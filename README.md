@@ -29,6 +29,21 @@ Designs are built with open-source EDA tooling against a pinned PDK revision. Ea
 design records the exact PDK commit it was built against, and the tool versions
 used, so a result can be reproduced rather than taken on trust.
 
+## Authorship
+
+Commits are made by agents under a project identity
+(`Principal Engineer Agent <agents@simra.tech>`), which is why they do not resolve
+to a GitHub account. Each commit records the role and the model that produced it in
+a trailer:
+
+```
+Agent-Role: Principal Engineer
+Agent-Model: <model id>
+```
+
+Tape-out submissions are signed by a human, who takes responsibility for what goes
+to the foundry.
+
 ## Licence
 
 Apache License 2.0 — see [LICENSE](LICENSE).
