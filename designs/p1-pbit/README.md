@@ -148,8 +148,7 @@ about a chip.
 | Fabrication | **Not done.** Nothing exists in silicon. |
 | Layout, DRC, LVS, parasitic extraction | **Not run.** No layout exists. |
 | Tape-out / foundry signoff | **Not done, not claimed.** |
-| HBT noise spectral density S<sub>v</sub>(f) | **Not simulated and not measured.** The 18.36 nV/√Hz figure in the specification is a hand calculation of shot plus thermal noise at I<sub>C</sub> = 1 mA, R<sub>C</sub> = 1 kΩ — not an ngspice `.noise` result. Settling it needs an AC noise analysis; the specification gives the analysis line. |
-| Total die power | **Not simulated.** The 15–45 mW range in the specification is an estimate, flagged there as Unknown. |
+| HBT noise spectral density S<sub>v</sub>(f) | **Simulated, not measured.** `.noise` on the noise generator gives 36.42 nV/√Hz differential at 1 GHz — see [`noise-generator/`](noise-generator/), which carries the deck and the raw simulator output. Still not measured in silicon, and no layout parasitics are included.|
 | σ<sub>VOS</sub> = 6.683 mV Monte Carlo | **Ran, but the artefacts were not retained** — see the caveat above. Not reproducible from this repository. |
 | HBT f<sub>T</sub> = 379.8 GHz, β = 638.3 | **Extracted from the PDK model in SPICE, but the run artefacts were not retained.** Same status as the Monte Carlo. |
 | Preamplifier gain, CML latch speed, 5 GS/s sampling rate | **Not simulated.** No preamp or latch schematic exists yet; these are derived from f<sub>T</sub> and are marked Assumed in the specification. |
