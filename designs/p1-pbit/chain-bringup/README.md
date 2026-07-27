@@ -17,9 +17,10 @@ signoff of any kind is claimed here.**
 
 | run | generator | preamplifier | decision | 200 ns |
 | --- | --- | --- | --- | --- |
-| stage 1 | behavioural `trnoise` + RC | behavioural VCVS | post-processed | complete |
+| stage 1 | behavioural noise + RC | behavioural VCVS | post-processed | complete |
 | swap 1 | **`P1_NOISE_GEN`, transistors** | behavioural VCVS | post-processed | complete |
 | swap 2 | **`P1_NOISE_GEN`** | **`P1_NOISE_AMP`, transistors** | post-processed | complete |
+| swap 3 | **`P1_NOISE_GEN`** | **`P1_NOISE_AMP`** | **`P1_COMPARATOR`, clocked at 5 GS/s** | complete |
 
 The decision is done in post-processing in all three: the differential output is
 sampled every 200 ps and compared against a threshold. No clocked comparator is
@@ -34,26 +35,39 @@ blocks themselves — 36.42 nV/√Hz differential from the generator's `.noise` 
 1,000 sampled bits per run. The 1σ detection floor for a correlation estimate at
 N = 1000 is 1/√N = **0.0316**, so any |r| below that is unresolvable, not zero.
 
-| statistic | stage 1 | swap 1 | swap 2 | expected |
-| --- | ---: | ---: | ---: | ---: |
-| P(bit = 1) | 0.4830 | 0.4680 | 0.5210 | 0.5 ± 0.0316 |
-| r[1] | +0.0340 | −0.0213 | −0.0088 | 0 ± 0.0316 |
-| r[2] | −0.0552 | −0.0002 | −0.0158 | 0 ± 0.0316 |
-| r[3] | **−0.0964** | +0.0088 | −0.0007 | 0 ± 0.0316 |
-| r[4] | +0.0091 | +0.0037 | −0.0359 | 0 ± 0.0316 |
-| longest run | 9 | 9 | **8** | ≈ 10 |
+| statistic | stage 1 | swap 1 | swap 2 | **swap 3** | expected |
+| --- | ---: | ---: | ---: | ---: | ---: |
+| P(bit = 1) | 0.4830 | 0.4680 | 0.5210 | **0.4870** | 0.5 ± 0.0316 |
+| r[1] | +0.0340 | −0.0213 | −0.0088 | **+0.0003** | 0 ± 0.0316 |
+| r[2] | −0.0552 | −0.0002 | −0.0158 | **+0.0134** | 0 ± 0.0316 |
+| r[3] | **−0.0964** | +0.0088 | −0.0007 | **−0.0900** | 0 ± 0.0316 |
+| r[4] | +0.0091 | +0.0037 | −0.0359 | **−0.0409** | 0 ± 0.0316 |
+| longest run | 9 | 9 | 8 | **7** | ≈ 10 |
 
-**A transistor-level HBT noise generator feeding a transistor-level HBT
-preamplifier produces bits with a longest run of 8 against an expectation near
-10, and no correlation resolvable above the floor.**
+**The complete transistor chain — HBT noise generator, HBT preamplifier and
+clocked CML comparator at 5 GS/s — produces a bitstream with a longest run of 7
+against an expectation near 10, and no correlation resolvable above the floor
+except the lag-3 entry noted below.**
+
+A direct check for hidden periodicity: the fraction of samples equal to the sample
+2, 3, 4 and 8 places earlier is 50.7%, 45.5%, 48.0% and 48.3% — chance in every
+case. Earlier iterations of swap 3
+reached 99.9% at period 4.
+
+Noise measured at the comparator's latch bases is 90.70 mV rms, 30% of the 300 mV
+CML latch swing.
 
 ### The one number that is not clean
 
-Stage 1's r[3] = −0.0964 is **3.05σ** outside the floor. It is the largest
-deviation in the table and the only one outside it. It does not appear in either
-swap, and across four lags a 3σ outlier arrives about 1% of the time, so it is
-probably a finite-sample fluctuation — but it is recorded here as *unexplained*
-rather than negligible, and the remedy is more bits.
+**r[3] is anomalous in two of the four runs and unexplained.** Stage 1 gives
+−0.0964 (3.05σ) and swap 3 gives −0.0900 (2.85σ) — same lag, same sign, similar
+magnitude, from configurations sharing almost nothing. Swap 1 and swap 2 show
+nothing at that lag.
+
+Two of four could still be chance, and no mechanism is proposed here. It is
+recorded as *unexplained* rather than negligible. The resolving measurement is
+10,000 bits, which drops the detection floor from 0.0316 to 0.0100: a real −0.09
+would stand at 9σ, a fluctuation would shrink toward zero.
 
 ### What these numbers do not establish
 
@@ -68,19 +82,33 @@ Every result is paired with the deck that produced it and the simulator log that
 proves it ran. A bit file without both is not evidence.
 
 ```
-run/tb_p1_stage1_behavioral.spice     ngspice_stage1_behavioral.log     pbit_stream_stage1_behavioral.csv
-run/tb_p1_swap1_real_noise_gen.spice  ngspice_swap1_real_noise_gen.log  pbit_stream_swap1_real_noise_gen.csv
-run/tb_p1_swap2_real_preamp.spice     ngspice_swap2_real_preamp.log     pbit_stream_swap2_real_preamp.csv
+run/tb_p1_stage1_behavioral.spice       ngspice_stage1_behavioral.log       pbit_stream_stage1_behavioral.csv
+run/tb_p1_swap1_real_noise_gen.spice    ngspice_swap1_real_noise_gen.log    pbit_stream_swap1_real_noise_gen.csv
+run/tb_p1_swap2_real_preamp.spice       ngspice_swap2_real_preamp.log       pbit_stream_swap2_real_preamp.csv
+run/tb_p1_swap3_real_comparator.spice   ngspice_swap3_real_comparator.log   pbit_stream_swap3_real_comparator.csv
 ```
+
+The swap-3 log opens with an audit trail listing all 100 noise tone frequencies,
+phases and amplitudes, so the excitation can be checked without reading the deck.
+All 100 lie between 117.7 MHz and 2.526 GHz and none is within 1% of any integer
+division of the 5 GHz sampling clock — verified by parsing the log, not by
+trusting the header.
 
 Reproduce with `ngspice -b <deck>` after setting `$PDK_ROOT` to an IHP SG13G2
 installation.
 
-## Swap 3 is not here
+## How the noise is excited, and why it is not `trnoise`
 
-Replacing the post-processed decision with the transistor comparator and its
-5 GS/s clock is not published, because it does not yet work. The chain completes
-200 ns, but the output is the pattern `1100` repeating — 99.9% of samples are
-identical to the sample four places earlier, r[2] = −0.998, r[4] = +0.998,
-longest run 3. That is a periodic waveform with no entropy in it, not a bitstream,
-and it is under investigation.
+ngspice's `trnoise` updates on a fixed grid. With a 20 ps step against a 200 ps
+clock the two grids are commensurate, and the solver's timestep collapses when a
+noise update lands on a clock edge. Moving the step to 23 ps relocated the abort
+from 100 ps to 920 ps — which is exactly 40 × 23 ps, and exactly where the fifth
+clock falling edge ends. The mechanism is a simulation artifact: real device noise
+is continuous and has no update grid, so this failure cannot occur in silicon.
+
+The excitation used here is a sum of 100 tones with random phases, irregular
+spacing, spanning the sampled band, evaluated offline and applied as a
+piecewise-linear source at 10 ps resolution. It is smooth at the scale of the
+underlying bandwidth, so the solver has nothing to trip over, and the sum of many
+randomly phased tones is Gaussian to well beyond the precision this measurement
+needs.
