@@ -1,0 +1,27 @@
+** sch_path: characterisation/runs/RUN_2026-07-27_12-37-29/parameters/switching_threshold/run_1/ihp_inv_dc_tb.sch
+**.subckt ihp_inv_dc_tb
+**** begin user architecture code
+
+
+.lib $PDK_ROOT/ihp-sg13g2/libs.tech/ngspice/models/cornerMOSlv.lib mos_ff
+.include characterisation/netlist/schematic/ihp_sg13g2_inv.spice
+
+X1 in out vdd vss ihp_sg13g2_inv
+
+VVDD vdd vss DC 1.2
+VVSS vss 0   DC 0.0
+VVIN in vss DC 0.6
+
+.control
+osdi $PDK_ROOT/ihp-sg13g2/libs.tech/ngspice/osdi/psp103.osdi
+dc VVIN 0 1.2 0.0005
+meas dc vth FIND v(in) WHEN v(out)='1.2/2'
+echo $&vth > characterisation/runs/RUN_2026-07-27_12-37-29/parameters/switching_threshold/run_1/ihp_inv_dc_tb_1.data
+quit
+.endc
+.end
+
+
+**** end user architecture code
+**.ends
+.end

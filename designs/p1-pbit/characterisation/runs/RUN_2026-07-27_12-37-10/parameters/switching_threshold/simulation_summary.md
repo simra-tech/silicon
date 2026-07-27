@@ -1,0 +1,7 @@
+# Simulation Summary for Switching Threshold Vth
+
+| run | vdd | vth |
+| :-- | --: | --: |
+| run_0 | 1.08 | 0.539 |
+| run_1 | 1.2 | 0.597 |
+| run_2 | 1.32 | 0.653 |

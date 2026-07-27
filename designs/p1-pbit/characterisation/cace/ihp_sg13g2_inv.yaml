@@ -1,0 +1,78 @@
+# CACE Specification for IHP SG13G2 CMOS Inverter
+name:           ihp_sg13g2_inv
+description:    CMOS Inverter Characterization on IHP SG13G2 Process
+PDK:            ihp-sg13g2
+
+cace_format:    5.2
+
+authorship:     
+  designer:         Autonomous Verification Agent
+  creation_date:    July 26, 2026
+  license:          Apache 2.0
+
+paths:          
+  root:             ..
+  schematic:        xschem
+  netlist:          netlist
+  documentation:    docs
+
+pins:           
+  vdd:          
+    description: Positive core power supply
+    type: power
+    direction: inout
+    Vmin: 1.08
+    Vmax: 1.32
+  vss:          
+    description: Ground reference
+    type: ground
+    direction: inout
+  in:           
+    description: Inverter digital input
+    type: signal
+    direction: input
+  out:          
+    description: Inverter digital output
+    type: signal
+    direction: output
+
+default_conditions:
+  vdd:          
+    description: Core supply voltage
+    display: VDD
+    unit: V
+    typical: 1.20
+  corner:       
+    description: Process corner
+    display: Corner
+    enumerate: [mos_ss, mos_tt, mos_ff]
+  temperature:  
+    description: Ambient temperature
+    display: Temp
+    unit: °C
+    minimum: -40
+    typical: 27
+    maximum: 125
+
+parameters:     
+  switching_threshold:
+    display: Switching Threshold Vth
+    description: DC input voltage where Vout equals VDD/2
+    unit: V
+    spec:
+      vth:      
+        display: Vth
+        description: Switching threshold voltage
+        unit: V
+        minimum:
+          value: 0.50
+        typical:
+          value: 0.60
+        maximum:
+          value: 0.70
+    tool:       
+      ngspice:  
+        template: ihp_inv_dc_tb.sch
+        format: ascii
+        suffix: .data
+        variables: [vth]

@@ -1,0 +1,19 @@
+* CACE Testbench for IHP SG13G2 Inverter DC Threshold
+.lib $PDK_ROOT/ihp-sg13g2/libs.tech/ngspice/models/cornerMOSlv.lib mos_tt
+
+.include CACE{DUT_path}
+
+X1 VIN VOUT VDD VSS ihp_sg13g2_inv
+
+VVDD VDD VSS DC CACE{vdd}
+VVSS VSS 0   DC 0.0
+VVIN VIN VSS DC 0.6
+
+.control
+osdi $PDK_ROOT/ihp-sg13g2/libs.tech/ngspice/osdi/psp103.osdi
+dc VVIN 0 CACE{vdd} 0.005
+meas dc vth FIND v(vin) WHEN v(vout)=0.6
+print vth
+quit
+.endc
+.end
