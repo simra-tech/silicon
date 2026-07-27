@@ -1,0 +1,28 @@
+* Stage 1: All-Behavioral Reference Chain (No Transistors, No Clock)
+
+* 1. Behavioral Noise Generator
+V_NOISE_P gen_p_raw 0 DC 0 TRNOISE(5.758m, 20p, 0, 0)
+V_NOISE_N gen_n_raw 0 DC 0 TRNOISE(5.758m, 20p, 0, 0)
+
+* Band-limiting filter to 25 GHz (R = 100, C = 63.66 fF)
+R_FILT_P gen_p_raw gen_p 100
+C_FILT_P gen_p 0 63.66f
+
+R_FILT_N gen_n_raw gen_n 100
+C_FILT_N gen_n 0 63.66f
+
+* 2. Behavioral Preamplifier with Gain = 11.97x and Pole at 31.29 GHz
+E_AMP amp_diff_raw 0 gen_p gen_n 11.97
+
+* Single pole filter at 31.29 GHz (R = 100, C = 50.86 fF)
+R_POLE amp_diff_raw amp_diff_out 100
+C_POLE amp_diff_out 0 50.86f
+
+.control
+op
+tran 20p 200n 0 20p
+setplot tran1
+wrdata run/raw_stage1.txt v(amp_diff_out) v(gen_p) v(gen_n)
+quit
+.endc
+.end
