@@ -1,0 +1,49 @@
+** sch_path: xschem/p1_comparator.sch
+.subckt p1_comparator PBIT_OUT PBIT_RAW IN_P IN_N CLK_P CLK_N VCC_HBT VDD VSS
+*.PININFO PBIT_OUT:O PBIT_RAW:O IN_P:I IN_N:I CLK_P:I CLK_N:I VCC_HBT:B VDD:B VSS:B
+
+* Clocked tail differential pair
+XQCLK_TRACK e_track CLK_P e_tail VSS npn13G2 Nx=1
+XQCLK_LATCH e_latch CLK_N e_tail VSS npn13G2 Nx=1
+ISET e_tail VSS DC 2.0m
+
+* Track Stage (Input diff pair)
+XQ1 c_n IN_P e_track VSS npn13G2 Nx=1
+XQ2 c_p IN_N e_track VSS npn13G2 Nx=1
+
+* Latch Stage (Cross-coupled regen pair)
+XQ3 c_n c_p e_latch VSS npn13G2 Nx=1
+XQ4 c_p c_n e_latch VSS npn13G2 Nx=1
+
+* CML Load Resistors
+RC1 VCC_HBT c_n 300 m=1
+RC2 VCC_HBT c_p 300 m=1
+
+* Emitter Follower Level Shifter
+XQEF1 VCC_HBT c_p ef_p VSS npn13G2 Nx=1
+XQEF2 VCC_HBT c_n ef_n VSS npn13G2 Nx=1
+REF1 ef_p VSS 5k m=1
+REF2 ef_n VSS 5k m=1
+
+R1_P ef_p g_p 10k m=1
+R2_P g_p VSS 10k m=1
+R1_N ef_n g_n 10k m=1
+R2_N g_n VSS 10k m=1
+
+* NMOS Level-Shifter Diff Pair
+XM1 cml_out_n g_p VSS VSS sg13_lv_nmos w=2.0u l=0.13u
+XM2 cml_out_p g_n VSS VSS sg13_lv_nmos w=2.0u l=0.13u
+XM3 cml_out_n cml_out_n VDD VDD sg13_lv_pmos w=2.83u l=0.13u
+XM4 cml_out_p cml_out_n VDD VDD sg13_lv_pmos w=2.83u l=0.13u
+
+* Inverter buffer chain to drive PBIT_RAW and PBIT_OUT
+XM5 raw_inv cml_out_p VDD VDD sg13_lv_pmos w=2.83u l=0.13u
+XM6 raw_inv cml_out_p VSS VSS sg13_lv_nmos w=2.00u l=0.13u
+
+XM7 PBIT_RAW raw_inv VDD VDD sg13_lv_pmos w=2.83u l=0.13u
+XM8 PBIT_RAW raw_inv VSS VSS sg13_lv_nmos w=2.00u l=0.13u
+
+XM9 PBIT_OUT PBIT_RAW VDD VDD sg13_lv_pmos w=2.83u l=0.13u
+XM10 PBIT_OUT PBIT_RAW VSS VSS sg13_lv_nmos w=2.00u l=0.13u
+
+.ends

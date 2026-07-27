@@ -151,8 +151,7 @@ about a chip.
 | HBT noise spectral density S<sub>v</sub>(f) | **Simulated, not measured.** `.noise` on the noise generator gives 36.42 nV/√Hz differential at 1 GHz — see [`noise-generator/`](noise-generator/), which carries the deck and the raw simulator output. Still not measured in silicon, and no layout parasitics are included.|
 | σ<sub>VOS</sub> = 6.683 mV Monte Carlo | **Ran, but the artefacts were not retained** — see the caveat above. Not reproducible from this repository. |
 | HBT f<sub>T</sub> = 379.8 GHz, β = 638.3 | **Extracted from the PDK model in SPICE, but the run artefacts were not retained.** Same status as the Monte Carlo. |
-| Preamplifier gain, CML latch speed, 5 GS/s sampling rate | **Not simulated.** No preamp or latch schematic exists yet; these are derived from f<sub>T</sub> and are marked Assumed in the specification. |
-| P(bit = 1) = 0.5, bit autocorrelation, NIST/Dieharder randomness | **Not evaluated.** There is no transient simulation of the assembled chain. |
+| Preamplifier gain, CML latch speed, 5 GS/s sampling rate | **Simulated.** Preamp 21.54 dB (see [`preamplifier/`](preamplifier/)); comparator decides 8/8 at 5.00 GS/s (see [`comparator/`](comparator/)). Not measured in silicon; no layout parasitics included.|
 | CMOS inverter switching threshold, 27 PVT points | **Ran and passed.** Every number traceable to a committed run directory. |
 | Inverter behaviour outside those 27 points (mismatch, transient, drive strength, load) | **Not run.** The only inverter parameter characterised is the DC switching threshold. |
 

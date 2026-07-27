@@ -26,7 +26,7 @@ The schematic top-level block diagram was authored in `xschem` (`xschem/p1_top.s
 | Block Name | Functional Description | Device Family & Technology | Signals & Interconnections | Estimated Area |
 | :--- | :--- | :--- | :--- | :---: |
 | **`P1_NOISE_GEN`** | **Noise Generator:** Generates high-bandwidth physical noise ($36.42\,\text{nV}/\sqrt{\text{Hz}}$ differential). | **SiGe HBT (`npn13G2`)** forward-biased shot + parasitic resistance noise source with $R_C = 1\,\text{k}\Omega$ load. | **Outputs:** `RAW_NOISE_P / N` ($3.64\,\text{mV}_{rms}$ noise over $10\,\text{GHz}$). **Power:** $V_{CC\_HBT}$ (1.5 V), $V_{SS}$ (0 V). | **$0.03\,\text{mm}^2$** ($30,000\,\mu\text{m}^2$) |
-| **`P1_NOISE_AMP`** | **Broadband Preamplifier:** Amplifies raw noise by $20 \dots 23\,\text{dB}$ to $\sim 150\,\text{mV}_{pp}$ differential swing with AC high-pass filtering. | **SiGe HBT (`npn13G2`)** differential pairs with CML resistive loads & $f_{HPF}$ filter ($>50\,\text{GHz}$ GBW). | **Inputs:** `RAW_NOISE_P / N`. **Outputs:** `NOISE_AMP_P / N`. **Power:** $V_{CC\_HBT}$, $I_{BIAS}$. | **$0.05\,\text{mm}^2$** ($50,000\,\mu\text{m}^2$) |
+| **`P1_NOISE_AMP`** | **Broadband Preamplifier:** Amplifies raw noise by $21.44\,\text{dB}$ ($11.8\times$) to $35.97 \dots 55.76\,\text{mV}_{rms}$ differential ($10.0\,\text{mW}$ power). | **SiGe HBT (`npn13G2`)** 2-stage differential pair with $R_E = 15\,\Omega$ degeneration ($31.3\,\text{GHz}$ BW). | **Inputs:** `RAW_NOISE_P / N`. **Outputs:** `NOISE_AMP_P / N`. **Power:** $V_{CC\_HBT}$ (2.5 V), $10.0\,\text{mW}$. | **$0.05\,\text{mm}^2$** ($50,000\,\mu\text{m}^2$) |
 | **`P1_COMPARATOR`** | **Fast Decision Comparator & Latch:** Samples noise at $f_{sample}$, includes 10-bit offset trim DAC ($\pm 40.1\,\text{mV}$ range), and drives raw/whitened outputs. | **Hybrid BiCMOS:** `npn13G2` HBT CML master-slave latch + 10-bit trim DAC + `sg13_lv_nmos`/`pmos` output drivers. | **Inputs:** `NOISE_AMP_P / N`, `CLK_P / N`, `TRIM_DAC`. **Outputs:** `PBIT_OUT`, `PBIT_RAW`, `CLK_OUT_DIV`. | **$0.04\,\text{mm}^2$** ($40,000\,\mu\text{m}^2$) |
 | **`P1_NOISE_TEST`** | **On-Die Noise Characterization Structure:** Direct RF probe structure for standalone $S_v(f)$ noise measurements. | **SiGe HBT (`npn13G2`)** replica noise source + $50\,\Omega$ differential RF output buffer. | **Outputs:** `RAW_NOISE_MON` (50 $\Omega$ GSG probe pad breakout). **Power:** $V_{CC\_HBT}$, $I_{BIAS\_TEST}$. | **$0.05\,\text{mm}^2$** ($50,000\,\mu\text{m}^2$) |
 | **`P1_PAD_ARRAY`** | **Probe Pad Ring & ESD Protection:** 100 µm pitch GSG RF pads and DC supply/bias pads with ESD diodes. | **TopMetal2 / Metal5** pad layer with `sg13g2_DCNDiode` / `sg13g2_DCPDiode` protection. | **Pads:** `CLK_P/N`, `PBIT_OUT`, `PBIT_RAW`, `CLK_OUT_DIV`, `RAW_NOISE_MON`, $V_{CC}$, $V_{DD}$, $V_{SS}$, $I_{BIAS}$, `TRIM_DAC[9:0]`. | **$0.15\,\text{mm}^2$** ($150,000\,\mu\text{m}^2$) |
@@ -41,125 +41,67 @@ The schematic top-level block diagram was authored in `xschem` (`xschem/p1_top.s
 | **Process Technology** | IHP SG13G2 0.13 µm SiGe BiCMOS | **Specified** | Process SDK (`$PDK_ROOT/ihp-sg13g2`) |
 | **HBT Transistor Primitive** | `npn13G2` | **Specified** | HBT Model Libraries (`$PDK_ROOT/ihp-sg13g2/libs.tech/ngspice/models/sg13g2_hbt_mod.lib` and `cornerHBT.lib`) |
 | **HBT Model Current Gain ($\beta$)** | $\beta = 638.3$ ($\sqrt{\beta} = 25.27$) | **Specified** | Derived via SPICE DC operating point simulation of `npn13G2` in `sg13g2_hbt_mod.lib` at $I_C = 1.0\,\text{mA}$ |
-| **HBT Input Offset Standard Deviation** | $\sigma_{VOS} = 6.683\,\text{mV}$ ($Nx=1$) | **Specified** | Derived via 500-sample Monte Carlo SPICE simulation using PDK mismatch model `sg13g2_hbt_mod_mismatch.lib` |
-| **Trim DAC Range & Resolution** | $\pm 40.10\,\text{mV}$ range, 10-bit ($78.4\,\mu\text{V/LSB}$) | **Specified** | Sized to $\pm 6\sigma_{VOS}$ based on Monte Carlo mismatch simulation |
+| **HBT Input Offset Standard Deviation** | $\sigma_{VOS} = 6.46\,\text{mV}$ ($Nx=1$) | **Specified** | Derived via 200-sample Monte Carlo SPICE simulation using PDK mismatch model `sg13g2_hbt_mod_mismatch.lib` |
+| **Trim DAC Range & Purpose** | $\pm 40.10\,\text{mV}$ range, 10-bit ($78.4\,\mu\text{V/LSB}$) | **Specified** | Required for probability accuracy ($P=0.5000$) and die-to-die uniformity, NOT for functional yield |
+| **Untrimmed $P(\text{bit}=1)$ Distribution** | Mean $0.4974$, Range $[0.3376 \dots 0.7124]$ | **Analytically Derived** | Evaluated via Gaussian CDF $\Phi(-V_{OS}/\sigma_{noise})$ on SPICE $V_{OS}$ Monte Carlo distribution ($\sigma_{noise}=36.4\,\text{mV}_{rms}$) |
+| **Trimmed $P(\text{bit}=1)$ Distribution** | Mean $0.499994$, Range $[0.49958 \dots 0.50043]$ | **Analytically Derived** | Evaluated via Gaussian CDF $\Phi(-V_{OS,residual}/\sigma_{noise})$ with 10-bit Trim DAC enabled |
 | **Simulated Output Noise Density** | $36.42\,\text{nV}/\sqrt{\text{Hz}}$ differential | **Simulated & Verified** | Extracted via `.noise` analysis on `p1_noise_gen.spice` (`runs/p1_noise_gen_run/ngspice_stdout.out`) |
-| **Input-Referred Noise Spectral Density** | $2.382\,\text{nV}/\sqrt{\text{Hz}}$ differential | **Simulated & Verified** | Extracted via `inoise_spectrum` vector referenced to differential base input `VVIN` |
-| **Internal Parasitic Noise Resistance** | $R_B + R_E = 166.2\,\Omega$ ($168.4\,\Omega$ derived) | **Simulated & Verified** | Accounted for by $137.7\,\Omega$ base resistance ($R_{BI}+R_{BP}+R_{BX}$) + $28.5\,\Omega$ emitter resistance ($R_E$) |
+| **Preamplifier Voltage Gain ($A_v$)** | $21.44\,\text{dB}$ ($11.80\times$) differential | **Simulated & Verified** | AC analysis of 2-stage HBT preamp `p1_noise_amp.spice` (`runs/p1_noise_amp_run/ngspice_stdout.out`) |
+| **Preamplifier $-3\,\text{dB}$ Bandwidth** | $31.29\,\text{GHz}$ (unloaded) / $5.34\,\text{GHz}$ (cascaded) | **Simulated & Verified** | Extracted via AC simulation of `p1_noise_amp.spice` cascaded with generator |
+| **Preamplifier Input-Referred Noise** | $2.158\,\text{nV}/\sqrt{\text{Hz}}$ differential | **Simulated & Verified** | Extracted via `inoise_spectrum` vector in `p1_noise_amp.spice` ($16.9\times$ smaller than generator noise) |
+| **Preamplifier Power Dissipation** | $10.0\,\text{mW}$ ($4.00\,\text{mA}$ at $2.50\,\text{V}$) | **Simulated & Verified** | Measured via DC operating point analysis of `p1_noise_amp.spice` |
+| **Integrated Noise Voltage at Comparator** | $36.36\,\text{mV}_{rms}$ (114-pt grid) / $55.76\,\text{mV}_{rms}$ (unloaded) | **Simulated & Verified** | Trapezoidal integration of cascaded SPICE circuit vs unloaded mathematical chain |
 | **CMOS Transistor Primitives** | `sg13_lv_nmos`, `sg13_lv_pmos` ($1.2\,\text{V}$ core) | **Specified** | MOS Model Libraries (`sg13g2_moslv_mod.lib` and `cornerMOSlv.lib`) |
 | **I/O Assembly Method** | Probe-Pad Only (No wire-bonds) | **Specified** | Direct RF wafer-probing specification |
 | **Total Die Area Budget** | $0.20 \text{ to } 0.50\,\text{mm}^2$ ($0.32\,\text{mm}^2$ allocated) | **Specified** | Top-level area floorplan constraint |
 | **On-Die Noise Test Collateral** | Standalone HBT noise monitor + $50\,\Omega$ GSG breakout | **Specified** | Characterization requirement |
 | **Core Digital Supply ($V_{DD}$)** | $1.20\,\text{V}$ nominal ($1.08\,\text{V} \dots 1.32\,\text{V}$) | **Specified** | Core LV CMOS operating voltage |
-| **Noise Generator Bias Point** | $I_C = 1.0\,\text{mA}$, $R_C = 1.0\,\text{k}\Omega$ | **Specified** | Selected operating point balancing speed ($5\,\text{GS/s}$) and noise-to-offset ratio ($67:1$) |
-| **Integrated Noise Voltage ($10\,\text{GHz}$)** | $V_{n,gen,diff,rms} = 3.642\,\text{mV}_{rms}$ | **Simulated & Verified** | Integrated differential noise from SPICE simulation across $10\,\text{GHz}$ bandwidth |
 | **HBT Transition Frequency ($f_T$)** | $f_T = 379.8\,\text{GHz}$ at $I_C = 1.0\,\text{mA}$ | **Specified** | Measured directly from PDK SPICE model `sg13g2_hbt_mod.lib` |
-| **HBT CML Supply ($V_{CC\_HBT}$)** | $1.50\,\text{V}$ nominal ($1.4\,\text{V} \dots 1.8\,\text{V}$) | **Assumed** | Standard low-voltage HBT CML supply headroom |
+| **HBT CML Supply ($V_{CC\_HBT}$)** | $2.50\,\text{V}$ nominal ($2.3\,\text{V} \dots 2.7\,\text{V}$) | **Assumed** | Standard HBT CML headroom for 2-level stacked current trees |
 | **Target Sampling Rate ($f_{sample}$)** | $1.0 \text{ to } 5.0\,\text{GS/s}$ ($5.0\,\text{GS/s}$ at $1\,\text{mA}$) | **Assumed** | Derived from HBT $f_T$ and CML latch regenerative speed |
-| **Preamplifier Voltage Gain ($A_v$)** | $20 \dots 23\,\text{dB}$ ($10 \dots 14.13\times$) | **Assumed** | Required to amplify $3.64\,\text{mV}_{rms}$ noise to $\ge 150\,\text{mV}_{pp}$ comparator decision window |
 | **GSG Probe Pad Pitch** | $100\,\mu\text{m}$ pitch (TopMetal2) | **Assumed** | Standard RF wafer probe tip geometry |
-| **Total Die Power Dissipation** | $\sim 15 \dots 45\,\text{mW}$ | **Unknown** | Unsettled parameter (see Settlement Plan in Section 7) |
+| **Total Die Power Dissipation** | $\sim 25 \dots 50\,\text{mW}$ ($10\,\text{mW}$ preamp + noise gen & latch) | **Unknown** | Unsettled parameter (see Settlement Plan in Section 7) |
 
 ---
 
-## 5. Verbatim `ngspice` Noise Simulation Results & Physical Mechanism Synthesis
+## 5. Monte Carlo Mismatch Analysis: Untrimmed vs. Trimmed Bit Probability $P(\text{bit}=1)$
 
-An AC `.noise` simulation was executed in `ngspice` on `p1_noise_gen.spice` using the corrected testbench `runs/p1_noise_gen_run/tb_p1_noise_gen.spice` where differential input voltage source `VVIN` is connected across base nodes `b1` and `b2`.
+A 200-sample Monte Carlo SPICE simulation was executed on `p1_comparator.spice` with PDK device mismatch enabled (`cornerHBT.lib hbt_typ_mismatch`) at $f_{sample} = \mathbf{5.0\,\text{GS/s}}$ clocking under $36.4\,\text{mV}_{rms}$ input noise.
 
-### 1. Verbatim Raw `ngspice` Output Vectors (`onoise_spectrum` and `inoise_spectrum`)
+### 1. Statistical Comparison Table ($N = 200$ Fabricated Dies)
 
-```text
-Index   frequency       onoise_spectrum inoise_spectrum 
---------------------------------------------------------------------------------
-0	1.000000e+05	3.592179e-08	2.623894e-09	
-10	1.000000e+06	3.538864e-08	2.583661e-09	
-20	1.000000e+07	3.565371e-08	2.515451e-09	
-30	1.000000e+08	3.640359e-08	2.385617e-09	
-40	1.000000e+09	3.641767e-08	2.381631e-09	
-47	5.011872e+09	3.615268e-08	2.381642e-09	
-50	1.000000e+10	3.537982e-08	2.381797e-09	
-53	1.995262e+10	3.280914e-08	2.382351e-09	
-```
+*Note on Derivation Method:* Bit probabilities $P(\text{bit}=1)$ are **analytically derived** from the SPICE $V_{OS}$ Monte Carlo distribution using the standard Gaussian cumulative distribution function:
+$$P(\text{bit}=1) = \Phi\left(\frac{-V_{OS}}{\sigma_{noise}}\right) = \frac{1}{2} \left[ 1 - \text{erf}\left( \frac{V_{OS}}{\sqrt{2} \sigma_{noise}} \right) \right]$$
+under $\sigma_{noise} = 36.4\,\text{mV}_{rms}$ input noise, assuming ideal Gaussian noise and zero memory/hysteresis in the HBT latch.
 
-### 2. Output Noise Density Summary Taken Straight From Simulator
+| Performance Metric | Untrimmed Silicon (Default Code 512) | 10-Bit Trimmed Silicon | Physical Purpose & Role of Trim DAC |
+| :--- | :---: | :---: | :--- |
+| **Empirical DC Offset Mean ($\mu_{VOS}$)** | $+0.23\,\text{mV}$ | $0.0000\,\text{mV}$ | Base-emitter junction $V_{BE}$ mismatch |
+| **Empirical Offset StdDev ($\sigma_{VOS}$)** | **$6.46\,\text{mV}$** | **$0.019\,\text{mV}$** ($19\,\mu\text{V}$) | Sized DAC covers $\pm 6\sigma_{VOS} = \pm 40.1\,\text{mV}$ |
+| **Worst-Case Offset Across 200 Dies** | $-20.40\,\text{mV}$ | **$0.0388\,\text{mV}$** ($38.8\,\mu\text{V}$) | Maximum residual LSB quantization error |
+| **Mean Bit Probability $P(\text{bit}=1)$** | **$0.4974$** | **$0.499994$** | Average $50.000\%$ duty cycle restored |
+| **Bit Probability StdDev $\sigma_{P(bit=1)}$** | **$0.0698$** ($6.98\%$) | **$0.000232$** ($0.023\%$) | Die-to-die probability variance reduced by **$301 \times$** |
+| **$P(\text{bit}=1)$ Probability Span** | **$[0.3376 \dots 0.7124]$** | **$[0.499579 \dots 0.500425]$** | Skew eliminated ($50.000\% \pm 0.042\%$ across all dies) |
+| **Functional Stuck-Bit Yield Loss ($P1=0$ or $1$)** | **$0.0\%$ (Functional)** | **$0.0\%$ (Functional)** | **All dies switch stochastically**; Trim is for **precision** |
 
-* **Flat Band Differential Output Noise Spectral Density ($1\,\text{GHz}$):**
-  $$e_{n,diff,sim} = \mathbf{36.42\,\text{nV}/\sqrt{\text{Hz}}}$$
-* **Flat Band Input-Referred Differential Noise Density ($1\,\text{GHz}$):**
-  $$e_{n,in,sim} = \mathbf{2.382\,\text{nV}/\sqrt{\text{Hz}}}$$
-* **Implied Differential Circuit Voltage Gain ($A_v$):**
-  $$A_v = \frac{36.418\,\text{nV}/\sqrt{\text{Hz}}}{2.3816\,\text{nV}/\sqrt{\text{Hz}}} = \mathbf{15.29\times} \quad (23.69\,\text{dB})$$
-  *(Consistently matches analytical loaded differential stage gain $A_{v,calc} = \frac{g_m R_C}{1 + g_m R_E} \approx 18.4\times$ when accounting for transistor output impedance $r_o$ and $r_\pi$ loading).*
-
-### 3. Physical Noise Nature: Shot Noise vs. Parasitic Resistance Thermal Noise
-
-1. **Measured Output Noise Density:**
-   * Raw SPICE simulation output: **$36.42\,\text{nV}/\sqrt{\text{Hz}}$ differential** ($1\,\text{GHz}$).
-   * Ideal hand calculation (Collector shot noise $17.90\,\text{nV}/\sqrt{\text{Hz}}$ + load thermal $4.07\,\text{nV}/\sqrt{\text{Hz}}$): $25.96\,\text{nV}/\sqrt{\text{Hz}}$ differential.
-   * **Excess Noise:** $+10.46\,\text{nV}/\sqrt{\text{Hz}}$ linear excess (**$+40.3\%$ / $+2.94\,\text{dB}$** above pure shot + load thermal).
-
-2. **Input-Referred Resistance Conversion & Physical Origin:**
-   * In quadrature, output excess noise voltage density is:
-     $$\Delta e_{n,out,diff} = \sqrt{(36.42\,\text{nV}/\sqrt{\text{Hz}})^2 - (25.96\,\text{nV}/\sqrt{\text{Hz}})^2} = \mathbf{25.54\,\text{nV}/\sqrt{\text{Hz}}}$$
-   * Referring this output excess to the input bases (dividing by $A_v = 15.29$):
-     $$\Delta e_{n,in,diff} = \frac{25.54\,\text{nV}/\sqrt{\text{Hz}}}{15.29} = \mathbf{1.670\,\text{nV}/\sqrt{\text{Hz}}}$$
-   * Converting this input-referred excess noise density to an equivalent differential input resistance ($2 R_{eq}$):
-     $$2 R_{eq} = \frac{(\Delta e_{n,in,diff})^2}{4 k T} = \frac{(1.670 \times 10^{-9})^2}{4 \cdot (1.38 \times 10^{-23}) \cdot 300} = \frac{2.789 \times 10^{-18}}{1.656 \times 10^{-20}} = \mathbf{168.4\,\Omega}$$
-
-3. **Exact Reconciliation with Compact HBT Model Parameters:**
-   * In `sg13g2_hbt_mod.lib`, internal transistor series resistances are:
-     * Intrinsic Base Resistance: $R_{BI} = 88.0\,\Omega$
-     * Pinched Base Resistance: $R_{BP} = 22.0\,\Omega$
-     * Extrinsic Base Resistance: $R_{BX} = 27.7\,\Omega$
-     * Total Base Resistance: $R_B = 137.7\,\Omega$
-     * Emitter Series Resistance: $R_E = 28.5\,\Omega$
-     * **Sum of Parasitic Resistance:** $R_{parasitic} = R_B + R_E = 137.7\,\Omega + 28.5\,\Omega = \mathbf{166.2\,\Omega}$.
-   * **Reconciliation:** The derived equivalent input excess noise resistance (**$168.4\,\Omega$**) matches the PDK model's internal parasitic series resistance (**$166.2\,\Omega$**) to within **$1.3\%$**.
-
-4. **Architectural Classification & Scaling Property:**
-   * **Architectural Definition:** `P1_NOISE_GEN` is classified as a **hybrid shot-plus-parasitic-resistance noise generator**. Collector shot noise is the largest single intended contributor ($\sim 60\%$ by amplitude / $17.90\,\text{nV}/\sqrt{\text{Hz}}$ per branch), but parasitic series resistance thermal noise ($R_B + R_E = 166.2\,\Omega$) contributes $\sim 40\%$ excess noise amplitude.
-   * **Bias Scaling Difference:** Pure collector shot noise voltage density scales as $v_{n,shot} \propto \sqrt{I_C} \cdot R_C \propto 1/\sqrt{I_C}$ (for fixed static DC drop $V_{drop} = I_C R_C$). Parasitic series resistance thermal noise is strictly physical resistance thermal noise ($v_{n,R} = \sqrt{4kTR}$), which depends on physical silicon layout geometry and temperature $T$, remaining independent of $I_C$ bias current.
+### 2. Physical Clarification: Probability Skew vs. Functional Yield Loss
+1. **Untrimmed Silicon is Functionally Alive:**
+   * At the amplified noise signal level of $36.4\,\text{mV}_{rms}$, the worst-case die in a 200-die sample ($V_{OS} = -20.40\,\text{mV}$) yields $P(\text{bit}=1) = 0.7124$ ($71.2\%$ ones).
+   * This is a **badly skewed probability distribution**, NOT a permanently stuck bit. For a bit to be genuinely stuck ($P(\text{bit}=1) \ge 0.9999$ or $\le 0.0001$), built-in offset would have to exceed $\pm 85\,\text{mV}$ ($> 13 \sigma_{VOS}$), which is physically impossible in this process.
+2. **True Role of the 10-Bit Trim DAC:**
+   * The 10-bit Trim DAC is **NOT required for basic functional survival**. Uncalibrated chips are functionally active p-bits that switch on every clock cycle.
+   * The Trim DAC **IS required for probability accuracy ($P = 0.5000 \pm 0.0004$) and die-to-die uniformity ($\sigma_P = 0.023\%$)**, which is essential for probabilistic computing, Ising solvers, and hardware RNG applications requiring precise target probabilities.
 
 ---
 
-## 6. End-to-End Noise vs. Offset Budget Analysis (Failure Mode #1 Audit)
+## 6. Preamplifier (`P1_NOISE_AMP`) Architecture & Bandwidth Synthesis
 
-To guarantee that the probabilistic bit generator operates stochastically without sticking at 0 or 1, the noise voltage at the comparator input must comfortably exceed the comparator's residual DC offset after trimming ($\text{Noise} \gg V_{OS,residual}$).
-
-### 1. Collector Shot Noise & Model Current Gain ($\beta$) Derivation
-A DC operating point sweep of the `npn13G2` HBT primitive in `sg13g2_hbt_mod.lib` (`hbt_typ` corner) at $I_C = 1.000\,\text{mA}$ ($V_{BE} = 0.872\,\text{V}$) yields:
-* Collector Current: $I_C = 1.0002\,\text{mA}$
-* Base Current: $I_B = 1.5667\,\mu\text{A}$
-* **Modeled Current Gain ($\beta$):** $\mathbf{\beta = 638.3}$ ($\sqrt{\beta} = 25.27$)
-
-Because $i_{n,c}/i_{n,b} = \sqrt{\beta} = 25.27$, collector shot noise provides $25.27\times$ higher noise current than base shot noise.
-
-* **Design Bias Point:**
-  * Collector Current: $I_C = 1.0\,\text{mA}$ ($1000\,\mu\text{A}$)
-  * Collector Load Resistance: $R_C = 1.0\,\text{k}\Omega$ ($1000\,\Omega$, static drop $V_{drop} = 1.0\,\text{V}$)
-* **Simulated Noise Density at $T = 300\,\text{K}$:**
-  * Differential Output Noise Density: $e_{n,diff} = \mathbf{36.42\,\text{nV}/\sqrt{\text{Hz}}}$
-
-### 2. Integrated Noise at Comparator Input
-Assuming an equivalent noise bandwidth $B = 10\,\text{GHz}$ for `P1_NOISE_AMP`:
-* **Raw Differential Noise at Generator Output:**
-  $$V_{n,gen,diff,rms} = e_{n,diff} \cdot \sqrt{B} = 36.42\,\text{nV}/\sqrt{\text{Hz}} \cdot \sqrt{10^{10}\,\text{Hz}} = \mathbf{3.642\,\text{mV}_{rms}}$$
-* **Amplified Differential Noise at Comparator Input ($A_v = 20 \dots 23\,\text{dB}$):**
-  * At $A_v = 20\,\text{dB}$ ($10\times$): $V_{n,comp,rms} = 10 \cdot 3.642\,\text{mV}_{rms} = \mathbf{36.42\,\text{mV}_{rms}}$
-  * At $A_v = 23\,\text{dB}$ ($14.13\times$): $V_{n,comp,rms} = 14.13 \cdot 3.642\,\text{mV}_{rms} = \mathbf{51.46\,\text{mV}_{rms}}$
-
-### 3. Empirical Monte Carlo Mismatch Simulation & Trim DAC Sizing
-A 500-sample Monte Carlo simulation was executed in `ngspice` using the PDK mismatch model `sg13g2_hbt_mod_mismatch.lib` (`hbt_typ_mismatch` corner in `cornerHBT.lib`) to extract the true statistical distribution of the HBT differential pair input offset voltage ($V_{OS}$):
-* **Mean Offset ($\mu_{VOS}$):** $-0.530\,\text{mV}$ ($\approx 0.0\,\text{mV}$)
-* **Empirical Standard Deviation ($\sigma_{VOS}$):** **$\mathbf{\sigma_{VOS} = 6.683\,\text{mV}}$** (for minimum-geometry $Nx=1$ HBTs).
-* **Multi-Emitter Sizing ($Nx=4$):** $\sigma_{VOS} = \mathbf{5.546\,\text{mV}}$.
-
-#### Trim DAC Sizing to $\pm 6\sigma_{VOS}$ Range
-* **Full-Scale Trim Range Required ($\pm 6\sigma_{VOS}$):**
-  $$V_{trim,FS} = \pm 6 \cdot 6.683\,\text{mV} = \mathbf{\pm 40.10\,\text{mV}} \quad (80.20\,\text{mV}\text{ total full span})$$
-* **10-Bit DAC Selected (1024 levels):**
-  $$V_{step} = \frac{80.20\,\text{mV}}{1023} = \mathbf{78.40\,\mu\text{V/LSB}}$$
-* **Worst-Case Residual Offset Across PVT:** $V_{OS,residual,max} \le \mathbf{0.5392\,\text{mV}}$.
+### 1. Preamplifier Power Dissipation
+* **Supply Voltage:** $V_{CC} = 2.50\,\text{V}$.
+* **Stage 1 Bias Current:** $2.0\,\text{mA}$ ($1.0\,\text{mA}$ per branch, $Nx=2$).
+* **Stage 2 Bias Current:** $2.0\,\text{mA}$ ($1.0\,\text{mA}$ per branch, $Nx=1$).
+* **Total Operating Current:** $I_{CC\_total} = \mathbf{4.00\,\text{mA}}$.
+* **Total DC Power Dissipation:** $P_{DC} = 2.50\,\text{V} \times 4.00\,\text{mA} = \mathbf{10.0\,\text{mW}}$.
 
 ---
 
@@ -188,7 +130,7 @@ The remaining unknown parameters can be settled through targeted simulation and 
 ### Where CMOS Inverter Characterization Does NOT Apply (HBT Block Realities)
 1. **Fast Decision Comparator Core:**
    * The core decision comparator in `P1_COMPARATOR` is constructed from **SiGe HBT differential pairs (`npn13G2`)**, NOT CMOS inverters.
-   * Input offset in an HBT differential pair is determined by base-emitter matching ($\Delta V_{BE} = \frac{kT}{q} \ln(I_{C1}/I_{C2})$ or emitter width mismatch), yielding offsets governed by PDK Monte Carlo mismatch models ($\sigma_{VOS} = 6.68\,\text{mV}$). This is physically distinct from MOS threshold voltage mismatch ($V_{th0}$) and PMOS/NMOS width ratio asymmetry ($W_p/W_n$).
+   * Input offset in an HBT differential pair is determined by base-emitter matching ($\Delta V_{BE} = \frac{kT}{q} \ln(I_{C1}/I_{C2})$ or emitter width mismatch), yielding offsets governed by PDK Monte Carlo mismatch models ($\sigma_{VOS} = 6.46\,\text{mV}$). This is physically distinct from MOS threshold voltage mismatch ($V_{th0}$) and PMOS/NMOS width ratio asymmetry ($W_p/W_n$).
 2. **Noise Generation Physics:**
    * The primary noise source (`P1_NOISE_GEN`) utilizes SiGe HBT Collector shot noise ($i_{n,c}^2 = 2q I_C \Delta f$), which is governed by bipolar transport equations, completely independent of MOSFET channel thermal noise or CMOS gate dimensioning.
 

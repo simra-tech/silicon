@@ -1,0 +1,75 @@
+* P1_COMPARATOR Extreme Tail Die #178 (Untrimmed vs Trimmed)
+.lib $PDK_ROOT/ihp-sg13g2/libs.tech/ngspice/models/cornerHBT.lib hbt_typ
+.lib $PDK_ROOT/ihp-sg13g2/libs.tech/ngspice/models/cornerMOSlv.lib mos_tt
+
+.subckt p1_comparator PBIT_OUT PBIT_RAW CLK_OUT_DIV IN_P IN_N CLK_P CLK_N VCC_HBT VDD VSS params: trim_val=512
+
+XQCLK_TRACK e_track CLK_P e_tail VSS npn13G2 Nx=1
+XQCLK_LATCH e_latch CLK_N e_tail VSS npn13G2 Nx=1
+ISET e_tail VSS DC 2.0m
+
+* Insert forced -20.4 mV built-in offset for Die #178
+XQ1 c_n IN_P e_track VSS npn13G2 Nx=1
+XQ2 c_p IN_N_skew e_track VSS npn13G2 Nx=1
+VSKEW IN_N IN_N_skew DC 0.0204
+
+XQ3 c_n c_p e_latch VSS npn13G2 Nx=1
+XQ4 c_p c_n e_latch VSS npn13G2 Nx=1
+
+RC1 VCC_HBT c_n 300 m=1
+RC2 VCC_HBT c_p 300 m=1
+
+ITRIM_P c_p VSS DC '66.85u + (trim_val - 512) * 0.1307u'
+ITRIM_N c_n VSS DC '66.85u - (trim_val - 512) * 0.1307u'
+
+XQEF1 VCC_HBT c_p ef_p VSS npn13G2 Nx=1
+XQEF2 VCC_HBT c_n ef_n VSS npn13G2 Nx=1
+REF1 ef_p VSS 5k m=1
+REF2 ef_n VSS 5k m=1
+
+R1_P ef_p g_p 10k m=1
+R2_P g_p VSS 10k m=1
+R1_N ef_n g_n 10k m=1
+R2_N g_n VSS 10k m=1
+
+XM1 cml_out_n g_p VSS VSS sg13_lv_nmos w=2.0u l=0.13u
+XM2 cml_out_p g_n VSS VSS sg13_lv_nmos w=2.0u l=0.13u
+XM3 cml_out_n cml_out_n VDD VDD sg13_lv_pmos w=2.83u l=0.13u
+XM4 cml_out_p cml_out_n VDD VDD sg13_lv_pmos w=2.83u l=0.13u
+
+XM5 raw_inv cml_out_p VDD VDD sg13_lv_pmos w=2.83u l=0.13u
+XM6 raw_inv cml_out_p VSS VSS sg13_lv_nmos w=2.00u l=0.13u
+
+XM7 PBIT_RAW raw_inv VDD VDD sg13_lv_pmos w=2.83u l=0.13u
+XM8 PBIT_RAW raw_inv VSS VSS sg13_lv_nmos w=2.00u l=0.13u
+
+XM9 PBIT_OUT PBIT_RAW VDD VDD sg13_lv_pmos w=2.83u l=0.13u
+XM10 PBIT_OUT PBIT_RAW VSS VSS sg13_lv_nmos w=2.00u l=0.13u
+.ends
+
+* Untrimmed Instance (Code 512)
+XCOMP_UNTRIMMED pbit_untrimmed raw1 clk_div1 in_p in_n clk_p clk_n vcc_hbt vdd 0 p1_comparator trim_val=512
+
+* Trimmed Instance (Code 772)
+XCOMP_TRIMMED   pbit_trimmed   raw2 clk_div2 in_p in_n clk_p clk_n vcc_hbt vdd 0 p1_comparator trim_val=772
+
+VCC_HBT vcc_hbt 0 DC 2.50
+VDD vdd 0 DC 1.20
+
+VCLK_P clk_p 0 PULSE(1.0 1.5 0p 10p 10p 90p 200p)
+VCLK_N clk_n 0 PULSE(1.5 1.0 0p 10p 10p 90p 200p)
+
+* Small 10 mV peak input signal (representing small input/un amplified signal)
+VIN_P in_p 0 DC 1.50 SIN(1.50 0.0100 1.25G 0 0)
+VIN_N in_n 0 DC 1.50 SIN(1.50 -0.0100 1.25G 0 0)
+
+.control
+osdi $PDK_ROOT/ihp-sg13g2/libs.tech/ngspice/osdi/psp103.osdi
+op
+tran 2p 2.0n
+
+setplot tran1
+wrdata /tmp/stuck_die_demo.txt v(pbit_untrimmed) v(pbit_trimmed)
+quit
+.endc
+.end

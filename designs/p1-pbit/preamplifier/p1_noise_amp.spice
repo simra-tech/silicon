@@ -1,0 +1,22 @@
+** sch_path: xschem/p1_noise_amp.sch
+.subckt p1_noise_amp NOISE_AMP_P NOISE_AMP_N RAW_NOISE_P RAW_NOISE_N VCC VSS
+*.PININFO NOISE_AMP_P:O NOISE_AMP_N:O RAW_NOISE_P:I RAW_NOISE_N:I VCC:B VSS:B
+
+* Stage 1: Low-noise input differential pair (Nx=2)
+XQ1 c1_n RAW_NOISE_P e1_1 VSS npn13G2 Nx=2
+XQ2 c1_p RAW_NOISE_N e1_2 VSS npn13G2 Nx=2
+RE1_1 e1_1 e1_common 15
+RE1_2 e1_2 e1_common 15
+RC1_1 VCC c1_n 240 m=1
+RC1_2 VCC c1_p 240 m=1
+ISET1 e1_common VSS DC 2.0m
+
+* Stage 2: Second differential gain stage (Nx=1)
+XQ3 NOISE_AMP_N c1_p e2_1 VSS npn13G2 Nx=1
+XQ4 NOISE_AMP_P c1_n e2_2 VSS npn13G2 Nx=1
+RE2_1 e2_1 e2_common 15
+RE2_2 e2_2 e2_common 15
+RC2_1 VCC NOISE_AMP_N 240 m=1
+RC2_2 VCC NOISE_AMP_P 240 m=1
+ISET2 e2_common VSS DC 2.0m
+.ends

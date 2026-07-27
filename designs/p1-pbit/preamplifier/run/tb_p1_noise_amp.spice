@@ -1,0 +1,52 @@
+* P1_NOISE_AMP Complete Simulation Deck (AC Gain & Noise)
+.lib $PDK_ROOT/ihp-sg13g2/libs.tech/ngspice/models/cornerHBT.lib hbt_typ
+.include netlist/schematic/p1_noise_amp.spice
+.include netlist/schematic/p1_noise_gen.spice
+
+* Standalone Preamp Instance for AC Gain & Standalone Noise
+XAMP_STANDALONE amp_p amp_n in_p in_n vcc 0 p1_noise_amp
+
+* Cascaded Chain Instance (Generator + Preamp)
+XGEN gen_p gen_n vcc 0 p1_noise_gen
+XAMP_CASCADE cas_p cas_n gen_p gen_n vcc 0 p1_noise_amp
+
+* Power Supply
+VCC vcc 0 DC 2.5
+
+* AC input source for Standalone Preamp
+VCM_IN in_cm 0 DC 1.5
+VIN in_p in_n DC 0 AC 1
+RDC1 in_p in_cm 1meg
+RDC2 in_n in_cm 1meg
+
+* Dummy AC source for noise command reference
+VAC dummy 0 DC 0 AC 1
+
+.control
+osdi $PDK_ROOT/ihp-sg13g2/libs.tech/ngspice/osdi/psp103.osdi
+op
+
+* 1. AC Gain Analysis of Standalone Preamplifier
+ac dec 10 100k 50G
+setplot ac1
+let gain_mag = abs(v(amp_p, amp_n) / v(in_p, in_n))
+let gain_db = 20 * log10(gain_mag)
+print frequency gain_mag gain_db
+
+meas ac gain_mid FIND gain_db AT=100e6
+let target_f3db = gain_mid - 3.0
+meas ac f3db WHEN gain_db = target_f3db
+
+* 2. Standalone Noise Analysis of Preamplifier (noise1)
+noise v(amp_p, amp_n) VIN dec 10 100k 50G
+setplot noise1
+print frequency inoise_spectrum onoise_spectrum
+
+* 3. Cascaded Noise Analysis (noise3)
+noise v(cas_p, cas_n) VAC dec 10 100k 50G
+setplot noise3
+print frequency onoise_spectrum
+
+quit
+.endc
+.end
