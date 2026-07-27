@@ -65,6 +65,9 @@ The schematic top-level block diagram was authored in `xschem` (`p1_top.sch`) an
 | **Empirical Noise Density ($S_v(f)$)** | Unverified physical $S_v(f)$ profile | **Unknown** | Unsettled parameter (see Settlement Plan in Section 7) |
 | **Total Die Power Dissipation** | $\sim 15 \dots 45\,\text{mW}$ | **Unknown** | Unsettled parameter (see Settlement Plan in Section 7) |
 
+> **Reproducibility caveat.** Three values in this table — $\beta = 638.3$, $\sigma_{VOS} = 6.683\,\text{mV}$ and $f_T = 379.8\,\text{GHz}$ — were obtained from SPICE runs whose artefacts were not retained. They are marked *Specified* because they are derived from the PDK models rather than assumed, but they cannot be reproduced from this repository as it stands. Re-running them against `sg13g2_hbt_mod.lib` and `sg13g2_hbt_mod_mismatch.lib` would settle that. See the *not run* table in the design README.
+
+
 ---
 
 ## 5. Quantitative Bias Point Trade-off Analysis ($I_C = 1.0\,\text{mA}$ vs $300\,\mu\text{A}$ vs $100\,\mu\text{A}$)
