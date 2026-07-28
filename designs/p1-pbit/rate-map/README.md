@@ -87,6 +87,22 @@ it as a floor.
   stand-in has already injected one artefact we had to find and remove. Treat any
   structure beyond lag 1 in this data with suspicion until it is reproduced with a
   physical noise source.
+- **The stimulus amplitude was never calibrated, and an independent source disagrees.**
+  `V_branch_rms = 0.001288` appears as a bare constant in every generator script with no
+  derivation. A physically calibrated source — ngspice `trnoise` at an amplitude derived
+  from a `.noise` analysis of the VBIC model at the actual bias — produces **3.2× less
+  amplifier output** (28.8 mV rms against 92.3 mV) and, at 5 GS/s, gives
+  **r₁ = −0.0164 ± 0.0097** against the +0.0596 ± 0.0060 reported above. Opposite sign,
+  6.7σ apart, on 4,995 bits with the comparator verified balanced (latch mean within
+  ±7 mV, P(1) = 0.506).
+
+  That is not yet a contradiction, because the two sources are at different noise
+  amplitudes and r₁ plausibly depends on the ratio of noise to the deterministic
+  disturbances reaching the comparator. It is, however, an open question directly
+  affecting every number in this table, and the resolving experiment — match the
+  amplitudes and re-compare — has not been run. **Read this table as measured under one
+  stimulus whose amplitude has no stated physical basis.**
+
 - **No entropy claim is made here.** 500 ns yields 500–2,500 bits per segment; SP 800-90B
   estimators want ≥10⁶ samples, which needs a 1 ms transient — not achievable in SPICE.
   The standard practice is to extract physical parameters in simulation and generate the
