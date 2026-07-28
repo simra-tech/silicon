@@ -116,9 +116,28 @@ it as a floor.
   above the chain's 3.55 GHz pole. **Real thermal noise is broadband and does not stop at
   half the clock rate**, so of the two, `trnoise` is the physically representative one.
 
-  **This table may therefore be wrong in bandwidth, not merely in amplitude — and the sign
-  of r₁ may depend on it.** The deciding run (band-limit `trnoise` to 2.5 GHz and
-  re-compare) has not been done. Treat every number here as provisional.
+  **The deciding run has since been done, and bandwidth is confirmed as the mechanism.**
+  Band-limiting `trnoise` to 2.5 GHz — same source, same injection, same circuit, only the
+  bandwidth changed — reverses the sign:
+
+  | source | bandwidth | amp RMS | r₁ |
+  | --- | ---: | ---: | ---: |
+  | trnoise | ~50 GHz | 86 mV | −0.0401 |
+  | trnoise | ~50 GHz | 29 mV | −0.0164 |
+  | trnoise, band-limited | 2.5 GHz | 68 mV | **+0.1323** |
+  | trnoise, band-limited | 2.5 GHz | 24 mV | **+0.1202** |
+
+  **The sign of r₁ is set by the noise bandwidth relative to the sampling rate.** Bandwidth
+  accounts for the sign completely; it accounts for the magnitude only partly, since
+  band-limited `trnoise` gives ~+0.13 where this table's source gives +0.06 at comparable
+  amplitude, so a further difference remains unidentified.
+
+  **Real thermal noise is broadband. This table's source is not.** With physically
+  broadband noise at the calibrated amplitude, r₁ at 5 GS/s is **−0.0164 ± 0.0097** —
+  magnitude at the derived limit rather than four times over it. That is five segments at
+  one rate and is **not** offered as a replacement figure; it is the reason every number
+  above is provisional. **The full sweep must be rerun with wideband noise before this
+  generator's correlation behaviour is known.**
 
 - **No entropy claim is made here.** 500 ns yields 500–2,500 bits per segment; SP 800-90B
   estimators want ≥10⁶ samples, which needs a 1 ms transient — not achievable in SPICE.
