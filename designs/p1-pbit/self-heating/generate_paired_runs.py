@@ -1,0 +1,209 @@
+import subprocess, time, os, sys, hashlib
+import concurrent.futures
+import numpy as np
+
+run_dir = 'run'
+os.makedirs(run_dir, exist_ok=True)
+
+orig_corner_path = '$PDK_ROOT/ihp-sg13g2/libs.tech/ngspice/models/cornerHBT.lib'
+iso_corner_path  = os.path.join(run_dir, 'cornerHBT_isothermal.lib')
+
+N_tones = 1000
+clock_f = 5.0e9 # 5.0 GS/s Clock Rate
+T_sim_segment = 500e-9 # 500 ns = 2,500 bits per segment
+N_bits_segment = 2500
+
+V_branch_rms = 0.001288
+A_k = V_branch_rms * np.sqrt(2.0 / N_tones)
+
+divisions = clock_f / np.arange(1, 51)
+
+def generate_5gsps_freqs_and_phases(seed_val):
+    np.random.seed(seed_val)
+    base_f = np.linspace(10.0e6, 2.5e9, N_tones)
+    jitter = np.sin(np.arange(N_tones) * 1.61803398875) * 8.7654e4 + np.cos(np.arange(N_tones) * 2.718281828) * 6.5432e4
+    freqs = np.sort(base_f + jitter)
+    
+    for i in range(N_tones):
+        valid = False
+        while not valid:
+            valid = True
+            for div_f in divisions:
+                if abs(freqs[i] - div_f) / div_f < 0.01:
+                    freqs[i] += 5.23456e4
+                    valid = False
+                    break
+    freqs = np.sort(freqs)
+    phases = np.random.uniform(0, 2*np.pi, N_tones)
+    return freqs, phases
+
+def make_pwl_str(v_name, node_p, node_n, time_array, val_array):
+    lines = []
+    chunk_size = 15
+    for i in range(0, len(time_array), chunk_size):
+        t_chunk = time_array[i:i+chunk_size]
+        v_chunk = val_array[i:i+chunk_size]
+        pairs = ' '.join([f'{t*1e9:.4f}n {v:.6f}' for t, v in zip(t_chunk, v_chunk)])
+        if i == 0:
+            lines.append(f'{v_name} {node_p} {node_n} DC 0 PWL ( {pairs}')
+        else:
+            lines.append(f'+ {pairs}')
+    lines[-1] += ' )'
+    return '\n'.join(lines)
+
+def run_paired_segment12(seg_idx, s_val):
+    out_b = os.path.join(run_dir, f'pbit_raw_5g_p12_selft1_seg{seg_idx}.txt')
+    out_i = os.path.join(run_dir, f'pbit_raw_5g_p12_selft0_seg{seg_idx}.txt')
+    
+    log_b = os.path.join(run_dir, f'ngspice_5g_p12_selft1_seg{seg_idx}.log')
+    log_i = os.path.join(run_dir, f'ngspice_5g_p12_selft0_seg{seg_idx}.log')
+    
+    op_b  = os.path.join(run_dir, f'pbit_op_5g_p12_selft1_seg{seg_idx}.txt')
+    op_i  = os.path.join(run_dir, f'pbit_op_5g_p12_selft0_seg{seg_idx}.txt')
+    
+    deck_b = os.path.join(run_dir, f'tb_p1_p12_selft1_seg{seg_idx}.spice')
+    deck_i = os.path.join(run_dir, f'tb_p1_p12_selft0_seg{seg_idx}.spice')
+    
+    freqs, phases = generate_5gsps_freqs_and_phases(s_val)
+    t_pts = np.arange(0, T_sim_segment + 5e-11, 10e-12)
+    v_p_pts = np.zeros_like(t_pts)
+    for f_i, phi_i in zip(freqs, phases):
+        v_p_pts += A_k * np.sin(2 * np.pi * f_i * t_pts + phi_i)
+    v_n_pts = -v_p_pts
+    
+    pwl_p_str = make_pwl_str('V_NOISE_P', 'b2_src', 'b_cm', t_pts, v_p_pts)
+    pwl_n_str = make_pwl_str('V_NOISE_N', 'b1_src', 'b_cm', t_pts, v_n_pts)
+    
+    def make_spice_text(arm_tag, hbt_lib_path, out_file, op_file):
+        return f'''* Paired Segment {seg_idx} Arm {arm_tag} (Seed {s_val})
+.lib {hbt_lib_path} hbt_typ
+.lib $PDK_ROOT/ihp-sg13g2/libs.tech/ngspice/models/cornerMOSlv.lib mos_tt
+
+.subckt p1_noise_gen RAW_NOISE_P RAW_NOISE_N VCC VSS
+XQ1 RAW_NOISE_N b1_q1 e VSS npn13G2 Nx=1
+XQ2 RAW_NOISE_P b2_q2 e VSS npn13G2 Nx=1
+RC1 VCC RAW_NOISE_N 1.0k m=1
+RC2 VCC RAW_NOISE_P 1.0k m=1
+R_TAIL e VSS 316
+
+VBM b_cm VSS DC 0.872
+
+* 1,000-Tone Physical Noise Source (10 MHz - 2.5 GHz)
+{pwl_p_str}
+{pwl_n_str}
+
+R1_DAMP b1_src b1_q1 100
+R2_DAMP b2_src b2_q2 100
+.ends
+
+.subckt p1_noise_amp OUT_P OUT_N IN_P IN_N VCC VSS
+R_DAMP_IN1 IN_P in_p_q1 100
+R_DAMP_IN2 IN_N in_n_q2 100
+
+XQ1 c1_n in_p_q1 e1_1 VSS npn13G2 Nx=2
+XQ2 c1_p in_n_q2 e1_2 VSS npn13G2 Nx=2
+RE1_1 e1_1 e1_common 15
+RE1_2 e1_2 e1_common 15
+RC1_1 VCC c1_n 240 m=1
+RC1_2 VCC c1_p 240 m=1
+R_TAIL1 e1_common VSS 316
+
+XQEF1 VCC c1_p b2_p VSS npn13G2 Nx=1
+XQEF2 VCC c1_n b2_n VSS npn13G2 Nx=1
+REF1 b2_p VSS 5k m=1
+REF2 b2_n VSS 5k m=1
+
+* Stage 2
+XQ3 OUT_N b2_p e2_1 VSS npn13G2 Nx=1
+XQ4 OUT_P b2_n e2_2 VSS npn13G2 Nx=1
+RE2_1 e2_1 e2_common 15
+RE2_2 e2_2 e2_common 15
+RC2_1 VCC OUT_N 240 m=1
+RC2_2 VCC OUT_P 240 m=1
+R_TAIL2 e2_common VSS 316
+.ends
+
+.subckt p1_comparator PBIT_OUT PBIT_RAW CLK_OUT_DIV IN_P IN_N CLK_P CLK_N VCC_HBT VDD VSS params: trim_val=512
+RIN1 IN_P in_p_int 100
+RIN2 IN_N in_n_int 100
+
+RCLK1 CLK_P clk_p_int 100
+RCLK2 CLK_N clk_n_int 100
+
+XQEF_IN1 VCC_HBT in_p_int b_latch_p VSS npn13G2 Nx=1
+XQEF_IN2 VCC_HBT in_n_int b_latch_n VSS npn13G2 Nx=1
+REF_IN1 b_latch_p VSS 5k m=1
+REF_IN2 b_latch_n VSS 5k m=1
+
+XQCLK_TRACK e_track clk_p_int e_tail VSS npn13G2 Nx=1
+XQCLK_LATCH e_latch clk_n_int e_tail VSS npn13G2 Nx=1
+ISET e_tail VSS DC 2.0m
+
+C_ETRACK e_track VSS 50f
+C_ELATCH e_latch VSS 50f
+
+XQ1 c_n b_latch_p e_track VSS npn13G2 Nx=1
+XQ2 c_p b_latch_n e_track VSS npn13G2 Nx=1
+
+XQ3 c_n c_p e_latch VSS npn13G2 Nx=1
+XQ4 c_p c_n e_latch VSS npn13G2 Nx=1
+
+RC1 VCC_HBT c_n 150 m=1
+RC2 VCC_HBT c_p 150 m=1
+
+ITRIM_P c_p VSS DC '66.85u + (trim_val - 512) * 0.1307u'
+ITRIM_N c_n VSS DC '66.85u - (trim_val - 512) * 0.1307u'
+
+XQEF1 VCC_HBT c_p ef_p VSS npn13G2 Nx=1
+XQEF2 VCC_HBT c_n ef_n VSS npn13G2 Nx=1
+REF1 ef_p VSS 5k m=1
+REF2 ef_n VSS 5k m=1
+
+R1_P ef_p g_p 10k m=1
+R2_P g_p VSS 10k m=1
+R1_N ef_n g_n 10k m=1
+R2_N g_n VSS 10k m=1
+
+XQBUF1 VCC_HBT g_p cml_out_p VSS npn13G2 Nx=1
+XQBUF2 VCC_HBT g_n cml_out_n VSS npn13G2 Nx=1
+RBUF1 cml_out_p VSS 5k m=1
+RBUF2 cml_out_n VSS 5k m=1
+.ends
+
+XGEN gen_p gen_n vcc_hbt 0 p1_noise_gen
+XAMP amp_p amp_n gen_p gen_n vcc_hbt 0 p1_noise_amp
+XCOMP pbit_out raw clk_div amp_p amp_n clk_p clk_n vcc_hbt vdd 0 p1_comparator trim_val=512
+
+VCC_HBT vcc_hbt 0 DC 2.50
+VDD vdd 0 DC 1.20
+
+VCLK_P clk_p 0 PULSE(0.775 0.925 0p 20p 20p 80p 200p)
+VCLK_N clk_n 0 PULSE(0.925 0.775 0p 20p 20p 80p 200p)
+
+.options method=gear reltol=1e-3
+
+.control
+op
+wrdata {op_file} v(xgen.xq1.t) v(xamp.xq1.t) v(gen_p) v(amp_p) v(xcomp.b_latch_p)
+tran 20p 500n 0 20p
+setplot tran1
+wrdata {out_file} v(amp_p) v(amp_n) v(xcomp.c_p) v(xcomp.c_n) v(xcomp.b_latch_p) v(xcomp.b_latch_n)
+quit
+.endc
+.end
+'''
+
+    if not os.path.exists(out_b):
+        with open(deck_b, 'w') as f: f.write(make_spice_text('selft1', orig_corner_path, out_b, op_b))
+        res = subprocess.run(['ngspice', '-b', deck_b], capture_output=True, text=True)
+        with open(log_b, 'w') as f: f.write(res.stdout)
+
+    if not os.path.exists(out_i):
+        with open(deck_i, 'w') as f: f.write(make_spice_text('selft0', iso_corner_path, out_i, op_i))
+        res = subprocess.run(['ngspice', '-b', deck_i], capture_output=True, text=True)
+        with open(log_i, 'w') as f: f.write(res.stdout)
+
+    return seg_idx
+
+if __name__ == '__main__':
+    pass
