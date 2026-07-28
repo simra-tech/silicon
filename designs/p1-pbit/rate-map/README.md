@@ -1,5 +1,22 @@
 # Adjacent-bit correlation versus sampling rate
 
+> ## ⚠ INVALIDATED FOR PHYSICAL RATE PREDICTION
+>
+> **These values characterise a synthetic, clock-dependent, Nyquist-truncated excitation.
+> They must not be used for architecture or rate-selection decisions.**
+>
+> The table is kept for provenance — including the failures and corrections that produced
+> it — not as a device result. The confound is *structural*: the tone band was scaled to
+> f_clk/2, so **every rate point used a different source process**, and a caveated
+> confounded sweep is still not a rate map. The 5 GS/s step is not a device result.
+>
+> The replacement measurement (wideband, physically calibrated noise) is in progress and
+> is **not** offered here; early values are consistent with zero but rest on too few
+> usable segments to state.
+>
+> Withdrawn after external review, 2026-07-28.
+
+
 How correlated is one output bit with the next, and does that get worse as you clock the
 p-bit faster? The answer decides whether the fastest clock is free.
 
@@ -66,10 +83,17 @@ anticipated both the flatness below 4 GS/s and the step at 5.
 
 r₁ sits near **0.029** from 1 to 4 GS/s and roughly doubles at 5 GS/s.
 
-Whitening remains mandatory at every rate. XOR whitening yields f_s/2 regardless of input
-correlation, so the argument for clocking fast survives — but it should be made knowing
-that the raw stream at 5 GS/s is materially worse than at 4, not on the assumption that
-the top of the range costs nothing.
+**Correction — the XOR-whitening claim made here was wrong.** An earlier version stated
+that XOR whitening yields f_s/2 regardless of input correlation. It does not. For adjacent
+bits of a symmetric Markov source,
+
+    P(X_2k XOR X_2k+1 = 1) = (1 - r_1) / 2
+
+so **input correlation becomes output bias**: r₁ = +0.0596 gives a whitened bias of
+−0.030, and a *negative* r₁ biases the output the other way rather than helping. XOR
+cannot create entropy, and simple XOR is not a vetted conditioner for full-entropy claims
+under current NIST guidance. Any argument for clocking fast has to be rebuilt on entropy
+throughput and a proved conditioner, not on this.
 
 **On the 0.0140 figure quoted elsewhere in this repository:** it is not a threshold
 published by anyone. It follows from PTG.2.3's min-entropy requirement (H∞ ≥ 0.98) under
