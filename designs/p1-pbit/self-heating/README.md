@@ -127,8 +127,16 @@ first: bias accounts for **−2 %** of the offset. The effect is genuine correla
 ### What it means, stated conservatively
 
 Baseline r₁ averages **0.0586** here. Self-heating accounts for **11 %** of it.
-Removing thermal coupling entirely would leave r₁ ≈ **0.0521** against a requirement of
+Removing thermal coupling entirely would leave r₁ ≈ **0.0521** against a limit of
 **0.0140** — still **3.7× over**.
+
+> **On that 0.0140.** It is not a threshold published by anyone. It is what
+> PTG.2.3's min-entropy requirement (H∞ ≥ 0.98) implies *under a first-order Markov
+> model that we supplied*: 2^-0.98 = 0.506980, and P(bit = previous) = 0.5 + r/2 gives
+> r ≤ 0.01396. Neither AIS-31 nor NIST SP 800-90B states a correlation limit. Cite it as
+> derived, not quoted. And the assumption does not err in our favour — any memory beyond
+> lag 1 raises the worst-case conditional probability for the same r₁, so the true limit
+> is *tighter* than 0.0140. Treat it as a floor.
 
 Thermal design is a genuine lever on the number that decides the architecture, and
 device sizing, bias current and heat extraction are worth treating as first-order
