@@ -101,16 +101,25 @@ binds this design. The shift is a broad positive offset across short lags
 | ---: | ---: | ---: |
 | 4 | +0.0112 | 3.7 |
 | 8 | +0.0086 | 4.4 |
-| **12** | **+0.0065** | **4.16** |
+| 12 | +0.0065 | 4.16 |
+| **24** | **+0.0065** | **5.03** |
 
-The effect is clearly real — positive in 11 of 12 pairs, t = 4.16. **Its magnitude has
-fallen by about a quarter at every increase in sample size, three times running.** A
-stable effect should wobble around a fixed value as n grows, not walk steadily
-downhill. Isolating the four newest pairs, they average **+0.0023** against +0.0086 for
-the first eight.
+The effect is clearly real — positive in 22 of 24 pairs, t = 5.03.
 
-**Existence: solid. Size: not settled, and has only ever moved in one direction.**
-Quote 0.0065 as a current best estimate, with that trend attached.
+**Its magnitude fell by about a quarter at each of the first three sample increases,
+then held.** Doubling from 12 pairs to 24 left it unchanged at +0.0065 while t rose
+from 4.16 to 5.03. That is what convergence looks like, and the earlier decline is the
+ordinary shrinkage of a fresh effect size rather than a signal that it would keep
+falling.
+
+An earlier revision of this note said the size was "not settled, and has only ever
+moved in one direction." That warning was correct when written and is now discharged:
+**0.0065 is stable across a doubling of the sample.** The sequence is left visible above
+because the direction of travel is part of the result.
+
+Long-lag exclusion also tightens with the larger sample: the largest paired-difference
+spread anywhere is **0.0013**, against the 0.0110 self-heating would need — a factor of
+eight.
 
 A bias shift would inflate every lag equally and mimic this exactly. It was checked
 first: bias accounts for **−2 %** of the offset. The effect is genuine correlation.
