@@ -5,7 +5,10 @@ for them ship with self-heating enabled (`selft=1`). Each device carries a therm
 node whose voltage is its own temperature rise. This measures what that does to the
 random bitstream.
 
-The question arose from a real defect. The raw stream carries a reproducible
+The question arose from an anomaly in the raw stream which we then believed to be a
+property of the chip. It is not — see the update under Results; it is an artefact of our
+own noise source. This note is kept as run, with the correction inline, because the
+controlled experiment below stands on its own. The raw stream carries a reproducible
 correlation structure at lags of 50–200 bits — roughly 10–40 ns at 5 GS/s — that
 survives averaging over independent noise seeds and is not explained by the chain's
 frequency response. The model's own thermal time constant is
@@ -77,7 +80,16 @@ included logs.
 | 101–200 | 0.0017 |
 
 Largest anywhere **0.0018** — a factor of six below what is required, and flat across
-every band. The hypothesis is excluded, and the long-lag structure remains unexplained.
+every band. The hypothesis is excluded.
+
+> **Update, same day.** The long-lag structure is no longer unexplained, and it is not a
+> property of the chip. It is the autocorrelation of our own multi-tone noise source,
+> carried through the arcsine law: predicted 0.01196 against measured 0.01223 over lags
+> 51-200, correlation +0.90, slope 0.94, nothing fitted. Its cause is the guard that
+> pushes tones away from clock submultiples - with the guard the predicted amplitude is
+> 0.0120, without it 0.0005. The guard carves a systematic gap around each f_clk/n, and a
+> comb of gaps in the spectrum makes a comb in the autocorrelation. The measure taken to
+> avoid one artefact created another.
 
 **It does contribute to the adjacent-bit correlation**, which is the constraint that
 binds this design. The shift is a broad positive offset across short lags
