@@ -96,12 +96,29 @@ it as a floor.
   6.7σ apart, on 4,995 bits with the comparator verified balanced (latch mean within
   ±7 mV, P(1) = 0.506).
 
-  That is not yet a contradiction, because the two sources are at different noise
-  amplitudes and r₁ plausibly depends on the ratio of noise to the deterministic
-  disturbances reaching the comparator. It is, however, an open question directly
-  affecting every number in this table, and the resolving experiment — match the
-  amplitudes and re-compare — has not been run. **Read this table as measured under one
-  stimulus whose amplitude has no stated physical basis.**
+  **The amplitude experiment has since been run, and amplitude is not the explanation.**
+  At 5 GS/s, matched by amplifier output:
+
+  | source | amp RMS | r₁ |
+  | --- | ---: | ---: |
+  | multi-tone | 92.3 mV | +0.0596 |
+  | multi-tone scaled down | 31.2 mV | +0.0261 |
+  | trnoise scaled up | 86.1 mV | −0.0401 |
+  | trnoise | 28.8 mV | −0.0164 |
+
+  Opposite signs at both amplitudes. But |r₁| scales almost identically with amplitude in
+  each (2.28× and 2.45× for a 2.97× amplitude change) — the same magnitude law with a sign
+  flip, which points at the one remaining difference: **bandwidth**.
+
+  This source spans 10 MHz to f_clk/2 and has *zero* energy above it — a brick wall at
+  2.5 GHz at the top rate. `trnoise` at NT = 2 ps is flat to ~50 GHz, so it carries the
+  entire band from 2.5 to 50 GHz that this one lacks, including everything around and
+  above the chain's 3.55 GHz pole. **Real thermal noise is broadband and does not stop at
+  half the clock rate**, so of the two, `trnoise` is the physically representative one.
+
+  **This table may therefore be wrong in bandwidth, not merely in amplitude — and the sign
+  of r₁ may depend on it.** The deciding run (band-limit `trnoise` to 2.5 GHz and
+  re-compare) has not been done. Treat every number here as provisional.
 
 - **No entropy claim is made here.** 500 ns yields 500–2,500 bits per segment; SP 800-90B
   estimators want ≥10⁶ samples, which needs a 1 ms transient — not achievable in SPICE.
