@@ -6,7 +6,7 @@ whose spectrum stopped at f_clk/2. Both mattered. This one uses ngspice `trnoise
 amplitude derived from a `.noise` analysis of the VBIC model at the operating bias, flat to
 ~50 GHz.
 
-224 runs across seven sampling rates, plus a deterministic offset sweep. Decks, logs and
+234 runs across seven sampling rates, plus a deterministic offset sweep. Decks, logs and
 extracted bitstreams for every run.
 
 ## 1. Adjacent-bit correlation does not depend on sampling rate
@@ -23,17 +23,18 @@ numbers — see the correction note at the end of this section for why that need
 | 2.5 | 25 | 12,450 | +0.0149 ± 0.0100 | 0.5017 |
 | 3.0 | 25 | 14,975 | −0.0075 ± 0.0092 | 0.5006 |
 | 4.0 | 25 | 19,950 | +0.0075 ± 0.0069 | 0.5011 |
-| 5.0 | 40 | 39,920 | +0.0090 ± 0.0047 | 0.4957 |
+| 5.0 | 50 | 49,900 | +0.0081 ± 0.0039 | 0.4966 |
 
-**Combined over all seven rates: r₁ = +0.0066 ± 0.0029** — 2.2σ from zero. Every value is
+**Combined over all seven rates: r₁ = +0.0066 ± 0.0027** — 2.4σ from zero, χ² = 3.47 on 6 dof. Every value is
 taken at a sampling phase of 0.9 T; see §1.1, which is not a footnote.
 
 **No rate dependence is detectable.** The pooled value is 0.47× the derived limit of 0.0140.
-At 2.2σ it is a weak positive hint rather than a detection: read |r₁| ≲ 0.01 as an upper
+At 2.4σ it is a weak positive hint rather than a detection: read |r₁| ≲ 0.01 as an upper
 bound, not a null.
 
-At 5.0 GS/s the segments are numbered 1–10 and 21–50; 11–20 were never produced. 40 files,
-40 logs, and the table says 40. Flagged rather than renumbered.
+The 5.0 GS/s series is now contiguous 1–50. An earlier version of this note had to flag a
+gap — segments 11–20 were missing — and those runs have since been done. 234 bitstreams, 234
+logs, and the per-rate counts in the table are the file counts in the directory.
 
 ## 1.1. The sampling phase changes the answer more than the circuit does
 
@@ -109,8 +110,8 @@ rates. Two things were wrong with it, neither affecting the conclusion:
   +0.0079 ± 0.0061; the 10 segments actually present here read +0.0150 ± 0.0077.
 
 Both are now fixed by re-measuring every rate from the files as they stand. 5.0 GS/s has since
-been taken from 10 segments to 40, which is why its row moved from +0.0150 ± 0.0077 to
-+0.0090 ± 0.0047 and why the pooled error fell from ±0.0034 to ±0.0029.
+been taken from 10 segments to 50, which is why its row moved from +0.0150 ± 0.0077 to
++0.0081 ± 0.0039 and why the pooled error fell from ±0.0034 to ±0.0027.
 
 **The withdrawn note reported +0.0192 to +0.0596 across the same rates, every value
 positive, rising 1.79× with clock rate.** That rise, and most of that magnitude, was the
@@ -205,7 +206,7 @@ the first-order Markov assumption *we* supplied (see §3), it is a floor.
   length (the latch differential is 221 mV rms), so the gate was selecting on noise. Both
   gated and ungated figures are reported above; they agree.
 - **Precision comes from pooling, not from grinding one rate.** Per-rate ±0.005 needs ~110
-  segments; pooling seven rates reaches ±0.0029 with what is here.
+  segments; pooling seven rates reaches ±0.0027 with what is here.
 - **Measure the files you publish, and publish the count you measured.** A table computed
   while a sweep is still running, shipped next to a harvest taken later, disagrees with its
   own directory — and the reader cannot tell which is authoritative. The first version of
@@ -227,8 +228,8 @@ the first-order Markov assumption *we* supplied (see §3), it is a floor.
 
 ```
 generate_rate_map.py                       deterministic deck generator
-rate-map/bits_{rate}_seg{n}.txt            224 extracted bitstreams
-rate-map/ngspice_{rate}_seg{n}.log         224 logs, one per bitstream
+rate-map/bits_{rate}_seg{n}.txt            234 extracted bitstreams
+rate-map/ngspice_{rate}_seg{n}.log         234 logs, one per bitstream
 rate-map/tb_p1_{rate}_seg1.spice           7 decks, one per rate
 offset/bits_dcgain_{0..500}uv.txt          bit-level offset sweep
 offset/{tb_p1,ngspice}_dcgain_*            its decks and logs
@@ -254,7 +255,7 @@ That cuts both ways and both halves matter:
 
 - **It is why the statistics are valid.** Each segment is an independent realisation, which is
   what pooling and the quoted standard errors require. Had ngspice used one fixed default
-  seed, all 40 segments at 5.0 GS/s would have been the same run repeated and every error bar
+  seed, all 50 segments at 5.0 GS/s would have been the same run repeated and every error bar
   in this note would have been meaningless.
 - **It is why the bits are not reproducible.** A deck here specifies a *distribution*, not a
   realisation. Reproducing a specific bitstream would need `set rndseed` in a `.control`
