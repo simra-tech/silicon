@@ -662,11 +662,46 @@ quoted earlier from biased data.
 trade curve, the saturation, the exponent near 0.41, and the quantisation floor. One artefact, five
 costumes — a fixed observation window while the observed process got slower.
 
+### The absolute scale, previously open, now closed by a closed form
+
+The open item below said we predicted how the band *changes* better than we predicted what it *is*.
+That is no longer true. Treating the settled trim code as an Ornstein–Uhlenbeck process and
+correcting for the lag-one correlation between accumulator steps gives, with **no fitted
+parameters**:
+
+    σ_band = π^(1/4) · √σ_n · √(1 + 2·R₁)  /  (2^(3/4) · √N_sub · √A_op · √ΔV_fine)
+
+Substituting σ_n = 45.5 mV, N_sub = 16, A_op = 314.7, ΔV_fine = 0.6118 µV and the measured
+√(1 + 2R₁) = 1.00658:
+
+| | value (fine LSB) |
+| --- | ---: |
+| bare Ornstein–Uhlenbeck | 3.0423 |
+| with the lag-one correction | **3.0624** |
+| measured, 10 runs pooled | **3.0558 ± 0.0271** |
+
+**−0.21%, or 0.24σ.** The two exponents were already 1/2; this fixes the prefactor as well, so the
+band is now predicted rather than described. The correction factor is not a free knob — R₁ was
+measured on the accumulator steps before being substituted here.
+
+**A correction to how this was first reported.** The figure initially recorded for the pooled
+measurement, 3.0700 ± 0.0110, was not a pooled value: it is one seed's Python result on its own. The
+pooled mean recomputed from the CSV is 3.0558 with a standard error of 0.0271. The agreement
+survives and marginally improves — 0.24σ rather than 0.70σ — but the number that was quoted was
+wrong, and a single seed presented as a pooled result is recorded here rather than quietly replaced.
+
+**What is deliberately *not* published from this dataset.** The ten runs are five from a Python
+implementation and five from an independent C port. They agree on the mean band to 0.2%. They
+**disagree on its run-to-run spread by a factor of four** — 1.03% against 4.08% — and that
+disagreement is unexplained after excluding the noise moments, the noise autocorrelation, the
+crossing statistics, the accumulator arithmetic, the measurement window and the variance computation
+itself, which the two agree on to 1×10⁻¹¹ when handed the same trajectory. Sampling statistics
+predict ≈4.9% for **both**, so the C side is the one behaving as theory says it should. Until that is
+resolved, the *mean* of this dataset is offered and the *spread* is not, and the ± above is the
+standard error of the pooled mean, not a claim about reproducibility.
+
 ### Still open, stated as open
 
-- **The absolute scale.** Pre-registered *scalings* have been hit; pre-registered *absolute values*
-  have now missed low twice running. We predict how the band changes better than we predict what it
-  is. That is a bias, not a spread, and widening intervals will not fix it.
 - **The design point.** There is an exact trade curve and **no stated startup-time budget for this
   chip.** The shape of the choice is known; which point to take is not, and that question is not a
   simulation.
@@ -685,10 +720,15 @@ Convergence time, across six levels: 8.3k, 12.5k, 23.6k, 45.1k, 76.7k and ~140k 
 - **Not a circuit simulation.** See the header. The loop dynamics are modelled, not simulated.
 - **No certification.** Nothing here has been assessed against AIS-31, SP 800-90B or any other
   standard by anyone.
-- **The band width has no working theory.** Over 11.5–90 mV it follows σ_n^(0.403 ± 0.013) with an
-  excellent fit — 0.4102 ± 0.0153, which is 5.0σ from 1/3 and 5.9σ from 1/2, so neither simple form
-  applies. Above 90 mV it rolls over: 3.9σ below the law at 128 mV, 6.0σ at 180, 12.4σ at 360.
-  Nothing explains either the exponent or the rollover, and no mechanism is proposed for either.
+- **The band's run-to-run reproducibility.** The closed form above predicts the band's *value* to
+  0.24σ, and both its exponents are 1/2. Its *spread* across seeds is a different matter: two
+  independent implementations of the same loop disagree on that spread by a factor of four, and only
+  one of them matches sampling statistics. No reproducibility figure is claimed.
+
+  *This bullet previously read "the band width has no working theory" and quoted σ_n^(0.403 ± 0.013),
+  a 5.0σ exclusion of 1/3, a 5.9σ exclusion of 1/2 and a rollover above 90 mV. Every one of those
+  numbers came from the fixed-observation-window defect described in §3 and was withdrawn there; this
+  page went on repeating them here, which is worse than either stating or withdrawing them once.*
 
 ## Contents
 
@@ -734,9 +774,13 @@ run_relative_dynamic_window_trade_campaign.py  window = 10x crossing, per run
 p1_relative_dynamic_window_trade_results.csv   its results: the trade law resolves to -1/2
 run_relative_dynamic_noise_campaign.py   noise sweep under the same relative-window protocol
 p1_relative_dynamic_noise_results.csv    its results: the noise exponent resolves to +1/2
+run_pcg64_c_equivalence_audit.py         5 seeds each side, Python and the C port, same generator
+p1_pcg64_c_equivalence_results.csv       its results: the 10 runs pooled for the closed-form check
+sim_pbit_loop.c                          the C port; build with gcc -O3 -shared -fPIC
 ```
 
-The scripts write their outputs beside themselves and need only `numpy`. Verdicts in the
+The scripts write their outputs beside themselves and need only `numpy`. The equivalence audit also
+needs `sim_pbit_loop.so` built from `sim_pbit_loop.c` in the same directory. Verdicts in the
 step-response script are computed against stated tolerances and can print `FAIL`; an earlier
 version printed its conclusions as string literals and reported success on three runs that
 measured three different things.
