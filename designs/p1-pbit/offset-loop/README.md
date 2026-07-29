@@ -510,17 +510,52 @@ in one round. Settling was predicted at 468,000 cycles and measured **459,671 ±
   the full 4–256 range the trade exponent is **−0.632**, not the −0.552 fitted from the first
   three points, which is corrected here.
 
-**Suspected cause — under test, not adopted.** The trim register holds an integer. At `N_sub` = 64
-the band is 1.077 counts ≈ one code; at 256 it is 0.356 counts ≈ a third of a code. A standard
-deviation well below one code no longer describes a *spread* — it describes a register resting on a
-single code and occasionally flipping to a neighbour. If so, the steepening is the **metric hitting
-the quantisation floor**, appearing exactly where the band crosses one code, rather than the loop
-genuinely improving. **The test:** distinct codes visited and modal-code fraction per divider,
-predicted first.
+#### The quantisation hypothesis is refuted, and most of the bend was our own window
 
-**If confirmed, the design answer changes.** There would be no reason to build beyond `N_sub` ≈ 64:
-20.7 µs already buys a residual at one code, while 91.9 µs buys accuracy an integer register cannot
-represent. The trade curve would have a **knee**, and the knee is the design point.
+A quantisation explanation was proposed for the steepening: below one code a standard deviation
+stops describing a spread and starts describing a register pinned to one code. It was tested with a
+pre-registered prediction — modal-code fraction > 90 % and 2–3 codes at `N_sub` = 256
+(`p1_discrete_occupancy_results.csv`).
+
+| `N_sub` | σ_code | codes visited | modal fraction | rounded-Gaussian prediction |
+| ---: | ---: | ---: | ---: | ---: |
+| 4 | 6.232 | 42.9 | 6.63 % | 6.39 % |
+| 16 | 3.091 | 17.8 | 13.40 % | 12.85 % |
+| 64 | 1.399 | 7.9 | 29.27 % | 27.92 % |
+| 256 | 0.612 | 3.2 | **58.28 %** | **58.62 %** |
+
+**Refuted.** At 256 the register visits 3.2 codes with 58 % modal occupancy, not > 90 %. And the
+decisive check: the modal fraction at *every* divider matches what a Gaussian of the measured σ,
+rounded to integers, would give — to within half a percentage point. **The code distribution is
+fully explained by σ alone; there is no additional pinning.** (Both parties' predictions erred the
+same way: 2 of 8 stated intervals hit, and all four modal-fraction predictions were too high.)
+
+#### The larger problem the audit exposed
+
+This audit reports σ_code = **0.612** at `N_sub` = 256. The extrapolation above reports **0.356**
+for the same circuit, same 45.5 mV noise, same divider — **72 % apart.**
+
+The cause is the window. The trade-curve and extrapolation scripts average σ computed *within*
+separate 50,000-cycle windows; this audit computes one σ across a single **150,000-cycle** span. A
+slowly-wandering register covers more ground the longer it is observed — and **the equilibration
+time grows with the divider, which is the variable being swept.** So the short-window figures are
+biased low, and biased worst exactly where the loop is slowest.
+
+Refitting the band exponent on the consistent 150,000-cycle numbers:
+
+| step | 150k window | 50k windows |
+| --- | ---: | ---: |
+| 4 → 16 | −0.506 | −0.590 |
+| 16 → 64 | −0.572 | −0.662 |
+| 64 → 256 | −0.596 | −0.799 |
+
+**Most of the bend reported above is an artefact of the measuring window, not the circuit.** Some
+steepening survives. **Band measurements require a window long compared with the loop's own
+correlation time, and because that time grows with the divider, no fixed window is valid across a
+divider sweep.** Whether even 150,000 cycles suffices at `N_sub` = 256 is itself under test.
+
+**The trade curve above should be read as provisional** pending recomputation under one consistent
+window definition.
 
 *Calibration note, recorded against the prediction:* all six stated point intervals missed, yet the
 underlying picture was substantially right. The intervals were too tight for what was known — a
@@ -577,6 +612,8 @@ run_tradecurve_nsub_campaign.py          trade curve, prediction pre-registered 
 p1_nsub_tradecurve_results.csv           its results: settling time against band width
 run_nsub256_extrapolation_campaign.py    divider 256, prediction pre-registered and widened
 p1_nsub256_extrapolation_results.csv     its results: the trade exponent bends
+run_discrete_occupancy_audit.py          code occupancy per divider, prediction pre-registered
+p1_discrete_occupancy_results.csv        its results: quantisation refuted, window discrepancy found
 ```
 
 The scripts write their outputs beside themselves and need only `numpy`. Verdicts in the
