@@ -148,17 +148,46 @@ heteroscedasticity between groups (sd 0.31, 0.13, 0.64) does not move the answer
 because the estimate itself rose to 0.363. An estimate drifting toward the hypothesis it is meant
 to exclude, while its error contracts around it, is not converging away from that hypothesis.
 
-**A known confound, stated rather than buried.** `settled_std` is computed from the crossing cycle
-to the end of the run, and crossing takes far longer at high noise — so the 90 mV group is measured
-over ~55,000 cycles against ~85,000 at 23 mV, and one run crossed at 74,541 and was measured over
-25,459. **The observation window is therefore tied to the variable under study.** The register
-performs a slow random walk, and a walk observed too briefly has not explored its range, so its
-sample σ comes out low. The bias falls hardest on the high-noise group, in the direction that
-*suppresses* the exponent. Within that group, corr(N_cross, σ_code) = −0.28 — weak at n = 10, and
-pointing the same way. Correcting it can only push α **up**, toward 0.5.
+#### A window confound was identified, tested, and found null
 
-The pending fix: 200,000-cycle runs with `settled_std` taken over a fixed 50,000-cycle window for
-every run regardless of crossing time.
+Above, `settled_std` was computed **from the crossing cycle to the end of the run**. Crossing takes
+far longer at high noise, so the 90 mV group was measured over ~55,000 cycles against ~85,000 at
+23 mV — the observation window was tied to the variable under study. The argument advanced here
+was that a slow random walk observed too briefly under-reports its spread, that the bias would fall
+hardest on the high-noise group, and therefore that **correcting it could only push α up toward
+0.5**.
+
+**That prediction was wrong.** Re-run at 200,000 cycles with `settled_std` taken over an identical
+50,000-cycle window for every run (`p1_25run_fixed_window_powerlaw_campaign_results.csv`):
+
+| σ_n (mV) | n | σ_code, fixed window | σ_code, crossing window |
+| ---: | ---: | ---: | ---: |
+| 23.0 | 10 | 2.069 ± 0.390 | 2.121 ± 0.308 |
+| 45.5 | 5 | 2.644 ± 0.332 | 2.664 ± 0.131 |
+| 90.0 | 10 | 3.477 ± 1.031 | 3.503 ± 0.635 |
+
+**α = 0.366 ± 0.075** (weighted three-mean refit: 0.376 ± 0.078), against 0.363 before. All three
+group means fell by about 2 %, in the same direction — no differential at all. The confound was
+real in structure and **null in effect**: both window lengths were long compared with the walk's
+correlation time, so truncation never bit.
+
+**Correcting it cost precision.** The fixed 50,000-cycle window is shorter than the 55,000–85,000
+it replaced, so each individual σ estimate is noisier and every group's scatter grew. The error on
+α rose from 0.049 to 0.075, and the distance from √σ_n fell from 2.8σ to **1.8σ** — not because
+the answer moved, but because our knowledge of it got worse. That is a real trade and it was worth
+taking: a clean measurement with honest error bars beats a tighter one that cannot be trusted.
+
+**Where the exponent stands**, on the fixed-window data:
+
+- **4.9σ from flat** — the noise dependence is certain.
+- **8.5σ from linear** — the withdrawn σ_dither law stays comprehensively dead.
+- **0.4σ from 1/3**, **1.8σ below 1/2.** A cube root is the better-supported reading; a square
+  root is not excluded. **Neither exponent is derived from anything.** No mechanism is offered.
+
+**More replicates are the wrong next step.** α is a slope, and the error on a slope falls with the
+spread of the x-values, not only their count. The present lever arm is 23 → 90 mV, a factor of 3.9.
+Adding levels near 11.5 and 180 mV makes it 15.7× — roughly double the leverage, worth about four
+times as many replicates at the existing points.
 
 Convergence time scales close to linearly with σ_n — 1 : 1.88 : 3.60 against noise ratios
 1 : 1.98 : 3.91 — consistent with linear inside the scatter.
@@ -169,9 +198,9 @@ Convergence time scales close to linearly with σ_n — 1 : 1.88 : 3.60 against 
 - **Not a circuit simulation.** See the header. The loop dynamics are modelled, not simulated.
 - **No certification.** Nothing here has been assessed against AIS-31, SP 800-90B or any other
   standard by anyone.
-- **The band width has no working theory**, and its exponent is not settled: 0.363 ± 0.049 with a
-  known window confound that can only push it toward 0.5. Nothing explains an exponent near 1/3,
-  and none is proposed.
+- **The band width has no working theory**, and its exponent is not settled: 0.366 ± 0.075 on the
+  confound-free data — 0.4σ from 1/3, 1.8σ from 1/2. Nothing derives either value, and no
+  mechanism is proposed.
 
 ## Contents
 
@@ -186,6 +215,8 @@ run_15run_noise_sweep_campaign.py        15 seeded runs, 5 each at 23.0, 45.5 an
 p1_15run_noise_sweep_campaign_results.csv  its results
 run_25run_noise_powerlaw_campaign.py     25 seeded runs, endpoints extended to 10 each
 p1_25run_noise_powerlaw_campaign_results.csv  its results; supersedes the 15-run fit
+run_25run_fixed_window_campaign.py       same 25, 200k cycles, identical 50k measuring window
+p1_25run_fixed_window_powerlaw_campaign_results.csv  its results; the window confound test
 ```
 
 The scripts write their outputs beside themselves and need only `numpy`. Verdicts in the
