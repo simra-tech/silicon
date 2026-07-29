@@ -256,9 +256,8 @@ opposite directions:
 
 **≤ 45.5 mV: equilibrated.** All four windows agree within 5 %. Those figures stand.
 
-**90 mV: still growing.** A monotonic rise with paired t = +2.26, and every one of those 20 runs
-crosses by cycle 74,541, so all four windows are clean. Incomplete equilibration is real, and it
-occurs *inside* the operating range — this value is a genuine lower bound.
+**90 mV: appeared to be still growing** — a monotonic rise with paired t = +2.26. **This too was
+an artefact, and is withdrawn below.**
 
 **180 and 360 mV: unreadable, and biased the other way.** Counting walk-in intrusions per window:
 
@@ -280,6 +279,48 @@ to that run's *own* crossing cycle — crossing+50k to +100k, +100k to +150k, an
 N so every level gets four full windows. Then no window can contain any part of the approach at
 any noise level, and comparing windows becomes a clean plateau test.
 
+#### Aligned windows: nothing was drifting, and the exponent is now well determined
+
+Re-measured with every window aligned to its own run's crossing cycle, and N extended per run so
+all four windows are full (`p1_65run_relative_window_equilibration_results.csv`):
+
+| σ_n (mV) | c+50–100k | +100–150k | +150–200k | +200–250k | paired t |
+| ---: | ---: | ---: | ---: | ---: | ---: |
+| 11.5 | 1.560 | 1.435 | 1.532 | 1.537 | −0.28 |
+| 23.0 | 1.982 | 2.090 | 2.075 | 1.975 | −0.05 |
+| 45.5 | 2.661 | 2.336 | 2.754 | 2.838 | +0.24 |
+| 90.0 | 3.456 | 3.492 | 3.414 | 3.512 | **+0.20** |
+| 180.0 | 2.879 | 3.506 | 4.479 | 3.897 | +2.00 |
+| 360.0 | 4.694 | 5.066 | 4.111 | 4.918 | +0.35 |
+
+**The 90 mV drift is withdrawn.** Its paired t falls from +2.26 to +0.20; the level is flat.
+
+**Why the absolute-window rise was spurious, which is the part worth keeping.** At 90 mV the
+twenty runs cross anywhere between 12,000 and 74,500 cycles. An absolute window therefore mixes
+runs at different stages of settling, and a later absolute window contains *the same runs, all
+further along*. The group average climbs from window to window **even when every individual run is
+stationary throughout**. That is why windows are defined relative to crossing here — not merely as
+good practice, but because the absolute version manufactures a trend out of dispersion in arrival
+times.
+
+**The clean result.** Pooling the four aligned windows per run, over 11.5–90 mV — 45 runs, an
+eightfold noise range:
+
+    σ_code ∝ σ_n^(0.403 ± 0.013)      χ² = 0.26 on 2 dof
+
+**19.6σ from √σ_n** — the diffusion picture is now firmly dead. **1.4σ from 1/3** — a cube root is
+the closest simple form, and still has no derivation behind it. Recorded as unexplained.
+
+**The bend above 90 mV survives the fix.** Extrapolating the clean law to 180 mV predicts ≈4.59;
+the aligned measurement is **3.690 ± 0.124** — seven standard errors low, and no longer
+attributable to windowing. Adding 180 mV to the fit takes χ² from 0.26 on 2 dof to 24.1 on 3.
+Something in the loop's behaviour genuinely changes between 90 and 180 mV.
+
+**Open:** 180 mV is the only level still drifting across its own aligned windows (t = +2.00), so
+its mean may still be low — it is being extended to eight aligned windows to test for a plateau. A
+level at 128 mV will locate the break. **No mechanism is proposed for the bend** until both are
+in.
+
 Convergence time, across six levels: 8.3k, 12.5k, 23.6k, 45.1k, 76.7k and ~140k cycles over a
 31× noise range.
 
@@ -289,10 +330,9 @@ Convergence time, across six levels: 8.3k, 12.5k, 23.6k, 45.1k, 76.7k and ~140k 
 - **Not a circuit simulation.** See the header. The loop dynamics are modelled, not simulated.
 - **No certification.** Nothing here has been assessed against AIS-31, SP 800-90B or any other
   standard by anyone.
-- **The band width has no working theory and no settled exponent.** Values at or below 45.5 mV are
-  equilibrated and stand. At 90 mV σ_code is still growing with observation time (a lower bound);
-  at 180 and 360 mV the early windows are contaminated by the walk-in (an upper bound). No
-  exponent should be fitted across the full range until relative windows separate the two.
+- **The band width has no working theory.** Over 11.5–90 mV it follows σ_n^(0.403 ± 0.013) with an
+  excellent fit; the relation bends above 90 mV and nothing explains either the exponent or the
+  bend. No mechanism is proposed for either.
 
 ## Contents
 
@@ -315,6 +355,8 @@ run_65run_extended_powerlaw_campaign.py  65 runs, 6 levels to 360 mV, 300k cycle
 p1_65run_extended_noise_campaign_results.csv  its results; supersedes all earlier fits
 run_multiwindow_equilibration_audit.py   sigma_code over four successive windows per run
 p1_65run_multiwindow_equilibration_results.csv  its results; the equilibration test
+run_relative_window_equilibration_campaign.py  windows aligned to each run's own crossing
+p1_65run_relative_window_equilibration_results.csv  its results; supersedes all earlier fits
 ```
 
 The scripts write their outputs beside themselves and need only `numpy`. Verdicts in the
