@@ -17,7 +17,8 @@
 > Withdrawn after external review, 2026-07-28.
 >
 > **Replaced by [`../wideband/`](../wideband/)**, which measures the same quantity under
-> physically calibrated broadband noise and finds r₁ = +0.0060 ± 0.0046, flat with rate.
+> physically calibrated broadband noise and finds r₁ = +0.0071 ± 0.0034 over 194 segments
+> at seven rates, flat with rate.
 
 
 How correlated is one output bit with the next, and does that get worse as you clock the

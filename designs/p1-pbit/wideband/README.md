@@ -6,24 +6,49 @@ whose spectrum stopped at f_clk/2. Both mattered. This one uses ngspice `trnoise
 amplitude derived from a `.noise` analysis of the VBIC model at the operating bias, flat to
 ~50 GHz.
 
-169 runs across seven sampling rates, plus a deterministic offset sweep. Decks, logs and
+194 runs across seven sampling rates, plus a deterministic offset sweep. Decks, logs and
 extracted bitstreams for every run.
 
 ## 1. Adjacent-bit correlation does not depend on sampling rate
 
-| f_s (GS/s) | segments | bits | r₁ |
-| ---: | ---: | ---: | ---: |
-| 1.0 | 40 | 7,960 | +0.0081 ± 0.0333 |
-| 1.5 | 34 | 10,166 | +0.0033 ± 0.0090 |
-| 2.0 | 25 | 9,950 | +0.0042 ± 0.0107 |
-| 2.5 | 10 | 4,980 | +0.0133 ± 0.0152 |
-| 3.0 | 10 | 5,990 | −0.0010 ± 0.0132 |
-| 4.0 | 10 | 7,980 | +0.0078 ± 0.0134 |
-| 5.0 | 10 + repeat | 9,990 ×2 | +0.0079 ± 0.0061 |
+Every rate below is measured from **all** segments present in `rate-map/`, by one method, in
+one pass. The segment counts in this table and the file counts in the directory are the same
+numbers — see the correction note at the end of this section for why that needed saying.
 
-**Combined over the three best-measured rates: r₁ = +0.0060 ± 0.0046** — 1.3σ from zero,
-χ² = 0.22 on 2 dof, so the rates are consistent with a single common value. Fitted slope
-against rate: +0.0014 per GS/s.
+| f_s (GS/s) | segments | bits | r₁ | P(1) |
+| ---: | ---: | ---: | ---: | ---: |
+| 1.0 | 50 | 9,900 | +0.0103 ± 0.0130 | 0.5065 |
+| 1.5 | 34 | 10,166 | +0.0033 ± 0.0090 | 0.4923 |
+| 2.0 | 25 | 9,950 | +0.0042 ± 0.0107 | 0.5105 |
+| 2.5 | 25 | 12,450 | +0.0149 ± 0.0100 | 0.5017 |
+| 3.0 | 25 | 14,975 | −0.0075 ± 0.0092 | 0.5006 |
+| 4.0 | 25 | 19,950 | +0.0075 ± 0.0069 | 0.5011 |
+| 5.0 | 10 | 9,980 | +0.0150 ± 0.0077 | 0.5042 |
+
+**Combined over all seven rates: r₁ = +0.0071 ± 0.0034** — 2.1σ from zero, χ² = 4.51 on
+6 dof against a constant, so a single common value describes the set well. Fitted slope
+against rate: +0.0020 per GS/s, which the same χ² budget cannot support as significant.
+
+**No rate dependence is detectable.** The pooled value is 0.51× the derived limit of 0.0140.
+At 2.1σ it is a weak positive hint rather than a detection: read |r₁| ≲ 0.01 as an upper
+bound, not a null.
+
+### Correction to the previous version of this table
+
+The version published on 2026-07-28 reported combined r₁ = +0.0060 ± 0.0046 over three
+rates. Two things were wrong with it, neither affecting the conclusion:
+
+- **Its per-rate segment counts did not match the files shipped beside it.** The table
+  accounted for 139 segments; the directory contained 169. The table had been computed while
+  the sweep was still running and the harvest was taken later, so each described a different
+  moment. A reader who recounted the directory would have found more data than the table
+  claimed to use, with no way to tell which was authoritative.
+- **Its 5.0 GS/s row pooled a repeat set that is not part of this family.** That row read
+  +0.0079 ± 0.0061; the 10 segments actually present here read +0.0150 ± 0.0077.
+
+Both are now fixed by re-measuring every rate from the files as they stand. 5.0 GS/s remains
+the one under-sampled rate at 10 segments, and is the largest single contributor to the
+pooled value sitting above zero.
 
 **The withdrawn note reported +0.0192 to +0.0596 across the same rates, every value
 positive, rising 1.79× with clock rate.** That rise, and most of that magnitude, was the
@@ -56,10 +81,42 @@ Consequently:
 | 128 µV | 10 % |
 
 **Bias costs entropy directly, so this is a specification limit rather than a
-characterisation curiosity.** For scale, offset from mismatch between nominally identical
-bipolar devices of this size is typically of order 1 mV — which on this transfer drives the
-output most of the way to stuck. **Offset compensation is not optional for this design**;
-trimming or a servo is required, and 12.8 µV per percent sets its accuracy target.
+characterisation curiosity.** Offset from mismatch between nominally identical bipolar
+devices of this size is **σ_VOS = 6.46 mV**, from a 200-sample Monte Carlo against the PDK
+mismatch model — five hundred times the offset that costs a percent of duty cycle, i.e. an
+uncompensated part is not slightly biased but stuck at a rail. **Offset compensation is not
+optional for this design.**
+
+### How much residual offset is allowed
+
+The 12.8 µV figure states a sensitivity, not a budget. The budget follows from the same
+min-entropy assumption used elsewhere in this repository: H∞ ≥ 0.98 means P(1) ≤ 0.506980,
+so the duty-cycle error allowed is **0.698 %**, i.e. a residual input offset of **8.9 µV**.
+
+| residual duty error | H∞ per bit | |
+| ---: | ---: | :--- |
+| 0.031 % | 0.99911 | |
+| 0.177 % | 0.99490 | |
+| 0.382 % | 0.98908 | |
+| 0.698 % | 0.98000 | **budget** |
+| 3.06 % | 0.91458 | fails |
+
+Two consequences for any compensation scheme:
+
+- A **digital trim DAC** is limited by half an LSB. Over a ±40 mV correction range, 10 bits
+  leaves 39.2 µV → 3.06 % duty error, which fails; 12 bits fails at 0.765 %; **13 bits is
+  the minimum** and 14 gives margin.
+- A **continuous servo** is limited by its own sampling floor, not by its amplifier gain. A
+  servo nulls the duty error it measures, and over N averaged bits an unbiased source still
+  shows a fluctuation of 0.5/√N which the servo cannot distinguish from real offset and so
+  injects back. At 5 GS/s a 16 µs time constant averages 8×10⁴ bits and injects 0.177 % —
+  inside budget, but six times larger than an amplifier-gain estimate would suggest. Driving
+  that floor to 0.031 % needs 2.6×10⁶ bits, a 306 Hz loop, and ~520 pF of integrating
+  capacitance, which is more die area than the signal path it protects.
+
+**This budget shares its allowance with correlation.** r₁ = +0.0071 already consumes part of
+the same 0.98, so the full 0.698 % is not available for bias alone. And because it rests on
+the first-order Markov assumption *we* supplied (see §3), it is a floor.
 
 ## 3. What is *not* claimed
 
@@ -86,14 +143,24 @@ trimming or a servo is required, and 12.8 µV per percent sets its accuracy targ
   length (the latch differential is 221 mV rms), so the gate was selecting on noise. Both
   gated and ungated figures are reported above; they agree.
 - **Precision comes from pooling, not from grinding one rate.** Per-rate ±0.005 needs ~110
-  segments; pooling three rates reaches ±0.0046 with what is here.
+  segments; pooling seven rates reaches ±0.0034 with what is here.
+- **Measure the files you publish, and publish the count you measured.** A table computed
+  while a sweep is still running, shipped next to a harvest taken later, disagrees with its
+  own directory — and the reader cannot tell which is authoritative. The first version of
+  this note did exactly that. Re-measuring from the shipped files costs minutes and is the
+  only way the two can be checked against each other.
+- **Extending a low-N point tests the error bar, not just the precision.** When 2.5, 3.0 and
+  4.0 GS/s went from 10 segments to 25, all three moved *within* their old error bars. Other
+  measurements in this project did not, and in each of those cases the error bar was
+  concealing a systematic rather than reporting noise. The check is cheap and it does not
+  require having guessed what the systematic might be.
 
 ## Contents
 
 ```
 generate_rate_map.py                       deterministic deck generator
-rate-map/bits_{rate}_seg{n}.txt            169 extracted bitstreams
-rate-map/ngspice_{rate}_seg{n}.log         169 logs
+rate-map/bits_{rate}_seg{n}.txt            194 extracted bitstreams
+rate-map/ngspice_{rate}_seg{n}.log         194 logs, one per bitstream
 rate-map/tb_p1_{rate}_seg1.spice           7 decks, one per rate
 offset/bits_dcgain_{0..500}uv.txt          bit-level offset sweep
 offset/{tb_p1,ngspice}_dcgain_*            its decks and logs
