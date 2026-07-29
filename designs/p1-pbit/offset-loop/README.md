@@ -421,14 +421,59 @@ crossing+100k.
 **5.0σ above 1/3, 5.9σ below 1/2.** Both simple forms excluded. Deficits against the law:
 **3.9σ at 128 mV, 6.0σ at 180, 12.4σ at 360.**
 
-**Mechanism is now being sought, in order: physics, then a prediction, then a run that could
-refute it.** Two lines of attack, both stated as predictions before running. (i) The accumulator
-advances the DAC code only once per 16 sub-counts, so the loop has *two* timescales; a two-scale
-process need not give a single clean power law but can give an effective exponent between the
-limiting cases over a bounded range — testable by changing the divider to 4 and 64. (ii) At 90 mV
-the noise is already 2× the 10 mV applied offset and by 360 mV it is 36×, so any mechanism should
-speak to the noise-to-offset *ratio* rather than to noise alone — testable by holding σ_n at
-180 mV and sweeping the offset from 5 to 80 mV. **Nothing is claimed yet.**
+### 4. The exponent is set by the loop, not by the noise
+
+Two hypotheses were tested (`run_hypothesis_tests_nsub_and_offset.py`). One is confirmed, one is
+refuted.
+
+**Confirmed: two timescales.** The accumulator advances the trim code only once per `N_sub`
+sub-counts, so the loop has an inner and an outer rate. Changing `N_sub` moves the exponent:
+
+| `N_sub` | α (11.5–90 mV) | χ² / 2 dof | σ_code at 90 mV |
+| ---: | ---: | ---: | ---: |
+| 4 | **0.476 ± 0.011** | 1.15 | 7.971 |
+| 16 | 0.410 ± 0.015 | 0.59 | 3.483 |
+| 64 | **0.284 ± 0.038** | 5.92 | 1.317 |
+
+The extremes are **4.9σ apart**. The exponent is therefore not a property of the noise process —
+it is a property of how often the loop is permitted to move.
+
+**And the direction is physical.** As the divider shrinks, α climbs toward **1/2** — 2.2σ from it
+at `N_sub` = 4 — which is the plain random-walk-against-restoring-drift limit. With a small
+divider the code moves almost every cycle and behaves as a simple random walk; with a large
+divider each code change is the average of many comparator decisions, which suppresses the wander
+and flattens the noise dependence. **That is why no simple fraction fitted: the loop sits between
+two regimes.** *Caveat: the `N_sub` = 64 fit has χ² = 5.92 on 2 dof, which is poor — 0.284 is
+indicative, not measured, pending more seeds.*
+
+**Refuted: the noise-to-offset ratio.** At 90 mV the noise is 2× the 10 mV offset and by 360 mV
+it is 36×, so the rollover might have tracked the *ratio*. Holding σ_n at 180 mV and sweeping the
+offset over a 16× range:
+
+| offset (mV) | σ_n/offset | σ_code |
+| ---: | ---: | ---: |
+| 5 | 36.0 | 4.350 ± 0.116 |
+| 10 | 18.0 | 4.152 ± 0.104 |
+| 20 | 9.0 | 3.868 ± 0.113 |
+| 40 | 4.5 | 3.857 ± 0.153 |
+| 80 | 2.25 | 4.310 ± 0.158 |
+
+No monotonic trend, and every value sits below the clean law's 4.629 at 180 mV. **The rollover
+follows noise alone.** This also independently reconfirms the offset-independence measured earlier
+at a different noise level.
+
+**Procedural note, recorded against ourselves:** the predicted directions were asked for *before*
+running and were not written into the script. The numbers are unaffected, but these are
+demonstrations rather than pre-registered tests, and both interpretations above were formed after
+seeing the data.
+
+### The design lever this exposes
+
+`N_sub` is not a law of nature — it is a chosen number, and it sets both the band width and its
+noise dependence. At 90 mV the band is 7.97 counts at `N_sub` = 4, 3.48 at 16, and 1.32 at 64. A
+larger divider buys substantially tighter residual accuracy. **The cost is presumably convergence
+time, and that has not been measured** — the band-width-versus-settling-time trade curve across
+`N_sub` is the outstanding measurement.
 
 Convergence time, across six levels: 8.3k, 12.5k, 23.6k, 45.1k, 76.7k and ~140k cycles over a
 31× noise range.
@@ -473,6 +518,9 @@ run_standardized_rw2_to_rw8_campaign.py  all levels, window 1 dropped, 75 runs
 p1_standardized_rw2_plus_results.csv     its results
 run_20run_stability_confirmation_test.py  90 and 180 mV from seeds never used before
 p1_stability_confirmation_results.csv    its results; pooled with the above for current values
+run_hypothesis_tests_nsub_and_offset.py  divider sweep and offset sweep
+p1_hypothesis_test1_nsub_sweep_results.csv   divider sweep: N_sub 4 and 64
+p1_hypothesis_test2_offset_sweep_results.csv offset sweep at fixed 180 mV noise
 ```
 
 The scripts write their outputs beside themselves and need only `numpy`. Verdicts in the
