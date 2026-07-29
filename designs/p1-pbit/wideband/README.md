@@ -264,3 +264,44 @@ That cuts both ways and both halves matter:
 So: the statistical results reproduce, run to run and by anyone. The individual bitstreams do
 not, and are shipped as the record of what was actually measured rather than as something you
 can regenerate. Checked by diffing the decks and their outputs, not assumed.
+
+## 1.2. The edge-completion model, tested against a prediction made first
+
+§1.1 proposes that the settled plateau opens when the clock finishes returning low, at
+`delay + t_rise + pulse_width + t_fall`. That was inferred from the production decks, which is
+weak evidence — the model was fitted to the same data it explains.
+
+So a prediction was recorded before the measurement existed: build a deck differing from
+production **only** in the clock, with a 50 % duty cycle instead of 40 %, and the plateau should
+move from 440 ps to **525 ps** at 1.0 GS/s.
+
+The deck was derived from `tb_p1_ac_wb10_1.0g_seg1.spice` by substituting the two `VCLK` lines
+and the output paths, and verified by diff that nothing else changed. Both decks were then
+scanned at 2 ps steps, one segment each, like for like:
+
+| deck | t_rise / pulse / t_fall | predicted | measured | error |
+| --- | ---: | ---: | ---: | ---: |
+| production | 20 / 400 / 20 ps | 440 ps | **438 ps** | 2 ps |
+| 50 % duty | 25 / 475 / 25 ps | 525 ps | **518 ps** | 7 ps |
+| **shift** | | **+85 ps** | **+80 ps** | 5 ps |
+
+**The model holds.** Both boundaries land within 7 ps of prediction on a 2 ps grid, and the
+predicted shift is right to 6 %.
+
+Both measurements sit slightly *early*, by 2 ps on a 20 ps edge and 7 ps on a 25 ps edge —
+roughly a tenth to a quarter of the fall time in each case. That is the expected direction: the
+latch commits once the clock has fallen far enough to cut off the track path, not at the last
+picosecond of the transition. So the boundary is `t_rise + pulse_width + t_fall` minus a small
+fraction of the fall time, and quoting the un-corrected sum is the conservative choice.
+
+This puts the rate ceiling of §1.1 on firmer ground: the settled window needs
+`T − (t_rise + pulse_width + t_fall)` to remain positive with margin for regeneration, and the
+model that predicts that boundary has now been tested out of sample rather than fitted.
+
+```
+duty-cycle/tb_dutyexp_1.0g_50pct.spice     the derived deck (clock lines only)
+duty-cycle/ngspice_dutyexp_1.0g_50pct.log  its run log
+duty-cycle/bits_dutyexp_1.0g_50pct.txt     199 bits extracted at 0.9 T
+```
+
+The raw transient (97 MB) is not shipped; the deck regenerates it in ~120 s.
