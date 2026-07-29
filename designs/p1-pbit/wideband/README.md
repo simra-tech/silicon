@@ -297,14 +297,25 @@ predicted shift is right to 6 %.
 printing the production-vs-variant diff as an audit — and used 20 ps edges where the deck above
 used 25 ps. Different author, different tooling, different edge rate:
 
-| f_s | t_rise / pulse / t_fall | predicted | measured | error |
-| ---: | ---: | ---: | ---: | ---: |
-| 1.0 | 20 / 480.0 / 20 ps | 520.0 ps | 524 ps | +4.0 |
-| 1.5 | 20 / 313.3 / 20 ps | 353.3 ps | 353 ps | −0.3 |
-| 2.0 | 20 / 230.0 / 20 ps | 270.0 ps | 272 ps | +2.0 |
+| f_s | production pulse | variant pulse | predicted | measured | error |
+| ---: | ---: | ---: | ---: | ---: | ---: |
+| 1.0 | 400.0 ps | 480.0 ps | 520.0 ps | 524 ps | +4.0 |
+| 1.5 | 266.7 ps | 313.3 ps | 353.3 ps | 353 ps | −0.3 |
+| 2.0 | 200.0 ps | 230.0 ps | 270.0 ps | 272 ps | +2.0 |
+| 2.5 | 160.0 ps | 180.0 ps | 220.0 ps | 216 ps | −4.0 |
+| 3.0 | 133.3 ps | 146.7 ps | 186.7 ps | 188 ps | +1.3 |
+| 4.0 | 100.0 ps | 105.0 ps | 145.0 ps | 149 ps | +4.0 |
 
-Mean +1.9 ps. That campaign is continuing across the remaining rates; these are the three
-complete at time of writing. Artefacts in `duty-cycle/` are `*_clk50_*`.
+**Mean +1.17 ps, spread 3.02 ps**, over six clock configurations none of which appear in the
+production set. Artefacts in `duty-cycle/` are `*_clk50_*`.
+
+**5.0 GS/s is excluded from that table, and the reason is worth stating.** Production sets the
+pulse width to 0.4 T; the rebuild sets it so that pulse + rise is 0.5 T. At T = 200 ps those
+coincide — both give 80.0 ps — so the 5.0 GS/s "variant" deck is the production clock exactly.
+It is not a duty-cycle point. It is an **accidental null-change control**, and it passed:
+production measured 122 ps, the rebuild measured 122 ps. Same clock, independently derived deck,
+separately run, separately extracted, identical answer. That tests the pipeline rather than the
+model, which is worth having and was not planned.
 
 **This is the confirmation that counts.** The seven production rates and the hand-derived deck
 above were all measured by the same person who proposed the model, from decks built the same
@@ -346,7 +357,7 @@ model that predicts that boundary has now been tested out of sample rather than 
 duty-cycle/tb_dutyexp_1.0g_50pct.spice     the derived deck (clock lines only)
 duty-cycle/ngspice_dutyexp_1.0g_50pct.log  its run log
 duty-cycle/bits_dutyexp_1.0g_50pct.txt     199 bits extracted at 0.9 T
-duty-cycle/{tb,ngspice,bits}_clk50_{1.0,1.5,2.0}g_seg1.*
+duty-cycle/{tb,ngspice,bits}_clk50_{1.0..5.0}g_seg1.*
                                            the independent rebuild, 20 ps edges
 ```
 
