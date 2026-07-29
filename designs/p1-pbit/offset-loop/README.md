@@ -233,23 +233,52 @@ settings**:
 Eight of ten individual runs rose; paired change +0.862, **t = 2.71**. Same circuit, same noise,
 same seeds, later window, **27 % more spread**.
 
-**At high noise the register has not finished spreading when we measure it.** The walk is still
-equilibrating, so every high-noise σ_code here is a **lower bound**, not a measurement.
-
 This is the truncation effect proposed earlier on this page, tested at 90 mV and below, found
 null, and published as refuted. It was null there because the walk equilibrates quickly at low
-noise. It is present at the top of the range — the one region the test did not cover. The
+noise. It is present at the top of the range — the one region that test did not cover. The
 hypothesis was right; the test was run in the wrong place.
 
-**The curvature is therefore probably not physical.** Over 11.5–90 mV, α = 0.443 ± 0.027
-(χ² = 2.01, 2 dof); over 45.5–360 mV, α = 0.253 ± 0.045. A bend of that size is what
-under-reported spread at the high end would produce. The 360 mV group is the worst case: seed 708
-crosses at 241,451, only 8,549 cycles before its window opens.
+#### Two opposite biases, not one — a correction
 
-**No exponent should be quoted across the full range until this is resolved.** The test costs no
-new simulation: compute σ_code over four successive windows (100–150k, 150–200k, 200–250k,
-250–300k) for every existing run. Flat at 11.5 and 23 mV with a rising trend at 180 and 360 mV
-confirms it; then extend runs per level until σ stops moving, and only then fit.
+An earlier version of this section concluded that **every high-noise σ_code is a lower bound**.
+That was too simple and is withdrawn. Measuring σ_code over four successive windows for all 65
+runs (`p1_65run_multiwindow_equilibration_results.csv`) separates two effects pointing in
+opposite directions:
+
+| σ_n (mV) | 100–150k | 150–200k | 200–250k | 250–300k | paired t (w4 vs w1) |
+| ---: | ---: | ---: | ---: | ---: | ---: |
+| 11.5 | 1.462 | 1.527 | 1.548 | 1.477 | +0.30 |
+| 23.0 | 2.057 | 2.069 | 1.965 | 2.155 | +0.57 |
+| 45.5 | 2.562 | 2.644 | 2.885 | 2.698 | +0.62 |
+| 90.0 | 3.098 | 3.420 | 3.559 | 3.654 | **+2.26** |
+| 180.0 | 3.629 | 3.176 | 4.515 | 4.038 | +0.91 |
+| 360.0 | 4.995 | 5.850 | 4.641 | 4.704 | −0.48 |
+
+**≤ 45.5 mV: equilibrated.** All four windows agree within 5 %. Those figures stand.
+
+**90 mV: still growing.** A monotonic rise with paired t = +2.26, and every one of those 20 runs
+crosses by cycle 74,541, so all four windows are clean. Incomplete equilibration is real, and it
+occurs *inside* the operating range — this value is a genuine lower bound.
+
+**180 and 360 mV: unreadable, and biased the other way.** Counting walk-in intrusions per window:
+
+| σ_n | runs intruding into w1 | w2 | w3 | w4 |
+| ---: | ---: | ---: | ---: | ---: |
+| 180.0 | 2 of 10 | 0 | 0 | 0 |
+| 360.0 | **10 of 10** | 4 | 1 | 0 |
+
+The walk-in is a long directed slide, so a window containing it **inflates** σ. That is why 360 mV
+appears to *fall* across the windows — contamination washing out, not equilibration. Only its
+fourth window is clean.
+
+So the dataset carries **incomplete settling, which deflates late windows, and walk-in
+contamination, which inflates early ones**. Absolute windows cannot separate them, and no
+exponent should be fitted across the full range until they are separated.
+
+**The fix removes the problem by construction rather than by audit:** define each window relative
+to that run's *own* crossing cycle — crossing+50k to +100k, +100k to +150k, and so on — extending
+N so every level gets four full windows. Then no window can contain any part of the approach at
+any noise level, and comparing windows becomes a clean plateau test.
 
 Convergence time, across six levels: 8.3k, 12.5k, 23.6k, 45.1k, 76.7k and ~140k cycles over a
 31× noise range.
@@ -260,9 +289,10 @@ Convergence time, across six levels: 8.3k, 12.5k, 23.6k, 45.1k, 76.7k and ~140k 
 - **Not a circuit simulation.** See the header. The loop dynamics are modelled, not simulated.
 - **No certification.** Nothing here has been assessed against AIS-31, SP 800-90B or any other
   standard by anyone.
-- **The band width has no working theory and no settled exponent.** Over 11.5–90 mV it follows
-  σ_n^(0.443 ± 0.027); above that the measurement is not yet trustworthy, because σ_code is still
-  growing with observation time at high noise. High-noise values here are lower bounds.
+- **The band width has no working theory and no settled exponent.** Values at or below 45.5 mV are
+  equilibrated and stand. At 90 mV σ_code is still growing with observation time (a lower bound);
+  at 180 and 360 mV the early windows are contaminated by the walk-in (an upper bound). No
+  exponent should be fitted across the full range until relative windows separate the two.
 
 ## Contents
 
@@ -283,6 +313,8 @@ run_45run_5level_noise_campaign.py       45 runs over 5 noise levels, 11.5 to 18
 p1_45run_5level_noise_campaign_results.csv  its results
 run_65run_extended_powerlaw_campaign.py  65 runs, 6 levels to 360 mV, 300k cycles
 p1_65run_extended_noise_campaign_results.csv  its results; supersedes all earlier fits
+run_multiwindow_equilibration_audit.py   sigma_code over four successive windows per run
+p1_65run_multiwindow_equilibration_results.csv  its results; the equilibration test
 ```
 
 The scripts write their outputs beside themselves and need only `numpy`. Verdicts in the
