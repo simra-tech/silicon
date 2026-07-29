@@ -42,6 +42,10 @@ r₁ is extracted by sampling the latch differential once per clock period. *Whe
 period was, until now, unstated in this note and unswept in the code that produced it. It
 dominates the result.
 
+**Which node, equally.** Everything in this note is measured on `v(xcomp.c_p) − v(xcomp.c_n)`,
+the collectors of the cross-coupled latch pair. That was also unstated, and it matters as much
+as the phase — see §1.3.
+
 At 1.0 GS/s, sweeping the sampling instant across one period — same files, same circuit:
 
 | phase | 0.1 T | 0.2 T | 0.3 T | 0.4 T | ≥ 0.5 T |
@@ -305,3 +309,30 @@ duty-cycle/bits_dutyexp_1.0g_50pct.txt     199 bits extracted at 0.9 T
 ```
 
 The raw transient (97 MB) is not shipped; the deck regenerates it in ~120 s.
+
+## 1.3. Which node you sample changes the answer, and one node carries nothing
+
+The comparator has more than one pair of nodes that could reasonably be called its output. All
+results here use `c_p − c_n`, the collectors of the cross-coupled latch pair. A downstream pair,
+`b_latch_p − b_latch_n`, is also written by the production decks. Scanning both over a full
+period at 2 ps steps, **from the same run**:
+
+| node pair | production (edge completes 440 ps) | 50 % duty (edge completes 525 ps) |
+| --- | ---: | ---: |
+| `c_p − c_n` | **438 ps** | **518 ps** |
+| `b_latch_p − b_latch_n` | **994 ps** | **992 ps** |
+
+Two separate points, and the second is the important one.
+
+**`c_p − c_n` tracks the clock edge; `b_latch` does not settle inside the period.** 994 ps of a
+1000 ps period leaves no usable sampling window at all.
+
+**`b_latch` carries no information about the boundary.** Shift the clock edge by 85 ps and the
+`c` boundary moves by 80 ps — that is the measurement. The `b_latch` boundary moves by −2 ps.
+It is not a noisier version of the same signal; it is insensitive to the quantity under study,
+so a dataset recording only that node cannot answer this question at any sample count.
+
+So a correlation figure from this circuit needs **three** things stated to be reproducible: the
+sampling phase (§1.1), the node pair, and the deck. Two of the three were missing from the
+first version of this note. Both were found the same way — by sweeping a parameter that had
+been treated as part of the apparatus rather than as a choice.
