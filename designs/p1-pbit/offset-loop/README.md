@@ -695,16 +695,75 @@ implementation and five from an independent C port. They agree on the mean band 
 **disagree on its run-to-run spread by a factor of four** — 1.03% against 4.08% — and that
 disagreement is unexplained after excluding the noise moments, the noise autocorrelation, the
 crossing statistics, the accumulator arithmetic, the measurement window and the variance computation
-itself, which the two agree on to 1×10⁻¹¹ when handed the same trajectory. Sampling statistics
-predict ≈4.9% for **both**, so the C side is the one behaving as theory says it should. Until that is
-resolved, the *mean* of this dataset is offered and the *spread* is not, and the ± above is the
-standard error of the pooled mean, not a claim about reproducibility.
+itself, which the two agree on to 1×10⁻¹¹ when handed the same trajectory — **and on the correlation
+time of the trajectories themselves, to 0.1%.** Until that is resolved, the *mean* of this dataset is
+offered and the *spread* is not, and the ± above is the standard error of the pooled mean, not a
+claim about reproducibility.
+
+**Correction to the previous revision of this paragraph.** It stated that "sampling statistics
+predict ≈4.9% for both, so the C side is the one behaving as theory says it should." That was an
+error in our arithmetic, not in either dataset. The scatter of a sample standard deviation over a
+correlated series is governed by the autocorrelation of *x²*, which for a Gaussian process is ρ(k)²
+rather than ρ(k), and the correct expression carries a factor of two:
+
+    rel. sd(σ̂) = √( (1 + 2·Σρ(k)²) / 2N )
+
+The version used — √(τ_int/N) with τ_int = 1 + 2Σρ(k) — fails the independent-sample check, giving
+1/√N where the classical result is 1/√(2N). Corrected, the prediction is **2.52% for the Python runs
+and 2.27% for the C runs**, against which the observed 1.03% and 4.08% are **0.41× and 1.80×**. The
+two implementations *straddle* the prediction; neither matches it, and the claim that C was the
+well-behaved side does not survive.
+
+**And the factor of four is itself imprecise.** It rests on five runs against five: F = 15.7 on
+(4,4) degrees of freedom, whose 95% interval on the ratio of standard deviations runs from **1.28 to
+12.3**. The disagreement is real at the 95% level and its size is known only to within an order of
+magnitude. More seeds precede any further mechanism-hunting.
+
+### The loop's memory, also predicted from the constants
+
+A second quantity falls out of the same Ornstein–Uhlenbeck treatment, and it is one no revision of
+this page previously mentioned: **how long the trim register remembers.** The restoring time constant
+is
+
+    τ_corr = σ_n · N_sub / ( √(2/π) · A_op · ΔV_fine )  =  4,751 cycles  ≈  0.95 µs at 5 GS/s
+
+which for an O-U process gives an exactly exponential autocorrelation, and hence a running
+integrated time τ_int(M) = 1 + 2·τ_corr·(1 − e^(−M/τ_corr)). Measured against it, with the sample
+mean subtracted and the truncation chosen adaptively:
+
+| truncation lag M | theory | Python | C port |
+| ---: | ---: | ---: | ---: |
+| 100 | 198.9 | 197.2 | 197.2 |
+| 500 | 950.2 | 940.9 | 940.4 |
+| 1,000 | 1,804.5 | 1,785.1 | 1,783.2 |
+| 2,000 | 3,265.7 | 3,222.8 | 3,219.7 |
+| 5,000 | 6,185.8 | 6,028.1 | 6,053.0 |
+| 20,000 | 9,361.5 | 8,811.0 | 9,240.2 |
+
+**Within 1% over the first two decades of lag, with nothing fitted.** The two implementations agree
+with each other to 0.01% at M = 100 and 0.1% at M = 2,000 — so whatever explains their disagreement
+over the band's *spread*, it is not a difference in how long their trajectories remember.
+
+Beyond M ≈ 20,000 the estimate stops being trustworthy: Python's running sum *falls*, from 8,811 to
+8,086 at M = 50,000, which means the empirical ρ has gone negative and the sum is accumulating noise.
+A value read at a fixed large truncation is a measurement of that noise, and an earlier attempt here
+read one at a hardcoded 50,000.
+
+**Why this matters beyond the band.** 0.95 µs of memory in the trim register bounds how fast the loop
+can respond to anything that changes — temperature drift, supply movement, a re-trim after a mode
+switch. No specification of this block has ever stated that number, and it is now derivable from four
+constants rather than measurable only by simulation.
 
 ### Still open, stated as open
 
 - **The design point.** There is an exact trade curve and **no stated startup-time budget for this
   chip.** The shape of the choice is known; which point to take is not, and that question is not a
   simulation.
+- **The band's run-to-run spread.** Two implementations, identical mean band and identical
+  correlation time, disagree on the spread by a factor somewhere between 1.28 and 12.3, straddling
+  the corrected prediction. Excluded so far: the noise moments, the noise autocorrelation, the
+  crossing statistics, the accumulator arithmetic, the measurement window, the variance computation,
+  and now the correlation time.
 
 *Calibration note, recorded against the prediction:* all six stated point intervals missed, yet the
 underlying picture was substantially right. The intervals were too tight for what was known — a
@@ -777,6 +836,8 @@ p1_relative_dynamic_noise_results.csv    its results: the noise exponent resolve
 run_pcg64_c_equivalence_audit.py         5 seeds each side, Python and the C port, same generator
 p1_pcg64_c_equivalence_results.csv       its results: the 10 runs pooled for the closed-form check
 sim_pbit_loop.c                          the C port; build with gcc -O3 -shared -fPIC
+run_sokal_adaptive_autocorr_tau_audit.py integrated correlation time, mean-subtracted, Sokal window
+p1_sokal_adaptive_autocorr_tau_results.csv  its results: the running sum against truncation lag
 ```
 
 The scripts write their outputs beside themselves and need only `numpy`. The equivalence audit also
