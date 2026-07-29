@@ -177,20 +177,48 @@ it replaced, so each individual σ estimate is noisier and every group's scatter
 the answer moved, but because our knowledge of it got worse. That is a real trade and it was worth
 taking: a clean measurement with honest error bars beats a tighter one that cannot be trusted.
 
-**Where the exponent stands**, on the fixed-window data:
+#### Five levels: the power law holds to 90 mV and breaks above it
 
-- **4.9σ from flat** — the noise dependence is certain.
-- **8.5σ from linear** — the withdrawn σ_dither law stays comprehensively dead.
-- **0.4σ from 1/3**, **1.8σ below 1/2.** A cube root is the better-supported reading; a square
-  root is not excluded. **Neither exponent is derived from anything.** No mechanism is offered.
+α is a slope, so the error falls with the *spread* of the x-values, not only their count. Two extra
+levels at 11.5 and 180 mV widened the lever arm from 3.9× to 15.7× and halved the error — ten runs
+buying what roughly forty replicates at the existing points would have. Forty-five runs, five
+levels, same fixed 50,000-cycle window, zero runs crossing after cycle 150,000
+(`p1_45run_5level_noise_campaign_results.csv`):
 
-**More replicates are the wrong next step.** α is a slope, and the error on a slope falls with the
-spread of the x-values, not only their count. The present lever arm is 23 → 90 mV, a factor of 3.9.
-Adding levels near 11.5 and 180 mV makes it 15.7× — roughly double the leverage, worth about four
-times as many replicates at the existing points.
+| σ_n (mV) | n | σ_code (LSB) | N_cross |
+| ---: | ---: | ---: | ---: |
+| 11.5 | 10 | 1.527 ± 0.178 | 8,254 |
+| 23.0 | 10 | 2.069 ± 0.390 | 12,524 |
+| 45.5 | 5 | 2.644 ± 0.332 | 23,560 |
+| 90.0 | 10 | 3.477 ± 1.031 | 45,119 |
+| 180.0 | 10 | 3.176 ± 0.433 | 76,702 |
 
-Convergence time scales close to linearly with σ_n — 1 : 1.88 : 3.60 against noise ratios
-1 : 1.98 : 3.91 — consistent with linear inside the scatter.
+**A single power law over all five levels is rejected.** σ_code rises monotonically to 90 mV and
+then falls. Weighted by the group standard errors, that fit gives **χ² = 15.4 on 3 dof, p ≈ 0.0015**.
+The exponent it returns (0.275 ± 0.020) is not a measurement — it is where a straight line lands
+when the data curves away from it.
+
+**Over 11.5 – 90 mV, an eightfold range, the power law is excellent:**
+
+    σ_code ∝ σ_n^(0.400 ± 0.038)      χ² = 0.16 on 2 dof
+
+Dropping the 90 mV point instead of the 180 mV one does not rescue the five-level fit (χ² = 10.1),
+so the departure is specifically at the top of the sweep and not general curvature.
+
+- **10σ+ from flat** — the noise dependence is certain.
+- **The withdrawn σ_dither law (α = 1) stays comprehensively dead.**
+- **1.8σ above 1/3, 2.6σ below 1/2.** Still between them. **Neither exponent is derived from
+  anything, and no mechanism is offered** — including for the flattening. A curve that rises and
+  levels invites explanation, and this page has already withdrawn three mechanisms that were sound
+  as arguments and absent from the data.
+
+**Open, and what would settle it:** one more level at 360 mV — if σ_code stays flat the saturation
+is real and worth explaining; if it resumes climbing, the 180 mV point was a fluctuation. Also ten
+more seeds at 90 mV, whose group sd of 1.031 is 2–3× every other level (0.18, 0.39, 0.33, 0.43) and
+which is one of the two points defining the departure.
+
+Convergence time scales close to linearly with σ_n across all five levels — 8.3k, 12.5k, 23.6k,
+45.1k, 76.7k cycles for a 15.7× noise range.
 
 ## 4. Not claimed
 
@@ -198,9 +226,9 @@ Convergence time scales close to linearly with σ_n — 1 : 1.88 : 3.60 against 
 - **Not a circuit simulation.** See the header. The loop dynamics are modelled, not simulated.
 - **No certification.** Nothing here has been assessed against AIS-31, SP 800-90B or any other
   standard by anyone.
-- **The band width has no working theory**, and its exponent is not settled: 0.366 ± 0.075 on the
-  confound-free data — 0.4σ from 1/3, 1.8σ from 1/2. Nothing derives either value, and no
-  mechanism is proposed.
+- **The band width has no working theory.** Over 11.5–90 mV it follows σ_n^(0.400 ± 0.038) with an
+  excellent fit; above 90 mV it departs from that law. Nothing derives the exponent, nothing
+  explains the departure, and no mechanism is proposed for either.
 
 ## Contents
 
@@ -217,6 +245,8 @@ run_25run_noise_powerlaw_campaign.py     25 seeded runs, endpoints extended to 1
 p1_25run_noise_powerlaw_campaign_results.csv  its results; supersedes the 15-run fit
 run_25run_fixed_window_campaign.py       same 25, 200k cycles, identical 50k measuring window
 p1_25run_fixed_window_powerlaw_campaign_results.csv  its results; the window confound test
+run_45run_5level_noise_campaign.py       45 runs over 5 noise levels, 11.5 to 180 mV
+p1_45run_5level_noise_campaign_results.csv  its results; supersedes all earlier fits
 ```
 
 The scripts write their outputs beside themselves and need only `numpy`. Verdicts in the
