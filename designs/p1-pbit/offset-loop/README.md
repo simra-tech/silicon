@@ -678,46 +678,61 @@ Substituting σ_n = 45.5 mV, N_sub = 16, A_op = 314.7, ΔV_fine = 0.6118 µV and
 | --- | ---: |
 | bare Ornstein–Uhlenbeck | 3.0423 |
 | with the lag-one correction | **3.0624** |
-| measured, 10 runs pooled | **3.0558 ± 0.0271** |
+| measured, 40 runs pooled | **3.0701 ± 0.0111** |
 
-**−0.21%, or 0.24σ.** The two exponents were already 1/2; this fixes the prefactor as well, so the
+**+0.25%, or 0.70σ.** The two exponents were already 1/2; this fixes the prefactor as well, so the
 band is now predicted rather than described. The correction factor is not a free knob — R₁ was
 measured on the accumulator steps before being substituted here.
 
-**A correction to how this was first reported.** The figure initially recorded for the pooled
-measurement, 3.0700 ± 0.0110, was not a pooled value: it is one seed's Python result on its own. The
-pooled mean recomputed from the CSV is 3.0558 with a standard error of 0.0271. The agreement
-survives and marginally improves — 0.24σ rather than 0.70σ — but the number that was quoted was
-wrong, and a single seed presented as a pooled result is recorded here rather than quietly replaced.
+**Withdrawn: a correction this page made and got wrong.** A previous revision stated that the figure
+above "was not a pooled value: it is one seed's Python result on its own", and replaced it with
+3.0558 ± 0.0271 at 0.24σ. **That was our error, and the original figure was right.** The campaign CSV
+contains 20 seeds per implementation, 40 measurements in total, and pooling all 40 gives 3.0701 ±
+0.0111 — the originally reported value, to four decimal places. Our replacement came from five of
+those twenty seeds, taken from a separate five-seed diagnostic file, after reading only the first
+rows of the campaign CSV. That 3.070180 also happens to be the first row's value is a coincidence,
+and we treated the coincidence as proof of a mistake. The agreement is 0.25% and 0.70σ, exactly as
+first stated.
 
-**What is deliberately *not* published from this dataset.** The ten runs are five from a Python
-implementation and five from an independent C port. They agree on the mean band to 0.2%. They
-**disagree on its run-to-run spread by a factor of four** — 1.03% against 4.08% — and that
-disagreement is unexplained after excluding the noise moments, the noise autocorrelation, the
-crossing statistics, the accumulator arithmetic, the measurement window and the variance computation
-itself, which the two agree on to 1×10⁻¹¹ when handed the same trajectory — **and on the correlation
-time of the trajectories themselves, to 0.1%.** Until that is resolved, the *mean* of this dataset is
-offered and the *spread* is not, and the ± above is the standard error of the pooled mean, not a
-claim about reproducibility.
+**What is deliberately *not* published from this dataset.** The 40 runs are 20 from a Python
+implementation and 20 from an independent C reimplementation. They agree on the mean band to 0.4%.
+They **disagree on its run-to-run spread by a factor of 2.10** — 1.40% against 2.95%, F = 4.41 on
+(19,19) degrees of freedom, two-sided p = 0.0022, 95% interval on the ratio **1.32 to 3.34**. That
+disagreement is unexplained after excluding the noise moments, the noise autocorrelation, the crossing
+statistics, the accumulator arithmetic, the measurement window, the variance computation itself —
+which the two agree on to 1×10⁻¹¹ when handed the same trajectory — and the correlation time of the
+trajectories, on which they agree to 0.1%. Until it is resolved, the *mean* of this dataset is offered
+and the *spread* is not, and the ± above is the standard error of the pooled mean, not a claim about
+reproducibility.
 
-**Correction to the previous revision of this paragraph.** It stated that "sampling statistics
-predict ≈4.9% for both, so the C side is the one behaving as theory says it should." That was an
-error in our arithmetic, not in either dataset. The scatter of a sample standard deviation over a
-correlated series is governed by the autocorrelation of *x²*, which for a Gaussian process is ρ(k)²
-rather than ρ(k), and the correct expression carries a factor of two:
+**Which side is anomalous, and the formula that settles it.** The scatter of a sample standard
+deviation over a correlated series is governed by the autocorrelation of *x²*, which for a Gaussian
+process is ρ(k)² rather than ρ(k), and the expression carries a factor of two:
 
     rel. sd(σ̂) = √( (1 + 2·Σρ(k)²) / 2N )
 
-The version used — √(τ_int/N) with τ_int = 1 + 2Σρ(k) — fails the independent-sample check, giving
-1/√N where the classical result is 1/√(2N). Corrected, the prediction is **2.52% for the Python runs
-and 2.27% for the C runs**, against which the observed 1.03% and 4.08% are **0.41× and 1.80×**. The
-two implementations *straddle* the prediction; neither matches it, and the claim that C was the
-well-behaved side does not survive.
+An earlier revision of this page used √(τ_int/N) with τ_int = 1 + 2Σρ(k), which fails the
+independent-sample check — it gives 1/√N where the classical result is 1/√(2N). With the correct
+expression, and the per-seed window lengths averaged as variances rather than as an average N:
 
-**And the factor of four is itself imprecise.** It rests on five runs against five: F = 15.7 on
-(4,4) degrees of freedom, whose 95% interval on the ratio of standard deviations runs from **1.28 to
-12.3**. The disagreement is real at the 95% level and its size is known only to within an order of
-magnitude. More seeds precede any further mechanism-hunting.
+| | predicted | observed | ratio |
+| --- | ---: | ---: | ---: |
+| Python | 2.50% | 1.40% | **0.56×** |
+| C reimplementation | 2.51% | 2.95% | **1.17×** |
+
+**The C side matches sampling theory; the Python side is calmer than it permits by a factor of 1.8.**
+Two intermediate revisions of this page got this wrong in both directions — first claiming C was the
+well-behaved side on a formula that was incorrect, then claiming the two straddled the prediction on
+observed values drawn from five of the twenty seeds. Both statements are withdrawn; the table above is
+computed from all 20 per side with the corrected formula.
+
+**Note on what "independent reimplementation" means here.** `sim_pbit_loop.c` implements **PCG32** — a
+64-bit LCG state with a 32-bit XSH-RR output permutation, two outputs concatenated per double — and
+draws normals by **Box–Muller**. NumPy's `default_rng` is PCG64 with ziggurat normals. Both generators
+and both transforms are sound, and the LCG step and permutation are canonical, but they are not the
+same stream: **the same seed produces different trajectories, with crossing times differing by up to
+1.86×.** Every comparison between these two implementations is therefore a comparison of
+distributions, never of trajectories, whatever the file names suggest.
 
 ### The loop's memory, also predicted from the constants
 
@@ -760,10 +775,11 @@ constants rather than measurable only by simulation.
   chip.** The shape of the choice is known; which point to take is not, and that question is not a
   simulation.
 - **The band's run-to-run spread.** Two implementations, identical mean band and identical
-  correlation time, disagree on the spread by a factor somewhere between 1.28 and 12.3, straddling
-  the corrected prediction. Excluded so far: the noise moments, the noise autocorrelation, the
-  crossing statistics, the accumulator arithmetic, the measurement window, the variance computation,
-  and now the correlation time.
+  correlation time, disagree on the spread by **2.10× (95% interval 1.32–3.34, p = 0.0022)**. The C
+  side matches sampling theory at 1.17×; the Python side is 0.56× of what theory permits, so the
+  question is why one implementation's runs resemble each other more closely than sampling statistics
+  allow. Excluded so far: the noise moments, the noise autocorrelation, the crossing statistics, the
+  accumulator arithmetic, the measurement window, the variance computation, and the correlation time.
 
 *Calibration note, recorded against the prediction:* all six stated point intervals missed, yet the
 underlying picture was substantially right. The intervals were too tight for what was known — a
