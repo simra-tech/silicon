@@ -61,11 +61,12 @@ Roughly linear in σ_n over a fourfold range.
 
 ## 3. The residual band, and a law that did not survive
 
-Once arrived, the loop does not sit on one code. It occupies a band — 16 codes in the
-100,000-cycle single run, 12 to 20 across the campaign — and its mean sits a fraction of an LSB
-off null. **This band is the residual the loop cannot remove, so it sets the useful resolution
-of the trim DAC: bits finer than the band buy nothing.** That makes it the binding constraint on
-trim sizing, and it appeared in no specification because nobody had noticed it was binding.
+Once arrived, the loop does not sit on one code. It occupies a band whose within-run standard
+deviation is **2.61 counts** (ten seeded runs; spans of 13–20 over 66,000-cycle windows), and its
+mean sits a fraction of an LSB off null. **This band is the residual the loop cannot remove, so
+it sets the useful resolution of the trim DAC: bits finer than the band buy nothing.** That makes
+it the binding constraint on trim sizing, and it appeared in no specification because nobody had
+noticed it was binding.
 
 **A proposed scaling law for the band width is withdrawn.** It read
 
@@ -84,11 +85,41 @@ The prediction moves by 3.9× across the sweep; the measurement does not move. T
 agreement was not evidence — that is the condition at which the expression's coefficient was
 calibrated.
 
+### The 20-code span was scatter, and so was the flatness
+
+The campaign above ran **one run per condition**. Ten seeded repeats settle what that could not
+(`p1_dither_scatter_campaign_results.csv`, seeds 101–105 and 201–205):
+
+| group | offset | spans | mean ± sd |
+| --- | ---: | --- | ---: |
+| A | 10 mV | 15, 17, 20, 15, 17 | 16.80 ± 2.05 |
+| B | 20 mV | 15, 13, 17, 17, 16 | 15.60 ± 1.67 |
+
+Difference 1.20 against a standard error of 1.18 — **t = 1.01, p = 0.33**. The 20-code span
+dissolves.
+
+**The same numbers retire the flatness claim as well.** Pooled scatter across the ten runs is
+**1.87 counts**, and the six-run campaign reported 12, 14, 13, 14, 13, 20 from single runs.
+Against that scatter those six values are one distribution: the sweep could not have detected a
+real effect below roughly 5 counts in either direction. It legitimately killed the σ_dither law,
+because that law predicted a 3.9× change which would have been visible. It never established
+flatness, and this page previously implied otherwise.
+
+**Use `settled_std`, not the span.** A span is `max − min`: an extreme-value statistic that grows
+with observation length and scatters badly, which is why ten runs were needed to say anything.
+The within-run standard deviation of the settled code is recorded in the same file and behaves:
+
+| group | settled_std | |
+| --- | ---: | ---: |
+| A (10 mV) | 2.648 ± 0.374 | |
+| B (20 mV) | 2.576 ± 0.322 | t = 0.33 |
+
+**Any dependence of the band on applied offset is bounded below 0.44 counts of σ — under 17 % of
+its value.** That is a specification-grade bound, and it came free from a column already on disk.
+
 **What is left open.** Convergence time scales with σ_n and the settled width does not. Any
 mechanism proposed for the band has to account for both; one that explains only the width is not
-finished. The single 20-code span at the largest applied offset is the one hint that the offset
-belongs in the law, and it is a single point against two baseline repeats that already differ by
-one count — it is not offered as evidence, only as the place to look next.
+finished.
 
 ## 4. Not claimed
 
@@ -96,7 +127,7 @@ one count — it is not offered as evidence, only as the place to look next.
 - **Not a circuit simulation.** See the header. The loop dynamics are modelled, not simulated.
 - **No certification.** Nothing here has been assessed against AIS-31, SP 800-90B or any other
   standard by anyone.
-- **The band width has no working theory**, only six measurements.
+- **The band width has no working theory**, only sixteen measurements.
 
 ## Contents
 
@@ -105,9 +136,11 @@ run_dither_scaling_campaign.py           6-run sweep: 3 noise levels, 3 offsets
 p1_dither_scaling_campaign_results.csv   its results, including M_target per run
 run_closed_loop_route2_experiment.py     single 100k-cycle step response
 p1_route2_closed_loop_trajectory.csv     its trajectory, clock_cycle,dac_code
+run_10run_dither_scatter_test.py         10 seeded repeats, 5 at 10 mV and 5 at 20 mV
+p1_dither_scatter_campaign_results.csv   its results, including settled_std per run
 ```
 
-Both scripts write their outputs beside themselves and need only `numpy`. Verdicts in the
+The scripts write their outputs beside themselves and need only `numpy`. Verdicts in the
 step-response script are computed against stated tolerances and can print `FAIL`; an earlier
 version printed its conclusions as string literals and reported success on three runs that
 measured three different things.
