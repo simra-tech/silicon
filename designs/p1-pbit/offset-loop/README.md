@@ -622,14 +622,54 @@ understood; the absolute scale is not.
 **Cost, corrected:** the concern that this protocol might be unaffordable was wrong. The whole
 four-point campaign ran in **under a minute** of wall clock, 46 s of it at `N_sub` = 256.
 
-#### The noise exponent is now suspect for the same reason
+#### Settled: both exponents are one half
 
 The α = 0.4102 ± 0.0153 reported earlier on this page — presented as excluding both 1/3 and 1/2 at
-5σ — was measured with **the same fixed-window protocol**. Across that noise sweep the settling time
-varies more than tenfold, so the 50,000-cycle window was **6.1× the settling time at 11.5 mV and
-0.36× at 360 mV**: same defect, same direction. Correcting it here moved the divider exponent from
-−0.600 to −0.485, toward one half. **That measurement is being repeated under the relative-window
-protocol, and until it reports, α should be treated as unresolved.**
+5σ — used **the same fixed-window protocol**, where the 50,000-cycle window was 6.1× the settling
+time at 11.5 mV and 0.36× at 360 mV. Re-measured with windows scaled per run
+(`p1_relative_dynamic_noise_results.csv`, six levels, five seeds each):
+
+| σ_n (mV) | crossing | window span | σ_code |
+| ---: | ---: | ---: | ---: |
+| 11.5 | 7,989 | 79,886 | 1.547 ± 0.053 |
+| 23.0 | 11,559 | 115,594 | 2.128 ± 0.117 |
+| 45.5 | 23,560 | 235,602 | 2.985 ± 0.194 |
+| 90.0 | 41,470 | 414,698 | 4.043 ± 0.187 |
+| 180.0 | 83,729 | 837,294 | 5.982 ± 0.216 |
+| 360.0 | 141,707 | 1,417,074 | 8.436 ± 0.255 |
+
+    σ_code ∝ σ_n^(0.4939 ± 0.0121)      χ² = 1.16 on 4 dof
+
+**0.5σ from exactly 1/2**, 13.2σ from 1/3. **The rollover is gone** — local slopes 0.460, 0.497,
+0.445, 0.565, 0.496, with no trend. And the size of the correction is diagnostic: against the old
+fixed-window values it is +3 % at 11.5 mV, +4 % at 23, +13 % at 45.5, +16 % at 90, **+47 % at 180**,
+**+80 % at 360** — growing precisely with how slow the loop is at each setting, which is what a
+too-short window produces, and accumulating into a fifth of an exponent across the sweep.
+
+### The settled result
+
+| quantity | exponent |
+| --- | --- |
+| band vs input noise | **+0.4939 ± 0.0121** |
+| band vs accumulator divider | **−0.4852 ± 0.0116** |
+| convergence time vs divider | **+1.085 ± 0.031** |
+
+Both band exponents are **one half to within half a standard error**, and the design trade follows
+exactly: **halving the residual error costs a factor of four in settling time** — not the 3.5
+quoted earlier from biased data.
+
+**Withdrawn from this page as artefacts of one defect:** the rollover above 90 mV, the bend in the
+trade curve, the saturation, the exponent near 0.41, and the quantisation floor. One artefact, five
+costumes — a fixed observation window while the observed process got slower.
+
+### Still open, stated as open
+
+- **The absolute scale.** Pre-registered *scalings* have been hit; pre-registered *absolute values*
+  have now missed low twice running. We predict how the band changes better than we predict what it
+  is. That is a bias, not a spread, and widening intervals will not fix it.
+- **The design point.** There is an exact trade curve and **no stated startup-time budget for this
+  chip.** The shape of the choice is known; which point to take is not, and that question is not a
+  simulation.
 
 *Calibration note, recorded against the prediction:* all six stated point intervals missed, yet the
 underlying picture was substantially right. The intervals were too tight for what was known — a
@@ -692,6 +732,8 @@ run_contiguous_window_trade_campaign.py  150k and 450k contiguous windows, predi
 p1_contiguous_window_trade_results.csv   its results: the measurement has not converged
 run_relative_dynamic_window_trade_campaign.py  window = 10x crossing, per run
 p1_relative_dynamic_window_trade_results.csv   its results: the trade law resolves to -1/2
+run_relative_dynamic_noise_campaign.py   noise sweep under the same relative-window protocol
+p1_relative_dynamic_noise_results.csv    its results: the noise exponent resolves to +1/2
 ```
 
 The scripts write their outputs beside themselves and need only `numpy`. Verdicts in the
