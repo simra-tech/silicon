@@ -17,12 +17,21 @@ said. Rather than make a reader reconstruct that from the body, the current stat
 | claim | status |
 | --- | --- |
 | r₁ flat with rate, \|r₁\| ≲ 0.01 | **stands** — 234 segments, seven rates |
-| boundary = t_rise + pulse + t_fall | **stands** — 13 configurations, two independent builders |
+| boundary ≈ t_rise + pulse + t_fall | **stands, with a correction** — 13 configurations, two independent builders, but see the next row |
+| boundary sits *exactly* at t_rise + pulse + t_fall | **corrected** — averaging shows it sits **+2.48 ± 0.41 ps late**, 6σ from zero (§1.2) |
+| that offset is constant | **corrected** — disfavoured at p = 0.013; it grows with rate (§1.2) |
+| the offset grows at 0.854 ps per GS/s | **corrected to +0.564 ± 0.140** — the first figure was inflated by model selection (§1.2) |
 | the plateau is an artefact of scaled clock slew | **withdrawn** — the decks use fixed 20 ps edges (§1.2) |
 | the boundary sits systematically early | **withdrawn** — two-point pattern; seven points scatter both ways (§1.2) |
 | σ_VOS = 6.46 mV from a 200-sample Monte Carlo | **downgraded to reported** — no artefacts substantiate it (§2) |
 | single-segment boundaries good to ~2 ps | **corrected** — ~5 ps; the 2 ps figure was the scan grid (§1.2) |
 | bitstreams reproducible from these decks | **corrected** — the decks carry no seed (*Reproducibility*) |
+| higher-order correlation (lags 2–3) | **neither claimed nor excluded** — largest excursion is a 1-in-18 event across 21 tests (§1.4) |
+
+This table went stale once already: it carried "boundary = t_rise + pulse + t_fall — stands"
+for several revisions after §1.2 had established the 2.5 ps offset, so the summary contradicted
+the body it summarised. A summary of corrections needs correcting too, and nothing prompts you
+to do it — the body is what you edit.
 
 Nothing above was found by a reader. Each was found by re-checking a claim this note had already
 published, which is the only reason the list is this specific.
