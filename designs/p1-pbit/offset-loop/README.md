@@ -774,12 +774,48 @@ constants rather than measurable only by simulation.
 - **The design point.** There is an exact trade curve and **no stated startup-time budget for this
   chip.** The shape of the choice is known; which point to take is not, and that question is not a
   simulation.
-- **The band's run-to-run spread.** Two implementations, identical mean band and identical
-  correlation time, disagree on the spread by **2.10× (95% interval 1.32–3.34, p = 0.0022)**. The C
-  side matches sampling theory at 1.17×; the Python side is 0.56× of what theory permits, so the
-  question is why one implementation's runs resemble each other more closely than sampling statistics
-  allow. Excluded so far: the noise moments, the noise autocorrelation, the crossing statistics, the
-  accumulator arithmetic, the measurement window, the variance computation, and the correlation time.
+- **The band's run-to-run spread**, now narrowed to a specific impossibility — see below.
+
+### The spread is below the noise floor of the instrument measuring it
+
+Two implementations agree on the mean band to 0.4% and on their trajectories' correlation time to
+0.1%, and disagree on the band's run-to-run spread by **2.10×** (95% interval 1.32–3.34, p = 0.0022).
+Cutting each settled window into 16 disjoint sub-windows of ≈248,500 cycles locates that disagreement
+precisely, by testing the estimator *inside* a single run where seed-to-seed variation cannot reach it:
+
+| | within-run scatter | Bartlett benchmark | ratio |
+| --- | ---: | ---: | ---: |
+| Python | 10.13% | 9.80% | 1.03× |
+| C reimplementation | 9.45% | 9.80% | 0.96× |
+
+**The estimator is sound on both sides.** That validated floor scales to the full window — sixteen
+times longer, so a quarter the noise — giving a single-run noise floor of **2.45%**. Against it:
+
+| | across-seed scatter | noise floor | |
+| --- | ---: | ---: | --- |
+| C reimplementation | 2.95% | 2.45% | ordinary; leaves ≈1.55% genuine seed-to-seed spread |
+| Python | **1.40%** | 2.45% | **below the floor**, χ²₁₉ = 5.96, one-sided p = 0.0036 |
+
+Twenty independent estimates of one quantity cannot cluster more tightly than the noise of the
+instrument that produced them. Something is compressing them, and unlike every previous step this
+constrains a mechanism instead of excluding one.
+
+**Candidate, stated as a candidate.** Crossing time and measured band correlate at **−0.49** for
+Python (t = −2.36, 18 dof) and **−0.12** for C. The measurement window is *derived from* the crossing
+time — it starts at 2×crossing and ends at 162×crossing — so on the Python side the width of the
+window is correlated with the quantity the window measures, and those twenty values are not twenty
+independent draws under a common noise model. **Whether that accounts for the compression
+quantitatively is not shown, and is not claimed.**
+
+This has a shape worth flagging to anyone reusing the method. §3 of this page describes moving *from*
+fixed windows *to* crossing-relative ones, to kill a real artefact in which the observation window
+stayed fixed while the observed process slowed down — five apparent physics results that were one
+defect in five costumes. That fix was correct. It may have introduced this subtler one: **an estimator
+whose window depends on the quantity being estimated.** The test is a single fixed window common to
+every seed, on the same trajectories, and it is pending.
+
+Excluded so far: the noise moments, the noise autocorrelation, the crossing statistics, the accumulator
+arithmetic, the variance computation, the correlation time, and now the single-run estimator itself.
 
 *Calibration note, recorded against the prediction:* all six stated point intervals missed, yet the
 underlying picture was substantially right. The intervals were too tight for what was known — a
@@ -854,6 +890,8 @@ p1_pcg64_c_equivalence_results.csv       its results: the 10 runs pooled for the
 sim_pbit_loop.c                          the C port; build with gcc -O3 -shared -fPIC
 run_sokal_adaptive_autocorr_tau_audit.py integrated correlation time, mean-subtracted, Sokal window
 p1_sokal_adaptive_autocorr_tau_results.csv  its results: the running sum against truncation lag
+run_20seed_and_16subwindow_audit.py      20 seeds a side, each window cut into 16 sub-windows
+p1_20seed_and_16subwindow_results.csv    its results: within-run scatter beside the full-window band
 ```
 
 The scripts write their outputs beside themselves and need only `numpy`. The equivalence audit also
