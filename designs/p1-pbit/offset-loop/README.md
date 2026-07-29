@@ -212,13 +212,47 @@ so the departure is specifically at the top of the sweep and not general curvatu
   levels invites explanation, and this page has already withdrawn three mechanisms that were sound
   as arguments and absent from the data.
 
-**Open, and what would settle it:** one more level at 360 mV — if σ_code stays flat the saturation
-is real and worth explaining; if it resumes climbing, the 180 mV point was a fluctuation. Also ten
-more seeds at 90 mV, whose group sd of 1.031 is 2–3× every other level (0.18, 0.39, 0.33, 0.43) and
-which is one of the two points defining the departure.
+#### There is no saturation, and σ_code at high noise is not yet a measurement
 
-Convergence time scales close to linearly with σ_n across all five levels — 8.3k, 12.5k, 23.6k,
-45.1k, 76.7k cycles for a 15.7× noise range.
+A sixth level at 360 mV was run, plus ten more seeds at 90 mV — 65 runs total
+(`p1_65run_extended_noise_campaign_results.csv`). **The flattening is gone:** 360 mV gives
+4.704 ± 1.125 against 4.038 at 180 mV. The curve does not level off, and the apparent saturation
+was a fluctuation. No mechanism was proposed for it in the interval, which was the right call.
+
+**But the same run exposes something that undermines every high-noise number on this page.** To
+give the 360 mV runs room to converge, the simulation was lengthened from 200,000 to 300,000
+cycles, and the fixed measuring window moved with it — from cycles 150,000–200,000 out to
+250,000–300,000. The 180 mV group was re-run with **identical seeds 601–610 and identical
+settings**:
+
+| window | σ_code at 180 mV |
+| --- | ---: |
+| cycles 150,000–200,000 | 3.176 |
+| cycles 250,000–300,000 | **4.038** |
+
+Eight of ten individual runs rose; paired change +0.862, **t = 2.71**. Same circuit, same noise,
+same seeds, later window, **27 % more spread**.
+
+**At high noise the register has not finished spreading when we measure it.** The walk is still
+equilibrating, so every high-noise σ_code here is a **lower bound**, not a measurement.
+
+This is the truncation effect proposed earlier on this page, tested at 90 mV and below, found
+null, and published as refuted. It was null there because the walk equilibrates quickly at low
+noise. It is present at the top of the range — the one region the test did not cover. The
+hypothesis was right; the test was run in the wrong place.
+
+**The curvature is therefore probably not physical.** Over 11.5–90 mV, α = 0.443 ± 0.027
+(χ² = 2.01, 2 dof); over 45.5–360 mV, α = 0.253 ± 0.045. A bend of that size is what
+under-reported spread at the high end would produce. The 360 mV group is the worst case: seed 708
+crosses at 241,451, only 8,549 cycles before its window opens.
+
+**No exponent should be quoted across the full range until this is resolved.** The test costs no
+new simulation: compute σ_code over four successive windows (100–150k, 150–200k, 200–250k,
+250–300k) for every existing run. Flat at 11.5 and 23 mV with a rising trend at 180 and 360 mV
+confirms it; then extend runs per level until σ stops moving, and only then fit.
+
+Convergence time, across six levels: 8.3k, 12.5k, 23.6k, 45.1k, 76.7k and ~140k cycles over a
+31× noise range.
 
 ## 4. Not claimed
 
@@ -226,9 +260,9 @@ Convergence time scales close to linearly with σ_n across all five levels — 8
 - **Not a circuit simulation.** See the header. The loop dynamics are modelled, not simulated.
 - **No certification.** Nothing here has been assessed against AIS-31, SP 800-90B or any other
   standard by anyone.
-- **The band width has no working theory.** Over 11.5–90 mV it follows σ_n^(0.400 ± 0.038) with an
-  excellent fit; above 90 mV it departs from that law. Nothing derives the exponent, nothing
-  explains the departure, and no mechanism is proposed for either.
+- **The band width has no working theory and no settled exponent.** Over 11.5–90 mV it follows
+  σ_n^(0.443 ± 0.027); above that the measurement is not yet trustworthy, because σ_code is still
+  growing with observation time at high noise. High-noise values here are lower bounds.
 
 ## Contents
 
@@ -246,7 +280,9 @@ p1_25run_noise_powerlaw_campaign_results.csv  its results; supersedes the 15-run
 run_25run_fixed_window_campaign.py       same 25, 200k cycles, identical 50k measuring window
 p1_25run_fixed_window_powerlaw_campaign_results.csv  its results; the window confound test
 run_45run_5level_noise_campaign.py       45 runs over 5 noise levels, 11.5 to 180 mV
-p1_45run_5level_noise_campaign_results.csv  its results; supersedes all earlier fits
+p1_45run_5level_noise_campaign_results.csv  its results
+run_65run_extended_powerlaw_campaign.py  65 runs, 6 levels to 360 mV, 300k cycles
+p1_65run_extended_noise_campaign_results.csv  its results; supersedes all earlier fits
 ```
 
 The scripts write their outputs beside themselves and need only `numpy`. Verdicts in the
