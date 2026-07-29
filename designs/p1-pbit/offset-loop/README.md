@@ -311,15 +311,46 @@ eightfold noise range:
 **19.6σ from √σ_n** — the diffusion picture is now firmly dead. **1.4σ from 1/3** — a cube root is
 the closest simple form, and still has no derivation behind it. Recorded as unexplained.
 
-**The bend above 90 mV survives the fix.** Extrapolating the clean law to 180 mV predicts ≈4.59;
-the aligned measurement is **3.690 ± 0.124** — seven standard errors low, and no longer
-attributable to windowing. Adding 180 mV to the fit takes χ² from 0.26 on 2 dof to 24.1 on 3.
-Something in the loop's behaviour genuinely changes between 90 and 180 mV.
+**A departure above 90 mV survives the fix.** Extrapolating the clean law to 180 mV predicts ≈4.59
+against an aligned measurement well below it, and adding 180 mV to the fit takes χ² from 0.26 on
+2 dof to 24.1 on 3. Its size and shape are corrected below.
 
-**Open:** 180 mV is the only level still drifting across its own aligned windows (t = +2.00), so
-its mean may still be low — it is being extended to eight aligned windows to test for a plateau. A
-level at 128 mV will locate the break. **No mechanism is proposed for the bend** until both are
-in.
+#### Eight windows: 180 mV plateaus, and the first window under-reports
+
+180 mV was extended to eight aligned windows and 128 mV was added
+(`p1_targeted_180mV_128mV_results.csv`). Across the eight windows 180 mV reads
+
+    2.879  3.506  4.479  3.897  4.028  4.050  3.962  3.691
+
+— rising for three windows, then flat. **It equilibrates.** Windows 4–8 give
+**3.926 ± 0.168** with no trend, so the four-window mean of 3.690 quoted above was **biased low**.
+
+**Window 1 is too early, and this is the inverse of the problem it was built to solve.** It runs
+from crossing+50k to +100k. That margin is ample against the *approach* — which is what it was
+designed for — but not against the *spread-out*: immediately after the register arrives it is
+still near where it arrived and has not yet diffused to full band width. Removing contamination
+from the start of the measurement introduced a different bias in the same place, pointing the
+other way. **All band estimates should therefore begin at crossing+100k**, applied to every level
+rather than only where it matters — a rule applied selectively produces levels measured
+differently.
+
+#### It is a gradual rollover, not a break at 90 mV
+
+Extrapolating the 11.5–90 mV law upward:
+
+| σ_n (mV) | law predicts | measured | deficit |
+| ---: | ---: | ---: | ---: |
+| 128 | 3.997 | 3.792 ± 0.192 | **1.1σ** |
+| 180 | 4.586 | 3.926 ± 0.168 | **3.9σ** |
+| 360 | 6.063 | 4.697 ± 0.159 | **8.6σ** |
+
+The deficit grows *monotonically* rather than appearing at a threshold, and 128 mV is consistent
+with the law. **Describing this as a bend at 90 mV was reading a step into a curve**; it is a
+gradual rollover that becomes detectable somewhere above 128 mV.
+
+**Open.** 128 mV received only four windows against 180 mV's eight and is being rerun for
+comparability; α over 11.5–90 mV will be requoted once window 1 is dropped everywhere, since every
+level shifts slightly. **No mechanism is proposed for either the exponent or the rollover.**
 
 Convergence time, across six levels: 8.3k, 12.5k, 23.6k, 45.1k, 76.7k and ~140k cycles over a
 31× noise range.
@@ -331,8 +362,9 @@ Convergence time, across six levels: 8.3k, 12.5k, 23.6k, 45.1k, 76.7k and ~140k 
 - **No certification.** Nothing here has been assessed against AIS-31, SP 800-90B or any other
   standard by anyone.
 - **The band width has no working theory.** Over 11.5–90 mV it follows σ_n^(0.403 ± 0.013) with an
-  excellent fit; the relation bends above 90 mV and nothing explains either the exponent or the
-  bend. No mechanism is proposed for either.
+  excellent fit; above that it rolls over gradually — 1.1σ below the law at 128 mV, 3.9σ at
+  180 mV, 8.6σ at 360 mV. Nothing explains either the exponent or the rollover, and no mechanism
+  is proposed for either.
 
 ## Contents
 
@@ -357,6 +389,8 @@ run_multiwindow_equilibration_audit.py   sigma_code over four successive windows
 p1_65run_multiwindow_equilibration_results.csv  its results; the equilibration test
 run_relative_window_equilibration_campaign.py  windows aligned to each run's own crossing
 p1_65run_relative_window_equilibration_results.csv  its results; supersedes all earlier fits
+run_extended_180mV_and_128mV_campaign.py  180 mV to eight aligned windows, plus a 128 mV level
+p1_targeted_180mV_128mV_results.csv      its results; the plateau test
 ```
 
 The scripts write their outputs beside themselves and need only `numpy`. Verdicts in the
