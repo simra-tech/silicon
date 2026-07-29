@@ -292,6 +292,25 @@ scanned at 2 ps steps, one segment each, like for like:
 **The model holds.** Both boundaries land within 7 ps of prediction on a 2 ps grid, and the
 predicted shift is right to 6 %.
 
+**Then it was tested again by someone else.** The Design Engineer independently rebuilt the
+50 % duty experiment with its own generator — deriving each deck from the production file and
+printing the production-vs-variant diff as an audit — and used 20 ps edges where the deck above
+used 25 ps. Different author, different tooling, different edge rate:
+
+| f_s | t_rise / pulse / t_fall | predicted | measured | error |
+| ---: | ---: | ---: | ---: | ---: |
+| 1.0 | 20 / 480.0 / 20 ps | 520.0 ps | 524 ps | +4.0 |
+| 1.5 | 20 / 313.3 / 20 ps | 353.3 ps | 353 ps | −0.3 |
+| 2.0 | 20 / 230.0 / 20 ps | 270.0 ps | 272 ps | +2.0 |
+
+Mean +1.9 ps. That campaign is continuing across the remaining rates; these are the three
+complete at time of writing. Artefacts in `duty-cycle/` are `*_clk50_*`.
+
+**This is the confirmation that counts.** The seven production rates and the hand-derived deck
+above were all measured by the same person who proposed the model, from decks built the same
+way. These three were not. A model that only survives tests run by its author has not been
+tested.
+
 ### Across all seven rates — and a correction to what this section first said
 
 The two points above were then extended to every rate already on disk, same method, 2 ps steps,
@@ -327,6 +346,8 @@ model that predicts that boundary has now been tested out of sample rather than 
 duty-cycle/tb_dutyexp_1.0g_50pct.spice     the derived deck (clock lines only)
 duty-cycle/ngspice_dutyexp_1.0g_50pct.log  its run log
 duty-cycle/bits_dutyexp_1.0g_50pct.txt     199 bits extracted at 0.9 T
+duty-cycle/{tb,ngspice,bits}_clk50_{1.0,1.5,2.0}g_seg1.*
+                                           the independent rebuild, 20 ps edges
 ```
 
 The raw transient (97 MB) is not shipped; the deck regenerates it in ~120 s.
