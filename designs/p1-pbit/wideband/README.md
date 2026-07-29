@@ -169,11 +169,24 @@ Consequently:
 | 128 µV | 10 % |
 
 **Bias costs entropy directly, so this is a specification limit rather than a
-characterisation curiosity.** Offset from mismatch between nominally identical bipolar
-devices of this size is **σ_VOS = 6.46 mV**, from a 200-sample Monte Carlo against the PDK
-mismatch model — five hundred times the offset that costs a percent of duty cycle, i.e. an
-uncompensated part is not slightly biased but stuck at a rail. **Offset compensation is not
-optional for this design.**
+characterisation curiosity.** The mismatch figure this section previously quoted —
+σ_VOS = 6.46 mV, attributed here to a 200-sample Monte Carlo against the PDK mismatch model —
+**is reported, not verified, and this note stated its provenance more confidently than the
+evidence supports.**
+
+Auditing it: no Monte Carlo artefacts exist on disk — no outputs, no logs, no generating
+script. The only deck referencing mismatch selects `cornerHBT.lib hbt_typ_mismatch`, which is a
+corner-library choice rather than a 200-sample sweep. The design specification it came from
+labels the row *Specified*, which is more careful than the sentence that appeared here. The
+figure may well be right and the run may have happened without leaving artefacts; what is
+certain is that **it cannot be substantiated from this repository, and it should not have been
+written as a measurement.**
+
+The qualitative conclusion does not depend on it. Bipolar pair mismatch of *any* plausible
+magnitude — hundreds of microvolts upward — is one to three orders above the 12.8 µV that costs
+a percent of duty cycle, so **offset compensation is not optional for this design** regardless.
+What does depend on the number is the *trim range*, which is sized in σ: until σ_VOS is measured
+with a run that leaves artefacts, treat range decisions derived from 6.46 mV as provisional.
 
 ### How much residual offset is allowed
 
