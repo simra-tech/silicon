@@ -810,9 +810,36 @@ quantitatively is not shown, and is not claimed.**
 This has a shape worth flagging to anyone reusing the method. §3 of this page describes moving *from*
 fixed windows *to* crossing-relative ones, to kill a real artefact in which the observation window
 stayed fixed while the observed process slowed down — five apparent physics results that were one
-defect in five costumes. That fix was correct. It may have introduced this subtler one: **an estimator
-whose window depends on the quantity being estimated.** The test is a single fixed window common to
-every seed, on the same trajectories, and it is pending.
+defect in five costumes. That fix was correct. It introduced a subtler one: **an estimator whose window
+depends on the quantity being estimated.**
+
+#### The window test ran, and it is a cause but not the cause
+
+Recomputed on one fixed window, `[100,000 : 3,000,000]` cycles, identical for every seed and both
+implementations, on the same trajectories:
+
+| | crossing-relative window | fixed common window |
+| --- | ---: | ---: |
+| Python scatter | 1.40% | **1.84%** |
+| C scatter | 2.95% | **3.05%** |
+| sd ratio | 2.10 | **1.66** |
+| F on (19,19) | 4.41 | **2.75** (two-sided p = 0.042) |
+
+Absolute figures mislead here, because the fixed window is *shorter* and so carries a **higher** floor
+— 2.86% against 2.45%. Sized against its own floor, Python's variance moves from 0.327 to 0.414 of it:
+**the adaptive window accounts for 13% of the missing variance and leaves 87% standing.** The
+difference between the implementations is still significant at 5%; it stopped being significant at 1%.
+
+**C measures 1.07× of the floor here, as it did before** — a third independent confirmation that its
+estimator and its process are sound. **Python measures 0.64×** (χ²₁₉ = 7.85, one-sided p = 0.019), and
+recomputing the floor from Python's own measured correlation time (8,254 cycles) rather than the
+theoretical 9,502 leaves it at 0.69×. The deficit does not depend on which correlation time is used.
+
+**One assumption behind every floor quoted on this page is not yet measured.** Each was extrapolated
+from the sub-window result by assuming estimator noise scales as 1/√(window length), a relation
+validated at a single length and then scaled. Whether it holds across lengths is being tested directly
+(k = 2, 4, 8, 16 sub-windows per trajectory). Until it is, treat the floors as derived rather than
+observed — if the scaling departs from √k, the deficit above is arithmetic rather than behaviour.
 
 Excluded so far: the noise moments, the noise autocorrelation, the crossing statistics, the accumulator
 arithmetic, the variance computation, the correlation time, and now the single-run estimator itself.
@@ -892,6 +919,8 @@ run_sokal_adaptive_autocorr_tau_audit.py integrated correlation time, mean-subtr
 p1_sokal_adaptive_autocorr_tau_results.csv  its results: the running sum against truncation lag
 run_20seed_and_16subwindow_audit.py      20 seeds a side, each window cut into 16 sub-windows
 p1_20seed_and_16subwindow_results.csv    its results: within-run scatter beside the full-window band
+run_fixed_common_window_audit.py         the band on one fixed window common to every seed
+p1_fixed_common_window_results.csv       its results: 20 seeds a side over [100k : 3M] cycles
 ```
 
 The scripts write their outputs beside themselves and need only `numpy`. The equivalence audit also
