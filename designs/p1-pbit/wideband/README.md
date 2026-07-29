@@ -292,11 +292,32 @@ scanned at 2 ps steps, one segment each, like for like:
 **The model holds.** Both boundaries land within 7 ps of prediction on a 2 ps grid, and the
 predicted shift is right to 6 %.
 
-Both measurements sit slightly *early*, by 2 ps on a 20 ps edge and 7 ps on a 25 ps edge —
-roughly a tenth to a quarter of the fall time in each case. That is the expected direction: the
-latch commits once the clock has fallen far enough to cut off the track path, not at the last
-picosecond of the transition. So the boundary is `t_rise + pulse_width + t_fall` minus a small
-fraction of the fall time, and quoting the un-corrected sum is the conservative choice.
+### Across all seven rates — and a correction to what this section first said
+
+The two points above were then extended to every rate already on disk, same method, 2 ps steps,
+`c_p − c_n`, one segment each:
+
+| f_s | t_rise / pulse / t_fall | predicted | measured | error |
+| ---: | ---: | ---: | ---: | ---: |
+| 1.0 | 20 / 400 / 20 ps | 440.0 ps | 438 ps | −2.0 |
+| 1.5 | 20 / 266.7 / 20 ps | 306.7 ps | 308 ps | +1.3 |
+| 2.0 | 20 / 200 / 20 ps | 240.0 ps | 246 ps | +6.0 |
+| 2.5 | 20 / 160 / 20 ps | 200.0 ps | 198 ps | −2.0 |
+| 3.0 | 20 / 133.3 / 20 ps | 173.3 ps | 173 ps | −0.3 |
+| 4.0 | 20 / 100 / 20 ps | 140.0 ps | 139 ps | −1.0 |
+| 5.0 | 20 / 80 / 20 ps | 120.0 ps | 122 ps | +2.0 |
+
+**Mean error +0.6 ps, spread 2.8 ps**, over boundaries spanning 120 to 440 ps — a 3.7× range of
+the quantity being predicted, across a 5× range of clock rate.
+
+**This corrects an earlier version of this section.** From the first two points it reported that
+both measurements sat *early* — 2 ps and 7 ps — and offered a mechanism: that the latch commits
+once the clock has fallen far enough to cut off the track path rather than at the end of the
+transition. With seven points the mean deviation is +0.6 ps and the residuals scatter both ways.
+**There is no systematic early commit**; the pattern was two points and an invented explanation
+for it. The single −7 ps point sits about 2.5σ out on the observed scatter and does not
+establish a trend. The model needs no correction term: the boundary is
+`t_rise + pulse_width + t_fall`.
 
 This puts the rate ceiling of §1.1 on firmer ground: the settled window needs
 `T − (t_rise + pulse_width + t_fall)` to remain positive with margin for regeneration, and the
