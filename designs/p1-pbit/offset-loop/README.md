@@ -794,11 +794,12 @@ times longer, so a quarter the noise — giving a single-run noise floor of **2.
 | | across-seed scatter | noise floor | |
 | --- | ---: | ---: | --- |
 | C reimplementation | 2.95% | 2.45% | ordinary; leaves ≈1.55% genuine seed-to-seed spread |
-| Python | **1.40%** | 2.45% | **below the floor**, χ²₁₉ = 5.96, one-sided p = 0.0036 |
+| Python | **1.40%** | 2.45% | below the floor, χ²₁₉ = 5.96, one-sided p = 0.0036 |
 
 Twenty independent estimates of one quantity cannot cluster more tightly than the noise of the
-instrument that produced them. Something is compressing them, and unlike every previous step this
-constrains a mechanism instead of excluding one.
+instrument that produced them, so this constrains a mechanism instead of excluding one — **subject to
+the floor being right, which two sections below is where that gets tested and the strong form of this
+claim gets withdrawn.** The 2.45% is derived by scaling, not observed.
 
 **Candidate, stated as a candidate.** Crossing time and measured band correlate at **−0.49** for
 Python (t = −2.36, 18 dof) and **−0.12** for C. The measurement window is *derived from* the crossing
@@ -830,16 +831,40 @@ Absolute figures mislead here, because the fixed window is *shorter* and so carr
 **the adaptive window accounts for 13% of the missing variance and leaves 87% standing.** The
 difference between the implementations is still significant at 5%; it stopped being significant at 1%.
 
-**C measures 1.07× of the floor here, as it did before** — a third independent confirmation that its
-estimator and its process are sound. **Python measures 0.64×** (χ²₁₉ = 7.85, one-sided p = 0.019), and
-recomputing the floor from Python's own measured correlation time (8,254 cycles) rather than the
-theoretical 9,502 leaves it at 0.69×. The deficit does not depend on which correlation time is used.
+Measured against that floor, C sits at 1.07× and Python at 0.64× (χ²₁₉ = 7.85, one-sided p = 0.019) —
+**but read the next section before using either number.**
 
-**One assumption behind every floor quoted on this page is not yet measured.** Each was extrapolated
-from the sub-window result by assuming estimator noise scales as 1/√(window length), a relation
-validated at a single length and then scaled. Whether it holds across lengths is being tested directly
-(k = 2, 4, 8, 16 sub-windows per trajectory). Until it is, treat the floors as derived rather than
-observed — if the scaling departs from √k, the deficit above is arithmetic rather than behaviour.
+#### Withdrawn: the strong form of the deficit does not survive its own floor
+
+Every floor quoted above is **extrapolated, not measured**: the estimator's noise was validated at one
+sub-window length and then scaled by 1/√(window length). That assumption has now been tested directly,
+by cutting each trajectory into k = 2, 4, 8, 16 sub-windows and comparing each against theory.
+
+**It does not hold as assumed.** The measured exponent is **−0.70**, not −0.50. Most of the departure is
+a bias rather than physics — a scatter computed from only k values per trajectory is biased low by
+c4(k), which is 0.798 at k = 2 and 0.984 at k = 16, i.e. strongest exactly where the departure is
+largest. Dividing it out moves the exponent to **−0.60** and the agreement with theory to 0.94, 0.97 and
+1.01 at k = 4, 8 and 16. So √W is close at the well-sampled scales and the k = 2 point — two values per
+trajectory — is both the most biased and the noisiest of the four.
+
+**The consequence is that the floor depends on the anchor, and so does the conclusion:**
+
+| extrapolation | floor | Python | p | C |
+| --- | ---: | ---: | ---: | ---: |
+| k = 16 anchor, √W | 2.86% | 0.64× | 0.019 | 1.07× |
+| bias-corrected k = 2 anchor, √W | 2.33% | 0.79× | 0.144 | 1.31× |
+| bias-corrected k = 16, empirical −0.60 | 2.19% | 0.84× | 0.230 | 1.39× |
+
+Python is below the floor on all three, but the significance runs from 2% to 23% on a choice of
+extrapolation — **and the first row is what a previous revision of this page published.** That is not a
+robust anomaly, and the strong form of the claim is withdrawn: there is a *suggestion* that one
+implementation's runs resemble each other more than sampling statistics allow, and it cannot be
+established on 20 seeds against an extrapolated floor.
+
+**The floor is now being measured rather than derived** — one long trajectory per implementation cut
+into 20 disjoint windows of the full 2,900,000-cycle length, which needs no scaling assumption, no
+anchor, and carries under 2% small-sample bias. Until that returns, treat both the deficit and C's
+apparent agreement as provisional: C moves from 1.07× to 1.39× across the same three choices.
 
 Excluded so far: the noise moments, the noise autocorrelation, the crossing statistics, the accumulator
 arithmetic, the variance computation, the correlation time, and now the single-run estimator itself.
@@ -921,7 +946,16 @@ run_20seed_and_16subwindow_audit.py      20 seeds a side, each window cut into 1
 p1_20seed_and_16subwindow_results.csv    its results: within-run scatter beside the full-window band
 run_fixed_common_window_audit.py         the band on one fixed window common to every seed
 p1_fixed_common_window_results.csv       its results: 20 seeds a side over [100k : 3M] cycles
+run_multiscale_subwindow_scaling_audit.py within-run scatter at k = 2, 4, 8, 16 sub-windows
+p1_multiscale_subwindow_scaling_results.csv  its results; its prediction column is wrong, see above
 ```
+
+**A warning about one column in that last file.** `bartlett_pred_pct` is *not* Bartlett: it is
+0.955·√(τ_int/W), uniformly at every k — the superseded expression, 1.91× too large. The correct form
+is the one given above, √((1 + 2Σρ²)/2N). Every measured-against-predicted ratio in that file is
+therefore wrong, and the ratios recomputed against the correct formula are the ones quoted in this
+page. The earlier sub-window audit used the correct form; the later script regressed to the superseded
+one, which is the failure mode a published correction is supposed to prevent and did not.
 
 The scripts write their outputs beside themselves and need only `numpy`. The equivalence audit also
 needs `sim_pbit_loop.so` built from `sim_pbit_loop.c` in the same directory. Verdicts in the
