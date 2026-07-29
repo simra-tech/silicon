@@ -242,6 +242,28 @@ from 165 ps to 245 ps — nearly the whole period:
 Identical throughout. Once the output settles it genuinely stops changing, so there are no
 spurious late transitions and the offset is not an artefact of the estimator.
 
+### Is the offset constant? No — but what it is instead is exploratory
+
+For anyone applying the rule, whether to add a flat 2.5 ps or something rate-dependent matters.
+Three forms fitted to the six 10-segment means, weighted by their standard errors:
+
+| form | best fit | χ² (5 dof) | p |
+| --- | ---: | ---: | ---: |
+| constant offset | +2.45 ps | 14.43 | **0.013** |
+| fixed fraction of the period | +0.364 % of T | 33.13 | <0.0001 |
+| proportional to clock rate | +0.854 ps per GS/s | 6.27 | 0.28 |
+
+**The defensible result is the negative one: a constant offset is disfavoured** (p = 0.013),
+and a fixed fraction of the period is excluded outright. Those are single hypothesis tests
+against the data.
+
+**The positive result is weaker than it looks and is labelled accordingly.** The rate-
+proportional form fits well, but it was selected as the best of three forms tried on six points,
+so its p-value is not the p-value of a pre-registered hypothesis. Residuals under it are within
+1σ everywhere except 2.5 GS/s, which sits at −2.2σ and was also the odd point in the raw table.
+Treat "≈0.85 ps per GS/s" as a working description for choosing margin, not as an established
+scaling law.
+
 **No mechanism is offered for the 2.5 ps.** An earlier version of this note proposed a physical
 story for a boundary offset seen in two points and had to withdraw it when seven points
 disagreed. The offset is now established; its cause is not, and a plausible story fitted after
