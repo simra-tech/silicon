@@ -61,14 +61,39 @@ still moving, and a node still moving retains a trace of the previous decision �
 arithmetic then reports as correlation. **Pre-plateau values measure the settling, not the
 bitstream.** Every number in this note is taken at 0.9 T, inside the plateau at every rate.
 
-**A caveat this raises for the rate-independence result above.** The plateau begins at 0.50 T
-for 1.0 and 2.0 GS/s but 0.60 T at 5.0 — mostly a *fraction* of the period plus ~20 ps fixed.
-A fixed fraction is a property of these decks, which scale the clock waveform with the
-sampling rate, so the latch is given proportionally the same time at every rate. Silicon has a
-slew set by its driver that does **not** scale, so the settled window would shrink as the
-clock speeds up. The flatness reported above may therefore be partly a consequence of how the
-clock is generated here, and a fixed-slew run is needed before it can be claimed for hardware.
-This is stated as an open question, not a defect.
+### Where the plateau boundary comes from — and a caveat withdrawn
+
+An earlier version of this section suggested the plateau might be an artefact of decks that
+scale the clock waveform with the sampling rate, and warned that silicon's fixed slew would
+shrink the settled window as the clock speeds up. **That was wrong, and it was published
+without checking the decks it was a claim about.** They read:
+
+```
+1.0 GS/s   VCLK_P clk_p 0 PULSE(0.775 0.925 0p 20p 20p 400.0p 1000.0p)
+5.0 GS/s   VCLK_P clk_p 0 PULSE(0.775 0.925 0p 20p 20p  80.0p  200.0p)
+```
+
+Rise and fall are **20 ps at every rate** — already fixed, already what silicon does. What is
+held constant is the *duty cycle* at 40 %, which is an ordinary design choice one would also
+make in hardware.
+
+That explains the boundary exactly. The clock's falling edge completes at 20 ps + pulse width,
+and the plateau opens essentially there:
+
+| f_s | period | falling edge done | plateau opens |
+| ---: | ---: | ---: | ---: |
+| 1.0 GS/s | 1000 ps | 440 ps | ~500 ps |
+| 2.0 GS/s | 500 ps | 240 ps | ~250 ps |
+| 5.0 GS/s | 200 ps | 120 ps | ~120 ps |
+
+**The rule is not a fraction of the period at all: sample after the latch clock edge has
+completed.** Regeneration after that is fast — tens of ps at most, within the resolution of
+these scans. It looked like a fixed fraction only because the duty cycle is fixed.
+
+**There is a rate ceiling, and it is above where we run.** The settled window needs
+0.6 T > 20 ps + t_regen. With regeneration in the tens of ps that puts the ceiling somewhere
+around 7.5–15 GS/s — worth pinning down before anyone designs past 5, but not a constraint on
+the results here. Measuring t_regen directly is the outstanding item.
 
 ### Correction to the previous version of this table
 
