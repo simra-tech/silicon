@@ -678,11 +678,15 @@ Substituting σ_n = 45.5 mV, N_sub = 16, A_op = 314.7, ΔV_fine = 0.6118 µV and
 | --- | ---: |
 | bare Ornstein–Uhlenbeck | 3.0423 |
 | with the lag-one correction | **3.0624** |
-| measured, 40 runs pooled | **3.0701 ± 0.0111** |
+| measured, 40 short runs pooled | **3.0701 ± 0.0111** |
+| measured, one 58M-cycle run in 20 windows | **3.0450 ± 0.0148** |
 
-**+0.25%, or 0.70σ.** The two exponents were already 1/2; this fixes the prefactor as well, so the
-band is now predicted rather than described. The correction factor is not a free knob — R₁ was
-measured on the accumulator steps before being substituted here.
+**Between −0.56% and +0.25% of the prediction — 1.17σ low and 0.70σ high.** The two independent
+measurements straddle the closed form and differ from each other by 1.36σ, so the agreement is a range
+rather than a single figure, and it is quoted that way deliberately: an earlier revision of this page
+quoted only the +0.25% figure, before the long run existed. The two exponents were already 1/2; this
+fixes the prefactor as well, so the band is predicted rather than described. The correction factor is not
+a free knob — R₁ was measured on the accumulator steps before being substituted here.
 
 **Withdrawn: a correction this page made and got wrong.** A previous revision stated that the figure
 above "was not a pooled value: it is one seed's Python result on its own", and replaced it with
@@ -861,10 +865,35 @@ robust anomaly, and the strong form of the claim is withdrawn: there is a *sugge
 implementation's runs resemble each other more than sampling statistics allow, and it cannot be
 established on 20 seeds against an extrapolated floor.
 
-**The floor is now being measured rather than derived** — one long trajectory per implementation cut
-into 20 disjoint windows of the full 2,900,000-cycle length, which needs no scaling assumption, no
-anchor, and carries under 2% small-sample bias. Until that returns, treat both the deficit and C's
-apparent agreement as provisional: C moves from 1.07× to 1.39× across the same three choices.
+#### Closed: the floor was measured, and there is no anomaly on either side
+
+The floor is no longer derived. One trajectory per implementation was run to **58,100,000 cycles** and
+cut into 20 disjoint windows of the full 2,900,000-cycle length — no scaling assumption, no anchor,
+under 2% small-sample bias. The two implementations turn out to have **different** floors, and comparing
+each side's across-seed scatter to *its own* rather than to a shared one settles the whole question:
+
+| | across-seed scatter | its own measured floor | ratio | p |
+| --- | ---: | ---: | ---: | ---: |
+| Python | 1.84% | **2.20%** | 0.84× | 0.227 |
+| C reimplementation | 3.05% | **3.00%** | 1.02× | 0.351 |
+
+**Neither side is anomalous.** The across-seed scatter differed by 2.75× because the estimator noise
+differs by 1.86× in the same direction; measured against its own noise, each implementation is ordinary.
+And the floor difference is not established either — F = 1.86 on (19,19), two-sided p = 0.186 against a
+critical value of 2.53. Everything in this dataset is consistent with a single common floor near 2.6%
+and 20 samples being too few to resolve any of it.
+
+So the sequence of claims this section made — a 4× disagreement, then 2.10×, then a deficit at p =
+0.002, then p = 0.019, then a suggestion — **ends at nothing established.** What looked for four rounds
+like a property of the loop was a difference between two simulators' estimator noise, itself within
+sampling error.
+
+**Two limitations, stated rather than glossed.** The 58M run is a single trajectory per implementation
+(seed 201; its first window reproduces that seed's fixed-window value to fifteen digits, which is how we
+know it is genuinely that stream extended), so it measures the estimator noise of one realisation, not
+an average over seeds. And that long run gives a mean band of **3.0450** for Python where 20 short runs
+gave 3.0768 — the two straddle the closed form, differing from each other by 1.36σ, which is why the
+agreement is quoted below as a range.
 
 Excluded so far: the noise moments, the noise autocorrelation, the crossing statistics, the accumulator
 arithmetic, the variance computation, the correlation time, and now the single-run estimator itself.
@@ -948,6 +977,8 @@ run_fixed_common_window_audit.py         the band on one fixed window common to 
 p1_fixed_common_window_results.csv       its results: 20 seeds a side over [100k : 3M] cycles
 run_multiscale_subwindow_scaling_audit.py within-run scatter at k = 2, 4, 8, 16 sub-windows
 p1_multiscale_subwindow_scaling_results.csv  its results; its prediction column is wrong, see above
+run_58M_direct_observed_noise_floor_campaign.py  the floor measured, not derived: 58.1M cycles
+p1_58M_direct_observed_noise_floor_results.csv   its results: 20 disjoint full-length windows
 ```
 
 **A warning about one column in that last file.** `bartlett_pred_pct` is *not* Bartlett: it is
