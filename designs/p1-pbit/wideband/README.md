@@ -239,4 +239,27 @@ Decks other than the per-rate representative are omitted: each is ~1.9 MB of PWL
 netlist plus generated content and all regenerate from `generate_rate_map.py` and the seed.
 Flagged rather than quietly taken.
 
-Reproduce with `ngspice -b <deck>` after setting `$PDK_ROOT` to an IHP SG13G2 installation.
+## Reproducibility — what these decks do and do not give you
+
+Run `ngspice -b <deck>` after setting `$PDK_ROOT` to an IHP SG13G2 installation. **You will
+not get the bitstreams shipped here.** You will get different ones, drawn from the same
+distribution.
+
+The decks carry no seed. Two production decks for the same rate — say `tb_p1_5.0g_seg1` and
+`_seg2` — are byte-identical apart from a comment line and their output filenames: same
+circuit, same `TRNOISE(3.357827e-04 2.0p 0 0)`, no `rndseed` anywhere. Their outputs have
+different checksums. ngspice reseeds its noise generator per process.
+
+That cuts both ways and both halves matter:
+
+- **It is why the statistics are valid.** Each segment is an independent realisation, which is
+  what pooling and the quoted standard errors require. Had ngspice used one fixed default
+  seed, all 40 segments at 5.0 GS/s would have been the same run repeated and every error bar
+  in this note would have been meaningless.
+- **It is why the bits are not reproducible.** A deck here specifies a *distribution*, not a
+  realisation. Reproducing a specific bitstream would need `set rndseed` in a `.control`
+  block, which these decks do not have.
+
+So: the statistical results reproduce, run to run and by anyone. The individual bitstreams do
+not, and are shipped as the record of what was actually measured rather than as something you
+can regenerate. Checked by diffing the decks and their outputs, not assumed.
