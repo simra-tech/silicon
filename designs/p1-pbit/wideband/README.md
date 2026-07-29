@@ -91,6 +91,27 @@ and the plateau opens essentially there:
 | 2.0 GS/s | 500 ps | 240 ps | ~250 ps |
 | 5.0 GS/s | 200 ps | 120 ps | ~120 ps |
 
+### Inside the plateau, the choice does not matter at all
+
+§1.1 shows the phase dominating the answer, which raises the obvious question of how much the
+published figures depend on having picked 0.9 T. The answer is: not at all. Pooled r₁ over 50
+segments, scanned across the whole settled region:
+
+| 5.0 GS/s (plateau opens 0.61 T) | 0.65 T | 0.70 T | 0.80 T | 0.90 T | 0.99 T |
+| --- | ---: | ---: | ---: | ---: | ---: |
+| pooled r₁ | +0.0082 | +0.0081 | +0.0081 | +0.0081 | +0.0081 |
+
+| 1.0 GS/s (plateau opens 0.44 T) | 0.50 T | 0.60 T | 0.80 T | 0.90 T | 0.99 T |
+| --- | ---: | ---: | ---: | ---: | ---: |
+| pooled r₁ | +0.0103 | +0.0103 | +0.0103 | +0.0103 | +0.0103 |
+
+Identical to four decimal places across the entire plateau, at both the best- and worst-resolved
+rates, with the standard error unchanged too. So the two halves of §1.1 are both true and not in
+tension: **outside** the settled region the sampling instant changes the answer by more than
+twice the design limit; **inside** it, every choice gives the same number. 0.9 T is not a tuned
+value, it is an arbitrary point in a flat region — which is what makes quoting it honest rather
+than merely reproducible.
+
 **The rule is not a fraction of the period at all: sample after the latch clock edge has
 completed.** Regeneration after that is fast — tens of ps at most, within the resolution of
 these scans. It looked like a fixed fraction only because the duty cycle is fixed.
