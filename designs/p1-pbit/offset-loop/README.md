@@ -308,8 +308,12 @@ eightfold noise range:
 
     σ_code ∝ σ_n^(0.403 ± 0.013)      χ² = 0.26 on 2 dof
 
-**19.6σ from √σ_n** — the diffusion picture is now firmly dead. **1.4σ from 1/3** — a cube root is
-the closest simple form, and still has no derivation behind it. Recorded as unexplained.
+> **Correction.** An earlier version of this page attached "19.6σ from √σ_n" and "1.4σ from 1/3"
+> to this fit. **Those distances belong to a different fit** — the all-six-level regression
+> (α = 0.344 ± 0.008) that the same page had *rejected* on its χ² of 32.9 on 4 dof. Numbers were
+> taken from a fit declared invalid and hung on a fit declared excellent, which is precisely the
+> rule stated earlier on this page. For α = 0.403 ± 0.013 the correct distances are **5.4σ from
+> 1/3** and **7.5σ from 1/2**. Superseded by the standardised fit below.
 
 **A departure above 90 mV survives the fix.** Extrapolating the clean law to 180 mV predicts ≈4.59
 against an aligned measurement well below it, and adding 180 mV to the fit takes χ² from 0.26 on
@@ -348,9 +352,45 @@ The deficit grows *monotonically* rather than appearing at a threshold, and 128 
 with the law. **Describing this as a bend at 90 mV was reading a step into a curve**; it is a
 gradual rollover that becomes detectable somewhere above 128 mV.
 
-**Open.** 128 mV received only four windows against 180 mV's eight and is being rerun for
-comparability; α over 11.5–90 mV will be requoted once window 1 is dropped everywhere, since every
-level shifts slightly. **No mechanism is proposed for either the exponent or the rollover.**
+#### Standardised: window 1 dropped everywhere, 128 mV brought to eight windows
+
+Seventy-five runs, seven levels, all band estimates starting at crossing+100k
+(`p1_standardized_rw2_plus_results.csv`):
+
+| σ_n (mV) | n | windows | σ_code |
+| ---: | ---: | ---: | ---: |
+| 11.5 | 10 | 4 | 1.501 ± 0.072 |
+| 23.0 | 10 | 4 | 2.047 ± 0.204 |
+| 45.5 | 5 | 4 | 2.643 ± 0.491 |
+| 90.0 | 20 | 4 | 3.472 ± 0.492 |
+| 128.0 | 10 | 8 | 3.583 ± 0.354 |
+| 180.0 | 10 | 8 | 3.945 ± 0.417 |
+| 360.0 | 10 | 8 | 4.679 ± 0.374 |
+
+**Over 11.5–90 mV:**
+
+    σ_code ∝ σ_n^(0.4095 ± 0.0166)      χ² = 0.62 on 2 dof
+
+**4.6σ above 1/3 and 5.5σ below 1/2 — both simple candidates are excluded.** The exponent is a
+value near 0.41 that nothing derives. It should not be described as "approximately a cube root";
+that overstates what is known.
+
+**The rollover begins below 128 mV, not above it.** Deficits against the clean law:
+
+| σ_n | law predicts | measured | deficit |
+| ---: | ---: | ---: | ---: |
+| 128 | 4.011 | 3.583 ± 0.112 | **3.8σ** |
+| 180 | 4.612 | 3.945 ± 0.132 | **5.1σ** |
+| 360 | 6.126 | 4.679 ± 0.118 | **12.2σ** |
+
+An earlier version called 128 mV consistent with the law at 1.1σ. That was computed with window 1
+still included at that level, which pulled it upward. It is not consistent.
+
+**Open.** The shape of this curve has changed three times in three hours, each time because of how
+the measuring window was drawn rather than because of the circuit. Before any mechanism is sought,
+90 and 180 mV are being re-run from **fresh seeds** under the standardised windows, to test whether
+3.472 and 3.945 reproduce within their error bars. **No mechanism is proposed for either the
+exponent or the rollover.**
 
 Convergence time, across six levels: 8.3k, 12.5k, 23.6k, 45.1k, 76.7k and ~140k cycles over a
 31× noise range.
@@ -362,9 +402,9 @@ Convergence time, across six levels: 8.3k, 12.5k, 23.6k, 45.1k, 76.7k and ~140k 
 - **No certification.** Nothing here has been assessed against AIS-31, SP 800-90B or any other
   standard by anyone.
 - **The band width has no working theory.** Over 11.5–90 mV it follows σ_n^(0.403 ± 0.013) with an
-  excellent fit; above that it rolls over gradually — 1.1σ below the law at 128 mV, 3.9σ at
-  180 mV, 8.6σ at 360 mV. Nothing explains either the exponent or the rollover, and no mechanism
-  is proposed for either.
+  excellent fit — an exponent near 0.41 that is 4.6σ from 1/3 and 5.5σ from 1/2, so neither simple
+  form applies. Above 90 mV it rolls over: 3.8σ below the law at 128 mV, 5.1σ at 180, 12.2σ at 360.
+  Nothing explains either the exponent or the rollover, and no mechanism is proposed for either.
 
 ## Contents
 
@@ -391,6 +431,8 @@ run_relative_window_equilibration_campaign.py  windows aligned to each run's own
 p1_65run_relative_window_equilibration_results.csv  its results; supersedes all earlier fits
 run_extended_180mV_and_128mV_campaign.py  180 mV to eight aligned windows, plus a 128 mV level
 p1_targeted_180mV_128mV_results.csv      its results; the plateau test
+run_standardized_rw2_to_rw8_campaign.py  all levels, window 1 dropped, 75 runs
+p1_standardized_rw2_plus_results.csv     its results; supersedes all earlier fits
 ```
 
 The scripts write their outputs beside themselves and need only `numpy`. Verdicts in the
