@@ -264,6 +264,42 @@ so its p-value is not the p-value of a pre-registered hypothesis. Residuals unde
 Treat "≈0.85 ps per GS/s" as a working description for choosing margin, not as an established
 scaling law.
 
+### The scaling tested against independent data — confirmed, but smaller
+
+The figure above came from the variant decks. The **production** decks span the same rates at a
+different duty cycle and were not used to obtain it, so they are an independent test of a
+hypothesis fixed in advance. Ten-segment means, same method:
+
+| f_s | predicted | mean of 10 | s.e.m. | error |
+| ---: | ---: | ---: | ---: | ---: |
+| 1.0 | 440.0 ps | 438.2 | 1.1 | −1.8 |
+| 1.5 | 306.7 ps | 307.0 | 0.5 | +0.3 |
+| 2.0 | 240.0 ps | 240.6 | 1.2 | +0.6 |
+| 2.5 | 200.0 ps | 201.8 | 0.9 | +1.8 |
+| 3.0 | 173.3 ps | 178.4 | 2.5 | +5.1 |
+| 4.0 | 140.0 ps | 143.4 | 1.2 | +3.4 |
+| 5.0 | 120.0 ps | 122.6 | 1.2 | +2.6 |
+
+| | value |
+| --- | ---: |
+| production slope | **+0.564 ± 0.140 ps per GS/s** (4.0σ from zero) |
+| variant slope (the prior) | +0.854 ps per GS/s |
+| disagreement | −0.290, **−2.1σ** |
+| constant-offset fit, production | χ² 17.67 / 6 dof — poor |
+
+**The effect is confirmed and the coefficient is not.** Rate-dependence reproduces on data that
+had no part in proposing it, at 4σ, and a constant offset is independently disfavoured here too.
+But the magnitude comes out ~a third smaller than the variant estimate.
+
+**The most likely reason is the one flagged when that estimate was published.** The 0.854 figure
+was the winner of a three-model contest on six points, and selecting the best-fitting model
+inflates the apparent effect. The production figure is a pre-registered fit of a single model to
+independent data, so it carries no such inflation. **Use +0.56 ps per GS/s**; the earlier value
+should be read as an upper end.
+
+A duty-cycle dependence would also explain the gap — the two sets differ in duty cycle as well
+as in provenance — and nothing here separates those two explanations.
+
 **No mechanism is offered for the 2.5 ps.** An earlier version of this note proposed a physical
 story for a boundary offset seen in two points and had to withdraw it when seven points
 disagreed. The offset is now established; its cause is not, and a plausible story fitted after
