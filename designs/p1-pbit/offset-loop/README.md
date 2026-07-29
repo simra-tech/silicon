@@ -554,8 +554,48 @@ steepening survives. **Band measurements require a window long compared with the
 correlation time, and because that time grows with the divider, no fixed window is valid across a
 divider sweep.** Whether even 150,000 cycles suffices at `N_sub` = 256 is itself under test.
 
-**The trade curve above should be read as provisional** pending recomputation under one consistent
-window definition.
+#### The measurement has not converged, and no exponent is quotable
+
+`N_sub` = 256 was re-measured over a 450,000-cycle contiguous window
+(`p1_contiguous_window_trade_results.csv`):
+
+| window | σ_code at `N_sub` = 256 |
+| ---: | ---: |
+| 50,000 | 0.3558 |
+| 150,000 | 0.6118 ± 0.0565 |
+| 450,000 | **0.7410 ± 0.0551** |
+
+**Still climbing.** And the step ratios say what is happening: the first tripling multiplied σ by
+**1.72**, against √3 = 1.73 — the signature of a **free random walk with no restoring force acting
+inside the observation**. The second tripling gave only 1.21, so confinement has finally begun.
+Every number quoted on this page came from somewhere on that transition, not from the confined
+limit.
+
+**The general rule.** Compare the window against each setting's *own* settling time, not against a
+cycle count:
+
+| `N_sub` | settling | 150k window as a multiple |
+| ---: | ---: | ---: |
+| 4 | 5,105 | **29.4×** |
+| 16 | 23,162 | 6.5× |
+| 64 | 103,729 | 1.45× |
+| 256 | 459,671 | **0.33×** |
+
+The same window is generous at one end of the sweep and inadequate at the other **by a factor of
+ninety**. Of the four trade-curve points, **only the fastest has ever been measured over a clearly
+adequate window** — the fitted exponent compares one converged measurement against three
+unconverged ones.
+
+> **No band exponent from this page is quotable.** The settling law (§ above) stands: it
+> extrapolates cleanly over a 64× divider range and does not depend on the band measurement. The
+> band *shrinks* with divider — that much is unambiguous. Its **slope is not established.**
+
+**The fix, and the lesson underneath it.** Specify the window as a multiple of each run's own
+crossing cycle: start at crossing + 1×crossing, run for 10×crossing. Every divider then gets equal
+statistical opportunity relative to its own dynamics. Note the shape of the error: the *start* of
+the window was made relative to each run earlier on this page, and the *length* was left fixed in
+absolute cycles. **Both ends of a measurement window must be defined relative to the thing being
+measured, not to the clock.**
 
 *Calibration note, recorded against the prediction:* all six stated point intervals missed, yet the
 underlying picture was substantially right. The intervals were too tight for what was known — a
@@ -614,6 +654,8 @@ run_nsub256_extrapolation_campaign.py    divider 256, prediction pre-registered 
 p1_nsub256_extrapolation_results.csv     its results: the trade exponent bends
 run_discrete_occupancy_audit.py          code occupancy per divider, prediction pre-registered
 p1_discrete_occupancy_results.csv        its results: quantisation refuted, window discrepancy found
+run_contiguous_window_trade_campaign.py  150k and 450k contiguous windows, prediction pre-registered
+p1_contiguous_window_trade_results.csv   its results: the measurement has not converged
 ```
 
 The scripts write their outputs beside themselves and need only `numpy`. Verdicts in the
