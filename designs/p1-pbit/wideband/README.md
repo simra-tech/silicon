@@ -9,6 +9,24 @@ amplitude derived from a `.noise` analysis of the VBIC model at the operating bi
 234 runs across seven sampling rates, plus a deterministic offset sweep. Decks, logs and
 extracted bitstreams for every run.
 
+### What this note has corrected about itself
+
+It has been revised repeatedly and several of those revisions withdrew things it previously
+said. Rather than make a reader reconstruct that from the body, the current status:
+
+| claim | status |
+| --- | --- |
+| r₁ flat with rate, \|r₁\| ≲ 0.01 | **stands** — 234 segments, seven rates |
+| boundary = t_rise + pulse + t_fall | **stands** — 13 configurations, two independent builders |
+| the plateau is an artefact of scaled clock slew | **withdrawn** — the decks use fixed 20 ps edges (§1.2) |
+| the boundary sits systematically early | **withdrawn** — two-point pattern; seven points scatter both ways (§1.2) |
+| σ_VOS = 6.46 mV from a 200-sample Monte Carlo | **downgraded to reported** — no artefacts substantiate it (§2) |
+| single-segment boundaries good to ~2 ps | **corrected** — ~5 ps; the 2 ps figure was the scan grid (§1.2) |
+| bitstreams reproducible from these decks | **corrected** — the decks carry no seed (*Reproducibility*) |
+
+Nothing above was found by a reader. Each was found by re-checking a claim this note had already
+published, which is the only reason the list is this specific.
+
 ## 1. Adjacent-bit correlation does not depend on sampling rate
 
 Every rate below is measured from **all** segments present in `rate-map/`, by one method, in
@@ -146,6 +164,154 @@ Nyquist. Band-limiting is not cosmetic — imposing a 2.5 GHz limit on *this* so
 the sign of r₁, from −0.04 to +0.13.
 
 **Read this as an upper bound, not a null.** |r₁| ≲ 0.01 is what the data supports.
+
+
+## 1.2. The edge-completion model, tested against a prediction made first
+
+§1.1 proposes that the settled plateau opens when the clock finishes returning low, at
+`delay + t_rise + pulse_width + t_fall`. That was inferred from the production decks, which is
+weak evidence — the model was fitted to the same data it explains.
+
+So a prediction was recorded before the measurement existed: build a deck differing from
+production **only** in the clock, with a 50 % duty cycle instead of 40 %, and the plateau should
+move from 440 ps to **525 ps** at 1.0 GS/s.
+
+The deck was derived from `tb_p1_ac_wb10_1.0g_seg1.spice` by substituting the two `VCLK` lines
+and the output paths, and verified by diff that nothing else changed. Both decks were then
+scanned at 2 ps steps, one segment each, like for like:
+
+| deck | t_rise / pulse / t_fall | predicted | measured | error |
+| --- | ---: | ---: | ---: | ---: |
+| production | 20 / 400 / 20 ps | 440 ps | **438 ps** | 2 ps |
+| 50 % duty | 25 / 475 / 25 ps | 525 ps | **518 ps** | 7 ps |
+| **shift** | | **+85 ps** | **+80 ps** | 5 ps |
+
+**The model holds.** Both boundaries land within 7 ps of prediction on a 2 ps grid, and the
+predicted shift is right to 6 %.
+
+**Then it was tested again by someone else.** The Design Engineer independently rebuilt the
+50 % duty experiment with its own generator — deriving each deck from the production file and
+printing the production-vs-variant diff as an audit — and used 20 ps edges where the deck above
+used 25 ps. Different author, different tooling, different edge rate:
+
+| f_s | production pulse | variant pulse | predicted | measured | error |
+| ---: | ---: | ---: | ---: | ---: | ---: |
+| 1.0 | 400.0 ps | 480.0 ps | 520.0 ps | 524 ps | +4.0 |
+| 1.5 | 266.7 ps | 313.3 ps | 353.3 ps | 353 ps | −0.3 |
+| 2.0 | 200.0 ps | 230.0 ps | 270.0 ps | 272 ps | +2.0 |
+| 2.5 | 160.0 ps | 180.0 ps | 220.0 ps | 216 ps | −4.0 |
+| 3.0 | 133.3 ps | 146.7 ps | 186.7 ps | 188 ps | +1.3 |
+| 4.0 | 100.0 ps | 105.0 ps | 145.0 ps | 149 ps | +4.0 |
+
+**Mean +1.17 ps, spread 3.02 ps**, over six clock configurations none of which appear in the
+production set. Artefacts in `duty-cycle/` are `*_clk50_*`.
+
+### How precise is a single-segment boundary? Less than the scan grid suggests
+
+Every boundary quoted above comes from **one segment**, scanned on a 2 ps grid — which invites
+the reading that they are good to ~2 ps. They are not, and an accidental duplicate exposed it:
+two decks with byte-identical clock lines gave 524 ps and 532 ps. Since ngspice reseeds its
+noise per run (see *Reproducibility*), each segment carries its own realisation and the boundary
+inherits that scatter.
+
+Measured directly — all 10 segments of one configuration (20 / 480 / 20 ps at 1.0 GS/s):
+
+```
+524  516  518  524  528  512  526  516  520  516      mean 520.0   sd 5.2   s.e.m. 1.7 ps
+```
+
+**So the per-segment boundary is good to about ±5 ps, not ±2**, and the individual errors in the
+tables above — mostly 0 to 4 ps — sit comfortably inside that. They should be read as consistent
+with the model, not as evidence of a few-ps bias in either direction.
+
+**Averaged properly, the agreement is exact.** The model predicts 20 + 480 + 20 = **520.0 ps**;
+the 10-segment mean is **520.0 ± 1.7 ps**, a deviation of 0.0σ. The single-segment tables
+understate the model's accuracy while overstating each measurement's precision — the two errors
+happen to point in opposite directions, which is exactly why neither was visible without
+measuring the estimator itself.
+
+**5.0 GS/s is excluded from that table, and the reason is worth stating.** Production sets the
+pulse width to 0.4 T; the rebuild sets it so that pulse + rise is 0.5 T. At T = 200 ps those
+coincide — both give 80.0 ps — so the 5.0 GS/s "variant" deck is the production clock exactly.
+It is not a duty-cycle point. It is an **accidental null-change control**, and it passed:
+production measured 122 ps, the rebuild measured 122 ps. Same clock, independently derived deck,
+separately run, separately extracted, identical answer. That tests the pipeline rather than the
+model, which is worth having and was not planned.
+
+**This is the confirmation that counts.** The seven production rates and the hand-derived deck
+above were all measured by the same person who proposed the model, from decks built the same
+way. These three were not. A model that only survives tests run by its author has not been
+tested.
+
+### Across all seven rates — and a correction to what this section first said
+
+The two points above were then extended to every rate already on disk, same method, 2 ps steps,
+`c_p − c_n`, one segment each:
+
+| f_s | t_rise / pulse / t_fall | predicted | measured | error |
+| ---: | ---: | ---: | ---: | ---: |
+| 1.0 | 20 / 400 / 20 ps | 440.0 ps | 438 ps | −2.0 |
+| 1.5 | 20 / 266.7 / 20 ps | 306.7 ps | 308 ps | +1.3 |
+| 2.0 | 20 / 200 / 20 ps | 240.0 ps | 246 ps | +6.0 |
+| 2.5 | 20 / 160 / 20 ps | 200.0 ps | 198 ps | −2.0 |
+| 3.0 | 20 / 133.3 / 20 ps | 173.3 ps | 173 ps | −0.3 |
+| 4.0 | 20 / 100 / 20 ps | 140.0 ps | 139 ps | −1.0 |
+| 5.0 | 20 / 80 / 20 ps | 120.0 ps | 122 ps | +2.0 |
+
+**Mean error +0.6 ps, spread 2.8 ps**, over boundaries spanning 120 to 440 ps — a 3.7× range of
+the quantity being predicted, across a 5× range of clock rate.
+
+**This corrects an earlier version of this section.** From the first two points it reported that
+both measurements sat *early* — 2 ps and 7 ps — and offered a mechanism: that the latch commits
+once the clock has fallen far enough to cut off the track path rather than at the end of the
+transition. With seven points the mean deviation is +0.6 ps and the residuals scatter both ways.
+**There is no systematic early commit**; the pattern was two points and an invented explanation
+for it. The single −7 ps point sits about 2.5σ out on the observed scatter and does not
+establish a trend. The model needs no correction term: the boundary is
+`t_rise + pulse_width + t_fall`.
+
+This puts the rate ceiling of §1.1 on firmer ground: the settled window needs
+`T − (t_rise + pulse_width + t_fall)` to remain positive with margin for regeneration, and the
+model that predicts that boundary has now been tested out of sample rather than fitted.
+
+```
+duty-cycle/tb_dutyexp_1.0g_50pct.spice     the derived deck (clock lines only)
+duty-cycle/ngspice_dutyexp_1.0g_50pct.log  its run log
+duty-cycle/bits_dutyexp_1.0g_50pct.txt     199 bits extracted at 0.9 T
+duty-cycle/{tb,ngspice,bits}_clk50_{1.0..5.0}g_seg1.*
+                                           the independent rebuild, 20 ps edges
+```
+
+The raw transient (97 MB) is not shipped; the deck regenerates it in ~120 s.
+
+## 1.3. Which node you sample changes the answer, and one node carries nothing
+
+The comparator has more than one pair of nodes that could reasonably be called its output. All
+results here use `c_p − c_n`, the collectors of the cross-coupled latch pair. A downstream pair,
+`b_latch_p − b_latch_n`, is also written by the production decks. Scanning both over a full
+period at 2 ps steps, **from the same run**:
+
+| node pair | production (edge completes 440 ps) | 50 % duty (edge completes 525 ps) |
+| --- | ---: | ---: |
+| `c_p − c_n` | **438 ps** | **518 ps** |
+| `b_latch_p − b_latch_n` | **994 ps** | **992 ps** |
+
+Two separate points, and the second is the important one.
+
+**`c_p − c_n` tracks the clock edge; `b_latch` does not settle inside the period.** 994 ps of a
+1000 ps period leaves no usable sampling window at all.
+
+**`b_latch` carries no information about the boundary.** Shift the clock edge by 85 ps and the
+`c` boundary moves by 80 ps — that is the measurement. The `b_latch` boundary moves by −2 ps.
+It is not a noisier version of the same signal; it is insensitive to the quantity under study,
+so a dataset recording only that node cannot answer this question at any sample count.
+
+So a correlation figure from this circuit needs **three** things stated to be reproducible: the
+sampling phase (§1.1), the node pair, and the deck. Two of the three were missing from the
+first version of this note. Both were found the same way — by sweeping a parameter that had
+been treated as part of the apparatus rather than as a choice.
+
+
 
 ## 2. Offset sensitivity — the number that constrains the design
 
@@ -302,148 +468,3 @@ That cuts both ways and both halves matter:
 So: the statistical results reproduce, run to run and by anyone. The individual bitstreams do
 not, and are shipped as the record of what was actually measured rather than as something you
 can regenerate. Checked by diffing the decks and their outputs, not assumed.
-
-## 1.2. The edge-completion model, tested against a prediction made first
-
-§1.1 proposes that the settled plateau opens when the clock finishes returning low, at
-`delay + t_rise + pulse_width + t_fall`. That was inferred from the production decks, which is
-weak evidence — the model was fitted to the same data it explains.
-
-So a prediction was recorded before the measurement existed: build a deck differing from
-production **only** in the clock, with a 50 % duty cycle instead of 40 %, and the plateau should
-move from 440 ps to **525 ps** at 1.0 GS/s.
-
-The deck was derived from `tb_p1_ac_wb10_1.0g_seg1.spice` by substituting the two `VCLK` lines
-and the output paths, and verified by diff that nothing else changed. Both decks were then
-scanned at 2 ps steps, one segment each, like for like:
-
-| deck | t_rise / pulse / t_fall | predicted | measured | error |
-| --- | ---: | ---: | ---: | ---: |
-| production | 20 / 400 / 20 ps | 440 ps | **438 ps** | 2 ps |
-| 50 % duty | 25 / 475 / 25 ps | 525 ps | **518 ps** | 7 ps |
-| **shift** | | **+85 ps** | **+80 ps** | 5 ps |
-
-**The model holds.** Both boundaries land within 7 ps of prediction on a 2 ps grid, and the
-predicted shift is right to 6 %.
-
-**Then it was tested again by someone else.** The Design Engineer independently rebuilt the
-50 % duty experiment with its own generator — deriving each deck from the production file and
-printing the production-vs-variant diff as an audit — and used 20 ps edges where the deck above
-used 25 ps. Different author, different tooling, different edge rate:
-
-| f_s | production pulse | variant pulse | predicted | measured | error |
-| ---: | ---: | ---: | ---: | ---: | ---: |
-| 1.0 | 400.0 ps | 480.0 ps | 520.0 ps | 524 ps | +4.0 |
-| 1.5 | 266.7 ps | 313.3 ps | 353.3 ps | 353 ps | −0.3 |
-| 2.0 | 200.0 ps | 230.0 ps | 270.0 ps | 272 ps | +2.0 |
-| 2.5 | 160.0 ps | 180.0 ps | 220.0 ps | 216 ps | −4.0 |
-| 3.0 | 133.3 ps | 146.7 ps | 186.7 ps | 188 ps | +1.3 |
-| 4.0 | 100.0 ps | 105.0 ps | 145.0 ps | 149 ps | +4.0 |
-
-**Mean +1.17 ps, spread 3.02 ps**, over six clock configurations none of which appear in the
-production set. Artefacts in `duty-cycle/` are `*_clk50_*`.
-
-### How precise is a single-segment boundary? Less than the scan grid suggests
-
-Every boundary quoted above comes from **one segment**, scanned on a 2 ps grid — which invites
-the reading that they are good to ~2 ps. They are not, and an accidental duplicate exposed it:
-two decks with byte-identical clock lines gave 524 ps and 532 ps. Since ngspice reseeds its
-noise per run (see *Reproducibility*), each segment carries its own realisation and the boundary
-inherits that scatter.
-
-Measured directly — all 10 segments of one configuration (20 / 480 / 20 ps at 1.0 GS/s):
-
-```
-524  516  518  524  528  512  526  516  520  516      mean 520.0   sd 5.2   s.e.m. 1.7 ps
-```
-
-**So the per-segment boundary is good to about ±5 ps, not ±2**, and the individual errors in the
-tables above — mostly 0 to 4 ps — sit comfortably inside that. They should be read as consistent
-with the model, not as evidence of a few-ps bias in either direction.
-
-**Averaged properly, the agreement is exact.** The model predicts 20 + 480 + 20 = **520.0 ps**;
-the 10-segment mean is **520.0 ± 1.7 ps**, a deviation of 0.0σ. The single-segment tables
-understate the model's accuracy while overstating each measurement's precision — the two errors
-happen to point in opposite directions, which is exactly why neither was visible without
-measuring the estimator itself.
-
-**5.0 GS/s is excluded from that table, and the reason is worth stating.** Production sets the
-pulse width to 0.4 T; the rebuild sets it so that pulse + rise is 0.5 T. At T = 200 ps those
-coincide — both give 80.0 ps — so the 5.0 GS/s "variant" deck is the production clock exactly.
-It is not a duty-cycle point. It is an **accidental null-change control**, and it passed:
-production measured 122 ps, the rebuild measured 122 ps. Same clock, independently derived deck,
-separately run, separately extracted, identical answer. That tests the pipeline rather than the
-model, which is worth having and was not planned.
-
-**This is the confirmation that counts.** The seven production rates and the hand-derived deck
-above were all measured by the same person who proposed the model, from decks built the same
-way. These three were not. A model that only survives tests run by its author has not been
-tested.
-
-### Across all seven rates — and a correction to what this section first said
-
-The two points above were then extended to every rate already on disk, same method, 2 ps steps,
-`c_p − c_n`, one segment each:
-
-| f_s | t_rise / pulse / t_fall | predicted | measured | error |
-| ---: | ---: | ---: | ---: | ---: |
-| 1.0 | 20 / 400 / 20 ps | 440.0 ps | 438 ps | −2.0 |
-| 1.5 | 20 / 266.7 / 20 ps | 306.7 ps | 308 ps | +1.3 |
-| 2.0 | 20 / 200 / 20 ps | 240.0 ps | 246 ps | +6.0 |
-| 2.5 | 20 / 160 / 20 ps | 200.0 ps | 198 ps | −2.0 |
-| 3.0 | 20 / 133.3 / 20 ps | 173.3 ps | 173 ps | −0.3 |
-| 4.0 | 20 / 100 / 20 ps | 140.0 ps | 139 ps | −1.0 |
-| 5.0 | 20 / 80 / 20 ps | 120.0 ps | 122 ps | +2.0 |
-
-**Mean error +0.6 ps, spread 2.8 ps**, over boundaries spanning 120 to 440 ps — a 3.7× range of
-the quantity being predicted, across a 5× range of clock rate.
-
-**This corrects an earlier version of this section.** From the first two points it reported that
-both measurements sat *early* — 2 ps and 7 ps — and offered a mechanism: that the latch commits
-once the clock has fallen far enough to cut off the track path rather than at the end of the
-transition. With seven points the mean deviation is +0.6 ps and the residuals scatter both ways.
-**There is no systematic early commit**; the pattern was two points and an invented explanation
-for it. The single −7 ps point sits about 2.5σ out on the observed scatter and does not
-establish a trend. The model needs no correction term: the boundary is
-`t_rise + pulse_width + t_fall`.
-
-This puts the rate ceiling of §1.1 on firmer ground: the settled window needs
-`T − (t_rise + pulse_width + t_fall)` to remain positive with margin for regeneration, and the
-model that predicts that boundary has now been tested out of sample rather than fitted.
-
-```
-duty-cycle/tb_dutyexp_1.0g_50pct.spice     the derived deck (clock lines only)
-duty-cycle/ngspice_dutyexp_1.0g_50pct.log  its run log
-duty-cycle/bits_dutyexp_1.0g_50pct.txt     199 bits extracted at 0.9 T
-duty-cycle/{tb,ngspice,bits}_clk50_{1.0..5.0}g_seg1.*
-                                           the independent rebuild, 20 ps edges
-```
-
-The raw transient (97 MB) is not shipped; the deck regenerates it in ~120 s.
-
-## 1.3. Which node you sample changes the answer, and one node carries nothing
-
-The comparator has more than one pair of nodes that could reasonably be called its output. All
-results here use `c_p − c_n`, the collectors of the cross-coupled latch pair. A downstream pair,
-`b_latch_p − b_latch_n`, is also written by the production decks. Scanning both over a full
-period at 2 ps steps, **from the same run**:
-
-| node pair | production (edge completes 440 ps) | 50 % duty (edge completes 525 ps) |
-| --- | ---: | ---: |
-| `c_p − c_n` | **438 ps** | **518 ps** |
-| `b_latch_p − b_latch_n` | **994 ps** | **992 ps** |
-
-Two separate points, and the second is the important one.
-
-**`c_p − c_n` tracks the clock edge; `b_latch` does not settle inside the period.** 994 ps of a
-1000 ps period leaves no usable sampling window at all.
-
-**`b_latch` carries no information about the boundary.** Shift the clock edge by 85 ps and the
-`c` boundary moves by 80 ps — that is the measurement. The `b_latch` boundary moves by −2 ps.
-It is not a noisier version of the same signal; it is insensitive to the quantity under study,
-so a dataset recording only that node cannot answer this question at any sample count.
-
-So a correlation figure from this circuit needs **three** things stated to be reproducible: the
-sampling phase (§1.1), the node pair, and the deck. Two of the three were missing from the
-first version of this note. Both were found the same way — by sweeping a parameter that had
-been treated as part of the apparatus rather than as a choice.
