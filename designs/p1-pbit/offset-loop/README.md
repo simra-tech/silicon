@@ -51,13 +51,14 @@ that leans decisively. This comparator sits in 45.5 mV of noise against a 10 mV 
 output is barely biased; the accumulator *drifts* rather than slews. The correct order is
 microseconds — still fine for a startup trim, and not a basis for any claim about tracking drift.
 
-Convergence time scales with noise, as that mechanism requires:
+Convergence time scales with noise, as that mechanism requires. From fifteen seeded runs, five
+per level:
 
 | σ_n | 23.0 mV | 45.5 mV | 90.0 mV |
 | --- | ---: | ---: | ---: |
-| crossing cycle | 12,207 | 22,661 | 53,321 |
+| crossing cycle | 11,559 ± 829 | 23,560 ± 5,137 | 41,470 ± 5,459 |
 
-Roughly linear in σ_n over a fourfold range.
+Ratios 1 : 2.04 : 3.59 against noise ratios 1 : 1.98 : 3.91 — linear within the scatter.
 
 ## 3. The residual band, and a law that did not survive
 
@@ -81,9 +82,10 @@ it, and refutes it:
 | 45.5 | 14.99 | 14 |
 | 90.0 | 29.65 | 13 |
 
-The prediction moves by 3.9× across the sweep; the measurement does not move. The baseline
-agreement was not evidence — that is the condition at which the expression's coefficient was
-calibrated.
+The prediction moves by 3.9× across the sweep and the single-run measurements do not track it.
+The baseline agreement was not evidence — that is the condition at which the expression's
+coefficient was calibrated. (These six single-run spans are retained for provenance; §3.3 below
+supersedes them with fifteen seeded runs, which do find a real but much weaker noise dependence.)
 
 ### The 20-code span was scatter, and so was the flatness
 
@@ -117,9 +119,37 @@ The within-run standard deviation of the settled code is recorded in the same fi
 **Any dependence of the band on applied offset is bounded below 0.44 counts of σ — under 17 % of
 its value.** That is a specification-grade bound, and it came free from a column already on disk.
 
-**What is left open.** Convergence time scales with σ_n and the settled width does not. Any
-mechanism proposed for the band has to account for both; one that explains only the width is not
-finished.
+### The band does scale with noise — an earlier version of this page said it did not
+
+**This page previously stated that convergence time scales with σ_n while the settled width does
+not. That was wrong**, for the same reason the 20-code outlier was wrong: the noise sweep in §1
+also ran **one run per condition**, measured with the span. Fifteen seeded runs, five per level
+(`p1_15run_noise_sweep_campaign_results.csv`):
+
+| σ_n (mV) | σ_code (LSB) | N_cross (cycles) |
+| ---: | ---: | ---: |
+| 23.0 | 2.108 ± 0.327 | 11,559 ± 829 |
+| 45.5 | 2.664 ± 0.131 | 23,560 ± 5,137 |
+| 90.0 | 3.222 ± 0.642 | 41,470 ± 5,459 |
+
+A log–log fit over all fifteen points gives **σ_code ∝ σ_n^(0.306 ± 0.067)**:
+
+- **4.5σ from flat.** The dependence is real. The underpowered sweep did not merely fail to detect
+  it — it reported the opposite.
+- **10.3σ from linear.** The withdrawn σ_dither law had the wrong *exponent*, not a miscalibrated
+  coefficient.
+- **2.9σ below √σ_n.** A diffusion-versus-restoring-drift balance predicts 0.5; disfavoured, but
+  not excluded at this sample size.
+
+**No mechanism is offered for an exponent near 1/3.** It does not fall out of any picture we have,
+and inventing one to fit three group means is precisely the move that produced the law already
+withdrawn above.
+
+**Caveat on the fit:** the three groups are markedly heteroscedastic (sd 0.33, 0.13, 0.64), so the
+quoted slope error is approximate; more seeds at the endpoints would firm it up.
+
+Convergence time scales close to linearly with σ_n — 1 : 2.04 : 3.59 against noise ratios
+1 : 1.98 : 3.91 — consistent with linear inside the ±5,000-cycle scatter.
 
 ## 4. Not claimed
 
@@ -127,7 +157,8 @@ finished.
 - **Not a circuit simulation.** See the header. The loop dynamics are modelled, not simulated.
 - **No certification.** Nothing here has been assessed against AIS-31, SP 800-90B or any other
   standard by anyone.
-- **The band width has no working theory**, only sixteen measurements.
+- **The band width has no working theory.** Thirty-one measurements establish that it rises
+  as roughly the cube root of the noise; nothing explains why that exponent.
 
 ## Contents
 
@@ -138,6 +169,8 @@ run_closed_loop_route2_experiment.py     single 100k-cycle step response
 p1_route2_closed_loop_trajectory.csv     its trajectory, clock_cycle,dac_code
 run_10run_dither_scatter_test.py         10 seeded repeats, 5 at 10 mV and 5 at 20 mV
 p1_dither_scatter_campaign_results.csv   its results, including settled_std per run
+run_15run_noise_sweep_campaign.py        15 seeded runs, 5 each at 23.0, 45.5 and 90.0 mV
+p1_15run_noise_sweep_campaign_results.csv  its results
 ```
 
 The scripts write their outputs beside themselves and need only `numpy`. Verdicts in the
