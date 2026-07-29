@@ -417,6 +417,45 @@ been treated as part of the apparatus rather than as a choice.
 
 
 
+## 1.4. Higher-order structure: the full lag table, and why nothing in it is a result
+
+r₁ is one number; the tests a TRNG must pass look further. Lags 1–3 measured from the **shipped
+bitstreams** (not the working directory — see below), all 234 segments:
+
+| f_s | R[1] | R[2] | R[3] |
+| ---: | ---: | ---: | ---: |
+| 1.0 | +0.0103 ± 0.0130 | **+0.0311 ± 0.0104** | +0.0014 ± 0.0098 |
+| 1.5 | +0.0033 ± 0.0090 | +0.0138 ± 0.0095 | +0.0220 ± 0.0103 |
+| 2.0 | +0.0042 ± 0.0107 | +0.0132 ± 0.0088 | +0.0208 ± 0.0092 |
+| 2.5 | +0.0149 ± 0.0100 | +0.0101 ± 0.0090 | +0.0010 ± 0.0092 |
+| 3.0 | −0.0075 ± 0.0092 | +0.0029 ± 0.0088 | +0.0156 ± 0.0097 |
+| 4.0 | +0.0075 ± 0.0069 | +0.0006 ± 0.0091 | −0.0017 ± 0.0065 |
+| 5.0 | +0.0081 ± 0.0039 | +0.0044 ± 0.0045 | +0.0058 ± 0.0045 |
+
+**The largest excursion is 1.0 GS/s at lag 2, 2.99σ — and it is not evidence of anything.**
+This table is 21 measurements. The probability that *at least one* of 21 reaches 2.99σ is
+**0.057**: a 1-in-18 event, not the 1-in-359 that 2.99σ suggests read alone. Counting the whole
+table against expectation:
+
+| threshold | observed | expected from 21 tests |
+| --- | ---: | ---: |
+| \|z\| ≥ 2.0 | 4 | 0.96 |
+| \|z\| ≥ 2.5 | 1 | 0.26 |
+| \|z\| ≥ 3.0 | 0 | 0.06 |
+
+A mild excess at 2σ (4 against ~1) and nothing at all beyond 3σ. Suggestive of slightly
+underestimated error bars or weak residual structure; not a detection. **No higher-order
+correlation is claimed, and none is excluded either** — the measurement floor here is ~0.01,
+while the calibrated model (§1.2) predicts ~0.001.
+
+**One methodological note, because it nearly misled me.** These figures come from the shipped
+`bits_*.txt`, not from the working simulation directory. Ten of the 1.0 GS/s segments were
+re-run there after publication, and because ngspice reseeds per process (see *Reproducibility*)
+those are different realisations: the same measurement on the working directory now returns
+r₁ = +0.0152 rather than +0.0103. Both are valid; they are different samples. The shipped bits
+reproduce the published table exactly, which is the property that matters — **the record is the
+artefact, not the directory it came from.**
+
 ## 2. Offset sensitivity — the number that constrains the design
 
 Two gains, and they differ by fifty times. Quoting either alone is misleading.
