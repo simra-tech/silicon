@@ -386,11 +386,49 @@ that overstates what is known.
 An earlier version called 128 mV consistent with the law at 1.1σ. That was computed with window 1
 still included at that level, which pulled it upward. It is not consistent.
 
-**Open.** The shape of this curve has changed three times in three hours, each time because of how
-the measuring window was drawn rather than because of the circuit. Before any mechanism is sought,
-90 and 180 mV are being re-run from **fresh seeds** under the standardised windows, to test whether
-3.472 and 3.945 reproduce within their error bars. **No mechanism is proposed for either the
-exponent or the rollover.**
+#### It reproduces on fresh seeds
+
+The shape of this curve changed three times in three hours, every time because of how the
+measuring window was drawn rather than because of the circuit. Before seeking any mechanism,
+90 and 180 mV were re-run from **seeds never previously used**
+(`p1_stability_confirmation_results.csv`):
+
+| σ_n | fresh seeds | previous | difference |
+| ---: | ---: | ---: | ---: |
+| 90 mV | 3.505 ± 0.206 | 3.472 ± 0.110 | **0.1σ** |
+| 180 mV | 4.184 ± 0.132 | 3.945 ± 0.132 | **1.3σ** |
+
+Both reproduce. This is the first evidence that what is being measured is a property of the loop
+rather than of the method.
+
+#### Current pooled values — these supersede every figure above
+
+Fresh runs pooled with the standardised set: 95 runs, seven levels, all estimates from
+crossing+100k.
+
+| σ_n (mV) | n | σ_code |
+| ---: | ---: | ---: |
+| 11.5 | 10 | 1.501 ± 0.023 |
+| 23.0 | 10 | 2.047 ± 0.065 |
+| 45.5 | 5 | 2.643 ± 0.220 |
+| 90.0 | **30** | 3.483 ± 0.098 |
+| 128.0 | 10 | 3.583 ± 0.112 |
+| 180.0 | **20** | 4.065 ± 0.095 |
+| 360.0 | 10 | 4.679 ± 0.118 |
+
+    σ_code ∝ σ_n^(0.4102 ± 0.0153)      χ² = 0.58 on 2 dof   (11.5–90 mV)
+
+**5.0σ above 1/3, 5.9σ below 1/2.** Both simple forms excluded. Deficits against the law:
+**3.9σ at 128 mV, 6.0σ at 180, 12.4σ at 360.**
+
+**Mechanism is now being sought, in order: physics, then a prediction, then a run that could
+refute it.** Two lines of attack, both stated as predictions before running. (i) The accumulator
+advances the DAC code only once per 16 sub-counts, so the loop has *two* timescales; a two-scale
+process need not give a single clean power law but can give an effective exponent between the
+limiting cases over a bounded range — testable by changing the divider to 4 and 64. (ii) At 90 mV
+the noise is already 2× the 10 mV applied offset and by 360 mV it is 36×, so any mechanism should
+speak to the noise-to-offset *ratio* rather than to noise alone — testable by holding σ_n at
+180 mV and sweeping the offset from 5 to 80 mV. **Nothing is claimed yet.**
 
 Convergence time, across six levels: 8.3k, 12.5k, 23.6k, 45.1k, 76.7k and ~140k cycles over a
 31× noise range.
@@ -402,8 +440,8 @@ Convergence time, across six levels: 8.3k, 12.5k, 23.6k, 45.1k, 76.7k and ~140k 
 - **No certification.** Nothing here has been assessed against AIS-31, SP 800-90B or any other
   standard by anyone.
 - **The band width has no working theory.** Over 11.5–90 mV it follows σ_n^(0.403 ± 0.013) with an
-  excellent fit — an exponent near 0.41 that is 4.6σ from 1/3 and 5.5σ from 1/2, so neither simple
-  form applies. Above 90 mV it rolls over: 3.8σ below the law at 128 mV, 5.1σ at 180, 12.2σ at 360.
+  excellent fit — 0.4102 ± 0.0153, which is 5.0σ from 1/3 and 5.9σ from 1/2, so neither simple form
+  applies. Above 90 mV it rolls over: 3.9σ below the law at 128 mV, 6.0σ at 180, 12.4σ at 360.
   Nothing explains either the exponent or the rollover, and no mechanism is proposed for either.
 
 ## Contents
@@ -432,7 +470,9 @@ p1_65run_relative_window_equilibration_results.csv  its results; supersedes all 
 run_extended_180mV_and_128mV_campaign.py  180 mV to eight aligned windows, plus a 128 mV level
 p1_targeted_180mV_128mV_results.csv      its results; the plateau test
 run_standardized_rw2_to_rw8_campaign.py  all levels, window 1 dropped, 75 runs
-p1_standardized_rw2_plus_results.csv     its results; supersedes all earlier fits
+p1_standardized_rw2_plus_results.csv     its results
+run_20run_stability_confirmation_test.py  90 and 180 mV from seeds never used before
+p1_stability_confirmation_results.csv    its results; pooled with the above for current values
 ```
 
 The scripts write their outputs beside themselves and need only `numpy`. Verdicts in the
