@@ -343,6 +343,30 @@ used 25 ps. Different author, different tooling, different edge rate:
 **Mean +1.17 ps, spread 3.02 ps**, over six clock configurations none of which appear in the
 production set. Artefacts in `duty-cycle/` are `*_clk50_*`.
 
+### How precise is a single-segment boundary? Less than the scan grid suggests
+
+Every boundary quoted above comes from **one segment**, scanned on a 2 ps grid — which invites
+the reading that they are good to ~2 ps. They are not, and an accidental duplicate exposed it:
+two decks with byte-identical clock lines gave 524 ps and 532 ps. Since ngspice reseeds its
+noise per run (see *Reproducibility*), each segment carries its own realisation and the boundary
+inherits that scatter.
+
+Measured directly — all 10 segments of one configuration (20 / 480 / 20 ps at 1.0 GS/s):
+
+```
+524  516  518  524  528  512  526  516  520  516      mean 520.0   sd 5.2   s.e.m. 1.7 ps
+```
+
+**So the per-segment boundary is good to about ±5 ps, not ±2**, and the individual errors in the
+tables above — mostly 0 to 4 ps — sit comfortably inside that. They should be read as consistent
+with the model, not as evidence of a few-ps bias in either direction.
+
+**Averaged properly, the agreement is exact.** The model predicts 20 + 480 + 20 = **520.0 ps**;
+the 10-segment mean is **520.0 ± 1.7 ps**, a deviation of 0.0σ. The single-segment tables
+understate the model's accuracy while overstating each measurement's precision — the two errors
+happen to point in opposite directions, which is exactly why neither was visible without
+measuring the estimator itself.
+
 **5.0 GS/s is excluded from that table, and the reason is worth stating.** Production sets the
 pulse width to 0.4 T; the rebuild sets it so that pulse + rise is 0.5 T. At T = 200 ps those
 coincide — both give 80.0 ps — so the 5.0 GS/s "variant" deck is the production clock exactly.
