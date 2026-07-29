@@ -489,12 +489,38 @@ setting at 45.5 mV:
   independent samples would, consistent with the measured lag-1 correlation of +0.0066: the
   decisions the accumulator sums are not independent.
 
-**The design curve:**
+**The design curve, and where it stops being a single power law.** A fourth point at `N_sub` = 256
+was run with the prediction again pre-registered, and with the intervals deliberately widened after
+the calibration failure above:
 
-    σ_code ∝ t_settle^(−0.552)
+| `N_sub` | settling | σ_code |
+| ---: | ---: | ---: |
+| 4 | 1.02 µs | 6.110 ± 0.088 |
+| 16 | 4.63 µs | 2.698 ± 0.051 |
+| 64 | 20.75 µs | 1.077 ± 0.078 |
+| **256** | **91.9 µs** | **0.356 ± 0.026** |
 
-**Halving the residual error costs a factor of 3.5 in settling time.** A startup-time budget on one
-axis reads off a trim resolution on the other.
+**Both widened predictions landed inside their intervals** — the calibration correction took effect
+in one round. Settling was predicted at 468,000 cycles and measured **459,671 ± 16,879**: 1.8 % out,
+0.5σ.
+
+- **Settling extrapolates cleanly.** Exponent across three successive 4× steps: 1.091, 1.082,
+  1.074 — constant.
+- **The band does not.** Its exponent steepens monotonically: **−0.590 → −0.662 → −0.799**. Over
+  the full 4–256 range the trade exponent is **−0.632**, not the −0.552 fitted from the first
+  three points, which is corrected here.
+
+**Suspected cause — under test, not adopted.** The trim register holds an integer. At `N_sub` = 64
+the band is 1.077 counts ≈ one code; at 256 it is 0.356 counts ≈ a third of a code. A standard
+deviation well below one code no longer describes a *spread* — it describes a register resting on a
+single code and occasionally flipping to a neighbour. If so, the steepening is the **metric hitting
+the quantisation floor**, appearing exactly where the band crosses one code, rather than the loop
+genuinely improving. **The test:** distinct codes visited and modal-code fraction per divider,
+predicted first.
+
+**If confirmed, the design answer changes.** There would be no reason to build beyond `N_sub` ≈ 64:
+20.7 µs already buys a residual at one code, while 91.9 µs buys accuracy an integer register cannot
+represent. The trade curve would have a **knee**, and the knee is the design point.
 
 *Calibration note, recorded against the prediction:* all six stated point intervals missed, yet the
 underlying picture was substantially right. The intervals were too tight for what was known — a
@@ -549,6 +575,8 @@ p1_hypothesis_test1_nsub_sweep_results.csv   divider sweep: N_sub 4 and 64
 p1_hypothesis_test2_offset_sweep_results.csv offset sweep at fixed 180 mV noise
 run_tradecurve_nsub_campaign.py          trade curve, prediction pre-registered in the header
 p1_nsub_tradecurve_results.csv           its results: settling time against band width
+run_nsub256_extrapolation_campaign.py    divider 256, prediction pre-registered and widened
+p1_nsub256_extrapolation_results.csv     its results: the trade exponent bends
 ```
 
 The scripts write their outputs beside themselves and need only `numpy`. Verdicts in the
