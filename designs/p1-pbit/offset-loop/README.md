@@ -470,10 +470,36 @@ seeing the data.
 ### The design lever this exposes
 
 `N_sub` is not a law of nature — it is a chosen number, and it sets both the band width and its
-noise dependence. At 90 mV the band is 7.97 counts at `N_sub` = 4, 3.48 at 16, and 1.32 at 64. A
-larger divider buys substantially tighter residual accuracy. **The cost is presumably convergence
-time, and that has not been measured** — the band-width-versus-settling-time trade curve across
-`N_sub` is the outstanding measurement.
+noise dependence. The trade curve was then measured against a **pre-registered prediction written
+into the script header before execution** (`run_tradecurve_nsub_campaign.py`), ten seeds per
+setting at 45.5 mV:
+
+| `N_sub` | settling | σ_code |
+| ---: | ---: | ---: |
+| 4 | 5,105 ± 401 cycles = **1.02 µs** | 6.110 ± 0.088 |
+| 16 | 23,162 ± 1,413 = **4.63 µs** | 2.698 ± 0.051 |
+| 64 | 103,729 ± 4,466 = **20.75 µs** | 1.077 ± 0.078 |
+
+**Scoring the two pre-registered predictions:**
+
+- *Convergence time ∝ `N_sub`* — **substantially confirmed.** Measured exponent
+  **1.085 ± 0.031**, 2.8σ from the predicted 1.0: slightly steeper than proportional.
+- *σ_code ∝ 1/√`N_sub`* — **refuted.** Measured **−0.600 ± 0.015** against a predicted −0.5,
+  **6.5σ** away. Averaging more comparator decisions suppresses the wander *faster* than averaging
+  independent samples would, consistent with the measured lag-1 correlation of +0.0066: the
+  decisions the accumulator sums are not independent.
+
+**The design curve:**
+
+    σ_code ∝ t_settle^(−0.552)
+
+**Halving the residual error costs a factor of 3.5 in settling time.** A startup-time budget on one
+axis reads off a trim resolution on the other.
+
+*Calibration note, recorded against the prediction:* all six stated point intervals missed, yet the
+underlying picture was substantially right. The intervals were too tight for what was known — a
+calibration problem rather than a physics one, and visible only because the numbers were written
+down first.
 
 Convergence time, across six levels: 8.3k, 12.5k, 23.6k, 45.1k, 76.7k and ~140k cycles over a
 31× noise range.
@@ -521,6 +547,8 @@ p1_stability_confirmation_results.csv    its results; pooled with the above for 
 run_hypothesis_tests_nsub_and_offset.py  divider sweep and offset sweep
 p1_hypothesis_test1_nsub_sweep_results.csv   divider sweep: N_sub 4 and 64
 p1_hypothesis_test2_offset_sweep_results.csv offset sweep at fixed 180 mV noise
+run_tradecurve_nsub_campaign.py          trade curve, prediction pre-registered in the header
+p1_nsub_tradecurve_results.csv           its results: settling time against band width
 ```
 
 The scripts write their outputs beside themselves and need only `numpy`. Verdicts in the
