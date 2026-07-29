@@ -204,7 +204,53 @@ used 25 ps. Different author, different tooling, different edge rate:
 | 4.0 | 100.0 ps | 105.0 ps | 145.0 ps | 149 ps | +4.0 |
 
 **Mean +1.17 ps, spread 3.02 ps**, over six clock configurations none of which appear in the
-production set. Artefacts in `duty-cycle/` are `*_clk50_*`.
+production set. Artefacts in `duty-cycle/` are `*_clk50_*`. Those are single-segment values;
+see below for what averaging reveals.
+
+### Averaged over 10 segments per rate, a small real offset appears
+
+Each row above is one segment, and a single-segment boundary carries ~5 ps of scatter (next
+subsection). Averaging all 10 segments at each rate:
+
+| f_s | predicted | mean of 10 | s.e.m. | sd | error |
+| ---: | ---: | ---: | ---: | ---: | ---: |
+| 1.0 | 520.0 ps | 520.0 | 1.7 | 5.2 | +0.0 |
+| 1.5 | 353.3 ps | 354.6 | 1.1 | 3.6 | +1.3 |
+| 2.0 | 270.0 ps | 271.6 | 1.3 | 4.0 | +1.6 |
+| 2.5 | 220.0 ps | 219.0 | 1.4 | 4.3 | −1.0 |
+| 3.0 | 186.7 ps | 190.4 | 1.2 | 3.7 | +3.7 |
+| 4.0 | 145.0 ps | 148.6 | 0.6 | 1.8 | +3.6 |
+
+**Inverse-variance weighted mean error: +2.48 ± 0.41 ps — 6σ from zero.** So the boundary does
+*not* sit exactly at `t_rise + pulse + t_fall`. It sits about 2.5 ps later, and only averaging
+could show that: the single-segment tables reported means consistent with zero because ±5 ps of
+per-segment noise swamped a 2.5 ps effect.
+
+**This supersedes the "+0.6 ps, consistent with zero" figures given elsewhere in this note.**
+
+**The obvious explanation is mine, and it was tested and refuted.** The estimator takes the
+*last* phase at which the answer changes, which noise can push later but never earlier — a
+built-in late bias. If that were the cause, widening the scan window would give more
+opportunities for a spurious late change and drift the estimate later. At 4.0 GS/s, widening
+from 165 ps to 245 ps — nearly the whole period:
+
+```
+105–165 ps   148.6 ± 0.6      105–205 ps   148.6 ± 0.6
+105–185 ps   148.6 ± 0.6      105–245 ps   148.6 ± 0.6
+```
+
+Identical throughout. Once the output settles it genuinely stops changing, so there are no
+spurious late transitions and the offset is not an artefact of the estimator.
+
+**No mechanism is offered for the 2.5 ps.** An earlier version of this note proposed a physical
+story for a boundary offset seen in two points and had to withdraw it when seven points
+disagreed. The offset is now established; its cause is not, and a plausible story fitted after
+the fact would be the same mistake again.
+
+**Consequence for use.** The offset is in the *non-conservative* direction: the settled window
+opens slightly later than `t_rise + pulse + t_fall` predicts, so that expression used directly
+as a sampling rule would have you sample marginally too early. Add margin. For the figures in
+this note it is irrelevant — everything is sampled at 0.9 T, far inside the plateau.
 
 ### How precise is a single-segment boundary? Less than the scan grid suggests
 
