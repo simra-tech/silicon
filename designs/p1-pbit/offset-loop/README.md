@@ -591,11 +591,45 @@ unconverged ones.
 > band *shrinks* with divider — that much is unambiguous. Its **slope is not established.**
 
 **The fix, and the lesson underneath it.** Specify the window as a multiple of each run's own
-crossing cycle: start at crossing + 1×crossing, run for 10×crossing. Every divider then gets equal
-statistical opportunity relative to its own dynamics. Note the shape of the error: the *start* of
-the window was made relative to each run earlier on this page, and the *length* was left fixed in
-absolute cycles. **Both ends of a measurement window must be defined relative to the thing being
-measured, not to the clock.**
+crossing cycle. Note the shape of the error: the *start* of the window was made relative to each run
+earlier on this page, and the *length* was left fixed in absolute cycles. **Both ends of a
+measurement window must be defined relative to the thing being measured, not to the clock.**
+
+#### Resolved: the trade law is an inverse square root
+
+Re-measured with the window running from 2×crossing to 12×crossing for every run — equal
+statistical opportunity relative to each setting's own dynamics
+(`p1_relative_dynamic_window_trade_results.csv`, five seeds per point):
+
+| `N_sub` | crossing | window span | σ_code |
+| ---: | ---: | ---: | ---: |
+| 4 | 5,383 | 53,826 | 5.837 ± 0.336 |
+| 16 | 22,561 | 225,614 | 2.979 ± 0.064 |
+| 64 | 103,639 | 1,036,386 | 1.496 ± 0.039 |
+| 256 | 455,729 | 4,557,286 | 0.780 ± 0.024 |
+
+    σ_code ∝ N_sub^(−0.4852 ± 0.0116)      χ² = 0.36 on 2 dof
+
+**1.3σ from exactly −1/2**, and the local slopes are flat: −0.485, −0.497, −0.470. **The bend is
+gone.** The band falls as the inverse square root of the divider — what a random walk under a
+restoring force predicts, and the simplest answer available. It was there the whole time underneath
+the measurement.
+
+The pre-registered exponent interval [−0.480, −0.520] **hit**. The pre-registered absolute value at
+`N_sub` = 256, [0.850, 1.150], **missed** — measured 0.780 ± 0.024, 3σ low. The scaling is
+understood; the absolute scale is not.
+
+**Cost, corrected:** the concern that this protocol might be unaffordable was wrong. The whole
+four-point campaign ran in **under a minute** of wall clock, 46 s of it at `N_sub` = 256.
+
+#### The noise exponent is now suspect for the same reason
+
+The α = 0.4102 ± 0.0153 reported earlier on this page — presented as excluding both 1/3 and 1/2 at
+5σ — was measured with **the same fixed-window protocol**. Across that noise sweep the settling time
+varies more than tenfold, so the 50,000-cycle window was **6.1× the settling time at 11.5 mV and
+0.36× at 360 mV**: same defect, same direction. Correcting it here moved the divider exponent from
+−0.600 to −0.485, toward one half. **That measurement is being repeated under the relative-window
+protocol, and until it reports, α should be treated as unresolved.**
 
 *Calibration note, recorded against the prediction:* all six stated point intervals missed, yet the
 underlying picture was substantially right. The intervals were too tight for what was known — a
@@ -656,6 +690,8 @@ run_discrete_occupancy_audit.py          code occupancy per divider, prediction 
 p1_discrete_occupancy_results.csv        its results: quantisation refuted, window discrepancy found
 run_contiguous_window_trade_campaign.py  150k and 450k contiguous windows, prediction pre-registered
 p1_contiguous_window_trade_results.csv   its results: the measurement has not converged
+run_relative_dynamic_window_trade_campaign.py  window = 10x crossing, per run
+p1_relative_dynamic_window_trade_results.csv   its results: the trade law resolves to -1/2
 ```
 
 The scripts write their outputs beside themselves and need only `numpy`. Verdicts in the
