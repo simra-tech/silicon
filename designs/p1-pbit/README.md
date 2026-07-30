@@ -8,9 +8,12 @@ Target process is the IHP SG13G2 open PDK (0.13 µm SiGe BiCMOS). The die is
 probe-pad only: no wire-bonds, no package, everything landed on top-metal GSG and
 DC pads for wafer probing.
 
-**State: in specification. Nothing has been fabricated. Nothing has been taped
-out. No layout exists. No gate has been signed off, and no foundry signoff is
-claimed anywhere in this directory.**
+**State: in specification, with one block laid out. Nothing has been fabricated.
+Nothing has been taped out. One of the five blocks — the noise generator — now has a
+physical layout that is DRC-clean on every geometry rule and matches its schematic under
+LVS; see [`noise-generator/layout/`](noise-generator/layout/). No parasitics have been
+extracted, nothing has been assembled at top level, no gate has been signed off, and no
+foundry signoff is claimed anywhere in this directory.**
 
 ## What the chip is meant to do
 
@@ -146,7 +149,8 @@ about a chip.
 | Check | State |
 | --- | --- |
 | Fabrication | **Not done.** Nothing exists in silicon. |
-| Layout, DRC, LVS, parasitic extraction | **Not run.** No layout exists. |
+| Layout, DRC, LVS | **One block of five.** The noise generator is laid out, DRC-clean on all geometry rules, and LVS-matched against a netlist exported from its schematic — [`noise-generator/layout/`](noise-generator/layout/). Nine minimum-global-density rules are waived at block level and unevaluated. The other four blocks have no layout. |
+| Parasitic extraction | **Not run.** No parasitics extracted anywhere, so every behavioural result in this directory still rests on schematic values. |
 | Tape-out / foundry signoff | **Not done, not claimed.** |
 | HBT noise spectral density S<sub>v</sub>(f) | **Simulated, not measured.** `.noise` on the noise generator gives 36.42 nV/√Hz differential at 1 GHz — see [`noise-generator/`](noise-generator/), which carries the deck and the raw simulator output. Still not measured in silicon, and no layout parasitics are included.|
 | σ<sub>VOS</sub> = 6.683 mV Monte Carlo | **Ran, but the artefacts were not retained** — see the caveat above. Not reproducible from this repository. |
