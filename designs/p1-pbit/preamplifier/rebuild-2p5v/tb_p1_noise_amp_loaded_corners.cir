@@ -1,0 +1,58 @@
+* Loaded PVT Corner Sweep Testbench for P1_NOISE_AMP
+.lib $PDK_ROOT/ihp-sg13g2/libs.tech/ngspice/models/cornerHBT.lib hbt_typ
+.lib $PDK_ROOT/ihp-sg13g2/libs.tech/ngspice/models/cornerRES.lib res_typ
+.lib $PDK_ROOT/ihp-sg13g2/libs.tech/ngspice/models/cornerCAP.lib cap_typ
+
+.options rshunt = 1e12
+
+* Supply Voltage 2.50V (Nominal)
+VCC VCC 0 DC 2.50
+VSS VSS 0 DC 0.00
+
+* Differential AC Input Excitation with Rs = 1059 Ohm Driving Resistance
+VIN_P in_p 0 DC 1.44 AC 0.5
+VIN_N in_n 0 DC 1.44 AC -0.5
+
+RS1 in_p RAW_NOISE_P 1059.0
+RS2 in_n RAW_NOISE_N 1059.0
+
+.include ./p1_noise_amp_clean.spice
+
+XAMP NOISE_AMP_P NOISE_AMP_N RAW_NOISE_P RAW_NOISE_N VCC VSS p1_noise_amp
+
+.control
+* 1. TYPICAL CORNER (27 C, VCC = 2.50V)
+alter VCC = 2.50
+set temp = 27
+op
+ac dec 20 1k 100g
+let vdiff_typ = v(noise_amp_p) - v(noise_amp_n)
+let gain_typ = mag(vdiff_typ)
+let db_gain_typ = 20*log10(gain_typ)
+print gain_typ[100] db_gain_typ[100]
+meas ac f3db_typ when gain_typ=gain_typ[100]/sqrt(2) fall=1
+
+* 2. COLD CORNER (-40 C, VCC = 2.625V)
+alter VCC = 2.625
+set temp = -40
+op
+ac dec 20 1k 100g
+let vdiff_cold = v(noise_amp_p) - v(noise_amp_n)
+let gain_cold = mag(vdiff_cold)
+let db_gain_cold = 20*log10(gain_cold)
+print gain_cold[100] db_gain_cold[100]
+meas ac f3db_cold when gain_cold=gain_cold[100]/sqrt(2) fall=1
+
+* 3. HOT CORNER (125 C, VCC = 2.375V)
+alter VCC = 2.375
+set temp = 125
+op
+ac dec 20 1k 100g
+let vdiff_hot = v(noise_amp_p) - v(noise_amp_n)
+let gain_hot = mag(vdiff_hot)
+let db_gain_hot = 20*log10(gain_hot)
+print gain_hot[100] db_gain_hot[100]
+meas ac f3db_hot when gain_hot=gain_hot[100]/sqrt(2) fall=1
+
+.endc
+.end

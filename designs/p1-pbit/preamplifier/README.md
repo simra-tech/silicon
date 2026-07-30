@@ -96,11 +96,64 @@ instantiate it, and the device lines are byte-identical to a fresh export. That 
 an earlier revision of this block carried a *hand-written* netlist wearing an exporter's header,
 and a reference maintained by hand cannot disagree with the schematic it claims to describe.
 
+## The gain does not hold over temperature
+
+The section above closed by recording that 20.95 dB against a 20 dB floor left **0.95 dB of margin that had
+not been tested** against corner, mismatch or temperature. It has now been tested against two of the three, and
+**the margin is not there.** Loaded with the generator's 1059 Ω, at V_CC = 2.5 V ±5% over −40 … +125 °C:
+
+| corner | V_CC | gain | f_-3dB |
+| --- | ---: | ---: | ---: |
+| cold, −40 °C | 2.625 V | 22.95 dB | 5.060 GHz |
+| nominal, +27 °C | 2.500 V | 20.95 dB | 5.258 GHz |
+| **hot, +125 °C** | 2.375 V | **18.12 dB** | 5.542 GHz |
+
+**18.12 dB is 1.88 dB below the 20 dB floor.** The specification window is not met at the hot corner.
+
+**And re-centring cannot fix it.** The spread is **4.83 dB** across a window that is **3 dB wide**, so no choice
+of nominal gain fits inside it. Either the window widens or the gain has to stop moving with temperature. Process
+corners are absent from all of this, and they can only widen the spread.
+
+Bandwidth, by contrast, is well behaved: 5.06 → 5.54 GHz, under 9.5% across the range, because the interface pole
+is set by 1059 Ω and ~28.6 fF and neither moves much with temperature.
+
+### Where the 2.83 dB goes, and why that makes the fix determinate
+
+The corners bundle supply and temperature. Separating them, one variable at a time:
+
+| condition | gain | attributable to |
+| --- | ---: | --- |
+| 27 °C, 2.375 V | 20.46 dB | **supply alone: 0.50 dB** |
+| 125 °C, 2.500 V | 18.63 dB | **temperature alone: 2.33 dB** |
+
+0.50 + 2.33 = 2.83 dB, the full hot-corner drop, so the two are independent. **Temperature is 82% of it.**
+
+Gain per stage goes as `R_C / (r_e + R_E + re_model)`. Measuring the per-side collector current directly, it is
+0.8933 mA at 27 °C and 0.9243 mA at 125 °C — a rise of only **3.5%**. But `r_e = V_T / I_E`, and V_T rises 33%
+across that range, so r_e goes **28.9 Ω → 37.1 Ω, up 28%**. In a denominator of 28.9 + 15 + 14.26, r_e is the
+single largest term at **50%**. That is 1.17 dB per stage, and there are two cascaded stages: **2.34 dB
+predicted against 2.33 dB measured.**
+
+So the mechanism is fully attributed, and the consequence is specific: **the emitter degeneration, at 15 Ω, is
+weaker than the transistor's own intrinsic emitter resistance at 29 Ω.** The gain is set mostly by a quantity
+proportional to absolute temperature. That is not a marginal sizing choice; it is the reason the block misses.
+
+**The fix that follows.** Make the tail current proportional to absolute temperature. If I_E ∝ T then
+`r_e = V_T / I_E` is constant by construction — at 398 K the tail would carry 1.185 mA rather than 0.924 mA,
+r_e stays at 28.9 Ω, and the gain goes flat to within **0.03 dB**. A PTAT reference costs no headroom. The
+alternative, raising R_E until it dominates r_e, flattens the gain too but sells gain that then has to be bought
+back with a larger R_C, and R_C is what sets the output headroom.
+
+**Recorded as a failure rather than as a to-do**, because an unmet specification and an untested one look
+identical in a summary table and are different facts about a chip. Decks and logs for every number above are in
+[`rebuild-2p5v/`](rebuild-2p5v/).
+
 ## Not run
 
 | Check | State |
 | --- | --- |
-| Corners and temperature on the rebuilt amplifier | **Not run.** Every figure in the rebuild table is `hbt_typ` / `res_typ` / `cap_typ` at 27 °C. `rppd` carries tc1 = +170 ppm/K and the HBT emitter resistance its own, so 20.95 dB against a 20 dB floor has **0.95 dB** of margin that has not been tested against any of it. The operating temperature range is still unspecified for P1, which is what blocks this. |
+| Temperature and supply on the rebuilt amplifier | **Run, and the gain specification is not met** — see *The gain does not hold over temperature* below. |
+| Process corners | **Not run.** All runs load `hbt_typ` / `res_typ` / `cap_typ` and never vary them, so the 4.83 dB spread below is a **lower bound**. |
 | Mismatch | **Not run.** No Monte Carlo on the rebuilt schematic. |
 | Layout, extraction, post-layout bandwidth | **Not run.** No layout exists for this block. |
 | Linearity, compression, supply rejection | **Not run.** |
