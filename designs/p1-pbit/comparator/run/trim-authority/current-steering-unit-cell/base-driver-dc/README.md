@@ -31,6 +31,9 @@ The preceding 0.9 V, nominal 40/20 kohm experiment is retained under
 [`failed-vref900/`](failed-vref900/). It missed the requested loaded-base
 differential and its original source-power claim was corrected.
 
+The follow-up [`loaded 16x steering segment`](segment16x/) scales both the NMOS
+sink multiplier and HBT emitter count while retaining this base network.
+
 This package does not implement the 0.96 V reference, a dynamic CMOS logic
 driver, a segmented array, mismatch, code transfer, settling, corners, layout,
 architecture selection, a gate disposition, or signoff.
