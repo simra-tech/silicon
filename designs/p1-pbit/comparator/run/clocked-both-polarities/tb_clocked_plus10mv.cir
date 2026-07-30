@@ -1,0 +1,36 @@
+* P1_COMPARATOR polarity-flip + phase-sample check, 5 GS/s
+.lib $PDK_ROOT/libs.tech/ngspice/models/cornerHBT.lib hbt_typ
+.lib $PDK_ROOT/libs.tech/ngspice/models/cornerRES.lib res_typ
+.lib $PDK_ROOT/libs.tech/ngspice/models/cornerCAP.lib cap_typ
+.lib $PDK_ROOT/libs.tech/ngspice/models/cornerMOShv.lib mos_tt
+.lib $PDK_ROOT/libs.tech/ngspice/models/cornerMOSlv.lib mos_tt
+.lib $PDK_ROOT/libs.tech/ngspice/models/cornerDIO.lib dio_tt
+.include ./p1_comparator_export.spice
+.option temp = 27.0
+.options rshunt = 1e12
+VCC_HBT VCC_HBT 0 DC 2.500
+VDD VDD 0 DC 1.200
+VSS VSS 0 DC 0.000
+VCLK_P CLK_P 0 PULSE(1.20 0.0 0 20p 20p 80p 200p)
+VCLK_N CLK_N 0 PULSE(0.0 1.20 0 20p 20p 80p 200p)
+VAMP_P raw_amp_p 0 DC 1.445
+VAMP_N raw_amp_n 0 DC 1.435
+RROUT1 raw_amp_p IN_P 120
+RROUT2 raw_amp_n IN_N 120
+VTRIM_P TRIM_P 0 DC 1.440
+VTRIM_N TRIM_N 0 DC 1.440
+XCOMP PBIT_OUT PBIT_RAW CLK_OUT_DIV IN_P IN_N CLK_P CLK_N TRIM_P TRIM_N VCC_HBT VDD VSS p1_comparator
+.control
+pre_osdi $PDK_ROOT/libs.tech/ngspice/osdi/psp103.osdi
+pre_osdi $PDK_ROOT/libs.tech/ngspice/osdi/psp103_nqs.osdi
+tran 2p 1.2n 0
+meas tran raw_latch_end FIND v(PBIT_RAW) at=900p
+meas tran out_latch_end FIND v(PBIT_OUT) at=900p
+meas tran raw_track_end FIND v(PBIT_RAW) at=1000p
+meas tran out_track_end FIND v(PBIT_OUT) at=1000p
+meas tran out_max MAX v(PBIT_OUT) from=600p to=1000p
+meas tran out_min MIN v(PBIT_OUT) from=600p to=1000p
+meas tran raw_max MAX v(PBIT_RAW) from=600p to=1000p
+meas tran raw_min MIN v(PBIT_RAW) from=600p to=1000p
+.endc
+.end
