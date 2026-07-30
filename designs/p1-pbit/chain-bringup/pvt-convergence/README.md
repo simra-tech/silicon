@@ -13,10 +13,20 @@ written in two passes and the first pass over-generalised. Current state:
   PVT correlation figure taken over 40 ns is a settling measurement — at 27 °C alone, a 40 ns
   window reads ρ₁ = 0.41 where 200 … 300 ns reads 0.079;
 - convergence is **not monotonic in distance from typical**: temperature alone at −40 °C
-  aborts, and −40 °C *combined with* the fast MOS corner completes.
+  aborts, and −40 °C *combined with* the fast MOS corner completes;
+- the `.ic` preset suggested further down is **withdrawn** — the coupling node starts at the
+  right value and is driven away by the noise switching on, so presetting it changes nothing;
+- reducing the coupling bias from **50 kΩ to 5 kΩ** does make short windows usable —
+  P(bit=1) = 0.560 from 2 ns against 0.989 before — and **costs correlation**, ρ₁ rising from
+  0.079 to 0.118. A trade to decide, not a fix to adopt.
 
-The sections below record how that was arrived at, including the conclusion that had to be
+The sections below record how that was arrived at, including three conclusions that had to be
 withdrawn, because the withdrawn reasoning is the useful part.
+
+> **Note on this page's structure.** It has been amended in four passes and its later sections
+> contradict its earlier ones by design. That is honest but it is not readable, and it should be
+> restructured into "what is true" followed by "what was withdrawn and why". Recorded as debt
+> rather than left implicit.
 
 ## First pass: both corner runs abort
 
