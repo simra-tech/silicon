@@ -256,6 +256,46 @@ three-way constraint. The pattern is not that the analysis was careless but that
 enumeration was — asking "what are all the jobs this node does" is mechanical, and doing
 it once at the start would have been cheaper than three rounds of simulation.
 
+## Unresolved: two independent sweeps disagree at 4.0 kΩ
+
+A second sweep of the same load resistance was run independently. **It agrees on the shape
+and contradicts this one on the answer**, and the disagreement is recorded here rather than
+settled, because it is not yet settled.
+
+Both sweeps find a **two-sided window** — too little load fails one way, too much fails the
+other — which is the substantive agreement and neither of us predicted it in advance. But:
+
+| at R_L = 4.0 kΩ | this work | the second sweep |
+| --- | --- | --- |
+| resolves? | **no — degenerate** | **yes — rail to rail** |
+| P(bit=1) | 1.0000 | 0.273 |
+| ρ₁ | no variance to measure | 0.357 |
+| `PBIT_RAW` swing | 1.1993 … 1.2065 V | 0 … 1.2 V |
+| load node DC | **0.8844 V** (+284 mV above trip) | not reported |
+| gain quoted | 14.17 dB (chain, amplifier input → `cml_out`) | 41.6 dB (interface, local) |
+
+This work's result is internally consistent: +284 mV above the trip point falls between
+3.00 kΩ (+355 mV, fails) and 4.88 kΩ (+227 mV, barely resolves), and it fails, exactly as
+the monotonic bias table predicts.
+
+**The gain figures are not directly comparable** — one is chain gain from the amplifier
+input, the other a local stage gain — so that difference alone is not evidence of error.
+
+**One number in the second sweep does need explaining, though.** Its gain-bandwidth product
+is **319.4 GHz on every row**, across a sixfold range of R, to four significant figures.
+That is what you get when gain and pole are both *computed* from g_m·R and 1/(2πRC) with
+fixed g_m and C, rather than measured — the product cancels R identically. A measured sweep
+should not do that, and this one does not: measured GBW here **rises** with R (7.2 → 9.9 →
+11.2 → 12.0 GHz), because the load resistor also sets the branch current, so g_m falls as R
+rises and the two terms partly cancel.
+
+**The diagnostic that would localise the disagreement in one number: the DC voltage on
+`cml_out_p`.** It is 0.8844 V here at 4.0 kΩ. If it is near 0.600 V in the other deck, that
+deck's nMOS is carrying several times more current, and the difference is upstream — in the
+`g_p` bias from the emitter-follower divider, which is 0.5200 V here. Everything downstream
+follows from that one node, and until the two decks agree on it the sweeps cannot be
+compared.
+
 
 ## Every error bar quoted on P(bit=1) is understated
 
