@@ -209,3 +209,71 @@ clock path even without a number attached to it.
 - [`count_phase_pvt.py`](count_phase_pvt.py) — the recount, aligned to `v(clk_p)` rising edges
 - [`sweep_sampling_phase_pvt.py`](sweep_sampling_phase_pvt.py) — the generating deck
 - [`pvt-raw-headers.txt`](pvt-raw-headers.txt) — headers of the two corner raw files
+
+## RESOLVED: the sampler alignment budget is ±30 ps, measured at 3 se
+
+The two earlier attempts at this number were both withdrawn (see the retraction at the top of
+this page) because they classified sampling phases against a fixed |ρ₁| < 0.05 threshold at
+sample counts where **se exceeded the threshold**. This measurement fixes both the sample count
+and the criterion.
+
+**N = 650 bits per phase** after discarding 50 ns of settling from a 180 ns run, so
+**se(ρ₁) = 1/√650 = 0.0392**. Phases are called correlated at **|z| ≥ 3**, a significance test
+against that se rather than a fixed level. Bits are sliced at the **measured trip point**
+([`../../comparator/run/trip-point/`](../../comparator/run/trip-point/)) — 0.593 V at typical,
+0.656 V cold — not at `vdd/2`. The noise stimulus steps at **5 ps**, finer than the 10 ps phase
+axis, so the axis resolves (the earlier 20 ps stimulus did not). Both corners share seed 42.
+
+| phase | 27 °C ρ₁ | z | −40 °C ρ₁ | z |
+| --- | --- | --- | --- | --- |
+| 0–30 ps | −0.0077 | −0.20 | −0.0015 | −0.04 |
+| **40–50 ps** | −0.0077 | −0.20 | **+0.239 … +0.282** | **+6.1 … +7.2** |
+| 60–80 ps | +0.005 … +0.096 | +0.12 … +2.45 | +0.023 … −0.002 | +0.59 … −0.04 |
+| **90–170 ps** | **+0.157 … +0.560** | **+4.0 … +14.3** | −0.003 | −0.08 |
+| 180–190 ps | +0.058 … +0.003 | +1.48 … +0.08 | −0.003 | −0.08 |
+
+Full data in [`phase-sweep-180ns.csv`](phase-sweep-180ns.csv).
+
+### Both corners are bad, in different places
+
+- **27 °C is correlated over 90–170 ps**, peaking at ρ₁ = **+0.560** (z = +14.3) at 130 ps.
+- **−40 °C is correlated over 40–50 ps**, peaking at ρ₁ = **+0.282** (z = +7.2) at 50 ps.
+
+These are not marginal. A z of 14 is not a threshold artefact under any criterion. And the two
+bands **do not overlap** — the phase that is worst at one corner is clean at the other, so a
+single sampling instant has to miss both.
+
+### The window
+
+Excluding both bands leaves two islands, the larger of which wraps through zero:
+
+| usable island | width |
+| --- | --- |
+| **180 ps → 30 ps** (wrapping) | **60 ps** |
+| 60 ps → 80 ps | 30 ps |
+
+The 60 ps island is centred at **phase ≈ 5 ps**, giving a clock-to-data alignment budget of
+**±30 ps** out of the 200 ps period.
+
+**Two honest caveats on that number**, because this is the third attempt at it:
+
+1. **The band edges are soft.** At 27 °C the transition runs z = 1.06 → 2.45 → 3.99 across
+   70 → 80 → 90 ps. The interior of each band is unambiguous; the *edge* carries about ±10 ps of
+   ambiguity, which is the phase step. So ±30 ps is the centre of a window whose boundaries are
+   known to roughly one phase step, not to the picosecond.
+2. **One seed.** Both corners use seed 42, which makes the corner comparison clean but means the
+   window position has not been checked against stimulus variation. Repeating at two more seeds
+   would bound that.
+
+It is worth noting where this lands: between the **±35 ps** this page originally claimed and the
+**±10 ps** proposed from the cold corner, both of which were withdrawn. The earlier numbers were
+not wildly wrong in magnitude — they were unsupported by the data used to derive them, which is a
+different defect and the one that mattered.
+
+### Provenance
+
+The generating script hit its own 600 s timeout **after** writing both raw files but before
+printing any results, so this analysis is a recount of data its own harness never reported. Decks
+[`tb_180ns_27c.cir`](tb_180ns_27c.cir) and [`tb_180ns_-40c.cir`](tb_180ns_-40c.cir) — the 716 kB
+PWL noise line is truncated to a stub for readability; regenerate it from seed 42 at σ = 3.0818 mV,
+5 ps step. Recount with [`count_phase_180ns.py`](count_phase_180ns.py).
