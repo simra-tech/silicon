@@ -34,6 +34,14 @@ withdrawn, because the withdrawn reasoning is the useful part.
 > restructured into "what is true" followed by "what was withdrawn and why". Recorded as debt
 > rather than left implicit.
 
+> **Sampling phase.** Every ρ₁ on this page is counted at a **fixed 100 ps offset** within the
+> 200 ps clock period (`ts = k·200 ps + 100 ps`), chosen to sample away from the clock edge.
+> That matters, because ρ₁ is a strong function of where in the period you sample: across one
+> period the same bitstream reads anywhere from ≈0.00 to ≈0.49. All figures here use the same
+> offset, so **comparisons between them are valid** — but an absolute ρ₁ quoted without its
+> sampling instant is not meaningful, and 100 ps is not the minimising phase. Measured in
+> [`../coupling-bias-sizing/`](../coupling-bias-sizing/).
+
 ## First pass: both corner runs abort
 
 The original attempt used these two corner definitions, and both failed at ~11 ns of 300.
