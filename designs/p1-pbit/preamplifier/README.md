@@ -224,6 +224,43 @@ is for `res_rppd`, and whether these indicate real overstress or an artefact of 
 network, has not been established. Recorded because 430 warnings in one committed log is not a thing to leave
 unread, and because the answer could change the sizing before any geometry is drawn.
 
+## The gain floor is not set by comparator offset
+
+Recorded because it retires a plausible hypothesis, and because it is arithmetic on two figures already published
+here rather than a measurement of any particular netlist — so it does not move when the schematic does.
+
+The natural derivation for a minimum gain is that the noise arriving at the comparator must be large enough
+relative to the comparator's *residual* offset after trimming, since a residual offset biases P(bit = 1) away
+from one half. Both inputs are published:
+
+- **Residual offset.** The trim DAC spans ±40.1 mV in 10 bits — 80.2 mV / 1024 = 78.32 µV per step — so what
+  survives trimming is bounded by half a step: **39.16 µV**.
+- **Noise at the comparator.** `specification/P1_TOP_LEVEL_SPECIFICATION.md` records
+  **36.36 mV<sub>rms</sub>** integrated at the comparator, marked *simulated and verified*.
+
+    signal-to-offset ratio = 36.36 mV / 39.16 µV = 928
+
+For small offsets P(1) ≈ ½ + (ΔV/σ)/√(2π), so the offset-induced bias is 0.399 / 928 = **0.043%**. Even a 1%
+bias budget — 25× looser than that — would be met at a signal-to-offset ratio of 40, which at this noise
+amplitude corresponds to a gain **below unity**.
+
+**So comparator offset does not constrain this stage's gain at all**, at any value in the range that has been
+discussed. Whatever the 20 dB figure in the specification is for, it is not this.
+
+Two cautions on the arithmetic, since both are easy to get wrong in the same direction:
+
+- The coefficient in the small-offset expansion of the Gaussian CDF is **1/√(2π) = 0.3989**, not
+  √(2/π) = 0.7979. The latter overstates the required ratio by 2×.
+- The noise figure to divide by is the one **at the comparator**, not at the generator's collector. Using a
+  raw-collector amplitude 20× smaller inflates the derived floor by 26 dB, which is enough to turn a
+  non-constraint into an apparently binding one.
+
+**What this leaves open.** The floor is not offset-limited; the binding edge is more likely the **ceiling**,
+which is not derived anywhere yet. At 36 mV<sub>rms</sub> already delivered, additional gain drives the
+comparator's CML input pair toward limiting, and clipping a Gaussian changes the statistics of the output bits —
+which is the one thing this chip must not do. That is a hypothesis and is labelled as one; it has not been
+simulated.
+
 ## Not run
 
 | Check | State |
