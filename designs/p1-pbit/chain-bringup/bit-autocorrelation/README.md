@@ -193,6 +193,69 @@ The honest form of it: sweep the interface gain and find the smallest value that
 resolves the CML swing to a full rail, then the pole target and the gain target together
 fix the GBW the topology must deliver.
 
+## The gain-bandwidth target was also incomplete: the resistor sets the bias too
+
+The sweep was run. It does not find a working resistor value, and the reason is a third
+constraint neither of the two previous specifications named.
+
+| load | gain | pole | GBW | resolves? | P(bit=1) | ρ₁ | overshoot |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| mirror, 38.3 fF damping | 23.37 dB | 196.6 MHz | 2.9 GHz | **yes** | 0.473 | +0.777 | 69 mV |
+| 1.03 kΩ | 4.01 dB | 4.545 GHz | 7.2 GHz | **no** | 1.0000 | — | — |
+| 2.00 kΩ | 9.23 dB | 3.440 GHz | 9.9 GHz | — | — | — | — |
+| 3.00 kΩ | 12.21 dB | 2.756 GHz | **11.2 GHz** | **no** | 1.0000 | — | — |
+| 4.88 kΩ | 15.42 dB | 2.026 GHz | 12.0 GHz | yes, barely | **0.956** | +0.669 | 89 mV |
+
+**3.00 kΩ has 4.08× of gain and a 2.756 GHz pole — it clears both previous targets and
+does not resolve.** So the ~4× gain guess above is wrong, and gain-bandwidth was not the
+binding quantity either.
+
+### What actually decides it
+
+The DC level of the load node, against the CMOS inverter's measured 0.600 V trip point:
+
+| load | `cml_out_p` DC | above trip point | resolves? |
+| --- | --- | --- | --- |
+| mirror | **0.6649 V** | **+65 mV** | yes |
+| 4.88 kΩ | 0.8269 V | +227 mV | yes, barely |
+| 3.00 kΩ | 0.9545 V | +355 mV | no |
+| 2.00 kΩ | 1.0302 V | +430 mV | — |
+| 1.03 kΩ | 1.1091 V | +509 mV | no |
+
+Monotonic, and it predicts the resolve column exactly: the two that work are the two
+closest to the trip point. As R_L falls the node rides up toward V_DD because there is
+less I·R drop, and at 1.03 kΩ it sits **509 mV above** the point where the inverter
+switches. No amount of signal swing crosses that.
+
+**So a single load resistor sets gain, bandwidth *and* bias — three jobs on one degree of
+freedom.** That is precisely what the current mirror was buying: it holds the node at
+0.665 V, 65 mV from the trip point, *independently* of its small-signal impedance. Its
+high impedance is a side effect of being a current source, and the slowness is the price.
+
+### The requirement, third attempt
+
+Three constraints, and they need three degrees of freedom:
+
+1. **bias** — the load node must sit within roughly 100 mV of the 0.600 V trip point;
+2. **pole** — above ~2.4 GHz, so τ is a fraction of the 200 ps clock period;
+3. **gain** — enough to carry the CML swing across the trip point once centred.
+
+A resistor gives one. The topologies that give more: a resistive load with a **separate
+bias current source**; a **cascode**, which decouples the impedance seen by the signal
+from the DC drop; or **AC-coupling into a self-biased inverter with a feedback resistor**,
+which centres itself at its own trip point regardless of the preceding node's DC level.
+
+That last one is what `cml_cmos_cand2` in the designer's own file gestures at — it puts an
+`rppd` feedback resistor from `raw_inv` back to `cml_out_p`. That instinct attacks exactly
+the term that kills the resistive load, and it is the more promising of their two
+candidates for a reason neither of us had measured when they were drawn.
+
+**Three specifications for this node, each incomplete, each corrected by measurement**: a
+pole target that omitted gain, a gain-bandwidth target that omitted bias, and now a
+three-way constraint. The pattern is not that the analysis was careless but that the
+enumeration was — asking "what are all the jobs this node does" is mechanical, and doing
+it once at the start would have been cheaper than three rounds of simulation.
+
 
 ## Every error bar quoted on P(bit=1) is understated
 
