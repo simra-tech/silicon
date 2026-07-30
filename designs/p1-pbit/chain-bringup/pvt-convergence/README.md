@@ -90,3 +90,61 @@ ngspice -b bis_mos_ss.cir    # device corner alone, completes
 `$PDK_ROOT` is the IHP SG13G2 PDK root. Corner section names differ by library and are
 worth writing down: MOS uses `mos_tt` / `mos_ss` / `mos_ff` / `mos_sf`, while resistors,
 HBTs and capacitors use `_typ` / `_bcs` / `_wcs`. `mos_typ` does not exist.
+
+## CORRECTION: convergence is path-dependent, and the fix does hold cold
+
+The bisection above is a correct set of measurements and the conclusion drawn from it —
+"temperature alone aborts, so the fix is confirmed at typical only" — is too pessimistic.
+**Adding a second deviation rescues a failure caused by the first.**
+
+| deck | 20 ns result |
+| --- | --- |
+| temp = −40 °C alone, `mos_tt` | **aborts** |
+| temp = −40 °C, VDD +10%, `mos_tt` | **aborts** |
+| temp = −40 °C, VDD +10%, **`mos_ff`** | **completes** |
+
+So convergence here is **not a monotonic function of distance from typical**. Going further
+from nominal on a second axis made a failing run converge. That is ordinary solver
+behaviour, and it has a methodological consequence worth stating: **single-axis bisection
+identifies the axis that breaks convergence in isolation, and does not predict which
+combinations converge.** It answered the question it was given and I generalised past it.
+
+## The fix holds at the cold corner
+
+Running the full 300 ns transient at that corner — `mos_ff`, −40 °C, VDD 1.32 V, HBT and
+resistors typical — sampling from 200 ns as always:
+
+| | typical, 27 °C | **cold, FF, −40 °C** |
+| --- | --- | --- |
+| ρ₁ | +0.079 | **+0.032** |
+| ρ₂ … ρ₅ | +0.108, +0.031, +0.109, +0.051 | +0.038, +0.016, +0.062, +0.040 |
+| P(bit=1) | 0.517 | **0.5030** |
+| variance inflation | 1.75 | 1.37 |
+| corrected standard error | 0.0295 | 0.0262 |
+| z against 0.5 | +0.57 | **+0.11** |
+| `cml_out_p` mean | 0.6336 V | 0.6623 V |
+
+Every lag at both corners is inside the 0.045 standard error on ρ. **The feedback fix is
+now confirmed at two corners, not one**, and the cold corner is if anything slightly
+better than typical.
+
+### An independent measurement of the same corner disagrees, and this one is the more likely
+
+A separate PVT matrix reports **ρ₁ = 0.2575** at FF / −40 °C / 1.32 V, with P(b=1) = 45.0%
+— eight times the correlation measured here. It also honestly reports the 125 °C corner as
+failed rather than concluding around it, which is the right behaviour.
+
+The discrepancy is not resolved, but there is a specific candidate: **the sampling window.**
+Every measurement on this page discards the first 200 ns, because the interstage coupling
+network needs ~100 ns to settle and a decaying offset inside that window inflates ρ — that
+is the mechanism that produced three all-zero bitstreams before it was found (see
+[`../counted-bitstream/`](../counted-bitstream/)). A run that samples from early in the
+transient would show exactly this: correlation several times too high, at any corner.
+
+**The number to compare is the start of the sampling window**, not the correlation. If it
+is earlier than ~200 ns the two measurements are measuring different things.
+
+## Still open: the hot corner
+
+125 °C has not been made to run by either measurement. The mechanism remains unidentified
+and self-heating remains untested rather than refuted, for the reasons in the section above.
