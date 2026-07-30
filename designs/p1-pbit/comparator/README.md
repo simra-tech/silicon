@@ -67,13 +67,56 @@ phases resolving to opposite sides of the trip point.
 Both resistor values include the `rppd` model's contact end resistance, which adds
 70 Ω·µm/w on top of Rspec·l/w — see `../noise-generator/layout/rppd-end-resistance/`.
 
+## Clock kickback is 20 µV, and our own 0.63 mV was wrong
+
+We published, in the first version of this page, that kickback at the sampling
+instant is **0.63 mV**, that it costs 0.80% of bit probability against a 1% budget,
+and that it is **untrimmable** because it recurs identically on every clock edge.
+All three statements are withdrawn. The measurement is in
+`run/kickback-clocked-vs-frozen/`.
+
+| | published | measured |
+| --- | --- | --- |
+| kickback at the sampling instant | 0.63 mV | **+20.4 µV** (latch phase), **+3.2 µV** (track phase) |
+| bit probability bias | 0.80% | **0.021%** |
+| peak excursion during an edge | 94.9 mV | **+23.8 / −5.1 mV** |
+| trimmable | no | **yes**, and it does not need to be |
+
+Three separate errors produced the 0.63 mV:
+
+**It was a settling transient, not a steady-state value.** The figure came from a
+`FIND ... at=0.25n` in a run that began at 0.1 ns — barely one clock period in.
+Measured in the fifth period it is 20.4 µV and repeatable to 1 µV.
+
+**It did not subtract a baseline.** The quantity measured was
+`v(IN_P) − v(IN_N) − 10 mV`, which contains the static loss of input-pair base
+current across the 120 Ω source resistors — 58.6 µV in track mode, and *zero* in
+latch mode where the pair is off. Attributing that to the clock is a category
+error, and it is a **gain error rather than an offset**, so it does not bias the
+bit at all. Kickback is the difference between a clocked run and a run with the
+clock frozen **in the same phase**; nothing else isolates it.
+
+**"Recurs identically per edge, therefore untrimmable" is backwards.** A
+disturbance that is the same on every edge is precisely what a static trim
+subtracts — it is indistinguishable, at the input, from device-mismatch offset.
+What a trim cannot remove is a disturbance that varies edge to edge. This one is
+repeatable to 1 µV, so it is trimmable; at 0.021% of bit probability it is also
+not worth a trim code.
+
+The 94.9 mV peak came from a deck driving the clock at CML levels, 1.74 / 1.14 V,
+where this design drives it 0 → 1.2 V. On the correct levels the peak excursion is
++23.8 / −5.1 mV.
+
+**Dummy-switch cancellation and edge-rate slowing are both off the table** — there
+is nothing left for them to fix. The sampling aperture stays at 20 ps edges.
+
 ## Still open on this block
 
 | | |
 | --- | --- |
-| Clock kickback | The clock injects a differential disturbance into the input pair on every edge. Peak during the edge is 94.9 mV; by the sampling instant it has decayed to **0.63 mV**, which is what sets the error. That is ≈0.80% of bit probability against a 1% budget. It recurs identically on every edge, so the trim DAC — which resolves 39 µV, 15× finer — **cannot remove it**. The fix has to be edge rate, clocked-pair sizing, or a dummy switch. |
 | Input-referred noise | A figure of 247.69 µV_rms exists but has no committed deck or log, so it is not published here. |
-| Bit statistics from a real bitstream | Not run. |
+| Bit statistics from a real bitstream | Not run. No long transient exists, so nothing is known about autocorrelation or bias drift over time. |
+| Layout, extraction | Not done. |
 
 ## Measured on the superseded netlist
 
