@@ -266,3 +266,24 @@ headroom the signal has at large trim codes. That is second-order rather than fa
 recorded with its number rather than as an alarm. It is also an argument for a current-steering
 trim, which redistributes a fixed total current and leaves the collector common mode
 unchanged — a property this base-driven version does not have.
+
+## Current-steering candidate: the first reproducible static result
+
+A fixed-tail current-steering candidate has now been measured with one retained deck and log at
+three explicit base-voltage pairs. The complete package is in
+[`current-steering-670ua/`](current-steering-670ua/).
+
+At a 670 uA steering tail, the collector-differential zero crossing moves **-34.593 mV** and
+**+34.607 mV** relative to midpoint. Total VCC current changes by 1.467 uA and collector common
+mode by about 0.209 mV across the three points. The fixed-current premise is therefore supported
+for this static experiment, but the authority is not enough: both endpoints remain about 5.49 mV
+inside the specified ±40.10 mV range.
+
+This does not select the current-steering architecture. It establishes one static candidate at
+one tail current and one corner. Code transfer, local step size, mismatch, dynamic behavior and
+full-chain headroom remain unmeasured.
+
+The immediately preceding one-deck attempt is retained in
+[`failed-unified-stimulus/`](failed-unified-stimulus/). Its dependent sources generated the wrong
+trim voltages and its log contains a parser error; it is evidence of a failed stimulus, not of the
+candidate's authority.
