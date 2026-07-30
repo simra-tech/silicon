@@ -5,7 +5,13 @@ written in two passes and the first pass over-generalised. Current state:
 
 - the feedback fix in [`../bit-autocorrelation/`](../bit-autocorrelation/) is confirmed at
   **typical and at cold** — ρ₁ = 0.079 at 27 °C and **0.032** at FF / −40 °C / VDD +10%;
-- **125 °C has not been made to run** by any measurement, and the mechanism is unidentified;
+- **every corner runs**, including 125 °C, once the maximum timestep is 2 ps rather than 5 ps.
+  Self-heating was never disabled;
+- but at 2 ps a 300 ns run **exhausts memory at 40 ns**, so a fine step and a long window
+  cannot be had together, and 40 ns is inside the ~100 ns coupling settling;
+- so **no corner has yet been measured over a valid window except typical and cold**, and any
+  PVT correlation figure taken over 40 ns is a settling measurement — at 27 °C alone, a 40 ns
+  window reads ρ₁ = 0.41 where 200 … 300 ns reads 0.079;
 - convergence is **not monotonic in distance from typical**: temperature alone at −40 °C
   aborts, and −40 °C *combined with* the fast MOS corner completes.
 
