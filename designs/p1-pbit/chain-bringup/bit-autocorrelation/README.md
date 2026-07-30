@@ -141,6 +141,58 @@ That is **12× beyond where the node sits even with the capacitors removed**, so
 amount of adjusting the damping reaches it. It is a topology change, and this is the
 number it has to clear.
 
+## And clearing it is not sufficient — the first candidate clears it and does not work
+
+The obvious topology fix is to replace the pMOS current-mirror load with resistors:
+1.03 kΩ (`rppd`, 3.7 µm at w = 1 µm) in place of the mirror, no tail device, damping
+capacitors gone. `p1_comparator_cand1.spice`, measured on the same harness:
+
+| | interface gain | pole | τ | clock periods |
+| --- | --- | --- | --- | --- |
+| baseline: mirror + 38.3 fF damping | **23.37 dB** | 196.6 MHz | 810 ps | 4.05 |
+| baseline, damping removed | 23.37 dB | 425.4 MHz | 374 ps | 1.87 |
+| **resistive load** | **4.01 dB** | **4.545 GHz** | **35 ps** | **0.18** |
+
+The pole moves by a factor of **23** and comfortably clears 2.4 GHz. Then the transient:
+
+```
+PBIT_RAW over the sampled window: min 1.1999 V   max 1.2001 V
+N = 501   P(bit=1) = 1.0000
+```
+
+**Pinned at the rail. Every one of 501 samples is a one.** The autocorrelation cannot
+even be computed — there is no variance to correlate. A fast interface that never
+decides is worse than a slow one that does.
+
+**The 19.4 dB it gave up was load-bearing.** The mirror's high output impedance is what
+provides the gain that carries the CML swing across the CMOS inverter's 0.600 V trip
+point — and that same high impedance is what makes the node slow. Gain and bandwidth
+here are *the same parameter*: g_m·R and 1/(RC) move in opposite directions on the same
+R. You cannot swap the mirror for a resistor and keep the decision.
+
+### The specification, restated as gain-bandwidth
+
+| | gain | pole | gain × pole |
+| --- | --- | --- | --- |
+| baseline | 14.7× | 196.6 MHz | **2.9 GHz** |
+| resistive load | 1.59× | 4.545 GHz | 7.2 GHz |
+
+The resistive load actually *improves* gain-bandwidth by 2.5× — it simply spends all of
+it on bandwidth and keeps none for the decision. So the real target is both at once:
+enough gain to cross the trip point from the available CML swing, **and** a pole above
+2.4 GHz.
+
+Taking ~12 dB (4×) as a working guess at the gain the decision needs, the interface
+requires **GBW ≳ 10 GHz** where it has 2.9 GHz — a factor of about 3.4. That is bought
+with transconductance, which means current or device width, or with a topology whose
+gain does not come from a single R·C: a cascode, a regenerative CMOS stage, or a
+self-biased converter with feedback.
+
+**The 12 dB figure is a guess and is the next thing to measure**, not a specification.
+The honest form of it: sweep the interface gain and find the smallest value that still
+resolves the CML swing to a full rail, then the pole target and the gain target together
+fix the GBW the topology must deliver.
+
 
 ## Every error bar quoted on P(bit=1) is understated
 

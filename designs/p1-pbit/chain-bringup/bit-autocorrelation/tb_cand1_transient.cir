@@ -1,0 +1,46 @@
+* CML-to-CMOS candidate 1: resistive load in place of the current mirror
+.lib $PDK_ROOT/libs.tech/ngspice/models/cornerHBT.lib hbt_typ
+.lib $PDK_ROOT/libs.tech/ngspice/models/cornerRES.lib res_typ
+.lib $PDK_ROOT/libs.tech/ngspice/models/cornerCAP.lib cap_typ
+.lib $PDK_ROOT/libs.tech/ngspice/models/cornerMOShv.lib mos_tt
+.lib $PDK_ROOT/libs.tech/ngspice/models/cornerMOSlv.lib mos_tt
+.lib $PDK_ROOT/libs.tech/ngspice/models/cornerDIO.lib dio_tt
+.include ./p1_noise_amp_export.spice
+.include ./p1_comparator_cand1.spice
+.option temp = 27.0
+.options rshunt = 1e12
+VCC_HBT VCC_HBT 0 DC 2.500
+VDD VDD 0 DC 1.200
+VSS VSS 0 DC 0.000
+VCLK_P CLK_P 0 PULSE(1.20 0.0 0 20p 20p 80p 200p)
+VCLK_N CLK_N 0 PULSE(0.0 1.20 0 20p 20p 80p 200p)
+VTRIM_P TRIM_P 0 DC 1.440
+VTRIM_N TRIM_N 0 DC 1.440
+.include ./pwl500ns.inc
+VRAW_N RAW_NOISE_N 0 DC 1.440
+XAMP NOISE_AMP_P NOISE_AMP_N RAW_NOISE_P RAW_NOISE_N VCC_HBT VSS p1_noise_amp
+XCOMP PBIT_OUT PBIT_RAW CLK_OUT_DIV NOISE_AMP_P NOISE_AMP_N CLK_P CLK_N TRIM_P TRIM_N VCC_HBT VDD VSS p1_comparator
+.control
+pre_osdi $PDK_ROOT/libs.tech/ngspice/osdi/psp103.osdi
+pre_osdi $PDK_ROOT/libs.tech/ngspice/osdi/psp103_nqs.osdi
+tran 5p 300n 0 5p
+let ampdiff = v(NOISE_AMP_P) - v(NOISE_AMP_N)
+let indiff  = v(RAW_NOISE_P) - v(RAW_NOISE_N)
+meas tran in_avg  AVG indiff  from=2n to=20n
+meas tran in_max  MAX indiff  from=2n to=20n
+meas tran in_min  MIN indiff  from=2n to=20n
+meas tran amp_avg AVG ampdiff from=2n to=20n
+meas tran amp_max MAX ampdiff from=2n to=20n
+meas tran amp_min MIN ampdiff from=2n to=20n
+meas tran raw_max MAX v(PBIT_RAW) from=2n to=20n
+meas tran raw_min MIN v(PBIT_RAW) from=2n to=20n
+let bd = v(NOISE_AMP_P) - v(NOISE_AMP_N)
+meas tran amp_rms RMS bd from=200n to=300n
+meas tran amp_mean AVG bd from=200n to=300n
+meas tran out_max MAX v(PBIT_OUT) from=200n to=300n
+meas tran out_min MIN v(PBIT_OUT) from=200n to=300n
+meas tran out_avg AVG v(PBIT_OUT) from=200n to=300n
+meas tran raw_avg AVG v(PBIT_RAW) from=200n to=300n
+wrdata ./bits_cand1.dat v(PBIT_RAW) v(xcomp.cml_out_p) v(xcomp.cml_out_n)
+.endc
+.end
