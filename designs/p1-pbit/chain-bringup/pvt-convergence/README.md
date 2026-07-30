@@ -1,14 +1,20 @@
-# The chain will not simulate a noise transient away from 27 °C
+# PVT convergence: fragile and path-dependent, and the fix holds at two corners
 
-The feedback fix in
-[`../bit-autocorrelation/`](../bit-autocorrelation/) takes the bit correlation from
-0.777 to 0.079. Confirming it over process, voltage and temperature was the next step,
-and **it cannot be done yet** — not because the fix fails, but because the chain's noise
-transient does not converge at any temperature other than 27 °C.
+**Read the correction at the bottom before the analysis in the middle.** This page was
+written in two passes and the first pass over-generalised. Current state:
 
-**The fix is therefore confirmed at typical only.** That is a limit on the evidence, not
-a finding against the circuit, and it is recorded here so nobody reads the typical result
-as a PVT result.
+- the feedback fix in [`../bit-autocorrelation/`](../bit-autocorrelation/) is confirmed at
+  **typical and at cold** — ρ₁ = 0.079 at 27 °C and **0.032** at FF / −40 °C / VDD +10%;
+- **125 °C has not been made to run** by any measurement, and the mechanism is unidentified;
+- convergence is **not monotonic in distance from typical**: temperature alone at −40 °C
+  aborts, and −40 °C *combined with* the fast MOS corner completes.
+
+The sections below record how that was arrived at, including the conclusion that had to be
+withdrawn, because the withdrawn reasoning is the useful part.
+
+## First pass: both corner runs abort
+
+The original attempt used these two corner definitions, and both failed at ~11 ns of 300.
 
 ## What happens
 
