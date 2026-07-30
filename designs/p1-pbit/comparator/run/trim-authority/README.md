@@ -300,3 +300,15 @@ sampled points, but its adjacent threshold steps range from **46.412 uV to 7.172
 voltages; it does not establish a physically implemented digital code transfer or zero missing
 codes. A realizable code mapping, corner and mismatch behavior, and dynamic integration with the
 comparator remain open.
+
+A first physical unit-cell experiment is retained in
+[`current-steering-unit-cell/`](current-steering-unit-cell/). One proposed IHP NMOS sink feeding
+one HBT steering pair sends **99.946%** of its collector-current sum to the selected branch under
+the ideal 1.0 V / 0.8 V test-base stimulus. At 2.1 V collector common mode its explicitly sensed
+sink current is **0.762516 uA**, within 0.007% of the nominal unit target. The digital level driver
+is not implemented.
+
+The experiment's initial 12.5 Gohm NMOS output-resistance calculation is retracted: the 300 mV
+sweep was applied at the HBT collectors while NMOS drain voltage moved only 36.053 uV. A direct
+NMOS drain-compliance sweep remains open, as do array weighting, matching and all digital-transfer
+and dynamic evidence.
