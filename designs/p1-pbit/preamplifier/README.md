@@ -166,6 +166,18 @@ Adding the process corners — `hbt_bcs`/`res_bcs`/`cap_bcs` and `hbt_wcs`/`res_
 
 **Envelope 17.19 … 24.11 dB: a 6.92 dB spread across a 3 dB window, missing at both ends.**
 
+> **The sizing moved after these runs.** Every number in this table was measured with the collector loads at
+> w = 1.0 µm, l = 0.7115 µm (255 Ω), which is what `p1_noise_amp_clean.spice` in
+> [`rebuild-2p5v/`](rebuild-2p5v/) contains. Twelve minutes after they were taken the schematic was changed to
+> l = 0.923 µm, and the same three corners then give **18.14 / 21.12 / 23.42 dB** — a 5.28 dB spread, still
+> missing the floor by 1.86 dB and the ceiling by 0.42 dB. The load change **narrowed** the spread rather than
+> shifting it, which a pure re-centring would not do: the bottom rose 0.95 dB and the top *fell* 0.69 dB. The
+> likely cause is collector headroom at cold/best-case, where the drop across 307 Ω at that corner's higher
+> current is the largest in the PVT space — but that is unconfirmed, and a spread that narrows because the top
+> is compressing is not a spread that narrows because the gain is stable. The envelope will be requoted once
+> the sizing is settled together with the PTAT reference, rather than chased. The table above is kept as
+> measured, against the netlist committed beside it.
+
 The diagonal is the true envelope, which is worth stating because it is not obvious: the crossed corners
 (cold+wcs, hot+bcs) both land *inside* the diagonal pair. The HBT corner dominates the resistor corner —
 `res_bcs` lowers R_C, which alone would lower gain, but `hbt_bcs` raises it by more. So cold+bcs is the
