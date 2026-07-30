@@ -401,3 +401,63 @@ python3 count_correlation.py bits2.dat
 `$PDK_ROOT` is the IHP SG13G2 PDK root. 300 ns at a 5 ps maximum timestep; the first
 200 ns are simulated and discarded for the coupling settling. Sampling convention and
 the reason for it are in [`../counted-bitstream/`](../counted-bitstream/).
+
+## SOLVED: shunt feedback around the output inverter, and one resistor does it
+
+One `rppd` resistor, 18.5 µm at w = 1 µm — **4.88 kΩ** — from `raw_inv` back to `cml_out_p`,
+wrapping the output inverter in shunt feedback. `p1_comparator_cand2.spice`, everything else
+untouched, damping capacitors left in place.
+
+| | baseline | **with feedback** |
+| --- | --- | --- |
+| lag-1 bit correlation | **+0.777** | **+0.079** |
+| lags 2 … 5 | +0.635, +0.517, +0.439, +0.356 | +0.108, +0.031, +0.109, +0.051 |
+| variance inflation | 7.96 | **1.75** |
+| P(bit=1) | 0.473 | 0.517 |
+| standard error, correlation-corrected | 0.0629 | **0.0295** |
+| z against 0.5 | −0.43 | +0.57 |
+| `cml_out_p` DC vs the 0.600 V trip point | +34 mV | **+1.2 mV** |
+| interface pole | 196.6 MHz | **1.636 GHz** |
+| interface gain | 23.37 dB | 6.998 dB |
+| overshoot above the 1.2 V rail | 69 mV | **27.7 mV** |
+| resolves | yes | yes, 0.0047 … 1.2035 V |
+
+**The correlation falls by a factor of ten, to within two standard errors of zero** — the
+standard error on ρ at N = 501 is 0.045, and every lag from 1 to 5 is inside that band. The
+bits are, as far as this measurement can tell, independent.
+
+**It fixes the three things that were in tension.** The feedback forces `cml_out_p` to sit at
+the inverter's own switching threshold — 1.2 mV from it, without anyone choosing a bias —
+which is the constraint that defeated every resistive load. Shunt feedback lowers the
+impedance at that node, which raises the pole 8.3×. And the overshoot *improves* rather than
+trading against the correlation, because the feedback damps the node it used to ring on.
+
+**The pole target from the section above was conservative.** 1.636 GHz is below the 2.4 GHz
+that a single-pole model said was needed for ρ₁ ≤ 0.05, and yet ρ₁ = 0.079 ± 0.045. The model
+over-predicts correlation; the measured behaviour is better than it. That is worth knowing
+before anyone spends current chasing the higher pole.
+
+## A correction to how this page described the node pair
+
+Earlier sections refer to `cml_out_p − cml_out_n` as a differential. **It is not.** Reading
+the netlist: `XM3` is diode-connected on `cml_out_n` and `XM4` mirrors it into `cml_out_p`,
+with `XM1` and `XM2` as the input pair. That is a five-transistor OTA — a differential input
+stage with a **single-ended** output. `cml_out_p` is the output; **`cml_out_n` is the mirror
+node**, not a second signal.
+
+So the "CMOS load differential" whose correlation was measured at +0.891 was output minus
+mirror node, a mixture rather than a signal. The localisation it supported still holds — the
+CML collectors measured uncorrelated and `PBIT_RAW` measured correlated, which brackets the
+interface either way — but the intermediate number was not the quantity it was labelled.
+
+It also means the feedback belongs on `cml_out_p` alone, which is where it is. There is no
+asymmetry to correct: the 63 mV difference between the two nodes is the mirror's V_GS, not an
+offset.
+
+## What is not established
+
+Single realisation, N = 501, typical corner, 27 °C, schematic values, no parasitics. **The
+16 dB of gain given up has not been checked against the smallest input the comparator must
+resolve** — it resolves the amplified noise here, which is what matters for this chip, but the
+minimum resolvable input has not been re-measured. And 4.88 kΩ was taken from the candidate as
+drawn; no sizing sweep has been done, so it is a working value rather than an optimised one.
