@@ -1,0 +1,23 @@
+* CMOS Inverter Vtrip Measurement: Temp = 27C, VDD = 1.2V
+.lib $PDK_ROOT/libs.tech/ngspice/models/cornerMOShv.lib mos_tt
+.lib $PDK_ROOT/libs.tech/ngspice/models/cornerMOSlv.lib mos_tt
+
+VDD VDD 0 DC 1.2
+VSS VSS 0 DC 0.000
+VIN IN 0 DC 0.600
+
+XM5 raw_inv IN VDD VDD sg13_lv_pmos w=2.83u l=0.13u ng=1 m=1
+XM6 raw_inv IN VSS VSS sg13_lv_nmos w=2.0u l=0.13u ng=1 m=1
+
+.option temp = 27
+.options rshunt=1e12 method=gear reltol=1e-3
+
+.control
+pre_osdi $PDK_ROOT/libs.tech/ngspice/osdi/psp103.osdi
+pre_osdi $PDK_ROOT/libs.tech/ngspice/osdi/psp103_nqs.osdi
+set filetype=ascii
+
+dc VIN 0.000 1.2 0.001
+wrdata ./raw_vtrip_27c.raw v(raw_inv)
+.endc
+.end

@@ -173,7 +173,7 @@ even be computed — there is no variance to correlate. A fast interface that ne
 decides is worse than a slow one that does.
 
 **The 19.4 dB it gave up was load-bearing.** The mirror's high output impedance is what
-provides the gain that carries the CML swing across the CMOS inverter's 0.600 V trip
+provides the gain that carries the CML swing across the CMOS inverter's 593.8 mV trip
 point — and that same high impedance is what makes the node slow. Gain and bandwidth
 here are *the same parameter*: g_m·R and 1/(RC) move in opposite directions on the same
 R. You cannot swap the mirror for a resistor and keep the decision.
@@ -220,7 +220,14 @@ binding quantity either.
 
 ### What actually decides it
 
-The DC level of the load node, against the CMOS inverter's measured 0.600 V trip point:
+The DC level of the load node, against the CMOS inverter's trip point.
+
+> **Reference corrected.** The "above trip point" column below is referenced to **0.600 V**,
+> which is `vdd/2` and not the trip point. The measured unity-gain trip point of this inverter
+> is **593.83 mV** at typical ([`../../comparator/run/trip-point/`](../../comparator/run/trip-point/)),
+> so **every figure in that column is 6.2 mV low**. The `cml_out_p` DC values in the first
+> column are measurements and are unaffected. No ordering or conclusion on this page changes;
+> the margins are all far larger than 6.2 mV.
 
 | load | `cml_out_p` DC | above trip point | resolves? |
 | --- | --- | --- | --- |
@@ -244,7 +251,8 @@ high impedance is a side effect of being a current source, and the slowness is t
 
 Three constraints, and they need three degrees of freedom:
 
-1. **bias** — the load node must sit within roughly 100 mV of the 0.600 V trip point;
+1. **bias** — the load node must sit within roughly 100 mV of the trip point (measured
+   593.83 mV, not the 0.600 V used when this was written — the margin dwarfs the difference);
 2. **pole** — above ~2.4 GHz, so τ is a fraction of the 200 ps clock period;
 3. **gain** — enough to carry the CML swing across the trip point once centred.
 
@@ -424,7 +432,9 @@ untouched, damping capacitors left in place.
 | P(bit=1) | 0.473 | 0.517 |
 | standard error, correlation-corrected | 0.0629 | **0.0295** |
 | z against 0.5 | −0.43 | +0.57 |
-| `cml_out_p` DC vs the 0.600 V trip point | +34 mV | **+1.2 mV** |
+| `cml_out_p` DC (measured) | 0.634 V | **0.6012 V** |
+| … vs the measured 593.83 mV trip point | +40.2 mV | **+7.4 mV** |
+| … vs the 0.600 V figure used previously | +34 mV | +1.2 mV *(reference 6.2 mV high)* |
 | interface pole | 196.6 MHz | **1.636 GHz** |
 | interface gain | 23.37 dB | 6.998 dB |
 | overshoot above the 1.2 V rail | 69 mV | **27.7 mV** |

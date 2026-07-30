@@ -60,7 +60,11 @@ against 86 mV before.
 | CML load node damping | none | 2 × 38.3 fF `cap_cmim` |
 
 The divider ratio sets where the CML swing lands relative to the CMOS inverter
-trip point, measured at 0.600 V on this 1.2 V supply. Raising it from 0.333 to
+trip point, **measured at 593.8 mV** on this 1.2 V supply — *not* 0.600 V, which
+is `vdd/2` and which this page previously gave. The inverter tracks the supply at
+49.1 … 49.7 % across corners, never 50 %. See
+[`run/trip-point/`](run/trip-point/); any figure below expressed as a distance
+from "the 0.600 V trip point" carries a 6.2 mV reference error. Raising it from 0.333 to
 0.399 moves the quiescent gate voltage up, and that is what stopped the two clock
 phases resolving to opposite sides of the trip point.
 

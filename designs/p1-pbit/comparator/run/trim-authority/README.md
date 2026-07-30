@@ -256,7 +256,7 @@ CML→CMOS load nodes move a long way:
 | 1.100 V | 0.3809 V | 0.6597 V | −278.8 mV | 0.520 V |
 | 1.400 V | 0.1516 V | 0.6892 V | −537.6 mV | **0.420 V** |
 
-Measuring `cml_out_p` alone suggests the node is being driven 448 mV below the 0.600 V trip
+Measuring `cml_out_p` alone suggests the node is being driven 448 mV below the trip
 point and the interface destroyed. Measuring both shows it is **mostly differential** — which
 is exactly what a trim is for. A large applied trim *should* bias the comparator hard toward
 one output; that is what correcting a large offset means.
