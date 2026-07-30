@@ -1,0 +1,463 @@
+* Full 67-Cell Array Comparator Integration DC Experiment - Model-Valid Binary-Only selft=1 Candidate
+.lib $PDK_ROOT/libs.tech/ngspice/models/cornerHBT.lib hbt_typ
+.lib $PDK_ROOT/libs.tech/ngspice/models/cornerRES.lib res_typ
+.lib $PDK_ROOT/libs.tech/ngspice/models/cornerCAP.lib cap_typ
+.lib $PDK_ROOT/libs.tech/ngspice/models/cornerMOShv.lib mos_tt
+.lib $PDK_ROOT/libs.tech/ngspice/models/cornerMOSlv.lib mos_tt
+.lib $PDK_ROOT/libs.tech/ngspice/models/cornerDIO.lib dio_tt
+
+.include ./p1_noise_amp.spice
+
+* Unchanged Subcircuit for Binary LSB Cells (XB8, XB4, XB2, XB1) - Keeps selft=1
+.subckt steer_cell_weighted logic_p logic_n v_ref c_p c_n v_bias VDD VSS PARAMS: n_sink=1 nx_hbt=1
+XM_SINK d_sink v_bias VSS VSS sg13_lv_nmos w=2.0u l=1.0u ng=1 m=n_sink
+V_SENSE e_st_tail d_sink DC 0.000
+
+XQST_P c_p trim_p_hbt e_st_tail sub! npn13G2 Nx=nx_hbt mm_ok=1
+XQST_N c_n trim_n_hbt e_st_tail sub! npn13G2 Nx=nx_hbt mm_ok=1
+
+XR1_P logic_p TRIM_P sub! rppd w=1.0u l=384.6u m=1 b=0 mm_ok=1
+XR2_P TRIM_P v_ref sub! rppd w=1.0u l=76.92u m=1 b=0 mm_ok=1
+
+XR1_N logic_n TRIM_N sub! rppd w=1.0u l=384.6u m=1 b=0 mm_ok=1
+XR2_N TRIM_N v_ref sub! rppd w=1.0u l=76.92u m=1 b=0 mm_ok=1
+
+V_IB_P TRIM_P trim_p_hbt DC 0.000
+V_IB_N TRIM_N trim_n_hbt DC 0.000
+.ends
+
+* Thermometer-Only Subcircuit overridden with selft=0 (XT01..XT63)
+.subckt steer_cell_therm_2x8 logic_p logic_n v_ref c_p c_n v_bias VDD VSS PARAMS: n_sink=16
+XM_SINK d_sink v_bias VSS VSS sg13_lv_nmos w=2.0u l=1.0u ng=1 m=n_sink
+V_SENSE e_st_tail d_sink DC 0.000
+
+XQST_P1 c_p trim_p_hbt e_st_tail sub! npn13G2 Nx=8 mm_ok=1 selft=0
+XQST_P2 c_p trim_p_hbt e_st_tail sub! npn13G2 Nx=8 mm_ok=1 selft=0
+XQST_N1 c_n trim_n_hbt e_st_tail sub! npn13G2 Nx=8 mm_ok=1 selft=0
+XQST_N2 c_n trim_n_hbt e_st_tail sub! npn13G2 Nx=8 mm_ok=1 selft=0
+
+XR1_P logic_p TRIM_P sub! rppd w=1.0u l=384.6u m=1 b=0 mm_ok=1
+XR2_P TRIM_P v_ref sub! rppd w=1.0u l=76.92u m=1 b=0 mm_ok=1
+
+XR1_N logic_n TRIM_N sub! rppd w=1.0u l=384.6u m=1 b=0 mm_ok=1
+XR2_N TRIM_N v_ref sub! rppd w=1.0u l=76.92u m=1 b=0 mm_ok=1
+
+V_IB_P TRIM_P trim_p_hbt DC 0.000
+V_IB_N TRIM_N trim_n_hbt DC 0.000
+.ends
+
+* Comparator Subcircuit overridden with selft=0 (XCOMP)
+.subckt p1_comp_cand2_exact PBIT_OUT PBIT_RAW CLK_OUT_DIV IN_P IN_N CLK_P CLK_N c_p c_n VCC_HBT VDD VSS
+XRC1 VCC_HBT c_n sub! rppd w=1.0u l=0.838u m=1 b=0 mm_ok=1
+XRC2 VCC_HBT c_p sub! rppd w=1.0u l=0.838u m=1 b=0 mm_ok=1
+XQ1 c_n IN_P e_track sub! npn13G2 Nx=1 mm_ok=1 selft=0
+XQ2 c_p IN_N e_track sub! npn13G2 Nx=1 mm_ok=1 selft=0
+I_PTAT_TAIL e_track VSS DC 1.958m
+
+XQEF1 VCC_HBT c_p ef_p sub! npn13G2 Nx=1 mm_ok=1 selft=0
+XQEF2 VCC_HBT c_n ef_n sub! npn13G2 Nx=1 mm_ok=1 selft=0
+XR1_P ef_p g_p sub! rppd w=1.0u l=22.0u m=1 b=0 mm_ok=1
+XR2_P g_p VSS sub! rppd w=1.0u l=14.5u m=1 b=0 mm_ok=1
+XR1_N ef_n g_n sub! rppd w=1.0u l=22.0u m=1 b=0 mm_ok=1
+XR2_N g_n VSS sub! rppd w=1.0u l=14.5u m=1 b=0 mm_ok=1
+XM1 cml_out_n g_p e_cmos VSS sg13_lv_nmos w=6.0u l=0.13u ng=1 m=1 mm_ok=1
+XM2 cml_out_p g_n e_cmos VSS sg13_lv_nmos w=6.0u l=0.13u ng=1 m=1 mm_ok=1
+XMTAIL e_cmos VDD VSS VSS sg13_lv_nmos w=8.0u l=0.50u ng=1 m=1 mm_ok=1
+XM3 cml_out_n cml_out_n VDD VDD sg13_lv_pmos w=8.0u l=0.13u ng=1 m=1 mm_ok=1
+XM4 cml_out_p cml_out_n VDD VDD sg13_lv_pmos w=8.0u l=0.13u ng=1 m=1 mm_ok=1
+XCDAMP1 cml_out_p VSS cap_cmim w=5.0u l=5.0u m=1 mm_ok=1
+XCDAMP2 cml_out_n VSS cap_cmim w=5.0u l=5.0u m=1 mm_ok=1
+
+* EXACT Candidate 2 Shunt Feedback Resistor: l=18.5u (4.88 kOhm)
+XRFB raw_inv cml_out_p sub! rppd w=1.0u l=18.5u m=1 b=0 mm_ok=1
+
+XM5 raw_inv cml_out_p VDD VDD sg13_lv_pmos w=2.83u l=0.13u ng=1 m=1 mm_ok=1
+XM6 raw_inv cml_out_p VSS VSS sg13_lv_nmos w=2.0u l=0.13u ng=1 m=1 mm_ok=1
+XM7 PBIT_RAW raw_inv VDD VDD sg13_lv_pmos w=2.83u l=0.13u ng=1 m=1 mm_ok=1
+XM8 PBIT_RAW raw_inv VSS VSS sg13_lv_nmos w=2.0u l=0.13u ng=1 m=1 mm_ok=1
+XM9 PBIT_OUT PBIT_RAW VDD VDD sg13_lv_pmos w=2.83u l=0.13u ng=1 m=1 mm_ok=1
+XM10 PBIT_OUT PBIT_RAW VSS VSS sg13_lv_nmos w=2.0u l=0.13u ng=1 m=1 mm_ok=1
+
+XTAP1 VSS sub! ptap1
+.ends
+
+VCC_HBT VCC 0 DC 2.500
+VDD VDD 0 DC 1.200
+VSS VSS 0 DC 0.000
+
+* Explicit Ideal Bias Reference Source (UNIMPLEMENTED in layout)
+VREF v_ref 0 DC 0.960
+
+* Gate Bias Voltage for NMOS Sinks
+VBIAS v_bias 0 DC 0.25515
+
+* Differential Input Driver around 1.440V CM
+VCM v_in_cm 0 DC 1.440
+VIN_SRC v_in_diff 0 DC 0.0
+E_IN_P IN_P v_in_cm v_in_diff 0 +0.5
+E_IN_N IN_N v_in_cm v_in_diff 0 -0.5
+
+VCLK_P CLK_P 0 DC 2.500
+VCLK_N CLK_N 0 DC 0.000
+
+* Logic Voltage Sources for 67 Array Cells
+VLOGIC_PT01 lp_t01 0 DC 0.000
+VLOGIC_NT01 ln_t01 0 DC 1.200
+VLOGIC_PT02 lp_t02 0 DC 0.000
+VLOGIC_NT02 ln_t02 0 DC 1.200
+VLOGIC_PT03 lp_t03 0 DC 0.000
+VLOGIC_NT03 ln_t03 0 DC 1.200
+VLOGIC_PT04 lp_t04 0 DC 0.000
+VLOGIC_NT04 ln_t04 0 DC 1.200
+VLOGIC_PT05 lp_t05 0 DC 0.000
+VLOGIC_NT05 ln_t05 0 DC 1.200
+VLOGIC_PT06 lp_t06 0 DC 0.000
+VLOGIC_NT06 ln_t06 0 DC 1.200
+VLOGIC_PT07 lp_t07 0 DC 0.000
+VLOGIC_NT07 ln_t07 0 DC 1.200
+VLOGIC_PT08 lp_t08 0 DC 0.000
+VLOGIC_NT08 ln_t08 0 DC 1.200
+VLOGIC_PT09 lp_t09 0 DC 0.000
+VLOGIC_NT09 ln_t09 0 DC 1.200
+VLOGIC_PT10 lp_t10 0 DC 0.000
+VLOGIC_NT10 ln_t10 0 DC 1.200
+VLOGIC_PT11 lp_t11 0 DC 0.000
+VLOGIC_NT11 ln_t11 0 DC 1.200
+VLOGIC_PT12 lp_t12 0 DC 0.000
+VLOGIC_NT12 ln_t12 0 DC 1.200
+VLOGIC_PT13 lp_t13 0 DC 0.000
+VLOGIC_NT13 ln_t13 0 DC 1.200
+VLOGIC_PT14 lp_t14 0 DC 0.000
+VLOGIC_NT14 ln_t14 0 DC 1.200
+VLOGIC_PT15 lp_t15 0 DC 0.000
+VLOGIC_NT15 ln_t15 0 DC 1.200
+VLOGIC_PT16 lp_t16 0 DC 0.000
+VLOGIC_NT16 ln_t16 0 DC 1.200
+VLOGIC_PT17 lp_t17 0 DC 0.000
+VLOGIC_NT17 ln_t17 0 DC 1.200
+VLOGIC_PT18 lp_t18 0 DC 0.000
+VLOGIC_NT18 ln_t18 0 DC 1.200
+VLOGIC_PT19 lp_t19 0 DC 0.000
+VLOGIC_NT19 ln_t19 0 DC 1.200
+VLOGIC_PT20 lp_t20 0 DC 0.000
+VLOGIC_NT20 ln_t20 0 DC 1.200
+VLOGIC_PT21 lp_t21 0 DC 0.000
+VLOGIC_NT21 ln_t21 0 DC 1.200
+VLOGIC_PT22 lp_t22 0 DC 0.000
+VLOGIC_NT22 ln_t22 0 DC 1.200
+VLOGIC_PT23 lp_t23 0 DC 0.000
+VLOGIC_NT23 ln_t23 0 DC 1.200
+VLOGIC_PT24 lp_t24 0 DC 0.000
+VLOGIC_NT24 ln_t24 0 DC 1.200
+VLOGIC_PT25 lp_t25 0 DC 0.000
+VLOGIC_NT25 ln_t25 0 DC 1.200
+VLOGIC_PT26 lp_t26 0 DC 0.000
+VLOGIC_NT26 ln_t26 0 DC 1.200
+VLOGIC_PT27 lp_t27 0 DC 0.000
+VLOGIC_NT27 ln_t27 0 DC 1.200
+VLOGIC_PT28 lp_t28 0 DC 0.000
+VLOGIC_NT28 ln_t28 0 DC 1.200
+VLOGIC_PT29 lp_t29 0 DC 0.000
+VLOGIC_NT29 ln_t29 0 DC 1.200
+VLOGIC_PT30 lp_t30 0 DC 0.000
+VLOGIC_NT30 ln_t30 0 DC 1.200
+VLOGIC_PT31 lp_t31 0 DC 0.000
+VLOGIC_NT31 ln_t31 0 DC 1.200
+VLOGIC_PT32 lp_t32 0 DC 0.000
+VLOGIC_NT32 ln_t32 0 DC 1.200
+VLOGIC_PT33 lp_t33 0 DC 0.000
+VLOGIC_NT33 ln_t33 0 DC 1.200
+VLOGIC_PT34 lp_t34 0 DC 0.000
+VLOGIC_NT34 ln_t34 0 DC 1.200
+VLOGIC_PT35 lp_t35 0 DC 0.000
+VLOGIC_NT35 ln_t35 0 DC 1.200
+VLOGIC_PT36 lp_t36 0 DC 0.000
+VLOGIC_NT36 ln_t36 0 DC 1.200
+VLOGIC_PT37 lp_t37 0 DC 0.000
+VLOGIC_NT37 ln_t37 0 DC 1.200
+VLOGIC_PT38 lp_t38 0 DC 0.000
+VLOGIC_NT38 ln_t38 0 DC 1.200
+VLOGIC_PT39 lp_t39 0 DC 0.000
+VLOGIC_NT39 ln_t39 0 DC 1.200
+VLOGIC_PT40 lp_t40 0 DC 0.000
+VLOGIC_NT40 ln_t40 0 DC 1.200
+VLOGIC_PT41 lp_t41 0 DC 0.000
+VLOGIC_NT41 ln_t41 0 DC 1.200
+VLOGIC_PT42 lp_t42 0 DC 0.000
+VLOGIC_NT42 ln_t42 0 DC 1.200
+VLOGIC_PT43 lp_t43 0 DC 0.000
+VLOGIC_NT43 ln_t43 0 DC 1.200
+VLOGIC_PT44 lp_t44 0 DC 0.000
+VLOGIC_NT44 ln_t44 0 DC 1.200
+VLOGIC_PT45 lp_t45 0 DC 0.000
+VLOGIC_NT45 ln_t45 0 DC 1.200
+VLOGIC_PT46 lp_t46 0 DC 0.000
+VLOGIC_NT46 ln_t46 0 DC 1.200
+VLOGIC_PT47 lp_t47 0 DC 0.000
+VLOGIC_NT47 ln_t47 0 DC 1.200
+VLOGIC_PT48 lp_t48 0 DC 0.000
+VLOGIC_NT48 ln_t48 0 DC 1.200
+VLOGIC_PT49 lp_t49 0 DC 0.000
+VLOGIC_NT49 ln_t49 0 DC 1.200
+VLOGIC_PT50 lp_t50 0 DC 0.000
+VLOGIC_NT50 ln_t50 0 DC 1.200
+VLOGIC_PT51 lp_t51 0 DC 0.000
+VLOGIC_NT51 ln_t51 0 DC 1.200
+VLOGIC_PT52 lp_t52 0 DC 0.000
+VLOGIC_NT52 ln_t52 0 DC 1.200
+VLOGIC_PT53 lp_t53 0 DC 0.000
+VLOGIC_NT53 ln_t53 0 DC 1.200
+VLOGIC_PT54 lp_t54 0 DC 0.000
+VLOGIC_NT54 ln_t54 0 DC 1.200
+VLOGIC_PT55 lp_t55 0 DC 0.000
+VLOGIC_NT55 ln_t55 0 DC 1.200
+VLOGIC_PT56 lp_t56 0 DC 0.000
+VLOGIC_NT56 ln_t56 0 DC 1.200
+VLOGIC_PT57 lp_t57 0 DC 0.000
+VLOGIC_NT57 ln_t57 0 DC 1.200
+VLOGIC_PT58 lp_t58 0 DC 0.000
+VLOGIC_NT58 ln_t58 0 DC 1.200
+VLOGIC_PT59 lp_t59 0 DC 0.000
+VLOGIC_NT59 ln_t59 0 DC 1.200
+VLOGIC_PT60 lp_t60 0 DC 0.000
+VLOGIC_NT60 ln_t60 0 DC 1.200
+VLOGIC_PT61 lp_t61 0 DC 0.000
+VLOGIC_NT61 ln_t61 0 DC 1.200
+VLOGIC_PT62 lp_t62 0 DC 0.000
+VLOGIC_NT62 ln_t62 0 DC 1.200
+VLOGIC_PT63 lp_t63 0 DC 0.000
+VLOGIC_NT63 ln_t63 0 DC 1.200
+VLOGIC_PB8 lp_b8 0 DC 0.000
+VLOGIC_NB8 ln_b8 0 DC 1.200
+VLOGIC_PB4 lp_b4 0 DC 0.000
+VLOGIC_NB4 ln_b4 0 DC 1.200
+VLOGIC_PB2 lp_b2 0 DC 0.000
+VLOGIC_NB2 ln_b2 0 DC 1.200
+VLOGIC_PB1 lp_b1 0 DC 0.000
+VLOGIC_NB1 ln_b1 0 DC 1.200
+
+* Instantiate Core Comparator Macro with c_p and c_n connected directly to 67-Cell Array
+XCOMP PBIT_OUT PBIT_RAW CLK_OUT_DIV IN_P IN_N CLK_P CLK_N c_p c_n VCC VDD VSS p1_comp_cand2_exact
+
+* 63 Thermometer Cells tied to steer_cell_therm_2x8 (4x Nx=8 HBTs per cell)
+XT01 lp_t01 ln_t01 v_ref c_p c_n v_bias VDD VSS steer_cell_therm_2x8 n_sink=16
+XT02 lp_t02 ln_t02 v_ref c_p c_n v_bias VDD VSS steer_cell_therm_2x8 n_sink=16
+XT03 lp_t03 ln_t03 v_ref c_p c_n v_bias VDD VSS steer_cell_therm_2x8 n_sink=16
+XT04 lp_t04 ln_t04 v_ref c_p c_n v_bias VDD VSS steer_cell_therm_2x8 n_sink=16
+XT05 lp_t05 ln_t05 v_ref c_p c_n v_bias VDD VSS steer_cell_therm_2x8 n_sink=16
+XT06 lp_t06 ln_t06 v_ref c_p c_n v_bias VDD VSS steer_cell_therm_2x8 n_sink=16
+XT07 lp_t07 ln_t07 v_ref c_p c_n v_bias VDD VSS steer_cell_therm_2x8 n_sink=16
+XT08 lp_t08 ln_t08 v_ref c_p c_n v_bias VDD VSS steer_cell_therm_2x8 n_sink=16
+XT09 lp_t09 ln_t09 v_ref c_p c_n v_bias VDD VSS steer_cell_therm_2x8 n_sink=16
+XT10 lp_t10 ln_t10 v_ref c_p c_n v_bias VDD VSS steer_cell_therm_2x8 n_sink=16
+XT11 lp_t11 ln_t11 v_ref c_p c_n v_bias VDD VSS steer_cell_therm_2x8 n_sink=16
+XT12 lp_t12 ln_t12 v_ref c_p c_n v_bias VDD VSS steer_cell_therm_2x8 n_sink=16
+XT13 lp_t13 ln_t13 v_ref c_p c_n v_bias VDD VSS steer_cell_therm_2x8 n_sink=16
+XT14 lp_t14 ln_t14 v_ref c_p c_n v_bias VDD VSS steer_cell_therm_2x8 n_sink=16
+XT15 lp_t15 ln_t15 v_ref c_p c_n v_bias VDD VSS steer_cell_therm_2x8 n_sink=16
+XT16 lp_t16 ln_t16 v_ref c_p c_n v_bias VDD VSS steer_cell_therm_2x8 n_sink=16
+XT17 lp_t17 ln_t17 v_ref c_p c_n v_bias VDD VSS steer_cell_therm_2x8 n_sink=16
+XT18 lp_t18 ln_t18 v_ref c_p c_n v_bias VDD VSS steer_cell_therm_2x8 n_sink=16
+XT19 lp_t19 ln_t19 v_ref c_p c_n v_bias VDD VSS steer_cell_therm_2x8 n_sink=16
+XT20 lp_t20 ln_t20 v_ref c_p c_n v_bias VDD VSS steer_cell_therm_2x8 n_sink=16
+XT21 lp_t21 ln_t21 v_ref c_p c_n v_bias VDD VSS steer_cell_therm_2x8 n_sink=16
+XT22 lp_t22 ln_t22 v_ref c_p c_n v_bias VDD VSS steer_cell_therm_2x8 n_sink=16
+XT23 lp_t23 ln_t23 v_ref c_p c_n v_bias VDD VSS steer_cell_therm_2x8 n_sink=16
+XT24 lp_t24 ln_t24 v_ref c_p c_n v_bias VDD VSS steer_cell_therm_2x8 n_sink=16
+XT25 lp_t25 ln_t25 v_ref c_p c_n v_bias VDD VSS steer_cell_therm_2x8 n_sink=16
+XT26 lp_t26 ln_t26 v_ref c_p c_n v_bias VDD VSS steer_cell_therm_2x8 n_sink=16
+XT27 lp_t27 ln_t27 v_ref c_p c_n v_bias VDD VSS steer_cell_therm_2x8 n_sink=16
+XT28 lp_t28 ln_t28 v_ref c_p c_n v_bias VDD VSS steer_cell_therm_2x8 n_sink=16
+XT29 lp_t29 ln_t29 v_ref c_p c_n v_bias VDD VSS steer_cell_therm_2x8 n_sink=16
+XT30 lp_t30 ln_t30 v_ref c_p c_n v_bias VDD VSS steer_cell_therm_2x8 n_sink=16
+XT31 lp_t31 ln_t31 v_ref c_p c_n v_bias VDD VSS steer_cell_therm_2x8 n_sink=16
+XT32 lp_t32 ln_t32 v_ref c_p c_n v_bias VDD VSS steer_cell_therm_2x8 n_sink=16
+XT33 lp_t33 ln_t33 v_ref c_p c_n v_bias VDD VSS steer_cell_therm_2x8 n_sink=16
+XT34 lp_t34 ln_t34 v_ref c_p c_n v_bias VDD VSS steer_cell_therm_2x8 n_sink=16
+XT35 lp_t35 ln_t35 v_ref c_p c_n v_bias VDD VSS steer_cell_therm_2x8 n_sink=16
+XT36 lp_t36 ln_t36 v_ref c_p c_n v_bias VDD VSS steer_cell_therm_2x8 n_sink=16
+XT37 lp_t37 ln_t37 v_ref c_p c_n v_bias VDD VSS steer_cell_therm_2x8 n_sink=16
+XT38 lp_t38 ln_t38 v_ref c_p c_n v_bias VDD VSS steer_cell_therm_2x8 n_sink=16
+XT39 lp_t39 ln_t39 v_ref c_p c_n v_bias VDD VSS steer_cell_therm_2x8 n_sink=16
+XT40 lp_t40 ln_t40 v_ref c_p c_n v_bias VDD VSS steer_cell_therm_2x8 n_sink=16
+XT41 lp_t41 ln_t41 v_ref c_p c_n v_bias VDD VSS steer_cell_therm_2x8 n_sink=16
+XT42 lp_t42 ln_t42 v_ref c_p c_n v_bias VDD VSS steer_cell_therm_2x8 n_sink=16
+XT43 lp_t43 ln_t43 v_ref c_p c_n v_bias VDD VSS steer_cell_therm_2x8 n_sink=16
+XT44 lp_t44 ln_t44 v_ref c_p c_n v_bias VDD VSS steer_cell_therm_2x8 n_sink=16
+XT45 lp_t45 ln_t45 v_ref c_p c_n v_bias VDD VSS steer_cell_therm_2x8 n_sink=16
+XT46 lp_t46 ln_t46 v_ref c_p c_n v_bias VDD VSS steer_cell_therm_2x8 n_sink=16
+XT47 lp_t47 ln_t47 v_ref c_p c_n v_bias VDD VSS steer_cell_therm_2x8 n_sink=16
+XT48 lp_t48 ln_t48 v_ref c_p c_n v_bias VDD VSS steer_cell_therm_2x8 n_sink=16
+XT49 lp_t49 ln_t49 v_ref c_p c_n v_bias VDD VSS steer_cell_therm_2x8 n_sink=16
+XT50 lp_t50 ln_t50 v_ref c_p c_n v_bias VDD VSS steer_cell_therm_2x8 n_sink=16
+XT51 lp_t51 ln_t51 v_ref c_p c_n v_bias VDD VSS steer_cell_therm_2x8 n_sink=16
+XT52 lp_t52 ln_t52 v_ref c_p c_n v_bias VDD VSS steer_cell_therm_2x8 n_sink=16
+XT53 lp_t53 ln_t53 v_ref c_p c_n v_bias VDD VSS steer_cell_therm_2x8 n_sink=16
+XT54 lp_t54 ln_t54 v_ref c_p c_n v_bias VDD VSS steer_cell_therm_2x8 n_sink=16
+XT55 lp_t55 ln_t55 v_ref c_p c_n v_bias VDD VSS steer_cell_therm_2x8 n_sink=16
+XT56 lp_t56 ln_t56 v_ref c_p c_n v_bias VDD VSS steer_cell_therm_2x8 n_sink=16
+XT57 lp_t57 ln_t57 v_ref c_p c_n v_bias VDD VSS steer_cell_therm_2x8 n_sink=16
+XT58 lp_t58 ln_t58 v_ref c_p c_n v_bias VDD VSS steer_cell_therm_2x8 n_sink=16
+XT59 lp_t59 ln_t59 v_ref c_p c_n v_bias VDD VSS steer_cell_therm_2x8 n_sink=16
+XT60 lp_t60 ln_t60 v_ref c_p c_n v_bias VDD VSS steer_cell_therm_2x8 n_sink=16
+XT61 lp_t61 ln_t61 v_ref c_p c_n v_bias VDD VSS steer_cell_therm_2x8 n_sink=16
+XT62 lp_t62 ln_t62 v_ref c_p c_n v_bias VDD VSS steer_cell_therm_2x8 n_sink=16
+XT63 lp_t63 ln_t63 v_ref c_p c_n v_bias VDD VSS steer_cell_therm_2x8 n_sink=16
+
+* 4 Unchanged Binary LSB Cells tied to steer_cell_weighted
+XB8 lp_b8 ln_b8 v_ref c_p c_n v_bias VDD VSS steer_cell_weighted n_sink=8 nx_hbt=8
+XB4 lp_b4 ln_b4 v_ref c_p c_n v_bias VDD VSS steer_cell_weighted n_sink=4 nx_hbt=4
+XB2 lp_b2 ln_b2 v_ref c_p c_n v_bias VDD VSS steer_cell_weighted n_sink=2 nx_hbt=2
+XB1 lp_b1 ln_b1 v_ref c_p c_n v_bias VDD VSS steer_cell_weighted n_sink=1 nx_hbt=1
+
+.option temp = 27.0
+.options rshunt=1e12 method=gear reltol=1e-3 savecurrents
+
+.control
+pre_osdi $PDK_ROOT/libs.tech/ngspice/osdi/psp103.osdi
+pre_osdi $PDK_ROOT/libs.tech/ngspice/osdi/psp103_nqs.osdi
+set filetype=ascii
+
+echo BEGIN_CODE_0
+* --- CODE 0 (P-Units = 0, N-Units = 1023) ---
+alter VLOGIC_PT01 DC = 0.000
+alter VLOGIC_NT01 DC = 1.200
+alter VLOGIC_PT02 DC = 0.000
+alter VLOGIC_NT02 DC = 1.200
+alter VLOGIC_PT03 DC = 0.000
+alter VLOGIC_NT03 DC = 1.200
+alter VLOGIC_PT04 DC = 0.000
+alter VLOGIC_NT04 DC = 1.200
+alter VLOGIC_PT05 DC = 0.000
+alter VLOGIC_NT05 DC = 1.200
+alter VLOGIC_PT06 DC = 0.000
+alter VLOGIC_NT06 DC = 1.200
+alter VLOGIC_PT07 DC = 0.000
+alter VLOGIC_NT07 DC = 1.200
+alter VLOGIC_PT08 DC = 0.000
+alter VLOGIC_NT08 DC = 1.200
+alter VLOGIC_PT09 DC = 0.000
+alter VLOGIC_NT09 DC = 1.200
+alter VLOGIC_PT10 DC = 0.000
+alter VLOGIC_NT10 DC = 1.200
+alter VLOGIC_PT11 DC = 0.000
+alter VLOGIC_NT11 DC = 1.200
+alter VLOGIC_PT12 DC = 0.000
+alter VLOGIC_NT12 DC = 1.200
+alter VLOGIC_PT13 DC = 0.000
+alter VLOGIC_NT13 DC = 1.200
+alter VLOGIC_PT14 DC = 0.000
+alter VLOGIC_NT14 DC = 1.200
+alter VLOGIC_PT15 DC = 0.000
+alter VLOGIC_NT15 DC = 1.200
+alter VLOGIC_PT16 DC = 0.000
+alter VLOGIC_NT16 DC = 1.200
+alter VLOGIC_PT17 DC = 0.000
+alter VLOGIC_NT17 DC = 1.200
+alter VLOGIC_PT18 DC = 0.000
+alter VLOGIC_NT18 DC = 1.200
+alter VLOGIC_PT19 DC = 0.000
+alter VLOGIC_NT19 DC = 1.200
+alter VLOGIC_PT20 DC = 0.000
+alter VLOGIC_NT20 DC = 1.200
+alter VLOGIC_PT21 DC = 0.000
+alter VLOGIC_NT21 DC = 1.200
+alter VLOGIC_PT22 DC = 0.000
+alter VLOGIC_NT22 DC = 1.200
+alter VLOGIC_PT23 DC = 0.000
+alter VLOGIC_NT23 DC = 1.200
+alter VLOGIC_PT24 DC = 0.000
+alter VLOGIC_NT24 DC = 1.200
+alter VLOGIC_PT25 DC = 0.000
+alter VLOGIC_NT25 DC = 1.200
+alter VLOGIC_PT26 DC = 0.000
+alter VLOGIC_NT26 DC = 1.200
+alter VLOGIC_PT27 DC = 0.000
+alter VLOGIC_NT27 DC = 1.200
+alter VLOGIC_PT28 DC = 0.000
+alter VLOGIC_NT28 DC = 1.200
+alter VLOGIC_PT29 DC = 0.000
+alter VLOGIC_NT29 DC = 1.200
+alter VLOGIC_PT30 DC = 0.000
+alter VLOGIC_NT30 DC = 1.200
+alter VLOGIC_PT31 DC = 0.000
+alter VLOGIC_NT31 DC = 1.200
+alter VLOGIC_PT32 DC = 0.000
+alter VLOGIC_NT32 DC = 1.200
+alter VLOGIC_PT33 DC = 0.000
+alter VLOGIC_NT33 DC = 1.200
+alter VLOGIC_PT34 DC = 0.000
+alter VLOGIC_NT34 DC = 1.200
+alter VLOGIC_PT35 DC = 0.000
+alter VLOGIC_NT35 DC = 1.200
+alter VLOGIC_PT36 DC = 0.000
+alter VLOGIC_NT36 DC = 1.200
+alter VLOGIC_PT37 DC = 0.000
+alter VLOGIC_NT37 DC = 1.200
+alter VLOGIC_PT38 DC = 0.000
+alter VLOGIC_NT38 DC = 1.200
+alter VLOGIC_PT39 DC = 0.000
+alter VLOGIC_NT39 DC = 1.200
+alter VLOGIC_PT40 DC = 0.000
+alter VLOGIC_NT40 DC = 1.200
+alter VLOGIC_PT41 DC = 0.000
+alter VLOGIC_NT41 DC = 1.200
+alter VLOGIC_PT42 DC = 0.000
+alter VLOGIC_NT42 DC = 1.200
+alter VLOGIC_PT43 DC = 0.000
+alter VLOGIC_NT43 DC = 1.200
+alter VLOGIC_PT44 DC = 0.000
+alter VLOGIC_NT44 DC = 1.200
+alter VLOGIC_PT45 DC = 0.000
+alter VLOGIC_NT45 DC = 1.200
+alter VLOGIC_PT46 DC = 0.000
+alter VLOGIC_NT46 DC = 1.200
+alter VLOGIC_PT47 DC = 0.000
+alter VLOGIC_NT47 DC = 1.200
+alter VLOGIC_PT48 DC = 0.000
+alter VLOGIC_NT48 DC = 1.200
+alter VLOGIC_PT49 DC = 0.000
+alter VLOGIC_NT49 DC = 1.200
+alter VLOGIC_PT50 DC = 0.000
+alter VLOGIC_NT50 DC = 1.200
+alter VLOGIC_PT51 DC = 0.000
+alter VLOGIC_NT51 DC = 1.200
+alter VLOGIC_PT52 DC = 0.000
+alter VLOGIC_NT52 DC = 1.200
+alter VLOGIC_PT53 DC = 0.000
+alter VLOGIC_NT53 DC = 1.200
+alter VLOGIC_PT54 DC = 0.000
+alter VLOGIC_NT54 DC = 1.200
+alter VLOGIC_PT55 DC = 0.000
+alter VLOGIC_NT55 DC = 1.200
+alter VLOGIC_PT56 DC = 0.000
+alter VLOGIC_NT56 DC = 1.200
+alter VLOGIC_PT57 DC = 0.000
+alter VLOGIC_NT57 DC = 1.200
+alter VLOGIC_PT58 DC = 0.000
+alter VLOGIC_NT58 DC = 1.200
+alter VLOGIC_PT59 DC = 0.000
+alter VLOGIC_NT59 DC = 1.200
+alter VLOGIC_PT60 DC = 0.000
+alter VLOGIC_NT60 DC = 1.200
+alter VLOGIC_PT61 DC = 0.000
+alter VLOGIC_NT61 DC = 1.200
+alter VLOGIC_PT62 DC = 0.000
+alter VLOGIC_NT62 DC = 1.200
+alter VLOGIC_PT63 DC = 0.000
+alter VLOGIC_NT63 DC = 1.200
+alter VLOGIC_PB8 DC = 0.000
+alter VLOGIC_NB8 DC = 1.200
+alter VLOGIC_PB4 DC = 0.000
+alter VLOGIC_NB4 DC = 1.200
+alter VLOGIC_PB2 DC = 0.000
+alter VLOGIC_NB2 DC = 1.200
+alter VLOGIC_PB1 DC = 0.000
+alter VLOGIC_NB1 DC = 1.200
+dc VIN_SRC -0.060 0.060 0.0001
+wrdata ./raw_modelvalid_binary_only_selft1_code0.txt v(c_p) v(c_n) vcc_hbt#branch vref#branch v(xt01.trim_p) v(xt01.trim_n) v(xb8.trim_p) v(xb8.trim_n) v(xb4.trim_p) v(xb4.trim_n) v(xb2.trim_p) v(xb2.trim_n) v(xb1.trim_p) v(xb1.trim_n)
+echo END_CODE_0
+echo CONTROL_END
+
+.endc
+.end
