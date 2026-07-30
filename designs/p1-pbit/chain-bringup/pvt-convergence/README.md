@@ -154,3 +154,67 @@ is earlier than ~200 ns the two measurements are measuring different things.
 
 125 °C has not been made to run by either measurement. The mechanism remains unidentified
 and self-heating remains untested rather than refuted, for the reasons in the section above.
+
+## The hot corner does run — at a 2 ps maximum timestep — and memory, not convergence, is the wall
+
+The "125 °C runs nowhere" above is also wrong. Tried three things on the hot deck over 40 ns:
+
+| change | result |
+| --- | --- |
+| maximum timestep 5 ps → **2 ps** | **completes** |
+| `reltol=1e-4`, `abstol=1e-13` | aborts |
+| `method=gear` | aborts |
+
+**A finer maximum step is what it needed**, not tighter tolerances and not a different
+integrator. So the earlier failure was a step-size choice of mine, and the physics stays
+intact — no self-heating flag was touched.
+
+But 300 ns at 2 ps does not finish either. It reaches **40.0 ns** and dies with
+`Setting the output memory is not possible` — 150,000 points across several vectors exhausts
+the available memory. So on this deck a fine step and a long window cannot be had together,
+and **40 ns is the practical ceiling at the hot corner.**
+
+## Which makes every corner number a settling measurement, and that is the whole discrepancy
+
+40 ns is well inside the ~100 ns interstage coupling settling. To measure what that does,
+hold **temperature fixed at 27 °C** and change only the resistor corner, sampling a 40 ns
+window:
+
+| corner, 27 °C, 40 ns window | P(bit=1) | ρ₁ | ρ₂ | ρ₃ |
+| --- | --- | --- | --- | --- |
+| `res_typ` | 0.963 | **+0.4065** | +0.2580 | +0.1095 |
+| `res_wcs` | 0.968 | **+0.4835** | +0.3113 | +0.1390 |
+| `res_bcs` | 0.958 | **+0.4778** | +0.3471 | +0.2163 |
+
+Compare the same circuit, same corner, over a 200 … 300 ns window: **ρ₁ = 0.079, P(1) = 0.517.**
+
+Two things follow, and neither involves temperature.
+
+**Window length dominates.** ρ₁ goes from 0.079 to 0.41 purely by shortening the window, and
+P(bit=1) goes from 0.517 to 0.96 — degenerate. A short window does not measure a slightly
+worse version of the circuit; it measures the settling transient.
+
+**And the resistor corner alone moves apparent ρ₁ from 0.41 to 0.48 with temperature held
+constant**, because the coupling network's time constant is set by those resistors. So a
+corner-to-corner spread in apparent correlation is expected from the settling alone, and a
+PVT matrix measured over a short window will show one whether or not the circuit degrades.
+
+**A separately reported matrix gives ρ₁ of 0.046 / 0.165 / 0.580 for typical / cold / hot over
+40 ns.** Its typical value is close to the long-window figure, so its window must sit later in
+the settling than the one used here — the numbers are not directly comparable. What the
+measurements above establish is that this ordering is **producible without any temperature
+effect at all**, so it is not evidence of one.
+
+## What would make short-window corner measurements valid
+
+The settling, not the solver, is the obstacle. Options, in order of directness:
+
+1. **Preset the coupling nodes with `.ic`** to their settled DC values, so no settling
+   transient occurs and a 40 ns window is usable from the first nanosecond. This is the clean
+   answer and it changes no devices.
+2. **Reduce the coupling time constant** — the ~2 pF into ~50 kΩ bias network is what costs
+   100 ns. Smaller bias resistors would shorten it, at the price of loading. That is a design
+   change with an independent justification: a 100 ns settling makes every corner measurement
+   expensive.
+3. Write out fewer vectors so the memory ceiling arrives later, which buys window length
+   rather than removing the need for it.
