@@ -65,6 +65,24 @@ sized `w=1.414 µm` / `w=1.0 µm`. That is the **same W/L ratio** as the chain's
 (1.414 against 2.83/2.0 = 1.415), so the two devices genuinely do share a trip point and the
 disagreement is not a device difference.
 
+And the definitional difference is not inferred — it is written in the CACE template,
+`cace/templates/ihp_inv_dc_tb.spice`:
+
+```
+dc VVIN 0 CACE{vdd} 0.005
+meas dc vth FIND v(vin) WHEN v(vout)=0.6
+```
+
+CACE's `vth` is *the input at which the output reaches 0.6 V*, i.e. VDD/2 — the
+**output-crossing** definition, explicitly, with the level hardcoded. It is not the unity-gain
+point and was never intended to be.
+
+Two further details from those two lines. The sweep step is **5 mV**, so the CACE figure carries
+about ±2.5 mV of grid resolution — coarser than the 6.2 mV difference being discussed here, and
+worth knowing before quoting it to three decimals. And because the level is hardcoded at 0.6
+rather than written as `CACE{vdd}/2`, the same template run at another supply would measure the
+input reaching a fixed 0.6 V rather than that supply's midpoint.
+
 **The 6.2 mV is a difference of definition between two measurements, not an error in either.**
 Which is the more instructive outcome: the number was right, the label on it was wrong, and it
 was propagated into a context where the other definition was the one that mattered.
