@@ -1,0 +1,88 @@
+* Candidate 2 P1_COMPARATOR Monte Carlo HBT Mismatch Deck (Seed 2197)
+* ngspice 46 Monte Carlo seed setting: .option seed = 2197
+* HBT Mismatch: 10 npn13G2 HBT calls (XQ1-4, XQCLK_TRACK/LATCH, XQEF1-2, XQDAC_P/N)
+.lib $PDK_ROOT/libs.tech/ngspice/models/cornerHBT.lib hbt_typ_mismatch
+.lib $PDK_ROOT/libs.tech/ngspice/models/cornerRES.lib res_typ
+.lib $PDK_ROOT/libs.tech/ngspice/models/cornerCAP.lib cap_typ
+.lib $PDK_ROOT/libs.tech/ngspice/models/cornerMOShv.lib mos_tt
+.lib $PDK_ROOT/libs.tech/ngspice/models/cornerMOSlv.lib mos_tt
+.lib $PDK_ROOT/libs.tech/ngspice/models/cornerDIO.lib dio_tt
+
+.subckt p1_comp_cand2_chunk PBIT_OUT PBIT_RAW CLK_OUT_DIV IN_P IN_N CLK_P CLK_N TRIM_P TRIM_N VCC_HBT VDD VSS
+XRC1 VCC_HBT c_n sub! rppd w=1.0u l=0.838u m=1 b=0 mm_ok=1
+XRC2 VCC_HBT c_p sub! rppd w=1.0u l=0.838u m=1 b=0 mm_ok=1
+XQ1 c_n IN_P e_track sub! npn13G2 Nx=1 mm_ok=1
+XQ2 c_p IN_N e_track sub! npn13G2 Nx=1 mm_ok=1
+XQ3 c_n ef_p e_latch sub! npn13G2 Nx=1 mm_ok=1
+XQ4 c_p ef_n e_latch sub! npn13G2 Nx=1 mm_ok=1
+I_PTAT_TAIL e_tail VSS DC 1.958m
+XQCLK_TRACK e_track CLK_P e_tail sub! npn13G2 Nx=1 mm_ok=1
+XQCLK_LATCH e_latch CLK_N e_tail sub! npn13G2 Nx=1 mm_ok=1
+XQEF1 VCC_HBT c_p ef_p sub! npn13G2 Nx=1 mm_ok=1
+XQEF2 VCC_HBT c_n ef_n sub! npn13G2 Nx=1 mm_ok=1
+XR1_P ef_p g_p sub! rppd w=1.0u l=22.0u m=1 b=0 mm_ok=1
+XR2_P g_p VSS sub! rppd w=1.0u l=14.5u m=1 b=0 mm_ok=1
+XR1_N ef_n g_n sub! rppd w=1.0u l=22.0u m=1 b=0 mm_ok=1
+XR2_N g_n VSS sub! rppd w=1.0u l=14.5u m=1 b=0 mm_ok=1
+XM1 cml_out_n g_p e_cmos VSS sg13_lv_nmos w=6.0u l=0.13u ng=1 m=1 mm_ok=1
+XM2 cml_out_p g_n e_cmos VSS sg13_lv_nmos w=6.0u l=0.13u ng=1 m=1 mm_ok=1
+XMTAIL e_cmos VDD VSS VSS sg13_lv_nmos w=8.0u l=0.50u ng=1 m=1 mm_ok=1
+XM3 cml_out_n cml_out_n VDD VDD sg13_lv_pmos w=8.0u l=0.13u ng=1 m=1 mm_ok=1
+XM4 cml_out_p cml_out_n VDD VDD sg13_lv_pmos w=8.0u l=0.13u ng=1 m=1 mm_ok=1
+XCDAMP1 cml_out_p VSS cap_cmim w=5.0u l=5.0u m=1 mm_ok=1
+XCDAMP2 cml_out_n VSS cap_cmim w=5.0u l=5.0u m=1 mm_ok=1
+
+* Candidate 2 Exact Shunt Feedback Resistor: l=18.5u (4.88 kOhm)
+XRFB raw_inv cml_out_p sub! rppd w=1.0u l=18.5u m=1 b=0 mm_ok=1
+
+XM5 raw_inv cml_out_p VDD VDD sg13_lv_pmos w=2.83u l=0.13u ng=1 m=1 mm_ok=1
+XM6 raw_inv cml_out_p VSS VSS sg13_lv_nmos w=2.0u l=0.13u ng=1 m=1 mm_ok=1
+XM7 PBIT_RAW raw_inv VDD VDD sg13_lv_pmos w=2.83u l=0.13u ng=1 m=1 mm_ok=1
+XM8 PBIT_RAW raw_inv VSS VSS sg13_lv_nmos w=2.0u l=0.13u ng=1 m=1 mm_ok=1
+XM9 PBIT_OUT PBIT_RAW VDD VDD sg13_lv_pmos w=2.83u l=0.13u ng=1 m=1 mm_ok=1
+XM10 PBIT_OUT PBIT_RAW VSS VSS sg13_lv_nmos w=2.0u l=0.13u ng=1 m=1 mm_ok=1
+XQDAC_P c_p TRIM_P e_dac_p sub! npn13G2 Nx=1 mm_ok=1
+XRDAC_P e_dac_p VSS sub! rppd w=1.0u l=3.0u m=1 b=0 mm_ok=1
+XQDAC_N c_n TRIM_N e_dac_n sub! npn13G2 Nx=1 mm_ok=1
+XRDAC_N e_dac_n VSS sub! rppd w=1.0u l=3.0u m=1 b=0 mm_ok=1
+XTAP1 VSS sub! ptap1
+.ends
+
+VCC_HBT VCC 0 DC 2.500
+VDD VDD 0 DC 1.200
+VSS VSS 0 DC 0.000
+
+* Common-mode input bias 1.440V
+VCM v_in_cm 0 DC 1.440
+VIN_SRC v_in_diff 0 DC 0.000
+E_IN_P IN_P v_in_cm v_in_diff 0 +0.5
+E_IN_N IN_N v_in_cm v_in_diff 0 -0.5
+
+* Frozen Clock State: Track Mode (CLK_P = 1.200V, CLK_N = 0.000V)
+VCLK_P CLK_P 0 DC 1.200
+VCLK_N CLK_N 0 DC 0.000
+
+* Neutral Analog Trim Control Bias (Connected directly to XCOMP TRIM_P/N pins)
+VTRIM_P TRIM_P 0 DC 0.800
+VTRIM_N TRIM_N 0 DC 0.800
+
+* Instantiate Candidate 2 P1_COMPARATOR
+XCOMP PBIT_OUT PBIT_RAW CLK_OUT_DIV IN_P IN_N CLK_P CLK_N TRIM_P TRIM_N VCC VDD VSS p1_comp_cand2_chunk
+
+.option temp = 27.0
+.option seed = 2197
+.options rshunt=1e12 method=gear reltol=1e-3 savecurrents
+
+.control
+pre_osdi $PDK_ROOT/libs.tech/ngspice/osdi/psp103.osdi
+pre_osdi $PDK_ROOT/libs.tech/ngspice/osdi/psp103_nqs.osdi
+set filetype=ascii
+
+dc VIN_SRC -0.060 0.060 0.0001
+let v_diff_in = v(IN_P) - v(IN_N)
+let v_diff_coll = v(xcomp.c_p) - v(xcomp.c_n)
+let i_vcc_hbt = vcc_hbt#branch
+
+wrdata ./raw_comp_mc_seed2197.txt v_diff_in v_diff_coll i_vcc_hbt
+.endc
+.end
