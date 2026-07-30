@@ -45,11 +45,63 @@ driving the collectors back to a state set by the input, and the track phase is 
 of a 200 ps period. Incomplete erasure leaves each decision biased toward the one
 before it, decaying over several cycles — which is the shape in the table.
 
-**Not yet established:** that the track phase is *why*. The discriminating experiment
-is to lengthen it — change the clock duty cycle, or raise the tail current so the
-collectors settle faster — and see whether ρ falls. If it does, the fix is duty cycle
-or bias. If it does not, the topology needs a reset device. **Nothing should be
-resized until that is run.**
+## The track phase is not why — and the latch is not the culprit at all
+
+Both of those were our hypotheses, and both are wrong. They are recorded because the
+measurements that killed them are the ones that found the real answer.
+
+**Lengthening the track phase does nothing.** Taking the clock from 80 ps of track in a
+200 ps period to 120 ps — `track120.cir`, everything else identical, same noise file:
+
+| | ρ₁ | ρ₂ | ρ₃ | ρ₄ | ρ₅ |
+| --- | --- | --- | --- | --- | --- |
+| track 80 ps, as built | +0.802 | +0.628 | +0.526 | +0.447 | +0.373 |
+| track 120 ps | **+0.810** | +0.637 | +0.499 | +0.405 | +0.320 |
+
+ρ₁ is unchanged within the standard error of 0.045. Incomplete erasure for want of
+settling time is not the mechanism.
+
+**And the latch's own collectors are not correlated.** Sampling three points in the
+same run — `nodes.cir`, mid-latch, N = 501:
+
+| node | ρ₁ | ρ₂ | ρ₃ | ρ₄ | ρ₅ |
+| --- | --- | --- | --- | --- | --- |
+| CML collectors, `c_p − c_n` | **−0.024** | +0.062 | −0.024 | +0.094 | +0.019 |
+| CMOS load, `cml_out_p − cml_out_n` | **+0.891** | +0.714 | +0.582 | +0.477 | +0.380 |
+| `PBIT_RAW` as bits | +0.777 | +0.635 | +0.517 | +0.439 | +0.356 |
+
+Every CML collector value is within two standard errors of zero. **The comparator's
+decision is independent bit to bit.** The correlation appears at the CMOS load nodes
+and is inherited by everything after them. The memory is in the **CML → CMOS
+interface**, not in the latch.
+
+## The overshoot fix is a large part of the cause
+
+Those load nodes carry two `cap_cmim` damping capacitors, 38.3 fF each, added to cure
+86 mV of overshoot. They sit on the output of a pMOS current-mirror load — a
+deliberately high-impedance node — so their time constant is of order a nanosecond,
+several clock periods. Removing them (`nodamp.cir`, same noise, same clock):
+
+| | ρ₁ bit | ρ₁ CMOS load | P(bit=1) | `PBIT_OUT` peak |
+| --- | --- | --- | --- | --- |
+| 38.3 fF damping, as built | +0.777 | +0.891 | 0.4731 | 1.269 V (**69 mV** over rail) |
+| damping removed | **+0.424** | +0.726 | 0.5788 | 1.301 V (**101 mV** over rail) |
+
+**Bit correlation nearly halves and the overshoot gets worse.** So the damping
+capacitors are a major contributor to the memory — and they are not the whole of it,
+because the load node is still correlated at 0.726 with them gone. The mirror's own
+output resistance against parasitic capacitance is already slow at 5 GS/s.
+
+**This is a real design tension and nobody had seen it.** Damping the overshoot and
+decorrelating the bits pull in opposite directions on the same node. It stayed hidden
+because overshoot is measured on a *single* edge and correlation requires *consecutive*
+ones — the two live on the same node and no measurement looked at both.
+
+So the fix is not "remove the capacitors". It is to make the interface fast enough at
+5 GS/s that neither compromise is needed: a lower-impedance load in place of the
+current mirror, or a different level-shifting topology between the CML latch and the
+CMOS buffer. That is a topology decision, and **nothing here licenses a resize** — what
+this establishes is which node to redesign and why.
 
 ## Every error bar quoted on P(bit=1) is understated
 
