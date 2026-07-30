@@ -1,0 +1,14 @@
+* rppd: measured resistance vs the Rspec*l/w formula
+.lib $PDK_ROOT/ihp-sg13g2/libs.tech/ngspice/models/cornerRES.lib res_typ
+.options rshunt = 1e12
+V1 a 0 DC 1
+V2 b 0 DC 1
+V3 c 0 DC 1
+XR1 a 0 0 rppd w=1u    l=0.923u
+XR2 b 0 0 rppd w=1u    l=3.85u
+XR3 c 0 0 rppd w=8.67u l=0.5u
+.control
+op
+print 1/abs(i(v1)) 1/abs(i(v2)) 1/abs(i(v3))
+.endc
+.end

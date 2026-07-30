@@ -1,8 +1,9 @@
 # P1_NOISE_GEN — physical layout
 
 The first physical layout in this project. Geometry for the entropy source in the
-IHP SG13G2 open PDK: two `npn13G2` SiGe HBTs, two `rppd` 1 kΩ collector loads, and a
-`ptap1` substrate tie, in a 42 × 57 µm cell.
+IHP SG13G2 open PDK: two `npn13G2` SiGe HBTs, two `rppd` collector loads drawn for
+1 kΩ and measuring **1059 Ω** in the PDK model, and a `ptap1` substrate tie, in a
+42 × 57 µm cell.
 
 **It is DRC-clean on every geometry rule and it matches its schematic.** Both verdicts
 below come from the PDK's own tools, and both are reproducible from the files here.
@@ -67,9 +68,10 @@ Nine attempts, and the failures were more instructive than the pass. In order:
    then 3.16 kΩ (`rhigh` at its default, because the generator passed a lowercase `r`
    where the parameter is `R` — silently discarded), then 130 Ω (`rppd` with the length
    left at `Lmin`). The `R` parameter field read 1000, then 3160, then 397 across those
-   revisions: it is a stored request, not a measurement. What finally worked is
+   revisions: it is a stored request, not a measurement. What ended the sequence was
    `verify_rppd_geometry.py` here — compute `Rspec × l / w` from the drawn geometry and
-   fail hard on any deviation over 10 Ω.
+   fail hard on any deviation over 10 Ω. **That check is not sufficient, and the
+   correction below says why.**
 3. **The reference netlist was hand-written for several attempts**, and was twice edited
    to agree with the layout — once while the layout carried a 7.7× undersized resistor.
    A reference maintained by hand cannot disagree with the layout, because whenever it
@@ -107,6 +109,49 @@ resized tap would have kept matching. The override was removed, the reference
 regenerated, and the pass reproduced with both values derived. That is the pass recorded
 above.
 
+## Correction: the collector loads are 1059 Ω, not 1000 Ω
+
+This page said "1 kΩ collector loads" when it was first published. The drawn geometry is
+w = 1.0 µm, l = 3.85 µm, and `260 Ω/sq × 3.85 / 1.0 = 1001 Ω` — which is what
+`verify_rppd_geometry.py` computes, and which passed its ±10 Ω gate.
+
+The PDK's model card does not compute that. `libs.tech/ngspice/models/resistors_mod.lib`
+defines `rppd` as its body plus an end resistance at **each** contact:
+
+    rzspec = 35e-6
+    rz     = rzspec/w        ; and the model instantiates c1=1, c2=1 — both ends
+
+so the device is `Rspec·l/w + 2 × 35 Ω·µm / w`. Measured directly — 1 V across the device,
+one `op` analysis, `cornerRES.lib res_typ`:
+
+| device | drawn | `Rspec·l/w` | ngspice | error |
+| --- | --- | ---: | ---: | ---: |
+| collector load, as drawn in this cell | w 1.0 µm, l 3.85 µm | 1001.0 Ω | **1059.2 Ω** | **+5.8%** |
+
+Deck and simulator output are in [`rppd-end-resistance/`](rppd-end-resistance/) — reproduce
+with `ngspice -b rppd_end_resistance.cir` after pointing `$PDK_ROOT` at an SG13G2 install.
+The deck also carries the two preamplifier sizes for comparison: w 1.0 µm / l 0.923 µm reads
+**307.3 Ω** against a 240 Ω intent, and w 8.67 µm / l 0.5 µm reads **23.1 Ω** against 15 Ω.
+As elsewhere in this directory the PDK path is written `$PDK_ROOT/...`; the run itself used
+the absolute path of the machine it ran on.
+
+**What this does and does not invalidate.** It does *not* touch any simulated result in this
+repository: ngspice evaluated the full model card in every run, so the 36.42 nV/√Hz noise
+figure in [`../`](../) already contains 1059 Ω rather than 1001 Ω. Nothing needs re-running.
+What was wrong is the *stated* resistance — the one number on this page a reader could have
+checked by eye, and the one the verification script certified.
+
+**And the verifier is the real defect.** It was written after three consecutive resistor
+errors, to stop a fourth. It failed to, because it was derived from the same formula that
+produced them: it checks the resistor *body*, and the body is not the device. Its 10 Ω gate
+passed a part 59 Ω out — 5.9× its own tolerance — and it would do so again, correctly by its
+own lights, on every block it is pointed at. A check is only worth its cost if it comes from
+somewhere other than the reasoning it is meant to police. The sufficient check was available
+from the first attempt and costs four lines: put a volt across the device and read the current.
+
+The penalty is `35 Ω·µm / w` per end, so it is largest for narrow devices and does not shrink
+as you lengthen them. Anything sized here at w = 1 µm carries ~70 Ω of it.
+
 ## Contents
 
 ```
@@ -118,6 +163,7 @@ p1_noise_gen_extracted.cir           the extracted netlist LVS compared against 
 lvs_run.log                          the LVS run reporting PASS
 drc/drc_run_*.log                    the DRC run and its violated-rule list
 drc/*_full.lyrdb                     the 9 density violations, itemised
+rppd-end-resistance/                 the deck and log behind the 1059 Ω correction
 ```
 
 Reproduce with the PDK's `run_drc.py` and `run_lvs.py` after setting `$PDK_ROOT` to an

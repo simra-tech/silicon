@@ -19,7 +19,7 @@ foundry signoff is claimed anywhere in this directory.**
 
 | Block | Function | Devices | Area |
 | --- | --- | --- | ---: |
-| `P1_NOISE_GEN` | Entropy source — forward-biased HBT collector shot noise into a 1 kΩ collector load | `npn13G2` SiGe HBT | 0.03 mm² |
+| `P1_NOISE_GEN` | Entropy source — forward-biased HBT collector shot noise into a collector load drawn for 1 kΩ, 1059 Ω in the model ([why](noise-generator/layout/README.md)) | `npn13G2` SiGe HBT | 0.03 mm² |
 | `P1_NOISE_AMP` | Broadband preamplifier, 20–23 dB, AC-coupled to suppress 1/f | `npn13G2` HBT CML differential pairs | 0.05 mm² |
 | `P1_COMPARATOR` | Clocked decision latch, 10-bit offset trim DAC, CMOS output drivers | HBT CML **and** CMOS | 0.04 mm² |
 | `P1_NOISE_TEST` | On-die noise monitor — replica source with a 50 Ω GSG breakout, so raw S<sub>v</sub>(f) can be probed independently of the comparator | `npn13G2` HBT | 0.05 mm² |

@@ -1,8 +1,11 @@
 # P1_NOISE_GEN — HBT noise generator
 
 The entropy source for the P1 p-bit: a differential pair of `npn13G2` HBTs on a
-shared tail current source, 1 mA per branch into a 1 kΩ collector load each,
-with the noise taken differentially across the two collectors.
+shared tail current source, 1 mA per branch into a collector load drawn for 1 kΩ —
+1059 Ω once the model's contact end resistance is included, see
+[`layout/README.md`](layout/README.md) —
+with the noise taken differentially across the two collectors. Every simulated result
+below already used 1059 Ω, because ngspice evaluates the full model card.
 
 This is the first block of P1 to exist as a circuit rather than as a paragraph.
 
