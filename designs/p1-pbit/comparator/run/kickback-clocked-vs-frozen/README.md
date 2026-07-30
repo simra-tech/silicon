@@ -16,6 +16,22 @@ clock, with the baseline frozen **in the same phase as the sample**:
 | `kick_D_frozen_latch_10mv` | held at CLK_P = 0 V (latch) | +10 mV | the static baseline for a latch-phase sample |
 | `kick_C_clocked_0mv` | 5 GS/s | **0 mV** | shows why the symmetric case cannot measure this |
 
+## Scope: this number belongs to the driver as much as to the comparator
+
+Every run here drives the comparator inputs from ideal 1.440 V sources through **120 Ω**,
+as a stand-in for the amplifier's output impedance. Kickback is charge injected into
+whatever is presented to the input, so **the 20 µV below is a property of that stand-in
+too**, not of the comparator alone. A driver with different output impedance, different
+bandwidth, or its own dynamics will absorb the injected charge differently.
+
+That is not a hypothetical caveat. The real amplifier turned out to put a **+31.9 mV**
+differential DC mean on its own output when amplifying noise — see
+[`../../../chain-bringup/rectified-offset/`](../../../chain-bringup/rectified-offset/) —
+which is three orders of magnitude larger than anything on this page and was invisible to
+every measurement made through a 120 Ω resistor. Nothing here is wrong; its scope is
+narrower than the headline reads, and a measurement whose value depends on a stand-in for
+a neighbouring block should name the stand-in in the claim rather than only in the deck.
+
 ## Result
 
 | | clocked | frozen, same phase | kickback |
