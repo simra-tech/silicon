@@ -1,0 +1,37 @@
+* Cascade-loaded variant: real 1059 ohm generator source impedance
+* Permanent AC Simulation Testbench for P1_NOISE_AMP
+.lib $PDK_ROOT/ihp-sg13g2/libs.tech/ngspice/models/cornerHBT.lib hbt_typ
+.lib $PDK_ROOT/ihp-sg13g2/libs.tech/ngspice/models/cornerRES.lib res_typ
+.lib $PDK_ROOT/ihp-sg13g2/libs.tech/ngspice/models/cornerCAP.lib cap_typ
+
+.options rshunt = 1e12
+
+* Supply Voltage 2.50V
+VCC VCC 0 DC 2.50
+VSS VSS 0 DC 0.00
+
+* Differential AC Input Excitation (DC Bias 1.44V matching P1_NOISE_GEN output)
+VIN_P src_p 0 DC 1.44 AC 0.5
+RSRC_P src_p RAW_NOISE_P 1059
+VIN_N src_n 0 DC 1.44 AC -0.5
+RSRC_N src_n RAW_NOISE_N 1059
+
+* Include Direct XSCHEM Netlist Export
+.include ./p1_noise_amp_clean.spice
+
+* Instantiate Preamplifier Subcircuit
+XAMP NOISE_AMP_P NOISE_AMP_N RAW_NOISE_P RAW_NOISE_N VCC VSS p1_noise_amp
+
+.control
+op
+print v(xamp.vbias2) v(xamp.c1_n) v(xamp.c1_p) v(xamp.b2_p) v(xamp.b2_n) v(noise_amp_p) v(noise_amp_n)
+print v(xamp.e1_common) v(xamp.e2_common)
+print (2.50 - v(xamp.c1_n))/255.0 (2.50 - v(noise_amp_p))/255.0
+ac dec 20 1k 100g
+let vdiff = v(noise_amp_p) - v(noise_amp_n)
+let gain = mag(vdiff)
+let db_gain = 20*log10(gain)
+print gain[100] db_gain[100]
+meas ac f3db when gain=gain[100]/sqrt(2) fall=1
+.endc
+.end

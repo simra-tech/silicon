@@ -42,10 +42,66 @@ buys bandwidth and sells signal. The decisive point is that 5.34 GHz is already
 **2.1× the 2.5 GHz Nyquist limit** of a 5 GS/s sampler: the extra bandwidth is
 unusable, and it would cost margin and double the generator power.
 
+## The rebuild on real PDK devices
+
+Everything above was simulated with **ideal SPICE passives** — `RC1_1 VCC c1_n 240`,
+`ISET1 e1_common VSS DC 2.0m` — as recorded in [`../README.md`](../README.md). The schematic has
+since been rebuilt so that every passive is a drawable `rppd` or `cap_cmim` and both tail
+sources are real degenerated HBT mirrors. Deck, log and netlist in
+[`rebuild-2p5v/`](rebuild-2p5v/).
+
+| quantity | ideal-passive version (above) | rebuilt on PDK devices |
+| --- | ---: | ---: |
+| passband gain, ideal drive | 21.54 dB | **21.285 dB** |
+| passband gain, driven from the generator | — | **20.953 dB** |
+| −3 dB bandwidth, standalone | 31.29 GHz | **19.091 GHz** |
+| −3 dB bandwidth, driven from the generator | 5.34 GHz (computed) | **5.258 GHz (simulated)** |
+| tail current per stage | 2.0 mA (ideal source) | **1.787 mA** (mirror) |
+| total supply current | 4.0 mA | **3.657 mA**, 9.14 mW |
+
+**What made the resistors change value.** An ideal `240` is 240 Ω; the `rppd` you can draw is
+its body plus `70 Ω·µm / w` of contact end resistance at the two contacts (see
+[`../noise-generator/layout/`](../noise-generator/layout/)). The collector loads are drawn
+w = 1.0 µm, l = 0.7115 µm and **measure 255 Ω**; the degeneration is w = 13.333 µm, l = 0.5 µm
+and measures 15.0 Ω. Sized against the formula alone they would have come out 28% low.
+
+### The interface pole, now measured rather than computed
+
+The section above derives a 5.34 GHz cascaded corner from 1 kΩ driving ~30 fF, and warns
+*"chain the blocks in simulation; do not multiply their standalone responses."* That warning is
+now testable against a full AC sweep of the rebuilt amplifier. Taking its own testbench and
+changing nothing except a 1059 Ω resistor in series with each input — the noise generator's real
+collector load — the corner moves from **19.091 GHz to 5.258 GHz**, a 3.6× reduction, and the
+gain falls 0.33 dB.
+
+5.258 GHz back-solves to **28.6 fF** of single-ended input capacitance against the earlier
+estimate of ~30 fF. A different device set, different sizing and 2 pF of coupling capacitance
+that did not exist before, arriving within 1.5% of a figure this repository published for the
+ideal-passive design. **The prediction was independently reproduced, and that is worth more than
+either number alone.**
+
+**Carry the loaded figures, not the standalone ones.** 19 GHz beside a 5 GS/s sampler reads as
+enormous margin. 5.26 GHz is only just above the rate the comparator is meant to run at, and it
+is a constraint rather than a comfort.
+
+### Reproducing it
+
+    ngspice -b tb_p1_noise_amp_ac.cir           # ideal drive:      21.285 dB, 19.091 GHz
+    ngspice -b tb_p1_noise_amp_ac_cascade.cir   # 1059 Ω drive:     20.953 dB,  5.258 GHz
+    ngspice -b tb_p1_mirror_sweep.cir           # tail vs V_ce
+
+`p1_noise_amp_clean.spice` is the netlist both AC decks include. It is an xschem export of the
+schematic with the `**.subckt` / `**.ends` wrapper uncommented — mechanically necessary to
+instantiate it, and the device lines are byte-identical to a fresh export. That is stated because
+an earlier revision of this block carried a *hand-written* netlist wearing an exporter's header,
+and a reference maintained by hand cannot disagree with the schematic it claims to describe.
+
 ## Not run
 
 | Check | State |
 | --- | --- |
-| Layout, extraction, post-layout bandwidth | **Not run.** No layout exists. |
+| Corners and temperature on the rebuilt amplifier | **Not run.** Every figure in the rebuild table is `hbt_typ` / `res_typ` / `cap_typ` at 27 °C. `rppd` carries tc1 = +170 ppm/K and the HBT emitter resistance its own, so 20.95 dB against a 20 dB floor has **0.95 dB** of margin that has not been tested against any of it. The operating temperature range is still unspecified for P1, which is what blocks this. |
+| Mismatch | **Not run.** No Monte Carlo on the rebuilt schematic. |
+| Layout, extraction, post-layout bandwidth | **Not run.** No layout exists for this block. |
 | Linearity, compression, supply rejection | **Not run.** |
 | Silicon measurement | **Not done.** |

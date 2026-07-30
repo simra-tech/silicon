@@ -1,0 +1,28 @@
+* Full Current Mirror Collector Voltage Sweep
+.lib $PDK_ROOT/ihp-sg13g2/libs.tech/ngspice/models/cornerHBT.lib hbt_typ
+.lib $PDK_ROOT/ihp-sg13g2/libs.tech/ngspice/models/cornerRES.lib res_typ
+
+.options rshunt = 1e12
+
+VCC VCC 0 DC 2.50
+VSS VSS 0 DC 0.00
+
+* Master Leg (QM1, RDEG_M1, RBIAS1)
+XQM1 c_m1 c_m1 e_m1 VSS npn13G2 Nx=1
+XRDEG_M1 e_m1 VSS VSS rppd w=4.0u l=0.50u
+XRBIAS1 VCC c_m1 VSS rppd w=1.0u l=2.808u
+
+* Slave Leg (QS1, RDEG_S1)
+XQS1 c_s1 c_m1 e_s1 VSS npn13G2 Nx=1
+XRDEG_S1 e_s1 VSS VSS rppd w=4.0u l=0.50u
+
+* Variable Collector Voltage Source for Slave Transistor
+VCS c_s1 0 DC 0.55
+
+.control
+op
+print i(VCS) (2.50 - v(c_m1))/791.5
+dc VCS 0.3 1.6 0.1
+print i(VCS)
+.endc
+.end

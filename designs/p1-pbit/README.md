@@ -155,7 +155,8 @@ about a chip.
 | HBT noise spectral density S<sub>v</sub>(f) | **Simulated, not measured.** `.noise` on the noise generator gives 36.42 nV/√Hz differential at 1 GHz — see [`noise-generator/`](noise-generator/), which carries the deck and the raw simulator output. Still not measured in silicon, and no layout parasitics are included.|
 | σ<sub>VOS</sub> = 6.683 mV Monte Carlo | **Ran, but the artefacts were not retained** — see the caveat above. Not reproducible from this repository. |
 | HBT f<sub>T</sub> = 379.8 GHz, β = 638.3 | **Extracted from the PDK model in SPICE, but the run artefacts were not retained.** Same status as the Monte Carlo. |
-| Preamplifier gain, CML latch speed, 5 GS/s sampling rate | **Simulated with ideal passives.** Preamp 21.54 dB (see [`preamplifier/`](preamplifier/)); comparator decides 8/8 at 5.00 GS/s (see [`comparator/`](comparator/)). Not measured in silicon, no layout parasitics — **and the resistors and tail current sources in both netlists are ideal SPICE elements rather than PDK devices.** See [ideal passives](#the-two-block-level-netlists-use-ideal-passives). |
+| Preamplifier gain | **Simulated on PDK devices.** The preamplifier has been rebuilt so every passive is a drawable `rppd`/`cap_cmim` and both tails are real degenerated mirrors: **20.95 dB** driven from the generator's 1059 Ω, **5.26 GHz** loaded, deck and log committed — [`preamplifier/rebuild-2p5v/`](preamplifier/rebuild-2p5v/). Typical corner, 27 °C, no mismatch. |
+| CML latch speed, 5 GS/s sampling rate | **Simulated with ideal passives.** Comparator decides 8/8 at 5.00 GS/s (see [`comparator/`](comparator/)). Its resistors and tail current source are still ideal SPICE elements rather than PDK devices, and its netlist does not correspond to its schematic — see [ideal passives](#the-two-block-level-netlists-use-ideal-passives). |
 | CMOS inverter switching threshold, 27 PVT points | **Ran and passed.** Every number traceable to a committed run directory. |
 | Inverter behaviour outside those 27 points (mismatch, transient, drive strength, load) | **Not run.** The only inverter parameter characterised is the DC switching threshold. |
 
@@ -194,9 +195,13 @@ Two further things about the comparator specifically, since they bear on what it
   declared ports are connected. The netlist is the authored artefact and the schematic is a stub. Nothing here
   can be laid out or LVS-checked until that is the other way round.
 
-The preamplifier schematic **has** since been rebuilt to use `rppd` devices throughout, with the end resistance
-absorbed — but that schematic is newer than the run this page cites, and its own operating point is not yet
-settled, so no number from it is quoted here.
+**The preamplifier has since been redone and no longer belongs in this section.** Every passive is now a
+drawable `rppd` or `cap_cmim`, both tails are degenerated HBT mirrors, and the operating point is settled at
+V_CC = 2.5 V with the deck and log committed — see
+[`preamplifier/rebuild-2p5v/`](preamplifier/rebuild-2p5v/). What is quoted for that block above is the rebuilt
+result, not the ideal-passive one. **The comparator has not been redone, so everything in this section still
+applies to it**, and it is the block where it matters most: `ISET e_tail VSS DC 2.0m` is the clocked tail, and
+an ideal tail is precisely what hides the ±10% the real mirror turned out to carry.
 
 ## What is in this directory
 
