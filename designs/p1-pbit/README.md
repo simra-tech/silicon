@@ -155,9 +155,48 @@ about a chip.
 | HBT noise spectral density S<sub>v</sub>(f) | **Simulated, not measured.** `.noise` on the noise generator gives 36.42 nV/√Hz differential at 1 GHz — see [`noise-generator/`](noise-generator/), which carries the deck and the raw simulator output. Still not measured in silicon, and no layout parasitics are included.|
 | σ<sub>VOS</sub> = 6.683 mV Monte Carlo | **Ran, but the artefacts were not retained** — see the caveat above. Not reproducible from this repository. |
 | HBT f<sub>T</sub> = 379.8 GHz, β = 638.3 | **Extracted from the PDK model in SPICE, but the run artefacts were not retained.** Same status as the Monte Carlo. |
-| Preamplifier gain, CML latch speed, 5 GS/s sampling rate | **Simulated.** Preamp 21.54 dB (see [`preamplifier/`](preamplifier/)); comparator decides 8/8 at 5.00 GS/s (see [`comparator/`](comparator/)). Not measured in silicon; no layout parasitics included.|
+| Preamplifier gain, CML latch speed, 5 GS/s sampling rate | **Simulated with ideal passives.** Preamp 21.54 dB (see [`preamplifier/`](preamplifier/)); comparator decides 8/8 at 5.00 GS/s (see [`comparator/`](comparator/)). Not measured in silicon, no layout parasitics — **and the resistors and tail current sources in both netlists are ideal SPICE elements rather than PDK devices.** See [ideal passives](#the-two-block-level-netlists-use-ideal-passives). |
 | CMOS inverter switching threshold, 27 PVT points | **Ran and passed.** Every number traceable to a committed run directory. |
 | Inverter behaviour outside those 27 points (mismatch, transient, drive strength, load) | **Not run.** The only inverter parameter characterised is the DC switching threshold. |
+
+## The two block-level netlists use ideal passives
+
+Recorded here because "no layout parasitics included" reads as though the devices themselves were real PDK
+devices and only the wiring between them was missing. For the preamplifier and the comparator, that is not the
+case. Both committed netlists in this directory use **plain SPICE resistors and ideal current sources**:
+
+    preamplifier/p1_noise_amp.spice     RC1_1 VCC c1_n 240        ISET1 e1_common VSS DC 2.0m
+                                        RE1_1 e1_1 e1_common 15
+    comparator/p1_comparator.spice      RC1 VCC_HBT c_n 300       ISET e_tail VSS DC 2.0m
+                                        REF1 ef_p VSS 5k
+                                        R1_P ef_p g_p 10k
+
+An ideal `240` is 240 Ω. The `rppd` device you would actually draw for it is not — as
+[`noise-generator/layout/`](noise-generator/layout/) records, the model adds `70 Ω·µm / w` of contact end
+resistance, so the intended 240 Ω lands at **307 Ω** at w = 1 µm until the geometry is resized to absorb it.
+Everything an ideal element omits is omitted here: sheet-resistance tolerance, temperature coefficient,
+mismatch, the resistor's own parasitic capacitance to substrate, and — for the tail — the fact that a real
+two-transistor mirror does not deliver a constant current. A measured sweep of one puts the tail between
+**1.69 mA and 2.06 mA** across a plausible tail-voltage range against a nominal 2.0 mA.
+
+So **21.54 dB and "8/8 at 5.00 GS/s" are results about an idealised schematic**, not about a circuit built
+from drawable devices. They are worth keeping — they establish that the topology and the sizing are in the
+right region — but they are not the numbers the block will have, and the gap is not the small one that
+"no layout parasitics" implies.
+
+Two further things about the comparator specifically, since they bear on what its netlist is:
+
+- Its resistors are ideal at values (300 Ω, 5 kΩ, 10 kΩ) that no `rppd` geometry has yet been chosen for, and
+  its `sg13_lv_nmos` / `sg13_lv_pmos` level shifter and buffer chain are real PDK devices — so the netlist is
+  **mixed**, ideal in its passives and real in its transistors.
+- `p1_comparator.spice` does not correspond to `p1_comparator.sch`. Exporting that schematic yields **six
+  devices and twenty-four unnamed nets** against the netlist's twenty-seven, and none of the schematic's ten
+  declared ports are connected. The netlist is the authored artefact and the schematic is a stub. Nothing here
+  can be laid out or LVS-checked until that is the other way round.
+
+The preamplifier schematic **has** since been rebuilt to use `rppd` devices throughout, with the end resistance
+absorbed — but that schematic is newer than the run this page cites, and its own operating point is not yet
+settled, so no number from it is quoted here.
 
 ## What is in this directory
 
