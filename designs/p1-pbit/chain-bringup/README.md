@@ -76,6 +76,25 @@ precisely. Qualification against NIST SP 800-90B needs 10⁶ samples plus a
 1000 × 1000 restart matrix, and AIS-31 T4 needs 40,200 bits over lags 3–100.
 None of that has been run. These are bring-up statistics, not a randomness claim.
 
+## Later sampler-alignment campaign
+
+A later candidate-2 experiment measures sampling phase with four independent
+seeded transients rather than the earlier 1,000-bit bring-up stimulus. The
+complete decks, native logs, ASCII raws, parser, and independently recounted
+phase table are in
+[`sampler-alignment/typical-four-chunk/`](sampler-alignment/typical-four-chunk/).
+
+At each phase, lag-one correlation is computed inside each of four 220-bit
+chunks and then averaged; no chunk boundary is treated as an adjacent bit. The
+result has `N = 880` and `se = 0.03371` per phase. It detects a correlated band
+from 20 through 70 ps, peaking at `rho = +0.58129` at 40 ps. From 110 through
+160 ps, no correlation is detected at this resolution. That observation is not
+a valid/invalid classification and does not establish an alignment budget.
+
+All four native processes completed, but every log retains a thermal-model
+warning. The campaign is therefore recorded as complete execution with unknown
+engineering status, not as a passing sampler result.
+
 ## Files
 
 Every result is paired with the deck that produced it and the simulator log that
