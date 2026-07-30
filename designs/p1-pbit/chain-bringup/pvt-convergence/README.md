@@ -224,3 +224,54 @@ The settling, not the solver, is the obstacle. Options, in order of directness:
    expensive.
 3. Write out fewer vectors so the memory ceiling arrives later, which buys window length
    rather than removing the need for it.
+
+## RETRACTED: `.ic` cannot fix the settling, because the settling is driven not initial
+
+The `.ic` option offered above was wrong, and not merely misapplied. Presetting the coupling
+nodes cannot help, because **they already start at the right value.**
+
+The coupling node's DC operating point is a zero differential, by symmetry. The measured
+differential goes **0 → −7.9 mV over 2 … 20 ns → back toward zero by 150 … 200 ns**. It is not
+starting from a bad state and converging; it starts correct and is **driven away by the noise
+source turning on at t = 0**, then recovers with the high-pass time constant. An initial
+condition on a node that already begins correct changes nothing.
+
+(An attempt with `.ic` plus `uic` also fails for a second, separate reason: `uic` skips the
+operating point altogether, so every node not given an explicit `.ic` starts at zero and the
+run dies at the initial timepoint with *"The temperature limiting function received NaN"*.
+`.ic` without `uic` is the correct usage — but per the above it would not have helped anyway.)
+
+So the settling is unavoidable for a high-pass network responding to a signal that switches
+on. The only real levers are **wait longer** or **make the time constant smaller.**
+
+## Making the time constant smaller: it works, and it costs correlation
+
+`XRB2_1` / `XRB2_2` are `rppd` 192 µm at w = 1 µm — **49.99 kΩ** — and with ~2 pF of coupling
+they set the ~100 ns constant. Reducing them to 19 µm gives **5.01 kΩ**, a 10× cut.
+`p1_noise_amp_fastbias.spice`, same noise seed, 300 ns:
+
+| window starts at | N | P(bit=1) | ρ₁ |
+| --- | --- | --- | --- |
+| 2 ns | 1490 | **0.560** | +0.1997 |
+| 20 ns | 1400 | 0.535 | +0.1637 |
+| 50 ns | 1250 | 0.522 | +0.1447 |
+| 100 ns | 1000 | 0.522 | +0.1554 |
+| 200 ns | 500 | 0.496 | **+0.1180** |
+
+Against the original network, where a window starting at 2 ns gives **P(1) = 0.989** —
+degenerate.
+
+**So it does what it was meant to.** P(bit=1) is usable from 2 ns onward rather than
+requiring 200 ns of discard, which is exactly what makes short-window corner measurement
+viable under the memory ceiling.
+
+**And it costs correlation.** ρ₁ at the settled window rises from **0.079 to 0.118** — same
+seed, same window, so the difference is the circuit. The likely mechanism is loading: 5 kΩ
+across the coupling node attenuates the signal reaching the comparator, so the interface's
+residual memory is a larger fraction of what is left. Still 6.6× better than the unfixed
+0.777, but at N = 500 it is about 2.6 standard errors from zero rather than comfortably
+inside the noise.
+
+**This is a trade to decide, not a fix to adopt.** Faster settling buys corner coverage;
+higher correlation spends part of what the feedback fix won. The sizing between 50 kΩ and
+5 kΩ has not been explored, and the right value is probably not either endpoint.
