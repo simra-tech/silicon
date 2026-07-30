@@ -56,8 +56,26 @@ irrelevant. Ruling out one nonlinear mechanism is not evidence for another.
 **"Confirmed on the amplifier alone, no comparator, no clock."** True and irrelevant.
 The settling has nothing to do with either.
 
-**"Scale-invariant peak asymmetry, 1.89:1 at both amplitudes."** Also a property of the
-transient, and also linear.
+**"Scale-invariant peak asymmetry, 1.89:1 at both amplitudes."** This one was called "the
+sharpest pointer we have" and it is the worst of the four, because it is not a measurement
+at all — it is arithmetic, and it points the other way.
+
+The two noise sources are the **same seeded draws scaled by ten**: `pwl20ns.inc` and
+`pwl_lo.inc` come from one generator with one seed and different σ. Their own input peak
+ratio is therefore identical by construction — 0.8271 against 0.8272, agreeing to four
+digits before the signal reaches any transistor.
+
+And for a **linear** system, scaling the input scales every voltage in the circuit, so
+every ratio of amplitudes anywhere is preserved *exactly*. A peak-asymmetry ratio that is
+unchanged across a scaled input is not evidence of a scale-free nonlinearity. **It is what
+linearity guarantees.** The observation I offered as the strongest sign of a nonlinear
+mechanism was in fact a demonstration that the circuit is linear — which is the thing that
+refutes the claim it was cited to support.
+
+Testing the scale-invariance of an asymmetry requires either a **different noise
+realisation** at each amplitude, or a deterministic input swept in amplitude. Neither was
+done. The 0.827:1 asymmetry of the input itself is just the finite-sample extremes of 2,000
+Gaussian draws — max +3.02σ, min −3.66σ — and carries no information about the circuit.
 
 **The tail nodes were the tell, and they were in the data.** `walk_hi` / `walk_lo`
 measure the two emitter nodes that would have to move if the tail current were being
