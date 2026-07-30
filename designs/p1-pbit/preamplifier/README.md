@@ -255,11 +255,25 @@ Two cautions on the arithmetic, since both are easy to get wrong in the same dir
   raw-collector amplitude 20× smaller inflates the derived floor by 26 dB, which is enough to turn a
   non-constraint into an apparently binding one.
 
-**What this leaves open.** The floor is not offset-limited; the binding edge is more likely the **ceiling**,
-which is not derived anywhere yet. At 36 mV<sub>rms</sub> already delivered, additional gain drives the
-comparator's CML input pair toward limiting, and clipping a Gaussian changes the statistics of the output bits —
-which is the one thing this chip must not do. That is a hypothesis and is labelled as one; it has not been
-simulated.
+**What this leaves open, and a hypothesis already weakened.** The floor is not offset-limited. When this was
+written the ceiling looked like the binding edge — additional gain driving the comparator's CML input pair toward
+limiting, and clipping a Gaussian changing the statistics of the output bits, which is the one thing this chip
+must not do. **That now looks doubtful too**, for two reasons worth recording rather than quietly dropping:
+
+- A clocked comparator resolves the *sign* of its differential input at the sampling instant. Saturating its
+  input pair does not flip a sign, and a larger input resolves faster rather than less reliably — so the
+  comparator's linear range is probably not what limits gain.
+- The clipping that *would* corrupt bit statistics is this amplifier's own output truncating the Gaussian before
+  the comparator sees it. That is not binding at the current operating point either: ≈330 mV of collector drop
+  leaves ≈330 mV of upward swing against 3.5σ peaks of ≈128 mV.
+
+So it is possible that **neither edge of the 20–23 dB window is traceable to a requirement**, and that gain is
+simply not the constrained quantity in this block — the real constraints being bandwidth into the sampler, the
+power budget, and the noise amplitude already verified above. That would be a result rather than a gap.
+
+**Neither the ceiling nor its absence has been simulated**, and both statements above are small-signal
+inference. The measurement that would settle it is a transient one: drive the chain with the real noise source,
+sweep the input amplitude, and find where the output bit distribution departs from the unclipped case.
 
 ## Not run
 
