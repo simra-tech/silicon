@@ -30,10 +30,26 @@ Absolute paths are rewritten — `$PDK_ROOT` for the PDK, `./` for the working d
 decks need `$PDK_ROOT` pointed at an SG13G2 installation before they will run. That substitution
 is the only edit; every number is as the simulator produced it.
 
-**What these files still do not contain: process variation.** Every deck loads `hbt_typ` / `res_typ` /
-`cap_typ` once at the top and never alters them, so what is swept is temperature and supply only — V and T, not
-PVT. The 4.83 dB gain spread the corner deck reports is therefore a **lower bound**; process spread on `rppd`
-and on the HBTs can only widen it. There is no Monte Carlo here either, so mismatch is untested.
+The process corners are separate decks, because a `.lib` section cannot be switched from inside `.control`:
+
+```
+tb_pvt_loaded_typ.cir            hbt_typ / res_typ / cap_typ,  +27 C, 2.500 V
+tb_pvt_loaded_cold_bcs.cir       hbt_bcs / res_bcs / cap_bcs,  -40 C, 2.625 V
+tb_pvt_loaded_hot_wcs.cir        hbt_wcs / res_wcs / cap_wcs, +125 C, 2.375 V
+ngspice_preamp_loaded_corners.log   all three: 20.95 / 24.11 / 17.19 dB
+tb_pvt_crossed_hot_bcs.cir       the crossed corners, run to confirm the diagonal
+tb_pvt_crossed_cold_wcs.cir        is the true envelope
+ngspice_crossed_hot_bcs.log      19.07 dB
+ngspice_crossed_cold_wcs.log     22.03 dB
+```
+
+**Read `ngspice_preamp_loaded_corners.log` rather than any summary of it.** It contains four lines of
+`Error: no such device or model name xamp.xrbias1.r1` — two per altered corner — recording that an attempt to
+override the bias resistor from the control block did not take effect. It is kept unedited for exactly that
+reason: the log is what caught a summary that reported gains the simulation never produced.
+
+**Still not contained here: mismatch.** There is no Monte Carlo in this directory, so device-to-device
+mismatch within a die is untested, and every corner above is a global shift.
 
 **On temperature in the control block.** The corner deck sets temperature with `set temp = 125` inside
 `.control` rather than a `.temp` card, which is easy to mistake for a no-op that would leave all three corners

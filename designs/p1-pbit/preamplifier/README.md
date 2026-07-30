@@ -111,8 +111,11 @@ not been tested** against corner, mismatch or temperature. It has now been teste
 **18.12 dB is 1.88 dB below the 20 dB floor.** The specification window is not met at the hot corner.
 
 **And re-centring cannot fix it.** The spread is **4.83 dB** across a window that is **3 dB wide**, so no choice
-of nominal gain fits inside it. Either the window widens or the gain has to stop moving with temperature. Process
-corners are absent from all of this, and they can only widen the spread.
+of nominal gain fits inside it. Either the window widens or the gain has to stop moving with temperature.
+
+**With process corners added it is 6.92 dB and it fails at both ends** — see *Process corners: 6.92 dB* below.
+The 4.83 dB figure was measured with the process libraries held at typical and was published as a lower bound;
+this is what the bound was hiding.
 
 Bandwidth, by contrast, is well behaved: 5.06 → 5.54 GHz, under 9.5% across the range, because the interface pole
 is set by 1059 Ω and ~28.6 fF and neither moves much with temperature.
@@ -147,6 +150,48 @@ back with a larger R_C, and R_C is what sets the output headroom.
 **Recorded as a failure rather than as a to-do**, because an unmet specification and an untested one look
 identical in a summary table and are different facts about a chip. Decks and logs for every number above are in
 [`rebuild-2p5v/`](rebuild-2p5v/).
+
+## Process corners: 6.92 dB, and it misses at both ends
+
+Adding the process corners — `hbt_bcs`/`res_bcs`/`cap_bcs` and `hbt_wcs`/`res_wcs`/`cap_wcs`, where
+`rsh_rppd` runs 234 / 260 / 286 Ω/sq — against the same 1059 Ω load:
+
+| corner | process | T, V_CC | gain |
+| --- | --- | --- | ---: |
+| **cold, best-case** | bcs | −40 °C, 2.625 V | **24.11 dB** — 1.11 dB **above** the 23 dB ceiling |
+| cold, worst-case | wcs | −40 °C, 2.625 V | 22.03 dB |
+| nominal | typ | +27 °C, 2.500 V | 20.95 dB |
+| hot, best-case | bcs | +125 °C, 2.375 V | 19.07 dB |
+| **hot, worst-case** | wcs | +125 °C, 2.375 V | **17.19 dB** — 2.81 dB **below** the 20 dB floor |
+
+**Envelope 17.19 … 24.11 dB: a 6.92 dB spread across a 3 dB window, missing at both ends.**
+
+The diagonal is the true envelope, which is worth stating because it is not obvious: the crossed corners
+(cold+wcs, hot+bcs) both land *inside* the diagonal pair. The HBT corner dominates the resistor corner —
+`res_bcs` lowers R_C, which alone would lower gain, but `hbt_bcs` raises it by more. So cold+bcs is the
+maximum and hot+wcs the minimum, and two corners suffice to bound this block.
+
+### The PTAT fix is not implemented
+
+The tail is still the fixed-resistor mirror. An attempt to emulate a PTAT tail by overriding the bias resistor
+per corner from inside the simulator's control block did not take effect — the committed log records
+`Error: no such device or model name xamp.xrbias1.r1` twice for each of the two altered corners, because the
+`rppd` subcircuit contains exactly one element, `NR1`, and no `r1`. Every number in the table above therefore
+uses the nominal 791.5 Ω bias resistor.
+
+**That is the right outcome for the wrong reason, and both halves matter.** Overriding a resistance to a
+different value at each corner is not a PTAT tail even when the device name is correct — it sets the answer once
+per corner and would report a flat gain that means nothing. A PTAT reference is a circuit: a ΔV_be across a
+resistor, carrying its own process spread and its own residual temperature coefficient, none of which appears in
+numbers produced by an `alter`. **The fix in the section above remains a recommendation, not a result.**
+
+### Unexamined: 430 rated-voltage warnings
+
+The corner log carries **430** instances of `V(i2,c) voltage is greater than specified by vmax`, spread across
+**every** `rppd` in the design — collector loads, degeneration, bias resistors and the base divider. What `vmax`
+is for `res_rppd`, and whether these indicate real overstress or an artefact of the model's internal thermal
+network, has not been established. Recorded because 430 warnings in one committed log is not a thing to leave
+unread, and because the answer could change the sizing before any geometry is drawn.
 
 ## Not run
 

@@ -1,0 +1,22 @@
+* crossed PVT corner hot_bcs
+.lib $PDK_ROOT/ihp-sg13g2/libs.tech/ngspice/models/cornerHBT.lib hbt_bcs
+.lib $PDK_ROOT/ihp-sg13g2/libs.tech/ngspice/models/cornerRES.lib res_bcs
+.lib $PDK_ROOT/ihp-sg13g2/libs.tech/ngspice/models/cornerCAP.lib cap_bcs
+.options rshunt = 1e12
+VCC VCC 0 DC 2.375
+VSS VSS 0 DC 0.00
+VIN_P in_p 0 DC 1.44 AC 0.5
+VIN_N in_n 0 DC 1.44 AC -0.5
+RS1 in_p RAW_NOISE_P 1059.0
+RS2 in_n RAW_NOISE_N 1059.0
+.include ./p1_noise_amp_clean.spice
+XAMP NOISE_AMP_P NOISE_AMP_N RAW_NOISE_P RAW_NOISE_N VCC VSS p1_noise_amp
+.control
+set temp = 125
+op
+ac dec 20 1k 100g
+let g = mag(v(noise_amp_p)-v(noise_amp_n))
+let db = 20*log10(g)
+print db[100]
+.endc
+.end
