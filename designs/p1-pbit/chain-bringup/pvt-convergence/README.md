@@ -6,7 +6,13 @@ written in two passes and the first pass over-generalised. Current state:
 - the feedback fix in [`../bit-autocorrelation/`](../bit-autocorrelation/) is confirmed at
   **typical and at cold** — ρ₁ = 0.079 at 27 °C and **0.032** at FF / −40 °C / VDD +10%;
 - **every corner runs**, including 125 °C, once the maximum timestep is 2 ps rather than 5 ps.
-  Self-heating was never disabled;
+  Self-heating was never disabled, and that remains the reference path;
+- **self-heating is confirmed as the mechanism** behind the aborts: over 20 ns at 125 °C and
+  5 ps the identical deck completes with `selft=0` (10,496 rows) and aborts at 313.5 ps with
+  `selft=1`. Disabling it costs less than the measurement error at 27 °C — but that was
+  established at the corner where self-heating matters *least*, and 20 ns is inside the
+  settling either way, so it is a labelled diagnostic and **not a measurable hot corner**
+  ([below](#self-heating-confirmed-as-the-blocker-and-the-cost-of-disabling-it));
 - but at 2 ps a 300 ns run **exhausts memory at 40 ns**, so a fine step and a long window
   cannot be had together, and 40 ns is inside the ~100 ns coupling settling;
 - so **no corner has yet been measured over a valid window except typical and cold**, and any
@@ -70,6 +76,12 @@ reproduces it. Failing at *both* ends rather than one is what makes this look li
 simulation property rather than a one-sided physical effect.
 
 ## The mechanism is not identified, and one hypothesis is untested rather than refuted
+
+> **RESOLVED — this section is superseded.** Self-heating *is* the mechanism; it was tested
+> properly later and confirmed. The scoping guess below is right: `selft` is declared inside
+> `.subckt npn13G2`, so it must be overridden per instance. See
+> [Self-heating confirmed as the blocker](#self-heating-confirmed-as-the-blocker-and-the-cost-of-disabling-it).
+> The text below is kept as the state of knowledge at the time.
 
 The `npn13G2` model carries self-heating: `sg13g2_hbt_mod.lib` sets `selft=1` and
 `rth = selft·3.26E+03·(4/Nx)^0.9`, and the runs emit ngspice's *"check your power
@@ -285,3 +297,112 @@ inside the noise.
 **This is a trade to decide, not a fix to adopt.** Faster settling buys corner coverage;
 higher correlation spends part of what the feedback fix won. The sizing between 50 kΩ and
 5 kΩ has not been explored, and the right value is probably not either endpoint.
+
+## Self-heating confirmed as the blocker, and the cost of disabling it
+
+Two sweeps ago this page recorded self-heating as *untested rather than refuted*: an attempt to
+switch it off had produced no change, and the reason was unknown. The reason is now known, and
+it was a mistake in how the switch was set, not a property of the circuit.
+
+`selft` is declared as a `.param` **inside** `.subckt npn13G2`:
+
+```
+.subckt npn13G2 c b e bn
+.param Nx=1 dtemp=0
++Ny=1 le=0.96e-6 we=0.12e-6
++El=le*1e6
++selft=1
+```
+
+A `.param selft=0` at the top level of a netlist does not reach it — the subcircuit's own
+declaration shadows the outer name. The override has to be applied **per instance**:
+
+```
+XQ1 c b e sub! npn13G2 Nx=1 selft=0
+```
+
+The tell was on screen the whole time. Every run kept printing
+
+```
+Please check your power dissipation and improve your heat sink Rth!
+```
+
+which is the self-heating code speaking. A warning from a feature believed to be disabled is
+direct evidence that it is not disabled, and it was read past for four sweeps.
+
+### The controlled comparison
+
+Identical deck, 125 °C, 5 ps maximum timestep — the step that aborts with the physics intact.
+This is the **20 ns bisection deck** from the section above, chosen for the same reason it was
+chosen there: long enough to pass the point where the hot corner gives up. `selft=0` applied to
+all 21 `npn13G2` instances (13 in `p1_comparator`, 8 in `p1_noise_amp`):
+
+| run | result | data rows | heat-sink warning |
+| --- | --- | --- | --- |
+| 125 °C, 5 ps, 20 ns, `selft=0` × 21 | **completes** | 10,496 | absent |
+| 125 °C, 5 ps, 20 ns, `selft=1` (default) | **aborts at 313.5 ps** | 166 | present |
+
+Two controls, not one. The warning's disappearance confirms the override took effect — which
+is exactly what the earlier attempt could not show. The **data-row count** confirms the run
+produced a transient rather than merely failing to print an error; 10,496 rows against 166.
+
+> The `.meas` lines in [`noself125.log`](noself125.log) report `out of interval` and return
+> zeros. That is an artefact of a 300 ns deck's measurement statements left on a 20 ns run,
+> **not** a failed simulation. It is recorded here because "no error string" was very nearly
+> taken for "it worked" — the row count is what actually settles it.
+
+**So self-heating is the convergence blocker.** That was previously a hypothesis; it is now a
+measurement.
+
+### What this does *not* buy
+
+Convergence is not a measurement. 20 ns is still well inside the ~100 ns coupling settling
+documented above, so a hot corner that now *runs* still yields **no valid hot-corner result**.
+What has been established is the mechanism, not a measurable corner. The settling constraint
+and the 40 ns memory ceiling are untouched by this.
+
+### What disabling it costs — and why that number does not license using it
+
+Confirming the mechanism is not permission to remove it. The thermal feedback is real at
+125 °C and will be present in fabricated silicon; a run that converges because the hard part
+was deleted is not evidence about the chip. So rather than argue the point, the error was
+measured. Candidate-2 comparator, same noise seed, same 300 ns run, 27 °C:
+
+| window from | `selft=1` P(1) | `selft=0` P(1) | `selft=1` ρ₁ | `selft=0` ρ₁ |
+| --- | --- | --- | --- | --- |
+| 2 ns | 0.989 | 0.602 | — | +0.2275 |
+| 50 ns | — | 0.549 | — | +0.1511 |
+| 200 ns (settled) | **0.517** | **0.530** | **+0.079** | **+0.0664** |
+
+At the settled window the differences are 0.013 in P(1) against a standard error of ≈0.030,
+and 0.013 in ρ₁ against ≈0.045. **Both are inside the measurement error**: at 27 °C, switching
+self-heating off changes the result by less than this measurement can resolve.
+
+The limit of that result is the important part, and it is a limit of where it was taken:
+
+> The simplification was validated at **27 °C**, which is the condition under which the
+> devices heat themselves *least*. The condition where it would actually be used is
+> **125 °C**, which is precisely where the removed physics matters *most*. The evidence and
+> the intended application sit at opposite ends of the temperature range.
+
+That gap is not closed by the table above and no amount of room-temperature data will close it.
+
+### Standing rule adopted
+
+- The **2 ps timestep with self-heating intact** remains the reference path for any corner
+  result that is quoted as a property of the circuit.
+- `selft=0` is permitted as a **first look** at a corner otherwise unreachable, on two
+  conditions: every number derived from it is labelled *thermally simplified* wherever it
+  appears, and nothing is concluded from it before a full-physics run agrees.
+- The decks in this directory carry `DIAGNOSTIC ONLY` on their first line for that reason.
+
+### Files
+
+- [`noself125.cir`](noself125.cir) / [`noself125.log`](noself125.log) — the 125 °C, 5 ps,
+  20 ns run that completes with self-heating off (its `.meas` errors are a leftover 300 ns
+  window, not a failure)
+- [`noself27.cir`](noself27.cir) / [`noself27.log`](noself27.log) — the 27 °C cost
+  measurement, a full 300 ns run at 150,005 rows
+- [`p1_comparator_cand2_noself.spice`](p1_comparator_cand2_noself.spice),
+  [`p1_noise_amp_noself.spice`](p1_noise_amp_noself.spice) — the two blocks with `selft=0`
+  on every `npn13G2` instance. **Diagnostic variants; not the design netlists.**

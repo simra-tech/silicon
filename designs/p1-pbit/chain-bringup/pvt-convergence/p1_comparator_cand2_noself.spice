@@ -1,0 +1,59 @@
+** p1_comparator cand2 with selft=0 on every npn13G2 instance: DIAGNOSTIC ONLY
+.subckt p1_comparator PBIT_OUT PBIT_RAW CLK_OUT_DIV IN_P IN_N CLK_P CLK_N TRIM_P TRIM_N VCC_HBT VDD VSS
+*.opin PBIT_OUT
+*.opin PBIT_RAW
+*.opin CLK_OUT_DIV
+*.ipin IN_P
+*.ipin IN_N
+*.ipin CLK_P
+*.ipin CLK_N
+*.ipin TRIM_P
+*.ipin TRIM_N
+*.iopin VCC_HBT
+*.iopin VDD
+*.iopin VSS
+XRC1 VCC_HBT c_n sub! rppd w=1.0u l=0.838u m=1 b=0 mm_ok=1
+XRC2 VCC_HBT c_p sub! rppd w=1.0u l=0.838u m=1 b=0 mm_ok=1
+XQ1 c_n IN_P e_track sub! npn13G2 Nx=1 mm_ok=1 selft=0
+XQ2 c_p IN_N e_track sub! npn13G2 Nx=1 mm_ok=1 selft=0
+XQ3 c_n ef_p e_latch sub! npn13G2 Nx=1 mm_ok=1 selft=0
+XQ4 c_p ef_n e_latch sub! npn13G2 Nx=1 mm_ok=1 selft=0
+XQCLK_TRACK e_track CLK_P e_tail sub! npn13G2 Nx=1 mm_ok=1 selft=0
+XQCLK_LATCH e_latch CLK_N e_tail sub! npn13G2 Nx=1 mm_ok=1 selft=0
+XMP1_COMP c_p1_comp c_p2_comp VCC_HBT VCC_HBT sg13_hv_pmos w=20.0u l=1.0u ng=1 m=1 mm_ok=1
+XMP2_COMP c_p2_comp c_p2_comp VCC_HBT VCC_HBT sg13_hv_pmos w=20.0u l=1.0u ng=1 m=1 mm_ok=1
+XQP1_COMP c_p1_comp c_p1_comp e_p1_comp sub! npn13G2 Nx=1 mm_ok=1 selft=0
+XRDEG_P1_COMP e_p1_comp VSS sub! rppd w=4.0u l=0.50u m=1 b=0 mm_ok=1
+XQP2_COMP c_p2_comp c_p1_comp e_p2_comp sub! npn13G2 Nx=4 mm_ok=1 selft=0
+XRPTAT_COMP e_p2_comp VSS sub! rppd w=2.0u l=1.107u m=1 b=0 mm_ok=1
+XQS_COMP e_tail c_p1_comp e_scomp sub! npn13G2 Nx=6 mm_ok=1 selft=0
+XRDEG_SCOMP e_scomp VSS sub! rppd w=24.0u l=0.50u m=1 b=0 mm_ok=1
+XQEF1 VCC_HBT c_p ef_p sub! npn13G2 Nx=1 mm_ok=1 selft=0
+XQEF2 VCC_HBT c_n ef_n sub! npn13G2 Nx=1 mm_ok=1 selft=0
+XR1_P ef_p g_p sub! rppd w=1.0u l=22.0u m=1 b=0 mm_ok=1
+XR2_P g_p VSS sub! rppd w=1.0u l=14.5u m=1 b=0 mm_ok=1
+XR1_N ef_n g_n sub! rppd w=1.0u l=22.0u m=1 b=0 mm_ok=1
+XR2_N g_n VSS sub! rppd w=1.0u l=14.5u m=1 b=0 mm_ok=1
+XM1 cml_out_n g_p e_cmos VSS sg13_lv_nmos w=6.0u l=0.13u ng=1 m=1 mm_ok=1
+XM2 cml_out_p g_n e_cmos VSS sg13_lv_nmos w=6.0u l=0.13u ng=1 m=1 mm_ok=1
+XMTAIL e_cmos VDD VSS VSS sg13_lv_nmos w=8.0u l=0.50u ng=1 m=1 mm_ok=1
+XM3 cml_out_n cml_out_n VDD VDD sg13_lv_pmos w=8.0u l=0.13u ng=1 m=1 mm_ok=1
+XM4 cml_out_p cml_out_n VDD VDD sg13_lv_pmos w=8.0u l=0.13u ng=1 m=1 mm_ok=1
+XCDAMP1 cml_out_p VSS cap_cmim w=5.0u l=5.0u m=1 mm_ok=1
+XCDAMP2 cml_out_n VSS cap_cmim w=5.0u l=5.0u m=1 mm_ok=1
+XRFB raw_inv cml_out_p sub! rppd w=1.0u l=18.5u m=1 b=0 mm_ok=1
+XM5 raw_inv cml_out_p VDD VDD sg13_lv_pmos w=2.83u l=0.13u ng=1 m=1 mm_ok=1
+XM6 raw_inv cml_out_p VSS VSS sg13_lv_nmos w=2.0u l=0.13u ng=1 m=1 mm_ok=1
+XM7 PBIT_RAW raw_inv VDD VDD sg13_lv_pmos w=2.83u l=0.13u ng=1 m=1 mm_ok=1
+XM8 PBIT_RAW raw_inv VSS VSS sg13_lv_nmos w=2.0u l=0.13u ng=1 m=1 mm_ok=1
+XM9 PBIT_OUT PBIT_RAW VDD VDD sg13_lv_pmos w=2.83u l=0.13u ng=1 m=1 mm_ok=1
+XM10 PBIT_OUT PBIT_RAW VSS VSS sg13_lv_nmos w=2.0u l=0.13u ng=1 m=1 mm_ok=1
+XM11 CLK_OUT_DIV CLK_P VDD VDD sg13_lv_pmos w=2.83u l=0.13u ng=1 m=1 mm_ok=1
+XM12 CLK_OUT_DIV CLK_P VSS VSS sg13_lv_nmos w=2.0u l=0.13u ng=1 m=1 mm_ok=1
+XQDAC_P c_p TRIM_P e_dac_p sub! npn13G2 Nx=1 mm_ok=1 selft=0
+XRDAC_P e_dac_p VSS sub! rppd w=1.0u l=5.4u m=1 b=0 mm_ok=1
+XQDAC_N c_n TRIM_N e_dac_n sub! npn13G2 Nx=1 mm_ok=1 selft=0
+XRDAC_N e_dac_n VSS sub! rppd w=1.0u l=5.4u m=1 b=0 mm_ok=1
+XTAP1 VSS sub! ptap1 R={ 1.0 / ( 1.0 / ( 9.8e-10 / ( 2.0u * 2.0u ) ) + 1.0 / ( 9.8e-4 / ( 2.0 * ( 2.0u + 2.0u ) ) ) )} w=2.0u l=2.0u
+.ends
+.end
