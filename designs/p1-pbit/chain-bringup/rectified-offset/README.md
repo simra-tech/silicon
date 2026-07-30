@@ -41,10 +41,36 @@ that DC run has the comparator clocking at 5 GS/s throughout.
 +σ/2 on one input and −σ/2 on the other from the same seed, gives +31.73 mV against
 +31.74 mV. Identical to four digits.
 
-**The size identifies the shape.** 10.30 divided by √(2/π) = 0.7979 is **12.9**, which
-is the amplifier's small-signal gain. So `amp_avg` = gain × E|v_in| — the output mean
-is the gain times the *mean absolute value* of the input, which is the signature of a
-full-wave rectifier characteristic somewhere in the stage.
+**The size is suggestive but does not settle the shape.** 10.30 divided by
+√(2/π) = 0.7979 is **12.9**, the amplifier's small-signal gain, so the mean is
+numerically equal to gain × E|v_in| — the form a full-wave rectifier would give. Treat
+that as a coincidence worth chasing rather than an identification: a simple
+two-slope model, gain G₊ for positive inputs and G₋ for negative, fits the peak
+asymmetry (below) but then predicts a mean of about 10 mV rather than the 32 mV
+measured. The size and the linearity are measurements; the mechanism is not.
+
+## Confirmed on the amplifier alone, with no comparator in the circuit
+
+The runs above all include the comparator, so the mean could in principle have been
+something the two blocks did to each other. It is not. `aa_pwl20ns` / `aa_pwl_lo` are
+the amplifier by itself — no comparator, no clock anywhere in the deck:
+
+| input σ | `amp_avg` | output range | peak ratio |
+| --- | --- | --- | --- |
+| 3.0818 mV | **+31.876 mV** | +141.8 / −75.0 mV | 1.89 |
+| 0.3082 mV | **+3.186 mV** | +14.2 / −7.53 mV | 1.89 |
+
+31.876 / 3.186 = **10.005** for a tenfold change in input: linear to four digits.
+
+This version of the measurement is the stronger one, and it kills the last two
+alternative explanations outright. There is **no clock in the deck**, so nothing
+synchronous can be contributing. And at the low amplitude the output swings **±14 mV
+against 330 mV of headroom** — three orders of magnitude clear of any rail — while the
+mean is still exactly 10.34 × σ. Whatever produces this is present at small signal.
+
+The **peak asymmetry is scale-invariant**: +1.89:1 at both amplitudes, four digits
+apart. A large-signal effect would grow with amplitude. A fixed asymmetry between the
+two halves of the amplifier would not, and this does not.
 
 ## Why it matters more than its size suggests
 
@@ -103,7 +129,23 @@ ngspice -b chain_lo.cir         # sigma / 10
 ngspice -b chain_mid.cir
 ngspice -b chain_diff.cir       # nominal sigma
 ngspice -b chain_truediff.cir   # nominal sigma, differential drive
+ngspice -b aa_pwl20ns.cir       # amplifier alone, nominal sigma
+ngspice -b aa_pwl_lo.cir        # amplifier alone, sigma / 10
 ```
+
+## If you are building a diagnostic for this, check row one first
+
+A stage-by-stage walk of this effect is the obvious next measurement, and the way to get
+it wrong is to write the differential expressions against the wrong reference. Both
+inputs here sit at a 1.440 V common mode, so a "differential" reading of **−1440 mV** is
+the common mode with a sign flip, not a differential — and every stage below such a row
+inherits the error. The check costs nothing: **the input differential mean must come out
+near zero, because the input is zero-mean by construction.** In these decks it reads
+0.47 µV. If the first row of a stage table is off by the common-mode voltage, stop there.
+
+The second check is the scaling column. A static operating-point difference does not move
+when the input amplitude changes; the effect being hunted scales by exactly ten for a
+tenfold input change. Any row that reads 1.00× is measuring a bias point, not a signal.
 
 `$PDK_ROOT` is the IHP SG13G2 PDK root. The `pwl_*.inc` files carry the noise samples,
 10 ps apart from a seeded Gaussian generator, linearly interpolated — see
