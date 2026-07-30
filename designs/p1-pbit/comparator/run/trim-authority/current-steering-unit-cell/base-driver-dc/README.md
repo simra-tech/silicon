@@ -35,6 +35,8 @@ The follow-up [`loaded 16x steering segment`](segment16x/) scales both the NMOS
 sink multiplier and HBT emitter count while retaining this base network.
 The [`loaded binary-weight package`](binary-weights248/) measures the remaining
 2x, 4x, and 8x cells with their exact executed decks.
+The [`31-unit major-carry slice`](major-carry-slice31/) then combines all five
+weights and measures the nominal static transition across codes 15 to 16.
 
 This package does not implement the 0.96 V reference, a dynamic CMOS logic
 driver, a segmented array, mismatch, code transfer, settling, corners, layout,
