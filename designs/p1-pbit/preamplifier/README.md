@@ -168,9 +168,17 @@ Adding the process corners — `hbt_bcs`/`res_bcs`/`cap_bcs` and `hbt_wcs`/`res_
 
 > **The sizing made a round trip, and the table is current.** These numbers were measured with the collector
 > loads at w = 1.0 µm, l = 0.7115 µm (255 Ω). Twelve minutes later the schematic was changed to l = 0.923 µm,
-> and about twenty minutes after that it was changed back. A fresh export of the schematic as it now stands
-> reproduces the table exactly — 17.1854 / 20.9532 / 24.1136 dB — so what is published here describes the
-> design as it is, verified rather than assumed.
+> and about twenty minutes after that it was changed back. A fresh export at that point reproduced the table
+> exactly — 17.1854 / 20.9532 / 24.1136 dB — so these are measurements of a real netlist and not of an
+> assumption.
+>
+> **The schematic continues to move, and this table is not re-quoted for every revision.** It is measured with
+> `RBIAS` at l = 2.808 µm; a later revision at 2.872 µm gives 17.05 / 20.83 / 24.01 dB, which is 0.12 dB lower
+> across the board and changes the envelope from 6.92 dB to 6.96. Revisions of that size will keep happening
+> while the bias reference is being designed, and chasing each one would make this page a changelog. **What is
+> stable, and what the page is asserting, is the shape: an envelope of roughly 7 dB against a 3 dB window,
+> missing at both ends, from a mechanism attributed to r_e = V_T/I_E.** The exact figures are labelled with the
+> sizing that produced them so a reader can tell which netlist they belong to.
 >
 > **Superseded again, and the block is mid-repair.** A PTAT bias attempt has since been added — four new devices,
 > `QPTAT`/`RPTAT` per stage — and the schematic no longer matches this table. Two things are wrong with it as
