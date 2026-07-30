@@ -318,8 +318,8 @@ bounds with derivations, and where no bound exists that is said rather than impl
 
 | held to | bound | margin as built |
 | --- | --- | --- |
-| **noise amplitude** — must dominate residual comparator offset | **≥ 1.562 mV_rms** (SOR ≥ 39.89, for ≤1% bit bias) | 38.98 mV_rms at hot/worst-case, **25×** clear |
-| **noise amplitude, upper** | **no binding upper bound** | 330 mV of collector headroom against 4.3σ peaks of 132 mV, 2.5× clear; and the CML sampler resolves sign regardless of overdrive |
+| **noise amplitude** — must dominate residual comparator offset | **≥ 1.562 mV_rms** (SOR ≥ 39.89, for ≤1% bit bias) | 38.98 mV_rms at hot/worst-case, **25×** clear against *comparator* offset — but see the row below, which supersedes this as the binding constraint |
+| **noise amplitude, upper** | **WITHDRAWN — "no binding upper bound" was wrong, and the real constraint is proportional rather than a ceiling** | The amplifier's differential output carries a DC mean of gain × E&#124;v_in&#124;, measured at **10.30 × σ** and constant to three digits across a factor of ten in amplitude. Referred to its input that is 0.7979 σ, so the signal-to-offset ratio is **1.25 at any amplitude**, against the 39.89 required — short by 32×. Raising the noise cannot fix it, because the offset rises with it, and the trim cannot either. Headroom was never what bound this. See [`../chain-bringup/rectified-offset/`](../chain-bringup/rectified-offset/) |
 | **bandwidth** | ≥ 5.20 GHz | 5.20 … 5.42 GHz across PVT |
 | **power** | ≤ 9.16 mW | 3.28 … 4.12 mA on 2.50 V ±5% |
 
