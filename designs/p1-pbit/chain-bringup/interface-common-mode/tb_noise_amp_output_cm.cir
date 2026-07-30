@@ -1,0 +1,20 @@
+* P1_NOISE_AMP output common mode, operating point
+.lib $PDK_ROOT/libs.tech/ngspice/models/cornerHBT.lib hbt_typ
+.lib $PDK_ROOT/libs.tech/ngspice/models/cornerRES.lib res_typ
+.lib $PDK_ROOT/libs.tech/ngspice/models/cornerCAP.lib cap_typ
+.lib $PDK_ROOT/libs.tech/ngspice/models/cornerMOShv.lib mos_tt
+.lib $PDK_ROOT/libs.tech/ngspice/models/cornerMOSlv.lib mos_tt
+.lib $PDK_ROOT/libs.tech/ngspice/models/cornerDIO.lib dio_tt
+.include ./p1_noise_amp_export.spice
+VCC VCC 0 DC 2.500
+VSS VSS 0 DC 0.0
+VP RAW_NOISE_P 0 DC 1.440
+VN RAW_NOISE_N 0 DC 1.440
+XAMP NOISE_AMP_P NOISE_AMP_N RAW_NOISE_P RAW_NOISE_N VCC VSS p1_noise_amp
+.control
+pre_osdi $PDK_ROOT/libs.tech/ngspice/osdi/psp103.osdi
+pre_osdi $PDK_ROOT/libs.tech/ngspice/osdi/psp103_nqs.osdi
+op
+print v(NOISE_AMP_P) v(NOISE_AMP_N)
+.endc
+.end

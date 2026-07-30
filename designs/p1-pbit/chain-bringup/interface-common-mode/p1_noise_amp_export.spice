@@ -1,0 +1,39 @@
+** exported from p1_noise_amp.sch by xschem
+.subckt p1_noise_amp NOISE_AMP_P NOISE_AMP_N RAW_NOISE_P RAW_NOISE_N VCC VSS
+*.opin NOISE_AMP_P
+*.opin NOISE_AMP_N
+*.ipin RAW_NOISE_P
+*.ipin RAW_NOISE_N
+*.iopin VCC
+*.iopin VSS
+XQ1 c1_n RAW_NOISE_P e1_1 sub! npn13G2 Nx=2 mm_ok=1
+XQ2 c1_p RAW_NOISE_N e1_2 sub! npn13G2 Nx=2 mm_ok=1
+XRC1_1 VCC c1_n sub! rppd w=1.0u l=0.7115u m=1 b=0 mm_ok=1
+XRC1_2 c1_p VCC sub! rppd w=1.0u l=0.7115u m=1 b=0 mm_ok=1
+XRE1_1 e1_1 e1_common sub! rppd w=13.333u l=0.50u m=1 b=0 mm_ok=1
+XRE1_2 e1_2 e1_common sub! rppd w=13.333u l=0.50u m=1 b=0 mm_ok=1
+XMP1 c_p1 c_p2 VCC VCC sg13_hv_pmos w=20.0u l=1.0u ng=1 m=1 mm_ok=1
+XMP2 c_p2 c_p2 VCC VCC sg13_hv_pmos w=20.0u l=1.0u ng=1 m=1 mm_ok=1
+XQP1 c_p1 c_p1 e_p1 sub! npn13G2 Nx=1 mm_ok=1
+XRDEG_P1 e_p1 VSS sub! rppd w=4.0u l=0.50u m=1 b=0 mm_ok=1
+XQP2 c_p2 c_p1 e_p2 sub! npn13G2 Nx=4 mm_ok=1
+XRPTAT e_p2 VSS sub! rppd w=2.0u l=1.107u m=1 b=0 mm_ok=1
+XQS1 e1_common c_p1 e_s1 sub! npn13G2 Nx=9 mm_ok=1
+XRDEG_S1 e_s1 VSS sub! rppd w=36.0u l=0.50u m=1 b=0 mm_ok=1
+XCAC1 c1_n b2_p cap_cmim w=36.5u l=36.5u m=1 mm_ok=1
+XCAC2 c1_p b2_n cap_cmim w=36.5u l=36.5u m=1 mm_ok=1
+XRBDIV1 VCC vbias2 sub! rppd w=1.0u l=40.50u m=1 b=0 mm_ok=1
+XRBDIV2 vbias2 VSS sub! rppd w=1.0u l=55.115u m=1 b=0 mm_ok=1
+XRB2_1 vbias2 b2_p sub! rppd w=1.0u l=192.0u m=1 b=0 mm_ok=1
+XRB2_2 b2_n vbias2 sub! rppd w=1.0u l=192.0u m=1 b=0 mm_ok=1
+XQ4 NOISE_AMP_P b2_p e2_1 sub! npn13G2 Nx=1 mm_ok=1
+XQ3 NOISE_AMP_N b2_n e2_2 sub! npn13G2 Nx=1 mm_ok=1
+XRC2_2 VCC NOISE_AMP_P sub! rppd w=1.0u l=0.7115u m=1 b=0 mm_ok=1
+XRC2_1 NOISE_AMP_N VCC sub! rppd w=1.0u l=0.7115u m=1 b=0 mm_ok=1
+XRE2_1 e2_1 e2_common sub! rppd w=13.333u l=0.50u m=1 b=0 mm_ok=1
+XRE2_2 e2_2 e2_common sub! rppd w=13.333u l=0.50u m=1 b=0 mm_ok=1
+XQS2 e2_common c_p1 e_s2 sub! npn13G2 Nx=9 mm_ok=1
+XRDEG_S2 e_s2 VSS sub! rppd w=36.0u l=0.50u m=1 b=0 mm_ok=1
+XTAP1 VSS sub! ptap1 R={ 1.0 / ( 1.0 / ( 9.8e-10 / ( 2.0u * 2.0u ) ) + 1.0 / ( 9.8e-4 / ( 2.0 * ( 2.0u + 2.0u ) ) ) )} w=2.0u l=2.0u
+.ends
+.end
