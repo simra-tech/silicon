@@ -293,6 +293,10 @@ Scaling only the fixed tail from 670 uA to **780 uA** produces **-40.722 mV** an
 static requirement at the tested 27 °C typical condition. The complete package is in
 [`current-steering-780ua/`](current-steering-780ua/).
 
-The 780 uA pair is the current front-runner, not a selected architecture. Its measured evidence is
-still three static points. A control-code transfer, local step size, corner and mismatch behavior,
-and dynamic integration with the comparator remain open.
+The 780 uA pair is the current front-runner, not a selected architecture. A follow-up
+[`33-point analog-control sweep`](current-steering-780ua-33point/) is strictly monotonic at its
+sampled points, but its adjacent threshold steps range from **46.412 uV to 7.172 mV**, a roughly
+154.5:1 variation. The correct median step is **1.450 mV**. That sweep drives ideal analog base
+voltages; it does not establish a physically implemented digital code transfer or zero missing
+codes. A realizable code mapping, corner and mismatch behavior, and dynamic integration with the
+comparator remain open.
