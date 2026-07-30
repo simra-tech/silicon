@@ -1,0 +1,43 @@
+* P1_NOISE_AMP stage walk and settling check
+.lib $PDK_ROOT/libs.tech/ngspice/models/cornerHBT.lib hbt_typ
+.lib $PDK_ROOT/libs.tech/ngspice/models/cornerRES.lib res_typ
+.lib $PDK_ROOT/libs.tech/ngspice/models/cornerCAP.lib cap_typ
+.lib $PDK_ROOT/libs.tech/ngspice/models/cornerMOShv.lib mos_tt
+.lib $PDK_ROOT/libs.tech/ngspice/models/cornerMOSlv.lib mos_tt
+.lib $PDK_ROOT/libs.tech/ngspice/models/cornerDIO.lib dio_tt
+.include ./p1_noise_amp_export.spice
+.option temp = 27.0
+.options rshunt = 1e12
+VCC_HBT VCC_HBT 0 DC 2.500
+VSS VSS 0 DC 0.000
+.include ./pwl_lo.inc
+VRAW_N RAW_NOISE_N 0 DC 1.440
+XAMP NOISE_AMP_P NOISE_AMP_N RAW_NOISE_P RAW_NOISE_N VCC_HBT VSS p1_noise_amp
+.control
+pre_osdi $PDK_ROOT/libs.tech/ngspice/osdi/psp103.osdi
+pre_osdi $PDK_ROOT/libs.tech/ngspice/osdi/psp103_nqs.osdi
+tran 2p 20n 0 2p
+let d0 = v(RAW_NOISE_P) - v(RAW_NOISE_N)
+let d1 = v(xamp.c1_p) - v(xamp.c1_n)
+let d2 = v(xamp.b2_p) - v(xamp.b2_n)
+let d3 = v(NOISE_AMP_P) - v(NOISE_AMP_N)
+let t1 = v(xamp.e1_common)
+let t2 = v(xamp.e2_common)
+meas tran d0_avg AVG d0 from=2n to=20n
+meas tran d0_rms RMS d0 from=2n to=20n
+meas tran d1_avg AVG d1 from=2n to=20n
+meas tran d1_rms RMS d1 from=2n to=20n
+meas tran d1_max MAX d1 from=2n to=20n
+meas tran d1_min MIN d1 from=2n to=20n
+meas tran d2_avg AVG d2 from=2n to=20n
+meas tran d2_rms RMS d2 from=2n to=20n
+meas tran d2_max MAX d2 from=2n to=20n
+meas tran d2_min MIN d2 from=2n to=20n
+meas tran d3_avg AVG d3 from=2n to=20n
+meas tran d3_rms RMS d3 from=2n to=20n
+meas tran d3_max MAX d3 from=2n to=20n
+meas tran d3_min MIN d3 from=2n to=20n
+meas tran t1_avg AVG t1 from=2n to=20n
+meas tran t2_avg AVG t2 from=2n to=20n
+.endc
+.end

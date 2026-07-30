@@ -1,152 +1,107 @@
-# The amplifier rectifies its own noise, and that sets a bias floor no trim can reach
+# RETRACTED — the amplifier does not rectify its own noise
 
-This is the most consequential result in this repository, and it retracts a published
-claim of ours. The short version: **the amplifier's differential output has a DC mean
-proportional to the noise amplitude it is amplifying.** Referred to its input, that
-mean is 0.80 × σ. It is therefore not an offset you can outrun by raising the noise,
-because it rises with the noise.
+**Everything this page previously claimed is withdrawn.** It asserted that the
+amplifier's differential output carries a DC mean proportional to the noise amplitude
+it amplifies, that the input-referred signal-to-offset ratio is therefore 1.25 against
+the 39.89 the specification requires, and that this was a fatal defect no trim could
+reach. The chip gate was set to *fail* on it. All of that is wrong.
 
-## The measurement
+The +31.9 mV was the **interstage coupling network settling**, measured over a window
+one fifth as long as its own time constant.
 
-Same chain — `p1_noise_amp` into `p1_comparator`, clocked at 5 GS/s — driven by a
-seeded band-limited PWL noise source. `amp_avg` is the time average of
-`v(NOISE_AMP_P) − v(NOISE_AMP_N)` over 2 … 20 ns. The input is zero-mean in every run
-(`in_avg` = 0.47 µV).
+## The measurement that settles it
 
-| deck | input σ | `amp_avg` | `amp_avg` / σ |
-| --- | --- | --- | --- |
-| `chain_nonoise2` | **DC, no noise** | **−4.3 µV** | — |
-| `chain_lo` | 0.3082 mV | +3.166 mV | 10.28 |
-| `chain_mid` | 1.000 mV | +10.29 mV | 10.29 |
-| `chain_diff` | 3.0818 mV | +31.74 mV | 10.30 |
-| `chain_truediff` | 3.0818 mV, applied **differentially** | +31.73 mV | 10.30 |
+Between the two amplifier stages the signal passes through `XCAC1` / `XCAC2` — 36.5 ×
+36.5 µm MIM capacitors, about 2 pF each — into bases biased through `XRB2_1` / `XRB2_2`,
+`rppd` resistors 192 µm long, about 50 kΩ. That is a high-pass corner near 1.6 MHz and a
+time constant of roughly **100 ns**.
 
-Five things fall out of that table.
+Every earlier measurement on this page used a window of **2 … 20 ns**.
 
-**It is a nonlinearity, and this is not an inference.** A linear time-invariant system
-cannot produce a DC output from a zero-mean input — no combination of gain, bandwidth,
-pole mismatch or asymmetric time constants can. The mean is +31.74 mV from an input
-whose mean is 0.47 µV, so the mechanism is necessarily nonlinear.
+Extending the run to 400 ns and taking the same average in successive windows —
+`walk_long2.cir`, amplifier alone, σ = 3.0818 mV throughout:
 
-**It is not headroom clipping.** The ratio is constant to three digits across a factor
-of ten in amplitude, from output peaks of ±35 mV to ±141 mV, against 330 mV of
-collector headroom. Compression against a rail would show up as a ratio that grows
-with amplitude. This one does not move.
+| window | mean of `v(NOISE_AMP_P) − v(NOISE_AMP_N)` |
+| --- | --- |
+| 2 … 20 ns | **+31.90 mV** ← the published figure |
+| 60 … 100 ns | +1.328 mV |
+| 150 … 200 ns | **+3.3 µV** |
+| 250 … 300 ns | +0.616 mV |
+| 350 … 400 ns | +0.735 mV |
 
-**It requires a varying input.** With DC in, the differential mean at the sampling
-instants is −1.5 … −2.7 µV and `amp_avg` is −4.3 µV. The clock is not doing it either:
-that DC run has the comparator clocking at 5 GS/s throughout.
+Four orders of magnitude of decay. The 0.6 … 0.7 mV in the later windows is not a
+residual offset: the output noise is 43.7 mV_rms and a 50 ns window holds about 5,000
+independent samples, so the standard error on the mean is 43.7/√5000 ≈ **0.6 mV**. The
+late windows are consistent with zero to within the precision the measurement has.
 
-**It is not an artefact of single-ended drive.** Driving the noise differentially,
-+σ/2 on one input and −σ/2 on the other from the same seed, gives +31.73 mV against
-+31.74 mV. Identical to four digits.
+## Every piece of the original argument, and why it failed
 
-**The size is suggestive but does not settle the shape.** 10.30 divided by
-√(2/π) = 0.7979 is **12.9**, the amplifier's small-signal gain, so the mean is
-numerically equal to gain × E|v_in| — the form a full-wave rectifier would give. Treat
-that as a coincidence worth chasing rather than an identification: a simple
-two-slope model, gain G₊ for positive inputs and G₋ for negative, fits the peak
-asymmetry (below) but then predicts a mean of about 10 mV rather than the 32 mV
-measured. The size and the linearity are measurements; the mechanism is not.
+**"A linear time-invariant system cannot put DC on a zero-mean input, so this must be a
+nonlinearity."** True of steady state, false of a transient. A linear high-pass network
+that is still charging produces a nonzero mean; that is what charging *is*. The theorem
+was applied outside its domain, and it read as rigour — the page said the conclusion was
+"free" and needed no further measurement, which in hindsight is the sentence that should
+have triggered a check.
 
-## Confirmed on the amplifier alone, with no comparator in the circuit
+**"Linear in σ to four digits."** This was recorded as confirmation and it is the
+refutation. A settling transient is a linear response, so its mean scales exactly with
+the signal driving it. A rectifier's mean also scales with σ, but nothing else in the
+data scaled *identically* — the means and the RMS values both came out at exactly 10.00×
+across a tenfold input change, which is the signature of a linear system, not of an
+even-order nonlinearity.
 
-The runs above all include the comparator, so the mean could in principle have been
-something the two blocks did to each other. It is not. `aa_pwl20ns` / `aa_pwl_lo` are
-the amplifier by itself — no comparator, no clock anywhere in the deck:
+**"Not clipping — the ratio holds while peaks go from ±35 mV to ±141 mV."** True and
+irrelevant. Ruling out one nonlinear mechanism is not evidence for another.
 
-| input σ | `amp_avg` | output range | peak ratio |
-| --- | --- | --- | --- |
-| 3.0818 mV | **+31.876 mV** | +141.8 / −75.0 mV | 1.89 |
-| 0.3082 mV | **+3.186 mV** | +14.2 / −7.53 mV | 1.89 |
+**"Confirmed on the amplifier alone, no comparator, no clock."** True and irrelevant.
+The settling has nothing to do with either.
 
-31.876 / 3.186 = **10.005** for a tenfold change in input: linear to four digits.
+**"Scale-invariant peak asymmetry, 1.89:1 at both amplitudes."** Also a property of the
+transient, and also linear.
 
-This version of the measurement is the stronger one, and it kills the last two
-alternative explanations outright. There is **no clock in the deck**, so nothing
-synchronous can be contributing. And at the low amplitude the output swings **±14 mV
-against 330 mV of headroom** — three orders of magnitude clear of any rail — while the
-mean is still exactly 10.34 × σ. Whatever produces this is present at small signal.
+**The tail nodes were the tell, and they were in the data.** `walk_hi` / `walk_lo`
+measure the two emitter nodes that would have to move if the tail current were being
+modulated: **0.562530 V** at full amplitude and **0.562524 V** at one tenth — identical
+to six digits, as is the second stage's node at 0.393129 / 0.393073 V. Nothing in the
+biasing behaves nonlinearly at any amplitude. That measurement was in the same run as
+the result it contradicted.
 
-The **peak asymmetry is scale-invariant**: +1.89:1 at both amplitudes, four digits
-apart. A large-signal effect would grow with amplitude. A fixed asymmetry between the
-two halves of the amplifier would not, and this does not.
+## The rule this repository now holds itself to
 
-## Why it matters more than its size suggests
+**A transient measurement of a mean or an offset must state its window and the longest
+time constant in the circuit, and the window must be several times that constant.**
+Where it is not, the number is a settling value and must be labelled one.
 
-Referred back to the input, the offset is E|v_in| = 0.7979 σ. So the
-signal-to-offset ratio the bit actually sees is
+For this design the binding constant is the **100 ns** interstage coupling network. Any
+average taken over a window shorter than about 500 ns is suspect, and that includes
+short-run averages elsewhere in this repository, which are being revisited.
 
-    SOR = σ / (0.7979 σ) = 1.25
+This is the second time the same error has been made here. The comparator's kickback
+figure was first published as 0.63 mV from a `FIND` at 250 ps in a run that began at
+100 ps — see [`../../comparator/run/kickback-clocked-vs-frozen/`](../../comparator/run/kickback-clocked-vs-frozen/),
+which records that correction. The lesson was written down and then not applied to a
+larger claim one step later.
 
-independent of amplitude. The specification needs **SOR ≥ 39.89** for the bias to stay
-within 1%. This is short by a factor of **32**, and — the part that matters — *raising
-the noise does not help*, because the offset is a fixed fraction of it.
+## What remains true, and what is open again
 
-Measured at the decision instants over twenty consecutive clock periods, the
-differential arriving at the comparator is positive in **19 of 20**: −5.0, +37.9,
-+41.9, +67.3, +41.6, +60.0, +63.1, +41.9, +14.5, +61.5, +107.6, +83.1, +18.7, +80.3,
-+52.2, +33.6, +22.2, +4.0, +13.5, +72.9 mV. Mean +45.9 mV against a spread of about
-27 mV — roughly 1.7σ off centre. The comparator resolves every one of them correctly;
-it is being handed a biased signal, not misreading a fair one.
+Still true: the comparator resolves both polarities and is not implicated; the chain
+converges once the noise source is band-limited; the amplifier meets its bandwidth and
+power bounds.
 
-That is the explanation for a bitstream that comes back all zeros. **The comparator is
-not at fault and neither is the sampling.** The 10-bit trim cannot correct it either:
-the trim subtracts a fixed voltage, and this offset moves with the noise amplitude.
-
-## What this retracts
-
-The preamplifier page states, in its specification table, **"noise amplitude, upper —
-no binding upper bound"**, on the grounds that 330 mV of collector headroom clears
-4.3σ peaks of 132 mV with 2.5× to spare. That reasoning is about clipping, and clipping
-is not what binds. **There is a binding constraint on noise amplitude and it is
-proportional**, so it cannot be satisfied by choosing an amplitude at all. That row is
-withdrawn — see `../../preamplifier/`.
-
-The claim was made on the amplifier measured **alone**, into its own load, looking at
-single-ended output swing. The rectified mean is a property of the differential output
-under a *varying* input, and no block-level test in this repository looked at that.
-
-## What has not been established
-
-The mechanism inside the stage is **not identified**. The measurement says the transfer
-is even-order in the input with the size of a full-wave rectifier; it does not say
-which device or which asymmetry produces it. Candidates not yet distinguished: tail
-current modulation converting common mode to differential through an asymmetric load,
-V_BE nonlinearity in the input pair at these swings, or the second stage's operating
-point moving with input amplitude. **Do not size anything on the strength of this page
-alone** — it localises the problem to the amplifier and quantifies the consequence.
-
-Also not established: whether the effect survives at lower gain, and whether it is
-present in the `noise-generator` → amplifier interface as built rather than with an
-ideal source.
+Open again: **the counted bitstream came back all zeros and there is no longer an
+explanation for it.** The gate returns from *fail* to *running*. Removing a wrong
+explanation is not progress toward a right one, and the honest state is that the cause
+of the pinned bit is unknown — with the added constraint that any re-measurement must
+run several hundred nanoseconds before its averages mean anything.
 
 ## Reproducing
 
 ```
-ngspice -b chain_nonoise2.cir   # DC control: -4.3 uV
-ngspice -b chain_lo.cir         # sigma / 10
-ngspice -b chain_mid.cir
-ngspice -b chain_diff.cir       # nominal sigma
-ngspice -b chain_truediff.cir   # nominal sigma, differential drive
-ngspice -b aa_pwl20ns.cir       # amplifier alone, nominal sigma
-ngspice -b aa_pwl_lo.cir        # amplifier alone, sigma / 10
+ngspice -b walk_hi.cir        # stage walk, sigma, 20 ns  (short window: shows +31.9 mV)
+ngspice -b walk_lo.cir        # stage walk, sigma/10, 20 ns
+ngspice -b walk_long2.cir     # 400 ns, windowed averages: the decay
 ```
 
-## If you are building a diagnostic for this, check row one first
-
-A stage-by-stage walk of this effect is the obvious next measurement, and the way to get
-it wrong is to write the differential expressions against the wrong reference. Both
-inputs here sit at a 1.440 V common mode, so a "differential" reading of **−1440 mV** is
-the common mode with a sign flip, not a differential — and every stage below such a row
-inherits the error. The check costs nothing: **the input differential mean must come out
-near zero, because the input is zero-mean by construction.** In these decks it reads
-0.47 µV. If the first row of a stage table is off by the common-mode voltage, stop there.
-
-The second check is the scaling column. A static operating-point difference does not move
-when the input amplitude changes; the effect being hunted scales by exactly ten for a
-tenfold input change. Any row that reads 1.00× is measuring a bias point, not a signal.
-
-`$PDK_ROOT` is the IHP SG13G2 PDK root. The `pwl_*.inc` files carry the noise samples,
-10 ps apart from a seeded Gaussian generator, linearly interpolated — see
-`../noise-convergence/` for why a held-step source will not integrate.
+The decks named in the withdrawn sections are retained — `chain_*.cir`, `aa_*.cir` and
+their logs — because they are the evidence for the retraction as much as they were for
+the claim. They are correct runs of the wrong window.
