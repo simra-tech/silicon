@@ -1,0 +1,75 @@
+* 780uA Differential Current-Steering Trim DAC Experiment
+.lib $PDK_ROOT/libs.tech/ngspice/models/cornerHBT.lib hbt_typ
+.lib $PDK_ROOT/libs.tech/ngspice/models/cornerRES.lib res_typ
+.lib $PDK_ROOT/libs.tech/ngspice/models/cornerCAP.lib cap_typ
+.lib $PDK_ROOT/libs.tech/ngspice/models/cornerMOShv.lib mos_tt
+.lib $PDK_ROOT/libs.tech/ngspice/models/cornerMOSlv.lib mos_tt
+.lib $PDK_ROOT/libs.tech/ngspice/models/cornerDIO.lib dio_tt
+
+.include ../p1_noise_amp_export.spice
+
+.subckt p1_comp_780u_steer PBIT_OUT PBIT_RAW CLK_OUT_DIV IN_P IN_N CLK_P CLK_N TRIM_P TRIM_N VCC_HBT VDD VSS
+XRC1 VCC_HBT c_n sub! rppd w=1.0u l=0.838u m=1 b=0 mm_ok=1
+XRC2 VCC_HBT c_p sub! rppd w=1.0u l=0.838u m=1 b=0 mm_ok=1
+XQ1 c_n IN_P e_track sub! npn13G2 Nx=1 mm_ok=1
+XQ2 c_p IN_N e_track sub! npn13G2 Nx=1 mm_ok=1
+I_PTAT_TAIL e_track VSS DC 1.958m
+
+XQEF1 VCC_HBT c_p ef_p sub! npn13G2 Nx=1 mm_ok=1
+XQEF2 VCC_HBT c_n ef_n sub! npn13G2 Nx=1 mm_ok=1
+
+* Fixed-Tail Differential Current-Steering Trim Cell (Sized I_tail = 0.780 mA)
+I_STEER_TAIL e_st_tail VSS DC 0.780m
+XQST_P c_p TRIM_P e_st_tail sub! npn13G2 Nx=1 mm_ok=1
+XQST_N c_n TRIM_N e_st_tail sub! npn13G2 Nx=1 mm_ok=1
+
+XTAP1 VSS sub! ptap1
+.ends
+
+VCC_HBT VCC 0 DC 2.500
+VDD VDD 0 DC 1.200
+VSS VSS 0 DC 0.000
+
+* Differential Input Driver around 1.440V CM
+VCM v_in_cm 0 DC 1.440
+VIN_SRC v_in_diff 0 DC 0.0
+E_IN_P IN_P v_in_cm v_in_diff 0 +0.5
+E_IN_N IN_N v_in_cm v_in_diff 0 -0.5
+
+VCLK_P CLK_P 0 DC 2.500
+VCLK_N CLK_N 0 DC 0.000
+
+* Independent Steering Code Base Voltage Sources
+VTRIM_P TRIM_P 0 DC 1.000
+VTRIM_N TRIM_N 0 DC 1.000
+
+.option temp = 27.0
+.options rshunt=1e12 method=gear reltol=1e-3
+
+XCOMP PBIT_OUT PBIT_RAW CLK_OUT_DIV IN_P IN_N CLK_P CLK_N TRIM_P TRIM_N VCC VDD VSS p1_comp_780u_steer
+
+.control
+pre_osdi $PDK_ROOT/libs.tech/ngspice/osdi/psp103.osdi
+pre_osdi $PDK_ROOT/libs.tech/ngspice/osdi/psp103_nqs.osdi
+set filetype=ascii
+
+* Run 1: MINIMUM CODE (VTRIM_P = 0.900 V, VTRIM_N = 1.100 V)
+alter VTRIM_P DC = 0.900
+alter VTRIM_N DC = 1.100
+dc VIN_SRC -0.060 0.060 0.0002
+wrdata ./raw_780u_steer_min.txt v(TRIM_P) v(TRIM_N) v(xcomp.c_p) v(xcomp.c_n) v(xcomp.ef_p) v(xcomp.ef_n) i(VCC_HBT)
+
+* Run 2: MIDPOINT CODE (VTRIM_P = 1.000 V, VTRIM_N = 1.000 V)
+alter VTRIM_P DC = 1.000
+alter VTRIM_N DC = 1.000
+dc VIN_SRC -0.060 0.060 0.0002
+wrdata ./raw_780u_steer_mid.txt v(TRIM_P) v(TRIM_N) v(xcomp.c_p) v(xcomp.c_n) v(xcomp.ef_p) v(xcomp.ef_n) i(VCC_HBT)
+
+* Run 3: MAXIMUM CODE (VTRIM_P = 1.100 V, VTRIM_N = 0.900 V)
+alter VTRIM_P DC = 1.100
+alter VTRIM_N DC = 0.900
+dc VIN_SRC -0.060 0.060 0.0002
+wrdata ./raw_780u_steer_max.txt v(TRIM_P) v(TRIM_N) v(xcomp.c_p) v(xcomp.c_n) v(xcomp.ef_p) v(xcomp.ef_n) i(VCC_HBT)
+
+.endc
+.end

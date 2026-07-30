@@ -287,3 +287,12 @@ The immediately preceding one-deck attempt is retained in
 [`failed-unified-stimulus/`](failed-unified-stimulus/). Its dependent sources generated the wrong
 trim voltages and its log contains a parser error; it is evidence of a failed stimulus, not of the
 candidate's authority.
+
+Scaling only the fixed tail from 670 uA to **780 uA** produces **-40.722 mV** and
+**+40.677 mV** of endpoint authority relative to midpoint. That clears the nominal ±40.10 mV
+static requirement at the tested 27 °C typical condition. The complete package is in
+[`current-steering-780ua/`](current-steering-780ua/).
+
+The 780 uA pair is the current front-runner, not a selected architecture. Its measured evidence is
+still three static points. A control-code transfer, local step size, corner and mismatch behavior,
+and dynamic integration with the comparator remain open.
