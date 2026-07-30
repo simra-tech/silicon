@@ -198,3 +198,71 @@ ngspice -b ig_0.002.cir
 
 `$PDK_ROOT` is the IHP SG13G2 PDK root. All runs are `.op` with the clock frozen in the
 track phase; the trim and input-pair transfers are differences between adjacent runs.
+
+## Full scale: the range holds, the peak current does not, and the DNL is normalised wrong
+
+A 16-point linearity sweep of the 820 Ω point was produced independently, driving `TRIM_P`
+from 0.800 V to 1.400 V single-ended with `TRIM_N` held. Three things about it, measured
+here on the same netlist.
+
+**The range claim holds.** At `TRIM_P` = 1.400 V the collector differential is −171.912 mV,
+which referred through the measured 4.824 V/V input-pair gain is **35.63 mV** against the
+32.42 mV claimed — within 10%, so ±5σ of the 6.46 mV untrimmed offset is genuinely reachable
+at this operating point.
+
+**The peak current is not stated and it is worse than the design being replaced.**
+
+| `TRIM_P` | input-referred trim | P-side current | `c_p` |
+| --- | --- | --- | --- |
+| 0.800 V, mid-code | 0 | **43.4 µA** | 2.211 V |
+| 1.200 V | 22.93 mV | 448.2 µA | 2.096 V |
+| 1.300 V | 29.25 mV | 559.8 µA | 2.065 V |
+| **1.400 V, full scale** | **35.63 mV** | **672.5 µA** | 2.033 V |
+
+Static current is genuinely 9.6× better than the as-built 415 µA. **Full-scale current is
+672.5 µA — 62% worse.** A report that quotes the static figure as a power saving and omits
+the peak has described half of the change. Whether the peak matters depends on how often
+large trim codes are used, which is a yield question, but it belongs in the table.
+
+**The DNL and INL are normalised to a 16-point LSB, which flatters them by about 64×.**
+The reported step sizes grow monotonically across the sweep — 1.571, 1.806, 1.954, 2.054,
+2.131, 2.169, 2.212, 2.242, 2.269, 2.293, 2.313, 2.331 mV — a **48% increase end to end**,
+which is the expected convexity of a base-driven bipolar stage. Normalised to the *average
+of those coarse steps*, that appears as DNL of −0.273 … +0.078 LSB and peak INL of
++0.598 LSB, which reads as an excellent converter.
+
+But the ladder being claimed is **10 bits**, so its LSB is 32 mV / 1023 ≈ **31.3 µV**, not
+the ~2.13 mV coarse step. Restated in the units of the converter it is supposed to be:
+
+    peak INL ≈ 0.598 × 2.13 mV / 31.3 µV ≈ 41 LSB
+
+**Forty-one LSB of integral nonlinearity on a 10-bit ladder.** That is not necessarily
+disqualifying — a trim needs monotonicity and fine local steps near the correction point far
+more than it needs absolute accuracy across full scale, and the transfer is monotonic
+throughout. But it must be stated in the converter's own units, and the acceptance criterion
+should be **local step size near the trim point and monotonicity**, not INL against full
+scale. As it stands the 48% step-size variation means the effective trim resolution is half
+as fine at one end of the range as the other.
+
+## The interface bias moves with the trim code, and it is mostly differential
+
+Worth recording because the alarming reading of it is wrong. Across the trim range the
+CML→CMOS load nodes move a long way:
+
+| `TRIM_P` | `cml_out_p` | `cml_out_n` | differential | common mode |
+| --- | --- | --- | --- | --- |
+| 0.800 V | 0.6336 V | 0.6336 V | 0 | 0.634 V |
+| 0.840 V | 0.6060 V | 0.6364 V | −30.3 mV | 0.621 V |
+| 1.100 V | 0.3809 V | 0.6597 V | −278.8 mV | 0.520 V |
+| 1.400 V | 0.1516 V | 0.6892 V | −537.6 mV | **0.420 V** |
+
+Measuring `cml_out_p` alone suggests the node is being driven 448 mV below the 0.600 V trip
+point and the interface destroyed. Measuring both shows it is **mostly differential** — which
+is exactly what a trim is for. A large applied trim *should* bias the comparator hard toward
+one output; that is what correcting a large offset means.
+
+What is real is the **common-mode droop: 214 mV across the range**, which reduces the
+headroom the signal has at large trim codes. That is second-order rather than fatal, and it is
+recorded with its number rather than as an alarm. It is also an argument for a current-steering
+trim, which redistributes a fixed total current and leaves the collector common mode
+unchanged — a property this base-driven version does not have.
