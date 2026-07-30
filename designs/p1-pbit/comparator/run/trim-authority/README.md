@@ -310,5 +310,6 @@ is not implemented.
 
 The experiment's initial 12.5 Gohm NMOS output-resistance calculation is retracted: the 300 mV
 sweep was applied at the HBT collectors while NMOS drain voltage moved only 36.053 uV. A direct
-NMOS drain-compliance sweep remains open, as do array weighting, matching and all digital-transfer
-and dynamic evidence.
+NMOS [`drain-compliance sweep`](current-steering-unit-cell/nmos-compliance/) measures **1.479714
+Mohm** near the intended 0.342 V drain bias and an interpolated low-side 99% threshold near
+0.33075 V. Array weighting, matching and all digital-transfer and dynamic evidence remain open.

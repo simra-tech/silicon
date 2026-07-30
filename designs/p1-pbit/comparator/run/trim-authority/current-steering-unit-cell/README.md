@@ -31,8 +31,10 @@ the NMOS drain voltage moves only from 0.341966803 V to 0.342002856 V, or
 36.053 uV; the HBTs absorb almost all of the collector-voltage change. Dividing
 300 mV by the 24.372 pA sensed-current change and reporting 12.5 Gohm is
 retracted. The local secant using the actual NMOS drain-voltage change is about
-1.48 Mohm, but a dedicated drain-compliance sweep is required for an output-
-resistance characterization.
+1.48 Mohm. A subsequent
+[`direct drain-compliance sweep`](nmos-compliance/) measures 1.479714 Mohm by
+linear fit near this bias and places the low-side 99% compliance threshold at
+about 0.33075 V.
 
 The collector-current sum changes by about 3.365 nA across the three common-
 mode settings. That is effective delivered-collector-current dependence for

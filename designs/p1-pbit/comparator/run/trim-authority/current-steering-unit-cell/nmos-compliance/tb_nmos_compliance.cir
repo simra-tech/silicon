@@ -1,0 +1,35 @@
+* NMOS Drain Compliance & Output Resistance Experiment (Vgs = 0.25515 V)
+.lib $PDK_ROOT/libs.tech/ngspice/models/cornerHBT.lib hbt_typ
+.lib $PDK_ROOT/libs.tech/ngspice/models/cornerRES.lib res_typ
+.lib $PDK_ROOT/libs.tech/ngspice/models/cornerCAP.lib cap_typ
+.lib $PDK_ROOT/libs.tech/ngspice/models/cornerMOShv.lib mos_tt
+.lib $PDK_ROOT/libs.tech/ngspice/models/cornerMOSlv.lib mos_tt
+.lib $PDK_ROOT/libs.tech/ngspice/models/cornerDIO.lib dio_tt
+
+VCC VCC 0 DC 2.500
+VDD VDD 0 DC 1.200
+VSS VSS 0 DC 0.000
+
+* Explicit Gate Bias Source
+VGS v_gs 0 DC 0.25515
+
+* Direct Drain Sweep Source
+VDS d_nmos 0 DC 0.342
+
+* 1x Unit Current Sink NMOS (sg13_lv_nmos w=2.0u l=1.0u)
+XM_SINK d_nmos v_gs VSS VSS sg13_lv_nmos w=2.0u l=1.0u ng=1 m=1
+
+XTAP1 VSS sub! ptap1
+
+.option temp = 27.0
+.options rshunt=1e12 method=gear reltol=1e-3
+
+.control
+pre_osdi $PDK_ROOT/libs.tech/ngspice/osdi/psp103.osdi
+pre_osdi $PDK_ROOT/libs.tech/ngspice/osdi/psp103_nqs.osdi
+set filetype=ascii
+
+dc VDS 0.050 0.600 0.005
+wrdata raw_nmos_compliance.txt i(VDS)
+.endc
+.end
