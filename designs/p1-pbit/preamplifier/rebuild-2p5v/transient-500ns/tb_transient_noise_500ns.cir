@@ -1,0 +1,33 @@
+* Permanent 500ns Transient Physical Thermal Noise Testbench
+.lib $PDK_ROOT/ihp-sg13g2/libs.tech/ngspice/models/cornerHBT.lib hbt_typ
+.lib $PDK_ROOT/ihp-sg13g2/libs.tech/ngspice/models/cornerRES.lib res_typ
+.lib $PDK_ROOT/ihp-sg13g2/libs.tech/ngspice/models/cornerCAP.lib cap_typ
+.lib $PDK_ROOT/ihp-sg13g2/libs.tech/ngspice/models/cornerMOShv.lib mos_tt
+.lib $PDK_ROOT/ihp-sg13g2/libs.tech/ngspice/models/cornerDIO.lib dio_tt
+
+.include ./cace_ihp_sg13g2_demo/xschem/simulations/p1_noise_amp.spice
+
+.option temp = 27.0
+.options rshunt = 1e12
+
+VCC VCC 0 DC 2.500
+VSS VSS 0 DC 0.000
+
+* Differential Physical Thermal Noise Source (TRNOISE: 3.0818 mV rms, 10ps step)
+V_IN_P raw_in_p 0 DC 1.44 TRNOISE(3.0818m 10p 0 0)
+V_IN_N raw_in_n 0 DC 1.44 TRNOISE(3.0818m 10p 0 0)
+
+RS1 raw_in_p RAW_NOISE_P 529.5
+RS2 raw_in_n RAW_NOISE_N 529.5
+
+XAMP NOISE_AMP_P NOISE_AMP_N RAW_NOISE_P RAW_NOISE_N VCC VSS p1_noise_amp
+
+.control
+tran 20p 500n 5n
+let vdiff = v(NOISE_AMP_P) - v(NOISE_AMP_N)
+meas tran v_rms RMS vdiff from=5n to=500n
+meas tran v_max MAX vdiff from=5n to=500n
+meas tran v_min MIN vdiff from=5n to=500n
+print v_rms v_max v_min
+.endc
+.end

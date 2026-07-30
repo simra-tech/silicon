@@ -275,6 +275,47 @@ power budget, and the noise amplitude already verified above. That would be a re
 inference. The measurement that would settle it is a transient one: drive the chain with the real noise source,
 sweep the input amplitude, and find where the output bit distribution departs from the unclipped case.
 
+## Neither edge of the gain window binds — closed with a transient
+
+The section above established that **comparator offset does not set a floor**. The remaining question was the
+ceiling: whether additional gain drives the amplifier's output into clipping and truncates the Gaussian, which
+would change the statistics of the output bits. That is now measured rather than argued. Deck and log in
+[`rebuild-2p5v/transient-500ns/`](rebuild-2p5v/transient-500ns/).
+
+A 500 ns transient drives the amplifier through its real 1059 Ω source impedance — split correctly as two
+529.5 Ω halves, one per input — from two independent `TRNOISE` sources, and measures the differential output:
+
+| run | v_rms | v_max | v_min | peak/σ |
+| --- | ---: | ---: | ---: | ---: |
+| as first reported (no artefact retained) | 30.364 mV | +145.34 mV | −127.66 mV | +4.79 / −4.20 |
+| **committed log** | **30.672 mV** | **+131.72 mV** | **−117.85 mV** | **+4.30 / −3.84** |
+| independent re-run of the committed deck | 30.735 mV | +128.24 mV | −140.42 mV | +4.17 / −4.57 |
+
+**What reproduces and what does not.** The deck sets no seed and ngspice reseeds `trnoise` per invocation, so
+each run is a fresh realisation. The **rms reproduces to 1.2%** across the three (30.36 … 30.74 mV), which is what
+5,260 independent bandwidth samples should give. The **peaks do not** — they range 128 … 145 mV, ±13%. So a
+specific peak in millivolts is not a property of this design, and quoting one as a verified result would be a
+category error. What *is* a property is the distribution: **largest excursions land at 4.2–4.8σ, exactly where a
+Gaussian's maximum should sit for this sample count (expected 4.14σ), and the largest across three runs is
+145 mV against 330 mV of collector headroom — 2.3× clear.**
+
+**No clipping in any run.** So the ceiling is not binding either, and the conclusion is symmetric with the floor:
+
+> Neither the 20 dB floor nor the 23 dB ceiling of the original window is traceable to a requirement. Gain is not
+> the constrained quantity in this stage.
+
+**Why 500 ns and not 10.** An earlier 10 ns run reported peaks at 2.83σ and 3.11σ and concluded that 3.5σ peaks
+fit. It carried ~104 samples, where the expected largest excursion is 3.05σ — so it had not observed an *absence*
+of 3.5σ events, it was too short to expect one. P(|x| > 3.5σ) = 4.7 × 10⁻⁴ needs ~2,150 samples, about 207 ns.
+**The distinction is between a measurement that confirms a bound and one that merely fails to contradict it**, and
+the sample count is what separates them.
+
+**What this stage is actually held to**, in place of the retired window: deliver noise amplitude sufficient to
+dominate residual comparator offset (satisfied by ~1000×), bandwidth above the sampling rate (5.20–5.42 GHz
+across PVT), and power within budget (≤9.16 mW). Those are inequalities with derivations. A range of *observed*
+output amplitudes is not a specification — it restates the present design as the requirement, so any later change
+reads as a violation.
+
 ## Not run
 
 | Check | State |
