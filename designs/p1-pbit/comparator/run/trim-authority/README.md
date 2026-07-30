@@ -131,6 +131,52 @@ None of these is sized here. What is established is that the first two are the o
 circuit-level escapes, that the third is the cheapest, and that no combination of R_dac and
 bias voltage solves it — which is worth knowing before more of them are simulated.
 
+## RETRACTED: a combination does solve it, at 3σ
+
+**The paragraph above is wrong and the swing analysis it rests on is wrong.** It assumed the
+trim swings symmetrically and is limited by the down-side turning off. That is the behaviour
+of a differential pair sharing a tail. **This is not one** — `XQDAC_P` and `XQDAC_N` each
+have their own emitter resistor to ground, so they are two independent common-emitter
+stages. The down side simply switches off and stops mattering; **the range is bought on the
+up side**, where current grows without a turn-off limit.
+
+Sweeping the TRIM differential at R_dac = 820 Ω, V(TRIM) = 0.800 V:
+
+| TRIM differential | c_p − c_n | input-referred trim | P-side current |
+| --- | --- | --- | --- |
+| 0 | 0 | 0 | **43.4 µA** |
+| 50 mV | −9.462 mV | 1.961 mV | 62.2 µA |
+| 100 mV | −18.475 mV | 3.830 mV | 83.2 µA |
+| 200 mV | −34.416 mV | 7.135 mV | 129.4 µA |
+| 300 mV | −48.782 mV | 10.112 mV | 179.2 µA |
+| 400 mV | −63.068 mV | 13.073 mV | 231.0 µA |
+| 500 mV | −77.608 mV | 16.087 mV | 284.2 µA |
+| **600 mV** | **−92.384 mV** | **19.150 mV** | **338.2 µA** |
+
+Input-referred through the measured 4.824 V/V input-pair gain.
+
+**±19.15 mV at ±600 mV of swing — the 3σ target of ±19.38 mV, reached.** And the current
+profile is better than the design it replaces: **43.4 µA at mid-code** against the as-built
+**415 µA at every code**, with 338 µA only at the extremes where the trim is actually
+working hard.
+
+The transfer compresses: 0.0392 mV/mV at small signal falling to 0.0319 over the full range,
+about **19% compression end to end**. That is a DAC linearity figure and it has not been
+apportioned across codes — worth measuring per code before the ten-bit resolution is
+claimed, because 19% of compression against a 1024-step ladder is not obviously benign.
+
+**±40.1 mV (6σ) remains out of reach on this topology.** Extrapolating the same slope needs
+about 1.26 V of differential swing and roughly 700 µA at full scale. So the specification
+decision still decides the topology — but it now decides between *3σ with a resistor change*
+and *6σ with a current-steering DAC*, rather than between a topology change and nothing.
+
+**Why the earlier analysis failed.** It applied the behaviour of a shared-tail differential
+pair to a circuit that is two independent stages. That is the same error as the earlier claim
+that this pair was "essentially off" at a 1.440 V bias — also reasoned from a shared tail,
+also wrong, and also about these same two devices. **Twice now the topology next door has
+been substituted for the one actually drawn.** The check that catches it is trivial and was
+available both times: look at where the emitters go.
+
 ## What is not established
 
 The ±40.1 mV specification itself has not been re-examined against the offset it exists to
