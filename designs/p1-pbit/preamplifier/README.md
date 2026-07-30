@@ -310,11 +310,28 @@ of 3.5σ events, it was too short to expect one. P(|x| > 3.5σ) = 4.7 × 10⁻�
 **The distinction is between a measurement that confirms a bound and one that merely fails to contradict it**, and
 the sample count is what separates them.
 
-**What this stage is actually held to**, in place of the retired window: deliver noise amplitude sufficient to
-dominate residual comparator offset (satisfied by ~1000×), bandwidth above the sampling rate (5.20–5.42 GHz
-across PVT), and power within budget (≤9.16 mW). Those are inequalities with derivations. A range of *observed*
-output amplitudes is not a specification — it restates the present design as the requirement, so any later change
-reads as a violation.
+### The specification, restated as inequalities
+
+The 20–23 dB window is retired. What replaces it is not another range — a range of *observed* output amplitudes
+would restate the present design as the requirement, so any later change would read as a violation. These are
+bounds with derivations, and where no bound exists that is said rather than implied:
+
+| held to | bound | margin as built |
+| --- | --- | --- |
+| **noise amplitude** — must dominate residual comparator offset | **≥ 1.562 mV_rms** (SOR ≥ 39.89, for ≤1% bit bias) | 38.98 mV_rms at hot/worst-case, **25×** clear |
+| **noise amplitude, upper** | **no binding upper bound** | 330 mV of collector headroom against 4.3σ peaks of 132 mV, 2.5× clear; and the CML sampler resolves sign regardless of overdrive |
+| **bandwidth** | ≥ 5.20 GHz | 5.20 … 5.42 GHz across PVT |
+| **power** | ≤ 9.16 mW | 3.28 … 4.12 mA on 2.50 V ±5% |
+
+The lower bound is worth spelling out because it is easy to get wrong by a factor of two. A residual offset
+ΔV biases the output as P(1) ≈ ½ + (ΔV/σ)·**1/√(2π)** — the coefficient is 0.3989, *not* √(2/π) = 0.7979. So a
+1% bias limit requires σ/ΔV ≥ 0.3989/0.01 = **39.89**, and with ΔV = 39.16 µV (half an LSB of the 10-bit trim
+across ±40.1 mV) the amplitude floor is 1.562 mV_rms. An earlier revision of this line read 0.98 mV from a ratio
+of 25, which corresponds to 1.6% rather than 1%; the design clears either, but the bound now matches the
+criterion beside it.
+
+**Nothing in this table constrains gain.** The floor is met 25× over and there is no ceiling, which is why the
+window that used to be here is gone.
 
 ## Not run
 
