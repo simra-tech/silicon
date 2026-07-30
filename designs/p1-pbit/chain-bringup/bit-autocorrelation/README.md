@@ -296,6 +296,59 @@ deck's nMOS is carrying several times more current, and the difference is upstre
 follows from that one node, and until the two decks agree on it the sweeps cannot be
 compared.
 
+### Resolved: the other deck omits the trim pair
+
+Both numbers came back, and they closed it in one exchange.
+
+| | this deck | the other deck | Δ |
+| --- | --- | --- | --- |
+| `v(g_p)` | 0.5200 V | 0.5662 V | +46.2 mV |
+| `v(cml_out_p)` at 4.0 kΩ | 0.8844 V | 0.7254 V | −159 mV |
+
+The divider ratio is the same in both — 3840/9630 = 0.3988 here, and `v(g_p)/v(ef_p)` =
+0.51999/1.30398 = 0.3988 confirms it — so the 46 mV originates further up. Accounting for
+every current into the collector node, clock frozen in track:
+
+| into `c_p` | |
+| --- | --- |
+| input pair `xq1` | 0.9763 mA |
+| **trim pair `xqdac_p`** | **0.4150 mA** |
+| latch pair `xq3` | 4.5 pA (off, as it should be) |
+| follower base `xqef1` | 0.17 µA |
+| **total** | **1.3915 mA** |
+
+1.3915 mA × 288 Ω = 0.401 V, so `c_p` = 2.099 V against 2.10299 V measured — closed to 4 mV.
+The tail is 1.9598 mA, matching the ideal source the other deck substitutes, so the tail is
+not the difference either.
+
+**The difference is the trim pair, which the other deck does not instantiate.** Its 415 µA
+per side pulls `c_p` down about 120 mV, which carries through the follower to `g_p` as
+46 mV, which is the whole discrepancy. So 4.0 kΩ resolves in a deck without the trim
+devices and does not resolve in the block as drawn. **The working point is an artefact of a
+missing device.**
+
+## The trim pair is mis-biased, and this corrects our own earlier claim
+
+The number that closed the dispute is also a defect in its own right.
+
+`TRIM_P` and `TRIM_N` are held at **1.440 V**. The amplifier's real output common mode —
+and therefore the comparator's input common mode — is **2.139 V**, 699 mV higher. So the
+trim devices sit with their bases 699 mV below the signal pair's and are hard on, drawing
+**415 µA per side: 21% of the 1.96 mA tail**, and loading the collectors by 120 mV.
+
+We previously described this pair as "essentially off" at this operating point. That was
+wrong, and it matters in two ways beyond the bias shift:
+
+- the trim's transconductance is set by 415 µA rather than by a small designed injection, so
+  the volt-per-code of the 10-bit DAC is not the step size the ±40.1 mV range assumed;
+- the loading is a function of the trim code, so changing the code moves the collector
+  operating point as well as the offset it is supposed to inject.
+
+**The trim reference needs to track the input common mode** rather than sit at a fixed
+1.440 V. Nothing here says what it should be set to — that follows from the injection
+current the trim is meant to provide, which has not been re-derived since the amplifier's
+output common mode was measured at 2.139 V.
+
 
 ## Every error bar quoted on P(bit=1) is understated
 
