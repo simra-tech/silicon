@@ -103,6 +103,45 @@ current mirror, or a different level-shifting topology between the CML latch and
 CMOS buffer. That is a topology decision, and **nothing here licenses a resize** — what
 this establishes is which node to redesign and why.
 
+## Confirmed independently, from small-signal bandwidth
+
+Everything above infers the interface time constant from *bitstream statistics* — the
+rate at which ρ decays. That is indirect. Measuring the same thing as a **frequency
+response**, with the clock frozen in track so the signal path is continuous, agrees:
+
+| node | −3 dB bandwidth | τ = 1/(2πf) | in clock periods (200 ps) |
+| --- | --- | --- | --- |
+| CML collectors, `c_p − c_n` | **32.88 GHz** | 4.8 ps | 0.02 |
+| CMOS load, with 38.3 fF damping | **196.6 MHz** | **810 ps** | **4.05** |
+| CMOS load, damping removed | **425.4 MHz** | 374 ps | 1.87 |
+
+Three things line up, and none of them was fitted to the others.
+
+**The latch node is 32.9 GHz — 6.6× the clock rate.** That is why its collectors come
+back uncorrelated: it settles in a fiftieth of a clock period. The latch is not the
+bottleneck by two orders of magnitude.
+
+**The interface is 196.6 MHz, 167× slower than the node feeding it**, and its τ of
+810 ps is **four clock periods** — which is the correlation length measured from the
+bitstream, where ρ falls through 1/e around lag 4 to 5. A statistical measurement and a
+small-signal measurement, taken by different means, giving the same number.
+
+**And the damping capacitors account for about half the node capacitance.** Removing
+them takes the pole from 196.6 to 425.4 MHz — a factor of 2.16 — and takes ρ₁ from
+0.777 to 0.424, a factor of 1.83. The correlation tracks τ, which is the relationship
+the mechanism predicts.
+
+### The specification the redesign has to hit
+
+For the bits to be usably independent, τ must be small against the clock period rather
+than several times it. Taking ρ₁ ≤ 0.05 as the target — roughly τ ≤ 200 ps / 3 — the
+interface pole needs to be **≳ 2.4 GHz**.
+
+That is **12× beyond where the node sits even with the capacitors removed**, so no
+amount of adjusting the damping reaches it. It is a topology change, and this is the
+number it has to clear.
+
+
 ## Every error bar quoted on P(bit=1) is understated
 
 A counted proportion has standard error √(p(1−p)/N) **only if the samples are
