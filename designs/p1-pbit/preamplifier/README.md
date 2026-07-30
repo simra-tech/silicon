@@ -172,6 +172,15 @@ Adding the process corners — `hbt_bcs`/`res_bcs`/`cap_bcs` and `hbt_wcs`/`res_
 > reproduces the table exactly — 17.1854 / 20.9532 / 24.1136 dB — so what is published here describes the
 > design as it is, verified rather than assumed.
 >
+> **Superseded again, and the block is mid-repair.** A PTAT bias attempt has since been added — four new devices,
+> `QPTAT`/`RPTAT` per stage — and the schematic no longer matches this table. Two things are wrong with it as
+> drawn, both measured: the tail current rises only **1.9%** from −40 °C to +125 °C where PTAT requires 32.7%,
+> because both reference legs are diode-connected onto one node with nothing forcing their current ratio; and
+> `Q3` has its **collector, emitter and substrate on the same net**, which collapses the differential gain to
+> −2.5 dB at typical. So the envelope is not being requoted against a broken circuit — this table remains the
+> last measurement of a working amplifier, and it is labelled as describing the l = 0.7115 µm fixed-mirror
+> design rather than what is currently in the file.
+>
 > **The excursion is worth keeping as a result.** At l = 0.923 µm the same three corners gave
 > **18.14 / 21.12 / 23.42 dB**: a 5.28 dB spread rather than 6.92. The load increase did not shift the envelope
 > uniformly — the bottom rose 0.95 dB and **the top fell 0.69 dB** — which a pure re-centring cannot do. The
