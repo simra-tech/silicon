@@ -96,6 +96,16 @@ changes the interpolated offset from `-5.354270990 mV` to
 `-6.738081366 mV`, a `-1.383810376 mV` shift. Because silicon self-heats, this
 control is causal diagnostic evidence, not a replacement measurement.
 
+The separate `selft0` seed-2145 control isolates the campaign's unknown point.
+The frozen physical-model deck cannot establish its initial -60 mV operating
+point and writes no raw. With only the same ten HBT calls changed to
+`selft=0`, the control completes a finite, monotonic 1,201-row raw with one
+crossing at `-13.233676797 mV`; its native log contains no thermal, resistor
+`vmax`, or solver-recovery diagnostics. This supports self-heating as a
+convergence dependency. The control scalar is not a physical-model offset
+sample, does not change the point manifest, and seed 2145 remains unknown in
+the planned 200-point campaign.
+
 ## Provenance and replay
 
 `SOURCE-HASHES.sha256` records all frozen workstation artifact hashes before
