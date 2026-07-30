@@ -16,7 +16,8 @@ said. Rather than make a reader reconstruct that from the body, the current stat
 
 | claim | status |
 | --- | --- |
-| r₁ flat with rate, \|r₁\| ≲ 0.01 | **stands** — 234 segments, seven rates |
+| r₁ flat with rate, \|r₁\| ≲ 0.01 | **stands, and now holds with layout parasitics too** — 234 schematic segments, plus a 17 µs extracted-parasitics rerun (*The extracted-parasitics rerun*) |
+| combined r₁ = +0.0066 ± 0.0027, "a weak positive hint" | **not reproduced against extracted parasitics** — 85,000 extracted bits give **+0.0010 ± 0.0034**, 0.29σ from zero against this note's 2.4σ. Compatible with the schematic value at 1.4σ, so **not refuted** — the hint does not survive (*The extracted-parasitics rerun*) |
 | boundary ≈ t_rise + pulse + t_fall | **stands, with a correction** — 13 configurations, two independent builders, but see the next row |
 | boundary sits *exactly* at t_rise + pulse + t_fall | **corrected** — averaging shows it sits **+2.48 ± 0.41 ps late**, 6σ from zero (§1.2) |
 | that offset is constant | **corrected** — disfavoured at p = 0.013; it grows with rate (§1.2) |
@@ -550,7 +551,68 @@ the first-order Markov assumption *we* supplied (see §3), it is a floor.
 - **No claim that XOR whitening solves correlation.** It does not: for adjacent bits,
   P(X ⊕ X′ = 1) = (1 − r₁)/2, so correlation becomes *bias*. XOR cannot create entropy and
   is not a vetted conditioner for full-entropy claims.
-- **Simulated bits, not silicon.** No layout, DRC, LVS or PEX.
+- **Simulated bits, not silicon.** Everything in §1 and §2 is schematic-level. Extracted layout
+  parasitics have since been run separately for the noise generator — see *The
+  extracted-parasitics rerun* below — but nothing here is measured on a wafer, and the
+  comparator and preamplifier still have no layout at all.
+
+## The extracted-parasitics rerun
+
+Everything above is schematic-level. This section is the same question asked of a netlist with
+the noise generator's layout parasitics extracted from the GDS in
+[`../noise-generator/layout/`](../noise-generator/layout/): one 17 µs `trnoise` transient at a
+0.5 ps solver step, resampled at seven intervals. Log and runner in
+[`extracted-parasitics/`](extracted-parasitics/).
+
+| f (GHz) | T_sample (ps) | bits N | r₁ | SE = 1/√N | z vs 0 | z vs this note's +0.0066 |
+| ---: | ---: | ---: | ---: | ---: | ---: | ---: |
+| 1.0 | 1000 | 17,000 | −0.001661 | 0.00767 | −0.22 | −1.02 |
+| 1.5 | 666.67 | 25,500 | +0.001164 | 0.00626 | +0.19 | −0.80 |
+| 2.0 | 500 | 34,000 | +0.008552 | 0.00542 | +1.58 | +0.32 |
+| 2.5 | 400 | 42,500 | +0.005823 | 0.00485 | +1.20 | −0.14 |
+| 3.0 | 333.33 | 51,000 | +0.002550 | 0.00443 | +0.58 | −0.78 |
+| **4.0** | 250 | 68,000 | **−0.004112** | 0.00383 | −1.07 | **−2.28** |
+| **5.0** | 200 | 85,000 | **+0.000999** | 0.00343 | **+0.29** | −1.28 |
+
+**The bound holds.** Every rate lies inside +0.0086 … −0.0041, comfortably within |r₁| ≲ 0.01,
+and no rate dependence is detectable. Layout parasitics did not break it.
+
+**The weak positive hint does not survive.** The best single extracted estimate is the 5 GHz
+row: **+0.0010 ± 0.0034 on 85,000 bits**, which is 1.7× the bit count of this note's 5.0 GS/s
+schematic row (+0.0081 ± 0.0039). Where the schematic gave 2.1σ from zero, the extracted run
+gives **0.29σ**. The two are compatible with each other (z = −1.37, p = 0.17), so this does
+**not refute** the schematic value — it fails to reproduce it, which is the weaker statement and
+the one to read.
+
+### Why the 4 GHz row is not a result
+
+It is the largest excursion in the table and it would be easy to write up as a bandwidth
+effect. Three reasons not to:
+
+1. **A threshold was set before the data existed.** The prediction on record was that this row
+   would carry 68,000 bits at SE 0.0038 — both correct — and that ≥2.4σ against the earlier
+   value would count as a real disagreement. It came in at **2.28σ** against this note's value, and 2.19σ against the withdrawn +0.0071 the threshold was phrased around. Below the stated line either way.
+2. **Seven rates were compared.** One excursion at 2.28σ out of seven looks needs |z| > 2.69
+   before it means anything; 2.24 is an ordinary largest-of-seven.
+3. **It moved toward zero as N grew.** At 7 µs this row read −0.00529 on 28,000 bits; at 17 µs
+   it reads −0.00411 on 68,000. A real effect stays put while its error bar shrinks around it.
+   A fluctuation regresses. Meanwhile the 5 GHz row sat at +0.00061, then −0.000005, then
+   +0.00100 across 7, 16 and 17 µs — pinned at zero throughout.
+
+The progress log prints −2.92 for that row rather than −2.28 because it divides by the new
+standard error alone and ignores the ±0.0034 on the value being compared against. The combined
+error is √(0.003835² + 0.0027²) = 0.00469 against this note's value, and that is what the table above uses.
+
+### What this rerun does not establish
+
+- **The seven rates are not independent.** They are nested subsamples of one waveform measuring
+  different lags, so they cannot be pooled the way 234 independent segments were. **The 5 GHz
+  row is the estimate; the average of the seven is not.**
+- **One transient, one seed.** 234 segments across 234 seeds is a different kind of evidence
+  from 17 µs of one realisation, however many bits it contains.
+- **Only the noise generator is extracted.** The comparator and preamplifier contribute their
+  schematic parasitics, because neither has a layout.
+- **No entropy claim, and no silicon.** Unchanged from §3.
 
 ## 4. Method notes worth carrying
 
