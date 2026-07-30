@@ -36,6 +36,10 @@ retracted. The local secant using the actual NMOS drain-voltage change is about
 linear fit near this bias and places the low-side 99% compliance threshold at
 about 0.33075 V.
 
+The follow-up [`loaded base-driver DC experiment`](base-driver-dc/) replaces
+the ideal base sources with a passive 0.96 V / nominal 5:1 resistor network;
+it retains the preceding failed-target network alongside the corrected result.
+
 The collector-current sum changes by about 3.365 nA across the three common-
 mode settings. That is effective delivered-collector-current dependence for
 the driven cell, including HBT behavior; it is not a pure NMOS or HBT output

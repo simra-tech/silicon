@@ -1,0 +1,72 @@
+* Corrected DC Driver-Loading Experiment with 5:1 Level-Shifter
+.lib $PDK_ROOT/libs.tech/ngspice/models/cornerHBT.lib hbt_typ
+.lib $PDK_ROOT/libs.tech/ngspice/models/cornerRES.lib res_typ
+.lib $PDK_ROOT/libs.tech/ngspice/models/cornerCAP.lib cap_typ
+.lib $PDK_ROOT/libs.tech/ngspice/models/cornerMOShv.lib mos_tt
+.lib $PDK_ROOT/libs.tech/ngspice/models/cornerMOSlv.lib mos_tt
+.lib $PDK_ROOT/libs.tech/ngspice/models/cornerDIO.lib dio_tt
+
+VCC VCC 0 DC 2.500
+VDD VDD 0 DC 1.200
+VSS VSS 0 DC 0.000
+
+* Explicit Ideal Bias Reference Source (UNIMPLEMENTED in layout)
+VREF v_ref 0 DC 0.960
+
+* Complementary Logic Voltage Sources (0.00V / 1.20V logic drive)
+VLOGIC_P logic_p 0 DC 1.200
+VLOGIC_N logic_n 0 DC 0.000
+
+* Explicit Collector Common-Mode Voltage Source
+VCP c_p 0 DC 2.100
+VCN c_n 0 DC 2.100
+
+* Dummy Sweep Source for single-point wrdata
+VDUMMY dummy 0 DC 0.0
+
+* 1x Unit Current Sink NMOS (sg13_lv_nmos w=2.0u l=1.0u, Vbias = 0.25515 V)
+VBIAS v_bias 0 DC 0.25515
+XM_SINK d_sink v_bias VSS VSS sg13_lv_nmos w=2.0u l=1.0u ng=1 m=1
+
+* Zero-Volt Series Sense Source for True NMOS Drain Current
+V_TAIL_SENSE e_st_tail d_sink DC 0.000
+
+* 1x Differential Steering HBT Pair (npn13G2 Nx=1)
+XQST_P c_p trim_p_hbt e_st_tail sub! npn13G2 Nx=1 mm_ok=1
+XQST_N c_n trim_n_hbt e_st_tail sub! npn13G2 Nx=1 mm_ok=1
+
+* 5:1 Resistor Divider Level-Shifter Networks (R1 = 100.0 kOhm, R2 = 20.0 kOhm)
+XR1_P logic_p TRIM_P sub! rppd w=1.0u l=384.6u m=1 b=0 mm_ok=1
+XR2_P TRIM_P v_ref sub! rppd w=1.0u l=76.92u m=1 b=0 mm_ok=1
+
+XR1_N logic_n TRIM_N sub! rppd w=1.0u l=384.6u m=1 b=0 mm_ok=1
+XR2_N TRIM_N v_ref sub! rppd w=1.0u l=76.92u m=1 b=0 mm_ok=1
+
+* Base Current Sense Sources
+V_IB_P TRIM_P trim_p_hbt DC 0.000
+V_IB_N TRIM_N trim_n_hbt DC 0.000
+
+XTAP1 VSS sub! ptap1
+
+.option temp = 27.0
+.options rshunt=1e12 method=gear reltol=1e-3
+
+.control
+pre_osdi $PDK_ROOT/libs.tech/ngspice/osdi/psp103.osdi
+pre_osdi $PDK_ROOT/libs.tech/ngspice/osdi/psp103_nqs.osdi
+set filetype=ascii
+
+* Run 1: Left Steer (Logic P = 1.20V, Logic N = 0.00V)
+alter VLOGIC_P DC = 1.200
+alter VLOGIC_N DC = 0.000
+dc VDUMMY 0 0 1
+wrdata raw_driver_run1.txt i(V_TAIL_SENSE) i(V_IB_P) i(V_IB_N) i(VLOGIC_P) i(VLOGIC_N) i(VREF) i(VCP) i(VCN) v(TRIM_P) v(TRIM_N) v(e_st_tail) v(c_p) v(c_n)
+
+* Run 2: Right Steer (Logic P = 0.00V, Logic N = 1.20V)
+alter VLOGIC_P DC = 0.000
+alter VLOGIC_N DC = 1.200
+dc VDUMMY 0 0 1
+wrdata raw_driver_run2.txt i(V_TAIL_SENSE) i(V_IB_P) i(V_IB_N) i(VLOGIC_P) i(VLOGIC_N) i(VREF) i(VCP) i(VCN) v(TRIM_P) v(TRIM_N) v(e_st_tail) v(c_p) v(c_n)
+
+.endc
+.end
