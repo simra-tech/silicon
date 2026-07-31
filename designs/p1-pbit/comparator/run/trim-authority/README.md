@@ -309,13 +309,21 @@ warning; the steering result is a nominal static experiment with an ideal fixed 
 bind its numerator. The exact numerator and denominator provenance is recorded in
 [`trim_coverage_reconciliation_v3.tsv`](trim_coverage_reconciliation_v3.tsv).
 
-The 780 uA pair is the current front-runner, not a selected architecture. A follow-up
+The 780 uA pair was the current front-runner at that checkpoint, not a selected architecture. A follow-up
 [`33-point analog-control sweep`](current-steering-780ua-33point/) is strictly monotonic at its
 sampled points, but its adjacent threshold steps range from **46.412 uV to 7.172 mV**, a roughly
 154.5:1 variation. The correct median step is **1.450 mV**. That sweep drives ideal analog base
 voltages; it does not establish a physically implemented digital code transfer or zero missing
 codes. A realizable code mapping, corner and mismatch behavior, and dynamic integration with the
 comparator remain open.
+
+One more one-variable endpoint experiment scales the ideal steering tail to **900 uA**. Its
+limiting authority is **47.594446 mV**. Conditional on the separate warned 199-point offset
+standard deviation, that is **6.273201 standard deviations**, or **2.072762 mV** beyond the
+arithmetic six-standard-deviation target. The complete deck, native log, and three raw files are
+in [`current-steering-900ua/`](current-steering-900ua/). This makes 900 uA the latest nominal
+authority candidate; it still does not select an architecture or establish a physical DAC,
+corner behavior, mismatch coverage, or a gate result.
 
 A first physical unit-cell experiment is retained in
 [`current-steering-unit-cell/`](current-steering-unit-cell/). One proposed IHP NMOS sink feeding

@@ -1,0 +1,51 @@
+# Current-steering trim: 900 uA static experiment
+
+This package changes only the shared steering-tail current from the retained
+780 uA experiment to **900 uA**. It uses the same 27 °C typical-model static
+comparator front end, ideal fixed tail, explicit trim-base voltages, and
+collector-differential zero-crossing method.
+
+An independent recount of the three raw files gives:
+
+| code | `TRIM_P` / `TRIM_N` | input zero crossing | authority from midpoint | total VCC current | collector common mode |
+| --- | --- | ---: | ---: | ---: | ---: |
+| minimum | 0.900 / 1.100 V | -47.601736336458 mV | **-47.612464669422 mV** | 2.854669533717 mA | 2.092740388047 V |
+| midpoint | 1.000 / 1.000 V | +0.010728332964 mV | 0 | 2.856638770000 mA | 2.092459395268 V |
+| maximum | 1.100 / 0.900 V | +47.605174633233 mV | **+47.594446300269 mV** | 2.854669560880 mA | 2.092740384179 V |
+
+Each raw has 601 rows and 14 columns, all 8,414 values finite, strictly
+increasing input coordinates, identical repeated scale columns, and exactly
+one collector-differential crossing. The native log records three completed
+601-row analyses and no NaN, thermal, resistor-voltage, convergence-recovery,
+parser-error, abort, or failure token.
+
+The limiting nominal authority is **47.594446300269 mV**. Conditional on the
+separate warned 199-point offset sample standard deviation of
+7.586947466704 mV, that is **6.273200982232 standard deviations** and
+**2.072761500045 mV** beyond the arithmetic six-standard-deviation target.
+
+That comparison does not close an engineering gate. It combines a nominal,
+typical-model, ideal-tail steering experiment with a separate HBT-mismatch
+campaign whose physical-model logs retain a self-heating warning and one
+unknown point. It does not establish a physical current source, digital code
+mapping, local resolution, mismatch, dynamic behavior, temperature or process
+corners, yield, architecture selection, or signoff.
+
+## Artifact identity and reproduction
+
+The exact executed deck was 2,877 bytes with SHA-256
+`bb747af21d7b133ebaaf30061918a82f51602b7bf6c5b5e1677b08ae588d8c16`.
+The public deck has SHA-256
+`d4991eefe6460b4a139c86c7fec7bf7a5138145fbd9898087cd71e274edd008f`;
+it differs only by replacing machine-specific model, include, OSDI, and
+output paths with `$PDK_ROOT` and repository-relative paths. The native log
+and all three raw files are byte-identical to the executed artifacts.
+
+From this directory, with `PDK_ROOT` set to the IHP SG13G2 PDK root:
+
+```sh
+ngspice -b tb_current_steering_900u.cir > log_current_steering_900u.log
+```
+
+The deck runs all three code points and writes the three
+`raw_900u_steer_*.txt` files.
