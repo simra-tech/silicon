@@ -1,0 +1,125 @@
+--- src/spicelib/devices/vbic/vbicload.c
++++ src/spicelib/devices/vbic/vbicload.c
+@@ -65,6 +65,9 @@
+     ,Ith_Vcei=0.0,Ith_Vbex=0.0,Ith_Vbep=0.0,Ith_Vrs=0.0,Ith_Vbcp=0.0,Ith_Vcep=0.0,Ith_Vrcx=0.0
+     ,Ith_Vrci=0.0,Ith_Vbcx=0.0,Ith_Vrbx=0.0,Ith_Vrbi=0.0,Ith_Vre=0.0,Ith_Vrbp=0.0,Qcth=0.0
+     ,Qcth_Vrth=0.0,SCALE;
++    /* [VBIC_VRTH_ORIGIN_DIAGNOSTIC] read-only local origin tag instrumentation */
++    int vrth_origin = 0;            /* origin 0 = declaration initializer (line 50) */
++    double vrth_origin_scalar = 0.0; /* exact source scalar used by the last Vrth assignment */
+ 
+     int iret;
+     double Vce;
+@@ -199,8 +202,11 @@
+                 Vrs = model->VBICtype*(
+                     *(ckt->CKTrhsOld+here->VBICsubsNode)-
+                     *(ckt->CKTrhsOld+here->VBICsubsSINode));
+-                if (here->VBIC_selfheat)
++                if (here->VBIC_selfheat) {
+                     Vrth = *(ckt->CKTstate0 + here->VBICvrth);
++                    vrth_origin = 1;    /* VRTH_ASSIGN_SMSIG (line 203) */
++                    vrth_origin_scalar = *(ckt->CKTstate0 + here->VBICvrth);
++                }
+                 Vxf1 = *(ckt->CKTrhsOld + here->VBICxf1Node);
+                 Vxf2 = *(ckt->CKTrhsOld + here->VBICxf2Node);
+             } else if(ckt->CKTmode & MODEINITTRAN) {
+@@ -231,8 +237,11 @@
+                 Vrs = model->VBICtype*(
+                     *(ckt->CKTrhsOld+here->VBICsubsNode)-
+                     *(ckt->CKTrhsOld+here->VBICsubsSINode));
+-                if (here->VBIC_selfheat)
++                if (here->VBIC_selfheat) {
+                     Vrth = *(ckt->CKTstate1 + here->VBICvrth);
++                    vrth_origin = 2;    /* VRTH_ASSIGN_INITTRAN (line 235) */
++                    vrth_origin_scalar = *(ckt->CKTstate1 + here->VBICvrth);
++                }
+                 Vxf1 = *(ckt->CKTrhsOld + here->VBICxf1Node);
+                 Vxf2 = *(ckt->CKTrhsOld + here->VBICxf2Node);
+             } else if((ckt->CKTmode & MODEINITJCT) &&
+@@ -246,6 +255,8 @@
+                 Vrci=Vrbi=Vrbp=0.0;
+                 Vrcx=Vrbx=Vre=Vrs=0.0;
+                 Vrth = 0.0, Icth = 0.0, Icth_Vrth = 0.0;
++                vrth_origin = 3;        /* VRTH_ASSIGN_UIC_ZERO (line 248) */
++                vrth_origin_scalar = 0.0;
+                 Vxf1=Vxf2=0.0;
+             } else if((ckt->CKTmode & MODEINITJCT) && (here->VBICoff==0)) {
+                 Vbe=Vbei=Vbex=model->VBICtype*here->VBICtVcrit;
+@@ -255,6 +266,8 @@
+                 Vrci=Vrbi=Vrbp=0.0;
+                 Vrcx=Vrbx=Vre=Vrs=0.0;
+                 Vrth = 0.0, Icth = 0.0, Icth_Vrth = 0.0;
++                vrth_origin = 4;        /* VRTH_ASSIGN_JCTON_ZERO (line 257) */
++                vrth_origin_scalar = 0.0;
+                 Vxf1=Vxf2=0.0;
+             } else if((ckt->CKTmode & MODEINITJCT) ||
+                     ( (ckt->CKTmode & MODEINITFIX) && (here->VBICoff!=0))) {
+@@ -266,6 +279,8 @@
+                 Vrci=Vrbi=Vrbp=0.0;
+                 Vrcx=Vrbx=Vre=Vrs=0.0;
+                 Vrth = 0.0, Icth = 0.0, Icth_Vrth = 0.0;
++                vrth_origin = 5;        /* VRTH_ASSIGN_JCTOFF_ZERO (line 268) */
++                vrth_origin_scalar = 0.0;
+                 Vxf1=Vxf2=0.0;
+             } else {
+ #ifndef PREDICTOR
+@@ -292,6 +307,8 @@
+                     if (here->VBIC_selfheat) {
+                         Vrth = (1.0 + xfact)* (*(ckt->CKTstate1 + here->VBICvrth))
+                           - ( xfact * (*(ckt->CKTstate2 + here->VBICvrth)));
++                        vrth_origin = 6;    /* VRTH_ASSIGN_PREDICTOR (lines 293-294) */
++                        vrth_origin_scalar = (1.0 + xfact)* (*(ckt->CKTstate1 + here->VBICvrth)) - ( xfact * (*(ckt->CKTstate2 + here->VBICvrth)));
+                         *(ckt->CKTstate0 + here->VBICvrth) =
+                                 *(ckt->CKTstate1 + here->VBICvrth);
+                     }
+@@ -443,8 +460,11 @@
+                     Vbcp = model->VBICtype*(
+                         *(ckt->CKTrhsOld+here->VBICsubsSINode)-
+                         *(ckt->CKTrhsOld+here->VBICbaseBPNode));
+-                    if (here->VBIC_selfheat)
++                    if (here->VBIC_selfheat) {
+                         Vrth = *(ckt->CKTrhsOld + here->VBICtempNode);
++                        vrth_origin = 7;    /* VRTH_ASSIGN_TEMPNODE_PRED (line 447) */
++                        vrth_origin_scalar = *(ckt->CKTrhsOld + here->VBICtempNode);
++                    }
+                     if (here->VBIC_excessPhase) {
+                         Vxf2  = *(ckt->CKTrhsOld + here->VBICxf2Node);
+                     }
+@@ -480,8 +500,11 @@
+                 Vrs = model->VBICtype*(
+                     *(ckt->CKTrhsOld+here->VBICsubsNode)-
+                     *(ckt->CKTrhsOld+here->VBICsubsSINode));
+-                if (here->VBIC_selfheat)
++                if (here->VBIC_selfheat) {
+                     Vrth = *(ckt->CKTrhsOld + here->VBICtempNode);
++                    vrth_origin = 8;    /* VRTH_ASSIGN_TEMPNODE_LOAD (line 484) */
++                    vrth_origin_scalar = *(ckt->CKTrhsOld + here->VBICtempNode);
++                }
+                 Vxf1 = *(ckt->CKTrhsOld + here->VBICxf1Node);
+                 Vxf2 = *(ckt->CKTrhsOld + here->VBICxf2Node);
+ 
+@@ -667,6 +690,24 @@
+                         here->VBICtVcrit,&ichk5);
+                 if (here->VBIC_selfheat) {
+                     ichk6 = 1;
++                    /* [VBIC_VRTH_ORIGIN_DIAGNOSTIC] first-occurrence origin print for XQS_COMP_S */
++                    static bool vrth_origin_printed = FALSE;
++                    static const char *vrth_origin_names[] = {
++                        "declaration_line_50", "smsig_line_203", "inittran_line_235",
++                        "uic_zero_line_248", "jcton_zero_line_257", "jctoff_zero_line_268",
++                        "predictor_line_293", "tempnode_pred_line_447", "tempnode_load_line_484"
++                    };
++                    if (!vrth_origin_printed &&
++                        (here->VBICname && strcmp(here->VBICname, "q.xdiv2.xqs_comp_s.qnpn13g2") == 0) &&
++                        (isnan(Vrth) || isnan(*(ckt->CKTstate0 + here->VBICvrth)))) {
++                        fprintf(stderr, "\n[VBIC_VRTH_ORIGIN_DIAGNOSTIC] Instance: %s | Origin: %d (%s) | OriginScalar: %a (isnan=%d) | Vrth(current): %a (isnan=%d) | Vrth(stored): %a (isnan=%d)\n\n",
++                                here->VBICname, vrth_origin,
++                                (vrth_origin >= 0 && vrth_origin <= 8) ? vrth_origin_names[vrth_origin] : "unknown",
++                                vrth_origin_scalar, isnan(vrth_origin_scalar) ? 1 : 0,
++                                Vrth, isnan(Vrth) ? 1 : 0,
++                                *(ckt->CKTstate0 + here->VBICvrth), isnan(*(ckt->CKTstate0 + here->VBICvrth)) ? 1 : 0);
++                        vrth_origin_printed = TRUE;
++                    }
+                     Vrth = DEVlimitlog(Vrth,
+                         *(ckt->CKTstate0 + here->VBICvrth),100,&ichk6);
+                 }

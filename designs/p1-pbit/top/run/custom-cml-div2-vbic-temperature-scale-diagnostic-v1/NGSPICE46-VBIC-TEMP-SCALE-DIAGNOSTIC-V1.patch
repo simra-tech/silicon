@@ -1,0 +1,20 @@
+--- src/spicelib/devices/vbic/vbicload.c
++++ src/spicelib/devices/vbic/vbicload.c
+@@ -2037,6 +2037,17 @@
+     xvar6_xvar1=xvar6*xvar5/xvar1;
+     xvar6_Vrth=xvar6_xvar1*xvar1_Vrth;
+     IBEIatT=p[31]*xvar6;
++    /* [VBIC_TEMP_SCALE_DIAGNOSTIC] read-only IBEIatT temperature-scaling decomposition (exact-instance gated via caller-passed IbeDiagActive; first-occurrence) */
++    static bool temp_scale_diag_printed = FALSE;
++    if (IbeDiagActive && !temp_scale_diag_printed && !isfinite(IBEIatT)) {
++        fprintf(stderr, "\n[VBIC_TEMP_SCALE_DIAGNOSTIC] BaseAssignment: 01cc4f1f@2038 (2999b2af@2039) | Tdev: %a (isfinite=%d) | Vtv: %a (isfinite=%d) | rT: %a (isfinite=%d) | p[79]: %a (isfinite=%d) | xvar2: %a (isfinite=%d)\n",
++                Tdev, isfinite(Tdev) ? 1 : 0, Vtv, isfinite(Vtv) ? 1 : 0, rT, isfinite(rT) ? 1 : 0, p[79], isfinite(p[79]) ? 1 : 0, xvar2, isfinite(xvar2) ? 1 : 0);
++        fprintf(stderr, "  p[72]: %a (isfinite=%d) | xvar3: %a (isfinite=%d) | xvar4: %a (isfinite=%d) | xvar1: %a (isfinite=%d) | p[33]: %a (isfinite=%d)\n",
++                p[72], isfinite(p[72]) ? 1 : 0, xvar3, isfinite(xvar3) ? 1 : 0, xvar4, isfinite(xvar4) ? 1 : 0, xvar1, isfinite(xvar1) ? 1 : 0, p[33], isfinite(p[33]) ? 1 : 0);
++        fprintf(stderr, "  xvar5: %a (isfinite=%d) | xvar6: %a (isfinite=%d) | p[31]: %a (isfinite=%d) | IBEIatT: %a (isfinite=%d)\n",
++                xvar5, isfinite(xvar5) ? 1 : 0, xvar6, isfinite(xvar6) ? 1 : 0, p[31], isfinite(p[31]) ? 1 : 0, IBEIatT, isfinite(IBEIatT) ? 1 : 0);
++        temp_scale_diag_printed = TRUE;
++    }
+     IBEIatT_xvar6=p[31];
+     IBEIatT_Vrth=IBEIatT_xvar6*xvar6_Vrth;
+     xvar2=pow(rT,p[80]);

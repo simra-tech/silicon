@@ -1,0 +1,82 @@
+--- src/spicelib/devices/vbic/vbicload.c
++++ src/spicelib/devices/vbic/vbicload.c
+@@ -1491,6 +1491,79 @@
+                                    - Ith_Vcep*Vcep - Ith_Vrci*Vrci - Ith_Vbcx*Vbcx
+                                    - Ith_Vrbi*Vrbi - Ith_Vrbp*Vrbp
+                                    - Ith_Vrcx*Vrcx - Ith_Vrbx*Vrbx - Ith_Vre*Vre - Ith_Vrs*Vrs;
++                /* [VBIC_ITH_RHS_DECOMP_DIAGNOSTIC] read-only decomposition of the Ith rhs_current expression (target-only, first-occurrence) */
++                static bool ith_rhs_decomp_printed = FALSE;
++                if (stamp_diag_active && !ith_rhs_decomp_printed && !isfinite(rhs_current)) {
++                    fprintf(stderr, "\n[VBIC_ITH_RHS_DECOMP_DIAGNOSTIC] Site: STAMP_ITH_RHS_DECOMP@1472 | rhs_current: %a (isfinite=%d) | Ith: %a (isfinite=%d)\n",
++                            rhs_current, isfinite(rhs_current) ? 1 : 0, Ith, isfinite(Ith) ? 1 : 0);
++                    fprintf(stderr, "  pair 01 Vrth  | deriv %a (isfinite=%d) | volt %a (isfinite=%d) | product %a (isfinite=%d)\n",
++                            Ith_Vrth, isfinite(Ith_Vrth) ? 1 : 0, Vrth, isfinite(Vrth) ? 1 : 0, Ith_Vrth*Vrth, isfinite(Ith_Vrth*Vrth) ? 1 : 0);
++                    fprintf(stderr, "  pair 02 Vbei  | deriv %a (isfinite=%d) | volt %a (isfinite=%d) | product %a (isfinite=%d)\n",
++                            Ith_Vbei, isfinite(Ith_Vbei) ? 1 : 0, Vbei, isfinite(Vbei) ? 1 : 0, Ith_Vbei*Vbei, isfinite(Ith_Vbei*Vbei) ? 1 : 0);
++                    fprintf(stderr, "  pair 03 Vbci  | deriv %a (isfinite=%d) | volt %a (isfinite=%d) | product %a (isfinite=%d)\n",
++                            Ith_Vbci, isfinite(Ith_Vbci) ? 1 : 0, Vbci, isfinite(Vbci) ? 1 : 0, Ith_Vbci*Vbci, isfinite(Ith_Vbci*Vbci) ? 1 : 0);
++                    fprintf(stderr, "  pair 04 Vcei  | deriv %a (isfinite=%d) | volt %a (isfinite=%d) | product %a (isfinite=%d)\n",
++                            Ith_Vcei, isfinite(Ith_Vcei) ? 1 : 0, Vcei, isfinite(Vcei) ? 1 : 0, Ith_Vcei*Vcei, isfinite(Ith_Vcei*Vcei) ? 1 : 0);
++                    fprintf(stderr, "  pair 05 Vbex  | deriv %a (isfinite=%d) | volt %a (isfinite=%d) | product %a (isfinite=%d)\n",
++                            Ith_Vbex, isfinite(Ith_Vbex) ? 1 : 0, Vbex, isfinite(Vbex) ? 1 : 0, Ith_Vbex*Vbex, isfinite(Ith_Vbex*Vbex) ? 1 : 0);
++                    fprintf(stderr, "  pair 06 Vbep  | deriv %a (isfinite=%d) | volt %a (isfinite=%d) | product %a (isfinite=%d)\n",
++                            Ith_Vbep, isfinite(Ith_Vbep) ? 1 : 0, Vbep, isfinite(Vbep) ? 1 : 0, Ith_Vbep*Vbep, isfinite(Ith_Vbep*Vbep) ? 1 : 0);
++                    fprintf(stderr, "  pair 07 Vbcp  | deriv %a (isfinite=%d) | volt %a (isfinite=%d) | product %a (isfinite=%d)\n",
++                            Ith_Vbcp, isfinite(Ith_Vbcp) ? 1 : 0, Vbcp, isfinite(Vbcp) ? 1 : 0, Ith_Vbcp*Vbcp, isfinite(Ith_Vbcp*Vbcp) ? 1 : 0);
++                    fprintf(stderr, "  pair 08 Vcep  | deriv %a (isfinite=%d) | volt %a (isfinite=%d) | product %a (isfinite=%d)\n",
++                            Ith_Vcep, isfinite(Ith_Vcep) ? 1 : 0, Vcep, isfinite(Vcep) ? 1 : 0, Ith_Vcep*Vcep, isfinite(Ith_Vcep*Vcep) ? 1 : 0);
++                    fprintf(stderr, "  pair 09 Vrci  | deriv %a (isfinite=%d) | volt %a (isfinite=%d) | product %a (isfinite=%d)\n",
++                            Ith_Vrci, isfinite(Ith_Vrci) ? 1 : 0, Vrci, isfinite(Vrci) ? 1 : 0, Ith_Vrci*Vrci, isfinite(Ith_Vrci*Vrci) ? 1 : 0);
++                    fprintf(stderr, "  pair 10 Vbcx  | deriv %a (isfinite=%d) | volt %a (isfinite=%d) | product %a (isfinite=%d)\n",
++                            Ith_Vbcx, isfinite(Ith_Vbcx) ? 1 : 0, Vbcx, isfinite(Vbcx) ? 1 : 0, Ith_Vbcx*Vbcx, isfinite(Ith_Vbcx*Vbcx) ? 1 : 0);
++                    fprintf(stderr, "  pair 11 Vrbi  | deriv %a (isfinite=%d) | volt %a (isfinite=%d) | product %a (isfinite=%d)\n",
++                            Ith_Vrbi, isfinite(Ith_Vrbi) ? 1 : 0, Vrbi, isfinite(Vrbi) ? 1 : 0, Ith_Vrbi*Vrbi, isfinite(Ith_Vrbi*Vrbi) ? 1 : 0);
++                    fprintf(stderr, "  pair 12 Vrbp  | deriv %a (isfinite=%d) | volt %a (isfinite=%d) | product %a (isfinite=%d)\n",
++                            Ith_Vrbp, isfinite(Ith_Vrbp) ? 1 : 0, Vrbp, isfinite(Vrbp) ? 1 : 0, Ith_Vrbp*Vrbp, isfinite(Ith_Vrbp*Vrbp) ? 1 : 0);
++                    fprintf(stderr, "  pair 13 Vrcx  | deriv %a (isfinite=%d) | volt %a (isfinite=%d) | product %a (isfinite=%d)\n",
++                            Ith_Vrcx, isfinite(Ith_Vrcx) ? 1 : 0, Vrcx, isfinite(Vrcx) ? 1 : 0, Ith_Vrcx*Vrcx, isfinite(Ith_Vrcx*Vrcx) ? 1 : 0);
++                    fprintf(stderr, "  pair 14 Vrbx  | deriv %a (isfinite=%d) | volt %a (isfinite=%d) | product %a (isfinite=%d)\n",
++                            Ith_Vrbx, isfinite(Ith_Vrbx) ? 1 : 0, Vrbx, isfinite(Vrbx) ? 1 : 0, Ith_Vrbx*Vrbx, isfinite(Ith_Vrbx*Vrbx) ? 1 : 0);
++                    fprintf(stderr, "  pair 15 Vre   | deriv %a (isfinite=%d) | volt %a (isfinite=%d) | product %a (isfinite=%d)\n",
++                            Ith_Vre, isfinite(Ith_Vre) ? 1 : 0, Vre, isfinite(Vre) ? 1 : 0, Ith_Vre*Vre, isfinite(Ith_Vre*Vre) ? 1 : 0);
++                    fprintf(stderr, "  pair 16 Vrs   | deriv %a (isfinite=%d) | volt %a (isfinite=%d) | product %a (isfinite=%d)\n",
++                            Ith_Vrs, isfinite(Ith_Vrs) ? 1 : 0, Vrs, isfinite(Vrs) ? 1 : 0, Ith_Vrs*Vrs, isfinite(Ith_Vrs*Vrs) ? 1 : 0);
++                    double ith_rhs_cum00 = -Ith;
++                    double ith_rhs_cum01 = ith_rhs_cum00 - Ith_Vrth*Vrth;
++                    double ith_rhs_cum02 = ith_rhs_cum01 - Ith_Vbei*Vbei;
++                    double ith_rhs_cum03 = ith_rhs_cum02 - Ith_Vbci*Vbci;
++                    double ith_rhs_cum04 = ith_rhs_cum03 - Ith_Vcei*Vcei;
++                    double ith_rhs_cum05 = ith_rhs_cum04 - Ith_Vbex*Vbex;
++                    double ith_rhs_cum06 = ith_rhs_cum05 - Ith_Vbep*Vbep;
++                    double ith_rhs_cum07 = ith_rhs_cum06 - Ith_Vbcp*Vbcp;
++                    double ith_rhs_cum08 = ith_rhs_cum07 - Ith_Vcep*Vcep;
++                    double ith_rhs_cum09 = ith_rhs_cum08 - Ith_Vrci*Vrci;
++                    double ith_rhs_cum10 = ith_rhs_cum09 - Ith_Vbcx*Vbcx;
++                    double ith_rhs_cum11 = ith_rhs_cum10 - Ith_Vrbi*Vrbi;
++                    double ith_rhs_cum12 = ith_rhs_cum11 - Ith_Vrbp*Vrbp;
++                    double ith_rhs_cum13 = ith_rhs_cum12 - Ith_Vrcx*Vrcx;
++                    double ith_rhs_cum14 = ith_rhs_cum13 - Ith_Vrbx*Vrbx;
++                    double ith_rhs_cum15 = ith_rhs_cum14 - Ith_Vre*Vre;
++                    double ith_rhs_cum16 = ith_rhs_cum15 - Ith_Vrs*Vrs;
++                    fprintf(stderr, "  cum 00 -Ith                         = %a (isfinite=%d) [diagnostic reconstruction]\n", ith_rhs_cum00, isfinite(ith_rhs_cum00) ? 1 : 0);
++                    fprintf(stderr, "  cum 01 - Ith_Vrth*Vrth                    = %a (isfinite=%d) [diagnostic reconstruction]\n", ith_rhs_cum01, isfinite(ith_rhs_cum01) ? 1 : 0);
++                    fprintf(stderr, "  cum 02 - Ith_Vbei*Vbei                    = %a (isfinite=%d) [diagnostic reconstruction]\n", ith_rhs_cum02, isfinite(ith_rhs_cum02) ? 1 : 0);
++                    fprintf(stderr, "  cum 03 - Ith_Vbci*Vbci                    = %a (isfinite=%d) [diagnostic reconstruction]\n", ith_rhs_cum03, isfinite(ith_rhs_cum03) ? 1 : 0);
++                    fprintf(stderr, "  cum 04 - Ith_Vcei*Vcei                    = %a (isfinite=%d) [diagnostic reconstruction]\n", ith_rhs_cum04, isfinite(ith_rhs_cum04) ? 1 : 0);
++                    fprintf(stderr, "  cum 05 - Ith_Vbex*Vbex                    = %a (isfinite=%d) [diagnostic reconstruction]\n", ith_rhs_cum05, isfinite(ith_rhs_cum05) ? 1 : 0);
++                    fprintf(stderr, "  cum 06 - Ith_Vbep*Vbep                    = %a (isfinite=%d) [diagnostic reconstruction]\n", ith_rhs_cum06, isfinite(ith_rhs_cum06) ? 1 : 0);
++                    fprintf(stderr, "  cum 07 - Ith_Vbcp*Vbcp                    = %a (isfinite=%d) [diagnostic reconstruction]\n", ith_rhs_cum07, isfinite(ith_rhs_cum07) ? 1 : 0);
++                    fprintf(stderr, "  cum 08 - Ith_Vcep*Vcep                    = %a (isfinite=%d) [diagnostic reconstruction]\n", ith_rhs_cum08, isfinite(ith_rhs_cum08) ? 1 : 0);
++                    fprintf(stderr, "  cum 09 - Ith_Vrci*Vrci                    = %a (isfinite=%d) [diagnostic reconstruction]\n", ith_rhs_cum09, isfinite(ith_rhs_cum09) ? 1 : 0);
++                    fprintf(stderr, "  cum 10 - Ith_Vbcx*Vbcx                    = %a (isfinite=%d) [diagnostic reconstruction]\n", ith_rhs_cum10, isfinite(ith_rhs_cum10) ? 1 : 0);
++                    fprintf(stderr, "  cum 11 - Ith_Vrbi*Vrbi                    = %a (isfinite=%d) [diagnostic reconstruction]\n", ith_rhs_cum11, isfinite(ith_rhs_cum11) ? 1 : 0);
++                    fprintf(stderr, "  cum 12 - Ith_Vrbp*Vrbp                    = %a (isfinite=%d) [diagnostic reconstruction]\n", ith_rhs_cum12, isfinite(ith_rhs_cum12) ? 1 : 0);
++                    fprintf(stderr, "  cum 13 - Ith_Vrcx*Vrcx                    = %a (isfinite=%d) [diagnostic reconstruction]\n", ith_rhs_cum13, isfinite(ith_rhs_cum13) ? 1 : 0);
++                    fprintf(stderr, "  cum 14 - Ith_Vrbx*Vrbx                    = %a (isfinite=%d) [diagnostic reconstruction]\n", ith_rhs_cum14, isfinite(ith_rhs_cum14) ? 1 : 0);
++                    fprintf(stderr, "  cum 15 - Ith_Vre*Vre                    = %a (isfinite=%d) [diagnostic reconstruction]\n", ith_rhs_cum15, isfinite(ith_rhs_cum15) ? 1 : 0);
++                    fprintf(stderr, "  cum 16 - Ith_Vrs*Vrs                    = %a (isfinite=%d) [diagnostic reconstruction]\n", ith_rhs_cum16, isfinite(ith_rhs_cum16) ? 1 : 0);
++                    ith_rhs_decomp_printed = TRUE;
++                }
+ 
+                 if (stamp_diag_active) stamp_diag_pre = *(ckt->CKTrhs + here->VBICtempNode);
+                 *(ckt->CKTrhs + here->VBICtempNode) += rhs_current;

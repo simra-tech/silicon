@@ -1,0 +1,184 @@
+--- src/spicelib/devices/vbic/vbicload.c
++++ src/spicelib/devices/vbic/vbicload.c
+@@ -1336,6 +1336,20 @@
+             }
+ 
+             if (here->VBIC_selfheat) {
++                /* [VBIC_TEMPNODE_STAMP_DIAGNOSTIC] read-only device-side stamp observation (target-only) */
++                static bool stamp_diag_printed = FALSE;
++                double stamp_diag_pre;
++                double stamp_diag_post;
++                bool stamp_diag_active = (here->VBICname && strcmp(here->VBICname, "q.xdiv2.xqs_comp_s.qnpn13g2") == 0);
++                /* first-occurrence report: prior accumulator (pre), contribution (input/arithmetic result), post-stamp accumulator (post); isfinite flags cover NaN and both infinities */
++                #define STAMP_DIAG_REPORT(site_id, cat, pre_v, contrib_v, post_v) do { \
++                    if (!stamp_diag_printed && stamp_diag_active && \
++                        (!isfinite(pre_v) || !isfinite(contrib_v) || !isfinite(post_v))) { \
++                        fprintf(stderr, "\n[VBIC_TEMPNODE_STAMP_DIAGNOSTIC] Site: %s | Category: %s | Pre: %a (isfinite=%d) | Contribution: %a (isfinite=%d) | Post: %a (isfinite=%d)\n\n", \
++                                site_id, cat, pre_v, isfinite(pre_v) ? 1 : 0, contrib_v, isfinite(contrib_v) ? 1 : 0, post_v, isfinite(post_v) ? 1 : 0); \
++                        stamp_diag_printed = TRUE; \
++                    } \
++                } while (0)
+ /*
+ c               Stamp element: Ibe
+ */
+@@ -1452,13 +1466,22 @@
+ /*
+ c               Stamp element: Rth
+ */
++                if (stamp_diag_active) stamp_diag_pre = *(here->VBICtempTempPtr);
+                 *(here->VBICtempTempPtr) +=  Irth_Vrth;
++                if (stamp_diag_active) stamp_diag_post = *(here->VBICtempTempPtr);
++                if (stamp_diag_active) STAMP_DIAG_REPORT("STAMP_RTH@1455", "matrix_stamp", stamp_diag_pre, Irth_Vrth, stamp_diag_post);
+ /*
+ c               Stamp element: Cth
+ */
+                 rhs_current = Icth - Icth_Vrth*Vrth;
++                if (stamp_diag_active) stamp_diag_pre = *(ckt->CKTrhs + here->VBICtempNode);
+                 *(ckt->CKTrhs + here->VBICtempNode) += -rhs_current;
++                if (stamp_diag_active) stamp_diag_post = *(ckt->CKTrhs + here->VBICtempNode);
++                if (stamp_diag_active) STAMP_DIAG_REPORT("STAMP_CTH_RHS@1460", "rhs_accumulator", stamp_diag_pre, -rhs_current, stamp_diag_post);
++                if (stamp_diag_active) stamp_diag_pre = *(here->VBICtempTempPtr);
+                 *(here->VBICtempTempPtr) +=  Icth_Vrth;
++                if (stamp_diag_active) stamp_diag_post = *(here->VBICtempTempPtr);
++                if (stamp_diag_active) STAMP_DIAG_REPORT("STAMP_CTH_JAC@1461", "matrix_stamp", stamp_diag_pre, Icth_Vrth, stamp_diag_post);
+ /*
+ c               Stamp element: Ith
+ */
+@@ -1469,40 +1492,137 @@
+                                    - Ith_Vrbi*Vrbi - Ith_Vrbp*Vrbp
+                                    - Ith_Vrcx*Vrcx - Ith_Vrbx*Vrbx - Ith_Vre*Vre - Ith_Vrs*Vrs;
+ 
++                if (stamp_diag_active) stamp_diag_pre = *(ckt->CKTrhs + here->VBICtempNode);
+                 *(ckt->CKTrhs + here->VBICtempNode) += rhs_current;
++                if (stamp_diag_active) stamp_diag_post = *(ckt->CKTrhs + here->VBICtempNode);
++                if (stamp_diag_active) STAMP_DIAG_REPORT("STAMP_ITH_RHS@1472", "rhs_accumulator", stamp_diag_pre, rhs_current, stamp_diag_post);
+ 
++                if (stamp_diag_active) stamp_diag_pre = *(here->VBICtempTempPtr);
+                 *(here->VBICtempTempPtr)   += -Ith_Vrth;
++                if (stamp_diag_active) stamp_diag_post = *(here->VBICtempTempPtr);
++                if (stamp_diag_active) STAMP_DIAG_REPORT("STAMP_ITH_VRTH_JAC@1474", "matrix_stamp", stamp_diag_pre, -Ith_Vrth, stamp_diag_post);
+ 
++                if (stamp_diag_active) stamp_diag_pre = *(here->VBICtempBaseBIPtr);
+                 *(here->VBICtempBaseBIPtr) += -Ith_Vbei;
++                if (stamp_diag_active) stamp_diag_post = *(here->VBICtempBaseBIPtr);
++                if (stamp_diag_active) STAMP_DIAG_REPORT("STAMP_ITH_VBEI_1@1476", "matrix_stamp", stamp_diag_pre, -Ith_Vbei, stamp_diag_post);
++                if (stamp_diag_active) stamp_diag_pre = *(here->VBICtempEmitEIPtr);
+                 *(here->VBICtempEmitEIPtr) += +Ith_Vbei;
++                if (stamp_diag_active) stamp_diag_post = *(here->VBICtempEmitEIPtr);
++                if (stamp_diag_active) STAMP_DIAG_REPORT("STAMP_ITH_VBEI_2@1477", "matrix_stamp", stamp_diag_pre, +Ith_Vbei, stamp_diag_post);
++                if (stamp_diag_active) stamp_diag_pre = *(here->VBICtempBaseBIPtr);
+                 *(here->VBICtempBaseBIPtr) += -Ith_Vbci;
++                if (stamp_diag_active) stamp_diag_post = *(here->VBICtempBaseBIPtr);
++                if (stamp_diag_active) STAMP_DIAG_REPORT("STAMP_ITH_VBCI_1@1478", "matrix_stamp", stamp_diag_pre, -Ith_Vbci, stamp_diag_post);
++                if (stamp_diag_active) stamp_diag_pre = *(here->VBICtempCollCIPtr);
+                 *(here->VBICtempCollCIPtr) += +Ith_Vbci;
++                if (stamp_diag_active) stamp_diag_post = *(here->VBICtempCollCIPtr);
++                if (stamp_diag_active) STAMP_DIAG_REPORT("STAMP_ITH_VBCI_2@1479", "matrix_stamp", stamp_diag_pre, +Ith_Vbci, stamp_diag_post);
++                if (stamp_diag_active) stamp_diag_pre = *(here->VBICtempCollCIPtr);
+                 *(here->VBICtempCollCIPtr) += -Ith_Vcei;
++                if (stamp_diag_active) stamp_diag_post = *(here->VBICtempCollCIPtr);
++                if (stamp_diag_active) STAMP_DIAG_REPORT("STAMP_ITH_VCEI_1@1480", "matrix_stamp", stamp_diag_pre, -Ith_Vcei, stamp_diag_post);
++                if (stamp_diag_active) stamp_diag_pre = *(here->VBICtempEmitEIPtr);
+                 *(here->VBICtempEmitEIPtr) += +Ith_Vcei;
++                if (stamp_diag_active) stamp_diag_post = *(here->VBICtempEmitEIPtr);
++                if (stamp_diag_active) STAMP_DIAG_REPORT("STAMP_ITH_VCEI_2@1481", "matrix_stamp", stamp_diag_pre, +Ith_Vcei, stamp_diag_post);
++                if (stamp_diag_active) stamp_diag_pre = *(here->VBICtempBaseBXPtr);
+                 *(here->VBICtempBaseBXPtr) += -Ith_Vbex;
++                if (stamp_diag_active) stamp_diag_post = *(here->VBICtempBaseBXPtr);
++                if (stamp_diag_active) STAMP_DIAG_REPORT("STAMP_ITH_VBEX_1@1482", "matrix_stamp", stamp_diag_pre, -Ith_Vbex, stamp_diag_post);
++                if (stamp_diag_active) stamp_diag_pre = *(here->VBICtempEmitEIPtr);
+                 *(here->VBICtempEmitEIPtr) += +Ith_Vbex;
++                if (stamp_diag_active) stamp_diag_post = *(here->VBICtempEmitEIPtr);
++                if (stamp_diag_active) STAMP_DIAG_REPORT("STAMP_ITH_VBEX_2@1483", "matrix_stamp", stamp_diag_pre, +Ith_Vbex, stamp_diag_post);
++                if (stamp_diag_active) stamp_diag_pre = *(here->VBICtempBaseBXPtr);
+                 *(here->VBICtempBaseBXPtr) += -Ith_Vbep;
++                if (stamp_diag_active) stamp_diag_post = *(here->VBICtempBaseBXPtr);
++                if (stamp_diag_active) STAMP_DIAG_REPORT("STAMP_ITH_VBEP_1@1484", "matrix_stamp", stamp_diag_pre, -Ith_Vbep, stamp_diag_post);
++                if (stamp_diag_active) stamp_diag_pre = *(here->VBICtempBaseBPPtr);
+                 *(here->VBICtempBaseBPPtr) += +Ith_Vbep;
++                if (stamp_diag_active) stamp_diag_post = *(here->VBICtempBaseBPPtr);
++                if (stamp_diag_active) STAMP_DIAG_REPORT("STAMP_ITH_VBEP_2@1485", "matrix_stamp", stamp_diag_pre, +Ith_Vbep, stamp_diag_post);
++                if (stamp_diag_active) stamp_diag_pre = *(here->VBICtempSubsPtr);
+                 *(here->VBICtempSubsPtr)   += -Ith_Vbcp;
++                if (stamp_diag_active) stamp_diag_post = *(here->VBICtempSubsPtr);
++                if (stamp_diag_active) STAMP_DIAG_REPORT("STAMP_ITH_VBCP_1@1486", "matrix_stamp", stamp_diag_pre, -Ith_Vbcp, stamp_diag_post);
++                if (stamp_diag_active) stamp_diag_pre = *(here->VBICtempBaseBPPtr);
+                 *(here->VBICtempBaseBPPtr) += +Ith_Vbcp;
++                if (stamp_diag_active) stamp_diag_post = *(here->VBICtempBaseBPPtr);
++                if (stamp_diag_active) STAMP_DIAG_REPORT("STAMP_ITH_VBCP_2@1487", "matrix_stamp", stamp_diag_pre, +Ith_Vbcp, stamp_diag_post);
++                if (stamp_diag_active) stamp_diag_pre = *(here->VBICtempBaseBXPtr);
+                 *(here->VBICtempBaseBXPtr) += -Ith_Vcep;
++                if (stamp_diag_active) stamp_diag_post = *(here->VBICtempBaseBXPtr);
++                if (stamp_diag_active) STAMP_DIAG_REPORT("STAMP_ITH_VCEP_1@1488", "matrix_stamp", stamp_diag_pre, -Ith_Vcep, stamp_diag_post);
++                if (stamp_diag_active) stamp_diag_pre = *(here->VBICtempSubsPtr);
+                 *(here->VBICtempSubsPtr)   += +Ith_Vcep;
++                if (stamp_diag_active) stamp_diag_post = *(here->VBICtempSubsPtr);
++                if (stamp_diag_active) STAMP_DIAG_REPORT("STAMP_ITH_VCEP_2@1489", "matrix_stamp", stamp_diag_pre, +Ith_Vcep, stamp_diag_post);
++                if (stamp_diag_active) stamp_diag_pre = *(here->VBICtempCollCXPtr);
+                 *(here->VBICtempCollCXPtr) += -Ith_Vrci;
++                if (stamp_diag_active) stamp_diag_post = *(here->VBICtempCollCXPtr);
++                if (stamp_diag_active) STAMP_DIAG_REPORT("STAMP_ITH_VRCI_1@1490", "matrix_stamp", stamp_diag_pre, -Ith_Vrci, stamp_diag_post);
++                if (stamp_diag_active) stamp_diag_pre = *(here->VBICtempCollCIPtr);
+                 *(here->VBICtempCollCIPtr) += +Ith_Vrci;
++                if (stamp_diag_active) stamp_diag_post = *(here->VBICtempCollCIPtr);
++                if (stamp_diag_active) STAMP_DIAG_REPORT("STAMP_ITH_VRCI_2@1491", "matrix_stamp", stamp_diag_pre, +Ith_Vrci, stamp_diag_post);
++                if (stamp_diag_active) stamp_diag_pre = *(here->VBICtempBaseBIPtr);
+                 *(here->VBICtempBaseBIPtr) += -Ith_Vbcx;
++                if (stamp_diag_active) stamp_diag_post = *(here->VBICtempBaseBIPtr);
++                if (stamp_diag_active) STAMP_DIAG_REPORT("STAMP_ITH_VBCX_1@1492", "matrix_stamp", stamp_diag_pre, -Ith_Vbcx, stamp_diag_post);
++                if (stamp_diag_active) stamp_diag_pre = *(here->VBICtempCollCXPtr);
+                 *(here->VBICtempCollCXPtr) += +Ith_Vbcx;
++                if (stamp_diag_active) stamp_diag_post = *(here->VBICtempCollCXPtr);
++                if (stamp_diag_active) STAMP_DIAG_REPORT("STAMP_ITH_VBCX_2@1493", "matrix_stamp", stamp_diag_pre, +Ith_Vbcx, stamp_diag_post);
++                if (stamp_diag_active) stamp_diag_pre = *(here->VBICtempBaseBXPtr);
+                 *(here->VBICtempBaseBXPtr) += -Ith_Vrbi;
++                if (stamp_diag_active) stamp_diag_post = *(here->VBICtempBaseBXPtr);
++                if (stamp_diag_active) STAMP_DIAG_REPORT("STAMP_ITH_VRBI_1@1494", "matrix_stamp", stamp_diag_pre, -Ith_Vrbi, stamp_diag_post);
++                if (stamp_diag_active) stamp_diag_pre = *(here->VBICtempBaseBIPtr);
+                 *(here->VBICtempBaseBIPtr) += +Ith_Vrbi;
++                if (stamp_diag_active) stamp_diag_post = *(here->VBICtempBaseBIPtr);
++                if (stamp_diag_active) STAMP_DIAG_REPORT("STAMP_ITH_VRBI_2@1495", "matrix_stamp", stamp_diag_pre, +Ith_Vrbi, stamp_diag_post);
++                if (stamp_diag_active) stamp_diag_pre = *(here->VBICtempBaseBPPtr);
+                 *(here->VBICtempBaseBPPtr) += -Ith_Vrbp;
++                if (stamp_diag_active) stamp_diag_post = *(here->VBICtempBaseBPPtr);
++                if (stamp_diag_active) STAMP_DIAG_REPORT("STAMP_ITH_VRBP_1@1496", "matrix_stamp", stamp_diag_pre, -Ith_Vrbp, stamp_diag_post);
++                if (stamp_diag_active) stamp_diag_pre = *(here->VBICtempCollCXPtr);
+                 *(here->VBICtempCollCXPtr) += +Ith_Vrbp;
++                if (stamp_diag_active) stamp_diag_post = *(here->VBICtempCollCXPtr);
++                if (stamp_diag_active) STAMP_DIAG_REPORT("STAMP_ITH_VRBP_2@1497", "matrix_stamp", stamp_diag_pre, +Ith_Vrbp, stamp_diag_post);
++                if (stamp_diag_active) stamp_diag_pre = *(here->VBICtempCollPtr);
+                 *(here->VBICtempCollPtr)   += -Ith_Vrcx;
++                if (stamp_diag_active) stamp_diag_post = *(here->VBICtempCollPtr);
++                if (stamp_diag_active) STAMP_DIAG_REPORT("STAMP_ITH_VRCX_1@1498", "matrix_stamp", stamp_diag_pre, -Ith_Vrcx, stamp_diag_post);
++                if (stamp_diag_active) stamp_diag_pre = *(here->VBICtempCollCXPtr);
+                 *(here->VBICtempCollCXPtr) += +Ith_Vrcx;
++                if (stamp_diag_active) stamp_diag_post = *(here->VBICtempCollCXPtr);
++                if (stamp_diag_active) STAMP_DIAG_REPORT("STAMP_ITH_VRCX_2@1499", "matrix_stamp", stamp_diag_pre, +Ith_Vrcx, stamp_diag_post);
++                if (stamp_diag_active) stamp_diag_pre = *(here->VBICtempBasePtr);
+                 *(here->VBICtempBasePtr)   += -Ith_Vrbx;
++                if (stamp_diag_active) stamp_diag_post = *(here->VBICtempBasePtr);
++                if (stamp_diag_active) STAMP_DIAG_REPORT("STAMP_ITH_VRBX_1@1500", "matrix_stamp", stamp_diag_pre, -Ith_Vrbx, stamp_diag_post);
++                if (stamp_diag_active) stamp_diag_pre = *(here->VBICtempBaseBXPtr);
+                 *(here->VBICtempBaseBXPtr) += +Ith_Vrbx;
++                if (stamp_diag_active) stamp_diag_post = *(here->VBICtempBaseBXPtr);
++                if (stamp_diag_active) STAMP_DIAG_REPORT("STAMP_ITH_VRBX_2@1501", "matrix_stamp", stamp_diag_pre, +Ith_Vrbx, stamp_diag_post);
++                if (stamp_diag_active) stamp_diag_pre = *(here->VBICtempEmitPtr);
+                 *(here->VBICtempEmitPtr)   += -Ith_Vre;
++                if (stamp_diag_active) stamp_diag_post = *(here->VBICtempEmitPtr);
++                if (stamp_diag_active) STAMP_DIAG_REPORT("STAMP_ITH_VRE_1@1502", "matrix_stamp", stamp_diag_pre, -Ith_Vre, stamp_diag_post);
++                if (stamp_diag_active) stamp_diag_pre = *(here->VBICtempEmitEIPtr);
+                 *(here->VBICtempEmitEIPtr) += +Ith_Vre;
++                if (stamp_diag_active) stamp_diag_post = *(here->VBICtempEmitEIPtr);
++                if (stamp_diag_active) STAMP_DIAG_REPORT("STAMP_ITH_VRE_2@1503", "matrix_stamp", stamp_diag_pre, +Ith_Vre, stamp_diag_post);
++                if (stamp_diag_active) stamp_diag_pre = *(here->VBICtempSubsPtr);
+                 *(here->VBICtempSubsPtr)   += -Ith_Vrs;
++                if (stamp_diag_active) stamp_diag_post = *(here->VBICtempSubsPtr);
++                if (stamp_diag_active) STAMP_DIAG_REPORT("STAMP_ITH_VRS_1@1504", "matrix_stamp", stamp_diag_pre, -Ith_Vrs, stamp_diag_post);
++                if (stamp_diag_active) stamp_diag_pre = *(here->VBICtempSubsSIPtr);
+                 *(here->VBICtempSubsSIPtr) += +Ith_Vrs;
++                if (stamp_diag_active) stamp_diag_post = *(here->VBICtempSubsSIPtr);
++                if (stamp_diag_active) STAMP_DIAG_REPORT("STAMP_ITH_VRS_2@1505", "matrix_stamp", stamp_diag_pre, +Ith_Vrs, stamp_diag_post);
++                #undef STAMP_DIAG_REPORT
+                 if (here->VBIC_excessPhase) {
+ //                  Stamp element: Ixf1    f_xf1 = +
+                     rhs_current = -Ixf1_Vrth*Vrth;
