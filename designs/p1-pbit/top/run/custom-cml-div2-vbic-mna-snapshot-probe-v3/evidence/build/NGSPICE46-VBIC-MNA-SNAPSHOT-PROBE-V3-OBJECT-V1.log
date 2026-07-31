@@ -1,0 +1,75 @@
+NGSPICE46-VBIC-MNA-SNAPSHOT-PROBE-V3-OBJECT-V1.log
+Matched object-compile check for Probe V3 (immutable; design-only)
+Date (UTC): 2026-07-31T19:00:32Z
+Compiler: gcc (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0
+Libtool: libtool (GNU libtool) 2.4.7
+Scratch: $MATCHED_BUILD_ROOT/{base_ctrl,patched} (fresh cp -al from the configured tree)
+niiter.c TU base: accepted Probe-V4 687e2f85 (copied over the retained 270de96a in both copies)
+Patch applied exactly once to the patched copy: NGSPICE46-VBIC-MNA-SNAPSHOT-PROBE-V3.patch (d833221f...)
+
+=== base hashes verified before patching (both copies) ===
+base_ctrl src/include/ngspice/smpdefs.h 13e94b623930c952ac05a0d8100121107c99a37e5fc096cf63e9bc9f9e8e9196
+base_ctrl src/maths/KLU/klusmp.c 4d1f9a39d33712948a8b25c461e060eadb80d3437a02f6011d0036617c0a0b20
+base_ctrl src/maths/ni/niiter.c 687e2f85776c7c1a064a980e333502aefd8162c4dd3a360412845a7a923e9625
+patched src/include/ngspice/smpdefs.h 61acdc96443b583cf8915bf3e3528284fbeb9c4b48fb694787f1a7959b45b369
+patched src/maths/KLU/klusmp.c d9a40052c6c29c6ecf7c2ee34a946512d3221908787b2e15095fad69ea9f297d
+patched src/maths/ni/niiter.c fa26677f5436801e0e725cf9500b80a03b3c2faf7a8fa0cbe32c518f1d7a811e
+
+=== targets verified immediately before compilation (patched copy) ===
+smpdefs.h 61acdc96443b583cf8915bf3e3528284fbeb9c4b48fb694787f1a7959b45b369
+klusmp.c  d9a40052c6c29c6ecf7c2ee34a946512d3221908787b2e15095fad69ea9f297d
+niiter.c  fa26677f5436801e0e725cf9500b80a03b3c2faf7a8fa0cbe32c518f1d7a811e
+
+=== compile commands (public-safe relative form; only the four object targets) ===
+cwd <scratch>/<side>/src/maths/KLU: make -j1 V=1 libKLU_la-klusmp.lo
+cwd <scratch>/<side>/src/maths/ni : make -j1 V=1 niiter.lo
+(configured Makefile/libtool path: ./libtool --tag=CC --mode=compile gcc -DHAVE_CONFIG_H
+ -I. -I. -I../../../src/include -I../../../src/include -static -O2 -s -Wall -Wextra
+ -Wmissing-prototypes -Wstrict-prototypes -Wnested-externs -Wold-style-definition
+ -Wredundant-decls -Wconversion -Wno-unused-but-set-variable -std=gnu11 -fopenmp
+ -MT <target> -MD -MP -MF .deps/<target>.Tpo -c -o <target> <source>; verbatim argv in raw stdout)
+
+=== per-TU records ===
+TU1: base_ctrl/src/maths/KLU/libKLU_la-klusmp.lo
+  rc=0 warnings=3 errors=0
+  stdout bytes=884 sha256=1077f2af0ccf072bbfba8d840b0f0a445a6dcc9e37b244b63ff396bffec8c001
+  stderr bytes=1545 sha256=2aa1ba676d592b2a118feaa0d5db731e13f997c18acbc75fa2c7b1496afa3f3c
+TU2: base_ctrl/src/maths/ni/niiter.lo
+  rc=0 warnings=0 errors=0
+  stdout bytes=771 sha256=bd762ab604a23dd31371ca7df4691029fe01dd557808f4eaa8ef2ab6fb8e376f
+  stderr bytes=0 sha256=e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855
+TU3: patched/src/maths/KLU/libKLU_la-klusmp.lo
+  rc=0 warnings=3 errors=0
+  stdout bytes=884 sha256=1077f2af0ccf072bbfba8d840b0f0a445a6dcc9e37b244b63ff396bffec8c001
+  stderr bytes=1545 sha256=2aa1ba676d592b2a118feaa0d5db731e13f997c18acbc75fa2c7b1496afa3f3c
+TU4: patched/src/maths/ni/niiter.lo
+  rc=0 warnings=0 errors=0
+  stdout bytes=771 sha256=bd762ab604a23dd31371ca7df4691029fe01dd557808f4eaa8ef2ab6fb8e376f
+  stderr bytes=0 sha256=e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855
+
+=== warning payload comparison (base vs patched, per TU) ===
+klusmp warning payloads:
+  base    3 lines, sha256 1b5f418e095cb535ae894e7712b460b1fd24abeb9b933451276e435864f3404c
+  patched 3 lines, sha256 1b5f418e095cb535ae894e7712b460b1fd24abeb9b933451276e435864f3404c
+  cmp -s: IDENTICAL; delta 0 (the three known base -Wredundant-decls warnings:
+  memory.h:12/13/14 tmalloc/trealloc/txfree vs sparse spdefs.h:367/368/369)
+niiter warning payloads: base 0 lines / patched 0 lines; delta 0
+authority: logs/make.log (sha256 75cd8cd8a1544ad2...) contains the identical three warnings
+
+=== object identities (.lo wrapper + underlying .o) ===
+base_ctrl/src/maths/KLU/libKLU_la-klusmp.lo bytes=299 sha256=6c8f254b6be420d05a5dd6a0793cc8b77e85877b22630130a7a87b2e4adc262e
+base_ctrl/src/maths/KLU/libKLU_la-klusmp.o  bytes=26944 sha256=d894f44db1c7bfa5ced6c578390bf492e5c1fd9a33b22cedeb55b4d83e50fe8c
+base_ctrl/src/maths/ni/niiter.lo bytes=279 sha256=7418b7bc4edb9d9018dc59e70c0a2640eff002216e2f4e69b131b752348e3263
+base_ctrl/src/maths/ni/niiter.o  bytes=8864 sha256=0f81b74d267a495fc6363bc1b3dbc42cca66fa16aff909ff1d3b9266b333875e
+patched/src/maths/KLU/libKLU_la-klusmp.lo bytes=299 sha256=6c8f254b6be420d05a5dd6a0793cc8b77e85877b22630130a7a87b2e4adc262e
+patched/src/maths/KLU/libKLU_la-klusmp.o  bytes=33904 sha256=51ec190568cbf9412c615bc351cd50a537b8afccdac0f5ee8dfff1bd4a0834d3
+patched/src/maths/ni/niiter.lo bytes=279 sha256=7418b7bc4edb9d9018dc59e70c0a2640eff002216e2f4e69b131b752348e3263
+patched/src/maths/ni/niiter.o  bytes=9976 sha256=b814bec39e8495728cf03f9e9db3c23c3b58d81312210ca607c229f210453718
+
+=== disposition ===
+OBJECT_STATUS=complete_with_matched_base_warnings
+PATCH_WARNING_DELTA=0 (klusmp 3==3 identical payloads; niiter 0==0)
+ERRORS=0 (all four compiles rc=0, errors=0)
+Boundaries: NOT a clean/pass verdict; NOT link/runtime/circuit evidence;
+no archive/shared-library/executable link, no invocation, no simulation;
+only the four scratch object targets and dep stamps were removed/regenerated.

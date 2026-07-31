@@ -1,0 +1,73 @@
+NGSPICE46-VBIC-MNA-SNAPSHOT-PROBE-V3-RUNTIME-V4.log
+Paired native ngspice diagnostic — accepted corrected recount (log-only; no invocation)
+Date (UTC): 2026-07-31T20:15:00Z
+Failed attempts preserved: RUNTIME-V1 dirs (harness manifest-parser defect; invocations rc=0),
+  RUNTIME-V2.log (raw finite recount tokenized the binary region), RUNTIME-V3.log
+  (recount parser consumed past the Binary: marker; 0-byte payload result invalid).
+  All prior logs and evidence dirs unchanged; nothing removed or reused.
+Evidence dirs (never removed/reused): NGSPICE46-VBIC-MNA-SNAPSHOT-PROBE-V3-RUNTIME-V2-BASE-RUN
+  and -PATCHED-RUN — the source of every count below.
+Native-scope statement: this deck is OUTSIDE the shared OpenADA profile (PDK libraries/
+  includes + control block: pre_osdi psp103.osdi/psp103_nqs.osdi, save all, tran 2p 4.0n,
+  write raw all): native ngspice evidence only, NOT backend-comparable OpenADA.
+
+=== command identity (exact; per side, invoked EXACTLY ONCE in the V2 runs) ===
+  ( cd <run-dir> && LC_ALL=C timeout 60s <side-executable> -b tb_p1_cml_div2_front_tran_v5.cir < /dev/null )
+
+=== invocation results (V2 runs; evidence rehashed) ===
+base: rc=0 started=2026-07-31T20:00:09Z ended=2026-07-31T20:00:10Z
+  stdout 5818 B sha 31f5593a247feca01aab20e1fceedf558b41606def13aea5ecaf3b073921b16d | stderr 10495 B sha 2676cdce3d9e5503b647578ef5c4835c73d80ff5fdfa264126cd88dabe175c43 | raw 7857477 B sha 75598b19e365b4e23e6e22e7131fcfcf5466b6693d8262e92997b0540125846c
+patched: rc=0 started=2026-07-31T20:00:10Z ended=2026-07-31T20:00:12Z
+  stdout 5818 B sha 82b16ef8597c254d13621d00d987e986ed3a3a612f4dff3ce407f95d5c8c05da | stderr 360577 B sha dfeba4dcb0462456b31ce72ba8b22d2bbf55ac21317982a0bd81ac81e10b3a2c | raw 7857477 B sha b910d48bf7fb0505d61280975dc855e71de788ae8c08e904b95f70efb86d1145
+
+=== raw binary payload recount (binary-aware; every assertion PASS) ===
+structure: Binary: marker; data region = 7838688 bytes = 429 x 2284 x 8 (asserted before unpack)
+header: exactly 429 variable rows (asserted); raw file shas differ ONLY via the Date header line
+data-region sha256 both sides: 26c62c1942b552ae609f6eb57e9746ee30ad77b7a5c6e433c118ddd965de3de7 (byte-identical)
+time vector: strict 0 -> 4e-9 s, monotonic, identical both sides
+doubles: 979,836 per side, ALL FINITE (0 nonfinite); values identical
+
+=== prior diagnostic markers (per side) ===
+8 distinct [VBIC_*] markers, exactly 1 each, identical on both sides:
+  [VBIC_IBE_SOURCE_DIAGNOSTIC] x1
+  [VBIC_ITH_RHS_DECOMP_DIAGNOSTIC] x1
+  [VBIC_ITH_TERM_DIAGNOSTIC] x1
+  [VBIC_TEMPNODE_STAMP_DIAGNOSTIC] x1
+  [VBIC_TEMP_SCALE_DIAGNOSTIC] x1
+  [VBIC_THERMAL_VECTOR_PROBE] x1
+  [VBIC_VRTH_ORIGIN_DIAGNOSTIC] x1
+  [VBIC_VRTH_TRANSITION_DIAGNOSTIC] x1
+
+=== stderr identity ===
+patched stderr (360577 B) minus exactly 4000 [MNA_SNAPSHOT_*] lines == base stderr byte-for-byte (10495 B, sha 2676cdce3d9e5503b647578ef5c4835c73d80ff5fdfa264126cd88dabe175c43)
+
+=== patched MNA records (recount; all assertions PASS) ===
+total MNA_SNAPSHOT lines: 4000
+snapshot id=1 phase=prefactor : BEGIN, 3254 ENTRY, 371 RHS, END (3627 lines)
+snapshot id=1 phase=postsolve : BEGIN, 371 SOL, END (373 lines)
+BEGIN/END event key on all 4 records: id=1 tnode=100 iterno=3 time=0x0p+0 mode=1056 backend=0
+GUARD: 0 | UNSUPPORTED: 0 | ABORT: 0 (complete pair, no markers)
+entry coordinate bounds: row 1..371, col 1..371; RHS/SOL indices 1..371 (742 total)
+finite=1 records: 3996 | finite=0 records: 0 (== entries 3254 + RHS 371 + SOL 371)
+END counts: prefactor entries 3254/3254 MATCH, vector 371/371 MATCH; postsolve entries 0/0 MATCH, vector 371/371 MATCH
+
+=== stdout identity (documented difference) ===
+stdout 125 lines / 5818 B both sides; ONLY line 122 differs (416 B, 13 'Reference value'
+tokens both sides, values differ). Source authority outitf.c:666-687: that print is a
+wall-clock progress tick ('Reference value : %12.5e\r' when currclock-lastclock > 0.25 s
+during the raw write) — a timing artifact, NOT circuit data: the raw data region and the
+time vector are byte-identical between the sides.
+
+=== post-execution rehash (V2 runs) ===
+executables unchanged (9ec2e4a1.../f2d2cd19...); run-dir deck/netlist copies unchanged;
+inputs rehashed before and after (deck 46e7f223, netlist 689d4bee, manifest 32cc8891, 35 deps).
+
+=== claim separation ===
+EXECUTION: base and patched each ran the frozen 4ns tran deck exactly once, rc=0, within 60s.
+EVIDENCE VALIDITY: no mutation (pre/post rehash); captures unmodified; binary-aware asserts
+  all PASS; every count above is a recount of the captured records.
+COMPARISON: circuit-run payload identical between sides (raw data regions byte-identical,
+  all-finite, strict 0->4ns; stderr identical except the 4000 MNA_SNAPSHOT lines; stdout
+  differs only in the wall-clock progress line, documented).
+MEASUREMENT: NOT evaluated (no spec limits applied to any value).
+SPECIFICATION: NOT evaluated.

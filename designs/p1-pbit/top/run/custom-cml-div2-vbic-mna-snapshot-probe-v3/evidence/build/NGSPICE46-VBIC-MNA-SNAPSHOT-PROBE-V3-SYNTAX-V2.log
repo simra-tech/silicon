@@ -1,0 +1,67 @@
+NGSPICE46-VBIC-MNA-SNAPSHOT-PROBE-V3-SYNTAX-V2.log
+Probe V3 matched syntax evidence packaging (immutable; no compiler rerun)
+Date (UTC): 2026-07-31T18:52:00Z
+Compiler: gcc (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0
+Superseded V1 (same-path evidence, not edited again): sha256 f0b679e574353cabed1d082908c13e731fbdc0624ce300540e80789fdaff012d
+This V2 log packages the completed fresh single-apply run whose per-TU
+stderr payloads are retained verbatim in the superseded V1 log and
+extracted here byte-exactly (extracted bytes == logged stderr_bytes for
+all four translation units).
+
+=== identities ===
+bases (verified before patching, both copies):
+  smpdefs.h 13e94b623930c952ac05a0d8100121107c99a37e5fc096cf63e9bc9f9e8e9196
+  klusmp.c  4d1f9a39d33712948a8b25c461e060eadb80d3437a02f6011d0036617c0a0b20
+  niiter.c  687e2f85776c7c1a064a980e333502aefd8162c4dd3a360412845a7a923e9625 (Probe-V4 TU base)
+patch: NGSPICE46-VBIC-MNA-SNAPSHOT-PROBE-V3.patch sha256 d833221f0d133ea75ea5e70861eb42c32a409f6c1aa01465cf78dc93aa2e4afa
+  applied exactly once to the patched scratch copy (rc=0, no reversal)
+targets after patching (verified):
+  smpdefs.h 61acdc96443b583cf8915bf3e3528284fbeb9c4b48fb694787f1a7959b45b369
+  klusmp.c  d9a40052c6c29c6ecf7c2ee34a946512d3221908787b2e15095fad69ea9f297d
+  niiter.c  fa26677f5436801e0e725cf9500b80a03b3c2faf7a8fa0cbe32c518f1d7a811e
+compiler: gcc (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0
+syntax command (public-safe relative form; -c/-o/-MT/-MD/-MP/-MF -> -fsyntax-only):
+  gcc -DHAVE_CONFIG_H -I. -I. -I../../../src/include -I../../../src/include -static -O2 -s
+      -Wall -Wextra -Wmissing-prototypes -Wstrict-prototypes -Wnested-externs
+      -Wold-style-definition -Wredundant-decls -Wconversion -Wno-unused-but-set-variable
+      -std=gnu11 -fopenmp -fsyntax-only <translation-unit>
+  run from cwd <scratch>/src/maths/KLU and <scratch>/src/maths/ni (relative form)
+build metadata: KLU Makefile libKLU_la_CPPFLAGS=-I. -I$(srcdir) -I$(top_builddir)/src/include
+  -I$(top_srcdir)/src/include; maths/ni AM_CPPFLAGS identical; AM_CFLAGS=$(STATIC)=-static;
+  configure CFLAGS -O2 -s -Wall -Wextra -Wmissing-prototypes -Wstrict-prototypes
+  -Wnested-externs -Wold-style-definition -Wredundant-decls -Wconversion
+  -Wno-unused-but-set-variable -std=gnu11 -fopenmp; -DHAVE_CONFIG_H (config.h defines KLU)
+
+=== per-translation-unit records (4) ===
+TU: base_klusmp
+  rc=0 warnings=3 errors=0 stderr_bytes=1545
+  stderr sha256: 2aa1ba676d592b2a118feaa0d5db731e13f997c18acbc75fa2c7b1496afa3f3c
+TU: base_niiter
+  rc=0 warnings=0 errors=0 stderr_bytes=0
+  stderr sha256: e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855
+TU: patched_klusmp
+  rc=0 warnings=3 errors=0 stderr_bytes=1545
+  stderr sha256: 2aa1ba676d592b2a118feaa0d5db731e13f997c18acbc75fa2c7b1496afa3f3c
+TU: patched_niiter
+  rc=0 warnings=0 errors=0 stderr_bytes=0
+  stderr sha256: e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855
+
+=== raw stderr payload equality proofs ===
+cmp -s base_klusmp_payload patched_klusmp_payload: IDENTICAL (byte-equal)
+sha256 base_klusmp_payload == sha256 patched_klusmp_payload: 2aa1ba676d592b2a118feaa0d5db731e13f997c18acbc75fa2c7b1496afa3f3c
+base_niiter_payload bytes: 0 (empty stderr)
+patched_niiter_payload bytes: 0 (empty stderr)
+
+=== original configured build-log authority for the same three warnings ===
+authority file: <tmp>/ngspice_46_vrth_transition_v2_build/logs/make.log sha256 75cd8cd8a1544ad2762c6bacdd10d2d0ad89e9ff26b2fe7fc59345163c2c3186
+  ../../../src/include/ngspice/memory.h:12:14: warning: redundant redeclaration of ‘tmalloc’ [-Wredundant-decls]
+  ../../../src/include/ngspice/memory.h:13:14: warning: redundant redeclaration of ‘trealloc’ [-Wredundant-decls]
+  ../../../src/include/ngspice/memory.h:14:13: warning: redundant redeclaration of ‘txfree’ [-Wredundant-decls]
+(identical warnings appear in the accepted original build's klusmp compile)
+
+=== disposition ===
+SYNTAX_STATUS=complete_with_matched_preexisting_warnings
+PATCH_WARNING_DELTA=0 (base klusmp 3 warnings == patched klusmp 3 warnings; niiter 0 == 0)
+ERRORS=0 (all four TUs rc=0, errors=0)
+Boundaries: NOT a clean/pass verdict; NOT object/link/runtime/circuit evidence;
+no compiler rerun, no object generation, no link, no invocation, no simulation.

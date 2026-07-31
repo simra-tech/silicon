@@ -1,0 +1,320 @@
+--- a/src/include/ngspice/smpdefs.h
++++ b/src/include/ngspice/smpdefs.h
+@@ -84,6 +84,16 @@
+ int SMPzeroRow(SMPmatrix *Matrix, int Row);
+ void SMPconstMult(SMPmatrix *, double);
+ void SMPmultiply(SMPmatrix *, double *, double *, double *, double *);
++/* [MNA_SNAPSHOT] read-only diagnostic snapshot helper; implemented in the
++ * effective KLU wrapper (src/maths/KLU/klusmp.c). Emits to stderr with %a
++ * precision; no matrix/RHS/state writes, no element creation, no
++ * arithmetic recomputation. size is the largest valid equation index
++ * (ckt->CKTmaxEqNum - 1); indices 1..size inclusive are emitted. Returns
++ * 0 on structural completeness (status=complete), non-zero on
++ * failure/partial (codes documented in klusmp.c). phase must be exactly
++ * "prefactor", "postsolve", or "abort". */
++int SMPsnapshotMNA( SMPmatrix *, double *, int, int, const char *,
++                    long, int, int, double, long );
+ 
+ #ifdef CIDER
+ void SMPcSolveForCIDER (SMPmatrix *, double [], double [], double [], double []) ;
+--- a/src/maths/KLU/klusmp.c
++++ b/src/maths/KLU/klusmp.c
+@@ -2007,3 +2007,209 @@
+     }
+ }
+ 
++
++
++/* ---- [MNA_SNAPSHOT] read-only diagnostic snapshot helper. ----
++ * Declared in ngspice/smpdefs.h. Emits to stderr with %a precision;
++ * synchronous, once-only by the caller; no writes to the matrix, RHS, or
++ * circuit state; no element creation; no arithmetic recomputation (stored
++ * values are emitted as-is). size is the largest valid equation index
++ * (ckt->CKTmaxEqNum - 1): indices 1..size inclusive are emitted and the
++ * same bound validates external row/column identities and vector_expected.
++ * Every BEGIN/END/UNSUPPORTED/ABORT/GUARD record carries the full event
++ * provenance (snapshot id, tnode, iterno, time, mode, backend, phase);
++ * every structurally valid stored entry and every RHS/solution index is
++ * emitted with an explicit finite=0/1 flag and counted observed. The
++ * sparse pre-factor enumeration is TWO-PASS: a read-only validation/count
++ * pass over all safely traversable FirstInCol/NextInCol chains computes
++ * the EXACT full stored-entry count (entries_expected) and records range
++ * guards WITHOUT indexing an invalid map position; if any structural/
++ * range guard fired, NO entry/vector payload is emitted (status=incomplete)
++ * and only a clean pass may perform the second emit pass. Return codes:
++ *   0 = MNA_SNAP_OK        structural completeness (status=complete)
++ *   1 = MNA_SNAP_ARG       NULL/negative argument or size <= 0
++ *   2 = MNA_SNAP_BACKEND   backend_flag != Matrix->CKTkluMODE
++ *   3 = MNA_SNAP_PHASE     phase not exactly prefactor/postsolve/abort
++ *   4 = MNA_SNAP_UNSUP     KLU prefactor unsupported (fail closed)
++ *   5 = MNA_SNAP_STRUCT    sparse structure/map guard
++ *   6 = MNA_SNAP_RANGE     internal/external range guard
++ *   7 = MNA_SNAP_PARTIAL   KLU postsolve vector (status=partial)
++ *   8 = MNA_SNAP_ABORT     keyed iteration abandoned before solve
++ * The sparse branch walks the private MatrixFrame column chains INSIDE
++ * the SMP layer and maps internal indices through
++ * IntToExtRowMap/IntToExtColMap. The KLU pre-factor phase fails closed:
++ * the CSC arrays (KLUmatrixAp/Ai/Ax) are populated only by the
++ * reorder/factor conversion (SMPreorder/SMPluFac KLU branches), so the
++ * pre-factor CSC is uninitialized at the snapshot site, and the
++ * post-conversion external identity passes through node collapsing
++ * (KLUmatrixNodeCollapsingNewToOld). The post-solve solution vector is
++ * available in RHS in both modes (the effective SMPsolve writes the
++ * solution back into RHS). ---- */
++
++#define MNA_SNAP_OK        0
++#define MNA_SNAP_ARG       1
++#define MNA_SNAP_BACKEND   2
++#define MNA_SNAP_PHASE     3
++#define MNA_SNAP_UNSUP     4
++#define MNA_SNAP_STRUCT    5
++#define MNA_SNAP_RANGE     6
++#define MNA_SNAP_PARTIAL   7
++#define MNA_SNAP_ABORT     8
++
++static long long
++SMPsnapshotMNA_emit_vector (double *RHS, int size, const char *tag,
++                            long id, const char *phase)
++{
++    long long observed = 0;
++    int I;
++
++    for (I = 1; I <= size; I++) {
++        /* every index 1..size is structurally valid; non-finite values are
++         * preserved with %a and an explicit finite=0/1 flag */
++        fprintf (stderr, "[MNA_SNAPSHOT_%s] id=%ld phase=%s index=%d value=%a finite=%d\n",
++                 tag, id, phase, I, RHS [I], isfinite (RHS [I]) ? 1 : 0);
++        observed++;
++    }
++    return observed;
++}
++
++static int
++SMPsnapshotMNA_sparse (SMPmatrix *Matrix, double *RHS, int size,
++                       long id, int tnode, int iterno, double ckt_time,
++                       long ckt_mode, int backend_flag, const char *phase,
++                       long long *entries_expected, long long *entries_observed,
++                       long long *vector_observed)
++{
++    MatrixPtr M = Matrix->SPmatrix;
++    ElementPtr pElement;
++    int I, ext_row, ext_col;
++    int guards = 0;
++
++    *entries_expected = 0;
++    *entries_observed = 0;
++    *vector_observed = 0;
++    if (M == NULL || M->FirstInCol == NULL || M->IntToExtRowMap == NULL ||
++        M->IntToExtColMap == NULL) {
++        fprintf (stderr, "[MNA_SNAPSHOT_GUARD] id=%ld tnode=%d iterno=%d time=%a mode=%ld backend=%d phase=%s reason=sparse_structure_maps_unavailable\n",
++                 id, tnode, iterno, ckt_time, ckt_mode, backend_flag, phase);
++        return MNA_SNAP_STRUCT;
++    }
++    if (strcmp (phase, "prefactor") == 0) {
++        /* pass 1: read-only validation/count over all safely traversable
++         * FirstInCol/NextInCol chains. entries_expected is the EXACT full
++         * stored-entry count even when a range defect exists; the internal
++         * range check precedes any map indexing, so an invalid position is
++         * never indexed. Range guards are recorded and counted. */
++        for (I = 1; I <= M->Size; I++) {
++            for (pElement = M->FirstInCol [I]; pElement != NULL;
++                 pElement = pElement->NextInCol) {
++                (*entries_expected)++;
++                if (pElement->Row < 1 || pElement->Row > M->Size ||
++                    I < 1 || I > M->Size) {
++                    fprintf (stderr, "[MNA_SNAPSHOT_GUARD] id=%ld tnode=%d iterno=%d time=%a mode=%ld backend=%d phase=%s reason=internal_range entry=%lld row=%d col=%d\n",
++                             id, tnode, iterno, ckt_time, ckt_mode, backend_flag,
++                             phase, *entries_expected, pElement->Row, I);
++                    guards++;
++                    continue;
++                }
++                ext_row = M->IntToExtRowMap [pElement->Row];
++                ext_col = M->IntToExtColMap [I];
++                if (ext_row < 1 || ext_row > size || ext_col < 1 ||
++                    ext_col > size) {
++                    fprintf (stderr, "[MNA_SNAPSHOT_GUARD] id=%ld tnode=%d iterno=%d time=%a mode=%ld backend=%d phase=%s reason=external_range entry=%lld ext_row=%d ext_col=%d\n",
++                             id, tnode, iterno, ckt_time, ckt_mode, backend_flag,
++                             phase, *entries_expected, ext_row, ext_col);
++                    guards++;
++                    continue;
++                }
++            }
++        }
++        if (guards != 0) {
++            /* fail closed: no entry/vector payload; the exact full expected
++             * count is still reported so truncation is detectable */
++            return MNA_SNAP_RANGE;
++        }
++        /* pass 2: emit pass — only after a clean validation pass */
++        for (I = 1; I <= M->Size; I++) {
++            for (pElement = M->FirstInCol [I]; pElement != NULL;
++                 pElement = pElement->NextInCol) {
++                ext_row = M->IntToExtRowMap [pElement->Row];
++                ext_col = M->IntToExtColMap [I];
++                fprintf (stderr, "[MNA_SNAPSHOT_ENTRY] id=%ld phase=%s row=%d col=%d value=%a finite=%d\n",
++                         id, phase, ext_row, ext_col, pElement->Real,
++                         isfinite (pElement->Real) ? 1 : 0);
++                (*entries_observed)++;
++            }
++        }
++        *vector_observed = SMPsnapshotMNA_emit_vector (RHS, size, "RHS", id, phase);
++    } else {
++        /* postsolve: the solution vector, same external identity */
++        *vector_observed = SMPsnapshotMNA_emit_vector (RHS, size, "SOL", id, phase);
++    }
++    return MNA_SNAP_OK;
++}
++
++int
++SMPsnapshotMNA (SMPmatrix *Matrix, double *RHS, int size, int backend_flag,
++                const char *phase, long id, int tnode, int iterno,
++                double ckt_time, long ckt_mode)
++{
++    long long entries_expected = 0, entries_observed = 0, vector_observed = 0;
++    long long vector_expected = (long long) size;
++    int rc = MNA_SNAP_OK;
++
++    if (Matrix == NULL || RHS == NULL || phase == NULL || size <= 0) {
++        fprintf (stderr, "[MNA_SNAPSHOT_GUARD] id=%ld tnode=%d iterno=%d time=%a mode=%ld backend=%d phase=%s reason=invalid_argument size=%d\n",
++                 id, tnode, iterno, ckt_time, ckt_mode, backend_flag,
++                 phase ? phase : "?", size);
++        return MNA_SNAP_ARG;
++    }
++    if (backend_flag != Matrix->CKTkluMODE) {
++        fprintf (stderr, "[MNA_SNAPSHOT_GUARD] id=%ld tnode=%d iterno=%d time=%a mode=%ld backend=%d phase=%s reason=backend_mismatch flag=%d matrix=%u\n",
++                 id, tnode, iterno, ckt_time, ckt_mode, backend_flag, phase,
++                 backend_flag, (unsigned int) Matrix->CKTkluMODE);
++        return MNA_SNAP_BACKEND;
++    }
++    if (strcmp (phase, "prefactor") != 0 && strcmp (phase, "postsolve") != 0 &&
++        strcmp (phase, "abort") != 0) {
++        fprintf (stderr, "[MNA_SNAPSHOT_GUARD] id=%ld tnode=%d iterno=%d time=%a mode=%ld backend=%d phase=%s reason=invalid_phase\n",
++                 id, tnode, iterno, ckt_time, ckt_mode, backend_flag, phase);
++        return MNA_SNAP_PHASE;
++    }
++    if (strcmp (phase, "abort") == 0) {
++        /* fail-closed marker for a keyed iteration abandoned before solve */
++        fprintf (stderr, "[MNA_SNAPSHOT_ABORT] id=%ld tnode=%d iterno=%d time=%a mode=%ld backend=%d phase=%s reason=keyed_iteration_abandoned_before_solve\n",
++                 id, tnode, iterno, ckt_time, ckt_mode, backend_flag, phase);
++        return MNA_SNAP_ABORT;
++    }
++    if (Matrix->CKTkluMODE) {
++        if (strcmp (phase, "prefactor") == 0) {
++            /* Fail closed: the pre-factor KLU CSC is uninitialized at this
++             * lifecycle point (immediately after CKTload, before any
++             * reorder/factor) and the post-conversion identity is
++             * node-collapsed. No completeness claim is emitted. */
++            fprintf (stderr, "[MNA_SNAPSHOT_UNSUPPORTED] id=%ld tnode=%d iterno=%d time=%a mode=%ld backend=%d phase=%s reason=klu_prefactor_csc_uninitialized\n",
++                     id, tnode, iterno, ckt_time, ckt_mode, backend_flag, phase);
++            return MNA_SNAP_UNSUP;
++        }
++        /* postsolve in KLU mode: separately labelled PARTIAL vector
++         * diagnostic only; never implies a complete pre/post MNA pair */
++        fprintf (stderr, "[MNA_SNAPSHOT_BEGIN] id=%ld tnode=%d iterno=%d time=%a mode=%ld backend=%d phase=%s\n",
++                 id, tnode, iterno, ckt_time, ckt_mode, backend_flag, phase);
++        vector_observed = SMPsnapshotMNA_emit_vector (RHS, size, "SOL", id, phase);
++        fprintf (stderr, "[MNA_SNAPSHOT_END] id=%ld tnode=%d iterno=%d time=%a mode=%ld backend=%d phase=%s status=partial entries_expected=0 entries_observed=0 vector_expected=%lld vector_observed=%lld\n",
++                 id, tnode, iterno, ckt_time, ckt_mode, backend_flag, phase,
++                 vector_expected, vector_observed);
++        return MNA_SNAP_PARTIAL;
++    }
++    fprintf (stderr, "[MNA_SNAPSHOT_BEGIN] id=%ld tnode=%d iterno=%d time=%a mode=%ld backend=%d phase=%s\n",
++             id, tnode, iterno, ckt_time, ckt_mode, backend_flag, phase);
++    rc = SMPsnapshotMNA_sparse (Matrix, RHS, size, id, tnode, iterno, ckt_time,
++                                ckt_mode, backend_flag, phase, &entries_expected,
++                                &entries_observed, &vector_observed);
++    fprintf (stderr, "[MNA_SNAPSHOT_END] id=%ld tnode=%d iterno=%d time=%a mode=%ld backend=%d phase=%s status=%s entries_expected=%lld entries_observed=%lld vector_expected=%lld vector_observed=%lld\n",
++             id, tnode, iterno, ckt_time, ckt_mode, backend_flag, phase,
++             (rc == MNA_SNAP_OK) ? "complete" : "incomplete", entries_expected,
++             entries_observed, vector_expected, vector_observed);
++    return rc;
++}
+--- a/src/maths/ni/niiter.c
++++ b/src/maths/ni/niiter.c
+@@ -44,6 +44,24 @@
+     long mode_at_load = 0;
+     double old_before_load = NAN, assembled_before_solve = NAN;
+     double solved_after_solve = NAN, after_damping = NAN, old_after_swap = NAN;
++#ifdef KLU
++    /* [MNA_SNAPSHOT] per-invocation latches + saved event key; the snapshot
++       id is process-stable (static sequence). postsolve is armed only after
++       a successful sparse prefactor snapshot (SMPsnapshotMNA == 0). The
++       event key is the accepted probe event (tnode 100, iterno 3, CKTtime 0,
++       MODETRANOP|MODEINITFIX; run 14b0060c). The size passed to the helper
++       is the largest valid equation index (int) ckt->CKTmaxEqNum - 1
++       (cktinit.c:42 init 1; cktnewn.c:37 node->number = CKTmaxEqNum++;
++       span.c alloc/copy CKTmaxEqNum elements; cktdump.c:42/cktnames.c:23
++       publish CKTmaxEqNum - 1); the helper fails closed on size <= 0. */
++    bool vtp_snap_pre_done = FALSE;
++    bool vtp_snap_post_done = FALSE;
++    double vtp_snap_time = NAN;
++    long vtp_snap_mode = 0;
++    long vtp_snap_id = 0;
++    static long vtp_snap_seq = 0;
++    const int vtp_snap_iter = 3;
++#endif
+ 
+     /* some convergence issues that get resolved by increasing max iter */
+     if (maxIter < 100)
+@@ -139,6 +157,27 @@
+                 FREE(OldCKTstate0);
+                 return (error);
+             }
++#ifdef KLU
++            /* [MNA_SNAPSHOT] pre-factor phase: once-only, immediately after
++               CKTload and before any reorder/factor (SMPpreOrder, SMPreorder,
++               SMPluFac below); saves the event key and arms postsolve only
++               on a successful sparse prefactor (SMPsnapshotMNA == 0) */
++            if (vtp_armed == 1 && !vtp_snap_pre_done &&
++                iterno == vtp_snap_iter && ckt->CKTtime == 0.0 &&
++                ((ckt->CKTmode & MODETRANOP) != 0) &&
++                ((ckt->CKTmode & MODEINITFIX) != 0)) {
++                const int vtp_snap_max_eq = (int) ckt->CKTmaxEqNum - 1;
++                vtp_snap_time = ckt->CKTtime;
++                vtp_snap_mode = (long) ckt->CKTmode;
++                vtp_snap_id = ++vtp_snap_seq;
++                if (SMPsnapshotMNA(ckt->CKTmatrix, ckt->CKTrhs,
++                                   vtp_snap_max_eq, ckt->CKTkluMODE,
++                                   "prefactor", vtp_snap_id, vtp_tnode,
++                                   iterno, ckt->CKTtime,
++                                   (long) ckt->CKTmode) == 0)
++                    vtp_snap_pre_done = TRUE;
++            }
++#endif
+ 
+             /* printf("after loading, before solving\n"); */
+             /* CKTdump(ckt); */
+@@ -311,6 +350,33 @@
+                 after_damping = solved_after_solve;
+                 iteration_captured = TRUE;
+             }
++#ifdef KLU
++            /* [MNA_SNAPSHOT] post-solve phase: full solution vector, once-only,
++               immediately after SMPsolve (before any damping); re-checks the
++               exact saved event key (iterno/time/mode); if control left the
++               keyed iteration before the solve (e.g., the sparse E_SINGULAR
++               reorder-continue at base niiter.c:258), emit a fail-closed ABORT
++               and never pair with a later solve */
++            if (vtp_snap_pre_done && !vtp_snap_post_done) {
++                const int vtp_snap_max_eq = (int) ckt->CKTmaxEqNum - 1;
++                if (iterno == vtp_snap_iter && ckt->CKTtime == vtp_snap_time &&
++                    (long) ckt->CKTmode == vtp_snap_mode) {
++                    SMPsnapshotMNA(ckt->CKTmatrix, ckt->CKTrhs,
++                                   vtp_snap_max_eq, ckt->CKTkluMODE,
++                                   "postsolve", vtp_snap_id, vtp_tnode,
++                                   iterno, ckt->CKTtime,
++                                   (long) ckt->CKTmode);
++                } else {
++                    SMPsnapshotMNA(ckt->CKTmatrix, ckt->CKTrhs,
++                                   vtp_snap_max_eq, ckt->CKTkluMODE,
++                                   "abort", vtp_snap_id, vtp_tnode,
++                                   vtp_snap_iter, vtp_snap_time,
++                                   vtp_snap_mode);
++                    vtp_snap_pre_done = FALSE;
++                }
++                vtp_snap_post_done = TRUE;
++            }
++#endif
+             ckt->CKTstat->STATsolveTime +=
+                 SPfrontEnd->IFseconds() - startTime;
+ #ifdef STEPDEBUG

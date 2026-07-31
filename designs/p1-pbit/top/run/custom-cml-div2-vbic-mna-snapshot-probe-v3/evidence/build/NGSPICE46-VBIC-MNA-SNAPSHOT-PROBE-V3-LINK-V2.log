@@ -1,0 +1,71 @@
+NGSPICE46-VBIC-MNA-SNAPSHOT-PROBE-V3-LINK-V2.log
+Matched archive-and-executable link boundary for Probe V3 (immutable; design-only)
+Date (UTC): 2026-07-31T19:24:52Z
+Compiler: gcc (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0
+Libtool: libtool (GNU libtool) 2.4.7
+Runner: LINK-V2 (LINK-V1 name reserved as the explicit failed attempt of the first
+  guarded run, interrupted mid-Step-B; no LINK-V1 file was created).
+Scratch: $MATCHED_BUILD_ROOT/{base_ctrl,patched} (verified object-experiment copies reused;
+  objects pre-compiled rc=0: base klusmp.o d894f44d... niiter.o 0f81b74d...; patched klusmp.o
+  51ec1905... niiter.o b814bec3...)
+Sources: bases 13e94b62/4d1f9a39/687e2f85; patch d833221f applied once to patched;
+  targets 61acdc96/d9a40052/fa26677f verified before the object compile (object log 01518c6c...)
+
+=== link commands (public-safe relative form; configured make/libtool, -j1 V=1) ===
+STEP A: cwd <scratch>/<side>/src/maths/KLU : make -j1 V=1 libKLU.la
+STEP B: cwd <scratch>/<side>/src/maths/ni  : make -j1 V=1 libni.la
+STEP C: cwd <scratch>/<side>/src           : make -j1 V=1 ngspice
+(verbatim libtool --mode=link argv in raw stdout files; scratch root shown as <scratch>)
+
+=== per-step results ===
+STEPA base_ctrl rc=0 warnings=0 errors=0
+STEPB base_ctrl rc=0 warnings=0 errors=0
+STEPC base_ctrl rc=0 warnings=0 errors=0
+STEPA patched rc=0 warnings=0 errors=0
+STEPB patched rc=0 warnings=0 errors=0
+STEPC patched rc=0 warnings=0 errors=0
+PATCH_WARNING_DELTA=0 (no warnings at archive/link steps; compile-time delta already 0)
+
+=== rebuild chain fail-closed check (incremental bounded manifests) ===
+manifest = non-overlapping artifact allowlist (KLU dir depth-1 + .libs archives;
+  ni dir depth-1 + .libs archives; src binary/objects/Makefile + bounded .la/.a/.lo/.o/.Plo/.Po
+  find excluding maths/KLU and maths/ni); comparisons pre->A->B->C.
+  STEP A changed set subset-of {KLU/libKLU.la, KLU/.libs/libKLU.a}: ok (both copies)
+  STEP B changed set subset-of {NI/libni.la, NI/.libs/libni.a}: ok (both copies)
+  STEP C changed set subset-of {SRC/ngspice, SRC/.libs/ngspice}: ok (both copies)
+  four objects re-asserted unchanged across all steps (d894f44d/0f81b74d/51ec1905/b814bec3)
+
+=== nm symbol boundary evidence + executable resolution evidence ===
+archive boundary (nm):
+  base libKLU.a  : 0 SMPsnapshotMNA lines (no symbol)
+  patched libKLU.a:   00000000000028e0 T SMPsnapshotMNA 
+  base libni.a   : 0 SMPsnapshotMNA lines (no symbol)
+  patched libni.a:                    U SMPsnapshotMNA 
+executable level: the configured link passes -s (strip; verified in the raw link
+  argv) so the binaries carry no symbol table (nm base=0 patched=0 symbols).
+  Resolution evidence chain: (a) patched libKLU.a provides T, patched libni.a
+  requires U (nm above); (b) the patched ngspice link completed rc=0 with both
+  inputs present — an unresolved final reference would fail the link with rc!=0;
+  (c) the defining object's rodata is resident: MNA_SNAPSHOT format strings
+  base=0 patched=13 (13 observed); base binary absent.
+  The base side contains no SMPsnapshotMNA anywhere (0 occurrences across
+  libKLU.a, libni.a, ngspice).
+
+=== artifact identities (bytes + sha256) ===
+base_ctrl/src/maths/KLU/libKLU.la 886 6c0762e00a0bb2ee127a0910b6abca6a7918fcf08d6fad1b82e975ab225d4cb8
+base_ctrl/src/maths/KLU/.libs/libKLU.a 245610 b2bdd9644485502cccb13ab5c98f03e4a1fc2f57c59f05fa8602dd50a6595c19
+base_ctrl/src/maths/ni/libni.la 883 5cd3a8205d9cb043ede35b512c72e4cfc24cfd41e5fbbc82e4aa020736f895ed
+base_ctrl/src/maths/ni/.libs/libni.a 43698 257c2024c352674cb7e02d2b35dcda6f041756397130870f5b381ea4bb3f35f9
+base_ctrl/src/ngspice 8050256 9ec2e4a14ba0f497c6f8f253546081d7dc3b59131c19e4be50cd60284bf3c054
+patched/src/maths/KLU/libKLU.la 886 6c0762e00a0bb2ee127a0910b6abca6a7918fcf08d6fad1b82e975ab225d4cb8
+patched/src/maths/KLU/.libs/libKLU.a 252588 c4f742e9e2dc0ae8dfd31f59d7325fcd8d7af518aeefb0f054f93c9b1c997cbe
+patched/src/maths/ni/libni.la 883 5cd3a8205d9cb043ede35b512c72e4cfc24cfd41e5fbbc82e4aa020736f895ed
+patched/src/maths/ni/.libs/libni.a 44810 45dd8eb520cd49a97a2ebcdcad92f38751a82d56994d254878a5095300506ce8
+patched/src/ngspice 8054352 f2d2cd197f03818f1501dbebc983e5fcf1dd062965ea5e56dbff6b8dde01a0c7
+
+=== disposition ===
+LINK_STATUS=complete_matched_link_boundary
+ERRORS=0 (all six make invocations rc=0, errors=0; no warnings at archive/link steps)
+Boundaries: executables NOT invoked; no simulation; no runtime/circuit/spec evidence;
+the patched convenience-lib link resolves SMPsnapshotMNA (noinst_LTLIBRARIES expansion
+into the direct object set; no archive-order dependence for this symbol).

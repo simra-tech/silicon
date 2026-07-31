@@ -1,0 +1,122 @@
+NGSPICE46-VBIC-MNA-SNAPSHOT-PROBE-V3-SYNTAX-V1.log
+Matched syntax-only check for Probe V3 (immutable; design-only)
+Date (UTC): 2026-07-31T18:51:29Z
+Compiler: gcc (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0
+Scratch: $MATCHED_SYNTAX_ROOT/{base_ctrl,patched} (fresh cp -al from the configured tree)
+niiter.c TU base: accepted Probe-V4 687e2f85 (copied over the retained 270de96a in both copies)
+Patch applied exactly once: NGSPICE46-VBIC-MNA-SNAPSHOT-PROBE-V3.patch (sha256 d833221f...) to patched copy ONLY
+
+=== base hashes verified before patching (both copies) ===
+base_ctrl src/include/ngspice/smpdefs.h 13e94b623930c952ac05a0d8100121107c99a37e5fc096cf63e9bc9f9e8e9196
+base_ctrl src/maths/KLU/klusmp.c 4d1f9a39d33712948a8b25c461e060eadb80d3437a02f6011d0036617c0a0b20
+base_ctrl src/maths/ni/niiter.c 687e2f85776c7c1a064a980e333502aefd8162c4dd3a360412845a7a923e9625
+patched src/include/ngspice/smpdefs.h 13e94b623930c952ac05a0d8100121107c99a37e5fc096cf63e9bc9f9e8e9196
+patched src/maths/KLU/klusmp.c 4d1f9a39d33712948a8b25c461e060eadb80d3437a02f6011d0036617c0a0b20
+patched src/maths/ni/niiter.c 687e2f85776c7c1a064a980e333502aefd8162c4dd3a360412845a7a923e9625
+
+=== patch apply (patched only, once) ===
+patching file src/include/ngspice/smpdefs.h
+patching file src/maths/KLU/klusmp.c
+patching file src/maths/ni/niiter.c
+PATCH_APPLY_RC=0
+
+=== target hashes after patching ===
+patched smpdefs.h 61acdc96443b583cf8915bf3e3528284fbeb9c4b48fb694787f1a7959b45b369
+patched klusmp.c  d9a40052c6c29c6ecf7c2ee34a946512d3221908787b2e15095fad69ea9f297d
+patched niiter.c  fa26677f5436801e0e725cf9500b80a03b3c2faf7a8fa0cbe32c518f1d7a811e
+TARGET_SMPDEFS_MATCH=yes
+TARGET_KLUSMP_MATCH=yes
+TARGET_NIITER_MATCH=yes
+BASE_CTRL_NIITER=687e2f85776c7c1a064a980e333502aefd8162c4dd3a360412845a7a923e9625
+BASE_CTRL_SMPDEFS=13e94b623930c952ac05a0d8100121107c99a37e5fc096cf63e9bc9f9e8e9196
+BASE_CTRL_KLUSMP=4d1f9a39d33712948a8b25c461e060eadb80d3437a02f6011d0036617c0a0b20
+
+=== compiler identity ===
+gcc (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0
+
+=== syntax-check command (public-safe relative form) ===
+Recovered build metadata: KLU Makefile libKLU_la_CPPFLAGS = -I. -I$(srcdir) -I$(top_builddir)/src/include -I$(top_srcdir)/src/include;
+maths/ni AM_CPPFLAGS identical; AM_CFLAGS = $(STATIC) = -static; configure CFLAGS -O2 -s -Wall -Wextra
+-Wmissing-prototypes -Wstrict-prototypes -Wnested-externs -Wold-style-definition -Wredundant-decls
+-Wconversion -Wno-unused-but-set-variable -std=gnu11 -fopenmp; -DHAVE_CONFIG_H (config.h defines KLU).
+Substitution for syntax-only: -c/-o/-MT/-MD/-MP/-MF -> -fsyntax-only (output controls only; no object/dep writes).
+gcc -DHAVE_CONFIG_H -I. -I. -I../../../src/include -I../../../src/include -static -O2 -s -Wall -Wextra -Wmissing-prototypes -Wstrict-prototypes -Wnested-externs -Wold-style-definition -Wredundant-decls -Wconversion -Wno-unused-but-set-variable -std=gnu11 -fopenmp -fsyntax-only <translation-unit>
+
+=== per-translation-unit results ===
+TU: base_ctrl/src/maths/KLU/klusmp.c
+  cwd: base_ctrl/src/maths/KLU (relative form)
+  command: gcc -DHAVE_CONFIG_H -I. -I. -I../../../src/include -I../../../src/include -static -O2 -s -Wall -Wextra -Wmissing-prototypes -Wstrict-prototypes -Wnested-externs -Wold-style-definition -Wredundant-decls -Wconversion -Wno-unused-but-set-variable -std=gnu11 -fopenmp -fsyntax-only klusmp.c
+  rc=0 warnings=3 errors=0 stderr_bytes=1545
+  STOP: warning/error detected for base_ctrl/src/maths/KLU/klusmp.c
+  | In file included from ../../../src/include/ngspice/dstring.h:11,
+  |                  from ../../../src/include/ngspice/cpstd.h:23,
+  |                  from ../../../src/include/ngspice/cpdefs.h:14,
+  |                  from ../../../src/include/ngspice/fteext.h:21,
+  |                  from klusmp.c:13:
+  | ../../../src/include/ngspice/memory.h:12:14: warning: redundant redeclaration of ‘tmalloc’ [-Wredundant-decls]
+  |    12 | extern void *tmalloc(size_t num);
+  |       |              ^~~~~~~
+  | In file included from klusmp.c:11:
+  | ../sparse/spdefs.h:367:15: note: previous declaration of ‘tmalloc’ with type ‘void *(size_t)’ {aka ‘void *(long unsigned int)’}
+  |   367 | extern void * tmalloc(size_t);
+  |       |               ^~~~~~~
+  | ../../../src/include/ngspice/memory.h:13:14: warning: redundant redeclaration of ‘trealloc’ [-Wredundant-decls]
+  |    13 | extern void *trealloc(const void *str, size_t num);
+  |       |              ^~~~~~~~
+  | ../sparse/spdefs.h:369:15: note: previous declaration of ‘trealloc’ with type ‘void *(const void *, size_t)’ {aka ‘void *(const void *, long unsigned int)’}
+  |   369 | extern void * trealloc(const void *, size_t);
+  |       |               ^~~~~~~~
+  | ../../../src/include/ngspice/memory.h:14:13: warning: redundant redeclaration of ‘txfree’ [-Wredundant-decls]
+  |    14 | extern void txfree(const void *ptr);
+  |       |             ^~~~~~
+  | ../sparse/spdefs.h:368:15: note: previous declaration of ‘txfree’ with type ‘void(const void *)’
+  |   368 | extern void   txfree(const void *);
+  |       |               ^~~~~~
+TU: base_ctrl/src/maths/ni/niiter.c
+  cwd: base_ctrl/src/maths/ni (relative form)
+  command: gcc -DHAVE_CONFIG_H -I. -I. -I../../../src/include -I../../../src/include -static -O2 -s -Wall -Wextra -Wmissing-prototypes -Wstrict-prototypes -Wnested-externs -Wold-style-definition -Wredundant-decls -Wconversion -Wno-unused-but-set-variable -std=gnu11 -fopenmp -fsyntax-only niiter.c
+  rc=0 warnings=0 errors=0 stderr_bytes=0
+TU: patched/src/maths/KLU/klusmp.c
+  cwd: patched/src/maths/KLU (relative form)
+  command: gcc -DHAVE_CONFIG_H -I. -I. -I../../../src/include -I../../../src/include -static -O2 -s -Wall -Wextra -Wmissing-prototypes -Wstrict-prototypes -Wnested-externs -Wold-style-definition -Wredundant-decls -Wconversion -Wno-unused-but-set-variable -std=gnu11 -fopenmp -fsyntax-only klusmp.c
+  rc=0 warnings=3 errors=0 stderr_bytes=1545
+  STOP: warning/error detected for patched/src/maths/KLU/klusmp.c
+  | In file included from ../../../src/include/ngspice/dstring.h:11,
+  |                  from ../../../src/include/ngspice/cpstd.h:23,
+  |                  from ../../../src/include/ngspice/cpdefs.h:14,
+  |                  from ../../../src/include/ngspice/fteext.h:21,
+  |                  from klusmp.c:13:
+  | ../../../src/include/ngspice/memory.h:12:14: warning: redundant redeclaration of ‘tmalloc’ [-Wredundant-decls]
+  |    12 | extern void *tmalloc(size_t num);
+  |       |              ^~~~~~~
+  | In file included from klusmp.c:11:
+  | ../sparse/spdefs.h:367:15: note: previous declaration of ‘tmalloc’ with type ‘void *(size_t)’ {aka ‘void *(long unsigned int)’}
+  |   367 | extern void * tmalloc(size_t);
+  |       |               ^~~~~~~
+  | ../../../src/include/ngspice/memory.h:13:14: warning: redundant redeclaration of ‘trealloc’ [-Wredundant-decls]
+  |    13 | extern void *trealloc(const void *str, size_t num);
+  |       |              ^~~~~~~~
+  | ../sparse/spdefs.h:369:15: note: previous declaration of ‘trealloc’ with type ‘void *(const void *, size_t)’ {aka ‘void *(const void *, long unsigned int)’}
+  |   369 | extern void * trealloc(const void *, size_t);
+  |       |               ^~~~~~~~
+  | ../../../src/include/ngspice/memory.h:14:13: warning: redundant redeclaration of ‘txfree’ [-Wredundant-decls]
+  |    14 | extern void txfree(const void *ptr);
+  |       |             ^~~~~~
+  | ../sparse/spdefs.h:368:15: note: previous declaration of ‘txfree’ with type ‘void(const void *)’
+  |   368 | extern void   txfree(const void *);
+  |       |               ^~~~~~
+TU: patched/src/maths/ni/niiter.c
+  cwd: patched/src/maths/ni (relative form)
+  command: gcc -DHAVE_CONFIG_H -I. -I. -I../../../src/include -I../../../src/include -static -O2 -s -Wall -Wextra -Wmissing-prototypes -Wstrict-prototypes -Wnested-externs -Wold-style-definition -Wredundant-decls -Wconversion -Wno-unused-but-set-variable -std=gnu11 -fopenmp -fsyntax-only niiter.c
+  rc=0 warnings=0 errors=0 stderr_bytes=0
+
+=== warning origin note ===
+The 3 klusmp.c warnings (redundant redeclaration of tmalloc/trealloc/txfree:
+memory.h:12/13/14 vs sparse spdefs.h:367/368/369) are PRE-EXISTING in the base
+klusmp.c under the configured flags: the original accepted build log
+(logs/make.log, klusmp compile) contains the identical warnings. They appear
+identically on base_ctrl and patched (delta 0); the patch adds no warnings.
+
+=== combined verdict ===
+COMBINED_VERDICT=STOPPED (warnings present; see per-TU records; all warnings pre-existing and matched base==patched)
+Boundary: syntax completion only; no linkability, runtime completeness, or circuit behavior inferred.

@@ -1,0 +1,91 @@
+NGSPICE46-VBIC-MNA-SNAPSHOT-PROBE-V3-LINK-V4.log
+Corrected matched archive-and-executable link boundary for Probe V3 (immutable; design-only)
+Date (UTC): 2026-07-31T19:44:43Z
+Compiler: gcc (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0
+Libtool: libtool (GNU libtool) 2.4.7
+Runner: LINK-V4. Raw evidence: persistent candidate dir NGSPICE46-VBIC-MNA-SNAPSHOT-PROBE-V3-LINK-V4-RAW
+  (plain mkdir exactly once; fail-closed if the dir or log pre-existed; never removed;
+  noclobber/O_EXCL for every file). LINK-V3 reserved failed partial:
+  NGSPICE46-VBIC-MNA-SNAPSHOT-PROBE-V3-LINK-V3-PARTIAL-RAW (dir sha256 3c792a9d...,
+  MANIFEST.tsv 1abfea9d7d076057ec734bef07212dea41255943137d1a392391124dac8c5dc0, DISPOSITION.txt 6a87aec5095a09bacd9a7762ef42b2a785c50db1d6ab2a4a50fe0837b2d06d71; re-asserted unchanged at run end).
+  LINK-V2 1ad6e203... superseded (raw provenance overwritten in its final rerun); LINK-V1 absent.
+Scratch: $MATCHED_BUILD_ROOT/{base_ctrl,patched} (objects reused, never removed)
+
+=== identities (all printed and checked) ===
+objects: base klusmp.o d894f44d... niiter.o 0f81b74d...; patched klusmp.o 51ec1905... niiter.o b814bec3...
+sources branched by side: base_ctrl 13e94b62/4d1f9a39/687e2f85; patched 61acdc96/d9a40052/fa26677f
+patch: NGSPICE46-VBIC-MNA-SNAPSHOT-PROBE-V3.patch d833221f... (applied once to patched; object log 01518c6c...)
+
+=== forced relink setup ===
+removed ONLY the six link-product targets (per copy: src/maths/KLU/libKLU.la,
+  src/maths/ni/libni.la, src/ngspice); no object removed or rebuilt.
+
+=== link commands (configured make/libtool, -j1 V=1; relative form) ===
+STEP A: cwd <scratch>/<side>/src/maths/KLU : make -j1 V=1 libKLU.la
+STEP B: cwd <scratch>/<side>/src/maths/ni  : make -j1 V=1 libni.la
+STEP C: cwd <scratch>/<side>/src           : make -j1 V=1 ngspice
+
+=== per-step results (raw streams in the LINK-V4-RAW dir, create-exclusive) ===
+STEPA base_ctrl rc=0 warnings=0 errors=0 stdout_bytes=3734 sha256=8c3f95b9ce6988bd0abc7be87aff05878a10054f1a15e77daefc70e59d87b4b8 libtool_link_lines=7
+STEPA base_ctrl stderr_bytes=0 sha256=e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855
+STEPB base_ctrl rc=0 warnings=0 errors=0 stdout_bytes=755 sha256=8280041095c1719fe43ad3b60911abb0cf644162e3d994b8f83aff08f1f0005e libtool_link_lines=4
+STEPB base_ctrl stderr_bytes=0 sha256=e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855
+STEPC base_ctrl rc=0 warnings=0 errors=0 stdout_bytes=5786 sha256=cf2abebebe0519bb2c73dc051eb8fb50f6769d8042c7a87352bdf6ea5a0c9fc4 libtool_link_lines=1
+STEPC base_ctrl stderr_bytes=0 sha256=e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855
+STEPA patched rc=0 warnings=0 errors=0 stdout_bytes=3730 sha256=6c9f49a926961fa1328570ba86e8c0fc8306b78e004f043aba2f5c1f38b5459e libtool_link_lines=7
+STEPA patched stderr_bytes=0 sha256=e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855
+STEPB patched rc=0 warnings=0 errors=0 stdout_bytes=755 sha256=8280041095c1719fe43ad3b60911abb0cf644162e3d994b8f83aff08f1f0005e libtool_link_lines=4
+STEPB patched stderr_bytes=0 sha256=e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855
+STEPC patched rc=0 warnings=0 errors=0 stdout_bytes=5786 sha256=cf2abebebe0519bb2c73dc051eb8fb50f6769d8042c7a87352bdf6ea5a0c9fc4 libtool_link_lines=1
+STEPC patched stderr_bytes=0 sha256=e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855
+PATCH_WARNING_DELTA=0 (no warnings at archive/link steps)
+
+=== link-command assertions ===
+each of the six stdout streams contains the actual configured libtool link command
+  ('libtool: link:' occurrences >= 1 per stream; counts above).
+patched executable link record (STEP C patched stdout) contains:
+  token ' -s ': 2 occurrence(s) (require >= 1)
+  token 'maths/ni/.libs/libni.a': 1 occurrence(s) (require >= 1)
+  token 'maths/KLU/.libs/libKLU.a': 1 occurrence(s) (require >= 1)
+
+=== rebuild chain fail-closed check (incremental bounded manifests pre->A->B->C) ===
+  STEP A allowed: {KLU/libKLU.la, KLU/.libs/libKLU.la, KLU/.libs/libKLU.a} — ok (both copies)
+  STEP B allowed: {NI/libni.la, NI/.libs/libni.la, NI/.libs/libni.a} — ok (both copies)
+  STEP C allowed: {SRC/ngspice, SRC/.libs/ngspice} — ok (both copies)
+  four objects re-asserted unchanged across all steps
+
+=== nm symbol boundary + executable resolution evidence ===
+  base libKLU.a: 0 SMPsnapshotMNA lines
+  patched libKLU.a:   00000000000028e0 T SMPsnapshotMNA 
+  base libni.a: 0 SMPsnapshotMNA lines
+  patched libni.a:                    U SMPsnapshotMNA 
+  binaries stripped (configured -s): base symbols=0 patched symbols=0
+  rodata presence: base MNA_SNAPSHOT strings=0 patched=13
+  resolution chain: patched libKLU.a T + patched libni.a U (nm), link rc=0 with both
+    inputs in the retained argv, defining rodata resident in the patched binary.
+
+=== artifact identities (bytes + sha256) ===
+base_ctrl/src/maths/KLU/libKLU.la 886 6c0762e00a0bb2ee127a0910b6abca6a7918fcf08d6fad1b82e975ab225d4cb8
+base_ctrl/src/maths/KLU/.libs/libKLU.a 245610 b2bdd9644485502cccb13ab5c98f03e4a1fc2f57c59f05fa8602dd50a6595c19
+base_ctrl/src/maths/ni/libni.la 883 5cd3a8205d9cb043ede35b512c72e4cfc24cfd41e5fbbc82e4aa020736f895ed
+base_ctrl/src/maths/ni/.libs/libni.a 43698 257c2024c352674cb7e02d2b35dcda6f041756397130870f5b381ea4bb3f35f9
+base_ctrl/src/ngspice 8050256 9ec2e4a14ba0f497c6f8f253546081d7dc3b59131c19e4be50cd60284bf3c054
+patched/src/maths/KLU/libKLU.la 886 6c0762e00a0bb2ee127a0910b6abca6a7918fcf08d6fad1b82e975ab225d4cb8
+patched/src/maths/KLU/.libs/libKLU.a 252588 c4f742e9e2dc0ae8dfd31f59d7325fcd8d7af518aeefb0f054f93c9b1c997cbe
+patched/src/maths/ni/libni.la 883 5cd3a8205d9cb043ede35b512c72e4cfc24cfd41e5fbbc82e4aa020736f895ed
+patched/src/maths/ni/.libs/libni.a 44810 45dd8eb520cd49a97a2ebcdcad92f38751a82d56994d254878a5095300506ce8
+patched/src/ngspice 8054352 f2d2cd197f03818f1501dbebc983e5fcf1dd062965ea5e56dbff6b8dde01a0c7
+
+=== retained tree + prior evidence status ===
+retained src/include/ngspice/smpdefs.h 13e94b623930c952ac05a0d8100121107c99a37e5fc096cf63e9bc9f9e8e9196
+retained src/maths/KLU/klusmp.c 4d1f9a39d33712948a8b25c461e060eadb80d3437a02f6011d0036617c0a0b20
+retained src/maths/ni/niiter.c 687e2f85776c7c1a064a980e333502aefd8162c4dd3a360412845a7a923e9625
+retained src/ngspice 7cdeb7f97c5744b8c453f52c404870df946e67657ff07537d63979928faca5c5
+LINK-V1 absent: confirmed; LINK-V2 1ad6e203... unchanged: confirmed;
+LINK-V3-PARTIAL-RAW MANIFEST/DISPOSITION unchanged at run end: confirmed
+
+=== disposition ===
+LINK_STATUS=complete_matched_link_boundary
+ERRORS=0 (all six forced make invocations rc=0, errors=0; no warnings at link steps)
+Boundaries: executables NOT invoked; no simulation; no runtime/circuit/spec evidence;
+raw stdout/stderr streams are create-exclusive immutable evidence (LINK-V4-RAW dir).

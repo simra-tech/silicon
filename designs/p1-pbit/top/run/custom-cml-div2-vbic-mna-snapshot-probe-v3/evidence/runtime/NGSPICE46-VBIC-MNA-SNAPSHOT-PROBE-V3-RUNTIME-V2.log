@@ -1,0 +1,80 @@
+NGSPICE46-VBIC-MNA-SNAPSHOT-PROBE-V3-RUNTIME-V2.log
+Paired native ngspice diagnostic (immutable; Probe V3 runtime evidence)
+Date (UTC): 2026-07-31T20:00:12Z
+Evidence dirs: NGSPICE46-VBIC-MNA-SNAPSHOT-PROBE-V3-RUNTIME-V2-BASE-RUN and
+  -PATCHED-RUN (persistent, exclusive, never removed/reused; noclobber captures).
+V1 reservation: NGSPICE46-VBIC-MNA-SNAPSHOT-PROBE-V3-RUNTIME-V1-{BASE,PATCHED}-RUN are
+  the failed attempt (harness manifest-parser defect; both invocations actually rc=0
+  with full evidence; no V1 final log was written). V1 dirs untouched.
+Native-scope statement: this deck is OUTSIDE the shared OpenADA profile (PDK libraries/
+  includes + control block): native ngspice evidence only, NOT backend-comparable OpenADA.
+
+=== identities (all reverified before execution) ===
+executables: base 9ec2e4a1.../8050256 B; patched f2d2cd19.../8054352 B (LINK-V4)
+deck 46e7f223.../1648 B; netlist 689d4bee.../5454 B; include manifest 32cc8891.../5296 B/36 lines
+manifest deps: all 35 rehashed, zero mismatches (parser: trim then strip ' B')
+patch: NGSPICE46-VBIC-MNA-SNAPSHOT-PROBE-V3.patch d833221f (object log 01518c6c; LINK-V4 a42f1cc5)
+
+=== command identity (exact; per side, invoked EXACTLY ONCE) ===
+  ( cd <run-dir> && LC_ALL=C timeout 60s <side-executable> -b tb_p1_cml_div2_front_tran_v5.cir < /dev/null )
+  base first; patched only if base rc=0; no retry, no alternate flag, no redesign
+
+=== invocation results ===
+base: rc=0 started=2026-07-31T20:00:09Z ended=2026-07-31T20:00:10Z
+  stdout bytes=5818 sha256=31f5593a247feca01aab20e1fceedf558b41606def13aea5ecaf3b073921b16d
+  stderr bytes=10495 sha256=2676cdce3d9e5503b647578ef5c4835c73d80ff5fdfa264126cd88dabe175c43
+  raw raw_tb_p1_cml_div2_front_tran_v5.raw bytes=7857477 sha256=75598b19e365b4e23e6e22e7131fcfcf5466b6693d8262e92997b0540125846c
+patched: rc=0 started=2026-07-31T20:00:10Z ended=2026-07-31T20:00:12Z
+  stdout bytes=5818 sha256=82b16ef8597c254d13621d00d987e986ed3a3a612f4dff3ce407f95d5c8c05da
+  stderr bytes=360577 sha256=dfeba4dcb0462456b31ce72ba8b22d2bbf55ac21317982a0bd81ac81e10b3a2c
+  raw raw_tb_p1_cml_div2_front_tran_v5.raw bytes=7857477 sha256=b910d48bf7fb0505d61280975dc855e71de788ae8c08e904b95f70efb86d1145
+stdout identity (both sides): differs
+
+=== recount (verbatim from evidence; not inferred) ===
+=== raw structure per side ===
+base: bytes=7857477 nvars=429 npts=2284 data_tokens=0 finite_tokens=0 nonfinite_tokens=0
+base header: Title: * physical-model candidate v5 integrated-sink transient testbench deck
+base header: Date: Fri Jul 31 22:00:09  2026
+base header: Plotname: Transient Analysis
+base header: Flags: real
+base header: Variables:
+patched: bytes=7857477 nvars=429 npts=2284 data_tokens=0 finite_tokens=0 nonfinite_tokens=0
+patched header: Title: * physical-model candidate v5 integrated-sink transient testbench deck
+patched header: Date: Fri Jul 31 22:00:10  2026
+patched header: Plotname: Transient Analysis
+patched header: Flags: real
+patched header: Variables:
+=== payload identity (data region, header metadata excluded) ===
+data-region byte-identical: True
+=== base prior diagnostic markers ===
+base NEGATIVE-probe marker lines: 0
+=== patched prior diagnostic markers ===
+patched NEGATIVE-probe marker lines: 0
+=== patched MNA records (recount) ===
+total MNA_SNAPSHOT lines: 4000
+snapshot id=1 phase=prefactor: records=BEGIN,END,ENTRY,RHS (3627 lines)
+snapshot id=1 phase=postsolve: records=BEGIN,END,SOL (373 lines)
+BEGIN lines: 2 | END lines: 2 | GUARD: 0 | UNSUPPORTED: 0 | ABORT: 0
+  [MNA_SNAPSHOT_BEGIN] id=1 tnode=100 iterno=3 time=0x0p+0 mode=1056 backend=0 phase=prefactor
+  [MNA_SNAPSHOT_BEGIN] id=1 tnode=100 iterno=3 time=0x0p+0 mode=1056 backend=0 phase=postsolve
+  [MNA_SNAPSHOT_END] id=1 tnode=100 iterno=3 time=0x0p+0 mode=1056 backend=0 phase=prefactor status=complete entries_expected=3254 entries_observed=3254 vector_expected=371
+  [MNA_SNAPSHOT_END] id=1 tnode=100 iterno=3 time=0x0p+0 mode=1056 backend=0 phase=postsolve status=complete entries_expected=0 entries_observed=0 vector_expected=371 vecto
+ENTRY lines: 3254 | RHS lines: 371 | SOL lines: 371
+ENTRY row bounds: min=1 max=371 | col bounds: min=1 max=371
+RHS/SOL index bounds: min=1 max=371 | count=742
+finite=0 records: 0 | finite=1 records: 3996 | total finite-flagged: 3996
+END counts: entries 3254/3254 MATCH | vector 371/371 MATCH
+END counts: entries 0/0 MATCH | vector 371/371 MATCH
+
+=== post-execution rehash ===
+executables: base 9ec2e4a14ba0f497c6f8f253546081d7dc3b59131c19e4be50cd60284bf3c054 / 8050256 B; patched f2d2cd197f03818f1501dbebc983e5fcf1dd062965ea5e56dbff6b8dde01a0c7 / 8054352 B — unchanged
+run-dir deck/netlist copies — unchanged (both dirs)
+
+=== claim separation ===
+EXECUTION: base and patched each ran the frozen 4ns tran deck once, rc=0 (2s each),
+  within the 60s limit; raw output written by the deck's 'write' directive.
+EVIDENCE VALIDITY: inputs/executables rehashed before and after (no mutation); captures
+  unmodified and create-exclusive; counts below are recounts of the captured records.
+COMPARISON: see recount (raw payload identity, marker counts, MNA record structure).
+MEASUREMENT: NOT evaluated (no spec limits applied to any value in this log).
+SPECIFICATION: NOT evaluated.

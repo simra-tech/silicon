@@ -1,0 +1,347 @@
+assertion_id	file	hunk	record_class	base_line	mod_line	literal_or_digest	disposition
+R01_src_include_ngspice_smpdefs.h	src/include/ngspice/smpdefs.h	-	header			--- a/src/include/ngspice/smpdefs.h	accepted
+R02_src_include_ngspice_smpdefs.h	src/include/ngspice/smpdefs.h	-	header			+++ b/src/include/ngspice/smpdefs.h	accepted
+R03_src_include_ngspice_smpdefs.h	src/include/ngspice/smpdefs.h	@@ -84,6 +84,16 @@	hunk	84	84	@@ -84,6 +84,16 @@	accepted
+R04_src_include_ngspice_smpdefs.h	src/include/ngspice/smpdefs.h	@@ -84,6 +84,16 @@	context	84	84	int SMPzeroRow(SMPmatrix *Matrix, int Row);	accepted
+R05_src_include_ngspice_smpdefs.h	src/include/ngspice/smpdefs.h	@@ -84,6 +84,16 @@	context	85	85	void SMPconstMult(SMPmatrix *, double);	accepted
+R06_src_include_ngspice_smpdefs.h	src/include/ngspice/smpdefs.h	@@ -84,6 +84,16 @@	context	86	86	void SMPmultiply(SMPmatrix *, double *, double *, double *, double *);	accepted
+R07_src_include_ngspice_smpdefs.h	src/include/ngspice/smpdefs.h	@@ -84,6 +84,16 @@	add		87	/* [MNA_SNAPSHOT] read-only diagnostic snapshot helper; implemented in the	accepted
+R08_src_include_ngspice_smpdefs.h	src/include/ngspice/smpdefs.h	@@ -84,6 +84,16 @@	add		88	 * effective KLU wrapper (src/maths/KLU/klusmp.c). Emits to stderr with %a	accepted
+R09_src_include_ngspice_smpdefs.h	src/include/ngspice/smpdefs.h	@@ -84,6 +84,16 @@	add		89	 * precision; no matrix/RHS/state writes, no element creation, no	accepted
+R10_src_include_ngspice_smpdefs.h	src/include/ngspice/smpdefs.h	@@ -84,6 +84,16 @@	add		90	 * arithmetic recomputation. size is the largest valid equation index	accepted
+R11_src_include_ngspice_smpdefs.h	src/include/ngspice/smpdefs.h	@@ -84,6 +84,16 @@	add		91	 * (ckt->CKTmaxEqNum - 1); indices 1..size inclusive are emitted. Returns	accepted
+R12_src_include_ngspice_smpdefs.h	src/include/ngspice/smpdefs.h	@@ -84,6 +84,16 @@	add		92	 * 0 on structural completeness (status=complete), non-zero on	accepted
+R13_src_include_ngspice_smpdefs.h	src/include/ngspice/smpdefs.h	@@ -84,6 +84,16 @@	add		93	 * failure/partial (codes documented in klusmp.c). phase must be exactly	accepted
+R14_src_include_ngspice_smpdefs.h	src/include/ngspice/smpdefs.h	@@ -84,6 +84,16 @@	add		94	 * "prefactor", "postsolve", or "abort". */	accepted
+R15_src_include_ngspice_smpdefs.h	src/include/ngspice/smpdefs.h	@@ -84,6 +84,16 @@	add		95	int SMPsnapshotMNA( SMPmatrix *, double *, int, int, const char *,	accepted
+R16_src_include_ngspice_smpdefs.h	src/include/ngspice/smpdefs.h	@@ -84,6 +84,16 @@	add		96	                    long, int, int, double, long );	accepted
+R17_src_include_ngspice_smpdefs.h	src/include/ngspice/smpdefs.h	@@ -84,6 +84,16 @@	context	87	97		accepted
+R18_src_include_ngspice_smpdefs.h	src/include/ngspice/smpdefs.h	@@ -84,6 +84,16 @@	context	88	98	#ifdef CIDER	accepted
+R19_src_include_ngspice_smpdefs.h	src/include/ngspice/smpdefs.h	@@ -84,6 +84,16 @@	context	89	99	void SMPcSolveForCIDER (SMPmatrix *, double [], double [], double [], double []) ;	accepted
+R01_src_maths_KLU_klusmp.c	src/maths/KLU/klusmp.c	-	header			--- a/src/maths/KLU/klusmp.c	accepted
+R02_src_maths_KLU_klusmp.c	src/maths/KLU/klusmp.c	-	header			+++ b/src/maths/KLU/klusmp.c	accepted
+R03_src_maths_KLU_klusmp.c	src/maths/KLU/klusmp.c	@@ -2007,3 +2007,209 @@	hunk	2007	2007	@@ -2007,3 +2007,209 @@	accepted
+R04_src_maths_KLU_klusmp.c	src/maths/KLU/klusmp.c	@@ -2007,3 +2007,209 @@	context	2007	2007	    }	accepted
+R05_src_maths_KLU_klusmp.c	src/maths/KLU/klusmp.c	@@ -2007,3 +2007,209 @@	context	2008	2008	}	accepted
+R06_src_maths_KLU_klusmp.c	src/maths/KLU/klusmp.c	@@ -2007,3 +2007,209 @@	context	2009	2009		accepted
+R07_src_maths_KLU_klusmp.c	src/maths/KLU/klusmp.c	@@ -2007,3 +2007,209 @@	add		2010		accepted
+R08_src_maths_KLU_klusmp.c	src/maths/KLU/klusmp.c	@@ -2007,3 +2007,209 @@	add		2011		accepted
+R09_src_maths_KLU_klusmp.c	src/maths/KLU/klusmp.c	@@ -2007,3 +2007,209 @@	add		2012	/* ---- [MNA_SNAPSHOT] read-only diagnostic snapshot helper. ----	accepted
+R10_src_maths_KLU_klusmp.c	src/maths/KLU/klusmp.c	@@ -2007,3 +2007,209 @@	add		2013	 * Declared in ngspice/smpdefs.h. Emits to stderr with %a precision;	accepted
+R11_src_maths_KLU_klusmp.c	src/maths/KLU/klusmp.c	@@ -2007,3 +2007,209 @@	add		2014	 * synchronous, once-only by the caller; no writes to the matrix, RHS, or	accepted
+R12_src_maths_KLU_klusmp.c	src/maths/KLU/klusmp.c	@@ -2007,3 +2007,209 @@	add		2015	 * circuit state; no element creation; no arithmetic recomputation (stored	accepted
+R13_src_maths_KLU_klusmp.c	src/maths/KLU/klusmp.c	@@ -2007,3 +2007,209 @@	add		2016	 * values are emitted as-is). size is the largest valid equation index	accepted
+R14_src_maths_KLU_klusmp.c	src/maths/KLU/klusmp.c	@@ -2007,3 +2007,209 @@	add		2017	 * (ckt->CKTmaxEqNum - 1): indices 1..size inclusive are emitted and the	accepted
+R15_src_maths_KLU_klusmp.c	src/maths/KLU/klusmp.c	@@ -2007,3 +2007,209 @@	add		2018	 * same bound validates external row/column identities and vector_expected.	accepted
+R16_src_maths_KLU_klusmp.c	src/maths/KLU/klusmp.c	@@ -2007,3 +2007,209 @@	add		2019	 * Every BEGIN/END/UNSUPPORTED/ABORT/GUARD record carries the full event	accepted
+R17_src_maths_KLU_klusmp.c	src/maths/KLU/klusmp.c	@@ -2007,3 +2007,209 @@	add		2020	 * provenance (snapshot id, tnode, iterno, time, mode, backend, phase);	accepted
+R18_src_maths_KLU_klusmp.c	src/maths/KLU/klusmp.c	@@ -2007,3 +2007,209 @@	add		2021	 * every structurally valid stored entry and every RHS/solution index is	accepted
+R19_src_maths_KLU_klusmp.c	src/maths/KLU/klusmp.c	@@ -2007,3 +2007,209 @@	add		2022	 * emitted with an explicit finite=0/1 flag and counted observed. The	accepted
+R20_src_maths_KLU_klusmp.c	src/maths/KLU/klusmp.c	@@ -2007,3 +2007,209 @@	add		2023	 * sparse pre-factor enumeration is TWO-PASS: a read-only validation/count	accepted
+R21_src_maths_KLU_klusmp.c	src/maths/KLU/klusmp.c	@@ -2007,3 +2007,209 @@	add		2024	 * pass over all safely traversable FirstInCol/NextInCol chains computes	accepted
+R22_src_maths_KLU_klusmp.c	src/maths/KLU/klusmp.c	@@ -2007,3 +2007,209 @@	add		2025	 * the EXACT full stored-entry count (entries_expected) and records range	accepted
+R23_src_maths_KLU_klusmp.c	src/maths/KLU/klusmp.c	@@ -2007,3 +2007,209 @@	add		2026	 * guards WITHOUT indexing an invalid map position; if any structural/	accepted
+R24_src_maths_KLU_klusmp.c	src/maths/KLU/klusmp.c	@@ -2007,3 +2007,209 @@	add		2027	 * range guard fired, NO entry/vector payload is emitted (status=incomplete)	accepted
+R25_src_maths_KLU_klusmp.c	src/maths/KLU/klusmp.c	@@ -2007,3 +2007,209 @@	add		2028	 * and only a clean pass may perform the second emit pass. Return codes:	accepted
+R26_src_maths_KLU_klusmp.c	src/maths/KLU/klusmp.c	@@ -2007,3 +2007,209 @@	add		2029	 *   0 = MNA_SNAP_OK        structural completeness (status=complete)	accepted
+R27_src_maths_KLU_klusmp.c	src/maths/KLU/klusmp.c	@@ -2007,3 +2007,209 @@	add		2030	 *   1 = MNA_SNAP_ARG       NULL/negative argument or size <= 0	accepted
+R28_src_maths_KLU_klusmp.c	src/maths/KLU/klusmp.c	@@ -2007,3 +2007,209 @@	add		2031	 *   2 = MNA_SNAP_BACKEND   backend_flag != Matrix->CKTkluMODE	accepted
+R29_src_maths_KLU_klusmp.c	src/maths/KLU/klusmp.c	@@ -2007,3 +2007,209 @@	add		2032	 *   3 = MNA_SNAP_PHASE     phase not exactly prefactor/postsolve/abort	accepted
+R30_src_maths_KLU_klusmp.c	src/maths/KLU/klusmp.c	@@ -2007,3 +2007,209 @@	add		2033	 *   4 = MNA_SNAP_UNSUP     KLU prefactor unsupported (fail closed)	accepted
+R31_src_maths_KLU_klusmp.c	src/maths/KLU/klusmp.c	@@ -2007,3 +2007,209 @@	add		2034	 *   5 = MNA_SNAP_STRUCT    sparse structure/map guard	accepted
+R32_src_maths_KLU_klusmp.c	src/maths/KLU/klusmp.c	@@ -2007,3 +2007,209 @@	add		2035	 *   6 = MNA_SNAP_RANGE     internal/external range guard	accepted
+R33_src_maths_KLU_klusmp.c	src/maths/KLU/klusmp.c	@@ -2007,3 +2007,209 @@	add		2036	 *   7 = MNA_SNAP_PARTIAL   KLU postsolve vector (status=partial)	accepted
+R34_src_maths_KLU_klusmp.c	src/maths/KLU/klusmp.c	@@ -2007,3 +2007,209 @@	add		2037	 *   8 = MNA_SNAP_ABORT     keyed iteration abandoned before solve	accepted
+R35_src_maths_KLU_klusmp.c	src/maths/KLU/klusmp.c	@@ -2007,3 +2007,209 @@	add		2038	 * The sparse branch walks the private MatrixFrame column chains INSIDE	accepted
+R36_src_maths_KLU_klusmp.c	src/maths/KLU/klusmp.c	@@ -2007,3 +2007,209 @@	add		2039	 * the SMP layer and maps internal indices through	accepted
+R37_src_maths_KLU_klusmp.c	src/maths/KLU/klusmp.c	@@ -2007,3 +2007,209 @@	add		2040	 * IntToExtRowMap/IntToExtColMap. The KLU pre-factor phase fails closed:	accepted
+R38_src_maths_KLU_klusmp.c	src/maths/KLU/klusmp.c	@@ -2007,3 +2007,209 @@	add		2041	 * the CSC arrays (KLUmatrixAp/Ai/Ax) are populated only by the	accepted
+R39_src_maths_KLU_klusmp.c	src/maths/KLU/klusmp.c	@@ -2007,3 +2007,209 @@	add		2042	 * reorder/factor conversion (SMPreorder/SMPluFac KLU branches), so the	accepted
+R40_src_maths_KLU_klusmp.c	src/maths/KLU/klusmp.c	@@ -2007,3 +2007,209 @@	add		2043	 * pre-factor CSC is uninitialized at the snapshot site, and the	accepted
+R41_src_maths_KLU_klusmp.c	src/maths/KLU/klusmp.c	@@ -2007,3 +2007,209 @@	add		2044	 * post-conversion external identity passes through node collapsing	accepted
+R42_src_maths_KLU_klusmp.c	src/maths/KLU/klusmp.c	@@ -2007,3 +2007,209 @@	add		2045	 * (KLUmatrixNodeCollapsingNewToOld). The post-solve solution vector is	accepted
+R43_src_maths_KLU_klusmp.c	src/maths/KLU/klusmp.c	@@ -2007,3 +2007,209 @@	add		2046	 * available in RHS in both modes (the effective SMPsolve writes the	accepted
+R44_src_maths_KLU_klusmp.c	src/maths/KLU/klusmp.c	@@ -2007,3 +2007,209 @@	add		2047	 * solution back into RHS). ---- */	accepted
+R45_src_maths_KLU_klusmp.c	src/maths/KLU/klusmp.c	@@ -2007,3 +2007,209 @@	add		2048		accepted
+R46_src_maths_KLU_klusmp.c	src/maths/KLU/klusmp.c	@@ -2007,3 +2007,209 @@	add		2049	#define MNA_SNAP_OK        0	accepted
+R47_src_maths_KLU_klusmp.c	src/maths/KLU/klusmp.c	@@ -2007,3 +2007,209 @@	add		2050	#define MNA_SNAP_ARG       1	accepted
+R48_src_maths_KLU_klusmp.c	src/maths/KLU/klusmp.c	@@ -2007,3 +2007,209 @@	add		2051	#define MNA_SNAP_BACKEND   2	accepted
+R49_src_maths_KLU_klusmp.c	src/maths/KLU/klusmp.c	@@ -2007,3 +2007,209 @@	add		2052	#define MNA_SNAP_PHASE     3	accepted
+R50_src_maths_KLU_klusmp.c	src/maths/KLU/klusmp.c	@@ -2007,3 +2007,209 @@	add		2053	#define MNA_SNAP_UNSUP     4	accepted
+R51_src_maths_KLU_klusmp.c	src/maths/KLU/klusmp.c	@@ -2007,3 +2007,209 @@	add		2054	#define MNA_SNAP_STRUCT    5	accepted
+R52_src_maths_KLU_klusmp.c	src/maths/KLU/klusmp.c	@@ -2007,3 +2007,209 @@	add		2055	#define MNA_SNAP_RANGE     6	accepted
+R53_src_maths_KLU_klusmp.c	src/maths/KLU/klusmp.c	@@ -2007,3 +2007,209 @@	add		2056	#define MNA_SNAP_PARTIAL   7	accepted
+R54_src_maths_KLU_klusmp.c	src/maths/KLU/klusmp.c	@@ -2007,3 +2007,209 @@	add		2057	#define MNA_SNAP_ABORT     8	accepted
+R55_src_maths_KLU_klusmp.c	src/maths/KLU/klusmp.c	@@ -2007,3 +2007,209 @@	add		2058		accepted
+R56_src_maths_KLU_klusmp.c	src/maths/KLU/klusmp.c	@@ -2007,3 +2007,209 @@	add		2059	static long long	accepted
+R57_src_maths_KLU_klusmp.c	src/maths/KLU/klusmp.c	@@ -2007,3 +2007,209 @@	add		2060	SMPsnapshotMNA_emit_vector (double *RHS, int size, const char *tag,	accepted
+R58_src_maths_KLU_klusmp.c	src/maths/KLU/klusmp.c	@@ -2007,3 +2007,209 @@	add		2061	                            long id, const char *phase)	accepted
+R59_src_maths_KLU_klusmp.c	src/maths/KLU/klusmp.c	@@ -2007,3 +2007,209 @@	add		2062	{	accepted
+R60_src_maths_KLU_klusmp.c	src/maths/KLU/klusmp.c	@@ -2007,3 +2007,209 @@	add		2063	    long long observed = 0;	accepted
+R61_src_maths_KLU_klusmp.c	src/maths/KLU/klusmp.c	@@ -2007,3 +2007,209 @@	add		2064	    int I;	accepted
+R62_src_maths_KLU_klusmp.c	src/maths/KLU/klusmp.c	@@ -2007,3 +2007,209 @@	add		2065		accepted
+R63_src_maths_KLU_klusmp.c	src/maths/KLU/klusmp.c	@@ -2007,3 +2007,209 @@	add		2066	    for (I = 1; I <= size; I++) {	accepted
+R64_src_maths_KLU_klusmp.c	src/maths/KLU/klusmp.c	@@ -2007,3 +2007,209 @@	add		2067	        /* every index 1..size is structurally valid; non-finite values are	accepted
+R65_src_maths_KLU_klusmp.c	src/maths/KLU/klusmp.c	@@ -2007,3 +2007,209 @@	add		2068	         * preserved with %a and an explicit finite=0/1 flag */	accepted
+R66_src_maths_KLU_klusmp.c	src/maths/KLU/klusmp.c	@@ -2007,3 +2007,209 @@	add		2069	        fprintf (stderr, "[MNA_SNAPSHOT_%s] id=%ld phase=%s index=%d value=%a finite=%d\\n",	accepted
+R67_src_maths_KLU_klusmp.c	src/maths/KLU/klusmp.c	@@ -2007,3 +2007,209 @@	add		2070	                 tag, id, phase, I, RHS [I], isfinite (RHS [I]) ? 1 : 0);	accepted
+R68_src_maths_KLU_klusmp.c	src/maths/KLU/klusmp.c	@@ -2007,3 +2007,209 @@	add		2071	        observed++;	accepted
+R69_src_maths_KLU_klusmp.c	src/maths/KLU/klusmp.c	@@ -2007,3 +2007,209 @@	add		2072	    }	accepted
+R70_src_maths_KLU_klusmp.c	src/maths/KLU/klusmp.c	@@ -2007,3 +2007,209 @@	add		2073	    return observed;	accepted
+R71_src_maths_KLU_klusmp.c	src/maths/KLU/klusmp.c	@@ -2007,3 +2007,209 @@	add		2074	}	accepted
+R72_src_maths_KLU_klusmp.c	src/maths/KLU/klusmp.c	@@ -2007,3 +2007,209 @@	add		2075		accepted
+R73_src_maths_KLU_klusmp.c	src/maths/KLU/klusmp.c	@@ -2007,3 +2007,209 @@	add		2076	static int	accepted
+R74_src_maths_KLU_klusmp.c	src/maths/KLU/klusmp.c	@@ -2007,3 +2007,209 @@	add		2077	SMPsnapshotMNA_sparse (SMPmatrix *Matrix, double *RHS, int size,	accepted
+R75_src_maths_KLU_klusmp.c	src/maths/KLU/klusmp.c	@@ -2007,3 +2007,209 @@	add		2078	                       long id, int tnode, int iterno, double ckt_time,	accepted
+R76_src_maths_KLU_klusmp.c	src/maths/KLU/klusmp.c	@@ -2007,3 +2007,209 @@	add		2079	                       long ckt_mode, int backend_flag, const char *phase,	accepted
+R77_src_maths_KLU_klusmp.c	src/maths/KLU/klusmp.c	@@ -2007,3 +2007,209 @@	add		2080	                       long long *entries_expected, long long *entries_observed,	accepted
+R78_src_maths_KLU_klusmp.c	src/maths/KLU/klusmp.c	@@ -2007,3 +2007,209 @@	add		2081	                       long long *vector_observed)	accepted
+R79_src_maths_KLU_klusmp.c	src/maths/KLU/klusmp.c	@@ -2007,3 +2007,209 @@	add		2082	{	accepted
+R80_src_maths_KLU_klusmp.c	src/maths/KLU/klusmp.c	@@ -2007,3 +2007,209 @@	add		2083	    MatrixPtr M = Matrix->SPmatrix;	accepted
+R81_src_maths_KLU_klusmp.c	src/maths/KLU/klusmp.c	@@ -2007,3 +2007,209 @@	add		2084	    ElementPtr pElement;	accepted
+R82_src_maths_KLU_klusmp.c	src/maths/KLU/klusmp.c	@@ -2007,3 +2007,209 @@	add		2085	    int I, ext_row, ext_col;	accepted
+R83_src_maths_KLU_klusmp.c	src/maths/KLU/klusmp.c	@@ -2007,3 +2007,209 @@	add		2086	    int guards = 0;	accepted
+R84_src_maths_KLU_klusmp.c	src/maths/KLU/klusmp.c	@@ -2007,3 +2007,209 @@	add		2087		accepted
+R85_src_maths_KLU_klusmp.c	src/maths/KLU/klusmp.c	@@ -2007,3 +2007,209 @@	add		2088	    *entries_expected = 0;	accepted
+R86_src_maths_KLU_klusmp.c	src/maths/KLU/klusmp.c	@@ -2007,3 +2007,209 @@	add		2089	    *entries_observed = 0;	accepted
+R87_src_maths_KLU_klusmp.c	src/maths/KLU/klusmp.c	@@ -2007,3 +2007,209 @@	add		2090	    *vector_observed = 0;	accepted
+R88_src_maths_KLU_klusmp.c	src/maths/KLU/klusmp.c	@@ -2007,3 +2007,209 @@	add		2091	    if (M == NULL || M->FirstInCol == NULL || M->IntToExtRowMap == NULL ||	accepted
+R89_src_maths_KLU_klusmp.c	src/maths/KLU/klusmp.c	@@ -2007,3 +2007,209 @@	add		2092	        M->IntToExtColMap == NULL) {	accepted
+R90_src_maths_KLU_klusmp.c	src/maths/KLU/klusmp.c	@@ -2007,3 +2007,209 @@	add		2093	        fprintf (stderr, "[MNA_SNAPSHOT_GUARD] id=%ld tnode=%d iterno=%d time=%a mode=%ld backend=%d phase=%s reason=sparse_structure_maps_unavailable\\n",	accepted
+R91_src_maths_KLU_klusmp.c	src/maths/KLU/klusmp.c	@@ -2007,3 +2007,209 @@	add		2094	                 id, tnode, iterno, ckt_time, ckt_mode, backend_flag, phase);	accepted
+R92_src_maths_KLU_klusmp.c	src/maths/KLU/klusmp.c	@@ -2007,3 +2007,209 @@	add		2095	        return MNA_SNAP_STRUCT;	accepted
+R93_src_maths_KLU_klusmp.c	src/maths/KLU/klusmp.c	@@ -2007,3 +2007,209 @@	add		2096	    }	accepted
+R94_src_maths_KLU_klusmp.c	src/maths/KLU/klusmp.c	@@ -2007,3 +2007,209 @@	add		2097	    if (strcmp (phase, "prefactor") == 0) {	accepted
+R95_src_maths_KLU_klusmp.c	src/maths/KLU/klusmp.c	@@ -2007,3 +2007,209 @@	add		2098	        /* pass 1: read-only validation/count over all safely traversable	accepted
+R96_src_maths_KLU_klusmp.c	src/maths/KLU/klusmp.c	@@ -2007,3 +2007,209 @@	add		2099	         * FirstInCol/NextInCol chains. entries_expected is the EXACT full	accepted
+R97_src_maths_KLU_klusmp.c	src/maths/KLU/klusmp.c	@@ -2007,3 +2007,209 @@	add		2100	         * stored-entry count even when a range defect exists; the internal	accepted
+R98_src_maths_KLU_klusmp.c	src/maths/KLU/klusmp.c	@@ -2007,3 +2007,209 @@	add		2101	         * range check precedes any map indexing, so an invalid position is	accepted
+R99_src_maths_KLU_klusmp.c	src/maths/KLU/klusmp.c	@@ -2007,3 +2007,209 @@	add		2102	         * never indexed. Range guards are recorded and counted. */	accepted
+R100_src_maths_KLU_klusmp.c	src/maths/KLU/klusmp.c	@@ -2007,3 +2007,209 @@	add		2103	        for (I = 1; I <= M->Size; I++) {	accepted
+R101_src_maths_KLU_klusmp.c	src/maths/KLU/klusmp.c	@@ -2007,3 +2007,209 @@	add		2104	            for (pElement = M->FirstInCol [I]; pElement != NULL;	accepted
+R102_src_maths_KLU_klusmp.c	src/maths/KLU/klusmp.c	@@ -2007,3 +2007,209 @@	add		2105	                 pElement = pElement->NextInCol) {	accepted
+R103_src_maths_KLU_klusmp.c	src/maths/KLU/klusmp.c	@@ -2007,3 +2007,209 @@	add		2106	                (*entries_expected)++;	accepted
+R104_src_maths_KLU_klusmp.c	src/maths/KLU/klusmp.c	@@ -2007,3 +2007,209 @@	add		2107	                if (pElement->Row < 1 || pElement->Row > M->Size ||	accepted
+R105_src_maths_KLU_klusmp.c	src/maths/KLU/klusmp.c	@@ -2007,3 +2007,209 @@	add		2108	                    I < 1 || I > M->Size) {	accepted
+R106_src_maths_KLU_klusmp.c	src/maths/KLU/klusmp.c	@@ -2007,3 +2007,209 @@	add		2109	                    fprintf (stderr, "[MNA_SNAPSHOT_GUARD] id=%ld tnode=%d iterno=%d time=%a mode=%ld backend=%d phase=%s reason=internal_range entry=%lld row=%d col=%d\\n",	accepted
+R107_src_maths_KLU_klusmp.c	src/maths/KLU/klusmp.c	@@ -2007,3 +2007,209 @@	add		2110	                             id, tnode, iterno, ckt_time, ckt_mode, backend_flag,	accepted
+R108_src_maths_KLU_klusmp.c	src/maths/KLU/klusmp.c	@@ -2007,3 +2007,209 @@	add		2111	                             phase, *entries_expected, pElement->Row, I);	accepted
+R109_src_maths_KLU_klusmp.c	src/maths/KLU/klusmp.c	@@ -2007,3 +2007,209 @@	add		2112	                    guards++;	accepted
+R110_src_maths_KLU_klusmp.c	src/maths/KLU/klusmp.c	@@ -2007,3 +2007,209 @@	add		2113	                    continue;	accepted
+R111_src_maths_KLU_klusmp.c	src/maths/KLU/klusmp.c	@@ -2007,3 +2007,209 @@	add		2114	                }	accepted
+R112_src_maths_KLU_klusmp.c	src/maths/KLU/klusmp.c	@@ -2007,3 +2007,209 @@	add		2115	                ext_row = M->IntToExtRowMap [pElement->Row];	accepted
+R113_src_maths_KLU_klusmp.c	src/maths/KLU/klusmp.c	@@ -2007,3 +2007,209 @@	add		2116	                ext_col = M->IntToExtColMap [I];	accepted
+R114_src_maths_KLU_klusmp.c	src/maths/KLU/klusmp.c	@@ -2007,3 +2007,209 @@	add		2117	                if (ext_row < 1 || ext_row > size || ext_col < 1 ||	accepted
+R115_src_maths_KLU_klusmp.c	src/maths/KLU/klusmp.c	@@ -2007,3 +2007,209 @@	add		2118	                    ext_col > size) {	accepted
+R116_src_maths_KLU_klusmp.c	src/maths/KLU/klusmp.c	@@ -2007,3 +2007,209 @@	add		2119	                    fprintf (stderr, "[MNA_SNAPSHOT_GUARD] id=%ld tnode=%d iterno=%d time=%a mode=%ld backend=%d phase=%s reason=external_range entry=%lld ext_row=%d ext_col=%d\\n",	accepted
+R117_src_maths_KLU_klusmp.c	src/maths/KLU/klusmp.c	@@ -2007,3 +2007,209 @@	add		2120	                             id, tnode, iterno, ckt_time, ckt_mode, backend_flag,	accepted
+R118_src_maths_KLU_klusmp.c	src/maths/KLU/klusmp.c	@@ -2007,3 +2007,209 @@	add		2121	                             phase, *entries_expected, ext_row, ext_col);	accepted
+R119_src_maths_KLU_klusmp.c	src/maths/KLU/klusmp.c	@@ -2007,3 +2007,209 @@	add		2122	                    guards++;	accepted
+R120_src_maths_KLU_klusmp.c	src/maths/KLU/klusmp.c	@@ -2007,3 +2007,209 @@	add		2123	                    continue;	accepted
+R121_src_maths_KLU_klusmp.c	src/maths/KLU/klusmp.c	@@ -2007,3 +2007,209 @@	add		2124	                }	accepted
+R122_src_maths_KLU_klusmp.c	src/maths/KLU/klusmp.c	@@ -2007,3 +2007,209 @@	add		2125	            }	accepted
+R123_src_maths_KLU_klusmp.c	src/maths/KLU/klusmp.c	@@ -2007,3 +2007,209 @@	add		2126	        }	accepted
+R124_src_maths_KLU_klusmp.c	src/maths/KLU/klusmp.c	@@ -2007,3 +2007,209 @@	add		2127	        if (guards != 0) {	accepted
+R125_src_maths_KLU_klusmp.c	src/maths/KLU/klusmp.c	@@ -2007,3 +2007,209 @@	add		2128	            /* fail closed: no entry/vector payload; the exact full expected	accepted
+R126_src_maths_KLU_klusmp.c	src/maths/KLU/klusmp.c	@@ -2007,3 +2007,209 @@	add		2129	             * count is still reported so truncation is detectable */	accepted
+R127_src_maths_KLU_klusmp.c	src/maths/KLU/klusmp.c	@@ -2007,3 +2007,209 @@	add		2130	            return MNA_SNAP_RANGE;	accepted
+R128_src_maths_KLU_klusmp.c	src/maths/KLU/klusmp.c	@@ -2007,3 +2007,209 @@	add		2131	        }	accepted
+R129_src_maths_KLU_klusmp.c	src/maths/KLU/klusmp.c	@@ -2007,3 +2007,209 @@	add		2132	        /* pass 2: emit pass — only after a clean validation pass */	accepted
+R130_src_maths_KLU_klusmp.c	src/maths/KLU/klusmp.c	@@ -2007,3 +2007,209 @@	add		2133	        for (I = 1; I <= M->Size; I++) {	accepted
+R131_src_maths_KLU_klusmp.c	src/maths/KLU/klusmp.c	@@ -2007,3 +2007,209 @@	add		2134	            for (pElement = M->FirstInCol [I]; pElement != NULL;	accepted
+R132_src_maths_KLU_klusmp.c	src/maths/KLU/klusmp.c	@@ -2007,3 +2007,209 @@	add		2135	                 pElement = pElement->NextInCol) {	accepted
+R133_src_maths_KLU_klusmp.c	src/maths/KLU/klusmp.c	@@ -2007,3 +2007,209 @@	add		2136	                ext_row = M->IntToExtRowMap [pElement->Row];	accepted
+R134_src_maths_KLU_klusmp.c	src/maths/KLU/klusmp.c	@@ -2007,3 +2007,209 @@	add		2137	                ext_col = M->IntToExtColMap [I];	accepted
+R135_src_maths_KLU_klusmp.c	src/maths/KLU/klusmp.c	@@ -2007,3 +2007,209 @@	add		2138	                fprintf (stderr, "[MNA_SNAPSHOT_ENTRY] id=%ld phase=%s row=%d col=%d value=%a finite=%d\\n",	accepted
+R136_src_maths_KLU_klusmp.c	src/maths/KLU/klusmp.c	@@ -2007,3 +2007,209 @@	add		2139	                         id, phase, ext_row, ext_col, pElement->Real,	accepted
+R137_src_maths_KLU_klusmp.c	src/maths/KLU/klusmp.c	@@ -2007,3 +2007,209 @@	add		2140	                         isfinite (pElement->Real) ? 1 : 0);	accepted
+R138_src_maths_KLU_klusmp.c	src/maths/KLU/klusmp.c	@@ -2007,3 +2007,209 @@	add		2141	                (*entries_observed)++;	accepted
+R139_src_maths_KLU_klusmp.c	src/maths/KLU/klusmp.c	@@ -2007,3 +2007,209 @@	add		2142	            }	accepted
+R140_src_maths_KLU_klusmp.c	src/maths/KLU/klusmp.c	@@ -2007,3 +2007,209 @@	add		2143	        }	accepted
+R141_src_maths_KLU_klusmp.c	src/maths/KLU/klusmp.c	@@ -2007,3 +2007,209 @@	add		2144	        *vector_observed = SMPsnapshotMNA_emit_vector (RHS, size, "RHS", id, phase);	accepted
+R142_src_maths_KLU_klusmp.c	src/maths/KLU/klusmp.c	@@ -2007,3 +2007,209 @@	add		2145	    } else {	accepted
+R143_src_maths_KLU_klusmp.c	src/maths/KLU/klusmp.c	@@ -2007,3 +2007,209 @@	add		2146	        /* postsolve: the solution vector, same external identity */	accepted
+R144_src_maths_KLU_klusmp.c	src/maths/KLU/klusmp.c	@@ -2007,3 +2007,209 @@	add		2147	        *vector_observed = SMPsnapshotMNA_emit_vector (RHS, size, "SOL", id, phase);	accepted
+R145_src_maths_KLU_klusmp.c	src/maths/KLU/klusmp.c	@@ -2007,3 +2007,209 @@	add		2148	    }	accepted
+R146_src_maths_KLU_klusmp.c	src/maths/KLU/klusmp.c	@@ -2007,3 +2007,209 @@	add		2149	    return MNA_SNAP_OK;	accepted
+R147_src_maths_KLU_klusmp.c	src/maths/KLU/klusmp.c	@@ -2007,3 +2007,209 @@	add		2150	}	accepted
+R148_src_maths_KLU_klusmp.c	src/maths/KLU/klusmp.c	@@ -2007,3 +2007,209 @@	add		2151		accepted
+R149_src_maths_KLU_klusmp.c	src/maths/KLU/klusmp.c	@@ -2007,3 +2007,209 @@	add		2152	int	accepted
+R150_src_maths_KLU_klusmp.c	src/maths/KLU/klusmp.c	@@ -2007,3 +2007,209 @@	add		2153	SMPsnapshotMNA (SMPmatrix *Matrix, double *RHS, int size, int backend_flag,	accepted
+R151_src_maths_KLU_klusmp.c	src/maths/KLU/klusmp.c	@@ -2007,3 +2007,209 @@	add		2154	                const char *phase, long id, int tnode, int iterno,	accepted
+R152_src_maths_KLU_klusmp.c	src/maths/KLU/klusmp.c	@@ -2007,3 +2007,209 @@	add		2155	                double ckt_time, long ckt_mode)	accepted
+R153_src_maths_KLU_klusmp.c	src/maths/KLU/klusmp.c	@@ -2007,3 +2007,209 @@	add		2156	{	accepted
+R154_src_maths_KLU_klusmp.c	src/maths/KLU/klusmp.c	@@ -2007,3 +2007,209 @@	add		2157	    long long entries_expected = 0, entries_observed = 0, vector_observed = 0;	accepted
+R155_src_maths_KLU_klusmp.c	src/maths/KLU/klusmp.c	@@ -2007,3 +2007,209 @@	add		2158	    long long vector_expected = (long long) size;	accepted
+R156_src_maths_KLU_klusmp.c	src/maths/KLU/klusmp.c	@@ -2007,3 +2007,209 @@	add		2159	    int rc = MNA_SNAP_OK;	accepted
+R157_src_maths_KLU_klusmp.c	src/maths/KLU/klusmp.c	@@ -2007,3 +2007,209 @@	add		2160		accepted
+R158_src_maths_KLU_klusmp.c	src/maths/KLU/klusmp.c	@@ -2007,3 +2007,209 @@	add		2161	    if (Matrix == NULL || RHS == NULL || phase == NULL || size <= 0) {	accepted
+R159_src_maths_KLU_klusmp.c	src/maths/KLU/klusmp.c	@@ -2007,3 +2007,209 @@	add		2162	        fprintf (stderr, "[MNA_SNAPSHOT_GUARD] id=%ld tnode=%d iterno=%d time=%a mode=%ld backend=%d phase=%s reason=invalid_argument size=%d\\n",	accepted
+R160_src_maths_KLU_klusmp.c	src/maths/KLU/klusmp.c	@@ -2007,3 +2007,209 @@	add		2163	                 id, tnode, iterno, ckt_time, ckt_mode, backend_flag,	accepted
+R161_src_maths_KLU_klusmp.c	src/maths/KLU/klusmp.c	@@ -2007,3 +2007,209 @@	add		2164	                 phase ? phase : "?", size);	accepted
+R162_src_maths_KLU_klusmp.c	src/maths/KLU/klusmp.c	@@ -2007,3 +2007,209 @@	add		2165	        return MNA_SNAP_ARG;	accepted
+R163_src_maths_KLU_klusmp.c	src/maths/KLU/klusmp.c	@@ -2007,3 +2007,209 @@	add		2166	    }	accepted
+R164_src_maths_KLU_klusmp.c	src/maths/KLU/klusmp.c	@@ -2007,3 +2007,209 @@	add		2167	    if (backend_flag != Matrix->CKTkluMODE) {	accepted
+R165_src_maths_KLU_klusmp.c	src/maths/KLU/klusmp.c	@@ -2007,3 +2007,209 @@	add		2168	        fprintf (stderr, "[MNA_SNAPSHOT_GUARD] id=%ld tnode=%d iterno=%d time=%a mode=%ld backend=%d phase=%s reason=backend_mismatch flag=%d matrix=%u\\n",	accepted
+R166_src_maths_KLU_klusmp.c	src/maths/KLU/klusmp.c	@@ -2007,3 +2007,209 @@	add		2169	                 id, tnode, iterno, ckt_time, ckt_mode, backend_flag, phase,	accepted
+R167_src_maths_KLU_klusmp.c	src/maths/KLU/klusmp.c	@@ -2007,3 +2007,209 @@	add		2170	                 backend_flag, (unsigned int) Matrix->CKTkluMODE);	accepted
+R168_src_maths_KLU_klusmp.c	src/maths/KLU/klusmp.c	@@ -2007,3 +2007,209 @@	add		2171	        return MNA_SNAP_BACKEND;	accepted
+R169_src_maths_KLU_klusmp.c	src/maths/KLU/klusmp.c	@@ -2007,3 +2007,209 @@	add		2172	    }	accepted
+R170_src_maths_KLU_klusmp.c	src/maths/KLU/klusmp.c	@@ -2007,3 +2007,209 @@	add		2173	    if (strcmp (phase, "prefactor") != 0 && strcmp (phase, "postsolve") != 0 &&	accepted
+R171_src_maths_KLU_klusmp.c	src/maths/KLU/klusmp.c	@@ -2007,3 +2007,209 @@	add		2174	        strcmp (phase, "abort") != 0) {	accepted
+R172_src_maths_KLU_klusmp.c	src/maths/KLU/klusmp.c	@@ -2007,3 +2007,209 @@	add		2175	        fprintf (stderr, "[MNA_SNAPSHOT_GUARD] id=%ld tnode=%d iterno=%d time=%a mode=%ld backend=%d phase=%s reason=invalid_phase\\n",	accepted
+R173_src_maths_KLU_klusmp.c	src/maths/KLU/klusmp.c	@@ -2007,3 +2007,209 @@	add		2176	                 id, tnode, iterno, ckt_time, ckt_mode, backend_flag, phase);	accepted
+R174_src_maths_KLU_klusmp.c	src/maths/KLU/klusmp.c	@@ -2007,3 +2007,209 @@	add		2177	        return MNA_SNAP_PHASE;	accepted
+R175_src_maths_KLU_klusmp.c	src/maths/KLU/klusmp.c	@@ -2007,3 +2007,209 @@	add		2178	    }	accepted
+R176_src_maths_KLU_klusmp.c	src/maths/KLU/klusmp.c	@@ -2007,3 +2007,209 @@	add		2179	    if (strcmp (phase, "abort") == 0) {	accepted
+R177_src_maths_KLU_klusmp.c	src/maths/KLU/klusmp.c	@@ -2007,3 +2007,209 @@	add		2180	        /* fail-closed marker for a keyed iteration abandoned before solve */	accepted
+R178_src_maths_KLU_klusmp.c	src/maths/KLU/klusmp.c	@@ -2007,3 +2007,209 @@	add		2181	        fprintf (stderr, "[MNA_SNAPSHOT_ABORT] id=%ld tnode=%d iterno=%d time=%a mode=%ld backend=%d phase=%s reason=keyed_iteration_abandoned_before_solve\\n",	accepted
+R179_src_maths_KLU_klusmp.c	src/maths/KLU/klusmp.c	@@ -2007,3 +2007,209 @@	add		2182	                 id, tnode, iterno, ckt_time, ckt_mode, backend_flag, phase);	accepted
+R180_src_maths_KLU_klusmp.c	src/maths/KLU/klusmp.c	@@ -2007,3 +2007,209 @@	add		2183	        return MNA_SNAP_ABORT;	accepted
+R181_src_maths_KLU_klusmp.c	src/maths/KLU/klusmp.c	@@ -2007,3 +2007,209 @@	add		2184	    }	accepted
+R182_src_maths_KLU_klusmp.c	src/maths/KLU/klusmp.c	@@ -2007,3 +2007,209 @@	add		2185	    if (Matrix->CKTkluMODE) {	accepted
+R183_src_maths_KLU_klusmp.c	src/maths/KLU/klusmp.c	@@ -2007,3 +2007,209 @@	add		2186	        if (strcmp (phase, "prefactor") == 0) {	accepted
+R184_src_maths_KLU_klusmp.c	src/maths/KLU/klusmp.c	@@ -2007,3 +2007,209 @@	add		2187	            /* Fail closed: the pre-factor KLU CSC is uninitialized at this	accepted
+R185_src_maths_KLU_klusmp.c	src/maths/KLU/klusmp.c	@@ -2007,3 +2007,209 @@	add		2188	             * lifecycle point (immediately after CKTload, before any	accepted
+R186_src_maths_KLU_klusmp.c	src/maths/KLU/klusmp.c	@@ -2007,3 +2007,209 @@	add		2189	             * reorder/factor) and the post-conversion identity is	accepted
+R187_src_maths_KLU_klusmp.c	src/maths/KLU/klusmp.c	@@ -2007,3 +2007,209 @@	add		2190	             * node-collapsed. No completeness claim is emitted. */	accepted
+R188_src_maths_KLU_klusmp.c	src/maths/KLU/klusmp.c	@@ -2007,3 +2007,209 @@	add		2191	            fprintf (stderr, "[MNA_SNAPSHOT_UNSUPPORTED] id=%ld tnode=%d iterno=%d time=%a mode=%ld backend=%d phase=%s reason=klu_prefactor_csc_uninitialized\\n",	accepted
+R189_src_maths_KLU_klusmp.c	src/maths/KLU/klusmp.c	@@ -2007,3 +2007,209 @@	add		2192	                     id, tnode, iterno, ckt_time, ckt_mode, backend_flag, phase);	accepted
+R190_src_maths_KLU_klusmp.c	src/maths/KLU/klusmp.c	@@ -2007,3 +2007,209 @@	add		2193	            return MNA_SNAP_UNSUP;	accepted
+R191_src_maths_KLU_klusmp.c	src/maths/KLU/klusmp.c	@@ -2007,3 +2007,209 @@	add		2194	        }	accepted
+R192_src_maths_KLU_klusmp.c	src/maths/KLU/klusmp.c	@@ -2007,3 +2007,209 @@	add		2195	        /* postsolve in KLU mode: separately labelled PARTIAL vector	accepted
+R193_src_maths_KLU_klusmp.c	src/maths/KLU/klusmp.c	@@ -2007,3 +2007,209 @@	add		2196	         * diagnostic only; never implies a complete pre/post MNA pair */	accepted
+R194_src_maths_KLU_klusmp.c	src/maths/KLU/klusmp.c	@@ -2007,3 +2007,209 @@	add		2197	        fprintf (stderr, "[MNA_SNAPSHOT_BEGIN] id=%ld tnode=%d iterno=%d time=%a mode=%ld backend=%d phase=%s\\n",	accepted
+R195_src_maths_KLU_klusmp.c	src/maths/KLU/klusmp.c	@@ -2007,3 +2007,209 @@	add		2198	                 id, tnode, iterno, ckt_time, ckt_mode, backend_flag, phase);	accepted
+R196_src_maths_KLU_klusmp.c	src/maths/KLU/klusmp.c	@@ -2007,3 +2007,209 @@	add		2199	        vector_observed = SMPsnapshotMNA_emit_vector (RHS, size, "SOL", id, phase);	accepted
+R197_src_maths_KLU_klusmp.c	src/maths/KLU/klusmp.c	@@ -2007,3 +2007,209 @@	add		2200	        fprintf (stderr, "[MNA_SNAPSHOT_END] id=%ld tnode=%d iterno=%d time=%a mode=%ld backend=%d phase=%s status=partial entries_expected=0 entries_observed=0 vector_expected=%lld vector_observed=%lld\\n",	accepted
+R198_src_maths_KLU_klusmp.c	src/maths/KLU/klusmp.c	@@ -2007,3 +2007,209 @@	add		2201	                 id, tnode, iterno, ckt_time, ckt_mode, backend_flag, phase,	accepted
+R199_src_maths_KLU_klusmp.c	src/maths/KLU/klusmp.c	@@ -2007,3 +2007,209 @@	add		2202	                 vector_expected, vector_observed);	accepted
+R200_src_maths_KLU_klusmp.c	src/maths/KLU/klusmp.c	@@ -2007,3 +2007,209 @@	add		2203	        return MNA_SNAP_PARTIAL;	accepted
+R201_src_maths_KLU_klusmp.c	src/maths/KLU/klusmp.c	@@ -2007,3 +2007,209 @@	add		2204	    }	accepted
+R202_src_maths_KLU_klusmp.c	src/maths/KLU/klusmp.c	@@ -2007,3 +2007,209 @@	add		2205	    fprintf (stderr, "[MNA_SNAPSHOT_BEGIN] id=%ld tnode=%d iterno=%d time=%a mode=%ld backend=%d phase=%s\\n",	accepted
+R203_src_maths_KLU_klusmp.c	src/maths/KLU/klusmp.c	@@ -2007,3 +2007,209 @@	add		2206	             id, tnode, iterno, ckt_time, ckt_mode, backend_flag, phase);	accepted
+R204_src_maths_KLU_klusmp.c	src/maths/KLU/klusmp.c	@@ -2007,3 +2007,209 @@	add		2207	    rc = SMPsnapshotMNA_sparse (Matrix, RHS, size, id, tnode, iterno, ckt_time,	accepted
+R205_src_maths_KLU_klusmp.c	src/maths/KLU/klusmp.c	@@ -2007,3 +2007,209 @@	add		2208	                                ckt_mode, backend_flag, phase, &entries_expected,	accepted
+R206_src_maths_KLU_klusmp.c	src/maths/KLU/klusmp.c	@@ -2007,3 +2007,209 @@	add		2209	                                &entries_observed, &vector_observed);	accepted
+R207_src_maths_KLU_klusmp.c	src/maths/KLU/klusmp.c	@@ -2007,3 +2007,209 @@	add		2210	    fprintf (stderr, "[MNA_SNAPSHOT_END] id=%ld tnode=%d iterno=%d time=%a mode=%ld backend=%d phase=%s status=%s entries_expected=%lld entries_observed=%lld vector_expected=%lld vector_observed=%lld\\n",	accepted
+R208_src_maths_KLU_klusmp.c	src/maths/KLU/klusmp.c	@@ -2007,3 +2007,209 @@	add		2211	             id, tnode, iterno, ckt_time, ckt_mode, backend_flag, phase,	accepted
+R209_src_maths_KLU_klusmp.c	src/maths/KLU/klusmp.c	@@ -2007,3 +2007,209 @@	add		2212	             (rc == MNA_SNAP_OK) ? "complete" : "incomplete", entries_expected,	accepted
+R210_src_maths_KLU_klusmp.c	src/maths/KLU/klusmp.c	@@ -2007,3 +2007,209 @@	add		2213	             entries_observed, vector_expected, vector_observed);	accepted
+R211_src_maths_KLU_klusmp.c	src/maths/KLU/klusmp.c	@@ -2007,3 +2007,209 @@	add		2214	    return rc;	accepted
+R212_src_maths_KLU_klusmp.c	src/maths/KLU/klusmp.c	@@ -2007,3 +2007,209 @@	add		2215	}	accepted
+R01_src_maths_ni_niiter.c	src/maths/ni/niiter.c	-	header			--- a/src/maths/ni/niiter.c	accepted
+R02_src_maths_ni_niiter.c	src/maths/ni/niiter.c	-	header			+++ b/src/maths/ni/niiter.c	accepted
+R03_src_maths_ni_niiter.c	src/maths/ni/niiter.c	@@ -44,6 +44,24 @@	hunk	44	44	@@ -44,6 +44,24 @@	accepted
+R04_src_maths_ni_niiter.c	src/maths/ni/niiter.c	@@ -44,6 +44,24 @@	context	44	44	    long mode_at_load = 0;	accepted
+R05_src_maths_ni_niiter.c	src/maths/ni/niiter.c	@@ -44,6 +44,24 @@	context	45	45	    double old_before_load = NAN, assembled_before_solve = NAN;	accepted
+R06_src_maths_ni_niiter.c	src/maths/ni/niiter.c	@@ -44,6 +44,24 @@	context	46	46	    double solved_after_solve = NAN, after_damping = NAN, old_after_swap = NAN;	accepted
+R07_src_maths_ni_niiter.c	src/maths/ni/niiter.c	@@ -44,6 +44,24 @@	add		47	#ifdef KLU	accepted
+R08_src_maths_ni_niiter.c	src/maths/ni/niiter.c	@@ -44,6 +44,24 @@	add		48	    /* [MNA_SNAPSHOT] per-invocation latches + saved event key; the snapshot	accepted
+R09_src_maths_ni_niiter.c	src/maths/ni/niiter.c	@@ -44,6 +44,24 @@	add		49	       id is process-stable (static sequence). postsolve is armed only after	accepted
+R10_src_maths_ni_niiter.c	src/maths/ni/niiter.c	@@ -44,6 +44,24 @@	add		50	       a successful sparse prefactor snapshot (SMPsnapshotMNA == 0). The	accepted
+R11_src_maths_ni_niiter.c	src/maths/ni/niiter.c	@@ -44,6 +44,24 @@	add		51	       event key is the accepted probe event (tnode 100, iterno 3, CKTtime 0,	accepted
+R12_src_maths_ni_niiter.c	src/maths/ni/niiter.c	@@ -44,6 +44,24 @@	add		52	       MODETRANOP|MODEINITFIX; run 14b0060c). The size passed to the helper	accepted
+R13_src_maths_ni_niiter.c	src/maths/ni/niiter.c	@@ -44,6 +44,24 @@	add		53	       is the largest valid equation index (int) ckt->CKTmaxEqNum - 1	accepted
+R14_src_maths_ni_niiter.c	src/maths/ni/niiter.c	@@ -44,6 +44,24 @@	add		54	       (cktinit.c:42 init 1; cktnewn.c:37 node->number = CKTmaxEqNum++;	accepted
+R15_src_maths_ni_niiter.c	src/maths/ni/niiter.c	@@ -44,6 +44,24 @@	add		55	       span.c alloc/copy CKTmaxEqNum elements; cktdump.c:42/cktnames.c:23	accepted
+R16_src_maths_ni_niiter.c	src/maths/ni/niiter.c	@@ -44,6 +44,24 @@	add		56	       publish CKTmaxEqNum - 1); the helper fails closed on size <= 0. */	accepted
+R17_src_maths_ni_niiter.c	src/maths/ni/niiter.c	@@ -44,6 +44,24 @@	add		57	    bool vtp_snap_pre_done = FALSE;	accepted
+R18_src_maths_ni_niiter.c	src/maths/ni/niiter.c	@@ -44,6 +44,24 @@	add		58	    bool vtp_snap_post_done = FALSE;	accepted
+R19_src_maths_ni_niiter.c	src/maths/ni/niiter.c	@@ -44,6 +44,24 @@	add		59	    double vtp_snap_time = NAN;	accepted
+R20_src_maths_ni_niiter.c	src/maths/ni/niiter.c	@@ -44,6 +44,24 @@	add		60	    long vtp_snap_mode = 0;	accepted
+R21_src_maths_ni_niiter.c	src/maths/ni/niiter.c	@@ -44,6 +44,24 @@	add		61	    long vtp_snap_id = 0;	accepted
+R22_src_maths_ni_niiter.c	src/maths/ni/niiter.c	@@ -44,6 +44,24 @@	add		62	    static long vtp_snap_seq = 0;	accepted
+R23_src_maths_ni_niiter.c	src/maths/ni/niiter.c	@@ -44,6 +44,24 @@	add		63	    const int vtp_snap_iter = 3;	accepted
+R24_src_maths_ni_niiter.c	src/maths/ni/niiter.c	@@ -44,6 +44,24 @@	add		64	#endif	accepted
+R25_src_maths_ni_niiter.c	src/maths/ni/niiter.c	@@ -44,6 +44,24 @@	context	47	65		accepted
+R26_src_maths_ni_niiter.c	src/maths/ni/niiter.c	@@ -44,6 +44,24 @@	context	48	66	    /* some convergence issues that get resolved by increasing max iter */	accepted
+R27_src_maths_ni_niiter.c	src/maths/ni/niiter.c	@@ -44,6 +44,24 @@	context	49	67	    if (maxIter < 100)	accepted
+R28_src_maths_ni_niiter.c	src/maths/ni/niiter.c	@@ -139,6 +157,27 @@	hunk	139	157	@@ -139,6 +157,27 @@	accepted
+R29_src_maths_ni_niiter.c	src/maths/ni/niiter.c	@@ -139,6 +157,27 @@	context	139	157	                FREE(OldCKTstate0);	accepted
+R30_src_maths_ni_niiter.c	src/maths/ni/niiter.c	@@ -139,6 +157,27 @@	context	140	158	                return (error);	accepted
+R31_src_maths_ni_niiter.c	src/maths/ni/niiter.c	@@ -139,6 +157,27 @@	context	141	159	            }	accepted
+R32_src_maths_ni_niiter.c	src/maths/ni/niiter.c	@@ -139,6 +157,27 @@	add		160	#ifdef KLU	accepted
+R33_src_maths_ni_niiter.c	src/maths/ni/niiter.c	@@ -139,6 +157,27 @@	add		161	            /* [MNA_SNAPSHOT] pre-factor phase: once-only, immediately after	accepted
+R34_src_maths_ni_niiter.c	src/maths/ni/niiter.c	@@ -139,6 +157,27 @@	add		162	               CKTload and before any reorder/factor (SMPpreOrder, SMPreorder,	accepted
+R35_src_maths_ni_niiter.c	src/maths/ni/niiter.c	@@ -139,6 +157,27 @@	add		163	               SMPluFac below); saves the event key and arms postsolve only	accepted
+R36_src_maths_ni_niiter.c	src/maths/ni/niiter.c	@@ -139,6 +157,27 @@	add		164	               on a successful sparse prefactor (SMPsnapshotMNA == 0) */	accepted
+R37_src_maths_ni_niiter.c	src/maths/ni/niiter.c	@@ -139,6 +157,27 @@	add		165	            if (vtp_armed == 1 && !vtp_snap_pre_done &&	accepted
+R38_src_maths_ni_niiter.c	src/maths/ni/niiter.c	@@ -139,6 +157,27 @@	add		166	                iterno == vtp_snap_iter && ckt->CKTtime == 0.0 &&	accepted
+R39_src_maths_ni_niiter.c	src/maths/ni/niiter.c	@@ -139,6 +157,27 @@	add		167	                ((ckt->CKTmode & MODETRANOP) != 0) &&	accepted
+R40_src_maths_ni_niiter.c	src/maths/ni/niiter.c	@@ -139,6 +157,27 @@	add		168	                ((ckt->CKTmode & MODEINITFIX) != 0)) {	accepted
+R41_src_maths_ni_niiter.c	src/maths/ni/niiter.c	@@ -139,6 +157,27 @@	add		169	                const int vtp_snap_max_eq = (int) ckt->CKTmaxEqNum - 1;	accepted
+R42_src_maths_ni_niiter.c	src/maths/ni/niiter.c	@@ -139,6 +157,27 @@	add		170	                vtp_snap_time = ckt->CKTtime;	accepted
+R43_src_maths_ni_niiter.c	src/maths/ni/niiter.c	@@ -139,6 +157,27 @@	add		171	                vtp_snap_mode = (long) ckt->CKTmode;	accepted
+R44_src_maths_ni_niiter.c	src/maths/ni/niiter.c	@@ -139,6 +157,27 @@	add		172	                vtp_snap_id = ++vtp_snap_seq;	accepted
+R45_src_maths_ni_niiter.c	src/maths/ni/niiter.c	@@ -139,6 +157,27 @@	add		173	                if (SMPsnapshotMNA(ckt->CKTmatrix, ckt->CKTrhs,	accepted
+R46_src_maths_ni_niiter.c	src/maths/ni/niiter.c	@@ -139,6 +157,27 @@	add		174	                                   vtp_snap_max_eq, ckt->CKTkluMODE,	accepted
+R47_src_maths_ni_niiter.c	src/maths/ni/niiter.c	@@ -139,6 +157,27 @@	add		175	                                   "prefactor", vtp_snap_id, vtp_tnode,	accepted
+R48_src_maths_ni_niiter.c	src/maths/ni/niiter.c	@@ -139,6 +157,27 @@	add		176	                                   iterno, ckt->CKTtime,	accepted
+R49_src_maths_ni_niiter.c	src/maths/ni/niiter.c	@@ -139,6 +157,27 @@	add		177	                                   (long) ckt->CKTmode) == 0)	accepted
+R50_src_maths_ni_niiter.c	src/maths/ni/niiter.c	@@ -139,6 +157,27 @@	add		178	                    vtp_snap_pre_done = TRUE;	accepted
+R51_src_maths_ni_niiter.c	src/maths/ni/niiter.c	@@ -139,6 +157,27 @@	add		179	            }	accepted
+R52_src_maths_ni_niiter.c	src/maths/ni/niiter.c	@@ -139,6 +157,27 @@	add		180	#endif	accepted
+R53_src_maths_ni_niiter.c	src/maths/ni/niiter.c	@@ -139,6 +157,27 @@	context	142	181		accepted
+R54_src_maths_ni_niiter.c	src/maths/ni/niiter.c	@@ -139,6 +157,27 @@	context	143	182	            /* printf("after loading, before solving\\n"); */	accepted
+R55_src_maths_ni_niiter.c	src/maths/ni/niiter.c	@@ -139,6 +157,27 @@	context	144	183	            /* CKTdump(ckt); */	accepted
+R56_src_maths_ni_niiter.c	src/maths/ni/niiter.c	@@ -311,6 +350,33 @@	hunk	311	350	@@ -311,6 +350,33 @@	accepted
+R57_src_maths_ni_niiter.c	src/maths/ni/niiter.c	@@ -311,6 +350,33 @@	context	311	350	                after_damping = solved_after_solve;	accepted
+R58_src_maths_ni_niiter.c	src/maths/ni/niiter.c	@@ -311,6 +350,33 @@	context	312	351	                iteration_captured = TRUE;	accepted
+R59_src_maths_ni_niiter.c	src/maths/ni/niiter.c	@@ -311,6 +350,33 @@	context	313	352	            }	accepted
+R60_src_maths_ni_niiter.c	src/maths/ni/niiter.c	@@ -311,6 +350,33 @@	add		353	#ifdef KLU	accepted
+R61_src_maths_ni_niiter.c	src/maths/ni/niiter.c	@@ -311,6 +350,33 @@	add		354	            /* [MNA_SNAPSHOT] post-solve phase: full solution vector, once-only,	accepted
+R62_src_maths_ni_niiter.c	src/maths/ni/niiter.c	@@ -311,6 +350,33 @@	add		355	               immediately after SMPsolve (before any damping); re-checks the	accepted
+R63_src_maths_ni_niiter.c	src/maths/ni/niiter.c	@@ -311,6 +350,33 @@	add		356	               exact saved event key (iterno/time/mode); if control left the	accepted
+R64_src_maths_ni_niiter.c	src/maths/ni/niiter.c	@@ -311,6 +350,33 @@	add		357	               keyed iteration before the solve (e.g., the sparse E_SINGULAR	accepted
+R65_src_maths_ni_niiter.c	src/maths/ni/niiter.c	@@ -311,6 +350,33 @@	add		358	               reorder-continue at base niiter.c:258), emit a fail-closed ABORT	accepted
+R66_src_maths_ni_niiter.c	src/maths/ni/niiter.c	@@ -311,6 +350,33 @@	add		359	               and never pair with a later solve */	accepted
+R67_src_maths_ni_niiter.c	src/maths/ni/niiter.c	@@ -311,6 +350,33 @@	add		360	            if (vtp_snap_pre_done && !vtp_snap_post_done) {	accepted
+R68_src_maths_ni_niiter.c	src/maths/ni/niiter.c	@@ -311,6 +350,33 @@	add		361	                const int vtp_snap_max_eq = (int) ckt->CKTmaxEqNum - 1;	accepted
+R69_src_maths_ni_niiter.c	src/maths/ni/niiter.c	@@ -311,6 +350,33 @@	add		362	                if (iterno == vtp_snap_iter && ckt->CKTtime == vtp_snap_time &&	accepted
+R70_src_maths_ni_niiter.c	src/maths/ni/niiter.c	@@ -311,6 +350,33 @@	add		363	                    (long) ckt->CKTmode == vtp_snap_mode) {	accepted
+R71_src_maths_ni_niiter.c	src/maths/ni/niiter.c	@@ -311,6 +350,33 @@	add		364	                    SMPsnapshotMNA(ckt->CKTmatrix, ckt->CKTrhs,	accepted
+R72_src_maths_ni_niiter.c	src/maths/ni/niiter.c	@@ -311,6 +350,33 @@	add		365	                                   vtp_snap_max_eq, ckt->CKTkluMODE,	accepted
+R73_src_maths_ni_niiter.c	src/maths/ni/niiter.c	@@ -311,6 +350,33 @@	add		366	                                   "postsolve", vtp_snap_id, vtp_tnode,	accepted
+R74_src_maths_ni_niiter.c	src/maths/ni/niiter.c	@@ -311,6 +350,33 @@	add		367	                                   iterno, ckt->CKTtime,	accepted
+R75_src_maths_ni_niiter.c	src/maths/ni/niiter.c	@@ -311,6 +350,33 @@	add		368	                                   (long) ckt->CKTmode);	accepted
+R76_src_maths_ni_niiter.c	src/maths/ni/niiter.c	@@ -311,6 +350,33 @@	add		369	                } else {	accepted
+R77_src_maths_ni_niiter.c	src/maths/ni/niiter.c	@@ -311,6 +350,33 @@	add		370	                    SMPsnapshotMNA(ckt->CKTmatrix, ckt->CKTrhs,	accepted
+R78_src_maths_ni_niiter.c	src/maths/ni/niiter.c	@@ -311,6 +350,33 @@	add		371	                                   vtp_snap_max_eq, ckt->CKTkluMODE,	accepted
+R79_src_maths_ni_niiter.c	src/maths/ni/niiter.c	@@ -311,6 +350,33 @@	add		372	                                   "abort", vtp_snap_id, vtp_tnode,	accepted
+R80_src_maths_ni_niiter.c	src/maths/ni/niiter.c	@@ -311,6 +350,33 @@	add		373	                                   vtp_snap_iter, vtp_snap_time,	accepted
+R81_src_maths_ni_niiter.c	src/maths/ni/niiter.c	@@ -311,6 +350,33 @@	add		374	                                   vtp_snap_mode);	accepted
+R82_src_maths_ni_niiter.c	src/maths/ni/niiter.c	@@ -311,6 +350,33 @@	add		375	                    vtp_snap_pre_done = FALSE;	accepted
+R83_src_maths_ni_niiter.c	src/maths/ni/niiter.c	@@ -311,6 +350,33 @@	add		376	                }	accepted
+R84_src_maths_ni_niiter.c	src/maths/ni/niiter.c	@@ -311,6 +350,33 @@	add		377	                vtp_snap_post_done = TRUE;	accepted
+R85_src_maths_ni_niiter.c	src/maths/ni/niiter.c	@@ -311,6 +350,33 @@	add		378	            }	accepted
+R86_src_maths_ni_niiter.c	src/maths/ni/niiter.c	@@ -311,6 +350,33 @@	add		379	#endif	accepted
+R87_src_maths_ni_niiter.c	src/maths/ni/niiter.c	@@ -311,6 +350,33 @@	context	314	380	            ckt->CKTstat->STATsolveTime +=	accepted
+R88_src_maths_ni_niiter.c	src/maths/ni/niiter.c	@@ -311,6 +350,33 @@	context	315	381	                SPfrontEnd->IFseconds() - startTime;	accepted
+R89_src_maths_ni_niiter.c	src/maths/ni/niiter.c	@@ -311,6 +350,33 @@	context	316	382	#ifdef STEPDEBUG	accepted
+BOUND_src_spicelib_devices_cktinit_L42	src/spicelib/devices/cktinit.c	-	source_authority	42		    sckt->CKTmaxEqNum = 1;	verified
+BOUND_src_spicelib_analysis_cktnewn_L37	src/spicelib/analysis/cktnewn.c	-	source_authority	37		    ckt->CKTlastNode->number = ckt->CKTmaxEqNum++;	verified
+BOUND_src_spicelib_analysis_span_L722	src/spicelib/analysis/span.c	-	source_authority	722		            rhswoPorts = (double*)TMALLOC(double, ckt->CKTmaxEqNum);	verified
+BOUND_src_spicelib_analysis_span_L724	src/spicelib/analysis/span.c	-	source_authority	724		            rhswoPorts = (double*)TREALLOC(double, rhswoPorts, ckt->CKTmaxEqNum);	verified
+BOUND_src_spicelib_analysis_span_L731	src/spicelib/analysis/span.c	-	source_authority	731		            irhswoPorts = (double*)TMALLOC(double, ckt->CKTmaxEqNum);	verified
+BOUND_src_spicelib_analysis_span_L733	src/spicelib/analysis/span.c	-	source_authority	733		            irhswoPorts = (double*)TREALLOC(double, irhswoPorts, ckt->CKTmaxEqNum);	verified
+BOUND_src_spicelib_analysis_span_L779	src/spicelib/analysis/span.c	-	source_authority	779		        memcpy(rhswoPorts, ckt->CKTrhs, (size_t)ckt->CKTmaxEqNum * sizeof(double));	verified
+BOUND_src_spicelib_analysis_span_L780	src/spicelib/analysis/span.c	-	source_authority	780		        memcpy(rhswoPorts, ckt->CKTirhs, (size_t)ckt->CKTmaxEqNum * sizeof(double));	verified
+BOUND_src_spicelib_analysis_span_L785	src/spicelib/analysis/span.c	-	source_authority	785		            memcpy(ckt->CKTrhs, rhswoPorts, (size_t)ckt->CKTmaxEqNum * sizeof(double));	verified
+BOUND_src_spicelib_analysis_span_L786	src/spicelib/analysis/span.c	-	source_authority	786		            memcpy(ckt->CKTirhs, irhswoPorts, (size_t)ckt->CKTmaxEqNum * sizeof(double));	verified
+BOUND_src_spicelib_analysis_span_L870	src/spicelib/analysis/span.c	-	source_authority	870		                for (j = 0; j < ckt->CKTmaxEqNum; j++)	verified
+BOUND_src_spicelib_analysis_cktdump_L42	src/spicelib/analysis/cktdump.c	-	source_authority	42		    valData.v.numValue = ckt->CKTmaxEqNum-1;	verified
+BOUND_src_spicelib_analysis_cktnames_L23	src/spicelib/analysis/cktnames.c	-	source_authority	23		    *numNames = ckt->CKTmaxEqNum-1;	verified
+PATCH_ID	<patch>	-	summary			NGSPICE46-VBIC-MNA-SNAPSHOT-PROBE-V3.patch sha256=d833221f0d133ea75ea5e70861eb42c32a409f6c1aa01465cf78dc93aa2e4afa bytes=17098 newlines=320; unified diff over three files	verified
+TOTALS_src_include_ngspice_smpdefs.h	src/include/ngspice/smpdefs.h	-	summary			base sha256=13e94b623930c952ac05a0d8100121107c99a37e5fc096cf63e9bc9f9e8e9196 verified vs target; modified sha256=61acdc96443b583cf8915bf3e3528284fbeb9c4b48fb694787f1a7959b45b369 bytes=4091; per-record totals: header=2 hunk=1 context=6 add=10 remove=0	verified
+RECON_src_include_ngspice_smpdefs.h	src/include/ngspice/smpdefs.h	-	summary			patch --dry-run rc=0; patch -p1 on fresh base copy reconstructs byte-for-byte: applied sha256=61acdc96443b583cf8915bf3e3528284fbeb9c4b48fb694787f1a7959b45b369 == intended PASS	verified
+TOTALS_src_maths_KLU_klusmp.c	src/maths/KLU/klusmp.c	-	summary			base sha256=4d1f9a39d33712948a8b25c461e060eadb80d3437a02f6011d0036617c0a0b20 verified vs target; modified sha256=d9a40052c6c29c6ecf7c2ee34a946512d3221908787b2e15095fad69ea9f297d bytes=81919; per-record totals: header=2 hunk=1 context=3 add=206 remove=0	verified
+RECON_src_maths_KLU_klusmp.c	src/maths/KLU/klusmp.c	-	summary			patch --dry-run rc=0; patch -p1 on fresh base copy reconstructs byte-for-byte: applied sha256=d9a40052c6c29c6ecf7c2ee34a946512d3221908787b2e15095fad69ea9f297d == intended PASS	verified
+TOTALS_src_maths_ni_niiter.c	src/maths/ni/niiter.c	-	summary			base sha256=687e2f85776c7c1a064a980e333502aefd8162c4dd3a360412845a7a923e9625 verified vs target; modified sha256=fa26677f5436801e0e725cf9500b80a03b3c2faf7a8fa0cbe32c518f1d7a811e bytes=21785; per-record totals: header=2 hunk=3 context=18 add=66 remove=0	verified
+RECON_src_maths_ni_niiter.c	src/maths/ni/niiter.c	-	summary			patch --dry-run rc=0; patch -p1 on fresh base copy reconstructs byte-for-byte: applied sha256=fa26677f5436801e0e725cf9500b80a03b3c2faf7a8fa0cbe32c518f1d7a811e == intended PASS	verified
+AUTHORITY_FILES	<sources>	-	summary			CKTmaxEqNum bound source files (sha256): src/spicelib/devices/cktinit.c=3c2c29c679499c95; src/spicelib/analysis/cktnewn.c=3ebab2aec1403def; src/spicelib/analysis/span.c=14204a41032fe194; src/spicelib/analysis/cktdump.c=8e704cd4b0965b14; src/spicelib/analysis/cktnames.c=61d3fd8ec2f104ae	verified
+DESIGN_BOUND	niiter.c + klusmp.c	-	summary			size = (int) ckt->CKTmaxEqNum - 1 derived as local vtp_snap_max_eq at every SMPsnapshotMNA call (prefactor, postsolve, abort); helper emits indices 1..size inclusive, validates external row/col against the same bound, vector_expected = size; size <= 0 fails closed (MNA_SNAP_ARG) satisfying the >= 1 guard; memory-safety: RHS has CKTmaxEqNum elements so RHS[1..CKTmaxEqNum-1] is in bounds	accepted
+DESIGN_TWO_PASS	klusmp.c	-	summary			sparse prefactor is two-pass: pass 1 counts EVERY stored element over safely traversable FirstInCol/NextInCol chains (entries_expected = exact full count), internal-range check precedes any map indexing, range guards recorded without invalid map access; any guard => no entry/vector payload, MNA_SNAP_RANGE return, status=incomplete; only a clean pass 1 runs pass 2 (emit) and may return complete	accepted
+DESIGN_PRESERVED	klusmp.c + niiter.c	-	summary			preserved from V2: event key (tnode 100, iterno 3, time 0, mode 0x420), return codes, backend mismatch guard, exact strcmp phase checks, KLU prefactor UNSUPPORTED fail-closed, same-iteration postsolve re-check, ABORT on keyed-iteration abandonment, %a values, finite=0/1 fields, separate entries_expected/observed and vector_expected/observed counts, postsolve armed only after successful sparse prefactor	accepted
+DESIGN_WRITE	klusmp.c + niiter.c	-	summary			stderr-only, %a, synchronous, once-only; no matrix/RHS/state writes; no element creation (no SMPfindElt/spcCreateElement); no arithmetic recomputation; SMPsolve/CKTload/reorder/factor calls and control flow unchanged (0 removed lines across all hunks)	accepted
+STATUS_COMPILE_RUN	<none>	-	summary			compile/run UNRUN: the patch was not applied to any retained build tree; nothing was configured, compiled, linked, invoked, or simulated; no gate claim made	unrun

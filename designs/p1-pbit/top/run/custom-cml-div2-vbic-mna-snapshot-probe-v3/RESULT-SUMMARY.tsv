@@ -1,0 +1,13 @@
+boundary	status	artifact	metric
+source_design	accepted	NGSPICE46-VBIC-MNA-SNAPSHOT-PROBE-V3.patch	d833221f; three-file read-only diagnostic patch
+source_audit	accepted	NGSPICE46-VBIC-MNA-SNAPSHOT-PROBE-AUDIT-V3.tsv	840a5097; exact reconstruction of all three applied sources
+syntax	complete_with_matched_preexisting_warnings	evidence/build/NGSPICE46-VBIC-MNA-SNAPSHOT-PROBE-V3-SYNTAX-V2.log	four translation units rc 0; patch warning delta 0; three pre-existing KLU warnings per side
+object_compile	complete	evidence/build/NGSPICE46-VBIC-MNA-SNAPSHOT-PROBE-V3-OBJECT-V1.log	four objects produced and independently identified
+matched_link	complete	evidence/build/NGSPICE46-VBIC-MNA-SNAPSHOT-PROBE-V3-LINK-V4.log	six forced link steps rc 0; warnings 0; errors 0
+startup	complete	evidence/build/NGSPICE46-VBIC-MNA-SNAPSHOT-PROBE-V3-INVOKE-V1.log	base and patched --version rc 0 with identical output
+native_runtime	complete	evidence/runtime/NGSPICE46-VBIC-MNA-SNAPSHOT-PROBE-V3-RUNTIME-V4.log	429 variables x 2284 points; payloads byte-identical; one complete 371-equation snapshot pair
+solver_consistency	verified	evidence/analysis/NGSPICE46-VBIC-MNA-SNAPSHOT-PROBE-V3-RESIDUAL-V3.log	max normalized residual 1.997255e-15; equation 100 residual 1.108590e-16
+equation_mapping	partial	evidence/analysis/NGSPICE46-VBIC-MNA-SNAPSHOT-PROBE-V3-EQMAP-AUDIT-V1.log	equation 100 mapped to target VBIC thermal node; 12 dominant equations unmapped
+device_causality	not_established	evidence/analysis/NGSPICE46-VBIC-MNA-SNAPSHOT-PROBE-V3-EQMAP-AUDIT-V1.log	no retained evidence identifies the causal device stamp
+measurement	not_evaluated	evidence/runtime/NGSPICE46-VBIC-MNA-SNAPSHOT-PROBE-V3-RUNTIME-V4.log	no circuit specification limit applied
+specification	not_evaluated	evidence/runtime/NGSPICE46-VBIC-MNA-SNAPSHOT-PROBE-V3-RUNTIME-V4.log	no circuit specification disposition

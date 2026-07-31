@@ -1,0 +1,59 @@
+NGSPICE46-VBIC-MNA-SNAPSHOT-PROBE-V3-INVOKE-V1.log
+Probe V3 invocation-only evidence (immutable; loader/startup boundary)
+Date (UTC): 2026-07-31T19:51:51Z
+Evidence dir: NGSPICE46-VBIC-MNA-SNAPSHOT-PROBE-V3-INVOKE-V1-RAW (persistent, exclusive, never removed)
+Executables: LINK-V4 builds in $MATCHED_BUILD_ROOT/{base_ctrl,patched}/src/ngspice
+  (log a42f1cc5...; bases 13e94b62/4d1f9a39/687e2f85, patch d833221f, targets 61acdc96/d9a40052/fa26677f)
+
+=== command identity (exact; per side, invoked EXACTLY ONCE) ===
+  ( cd /tmp && LC_ALL=C timeout 30s <scratch>/<side>/src/ngspice --version < /dev/null )
+  env: LC_ALL=C; timeout 30s; stdin /dev/null; no deck; no alternate flag; no retry
+
+=== pre-invocation reverify (exact LINK-V4 bytes/hashes) ===
+base    8050256 9ec2e4a14ba0f497c6f8f253546081d7dc3b59131c19e4be50cd60284bf3c054
+patched 8054352 f2d2cd197f03818f1501dbebc983e5fcf1dd062965ea5e56dbff6b8dde01a0c7
+
+=== invocation results ===
+base:
+  rc=0
+  stdout bytes=449 sha256=217731505de0a8887c6b8a9d80af39da3e445ee36ebb24c1852fcf8a344d2dde
+  stderr bytes=0 sha256=e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855
+  stdout content (unmodified):
+    | ******
+    | ** ngspice-46 : Circuit level simulation program
+    | ** Compiled with KLU Direct Linear Solver
+    | ** The U. C. Berkeley CAD Group
+    | ** Copyright 1985-1994, Regents of the University of California.
+    | ** Copyright 2001-2025, The ngspice team.
+    | ** Please get your ngspice manual from https://ngspice.sourceforge.io/docs.html
+    | ** Please file your bug-reports at http://ngspice.sourceforge.net/bugrep.html
+    | ** Creation Date: Fri Jul 31 16:21:22 UTC 2026
+    | ******
+  stderr content (unmodified):
+patched:
+  rc=0
+  stdout bytes=449 sha256=217731505de0a8887c6b8a9d80af39da3e445ee36ebb24c1852fcf8a344d2dde
+  stderr bytes=0 sha256=e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855
+  stdout content (unmodified):
+    | ******
+    | ** ngspice-46 : Circuit level simulation program
+    | ** Compiled with KLU Direct Linear Solver
+    | ** The U. C. Berkeley CAD Group
+    | ** Copyright 1985-1994, Regents of the University of California.
+    | ** Copyright 2001-2025, The ngspice team.
+    | ** Please get your ngspice manual from https://ngspice.sourceforge.io/docs.html
+    | ** Please file your bug-reports at http://ngspice.sourceforge.net/bugrep.html
+    | ** Creation Date: Fri Jul 31 16:21:22 UTC 2026
+    | ******
+  stderr content (unmodified):
+
+=== post-invocation rehash (no mutation required) ===
+base    8050256 9ec2e4a14ba0f497c6f8f253546081d7dc3b59131c19e4be50cd60284bf3c054
+patched 8054352 f2d2cd197f03818f1501dbebc983e5fcf1dd062965ea5e56dbff6b8dde01a0c7
+no-mutation: PASS (both executables byte-identical before/after invocation)
+
+=== scope statement ===
+Even two clean --version invocations prove loader/startup only: the dynamic
+loader, libc startup, and the ngspice --version path ran and exited rc=0.
+They do NOT exercise SMPsnapshotMNA, the NIiter probe/snapshot code path, any
+circuit, or any simulation. No circuit or specification evidence is claimed.
