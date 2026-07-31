@@ -38,6 +38,12 @@ The subsequent [`2.25 µm correction`](scaled-900ua-w2p25/) delivers
 current variation across the same common-mode range. This is the current
 nominal single-unit sizing checkpoint, not evidence for an assembled array.
 
+The follow-up [`loaded weight-8 experiment`](base-driver-dc/loaded-weight8-900ua/)
+applies that width to the passive 100/20 kΩ base network with `m=8` and
+`Nx=8`. It measures **7.042425980 µA** against a 7.038123167 µA
+target (+0.0611358%) with symmetric steering and 99.9488069% selected share.
+No tolerance disposition is assigned.
+
 ## Output-resistance correction
 
 This experiment does **not** measure NMOS output resistance from a 300 mV
