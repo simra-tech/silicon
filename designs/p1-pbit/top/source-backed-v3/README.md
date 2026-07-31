@@ -36,13 +36,14 @@ Its SHA-256 is
 
 ## What this package does not establish
 
-No valid top-level operating point, transient, noise, correlation, power,
-timing, PVT, DRC, LVS, or PEX result exists for this hierarchy. The first
-operating-point attempt on Top V2 failed and produced no raw dataset; that
-failed execution is not part of this structural package. The values retained
-in the planning tables do not choose whether `VB1`, `VB2`, and `IE` are
-external or integrated. This package makes no signoff, foundry-approval, or
-tape-out-readiness claim.
+This structural package itself establishes no electrical result. A later
+[nominal Top V3 operating-point package](../run/nominal-op-v3/) retains one
+parseable 398-variable dataset, but its electrical status remains not
+evaluated while a thermal-model warning and negative `IE` bias are reviewed.
+No validated transient, noise, correlation, power, timing, PVT, DRC, LVS, or
+PEX result exists for this hierarchy. The values retained in the planning
+tables do not choose whether `VB1`, `VB2`, and `IE` are external or integrated.
+This package makes no signoff, foundry-approval, or tape-out-readiness claim.
 
 ## Files
 
