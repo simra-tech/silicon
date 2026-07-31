@@ -19,6 +19,9 @@ lineage evidence; it is not a reusable DFF.
 | [`rejected-v2/`](rejected-v2/) | Rejected | The unresolved output-load model was dropped and diagram values lacked provenance. |
 | [`current-v3/`](current-v3/) | Current | Text integrity, authority categories, load uncertainty, and diagram provenance were checked. |
 
+The supporting [`lineage/`](lineage/) record audits the existing Top V3 comparator latch that
+was retained only as a provisional implementation seed.
+
 The original rejected V1 identity is retained in its publication note; its unsafe control bytes
 are represented as literal markers rather than committed raw bytes. V3 remains a proposal with
 no schematic, simulation, electrical pass, signoff result, or tape-out-readiness claim. Device
