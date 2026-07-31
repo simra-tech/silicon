@@ -4,6 +4,14 @@ Two-stage degenerated HBT CML pair. Takes the differential noise from
 [`../noise-generator/`](../noise-generator/) and lifts it to a level a clocked
 comparator can decide on.
 
+## Schematic-backed hierarchy source
+
+[`source-backed-v2/`](source-backed-v2/) publishes the cleaned Xschem source,
+ordered symbol, one-instance hierarchy, generated netlist, and normalized
+generation evidence. The source change removes four duplicate same-net labels
+and no devices, nets, or values. This establishes source-to-netlist binding
+only; it does not supersede or extend the electrical results below.
+
 ## Measured
 
 | Quantity | Value | How |

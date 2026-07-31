@@ -1,0 +1,27 @@
+v {xschem version=3.4.8RC file_version=1.3}
+K {type=subcircuit
+format="@name @pinlist @symname"
+spectre_format="@name ( @pinlist ) @symname"
+template="name=x1"
+}
+T {@symname} -72 -6 0 0 0.3 0.3 {}
+T {@name} 45 -52 0 0 0.2 0.2 {}
+P 4 5 40 -40 -40 -40 -40 40 40 40 40 -40 {}
+B 5 57.5 -12.5 62.5 -7.5 {name=NOISE_AMP_P dir=out}
+L 4 40 -10 60 -10 {}
+T {NOISE_AMP_P} 35 -14 0 1 0.2 0.2 {}
+B 5 57.5 7.5 62.5 12.5 {name=NOISE_AMP_N dir=out}
+L 4 40 10 60 10 {}
+T {NOISE_AMP_N} 35 6 0 1 0.2 0.2 {}
+B 5 -62.5 -32.5 -57.5 -27.5 {name=RAW_NOISE_P dir=in}
+L 4 -60 -30 -40 -30 {}
+T {RAW_NOISE_P} -35 -34 0 0 0.2 0.2 {}
+B 5 -62.5 -12.5 -57.5 -7.5 {name=RAW_NOISE_N dir=in}
+L 4 -60 -10 -40 -10 {}
+T {RAW_NOISE_N} -35 -14 0 0 0.2 0.2 {}
+B 5 57.5 -32.5 62.5 -27.5 {name=VCC dir=inout}
+L 7 40 -30 60 -30 {}
+T {VCC} 35 -34 0 1 0.2 0.2 {}
+B 5 57.5 27.5 62.5 32.5 {name=VSS dir=inout}
+L 7 40 30 60 30 {}
+T {VSS} 35 26 0 1 0.2 0.2 {}
