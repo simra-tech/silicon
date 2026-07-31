@@ -31,6 +31,24 @@ unknown point. It does not establish a physical current source, digital code
 mapping, local resolution, mismatch, dynamic behavior, temperature or process
 corners, yield, architecture selection, or signoff.
 
+## Evidence ladder
+
+[`current_steering_900ua_evidence_ladder_v3.tsv`](current_steering_900ua_evidence_ladder_v3.tsv)
+keeps five evidence levels separate: this ideal-tail authority experiment, the
+2.25 µm physical unit, the loaded weight-8 cell, the loaded 31-unit
+major-carry slice, and the current full-array boundary. Every published path
+and SHA-256 resolves at its cited commit; the first four rows separately label
+the native executed deck and the sanitized public deck.
+
+The final row is intentionally **UNKNOWN**. It binds the retained model-valid
+self-heating-on 780 µA-era full-array diagnostic, whose finite raw accompanies
+a thermal NaN/heat-sink warning, and explicitly records that no 900 µA
+full-array artifact exists. Nominal subarray evidence is not promoted into a
+full-array conclusion.
+
+The TSV is 7,331 bytes with SHA-256
+`91c1e291ac65b54a514a925ac13b8c722295fb828b19aad3a7a1ce0184533fd2`.
+
 ## Artifact identity and reproduction
 
 The exact executed deck was 2,877 bytes with SHA-256
