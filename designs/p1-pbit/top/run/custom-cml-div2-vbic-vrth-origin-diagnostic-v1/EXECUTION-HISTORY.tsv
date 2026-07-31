@@ -1,0 +1,4 @@
+event_id	stage	command_summary	harness_exit_code	process_spawned	actual_ngspice_invocations	outcome	retained_artifact	notes
+1	input_materialization	Copy frozen Candidate V5 deck and netlist into a new run directory	0	FALSE	0	PREPARED	Frozen deck and netlist copies	The copied identities matched the required deck and Candidate V5 netlist before execution.
+2	foreground_request	Request ngspice with the frozen deck as a foreground command	-1	FALSE	0	REJECTED_BEFORE_SPAWN	None	The harness rejected the request as a potentially persistent GUI process before spawning any process; no ngspice invocation occurred.
+3	simulation	Run ngspice with the frozen deck through one tracked background process	0	TRUE	1	SUCCESS	evidence/tb_p1_cml_div2_front_tran_v5_vrth_origin_diag.log; raw_tb_p1_cml_div2_front_tran_v5.raw	Exactly one actual ngspice invocation ran. The native log records ngspice-46 done and NGSPICE_EXIT=0. There was no retry.

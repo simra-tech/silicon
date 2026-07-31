@@ -1,0 +1,15 @@
+metric_id	literal_or_value	evidence	description
+origin_diagnostic_marker_count	1	native log	Occurrence count of [VBIC_VRTH_ORIGIN_DIAGNOSTIC]
+prior_nan_diagnostic_marker_count	0	native log	Occurrence count of the older [VBIC_NAN_DIAGNOSTIC] marker
+generic_thermal_warning_line1_count	1	native log	Occurrence count of The temperature limiting function received NaN.
+generic_thermal_warning_line2_count	1	native log	Occurrence count of Please check your power dissipation and improve your heat sink Rth!
+first_marker_line_literal	[VBIC_VRTH_ORIGIN_DIAGNOSTIC] Instance: q.xdiv2.xqs_comp_s.qnpn13g2 | Origin: 8 (tempnode_load_line_484) | OriginScalar: -nan (isnan=1) | Vrth(current): -nan (isnan=1) | Vrth(stored): -0x1.802fd62bf6888p+8 (isnan=0)	native log	Exact first and only origin-diagnostic marker line
+mapped_candidate_instance	XQS_COMP_S	Candidate V5 netlist line 91	Subcircuit instance corresponding to the reported hierarchical VBIC instance
+origin_id	8	V2 patched source and native log	Origin tag selected by the executed branch
+origin_name	tempnode_load_line_484	V2 patched source and native log	Diagnostic label for the load-path assignment in official-source line numbering
+origin_source_expression	*(ckt->CKTrhsOld + here->VBICtempNode)	V2 patched source	Exact scalar expression captured by Origin 8 before DEVlimitlog
+origin_scalar_literal	-nan (isnan=1)	native log	Value read from the Origin 8 source expression at the marker
+vrth_current_literal	-nan (isnan=1)	native log	Vrth value presented to the pre-limiter diagnostic point
+vrth_stored_literal	-0x1.802fd62bf6888p+8 (isnan=0)	native log	Finite stored state value observed at the same point
+operand_physical_unit	unresolved	local evidence boundary	No physical unit is asserted for the internal scalar
+strongest_supported_result	XQS_COMP_S Origin 8 read NaN from CKTrhsOld VBICtempNode before the limiter, while stored Vrth was finite.	patch plus native log	This does not locate where the circuit-vector value became NaN and does not establish root cause.
