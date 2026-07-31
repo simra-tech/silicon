@@ -1,0 +1,31 @@
+** sch_path: ./p1_noise_gen_hier.sch
+**.subckt p1_noise_gen_hier RAW_NOISE_P RAW_NOISE_N VCC VSS VB1 VB2 IE
+*.opin RAW_NOISE_P
+*.opin RAW_NOISE_N
+*.iopin VCC
+*.iopin VSS
+*.ipin VB1
+*.ipin VB2
+*.iopin IE
+X1 RAW_NOISE_P RAW_NOISE_N VCC VSS VB1 VB2 IE p1_noise_gen
+**.ends
+
+* expanding   symbol:  p1_noise_gen.sym # of pins=7
+** sym_path: ./p1_noise_gen.sym
+** sch_path: ./p1_noise_gen.sch
+.subckt p1_noise_gen RAW_NOISE_P RAW_NOISE_N VCC VSS VB1 VB2 IE
+*.opin RAW_NOISE_P
+*.opin RAW_NOISE_N
+*.iopin VCC
+*.iopin VSS
+*.ipin VB1
+*.ipin VB2
+*.iopin IE
+XQ1 RAW_NOISE_N VB1 IE VSS npn13G2 Nx=1 mm_ok=1
+XQ2 RAW_NOISE_P VB2 IE VSS npn13G2 Nx=1 mm_ok=1
+XRC1 VCC RAW_NOISE_N sub! rppd w=1.0u l=3.85u m=1 b=0 mm_ok=1
+XRC2 VCC RAW_NOISE_P sub! rppd w=1.0u l=3.85u m=1 b=0 mm_ok=1
+XTAP1 VSS sub! ptap1 R={ 1.0 / ( 1.0 / ( 9.8e-10 / ( 2.0u * 2.0u ) ) + 1.0 / ( 9.8e-4 / ( 2.0 * ( 2.0u + 2.0u ) ) ) )} w=2.0u l=2.0u
+.ends
+
+.end

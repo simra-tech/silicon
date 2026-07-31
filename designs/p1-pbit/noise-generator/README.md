@@ -11,10 +11,13 @@ This is the first block of P1 to exist as a circuit rather than as a paragraph.
 
 ## Schematic-backed hierarchy source
 
-[`source-backed-v1/`](source-backed-v1/) publishes the current Xschem source,
+[`source-backed-v2/`](source-backed-v2/) publishes the current Xschem source,
 retained raw and ordered symbols, one-instance hierarchy, generated netlist,
-and normalized generation evidence. It establishes source-to-netlist binding
-only; it does not supersede or extend the electrical results below.
+and normalized generation evidence. V2 replaces one ineffective substrate
+label wire so the generated tap is `XTAP1 VSS sub! ptap1`;
+[`source-backed-v1/`](source-backed-v1/) remains retained as the failed
+structural predecessor. These packages establish source-to-netlist binding
+only; they do not supersede or extend the electrical results below.
 
 ## Measured
 
