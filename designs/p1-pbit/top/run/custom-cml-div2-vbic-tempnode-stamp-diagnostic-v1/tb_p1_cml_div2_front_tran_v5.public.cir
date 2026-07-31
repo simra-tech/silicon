@@ -1,0 +1,40 @@
+* Physical-Model Candidate V5 Integrated-Sink Transient Testbench Deck
+* Target Subcircuit: p1_cml_div2_front_integrated_sinks.spice
+
+* Exact PDK Corner Library Models (Lineage from tb_chunk0_27c.cir lines 2..7)
+.lib $PDK_ROOT/libs.tech/ngspice/models/cornerHBT.lib hbt_typ
+.lib $PDK_ROOT/libs.tech/ngspice/models/cornerRES.lib res_typ
+.lib $PDK_ROOT/libs.tech/ngspice/models/cornerCAP.lib cap_typ
+.lib $PDK_ROOT/libs.tech/ngspice/models/cornerMOShv.lib mos_tt
+.lib $PDK_ROOT/libs.tech/ngspice/models/cornerMOSlv.lib mos_tt
+.lib $PDK_ROOT/libs.tech/ngspice/models/cornerDIO.lib dio_tt
+
+* Include Standalone CML Divide-by-2 Candidate V5 Netlist Copy
+.include p1_cml_div2_front_integrated_sinks.spice
+
+* Instantiate Custom CML Divide-by-2 Subcircuit Candidate
+XDIV2 DIV2_P DIV2_N CLK_P CLK_N VCC_HBT VSS p1_cml_div2_front
+
+* Supply Stimulus (Copied from tb_full_array_code0_modelvalid_2x8_900ua.cir lines 83, 85)
+V_VCC_HBT VCC_HBT 0 DC 2.500
+V_VSS VSS 0 DC 0.000
+
+* Complementary 5.0 GHz Clock Stimulus with 100ps Initial Static Prephase
+* Period T = 200ps, Rise/Fall = 2ps, High/Low Plateau = 96ps, 0V..1.2V
+VCLK_P CLK_P 0 PULSE(1.200 0.000 100p 2p 2p 96p 200p)
+VCLK_N CLK_N 0 PULSE(0.000 1.200 100p 2p 2p 96p 200p)
+
+* No external load sources, no reset, no .ic, no .nodeset (PROVISIONAL_DIAGNOSTIC_CONDITION)
+
+.options savecurrents
+
+.control
+  pre_osdi $PDK_ROOT/libs.tech/ngspice/osdi/psp103.osdi
+  pre_osdi $PDK_ROOT/libs.tech/ngspice/osdi/psp103_nqs.osdi
+  save all
+  tran 2p 4.0n
+  write raw_tb_p1_cml_div2_front_tran_v5.raw all
+  quit
+.endc
+
+.end
