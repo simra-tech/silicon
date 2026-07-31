@@ -1,0 +1,15 @@
+--- src/spicelib/devices/vbic/vbicload.c
++++ src/spicelib/devices/vbic/vbicload.c
+@@ -667,6 +667,12 @@
+                         here->VBICtVcrit,&ichk5);
+                 if (here->VBIC_selfheat) {
+                     ichk6 = 1;
++                    static bool vbic_nan_printed = FALSE;
++                    if (!vbic_nan_printed && (isnan(Vrth) || isnan(*(ckt->CKTstate0 + here->VBICvrth)))) {
++                        fprintf(stderr, "\n[VBIC_NAN_DIAGNOSTIC] Instance: %s | Vrth(current): %a (isnan=%d) | Vrth(stored): %a (isnan=%d)\n\n",
++                                here->VBICname, Vrth, isnan(Vrth) ? 1 : 0, *(ckt->CKTstate0 + here->VBICvrth), isnan(*(ckt->CKTstate0 + here->VBICvrth)) ? 1 : 0);
++                        vbic_nan_printed = TRUE;
++                    }
+                     Vrth = DEVlimitlog(Vrth,
+                         *(ckt->CKTstate0 + here->VBICvrth),100,&ichk6);
+                 }

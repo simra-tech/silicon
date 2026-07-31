@@ -1,0 +1,5 @@
+invocation_id	stage	command_summary	exit_code	outcome	retained_artifact	notes
+1	build_attempt_1	make -j4 (initial configure and build)	124	TIMED_OUT	build_attempt1_incomplete.log (private workspace)	Timed out at 180s; build log is incomplete ending at termination signal.
+2	build_attempt_2	make -j8 (build resume)	0	SUCCESS	ngspice executable (isolated build tree)	Build resume succeeded in 29.84s; resume stdout transcript was not retained.
+3	simulation_attempt_1	ngspice -b -s tb_p1_cml_div2_front_tran_v5.cir	1	FAILED_SERVER_MODE_POSITIONAL_DECK	None (overwritten)	Failed because -s specifies server mode in ngspice main.c, ignoring positional deck arguments and returning error no circuit loaded.
+4	simulation_attempt_2	SPICE_SCRIPTS set; ngspice tb_p1_cml_div2_front_tran_v5.cir	0	SUCCESS	raw_tb_p1_cml_div2_front_tran_v5.raw, log	Executed 4.0ns transient; created 7.85MB raw dataset and 7.54KB execution log.
