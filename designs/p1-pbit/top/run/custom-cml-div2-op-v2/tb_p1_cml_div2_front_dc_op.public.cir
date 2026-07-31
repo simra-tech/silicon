@@ -1,0 +1,37 @@
+* Nominal Operating Point Testbench Deck for Custom CML Divide-by-2 Front-Stage Candidate V2
+* Target Subcircuit: xschem/candidates/p1_clk_divider_div2_candidate_v2/p1_cml_div2_front.spice (64226d85)
+
+* Exact PDK Corner Library Models (Lineage from tb_chunk0_27c.cir lines 2..7)
+.lib $PDK_ROOT/libs.tech/ngspice/models/cornerHBT.lib hbt_typ
+.lib $PDK_ROOT/libs.tech/ngspice/models/cornerRES.lib res_typ
+.lib $PDK_ROOT/libs.tech/ngspice/models/cornerCAP.lib cap_typ
+.lib $PDK_ROOT/libs.tech/ngspice/models/cornerMOShv.lib mos_tt
+.lib $PDK_ROOT/libs.tech/ngspice/models/cornerMOSlv.lib mos_tt
+.lib $PDK_ROOT/libs.tech/ngspice/models/cornerDIO.lib dio_tt
+
+* Include Standalone CML Divide-by-2 Candidate V2 Netlist
+.include ../../candidate/custom-cml-div2-v2/p1_cml_div2_front.spice
+
+* Instantiate Custom CML Divide-by-2 Subcircuit Candidate
+XDIV2 DIV2_P DIV2_N CLK_P CLK_N VCC_HBT VSS p1_cml_div2_front
+
+* Supply Stimulus (Copied from tb_full_array_code0_modelvalid_2x8_900ua.cir lines 83, 85)
+V_VCC_HBT VCC_HBT 0 DC 2.500
+V_VSS VSS 0 DC 0.000
+
+* Clock DC Phase Stimulus at t=0 (Inherited from tb_chunk0_27c.cir lines 63--64, PROVISIONAL_DIAGNOSTIC_CONDITION)
+VCLK_P CLK_P 0 DC 1.200
+VCLK_N CLK_N 0 DC 0.000
+
+* No external DIV2 load, no reset, no .ic, no .nodeset (PROVISIONAL_DIAGNOSTIC_CONDITION)
+
+.control
+  pre_osdi $PDK_ROOT/libs.tech/ngspice/osdi/psp103.osdi
+  pre_osdi $PDK_ROOT/libs.tech/ngspice/osdi/psp103_nqs.osdi
+  save all
+  op
+  write raw_tb_p1_cml_div2_front_dc_op.raw all
+  quit
+.endc
+
+.end

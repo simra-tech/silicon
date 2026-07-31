@@ -22,6 +22,11 @@ lineage evidence; it is not a reusable DFF.
 The supporting [`lineage/`](lineage/) record audits the existing Top V3 comparator latch that
 was retained only as a provisional implementation seed.
 
+The resulting [`candidate/custom-cml-div2-v2/`](../../candidate/custom-cml-div2-v2/) and its
+[`run/custom-cml-div2-op-v2/`](../../run/custom-cml-div2-op-v2/) package preserve the first
+transistor-level seed and a thermally warned nominal operating point. The run remains
+engineering-unknown and establishes no divider function.
+
 The original rejected V1 identity is retained in its publication note; its unsafe control bytes
 are represented as literal markers rather than committed raw bytes. V3 remains a proposal with
 no schematic, simulation, electrical pass, signoff result, or tape-out-readiness claim. Device
