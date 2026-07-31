@@ -32,6 +32,12 @@ package also retracts a reported power scalar that multiplied sink current by
 a disconnected 1.2 V rail; the current and selectivity measurements remain
 valid.
 
+The subsequent [`2.25 µm correction`](scaled-900ua-w2p25/) delivers
+**0.880011227 µA** at 2.1 V, only **+0.02794%** from the
+0.879765396 µA target. It retains 99.9460% selected share and 0.00325%
+current variation across the same common-mode range. This is the current
+nominal single-unit sizing checkpoint, not evidence for an assembled array.
+
 ## Output-resistance correction
 
 This experiment does **not** measure NMOS output resistance from a 300 mV
