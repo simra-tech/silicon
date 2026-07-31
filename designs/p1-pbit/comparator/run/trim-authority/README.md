@@ -293,6 +293,22 @@ Scaling only the fixed tail from 670 uA to **780 uA** produces **-40.722 mV** an
 static requirement at the tested 27 °C typical condition. The complete package is in
 [`current-steering-780ua/`](current-steering-780ua/).
 
+### Reconciled against the retained offset campaign
+
+The later physical-model offset campaign changes the range interpretation. Its planned
+denominator is 200 points: 199 complete and one unknown. Conditional on the complete points,
+the sample standard deviation is **7.586947 mV**. Dividing the limiting 780 uA endpoint
+(+40.677374 mV) by that value gives **5.361494 standard deviations**, not six. Six standard
+deviations would require **45.521685 mV**, leaving a **4.844311 mV** shortfall at the limiting
+side.
+
+This is a cross-experiment arithmetic reconciliation, not an engineering disposition. The
+offset campaign uses the HBT mismatch model and its physical-model logs retain a self-heating
+warning; the steering result is a nominal static experiment with an ideal fixed tail. Passive
+820-ohm coverage remains unknown because no retained deck, complete log, and full-range output
+bind its numerator. The exact numerator and denominator provenance is recorded in
+[`trim_coverage_reconciliation_v3.tsv`](trim_coverage_reconciliation_v3.tsv).
+
 The 780 uA pair is the current front-runner, not a selected architecture. A follow-up
 [`33-point analog-control sweep`](current-steering-780ua-33point/) is strictly monotonic at its
 sampled points, but its adjacent threshold steps range from **46.412 uV to 7.172 mV**, a roughly
