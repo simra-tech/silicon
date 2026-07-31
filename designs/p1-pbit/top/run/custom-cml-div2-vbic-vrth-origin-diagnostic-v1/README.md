@@ -18,6 +18,19 @@ The hierarchical device maps to Candidate V5 instance `XQS_COMP_S` at netlist li
 
 Therefore, the strongest result is only: **XQS_COMP_S Origin 8 read NaN from `CKTrhsOld` `VBICtempNode` before the limiter, while stored `Vrth` was finite.** This does not identify where the circuit-vector value became NaN, why it became NaN, or a physical unit. Root cause remains unresolved.
 
+## Static audit lineage
+
+The four `NGSPICE46-VBIC-TEMPNODE-STAMP-DATAFLOW` tables are preserved as an immutable correction history. A later version does not erase or silently repair an earlier one:
+
+| Version | Identity and shape | Retained disposition |
+| --- | --- | --- |
+| V1 | `8869e088...`; 190 data rows × 10 columns | **INCOMPLETE.** Maps the official-source temperature-node allocation, model outputs, integration, and stamp sites, but predates the patched-source Origin-8 bridge. It is not authority for complete executed-patch provenance. |
+| V2 | `ae9deddf...`; 228 data rows × 11 columns | **FAILED PATCH-INVENTORY CHECK / INCOMPLETE.** Adds patched-source and Origin-8 provenance, but its diagnostic-addition bridge incorrectly describes 37 added lines and treats a selected 28-row trace as complete. The actual patch has 45 additions and 4 deletions. |
+| V3 | `b5f0d835...`; 279 data rows × 11 columns | **FAILED DELETION-PROVENANCE CHECK / INCOMPLETE.** Corrects the 45-addition inventory, but its four `PATCH_DEL` rows carry the patched-source hash and no numeric source line. Its complete-reconciliation claim is retracted. |
+| V4 | `0752707a...`; 279 data rows × 11 columns | **CORRECTED AND COMPLETE FOR THE DECLARED STATIC SOURCE/PATCH PROVENANCE SCOPE.** The four deletion rows now bind to official-base hash `752518c6...`, numeric lines 202/234/446/483, exact literals, and their patched replacement guards. |
+
+V4 retains the complete 45-addition / 4-deletion reconciliation and the static read-to-stamp map. It does not show that any individual stamp term was non-finite, locate the upstream NaN source, establish a physical unit, or pass an engineering gate. V1–V3 remain evidence of the review and correction sequence, not interchangeable authorities.
+
 ## Execution record
 
 `EXECUTION-HISTORY.tsv` separates a rejected foreground request from process execution. The harness rejected that request before spawning a process, so it was not an ngspice invocation. One tracked background process then made exactly one actual ngspice invocation. It exited successfully, wrote the retained raw dataset, and produced a log containing `ngspice-46 done` and `NGSPICE_EXIT=0`. There was no retry.
