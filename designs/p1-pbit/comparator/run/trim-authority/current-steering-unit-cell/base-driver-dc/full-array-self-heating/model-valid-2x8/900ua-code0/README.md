@@ -38,6 +38,14 @@ distinct from the baseline raw (`d3259ccf...`). This is a direct comparison
 between two nominal code-0 diagnostics, not a specification or linearity
 result.
 
+The later
+[code-1023 endpoint](../900ua-code1023/README.md) crosses at
++47.831624406 mV. Together the two endpoints span 95.661536110 mV around an
+arithmetic midpoint of +0.000856351 mV. The code-1023 native log is
+warning-free while this code-0 log warns and invokes dynamic-gmin recovery.
+That asymmetry remains an unresolved model-validity observation; it is not
+averaged into a pass or tolerance claim.
+
 The native log contains one temperature-limiter NaN event represented by the
 NaN line and its heat-sink guidance line. It also records one dynamic-gmin
 start and one completion, with no failed recovery, parser error, abort, or

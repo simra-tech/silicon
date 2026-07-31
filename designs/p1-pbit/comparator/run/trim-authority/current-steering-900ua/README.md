@@ -47,13 +47,18 @@ explicitly records that no 900 µA full-array artifact existed at that commit.
 V3 remains an immutable provenance snapshot rather than being silently
 rewritten.
 
-A later
-[model-valid full-array code-0 diagnostic](../current-steering-unit-cell/base-driver-dc/full-array-self-heating/model-valid-2x8/900ua-code0/README.md)
-now provides a complete 900 µA-scale deck, native log, and raw file. Its 1,201
-rows are finite and yield one collector crossing, but the thermal NaN/heat-sink
-warning recurs. The current full-array engineering status therefore remains
-**UNKNOWN**; specification status is **NOT EVALUATED**. Nominal subarray
-evidence is not promoted into a full-array conclusion.
+Later model-valid full-array diagnostics at
+[code 0](../current-steering-unit-cell/base-driver-dc/full-array-self-heating/model-valid-2x8/900ua-code0/README.md)
+and
+[code 1023](../current-steering-unit-cell/base-driver-dc/full-array-self-heating/model-valid-2x8/900ua-code1023/README.md)
+now provide complete 900 µA-scale decks, native logs, and raw files. Both
+1,201-row datasets are finite and yield one collector crossing. They span
+95.661536110 mV around a +0.000856351 mV arithmetic midpoint. The code-0 log
+contains the thermal NaN/heat-sink warning and dynamic-gmin recovery; the
+code-1023 log contains neither. The current paired full-array engineering
+status therefore remains **UNKNOWN**; specification status is **NOT
+EVALUATED**. Nominal subarray evidence is not promoted into a full-array
+conclusion.
 
 The TSV is 7,331 bytes with SHA-256
 `91c1e291ac65b54a514a925ac13b8c722295fb828b19aad3a7a1ce0184533fd2`.
