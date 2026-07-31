@@ -67,6 +67,17 @@ UNKNOWN and NOT_EVALUATED dispositions on both rows and contains no
 pass/fail or valid/invalid field. The TSV is 1,297 bytes with SHA-256
 `7635caedd484cbd62b0095d3e2cfe13d31e74cc07fe5a71126c05027f42f796b`.
 
+[`current_steering_900ua_fullarray_vin0_v2.tsv`](current_steering_900ua_fullarray_vin0_v2.tsv)
+retains zero-based row 600 from each of those two native raw files. It
+preserves the literal repeated sweep coordinate `6.90175998e-16`, collector
+voltages, supply and reference-branch currents, and five trim-node pairs. The
+two-row by 20-column table contains no pass/fail or valid/invalid field; its
+WARNED and WARNING_ABSENT values are the separately recounted native-log
+diagnostic dispositions. The paired engineering status remains UNKNOWN and no
+specification is evaluated. The TSV is 987 bytes with SHA-256
+`9b190dc326db13dfce10f15f173170730b72d4c87949368a746530e05e100ab5`.
+The rejected first extraction was not published.
+
 The V3 evidence-ladder TSV is 7,331 bytes with SHA-256
 `91c1e291ac65b54a514a925ac13b8c722295fb828b19aad3a7a1ce0184533fd2`.
 
