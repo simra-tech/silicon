@@ -1,0 +1,62 @@
+NGSPICE46-VBIC-MNA-SNAPSHOT-PROBE-V3-EQMAP-PATCH-V4-OBJECT-V2.log
+Matched NIiter object-only checkpoint (no KLU rebuild, no archive/shared-library/
+executable link, no invocation, no deck, no simulation)
+
+=== V1 attempt reservation ===
+OBJECT-V1 (log 4285b63e..., raws with lowercase control/experiment names) reserved:
+its harness used lowercase raw names while the delta/check sections referenced
+uppercase, so the delta comparisons and the log sections were empty; the compile
+itself had succeeded (control object b814bec3, experiment object 9a54a5b5, rc=0/0,
+nm 23/23). V1 artifacts preserved unchanged; this V2 run repeats the checkpoint
+fresh with consistent uppercase names.
+
+=== identities (pre-compile, both copies) ===
+smpdefs.h 61acdc96443b583cf8915bf3e3528284fbeb9c4b48fb694787f1a7959b45b369
+klusmp.c  d9a40052c6c29c6ecf7c2ee34a946512d3221908787b2e15095fad69ea9f297d
+control niiter.c fa26677f5436801e0e725cf9500b80a03b3c2faf7a8fa0cbe32c518f1d7a811e
+patch V4 31dc7dfe979e64dfb0ed32bff798ab8c176ab2a8e1536b943d4b12c4049934b6 applied
+  exactly once to the experiment copy only (rc=0); experiment niiter.c becomes
+  b3117492d719614381c4580ce6ede6528c3fd2603b02d913b0f93074987d6cc4; control stays fa26677f
+stale niiter .lo/.o/.deps/niiter.Plo removed from the scratch sides only; the
+  retained configured tree is untouched (its niiter.lo still present)
+
+=== compile per side (configured Makefile/libtool authority) ===
+command: make -j1 V=1 niiter.lo  (cwd: <side>/src/maths/ni)
+control rc=0
+  warnings=0 errors=0 stderr_bytes=0
+  exact argv: /bin/bash ../../../libtool  --tag=CC   --mode=compile gcc -DHAVE_CONFIG_H   -I. -I. -I../../../src/include -I../../../src/include  -static -O2 -s -Wall -Wextra -Wmissing-prototypes -Wstrict-prototypes -Wnested-externs -Wold-style-definition -Wredundant-decls -Wconversion -Wno-unused-but-set-variable -std=gnu11 -fopenmp -MT niiter.lo -MD -MP -MF .deps/niiter.Tpo -c -o niiter.lo niiter.c
+experiment rc=0
+  warnings=0 errors=0 stderr_bytes=0
+  exact argv: /bin/bash ../../../libtool  --tag=CC   --mode=compile gcc -DHAVE_CONFIG_H   -I. -I. -I../../../src/include -I../../../src/include  -static -O2 -s -Wall -Wextra -Wmissing-prototypes -Wstrict-prototypes -Wnested-externs -Wold-style-definition -Wredundant-decls -Wconversion -Wno-unused-but-set-variable -std=gnu11 -fopenmp -MT niiter.lo -MD -MP -MF .deps/niiter.Tpo -c -o niiter.lo niiter.c
+
+=== object identities ===
+control niiter.lo 7418b7bc4edb9d9018dc59e70c0a2640eff002216e2f4e69b131b752348e3263 bytes 279
+control niiter.o  b814bec39e8495728cf03f9e9db3c23c3b58d81312210ca607c229f210453718 bytes 9976
+experiment niiter.lo 7418b7bc4edb9d9018dc59e70c0a2640eff002216e2f4e69b131b752348e3263 bytes 279
+experiment niiter.o  9a54a5b5e7fe392e9a41f1c9e1e279fcc55868d85281afeb752ff80a9ee3a6c5 bytes 11208
+
+=== nm -u (undefined symbols) per side ===
+control undefined count: 23 | experiment undefined count: 23
+undefined-symbol sets IDENTICAL
+
+=== diagnostics delta ===
+control/experiment stderr byte-identical (warning payload delta 0)
+
+=== archive/library/executable unchanged proof ===
+pre/post hash snapshot of all *.a, *.so*, and executables in both scratch copies:
+  IDENTICAL (ARCHIVES_UNCHANGED=YES); no link was performed (niiter.lo target only)
+
+=== artifacts (O_EXCL; identities reported externally after close) ===
+log: NGSPICE46-VBIC-MNA-SNAPSHOT-PROBE-V3-EQMAP-PATCH-V4-OBJECT-V2.log
+raws: <prefix>-CONTROL-stdout.raw / -CONTROL-stderr.raw / -EXPERIMENT-stdout.raw /
+      -EXPERIMENT-stderr.raw / -CONTROL-nm-u.raw / -EXPERIMENT-nm-u.raw
+this log contains no numeric self-size, self-line-count, self-hash, or self-creation-time;
+  identities are reported externally after O_EXCL close
+
+=== claims ===
+CONFIRMED: identities pre-compile; patch applied once (experiment -> b3117492, control
+fa26677f); niiter.lo built per side with the configured Makefile/libtool authority
+(make -j1 V=1 niiter.lo); rc/warnings/errors/stderr captured raw; .lo/.o identities
+and nm -u recorded; archives/libraries/executables unchanged; retained tree untouched.
+PROVISIONAL: none. Boundary: object-only compile; no link, no runtime, no circuit,
+no measurement, no specification claim.

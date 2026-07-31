@@ -1,0 +1,72 @@
+NGSPICE46-VBIC-MNA-SNAPSHOT-PROBE-V3-EQMAP-AUDIT-V1.log
+Static authority audit (immutable; no invocation, no deck execution, no simulation, no source modification)
+Date (UTC): 2026-07-31T20:45:00Z
+
+=== evidence inputs (all hash-verified) ===
+deck tb_p1_cml_div2_front_tran_v5.cir 46e7f223.../1648 B
+netlist p1_cml_div2_front_integrated_sinks.spice 689d4bee.../5454 B
+V2 base stderr 2676cdce... (probe markers) | V2 patched stderr dfeba4dc... (MNA snapshot)
+V2 base stdout 31f5593a... (op listing, Reference print) | V2 raw headers (Binary: marker)
+niiter.c (accepted Probe-V4) 687e2f85... | vbicdefs.h 0185f8162e02de0c
+
+=== raw Variables: order test (explicit, recorded) ===
+raw header (outitf.c:906/918, rawfile.c:162/224) enumerates the SAVED OUTPUT VECTORS
+  (run->numData), NOT external equation indices. This run: 429 rows = 1 time + 191
+  currents + 237 voltages; variable 1 = i(@c.xdiv2.xcstab_comp_m.c1[i]) (currents FIRST).
+  variable index 100 row = i(@q.xdiv2.xqp1_comp_s.qnpn13g2[is]) (a saved current) — NOT equation 100.
+  => raw variable indices are NOT presumed equal to external equation indices.
+
+=== node-number/equation authority ===
+cktnewn.c:37  ckt->CKTlastNode->number = ckt->CKTmaxEqNum++;  (node numbers ARE the
+  equation indices; valid 1..CKTmaxEqNum-1 = 1..371; cktinit.c:42 init = 1)
+cktdefs.h:42  IFuid name;  | cktdefs.h:50  int number;  (CKTnode fields)
+cktnames.c:23 *numNames = ckt->CKTmaxEqNum-1; | cktdump.c:42 numValue = CKTmaxEqNum-1
+
+=== sparse internal<->external maps ===
+spdefs.h:624-627/757-758 IntToExtColMap/IntToExtRowMap declarations
+spalloc.c:229-241 maps allocated SizePlusOne and initialized IDENTITY (RowMap[I]=I,
+  ColMap[I]=I): external indices are the CKT equation numbers; the MNA_SNAPSHOT
+  emits external row/col via these maps.
+
+=== retained thermal-vector chain for equation 100 (exact) ===
+1. niiter.c:82-104 (687e2f85): probe resolves the target instance by literal
+   strcmp(GENname, "q.xdiv2.xqs_comp_s.qnpn13g2") and sets vtp_tnode = ((VBICinstance*)inst)->VBICtempNode
+   guarded 0 < vtp_tnode < CKTmaxEqNum.
+2. vbicdefs.h:55: 'const int VBICtempNode; /* number of the temperature node of the vbic */' — the field is the
+   temperature NODE NUMBER (a CKT equation index).
+3. V2 base stderr (2676cdce): '[VBIC_THERMAL_VECTOR_PROBE] Instance: q.xdiv2.xqs_comp_s.qnpn13g2 | tnode: 100 | iterno: 3 | CKTtime_at_load: 0 | CKTmode_at_load: 1056' — the accepted event key.
+4. MNA_SNAPSHOT event key (patched stderr dfeba4dc): id=1 tnode=100 iterno=3 time=0
+   mode=1056 backend=0 — the same tnode; ENTRY row=100 is the external equation index.
+5. cktnewn.c:37 + spalloc.c identity maps: node number 100 == external equation 100.
+=> equation 100 MAPPED to the VBIC temperature node of instance q.xdiv2.xqs_comp_s.qnpn13g2
+   (circuit node name appears in the raw Variables: as v(xdiv2.xqs_comp_s.t); the raw
+   vector-index-to-equation link for that name is NOT chain-proven — recorded separately,
+   it does NOT map the other indices.)
+
+=== mapping result (TSV: 13 rows) ===
+MAPPED: 1 (equation 100 -> q.xdiv2.xqs_comp_s.qnpn13g2)
+UNMAPPED: 12 (2,70,79,98,99,102,103,104,105,106,107,108)
+No value-match or order heuristic was used; a name is bound only via an exact retained/source chain.
+
+=== netlist/deck evidence (context, not a mapping) ===
+deck line: XDIV2 DIV2_P DIV2_N CLK_P CLK_N VCC_HBT VSS p1_cml_div2_front
+netlist: XQSEF1_S DIV2_P c_p1_comp_s e_scomp_ef1_s sub! npn13G2 Nx=3 mm_ok=1
+netlist: XQSEF2_S DIV2_N c_p1_comp_s e_scomp_ef2_s sub! npn13G2 Nx=3 mm_ok=1
+netlist: XMP1_COMP_S c_p1_comp_s c_p2_comp_s VCC_HBT VCC_HBT sg13_hv_pmos w=20.0u l=1.0u ng=1 m=1 mm_ok=1
+
+=== bounded static recommendation (smallest read-only future instrumentation) ===
+The remaining 12 equation indices have no retained name chain. The smallest read-only
+instrumentation to bind them exactly: at the accepted event key (vtp_armed, iterno==3,
+CKTtime==0.0, MODETRANOP|MODEINITFIX), walk the CKT node list and emit names:
+  for (CKTnode *node = ckt->CKTnodes->next; node; node = node->next)
+      fprintf(stderr, "[EQMAP] eq=%d name=%s\n", node->number, node->name);
+API: CKTnode (cktdefs.h:42 name / :50 number), list head ckt->CKTnodes, traversal via
+node->next (cktdefs.h:53). stderr only; NO matrix/RHS/state writes, no element creation,
+no CKTload/SMPsolve changes; once-only per process. NOT drafted or applied.
+
+=== claim separation ===
+SOLVER CONSISTENCY: established by RESIDUAL-V3 (max normalized residual 1.997255e-15).
+NODE MAPPING: equation 100 mapped via the retained thermal chain; 12 of 13 indices UNMAPPED.
+DEVICE CAUSALITY: NOT established (the causal device stamp for the negative thermal-node
+  solution is not identified by any retained evidence).
+MEASUREMENT: NOT evaluated. SPECIFICATION: NOT evaluated.

@@ -1,0 +1,70 @@
+NGSPICE46-VBIC-MNA-SNAPSHOT-PROBE-V3-EQMAP-PATCH-V3-AUDIT.log
+Static design audit (no apply, no compile, no link, no invocation, no deck, no simulation)
+Date (UTC): 2026-07-31T21:10:00Z
+
+=== V1/V2 reservations ===
+V1 patch exists (sha 994c96fa59285a7c706c57b9a9406f8e7ab6a935dd89134695267ed52c0e1dae, 3066 B, 62 lines); its run crashed in the audit-log build
+(harness defect); preserved unchanged.
+V2 pair exists (patch sha 994c96fa59285a7c706c57b9a9406f8e7ab6a935dd89134695267ed52c0e1dae, audit log sha e4dfdef746e08a43...); V2 audit log
+reserved: its self-reported bytes 3925/lines 68 excluded its own final line
+(actual 4061/69). All three patch variants are byte-identical (deterministic diff).
+
+=== immutable inputs (hash-verified) ===
+base niiter.c (accepted Probe-V4) 687e2f85776c7c1a064a980e333502aefd8162c4dd3a360412845a7a923e9625
+  bytes 18197 / 451 physical lines; scratch copies used for diff construction only
+snapshot authority: patched niiter.c fa26677f (once-only trigger, lines 160-180) +
+  klusmp.c d9a40052 (SMPsnapshotMNA helper, lines 2012-2215) — retained V3 source
+  (probe_v3_object_scratch/patched); both hash-cited
+
+=== touched files / hunks ===
+1 file: src/maths/ni/niiter.c; 2 hunks:
+  hunk A: after line 28 — 'static bool eqmap_printed = FALSE;' (+comment)
+  hunk B: after the once-only probe block closing brace (line 442) — the [EQMAP]
+          emission block (+38 lines)
+
+=== event/once-only coupling ===
+predicate is THE accepted snapshot event key only (no second event predicate, no
+independent trigger): vtp_armed == 1 && iteration_captured && !eqmap_printed &&
+iterno == 3 && ckt->CKTtime == 0.0 && MODETRANOP && MODEINITFIX — structurally
+identical to the retained trigger (niiter.c fa26677f:165-168, minus vtp_snap_pre_done
+which is replaced by the eqmap_printed once-only static).
+id=1 shared with the A,b,x snapshot records: the equation names and A,b,x share one
+event identity.
+
+=== structure (countable) ===
+one [EQMAP_BEGIN] id=1 tnode=... iterno=... time=%a mode=%ld expected=13 (event identity)
+exactly one [EQMAP] id=1 eq=<target> name=<name|'<null>'|'<absent>'> row per target
+  (13 rows; targets {2,70,79,98,99,100,102,103,104,105,106,107,108})
+one [EQMAP_END] id=1 emitted=13 expected=13
+
+=== null-name handling ===
+(eqmap_node->name != NULL) ? eqmap_node->name : "<null>" — a found node with a NULL
+name still emits exactly one countable row with the literal <null>.
+A target absent from the node list emits the literal <absent> row (still counted).
+
+=== compile-surface reasoning (CONFIRMED) ===
+CKTnode, ckt->CKTnodes->next, node->number/name/next: cktdefs.h:42/50/53 — the SAME
+walk already exists in the base file (niiter.c:359-361, damping block);
+MODETRANOP/MODEINITFIX: cktdefs.h mode flags (used by the snapshot trigger);
+fprintf/stderr: stdio.h (already used by the probe prints); no new includes, no new
+types, no new functions, no static-library surface change.
+
+=== forbidden-write scan (CONFIRMED clean) ===
+no CKTload/SMPsolve/SMPsnapshotMNA calls, no CKTstate/CKTrhs/CKTrhsSpare/CKTrhsOld
+writes, no node->ic/nodeset/ptr writes, no NEW/TMALLOC/MALLOC, no REORDER, no element
+creation, no matrix/RHS/state/node/device data writes; stderr fprintf only.
+
+=== unrelated changes (CONFIRMED none) ===
+diff touches only the 2 hunks above; no other lines changed.
+
+=== claim separation ===
+CONFIRMED: base/snapshot input SHAs; 1 file / 2 hunks; target-set uniqueness and
+completeness (13); null-name guard; event/once-only coupling to the accepted key;
+no forbidden writes; no unrelated changes; output hashes/bytes/lines.
+PROVISIONAL: the emitted [EQMAP] rows will list every target exactly once in the
+node list (valid equation indices are all present as CKT nodes) — NOT yet executed;
+compile correctness of the draft is static-reasoned only (no compile performed).
+
+=== outputs (O_EXCL) ===
+PATCH  NGSPICE46-VBIC-MNA-SNAPSHOT-PROBE-V3-EQMAP-PATCH-V3.patch  sha256 994c96fa59285a7c706c57b9a9406f8e7ab6a935dd89134695267ed52c0e1dae bytes 3066 physical_lines 62
+AUDIT  NGSPICE46-VBIC-MNA-SNAPSHOT-PROBE-V3-EQMAP-PATCH-V3-AUDIT.log  sha256 <reported after O_EXCL write> bytes 4172 physical_lines 70

@@ -1,0 +1,71 @@
+NGSPICE46-VBIC-MNA-SNAPSHOT-PROBE-V3-EQMAP-PATCH-V4-RUNTIME-V2.log
+One matched frozen-deck pair (control f2d2cd19, then experiment c865f1bf)
+
+=== run directories (persistent, exclusive; V1 reserved: manifest-header parse
+defect, dirs created empty, preserved) ===
+NGSPICE46-VBIC-MNA-SNAPSHOT-PROBE-V3-EQMAP-PATCH-V4-RUNTIME-V2-CONTROL-RUN
+NGSPICE46-VBIC-MNA-SNAPSHOT-PROBE-V3-EQMAP-PATCH-V4-RUNTIME-V2-EXPERIMENT-RUN
+inputs: 35 frozen manifest entries (deck 46e7f223 / netlist 689d4bee / 33 PDK
+  deps; manifest 32cc8891) copied and hash-verified per run dir; no hardlinking
+  of writable outputs from any prior run
+
+=== invocations (exactly once per side; control first) ===
+command: ( cd <run-dir> && LC_ALL=C timeout 60s <side-executable> -b tb_p1_cml_div2_front_tran_v5.cir < /dev/null )
+control:    rc=0 started=2026-07-31T21:21:52Z ended=2026-07-31T21:21:53Z
+experiment: rc=0 started=2026-07-31T21:21:53Z ended=2026-07-31T21:21:55Z
+pre/post rehash: executables and all immutable inputs unchanged (POST_EXE_NO_MUTATION=PASS)
+
+=== 1. binary-aware raw structure ===
+header variable rows: 429 both sides; Binary: marker; payload asserted == 7838688 bytes before unpack
+all 979836 doubles finite both sides; time strict 0 -> 4e-9 s, monotonic, both sides
+data-region sha256 both sides: 26c62c1942b552ae609f6eb57e9746ee30ad77b7a5c6e433c118ddd965de3de7 (byte-identical)
+
+=== 2. existing diagnostics (both sides) ===
+MNA_SNAPSHOT 4000 lines; BEGIN 2 / END 2; ENTRY 3254 / RHS 371 / SOL 371;
+GUARD 0 / UNSUPPORTED 0 / ABORT 0; 8 distinct [VBIC_*] markers x1 each — per side
+
+=== 3. EQMAP structure ===
+control: 0 EQMAP records
+experiment: BEGIN exactly 1 (expected=13); rows exactly 13; END exactly 1 (emitted=13 expected=13)
+row equation set: {2,70,79,98,99,100,102,103,104,105,106,107,108} — one row per equation
+
+=== 4. same-event authority ===
+EQMAP BEGIN event (id=1 tnode=100 iterno=3 time=0x0p+0 mode=1056) == accepted prefactor
+MNA BEGIN/END event (id=1 tnode=100 iterno=3 time=0x0p+0 mode=1056); every EQMAP row
+carries id=1 (the dynamic vtp_snap_id)
+equation->name rows (verbatim):
+    [EQMAP] id=1 eq=2 name=xdiv2.sub!
+    [EQMAP] id=1 eq=70 name=xdiv2.e_tail_s
+    [EQMAP] id=1 eq=79 name=xdiv2.c_p1_comp_s
+    [EQMAP] id=1 eq=98 name=xdiv2.e_scomp_s
+    [EQMAP] id=1 eq=99 name=xdiv2.xqs_comp_s.s1
+    [EQMAP] id=1 eq=100 name=xdiv2.xqs_comp_s.t
+    [EQMAP] id=1 eq=102 name=q.xdiv2.xqs_comp_s.qnpn13g2#collector
+    [EQMAP] id=1 eq=103 name=q.xdiv2.xqs_comp_s.qnpn13g2#base
+    [EQMAP] id=1 eq=104 name=q.xdiv2.xqs_comp_s.qnpn13g2#emitter
+    [EQMAP] id=1 eq=105 name=q.xdiv2.xqs_comp_s.qnpn13g2#substrate
+    [EQMAP] id=1 eq=106 name=q.xdiv2.xqs_comp_s.qnpn13g2#collCI
+    [EQMAP] id=1 eq=107 name=q.xdiv2.xqs_comp_s.qnpn13g2#baseBP
+    [EQMAP] id=1 eq=108 name=q.xdiv2.xqs_comp_s.qnpn13g2#baseBI
+equation 100 row name == xdiv2.xqs_comp_s.t — the thermal node of the accepted static
+authority instance q.xdiv2.xqs_comp_s.qnpn13g2 (EQMAP-AUDIT-V1 chain). Device causality
+is NOT inferred for the other rows (no equation->node map retained beyond this chain).
+
+=== 5. comparisons ===
+experiment stderr minus exactly the 15 EQMAP lines == control stderr byte-for-byte
+stdout: 125 lines / 5818 B both sides; ONLY line 122 differs (416 B, 13 'Reference
+value' tokens each) — the wall-clock progress print (outitf.c:666-687), documented
+against the identical raw data regions (timing artifact, not circuit data)
+
+=== claims ===
+EXECUTION: exactly two native invocations (control then experiment), rc=0 each,
+within 60 s; no retries, no alternate flags, no third invocation.
+EVIDENCE VALIDITY: pre/post executable+input rehash no-mutation; captures create-exclusive;
+all recount assertions PASS; raw payload counted binary-aware (no tokenizing).
+COMPARISON: raw data regions byte-identical; MNA/VBIC structure identical per side;
+stderr identical modulo the 15 EQMAP lines; stdout line-122 difference documented.
+MEASUREMENT: NOT evaluated (no spec limits applied to any value).
+SPECIFICATION: NOT evaluated.
+No signoff claim. String/EQMAP record presence is structural evidence only; runtime
+emission of the EQMAP rows occurred (records present) but no circuit/measurement
+conclusion is drawn from them.

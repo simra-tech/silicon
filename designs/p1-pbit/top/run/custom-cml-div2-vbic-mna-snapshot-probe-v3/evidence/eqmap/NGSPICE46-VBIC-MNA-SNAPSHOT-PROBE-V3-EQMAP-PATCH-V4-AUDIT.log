@@ -1,0 +1,60 @@
+NGSPICE46-VBIC-MNA-SNAPSHOT-PROBE-V3-EQMAP-PATCH-V4-AUDIT.log
+Static design audit (no apply, no compile, no link, no invocation, no deck, no simulation)
+Date (UTC): 2026-07-31T21:20:00Z
+
+=== V3 rejection / retraction ===
+V3 (994c96fa...) rejected: (1) diffed against the pre-snapshot Probe-V4 base
+687e2f85 instead of the applied Probe-V3 fa26677f; (2) added a static
+eqmap_printed flag and a second independent event predicate at the later
+probe-report site, hardcoding id=1. RETRACTED from the V3 audit: 'no second
+event predicate', 'tied to the accepted snapshot event', 'shares its id=1
+event identity'. V1/V2/V3 artifacts preserved unchanged.
+
+=== V4 design ===
+diff base: accepted applied Probe-V3 niiter.c fa26677f5436801e0e725cf9500b80a03b3c2faf7a8fa0cbe32c518f1d7a811e
+  (bytes 21785 / 517 lines; hash-verified before construction)
+change: the unbraced `if (SMPsnapshotMNA(...) == 0) vtp_snap_pre_done = TRUE;`
+becomes a braced success block; the 13 filtered CKTnode number/name rows are
+emitted there with the existing dynamic vtp_snap_id; vtp_snap_pre_done = TRUE
+is set at the end of the block. NO EQMAP static flag, NO second event
+predicate, NO hardcoded snapshot id, NO later emission site. Once-only
+authority remains the existing !vtp_snap_pre_done guard plus a successful
+SMPsnapshotMNA return. stderr only.
+
+=== audit assertions (all PASS) ===
+PASS exactly 1 hunk, 1 file (src/maths/ni/niiter.c)
+PASS removed line is exactly the unbraced '== 0)' tail (1 line)
+PASS context vtp_snap_pre_done = TRUE; lands INSIDE the braced block before the added '}'
+PASS no EQMAP static flag
+PASS no second event predicate in added lines
+PASS no hardcoded snapshot id
+PASS vtp_snap_id used in all 4 EQMAP fprintf arg lines (no hardcoded id)
+PASS target set exact (13 unique)
+PASS structural rows: BEGIN expected=13 / 13-row loop / END emitted=13
+PASS null-name and absent guards explicit
+PASS ground excluded (walk starts at CKTnodes->next)
+PASS no forbidden writes or solver calls in added lines
+PASS all 6 context lines verbatim in base
+PASS snapshot call lines preserved as context (call unchanged)
+PASS no includes added
+
+=== preservation of existing snapshot flow ===
+the SMPsnapshotMNA call arguments are context (unchanged); the surrounding
+predicate if (vtp_armed == 1 && !vtp_snap_pre_done && iterno == vtp_snap_iter
+&& CKTtime == 0.0 && MODETRANOP && MODEINITFIX) is untouched; only the
+unbraced success body is replaced by the braced block (removed lines: exactly
+the two original success-body lines).
+
+=== output identities (reported externally after O_EXCL close) ===
+PATCH sha256 31dc7dfe979e64dfb0ed32bff798ab8c176ab2a8e1536b943d4b12c4049934b6 bytes 3322 physical_lines 59
+AUDIT sha256 <reported after close> bytes 3322 physical_lines 59
+
+=== claims ===
+CONFIRMED: base sha fa26677f...; one file / one event-branch hunk; dynamic
+vtp_snap_id used in all EQMAP records; no independent predicate, flag, or
+hardcoded id; exact target set (13 unique); countable BEGIN/13/END structure;
+null/absent guards; ground excluded; forbidden-write absence; snapshot
+calls/control flow preserved except bracing the success body.
+PROVISIONAL: runtime emission (every target present in the node list) and
+compile correctness of the draft are static-reasoned only; nothing applied,
+compiled, linked, invoked, or simulated.

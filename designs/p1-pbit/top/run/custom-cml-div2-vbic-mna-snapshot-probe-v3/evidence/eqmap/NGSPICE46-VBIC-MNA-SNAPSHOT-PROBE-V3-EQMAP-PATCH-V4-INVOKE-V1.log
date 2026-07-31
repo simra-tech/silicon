@@ -1,0 +1,55 @@
+NGSPICE46-VBIC-MNA-SNAPSHOT-PROBE-V3-EQMAP-PATCH-V4-INVOKE-V1.log
+Matched loader/startup --version invocation only (no deck, no stdin, no simulation)
+
+=== executables (pre-verified) ===
+control    f2d2cd197f03818f1501dbebc983e5fcf1dd062965ea5e56dbff6b8dde01a0c7 / 8054352 B
+experiment c865f1bf2ea99bc684b9e40342cfd6565f6bc995fb47c748474aceb5ef384045 / 8054352 B
+paths: <build-scratch>/object-v2/{control,experiment}/src/ngspice (accepted Link V2)
+
+=== invocation (EXACTLY ONCE per side; no retries, no alternate flags) ===
+command: ( cd /tmp && LC_ALL=C timeout 30s <executable> --version < /dev/null )
+environment: LC_ALL=C; stdin: /dev/null; cwd: /tmp
+--- control: rc=0 started=2026-07-31T21:18:13Z ended=2026-07-31T21:18:13Z
+  stdout: 449 B sha=217731505de0a8887c6b8a9d80af39da3e445ee36ebb24c1852fcf8a344d2dde
+  stderr: 0 B sha=e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855
+--- experiment: rc=0 started=2026-07-31T21:18:13Z ended=2026-07-31T21:18:14Z
+  stdout: 449 B sha=217731505de0a8887c6b8a9d80af39da3e445ee36ebb24c1852fcf8a344d2dde
+  stderr: 0 B sha=e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855
+
+=== provider-returned ngspice identity text ===
+control stdout content:
+  | ******
+  | ** ngspice-46 : Circuit level simulation program
+  | ** Compiled with KLU Direct Linear Solver
+  | ** The U. C. Berkeley CAD Group
+  | ** Copyright 1985-1994, Regents of the University of California.
+  | ** Copyright 2001-2025, The ngspice team.
+experiment stdout content:
+  | ******
+  | ** ngspice-46 : Circuit level simulation program
+  | ** Compiled with KLU Direct Linear Solver
+  | ** The U. C. Berkeley CAD Group
+  | ** Copyright 1985-1994, Regents of the University of California.
+  | ** Copyright 2001-2025, The ngspice team.
+
+=== byte comparison ===
+stdout byte-identical between sides
+stderr byte-identical between sides
+
+=== post-invocation rehash ===
+control    f2d2cd197f03818f1501dbebc983e5fcf1dd062965ea5e56dbff6b8dde01a0c7 / 8054352 B (unchanged)
+experiment c865f1bf2ea99bc684b9e40342cfd6565f6bc995fb47c748474aceb5ef384045 / 8054352 B (unchanged)
+POST_NO_MUTATION=PASS (byte-for-byte)
+
+=== scope statement ===
+Two clean --version invocations prove loader/startup only: the dynamic loader, libc
+startup, and the --version path ran and exited rc=0. They do NOT exercise the MNA
+snapshot, the EQMAP node-list walk, any circuit, or any simulation. EQMAP execution
+is NOT inferred. No circuit, measurement, or specification evidence is claimed.
+
+=== claims ===
+CONFIRMED: pre/post executable identities (f2d2cd19 / c865f1bf, 8054352 B each, no
+mutation); exactly one --version invocation per side (rc recorded); raw stdout/stderr
+captured create-exclusive with SHAs; byte comparison recorded; ngspice identity text
+recorded; scope limited to loader/startup.
+PROVISIONAL: none.

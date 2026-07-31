@@ -1,0 +1,57 @@
+NGSPICE46-VBIC-MNA-SNAPSHOT-PROBE-V3-EQMAP-PATCH-V4-AUDIT-V3.log
+Log-only correction of the V4 audit (no redesign, no apply/compile/link/invocation/deck/simulation)
+Date (UTC): 2026-07-31T21:35:00Z
+
+=== reservations ===
+V4-AUDIT (74908cd6...) reserved: output-identity values were the audit's own
+(3322/59 on the PATCH line) and the preservation prose claimed two removed
+lines; the assistant's 52-line patch claim retracted (53 physical lines).
+V4-AUDIT-V2 (c4a45164...) reserved: its self-line counted physical lines by
+split segments (61) instead of the newline convention (60, wc -l style).
+All V1-V4 artifacts and both reserved audit logs preserved unchanged.
+
+=== patch identity (recounted, immutable) ===
+NGSPICE46-VBIC-MNA-SNAPSHOT-PROBE-V3-EQMAP-PATCH-V4.patch
+  sha256 31dc7dfe979e64dfb0ed32bff798ab8c176ab2a8e1536b943d4b12c4049934b6
+  bytes 3032 | physical lines 53 (newline count, wc -l style)
+  base: applied Probe-V3 niiter.c fa26677f5436801e0e725cf9500b80a03b3c2faf7a8fa0cbe32c518f1d7a811e (hash-verified)
+
+=== semantic assertions (all PASS; repeated against the applied base) ===
+PASS exactly 1 hunk, 1 file (src/maths/ni/niiter.c)
+PASS exactly ONE original line replaced (the call tail gains '{')
+PASS vtp_snap_pre_done = TRUE; is unchanged CONTEXT inside the new block (before the added '}')
+PASS no EQMAP static flag
+PASS no second event predicate in added lines
+PASS no hardcoded snapshot id
+PASS dynamic vtp_snap_id in all 4 EQMAP fprintf arg lines
+PASS target set exact (13 unique)
+PASS structural rows: BEGIN expected=13 / 13-row loop / END emitted=13
+PASS null-name and absent guards explicit
+PASS ground excluded (walk starts at CKTnodes->next)
+PASS no forbidden writes or solver calls in added lines
+PASS all 6 context lines verbatim in base
+PASS snapshot call lines preserved as context (call unchanged)
+PASS no includes added
+PASS patch identity recount: 3032 bytes / 53 physical lines / sha 31dc7dfe...
+
+=== exact change semantics ===
+the hunk (@@ -174,8 +174,48 @@) removes exactly one line:
+  - '                                   (long) ckt->CKTmode) == 0)'
+and adds the braced success block: '== 0) {' + the EQMAP emission + '}'.
+'vtp_snap_pre_done = TRUE;' appears as unchanged CONTEXT (matched line) and
+lands INSIDE the new block, immediately before the added closing '}' — the
+once-only assignment is preserved exactly once, inside the successful
+SMPsnapshotMNA branch. The SMPsnapshotMNA call arguments, the outer
+!vtp_snap_pre_done predicate, '            }', and '#endif' are untouched context.
+
+=== output identity (reported externally after O_EXCL close) ===
+AUDIT-V3 log sha256: reported in the run output (not self-referential).
+bytes 3111 | physical lines 57
+
+=== claims ===
+CONFIRMED: patch sha 31dc7dfe.../3032 B/53 physical lines (recounted); one
+replaced line; the assignment remains context; all semantic assertions repeat
+against applied base fa26677f...; no redesign of the accepted patch.
+PROVISIONAL: none beyond the previously stated runtime/compile caveats of the
+accepted design (static-only; nothing applied, compiled, linked, invoked, or
+simulated).

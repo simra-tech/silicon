@@ -1,0 +1,87 @@
+NGSPICE46-VBIC-MNA-SNAPSHOT-PROBE-V3-VBIC-TEMP-STAMP-AUTHORITY-V1.log
+Source-only ownership boundary for the 13 row-100 columns (read-only; no execution,
+no deck access, no simulation)
+
+=== immutable inputs (all hash-verified) ===
+vbicload.c    59d875679da675ef8daedbd151e91b39b27a13ae197530af40650c62e3e75172
+vbicsetup.c   f711c83cb3811d4a0fad08a2d16fbe79416886330417b4c26b3c4f46a5483d79
+vbicdefs.h    0185f8162e02de0cf9c332bbc827d6e43af9a1c494e8e86642b2d7d8ec57ef9b
+vbicbindCSC.c 207ef662c2c26fbd5e8236810c10dd8f8c68b2f22b42999f1d2ec3bfefc89810
+deck 46e7f223 / netlist 689d4bee / sg13g2_hbt_mod.lib ae9288f8 (the exact Runtime V2 copies)
+
+=== node identity mapping (equation -> VBIC node field -> origin) ===
+eq70  xdiv2.e_tail_s          = VBICcollNode  (npn13G2 pin c; netlist:91)
+eq79  xdiv2.c_p1_comp_s       = VBICbaseNode  (pin b)
+eq98  xdiv2.e_scomp_s         = VBICemitNode  (pin e)
+eq99  xdiv2.xqs_comp_s.s1     = VBICsubsNode  (subckt internal s1; Qnpn13G2 s1 terminal)
+eq100 xdiv2.xqs_comp_s.t      = VBICtempNode  (subckt internal t; Qnpn13G2 t terminal)
+eq102 qnpn13g2#collector      = VBICcollCXNode (CKTmkVolt 'collector' vbicsetup.c:413)
+eq103 qnpn13g2#base           = VBICbaseBXNode (CKTmkVolt 'base' :428)
+eq104 qnpn13g2#emitter        = VBICemitEINode (CKTmkVolt 'emitter' :443)
+eq105 qnpn13g2#substrate      = VBICsubsSINode (CKTmkVolt 'substrate' :458)
+eq106 qnpn13g2#collCI         = VBICcollCINode (CKTmkVolt 'collCI' :492)
+eq107 qnpn13g2#baseBP         = VBICbaseBPNode (CKTmkVolt 'baseBP' :498)
+eq108 qnpn13g2#baseBI         = VBICbaseBINode (CKTmkVolt 'baseBI' :504)
+eq2   xdiv2.sub!              = global substrate net (bn pin of npn13G2; NOT a VBIC node)
+
+=== TSTALLOC/KLU binding orientation (vbicsetup.c:596-603, vbicbindCSC.c:83-102) ===
+TSTALLOC(VBICtempXxxPtr, VBICtempNode, VBICxxxNode): (row=VBICtempNode, col=VBICxxxNode);
+CREATE_KLU_BINDING_TABLE(VBICtempXxxPtr, ..., VBICtempNode, VBICxxxNode) identical order.
+The complementary orientation VBICxxxTempPtr = (row=VBICxxxNode, col=VBICtempNode).
+
+=== transient vbicload.c write sites to the (100, col) entries (33 sites, 1548-1775) ===
+(100,100): VBICtempTempPtr += Irth_Vrth (1548), Icth_Vrth (1560), -Ith_Vrth (1652)
+(100,70):  VBICtempCollPtr  += -Ith_Vrcx (1745)
+(100,79):  VBICtempBasePtr  += -Ith_Vrbx (1753)
+(100,98):  VBICtempEmitPtr  += -Ith_Vre (1761)
+(100,99):  VBICtempSubsPtr  += -Ith_Vbcp (1697), +Ith_Vcep (1709), -Ith_Vrs (1769)
+(100,102): VBICtempCollCXPtr += -Ith_Vrci (1713), +Ith_Vbcx (1725), +Ith_Vrbp (1741), +Ith_Vrcx (1749)
+(100,103): VBICtempBaseBXPtr += -Ith_Vbex (1681), -Ith_Vbep (1689), -Ith_Vcep (1705), -Ith_Vrbi (1729), +Ith_Vrbx (1757)
+(100,104): VBICtempEmitEIPtr += +Ith_Vbei (1661), +Ith_Vcei (1677), +Ith_Vbex (1685), +Ith_Vre (1765)
+(100,105): VBICtempSubsSIPtr += +Ith_Vrs (1773)
+(100,106): VBICtempCollCIPtr += +Ith_Vbci (1669), -Ith_Vcei (1673), +Ith_Vrci (1717)
+(100,107): VBICtempBaseBPPtr += +Ith_Vbep (1693), +Ith_Vbcp (1701), -Ith_Vrbp (1737)
+(100,108): VBICtempBaseBIPtr += -Ith_Vbei (1657), -Ith_Vbci (1665), -Ith_Vbcx (1721), +Ith_Vrbi (1733)
+No vbicload.c write site addresses (100,2); excess-phase block (1777-1783) writes no (100,*) entry.
+
+=== per-column ownership statuses (fail-closed) ===
+SOURCE_EXCLUSIVE (11): 70,79,98,99,102,103,104,105,106,107,108 — the row 100 (VBICtempNode)
+  is written only by this VBIC's tempXxxPtr chains (33 sites); the subckt wrapper
+  elements (Rsub/Csub: rows 99/2; Rt: (100,100)+(100,0)) do not touch these columns;
+  the complete frozen hierarchy+source prove exactly one device/write chain per entry.
+SOURCE_CAPABLE_NOT_EXCLUSIVE (1): 100 — VBICtempTempPtr (Ith_Vrth/Irth_Vrth/Icth_Vrth)
+  AND the npn13G2 subckt Rt t 0 R=1e9 (lib:143) both stamp the (100,100) diagonal.
+  NOT causal evidence; static sites show possible stamp paths only.
+NOT_BOUND (1): 2 (sub!) — the sub! is not a VBIC node; the VBIC's tempXxxPtr columns
+  cover the 12 VBIC nodes only; the Rsub/Csub stamp rows 99/2; the Rt stamps (100,0)
+  (col 0 = ground, not col 2); no exact source/hierarchy chain establishes the (100,2)
+  assembled entry. The 5.17e-9 magnitude (0x1.6e3c934a4385ep-28) has no proven writer.
+
+=== conclusion boundary ===
+Static source sites show possible stamp paths, not the numerical delta contributed at
+the captured event. SOURCE_EXCLUSIVE is ownership of the write chain, NOT causality,
+measurement, or specification. No signoff or tape-out-readiness claim.
+
+=== smallest justified next experiment (CONTRACT ONLY; not drafted as a patch) ===
+Name: EQMAP-PATCH-V4-STAMP-DELTA-V1 (contract; no code written, nothing applied/built/invoked)
+Target: the q.xdiv2.xqs_comp_s.qnpn13g2 instance ONLY (existing stamp_diag_active guard,
+  vbicload.c:1421 pattern), at the accepted event identity (id=1 tnode=100 iterno=3
+  time=0 mode=1056, the prefactor snapshot branch).
+Capture (read-only, stderr-only, no solver/circuit-state writes, no element creation):
+  for the unresolved columns {2, 100} and the RHS(100): the BEFORE value and the AFTER
+  value of each assembled (100, col) matrix entry and CKTrhs[tempNode], at the same
+  iteration, bracketing this VBIC's load/stamp block; the per-entry delta = this
+  instance's stamp contribution. Columns 70/79/98/99/102-108 need no delta capture
+  (SOURCE_EXCLUSIVE static proof already establishes the single writer).
+  Emission: [STAMPDELTA] id=%ld tnode=%d iterno=%d col=%d pre=%a post=%a delta=%a per
+  record, one BEGIN/END pair with expected=2+1, no matrix/RHS/state/node/device writes.
+Expected value: the (100,2) delta resolves NOT_BOUND (writer attribution) or confirms
+  an unaccounted contributor; the (100,100) delta separates the VBIC contribution
+  from the Rt's 1e-9. No circuit/measurement/specification conclusion is drawn.
+
+=== claims ===
+CONFIRMED: source/hierarchy identities hash-verified; 12 of 13 columns bound to exact
+VBIC node fields and write chains; statuses assigned fail-closed; the (100,2) entry
+has no proven writer; experiment contract drafted without a patch.
+PROVISIONAL: none. Boundary: no measurement, specification, signoff, or tape-out
+readiness claim; SOURCE_CAPABLE_NOT_EXCLUSIVE and NOT_BOUND are not causal evidence.

@@ -1,0 +1,49 @@
+NGSPICE46-VBIC-MNA-SNAPSHOT-PROBE-V3-EQMAP-PATCH-V4-APPLY-SYNTAX-V1.log
+Fresh matched apply + syntax-only checkpoint (no objects/archives, no link, no invocation, no deck, no simulation)
+Date (UTC): 2026-07-31T20:59:23Z
+
+=== V1 attempt reservation ===
+V1 scratch <build-scratch>/apply-syntax-v1 reserved: its final object-change
+check used a broken mtime comparison (find -newer vs the source); all substantive
+steps (identities, apply, syntax) had passed; no artifacts were written. The V1
+scratch is preserved unchanged; this V2 run repeats the checkpoint fresh.
+
+=== source side (configured; identities verified pre-change on BOTH copies) ===
+smpdefs.h 61acdc96443b583cf8915bf3e3528284fbeb9c4b48fb694787f1a7959b45b369
+klusmp.c  d9a40052c6c29c6ecf7c2ee34a946512d3221908787b2e15095fad69ea9f297d
+niiter.c  fa26677f5436801e0e725cf9500b80a03b3c2faf7a8fa0cbe32c518f1d7a811e
+scratch: <build-scratch>/apply-syntax-v2/{control,experiment} (fresh exclusive; hardlinked)
+
+=== apply (experiment only, exactly once) ===
+patch: NGSPICE46-VBIC-MNA-SNAPSHOT-PROBE-V3-EQMAP-PATCH-V4.patch sha256 31dc7dfe979e64dfb0ed32bff798ab8c176ab2a8e1536b943d4b12c4049934b6
+PATCH_APPLY_RC=0 (patch -p1 --batch --forward)
+experiment niiter.c new sha256: b3117492d719614381c4580ce6ede6528c3fd2603b02d913b0f93074987d6cc4 (single new SHA; != fa26677f)
+control niiter.c: fa26677f5436801e0e725cf9500b80a03b3c2faf7a8fa0cbe32c518f1d7a811e (unchanged)
+smpdefs.h/klusmp.c: unchanged on both sides (verified)
+
+=== syntax-only NIiter command (retained Probe V3 Syntax V2 authority, exact) ===
+compiler: gcc (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0
+relative argv: gcc -DHAVE_CONFIG_H -I. -I. -I../../../src/include -I../../../src/include -static -O2 -s -Wall -Wextra -Wmissing-prototypes -Wstrict-prototypes -Wnested-externs -Wold-style-definition -Wredundant-decls -Wconversion -Wno-unused-but-set-variable -std=gnu11 -fopenmp -fsyntax-only niiter.c
+cwd per side: <side>/src/maths/ni
+
+=== per-side results ===
+SIDE=control rc=0 warnings=0 errors=0 stderr_bytes=0
+SIDE=experiment rc=0 warnings=0 errors=0 stderr_bytes=0
+PATCH_WARNING_DELTA=0
+raw stderr captured per side (scratch copies; unmodified)
+
+=== checkpoint verification ===
+pre/post hash snapshot of candidates-dir evidence + executables + V2 captures: IDENTICAL (EVIDENCE_UNCHANGED=YES)
+pre/post object+archive+executable hash snapshots of the scratch: IDENTICAL (OBJECTS_UNCHANGED=YES; fsyntax-only writes nothing)
+
+=== artifacts (O_EXCL; identities reported externally after close) ===
+APPLIED-niiter.c sha256 b3117492d719614381c4580ce6ede6528c3fd2603b02d913b0f93074987d6cc4 bytes 24300 physical_lines 557
+APPLY-SYNTAX-V1.log sha256 <reported externally> bytes 2648 physical_lines 40
+
+=== claims ===
+CONFIRMED: fresh exclusive scratch; pre-change identities on both copies; patch V4 applied
+exactly once to the experiment copy only; control niiter stays fa26677f; experiment niiter
+gets one new sha; non-niiter identities unchanged; syntax-only rc=0 both sides with the
+retained gnu11 command; warning delta 0; no evidence/object change.
+PROVISIONAL: none. Boundary: syntax-only completion; compile success is NOT runtime,
+circuit, measurement, or specification evidence.

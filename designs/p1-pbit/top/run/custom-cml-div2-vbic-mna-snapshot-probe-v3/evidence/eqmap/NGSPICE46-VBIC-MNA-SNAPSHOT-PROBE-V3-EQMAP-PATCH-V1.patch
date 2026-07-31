@@ -1,0 +1,63 @@
+--- a/src/maths/ni/niiter.c
++++ b/src/maths/ni/niiter.c
+@@ -26,6 +26,8 @@
+ /* [VBIC_THERMAL_VECTOR_PROBE] once-emitted flag only; resolver/node state is
+    local to each NIiter invocation (circuit-keyed by construction) */
+ static bool vtp_printed = FALSE;
++/* [EQMAP] once-only emission flag; tied to the accepted snapshot event key */
++static bool eqmap_printed = FALSE;
+ 
+ /* NIiter() - return value is non-zero for convergence failure */
+ 
+@@ -440,6 +442,50 @@
+                 vtp_printed = TRUE;
+             }
+         }
++        /* [EQMAP] once-only external-equation-index -> node-name map; fires at
++         * the accepted snapshot event key only (same predicate as the retained
++         * V3 snapshot trigger: vtp_armed, iterno == 3, CKTtime == 0.0,
++         * MODETRANOP | MODEINITFIX) and shares its id=1 event identity with the
++         * A,b,x snapshot records. Read-only: walks the CKT node list from
++         * ckt->CKTnodes->next (ground excluded); stderr only; no matrix/RHS/
++         * state/node/device writes; no element creation; no CKTload/SMPsolve
++         * change. Structurally countable: one BEGIN with event identity and
++         * expected count, exactly one [EQMAP] row per target equation, one END
++         * with the emitted row count. */
++        if (vtp_armed == 1 && iteration_captured && !eqmap_printed &&
++            iterno == 3 && ckt->CKTtime == 0.0 &&
++            ((ckt->CKTmode & MODETRANOP) != 0) &&
++            ((ckt->CKTmode & MODEINITFIX) != 0)) {
++            static const int eqmap_targets[13] = {
++                2, 70, 79, 98, 99, 100,
++                102, 103, 104, 105, 106, 107, 108};
++            CKTnode *eqmap_node;
++            int eqmap_i, eqmap_hit, eqmap_emitted = 0;
++            fprintf(stderr,
++                    "[EQMAP_BEGIN] id=1 tnode=%d iterno=%d time=%a mode=%ld expected=%d\n",
++                    vtp_tnode, iterno, ckt->CKTtime, (long) ckt->CKTmode, 13);
++            for (eqmap_i = 0; eqmap_i < 13; eqmap_i++) {
++                eqmap_hit = 0;
++                for (eqmap_node = ckt->CKTnodes->next; eqmap_node;
++                     eqmap_node = eqmap_node->next) {
++                    if (eqmap_node->number == eqmap_targets[eqmap_i]) {
++                        fprintf(stderr, "[EQMAP] id=1 eq=%d name=%s\n",
++                                eqmap_node->number,
++                                (eqmap_node->name != NULL)
++                                    ? eqmap_node->name : "<null>");
++                        eqmap_hit = 1;
++                        break;
++                    }
++                }
++                eqmap_emitted++;
++                if (!eqmap_hit)
++                    fprintf(stderr, "[EQMAP] id=1 eq=%d name=<absent>\n",
++                            eqmap_targets[eqmap_i]);
++            }
++            fprintf(stderr, "[EQMAP_END] id=1 emitted=%d expected=%d\n",
++                    eqmap_emitted, 13);
++            eqmap_printed = TRUE;
++        }
+         /* printf("after loading, after solving\n"); */
+         /* CKTdump(ckt); */
+     }
+

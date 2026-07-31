@@ -1,0 +1,53 @@
+--- a/src/maths/ni/niiter.c
++++ b/src/maths/ni/niiter.c
+@@ -174,8 +174,48 @@
+                                    vtp_snap_max_eq, ckt->CKTkluMODE,
+                                    "prefactor", vtp_snap_id, vtp_tnode,
+                                    iterno, ckt->CKTtime,
+-                                   (long) ckt->CKTmode) == 0)
++                                   (long) ckt->CKTmode) == 0) {
++                    /* [EQMAP] equation-index -> node-name rows for the 13
++                     * target equations, INSIDE the same successful prefactor
++                     * branch (once-only authority: the existing !vtp_snap_pre_done
++                     * guard plus a successful SMPsnapshotMNA return); the records
++                     * carry the existing dynamic vtp_snap_id (no hardcoded id).
++                     * Read-only CKTnode walk from ckt->CKTnodes->next (ground
++                     * excluded); stderr only; no matrix/RHS/state/node/device
++                     * writes; no element creation. Structurally countable:
++                     * BEGIN with event identity and expected count, exactly one
++                     * [EQMAP] row per target equation, END with emitted count. */
++                    const int eqmap_targets[13] = {
++                        2, 70, 79, 98, 99, 100,
++                        102, 103, 104, 105, 106, 107, 108};
++                    CKTnode *eqmap_node;
++                    int eqmap_i, eqmap_hit, eqmap_emitted = 0;
++                    fprintf(stderr,
++                            "[EQMAP_BEGIN] id=%ld tnode=%d iterno=%d time=%a mode=%ld expected=%d\n",
++                            vtp_snap_id, vtp_tnode, iterno, ckt->CKTtime,
++                            (long) ckt->CKTmode, 13);
++                    for (eqmap_i = 0; eqmap_i < 13; eqmap_i++) {
++                        eqmap_hit = 0;
++                        for (eqmap_node = ckt->CKTnodes->next; eqmap_node;
++                             eqmap_node = eqmap_node->next) {
++                            if (eqmap_node->number == eqmap_targets[eqmap_i]) {
++                                fprintf(stderr, "[EQMAP] id=%ld eq=%d name=%s\n",
++                                        vtp_snap_id, eqmap_node->number,
++                                        (eqmap_node->name != NULL)
++                                            ? eqmap_node->name : "<null>");
++                                eqmap_hit = 1;
++                                break;
++                            }
++                        }
++                        eqmap_emitted++;
++                        if (!eqmap_hit)
++                            fprintf(stderr, "[EQMAP] id=%ld eq=%d name=<absent>\n",
++                                    vtp_snap_id, eqmap_targets[eqmap_i]);
++                    }
++                    fprintf(stderr, "[EQMAP_END] id=%ld emitted=%d expected=%d\n",
++                            vtp_snap_id, eqmap_emitted, 13);
+                     vtp_snap_pre_done = TRUE;
++                }
+             }
+ #endif
+ 
+

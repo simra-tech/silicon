@@ -1,0 +1,102 @@
+NGSPICE46-VBIC-MNA-SNAPSHOT-PROBE-V3-EQMAP-PATCH-V4-LINK-V2.log
+Matched libni + executable link boundary (no executable invocation, no deck, no simulation)
+
+=== V1 attempt reservation ===
+LINK-V1 (raw dir ...-LINK-V1-RAW, log absent) reserved: its allowed-change extraction
+compared hash lists instead of file paths (sed stripped the paths), so the PRE->LIBNI
+check failed spuriously; all four links had completed rc=0 with 0 warnings/0 errors.
+V1 raw dir preserved unchanged; this V2 run repeats the checkpoint fresh.
+
+=== provenance ===
+scratch: accepted Object V2 state <build-scratch>/object-v2/{control,experiment}
+Object V1 attempt reserved (case-mismatch packaging); Object V2 accepted (log 8f39073a...)
+
+=== pre-link identity reproof (both sides, all PASS) ===
+control niiter.c fa26677f... / experiment niiter.c b3117492...
+smpdefs.h 61acdc96... klusmp.c d9a40052... both sides
+control niiter.o b814bec3... / experiment niiter.o 9a54a5b5...
+KLU libKLU.a identities recorded pre/post (klu-lib-pre.txt, re-asserted after each step)
+
+=== steps (make -j1 V=1, configured authority) ===
+--- control
+libni:   rc=0 warnings=0 errors=0 stderr_bytes=0
+ngspice: rc=0 warnings=0 errors=0 stderr_bytes=0
+--- experiment
+libni:   rc=0 warnings=0 errors=0 stderr_bytes=0
+ngspice: rc=0 warnings=0 errors=0 stderr_bytes=0
+exact libtool argv: raw stdout files (libni/ngspice per side; V=1)
+
+=== allowed-change manifests (fail closed) ===
+PRE->LIBNI: only libni.la/.libs/libni.a(.la/.lai) changed (change-PRE-LIBNI.disposition)
+LIBNI->POST: only src/ngspice changed (change-LIBNI-POST.disposition)
+niiter.o and all KLU artifacts re-asserted unchanged after every step
+
+=== product identities (matched; raw experiment-products.txt per side) ===
+control libni.la 5cd3a8205d9cb043ede35b512c72e4cfc24cfd41e5fbbc82e4aa020736f895ed bytes 883
+control libni.a  45dd8eb520cd49a97a2ebcdcad92f38751a82d56994d254878a5095300506ce8 bytes 44810
+control ngspice  f2d2cd197f03818f1501dbebc983e5fcf1dd062965ea5e56dbff6b8dde01a0c7 bytes 8054352
+experiment libni.la 5cd3a8205d9cb043ede35b512c72e4cfc24cfd41e5fbbc82e4aa020736f895ed bytes 883
+experiment libni.a  7a5a274e20feda18a100faba64a911b960681c601ea0417d0185bd6ec04c2b4a bytes 46042
+experiment ngspice  c865f1bf2ea99bc684b9e40342cfd6565f6bc995fb47c748474aceb5ef384045 bytes 8054352
+.libs/ngspice: ABSENT in this build layout (executable built directly at src/ngspice)
+
+=== link-input verification ===
+both ngspice link argv contain maths/ni/.libs/libni.a AND maths/KLU/.libs/libKLU.a (experiment-argv-check.txt, experiment-argv-libs.txt)
+
+=== strings counts (presence only, no runtime inference) ===
+control: control EQMAP_BEGIN=0 control [EQMAP]=0 control EQMAP_END=0   (string presence only; no runtime emission inferred) 
+experiment: experiment EQMAP_BEGIN=1 experiment [EQMAP]=2 experiment EQMAP_END=1   (string presence only; no runtime emission inferred) 
+
+=== archive symbol evidence ===
+libni archive members and niiter symbols recorded (experiment-libni-members.txt / experiment-libni-nm-niiter.txt)
+libni niiter member sha == niiter.o sha per side (control b814bec3 / experiment 9a54a5b5)
+
+=== raw directory manifest (O_EXCL, retained) ===
+  change-LIBNI-POST.disposition
+  change-LIBNI-POST.txt
+  change-PRE-LIBNI.disposition
+  change-PRE-LIBNI.txt
+  control
+  control-argv-check.txt
+  control-argv-libs.txt
+  control-libni-members.txt
+  control-libni-niiter-member.sha
+  control-libni-nm-niiter.txt
+  control-libni.rc
+  control-libni-stderr.raw
+  control-libni-stdout.raw
+  control-ngspice.rc
+  control-ngspice-stderr.raw
+  control-ngspice-stdout.raw
+  control-products.txt
+  control-strings.txt
+  DISPOSITION.txt
+  experiment
+  experiment-argv-check.txt
+  experiment-argv-libs.txt
+  experiment-libni-members.txt
+  experiment-libni-niiter-member.sha
+  experiment-libni-nm-niiter.txt
+  experiment-libni.rc
+  experiment-libni-stderr.raw
+  experiment-libni-stdout.raw
+  experiment-ngspice.rc
+  experiment-ngspice-stderr.raw
+  experiment-ngspice-stdout.raw
+  experiment-products.txt
+  experiment-strings.txt
+  klu-lib-pre.txt
+  klu-objs2-pre.txt
+  klu-objs-pre.txt
+  manifest-LIBNI.txt
+  manifest-POST.txt
+  manifest-PRE.txt
+
+=== claims ===
+CONFIRMED: identities reproved; libni.la and ngspice forced via make -j1 V=1 per side with
+only scratch-side link products removed (DISPOSITION.txt); rc/warnings/errors/stderr raw;
+incremental manifests prove only the named link products changed; niiter.o and all KLU
+artifacts unchanged after every step; link argv contains libni.a + libKLU.a; strings
+counts recorded; libni archive niiter member matches the per-side object.
+PROVISIONAL: none. Boundary: link only; no executable invocation, no deck, no simulation,
+no circuit/measurement/specification claim. String presence is NOT runtime emission.
