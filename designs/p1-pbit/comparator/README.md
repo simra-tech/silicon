@@ -3,6 +3,14 @@
 HBT CML latch with a CMOS output buffer and a 10-bit offset trim DAC. Samples
 the amplified noise and produces a rail-to-rail digital bit.
 
+## Schematic-backed 18.5 um feedback-resistor source
+
+[`source-backed-rfb18p5-v5/`](source-backed-rfb18p5-v5/) publishes the isolated
+Xschem source, ordered symbol, one-instance hierarchy, generated netlist, and
+normalized generation evidence for the comparator with
+`XRFB ... rppd w=1.0u l=18.5u`. It establishes source-to-netlist binding only;
+it does not supersede or extend the electrical results below.
+
 ## The block was rebuilt, and the table below predates the rebuild
 
 Everything in *Measured* was taken on a hand-written netlist that did not
