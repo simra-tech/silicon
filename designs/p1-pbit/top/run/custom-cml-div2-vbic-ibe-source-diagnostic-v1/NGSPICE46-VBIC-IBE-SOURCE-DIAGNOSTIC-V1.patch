@@ -1,0 +1,50 @@
+--- src/spicelib/devices/vbic/vbicload.c
++++ src/spicelib/devices/vbic/vbicload.c
+@@ -36,7 +36,7 @@
+     double *,double *,double *,double *,double *,double *,double *,
+     double *,double *,double *,double *,double *,double *,double *,
+     double *,double *,double *,double *,double *,double *,double *,
+-    double *,double *);
++    double *,double *,int);
+ 
+ int
+ VBICload(GENmodel *inModel, CKTcircuit *ckt)
+@@ -736,7 +736,8 @@
+                 ,&Qbcp_Vbcp, &Irth, &Irth_Vrth, &Ith, &Ith_Vrth, &Ith_Vbei, &Ith_Vbci
+                 ,&Ith_Vcei, &Ith_Vbex, &Ith_Vbep, &Ith_Vrs, &Ith_Vbcp, &Ith_Vcep, &Ith_Vrcx
+                 ,&Ith_Vrci, &Ith_Vbcx, &Ith_Vrbx, &Ith_Vrbi, &Ith_Vre, &Ith_Vrbp, &Qcth
+-                ,&Qcth_Vrth, &SCALE);
++                ,&Qcth_Vrth, &SCALE
++                ,(here->VBICname && strcmp(here->VBICname, "q.xdiv2.xqs_comp_s.qnpn13g2") == 0) ? 1 : 0);
+                 /* [VBIC_ITH_TERM_DIAGNOSTIC] read-only decomposition of Ith model outputs at the call boundary (target-only, first-occurrence) */
+                 bool ith_term_diag_active = (here->VBICname && strcmp(here->VBICname, "q.xdiv2.xqs_comp_s.qnpn13g2") == 0);
+                 static bool ith_term_diag_printed = FALSE;
+@@ -1792,7 +1793,7 @@
+     ,double *Qbcp_Vbcp, double *Irth, double *Irth_Vrth, double *Ith, double *Ith_Vrth, double *Ith_Vbei, double *Ith_Vbci
+     ,double *Ith_Vcei, double *Ith_Vbex, double *Ith_Vbep, double *Ith_Vrs, double *Ith_Vbcp, double *Ith_Vcep, double *Ith_Vrcx
+     ,double *Ith_Vrci, double *Ith_Vbcx, double *Ith_Vrbx, double *Ith_Vrbi, double *Ith_Vre, double *Ith_Vrbp, double *Qcth
+-    ,double *Qcth_Vrth, double *SCALE)
++    ,double *Qcth_Vrth, double *SCALE, int IbeDiagActive)
+ {
+ double Tini,Tdev,Tdev_Vrth,Vtv,Vtv_Tdev,Vtv_Vrth,rT;
+ double rT_Tdev,rT_Vrth,dT,dT_Tdev,dT_Vrth,xvar1,xvar1_rT;
+@@ -3637,6 +3638,19 @@
+             *Ibe_Vrth=(*Ibe_Vrth)+Ibe_EBBEatT*EBBEatT_Vrth;
+         }else{
+             (*Ibe)=IBEIatT*(expi-1.0)+IBENatT*(expn-1.0);
++                                /* [VBIC_IBE_SOURCE_DIAGNOSTIC] read-only Ibe source decomposition (exact-instance gated via caller-passed IbeDiagActive; first-occurrence) */
++                                static bool ibe_diag_printed = FALSE;
++                                if (IbeDiagActive && !ibe_diag_printed && !isfinite(*Ibe)) {
++                                    fprintf(stderr, "\n[VBIC_IBE_SOURCE_DIAGNOSTIC] Branch: p[32]==1.0 (WBE=1), p[98]<=0.0 (VBBE=0), Ibe assignment line 3639 | *Ibe: %a (isfinite=%d) | IBEIatT: %a (isfinite=%d) | expi: %a (isfinite=%d) | IBENatT: %a (isfinite=%d) | expn: %a (isfinite=%d)\n",
++                                            *Ibe, isfinite(*Ibe) ? 1 : 0, IBEIatT, isfinite(IBEIatT) ? 1 : 0, expi, isfinite(expi) ? 1 : 0, IBENatT, isfinite(IBENatT) ? 1 : 0, expn, isfinite(expn) ? 1 : 0);
++                                    fprintf(stderr, "  argi: %a (isfinite=%d) | argn: %a (isfinite=%d) | *Vbei: %a (isfinite=%d) | Vtv: %a (isfinite=%d) | Tdev: %a (isfinite=%d) | *Vrth: %a (isfinite=%d)\n",
++                                            argi, isfinite(argi) ? 1 : 0, argn, isfinite(argn) ? 1 : 0, *Vbei, isfinite(*Vbei) ? 1 : 0, Vtv, isfinite(Vtv) ? 1 : 0, Tdev, isfinite(Tdev) ? 1 : 0, *Vrth, isfinite(*Vrth) ? 1 : 0);
++                                    fprintf(stderr, "  rT: %a (isfinite=%d) | dT: %a (isfinite=%d) | p[31]: %a (isfinite=%d) | p[33]: %a (isfinite=%d) | p[34]: %a (isfinite=%d) | p[35]: %a (isfinite=%d)\n",
++                                            rT, isfinite(rT) ? 1 : 0, dT, isfinite(dT) ? 1 : 0, p[31], isfinite(p[31]) ? 1 : 0, p[33], isfinite(p[33]) ? 1 : 0, p[34], isfinite(p[34]) ? 1 : 0, p[35], isfinite(p[35]) ? 1 : 0);
++                                    fprintf(stderr, "  p[32]: %a (isfinite=%d) | p[98]: %a (isfinite=%d)\n",
++                                            p[32], isfinite(p[32]) ? 1 : 0, p[98], isfinite(p[98]) ? 1 : 0);
++                                    ibe_diag_printed = TRUE;
++                                }
+             Ibe_IBEIatT=expi-1.0;
+             Ibe_expi=IBEIatT;
+             Ibe_IBENatT=expn-1.0;

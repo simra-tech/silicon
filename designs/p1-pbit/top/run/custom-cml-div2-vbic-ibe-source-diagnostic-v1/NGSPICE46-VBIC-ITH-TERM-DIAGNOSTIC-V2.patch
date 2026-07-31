@@ -1,0 +1,73 @@
+--- src/spicelib/devices/vbic/vbicload.c
++++ src/spicelib/devices/vbic/vbicload.c
+@@ -737,6 +737,70 @@
+                 ,&Ith_Vcei, &Ith_Vbex, &Ith_Vbep, &Ith_Vrs, &Ith_Vbcp, &Ith_Vcep, &Ith_Vrcx
+                 ,&Ith_Vrci, &Ith_Vbcx, &Ith_Vrbx, &Ith_Vrbi, &Ith_Vre, &Ith_Vrbp, &Qcth
+                 ,&Qcth_Vrth, &SCALE);
++                /* [VBIC_ITH_TERM_DIAGNOSTIC] read-only decomposition of Ith model outputs at the call boundary (target-only, first-occurrence) */
++                bool ith_term_diag_active = (here->VBICname && strcmp(here->VBICname, "q.xdiv2.xqs_comp_s.qnpn13g2") == 0);
++                static bool ith_term_diag_printed = FALSE;
++                if (ith_term_diag_active && !ith_term_diag_printed && !isfinite(Ith)) {
++                    fprintf(stderr, "\n[VBIC_ITH_TERM_DIAGNOSTIC] Site: MODEL_CALL@721 | iret: %d | Ith: %a (isfinite=%d) | SCALE: %a (isfinite=%d)\n",
++                            iret, Ith, isfinite(Ith) ? 1 : 0, SCALE, isfinite(SCALE) ? 1 : 0);
++                    fprintf(stderr, "  group 01 Ibe*Vbei         | cur %a (isfinite=%d) | volt %a (isfinite=%d) | product %a (isfinite=%d)\n",
++                            Ibe, isfinite(Ibe) ? 1 : 0, Vbei, isfinite(Vbei) ? 1 : 0, Ibe*Vbei, isfinite(Ibe*Vbei) ? 1 : 0);
++                    fprintf(stderr, "  group 02 Ibc*Vbci         | cur %a (isfinite=%d) | volt %a (isfinite=%d) | product %a (isfinite=%d)\n",
++                            Ibc, isfinite(Ibc) ? 1 : 0, Vbci, isfinite(Vbci) ? 1 : 0, Ibc*Vbci, isfinite(Ibc*Vbci) ? 1 : 0);
++                    fprintf(stderr, "  group 03 (Itzf-Itzr)*Vcei | Itzf %a (isfinite=%d) | Itzr %a (isfinite=%d) | diff %a (isfinite=%d) | volt %a (isfinite=%d) | product %a (isfinite=%d)\n",
++                            Itzf, isfinite(Itzf) ? 1 : 0, Itzr, isfinite(Itzr) ? 1 : 0, Itzf-Itzr, isfinite(Itzf-Itzr) ? 1 : 0, Vcei, isfinite(Vcei) ? 1 : 0, (Itzf-Itzr)*Vcei, isfinite((Itzf-Itzr)*Vcei) ? 1 : 0);
++                    fprintf(stderr, "  group 04 Ibex*Vbex        | cur %a (isfinite=%d) | volt %a (isfinite=%d) | product %a (isfinite=%d)\n",
++                            Ibex, isfinite(Ibex) ? 1 : 0, Vbex, isfinite(Vbex) ? 1 : 0, Ibex*Vbex, isfinite(Ibex*Vbex) ? 1 : 0);
++                    fprintf(stderr, "  group 05 Ibep*Vbep        | cur %a (isfinite=%d) | volt %a (isfinite=%d) | product %a (isfinite=%d)\n",
++                            Ibep, isfinite(Ibep) ? 1 : 0, Vbep, isfinite(Vbep) ? 1 : 0, Ibep*Vbep, isfinite(Ibep*Vbep) ? 1 : 0);
++                    fprintf(stderr, "  group 06 Irs*Vrs          | cur %a (isfinite=%d) | volt %a (isfinite=%d) | product %a (isfinite=%d)\n",
++                            Irs, isfinite(Irs) ? 1 : 0, Vrs, isfinite(Vrs) ? 1 : 0, Irs*Vrs, isfinite(Irs*Vrs) ? 1 : 0);
++                    fprintf(stderr, "  group 07 Ibcp*Vbcp        | cur %a (isfinite=%d) | volt %a (isfinite=%d) | product %a (isfinite=%d)\n",
++                            Ibcp, isfinite(Ibcp) ? 1 : 0, Vbcp, isfinite(Vbcp) ? 1 : 0, Ibcp*Vbcp, isfinite(Ibcp*Vbcp) ? 1 : 0);
++                    fprintf(stderr, "  group 08 Iccp*Vcep        | cur %a (isfinite=%d) | volt %a (isfinite=%d) | product %a (isfinite=%d)\n",
++                            Iccp, isfinite(Iccp) ? 1 : 0, Vcep, isfinite(Vcep) ? 1 : 0, Iccp*Vcep, isfinite(Iccp*Vcep) ? 1 : 0);
++                    fprintf(stderr, "  group 09 Ircx*Vrcx        | cur %a (isfinite=%d) | volt %a (isfinite=%d) | product %a (isfinite=%d)\n",
++                            Ircx, isfinite(Ircx) ? 1 : 0, Vrcx, isfinite(Vrcx) ? 1 : 0, Ircx*Vrcx, isfinite(Ircx*Vrcx) ? 1 : 0);
++                    fprintf(stderr, "  group 10 Irci*Vrci        | cur %a (isfinite=%d) | volt %a (isfinite=%d) | product %a (isfinite=%d)\n",
++                            Irci, isfinite(Irci) ? 1 : 0, Vrci, isfinite(Vrci) ? 1 : 0, Irci*Vrci, isfinite(Irci*Vrci) ? 1 : 0);
++                    fprintf(stderr, "  group 11 Irbx*Vrbx        | cur %a (isfinite=%d) | volt %a (isfinite=%d) | product %a (isfinite=%d)\n",
++                            Irbx, isfinite(Irbx) ? 1 : 0, Vrbx, isfinite(Vrbx) ? 1 : 0, Irbx*Vrbx, isfinite(Irbx*Vrbx) ? 1 : 0);
++                    fprintf(stderr, "  group 12 Irbi*Vrbi        | cur %a (isfinite=%d) | volt %a (isfinite=%d) | product %a (isfinite=%d)\n",
++                            Irbi, isfinite(Irbi) ? 1 : 0, Vrbi, isfinite(Vrbi) ? 1 : 0, Irbi*Vrbi, isfinite(Irbi*Vrbi) ? 1 : 0);
++                    fprintf(stderr, "  group 13 Ire*Vre          | cur %a (isfinite=%d) | volt %a (isfinite=%d) | product %a (isfinite=%d)\n",
++                            Ire, isfinite(Ire) ? 1 : 0, Vre, isfinite(Vre) ? 1 : 0, Ire*Vre, isfinite(Ire*Vre) ? 1 : 0);
++                    fprintf(stderr, "  group 14 Irbp*Vrbp        | cur %a (isfinite=%d) | volt %a (isfinite=%d) | product %a (isfinite=%d)\n",
++                            Irbp, isfinite(Irbp) ? 1 : 0, Vrbp, isfinite(Vrbp) ? 1 : 0, Irbp*Vrbp, isfinite(Irbp*Vrbp) ? 1 : 0);
++                    double ith_term_cum00 = -(Ibe*Vbei);
++                    double ith_term_cum01 = ith_term_cum00 -(Ibc*Vbci);
++                    double ith_term_cum02 = ith_term_cum01 -((Itzf-Itzr)*Vcei);
++                    double ith_term_cum03 = ith_term_cum02 -(Ibex*Vbex);
++                    double ith_term_cum04 = ith_term_cum03 -(Ibep*Vbep);
++                    double ith_term_cum05 = ith_term_cum04 -(Irs*Vrs);
++                    double ith_term_cum06 = ith_term_cum05 -(Ibcp*Vbcp);
++                    double ith_term_cum07 = ith_term_cum06 -(Iccp*Vcep);
++                    double ith_term_cum08 = ith_term_cum07 -(Ircx*Vrcx);
++                    double ith_term_cum09 = ith_term_cum08 -(Irci*Vrci);
++                    double ith_term_cum10 = ith_term_cum09 -(Irbx*Vrbx);
++                    double ith_term_cum11 = ith_term_cum10 -(Irbi*Vrbi);
++                    double ith_term_cum12 = ith_term_cum11 -(Ire*Vre);
++                    double ith_term_cum13 = ith_term_cum12 -(Irbp*Vrbp);
++                    fprintf(stderr, "  cum 00 -(Ibe*Vbei)                  = %a (isfinite=%d) [post-scale algebraic reconstruction from returned operands; not an exact floating-point replay]\n", ith_term_cum00, isfinite(ith_term_cum00) ? 1 : 0);
++                    fprintf(stderr, "  cum 01 -(Ibc*Vbci)                          = %a (isfinite=%d) [post-scale algebraic reconstruction from returned operands; not an exact floating-point replay]\n", ith_term_cum01, isfinite(ith_term_cum01) ? 1 : 0);
++                    fprintf(stderr, "  cum 02 -((Itzf-Itzr)*Vcei)                  = %a (isfinite=%d) [post-scale algebraic reconstruction from returned operands; not an exact floating-point replay]\n", ith_term_cum02, isfinite(ith_term_cum02) ? 1 : 0);
++                    fprintf(stderr, "  cum 03 -(Ibex*Vbex)                         = %a (isfinite=%d) [post-scale algebraic reconstruction from returned operands; not an exact floating-point replay]\n", ith_term_cum03, isfinite(ith_term_cum03) ? 1 : 0);
++                    fprintf(stderr, "  cum 04 -(Ibep*Vbep)                         = %a (isfinite=%d) [post-scale algebraic reconstruction from returned operands; not an exact floating-point replay]\n", ith_term_cum04, isfinite(ith_term_cum04) ? 1 : 0);
++                    fprintf(stderr, "  cum 05 -(Irs*Vrs)                           = %a (isfinite=%d) [post-scale algebraic reconstruction from returned operands; not an exact floating-point replay]\n", ith_term_cum05, isfinite(ith_term_cum05) ? 1 : 0);
++                    fprintf(stderr, "  cum 06 -(Ibcp*Vbcp)                         = %a (isfinite=%d) [post-scale algebraic reconstruction from returned operands; not an exact floating-point replay]\n", ith_term_cum06, isfinite(ith_term_cum06) ? 1 : 0);
++                    fprintf(stderr, "  cum 07 -(Iccp*Vcep)                         = %a (isfinite=%d) [post-scale algebraic reconstruction from returned operands; not an exact floating-point replay]\n", ith_term_cum07, isfinite(ith_term_cum07) ? 1 : 0);
++                    fprintf(stderr, "  cum 08 -(Ircx*Vrcx)                         = %a (isfinite=%d) [post-scale algebraic reconstruction from returned operands; not an exact floating-point replay]\n", ith_term_cum08, isfinite(ith_term_cum08) ? 1 : 0);
++                    fprintf(stderr, "  cum 09 -(Irci*Vrci)                         = %a (isfinite=%d) [post-scale algebraic reconstruction from returned operands; not an exact floating-point replay]\n", ith_term_cum09, isfinite(ith_term_cum09) ? 1 : 0);
++                    fprintf(stderr, "  cum 10 -(Irbx*Vrbx)                         = %a (isfinite=%d) [post-scale algebraic reconstruction from returned operands; not an exact floating-point replay]\n", ith_term_cum10, isfinite(ith_term_cum10) ? 1 : 0);
++                    fprintf(stderr, "  cum 11 -(Irbi*Vrbi)                         = %a (isfinite=%d) [post-scale algebraic reconstruction from returned operands; not an exact floating-point replay]\n", ith_term_cum11, isfinite(ith_term_cum11) ? 1 : 0);
++                    fprintf(stderr, "  cum 12 -(Ire*Vre)                           = %a (isfinite=%d) [post-scale algebraic reconstruction from returned operands; not an exact floating-point replay]\n", ith_term_cum12, isfinite(ith_term_cum12) ? 1 : 0);
++                    fprintf(stderr, "  cum 13 -(Irbp*Vrbp)                         = %a (isfinite=%d) [post-scale algebraic reconstruction from returned operands; not an exact floating-point replay]\n", ith_term_cum13, isfinite(ith_term_cum13) ? 1 : 0);
++                    ith_term_diag_printed = TRUE;
++                }
+ 
+             here->VBICpower = Ith;
+ 
