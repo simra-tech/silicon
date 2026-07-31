@@ -91,10 +91,24 @@ The audit uses the numeric thresholds `VBE=0.65/0.96 V` and
 
 The local PDK model file identifies 0.65–0.96 V VBE and 0.4–2.0 V VCE as
 model-valid ranges and separately names 1.6 V as a maximum
-collector-to-emitter voltage/model parameter. This package does not promote
-those literals into a reliability, absolute-maximum, breakdown, harmlessness
-or operating-mode claim. The authority and applicability of the dynamic
-exceptions remain unresolved.
+collector-to-emitter voltage/model parameter. The IHP SG13G2 Process
+Specification Rev. 1.2 separately identifies `NPN13G2_BVCEO` as a
+process-control breakdown metric with a 1.4 V minimum and 1.6 V target.
+Measurement condition A.p defines an extrapolation from the
+`JC=(0.3–0.75) mA/µm²` portion of the VCE(IC) characteristic and the
+specification notes that process-control monitoring uses minimum devices.
+
+`HBT-BVCEO-PROCESS-AUTHORITY.tsv` retains those two bounds, the normalized
+source text, PDF and printed pages, source revision and complete source hash.
+Its literal fields are byte-identical to the declared
+`pdftotext -enc UTF-8 -layout` extraction after wrapped lines are joined with
+one ASCII space.
+
+This package does not turn a process-control breakdown metric into a blanket
+dynamic operating limit for the driven-base `Nx=3` sink devices. It also does
+not promote either source into a reliability, absolute-maximum, harmlessness
+or operating-mode claim. The authority is now explicit; its applicability to
+the observed switching intervals remains unresolved.
 
 `HBT-BOUND-AUTHORITY.public.tsv` preserves the seven-row source map that
 separates the forward measurement ranges, model-valid ranges, named maximum,
@@ -102,6 +116,27 @@ model parameters and valid `Nx` geometry. Its nine literal-field occurrences
 round-trip byte-for-byte to eight unique physical lines in the identified
 model file. The TSV remains ISO-8859-1 so the source's raw `B5` micro-sign byte
 on line 26 is not transcoded.
+
+## Frozen-waveform resistor counterfactual
+
+`SINK-COLLECTOR-RESISTOR-COUNTERFACTUAL.tsv` applies two algebraic coordinates
+to all 1,141 retained samples at or after 2 ns with positive collector current:
+
+- a lower resistance coordinate `(VCE-1.6 V)/Ic`; and
+- an upper resistance coordinate `(VCE-0.4 V)/Ic`.
+
+The largest device lower coordinate is
+`73.7045910482929543 ohm`; the smallest upper coordinate is
+`538.397754496273819 ohm`. Their direct decimal separation is
+`464.6931634479808647 ohm`. At the common lower coordinate, the serialized
+frozen-current estimate for `XQSEF2_S` is
+`1.60000000000000009 V`, exposing the binary floating-point boundary rather
+than hiding it behind a verdict.
+
+This is a provisional counterfactual on the frozen V5 waveform. It does not
+model a PDK resistor geometry or the resulting changes to current,
+capacitance, bias loading, temperature or waveform. No edited-circuit
+simulation is represented.
 
 ## Files
 
@@ -120,6 +155,8 @@ on line 26 is not transcoded.
 | `OUTPUT-CROSSINGS.tsv` | exact interpolated terminal zero-crossing times |
 | `BOUNDARY-OCCUPANCY.tsv` | rectangular dynamic threshold-occupancy audit |
 | `HBT-BOUND-AUTHORITY.public.tsv` | path-sanitized, byte-preserving PDK model-bound source map |
+| `HBT-BVCEO-PROCESS-AUTHORITY.tsv` | process-specification BVCEO bounds and normalized literal source bindings |
+| `SINK-COLLECTOR-RESISTOR-COUNTERFACTUAL.tsv` | verdict-free frozen-current series-resistance coordinates |
 | `SOURCE-IDENTITIES.tsv` | frozen and public artifact identities |
 | `PUBLISHED-HASHES.sha256` | hashes of every published technical file |
 
@@ -132,6 +169,9 @@ generated control script replace runtime workspace, tool, PDK-catalog and
 temporary paths with relative paths or named placeholders. The authority map
 is byte-preserving except that its source-file path is replaced with
 `$PDK_ROOT`; its ISO-8859-1 source literals are unchanged.
+The BVCEO authority and resistor-counterfactual TSVs are published verbatim
+from the independently checked Design Engineer artifacts. The process
+specification itself remains an identified external PDK reference.
 
 Set `PDK_ROOT` to the `ihp-sg13g2` PDK root and run from this directory:
 
