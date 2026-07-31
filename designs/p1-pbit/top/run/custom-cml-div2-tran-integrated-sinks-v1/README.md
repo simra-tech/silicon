@@ -126,6 +126,23 @@ round-trip byte-for-byte to eight unique physical lines in the identified
 model file. The TSV remains ISO-8859-1 so the source's raw `B5` micro-sign byte
 on line 26 is not transcoded.
 
+## Retained HBT thermal-node scalars
+
+`HBT-THERMAL-NODE-AUDIT.tsv` binds every one of the candidate's 26
+`npn13G2` instances and its `Nx` value to the corresponding retained `.t`
+vector. It covers all 1,141 samples at or after 2 ns:
+
+- 29,666 scalar samples are finite and none are non-finite;
+- the global minimum is `0.752000089467494970` at `XQCLK_TRACK_S`;
+- the global maximum is `17.0801433538495928` at `XQ2_M`; and
+- the native log still contains one occurrence of each thermal diagnostic
+  quoted above.
+
+The values are retained as thermal-node scalars. This package does not assign
+them a physical temperature unit or use their finiteness to clear the native
+diagnostic. The model source identity and its self-heating equations remain
+bound in `SOURCE-IDENTITIES.tsv`.
+
 ## Frozen-waveform resistor counterfactual
 
 `SINK-COLLECTOR-RESISTOR-COUNTERFACTUAL.tsv` applies two algebraic coordinates
@@ -166,6 +183,7 @@ simulation is represented.
 | `HBT-BOUND-AUTHORITY.public.tsv` | path-sanitized, byte-preserving PDK model-bound source map |
 | `HBT-BREAKDOWN-PROCESS-AUTHORITY.tsv` | process-specification BVCEO/BVCBO bounds and normalized literal source bindings |
 | `SINK-BREAKDOWN-CONTEXT.tsv` | frozen-raw sink VCE/VBE/VCB context and interpolated durations |
+| `HBT-THERMAL-NODE-AUDIT.tsv` | per-instance retained thermal-node scalar extrema, means and final values |
 | `SINK-COLLECTOR-RESISTOR-COUNTERFACTUAL.tsv` | verdict-free frozen-current series-resistance coordinates |
 | `SOURCE-IDENTITIES.tsv` | frozen and public artifact identities |
 | `PUBLISHED-HASHES.sha256` | hashes of every published technical file |
@@ -179,8 +197,9 @@ generated control script replace runtime workspace, tool, PDK-catalog and
 temporary paths with relative paths or named placeholders. The authority map
 is byte-preserving except that its source-file path is replaced with
 `$PDK_ROOT`; its ISO-8859-1 source literals are unchanged. The process
-breakdown authority, sink-context and resistor-counterfactual TSVs are
-published verbatim from the independently checked Design Engineer artifacts.
+breakdown authority, sink-context, resistor-counterfactual and thermal-node
+audit TSVs are published verbatim from the independently checked Design
+Engineer artifacts.
 The process specification itself remains an identified external PDK reference.
 
 Set `PDK_ROOT` to the `ihp-sg13g2` PDK root and run from this directory:
