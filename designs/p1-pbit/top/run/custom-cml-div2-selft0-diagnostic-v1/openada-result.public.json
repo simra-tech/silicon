@@ -1,0 +1,190 @@
+{
+  "schema": "openada.result/v0alpha1",
+  "operation": "simulate",
+  "tool": {
+    "name": "ngspice",
+    "path": "$NGSPICE_ROOT/bin/ngspice",
+    "version": "** ngspice-46 : Circuit level simulation program"
+  },
+  "execution": {
+    "status": "completed",
+    "exit_code": 0,
+    "duration_ms": 1571,
+    "command": [
+      "$NGSPICE_ROOT/bin/ngspice",
+      "-i",
+      "-n",
+      "-o",
+      "<OPENADA_TEMP>/simulation.log",
+      "evidence/tb_p1_cml_div2_front_tran_v5_selft0_diagnostic.openada-control.sp"
+    ],
+    "cwd": "."
+  },
+  "engineering": {
+    "status": "pass",
+    "summary": "ngspice produced all required, structurally valid simulation evidence."
+  },
+  "inputs": [
+    {
+      "kind": "spice-netlist",
+      "role": "input",
+      "path": "tb_p1_cml_div2_front_tran_v5_selft0_diagnostic.cir",
+      "exists": true,
+      "bytes": 1684,
+      "sha256": "21476a37993b026cfe3dce4f8b0b1cb8ce1af9173b071e2c1a15ebf50ee550c7"
+    },
+    {
+      "kind": "ngspice-system-init",
+      "role": "configuration",
+      "path": "$NGSPICE_ROOT/share/ngspice/scripts/spinit",
+      "exists": true,
+      "bytes": 1509,
+      "sha256": "b088c11a27e21ceadb14abbf9dff877105177bd025ca37750877d71e7f6f87af"
+    }
+  ],
+  "artifacts": [
+    {
+      "kind": "simulation-log",
+      "role": "evidence",
+      "path": "evidence/tb_p1_cml_div2_front_tran_v5_selft0_diagnostic.log",
+      "exists": true,
+      "bytes": 5867,
+      "sha256": "341e4d0bcd10fa7d06689b2bd25e59bf6bff15bfb8fbd0c8722f206bc98cb493"
+    },
+    {
+      "kind": "ngspice-control-script",
+      "role": "evidence",
+      "path": "evidence/tb_p1_cml_div2_front_tran_v5_selft0_diagnostic.openada-control.sp",
+      "exists": true,
+      "bytes": 212,
+      "sha256": "8572637d4e03fc1db3a7aa9036d6b8ecf54768298f95586c2245ccb3c25a6cb2"
+    },
+    {
+      "kind": "ngspice-raw",
+      "role": "output",
+      "path": "raw_tb_p1_cml_div2_front_tran_v5_selft0_diagnostic.raw",
+      "exists": true,
+      "bytes": 7857475,
+      "sha256": "cf6067c37593907e3f86e7b17354b9d0229603f5924d63326ed0ab8aa29bad17"
+    }
+  ],
+  "diagnostics": [],
+  "data": {
+    "execution_mode": "control",
+    "expected_outputs": [
+      {
+        "kind": "raw",
+        "declared_path": "raw_tb_p1_cml_div2_front_tran_v5_selft0_diagnostic.raw",
+        "path": "raw_tb_p1_cml_div2_front_tran_v5_selft0_diagnostic.raw"
+      }
+    ],
+    "working_directory": ".",
+    "working_directory_is_sandbox": false,
+    "transitive_inputs_enumerated": false,
+    "requested_environment_overrides": {},
+    "transitive_include_detected": true,
+    "initialization": {
+      "policy": "explicit",
+      "file": null,
+      "local_user_spiceinit": "disabled",
+      "system_spinit": {
+        "policy": "explicit",
+        "file": "$NGSPICE_ROOT/share/ngspice/scripts/spinit"
+      },
+      "ambient_startup_files_enumerated": true
+    },
+    "environment_overrides": {
+      "SPICE_SCRIPTS": "$NGSPICE_ROOT/share/ngspice/scripts"
+    },
+    "environment_policy": {
+      "mode": "inherit",
+      "ambient_inherited": true
+    },
+    "environment": {
+      "PDK": "ihp-sg13g2",
+      "PDK_ROOT": "$PDK_CATALOG_ROOT",
+      "SPICE_ASCIIRAWFILE": null,
+      "SPICE_LIB_DIR": null,
+      "SPICE_SCRIPTS": "$NGSPICE_ROOT/share/ngspice/scripts",
+      "NGSPICE_INPUT_DIR": null
+    },
+    "converged": true,
+    "measurements": [],
+    "measurements_truncated": false,
+    "missing_measurements": [],
+    "duplicate_measurements": [],
+    "measurement_section_count": 0,
+    "solver_warning_count": 0,
+    "solver_warning_examples": [],
+    "solver_warning_examples_truncated": false,
+    "log_tail": "                      0.207632\nxdiv2.xqclk_track_m.s1             0.000810161\nxdiv2.xqclk_track_m.t                        0\nclk_n                                        0\nxdiv2.xqclk_latch_m.s1             0.000235237\nxdiv2.xqclk_latch_m.t                        0\nxdiv2.xqef1_m.s1                   0.000235237\nxdiv2.xqef1_m.t                              0\nxdiv2.xqef2_m.s1                   0.000235237\nxdiv2.xqef2_m.t                              0\nxdiv2.c_p1_comp_m                     0.851241\nxdiv2.e_scomp_ef1_m                  0.0175166\nxdiv2.xqsef1_m.s1                  0.000235237\nxdiv2.xqsef1_m.t                             0\nxdiv2.xrdeg_sef1_m.dt                        0\nxdiv2.e_scomp_ef2_m                  0.0175166\nxdiv2.xqsef2_m.s1                  0.000235237\nxdiv2.xqsef2_m.t                             0\nxdiv2.xrdeg_sef2_m.dt                        0\nxdiv2.c_p2_comp_m                     0.738097\nxdiv2.e_p1_comp_m                    0.0174865\nxdiv2.xqp1_comp_m.s1               0.000235237\nxdiv2.xqp1_comp_m.t                          0\nxdiv2.xrdeg_p1_comp_m.dt                     0\nxdiv2.e_p2_comp_m                    0.0635711\nxdiv2.xqp2_comp_m.s1               0.000235237\nxdiv2.xqp2_comp_m.t                          0\nxdiv2.xrptat_comp_m.dt                       0\nxdiv2.xcstab_comp_m.1                        0\nxdiv2.e_scomp_m                      0.0174294\nxdiv2.xqs_comp_m.s1                 0.00023784\nxdiv2.xqs_comp_m.t                           0\nxdiv2.xrdeg_scomp_m.dt                       0\nxdiv2.c_n_s                            2.20528\nxdiv2.xrc1_s.dt                              0\nxdiv2.c_p_s                            2.20528\nxdiv2.xrc2_s.dt                              0\nxdiv2.e_track_s                        1.01988\nxdiv2.xq1_s.s1                     0.000235237\nxdiv2.xq1_s.t                                0\nxdiv2.xq2_s.s1                     0.000235237\nxdiv2.xq2_s.t                                0\nxdiv2.e_latch_s                       0.429702\nxdiv2.xq3_s.s1                     0.000235237\nxdiv2.xq3_s.t                                0\nxdiv2.xq4_s.s1                     0.000235237\nxdiv2.xq4_s.t                                0\nxdiv2.e_tail_s                        0.207633\nxdiv2.xqclk_track_s.s1             0.000235237\nxdiv2.xqclk_track_s.t                        0\nxdiv2.xqclk_latch_s.s1             0.000810159\nxdiv2.xqclk_latch_s.t                        0\nxdiv2.xqef1_s.s1                   0.000235237\nxdiv2.xqef1_s.t                              0\nxdiv2.xqef2_s.s1                   0.000235237\nxdiv2.xqef2_s.t                              0\nxdiv2.c_p1_comp_s                     0.851241\nxdiv2.e_scomp_ef1_s                  0.0175166\nxdiv2.xqsef1_s.s1                  0.000235237\nxdiv2.xqsef1_s.t                             0\nxdiv2.xrdeg_sef1_s.dt                        0\nxdiv2.e_scomp_ef2_s                  0.0175166\nxdiv2.xqsef2_s.s1                  0.000235237\nxdiv2.xqsef2_s.t                             0\nxdiv2.xrdeg_sef2_s.dt                        0\nxdiv2.c_p2_comp_s                     0.738098\nxdiv2.e_p1_comp_s                    0.0174865\nxdiv2.xqp1_comp_s.s1               0.000235237\nxdiv2.xqp1_comp_s.t                          0\nxdiv2.xrdeg_p1_comp_s.dt                     0\nxdiv2.e_p2_comp_s                     0.063571\nxdiv2.xqp2_comp_s.s1               0.000235237\nxdiv2.xqp2_comp_s.t                          0\nxdiv2.xrptat_comp_s.dt                       0\nxdiv2.xcstab_comp_s.1                        0\nxdiv2.e_scomp_s                      0.0174294\nxdiv2.xqs_comp_s.s1                 0.00023784\nxdiv2.xqs_comp_s.t                           0\nxdiv2.xrdeg_scomp_s.dt                       0\nvclk_n#branch                      4.92075e-12\nvclk_p#branch                     -5.33099e-05\nv_vss#branch                         0.0098089\nv_vcc_hbt#branch                   -0.00975559\n\n\nNo. of Data Rows : 2284\nbinary raw file \"raw_tb_p1_cml_div2_front_tran_v5_selft0_diagnostic.raw\"\nngspice-46 done\n",
+    "log_capture": {
+      "path": "evidence/tb_p1_cml_div2_front_tran_v5_selft0_diagnostic.log",
+      "status": "valid",
+      "bytes": 5867,
+      "sha256": "341e4d0bcd10fa7d06689b2bd25e59bf6bff15bfb8fbd0c8722f206bc98cb493"
+    },
+    "output_captures": [
+      {
+        "path": "raw_tb_p1_cml_div2_front_tran_v5_selft0_diagnostic.raw",
+        "status": "valid",
+        "bytes": 7857475,
+        "sha256": "cf6067c37593907e3f86e7b17354b9d0229603f5924d63326ed0ab8aa29bad17",
+        "validation": {
+          "valid": true,
+          "reason": "valid",
+          "metadata": {
+            "format": "ngspice-raw",
+            "bytes": 7857475,
+            "plot_count": 1,
+            "analysis_plot_count": 1,
+            "has_analysis_plot": true,
+            "value_count": 979836,
+            "numeric_scalar_count": 979836,
+            "plots": [
+              {
+                "plotname": "Transient Analysis",
+                "encoding": "binary",
+                "numeric_type": "real",
+                "variables": 429,
+                "points": 2284,
+                "values": 979836,
+                "unpadded": false,
+                "independent_variable": "time",
+                "axis_first": 0,
+                "axis_last": 4e-09,
+                "axis_strictly_increasing": true,
+                "axis_linear_step": null,
+                "axis_log_ratio": null
+              }
+            ]
+          }
+        },
+        "kind": "raw",
+        "origin": "deck",
+        "declared_path": "raw_tb_p1_cml_div2_front_tran_v5_selft0_diagnostic.raw",
+        "parent_anchored": true
+      }
+    ],
+    "control_script_capture": {
+      "path": "evidence/tb_p1_cml_div2_front_tran_v5_selft0_diagnostic.openada-control.sp",
+      "status": "valid",
+      "bytes": 212,
+      "sha256": "8572637d4e03fc1db3a7aa9036d6b8ecf54768298f95586c2245ccb3c25a6cb2"
+    },
+    "analysis_evidence": {
+      "raw": true,
+      "completed_log_record": true
+    },
+    "inputs_stable": true
+  },
+  "provenance": {
+    "openada_version": "0.4.0",
+    "created_at": "2026-07-31T10:38:58.166630Z",
+    "host": {
+      "system": "Linux",
+      "machine": "x86_64",
+      "python": "3.12.3"
+    }
+  }
+}
