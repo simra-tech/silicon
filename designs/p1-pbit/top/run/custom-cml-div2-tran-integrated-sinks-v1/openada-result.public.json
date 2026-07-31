@@ -1,0 +1,190 @@
+{
+  "schema": "openada.result/v0alpha1",
+  "operation": "simulate",
+  "tool": {
+    "name": "ngspice",
+    "path": "$NGSPICE_ROOT/bin/ngspice",
+    "version": "** ngspice-46 : Circuit level simulation program"
+  },
+  "execution": {
+    "status": "completed",
+    "exit_code": 0,
+    "duration_ms": 2181,
+    "command": [
+      "$NGSPICE_ROOT/bin/ngspice",
+      "-i",
+      "-n",
+      "-o",
+      "<OPENADA_TEMP>/simulation.log",
+      "evidence/tb_p1_cml_div2_front_tran_v5.openada-control.sp"
+    ],
+    "cwd": "."
+  },
+  "engineering": {
+    "status": "pass",
+    "summary": "ngspice produced all required, structurally valid simulation evidence."
+  },
+  "inputs": [
+    {
+      "kind": "spice-netlist",
+      "role": "input",
+      "path": "tb_p1_cml_div2_front_tran_v5.cir",
+      "exists": true,
+      "bytes": 1648,
+      "sha256": "46e7f223c140769ddbb1f503200caf463bccb395c6f117c39873a600170076fa"
+    },
+    {
+      "kind": "ngspice-system-init",
+      "role": "configuration",
+      "path": "$NGSPICE_ROOT/share/ngspice/scripts/spinit",
+      "exists": true,
+      "bytes": 1509,
+      "sha256": "b088c11a27e21ceadb14abbf9dff877105177bd025ca37750877d71e7f6f87af"
+    }
+  ],
+  "artifacts": [
+    {
+      "kind": "simulation-log",
+      "role": "evidence",
+      "path": "evidence/tb_p1_cml_div2_front_tran_v5.log",
+      "exists": true,
+      "bytes": 6087,
+      "sha256": "4df00a12c025c1f2d0335a2a27d6e11f15bb0ddf951910f564c7197bdb811d93"
+    },
+    {
+      "kind": "ngspice-control-script",
+      "role": "evidence",
+      "path": "evidence/tb_p1_cml_div2_front_tran_v5.openada-control.sp",
+      "exists": true,
+      "bytes": 189,
+      "sha256": "1068a7568e8197f74ef0497603b0a172abde14243b895c37b6274939db335314"
+    },
+    {
+      "kind": "ngspice-raw",
+      "role": "output",
+      "path": "raw_tb_p1_cml_div2_front_tran_v5.raw",
+      "exists": true,
+      "bytes": 7857477,
+      "sha256": "e8dd0e089f8da6d9db0a268276581eb2c23b3075463d295d011198f1b1155904"
+    }
+  ],
+  "diagnostics": [],
+  "data": {
+    "execution_mode": "control",
+    "expected_outputs": [
+      {
+        "kind": "raw",
+        "declared_path": "raw_tb_p1_cml_div2_front_tran_v5.raw",
+        "path": "raw_tb_p1_cml_div2_front_tran_v5.raw"
+      }
+    ],
+    "working_directory": ".",
+    "working_directory_is_sandbox": false,
+    "transitive_inputs_enumerated": false,
+    "requested_environment_overrides": {},
+    "transitive_include_detected": true,
+    "initialization": {
+      "policy": "explicit",
+      "file": null,
+      "local_user_spiceinit": "disabled",
+      "system_spinit": {
+        "policy": "explicit",
+        "file": "$NGSPICE_ROOT/share/ngspice/scripts/spinit"
+      },
+      "ambient_startup_files_enumerated": true
+    },
+    "environment_overrides": {
+      "SPICE_SCRIPTS": "$NGSPICE_ROOT/share/ngspice/scripts"
+    },
+    "environment_policy": {
+      "mode": "inherit",
+      "ambient_inherited": true
+    },
+    "environment": {
+      "PDK": "ihp-sg13g2",
+      "PDK_ROOT": "$PDK_CATALOG_ROOT",
+      "SPICE_ASCIIRAWFILE": null,
+      "SPICE_LIB_DIR": null,
+      "SPICE_SCRIPTS": "$NGSPICE_ROOT/share/ngspice/scripts",
+      "NGSPICE_INPUT_DIR": null
+    },
+    "converged": true,
+    "measurements": [],
+    "measurements_truncated": false,
+    "missing_measurements": [],
+    "duplicate_measurements": [],
+    "measurement_section_count": 0,
+    "solver_warning_count": 0,
+    "solver_warning_examples": [],
+    "solver_warning_examples_truncated": false,
+    "log_tail": "2\nxdiv2.e_tail_m                        0.241302\nxdiv2.xqclk_track_m.s1             0.000107465\nxdiv2.xqclk_track_m.t                  5.34841\nclk_n                                        0\nxdiv2.xqclk_latch_m.s1             3.12396e-05\nxdiv2.xqclk_latch_m.t              8.63406e-11\nxdiv2.xqef1_m.s1                   3.12402e-05\nxdiv2.xqef1_m.t                        13.5339\nxdiv2.xqef2_m.s1                   3.12402e-05\nxdiv2.xqef2_m.t                        13.5339\nxdiv2.c_p1_comp_m                     0.845457\nxdiv2.e_scomp_ef1_m                  0.0173053\nxdiv2.xqsef1_m.s1                    3.124e-05\nxdiv2.xqsef1_m.t                       5.84783\nxdiv2.xrdeg_sef1_m.dt                        0\nxdiv2.e_scomp_ef2_m                  0.0173053\nxdiv2.xqsef2_m.s1                    3.124e-05\nxdiv2.xqsef2_m.t                       5.84783\nxdiv2.xrdeg_sef2_m.dt                        0\nxdiv2.c_p2_comp_m                      0.76975\nxdiv2.e_p1_comp_m                    0.0165614\nxdiv2.xqp1_comp_m.s1               3.12395e-05\nxdiv2.xqp1_comp_m.t                    3.12277\nxdiv2.xrdeg_p1_comp_m.dt                     0\nxdiv2.e_p2_comp_m                    0.0601974\nxdiv2.xqp2_comp_m.s1               3.12397e-05\nxdiv2.xqp2_comp_m.t                   0.782149\nxdiv2.xrptat_comp_m.dt                       0\nxdiv2.xcstab_comp_m.1                        0\nxdiv2.e_scomp_m                      0.0159934\nxdiv2.xqs_comp_m.s1                3.18479e-05\nxdiv2.xqs_comp_m.t                    0.982377\nxdiv2.xrdeg_scomp_m.dt                       0\nxdiv2.c_n_s                            2.22767\nxdiv2.xrc1_s.dt                              0\nxdiv2.c_p_s                            2.22767\nxdiv2.xrc2_s.dt                              0\nxdiv2.e_track_s                        1.05202\nxdiv2.xq1_s.s1                     3.12401e-05\nxdiv2.xq1_s.t                      1.72156e-08\nxdiv2.xq2_s.s1                     3.12401e-05\nxdiv2.xq2_s.t                      1.72156e-08\nxdiv2.e_latch_s                       0.483155\nxdiv2.xq3_s.s1                     3.12401e-05\nxdiv2.xq3_s.t                           18.877\nxdiv2.xq4_s.s1                     3.12401e-05\nxdiv2.xq4_s.t                           18.877\nxdiv2.e_tail_s                        0.241302\nxdiv2.xqclk_track_s.s1             3.12396e-05\nxdiv2.xqclk_track_s.t              8.63406e-11\nxdiv2.xqclk_latch_s.s1             0.000107465\nxdiv2.xqclk_latch_s.t                  5.34841\nxdiv2.xqef1_s.s1                   3.12402e-05\nxdiv2.xqef1_s.t                        13.5572\nxdiv2.xqef2_s.s1                   3.12402e-05\nxdiv2.xqef2_s.t                        13.5572\nxdiv2.c_p1_comp_s                     0.845457\nxdiv2.e_scomp_ef1_s                  0.0173052\nxdiv2.xqsef1_s.s1                    3.124e-05\nxdiv2.xqsef1_s.t                        5.8474\nxdiv2.xrdeg_sef1_s.dt                        0\nxdiv2.e_scomp_ef2_s                  0.0173052\nxdiv2.xqsef2_s.s1                    3.124e-05\nxdiv2.xqsef2_s.t                        5.8474\nxdiv2.xrdeg_sef2_s.dt                        0\nxdiv2.c_p2_comp_s                      0.76975\nxdiv2.e_p1_comp_s                    0.0165614\nxdiv2.xqp1_comp_s.s1               3.12395e-05\nxdiv2.xqp1_comp_s.t                    3.12276\nxdiv2.xrdeg_p1_comp_s.dt                     0\nxdiv2.e_p2_comp_s                    0.0601974\nxdiv2.xqp2_comp_s.s1               3.12397e-05\nxdiv2.xqp2_comp_s.t                   0.782149\nxdiv2.xrptat_comp_s.dt                       0\nxdiv2.xcstab_comp_s.1                        0\nxdiv2.e_scomp_s                      0.0159934\nxdiv2.xqs_comp_s.s1                3.18479e-05\nxdiv2.xqs_comp_s.t                    0.982377\nxdiv2.xrdeg_scomp_s.dt                       0\nvclk_n#branch                      5.18398e-12\nvclk_p#branch                     -2.04846e-05\nv_vss#branch                        0.00933591\nv_vcc_hbt#branch                   -0.00931542\n\n\nNo. of Data Rows : 2284\nbinary raw file \"raw_tb_p1_cml_div2_front_tran_v5.raw\"\nngspice-46 done\n",
+    "log_capture": {
+      "path": "evidence/tb_p1_cml_div2_front_tran_v5.log",
+      "status": "valid",
+      "bytes": 6087,
+      "sha256": "4df00a12c025c1f2d0335a2a27d6e11f15bb0ddf951910f564c7197bdb811d93"
+    },
+    "output_captures": [
+      {
+        "path": "raw_tb_p1_cml_div2_front_tran_v5.raw",
+        "status": "valid",
+        "bytes": 7857477,
+        "sha256": "e8dd0e089f8da6d9db0a268276581eb2c23b3075463d295d011198f1b1155904",
+        "validation": {
+          "valid": true,
+          "reason": "valid",
+          "metadata": {
+            "format": "ngspice-raw",
+            "bytes": 7857477,
+            "plot_count": 1,
+            "analysis_plot_count": 1,
+            "has_analysis_plot": true,
+            "value_count": 979836,
+            "numeric_scalar_count": 979836,
+            "plots": [
+              {
+                "plotname": "Transient Analysis",
+                "encoding": "binary",
+                "numeric_type": "real",
+                "variables": 429,
+                "points": 2284,
+                "values": 979836,
+                "unpadded": false,
+                "independent_variable": "time",
+                "axis_first": 0.0,
+                "axis_last": 4e-09,
+                "axis_strictly_increasing": true,
+                "axis_linear_step": null,
+                "axis_log_ratio": null
+              }
+            ]
+          }
+        },
+        "kind": "raw",
+        "origin": "deck",
+        "declared_path": "raw_tb_p1_cml_div2_front_tran_v5.raw",
+        "parent_anchored": true
+      }
+    ],
+    "control_script_capture": {
+      "path": "evidence/tb_p1_cml_div2_front_tran_v5.openada-control.sp",
+      "status": "valid",
+      "bytes": 189,
+      "sha256": "1068a7568e8197f74ef0497603b0a172abde14243b895c37b6274939db335314"
+    },
+    "analysis_evidence": {
+      "raw": true,
+      "completed_log_record": true
+    },
+    "inputs_stable": true
+  },
+  "provenance": {
+    "openada_version": "0.4.0",
+    "created_at": "2026-07-31T09:18:26.222742Z",
+    "host": {
+      "system": "Linux",
+      "machine": "x86_64",
+      "python": "3.12.3"
+    }
+  }
+}
