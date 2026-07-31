@@ -1,0 +1,138 @@
+--- src/maths/ni/niiter.c
++++ src/maths/ni/niiter.c
+@@ -19,9 +19,13 @@
+ #include "ngspice/smpdefs.h"
+ #include "ngspice/sperror.h"
+ #include "ngspice/fteext.h"
++#include "../../spicelib/devices/vbic/vbicdefs.h"
+ 
+ /* Limit the number of 'singular matrix' warnings */
+ static int msgcount = 0;
++/* [VBIC_THERMAL_VECTOR_PROBE] once-emitted flag only; resolver/node state is
++   local to each NIiter invocation (circuit-keyed by construction) */
++static bool vtp_printed = FALSE;
+ 
+ /* NIiter() - return value is non-zero for convergence failure */
+ 
+@@ -33,6 +37,13 @@
+ 
+     int iterno = 0;
+     int ipass = 0;
++    int vtp_tnode = -1;
++    int vtp_armed = 0;
++    bool iteration_captured = FALSE;
++    double time_at_load = NAN;
++    long mode_at_load = 0;
++    double old_before_load = NAN, assembled_before_solve = NAN;
++    double solved_after_solve = NAN, after_damping = NAN, old_after_swap = NAN;
+ 
+     /* some convergence issues that get resolved by increasing max iter */
+     if (maxIter < 100)
+@@ -64,9 +75,45 @@
+         }
+     }
+ 
++    /* [VBIC_THERMAL_VECTOR_PROBE] resolve target thermal node once per
++       invocation, AFTER initialization (NIreinit may allocate the vectors);
++       explicitly scoped to the normal solver path (not the MODETRANOP+MODEUIC
++       early return) */
++    if (!vtp_printed) {
++        int vtp_type = CKTtypelook("VBIC");
++        if (vtp_type >= 0 && ckt->CKTrhs && ckt->CKTrhsOld) {
++            GENmodel *vtp_model;
++            for (vtp_model = ckt->CKThead[vtp_type]; vtp_model;
++                 vtp_model = vtp_model->GENnextModel) {
++                GENinstance *vtp_inst;
++                for (vtp_inst = vtp_model->GENinstances; vtp_inst;
++                     vtp_inst = vtp_inst->GENnextInstance) {
++                    if (vtp_inst->GENname &&
++                        strcmp(vtp_inst->GENname,
++                               "q.xdiv2.xqs_comp_s.qnpn13g2") == 0) {
++                        vtp_tnode = ((VBICinstance *) vtp_inst)->VBICtempNode;
++                        if (vtp_tnode > 0 && vtp_tnode < ckt->CKTmaxEqNum)
++                            vtp_armed = 1;
++                        break;
++                    }
++                }
++                if (vtp_armed == 1)
++                    break;
++            }
++        }
++    }
++
+     /* OldCKTstate0 = TMALLOC(double, ckt->CKTnumStates + 1); */
+ 
+     for (;;) {
++        old_before_load = NAN;
++        assembled_before_solve = NAN;
++        solved_after_solve = NAN;
++        after_damping = NAN;
++        old_after_swap = NAN;
++        time_at_load = NAN;
++        mode_at_load = 0;
++        iteration_captured = FALSE;
+ 
+         ckt->CKTnoncon = 0;
+ 
+@@ -75,6 +122,11 @@
+ #endif
+         {
+ 
++            if (vtp_armed == 1) {
++                old_before_load = *(ckt->CKTrhsOld + vtp_tnode);
++                time_at_load = ckt->CKTtime;
++                mode_at_load = (long) ckt->CKTmode;
++            }
+             error = CKTload(ckt);
+             /* printf("loaded, noncon is %d\n", ckt->CKTnoncon); */
+             /* fflush(stdout); */
+@@ -251,7 +303,14 @@
+                        (size_t) ckt->CKTnumStates * sizeof(double));
+ 
+             startTime = SPfrontEnd->IFseconds();
++            if (vtp_armed == 1)
++                assembled_before_solve = *(ckt->CKTrhs + vtp_tnode);
+             SMPsolve(ckt->CKTmatrix, ckt->CKTrhs, ckt->CKTrhsSpare);
++            if (vtp_armed == 1) {
++                solved_after_solve = *(ckt->CKTrhs + vtp_tnode);
++                after_damping = solved_after_solve;
++                iteration_captured = TRUE;
++            }
+             ckt->CKTstat->STATsolveTime +=
+                 SPfrontEnd->IFseconds() - startTime;
+ #ifdef STEPDEBUG
+@@ -321,6 +380,8 @@
+                 }
+             }
+         }
++        if (vtp_armed == 1 && iteration_captured)
++            after_damping = *(ckt->CKTrhs + vtp_tnode);
+ 
+         if (ckt->CKTmode & MODEINITFLOAT) {
+             if ((ckt->CKTmode & MODEDC) && ckt->CKThadNodeset) {
+@@ -360,6 +421,25 @@
+ 
+         /* build up the lvnim1 array from the lvn array */
+         SWAP(double *, ckt->CKTrhs, ckt->CKTrhsOld);
++        if (vtp_armed == 1 && iteration_captured) {
++            old_after_swap = *(ckt->CKTrhsOld + vtp_tnode);
++            if (!vtp_printed &&
++                ((isfinite(old_before_load) && old_before_load < 0.0) ||
++                 (isfinite(assembled_before_solve) && assembled_before_solve < 0.0) ||
++                 (isfinite(solved_after_solve) && solved_after_solve < 0.0) ||
++                 (isfinite(after_damping) && after_damping < 0.0) ||
++                 (isfinite(old_after_swap) && old_after_swap < 0.0))) {
++                fprintf(stderr, "\n[VBIC_THERMAL_VECTOR_PROBE] Instance: q.xdiv2.xqs_comp_s.qnpn13g2 | tnode: %d | iterno: %d | CKTtime_at_load: %g | CKTmode_at_load: %ld\n",
++                        vtp_tnode, iterno, time_at_load, mode_at_load);
++                fprintf(stderr, "  old_before_load: %a (isfinite=%d) | assembled_before_solve: %a (isfinite=%d) | solved_after_solve: %a (isfinite=%d) | after_damping: %a (isfinite=%d) | old_after_swap: %a (isfinite=%d)\n",
++                        old_before_load, isfinite(old_before_load) ? 1 : 0,
++                        assembled_before_solve, isfinite(assembled_before_solve) ? 1 : 0,
++                        solved_after_solve, isfinite(solved_after_solve) ? 1 : 0,
++                        after_damping, isfinite(after_damping) ? 1 : 0,
++                        old_after_swap, isfinite(old_after_swap) ? 1 : 0);
++                vtp_printed = TRUE;
++            }
++        }
+         /* printf("after loading, after solving\n"); */
+         /* CKTdump(ckt); */
+     }
