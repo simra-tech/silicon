@@ -67,6 +67,21 @@ path. It does not establish the physical meaning of the internal `.t` scalar,
 does not clear the Candidate V5 messages, and does not authorize a circuit
 change.
 
+## Thermal-terminal source authority
+
+`THERMAL-TERMINAL-AUTHORITY.tsv` preserves 13 physical lines from the
+hash-identified IHP HBT model. The model's `npn13G2_5t` wrapper exposes a fifth
+terminal that its line-147 comment names `temperature output`. The
+four-terminal `npn13G2` wrapper used by Candidate V5 instead connects the core
+device's fifth terminal to an internal node named `t`.
+
+`THERMAL-SOURCE-SEARCH-INVENTORY.tsv` enumerates the four local sources
+searched for an explicit semantic definition. Within that bounded inventory,
+none establishes the physical unit of the temperature output or whether it is
+absolute temperature versus temperature rise. The authority table therefore
+preserves model topology and exact source language without assigning either
+unresolved meaning to the saved `.t` vectors.
+
 ## Files
 
 | File | Purpose |
@@ -82,6 +97,8 @@ change.
 | `WAVEFORM-COMPARISON.tsv` | full-precision physical-versus-simplified waveform metrics |
 | `OUTPUT-CROSSINGS.tsv` | all terminal-output zero-crossing timestamps |
 | `THERMAL-NODE-COMPARISON.tsv` | `.t` vector populations and native message counts |
+| `THERMAL-TERMINAL-AUTHORITY.tsv` | path-sanitized exact model-line authority map |
+| `THERMAL-SOURCE-SEARCH-INVENTORY.tsv` | path-sanitized bounded source-search inventory |
 | `SOURCE-IDENTITIES.tsv` | private and public artifact identities |
 | `PUBLISHED-HASHES.sha256` | hashes of every published technical file |
 
