@@ -23,6 +23,15 @@ At 2.1 V collector common mode, the sensed sink current is within 0.007% of
 the 0.762463 uA unit target. Reversing the ideal base stimulus exchanges the
 two collector currents as expected.
 
+A follow-up [`900 uA width-scaling experiment`](scaled-900ua-w2p307692/)
+increases only the NMOS sink width from 2.0 µm to 2.307692 µm at the same
+bias. It delivers 0.907922503 µA at 2.1 V, **3.2005% above** the
+0.879765396 µA unit target, while retaining 99.9461% selected share and only
+0.00327% sink-current variation across 1.9–2.2 V collector common mode. That
+package also retracts a reported power scalar that multiplied sink current by
+a disconnected 1.2 V rail; the current and selectivity measurements remain
+valid.
+
 ## Output-resistance correction
 
 This experiment does **not** measure NMOS output resistance from a 300 mV

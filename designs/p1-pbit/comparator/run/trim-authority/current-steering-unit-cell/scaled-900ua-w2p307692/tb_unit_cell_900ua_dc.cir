@@ -1,0 +1,86 @@
+* 1x Sensed 900uA Scaled Unit-Cell 6-Point DC Experiment (V_bias = 0.25515 V)
+.lib $PDK_ROOT/libs.tech/ngspice/models/cornerHBT.lib hbt_typ
+.lib $PDK_ROOT/libs.tech/ngspice/models/cornerRES.lib res_typ
+.lib $PDK_ROOT/libs.tech/ngspice/models/cornerCAP.lib cap_typ
+.lib $PDK_ROOT/libs.tech/ngspice/models/cornerMOShv.lib mos_tt
+.lib $PDK_ROOT/libs.tech/ngspice/models/cornerMOSlv.lib mos_tt
+.lib $PDK_ROOT/libs.tech/ngspice/models/cornerDIO.lib dio_tt
+
+VCC VCC 0 DC 2.500
+VDD VDD 0 DC 1.200
+VSS VSS 0 DC 0.000
+
+* Explicit Test Base Drive Sources (Digital level driver UNIMPLEMENTED)
+VTRIM_P TRIM_P 0 DC 1.000
+VTRIM_N TRIM_N 0 DC 0.800
+
+* Explicit Collector Common-Mode Voltage Source
+VCP c_p 0 DC 2.100
+VCN c_n 0 DC 2.100
+
+* Dummy Sweep Source for single-point wrdata
+VDUMMY dummy 0 DC 0.0
+
+* 1x Unit Current Sink NMOS (sg13_lv_nmos w=2.307692307692u l=1.0u)
+VBIAS v_bias 0 DC 0.25515
+XM_SINK d_sink v_bias VSS VSS sg13_lv_nmos w=2.307692307692u l=1.0u ng=1 m=1
+
+* Zero-Volt Series Sense Source for True NMOS Drain Current
+V_TAIL_SENSE e_st_tail d_sink DC 0.000
+
+* 1x Differential Steering HBT Pair (npn13G2 Nx=1)
+XQST_P c_p TRIM_P e_st_tail sub! npn13G2 Nx=1 mm_ok=1
+XQST_N c_n TRIM_N e_st_tail sub! npn13G2 Nx=1 mm_ok=1
+
+XTAP1 VSS sub! ptap1
+
+.option temp = 27.0
+.options rshunt=1e12 method=gear reltol=1e-3
+
+.control
+pre_osdi $PDK_ROOT/libs.tech/ngspice/osdi/psp103.osdi
+pre_osdi $PDK_ROOT/libs.tech/ngspice/osdi/psp103_nqs.osdi
+set filetype=ascii
+
+* Run 1: Left Steer (P=1.0V, N=0.8V), V_cm = 1.9 V
+alter VTRIM_P DC = 1.000
+alter VTRIM_N DC = 0.800
+alter VCP DC = 1.900
+alter VCN DC = 1.900
+dc VDUMMY 0 0 1
+wrdata raw_unit900_run1.txt i(V_TAIL_SENSE) i(VTRIM_P) i(VTRIM_N) i(VCP) i(VCN) v(e_st_tail) v(TRIM_P) v(TRIM_N) v(c_p) v(c_n) v(v_bias)
+
+* Run 2: Left Steer (P=1.0V, N=0.8V), V_cm = 2.1 V
+alter VCP DC = 2.100
+alter VCN DC = 2.100
+dc VDUMMY 0 0 1
+wrdata raw_unit900_run2.txt i(V_TAIL_SENSE) i(VTRIM_P) i(VTRIM_N) i(VCP) i(VCN) v(e_st_tail) v(TRIM_P) v(TRIM_N) v(c_p) v(c_n) v(v_bias)
+
+* Run 3: Left Steer (P=1.0V, N=0.8V), V_cm = 2.2 V
+alter VCP DC = 2.200
+alter VCN DC = 2.200
+dc VDUMMY 0 0 1
+wrdata raw_unit900_run3.txt i(V_TAIL_SENSE) i(VTRIM_P) i(VTRIM_N) i(VCP) i(VCN) v(e_st_tail) v(TRIM_P) v(TRIM_N) v(c_p) v(c_n) v(v_bias)
+
+* Run 4: Right Steer (P=0.8V, N=1.0V), V_cm = 1.9 V
+alter VTRIM_P DC = 0.800
+alter VTRIM_N DC = 1.000
+alter VCP DC = 1.900
+alter VCN DC = 1.900
+dc VDUMMY 0 0 1
+wrdata raw_unit900_run4.txt i(V_TAIL_SENSE) i(VTRIM_P) i(VTRIM_N) i(VCP) i(VCN) v(e_st_tail) v(TRIM_P) v(TRIM_N) v(c_p) v(c_n) v(v_bias)
+
+* Run 5: Right Steer (P=0.8V, N=1.0V), V_cm = 2.1 V
+alter VCP DC = 2.100
+alter VCN DC = 2.100
+dc VDUMMY 0 0 1
+wrdata raw_unit900_run5.txt i(V_TAIL_SENSE) i(VTRIM_P) i(VTRIM_N) i(VCP) i(VCN) v(e_st_tail) v(TRIM_P) v(TRIM_N) v(c_p) v(c_n) v(v_bias)
+
+* Run 6: Right Steer (P=0.8V, N=1.0V), V_cm = 2.2 V
+alter VCP DC = 2.200
+alter VCN DC = 2.200
+dc VDUMMY 0 0 1
+wrdata raw_unit900_run6.txt i(V_TAIL_SENSE) i(VTRIM_P) i(VTRIM_N) i(VCP) i(VCN) v(e_st_tail) v(TRIM_P) v(TRIM_N) v(c_p) v(c_n) v(v_bias)
+
+.endc
+.end
