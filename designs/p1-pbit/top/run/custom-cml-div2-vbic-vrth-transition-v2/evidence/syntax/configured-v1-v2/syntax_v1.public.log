@@ -1,0 +1,23 @@
+=== PRE_SYNTAX_STATE 2026-07-31T16:07:32Z ===
+SOURCE_SHA=c571a9c68e959c570b1680ff5cf6e51bab5e97071b5f49b3875360e6cffc9898
+HEADER_SHA=486fa8f0e2459cd8d2bb92e6c020f30da1d95197783a2ff631de9f0d650fe82b
+OBJECT_FILES=0
+SRC_NGSPICE=no
+=== SYNTAX_CMD: gcc -DHAVE_CONFIG_H -I. -I../../../../src/include -std=gnu11 -fopenmp -Wall -Wextra -Wmissing-prototypes -Wstrict-prototypes -Wnested-externs -Wold-style-definition -Wredundant-decls -Wconversion -Wno-unused-but-set-variable -fsyntax-only vbicload.c ===
+=== SYNTAX_START 2026-07-31T16:07:32Z ===
+vbicload.c: In function ‘VBICload’:
+vbicload.c:1083:296: warning: format ‘%d’ expects argument of type ‘int’, but argument 14 has type ‘long int’ [-Wformat=]
+ 1083 |                 fprintf(stderr, "\n[VBIC_VRTH_TRANSITION_DIAGNOSTIC] Site: state0_writeback@1075 | stored_before: %a (isfinite=%d) | Vrth(local): %a (isfinite=%d) | state0_after_write(direct read): %a (isfinite=%d) | state1: %a (isfinite=%d) | state2: %a (isfinite=%d) | CKTtime: %g | CKTmode: %d\n",
+      |                                                                                                                                                                                                                                                                                                       ~^
+      |                                                                                                                                                                                                                                                                                                        |
+      |                                                                                                                                                                                                                                                                                                        int
+      |                                                                                                                                                                                                                                                                                                       %ld
+ 1084 |                         stored_before, isfinite(stored_before) ? 1 : 0, Vrth, isfinite(Vrth) ? 1 : 0, *(ckt->CKTstate0 + here->VBICvrth), isfinite(*(ckt->CKTstate0 + here->VBICvrth)) ? 1 : 0, *(ckt->CKTstate1 + here->VBICvrth), isfinite(*(ckt->CKTstate1 + here->VBICvrth)) ? 1 : 0, *(ckt->CKTstate2 + here->VBICvrth), isfinite(*(ckt->CKTstate2 + here->VBICvrth)) ? 1 : 0, ckt->CKTtime, ckt->CKTmode);
+      |                                                                                                                                                                                                                                                                                                                                                                                                   ~~~~~~~~~~~~
+      |                                                                                                                                                                                                                                                                                                                                                                                                      |
+      |                                                                                                                                                                                                                                                                                                                                                                                                      long int
+SYNTAX_EXIT=0
+=== POST_SYNTAX_STATE 2026-07-31T16:07:33Z ===
+SOURCE_SHA=c571a9c68e959c570b1680ff5cf6e51bab5e97071b5f49b3875360e6cffc9898
+HEADER_SHA=486fa8f0e2459cd8d2bb92e6c020f30da1d95197783a2ff631de9f0d650fe82b
+=== SYNTAX_END 2026-07-31T16:07:33Z ===

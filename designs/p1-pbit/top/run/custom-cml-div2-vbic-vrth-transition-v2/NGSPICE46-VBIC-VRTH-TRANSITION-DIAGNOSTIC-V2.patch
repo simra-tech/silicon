@@ -1,0 +1,11 @@
+--- src/spicelib/devices/vbic/vbicload.c
++++ src/spicelib/devices/vbic/vbicload.c
+@@ -1080,7 +1080,7 @@
+                 !vrth_transition_printed &&
+                 isfinite(stored_before) && stored_before >= 0.0 &&
+                 isfinite(Vrth) && Vrth < 0.0) {
+-                fprintf(stderr, "\n[VBIC_VRTH_TRANSITION_DIAGNOSTIC] Site: state0_writeback@1075 | stored_before: %a (isfinite=%d) | Vrth(local): %a (isfinite=%d) | state0_after_write(direct read): %a (isfinite=%d) | state1: %a (isfinite=%d) | state2: %a (isfinite=%d) | CKTtime: %g | CKTmode: %d\n",
++                fprintf(stderr, "\n[VBIC_VRTH_TRANSITION_DIAGNOSTIC] Site: state0_writeback@1075 | stored_before: %a (isfinite=%d) | Vrth(local): %a (isfinite=%d) | state0_after_write(direct read): %a (isfinite=%d) | state1: %a (isfinite=%d) | state2: %a (isfinite=%d) | CKTtime: %g | CKTmode: %ld\n",
+                         stored_before, isfinite(stored_before) ? 1 : 0, Vrth, isfinite(Vrth) ? 1 : 0, *(ckt->CKTstate0 + here->VBICvrth), isfinite(*(ckt->CKTstate0 + here->VBICvrth)) ? 1 : 0, *(ckt->CKTstate1 + here->VBICvrth), isfinite(*(ckt->CKTstate1 + here->VBICvrth)) ? 1 : 0, *(ckt->CKTstate2 + here->VBICvrth), isfinite(*(ckt->CKTstate2 + here->VBICvrth)) ? 1 : 0, ckt->CKTtime, ckt->CKTmode);
+                 fprintf(stderr, "  tempnode RHS accumulator (current read, not a causal sum): %a (isfinite=%d)\n",
+                         *(ckt->CKTrhs + here->VBICtempNode), isfinite(*(ckt->CKTrhs + here->VBICtempNode)) ? 1 : 0);
