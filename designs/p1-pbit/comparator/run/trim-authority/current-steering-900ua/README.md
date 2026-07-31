@@ -40,11 +40,20 @@ major-carry slice, and the current full-array boundary. Every published path
 and SHA-256 resolves at its cited commit; the first four rows separately label
 the native executed deck and the sanitized public deck.
 
-The final row is intentionally **UNKNOWN**. It binds the retained model-valid
-self-heating-on 780 µA-era full-array diagnostic, whose finite raw accompanies
-a thermal NaN/heat-sink warning, and explicitly records that no 900 µA
-full-array artifact exists. Nominal subarray evidence is not promoted into a
-full-array conclusion.
+The final row records the boundary as it existed when V3 was published: it
+binds the retained model-valid self-heating-on 780 µA-era full-array
+diagnostic, whose finite raw accompanies a thermal NaN/heat-sink warning, and
+explicitly records that no 900 µA full-array artifact existed at that commit.
+V3 remains an immutable provenance snapshot rather than being silently
+rewritten.
+
+A later
+[model-valid full-array code-0 diagnostic](../current-steering-unit-cell/base-driver-dc/full-array-self-heating/model-valid-2x8/900ua-code0/README.md)
+now provides a complete 900 µA-scale deck, native log, and raw file. Its 1,201
+rows are finite and yield one collector crossing, but the thermal NaN/heat-sink
+warning recurs. The current full-array engineering status therefore remains
+**UNKNOWN**; specification status is **NOT EVALUATED**. Nominal subarray
+evidence is not promoted into a full-array conclusion.
 
 The TSV is 7,331 bytes with SHA-256
 `91c1e291ac65b54a514a925ac13b8c722295fb828b19aad3a7a1ce0184533fd2`.
