@@ -97,12 +97,21 @@ process-control breakdown metric with a 1.4 V minimum and 1.6 V target.
 Measurement condition A.p defines an extrapolation from the
 `JC=(0.3–0.75) mA/µm²` portion of the VCE(IC) characteristic and the
 specification notes that process-control monitoring uses minimum devices.
+The same source identifies `NPN13G2_BVCBO` as 3.8 V minimum and 4.8 V target;
+condition A.q is `IE=0; ICB=0.1µA`.
 
-`HBT-BVCEO-PROCESS-AUTHORITY.tsv` retains those two bounds, the normalized
+`HBT-BREAKDOWN-PROCESS-AUTHORITY.tsv` retains all four bounds, the normalized
 source text, PDF and printed pages, source revision and complete source hash.
 Its literal fields are byte-identical to the declared
 `pdftotext -enc UTF-8 -layout` extraction after wrapped lines are joined with
 one ASCII space.
+
+`SINK-BREAKDOWN-CONTEXT.tsv` derives VCE, VBE and VCB directly from all 1,141
+retained post-2 ns samples for the four physical sinks. During samples with
+`VCE>=1.6 V`, VBE remains `0.827153460406452212–0.829039955929505523 V`
+and VCB remains `0.771854869066933569–0.852240848156617825 V`. The four
+devices occupy that coordinate for 490–493 saved points and
+`874.30864078–875.91870994 ps` by linear interpolation.
 
 This package does not turn a process-control breakdown metric into a blanket
 dynamic operating limit for the driven-base `Nx=3` sink devices. It also does
@@ -155,7 +164,8 @@ simulation is represented.
 | `OUTPUT-CROSSINGS.tsv` | exact interpolated terminal zero-crossing times |
 | `BOUNDARY-OCCUPANCY.tsv` | rectangular dynamic threshold-occupancy audit |
 | `HBT-BOUND-AUTHORITY.public.tsv` | path-sanitized, byte-preserving PDK model-bound source map |
-| `HBT-BVCEO-PROCESS-AUTHORITY.tsv` | process-specification BVCEO bounds and normalized literal source bindings |
+| `HBT-BREAKDOWN-PROCESS-AUTHORITY.tsv` | process-specification BVCEO/BVCBO bounds and normalized literal source bindings |
+| `SINK-BREAKDOWN-CONTEXT.tsv` | frozen-raw sink VCE/VBE/VCB context and interpolated durations |
 | `SINK-COLLECTOR-RESISTOR-COUNTERFACTUAL.tsv` | verdict-free frozen-current series-resistance coordinates |
 | `SOURCE-IDENTITIES.tsv` | frozen and public artifact identities |
 | `PUBLISHED-HASHES.sha256` | hashes of every published technical file |
@@ -168,10 +178,10 @@ includes the adjacent candidate copy. The OpenADA JSON, preflight record and
 generated control script replace runtime workspace, tool, PDK-catalog and
 temporary paths with relative paths or named placeholders. The authority map
 is byte-preserving except that its source-file path is replaced with
-`$PDK_ROOT`; its ISO-8859-1 source literals are unchanged.
-The BVCEO authority and resistor-counterfactual TSVs are published verbatim
-from the independently checked Design Engineer artifacts. The process
-specification itself remains an identified external PDK reference.
+`$PDK_ROOT`; its ISO-8859-1 source literals are unchanged. The process
+breakdown authority, sink-context and resistor-counterfactual TSVs are
+published verbatim from the independently checked Design Engineer artifacts.
+The process specification itself remains an identified external PDK reference.
 
 Set `PDK_ROOT` to the `ihp-sg13g2` PDK root and run from this directory:
 
