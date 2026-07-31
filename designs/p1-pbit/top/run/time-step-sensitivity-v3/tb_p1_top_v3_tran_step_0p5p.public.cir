@@ -1,0 +1,69 @@
+* Deterministic 2ns 0.5ps Time-Step-Sensitivity Testbench Deck Candidate for Top V3
+* Scope: 2ns / 0.5ps time-step-sensitivity comparison against first 2ns of raw 9c3be452. No digital-threshold, stochastic-bit, correlation, or statistical claim.
+* Target Top Schematic: ../../source-backed-v3/p1_top.sch (e91c4660)
+* Target Top Netlist: ../../source-backed-v3/p1_top_hier.spice (frozen original b8ac8271)
+
+* Load Exact PDK Corner Library Models (Lineage from tb_chunk0_27c.cir lines 2..7)
+.lib $PDK_ROOT/libs.tech/ngspice/models/cornerHBT.lib hbt_typ
+.lib $PDK_ROOT/libs.tech/ngspice/models/cornerRES.lib res_typ
+.lib $PDK_ROOT/libs.tech/ngspice/models/cornerCAP.lib cap_typ
+.lib $PDK_ROOT/libs.tech/ngspice/models/cornerMOShv.lib mos_tt
+.lib $PDK_ROOT/libs.tech/ngspice/models/cornerMOSlv.lib mos_tt
+.lib $PDK_ROOT/libs.tech/ngspice/models/cornerDIO.lib dio_tt
+
+* Include Generated Top Hierarchy Netlist
+.include ../../source-backed-v3/p1_top_hier.spice
+
+* Note: The included generated hierarchy (p1_top_hier.spice) already provides the one active top-level instance X1 ... p1_top at lines 21-22.
+
+* ==============================================================================================
+* SEVEN DISTINCT SUPPLY SOURCES (LINEAGE_ONLY / TESTBENCH_STIMULUS)
+* ==============================================================================================
+* 1. Noise Generator Supplies (Lineage from p1_noise_gen_run/tb_p1_noise_gen.spice line 17)
+V_NOISE_GEN_VCC NOISE_GEN_VCC 0 DC 2.5
+V_NOISE_GEN_VSS NOISE_GEN_VSS 0 DC 0.0
+
+* 2. Preamplifier Supplies (Lineage from tb_chunk0_27c.cir lines 54, 56, 68)
+V_NOISE_AMP_VCC NOISE_AMP_VCC 0 DC 2.5
+V_NOISE_AMP_VSS NOISE_AMP_VSS 0 DC 0.0
+
+* 3. Comparator Supplies (Lineage from tb_full_array_code0_modelvalid_2x8_900ua.cir lines 83..85)
+V_COMPARATOR_VCC_HBT COMPARATOR_VCC_HBT 0 DC 2.500
+V_VDD VDD 0 DC 1.200
+V_COMPARATOR_VSS COMPARATOR_VSS 0 DC 0.000
+
+* ==============================================================================================
+* NOISE GENERATOR BASE BIAS & TAIL EMITTER CURRENT SINK (LINEAGE_ONLY / TESTBENCH_STIMULUS)
+* Lineage from p1_noise_gen_run/tb_p1_noise_gen.spice lines 10, 20, 24, 25
+* ==============================================================================================
+V_VCM b_cm 0 DC 0.872
+R1_VB1 b_cm VB1 1.0Meg
+R2_VB2 b_cm VB2 1.0Meg
+I_ISET IE NOISE_GEN_VSS DC 2.0m
+
+* ==============================================================================================
+* EXACT CLOCK & TRIM SOURCE LITERALS (Lineage from tb_chunk0_27c.cir lines 63..66)
+* ==============================================================================================
+VCLK_P CLK_P 0 PULSE(1.2 0.0 0 20p 20p 80p 200p)
+VCLK_N CLK_N 0 PULSE(0.0 1.2 0 20p 20p 80p 200p)
+VTRIM_P TRIM_P 0 DC 0.800
+VTRIM_N TRIM_N 0 DC 0.800
+
+* ==============================================================================================
+* OUTPUT LOADS: ABSENT / UNKNOWN_TOP_DECISION
+* Output pins PBIT_OUT, PBIT_RAW, CLK_OUT_DIV left unloaded in nominal DC OP testbench plan
+* ==============================================================================================
+
+* ==============================================================================================
+* NGSPICE CONTROL BLOCK WITH PRE_OSDI & ACTIVE TRANSIENT COMMAND
+* ==============================================================================================
+.control
+  pre_osdi $PDK_ROOT/libs.tech/ngspice/osdi/psp103.osdi
+  pre_osdi $PDK_ROOT/libs.tech/ngspice/osdi/psp103_nqs.osdi
+  save time v(pbit_out) v(pbit_raw) v(clk_out_div) v(x1.net1) v(x1.net2) v(x1.net3) v(x1.net4) v(x1.x3.cml_out_p) v(x1.x3.cml_out_n)
+  tran 0.5p 2n
+  write raw_tb_p1_top_v3_tran_step_0p5p.raw all
+  quit
+.endc
+
+.end
