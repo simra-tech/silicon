@@ -1,0 +1,91 @@
+line_number_in_base_v2	base_v2_line_literal	line_relation_token	target_v3_line_literal
+1	** Custom HBT CML Standalone Divide-by-2 Front-Stage Candidate V2	IDENTICAL	** Custom HBT CML Standalone Divide-by-2 Front-Stage Candidate V2
+2	** Structural seed copied from Top V3 comparator core (b8ac8271 lines 130--150)	IDENTICAL	** Structural seed copied from Top V3 comparator core (b8ac8271 lines 130--150)
+3	** Substrate tap XTAP1 copied directly from Top V3 netlist (b8ac8271 line 174)	IDENTICAL	** Substrate tap XTAP1 copied directly from Top V3 netlist (b8ac8271 line 174)
+4	.subckt p1_cml_div2_front DIV2_P DIV2_N CLK_P CLK_N VCC_HBT VSS	IDENTICAL	.subckt p1_cml_div2_front DIV2_P DIV2_N CLK_P CLK_N VCC_HBT VSS
+5		IDENTICAL	
+6	* Substrate Tap (Copied literally from b8ac8271 line 174, connecting global VSS to sub!)	IDENTICAL	* Substrate Tap (Copied literally from b8ac8271 line 174, connecting global VSS to sub!)
+7	XTAP1 VSS sub! ptap1 R={ 1.0 / ( 1.0 / ( 9.8e-10 / ( 2.0u * 2.0u ) ) + 1.0 / ( 9.8e-4 / ( 2.0 * ( 2.0u + 2.0u ) ) ) )} w=2.0u l=2.0u	IDENTICAL	XTAP1 VSS sub! ptap1 R={ 1.0 / ( 1.0 / ( 9.8e-10 / ( 2.0u * 2.0u ) ) + 1.0 / ( 9.8e-4 / ( 2.0 * ( 2.0u + 2.0u ) ) ) )} w=2.0u l=2.0u
+8		IDENTICAL	
+9	* ==============================================================================	IDENTICAL	* ==============================================================================
+10	* MASTER CML LATCH STAGE	IDENTICAL	* MASTER CML LATCH STAGE
+11	* ==============================================================================	IDENTICAL	* ==============================================================================
+12	* Master CML Collector Loads (Copied from b8ac8271 lines 130--131)	IDENTICAL	* Master CML Collector Loads (Copied from b8ac8271 lines 130--131)
+13	XRC1_M VCC_HBT c_n_m sub! rppd w=1.0u l=0.838u m=1 b=0 mm_ok=1	IDENTICAL	XRC1_M VCC_HBT c_n_m sub! rppd w=1.0u l=0.838u m=1 b=0 mm_ok=1
+14	XRC2_M VCC_HBT c_p_m sub! rppd w=1.0u l=0.838u m=1 b=0 mm_ok=1	IDENTICAL	XRC2_M VCC_HBT c_p_m sub! rppd w=1.0u l=0.838u m=1 b=0 mm_ok=1
+15		IDENTICAL	
+16	* Master Track Differential Pair (Inverted Feedback Inputs directly from Slave Outputs: DIV2_N -> D_P, DIV2_P -> D_N)	IDENTICAL	* Master Track Differential Pair (Inverted Feedback Inputs directly from Slave Outputs: DIV2_N -> D_P, DIV2_P -> D_N)
+17	* Copied structure from b8ac8271 lines 132--133	IDENTICAL	* Copied structure from b8ac8271 lines 132--133
+18	XQ1_M c_n_m DIV2_N e_track_m sub! npn13G2 Nx=1 mm_ok=1	IDENTICAL	XQ1_M c_n_m DIV2_N e_track_m sub! npn13G2 Nx=1 mm_ok=1
+19	XQ2_M c_p_m DIV2_P e_track_m sub! npn13G2 Nx=1 mm_ok=1	IDENTICAL	XQ2_M c_p_m DIV2_P e_track_m sub! npn13G2 Nx=1 mm_ok=1
+20		IDENTICAL	
+21	* Master Emitter Bleed Resistors (Copied from b8ac8271 lines 134--135)	IDENTICAL	* Master Emitter Bleed Resistors (Copied from b8ac8271 lines 134--135)
+22	XRBLEED_TRACK_M e_track_m e_tail_m sub! rppd w=1.0u l=0.50u m=1 b=0 mm_ok=1	ONLY_BASE	ABSENT
+23	XRBLEED_LATCH_M e_latch_m e_tail_m sub! rppd w=1.0u l=0.50u m=1 b=0 mm_ok=1	ONLY_BASE	ABSENT
+24		IDENTICAL	
+25	* Master Cross-Coupled Regenerative Latch Pair (Copied from b8ac8271 lines 136--137)	IDENTICAL	* Master Cross-Coupled Regenerative Latch Pair (Copied from b8ac8271 lines 136--137)
+26	XQ3_M c_n_m ef_p_m e_latch_m sub! npn13G2 Nx=1 mm_ok=1	IDENTICAL	XQ3_M c_n_m ef_p_m e_latch_m sub! npn13G2 Nx=1 mm_ok=1
+27	XQ4_M c_p_m ef_n_m e_latch_m sub! npn13G2 Nx=1 mm_ok=1	IDENTICAL	XQ4_M c_p_m ef_n_m e_latch_m sub! npn13G2 Nx=1 mm_ok=1
+28		IDENTICAL	
+29	* Master Clock Steering Differential Pair (Sample on CLK_P / Latch on CLK_N)	IDENTICAL	* Master Clock Steering Differential Pair (Sample on CLK_P / Latch on CLK_N)
+30	* Copied from b8ac8271 lines 138--139	IDENTICAL	* Copied from b8ac8271 lines 138--139
+31	XQCLK_TRACK_M e_track_m CLK_P e_tail_m sub! npn13G2 Nx=1 mm_ok=1	IDENTICAL	XQCLK_TRACK_M e_track_m CLK_P e_tail_m sub! npn13G2 Nx=1 mm_ok=1
+32	XQCLK_LATCH_M e_latch_m CLK_N e_tail_m sub! npn13G2 Nx=1 mm_ok=1	IDENTICAL	XQCLK_LATCH_M e_latch_m CLK_N e_tail_m sub! npn13G2 Nx=1 mm_ok=1
+33		IDENTICAL	
+34	* Master Emitter Follower Level Shifters (Copied from b8ac8271 lines 149--150)	IDENTICAL	* Master Emitter Follower Level Shifters (Copied from b8ac8271 lines 149--150)
+35	XQEF1_M VCC_HBT c_p_m ef_p_m sub! npn13G2 Nx=1 mm_ok=1	IDENTICAL	XQEF1_M VCC_HBT c_p_m ef_p_m sub! npn13G2 Nx=1 mm_ok=1
+36	XQEF2_M VCC_HBT c_n_m ef_n_m sub! npn13G2 Nx=1 mm_ok=1	IDENTICAL	XQEF2_M VCC_HBT c_n_m ef_n_m sub! npn13G2 Nx=1 mm_ok=1
+37		IDENTICAL	
+38	* Master PTAT Current Bias Generator (Copied from b8ac8271 lines 140--148)	IDENTICAL	* Master PTAT Current Bias Generator (Copied from b8ac8271 lines 140--148)
+39	XMP1_COMP_M c_p1_comp_m c_p2_comp_m VCC_HBT VCC_HBT sg13_hv_pmos w=20.0u l=1.0u ng=1 m=1 mm_ok=1	IDENTICAL	XMP1_COMP_M c_p1_comp_m c_p2_comp_m VCC_HBT VCC_HBT sg13_hv_pmos w=20.0u l=1.0u ng=1 m=1 mm_ok=1
+40	XMP2_COMP_M c_p2_comp_m c_p2_comp_m VCC_HBT VCC_HBT sg13_hv_pmos w=20.0u l=1.0u ng=1 m=1 mm_ok=1	IDENTICAL	XMP2_COMP_M c_p2_comp_m c_p2_comp_m VCC_HBT VCC_HBT sg13_hv_pmos w=20.0u l=1.0u ng=1 m=1 mm_ok=1
+41	XQP1_COMP_M c_p1_comp_m c_p1_comp_m e_p1_comp_m sub! npn13G2 Nx=1 mm_ok=1	IDENTICAL	XQP1_COMP_M c_p1_comp_m c_p1_comp_m e_p1_comp_m sub! npn13G2 Nx=1 mm_ok=1
+42	XRDEG_P1_COMP_M e_p1_comp_m VSS sub! rppd w=4.0u l=0.50u m=1 b=0 mm_ok=1	IDENTICAL	XRDEG_P1_COMP_M e_p1_comp_m VSS sub! rppd w=4.0u l=0.50u m=1 b=0 mm_ok=1
+43	XQP2_COMP_M c_p2_comp_m c_p1_comp_m e_p2_comp_m sub! npn13G2 Nx=4 mm_ok=1	IDENTICAL	XQP2_COMP_M c_p2_comp_m c_p1_comp_m e_p2_comp_m sub! npn13G2 Nx=4 mm_ok=1
+44	XRPTAT_COMP_M e_p2_comp_m VSS sub! rppd w=2.0u l=1.107u m=1 b=0 mm_ok=1	IDENTICAL	XRPTAT_COMP_M e_p2_comp_m VSS sub! rppd w=2.0u l=1.107u m=1 b=0 mm_ok=1
+45	XCSTAB_COMP_M VSS c_p1_comp_m cap_cmim w=80.0u l=83.3u m=1 mm_ok=1	IDENTICAL	XCSTAB_COMP_M VSS c_p1_comp_m cap_cmim w=80.0u l=83.3u m=1 mm_ok=1
+46	XQS_COMP_M e_tail_m c_p1_comp_m e_scomp_m sub! npn13G2 Nx=6 mm_ok=1	IDENTICAL	XQS_COMP_M e_tail_m c_p1_comp_m e_scomp_m sub! npn13G2 Nx=6 mm_ok=1
+47	XRDEG_SCOMP_M e_scomp_m VSS sub! rppd w=24.0u l=0.50u m=1 b=0 mm_ok=1	IDENTICAL	XRDEG_SCOMP_M e_scomp_m VSS sub! rppd w=24.0u l=0.50u m=1 b=0 mm_ok=1
+48		IDENTICAL	
+49	* ==============================================================================	IDENTICAL	* ==============================================================================
+50	* SLAVE CML LATCH STAGE	IDENTICAL	* SLAVE CML LATCH STAGE
+51	* ==============================================================================	IDENTICAL	* ==============================================================================
+52	* Slave CML Collector Loads (Copied structure from b8ac8271 lines 130--131)	IDENTICAL	* Slave CML Collector Loads (Copied structure from b8ac8271 lines 130--131)
+53	XRC1_S VCC_HBT c_n_s sub! rppd w=1.0u l=0.838u m=1 b=0 mm_ok=1	IDENTICAL	XRC1_S VCC_HBT c_n_s sub! rppd w=1.0u l=0.838u m=1 b=0 mm_ok=1
+54	XRC2_S VCC_HBT c_p_s sub! rppd w=1.0u l=0.838u m=1 b=0 mm_ok=1	IDENTICAL	XRC2_S VCC_HBT c_p_s sub! rppd w=1.0u l=0.838u m=1 b=0 mm_ok=1
+55		IDENTICAL	
+56	* Slave Track Differential Pair (Forward Inputs from Master: ef_p_m -> D_P, ef_n_m -> D_N)	IDENTICAL	* Slave Track Differential Pair (Forward Inputs from Master: ef_p_m -> D_P, ef_n_m -> D_N)
+57	* Copied structure from b8ac8271 lines 132--133	IDENTICAL	* Copied structure from b8ac8271 lines 132--133
+58	XQ1_S c_n_s ef_p_m e_track_s sub! npn13G2 Nx=1 mm_ok=1	IDENTICAL	XQ1_S c_n_s ef_p_m e_track_s sub! npn13G2 Nx=1 mm_ok=1
+59	XQ2_S c_p_s ef_n_m e_track_s sub! npn13G2 Nx=1 mm_ok=1	IDENTICAL	XQ2_S c_p_s ef_n_m e_track_s sub! npn13G2 Nx=1 mm_ok=1
+60		IDENTICAL	
+61	* Slave Emitter Bleed Resistors (Copied structure from b8ac8271 lines 134--135)	IDENTICAL	* Slave Emitter Bleed Resistors (Copied structure from b8ac8271 lines 134--135)
+62	XRBLEED_TRACK_S e_track_s e_tail_s sub! rppd w=1.0u l=0.50u m=1 b=0 mm_ok=1	ONLY_BASE	ABSENT
+63	XRBLEED_LATCH_S e_latch_s e_tail_s sub! rppd w=1.0u l=0.50u m=1 b=0 mm_ok=1	ONLY_BASE	ABSENT
+64		IDENTICAL	
+65	* Slave Cross-Coupled Regenerative Latch Pair (Copied structure from b8ac8271 lines 136--137)	IDENTICAL	* Slave Cross-Coupled Regenerative Latch Pair (Copied structure from b8ac8271 lines 136--137)
+66	XQ3_S c_n_s DIV2_P e_latch_s sub! npn13G2 Nx=1 mm_ok=1	IDENTICAL	XQ3_S c_n_s DIV2_P e_latch_s sub! npn13G2 Nx=1 mm_ok=1
+67	XQ4_S c_p_s DIV2_N e_latch_s sub! npn13G2 Nx=1 mm_ok=1	IDENTICAL	XQ4_S c_p_s DIV2_N e_latch_s sub! npn13G2 Nx=1 mm_ok=1
+68		IDENTICAL	
+69	* Slave Clock Steering Differential Pair (Complementary Clocking: Sample on CLK_N / Latch on CLK_P)	IDENTICAL	* Slave Clock Steering Differential Pair (Complementary Clocking: Sample on CLK_N / Latch on CLK_P)
+70	* Copied structure from b8ac8271 lines 138--139	IDENTICAL	* Copied structure from b8ac8271 lines 138--139
+71	XQCLK_TRACK_S e_track_s CLK_N e_tail_s sub! npn13G2 Nx=1 mm_ok=1	IDENTICAL	XQCLK_TRACK_S e_track_s CLK_N e_tail_s sub! npn13G2 Nx=1 mm_ok=1
+72	XQCLK_LATCH_S e_latch_s CLK_P e_tail_s sub! npn13G2 Nx=1 mm_ok=1	IDENTICAL	XQCLK_LATCH_S e_latch_s CLK_P e_tail_s sub! npn13G2 Nx=1 mm_ok=1
+73		IDENTICAL	
+74	* Slave Emitter Follower Level Shifters (Driving Internal Subcircuit Ports DIV2_P / DIV2_N Directly)	IDENTICAL	* Slave Emitter Follower Level Shifters (Driving Internal Subcircuit Ports DIV2_P / DIV2_N Directly)
+75	* Copied structure from b8ac8271 lines 149--150	IDENTICAL	* Copied structure from b8ac8271 lines 149--150
+76	XQEF1_S VCC_HBT c_p_s DIV2_P sub! npn13G2 Nx=1 mm_ok=1	IDENTICAL	XQEF1_S VCC_HBT c_p_s DIV2_P sub! npn13G2 Nx=1 mm_ok=1
+77	XQEF2_S VCC_HBT c_n_s DIV2_N sub! npn13G2 Nx=1 mm_ok=1	IDENTICAL	XQEF2_S VCC_HBT c_n_s DIV2_N sub! npn13G2 Nx=1 mm_ok=1
+78		IDENTICAL	
+79	* Slave PTAT Current Bias Generator (Copied structure from b8ac8271 lines 140--148)	IDENTICAL	* Slave PTAT Current Bias Generator (Copied structure from b8ac8271 lines 140--148)
+80	XMP1_COMP_S c_p1_comp_s c_p2_comp_s VCC_HBT VCC_HBT sg13_hv_pmos w=20.0u l=1.0u ng=1 m=1 mm_ok=1	IDENTICAL	XMP1_COMP_S c_p1_comp_s c_p2_comp_s VCC_HBT VCC_HBT sg13_hv_pmos w=20.0u l=1.0u ng=1 m=1 mm_ok=1
+81	XMP2_COMP_S c_p2_comp_s c_p2_comp_s VCC_HBT VCC_HBT sg13_hv_pmos w=20.0u l=1.0u ng=1 m=1 mm_ok=1	IDENTICAL	XMP2_COMP_S c_p2_comp_s c_p2_comp_s VCC_HBT VCC_HBT sg13_hv_pmos w=20.0u l=1.0u ng=1 m=1 mm_ok=1
+82	XQP1_COMP_S c_p1_comp_s c_p1_comp_s e_p1_comp_s sub! npn13G2 Nx=1 mm_ok=1	IDENTICAL	XQP1_COMP_S c_p1_comp_s c_p1_comp_s e_p1_comp_s sub! npn13G2 Nx=1 mm_ok=1
+83	XRDEG_P1_COMP_S e_p1_comp_s VSS sub! rppd w=4.0u l=0.50u m=1 b=0 mm_ok=1	IDENTICAL	XRDEG_P1_COMP_S e_p1_comp_s VSS sub! rppd w=4.0u l=0.50u m=1 b=0 mm_ok=1
+84	XQP2_COMP_S c_p2_comp_s c_p1_comp_s e_p2_comp_s sub! npn13G2 Nx=4 mm_ok=1	IDENTICAL	XQP2_COMP_S c_p2_comp_s c_p1_comp_s e_p2_comp_s sub! npn13G2 Nx=4 mm_ok=1
+85	XRPTAT_COMP_S e_p2_comp_s VSS sub! rppd w=2.0u l=1.107u m=1 b=0 mm_ok=1	IDENTICAL	XRPTAT_COMP_S e_p2_comp_s VSS sub! rppd w=2.0u l=1.107u m=1 b=0 mm_ok=1
+86	XCSTAB_COMP_S VSS c_p1_comp_s cap_cmim w=80.0u l=83.3u m=1 mm_ok=1	IDENTICAL	XCSTAB_COMP_S VSS c_p1_comp_s cap_cmim w=80.0u l=83.3u m=1 mm_ok=1
+87	XQS_COMP_S e_tail_s c_p1_comp_s e_scomp_s sub! npn13G2 Nx=6 mm_ok=1	IDENTICAL	XQS_COMP_S e_tail_s c_p1_comp_s e_scomp_s sub! npn13G2 Nx=6 mm_ok=1
+88	XRDEG_SCOMP_S e_scomp_s VSS sub! rppd w=24.0u l=0.50u m=1 b=0 mm_ok=1	IDENTICAL	XRDEG_SCOMP_S e_scomp_s VSS sub! rppd w=24.0u l=0.50u m=1 b=0 mm_ok=1
+89		IDENTICAL	
+90	.ends	IDENTICAL	.ends

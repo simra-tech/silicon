@@ -59,4 +59,11 @@ preserves every shared voltage and the warning while retaining explicit HBT term
 vectors. Its current-range audit does not resolve the thermal warning or establish divider
 function.
 
+A controlled [`no-bleed V3 experiment`](../custom-cml-div2-v3-nobleed/) removes only the four
+parallel emitter-to-tail shunts. Its
+[`warning-bearing operating-point package`](../../run/custom-cml-div2-op-nobleed-v1/) shows
+nearly all of the tail collector-current ratio moving through the active clock HBT, while
+retaining model-range exceptions and leaving dynamic divider function untested. Candidate V2
+remains preserved unchanged.
+
 Signoff and tape-out readiness are not claimed.
