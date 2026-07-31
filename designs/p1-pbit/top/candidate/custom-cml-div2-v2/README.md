@@ -50,4 +50,8 @@ The current nominal operating-point package is
 log, raw file, and path-sanitized OpenADA envelope. That run is thermally warned and remains
 engineering-unknown; it does not establish divider operation.
 
+A separate [`selft=0` A/B diagnostic`](../../run/custom-cml-div2-op-selft0-v1/) removes the
+warning but shifts the operating point materially. It is retained as diagnostic evidence only
+and does not replace this physical-model candidate or its warned result.
+
 Signoff and tape-out readiness are not claimed.

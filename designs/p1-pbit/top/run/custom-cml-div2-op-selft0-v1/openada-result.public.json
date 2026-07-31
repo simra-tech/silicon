@@ -1,0 +1,190 @@
+{
+  "schema": "openada.result/v0alpha1",
+  "operation": "simulate",
+  "tool": {
+    "name": "ngspice",
+    "path": "$NGSPICE_ROOT/bin/ngspice",
+    "version": "** ngspice-46 : Circuit level simulation program"
+  },
+  "execution": {
+    "status": "completed",
+    "exit_code": 0,
+    "duration_ms": 166,
+    "command": [
+      "$NGSPICE_ROOT/bin/ngspice",
+      "-i",
+      "-n",
+      "-o",
+      "<OPENADA_TEMP>/simulation.log",
+      "evidence/tb_p1_cml_div2_front_dc_op_isothermal.openada-control.sp"
+    ],
+    "cwd": "."
+  },
+  "engineering": {
+    "status": "pass",
+    "summary": "ngspice produced all required, structurally valid simulation evidence."
+  },
+  "inputs": [
+    {
+      "kind": "spice-netlist",
+      "role": "input",
+      "path": "tb_p1_cml_div2_front_dc_op_isothermal.cir",
+      "exists": true,
+      "bytes": 1709,
+      "sha256": "ce3d915fc93b91f929a3d47dffcfbed81fabeef6a567acfd57f69993065e1eeb"
+    },
+    {
+      "kind": "ngspice-system-init",
+      "role": "configuration",
+      "path": "$NGSPICE_ROOT/share/ngspice/scripts/spinit",
+      "exists": true,
+      "bytes": 1509,
+      "sha256": "b088c11a27e21ceadb14abbf9dff877105177bd025ca37750877d71e7f6f87af"
+    }
+  ],
+  "artifacts": [
+    {
+      "kind": "simulation-log",
+      "role": "evidence",
+      "path": "evidence/tb_p1_cml_div2_front_dc_op_isothermal.log",
+      "exists": true,
+      "bytes": 804,
+      "sha256": "9d85986ef876af34ee817d6f2e31863629cc5271ec42208777eb491532f5dfc6"
+    },
+    {
+      "kind": "ngspice-control-script",
+      "role": "evidence",
+      "path": "evidence/tb_p1_cml_div2_front_dc_op_isothermal.openada-control.sp",
+      "exists": true,
+      "bytes": 190,
+      "sha256": "8bc6937e6c45cfc1e993feb9778347fe99abc382b6871d29c53d8167b2c91c6e"
+    },
+    {
+      "kind": "ngspice-raw",
+      "role": "output",
+      "path": "raw_tb_p1_cml_div2_front_dc_op_isothermal.raw",
+      "exists": true,
+      "bytes": 11428,
+      "sha256": "a34ab7e1c1c8f33383ed88c033349f742d34c1e9450dcd1d94ca3a48c8970e16"
+    }
+  ],
+  "diagnostics": [],
+  "data": {
+    "execution_mode": "control",
+    "expected_outputs": [
+      {
+        "kind": "raw",
+        "declared_path": "raw_tb_p1_cml_div2_front_dc_op_isothermal.raw",
+        "path": "raw_tb_p1_cml_div2_front_dc_op_isothermal.raw"
+      }
+    ],
+    "working_directory": ".",
+    "working_directory_is_sandbox": false,
+    "transitive_inputs_enumerated": false,
+    "requested_environment_overrides": {},
+    "transitive_include_detected": true,
+    "initialization": {
+      "policy": "explicit",
+      "file": null,
+      "local_user_spiceinit": "disabled",
+      "system_spinit": {
+        "policy": "explicit",
+        "file": "$NGSPICE_ROOT/share/ngspice/scripts/spinit"
+      },
+      "ambient_startup_files_enumerated": true
+    },
+    "environment_overrides": {
+      "SPICE_SCRIPTS": "$NGSPICE_ROOT/share/ngspice/scripts"
+    },
+    "environment_policy": {
+      "mode": "inherit",
+      "ambient_inherited": true
+    },
+    "environment": {
+      "PDK": "ihp-sg13g2",
+      "PDK_ROOT": "$PDK_CATALOG_ROOT",
+      "SPICE_ASCIIRAWFILE": null,
+      "SPICE_LIB_DIR": null,
+      "SPICE_SCRIPTS": "$NGSPICE_ROOT/share/ngspice/scripts",
+      "NGSPICE_INPUT_DIR": null
+    },
+    "converged": true,
+    "measurements": [],
+    "measurements_truncated": false,
+    "missing_measurements": [],
+    "duplicate_measurements": [],
+    "measurement_section_count": 0,
+    "solver_warning_count": 0,
+    "solver_warning_examples": [],
+    "solver_warning_examples_truncated": false,
+    "log_tail": "******\n** ngspice-46 : Circuit level simulation program\n** Compiled with KLU Direct Linear Solver\n** The U. C. Berkeley CAD Group\n** Copyright 1985-1994, Regents of the University of California.\n** Copyright 2001-2025, The ngspice team.\n** Please get your ngspice manual from https://ngspice.sourceforge.io/docs.html\n** Please file your bug-reports at http://ngspice.sourceforge.net/bugrep.html\n** Creation Date: Mon Jun 22 10:09:10 UTC 2026\n******\n\nNote: No compatibility mode selected!\n\n\nCircuit: * isothermal nominal operating point testbench deck for custom cml divide-by-2 front-stage candidate v2\n\nDoing analysis at TEMP = 27.000000 and TNOM = 27.000000\n\nUsing SPARSE 1.3 as Direct Linear Solver\n\nNo. of Data Rows : 1\nbinary raw file \"raw_tb_p1_cml_div2_front_dc_op_isothermal.raw\"\nngspice-46 done\n",
+    "log_capture": {
+      "path": "evidence/tb_p1_cml_div2_front_dc_op_isothermal.log",
+      "status": "valid",
+      "bytes": 804,
+      "sha256": "9d85986ef876af34ee817d6f2e31863629cc5271ec42208777eb491532f5dfc6"
+    },
+    "output_captures": [
+      {
+        "path": "raw_tb_p1_cml_div2_front_dc_op_isothermal.raw",
+        "status": "valid",
+        "bytes": 11428,
+        "sha256": "a34ab7e1c1c8f33383ed88c033349f742d34c1e9450dcd1d94ca3a48c8970e16",
+        "validation": {
+          "valid": true,
+          "reason": "valid",
+          "metadata": {
+            "format": "ngspice-raw",
+            "bytes": 11428,
+            "plot_count": 1,
+            "analysis_plot_count": 1,
+            "has_analysis_plot": true,
+            "value_count": 221,
+            "numeric_scalar_count": 221,
+            "plots": [
+              {
+                "plotname": "Operating Point",
+                "encoding": "binary",
+                "numeric_type": "real",
+                "variables": 221,
+                "points": 1,
+                "values": 221,
+                "unpadded": false,
+                "independent_variable": "v(vss)",
+                "axis_first": 0,
+                "axis_last": 0,
+                "axis_strictly_increasing": true,
+                "axis_linear_step": null,
+                "axis_log_ratio": null
+              }
+            ]
+          }
+        },
+        "kind": "raw",
+        "origin": "deck",
+        "declared_path": "raw_tb_p1_cml_div2_front_dc_op_isothermal.raw",
+        "parent_anchored": true
+      }
+    ],
+    "control_script_capture": {
+      "path": "evidence/tb_p1_cml_div2_front_dc_op_isothermal.openada-control.sp",
+      "status": "valid",
+      "bytes": 190,
+      "sha256": "8bc6937e6c45cfc1e993feb9778347fe99abc382b6871d29c53d8167b2c91c6e"
+    },
+    "analysis_evidence": {
+      "raw": true,
+      "completed_log_record": true
+    },
+    "inputs_stable": true
+  },
+  "provenance": {
+    "openada_version": "0.4.0",
+    "created_at": "2026-07-31T07:07:35.262814Z",
+    "host": {
+      "system": "Linux",
+      "machine": "x86_64",
+      "python": "3.12.3"
+    }
+  }
+}
