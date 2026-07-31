@@ -44,6 +44,11 @@ applies that width to the passive 100/20 kΩ base network with `m=8` and
 target (+0.0611358%) with symmetric steering and 99.9488069% selected share.
 No tolerance disposition is assigned.
 
+The [`corrected 31-unit major-carry slice`](base-driver-dc/major-carry-slice31-900ua/)
+then combines weights 16/8/4/2/1. Its central code-15-to-16 differential-current
+step is 9.5229 nA (0.540246%) larger than either nominal neighbor. This is a
+direct static step comparison, not DNL or a full-array result.
+
 ## Output-resistance correction
 
 This experiment does **not** measure NMOS output resistance from a 300 mV

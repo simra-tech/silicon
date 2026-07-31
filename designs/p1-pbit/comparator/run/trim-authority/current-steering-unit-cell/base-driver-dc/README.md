@@ -37,6 +37,8 @@ The [`loaded binary-weight package`](binary-weights248/) measures the remaining
 2x, 4x, and 8x cells with their exact executed decks.
 The [`31-unit major-carry slice`](major-carry-slice31/) then combines all five
 weights and measures the nominal static transition across codes 15 to 16.
+The [`corrected 900 uA major-carry slice`](major-carry-slice31-900ua/) repeats
+that comparison with the 2.25 µm unit width.
 
 This package does not implement the 0.96 V reference, a dynamic CMOS logic
 driver, a segmented array, mismatch, code transfer, settling, corners, layout,
