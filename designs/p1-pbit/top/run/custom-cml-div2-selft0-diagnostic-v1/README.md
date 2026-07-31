@@ -97,6 +97,22 @@ The warning inventory uses `$NGSPICE_ROOT`, `$PDK_ROOT`,
 labels for the four private search roots. No file from those roots is included
 in this package.
 
+The official ngspice 46 source tarball closes part of that binary-only gap.
+`NGSPICE46-SOURCE-PACKAGE.tsv` records its release identity without republishing
+the archive. `NGSPICE46-WARNING-CALLPATH-AUTHORITY.tsv` binds 15 exact physical
+lines to tarball SHA-256 `a0d1699a...`. `DEVlimitlog` emits the warning when
+either its current or stored temperature-change input is NaN, assigns the
+current input to zero, sets its check flag, and suppresses later prints after
+the first emission. The source therefore supports at most one print per
+process, not one print in every process.
+
+`NGSPICE46-DEVLIMITLOG-CALLER-LINE-MAP.tsv` contains 25 byte-verified source
+lines covering all five executable call sites: diode, VDMOS, VBIC, HICUM2, and
+the OSDI callback. In the VBIC loader, the call is inside the self-heating
+guard and passes `Vrth`, stored `VBICvrth`, a limit of 100, and `ichk6`. Neither
+the warning function nor that call prints an instance identity or establishes
+which upstream calculation first produced NaN.
+
 ## Files
 
 | File | Purpose |
@@ -116,6 +132,9 @@ in this package.
 | `THERMAL-SOURCE-SEARCH-INVENTORY.tsv` | path-sanitized bounded source-search inventory |
 | `NGSPICE-WARNING-AUTHORITY.tsv` | path-sanitized exact compiled-warning byte authority |
 | `NGSPICE-WARNING-SEARCH-INVENTORY.tsv` | path-sanitized bounded warning-string search inventory |
+| `NGSPICE46-SOURCE-PACKAGE.tsv` | official source release URL, size, and SHA-256 identity |
+| `NGSPICE46-WARNING-CALLPATH-AUTHORITY.tsv` | official-source warning behavior and VBIC call authority |
+| `NGSPICE46-DEVLIMITLOG-CALLER-LINE-MAP.tsv` | exact source lines for all five limiter call sites |
 | `SOURCE-IDENTITIES.tsv` | private and public artifact identities |
 | `PUBLISHED-HASHES.sha256` | hashes of every published technical file |
 
