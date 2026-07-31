@@ -96,6 +96,13 @@ those literals into a reliability, absolute-maximum, breakdown, harmlessness
 or operating-mode claim. The authority and applicability of the dynamic
 exceptions remain unresolved.
 
+`HBT-BOUND-AUTHORITY.public.tsv` preserves the seven-row source map that
+separates the forward measurement ranges, model-valid ranges, named maximum,
+model parameters and valid `Nx` geometry. Its nine literal-field occurrences
+round-trip byte-for-byte to eight unique physical lines in the identified
+model file. The TSV remains ISO-8859-1 so the source's raw `B5` micro-sign byte
+on line 26 is not transcoded.
+
 ## Files
 
 | File | Purpose |
@@ -112,6 +119,7 @@ exceptions remain unresolved.
 | `CROSSING-SUMMARY.tsv` | differential ranges, crossings, periods and inferred frequency |
 | `OUTPUT-CROSSINGS.tsv` | exact interpolated terminal zero-crossing times |
 | `BOUNDARY-OCCUPANCY.tsv` | rectangular dynamic threshold-occupancy audit |
+| `HBT-BOUND-AUTHORITY.public.tsv` | path-sanitized, byte-preserving PDK model-bound source map |
 | `SOURCE-IDENTITIES.tsv` | frozen and public artifact identities |
 | `PUBLISHED-HASHES.sha256` | hashes of every published technical file |
 
@@ -121,7 +129,9 @@ The candidate, native log, raw plot, candidate diff and numeric audits are
 published verbatim. The deck replaces the PDK root with `$PDK_ROOT` and
 includes the adjacent candidate copy. The OpenADA JSON, preflight record and
 generated control script replace runtime workspace, tool, PDK-catalog and
-temporary paths with relative paths or named placeholders.
+temporary paths with relative paths or named placeholders. The authority map
+is byte-preserving except that its source-file path is replaced with
+`$PDK_ROOT`; its ISO-8859-1 source literals are unchanged.
 
 Set `PDK_ROOT` to the `ihp-sg13g2` PDK root and run from this directory:
 
