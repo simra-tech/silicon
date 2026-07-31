@@ -20,6 +20,7 @@ The series contains:
 | `unloaded-2ns-v1/` | 2 ns | no external output load |
 | `unloaded-4ns-v2/` | 4 ns | horizon extension of the first deck |
 | `loaded-4ns-v1/` | 4 ns | adds matched `1 mA` ideal DC sinks from `DIV2_P` and `DIV2_N` to `VSS` |
+| `ideal-four-sink-4ns-v1/` | 4 ns | keeps the output sinks and adds matched `1 mA` ideal sinks at `ef_p_m` and `ef_n_m` |
 
 The 4 ns unloaded deck differs executably from the 2 ns deck only in the stop
 time and raw-output name. The first 1,143 rows before 2 ns are numerically
@@ -47,6 +48,12 @@ checking every scalar for finiteness.
   full-cycle mean of `200.0018311605495 ps`. The slave collector and output
   make no crossings. The output remains between
   `+0.30252501420703637 V` and `+0.69131935778643905 V`.
+- The ideal-four-sink 4 ns run contains 365 variables by 2,284 points. From
+  2 ns, the master collector, master follower, slave collector, and output
+  differentials each make 10 crossings. The output's mean adjacent-crossing
+  interval is `199.99975673082122 ps`; its mean two-crossing full period is
+  `399.99956089351718 ps`, corresponding to approximately
+  `2.500002744 GHz` from the 5 GHz input.
 
 The approximately 200 ps internal cycles match the input-clock period, not an
 observed divide-by-two terminal waveform. Matched output sinks did not produce
@@ -54,6 +61,20 @@ a divided output; they moved input-rate differential motion from the slave
 collector to the master collector and selected the opposite one-sided output
 polarity. That localizes a load-sensitive state-transfer question but does not
 establish its cause.
+
+Adding only the two master-follower ideal sinks to that loaded experiment
+restores sign transfer at all four observed differential locations and
+produces the divided terminal waveform. This strongly supports missing
+follower bias as the mechanism in this diagnostic sequence. The four ideal
+sources are not a physical implementation.
+
+The retained follower-range audit reproduces all extrema and timestamps from
+the divided raw plot. All four follower VBE maxima are between
+`0.98915798390394860 V` and `0.98942705263184294 V`, exceeding the cited
+`0.960 V` maximum by 29.158 mV to 29.427 mV. Their VCE maxima leave only
+17.578 mV to 18.100 mV to the cited 1.600 V ceiling, while collector-current
+maxima leave 0.269188 mA to 0.288406 mA to the cited 3 mA ceiling. The
+ideal-sink result therefore cannot be promoted to a physical candidate.
 
 Each native log retains the temperature-limiter NaN and heat-sink warning.
 OpenADA 0.4.0 legacy control mode completed each requested evidence envelope,
@@ -69,6 +90,11 @@ the corresponding binary point. A later output-node report used false
 physical line numbers and treated selected transient device-current vectors
 as a demonstrated node-KCL closure. None of those artifacts is required for
 the raw-backed observations above.
+
+The ideal-four-sink generated report is also excluded. It correctly gave
+365 variables by 2,284 points and 833,660 finite scalars, but mislabeled
+833,660 as binary payload bytes. The actual double-precision payload is
+6,669,280 bytes and the complete raw file is 6,685,252 bytes.
 
 `SOURCE-IDENTITIES.tsv` binds the frozen private artifacts to the public
 copies. Candidate, native logs, and raw plots are verbatim. Decks replace PDK
