@@ -25,6 +25,29 @@ The equal static outputs, approximately 1.5468244042 V each, describe one symmet
 They do not establish startup resolution, toggling, divide-by-2 function, or 5 GHz capability.
 No transient, AC, DC sweep, output load, reset, `.ic`, or `.nodeset` is present.
 
+## HBT voltage-domain audit
+
+The accepted candidate maps 22 `npn13G2` instances to 28 unique terminal-voltage vectors in this
+raw point. Independent bounded extraction reproduced every value and derived comparison in
+`HBT-VOLTAGE-AUDIT.tsv` at its printed precision:
+
+- 2 of 22 HBTs are outside the model comment's 0.65–0.96 V `VBE` range:
+  `XQCLK_LATCH_M` and `XQCLK_TRACK_S`;
+- all 4 clock-steering HBTs are below the model comment's 0.4 V `VCE` lower boundary; and
+- 0 of 22 HBTs exceeds the separate 1.6 V ceiling.
+
+The two positive-`VBE` clock devices are consistent with saturation. The two negative-`VBE`
+devices are off; they are not classified as saturated merely because their `VCE` is low. These
+range exceptions do not establish the cause of the thermal warning.
+
+The active HBT corner file is 3,975 bytes with SHA-256
+`bae3d705445de8d6b8de4aa798a0e3e5e7cab617d6495d9c56473bc5377de462`.
+Its included model file is 20,057 bytes with SHA-256
+`ae9288f885dd30fab24b07ed1e7e02e69eac9154022a0a6da576985183b0bd79`.
+Model comments distinguish the 1.6 V maximum, the 0.4–2.0 V measurement and valid ranges, and
+the `vce_max=1.6` parameter. The raw plot contains no per-HBT collector or base current vectors,
+so device currents and thermal power remain unavailable.
+
 ## Frozen conditions
 
 | Condition | Value | Authority |
@@ -51,6 +74,7 @@ The retained Top V3 nominal deck SHA-256 is
 | `preflight.public.json` | path-sanitized OpenADA readiness record |
 | `evidence/tb_p1_cml_div2_front_dc_op.openada-control.public.sp` | path-sanitized generated control script |
 | `RAW-SUMMARY.tsv` | independently extracted selected scalars |
+| `HBT-VOLTAGE-AUDIT.tsv` | independently checked 22-instance terminal-voltage audit |
 | `SOURCE-IDENTITIES.tsv` | frozen and public artifact identities |
 | `PUBLISHED-HASHES.sha256` | hashes of every published technical file |
 
