@@ -82,6 +82,21 @@ absolute temperature versus temperature rise. The authority table therefore
 preserves model topology and exact source language without assigning either
 unresolved meaning to the saved `.t` vectors.
 
+`NGSPICE-WARNING-AUTHORITY.tsv` separately binds the two native warning
+literals to compiled ngspice 46 executable SHA-256 `6aacaca8...`. Their exact
+byte offsets are `0x6d5c8a` and `0x6d5cc0`, separated by one newline byte and
+six NUL bytes. `NGSPICE-WARNING-SEARCH-INVENTORY.tsv` records the bounded local
+search: the text occurs in compiled ngspice binaries and retained tool
+evidence, but not in the searched PDK tree. No matching installed C or header
+source was found in the bounded local search. Binary strings do not reveal the
+emitting C function, trigger condition, or HBT instance, so all three remain
+unresolved.
+
+The warning inventory uses `$NGSPICE_ROOT`, `$PDK_ROOT`,
+`$SYSTEM_NGSPICE_LIB_ROOT`, and `$LOCAL_TOOL_EVIDENCE_ROOT` as publication
+labels for the four private search roots. No file from those roots is included
+in this package.
+
 ## Files
 
 | File | Purpose |
@@ -99,6 +114,8 @@ unresolved meaning to the saved `.t` vectors.
 | `THERMAL-NODE-COMPARISON.tsv` | `.t` vector populations and native message counts |
 | `THERMAL-TERMINAL-AUTHORITY.tsv` | path-sanitized exact model-line authority map |
 | `THERMAL-SOURCE-SEARCH-INVENTORY.tsv` | path-sanitized bounded source-search inventory |
+| `NGSPICE-WARNING-AUTHORITY.tsv` | path-sanitized exact compiled-warning byte authority |
+| `NGSPICE-WARNING-SEARCH-INVENTORY.tsv` | path-sanitized bounded warning-string search inventory |
 | `SOURCE-IDENTITIES.tsv` | private and public artifact identities |
 | `PUBLISHED-HASHES.sha256` | hashes of every published technical file |
 
