@@ -45,8 +45,12 @@ The active HBT corner file is 3,975 bytes with SHA-256
 Its included model file is 20,057 bytes with SHA-256
 `ae9288f885dd30fab24b07ed1e7e02e69eac9154022a0a6da576985183b0bd79`.
 Model comments distinguish the 1.6 V maximum, the 0.4–2.0 V measurement and valid ranges, and
-the `vce_max=1.6` parameter. The raw plot contains no per-HBT collector or base current vectors,
-so device currents and thermal power remain unavailable.
+the `vce_max=1.6` parameter. This raw plot contains no per-HBT collector or base current vectors,
+so device currents and thermal power are unavailable from this plot.
+
+A paired [`savecurrents instrumentation run`](../custom-cml-div2-op-savecurrents-v1/) preserves
+all shared voltages and this warning while adding explicit HBT terminal-current vectors. It does
+not establish device power, the warning's cause, or divider function.
 
 ## Frozen conditions
 

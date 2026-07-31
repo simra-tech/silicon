@@ -1,0 +1,88 @@
+{
+  "schema": "openada.result/v0alpha1",
+  "operation": "doctor",
+  "tool": null,
+  "execution": {
+    "status": "completed",
+    "exit_code": 0,
+    "duration_ms": 0,
+    "command": []
+  },
+  "engineering": {
+    "status": "pass",
+    "summary": "Preflight selected 'simulate' and found ngspice usable; no design assertion was executed."
+  },
+  "inputs": [],
+  "artifacts": [],
+  "diagnostics": [],
+  "data": {
+    "runtime": {
+      "profile": "iic-osic-tools",
+      "reference_profile": true
+    },
+    "tools": {
+      "ngspice": {
+        "status": "available",
+        "binary": "$NGSPICE_ROOT/bin/ngspice",
+        "version": "** ngspice-46 : Circuit level simulation program",
+        "maturity": "workflow-validated",
+        "operations": [
+          "simulate"
+        ],
+        "version_probe": {
+          "status": "accepted",
+          "binary_identity_stable": true,
+          "accepted_exit_code": 0
+        }
+      }
+    },
+    "pdk_roots": [
+      "$PDK_CATALOG_ROOT"
+    ],
+    "pdks": [],
+    "preflight": {
+      "project_root": {
+        "path": ".",
+        "kind": "directory",
+        "canonicalized": true,
+        "identity_stable": true
+      },
+      "assertion": "spice-analysis-evidence-valid",
+      "assertion_evaluated": false,
+      "target": {
+        "operation": "simulate",
+        "tool": "ngspice"
+      },
+      "tool_ready": true,
+      "project_inventory_performed": false,
+      "project_collateral_enumerated": false,
+      "pdk": {
+        "applicable": true,
+        "roots": [
+          "$PDK_CATALOG_ROOT"
+        ],
+        "selected": null,
+        "catalog_enumerated": false
+      },
+      "startup": {
+        "binding": "operation-time",
+        "policy": "native-default-or-operation-explicit",
+        "supported_explicit_options": [
+          "--init-file",
+          "--system-init-file"
+        ],
+        "selected_files": [],
+        "ambient_files_enumerated": false
+      }
+    }
+  },
+  "provenance": {
+    "openada_version": "0.4.0",
+    "created_at": "2026-07-31T07:20:26.568910Z",
+    "host": {
+      "system": "Linux",
+      "machine": "x86_64",
+      "python": "3.12.3"
+    }
+  }
+}

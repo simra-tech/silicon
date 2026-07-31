@@ -54,4 +54,9 @@ A separate [`selft=0` A/B diagnostic`](../../run/custom-cml-div2-op-selft0-v1/) 
 warning but shifts the operating point materially. It is retained as diagnostic evidence only
 and does not replace this physical-model candidate or its warned result.
 
+An [`instrumentation-only savecurrents rerun`](../../run/custom-cml-div2-op-savecurrents-v1/)
+preserves every shared voltage and the warning while retaining explicit HBT terminal-current
+vectors. Its current-range audit does not resolve the thermal warning or establish divider
+function.
+
 Signoff and tape-out readiness are not claimed.
