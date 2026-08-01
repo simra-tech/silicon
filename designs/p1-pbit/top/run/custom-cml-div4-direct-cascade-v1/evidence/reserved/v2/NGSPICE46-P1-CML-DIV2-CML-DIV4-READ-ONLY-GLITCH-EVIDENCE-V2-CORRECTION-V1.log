@@ -1,0 +1,32 @@
+NGSPICE46-P1-CML-DIV2-CML-DIV4-READ-ONLY-GLITCH-EVIDENCE-V2-CORRECTION-V1.log
+O_EXCL correction note for the sealed V2 package
+  V1-CORRECTION-V1 note (sha256 e3d1abb6ffbc1d04c38ea09c44e2e48eb29a339f37c3c98d180f08d986f5e753)
+  V2 report             (sha256 f33e57ac75b7592bee001547ddb44d27b2fab5e50ec99453ca5113216e489fe7)
+
+CONFIRMED defect: frequency values were formatted in Hz but labeled 'GHz'
+(unit label off by 1e9). The underlying arithmetic is correct:
+period 2.000000000000e-10 s -> 5.000000000000e+09 Hz = 5.0 GHz;
+divided by four -> 1.250000000000e+09 Hz = 1.25 GHz.
+
+RETRACTED (these sentences only; in the V1-CORRECTION-V1 note):
+  (1) 'input CLK same-direction mean period = 2.000000000000e-10 s (5000000000.0 GHz)'
+      -> corrected: '... = 2.000000000000e-10 s -> 5.0 GHz (5.000000000000e+09 Hz)'
+  (2) 'divide-by-four: 1250000000.0 GHz, period 8.000000000000e-10 s (800 ps)'
+      -> corrected: 'divide-by-four: 1.25 GHz (1.250000000000e+09 Hz), period
+         8.000000000000e-10 s (800 ps)'
+
+RETRACTED (these sentences only; in the V2 report):
+  (3) 'input CLK same-direction mean period 2.000000000000e-10 s -> 5000000000.0 GHz'
+      -> corrected: '... -> 5.0 GHz (5.000000000000e+09 Hz)'
+  (4) '/4: 1250000000.0 GHz, period 8.000000000000e-10 s (800 ps)'
+      -> corrected: '/4: 1.25 GHz (1.250000000000e+09 Hz), period
+         8.000000000000e-10 s (800 ps)'
+
+All other statements in the V2 package stand unchanged: 800 ps /4 period,
+400 ps differential crossing cadence, 5 spacings in the closed 2 ns window,
+generic bound 5, finite-window upper bound 6, observed 27, at least 21
+excess crossings (PROVISIONAL), no exact ideal phase assigned. V2 members
+remain byte-for-byte; this note is a follow-on sealed artifact outside the
+V2 manifest (deferred to public packaging, consistent with the deck
+package precedent). No valid/invalid column, no compatibility PASS, no
+publication claim. Awaiting Principal Engineer review.

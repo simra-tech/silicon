@@ -1,0 +1,32 @@
+NGSPICE46-P1-CML-DIV2-CML-DIV4-READ-ONLY-GLITCH-EVIDENCE-V1-CORRECTION-V1.log
+O_EXCL correction note for the sealed READ-ONLY-GLITCH-EVIDENCE-V1 report
+(sha256 e30ecbfae8a63dc0063d18a03902cd045a9e132a14d6bb147cf1167b24b80bef)
+
+CONFIRMED defect: V1's clean-divide baseline is wrong. A 5 GHz input
+divided by four is 1.25 GHz, period 800 ps, with differential zero
+crossings every 400 ps. A closed 2 ns window therefore contains five
+crossing spacings: generically 5 crossings, or 6 only if both endpoints
+exactly coincide with crossings. Ten is the divide-by-two baseline,
+not divide-by-four.
+
+RETRACTED (these two V1 sentences only):
+  (1) 'expected clean /4 crossings in a 2 ns window: 5 rise + 5 fall = 10;'
+  (2) 'the 17 extra reversals are preserved in the TSV'
+
+Corrected figures (derived from sealed V1 facts, no coordinate
+regeneration):
+  input CLK same-direction mean period = 2.000000000000e-10 s (5000000000.0 GHz)
+  divide-by-four: 1250000000.0 GHz, period 8.000000000000e-10 s (800 ps), differential
+  crossing cadence = half period = 4.000000000000e-10 s (400 ps)
+  closed 2 ns window: 5 crossing spacings -> generically 5 crossings,
+  finite-window upper bound = 6 (only if both endpoints exactly coincide)
+  observed STAGE2 crossings = 27 (from the byte-identical V1 TSV)
+  PROVISIONAL: at least 21 excess crossings versus the clean finite-window
+  upper bound; no exact ideal phase is assigned without evidence.
+
+V1 TSV data is CONFIRMED correct (all 57 data rows independently match
+raw c0aed217... for crossing times, directions, bracketing samples,
+sign-interval durations, and interval maxima). V1 is reserved unchanged;
+only the two baseline sentences above are retracted. No valid/invalid
+column, no heuristic deletion, no compatibility PASS, no publication
+claim. Awaiting Principal Engineer review.

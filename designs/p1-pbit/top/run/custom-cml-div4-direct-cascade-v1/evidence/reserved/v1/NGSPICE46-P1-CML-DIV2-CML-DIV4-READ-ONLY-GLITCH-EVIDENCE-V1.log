@@ -1,0 +1,60 @@
+NGSPICE46-P1-CML-DIV2-CML-DIV4-READ-ONLY-GLITCH-EVIDENCE-V1.log
+Read-only glitch evidence V1 (Phase B; closed inputs only)
+
+=== discipline ===
+closed RUNTIME-V1 raw/log/deck/source only; no simulator, no circuit or
+deck edit, no retry, no heuristic deletion; every extra reversal preserved;
+no valid/invalid or pass/fail column; no publication claim.
+
+=== input hash binding (CONFIRMED) ===
+  raw      sha256=c0aed217cc55e8818fdaeeb09c68bcc83ea285c618a91952b08826f9a4adf925
+  deck     sha256=97a52bb7757c5b36160a28377cf50bede0197656b3a395a411faec19eea5532c
+  net      sha256=689d4beedfce278f0c13cf0e79a25b87ba8a12d25b9459e51dfbfde041cd3db7
+  stdout   sha256=32d189f23303200fc61c089d061df2d3ac2d397caca3861242c8bd2f94fa7c36
+  stderr   sha256=526fad3a5c43dce055a526e26284f01dbc3deb13066cb2aa5915b1feff8e4008
+  logr     sha256=da526904cc5e40ccfcd5d648e84a139960d029af266c62fd9de0aacbde17bd2e
+  rawmf    sha256=0211da0468cd28743c0edcf27e42ddb44d0c406f0073d2d0f8a84258de39ef19
+  preh     sha256=1ebc82f488df350ce85158ab8f1c21060cea95395b31610976f2f3167c62a9e5
+  posth    sha256=02f31063d23918b19f3281d401e4260bbee066e3202a28af671e88f1b98b1bfc
+
+=== raw structural facts (CONFIRMED, derived) ===
+  849 vectors x 2284 points; payload 15512928 B; all values finite (NaN=0 Inf=0)
+  time monotonic 0..4 ns (first=0.000e+00 last=4.000e-09)
+
+=== crossing tables (2..4 ns, every crossing, no deletion) ===
+  CLK     crossings=20 (rise 10, fall 10)
+         mean same-direction period = 2.000000000000e-10 s
+  STAGE1  crossings=10 (rise 5, fall 5)
+         mean same-direction period = 4.000042625680e-10 s
+  STAGE2  crossings=27 (rise 14, fall 13)
+         mean same-direction period = 1.446537308640e-10 s
+
+=== stage-2 differential / common-mode (2..4 ns, derived) ===
+  differential range -0.559743..+0.560222 V
+  common-mode range  1.330887..1.477304 V
+
+=== stage-2 extra reversals (preserved, none deleted) ===
+  expected clean /4 crossings in a 2 ns window: 5 rise + 5 fall = 10;
+  observed 27 crossings; the 17 extra reversals are preserved in the TSV
+  sign intervals whose max |differential| >= 0.300 V: 26 of 26
+  => extra reversals cross even +/-0.300 V (not threshold noise);
+     every interval value is in the TSV (max_abs_diff_interval_V).
+
+=== convergence warnings preserved (stderr, verbatim) ===
+  'Warning: Dynamic gmin stepping failed' followed by
+  'Note: Starting true gmin stepping' / 'Note: True gmin stepping completed';
+  'The temperature limiting function received NaN' / 'improve your heat sink Rth'
+
+=== claims ===
+CONFIRMED (derived from the closed raw): crossing counts, directions, times,
+sign-interval durations, same-direction mean periods, stage-2 differential
+and common-mode ranges, finiteness, monotonic time; every extra reversal
+preserved in the TSV; convergence warnings recorded.
+PROVISIONAL (PE): this deck does not establish clean V5-to-V5 direct-cascade
+compatibility; not labeled PASS or clean divide-by-four.
+UNKNOWN: everything outside the 2..4 ns structural recount.
+No pass/fail, compatibility, specification, reliability, engineering-gate,
+signoff, or tape-out-readiness statement; no publication claim.
+
+=== stop ===
+Read-only package complete; awaiting Principal Engineer review.

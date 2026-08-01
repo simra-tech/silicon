@@ -1,0 +1,73 @@
+NGSPICE46-P1-CML-DIV2-CML-DIV4-READ-ONLY-GLITCH-EVIDENCE-V2.log
+Read-only glitch evidence V2 (corrected baseline; closed V1/raw only)
+preceded by V1 (report e30ecbfae8a63dc0, manifest c399c41dffb9225f) and
+V1-CORRECTION-V1 (e3d1abb6ffbc1d04c38ea09c44e2e48eb29a339f37c3c98d180f08d986f5e753)
+
+=== discipline ===
+closed V1/raw only; TSV copied byte-for-byte (no coordinate regeneration);
+no simulator, no circuit/deck edit, no retry, no heuristic deletion;
+no valid/invalid or pass/fail column; no compatibility PASS; no
+publication claim.
+
+=== input hash binding (CONFIRMED, preserved from V1) ===
+  raw      sha256=c0aed217cc55e8818fdaeeb09c68bcc83ea285c618a91952b08826f9a4adf925
+  deck     sha256=97a52bb7757c5b36160a28377cf50bede0197656b3a395a411faec19eea5532c
+  net      sha256=689d4beedfce278f0c13cf0e79a25b87ba8a12d25b9459e51dfbfde041cd3db7
+  stdout   sha256=32d189f23303200fc61c089d061df2d3ac2d397caca3861242c8bd2f94fa7c36
+  stderr   sha256=526fad3a5c43dce055a526e26284f01dbc3deb13066cb2aa5915b1feff8e4008
+  logr     sha256=da526904cc5e40ccfcd5d648e84a139960d029af266c62fd9de0aacbde17bd2e
+  rawmf    sha256=0211da0468cd28743c0edcf27e42ddb44d0c406f0073d2d0f8a84258de39ef19
+  preh     sha256=1ebc82f488df350ce85158ab8f1c21060cea95395b31610976f2f3167c62a9e5
+  posth    sha256=02f31063d23918b19f3281d401e4260bbee066e3202a28af671e88f1b98b1bfc
+
+=== V1 hashes (preserved; V1 reserved unchanged) ===
+  V1 TSV      sha256=592a50f3f32092dd290aad83675f861a5c75c9cd87cbdf679eb7839d1a255cf5 (byte-identical copy in V2: 592a50f3f32092dd290aad83675f861a5c75c9cd87cbdf679eb7839d1a255cf5)
+  V1 report   sha256=e30ecbfae8a63dc0063d18a03902cd045a9e132a14d6bb147cf1167b24b80bef
+  V1 manifest sha256=c399c41dffb9225fb245cb138f2d15716201f2bd8b0d70ca296a8b16f9f4093f
+
+=== raw structural facts (CONFIRMED, preserved from V1) ===
+  849 vectors x 2284 points; payload 15512928 B; all values finite (NaN=0 Inf=0)
+  time monotonic 0..4 ns (first=0.000e+00 last=4.000e-09)
+
+=== crossing tables (2..4 ns, every crossing, no deletion; preserved) ===
+  CLK     crossings=20 (rise 10, fall 10)
+  mean same-direction period = 2.000000000000e-10 s
+  STAGE1  crossings=10 (rise 5, fall 5)
+  mean same-direction period = 4.000042625680e-10 s
+  STAGE2  crossings=27 (rise 14, fall 13)
+  mean same-direction period = 1.446537308640e-10 s
+
+=== corrected divide-by-four baseline (derived from sealed V1 facts) ===
+  input CLK same-direction mean period 2.000000000000e-10 s -> 5000000000.0 GHz
+  /4: 1250000000.0 GHz, period 8.000000000000e-10 s (800 ps)
+  differential zero-crossing cadence = half period = 4.000000000000e-10 s (400 ps)
+  closed 2 ns window contains 5 crossing spacings
+  generically 5 crossings; finite-window upper bound 6 (both endpoints
+  coincident with crossings)
+  10 is the divide-by-two baseline, NOT divide-by-four (V1 error)
+
+=== excess crossings (PROVISIONAL) ===
+  observed STAGE2 crossings = 27 (byte-identical V1 TSV)
+  at least 21 excess crossings versus the clean finite-window upper bound
+  no exact ideal phase assigned without evidence
+
+=== stage-2 ranges (CONFIRMED, preserved from V1) ===
+  differential range -0.559743..+0.560222 V
+  common-mode range  1.330887..1.477304 V
+
+=== convergence warnings preserved (stderr, verbatim) ===
+  'Warning: Dynamic gmin stepping failed' followed by
+  'Note: Starting true gmin stepping' / 'Note: True gmin stepping completed';
+  'The temperature limiting function received NaN' / 'improve your heat sink Rth'
+
+=== claims ===
+CONFIRMED: V1 TSV data (PE-verified vs raw c0aed217); V1 hashes preserved;
+byte-identical TSV copy; corrected /4 baseline arithmetic (1.25 GHz,
+800 ps period, 400 ps cadence, finite-window bound 6).
+PROVISIONAL: at least 21 excess crossings; no exact ideal phase assigned.
+UNKNOWN: everything outside the 2..4 ns structural recount.
+No pass/fail, compatibility, specification, reliability, engineering-gate,
+signoff, or tape-out-readiness statement; no publication claim.
+
+=== stop ===
+Read-only package complete; awaiting Principal Engineer review.
