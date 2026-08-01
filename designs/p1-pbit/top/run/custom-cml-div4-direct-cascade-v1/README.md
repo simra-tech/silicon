@@ -67,6 +67,29 @@ generically five crossings and at most six only when both endpoints coincide
 with crossings. Therefore the observed 27 crossings imply **provisionally at
 least 21 excess crossings**. No exact ideal phase is assigned.
 
+## Read-only interstage comparison
+
+The accepted read-only audit under
+`evidence/interstage-loading-audit-v1/` compares this direct run against the
+previously published single-stage Candidate V5 raw. An independent parser
+reproduced all 87 crossing-table rows and all 30 stage-two device-coordinate
+rows from the two published raws.
+
+The single-stage and direct-run clocks are identical. Stage one retains ten
+crossings and a near-400 ps same-direction period when stage two is connected,
+while its differential peak-to-peak range changes from 1.310149 V to 1.153711
+V and its mean absolute bracketing-sample crossing slope changes from
+1.391744e11 V/s to 9.123610e9 V/s. These are confirmed observational deltas.
+They do **not** establish interface loading as the cause: the single-stage raw
+was produced by the retained probe-instrumented executable, while the direct
+run used a different native-ngspice executable, in addition to the circuit
+difference. A matched control/experiment run is required for causal
+attribution.
+
+The audit also records min, max, mean, and actual sample coordinates for six
+saved stage-two clock-terminal voltages and four saved clock-device currents.
+It infers neither capacitance nor a failing device or mechanism.
+
 ## Correction history
 
 The V1 and V2 read-only evidence packages remain byte-for-byte under
@@ -80,7 +103,8 @@ retaining their hashes and the byte-identical 57-row crossing table. See
 ## Package boundary
 
 The binary raw is published with its deck, source, stdout, stderr, invocation
-record, pre/post hashes, raw manifest, and accepted crossing evidence.
+record, pre/post hashes, raw manifest, accepted crossing evidence, and the
+independently reproduced read-only interstage comparison.
 `PUBLISH-MANIFEST.tsv` covers every payload except itself. Private PDK files,
 the simulator executable, credentials, prompts, transcripts, reasoning,
 absolute host paths, symlinks, and executable files are excluded.
