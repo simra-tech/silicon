@@ -1,0 +1,24 @@
+NGSPICE46-P1-CML-DIV2-CML-DIV4-STAGE2-REPLAY-SOURCE-DECK-V2-SUPERSEDES-V1.log
+Superunpublished execution record: V2 replaces the V1 replay-driver mechanism; V1 reserved
+unchanged (byte-for-byte).
+
+V1 (reserved unchanged):
+  decks: unloaded 2134c06b41328d124f2ba0c4cf98b7f0cfa9d71a9c6cfa773b8a4c305aea25d3 ; loaded e06d0bbd6ddd5c5c40f290fd9b00c11eb822b713553f9ed7ef38432dbdad541f
+  log 96590ce7e29cc87932a7c56d95d41d8d5de1872b97781383c20609a06059ec6c ; manifest f3e6d137c65d9adea5c4340eb2b526d128df4307f9cd134ccbab98b90cee0305 ; deck-diff 6aa0b2aa759f42fd635f5eaae87d279b7e4489c5e0e363d47d2d0dd7bbe0704a
+  method d3f2a8ec552219b939138315e00fbe327faf9de85269e40b021e1c2581f67208
+  replay PWL: unloaded p a3fb5a7e86971ba8680918e9121c114c5ce384b5ae2fc2e1c944edeb2d31e822 / n 9c8417d8c286db2857f5be6736a34d3ecfb83b69e38a73df7974b7808b1a4708 ; loaded p 0ec539a814ada5d7c6a2635abbf297608238573cf65980199a3d1a9f0b018f41 / n b1f771e47187a462e0242ac25cffbede810cd00ebf8bee43b48093d95f3e05b3
+  V1 defect superseded: voltage-source PWL FILE= is not the documented
+  file-backed analog source in native ngspice-46; the documented form is
+  the XSPICE filesource two-output A-device.
+
+V2 (this package):
+  AREPLAY %vd([DIV2_P_1 0 DIV2_N_1 0]) REPLAYMODEL
+  .model REPLAYMODEL filesource (file="<arm tpn data>" amploffset=[0 0]
+    amplscale=[1 1] timeoffset=0 timescale=1 timerelative=false amplstep=false)
+  one 3-column file per arm (time, p, n), 2284 exact native samples each
+  official syntax authority: ngspice manual 'a8 %vd([1 0 2 0]) filesrc'
+  PROVISIONAL until source review: documented two-output filesource form,
+  preserves linear interpolation
+
+No runtime, no engineering/specification/signoff claim. Awaiting Principal
+Engineer review.

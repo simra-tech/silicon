@@ -1,0 +1,94 @@
+NGSPICE46-P1-CML-DIV2-CML-DIV4-STAGE2-REPLAY-RUNTIME-V2-CORRECTION.log
+Correction-only package for the sealed STAGE2-REPLAY-RUNTIME-V1 pair and its
+FAILED-ATTEMPT-V1 sibling. No simulation was run; no design, deck, data, or
+raw file was created or edited; no waveform analysis was performed; this
+correction makes no waveform or circuit claim. All package files written
+with O_EXCL; self-identity reported externally after close.
+Correction-first: exactly the two false claims below are superseded; nothing
+else in the sealed chain is retracted.
+
+=== audit basis (CONFIRMED, re-verified from scratch) ===
+An independent scratch audit of the complete attempt chain finds exactly
+three ngspice invocations, all $TOOLS_ROOT/ngspice/bin/ngspice -b
+(sha256=6aacaca88f656e5e19074ac070fb410bf6cc437df1de88ec28d50a24c6239a1b),
+all rc=0:
+
+  1. retained failed UNLOADED  2026-08-01T03:49:43Z..03:49:44Z  rc=0  elapsed 1.570 s
+     raw c954e868ec28eaf716e583f07d7d3dcd6b4cfbca3ea236d66850a0607722bfed
+     (FAILED-ATTEMPT-V1/UNLOADED-RUN/raw_tb_p1_cml_div2_front_unloaded_replay_tran_v2.raw)
+  2. corrected-pair UNLOADED   2026-08-01T03:50:33Z..03:50:35Z  rc=0  elapsed 2.274 s
+     raw 456aa04dafc1b8a3023552e31cc1ba1c16fd8c55e04b5171934a7f0670489881
+     (RUNTIME-V1/UNLOADED-RUN/raw_tb_p1_cml_div2_front_unloaded_replay_tran_v2.raw)
+  3. LOADED                    2026-08-01T03:50:36Z..03:50:38Z  rc=0  elapsed 2.123 s
+     raw 2f2010d24096030bb0317bf1c774fa16bcb82a61c09eb6f3badca402da357c26
+     (RUNTIME-V1/LOADED-RUN/raw_tb_p1_cml_div2_front_loaded_replay_tran_v2.raw)
+
+All three raw identities re-hashed from scratch (see BOUND-INVENTORY) and
+verified to match. The UNLOADED side was therefore invoked twice across the
+complete attempt chain; LOADED once. LOADED was gated on the corrected
+UNLOADED outcome (03:50:33Z, raw 456aa04d...) as recorded in the sealed pair
+log; the failed-attempt raw c954e868... is retained in FAILED-ATTEMPT-V1 and
+no gate result is claimed for it here.
+
+=== superseded claim 1 (discipline) - FALSE ===
+Sealed pair log ...RUNTIME-V1/NGSPICE46-P1-CML-DIV2-CML-DIV4-STAGE2-REPLAY-
+RUNTIME-V1.log lines 5-6: "exactly one invocation per attempted side; no
+retry under any outcome", and its claims-section restatement at lines 47-48:
+"CONFIRMED: one invocation per attempted side (UNLOADED always, LOADED only
+on gate)". Across the complete attempt chain the UNLOADED side was invoked
+twice (03:49:43Z retained failed attempt; 03:50:33Z corrected retry), so the
+claim is false. The remainder of the claims entry (per-side argv/cwd/UTC/
+elapsed/timeout/rc/stdout/stderr/raw/pre+post hashes recorded; structural
+raw facts as listed) is not superseded. The same chain-level no-retry wording
+"invocation EXACTLY ONCE ; no retry under any outcome" appears at
+PRE-HASHES.txt line 10 in all three sealed run dirs
+(RUNTIME-V1/UNLOADED-RUN, RUNTIME-V1/LOADED-RUN,
+FAILED-ATTEMPT-V1/UNLOADED-RUN); that wording is superseded chain-wide by the
+chronology above, while the per-run-dir factual fields (argv, cwd, UTC, rc,
+hashes) in those files remain valid and are re-bound in BOUND-INVENTORY.
+Corroboration: the final report itself states "the one authorized corrected
+retry completed the pair" (retained Design Engineer final report).
+
+=== superseded claim 2 (preservation) - FALSE ===
+Final report (retained Design Engineer final report,
+"Harness failure handled per discipline" paragraph): "the partial evidence
+(UNLOADED raw c954e868..., all 8 files) was preserved as
+...-RUNTIME-V1-FAILED-ATTEMPT-V1". False as a preservation claim: the eight
+run files are present (true part), but FAILED-ATTEMPT-V1 contains exactly
+those eight UNLOADED run files (raw, deck, data, netlist, stdout, stderr,
+PRE-HASHES, POST-HASHES) and does NOT retain the original runner script (at
+crash time TEMPORARY/gen_stage2_replay_runtime_v1.py) nor the tuple-unpack
+traceback. The failed attempt's failure evidence is therefore not preserved;
+superseded by the retained limitations below.
+
+=== retained limitations (honest) ===
+- Tuple-unpack failure (cause of the failed attempt; retained here verbatim
+  from the retained private execution record - the artifact does not contain it):
+  after the UNLOADED invocation (03:49:43Z, rc=0) completed, the runner
+  crashed at the LOADED gate:
+      File "TEMPORARY/gen_stage2_replay_runtime_v1.py", line 107, in <module>
+        prev_st, prev_err = structs.get("UNLOADED", (None, "not evaluated"))
+        ^^^^^^^^^^^^^^^^^
+      ValueError: too many values to unpack (expected 2)
+  (structs stores 3-tuples; the gate unpacked 2; RUNNER_EXIT=1). LOADED was
+  never invoked in the failed attempt. The traceback survives only in the
+  unpublished execution record; a public-safe error summary is retained here.
+- Missing-original-runner limitation: FAILED-ATTEMPT-V1 holds only the eight
+  UNLOADED run files; the original runner script and its traceback are not
+  retained anywhere in the sealed tree. The failure cause is documented here
+  from an unpublished execution record, not from a retained artifact.
+- No waveform/circuit claim: the two V1 pair raws (456aa04d..., 2f2010d2...)
+  remain structurally valid evidence as sealed and are re-bound here; raw
+  c954e868... is retained as identity-only evidence (hash/bytes). This
+  correction makes no waveform or circuit claim about any of them.
+
+=== unchanged ===
+All other statements in the sealed pair log, raw manifest, manifest, and
+final report stand: per-side argv/cwd/UTC/elapsed/timeout/rc and stdout/
+stderr/PRE+POST hash records; structural raw facts (variables/points/
+payload/finite/monotonic); gating facts; warning records; PROVISIONAL and
+UNKNOWN statements; the no-pass/fail, no-compatibility/specification/signoff/
+tape-out framing.
+
+=== stop ===
+Correction-only package complete; awaiting Principal Engineer review.

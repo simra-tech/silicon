@@ -1,0 +1,83 @@
+NGSPICE46-P1-CML-DIV2-CML-DIV4-STAGE2-REPLAY-SOURCE-DECK-V1.log
+Stage-2-only exact-waveform replay source/deck checkpoint V1 (NO simulator)
+
+=== discipline ===
+source/deck preparation only; no simulator, no design/deck edit, no retry;
+no reset, external load, .ic, or .nodeset; no compatibility/
+specification/signoff claim; no publication claim.
+
+=== bound hashes (CONFIRMED) ===
+  control raw   sha256=8317c689599ff6145f6ff8a70e5dbc4b4e05d8dc870b5d44e91b3fce9e6695f0
+  experiment raw sha256=dd0f874ee53e1fff13581f99e3db04185b166705244e81be9ca59a2918a9a97f
+  source netlist sha256=689d4beedfce278f0c13cf0e79a25b87ba8a12d25b9459e51dfbfde041cd3db7 (byte-identical copy in package)
+  planned exe    sha256=6aacaca88f656e5e19074ac070fb410bf6cc437df1de88ec28d50a24c6239a1b (native ngspice-46)
+  replay_unloaded_div2_p_1.pwl sha256=a3fb5a7e86971ba8680918e9121c114c5ce384b5ae2fc2e1c944edeb2d31e822
+  replay_unloaded_div2_n_1.pwl sha256=9c8417d8c286db2857f5be6736a34d3ecfb83b69e38a73df7974b7808b1a4708
+  replay_loaded_div2_p_1.pwl   sha256=0ec539a814ada5d7c6a2635abbf297608238573cf65980199a3d1a9f0b018f41
+  replay_loaded_div2_n_1.pwl   sha256=b1f771e47187a462e0242ac25cffbede810cd00ebf8bee43b48093d95f3e05b3
+  method script sha256=d3f2a8ec552219b939138315e00fbe327faf9de85269e40b021e1c2581f67208 (byte-identical preserved extraction)
+
+=== replay inputs (extracted, no decimation, no interpolation) ===
+  UNLOADED-REPLAY: replay_unloaded_div2_p_1.pwl, replay_unloaded_div2_n_1.pwl (from CONTROL raw, v(div2_p_1)/v(div2_n_1))
+  LOADED-REPLAY:   replay_loaded_div2_p_1.pwl, replay_loaded_div2_n_1.pwl (from EXPERIMENT raw, v(div2_p_1)/v(div2_n_1))
+  samples per input: 2284 (every full 0..4 ns native sample; full grid)
+  breakpoints per input: 2284 (one per native sample, native order)
+  round-trip verified: every PWL line equals the raw native time/value
+  pair exactly (4 inputs x 2284 samples; read-back == raw)
+
+=== stage-2 source (held fixed, byte-identical both arms) ===
+  XSTAGE2 DIV4_P DIV4_N DIV2_P_1 DIV2_N_1 VCC_HBT VSS p1_cml_div2_front
+  (one byte-identical frozen V5 stage; same line as the experiment deck)
+
+=== held fixed (identical in both decks) ===
+  model libraries (.lib x6), .include netlist, supplies VCC_HBT 2.500/VSS 0.000,
+  no .temp (default), .options savecurrents, pre_osdi x2, save all,
+  tran 2p 4.0n, quit/.endc/.end, PROVISIONAL_DIAGNOSTIC_CONDITION, startup
+  interval (waveform includes stage-1 startup from the sealed raw), no
+  load/reset/.ic/.nodeset; planned native ngspice-46 exe 6aacaca8...
+
+=== smallest auditable deck delta (UNLOADED -> LOADED): every differing line ===
+  line   1: -* Physical-Model Candidate V5 Stage-2-Only Exact-Waveform Replay Deck - UNLOADED arm (PROVISIONAL)
+           +* Physical-Model Candidate V5 Stage-2-Only Exact-Waveform Replay Deck - LOADED arm (PROVISIONAL)
+  line   2: -* Replays the CONTROL stage-1 waveform pair v(div2_p_1)/v(div2_n_1) from raw 8317c689599ff614...
+           +* Replays the EXPERIMENT stage-1 waveform pair v(div2_p_1)/v(div2_n_1) from raw dd0f874ee53e1fff...
+  line  21: -VREPLAY_P DIV2_P_1 0 PWL FILE=replay_unloaded_div2_p_1.pwl
+           +VREPLAY_P DIV2_P_1 0 PWL FILE=replay_loaded_div2_p_1.pwl
+  line  22: -VREPLAY_N DIV2_N_1 0 PWL FILE=replay_unloaded_div2_n_1.pwl
+           +VREPLAY_N DIV2_N_1 0 PWL FILE=replay_loaded_div2_n_1.pwl
+  line  37: -  write raw_tb_p1_cml_div2_front_unloaded_replay_tran_v1.raw all
+           +  write raw_tb_p1_cml_div2_front_loaded_replay_tran_v1.raw all
+  summary: 5 differing lines (2 header comments, 2 PWL FILE references,
+  1 write target); electrical difference is ONLY the two replay waveforms
+  (PWL file content); every other deck line byte-identical
+
+=== explicit interpretation bound (sealed statement) ===
+  The replay sources are ideal voltage sources and impose ZERO source
+  impedance. This experiment can therefore test whether the unloaded-
+  versus-loaded stage-1 waveforms are SUFFICIENT to change stage-2
+  reversal behaviour under ideal-source drive, but it CANNOT reproduce
+  or prove the actual direct-cascade source impedance. Interpretation is
+  bounded to waveform sufficiency under ideal drive.
+
+=== package members (manifest-closed) ===
+  extract_stage1_replay_waveforms.py (preserved extraction method)
+  replay_unloaded_div2_p_1.pwl, replay_unloaded_div2_n_1.pwl, replay_loaded_div2_p_1.pwl, replay_loaded_div2_n_1.pwl (replay inputs)
+  tb_p1_cml_div2_front_unloaded_replay_tran_v1.cir (UNLOADED-REPLAY deck)
+  tb_p1_cml_div2_front_loaded_replay_tran_v1.cir (LOADED-REPLAY deck)
+  p1_cml_div2_front_integrated_sinks.spice (byte-identical V5 source)
+  NGSPICE46-P1-CML-DIV2-CML-DIV4-STAGE2-REPLAY-SOURCE-DECK-V1-DECK-DIFF.diff (complete deck diff)
+
+=== claims ===
+CONFIRMED: bound hashes; extraction method preserved byte-identical;
+4 replay inputs x 2284 full native samples each, round-trip verified;
+paired decks differ only in the 5 listed lines (2 waveform references,
+2 comments, 1 write target); held-fixed list; zero-source-impedance
+interpretation bound recorded.
+PROVISIONAL: waveform sufficiency hypothesis is TESTABLE by the future
+run, not established here.
+UNKNOWN: all runtime behaviour (decks UNRUN).
+No pass/fail, compatibility, specification, reliability, engineering-gate,
+signoff, or tape-out-readiness statement; no publication claim.
+
+=== stop ===
+Source/deck checkpoint complete; awaiting Principal Engineer review.

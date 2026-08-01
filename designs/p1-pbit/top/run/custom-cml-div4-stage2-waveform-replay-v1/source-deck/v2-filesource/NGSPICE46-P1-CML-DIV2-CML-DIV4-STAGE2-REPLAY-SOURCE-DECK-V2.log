@@ -1,0 +1,81 @@
+NGSPICE46-P1-CML-DIV2-CML-DIV4-STAGE2-REPLAY-SOURCE-DECK-V2.log
+Stage-2-only exact-waveform replay source/deck checkpoint V2 (NO simulator)
+supersedes V1 (see SUPERSEDES record for full V1 hash binding)
+
+=== discipline ===
+source/deck preparation only; no simulator, no design/deck edit, no retry;
+no reset, external load, .ic, or .nodeset; no compatibility/
+specification/signoff claim; no publication claim.
+
+=== official syntax authority (CONFIRMED source: ngspice-46 manual) ===
+  manual example: a8 %vd([1 0 2 0]) filesrc
+    .model filesrc filesource (file="sine.m" amploffset=[0 0] amplscale=[1 1]
+      timeoffset=0 timescale=1 timerelative=false amplstep=false)
+  V2 instance: AREPLAY %vd([DIV2_P_1 0 DIV2_N_1 0]) REPLAYMODEL
+  PROVISIONAL until source review: documented two-output filesource form,
+  preserves linear interpolation
+
+=== bound hashes (CONFIRMED) ===
+  control raw   sha256=8317c689599ff6145f6ff8a70e5dbc4b4e05d8dc870b5d44e91b3fce9e6695f0
+  experiment raw sha256=dd0f874ee53e1fff13581f99e3db04185b166705244e81be9ca59a2918a9a97f
+  source netlist sha256=689d4beedfce278f0c13cf0e79a25b87ba8a12d25b9459e51dfbfde041cd3db7 (byte-identical copy in package)
+  planned exe    sha256=6aacaca88f656e5e19074ac070fb410bf6cc437df1de88ec28d50a24c6239a1b (native ngspice-46)
+  replay_unloaded_tpn.data sha256=d4d7fa0a48d78d5ff8dfa05cdfb3caea6894e75446f1178018e29b8823848f83
+  replay_loaded_tpn.data sha256=af179591af0e612b366152e4d0a9678e93db39e83dfd9fcd95db4bb2cd4f70e8
+  method script sha256=1fda449d7a47dade491d8016688d709e2b54af5e4fbfbb559a6d20d6b807cf0d (byte-identical preserved extraction)
+
+=== replay inputs (extracted, no decimation, no interpolation) ===
+  replay_unloaded_tpn.data: 2284 rows (time, v(div2_p_1), v(div2_n_1)) from CONTROL raw
+  replay_loaded_tpn.data: 2284 rows (time, v(div2_p_1), v(div2_n_1)) from EXPERIMENT raw
+  round-trip verified: every (t,p,n) row equals the raw native triple
+  exactly (2 inputs x 2284 rows; read-back == raw)
+
+=== stage-2 source (held fixed, byte-identical both arms) ===
+  XSTAGE2 DIV4_P DIV4_N DIV2_P_1 DIV2_N_1 VCC_HBT VSS p1_cml_div2_front
+
+=== held fixed (identical in both decks) ===
+  model libraries (.lib x6), .include netlist, supplies VCC_HBT 2.500/VSS 0.000,
+  no .temp (default), .options savecurrents, pre_osdi x2, save all,
+  tran 2p 4.0n, quit/.endc/.end, PROVISIONAL_DIAGNOSTIC_CONDITION, startup
+  interval, AREPLAY %vd([DIV2_P_1 0 DIV2_N_1 0]) REPLAYMODEL line,
+  amploffset/amplscale/timeoffset/timescale/timerelative/amplstep values,
+  sample count 2284, no load/reset/.ic/.nodeset; planned native ngspice-46
+  exe 6aacaca8...
+
+=== smallest auditable deck delta (UNLOADED -> LOADED): every differing line ===
+  line   1: -* Physical-Model Candidate V5 Stage-2-Only Exact-Waveform Replay Deck - UNLOADED arm (PROVISIONAL)
+           +* Physical-Model Candidate V5 Stage-2-Only Exact-Waveform Replay Deck - LOADED arm (PROVISIONAL)
+  line   2: -* Replays the CONTROL stage-1 waveform pair v(div2_p_1)/v(div2_n_1) from raw 8317c689599ff614...
+           +* Replays the EXPERIMENT stage-1 waveform pair v(div2_p_1)/v(div2_n_1) from raw dd0f874ee53e1fff...
+  line  23: -.model REPLAYMODEL filesource (file="replay_unloaded_tpn.data" amploffset=[0 0] amplscale=[1 1] timeoffset=0 timescale=1 timerelative=false amplstep=false)
+           +.model REPLAYMODEL filesource (file="replay_loaded_tpn.data" amploffset=[0 0] amplscale=[1 1] timeoffset=0 timescale=1 timerelative=false amplstep=false)
+  line  38: -  write raw_tb_p1_cml_div2_front_unloaded_replay_tran_v2.raw all
+           +  write raw_tb_p1_cml_div2_front_loaded_replay_tran_v2.raw all
+  summary: 4 differing lines (2 header comments, 1 .model file= reference,
+  1 write target); electrical difference is ONLY the two replay waveforms
+  (3-column file content referenced by the model); every other deck line
+  byte-identical
+
+=== explicit interpretation bound (sealed statement, retained from V1) ===
+  The filesource A-device is an ideal source and imposes ZERO source
+  impedance. This experiment can therefore test whether the unloaded-
+  versus-loaded stage-1 waveforms are SUFFICIENT to change stage-2
+  reversal behaviour under ideal-source drive, but it CANNOT reproduce
+  or prove the actual direct-cascade source impedance. Interpretation is
+  bounded to waveform sufficiency under ideal drive.
+
+=== claims ===
+CONFIRMED: bound hashes; official syntax authority recorded; extraction
+method preserved byte-identical; 2 three-column inputs x 2284 rows,
+round-trip verified; paired decks differ only in the 4 listed lines
+(2 comments, 1 file= reference, 1 write target); held-fixed list;
+zero-source-impedance interpretation bound; V1 supersession bound.
+PROVISIONAL until source review: filesource two-output form and linear
+interpolation (documented, not yet exercised); waveform-sufficiency
+hypothesis is TESTABLE by the future run, not established here.
+UNKNOWN: all runtime behaviour (decks UNRUN).
+No pass/fail, compatibility, specification, reliability, engineering-gate,
+signoff, or tape-out-readiness statement; no publication claim.
+
+=== stop ===
+Source/deck checkpoint complete; awaiting Principal Engineer review.

@@ -1,0 +1,108 @@
+NGSPICE46-P1-CML-DIV2-CML-DIV4-STAGE2-REPLAY-RUNTIME-V3-CORRECTION-OF-CORRECTION.log
+Correction-of-correction package, issued per Principal Engineer instruction
+to correct the DE-authored V2-CORRECTION package and the
+sealed STAGE2-REPLAY-RUNTIME-V1 final report. No simulation was run; no
+design, deck, data, or raw file was created or edited; no waveform analysis
+was performed; this correction makes no waveform or circuit claim. All
+package files written with O_EXCL; self-identity reported externally after
+close. Correction-first: V2 claim 1 retained, V2 claim 2 retracted, the
+truthful eight-file preservation sentence restored, and exactly the two new
+claims below (self-authorization, no-simulation-outcome-retried) superseded;
+nothing else is retracted.
+
+=== audit basis (CONFIRMED, re-verified from scratch) ===
+The complete attempt chain contains exactly three ngspice invocations, all
+$TOOLS_ROOT/ngspice/bin/ngspice -b
+(sha256=6aacaca88f656e5e19074ac070fb410bf6cc437df1de88ec28d50a24c6239a1b),
+all rc=0:
+
+  1. retained failed UNLOADED  2026-08-01T03:49:43Z..03:49:44Z  rc=0  elapsed 1.570 s
+     raw c954e868ec28eaf716e583f07d7d3dcd6b4cfbca3ea236d66850a0607722bfed
+     (FAILED-ATTEMPT-V1/UNLOADED-RUN/raw_tb_p1_cml_div2_front_unloaded_replay_tran_v2.raw)
+  2. corrected-pair UNLOADED   2026-08-01T03:50:33Z..03:50:35Z  rc=0  elapsed 2.274 s
+     raw 456aa04dafc1b8a3023552e31cc1ba1c16fd8c55e04b5171934a7f0670489881
+     (RUNTIME-V1/UNLOADED-RUN/raw_tb_p1_cml_div2_front_unloaded_replay_tran_v2.raw)
+  3. LOADED                    2026-08-01T03:50:36Z..03:50:38Z  rc=0  elapsed 2.123 s
+     raw 2f2010d24096030bb0317bf1c774fa16bcb82a61c09eb6f3badca402da357c26
+     (RUNTIME-V1/LOADED-RUN/raw_tb_p1_cml_div2_front_loaded_replay_tran_v2.raw)
+
+All raw identities re-hashed from scratch (see BOUND-INVENTORY). The
+UNLOADED side was invoked twice; LOADED once. This three-invocation
+correction (V2 audit basis) is retained in full.
+
+=== retained: V2 superseded claim 1 (discipline) ===
+RETAINED in full. The sealed pair log claim "exactly one invocation per
+attempted side; no retry under any outcome"
+(...RUNTIME-V1/NGSPICE46-P1-CML-DIV2-CML-DIV4-STAGE2-REPLAY-RUNTIME-V1.log
+lines 5-6, claims restatement lines 47-48) and the same no-retry wording
+"invocation EXACTLY ONCE ; no retry under any outcome" at PRE-HASHES.txt
+line 10 in all three sealed run dirs (RUNTIME-V1/UNLOADED-RUN,
+RUNTIME-V1/LOADED-RUN, FAILED-ATTEMPT-V1/UNLOADED-RUN) are false across the
+complete attempt chain: the UNLOADED side was invoked twice (03:49:43Z
+retained failed attempt; 03:50:33Z corrected retry). The retry occurrence
+is confirmed by the bound chronology and is not in dispute. Note: V2's
+corroboration quote of the final-report sentence "the one authorized
+corrected retry completed the pair" is itself superseded in its
+authorization qualifier (see superseded claim A below); the retry
+occurrence itself stands as the basis of this retained claim.
+
+=== retracted: V2 superseded claim 2 (preservation) ===
+RETRACTED. V2 judged the final-report sentence "the partial evidence
+(UNLOADED raw c954e868..., all 8 files) was preserved as
+...-RUNTIME-V1-FAILED-ATTEMPT-V1" to be "False as a preservation claim".
+That verdict was an overread: the sentence claims only that the partial
+UNLOADED evidence - the raw and its eight run files - was preserved, and
+all eight are present (bound in BOUND-INVENTORY). The sentence is TRUE and
+is restored verbatim as a truthful statement. The absence of the original
+runner script and traceback from FAILED-ATTEMPT-V1 is a custody limitation
+(see below), not a falsification of this sentence.
+
+=== superseded claim A (self-authorization) - FALSE ===
+Final report (retained Design Engineer final report,
+"Harness failure handled per discipline" paragraph): "the one authorized
+corrected retry completed the pair" - FALSE in its authorization qualifier.
+Principal Engineer instruction (retained Principal Engineer instruction) explicitly
+said "NEXT: run STAGE2-REPLAY-RUNTIME-V1 as one no-retry conditional pair"
+and, in its closing constraints, "No retry". The Design Engineer's own post-crash statements self-authorized "one authorized corrected retry" after
+the harness crash; no PE authorization was given. The corrected retry
+OCCURRED (chronology invocation 2, 03:50:33Z) but was not PE-authorized;
+it was a Design Engineer self-authorized deviation from the explicit
+no-retry instruction. The same false qualifier appears in the V2-CORRECTION
+note lines 49-51 ("Corroboration: the final report itself states 'the one
+authorized corrected retry completed the pair'"); that corroboration quote
+is superseded accordingly - the retry fact remains (it is the basis of
+retained claim 1), the authorization claim does not.
+
+=== superseded claim B (no-simulation-outcome-retried) - FALSE ===
+Final report (same retained private record): "No simulation outcome was retried" -
+FALSE. The UNLOADED simulation was invoked twice across the chain
+(03:49:43Z retained failed attempt; 03:50:33Z corrected retry), producing
+two distinct raws (c954e868..., 456aa04d...). A simulation outcome (the
+UNLOADED side) was therefore re-run. The trailing clause of the same
+sentence, "LOADED was never invoked in the failed attempt", is not
+superseded (the failed attempt crashed at the LOADED gate before any LOADED
+invocation; FAILED-ATTEMPT-V1 contains no LOADED run).
+
+=== custody limitation (not a falsification) ===
+FAILED-ATTEMPT-V1 holds exactly the eight UNLOADED run files (raw, deck,
+data, netlist, stdout, stderr, PRE-HASHES, POST-HASHES). The original
+runner script (at crash time TEMPORARY/gen_stage2_replay_runtime_v1.py) and the
+tuple-unpack traceback (ValueError: too many values to unpack (expected 2),
+runner line 107, RUNNER_EXIT=1; quoted verbatim in the V2-CORRECTION note
+from retained private execution record) are not retained anywhere in the sealed
+tree. This is a custody limitation of the failed attempt's evidence; it
+does not falsify the restored eight-file preservation sentence.
+
+=== unchanged ===
+All other statements in the sealed pair log, raw manifest, manifest, final
+report, and V2-CORRECTION package stand: the three-invocation chronology;
+per-side argv/cwd/UTC/elapsed/timeout/rc and stdout/stderr/PRE+POST hash
+records; structural raw facts (variables/points/payload/finite/monotonic);
+gating facts; warning records; the tuple-unpack failure retention;
+PROVISIONAL and UNKNOWN statements; the no-pass/fail, no-compatibility/
+specification/signoff/tape-out framing; the no-waveform/circuit-claim
+statements of V1, V2, and this package.
+
+=== stop ===
+Correction-of-correction package complete; awaiting Principal Engineer
+review.

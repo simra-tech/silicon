@@ -1,0 +1,28 @@
+--- ./NGSPICE46-P1-CML-DIV2-CML-DIV4-STAGE2-REPLAY-SOURCE-DECK-V2/tb_p1_cml_div2_front_unloaded_replay_tran_v2.cir	2026-08-01 05:46:03.733168694 +0200
++++ ./NGSPICE46-P1-CML-DIV2-CML-DIV4-STAGE2-REPLAY-SOURCE-DECK-V2/tb_p1_cml_div2_front_loaded_replay_tran_v2.cir	2026-08-01 05:46:03.733168694 +0200
+@@ -1,5 +1,5 @@
+-* Physical-Model Candidate V5 Stage-2-Only Exact-Waveform Replay Deck - UNLOADED arm (PROVISIONAL)
+-* Replays the CONTROL stage-1 waveform pair v(div2_p_1)/v(div2_n_1) from raw 8317c689599ff614...
++* Physical-Model Candidate V5 Stage-2-Only Exact-Waveform Replay Deck - LOADED arm (PROVISIONAL)
++* Replays the EXPERIMENT stage-1 waveform pair v(div2_p_1)/v(div2_n_1) from raw dd0f874ee53e1fff...
+ * PROVISIONAL_DIAGNOSTIC_CONDITION: no external load, no reset, no .ic, no .nodeset
+ * tran 2p 4.0n stop = 4.0 ns, identical to the matched pair runtime
+ 
+@@ -20,7 +20,7 @@
+ * Official ngspice-46 XSPICE filesource two-output A-device (manual example
+ * 'a8 %vd([1 0 2 0]) filesrc'; ZERO source impedance; linear interpolation)
+ AREPLAY %vd([DIV2_P_1 0 DIV2_N_1 0]) REPLAYMODEL
+-.model REPLAYMODEL filesource (file="replay_unloaded_tpn.data" amploffset=[0 0] amplscale=[1 1] timeoffset=0 timescale=1 timerelative=false amplstep=false)
++.model REPLAYMODEL filesource (file="replay_loaded_tpn.data" amploffset=[0 0] amplscale=[1 1] timeoffset=0 timescale=1 timerelative=false amplstep=false)
+ 
+ * Supply Stimulus (Copied from tb_full_array_code0_modelvalid_2x8_900ua.cir lines 83, 85)
+ V_VCC_HBT VCC_HBT 0 DC 2.500
+@@ -35,7 +35,7 @@
+   pre_osdi $PDK_ROOT/libs.tech/ngspice/osdi/psp103_nqs.osdi
+   save all
+   tran 2p 4.0n
+-  write raw_tb_p1_cml_div2_front_unloaded_replay_tran_v2.raw all
++  write raw_tb_p1_cml_div2_front_loaded_replay_tran_v2.raw all
+   quit
+ .endc
+ 

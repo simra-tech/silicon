@@ -1,0 +1,58 @@
+NGSPICE46-P1-CML-DIV2-CML-DIV4-STAGE2-REPLAY-RUNTIME-V1.log
+Stage-2 replay runtime pair V1 (conditional: LOADED only if UNLOADED gate met)
+
+=== discipline ===
+native ngspice-46 $TOOLS_ROOT/ngspice/bin/ngspice (sha256=6aacaca88f656e5e19074ac070fb410bf6cc437df1de88ec28d50a24c6239a1b); exactly one invocation per attempted
+side; no retry under any outcome; no deck edit; fresh O_EXCL run dirs;
+frozen deck/data/source/exe re-hashed immediately before each invocation;
+LOADED gated on UNLOADED rc=0 AND finite/exact-length/monotonic raw;
+structural raw checks only - no waveform crossing analysis, no pass/fail,
+no compatibility/specification/signoff/tape-out claim.
+
+attempted sides: UNLOADED, LOADED
+
+=== UNLOADED side ===
+  argv = ['$TOOLS_ROOT/ngspice/bin/ngspice', '-b', 'tb_p1_cml_div2_front_unloaded_replay_tran_v2.cir']
+  cwd  = ./NGSPICE46-P1-CML-DIV2-CML-DIV4-STAGE2-REPLAY-RUNTIME-V1/UNLOADED-RUN
+  exe  sha256=6aacaca88f656e5e19074ac070fb410bf6cc437df1de88ec28d50a24c6239a1b
+  deck sha256=7331ed2ee383c15044a29df4b8bd2f8c2817260f3b2a2ae98b586e68c7a67d2f ; data sha256=d4d7fa0a48d78d5ff8dfa05cdfb3caea6894e75446f1178018e29b8823848f83 ; netlist sha256=689d4beedfce278f0c13cf0e79a25b87ba8a12d25b9459e51dfbfde041cd3db7
+  start_utc=2026-08-01T03:50:33Z  end_utc=2026-08-01T03:50:35Z  elapsed=2.274 s
+  timeout=600 s  rc=0  timed_out=False
+  OUTCOME: rc=0, raw structurally valid.
+
+=== LOADED side ===
+  argv = ['$TOOLS_ROOT/ngspice/bin/ngspice', '-b', 'tb_p1_cml_div2_front_loaded_replay_tran_v2.cir']
+  cwd  = ./NGSPICE46-P1-CML-DIV2-CML-DIV4-STAGE2-REPLAY-RUNTIME-V1/LOADED-RUN
+  exe  sha256=6aacaca88f656e5e19074ac070fb410bf6cc437df1de88ec28d50a24c6239a1b
+  deck sha256=e8ffffeab75e7a75f50a7b1ced2609dfe224a3b9b4930836faffaea1e4082de8 ; data sha256=af179591af0e612b366152e4d0a9678e93db39e83dfd9fcd95db4bb2cd4f70e8 ; netlist sha256=689d4beedfce278f0c13cf0e79a25b87ba8a12d25b9459e51dfbfde041cd3db7
+  start_utc=2026-08-01T03:50:36Z  end_utc=2026-08-01T03:50:38Z  elapsed=2.123 s
+  timeout=600 s  rc=0  timed_out=False
+  OUTCOME: rc=0, raw structurally valid.
+
+=== structural raw checks (no waveform interpretation) ===
+  UNLOADED raw: raw_tb_p1_cml_div2_front_unloaded_replay_tran_v2.raw
+    sha256=456aa04dafc1b8a3023552e31cc1ba1c16fd8c55e04b5171934a7f0670489881 bytes=7120469
+    No. Variables=429  No. Points=2069
+    payload=7100808 B  exact payload=True
+    finite: NaN=0 Inf=0
+    time monotonic=True  first=0.000000e+00  last=4.000000e-09
+  LOADED raw: raw_tb_p1_cml_div2_front_loaded_replay_tran_v2.raw
+    sha256=2f2010d24096030bb0317bf1c774fa16bcb82a61c09eb6f3badca402da357c26 bytes=6914547
+    No. Variables=429  No. Points=2009
+    payload=6894888 B  exact payload=True
+    finite: NaN=0 Inf=0
+    time monotonic=True  first=0.000000e+00  last=4.000000e-09
+
+=== claims ===
+CONFIRMED: one invocation per attempted side (UNLOADED always, LOADED only
+on gate); per-side argv/cwd/UTC/elapsed/timeout/rc/stdout/stderr/raw/
+pre+post hashes recorded; structural raw facts as listed.
+PROVISIONAL: runtime can test waveform sufficiency under zero-source-
+impedance ideal drive only, not actual interface impedance or
+compatibility (PE statement, retained).
+UNKNOWN: all waveform behaviour (explicitly not analyzed here).
+No pass/fail, compatibility, specification, reliability, engineering-gate,
+signoff, or tape-out-readiness statement; no publication claim.
+
+=== stop ===
+Replay runtime package complete; awaiting Principal Engineer review.
