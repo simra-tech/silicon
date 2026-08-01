@@ -1,0 +1,42 @@
+* Physical-Model Candidate V5 Stage-2-Only Exact-Waveform Replay Deck - LOADED-NORMALIZED arm (PROVISIONAL)
+* Replays the LOADED stage-1 waveform pair v(div2_p_1)/v(div2_n_1) from raw 2f2010d24096030bb0317bf1c774fa16bcb82a61c09eb6f3badca402da357c26 with differential gain normalized to the unloaded input p2p (K = unloaded_p2p/loaded_p2p); common mode unchanged (PROVISIONAL)
+* PROVISIONAL_DIAGNOSTIC_CONDITION: no external load, no reset, no .ic, no .nodeset
+* tran 2p 4.0n stop = 4.0 ns, identical to the matched pair runtime
+
+* Exact PDK Corner Library Models (Lineage from tb_chunk0_27c.cir lines 2..7)
+.lib $PDK_ROOT/libs.tech/ngspice/models/cornerHBT.lib hbt_typ
+.lib $PDK_ROOT/libs.tech/ngspice/models/cornerRES.lib res_typ
+.lib $PDK_ROOT/libs.tech/ngspice/models/cornerCAP.lib cap_typ
+.lib $PDK_ROOT/libs.tech/ngspice/models/cornerMOShv.lib mos_tt
+.lib $PDK_ROOT/libs.tech/ngspice/models/cornerMOSlv.lib mos_tt
+.lib $PDK_ROOT/libs.tech/ngspice/models/cornerDIO.lib dio_tt
+
+* Include Standalone CML Divide-by-2 Candidate V5 Netlist Copy (byte-identical)
+.include p1_cml_div2_front_integrated_sinks.spice
+
+* Stage-2 only: one byte-identical frozen V5 stage (XSTAGE2 line identical to experiment)
+XSTAGE2 DIV4_P DIV4_N DIV2_P_1 DIV2_N_1 VCC_HBT VSS p1_cml_div2_front
+
+* Official ngspice-46 XSPICE filesource two-output A-device (manual example
+* 'a8 %vd([1 0 2 0]) filesrc'; ZERO source impedance; linear interpolation)
+AREPLAY %vd([DIV2_P_1 0 DIV2_N_1 0]) REPLAYMODEL
+.model REPLAYMODEL filesource (file="replay_loaded_normalized_tpn.data" amploffset=[0 0] amplscale=[1 1] timeoffset=0 timescale=1 timerelative=false amplstep=false)
+
+* Supply Stimulus (Copied from tb_full_array_code0_modelvalid_2x8_900ua.cir lines 83, 85)
+V_VCC_HBT VCC_HBT 0 DC 2.500
+V_VSS VSS 0 DC 0.000
+
+* No external load sources, no reset, no .ic, no .nodeset (PROVISIONAL_DIAGNOSTIC_CONDITION)
+
+.options savecurrents
+
+.control
+  pre_osdi $PDK_ROOT/libs.tech/ngspice/osdi/psp103.osdi
+  pre_osdi $PDK_ROOT/libs.tech/ngspice/osdi/psp103_nqs.osdi
+  save all
+  tran 2p 4.0n
+  write raw_tb_p1_cml_div2_front_loaded_normalized_replay_tran_v1.raw all
+  quit
+.endc
+
+.end
