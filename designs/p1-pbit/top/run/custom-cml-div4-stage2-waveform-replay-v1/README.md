@@ -82,6 +82,22 @@ the original interstage impedance, and are not a pass/fail or compatibility
 result. The preserved self-check's opening docstring says "13 fields"; its
 executed assertion and the sealed TSV correctly use 12 fields.
 
+## Crossing topology addendum
+
+`analysis/crossing-topology-v1/` partitions each arm's closed 2-to-4 ns
+window at the ten input-differential crossings. Its 57-row table contains 22
+interval records and all 35 output-crossing records with exact brackets,
+nearest-input timing, and interpolated input/output common mode. A separate
+package-relative verifier reproduces every row directly from the published
+raws.
+
+The unloaded output has one crossing in intervals 2, 4, 6, and 8 and one in
+the post fragment. The loaded output has 2-to-4 crossings in every
+between-input interval and two in the post fragment. These are timing and
+common-mode observations under ideal zero-source-impedance replay. They do
+not identify ringing or oscillation, establish cause or compatibility, or
+close the P1 gate.
+
 ## Correction history
 
 `corrections/v2-overbroad/` correctly records the three-invocation chronology
