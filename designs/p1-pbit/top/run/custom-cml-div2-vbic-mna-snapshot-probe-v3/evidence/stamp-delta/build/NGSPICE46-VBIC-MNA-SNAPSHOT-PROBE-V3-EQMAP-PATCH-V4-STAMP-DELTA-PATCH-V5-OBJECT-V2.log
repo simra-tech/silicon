@@ -1,0 +1,62 @@
+NGSPICE46-VBIC-MNA-SNAPSHOT-PROBE-V3-EQMAP-PATCH-V4-STAMP-DELTA-PATCH-V5-OBJECT-V1.log
+Object-only build report (no archive mutation, link, invocation, deck, simulation)
+
+=== trees ===
+Control = exact EQMAP V4: cktdefs.h 6e180f74..., niiter.c b3117492..., vbicload.c 59d87567...
+Experiment = V4 086461c0 then V5 279bfdb2 applied exactly once each; end identities:
+  src/include/ngspice/cktdefs.h be6f76e790ba2acd9261da7f862c46fbc7c90704c40c89d1bb91d26aeb2175fa
+  src/maths/ni/niiter.c efd0eb3b7a1ce64407ce88dd1a467cf231eef356f0e1d2242eb4a0df0419ebb3
+  src/spicelib/devices/vbic/vbicload.c c73eef5c6e16b743515398458f9aba0f200b83acae78421fbfbcf1f33fdb9082
+control verified exact: True
+
+=== applies (raw argv/stdout/stderr/rc in the raw dir) ===
+V4: rc=0 stdout=patching file src/include/ngspice/cktdefs.h | patching file src/maths/ni/niiter.c | patching file src/spicelib/devices/vbic/vbicload.c
+V5: rc=0 stdout=patching file src/maths/ni/niiter.c
+
+=== object jobs (accepted configured KLU argv; tree include first) ===
+compiler: gcc (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0
+exp-niiter: rc=0 time=0.2352s warnings=0 errors=0
+  7fdac54b781cc2d2987edba0d8b482a6b5931096f1e831162ec45af2cc87dec8  13424 bytes
+  stderr: (empty)
+exp-vbicload: rc=0 time=1.8612s warnings=0 errors=0
+  5832c9420d008121c51a43eac2f0d72ceb9706c10fa65c9aff0c14e8a2f4f6d7  142088 bytes
+  stderr: (empty)
+ctl-niiter: rc=0 time=0.2224s warnings=0 errors=0
+  9a54a5b5e7fe392e9a41f1c9e1e279fcc55868d85281afeb752ff80a9ee3a6c5  11208 bytes
+  stderr: (empty)
+ctl-vbicload: rc=0 time=1.8935s warnings=0 errors=0
+  70159e1dded1d9e860384f937427ac9e4f5d6d374024d5d196a23dcd8f4fabae  141520 bytes
+  stderr: (empty)
+
+=== undefined-symbol deltas (explained from the exact source) ===
+exp-niiter - ctl-niiter: EMPTY (the V4/V5 niiter changes use only existing symbols:
+  fprintf/stderr, the existing CKT fields, memset - no new undefined symbol)
+exp-vbicload - ctl-vbicload: ['SMPfindElt'] (the V4 pre/post capture blocks call the read-only
+  SMPfindElt(...,0) lookup - a legitimate new undefined symbol in the diagnostic
+  VBIC object; declared in smpdefs.h:81, resolved at link time, not an archive change)
+
+=== Stamp Delta format families (present only where the source requires) ===
+exp-niiter: ['[STAMPDELTA_BEGIN]', '[STAMPDELTA]', '[STAMPDELTA_RHS]', '[STAMPDELTA_END]', '[STAMPDELTA_ABORT]']
+exp-vbicload: NONE
+ctl-niiter: NONE
+ctl-vbicload: NONE
+(the emission sites are in the applied niiter.c only; the vbicload capture blocks
+write diagnostic context fields and contain no STAMPDELTA format strings)
+
+=== sources/headers unchanged; outputs only ===
+exp tree: True (only niiter.o, .deps/niiter.Tpo, vbicload.o, .deps/vbicload.Tpo added)
+ctl tree: True
+
+=== scope ===
+Object compilation is not runtime evidence; no archive mutation, link, invocation,
+deck access, or simulation.
+
+=== claims ===
+CONFIRMED: metadata correction note created first; fresh full configured trees;
+control exact EQMAP V4; experiment ends at the accepted identities; 4/4 object jobs
+rc=0 with zero warnings/errors; object hashes/sizes retained; symbol deltas
+explained (exp-vbicload adds only SMPfindElt; exp-niiter adds none); STAMPDELTA
+families present only in exp-niiter (the emission source); sources/headers
+unchanged; outputs only the requested objects and dependency files.
+PROVISIONAL: the (100,2) first-field-real interpretation remains provisional; object
+existence is not runtime evidence.

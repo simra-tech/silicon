@@ -2,7 +2,7 @@
 
 ## Scope
 
-This package preserves the source, matched build boundary, paired native ngspice runs, full sparse MNA snapshot, solver-residual reconstruction, runtime equation-name map, and equation-100 contribution join for Candidate V5's VBIC thermal-node investigation.
+This package preserves the source, matched build boundary, paired native ngspice runs, full sparse MNA snapshot, solver-residual reconstruction, runtime equation-name map, equation-100 contribution join, and the follow-on target-instance stamp-delta investigation for Candidate V5's VBIC thermal-node investigation.
 
 The diagnostic captures one event at thermal-node equation 100, iteration 3, simulation time zero, mode 1056. It records the assembled sparse matrix and right-hand side immediately before the solver and the complete solution vector immediately after it. The base and patched executables then run the same frozen 4 ns deck.
 
@@ -90,7 +90,31 @@ The fail-closed source-only dispositions are:
 
 These labels classify static write-chain authority. They do not measure the numerical contribution made at the captured event and do not establish a causal device mechanism.
 
-The retained next-experiment contract is a target-instance-only before/after delta probe for equation 100, equation 2 if an existing entry can be read without sparse-element creation, and RHS(100). No such patch, build, invocation, or simulation is included in this package.
+The retained V1 authority log contains one false coordinate sentence: `0x1.6e3c934a4385ep-28` is the `(100,99)` entry, not `(100,2)`; `(100,2)` is zero. `evidence/stamp-delta/analysis/NGSPICE46-VBIC-MNA-SNAPSHOT-PROBE-V3-VBIC-TEMP-STAMP-AUTHORITY-V1-CORRECTION-V1.log` retracts only that sentence. The source-supported `NOT_BOUND` disposition for equation 2 is unchanged.
+
+The retained next-experiment contract was a target-instance-only before/after delta probe for equation 100, equation 2 if an existing entry could be read without sparse-element creation, and RHS(100). The follow-on section below preserves that experiment and its correction history.
+
+## Stamp-delta follow-on
+
+The retained next experiment was completed after five source revisions. V1 had malformed hunk counts, V2 was not exact-event gated, and V3 was hand-authored with mismatched hunk headers. V4 is the mechanically generated exact-event design. V5, SHA-256 `279bfdb281bc7c8bb84ad864881ab3c73e8332124b6b38257abc80688513bae7`, corrects V4's diagnostic-context lifetime by clearing `CKTdiagctx` immediately after the synchronous `CKTload` call returns. The accepted experiment is V4 plus V5; every earlier patch and correction remains under `evidence/stamp-delta/`.
+
+The first V5 executable was assembled by a partial object/archive relink. Two preserved experiment invocations both exited 139 before emitting any STAMPDELTA record, while their controls completed and reproduced the accepted waveform payload. The read-only ABI audit then proved that the executable mixed two `CKTcircuit` layouts: the structure grew from 968 to 976 bytes, and every field after the inserted pointer shifted by eight bytes, while retained objects still used the old layout. The exact instruction-to-source crash chain remains provisional; the package does not promote the unsupported `SMPfindElt` null-dereference candidate to a root cause.
+
+The corrective build used fresh configured trees and `make -j1 V=1 all` on both sides. All 2,874 objects on each side were rebuilt after their respective header. The control executable exactly reproduced SHA-256 `c865f1bf2ea99bc684b9e40342cfd6565f6bc995fb47c748474aceb5ef384045`; the coherent-layout experiment executable is `4bf27ba5aae5b11ae0b8adebc6dd6eb8f6b109663e595d4ba6c23c7b647482d3`. The executables themselves are not published. The retained `--version` pair proves loader/startup only and is not circuit evidence.
+
+The accepted full-rebuild runtime report is `evidence/stamp-delta/runtime/NGSPICE46-VBIC-MNA-SNAPSHOT-PROBE-V3-EQMAP-PATCH-V4-STAMP-DELTA-PATCH-V5-FULL-REBUILD-RUNTIME-V1.log`. A two-phase harness invoked exactly one control and one experiment, then performed a read-only recount. Both invocations returned zero. Each raw output contains 429 variables by 2,284 points, all values are finite, time is strictly increasing from 0 to 4 ns, and both binary data regions have SHA-256 `26c62c1942b552ae609f6eb57e9746ee30ad77b7a5c6e433c118ddd965de3de7`. Their full files differ only in non-payload header metadata. Removing exactly five STAMPDELTA lines makes experiment stderr byte-identical to control stderr.
+
+At the accepted MNA/EQMAP event `(id=1, tnode=100, iterno=3, time=0, mode=1056)`, the experiment emits one complete family: BEGIN, matrix columns 100 and 2, RHS, and END, with `expected=3` and `emitted=3`. The verbatim deltas are:
+
+- column 100: `0x1.fa6f827bccaa1p-12`;
+- column 2: `0x0p+0`;
+- RHS: `0x1.4322d5214a7cfp-5`.
+
+Each emitted delta independently equals post minus pre at the emitted-double representation. This is structural diagnostic evidence at one event. It does not by itself assign a physical mechanism, evaluate a circuit measurement, satisfy a specification, show a design improvement, or support signoff or tape-out readiness.
+
+The accepted read-only interpretation is `evidence/stamp-delta/analysis/NGSPICE46-VBIC-MNA-SNAPSHOT-PROBE-V3-EQMAP-PATCH-V4-STAMP-DELTA-PATCH-V5-INTERPRETATION-V2.log`, SHA-256 `bbc4436b327bcb513c4093375260dde35af5526929c911c39d5d2e8b928688ad`. It confirms that the bracketed target-VBIC load contributed the observed column-100 delta at the accepted event and exactly zero to `(100,2)`. For RHS(100), it confirms only the bracketed delta and its numerical equality to the final prefactor RHS value. A zero pre-value means the target bracket began from zero; it does not exclude later nonzero contributions that cancel. Both event-local sole ownership and global RHS ownership are therefore **NOT ESTABLISHED**.
+
+Interpretation V1, SHA-256 `ddbcc9cd31cfcdcbdb33949b9a80ab31bf8f479493ac99b1ad4cc797ab788144`, is preserved as **RESERVED** because it incorrectly claimed event-local sole RHS ownership. `INTERPRETATION-V1-CORRECTION-V1` retracts that sentence, and V2 carries the corrected wording. The column-100 and column-2 arithmetic is unchanged.
 
 ## Preserved failed attempts
 
@@ -98,8 +122,10 @@ The retained next-experiment contract is a target-instance-only before/after del
 
 The V1 paired runtime directories are not duplicated here: both completed captures, but the wrapper failed afterward and wrote no final V1 log. Runtime V4 identifies that retained attempt and the accepted V2 captures. LINK-V3's partial raw directory likewise remains in the design workspace and is identified by LINK-V4; it has no final log to publish.
 
+For the stamp-delta follow-on, both mixed-layout crash attempts are retained as compact `rc`, timing, stdout, and stderr evidence. Core files are excluded because they can contain unrestricted process memory; the sanitized read-only GDB summaries are retained instead. The two failed control raw files are not duplicated because the accepted analysis already binds their data-region identity. The corrected full-rebuild pair includes both complete raw outputs with the existing frozen deck and dependency manifest as authority.
+
 ## Package boundary
 
 `RESULT-SUMMARY.tsv` separates execution, evidence validity, comparison, mapping, measurement, and specification dispositions. `PUBLISH-MANIFEST.tsv` covers every published payload except itself, whose self-hash would be recursive.
 
-Compiled objects, archives, executables, private PDK files, credentials, cookies, prompts, transcripts, private reasoning, absolute host paths, symlinks, and executable-mode files are excluded. The equation-map runtime subdirectories contain only the deck-backed captures (`rc`, `times`, stdout, stderr, and binary raw output); the existing sanitized deck and dependency manifest remain their authority.
+Compiled objects, archives, executables, core dumps, private PDK files, credentials, cookies, prompts, transcripts, private reasoning, unrestricted environment logs, absolute host paths, symlinks, and executable-mode files are excluded. Runtime subdirectories contain only selected deck-backed captures (`rc`, `times`, stdout, stderr, and, for accepted pairs, binary raw output); the existing sanitized deck and dependency manifest remain their authority. Sanitized copies are bound to their originals in `PUBLIC-COPY-IDENTITIES.tsv`.

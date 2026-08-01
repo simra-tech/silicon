@@ -1,0 +1,16 @@
+NEW (applied be6f76e7) line 183: void *CKTdiagctx;           /* [EQMAP-PATCH-V4-STAMP-DELTA-V4] circuit-keyed
+NEW line 181 (CKTmode):   long CKTmode;               /* Mode of operation of the circuit
+NEW line 221 (CKTbypass): int CKTbypass;              /* bypass option, how does it work ?  */
+OLD line 165 (CKTmode):   long CKTmode;               /* Mode of operation of the circuit
+OLD line 201 (CKTbypass): int CKTbypass;              /* bypass option, how does it work ?  */
+V4 patch insertion line: +    void *CKTdiagctx;           /* [EQMAP-PATCH-V4-STAMP-DELTA-V4] circuit-keyed
+V4 patch hunk context (first 400 chars):
+@@ -63,6 +63,22 @@
+     PARM_NODETYPE,
+ };
+ 
++/* [EQMAP-PATCH-V4-STAMP-DELTA-V4] circuit-keyed diagnostic capture context.
++ * Armed by NIiter immediately before the intended CKTload (authoritative next
++ * iteration (iterno+1)==vtp_snap_iter plus the accepted time/mode/target
++ * conditions); filled by the target VBIC load block (no emission); committed or
++ * discarded by NIiter only after a suc

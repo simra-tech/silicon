@@ -1,0 +1,26 @@
+NGSPICE46-VBIC-MNA-SNAPSHOT-PROBE-V3-EQMAP-PATCH-V4-STAMP-DELTA-PATCH-V5-LINK-V4-DISPOSITION-CORRECTION-V1.log
+LINK-V4 reserved as an execution/reporting retry; every LINK-V4 artifact preserved.
+
+Bound identities:
+  LINK-V4 report 23cf96d195cd8fdf40109cc1667ac57d3b1c1134ff3fcb0ba199b5f17dd826ab
+    bytes=6466 wc-l=85
+  LINK-V4 audit  830ba2b1a3fce90a5959f8bc9296abf5d2c9b0165fe10f1f319f1374bd98035c
+    bytes=3551 wc-l=44
+  LINK-V4 raw dir (44 files) preserved.
+
+Reason (reviewer-confirmed root cause): LINK-V4 does not satisfy the control-
+reproduction boundary and its 'authoritative command reused verbatim' claim is
+false for the VBIC archive: retained control libvbic.a 981f8897... and rebuilt
+01cad8c5... have identical member sets, sizes, and per-member hashes but different
+ORDER. Retained/configured order:
+  vbic.o vbicacld.o vbicask.o vbicconv.o vbicgetic.o vbicinit.o vbicload.o
+  vbicmask.o vbicmpar.o vbicnoise.o vbicparam.o vbicpzld.o vbicsetup.o
+  vbicsoachk.o vbictemp.o vbictrunc.o vbicbindCSC.o   (vbicbindCSC.o LAST)
+LINK-V4 alphabetized the filesystem and placed vbicbindCSC.o fourth.
+With the configured order, the control archive reproduces
+  981f8897a6cce005a6fc41c18e28333b5795a349bcf75e497888b56e5b9439af byte-for-byte.
+
+=== claims ===
+CONFIRMED: the binding above; originals preserved, not overwritten; the mechanism
+is no longer provisional (archive member ORDER).
+PROVISIONAL: none.

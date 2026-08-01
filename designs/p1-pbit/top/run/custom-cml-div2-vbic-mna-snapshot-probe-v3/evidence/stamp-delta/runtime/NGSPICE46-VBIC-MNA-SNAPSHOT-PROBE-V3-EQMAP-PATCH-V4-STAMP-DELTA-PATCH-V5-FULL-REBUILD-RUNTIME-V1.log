@@ -1,0 +1,59 @@
+NGSPICE46-VBIC-MNA-SNAPSHOT-PROBE-V3-EQMAP-PATCH-V4-STAMP-DELTA-PATCH-V5-FULL-REBUILD-RUNTIME-V1.log
+One matched frozen-deck pair (full-rebuild executables) - structural runtime
+evidence only; two-phase harness
+
+=== EXECUTION (Phase A) ===
+exactly two native circuit invocations, control first then experiment (Phase A had
+no parser/recount/report/retry path):
+  control:    (cd <control-run> && LC_ALL=C timeout 60s <full-rebuild-control-tree>/src/ngspice -b tb_p1_cml_div2_front_tran_v5.cir < /dev/null) rc=0
+  experiment: (cd <experiment-run> && LC_ALL=C timeout 60s <full-rebuild-experiment-tree>/src/ngspice -b tb_p1_cml_div2_front_tran_v5.cir < /dev/null) rc=0
+sealed invocation manifest: see ...-RUNTIME-V1-INVOCATION-MANIFEST.log
+
+=== EVIDENCE VALIDITY ===
+executables pre-hashed: control c865f1bf/8,054,352B; experiment 4bf27ba5/8,058,448B;
+frozen 35-entry manifest 32cc8891 (deck 46e7f223, netlist 689d4bee) copied + hash-
+verified into both fresh O_EXCL run dirs; no hardlinked writable outputs;
+post-invocation: executables and immutable inputs unchanged; captures create-
+exclusive; outputs never read while their write handles were open; Phase B is
+read-only with no subprocess path to either executable.
+
+=== COMPARISON ===
+binary raw (both sides): 429 header variable rows; Binary: marker at byte 18781; payload
+  7838688 bytes asserted BEFORE unpack (= 429 x 2284 x 8); all 979836 doubles finite; strict
+  monotonic 0 -> 4ns time (control=True experiment=True)
+  data-region sha256=26c62c1942b552ae609f6eb57e9746ee30ad77b7a5c6e433c118ddd965de3de7 byte-identical=True
+stderr: experiment minus the 5 STAMPDELTA lines == control byte-for-byte: True
+stdout: differs ONLY at line 122 (wall-clock Reference progress print); the raw data
+  regions are byte-identical, so the difference is the documented wall-clock
+  artifact
+
+=== diagnostics (both sides) ===
+MNA_SNAPSHOT: control=4000 lines, experiment=4000 lines (complete accepted structure)
+VBIC marker families: 8 distinct each side, identical set ([VBIC_IBE_SOURCE_DIAGNOSTIC] [VBIC_ITH_RHS_DECOMP_DIAGNOSTIC] [VBIC_ITH_TERM_DIAGNOSTIC] [VBIC_TEMPNODE_STAMP_DIAGNOSTIC] [VBIC_TEMP_SCALE_DIAGNOSTIC] [VBIC_THERMAL_VECTOR_PROBE] [VBIC_VRTH_ORIGIN_DIAGNOSTIC] [VBIC_VRTH_TRANSITION_DIAGNOSTIC])
+EQMAP: control BEGIN/rows/END=1/13/1 set_exact=True; experiment=1/13/1 set_exact=True
+event identity: MNA control=('1', '100', '3', '0x0p+0', '1056') MNA experiment=('1', '100', '3', '0x0p+0', '1056') (accepted=('1', '100', '3', '0x0p+0', '1056'))
+no GUARD/UNSUPPORTED/ABORT: control=True experiment=True
+
+=== STAMPDELTA (structural) ===
+control: 0 records (zero from every family)
+experiment: BEGIN=1 matrix rows=2 (col order ['100', '2']) RHS=1 END=1 ABORT=0; expected=3/emitted=3: True
+event identity on every record: ('1', '100', '3', '0x0p+0', '1056') (matches the accepted MNA/EQMAP event: True)
+
+=== STAMPDELTA pre/post/delta (verbatim hex floats) ===
+  col=100 pre=0x1.12e0be826d695p-30 post=0x1.fa6fc733fc4abp-12 delta=0x1.fa6f827bccaa1p-12
+  col=2 pre=0x0p+0 post=0x0p+0 delta=0x0p+0
+  RHS     pre=0x0p+0 post=0x1.4322d5214a7cfp-5 delta=0x1.4322d5214a7cfp-5
+each emitted delta == post-pre at the emitted-double representation (independent): True
+No field-meaning, ownership, causality, or real/imaginary inference is drawn.
+
+=== MEASUREMENT ===
+NOT evaluated (no spec limits applied to any value).
+=== SPECIFICATION ===
+NOT evaluated. No signoff or tape-out-readiness claim.
+
+=== claims ===
+CONFIRMED: two-phase harness (Phase A invocation-only, Phase B read-only); exactly
+two invocations rc=0; all recounts pass (raw structure, diagnostics, EQMAP 1/13/1,
+event identity, STAMPDELTA structure with expected/emitted=3, pre/post/delta
+consistency, stderr and data-region comparisons); outputs O_EXCL after Phase B.
+PROVISIONAL: none.

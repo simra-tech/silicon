@@ -1,0 +1,48 @@
+NGSPICE46-VBIC-MNA-SNAPSHOT-PROBE-V3-EQMAP-PATCH-V4-STAMP-DELTA-PATCH-V5-RUNTIME-ANALYSIS-V1.log
+Analysis-only dual-pair recount (no ngspice invocation; read-only)
+
+=== EXECUTION COUNT (corrected) ===
+Two completed run pairs total: RUNTIME-V1 pair and RUNTIME-V2 pair = two control
+and two experiment native circuit invocations. The no-retry boundary was exceeded
+before the parser failures; NOTHING further is invoked. V1 and V2 are reserved as
+execution retries; no value selection is made between them.
+
+=== PAIR V1 ===
+control: rc=0; raw=7857477B; header Binary: marker at byte 18781; nvar=429; payload=7838688B
+  payload==429x2284x8=True; all-finite=True; time strict monotonic 0->4ns=True; data-region sha256=26c62c1942b552ae609f6eb57e9746ee30ad77b7a5c6e433c118ddd965de3de7
+  MNA lines=4000; VBIC markers=11 distinct; EQMAP BEGIN/rows/END=1/13/1 set_exact=True;
+  event identity=('1', '100', '3', '0x0p+0', '1056') (accepted=('1', '100', '3', '0x0p+0', '1056')); guards=0; STAMPDELTA records=0 (control must be zero)
+experiment: rc=b'139'; segmentation-fault evidence=True; raw written=False; STAMPDELTA records=0
+
+=== PAIR V2 ===
+control: rc=0; raw=7857477B; header Binary: marker at byte 18781; nvar=429; payload=7838688B
+  payload==429x2284x8=True; all-finite=True; time strict monotonic 0->4ns=True; data-region sha256=26c62c1942b552ae609f6eb57e9746ee30ad77b7a5c6e433c118ddd965de3de7
+  MNA lines=4000; VBIC markers=11 distinct; EQMAP BEGIN/rows/END=1/13/1 set_exact=True;
+  event identity=('1', '100', '3', '0x0p+0', '1056') (accepted=('1', '100', '3', '0x0p+0', '1056')); guards=0; STAMPDELTA records=0 (control must be zero)
+experiment: rc=b'139'; segmentation-fault evidence=True; raw written=False; STAMPDELTA records=0
+
+=== AGREEMENT ACROSS THE TWO PAIRS ===
+control raw files byte-identical: False (sha b7dc1bbe3ea951fbceb1b3a60e35fafe91eaf17551beea708b74b04109e2c81f both)
+control data regions byte-identical: True (sha256=26c62c1942b552ae609f6eb57e9746ee30ad77b7a5c6e433c118ddd965de3de7)
+control stderr streams byte-identical: True
+STAMPDELTA hex-float records: both experiments produced ZERO records (both crashed
+  before emission) - the required col=100/col=2/RHS pre/post/delta fields exist in
+  neither pair; agreement is vacuous on an empty set: True
+experiment crash agreement: both rc=139 with segmentation-fault evidence: True
+
+=== MEASUREMENT / SPECIFICATION ===
+NOT evaluated. No numerical interpretation, specification, signoff, or tape-out-
+readiness claim.
+
+=== claims ===
+CONFIRMED: corrected execution count (two control + two experiment invocations
+across the V1 and V2 pairs); read-only analysis with no invocation and no run
+artifact modified; the exact existing Binary: header marker detected read-only in
+both control raws; both pairs recounted independently; the two controls agree
+byte-for-byte (raw files, data regions, stderr streams); both experiments crashed
+rc=139 before any STAMPDELTA emission (zero records on both); V1/V2 reserved as
+execution retries without value selection; outputs O_EXCL; external identities
+reported after close.
+PROVISIONAL: the experiment crash root cause remains undiagnosed; the STAMPDELTA
+hex-float records were never produced (the required structural evidence was not
+obtained).

@@ -1,0 +1,36 @@
+NGSPICE46-VBIC-MNA-SNAPSHOT-PROBE-V3-EQMAP-PATCH-V4-STAMP-DELTA-PATCH-V5-LINK-V5-AUDIT.log
+Order-correct link audit
+
+=== disposition ===
+afb0afa4c8d61967a4d3ec3a0f396ae1d4a73824a161003050078c8e0879c231
+LINK-V4 reserved (report 23cf96d1 / audit 830ba2b1 / 44 raws preserved); order root
+cause bound: retained/configured VBIC member order has vbicbindCSC.o LAST; LINK-V4
+alphabetized and placed it fourth; with the configured order the control archive
+reproduces 981f8897a6cce005a6fc41c18e28333b5795a349bcf75e497888b56e5b9439af.
+
+=== flows and gates ===
+control libni gate: 7a5a274e20feda18a100faba64a911b960681c601ea0417d0185bd6ec04c2b4a (PASS)
+control libvbic gate: 981f8897a6cce005a6fc41c18e28333b5795a349bcf75e497888b56e5b9439af (PASS)
+control exe gate: c865f1bf2ea99bc684b9e40342cfd6565f6bc995fb47c748474aceb5ef384045 (PASS)
+experiment linked after control reproduction: True
+control-libni rc=0 time=0.3174s stdout=337B/4L stderr=0B/0L
+control-libvbic rc=0 time=0.3630s stdout=414B/4L stderr=0B/0L
+control-ngspice rc=0 time=4.4966s stdout=3056B/1L stderr=0B/0L
+experiment-libni rc=0 time=0.3157s stdout=337B/4L stderr=0B/0L
+experiment-libvbic rc=0 time=0.3543s stdout=414B/4L stderr=0B/0L
+experiment-ngspice rc=0 time=4.4869s stdout=3056B/1L stderr=0B/0L
+
+=== member deltas ===
+libni: order-identical=True changed-members=['niiter.o']
+libvbic: order-identical=True changed-members=['vbicload.o']
+
+=== executables ===
+control c865f1bf2ea99bc684b9e40342cfd6565f6bc995fb47c748474aceb5ef384045 (8054352B)
+experiment bc5567d6c93fcfb8423abfc7303bd6140f956f559a1ea9d39a7a536a3637ab26 (8058448B)
+undefined-symbol delta: EMPTY
+SMPfindElt unresolved: False
+STAMPDELTA: experiment 5/5 control 0/5
+
+=== verdict ===
+CONFIRMED: everything above; outputs O_EXCL after the raw recount.
+PROVISIONAL: the (100,2) first-field-real interpretation remains provisional.

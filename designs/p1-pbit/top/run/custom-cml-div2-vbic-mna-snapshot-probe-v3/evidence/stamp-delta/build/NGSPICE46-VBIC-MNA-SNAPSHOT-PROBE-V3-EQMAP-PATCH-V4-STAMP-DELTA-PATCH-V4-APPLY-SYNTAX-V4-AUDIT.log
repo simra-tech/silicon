@@ -1,0 +1,66 @@
+NGSPICE46-VBIC-MNA-SNAPSHOT-PROBE-V3-EQMAP-PATCH-V4-STAMP-DELTA-PATCH-V4-APPLY-SYNTAX-V4-AUDIT.log
+CKTdiagctx lifetime audit + procedure audit (ran BEFORE the compiles; no contradiction)
+
+=== prior attempts preserved ===
+V1: lifetime-check harness bug (first index() hit the earlier CKTload at niiter.c:72;
+  the applied source itself was correct); no compiles ran; trees+raw preserved.
+V2: compiles failed rc=1 because the trees lacked the vbic header set required by
+  the niiter.c relative include (../../spicelib/devices/vbic/vbicdefs.h) and the
+  vbicload.c local include; its report's static claims line contradicted the raw
+  rcs - reserved with all artifacts.
+V3: exp compiles failed rc=1 because the -I order resolved ngspice/cktdefs.h to the
+  accepted tree's UNPATCHED cktdefs.h, shadowing the applied tree's patched copy;
+  control rc=0; reserved with all artifacts.
+
+=== compile-environment headers in the trees (accepted configured identities) ===
+vbicdefs.h 0185f8162e02de0cf9c332bbc827d6e43af9a1c494e8e86642b2d7d8ec57ef9b (asserted)
+vbicext.h bc4843ca858f88f3b0bc09cb51a1e785bca17a649715632948c0c8300c09742e
+vbicinit.h 4c509a66b3f9817856c999715c23334f16982bb9cc0f880ffe0da74dc00d20de
+vbicitf.h 9eb11bed11099a84ee455df354e541073228b24f11103f7082c6c5ae53624a0e
+
+=== lifetime audit results ===
+PASS fresh circuit allocation zeroed: CKTinit TMALLOC(CKTcircuit,1) (cktinit.c:29) | tmalloc uses calloc(num,1) (src/misc/alloc.c:53-70) -> CKTdiagctx NULL at birth
+PASS unconditional CKTdiagctx=NULL before the arm condition (niiter) | applied niiter arm block
+PASS arm sets pointer immediately before the synchronous CKTload | arm->load ordering (distance 63 chars)
+PASS every armed path clears (load-error, snapshot-failure, commit, commit-abort): 4 clear sites | count=4
+PASS capture writes only diagnostic context fields (sd_ctx->...) | pre/post capture blocks
+PASS capture guarded target-instance-only + armed (stamp_diag_active && sd_ctx->armed) | 2 guards
+
+=== allocation zeroing proof ===
+CKTinit (src/spicelib/devices/cktinit.c:29): CKTcircuit *sckt = TMALLOC(CKTcircuit, 1);
+TMALLOC (src/include/ngspice/memory.h:6) -> tmalloc; tmalloc (src/misc/alloc.c:53-70)
+uses calloc(num,1) (line 70) -> the fresh CKTcircuit and every field including
+CKTdiagctx are zeroed at birth.
+
+=== pointer lifetime paths (applied source) ===
+birth:      NULL (zeroed allocation)
+unarmed:    NULL (unconditional ckt->CKTdiagctx=NULL before every arm evaluation)
+armed:      &vtp_ctx (stack-local, memset 0) immediately before the synchronous
+            CKTload; non-NULL only across that load; the context stays alive in
+            the same NIiter iteration through commit/discard
+clears:     4 sites - (1) unconditional pre-arm NULL; (2) load-error abort;
+            (3) snapshot-failure abort; (4) successful commit and commit-abort
+            (capture_missing / record_count_incomplete) - every armed path clears
+capture:    vbicload pre/post blocks write ONLY sd_ctx-> diagnostic fields; reads
+            only the existing pointers and SMPfindElt(...,2,0); no SMPmakeElt;
+            guards: sd_ctx != NULL && sd_ctx->armed == 1 && stamp_diag_active
+            (target-instance-only), 2 sites
+
+=== procedure audit ===
+trees: fresh experiment and control from the exact three base sources (hashes
+verified pre-apply); V4 applied exactly once to experiment only (patch --batch -p1,
+rc=0); control byte-exact (all three base hashes unchanged).
+syntax checks: gcc -fsyntax-only with the exact accepted configured KLU flags
+(-DHAVE_CONFIG_H -I. -I. -I../../../src/include -I../../../src/include -O2 -s
+-Wall -Wextra -Wmissing-prototypes -Wstrict-prototypes -Wnested-externs
+-Wold-style-definition -Wredundant-decls -Wconversion -Wno-unused-but-set-variable
+-std=gnu11 -fopenmp), -I../../../src/include mapped to the accepted configured tree;
+no warning flags dropped, no flags changed beyond -c/-o -> -fsyntax-only.
+compiler: gcc (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0
+
+=== verdict ===
+CONFIRMED: lifetime audit passed (no contradiction - compiled); apply rc=0; control
+byte-exact; 4/4 syntax checks rc=0 (niiter.c and vbicload.c, experiment and control);
+all raw outputs O_EXCL and preserved; report/audit created after recounting.
+PROVISIONAL: syntax validity holds for the retained KLU configuration only; the
+(100,2) first-field-real interpretation remains the prior provisional.

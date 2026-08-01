@@ -1,0 +1,29 @@
+NGSPICE46-VBIC-MNA-SNAPSHOT-PROBE-V3-EQMAP-PATCH-V4-STAMP-DELTA-PATCH-V5-RUNTIME-ANALYSIS-CORRECTION-V1.log
+Correction/disposition note binding the three sealed RUNTIME-ANALYSIS-V1 artifacts
+and correcting two false internal statements. Nothing is overwritten or renamed;
+every report, audit, manifest, run dir, stderr, raw, and core is preserved.
+
+Bound identities (sealed, preserved):
+  analysis report  205b4bbcc0e53622b48e8100c0a8faeeb6458ba388a2645502ac89e3abfcf987
+  analysis audit   83f92c35d06c051db011841b8a708374ef1571b9b42715209c44ea9f2aa249e1
+  analysis manifest 83084a48e563af0cba75633abae13dabda0c13e0a2a473483dc2ea463ed5a793
+
+Correction 1 - complete control raw files are NOT byte-identical:
+  V1 control raw = b7dc1bbe3ea951fbceb1b3a60e35fafe91eaf17551beea708b74b04109e2c81f
+  V2 control raw = e75327a4895475c9076e163db176c5415397689666a3a019429582abc7960138
+  both 7,857,477 bytes; the ONLY difference is the Date: header line
+  (Sat Aug 1 00:58:51 2026 vs 00:59:04 2026); headers otherwise identical;
+  the 7,838,688-byte data regions ARE byte-identical at 26c62c19....
+  Therefore the report line 'raw files byte-identical: False (sha b7dc... both)'
+  (the 'both' is false - the V2 sha is e75327a4) and the later CONFIRMED claim
+  that complete raw files agree byte-for-byte are both FALSE. The response
+  summary already stated the correct comparison.
+
+Correction 2 - VBIC marker families:
+  each control stderr has exactly EIGHT distinct [VBIC_*] marker families,
+  one occurrence each, NOT 11 distinct; both control stderr streams are
+  byte-identical at 046259a7....
+
+=== claims ===
+CONFIRMED: the two corrections above; the binding; nothing overwritten.
+PROVISIONAL: none.

@@ -1,0 +1,27 @@
+--- a/src/maths/ni/niiter.c
++++ b/src/maths/ni/niiter.c
+@@ -151,7 +151,9 @@
+              * is stack-local to this iteration and valid through the commit/discard
+              * below. Arm only for the exact accepted next iteration: authoritative
+              * iterno + 1 == vtp_snap_iter plus the same time/mode/target conditions
+-             * as the accepted prefactor snapshot. No emission here. */
++             * as the accepted prefactor snapshot. The pointer is non-NULL only
++             * across the synchronous CKTload below and is cleared unconditionally
++             * immediately when the load returns. No emission here. */
+             ckt->CKTdiagctx = NULL;
+             vtp_diag_ctx_t vtp_ctx;
+             memset(&vtp_ctx, 0, sizeof(vtp_ctx));
+@@ -163,6 +165,13 @@
+                 ckt->CKTdiagctx = (void *) &vtp_ctx;
+             }
+             error = CKTload(ckt);
++            /* [EQMAP-PATCH-V4-STAMP-DELTA-V5-CLEAR-AFTER-LOAD] unconditional
++             * immediate post-load clear: the circuit-keyed diagnostic pointer
++             * is non-NULL only across the synchronous CKTload above. From here
++             * on the commit/discard logic uses only the stack-local vtp_ctx
++             * (and its armed bit), which remains available through the
++             * post-load paths below. */
++            ckt->CKTdiagctx = NULL;
+             /* printf("loaded, noncon is %d\n", ckt->CKTnoncon); */
+             /* fflush(stdout); */
+             iterno++;

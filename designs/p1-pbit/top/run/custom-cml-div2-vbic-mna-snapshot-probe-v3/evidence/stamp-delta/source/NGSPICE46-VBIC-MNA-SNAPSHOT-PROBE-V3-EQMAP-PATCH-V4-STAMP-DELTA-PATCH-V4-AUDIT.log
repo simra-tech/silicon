@@ -1,0 +1,96 @@
+NGSPICE46-VBIC-MNA-SNAPSHOT-PROBE-V3-EQMAP-PATCH-V4-STAMP-DELTA-PATCH-V4-AUDIT.log
+Generated-diff source design audit; the patch is NOT applied; nothing compiled,
+linked, or invoked; no deck access, no simulation.
+
+=== prior attempts preserved (unchanged) ===
+V1 340fdef9ff576a13114c4908de83dc174dfb56ca0475d3dec370cbad3466d5bd (malformed hunk
+  counts; never applied)
+V2 8ab097bd2d9f8606a066c2c57f0010fffe0214cb4bcb0d5f0189a11f0103ed27 (count-correct,
+  but not exact-event gated; records lacked id/iterno)
+V3 d97ab00cd6571f3cc91e24b04f68b356ed083967782cbfbacb8ce352c8e76a0e (hand-authored;
+  hunk headers mismatched; builder looped in its checker; no V3 audit)
+
+=== generated-diff procedure ===
+1. Fresh tree A: exact byte-for-byte copies of the three hash-verified bases.
+2. Fresh tree B: the same copies, edited ONLY by unique anchored insertions
+   (8 edits; each anchor asserted unique before replacement).
+3. Patch generated MECHANICALLY: per-file `diff -u --label a/<path> --label
+   b/<path> A/<path> B/<path>`; no hand-authored hunk counts or headers.
+4. Checks: independent terminating hunk parser (advances over non-hunk lines),
+   then `patch --batch --dry-run -p1` against tree C (a second fresh exact
+   tree). Outputs created O_EXCL only after both checks pass.
+
+=== touched-file set (exactly three) ===
+src/include/ngspice/cktdefs.h (typedef + one CKT field)
+src/maths/ni/niiter.c (arm + load-error abort + commit + snapshot-failure discard)
+src/spicelib/devices/vbic/vbicload.c (pre-capture + post-capture)
+
+=== every before/after source hash ===
+before src/include/ngspice/cktdefs.h 6e180f74efdae65793a5b5baa316b8fcd4e59782ed8bda5165dd8cd19b692672
+after  src/include/ngspice/cktdefs.h be6f76e790ba2acd9261da7f862c46fbc7c90704c40c89d1bb91d26aeb2175fa
+before src/maths/ni/niiter.c b3117492d719614381c4580ce6ede6528c3fd2603b02d913b0f93074987d6cc4
+after  src/maths/ni/niiter.c 8ba446cc220067dea01dddd6c4e2719fdf5291c240e9097e9a37f330f2985094
+before src/spicelib/devices/vbic/vbicload.c 59d875679da675ef8daedbd151e91b39b27a13ae197530af40650c62e3e75172
+after  src/spicelib/devices/vbic/vbicload.c c73eef5c6e16b743515398458f9aba0f200b83acae78421fbfbcf1f33fdb9082
+
+=== sparse lookup authority (unchanged acceptance) ===
+SMPfindElt(matrix,row,col,0) read-only existing-entry lookup in both retained
+backends (smpdefs.h:81; KLU klusmp.c:1813-1852; Sparse spsmp.c:492-510).
+Base support hashes: smpdefs.h 61acdc96443b583cf8915bf3e3528284fbeb9c4b48fb694787f1a7959b45b369,
+  klusmp.c d9a40052c6c29c6ecf7c2ee34a946512d3221908787b2e15095fad69ea9f297d,
+  spsmp.c 8d04e3cadc25e2f96e7265af26ef4b1b7a2a9ce820552f8d3202ac839f698825,
+  vbicdefs.h 0185f8162e02de0cf9c332bbc827d6e43af9a1c494e8e86642b2d7d8ec57ef9b,
+  vbicsetup.c f711c83cb3811d4a0fad08a2d16fbe79416886330417b4c26b3c4f46a5483d79,
+  vbicbindCSC.c 207ef662c2c26fbd5e8236810c10dd8f8c68b2f22b42999f1d2ec3bfefc89810.
+
+=== context initialization and clearing paths (proved) ===
+INIT: ckt->CKTdiagctx = NULL UNCONDITIONALLY before every arm-condition
+evaluation (niiter, before the intended CKTload) - it cannot be stale or
+uninitialized on any unarmed iteration; the context itself is a stack-local
+vtp_diag_ctx_t memset to 0 in the same iteration, valid through commit/discard.
+ARM: vtp_armed==1 (target found) AND (iterno+1)==vtp_snap_iter AND time==0.0 AND
+  MODETRANOP AND MODEINITFIX -> armed=1, CKTdiagctx=&vtp_ctx.
+CAPTURE: target-instance-only (stamp_diag_active) pre/post reads into the ctx;
+  writes touch ONLY the diagnostic-only context fields (permitted); no existing
+  numerical matrix/RHS/state/model/device/node data is written.
+CLEAR: every commit and every abort sets CKTdiagctx=NULL and armed=0; the
+  unconditional NULL before the next arm evaluation is the second guarantee.
+
+=== record-field contract (recount) ===
+BEGIN  id tnode iterno time mode expected=3
+col=100 id tnode iterno time mode col pre post delta
+col=2   id tnode iterno time mode col pre post delta
+RHS    id tnode iterno time mode pre post delta
+END    id tnode iterno time mode emitted=3 expected=3
+ABORT  id committed=0 tnode iterno time mode reason
+  reason=load_error -> id=0 committed=0 (no dynamic id committed; never a stale or
+  future id presented as accepted); reason=snapshot_failure -> the assigned
+  vtp_snap_id with committed=0; reason=capture_missing|record_count_incomplete ->
+  the assigned vtp_snap_id with committed=0 (missing existing entry -> records=0).
+Successful family emits only after CKTload success AND SMPsnapshotMNA success,
+carrying the actual dynamic id, tnode, authoritative iterno, time, mode; %a hex.
+
+=== independent patch checks (results) ===
+hunk parser (terminating): 6 hunks; ALL COUNT-EXACT
+patch --batch --dry-run -p1 against fresh tree C: rc=0
+dry-run stdout: checking file src/include/ngspice/cktdefs.h | checking file src/maths/ni/niiter.c | checking file src/spicelib/devices/vbic/vbicload.c
+dry-run stderr: 
+
+=== forbidden-side-effect review (all clear) ===
+No matrix/RHS/state/model/device/node writes (the only writes are the diagnostic-
+only context fields); no sparse creation (SMPfindElt(...,0) only); no load-order
+change; no solver-flow/convergence/damping change; no static call-count proxy;
+the single cktdefs.h addition is one NULL-able pointer never dereferenced by
+non-diagnostic code.
+
+=== verdict ===
+CONFIRMED: generated-diff procedure (no hand-authored hunk counts); every
+before/after source hash recorded; terminating hunk parser ALL COUNT-EXACT;
+patch --batch --dry-run rc=0 on the second fresh exact tree; exact-event buffered
+architecture retained (arm/capture/commit-or-discard); id=0 committed=0 on the
+load-error path; context init/clear paths proven; record contract recounted;
+forbidden-side-effect review clear. The patch is created O_EXCL.
+PROVISIONAL: the (100,2) read value is the first-field real (the SMPmakeElt-
+consistent pointer shape); the snapshot-failure/commit abort records carry the
+assigned (not-yet-accepted) vtp_snap_id with committed=0. No apply/syntax/
+compile/link/invocation/deck/simulation was performed.

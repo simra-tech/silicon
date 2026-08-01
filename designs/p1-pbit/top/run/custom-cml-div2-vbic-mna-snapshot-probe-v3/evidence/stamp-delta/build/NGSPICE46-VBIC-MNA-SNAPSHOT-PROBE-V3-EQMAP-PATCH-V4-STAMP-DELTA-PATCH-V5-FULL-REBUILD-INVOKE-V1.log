@@ -1,0 +1,63 @@
+NGSPICE46-VBIC-MNA-SNAPSHOT-PROBE-V3-EQMAP-PATCH-V4-STAMP-DELTA-PATCH-V5-FULL-REBUILD-INVOKE-V1.log
+Full-rebuild executables --version invocation report (loader/startup only)
+
+=== correction note (prerequisite) ===
+FULL-REBUILD-V4-CORRECTION-V1 a5ace49f7e2e1a74100d81ad69780edb92f9f0203e97eddc7edab5506a7ec45b (build-command correction + warning-stream
+counts bound; originals preserved)
+
+=== pre-verified executables (exact full-rebuild V4) ===
+control    c865f1bf2ea99bc684b9e40342cfd6565f6bc995fb47c748474aceb5ef384045 / 8054352 bytes
+experiment 4bf27ba5aae5b11ae0b8adebc6dd6eb8f6b109663e595d4ba6c23c7b647482d3 / 8058448 bytes
+
+=== invocations (exactly one per side, control then experiment; no retries) ===
+control: ( cd <scratch-root> && LC_ALL=C timeout 30s "<full-rebuild-control-tree>/src/ngspice" --version < /dev/null ) > "<design-workspace>/NGSPICE46-VBIC-MNA-SNAPSHOT-PROBE-V3-EQMAP-PATCH-V4-STAMP-DELTA-PATCH-V5-FULL-REBUILD-INVOKE-V1-RAW/control.stdout" 2> "<design-workspace>/NGSPICE46-VBIC-MNA-SNAPSHOT-PROBE-V3-EQMAP-PATCH-V4-STAMP-DELTA-PATCH-V5-FULL-REBUILD-INVOKE-V1-RAW/control.stderr"; echo $? > "<design-workspace>/NGSPICE46-VBIC-MNA-SNAPSHOT-PROBE-V3-EQMAP-PATCH-V4-STAMP-DELTA-PATCH-V5-FULL-REBUILD-INVOKE-V1-RAW/control.rc"; date +%s.%N > "<design-workspace>/NGSPICE46-VBIC-MNA-SNAPSHOT-PROBE-V3-EQMAP-PATCH-V4-STAMP-DELTA-PATCH-V5-FULL-REBUILD-INVOKE-V1-RAW/control.times"
+  rc=0 time=0.021s cwd=/tmp env=LC_ALL=C stdin=</dev/null timeout=30s
+experiment: ( cd <scratch-root> && LC_ALL=C timeout 30s "<full-rebuild-experiment-tree>/src/ngspice" --version < /dev/null ) > "<design-workspace>/NGSPICE46-VBIC-MNA-SNAPSHOT-PROBE-V3-EQMAP-PATCH-V4-STAMP-DELTA-PATCH-V5-FULL-REBUILD-INVOKE-V1-RAW/experiment.stdout" 2> "<design-workspace>/NGSPICE46-VBIC-MNA-SNAPSHOT-PROBE-V3-EQMAP-PATCH-V4-STAMP-DELTA-PATCH-V5-FULL-REBUILD-INVOKE-V1-RAW/experiment.stderr"; echo $? > "<design-workspace>/NGSPICE46-VBIC-MNA-SNAPSHOT-PROBE-V3-EQMAP-PATCH-V4-STAMP-DELTA-PATCH-V5-FULL-REBUILD-INVOKE-V1-RAW/experiment.rc"; date +%s.%N > "<design-workspace>/NGSPICE46-VBIC-MNA-SNAPSHOT-PROBE-V3-EQMAP-PATCH-V4-STAMP-DELTA-PATCH-V5-FULL-REBUILD-INVOKE-V1-RAW/experiment.times"
+  rc=0 time=0.012s cwd=/tmp env=LC_ALL=C stdin=</dev/null timeout=30s
+
+=== stdout/stderr SHA and shape ===
+control.stdout    sha256=217731505de0a8887c6b8a9d80af39da3e445ee36ebb24c1852fcf8a344d2dde bytes=449 lines=10
+experiment.stdout sha256=217731505de0a8887c6b8a9d80af39da3e445ee36ebb24c1852fcf8a344d2dde bytes=449 lines=10
+control.stderr    sha256=e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855 bytes=0 (empty=True)
+experiment.stderr sha256=e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855 bytes=0 (empty=True)
+byte comparison: stdout identical=True stderr identical=True
+identical 449-byte ngspice-46 banner: True
+
+=== provider-returned identity text ===
+control:    ******
+** ngspice-46 : Circuit level simulation program
+** Compiled with KLU Direct Linear Solver
+** The U. C. Berkeley CAD Group
+** Copyright 1985-1994, Regents of the University of California.
+** Copyright 2001-2025, The ngspice team.
+** Please get your ngspice manual from https://ngspice.sourceforge.io/docs.html
+** Please file your bug-reports at http://ngspice.sourceforge.net/bugrep.html
+** Creation Date: Fri Jul 31 16:21:22 UTC 2026
+******
+experiment: ******
+** ngspice-46 : Circuit level simulation program
+** Compiled with KLU Direct Linear Solver
+** The U. C. Berkeley CAD Group
+** Copyright 1985-1994, Regents of the University of California.
+** Copyright 2001-2025, The ngspice team.
+** Please get your ngspice manual from https://ngspice.sourceforge.io/docs.html
+** Please file your bug-reports at http://ngspice.sourceforge.net/bugrep.html
+** Creation Date: Fri Jul 31 16:21:22 UTC 2026
+******
+
+=== post-invocation executable proof (no mutation) ===
+control    post c865f1bf2ea99bc684b9e40342cfd6565f6bc995fb47c748474aceb5ef384045 (8054352 bytes; unchanged=True)
+experiment post 4bf27ba5aae5b11ae0b8adebc6dd6eb8f6b109663e595d4ba6c23c7b647482d3 (8058448 bytes; unchanged=True)
+
+=== scope statement ===
+Two clean --version invocations prove loader/startup only (dynamic loader, libc
+startup, and the --version path ran and exited rc=0). No deck, circuit,
+simulation, MNA/EQMAP/STAMPDELTA execution inference, measurement, or
+specification claim.
+
+=== claims ===
+CONFIRMED: correction note first; pre-verified identities; exactly one invocation
+per side with the exact argv/environment; rc=0 each; identical 449-byte banner;
+empty stderr both; stdout/stderr SHAs and shapes; byte comparison; identity text;
+post-invocation rehash no-mutation; outputs O_EXCL after the recount.
+PROVISIONAL: none.

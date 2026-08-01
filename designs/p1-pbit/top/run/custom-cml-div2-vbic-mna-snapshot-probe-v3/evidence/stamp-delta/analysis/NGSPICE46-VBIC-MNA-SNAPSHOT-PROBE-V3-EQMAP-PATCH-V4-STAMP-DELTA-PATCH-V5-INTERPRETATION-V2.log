@@ -1,0 +1,61 @@
+NGSPICE46-VBIC-MNA-SNAPSHOT-PROBE-V3-EQMAP-PATCH-V4-STAMP-DELTA-PATCH-V5-INTERPRETATION-V2.log
+Read-only reconciliation, corrected wording (no invocation/compile/link/patch)
+
+=== correction (prerequisite) ===
+INTERPRETATION-V1-CORRECTION-V1 7a0e8d26f79d2220372a5f92b7b3233746e32f77507d0465048470aa58d8fe5f (single-sentence retraction; V1 preserved)
+
+=== read inputs (full hashes in the READ-IDENTITIES list) ===
+accepted EQMAP authority (RUNTIME-V2 experiment stderr 046259a7), row-100 TSV
+e3963252, FULL-REBUILD-RUNTIME-V1 experiment stderr dfa02985 + control stderr
+046259a7
+
+=== recount (verbatim, physical) ===
+STAMPDELTA records (experiment stderr, all three):
+  [STAMPDELTA] id=1 tnode=100 iterno=3 time=0x0p+0 mode=1056 col=100 pre=0x1.12e0be826d695p-30 post=0x1.fa6fc733fc4abp-12 delta=0x1.fa6f827bccaa1p-12
+  [STAMPDELTA] id=1 tnode=100 iterno=3 time=0x0p+0 mode=1056 col=2 pre=0x0p+0 post=0x0p+0 delta=0x0p+0
+  [STAMPDELTA_RHS] id=1 tnode=100 iterno=3 time=0x0p+0 mode=1056 pre=0x0p+0 post=0x1.4322d5214a7cfp-5 delta=0x1.4322d5214a7cfp-5
+control STAMPDELTA records: 0 (zero)
+final prefactor MNA rows (accepted stderr): row=100 col=99 value=0x1.6e3c934a4385ep-28; col=2 value=0x0p+0;
+  col=100 value=0x1.fa6fc733fc4abp-12; RHS index=100 value=0x1.4322d5214a7cfp-5
+
+=== record 1: col=100 (xdiv2.xqs_comp_s.t diagonal) ===
+pre=0x1.12e0be826d695p-30 post=0x1.fa6fc733fc4abp-12 delta=0x1.fa6f827bccaa1p-12
+  hierarchy: [EQMAP] id=1 eq=100 name=xdiv2.xqs_comp_s.t; netlist XQS_COMP_S
+  e_tail_s c_p1_comp_s e_scomp_s sub! npn13G2 Nx=6 mm_ok=1; authority: the Rt stamps
+  (100,0) (ground column) contributing to the (100,100) diagonal
+  binary64 arithmetic: pre+delta==post at the emitted-double: True
+  post equals the accepted final prefactor (100,100) value=0x1.fa6fc733fc4abp-12: CONFIRMED
+  CONFIRMED: the delta is the bracketed target-VBIC load's (100,100) stamp
+  contribution at the accepted event; the pre is at the ~1e-9 scale consistent with
+  the Rt t-to-ground conductance reference; the post is the assembled final entry.
+  PROVISIONAL: the exact decomposition of the pre (Rt vs other prior stamps).
+
+=== record 2: col=2 (xdiv2.sub!) ===
+pre=post=delta=0x0p+0
+  CONFIRMED: the bracketed VBIC load contributed exactly zero to the (100,2) entry at
+  the accepted event; the final prefactor (100,2)=0x0p+0 agrees (stderr + TSV).
+  The zero does NOT resolve the static binding: NOT_BOUND (no tempXxxPtr binding to
+  eq2) remains source-supported; the zero is event/iteration-specific, not
+  structural proof.
+
+=== record 3: RHS[100] ===
+pre=0x0p+0 post=delta=0x1.4322d5214a7cfp-5
+  comparison: the final prefactor MNA_SNAPSHOT_RHS index=100 value=0x1.4322d5214a7cfp-5 - numerically
+  equal at the emitted-double representation: True
+  CONFIRMED: pre=0 establishes ONLY that the target bracket began from zero; the
+  final equality establishes ONLY that all subsequent net change was zero.
+  NOT ESTABLISHED: event-local sole ownership (nonzero later contributions that
+  cancel are not excluded) and global source ownership (contributions across the
+  transient are not proven by these records).
+
+=== MEASUREMENT ===
+NOT evaluated.
+=== SPECIFICATION ===
+NOT evaluated. No signoff or tape-out-readiness claim.
+
+=== claims ===
+CONFIRMED: correction note first; recount of all three physical STAMPDELTA records
+and the final MNA rows; col=100 arithmetic and equality; col=2 zero scope with
+NOT_BOUND source-supported; the corrected RHS ownership statement (both event-local
+and global NOT ESTABLISHED).
+PROVISIONAL: the col=100 pre decomposition.

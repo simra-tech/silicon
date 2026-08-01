@@ -1,0 +1,53 @@
+NGSPICE46-VBIC-MNA-SNAPSHOT-PROBE-V3-EQMAP-PATCH-V4-STAMP-DELTA-PATCH-V5-LINK-V5.log
+Order-correct matched archive + link report (no executable invocation, deck, or
+simulation; linking is not runtime evidence)
+
+=== disposition (prerequisite) ===
+LINK-V4-DISPOSITION-CORRECTION-V1 afb0afa4c8d61967a4d3ec3a0f396ae1d4a73824a161003050078c8e0879c231 (order root cause bound; LINK-V4 preserved)
+
+=== gates (control reproduction, before experiment link) ===
+control libni.a  = 7a5a274e20feda18a100faba64a911b960681c601ea0417d0185bd6ec04c2b4a (46042B) - REQUIRED 7a5a274e... -> PASS
+control libvbic.a = 981f8897a6cce005a6fc41c18e28333b5795a349bcf75e497888b56e5b9439af (296936B) - REQUIRED 981f8897... -> PASS
+control executable = c865f1bf2ea99bc684b9e40342cfd6565f6bc995fb47c748474aceb5ef384045 (8054352B) - REQUIRED c865f1bf... -> PASS
+(experiment was linked only after all three control gates passed)
+
+=== products ===
+experiment libni.a  = 156b49c25bb9a44ad8d7ca94c5d07fab2d0cab72d0387fdf6c0247fcca5b072d
+experiment libvbic.a = 7ae0604d468b065bae2d69ea40073f4ac0c7896d64d9a26e611bfce576a7ee45
+experiment executable = bc5567d6c93fcfb8423abfc7303bd6140f956f559a1ea9d39a7a536a3637ab26 (8058448B)
+control-libni: rc=0 time=0.3174s stderr=(empty)
+control-libvbic: rc=0 time=0.3630s stderr=(empty)
+control-ngspice: rc=0 time=4.4966s stderr=(empty)
+experiment-libni: rc=0 time=0.3157s stderr=(empty)
+experiment-libvbic: rc=0 time=0.3543s stderr=(empty)
+experiment-ngspice: rc=0 time=4.4869s stderr=(empty)
+
+=== archive inventories (order-sensitive) ===
+control-libni (13 members): niaciter.o nicomcof.o niconv.o nidest.o niditer.o niinit.o niinteg.o niiter.o niniter.o nipred.o nipzmeth.o nireinit.o nisenre.o
+control-libvbic (17 members): vbic.o vbicacld.o vbicask.o vbicconv.o vbicgetic.o vbicinit.o vbicload.o vbicmask.o vbicmpar.o vbicnoise.o vbicparam.o vbicpzld.o vbicsetup.o vbicsoachk.o vbictemp.o vbictrunc.o vbicbindCSC.o
+experiment-libni (13 members): niaciter.o nicomcof.o niconv.o nidest.o niditer.o niinit.o niinteg.o niiter.o niniter.o nipred.o nipzmeth.o nireinit.o nisenre.o
+experiment-libvbic (17 members): vbic.o vbicacld.o vbicask.o vbicconv.o vbicgetic.o vbicinit.o vbicload.o vbicmask.o vbicmpar.o vbicnoise.o vbicparam.o vbicpzld.o vbicsetup.o vbicsoachk.o vbictemp.o vbictrunc.o vbicbindCSC.o
+control libni niiter member: 9a54a5b5e7fe392e9a41f1c9e1e279fcc55868d85281afeb752ff80a9ee3a6c5
+experiment libni niiter member: 7fdac54b781cc2d2987edba0d8b482a6b5931096f1e831162ec45af2cc87dec8
+control libvbic vbicload member: 70159e1dded1d9e860384f937427ac9e4f5d6d374024d5d196a23dcd8f4fabae
+experiment libvbic vbicload member: 5832c9420d008121c51a43eac2f0d72ceb9706c10fa65c9aff0c14e8a2f4f6d7
+member deltas limited to niiter.o/vbicload.o: True
+
+=== SMPfindElt + STAMPDELTA ===
+SMPfindElt resolved in the experiment executable: True
+executable undefined-symbol delta experiment-control: EMPTY
+STAMPDELTA families: experiment 5/5 ['[STAMPDELTA_BEGIN]', '[STAMPDELTA]', '[STAMPDELTA_RHS]', '[STAMPDELTA_END]', '[STAMPDELTA_ABORT]']; control 0/5
+
+=== verification ===
+sources unchanged: True; exact object inputs unchanged: True
+
+=== claims ===
+CONFIRMED: disposition note created first; fresh exact trees; source+object hashes
+re-verified; NIiter archives with the accepted retained command; VBIC archives in
+the configured Makefile expansion order (vbicbindCSC.o last, never from sorted
+filesystem paths or rendered terminal text); all three control reproduction gates
+passed exactly (7a5a274e / 981f8897 / c865f1bf); experiment linked only after
+control reproduced; member deltas only niiter.o/vbicload.o; SMPfindElt resolved;
+5/5 STAMPDELTA families experiment vs 0/5 control; sources+objects unchanged;
+outputs O_EXCL after the raw recount.
+PROVISIONAL: the (100,2) first-field-real interpretation remains provisional.

@@ -1,0 +1,68 @@
+NGSPICE46-VBIC-MNA-SNAPSHOT-PROBE-V3-EQMAP-PATCH-V4-STAMP-DELTA-PATCH-V5-INTERPRETATION-V1.log
+Read-only reconciliation of the three STAMPDELTA records (no ngspice invocation,
+compile, link, patch, or edit of a retained artifact)
+
+=== correction (prerequisite) ===
+VBIC-TEMP-STAMP-AUTHORITY-V1-CORRECTION-V1 0c53d91a6f11a18d5f47d2c875af77d931e5076f4b36e72aa910b918a8d91df0 (the false (100,2) magnitude
+sentence retracted; the static NOT_BOUND status unchanged)
+
+=== read inputs (full hashes in the READ-IDENTITIES list) ===
+accepted EQMAP authority: RUNTIME-V2 experiment stderr 046259a7 (MNA_SNAPSHOT rows,
+  RHS, EQMAP eq=100); row-100 TSV e3963252; FULL-REBUILD-RUNTIME-V1 experiment
+  stderr dfa02985 (STAMPDELTA rows) + control stderr 046259a7
+
+=== record 1: col=100 (xdiv2.xqs_comp_s.t diagonal) ===
+pre=0x1.12e0be826d695p-30 post=0x1.fa6fc733fc4abp-12 delta=0x1.fa6f827bccaa1p-12
+source/hierarchy (exact):
+  [EQMAP] id=1 eq=100 name=xdiv2.xqs_comp_s.t
+  netlist: XQS_COMP_S e_tail_s c_p1_comp_s e_scomp_s sub! npn13G2 Nx=6 mm_ok=1
+  authority NOT_BOUND text: 'the Rt stamps (100,0) (col 0 = ground, not col 2)' -
+  the t node's Rt to-ground conductance path (the (100,0) ground column, and the
+  (100,100) diagonal it contributes to)
+binary64 arithmetic (independent): pre + delta == post at the emitted-double
+  representation: 0x1.12e0be826d695p-30 + 0x1.fa6f827bccaa1p-12 = 0x1.fa6fc733fc4abp-12: True
+assembled post equality: the STAMPDELTA post equals the accepted final prefactor
+  [MNA_SNAPSHOT_ENTRY] id=1 phase=prefactor row=100 col=100 value=0x1.fa6fc733fc4abp-12: CONFIRMED
+CONFIRMED: the delta is the bracketed target-VBIC load's (100,100) stamp contribution
+  at the accepted event; the pre (before the target's load, ~1e-9 scale) is consistent
+  with the authority's Rt t-to-ground conductance reference; the post is the assembled
+  final prefactor entry.
+PROVISIONAL: the exact decomposition of the pre (Rt conductance vs other prior stamps)
+  is not established from these records; no field-meaning or physical-performance
+  claim is made.
+
+=== record 2: col=2 (xdiv2.sub!) ===
+pre=post=delta=0x0p+0
+CONFIRMED: the bracketed VBIC load contributed EXACTLY ZERO to the (100,2) assembled
+  entry at the accepted event; the final prefactor entry (100,2) = 0x0p+0 agrees
+  (accepted stderr row=100 col=2 value=0x0p+0; TSV col=2 a_hex=0x0.0p+0).
+What the zero does NOT prove: it does not resolve the static (100,2) binding question
+  - the NOT_BOUND status (no tempXxxPtr binding to eq2) remains source-supported; the
+  zero is an event- and iteration-specific runtime observation, not structural proof
+  (other events/iterations could differ); eq2's row/col placement is not established
+  by a single zero observation.
+
+=== record 3: RHS[100] ===
+pre=0x0p+0 post=delta=0x1.4322d5214a7cfp-5
+comparison: the final prefactor MNA_SNAPSHOT_RHS index=100 value=0x1.4322d5214a7cfp-5
+  - NUMERICALLY EQUAL to the STAMPDELTA post/delta at the emitted-double
+  representation: True
+CONFIRMED (event-local): the pre=0 means the target's contribution IS the entire
+  RHS[100] value at this event (sole contributor at this event).
+PROVISIONAL / NOT ESTABLISHED (global): global source ownership of RHS[100] across
+  the full transient, and the contributions of other devices/iterations, are not
+  proven by this single event. Numerical equality at this event is DISTINCT from
+  global source ownership.
+
+=== MEASUREMENT ===
+NOT evaluated (no spec limits applied).
+=== SPECIFICATION ===
+NOT evaluated. No signoff or tape-out-readiness claim.
+
+=== claims ===
+CONFIRMED: correction note first; read-only reconciliation with exact source rows;
+binary64 arithmetic (pre+delta==post; RHS post==final RHS[100]); hierarchy bindings
+(eq=100 = xdiv2.xqs_comp_s.t; col=2 = xdiv2.sub!); the col=2 zero's precise scope;
+event-local vs global distinction for RHS[100].
+PROVISIONAL: the pre's exact decomposition; global RHS[100] ownership; the static
+(100,2) binding remains NOT_BOUND (source-supported, not resolved here).

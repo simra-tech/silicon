@@ -1,0 +1,162 @@
+--- a/src/include/ngspice/cktdefs.h
++++ b/src/include/ngspice/cktdefs.h
+@@ -63,6 +63,22 @@
+     PARM_NODETYPE,
+ };
+ 
++/* [EQMAP-PATCH-V4-STAMP-DELTA-V4] circuit-keyed diagnostic capture context.
++ * Armed by NIiter immediately before the intended CKTload (authoritative next
++ * iteration (iterno+1)==vtp_snap_iter plus the accepted time/mode/target
++ * conditions); filled by the target VBIC load block (no emission); committed or
++ * discarded by NIiter only after a successful CKTload and a successful
++ * SMPsnapshotMNA("prefactor"). Stack-local in NIiter; the CKT field is NULL when
++ * not armed and is cleared on every commit/abort and before every arm evaluation. */
++typedef struct vtp_diag_ctx {
++    int armed;
++    int captured;
++    int records;
++    double pre_100, post_100;
++    double pre_rhs, post_rhs;
++    double pre_2, post_2;
++    void *elt2;
++} vtp_diag_ctx_t;
+ struct CKTcircuit {
+ 
+ /* gtri - begin - wbk - change declaration to allow dynamic sizing */
+@@ -164,6 +180,10 @@
+     int CKTnumStates;           /* Number of states summed up over all device instances */
+     long CKTmode;               /* Mode of operation of the circuit
+                                    ??? */
++    void *CKTdiagctx;           /* [EQMAP-PATCH-V4-STAMP-DELTA-V4] circuit-keyed
++                                   diagnostic capture context (typedef above); NULL
++                                   when not armed; never dereferenced by non-
++                                   diagnostic code. */
+ 
+ /* defines for CKTmode */
+ 
+--- a/src/maths/ni/niiter.c
++++ b/src/maths/ni/niiter.c
+@@ -145,11 +145,38 @@
+                 time_at_load = ckt->CKTtime;
+                 mode_at_load = (long) ckt->CKTmode;
+             }
++            /* [EQMAP-PATCH-V4-STAMP-DELTA-V4] clear the circuit-keyed diagnostic
++             * pointer UNCONDITIONALLY before the arm condition is evaluated, so it
++             * is never stale or uninitialized on any unarmed iteration; the context
++             * is stack-local to this iteration and valid through the commit/discard
++             * below. Arm only for the exact accepted next iteration: authoritative
++             * iterno + 1 == vtp_snap_iter plus the same time/mode/target conditions
++             * as the accepted prefactor snapshot. No emission here. */
++            ckt->CKTdiagctx = NULL;
++            vtp_diag_ctx_t vtp_ctx;
++            memset(&vtp_ctx, 0, sizeof(vtp_ctx));
++            if (vtp_armed == 1 && (iterno + 1) == vtp_snap_iter &&
++                ckt->CKTtime == 0.0 &&
++                ((ckt->CKTmode & MODETRANOP) != 0) &&
++                ((ckt->CKTmode & MODEINITFIX) != 0)) {
++                vtp_ctx.armed = 1;
++                ckt->CKTdiagctx = (void *) &vtp_ctx;
++            }
+             error = CKTload(ckt);
+             /* printf("loaded, noncon is %d\n", ckt->CKTnoncon); */
+             /* fflush(stdout); */
+             iterno++;
+             if (error) {
++                if (vtp_ctx.armed == 1) {
++                    /* id=0 committed=0: no dynamic snapshot id is committed for
++                     * this iteration (vtp_snap_id is assigned only after a
++                     * successful load); never present a stale or future id as
++                     * accepted. */
++                    fprintf(stderr, "[STAMPDELTA_ABORT] id=0 committed=0 tnode=%d iterno=%d time=%a mode=%ld reason=load_error\n",
++                            vtp_tnode, iterno, ckt->CKTtime, (long) ckt->CKTmode);
++                    ckt->CKTdiagctx = NULL;
++                    vtp_ctx.armed = 0;
++                }
+                 ckt->CKTstat->STATnumIter += iterno;
+ #ifdef STEPDEBUG
+                 printf("load returned error \n");
+@@ -214,8 +241,42 @@
+                     }
+                     fprintf(stderr, "[EQMAP_END] id=%ld emitted=%d expected=%d\n",
+                             vtp_snap_id, eqmap_emitted, 13);
++                    /* [EQMAP-PATCH-V4-STAMP-DELTA-V4] commit: emit the buffered
++                     * family ONLY here, after CKTload succeeded (error==0) AND
++                     * SMPsnapshotMNA("prefactor") returned 0. Every record carries
++                     * the actual dynamic vtp_snap_id, the authoritative iterno,
++                     * tnode, time and mode. */
++                    if (vtp_ctx.armed == 1) {
++                        if (vtp_ctx.captured == 1 && vtp_ctx.records == 3) {
++                            fprintf(stderr, "[STAMPDELTA_BEGIN] id=%ld tnode=%d iterno=%d time=%a mode=%ld expected=3\n",
++                                    vtp_snap_id, vtp_tnode, iterno, ckt->CKTtime, (long) ckt->CKTmode);
++                            fprintf(stderr, "[STAMPDELTA] id=%ld tnode=%d iterno=%d time=%a mode=%ld col=100 pre=%a post=%a delta=%a\n",
++                                    vtp_snap_id, vtp_tnode, iterno, ckt->CKTtime, (long) ckt->CKTmode,
++                                    vtp_ctx.pre_100, vtp_ctx.post_100, vtp_ctx.post_100 - vtp_ctx.pre_100);
++                            fprintf(stderr, "[STAMPDELTA] id=%ld tnode=%d iterno=%d time=%a mode=%ld col=2 pre=%a post=%a delta=%a\n",
++                                    vtp_snap_id, vtp_tnode, iterno, ckt->CKTtime, (long) ckt->CKTmode,
++                                    vtp_ctx.pre_2, vtp_ctx.post_2, vtp_ctx.post_2 - vtp_ctx.pre_2);
++                            fprintf(stderr, "[STAMPDELTA_RHS] id=%ld tnode=%d iterno=%d time=%a mode=%ld pre=%a post=%a delta=%a\n",
++                                    vtp_snap_id, vtp_tnode, iterno, ckt->CKTtime, (long) ckt->CKTmode,
++                                    vtp_ctx.pre_rhs, vtp_ctx.post_rhs, vtp_ctx.post_rhs - vtp_ctx.pre_rhs);
++                            fprintf(stderr, "[STAMPDELTA_END] id=%ld tnode=%d iterno=%d time=%a mode=%ld emitted=3 expected=3\n",
++                                    vtp_snap_id, vtp_tnode, iterno, ckt->CKTtime, (long) ckt->CKTmode);
++                        } else {
++                            fprintf(stderr, "[STAMPDELTA_ABORT] id=%ld committed=0 tnode=%d iterno=%d time=%a mode=%ld reason=%s\n",
++                                    vtp_snap_id, vtp_tnode, iterno, ckt->CKTtime, (long) ckt->CKTmode,
++                                    (vtp_ctx.captured != 1) ? "capture_missing" : "record_count_incomplete");
++                        }
++                        ckt->CKTdiagctx = NULL;
++                        vtp_ctx.armed = 0;
++                    }
+                     vtp_snap_pre_done = TRUE;
+                 }
++                else if (vtp_ctx.armed == 1) {
++                    fprintf(stderr, "[STAMPDELTA_ABORT] id=%ld committed=0 tnode=%d iterno=%d time=%a mode=%ld reason=snapshot_failure\n",
++                            vtp_snap_id, vtp_tnode, iterno, ckt->CKTtime, (long) ckt->CKTmode);
++                    ckt->CKTdiagctx = NULL;
++                    vtp_ctx.armed = 0;
++                }
+             }
+ #endif
+ 
+--- a/src/spicelib/devices/vbic/vbicload.c
++++ b/src/spicelib/devices/vbic/vbicload.c
+@@ -1541,6 +1541,20 @@
+                 *(here->VBICsubsTempPtr)   +=  Irs_Vrth;
+                 *(ckt->CKTrhs + here->VBICsubsSINode) +=  rhs_current;
+                 *(here->VBICsubsSItempPtr) += -Irs_Vrth;
++                /* [EQMAP-PATCH-V4-STAMP-DELTA-V4] read-only pre-capture into the
++                 * circuit-keyed context armed by NIiter for the exact accepted
++                 * event; target-instance-only (stamp_diag_active). Reads only the
++                 * existing (tempNode,tempNode) pointer, the existing RHS slot, and
++                 * the read-only existing-entry lookup SMPfindElt(...,0); the only
++                 * writes are to the diagnostic-only context fields. */
++                vtp_diag_ctx_t *sd_ctx = (vtp_diag_ctx_t *) ckt->CKTdiagctx;
++                if (sd_ctx != NULL && sd_ctx->armed == 1 && stamp_diag_active) {
++                    sd_ctx->pre_100 = *(here->VBICtempTempPtr);
++                    sd_ctx->pre_rhs = *(ckt->CKTrhs + here->VBICtempNode);
++                    sd_ctx->elt2 = (void *) SMPfindElt(ckt->CKTmatrix, here->VBICtempNode, 2, 0);
++                    sd_ctx->pre_2 = (sd_ctx->elt2 != NULL) ? *((double *) sd_ctx->elt2) : 0.0;
++                    sd_ctx->captured = 1;
++                }
+ /*
+ c               Stamp element: Rth
+ */
+@@ -1774,6 +1788,18 @@
+                 if (stamp_diag_active) stamp_diag_post = *(here->VBICtempSubsSIPtr);
+                 if (stamp_diag_active) STAMP_DIAG_REPORT("STAMP_ITH_VRS_2@1505", "matrix_stamp", stamp_diag_pre, +Ith_Vrs, stamp_diag_post);
+                 #undef STAMP_DIAG_REPORT
++                /* [EQMAP-PATCH-V4-STAMP-DELTA-V4] read-only post-capture after this
++                 * VBIC's complete load/stamp block (the excess-phase block writes no
++                 * (tempNode,*) entry). Same reads as the pre-capture; records = 3
++                 * only when the (tempNode, eq 2) entry exists (fail-closed on a
++                 * missing existing entry). */
++                if (sd_ctx != NULL && sd_ctx->armed == 1 && stamp_diag_active) {
++                    sd_ctx->post_100 = *(here->VBICtempTempPtr);
++                    sd_ctx->post_rhs = *(ckt->CKTrhs + here->VBICtempNode);
++                    sd_ctx->elt2 = (void *) SMPfindElt(ckt->CKTmatrix, here->VBICtempNode, 2, 0);
++                    sd_ctx->post_2 = (sd_ctx->elt2 != NULL) ? *((double *) sd_ctx->elt2) : 0.0;
++                    sd_ctx->records = (sd_ctx->elt2 != NULL) ? 3 : 0;
++                }
+                 if (here->VBIC_excessPhase) {
+ //                  Stamp element: Ixf1    f_xf1 = +
+                     rhs_current = -Ixf1_Vrth*Vrth;

@@ -1,0 +1,63 @@
+NGSPICE46-VBIC-MNA-SNAPSHOT-PROBE-V3-EQMAP-PATCH-V4-STAMP-DELTA-PATCH-V5-CLEAR-AFTER-LOAD-APPLY-SYNTAX-V1.log
+Apply + syntax report for the V5 clear-after-load correction
+
+=== apply (V5 exactly once, experiment D only) ===
+argv: patch --batch -p1 (cwd=<v5-experiment-tree>)
+rc: 0
+stdout: patching file src/maths/ni/niiter.c
+stderr: 
+experiment D pre (V4-applied) -> post hashes:
+  src/include/ngspice/cktdefs.h
+    pre  be6f76e790ba2acd9261da7f862c46fbc7c90704c40c89d1bb91d26aeb2175fa
+    post be6f76e790ba2acd9261da7f862c46fbc7c90704c40c89d1bb91d26aeb2175fa
+  src/maths/ni/niiter.c
+    pre  8ba446cc220067dea01dddd6c4e2719fdf5291c240e9097e9a37f330f2985094
+    post efd0eb3b7a1ce64407ce88dd1a467cf231eef356f0e1d2242eb4a0df0419ebb3
+  src/spicelib/devices/vbic/vbicload.c
+    pre  c73eef5c6e16b743515398458f9aba0f200b83acae78421fbfbcf1f33fdb9082
+    post c73eef5c6e16b743515398458f9aba0f200b83acae78421fbfbcf1f33fdb9082
+after tree B hashes (the exact V5-applied state):
+  src/include/ngspice/cktdefs.h be6f76e790ba2acd9261da7f862c46fbc7c90704c40c89d1bb91d26aeb2175fa
+  src/maths/ni/niiter.c efd0eb3b7a1ce64407ce88dd1a467cf231eef356f0e1d2242eb4a0df0419ebb3
+  src/spicelib/devices/vbic/vbicload.c c73eef5c6e16b743515398458f9aba0f200b83acae78421fbfbcf1f33fdb9082
+control E byte-exact V4-applied: True
+  control src/include/ngspice/cktdefs.h be6f76e790ba2acd9261da7f862c46fbc7c90704c40c89d1bb91d26aeb2175fa
+  control src/maths/ni/niiter.c 8ba446cc220067dea01dddd6c4e2719fdf5291c240e9097e9a37f330f2985094
+  control src/spicelib/devices/vbic/vbicload.c c73eef5c6e16b743515398458f9aba0f200b83acae78421fbfbcf1f33fdb9082
+
+=== compiler identity ===
+gcc (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0
+
+=== syntax-only checks (accepted configured KLU argv; tree include first) ===
+exp-niiter: rc=0 time=0.1010s warnings=0
+  stderr: (empty)
+  argv: gcc -DHAVE_CONFIG_H -I. -I<v5-experiment-tree>/src/include -I<accepted-eqmap-tree>/src/include -I. -O2 -s -Wall -Wextra -Wmissing-prototypes -Wstrict-prototypes -Wnested-externs -Wold-style-definition -Wredundant-decls -Wconversion -Wno-unused-but-set-variable -std=gnu11 -fopenmp -fsyntax-only niiter.c
+ctl-niiter: rc=0 time=0.1041s warnings=0
+  stderr: (empty)
+  argv: gcc -DHAVE_CONFIG_H -I. -I<v5-control-tree>/src/include -I<accepted-eqmap-tree>/src/include -I. -O2 -s -Wall -Wextra -Wmissing-prototypes -Wstrict-prototypes -Wnested-externs -Wold-style-definition -Wredundant-decls -Wconversion -Wno-unused-but-set-variable -std=gnu11 -fopenmp -fsyntax-only niiter.c
+
+=== recount (from the raw files) ===
+  apply.rc             sha256=9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa bytes=2
+  apply.stderr         sha256=e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855 bytes=0
+  apply.stdout         sha256=f5fd707a6978999ef2569cd3145ad47d38e30a20602edde015b499af9279b18f bytes=36
+  ctl-niiter.argv      sha256=6645cc0206b6a9c0f6633064d47cf0c52e22005c500face7fe34bbbeee60a159 bytes=320
+  ctl-niiter.rc        sha256=9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa bytes=2
+  ctl-niiter.stderr    sha256=e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855 bytes=0
+  ctl-niiter.stdout    sha256=e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855 bytes=0
+  ctl-niiter.time      sha256=ec61d3d33794b10c5fe3dabe1813a95d69d9531c2f75bd8ca230310ba827346d bytes=7
+  exp-niiter.argv      sha256=9ffd1389556c1f57d76b3a6c68da21697b07c97a2900e221dee00de967ea469e bytes=320
+  exp-niiter.rc        sha256=9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa bytes=2
+  exp-niiter.stderr    sha256=e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855 bytes=0
+  exp-niiter.stdout    sha256=e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855 bytes=0
+  exp-niiter.time      sha256=56844b9044cb3faa2bbf0b1a7e0e3059c02c2e95d7a81a1513f89918c588cc72 bytes=7
+
+=== scope statement ===
+Syntax-only in the retained KLU configuration; no object build, link, invocation,
+deck access, or simulation.
+
+=== claims ===
+CONFIRMED: V5 applied exactly once (rc=0); control byte-exact; ordering audit
+proved from the applied source; both syntax checks rc=0 with zero warnings (stop-on-
+warning honored: none seen); raw argv/stdout/stderr/rc/time retained; report/raw
+created O_EXCL after the recount.
+PROVISIONAL: the (100,2) first-field-real interpretation remains provisional.

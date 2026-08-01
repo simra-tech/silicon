@@ -1,0 +1,23 @@
+NGSPICE46-VBIC-MNA-SNAPSHOT-PROBE-V3-EQMAP-PATCH-V4-STAMP-DELTA-PATCH-V5-FULL-REBUILD-V4-CORRECTION-V1.log
+Correction/disposition note binding the sealed FULL-REBUILD-V4 report/audit/raw.
+V1/V2/V3/V4 attempts are preserved unchanged; nothing is overwritten or renamed.
+
+Bound identities (sealed, preserved):
+  FULL-REBUILD-V4 report 75011b8cbcf67b11c1c5f7ad8b34edb5988b6b23a439afaa065722e1ad367d2e
+  FULL-REBUILD-V4 audit  92f7f14441839de3c1fa0712e27668fed8aa8c7ccb6f7b6c941e930b6556cc87
+  FULL-REBUILD-V4 raw (29 files)
+
+Correction - build command: the sealed V4 report heading says 'make -j1 V=1
+ngspice', but its own raw argv files and the audit prove the successful V4
+command was 'make -j1 V=1 all' (the default target; the bare ngspice target has
+no rule for the removed frontend/libfte.la). The V4 report's other claims are
+unaffected: both builds rc=0, ~473 s each.
+
+Recorded warning streams (nonempty, byte-identical):
+  each captured make stderr = 71,630 bytes / 941 lines, with 233 compiler
+  warnings and no 'error:' line; the two streams are byte-identical.
+  (The V4 report did not enumerate these warnings; this note records them.)
+
+=== claims ===
+CONFIRMED: the build-command correction; the warning-stream counts; the binding.
+PROVISIONAL: none.

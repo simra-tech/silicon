@@ -1,0 +1,35 @@
+NGSPICE46-VBIC-MNA-SNAPSHOT-PROBE-V3-EQMAP-PATCH-V4-STAMP-DELTA-PATCH-V5-ABI-AUDIT-V3-CORRECTION-V1.log
+Correction/disposition note binding the sealed ABI-AUDIT-V3 report/audit/raw and
+the exact corrections. The V1/V2/V3 audit attempts are preserved unchanged.
+
+Bound identities (sealed, preserved):
+  ABI-AUDIT-V3 report 81ddf095016ba34f4e15337bdcb41ab8d552d6bd019fded645e2d9c1a1db2196
+  ABI-AUDIT-V3 audit  628ab7c56a57bdc557df3e0948994fbcbded4a497ab1fcb12aba8b6a45b61e24
+  ABI-AUDIT-V3 raw (20 files)
+
+Correction 1 - normalized fault PC: the V3 report/audit say normalized-PC agreement
+is false and later say both cores have the same raw PC. Both are wrong. The raw
+PCs are 0x5583c3fc3ee0 (V1) and 0x558245244ee0 (V2); subtracting their respective
+load bases 0x5583c3962000 (V1) and 0x558244be3000 (V2) gives 0x661ee0 for BOTH.
+The normalized fault offset agreement is TRUE; the raw PCs differ only under ASLR.
+
+Correction 2 - fault-path candidate: the V3 report's SMPfindElt NULL-dereference
+candidate is RETRACTED. The patched source dereferences sd_ctx->elt2 only when it
+is non-NULL (a conditional guard); the cores therefore do not establish that
+candidate. The exact source/function mapping of offset 0x661ee0 and the precise
+crash chain remain PROVISIONAL.
+
+Correction 3 - dependency count: the V3 claims section's unresolved '%d Tpo files'
+is the direct count 1,085 dependency files (.Plo/.Po/.Tpo). That is a dependency-
+cone INVENTORY, not proof that every listed object was linked. Linked-input claims
+bind only to the accepted LINK-V5 inventory (the retained link command's inputs).
+
+Independently confirmed mixed-ABI facts (retained): compile-only probes prove
+sizeof(CKTcircuit) 968 -> 976, CKTmode offset 400 unchanged, CKTdiagctx at 408,
+CKTbypass shifted 408 -> 416; retained cktinit.o allocates the old layout while
+rebuilt niiter.o/vbicload.o use the new layout; a mixed CKTcircuit ABI in LINK-V5
+is CONFIRMED; both cores normalize to executable offset 0x661ee0 with RAX=0.
+
+=== claims ===
+CONFIRMED: the three corrections; the binding; originals preserved.
+PROVISIONAL: the source/function mapping of 0x661ee0 and the precise crash chain.

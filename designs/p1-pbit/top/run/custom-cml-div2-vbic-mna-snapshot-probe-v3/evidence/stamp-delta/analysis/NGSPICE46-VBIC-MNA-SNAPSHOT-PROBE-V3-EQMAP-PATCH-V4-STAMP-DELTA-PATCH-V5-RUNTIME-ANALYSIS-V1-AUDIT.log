@@ -1,0 +1,21 @@
+NGSPICE46-VBIC-MNA-SNAPSHOT-PROBE-V3-EQMAP-PATCH-V4-STAMP-DELTA-PATCH-V5-RUNTIME-ANALYSIS-V1-AUDIT.log
+Analysis-only audit
+
+=== procedure ===
+read-only: all four run dirs opened for reading only; no file in any run dir was
+created, copied, rewritten, or deleted; no ngspice invocation; no V3 run dirs;
+Binary: marker detected via read-only find on the already-closed raw files.
+
+=== raw recount summary ===
+V1: ctl rc=b'0' raw=7857477B data_sha=26c62c1942b552ae payload_ok=True finite=True time=True ev=('1', '100', '3', '0x0p+0', '1056') eq=1/13/1 set=True sd_ctl=0 guards=0
+   exp rc=b'139' segv=True raw=False sd=0
+V2: ctl rc=b'0' raw=7857477B data_sha=26c62c1942b552ae payload_ok=True finite=True time=True ev=('1', '100', '3', '0x0p+0', '1056') eq=1/13/1 set=True sd_ctl=0 guards=0
+   exp rc=b'139' segv=True raw=False sd=0
+
+=== cross-pair ===
+ctl raw identical=False; data regions identical=True; ctl stderr identical=True; exp crash identical=True; sd records both zero=True
+
+=== verdict ===
+CONFIRMED: everything above; no further invocation; outputs O_EXCL; external
+identities reported after close.
+PROVISIONAL: the experiment crash root cause; the missing STAMPDELTA evidence.

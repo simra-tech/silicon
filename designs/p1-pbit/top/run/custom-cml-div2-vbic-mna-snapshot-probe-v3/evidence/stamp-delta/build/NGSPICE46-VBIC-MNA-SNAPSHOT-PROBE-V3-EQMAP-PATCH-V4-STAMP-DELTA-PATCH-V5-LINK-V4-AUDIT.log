@@ -1,0 +1,44 @@
+NGSPICE46-VBIC-MNA-SNAPSHOT-PROBE-V3-EQMAP-PATCH-V4-STAMP-DELTA-PATCH-V5-LINK-V1-AUDIT.log
+Link audit (procedure + recount)
+
+=== prior attempts preserved ===
+V1: vbic .lo list regex failed on the configured Makefile's generated variable name;
+  label-correction note created (0650096b); no archives/links ran.
+V2: libvbic archive command used the wrong libtool path depth (../libtool vs the
+  correct ../../../../libtool from the vbic dir -> rc=127); libni archives and
+  both ngspice links rc=0; raw dir reserved with all raws.
+V3: full run succeeded (all six steps rc=0, SMPfindElt resolved, STAMPDELTA 5/5 exp
+  vs 0 ctl) but the report build used libni_la- prefixed member names (the libtool
+  ar uses plain .o member names); raw dir and trees reserved.
+
+=== label correction ===
+0650096b7878b73437b9e358432929cf26216b72d0b74112e29c5157e5e8976f
+report b326a9f1: bytes=3439 wc-l=62 inner first line=NGSPICE46-VBIC-MNA-SNAPSHOT-PROBE-V3-EQMAP-PATCH-V4-STAMP-DELTA-PATCH-V5-OBJECT-V1.log
+audit 33bc5ba3: bytes=2758 wc-l=45 inner first line=NGSPICE46-VBIC-MNA-SNAPSHOT-PROBE-V3-EQMAP-PATCH-V4-STAMP-DELTA-PATCH-V5-OBJECT-V1-AUDIT.log
+
+=== flows ===
+control tree: <link-v4-control-tree>
+  libni.la rc=0 ({'src/maths/ni/libni.la': ('5cd3a8205d9cb043ede35b512c72e4cfc24cfd41e5fbbc82e4aa020736f895ed', 883), 'src/maths/ni/.libs/libni.a': ('7a5a274e20feda18a100faba64a911b960681c601ea0417d0185bd6ec04c2b4a', 46042), 'src/spicelib/devices/vbic/libvbic.la': ('0108e735145a9a5f919aa7c3992016a77b49216bd855bc3d8e6ca1894392d695', 889), 'src/spicelib/devices/vbic/.libs/libvbic.a': ('01cad8c53bff397e0cab7dfe80a2bcaf2397b9fb0531c43e178dda0544dcc8fb', 296936), 'src/ngspice': ('d1be0b59b306b038ea20d0492b68b1ea81c0682c700a0ebb2086371a92693baa', 8054352)}); libvbic.la rc=0 (); ngspice rc=0 () time=0.33s/0.36s/4.50s
+experiment tree: <link-v4-experiment-tree>
+  libni.la rc=0 ({'src/maths/ni/libni.la': ('5cd3a8205d9cb043ede35b512c72e4cfc24cfd41e5fbbc82e4aa020736f895ed', 883), 'src/maths/ni/.libs/libni.a': ('156b49c25bb9a44ad8d7ca94c5d07fab2d0cab72d0387fdf6c0247fcca5b072d', 48258), 'src/spicelib/devices/vbic/libvbic.la': ('0108e735145a9a5f919aa7c3992016a77b49216bd855bc3d8e6ca1894392d695', 889), 'src/spicelib/devices/vbic/.libs/libvbic.a': ('f2cd0937ed05c49d0b0e281d1796e6ab0c7e430c8663f6eed062bacefc187ffc', 297504), 'src/ngspice': ('f79a5e323b4da6c477a84ec674e0791ecf6bfe92a31c4efcb8b3c7d212da2708', 8058448)}); libvbic.la rc=0 (); ngspice rc=0 () time=0.31s/0.37s/4.46s
+control-libni rc=0 time=0.3285s stdout=337B/4L stderr=0B/0L
+control-libvbic rc=0 time=0.3632s stdout=414B/4L stderr=0B/0L
+control-ngspice rc=0 time=4.5024s stdout=3056B/1L stderr=0B/0L
+experiment-libni rc=0 time=0.3136s stdout=337B/4L stderr=0B/0L
+experiment-libvbic rc=0 time=0.3708s stdout=414B/4L stderr=0B/0L
+experiment-ngspice rc=0 time=4.4649s stdout=3056B/1L stderr=0B/0L
+
+=== member deltas ===
+libni: member count control=13 experiment=13; changed=['niiter.o'] missing=none added=none
+libvbic: member count control=17 experiment=17; changed=['vbicload.o'] missing=none added=none
+
+=== executables ===
+control d1be0b59b306b038ea20d0492b68b1ea81c0682c700a0ebb2086371a92693baa
+experiment f79a5e323b4da6c477a84ec674e0791ecf6bfe92a31c4efcb8b3c7d212da2708
+undefined-symbol delta experiment-control: EMPTY
+SMPfindElt unresolved in experiment executable: False
+STAMPDELTA families: experiment=5/5 control=0/5
+
+=== verdict ===
+CONFIRMED: everything above; outputs O_EXCL after the raw recount.
+PROVISIONAL: the (100,2) first-field-real interpretation remains provisional.

@@ -1,0 +1,34 @@
+NGSPICE46-VBIC-MNA-SNAPSHOT-PROBE-V3-EQMAP-PATCH-V4-STAMP-DELTA-PATCH-V5-FULL-REBUILD-V4-AUDIT.log
+Full-rebuild audit
+
+=== prior attempts preserved ===
+V1: correction note created (f1d62b2c); trees built but the report build hit a %-
+  precedence bug; reserved with all raws.
+V2: fresh trees retained the copied built artifacts, so make -j1 V=1 ngspice did
+  nothing (rc=0 in 0-5s; both executables were the retained copy f2d2cd19); the
+  V2 report's 'dependency-correct rebuild' claims are NOT VALID - reserved.
+V3: built artifacts removed from the fresh trees, but the bare 'ngspice' target has
+  no rule for the removed frontend/libfte.la (make rc=2 'No rule to make target'
+  in 0.47s); reserved - V4 uses the default 'all' target so the recursive subdir
+  builds (frontend/libfte.la etc.) run first, then the top-level link.
+
+=== correction ===
+f1d62b2c72931de3de4421ca90758d8240b6b3fc5fbd382b692d4b9d5c7e4310
+
+=== builds ===
+control: rc=0 time=472.6s stdout=<design-workspace>/NGSPICE46-VBIC-MNA-SNAPSHOT-PROBE-V3-EQMAP-PATCH-V4-STAMP-DELTA-PATCH-V5-FULL-REBUILD-V4-RAW/control-make.stdout stderr=<design-workspace>/NGSPICE46-VBIC-MNA-SNAPSHOT-PROBE-V3-EQMAP-PATCH-V4-STAMP-DELTA-PATCH-V5-FULL-REBUILD-V4-RAW/control-make.stderr
+experiment: rc=0 time=472.8s stdout=<design-workspace>/NGSPICE46-VBIC-MNA-SNAPSHOT-PROBE-V3-EQMAP-PATCH-V4-STAMP-DELTA-PATCH-V5-FULL-REBUILD-V4-RAW/experiment-make.stdout stderr=<design-workspace>/NGSPICE46-VBIC-MNA-SNAPSHOT-PROBE-V3-EQMAP-PATCH-V4-STAMP-DELTA-PATCH-V5-FULL-REBUILD-V4-RAW/experiment-make.stderr
+
+=== probes ===
+CTL b0872866aec9b413 EXP e5a2e5982dc95159 (sizeof 968 -> 976; bypass 408 -> 416)
+
+=== executables ===
+control c865f1bf2ea99bc684b9e40342cfd6565f6bc995fb47c748474aceb5ef384045 (8054352B) vs retained c865f1bf (8054352B): IDENTICAL
+experiment 4bf27ba5aae5b11ae0b8adebc6dd6eb8f6b109663e595d4ba6c23c7b647482d3 (8058448B) vs prior bc5567d6 (8058448B): DIFFERS (expected)
+SMPfindElt unresolved=False; STAMPDELTA families=5/5
+timestamp proof: ctl 2874/2874 exp 2874/2874
+
+=== verdict ===
+CONFIRMED: everything above; outputs O_EXCL after the recount; stopped after link.
+PROVISIONAL: any unexplained executable difference; the 0x661ee0 mapping; the crash
+chain; no measurement/specification/signoff/tape-out-readiness claim.

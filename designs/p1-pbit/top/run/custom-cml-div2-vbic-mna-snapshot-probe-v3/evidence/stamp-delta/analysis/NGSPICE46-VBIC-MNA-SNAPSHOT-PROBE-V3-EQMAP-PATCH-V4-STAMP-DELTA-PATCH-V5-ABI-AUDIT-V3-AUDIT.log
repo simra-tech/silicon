@@ -1,0 +1,25 @@
+NGSPICE46-VBIC-MNA-SNAPSHOT-PROBE-V3-EQMAP-PATCH-V4-STAMP-DELTA-PATCH-V5-ABI-AUDIT-V3-AUDIT.log
+ABI audit (procedure)
+
+=== correction ===
+2f25d1e32b031b1fe226d5c1f1bf7c4a01f8d55a132ce36799af3001dc1f4cca
+
+=== probes ===
+OLD probe: object 8e1bf1e9339d8b70623a082016027db823597e9e91fa05421790eda0dc90310d rc=0 section=.rodata (stdout/stderr sizes in the raw dir)
+NEW probe: object 15e89b8a991c2f3a73cf9b2f8cf5f181098217f9f6263b2c1b9755df72d9ec59 rc=0 section=.rodata (stdout/stderr sizes in the raw dir)
+values: OLD sizeof=968 mode=400 bypass=408 time=80 rhs=280; NEW sizeof=976 mode=400 diag=408 bypass=416 time=80 rhs=280
+deltas: size=8 bypass=8 time=0 rhs=0
+
+=== retained binding ===
+cktdefs-bound Tpo count=1085; cktinit.o=416aa78983920608f1d1bfa91710539a9a609bd5cf7d22ba54455db29df654b9; spiceif.o=a82fde9eea6a496df5303a5faf71045d3370f1f0f88f834c4580ba1825b1beeb
+
+=== cores ===
+V1: PC=0x00005583c3fc3ee0 RAX=0x0
+V2: PC=0x0000558245244ee0 RAX=0x0
+fault agree=False; addr2line=??:0
+
+=== verdict ===
+CONFIRMED: mixed ABI (probe-proven layout delta + retained old-layout objects in one
+executable); both cores at the same PC 0x00005583c3fc3ee0 RAX=0; correction note created.
+PROVISIONAL: fault offset function mapping; precise crash chain; no measurement/
+specification/signoff/tape-out-readiness claim.

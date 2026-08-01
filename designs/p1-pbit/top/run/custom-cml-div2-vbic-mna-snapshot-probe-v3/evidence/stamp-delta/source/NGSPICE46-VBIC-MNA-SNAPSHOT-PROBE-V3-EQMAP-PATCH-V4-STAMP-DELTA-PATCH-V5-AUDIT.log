@@ -1,0 +1,44 @@
+NGSPICE46-VBIC-MNA-SNAPSHOT-PROBE-V3-EQMAP-PATCH-V4-STAMP-DELTA-PATCH-V5-AUDIT.log
+Design audit: single functional correction (niiter.c only); generated diff; checks
+
+=== V4 lifetime verdict correction (reviewer-confirmed) ===
+The V4 APPLY-SYNTAX verdict 'non-NULL only across the synchronous CKTload' was false as
+written: the applied niiter.c left CKTdiagctx non-NULL after CKTload returned until
+the later clear sites. That lifetime claim is withdrawn; the valid V4 apply/syntax
+evidence (patch 086461c0, apply rc=0, control byte-exact, 4x rc=0 syntax) is retained.
+
+=== V5 correction ===
+Exactly one functional change in niiter.c: ckt->CKTdiagctx = NULL; unconditionally
+immediately after the synchronous 'error = CKTload(ckt);' returns, before iterno++,
+any error return, snapshot call, or emission. The stack-local vtp_ctx and its armed
+bit stay available for the post-load commit/discard; redundant later NULL clears
+remain (5 total clear sites). One nearby comment updated to state the true lifetime.
+
+=== generated-diff procedure ===
+Before tree A: fresh exact V4-applied (bases cktdefs.h 6e180f74 / niiter.c b3117492 /
+vbicload.c 59d87567 + V4 applied; post identities be6f76e7 / 8ba446cc / c73eef5c, the
+accepted prefixes). After tree B: A + the two anchored niiter.c edits. Patch generated
+mechanically: diff -u --label a/src/maths/ni/niiter.c --label b/... ; touched-file set
+asserted niiter.c only: ['src/maths/ni/niiter.c']
+
+=== checks (results) ===
+terminating hunk parser: 2 hunks; ALL COUNT-EXACT
+patch --batch --dry-run -p1 on a second fresh V4-applied tree: rc=0 (clean)
+
+=== ordering audit (proved from the applied source, not from compiler success) ===
+PASS NULL at birth (zeroed allocation) | tmalloc->calloc (alloc.c:70)
+PASS unconditional pre-arm clear before the arm | pre@5692 arm@6068
+PASS arm before the synchronous CKTload | arm@6068 load@6131
+PASS unconditional immediate post-load clear between the load and iterno++ | load@6131 post@6592 iterno@6730
+PASS commit/discard uses local vtp_ctx only; 5 total clear sites (redundant later clears allowed) | clear sites=5
+PASS no CKTdiagctx write after the commit block | last clear before commit end
+
+=== verdict ===
+CONFIRMED: single-functional-correction patch generated mechanically (niiter.c only),
+hunk counts exact, dry-run rc=0; ordering NULL at birth -> pre-arm clear -> arm ->
+synchronous CKTload -> unconditional immediate post-load clear -> vtp_ctx-only
+commit/discard proved from the applied source; V5 applied exactly once to the third
+fresh V4-applied experiment tree; control byte-exact V4-applied; syntax argv reused
+with the tree include first; outputs O_EXCL after the raw recount.
+PROVISIONAL: the (100,2) first-field-real interpretation remains provisional; syntax
+validity is for the retained KLU configuration only.

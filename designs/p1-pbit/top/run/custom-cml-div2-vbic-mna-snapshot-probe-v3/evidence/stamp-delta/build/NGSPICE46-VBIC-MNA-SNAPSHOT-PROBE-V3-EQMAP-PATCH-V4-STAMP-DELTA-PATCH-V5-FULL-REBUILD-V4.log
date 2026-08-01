@@ -1,0 +1,52 @@
+NGSPICE46-VBIC-MNA-SNAPSHOT-PROBE-V3-EQMAP-PATCH-V4-STAMP-DELTA-PATCH-V5-FULL-REBUILD-V4.log
+Repair branch (a): dependency-correct matched full rebuild (no invocation, deck,
+run, or simulation; stopped after link)
+
+=== correction note (prerequisite) ===
+ABI-AUDIT-V3-CORRECTION-V1 f1d62b2c72931de3de4421ca90758d8240b6b3fc5fbd382b692d4b9d5c7e4310 (three corrections; originals preserved)
+
+=== trees and identities (re-verified before building) ===
+control: exact accepted EQMAP-PATCH-V4 sources (6e180f74 / b3117492 / 59d87567),
+  no Stamp Delta; config + generated files identical to the accepted tree
+experiment: the exact control plus accepted STAMP-DELTA V4 086461c0 and V5 279bfdb2
+  (be6f76e7 / efd0eb3b / c73eef5c); patch applications rc=0
+source deltas experiment vs control limited to the three V4/V5 files: True
+
+=== compile-only layout probes (never executed) ===
+CTL: sizeof=968 mode=400 bypass=408 time=80 rhs=280; EXP: sizeof=976 mode=400 diag=408 bypass=416 time=80 rhs=280
+  (each side's probe built against its own header; object hashes in the raw dir)
+
+=== dependency-correct rebuild (configured Makefiles, make -j1 V=1 ngspice) ===
+control: rc=0 time=472.6s (argv/env/stdout/stderr/rc/timing raw)
+experiment: rc=0 time=472.8s (argv/env/stdout/stderr/rc/timing raw)
+fresh trees: no retained old-layout production object can survive (every cktdefs.h-
+bound object was rebuilt after its side's header)
+timestamp/dependency proof: control objects rebuilt-after-header=2874/2874; experiment=2874/2874
+(the 1,085-file text inventory is the dependency-cone inventory; linked-input claims
+bind only to the accepted LINK-V5 inventory)
+
+=== products ===
+control executable    c865f1bf2ea99bc684b9e40342cfd6565f6bc995fb47c748474aceb5ef384045 (8054352 bytes)
+experiment executable 4bf27ba5aae5b11ae0b8adebc6dd6eb8f6b109663e595d4ba6c23c7b647482d3 (8058448 bytes)
+unresolved SMPfindElt in the experiment executable: False
+STAMPDELTA families in the experiment executable: 5/5 ['[STAMPDELTA_BEGIN]', '[STAMPDELTA]', '[STAMPDELTA_RHS]', '[STAMPDELTA_END]', '[STAMPDELTA_ABORT]']
+
+=== comparisons vs retained (exact reproduction desirable, not required) ===
+control: retained c865f1bf/8,054,352B; full-rebuild c865f1bf2ea99bc6/8054352B; byte-identical=True
+  EXACT REPRODUCTION
+experiment: prior (mixed-ABI) bc5567d6/8,058,448B; full-rebuild 4bf27ba5aae5b11a/8058448B; byte-identical=False
+  differs (the expected consequence of the repair: every
+  old-layout object was replaced by its new-layout rebuild)
+
+=== claims ===
+CONFIRMED: correction note first; fresh exact trees with every identity re-verified;
+configured-Makefile dependency-correct full rebuild (single-threaded, symmetric,
+rc=0 both); compile-only layout probes on each side's own header (968 vs 976);
+timestamp/dependency evidence that every linked CKTcircuit consumer was rebuilt
+against its side's header; no unresolved SMPfindElt; source deltas limited to the
+V4/V5 patch files; products' identities recorded; comparisons stated (control reproduced,
+experiment expected to differ); differences explained from the rebuild inputs or left PROVISIONAL;
+outputs O_EXCL after the recount.
+PROVISIONAL: any unexplained executable difference; the source/function mapping of
+0x661ee0 and the precise crash chain remain provisional; no measurement/
+specification/signoff/tape-out-readiness claim.

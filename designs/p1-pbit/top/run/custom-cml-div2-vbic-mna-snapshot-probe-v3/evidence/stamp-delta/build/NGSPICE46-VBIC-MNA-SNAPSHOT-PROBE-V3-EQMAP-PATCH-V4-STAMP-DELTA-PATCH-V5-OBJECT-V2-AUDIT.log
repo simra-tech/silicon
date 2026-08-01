@@ -1,0 +1,45 @@
+NGSPICE46-VBIC-MNA-SNAPSHOT-PROBE-V3-EQMAP-PATCH-V4-STAMP-DELTA-PATCH-V5-OBJECT-V1-AUDIT.log
+Object-build audit (procedure + recount); O_EXCL after the recount
+
+=== metadata correction (pre-requisite, immutable originals) ===
+METADATA-CORRECTION-V1 2d0bb9e9f2af8c1cb660814445f35f7b104fe7493d0d2d68758f3c1e6eb9c1cb created before any object work; the V5 audit/report files
+were not modified (audit ac27afbc: 2814 bytes / 44 wc-l lines; report e5403f86:
+4424 bytes / 63 wc-l lines - hashes/bytes correct as stated).
+
+=== fresh full configured trees ===
+copied from the accepted configured tree <accepted-eqmap-tree> (built artifacts excluded: *.o *.lo *.la
+*.a *.so* *.Tpo *.Plo .libs *.log *.raw executables), then the three sources
+replaced with the exact EQMAP V4 bases; experiment got V4 then V5 exactly once each.
+V4 apply rc=0; V5 apply rc=0.
+
+=== object jobs (complete argv in raw; flags identical to the accepted Object V2) ===
+argv template: gcc -DHAVE_CONFIG_H -I. -I. -I<TREE>/src/include -I<ACC>/src/include
+  -O2 -s -Wall -Wextra -Wmissing-prototypes -Wstrict-prototypes -Wnested-externs
+  -Wold-style-definition -Wredundant-decls -Wconversion -Wno-unused-but-set-variable
+  -std=gnu11 -fopenmp -MT <tu>.lo -MD -MP -MF .deps/<tu>.Tpo -c <tu>.c -o <tu>.o
+per-job: exp-niiter rc=0 sha=7fdac54b781cc2d2 size=13424, exp-vbicload rc=0 sha=5832c9420d008121 size=142088, ctl-niiter rc=0 sha=9a54a5b5e7fe392e size=11208, ctl-vbicload rc=0 sha=70159e1dded1d9e8 size=141520
+
+=== recount (from raw streams) ===
+exp-niiter: stdout 0 B / 0 lines; stderr 0 B / 0 lines; warnings=0 errors=0; nm -u lines=23; strings lines=141
+exp-vbicload: stdout 0 B / 0 lines; stderr 0 B / 0 lines; warnings=0 errors=0; nm -u lines=13; strings lines=815
+ctl-niiter: stdout 0 B / 0 lines; stderr 0 B / 0 lines; warnings=0 errors=0; nm -u lines=23; strings lines=113
+ctl-vbicload: stdout 0 B / 0 lines; stderr 0 B / 0 lines; warnings=0 errors=0; nm -u lines=12; strings lines=766
+
+=== symbol deltas (source-explained) ===
+exp-niiter - ctl-niiter: none
+exp-vbicload - ctl-vbicload: ['SMPfindElt'] (SMPfindElt - the V4 capture's read-only lookup,
+  smpdefs.h:81 declaration; the only new undefined symbol in the diagnostic object)
+
+=== STAMPDELTA families ===
+exp-niiter: ['[STAMPDELTA_BEGIN]', '[STAMPDELTA]', '[STAMPDELTA_RHS]', '[STAMPDELTA_END]', '[STAMPDELTA_ABORT]']
+exp-vbicload: NONE
+ctl-niiter: NONE
+ctl-vbicload: NONE
+
+=== verification ===
+sources+headers unchanged after compilation: exp=True ctl=True (only the requested
+niiter.o/vbicload.o and .deps Tpo files were added; no other file changed)
+
+=== verdict ===
+CONFIRMED: everything above; outputs O_EXCL after the recount.
+PROVISIONAL: the (100,2) first-field-real interpretation remains provisional.

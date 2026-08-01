@@ -1,0 +1,70 @@
+NGSPICE46-VBIC-MNA-SNAPSHOT-PROBE-V3-EQMAP-PATCH-V4-STAMP-DELTA-PATCH-V1-AUDIT.log
+Source-design-only audit for the minimal read-only STAMP-DELTA patch; the patch is
+NOT applied; nothing compiled, linked, invoked; no deck access, no simulation.
+
+=== base-source hashes (exact accepted state) ===
+vbicload.c    59d875679da675ef8daedbd151e91b39b27a13ae197530af40650c62e3e75172
+vbicsetup.c   f711c83cb3811d4a0fad08a2d16fbe79416886330417b4c26b3c4f46a5483d79
+vbicdefs.h    0185f8162e02de0cf9c332bbc827d6e43af9a1c494e8e86642b2d7d8ec57ef9b
+vbicbindCSC.c 207ef662c2c26fbd5e8236810c10dd8f8c68b2f22b42999f1d2ec3bfefc89810
+smpdefs.h     61acdc96443b583cf8915bf3e3528284fbeb9c4b48fb694787f1a7959b45b369
+klusmp.c      d9a40052c6c29c6ecf7c2ee34a946512d3221908787b2e15095fad69ea9f297d
+spsmp.c       8d04e3cadc25e2f96e7265af26ef4b1b7a2a9ce820552f8d3202ac839f698825
+
+=== sparse API audit (fail-closed gate) ===
+SMPfindElt(SMPmatrix *, int, int, int CreateIfMissing) is the EXISTING public
+read-only lookup (smpdefs.h:81). KLU branch (klusmp.c:1813-1852): pure scan of
+KLUmatrixAp/Ai/Ax (Col-1/Row-1 indexing), returns &Ax[i] or NULL; no creation,
+no structural mutation. Sparse branch (spsmp.c:492-510): ExtToIntRowMap/ColMap
++ spcFindElementInCol(..., CreateIfMissing); with CreateIfMissing=0 the lookup
+never allocates. The returned pointer's first field is the real value (the same
+pointer shape SMPmakeElt returns, smpdefs.h:61: double*); the patch reads
+*((double *)sd_elt). GATE: PASSED - the assembled (tempNode, eq 2) entry is
+readable without SMPmakeElt, element creation, or backend-specific unsafe
+traversal; NO blocker. No whole-CKTload delta is substituted; no broadening.
+
+=== touched source (minimal) ===
+File: src/spicelib/devices/vbic/vbicload.c ONLY (function vbic_4T_et_cf_fj,
+lines 21-1789; the thermal stamp block 1545-1775). Three hunks: (1) one include
+line after vbicload.c:14; (2) pre-capture + [STAMPDELTA_BEGIN] inserted before
+the Rth stamp (vbicload.c:1545); (3) post-capture + 3 records + [STAMPDELTA_END]
+inserted after the last Ith stamp / #undef STAMP_DIAG_REPORT (after :1775-1776).
+
+=== lookup authority ===
+(tempNode,tempNode): existing TSTALLOC'd pointer here->VBICtempTempPtr (the
+accepted binding; vbicsetup.c:596-603, vbicbindCSC.c:83-102) - direct read.
+CKTrhs[tempNode]: existing ckt->CKTrhs + here->VBICtempNode - direct read.
+(tempNode, eq 2): SMPfindElt(ckt->CKTmatrix, tempNode, 2, 0) - read-only, no
+creation; NULL means the entry is absent (recorded with pre/post 0x0p+0 and
+the delta 0x0p+0; the assembled entry is expected present per the Runtime V2
+snapshot). The 4th argument is LITERALLY 0: no CreateIfMissing path is taken.
+
+=== guard logic ===
+stamp_diag_active (vbicload.c:1421: here->VBICname == q.xdiv2.xqs_comp_s.qnpn13g2)
+AND ckt->CKTtime == 0.0 (the accepted event's time, niiter.c:166 event key).
+The capture runs only for the target instance at time 0; the accepted event is
+id=1 tnode=100 iterno=3 time=0 mode=1056. Iteration: NOT available at the load
+site (iterno is a niiter.c local; vtp_snap_id is a niiter.c file-scope static);
+the emission carries inst/tnode/time/mode; event correlation is by the
+EQMAP_BEGIN record (id=1 tnode=100 iterno=3 time=0 mode=1056) in the same stderr.
+
+=== emitted record count contract ===
+Per family (one per target load at time 0): 1 [STAMPDELTA_BEGIN] + 3 records
+(col=100, col=2, RHS) + 1 [STAMPDELTA_END], END emitted=3 expected=3. The number
+of families equals the target's load invocations at time 0 (transient init,
+iterations 1..3); the accepted event is the last at time 0. Hex floats (%a)
+for pre/post/delta/time throughout; explicit inst/tnode/col.
+
+=== forbidden-side-effect audit (all clear) ===
+Writes: none (reads + fprintf(stderr) only). Matrix/RHS/state/model/device/node
+data: not written. Sparse elements: SMPfindElt(...,0) only - no SMPmakeElt, no
+creation/rebinding, no structural mutation. Load order, solver flow, convergence,
+damping, and the existing snapshot/EQMAP trigger: untouched (the capture sits
+inside the existing guarded block; no condition, loop, or call is changed).
+
+=== verdict ===
+CONFIRMED: gate passed; the patch design satisfies every boundary; the patch is
+created O_EXCL. PROVISIONAL: the iteration identity is not available at the load
+site (correlation via the EQMAP_BEGIN record in the same stderr); the (100,2)
+read value is the first-field real (the SMPmakeElt-consistent pointer shape).
+No apply/syntax/compile/link/invocation/deck/simulation was performed.

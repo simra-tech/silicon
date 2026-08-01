@@ -1,0 +1,57 @@
+NGSPICE46-VBIC-MNA-SNAPSHOT-PROBE-V3-EQMAP-PATCH-V4-STAMP-DELTA-PATCH-V4-APPLY-SYNTAX-V4.log
+Apply + syntax-only check report (no object build, link, invocation, deck, simulation)
+
+=== apply (V4 exactly once, experiment only) ===
+argv: patch --batch -p1 (cwd=<v4-experiment-tree>; patch input: <design-workspace>/NGSPICE46-VBIC-MNA-SNAPSHOT-PROBE-V3-EQMAP-PATCH-V4-STAMP-DELTA-PATCH-V4.patch)
+rc: 0
+stdout: patching file src/include/ngspice/cktdefs.h | patching file src/maths/ni/niiter.c | patching file src/spicelib/devices/vbic/vbicload.c
+stderr: 
+experiment pre (verified base) -> post hashes:
+  src/include/ngspice/cktdefs.h
+    pre  6e180f74efdae65793a5b5baa316b8fcd4e59782ed8bda5165dd8cd19b692672
+    post be6f76e790ba2acd9261da7f862c46fbc7c90704c40c89d1bb91d26aeb2175fa
+  src/maths/ni/niiter.c
+    pre  b3117492d719614381c4580ce6ede6528c3fd2603b02d913b0f93074987d6cc4
+    post 8ba446cc220067dea01dddd6c4e2719fdf5291c240e9097e9a37f330f2985094
+  src/spicelib/devices/vbic/vbicload.c
+    pre  59d875679da675ef8daedbd151e91b39b27a13ae197530af40650c62e3e75172
+    post c73eef5c6e16b743515398458f9aba0f200b83acae78421fbfbcf1f33fdb9082
+control byte-exact after apply: True
+  control src/include/ngspice/cktdefs.h 6e180f74efdae65793a5b5baa316b8fcd4e59782ed8bda5165dd8cd19b692672
+  control src/maths/ni/niiter.c b3117492d719614381c4580ce6ede6528c3fd2603b02d913b0f93074987d6cc4
+  control src/spicelib/devices/vbic/vbicload.c 59d875679da675ef8daedbd151e91b39b27a13ae197530af40650c62e3e75172
+
+=== compiler identity ===
+gcc (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0
+
+=== syntax-only checks (exact accepted configured KLU flags + -fsyntax-only) ===
+flags: -DHAVE_CONFIG_H -I. -I. -O2 -s -Wall -Wextra -Wmissing-prototypes -Wstrict-prototypes -Wnested-externs -Wold-style-definition -Wredundant-decls -Wconversion -Wno-unused-but-set-variable -std=gnu11 -fopenmp
+include mapping from the accepted argv: -I. -I. -> the TU dir; -I../../../src/include
+  -> <accepted-eqmap-tree>/src/include (the accepted configured tree)
+exp-niiter: rc=0 time=0.0958s warnings=0
+  stderr: (empty)
+exp-vbicload: rc=0 time=0.1368s warnings=0
+  stderr: (empty)
+ctl-niiter: rc=0 time=0.0909s warnings=0
+  stderr: (empty)
+ctl-vbicload: rc=0 time=0.1332s warnings=0
+  stderr: (empty)
+
+=== recount (from the raw files) ===
+apply.stdout bytes=131 lines=3
+exp-niiter.stdout bytes=0 lines=0; exp-niiter.stderr bytes=0 lines=0; exp-niiter.rc=0; exp-niiter.time=0.0958
+exp-vbicload.stdout bytes=0 lines=0; exp-vbicload.stderr bytes=0 lines=0; exp-vbicload.rc=0; exp-vbicload.time=0.1368
+ctl-niiter.stdout bytes=0 lines=0; ctl-niiter.stderr bytes=0 lines=0; ctl-niiter.rc=0; ctl-niiter.time=0.0909
+ctl-vbicload.stdout bytes=0 lines=0; ctl-vbicload.stderr bytes=0 lines=0; ctl-vbicload.rc=0; ctl-vbicload.time=0.1332
+
+=== scope statement ===
+This establishes only syntax in the retained KLU configuration (the exact accepted
+configured compile environment and flags); it is NOT generic non-KLU portability,
+NOT an object build, link, or runtime evidence.
+
+=== claims ===
+CONFIRMED: V4 applied exactly once to experiment only (rc=0); control byte-exact;
+CKTdiagctx lifetime audit passed before compiling; all four syntax-only checks
+returned: exp-niiter=rc0, exp-vbicload=rc0, ctl-niiter=rc0, ctl-vbicload=rc0, with warnings recorded verbatim (none dropped); compiler identity,
+complete argv, stdout/stderr/rc/time recorded; outputs O_EXCL after recount.
+PROVISIONAL: none.

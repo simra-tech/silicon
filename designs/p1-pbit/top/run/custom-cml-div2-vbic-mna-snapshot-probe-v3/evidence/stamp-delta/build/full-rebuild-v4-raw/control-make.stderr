@@ -1,0 +1,941 @@
+string.c: In function ‘itoa10’:
+string.c:1546:18: warning: conversion from ‘int’ to ‘char’ may change value [-Wconversion]
+ 1546 |         s[i++] = n % 10 + '0';   /* get next digit */
+      |                  ^
+In file included from ../../../src/include/ngspice/ftedefs.h:77,
+                 from cmath4.c:37:
+../../../src/include/ngspice/fteext.h:123:14: warning: redundant redeclaration of ‘cx_and’ [-Wredundant-decls]
+  123 | extern void *cx_and(void *, void *, short int , short int , int);
+      |              ^~~~~~
+In file included from cmath4.c:32:
+cmath4.h:13:8: note: previous declaration of ‘cx_and’ with type ‘void *(void *, void *, short int,  short int,  int)’
+   13 | void * cx_and(void *data1, void *data2, short int datatype1, short int datatype2, int length);
+      |        ^~~~~~
+../../../src/include/ngspice/fteext.h:124:14: warning: redundant redeclaration of ‘cx_or’ [-Wredundant-decls]
+  124 | extern void *cx_or(void *, void *, short int , short int , int);
+      |              ^~~~~
+cmath4.h:14:8: note: previous declaration of ‘cx_or’ with type ‘void *(void *, void *, short int,  short int,  int)’
+   14 | void * cx_or(void *data1, void *data2, short int datatype1, short int datatype2, int length);
+      |        ^~~~~
+../../../src/include/ngspice/fteext.h:125:14: warning: redundant redeclaration of ‘cx_not’ [-Wredundant-decls]
+  125 | extern void *cx_not(void *, short int , int , int *, short int *);
+      |              ^~~~~~
+cmath4.h:15:8: note: previous declaration of ‘cx_not’ with type ‘void *(void *, short int,  int,  int *, short int *)’
+   15 | void * cx_not(void *data, short int type, int length, int *newlength, short int *newtype);
+      |        ^~~~~~
+../../../src/include/ngspice/fteext.h:127:14: warning: redundant redeclaration of ‘cx_interpolate’ [-Wredundant-decls]
+  127 | extern void *cx_interpolate(void *, short int , int , int *, short int *, struct plot *, struct plot *, int );
+      |              ^~~~~~~~~~~~~~
+cmath4.h:16:8: note: previous declaration of ‘cx_interpolate’ with type ‘void *(void *, short int,  int,  int *, short int *, struct plot *, struct plot *, int)’
+   16 | void * cx_interpolate(void *data, short int type, int length, int *newlength,
+      |        ^~~~~~~~~~~~~~
+../../../src/include/ngspice/fteext.h:128:14: warning: redundant redeclaration of ‘cx_deriv’ [-Wredundant-decls]
+  128 | extern void *cx_deriv(void *, short int , int , int *, short int *, struct plot *, struct plot *, int );
+      |              ^~~~~~~~
+cmath4.h:18:8: note: previous declaration of ‘cx_deriv’ with type ‘void *(void *, short int,  int,  int *, short int *, struct plot *, struct plot *, int)’
+   18 | void * cx_deriv(void *data, short int type, int length, int *newlength, short int *newtype,
+      |        ^~~~~~~~
+../../../src/include/ngspice/fteext.h:129:14: warning: redundant redeclaration of ‘cx_integ’ [-Wredundant-decls]
+  129 | extern void *cx_integ(void *, short int , int , int *, short int *, struct plot *, struct plot *, int );
+      |              ^~~~~~~~
+cmath4.h:20:8: note: previous declaration of ‘cx_integ’ with type ‘void *(void *, short int,  int,  int *, short int *, struct plot *, struct plot *, int)’
+   20 | void * cx_integ(void *data, short int type, int length, int *newlength, short int *newtype,
+      |        ^~~~~~~~
+../../../src/include/ngspice/fteext.h:130:14: warning: redundant redeclaration of ‘cx_group_delay’ [-Wredundant-decls]
+  130 | extern void *cx_group_delay(void *, short int , int , int *, short int *, struct plot *, struct plot *, int );
+      |              ^~~~~~~~~~~~~~
+cmath4.h:22:8: note: previous declaration of ‘cx_group_delay’ with type ‘void *(void *, short int,  int,  int *, short int *, struct plot *, struct plot *, int)’
+   22 | void * cx_group_delay(void *data, short int type, int length, int *newlength, short int *newtype,
+      |        ^~~~~~~~~~~~~~
+../../../src/include/ngspice/fteext.h:131:14: warning: redundant redeclaration of ‘cx_fft’ [-Wredundant-decls]
+  131 | extern void *cx_fft(void *, short int , int , int *, short int *, struct plot *, struct plot *, int );
+      |              ^~~~~~
+cmath4.h:24:8: note: previous declaration of ‘cx_fft’ with type ‘void *(void *, short int,  int,  int *, short int *, struct plot *, struct plot *, int)’
+   24 | void * cx_fft(void *data, short int type, int length, int *newlength, short int *newtype,
+      |        ^~~~~~
+../../../src/include/ngspice/fteext.h:132:14: warning: redundant redeclaration of ‘cx_ifft’ [-Wredundant-decls]
+  132 | extern void *cx_ifft(void *, short int , int , int *, short int *, struct plot *, struct plot *, int );
+      |              ^~~~~~~
+cmath4.h:26:8: note: previous declaration of ‘cx_ifft’ with type ‘void *(void *, short int,  int,  int *, short int *, struct plot *, struct plot *, int)’
+   26 | void * cx_ifft(void *data, short int type, int length, int *newlength, short int *newtype,
+      |        ^~~~~~~
+../../../src/include/ngspice/fteext.h:133:14: warning: redundant redeclaration of ‘cx_mtimeavg’ [-Wredundant-decls]
+  133 | extern void *cx_mtimeavg(void *, short int , int , int *, short int *, struct plot *, struct plot *, int );
+      |              ^~~~~~~~~~~
+cmath4.h:28:7: note: previous declaration of ‘cx_mtimeavg’ with type ‘void *(void *, short int,  int,  int *, short int *, struct plot *, struct plot *, int)’
+   28 | void* cx_mtimeavg(void* data, short int type, int length, int* newlength, short int* newtype,
+      |       ^~~~~~~~~~~
+../../../src/include/ngspice/fteext.h:224:13: warning: redundant redeclaration of ‘ft_interpolate’ [-Wredundant-decls]
+  224 | extern bool ft_interpolate(double *data, double *ndata, double *oscale, int olen, double *nscale, int nlen, int degree);
+      |             ^~~~~~~~~~~~~~
+In file included from cmath4.c:26:
+../../../src/maths/poly/interpolate.h:6:6: note: previous declaration of ‘ft_interpolate’ with type ‘_Bool(double *, double *, double *, int,  double *, int,  int)’
+    6 | bool ft_interpolate(double *data, double *ndata, double *oscale, int olen, double *nscale, int nlen, int degree);
+      |      ^~~~~~~~~~~~~~
+../../../src/include/ngspice/fteext.h:225:13: warning: redundant redeclaration of ‘ft_polyfit’ [-Wredundant-decls]
+  225 | extern bool ft_polyfit(double *xdata, double *ydata, double *result, int degree, double *scratch);
+      |             ^~~~~~~~~~
+In file included from cmath4.c:27:
+../../../src/maths/poly/polyfit.h:6:6: note: previous declaration of ‘ft_polyfit’ with type ‘_Bool(double *, double *, double *, int,  double *)’
+    6 | bool ft_polyfit(double *xdata, double *ydata, double *result,
+      |      ^~~~~~~~~~
+../../../src/include/ngspice/fteext.h:226:15: warning: redundant redeclaration of ‘ft_peval’ [-Wredundant-decls]
+  226 | extern double ft_peval(double x, double *coeffs, int degree);
+      |               ^~~~~~~~
+In file included from cmath4.c:28:
+../../../src/maths/poly/polyeval.h:4:8: note: previous declaration of ‘ft_peval’ with type ‘double(double,  double *, int)’
+    4 | double ft_peval(double x, double *coeffs, int degree);
+      |        ^~~~~~~~
+../../../src/include/ngspice/fteext.h:227:13: warning: redundant redeclaration of ‘ft_polyderiv’ [-Wredundant-decls]
+  227 | extern void ft_polyderiv(double *coeffs, int degree);
+      |             ^~~~~~~~~~~~
+In file included from cmath4.c:29:
+../../../src/maths/poly/polyderiv.h:4:6: note: previous declaration of ‘ft_polyderiv’ with type ‘void(double *, int)’
+    4 | void ft_polyderiv(double *coeffs, int degree);
+      |      ^~~~~~~~~~~~
+cmath4.c:40:13: warning: redundant redeclaration of ‘cx_degrees’ [-Wredundant-decls]
+   40 | extern bool cx_degrees;
+      |             ^~~~~~~~~~
+../../../src/include/ngspice/fteext.h:56:13: note: previous declaration of ‘cx_degrees’ with type ‘_Bool’
+   56 | extern bool cx_degrees;
+      |             ^~~~~~~~~~
+cmath4.c:41:13: warning: redundant redeclaration of ‘vec_new’ [-Wredundant-decls]
+   41 | extern void vec_new(struct dvec *d);
+      |             ^~~~~~~
+../../../src/include/ngspice/fteext.h:351:13: note: previous declaration of ‘vec_new’ with type ‘void(struct dvec *)’
+  351 | extern void vec_new(struct dvec *d);
+      |             ^~~~~~~
+klu.c: In function ‘klu_kernel_factor’:
+klu.c:119:17: warning: conversion from ‘double’ to ‘int’ may change value [-Wfloat-conversion]
+  119 |         lsize = Lsize * anz + n ;
+      |                 ^~~~~
+klu.c:123:17: warning: conversion from ‘double’ to ‘int’ may change value [-Wfloat-conversion]
+  123 |         lsize = Lsize ;
+      |                 ^~~~~
+klu_factor.c: In function ‘klu_factor’:
+klu_factor.c:460:33: warning: conversion to ‘size_t’ {aka ‘long unsigned int’} from ‘int’ may change the sign of the result [-Wsign-conversion]
+  460 |     Numeric->Pnum = KLU_malloc (n, sizeof (Int), Common) ;
+      |                                 ^
+klu_factor.c:465:33: warning: conversion to ‘size_t’ {aka ‘long unsigned int’} from ‘int’ may change the sign of the result [-Wsign-conversion]
+  465 |     Numeric->Lip  = KLU_malloc (n, sizeof (Int), Common) ;
+      |                                 ^
+klu_factor.c:466:33: warning: conversion to ‘size_t’ {aka ‘long unsigned int’} from ‘int’ may change the sign of the result [-Wsign-conversion]
+  466 |     Numeric->Uip  = KLU_malloc (n, sizeof (Int), Common) ;
+      |                                 ^
+klu_factor.c:467:33: warning: conversion to ‘size_t’ {aka ‘long unsigned int’} from ‘int’ may change the sign of the result [-Wsign-conversion]
+  467 |     Numeric->Llen = KLU_malloc (n, sizeof (Int), Common) ;
+      |                                 ^
+klu_factor.c:468:33: warning: conversion to ‘size_t’ {aka ‘long unsigned int’} from ‘int’ may change the sign of the result [-Wsign-conversion]
+  468 |     Numeric->Ulen = KLU_malloc (n, sizeof (Int), Common) ;
+      |                                 ^
+klu_factor.c:470:35: warning: conversion to ‘size_t’ {aka ‘long unsigned int’} from ‘int’ may change the sign of the result [-Wsign-conversion]
+  470 |     Numeric->LUsize = KLU_malloc (nblocks, sizeof (size_t), Common) ;
+      |                                   ^~~~~~~
+klu_factor.c:472:33: warning: conversion to ‘size_t’ {aka ‘long unsigned int’} from ‘int’ may change the sign of the result [-Wsign-conversion]
+  472 |     Numeric->LUbx = KLU_malloc (nblocks, sizeof (Unit *), Common) ;
+      |                                 ^~~~~~~
+klu_factor.c:481:34: warning: conversion to ‘size_t’ {aka ‘long unsigned int’} from ‘int’ may change the sign of the result [-Wsign-conversion]
+  481 |     Numeric->Udiag = KLU_malloc (n, sizeof (Entry), Common) ;
+      |                                  ^
+klu_factor.c:485:35: warning: conversion to ‘size_t’ {aka ‘long unsigned int’} from ‘int’ may change the sign of the result [-Wsign-conversion]
+  485 |         Numeric->Rs = KLU_malloc (n, sizeof (double), Common) ;
+      |                                   ^
+klu_factor.c:493:33: warning: conversion to ‘size_t’ {aka ‘long unsigned int’} from ‘int’ may change the sign of the result [-Wsign-conversion]
+  493 |     Numeric->Pinv = KLU_malloc (n, sizeof (Int), Common) ;
+      |                                 ^
+klu_factor.c:502:26: warning: conversion to ‘size_t’ {aka ‘long unsigned int’} from ‘int’ may change the sign of the result [-Wsign-conversion]
+  502 |     s = KLU_mult_size_t (n, sizeof (Entry), &ok) ;
+      |                          ^
+klu_factor.c:503:27: warning: conversion to ‘size_t’ {aka ‘long unsigned int’} from ‘int’ may change the sign of the result [-Wsign-conversion]
+  503 |     n3 = KLU_mult_size_t (n, 3 * sizeof (Entry), &ok) ;
+      |                           ^
+klu_factor.c:504:27: warning: conversion to ‘size_t’ {aka ‘long unsigned int’} from ‘int’ may change the sign of the result [-Wsign-conversion]
+  504 |     b6 = KLU_mult_size_t (maxblock, 6 * sizeof (Int), &ok) ;
+      |                           ^~~~~~~~
+klu_free_numeric.c: In function ‘klu_free_numeric’:
+klu_free_numeric.c:46:30: warning: conversion to ‘size_t’ {aka ‘long unsigned int’} from ‘int’ may change the sign of the result [-Wsign-conversion]
+   46 |     KLU_free (Numeric->Pnum, n, sizeof (Int), Common) ;
+      |                              ^
+klu_free_numeric.c:47:31: warning: conversion to ‘size_t’ {aka ‘long unsigned int’} from ‘int’ may change the sign of the result [-Wsign-conversion]
+   47 |     KLU_free (Numeric->Offp, n+1, sizeof (Int), Common) ;
+      |                              ~^~
+klu_free_numeric.c:48:35: warning: conversion to ‘size_t’ {aka ‘long unsigned int’} from ‘int’ may change the sign of the result [-Wsign-conversion]
+   48 |     KLU_free (Numeric->Offi, nzoff+1, sizeof (Int), Common) ;
+      |                              ~~~~~^~
+klu_free_numeric.c:49:35: warning: conversion to ‘size_t’ {aka ‘long unsigned int’} from ‘int’ may change the sign of the result [-Wsign-conversion]
+   49 |     KLU_free (Numeric->Offx, nzoff+1, sizeof (Entry), Common) ;
+      |                              ~~~~~^~
+klu_free_numeric.c:51:30: warning: conversion to ‘size_t’ {aka ‘long unsigned int’} from ‘int’ may change the sign of the result [-Wsign-conversion]
+   51 |     KLU_free (Numeric->Lip,  n, sizeof (Int), Common) ;
+      |                              ^
+klu_free_numeric.c:52:30: warning: conversion to ‘size_t’ {aka ‘long unsigned int’} from ‘int’ may change the sign of the result [-Wsign-conversion]
+   52 |     KLU_free (Numeric->Llen, n, sizeof (Int), Common) ;
+      |                              ^
+klu_free_numeric.c:53:30: warning: conversion to ‘size_t’ {aka ‘long unsigned int’} from ‘int’ may change the sign of the result [-Wsign-conversion]
+   53 |     KLU_free (Numeric->Uip,  n, sizeof (Int), Common) ;
+      |                              ^
+klu_free_numeric.c:54:30: warning: conversion to ‘size_t’ {aka ‘long unsigned int’} from ‘int’ may change the sign of the result [-Wsign-conversion]
+   54 |     KLU_free (Numeric->Ulen, n, sizeof (Int), Common) ;
+      |                              ^
+klu_free_numeric.c:56:32: warning: conversion to ‘size_t’ {aka ‘long unsigned int’} from ‘int’ may change the sign of the result [-Wsign-conversion]
+   56 |     KLU_free (Numeric->LUsize, nblocks, sizeof (size_t), Common) ;
+      |                                ^~~~~~~
+klu_free_numeric.c:58:30: warning: conversion to ‘size_t’ {aka ‘long unsigned int’} from ‘int’ may change the sign of the result [-Wsign-conversion]
+   58 |     KLU_free (Numeric->LUbx, nblocks, sizeof (Unit *), Common) ;
+      |                              ^~~~~~~
+klu_free_numeric.c:60:31: warning: conversion to ‘size_t’ {aka ‘long unsigned int’} from ‘int’ may change the sign of the result [-Wsign-conversion]
+   60 |     KLU_free (Numeric->Udiag, n, sizeof (Entry), Common) ;
+      |                               ^
+klu_free_numeric.c:62:30: warning: conversion to ‘size_t’ {aka ‘long unsigned int’} from ‘int’ may change the sign of the result [-Wsign-conversion]
+   62 |     KLU_free (Numeric->Rs,   n, sizeof (double), Common) ;
+      |                              ^
+klu_free_numeric.c:63:30: warning: conversion to ‘size_t’ {aka ‘long unsigned int’} from ‘int’ may change the sign of the result [-Wsign-conversion]
+   63 |     KLU_free (Numeric->Pinv, n, sizeof (Int), Common) ;
+      |                              ^
+klu_kernel.c: In function ‘klu_kernel’:
+klu_kernel.c:788:33: warning: conversion from ‘size_t’ {aka ‘long unsigned int’} to ‘double’ may change value [-Wconversion]
+  788 |             newlusize = memgrow * lusize + 2*n + 1 ;
+      |                                 ^
+klu_kernel.c:788:25: warning: conversion from ‘double’ to ‘size_t’ {aka ‘long unsigned int’} may change value [-Wfloat-conversion]
+  788 |             newlusize = memgrow * lusize + 2*n + 1 ;
+      |                         ^~~~~~~
+klu_kernel.c:1018:17: warning: conversion to ‘size_t’ {aka ‘long unsigned int’} from ‘int’ may change the sign of the result [-Wsign-conversion]
+ 1018 |     newlusize = lup ;
+      |                 ^~~
+klu_refactor.c: In function ‘klu_refactor’:
+klu_refactor.c:95:39: warning: conversion to ‘size_t’ {aka ‘long unsigned int’} from ‘int’ may change the sign of the result [-Wsign-conversion]
+   95 |             Numeric->Rs = KLU_malloc (n, sizeof (double), Common) ;
+      |                                       ^
+klu_refactor.c:107:46: warning: conversion to ‘size_t’ {aka ‘long unsigned int’} from ‘int’ may change the sign of the result [-Wsign-conversion]
+  107 |         Numeric->Rs = KLU_free (Numeric->Rs, n, sizeof (double), Common) ;
+      |                                              ^
+klu_sort.c: In function ‘klu_sort’:
+klu_sort.c:125:22: warning: conversion to ‘size_t’ {aka ‘long unsigned int’} from ‘int’ may change the sign of the result [-Wsign-conversion]
+  125 |     W  = KLU_malloc (maxblock, sizeof (Int), Common) ;
+      |                      ^~~~~~~~
+klu_sort.c:127:22: warning: conversion to ‘size_t’ {aka ‘long unsigned int’} from ‘int’ may change the sign of the result [-Wsign-conversion]
+  127 |     Ti = KLU_malloc (nz, sizeof (Int), Common) ;
+      |                      ^~
+klu_sort.c:128:22: warning: conversion to ‘size_t’ {aka ‘long unsigned int’} from ‘int’ may change the sign of the result [-Wsign-conversion]
+  128 |     Tx = KLU_malloc (nz, sizeof (Entry), Common) ;
+      |                      ^~
+klu_sort.c:151:18: warning: conversion to ‘size_t’ {aka ‘long unsigned int’} from ‘int’ may change the sign of the result [-Wsign-conversion]
+  151 |     KLU_free (W, maxblock, sizeof (Int), Common) ;
+      |                  ^~~~~~~~
+klu_sort.c:153:19: warning: conversion to ‘size_t’ {aka ‘long unsigned int’} from ‘int’ may change the sign of the result [-Wsign-conversion]
+  153 |     KLU_free (Ti, nz, sizeof (Int), Common) ;
+      |                   ^~
+klu_sort.c:154:19: warning: conversion to ‘size_t’ {aka ‘long unsigned int’} from ‘int’ may change the sign of the result [-Wsign-conversion]
+  154 |     KLU_free (Tx, nz, sizeof (Entry), Common) ;
+      |                   ^~
+klu.c: In function ‘klu_z_kernel_factor’:
+klu.c:119:17: warning: conversion from ‘double’ to ‘int’ may change value [-Wfloat-conversion]
+  119 |         lsize = Lsize * anz + n ;
+      |                 ^~~~~
+klu.c:123:17: warning: conversion from ‘double’ to ‘int’ may change value [-Wfloat-conversion]
+  123 |         lsize = Lsize ;
+      |                 ^~~~~
+klu_factor.c: In function ‘klu_z_factor’:
+klu_factor.c:460:33: warning: conversion to ‘size_t’ {aka ‘long unsigned int’} from ‘int’ may change the sign of the result [-Wsign-conversion]
+  460 |     Numeric->Pnum = KLU_malloc (n, sizeof (Int), Common) ;
+      |                                 ^
+klu_factor.c:465:33: warning: conversion to ‘size_t’ {aka ‘long unsigned int’} from ‘int’ may change the sign of the result [-Wsign-conversion]
+  465 |     Numeric->Lip  = KLU_malloc (n, sizeof (Int), Common) ;
+      |                                 ^
+klu_factor.c:466:33: warning: conversion to ‘size_t’ {aka ‘long unsigned int’} from ‘int’ may change the sign of the result [-Wsign-conversion]
+  466 |     Numeric->Uip  = KLU_malloc (n, sizeof (Int), Common) ;
+      |                                 ^
+klu_factor.c:467:33: warning: conversion to ‘size_t’ {aka ‘long unsigned int’} from ‘int’ may change the sign of the result [-Wsign-conversion]
+  467 |     Numeric->Llen = KLU_malloc (n, sizeof (Int), Common) ;
+      |                                 ^
+klu_factor.c:468:33: warning: conversion to ‘size_t’ {aka ‘long unsigned int’} from ‘int’ may change the sign of the result [-Wsign-conversion]
+  468 |     Numeric->Ulen = KLU_malloc (n, sizeof (Int), Common) ;
+      |                                 ^
+klu_factor.c:470:35: warning: conversion to ‘size_t’ {aka ‘long unsigned int’} from ‘int’ may change the sign of the result [-Wsign-conversion]
+  470 |     Numeric->LUsize = KLU_malloc (nblocks, sizeof (size_t), Common) ;
+      |                                   ^~~~~~~
+klu_factor.c:472:33: warning: conversion to ‘size_t’ {aka ‘long unsigned int’} from ‘int’ may change the sign of the result [-Wsign-conversion]
+  472 |     Numeric->LUbx = KLU_malloc (nblocks, sizeof (Unit *), Common) ;
+      |                                 ^~~~~~~
+klu_factor.c:481:34: warning: conversion to ‘size_t’ {aka ‘long unsigned int’} from ‘int’ may change the sign of the result [-Wsign-conversion]
+  481 |     Numeric->Udiag = KLU_malloc (n, sizeof (Entry), Common) ;
+      |                                  ^
+klu_factor.c:485:35: warning: conversion to ‘size_t’ {aka ‘long unsigned int’} from ‘int’ may change the sign of the result [-Wsign-conversion]
+  485 |         Numeric->Rs = KLU_malloc (n, sizeof (double), Common) ;
+      |                                   ^
+klu_factor.c:493:33: warning: conversion to ‘size_t’ {aka ‘long unsigned int’} from ‘int’ may change the sign of the result [-Wsign-conversion]
+  493 |     Numeric->Pinv = KLU_malloc (n, sizeof (Int), Common) ;
+      |                                 ^
+klu_factor.c:502:26: warning: conversion to ‘size_t’ {aka ‘long unsigned int’} from ‘int’ may change the sign of the result [-Wsign-conversion]
+  502 |     s = KLU_mult_size_t (n, sizeof (Entry), &ok) ;
+      |                          ^
+klu_factor.c:503:27: warning: conversion to ‘size_t’ {aka ‘long unsigned int’} from ‘int’ may change the sign of the result [-Wsign-conversion]
+  503 |     n3 = KLU_mult_size_t (n, 3 * sizeof (Entry), &ok) ;
+      |                           ^
+klu_factor.c:504:27: warning: conversion to ‘size_t’ {aka ‘long unsigned int’} from ‘int’ may change the sign of the result [-Wsign-conversion]
+  504 |     b6 = KLU_mult_size_t (maxblock, 6 * sizeof (Int), &ok) ;
+      |                           ^~~~~~~~
+klu_free_numeric.c: In function ‘klu_z_free_numeric’:
+klu_free_numeric.c:46:30: warning: conversion to ‘size_t’ {aka ‘long unsigned int’} from ‘int’ may change the sign of the result [-Wsign-conversion]
+   46 |     KLU_free (Numeric->Pnum, n, sizeof (Int), Common) ;
+      |                              ^
+klu_free_numeric.c:47:31: warning: conversion to ‘size_t’ {aka ‘long unsigned int’} from ‘int’ may change the sign of the result [-Wsign-conversion]
+   47 |     KLU_free (Numeric->Offp, n+1, sizeof (Int), Common) ;
+      |                              ~^~
+klu_free_numeric.c:48:35: warning: conversion to ‘size_t’ {aka ‘long unsigned int’} from ‘int’ may change the sign of the result [-Wsign-conversion]
+   48 |     KLU_free (Numeric->Offi, nzoff+1, sizeof (Int), Common) ;
+      |                              ~~~~~^~
+klu_free_numeric.c:49:35: warning: conversion to ‘size_t’ {aka ‘long unsigned int’} from ‘int’ may change the sign of the result [-Wsign-conversion]
+   49 |     KLU_free (Numeric->Offx, nzoff+1, sizeof (Entry), Common) ;
+      |                              ~~~~~^~
+klu_free_numeric.c:51:30: warning: conversion to ‘size_t’ {aka ‘long unsigned int’} from ‘int’ may change the sign of the result [-Wsign-conversion]
+   51 |     KLU_free (Numeric->Lip,  n, sizeof (Int), Common) ;
+      |                              ^
+klu_free_numeric.c:52:30: warning: conversion to ‘size_t’ {aka ‘long unsigned int’} from ‘int’ may change the sign of the result [-Wsign-conversion]
+   52 |     KLU_free (Numeric->Llen, n, sizeof (Int), Common) ;
+      |                              ^
+klu_free_numeric.c:53:30: warning: conversion to ‘size_t’ {aka ‘long unsigned int’} from ‘int’ may change the sign of the result [-Wsign-conversion]
+   53 |     KLU_free (Numeric->Uip,  n, sizeof (Int), Common) ;
+      |                              ^
+klu_free_numeric.c:54:30: warning: conversion to ‘size_t’ {aka ‘long unsigned int’} from ‘int’ may change the sign of the result [-Wsign-conversion]
+   54 |     KLU_free (Numeric->Ulen, n, sizeof (Int), Common) ;
+      |                              ^
+klu_free_numeric.c:56:32: warning: conversion to ‘size_t’ {aka ‘long unsigned int’} from ‘int’ may change the sign of the result [-Wsign-conversion]
+   56 |     KLU_free (Numeric->LUsize, nblocks, sizeof (size_t), Common) ;
+      |                                ^~~~~~~
+klu_free_numeric.c:58:30: warning: conversion to ‘size_t’ {aka ‘long unsigned int’} from ‘int’ may change the sign of the result [-Wsign-conversion]
+   58 |     KLU_free (Numeric->LUbx, nblocks, sizeof (Unit *), Common) ;
+      |                              ^~~~~~~
+klu_free_numeric.c:60:31: warning: conversion to ‘size_t’ {aka ‘long unsigned int’} from ‘int’ may change the sign of the result [-Wsign-conversion]
+   60 |     KLU_free (Numeric->Udiag, n, sizeof (Entry), Common) ;
+      |                               ^
+klu_free_numeric.c:62:30: warning: conversion to ‘size_t’ {aka ‘long unsigned int’} from ‘int’ may change the sign of the result [-Wsign-conversion]
+   62 |     KLU_free (Numeric->Rs,   n, sizeof (double), Common) ;
+      |                              ^
+klu_free_numeric.c:63:30: warning: conversion to ‘size_t’ {aka ‘long unsigned int’} from ‘int’ may change the sign of the result [-Wsign-conversion]
+   63 |     KLU_free (Numeric->Pinv, n, sizeof (Int), Common) ;
+      |                              ^
+klu_kernel.c: In function ‘klu_z_kernel’:
+klu_kernel.c:788:33: warning: conversion from ‘size_t’ {aka ‘long unsigned int’} to ‘double’ may change value [-Wconversion]
+  788 |             newlusize = memgrow * lusize + 2*n + 1 ;
+      |                                 ^
+klu_kernel.c:788:25: warning: conversion from ‘double’ to ‘size_t’ {aka ‘long unsigned int’} may change value [-Wfloat-conversion]
+  788 |             newlusize = memgrow * lusize + 2*n + 1 ;
+      |                         ^~~~~~~
+klu_kernel.c:1018:17: warning: conversion to ‘size_t’ {aka ‘long unsigned int’} from ‘int’ may change the sign of the result [-Wsign-conversion]
+ 1018 |     newlusize = lup ;
+      |                 ^~~
+klu_refactor.c: In function ‘klu_z_refactor’:
+klu_refactor.c:95:39: warning: conversion to ‘size_t’ {aka ‘long unsigned int’} from ‘int’ may change the sign of the result [-Wsign-conversion]
+   95 |             Numeric->Rs = KLU_malloc (n, sizeof (double), Common) ;
+      |                                       ^
+klu_refactor.c:107:46: warning: conversion to ‘size_t’ {aka ‘long unsigned int’} from ‘int’ may change the sign of the result [-Wsign-conversion]
+  107 |         Numeric->Rs = KLU_free (Numeric->Rs, n, sizeof (double), Common) ;
+      |                                              ^
+klu_sort.c: In function ‘klu_z_sort’:
+klu_sort.c:125:22: warning: conversion to ‘size_t’ {aka ‘long unsigned int’} from ‘int’ may change the sign of the result [-Wsign-conversion]
+  125 |     W  = KLU_malloc (maxblock, sizeof (Int), Common) ;
+      |                      ^~~~~~~~
+klu_sort.c:127:22: warning: conversion to ‘size_t’ {aka ‘long unsigned int’} from ‘int’ may change the sign of the result [-Wsign-conversion]
+  127 |     Ti = KLU_malloc (nz, sizeof (Int), Common) ;
+      |                      ^~
+klu_sort.c:128:22: warning: conversion to ‘size_t’ {aka ‘long unsigned int’} from ‘int’ may change the sign of the result [-Wsign-conversion]
+  128 |     Tx = KLU_malloc (nz, sizeof (Entry), Common) ;
+      |                      ^~
+klu_sort.c:151:18: warning: conversion to ‘size_t’ {aka ‘long unsigned int’} from ‘int’ may change the sign of the result [-Wsign-conversion]
+  151 |     KLU_free (W, maxblock, sizeof (Int), Common) ;
+      |                  ^~~~~~~~
+klu_sort.c:153:19: warning: conversion to ‘size_t’ {aka ‘long unsigned int’} from ‘int’ may change the sign of the result [-Wsign-conversion]
+  153 |     KLU_free (Ti, nz, sizeof (Int), Common) ;
+      |                   ^~
+klu_sort.c:154:19: warning: conversion to ‘size_t’ {aka ‘long unsigned int’} from ‘int’ may change the sign of the result [-Wsign-conversion]
+  154 |     KLU_free (Tx, nz, sizeof (Entry), Common) ;
+      |                   ^~
+amd_2.c: In function ‘amd_2’:
+amd_2.c:603:17: warning: conversion from ‘double’ to ‘int’ may change value [-Wfloat-conversion]
+  603 |         dense = alpha * sqrt ((double) n) ;
+      |                 ^~~~~
+amd_2.c:1116:34: warning: conversion to ‘unsigned int’ from ‘int’ may change the sign of the result [-Wsign-conversion]
+ 1116 |                             hash += e ;
+      |                                  ^~
+amd_2.c:1145:30: warning: conversion to ‘unsigned int’ from ‘int’ may change the sign of the result [-Wsign-conversion]
+ 1145 |                         hash += e ;
+      |                              ^~
+amd_2.c:1174:26: warning: conversion to ‘unsigned int’ from ‘int’ may change the sign of the result [-Wsign-conversion]
+ 1174 |                     hash += j ;
+      |                          ^~
+amd_2.c:1258:29: warning: conversion to ‘unsigned int’ from ‘int’ may change the sign of the result [-Wsign-conversion]
+ 1258 |                 hash = hash % n ;
+      |                             ^
+amd_2.c:1282:28: warning: conversion to ‘int’ from ‘unsigned int’ may change the sign of the result [-Wsign-conversion]
+ 1282 |                 Last [i] = hash ;
+      |                            ^~~~
+amd_2.c:1320:24: warning: conversion to ‘unsigned int’ from ‘int’ may change the sign of the result [-Wsign-conversion]
+ 1320 |                 hash = Last [i] ;
+      |                        ^~~~
+amd_aat.c: In function ‘amd_aat’:
+amd_aat.c:166:15: warning: conversion to ‘size_t’ {aka ‘long unsigned int’} from ‘int’ may change the sign of the result [-Wsign-conversion]
+  166 |         nzaat += Len [k] ;
+      |               ^~
+amd_aat.c:181:35: warning: conversion from ‘size_t’ {aka ‘long unsigned int’} to ‘double’ may change value [-Wconversion]
+  181 |         Info [AMD_NZ_A_PLUS_AT] = nzaat ;   /* nonzeros in A+A' */
+      |                                   ^~~~~
+amd_order.c: In function ‘amd_order’:
+amd_order.c:93:25: warning: conversion to ‘long unsigned int’ from ‘int’ may change the sign of the result [-Wsign-conversion]
+   93 |     Len = amd_malloc (n * sizeof (Int)) ;
+      |                         ^
+amd_order.c:94:26: warning: conversion to ‘long unsigned int’ from ‘int’ may change the sign of the result [-Wsign-conversion]
+   94 |     Pinv = amd_malloc (n * sizeof (Int)) ;
+      |                          ^
+amd_order.c:110:32: warning: conversion to ‘long unsigned int’ from ‘int’ may change the sign of the result [-Wsign-conversion]
+  110 |         Rp = amd_malloc ((n+1) * sizeof (Int)) ;
+      |                                ^
+amd_order.c:111:37: warning: conversion to ‘long unsigned int’ from ‘int’ may change the sign of the result [-Wsign-conversion]
+  111 |         Ri = amd_malloc (MAX (nz,1) * sizeof (Int)) ;
+      |                                     ^
+amd_order.c:156:21: warning: conversion to ‘size_t’ {aka ‘long unsigned int’} from ‘int’ may change the sign of the result [-Wsign-conversion]
+  156 |         ok = ((slen + n) > slen) ;      /* check for size_t overflow */
+      |                     ^
+amd_order.c:157:14: warning: conversion to ‘size_t’ {aka ‘long unsigned int’} from ‘int’ may change the sign of the result [-Wsign-conversion]
+  157 |         slen += n ;                     /* size-n elbow room, 6 size-n work */
+      |              ^~
+amd_order.c:159:9: warning: conversion from ‘size_t’ {aka ‘long unsigned int’} to ‘double’ may change value [-Wconversion]
+  159 |     mem += slen ;
+      |         ^~
+amd_order.c:187:37: warning: conversion from ‘size_t’ {aka ‘long unsigned int’} to ‘int’ may change value [-Wconversion]
+  187 |     AMD_1 (n, Cp, Ci, P, Pinv, Len, slen, S, Control, Info) ;
+      |                                     ^~~~
+colamd.c: In function ‘colamd_recommended’:
+colamd.c:1080:17: warning: conversion to ‘size_t’ {aka ‘long unsigned int’} from ‘int’ may change the sign of the result [-Wsign-conversion]
+ 1080 |     s = t_mult (nnz, 2, &ok) ;      /* 2*nnz */
+      |                 ^~~
+colamd.c:1081:19: warning: conversion to ‘size_t’ {aka ‘long unsigned int’} from ‘int’ may change the sign of the result [-Wsign-conversion]
+ 1081 |     c = COLAMD_C (n_col, &ok) ;     /* size of column structures */
+      |                   ^~~~~
+colamd.c:1059:22: note: in definition of macro ‘COLAMD_C’
+ 1059 |     ((t_mult (t_add (n_col, 1, ok), sizeof (Colamd_Col), ok) / sizeof (Int)))
+      |                      ^~~~~
+colamd.c:1082:19: warning: conversion to ‘size_t’ {aka ‘long unsigned int’} from ‘int’ may change the sign of the result [-Wsign-conversion]
+ 1082 |     r = COLAMD_R (n_row, &ok) ;     /* size of row structures */
+      |                   ^~~~~
+colamd.c:1062:22: note: in definition of macro ‘COLAMD_R’
+ 1062 |     ((t_mult (t_add (n_row, 1, ok), sizeof (Colamd_Row), ok) / sizeof (Int)))
+      |                      ^~~~~
+colamd.c:1085:19: warning: conversion to ‘size_t’ {aka ‘long unsigned int’} from ‘int’ may change the sign of the result [-Wsign-conversion]
+ 1085 |     s = t_add (s, n_col, &ok) ;     /* elbow room */
+      |                   ^~~~~
+colamd.c:1086:22: warning: conversion to ‘size_t’ {aka ‘long unsigned int’} from ‘int’ may change the sign of the result [-Wsign-conversion]
+ 1086 |     s = t_add (s, nnz/5, &ok) ;     /* elbow room */
+      |                   ~~~^~
+colamd.c: In function ‘symamd’:
+colamd.c:1253:36: warning: conversion to ‘size_t’ {aka ‘long unsigned int’} from ‘int’ may change the sign of the result [-Wsign-conversion]
+ 1253 |     count = (Int *) ((*allocate) (n+1, sizeof (Int))) ;
+      |                                   ~^~
+colamd.c:1261:35: warning: conversion to ‘size_t’ {aka ‘long unsigned int’} from ‘int’ may change the sign of the result [-Wsign-conversion]
+ 1261 |     mark = (Int *) ((*allocate) (n+1, sizeof (Int))) ;
+      |                                  ~^~
+colamd.c: In function ‘colamd’:
+colamd.c:1577:26: warning: conversion to ‘size_t’ {aka ‘long unsigned int’} from ‘int’ may change the sign of the result [-Wsign-conversion]
+ 1577 |     Col_size = COLAMD_C (n_col, &ok) ;      /* size of Col array of structs */
+      |                          ^~~~~
+colamd.c:1059:22: note: in definition of macro ‘COLAMD_C’
+ 1059 |     ((t_mult (t_add (n_col, 1, ok), sizeof (Colamd_Col), ok) / sizeof (Int)))
+      |                      ^~~~~
+colamd.c:1578:26: warning: conversion to ‘size_t’ {aka ‘long unsigned int’} from ‘int’ may change the sign of the result [-Wsign-conversion]
+ 1578 |     Row_size = COLAMD_R (n_row, &ok) ;      /* size of Row array of structs */
+      |                          ^~~~~
+colamd.c:1062:22: note: in definition of macro ‘COLAMD_R’
+ 1062 |     ((t_mult (t_add (n_row, 1, ok), sizeof (Colamd_Row), ok) / sizeof (Int)))
+      |                      ^~~~~
+colamd.c:1581:20: warning: conversion to ‘size_t’ {aka ‘long unsigned int’} from ‘int’ may change the sign of the result [-Wsign-conversion]
+ 1581 |     need = t_mult (nnz, 2, &ok) ;
+      |                    ^~~
+colamd.c:1582:25: warning: conversion to ‘size_t’ {aka ‘long unsigned int’} from ‘int’ may change the sign of the result [-Wsign-conversion]
+ 1582 |     need = t_add (need, n_col, &ok) ;
+      |                         ^~~~~
+colamd.c:1590:32: warning: conversion from ‘size_t’ {aka ‘long unsigned int’} to ‘int’ may change value [-Wconversion]
+ 1590 |         stats [COLAMD_INFO1] = need ;
+      |                                ^~~~
+colamd.c:1596:10: warning: conversion to ‘size_t’ {aka ‘long unsigned int’} from ‘int’ may change the sign of the result [-Wsign-conversion]
+ 1596 |     Alen -= Col_size + Row_size ;
+      |          ^~
+colamd.c:1596:13: warning: conversion from ‘size_t’ {aka ‘long unsigned int’} to ‘int’ may change value [-Wconversion]
+ 1596 |     Alen -= Col_size + Row_size ;
+      |             ^~~~~~~~
+colamd.c:1598:35: warning: conversion to ‘size_t’ {aka ‘long unsigned int’} from ‘int’ may change the sign of the result [-Wsign-conversion]
+ 1598 |     Row = (Colamd_Row *) &A [Alen + Col_size] ;
+      |                                   ^
+colamd.c: In function ‘find_ordering’:
+colamd.c:2561:22: warning: conversion to ‘unsigned int’ from ‘int’ may change the sign of the result [-Wsign-conversion]
+ 2561 |                 hash += row ;
+      |                      ^~
+colamd.c:2595:22: warning: conversion to ‘unsigned int’ from ‘int’ may change the sign of the result [-Wsign-conversion]
+ 2595 |                 hash %= n_col + 1 ;
+      |                      ^~
+colamd.c: In function ‘print_report’:
+colamd.c:839:29: warning: this statement may fall through [-Wimplicit-fallthrough=]
+  839 | #define PRINTF(params) { if (colamd_printf != NULL) (void) colamd_printf params ; }
+      |                             ^
+colamd.c:3226:13: note: in expansion of macro ‘PRINTF’
+ 3226 |             PRINTF(("%s: last seen in column:                             %d",
+      |             ^~~~~~
+colamd.c:3231:9: note: here
+ 3231 |         case COLAMD_OK:
+      |         ^~~~
+In file included from klu_analyze.c:9:
+klu_analyze.c: In function ‘analyze_worker’:
+klu_analyze.c:159:34: warning: conversion from ‘size_t’ {aka ‘long unsigned int’} to ‘double’ may change value [-Wconversion]
+  159 |                 Common->memusage + amd_Info [AMD_MEMORY]) ;
+      |                                  ^
+klu_internal.h:68:27: note: in definition of macro ‘MAX’
+   68 | #define MAX(a,b) (((a) > (b)) ?  (a) : (b))
+      |                           ^
+klu_analyze.c:159:34: warning: conversion from ‘size_t’ {aka ‘long unsigned int’} to ‘double’ may change value [-Wconversion]
+  159 |                 Common->memusage + amd_Info [AMD_MEMORY]) ;
+      |                                  ^
+klu_internal.h:68:41: note: in definition of macro ‘MAX’
+   68 | #define MAX(a,b) (((a) > (b)) ?  (a) : (b))
+      |                                         ^
+klu_internal.h:68:38: warning: conversion from ‘size_t’ {aka ‘long unsigned int’} to ‘double’ may change value [-Wconversion]
+   68 | #define MAX(a,b) (((a) > (b)) ?  (a) : (b))
+      |                                      ^
+klu_analyze.c:158:31: note: in expansion of macro ‘MAX’
+  158 |             Common->mempeak = MAX (Common->mempeak,
+      |                               ^~~
+klu_internal.h:68:18: warning: conversion from ‘double’ to ‘size_t’ {aka ‘long unsigned int’} may change value [-Wfloat-conversion]
+   68 | #define MAX(a,b) (((a) > (b)) ?  (a) : (b))
+      |                  ^
+klu_analyze.c:158:31: note: in expansion of macro ‘MAX’
+  158 |             Common->mempeak = MAX (Common->mempeak,
+      |                               ^~~
+In file included from klu_internal.h:12:
+klu_analyze.c: In function ‘order_and_analyze’:
+klu_version.h:199:28: warning: conversion from ‘size_t’ {aka ‘long unsigned int’} to ‘int’ may change value [-Wconversion]
+  199 | #define COLAMD_recommended colamd_recommended
+      |                            ^~~~~~~~~~~~~~~~~~
+klu_analyze.c:294:17: note: in expansion of macro ‘COLAMD_recommended’
+  294 |         Cilen = COLAMD_recommended (nz, n, n) ;
+      |                 ^~~~~~~~~~~~~~~~~~
+klu_analyze.c:319:24: warning: conversion to ‘size_t’ {aka ‘long unsigned int’} from ‘int’ may change the sign of the result [-Wsign-conversion]
+  319 |     Pbtf = KLU_malloc (n, sizeof (Int), Common) ;
+      |                        ^
+klu_analyze.c:320:24: warning: conversion to ‘size_t’ {aka ‘long unsigned int’} from ‘int’ may change the sign of the result [-Wsign-conversion]
+  320 |     Qbtf = KLU_malloc (n, sizeof (Int), Common) ;
+      |                        ^
+klu_analyze.c:323:25: warning: conversion to ‘size_t’ {aka ‘long unsigned int’} from ‘int’ may change the sign of the result [-Wsign-conversion]
+  323 |         KLU_free (Pbtf, n, sizeof (Int), Common) ;
+      |                         ^
+klu_analyze.c:324:25: warning: conversion to ‘size_t’ {aka ‘long unsigned int’} from ‘int’ may change the sign of the result [-Wsign-conversion]
+  324 |         KLU_free (Qbtf, n, sizeof (Int), Common) ;
+      |                         ^
+klu_analyze.c:347:29: warning: conversion to ‘size_t’ {aka ‘long unsigned int’} from ‘int’ may change the sign of the result [-Wsign-conversion]
+  347 |         Work = KLU_malloc (5*n, sizeof (Int), Common) ;
+      |                            ~^~
+klu_analyze.c:351:29: warning: conversion to ‘size_t’ {aka ‘long unsigned int’} from ‘int’ may change the sign of the result [-Wsign-conversion]
+  351 |             KLU_free (Pbtf, n, sizeof (Int), Common) ;
+      |                             ^
+klu_analyze.c:352:29: warning: conversion to ‘size_t’ {aka ‘long unsigned int’} from ‘int’ may change the sign of the result [-Wsign-conversion]
+  352 |             KLU_free (Qbtf, n, sizeof (Int), Common) ;
+      |                             ^
+klu_analyze.c:362:26: warning: conversion to ‘size_t’ {aka ‘long unsigned int’} from ‘int’ may change the sign of the result [-Wsign-conversion]
+  362 |         KLU_free (Work, 5*n, sizeof (Int), Common) ;
+      |                         ~^~
+klu_analyze.c:407:24: warning: conversion to ‘size_t’ {aka ‘long unsigned int’} from ‘int’ may change the sign of the result [-Wsign-conversion]
+  407 |     Pblk = KLU_malloc (maxblock, sizeof (Int), Common) ;
+      |                        ^~~~~~~~
+klu_analyze.c:408:33: warning: conversion to ‘size_t’ {aka ‘long unsigned int’} from ‘int’ may change the sign of the result [-Wsign-conversion]
+  408 |     Cp   = KLU_malloc (maxblock + 1, sizeof (Int), Common) ;
+      |                        ~~~~~~~~~^~~
+klu_internal.h:68:38: warning: conversion to ‘size_t’ {aka ‘long unsigned int’} from ‘int’ may change the sign of the result [-Wsign-conversion]
+   68 | #define MAX(a,b) (((a) > (b)) ?  (a) : (b))
+      |                  ~~~~~~~~~~~~~~~~~~~~^~~~~~
+klu_analyze.c:409:24: note: in expansion of macro ‘MAX’
+  409 |     Ci   = KLU_malloc (MAX (Cilen, nz+1), sizeof (Int), Common) ;
+      |                        ^~~
+klu_analyze.c:410:24: warning: conversion to ‘size_t’ {aka ‘long unsigned int’} from ‘int’ may change the sign of the result [-Wsign-conversion]
+  410 |     Pinv = KLU_malloc (n, sizeof (Int), Common) ;
+      |                        ^
+klu_analyze.c:428:21: warning: conversion to ‘size_t’ {aka ‘long unsigned int’} from ‘int’ may change the sign of the result [-Wsign-conversion]
+  428 |     KLU_free (Pblk, maxblock, sizeof (Int), Common) ;
+      |                     ^~~~~~~~
+klu_analyze.c:429:27: warning: conversion to ‘size_t’ {aka ‘long unsigned int’} from ‘int’ may change the sign of the result [-Wsign-conversion]
+  429 |     KLU_free (Cp, maxblock+1, sizeof (Int), Common) ;
+      |                   ~~~~~~~~^~
+klu_internal.h:68:38: warning: conversion to ‘size_t’ {aka ‘long unsigned int’} from ‘int’ may change the sign of the result [-Wsign-conversion]
+   68 | #define MAX(a,b) (((a) > (b)) ?  (a) : (b))
+      |                  ~~~~~~~~~~~~~~~~~~~~^~~~~~
+klu_analyze.c:430:19: note: in expansion of macro ‘MAX’
+  430 |     KLU_free (Ci, MAX (Cilen, nz+1), sizeof (Int), Common) ;
+      |                   ^~~
+klu_analyze.c:431:21: warning: conversion to ‘size_t’ {aka ‘long unsigned int’} from ‘int’ may change the sign of the result [-Wsign-conversion]
+  431 |     KLU_free (Pinv, n, sizeof (Int), Common) ;
+      |                     ^
+klu_analyze.c:432:21: warning: conversion to ‘size_t’ {aka ‘long unsigned int’} from ‘int’ may change the sign of the result [-Wsign-conversion]
+  432 |     KLU_free (Pbtf, n, sizeof (Int), Common) ;
+      |                     ^
+klu_analyze.c:433:21: warning: conversion to ‘size_t’ {aka ‘long unsigned int’} from ‘int’ may change the sign of the result [-Wsign-conversion]
+  433 |     KLU_free (Qbtf, n, sizeof (Int), Common) ;
+      |                     ^
+klu_analyze_given.c: In function ‘klu_alloc_symbolic’:
+klu_analyze_given.c:72:21: warning: conversion to ‘size_t’ {aka ‘long unsigned int’} from ‘int’ may change the sign of the result [-Wsign-conversion]
+   72 |     P = KLU_malloc (n, sizeof (Int), Common) ;
+      |                     ^
+klu_analyze_given.c:92:30: warning: conversion to ‘size_t’ {aka ‘long unsigned int’} from ‘int’ may change the sign of the result [-Wsign-conversion]
+   92 |                 KLU_free (P, n, sizeof (Int), Common) ;
+      |                              ^
+klu_analyze_given.c:109:22: warning: conversion to ‘size_t’ {aka ‘long unsigned int’} from ‘int’ may change the sign of the result [-Wsign-conversion]
+  109 |         KLU_free (P, n, sizeof (Int), Common) ;
+      |                      ^
+klu_analyze_given.c:114:21: warning: conversion to ‘size_t’ {aka ‘long unsigned int’} from ‘int’ may change the sign of the result [-Wsign-conversion]
+  114 |     Q = KLU_malloc (n, sizeof (Int), Common) ;
+      |                     ^
+klu_analyze_given.c:115:22: warning: conversion to ‘size_t’ {aka ‘long unsigned int’} from ‘int’ may change the sign of the result [-Wsign-conversion]
+  115 |     R = KLU_malloc (n+1, sizeof (Int), Common) ;
+      |                     ~^~
+klu_analyze_given.c:116:23: warning: conversion to ‘size_t’ {aka ‘long unsigned int’} from ‘int’ may change the sign of the result [-Wsign-conversion]
+  116 |     Lnz = KLU_malloc (n, sizeof (double), Common) ;
+      |                       ^
+klu_analyze_given.c: In function ‘klu_analyze_given’:
+klu_analyze_given.c:214:29: warning: conversion to ‘size_t’ {aka ‘long unsigned int’} from ‘int’ may change the sign of the result [-Wsign-conversion]
+  214 |         Work = KLU_malloc (4*n, sizeof (Int), Common) ;
+      |                            ~^~
+klu_analyze_given.c:215:28: warning: conversion to ‘size_t’ {aka ‘long unsigned int’} from ‘int’ may change the sign of the result [-Wsign-conversion]
+  215 |         Pinv = KLU_malloc (n, sizeof (Int), Common) ;
+      |                            ^
+klu_analyze_given.c:218:32: warning: conversion to ‘size_t’ {aka ‘long unsigned int’} from ‘int’ may change the sign of the result [-Wsign-conversion]
+  218 |             Bi = KLU_malloc (nz+1, sizeof (Int), Common) ;
+      |                              ~~^~
+klu_analyze_given.c:228:30: warning: conversion to ‘size_t’ {aka ‘long unsigned int’} from ‘int’ may change the sign of the result [-Wsign-conversion]
+  228 |             KLU_free (Work, 4*n, sizeof (Int), Common) ;
+      |                             ~^~
+klu_analyze_given.c:229:29: warning: conversion to ‘size_t’ {aka ‘long unsigned int’} from ‘int’ may change the sign of the result [-Wsign-conversion]
+  229 |             KLU_free (Pinv, n, sizeof (Int), Common) ;
+      |                             ^
+klu_analyze_given.c:232:33: warning: conversion to ‘size_t’ {aka ‘long unsigned int’} from ‘int’ may change the sign of the result [-Wsign-conversion]
+  232 |                 KLU_free (Bi, nz+1, sizeof (Int), Common) ;
+      |                               ~~^~
+klu_analyze_given.c:332:26: warning: conversion to ‘size_t’ {aka ‘long unsigned int’} from ‘int’ may change the sign of the result [-Wsign-conversion]
+  332 |         KLU_free (Work, 4*n, sizeof (Int), Common) ;
+      |                         ~^~
+klu_analyze_given.c:333:25: warning: conversion to ‘size_t’ {aka ‘long unsigned int’} from ‘int’ may change the sign of the result [-Wsign-conversion]
+  333 |         KLU_free (Pinv, n, sizeof (Int), Common) ;
+      |                         ^
+klu_analyze_given.c:336:29: warning: conversion to ‘size_t’ {aka ‘long unsigned int’} from ‘int’ may change the sign of the result [-Wsign-conversion]
+  336 |             KLU_free (Bi, nz+1, sizeof (Int), Common) ;
+      |                           ~~^~
+klu_free_symbolic.c: In function ‘klu_free_symbolic’:
+klu_free_symbolic.c:27:28: warning: conversion to ‘size_t’ {aka ‘long unsigned int’} from ‘int’ may change the sign of the result [-Wsign-conversion]
+   27 |     KLU_free (Symbolic->P, n, sizeof (Int), Common) ;
+      |                            ^
+klu_free_symbolic.c:28:28: warning: conversion to ‘size_t’ {aka ‘long unsigned int’} from ‘int’ may change the sign of the result [-Wsign-conversion]
+   28 |     KLU_free (Symbolic->Q, n, sizeof (Int), Common) ;
+      |                            ^
+klu_free_symbolic.c:29:29: warning: conversion to ‘size_t’ {aka ‘long unsigned int’} from ‘int’ may change the sign of the result [-Wsign-conversion]
+   29 |     KLU_free (Symbolic->R, n+1, sizeof (Int), Common) ;
+      |                            ~^~
+klu_free_symbolic.c:30:30: warning: conversion to ‘size_t’ {aka ‘long unsigned int’} from ‘int’ may change the sign of the result [-Wsign-conversion]
+   30 |     KLU_free (Symbolic->Lnz, n, sizeof (double), Common) ;
+      |                              ^
+In file included from ../../../src/include/ngspice/dstring.h:11,
+                 from ../../../src/include/ngspice/cpstd.h:23,
+                 from ../../../src/include/ngspice/cpdefs.h:14,
+                 from ../../../src/include/ngspice/fteext.h:21,
+                 from klusmp.c:13:
+../../../src/include/ngspice/memory.h:12:14: warning: redundant redeclaration of ‘tmalloc’ [-Wredundant-decls]
+   12 | extern void *tmalloc(size_t num);
+      |              ^~~~~~~
+In file included from klusmp.c:11:
+../sparse/spdefs.h:367:15: note: previous declaration of ‘tmalloc’ with type ‘void *(size_t)’ {aka ‘void *(long unsigned int)’}
+  367 | extern void * tmalloc(size_t);
+      |               ^~~~~~~
+../../../src/include/ngspice/memory.h:13:14: warning: redundant redeclaration of ‘trealloc’ [-Wredundant-decls]
+   13 | extern void *trealloc(const void *str, size_t num);
+      |              ^~~~~~~~
+../sparse/spdefs.h:369:15: note: previous declaration of ‘trealloc’ with type ‘void *(const void *, size_t)’ {aka ‘void *(const void *, long unsigned int)’}
+  369 | extern void * trealloc(const void *, size_t);
+      |               ^~~~~~~~
+../../../src/include/ngspice/memory.h:14:13: warning: redundant redeclaration of ‘txfree’ [-Wredundant-decls]
+   14 | extern void txfree(const void *ptr);
+      |             ^~~~~~
+../sparse/spdefs.h:368:15: note: previous declaration of ‘txfree’ with type ‘void(const void *)’
+  368 | extern void   txfree(const void *);
+      |               ^~~~~~
+graf.c: In function ‘gr_iplot’:
+graf.c:1407:35: warning: ‘save_sign’ may be used uninitialized [-Wmaybe-uninitialized]
+ 1407 |                             *offp = save_sign;
+      |                             ~~~~~~^~~~~~~~~~~
+graf.c:1362:42: note: ‘save_sign’ was declared here
+ 1362 |                     char          *offp, save_sign;
+      |                                          ^~~~~~~~~
+xpressn.c: In function ‘insertnumber’:
+xpressn.c:1285:42: warning: conversion to ‘long unsigned int’ from ‘long int’ may change the sign of the result [-Wsign-conversion]
+ 1285 |             newline = malloc((p - s) + n + strlen(p + ACT_CHARACTS) + 1);
+      |                                          ^
+xpressn.c:1290:35: warning: conversion to ‘size_t’ {aka ‘long unsigned int’} from ‘long int’ may change the sign of the result [-Wsign-conversion]
+ 1290 |             memcpy(newline, s, (p - s));
+      |                                ~~~^~~~
+xpressn.c:1291:42: warning: conversion to ‘size_t’ {aka ‘long unsigned int’} from ‘int’ may change the sign of the result [-Wsign-conversion]
+ 1291 |             memcpy(newline + (p - s), u, n);
+      |                                          ^
+com_measure2.c:70:1: warning: no previous prototype for ‘str_has_arith_char2’ [-Wmissing-prototypes]
+   70 | str_has_arith_char2(char* s)
+      | ^~~~~~~~~~~~~~~~~~~
+com_fileio.c:43:6: warning: no previous prototype for ‘com_fopen’ [-Wmissing-prototypes]
+   43 | void com_fopen(wordlist *wl)
+      |      ^~~~~~~~~
+com_fileio.c:91:6: warning: no previous prototype for ‘com_fread’ [-Wmissing-prototypes]
+   91 | void com_fread(wordlist *wl)
+      |      ^~~~~~~~~
+com_fileio.c:162:6: warning: no previous prototype for ‘com_fclose’ [-Wmissing-prototypes]
+  162 | void com_fclose(wordlist *wl)
+      |      ^~~~~~~~~~
+inp.c: In function ‘inp_spsource’:
+inp.c:649:33: warning: nested extern declaration of ‘Copy_of_argv’ [-Wnested-externs]
+  649 |             extern char       **Copy_of_argv; // main.c
+      |                                 ^~~~~~~~~~~~
+inp.c:650:33: warning: nested extern declaration of ‘optind’ [-Wnested-externs]
+  650 |             extern int          optind;       // Library function getopt()
+      |                                 ^~~~~~
+inp.c:650:33: warning: redundant redeclaration of ‘optind’ [-Wredundant-decls]
+In file included from <system-include>/x86_64-linux-gnu/bits/getopt_posix.h:27,
+                 from <system-include>/unistd.h:903,
+                 from <system-include>/x86_64-linux-gnu/bits/sigstksz.h:24,
+                 from <system-include>/signal.h:328,
+                 from <system-include>/x86_64-linux-gnu/sys/wait.h:36,
+                 from ../../src/include/ngspice/ngspice.h:80,
+                 from inp.c:11:
+<system-include>/x86_64-linux-gnu/bits/getopt_core.h:50:12: note: previous declaration of ‘optind’ with type ‘int’
+   50 | extern int optind;
+      |            ^~~~~~
+inp.c:665:48: warning: conversion to ‘unsigned int’ from ‘int’ may change the sign of the result [-Wsign-conversion]
+  665 |             for (argc = 0; Copy_of_argv[optind + argc]; ++argc)
+      |                                                ^
+inp.c:666:57: warning: conversion to ‘unsigned int’ from ‘int’ may change the sign of the result [-Wsign-conversion]
+  666 |                 size += (int)strlen(Copy_of_argv[optind + argc]);
+      |                                                         ^
+inp.c:666:22: warning: conversion to ‘unsigned int’ from ‘int’ may change the sign of the result [-Wsign-conversion]
+  666 |                 size += (int)strlen(Copy_of_argv[optind + argc]);
+      |                      ^~
+inp.c:675:20: warning: conversion to ‘unsigned int’ from ‘int’ may change the sign of the result [-Wsign-conversion]
+  675 |             size = sprintf(p_buf_active, header, argc);
+      |                    ^~~~~~~
+inp.c:687:22: warning: conversion to ‘unsigned int’ from ‘int’ may change the sign of the result [-Wsign-conversion]
+  687 |                 size += sprintf(p_buf_active + size, fmt,
+      |                      ^~
+logicexp.c: In function ‘bstmt_postfix’:
+logicexp.c:1133:44: warning: conversion to ‘size_t’ {aka ‘long unsigned int’} from ‘long int’ may change the sign of the result [-Wsign-conversion]
+ 1133 |     ds_cat_mem(&infix, rest, right_bracket - rest);
+      |                              ~~~~~~~~~~~~~~^~~~~~
+outitf.c:39:13: warning: redundant redeclaration of ‘Spice_Build_Date’ [-Wredundant-decls]
+   39 | extern char Spice_Build_Date[];
+      |             ^~~~~~~~~~~~~~~~
+In file included from outitf.c:14:
+../../src/include/ngspice/ngspice.h:259:13: note: previous declaration of ‘Spice_Build_Date’ with type ‘char[]’
+  259 | extern char Spice_Build_Date[];
+      |             ^~~~~~~~~~~~~~~~
+outitf.c: In function ‘OUTpD_memory’:
+outitf.c:561:36: warning: conversion to ‘long unsigned int’ from ‘int’ may change the sign of the result [-Wsign-conversion]
+  561 |         size_t memrequ = (size_t)n * vlength2delta(0) * sizeof(double);
+      |                                    ^
+outitf.c:565:58: warning: format ‘%d’ expects argument of type ‘int’, but argument 3 has type ‘size_t’ {aka ‘long unsigned int’} [-Wformat=]
+  565 |             fprintf(stderr, "\nError: memory required (%Id Bytes)\n"
+      |                                                        ~~^
+      |                                                          |
+      |                                                          int
+      |                                                        %Ild
+  566 |                 "       is more than memory available (%Id Bytes)!\n",
+  567 |                 memrequ, memavail);
+      |                 ~~~~~~~                                   
+      |                 |
+      |                 size_t {aka long unsigned int}
+outitf.c:565:29: warning: format ‘%d’ expects argument of type ‘int’, but argument 4 has type ‘size_t’ {aka ‘long unsigned int’} [-Wformat=]
+  565 |             fprintf(stderr, "\nError: memory required (%Id Bytes)\n"
+      |                             ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  566 |                 "       is more than memory available (%Id Bytes)!\n",
+  567 |                 memrequ, memavail);
+      |                          ~~~~~~~~
+      |                          |
+      |                          size_t {aka long unsigned int}
+outitf.c:566:58: note: format string is defined here
+  566 |                 "       is more than memory available (%Id Bytes)!\n",
+      |                                                        ~~^
+      |                                                          |
+      |                                                          int
+      |                                                        %Ild
+udevices.c: In function ‘replacement_udevice_cards’:
+udevices.c:902:36: warning: conversion to ‘size_t’ {aka ‘long unsigned int’} from ‘long int’ may change the sign of the result [-Wsign-conversion]
+  902 |         ds_cat_mem(&tmpds, p1, (p2 - p1));
+      |                                ~~~~^~~~~
+dctran.c:977:1: warning: no previous prototype for ‘DCtran_step_quit’ [-Wmissing-prototypes]
+  977 | DCtran_step_quit(CKTcircuit* ckt) {
+      | ^~~~~~~~~~~~~~~~
+inp2dot.c: In function ‘dot_sens’:
+inp2dot.c:471:19: warning: nested extern declaration of ‘Sens_filter’ [-Wnested-externs]
+  471 |     extern char **Sens_filter;  /* cktsens.c */
+      |                   ^~~~~~~~~~~
+inp2dot.c:545:29: warning: conversion to ‘size_t’ {aka ‘long unsigned int’} from ‘int’ may change the sign of the result [-Wsign-conversion]
+  545 |         strncpy(name, line, l);
+      |                             ^
+b1moscap.c:21:12: warning: argument 5 of type ‘double[8]’ with mismatched bound [-Warray-parameter=]
+   21 |     double args[8],
+      |     ~~~~~~~^~~~~~~
+In file included from bsim1def.h:675,
+                 from b1moscap.c:8:
+bsim1ext.h:15:59: note: previously declared as ‘double *’
+   15 | extern void B1mosCap(CKTcircuit*, double, double, double, double*,
+      |                                                           ^~~~~~~
+b2moscap.c:21:12: warning: argument 5 of type ‘double[8]’ with mismatched bound [-Warray-parameter=]
+   21 |     double args[8],
+      |     ~~~~~~~^~~~~~~
+In file included from bsim2def.h:770,
+                 from b2moscap.c:8:
+bsim2ext.h:13:59: note: previously declared as ‘double *’
+   13 | extern void B2mosCap(CKTcircuit*, double, double, double, double*,
+      |                                                           ^~~~~~~
+cplask.c: In function ‘CPLask’:
+cplask.c:32:36: warning: conversion to ‘long unsigned int’ from ‘int’ may change the sign of the result [-Wsign-conversion]
+   32 |                    here->dimension * sizeof (char *));
+      |                                    ^
+cplask.c:38:36: warning: conversion to ‘long unsigned int’ from ‘int’ may change the sign of the result [-Wsign-conversion]
+   38 |                    here->dimension * sizeof (char *));
+      |                                    ^
+diosetup.c: In function ‘DIOunsetup’:
+diosetup.c:497:13: warning: this ‘if’ clause does not guard... [-Wmisleading-indentation]
+  497 |             if (here->DIOposPrimeNode > 0
+      |             ^~
+diosetup.c:500:17: note: ...this statement, but the latter is misleadingly indented as if it were guarded by the ‘if’
+  500 |                 here->DIOposPrimeNode = 0;
+      |                 ^~~~
+diosetup.c:511:13: warning: this ‘if’ clause does not guard... [-Wmisleading-indentation]
+  511 |             if (here->DIOqpNode > 0)
+      |             ^~
+diosetup.c:513:17: note: ...this statement, but the latter is misleadingly indented as if it were guarded by the ‘if’
+  513 |                 here->DIOqpNode = 0;
+      |                 ^~~~
+soi3cap.c:34:19: warning: argument 4 of type ‘double[10]’ with mismatched bound [-Warray-parameter=]
+   34 |            double paramargs[10],
+      |            ~~~~~~~^~~~~~~~~~~~~
+In file included from soi3defs.h:925,
+                 from soi3cap.c:27:
+soi3ext.h:31:25: note: previously declared as ‘double *’
+   31 |                         double*,double*,double*,double*,
+      |                         ^~~~~~~
+soi3cap.c:35:19: warning: argument 5 of type ‘double[2]’ with mismatched bound [-Warray-parameter=]
+   35 |            double Bfargs[2], double alpha_args[5], double psi_st0args[5],
+      |            ~~~~~~~^~~~~~~~~
+soi3ext.h:31:33: note: previously declared as ‘double *’
+   31 |                         double*,double*,double*,double*,
+      |                                 ^~~~~~~
+soi3cap.c:35:37: warning: argument 6 of type ‘double[5]’ with mismatched bound [-Warray-parameter=]
+   35 |            double Bfargs[2], double alpha_args[5], double psi_st0args[5],
+      |                              ~~~~~~~^~~~~~~~~~~~~
+soi3ext.h:31:41: note: previously declared as ‘double *’
+   31 |                         double*,double*,double*,double*,
+      |                                         ^~~~~~~
+soi3cap.c:35:59: warning: argument 7 of type ‘double[5]’ with mismatched bound [-Warray-parameter=]
+   35 |            double Bfargs[2], double alpha_args[5], double psi_st0args[5],
+      |                                                    ~~~~~~~^~~~~~~~~~~~~~
+soi3ext.h:31:49: note: previously declared as ‘double *’
+   31 |                         double*,double*,double*,double*,
+      |                                                 ^~~~~~~
+soi3cap.c:36:19: warning: argument 8 of type ‘double[5]’ with mismatched bound [-Warray-parameter=]
+   36 |            double vGTargs[5],
+      |            ~~~~~~~^~~~~~~~~~
+soi3ext.h:32:25: note: previously declared as ‘double *’
+   32 |                         double*,double*,double*,double*,
+      |                         ^~~~~~~
+soi3cap.c:37:19: warning: argument 9 of type ‘double[5]’ with mismatched bound [-Warray-parameter=]
+   37 |            double psi_sLargs[5], double psi_s0args[5],
+      |            ~~~~~~~^~~~~~~~~~~~~
+soi3ext.h:32:33: note: previously declared as ‘double *’
+   32 |                         double*,double*,double*,double*,
+      |                                 ^~~~~~~
+soi3cap.c:37:41: warning: argument 10 of type ‘double[5]’ with mismatched bound [-Warray-parameter=]
+   37 |            double psi_sLargs[5], double psi_s0args[5],
+      |                                  ~~~~~~~^~~~~~~~~~~~~
+soi3ext.h:32:41: note: previously declared as ‘double *’
+   32 |                         double*,double*,double*,double*,
+      |                                         ^~~~~~~
+soi3cap.c:38:19: warning: argument 11 of type ‘double[5]’ with mismatched bound [-Warray-parameter=]
+   38 |            double ldargs[5],
+      |            ~~~~~~~^~~~~~~~~
+soi3ext.h:32:49: note: previously declared as ‘double *’
+   32 |                         double*,double*,double*,double*,
+      |                                                 ^~~~~~~
+soi3cap.c:407:20: warning: argument 2 of type ‘double[6]’ with mismatched bound [-Warray-parameter=]
+  407 |             double Frontcapargs[6],
+      |             ~~~~~~~^~~~~~~~~~~~~~~
+soi3ext.h:38:37: note: previously declared as ‘double *’
+   38 | extern void SOI3capEval(CKTcircuit*,double*,double*,
+      |                                     ^~~~~~~
+soi3cap.c:408:20: warning: argument 3 of type ‘double[6]’ with mismatched bound [-Warray-parameter=]
+  408 |             double Backcapargs[6],
+      |             ~~~~~~~^~~~~~~~~~~~~~
+soi3ext.h:38:45: note: previously declared as ‘double *’
+   38 | extern void SOI3capEval(CKTcircuit*,double*,double*,
+      |                                             ^~~~~~~
+../../../../src/xspice/cmpp/ifs_yacc.y: In function ‘store_default_value’:
+../../../../src/xspice/cmpp/ifs_yacc.y:458:33: warning: comparison of integer expressions of different signedness: ‘int’ and ‘size_t’ {aka ‘long unsigned int’} [-Wsign-compare]
+spice2poly/icm_spice2poly/cfunc.c: In function ‘spice2poly’:
+spice2poly/icm_spice2poly/cfunc.c:160:20: warning: ‘*coef’ may be used uninitialized [-Wmaybe-uninitialized]
+  160 |     for(i = 1, sum = coef[0]; i < num_coefs; i++) {
+      |                ~~~~^~~~~~~~~
+digital/d_osc/cfunc.c: In function ‘cm_d_osc’:
+digital/d_osc/cfunc.c:97:30: warning: conversion to ‘long unsigned int’ from ‘int’ may change the sign of the result [-Wsign-conversion]
+   97 |         table = malloc(csize * sizeof (struct pwl));
+      |                              ^
+digital/d_process/cfunc.c: In function ‘dprocess_exchangedata’:
+digital/d_process/cfunc.c:229:12: warning: conversion from ‘ssize_t’ {aka ‘long int’} to ‘int’ may change value [-Wconversion]
+  229 |     wlen = write(process->pipe_to_child, &packet, sizeof(double) + process->N_din);
+      |            ^~~~~
+digital/d_process/cfunc.c: In function ‘start’:
+digital/d_process/cfunc.c:300:57: warning: conversion to ‘size_t’ {aka ‘long unsigned int’} from ‘int’ may change the sign of the result [-Wsign-conversion]
+  300 |         strncpy(filename_in, system_command, syscmd_len - endpt);
+      |                                                         ^
+digital/d_process/cfunc.c:301:40: warning: conversion to ‘size_t’ {aka ‘long unsigned int’} from ‘int’ may change the sign of the result [-Wsign-conversion]
+  301 |         strcpy(&filename_in[syscmd_len - endpt], "_in");
+      |                                        ^
+digital/d_process/cfunc.c:302:58: warning: conversion to ‘size_t’ {aka ‘long unsigned int’} from ‘int’ may change the sign of the result [-Wsign-conversion]
+  302 |         strncpy(filename_out, system_command, syscmd_len - endpt);
+      |                                                          ^
+digital/d_process/cfunc.c:303:41: warning: conversion to ‘size_t’ {aka ‘long unsigned int’} from ‘int’ may change the sign of the result [-Wsign-conversion]
+  303 |         strcpy(&filename_out[syscmd_len - endpt], "_out");
+      |                                         ^
+digital/d_process/cfunc.c: In function ‘cm_d_process’:
+digital/d_process/cfunc.c:300:9: warning: ‘__builtin___strncpy_chk’ specified bound depends on the length of the source argument [-Wstringop-truncation]
+  300 |         strncpy(filename_in, system_command, syscmd_len - endpt);
+      |         ^
+In function ‘start’,
+    inlined from ‘cm_d_process’ at digital/d_process/cfunc.c:417:15:
+digital/d_process/cfunc.c:258:22: note: length computed here
+  258 |         syscmd_len = strlen(system_command);
+      |                      ^~~~~~~~~~~~~~~~~~~~~~
+digital/d_pwm/cfunc.c: In function ‘cm_d_pwm’:
+digital/d_pwm/cfunc.c:105:30: warning: conversion to ‘long unsigned int’ from ‘int’ may change the sign of the result [-Wsign-conversion]
+  105 |         table = malloc(csize * sizeof (struct pwl));
+      |                              ^
+analog/xfer/cfunc.c: In function ‘read_file’:
+analog/xfer/cfunc.c:95:29: warning: conversion to ‘long unsigned int’ from ‘int’ may change the sign of the result [-Wsign-conversion]
+   95 |     file_data = malloc(size * sizeof(double));
+      |                             ^
+analog/xfer/cfunc.c:129:49: warning: conversion to ‘long unsigned int’ from ‘int’ may change the sign of the result [-Wsign-conversion]
+  129 |             file_data = realloc(file_data, size * sizeof(double));
+      |                                                 ^
+analog/xfer/cfunc.c: In function ‘cm_xfer’:
+analog/xfer/cfunc.c:255:41: warning: conversion to ‘long unsigned int’ from ‘int’ may change the sign of the result [-Wsign-conversion]
+  255 |         table->f = (double*)malloc(size * sizeof (double));
+      |                                         ^
+analog/xfer/cfunc.c:260:50: warning: conversion to ‘long unsigned int’ from ‘int’ may change the sign of the result [-Wsign-conversion]
+  260 |         table->s =  (Mif_Complex_t *)malloc(size * sizeof (Mif_Complex_t));
+      |                                                  ^
+analog/astate/cfunc.c: In function ‘cm_astate’:
+analog/astate/cfunc.c:88:12: warning: unused variable ‘outval’ [-Wunused-variable]
+   88 |     double outval = 0.0;
+      |            ^~~~~~
+xtradev/seegenerator/cfunc.c: In function ‘cm_seegen’:
+xtradev/seegenerator/cfunc.c:220:70: warning: conversion to ‘unsigned int’ from ‘int’ may change the sign of the result [-Wsign-conversion]
+  220 |                 *pulse_number, cm_get_node_name("out", *pulse_number - 1),
+      |                                                        ~~~~~~~~~~~~~~^~~
+xtradev/seegenerator/cfunc.c:221:59: warning: conversion to ‘unsigned int’ from ‘int’ may change the sign of the result [-Wsign-conversion]
+  221 |                 cm_get_neg_node_name("out", *pulse_number - 1), *last_t_value);
+      |                                             ~~~~~~~~~~~~~~^~~

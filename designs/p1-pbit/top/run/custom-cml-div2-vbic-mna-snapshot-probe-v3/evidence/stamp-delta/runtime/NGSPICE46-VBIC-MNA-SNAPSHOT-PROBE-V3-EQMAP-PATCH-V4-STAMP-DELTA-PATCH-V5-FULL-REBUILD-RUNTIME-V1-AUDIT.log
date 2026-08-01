@@ -1,0 +1,19 @@
+NGSPICE46-VBIC-MNA-SNAPSHOT-PROBE-V3-EQMAP-PATCH-V4-STAMP-DELTA-PATCH-V5-FULL-REBUILD-RUNTIME-V1-AUDIT.log
+Two-phase runtime audit
+
+=== phase separation ===
+Phase A: invocation-only script (no parser/recount/report/loop/retry); sealed the
+invocation manifest and terminated. Phase B: read-only, no subprocess path to
+either executable; opens only the closed Phase-A outputs.
+
+=== recount ===
+control: rc=b'0' stdout=5786B stderr=361357B raw=7857477B data_sha=26c62c1942b552ae
+experiment: rc=b'0' stdout=5818B stderr=361893B raw=7857477B data_sha=26c62c1942b552ae
+nvar=429 payload_ok=True finite=True time_ok=True data_identical=True
+MNA c/e=4000/4000; VBIC families=8; EQMAP c/e=1/13/1 | 1/13/1 set=True; guards c/e=0/0
+STAMPDELTA: control=0; experiment BEGIN=1 mat=2 cols=['100', '2'] RHS=1 END=1 ABORT=0 exp/emitted=True event=True
+delta==post-pre=True; stderr-minus-5==control=True; stdout diff lines=[121]
+
+=== verdict ===
+CONFIRMED: everything above; Phase B read-only; outputs O_EXCL after the recount.
+PROVISIONAL: none. No measurement/specification/signoff/tape-out-readiness claim.

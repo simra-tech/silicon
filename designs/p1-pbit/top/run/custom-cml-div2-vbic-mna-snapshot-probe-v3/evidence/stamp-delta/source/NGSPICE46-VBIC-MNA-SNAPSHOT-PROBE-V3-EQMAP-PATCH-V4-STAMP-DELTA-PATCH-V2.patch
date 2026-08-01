@@ -1,0 +1,55 @@
+--- a/src/spicelib/devices/vbic/vbicload.c
++++ b/src/spicelib/devices/vbic/vbicload.c
+@@ -14,3 +14,4 @@
+ #include "ngspice/cktdefs.h"
++#include "ngspice/smpdefs.h"
+ #include "vbicdefs.h"
+ #include "ngspice/const.h"
+@@ -1544,3 +1544,22 @@
+ /*
+ c               Stamp element: Rth
+ */
++                /* [EQMAP-PATCH-V4-STAMP-DELTA-V2] read-only pre-capture for
++                 * target instance q.xdiv2.xqs_comp_s.qnpn13g2 (existing
++                 * stamp_diag_active guard, vbicload.c:1421) at the accepted
++                 * event time gate (ckt->CKTtime == 0.0). Reads only: the
++                 * existing (tempNode,tempNode) pointer, the existing RHS slot,
++                 * and the read-only SMPfindElt(..., CreateIfMissing=0) lookup
++                 * of the assembled (tempNode, eq 2) entry. No writes, no
++                 * element creation/rebinding, no load-order/solver-flow
++                 * change; the snapshot/EQMAP trigger is untouched. */
++                double sd_pre_100 = 0.0, sd_pre_rhs = 0.0, sd_pre_2 = 0.0;
++                SMPelement *sd_elt = NULL;
++                if (stamp_diag_active && ckt->CKTtime == 0.0) {
++                    sd_pre_100 = *(here->VBICtempTempPtr);
++                    sd_pre_rhs = *(ckt->CKTrhs + here->VBICtempNode);
++                    sd_elt = SMPfindElt(ckt->CKTmatrix, here->VBICtempNode, 2, 0);
++                    sd_pre_2 = (sd_elt != NULL) ? *((double *)sd_elt) : 0.0;
++                    fprintf(stderr, "[STAMPDELTA_BEGIN] inst=%s tnode=%d time=%a mode=%ld expected=3\n",
++                            here->VBICname, here->VBICtempNode, ckt->CKTtime, ckt->CKTmode);
++                }
+ /*
+ c               Stamp element: Rth
+ */
+@@ -1775,3 +1794,21 @@
+                 *(here->VBICtempSubsSIPtr) += +Ith_Vrs;
+                 #undef STAMP_DIAG_REPORT
++                /* [EQMAP-PATCH-V4-STAMP-DELTA-V2] read-only post-capture after
++                 * this VBIC's complete load/stamp block (the excess-phase
++                 * block writes no (tempNode,*) entry). Same reads as the
++                 * pre-capture; deltas = this instance's stamp contribution. */
++                if (stamp_diag_active && ckt->CKTtime == 0.0) {
++                    double sd_post_100 = *(here->VBICtempTempPtr);
++                    double sd_post_rhs = *(ckt->CKTrhs + here->VBICtempNode);
++                    sd_elt = SMPfindElt(ckt->CKTmatrix, here->VBICtempNode, 2, 0);
++                    double sd_post_2 = (sd_elt != NULL) ? *((double *)sd_elt) : 0.0;
++                    fprintf(stderr, "[STAMPDELTA] inst=%s tnode=%d col=100 pre=%a post=%a delta=%a\n",
++                            here->VBICname, here->VBICtempNode, sd_pre_100, sd_post_100, sd_post_100 - sd_pre_100);
++                    fprintf(stderr, "[STAMPDELTA] inst=%s tnode=%d col=2 pre=%a post=%a delta=%a\n",
++                            here->VBICname, here->VBICtempNode, sd_pre_2, sd_post_2, sd_post_2 - sd_pre_2);
++                    fprintf(stderr, "[STAMPDELTA_RHS] inst=%s tnode=%d pre=%a post=%a delta=%a\n",
++                            here->VBICname, here->VBICtempNode, sd_pre_rhs, sd_post_rhs, sd_post_rhs - sd_pre_rhs);
++                    fprintf(stderr, "[STAMPDELTA_END] inst=%s tnode=%d emitted=3 expected=3\n",
++                            here->VBICname, here->VBICtempNode);
++                }
+                 if (here->VBIC_excessPhase) {

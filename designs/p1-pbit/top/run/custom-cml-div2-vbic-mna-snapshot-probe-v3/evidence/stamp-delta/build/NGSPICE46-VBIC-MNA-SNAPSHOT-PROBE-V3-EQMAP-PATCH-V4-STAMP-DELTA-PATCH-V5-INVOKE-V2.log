@@ -1,0 +1,59 @@
+NGSPICE46-VBIC-MNA-SNAPSHOT-PROBE-V3-EQMAP-PATCH-V4-STAMP-DELTA-PATCH-V5-INVOKE-V2.log
+Matched loader/startup --version invocation report
+
+=== pre-verified executables (accepted LINK-V5) ===
+control    c865f1bf2ea99bc684b9e40342cfd6565f6bc995fb47c748474aceb5ef384045 / 8054352 bytes
+experiment bc5567d6c93fcfb8423abfc7303bd6140f956f559a1ea9d39a7a536a3637ab26 / 8058448 bytes
+
+=== invocations (exactly one per side, no retries, no alternate flags) ===
+control: ( cd <scratch-root> && LC_ALL=C timeout 30s "<mixed-abi-control-tree>/src/ngspice" --version < /dev/null ) > "<design-workspace>/NGSPICE46-VBIC-MNA-SNAPSHOT-PROBE-V3-EQMAP-PATCH-V4-STAMP-DELTA-PATCH-V5-INVOKE-V2-RAW/control.stdout" 2> "<design-workspace>/NGSPICE46-VBIC-MNA-SNAPSHOT-PROBE-V3-EQMAP-PATCH-V4-STAMP-DELTA-PATCH-V5-INVOKE-V2-RAW/control.stderr"; echo $? > "<design-workspace>/NGSPICE46-VBIC-MNA-SNAPSHOT-PROBE-V3-EQMAP-PATCH-V4-STAMP-DELTA-PATCH-V5-INVOKE-V2-RAW/control.rc"; date +%s.%N > "<design-workspace>/NGSPICE46-VBIC-MNA-SNAPSHOT-PROBE-V3-EQMAP-PATCH-V4-STAMP-DELTA-PATCH-V5-INVOKE-V2-RAW/control.times"
+  rc=0 time=0.019s cwd=/tmp env=LC_ALL=C stdin=</dev/null timeout=30s
+experiment: ( cd <scratch-root> && LC_ALL=C timeout 30s "<mixed-abi-experiment-tree>/src/ngspice" --version < /dev/null ) > "<design-workspace>/NGSPICE46-VBIC-MNA-SNAPSHOT-PROBE-V3-EQMAP-PATCH-V4-STAMP-DELTA-PATCH-V5-INVOKE-V2-RAW/experiment.stdout" 2> "<design-workspace>/NGSPICE46-VBIC-MNA-SNAPSHOT-PROBE-V3-EQMAP-PATCH-V4-STAMP-DELTA-PATCH-V5-INVOKE-V2-RAW/experiment.stderr"; echo $? > "<design-workspace>/NGSPICE46-VBIC-MNA-SNAPSHOT-PROBE-V3-EQMAP-PATCH-V4-STAMP-DELTA-PATCH-V5-INVOKE-V2-RAW/experiment.rc"; date +%s.%N > "<design-workspace>/NGSPICE46-VBIC-MNA-SNAPSHOT-PROBE-V3-EQMAP-PATCH-V4-STAMP-DELTA-PATCH-V5-INVOKE-V2-RAW/experiment.times"
+  rc=0 time=0.013s cwd=/tmp env=LC_ALL=C stdin=</dev/null timeout=30s
+
+=== stdout/stderr SHA and shape ===
+control.stdout    sha256=217731505de0a8887c6b8a9d80af39da3e445ee36ebb24c1852fcf8a344d2dde bytes=449 lines=10
+experiment.stdout sha256=217731505de0a8887c6b8a9d80af39da3e445ee36ebb24c1852fcf8a344d2dde bytes=449 lines=10
+control.stderr    sha256=e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855 bytes=0
+experiment.stderr sha256=e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855 bytes=0
+byte comparison: stdout identical=True stderr identical=True
+
+=== provider-returned ngspice identity text ===
+control:    ******
+** ngspice-46 : Circuit level simulation program
+** Compiled with KLU Direct Linear Solver
+** The U. C. Berkeley CAD Group
+** Copyright 1985-1994, Regents of the University of California.
+** Copyright 2001-2025, The ngspice team.
+** Please get your ngspice manual from https://ngspice.sourceforge.io/docs.html
+** Please file your bug-reports at http://ngspice.sourceforge.net/bugrep.html
+** Creation Date: Fri Jul 31 16:21:22 UTC 2026
+******
+experiment: ******
+** ngspice-46 : Circuit level simulation program
+** Compiled with KLU Direct Linear Solver
+** The U. C. Berkeley CAD Group
+** Copyright 1985-1994, Regents of the University of California.
+** Copyright 2001-2025, The ngspice team.
+** Please get your ngspice manual from https://ngspice.sourceforge.io/docs.html
+** Please file your bug-reports at http://ngspice.sourceforge.net/bugrep.html
+** Creation Date: Fri Jul 31 16:21:22 UTC 2026
+******
+
+=== post-invocation executable proof (no mutation) ===
+control    post c865f1bf2ea99bc684b9e40342cfd6565f6bc995fb47c748474aceb5ef384045 (unchanged=True)
+experiment post bc5567d6c93fcfb8423abfc7303bd6140f956f559a1ea9d39a7a536a3637ab26 (unchanged=True)
+
+=== scope statement ===
+Two clean --version invocations prove loader/startup only (dynamic loader, libc
+startup, and the --version path ran and exited rc=0). They do not exercise the MNA
+snapshot, the EQMAP walk, the STAMPDELTA capture/commit, any circuit, or any
+simulation; STAMPDELTA execution is NOT inferred; no circuit/measurement/
+specification evidence claimed.
+
+=== claims ===
+CONFIRMED: pre-verified identities; exactly one invocation per side with the exact
+argv/environment; rc=0 each; stdout/stderr SHAs and shapes recorded; byte
+comparison; provider-returned identity text; post-invocation rehash no-mutation;
+outputs O_EXCL, never read while open; external identities reported after close.
+PROVISIONAL: none.
