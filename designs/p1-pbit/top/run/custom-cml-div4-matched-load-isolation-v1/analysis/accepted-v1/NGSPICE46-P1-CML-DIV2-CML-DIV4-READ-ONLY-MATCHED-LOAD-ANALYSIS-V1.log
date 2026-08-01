@@ -1,0 +1,104 @@
+NGSPICE46-P1-CML-DIV2-CML-DIV4-READ-ONLY-MATCHED-LOAD-ANALYSIS-V1.log
+Read-only matched-load analysis V1 (sealed pair only; closed inputs)
+
+=== discipline ===
+sealed MATCHED-LOAD-ISOLATION-RUNTIME-V1 pair only; no simulator, no
+design/deck edit, no retry, no heuristic deletion; no valid/invalid
+column; no compatibility/specification/signoff claim; no publication
+claim.
+
+=== input hash binding (CONFIRMED) ===
+  ctlraw    sha256=8317c689599ff6145f6ff8a70e5dbc4b4e05d8dc870b5d44e91b3fce9e6695f0
+  expraw    sha256=dd0f874ee53e1fff13581f99e3db04185b166705244e81be9ca59a2918a9a97f
+  prior     sha256=c0aed217cc55e8818fdaeeb09c68bcc83ea285c618a91952b08826f9a4adf925
+  ctldeck   sha256=4127fc03374d9ba777f700016de2e748dc20bf577e5706360a924c12ac55178d
+  expdeck   sha256=97a52bb7757c5b36160a28377cf50bede0197656b3a395a411faec19eea5532c
+  net       sha256=689d4beedfce278f0c13cf0e79a25b87ba8a12d25b9459e51dfbfde041cd3db7
+  ctlout    sha256=23dccdc62e20e1a132abfdda42fd4735b8d60e8f4ed1d130ca5850d7817cb37c
+  ctlerr    sha256=324d19065ee562a86acd081f844a200ec73e3c7452f93dc6def6f9b16034a628
+  expout    sha256=317c165c0d4214ba56a20f23c0cf6c737b7c5defa47fe5503d7b45bd2b2b422d
+  experr    sha256=526fad3a5c43dce055a526e26284f01dbc3deb13066cb2aa5915b1feff8e4008
+  pairlog   sha256=5eca8b4969ae1992a1292ac5efe397115498ecd30e368abc44e0281701bbf6ac
+  pairrawmf sha256=2a71279648cb9584a41efa53f31d50b623e7abb51db0156cfd4538d9203a9d30
+  pairman   sha256=590bd1c20e174b607e2fffad8301b4b9afdc16e5b46a7c0d5aeb470bd60346dd
+  ctlpre    sha256=a19839b6e73a6411c7138710e2e40666066d3a56db1788022e72784d4d88ab4b
+  ctlpost   sha256=13cd8b82af45e1ba58ebdf781d46b3d29bccadc5f083cc5f75fe8a62be373cfb
+  exppre    sha256=950740be07065f2ea7c844d11876d5eb41898eb444d64f649e2e61dd7e64eb45
+  exppost   sha256=669f17bcfc3dd6d563286ca4d99e39395e99678619d89b0490f6c5905e16794d
+  exe       sha256=6aacaca88f656e5e19074ac070fb410bf6cc437df1de88ec28d50a24c6239a1b (native ngspice-46, both sides)
+
+=== raw structural facts (CONFIRMED, derived) ===
+  control raw:    429 vectors x 2284 points
+  experiment raw: 849 vectors x 2284 points
+  prior direct raw: 849 vectors x 2284 points (payload check only)
+
+=== differential/common-mode ranges (2..4 ns, each raw's own grid) ===
+  CLK_CTL     diff -1.200000..+1.200000 V ; CM 0.600000..0.600000 V
+  STAGE1_CTL  diff -0.655085..+0.655066 V ; CM 1.300947..1.485771 V
+  CLK_EXP     diff -1.200000..+1.200000 V ; CM 0.600000..0.600000 V
+  STAGE1_EXP  diff -0.576548..+0.577164 V ; CM 1.287773..1.549836 V
+  STAGE2_EXP  diff -0.559743..+0.560222 V ; CM 1.330887..1.477304 V
+
+=== zero crossings (2..4 ns; every crossing in TSV) ===
+  CLK_CTL     crossings=20 (rise 10, fall 10) ; same-dir period=2.000000000000e-10 s
+            mean |crossing slope|=1.200000e+12 V/s
+  STAGE1_CTL  crossings=10 (rise 5, fall 5) ; same-dir period=3.999993209634e-10 s
+            mean |crossing slope|=1.391745e+11 V/s
+  CLK_EXP     crossings=20 (rise 10, fall 10) ; same-dir period=2.000000000000e-10 s
+            mean |crossing slope|=1.200000e+12 V/s
+  STAGE1_EXP  crossings=10 (rise 5, fall 5) ; same-dir period=4.000042625680e-10 s
+            mean |crossing slope|=9.123610e+09 V/s
+  STAGE2_EXP  crossings=27 (rise 14, fall 13) ; same-dir period=1.446537308640e-10 s
+            mean |crossing slope|=9.589121e+10 V/s
+
+=== crossing-slope metric (explicit, same as prior audits) ===
+  slope at crossing k = (d[k1]-d[k0])/(t[k1]-t[k0]) over the two raw
+  samples bracketing the crossing (same pair used for interpolated
+  crossing time); units V/s; per-crossing values in TSV.
+
+=== matched deltas: control STAGE1 -> experiment STAGE1 (2..4 ns) ===
+  differential pp:   control 1.310150092812e+00 V ; experiment 1.153711330606e+00 V ; delta 0.156439 V (11.94%)
+  CM mid:            control 1.393359033092e+00 V ; experiment 1.418804545458e+00 V
+  crossings:         control 10 ; experiment 10
+  same-dir period:   control 3.999993209634e-10 s ; experiment 4.000042625680e-10 s
+  mean |slope|:      control 1.391745e+11 V/s ; experiment 9.123610e+09 V/s ; delta 1.300509e+11 (93.44%)
+
+=== payload identity: experiment raw vs prior direct raw c0aed217 ===
+  experiment raw total bytes=15551856 ; header bytes=38920 ; payload bytes=15512928
+  prior direct raw total bytes=15551856 ; header bytes=38920 ; payload bytes=15512928
+  payload byte-identical=True ; header byte-identical=False ; full file identical=False
+  => the experiment run reproduces the prior direct-run payload exactly;
+     header differences (if any) are metadata only (Date/Command lines).
+  header delta (prior vs experiment), first differing header line:
+    prior:      Date: Sat Aug  1 04:06:18  2026
+    experiment: Date: Sat Aug  1 05:10:09  2026
+
+=== supported vs unproven (separation) ===
+  SUPPORTED (CONFIRMED, this matched pair): executable, source, stimuli,
+  settings, and every circuit line except XSTAGE2 are controlled; adding
+  the stage-2 load (XSTAGE2) causes the observed stage-1 differential
+  amplitude/slope change under this PROVISIONAL diagnostic condition
+  (pp 1.310150093 V -> 1.153711331 V, 11.94%; mean |slope| 1.391744683e11
+  -> 9.123610262e9 V/s, 93.44%).
+  NOT ESTABLISHED (PROVISIONAL): the stage-1 change does NOT establish a
+  causal link to the 27 stage-2 reversals; that requires a separate
+  controlled experiment and is not claimed here.
+
+=== warnings preserved (stderr, by hash) ===
+  control stderr (324d19065ee562a8...): temperature-limiting NaN warning; 'Note: Starting
+    dynamic gmin stepping' / 'Note: Dynamic gmin stepping completed'
+  experiment stderr (526fad3a5c43dce0...): temperature-limiting NaN warning; 'Warning:
+    Dynamic gmin stepping failed' then true gmin stepping completed
+
+=== claims ===
+CONFIRMED (derived from the sealed pair): ranges, crossings, directions,
+slopes, same-direction periods, matched deltas, payload-identity result;
+hash bindings; warnings recorded.
+PROVISIONAL: stage-1 loading effect is supported under this diagnostic
+condition; the stage-2 reversal cause is NOT established.
+UNKNOWN: everything outside the 2..4 ns structural recount.
+No pass/fail, compatibility, specification, reliability, engineering-gate,
+signoff, or tape-out-readiness statement; no publication claim.
+
+=== stop ===
+Read-only package complete; awaiting Principal Engineer review.

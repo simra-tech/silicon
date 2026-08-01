@@ -1,0 +1,56 @@
+NGSPICE46-P1-CML-DIV2-CML-DIV4-MATCHED-LOAD-ISOLATION-RUNTIME-V1.log
+Matched load-isolation runtime pair V1 (control once, experiment once)
+
+=== discipline ===
+native ngspice-46 $TOOLS_ROOT/ngspice/bin/ngspice (sha256=6aacaca88f656e5e19074ac070fb410bf6cc437df1de88ec28d50a24c6239a1b) both sides; exactly one invocation per
+side; no retry under any outcome; fresh O_EXCL run dirs; frozen
+source/deck/exe re-hashed immediately before each invocation; if a side
+failed or timed out the outcome was retained and the other side ran only
+in its own directory (no evidence overwritten); structural raw checks
+only - no crossing counts, no waveform comparison, no loading inference,
+no compatibility/specification/signoff claim.
+
+=== CONTROL side ===
+  argv = ['$TOOLS_ROOT/ngspice/bin/ngspice', '-b', 'tb_p1_cml_div2_front_x1_unloaded_tran_v1.cir']
+  cwd  = ./CONTROL-RUN
+  exe  sha256=6aacaca88f656e5e19074ac070fb410bf6cc437df1de88ec28d50a24c6239a1b
+  frozen deck sha256=4127fc03374d9ba777f700016de2e748dc20bf577e5706360a924c12ac55178d ; frozen netlist sha256=689d4beedfce278f0c13cf0e79a25b87ba8a12d25b9459e51dfbfde041cd3db7
+  start_utc=2026-08-01T03:10:07Z  end_utc=2026-08-01T03:10:09Z  elapsed=2.274 s
+  timeout=600 s  rc=0  timed_out=False
+  OUTCOME: rc=0.
+
+=== EXPERIMENT side ===
+  argv = ['$TOOLS_ROOT/ngspice/bin/ngspice', '-b', 'tb_p1_cml_div2_front_x2_div4_tran_v1.cir']
+  cwd  = ./EXPERIMENT-RUN
+  exe  sha256=6aacaca88f656e5e19074ac070fb410bf6cc437df1de88ec28d50a24c6239a1b
+  frozen deck sha256=97a52bb7757c5b36160a28377cf50bede0197656b3a395a411faec19eea5532c ; frozen netlist sha256=689d4beedfce278f0c13cf0e79a25b87ba8a12d25b9459e51dfbfde041cd3db7
+  start_utc=2026-08-01T03:10:09Z  end_utc=2026-08-01T03:10:15Z  elapsed=6.143 s
+  timeout=600 s  rc=0  timed_out=False
+  OUTCOME: rc=0.
+
+=== structural raw checks (after both sides; no waveform interpretation) ===
+  CONTROL raw: raw_tb_p1_cml_div2_front_x1_unloaded_tran_v1.raw
+    sha256=8317c689599ff6145f6ff8a70e5dbc4b4e05d8dc870b5d44e91b3fce9e6695f0 bytes=7858344
+    No. Variables=429  No. Points=2284
+    payload=7838688 B  exact payload (nvar*npts*8)=True
+    finite: NaN=0 Inf=0
+    time monotonic=True  first=0.000000e+00  last=4.000000e-09
+  EXPERIMENT raw: raw_tb_p1_cml_div2_front_x2_div4_tran_v1.raw
+    sha256=dd0f874ee53e1fff13581f99e3db04185b166705244e81be9ca59a2918a9a97f bytes=15551856
+    No. Variables=849  No. Points=2284
+    payload=15512928 B  exact payload (nvar*npts*8)=True
+    finite: NaN=0 Inf=0
+    time monotonic=True  first=0.000000e+00  last=4.000000e-09
+
+=== claims ===
+CONFIRMED: one invocation per side; per-side argv/cwd/UTC/elapsed/timeout/
+rc/stdout/stderr/raw/pre+post hashes recorded; structural raw facts as
+listed above.
+PROVISIONAL: nothing beyond the structural recount (no waveform analysis).
+UNKNOWN: all waveform behaviour (explicitly not analyzed here).
+No pass/fail, compatibility, specification, reliability, engineering-gate,
+signoff, or tape-out-readiness statement; no loading inference; no
+publication claim.
+
+=== stop ===
+Matched pair complete; awaiting Principal Engineer review.

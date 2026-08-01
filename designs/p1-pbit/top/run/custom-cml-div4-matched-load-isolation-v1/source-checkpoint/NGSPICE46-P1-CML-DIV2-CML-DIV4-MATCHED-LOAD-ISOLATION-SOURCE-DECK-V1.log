@@ -1,0 +1,73 @@
+NGSPICE46-P1-CML-DIV2-CML-DIV4-MATCHED-LOAD-ISOLATION-SOURCE-DECK-V1.log
+Matched load-isolation source/deck checkpoint V1 (NO simulator run)
+
+=== discipline ===
+source/deck preparation only; no simulator, no circuit/design change,
+no retry, no regenerated raw; no reset, external load, .ic, or .nodeset;
+no compatibility/specification/signoff claim; no publication claim.
+
+=== executable context (planned matched pair) ===
+  native ngspice-46 executable sha256=6aacaca88f656e5e19074ac070fb410bf6cc437df1de88ec28d50a24c6239a1b
+  (planned for BOTH control and experiment sides, one invocation each)
+  PE-recorded: V5 control run used probe-instrumented executable
+  c865f1bf...; direct run used native 6aacaca8...; the matched pair uses
+  native 6aacaca8... on both sides to isolate the loading effect
+
+=== bound hashes (CONFIRMED) ===
+  source netlist  sha256=689d4beedfce278f0c13cf0e79a25b87ba8a12d25b9459e51dfbfde041cd3db7 (byte-identical copy in package)
+  experiment deck sha256=97a52bb7757c5b36160a28377cf50bede0197656b3a395a411faec19eea5532c (byte-identical sealed V1 deck)
+  V5 single deck  sha256=46e7f223c140769ddbb1f503200caf463bccb395c6f117c39873a600170076fa (lineage reference)
+  control deck    sha256=4127fc03374d9ba777f700016de2e748dc20bf577e5706360a924c12ac55178d
+  planned exe     sha256=6aacaca88f656e5e19074ac070fb410bf6cc437df1de88ec28d50a24c6239a1b
+
+=== package members (manifest-closed) ===
+  tb_p1_cml_div2_front_x1_unloaded_tran_v1.cir (control deck)
+  tb_p1_cml_div2_front_x2_div4_tran_v1.cir (experiment deck, byte-identical 97a52bb7...)
+  p1_cml_div2_front_integrated_sinks.spice (byte-identical V5 source)
+  NGSPICE46-P1-CML-DIV2-CML-DIV4-MATCHED-LOAD-ISOLATION-SOURCE-DECK-V1-DECK-DELTA.diff (deck delta)
+
+=== control/experiment topology ===
+  control:    XSTAGE1 DIV2_P_1 DIV2_N_1 CLK_P CLK_N VCC_HBT VSS p1_cml_div2_front
+              (one stage; no stage-2 load)
+  experiment: XSTAGE1 DIV2_P_1 DIV2_N_1 CLK_P CLK_N VCC_HBT VSS p1_cml_div2_front
+              XSTAGE2 DIV4_P DIV4_N DIV2_P_1 DIV2_N_1 VCC_HBT VSS p1_cml_div2_front
+              (existing direct two-stage topology, byte-identical)
+
+=== held identical (control == experiment, byte-for-byte) ===
+  model libraries (.lib x6), .include netlist, supplies VCC_HBT 2.500/VSS 0.000,
+  clocks PULSE(1.200 0.000 100p 2p 2p 96p 200p)/(0.000 1.200 ...), no .temp
+  (ngspice default temperature both sides), .options savecurrents,
+  pre_osdi x2, save all, tran 2p 4.0n, quit/.endc/.end, no load/reset/.ic/
+  .nodeset, output-naming policy 'write raw_tb_<deck>.raw all' (stem differs
+  per side: x1_unloaded vs x2_div4)
+
+=== smallest auditable deck delta (experiment -> control): every differing line ===
+  exp line | ctl line | change
+    1     |   1     | -* Physical-Model Candidate V5 Two-Stage CML Divide-by-4 Cascade Diagnostic Deck (PROVISIONAL)+* Physical-Model Candidate V5 Single-Stage Unloaded Control Deck (MATCHED native ngspice-46 pair)
+    2     |   2     | -* Two p1_cml_div2_front subcircuit instances from the frozen V5 netlist (byte-identical copy)+* One p1_cml_div2_front subcircuit instance (XSTAGE1); NO stage-2 load (control side)
+    4     |   4     | -* tran 2p 4.0n stop = five theoretical 800 ps /4 periods total including startup (5 x 800 ps = 4.0 ns)+* tran 2p 4.0n stop = 4.0 ns, held identical to the experiment deck (tran policy match)
+   17     |  17     | -* Instantiate Two-Stage CML Divide-by-4 Cascade (non-swapped, shared supplies)+* Instantiate Single CML Divide-by-2 Stage (control; no stage-2 load)
+   19     |   -     | -XSTAGE2 DIV4_P DIV4_N DIV2_P_1 DIV2_N_1 VCC_HBT VSS p1_cml_div2_front+<deleted>
+   39     |  38     | -  write raw_tb_p1_cml_div2_front_x2_div4_tran_v1.raw all+  write raw_tb_p1_cml_div2_front_x1_unloaded_tran_v1.raw all
+
+  summary: 6 differing lines (3 header, 1 instance-comment, 1 XSTAGE2
+  deletion, 1 write-target); all other lines byte-identical; full unified
+  diff in NGSPICE46-P1-CML-DIV2-CML-DIV4-MATCHED-LOAD-ISOLATION-SOURCE-DECK-V1-DECK-DELTA.diff
+
+=== planned run boundary (NOT executed) ===
+  exactly one invocation per side (control once, experiment once), native
+  ngspice-46 6aacaca88f656e5e... ; no retry under any outcome; O_EXCL run dirs; frozen
+  hash verification before each invocation; no simulator invoked by this
+  checkpoint
+
+=== claims ===
+CONFIRMED: bound hashes; byte-identical source and experiment copies;
+control/experiment delta is exactly the 6 listed lines; held-identical
+policy list; planned boundary recorded.
+PROVISIONAL: nothing (no run performed).
+UNKNOWN: all runtime behaviour (decks UNRUN).
+No pass/fail, compatibility, specification, reliability, engineering-gate,
+signoff, or tape-out-readiness statement; no publication claim.
+
+=== stop ===
+Source/deck checkpoint complete; awaiting Principal Engineer review.
