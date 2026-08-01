@@ -1,0 +1,58 @@
+NGSPICE46-P1-CML-DIV2-CANDIDATE-V6-MATCHED-RUNTIME-V5-PUBLIC.log
+Sanitized public copy of the V5 report (no absolute host/container paths, no
+keys/secrets, no raw prompts/tool arguments; bits/raw publishable only with
+their exact decks and logs)
+NGSPICE46-P1-CML-DIV2-CANDIDATE-V6-MATCHED-RUNTIME-V5.log
+Read-only record correction V5 (from closed V3/V4 files only; no rerun)
+
+=== corrections applied (V4 defects) ===
+(1) warning counts: control=1, experiment=1; exact warning text: 'Warning: can't find the initialization file spinit.'
+    diagnostic NaN stderr observations kept distinct: control=68 lines, experiment=71
+    lines (VBIC diagnostic instrumentation), while BOTH final raw payloads are all-finite
+(2) comparison TSV now truly rectangular: header metric<TAB>V5<TAB>V6; every row exactly
+    3 fields (field-count audit: {3: 85}); side-specific values under their side with
+    NOT_APPLICABLE under the other; branch current NOT_SAVED; no valid/invalid or
+    pass/fail column (scan: True)
+(3) executable identified as: retained full-rebuild control executable c865f1bf (8,054,352 B)
+    with diagnostic instrumentation visible in stderr (VBIC diagnostic lines); NOT
+    'non-instrumented'
+(4) SEF extrema/durations labeled as FULL 0-to-4 ns coordinates; DIV2_P-DIV2_N metrics
+    are 2-to-4 ns
+(5) sanitized public-copy set produced (PUBLIC.log / PUBLIC.tsv / PUBLIC-MANIFEST.log)
+
+=== EXECUTION (Phase A, from the sealed invocation manifest) ===
+exactly one control + one experiment invocation (no retry); the same retained
+full-rebuild control executable (diagnostic stderr) for both sides; control rc=0
+with its raw data region reproducing the accepted 26c62c19... payload before V6 was
+invoked; experiment rc=0
+
+=== EVIDENCE VALIDITY ===
+control raw: 429 x 2284; payload 7838688 B sha256=26c62c1942b552ae609f6eb57e9746ee30ad77b7a5c6e433c118ddd965de3de7; all doubles finite
+experiment raw: 453 x 2284; payload 8277216 B sha256=5b2e349be38e001a5f251d0ebc51f6f50e3312480821c01014652f874b695f9b; all doubles finite
+time strict 0->4ns both; warnings: control=1 experiment=1 ('can't find the
+initialization file spinit.'); diagnostic NaN stderr lines: control=68 experiment=71
+
+=== DIV2_P - DIV2_N over 2-4 ns (values) ===
+V5: range=(-6.550851e-01, 6.550640e-01) V; crossings=10; mean adjacent interval=2.0000e-10 s; mean two-crossing period=4.0000e-10 s; freq=2.500004e+09 Hz
+V6: range=(-6.519926e-01, 6.520662e-01) V; crossings=10; mean adjacent interval=2.0000e-10 s; mean two-crossing period=4.0000e-10 s; freq=2.500003e+09 Hz
+
+=== SEF VCE/VBE/VCB extrema + occupancy coordinates (FULL 0-to-4 ns) ===
+  XQSEF1_M V5: VCE=(9.5630e-01 .. 1.6909e+00) V; VBE=(8.2665e-01 .. 8.3012e-01) V; VCB=(1.2806e-01 .. 8.6307e-01) V; VCE>=1.4V samples=1110 dur=1.9382e-09 s; VCE>=1.6V samples=940 dur=1.6680e-09 s
+  XQSEF1_M V6: VCE=(9.2693e-01 .. 1.6810e+00) V; VBE=(8.2721e-01 .. 8.2981e-01) V; VCB=(9.8293e-02 .. 8.5285e-01) V; VCE>=1.4V samples=1135 dur=2.0033e-09 s; VCE>=1.6V samples=1006 dur=1.7794e-09 s
+  XQSEF2_M V5: VCE=(9.1384e-01 .. 1.6796e+00) V; VBE=(8.2650e-01 .. 8.3000e-01) V; VCB=(8.6027e-02 .. 8.5159e-01) V; VCE>=1.4V samples=1144 dur=2.0113e-09 s; VCE>=1.6V samples=979 dur=1.7456e-09 s
+  XQSEF2_M V6: VCE=(9.7840e-01 .. 1.6810e+00) V; VBE=(8.2721e-01 .. 8.2981e-01) V; VCB=(1.4950e-01 .. 8.5284e-01) V; VCE>=1.4V samples=1103 dur=1.9365e-09 s; VCE>=1.6V samples=974 dur=1.7110e-09 s
+  XQSEF1_S V5: VCE=(9.1075e-01 .. 1.6802e+00) V; VBE=(8.2665e-01 .. 8.3002e-01) V; VCB=(8.2642e-02 .. 8.5225e-01) V; VCE>=1.4V samples=1150 dur=2.0183e-09 s; VCE>=1.6V samples=980 dur=1.7512e-09 s
+  XQSEF1_S V6: VCE=(9.7727e-01 .. 1.6819e+00) V; VBE=(8.2722e-01 .. 8.2984e-01) V; VCB=(1.4836e-01 .. 8.5374e-01) V; VCE>=1.4V samples=1099 dur=1.9321e-09 s; VCE>=1.6V samples=978 dur=1.7164e-09 s
+  XQSEF2_S V5: VCE=(9.5613e-01 .. 1.6814e+00) V; VBE=(8.2666e-01 .. 8.3002e-01) V; VCB=(1.2790e-01 .. 8.5322e-01) V; VCE>=1.4V samples=1105 dur=1.9337e-09 s; VCE>=1.6V samples=948 dur=1.6729e-09 s
+  XQSEF2_S V6: VCE=(9.3137e-01 .. 1.6818e+00) V; VBE=(8.2713e-01 .. 8.2981e-01) V; VCB=(1.0256e-01 .. 8.5367e-01) V; VCE>=1.4V samples=1140 dur=2.0092e-09 s; VCE>=1.6V samples=1020 dur=1.7893e-09 s
+  (coordinates only, not reliability limits)
+
+=== XRSINK branches (V6 raw; branch CURRENTS NOT SAVED) ===
+  XRSINK_SEF1_M: collector node range=(8.032694e-01, 1.510259e+00) V; drop (old-new) range=(5.801936e-02, 2.741132e-01) V; mean=1.698316e-01 V
+  XRSINK_SEF2_M: collector node range=(8.391118e-01, 1.510233e+00) V; drop (old-new) range=(5.803495e-02, 2.741286e-01) V; mean=1.696603e-01 V
+  XRSINK_SEF1_S: collector node range=(8.384856e-01, 1.511241e+00) V; drop (old-new) range=(5.831959e-02, 2.736730e-01) V; mean=1.698655e-01 V
+  XRSINK_SEF2_S: collector node range=(8.012974e-01, 1.511098e+00) V; drop (old-new) range=(5.833989e-02, 2.763339e-01) V; mean=1.697033e-01 V
+  branch currents NOT SAVED (no i(@...xrsink...) variable); no current inference
+
+(public copy ends at the results; the internal claims and paths are in the
+sealed internal report)

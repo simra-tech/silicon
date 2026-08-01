@@ -1,0 +1,70 @@
+NGSPICE46-P1-CML-DIV2-CANDIDATE-V6-SINK-COLLECTOR-SERIES-AUDIT-V2.log
+Immutable audit V2 (correction + geometry-authority closure; read only)
+
+=== correction (prerequisite) ===
+AUDIT-V1-CORRECTION-V1 8a5077f8637ff77529ac0d77c1dc1c21fef09f5934e3c8593af965ff4a376714 (4 removed + 8 added; V1's claims sentence retracted)
+
+=== preserved byte-for-byte ===
+V5 689d4beedfce278f0c13cf0e79a25b87ba8a12d25b9459e51dfbfde041cd3db7 (5,454 B / 94 lines)
+V6 174aea1f87d5e8e00eddd9937477ec01968b4f66ac77433e766d2349f5616e0a (5,734 B / 98 lines)
+diff ea49605a4edc2b39f0ae1571ef4711e74c7701efc40951e722abce14f0130a46 (952 B / 15 lines)
+corrected diff count: exactly 4 removed lines (four old SEF collector terminals)
+  and 8 added lines (four modified SEF instances + four new XRSINK_SEF* resistors);
+  no other line changed; ports and all non-diff lines unchanged
+
+=== exact installed authority: rppd w/l geometry bounds ===
+  magic device generator $PDK_ROOT/libs.tech/magic/ihp-sg13g2-res.tcl (ihp-sg13g2-res.tcl):
+    proc sg13g2::rppd_defaults {} {     return {w 0.50 l 2.00 m 1 nx 1 wmin 0.50 lmin 0.50 class resistor \ 		rho 260.0 val 520.0 dummy 0 dw 0.0 term 0.0 \ 		sterm 0.0 caplen 0 guard 1 glc 1 grc 1 gtc 1 gbc 1 \ 		snake 0 full_metal 1 vias 1 n_g
+    explicit bounds: wmin=0.50 um, lmin=0.50 um (rppd_defaults); the width check is
+    'if {$wmax > 0 && $w > $wmax}' with 'set wmax 0' (set wmax 0) - the upper width check
+    is disabled; NO explicit wmax/lmax bound is present in the exact source
+  r3_cmc model source ($PDK_ROOT/libs.tech/verilog-a/r3_cmc/r3_cmc.va):
+    `MPRcz( lmin      ,   0.0     ,"um"                      , "minimum allowed drawn length")
+    `MPRcz( wmin      ,   0.0     ,"um"                      , "minimum allowed drawn width")
+    (model-level minimum parameters default to 0.0; the model itself does not
+    enforce the foundry geometry bounds)
+  design usage is lineage, not a bound: the V1 'demonstrated range' phrase is not
+  the bound authority
+
+=== exact installed authority: r3_cmc rc contact convention ===
+  `MPRcz( rc        ,   0.0     ,"Ohm"                     , "resistance per contact")
+  rc1_tnom =  (rc+rcw/w_um)/c1;
+  rc2_tnom =  (rc+rcw/w_um)/c2;
+  r_dc     =  (1.0/geff+tcrc*(rc1_tnom+rc2_tnom)); // end resistance is added, this is an approximation
+  CONFIRMED: rc is the resistance PER CONTACT; the total DC resistance is the sheet
+  term plus the TWO end resistances (rc1_tnom + rc2_tnom) - the two-end convention
+  is the exact model semantics
+
+=== device-generator resistance expression (xschem rppd.sym) ===
+  value=\\"expr_eng(  ( 70.0e-6 / @w + 260.0 * ( (@b + 1)* @l + ( 1.081*( @w + 6.0e-9 ) + 0.18e-6 )*@b ) / ( @w + 6.0e-9 ) ) / @m  )\\"
+  drc hook: drc="res_drc @name @symname @model @w @l"
+  for w=2.0u l=1.0u: generator expression = 70.0e-6/2.0e-6 + 260.0*1.0e-6/2.006e-6
+    = 35.0 + 129.6112 = 164.611167 ohm
+
+=== arithmetic (both conventions, w=2.0u l=1.0u m=1 b=0) ===
+  weff = w + dw_rppd_par = 2.006e-6 ; leff = l = 1.0e-6 (b=0)
+  sheet = 260.0 * 1.0e-6/2.006e-6 = 129.611167 ohm
+  two-end total (model semantics) = sheet + 2*(35e-6/2e-6) = 164.611167 ohm; inside=True
+  one-end total (bracket) = sheet + 35e-6/2e-6 = 147.111167 ohm; inside=True
+  coordinate (73.7045910482929543, 538.397754496273819): both inside
+
+=== geometry drawability verdict (exact-source level) ===
+  CONFIRMED: the geometry w=2.0u satisfies the exact installed lower bound
+  w >= wmin=0.50 um strictly, and l=1.0u satisfies l >= lmin=0.50 um strictly; the
+  bound authority is the magic generator's rppd_defaults (not design lineage)
+  NOT ESTABLISHED: any explicit upper width/length bound (the upper width check is
+  disabled in the exact source; no lmax appears); the model-level lmin/wmin params
+  default to 0.0 and do not add bounds
+  (the V1 phrase 'derived drawable geometry' and its demonstrated-range wording are
+  corrected to this exact-source level)
+
+=== claims ===
+CONFIRMED: correction note first; V5/V6/diff preserved byte-for-byte; corrected
+diff count (4 removed + 8 added); the two-end rc convention from the exact VA
+source; the lower w/l bounds (wmin=0.50, lmin=0.50) with the geometry strictly
+above both; the generator expression reproducing the two-end total; arithmetic
+under both conventions inside the coordinate.
+PROVISIONAL: upper width/length bounds NOT ESTABLISHED (no explicit source); the
+nominal sheet rsh_rppd=260.0 is the cornerRES nominal; no candidate edit, build,
+link, ngspice invocation, simulation, waveform, verdict, reliability, signoff, or
+tape-out-readiness claim.

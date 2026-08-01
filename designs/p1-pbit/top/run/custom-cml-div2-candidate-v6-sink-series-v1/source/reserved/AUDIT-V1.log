@@ -1,0 +1,67 @@
+NGSPICE46-P1-CML-DIV2-CANDIDATE-V6-SINK-COLLECTOR-SERIES-AUDIT-V1.log
+Source-design audit for Candidate V6 (source, diff, audit only; STOP before build)
+
+=== preservation ===
+Candidate V5 netlist sha256=689d4beedfce278f0c13cf0e79a25b87ba8a12d25b9459e51dfbfde041cd3db7 (5454 bytes / 94 lines), byte-for-byte preserved as source/p1_cml_div2_front_integrated_sinks_v5.spice
+
+=== the four added sink branches (exact) ===
+  line 35: XQSEF1_M ef_p_m c_p1_comp_m e_scomp_ef1_m sub! npn13G2 Nx=3 mm_ok=1
+  line 37: XQSEF2_M ef_n_m c_p1_comp_m e_scomp_ef2_m sub! npn13G2 Nx=3 mm_ok=1
+  line 78: XQSEF1_S DIV2_P c_p1_comp_s e_scomp_ef1_s sub! npn13G2 Nx=3 mm_ok=1
+  line 80: XQSEF2_S DIV2_N c_p1_comp_s e_scomp_ef2_s sub! npn13G2 Nx=3 mm_ok=1
+follower-output-to-sink-collector connections: ef_p_m / ef_n_m / DIV2_P / DIV2_N
+
+=== rppd model/geometry authority (exact source identities) ===
+  resistors_mod.lib rppd subckt: weff=w+dw_rppd_par ; leff=(b+1)*l+(2/kappa*weff+ps)*b ;
+    rzspec=35e-6 ; rz=rzspec/w (postsim=0) ; model res_rppd r3_cmc rsh=rsh_rppd rc=rz
+  cornerRES.lib: rsh_rppd=260.0 ; dw_rppd_par=0.006e-6
+
+=== drawable geometry derivation (nominal) ===
+  w=2.0e-6  l=1.0e-6  m=1  b=0  (design-demonstrated range: w=2.0u used by XRPTAT_COMP_S,
+    l in 0.5u..1.107u; both strictly inside the demonstrated drawable range)
+  weff = w + dw_rppd_par = 2.0e-6 + 0.006e-6 = 2.006e-6
+  leff = (b+1)*l + (2/kappa*weff+ps)*b = l = 1.0e-6 (b=0)
+  sheet term  = rsh_rppd * (leff/weff) / m = 260.0 * (1.0e-6 / 2.006e-6) / 1 = 129.611167 ohm
+  contact term = rz = rzspec/w = 35e-6 / 2.0e-6 = 17.5 ohm per end
+  R_total (two-end convention) = sheet + 2*rz = 129.611167 + 35.0 = 164.611167 ohm
+  R_total (single-end convention) = sheet + rz = 147.111167 ohm (bracketing)
+  coordinate: 73.7045910482929543 < R < 538.397754496273819
+  R_total=164.611167 strictly inside: True (single-end 147.111167 also inside: True)
+  Neither coordinate is treated as a device absolute maximum or reliability rule.
+
+=== Candidate V6 netlist (O_EXCL) ===
+  source/p1_cml_div2_front_integrated_sinks_v6.spice sha256=174aea1f87d5e8e00eddd9937477ec01968b4f66ac77433e766d2349f5616e0a (5734 bytes / 98 lines)
+  exactly four matched collector-series rppd (w=2.0u l=1.0u m=1 b=0), one per added
+  physical sink branch, splitting each follower-output-to-sink-collector connection
+  onto a new local collector node:
+    XQSEF1_M  old collector connection: ef_p_m -> new collector node: c_cs1_m
+    XQSEF2_M  old collector connection: ef_n_m -> new collector node: c_cs2_m
+    XQSEF1_S  old collector connection: DIV2_P -> new collector node: c_cs1_s
+    XQSEF2_S  old collector connection: DIV2_N -> new collector node: c_cs2_s
+  new series resistors: XRSINK_SEF1_M (ef_p_m->c_cs1_m), XRSINK_SEF2_M (ef_n_m->c_cs2_m),
+    XRSINK_SEF1_S (DIV2_P->c_cs1_s), XRSINK_SEF2_S (DIV2_N->c_cs2_s)
+  ports, substrate connection (sub!), all other devices, model parameters, and
+  ordering preserved (only the four SEF collector terminals changed + four new
+  resistor lines inserted immediately after their SEF instance)
+
+=== zero-unintended-change check ===
+  unified diff (V5->V6): exactly 4 removed lines (the 4 old SEF collector terminals)
+  and 8 added lines (the 4 modified SEF instances + the 4 new XRSINK_SEF* resistors);
+  no other line changed
+  element-name uniqueness: V5 unique=True (47 devices); V6 unique=True (51 devices = V5+4)
+  new nodes ['c_cs1_m', 'c_cs1_s', 'c_cs2_m', 'c_cs2_s'] are absent from the V5 node set; SEF port order (c b e s) preserved
+  V5 sha256=689d4beedfce278f0c13cf0e79a25b87ba8a12d25b9459e51dfbfde041cd3db7
+  V6 sha256=174aea1f87d5e8e00eddd9937477ec01968b4f66ac77433e766d2349f5616e0a
+
+=== claims ===
+CONFIRMED: Candidate V5 preserved; the four sink branches and the rppd model authority
+read from exact sources; the geometry (w=2.0u l=1.0u m=1 b=0) derived with the full
+expression and arithmetic lands strictly inside the published coordinate (both
+contact conventions); the O_EXCL V6 netlist adds exactly four matched collector-
+series resistors with the four new collector nodes and connections; the unified diff
+is exactly 4 removed + 4 added lines; name uniqueness, port order, device counts,
+and the zero-unintended-change check all pass.
+PROVISIONAL: the r3_cmc contact-term convention (two-end vs single-end rz); the model's
+nominal sheet value rsh_rppd=260.0 is the cornerRES nominal used by the design; no
+simulation, waveform estimate, engineering verdict, or reliability conclusion is
+drawn; no configure/compile/link/ngspice invocation performed.
