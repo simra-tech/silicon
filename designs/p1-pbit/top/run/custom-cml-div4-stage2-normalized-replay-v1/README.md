@@ -69,6 +69,23 @@ published raw:
 The output crossings per input-defined interval are
 `[0, 4, 3, 4, 3, 4, 3, 4, 3, 4, 3]`.
 
+## Timestamp-grid alignment correction
+
+`analysis/GRID-ALIGNMENT.tsv` records a fresh package-relative recount of the
+three published source timestamp columns. Loaded and normalized are exactly
+aligned at all 2,284 rows. Unloaded versus either loaded or normalized has 409
+index-exact rows and 1,875 mismatches, with an indexwise maximum absolute
+offset of `1.253053637602494e-13 s` and RMS offset of
+`1.8358363611283227e-14 s`.
+
+In each nearest-neighbor direction, 982 timestamps exceed 1 fs, 48 exceed
+10 fs, 46 exceed 100 fs, and none exceed 1 ps. An earlier private prose
+summary stated 187 and 11 for the 10 fs and 100 fs thresholds; those values
+are retracted. `VERIFY-PUBLIC-GRID-ALIGNMENT.py` reproduces the table directly
+from public source files. Loaded-to-normalized indexwise comparisons are valid;
+comparisons that substitute unloaded common mode onto the loaded-normalized
+grid require a declared interpolation rule.
+
 ## Custody correction history
 
 The original six-file analysis package claimed no retry. The retained creation
@@ -90,7 +107,8 @@ for that check.
 ## Package boundary
 
 `PUBLISH-MANIFEST.tsv` hashes every payload except itself. The raw, source data,
-netlist, stdout, stderr, and fact table are byte-identical snapshots. The two
+netlist, stdout, stderr, and waveform fact table are byte-identical snapshots.
+The grid-alignment table is a public-source reconstruction. The two
 deck copies replace private PDK paths with `$PDK_ROOT`; their original and
 public identities are listed in `PUBLIC-COPY-IDENTITIES.tsv`.
 
