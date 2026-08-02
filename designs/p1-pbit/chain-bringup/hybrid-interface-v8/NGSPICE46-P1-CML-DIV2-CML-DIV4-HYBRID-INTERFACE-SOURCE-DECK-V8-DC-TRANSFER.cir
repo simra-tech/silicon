@@ -1,0 +1,57 @@
+* DC-transfer deck for p1_cml2lv_hybrid_interface_v1 (SOURCE-DECK-V8; UNRUN)
+* CORRECTION-V1 + V2 + V3 repairs applied; V8 versioned names only: .include names the packaged member;
+* .dc sweeps the independent source VCML_P; threshold is a rail-midpoint
+* proxy; output basename is v8; divider-crossing statement is an unrun
+* intention; CORRECTION-V3: exactly one "run" after "save all" and before
+* "write" in the .control block (ngspice-46 manual 12.11.4.3 - top-level .dc
+* with a .control block requires run inside .control before write).
+*
+* V2 envelope (accepted row 37144; direct-cascade-under-V5-load evidence,
+* NOT a hybrid contract):
+*   CM1 (P+N)/2 range 1.2877728318340829..1.549836259081225 V
+*   D1 (P-N) range -0.5765475013903696..+0.5771638292154451 V
+*   cadence: same-direction period ~4.0000e-10 s (2.5 GHz)
+* Exposed parameters: vcm (nominal 1.42 V, mid of the V2 CM1 range);
+*   rsrc = source impedance of the CML producer (50 ohm ASSUMPTION; the exact
+*   hybrid-load value is UNKNOWN).
+* Output-threshold statement: the LV CMOS switching threshold is NOT measured;
+*   VDD/2 = 0.6 V is used only as a RAIL-MIDPOINT PROXY (assumption). The
+*   actual trip point, corner thresholds, stress and timing are UNKNOWN.
+* UNRUN INTENTION (not a fact): the rppd divider ratio + follower VBE are
+*   INTENDED to set the DC crossing near the threshold; unverified until run.
+*
+* UNRUN: design-only deck; no simulation authorized.
+
+.lib $PDK_ROOT/libs.tech/ngspice/models/cornerHBT.lib hbt_typ
+.lib $PDK_ROOT/libs.tech/ngspice/models/cornerRES.lib res_typ
+.lib $PDK_ROOT/libs.tech/ngspice/models/cornerMOSlv.lib mos_tt
+.include NGSPICE46-P1-CML-DIV2-CML-DIV4-HYBRID-INTERFACE-SOURCE-DECK-V8-INTERFACE.spice
+
+.param vcm = 1.42
+.param rsrc = 50
+
+V_VCC_HBT VCC_HBT 0 DC 2.500
+V_VDD VDD 0 DC 1.200
+V_VSS VSS 0 DC 0.000
+
+* differential CML stimulus: VCML_P is the swept INDEPENDENT SOURCE; the N leg
+* is a behavioral complement so that vdiff = v(cml_p) - v(cml_n) tracks the
+* sweep: vdiff in [-0.7, +0.7] V for VCML_P in [vcm-0.35, vcm+0.35] V.
+VCML_P CML_P 0 DC {vcm}
+B_CML_N CML_N 0 V = {2*vcm - v(cml_p)}
+RSRC_P CML_P IN_P {rsrc}
+RSRC_N CML_N IN_N {rsrc}
+
+XU1 IN_P IN_N CMOS_OUT_P CMOS_OUT_N VCC_HBT VDD VSS p1_cml2lv_hybrid_interface_v1
+
+* top-level DC sweep of the independent source VCML_P (executed by "run"
+* inside .control - ngspice-46 12.11.4.3)
+.dc VCML_P {vcm - 0.35} {vcm + 0.35} 0.005
+
+.control
+  save all
+  run
+  write raw_tb_p1_cml2lv_hybrid_dc_v8.raw all
+  quit
+.endc
+.end

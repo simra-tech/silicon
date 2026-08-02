@@ -22,6 +22,11 @@ signoff of any kind is claimed here.**
 | swap 2 | **`P1_NOISE_GEN`** | **`P1_NOISE_AMP`, transistors** | post-processed | complete |
 | swap 3 | **`P1_NOISE_GEN`** | **`P1_NOISE_AMP`** | **`P1_COMPARATOR`, clocked at 5 GS/s** | complete |
 
+The later [hybrid interface V8 checkpoint](hybrid-interface-v8/) isolates the
+CML-to-1.2 V CMOS output conversion. Its single nominal-DC run verifies
+complementary static logic at 27 C; its transient deck is published but remains
+unrun, so it does not yet establish timing or chain compatibility.
+
 The decision is done in post-processing in all three: the differential output is
 sampled every 200 ps and compared against a threshold. No clocked comparator is
 instantiated, so no clock exists in these decks.
