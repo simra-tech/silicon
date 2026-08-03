@@ -1,0 +1,56 @@
+* C08-V3-PLUS10MV : EXACT46 p1_comparator, +10 mV differential input, 5.0 GS/s clock, SOURCE ONLY UNRUN
+* C08-V2 (corrected): binds the direct 46-instance source simulations/p1_comparator.spice
+*   (sha256 4a021355...); reproduces the older 42-instance polarity harness parameters
+*   (published f6ed08ba/fb846fe7): tran 2p 1.2n 0, latch sample at=900p, track sample
+*   at=1000p, output/raw min/max from=600p to=1000p; tstart 0; no kick / 0.10n-0.20n /
+*   cp-cn / 0.2n-0.4n measurements.
+* No output load on PBIT_OUT/PBIT_RAW/CLK_OUT_DIV: CONFIRMED lineage-reproduction
+*   limitation (identical to the retained harness); NOT acceptance evidence.
+* UNRUN: design-only deck; no simulation authorized.
+.lib $PDK_ROOT/libs.tech/ngspice/models/cornerHBT.lib hbt_typ
+.lib $PDK_ROOT/libs.tech/ngspice/models/cornerRES.lib res_typ
+.lib $PDK_ROOT/libs.tech/ngspice/models/cornerCAP.lib cap_typ
+.lib $PDK_ROOT/libs.tech/ngspice/models/cornerMOShv.lib mos_tt
+.lib $PDK_ROOT/libs.tech/ngspice/models/cornerMOSlv.lib mos_tt
+.lib $PDK_ROOT/libs.tech/ngspice/models/cornerDIO.lib dio_tt
+
+.include p1_comparator.spice
+
+.option temp = 27.0
+.options rshunt = 1e12
+
+VCC_HBT VCC_HBT 0 DC 2.500
+VDD VDD 0 DC 1.200
+VSS VSS 0 DC 0.000
+
+* Differential Clock Input (5.0 GS/s, 200ps Period)
+VCLK_P CLK_P 0 PULSE(1.20 0.0 0 20p 20p 80p 200p)
+VCLK_N CLK_N 0 PULSE(0.0 1.20 0 20p 20p 80p 200p)
+
+* Preamplifier Output Impedance Drivers (120 Ohm, DC = 1.44V Common Mode)
+VAMP_P raw_amp_p 0 DC 1.445
+VAMP_N raw_amp_n 0 DC 1.435
+RROUT1 raw_amp_p IN_P 120
+RROUT2 raw_amp_n IN_N 120
+
+VTRIM_P TRIM_P 0 DC 1.440
+VTRIM_N TRIM_N 0 DC 1.440
+
+XCOMP PBIT_OUT PBIT_RAW CLK_OUT_DIV IN_P IN_N CLK_P CLK_N TRIM_P TRIM_N VCC_HBT VDD VSS p1_comparator
+
+.control
+pre_osdi $PDK_ROOT/libs.tech/ngspice/osdi/psp103.osdi
+pre_osdi $PDK_ROOT/libs.tech/ngspice/osdi/psp103_nqs.osdi
+tran 2p 1.2n 0
+write C08-V3-PLUS10MV.raw all
+meas tran raw_latch_end FIND v(PBIT_RAW) at=900p
+meas tran out_latch_end FIND v(PBIT_OUT) at=900p
+meas tran raw_track_end FIND v(PBIT_RAW) at=1000p
+meas tran out_track_end FIND v(PBIT_OUT) at=1000p
+meas tran out_max MAX v(PBIT_OUT) from=600p to=1000p
+meas tran out_min MIN v(PBIT_OUT) from=600p to=1000p
+meas tran raw_max MAX v(PBIT_RAW) from=600p to=1000p
+meas tran raw_min MIN v(PBIT_RAW) from=600p to=1000p
+print raw_latch_end out_latch_end raw_track_end out_track_end out_max out_min raw_max raw_min
+.endc
+.end
