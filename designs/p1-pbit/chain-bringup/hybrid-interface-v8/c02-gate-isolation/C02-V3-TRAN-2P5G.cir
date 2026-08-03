@@ -1,0 +1,58 @@
+* 2.5 GHz transient deck for p1_cml2lv_hybrid_interface_v1 (SOURCE-DECK-V8; UNRUN)
+* CORRECTION-V1 + V2 repairs applied (V3's tran deck is retained unchanged
+* except the packaged .include basename and the v4 output basename):
+*   .include names the packaged member; tedge is slope-consistent
+*   (2*vdiff / mean|slope|); threshold is a rail-midpoint proxy.
+* The TRAN deck's control block order is save < tran (the run) < write < quit.
+*
+* V2 envelope evidence (accepted row 37144; direct-cascade-under-V5-load
+* evidence, NOT a hybrid contract):
+*   D1 min/max -0.5765475013903696..+0.5771638292154451 V
+*   CM1 range 1.2877728318340829..1.549836259081225 V (nominal 1.42 V)
+*   same-direction period ~4.0000e-10 s (2.5 GHz cadence)
+*   mean |bracketing-sample slope| 9.123610261699474e9 V/s
+* Exposed parameters: vcm (1.42 V nominal), vdiff (V2 D1 max), period (400p),
+*   tedge = {2*vdiff/9.123610261699474e9} (~126.5 ps). PROVISIONAL: this edge
+*   matches ONLY the chosen mean-slope proxy (9.123610261699474e9 V/s); it is
+*   NOT the full-waveform edge time, which remains UNKNOWN (CORRECTION-V2).
+*   rsrc (50 ohm ASSUMPTION; exact hybrid-load value UNKNOWN); supplies
+*   VCC_HBT 2.5V / VDD 1.2V / VSS 0V; models = bound .lib set; saves = all.
+* Output-threshold statement: the LV CMOS switching threshold is NOT measured;
+*   VDD/2 = 0.6 V is used only as a RAIL-MIDPOINT PROXY (assumption). The
+*   actual trip point, corner thresholds, stress and timing are UNKNOWN.
+* UNRUN INTENTION (not a fact): the rppd divider ratio + follower VBE are
+*   INTENDED to set the DC crossing near the threshold; unverified until run.
+*
+* UNRUN: design-only deck; no simulation authorized.
+
+.lib $PDK_ROOT/libs.tech/ngspice/models/cornerHBT.lib hbt_typ
+.lib $PDK_ROOT/libs.tech/ngspice/models/cornerRES.lib res_typ
+.lib $PDK_ROOT/libs.tech/ngspice/models/cornerMOSlv.lib mos_tt
+.include NGSPICE46-P1-CML-DIV2-CML-DIV4-HYBRID-INTERFACE-SOURCE-DECK-V8-INTERFACE-V2.spice
+
+.param vcm = 1.42
+.param vdiff = 0.5771638292154451
+.param period = 400p
+.param tedge = {2*vdiff/9.123610261699474e9}
+.param rsrc = 50
+
+V_VCC_HBT VCC_HBT 0 DC 2.500
+V_VDD VDD 0 DC 1.200
+V_VSS VSS 0 DC 0.000
+
+* differential CML stimulus (2.5 GHz) with exposed source impedance
+VCML_P CML_P 0 PULSE({vcm + vdiff/2} {vcm - vdiff/2} 0 {tedge} {tedge} {period/2 - tedge} {period})
+VCML_N CML_N 0 PULSE({vcm - vdiff/2} {vcm + vdiff/2} 0 {tedge} {tedge} {period/2 - tedge} {period})
+RSRC_P CML_P IN_P {rsrc}
+RSRC_N CML_N IN_N {rsrc}
+
+XU1 IN_P IN_N CMOS_OUT_P CMOS_OUT_N VCC_HBT VDD VSS p1_cml2lv_hybrid_interface_v1
+
+* intended analysis: five 400 ps periods (2 ns); tran inside .control is the run
+.control
+  save all
+  tran 2p 2n
+  write raw_tb_p1_cml2lv_hybrid_tran_2p5g_v8.raw all
+  quit
+.endc
+.end
