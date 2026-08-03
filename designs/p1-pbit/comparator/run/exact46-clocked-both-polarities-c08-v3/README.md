@@ -1,10 +1,18 @@
-# Exact-current comparator polarity reproduction — C08 V3
+# Retained 46-instance comparator polarity reproduction — C08 V3
 
-This package publishes the current 46-instance `p1_comparator` schematic and
-generated source with two static-input, 5 GS/s clocked transient runs. It closes
-one narrow lineage question: the current comparator reaches opposite unloaded
-output states for `+10 mV` and `-10 mV` differential inputs at the retained
-historical harness's latch and track sample instants.
+This package publishes a retained 46-instance `p1_comparator` **simulation
+copy** and two static-input, 5 GS/s clocked transient runs. It closes one narrow
+question: that exact generated source reaches opposite unloaded output states
+for `+10 mV` and `-10 mV` differential inputs at the retained historical
+harness's latch and track sample instants.
+
+The executed source has `XRFB l=18.05u`. The source-backed comparator and Top
+V3 instead have `XRFB l=18.5u`, so this package is not evidence for that current
+source-backed lineage. The adjacent retained `p1_comparator.sch` is included
+for custody but contains no `XRFB` device and is **not** the source parent of the
+executed generated netlist. The earlier package wording that called these the
+current schematic and source was incorrect; instance count alone does not bind
+source identity.
 
 The two portable decks preserve the executed circuit, stimulus, analysis,
 measures, and explicit raw writes. Only private execution paths were rewritten:
@@ -44,10 +52,11 @@ polarity to the logs' precision.
 
 ## Evidence boundary
 
-This is **unloaded static-polarity lineage evidence**, not a loaded dynamic
-decision test. It does not establish pad or buffer drive, kickback, PVT or
-mismatch robustness, power, entropy, top-level operation, or any P1
-specification. Both logs retain one IHP aggregate HBT self-heating warning:
+This is **unloaded static-polarity simulation-copy evidence**, not a loaded
+dynamic decision test. It does not establish the source-backed 18.5 µm
+comparator, pad or buffer drive, kickback, PVT or mismatch robustness, power,
+entropy, top-level operation, or any P1 specification. Both logs retain one IHP
+aggregate HBT self-heating warning:
 `The temperature limiting function received NaN.` That warning is preserved,
 not waived.
 

@@ -236,6 +236,11 @@ def main():
     ], "generated source has exact ordered 12-port interface")
     require(sum(line.startswith("X") for line in source_lines) == 46,
             "generated source contains 46 X-instances")
+    require("XRFB raw_inv cml_out_p sub! rppd w=1.0u l=18.05u m=1 b=0 mm_ok=1" in source_lines,
+            "executed generated source binds XRFB length 18.05 um")
+    schematic_text = SCHEMATIC.read_text()
+    require("name=RFB" not in schematic_text and "name=XRFB" not in schematic_text,
+            "adjacent retained schematic lacks XRFB and is not treated as source parent")
 
     plus, minus = RUNS["PLUS"][0], RUNS["MINUS"][0]
     require(source_diff(plus, minus) == [
@@ -255,7 +260,7 @@ def main():
         require(text.count(".lib $PDK_ROOT/") == 6 and text.count("pre_osdi $PDK_ROOT/") == 2,
                 f"{run} deck has portable model and OSDI bindings")
         require(text.count(".include p1_comparator.spice") == 1,
-                f"{run} deck includes the local exact-current source once")
+                f"{run} deck includes the local retained simulation-copy source once")
         require("tran 2p 1.2n 0" in lines and
                 f"write C08-V3-{run}10MV.raw all" in lines,
                 f"{run} deck has exact transient and raw write")
