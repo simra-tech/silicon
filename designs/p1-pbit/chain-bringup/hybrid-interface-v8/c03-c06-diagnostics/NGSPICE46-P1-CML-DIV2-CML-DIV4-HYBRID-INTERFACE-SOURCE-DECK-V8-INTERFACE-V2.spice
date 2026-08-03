@@ -1,0 +1,59 @@
+* p1_cml2lv_hybrid_interface_v1 - differential CML-to-1.2V-CMOS interface candidate
+* (SOURCE-DECK-V8 package; design-only; UNRUN - no simulation)
+* CORRECTION-V1 + V2 retractions applied. V8 repair (CORRECTION-V7 plan,
+* PROVISIONAL, unrun): XINV3/XINV4 gate token CM_N -> CMOS_OUT_N only -
+* complementary-logic output (CMOS_OUT_P = NOT CMOS_OUT_N); added gate
+* load on CMOS_OUT_N; 0.6-V midpoint proxy (not a measured trip); no
+* true second analog swing (single-ended CM_P swing retained).
+*
+* Topology (an ASSUMPTION/PROVISIONAL candidate, selected in the PLAN log):
+*   HBT emitter-follower level shift (npn13G2) + rppd divider to VSS +
+*   LV CMOS differential pair + tail + PMOS current-mirror load + LV CMOS
+*   inverters - modeled on the level-shift/conversion section of the bound
+*   Top V3 comparator (p1_top_hier.spice b8ac82719ffcd365...). This candidate
+*   is NOT the exact comparator structure: it intentionally omits the
+*   comparator's XCDAMP1/2 damping caps, XRFB feedback resistor, and the later
+*   inverter stages (XM5-XM12); only the level shift, differential pair, tail,
+*   current-mirror load, and one inverter stage per output (CMOS_OUT_N),
+*   plus a second inverter stage on CMOS_OUT_N for CMOS_OUT_P (V8 repair).
+* Devices from the installed IHP SG13G2 PDK via the bound .lib set:
+*   cornerHBT.lib hbt_typ (npn13G2 -> npn13G2_NX_vbic alias)
+*   cornerRES.lib res_typ (rppd -> res_rppd alias)
+*   cornerMOSlv.lib mos_tt (sg13_lv_nmos / sg13_lv_pmos LV 1.2V MOS aliases)
+*
+* Supplies exposed: VCC_HBT 2.5V (HBT domain), VDD 1.2V (LV CMOS domain),
+*   VSS 0V. Interface input (CML_P/CML_N) = the HBT base pair of the emitter
+*   followers; the decks expose the producer source impedance as rsrc
+*   (50 ohm is an ASSUMPTION).
+* UNRUN INTENTIONS (not facts; require a run to confirm, which is not
+*   authorized): the rppd divider ratio + follower VBE are INTENDED to set the
+*   DC crossing near the LV CMOS threshold; the outputs are INTENDED to be
+*   complementary via the V8 repair (CMOS_OUT_P = NOT CMOS_OUT_N). Both
+*   remain unverified until run (PROVISIONAL).
+.subckt p1_cml2lv_hybrid_interface_v1 CML_P CML_N CMOS_OUT_P CMOS_OUT_N VCC_HBT VDD VSS
+* HBT emitter-follower level shifters (npn13G2, 2.5V HBT domain)
+XQEF_P VCC_HBT CML_P EF_P sub! npn13G2 Nx=1 mm_ok=1
+XQEF_N VCC_HBT CML_N EF_N sub! npn13G2 Nx=1 mm_ok=1
+* rppd dividers EF -> GP/GN -> VSS (intended to set the DC crossing near the
+* LV CMOS threshold - unrun intention, PROVISIONAL)
+XR1_P EF_P GP sub! rppd w=1.0u l=22.0u m=1 b=0 mm_ok=1
+XR2_P GP VSS sub! rppd w=1.0u l=14.5u m=1 b=0 mm_ok=1
+XR1_N EF_N GN sub! rppd w=1.0u l=22.0u m=1 b=0 mm_ok=1
+XR2_N GN VSS sub! rppd w=1.0u l=14.5u m=1 b=0 mm_ok=1
+EGP_BUF gbuf_p VSS GP VSS 1
+EGN_BUF gbuf_n VSS GN VSS 1
+* LV CMOS differential pair + tail (1.2V domain, VDD rail)
+XM1 CM_N gbuf_p E_CM VSS sg13_lv_nmos w=6.0u l=0.13u ng=1 m=1 mm_ok=1
+XM2 CM_P gbuf_n E_CM VSS sg13_lv_nmos w=6.0u l=0.13u ng=1 m=1 mm_ok=1
+XMTAIL E_CM VDD VSS VSS sg13_lv_nmos w=8.0u l=0.50u ng=1 m=1 mm_ok=1
+* PMOS current-mirror load (diode-connected XM3 + mirrored XM4; matches the
+* bound comparator structure - NOT cross-coupled)
+XM3 CM_N CM_N VDD VDD sg13_lv_pmos w=8.0u l=0.13u ng=1 m=1 mm_ok=1
+XM4 CM_P CM_N VDD VDD sg13_lv_pmos w=8.0u l=0.13u ng=1 m=1 mm_ok=1
+* LV CMOS inverters: CMOS_OUT_N = NOT CM_P (swinging node); CMOS_OUT_P =
+* NOT CMOS_OUT_N (V8 repair) - complementary logic; unrun, PROVISIONAL
+XINV1 CMOS_OUT_N CM_P VDD VDD sg13_lv_pmos w=2.83u l=0.13u ng=1 m=1 mm_ok=1
+XINV2 CMOS_OUT_N CM_P VSS VSS sg13_lv_nmos w=2.0u l=0.13u ng=1 m=1 mm_ok=1
+XINV3 CMOS_OUT_P CMOS_OUT_N VDD VDD sg13_lv_pmos w=2.83u l=0.13u ng=1 m=1 mm_ok=1
+XINV4 CMOS_OUT_P CMOS_OUT_N VSS VSS sg13_lv_nmos w=2.0u l=0.13u ng=1 m=1 mm_ok=1
+.ends p1_cml2lv_hybrid_interface_v1
