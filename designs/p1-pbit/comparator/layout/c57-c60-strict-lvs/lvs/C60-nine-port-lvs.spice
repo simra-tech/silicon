@@ -1,0 +1,20 @@
+* C60 nine-port LVS schematic (SOURCE/PLAN ONLY, UNRUN)
+* Top: C57_SUBSTRATE_TIE_M1B_REPAIR
+* Ports (exactly 9, in the EXTRACTED order): LS_N LS_P NOISE_AMP_N NOISE_AMP_P VCC_HBT VSS c_n c_p e_track
+* Representation/parameter normalization vs C59-V2 (proven by byte-diff):
+*   - Q/R device prefixes (reader-recognized BJT/resistor classes; the X prefix
+*     made the reader treat PDK instances as unresolved subcircuits);
+*   - reader-recognized BJT geometry we/le (npn13G2v we=0.12u le=5.0u; npn13G2
+*     we=0.07u le=0.9u), Nx/m retained;
+*   - rppd w/l/m/b and ptap1 w/l retained;
+*   - sub! bulk is the INTERNAL common node nbulk (not a port).
+* Topology and the seven devices unchanged. No models/extras.
+.SUBCKT C57_SUBSTRATE_TIE_M1B_REPAIR LS_N LS_P NOISE_AMP_N NOISE_AMP_P VCC_HBT VSS c_n c_p e_track
+RXTAP1 VSS          nbulk      ptap1 w=2.0u l=2.0u
+RXRLS_P LS_P        VSS        nbulk rppd w=1.0u l=3.85u m=1 b=0
+RXRLS_N LS_N        VSS        nbulk rppd w=1.0u l=3.85u m=1 b=0
+QXLS_P VCC_HBT      NOISE_AMP_P LS_P      nbulk npn13G2 we=0.07u le=0.9u Nx=1 m=1
+QXLS_N VCC_HBT      NOISE_AMP_N LS_N      nbulk npn13G2 we=0.07u le=0.9u Nx=1 m=1
+QXQ1   c_n          LS_P       e_track    nbulk npn13G2v we=0.12u le=5.0u Nx=4 m=1
+QXQ2   c_p          LS_N       e_track    nbulk npn13G2v we=0.12u le=5.0u Nx=4 m=1
+.ENDS

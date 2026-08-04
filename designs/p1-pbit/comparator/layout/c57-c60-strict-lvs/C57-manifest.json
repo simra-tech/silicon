@@ -1,0 +1,122 @@
+{
+  "generator": "C57_gen.py",
+  "generator_rev": 1,
+  "klayout_version": "0.30.9",
+  "pdk_commit": "144f811cdffda49b71d28f64e8a92b697b61cf06",
+  "dbu_um": 0.001,
+  "top": "C57_SUBSTRATE_TIE_M1B_REPAIR",
+  "c54_source_sha256": "d863ac3a056613b4e7947c69fe9218b8966488a3efa226489165929c426f2a82",
+  "c54_instance": {
+    "cell": "C54_BOUNDARY_ACCESS",
+    "trans": "r0 (0,0)"
+  },
+  "repair": {
+    "c56_gds_sha256": "12ee5261df512be6d8aef0d9ee0132cf9498510bb0e8c9c8810c8c331dda258f",
+    "cause": "C56 pin-based placement: 8/2 pin top 1.80 vs 8/0 drawing top 1.85 -> drawing top -16.08 vs VSS bottom -15.95 = 0.13 um notch < M1.b 0.18 (4 M1.b records, 2 unique locations)",
+    "fix": "ptap disp changed (-1.000,-17.930) -> (-1.000,-17.980); route bottom -16.180 -> -16.230, top kept -15.940"
+  },
+  "tap": {
+    "pcell": "ptap1",
+    "params": {
+      "w": "2.0u",
+      "l": "2.0u"
+    },
+    "variant_cell": "ptap1",
+    "draw8_0_bbox_um": [
+      0.2,
+      0.15,
+      1.8,
+      1.85
+    ],
+    "pin8_2_bbox_um": [
+      0.2,
+      0.2,
+      1.8,
+      1.8
+    ],
+    "instance_disp_um": [
+      -1.0,
+      -17.98
+    ],
+    "global_draw_top_um": -16.13,
+    "gap_draw_top_to_strap_um": 0.18
+  },
+  "route": {
+    "layer": "8/0",
+    "width_um": 0.2,
+    "bbox_um": [
+      -0.1,
+      -16.23,
+      0.1,
+      -15.94
+    ]
+  },
+  "texts": {
+    "10/25": [
+      [
+        "LS_P",
+        -4.7,
+        -8.5
+      ],
+      [
+        "LS_N",
+        4.7,
+        -8.5
+      ],
+      [
+        "e_track",
+        0.0,
+        5.6
+      ]
+    ],
+    "8/25": [
+      [
+        "c_n",
+        -8.38,
+        9.425
+      ],
+      [
+        "c_p",
+        8.38,
+        9.425
+      ],
+      [
+        "VCC_HBT",
+        0.0,
+        -4.65
+      ],
+      [
+        "VSS",
+        0.0,
+        -15.85
+      ],
+      [
+        "NOISE_AMP_P",
+        -4.35,
+        -6.92
+      ],
+      [
+        "NOISE_AMP_N",
+        4.35,
+        -6.92
+      ]
+    ],
+    "40/25": [
+      [
+        "sub!",
+        0.0,
+        -16.98
+      ]
+    ],
+    "size_um": 0.25,
+    "63/0": "native from ptap1 PCell (not duplicated)"
+  },
+  "overall_bbox_um": [
+    -15.76,
+    -18.01,
+    15.76,
+    11.200000000000001
+  ],
+  "content": "one C54 instance + one ptap1 w=2.0u l=2.0u (M1.b-repaired placement) + one Metal1 route + 10 extractor texts; no pwell 46/0, no other geometry/devices/nets",
+  "claims": "no DRC/LVS/PEX/simulation; PROVISIONAL until fresh DRC; no P1/signoff claim"
+}

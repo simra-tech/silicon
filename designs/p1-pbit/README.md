@@ -8,10 +8,13 @@ Target process is the IHP SG13G2 open PDK (0.13 µm SiGe BiCMOS). The die is
 probe-pad only: no wire-bonds, no package, everything landed on top-metal GSG and
 DC pads for wafer probing.
 
-**State: in specification, with one block laid out. Nothing has been fabricated.
+**State: in specification, with one block and one partial core laid out. Nothing has been fabricated.
 Nothing has been taped out. One of the five blocks — the noise generator — now has a
 physical layout that is DRC-clean on every geometry rule and matches its schematic under
-LVS; see [`noise-generator/layout/`](noise-generator/layout/). A source-backed three-block
+LVS; see [`noise-generator/layout/`](noise-generator/layout/). A seven-device comparator-core
+checkpoint also has a zero-item main-table DRC report and strict nine-port LVS match; it is
+not the complete comparator and has no PEX or post-layout simulation — see
+[`comparator/layout/c57-c60-strict-lvs/`](comparator/layout/c57-c60-strict-lvs/). A source-backed three-block
 structural hierarchy now generates a netlist with its noise-generator substrate tap connected;
 its first operating-point attempt failed and produced no raw dataset;
 see [`top/source-backed-v3/`](top/source-backed-v3/). No parasitics have been extracted, no
@@ -151,7 +154,7 @@ about a chip.
 | Check | State |
 | --- | --- |
 | Fabrication | **Not done.** Nothing exists in silicon. |
-| Layout, DRC, LVS | **One block of five.** The noise generator is laid out, DRC-clean on all geometry rules, and LVS-matched against a netlist exported from its schematic — [`noise-generator/layout/`](noise-generator/layout/). Nine minimum-global-density rules are waived at block level and unevaluated. The other four blocks have no layout. |
+| Layout, DRC, LVS | **One complete block plus one partial core.** The noise generator is laid out, DRC-clean on all geometry rules, and LVS-matched against a netlist exported from its schematic — [`noise-generator/layout/`](noise-generator/layout/). Nine minimum-global-density rules are waived at block level and unevaluated. Separately, a seven-device comparator-core checkpoint has zero items under the installed main DRC table and a strict nine-port LVS match — [`comparator/layout/c57-c60-strict-lvs/`](comparator/layout/c57-c60-strict-lvs/). It omits the rest of the comparator and has no PEX or post-layout simulation; the remaining blocks have no layout. |
 | Parasitic extraction | **Not run.** No parasitics extracted anywhere, so every behavioural result in this directory still rests on schematic values. |
 | Tape-out / foundry signoff | **Not done, not claimed.** |
 | HBT noise spectral density S<sub>v</sub>(f) | **Simulated, not measured.** `.noise` on the noise generator gives 36.42 nV/√Hz differential at 1 GHz — see [`noise-generator/`](noise-generator/), which carries the deck and the raw simulator output. Still not measured in silicon, and no layout parasitics are included.|
