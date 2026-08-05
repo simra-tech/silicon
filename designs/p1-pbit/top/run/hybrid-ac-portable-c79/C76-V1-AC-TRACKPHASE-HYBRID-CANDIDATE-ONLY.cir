@@ -1,0 +1,148 @@
+* C76-V1 AC deck — track-phase loading with the p1_hybrid B copy (DECK ONLY, UNRUN)
+* Derived from the C75 deck (4c7e002f, rejected) fixing TWO defects; the source
+* C75-V1-SOURCE-p1_hybrid.spice (cd475e71) is PRESERVED and re-used unchanged:
+*   (1) WRITE PATHS: the C75 deck wrote the OP/AC raws to the PROJECT ROOT while
+*       its guards targeted evidence/c75-* — C76 writes both raws to the fresh
+*       exact evidence basenames evidence/c76-V1-AC-TRACKPHASE-HYBRID-CANDIDATE-ONLY.op.raw
+*       and evidence/c76-V1-AC-TRACKPHASE-HYBRID-CANDIDATE-ONLY.raw, matching the
+*       wrapper guards (stated below).
+*   (2) SAVE INVENTORY: the C75 deck dropped i(vcc_hbt)/i(vdd)/i(vss) and added
+*       xhyb.c_p/xhyb.c_n/xhyb.e_track — C76 RESTORES the C46 save inventory
+*       (74c407ae8b77aad4...) with ONLY v(ls_pb)/v(ls_nb) -> v(xhyb.ls_p)/
+*       v(xhyb.ls_n) renamed: 20 vectors total.
+* Everything else preserved from C75/C46-V4 byte-identical: the six libs, options
+* (temp 27.0, rshunt 1e12), supplies, the A copy, the stimulus, the B copy
+* (XAMPB -> the same 0 V probes VBASE_PB/NB -> ONE hybrid XHYB, exact 12-pin
+* order), op + the distinct OP raw, ac dec 40 1MEG 100G + the distinct AC raw,
+* the four let-vectors (ga unchanged; gb over v(xhyb.ls_p)/v(xhyb.ls_n); load and
+* ydm unchanged), the 40 measures, the print and quit/endc/end.
+* BOUND INPUTS (full): C45 102f2a9d1e1fe870b34eb14de386ab7ba2d6d31104d217f38cf1d422bb1cd8d8;
+* C46-V4 74c407ae8b77aad4af7ae41f04e1273b232e78171fb4670c8c0491c76f17ab9a;
+* C71 fragment b6dda1659139a4036b1899d57feb5b006d288e326c9e697cbbdb051c919a6d7b;
+* hybrid source cd475e7145f49b3c44ec7310cce9ad554e175e3e33c4ae7b860a0de710e6dace.
+* EXACT FAIL-CLOSED LATER-RUN WRAPPER (stated; NOT executed here):
+*   set -o pipefail
+*   for f in "evidence/c76-V1-AC-TRACKPHASE-HYBRID-CANDIDATE-ONLY.op.raw" \
+*            "evidence/c76-V1-AC-TRACKPHASE-HYBRID-CANDIDATE-ONLY.raw" \
+*            "evidence/c76-V1-run.log" "evidence/c76-V1-run.stdout.log"; do
+*       if [ -e "$f" ]; then echo "FAIL-CLOSED: C76 output already exists: $f"; exit 1; fi
+*   done
+*   ngspice -b C76-V1-AC-TRACKPHASE-HYBRID-CANDIDATE-ONLY.cir 2>&1 \
+*     | tee evidence/c76-V1-run.log > evidence/c76-V1-run.stdout.log
+*   c76_status=${PIPESTATUS[0]}
+*   echo "c76_exit=$c76_status"
+*   exit "$c76_status"
+* The guards match BOTH the write paths and the log/stdout paths. NO bandwidth/pass
+* decision; P1 open; no PEX/pass/signoff claim.
+.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerHBT.lib hbt_typ
+.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerRES.lib res_typ
+.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerCAP.lib cap_typ
+.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerMOShv.lib mos_tt
+.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerMOSlv.lib mos_tt
+.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerDIO.lib dio_tt
+
+.include C45-V1-SOURCE-p1_top_hier_v3-no-bleed-wrapped-damp35-ls-hbtv-nx4el5.spice
+.include C75-V1-SOURCE-p1_hybrid.spice
+
+.option temp = 27.0
+.options rshunt = 1e12
+
+VCC_HBT VCC_HBT 0 DC 2.500
+VDD VDD 0 DC 1.200
+VSS VSS 0 DC 0.000
+VBUF_VDD VDD_BUF 0 DC 1.200
+
+* Track phase: CLK_P = 1.2 V, CLK_N = 0 V; trims 1.440 V
+VCLKP CLK_P 0 DC 1.2
+VCLKN CLK_N 0 DC 0.0
+VTRIMP TRIM_P 0 DC 1.440
+VTRIMN TRIM_N 0 DC 1.440
+
+* Differential AC stimulus (both copies, identical): CM 1.440 V,
+* P +0.5 / N +0.5 phase 180 (1 V differential; ngspice AC contract:
+* magnitude plus optional phase)
+VRAWP_A RAW_NOISE_PA 0 DC 1.440 AC 0.5
+VRAWN_A RAW_NOISE_NA 0 DC 1.440 AC 0.5 180
+VRAWP_B RAW_NOISE_PB 0 DC 1.440 AC 0.5
+VRAWN_B RAW_NOISE_NB 0 DC 1.440 AC 0.5 180
+
+* COPY A: amp alone
+XAMPA NOISE_AMP_PA NOISE_AMP_NA RAW_NOISE_PA RAW_NOISE_NA VCC_HBT VSS p1_noise_amp
+
+* COPY B: amp -> 0 V probes -> ONE hybrid (LS stage + input pair + retained
+* comparator interior; the ls_pbit is NOT instantiated)
+XAMPB NOISE_AMP_PB NOISE_AMP_NB RAW_NOISE_PB RAW_NOISE_NB VCC_HBT VSS p1_noise_amp
+VBASE_PB NOISE_AMP_PB LS_BASE_PB 0
+VBASE_NB NOISE_AMP_NB LS_BASE_NB 0
+XHYB LS_BASE_PB LS_BASE_NB pbit_out_b pbit_raw_b clk_out_div_b CLK_P CLK_N TRIM_P TRIM_N VCC_HBT VDD VSS p1_hybrid
+
+.control
+pre_osdi /foss/pdks/ihp-sg13g2/libs.tech/ngspice/osdi/psp103.osdi
+pre_osdi /foss/pdks/ihp-sg13g2/libs.tech/ngspice/osdi/psp103_nqs.osdi
+* selected-vector save allowlist (20 vectors; frequency is implicit;
+* NOT all currents - no savecurrents); C46 inventory restored with ONLY
+* v(ls_pb)/v(ls_nb) -> v(xhyb.ls_p)/v(xhyb.ls_n) renamed
+save v(raw_noise_pa) v(raw_noise_na) v(raw_noise_pb) v(raw_noise_nb) v(noise_amp_pa) v(noise_amp_na) v(noise_amp_pb) v(noise_amp_nb) v(ls_base_pb) v(ls_base_nb) v(xhyb.ls_p) v(xhyb.ls_n) v(pbit_out_b) v(pbit_raw_b) v(clk_out_div_b) i(vbase_pb) i(vbase_nb) i(vcc_hbt) i(vdd) i(vss)
+op
+write evidence/c76-V1-AC-TRACKPHASE-HYBRID-CANDIDATE-ONLY.op.raw all
+ac dec 40 1MEG 100G
+write evidence/c76-V1-AC-TRACKPHASE-HYBRID-CANDIDATE-ONLY.raw all
+* let-based complex response vectors (evaluated on the AC plot)
+let ga=(v(NOISE_AMP_PA)-v(NOISE_AMP_NA))/(v(RAW_NOISE_PA)-v(RAW_NOISE_NA))
+let gb=(v(xhyb.ls_p)-v(xhyb.ls_n))/(v(RAW_NOISE_PB)-v(RAW_NOISE_NB))
+let load=(v(NOISE_AMP_PB)-v(NOISE_AMP_NB))/(v(NOISE_AMP_PA)-v(NOISE_AMP_NA))
+let ydm=((i(VBASE_PB)-i(VBASE_NB))/2)/(v(LS_BASE_PB)-v(LS_BASE_NB))
+* eight simple vectors via mag()/ph()
+let ga_mag=mag(ga)
+let ga_ph=ph(ga)
+let gb_mag=mag(gb)
+let gb_ph=ph(gb)
+let load_mag=mag(load)
+let load_ph=ph(load)
+let ydm_mag=mag(ydm)
+let ydm_ph=ph(ydm)
+* 40 scalars: 8 simple names x 5 probe frequencies (10Meg/100Meg/1G/2.5G/5G)
+meas ac ga_mag_10M find ga_mag at=10Meg
+meas ac ga_mag_100M find ga_mag at=100Meg
+meas ac ga_mag_1G find ga_mag at=1G
+meas ac ga_mag_2G5 find ga_mag at=2.5G
+meas ac ga_mag_5G find ga_mag at=5G
+meas ac ga_ph_10M find ga_ph at=10Meg
+meas ac ga_ph_100M find ga_ph at=100Meg
+meas ac ga_ph_1G find ga_ph at=1G
+meas ac ga_ph_2G5 find ga_ph at=2.5G
+meas ac ga_ph_5G find ga_ph at=5G
+meas ac gb_mag_10M find gb_mag at=10Meg
+meas ac gb_mag_100M find gb_mag at=100Meg
+meas ac gb_mag_1G find gb_mag at=1G
+meas ac gb_mag_2G5 find gb_mag at=2.5G
+meas ac gb_mag_5G find gb_mag at=5G
+meas ac gb_ph_10M find gb_ph at=10Meg
+meas ac gb_ph_100M find gb_ph at=100Meg
+meas ac gb_ph_1G find gb_ph at=1G
+meas ac gb_ph_2G5 find gb_ph at=2.5G
+meas ac gb_ph_5G find gb_ph at=5G
+meas ac load_mag_10M find load_mag at=10Meg
+meas ac load_mag_100M find load_mag at=100Meg
+meas ac load_mag_1G find load_mag at=1G
+meas ac load_mag_2G5 find load_mag at=2.5G
+meas ac load_mag_5G find load_mag at=5G
+meas ac load_ph_10M find load_ph at=10Meg
+meas ac load_ph_100M find load_ph at=100Meg
+meas ac load_ph_1G find load_ph at=1G
+meas ac load_ph_2G5 find load_ph at=2.5G
+meas ac load_ph_5G find load_ph at=5G
+meas ac ydm_mag_10M find ydm_mag at=10Meg
+meas ac ydm_mag_100M find ydm_mag at=100Meg
+meas ac ydm_mag_1G find ydm_mag at=1G
+meas ac ydm_mag_2G5 find ydm_mag at=2.5G
+meas ac ydm_mag_5G find ydm_mag at=5G
+meas ac ydm_ph_10M find ydm_ph at=10Meg
+meas ac ydm_ph_100M find ydm_ph at=100Meg
+meas ac ydm_ph_1G find ydm_ph at=1G
+meas ac ydm_ph_2G5 find ydm_ph at=2.5G
+meas ac ydm_ph_5G find ydm_ph at=5G
+print ga_mag_10M ga_mag_100M ga_mag_1G ga_mag_2G5 ga_mag_5G ga_ph_10M ga_ph_100M ga_ph_1G ga_ph_2G5 ga_ph_5G gb_mag_10M gb_mag_100M gb_mag_1G gb_mag_2G5 gb_mag_5G gb_ph_10M gb_ph_100M gb_ph_1G gb_ph_2G5 gb_ph_5G load_mag_10M load_mag_100M load_mag_1G load_mag_2G5 load_mag_5G load_ph_10M load_ph_100M load_ph_1G load_ph_2G5 load_ph_5G ydm_mag_10M ydm_mag_100M ydm_mag_1G ydm_mag_2G5 ydm_mag_5G ydm_ph_10M ydm_ph_100M ydm_ph_1G ydm_ph_2G5 ydm_ph_5G
+quit
+.endc
+.end

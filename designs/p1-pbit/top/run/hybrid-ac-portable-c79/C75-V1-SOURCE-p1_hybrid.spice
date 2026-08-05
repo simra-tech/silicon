@@ -1,0 +1,86 @@
+* C75-V1 SOURCE — p1_hybrid 12-pin comparator/LS hybrid (SOURCE+DECK ONLY, UNRUN)
+* Derived from C45 102f2a9d1e1fe870b34eb14de386ab7ba2d6d31104d217f38cf1d422bb1cd8d8
+* (p1_comparator body, lines 130-173), C46-V4 74c407ae8b77aad4af7ae41f04e1273b232e78171fb4670c8c0491c76f17ab9a
+* and C71 b6dda1659139a4036b1899d57feb5b006d288e326c9e697cbbdb051c919a6d7b
+* (the PE-reviewed/non-native connectivity-corrected fragment).
+* Per the accepted C74 audit (b1335486...): 44 comparator X instances; XQ1/XQ2
+* REMOVED (input pair -> fragment X2-X9, 1:4 stripes); the fragment's 12 X + 6 C
+* records flat-spliced byte-for-byte at the XQ1/XQ2 position; ALL 42 remaining
+* comparator instances retained (XRC1 XRC2 XQ3 XQ4 XQCLK_TRACK XQCLK_LATCH
+* XMP1_COMP XMP2_COMP XQP1_COMP XRDEG_P1_COMP XQP2_COMP XRPTAT_COMP XCSTAB_COMP
+* XQS_COMP XRDEG_SCOMP XQEF1 XQEF2 XR1_P XR2_P XR1_N XR2_N XM1 XM2 XMTAIL XM3
+* XM4 XCDAMP1 XCDAMP2 XM5 XM6 XM7 XM8 XM9 XM10 XM11 XM12 XQDAC_P XRDAC_P XQDAC_N
+* XRDAC_N XTAP1 XRFB); NO ls_pbit instance (its four devices are superseded by the
+* fragment's LS stage); comparator XTAP1 RETAINED.
+* Fragment nets bound: LS_P LS_N c_n c_p e_track -> hybrid interior;
+* NOISE_AMP_P NOISE_AMP_N VCC_HBT VSS -> hybrid pins.
+* FAIL-CLOSED LATER-RUN CONTRACT (NOT executed here): one command from the project
+* root: absence of evidence/c75-*op.raw, evidence/c75-*raw, evidence/c75-run.log,
+* evidence/c75-run.stdout.log checked pre-pipeline; then `ngspice -b <deck>
+* 2>&1 | tee evidence/c75-run.log > evidence/c75-run.stdout.log` with
+* set -o pipefail; status=${PIPESTATUS[0]}; echo "c75_exit=$status"; exit $status.
+* NO bandwidth/pass decision; P1 open; no PEX/pass/signoff claim.
+.subckt p1_hybrid NOISE_AMP_P NOISE_AMP_N PBIT_OUT PBIT_RAW CLK_OUT_DIV CLK_P CLK_N TRIM_P TRIM_N VCC_HBT VDD VSS
+XRC1 VCC_HBT c_n sub! rppd w=1.0u l=0.838u m=1 b=0 mm_ok=1
+XRC2 VCC_HBT c_p sub! rppd w=1.0u l=0.838u m=1 b=0 mm_ok=1
+* --- C71 fragment (b6dda165...), 12 X + 6 C records, byte-for-byte, flat-spliced ---
+X0 VCC_HBT NOISE_AMP_P LS_P VSS npn13g2 we=0.07u le=0.9u  
+X1 VCC_HBT NOISE_AMP_N LS_N VSS npn13g2  we=0.07u le=0.9u
+X2 c_p LS_N e_track VSS npn13g2v we=0.12u le=5u  
+X3 c_p LS_N e_track VSS npn13g2v we=0.12u le=5u  
+X4 c_p LS_N e_track VSS npn13g2v we=0.12u le=5u  
+X5 c_p LS_N e_track VSS npn13g2v we=0.12u le=5u  
+X6 c_n LS_P e_track VSS npn13g2v  we=0.12u le=5u
+X7 c_n LS_P e_track VSS npn13g2v  we=0.12u le=5u
+X8 c_n LS_P e_track VSS npn13g2v  we=0.12u le=5u
+X9 c_n LS_P e_track VSS npn13g2v  we=0.12u le=5u
+X10 LS_N VSS VSS rppd l=3.85u w=1u
+X11 LS_P VSS VSS rppd l=3.85u w=1u
+C0 LS_P e_track 8.65568f
+C1 e_track LS_N 8.65568f
+C2 LS_P c_n 4.92768f
+C3 LS_N c_p 4.92768f
+C4 LS_P VSS 2.76025f
+C5 LS_N VSS 2.76025f
+* --- end fragment ---
+XQ3 c_n ef_p e_latch sub! npn13G2 Nx=1 mm_ok=1
+XQ4 c_p ef_n e_latch sub! npn13G2 Nx=1 mm_ok=1
+XQCLK_TRACK e_track CLK_P e_tail sub! npn13G2 Nx=1 mm_ok=1
+XQCLK_LATCH e_latch CLK_N e_tail sub! npn13G2 Nx=1 mm_ok=1
+XMP1_COMP c_p1_comp c_p2_comp VCC_HBT VCC_HBT sg13_hv_pmos w=20.0u l=1.0u ng=1 m=1 mm_ok=1
+XMP2_COMP c_p2_comp c_p2_comp VCC_HBT VCC_HBT sg13_hv_pmos w=20.0u l=1.0u ng=1 m=1 mm_ok=1
+XQP1_COMP c_p1_comp c_p1_comp e_p1_comp sub! npn13G2 Nx=1 mm_ok=1
+XRDEG_P1_COMP e_p1_comp VSS sub! rppd w=4.0u l=0.50u m=1 b=0 mm_ok=1
+XQP2_COMP c_p2_comp c_p1_comp e_p2_comp sub! npn13G2 Nx=4 mm_ok=1
+XRPTAT_COMP e_p2_comp VSS sub! rppd w=2.0u l=1.107u m=1 b=0 mm_ok=1
+XCSTAB_COMP VSS c_p1_comp cap_cmim w=80.0u l=83.3u m=1 mm_ok=1
+XQS_COMP e_tail c_p1_comp e_scomp sub! npn13G2 Nx=6 mm_ok=1
+XRDEG_SCOMP e_scomp VSS sub! rppd w=24.0u l=0.50u m=1 b=0 mm_ok=1
+XQEF1 VCC_HBT c_p ef_p sub! npn13G2 Nx=1 mm_ok=1
+XQEF2 VCC_HBT c_n ef_n sub! npn13G2 Nx=1 mm_ok=1
+XR1_P ef_p g_p sub! rppd w=1.0u l=22.0u m=1 b=0 mm_ok=1
+XR2_P g_p VSS sub! rppd w=1.0u l=14.5u m=1 b=0 mm_ok=1
+XR1_N ef_n g_n sub! rppd w=1.0u l=22.0u m=1 b=0 mm_ok=1
+XR2_N g_n VSS sub! rppd w=1.0u l=14.5u m=1 b=0 mm_ok=1
+XM1 cml_out_n g_p e_cmos VSS sg13_lv_nmos w=6.0u l=0.13u ng=1 m=1 mm_ok=1
+XM2 cml_out_p g_n e_cmos VSS sg13_lv_nmos w=6.0u l=0.13u ng=1 m=1 mm_ok=1
+XMTAIL e_cmos VDD VSS VSS sg13_lv_nmos w=8.0u l=0.50u ng=1 m=1 mm_ok=1
+XM3 cml_out_n cml_out_n VDD VDD sg13_lv_pmos w=8.0u l=0.13u ng=1 m=1 mm_ok=1
+XM4 cml_out_p cml_out_n VDD VDD sg13_lv_pmos w=8.0u l=0.13u ng=1 m=1 mm_ok=1
+XCDAMP1 cml_out_p VSS cap_cmim w=3.5u l=3.5u m=1 mm_ok=1
+XCDAMP2 cml_out_n VSS cap_cmim w=3.5u l=3.5u m=1 mm_ok=1
+XM5 raw_inv cml_out_p VDD VDD sg13_lv_pmos w=2.83u l=0.13u ng=1 m=1 mm_ok=1
+XM6 raw_inv cml_out_p VSS VSS sg13_lv_nmos w=2.0u l=0.13u ng=1 m=1 mm_ok=1
+XM7 PBIT_RAW raw_inv VDD VDD sg13_lv_pmos w=2.83u l=0.13u ng=1 m=1 mm_ok=1
+XM8 PBIT_RAW raw_inv VSS VSS sg13_lv_nmos w=2.0u l=0.13u ng=1 m=1 mm_ok=1
+XM9 PBIT_OUT PBIT_RAW VDD VDD sg13_lv_pmos w=2.83u l=0.13u ng=1 m=1 mm_ok=1
+XM10 PBIT_OUT PBIT_RAW VSS VSS sg13_lv_nmos w=2.0u l=0.13u ng=1 m=1 mm_ok=1
+XM11 CLK_OUT_DIV CLK_P VDD VDD sg13_lv_pmos w=2.83u l=0.13u ng=1 m=1 mm_ok=1
+XM12 CLK_OUT_DIV CLK_P VSS VSS sg13_lv_nmos w=2.0u l=0.13u ng=1 m=1 mm_ok=1
+XQDAC_P c_p TRIM_P e_dac_p sub! npn13G2 Nx=1 mm_ok=1
+XRDAC_P e_dac_p VSS sub! rppd w=1.0u l=5.4u m=1 b=0 mm_ok=1
+XQDAC_N c_n TRIM_N e_dac_n sub! npn13G2 Nx=1 mm_ok=1
+XRDAC_N e_dac_n VSS sub! rppd w=1.0u l=5.4u m=1 b=0 mm_ok=1
+XTAP1 VSS sub! ptap1 R={ 1.0 / ( 1.0 / ( 9.8e-10 / ( 2.0u * 2.0u ) ) + 1.0 / ( 9.8e-4 / ( 2.0 * ( 2.0u + 2.0u ) ) ) )} w=2.0u l=2.0u
+XRFB raw_inv cml_out_p sub! rppd w=1.0u l=18.5u m=1 b=0 mm_ok=1
+.ends p1_hybrid
