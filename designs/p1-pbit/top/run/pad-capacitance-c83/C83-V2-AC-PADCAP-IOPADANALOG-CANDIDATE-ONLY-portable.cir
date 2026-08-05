@@ -1,0 +1,82 @@
+* C83 AC PAD-CAP EXTRACTION — sg13g2_IOPadAnalog pad-pin small-signal
+* capacitance from its own subckt (SOURCE ONLY, UNRUN)
+* Purpose: extract the capacitance presented AT the `pad` pin of the
+* installed analog pad cell sg13g2_IOPadAnalog — the load an
+* outward-driving buffer actually sees. The installed PDK does NOT state
+* this number in any datasheet (IOPadAnalog appears in no Pin
+* Capacitance table; sg13g2_IOPadIn 0.22075 pF is an INPUT pad; the
+* IOPadOut* pad-pin cap is listed 0.00000 because the pad pin is the
+* driver output node). This deck measures it from the cell's own subckt.
+* Method (exact):
+*   VSTIM PAD 0 DC 0 AC 1 forces v(pad) = 1 V (mag 1, angle 0).
+*   Y_in(pad) = -i(vstim)/v(pad)   (KCL at PAD: current into the pad
+*     network = -i(vstim); ngspice branch convention i(vstim) positive =
+*     conventional current from PAD through the source to ground)
+*   C_pad(f) = Im(Y_in)/(2*pi*f)   (small-signal capacitance vs frequency)
+*   probe frequencies: 10Meg / 100Meg / 1G (AC-package convention)
+* Bias (declared; junction capacitances are bias-dependent):
+*   pad DC 0 V (AC 1 V), IOVDD 3.3 V, IOVSS 0 V (IO 3.3 V domain per
+*   sg13g2_io_typ_1p2V_3p3V_25C), VDD 1.2 V, VSS 0 V; the
+*   SecondaryProtection core node (padres) terminated via RBIAS 1e12 to
+*   IOVSS (no DC path otherwise; AC effect negligible at probe freqs).
+* Subckt contents (sg13g2_io.spi, read verbatim):
+*   .subckt sg13g2_IOPadAnalog vss vdd iovss iovdd pad padres
+*     Xnclamp  iovss iovdd pad  sg13g2_Clamp_N20N0D  (sg13_hv_nmos clamp
+*       string x20 + rppd + guard rings; empty guard-ring subckts)
+*     Xpclamp  iovss iovdd pad  sg13g2_Clamp_P20N0D
+*     Xdcndiode iovss pad iovdd sg13g2_DCNDiode    (dantenna l=1.26u
+*       w=27.78u x2 + guard rings)
+*     Xdcpdiode pad iovdd iovss sg13g2_DCPDiode    (dpantenna l=1.26u
+*       w=27.78u x2 + guard rings)
+*     Xsecondprot iovdd iovss pad padres sg13g2_SecondaryProtection
+*       (rppd l=2.0u w=1.0u + dantenna l=3.1u w=0.64u + dpantenna
+*       l=0.64u w=4.98u + guard rings)
+* Diode models resolve via the standard 6-lib set:
+*   cornerDIO.lib dio_tt -> diodes.lib (.MODEL darea/dperim/dcorner/
+*   dparea/dpperim/dpcorner); clamps use sg13_hv_nmos/pmos
+*   (cornerMOShv.lib mos_tt); rppd (cornerRES.lib res_typ).
+* LOADS/EXTRACTIONS ARE REFERENCE DATA, NOT ACCEPTANCE LOADS.
+* UNRUN: design-only deck; no simulation authorized. No gate/bandwidth/
+* signoff/tape-out claim. P1 open.
+.lib $PDK_ROOT/libs.tech/ngspice/models/cornerHBT.lib hbt_typ
+.lib $PDK_ROOT/libs.tech/ngspice/models/cornerRES.lib res_typ
+.lib $PDK_ROOT/libs.tech/ngspice/models/cornerCAP.lib cap_typ
+.lib $PDK_ROOT/libs.tech/ngspice/models/cornerMOShv.lib mos_tt
+.lib $PDK_ROOT/libs.tech/ngspice/models/cornerMOSlv.lib mos_tt
+.lib $PDK_ROOT/libs.tech/ngspice/models/cornerDIO.lib dio_tt
+
+.include $PDK_ROOT/libs.ref/sg13g2_io/spice/sg13g2_io.spi
+
+.option temp = 27.0
+.options rshunt = 1e12
+
+VDD VDD 0 DC 1.200
+VSS VSS 0 DC 0.000
+VIOVDD IOVDD 0 DC 3.300
+VIOVSS IOVSS 0 DC 0.000
+
+* pad stimulus: 0 V DC bias + 1 V AC (mag 1, angle 0); current probe
+VSTIM PAD 0 DC 0 AC 1
+* secondary-protection core-node termination (see header)
+RBIAS PADRES IOVSS 1e12
+* the cell under test (installed PDK subckt, exact 6-pin order)
+XPAD VSS VDD IOVSS IOVDD PAD PADRES sg13g2_IOPadAnalog
+
+.control
+pre_osdi $PDK_ROOT/libs.tech/ngspice/osdi/psp103.osdi
+pre_osdi $PDK_ROOT/libs.tech/ngspice/osdi/psp103_nqs.osdi
+save v(pad) v(padres) i(vstim)
+op
+write C83-AC-PADCAP-IOPADANALOG-CANDIDATE-ONLY.op.raw all
+ac dec 40 1MEG 100G
+write C83-AC-PADCAP-IOPADANALOG-CANDIDATE-ONLY.raw all
+* Y_in(pad) and C_pad(f) as defined in the header
+let ypad = -i(vstim)/v(pad)
+let cpad = imag(ypad)/(2*pi*frequency)
+meas ac cpad_10m find cpad at=10Meg
+meas ac cpad_100m find cpad at=100Meg
+meas ac cpad_1g find cpad at=1G
+print cpad_10m cpad_100m cpad_1g
+quit
+.endc
+.end

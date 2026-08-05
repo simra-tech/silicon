@@ -1,0 +1,98 @@
+* C83-V3 AC PAD-CAP BIAS SWEEP — sg13g2_IOPadAnalog pad-pin small-signal
+* capacitance vs pad DC bias (SOURCE ONLY, UNRUN)
+* Sweep: pad DC bias 0 / 0.3 / 0.6 / 0.9 / 1.2 V; report cpad at 1G for
+* each. Method identical to C83-V2 (60ffbc38...): VSTIM PAD 0 DC <bias>
+* AC 1 forces v(pad) = 1 V; Y_in(pad) = -i(vstim)/v(pad); C_pad(f) =
+* Im(Y_in)/(2*pi*f); probe 1G. Junction capacitance is bias-dependent, so
+* this sweep maps C_pad(1G) vs the pad DC bias - a reference curve, NOT
+* operating-point values (the bias itself is the independent variable).
+* IOVDD 3.3 V is an assumption (IO 3.3 V domain per
+* sg13g2_io_typ_1p2V_3p3V_25C); VDD 1.2 V, VSS 0 V, IOVSS 0 V.
+* Mechanism (ngspice-46 has no .step, CONFIRMED): five sequential AC
+* runs in one .control block; the pad DC bias is re-valued between runs
+* with alter vstim = <bias> (positional first-parameter form, same
+* pattern as the accepted C82-V4 alter cload); per-run let + meas
+* cpad_1g_<bias> + distinct raw.
+* V3 = C83-V2 (60ffbc38...) with ONLY: identity/comments, the control
+* block (sweep), and the raw basenames. CRITICAL CARRIED FINDINGS:
+*  (1) the rail sources remain V-prefixed (VIOVDD/VIOVSS - V2 fix);
+*      SPICE types by first letter, I-prefixed rails are current
+*      sources.
+*  (2) raw basenames now CARRY THE REVISION (V3) - the V2 run wrote to
+*      the V1-labeled basenames and overwrote the void V1 raws; future
+*      revisions must put the revision in the raw basename.
+*  (3) the user's scratch 85 fF is RETRACTED (publicly, by the user):
+*      their diagnostic deck had the same IOVDD current-source defect;
+*      renaming only that line reproduces C83-V2's 2.09738e-13 at 1G.
+* Subckt: .subckt sg13g2_IOPadAnalog vss vdd iovss iovdd pad padres
+* (clamps N20N0D/P20N0D, DCNDiode/DCPDiode dantenna/dpantenna 1.26u x
+* 27.78u x2, SecondaryProtection rppd 2.0u x 1.0u + dantenna 3.1u x
+* 0.64u + dpantenna 0.64u x 4.98u; guard rings empty). Diode models via
+* cornerDIO.lib dio_tt -> diodes.lib; clamps sg13_hv_nmos/pmos via
+* cornerMOShv.lib mos_tt; rppd via cornerRES.lib res_typ.
+* LOADS/EXTRACTIONS ARE REFERENCE DATA, NOT ACCEPTANCE LOADS.
+* UNRUN: design-only deck; no simulation authorized. No gate/bandwidth/
+* signoff/tape-out claim. P1 open.
+.lib $PDK_ROOT/libs.tech/ngspice/models/cornerHBT.lib hbt_typ
+.lib $PDK_ROOT/libs.tech/ngspice/models/cornerRES.lib res_typ
+.lib $PDK_ROOT/libs.tech/ngspice/models/cornerCAP.lib cap_typ
+.lib $PDK_ROOT/libs.tech/ngspice/models/cornerMOShv.lib mos_tt
+.lib $PDK_ROOT/libs.tech/ngspice/models/cornerMOSlv.lib mos_tt
+.lib $PDK_ROOT/libs.tech/ngspice/models/cornerDIO.lib dio_tt
+
+.include $PDK_ROOT/libs.ref/sg13g2_io/spice/sg13g2_io.spi
+
+.option temp = 27.0
+.options rshunt = 1e12
+
+VDD VDD 0 DC 1.200
+VSS VSS 0 DC 0.000
+VIOVDD IOVDD 0 DC 3.300
+VIOVSS IOVSS 0 DC 0.000
+
+* pad stimulus: DC bias swept 0..1.2 V (run 1 = deck value 0 V, then
+* alter vstim), AC 1 V (mag 1, angle 0); current probe
+VSTIM PAD 0 DC 0 AC 1
+* secondary-protection core-node termination (see header)
+RBIAS PADRES IOVSS 1e12
+* the cell under test (installed PDK subckt, exact 6-pin order)
+XPAD VSS VDD IOVSS IOVDD PAD PADRES sg13g2_IOPadAnalog
+
+.control
+pre_osdi $PDK_ROOT/libs.tech/ngspice/osdi/psp103.osdi
+pre_osdi $PDK_ROOT/libs.tech/ngspice/osdi/psp103_nqs.osdi
+save v(pad) v(padres) i(vstim)
+* run 1: pad DC bias 0 V (deck value)
+ac dec 40 1MEG 100G
+let ypad_0v = -i(vstim)/v(pad)
+let cpad_0v = imag(ypad_0v)/(2*pi*frequency)
+meas ac cpad_1g_0v find cpad_0v at=1G
+write C83-V3-AC-PADCAP-SWEEP-0v.raw all
+alter vstim = 0.3
+ac dec 40 1MEG 100G
+let ypad_0v3 = -i(vstim)/v(pad)
+let cpad_0v3 = imag(ypad_0v3)/(2*pi*frequency)
+meas ac cpad_1g_0v3 find cpad_0v3 at=1G
+write C83-V3-AC-PADCAP-SWEEP-0v3.raw all
+alter vstim = 0.6
+ac dec 40 1MEG 100G
+let ypad_0v6 = -i(vstim)/v(pad)
+let cpad_0v6 = imag(ypad_0v6)/(2*pi*frequency)
+meas ac cpad_1g_0v6 find cpad_0v6 at=1G
+write C83-V3-AC-PADCAP-SWEEP-0v6.raw all
+alter vstim = 0.9
+ac dec 40 1MEG 100G
+let ypad_0v9 = -i(vstim)/v(pad)
+let cpad_0v9 = imag(ypad_0v9)/(2*pi*frequency)
+meas ac cpad_1g_0v9 find cpad_0v9 at=1G
+write C83-V3-AC-PADCAP-SWEEP-0v9.raw all
+alter vstim = 1.2
+ac dec 40 1MEG 100G
+let ypad_1v2 = -i(vstim)/v(pad)
+let cpad_1v2 = imag(ypad_1v2)/(2*pi*frequency)
+meas ac cpad_1g_1v2 find cpad_1v2 at=1G
+write C83-V3-AC-PADCAP-SWEEP-1v2.raw all
+print cpad_1g_0v cpad_1g_0v3 cpad_1g_0v6 cpad_1g_0v9 cpad_1g_1v2
+quit
+.endc
+.end

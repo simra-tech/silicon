@@ -1,0 +1,46 @@
+{
+  "schema": "simra.design-bindings/v1",
+  "block": "p1-pbit/top",
+  "candidate": "C83",
+  "subject": "sg13g2_IOPadAnalog pad-pin small-signal capacitance",
+  "pdk": {
+    "name": "IHP SG13G2",
+    "root_variable": "PDK_ROOT",
+    "cell": "sg13g2_IOPadAnalog",
+    "cell_source": "libs.ref/sg13g2_io/spice/sg13g2_io.spi",
+    "stated_pad_capacitance": "not stated for this cell in the installed PDK",
+    "input_pad_reference": {
+      "cell": "sg13g2_IOPadIn",
+      "pin_cap_pf": 0.22075,
+      "source": "libs.ref/sg13g2_io/doc/sg13g2_io_typ_1p5V_3p3V_25C.pdf, Pin Capacitance Information",
+      "note": "Max Cap 1.12616 pF in that table belongs to pin p2c, the core-side pin, not to pad"
+    }
+  },
+  "exact_sources": {
+    "C83-V2-AC-PADCAP-IOPADANALOG-CANDIDATE-ONLY.cir": "60ffbc381699058bd9211b7cd9cfa274f83266499e90bcfb7987af4bb799a448",
+    "C83-V3-AC-PADCAP-SWEEP-IOPADANALOG-CANDIDATE-ONLY.cir": "c5dcda38a5c806601eff9374c195914aebb9e5633b27e804fa16ddc327602c26"
+  },
+  "portable_derivatives": {
+    "C83-V2-AC-PADCAP-IOPADANALOG-CANDIDATE-ONLY-portable.cir": "d6b7ed89310600b05a63747f47f4e2985d2043b0bb8cecec95f318f0b3fa0cad",
+    "C83-V3-AC-PADCAP-SWEEP-IOPADANALOG-CANDIDATE-ONLY-portable.cir": "9a9ee99a97f46a9aba65227dcdc32af3db24236e98fd01299920cb378a0a5771",
+    "transform": "installed PDK root prefix replaced by $PDK_ROOT; no other byte changed"
+  },
+  "retracted": [
+    {
+      "claim": "analog pad capacitance is 2.6e-23 F",
+      "role": "Design Engineer",
+      "cause": "IO supply rails declared as current sources through I-prefixed element names"
+    },
+    {
+      "claim": "analog pad capacitance is about 85 fF at 1 GHz",
+      "role": "Principal Engineer",
+      "cause": "reviewer diagnostic deck carried the same I-prefixed rail defect"
+    },
+    {
+      "claim": "Max Cap 1.12616 pF is a pad-pin limit",
+      "role": "Design Engineer",
+      "cause": "that column belongs to the core-side p2c pin"
+    }
+  ],
+  "tooling": "ngspice-46, build 2026-06-22"
+}
