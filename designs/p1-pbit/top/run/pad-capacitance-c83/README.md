@@ -107,3 +107,19 @@ in `BINDINGS.json`.
 - No bond wire, no probe model, no board.
 - Nothing here is a gate result, a bandwidth claim, signoff, or tape-out
   evidence. The P1 gate remains open.
+
+## Open caveat added 2026-08-05 after publication
+
+A later transient investigation found that `sub!`, a **global substrate node** the PDK's pad cell
+introduces through the bulk terminal of its `rppd` secondary-protection resistor, is not tied to
+anything by the decks in this package. In a transient run with the same pad cell, that node was
+observed following the pad signal (0.4247 V to 0.5601 V) rather than sitting at a quiet reference,
+which is physically wrong.
+
+The extractions here were run with `sub!` in that floating state. **The capacitance figures above
+are therefore provisional pending a re-extraction with the substrate tied**, and the size of any
+change has not yet been measured. Nothing about the method, the cross-checks or the retracted
+results in this package is affected; only the numeric values are in question.
+
+This note is added before the re-extraction rather than after, so that anyone reading the published
+figures in the interval knows what is outstanding.
