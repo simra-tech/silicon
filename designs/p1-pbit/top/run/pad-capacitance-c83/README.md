@@ -108,18 +108,26 @@ in `BINDINGS.json`.
 - Nothing here is a gate result, a bandwidth claim, signoff, or tape-out
   evidence. The P1 gate remains open.
 
-## Open caveat added 2026-08-05 after publication
+## Open caveat added 2026-08-05 after publication, updated the same day
 
-A later transient investigation found that `sub!`, a **global substrate node** the PDK's pad cell
-introduces through the bulk terminal of its `rppd` secondary-protection resistor, is not tied to
-anything by the decks in this package. In a transient run with the same pad cell, that node was
-observed following the pad signal (0.4247 V to 0.5601 V) rather than sitting at a quiet reference,
-which is physically wrong.
+A later transient investigation found that `sub!` — the substrate node the PDK pad cell introduces
+through the bulk terminal of its `rppd` secondary-protection resistor — is not tied by the decks in
+this package, and was observed following the pad signal (0.4247 V to 0.5601 V) rather than sitting at
+a quiet reference.
 
-The extractions here were run with `sub!` in that floating state. **The capacitance figures above
-are therefore provisional pending a re-extraction with the substrate tied**, and the size of any
-change has not yet been measured. Nothing about the method, the cross-checks or the retracted
-results in this package is affected; only the numeric values are in question.
+**Correction to the first version of this note:** that note called `sub!` a *global* node. It is not.
+ngspice treats it as instance-local unless a `.global` declaration exists, and the installed PDK
+contains none. A first attempt to fix this by adding a top-level `Vsub sub! 0 DC 0` was therefore
+**inert** — it tied a top-level node nothing connects to, while three separate internal nodes
+(`xpad.xnclamp.sub!`, `xpad.xpclamp.sub!`, `xpad.xsecondprot.sub!`) stayed floating. That attempt
+produced bit-identical results, which briefly looked like evidence that the substrate did not matter.
+It was not evidence; it was a change that did nothing.
 
-This note is added before the re-extraction rather than after, so that anyone reading the published
-figures in the interval knows what is outstanding.
+Adding `.global sub!` collapses those to a single node which then holds at 0.000000 V. Measured on a
+comparable transient metric — buffered output at t = 1.000 ns driving this same pad cell — tying the
+substrate properly moves the result by **-0.188 %** (0.385244 V floating to 0.384520 V tied). That is
+roughly nineteen times the measurement method's own error bar, so the effect is real, but it is small.
+
+**Status of the figures above:** still provisional pending a re-extraction with `.global sub!` in
+place. The effect is now bounded as small rather than unknown, but it has not been measured on the
+capacitance itself, so no corrected value is claimed here.
