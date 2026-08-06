@@ -92,6 +92,40 @@ load on the comparator and stage 1 gets faster by stealing the signal it exists 
 3. **The 210 fF lumped stand-in was then checked against the real pad and held.** It predicted
    44.28 ps and 141.89 ps; the real pad gives 44.50 ps and 138.55 ps.
 
+## Corner check added 2026-08-06 — this candidate does not survive `mos_ss`
+
+A partial corner check was run after publication: `cornerMOSlv` moved to `mos_ss` and `mos_ff`,
+`cornerHBT` held at `hbt_typ`, on the same full chain into a lumped 210 fF load.
+
+| corner / temperature | max `v(PBIT_OUT)` | pulse 1 above 0.6 V |
+|---|---|---|
+| `mos_tt` / 27 °C | 0.772905 V | 44.28 ps as drawn, 141.89 ps tapered |
+| `mos_tt` / 125 °C | 1.187339 V | works, better than nominal |
+| **`mos_ss` / 27 °C** | **0.000013 V** | **never clears — dead** |
+| **`mos_ss` / 125 °C** | 0.001849 V as drawn, 0.000051 V tapered | **never clears — dead** |
+| `mos_ff` / −40 °C | 1.219988 V as drawn, 1.246055 V tapered | 205.47 ps / 190.90 ps |
+
+**Both buffers fail at the slow corner, tapered and as drawn alike.** Temperature is not the cause:
+`mos_tt` at 125 °C works better than nominal, `mos_ss` at 27 °C is dead. Reproduced independently
+in two sets of runs.
+
+**Where it breaks, and why.** `v(pbit_raw_core)` — the comparator's decision node — is healthy at
+`mos_ss`, keeping 0.539 V of swing. The signal dies across the following inverter, `xcomp.xm9`/
+`xm10`: `v(pbit_out_core)` reaches only 24.9 mV.
+
+The mechanism is **not** drive. That node's minimum is **0.658 V at `mos_ss`** against **0.338 V at
+nominal** and 0.053 V at `mos_tt`/125 °C. The swing is ample; it sits entirely above the trip point
+of the inverter that has to read it. Widening `xm9`/`xm10` would not help. This is a level-shifter
+operating-point failure, and the level shifter is the `LS` block named in the deck lineage.
+
+*(An earlier reading of the same data attributed this to undersizing — the same fault as the buffer,
+one stage earlier. That reading was wrong and is corrected here. A recently-solved problem is a
+dangerous hypothesis; it arrives already believed.)*
+
+**Consequence for this package:** the taper remains a real and measured improvement at `mos_tt` and
+`mos_ff`, and it is not sufficient. It fixes the second-most-important problem in this path. The
+first is that the chain does not function at a manufacturing corner that will certainly occur.
+
 ## Limitations
 
 - One process corner (`mos_tt`), 27 °C, no mismatch, no statistical spread, no PVT sweep.

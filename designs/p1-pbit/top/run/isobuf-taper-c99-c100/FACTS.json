@@ -2,7 +2,7 @@
   "schema": "simra.design-facts/v1",
   "candidate": "C99/C100 isolation buffer taper",
   "status": "candidate design change, simulation evidence only",
-  "disposition": "not a gate result, not signoff, not tape-out evidence; P1 gate open",
+  "disposition": "candidate improvement at tt and ff corners; NOT sufficient - the chain does not function at mos_ss. Not a gate result, not signoff, not tape-out evidence.",
   "real_pad_full_chain": {
     "note": "real comparator, real buffer, real sg13g2_IOPadAnalog, .global sub! tied at 0.000000 V",
     "threshold_v": 0.6,
@@ -75,5 +75,22 @@
     "solver tolerances loosened to reltol=2e-2 abstol=1e-8 vntol=1e-3; offset bounded at ~0.42 mV, under 0.7 ps of width",
     "600 mV is an unvalidated proxy threshold",
     "no bond wire, no probe, no board, no package"
-  ]
+  ],
+  "corner_check_2026_08_06": {
+    "scope": "partial: cornerMOSlv moved, cornerHBT held at hbt_typ",
+    "max_pbit_out_v": {
+      "tt_27": 0.772905,
+      "tt_125": 1.187339,
+      "ss_27": 1.3e-05,
+      "ss_125_asdrawn": 0.001849,
+      "ss_125_tapered": 5.1e-05,
+      "ff_m40_asdrawn": 1.219988,
+      "ff_m40_tapered": 1.246055
+    },
+    "verdict": "both buffers fail at mos_ss at any temperature; temperature is not the cause",
+    "localisation": "chain healthy to pbit_raw_core (0.539 V swing at ss), dies across xcomp xm9/xm10; pbit_out_core reaches 24.9 mV",
+    "mechanism": "level, not drive: pbit_raw_core minimum is 0.658 V at ss against 0.338 V at tt, so it never crosses the following inverter's trip point",
+    "corrected_from": "an earlier reading attributed this to undersizing; that is withdrawn",
+    "replication": "reproduced independently by the Design Engineer (C101, C102), matching to all printed digits"
+  }
 }
