@@ -1,0 +1,39 @@
+* C11-V2 ISOBUF PBIT_OUT - non-inverting two-inverter 1.2 V SG13G2 isolation buffer
+* SOURCE ONLY, UNRUN. Model-valid primitives: sg13_lv_pmos / sg13_lv_nmos
+* (cornerMOSlv.lib mos_tt supplied by the including deck).
+* V2 correction: trailing .end REMOVED (this file is .include'd by the deck;
+* a premature .end would terminate the including deck's parse).
+* Sizing derived from the exact comparator output geometry (XM9/XM10 in the
+* source-backed Top V3 p1_comparator, b8ac8271...: XM9 pmos w=2.83u l=0.13u
+* ng=1 m=1, XM10 nmos w=2.0u l=0.13u ng=1 m=1) plus a quantitative load
+* rationale. No placeholders.
+*
+* Stage 1 (input) - EXACT core geometry (Wp=2.83u, Wn=2.0u, L=0.13u, ng=1,
+* m=1): input gate load ~ (2.83+2.0)um * 5 fF/um ~ 24 fF (ASSUMPTION A3),
+* same class as the core's own output stage, so core backaction is of the
+* same order as the unloaded lineage.
+*
+* Stage 2 (output) - sized for the largest retained single-ended reference
+* CL=520 fF at <=50 ps 50%-delay (first-order CMOS, t = 0.69*(VDD/I_dsat)*CL):
+*   fall (nmos): Wn >= 0.69*1.2*520e-15/(0.6e-3*50e-12) = 14.35 um
+*   rise (pmos): Wp >= 0.69*1.2*520e-15/(0.3e-3*50e-12) = 28.70 um
+*   -> Wn=14.4u (m=2 x 7.2u), Wp=28.8u (m=2 x 14.4u); L=0.13u, ng=1.
+* ASSUMPTIONS (A1) sg13_lv nmos Idsat(1.2 V) ~ 0.60 mA/um; (A2) pmos ~
+* 0.30 mA/um (2:1 n:p); (A3) gate C ~ 5 fF/um; (A4) first-order
+* t ~ 0.69*Ron*CL. All PROVISIONAL, verified only by an authorized run.
+* RISK (not evidence): A3/A4 stage-1->stage-2 input ~216 fF -> stage-1 delay
+* ~149 ps, core->buffer total ~200 ps. This is an ESTIMATE flagged as a
+* design risk pending the run - NOT a measured value and NOT evidence.
+*
+* Pad, ESD, and interconnect are EXCLUDED; the 44/520 fF points are named
+* single-ended references; 220/400 fF are published differential figures and
+* are treated as generic scalar sensitivity only (NOT single-ended
+* instrument loads). None are acceptance loads.
+.subckt iso_buf_pbit_out IN OUT VDD VSS
+* stage 1: input inverter (matched XM9/XM10 geometry)
+XP1 N1 IN VDD VDD sg13_lv_pmos w=2.83u l=0.13u ng=1 m=1 mm_ok=1
+XN1 N1 IN VSS VSS sg13_lv_nmos w=2.0u l=0.13u ng=1 m=1 mm_ok=1
+* stage 2: output inverter (drive-sized, CL=520 fF @ <=50 ps)
+XP2 OUT N1 VDD VDD sg13_lv_pmos w=14.4u l=0.13u ng=1 m=2 mm_ok=1
+XN2 OUT N1 VSS VSS sg13_lv_nmos w=7.2u l=0.13u ng=1 m=2 mm_ok=1
+.ends iso_buf_pbit_out

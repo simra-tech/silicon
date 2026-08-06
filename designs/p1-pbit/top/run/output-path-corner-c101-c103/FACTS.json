@@ -1,0 +1,75 @@
+{
+  "schema": "simra.design-facts/v1",
+  "candidate": "C101/C103 output-path slow-corner failure",
+  "status": "characterised failure",
+  "disposition": "not a gate result, not signoff, not tape-out evidence; P1 gate open",
+  "headline": "at mos_ss the output path delivers 13 uV against 773 mV at nominal, at any temperature",
+  "corner_max_pbit_out_v": {
+    "tt_27_asdrawn": 0.772905,
+    "tt_27_taper": 1.230175,
+    "tt_125_asdrawn": 1.187339,
+    "ss_27_asdrawn": 1.3e-05,
+    "ss_125_asdrawn": 0.001849,
+    "ss_125_taper": 5.1e-05,
+    "ff_m40_asdrawn": 1.219988,
+    "ff_m40_taper": 1.246055
+  },
+  "converter_gain": {
+    "tt_27": 1.58,
+    "tt_125": 1.67,
+    "ss_27": 1.0,
+    "note": "self-biased XM5/XM6 with XRFB rppd w=1.0u l=18.5u; gain = raw_inv swing / cml_out_p swing"
+  },
+  "localisation": {
+    "healthy_to": "pbit_raw_core, 0.539 V swing at ss/27C",
+    "collapses_across": "xcomp.xm9/xm10",
+    "mechanism": "level not drive: PBIT_RAW floor 0.658 V at ss vs 0.338 V at tt, above the following inverter's trip point"
+  },
+  "attempted_fixes_at_ss27": [
+    {
+      "variant": "baseline",
+      "pbit_raw_floor_v": 0.658,
+      "pbit_out_core_max_v": 0.025,
+      "pbit_out_max_v": 1.3e-05
+    },
+    {
+      "variant": "XM5/XM6 m=2",
+      "pbit_raw_floor_v": 0.49,
+      "pbit_out_core_max_v": 0.478,
+      "pbit_out_max_v": 0.000172
+    },
+    {
+      "variant": "XM5/XM6 m=4",
+      "pbit_raw_floor_v": 0.421,
+      "pbit_out_core_max_v": 0.788,
+      "pbit_out_max_v": 0.001873
+    },
+    {
+      "variant": "XRFB l=37.0u",
+      "pbit_raw_floor_v": 0.584,
+      "pbit_out_core_max_v": 0.113,
+      "pbit_out_max_v": 6.1e-05
+    },
+    {
+      "variant": "both",
+      "pbit_raw_floor_v": 0.41,
+      "pbit_out_core_max_v": 0.761,
+      "pbit_out_max_v": 0.00138
+    },
+    {
+      "variant": "nominal tt/27C for scale",
+      "pbit_raw_floor_v": 0.338,
+      "pbit_out_core_max_v": 1.164,
+      "pbit_out_max_v": 0.772905
+    }
+  ],
+  "conclusion": "distributed marginality; the failure relocates rather than resolving. Corner-robustness redesign of the output path, not a device to widen.",
+  "replication": "corner failure reproduced independently (C101, C102) to all printed digits; the four fix attempts are a single implementation and a replication has been requested",
+  "limitations": [
+    "partial corner check: only cornerMOSlv moves, cornerHBT held at hbt_typ",
+    "no mismatch, no statistical spread, no sf/fs skew, no supply variation",
+    "lumped 210 fF stands in for the pad; validated against the real pad at mos_tt only",
+    "the four fixes are first probes, not an optimisation",
+    "an earlier reading attributing the break to undersizing is withdrawn"
+  ]
+}

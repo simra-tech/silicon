@@ -1,0 +1,198 @@
+** source: p1_top_hier.sch (path scrubbed; original provenance removed)
+.subckt p1_top_hier PBIT_OUT PBIT_RAW CLK_OUT_DIV CLK_P CLK_N TRIM_P TRIM_N NOISE_GEN_VCC NOISE_GEN_VSS NOISE_AMP_VCC
++ NOISE_AMP_VSS COMPARATOR_VCC_HBT VDD COMPARATOR_VSS VB1 VB2 IE
+*.opin PBIT_OUT
+*.opin PBIT_RAW
+*.opin CLK_OUT_DIV
+*.ipin CLK_P
+*.ipin CLK_N
+*.ipin TRIM_P
+*.ipin TRIM_N
+*.iopin NOISE_GEN_VCC
+*.iopin NOISE_GEN_VSS
+*.iopin NOISE_AMP_VCC
+*.iopin NOISE_AMP_VSS
+*.iopin COMPARATOR_VCC_HBT
+*.iopin VDD
+*.iopin COMPARATOR_VSS
+*.ipin VB1
+*.ipin VB2
+*.iopin IE
+X1 PBIT_OUT PBIT_RAW CLK_OUT_DIV CLK_P CLK_N TRIM_P TRIM_N NOISE_GEN_VCC NOISE_GEN_VSS NOISE_AMP_VCC NOISE_AMP_VSS
++ COMPARATOR_VCC_HBT VDD COMPARATOR_VSS VB1 VB2 IE p1_top
+.ends
+
+* expanding   symbol:  p1_top.sym # of pins=17
+** source: p1_top.sym (path scrubbed; original provenance removed)
+** source: p1_top.sch (path scrubbed; original provenance removed)
+.subckt p1_top PBIT_OUT PBIT_RAW CLK_OUT_DIV CLK_P CLK_N TRIM_P TRIM_N NOISE_GEN_VCC NOISE_GEN_VSS NOISE_AMP_VCC NOISE_AMP_VSS
++ COMPARATOR_VCC_HBT VDD COMPARATOR_VSS VB1 VB2 IE
+*.opin PBIT_OUT
+*.opin PBIT_RAW
+*.opin CLK_OUT_DIV
+*.ipin CLK_P
+*.ipin CLK_N
+*.ipin TRIM_P
+*.ipin TRIM_N
+*.iopin NOISE_GEN_VCC
+*.iopin NOISE_GEN_VSS
+*.iopin NOISE_AMP_VCC
+*.iopin NOISE_AMP_VSS
+*.iopin COMPARATOR_VCC_HBT
+*.iopin VDD
+*.iopin COMPARATOR_VSS
+*.ipin VB1
+*.ipin VB2
+*.iopin IE
+X1 net1 net2 NOISE_GEN_VCC NOISE_GEN_VSS VB1 VB2 IE p1_noise_gen
+X2 net3 net4 net1 net2 NOISE_AMP_VCC NOISE_AMP_VSS p1_noise_amp
+X3 PBIT_OUT PBIT_RAW CLK_OUT_DIV net3 net4 CLK_P CLK_N TRIM_P TRIM_N COMPARATOR_VCC_HBT VDD COMPARATOR_VSS p1_comparator
+.ends
+
+
+* expanding   symbol:  p1_noise_gen.sym # of pins=7
+** source: p1_noise_gen.sym (path scrubbed; original provenance removed)
+** source: p1_noise_gen.sch (path scrubbed; original provenance removed)
+.subckt p1_noise_gen RAW_NOISE_P RAW_NOISE_N VCC VSS VB1 VB2 IE
+*.opin RAW_NOISE_P
+*.opin RAW_NOISE_N
+*.iopin VCC
+*.iopin VSS
+*.ipin VB1
+*.ipin VB2
+*.iopin IE
+XQ1 RAW_NOISE_N VB1 IE VSS npn13G2 Nx=1 mm_ok=1
+XQ2 RAW_NOISE_P VB2 IE VSS npn13G2 Nx=1 mm_ok=1
+XRC1 VCC RAW_NOISE_N sub! rppd w=1.0u l=3.85u m=1 b=0 mm_ok=1
+XRC2 VCC RAW_NOISE_P sub! rppd w=1.0u l=3.85u m=1 b=0 mm_ok=1
+XTAP1 VSS sub! ptap1 R={ 1.0 / ( 1.0 / ( 9.8e-10 / ( 2.0u * 2.0u ) ) + 1.0 / ( 9.8e-4 / ( 2.0 * ( 2.0u + 2.0u ) ) ) )} w=2.0u l=2.0u
+.ends
+
+
+* expanding   symbol:  p1_noise_amp.sym # of pins=6
+** source: p1_noise_amp.sym (path scrubbed; original provenance removed)
+** source: p1_noise_amp.sch (path scrubbed; original provenance removed)
+.subckt p1_noise_amp NOISE_AMP_P NOISE_AMP_N RAW_NOISE_P RAW_NOISE_N VCC VSS
+*.opin NOISE_AMP_P
+*.opin NOISE_AMP_N
+*.ipin RAW_NOISE_P
+*.ipin RAW_NOISE_N
+*.iopin VCC
+*.iopin VSS
+XQ1 c1_n RAW_NOISE_P e1_1 sub! npn13G2 Nx=2 mm_ok=1
+XQ2 c1_p RAW_NOISE_N e1_2 sub! npn13G2 Nx=2 mm_ok=1
+XRC1_1 VCC c1_n sub! rppd w=1.0u l=0.7115u m=1 b=0 mm_ok=1
+XRC1_2 c1_p VCC sub! rppd w=1.0u l=0.7115u m=1 b=0 mm_ok=1
+XRE1_1 e1_1 e1_common sub! rppd w=13.333u l=0.50u m=1 b=0 mm_ok=1
+XRE1_2 e1_2 e1_common sub! rppd w=13.333u l=0.50u m=1 b=0 mm_ok=1
+XMP1 c_p1 c_p2 VCC VCC sg13_hv_pmos w=20.0u l=1.0u ng=1 m=1 mm_ok=1
+XMP2 c_p2 c_p2 VCC VCC sg13_hv_pmos w=20.0u l=1.0u ng=1 m=1 mm_ok=1
+XQP1 c_p1 c_p1 e_p1 sub! npn13G2 Nx=1 mm_ok=1
+XRDEG_P1 e_p1 VSS sub! rppd w=4.0u l=0.50u m=1 b=0 mm_ok=1
+XQP2 c_p2 c_p1 e_p2 sub! npn13G2 Nx=4 mm_ok=1
+XRPTAT e_p2 VSS sub! rppd w=2.0u l=1.107u m=1 b=0 mm_ok=1
+XQS1 e1_common c_p1 e_s1 sub! npn13G2 Nx=9 mm_ok=1
+XRDEG_S1 e_s1 VSS sub! rppd w=36.0u l=0.50u m=1 b=0 mm_ok=1
+XCAC1 c1_n b2_p cap_cmim w=36.5u l=36.5u m=1 mm_ok=1
+XCAC2 c1_p b2_n cap_cmim w=36.5u l=36.5u m=1 mm_ok=1
+XRBDIV1 VCC vbias2 sub! rppd w=1.0u l=40.50u m=1 b=0 mm_ok=1
+XRBDIV2 vbias2 VSS sub! rppd w=1.0u l=55.115u m=1 b=0 mm_ok=1
+XRB2_1 vbias2 b2_p sub! rppd w=1.0u l=192.0u m=1 b=0 mm_ok=1
+XRB2_2 b2_n vbias2 sub! rppd w=1.0u l=192.0u m=1 b=0 mm_ok=1
+XQ4 NOISE_AMP_P b2_p e2_1 sub! npn13G2 Nx=1 mm_ok=1
+XQ3 NOISE_AMP_N b2_n e2_2 sub! npn13G2 Nx=1 mm_ok=1
+XRC2_2 VCC NOISE_AMP_P sub! rppd w=1.0u l=0.7115u m=1 b=0 mm_ok=1
+XRC2_1 NOISE_AMP_N VCC sub! rppd w=1.0u l=0.7115u m=1 b=0 mm_ok=1
+XRE2_1 e2_1 e2_common sub! rppd w=13.333u l=0.50u m=1 b=0 mm_ok=1
+XRE2_2 e2_2 e2_common sub! rppd w=13.333u l=0.50u m=1 b=0 mm_ok=1
+XQS2 e2_common c_p1 e_s2 sub! npn13G2 Nx=9 mm_ok=1
+XRDEG_S2 e_s2 VSS sub! rppd w=36.0u l=0.50u m=1 b=0 mm_ok=1
+XTAP1 VSS sub! ptap1 R={ 1.0 / ( 1.0 / ( 9.8e-10 / ( 2.0u * 2.0u ) ) + 1.0 / ( 9.8e-4 / ( 2.0 * ( 2.0u + 2.0u ) ) ) )} w=2.0u l=2.0u
+.ends
+
+
+* expanding   symbol:  p1_comparator.sym # of pins=12
+** source: p1_comparator.sym (path scrubbed; original provenance removed)
+** source: p1_comparator.sch (path scrubbed; original provenance removed)
+.subckt p1_comparator PBIT_OUT PBIT_RAW CLK_OUT_DIV IN_P IN_N CLK_P CLK_N TRIM_P TRIM_N VCC_HBT VDD VSS
+*.opin PBIT_OUT
+*.opin PBIT_RAW
+*.opin CLK_OUT_DIV
+*.ipin IN_P
+*.ipin IN_N
+*.ipin CLK_P
+*.ipin CLK_N
+*.ipin TRIM_P
+*.ipin TRIM_N
+*.iopin VCC_HBT
+*.iopin VDD
+*.iopin VSS
+XRC1 VCC_HBT c_n sub! rppd w=1.0u l=0.838u m=1 b=0 mm_ok=1
+XRC2 VCC_HBT c_p sub! rppd w=1.0u l=0.838u m=1 b=0 mm_ok=1
+XQ1 c_n IN_P e_track sub! npn13G2v Nx=4 El=5.0 mm_ok=1
+XQ2 c_p IN_N e_track sub! npn13G2v Nx=4 El=5.0 mm_ok=1
+XQ3 c_n ef_p e_latch sub! npn13G2 Nx=1 mm_ok=1
+XQ4 c_p ef_n e_latch sub! npn13G2 Nx=1 mm_ok=1
+XQCLK_TRACK e_track CLK_P e_tail sub! npn13G2 Nx=1 mm_ok=1
+XQCLK_LATCH e_latch CLK_N e_tail sub! npn13G2 Nx=1 mm_ok=1
+XMP1_COMP c_p1_comp c_p2_comp VCC_HBT VCC_HBT sg13_hv_pmos w=20.0u l=1.0u ng=1 m=1 mm_ok=1
+XMP2_COMP c_p2_comp c_p2_comp VCC_HBT VCC_HBT sg13_hv_pmos w=20.0u l=1.0u ng=1 m=1 mm_ok=1
+XQP1_COMP c_p1_comp c_p1_comp e_p1_comp sub! npn13G2 Nx=1 mm_ok=1
+XRDEG_P1_COMP e_p1_comp VSS sub! rppd w=4.0u l=0.50u m=1 b=0 mm_ok=1
+XQP2_COMP c_p2_comp c_p1_comp e_p2_comp sub! npn13G2 Nx=4 mm_ok=1
+XRPTAT_COMP e_p2_comp VSS sub! rppd w=2.0u l=1.107u m=1 b=0 mm_ok=1
+XCSTAB_COMP VSS c_p1_comp cap_cmim w=80.0u l=83.3u m=1 mm_ok=1
+XQS_COMP e_tail c_p1_comp e_scomp sub! npn13G2 Nx=6 mm_ok=1
+XRDEG_SCOMP e_scomp VSS sub! rppd w=24.0u l=0.50u m=1 b=0 mm_ok=1
+XQEF1 VCC_HBT c_p ef_p sub! npn13G2 Nx=1 mm_ok=1
+XQEF2 VCC_HBT c_n ef_n sub! npn13G2 Nx=1 mm_ok=1
+XR1_P ef_p g_p sub! rppd w=1.0u l=22.0u m=1 b=0 mm_ok=1
+XR2_P g_p VSS sub! rppd w=1.0u l=14.5u m=1 b=0 mm_ok=1
+XR1_N ef_n g_n sub! rppd w=1.0u l=22.0u m=1 b=0 mm_ok=1
+XR2_N g_n VSS sub! rppd w=1.0u l=14.5u m=1 b=0 mm_ok=1
+XM1 cml_out_n g_p e_cmos VSS sg13_lv_nmos w=6.0u l=0.13u ng=1 m=1 mm_ok=1
+XM2 cml_out_p g_n e_cmos VSS sg13_lv_nmos w=6.0u l=0.13u ng=1 m=1 mm_ok=1
+XMTAIL e_cmos VDD VSS VSS sg13_lv_nmos w=8.0u l=0.50u ng=1 m=1 mm_ok=1
+XM3 cml_out_n cml_out_n VDD VDD sg13_lv_pmos w=8.0u l=0.13u ng=1 m=1 mm_ok=1
+XM4 cml_out_p cml_out_n VDD VDD sg13_lv_pmos w=8.0u l=0.13u ng=1 m=1 mm_ok=1
+XCDAMP1 cml_out_p VSS cap_cmim w=3.5u l=3.5u m=1 mm_ok=1
+XCDAMP2 cml_out_n VSS cap_cmim w=3.5u l=3.5u m=1 mm_ok=1
+XM5 raw_inv cml_out_p VDD VDD sg13_lv_pmos w=2.83u l=0.13u ng=1 m=4 mm_ok=1
+XM6 raw_inv cml_out_p VSS VSS sg13_lv_nmos w=2.0u l=0.13u ng=1 m=4 mm_ok=1
+XM7 PBIT_RAW raw_inv VDD VDD sg13_lv_pmos w=2.83u l=0.13u ng=1 m=1 mm_ok=1
+XM8 PBIT_RAW raw_inv VSS VSS sg13_lv_nmos w=2.0u l=0.13u ng=1 m=1 mm_ok=1
+XM9 PBIT_OUT PBIT_RAW VDD VDD sg13_lv_pmos w=2.83u l=0.13u ng=1 m=1 mm_ok=1
+XM10 PBIT_OUT PBIT_RAW VSS VSS sg13_lv_nmos w=2.0u l=0.13u ng=1 m=1 mm_ok=1
+XM11 CLK_OUT_DIV CLK_P VDD VDD sg13_lv_pmos w=2.83u l=0.13u ng=1 m=1 mm_ok=1
+XM12 CLK_OUT_DIV CLK_P VSS VSS sg13_lv_nmos w=2.0u l=0.13u ng=1 m=1 mm_ok=1
+XQDAC_P c_p TRIM_P e_dac_p sub! npn13G2 Nx=1 mm_ok=1
+XRDAC_P e_dac_p VSS sub! rppd w=1.0u l=5.4u m=1 b=0 mm_ok=1
+XQDAC_N c_n TRIM_N e_dac_n sub! npn13G2 Nx=1 mm_ok=1
+XRDAC_N e_dac_n VSS sub! rppd w=1.0u l=5.4u m=1 b=0 mm_ok=1
+XTAP1 VSS sub! ptap1 R={ 1.0 / ( 1.0 / ( 9.8e-10 / ( 2.0u * 2.0u ) ) + 1.0 / ( 9.8e-4 / ( 2.0 * ( 2.0u + 2.0u ) ) ) )} w=2.0u l=2.0u
+XRFB raw_inv cml_out_p sub! rppd w=1.0u l=18.5u m=1 b=0 mm_ok=1
+.ends
+
+* C42-V3 interface block: matched NPN emitter-follower level shift (PDK-only).
+* Physical CM conditioning between the published preamp outputs
+* (NOISE_AMP_P/N, CM ~2.02-2.19 V) and the comparator input stage
+* (design CM ~1.44 V). PROVISIONAL: external VCB = VCC_HBT - V_B is
+* expected positive from the stated rails (2.5 V - 2.035..2.168 V);
+* actual device region remains UNKNOWN pending waveform review.
+* rppd res_typ: rsh = 260 ohm/sq,
+* dw = 0.006u -> XRLS w=1.0u l=3.85u gives about one source-derived
+* 1 kohm (3.85/1.006 * 260 = 995 ohm). Retained amplifier HBT evidence:
+* VBE = 0.886-0.893 V at 1.35-1.53 mA (NOT 0.75 V) -> expected LS CM
+* about 1.14-1.28 V (amp CM 2.035-2.168 - VBE 0.886-0.893).
+* AC loading/gain/region and final CM are UNKNOWN pending runtime;
+* npn13G2 Nx=1 m=1 (IC target ~1.1-1.3 mA < 3.5 mA max, Nx <= 10,
+* selft=1). No beta, capacitance, gain-fraction, loading-percent or
+* reliability claims are made (unverified).
+.subckt ls_pbit LS_P LS_N VCC_HBT VSS NOISE_AMP_P NOISE_AMP_N
+XLS_P VCC_HBT NOISE_AMP_P LS_P sub! npn13G2 Nx=1 mm_ok=1
+XLS_N VCC_HBT NOISE_AMP_N LS_N sub! npn13G2 Nx=1 mm_ok=1
+XRLS_P LS_P VSS sub! rppd w=1.0u l=3.85u m=1 b=0 mm_ok=1
+XRLS_N LS_N VSS sub! rppd w=1.0u l=3.85u m=1 b=0 mm_ok=1
+.ends
+
+.end

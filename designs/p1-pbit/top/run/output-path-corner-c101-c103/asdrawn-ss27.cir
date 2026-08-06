@@ -1,0 +1,149 @@
+* C82-V2-44F TRAN 5 GS/s CORE-ONLY FOUR-REVERSAL NOISE-AMP LS HBT-V
+* NX4EL5 ISOBUF CLOAD=44f deck (SOURCE ONLY, UNRUN)
+* C82 correction (accepted C81-V2 856cce36): ngspice lacks .step, and one
+* XISO cannot represent 44 fF and 520 fF in one invocation -> exactly TWO
+* decks: C82-44F (CLOAD 44f) and C82-520F (CLOAD 520f).
+* V2 = C82 V1 (44F 06c5e423... / 520F 9feab227...), preserved
+* byte-identical except identity/comments, raw basenames, and the 8
+* crossing/delay measure lines. Independent review (user CONFIRMED):
+* V1's buf_cross/td measures CLAIMED to ignore crossings <= 0.48 ns but
+* encoded no time guard; a startup buffer crossing could shift the
+* RISE/FALL ordinals and mispair the core-to-buffer delays. V2 ENCODES
+* the guard: TD=0.48n in every buf_cross WHEN clause and in BOTH TRIG
+* and TARG clauses of every td line, before the RISE/FALL ordinal.
+* Preserved from V1/C45 (byte-identical): all circuit lines and loads
+* (exactly one XISO pbit_out_core PBIT_OUT VDD_BUF VSS iso_buf_pbit_out;
+* exactly one CLOAD PBIT_OUT 0 44f - this deck; the 520F deck uses 520f),
+* the 16 C45 core measures, all other C82 measures, and the print list.
+* Retained: C45 source 102f2a9d... and C11-V2 buffer source cf8f7462...
+* (both include operands unchanged). The C45 chain comment's "NO XISO
+* buffer branch (pbit_out_core unloaded)" clause describes the C45
+* baseline and is SUPERSEDED here by the declared XISO/CLOAD additions.
+* LOADS ARE SENSITIVITY ASSUMPTIONS, NEVER ACCEPTANCE LOADS (44/520 fF
+* are named single-ended references; 220/400 fF generic scalar only).
+* UNRUN: design-only deck; no simulation authorized. PROVISIONAL until
+* review; no run/P1/pass/signoff/tape-out claim. P1 open.
+.lib $PDK_ROOT/libs.tech/ngspice/models/cornerHBT.lib hbt_typ
+.lib $PDK_ROOT/libs.tech/ngspice/models/cornerRES.lib res_typ
+.lib $PDK_ROOT/libs.tech/ngspice/models/cornerCAP.lib cap_typ
+.lib $PDK_ROOT/libs.tech/ngspice/models/cornerMOShv.lib mos_tt
+.lib $PDK_ROOT/libs.tech/ngspice/models/cornerMOSlv.lib mos_ss
+.lib $PDK_ROOT/libs.tech/ngspice/models/cornerDIO.lib dio_tt
+
+.include ./C45-V1-SOURCE-p1_top_hier_v3-no-bleed-wrapped-damp35-ls-hbtv-nx4el5.spice
+.include ./buf-m1.spice
+
+.option temp = 27.0
+.options rshunt = 1e12
+.options savecurrents
+
+VCC_HBT VCC_HBT 0 DC 2.500
+VDD VDD 0 DC 1.200
+VSS VSS 0 DC 0.000
+VBUF_VDD VDD_BUF 0 DC 1.200
+
+* Differential Clock Input (5.0 GS/s, 200ps Period) - normal PULSE pair
+VCLK_P CLK_P 0 PULSE(1.20 0.0 0 20p 20p 80p 200p)
+VCLK_N CLK_N 0 PULSE(0.0 1.20 0 20p 20p 80p 200p)
+
+* Acquisition-then-four-reversal differential input, CONTINUOUS 20 ps
+* ramps (no duplicate timestamps): 0..0.08n neutral (both 1.440 V);
+* ramp 0.08n->0.10n to +1 mV (P 1.4405 / N 1.4395); hold to 0.48n;
+* reversal 1 0.48n->0.50n to -1 mV; hold to 0.68n; reversal 2
+* 0.68n->0.70n to +1 mV; hold to 0.88n; reversal 3 0.88n->0.90n to
+* -1 mV; hold to 1.08n; reversal 4 1.08n->1.10n to +1 mV; hold to
+* 2.2n. VCM = 1.440 V everywhere. VRAW_N = complement.
+VRAW_P RAW_NOISE_P 0 PWL(0n 1.440 0.08n 1.440 0.10n 1.4405 0.48n 1.4405 0.50n 1.4395 0.68n 1.4395 0.70n 1.4405 0.88n 1.4405 0.90n 1.4395 1.08n 1.4395 1.10n 1.4405 2.2n 1.4405)
+VRAW_N RAW_NOISE_N 0 PWL(0n 1.440 0.08n 1.440 0.10n 1.4395 0.48n 1.4395 0.50n 1.4405 0.68n 1.4405 0.70n 1.4395 0.88n 1.4395 0.90n 1.4405 1.08n 1.4405 1.10n 1.4395 2.2n 1.4395)
+
+VTRIM_P TRIM_P 0 DC 1.440
+VTRIM_N TRIM_N 0 DC 1.440
+
+* ---- integrated chain with PHYSICAL CM conditioning + HBT-V Nx4El5
+*      input pair: published preamp (p1_noise_amp) -> matched NPN
+*      emitter-follower level shift (ls_pbit V3, PDK-only, XRLS 1u x
+*      3.85u ~ 995 ohm) -> no-bleed comparator with npn13G2v Nx=4 El=5.0
+*      input pair XQ1/XQ2 (~20x C44 emitter area; may lower current-
+*      density VBE by ~78 mV; capacitance/timing/loading UNKNOWN;
+*      XRC1/XRC2 l=0.838u ~ 216 ohm, C42 geometry) (p1_comparator); NO
+*      XISO buffer branch in the C45 baseline (pbit_out_core unloaded);
+*      C82-44F/520F INSTANTIATE exactly one XISO + one CLOAD (declared
+*      additions below); cml_out damping
+*      caps 3.5u x 3.5u (18.935 fF/node typical). Family-bound emitter-
+*      area control candidate; no E/G/B behavioral sources. ----
+XAMP NOISE_AMP_P NOISE_AMP_N RAW_NOISE_P RAW_NOISE_N VCC_HBT VSS p1_noise_amp
+XLS LS_P LS_N VCC_HBT VSS NOISE_AMP_P NOISE_AMP_N ls_pbit
+XCOMP pbit_out_core pbit_raw_core clk_replica LS_P LS_N CLK_P CLK_N TRIM_P TRIM_N VCC_HBT VDD VSS p1_comparator
+* C82 declared addition: exactly one isolation buffer (C11-V2
+* iso_buf_pbit_out, cf8f7462...) driving the new PBIT_OUT node, loaded by
+* exactly one CLOAD of the named value. Sensitivity assumptions only.
+XISO pbit_out_core PBIT_OUT VDD_BUF VSS iso_buf_pbit_out
+CLOAD PBIT_OUT 0 210f
+
+.control
+pre_osdi $PDK_ROOT/libs.tech/ngspice/osdi/psp103.osdi
+pre_osdi $PDK_ROOT/libs.tech/ngspice/osdi/psp103_nqs.osdi
+tran 2p 2.2n 0
+write ./asdrawn-ss27.raw all
+* four matched core samples (C16-identical): PBIT_RAW / PBIT_OUT at 900p,
+* 1000p, 1900p, 2000p
+meas tran raw_latch_end FIND v(pbit_raw_core) at=900p
+meas tran raw_track_end FIND v(pbit_raw_core) at=1000p
+meas tran out_latch_end FIND v(pbit_out_core) at=900p
+meas tran out_track_end FIND v(pbit_out_core) at=1000p
+meas tran raw_latch2_end FIND v(pbit_raw_core) at=1900p
+meas tran raw_track2_end FIND v(pbit_raw_core) at=2000p
+meas tran out_latch2_end FIND v(pbit_out_core) at=1900p
+meas tran out_track2_end FIND v(pbit_out_core) at=2000p
+* core crossings RISE/FALL 1 and 2 (four alternating reversals; criterion
+* ignores crossings <= 0.48 ns)
+meas tran c_cross_r1 WHEN v(pbit_out_core)=0.6 RISE=1
+meas tran c_cross_r2 WHEN v(pbit_out_core)=0.6 RISE=2
+meas tran c_cross_f1 WHEN v(pbit_out_core)=0.6 FALL=1
+meas tran c_cross_f2 WHEN v(pbit_out_core)=0.6 FALL=2
+* core samples at 1.1/1.3/1.5/1.7n
+meas tran out_1p1 FIND v(pbit_out_core) at=1.1n
+meas tran out_1p3 FIND v(pbit_out_core) at=1.3n
+meas tran out_1p5 FIND v(pbit_out_core) at=1.5n
+meas tran out_1p7 FIND v(pbit_out_core) at=1.7n
+* C82 declared additions: buffered PBIT_OUT samples at the C16-identical
+* instants (900p/1000p/1900p/2000p) and at 1.1/1.3/1.5/1.7n
+meas tran buf_latch_end FIND v(PBIT_OUT) at=900p
+meas tran buf_track_end FIND v(PBIT_OUT) at=1000p
+meas tran buf_latch2_end FIND v(PBIT_OUT) at=1900p
+meas tran buf_track2_end FIND v(PBIT_OUT) at=2000p
+meas tran buf_1p1 FIND v(PBIT_OUT) at=1.1n
+meas tran buf_1p3 FIND v(PBIT_OUT) at=1.3n
+meas tran buf_1p5 FIND v(PBIT_OUT) at=1.5n
+meas tran buf_1p7 FIND v(PBIT_OUT) at=1.7n
+* buffered 0.6 V rail-midpoint proxy crossings; V2 ENCODES the
+* ignore-crossings-<=0.48-ns guard with TD=0.48n before the ordinal
+* (V1 claimed the guard without a time window)
+meas tran buf_cross_r1 WHEN v(PBIT_OUT)=0.6 TD=0.48n RISE=1
+meas tran buf_cross_r2 WHEN v(PBIT_OUT)=0.6 TD=0.48n RISE=2
+meas tran buf_cross_f1 WHEN v(PBIT_OUT)=0.6 TD=0.48n FALL=1
+meas tran buf_cross_f2 WHEN v(PBIT_OUT)=0.6 TD=0.48n FALL=2
+* core-to-buffer propagation delays: same-edge 0.6 V rail-midpoint proxy
+* crossings of pbit_out_core (TRIG) and PBIT_OUT (TARG); TD=0.48n on BOTH
+* clauses encodes the ignore-crossings-<=0.48-ns guard (V2)
+meas tran td_r1 TRIG v(pbit_out_core) VAL=0.6 TD=0.48n RISE=1 TARG v(PBIT_OUT) VAL=0.6 TD=0.48n RISE=1
+meas tran td_r2 TRIG v(pbit_out_core) VAL=0.6 TD=0.48n RISE=2 TARG v(PBIT_OUT) VAL=0.6 TD=0.48n RISE=2
+meas tran td_f1 TRIG v(pbit_out_core) VAL=0.6 TD=0.48n FALL=1 TARG v(PBIT_OUT) VAL=0.6 TD=0.48n FALL=1
+meas tran td_f2 TRIG v(pbit_out_core) VAL=0.6 TD=0.48n FALL=2 TARG v(PBIT_OUT) VAL=0.6 TD=0.48n FALL=2
+* buffered-output run extrema (whole 0..2.2n window)
+meas tran buf_vmax MAX v(PBIT_OUT)
+meas tran buf_vmin MIN v(PBIT_OUT)
+* VDD_BUF delivered current/power (explicit definitions):
+* I_SUP(t) = -i(vbuf_vdd)  = current delivered by VBUF_VDD into VDD_BUF
+*   (A; ngspice branch convention i(vbuf_vdd) positive = conventional
+*   current from node VDD_BUF through the source to ground, so the
+*   delivered current is the negation)
+* P_SUP(t) = VDD_BUF * I_SUP(t) = 1.2 * I_SUP(t)  (W)
+let i_vbuf = -i(vbuf_vdd)
+let p_vbuf = 1.2*i_vbuf
+meas tran buf_idd_max MAX i_vbuf
+meas tran buf_pow_max MAX p_vbuf
+print raw_latch_end raw_track_end out_latch_end out_track_end raw_latch2_end raw_track2_end out_latch2_end out_track2_end c_cross_r1 c_cross_r2 c_cross_f1 c_cross_f2 out_1p1 out_1p3 out_1p5 out_1p7 buf_latch_end buf_track_end buf_latch2_end buf_track2_end buf_1p1 buf_1p3 buf_1p5 buf_1p7 buf_cross_r1 buf_cross_r2 buf_cross_f1 buf_cross_f2 td_r1 td_r2 td_f1 td_f2 buf_vmax buf_vmin buf_idd_max buf_pow_max
+quit
+.endc
+.end

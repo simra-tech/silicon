@@ -1,0 +1,20 @@
+* PE101 tapered isolation buffer - EXPERIMENT, Principal Engineer, 2026-08-06
+* Stage 1 geometry is IDENTICAL to C11-V2 (Wp=2.83u Wn=2.0u L=0.13u ng=1 m=1)
+* so the load presented to the comparator is unchanged. Only intermediate
+* stages are added. Final stage is the C11-V2 output stage, unchanged.
+* Four stages keeps the buffer non-inverting, as C11-V2 is.
+
+.subckt iso_buf_pbit_out IN OUT VDD VSS
+* stage 1 - UNCHANGED from C11-V2
+XP1 N1 IN VDD VDD sg13_lv_pmos w=2.83u l=0.13u ng=1 m=1 mm_ok=1
+XN1 N1 IN VSS VSS sg13_lv_nmos w=2.0u l=0.13u ng=1 m=1 mm_ok=1
+* stage 2 - added
+XP2 N2 N1 VDD VDD sg13_lv_pmos w=2.83u l=0.13u ng=1 m=2 mm_ok=1
+XN2 N2 N1 VSS VSS sg13_lv_nmos w=2.0u l=0.13u ng=1 m=2 mm_ok=1
+* stage 3 - added
+XP3 N3 N2 VDD VDD sg13_lv_pmos w=2.83u l=0.13u ng=1 m=4 mm_ok=1
+XN3 N3 N2 VSS VSS sg13_lv_nmos w=2.0u l=0.13u ng=1 m=4 mm_ok=1
+* stage 4 - the C11-V2 output stage, unchanged
+XPF OUT N3 VDD VDD sg13_lv_pmos w=14.4u l=0.13u ng=1 m=2 mm_ok=1
+XNF OUT N3 VSS VSS sg13_lv_nmos w=7.2u l=0.13u ng=1 m=2 mm_ok=1
+.ends iso_buf_pbit_out
