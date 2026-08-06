@@ -122,9 +122,30 @@ operating-point failure, and the level shifter is the `LS` block named in the de
 one stage earlier. That reading was wrong and is corrected here. A recently-solved problem is a
 dangerous hypothesis; it arrives already believed.)*
 
-**Consequence for this package:** the taper remains a real and measured improvement at `mos_tt` and
-`mos_ff`, and it is not sufficient. It fixes the second-most-important problem in this path. The
-first is that the chain does not function at a manufacturing corner that will certainly occur.
+### The taper is not corner-neutral — it is corner-harmful
+
+Amended a second time, 2026-08-06. Three independent comparisons, all in the same direction:
+
+| condition | as drawn | tapered | tapered is |
+|---|---|---|---|
+| `mos_ss` / 125 °C | 0.001849 V | 0.000051 V | **36× worse** |
+| `mos_ss` / 27 °C, converter `XM5`/`XM6` `m=4` | 0.001873 V | 0.000035 V | **53× worse** |
+| `mos_ss` / 27 °C, converter `m=2` + `R`<sub>fb</sub> `l=37u` | 0.001380 V | 0.000031 V | **45× worse** |
+
+Both are dead at that corner either way, but the four-stage taper is consistently more than an
+order of magnitude deader than the two-stage buffer it replaces.
+
+A plausible mechanism — a longer chain has more thresholds, and a signal no longer reaching the
+rails has more places to fail to cross one — **is untested and is not claimed here.** What is
+measured is the direction and the magnitude.
+
+**Consequence for this package:** the taper is a real and measured improvement at `mos_tt` and
+`mos_ff`, and it is **actively harmful at `mos_ss`**. It is not a change that helps where it helps
+and is neutral elsewhere. Anyone adopting it must treat the slow corner as a hard blocker to be
+solved first, not as a place where this change merely fails to assist.
+
+*(The first version of this note said only that the taper "is not sufficient" at the slow corner.
+That was technically accurate and practically misleading, and is superseded by the table above.)*
 
 ## Limitations
 

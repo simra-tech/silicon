@@ -2,7 +2,7 @@
   "schema": "simra.design-facts/v1",
   "candidate": "C99/C100 isolation buffer taper",
   "status": "candidate design change, simulation evidence only",
-  "disposition": "candidate improvement at tt and ff corners; NOT sufficient - the chain does not function at mos_ss. Not a gate result, not signoff, not tape-out evidence.",
+  "disposition": "improvement at tt and ff corners; ACTIVELY HARMFUL at mos_ss by 36 to 53 times. Not a gate result, not signoff, not tape-out evidence.",
   "real_pad_full_chain": {
     "note": "real comparator, real buffer, real sg13g2_IOPadAnalog, .global sub! tied at 0.000000 V",
     "threshold_v": 0.6,
@@ -91,6 +91,25 @@
     "localisation": "chain healthy to pbit_raw_core (0.539 V swing at ss), dies across xcomp xm9/xm10; pbit_out_core reaches 24.9 mV",
     "mechanism": "level, not drive: pbit_raw_core minimum is 0.658 V at ss against 0.338 V at tt, so it never crosses the following inverter's trip point",
     "corrected_from": "an earlier reading attributed this to undersizing; that is withdrawn",
-    "replication": "reproduced independently by the Design Engineer (C101, C102), matching to all printed digits"
+    "replication": "reproduced independently by the Design Engineer (C101, C102), matching to all printed digits",
+    "taper_is_harmful_at_ss": {
+      "ss_125": {
+        "asdrawn": 0.001849,
+        "tapered": 5.1e-05,
+        "ratio": 36
+      },
+      "ss_27_with_gm4_converter": {
+        "asdrawn": 0.001873,
+        "tapered": 3.5e-05,
+        "ratio": 53
+      },
+      "ss_27_with_gm2_rfb37_converter": {
+        "asdrawn": 0.00138,
+        "tapered": 3.1e-05,
+        "ratio": 45
+      },
+      "note": "three independent comparisons; both dead either way but the taper is consistently over an order of magnitude worse",
+      "mechanism": "untested hypothesis only: more stages means more thresholds for a signal no longer reaching the rails"
+    }
   }
 }
