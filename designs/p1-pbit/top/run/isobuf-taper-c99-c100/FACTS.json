@@ -1,0 +1,79 @@
+{
+  "schema": "simra.design-facts/v1",
+  "candidate": "C99/C100 isolation buffer taper",
+  "status": "candidate design change, simulation evidence only",
+  "disposition": "not a gate result, not signoff, not tape-out evidence; P1 gate open",
+  "real_pad_full_chain": {
+    "note": "real comparator, real buffer, real sg13g2_IOPadAnalog, .global sub! tied at 0.000000 V",
+    "threshold_v": 0.6,
+    "as_drawn": {
+      "pulse1_width_ps": 44.5,
+      "pulse1_peak_v": 0.659333,
+      "cross_ns": 1.027923,
+      "pulse2": "not reached; run aborted at 1.398705 ns"
+    },
+    "tapered": {
+      "pulse1_width_ps": 138.55,
+      "pulse1_peak_v": 1.190574,
+      "cross_ns": 1.03078,
+      "pulse2_width_ps": 142.13,
+      "pulse2_peak_v": 1.19796
+    }
+  },
+  "lumped_210f_full_chain": {
+    "note": "same chain with the pad replaced by a lumped 210 fF capacitor",
+    "as_drawn": {
+      "pulse1_width_ps": 44.28,
+      "pulse1_peak_v": 0.650503,
+      "cross_ns": 1.036376
+    },
+    "tapered": {
+      "pulse1_width_ps": 141.89,
+      "pulse1_peak_v": 1.230175,
+      "cross_ns": 1.037029
+    },
+    "stand_in_accuracy": "predicted 44.28 and 141.89 ps against the real pad's 44.50 and 138.55 ps"
+  },
+  "diagnosis": {
+    "fanout_as_drawn": 8.94,
+    "stage1_width_um": 4.83,
+    "stage2_width_um": 43.2,
+    "note": "the source file's own RISK header states this correctly and it was never run until now"
+  },
+  "costs": {
+    "latency_ps": 0.65,
+    "worst_core_perturbation_v": 0.0625,
+    "worst_core_perturbation_percent_of_swing": 5.3,
+    "core_peak_v": {
+      "as_drawn": 1.159521,
+      "tapered": 1.161452
+    },
+    "added_transistor_width_um": 28.98
+  },
+  "withdrawn": {
+    "claim": "doubling stage 1 nearly triples the output pulse",
+    "why": "measured with a PWL replay, which cannot respond to being loaded",
+    "live_driver_result": {
+      "m1_ps": 44.28,
+      "m2_ps": 43.44,
+      "m3": "never clears 0.6 V"
+    },
+    "core_peak_v": {
+      "m1": 1.1595,
+      "m2": 0.9997,
+      "m3": 0.8445
+    }
+  },
+  "method_corrections": [
+    "PWL replay is faithful only at the load it was recorded at: 8 fs / 0.27 mV at 44 fF, 15 percent optimistic at 210 fF",
+    "hypothesis that the pad's loss term caused the deficit was falsified; the pad behaves as a plain capacitor",
+    "the 210 fF lumped stand-in was checked against the real pad and held to within 2.4 percent"
+  ],
+  "limitations": [
+    "one corner (mos_tt), 27 C, no mismatch, no statistical spread, no PVT",
+    "neither C100 run completed: both abort on the comparator's VBIC device q.xcomp.xqs_comp.qnpn13g2 after a thermal NaN warning",
+    "solver tolerances loosened to reltol=2e-2 abstol=1e-8 vntol=1e-3; offset bounded at ~0.42 mV, under 0.7 ps of width",
+    "600 mV is an unvalidated proxy threshold",
+    "no bond wire, no probe, no board, no package"
+  ]
+}
