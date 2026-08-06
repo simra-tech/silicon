@@ -157,6 +157,12 @@ deck exposes **one** (`v(sub!)`, with `i(vsub)` beside it).
 The real part of the admittance is unchanged to five significant figures at every point, so the loss
 term and the roll-off reading in this package are unaffected.
 
+Artifacts for this re-extraction ship beside the originals:
+`C92-AC-PADCAP-SUBTIED-portable.cir` (the deck, `$PDK_ROOT` substituted the same way),
+`C92-AC-PADCAP-SUBTIED.raw`, `C92-AC-PADCAP-SUBTIED.op.raw` and the two run logs. Diff the deck
+against `C83-V2-AC-PADCAP-IOPADANALOG-CANDIDATE-ONLY-portable.cir` to see that the two added lines
+and the output basenames are the only differences.
+
 **Status of the figures above:** confirmed, with a correction smaller than the rounding used to
 quote them. Every value moves up by between 0.17 % and 0.30 %, in the same direction, and none of the
 conclusions drawn from them changes — in particular the pad still sits inside the 300–400 fF buffer
