@@ -160,6 +160,49 @@ solved first, not as a place where this change merely fails to assist.
 *(The first version of this note said only that the taper "is not sufficient" at the slow corner.
 That was technically accurate and practically misleading, and is superseded by the table above.)*
 
+### RETRACTED 2026-08-06 evening — "corner-harmful" is withdrawn
+
+The three comparisons above rank outputs that are all dead. As the note itself says, "both are dead
+at that corner either way": the largest number in that table is 1.9 mV and the pin's own stuck
+level scores in that range by arithmetic. **Ranking two circuits that both produce nothing, by how
+close to nothing they get, is not evidence about either.** The 36×/53×/45× ratios are differences
+between non-working variants and carry no design information.
+
+The stage-count table has the same defect. Every value in it is under 4 mV.
+
+A clean measurement was made later the same day, with the buffer lifted out of the chain and driven
+from ideal sources at `mos_ss`/125 °C into 210 fF — the method that should have been used here:
+
+| input pulse width | as drawn, max `v(out)` | 4-stage taper, max `v(out)` |
+|---|---|---|
+| 100 ps | 0.006862 V | 0.003495 V |
+| 140 ps | 0.019753 V | **0.674680 V** |
+| 200 ps | 0.133800 V | 1.216644 V |
+| 300 ps | **0.653118 V** | 1.239985 V |
+
+**Minimum usable input pulse: as drawn 200–300 ps; taper 100–140 ps.** The taper needs roughly half
+the input width the as-drawn buffer does — the opposite of "corner-harmful". The earlier ranking was
+an artifact of comparing dead outputs at a corner where the converter upstream delivered only ~92 ps,
+below the floor of *both* buffers, so neither could work and the comparison could not discriminate.
+
+**What stands from this package:** the pad load measurement, the as-drawn buffer's inadequacy, and
+the taper being a real improvement. **What is withdrawn:** that the taper is harmful at `mos_ss`,
+and the claim that stage count rather than stage size is the harmful variable. Neither is supported.
+
+### Superseded criterion — read the whole package with this in mind
+
+Every number in this package, including the headline 44.50 → 138.55 ps, is *time above 600 mV*.
+Later work established that this criterion is passed more easily by a circuit that merges several
+bits into one wide pulse than by one that correctly resolves them, because a merged pulse is both
+taller and longer. **The criterion rewards the defect.** It was replaced by decoding the output at
+the bit clock and counting bit errors against the transmitted sequence, with the comparator's own
+output decoded alongside as a reference.
+
+Under that criterion the output path does not work: it delivers a 64-bit sequence with zero errors
+only at 800 ps/bit and only at the three 125 °C corners; at slow silicon and 27 °C it needs
+3200 ps/bit; and at `res_wcs`/−40 °C the output does not move at any rate tested. The width and
+amplitude figures in this package remain correct as measurements. They are not evidence of function.
+
 ## Limitations
 
 - One process corner (`mos_tt`), 27 °C, no mismatch, no statistical spread, no PVT sweep.

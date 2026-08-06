@@ -2,7 +2,7 @@
   "schema": "simra.design-facts/v1",
   "candidate": "C99/C100 isolation buffer taper",
   "status": "candidate design change, simulation evidence only",
-  "disposition": "improvement at tt and ff corners; ACTIVELY HARMFUL at mos_ss by 36 to 53 times. Not a gate result, not signoff, not tape-out evidence.",
+  "disposition": "improvement at tt and ff; the 'ACTIVELY HARMFUL at mos_ss' claim is WITHDRAWN 2026-08-06 evening (it ranked outputs that were all under 2 mV, i.e. all dead). Isolated measurement gives minimum usable input pulse 200-300 ps as drawn versus 100-140 ps tapered, so the taper needs about half the input width. Not a gate result, not signoff, not tape-out evidence.",
   "real_pad_full_chain": {
     "note": "real comparator, real buffer, real sg13g2_IOPadAnalog, .global sub! tied at 0.000000 V",
     "threshold_v": 0.6,
@@ -109,7 +109,9 @@
         "ratio": 45
       },
       "note": "three independent comparisons; both dead either way but the taper is consistently over an order of magnitude worse",
-      "mechanism": "TESTED: stage count, not stage size. At mos_ss/27C with the m=4 converter, 2 stages big-stage2 0.001873 V, 2 stages small-stage2 0.003526 V, 4 stages 0.000035 V, 6 stages 0.000001 V. Shrinking stage 2 improves it; adding stages costs ~50x per two stages. A taper assumes full-swing inputs so each stage restores the edge; with a degraded input each stage attenuates instead and a chain multiplies the loss."
+      "mechanism": "TESTED: stage count, not stage size. At mos_ss/27C with the m=4 converter, 2 stages big-stage2 0.001873 V, 2 stages small-stage2 0.003526 V, 4 stages 0.000035 V, 6 stages 0.000001 V. Shrinking stage 2 improves it; adding stages costs ~50x per two stages. A taper assumes full-swing inputs so each stage restores the edge; with a degraded input each stage attenuates instead and a chain multiplies the loss.",
+      "RETRACTED_2026_08_06_evening": "Withdrawn. Every value compared is under 4 mV, at or below the stuck-pin level; ranking degrees of a dead output is not evidence. The upstream converter delivered only ~92 ps at that corner, below the minimum input width of BOTH buffers, so the comparison could not discriminate. The stage-count-not-stage-size mechanism is withdrawn with it."
     }
-  }
+  },
+  "superseded_criterion_2026_08_06_evening": "Every figure in this package is time above 600 mV. That criterion is scored higher by a circuit that merges several bits into one wide pulse than by one that resolves them correctly, so it rewards the defect. Replaced by bit-error decoding at the bit clock against the transmitted sequence, with the comparator output decoded alongside as a reference. Under that criterion the output path reaches zero errors only at 800 ps/bit and only at the three 125 C corners; slow silicon at 27 C needs 3200 ps/bit; res_wcs at -40 C does not move at any rate tested. The amplitude and width figures here remain correct as measurements and are not evidence of function."
 }
