@@ -135,9 +135,22 @@ Amended a second time, 2026-08-06. Three independent comparisons, all in the sam
 Both are dead at that corner either way, but the four-stage taper is consistently more than an
 order of magnitude deader than the two-stage buffer it replaces.
 
-A plausible mechanism — a longer chain has more thresholds, and a signal no longer reaching the
-rails has more places to fail to cross one — **is untested and is not claimed here.** What is
-measured is the direction and the magnitude.
+**Mechanism, now tested.** The taper changed two things at once: it added stages, and it made
+stage 2 much smaller. Separating them, all at `mos_ss`/27 °C with the `m=4` converter:
+
+| buffer | stages | stage 2 | max `v(PBIT_OUT)` |
+|---|---|---|---|
+| as drawn | 2 | 43.2 µm | 0.001873 V |
+| small stage 2 | 2 | 9.66 µm | **0.003526 V** — slightly *better* |
+| taper | 4 | 9.66 µm | 0.000035 V |
+| longer taper | 6 | 4.83 µm | **0.000001 V** |
+
+**Stage count is the variable; stage size is not.** Shrinking stage 2 while keeping two stages
+improves the result. Going 2 → 4 → 6 stages costs roughly 50× per two stages added.
+
+The reason tapering helps at nominal and hurts here is that a taper assumes every stage receives a
+full-swing input and therefore restores the edge. Once the signal stops reaching the rails, each
+stage attenuates instead of restoring, and a chain multiplies the loss.
 
 **Consequence for this package:** the taper is a real and measured improvement at `mos_tt` and
 `mos_ff`, and it is **actively harmful at `mos_ss`**. It is not a change that helps where it helps
