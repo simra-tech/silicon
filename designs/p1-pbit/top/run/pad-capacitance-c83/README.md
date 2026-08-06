@@ -128,6 +128,39 @@ comparable transient metric — buffered output at t = 1.000 ns driving this sam
 substrate properly moves the result by **-0.188 %** (0.385244 V floating to 0.384520 V tied). That is
 roughly nineteen times the measurement method's own error bar, so the effect is real, but it is small.
 
-**Status of the figures above:** still provisional pending a re-extraction with `.global sub!` in
-place. The effect is now bounded as small rather than unknown, but it has not been measured on the
-capacitance itself, so no corrected value is claimed here.
+## Caveat closed 2026-08-06 — the re-extraction was run
+
+The extraction has now been repeated with the substrate genuinely tied, and the caveat above is
+resolved with numbers rather than withdrawn or left hanging.
+
+Method, in two steps, because a re-extraction that silently differs from the original in some other
+way proves nothing:
+
+1. The portable deck in this package was run unmodified. It reproduced the published figures
+   **exactly** — 2.711959e-13 / 2.660271e-13 / 2.097377e-13 F — establishing that the comparison
+   baseline is this package and not a rebuilt approximation of it.
+2. That same deck was then changed by exactly two added lines, `.global sub!` and `VSUB sub! 0 DC 0`,
+   and nothing else.
+
+The tie was verified to have taken effect rather than assumed, which is the failure the note above
+records: with the saved-variable restriction lifted, the unmodified deck exposes **three** separate
+substrate nodes (`xpad.xnclamp.sub!`, `xpad.xpclamp.sub!`, `xpad.xsecondprot.sub!`) and the modified
+deck exposes **one** (`v(sub!)`, with `i(vsub)` beside it).
+
+| frequency | published (substrate floating) | substrate tied | change |
+|---|---|---|---|
+| 10 MHz  | 271.196 fF | 271.646 fF | +0.166 % |
+| 100 MHz | 266.027 fF | 266.479 fF | +0.170 % |
+| 1 GHz   | 209.738 fF | 210.193 fF | +0.217 % |
+| 10 GHz  | 150.813 fF | 151.266 fF | +0.301 % |
+
+The real part of the admittance is unchanged to five significant figures at every point, so the loss
+term and the roll-off reading in this package are unaffected.
+
+**Status of the figures above:** confirmed, with a correction smaller than the rounding used to
+quote them. Every value moves up by between 0.17 % and 0.30 %, in the same direction, and none of the
+conclusions drawn from them changes — in particular the pad still sits inside the 300–400 fF buffer
+drive limit recorded under `context` in `FACTS.json`. Readers who want the corrected numbers should
+use the right-hand column; readers comparing against the raws in this package should expect the
+left-hand one, because those raws were produced with the substrate floating and have not been
+replaced.

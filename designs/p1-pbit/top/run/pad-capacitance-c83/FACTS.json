@@ -6,19 +6,50 @@
   "frequency_sweep_v2": {
     "bias_v": 0.0,
     "points": [
-      {"f_hz": 1.0e7, "c_ff": 271.20, "re_y_s": 1.2762e-07},
-      {"f_hz": 1.0e8, "c_ff": 266.03, "re_y_s": 9.1614e-06},
-      {"f_hz": 1.0e9, "c_ff": 209.74, "re_y_s": 3.3366e-04},
-      {"f_hz": 1.0e10, "c_ff": 150.81, "re_y_s": 1.5059e-03}
+      {
+        "f_hz": 10000000.0,
+        "c_ff": 271.2,
+        "re_y_s": 1.2762e-07
+      },
+      {
+        "f_hz": 100000000.0,
+        "c_ff": 266.03,
+        "re_y_s": 9.1614e-06
+      },
+      {
+        "f_hz": 1000000000.0,
+        "c_ff": 209.74,
+        "re_y_s": 0.00033366
+      },
+      {
+        "f_hz": 10000000000.0,
+        "c_ff": 150.81,
+        "re_y_s": 0.0015059
+      }
     ],
     "note": "roll-off accompanied by rising loss; consistent with a lossy protection network rather than a pure capacitance"
   },
   "bias_sweep_v3_at_1ghz": [
-    {"bias_v": 0.0, "c_ff": 209.7377},
-    {"bias_v": 0.3, "c_ff": 209.2036},
-    {"bias_v": 0.6, "c_ff": 209.2039},
-    {"bias_v": 0.9, "c_ff": 209.6917},
-    {"bias_v": 1.2, "c_ff": 210.6463}
+    {
+      "bias_v": 0.0,
+      "c_ff": 209.7377
+    },
+    {
+      "bias_v": 0.3,
+      "c_ff": 209.2036
+    },
+    {
+      "bias_v": 0.6,
+      "c_ff": 209.2039
+    },
+    {
+      "bias_v": 0.9,
+      "c_ff": 209.6917
+    },
+    {
+      "bias_v": 1.2,
+      "c_ff": 210.6463
+    }
   ],
   "bias_spread_ff": 1.44,
   "bias_spread_percent": 0.7,
@@ -36,5 +67,39 @@
     "no bond wire, probe, cable or board",
     "0 V and swept bias only; no temperature or corner variation",
     "P1 gate remains open"
-  ]
+  ],
+  "substrate_tied_reextraction_2026_08_06": {
+    "change": "two added lines to the published portable deck: '.global sub!' and 'VSUB sub! 0 DC 0'",
+    "baseline_check": "the unmodified portable deck reproduces the published values exactly (2.711959e-13 / 2.660271e-13 / 2.097377e-13 F)",
+    "tie_verified": "unmodified deck exposes three substrate nodes (xpad.xnclamp.sub!, xpad.xpclamp.sub!, xpad.xsecondprot.sub!); modified deck exposes one (v(sub!)) plus i(vsub)",
+    "points": [
+      {
+        "f_hz": 10000000.0,
+        "c_ff_floating": 271.196,
+        "c_ff_tied": 271.646,
+        "change_percent": 0.166
+      },
+      {
+        "f_hz": 100000000.0,
+        "c_ff_floating": 266.027,
+        "c_ff_tied": 266.479,
+        "change_percent": 0.17
+      },
+      {
+        "f_hz": 1000000000.0,
+        "c_ff_floating": 209.738,
+        "c_ff_tied": 210.193,
+        "change_percent": 0.217
+      },
+      {
+        "f_hz": 10000000000.0,
+        "c_ff_floating": 150.813,
+        "c_ff_tied": 151.266,
+        "change_percent": 0.301
+      }
+    ],
+    "loss_term": "Re(Y) unchanged to five significant figures at every point",
+    "disposition": "caveat closed; the published figures are low by 0.17 to 0.30 percent and no conclusion drawn from them changes",
+    "raws_in_this_package": "produced with the substrate floating and NOT replaced; they match the left-hand column"
+  }
 }
