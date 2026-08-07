@@ -1,0 +1,37 @@
+{
+  "package": "load-servo-corner-matrix-c148-c149",
+  "date": "2026-08-07",
+  "status": "in_simulation_public_experiment_not_signoff",
+  "netlist": "C148-SOURCE-p1_top_hier_v3-no-bleed-wrapped-damp35-ls-hbtv-nx4el5.spice",
+  "cmfb": {"topology": "load_servo_diode_pmos_gates", "vcmref_V": 0.75, "vcmref_is_ideal_source": true, "tail_um": 2.5},
+  "standard": {
+    "decode": "offset_sweep_zero_error_spans",
+    "step_bits": 0.05,
+    "reference": "xcomp.c_p_minus_c_n_0V_slice_must_be_0_of_64",
+    "stuck_pin_floors": {"high": 33, "low": 31},
+    "threshold_V": 0.6,
+    "threshold_valid_band_V": [0.10, 1.10],
+    "settle_ns": 10
+  },
+  "c148_b800": {
+    "bit_ps": 800,
+    "zero_error_spans_bits": {
+      "TT-TYP-125": [1.30, 2.15], "SS-TYP-27": [1.55, 2.45], "SS-TYP-125": [1.50, 2.35],
+      "SS-WCS-27": [1.60, 2.45], "SS-WCS-125": [1.50, 2.35], "SS-WCS-N40": [1.70, 2.55]
+    },
+    "cross_corner_intersection_bits": [1.70, 2.15],
+    "cm_V": {"TT-TYP-125": 0.7760, "SS-TYP-27": 0.7673, "SS-TYP-125": 0.7716, "SS-WCS-27": 0.7673, "SS-WCS-125": 0.7715, "SS-WCS-N40": 0.7651},
+    "verdict": "all_six_corners_0_of_64"
+  },
+  "c149_b400": {
+    "bit_ps": 400,
+    "zero_error_spans": "none_at_any_corner_sweep_0_to_11_bits",
+    "min_errors": {"TT-TYP-125": 2, "SS-TYP-125": 5, "SS-WCS-125": 6, "SS-TYP-27": 7, "SS-WCS-27": 7, "SS-WCS-N40": 8},
+    "rig_clean_span_bits": 0.95,
+    "verdict": "fails_every_corner_ceiling_is_sense_amp_latch"
+  },
+  "rate_of_record_GSps": 1.25,
+  "history_note": "single_phase_decode_manufactured_the_c148_27C_failures_see_harness_finding_H722",
+  "c145_audit": "all_pre_c148_rate_ladder_conclusions_confirmed_under_offset_sweep",
+  "pending": "c150_full_prbs_period_and_vdd_pm10pc_to_be_appended_after_independent_verification"
+}

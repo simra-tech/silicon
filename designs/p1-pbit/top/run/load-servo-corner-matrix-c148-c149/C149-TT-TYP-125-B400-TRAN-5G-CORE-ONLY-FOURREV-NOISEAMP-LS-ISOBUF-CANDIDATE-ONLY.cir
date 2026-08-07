@@ -1,0 +1,226 @@
+* C149-TT-TYP-125-B400 = C148-TT-TYP-125-B800 (C148 netlist UNTOUCHED) with ONLY
+* the PRBS at 400 ps per bit and the tran window (40n).
+* New decode standard: sweep the sample offset 0-3 bits in 0.05 steps;
+* report the widest contiguous zero-error span per corner plus the
+* cross-corner intersection; rig reference and point-count check
+* unchanged; never a single-phase count.
+* C149-TT-TYP-125-B400 = C143-TT-TYP-125-B800 with ONLY the comparator source
+* swapped to C148-SOURCE (CMFB on the LOAD: diode pmos gates servoed to
+* 0.75 V via VLOAD, XMTAIL fixed at 2.5u - cm and tail current
+* independent; first-order, stated). Report per corner cml
+* differential, e_cmos, cm, rig, then errors. If -40 is dead with both
+* healthy, cm is exonerated.
+* C149-TT-TYP-125-B400 = C142-B800 (BUF-D110, 800 ps/bit) with ONLY the
+* corner: RES res_typ, MOSlv mos_tt, temp 125 degC (HBT hbt_typ,
+* MOShv mos_tt, CAP/DIO typ - the C112 convention). Report per corner
+* the rig FIRST, then the cml differential decode, then pbit_out
+* errors and positions. Any corner where the rig is not 0/64 is VOID,
+* not a failure - do not score it. If the zero holds everywhere the
+* working rate is 1.25 GS/s; if not, it is whatever the worst corner
+* allows.
+* C149-TT-TYP-125-B400 = C141-BUF-D110 UNCHANGED (BUF first stage 0.5u/0.35u,
+* CD2 base, SACLK delay 110 ps, 200 ps period) with ONLY the input
+* PRBS widened to 800 ps per bit (same 64 bits, starting at 10 ns) and
+* the tran window. The sense-amp clock stays at its 200 ps period:
+* 4 strobe(s) per bit. If the failures are time-to-change-state,
+* the longer bits give the latch more strobes and should help. Report
+* rig, cml differential decode, pbit_out errors + first-bit-of-run
+* count for each. If either gives zero with the rig at zero, say so
+* plainly and quote both.
+* C149-TT-TYP-125-B400 = C140-D110 (CD2 base, delay 110 ps) with ONLY
+* buffer first stage shrunk 0.8u/0.6u -> 0.5u/0.35u (NAND drives less). Error pattern: errors happen when the latch must CHANGE
+* STATE (first bit of a run / single-bit runs get swallowed; long runs
+* pass). Make the flip easier. Report errors and how many fall at a
+* run's first bit.
+* C149-TT-TYP-125-B400 = C139-CD2-S120 (CD2 base) with ONLY the VSACLK delay
+* changed to 110 ps: evaluate [120p,240p] (truncated at the 200 ps period: evaluate at rail ends at 200p, 80 ps).
+* The data is perfect through the cml stage (c_p-c_n 0/64, cml diff
+* 0/64); every remaining error is made inside the sense amp+latch, so
+* the untried parameter is WHEN it samples. Report per run: rig, cml
+* differential decode, pbit_out errors. Prediction: errors depend
+* strongly on the delay, minimum well below 11.
+* C149-TT-TYP-125-B400 = C138-T4-S120 (XMTAIL 4u, 120/80 split, precharge 6u)
+* with ONLY XCDAMP1/2 halved 3.5u -> 2.0u square (damping caps on the settling-critical nodes); report ringing on cml_out_p/n FIRST. Report cm, differential, hold, rig, errors.
+* C149-TT-TYP-125-B400 = C137-W16-S120 (16u cml diode loads, 120/80 split,
+* precharge 6u) with ONLY XMTAIL (e_cmos, gate at VDD, l=0.50u)
+* narrowed to 4.0u - less tail current, less drop across the loads,
+* higher output common mode; should be monotonic (unlike the diode
+* width, which turned over past 16u). Report cm and differential,
+* then hold, then rig, then errors. Prediction: cm > 0.691 V, hold
+* > 40 ps, errors < 12.
+* SEPARATE (do not act): XCDAMP1/XCDAMP2 are 3.5u x 3.5u caps on
+* cml_out_p/cml_out_n - real capacitance on the settling-critical
+* nodes; worth a later test.
+* C149-TT-TYP-125-B400 = C134-S120 (120/80 split, precharge 6u) with ONLY
+* the cml diode loads WIDENED to 16.0u (C137-SOURCE-W16) - lowers
+* their Vgs, raising the output common mode. The C136 data: common
+* mode 0.656/0.592/0.509 V -> hold 37.6/29.0/19.4 ps -> errors
+* 15/18/31, while the differential moved the opposite way - the hold
+* tracks common mode (input-pair overdrive = cm - Vth), not
+* differential. Report cml common mode and differential, then
+* valid-low hold, then rig, then errors. Prediction: cm > 0.656 V,
+* hold > 37.6 ps, errors < 15. If the hold does not move, the
+* relationship is not causal.
+* C149-TT-TYP-125-B400 = C133-FULL200 with ONLY the evaluate/precharge split
+* changed: evaluate 120 ps (at rail, [70p,190p]), precharge
+* 80 ps effective (60 ps at rail + the 20 ps edges).
+* Delay adjusted (td=60p) so the evaluate ends at 190 ps (the
+* measured cml-valid end) and the 200 ps period fits. For each split
+* report IN ORDER: strobe-start imbalance, mean+max time raw_inv
+* holds below 0.3 V, the rig, then the bit errors at 200 ps.
+* C149-TT-TYP-125-B400 = C132-FULL200 with ONLY the two-inverter buffer
+* (C133-SOURCE: XB1 0.8u/0.6u + XB2 2.4u/1.8u, non-inverting) between
+* Q and XM7; the NAND stays minimum size. Report the buffer output
+* window range BEFORE any score, then decode at 200 ps with the rig
+* alongside. SEPARATE RELIABILITY ITEM (recorded, not fixed): raw_inv
+* and sa_n reach ~1.49 V on a 1.2 V supply (~24% over-rail, presumed
+* clock coupling through the precharge devices).
+* C149-TT-TYP-125-B400 = C127-200 with CLK_P/CLK_N RESTORED exactly as
+* original and the sense amp given its OWN clock VSACLK (global node
+* SACLK): period 200 ps, evaluate [90p,190p] (100 ps), precharge
+* [190p,290p] (100 ps), delay 80 ps set from the measured cml_out
+* validity (the cml_out differential regenerates through the latch and
+* peaks at the CLK_P edge +120p: 0.115 V; valid ~95-190 ps; the
+* evaluate covers it). The comparator tracks bit n+1 while the sense
+* amp resolves bit n - pipeline stages, not exclusive in time.
+* Sense amp gates (XSA_T tail, XPC1/XPC2 precharge) switched CLK_N ->
+* SACLK (C132-SOURCE). Report the rig FIRST.
+* C149-TT-TYP-125-B400 TRAN 5 GS/s CORE-ONLY FOUR-REVERSAL NOISE-AMP LS HBT-V
+* NX4EL5 ISOBUF deck, 210f LOAD, STRONGARM + NAND2 SR LATCH
+* (C127-SOURCE), tt/typ/27 (SOURCE ONLY, UNRUN)
+* C149-TT-TYP-125-B400 = accepted C99-ASDRAWN (76911db0...) with ONLY the
+* comparator source include swapped to C127-SOURCE-...spice (pass
+* gates, h_p/h_n keeper and raw_buf/sa_buf buffers REMOVED; raw_inv
+* and sa_n wired straight into two cross-coupled minimum-size NAND2
+* gates - Q = NAND(raw_inv,qbar), qbar = NAND(sa_n,Q) - the
+* precharged sense nodes are self-timed active-low inputs (both high =
+* HOLD, one falls = SET); XM7 reads Q), the input PWL changed to the
+* 64-bit PRBS at 200 ps per bit starting at 10 ns, the tran window
+* (25n), and the basename. Report the two NAND output window
+* ranges (t > 10 ns) BEFORE any score.
+.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerHBT.lib hbt_typ
+.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerRES.lib res_typ
+.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerCAP.lib cap_typ
+.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerMOShv.lib mos_tt
+.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerMOSlv.lib mos_tt
+.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerDIO.lib dio_tt
+
+.include /volume/user/workspace/2026-08-03_p1-cml-div2-cml-div4-c11-iso-buffer/C148-SOURCE-p1_top_hier_v3-no-bleed-wrapped-damp35-ls-hbtv-nx4el5.spice
+.include /volume/user/workspace/2026-08-03_p1-cml-div2-cml-div4-c11-iso-buffer/C11-V2-ISOBUF-PBIT_OUT.spice
+
+.option temp = 125.0
+.options rshunt = 1e12
+.options savecurrents
+
+VCC_HBT VCC_HBT 0 DC 2.500
+VDD VDD 0 DC 1.200
+VSS VSS 0 DC 0.000
+VBUF_VDD VDD_BUF 0 DC 1.200
+
+* Differential Clock Input (5.0 GS/s, 200ps Period) - normal PULSE pair
+VCLK_P CLK_P 0 PULSE(1.20 0.0 0 20p 20p 80p 200p)
+VCLK_N CLK_N 0 PULSE(0.0 1.20 0 20p 20p 80p 200p)
+.global SACLK
+VSACLK SACLK 0 PULSE(0.0 1.20 110p 10p 10p 120p 200p)
+
+* Acquisition-then-four-reversal differential input, CONTINUOUS 20 ps
+* ramps (no duplicate timestamps): 0..0.08n neutral (both 1.440 V);
+* ramp 0.08n->0.10n to +1 mV (P 1.4405 / N 1.4395); hold to 0.48n;
+* reversal 1 0.48n->0.50n to -1 mV; hold to 0.68n; reversal 2
+* 0.68n->0.70n to +1 mV; hold to 0.88n; reversal 3 0.88n->0.90n to
+* -1 mV; hold to 1.08n; reversal 4 1.08n->1.10n to +1 mV; hold to
+* 2.2n. VCM = 1.440 V everywhere. VRAW_N = complement.
+VRAW_P RAW_NOISE_P 0 PWL(0.00n 1.440 10.00n 1.440 10.02n 1.4405 10.40n 1.4405 10.42n 1.4405 10.80n 1.4405 10.82n 1.4405 11.20n 1.4405 11.22n 1.4405 11.60n 1.4405 11.62n 1.4405 12.00n 1.4405 12.02n 1.4405 12.40n 1.4405 12.42n 1.4405 12.80n 1.4405 12.82n 1.4395 13.20n 1.4395 13.22n 1.4395 13.60n 1.4395 13.62n 1.4395 14.00n 1.4395 14.02n 1.4395 14.40n 1.4395 14.42n 1.4395 14.80n 1.4395 14.82n 1.4395 15.20n 1.4395 15.22n 1.4405 15.60n 1.4405 15.62n 1.4395 16.00n 1.4395 16.02n 1.4395 16.40n 1.4395 16.42n 1.4395 16.80n 1.4395 16.82n 1.4395 17.20n 1.4395 17.22n 1.4395 17.60n 1.4395 17.62n 1.4405 18.00n 1.4405 18.02n 1.4405 18.40n 1.4405 18.42n 1.4395 18.80n 1.4395 18.82n 1.4395 19.20n 1.4395 19.22n 1.4395 19.60n 1.4395 19.62n 1.4395 20.00n 1.4395 20.02n 1.4405 20.40n 1.4405 20.42n 1.4395 20.80n 1.4395 20.82n 1.4405 21.20n 1.4405 21.22n 1.4395 21.60n 1.4395 21.62n 1.4395 22.00n 1.4395 22.02n 1.4395 22.40n 1.4395 22.42n 1.4405 22.80n 1.4405 22.82n 1.4405 23.20n 1.4405 23.22n 1.4405 23.60n 1.4405 23.62n 1.4405 24.00n 1.4405 24.02n 1.4395 24.40n 1.4395 24.42n 1.4395 24.80n 1.4395 24.82n 1.4405 25.20n 1.4405 25.22n 1.4395 25.60n 1.4395 25.62n 1.4395 26.00n 1.4395 26.02n 1.4395 26.40n 1.4395 26.42n 1.4405 26.80n 1.4405 26.82n 1.4395 27.20n 1.4395 27.22n 1.4405 27.60n 1.4405 27.62n 1.4405 28.00n 1.4405 28.02n 1.4395 28.40n 1.4395 28.42n 1.4395 28.80n 1.4395 28.82n 1.4405 29.20n 1.4405 29.22n 1.4405 29.60n 1.4405 29.62n 1.4405 30.00n 1.4405 30.02n 1.4395 30.40n 1.4395 30.42n 1.4405 30.80n 1.4405 30.82n 1.4395 31.20n 1.4395 31.22n 1.4405 31.60n 1.4405 31.62n 1.4395 32.00n 1.4395 32.02n 1.4395 32.40n 1.4395 32.42n 1.4405 32.80n 1.4405 32.82n 1.4405 33.20n 1.4405 33.22n 1.4405 33.60n 1.4405 33.62n 1.4405 34.00n 1.4405 34.02n 1.4405 34.40n 1.4405 34.42n 1.4395 34.80n 1.4395 34.82n 1.4405 35.20n 1.4405 35.22n 1.4395 40.00n 1.4395)
+VRAW_N RAW_NOISE_N 0 PWL(0.00n 1.440 10.00n 1.440 10.02n 1.4395 10.40n 1.4395 10.42n 1.4395 10.80n 1.4395 10.82n 1.4395 11.20n 1.4395 11.22n 1.4395 11.60n 1.4395 11.62n 1.4395 12.00n 1.4395 12.02n 1.4395 12.40n 1.4395 12.42n 1.4395 12.80n 1.4395 12.82n 1.4405 13.20n 1.4405 13.22n 1.4405 13.60n 1.4405 13.62n 1.4405 14.00n 1.4405 14.02n 1.4405 14.40n 1.4405 14.42n 1.4405 14.80n 1.4405 14.82n 1.4405 15.20n 1.4405 15.22n 1.4395 15.60n 1.4395 15.62n 1.4405 16.00n 1.4405 16.02n 1.4405 16.40n 1.4405 16.42n 1.4405 16.80n 1.4405 16.82n 1.4405 17.20n 1.4405 17.22n 1.4405 17.60n 1.4405 17.62n 1.4395 18.00n 1.4395 18.02n 1.4395 18.40n 1.4395 18.42n 1.4405 18.80n 1.4405 18.82n 1.4405 19.20n 1.4405 19.22n 1.4405 19.60n 1.4405 19.62n 1.4405 20.00n 1.4405 20.02n 1.4395 20.40n 1.4395 20.42n 1.4405 20.80n 1.4405 20.82n 1.4395 21.20n 1.4395 21.22n 1.4405 21.60n 1.4405 21.62n 1.4405 22.00n 1.4405 22.02n 1.4405 22.40n 1.4405 22.42n 1.4395 22.80n 1.4395 22.82n 1.4395 23.20n 1.4395 23.22n 1.4395 23.60n 1.4395 23.62n 1.4395 24.00n 1.4395 24.02n 1.4405 24.40n 1.4405 24.42n 1.4405 24.80n 1.4405 24.82n 1.4395 25.20n 1.4395 25.22n 1.4405 25.60n 1.4405 25.62n 1.4405 26.00n 1.4405 26.02n 1.4405 26.40n 1.4405 26.42n 1.4395 26.80n 1.4395 26.82n 1.4405 27.20n 1.4405 27.22n 1.4395 27.60n 1.4395 27.62n 1.4395 28.00n 1.4395 28.02n 1.4405 28.40n 1.4405 28.42n 1.4405 28.80n 1.4405 28.82n 1.4395 29.20n 1.4395 29.22n 1.4395 29.60n 1.4395 29.62n 1.4395 30.00n 1.4395 30.02n 1.4405 30.40n 1.4405 30.42n 1.4395 30.80n 1.4395 30.82n 1.4405 31.20n 1.4405 31.22n 1.4395 31.60n 1.4395 31.62n 1.4405 32.00n 1.4405 32.02n 1.4405 32.40n 1.4405 32.42n 1.4395 32.80n 1.4395 32.82n 1.4395 33.20n 1.4395 33.22n 1.4395 33.60n 1.4395 33.62n 1.4395 34.00n 1.4395 34.02n 1.4395 34.40n 1.4395 34.42n 1.4405 34.80n 1.4405 34.82n 1.4395 35.20n 1.4395 35.22n 1.4405 40.00n 1.4405)
+
+VTRIM_P TRIM_P 0 DC 1.440
+VTRIM_N TRIM_N 0 DC 1.440
+
+* ---- integrated chain with PHYSICAL CM conditioning + HBT-V Nx4El5
+*      input pair: published preamp (p1_noise_amp) -> matched NPN
+*      emitter-follower level shift (ls_pbit V3, PDK-only, XRLS 1u x
+*      3.85u ~ 995 ohm) -> no-bleed comparator with npn13G2v Nx=4 El=5.0
+*      input pair XQ1/XQ2 (~20x C44 emitter area; may lower current-
+*      density VBE by ~78 mV; capacitance/timing/loading UNKNOWN;
+*      XRC1/XRC2 l=0.838u ~ 216 ohm, C42 geometry) (p1_comparator); NO
+*      XISO buffer branch in the C45 baseline (pbit_out_core unloaded);
+*      C82-44F/520F INSTANTIATE exactly one XISO + one CLOAD (declared
+*      additions below); cml_out damping
+*      caps 3.5u x 3.5u (18.935 fF/node typical). Family-bound emitter-
+*      area control candidate; no E/G/B behavioral sources. ----
+XAMP NOISE_AMP_P NOISE_AMP_N RAW_NOISE_P RAW_NOISE_N VCC_HBT VSS p1_noise_amp
+XLS LS_P LS_N VCC_HBT VSS NOISE_AMP_P NOISE_AMP_N ls_pbit
+XCOMP pbit_out_core pbit_raw_core clk_replica LS_P LS_N CLK_P CLK_N TRIM_P TRIM_N VCC_HBT VDD VSS p1_comparator
+* C82 declared addition: exactly one isolation buffer (C11-V2
+* iso_buf_pbit_out, cf8f7462...) driving the new PBIT_OUT node, loaded by
+* exactly one CLOAD of the named value. Sensitivity assumptions only.
+XISO pbit_out_core PBIT_OUT VDD_BUF VSS iso_buf_pbit_out
+CLOAD PBIT_OUT 0 210f
+
+.control
+pre_osdi /foss/pdks/ihp-sg13g2/libs.tech/ngspice/osdi/psp103.osdi
+pre_osdi /foss/pdks/ihp-sg13g2/libs.tech/ngspice/osdi/psp103_nqs.osdi
+tran 2p 40n 0
+write C149-TT-TYP-125-B400-TRAN-5G-CORE-ONLY-FOURREV-NOISEAMP-LS-ISOBUF-CANDIDATE-ONLY.raw all
+* four matched core samples (C16-identical): PBIT_RAW / PBIT_OUT at 900p,
+* 1000p, 1900p, 2000p
+meas tran raw_latch_end FIND v(pbit_raw_core) at=900p
+meas tran raw_track_end FIND v(pbit_raw_core) at=1000p
+meas tran out_latch_end FIND v(pbit_out_core) at=900p
+meas tran out_track_end FIND v(pbit_out_core) at=1000p
+meas tran raw_latch2_end FIND v(pbit_raw_core) at=1900p
+meas tran raw_track2_end FIND v(pbit_raw_core) at=2000p
+meas tran out_latch2_end FIND v(pbit_out_core) at=1900p
+meas tran out_track2_end FIND v(pbit_out_core) at=2000p
+* core crossings RISE/FALL 1 and 2 (four alternating reversals; criterion
+* ignores crossings <= 0.48 ns)
+meas tran c_cross_r1 WHEN v(pbit_out_core)=0.6 RISE=1
+meas tran c_cross_r2 WHEN v(pbit_out_core)=0.6 RISE=2
+meas tran c_cross_f1 WHEN v(pbit_out_core)=0.6 FALL=1
+meas tran c_cross_f2 WHEN v(pbit_out_core)=0.6 FALL=2
+* core samples at 1.1/1.3/1.5/1.7n
+meas tran out_1p1 FIND v(pbit_out_core) at=1.1n
+meas tran out_1p3 FIND v(pbit_out_core) at=1.3n
+meas tran out_1p5 FIND v(pbit_out_core) at=1.5n
+meas tran out_1p7 FIND v(pbit_out_core) at=1.7n
+* C82 declared additions: buffered PBIT_OUT samples at the C16-identical
+* instants (900p/1000p/1900p/2000p) and at 1.1/1.3/1.5/1.7n
+meas tran buf_latch_end FIND v(PBIT_OUT) at=900p
+meas tran buf_track_end FIND v(PBIT_OUT) at=1000p
+meas tran buf_latch2_end FIND v(PBIT_OUT) at=1900p
+meas tran buf_track2_end FIND v(PBIT_OUT) at=2000p
+meas tran buf_1p1 FIND v(PBIT_OUT) at=1.1n
+meas tran buf_1p3 FIND v(PBIT_OUT) at=1.3n
+meas tran buf_1p5 FIND v(PBIT_OUT) at=1.5n
+meas tran buf_1p7 FIND v(PBIT_OUT) at=1.7n
+* buffered 0.6 V rail-midpoint proxy crossings; V2 ENCODES the
+* ignore-crossings-<=0.48-ns guard with TD=0.48n before the ordinal
+* (V1 claimed the guard without a time window)
+meas tran buf_cross_r1 WHEN v(PBIT_OUT)=0.6 TD=0.48n RISE=1
+meas tran buf_cross_r2 WHEN v(PBIT_OUT)=0.6 TD=0.48n RISE=2
+meas tran buf_cross_f1 WHEN v(PBIT_OUT)=0.6 TD=0.48n FALL=1
+meas tran buf_cross_f2 WHEN v(PBIT_OUT)=0.6 TD=0.48n FALL=2
+* core-to-buffer propagation delays: same-edge 0.6 V rail-midpoint proxy
+* crossings of pbit_out_core (TRIG) and PBIT_OUT (TARG); TD=0.48n on BOTH
+* clauses encodes the ignore-crossings-<=0.48-ns guard (V2)
+meas tran td_r1 TRIG v(pbit_out_core) VAL=0.6 TD=0.48n RISE=1 TARG v(PBIT_OUT) VAL=0.6 TD=0.48n RISE=1
+meas tran td_r2 TRIG v(pbit_out_core) VAL=0.6 TD=0.48n RISE=2 TARG v(PBIT_OUT) VAL=0.6 TD=0.48n RISE=2
+meas tran td_f1 TRIG v(pbit_out_core) VAL=0.6 TD=0.48n FALL=1 TARG v(PBIT_OUT) VAL=0.6 TD=0.48n FALL=1
+meas tran td_f2 TRIG v(pbit_out_core) VAL=0.6 TD=0.48n FALL=2 TARG v(PBIT_OUT) VAL=0.6 TD=0.48n FALL=2
+* buffered-output run extrema (whole 0..2.2n window)
+meas tran buf_vmax MAX v(PBIT_OUT)
+meas tran buf_vmin MIN v(PBIT_OUT)
+* VDD_BUF delivered current/power (explicit definitions):
+* I_SUP(t) = -i(vbuf_vdd)  = current delivered by VBUF_VDD into VDD_BUF
+*   (A; ngspice branch convention i(vbuf_vdd) positive = conventional
+*   current from node VDD_BUF through the source to ground, so the
+*   delivered current is the negation)
+* P_SUP(t) = VDD_BUF * I_SUP(t) = 1.2 * I_SUP(t)  (W)
+let i_vbuf = -i(vbuf_vdd)
+let p_vbuf = 1.2*i_vbuf
+meas tran buf_idd_max MAX i_vbuf
+meas tran buf_pow_max MAX p_vbuf
+print raw_latch_end raw_track_end out_latch_end out_track_end raw_latch2_end raw_track2_end out_latch2_end out_track2_end c_cross_r1 c_cross_r2 c_cross_f1 c_cross_f2 out_1p1 out_1p3 out_1p5 out_1p7 buf_latch_end buf_track_end buf_latch2_end buf_track2_end buf_1p1 buf_1p3 buf_1p5 buf_1p7 buf_cross_r1 buf_cross_r2 buf_cross_f1 buf_cross_f2 td_r1 td_r2 td_f1 td_f2 buf_vmax buf_vmin buf_idd_max buf_pow_max
+quit
+.endc
+.end
