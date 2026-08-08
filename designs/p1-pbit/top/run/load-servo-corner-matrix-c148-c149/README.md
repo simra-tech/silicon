@@ -290,3 +290,56 @@ four; 7% is a cheap price for leaving the interface alone.
 **Open — unmodelled load:** PBIT_RAW is connected to nothing in these testbenches while PBIT_OUT
 carries 210 fF. On a real part it would drive a comparable pad, so the stage feeding it is
 under-loaded here and today's timing is optimistic by an unquantified amount.
+
+## Randomness campaign, 2026-08-08 (C157–C162): offset, noise, bias, correlation
+
+The timing work above says whether the part moves bits correctly. This section is the first evidence
+about whether the bits are **unpredictable**, which is what the part is for.
+
+### Measured
+
+| quantity | value | method |
+|---|---|---|
+| input-referred offset, σ | **11.79 mV** (mean −0.19, 90th pct \|offset\| 19.12) | MC mismatch, N=200, track-phase DC sweep; 1/200 failed the validity gate, excluded |
+| offset attribution | **11.5 mV** sense-amp/latch/buffer chain, **2.7 mV** CML stage | second MC population with the CML held matched |
+| trim efficacy | 1.002 mV input-referred per mV trim differential; range ±60 mV (5σ) | trim sweep at the operating point |
+| trim resolution | 0.20 mV per step as drawn; 0.05 mV with 2 extra DAC bits | fine-trim bench |
+| noise at comparator, σ_n | **3.246 mV rms** | `.noise`, band later characterised by `.ac` |
+| noise band | −3 dB 15.8 MHz … 5.62 GHz, peak \|H\| 14.8 V/V @0.32 GHz, NEBW 8.0 GHz | `.ac` sweep |
+| serial correlation ρ (800 ps) | **−0.0033** (independently reproduced: −0.004) | analytic from the `.ac` transfer, dense linear grid |
+
+**Consistency check (independent, both chairs):** implied input density S = 6.12e-18 V²/Hz = 4kTR
+with R = 278 Ω at 125 °C — a physical source resistance. √(S·NEBW·|H|²) = 3.253 mV against the
+measured 3.246.
+
+### Conclusions
+
+- **Bias, not error rate, is the binding constraint.** Against the 121 mV test differential the
+  offset is 10σ of headroom and harmless. Against σ_n = 3.25 mV — the correct yardstick, since in
+  service the input is noise centred on zero — an *untrimmed* part gives P(one) ≈ 100%: dead-biased,
+  not merely skewed. **Trim is mandatory.**
+- **Trim resolution, not range, is the specification.** Required residual is σ_n/40 = **0.081 mV**
+  for <1% imbalance. As drawn (0.20 mV) gives 2.45% — 2.5× outside. With 0.05 mV steps: 0.6% —
+  inside, min-entropy 0.983 bits/bit.
+- **Serial correlation is not a defect.** ρ ≈ −0.003 → P(repeat) ≈ 49.9%, indistinguishable from a
+  fair coin. An earlier ρ = 0.102 was a log-grid aliasing artefact (see H-730) and is retracted,
+  along with the "correlation dominates" conclusion built on it.
+- **One-time calibration cannot work, by arithmetic rather than measurement.** The 0.081 mV budget is
+  0.69% of the 11.8 mV offset; a part drifting 1% of its own offset yields 1.45% bias, 5% yields
+  7.2%. Any plausible tempco over 165 °C is tens of percent — 30–70× over budget. Three attempts to
+  measure the drift factor all failed (probe fighting the CMFB loop; forced-bias deck giving a
+  non-physical 375× gain span; unseedable RNG preventing per-part tracking), and none of them matter.
+- **The answer is a background servo**, not a tighter component: count the output ones/zeros and
+  servo the trim to hold the ratio at ½. Sizing: N = 10,000 bits resolves 1% at 2σ (32,768 at 3σ),
+  giving an 8–26 µs window against a 20–50 ms drift time at 1 °C/s — three orders of margin. It also
+  absorbs ageing and supply drift, which no factory calibration can.
+
+### Open
+
+- **Servo hazards (raised, not yet analysed):** a loop that forces the ratio to ½ will do so even if
+  the noise source dies, so **health monitoring must be independent of the servo** — repetition
+  counts and raw pre-trim balance, not the corrected ratio. And the loop imprints a slow negative
+  correlation at its own window scale; that must be shown to sit below the measurement floor.
+- Metastability rate never calculated — and this circuit deliberately operates in the small-input
+  regime other designs treat as the dangerous tail, so it is a first-order quantity here.
+- No layout parasitics, no post-layout re-verification. Nothing fabricated.

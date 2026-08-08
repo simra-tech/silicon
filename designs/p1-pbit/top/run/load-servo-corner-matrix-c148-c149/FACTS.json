@@ -236,5 +236,44 @@
     },
     "stage_count": "kept at 6: XM7/8 feeds the PBIT_RAW output pin and stages invert, so only an even number may be removed"
   },
-  "open_items_added": "PBIT_RAW is unloaded in the testbench but would drive its own pad on a real part"
+  "open_items_added": "PBIT_RAW is unloaded in the testbench but would drive its own pad on a real part",
+  "randomness_campaign_2026_08_08": {
+    "offset_sigma_mV": 11.79,
+    "offset_p90_mV": 19.12,
+    "gate_failures": "1/200 excluded",
+    "attribution_mV": {
+      "sense_amp_latch_buffer": 11.5,
+      "cml": 2.7
+    },
+    "trim_mV_per_mV": 1.002,
+    "trim_range_mV": 60,
+    "trim_step_mV": {
+      "as_drawn": 0.2,
+      "with_2_extra_bits": 0.05
+    },
+    "sigma_n_mV": 3.246,
+    "noise_band": {
+      "f3db_low_MHz": 15.8,
+      "f3db_high_GHz": 5.62,
+      "NEBW_GHz": 8.0,
+      "peak_gain": 14.8
+    },
+    "implied_source_R_ohm": 278,
+    "rho_800ps": -0.0033,
+    "bias": {
+      "untrimmed": "P(one) ~100pc",
+      "trim_0p20": "2.45 pc",
+      "trim_0p05": "0.6 pc",
+      "required_residual_mV": 0.081
+    },
+    "min_entropy_bits": 0.983,
+    "one_time_calibration": "impossible by arithmetic: 0.69pc budget vs tens-of-pc tempco",
+    "answer": "background servo on the output ones/zeros ratio; N=10k bits at 2 sigma, 32768 at 3 sigma; 8-26 us window vs 20-50 ms drift",
+    "retracted": "rho=0.102 and correlation-dominates, a log-grid aliasing artefact",
+    "open": [
+      "servo must not mask a dead source - independent health monitoring",
+      "servo imprints correlation at its window scale",
+      "metastability rate never calculated"
+    ]
+  }
 }
