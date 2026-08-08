@@ -71,3 +71,24 @@ clean span. All pre-C148 rate-ladder conclusions stand.
   will be appended once independently verified.
 - Schematic-level only: no layout parasitics, no mismatch, no noise analysis yet.
 - Path to 2.5 GS/s: interleaved sense amps (alternate bits) — proposed, not designed.
+
+## C150 (2026-08-07) — full-period pass, supply axis void
+
+**Axis 1 (pattern) — valid, passed.** TX extended to the full 127-bit PRBS-7 period (64 ones,
+63 zeros; first 64 bits identical to the previous window), 800 ps/bit, 10 ns settle + 131 bits.
+All six corners decode 0/64 with a 720 ps eye and spans identical to the 64-bit result
+(TT-TYP-125 1.30–2.15, SS-TYP-27 1.55–2.40, SS-TYP-125 1.50–2.35, SS-WCS-27 1.60–2.45,
+SS-WCS-125 1.50–2.35, SS-WCS-N40 1.70–2.55; cm unchanged to 4 digits). The previously untested
+half of the pattern, including the runs of seven, changes nothing.
+
+**Axis 2 (supply) — VOID, unrun.** The V108/V120/V132 decks all carry `VDD VDD 0 DC 1.200` and
+`VBUF_VDD VDD_BUF 0 DC 1.200`; the supply distinction exists only in the header comment. Confirmed
+by identical non-comment deck bodies and by `v(vdd)` = 1.2000 sampled from all three raws. Each
+corner ran three times at nominal. Detected because the three "conditions" agreed to every digit —
+a 10% supply step cannot leave cm identical to 0.1 mV (harness finding H-723). **Behaviour across
+supply is unknown**; the standing prediction that 1.08 V fails (VCMREF being an absolute source) is
+untested, neither confirmed nor refuted. C151 reruns it with the sources actually edited.
+
+**Standing rule added:** every swept quantity (supply, temperature, bit period) must be read back
+out of the raw and reported beside the result. A condition named only in a filename is not a
+condition.
