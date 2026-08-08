@@ -219,3 +219,25 @@ source. Not a signoff, not a tape-out claim.
 **Next (C154):** strengthen the digital tail (NAND latch + three buffer stages, which carry ~400 ps
 of the 533 ps spread), rerun the 18-condition matrix at 800 ps/bit, target making 1.25 GS/s
 composable.
+
+## Derived design trade-off — supply regulation vs achievable fixed-clock rate
+
+From the measured window edges at 800 and 1000 ps/bit (linear interpolation of edges in VDD; no
+additional simulation):
+
+| supply tolerance | shared margin @800 ps | @1000 ps | max fixed-clock rate |
+|---|---|---|---|
+| ±0% (perfect) | +360 ps | +550 ps | >1.25 GS/s |
+| ±2.5% | +240 ps | +450 ps | >1.25 GS/s |
+| ±5% | +120 ps | +350 ps | >1.25 GS/s |
+| ±7.5% | 0 ps | +250 ps | ≈1.25 GS/s (boundary) |
+| ±10% | −120 ps | +150 ps | 1.13 GS/s (889 ps/bit) |
+
+**Sampling-instant specification.** At ±10% supply and 1000 ps/bit: sample at **1.725 bits past the
+settle reference, ±75 ps**. At nominal supply and 800 ps/bit: 1.925 bits, ±180 ps. That tolerance is
+the whole budget for clock jitter, distribution skew, and edge-placement error — and none of
+mismatch, extracted parasitics or noise has been charged against it yet.
+
+**Reading:** the rate is not a property of the circuit alone. Behind a dedicated on-chip regulator
+(±5% or better) the 1.25 GS/s rate is composable; on a raw ±10% supply the fixed-clock ceiling is
+1.13 GS/s. Quote the trade, not a single number.
