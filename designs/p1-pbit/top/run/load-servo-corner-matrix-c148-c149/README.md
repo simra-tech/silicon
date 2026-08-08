@@ -129,3 +129,62 @@ intersection as the headline number, the per-condition table as diagnostic.
 **Open, pending C152:** where the 700 ps of latency spread accumulates, stage by stage. If one
 stage dominates, replica-path clocking is the fix; if it is spread evenly, clock-and-data recovery
 or a per-condition clock. Also open: the bit rate at which the intersection first becomes non-empty.
+
+## C152 (2026-08-07) — where the latency spread accumulates
+
+Delay from the bit-clock edge to the crossing at each node, spread across the 18 conditions:
+
+| node | spread across 18 (ps) | mean delay (ps) |
+|---|---|---|
+| c_p − c_n (comparator) | **11** | 140 |
+| cml_out | 53 | 351 |
+| sa_n (sense amp) | 111 | 294 |
+| Q (NAND latch) | 252 | 543 |
+| pbit_out_core | 524 | 626 |
+| PBIT_OUT (pad) | 533 | 778 |
+
+The analogue front end is essentially invariant (11 ps); the digital tail — latch, buffers, output
+driver — carries ~400 ps of the 533 ps total. Spread is distributed across a latch and three
+buffers rather than concentrated in one stage, so a **simple replica-path clock will not track it**;
+a replica would have to duplicate the whole NAND→buffer→output chain.
+
+**Tested and refuted: sampling before the pad does not rescue the intersection.** The output driver
+and pad exist only for observability, so the obvious hypothesis was that the empty window is an
+artifact of the observation path. Decoding internal nodes across all 18 conditions (harness finding
+H-725):
+
+| sampling point | intersection across 18 |
+|---|---|
+| Q (latch, on-chip) | empty by 360 ps |
+| pbit_out_core (pre-pad) | empty by 40 ps |
+| PBIT_OUT (pad) | empty by 120 ps |
+
+Sampling at Q is *worse*. Per-condition windows are ~600 ps at Q against 640–760 ps after the
+buffers: buffers sharpen edges, so window width grows along the chain slightly faster than delay
+spread does. Intermediate nodes are not automatically better test points.
+
+## Axis decomposition and the supply-tolerance specification
+
+Window-position shift by axis, from the 18 measured windows (no additional simulation):
+
+| axis | at VDD 1.32 | at VDD 1.08 |
+|---|---|---|
+| supply 1.32 → 1.08 V (per corner) | 120 ps (TT-TYP-125) … 520 ps (SS-WCS-N40) | — |
+| temperature 125 °C → −40 °C | 120 ps | 280 ps |
+| process TT → SS (at 125 °C) | 80 ps | 320 ps |
+
+**Every axis is 3–4× worse at low supply**: the axes are not independent contributions, low supply
+amplifies sensitivity to all of them (gates short of headroom). One fix aimed at supply sensitivity
+would improve temperature and process behaviour too.
+
+**Specification derived:** at nominal supply alone the six-corner intersection is **open 360 ps**;
+at ±10% it is empty by 120 ps; linear interpolation of the measured window edges puts the closing
+point at **≈ ±7.5% supply**. As drawn, this block needs its supply held to roughly 7% for a
+fixed-instant clock to work across the corner matrix — an on-chip regulator requirement, not a
+defect.
+
+**In flight (C153):** the 18-condition matrix at 1000 ps/bit, testing the published prediction that
+the intersection opens to ~116 ps and that the crossing is near 861 ps/bit (model: eye ≈ 0.836 × BP,
+latency spread ≈ 720 ps fixed). Partial at 4/18 conditions: eyes 850–950 ps, intersection open
+300 ps — but the late-edge condition (SS-WCS-N40 @1.08 V) has not finished, so the number will
+shrink. Not scored until complete.

@@ -126,5 +126,54 @@
     "finding": "H-724",
     "pattern": "64bit_not_combined_with_full_period_axis"
   },
-  "claim_of_record": "0/64 at 1.25 GS/s at every corner and supply GIVEN a clock that tracks temperature and supply; fixed-instant clock fails across the matrix; simulation only, not a signoff"
+  "claim_of_record": "0/64 at 1.25 GS/s at every corner and supply GIVEN a clock that tracks temperature and supply; fixed-instant clock fails across the matrix; simulation only, not a signoff",
+  "c152_latency_spread_ps": {
+    "c_p_minus_c_n": 11,
+    "cml_out": 53,
+    "sa_n": 111,
+    "Q": 252,
+    "pbit_out_core": 524,
+    "PBIT_OUT": 533
+  },
+  "c152_node_intersection_ps": {
+    "Q": -360,
+    "pbit_out_core": -40,
+    "PBIT_OUT": -120,
+    "note": "negative means empty; sampling earlier is worse; H-725"
+  },
+  "axis_decomposition_ps": {
+    "supply_1p32_to_1p08_per_corner": [
+      120,
+      360,
+      360,
+      400,
+      400,
+      520
+    ],
+    "temperature_125_to_m40": {
+      "at_1.32": 120,
+      "at_1.20": 160,
+      "at_1.08": 280
+    },
+    "process_TT_to_SS_at_125C": {
+      "at_1.32": 80,
+      "at_1.20": 160,
+      "at_1.08": 320
+    },
+    "note": "every axis 3-4x worse at low supply; low VDD amplifies all sensitivities"
+  },
+  "supply_tolerance_spec": {
+    "nominal_only_intersection_ps": 360,
+    "at_pm10pc": -120,
+    "closing_point_pct": 7.5,
+    "implication": "needs on-chip regulated supply held to ~7pc"
+  },
+  "c153_in_flight": {
+    "bit_ps": 1000,
+    "prediction_intersection_ps": 116,
+    "predicted_crossing_ps_per_bit": 861,
+    "model": "eye = 0.836 x BP ; latency spread 720 ps fixed",
+    "partial_4_of_18_ps": 300,
+    "status": "not_scored_until_complete"
+  }
 }
