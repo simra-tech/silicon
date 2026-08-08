@@ -188,3 +188,34 @@ the intersection opens to ~116 ps and that the crossing is near 861 ps/bit (mode
 latency spread ≈ 720 ps fixed). Partial at 4/18 conditions: eyes 850–950 ps, intersection open
 300 ps — but the late-edge condition (SS-WCS-N40 @1.08 V) has not finished, so the number will
 shrink. Not scored until complete.
+
+## C153 (2026-08-07) — 1000 ps/bit: the first composable result
+
+All 18 conditions (6 corners × 1.08/1.20/1.32 V), 127-bit PRBS-7, 1000 ps/bit. Rig 0/127 and
+output 0/127 at every condition; per-condition eyes 850–950 ps.
+
+**INTERSECTION OPEN 150 ps** — late open SS-WCS-N40 @1.08 V at 1.65 bits, early close
+TT-TYP-125 @1.32 V at 1.80 bits. A single fixed sampling instant decodes the full pattern at every
+corner, over 165 °C, with the supply ±10%.
+
+**Prediction scored.** Published before the runs existed, from the 800 ps/bit windows alone
+(eye ≈ 0.836 × BP, latency spread ≈ 720 ps fixed): +116 ps. Measured: **+150 ps**, an error of
+34 ps on a quantity that moved 270 ps between the two rates. The model's assumptions were both
+slightly wrong in opposite directions — the spread shrank to 650 ps rather than staying fixed (part
+of it is tied to the decision schedule, not propagation), while the eye grew to ~0.90 × BP — and the
+errors largely cancelled. Predicted crossing 861 ps/bit; interpolating the two measured
+intersections (−120 ps at 800, +150 ps at 1000) puts it at **≈889 ps/bit**.
+
+### Claim of record (2026-08-07, supersedes all earlier rate claims)
+
+> In simulation: 0/127 errors from a **single fixed sampling instant** across six process/temperature
+> corners × three supplies (±10%), full PRBS-7 period, at **1.0 GS/s**, with 150 ps of shared
+> margin. Fixed-clock operation fails above ≈1.12 GS/s; per-condition operation reaches 1.25 GS/s
+> but does not compose.
+
+Still schematic-level: no layout parasitics, no device mismatch, no noise analysis, VCMREF an ideal
+source. Not a signoff, not a tape-out claim.
+
+**Next (C154):** strengthen the digital tail (NAND latch + three buffer stages, which carry ~400 ps
+of the 533 ps spread), rerun the 18-condition matrix at 800 ps/bit, target making 1.25 GS/s
+composable.

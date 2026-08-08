@@ -83,7 +83,7 @@
   "rate_of_record_GSps": 1.25,
   "history_note": "single_phase_decode_manufactured_the_c148_27C_failures_see_harness_finding_H722",
   "c145_audit": "all_pre_c148_rate_ladder_conclusions_confirmed_under_offset_sweep",
-  "pending": "c152_stage_by_stage_latency_spread_and_rate_at_which_intersection_opens",
+  "pending": "c154_strengthen_digital_tail_and_retest_at_800ps",
   "c150_full_period": {
     "bit_ps": 800,
     "tx_bits": 127,
@@ -126,7 +126,7 @@
     "finding": "H-724",
     "pattern": "64bit_not_combined_with_full_period_axis"
   },
-  "claim_of_record": "0/64 at 1.25 GS/s at every corner and supply GIVEN a clock that tracks temperature and supply; fixed-instant clock fails across the matrix; simulation only, not a signoff",
+  "claim_of_record": "simulation only: 0/127 from a SINGLE FIXED sampling instant across 6 corners x 3 supplies (+/-10pc), full PRBS-7 period, at 1.0 GS/s with 150 ps shared margin; fixed-clock fails above ~1.12 GS/s; per-condition operation reaches 1.25 GS/s but does not compose; schematic-level, no parasitics/mismatch/noise, ideal VCMREF; not a signoff",
   "c152_latency_spread_ps": {
     "c_p_minus_c_n": 11,
     "cml_out": 53,
@@ -168,12 +168,26 @@
     "closing_point_pct": 7.5,
     "implication": "needs on-chip regulated supply held to ~7pc"
   },
-  "c153_in_flight": {
-    "bit_ps": 1000,
-    "prediction_intersection_ps": 116,
-    "predicted_crossing_ps_per_bit": 861,
-    "model": "eye = 0.836 x BP ; latency spread 720 ps fixed",
-    "partial_4_of_18_ps": 300,
-    "status": "not_scored_until_complete"
+  "c153_b1000": {
+    "conditions": 18,
+    "all_clean": true,
+    "rig": "0/127 everywhere",
+    "eye_ps": [
+      850,
+      950
+    ],
+    "intersection_ps": 150,
+    "late_open": {
+      "cond": "SS-WCS-N40@1.08",
+      "bits": 1.65
+    },
+    "early_close": {
+      "cond": "TT-TYP-125@1.32",
+      "bits": 1.8
+    },
+    "prediction_ps": 116,
+    "actual_ps": 150,
+    "model_error_ps": 34,
+    "crossing_interpolated_ps_per_bit": 889
   }
 }
