@@ -241,3 +241,52 @@ mismatch, extracted parasitics or noise has been charged against it yet.
 **Reading:** the rate is not a property of the circuit alone. Behind a dedicated on-chip regulator
 (±5% or better) the 1.25 GS/s rate is composable; on a raw ±10% supply the fixed-clock ceiling is
 1.13 GS/s. Quote the trade, not a single number.
+
+## Output-chain taper: C154 / C155 / C156 (2026-08-07)
+
+The chain is Q → XB1 → XB2 → XM7/8 (PBIT_RAW tap) → XM9/10 (block output) → XISO1 → XISO2 → 210 fF
+pad load. The last two stages live in a **separate include** (`*-ISOBUF-PBIT_OUT.spice`), so the
+chain crosses a file boundary. Chain delay is set by the ratio between neighbouring stages; as
+drawn those ratios are 4.94, 1.15, 1.00, 1.00, 8.94, 2.86 — three stages amplifying nothing and one
+overloaded ~9×. Delay proxy (Σ of 1+fanout): 25.9 τ.
+
+| run | change | intersection @800 ps/bit | start spread |
+|---|---|---|---|
+| C148 | baseline | −120 ps | 720 ps |
+| C154 | every device ×2 | **0 ps** (exactly) | 680 ps |
+| C155 | retaper, comparator block only | **−160 ps** | 760 ps |
+| C156 | retaper both files, equal 2.29× | running | — |
+
+**C154** should have been a no-op — uniform scaling doubles drive and load together — and recovered
+120 ps *because the scaling stopped at the block boundary*: exactly one ratio changed (XM9/10 driving
+an unscaled XISO1, 1.0 → 0.5).
+
+**C155** set the three in-block ratios to 3.53/4.0/4.0 — textbook — and was **worse by 160 ps**,
+because the two unreachable ratios became 0.10 and 8.94. Predicted in advance from the delay proxy
+(29.4 τ vs 25.9, "≈14% slower, −80 to −100 ps"); measured every condition 40–160 ps later. Direction
+and scale correct, magnitude understated. See harness finding H-727: partial optimisation across an
+interface is worse than none, because the quantity optimised belongs to the *pair*.
+
+**C156** (in flight) applies one equal ratio of 2.29 across all six stages, both files:
+
+| stage | as drawn (µm, P+N) | C156 |
+|---|---|---|
+| XB1 | 0.85 | 0.85 (unchanged) |
+| XB2 | 4.20 | 1.95 |
+| XM7/8 | 4.83 | 4.47 |
+| XM9/10 | 4.83 | 10.25 |
+| XISO1 | 4.83 | 23.50 |
+| XISO2 | 43.20 | 53.86 (w=15.71/11.22 with **m=2**) |
+
+Build verified against the netlists: all six ratios = 2.29, delay proxy 19.8 τ (−24%).
+**Prediction on record:** spread ~760 → ~520 ps, intersection ≈ +160 ps, which would make 1.25 GS/s
+composable. Not scored until all 18 conditions land.
+
+**Note — stage count kept at six.** An earlier recommendation to remove two stages was withdrawn:
+XM7/8 feeds the separate PBIT_RAW output pin, so deleting it changes the block's I/O, and each stage
+inverts so only an even number may be removed. Six equal stages give −24% delay against −31% for
+four; 7% is a cheap price for leaving the interface alone.
+
+**Open — unmodelled load:** PBIT_RAW is connected to nothing in these testbenches while PBIT_OUT
+carries 210 fF. On a real part it would drive a comparable pad, so the stage feeding it is
+under-loaded here and today's timing is optimistic by an unquantified amount.
