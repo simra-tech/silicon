@@ -92,3 +92,40 @@ untested, neither confirmed nor refuted. C151 reruns it with the sources actuall
 **Standing rule added:** every swept quantity (supply, temperature, bit period) must be read back
 out of the raw and reported beside the result. A condition named only in a filename is not a
 condition.
+
+## C151 (2026-08-07) — supply axis rerun, and the empty intersection
+
+Supply genuinely applied this time: `v(vdd)` read back from every raw as 1.0800 / 1.2000 / 1.3200.
+64-bit pattern, 800 ps/bit. **All 18 conditions (6 corners × 3 supplies) decode 0/64**, rig 0/64
+throughout, per-condition eyes 640–760 ps.
+
+| condition | window (bits past 10 ns settle) | | condition | window |
+|---|---|---|---|---|
+| TT-TYP-125 @1.32 | 1.25–2.05 | | SS-TYP-125 @1.20 | 1.50–2.35 |
+| TT-TYP-125 @1.20 | 1.30–2.15 | | SS-WCS-125 @1.20 | 1.50–2.35 |
+| TT-TYP-125 @1.08 | 1.40–2.25 | | SS-TYP-27 @1.20 | 1.55–2.45 |
+| SS-TYP-125 @1.32 | 1.35–2.20 | | SS-WCS-27 @1.20 | 1.60–2.45 |
+| SS-WCS-125 @1.32 | 1.35–2.20 | | SS-WCS-N40 @1.20 | 1.70–2.55 |
+| SS-TYP-27 @1.32 | 1.35–2.20 | | SS-TYP-125 @1.08 | 1.80–2.60 |
+| SS-WCS-27 @1.32 | 1.35–2.20 | | SS-WCS-125 @1.08 | 1.80–2.60 |
+| SS-WCS-N40 @1.32 | 1.50–2.30 | | SS-TYP-27 @1.08 | 1.85–2.70 |
+| | | | SS-WCS-27 @1.08 | 1.85–2.70 |
+| | | | SS-WCS-N40 @1.08 | 2.15–2.90 |
+
+**INTERSECTION ACROSS ALL 18: EMPTY.** Latest opening 2.15 (SS-WCS-N40 @1.08 V) vs earliest
+closing 2.05 (TT-TYP-125 @1.32 V) — a fixed sampling instant misses by 0.10 bits (80 ps). Chain
+latency spread across corner and supply is ~700 ps, one full bit period, as wide as the eye itself.
+
+**Claim of record (revised):** in simulation, 0/64 at 1.25 GS/s at every corner and supply
+**given a clock that tracks temperature and supply**. A fixed-instant clock does not work across
+the full matrix. Not a signoff; schematic-level only.
+
+**Note on axis coverage:** C151 used the 64-bit pattern, so the supply axis and the full-127-bit
+axis have each passed separately but not together.
+
+Per-condition margins do not compose (harness finding H-724): report the cross-condition
+intersection as the headline number, the per-condition table as diagnostic.
+
+**Open, pending C152:** where the 700 ps of latency spread accumulates, stage by stage. If one
+stage dominates, replica-path clocking is the fix; if it is spread evenly, clock-and-data recovery
+or a per-condition clock. Also open: the bit rate at which the intersection first becomes non-empty.

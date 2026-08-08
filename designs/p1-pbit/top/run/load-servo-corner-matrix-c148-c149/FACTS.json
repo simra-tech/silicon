@@ -83,7 +83,7 @@
   "rate_of_record_GSps": 1.25,
   "history_note": "single_phase_decode_manufactured_the_c148_27C_failures_see_harness_finding_H722",
   "c145_audit": "all_pre_c148_rate_ladder_conclusions_confirmed_under_offset_sweep",
-  "pending": "c151_supply_sweep_rerun_with_sources_actually_edited",
+  "pending": "c152_stage_by_stage_latency_spread_and_rate_at_which_intersection_opens",
   "c150_full_period": {
     "bit_ps": 800,
     "tx_bits": 127,
@@ -99,5 +99,32 @@
     "finding": "H-723",
     "prediction_1p08V_fails": "untested_neither_confirmed_nor_refuted"
   },
-  "standing_rule": "read_every_swept_quantity_back_from_the_raw_and_report_it_beside_the_result"
+  "standing_rule": "read_every_swept_quantity_back_from_the_raw_and_report_it_beside_the_result",
+  "c151_supply_matrix": {
+    "conditions": 18,
+    "all_pass_individually": true,
+    "vdd_readback_V": [
+      1.08,
+      1.2,
+      1.32
+    ],
+    "per_condition_eye_ps": [
+      640,
+      760
+    ],
+    "intersection": "EMPTY",
+    "binding_late_open": {
+      "cond": "SS-WCS-N40@1.08",
+      "bits": 2.15
+    },
+    "binding_early_close": {
+      "cond": "TT-TYP-125@1.32",
+      "bits": 2.05
+    },
+    "miss_ps": 80,
+    "latency_spread_ps": 700,
+    "finding": "H-724",
+    "pattern": "64bit_not_combined_with_full_period_axis"
+  },
+  "claim_of_record": "0/64 at 1.25 GS/s at every corner and supply GIVEN a clock that tracks temperature and supply; fixed-instant clock fails across the matrix; simulation only, not a signoff"
 }
