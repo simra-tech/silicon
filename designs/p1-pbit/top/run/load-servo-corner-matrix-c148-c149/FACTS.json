@@ -409,12 +409,15 @@
   },
   "model_limitation": "sg13g2_hbt_mod_mismatch.lib:49 qarea=agauss(1,0.1,..) has NO Nx term; scaling Nx cannot change mismatch. Area helps only via 2^k parallel Nx=1 unit devices (H-736)",
   "boundary_margins": {
-   "b1": "5.77 sigma / 4 LSB unit / 255 elements",
-   "b2": "3.78 sigma / 8 LSB / 127",
-   "b3": "2.58 sigma / 16 LSB / 63",
-   "b4": "1.80 sigma / 32 LSB / 31",
+   "limiting_step": "binary-to-unary handover: unary element 2^(k+1) LSB vs binary array 2^(k+1)-1; margin 1 LSB; var = u^2*0.01*(2^(k+2)-1)",
+   "b0": "2 LSB unit / 5.77 sigma / 303 boundaries / P(any reversal) ~0",
+   "b1": "4 LSB unit / 3.78 sigma / 151 boundaries / P(any reversal) 1.2 pc",
+   "b2": "8 LSB unit / 2.58 sigma / 75 boundaries / P(any reversal) 30.9 pc",
+   "b3": "16 LSB unit / 1.80 sigma / 37 boundaries / P(any reversal) 74.5 pc",
    "current_design": "binary to b6",
-   "recommendation": "b2 preferred, b3 acceptable"
+   "recommendation": "b1 preferred; b0 if 303 elements affordable; b2 is NOT acceptable",
+   "correction_2026_08_09": "first version quoted the INTERNAL binary boundary margin (one row optimistic) and reported sigma alone; sigma is the wrong figure of merit with many handovers per part - use 1-(1-phi(-margin))^n. A build had been generated at b2 on the wrong row.",
+   "caveat": "rests on the model's flat 10 pc per-unit-device sigma (qarea)"
   },
   "why_boundary_not_matching": "unary segments are monotonic by construction; each element need only be positive, so mismatch costs linearity never monotonicity",
   "acceptance_gate_stated_in_advance": [

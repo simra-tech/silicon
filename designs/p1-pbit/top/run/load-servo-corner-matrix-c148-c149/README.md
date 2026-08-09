@@ -618,19 +618,25 @@ Scaling `Nx` changes the mismatch by nothing. Area helps only through **replicat
 `Nx=1` unit devices give 2^k independent draws with σ ∝ 1/√m, which is both what the model will show
 and what the layout would do. See H-736.
 
-**Architectural consequence — move the segmentation boundary.** With unit averaging the absolute
-sigma of W_k is u·0.10·2^(k/2) and the nominal margin on the worst step is exactly one LSB, so the
-margin in sigmas is 1/√(Σ variances up to k):
+**Architectural consequence — move the segmentation boundary.** The limiting step is the
+**binary-to-unary handover**, where a unary element of 2^(k+1) LSB replaces a binary array summing to
+2^(k+1) − 1: nominal margin exactly one LSB, variance u²·0.10²·(2^(k+2) − 1).
 
-| binary top bit | margin | unary unit | elements for 1023 codes |
-| --- | --- | --- | --- |
-| b1 | 5.77σ | 4 LSB | 255 |
-| b2 | **3.78σ** | 8 LSB | 127 |
-| b3 | 2.58σ | 16 LSB | 63 |
-| b4 | 1.80σ | 32 LSB | 31 |
+*(Corrected 2026-08-09. The first version of this table quoted the margin at the **internal binary**
+boundary, 1/(0.1·√(2^(k+1) − 1)) — one row optimistic — and reported σ alone. σ is the wrong figure
+of merit here: there are many handovers per part and the worst one decides, so the number that
+matters is 1 − (1 − Φ(−margin))^n over n boundaries. A build had already been generated at b2 on the
+strength of the wrong row.)*
 
-C169 is binary to b6. The repair is not better matching but a boundary move to **b2 (preferred) or
-b3** — because the unary segments are **monotonic by construction**: each element need only be
+| binary top bit | unary unit | margin at the handover | P(reversal) per boundary | boundaries | **P(any reversal per part)** |
+| --- | --- | --- | --- | --- | --- |
+| b0 | 2 LSB | 5.77σ | 3.9e-9 | 303 | ~0 |
+| b1 | 4 LSB | 3.78σ | 7.9e-5 | 151 | **1.2%** |
+| b2 | 8 LSB | 2.58σ | 4.9e-3 | 75 | 30.9% |
+| b3 | 16 LSB | 1.80σ | 3.6e-2 | 37 | 74.5% |
+
+C169 is binary to b6. The repair is not better matching but a boundary move to **b1 (4 LSB units,
+151 elements, 1.2% escape) or b0 if 303 elements is affordable** — because the unary segments are **monotonic by construction**: each element need only be
 positive, so mismatch there costs linearity and can never cost monotonicity, which is the one
 property the bias servo cannot function without.
 
