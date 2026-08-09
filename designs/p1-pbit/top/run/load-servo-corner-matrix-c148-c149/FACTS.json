@@ -312,5 +312,41 @@
       "verdict": "works; resolution bought in digital, no analogue wall"
     },
     "principle": "corrections referenced to absolute quantities separate from what they correct; range wants authority, resolution wants ratios; when precision is cheap in digital, buy it there and let averaging convert it back"
+  },
+  "additions_spec_2026_08_09": {
+    "trim": {
+      "structure": "(C,p): offset=(C+p)*0.2mV",
+      "coarse_bits": 10,
+      "coarse_step_mV": 0.2,
+      "range_mV": 60,
+      "fine": "5-bit dither probability over one LSB",
+      "effective_step_mV": 0.00625,
+      "dither_must_be": "random not periodic",
+      "dither_jitter_mV": 0.087
+    },
+    "servo": {
+      "window_bits": 32768,
+      "window_us": 26.2,
+      "meas_sigma_pc": 0.276,
+      "gain_g": 10.2,
+      "loop_gain": 0.25,
+      "db_dp": 0.0245,
+      "tau_windows": 4,
+      "settle_ms": 0.52,
+      "residual_bias_pc": 0.105,
+      "residual_note": "loop-noise dominated, not quantization",
+      "startup": "p=0.5, output gated one window"
+    },
+    "monitors": {
+      "envelope": "1.8-2.2 GHz, alarm 0.34 mV rms vs 0.687 healthy",
+      "repetition": "3 sigma = 50.83 pc vs 49.9 natural",
+      "coarse_rail": "C pinned at 0 or 599, 4-window debounce",
+      "rejected": [
+        "raw pre-trim balance - saturates ~100 pc on every real part",
+        "p-rail alarm - p railing is normal coarse-step behaviour"
+      ]
+    },
+    "interaction_audit": "3 of 4 pairs compatible with margin; 1 failed and produced the coarse-rail replacement",
+    "method": "arithmetic only, no simulation; every number computed by both chairs; two corrections resulted (40x loop gain, saturated monitor)"
   }
 }

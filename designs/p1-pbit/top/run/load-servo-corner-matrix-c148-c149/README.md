@@ -388,3 +388,56 @@ at the dither rate into the output, precisely the structure certification tests 
 the dither's threshold jitter is LSB·√(p(1−p)) = 0.087 mV at p = 0.25, i.e. 2.7% of σ_n, raising the
 effective noise to 3.2512 mV (+0.035%). Being a *random* component added to the threshold, it cannot
 reduce per-bit entropy.
+
+## Specification of the three additions (C166–C168, 2026-08-09)
+
+Derived entirely by arithmetic from the measured properties above; **no simulation**. Every number
+was computed independently by both chairs; the corrections that resulted are noted inline.
+
+### 1. Offset trim — coarse/fine cascade
+
+| element | value |
+|---|---|
+| structure | **(C, p)**: effective offset = (C + p) × 0.2 mV |
+| coarse code C | ~10 bits, 0.2 mV per code, ±60 mV (±300 codes) — current-steering DAC |
+| fine p | 5-bit **dither probability** over one LSB, 1/32 steps = 0.00625 mV effective |
+| why dithered | a 0.05 mV physical step is unmanufacturable here (0.19% of 838 Ω = 1.6 Ω); the servo's 32,768-bit averaging converts digital duty-cycle into effective analogue resolution |
+| dither requirement | **must be random, not periodic** — a periodic toggle puts a tone at the dither rate into the output. Jitter contributed: 0.087 mV = 2.7% of σ_n, raising effective σ_n to 3.2512 mV (+0.035%), entropy-neutral |
+
+### 2. Bias servo
+
+| element | value |
+|---|---|
+| window N | 32,768 bits = 26.2 µs at 1.25 GS/s (15-bit counter) |
+| measurement σ | √(0.25/N) = 0.276% per window |
+| error | e = count − 16,384; b = f − 0.5 |
+| update | p ← clamp(p − g·b, 0, 31/32); **p railing steps C by ±1 and re-centres p** — normal tracking behaviour |
+| loop gain | **g = 10.2**, giving dimensionless loop gain 0.25 (db/dp = 0.0245). *Originally specified as g = 0.25, which confuses bias-fraction with probability units and would have been 40× too slow — τ = 163 windows instead of 4.* |
+| response | τ = 4 windows = 105 µs; 5τ = 0.52 ms, against drift of ~20 ms per 1% at 1 °C/s |
+| settled residual | **0.105%** bias — loop-noise-dominated (per-update p noise 0.028 ≈ 0.9 p-step; steady-state wander 1.4 steps). *Not the 0.038% quantization figure: the loop noise dominates it.* |
+| start-up | p = 0.5, output gated until one full window has been observed (26 µs) |
+
+### 3. Health monitors — three independent channels
+
+| channel | watches | alarm | why it survives audit |
+|---|---|---|---|
+| envelope detector | 1.8–2.2 GHz band at the comparator input | 0.34 mV rms (healthy 0.687) | spectral, so it separates thermal noise from clock-harmonic pickup; a 20 dB source loss lands 5× below the alarm |
+| repetition count | P(repeat) over raw windows | 3σ = 50.83% (natural 49.9%) | the dither is white per bit, contributing ρ ≈ 0 — invisible to this statistic, as required |
+| **coarse-code rail** | C pinned at 0 or 599, 4-window debounce | — | the total correction has run out of authority. *Replaces two rejected designs: a raw pre-trim balance channel (saturates at ~100% ones for every real part — cannot distinguish healthy from dead) and a p-rail alarm (p railing is normal coarse-step behaviour and would fire during ordinary tracking).* |
+
+### Interaction audit (the composition check)
+
+Each subsystem was specified against its own requirement; the audit asked what they do to each
+other. Three pairs compatible with margin (dither vs repetition counts: ρ ≈ 0 against a 0.83%
+alarm; dither vs envelope band: ~4 µV in-band against a 340 µV alarm, 85×; start-up: output gated
+before monitors are asked to judge). **One pair failed** — see the coarse-code-rail row above.
+
+**Three monitoring channels were designed and then found to alarm on the design's own intended
+behaviour** (an amplitude detector that could not separate source from pickup; a balance channel
+saturated by the imbalance it was meant to survive; an alarm on a control value that rails
+routinely). Each was a reasonable design *considered alone*. The recurring lesson — after H-724's
+empty intersection — is that **correctness of parts does not compose into correctness of wholes**,
+and the check costs arithmetic against a design that does not yet exist.
+
+**Still unbuilt:** none of this is drawn, simulated or laid out. The metastability rate remains
+unmeasured (H-731). No layout parasitics anywhere.
