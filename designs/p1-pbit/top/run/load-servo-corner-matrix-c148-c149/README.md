@@ -343,3 +343,48 @@ measured 3.246.
 - Metastability rate never calculated — and this circuit deliberately operates in the small-input
   regime other designs treat as the dangerous tail, so it is a first-order quantity here.
 - No layout parasitics, no post-layout re-verification. Nothing fabricated.
+
+## Trim architecture: C164–C166 (2026-08-09)
+
+The randomness campaign specified a 0.05 mV input-referred trim step. Building it took four attempts,
+each failing for a different and instructive reason. All measured in the working deck, arrival-gated.
+
+| attempt | mechanism | worst step | range | verdict |
+|---|---|---|---|---|
+| C164 | extra DAC bits, independently referenced | 0.728 mV @125 °C | 121.6 → 3.9 mV | **96× step variation** across corners |
+| C165 | ratiometric: trim pairs on the CML tail | 0.742 mV @−40 °C | 325.9 → 12.7 mV | 26× variation, range still collapses, **sign reverses** |
+| — | fine trim by load imbalance | — | — | **not manufacturable**: 0.19% of 838 Ω = 1.6 Ω, needs a 434 kΩ tap or is swamped by switch R_on |
+| C166 | **dithered LSB** | effective 0.00625 mV | unchanged | **works** |
+
+**Why C164 failed:** the trim was referenced to an absolute quantity while the thing it corrects
+scales with the stage's own bias, so the two drift apart. *Any correction referenced to something
+absolute, when the thing corrected is not, will separate from it* — the third time this principle
+decided an outcome (see also the CMFB loop and the one-time-calibration analysis).
+
+**Why C165 fell short of its prediction:** the ratiometric arithmetic — input-referred step =
+ΔI/g_m, and g_m = I_tail/V_T for a bipolar pair, so ΔI = k·I_tail gives step = k·V_T with only a
+1.71× spread over −40…125 °C — is correct, but assumes the trim devices *share the tail as a
+controlled fraction*. Measured, they sat at V_be ≈ 1.16 V, hard on and outside that regime. **The
+arithmetic was right about a circuit that was not built.**
+
+**Why the load-ratio idea died:** (ΔR/R)·V_T is exactly the right relation and depends on no bias
+point at all, but at an 838 Ω load a 0.19% imbalance is 1.6 Ω — two orders below what an rppd tap or
+a switch can resolve. Sound requirement, unmanufacturable at this impedance.
+
+**C166, the solution — buy the resolution in digital:** keep the 0.2 mV physical LSB that *is*
+buildable and toggle it with probability p from a 5-bit dither register. Effective offset = p·LSB,
+resolution set by the register rather than by any physical dimension: **0.00625 mV effective step,
+32× finer than the LSB**, from logic the servo already requires.
+
+- Mean bias at p = 0.25: Φ(0.05/3.25) = 50.61% → **0.61%**, inside the 1% target.
+- Steady-state residual (half p-step, 0.0031 mV): **0.038%** bias — 26× inside target.
+  *(Reported as 0.055% by the DE; independently recomputed as 0.038%. Same order, does not change
+  the conclusion, recorded for accuracy.)*
+- It works because the servo already averages 32,768 bits — anything toggling faster than that
+  window is seen only as its average, so the fine resolution is real from the loop's point of view.
+
+**Requirement, not a detail — the dither must be RANDOM, not periodic.** A regular toggle puts a tone
+at the dither rate into the output, precisely the structure certification tests hunt for. Quantified:
+the dither's threshold jitter is LSB·√(p(1−p)) = 0.087 mV at p = 0.25, i.e. 2.7% of σ_n, raising the
+effective noise to 3.2512 mV (+0.035%). Being a *random* component added to the threshold, it cannot
+reduce per-bit entropy.

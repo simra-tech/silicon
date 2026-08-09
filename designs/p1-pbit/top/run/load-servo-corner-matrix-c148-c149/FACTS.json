@@ -275,5 +275,42 @@
       "servo imprints correlation at its window scale",
       "metastability rate never calculated"
     ]
+  },
+  "trim_architecture_2026_08_09": {
+    "target_step_mV": 0.05,
+    "c164_absolute_ref": {
+      "worst_step_mV": 0.728,
+      "variation": "96x",
+      "range_mV": [
+        121.6,
+        3.9
+      ],
+      "verdict": "fail"
+    },
+    "c165_ratiometric": {
+      "worst_step_mV": 0.742,
+      "variation": "26x",
+      "range_mV": [
+        325.9,
+        12.7
+      ],
+      "verdict": "fail, sign reverses, trim pair Vbe 1.16 V outside sharing regime"
+    },
+    "load_ratio_idea": {
+      "relation": "(dR/R)*V_T, bias-independent",
+      "verdict": "unmanufacturable: 0.19pc of 838 ohm = 1.6 ohm"
+    },
+    "c166_dithered": {
+      "physical_lsb_mV": 0.2,
+      "dither_bits": 5,
+      "effective_step_mV": 0.00625,
+      "mean_bias_pc_at_p025": 0.61,
+      "residual_bias_pc": 0.038,
+      "dither_jitter_mV": 0.087,
+      "effective_sigma_n_mV": 3.2512,
+      "condition": "dither must be random, not periodic - a periodic toggle puts a tone at the dither rate",
+      "verdict": "works; resolution bought in digital, no analogue wall"
+    },
+    "principle": "corrections referenced to absolute quantities separate from what they correct; range wants authority, resolution wants ratios; when precision is cheap in digital, buy it there and let averaging convert it back"
   }
 }
