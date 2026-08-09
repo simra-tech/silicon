@@ -462,3 +462,21 @@ control design — every gain, time constant and threshold can be correct while 
 the rail. It survives inspection because a minus sign reads as a considered choice. Nothing catches
 it except letting the design run. Forty lines, minutes to write, against a fabricated part whose
 output would be stuck at one value in a block whose entire purpose is unpredictability.
+
+**Final servo parameters after the coverage fix.** The fine control spans **8 coarse codes**
+(1.6 mV) with **6-bit** dither, giving an unchanged 0.025 mV effective step and a **2.95×** coverage
+margin over the worst measured coarse step. Loop gain rescales with the wider span:
+db/dp = 0.194, so **g = 1.29** holds the dimensionless loop gain at 0.25. Acquisition **18 windows
+(0.47 ms)**, settled bias **0.25%** (max 0.90%).
+
+*Why 8 codes and not the 4 that satisfied the arithmetic:* the coverage condition is compared
+against a worst coarse step of 0.543 mV taken from **C165, a build that was rejected** — the coarse
+DAC is not designed yet, so that number is provisional, while coverage failure is permanent and
+inescapable for an affected part. **Margin should scale with how well the number is known, not only
+with how bad the failure is.** At 4 codes the check passed 0.800 against 0.798, ~1.5% of headroom on
+a placeholder. The extra span costs one register bit.
+
+`servo_model.py` now carries `coverage_check(coarse_step_mV)` as a **fail-loud assertion** taking the
+coarse step as an input, so the condition is re-tested automatically when the coarse design lands
+rather than being remembered by whoever happens to still be here. It also retains a **regression
+case for the sign error** — a defect already found must not be able to return silently.
