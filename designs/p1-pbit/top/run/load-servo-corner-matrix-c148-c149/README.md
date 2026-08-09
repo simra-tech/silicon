@@ -524,3 +524,41 @@ walking but slow (something wrong with the loop); the coarse rail catches one ou
 **Slewing is recorded as a deferred optimisation**, not a bug: it acquires in ~55 windows instead of
 229, but a coarse control that can accelerate is a second feedback loop and needs its own overshoot
 and stability analysis before it is adopted.
+
+## C169 — the coarse DAC, first build: a void measurement, and the check that will catch the next one
+
+The coarse DAC was built to replace the **provisional** 0.543 mV worst-step figure (itself taken from
+C165, a rejected build) that the coverage assertion depends on. The first build measured:
+
+| corner | mean step | worst step | sign reversals |
+|---|---|---|---|
+| tt/typ/27 | −0.817 mV | 258.3 mV | 373 / 599 |
+| ss/wcs/−40 | −0.668 mV | 223.5 mV | 428 / 599 |
+| tt/typ/125 | −0.256 mV | 79.8 mV | 5 (only **10 of 599** steps nonzero) |
+
+`coverage_check(258.3)` duly failed — the assertion working as designed, hours after being written.
+
+**But all of it is VOID, and the numbers above must not be quoted as data.** Three symptoms had one
+cause: the bench decoder read the sweep *voltage* as the code count (missing a ×100 scale), so
+`floor(0.64 V / 64) = 0` — the code never advanced. That single fault explains the inverted direction
+(mean step negative at every corner), the ~4× oversize implied full scale (−489 mV against a target
+of +120), and the two-thirds-of-boundaries reversals. **A binary-weighted DAC can lose monotonicity
+only at major carries — nine of them among 599 boundaries — so 373–428 reversals was never a
+matching result.**
+
+**Diagnostic that found it:** a coarse sweep every 64 codes, before any further corner work. The
+transfer showed two populations — five points moving by hundreds of millivolts, five by microvolts —
+which is not a transfer curve.
+
+**Standing check adopted (see harness finding H-733):** *before characterising any converter, sweep
+N codes and count the DISTINCT output levels; if it is not ≈N the decode is broken and nothing
+downstream means anything.* The tell was already in the data — 10 nonzero steps across 599 codes,
+which no 10-bit converter produces — and would have halted the run before two further corner sweeps,
+a monotonicity analysis, and the coverage assertion being fed a number that was never real.
+
+**Rebuild direction:** fix the decoder scale, then **thermometer-code the top bits** — unary segments
+are monotonic by construction, which removes the failure mode rather than measuring it. The
+distinct-levels check runs first, before any corner run or assertion.
+
+**The worst-case coarse step therefore remains unmeasured**, and the coverage margin still rests on
+the provisional 0.543 mV. That is the most load-bearing placeholder in the specification.

@@ -348,5 +348,19 @@
     },
     "interaction_audit": "3 of 4 pairs compatible with margin; 1 failed and produced the coarse-rail replacement",
     "method": "arithmetic only, no simulation; every number computed by both chairs; two corrections resulted (40x loop gain, saturated monitor)"
+  },
+  "c169_coarse_dac_first_build": {
+    "status": "VOID - bench decoder read sweep voltage as code count (missing x100)",
+    "do_not_quote": [
+      "worst step 258.3 mV",
+      "373-428 sign reversals",
+      "mean step negative",
+      "full scale -489 mV"
+    ],
+    "why_void": "one decode fault explains all three symptoms; binary DAC can only lose monotonicity at 9 major carries of 599",
+    "found_by": "coarse sweep every 64 codes showed two populations, not a transfer curve",
+    "standing_check": "sweep N codes, count distinct output levels; if not ~N the decode is broken (H-733)",
+    "rebuild": "fix decoder scale, thermometer-code the top bits (monotonic by construction)",
+    "consequence": "worst-case coarse step remains UNMEASURED; coverage margin still rests on the provisional 0.543 mV"
   }
 }
