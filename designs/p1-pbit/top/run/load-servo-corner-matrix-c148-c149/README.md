@@ -648,3 +648,98 @@ static-weight fit with residual under 10% of an LSB.
 `servo_model.py` coverage assertion still carries the provisional 0.543 mV from rejected build C165.
 Under the b2 boundary the expected bound is ~1 LSB + 3σ ≈ 2.2 LSB ≈ 0.34 mV against a 1.6 mV fine
 range, but that is a prediction, not a measurement, and the placeholder stays until it is one.
+
+## C169 v5 — the steering element changed, and why (2026-08-09, later)
+
+The b1-boundary rebuild produced no current at all. The chain that found it, in order, took four
+minutes after eight hours of everything else:
+
+1. **Diff before probe.** A version existed in which the b0 segment conducted 0.435 µA at VREF
+   0.650. Placing its four lines beside the dead version's showed them equivalent in every
+   meaningful parameter — so the fault was environmental, not in the description.
+2. **Three voltages.** `v(ref)` = 0.6500, `v(vsegb0)` = 0.6215, `v(e_dacb0)` = 0.0008 →
+   **V_BE = 649.2 mV** (fully asking to conduct) with **V_CE = 620.7 mV** (not saturated) and no
+   current. The collector path was blocked: the switch.
+3. **One subtraction.** The steering nmos gate is the 1 V logic rail; its *source* is the segment
+   node at 0.62 V, so V_gs = 0.38 V — subthreshold. With V_th above 0.38 V (call it 0.45), the gate
+   needs ~1.07 V merely to reach threshold and ~1.4 V for usable overdrive. **VDD is 1.2 V.**
+
+**This is not a marginal design but one that does not fit its supply.** The distinction matters: a
+marginal design improves when adjusted; a design whose requirement exceeds its rail does not improve
+however it is adjusted, because the constraint violated is arithmetic rather than a performance
+target. It would have failed across corners even had this draw scraped through.
+
+**Resolution: HBT differential-pair steering** (`XQP<k>`/`XQN<k>`, bases on the decoder's
+complementary outputs, emitters on the shared segment node) in place of the nmos pass switches. It
+steers fully on a few hundred mV of differential swing, needs no level shifter, has no threshold to
+be marginal about over temperature and supply, is faster with no gate capacitance in the signal
+path, and matches the CML style the rest of the comparator already uses. The alternative — level
+shifting the gate drive into the 2.5 V HBT domain, which this design already does for the output —
+was rejected as more circuitry for a worse result.
+
+**Three symptoms closed on that one change**: the 1045 µA steered to the wrong side, the segment that
+would not conduct at a reference where it previously did, and the subthreshold switch. When several
+symptoms resolve on one change, that is the strongest available evidence the diagnosis was right.
+
+### First clean operating point, and the level
+
+| figure | value |
+| --- | --- |
+| b0 pair current | 0.467 µA |
+| array total | 305.8 µA |
+| steering at code 0 | c_p 2.4127 V (87.3 mV drop), c_n 2.5000 V clean |
+| **balance check** | 87.3 mV / 305.8 µA = **285.5 Ω** vs the independently known ~290 Ω |
+
+The balance is the point: drop and current were not derived from each other and they agree to 2%.
+The same check failed on every earlier state of this bench.
+
+**Set the level from the total, not from a canary segment.** b0 is one device with 10% σ; the array
+total averages 603 draws and has 0.41%. b0's 0.467 µA against the array mean of 0.5071 µA is a 0.8σ
+low draw — ordinary, and not a calibration reference.
+
+### Effective thermal voltage, measured
+
+A −9.6 mV VREF move predicted a current ratio of 0.690 (assuming kT/q = 25.85 mV) and delivered
+0.718. That miss is a measurement, not an annoyance. Correcting each point for its own degeneration
+drop (0.728 mV and 0.522 mV):
+
+    ΔV_BE = 9.395 mV for a current ratio of 0.718
+    →  effective kT/q = 28.36 mV,  ideality n ≈ 1.10
+
+Ordinary for SiGe at this current, and the reason the prediction undershot. **Use 28.4 mV for every
+subsequent level move.** The residual to 0.3503 µA is then −1.116 mV → **VREF 0.6393**, one shot.
+
+Not applied yet, deliberately: the LSB is 0.2078 mV against 0.200 (3.9% high), which is immaterial
+to a servo that measures the real output and corrects — the fine dither spans eight coarse codes, so
+a 4% LSB moves loop gain and nothing else. Measuring the escape rate ranked higher than a perfect
+LSB.
+
+### Monotonicity: count boundaries, not draws
+
+Nine draws: eight clean, one with a single reversal; worst steps 1.00–1.76 LSB against the 1.66 LSB
+predicted before the run. Reported first as "1/9 = 11%, ten times the 1.2% spec". **That reading is
+wrong.** Each part contains 151 handover boundaries, so nine parts give **1359 independent
+opportunities**, not nine:
+
+| | |
+| --- | --- |
+| model rate | 7.85e-5 per boundary → expects **0.107** events |
+| P(≥1 under the model) | **10.1%** — the observation is an ordinary draw *from* the arithmetic |
+| 95% CI on a count of 1 | 0.025–5.57 events → 0.24×–52× the model, i.e. 0.3%–46% per part |
+
+*The natural unit is the thing you ran; the informative unit is the thing that can independently
+fail.* Recounting the same nine runs by opportunity multiplied the statistical power by 151, for
+free. A 250-draw run (37,750 boundaries, model expects 3.0) is executing to settle it — three
+confirms, thirty refutes.
+
+### Gate corrections (both mine)
+
+- **Gate scope**: three draws cannot distinguish a 1.2% escape rate from the 31% of the architecture
+  it replaced (three clean draws happen 33% of the time at 31%). The gate checks the arithmetic's
+  assumptions; it does not measure the rate.
+- **Gate 2 retired for mismatch runs**: requiring range/(n−1) to equal the b0 turn-on step pits a
+  603-sample average against a single 10% draw. Valid only with `mm_ok=0`; kept for the control run,
+  with the static-fit residual carrying the load otherwise.
+
+Two of the three conditions set in advance were corrected afterwards. That is not a failure of the
+practice — stating them early is what made it possible to notice they were unsound.

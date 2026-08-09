@@ -427,5 +427,59 @@
   ],
   "regression_note": "the switch terminal fix was applied to a deck, not to its generator, and returned on the next rebuild across 156 instances; guard added: awk '/^XSW/ && ($3 ~ /vseg/ || $4 !~ /vseg/)' run before every sim",
   "still_open": "worst-case coarse step unmeasured for the rebuilt architecture; servo_model.py coverage assertion still carries the provisional 0.543 mV from rejected C165"
+ },
+ "c169_v5_pair_steering_2026_08_09": {
+  "status": "topology changed: HBT differential-pair steering replaces nmos pass switches",
+  "why": "nmos gate needs ~1.4 V for usable overdrive against a 0.62 V source; VDD is 1.2 V - the topology does not fit the supply, not a marginal bias",
+  "found_by": [
+   "diff working vs dead segment (identical lines -> environmental)",
+   "v(ref)=0.6500 v(vsegb0)=0.6215 v(e_dacb0)=0.0008 -> VBE 649.2 mV, VCE 620.7 mV, no current -> collector path blocked",
+   "one subtraction: 0.62 + Vth(>0.38) + overdrive > 1.2 V rail"
+  ],
+  "symptoms_closed_together": [
+   "1045 uA steered to the wrong side",
+   "segment dead at a reference where it previously conducted",
+   "switch stuck subthreshold"
+  ],
+  "first_clean_op": {
+   "b0_pair_uA": 0.467,
+   "array_total_uA": 305.8,
+   "c_p_V": 2.4127,
+   "c_n_V": 2.5,
+   "balance_ohm": 285.5,
+   "independent_load_ohm": 290,
+   "note": "drop and current not derived from each other; agree to 2 pc"
+  },
+  "level_rule": "set from the array TOTAL (603 draws, 0.41 pc) not a canary segment (one draw, 10 pc)",
+  "effective_thermal_voltage": {
+   "measured_mV": 28.36,
+   "ideality": 1.1,
+   "method": "two VREF points corrected for their own degeneration drops (0.728 and 0.522 mV); dVBE 9.395 mV for a current ratio 0.718",
+   "consequence": "use 28.4 mV for all level moves; residual trim is VREF 0.6393, one shot",
+   "note": "a 25.85 mV assumption predicted 0.690 and delivered 0.718 - the failed prediction was the experiment"
+  },
+  "level_status": "LSB 0.2078 mV vs 0.200 target, 3.9 pc high; NOT trimmed - immaterial to a servo, escape rate ranked higher",
+  "monotonicity_nine_draws": {
+   "draws": 9,
+   "clean": 8,
+   "with_reversal": 1,
+   "worst_step_LSB": "1.00-1.76 vs 1.66 predicted",
+   "correct_unit": "boundaries not draws: 9 x 151 = 1359 opportunities",
+   "model_rate_per_boundary": 7.85e-05,
+   "expected_events": 0.107,
+   "P_at_least_one": 0.101,
+   "CI95_on_count_of_1": [
+    0.025,
+    5.572
+   ],
+   "implied_rate_range": "0.24x to 52x the model, 0.3-46 pc per part",
+   "verdict": "NOT a refutation and NOT a measurement; '11 pc' retired",
+   "settling_run": "250 draws = 37750 boundaries, model expects 3.0; three confirms, thirty refutes"
+  },
+  "gate_corrections_both_PE": [
+   "gate scope: 3 draws cannot separate 1.2 pc from 31 pc (3 clean draws happen 33 pc of the time at 31 pc)",
+   "gate2 retired for mismatch runs: range/(n-1) vs b0 turn-on pits a 603-sample average against one 10 pc draw; mm_ok=0 control only"
+  ],
+  "lesson": "the natural unit is the thing you ran; the informative unit is the thing that can independently fail"
  }
 }
