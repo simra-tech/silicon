@@ -441,3 +441,24 @@ and the check costs arithmetic against a design that does not yet exist.
 
 **Still unbuilt:** none of this is drawn, simulated or laid out. The metastability rate remains
 unmeasured (H-731). No layout parasitics anywhere.
+
+### Behavioural verification of the servo — `servo_model.py`
+
+The specification above was derived by arithmetic, with every parameter computed independently by
+both chairs. It still contained a **sign error** that made the loop diverge: the correction
+(C+p)·LSB *opposes* the offset, so a positive measured bias means more correction is needed, and the
+originally specified `p ← p − g·b` applies less. Simulated, it rails within a few windows and sits
+at 50% bias permanently. The corrected rule is **`p ← p + g·b`**, and the convention is now stated
+explicitly in the spec so the polarity cannot be re-inferred: *correction opposes the offset;
+positive b raises the correction.*
+
+Running the model confirms the response time (first window under 1% at **window 23 = 0.6 ms**,
+against the predicted 5τ of 0.52 ms) and revises the settled residual to **0.23%** — the analytic
+0.105% omits the coarse/fine interaction with loop noise, so the simulated figure is the one of
+record. Both remain inside the 1% target.
+
+**Method note:** a sign error in feedback is the most consequential and least visible defect in
+control design — every gain, time constant and threshold can be correct while the loop drives into
+the rail. It survives inspection because a minus sign reads as a considered choice. Nothing catches
+it except letting the design run. Forty lines, minutes to write, against a fabricated part whose
+output would be stuck at one value in a block whose entire purpose is unpredictability.
