@@ -480,3 +480,47 @@ a placeholder. The extra span costs one register bit.
 coarse step as an input, so the condition is re-tested automatically when the coarse design lands
 rather than being remembered by whoever happens to still be here. It also retains a **regression
 case for the sign error** — a defect already found must not be able to return silently.
+
+### Single-step correction, acquisition scaling, and the timeout — the last correction round
+
+Both chairs' copies of `servo_model.py` were found to **slew the coarse code** — up to 6 steps in a
+single window (mean 5.1 during acquisition) — while both specification and commentary described a
+single-step loop. Neither noticed until the models were *instrumented* rather than read: the p update
+can reach g·0.5 = 0.645 and each coarse step consumes 1/FINE_CODES = 0.125 of p, so ~5 steps per
+window. **A property of the specification had been asserted as a property of the code, by both sides.**
+
+A related error ran alongside it: acquisition was measured against the wrong σ. Two distinct
+quantities in this design are both spread parameters — the noise at the comparator (3.25 mV) and the
+part-to-part offset distribution (11.8 mV). Scaling a sweep by the first while meaning the second
+gives internally consistent numbers about a part that does not exist.
+
+**With single-stepping enforced (verified by instrumentation: max 1 C-step per window), acquisition
+is simply the walk:**
+
+| offset | codes | windows | time |
+|---|---|---|---|
+| 0.5σ (5.9 mV) | 29 | 29 | 0.77 ms |
+| 1σ typical (11.8 mV) | 59 | 59 | 1.55 ms |
+| 2σ (23.6 mV) | 118 | 118 | 3.09 ms |
+| 3σ (35.4 mV) | 177 | 177 | 4.64 ms |
+| 4σ (47.2 mV) | 236 | 229 measured | 6.18 ms |
+
+**Consequence, which neither chair had drawn:** the previously agreed 100-window timeout covers
+offsets only to 20 mV = 1.69σ, so **~9% of perfectly healthy parts would raise a fault at every
+power-up** — the alarm-on-healthy-behaviour failure for the fourth time, this time inside a number
+that had been *verified as safe* using acquisition times nobody knew were slewed.
+
+**Timeout raised to 400 windows (10.5 ms)** — and justified by the *architectural* limit rather than
+a statistical tail: the coarse code spans ±300 codes, so the longest possible walk is 300 windows
+however the offset distribution turns out; anything beyond is uncorrectable and is caught by the
+coarse-rail alarm. **400 = full coarse range + ⅓ margin.** A threshold justified by a statistical
+tail must be revisited whenever the tail estimate moves — and 11.8 mV rests on one MC campaign with
+one gate-failed sample. A threshold justified by the range moves only when the range does.
+
+The two alarms are then complementary rather than overlapping: **the timeout catches a loop that is
+walking but slow (something wrong with the loop); the coarse rail catches one out of authority
+(something wrong with the part).**
+
+**Slewing is recorded as a deferred optimisation**, not a bug: it acquires in ~55 windows instead of
+229, but a coarse control that can accelerate is a second feedback loop and needs its own overshoot
+and stability analysis before it is adopted.

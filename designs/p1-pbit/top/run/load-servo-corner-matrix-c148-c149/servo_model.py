@@ -61,18 +61,20 @@ def run(offset_mV=11.79, windows=300, gain=GAIN, sign=+1, drift=DRIFT_MV_PER_S, 
     history = []
     for k in range(windows):
         off += drift * WINDOW
-        corr = (C + FINE_CODES * p) * LSB   # effective correction over the FINE_CODES-wide dither span
+        corr = (C + FINE_CODES * p) * LSB   # effective correction over the 4-code dither span
         r0 = off - corr                     # dither bit low (p_applied=0 -> 0 extra codes)
-        r1 = r0 - FINE_CODES * LSB          # dither bit high (p_applied=1 -> FINE_CODES extra codes)
+        r1 = r0 - FINE_CODES * LSB          # dither bit high (p_applied=1 -> 4 extra codes)
         p_eff = (1 - p) * phi(r0 / SIGMA_N) + p * phi(r1 / SIGMA_N)
         var = max(N * p_eff * (1 - p_eff), 1e-9)
         count = p_eff * N + random.gauss(0, math.sqrt(var))
         b = count / N - 0.5
         p = p + sign * gain * b
-        while p < 0 and C > -COARSE_LIMIT:
+        # spec rule: at most ONE coarse step per window (a slewing coarse control
+        # would be a second integrator -- see the acquisition-scaling record)
+        if p < 0 and C > -COARSE_LIMIT:
             C -= 1
             p += 1 / FINE_CODES
-        while p > 1 - PSTEP and C < COARSE_LIMIT:
+        elif p > 1 - PSTEP and C < COARSE_LIMIT:
             C += 1
             p -= 1 / FINE_CODES
         p = min(max(p, 0.0), 1 - PSTEP)
