@@ -1,366 +1,428 @@
 {
-  "package": "load-servo-corner-matrix-c148-c149",
-  "date": "2026-08-07",
-  "status": "in_simulation_public_experiment_not_signoff",
-  "netlist": "C148-SOURCE-p1_top_hier_v3-no-bleed-wrapped-damp35-ls-hbtv-nx4el5.spice",
-  "cmfb": {
-    "topology": "load_servo_diode_pmos_gates",
-    "vcmref_V": 0.75,
-    "vcmref_is_ideal_source": true,
-    "tail_um": 2.5
+ "package": "load-servo-corner-matrix-c148-c149",
+ "date": "2026-08-07",
+ "status": "in_simulation_public_experiment_not_signoff",
+ "netlist": "C148-SOURCE-p1_top_hier_v3-no-bleed-wrapped-damp35-ls-hbtv-nx4el5.spice",
+ "cmfb": {
+  "topology": "load_servo_diode_pmos_gates",
+  "vcmref_V": 0.75,
+  "vcmref_is_ideal_source": true,
+  "tail_um": 2.5
+ },
+ "standard": {
+  "decode": "offset_sweep_zero_error_spans",
+  "step_bits": 0.05,
+  "reference": "xcomp.c_p_minus_c_n_0V_slice_must_be_0_of_64",
+  "stuck_pin_floors": {
+   "high": 33,
+   "low": 31
   },
-  "standard": {
-    "decode": "offset_sweep_zero_error_spans",
-    "step_bits": 0.05,
-    "reference": "xcomp.c_p_minus_c_n_0V_slice_must_be_0_of_64",
-    "stuck_pin_floors": {
-      "high": 33,
-      "low": 31
-    },
-    "threshold_V": 0.6,
-    "threshold_valid_band_V": [
-      0.1,
-      1.1
-    ],
-    "settle_ns": 10
+  "threshold_V": 0.6,
+  "threshold_valid_band_V": [
+   0.1,
+   1.1
+  ],
+  "settle_ns": 10
+ },
+ "c148_b800": {
+  "bit_ps": 800,
+  "zero_error_spans_bits": {
+   "TT-TYP-125": [
+    1.3,
+    2.15
+   ],
+   "SS-TYP-27": [
+    1.55,
+    2.45
+   ],
+   "SS-TYP-125": [
+    1.5,
+    2.35
+   ],
+   "SS-WCS-27": [
+    1.6,
+    2.45
+   ],
+   "SS-WCS-125": [
+    1.5,
+    2.35
+   ],
+   "SS-WCS-N40": [
+    1.7,
+    2.55
+   ]
   },
-  "c148_b800": {
-    "bit_ps": 800,
-    "zero_error_spans_bits": {
-      "TT-TYP-125": [
-        1.3,
-        2.15
-      ],
-      "SS-TYP-27": [
-        1.55,
-        2.45
-      ],
-      "SS-TYP-125": [
-        1.5,
-        2.35
-      ],
-      "SS-WCS-27": [
-        1.6,
-        2.45
-      ],
-      "SS-WCS-125": [
-        1.5,
-        2.35
-      ],
-      "SS-WCS-N40": [
-        1.7,
-        2.55
-      ]
-    },
-    "cross_corner_intersection_bits": [
-      1.7,
-      2.15
-    ],
-    "cm_V": {
-      "TT-TYP-125": 0.776,
-      "SS-TYP-27": 0.7673,
-      "SS-TYP-125": 0.7716,
-      "SS-WCS-27": 0.7673,
-      "SS-WCS-125": 0.7715,
-      "SS-WCS-N40": 0.7651
-    },
-    "verdict": "all_six_corners_0_of_64"
+  "cross_corner_intersection_bits": [
+   1.7,
+   2.15
+  ],
+  "cm_V": {
+   "TT-TYP-125": 0.776,
+   "SS-TYP-27": 0.7673,
+   "SS-TYP-125": 0.7716,
+   "SS-WCS-27": 0.7673,
+   "SS-WCS-125": 0.7715,
+   "SS-WCS-N40": 0.7651
   },
-  "c149_b400": {
-    "bit_ps": 400,
-    "zero_error_spans": "none_at_any_corner_sweep_0_to_11_bits",
-    "min_errors": {
-      "TT-TYP-125": 2,
-      "SS-TYP-125": 5,
-      "SS-WCS-125": 6,
-      "SS-TYP-27": 7,
-      "SS-WCS-27": 7,
-      "SS-WCS-N40": 8
-    },
-    "rig_clean_span_bits": 0.95,
-    "verdict": "fails_every_corner_ceiling_is_sense_amp_latch"
+  "verdict": "all_six_corners_0_of_64"
+ },
+ "c149_b400": {
+  "bit_ps": 400,
+  "zero_error_spans": "none_at_any_corner_sweep_0_to_11_bits",
+  "min_errors": {
+   "TT-TYP-125": 2,
+   "SS-TYP-125": 5,
+   "SS-WCS-125": 6,
+   "SS-TYP-27": 7,
+   "SS-WCS-27": 7,
+   "SS-WCS-N40": 8
   },
-  "rate_of_record_GSps": 1.25,
-  "history_note": "single_phase_decode_manufactured_the_c148_27C_failures_see_harness_finding_H722",
-  "c145_audit": "all_pre_c148_rate_ladder_conclusions_confirmed_under_offset_sweep",
-  "pending": "c154_strengthen_digital_tail_and_retest_at_800ps",
-  "c150_full_period": {
-    "bit_ps": 800,
-    "tx_bits": 127,
-    "ones": 64,
-    "zeros": 63,
-    "verdict": "all_six_corners_0_of_64_spans_unchanged_from_64bit",
-    "eye_ps": 720
+  "rig_clean_span_bits": 0.95,
+  "verdict": "fails_every_corner_ceiling_is_sense_amp_latch"
+ },
+ "rate_of_record_GSps": 1.25,
+ "history_note": "single_phase_decode_manufactured_the_c148_27C_failures_see_harness_finding_H722",
+ "c145_audit": "all_pre_c148_rate_ladder_conclusions_confirmed_under_offset_sweep",
+ "pending": "c154_strengthen_digital_tail_and_retest_at_800ps",
+ "c150_full_period": {
+  "bit_ps": 800,
+  "tx_bits": 127,
+  "ones": 64,
+  "zeros": 63,
+  "verdict": "all_six_corners_0_of_64_spans_unchanged_from_64bit",
+  "eye_ps": 720
+ },
+ "c150_supply_axis": {
+  "status": "VOID_UNRUN",
+  "reason": "all_decks_DC_1.200_v_vdd_measured_1.2000_label_only_in_comment",
+  "detected_by": "identical_results_across_nominally_different_conditions",
+  "finding": "H-723",
+  "prediction_1p08V_fails": "untested_neither_confirmed_nor_refuted"
+ },
+ "standing_rule": "read_every_swept_quantity_back_from_the_raw_and_report_it_beside_the_result",
+ "c151_supply_matrix": {
+  "conditions": 18,
+  "all_pass_individually": true,
+  "vdd_readback_V": [
+   1.08,
+   1.2,
+   1.32
+  ],
+  "per_condition_eye_ps": [
+   640,
+   760
+  ],
+  "intersection": "EMPTY",
+  "binding_late_open": {
+   "cond": "SS-WCS-N40@1.08",
+   "bits": 2.15
   },
-  "c150_supply_axis": {
-    "status": "VOID_UNRUN",
-    "reason": "all_decks_DC_1.200_v_vdd_measured_1.2000_label_only_in_comment",
-    "detected_by": "identical_results_across_nominally_different_conditions",
-    "finding": "H-723",
-    "prediction_1p08V_fails": "untested_neither_confirmed_nor_refuted"
+  "binding_early_close": {
+   "cond": "TT-TYP-125@1.32",
+   "bits": 2.05
   },
-  "standing_rule": "read_every_swept_quantity_back_from_the_raw_and_report_it_beside_the_result",
-  "c151_supply_matrix": {
-    "conditions": 18,
-    "all_pass_individually": true,
-    "vdd_readback_V": [
-      1.08,
-      1.2,
-      1.32
-    ],
-    "per_condition_eye_ps": [
-      640,
-      760
-    ],
-    "intersection": "EMPTY",
-    "binding_late_open": {
-      "cond": "SS-WCS-N40@1.08",
-      "bits": 2.15
-    },
-    "binding_early_close": {
-      "cond": "TT-TYP-125@1.32",
-      "bits": 2.05
-    },
-    "miss_ps": 80,
-    "latency_spread_ps": 700,
-    "finding": "H-724",
-    "pattern": "64bit_not_combined_with_full_period_axis"
+  "miss_ps": 80,
+  "latency_spread_ps": 700,
+  "finding": "H-724",
+  "pattern": "64bit_not_combined_with_full_period_axis"
+ },
+ "claim_of_record": "simulation only: 0/127 from a SINGLE FIXED sampling instant across 6 corners x 3 supplies (+/-10pc), full PRBS-7 period, at 1.0 GS/s with 150 ps shared margin; fixed-clock fails above ~1.12 GS/s; per-condition operation reaches 1.25 GS/s but does not compose; schematic-level, no parasitics/mismatch/noise, ideal VCMREF; not a signoff",
+ "c152_latency_spread_ps": {
+  "c_p_minus_c_n": 11,
+  "cml_out": 53,
+  "sa_n": 111,
+  "Q": 252,
+  "pbit_out_core": 524,
+  "PBIT_OUT": 533
+ },
+ "c152_node_intersection_ps": {
+  "Q": -360,
+  "pbit_out_core": -40,
+  "PBIT_OUT": -120,
+  "note": "negative means empty; sampling earlier is worse; H-725"
+ },
+ "axis_decomposition_ps": {
+  "supply_1p32_to_1p08_per_corner": [
+   120,
+   360,
+   360,
+   400,
+   400,
+   520
+  ],
+  "temperature_125_to_m40": {
+   "at_1.32": 120,
+   "at_1.20": 160,
+   "at_1.08": 280
   },
-  "claim_of_record": "simulation only: 0/127 from a SINGLE FIXED sampling instant across 6 corners x 3 supplies (+/-10pc), full PRBS-7 period, at 1.0 GS/s with 150 ps shared margin; fixed-clock fails above ~1.12 GS/s; per-condition operation reaches 1.25 GS/s but does not compose; schematic-level, no parasitics/mismatch/noise, ideal VCMREF; not a signoff",
-  "c152_latency_spread_ps": {
-    "c_p_minus_c_n": 11,
-    "cml_out": 53,
-    "sa_n": 111,
-    "Q": 252,
-    "pbit_out_core": 524,
-    "PBIT_OUT": 533
+  "process_TT_to_SS_at_125C": {
+   "at_1.32": 80,
+   "at_1.20": 160,
+   "at_1.08": 320
   },
-  "c152_node_intersection_ps": {
-    "Q": -360,
-    "pbit_out_core": -40,
-    "PBIT_OUT": -120,
-    "note": "negative means empty; sampling earlier is worse; H-725"
+  "note": "every axis 3-4x worse at low supply; low VDD amplifies all sensitivities"
+ },
+ "supply_tolerance_spec": {
+  "nominal_only_intersection_ps": 360,
+  "at_pm10pc": -120,
+  "closing_point_pct": 7.5,
+  "implication": "needs on-chip regulated supply held to ~7pc"
+ },
+ "c153_b1000": {
+  "conditions": 18,
+  "all_clean": true,
+  "rig": "0/127 everywhere",
+  "eye_ps": [
+   850,
+   950
+  ],
+  "intersection_ps": 150,
+  "late_open": {
+   "cond": "SS-WCS-N40@1.08",
+   "bits": 1.65
   },
-  "axis_decomposition_ps": {
-    "supply_1p32_to_1p08_per_corner": [
-      120,
-      360,
-      360,
-      400,
-      400,
-      520
-    ],
-    "temperature_125_to_m40": {
-      "at_1.32": 120,
-      "at_1.20": 160,
-      "at_1.08": 280
-    },
-    "process_TT_to_SS_at_125C": {
-      "at_1.32": 80,
-      "at_1.20": 160,
-      "at_1.08": 320
-    },
-    "note": "every axis 3-4x worse at low supply; low VDD amplifies all sensitivities"
+  "early_close": {
+   "cond": "TT-TYP-125@1.32",
+   "bits": 1.8
   },
-  "supply_tolerance_spec": {
-    "nominal_only_intersection_ps": 360,
-    "at_pm10pc": -120,
-    "closing_point_pct": 7.5,
-    "implication": "needs on-chip regulated supply held to ~7pc"
+  "prediction_ps": 116,
+  "actual_ps": 150,
+  "model_error_ps": 34,
+  "crossing_interpolated_ps_per_bit": 889
+ },
+ "output_chain_taper": {
+  "chain": [
+   "XB1",
+   "XB2",
+   "XM7/8(PBIT_RAW tap)",
+   "XM9/10",
+   "XISO1",
+   "XISO2"
+  ],
+  "crosses_file_boundary_after": "XM9/10",
+  "as_drawn_ratios": [
+   4.94,
+   1.15,
+   1.0,
+   1.0,
+   8.94,
+   2.86
+  ],
+  "as_drawn_delay_proxy_tau": 25.9,
+  "c154_uniform_2x": {
+   "intersection_ps": 0,
+   "spread_ps": 680,
+   "note": "gain came only from the unscaled boundary ratio"
   },
-  "c153_b1000": {
-    "conditions": 18,
-    "all_clean": true,
-    "rig": "0/127 everywhere",
-    "eye_ps": [
-      850,
-      950
-    ],
-    "intersection_ps": 150,
-    "late_open": {
-      "cond": "SS-WCS-N40@1.08",
-      "bits": 1.65
-    },
-    "early_close": {
-      "cond": "TT-TYP-125@1.32",
-      "bits": 1.8
-    },
-    "prediction_ps": 116,
-    "actual_ps": 150,
-    "model_error_ps": 34,
-    "crossing_interpolated_ps_per_bit": 889
+  "c155_block_only": {
+   "intersection_ps": -160,
+   "spread_ps": 760,
+   "predicted": "-80 to -100",
+   "note": "H-727"
   },
-  "output_chain_taper": {
-    "chain": [
-      "XB1",
-      "XB2",
-      "XM7/8(PBIT_RAW tap)",
-      "XM9/10",
-      "XISO1",
-      "XISO2"
-    ],
-    "crosses_file_boundary_after": "XM9/10",
-    "as_drawn_ratios": [
-      4.94,
-      1.15,
-      1.0,
-      1.0,
-      8.94,
-      2.86
-    ],
-    "as_drawn_delay_proxy_tau": 25.9,
-    "c154_uniform_2x": {
-      "intersection_ps": 0,
-      "spread_ps": 680,
-      "note": "gain came only from the unscaled boundary ratio"
-    },
-    "c155_block_only": {
-      "intersection_ps": -160,
-      "spread_ps": 760,
-      "predicted": "-80 to -100",
-      "note": "H-727"
-    },
-    "c156_both_files": {
-      "ratios": 2.29,
-      "delay_proxy_tau": 19.8,
-      "widths_um_P_plus_N": [
-        0.85,
-        1.95,
-        4.47,
-        10.25,
-        23.5,
-        53.86
-      ],
-      "predicted_intersection_ps": 160,
-      "status": "running_not_scored"
-    },
-    "stage_count": "kept at 6: XM7/8 feeds the PBIT_RAW output pin and stages invert, so only an even number may be removed"
+  "c156_both_files": {
+   "ratios": 2.29,
+   "delay_proxy_tau": 19.8,
+   "widths_um_P_plus_N": [
+    0.85,
+    1.95,
+    4.47,
+    10.25,
+    23.5,
+    53.86
+   ],
+   "predicted_intersection_ps": 160,
+   "status": "running_not_scored"
   },
-  "open_items_added": "PBIT_RAW is unloaded in the testbench but would drive its own pad on a real part",
-  "randomness_campaign_2026_08_08": {
-    "offset_sigma_mV": 11.79,
-    "offset_p90_mV": 19.12,
-    "gate_failures": "1/200 excluded",
-    "attribution_mV": {
-      "sense_amp_latch_buffer": 11.5,
-      "cml": 2.7
-    },
-    "trim_mV_per_mV": 1.002,
-    "trim_range_mV": 60,
-    "trim_step_mV": {
-      "as_drawn": 0.2,
-      "with_2_extra_bits": 0.05
-    },
-    "sigma_n_mV": 3.246,
-    "noise_band": {
-      "f3db_low_MHz": 15.8,
-      "f3db_high_GHz": 5.62,
-      "NEBW_GHz": 8.0,
-      "peak_gain": 14.8
-    },
-    "implied_source_R_ohm": 278,
-    "rho_800ps": -0.0033,
-    "bias": {
-      "untrimmed": "P(one) ~100pc",
-      "trim_0p20": "2.45 pc",
-      "trim_0p05": "0.6 pc",
-      "required_residual_mV": 0.081
-    },
-    "min_entropy_bits": 0.983,
-    "one_time_calibration": "impossible by arithmetic: 0.69pc budget vs tens-of-pc tempco",
-    "answer": "background servo on the output ones/zeros ratio; N=10k bits at 2 sigma, 32768 at 3 sigma; 8-26 us window vs 20-50 ms drift",
-    "retracted": "rho=0.102 and correlation-dominates, a log-grid aliasing artefact",
-    "open": [
-      "servo must not mask a dead source - independent health monitoring",
-      "servo imprints correlation at its window scale",
-      "metastability rate never calculated"
-    ]
+  "stage_count": "kept at 6: XM7/8 feeds the PBIT_RAW output pin and stages invert, so only an even number may be removed"
+ },
+ "open_items_added": "PBIT_RAW is unloaded in the testbench but would drive its own pad on a real part",
+ "randomness_campaign_2026_08_08": {
+  "offset_sigma_mV": 11.79,
+  "offset_p90_mV": 19.12,
+  "gate_failures": "1/200 excluded",
+  "attribution_mV": {
+   "sense_amp_latch_buffer": 11.5,
+   "cml": 2.7
   },
-  "trim_architecture_2026_08_09": {
-    "target_step_mV": 0.05,
-    "c164_absolute_ref": {
-      "worst_step_mV": 0.728,
-      "variation": "96x",
-      "range_mV": [
-        121.6,
-        3.9
-      ],
-      "verdict": "fail"
-    },
-    "c165_ratiometric": {
-      "worst_step_mV": 0.742,
-      "variation": "26x",
-      "range_mV": [
-        325.9,
-        12.7
-      ],
-      "verdict": "fail, sign reverses, trim pair Vbe 1.16 V outside sharing regime"
-    },
-    "load_ratio_idea": {
-      "relation": "(dR/R)*V_T, bias-independent",
-      "verdict": "unmanufacturable: 0.19pc of 838 ohm = 1.6 ohm"
-    },
-    "c166_dithered": {
-      "physical_lsb_mV": 0.2,
-      "dither_bits": 5,
-      "effective_step_mV": 0.00625,
-      "mean_bias_pc_at_p025": 0.61,
-      "residual_bias_pc": 0.038,
-      "dither_jitter_mV": 0.087,
-      "effective_sigma_n_mV": 3.2512,
-      "condition": "dither must be random, not periodic - a periodic toggle puts a tone at the dither rate",
-      "verdict": "works; resolution bought in digital, no analogue wall"
-    },
-    "principle": "corrections referenced to absolute quantities separate from what they correct; range wants authority, resolution wants ratios; when precision is cheap in digital, buy it there and let averaging convert it back"
+  "trim_mV_per_mV": 1.002,
+  "trim_range_mV": 60,
+  "trim_step_mV": {
+   "as_drawn": 0.2,
+   "with_2_extra_bits": 0.05
   },
-  "additions_spec_2026_08_09": {
-    "trim": {
-      "structure": "(C,p): offset=(C+p)*0.2mV",
-      "coarse_bits": 10,
-      "coarse_step_mV": 0.2,
-      "range_mV": 60,
-      "fine": "5-bit dither probability over one LSB",
-      "effective_step_mV": 0.00625,
-      "dither_must_be": "random not periodic",
-      "dither_jitter_mV": 0.087
-    },
-    "servo": {
-      "window_bits": 32768,
-      "window_us": 26.2,
-      "meas_sigma_pc": 0.276,
-      "gain_g": 10.2,
-      "loop_gain": 0.25,
-      "db_dp": 0.0245,
-      "tau_windows": 4,
-      "settle_ms": 0.52,
-      "residual_bias_pc": 0.105,
-      "residual_note": "loop-noise dominated, not quantization",
-      "startup": "p=0.5, output gated one window"
-    },
-    "monitors": {
-      "envelope": "1.8-2.2 GHz, alarm 0.34 mV rms vs 0.687 healthy",
-      "repetition": "3 sigma = 50.83 pc vs 49.9 natural",
-      "coarse_rail": "C pinned at 0 or 599, 4-window debounce",
-      "rejected": [
-        "raw pre-trim balance - saturates ~100 pc on every real part",
-        "p-rail alarm - p railing is normal coarse-step behaviour"
-      ]
-    },
-    "interaction_audit": "3 of 4 pairs compatible with margin; 1 failed and produced the coarse-rail replacement",
-    "method": "arithmetic only, no simulation; every number computed by both chairs; two corrections resulted (40x loop gain, saturated monitor)"
+  "sigma_n_mV": 3.246,
+  "noise_band": {
+   "f3db_low_MHz": 15.8,
+   "f3db_high_GHz": 5.62,
+   "NEBW_GHz": 8.0,
+   "peak_gain": 14.8
   },
-  "c169_coarse_dac_first_build": {
-    "status": "VOID - bench decoder read sweep voltage as code count (missing x100)",
-    "do_not_quote": [
-      "worst step 258.3 mV",
-      "373-428 sign reversals",
-      "mean step negative",
-      "full scale -489 mV"
-    ],
-    "why_void": "one decode fault explains all three symptoms; binary DAC can only lose monotonicity at 9 major carries of 599",
-    "found_by": "coarse sweep every 64 codes showed two populations, not a transfer curve",
-    "standing_check": "sweep N codes, count distinct output levels; if not ~N the decode is broken (H-733)",
-    "rebuild": "fix decoder scale, thermometer-code the top bits (monotonic by construction)",
-    "consequence": "worst-case coarse step remains UNMEASURED; coverage margin still rests on the provisional 0.543 mV"
-  }
+  "implied_source_R_ohm": 278,
+  "rho_800ps": -0.0033,
+  "bias": {
+   "untrimmed": "P(one) ~100pc",
+   "trim_0p20": "2.45 pc",
+   "trim_0p05": "0.6 pc",
+   "required_residual_mV": 0.081
+  },
+  "min_entropy_bits": 0.983,
+  "one_time_calibration": "impossible by arithmetic: 0.69pc budget vs tens-of-pc tempco",
+  "answer": "background servo on the output ones/zeros ratio; N=10k bits at 2 sigma, 32768 at 3 sigma; 8-26 us window vs 20-50 ms drift",
+  "retracted": "rho=0.102 and correlation-dominates, a log-grid aliasing artefact",
+  "open": [
+   "servo must not mask a dead source - independent health monitoring",
+   "servo imprints correlation at its window scale",
+   "metastability rate never calculated"
+  ]
+ },
+ "trim_architecture_2026_08_09": {
+  "target_step_mV": 0.05,
+  "c164_absolute_ref": {
+   "worst_step_mV": 0.728,
+   "variation": "96x",
+   "range_mV": [
+    121.6,
+    3.9
+   ],
+   "verdict": "fail"
+  },
+  "c165_ratiometric": {
+   "worst_step_mV": 0.742,
+   "variation": "26x",
+   "range_mV": [
+    325.9,
+    12.7
+   ],
+   "verdict": "fail, sign reverses, trim pair Vbe 1.16 V outside sharing regime"
+  },
+  "load_ratio_idea": {
+   "relation": "(dR/R)*V_T, bias-independent",
+   "verdict": "unmanufacturable: 0.19pc of 838 ohm = 1.6 ohm"
+  },
+  "c166_dithered": {
+   "physical_lsb_mV": 0.2,
+   "dither_bits": 5,
+   "effective_step_mV": 0.00625,
+   "mean_bias_pc_at_p025": 0.61,
+   "residual_bias_pc": 0.038,
+   "dither_jitter_mV": 0.087,
+   "effective_sigma_n_mV": 3.2512,
+   "condition": "dither must be random, not periodic - a periodic toggle puts a tone at the dither rate",
+   "verdict": "works; resolution bought in digital, no analogue wall"
+  },
+  "principle": "corrections referenced to absolute quantities separate from what they correct; range wants authority, resolution wants ratios; when precision is cheap in digital, buy it there and let averaging convert it back"
+ },
+ "additions_spec_2026_08_09": {
+  "trim": {
+   "structure": "(C,p): offset=(C+p)*0.2mV",
+   "coarse_bits": 10,
+   "coarse_step_mV": 0.2,
+   "range_mV": 60,
+   "fine": "5-bit dither probability over one LSB",
+   "effective_step_mV": 0.00625,
+   "dither_must_be": "random not periodic",
+   "dither_jitter_mV": 0.087
+  },
+  "servo": {
+   "window_bits": 32768,
+   "window_us": 26.2,
+   "meas_sigma_pc": 0.276,
+   "gain_g": 10.2,
+   "loop_gain": 0.25,
+   "db_dp": 0.0245,
+   "tau_windows": 4,
+   "settle_ms": 0.52,
+   "residual_bias_pc": 0.105,
+   "residual_note": "loop-noise dominated, not quantization",
+   "startup": "p=0.5, output gated one window"
+  },
+  "monitors": {
+   "envelope": "1.8-2.2 GHz, alarm 0.34 mV rms vs 0.687 healthy",
+   "repetition": "3 sigma = 50.83 pc vs 49.9 natural",
+   "coarse_rail": "C pinned at 0 or 599, 4-window debounce",
+   "rejected": [
+    "raw pre-trim balance - saturates ~100 pc on every real part",
+    "p-rail alarm - p railing is normal coarse-step behaviour"
+   ]
+  },
+  "interaction_audit": "3 of 4 pairs compatible with margin; 1 failed and produced the coarse-rail replacement",
+  "method": "arithmetic only, no simulation; every number computed by both chairs; two corrections resulted (40x loop gain, saturated monitor)"
+ },
+ "c169_coarse_dac_first_build": {
+  "status": "VOID - bench decoder read sweep voltage as code count (missing x100)",
+  "do_not_quote": [
+   "worst step 258.3 mV",
+   "373-428 sign reversals",
+   "mean step negative",
+   "full scale -489 mV"
+  ],
+  "why_void": "one decode fault explains all three symptoms; binary DAC can only lose monotonicity at 9 major carries of 599",
+  "found_by": "coarse sweep every 64 codes showed two populations, not a transfer curve",
+  "standing_check": "sweep N codes, count distinct output levels; if not ~N the decode is broken (H-733)",
+  "rebuild": "fix decoder scale, thermometer-code the top bits (monotonic by construction)",
+  "consequence": "worst-case coarse step remains UNMEASURED; coverage margin still rests on the provisional 0.543 mV"
+ },
+ "c169_characterised_2026_08_09": {
+  "status": "MEASURED - converter is an exact static weighted sum; weights wrong by mismatch",
+  "apparatus_faults_removed": [
+   "VSS never tied to 0; ground floated 795 mV; segments at VBE = -21.8 mV (H-734)",
+   "e_track/e_latch pinned by ideal sources; comparator permanently latched; balanced inputs gave c_p-c_n = -1705 mV",
+   "all switch instances had gate and source transposed vs .subckt sg13_lv_nmos d g s b; every HBT collector open-circuit"
+  ],
+  "fit": {
+   "model": "static 7-weight sum",
+   "points": 121,
+   "excluded": "7 codes corrupted by decoder floating-point",
+   "max_residual_mV": 0.0013,
+   "LSB_mV": 0.1497,
+   "residual_as_fraction_of_LSB": 0.009,
+   "conclusion": "no code-dependent interaction"
+  },
+  "weights_mV": [
+   0.1497,
+   0.3529,
+   0.4825,
+   1.2661,
+   2.6096,
+   4.9546,
+   11.1719
+  ],
+  "weight_ratio_to_ideal": [
+   1.0,
+   1.179,
+   0.806,
+   1.058,
+   1.09,
+   1.035,
+   1.166
+  ],
+  "symptoms_explained": {
+   "14_reversals_at_codes_3_mod_8": "b2 19 pc light: W2-W1-W0 = -0.0201 mV",
+   "worst_step_-1.356_mV_at_63": "b6 17 pc heavy: W6 - sum_below = 1.3565 mV"
+  },
+  "mismatch_off_control": {
+   "turn_on_steps_mV": "0.154-0.155 uniform",
+   "reversals": "0/127",
+   "range_over_N_minus_1_mV": 0.15512,
+   "note": "two independent numbers agree to 4 digits; design weights are correct"
+  },
+  "model_limitation": "sg13g2_hbt_mod_mismatch.lib:49 qarea=agauss(1,0.1,..) has NO Nx term; scaling Nx cannot change mismatch. Area helps only via 2^k parallel Nx=1 unit devices (H-736)",
+  "boundary_margins": {
+   "b1": "5.77 sigma / 4 LSB unit / 255 elements",
+   "b2": "3.78 sigma / 8 LSB / 127",
+   "b3": "2.58 sigma / 16 LSB / 63",
+   "b4": "1.80 sigma / 32 LSB / 31",
+   "current_design": "binary to b6",
+   "recommendation": "b2 preferred, b3 acceptable"
+  },
+  "why_boundary_not_matching": "unary segments are monotonic by construction; each element need only be positive, so mismatch costs linearity never monotonicity",
+  "acceptance_gate_stated_in_advance": [
+   "zero reversals on EVERY seed",
+   "range/(codes-1) equals turn-on step to 3 digits",
+   "static-weight fit residual under 10 pc of an LSB"
+  ],
+  "regression_note": "the switch terminal fix was applied to a deck, not to its generator, and returned on the next rebuild across 156 instances; guard added: awk '/^XSW/ && ($3 ~ /vseg/ || $4 !~ /vseg/)' run before every sim",
+  "still_open": "worst-case coarse step unmeasured for the rebuilt architecture; servo_model.py coverage assertion still carries the provisional 0.543 mV from rejected C165"
+ }
 }

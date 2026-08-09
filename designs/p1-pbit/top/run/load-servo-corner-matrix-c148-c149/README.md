@@ -562,3 +562,83 @@ distinct-levels check runs first, before any corner run or assertion.
 
 **The worst-case coarse step therefore remains unmeasured**, and the coverage margin still rests on
 the provisional 0.543 mV. That is the most load-bearing placeholder in the specification.
+
+## C169 characterised — 2026-08-09, after three apparatus faults
+
+The rebuild was measured. Getting a number out of it required removing three faults, none of which
+were in the converter:
+
+1. **The bench had no ground.** `VSS` was never tied to node `0` — no source, no `.global` — and was
+   passed positionally into `XCOMP`/`XISO` as the ground port. Ground floated 795 mV above the
+   reference the forced bias sources used; every segment sat at V_BE = −21.8 mV, cut off. The deck
+   had been made to converge by relaxing `reltol` to 2e-2; a circuit with no ground is not stiff, it
+   is singular. Caught by an impossible coincidence: seven segment emitters reading **794.769 mV
+   identical to the microvolt** across seven degeneration resistors spanning m=1…64. See H-734.
+2. **The comparator was permanently latched.** With balanced inputs (both 1.245 V) `c_p − c_n` read
+   −1705 mV. The bench pinned `e_track` and `e_latch` — the tail nodes of the input pair and of the
+   cross-coupled latch — with ideal sources, defeating `XQCLK_TRACK`/`XQCLK_LATCH` so the clock could
+   not steer between track and latch. With those deleted, `e_latch` has **no DC path to ground** in
+   the track phase, so the DC solution is latched regardless: `.op` is the wrong instrument for a
+   regenerative block. Resolved by characterising the DAC standalone, with resistive loads and no
+   comparator.
+3. **Every switch had two terminals transposed.** The PDK declares `.subckt sg13_lv_nmos d g s b`;
+   the instances read `XSWBN0 c_n vsegb0 b0 VSS` — gate on the segment node, source on the decoder
+   bit. All fourteen HBT collectors were therefore open-circuit (a gate carries no DC current),
+   which is why the current sat at the leakage floor from VREF 0.75 V to 1.10 V and never lifted.
+   The 2 nA reported "equal weights" was the identical off-state leakage of fourteen identically
+   sized switches.
+
+**The measurement, once the apparatus was sound.** Transfer curve `v(c_n)` over codes 0–127, one
+column (a seven-column print had been silently dropping columns). Excluding seven codes corrupted by
+decoder floating-point, a **static seven-weight model fits the remaining 121 points to a max residual
+of 0.0013 mV against a 0.1497 mV LSB — 0.9%.** There is no code-dependent interaction; the converter
+is exactly a weighted sum, and the weights are simply wrong.
+
+| bit | fitted weight (mV) | ratio to ideal 2^k |
+| --- | --- | --- |
+| b0 | 0.1497 | 1.000 |
+| b1 | 0.3529 | 1.179 |
+| b2 | 0.4825 | **0.806** |
+| b3 | 1.2661 | 1.058 |
+| b4 | 2.6096 | 1.090 |
+| b5 | 4.9546 | 1.035 |
+| b6 | 11.1719 | **1.166** |
+
+Two entries account for every symptom: **b2 19% light** makes W2 − W1 − W0 = −0.0201 mV, which is all
+14 clean reversals (every code ≡ 3 mod 8); **b6 17% heavy** makes W6 − Σbelow = 1.3565 mV, the
+observed −1.356 mV worst step at 63→64.
+
+**Cause is mismatch, and the design weights are correct.** With `mm_ok=0`: turn-on steps uniform at
+0.154–0.155 mV, **0/127 reversals**, and range/(N−1) = 19.70/127 = **0.15512 mV**, matching the step
+size from an independent direction to four digits.
+
+**The obvious repair would have measured nothing.** `sg13g2_hbt_mod_mismatch.lib:49` sets
+`qarea='agauss(1, 0.1, …)'` with **no `Nx` term** — a flat 10% area sigma regardless of device size.
+Scaling `Nx` changes the mismatch by nothing. Area helps only through **replication**: 2^k parallel
+`Nx=1` unit devices give 2^k independent draws with σ ∝ 1/√m, which is both what the model will show
+and what the layout would do. See H-736.
+
+**Architectural consequence — move the segmentation boundary.** With unit averaging the absolute
+sigma of W_k is u·0.10·2^(k/2) and the nominal margin on the worst step is exactly one LSB, so the
+margin in sigmas is 1/√(Σ variances up to k):
+
+| binary top bit | margin | unary unit | elements for 1023 codes |
+| --- | --- | --- | --- |
+| b1 | 5.77σ | 4 LSB | 255 |
+| b2 | **3.78σ** | 8 LSB | 127 |
+| b3 | 2.58σ | 16 LSB | 63 |
+| b4 | 1.80σ | 32 LSB | 31 |
+
+C169 is binary to b6. The repair is not better matching but a boundary move to **b2 (preferred) or
+b3** — because the unary segments are **monotonic by construction**: each element need only be
+positive, so mismatch there costs linearity and can never cost monotonicity, which is the one
+property the bias servo cannot function without.
+
+**Acceptance gate for the rebuild, stated before the run** (all three required): zero reversals on
+**every** seed, not the best one; range/(codes−1) equal to the turn-on step to three digits; and a
+static-weight fit with residual under 10% of an LSB.
+
+**Still open.** The worst-case coarse step remains unmeasured for the *rebuilt* architecture, so the
+`servo_model.py` coverage assertion still carries the provisional 0.543 mV from rejected build C165.
+Under the b2 boundary the expected bound is ~1 LSB + 3σ ≈ 2.2 LSB ≈ 0.34 mV against a 1.6 mV fine
+range, but that is a prediction, not a measurement, and the placeholder stays until it is one.
