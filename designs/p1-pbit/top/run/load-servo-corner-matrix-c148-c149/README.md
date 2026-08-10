@@ -1961,12 +1961,25 @@ are involved. Code sweep, 16 points:
 **A fixed asymmetry carried by every part.** It also explains the first two mismatch draws (67 % and
 80 % consumed) — a ~16 mV fixed term plus a modest random one, not a coincidence.
 
-**THE CONFOUND.** The start-up kick `IKICK2 0 xcomp.c_p1_comp` injects **1 mA into one node, not
-differentially**. A one-sided injection into a comparator is **indistinguishable from a systematic
-offset** by any later measurement. **Discriminating test:** same deck with the kick symmetric (same
-current into `c_p1_comp` and its complement, or halved and split). **Flip stays near 60 ⇒ real, in
-the silicon. Flip moves to 301 ⇒ the testbench.** The kick cannot be removed — the bias loop has no
-starter (see the start-up section above), which is precisely why this confound exists.
+**THE CONFOUND.** The start-up kick `IKICK2 0 xcomp.c_p1_comp` injects **1 mA into a single node**,
+and the measurement cannot separate the circuit's own asymmetry from the state that kick leaves the
+part in. The kick cannot be removed — the bias loop has no starter (see the start-up section above),
+which is precisely why this confound exists.
+
+*Corrected 2026-08-10: an earlier draft of this paragraph called `c_p1_comp` "one side of a
+differential pair" and proposed symmetrising the injection. **That was wrong.** `c_p1_comp` and
+`c_p2_comp` are the **bias loop's compensation nodes** — the same ones in the three-equilibria
+start-up finding above — so the kick moves the loop off its dead equilibrium onto the live one rather
+than unbalancing the comparator inputs. It has **no complement**, and "symmetrise it" is undefined.*
+
+**Discriminating test (assumes nothing about topology): sweep the kick amplitude.** Same no-mismatch
+deck at **0.5 mA / 1 mA / 2 mA**.
+
+    flip stays at code 60 across 4:1 in stimulus  ->  the kick is not the cause; the 16 mV is real
+    flip moves with amplitude                     ->  the kick sets where the loop lands; it is ours
+
+**A rerun is not this test.** `systest3` was byte-identical to `systest2` but for output filenames;
+its matching answer shows only that a no-mismatch deck is deterministic.
 
 **IF REAL, this supersedes the +20 % `I_FS` recommendation.**
 
