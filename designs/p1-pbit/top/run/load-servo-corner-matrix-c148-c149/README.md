@@ -1342,3 +1342,36 @@ measurement in this lineage. It is not a v7 number and **no arithmetic converts 
 come from the same build.* Mixing an ideal from one architecture with a σ from another produces a
 number that looks like a margin, sits in the right units, and describes nothing — the same failure as
 the LSB-σ × mV-σ conflation (H-750) and the level-for-step substitution (H-752).
+
+### The trim verdict, pre-committed before the measurement (2026-08-10)
+
+The architectural verdict recorded above rests on **σ = 11.79 mV**, which is now known to be
+HBT-mismatch-only, DC-protocol, and measured on a different comparator deck. A whole-chain,
+uncompressed σ is in flight. **The decision rule is written here first, so the result is a test
+rather than a rationalisation.**
+
+`range needed for 99% = 2.576σ`; `shortfall = that / 6.7 mV`. Range scales with DAC full-scale
+current, so **the shortfall factor is the multiplier on the DAC's contribution to `c_p`/`c_n`** — and
+the pair enlargement died at **3.4×** on that node.
+
+| whole-chain σ | within ±6.7 mV | 99% needs | shortfall | verdict |
+|---|---|---|---|---|
+| 4.0 mV | 90.6% | 10.30 mV | 1.54× | **scalable** |
+| 5.2 mV | 80.2% | 13.40 mV | 2.00× | **scalable** (boundary) |
+| 7.0 mV | 66.2% | 18.03 mV | 2.69× | marginal |
+| 8.8 mV | 55.1% | 22.80 mV | 3.40× | **architectural** (boundary) |
+| 12.0 mV | 42.3% | 30.91 mV | 4.61× | architectural |
+
+**Thresholds: σ < 5.2 mV → the range problem is a sizing exercise after all. 5.2–8.8 mV → a real
+trade against the pole, not a yes/no. > 8.8 mV → the architectural verdict stands as written.**
+
+These thresholds are **conservative in the design's favour**: the DAC is only part of the 379 fF on
+that node, so scaling its current by *k* raises the total by less than *k*. If the result lands in
+the marginal band, the DAC's actual share of `c_p`/`c_n` is the next number to obtain and it can only
+help.
+
+**Also recorded: an input-stage-only σ of 3.975 mV** (n=250, flip-point at `v(c_p) − v(c_n)`,
+linear by construction, all three mismatch families). It is **not** comparable to the 11.79 —
+it excludes the CML, sense amp, output latch and buffers, where most of the old budget sat. The
+tell was the monotonicity check: 11.79 → 3.975 while *adding* two mismatch families is impossible,
+so the two describe different objects. It is a valid number for the input stage and nothing else.
