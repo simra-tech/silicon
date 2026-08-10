@@ -1653,3 +1653,40 @@ would work; it is that **the overshoot the design deliberately wants is undelive
 At `V_R = 25 mV` the exact 1.000 step alone gives **7.5σ** and the overshoot would take it to 8.3σ —
 at which point the overshoot becomes a nicety rather than a necessity, and keeping the exact step
 (with its zero DNL) becomes a defensible choice on its own merits.
+
+## Requirement — bias start-up budget: one servo window (2026-08-10)
+
+Recorded because it was previously **unstated**, and a starter was about to be sized without it.
+
+**No external power-on specification exists in this package.** The budget below is derived from
+internal consistency; **a system-level spec, if one appears, supersedes it.**
+
+**Derivation.** The servo window is `32768 bits × 800 ps = 26.2 µs`, and the corrected servo model
+converges by window 23 — **~603 µs** from cold. The bias must be up before the first window's
+statistics mean anything, or that window is wasted. So:
+
+```
+BUDGET: the bias loop reaches its live state within ONE SERVO WINDOW = 26.2 us
+```
+
+**Sizing that follows.** The start-up barrier is a *charge* problem (H-778): `C ≈ 8.5 pF` on
+`c_p1_comp`, `ΔV = 0.207 V` from the dead state to the unstable crossing at 0.439 V.
+
+| budget | minimum starter current |
+|---|---|
+| one servo window (26.2 µs) | **67 nA** |
+| ×1.5 margin | 101 nA |
+| ×3 margin | 201 nA |
+
+**Recommendation: size for 0.1–0.2 µA at the cold slow corner**, where the barrier is deepest and the
+capacitance largest.
+
+**And take the margin.** A *self-disabling* starter (H-775) costs **nothing in steady state**, so the
+only penalty for oversizing is a starter that fails to switch off cleanly — which the
+third-equilibrium sweep (H-776) already tests for. The 10 nA candidate is ~6× under this budget: it
+would take **176 µs** and burn the first six servo windows, a self-inflicted delay of a third of the
+convergence time to economise on a device that is free once it turns off.
+
+**Measured inputs behind this:** barrier current **0.07 nA max at 0.400 V**; equilibria at
+**0.232 / 0.439 / 0.812 V**; both cold-start ramps confirmed **dead**, so unaided start is impossible
+at any realistic ramp rate — the starter is a requirement, not insurance.
