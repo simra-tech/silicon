@@ -882,3 +882,71 @@ one sample's mismatch. Re-tune against the 250-draw ensemble mean (uncertainty 0
 **Still owed before any of this is settled:** measure the c_p/c_n capacitance and settling on the
 rebuilt comparator bench — the pole arithmetic is model-derived, and the comparator bench itself is
 still the broken one (latched, five forced bias nodes).
+
+---
+
+## Correction (2026-08-10) — every mismatch figure in this package was measured with resistor mismatch disabled
+
+**What was found.** Every deck in this lineage selects two corner blocks:
+
+```
+.lib .../cornerHBT.lib hbt_typ_mismatch     <- transistor mismatch ON
+.lib .../cornerRES.lib res_typ              <- resistor mismatch OFF
+```
+
+`res_typ` (cornerRES.lib lines 19–37) sets `drsh_rppd = dl_rppd = dw_rppd = 0.0` and includes the
+plain `resistors_mod.lib`. The block that enables it is **`res_typ_mismatch`**, which supplies
+`rsh_rppd_mm = 2.0 %·µm`, `dl_rppd_mm = dw_rppd_mm = 6 nm` and includes
+`resistors_mod_mismatch.lib`. No run behind any number in this document contained a resistor that
+differed from its neighbour.
+
+**Why it went unnoticed for the whole exercise.** The two device families are switched at *different
+levels*. For HBTs, mismatch is gated per instance by `mm_ok`, and `mm_ok=1` is written on
+essentially every device in the netlists. **For `rppd`, `mm_ok` is a no-op** — it appears only in the
+subcircuit's `.param` default line and nowhere in the `NR1` model card. The switch is the corner
+block one file higher. So every resistor carries a marking that reads *mismatch enabled* while being
+perfectly matched, which is the most persuasive possible form of the fault.
+
+**Measured effect on the comparator** (5 draws each, same protocol, gate at 7.450 ns):
+
+| configuration | sample σ (collector) | input-referred (gain 8.17) |
+|---|---|---|
+| HBT mismatch only (`res_typ`) | 18.46 mV | **2.26 mV** |
+| HBT + resistor mismatch (`res_typ_mismatch`) | 29.65 mV | **3.63 mV** |
+
+The implied resistor term is √(3.63² − 2.26²) = **2.84 mV** input-referred — larger than the
+loads-only hand estimate of 0.87 mV (27 °C) / 1.15 mV (125 °C), because the corner switch mismatches
+the *entire* `rppd` set at once: the pair loads, `XRDEG_SCOMP`, `XRPTAT_COMP`, the `g_p`/`g_n`
+divider, the CMFB sense pair, and the DAC degeneration resistors. **At 5 + 5 draws the increase is
+11.19 ± 12.35 gate-mV and the 95% interval includes zero — the direction is established by the
+mechanism, the magnitude is not yet significant.**
+
+**Consequence for the figures in this document.** Every mismatch-derived number above — the handover
+σ, the per-boundary reversal probabilities, the 4.33σ / 4.06σ margins, the "0.20% of parts affected
+against a 1.2% spec", and the 250-draw validation (σ 0.2569 measured vs 0.2538 modelled) — was
+computed on a bench where the unit-cell degeneration resistors could not vary. Those resistors are
+`rppd w=1.0 µm l=5.4 µm`, giving
+
+```
+rsh term  2.0 / sqrt(1.0 x 5.4) = 0.861 %
+dl  term  0.006 / 5.4           = 0.111 %
+dw  term  0.006 / 1.0           = 0.600 %
+                        total     1.055 % per device (1 sigma)
+```
+
+and they sit **directly in the current-setting path** of every unit cell, so the mapping into weight
+error is close to one-for-one rather than attenuated. The model's agreement with the 250-draw
+ensemble is not evidence against this: the model was built from the same HBT-only physics the bench
+simulated, so both are short the same term and agree with each other.
+
+**Status.** The C169 v7 build (`6ac3acf0`) remains the selected variant — nothing here changes the
+ranking of the alternatives, all of which were compared under the same omission. **But its margin
+figures are provisional, not frozen, until the 250-draw ensemble is re-run under
+`res_typ_mismatch`.** The direction of the correction is known and unfavourable: σ can only grow, so
+the margins can only shrink and the escape rate can only rise. It is stated here rather than left
+implicit because a margin on record is read as a margin measured.
+
+**Rule this earns.** *A per-instance mismatch flag is not evidence that mismatch is enabled.* Verify
+enablement by measuring it: run two draws and confirm the quantity actually moves. Every device
+family in a PDK may switch at a different level, and the one that silently does nothing is the one
+written most consistently.
