@@ -1389,3 +1389,47 @@ linear by construction, all three mismatch families). It is **not** comparable t
 it excludes the CML, sense amp, output latch and buffers, where most of the old budget sat. The
 tell was the monotonicity check: 11.79 → 3.975 while *adding* two mismatch families is impossible,
 so the two describe different objects. It is a valid number for the input stage and nothing else.
+
+### Relocating the trim cannot help — `c_p`/`c_n` is the minimum-current injection node
+
+The fallback recorded earlier — *"the correction cannot stay on `c_p`/`c_n`; it has to inject
+somewhere that is not bandwidth-critical"* — is **refuted by its own arithmetic and is withdrawn.**
+
+To null an input-referred offset `V_os` you must produce `A_X · V_os` at whatever node X you inject
+into, where `A_X` is the gain from the input to X. So the injected current is
+
+```
+inject at c_p/c_n :  dI = gm . V_os                       (gm = I_T/2V_T = 34.6 mA/V)
+inject at cml_out :  dI = gm . R_C . gm_cml . V_os        -> R_C.gm_cml times MORE
+```
+
+`R_C·gm_cml > 1` whenever the CML tail exceeds **0.18 mA** — true of any CML stage; at a 1 mA tail it
+is **5.5×**. Every node downstream is worse by the gain preceding it, and there is nothing upstream of
+the input pair except the input. **`c_p`/`c_n` is already the cheapest place in the chain to inject a
+correction**, so no relocation can beat it, and the four-candidate injection survey is closed.
+
+### What replaces it: the offset is downstream, and downstream mismatch is an area problem
+
+Pre-committed against the pending whole-chain σ. If it lands near **9.95 mV** against the input
+stage's measured **3.975 mV**, then the downstream contributes
+
+```
+sqrt(9.95^2 - 3.975^2) = 9.12 mV  ->  84% of the offset VARIANCE
+```
+
+The downstream is CMOS. Its mismatch scales as `1/sqrt(W·L)`, and area there loads `cml_out` and the
+sense nodes — **not `c_p`/`c_n`**, which is the constrained node. To bring the whole chain to the
+5.2 mV *scalable* threshold, the downstream must fall 9.12 → 3.35 mV, a factor 2.72, i.e.
+
+```
+area factor = 2.72^2 = 7.4x   ->  sense-amp pair w = 2.0 um  ->  ~15 um at the same length
+```
+
+Large but ordinary, and paid in gate capacitance on a node that is not the bottleneck.
+
+**So the headline may not be "the trim needs to be bigger". It may be "the sense amp needs to be
+better matched"** — a different and considerably cheaper class of fix, and one that only became
+visible once the offset was decomposed by stage rather than quoted as a single number.
+
+*(Conditional on the campaign: if the whole-chain σ lands well below ~9 mV the split changes and this
+costing must be redone with the measured numbers.)*
