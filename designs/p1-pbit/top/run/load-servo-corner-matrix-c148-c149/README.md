@@ -1568,3 +1568,55 @@ labelled extrapolated and optimistic.
 **Unchanged and not in question:** the exact coverage count — **46.4% of parts lie beyond ±6.7 mV**
 (H-768), measured with no distributional assumption at all. Whatever band the shortfall lands in,
 nearly half the population is uncorrectable as drawn.
+
+## The v7 compensation is inert, and the number that shows it opens a better fix (2026-08-10)
+
+**The carrier, located in the frozen generator** (`C169-gen-standalone.py:35`):
+
+```
+XRCU{j}  e_dacu{j} VSS  rppd w=1.037u l=5.4u m=4     unary
+XRCB{k}  e_dacb{k} VSS  rppd w=1.0u   l=5.4u m=1     binary
+```
+
+Conductance ratio `4 × 1.037 = 4.148` against an exact 4 — a **+3.7%** trim, not the 8% the v7
+section above quotes. *(The surrounding architecture is right: the unary element is `NUNBITS`
+parallel `Nx=1` devices, which is H-736 applied correctly, since `qarea` has no `Nx` term.)*
+
+**It cannot deliver that.** Measured `V_R` on a unary cell is **0.6 mV** (predicted ~0.5 before the
+run; `b1` reads 1.0 mV in the same `.op`, consistent with the earlier 0.967). The unary cell carries
+4 LSB through *four parallel* resistors, so its `V_R` equals a unit cell's rather than 4×. Then
+
+```
+sensitivity of I to R  =  (V_R/V_T)/(1 + V_R/V_T)  =  0.022
+3.7% conductance trim  ->  0.08% of current change      inert by ~44x
+```
+
+**Consequence.** v7's headline — *"improves monotonicity **and** recovers the capacitance"* — is
+**half supported**. Reverting the pairs genuinely recovers 379 fF and the ~1.5 GHz pole. The
+compensation that was to replace them does essentially nothing, so the 1.098 LSB handover step and
+the **4.33σ margin were computed from a single-draw `x` on a correction that is not working** (and
+that `x` was already H-742). The margin is unsupported from two independent directions.
+
+### The same number is the lever
+
+Degeneration suppresses V_BE mismatch by `1/(1+V_R/V_T)` and raises the resistor's authority by
+`(V_R/V_T)/(1+V_R/V_T)`. **Both are governed by the one quantity now measured at 0.6 mV:**
+
+| `V_R` | HBT term | R term | cell mismatch | trim sensitivity |
+|---|---|---|---|---|
+| **0.6 mV (today)** | 9.31% | 0.02% | **9.31%** | **0.023** |
+| 25 mV | 4.85% | 0.49% | 4.87% | 0.492 |
+| 50 mV | 3.25% | 0.66% | 3.32% | 0.659 |
+| **100 mV** | 1.96% | 0.79% | **2.11%** | **0.795** |
+
+**Raising `V_R` to 100 mV cuts unit-cell current mismatch 4.4× and makes a width trim deliver what it
+claims.** Two problems, one lever — the first proposal tonight that improves the mismatch and the
+trim together instead of trading them.
+
+**It also pre-answers the open HBT-vs-resistor split.** At 0.6 mV the answer is *necessarily* HBT,
+because the resistors are electrically almost absent from the current-setting path. Degenerating
+deliberately moves weight onto the resistors — which **have** an area lever — and off the
+transistors, which per H-736 **do not**.
+
+**Cost, and the open question:** ~100 mV of headroom per cell on the emitter node. The supply budget
+there is not established in this package and is the number to obtain before this is costed.
