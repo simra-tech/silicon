@@ -2261,3 +2261,38 @@ the **balance code** per part.
 **Caution:** draw 4 is non-monotonic (0.64 at code 0, flat 0 mid-range, 0.34 at top). **Bisection
 returns a confident wrong answer on such a part.** Screen for monotonicity on the coarse sweep and
 bisect only the chips that pass; the remainder are a separate population.
+
+# CORRECTION: THE GAP IS NOT THE GRID — THE CROSSING IS OUTSIDE THE ARRAY (2026-08-10)
+
+**Supersedes the section immediately above, which was wrong.** Interpolating for the balance point on
+every monotonic draw: **of 19 monotonic chips, ZERO have a duty crossing of 0.50 anywhere inside the
+code range.**
+
+    upper cluster   0.63-0.65 at code 0, rising monotonically to 1.00
+                    -> balance point lies BELOW code 0
+    lower cluster   0.00 through most of the range, only 0.35 at code 602
+                    -> balance point lies ABOVE code 602
+
+**The empty span between 0.35 and 0.63 is the range of duty the array cannot reach**, not a
+transition stepped over. A coarse grid would still have bracketed a crossing that existed; **no draw
+brackets one.** The state-split retraction in the previous section stands for the *fractions*; the
+"sampling artefact" explanation for the gap does not.
+
+## The trim-range answer, in the right units at last
+
+From the endpoint slopes (duty changes ~0.02 per 40 codes at both ends):
+
+    low end    0.64 -> 0.50   needs ~280 more codes
+    high end   0.35 -> 0.50   needs ~200 more codes
+
+**The array is short by roughly 200–280 codes of 602 — it must be ~1.3–1.5× larger, or the offset
+consuming it must be removed.** Extrapolated from endpoint slope, so treat as an estimate pending the
+bisection; but the direction and order of magnitude are firm.
+
+**Independent convergence.** The first measured verdict of this session — *"shortfall 1.23×,
+scalable"*, from the DAC-current route with no reference to duty cycle — agrees with **1.3–1.5×**
+from the duty route, ten hours and one complete change of metric later.
+
+**Still owed:** bisection on duty for the monotonic chips, to replace the extrapolation with a measured
+balance code per part; and a separate treatment of the **7 non-monotonic** draws of 26, which are a
+different population and are not described by any of this.
