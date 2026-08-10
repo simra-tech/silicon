@@ -1433,3 +1433,40 @@ visible once the offset was decomposed by stage rather than quoted as a single n
 
 *(Conditional on the campaign: if the whole-chain σ lands well below ~9 mV the split changes and this
 costing must be redone with the measured numbers.)*
+
+## VERDICT — the whole-chain offset, and the architectural conclusion confirmed (2026-08-10)
+
+Measured against the thresholds pre-committed above, before the number existed.
+
+```
+whole-chain offset sigma  = 9.395 mV   (quantisation-corrected 9.28; n=235 uncensored + 15 no-crossing)
+tail-only cross-check     = 10.63 mV   (15/250 beyond +/-20; agrees within 12%, and higher as censoring predicts)
+systematic mean           = -3.4 mV    (design asymmetry, not per-part spread)
+shortfall = 2.576 x 9.395 / 6.7 = 3.61x   >  3.4  ->  ARCHITECTURAL BAND
+downstream term = sqrt(9.395^2 - 3.975^2) = 8.51 mV = 82% of the variance
+99% range = +/-24.2 mV -- EXTRAPOLATED (the +/-20 bracket cannot support it)
+```
+
+**The trim range at ±6.7 mV cannot be rescued by scaling under the 3.4× capacitance wall.** The
+architectural verdict recorded earlier is no longer suspended: it is confirmed, on a number measured
+after the ruler was fixed (H-753), the mismatch enabled (H-746/748), and the rule written down first.
+
+### The coverage count needs correcting before it is quoted
+
+The campaign's direct count — **163/250 (65.2%) beyond ±6.7 mV** — is **biased high and should not be
+quoted.** A Gaussian at (−3.4, 9.395) predicts 126; the 4.7σ gap is the 5 mV sweep grid straddling
+the 6.7 mV threshold (grid points at 2.083 and 7.083). Correcting the 2.117 mV misclassified band
+per side gives ≈129 draws, **51.7%**, consistent with the fitted σ. See H-760.
+
+**The exact figure costs two runs per draw**: apply exactly −6.7 mV and exactly +6.7 mV and compare
+the output bit — different means the flip point is inside the trim range. No grid, no σ, no
+censoring, no distributional assumption, and cheaper than the nine-point sweep it replaces.
+
+### What the verdict does and does not settle
+
+- **Settled:** widening the trim by scaling the DAC is dead. So is relocating the injection point —
+  `c_p`/`c_n` is the minimum-current node.
+- **Open, and now the live question:** 82% of the variance is downstream, and the partition campaign
+  will name which device carries it. If it is a device whose area can grow on `cml_out` rather than
+  `c_p`/`c_n`, the fix is matching, not range — and the architectural verdict, while correct about
+  the *trim*, would not be the last word on the *design*.
