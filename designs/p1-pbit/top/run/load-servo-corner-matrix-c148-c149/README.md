@@ -2073,3 +2073,41 @@ output.*
 is the next item; the correctable count can only be re-run once the part has one deterministic
 power-up state. **Re-running the count before then measures the coin toss, however many draws it
 takes.**
+
+# QUALIFICATION ON EVERY PBIT NUMBER ABOVE: THE SAMPLE IS TAKEN MID-TRANSIENT (2026-08-10)
+
+**Read this before quoting the systematic offset or the state split.**
+
+    bias loop settling (servo window)   ~26 us
+    transient in every deck tonight      12 ns
+    ratio                                ~2000x
+
+**Every `pbit` reading this session was sampled roughly 2000× sooner than the bias loop settles.**
+Confirmation from the localisation run: at 12 ns `c_p1_comp = 0.7348`, while the measured stable
+equilibria are **0.232** and **0.812** — the node is *in transit*, not at either one. **The comparator
+is being asked to decide while its own operating point is still sliding.**
+
+**This is a candidate common cause for three findings recorded above:**
+
+- the answer moving with kick amplitude — amplitude sets the trajectory;
+- the bimodal flip codes — different trajectories are elsewhere at 10 ns;
+- the non-monotonic draws — trajectory and code interact.
+
+**It does not refute them.** The ~16–19 mV may well survive. What is true is that **no measurement
+taken tonight distinguishes a settled offset from a snapshot of a transient**, and that ambiguity sits
+under every number since the campaign began.
+
+**Waiting it out is not available**: 26 µs at the measured 0.056 s/ns is ~1450 s per point.
+
+**The fix, and it costs nothing.** Initialise the loop into its live state at t = 0:
+
+    .ic v(xcomp.c_p1_comp)=0.812  v(xcomp.c_p2_comp)=0.975     # measured live values
+
+This steers the DC solve onto the **live** equilibrium instead of the dead one, so the transient
+**begins settled** and 12 ns is ample for the comparator alone. **It is a software starter standing in
+for the missing circuit** — and it makes every subsequent measurement comparable to every other.
+
+**All quantitative claims in the two sections above are provisional until re-taken with the loop
+initialised.** The qualitative conclusions — starter is a blocker, count cannot be produced without a
+single power-up state — are unaffected, since they rest on the multiplicity of states rather than on
+any particular value.
