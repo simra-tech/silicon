@@ -1868,9 +1868,27 @@ Read directly out of the IHP SG13G2 model files — no simulation, no fitting. *
 
 | term | device-plane sigma | input-referred sigma | share of 8.5 mV | area lever |
 |---|---|---|---|---|
-| HBT pair (`qarea`) | 10 % area, **flat** | **3.66 mV** | **18 %** | **none, at any size** |
+| HBT **input pair** (`qarea`) | 10 % area, **flat** | **3.66 mV** | **18 %** | **none, at any size** |
+| HBT **DAC cells** (`qarea`, ~undegenerated) | 10 % area | ~1.29 mV | ~2 % | none |
+| HBT **CML pair**, referred through gain 8.17 | 10 % area | ~0.45 mV | < 1 % | none |
+| **HBT total** | — | **~3.9 mV** | **~21 %** | **none** |
 | rppd load / DAC (`rsh_rppd_mm`) | 0.44 % | **0.11 mV** | < 1 % | 1/sqrt(W·L·m), irrelevant |
-| MOS (`delvto_mm`) | 3.9–7.0 mV·µm | balance | **~80 %** | **1/sqrt(W·L·m)** |
+| MOS (`delvto_mm`) — **by subtraction** | 3.9–7.0 mV·µm | balance | **~79 %** | **1/sqrt(W·L·m)** |
+
+**Two qualifications on this table, both mine.** (1) The 18 % line covers **only the input pair**;
+`qarea` sits on *every* HBT — DAC cells, CML, tail — and each refers to the input plane. The extra
+rows above cost those out: HBT total lands near **21 %**, still a clear minority, so the conclusion
+holds — but it holds by arithmetic done *after* the claim, not before. (2) **The MOS share is
+obtained by subtraction**, the weakest form of attribution: every unmodelled term and every error in
+the modelled ones lands in it. It is not yet a measurement of MOS.
+
+**The experiment that replaces the subtraction** — run the offset measurement three times with one
+family's mismatch enabled at a time (HBT-only, rppd-only, MOS-only) and check the three variances sum
+to the measured total. If they do, the ~79 % becomes a reading. **If they do not, that is the more
+useful outcome**: either a term outside all three families, or interaction between them.
+**The switching is not symmetric** (H-7xx): HBT needs `hbt_typ_mismatch` **and** `mm_ok=1` on the
+instances — the corner alone does nothing; rppd and MOS are corner-only and `mm_ok` is a no-op on
+them. Getting that backwards is how two families were found silently disabled earlier tonight.
 
 **HBT.** `qarea = agauss(1, 0.1, (mm_ok != 1 ? 0 : 1))`, `sg13g2_hbt_mod_mismatch.lib` lines 49, 159,
 289, 397, 528, 636 — every block, and **no geometry term in any of them**. This is the source-level
