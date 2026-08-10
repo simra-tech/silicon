@@ -1754,3 +1754,54 @@ metastable band. The term underneath was never questioned, because it arrived as
 - **The offset numbers stand:** whole-chain σ ≈ 8.5–11 mV, **46.4% of parts beyond ±6.7 mV** by direct
   count. That figure was always about ±6.7 mV, a range the part does not have; against the real
   ±20.3 mV the reachable fraction is far higher and should be recounted from the same data.
+
+---
+
+# STATE OF PLAY — REVISED, 2026-08-10 (14 h). Supersedes the 9-hour section above.
+
+The 9-hour state-of-play is now itself out of date in its most important row. **Where the two
+conflict, this one wins.**
+
+## Corrected since that section was written
+
+| quantity | 9 h section said | now |
+|---|---|---|
+| **trim range** | ±6.7 mV (derived) | **±20.3 mV per side (MEASURED)** — symmetric, `mm_ok=0`, endpoints −671/+669 µA |
+| **shortfall** | 3.6–4.6×, architectural | **1.23×, SCALABLE** — fix is ~20% more `I_FS` for an 18% node-capacitance rise |
+| whole-chain offset σ | ~10.5 mV | **~8.5–10 mV** — both censoring campaigns reconcile once their windows are read correctly (±20 and ±10, not ±15) |
+| the headline count | 46.4% beyond ±6.7 mV | **being recounted** as a *predicate*: input at zero, sweep the code, does the bit flip — distribution-free, in flight |
+
+## The root cause of the withdrawn verdict
+
+`range = I_FS/gm` was **correct**; its `I_FS` was the **design intent (232 µA)**, not the built array
+(**1340 µA nominal**). The two cross-checks agreed because **both consumed the same wrong `I_FS`** —
+the second inherits it through the LSB. *Two derivations sharing one unverified input agree exactly as
+strongly as one.*
+
+## Also retracted since the 9-hour section
+
+- **"The range is unbounded"** — the span used as though one-sided (H-783).
+- **"1340 µA is 1.67× the requirement"** — the same span/reach error, opposite direction, twenty
+  minutes later (H-785).
+- **"The array is mis-centred by −249 µA"** — that was the comparator's own offset measured through
+  itself; at `mm_ok=0` the midpoint is **−1 µA** (H-784).
+- **"The censored population fits no distribution"** — mine, computed on a ±15 mV window that was
+  actually ±10 mV. Everything reconciles at σ ≈ 8.5 (H-786, corrected).
+
+## Standing, and unaffected by any of the above
+
+- **The v7 compensation is inert** — `V_R = 0.6 mV` gives it 0.08% authority; v7's true nominal margin
+  is **3.94σ**, not 4.33 (H-780/H-781).
+- **The bias loop has no starter** and comes up dead from a cold ramp — a real silicon defect, fix
+  specified (three-stack pull-down on `c_p2_comp`), not gating any measurement (H-774/H-775/H-779).
+- **Resistor and MOS mismatch were disabled in every deck** until tonight (H-746/H-748).
+- **The offset metric saturated**, compressing every σ taken from it (H-753).
+
+## What is still open
+
+1. **The correctable count** — in flight, with per-draw tail/core breakdown. Reading pre-committed:
+   >95% fine as built; 89–95% the 1.23× sizing closes it; <89% the tail needs its own investigation.
+2. **The step at code 3→4** — verifies the 3.94σ handover margin on the real v7 boundary.
+3. **The HBT-vs-resistor budget** — decides whether the downstream offset has an area lever at all.
+4. **The starter build and its sign-off pair** — forced sweep (one zero) plus ramped transients across
+   the corner matrix.
