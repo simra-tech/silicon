@@ -1183,3 +1183,45 @@ magnitude of a compressed σ: that resistor and MOS mismatch were disabled in ev
 `mm_ok` is a no-op for `rppd` and MOS; that the 11.79 mV attribution names devices that could not
 vary; that the trim range is short by 4.5–5.8× against the capacitance wall. The handover margin is
 unaffected — it is measured from the DAC step, not from this metric.
+
+### The coarse DAC's resolution is redundant with the dither — a lever, and the measurement that decides it
+
+Found while landing the servo-model correction (2026-08-10).
+
+**The observation.** With the input-referred LSB, the two resolutions are numerically identical:
+
+```
+coarse LSB                 = 0.2078 / 8.17            = 0.0254 mV
+dither effective resolution = DITHER_SPAN_MV / 64      = 1.63 / 64 = 0.0255 mV
+```
+
+The coarse step has been made *exactly* as fine as the dither's own 6-bit granularity. That is
+redundant work: **the dither sets the trim resolution at `span/64` regardless of the LSB.** The only
+constraint the LSB must satisfy is this package's own coverage rule, `fine span ≥ 2 × worst coarse
+step`, with the worst step at `1 + 5σ_handover = 2.33 LSB`. That permits
+
+```
+LSB_max = 1.63 / (2 x 2.33) = 0.3505 mV input-referred  =  13.8x today's LSB
+```
+
+**What that buys in code count.** At `LSB_max`, the range needed for 99% coverage at σ = 11.79 mV
+(±30.4 mV) requires **87 codes**. Today's design spends **300 codes to buy ±7.63 mV** — a quarter of
+the range for 3.4× the codes.
+
+**The caveat, which is load-bearing.** Range in millivolts comes from `I_FS`, **not** from the code
+count: `V_range = 2·V_T·I_FS/I_T`. So this is *not* a free 4× in range. It is **4× the full-scale
+current carried by 3.4× fewer unit cells.**
+
+**Therefore the whole lever reduces to one measurable question:**
+
+> Does the DAC's contribution to `c_p`/`c_n` scale with **total current** (device area), or with
+> **cell count** (per-cell fixed overhead — routing, cascode, junction perimeter)?
+
+- *Current-dominated* → the lever is dead, 4× the current is 4× the capacitance, and the wall that
+  killed the 3.4× pair enlargement kills this too.
+- *Count-dominated* → 87 large cells at 4× the current may cost **less** capacitance than 300 small
+  ones, and this is the first candidate all night with a chance of breaking that wall.
+
+The measurement is a netlist question, not a campaign: extract the DAC's share of `c_p`/`c_n` and
+split it into a per-cell constant and an area-proportional term. **Recorded before the answer is
+known, so that a dead lever is buried with its reason rather than re-proposed.**
