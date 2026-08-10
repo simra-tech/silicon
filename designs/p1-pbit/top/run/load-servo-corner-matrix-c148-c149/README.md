@@ -2141,3 +2141,43 @@ configuration that solves a genuine operating point.
 
 **Unaffected:** the kicked-deck results (H-814/H-816 systematic offset, the bimodal state split), which
 solved real operating points. They remain subject to the separate mid-transient qualification above.
+
+# THE OPERATING-POINT FAILURES ARE NUMERICAL, NOT PHYSICAL (2026-08-10)
+
+Pull-down bisection on `c_p2_comp`, by whether an initial transient solution was found:
+
+| value | current at ~1 V | result |
+|---|---|---|
+| 200 MΩ | ~5 nA | **converges** |
+| 500 MΩ | ~2 nA | **converges** |
+| 1 GΩ | ~1 nA | fails |
+| 10 GΩ | ~100 pA | fails |
+| 100 GΩ | ~10 pA | **converges** |
+
+**Not a threshold — it converges, fails, then converges again across four orders of magnitude**, with
+the *weakest* value of all (100 GΩ, electrically indistinguishable from nothing) working while 1 GΩ
+does not. **No physical mechanism is non-monotonic like that.**
+
+**Conclusion: the DC solution of this circuit is hard for the solver to locate**, and success depends
+on where the homotopy path lands rather than on the load. Consistent with the three-equilibria
+structure recorded above: two stable points and one unstable one give a complicated basin structure
+for Newton to wander in. **This numerical fragility is a property of the design worth carrying — a
+block whose operating point cannot be reliably solved is expensive to verify at every future stage.**
+
+**Retracted on this basis:** every reading in which an operating-point failure was taken as evidence
+about the circuit — "the pull-down removes a solution", "the loop has no stable DC state". **Those
+were the solver.**
+
+**The genuine conflict that remains, one run from resolution.** Every converging value is **far too
+weak to act as a starter**: 200 MΩ passes ~5 nA against the derived **67 nA** floor. The
+starter-relevant values (~10 MΩ) failed — **but in earlier deck variants, not in the bisection deck.**
+
+**Owed: 10 MΩ and 50 MΩ in the identical deck that converged at 200 MΩ.**
+
+    converges     -> a working configuration exists; the measurement proceeds
+    fails         -> across the whole range where this fix could function, the OP cannot be solved,
+                     and the fix must change: a different node, a switched element that disengages
+                     after start-up, or a change to the loop itself
+
+**The two sweeps bracket from opposite directions** — minimum strength that guarantees starting versus
+maximum strength the analysis tolerates. **The design exists only if the brackets overlap.**
