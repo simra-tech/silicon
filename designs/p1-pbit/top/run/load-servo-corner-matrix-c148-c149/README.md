@@ -1037,3 +1037,32 @@ variance partition names the bucket that moved, not the mechanism inside it, and
 afterwards is a hypothesis. Record which families were enabled alongside every attribution, or the
 label outlives the conditions that produced it — which is H-740 (instructions age well, numbers age
 badly) applied to a *name* rather than a number.
+
+### Guard — the two margins in this document are in different units and are not interchangeable
+
+This document reports two families of "σ margin" and they were conflated once (2026-08-10), so the
+distinction is recorded explicitly:
+
+| | **handover margin** | **trim-reach margin** |
+|---|---|---|
+| question | is the converter monotonic? | can the trim correct this part? |
+| units | **LSB** | **mV** |
+| formula | handover step (LSB) / σ_handover (LSB) | trim range (mV) / σ_offset (mV) |
+| current value | 1.098 / 0.2538 = **4.33σ** | 6.7 / σ_offset |
+| failure it counts | a reversed step at a binary→unary boundary | a part the trim cannot reach |
+
+**They share no term.** Multiplying a handover margin by an offset σ to recover a "correctable
+range", or dividing such a range by a new offset σ to obtain a new handover margin, is not a defined
+operation — both quantities change meaning halfway through. The 4.33σ says nothing about millivolts
+and the trim reach says nothing about monotonicity.
+
+**The free check that catches this class of error.** *Enabling additional mismatch sources cannot
+improve a margin.* Any recompute that adds resistor and MOS variation and returns a **larger** σ
+margin than before has gone wrong somewhere upstream of its arithmetic, and no amount of checking the
+arithmetic will find it. Apply the monotonicity test to the result before reading the number:
+more variation ⇒ σ up ⇒ margin down, always.
+
+**The correct recompute for the handover margin** is the DAC ensemble re-run under
+`res_typ_mismatch` so the unit-cell degeneration resistors vary, giving σ_handover in LSB against the
+unchanged 1.098 LSB step. σ_handover can only grow from 0.2538, so the margin can only fall from
+4.33σ. That number is still owed.
