@@ -1365,10 +1365,24 @@ the pair enlargement died at **3.4×** on that node.
 **Thresholds: σ < 5.2 mV → the range problem is a sizing exercise after all. 5.2–8.8 mV → a real
 trade against the pole, not a yes/no. > 8.8 mV → the architectural verdict stands as written.**
 
-These thresholds are **conservative in the design's favour**: the DAC is only part of the 379 fF on
-that node, so scaling its current by *k* raises the total by less than *k*. If the result lands in
-the marginal band, the DAC's actual share of `c_p`/`c_n` is the next number to obtain and it can only
-help.
+**Correction, same session — read these thresholds as hard, not pessimistic.** They were first
+recorded as *"conservative in the design's favour, since the DAC is only part of the 379 fF."* **The
+premise is wrong: 379 fF is the DAC array alone** — 150 unary elements at `Nx=1` × 2.48 fF = 379, and
+the rejected pair enlargement's 1275 fF is 150 × 8.45 = 1274. This document says so a few hundred
+lines above: *"the comparator's own devices there are tens of fF: the trim DAC came to dominate the
+electrical behaviour of the node it exists to correct."*
+
+With the node at ≈ 379 + 40 fF, scaling the DAC by *k* gives a node multiplier of `(379k + 40)/419`:
+
+| DAC ×k | node × | relief |
+|---|---|---|
+| 1.53 | 1.48 | 3.3% |
+| 2.0 | 1.90 | 4.8% |
+| 3.4 | 3.17 | 6.7% |
+
+The relief is real and **immaterial — 3–7%, not a cushion.** The shortfall factor therefore maps to
+the node capacitance factor almost exactly. **If the whole-chain σ lands within a few percent of
+5.20 or 8.84 mV, treat it as inside the worse band.**
 
 **Also recorded: an input-stage-only σ of 3.975 mV** (n=250, flip-point at `v(c_p) − v(c_n)`,
 linear by construction, all three mismatch families). It is **not** comparable to the 11.79 —
