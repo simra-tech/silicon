@@ -2111,3 +2111,33 @@ for the missing circuit** — and it makes every subsequent measurement comparab
 initialised.** The qualitative conclusions — starter is a blocker, count cannot be produced without a
 single power-up state — are unaffected, since they rest on the multiplicity of states rather than on
 any particular value.
+
+# VOID: EVERY RESULT FROM THE `.ic` / `uic` DECKS (2026-08-10)
+
+**`icdeck3` line 35 reads `tran 0.05n 12n uic`.** `uic` **skips the operating point entirely** — the
+transient begins with **every node at 0 V** except the two named in `.ic`. Not the dead equilibrium,
+not any equilibrium. Every collector, bias node and internal supply node at ground, given 12 ns to
+recover in a circuit whose bias loop settles in 26 µs.
+
+**Voided by this, with no residual claim:**
+
+- the "no flip at any code with the loop settled" result — the loop was not settled, it was at zero;
+- the "output stuck; no response to ±50 mV" result — same decks, same defect;
+- any inference that the nominal part cannot be centred by the trim. **That question is OPEN.**
+
+**The `.ic` software starter is withdrawn entirely** (it was already withdrawn on the weaker grounds
+of clamping a partial state; this is the stronger reason).
+
+**A methodological failure of my own belongs on the record beside it.** The validity column added to
+guard exactly this read **0.813 at every code**, and I read that as proof the circuit was live. It was
+the initial condition *persisting* — nothing had moved it. **A forced node reports on the forcing, not
+on the circuit.** Every validity column from here must include at least one **unforced** node whose
+value can only be right if the rest of the circuit is right — the collectors near 2.5 V would have
+caught this instantly.
+
+**Still open, and now with no valid answer at all:** the ±50 mV must-succeed test — does the signal
+path respond to a differential far larger than any offset? It must be re-run under the first
+configuration that solves a genuine operating point.
+
+**Unaffected:** the kicked-deck results (H-814/H-816 systematic offset, the bimodal state split), which
+solved real operating points. They remain subject to the separate mid-transient qualification above.
