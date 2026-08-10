@@ -1470,3 +1470,57 @@ censoring, no distributional assumption, and cheaper than the nine-point sweep i
   will name which device carries it. If it is a device whose area can grow on `cml_out` rather than
   `c_p`/`c_n`, the fix is matching, not range — and the architectural verdict, while correct about
   the *trim*, would not be the last word on the *design*.
+
+---
+
+# STATE OF PLAY — 2026-08-10, end of the 9-hour session
+
+This document grew by ~600 lines in one night, almost all of it corrections appended in sequence so
+the reasoning stays auditable. **That makes the archaeology readable and the current position hard to
+find. This section is the current position.** Where it conflicts with anything above, this wins.
+
+## Numbers that stand
+
+| quantity | value | how measured |
+|---|---|---|
+| whole-chain offset σ | **~10.5 mV** | 250 draws, flip-point at `pbit_out`; bulk 9.395 is censored-low, tail 10.63, censored count pins ~10.5 |
+| input-stage-only offset σ | **3.975 mV** | same protocol at `v(c_p)−v(c_n)`; **not** comparable to the whole-chain figure |
+| downstream share | **~82% of the variance** | difference of the two above |
+| trim range (hardware) | **±6.7 mV** | `I_FS/gm`, cross-checked by `300 codes × 0.0254 mV = ±7.63` |
+| **shortfall** | **3.6–4.6×** | `2.576σ / 6.7`, architectural at every σ estimate |
+| handover σ (b7 deck) | **0.3335 LSB** | 250 draws, correct boundary and scale |
+| DAC node capacitance | **379 fF** (the array alone) | `150 × 2.48 fF`; per-cell fixed term 0.49 fF |
+| nominal whole-chain offset | **+2.083 mV** | `mm_ok=0`, deterministic — a real downstream asymmetry |
+
+## Retracted tonight — do not quote
+
+- **σ = 11.79 mV** (HBT-only, DC protocol, different deck) and its *"11.5 mV sense-amp chain"*
+  attribution: the named devices could not vary.
+- **All σ from `gate@7.450 ns`** (2.26 / 3.63 / 4.742 mV): the metric saturates (H-753).
+- **65.2% beyond ±6.7 mV**: grid straddled the threshold; ~52% is honest (H-760).
+- **Handover margins 0.96σ and 3.29σ**: a level for a step, then an ideal from one architecture over a
+  σ from another (H-752, H-757).
+- **Servo convergence figures** from before the unit fix: 8× the trim range the part has (H-754).
+- **The relocation fallback**: `c_p`/`c_n` is the minimum-current injection node.
+- **The cell-consolidation lever**: 3.27×, not free.
+
+## Settled conclusions
+
+1. **The trim range cannot be widened by scaling** — the shortfall multiplies the DAC's current and
+   the DAC *is* the node capacitance (379 of ~419 fF); the 3.4× wall killed a smaller increase.
+2. **Nor by relocating** — every downstream node needs more current by the intervening gain.
+3. **The frozen DAC's v7 margin is unverified** — the deck two generations behind (b7/7 handovers vs
+   b1/151). The merge is the blocker.
+4. **The offset is downstream**, and *which device* is the live question.
+
+## The one question that decides whether a fix exists
+
+**Is the dominant downstream term HBT or resistor?**
+
+- **Resistor** → mismatch scales `1/√(W·L)`; ordinary sizing works, on nodes that are not `c_p`/`c_n`.
+- **HBT** → **there is no area lever at all.** `qarea = agauss(1, 0.1, …)` has **no `Nx` term**
+  (H-736): a flat 10% regardless of device size. The fix would have to be topological — fewer HBTs in
+  the offset path, or more gain ahead of them.
+
+Everything else now waiting is subordinate to that split. The MOS partition that failed is *not* the
+route to it (H-762); the deterministic sensitivity sweep — one run per device, no ensemble — is.
