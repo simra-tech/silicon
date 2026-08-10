@@ -2329,3 +2329,36 @@ the forced sweep (exactly one zero) and the ramped transients across the corner 
 **Implementation note for layout:** the model is a conductance to ground on `c_p2_comp`; the intended
 device is the 3-stack nmos pull-down. Size it anywhere in the 10–200 MΩ equivalent band — **the flat
 region is the specification, not a target value.**
+
+# THE "THIRD POPULATION" IS A SOLVER ARTEFACT (2026-08-10) — RETRACTS THE NO-MONOTONIC-TRANSFER CLASS
+
+The 9-of-31 draws classified as having "no monotonic transfer" are **not a population of parts.**
+Their duty curves:
+
+    draw 3    0.00 0.00 1.00 0.00 0.00 1.00 0.00 ... 0.31 0.34 0.35
+    draw 15   0.00 x5 1.00 0.00 x5 1.00 0.00 0.00 0.00 0.34
+    draw 24   0.67 0.79 1.00 1.00 | 0.00 x9 | 1.00 1.00 1.00
+
+**The values are almost all exactly 0.00 or 1.00 — fully railed — flipping between codes with no
+pattern.** Not a curve doubling back: a part sitting hard at one rail, with *which* rail changing per
+code.
+
+**Mechanism.** Each code performs `alter` then `tran`, and **every `tran` re-solves the operating
+point.** This circuit has **two stable equilibria** and a **numerically fragile OP solve** (see the
+non-monotonic convergence section above). **At each code the solver may land in either equilibrium —
+and does.** The railing flips because the equilibrium flips.
+
+**So this is one measurement artefact affecting 29 % of draws, not a third class of silicon.**
+
+**Falsifiable prediction: with the 10 MΩ starter in the campaign deck, this population should vanish**
+— the dead equilibrium is removed, leaving one state for the OP solve to find.
+
+    vanishes  -> artefact explained; every remaining chip is measurable
+    survives  -> a real second mechanism, and much narrower than before
+
+**Action: re-run the campaign with the starter in place.** This is the "starter unblocks the
+measurement" argument recorded earlier, now with a number: **29 % of draws recovered**, on top of the
+silicon defect it fixes.
+
+*Note the sequence: the starter was a silicon fix, then a blocker, then an unblocker for measurement,
+and is now also the repair for 29 % of the data. One defect, four consequences.*
