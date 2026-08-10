@@ -2362,3 +2362,32 @@ silicon defect it fixes.
 
 *Note the sequence: the starter was a silicon fix, then a blocker, then an unblocker for measurement,
 and is now also the repair for 29 % of the data. One defect, four consequences.*
+
+# STANDING QUALIFICATION ON EVERY NUMBER ABOVE (2026-08-10, end of session)
+
+**If the operating-point solver selects an equilibrium per code (previous section), then codes within
+the *monotonic* 71 % could also have been solved in the wrong equilibrium** — those draws merely came
+out consistent. Their credibility rests on their curves *looking* sensible, which is weaker than
+knowing the equilibrium was held.
+
+**So the starter re-run is not a repair of the 29 %. It is the first campaign in which every data
+point has a determined operating state.** Provisional on it:
+
+- the duty distribution and its empty span between 0.35 and 0.63;
+- the **200–280 code** shortfall and the 1.3–1.5× figure derived from endpoint slopes;
+- the ~16–19 mV systematic offset (kicked decks; also subject to the mid-transient qualification);
+- every population fraction quoted anywhere in this file.
+
+**Not provisional on it** — these rest on their own evidence and stand:
+
+- the bias loop has **three equilibria and no starter** (DC sweep);
+- the transfer **polarity inverts** at reduced start-up energy (0.5 mA control);
+- the pull-down **establishes the live state and is flat over 20×** in strength;
+- `qarea` is **geometry-independent**, so HBT mismatch has no area lever, at any size.
+
+**Order of work for the next session.** (1) Re-run the count with the 10 MΩ starter in the deck and
+confirm the 29 % artefact vanishes. (2) Measure the shortfall directly by bisecting the **input
+differential** at the code extremes — the quantity the whole session was about, never yet measured.
+(3) Complete the starter's dynamic acceptance test: ramp the supply across a wide range of rates and
+confirm the polarity never inverts. (4) The three-run family decomposition, to replace the ~79 % MOS
+residual with a reading.
