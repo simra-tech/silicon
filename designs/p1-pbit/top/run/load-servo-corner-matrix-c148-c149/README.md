@@ -2222,3 +2222,42 @@ part is itself informative.
 
 *Four hours of analysis in this file treated a random-number generator as a comparator, because the
 harness had always sampled it that way.*
+
+# THE BIMODAL RESULT WAS OUR SAMPLING GRID (2026-08-10) — RETRACTS THE STATE-SPLIT SECTION
+
+Duty-cycle re-analysis over all **24** complete draws. Per chip, the code whose duty is closest to
+0.50; sorted best-achievable duties:
+
+    0.32 0.34 0.34 0.34 0.35 0.35 0.35 0.35 0.35 | 0.63 0.63 0.64 0.64 0.65 (x8) 0.66 0.67
+
+**Zero of 24 within 0.45–0.55** — but the shape is the finding. **Nine chips at ~0.34, fifteen at
+~0.65, and nothing at all between 0.35 and 0.63:** an empty gap **centred exactly on the target,
+symmetric about it.** *No physical spread of manufacturing offsets avoids a value.*
+
+**It is the grid.** 16 points across 602 codes is a **40-code step**, while duty moves **≥0.30 between
+adjacent samples** (draw 0: 0.66 → 1.00; draw 3: 0.00 → 0.31). **The transition is far narrower than
+the step.** Every chip was stepped over its own balance point, landing either side and never on it.
+**The two clusters are the duty values at the bracketing codes.**
+
+**Retracted on this basis:** the "intended / inverted / no-monotonic-transfer" split recorded above,
+including the "about half the parts come up inverted" figure. **What was read as two power-up states
+is, at least in large part, one steep transition sampled too coarsely.** The start-up defect itself
+stands on its own evidence (three DC equilibria; the 0.5 mA control inverting) — but **the population
+fractions attributed to it are withdrawn.**
+
+**The trim-range question is open again, for a reason not previously considered: sweep resolution, not
+array range.** The part may be centreable at a code never sampled.
+
+**Method: bisect on duty.** Duty is continuous and monotonic in code on nearly every draw — ideal for
+bisection, which the binary flip never was. Bracket from the coarse sweep (free), then ~9 halvings to
+single-code resolution: **~11 evaluations per chip against 16, cheaper and far sharper**, returning
+the **balance code** per part.
+
+**Headline becomes the distribution of balance codes**, and how many lie inside 0–602:
+
+    all inside   -> the range is adequate; the shortfall discussion in this file evaporates
+    any outside  -> the excess IS the extra range required, in codes, directly
+
+**Caution:** draw 4 is non-monotonic (0.64 at code 0, flat 0 mid-range, 0.34 at top). **Bisection
+returns a confident wrong answer on such a part.** Screen for monotonicity on the coarse sweep and
+bisect only the chips that pass; the remainder are a separate population.
