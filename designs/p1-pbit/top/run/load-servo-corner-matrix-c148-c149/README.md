@@ -998,3 +998,42 @@ the trim needs to know that its provenance is under review.
 **Immediate consequence for live work.** Both MOS corners must be switched to `_mismatch` before any
 offset number from this bench is used for a design decision. Note that this cannot be verified by
 inspecting the netlist — every instance already says `mm_ok=1`.
+
+### Resolved, same day — the N=200 campaign ran with MOS and resistor mismatch off
+
+The open question above is closed, from the archive rather than by re-running.
+`designs/p1-pbit/comparator/run/offset-mismatch-n200/` holds the campaign, and its decks select:
+
+```
+204 x cornerHBT.lib   hbt_typ_mismatch     <- HBT mismatch ON
+203 x cornerMOSlv.lib mos_tt               <- MOS mismatch OFF
+203 x cornerMOShv.lib mos_tt               <- MOS mismatch OFF
+203 x cornerRES.lib   res_typ              <- resistor mismatch OFF
+```
+
+**The second branch is the case: σ = 11.79 mV was produced by HBT mismatch alone.** Two consequences,
+and the first is the more surprising:
+
+1. **The attribution is mislabelled.** "11.5 mV sense-amp/latch/buffer chain" cannot be CMOS device
+   mismatch, because across all 200 draws **every CMOS device was identical**. The partition was
+   real — holding the input pair matched did move 11.5 mV of variance elsewhere — but the devices
+   that were varying in that "elsewhere" bucket are **HBTs**: the bias block (`XQS_COMP`, the PTAT
+   pair `XQP1/XQP2_COMP`), the clock devices, and the emitter followers `XQEF1/XQEF2`. A tail-current
+   shift from bias mismatch moves the whole chain's decision point, which is a plausible route to a
+   term that large and is *not* what the label directs a reader to.
+
+2. **The CMOS term is additional and still unmeasured.** The 10.8 mV differential threshold mismatch
+   on `XSA1/XSA2` computed above sits **on top of** whatever the 11.5 mV actually is, not inside it.
+
+**Consequence for the trim-range work.** Lever 2 of the shortfall analysis — *"reduce the offset at
+source: 11.5 of the 11.79 mV is the sense-amp chain"* — is aimed at devices that were held identical
+in the measurement that motivated it. The lever may still be sound, but **its target must be
+re-derived** from a partition run with all three families enabled before any effort is spent
+re-sizing the sense amp. The 5.3× trim shortfall itself is unchanged in character; what changes is
+*which* devices to attack to close it.
+
+**Rule.** *An attribution is only as good as the set of things that were allowed to vary.* A
+variance partition names the bucket that moved, not the mechanism inside it, and the label attached
+afterwards is a hypothesis. Record which families were enabled alongside every attribution, or the
+label outlives the conditions that produced it — which is H-740 (instructions age well, numbers age
+badly) applied to a *name* rather than a number.
