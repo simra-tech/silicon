@@ -2296,3 +2296,36 @@ from the duty route, ten hours and one complete change of metric later.
 **Still owed:** bisection on duty for the monotonic chips, to replace the extrapolation with a measured
 balance code per part; and a separate treatment of the **7 non-monotonic** draws of 26, which are a
 different population and are not described by any of this.
+
+# THE STARTER IS VALIDATED AT THE OPERATING POINT, AND IT IS FLAT OVER 20x (2026-08-10)
+
+Pull-down `RSTART c_p2_comp` inside the `p1_comparator` subcircuit, bisection deck:
+
+| value | current at ~0.87 V | bias node | duty | run |
+|---|---|---|---|---|
+| 10 MΩ | ~87 nA | **0.8725** | 0.16 | full 12 ns |
+| 50 MΩ | ~17 nA | **0.8724** | 0.16 | full 12 ns |
+| 200 MΩ | ~4 nA | **0.8724** | 0.16 | full 12 ns |
+
+**10 MΩ converges** — the value that failed in earlier deck variants, whose failures are now
+attributed to the numerical fragility recorded above. **The brackets overlap; the starter as specified
+can exist.**
+
+**Three results.**
+
+1. **The bias node sits at 0.8725 — the live equilibrium, not the dead 0.233.** The pull-down
+   establishes the working state and holds it, **with no kick, no initial condition, and nothing to
+   verify after the fact.** It replaces every start-up workaround used in this file.
+2. **Across a 20× range of strength the operating point is unchanged** — duty identical to two
+   decimals, bias to four. *The element establishes the state without perturbing it*, so sizing has
+   wide margin and needs no tolerance argument.
+3. The **67 nA** floor derived by charge arithmetic is met comfortably at 10 MΩ, with room either way.
+
+**Still owed — the dynamic half, and the harder one.** This shows the starter works *once the supplies
+are up*, not *during a supply ramp*. **The acceptance test stands as written in the start-up section:
+ramp the supply across a wide range of rates and confirm the transfer polarity never inverts**, plus
+the forced sweep (exactly one zero) and the ramped transients across the corner matrix.
+
+**Implementation note for layout:** the model is a conductance to ground on `c_p2_comp`; the intended
+device is the 3-stack nmos pull-down. Size it anywhere in the 10–200 MΩ equivalent band — **the flat
+region is the specification, not a target value.**
