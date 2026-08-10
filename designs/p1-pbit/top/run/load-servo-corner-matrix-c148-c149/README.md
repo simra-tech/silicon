@@ -1111,3 +1111,42 @@ already closed by the same capacitance wall. **Lever 2 (reduce the offset at sou
 have been aimed at devices that were held identical in the measurement that motivated it** — see the
 attribution correction above — so it must be re-derived before it can be costed. Lever 3 (more
 segments) is a resolution lever, not a range lever, and does not address this at all.
+
+### Handover recompute — resolved: the margin is not broken, the measurement was
+
+The recompute first came back as a **collapse**: σ_handover 0.2688 → 1.2111 mV (4.5×), margin
+4.33σ → **0.96σ**, with 94% of the variance attributed to the unit-cell degeneration resistors that
+had never drawn. Both figures are **retracted**. What happened:
+
+**The physics check that stopped it.** For a degenerated current source the mismatch splits by where
+the voltage sits:
+
+```
+HBT term   = V_T . ln(1.1) / (V_T + V_R)   = 2.47 mV / (25.9 + V_R)
+resistor   = (dR/R) . V_R / (V_T + V_R)    = 0.01055 . V_R / (25.9 + V_R)
+ratio res/HBT = V_R / 234 mV
+```
+
+For the resistors to carry 94% of the variance, `V_R ≈ 925 mV` is required across each unit-cell
+degeneration. **Measured: `v(e_dacb1) = 0.967 mV`, `v(e_dacb0) = 0.68 mV`** — the cell carries
+≈0.7 µA, not the ~2.9 µA assumed in the first estimate. Resistor share of the step variance is
+`(0.967/234)²` ≈ **0.0017%**. The unit-cell degenerations are very nearly irrelevant to the handover;
+they provide almost no degeneration at all at these currents.
+
+*(The estimate that raised the objection said ~4 mV and was itself 4× high — it assumed a 4-LSB unary
+unit. The conclusion held with more room than claimed, not less.)*
+
+**What the 4.5× actually was.** The run measured `c_n − c_p` at code 0 — a **level**, not the
+boundary **step**. A level carries every common-mode term in the circuit, including the comparator
+load resistors `XRC1/XRC2` (2.38%/device, 3.36% differential), which began drawing for the first time
+in that same run: 3.36% of the 66 mV level ≈ 2.2 mV, the right magnitude for the observed growth.
+**The step at the boundary cancels all of it.**
+
+**Status.** The 4.33σ handover margin **stands**, pending the correct measurement — `code 1 − code 0`
+at the b1 boundary over the same 250 draws. The load resistors' 3.36% differential is real and does
+belong in the `c_p`/`c_n` **level** budget, which is the trim-range question, not the monotonicity
+question.
+
+**Rule.** *If the quantity of interest is a difference, measure it as a difference.* Never let a
+level stand in for a step: a level is contaminated by every device the step cancels, and the
+contaminating devices are typically the largest in the circuit.
