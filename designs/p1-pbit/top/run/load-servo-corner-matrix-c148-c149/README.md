@@ -1066,3 +1066,48 @@ more variation ⇒ σ up ⇒ margin down, always.
 `res_typ_mismatch` so the unit-cell degeneration resistors vary, giving σ_handover in LSB against the
 unchanged 1.098 LSB step. σ_handover can only grow from 0.2538, so the margin can only fall from
 4.33σ. That number is still owed.
+
+## The trim-range shortfall is architectural, not a sizing problem (2026-08-10)
+
+Derived on paper while the handover recompute was in flight. **It does not depend on the pending
+σ, and every plausible value of that σ makes it worse** — so the design question is open now.
+
+**Assumptions, stated.** Correction range for a bipolar pair at balance, with the DAC steering a
+one-sided full-scale current `I_FS` into a collector:
+
+```
+V_range = 2 . V_T . I_FS / I_T          V_T = 25.86 mV (27 C), I_T = 1.79 mA (derived)
+```
+
+**Where the present design sits.** The measured range of ±6.7 mV implies
+
+```
+I_FS = 6.7 x 1.79 / (2 x 25.86) = 0.232 mA  =  13.0 % of the tail
+```
+
+**What coverage costs.**
+
+| target | range needed | I_FS | % of tail | scale-up |
+|---|---|---|---|---|
+| 99 % of parts at σ = 11.79 mV | ±30.4 mV | 1.05 mA | 59 % | **4.5×** |
+| 99.9 % at σ = 11.79 mV | ±38.8 mV | 1.34 mA | 75 % | **5.8×** |
+| 99 % at σ = 15 mV | ±38.6 mV | 1.34 mA | 75 % | **5.8×** |
+
+**Why scaling the array cannot deliver it.** The DAC's contribution to `c_p`/`c_n` scales with its
+full-scale current, and **`c_p`/`c_n` capacitance is already the binding constraint on the design** —
+it is what killed the pair-enlargement lever at a mere **3.4×** increase (379 → 1275 fF, pole at
+438 MHz). A 4.5–5.8× scale-up fails for the identical reason with a larger factor. The two
+constraints are independent and neither alone forbids anything; **together they close the route
+completely.**
+
+**Consequence.** The correction cannot stay on `c_p`/`c_n`. Closing the shortfall requires injecting
+the correction at a node that is **not** bandwidth-critical, which is a change of arrangement rather
+than a change of dimensions. Candidate directions, none yet assessed: trim on the tail/emitter side
+rather than the collectors; trim further down the chain where the node is slower; or move the
+correction out of the analogue path entirely and let the servo carry more of it.
+
+**Status of the two earlier levers.** Lever 1 (load R traded against I_T at constant gain) was
+already closed by the same capacitance wall. **Lever 2 (reduce the offset at source) is now known to
+have been aimed at devices that were held identical in the measurement that motivated it** — see the
+attribution correction above — so it must be re-derived before it can be costed. Lever 3 (more
+segments) is a resolution lever, not a range lever, and does not address this at all.
