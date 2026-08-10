@@ -1690,3 +1690,67 @@ convergence time to economise on a device that is free once it turns off.
 **Measured inputs behind this:** barrier current **0.07 nA max at 0.400 V**; equilibria at
 **0.232 / 0.439 / 0.812 V**; both cold-start ramps confirmed **dead**, so unaided start is impossible
 at any realistic ramp rate — the starter is a requirement, not insurance.
+
+---
+
+# THE TRIM RANGE VERDICT, MEASURED — supersedes every shortfall figure above (2026-08-10)
+
+**The architectural verdict is withdrawn.** Every shortfall figure in this document — 3.6×, 3.7×,
+4.2×, 4.6× — rested on a trim range of **±6.7 mV that was derived and never measured.** It has now
+been measured, and it was wrong by a factor of three.
+
+## What was actually built
+
+Measured on the merged v7 deck at `mm_ok=0` (nominal, no mismatch), endpoints of the code range:
+
+```
+code 0    (I_cp - I_cn) = -671 uA
+code 602                = +669 uA
+midpoint                =   -1 uA      -> the array is SYMMETRIC
+span                    = 1340 uA      -> ONE-SIDED reach 670 uA
+```
+
+**One-sided voltage reach** (`V = 2·V_T·atanh(I/I_T)`, `I_T = 1.79 mA`): **±20.3 mV**.
+
+## The verdict
+
+| quantity | value |
+|---|---|
+| requirement (95th percentile of \|offset\|, ranked) | **25 mV** = 804 µA one-sided |
+| available | **20.3 mV** = 670 µA one-sided |
+| **shortfall** | **1.23×** |
+| **band** | **SCALABLE** (architectural begins at 3.4×) |
+
+**Fix: ~20% more full-scale current** (1340 → ~1610 µA). The DAC's contribution to `c_p`/`c_n` rises
+379 → ~455 fF and the node 419 → ~495 fF — an **18% capacitance penalty on the node whose wall killed
+a 3.4× increase.** Entirely affordable.
+
+## Why the record was wrong
+
+The derivation `range = I_FS/gm` was **correct**; its `I_FS` input was not. **232 µA was the design
+intent; the built array delivers 1340 µA nominal** — 5.8× more. Both cross-checks agreed with each
+other because **both consumed the same wrong `I_FS`**: `300 codes × 0.0254 mV` inherits it through the
+LSB. Two independent-looking derivations sharing one unverified input agree exactly as strongly as one.
+
+**The ninth instance of *which circuit is this number for*** — and the only one that sat in the
+**denominator** of the question the whole exercise existed to answer. Everything above the line was
+scrutinised for eleven hours: the saturating metric, the censoring, the estimator, the heavy tail, the
+metastable band. The term underneath was never questioned, because it arrived as a derivation.
+
+## Two claims retracted on the way, both within twenty minutes of being accepted
+
+1. **"The range is unbounded"** — `I_FS/I_T = 1.078 > 1` used the **span** as though one-sided. Neither
+   end alone exceeds the tail; the range is finite (H-783).
+2. **"1340 µA is 1.67× the 804 µA requirement"** — the same span/reach confusion, in the opposite
+   direction, twenty minutes later (H-785).
+
+**Both errors are invisible to dimensional analysis** — span and reach share units and differ by two.
+**Put the convention in the identifier:** `I_FS_span` vs `I_reach_one_sided`.
+
+## Also settled
+
+- **The array is symmetric.** A −249 µA "centring error" measured with mismatch on was the
+  comparator's own offset (7.24 mV, 0.73σ — an ordinary draw). No centring fix is needed (H-784).
+- **The offset numbers stand:** whole-chain σ ≈ 8.5–11 mV, **46.4% of parts beyond ±6.7 mV** by direct
+  count. That figure was always about ±6.7 mV, a range the part does not have; against the real
+  ±20.3 mV the reachable fraction is far higher and should be recounted from the same data.
