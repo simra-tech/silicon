@@ -1945,3 +1945,41 @@ required code down by the same factor, so **divide every measured flip code by 1
 many land under the 79 % line.** That is the predicted `p_cold` after the fix, free, from data
 already in hand. **If the forecast clears 95 %, the sizing decision is settled without its own
 campaign.**
+
+# A ~16 mV SYSTEMATIC OFFSET — MEASURED WITH ALL MISMATCH DISABLED (2026-08-10)
+
+**PROVISIONAL, pending one discriminating test.** Read this section together with its confound.
+
+**Measurement.** All six corners at plain typ (`hbt_typ`, `res_typ`, `cap_typ`, `mos_tt` ×2,
+`dio_tt`), **no `_mismatch` block anywhere** — so there is exactly one possible part and no statistics
+are involved. Code sweep, 16 points:
+
+    levels                 0011111111111111      flip at index 2  ->  code ~60
+    from midpoint (301)    -241 codes  =  80 % of the one-sided trim range
+    input-referred         ~ -16.2 mV     (+/- 1.35 mV, set by the 16-point resolution)
+
+**A fixed asymmetry carried by every part.** It also explains the first two mismatch draws (67 % and
+80 % consumed) — a ~16 mV fixed term plus a modest random one, not a coincidence.
+
+**THE CONFOUND.** The start-up kick `IKICK2 0 xcomp.c_p1_comp` injects **1 mA into one node, not
+differentially**. A one-sided injection into a comparator is **indistinguishable from a systematic
+offset** by any later measurement. **Discriminating test:** same deck with the kick symmetric (same
+current into `c_p1_comp` and its complement, or halved and split). **Flip stays near 60 ⇒ real, in
+the silicon. Flip moves to 301 ⇒ the testbench.** The kick cannot be removed — the bias loop has no
+starter (see the start-up section above), which is precisely why this confound exists.
+
+**IF REAL, this supersedes the +20 % `I_FS` recommendation.**
+
+    required correction   = -16.2 +/- 8.5 mV        against a reach of +/- 20.3 mV
+    headroom              =   4.1 mV  ~= 0.5 sigma
+    uncorrectable         ~  1 in 3        (not the 5-10 % assumed all evening)
+
+    fix by growing the DAC   +20 % I_FS, 379->455 fF and 419->495 fF   ->  1.2x usable range
+    fix by removing the skew zero area                                 ->  5x usable range
+                                                                           (4.1 mV -> 20.3 mV)
+
+**Paying silicon area to compensate a fixed design asymmetry is the worst class of fix, because it
+works.** If the test confirms, the sizing change comes off the table and is replaced by locating the
+asymmetry.
+
+*No action is to be taken on this section until the kick test resolves it.*
