@@ -1620,3 +1620,36 @@ transistors, which per H-736 **do not**.
 
 **Cost, and the open question:** ~100 mV of headroom per cell on the emitter node. The supply budget
 there is not established in this package and is the number to obtain before this is costed.
+
+### Correction — v7's margin is 3.94σ, and the 1.037 µm was the *overshoot*, not a correction
+
+Following the inertness finding above, the record's characterisation of what the compensation is
+**for** is also wrong, and the corrected reading is cleaner.
+
+**There is no systematic ratio error in v7 to correct.** The unary element is **4 identical unit
+devices**; the binary section is `b0 + b1` = **3 identical units**. The handover step is therefore
+`4 − 3 = 1.000 LSB` **exactly, by construction** — the replication architecture (H-736) removed the
+error that the pair-scaled builds had. So the 1.037 µm was never a correction. **It was the deliberate
+overshoot** — the segmented-DAC move this document rightly defends — and *the overshoot* is what is
+inert.
+
+**Consequences for the numbers on record:**
+
+```
+v7 nominal step   1.000 LSB  (not 1.098)   ->  margin 3.94 sigma  (not 4.33)
+```
+
+which is the *nominal* row of this document's own table. **And it flips the comparison:** v7 at
+**3.94σ** against the pair-enlarged build's **4.06σ** is slightly **worse** on monotonicity, not
+better.
+
+**v7 remains the right choice by a distance** — 379 fF against 1275, a ~1.5 GHz pole against 438 MHz.
+But the stated basis, *"improves monotonicity **and** recovers the capacitance"*, is wrong in its
+first half. **The correct claim is that v7 trades a little monotonicity for a great deal of
+bandwidth** — which is a good trade, honestly stated, and did not need the overstatement.
+
+**It also raises the value of the degeneration lever.** The point is not merely that a width trim
+would work; it is that **the overshoot the design deliberately wants is undeliverable without it.**
+At `V_R = 25 mV` the exact 1.000 step alone gives **7.5σ** and the overshoot would take it to 8.3σ —
+at which point the overshoot becomes a nicety rather than a necessity, and keeping the exact step
+(with its zero DNL) becomes a defensible choice on its own merits.
