@@ -14,9 +14,11 @@ Model, matching the specification:
     update: p <- clamp(p + g*b, 0, 1-1/32)      # NOTE THE SIGN: positive b needs MORE correction
     p railing steps the coarse code C by +/-1 and re-centres p (normal tracking, not a fault)
 
-Verified behaviour with the specification's numbers: converges below 1% bias by window 23 (0.6 ms)
-against a predicted 5*tau of 0.52 ms; settled bias 0.23% (the analytic estimate of 0.105% omits the
-coarse/fine interaction with loop noise, so the simulated figure is the one of record).
+Verified behaviour with the current constants (re-run 2026-08-10, seed 1): converges below 1% bias
+by window 45 (1.18 ms); settled bias 0.254%, worst 0.895% (the analytic estimate of 0.105% omits the
+coarse/fine interaction with loop noise, so the simulated figure is the one of record). The earlier
+"window 23 / 0.23%" figures in this docstring were measured when FINE_CODES was 4 and were left
+behind when it became 8 - re-run this file rather than quoting it.
 """
 import math
 import random
@@ -37,17 +39,31 @@ DRIFT_MV_PER_S = 0.081 / 0.020   # 1% of bias per 20 ms at 1 C/s
 def coverage_check(coarse_step_mV, label="coarse step"):
     """Fail loudly if the fine range cannot cover 2x the given coarse step.
 
-    The coarse DAC is not designed yet; its worst step is provisional (the 0.543 mV
-    figure comes from C165, a rejected build). Coverage failure is permanent and
-    inescapable for an affected part, so the margin rule is 2x, not 1.47x, and this
-    check is re-run automatically whenever the coarse design lands (edit the call).
+    Coverage failure is permanent and inescapable for an affected part, so the margin
+    rule is 2x, not 1.47x.
+
+    MEASURED 2026-08-10 (C169 v5, HBT-pair steering, b1 boundary: 2 binary units +
+    150 unary elements of 4, 603 codes). 250 mismatch draws = 37,750 binary-to-unary
+    handovers. Worst observed step 1.85 LSB; handover step sigma 0.265 LSB about a
+    1 LSB nominal. The assertion uses a 5-sigma design figure rather than the observed
+    maximum, because the observed max of a finite sample understates the population:
+
+        worst coarse step = (1 + 5 * 0.265) LSB = 2.33 LSB = 0.465 mV at LSB 0.200
+
+    This replaces the provisional 0.543 mV from C165, a build later rejected as void
+    (its decoder read the sweep voltage as the code count). The margin improves from
+    1.47x to 1.72x. Re-derive if the handover sigma changes: it is the one quantity
+    this assertion now rests on.
     """
     assert FINE_CODES * LSB >= 2.0 * coarse_step_mV, (
         f"COVERAGE FAILURE: fine range {FINE_CODES*LSB:.3f} mV < 2x coarse step "
         f"{coarse_step_mV:.3f} mV ({label})")
 
 
-coverage_check(0.543, "C165 ratiometric worst coarse step (PROVISIONAL)")
+HANDOVER_SIGMA_LSB = 0.265   # measured, C169 v5, 250 draws x 151 handovers
+WORST_COARSE_STEP_LSB = 1.0 + 5.0 * HANDOVER_SIGMA_LSB   # 5-sigma design figure, 2.33 LSB
+
+coverage_check(WORST_COARSE_STEP_LSB * LSB, "C169 v5 worst coarse step, 5-sigma (MEASURED)")
 
 
 def phi(x):
@@ -61,9 +77,9 @@ def run(offset_mV=11.79, windows=300, gain=GAIN, sign=+1, drift=DRIFT_MV_PER_S, 
     history = []
     for k in range(windows):
         off += drift * WINDOW
-        corr = (C + FINE_CODES * p) * LSB   # effective correction over the 4-code dither span
+        corr = (C + FINE_CODES * p) * LSB   # effective correction over the FINE_CODES-wide dither span
         r0 = off - corr                     # dither bit low (p_applied=0 -> 0 extra codes)
-        r1 = r0 - FINE_CODES * LSB          # dither bit high (p_applied=1 -> 4 extra codes)
+        r1 = r0 - FINE_CODES * LSB          # dither bit high (p_applied=1 -> FINE_CODES extra codes)
         p_eff = (1 - p) * phi(r0 / SIGMA_N) + p * phi(r1 / SIGMA_N)
         var = max(N * p_eff * (1 - p_eff), 1e-9)
         count = p_eff * N + random.gauss(0, math.sqrt(var))
