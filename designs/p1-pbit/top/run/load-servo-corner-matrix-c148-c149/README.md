@@ -1150,3 +1150,36 @@ question.
 **Rule.** *If the quantity of interest is a difference, measure it as a difference.* Never let a
 level stand in for a step: a level is contaminated by every device the step cancels, and the
 contaminating devices are typically the largest in the circuit.
+
+### WITHDRAWN — every σ measured from `gate@7.450 ns` is compressed
+
+**All offset σ figures reported in the corrections above are withdrawn**, including the
+`2.26 → 3.63 → 4.742 mV` progression and the gate-level `47.7 / 35.4 / 42.7 / 38.7 mV`. The metric
+they came from saturates.
+
+A nine-point input sweep on the comparator gives:
+
+```
+dV_in (mV)  -20    -15    -10    -5     0      +5     +10    +15    +20
+gate (mV)  -168.3 -158.1 -47.2  -7.6  -16.5  +22.0  +43.3 +161.9 +171.2
+```
+
+Floor ≈ −160 mV, ceiling ≈ +170 mV, **linear only within roughly ±10 mV of input**. The draws being
+measured span well beyond that, so the observable compresses the tail of the offset distribution by a
+draw-dependent factor. This is why σ *fell* when mismatch sources were added: more draws pushed into
+the flat region.
+
+**The same sweep also questions the referral gain.** From −10 to +10 mV the gate moves −47.2 to
++43.3 — a slope near **4.5**, against the **8.17** used to refer every gate σ to the input. Both the
+compression and the referral factor are therefore in doubt, in the same direction of unreliability.
+
+**What replaces it.** The **flip point** — the input differential at which the decision changes —
+which is linear in the offset by construction and indifferent to how hard the output saturates
+afterwards. Measured with the whole input staircase inside a *single* ngspice run per draw, so that
+every point on a curve belongs to the same drawn chip (the RNG draws once at netlist expansion).
+
+**What still stands.** The *structural* findings are unaffected, because none of them depends on the
+magnitude of a compressed σ: that resistor and MOS mismatch were disabled in every deck; that
+`mm_ok` is a no-op for `rppd` and MOS; that the 11.79 mV attribution names devices that could not
+vary; that the trim range is short by 4.5–5.8× against the capacitance wall. The handover margin is
+unaffected — it is measured from the DAC step, not from this metric.
