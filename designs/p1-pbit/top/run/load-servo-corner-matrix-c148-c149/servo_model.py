@@ -30,7 +30,27 @@ N = 32768             # bits per servo window (15-bit counter)
 GAIN = 1.29           # dimensionless loop gain 0.25 / (db/dp = 0.194, 8-code dither span)
 PSTEP = 1.0 / 64      # 6-bit dither resolution
 FINE_CODES = 8        # dither spans 8 coarse codes: fine range 8*LSB = 1.6 mV (2.95x worst coarse)
-COARSE_LIMIT = 300    # +/- codes, i.e. +/-60 mV of range
+COARSE_LIMIT = 300    # +/- codes. SEE THE UNIT WARNING BELOW: this is +/-7.6 mV, NOT +/-60 mV.
+
+# --- UNIT WARNING (2026-08-10) -----------------------------------------------
+# LSB above (0.20 mV) is the DAC's step measured AT THE COLLECTORS. Everything else
+# in this model - offset_mV, SIGMA_N, the residual arithmetic - is INPUT-REFERRED.
+# Input-referred the step is 0.2078 / 8.17 = 0.0254 mV, so the loop's true authority
+# is 300 * 0.0254 = +/-7.6 mV, not the +/-60 mV that 300 * 0.20 implies.
+#
+# Cross-check, two independent routes agreeing to 14%:
+#     300 codes x 0.0254 mV                  = +/-7.63 mV
+#     current-domain, I_FS/gm (README)       = +/-6.70 mV
+#
+# CONSEQUENCE: every convergence figure in the docstring above was obtained with
+# roughly 8x the trim range the part actually has, against an offset sigma of
+# ~11.8 mV. Only ~43-48% of parts are reachable at the true range, so for the
+# majority the real loop rails at COARSE_LIMIT and never converges - a regime this
+# model has never exercised. DO NOT quote the convergence results until the model is
+# re-run with the input-referred LSB and a railing-aware acceptance criterion.
+# Deliberately left unpatched rather than silently rescaled: changing LSB alone also
+# changes GAIN, FINE_CODES coverage and the dither-vs-noise ratio, and each of those
+# needs re-deriving rather than following the constant.
 BIT_PERIOD = 0.8e-9
 WINDOW = N * BIT_PERIOD          # 26.2 us
 DRIFT_MV_PER_S = 0.081 / 0.020   # 1% of bias per 20 ms at 1 C/s
