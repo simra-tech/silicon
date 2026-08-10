@@ -1860,3 +1860,34 @@ foundry's statistics (global vs per-instance terms, `sqrt(m·l·w)` scaling on `
 not the PDK's, with nothing to compare against. **The PDK draws its own devices.**
 
 *Nothing in the measured trim-range verdict above depends on the count campaign; that section stands.*
+
+# THE OFFSET VARIANCE BUDGET, FROM THE MODELS (2026-08-10)
+
+Read directly out of the IHP SG13G2 model files — no simulation, no fitting. **Conditional on
+`mm_ok = 1` being set on the comparator's input-pair HBT instances; verify before quoting.**
+
+| term | device-plane sigma | input-referred sigma | share of 8.5 mV | area lever |
+|---|---|---|---|---|
+| HBT pair (`qarea`) | 10 % area, **flat** | **3.66 mV** | **18 %** | **none, at any size** |
+| rppd load / DAC (`rsh_rppd_mm`) | 0.44 % | **0.11 mV** | < 1 % | 1/sqrt(W·L·m), irrelevant |
+| MOS (`delvto_mm`) | 3.9–7.0 mV·µm | balance | **~80 %** | **1/sqrt(W·L·m)** |
+
+**HBT.** `qarea = agauss(1, 0.1, (mm_ok != 1 ? 0 : 1))`, `sg13g2_hbt_mod_mismatch.lib` lines 49, 159,
+289, 397, 528, 636 — every block, and **no geometry term in any of them**. This is the source-level
+confirmation of the flat `qarea` inferred in H-736. `sigma_Vbe = V_T·(sigma_A/A) = 2.59 mV` per
+device, `sqrt(2)·2.59 = 3.66 mV` for the pair. **Emitter area is not a lever and never will be.**
+
+**Resistors.** For a *bipolar* pair the referral collapses:
+`input-referred = I·dR/(g_m·R) = V_T·dR/R` — the current and the resistance divide out. At 0.44 %
+that is **0.11 mV**; even a 10×-smaller resistor reaches only ~0.35 mV. **The resistor path is
+bounded well below half a millivolt.** General property: bipolar load mismatch is suppressed by
+`V_T / V_load`, which is why it seldom dominates here and routinely does in CMOS.
+
+**Consequence, and it reverses the standing worry.** The item was framed as *"decides whether the
+downstream ~80 % of the variance has any area lever"*, on the expectation that it might be HBT and
+therefore immovable. It is not. **The immovable term is the 18 % minority; the ~80 % majority is MOS
+and scales as 1/sqrt(W·L·m).** Halving the MOS-contributed sigma costs 4× area on those devices only
+— and cuts total sigma from 8.5 mV to about **5.3 mV**, which is a 1.6× relaxation of the trim range
+requirement, on top of the 1.23× shortfall already measured.
+
+**This supersedes any statement in this file that the offset spread has no design lever.**
