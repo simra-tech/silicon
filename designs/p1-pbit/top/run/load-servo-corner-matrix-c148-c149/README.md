@@ -1909,3 +1909,32 @@ and scales as 1/sqrt(W·L·m).** Halving the MOS-contributed sigma costs 4× are
 requirement, on top of the 1.23× shortfall already measured.
 
 **This supersedes any statement in this file that the offset spread has no design lever.**
+
+# PRE-COMMITTED READING FOR THE REBUILT COUNT (written at draw 26 of 60, before any result)
+
+The old thresholds are **void** — they were set against `((1+p)/2)^2`, not `p`. These replace them,
+and they are recorded here *before* the number exists, which is the only time it can be done honestly.
+
+**Two statistics, read in this order.**
+
+1. **`p_room`** — the fraction of chips whose output flips *anywhere* across codes 0…602 at 27 °C.
+   Rule of three now applies honestly, because the predicate is finally per-chip: **60 perfect draws
+   bound the failure rate below 5 %.**
+2. **`p_cold`** — the fraction whose **flip code ≤ 79 % of full scale**. This is the statistic that
+   decides whether a part works, because 79 % at 27 °C reproduces the trim reach available at
+   −40 °C (the V_T equivalence recorded above).
+
+**Pre-committed thresholds on `p_cold`:**
+
+| `p_cold` | reading |
+|---|---|
+| **> 95 %** | fine as built |
+| **89 – 95 %** | the already-costed **+20 % `I_FS`** (DAC 379→455 fF, node 419→495 fF) closes it |
+| **< 89 %** | range alone is insufficient; the variance work must come with it |
+
+**A forecast the old campaign could never produce.** With a **flip code** per chip rather than a
+yes/no, the sizing change can be evaluated *without simulating it*: a +20 % `I_FS` moves every chip's
+required code down by the same factor, so **divide every measured flip code by 1.23 and recount how
+many land under the 79 % line.** That is the predicted `p_cold` after the fix, free, from data
+already in hand. **If the forecast clears 95 %, the sizing decision is settled without its own
+campaign.**
