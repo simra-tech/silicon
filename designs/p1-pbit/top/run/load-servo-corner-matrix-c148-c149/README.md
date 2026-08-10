@@ -1524,3 +1524,47 @@ find. This section is the current position.** Where it conflicts with anything a
 
 Everything else now waiting is subordinate to that split. The MOS partition that failed is *not* the
 route to it (H-762); the deterministic sensitivity sweep — one run per device, no ensemble — is.
+
+## VERDICT SUSPENDED at the boundary (2026-08-10, band-centre result)
+
+**The band-centre estimator (H-764) resolved the mean and moved σ, and the verdict is now
+undetermined.** Recorded here immediately because the movement favours the *more favourable* band and
+therefore needs the most scrutiny.
+
+```
+band-centre campaign, n=238 of 250:   mean = +0.420 mV    sigma = 8.484 mV
+```
+
+**Mean: settled.** +0.420 against the first-crossing estimator's −3.00 — the 7.3σ anomaly (H-761) was
+the estimator, exactly as predicted. That thread is closed.
+
+**Shortfall: at the boundary.**
+
+| σ source | σ | shortfall | band |
+|---|---|---|---|
+| band-centre, raw | 8.484 | **3.26×** | **marginal** |
+| exact-count core (H-768) | 9.15 | 3.52× | architectural |
+| first-crossing MLE | 11.0 | 4.23× | architectural |
+
+Boundary is 3.4× at **σ = 8.84 mV**. The raw band-centre σ sits **0.9 standard errors below it**
+(4.6% uncertainty at n=238) — statistically indistinguishable from the boundary.
+
+**Why the raw figure should not stand, and all three reasons point the same way:**
+
+1. It is the **fallback summary** — the specified analysis (clipped-band flagging, recovery,
+   h-distribution) errored twice and never ran. **Clipping biases σ downward** by pulling the largest
+   offsets inward (H-765/766).
+2. **12 of 250 draws are unaccounted** (n=238, 4.8%). If those are the no-crossings, they are the
+   largest offsets, missing in the same direction.
+3. The **distribution-free count** independently implies a core σ of **9.15 mV** → 3.52×,
+   architectural — and the tail is **heavier than Gaussian** (H-768), so `2.576σ` *understates* the
+   99% range.
+
+**What closes it.** (a) The clipped-band recovery, reporting corrected σ with the censored count.
+(b) **Stop using `2.576σ`** — with 250 band centres the **empirical 95th percentile of |offset| is
+directly countable**, so the shortfall at 95% coverage becomes a *measurement*; the 99% figure stays
+labelled extrapolated and optimistic.
+
+**Unchanged and not in question:** the exact coverage count — **46.4% of parts lie beyond ±6.7 mV**
+(H-768), measured with no distributional assumption at all. Whatever band the shortfall lands in,
+nearly half the population is uncorrectable as drawn.
