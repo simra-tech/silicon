@@ -1805,3 +1805,58 @@ strongly as one.*
 3. **The HBT-vs-resistor budget** — decides whether the downstream offset has an area lever at all.
 4. **The starter build and its sign-off pair** — forced sweep (one zero) plus ramped transients across
    the corner matrix.
+
+# THE CORRECTABLE COUNT IS RETIRED AND REBUILT (2026-08-10)
+
+**No correctable-fraction figure from tonight's count campaign may be quoted.** Versions 1 through 6
+all shared a defect in the sample unit, found by reading the PDK rather than the results.
+
+**The defect.** The harness ran one `ngspice` process per code point (`c0`, `c602`, `c476`). Mismatch
+in this deck comes from the `*_mismatch` corner libs, every one of which draws through `agauss`
+(`resistors_mod_mismatch`, `cornerRES.lib:219+`; `sg13g2_moshv_mod_mismatch:78–91`;
+`sg13g2_hbt_mod_mismatch`), and **`agauss` is evaluated at netlist expansion — once per process.**
+So the points of one "draw" were **independent parts**, and the predicate `pbit(c0) != pbit(c602)`
+differenced one chip against a different chip.
+
+**Confirmed empirically, not just by reading:** the identical deck run twice gave `c_p` differing by
+**9.1 mV**. Per-process draws; no deterministic seeding.
+
+**What the reported numbers were.** At either code endpoint the DAC steers hard, so a *correctable*
+part answers deterministically whichever part it is, and an *uncorrectable* one reports the sign of
+its own offset — a coin flip. The reported fraction is therefore
+
+    P(scored correctable) = ((1 + p) / 2)^2 ,  not p
+
+compressed toward one exactly where the decision sits (p = 0.9 → 0.90; p = 1 → 1.00). The 40/40 run
+bounds **p ≈ 0.93**, not ≥ 0.95, and **the pre-committed 89 / 95 % thresholds never applied to the
+statistic being produced.** They are void; new thresholds must be set against the rebuilt measure
+before its first result is read.
+
+**The rebuild.** One process per draw, code stepped **inside** the run — a PWL staircase on `VCODE`
+with `IKICK2` re-fired at each plateau, `pbit_out_core` read at the end of each. One expansion, one
+chip, the whole code axis. Not `alter` (killed v1/v2) and not `.dc` (no time axis, cannot exercise
+the latch).
+
+**Three things it delivers that the old campaign could not:**
+
+1. **A genuine per-chip predicate** — does *this* part's output change anywhere across *its own* code
+   sweep — with no independence assumption in it.
+2. **The flip code per draw**, i.e. the **margin distribution** this README previously recorded as
+   needing a bisection. It is free here.
+3. **The cold answer off the same sweep** — a flip below 79 % of full scale survives −40 °C (the V_T
+   equivalence already recorded), so no separate cold deck.
+
+At one deck per draw instead of three, the draw rate rises ~3× despite the longer transient.
+
+**Settling is verified internally, because it can no longer be verified externally.** With one chip
+per process, a plateau cannot be checked against a fixed-code deck — that deck is a different part.
+Instead the staircase runs **up through the codes and back down**, and each code is compared against
+itself on the two passes. Agreement ⇒ the plateau is long enough; disagreement is hysteresis, i.e.
+unallowed settling.
+
+**Declined:** drawing the mismatch in Python and injecting literals. It requires reimplementing the
+foundry's statistics (global vs per-instance terms, `sqrt(m·l·w)` scaling on `delvto`/`factuo`,
+`mm_ok` gating, the joint `w`/`l` draw); a subtle error there produces a distribution that is silently
+not the PDK's, with nothing to compare against. **The PDK draws its own devices.**
+
+*Nothing in the measured trim-range verdict above depends on the count campaign; that section stands.*
