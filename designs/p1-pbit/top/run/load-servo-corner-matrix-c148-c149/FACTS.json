@@ -481,5 +481,57 @@
    "gate2 retired for mismatch runs: range/(n-1) vs b0 turn-on pits a 603-sample average against one 10 pc draw; mm_ok=0 control only"
   ],
   "lesson": "the natural unit is the thing you ran; the informative unit is the thing that can independently fail"
+ },
+ "c169_v6_handover_deficit_2026_08_10": {
+  "root_cause": "the model had the right spread and the wrong centre: handover step averaged 0.868 LSB not the assumed 1.000",
+  "arithmetic": {
+   "margin_at_1.000": "3.94 sigma -> 1.5 events / 37750",
+   "margin_at_0.868": "3.42 sigma -> 11.8 events",
+   "observed": 11,
+   "lesson": "a ratio assumed exact by construction was 4.4 pc off; 4 pc in the centre moves the tail 8x"
+  },
+  "three_repairs": [
+   {
+    "fix": "missing m=4 on the unary degeneration (generator line 35)",
+    "status": "genuine defect, fixed at the generator",
+    "effect": "emitter ratio 3.69x -> 0.92x; current ratio x UNCHANGED (0.922 -> 0.920)",
+    "lesson": "a correctly diagnosed and properly repaired defect can move the target metric by nothing"
+   },
+   {
+    "fix": "trim the binary 4.2 pc lighter",
+    "status": "proposed then withdrawn",
+    "why": "compensates an unidentified effect; holds at 27 C and drifts elsewhere"
+   },
+   {
+    "fix": "steering pairs all Nx=1 while carrying 1, 2 or 4 units",
+    "status": "THE MECHANISM, fixed",
+    "detail": "unary pair at 4x density raises its VBE by kT/q*ln4 = 39 mV, dropping the source collector and costing ~8 pc via Early effect",
+    "confirmation": "vsegb0 0.3571 vs vsegu1 0.3217 = 35.4 mV gap, in a printout taken an hour earlier for another purpose",
+    "result": "gap 35.4 -> 2.1 mV; x 0.920 -> 1.033"
+   }
+  ],
+  "rejected_then_partly_right": "a density asymmetry was proposed and correctly refuted for the current sources (each carries exactly one unit) - but the conclusion that density was irrelevant was too broad. Refuting a mechanism in one place is not refuting the mechanism.",
+  "overshoot_is_deliberate": {
+   "handover_step_LSB": 1.133,
+   "margin_sigma": 4.46,
+   "expected_events_37750": 0.152,
+   "note": "first reported as 3.000 units, which was the PAIR SUM not the step",
+   "trade": {
+    "0.868": "3.42 sigma / 11.8",
+    "1.000": "3.94 sigma / 1.5",
+    "1.133": "4.46 sigma / 0.152",
+    "1.300": "5.12 sigma / 0.006"
+   },
+   "cost": "0.133 LSB DNL per handover, ~0.10 LSB peak INL, full scale 124.6 vs 120.6 mV - all invisible to a servo",
+   "decision": "KEEP the overshoot; consider increasing it. Monotonicity is precious, DNL is free."
+  },
+  "deferred_number_rot": {
+   "queued": "VREF 0.6393 computed at b0 = 0.3641 uA",
+   "now": "b0 = 0.3847 uA (+5.7 pc) after the m=4 and pair-Nx fixes -> correct trim -2.709 mV -> VREF 0.6377",
+   "rule": "any deferred number is recomputed when applied, never carried forward",
+   "corollary": "instructions age well, numbers age badly - record the procedure, not the answer",
+   "status": "trim optional, not owed: LSB 0.2197 vs 0.200, full scale 132.5 vs a 120 mV spec"
+  },
+  "pending": "250-draw re-measure on the fixed deck, targets pre-stated: step ~1.133 LSB, sigma ~0.2538, margin ~4.46 sigma, ~0.15 events"
  }
 }

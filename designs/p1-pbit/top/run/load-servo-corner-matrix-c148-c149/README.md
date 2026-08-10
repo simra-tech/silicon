@@ -743,3 +743,71 @@ confirms, thirty refutes.
 
 Two of the three conditions set in advance were corrected afterwards. That is not a failure of the
 practice — stating them early is what made it possible to notice they were unsound.
+
+## C169 v6 — the handover deficit, and the three repairs it took (2026-08-10)
+
+The 250-draw run measured 11 reversals against a predicted 3.0. The excess was never a σ error and
+never a heavy tail: **the model had the right spread and the wrong centre.** The handover step
+averaged **0.868 LSB, not the 1.000 assumed**, which moves the margin from 3.94σ to 3.42σ and the
+expected count from 1.5 to 11.8 — against 11 observed. A ratio assumed exact by construction (4 unary
+units against 3 binary) was 4.4% off, and 4% in the centre moves the tail by a factor of eight.
+
+**Three repairs were made chasing it. Only the third mattered.**
+
+1. **Missing `m=4` on the unary degeneration** (generator line 35 wrote `m=1` for both arrays). A
+   genuine defect, predicted from the emitter voltages before the grep confirmed it, fixed at the
+   generator. The emitter ratio collapsed 3.69× → 0.92×. **It changed the current ratio by nothing:**
+   rearranging as `emitter ratio = 4·(Ru/Rb)·x` gives x = 0.922 before and 0.920 after. *A genuine
+   defect can be correctly diagnosed and properly repaired while the metric everyone cares about does
+   not move.* State what should change, measure it, and credit a fix with nothing you have not seen.
+2. **Trimming the binary 4.2% lighter** — proposed, then withdrawn. It compensates for an
+   unidentified effect, which holds at 27 °C and drifts everywhere else.
+3. **The steering pairs were all `Nx=1` while carrying 1, 2 or 4 units.** The unary pair therefore
+   ran at 4× b0's current density, raising its V_BE by kT/q·ln4 = 39 mV, dropping the current
+   source's collector by the same amount and costing ~8% of its current to the Early effect.
+
+**The confirmation was already in a printout taken an hour earlier for another purpose:**
+`vsegb0 = 0.3571 V` against `vsegu1 = 0.3217 V` — a **35.4 mV** gap against 39 mV predicted from
+first principles. Scaling the pairs to Nx = 1/2/4 closed it to 2.1 mV and moved x from 0.920 to
+1.033.
+
+**Note on the rejected explanation.** A current-density asymmetry had been proposed and refuted:
+the current-source devices each carry exactly one unit (unary element 1.4531 µA = 4.00 units across
+four parallel devices = 0.3633 each, the same as b0's single device). That refutation was sound and
+the conclusion drawn from it — that density was irrelevant here — was too broad. **Refuting a
+mechanism in one place is not refuting the mechanism.**
+
+### The overshoot is a design decision, not a residual
+
+After the pair fix the handover step is `(1.5899 − 1.1541)/0.3847 = 1.133 LSB`, i.e. 13% heavy.
+(The figure first reported as "the step" was the *pair sum*, 3.000 units — a different quantity.)
+
+| handover step | margin | expected events / 37,750 |
+| --- | --- | --- |
+| 0.868 (before) | 3.42σ | 11.8 |
+| 1.000 (nominal) | 3.94σ | 1.5 |
+| **1.133 (v6, kept)** | **4.46σ** | **0.152** |
+| 1.300 (deliberate option) | 5.12σ | 0.006 |
+
+**Do not trim the overshoot out.** A deliberately heavy unary element is the standard segmented-DAC
+move: it converts a symmetric risk — a step that may land either side of zero — into an asymmetric
+one where every step is positive but slightly uneven. Cost: 0.133 LSB DNL per handover, ~0.10 LSB
+peak INL, full scale 124.6 mV instead of 120.6. **A servo that measures its own output sees none of
+it.** Textbook figures of merit for a converter include step evenness; this converter drives nothing
+that looks at its steps. When two quantities trade and only one matters, the design point is not the
+balanced one.
+
+### Deferred numbers rot
+
+The queued level trim of **VREF 0.6393** was computed when b0 drew 0.3641 µA. After the `m=4` and
+pair-Nx repairs b0 draws 0.3847 µA (+5.7%), and the correct trim is **−2.709 mV → VREF 0.6377**.
+Applying the queued value would have left the level 4% off in the wrong direction.
+
+**Rule adopted: any deferred number is recomputed at the moment it is applied, never carried
+forward.** A number carries an invisible attachment to the state of the world when it was produced,
+and that attachment does not travel with it into a queue. Of three items pending, the two that were
+*procedures* remained valid and the one that was a *value* had rotted — **instructions age well,
+numbers age badly.** Prefer recording the procedure over the answer wherever both are possible.
+
+The trim is in any case optional: LSB 0.2197 mV against 0.200 (9.8% high), full scale 132.5 mV
+against a 120 mV spec — more range than required, and invisible to the loop.
