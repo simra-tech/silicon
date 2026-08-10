@@ -1225,3 +1225,40 @@ current carried by 3.4× fewer unit cells.**
 The measurement is a netlist question, not a campaign: extract the DAC's share of `c_p`/`c_n` and
 split it into a per-cell constant and an area-proportional term. **Recorded before the answer is
 known, so that a dead lever is buried with its reason rather than re-proposed.**
+
+#### Costed and dead — with the number worth keeping
+
+The lever above resolves **against**, and it can be buried without the layout extraction.
+
+The two archived collector-side capacitance points (`cjc+cbc+cjcp`, per cell) give the
+fixed-versus-area split directly:
+
+```
+Nx = 1 : 2.48 fF        fit  C(Nx) = 0.49 + 1.99 * Nx  fF
+Nx = 4 : 8.45 fF        device-level FIXED term = 0.49 fF = 20% of a unit cell
+```
+
+Junction capacitance therefore tracks **area**, i.e. current, with only a fifth of a unit cell's C
+sitting in a per-cell constant. Costing 4× range over 87 cells (each `Nx = 4·300/87 = 13.8`):
+
+| build | node C |
+|---|---|
+| today, 300 unit cells | **744 fF** |
+| 4× current spread over 1200 unit cells | 2976 fF |
+| 4× current consolidated into 87 large cells | **2431 fF** |
+
+Consolidation saves **18%** against the naive spread — real, and irrelevant: the net cost against
+today is **3.27×**, not the 4× a pure area scaling would give, and 3.27× is still well past the wall
+that killed the 3.4× pair enlargement at 438 MHz.
+
+For per-cell **routing** overhead to rescue this, it would have to exceed **27 fF per cell** — the
+area term at `Nx = 13.8`. That is not plausible for local interconnect inside an array, so the
+layout-extraction path is not worth opening for this question.
+
+**Keep the 0.49 fF fixed term.** It is the number anyone will want the next time consolidating cells
+is proposed, and it says the answer in advance: consolidation buys ~20% at best, because 80% of a
+unit cell's collector capacitance is area that has to exist to carry the current.
+
+*(Caution recorded with it: an intermediate costing of "87 cells at Nx=4 ≈ 735 fF vs today's 744 fF"
+appeared to show the lever working. It compares 348 unit-currents against 300 — a 1.16× build, not
+the 4× one. When a capacitance comparison looks free, check that both sides carry the same current.)*
