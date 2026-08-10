@@ -2038,3 +2038,38 @@ previously written.** It is not sufficient to reach the live equilibrium; it mus
 equilibrium every time. **Sign-off must include: sweep the start-up energy across a wide range and
 confirm the transfer polarity never inverts** — in addition to the forced-sweep (exactly one zero)
 and ramped-transient checks already specified.
+
+# THE COUNT IS BIMODAL: IT MEASURES WHICH POWER-UP STATE, NOT HOW MUCH OFFSET (2026-08-10)
+
+First ten draws of the rebuilt campaign, read directly from the CSVs:
+
+    draw 0  0011111111111111  code  60      draw 4  0000000000000111  code 502
+    draw 1  0001111111111111  code 100      draw 6  0000000000000111  code 502
+    draw 2  0001111111111111  code 100      draw 7  0000000000000111  code 502
+    draw 3  0010010000000111  NON-MONOTONIC
+    draw 5  0010000000000011  NON-MONOTONIC
+
+**Bimodal, with nothing in the middle** — no draw lands near code 301. Chips at ~60–100 sit in one
+bias equilibrium; chips at ~502 sit in the **inverted** one, exactly where the 0.5 mA control put the
+nominal part (code 582). **Consumed margin reads 67–80 % for every chip**, because the flip is always
+near an *end* and only *which* end varies.
+
+**The non-monotonic draws are the mechanism, visible.** Those parts sit near the boundary between the
+two states, and **sweeping the code switches the loop from one equilibrium to the other mid-sweep** —
+their output is not a comparator decision at all.
+
+**Consequence: `p_room`, `p_cold` and the ÷1.23 forecast cannot be produced from this run.** The
+campaign is not measuring how much offset the trim can cancel; it is measuring **which of two
+power-up states each chip fell into**. Every statistical apparatus specified above sits downstream of
+a quantity that is not the one it names. **The pre-committed thresholds are not void — they are
+simply not yet applicable, and will not be until the part has a single power-up state.**
+
+**The run continues, re-purposed.** It now measures **the fraction of parts that come up inverted** —
+roughly **half** on the first ten. That figure, not the equilibrium diagram, is the case for the
+starter: *approximately one part in two powers up producing the logical inverse of its intended
+output.*
+
+**Order of work is now fixed by this.** The starter is the blocker; the systematic offset (~16–19 mV)
+is the next item; the correctable count can only be re-run once the part has one deterministic
+power-up state. **Re-running the count before then measures the coin toss, however many draws it
+takes.**
