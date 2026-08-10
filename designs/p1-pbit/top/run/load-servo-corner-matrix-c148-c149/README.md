@@ -1262,3 +1262,41 @@ unit cell's collector capacitance is area that has to exist to carry the current
 *(Caution recorded with it: an intermediate costing of "87 cells at Nx=4 ≈ 735 fF vs today's 744 fF"
 appeared to show the lever working. It compares 348 unit-currents against 300 — a 1.16× build, not
 the 4× one. When a capacitance comparison looks free, check that both sides carry the same current.)*
+
+### Handover margin measured — but on the pre-v7 array. The 4.33σ is still unverified.
+
+The corrected step campaign (code 127→128, correct scale, `n = 250`, all runs clean) gives
+
+```
+sigma_step = 0.0693 mV      mean_step = -1.1004 mV
+margin     = 1.098 x 0.2078 / 0.0693 = 3.29 sigma        (package quotes 4.33)
+```
+
+**But the deck it ran on is not the frozen build.** `C169-SOURCE-coarse-dac.spice` still carries
+`XQU1..7 @ Nx=128` and `XQB0..6 @ Nx=1..64`, and contains **no v7 compensation of any kind** — no
+1.037 µm width, no compensation devices. The v7 rebuild (`6ac3acf0`) has never been merged back into
+the source deck, an item outstanding since the morning of 2026-08-10. It is now the thing blocking
+the verdict.
+
+**The step's mean confirms the diagnosis rather than raising a new question.** At the b7 handover the
+step is `128x − 127` LSB, with `x` the unary-to-binary current ratio:
+
+```
+measured  |−1.1004 mV| / 0.2078 = 5.295 LSB   ->  x = 1.0336   (3.4% ratio error)
+v7 ideal   1.098 LSB                          ->  x = 1.0008   (0.08%)
+```
+
+So the deck sits ~3.3% off on **exactly the ratio the v7 compensation exists to set**, while
+containing no compensation. *(The sign is convention: every code step is negative on this node, so a
+negative handover step is a step in the same direction, 5.3× a normal one.)*
+
+**Status of the three numbers.**
+
+| figure | what it describes | standing |
+|---|---|---|
+| 0.96σ | contaminated *level* measurement | **dead** — artefact (loads, see above) |
+| **3.29σ** | the **pre-v7, uncompensated** array | **valid, correctly labelled** |
+| 4.33σ | the frozen v7 build | **unverified** — needs the merge first |
+
+Keep the 3.29σ: it is the first correctly-measured handover margin in this lineage, and it is the
+baseline the compensation has to beat.
