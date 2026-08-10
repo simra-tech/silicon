@@ -1996,3 +1996,45 @@ works.** If the test confirms, the sizing change comes off the table and is repl
 asymmetry.
 
 *No action is to be taken on this section until the kick test resolves it.*
+
+# THE SYSTEMATIC OFFSET IS CONFIRMED, AND THE START-UP DEFECT IS NOW A BLOCKER (2026-08-10)
+
+**The confound above is cleared.** Kick-amplitude sweep, mismatch off throughout:
+
+| kick | levels | flip | code | offset |
+|---|---|---|---|---|
+| 0.5 mA | `1111111111111110` | idx 15 | 582 | **INVERTED TRANSFER** |
+| 1.0 mA | `0011111111111111` | idx 2 | 60 | −16.2 mV |
+| 2.0 mA | `0111111111111111` | idx 1 | 20 | −18.9 mV |
+
+**1 mA and 2 mA differ by exactly one resolution step** (602/15 = 40 codes = 2.7 mV): a **doubling of
+the stimulus moved the answer by less than the measurement resolves.** The kick does not manufacture
+the offset. **The ~16–19 mV systematic term is real.**
+
+**It is worse than the provisional section stated.** The asymmetry consumes **80–94 % of the one-sided
+range** before any mismatch. At 2 mA the flip lands **20 codes from the end** — nearly railed; a
+slightly larger asymmetry would give **no flip at all**. **The array is close to unable to centre even
+the nominal part.**
+
+**Decision (supersedes the +20 % `I_FS` sizing entirely).** Do not grow the array: 1.2× on a range
+already ~90 % consumed by a defect. **Locate and remove the asymmetry** — zero area, ~5× usable range
+(4.1 mV → 20.3 mV). The 379→455 fF and 419→495 fF changes are withdrawn.
+
+## The 0.5 mA control case: the part can come up inverted
+
+Same deck, same devices, **no mismatch** — and the transfer is **reversed**: 1 at low codes, 0 at
+high. **Halving the start-up current reverses the input-to-output polarity of the part.**
+
+This is the three-equilibria / no-starter defect recorded earlier in this file, now seen in a
+transient rather than a DC sweep: a smaller kick leaves the bias loop in the *other* stable state, and
+in that state **the signal path runs backwards.**
+
+**In silicon this means the p-bit generator can power up producing the logical inverse of its intended
+output, with nothing in the circuit to prevent it** — which state it lands in depends on supply ramp
+and on what the loop sees on the way up.
+
+**The starter is promoted from non-blocking to a HARD BLOCKER, with a stronger acceptance test than
+previously written.** It is not sufficient to reach the live equilibrium; it must reach **the same**
+equilibrium every time. **Sign-off must include: sweep the start-up energy across a wide range and
+confirm the transfer polarity never inverts** — in addition to the forced-sweep (exactly one zero)
+and ramped-transient checks already specified.
