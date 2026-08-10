@@ -1920,9 +1920,16 @@ and they are recorded here *before* the number exists, which is the only time it
 1. **`p_room`** — the fraction of chips whose output flips *anywhere* across codes 0…602 at 27 °C.
    Rule of three now applies honestly, because the predicate is finally per-chip: **60 perfect draws
    bound the failure rate below 5 %.**
-2. **`p_cold`** — the fraction whose **flip code ≤ 79 % of full scale**. This is the statistic that
-   decides whether a part works, because 79 % at 27 °C reproduces the trim reach available at
-   −40 °C (the V_T equivalence recorded above).
+2. **`p_cold`** — the fraction whose **consumed margin ≤ 79 %**, where
+
+       consumed margin = |flip_code - 301| / 301
+
+   **CORRECTED 2026-08-10, before the first result.** This originally read "flip code ≤ 79 % of full
+   scale", which is **wrong**: the code axis is **bipolar** — code 0 = **−671 µA** (full negative
+   steer), code 602 = **+669 µA**, and **zero correction is the MIDPOINT, code 301**. A chip flipping
+   near *either end* consumed nearly all the trim; a chip with no offset flips in the *middle*. The
+   original definition would have scored the worst parts as the best and returned ~100 %.
+   79 % at 27 °C reproduces the trim reach available at −40 °C (the V_T equivalence recorded above).
 
 **Pre-committed thresholds on `p_cold`:**
 
