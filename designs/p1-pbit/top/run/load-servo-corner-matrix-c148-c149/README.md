@@ -950,3 +950,51 @@ implicit because a margin on record is read as a margin measured.
 enablement by measuring it: run two draws and confirm the quantity actually moves. Every device
 family in a PDK may switch at a different level, and the one that silently does nothing is the one
 written most consistently.
+
+## Correction, second part (2026-08-10) — MOS mismatch has never been enabled in any deck in this repository
+
+The resistor finding above has a third instance, and it reaches the dominant term in the offset
+budget.
+
+**File evidence (certain).**
+
+- `cornerMOSlv.lib` / `cornerMOShv.lib` block **`mos_tt`** includes `sg13g2_moslv_mod.lib`, which
+  contains **zero `agauss` calls**. The enabling block is **`mos_tt_mismatch`**, which includes
+  `sg13g2_moslv_mismatch.lib` + `sg13g2_moslv_mod_mismatch.lib` — 48 `agauss` calls, gated by
+  `mm_ok`, including the one that matters: `delvto = agauss(0, delvto_mm/sqrt(m·l·w·1e12), …)`.
+- **`mm_ok` on a MOS instance is a no-op under `mos_tt`**, exactly as on an `rppd` under `res_typ`.
+  This is now the *third* device family found switching at the corner-block level while carrying a
+  per-instance flag that reads as enabled.
+- Across the whole design repository: **423 decks select `mos_tt`, 30 select `mos_ss`, 19 select
+  `mos_ff`, and none selects any `_mismatch` MOS block.**
+
+**Scale of the omitted term.** `sg13g2_lv_nmos_delvto_mm = 0.0039 V·µm`. For the sense-amp input pair
+`XSA1/XSA2` at `w = 2.0 µm, l = 0.13 µm, m = 1`:
+
+```
+sigma(Vth) = 0.0039 / sqrt(0.13 x 2.0) = 7.65 mV per device
+differential                            = 10.8 mV
+```
+
+That is threshold mismatch on the pair that makes the decision, and it has never been drawn.
+
+**The open question, stated as open.** The table above records **σ = 11.79 mV** input-referred from
+an *MC mismatch, N = 200* campaign (2026-08-08), and attributes **11.5 mV of it to the
+sense-amp/latch/buffer chain** — which is CMOS. Those two statements are hard to hold together with
+the file evidence: if that campaign selected `mos_tt` like the other 423 decks, the chain's devices
+could not vary, and the attribution cannot be what it says. Either
+
+- the campaign used a deck that enabled MOS mismatch by some route not present in the current
+  netlists — in which case 11.79 stands and only everything *since* is incomplete; or
+- it did not — in which case **the dominant term of the offset budget has never been measured**, the
+  11.5 mV attribution is misassigned, and the trim-range shortfall (currently 5.3×) is sized against
+  a number of unknown accuracy.
+
+**This is not yet resolved and is not being asserted either way.** The check is one `grep` of that
+campaign deck's `.lib` lines and it has been requested. Recording the question here because the
+trim-range analysis later in this document consumes the 11.79 mV as an input, and a reader sizing
+the trim needs to know that its provenance is under review.
+
+**Immediate consequence for live work.** Both MOS corners must be switched to `_mismatch` before any
+offset number from this bench is used for a design decision. Note that this cannot be verified by
+inspecting the netlist — every instance already says `mm_ok=1`.
