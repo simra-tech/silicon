@@ -811,3 +811,74 @@ numbers age badly.** Prefer recording the procedure over the answer wherever bot
 
 The trim is in any case optional: LSB 0.2197 mV against 0.200 (9.8% high), full scale 132.5 mV
 against a 120 mV spec — more range than required, and invisible to the loop.
+
+## C169 v7 — the fix that loaded the node it was fixing (2026-08-10)
+
+**The range problem, found on paper.** The DAC exists to cancel the comparator's offset, and it had
+never been connected to it. The comparator's tail current is derivable from the source without any
+bench: `XRDEG_P1_COMP` 41.2 Ω, `XRPTAT_COMP` 161.4 Ω, `XRDEG_SCOMP` 6.9 Ω, so the PTAT reference is
+Vt·ln4/(R2−R1) = 35.8 mV/120.2 Ω = **298 µA**, and R1/RS = 6.00 against Nx = 6 makes a cleanly
+scaled 1:6 mirror — **tail 1.79 mA**. Hence gm = I_T/2Vt = 34.6 mA/V and the input-referred trim
+range is I_FS/gm = **±6.7 mV against an offset σ of 11.79 mV — 0.57σ, only 43% of parts reachable.
+A 5.3× shortfall.** (An earlier threshold of 678 µA was 2× optimistic: it used 2·I_FS as the
+one-sided range. The correct figure is 339 µA.) Independent support: 1.79 mA through the 285 Ω loads
+puts c_p/c_n ~255 mV below VCC_HBT, a sensible CML point.
+
+**The levers, and one blind alley.**
+
+- **Blind alley — do not degenerate the input pair.** The dominant offset originates *downstream* of
+  the comparator gain, and so does the trim. Reducing gm scales the input-referred offset and the
+  input-referred trim range by the same factor: **the ratio is invariant.** *Before adjusting a gain
+  to fix a ratio, check whether both numbers in the ratio move with it.*
+- **Lever 1 — the load resistance.** At c_p/c_n the trim range is I_FS·R while the sense-amp's own
+  offset is independent of R, so R trades against I_T at constant gain and constant DC drop
+  (338 µA / 1510 Ω closes the 5.3×). Cost: bandwidth.
+- **Lever 2, probably cheapest — the offset's source.** 11.5 of the 11.79 mV is the sense-amp chain,
+  not the comparator. Halving it halves the requirement, and attacks the cause.
+
+**Lever 1 is dead, killed by a cost of our own earlier fix.** Every steering pair puts one collector
+on c_p and one on c_n. From the HBT model, collector-node capacitance (cjc + cbco + cjcp) is 2.48 fF
+at Nx=1 and 8.45 fF at Nx=4, so 150 unary pairs give **379 fF per node before the pair-Nx scaling
+and 1275 fF after — 3.4×, spent to fix an 8% current error.** The comparator's own devices there are
+tens of fF: **the trim DAC came to dominate the electrical behaviour of the node it exists to
+correct.** Poles: 438 MHz at 285 Ω (τ = 363 ps against a 1000 ps bit period), **83 MHz at lever 1's
+1510 Ω — unusable.**
+
+> **Why it hid.** The DAC was measured all evening in a deck of its own, deliberately, because
+> isolation made it fast to test and easy to reason about. Isolation is exactly the condition under
+> which loading effects vanish — there is nothing left to load. Every property established in
+> isolation was real; the one property that only exists in company was invisible by construction.
+
+**v7 — the synthesis.** Revert the pairs to Nx=1 (recovering 379 fF and a ~1.5 GHz pole) and correct
+the 8% by widening the **unary current sources** instead. Their collectors sit on `vsegu`, an
+internal node, so the correction costs nothing on c_p/c_n.
+
+This is compensation, rejected earlier in almost identical words. **The rule that separates the two
+cases: compensate a mechanism you have characterised, never one you have not.** Because the
+mechanism is now known — the pair's V_BE difference is kT/q·ln4, proportional to absolute
+temperature — its drift is computable rather than feared:
+
+| | kT/q | ΔV_BE | Early loss |
+| --- | --- | --- | --- |
+| −40 °C | 20.09 mV | 27.9 mV | 6.2% |
+| +27 °C | 25.86 mV | 35.9 mV | 8.0% |
+| +125 °C | 34.31 mV | 47.6 mV | 10.6% |
+
+A fixed 8% compensation leaves **−2.6% to +1.8%** across the range — 3× better than the 8% removed,
+everywhere, and well inside the trim's budget.
+
+**Result, and a correction of the report.** v7 measured x = I_u/(4·I_b) = 1.0246, reported as a
+"2.5% residual". Worked through, the handover step is 4x − 3 = **1.098 LSB → 4.33σ → 0.28 expected
+events**, against **4.06σ / 0.94** for the pair-enlarged build. **v7 improves monotonicity *and*
+recovers the capacitance.** The 2.5% is the deliberate overshoot working, not an error to remove.
+
+**But the tuning was fitted to one draw** — the third appearance of the canary-vs-total error, and
+the first inside a tuning loop. On a single draw x carries σ = √(0.10² + 0.05²) = **11.2%** (I_b is
+one device, I_u is four in parallel), so 1.0246 from one `.op` is 1.02 ± 0.11 — indistinguishable
+from 1.00 and from 1.13. The 1.08 → 1.032 width move was real in *direction*; the landing point was
+one sample's mismatch. Re-tune against the 250-draw ensemble mean (uncertainty 0.71%), targeting
+**1.03, not 1.00**.
+
+**Still owed before any of this is settled:** measure the c_p/c_n capacitance and settling on the
+rebuilt comparator bench — the pole arithmetic is model-derived, and the comparator bench itself is
+still the broken one (latched, five forced bias nodes).

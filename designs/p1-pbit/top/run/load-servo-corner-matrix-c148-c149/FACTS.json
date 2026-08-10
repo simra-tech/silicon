@@ -533,5 +533,69 @@
    "status": "trim optional, not owed: LSB 0.2197 vs 0.200, full scale 132.5 vs a 120 mV spec"
   },
   "pending": "250-draw re-measure on the fixed deck, targets pre-stated: step ~1.133 LSB, sigma ~0.2538, margin ~4.46 sigma, ~0.15 events"
+ },
+ "c169_v7_range_and_loading_2026_08_10": {
+  "trim_range_shortfall": {
+   "tail_derived_from_source_uA": 1790,
+   "derivation": "PTAT = Vt*ln4/(161.4-41.2) = 298 uA; R1/RS = 6.00 vs Nx 6 -> 1:6 mirror -> 1.79 mA",
+   "gm_mA_per_V": 34.6,
+   "input_referred_range_mV": 6.7,
+   "offset_sigma_mV": 11.79,
+   "coverage": "0.57 sigma, 43 pc of parts",
+   "shortfall": "5.3x",
+   "PE_correction": "an earlier 678 uA threshold used 2*Ifs as the one-sided range; correct figure 339 uA",
+   "support": "1.79 mA x 285 ohm puts c_p/c_n 255 mV below VCC_HBT, a sensible CML point"
+  },
+  "blind_alley": "do not degenerate the input pair - the dominant offset and the trim both sit downstream of the gain, so the ratio is invariant",
+  "levers": {
+   "1": "load R trades against I_T at constant gain and DC drop (338 uA / 1510 ohm); cost is bandwidth",
+   "2": "reduce the offset at source - 11.5 of the 11.79 mV is the sense-amp chain"
+  },
+  "lever1_killed_by_our_own_fix": {
+   "per_device_collector_cap_fF": {
+    "Nx1": 2.48,
+    "Nx4": 8.45
+   },
+   "per_node_fF": {
+    "before_pair_scaling": 379,
+    "after": 1275,
+    "factor": 3.4
+   },
+   "poles_MHz": {
+    "285_ohm": 438,
+    "1510_ohm": 83
+   },
+   "tau_ps_at_285": 363,
+   "bit_period_ps": 1000,
+   "note": "the trim DAC came to dominate the decision node it exists to correct",
+   "why_it_hid": "the DAC was characterised in isolation, which is exactly the condition under which loading effects vanish"
+  },
+  "v7_synthesis": {
+   "pairs": "reverted to Nx=1 (379 fF, ~1.5 GHz pole)",
+   "compensation": "unary current sources widened; their collectors sit on vsegu, an internal node - no cost on c_p/c_n",
+   "rule": "compensate a mechanism you have characterised, never one you have not",
+   "temperature": {
+    "-40": "6.2 pc",
+    "27": "8.0 pc",
+    "125": "10.6 pc",
+    "fixed_8pc_residual": "-2.6 to +1.8 pc, 3x better than the 8 pc removed"
+   },
+   "result": {
+    "x": 1.0246,
+    "handover_step_LSB": 1.098,
+    "margin_sigma": 4.33,
+    "expected_events_37750": 0.28,
+    "vs_pair_enlarged": "4.06 sigma / 0.94 - v7 is BETTER on monotonicity and recovers the capacitance",
+    "note": "the 2.5 pc is the deliberate overshoot working, not a residual"
+   }
+  },
+  "tuning_fitted_to_one_draw": {
+   "single_draw_sigma_on_x": "11.2 pc (Ib one device, Iu four in parallel)",
+   "consequence": "1.0246 from one op is 1.02 +/- 0.11 - indistinguishable from 1.00 and 1.13",
+   "verdict": "the 1.08 -> 1.032 move was real in direction; the landing point was one sample's mismatch",
+   "fix": "re-tune against the 250-draw ensemble mean (0.71 pc), target 1.03 not 1.00",
+   "note": "third appearance of the canary-vs-total error tonight, first inside a tuning loop"
+  },
+  "still_owed": "measure c_p/c_n capacitance and settling on the rebuilt comparator bench; the comparator bench is still the broken one (latched, five forced bias nodes)"
  }
 }
