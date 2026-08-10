@@ -1300,3 +1300,45 @@ negative handover step is a step in the same direction, 5.3× a normal one.)*
 
 Keep the 3.29σ: it is the first correctly-measured handover margin in this lineage, and it is the
 baseline the compensation has to beat.
+
+#### Correction, same session — the 3.29σ label above is wrong, and the deck is a different architecture
+
+The section immediately above labels 3.29σ as *"the pre-v7, uncompensated array — valid, correctly
+labelled."* **That is wrong on both counts**, and the deck is further from v7 than "missing the
+compensation" suggests.
+
+**The deck is not a stale v7. It is a different segmentation.**
+
+| | campaign deck | frozen v5/v7 |
+|---|---|---|
+| segments at | **b7** | **b1** |
+| unary elements | 7 × `Nx=128` | 150 × 4 LSB |
+| binary units | 7 (`Nx=1..64`) | 2 |
+| codes | 1023 | 603 |
+| **handovers per part** | **7** | **151** |
+
+The frozen architecture is the one `servo_model.py` documents and the one
+`HANDOVER_SIGMA_LSB = 0.265` was measured on. Two generations apart, not one merge.
+
+**So 3.29σ belongs to neither build.** It divides v7's ideal step (1.098 LSB — a *b1*-boundary
+quantity) by this deck's σ (a *b7*-boundary quantity). The deck's own margin is its own step over its
+own σ:
+
+```
+5.295 LSB / 0.3335 LSB = 15.9 sigma
+```
+
+— large precisely because it overshoots by 5.3 LSB, and overshoot is what buys monotonicity.
+
+**Exposure differs too, and it is not a detail.** Per-part reversal risk goes as the number of
+boundaries: **151 against 7 is a factor of 21** before any margin is compared. Two builds with equal
+per-boundary margins have very different per-part rates.
+
+**What the campaign did establish, and it is worth keeping:** a clean handover σ of **0.3335 LSB** at
+the b7 boundary, `n = 250`, correct scale, all three mismatch families enabled — the first such
+measurement in this lineage. It is not a v7 number and **no arithmetic converts it into one.**
+
+**Rule (this is its third appearance today).** *A margin is a ratio between two quantities that must
+come from the same build.* Mixing an ideal from one architecture with a σ from another produces a
+number that looks like a margin, sits in the right units, and describes nothing — the same failure as
+the LSB-σ × mV-σ conflation (H-750) and the level-for-step substitution (H-752).
