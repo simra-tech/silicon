@@ -2181,3 +2181,44 @@ starter-relevant values (~10 MΩ) failed — **but in earlier deck variants, not
 
 **The two sweeps bracket from opposite directions** — minimum strength that guarantees starting versus
 maximum strength the analysis tolerates. **The design exists only if the brackets overlap.**
+
+# THE OBSERVABLE IS DUTY CYCLE, NOT A LOGIC LEVEL (2026-08-10)
+
+**Supersedes the metric used by every count campaign in this file.** `pbit_out_core` is a
+**probabilistic** output — that is the circuit's function — so the quantity is its **duty cycle**, the
+fraction of the run spent high. **Sampling one instant at 10 ns measures which phase of the clock the
+sample landed on.**
+
+**Measured from CSVs already on disk** (all samples after 2 ns, mid-band excluded), duty vs code index:
+
+    draw 0   0.64 0.66 1.00 1.00 ... 1.00
+    draw 1   0.63 0.65 0.66 1.00 ... 1.00
+    draw 3   0.00 ...... 0.00 | 0.31 0.34 0.35
+    draw 4   0.64 | 0.00 ... 0.00 | 0.32 0.34 0.34
+
+**Draws 0 and 1 are nearly balanced at the bottom of the code range** (duty 0.64 against the 0.50
+wanted) and saturate high as the code rises — they need **more negative correction than code 0
+provides**. Just outside the range, **and the shortfall is now a number.** Draw 3 is the mirror,
+reaching only 0.35 at maximum code.
+
+**Across all four, nothing reaches 0.50 at any code.** The same conclusion the binary analysis was
+approaching — now quantified per part.
+
+**The binary classifier also manufactured artefacts.** Draw 3's isolated 1s at codes 2 and 5, recorded
+earlier as "non-monotonic", are codes where the part **sat stuck high rather than toggling**.
+
+**Re-analysis, not re-simulation.** Every CSV exists. Definitions:
+
+| term | definition |
+|---|---|
+| correctable | some code brings duty within 0.45–0.55; that code is the part's trim setting |
+| out of range | closest approach outside the band; **report the best achievable duty**, not a verdict |
+| headline | the **distribution of best-achievable duty** over 60 parts |
+
+**Consequences.** The trim-range question is finally answerable in its own units — distance from 0.50
+maps onto required range. **The intended/inverted/no-transfer split recorded above is suspect and must
+be recomputed on this basis.** Keep the level-crossing analysis alongside: the two disagreeing on a
+part is itself informative.
+
+*Four hours of analysis in this file treated a random-number generator as a comparator, because the
+harness had always sampled it that way.*
