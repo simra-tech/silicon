@@ -2984,3 +2984,41 @@ beneath it.
 
 **Next:** print the tail current directly and trace its bias path from `e_tail` back into the
 compensation network.
+
+# THE CHAIN CLOSES: `c_p1_comp` BIASES THE COMPARATOR'S TAIL SOURCE (2026-08-11)
+
+**From the netlist, everything on `e_tail`:**
+
+    XQCLK_TRACK  e_track CLK_P e_tail       track switch emitter
+    XQCLK_LATCH  e_latch CLK_N e_tail       latch switch emitter
+    XQS_COMP     e_tail c_p1_comp e_scomp   npn: collector e_tail, BASE = c_p1_comp
+    XRDEG_SCOMP  e_scomp VSS  rppd w=24.0u l=0.50u
+
+**`XQS_COMP` is the tail current source for the whole comparator — track pair and latch pair both —
+and its base is the compensation node of the loop with three equilibria and no starter.**
+
+**Computable from one measured number.** `c_p1_comp` = **0.7324 V** (measured). With little current
+flowing, `e_scomp` sits near VSS, so **V_BE(XQS_COMP) ≈ 732 mV** against the 850–900 mV these devices
+need.
+
+    tail source weakly on
+      -> tiny tail current            (confirmed: e_track moves only 30 mV latch -> track)
+      -> input pair starved           (confirmed: V_BE 669 mV during track)
+      -> gain 0.0985 instead of 8.17  (measured, phase-correct)
+      -> collectors railed 1.33 V apart during track
+      -> 100 mV at the input does nothing
+
+**Every link is now measured or read off the netlist.**
+
+## This changes the starter requirement
+
+Avoiding the dead equilibrium (0.232 V) is necessary but **not sufficient**. The "live" equilibrium at
+**0.812 V gives V_BE ≈ 812 mV — marginal, not comfortable.**
+
+> **The requirement is not merely that the loop starts. It is that it settles high enough to bias the
+> tail properly — and 0.812 V may not be high enough.**
+
+**Owed, and it is now the top item:** determine what `c_p1_comp` must be for `XQS_COMP` to deliver its
+intended tail current, and whether the loop's live equilibrium reaches it. If it does not, the fix is
+a bias-level change in the compensation loop, not only a start-up circuit — and every measurement in
+this file was taken through a comparator running at ~1 % of its designed gain.
