@@ -3164,3 +3164,44 @@ decision nodes at 0.26 V — and it happens to size the trim correctly as well.
    reassuring way.
 4. **Everything here post-dates two repairs** — the array current and the dangling sense-amp strobe. It
    describes the repaired circuit, not the one in the merged netlist.
+
+---
+
+## Update, 2026-08-11 23:2x — n = 18
+
+Two parts previously listed as unresolved were recovered. Neither had failed to reach its decision
+point; both had *found* it, with the intermediate points missing because the solver rejected them,
+leaving a 25 mV bracket that the analysis correctly refused to report as a measurement. Re-running
+only the rejected points inside each bracket — **four simulation points per part** — closed both.
+
+    part 20   50 valid  17 rejected   crossing  +7.5 mV +/-2.5
+    part 26   56 valid  11 rejected   crossing  -2.5 mV +/-2.5
+
+Revised distribution:
+
+    n = 18 parts
+    mean  +0.42 mV      sd 8.28 mV      range -17.5 .. +12.5 mV
+
+The conclusion is unchanged and slightly firmer. sd moved 8.59 -> 8.28 mV (3.6 %), well inside the
+~18 % uncertainty a sample this size carries, which is what convergence rather than discovery looks
+like. Against sd = 8.28 mV the requirement is **range >= +/-41 mV, step <= 0.83 mV**; the as-built
+array gives **+/-1063 mV = 128 sigma and a 3.17 mV = 0.38 sigma step**, and at 23 µA/segment
+**+/-144 mV = 17 sigma and 0.43 mV = 0.05 sigma**. Still wrong in both directions as built; still
+correct at the reduced current.
+
+Caveat 1 above now reads n = 18 (sd uncertainty ~17 %); caveat 3's bias correlation is **−0.34 over
+18 parts**, unchanged in sign and still the reassuring direction.
+
+Two parts remain outside the sample and are recorded rather than dropped, because the count of parts
+that could not be measured is part of the result:
+
+    part 16   9 valid, 9 rejected -- 50 % failure even at the looser solver settings; unmeasurable
+    part 25   36 valid, 7 rejected -- no crossing found in -300..+5 mV; still sweeping
+
+**Twenty attempted, eighteen measured, one unmeasurable, one still running.** The rule-of-three bound
+on the unobserved fraction is 3/18 = 17 %: a trim range set from this sample covers the parts seen,
+not the parts that exist.
+
+**The step figure of 3.17 mV/segment is still derived, not measured.** A direct measurement — one
+part, three trim codes, one process — is running. Until it lands, every statement above comparing a
+measured spread against a calculated step is comparing one measurement to one calculation.
