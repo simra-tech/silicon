@@ -2501,3 +2501,35 @@ settle. The *shape* of this result is firm; its *values* are provisional on that
 **Next experiment, and the only one that unblocks the rest:** dump node voltages from a converged
 no-starter draw, feed them as a **`.nodeset`** to a **10 MΩ** (`10MEG`, not `10M`) starter deck, and
 see whether it solves. Nothing competes for the machine now.
+
+# THE MEASUREMENT ARTEFACT IS FIXED — BY SEEDING, NOT BY THE STARTER (2026-08-11)
+
+A mismatch-enabled, **no-starter** campaign draw with `.nodeset` seeded from a live (kicked-transient)
+dump:
+
+    code  0..14   duty 0.00    c_p1_comp 0.7344 .. 0.7364
+    code 15..16   duty 0.34    c_p1_comp 0.7348, 0.7342
+
+**The validity column is the result: `c_p1_comp` spans 2.2 mV across the entire sweep.** Against the
+unseeded campaign, where the equilibrium flipped code-to-code and produced railed 0.00/1.00 in no
+order. **The operating state is now determined and identical at every code**, and **the transfer is
+monotonic.** 17 initial transient solutions, **0 operating-point failures.**
+
+**So the 30 % artefact recorded above is repaired by one `.nodeset` directive** — no starter, no
+circuit change. **This supersedes the prediction that the starter would fix it.** The starter returns
+to being what it actually is: **a silicon defect, judged on the three-equilibria sweep and the
+polarity inversion, not on measurement convenience.**
+
+**The headline survives the clean measurement.** This chip still tops out at **0.34** and never
+reaches 0.50 — exactly the lower-cluster shape of the n=46 control. The trim-range conclusion does not
+depend on the artefact.
+
+**Standing procedure from here, for every campaign deck:**
+
+1. `.nodeset` seeded from a **live** dump — taken at the end of a **kicked transient** (the campaign's
+   own 1 mA `IKICK2 0 xcomp.c_p1_comp` PWL, *not* another testbench's kick);
+2. **`v(xcomp.c_p1_comp)` written as a second column**, so every draw proves its own validity;
+3. reject any draw whose bias column is not near the live value.
+
+**Next: re-run the count with the nodeset in place** — the first fully determined dataset, with no
+artefact class and every draw usable.
