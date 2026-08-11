@@ -2638,3 +2638,47 @@ doubles back while `c_p1_comp` stays fixed — the candidates are downstream of 
 
 *Retained without change: seeding is still correct practice. A determined operating state is worth
 having on its own terms, and it is what makes the confirmation above trustworthy.*
+
+# THE DUTY METRIC WAS ONE BIT IN DISGUISE — READ THIS BEFORE ANY SECTION ABOVE (2026-08-11)
+
+**Every CSV contains exactly one transition, at 8.5–8.8 ns in nearly all of them. Only the DIRECTION
+differs.**
+
+    duty 0.337   starts 0, ends 1, edge 8.61 ns      duty 0.646   starts 1, ends 0, edge 8.54 ns
+    duty 0.353   starts 0, ends 1, edge 8.54 ns      duty 0.645   starts 1, ends 0, edge 8.66 ns
+
+Averaging window 2–12 ns: an edge at 8.6 ns **rising** leaves 3.4 ns high of 10 → **0.34**; the same
+edge **falling** leaves 6.6 ns → **0.66**. **Duty is the direction of a single comparator decision,
+encoded by a fixed edge time. It is not a probability.**
+
+**Withdrawn as artefacts of the metric:** the two clusters at 0.34 / 0.65 (they are the two logic
+outcomes); the empty span between them (the absence of a third possibility); *"nothing reaches 0.50"*
+(0.50 is not an available value); and **the trim-range headline confirmed earlier today.**
+
+## Re-derived from the settled decision — and it reverses the conclusion
+
+Output state is constant from 9.5 to 12 ns in four of five files checked: **the decision at 12 ns is
+settled.** Taking final state vs code over 24 seeded draws:
+
+    13 draws   single clean change, ALL at index 14 or 15  ->  code 508 or 546
+    11 draws   multiple changes (the anomalous population)
+     0 draws   no change
+
+**The balance point is at code ~508–546 — INSIDE the array's 0–602 range.** This **contradicts and
+replaces** the earlier "crossing lies outside the array in both directions".
+
+## The sharpest open question now on this design
+
+Thirteen chips all flip at one of **two adjacent** code steps. The step is 602/16 ≈ 38 codes ≈
+**0.96 mV** input-referred, so the whole spread of balance points across thirteen mismatched chips is
+**under 2 mV** — against a believed offset sigma of **8.5 mV**. **Those cannot both be true.** Either
+mismatch is not producing the offset spread assumed, or the code axis is not moving the balance point
+as assumed. **Resolve this before any sizing decision.**
+
+## Replacement metric: edge time
+
+Draw 0's file at its flip boundary resolves at **~10 ns** against **8.6 ns** everywhere else —
+regeneration slowing as the input approaches balance, exactly as a comparator should. **Edge time is
+the continuous quantity: it peaks at the balance point, it is measured rather than inferred, and it
+assumes nothing about the output being probabilistic. Record final state and edge time per code.
+Duty is deleted.**
