@@ -2912,3 +2912,42 @@ fraction of separation — are unaffected, being ratios on a single axis.
 **Correct experiment:** **one ngspice process**, `alter` the input differential *and* the code inside
 it, so both differentials are measured **on the same chip**, with finer differential steps than one
 index of resolution.
+
+# ROOT CAUSE CANDIDATE: THE INPUT PAIR IS SATURATED (2026-08-11)
+
+**Read this before any quantitative section in this file.** Collector probe, one chip, one process,
+at 10 ns:
+
+| differential | c_p | c_n | c_p − c_n |
+|---|---|---|---|
+| 0 mV | 1.13828 | 2.49892 | −1.360637 |
+| +50 mV | 1.13992 | 2.49821 | −1.358294 |
+| +100 mV | 1.13914 | 2.49798 | −1.358840 |
+| −100 mV | 1.13773 | 2.49980 | −1.362069 |
+
+**A 200 mV input swing moves the collector differential by 3.8 mV — a stage gain of 0.019 against the
+design record's 8.17, short by ~430×.**
+
+**And the absolute values say why: `c_p − c_n = −1.36 V`, with `c_n` at the supply rail (2.4989).**
+The pair is **driven hard into saturation with one side pinned to the rail.** A saturated stage has no
+gain — which explains the complete absence of input authority (H-872, H-883).
+
+**Consequence: the switching measured throughout this file is not the comparator deciding about its
+input.** Every "balance point" recorded here is the switching point of whatever else responds to the
+code. **Every quantitative claim in this document — offsets, spreads, margins, cluster separations,
+transition widths, correctable fractions — was measured through a stage that was not amplifying.**
+
+**Unaffected** (separate sweeps, structural): three equilibria and no starter; polarity inversion at
+reduced start-up energy; `qarea` geometry-independence.
+
+## Next test, and it decides which kind of fault this is
+
+**Sweep the input common mode** — `IN_P` and `IN_N` together, ~0.8 V to ~2.0 V — and find where the
+collectors leave the rail and a differential gain appears.
+
+    a working window exists and 1.245 V is outside it  ->  TESTBENCH fault; fix the bias, re-measure
+    the window includes 1.245 V                        ->  front-end DESIGN fault, and it is the headline
+
+**Note for the record:** both inputs have sat at **1.245 V** in every deck this session, and nobody
+ever verified the input pair can operate there. **One printed collector voltage at the start would
+have shown 1.36 V of separation.**
