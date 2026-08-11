@@ -2442,3 +2442,33 @@ mirror reference is the most bias-sensitive point available.
 **Unblock for the seeding plan:** the **no-starter deck converges** (45 chips run on it). **Dump node
 voltages from that** to seed the starter runs — the starter perturbs one branch by ~10 %, so it is an
 excellent initial guess. Do not wait for a nominal-with-starter solve; none has ever succeeded.
+
+# CORRECTION TO THE NUMERICAL-FRAGILITY TABLE — SAME UNITS ERROR (2026-08-11)
+
+The pull-down bisection table recorded earlier in this file used the includes **200M, 500M, 1G, 10G,
+100G**. `G` is giga and correct; **`M` is milli and was not.** So that table compared **two shorts
+against three gigaohm resistors**, and its headline — *"non-monotonic over four orders of
+magnitude"* — is **withdrawn**.
+
+**Corrected reading:**
+
+| value | actual | result | note |
+|---|---|---|---|
+| 200M | **0.2 Ω** | converges | pinning the node makes the solve trivial |
+| 500M | **0.5 Ω** | converges | same |
+| 1G | 1 GΩ | fails | |
+| 10G | 10 GΩ | fails | |
+| 100G | 100 GΩ | converges | electrically negligible |
+
+**Among genuine resistors the behaviour is still non-monotonic** — 1 G and 10 G fail while 100 G
+succeeds, all three negligible loads, with no physical ordering. **The numerical-fragility conclusion
+survives on thinner evidence; the "four orders" phrasing does not.**
+
+**The consequence is worse than the previous section states.** Combining every correctly-read run:
+**10 MΩ fails, 1 GΩ fails, 10 GΩ fails — the entire starter-relevant range, three decades wide.** The
+only converging values are **shorts** (which destroy the bias rather than start it) and **100 GΩ**
+(far too weak to act).
+
+**So: no usable starter value has ever converged — only values that cannot work do.** Seeding the
+solver from the converged **no-starter** solution is therefore required, not optional, before any
+statement about the starter can be made at all.
