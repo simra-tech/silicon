@@ -2765,3 +2765,46 @@ magnitude in trim margin**, and that figure comes from measured data rather than
 single-state population, then size the array against ~0.6 mV rather than ~8.5. **The +20 % `I_FS`
 proposal, already withdrawn, is not merely unnecessary — the array is oversized by roughly an order of
 magnitude for a single-state part.**
+
+# SETTLED PICTURE FROM EDGE LOCATION — SUPERSEDES ALL EARLIER CLASSIFICATIONS (2026-08-11)
+
+Switching region located by **edge presence**, not by any derived metric. All 35 seeded draws:
+
+    17 draws   edges at codes 1-3      (low cluster)
+    18 draws   edges at codes 14-16    (high cluster)
+     3 draws   one stray edge outside their block
+     0 draws   scattered switching
+
+**Every draw has a tight contiguous switching block. The "anomalous / multi-change" population does
+not exist** — it was an artefact of reading the **final state** at codes where no transition occurred,
+where the output merely sat where the operating point left it. All anomaly classes recorded earlier in
+this file are withdrawn.
+
+## The measured picture
+
+| quantity | value | how obtained |
+|---|---|---|
+| split between clusters | **17 / 18** | edge location, 35 draws |
+| cluster separation | **~12 mV** | balance codes ~56 and ~546 |
+| displacement of each cluster from centre | **~6.2 mV** | 245 codes from code 301 |
+| within-cluster spread (mismatch only) | **~0.6 mV** | 3 independent estimates |
+| comparator transition width | **2–3 mV** | switching block is 2–3 codes wide |
+| margin from balance point to array end | **1.4 mV ≈ 2.3 sigma** | 56 codes remaining |
+| implied fallout | **1–2 % of a cluster** | 2.3 sigma one-sided |
+
+## What this says about the design, in two parts
+
+**1. The starter removes the bimodality.** A 17/18 split is exactly what two power-up states predict,
+and pinning the state (nodeset) produced a single cluster. Fixing it removes ~12 mV of apparent spread
+that is not device variation at all.
+
+**2. A ~6.2 mV systematic displacement remains in each state, and that is what consumes the range.**
+With the balance point 245 codes from centre, only 56 codes remain before the array runs out —
+**1.4 mV, or 2.3 sigma against the 0.6 mV mismatch spread.** *The starter alone does not fix this.*
+Removing the systematic displacement would leave ~7.6 mV of reach against 0.6 mV of spread — margin of
+order 12 sigma.
+
+**Order of work, unchanged in sequence but now quantified:** starter first (removes the bimodality and
+makes every subsequent measurement single-valued), then locate and remove the 6.2 mV systematic
+displacement, then size the array — which on this evidence is oversized for a single-state,
+symmetric part.
