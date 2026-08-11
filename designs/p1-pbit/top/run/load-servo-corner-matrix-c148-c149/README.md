@@ -2878,3 +2878,37 @@ confirmation of its own.*
 *Note for whoever re-derives this: the LSB and reach values were each internally consistent and each
 wrong. Do not attempt to repair them by inspection — the measured value is the only one with an
 instrument behind it.*
+
+# WITHDRAWN: THE 0.0095 mV/CODE CALIBRATION MEASURED THE STATE SPLIT (2026-08-11)
+
+**The second chip contradicts the first by ~28×.**
+
+    chip 2, base     10011111111111111   balance between index 2 and 3
+    chip 2, +10 mV   10001111111111111   balance between index 3 and 4   -> ONE index step
+    chip 1, +5 mV                                                        -> FOURTEEN index steps
+
+**`cal-base` and `cal-p5` were separate ngspice invocations — separate mismatch draws — two different
+chips.** Different chips land in one of two power-up states whose balance points differ by ~13 index
+steps. **The 14-step shift was `cal-base` in the low cluster and `cal-p5` in the high one: the state
+split, not the input response.**
+
+**This is the one-process-per-condition trap** already diagnosed and fixed for the campaign, then
+reintroduced in a two-run side experiment because two runs did not look like a campaign.
+
+**Chip 2's pair landed in the same state**, so its one-step shift is the believable one — but a single
+index step is the quantisation limit, bounding the constant only to **0.18–0.53 mV/code**.
+
+**Status of the code-to-millivolt conversion: THREE mutually inconsistent values, none measured.**
+
+    LSB-derived     0.02543 mV/code
+    reach-derived   0.0674  mV/code
+    chip-2 bound    0.18 - 0.53 mV/code
+    withdrawn       0.0095 (confounded)
+
+**No absolute millivolt figure in this file should be quoted until this is settled.** The **relative**
+conclusions — cluster positions as a fraction of range, the 17/18 split, within-cluster spread as a
+fraction of separation — are unaffected, being ratios on a single axis.
+
+**Correct experiment:** **one ngspice process**, `alter` the input differential *and* the code inside
+it, so both differentials are measured **on the same chip**, with finer differential steps than one
+index of resolution.
