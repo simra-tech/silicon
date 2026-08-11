@@ -2297,15 +2297,27 @@ from the duty route, ten hours and one complete change of metric later.
 balance code per part; and a separate treatment of the **7 non-monotonic** draws of 26, which are a
 different population and are not described by any of this.
 
-# THE STARTER IS VALIDATED AT THE OPERATING POINT, AND IT IS FLAT OVER 20x — AT NOMINAL ONLY (2026-08-10)
+# RETRACTED IN FULL — THIS SECTION MEASURED A NEAR-SHORT, NOT A STARTER (retracted 2026-08-11)
 
-> **QUALIFIER ADDED 2026-08-11, and it should have been in the original heading.** Every measurement
-> in this section was taken with **mismatch DISABLED** — `hbt_typ` / `res_typ` / `mos_tt`, a single
-> nominal part. **The result does not yet transfer to the population.** When the same starter was
-> put into the mismatch-enabled campaign deck it **failed to solve an operating point at all** (21
-> errors, zero output in 8 minutes). Mismatch perturbs every device in the loop, and this circuit's
-> operating point is fragile to exactly that. **Re-validation across mismatched draws is owed before
-> anything here is quoted.**
+> **DO NOT QUOTE ANY NUMBER BELOW.** Diffing the include files found one character:
+>
+>     converging deck   RSTART c_p2_comp 0 10M     <- 10 MILLIOHMS
+>     failing deck      RSTART c_p2_comp 0 10MEG   <- 10 megohms
+>
+> **In SPICE `M` means milli.** Every converging run in this section — `10M`, `50M`, `100M`, `200M`,
+> `500M` — was **10–500 mΩ, a near-short to ground**, not a pull-down. So:
+>
+> - the **"flat over a 20× band"** was five slightly different ways of *grounding a node*;
+> - the **67 nA floor "comfortably satisfied"** — it was never 10 MΩ;
+> - the **bias node "at 0.8725, therefore live"** is column two, `c_p1_comp`; `c_p2_comp`, the node
+>   actually shorted, would sit near zero. Consistent with a short, and read as a working starter.
+>
+> **The real starter has never converged** — not at nominal, not with mismatch, not at the midpoint,
+> not at any value tried with correct units. **The proposed fix has not been simulated even once.**
+>
+> **Unaffected and still standing:** the three equilibria and absent starter (DC sweeps); the polarity
+> inversion at 0.5 mA kick; the duty-cycle analysis and the control campaign, which never involved a
+> pull-down at all.
 
 Pull-down `RSTART c_p2_comp` inside the `p1_comparator` subcircuit, bisection deck:
 
