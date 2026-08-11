@@ -3244,3 +3244,33 @@ sweep that measured nothing.
 
 A replacement measurement at codes 300 / 400 / 500 (hundred-code levers about centre) is running. Until
 it lands, every step figure here remains derived, and the derivation has now been wrong once.
+
+### First measured constraint on the step, 2026-08-11 23:5x
+
+Same part, same process, three codes (mismatch drawn once, so these three numbers are comparable):
+
+    code 300 (VCODE 3.0)   crossing  -2.50 mV  +/-2.50   [33 points, 0 rejected]
+    code   0 (VCODE 0.0)   NO crossing in -80..+80 mV    [33 points, 0 rejected]
+    code 600 (VCODE 6.0)   in progress
+
+The code-300 crossing is this part's offset near centre code. The code-0 sweep found nothing in the
+window, so the crossing moved by **more than 77.5 mV over 300 codes**:
+
+    LSB > 0.258 mV  (this deck is the 23 uA/segment array)
+
+**That is at least 2.4x the derived 0.107 mV/LSB.** The derivation is low, and it is now low by a
+measured amount rather than a suspected one. Note this bound needs no assumption about the part's
+intrinsic offset -- both crossings are the same part in the same process, so the offset cancels.
+
+Carried through, as bounds rather than results:
+
+    at 23 uA :  LSB > 0.26 mV = 0.031 sigma   range > 603*0.26 = +/-78 mV = 9.4 sigma
+    at 170 uA:  LSB > 1.9 mV  = 0.23 sigma    (scaling by the ~7.4x current ratio)
+
+If that scaling holds, **the as-built array fails the 0.1 sigma resolution requirement after all** --
+by about 2.3x, not the 4x claimed and retracted above, and from a bound rather than a measurement. The
+retraction stands as written: the 4x figure was wrong. Whether the true figure is 1x or 2.3x is what
+the codes 300/400/500 measurement is for. **Do not quote a resolution verdict from this section.**
+
+The range picture also tightens: at 23 uA the array covers >9.4 sigma rather than the 17 sigma derived,
+still comfortably above the +/-5 sigma requirement.
