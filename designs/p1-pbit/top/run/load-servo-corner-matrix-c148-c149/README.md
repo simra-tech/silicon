@@ -2472,3 +2472,32 @@ only converging values are **shorts** (which destroy the bias rather than start 
 **So: no usable starter value has ever converged — only values that cannot work do.** Seeding the
 solver from the converged **no-starter** solution is therefore required, not optional, before any
 statement about the starter can be made at all.
+
+# CONTROL CAMPAIGN — FINAL RESULT, n = 46 (2026-08-11)
+
+Called complete at 46 draws. The distribution's **shape was identical at four checkpoints** (n = 19,
+31, 44, 46) — two clusters, an empty span between them, same width, same edges — so further draws
+tighten an already-wide interval without changing any decision on the board.
+
+    complete draws                46
+    usable (monotonic transfer)   32
+    spoiled by per-code equilibrium selection   14  = 30%   (95% CI 17-44%)
+
+    of the 32 usable:
+      closest approach BELOW 0.5   12   (max 0.36)
+      closest approach ABOVE 0.5   20   (min 0.63)
+      within 0.45-0.55              0
+      empty span   0.36 -> 0.63    width 0.27, and nothing has appeared inside it at any sample size
+
+**Headline, as it may honestly be stated:**
+
+> **Of 32 chips with a usable transfer, none can be brought within striking distance of balance by any
+> code in the array.**
+
+**Standing qualification, unchanged:** the operating state at each code is undetermined (the solver
+selects among two stable equilibria per `alter`+`tran`), which is what the seeding run exists to
+settle. The *shape* of this result is firm; its *values* are provisional on that.
+
+**Next experiment, and the only one that unblocks the rest:** dump node voltages from a converged
+no-starter draw, feed them as a **`.nodeset`** to a **10 MΩ** (`10MEG`, not `10M`) starter deck, and
+see whether it solves. Nothing competes for the machine now.
