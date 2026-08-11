@@ -2808,3 +2808,38 @@ order 12 sigma.
 makes every subsequent measurement single-valued), then locate and remove the 6.2 mV systematic
 displacement, then size the array — which on this evidence is oversized for a single-state,
 symmetric part.
+
+# UNRESOLVED: A FACTOR OF 2.65 IN THE CODE-TO-MILLIVOLT CONVERSION (2026-08-11)
+
+**Every millivolt figure in this file is provisional on this.** Two established numbers in this record
+imply different scale factors:
+
+    from the LSB     0.2078 mV at the collectors / stage gain 8.17  =  0.02543 mV/code
+                     -> 602 codes = 15.3 mV full scale = +/- 7.65 mV
+    from the reach   measured endpoints -671 / +669 uA -> +/- 20.3 mV input-referred
+                     -> 40.6 mV / 602 codes = 0.0674 mV/code
+
+**Ratio 2.65.** All conversions above used the first.
+
+| quantity | if 0.02543 | if 0.0674 |
+|---|---|---|
+| systematic displacement per state | 6.2 mV | **16.4 mV** |
+| within-cluster spread (mismatch) | 0.6 mV | **1.6 mV** |
+| margin from balance point to array end | 1.4 mV | **3.8 mV** |
+| comparator transition width | 2–3 mV | **5–8 mV** |
+
+*Note the second column reconciles better with two independent measurements recorded earlier: the
+~16 mV nominal offset from the no-mismatch sweep, and the 9–15 mV chaotic band read as a transition
+width. That is suggestive, not decisive.*
+
+**Do not resolve this by re-reading the derivations.** Both look sound and one is wrong — the exact
+situation in which re-reading yields a confident wrong answer.
+
+**Measure it.** Apply a known input differential (**5 mV, `VIN_P` = 1.2475**) and observe **how far the
+switching block moves in codes**:
+
+    moves ~74 codes  ->  0.0674 mV/code   (reach-derived)
+    moves ~28 codes  ->  0.02543 mV/code  (LSB-derived)
+
+A handful of simulations on an existing deck. **It calibrates the code axis in the only way that
+cannot be argued with, and every quantitative conclusion in this file depends on it.**
