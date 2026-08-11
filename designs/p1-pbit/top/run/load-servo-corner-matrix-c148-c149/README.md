@@ -3108,3 +3108,59 @@ bias node (`IKICK`) and 254 do not.** Any statistic pooled across that fleet mix
   decision.
 - **gate every output on run completion.** A truncated transient still writes a file whose columns parse
   and whose forced nodes read their forced values.
+
+---
+
+## 2026-08-12 — the offset distribution, and what the correction array should be
+
+**This answers the question the work was commissioned around, and it answers it in the opposite
+direction to how it was posed.**
+
+### The measurement
+
+Input differential swept per part in a **single ngspice process** (mismatch is drawn once per process,
+so one process = one part; a sweep cannot be resumed or split), 5 mV grid over ±300 mV, decision read at
+the **latch phase** with the clock recorded beside every sample, every file gated on run completion, and
+any part showing more than one sign change excluded rather than reported.
+
+    n = 16 parts
+    mean  +0.16 mV      sd 8.59 mV      range -17.5 .. +12.5 mV
+
+**The mean is zero within resolution.** There is no systematic offset to remove in the design — this is
+a zero-centred random spread, which is what device mismatch should look like. **Sigma ~8.6 mV is the
+number the array must be sized against.**
+
+### What the array should be
+
+    requirement:  range >= +/-5 sigma = +/-43 mV      step <= 0.1 sigma = 0.86 mV
+
+Range must cover the tails of the population, not the average part. Step must be a small fraction of
+sigma, or a part can be brought close to centre but not to it.
+
+### What the array is
+
+    as-built (170 uA/segment):  range +/-1063 mV = 124 sigma | step 3.17 mV = 0.37 sigma
+    at 23 uA/segment         :  range +/- 144 mV =  17 sigma | step 0.43 mV = 0.05 sigma
+
+**As built the array is wrong in both directions at once: ~25x more range than required, and a step
+about four times too coarse.** It can bring any part close to centre and few parts to it. *That is how
+"the trim cannot correct this part" becomes "we need more range" — the array reaches a volt; it simply
+cannot step finer than 3 mV.*
+
+**At 23 µA per segment it meets both requirements with margin.** That reduction was specified for an
+unrelated reason — the array was drawing **25.5 mA against a 1.24 mA comparator tail** and pinning the
+decision nodes at 0.26 V — and it happens to size the trim correctly as well.
+
+### Caveats, in order of how much they should worry you
+
+1. **n = 16.** The uncertainty on a sd from 16 samples is ~18 %, and the **tails — precisely what the
+   range depends on — are the least determined part of a small sample.**
+2. **Simulated mismatch at one corner and one temperature.** These are `mm_ok=1` agauss draws from the
+   PDK, not silicon, and not swept over process corners or temperature.
+3. **Convergence failures are not evenly distributed across parts** (0 to ~40 % per part). Parts that
+   failed heavily were re-run with looser solver settings rather than dropped. **The correlation between
+   a part's failure count and the magnitude of its offset is −0.38** — negative, i.e. difficult parts
+   have *smaller* offsets, which is the opposite of the feared bias. Weak at this n, but it points the
+   reassuring way.
+4. **Everything here post-dates two repairs** — the array current and the dangling sense-amp strobe. It
+   describes the repaired circuit, not the one in the merged netlist.
