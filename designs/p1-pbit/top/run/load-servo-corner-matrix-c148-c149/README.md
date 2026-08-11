@@ -2573,3 +2573,32 @@ before any statement about the outcome.
 **Unchanged by this:** the seeding is still correct practice — a determined operating state is worth
 having on its own terms, independently of whether it improves the transfer statistics — and the
 standing procedure (live seed, bias column, reject on bad bias) stands.
+
+# WITHDRAWN: EVERY EXTRAPOLATED SHORTFALL IN THIS FILE (2026-08-11)
+
+**Applies to the 200–280 codes and the 1.3–1.5× recorded above, and to anything derived from the slope
+at the end of a duty curve.** They are not merely uncertain — they are **arbitrary within an order of
+magnitude.**
+
+Demonstrated from data already in hand. For three seeded draws, extrapolate to the 0.50 crossing using
+the **last** pair of samples, then the **pair before it**:
+
+| draw | last three duty | last pair | previous pair | ratio |
+|---|---|---|---|---|
+| 0 | 0.21 0.33 0.34 | **24.93 mV** | **1.29 mV** | **19×** |
+| 1 | 0.33 0.35 0.36 | 20.52 mV | 6.07 mV | 3.4× |
+| 4 | 0.00 0.31 0.33 | 8.20 mV | 0.51 mV | 16× |
+
+**Same chip, same data, two adjacent choices of slope, answer moves by up to 19×.** The duty curve has
+a knee; the 16-point grid straddles it; the extrapolation reports **which side of the knee the last
+samples happened to fall on**, not the distance to the crossing.
+
+**Consequence: the direct measurement is the only route to the trim shortfall.** The input-differential
+sweep moves from a nice-to-have to the critical path. Bracket already established on the first chip:
+duty **0.35 at 0 mV**, **1.00 at −110 mV**, so the crossing lies between — and on the transition-width
+argument (13 mV for the full swing, 15 % of it needed) it should land within **a few millivolts of
+zero**, not tens. *That prediction is on the record before the measurement.*
+
+**Standing check to adopt: extrapolate twice from different adjacent pairs and compare.** If they
+differ by more than the tolerance you care about, the extrapolation is meaningless. **One line, and it
+would have caught this at first use rather than after four separate quotations of the number.**
