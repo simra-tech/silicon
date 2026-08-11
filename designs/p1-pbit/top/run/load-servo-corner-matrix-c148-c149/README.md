@@ -3022,3 +3022,89 @@ Avoiding the dead equilibrium (0.232 V) is necessary but **not sufficient**. The
 intended tail current, and whether the loop's live equilibrium reaches it. If it does not, the fix is
 a bias-level change in the compensation loop, not only a start-up circuit — and every measurement in
 this file was taken through a comparator running at ~1 % of its designed gain.
+
+---
+
+## 2026-08-11 — two faults found in the merged comparator, and what every earlier number means
+
+**Read this before using any number measured on `C169-SOURCE-coarse-dac-v7-merged.spice`.**
+
+### The two faults
+
+Both were introduced when the trim DAC was merged into the comparator. Neither is visible from inside
+either block; both live in the seam.
+
+**1. The correction array draws ~20x the comparator's tail current.**
+
+    XQS_COMP (tail)      1.24 mA measured
+    150 unary segments   170 uA each  = 25.5 mA
+    2 binary segments                 =  0.1 mA
+    collector loads      XRC1/XRC2 rppd w=1.0u l=0.838u ~= 218 ohm
+
+~21 mA into 218 Ω wants to drop 4.6 V on a 2.5 V supply. It cannot, so the collectors are dragged to
+**0.26 V** against a design intent of 1.9–2.5 V. Everything downstream starves: emitter followers at
+**0 V**, level shift passing zero, CMOS pair below threshold, sense amp receiving **0.04 mV**, hold latch
+frozen, output stuck. Nine links, all measured.
+
+The original schematic (`cace_ihp_sg13g2_demo/netlist/schematic/p1_comparator.spice`) states the intent:
+
+    ISET e_tail VSS DC 2.0m
+    RC1 VCC_HBT c_n 300      RC2 VCC_HBT c_p 300
+
+**Those loads carry the tail current and nothing else. There was never a current budget for a trim
+array.** The merge reduced them 300 → 218 Ω, which buys ~0.75 mA of headroom. The array draws 25.5.
+
+**Budget: ~3.5 mA for the array** (218 Ω loads, collectors ≥1.9 V, 2.0 mA tail). Reducing segments to
+**23 µA** restores collectors to **1.86 V**, followers to **1.06 V**, and gives a **74 mV** sense-amp
+differential.
+
+**2. `SACLK`, the sense amplifier's strobe, is a dangling node.**
+
+It appears exactly three times in the netlist — `XSA_T` (tail), `XPC1`, `XPC2` (precharge) — **all three as
+gate terminals, zero times as any device's output.** Nothing drives it; it floats at ~0.72 V. The stage
+never evaluates, and the hold latch repeats a stale decision indefinitely. A netlist comment states the
+intent: *evaluates on CLK_N high*. **The connection was never made.**
+
+### Trim sizing — a resolution problem, not a range problem
+
+Input-pair differential transconductance `gm = I_tail/(2 VT)` = 23.98 mA/V at 1.24 mA. A segment steered
+across changes the output current by `2 I_seg`; input-referred weight is `2 I_seg / gm`.
+
+    as-built  : unary step 14.2 mV | binary LSB 3.17 mV | range +/-1063 mV
+    at 23 uA  : unary step  1.92 mV | binary LSB 0.43 mV | range +/- 144 mV
+    measured offsets: +8.6, +2.5, +1.16 mV
+
+**As built the array has ~100x more range than needed and cannot step finer than 3.2 mV — larger than
+most of the offsets it exists to null.** That is how "the trim cannot correct this part" becomes "we need
+more range" when the actual defect is granularity. **Derived, not yet measured; a direct reach
+measurement is in progress.**
+
+### What every earlier measurement means
+
+**Every campaign on this block ran 12 ns transients. The bias loop needs ~100 ns to settle and the
+comparator produces no decisions at all until it does.** Twelve nanoseconds lies entirely inside the
+start-up window. The 92 output transitions once used to conclude the comparator works were **collected
+during start-up**; in the settled state, across six independent runs including one of 1 µs, **the output
+never changes.**
+
+**So no number measured on this netlist before 2026-08-11 describes normal operation.** They are not
+approximate — they describe a circuit whose decision nodes sit at 0.26 V and whose sense amp is never
+strobed.
+
+Also: **175 of 429 decks in the `correct250` campaign carry a repeating 30 µA/10 ns injection into the
+bias node (`IKICK`) and 254 do not.** Any statistic pooled across that fleet mixes two different circuits.
+
+### Method constraints specific to this PDK
+
+**Mismatch is drawn once per ngspice process at netlist expansion and cannot be seeded.** Therefore:
+
+- **a process is a chip.** Two files are two parts, however identical the decks.
+- **no measurement can be resumed.** An interrupted sweep must be redone, not continued — a continuation
+  is a different chip filed under the same name.
+- **nothing transfers between parts.** No shared coarse scan, no bracket reuse, no caching. Per-part cost
+  is irreducible; throughput comes only from running parts concurrently.
+- **sample in the correct clock phase and print the clock beside every sample.** Track and latch phases
+  give different answers; a precharge-phase sample reads both sense nodes at the rail and carries no
+  decision.
+- **gate every output on run completion.** A truncated transient still writes a file whose columns parse
+  and whose forced nodes read their forced values.
