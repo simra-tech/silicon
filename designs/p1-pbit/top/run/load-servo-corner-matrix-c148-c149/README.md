@@ -3274,3 +3274,44 @@ the codes 300/400/500 measurement is for. **Do not quote a resolution verdict fr
 
 The range picture also tightens: at 23 uA the array covers >9.4 sigma rather than the 17 sigma derived,
 still comfortably above the +/-5 sigma requirement.
+
+### Step bounded from below by a same-chip subtraction, 2026-08-12 00:0x
+
+Second step deck (`stepmid`, codes 300/400/500, identical to `stepfast` apart from the codes):
+
+    code 300   crossing +42.50 mV +/-2.50   33 points, 0 rejected
+    code 400   NO crossing, LOW at both -80 and +80  => crossing below -80 mV
+
+Both from one ngspice process, so the part's offset cancels and no assumption enters:
+
+    > 122.5 mV of movement over 100 codes   =>   LSB > 1.225 mV   (23 uA/segment array)
+
+**That is >11x the derived 0.107 mV/LSB.** The first deck's bound (LSB > 0.275 mV from 300 codes) is
+consistent with it: both are floors, and the larger floor wins. Direction is downward with increasing
+code, confirmed on both chips by the output state at the window edges.
+
+Consequence, and it is a real verdict rather than a bound-shaped hint, because the requirement is an
+upper limit and a lower bound is enough to violate one:
+
+    requirement       step <= 0.1 sigma = 0.83 mV
+    measured floor    step  > 1.225 mV = 0.148 sigma      -- FAILS, at 23 uA/segment
+    as-built (x7.4)   step  > ~9 mV = ~1.1 sigma          -- fails by ~an order of magnitude
+
+So the array is **oversized in range and too coarse in step**, which is the shape of the original
+claim -- but the original claim was reached by a broken comparison (H-1017) and its 4x figure was
+wrong. The correct statement is a floor of 0.148 sigma at reduced current, from a subtraction on one
+chip, pending the short-lever measurement that will give a value instead of a floor.
+
+### Open inconsistency: two step-deck chips sit 45 mV apart
+
+    stepfast chip, code 300:   -2.50 mV
+    stepmid  chip, code 300:  +42.50 mV
+
+The decks are identical apart from the code list, including solver tolerance (`reltol=1e-3`, matching
+20 of the 24 campaign decks; only the four rescue decks used 3e-3). Against the campaign's **sd
+8.28 mV over 18 parts**, two draws 45 mV apart is a ~5 sigma separation.
+
+**Either we have drawn a rare part, or the campaign's sd is wrong -- and the campaign's sd is the
+headline number of this study.** The check is nearly free, because the code-300 sweep *is* an offset
+measurement: run it alone on 6-8 fresh processes and compare the spread against 8.28 mV. Commissioned.
+Until it returns, treat sd = 8.28 mV as unconfirmed by any second method.
