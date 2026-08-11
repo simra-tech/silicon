@@ -2602,3 +2602,39 @@ zero**, not tens. *That prediction is on the record before the measurement.*
 **Standing check to adopt: extrapolate twice from different adjacent pairs and compare.** If they
 differ by more than the tolerance you care about, the extrapolation is meaningless. **One line, and it
 would have caught this at first use rather than after four separate quotations of the number.**
+
+# THE TRIM CONCLUSION IS CONFIRMED ON DETERMINED DATA (2026-08-11)
+
+**Seeded campaign, n = 21, every point with a verified operating state (bias column within ~2 mV
+across each sweep):**
+
+    best-achievable duty:  15 below 0.5 (max 0.37)   6 above (min 0.64)   within 0.45-0.55: ZERO
+
+**Same shape as the n=46 control** — two clusters, empty span across the middle, nothing reaching
+balance. **The trim-range conclusion is no longer provisional on the operating-state question.**
+
+> **Of chips with a usable transfer, none can be brought within striking distance of balance by any
+> code in the array** — now established on data where the operating state is determined and checked,
+> not merely on data where it was undetermined.
+
+*The magnitude of the shortfall remains unmeasured; every extrapolated figure is withdrawn (see the
+preceding section). The direct input-differential sweep is the only route to it and is outstanding.*
+
+# AND THE ARTEFACT EXPLANATION IS REFUTED — THE ANOMALOUS POPULATION MAY BE REAL
+
+    descents/draw   unseeded 0.565 (n=46)    seeded 0.667 (n=21)
+    difference      -0.101 +/- 0.252  =  -0.4 sigma
+    clean draws     70%                      57%   (1.0 sigma, not significant)
+
+**Seeding does not reduce the anomalies.** The explanation recorded earlier in this file — that the
+non-monotonic draws are the solver selecting a different equilibrium per code — **is refuted.** The
+state is demonstrably held (bias column within 2 mV) and **the anomalies persist at the same rate.
+Whatever is switching, it is not that node.**
+
+**Consequence for the design: the 30–40 % anomalous population can no longer be dismissed as a
+measurement artefact. It may be real circuit behaviour, and it is now the largest unexplained item on
+this design.** Next investigation should probe *which* node bistability produces a duty curve that
+doubles back while `c_p1_comp` stays fixed — the candidates are downstream of the bias loop.
+
+*Retained without change: seeding is still correct practice. A determined operating state is worth
+having on its own terms, and it is what makes the confirmation above trustworthy.*
