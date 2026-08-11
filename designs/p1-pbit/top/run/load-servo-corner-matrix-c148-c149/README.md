@@ -2725,3 +2725,43 @@ the quantity being measured.**
 
 *Confidence: the coverage claim rests on 37 draws, one metric, one dataset, and is the fourth headline
 this design has had in twelve hours. It should be reproduced before anyone acts on it.*
+
+# THE OFFSET SPREAD IS THE POWER-UP STATE, NOT MISMATCH (2026-08-11)
+
+**This is the unifying result of the session and it supersedes every offset-sigma figure in this
+file.** Control campaign, clean draws, split by cluster and measured within each:
+
+| population | n | sd |
+|---|---|---|
+| lower cluster | 23 | **0.59 mV** |
+| upper cluster | 14 | **0.62 mV** |
+| seeded run (state pinned) | 14 | **0.49 mV** |
+| **separation between clusters** | — | **10.30 mV** (±5.15 mV) |
+
+**Three independent estimates of the mismatch-only spread, all ~0.5–0.6 mV.**
+
+    device mismatch          ~0.6 mV of balance-point spread
+    two power-up states      10.3 mV apart
+    ratio                    ~17x
+
+**The apparent offset spread is dominated by which state the part came up in, not by device
+mismatch.**
+
+**What this retro-explains.** The **8.5 mV offset sigma** used throughout this file was measuring **the
+state split**, not device variation — which is why the HBT/resistor/MOS variance budget never
+reconciled with anything. The bimodality is not unexplained structure: it is **two states, each with
+its own balance point**. And the nodeset did not suppress mismatch generally — **it selected one
+state**, and the state was most of the distribution.
+
+## Design consequence — the quantified case for the starter
+
+    with two power-up states     offset spread +/-5.15 mV   against 7.65 mV reach  ->  ~1.5x margin
+    with one power-up state      offset spread +/-0.6  mV   against 7.65 mV reach  ->  ~12x margin
+
+**The starter is not merely a correctness fix for parts that come up inverted. It is worth an order of
+magnitude in trim margin**, and that figure comes from measured data rather than from an argument.
+
+**Sequencing follows directly:** fix the starter first, then re-measure the offset distribution on a
+single-state population, then size the array against ~0.6 mV rather than ~8.5. **The +20 % `I_FS`
+proposal, already withdrawn, is not merely unnecessary — the array is oversized by roughly an order of
+magnitude for a single-state part.**
