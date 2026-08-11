@@ -2411,3 +2411,34 @@ differential** at the code extremes — the quantity the whole session was about
 (3) Complete the starter's dynamic acceptance test: ramp the supply across a wide range of rates and
 confirm the polarity never inverts. (4) The three-run family decomposition, to replace the ~79 % MOS
 residual with a reading.
+
+# THE STARTER NODE IS A CURRENT-MIRROR REFERENCE — THE SPECIFICATION MUST CHANGE (2026-08-11)
+
+Netlist around `c_p2_comp`:
+
+    XMP2_COMP  c_p2_comp c_p2_comp VCC_HBT VCC_HBT  sg13_hv_pmos   gate tied to own drain: DIODE
+    XMP1_COMP  c_p1_comp c_p2_comp VCC_HBT VCC_HBT  sg13_hv_pmos   gate = c_p2_comp: MIRROR OUTPUT
+    XQP2_COMP  c_p2_comp c_p1_comp e_p2_comp sub!   npn13G2 Nx=4   collector pulls the reference
+
+**It is a pmos current mirror.** MP2 is the diode-connected reference, MP1 the mirrored output, and an
+npn pulls current out of the reference branch.
+
+**1. The node is not DC-isolated.** It has conducting paths through a pmos drain and an npn collector,
+which rules out the isolation hypothesis that would have explained both the current-source failure and
+the resistor failure. **The 10 MΩ convergence failures are therefore numerical** (consistent with the
+non-monotonic-convergence section above), and seeding the solver should resolve them.
+
+**2. A permanent pull-down on a mirror's diode node permanently increases the mirror current.** At the
+live value (~0.975 V), 10 MΩ draws **~97 nA out of the reference branch**, and MP1 copies that shift
+downstream. **The starter as specified is not a neutral addition that only matters at power-up — it
+moves the bias of the entire compensation network for the life of the part.**
+
+**Specification change.** The starter must **disengage once the loop is up**: a switched device, or one
+referenced to a start-up detector, rather than a resistor that sits there forever. *A starter that
+alters the steady-state bias is not a starter; it is a bias change with a start-up side effect.* The
+3-stack nmos pull-down should be re-specified on that basis — and its node re-examined, since the
+mirror reference is the most bias-sensitive point available.
+
+**Unblock for the seeding plan:** the **no-starter deck converges** (45 chips run on it). **Dump node
+voltages from that** to seed the starter runs — the starter perturbs one branch by ~10 %, so it is an
+excellent initial guess. Do not wait for a nominal-with-starter solve; none has ever succeeded.
