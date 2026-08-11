@@ -2682,3 +2682,46 @@ regeneration slowing as the input approaches balance, exactly as a comparator sh
 the continuous quantity: it peaks at the balance point, it is measured rather than inferred, and it
 assumes nothing about the output being probabilistic. Record final state and edge time per code.
 Duty is deleted.**
+
+# CORRECTED HEADLINE: THE ARRAY COVERS EVERY CHIP MEASURED (2026-08-11)
+
+**Supersedes every trim-shortfall statement in this file.** Derived from the **control** campaign
+(no nodeset) by the settled-decision method — the only combination of dataset and metric that has
+survived scrutiny.
+
+    37 clean draws of 46 (9 multi-change, see below)
+    flip index   2: 8    3: 13   4: 2   |   13: 8   14: 5   15: 1
+    BIMODAL, sd 5.33 index = 5.10 mV
+
+    index 3   -> code  94  -> 207 codes from centre  ->  5.3 mV
+    index 14  -> code 508  -> 207 codes from centre  ->  5.3 mV (opposite side)
+    extreme (index 2)                                ->  6.2 mV
+    half range = 301 codes                           ->  7.65 mV
+
+**Every one of the 37 clean chips has its balance point inside the array, with ~20 % margin.
+The correction range covers every chip measured.**
+
+## Why the seeded campaign must not be used for this
+
+    SEEDED  14 clean draws   flip index 14:6  15:8 ONLY   sd 0.49 mV, lower cluster absent
+
+**The nodeset collapsed the distribution** — seeding every draw with identical node voltages pinned
+each operating point to the same solution and erased mismatch's effect on the balance point. **The
+seeded run is less trustworthy for offsets than the control, not more.** Seeding remains valid for
+what it was verified to do (hold a determined operating state); it is **not neutral with respect to
+the quantity being measured.**
+
+## What this conclusion still owes
+
+1. **9 of 46 control draws change decision multiple times** and are excluded here. ~20 % of the
+   population unexplained; if they represent parts whose balance point is undefined, the coverage
+   claim is incomplete.
+2. **The distribution is bimodal at ±5.3 mV**, not unimodal about zero. That structure is unexplained
+   and is not what random mismatch alone produces.
+3. **Measured sd is 5.10 mV against a believed offset sigma of 8.5 mV.** Closer than the seeded run's
+   0.49 mV, still a discrepancy worth resolving.
+4. The **starter defect stands independently** (three equilibria, polarity inversion at reduced
+   kick) and is unaffected by any of this.
+
+*Confidence: the coverage claim rests on 37 draws, one metric, one dataset, and is the fourth headline
+this design has had in twelve hours. It should be reproduced before anyone acts on it.*
