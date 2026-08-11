@@ -2544,3 +2544,32 @@ every data point has a determined operating state, verified rather than assumed.
 now a real finding — flag those individually rather than bucketing them. If the duty distribution
 reproduces the n=46 control's shape (two clusters, empty span, nothing reaching 0.50), the trim-range
 conclusion is established on determined data and ceases to be provisional.*
+
+# QUALIFICATION: MECHANISM CONFIRMED, OUTCOME NOT YET (2026-08-11)
+
+**Applies to the "measurement artefact is fixed by seeding" section above, which over-claimed.**
+
+Point-level metric — descents, i.e. codes where duty drops by more than 0.02:
+
+| dataset | draws | mean descents/draw | median | clean | max |
+|---|---|---|---|---|---|
+| unseeded control | 46 | **0.57** | 0 | 70 % | 5 |
+| seeded campaign | 6 | **0.50** | 0 | 67 % | 2 |
+
+**Indistinguishable at this sample size.** So the claim that the disorder "collapsed by an order of
+magnitude" is **withdrawn** — it came from comparing two plots against a recollection of the others,
+and the recollection was itself an exaggeration (the draw quoted as chaotic has 2–3 descents, not 10).
+
+**Separate the two claims, which were conflated:**
+
+    MECHANISM   the bias column holds within ~2 mV at every code in every seeded draw.
+                Verified. The unseeded runs demonstrably did not have this.
+    OUTCOME     fewer anomalies in the transfer. NOT established. No detectable difference at n=6.
+
+**The nodeset provably holds the operating state. Whether that buys cleaner transfers is a separate
+empirical question, and it is open.** Recompute the descent comparison at **20 and 30 seeded draws**
+before any statement about the outcome.
+
+**Unchanged by this:** the seeding is still correct practice — a determined operating state is worth
+having on its own terms, independently of whether it improves the transfer statistics — and the
+standing procedure (live seed, bias column, reject on bad bias) stands.
