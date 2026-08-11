@@ -2533,3 +2533,14 @@ depend on the artefact.
 
 **Next: re-run the count with the nodeset in place** — the first fully determined dataset, with no
 artefact class and every draw usable.
+
+**Seeded campaign verified in production (2026-08-11).** Draw 0, all 17 codes: bias column
+**0.7307–0.7327, spread 2.1 mV**; duty monotonic (`0.00 ×14, 0.21, 0.33, 0.34`); best approach 0.34 —
+the control's lower cluster. **The nodeset holds at every code.** This is the first campaign in which
+every data point has a determined operating state, verified rather than assumed. The intermediate
+0.21 is new: a stable operating state reveals structure the rail-hopping version destroyed.
+
+*Expect the artefact class near zero rather than 30 %. Any draw that still returns non-monotonic is
+now a real finding — flag those individually rather than bucketing them. If the duty distribution
+reproduces the n=46 control's shape (two clusters, empty span, nothing reaching 0.50), the trim-range
+conclusion is established on determined data and ceases to be provisional.*
