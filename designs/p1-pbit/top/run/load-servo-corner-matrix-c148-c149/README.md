@@ -3205,3 +3205,42 @@ not the parts that exist.
 **The step figure of 3.17 mV/segment is still derived, not measured.** A direct measurement — one
 part, three trim codes, one process — is running. Until it lands, every statement above comparing a
 measured spread against a calculated step is comparing one measurement to one calculation.
+
+---
+
+## Correction, 2026-08-11 23:4x — the step conclusion was wrong by 4x (units)
+
+**The resolution conclusion above is withdrawn.** The array netlist states its own encoding at
+`C169-array23-strobe.spice:268`:
+
+    * V7 MERGE: 2-binary (codes 0-3) + 150 unary elements of 4 LSB (codes 4-603).
+    * 603 codes, 151 handovers, segmenting at b1. Handover = code 3->4 = VCODE 0.03->0.04.
+
+Two things follow.
+
+**A unary segment is 4 LSB, not 1.** The 3.17 mV I derived is a *segment weight*. The resolution — the
+smallest change the trim can make — is a quarter of it: **0.79 mV as built, 0.107 mV at 23 µA/segment.**
+I compared a segment weight against a resolution requirement, which is comparing a quantity to a
+requirement four times finer than the quantity's own unit.
+
+    requirement (sd 8.28 mV):  step <= 0.1 sigma = 0.83 mV
+    as built,   per LSB     :  0.79 mV = 0.096 sigma   -- MEETS, marginally
+    at 23 uA,   per LSB     :  0.107 mV = 0.013 sigma  -- meets comfortably
+
+So **the array as built does not have a resolution problem.** The claim that it is "about four times too
+coarse" was an artifact of the unit error and is retracted. What survives is the range half of the
+finding: the array is grossly oversized in range, and the current reduction specified for the 25.5 mA
+overdraw remains correct. **The range figure of +/-1063 mV was derived in segment units and has not been
+re-derived per code; treat its magnitude as unverified while its direction stands.**
+
+**The code input is scaled 0.01 V per code.** Centre is code 301 = `VCODE 3.01` (what the campaign
+uses). The direct step measurement was launched at `VCODE 0.0 / 3.0 / 6.0`, which is codes **0, 300 and
+600** — the bottom, middle and top of the array, not codes 0, 3 and 6.
+
+That explains its code-0 sweep finding no crossing in +/-80 mV, and the null result carries information.
+If the code-0 crossing lies beyond 80 mV while the part's own offset is within ~25 mV, then 300 codes are
+worth more than 55 mV, so **LSB >= 0.18 mV** — about twice the derived 0.107 mV. A lower bound from a
+sweep that measured nothing.
+
+A replacement measurement at codes 300 / 400 / 500 (hundred-code levers about centre) is running. Until
+it lands, every step figure here remains derived, and the derivation has now been wrong once.
