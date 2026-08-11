@@ -2951,3 +2951,36 @@ collectors leave the rail and a differential gain appears.
 **Note for the record:** both inputs have sat at **1.245 V** in every deck this session, and nobody
 ever verified the input pair can operate there. **One printed collector voltage at the start would
 have shown 1.36 V of separation.**
+
+# PHASE-CORRECT FRONT-END DIAGNOSIS: UNDER-BIASED, GAIN 0.0985 (2026-08-11)
+
+**Supersedes the earlier saturated/dead-input entries, which were sampled at the wrong clock phase.**
+
+**This is a track-and-latch comparator.** `XQCLK_TRACK e_track CLK_P e_tail` switches the input pair's
+tail with the clock; `XQ3`/`XQ4` are a cross-coupled latch on `c_n`/`c_p`. Clock high 400 ps per 1 ns.
+**87 % of output transitions occur in the latch window, peaking 100–350 ps after the clock falls** —
+textbook behaviour, and it validates reading the settled state at 12 ns as the last latched decision.
+
+**Track-phase probe (`CLK_P` verified at 1.2000 V):**
+
+| phase | e_track | c_p − c_n | differential |
+|---|---|---|---|
+| TRACK | 0.57567 | −1.333459 | 0 mV |
+| TRACK | 0.59899 | −1.323613 | +100 mV |
+| latch | 0.60602 | −1.356677 | 0 mV |
+
+    V_BE during track = 1.245 - 0.576 = 669 mV      (HBT wants 850-900 mV)
+    gain across 100 mV = 9.85 mV / 100 mV = 0.0985  (design value 8.17 -> ~83x short)
+    c_p - c_n = 1.33 V apart DURING TRACK           (should be near balance)
+    e_track moves only 30 mV latch -> track         (a tail turning fully on should pull it hard)
+
+**Diagnosis: the tail current is far too small.** The input pair is badly under-biased even when its
+switch is on, the stage has a gain of ~0.1 instead of ~8, and the collectors never leave the rail.
+**This explains the 100 mV input insensitivity that survived every retraction.**
+
+**The tail is biased from the compensation network — the loop with three equilibria and no starter.**
+So the missing starter remains the leading root-cause candidate, now with phase-correct evidence
+beneath it.
+
+**Next:** print the tail current directly and trace its bias path from `e_tail` back into the
+compensation network.
