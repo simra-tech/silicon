@@ -2843,3 +2843,38 @@ switching block moves in codes**:
 
 A handful of simulations on an existing deck. **It calibrates the code axis in the only way that
 cannot be argued with, and every quantitative conclusion in this file depends on it.**
+
+# THE CODE AXIS, MEASURED: 0.0095 mV/CODE — BOTH RECORD VALUES WERE WRONG (2026-08-11)
+
+**Resolves the 2.65× conflict above, by rejecting both candidates.**
+
+    cal-base    0 mV differential   switching block at index 1-2
+    cal-p5     +5 mV differential   switching block at index 15-16
+    -> 5 mV moved the balance point 14 index steps = 526 codes
+    -> 0.0095 mV/code   ->  full scale 5.7 mV,  reach +/-2.85 mV
+
+| route | mV/code | verdict |
+|---|---|---|
+| LSB (0.2078 / 8.17) | 0.02543 | **2.7× too large** |
+| reach (±20.3 mV) | 0.0674 | **7× too large** |
+| **measured** | **0.0095** | **use this** |
+
+**Corrected figures — every millivolt in this file is 2.7× smaller than written:**
+
+    systematic displacement per state    ~2.3 mV    (was 6.2)
+    within-cluster spread (mismatch)     ~0.22 mV   (was 0.6)
+    comparator transition width          ~1 mV      (was 2-3)
+    array reach                          +/-2.85 mV (was +/-7.65 or +/-20.3)
+
+**The relative picture is unchanged.** The clusters sit at index 2 and 15 — **75 % of the way to the
+ends whatever the conversion** — because cluster position and reach scale together. **The two-state
+structure, the 17/18 split, the tight within-cluster spread and the small margin all stand.** Only the
+absolute labels move.
+
+**Caveat: one chip, one pair of runs.** Repeat on a second chip and at a second differential (10 mV
+should move the block twice as far). *A calibration appearing in every result deserves at least one
+confirmation of its own.*
+
+*Note for whoever re-derives this: the LSB and reach values were each internally consistent and each
+wrong. Do not attempt to repair them by inspection — the measured value is the only one with an
+instrument behind it.*
