@@ -2297,7 +2297,15 @@ from the duty route, ten hours and one complete change of metric later.
 balance code per part; and a separate treatment of the **7 non-monotonic** draws of 26, which are a
 different population and are not described by any of this.
 
-# THE STARTER IS VALIDATED AT THE OPERATING POINT, AND IT IS FLAT OVER 20x (2026-08-10)
+# THE STARTER IS VALIDATED AT THE OPERATING POINT, AND IT IS FLAT OVER 20x — AT NOMINAL ONLY (2026-08-10)
+
+> **QUALIFIER ADDED 2026-08-11, and it should have been in the original heading.** Every measurement
+> in this section was taken with **mismatch DISABLED** — `hbt_typ` / `res_typ` / `mos_tt`, a single
+> nominal part. **The result does not yet transfer to the population.** When the same starter was
+> put into the mismatch-enabled campaign deck it **failed to solve an operating point at all** (21
+> errors, zero output in 8 minutes). Mismatch perturbs every device in the loop, and this circuit's
+> operating point is fragile to exactly that. **Re-validation across mismatched draws is owed before
+> anything here is quoted.**
 
 Pull-down `RSTART c_p2_comp` inside the `p1_comparator` subcircuit, bisection deck:
 
