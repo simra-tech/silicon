@@ -4167,3 +4167,31 @@ simulated part. That was the last open question of the session on this block.
 
 Caveats unchanged and still material: two draws, one corner, one temperature, simulated mismatch, and
 the whole study post-dates two repairs to the netlist made at the start of the session.
+
+## DNL measured on both chips: up to +14 LSB, 2026-08-12 06:4x
+
+    chip 1                                    chip 3
+      309 -> 310   -7.50 mV/code  DNL -2.01     309 -> 310  -12.50 mV/code  DNL  -4.02
+      310 -> 312   +5.00 mV/code  DNL +3.01     310 -> 311  -15.00 mV/code  DNL  -5.02
+      312 -> 313   -7.50 mV/code  DNL -2.01     311 -> 312  +32.50 mV/code  DNL +14.05
+      313 -> 314   -5.00 mV/code  DNL -1.01
+      net 309-314  -2.00 (ideal -2.49)          net 309-312  +1.67 (ideal -2.49)
+
+**Same shape and same phase on both draws; amplitude differs by ~4x.** Several codes stepping far too
+far in the descending direction, then one code reversing hard. Chip 3 reverses **+32.50 mV in a single
+code** -- a DNL of **+14 LSB**.
+
+That is worse than chip 1 suggested, and it changes how the defect should be described. At +3 LSB the
+array is a poor-resolution trim. At +14 LSB **the array skips ~35 mV of correction between adjacent
+codes**: there are offsets that no code in that neighbourhood produces at all.
+
+Whether those offsets are reachable *elsewhere* in the range depends on whether the pattern repeats
+with the same phase across all 150 segments -- **not measured**. If it does, specific offset values are
+unreachable by any code, which is a categorically different defect from imprecision. If the phase
+varies between segments, the gaps move and every offset is reachable somewhere. That is now the most
+valuable remaining measurement on this block: the same four codes in a different segment, e.g. around
+code 409 or 509.
+
+Note also that the net over the measured span is wrong on both chips (-2.00 and +1.67 against -2.49),
+so the repayment extends beyond these four codes. Chip 1's wider span (300 -> 314, fourteen codes)
+returns -2.482, i.e. correct to 0.3 %. **The error cancels over ~14 codes, not over 4.**
