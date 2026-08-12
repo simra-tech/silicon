@@ -3994,3 +3994,36 @@ one discriminates sharply. Chip 3's code 311 is sweeping now; 312 follows.
 **This is the last outstanding question of the session on this block.** Everything else -- step, range,
 centring -- is measured and consistent across 91 parts. Whether the trim array is non-monotonic, or
 merely non-uniform, turns on the sign of one number.
+
+## Non-uniformity is forced by conservation of full-scale, independent of the recovery test
+
+Chip 3 so far:
+
+    309  -18.75      310  -31.25      311  -46.25 +/-1.25
+    steps:  -12.50 mV/code,  -15.00 mV/code       (nominal 2.49)
+
+**A local slope of ~13.75 mV/code cannot be the array's average slope**, and the average is not a matter
+of opinion. Full-scale is set by device values that were checked independently earlier tonight:
+
+    150 segments x 23 uA x 218 ohm x 2 = 1504 mV across 603 codes = 2.49 mV/code
+
+That calculation agreed with the measured step to 0.2 % (2026-08-12 00:5x) and does not depend on any
+crossing measurement. So if three consecutive codes step at 12-15 mV, **other codes must step at well
+under 2.49 mV -- and the deficit has to appear somewhere.** Over 603 codes the excess in this region
+must be repaid by flat, or reversed, codes elsewhere.
+
+**Non-uniformity is therefore established without needing to observe the recovery directly.** What the
+recovery test still decides is *where* the deficit sits: adjacent to the steep codes (a local sawtooth,
+as chip 1 showed) or distributed across the range (a smooth but non-linear transfer). Those have
+different consequences -- a local sawtooth means specific offsets are uncorrectable; a distributed
+non-linearity means the effective step varies with code but every offset remains reachable.
+
+Prediction unchanged and now sharper, since chip 3's excursions are larger than chip 1's:
+
+    sawtooth      -> code 312 recovers above -31.25 mV
+    steeper slope -> code 312 continues down, near -60 mV
+
+~40 mV apart against a +/-1.25 measurement.
+
+Note also that chip 3 resolves code 311 cleanly (-46.25 +/-1.25) where chip 1 could not resolve it at
+all -- further confirmation that the convergence difficulty belongs to chip 1's draw, not to the code.
