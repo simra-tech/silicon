@@ -3492,3 +3492,28 @@ sd has moved 8.59 -> 8.28 -> 8.30 -> 7.37 mV as n went 16 -> 18 -> 27 -> 33. The
 largest recent move and sits at the edge of the ~12 % uncertainty band; it is not yet a reason to
 revise the recommendation, which depends on sd only through a ratio, but it is worth watching rather
 than averaging away.
+
+### The step reproduces on a second chip, 2026-08-12 02:0x
+
+First two codes of the fine transfer sweep, a different ngspice process (so a different mismatch draw)
+from the lever deck, at a 2.5 mV grid:
+
+    code 300   crossing +13.50 mV +/-1.50      (lever deck, other chip: +27.50)
+    code 309   crossing  -9.00 mV +/-1.00
+    9 codes move the crossing -22.50 mV   =>   2.500 mV/LSB
+
+**Identical to the lever deck's 2.500 mV/LSB on a different chip.** The two parts' absolute crossings
+differ by 14 mV, as independent mismatch draws should; their step does not differ at all within the
+resolution available.
+
+This verifies an assumption made hours earlier rather than leaving it asserted. When the fast step deck
+was started alongside the slow one, the justification for accepting a fresh mismatch draw was that "the
+step is set by segment current and load resistance and should be very nearly the same part to part,
+unlike the offset". That licensed a cross-process comparison. It is now measured on two chips and holds.
+
+    quantity   chip A      chip B      chip-to-chip
+    offset     +27.50 mV   +13.50 mV   differs by 14 mV  (expected: sd 7.4 mV)
+    step        2.500       2.500      no measurable difference
+
+So the step may legitimately be characterised on one part, and the offset may not -- which is what the
+whole campaign structure assumes.
