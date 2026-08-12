@@ -4027,3 +4027,48 @@ Prediction unchanged and now sharper, since chip 3's excursions are larger than 
 
 Note also that chip 3 resolves code 311 cleanly (-46.25 +/-1.25) where chip 1 could not resolve it at
 all -- further confirmation that the convergence difficulty belongs to chip 1's draw, not to the code.
+
+---
+
+## The finding, stated in converter terms: good INL, bad DNL, non-monotonic
+
+Chip 1's completed sweep, resolved codes only:
+
+    300 -> 309 :  -24.75 mV over  9 codes  =  -2.75 mV/code
+    309 -> 310 :   -7.50 mV over  1 code   =  -7.50 mV/code
+    310 -> 312 :  +10.00 mV over  2 codes  =  +5.00 mV/code    <- reversed
+    312 -> 313 :   -7.50 mV over  1 code   =  -7.50 mV/code
+    313 -> 314 :   -5.00 mV over  1 code   =  -5.00 mV/code
+
+    NET 300 -> 314 :  -34.75 mV over 14 codes  =  -2.482 mV/code
+    nominal from device values                 =  -2.490 mV/code      agreement 0.3 %
+
+**Integral linearity is essentially perfect and differential linearity is badly broken.** Over 14 codes
+the array delivers exactly the correction the device sizing predicts -- 0.3 % -- while individual codes
+step at anything from 3x the nominal to a full reversal.
+
+Expressed as DNL against the ideal -2.49 mV step:
+
+    -7.50 mV/code   ->  DNL +2.0 LSB
+    +5.00 mV/code   ->  DNL +3.0 LSB   (the transfer runs backwards here)
+    -5.00 mV/code   ->  DNL -1.0 LSB
+
+**DNL exceeding 1 LSB permits non-monotonicity; +3 LSB delivers it.** This is a non-monotonic trim DAC
+whose endpoints are correct.
+
+### Why the errors cancel, and what that means
+
+The excess in the steep codes is repaid within ~14 codes, not spread across the range -- which is why
+the net matches nominal so exactly. That answers the local-versus-distributed question without the
+recovery test: **the non-linearity is local and self-cancelling.**
+
+Consequences for the block:
+
+    total range          correct, as conservation requires -- and irrelevant, being 18x oversized
+    effective resolution set by the local excursion (~6 mV), not the 2.49 mV step
+    monotonicity         violated: a higher code can correct less than a lower one
+    trim algorithm       any successive-approximation or binary search over this code space can
+                         converge to the wrong code, because it assumes monotonicity
+
+That last consequence is the one that reaches beyond this block. A non-monotonic trim array is not
+merely imprecise; it breaks the search procedure normally used to find the right code.
