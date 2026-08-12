@@ -4246,3 +4246,39 @@ snaps back.
 
 The `seg.cir` sweep at codes 409-412 straddles a boundary at the same relative position (element 102 ->
 103) and tests whether the same weighting error appears in a distant segment, as the model requires.
+
+---
+
+## The comparator is PINNED at code 409 — the oversized range is not merely wasteful
+
+A locate sweep at code 409 (a different unary segment, 108 codes above centre) returned identical node
+voltages at every input from -900 mV to -400 mV:
+
+    code 409, any input in -900..-400 mV:   raw_inv 0.0040   sa_n 1.1803   pbit 0.0000
+    code 309, -70 mV                    :   raw_inv 1.1275   sa_n 0.0156   pbit 1.2000
+    code 309, +5 mV                     :   raw_inv 0.0067   sa_n 1.1698   pbit 0.0000
+
+**Identical to four decimal places across 500 mV of input.** This is not a decision -- the comparator is
+insensitive to its input. It is the same signature as the original array-overdraw fault repaired at the
+start of this session: the trim array overwhelms the comparator and pins it.
+
+### This reframes the range finding
+
+The array's full-scale is +/-753 mV, which was recorded as "90 sigma, ~18x oversized" -- wasteful but
+harmless. It is not harmless. **Beyond some code the array saturates the comparator and the part stops
+deciding at all.** Codes above that limit are not merely unnecessary; they are destructive.
+
+    code 315 (14 codes from centre,  ~35 mV of trim)   works, decisions clean
+    code 409 (108 codes from centre, ~269 mV of trim)  PINNED, no decisions at any input
+
+The usable code range therefore lies somewhere between, and the *usable* correction range is a fraction
+of the nominal +/-753 mV. That is a different and more serious statement than "oversized".
+
+A two-point test is running (`pe-pin.cir`): codes 301, 310, 320, 330, 340, 350, 360, 380, 400, 420,
+450, 500, 550, 600, each evaluated at -800 mV and +800 mV. If the two inputs give different outputs the
+comparator still responds; if identical, it is pinned. 28 runs, ~30 minutes, and it bounds the usable
+range directly.
+
+**Note this was found by accident.** The sweep was aimed at the segment-phase question and its window
+was wrong; chasing the wrong window turned up a failure mode that matters more than the question it was
+built to answer.
