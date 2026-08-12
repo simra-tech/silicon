@@ -5690,3 +5690,28 @@ than its offset distribution requires, at the worst resistor corner.
 measured directly and are untouched. What has changed is that the range margin now
 has a demonstrated mechanism for falling below 1 on a chip that exists, which
 makes the follow-up above required rather than optional.
+
+### Correction to the follow-up list, 22:55 — the correlation test is not free
+
+Item 2 above says the offset/trim-strength correlation is "free from the same
+runs". **That is wrong.** What each chip provides is the crossing at code 200,
+which is
+
+    crossing(200) = input_offset + trim_effect(200)
+
+Both terms vary with the draw, so a chip with strong trim moves its own crossing
+even at identical offset. Using crossing(200) as "the offset" conflates precisely
+the two quantities the test is meant to separate.
+
+The clean input offset is the crossing at the **centre code (301)**, where the
+trim contributes nothing by construction. That code is not in these decks, and
+because a process is a chip it **cannot be added to a running deck** — the test
+needs a fresh set of chips swept at codes 200, 301 and 400.
+
+Revised follow-up:
+
+1. **More chips**, swept at codes **200, 301 and 400** — three codes, so each chip
+   yields both its trim strength (from the 200→400 lever) and its true input
+   offset (from 301) in the same process.
+2. Then the correlation, on enough chips to state one.
+3. Only then revisit whether 5.75× needs more range headroom.
