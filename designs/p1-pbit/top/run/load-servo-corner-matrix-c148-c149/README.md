@@ -4359,3 +4359,44 @@ those decide whether the structural rework of the binary sub-elements is still r
 Note the `redstep` deck needs its window extended: at code 300 it swept -80..-10 mV and found no
 crossing, because at the reduced step the crossing sits above -10 mV. The window was sized for the
 23 uA array.
+
+---
+
+## ROOT CAUSE: the binary degeneration resistors are 15.6x too short
+
+Comparing the elements in `C169-array23-strobe.spice` directly:
+
+    element              device    degeneration           R_eff ~ l/m   current per LSB
+    unary   (150 of)     Nx=4      rppd w=1.0u l=84u  m=4     21.0          0.0119
+    binary b1            Nx=2      rppd w=1.0u l=5.4u m=2      2.7          0.1852   15.6x
+    binary b0            Nx=1      rppd w=1.0u l=5.4u m=1      5.4          0.1852   15.6x
+
+**Every element should carry the same current per LSB.** The unary element is degenerated with 84 um of
+rppd; the binary sub-elements that are supposed to be 1 and 2 LSB against its 4 use **5.4 um**. Current
+in a degenerated element is set by that resistor, so the binaries carry ~15.6x their share.
+
+That is the nominal weighting error measured all session, now located in two lines of netlist. It
+explains why the within-element steps run 2.7-5.5x oversized, why the boundary snaps back by exactly
+"one unary minus three binary steps" (H-1071), and why the error is identical in sign on every draw --
+it is not mismatch, it is sizing.
+
+**The fix is now specific:** give the binary sub-elements the same degeneration *per unit device* as the
+unary -- l=84u with m=2 for b1 and m=1 for b0 -- rather than the present 5.4u. Same device, same
+current density, weights in the intended 1:2:4 ratio.
+
+### The reduced-current variant does not test the recommendation
+
+`C169-array4.spice` scales **only the unary** resistors, 84u -> 483u (5.75x), and leaves the binary
+elements at 5.4u:
+
+    diff of the two arrays:  150 x l=84u  ->  150 x l=483u     (unary only)
+                             binary l=5.4u unchanged in both
+
+So it makes the binary-to-unary ratio **5.75x worse**, which is exactly what the measurement shows:
+
+    DNL at 23 uA, code 309->310:  -2.01 LSB (chip 1),  -4.02 LSB (chip 3)
+    DNL at  4 uA, code 309->310:  -5.93 LSB
+
+**That result is not evidence about the current reduction.** It is evidence that scaling half an array
+makes its ratios worse, which was never in doubt. The prediction "DNL in LSB is unchanged by a current
+reduction" remains untested, and testing it requires scaling *both* element types together.
