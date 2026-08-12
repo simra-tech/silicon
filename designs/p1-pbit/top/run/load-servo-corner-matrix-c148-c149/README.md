@@ -3730,3 +3730,36 @@ establishes agreement where both timesteps converge; it does not establish that 
 changes an answer, and it says nothing about points only the fine step can resolve -- which are, by
 construction, the ones we are about to rely on. **The comparison it licenses is between measured
 crossings, not between a measured crossing and an unresolvable one.**
+
+---
+
+## A flat region in the trim transfer: codes 309-312 deliver no correction, 2026-08-12 05:1x
+
+Transfer sweep, one chip, one process, 50 ns, 2.5 mV grid. Failure counts in brackets:
+
+    code 300   +13.50 mV +/-1.50   (clean)
+    code 309   -11.25 mV +/-1.25   ( 1/31 failed)
+    code 310   -18.75 mV +/-3.75   (17/31 failed)
+    code 311   no crossing         (16/31 failed -- solver, not circuit; see 04:5x)
+    code 312    -8.75 mV +/-1.25   ( 4/31 failed)
+
+**The two cleanest codes in the sweep are 309 and 312**, at 1 and 4 failures of 31, and they bracket the
+messy region. So the comparison that matters does not depend on the codes that were hard to simulate.
+
+    measured step, codes 300 -> 309:   -24.75 mV over 9 codes  =  -2.75 mV/code
+    predicted for codes 309 -> 312:    -8.25 mV over 3 codes
+    observed for codes 309 -> 312:     +2.50 +/- 2.50 mV
+
+**The crossing failed to move as predicted by ~10.75 mV, against a combined uncertainty of +/-2.50 mV
+-- more than four standard errors.** Stated carefully: the *reversal* is marginal on its own
+(+2.50 +/- 2.50, about 1 sigma, so consistent with zero). What is firmly established is that the trim
+**did not advance**: three codes that should have moved the decision point 8 mV moved it by nothing
+measurable.
+
+So the array has a flat of at least three codes, and roughly 7.5 mV of intended correction range is
+absent there. That is the differential non-linearity this sweep was built to look for, and it is the
+first version of that claim resting on well-converged codes rather than on the failures.
+
+**Confirmation required before this is treated as a design fault**: `recur2` is running codes 309-312 on
+an independent mismatch draw. If the flat appears at the same codes on a second chip it is structural.
+If it moves, it belongs to this draw. Until then the finding is one chip, and one chip is one sample.
