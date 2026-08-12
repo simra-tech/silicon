@@ -3443,3 +3443,31 @@ batch agrees. The mean difference (4.8 mV) is 1.3 standard errors -- not signifi
 
 sd moved 8.28 -> 8.30 mV on adding eight parts and the recommendation does not move at all. **~4 uA per
 segment sits centrally between the two limits**, with the usable band running from about 1.3 to 7.6 uA.
+
+## A flat decade: possible differential non-linearity, 2026-08-12 01:2x
+
+The 50 ns lever deck completed all three codes on one part, one process:
+
+    code 300   crossing +27.50 mV +/-2.50
+    code 310   crossing  +2.50 mV +/-2.50      -25.00 mV over 10 codes  =>  2.50 mV/code
+    code 320   crossing  +2.50 mV +/-2.50        0.00 mV over 10 codes  =>  <=0.5 mV/code
+
+With the 5 mV grid the second decade's shift lies between -5 and +5 mV, so **its incremental step is at
+most one fifth of the first decade's, and may be zero.**
+
+**This is a worse class of defect than either problem recorded above.** Excess range is waste. A coarse
+step is a resolution limit that can be quoted. A dead zone means **there are offsets no code can
+correct**, however much range exists and however fine the average step is. The 20-code average of
+1.25 mV/code is a fiction: it describes a jump followed by a flat, not a ramp.
+
+**The measured step of 2.50 mV/LSB is therefore a local figure, valid across codes 300-310 on one part.**
+It should not be treated as the array's step until the transfer curve is known. The sizing verdict above
+(range 91 sigma, step 0.30 sigma, recommend ~4 uA/segment) rests on that local value and is provisional
+pending the fine sweep.
+
+What to look for: the array segments every 4th code with 151 handovers across its range, and a handover
+is exactly where a segmented converter goes non-monotonic if the binary sub-elements do not match the
+unary element they hand over to. A flat sitting **on** a handover boundary is a known fault with a known
+fix; a flat sitting somewhere arbitrary is something else. A fine sweep of every code from 305 to 325 in
+one process, at a 2.5 mV grid, is running -- three points cannot distinguish these and should not be
+asked to.
