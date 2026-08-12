@@ -4400,3 +4400,60 @@ So it makes the binary-to-unary ratio **5.75x worse**, which is exactly what the
 **That result is not evidence about the current reduction.** It is evidence that scaling half an array
 makes its ratios worse, which was never in doubt. The prediction "DNL in LSB is unchanged by a current
 reduction" remains untested, and testing it requires scaling *both* element types together.
+
+---
+
+# STATE OF THIS INVESTIGATION — 2026-08-12 10:0x (supersedes the 06:2x summary)
+
+## Established
+
+    part-to-part spread    sd 8.32 mV, mean +4.37 mV, -17.5..+27.5      91 parts, 8 batches
+                           SE(mean) 0.87 -> the mean is systematic, not noise
+    trim step              2.49 mV/LSB, agreeing 0.2-0.3 % across three independent routes
+    nominal full-scale     +/-753 mV = 90 sigma
+    USABLE range           +/-~170 mV = 20 sigma; beyond +67..+70 codes from centre the
+                           array saturates the comparator and it stops deciding entirely
+    integral linearity     -2.482 vs -2.490 mV/code over 14 codes (0.3 %)
+    differential linearity DNL -5 to +14 LSB; NON-MONOTONIC, on two independent draws
+    mechanism              binary sub-elements degenerated 5.4u where the unary uses 84u,
+                           so they carry 15.6x their share. Boundary step = one unary minus
+                           three binary steps, closing to 0.04 and 1.21 mV on two chips
+                           with no fitted parameters.
+
+## The three faults and the three changes — non-overlapping
+
+    fault                        fix                                    what it does NOT fix
+    step 3x too coarse           segment current 23 -> ~4 uA            monotonicity
+    range 18x oversized (and     same change                            monotonicity
+      only 1/4 of it usable)
+    non-monotonic, DNL>1 LSB     binary degeneration 5.4u -> 84u        step, range, saturation
+    centre offset 1.75 LSB       nominal code 301 -> ~303               everything else
+
+**A review applying only the obvious change (reduce the current) ships a non-monotonic trim array with
+every other number looking correct.**
+
+## Verified by measurement
+
+    current reduction restores the saturated codes      codes 400 and 500 pinned at 23 uA, respond at 4 uA
+
+## Under test now
+
+    corrected weighting (`C169-correct`, all elements 84u/unit device) on codes 309-312
+      prediction: steps uniform, boundary reversal gone, DNL < 1 LSB
+      falsifier:  if the reversal survives, the mechanism account is incomplete
+    step scaling at 4 uA (`pe-red50`, 50-code lever)
+      prediction: 2.49 -> ~0.43 mV/code
+
+## Not established
+
+    DNL in LSB under a pure current reduction   `C169-array4` scaled only the unary and is invalid
+                                                for this; `C169-array4b` scales both and is untested
+    whether the weighting error keeps its phase across all 150 segments (one segment measured)
+    anything about corners, temperature, or silicon -- one corner, one temperature, simulated mismatch
+
+## Withdrawn during the session
+
+    "step 4x too coarse" (unit error) | "6.0 mV/LSB" (20 ns stop changes the answer) |
+    "no determinable decision point" (numerical) | "corr(rejections,|offset|) = -0.41" (noise) |
+    "parts 20 and 26" (spliced chips) | "period-4 in failure rates" (chip-specific) |
+    "range oversized but harmless" (it saturates the comparator)
