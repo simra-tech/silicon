@@ -4481,3 +4481,31 @@ sub-elements snaps back, and it is the signature the whole mechanism account res
 
     if the boundary reversal is gone     the account is complete and the fix is the fix
     if it survives                       something else contributes and the account has a gap
+
+## The recommended configuration: the whole code space is usable
+
+`C169-array4b` (both element types scaled to ~4 uA/segment), two-point test at +/-800 mV:
+
+    code   1   (-300 from centre)   responds
+    code 100   (-201)               responds
+    code 200   (-101)               responds
+    code 400   ( +99)               responds
+    code 500   (+199)               responds
+    code 600   (+299)               responds
+
+**Every code in the array produces a decision.** Tested on both sides of centre, which no earlier
+saturation measurement did -- all of them swept upward only, and the array is differential.
+
+    at 23 uA/segment    nominal +/-753 mV = 90 sigma    usable +/-~170 mV = 20 sigma   (~1/4 of codes)
+    at  4 uA/segment    nominal +/-131 mV = 16 sigma    usable +/-131 mV = 16 sigma    (all codes)
+    requirement                                          +/-5 sigma
+
+So the current reduction does something better than shrink an oversized range. **It converts a range
+that is 18x oversized and three-quarters unusable into one that is ~3x oversized and entirely usable.**
+The usable correction range in sigma barely changes -- 20 to 16 -- while the wasted silicon, the wasted
+current, and the trap for the calibration algorithm all disappear.
+
+That last point is the practically important one. At 23 uA a trim search that overshoots lands in a
+region where the part stops deciding; there is no such region at 4 uA. Combined with the weighting fix
+removing the non-monotonicity, **both of the ways the calibration search could fail are closed by the
+two recommended changes.**
