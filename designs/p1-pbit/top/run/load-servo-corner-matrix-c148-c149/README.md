@@ -4785,3 +4785,52 @@ distinction that made the original array look acceptable when three quarters of 
 Pending the last two codes, the position is: **2.5x remains the better candidate, with a caveat that
 its extreme codes are unusable and the calibration must be bounded away from them.** That caveat is
 cheap to honour -- the trim search needs a code limit regardless, since it needs one at any scaling.
+
+---
+
+# FINAL SIZING RECOMMENDATION — measured at three scalings
+
+    2.5x reduction (l=210u), corrected weighting -- saturation, complete:
+      code   1 (-300)  PINNED        code 400 (+99)   responds
+      code 100 (-201)  responds      code 500 (+199)  responds
+      code 200 (-101)  responds      code 600 (+299)  PINNED
+
+**Symmetric** -- both extremes pinned, the interior clear. That is what a differential array should do,
+and it is the first saturation measurement taken on both sides from the start.
+
+## The three scalings, on usable range rather than nominal
+
+    scaling      step mV/code   step sigma   nominal sigma   USABLE sigma   step margin   range margin
+    1.0x (84u)      2.490          0.299         90.5           ~20            FAILS 3x       4.0x
+    2.5x (210u)     0.417          0.050         15.1           +/-10.0         2.0x          2.0x
+    5.75x (483u)    0.208          0.025          7.5           +/- 7.5         4.0x          1.5x
+    requirement                    <= 0.100                     >= 5
+
+**Recommend 2.5x (degeneration 84u -> 210u per unit device, with the binary elements at the same
+length as the unary).** It is the only scaling with both margins at 2x or better. 5.75x buys step
+precision that is already 4x more than required and pays for it in range; 1.0x fails the step
+requirement outright.
+
+## Complete recommendation for this block
+
+    1. binary degeneration 5.4u -> same length as unary, per unit device
+       fixes: non-monotonicity (DNL from -5..+14 LSB to inside +/-1, two chips, boundary reversal gone)
+    2. degeneration length x2.5 on all elements (84u -> 210u)
+       fixes: step 0.299 -> 0.050 sigma; saturation from +67 codes to +/-199 codes
+    3. nominal centre code 301 -> ~303
+       fixes: the +4.37 mV systematic offset (91 parts)
+    4. bound the trim search to codes ~100..500
+       the extremes remain unusable at any scaling measured; the limit must be stated, not assumed
+
+Items 1 and 2 are independent and both are needed -- neither fixes the other's defect. Item 4 costs
+nothing and is required regardless, because a search that can reach a pinned code will eventually
+reach one.
+
+## What remains unmeasured
+
+    corners, temperature, fabricated silicon
+    the weighting error's phase across all 150 elements (one boundary measured, on two chips)
+    DNL at the recommended scaling -- established at 1.0x where the grid could resolve it, and
+      carried across by the ratio argument, not measured at 2.5x (the step is 6x below the grid)
+    the combined array at 2.5x -- `C169-mid` measured for step and saturation; its boundary DNL
+      inherits from the 1.0x corrected measurement by the same ratio argument
