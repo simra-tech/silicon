@@ -5473,3 +5473,17 @@ handed over is what the array does, measured, with intervals attached.
 **Still unmeasured:** everything with mismatch enabled (this method is blind to
 random device spread by construction); the minimum's position closer than ~104
 codes; any corner or temperature other than res_wcs/hbt_typ at 27 °C.
+
+### Element #150 resolved — 2026-08-12 21:50
+
+    code 596 crossing (-53.450, -53.425)     code 600 crossing (-54.700, -54.675)
+    element #150 = **1.2500 ± 0.025 mV**
+
+Supersedes the "1.1250 … 1.3750, still narrowing" row above. Against element #2
+(1.1750 … 1.2750, ±0.050): **overlap, with #150 lying wholly inside #2** — the two
+ends of the array have the same element size to within measurement, and no
+ordering between them is established.
+
+#150 is now the better-measured of the two; #2 carries the wider bracket because
+code 4 is the single gap-bracketed crossing in the set (its midpoint fails to
+converge, permanently, under the deterministic no-mismatch method).
