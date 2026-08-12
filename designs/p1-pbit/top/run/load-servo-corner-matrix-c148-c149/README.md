@@ -4670,3 +4670,41 @@ the correct direction.
     centre offset 1.75 LSB              nominal code 301 -> ~303            measured (91 parts)
 
 Two of the four share one change; the other two need one number each. Nothing here is a signoff.
+
+---
+
+## CORRECTION to the range figures, and a gap: the recommended design had never been built
+
+The whole-element step measurement at reduced current (`pe-red48`, 48 codes = 12 whole elements, both
+element types scaled, so sub-element contributions cancel):
+
+    code 300   +3.75 mV      code 348   -6.25 mV
+    step 0.208 +/-0.104 mV/code       predicted from linear current scaling: 0.433
+
+**The step scaled by 12x where the degeneration resistors scaled by 5.75x.** Current is not simply
+proportional to 1/R here. That is a factor-of-two error in a number used to size the recommendation.
+
+Consequences for the reduced-current configuration:
+
+    step        0.208 mV = 0.025 sigma       requirement <= 0.1 sigma     met with margin
+    full-scale  603 x 0.208 = +/-63 mV = 7.5 sigma   requirement >= 5 sigma   met, margin 1.5x
+
+Not the "16 sigma, ~3x margin" recorded earlier from linear scaling. **The recommended 5.75x reduction
+is close to the point where range becomes the binding constraint**, and a smaller reduction would trade
+step margin (currently 4x more than needed) for range margin (currently 1.5x).
+
+### The gap
+
+Three arrays have been characterised and **none of them is the recommended design**:
+
+    C169-array23-strobe   original: mis-weighted, full current
+    C169-correct          corrected weighting, ORIGINAL current
+    C169-array4b          reduced current, weighting error PRESERVED
+
+The recommendation is *both* changes together. Built now as `C169-final.spice` -- all element types at
+l=483u per unit device, so weighting is consistent (binaries at 483u m=2 and m=1 against unary 483u
+m=4) and current is reduced. Verified by construction: 150 unary lines changed, both binary lines
+changed, no 84u remaining. Running on codes 309-312.
+
+**Each change was verified in isolation and their combination was assumed.** That is exactly the
+assumption this session has punished most often.
