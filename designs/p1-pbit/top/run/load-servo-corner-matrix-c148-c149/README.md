@@ -4072,3 +4072,58 @@ Consequences for the block:
 
 That last consequence is the one that reaches beyond this block. A non-monotonic trim array is not
 merely imprecise; it breaks the search procedure normally used to find the right code.
+
+---
+
+# STATE OF THIS INVESTIGATION — 2026-08-12 06:2x
+
+A navigation aid. This file is appended chronologically, including the entries that were later
+withdrawn, so that the reasoning remains auditable. This section says what currently stands.
+
+## Established
+
+    quantity              value                          basis
+    part-to-part spread   sd 8.32 mV, mean +4.37 mV      91 parts, 7 batches, one deck
+                          -17.5 .. +27.5 mV             sd uncertainty ~7 %, rule of three 3.3 %
+    trim step (nominal)   2.49 mV/LSB                    device values; agrees 0.2-0.3 % with two
+                                                         independent measured routes
+    correction range      +/-753 mV = 90 sigma           603 codes x measured step
+    integral linearity    -2.482 vs -2.490 mV/code       chip 1, 14 codes, 0.3 %
+    differential lin.     DNL +2, +3, -1 LSB             chip 1, resolved codes; NON-MONOTONIC
+    oversized step        0.30 sigma vs 0.1 required     ~3x too coarse
+    oversized range       90 sigma vs 5 required         ~18x
+    centring error        +4.37 mV = 1.75 LSB            centre belongs near code 303, not 301
+
+## Recommended
+
+    1. segment current 23 uA -> ~4 uA      fixes step AND range (one knob, both scale with current)
+    2. nominal centre code 301 -> ~303     one number; removes 1.75 LSB of wasted one-sided range
+    3. monotonicity: structural fix        matched unit devices for the binary elements, or
+                                           deliberate binary/unary overlap. NOT fixed by (1):
+                                           DNL in LSB is a ratio and does not scale with current.
+    4. trim search algorithm               any binary/SAR search over this code space is unsafe
+                                           while DNL > 1 LSB; it converges silently to a wrong code
+
+## Pending
+
+    chip 3 code 312       decides whether the deficit is repaid locally (chip 1's shape) or
+                          over a wider span. 4 of 53 points down.
+    DNL at 4 uA           expected unchanged in LSB; being wrong would be good news
+    chips 4 and 5         monotonicity currently rests on one draw; the steep region on two
+
+## Withdrawn during the session (retained above with their retractions)
+
+    "step 4x too coarse"              unit error, segment weight vs per-LSB requirement
+    "6.0 mV/LSB"                      measured at a 20 ns stop that changes the answer
+    "no determinable decision point"  numerical, yields to a 0.01 ns timestep
+    "corr(rejections,|offset|) -0.41" small-sample noise; ~0 at n = 48-73
+    "parts 20 and 26"                 spliced from two different mismatch draws
+    "period-4 in failure rates"       chip-specific; does not reproduce on an independent draw
+
+## Standing constraints on method
+
+    a process is a chip                 quantities that depend on the draw need one process
+    tstop 50 ns                         20 ns changes the answer, not merely the convergence
+    window sized from the population    +/-60 mV floor for multi-code sweeps on an unseen draw
+    filenames carry the value set       not a label typed alongside
+    no rate from a partial sweep        unless compared at matched progress
