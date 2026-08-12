@@ -4195,3 +4195,54 @@ code 409 or 509.
 Note also that the net over the measured span is wrong on both chips (-2.00 and +1.67 against -2.49),
 so the repayment extends beyond these four codes. Chip 1's wider span (300 -> 314, fourteen codes)
 returns -2.482, i.e. correct to 0.3 %. **The error cancels over ~14 codes, not over 4.**
+
+---
+
+## MECHANISM IDENTIFIED: the binary sub-elements are oversized; the unary element is correct
+
+Mapping every measured step onto the array's element structure (150 unary elements, element k covering
+codes 4k..4k+3):
+
+    chip 1   309->310  element 77 -> 77  within     -7.50 mV/code   DNL  -2.01
+             310->312  element 77 -> 78  BOUNDARY   +5.00 mV/code   DNL  +3.01
+             312->313  element 78 -> 78  within     -7.50 mV/code   DNL  -2.01
+             313->314  element 78 -> 78  within     -5.00 mV/code   DNL  -1.01
+
+    chip 3   309->310  element 77 -> 77  within    -12.50 mV/code   DNL  -4.02
+             310->311  element 77 -> 77  within    -15.00 mV/code   DNL  -5.02
+             311->312  element 77 -> 78  BOUNDARY  +32.50 mV/code   DNL +14.05
+
+**The sign of the DNL is determined entirely by whether the step crosses an element boundary.** Every
+within-element step is negative and oversized; every boundary step is positive and hugely oversized.
+Chip 1 spans two adjacent elements (77 and 78) and behaves identically in both.
+
+### The arithmetic closes
+
+Within an element the two binary sub-elements step the array; at the boundary they reset and the next
+unary element switches in. So the boundary step should be **one unary element minus three binary
+steps**. With the unary element at its nominal 4 LSB = -9.96 mV:
+
+    chip 1   mean binary step  -6.67 mV (2.7x nominal)   predicted boundary +10.05   measured +10.00
+    chip 3   mean binary step -13.75 mV (5.5x nominal)   predicted boundary +31.29   measured +32.50
+
+**Agreement to 0.05 mV and 1.2 mV, on two independent draws.** The model has no fitted parameters --
+the binary step is measured within the element, the unary weight is the nominal 4 LSB, and the boundary
+step is predicted from them.
+
+    the unary element delivers its nominal weight
+    the binary sub-elements deliver 2.7-5.5x their nominal weight
+
+**This is a binary-to-unary weighting error, not a mismatch problem.** The unary array is correct; the
+sub-elements that subdivide it are too strong, so they overshoot within each segment and the handover
+snaps back.
+
+### What this changes
+
+    fix               resize the binary sub-elements to 1 and 2 LSB against the unary element's 4,
+                      preferably by building them from the same unit device rather than by scaling
+    not the fix       reducing segment current (scales everything together; the ratio is untouched)
+    not the fix       better matching or larger devices (this is a nominal weighting error, present
+                      in both draws with the same sign, not a random mismatch)
+
+The `seg.cir` sweep at codes 409-412 straddles a boundary at the same relative position (element 102 ->
+103) and tests whether the same weighting error appears in a distant segment, as the model requires.
