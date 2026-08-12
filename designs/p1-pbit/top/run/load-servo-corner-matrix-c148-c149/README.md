@@ -3413,3 +3413,33 @@ nearly two orders of magnitude.
 Caveats unchanged: n=18 (going to ~35), one corner, one temperature, simulated mismatch, and everything
 post-dates two repairs. The 20-code lever (code 320) is still running and will halve the +/-0.50 mV
 uncertainty and give a linearity check.
+
+## n = 27 — the fresh batch confirms the spread, 2026-08-12 01:0x
+
+Eight parts run at `VCODE 3.01` (code 301), 50 ns, same deck and analysis as the campaign, so they
+join the sample rather than sitting beside it:
+
+    campaign (cam6)     n=19  mean -0.13 mV  sd 8.39 mV   -17.5 .. +12.5
+    fresh batch (off6)  n= 8  mean +4.69 mV  sd 7.49 mV    -7.5 .. +17.5
+    ---------------------------------------------------------------------
+    COMBINED            n=27  mean +1.30 mV  sd 8.30 mV   -17.5 .. +17.5
+
+**sd 7.49 against 8.39 from eight independent draws.** The apparent 5 sigma disagreement recorded
+earlier is now closed from both directions: it was entirely the 20 ns stop time, and a proper 50 ns
+batch agrees. The mean difference (4.8 mV) is 1.3 standard errors -- not significant at this n.
+
+    sd uncertainty at n=27          ~14 %   (was ~17 % at n=18)
+    rule of three, unobserved tail  11.1 %  (was 16.7 %)
+    distribution is now symmetric   -17.5 .. +17.5 mV
+
+### Sizing verdict on 27 parts — unchanged
+
+    requirement:  range >= +/-5 sd = +/-41.5 mV     step <= 0.1 sd = 0.83 mV
+
+    at 23.0 uA/segment:  range +/-753 mV = 91 sd   step 2.500 mV = 0.300 sd   FAILS step
+    at  7.6 uA/segment:  range +/-249 mV = 30 sd   step 0.826 mV = 0.100 sd   at the limit
+    at  4.0 uA/segment:  range +/-131 mV = 16 sd   step 0.435 mV = 0.052 sd   RECOMMENDED
+    at  1.3 uA/segment:  range +/- 43 mV =  5 sd   step 0.141 mV = 0.017 sd   at the range limit
+
+sd moved 8.28 -> 8.30 mV on adding eight parts and the recommendation does not move at all. **~4 uA per
+segment sits centrally between the two limits**, with the usable band running from about 1.3 to 7.6 uA.
