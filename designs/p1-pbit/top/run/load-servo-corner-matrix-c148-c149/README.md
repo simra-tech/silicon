@@ -5744,3 +5744,87 @@ converging draws.
 
 **Unchanged:** the 5.75× recommendation. Dead codes and monotonicity are measured
 directly and this does not touch them.
+
+---
+
+# ▶▶ CURRENT STATE v2 — supersedes the earlier CURRENT STATE block
+
+The earlier block was written before the mismatch measurement and is missing its
+most consequential result. Read this one. Everything above remains as the audit
+trail.
+
+## The recommendation
+
+**5.75× degeneration.** Only scaling with no dead codes at any corner tested.
+Measured directly, at every corner. **Unchanged by everything below.**
+
+## What is measured, and on what
+
+Two distinct bodies of work tonight, and the distinction matters more than any
+single number in them:
+
+**(a) The systematic curve — mismatch disabled, one nominal chip.** Element size
+across the code space, six positions, each a pure unary difference of two
+adjacent-bracket crossings:
+
+| element | code | value (mV) |
+|---|---|---|
+| #2 | 4 | 1.1750 … 1.2750 |
+| #25 | 100 | 0.6750 … 0.7250 |
+| #38 | 150 | 0.6000 … 0.6500 |
+| #51 | 200 | 0.5250 … 0.5750 |
+| #101 | 400 | 0.5500 … 0.6500 |
+| #150 | 596 | 1.2250 … 1.2750 |
+
+A **bowl**: falls ~2.3× from the bottom to a minimum in **(code 154, code 204]**,
+rises ~2.3× back to the top; the two ends overlap and are not ordered. No
+mechanism offered — two were proposed tonight and both withdrawn against
+measurement.
+
+**(b) The distribution — mismatch enabled, four independent draws.** Mean trim
+element over #51…#100, per chip, against the nominal 0.6147:
+
+    chip 1  0.5000  −18.7%      chip 4  0.7000  +13.9%
+    chip 2  0.5500  −10.5%      chip 3  0.8000  +30.1%
+
+**Spread 49% of nominal; mean +3.7%.** So (a) describes the *typical* part — that
+was not guaranteed — and (b) says the typical part is the centre of a
+distribution half again as wide as the whole curve's variation.
+
+## The one thing a reviewer must act on
+
+Correction range = codes × step, so it scales with trim strength. This record puts
+the 5.75× **range margin at 1.18×** at the worst resistor corner. Per chip:
+
+    chip 1  0.96×   ← below 1        chip 4  1.34×
+    chip 2  1.06×                    chip 3  1.54×
+
+**One of four below 1.** Four chips is not a yield number and must not be quoted
+as one. The mechanism is nonetheless demonstrated on a chip that exists.
+
+**Required follow-up, in order:**
+1. More chips, swept at codes **200, 301 and 400** — three codes so each chip
+   yields trim strength (200→400 lever) *and* true input offset (301) in one
+   process. The offset does **not** come free from a two-code run; see the
+   correction above.
+2. The offset/trim-strength correlation, which could remove the concern entirely
+   if weak-trim draws also carry smaller offsets.
+3. Only then, whether 5.75× needs more range headroom.
+
+## Practice notes for anyone repeating this
+
+* **Do not drop slow-converging draws.** The draw that cost 2.5× per point was the
+  strongest of four; dropping it would have understated the spread by a third with
+  nothing in the survivors to hint at it.
+* **A process is a chip.** Any per-chip quantity must have all its codes measured
+  inside one ngspice process. Differencing two codes in one process cancels the
+  input offset exactly.
+* **Any DNL figure must name which unary element its LSB came from.** There is no
+  single well-defined LSB for this array.
+
+## Not measured
+
+Mismatch at any corner other than res_wcs/hbt_typ, 27 °C; more than four draws;
+the minimum's position closer than ~50 codes; temperature above 27 °C (+60 °C
+aborts in the transient, 85 °C finds no DC operating point); **how the trim code
+is selected in operation**, which determines whether the bowl matters at all.
