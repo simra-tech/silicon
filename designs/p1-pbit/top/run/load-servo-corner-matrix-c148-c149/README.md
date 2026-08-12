@@ -5828,3 +5828,53 @@ Mismatch at any corner other than res_wcs/hbt_typ, 27 °C; more than four draws;
 the minimum's position closer than ~50 codes; temperature above 27 °C (+60 °C
 aborts in the transient, 85 °C finds no DC operating point); **how the trim code
 is selected in operation**, which determines whether the bowl matters at all.
+
+## OPEN QUESTION — is the binary weighting position-dependent? — 2026-08-13 00:50
+
+**Not established. Recorded because it is being measured now and because a reader
+who sees only the bottom-of-array numbers would draw the wrong conclusion.**
+
+At the **bottom** of the code space, measured at 0.025 mV (this record, above):
+
+    b0 / local LSB   0.99      intent 1.0
+    b1 / local LSB   2.02      intent 2.0
+    handover / LSB   1.00      intent 1.0
+
+At **code 300**, from the Design Engineer's 0.25 mV refine pass:
+
+    b0 / local LSB   0.667
+    b1 / local LSB   1.333
+    handover / LSB   2.000
+
+Same array, different position. If it survives the fine pass, the binary weighting
+that is correct at the bottom of the code space is **not** correct mid-array, and
+the handover step there is twice its neighbours — a DNL of +1 LSB at every unary
+boundary in that region.
+
+### Why it is not established
+
+Every step in the refine pass carries **±0.25 mV, the same size as the steps
+themselves**. The pattern above is entirely within that uncertainty. A 0.025 mV
+fine pass across the nine codes 296–304 is running and tightens by 10×.
+
+### The other half of the same disagreement
+
+The DE's element #75 (codes 300→304) computes to **1.500 mV** from the refine
+pass, against a lever mean over elements #51…#100 of **0.6148 mV** — a factor of
+2.4, with #75 inside that range. Meanwhile their code-300 *crossing* agrees with
+the lever to better than 5% on both sides (0.5885 and 0.6410 per element). So the
+coarse geometry is consistent and only the single-element value disagrees.
+
+Units were checked first and are **clean**: their deck maps `VIN_P 1.243750 →
+suffix −2500`, differential mV × 1000, identical to this record's convention.
+
+### What resolves it
+
+The 0.025 mV pass, reported **bound-first and undecomposed before
+interpretation**: element #74 and #75 as numbers with bounds, then the four
+within-element steps (b0, b1−b0, b0, handover) as ratios to the local LSB.
+
+Until then, **the element-size curve above stands and the binary weighting result
+at the bottom of the array stands; neither is contradicted.** What is open is
+whether the weighting is uniform across the code space, which nothing in this
+record previously asserted either way.
