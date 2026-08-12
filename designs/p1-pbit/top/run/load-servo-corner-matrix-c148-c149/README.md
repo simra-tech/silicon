@@ -3615,3 +3615,29 @@ requirement is a step below 0.81-0.88 mV, and the measured step is 2.50 mV -- 0.
 
 The mean also survives all of them (+2.7 to +3.6 mV), which strengthens rather than settles the possible
 centring error noted above: it is at least not an artifact of the exclusion policy.
+
+## Code 311 is unmeasurable: no decision point can be determined, 2026-08-12 04:2x
+
+Complete sweep, 31 points, one chip, 50 ns, 2.5 mV grid. Shown in sweep order, `.` = transient failed
+to converge:
+
+    code 309  HHHHHHHHHHHHHHHHHHHHHHHHLLLLL.L    1/31 failed   crossing -11.25 mV +/-1.25
+    code 310  H.H.HHHHHHHH.......H..L..LL....   17/31 failed   crossing -18.75 mV +/-3.75
+    code 311  HHHHHHHH.HHHHH.HH..............   16/31 failed   NO CROSSING among converged points
+
+**Code 311 converges cleanly from -70 mV up to -30 mV, all HIGH, and then every point above -30 mV
+fails.** Its decision point must lie in that region, and the region cannot be simulated. This is not a
+wide bracket or a noisy measurement -- there is no measurement.
+
+That is a result about the array, not about the data collection: **there exists a trim setting at which
+this comparator's decision point cannot be determined.** Whether it is a property of the circuit or of
+the solver is the open question, and it is exactly the question the two commissioned tests separate:
+
+  - codes 309-312 re-run on an independent mismatch draw (`recur.cir`, running) -- same codes failing
+    the same way means structural
+  - one failing point re-run at a 0.01 ns timestep -- numerical trouble usually yields to a finer step;
+    a circuit with no findable operating point does not
+
+Until those return, the honest statement is that **codes 310 and 311 are not characterised**, and any
+transfer curve drawn through this region is drawn through a hole. The measured 2.50 mV/LSB (2026-08-12
+00:5x) came from codes 300-310 and remains the only step figure with a clean measurement behind it.
