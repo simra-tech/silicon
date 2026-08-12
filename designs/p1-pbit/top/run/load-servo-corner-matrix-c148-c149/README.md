@@ -4127,3 +4127,43 @@ withdrawn, so that the reasoning remains auditable. This section says what curre
     window sized from the population    +/-60 mV floor for multi-code sweeps on an unseen draw
     filenames carry the value set       not a label typed alongside
     no rate from a partial sweep        unless compared at matched progress
+
+---
+
+## RESOLVED: non-monotonicity reproduces on an independent draw, 2026-08-12 06:3x
+
+The discriminating prediction (filed 2026-08-12 05:5x, before the data):
+
+    sawtooth structural  ->  chip 3's code 312 recovers, above -31.25 mV
+    steeper slope only   ->  chip 3's code 312 continues down, near -60 mV
+
+Chip 3, code 312, 19 of 53 points: **swept -70 to -25 mV with no crossing.** The crossing lies above
+-25 mV. The steeper-slope prediction is dead -- the sweep passed -60, -50, -40 and -30 without a
+transition.
+
+    chip 3:  code 311  -46.25 mV      code 312  above -25 mV      step > +21.25 mV in one code
+    chip 1:  code 310  -18.75 mV      code 312   -8.75 mV         step   +10.00 mV over two codes
+
+**The transfer reverses on both chips, and recovers into the same code.** Code 312 is 0 mod 4 and is a
+high point on both draws.
+
+### Why the matching phase is the important part
+
+Random mismatch differs per draw; a systematic design property does not. Two independent chips showing
+a reversal *at the same code, in the same direction, with the same period* is what distinguishes a
+built-in structural error from a coincidence of one draw. Chip 3's excursion is larger than chip 1's
+(>21 mV against 10 mV), which is what random mismatch superimposed on a systematic error looks like:
+same sign and position, different magnitude.
+
+**The non-monotonicity is therefore a property of the array as designed**, not of a particular
+simulated part. That was the last open question of the session on this block.
+
+    established now:   DNL > 1 LSB and non-monotonic, on two independent draws
+    consequence:       any binary or successive-approximation trim search is unsafe over this
+                       code space -- it converges silently to a wrong code
+    fix:               structural (matched unit devices for the binary elements, or deliberate
+                       binary/unary overlap). NOT fixed by the current reduction, which addresses
+                       step and range only.
+
+Caveats unchanged and still material: two draws, one corner, one temperature, simulated mismatch, and
+the whole study post-dates two repairs to the netlist made at the start of the session.
