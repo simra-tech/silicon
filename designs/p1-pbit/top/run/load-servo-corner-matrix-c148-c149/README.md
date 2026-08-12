@@ -5529,3 +5529,74 @@ way, deterministically but arbitrarily.
 
 Anyone re-deriving these numbers should expect that point and should not treat it
 as evidence of non-monotonic trim behaviour.
+
+---
+
+# ▶ CURRENT STATE — read this first for the 2026-08-12 evening work
+
+The sections above from "DNL AT THE RECOMMENDED SCALING" onward are chronological
+and include two claims that were later withdrawn. **The retractions sit beneath
+the claims rather than replacing them**, so the reasoning stays auditable — which
+makes the sequence hard to read cold. This block is what is currently believed.
+Everything in it is measured on one nominal chip (mismatch disabled), 5.75×
+deck, res_wcs + hbt_typ, 27 °C.
+
+### The recommendation — unchanged all evening
+
+**5.75× degeneration.** It is the only scaling with no dead codes at any corner
+tested. Measured directly, at every corner, and **never dependent on any of the
+element-size analysis below**. Nothing tonight has touched it.
+
+### Element size varies strongly with position — a bowl
+
+| element | code | value (mV) | provenance |
+|---|---|---|---|
+| #2 | 4 → 8 | 1.1750 … 1.2750 | pure unary difference |
+| #25 | 100 → 104 | 0.6750 … 0.7250 | pure unary difference |
+| #38 | 150 → 154 | 0.6000 … 0.6500 | pure unary difference |
+| #51 | 200 → 204 | 0.5250 … 0.5750 | pure unary difference |
+| #101 | 400 → 404 | 0.5500 … 0.6500 | pure unary difference |
+| #150 | 596 → 600 | 1.2250 … 1.2750 | pure unary difference |
+
+Every entry is a difference of two directly measured adjacent-bracket crossings
+of codes with b1=b0=0. Orderings are stated only where intervals do not overlap.
+
+**Minimum position: (code 154, code 204].** Falls ~2.3× from the bottom of the
+code space to the minimum, rises ~2.3× back to the top. The two ends overlap and
+no ordering between them is established.
+
+### The consequence that matters
+
+**Any DNL figure for this array must name which unary element its LSB came from.**
+There is no single well-defined LSB. Normalising a local step against an
+array-average LSB manufactures a false DNL of order 1 — that error was made,
+published, and retracted tonight (see the ⚠ RETRACTION section).
+
+### What was withdrawn
+
+1. **"b0 carries ~1.85 LSB; the binary pair is oversized"** — an artifact of the
+   unit above. Against the *local* unary element, b0 = 0.99 and b1 = 2.02. No
+   residual binary weighting error is in evidence.
+2. **"The array saturates monotonically"** — refuted: the mean element over codes
+   #51…#100 exceeds element #51, so size rises again above the minimum.
+
+**No mechanism is offered for the bowl.** Two were proposed tonight and both were
+withdrawn against measurement.
+
+### Not measured
+
+* **Anything with mismatch enabled.** This method is blind to random device
+  spread by construction. Four chips are in flight at codes 200/204 as a first
+  look; four points give a spread, not a distribution.
+* The minimum's position closer than ~50 codes.
+* Any corner or temperature other than res_wcs/hbt_typ at 27 °C. The +60 °C run
+  aborted (transient solver failure on the comparator input device); 85 °C finds
+  no DC operating point.
+* Element size at codes other than the six above.
+
+### One data-quality note
+
+Code 154 carries a single isolated inversion at 22.125 mV (hard LOW between two
+firm HIGHs, 0.16 mV below the true crossing). Excluded, with justification, in
+the "Element #38" section. An audit of all 16 codes measured at fine resolution
+found no other instance.
