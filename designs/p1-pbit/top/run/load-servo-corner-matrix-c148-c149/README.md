@@ -5250,3 +5250,54 @@ This section will be updated with that result either way.
 **Any DNL number for this array must state which unary element its LSB came
 from.** A single "LSB" for the whole array is not well defined when the array
 saturates, and using one is exactly the error made above.
+
+## Retraction confirmed, and the explanation withdrawn too — 2026-08-12 21:00
+
+The confirming measurement promised in the retraction above has landed. Both
+crossings are clean and adjacent:
+
+    code 200:  H at 15.575, L at 15.600   ->  +15.5875 ± 0.0125
+    code 204:  H at 15.025, L at 15.050   ->  +15.0375 ± 0.0125
+
+    unary element #51 = 0.5500 mV, bound ±0.025
+
+**The retraction is confirmed on measurement.** Element #1 at the bottom of the
+array is 1.2625 mV; element #51 is 0.5500 mV. Non-overlapping by a wide margin,
+so "one unary element = 4 × array-average LSB" is definitively false and the
+1.85×-oversized-binaries result was definitively an artifact of that unit.
+
+**But the saturation explanation offered with the retraction is also withdrawn.**
+The lever over codes 200–400 measures the *average* of elements #51…#100:
+
+    element #51                  ≤ 0.575
+    average of #51…#100          ≥ 0.607        (no overlap)
+
+Monotonic saturation requires the average of a range to lie at or below its first
+member. It does not. Elements #52…#100 must average *larger* than #51.
+
+### The measured shape, with no mechanism attached
+
+    unary #1   (codes   4 → 8)     1.2625 mV
+    unary #51  (codes 200 → 204)   0.5500 mV
+    average #51…#100                > 0.607 mV
+
+**Element size has a minimum near code 200 and rises on both sides of it.** That
+is what the numbers say. Two mechanisms were proposed today (binary
+over-weighting; monotonic saturation) and both are buried; a third is not offered.
+Codes 100, 400 and 500 are in flight to fill in the curve, and the Design
+Engineer's elements #74/#75 at code 300 sit on the rising side.
+
+### What this means for the record
+
+Unchanged: the dead-code result and the **5.75× recommendation**, measured
+directly at every corner and never dependent on any of this.
+
+Confirmed: **any DNL number for this array must name which unary element its LSB
+came from.** With element size varying by more than 2× across the code space, a
+bare "LSB" is not well defined, and normalising a local step against an
+array-average LSB manufactures a false DNL of order 1 — which is exactly the error
+made and retracted above.
+
+Added: this array has **large integral nonlinearity**, non-monotonic in element
+size. That is a design property worth stating in its own right and was not
+previously in the record.
