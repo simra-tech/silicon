@@ -5487,3 +5487,45 @@ ordering between them is established.
 #150 is now the better-measured of the two; #2 carries the wider bracket because
 code 4 is the single gap-bracketed crossing in the set (its midpoint fails to
 converge, permanently, under the deterministic no-mismatch method).
+
+## Element #38 and the minimum, narrowed — 2026-08-12 22:00
+
+    code 150 crossing (22.9000, 22.9250)
+    code 154 crossing (22.2750, 22.3000)
+    element #38 = **0.6250 ± 0.025 mV**
+
+    #38 < #25 (code 100)   ORDERED, gap 0.025
+    #38 > #51 (code 200)   ORDERED, gap 0.025
+
+Element size is **still falling at code 150**, so the minimum lies after code 154.
+Combined with the rise beginning after code 204:
+
+**Minimum position: (code 154, code 204]** — about 50 codes, down from (100, 204].
+
+Updated curve:
+
+| element | code | value (mV) |
+|---|---|---|
+| #2 | 4 | 1.1750 … 1.2750 |
+| #25 | 100 | 0.6750 … 0.7250 |
+| #38 | 150 | 0.6000 … 0.6500 |
+| #51 | 200 | 0.5250 … 0.5750 ← minimum region |
+| #101 | 400 | 0.5500 … 0.6500 |
+| #150 | 596 | 1.2250 … 1.2750 |
+
+### Data-quality note: one isolated inversion
+
+Code 154 carries a single anomalous point at **22.125 mV**, reading a hard LOW
+(0.000000 V) with firm HIGH (1.199999 V) on both immediate neighbours, 0.16 mV
+below the true crossing at ~22.29. The crossing above is taken from the **last**
+flip, excluding it.
+
+The exclusion is justified rather than assumed: the point is bracketed by firm
+HIGHs, its value is a hard rail rather than a marginal reading near the 0.6 V
+decision threshold, and an audit of all 16 codes measured at fine resolution
+tonight found **no other instance**. The plausible cause is comparator
+metastability — at ~1 LSB of overdrive a regenerative latch may resolve either
+way, deterministically but arbitrarily.
+
+Anyone re-deriving these numbers should expect that point and should not treat it
+as evidence of non-monotonic trim behaviour.
