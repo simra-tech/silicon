@@ -4958,3 +4958,30 @@ Also from the precise lever, the resistor-corner picture is not a monotonic spre
 
 typ and wcs agree within error; bcs sits 3.4 sigma above both. "27 % spread across the corner" is
 better stated as "best-case resistors give 30 % more step than typical or worst-case".
+
+## Resolution: the identical-range claim is consistent but was never established
+
+The 5.75x step at the worst resistor corner is measured: **0.1625 +/-0.025 mV/code** (200-code lever).
+Recomputing the comparison with precise values on both arrays, steps taken at res_wcs:
+
+    5.75x   603 codes x 0.1625 = 98.0 +/- 15.1 mV
+    2.5x    300 codes x 0.3000 = 90.0 +/-  7.5 mV
+    difference 8.0 +/- 16.8 mV = 0.5 sigma
+
+**Consistent with identical, and equally consistent with a 25 % gap.** So the idea that the usable
+correction is set by the comparator rather than the array survives as a *plausible reading*, and the
+original statement -- "identical to within 0.3 mV" -- does not. That precision was an artifact of
+quoting point estimates from +/-25 % measurements, as flagged before this run landed.
+
+**The design decision is unaffected**, as recorded then: 5.75x is chosen because it has no dead codes at
+any corner while 2.5x has them at every corner, which is measured directly.
+
+### The recommendation's tightest numbers, now measured at the worst resistor corner
+
+    step        0.1625 mV = 0.0195 sigma    requirement <= 0.100    margin 5.1x
+    range       +/-49.0 mV = +/-5.89 sigma  requirement >= 5 sigma  margin 1.18x
+
+**Range at the worst resistor corner is the binding constraint of the whole design, at 1.18x.** Every
+other requirement has multiple-times margin. A reviewer should look there first, and a design change
+that trades step margin for range margin -- a milder current reduction -- is worth considering, subject
+to the dead-code constraint that forced 5.75x in the first place.
