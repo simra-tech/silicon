@@ -5392,3 +5392,38 @@ already held: the element at code 100 splits (8, 204] into (8, 100] and [100, 20
 the elements at code 300 fix whether the rise starts before or after 300.
 
 Read the "Element size vs position" section above with this correction applied.
+
+## Element-size table, all directly measured — 2026-08-12 21:35
+
+Every entry is a difference of two directly measured adjacent-bracket crossings
+of codes with b1=b0=0, so each is a pure unary-element difference with no
+inference chain. Provenance is on the line, per the correction above.
+
+| element | codes | value (mV) | provenance |
+|---|---|---|---|
+| #2 | 4 → 8 | 1.1750 … 1.2750 | pure unary difference |
+| #25 | 100 → 104 | 0.6750 … 0.7250 | pure unary difference |
+| #51 | 200 → 204 | 0.5250 … 0.5750 | pure unary difference |
+| #101 | 400 → 404 | 0.5500 … 0.6500 | pure unary difference |
+| mean #51…#100 | 300 → 400 | 0.6050 … 0.7070 | 100-code lever |
+
+*(element #1 = 1.2625 mV remains an inference — `step(3→4)+b1+b0` — and is
+consistent with #2 but not independent of it; see the provenance correction
+above.)*
+
+Orderings, computed by interval comparison, never by midpoint:
+
+    #2  > #25   #25 > #51   #25 > #101   mean(300–400) > #51
+    #51 vs #101 — OVERLAP, no ordering
+
+**Minimum position: (code 100, code 204].** The fall continues past code 100
+(#25 > #51) and the rise begins after code 204 (lever mean > #51). Halved from
+the previous (code 8, code 204].
+
+**Shape:** element size falls from ~1.2 mV at the bottom of the code space to
+~0.55 mV somewhere between codes 100 and 204, then rises. `#25 > #101` is ordered
+by only 0.025 mV (3.5%), which would make the curve asymmetric about its minimum
+— recorded as measured, but too narrow a margin to build on.
+
+**Still no mechanism offered.** Two were proposed and withdrawn against
+measurement earlier today.
