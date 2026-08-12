@@ -4835,3 +4835,38 @@ reach one.
       carried across by the ratio argument, not measured at 2.5x (the step is 6x below the grid)
     the combined array at 2.5x -- `C169-mid` measured for step and saturation; its boundary DNL
       inherits from the 1.0x corrected measurement by the same ratio argument
+
+## The combination, measured: no reversal, no dead codes, clean convergence
+
+`C169-final` (corrected weighting AND 5.75x reduction), codes 309-312, 164 points:
+
+    code 309  +6.50 mV      code 311  +6.50 mV
+    code 310  +6.50 mV      code 312  +6.50 mV      boundary step +0.000 mV/code
+
+    convergence failures: 0 of 164
+
+**No reversal at the element boundary**, on the combination rather than on either change alone. Against
+the original array's boundary steps:
+
+    original chip 1   +5.00 mV/code    excluded at ~2 sigma against this measurement's +/-2.5
+    original chip 3  +32.50 mV/code    excluded at ~13 sigma
+
+The individual step magnitudes are all 0.000 and mean nothing -- the step is 0.21 mV against a 2.5 mV
+grid, so every adjacent pair quantises into one bracket. **What is measured here is the absence of a
+large reversal, and the convergence.**
+
+Zero failures in 164 points is the cleanest convergence of any array this session, against 17/31 at
+some codes on the original. It is the last of several independent signs that the solver difficulty
+belonged to one mismatch draw rather than to the codes (H-1062, H-1084, H-1090).
+
+### Coverage of the recommendation, stated plainly
+
+    weighting correction   boundary DNL and reversal measured at 1.0x on two chips (grid adequate)
+                           and confirmed on the combination at 5.75x (reversal absent)
+    scaling to 2.5x        step and saturation measured directly at 2.5x
+    boundary DNL at 2.5x   NOT measured -- the step is 6x below the grid there. It is carried across
+                           from the 1.0x measurement by the ratio argument: the weighting is identical
+                           in both netlists (all elements the same length per unit device), and DNL in
+                           LSB is a ratio that scaling preserves.
+
+That last line is an inference, not a measurement, and is marked as such.
