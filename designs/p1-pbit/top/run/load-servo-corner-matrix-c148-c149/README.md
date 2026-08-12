@@ -5368,3 +5368,27 @@ than the inferred point.
 
 Nothing about the shape changes: bottom-of-array elements are ~1.2 mV against
 ~0.55 mV near code 200.
+
+## Correction: "minimum near code 200" is over-precise — 2026-08-12 21:30
+
+The Design Engineer enumerated every comparison in hand and showed that the
+phrase "minimum near code 200", used above, claims more than the data supports.
+Their framing, adopted here:
+
+| comparison | what it actually pins |
+|---|---|
+| element #1 (1.2625) vs #51 (0.550) | minimum is **after** code 8 |
+| #51 (0.525–0.575) vs #101 (0.550–0.650) | overlap — no ordering, no constraint |
+| lever mean(#51…#100) > #51 | rise begins after code 204 → minimum is **at or before** code 204 |
+
+**The tightest supported statement is that the minimum lies in (code 8, code 204]**
+— a span of ~196 codes, with element #51 = 0.550 mV the only measured point inside
+it. There is *no* measurement anywhere between code 8 and code 204, so the minimum
+could sit anywhere in that interval. "Near code 200" reads as if it were pinned to
+a handful of codes; it is not.
+
+Two measurements now in flight tighten it and neither is a re-analysis of data
+already held: the element at code 100 splits (8, 204] into (8, 100] and [100, 204];
+the elements at code 300 fix whether the rise starts before or after 300.
+
+Read the "Element size vs position" section above with this correction applied.
