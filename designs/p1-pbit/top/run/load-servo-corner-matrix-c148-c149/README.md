@@ -4708,3 +4708,24 @@ changed, no 84u remaining. Running on codes 309-312.
 
 **Each change was verified in isolation and their combination was assumed.** That is exactly the
 assumption this session has punished most often.
+
+## Combined array: saturation confirmed across the whole code space
+
+`C169-final` (corrected weighting AND reduced current), two-point test at +/-800 mV:
+
+    code   1 (-300)  responds      code 400 (+99)   responds
+    code 100 (-201)  responds      code 500 (+199)  responds
+    code 200 (-101)  responds      code 600 (+299)  responds
+
+**Every code usable, both sides**, on the configuration actually recommended -- not on a variant with
+one fault still present.
+
+This result was expected: correcting the weighting *lowers* the binary currents further, so the
+combined array draws slightly less total current than the reduced-current variant already shown to be
+clear of saturation. Recording it as confirmation rather than discovery. **It is the check whose
+absence was the point of the previous entry** -- three arrays characterised, none of them the
+recommendation -- and a property that holds for each change separately is not thereby established for
+their combination, even when the physics makes it likely.
+
+Remaining on the combination: step size, DNL and the boundary transition (`pe-final`, codes 309-312,
+54 of 165 points).
