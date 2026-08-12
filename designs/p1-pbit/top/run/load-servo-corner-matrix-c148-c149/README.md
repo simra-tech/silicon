@@ -5059,3 +5059,14 @@ runs directly into the dead-code constraint that selected 5.75x to begin with.
 temperature above 27 °C; the weighting error's phase across all 150 unary
 elements; DNL at the recommended scaling, which is carried by a ratio argument
 and is marked in this file as inference, not measurement.
+
+## Update — pe-q4s closed, 2026-08-12 19:35
+
+The open item in section 3 above is resolved. `pe-q4s` code 400 finished its
+sweep: **77/77 points, full span −95.0…+95.0 mV, still exactly one crossing**, at
+−23.75 mV with an adjacent bracket. The second crossing that the partial sweep
+could not rule out does not exist. Step for the 4x array at the worst resistor
+corner is **0.2375 mV/code, bounded ±0.0125**, from two complete sweeps.
+
+Every number in the three-scaling table above now rests on complete sweeps with
+adjacent brackets. Nothing in the comparison changes.
