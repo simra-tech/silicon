@@ -4317,3 +4317,33 @@ A refinement across codes 362-377 is running to narrow the boundary to +/-3 code
 
 Caveat: one chip. The boundary depends on how much array current a given part's comparator can absorb,
 so it will move with mismatch. The mechanism is deterministic; the exact code is not.
+
+## Saturation boundary narrowed, and the current reduction verified against it
+
+Refinement across codes 362-377 (two-point test, one chip):
+
+    code 368  (+67 codes, +167 mV trim)  responds
+    code 371  (+70 codes, +174 mV trim)  PINNED
+
+**The boundary sits between +67 and +70 codes -- about +170 mV of applied trim, or 20.4 sigma.**
+
+### The recommended fix, tested
+
+A variant array at ~4 uA/segment (`C169-array4.spice`, a 5.75x current cut) re-run at the two codes
+that were pinned at 23 uA:
+
+    code 400  (+99 codes from centre)    at 23 uA: PINNED     at 4 uA: RESPONDS
+    code 500  (+199 codes from centre)   at 23 uA: PINNED     at 4 uA: RESPONDS
+
+**Prediction confirmed.** The current reduction recommended for the step and range problems also buys
+back the usable code range: at 4 uA the array no longer overwhelms the comparator at codes where it
+did at 23 uA. Code 500 corresponds to ~87 mV of trim at the reduced step, comfortably inside the
+comparator's capability.
+
+This is the first element of the recommendation to be verified by measurement rather than inferred. Two
+remain -- whether the step scales as 2.50 -> 0.435 mV/code, and whether DNL in LSB is unchanged -- and
+those decide whether the structural rework of the binary sub-elements is still required.
+
+Note the `redstep` deck needs its window extended: at code 300 it swept -80..-10 mV and found no
+crossing, because at the reduced step the crossing sits above -10 mV. The window was sized for the
+23 uA array.
