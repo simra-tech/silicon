@@ -4457,3 +4457,27 @@ every other number looking correct.**
     "no determinable decision point" (numerical) | "corr(rejections,|offset|) = -0.41" (noise) |
     "parts 20 and 26" (spliced chips) | "period-4 in failure rates" (chip-specific) |
     "range oversized but harmless" (it saturates the comparator)
+
+## Corrected weighting, first result: the within-element step is fixed
+
+`C169-correct` (all element types 84u per unit device), codes 309-310, original current:
+
+    transition        original chip 1   original chip 3   CORRECTED
+    309 -> 310        -7.50 mV/code     -12.50 mV/code    -1.50 mV/code
+    DNL               -2.01 LSB         -4.02 LSB         +0.40 LSB
+    (ideal step -2.49 mV/code; |DNL| < 1 LSB guarantees monotonicity)
+
+**The within-element step falls from 3-5x oversized to 0.6x nominal**, and DNL from -2 and -4 LSB to
++0.40. Prediction confirmed on this half of the test.
+
+Uncertainty stated honestly: each crossing carries +/-1.25 mV on the 2.5 mV grid, so the step is
+-1.50 +/- 2.50 and the DNL is +0.40 +/- 1.0. **The improvement is unambiguous** (from -2/-4 to
+approximately zero); **the claim "below 1 LSB" is supported but not tightly** -- the error bar reaches
+the threshold it is being compared against.
+
+The decisive half is still running: the **boundary** transition 311 -> 312, where the original array
+gave DNL +3.01 (chip 1) and +14.05 (chip 3). That is where a segmented converter with mismatched
+sub-elements snaps back, and it is the signature the whole mechanism account rests on.
+
+    if the boundary reversal is gone     the account is complete and the fix is the fix
+    if it survives                       something else contributes and the account has a gap
