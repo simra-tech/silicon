@@ -3581,3 +3581,37 @@ This costs nothing to watch and would cost a silicon revision to discover late, 
 rather than after it is certain. **Not a conclusion.** The batch disagreement needs explaining before the
 mean is worth acting on, and the two candidate explanations -- sampling noise, or something differing
 between the campaign deck and the offset decks -- have not been separated.
+
+## Exclusion policy tested: it does not bias the distribution, 2026-08-12 03:5x
+
+34 % of fully-swept parts (18 of 53) are excluded by the bracket guard -- their crossings are bracketed
+too widely because solver failures removed intermediate points. Whether that exclusion biases the
+result is testable directly by varying the guard:
+
+    guard    n   mean     sd     min    max   corr(rejections,|offset|)
+      7.5   48   +3.02   8.14   -17.5  +27.5      -0.07
+     12.5   62   +2.66   8.41   -17.5  +27.5      +0.06
+     25.0   71   +3.24   8.35   -17.5  +27.5      -0.03
+     50.0   73   +3.63   8.81   -17.5  +30.0      -0.13
+
+**Admitting 25 more parts (+52 %) moves sd by 8 %** -- inside the ~10 % uncertainty the sample carries
+anyway. The strict guard is mildly *conservative*: sd creeps up as wide-bracket parts are admitted, so
+those parts are if anything slightly more extreme, not less. **No tail truncation.**
+
+Separately confirmed, and it removes the other candidate bias: **no part anywhere has "no crossing" in
+the +/-80 mV window** (0 of 53). The window is not clipping the distribution.
+
+### Correction: the bias correlation was small-sample noise
+
+Earlier entries recorded corr(rejections, |offset|) = -0.41 (n=16) then -0.34 (n=18), described as
+"the reassuring direction" -- difficult parts having *smaller* offsets. At n = 48-73 the correlation is
+**-0.07 to -0.13, i.e. nothing**. The honest statement is that there is *no detectable relationship*
+between how hard a part is to simulate and how far out it sits. That still means no bias, which was the
+question; but the earlier negative value was over-read, and it is withdrawn as a finding.
+
+**The conclusion is invariant across every one of these choices**: with sd between 8.1 and 8.8 mV the
+requirement is a step below 0.81-0.88 mV, and the measured step is 2.50 mV -- 0.28 to 0.31 sigma,
+~3x too coarse, at every n and every guard.
+
+The mean also survives all of them (+2.7 to +3.6 mV), which strengthens rather than settles the possible
+centring error noted above: it is at least not an artifact of the exclusion policy.
