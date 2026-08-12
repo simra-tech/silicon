@@ -5148,3 +5148,42 @@ only the first will be misled.
 
 **Limitations:** systematic only (no mismatch); one handover of 151; one corner;
 27 °C only.
+
+## Update — the residual is localised, 2026-08-12 20:25
+
+Codes 0 and 1 separate the two binary elements, which every earlier step
+confounded (code 0 = no trim, 1 = b0, 2 = b1, 3 = b1+b0):
+
+    step 1 -> 2 = 0.3250 mV     (= b1 - b0)
+    step 2 -> 3 = 0.3000 mV     (= b0)
+
+Two predictions were filed before the run:
+
+| hypothesis | predicted step 1→2 | outcome |
+|---|---|---|
+| both binaries over-weighted ~1.8x | 0.3000 mV | **matches** |
+| only b0 wrong, b1 correct | 0.0380 mV | excluded by 7.6x |
+
+Further: `b1 - b0` and `b0` come out one grid step apart, inside their bounds.
+If b1 = 2·b0 exactly then those two quantities are equal, which is what is
+measured.
+
+**Conclusion: the binary pair is correctly proportioned internally (b1 = 2·b0 to
+within resolution); the pair as a whole is ~1.8x oversized relative to the unary
+elements.** The error is between the pair and the rest of the array, not inside
+the pair.
+
+**This supersedes follow-up item 1 in the section above.** It is not "re-examine
+b0's sizing" — it is a single proportional rescale of *both* binaries by ~1/1.8,
+leaving their 2:1 ratio intact. The earlier correction resized the two together
+and kept them in step; it simply did not go far enough.
+
+It also settles the character of the residual: this is the **original defect,
+reduced, not a new one**. The axis and sign are the same — binaries oversized
+against unary — and only the magnitude changed, from 15.6x to ~1.8x. The record
+should describe the weighting fix as **substantially reducing** the error rather
+than removing it.
+
+Code 0 is still in flight and will give a third independent reading of b0 via
+step 0→1. It can refine the residual's magnitude; it cannot reverse a 7.6x
+discrimination.
