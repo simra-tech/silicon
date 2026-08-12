@@ -5633,3 +5633,60 @@ Two things that do not depend on the resolution:
   inferred from the element-size curve.
 * **Any DNL number must still name its LSB.** That obligation stands whichever
   way the calibration question is answered.
+
+## ⚠ First mismatch result — the range margin has a path below 1 — 2026-08-12 22:50
+
+**Preliminary: three chips of four. Not a distribution.** Recorded now because it
+bears on the recommendation's tightest number.
+
+Mean trim element over #51…#100, measured per chip with mismatch enabled (each
+chip one ngspice process; the lever over codes 200→400 cancels the input offset
+exactly, so only trim-element variation survives):
+
+| chip | mean element (mV) | vs nominal 0.6147 |
+|---|---|---|
+| 1 | 0.5000 | **−18.7%** |
+| 2 | 0.5500 | −10.5% |
+| 4 | 0.7000 | +13.9% |
+| 3 | in flight (this draw costs ~2.5× per point) | — |
+
+Spread 0.20 mV = **33% of nominal**, against a ±0.05 per-chip measurement bound.
+The spread is four times the bound and is therefore real.
+
+### Why this matters
+
+Correction range = codes × step, so it scales directly with trim strength. This
+record states the 5.75× **range margin as 1.18×** at the worst resistor corner —
+already flagged as the tightest number in the recommendation.
+
+    trim at  80% of nominal  →  range margin 0.94×   ← below 1
+    trim at  90%             →  1.06×
+    trim at 100%             →  1.18×
+    trim at 114%             →  1.35×
+
+**Chip 1 sits at 81%.** On this arithmetic such a chip has less correction range
+than its offset distribution requires, at the worst resistor corner.
+
+### What this is not
+
+* **Three chips.** No yield number, and nothing here says how often a weak chip occurs.
+* The 1.18× margin was computed at nominal trim strength **and** the worst resistor
+  corner; whether a weak-trim draw also lands at that corner is an unmeasured
+  correlation.
+* Offset σ and trim strength come from the same draw and **may correlate** — a chip
+  with weak trim might also have less offset to correct, which would soften this
+  substantially. Measurable from these same runs; **not done**, and not worth
+  computing from three points.
+* One corner, 27 °C, four draws.
+
+### Recommended follow-up, in order
+
+1. **More chips** — enough to state a distribution rather than a spread.
+2. **Test the offset/trim-strength correlation** within each chip; it is free from
+   the same runs and could remove the concern entirely.
+3. Only then revisit whether 5.75× needs more range headroom.
+
+**The 5.75× recommendation is unchanged by this.** Dead codes and monotonicity are
+measured directly and are untouched. What has changed is that the range margin now
+has a demonstrated mechanism for falling below 1 on a chip that exists, which
+makes the follow-up above required rather than optional.
