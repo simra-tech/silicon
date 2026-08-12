@@ -5427,3 +5427,49 @@ by only 0.025 mV (3.5%), which would make the curve asymmetric about its minimum
 
 **Still no mechanism offered.** Two were proposed and withdrawn against
 measurement earlier today.
+
+## The element-size curve across the whole code space — 2026-08-12 21:45
+
+The gap noted above (nothing measured beyond code 404, a third of the array) is
+closed. Codes 596 and 600 both have b1=b0=0, so their difference is element #150,
+the last unary element.
+
+| element | codes | value (mV) | provenance |
+|---|---|---|---|
+| #2 | 4 → 8 | 1.1750 … 1.2750 | pure unary difference |
+| #25 | 100 → 104 | 0.6750 … 0.7250 | pure unary difference |
+| #51 | 200 → 204 | 0.5250 … 0.5750 | pure unary difference |
+| #101 | 400 → 404 | 0.5500 … 0.6500 | pure unary difference |
+| #150 | 596 → 600 | 1.1250 … 1.3750 | pure unary difference, still narrowing |
+| mean #51…#100 | 300 → 400 | 0.6050 … 0.7070 | 100-code lever |
+
+Orderings, by interval comparison only:
+
+    #2 > #25 > #51        #25 > #101      mean(300–400) > #51
+    #150 > #101   gap 0.100        #150 > #51    gap 0.175
+    #150 vs #2    OVERLAP — no ordering
+    #51 vs #101   OVERLAP — no ordering
+
+**Shape: a bowl.** Element size is ~1.2 mV at the bottom of the code space, falls
+to ~0.55 mV with the minimum in **(code 100, code 204]**, stays low through code
+400, and climbs back to ~1.25 mV at the top. The two ends are comparable — #150
+and #2 overlap and no ordering between them is established.
+
+So the array's **integral nonlinearity is large and roughly symmetric in
+magnitude between its ends**, with element size varying by a factor of about
+2.3 between the middle and either extreme.
+
+**Consequences, unchanged from above but now supported across the full range:**
+
+* Any DNL figure must name which unary element its LSB came from. There is no
+  single well-defined LSB for this array.
+* The **5.75× recommendation and the dead-code result are unaffected** — measured
+  directly at every corner, never dependent on this analysis.
+
+**No mechanism is offered.** Two were proposed today and both withdrawn against
+measurement. A bowl-shaped curve invites a third confident story; what is being
+handed over is what the array does, measured, with intervals attached.
+
+**Still unmeasured:** everything with mismatch enabled (this method is blind to
+random device spread by construction); the minimum's position closer than ~104
+codes; any corner or temperature other than res_wcs/hbt_typ at 27 °C.
