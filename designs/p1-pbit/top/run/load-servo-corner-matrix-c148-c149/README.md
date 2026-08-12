@@ -3957,3 +3957,40 @@ uncertainty and going nowhere**, which is what a converged estimate looks like.
 (1) and (2) are the same knob: reduce segment current to ~4 uA. (3) is one number. (4) is the one that
 may require a design change rather than a parameter change, and it is the least characterised -- two
 chips, one transition each, and the second chip's sweep still running.
+
+## Chip 1 transfer sweep complete, and the decisive prediction for chip 3
+
+Chip 1 (`fb`), all 217 points, seven codes, 50 ns, 2.5 mV grid:
+
+    code   mod4   crossing            failures
+     300    0     +13.50 +/-1.50       (anchor)
+     309    1     -11.25 +/-1.25        1/31
+     310    2     -18.75 +/-3.75       17/31
+     311    3     unresolved           16/31
+     312    0      -8.75 +/-1.25        4/31
+     313    1     -16.25 +/-1.25        4/31
+     314    2     -21.25 +/-3.75       17/31
+     315    3     unresolved           17/29
+
+Chip 3 (`recur3`, independent draw, 53-point window) so far:
+
+     309          -18.75 +/-1.25        6/53
+     310          -31.25 +/-1.25       11/53      step -12.50 mV/code = 5x nominal
+     311          in progress
+
+### The test that decides whether the sawtooth is structural
+
+The defining feature of the sawtooth is not the large step at 309 -> 310 -- a merely steeper local slope
+would produce that too. It is the **recovery**: on chip 1 the crossing went -18.75 (310) then back up to
+-8.75 (312), a **+10 mV reversal**.
+
+    if the sawtooth is structural:  chip 3's code 312 is LESS negative than its code 310
+                                    i.e. above -31.25 mV, recovering by roughly +10 to +17 mV
+    if it is only a steeper slope:  chip 3's code 312 continues DOWN, near -40 mV or below
+
+Those predictions are ~20 mV apart against a +/-1.25 mV measurement, so unlike the code-314 test this
+one discriminates sharply. Chip 3's code 311 is sweeping now; 312 follows.
+
+**This is the last outstanding question of the session on this block.** Everything else -- step, range,
+centring -- is measured and consistent across 91 parts. Whether the trim array is non-monotonic, or
+merely non-uniform, turns on the sign of one number.
