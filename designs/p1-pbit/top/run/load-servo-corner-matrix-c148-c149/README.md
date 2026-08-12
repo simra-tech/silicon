@@ -4932,3 +4932,29 @@ requirement -- about 1.1x margin.** Thin, and derived rather than measured. Run 
 requirement at every corner tested, with the range margin falling from 1.5x at typical to roughly 1.1x
 at the worst resistor corner. That is the tightest number in the recommendation and the one a reviewer
 should look at first.
+
+## CAUTION on the "identical usable range" result above — it rests on coarse numbers
+
+The entry concluding that 2.5x and 5.75x deliver identical usable correction (125.1 vs 125.4 mV) used
+step values measured on the **48-code lever**, which carries +/-0.104 mV/code -- about +/-25 %. Two
+numbers each uncertain by a quarter were quoted as agreeing to 0.3 mV.
+
+The precise 200-code lever has since measured the 2.5x step at 27 C:
+
+    48-code   0.417  +/-0.104
+    200-code  0.2875 +/-0.025      -> 31 % lower, consistent at 1.2 sigma
+
+Recomputing with it: **2.5x gives 300 x 0.2875 = 86.3 mV, not 125.1.** The 5.75x figure (0.208) is
+still the coarse one and its precise measurement is running. The conclusion survives only if that
+number falls by a similar fraction.
+
+**Treat the identical-range result as unsupported until `pe-fwcs` lands.** The design decision it
+informed -- 5.75x over 2.5x -- does not depend on it: that choice rests on 5.75x having no dead codes
+at any corner while 2.5x has them at every corner, which is measured directly and unaffected.
+
+Also from the precise lever, the resistor-corner picture is not a monotonic spread:
+
+    res_bcs 0.4125    res_typ 0.2875    res_wcs 0.3000     (all +/-0.025)
+
+typ and wcs agree within error; bcs sits 3.4 sigma above both. "27 % spread across the corner" is
+better stated as "best-case resistors give 30 % more step than typical or worst-case".
