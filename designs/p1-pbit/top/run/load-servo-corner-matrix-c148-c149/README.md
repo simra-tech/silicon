@@ -3763,3 +3763,42 @@ first version of that claim resting on well-converged codes rather than on the f
 **Confirmation required before this is treated as a design fault**: `recur2` is running codes 309-312 on
 an independent mismatch draw. If the flat appears at the same codes on a second chip it is structural.
 If it moves, it belongs to this draw. Until then the finding is one chip, and one chip is one sample.
+
+## The non-linearity is a period-4 sawtooth — matching the segment structure, 2026-08-12 05:3x
+
+Fitting a local slope through the two end codes of the measured run (309 and 313, both the cleanest
+class of measurement) gives **-1.25 mV/code**, half the -2.75 mV/code measured over codes 300-309.
+Residuals against that local slope:
+
+    code   mod 4   measured    local fit   residual
+     309     1      -11.25      -11.25      +0.00
+     310     2      -18.75      -12.50      -6.25
+     311     3      (unresolved at 0.05 ns; bounded -30..-10 by the 0.01 ns point)
+     312     0       -8.75      -15.00      +6.25
+     313     1      -16.25      -16.25      +0.00
+
+**A sawtooth of amplitude ~6.25 mV with period 4**, returning to zero at both codes that are 1 mod 4.
+
+The array is 150 unary elements of 4 LSB each plus 2 binary elements which subdivide them
+(`C169-array23-strobe.spice:268`). **A period-4 error is exactly what mismatch between the binary
+sub-elements and the unary element they subdivide produces.** The period matches the structure without
+being fitted to it -- the model has two parameters (slope, amplitude) against four measurements.
+
+    amplitude 6.25 mV = 2.5 LSB of differential non-linearity
+
+### Falsifiable prediction, recorded before the data lands
+
+Code 314 is 2 mod 4, so the model puts its residual at -6.25 mV against a local fit of -17.50 mV:
+
+    predicted crossing, code 314:   -23.75 mV, uncertainty ~+/-2.5 mV
+
+Code 314 is sweeping now (6 of 31 points at time of writing). If it lands near -23.75 the sawtooth model
+survives and the mechanism is identified. If it lands near -17.50 the oscillation is not periodic and
+the model is wrong.
+
+### If it holds, the sizing verdict gets worse
+
+With a 2.5 LSB DNL the *effective* resolution is not the 2.50 mV step but the sawtooth amplitude --
+about 6.25 mV, or **0.79 sigma against sd 7.94 mV**, versus a requirement of 0.1 sigma. That is ~8x
+too coarse rather than ~3x. **Provisional**: one chip, four codes, one unresolved code in the middle,
+and the recurrence test on a second chip still running.
