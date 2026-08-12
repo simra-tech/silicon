@@ -5715,3 +5715,32 @@ Revised follow-up:
    offset (from 301) in the same process.
 2. Then the correlation, on enough chips to state one.
 3. Only then revisit whether 5.75× needs more range headroom.
+
+### All four chips — 2026-08-13 (supersedes the three-chip table above)
+
+| chip | mean element (mV) | vs nominal 0.6147 | range margin (from 1.18× nominal) |
+|---|---|---|---|
+| 1 | 0.5000 | −18.7% | **0.96×** — below 1 |
+| 2 | 0.5500 | −10.5% | 1.06× |
+| 4 | 0.7000 | +13.9% | 1.34× |
+| 3 | 0.8000 | +30.1% | 1.54× |
+
+**Spread 0.50 … 0.80 mV = 49% of nominal. Mean of the four = 0.6375, +3.7% vs
+nominal** — so the no-mismatch circuit sits close to the average chip, and the
+element-size curve measured tonight describes the typical part rather than a
+special case.
+
+**One of four has a range margin below 1** at the worst resistor corner. Four
+chips is not a yield number and must not be quoted as one. What it establishes is
+that the mechanism is real: a chip whose correction range falls short of its own
+offset distribution occurred in a sample of four.
+
+**Note on chip 3.** This draw cost ~2.5× more simulation time per point than the
+others and finished well after them. It is the **strongest** of the four. Had the
+runs been time-limited and the three finishers reported, the spread would have
+read 0.50–0.70 instead of 0.50–0.80 — understated by a third, with nothing in the
+result to hint at the omission. Anyone repeating this must not drop slow-
+converging draws.
+
+**Unchanged:** the 5.75× recommendation. Dead codes and monotonicity are measured
+directly and this does not touch them.
