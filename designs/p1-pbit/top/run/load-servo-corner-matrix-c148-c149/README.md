@@ -3708,3 +3708,25 @@ one awkward code. Four points, ~20 minutes, and it gates everything after it.
 
 If it passes: re-run codes 310 and 311 at 0.01 ns over -40..0 mV. Five times the cost per point, so
 narrow the window rather than coarsen the resolution.
+
+### Gate passed: the two timesteps agree, 2026-08-12 05:0x
+
+Four points spanning code 309's crossing (-11.25 mV), each run at both timesteps on the same chip:
+
+    -20.0 mV   0.01 ns: HIGH   0.05 ns: HIGH   match
+    -15.0 mV   0.01 ns: HIGH   0.05 ns: HIGH   match
+    -10.0 mV   0.01 ns: LOW    0.05 ns: LOW    match
+     -5.0 mV   0.01 ns: LOW    0.05 ns: LOW    match
+
+The two points that straddle the crossing (-15 and -10) are the demanding ones and they agree, so the
+crossing is between -15 and -10 mV by either method -- consistent with the -11.25 +/-1.25 measured at
+the standard step.
+
+**The timesteps agree on points both can resolve, so 0.01 ns and 0.05 ns data may be combined**, and
+re-measuring codes 310 and 311 at the finer step is legitimate. That run is under way.
+
+Limits of the test, stated because it gates hours of work: four points, one code, one chip. It
+establishes agreement where both timesteps converge; it does not establish that a finer step never
+changes an answer, and it says nothing about points only the fine step can resolve -- which are, by
+construction, the ones we are about to rely on. **The comparison it licenses is between measured
+crossings, not between a measured crossing and an unresolvable one.**
