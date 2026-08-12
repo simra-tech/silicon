@@ -4282,3 +4282,38 @@ range directly.
 **Note this was found by accident.** The sweep was aimed at the segment-phase question and its window
 was wrong; chasing the wrong window turned up a failure mode that matters more than the question it was
 built to answer.
+
+## The saturation limit measured: only ~1/4 of the nominal range is usable
+
+Two-point test (inputs -800 and +800 mV, 50 ns), one chip:
+
+    code   from centre   nominal trim   verdict
+     301      +0 codes        +0 mV     responds
+     310      +9             +22        responds
+     320     +19             +47        responds
+     330     +29             +72        responds
+     340     +39             +97        responds
+     350     +49            +122        responds
+     360     +59            +147        responds
+     380     +79            +197        PINNED
+     400     +99            +247        PINNED
+     420    +119            +296        PINNED
+
+**The comparator stops responding between +59 and +79 codes from centre -- between +147 and +197 mV of
+applied trim.** Beyond that the array overwhelms it and no input produces a decision.
+
+    nominal full-scale        +/-753 mV  =  90 sigma
+    usable one-sided range    +147 .. +197 mV  =  18 .. 24 sigma
+    requirement               +/-5 sigma
+
+So the picture is sharper and worse than "18x oversized":
+
+  - the **usable** range is ~20 sigma, still 4x the requirement -- the design meets its range spec
+  - roughly **three quarters of the code space does nothing useful**, and is not inert: entering it
+    produces a part that never decides
+  - the earlier figure of 90 sigma describes a range the circuit cannot actually deliver
+
+A refinement across codes 362-377 is running to narrow the boundary to +/-3 codes.
+
+Caveat: one chip. The boundary depends on how much array current a given part's comparator can absorb,
+so it will move with mismatch. The mechanism is deterministic; the exact code is not.
