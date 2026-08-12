@@ -4758,3 +4758,30 @@ Outstanding before 2.5x can be recommended: saturation must be clear across the 
 scaling. It is clear at 5.75x (measured, both sides) and starts at +67 codes at 1.0x, so 2.5x is
 between a known-good and a known-bad point. **Running now** (`pe-satmid`); until it returns, 2.5x is
 the better-balanced candidate rather than the recommendation.
+
+## The interpolation would have been wrong: 2.5x does saturate, at the extreme code
+
+    2.5x reduction (l=210u), corrected weighting -- saturation, 4 of 6 codes returned:
+      code   1  (-300 from centre)   PINNED
+      code 100  (-201)               responds
+      code 200  (-101)               responds
+      code 400  ( +99)               responds
+      codes 500, 600 still running
+
+**Code 1 is pinned at 2.5x where every code responds at 5.75x.** The saturation boundary on the low
+side lies between -300 and -201 codes. So a property that holds at one scaling and fails at another
+does not interpolate, exactly as flagged before the run -- and 12 simulations, 15 minutes, were the
+difference between recommending a setting and recommending one with a dead region at its edge.
+
+**It does not overturn the choice.** Usable range measured so far:
+
+    2.5x    at least -201..+99 codes = -84..+41 mV = at least -10.1 .. +5.0 sigma
+    5.75x   all codes, +/-63 mV = +/-7.5 sigma
+
+2.5x still delivers **more usable range than 5.75x delivers in total** (>=10 sigma against 7.5), while
+keeping 2x margin on step. The comparison must be made on *usable* range, not nominal -- which is the
+distinction that made the original array look acceptable when three quarters of its codes were dead.
+
+Pending the last two codes, the position is: **2.5x remains the better candidate, with a caveat that
+its extreme codes are unusable and the calibration must be bounded away from them.** That caveat is
+cheap to honour -- the trim search needs a code limit regardless, since it needs one at any scaling.
