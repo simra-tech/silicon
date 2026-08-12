@@ -3641,3 +3641,38 @@ the solver is the open question, and it is exactly the question the two commissi
 Until those return, the honest statement is that **codes 310 and 311 are not characterised**, and any
 transfer curve drawn through this region is drawn through a hole. The measured 2.50 mV/LSB (2026-08-12
 00:5x) came from codes 300-310 and remains the only step figure with a clean measurement behind it.
+
+## n = 63 — the mean is systematic, not noise: the array is centred ~1.3 codes low
+
+    cam6 13  cam5r 8  off6 5  off7 7  off9 6  off10 9  off11 7  off12 8      n = 63
+
+    mean +3.29 mV     sd 7.94 mV     -17.5 .. +27.5 mV
+    SE(mean) 1.00 mV  -> the mean is 3.3 standard errors from zero
+    sd uncertainty ~9 %      rule of three: 4.8 %
+
+At n = 18 this was +0.4 mV and dismissible; at n = 48, +3.0 mV and marginal; at n = 63 it is **+3.29
++/- 1.00 mV**, and the batch-to-batch disagreement that made it doubtful has washed out as the batches
+grew. **It is a systematic offset, not sampling noise.**
+
+Checked for the obvious artifacts before believing it: the sweep grid is symmetric about zero at a
+uniform 5 mV, so the bracket-midpoint estimator carries no rounding bias; `EIN_N` is the exact
+complement `2.49 - v(IN_P)`; `VTRIM_P` and `VTRIM_N` are equal. The deck is symmetric, so the asymmetry
+is in the circuit.
+
+### This is a different kind of defect from the other two, and a much cheaper one
+
+    random part-to-part spread   sd 7.94 mV   cannot be trimmed away; sets the range requirement
+    systematic offset            +3.29 mV     the same on every part; trimmed away by one choice
+
+A systematic offset costs nothing to remove: pick a different centre code. At the measured 2.50 mV/LSB,
++3.29 mV is **1.3 LSB**, so the array's nominal centre should sit at **code 302 rather than 301**.
+Left uncorrected it consumes 3.3 mV of one-sided correction range on every part and biases the whole
+population toward one rail.
+
+Three findings now stand against this block, in increasing order of how easily they are fixed:
+
+    1. step 2.50 mV = 0.31 sigma, ~3x too coarse       -> reduce segment current to ~4 uA
+    2. range +/-753 mV = 95 sigma, ~19x oversized      -> same change fixes it
+    3. centre offset +3.29 mV = 1.3 LSB                -> shift the nominal code by one
+
+The first two are the same knob. The third is free.
