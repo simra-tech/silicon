@@ -3676,3 +3676,35 @@ Three findings now stand against this block, in increasing order of how easily t
     3. centre offset +3.29 mV = 1.3 LSB                -> shift the nominal code by one
 
 The first two are the same knob. The third is free.
+
+## Correction: code 311 is measurable — the failure was numerical, 2026-08-12 04:5x
+
+**The "no determinable decision point" entry above is withdrawn.** The same point, same code, same input,
+at two timesteps:
+
+    code 311, -10 mV, tran 0.05n 50n   ABORTED at 39.49 ns
+    code 311, -10 mV, tran 0.01n 50n   completed 50.00 ns, 5725 rows, decision LOW
+
+The failure yields to a finer timestep, so it is a solver artifact, not a circuit without an operating
+point. The correct and much weaker claim: **at the 0.05 ns timestep, codes 310 and 311 cannot be
+characterised.** That is a statement about the method, not the design.
+
+It also locates the crossing. Code 311's converged points were HIGH up to -30 mV and this new point at
+-10 mV is LOW, so its decision point lies **between -30 and -10 mV** -- close to where the trend from
+the codes below predicts. Nothing exotic is happening; it simply could not be seen.
+
+### Gate before re-measuring: does the timestep move the answer?
+
+Established tonight (2026-08-12 00:2x): the *sample time* changes the result, not merely the
+convergence -- reading at 20 ns instead of 50 ns moved sd from 9.00 to 15.40 mV. A finer *timestep*
+could do the same. So before mixing 0.01 ns and 0.05 ns data in one transfer curve:
+
+    re-run 3-4 points either side of code 309's crossing (-11.25 mV, cleanly measured at 0.05 ns)
+    at 0.01 ns and compare the decisions
+
+If they agree, the timesteps agree on points both can resolve and the data may be combined. If they
+disagree, **every crossing measured tonight is timestep-dependent** and the problem is far larger than
+one awkward code. Four points, ~20 minutes, and it gates everything after it.
+
+If it passes: re-run codes 310 and 311 at 0.01 ns over -40..0 mV. Five times the cost per point, so
+narrow the window rather than coarsen the resolution.
