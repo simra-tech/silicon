@@ -3895,3 +3895,37 @@ the same anti-correlation between prediction and precision noted above -- now vi
 brackets rather than inferred.
 
 Code 315 (3 mod 4, predicted hard) is sweeping and completes this run.
+
+---
+
+## Recurrence test, first result: the transfer anomaly reproduces, the convergence anomaly does not
+
+Chip 3 (`recur3`, independent mismatch draw) against chip 1 (`fb`), compared inside the **matched**
+input window -70..+5 mV and at **matched progress** (the same first N points), since chip 3's sweep is
+wider and still running:
+
+    step across the 309 -> 310 transition       nominal 2.50 mV/code
+        chip 1:  -11.25 -> -18.75   =  -7.50 mV      3.0x nominal
+        chip 3:  -18.75 -> -31.25   = -12.50 mV      5.0x nominal
+
+    convergence failures, code 310, first 27 in-window points
+        chip 1:  13/27  (48 %)
+        chip 3:   5/27  (19 %)     -- and chip 3's *easy* code 309 sits at 4/31 (13 %)
+
+**The oversized step at 309 -> 310 reproduces on an independent draw; the convergence difficulty does
+not.** On chip 3, code 310 is barely harder than code 309; on chip 1 it was dramatically harder
+(13/27 against 1/31). Fisher exact on 13/27 vs 5/27 gives p ~ 0.03.
+
+### What this does to the findings above
+
+  - **The transfer non-linearity gains its first independent support.** Two chips, two draws, both
+    showing a step 3-5x nominal at the same code transition. This is the finding that matters for the
+    design and it is now more than one chip.
+  - **The period-4 structure in the *failure rates* (05:3x entries) is weakened.** It was recorded as
+    corroboration "from a completely different observable"; that observable now appears to be
+    chip-specific. Convergence difficulty is a property of a particular mismatch draw meeting a
+    particular solver, not of the array.
+  - The two were treated as mutually supporting. They are not: one reproduces and one does not.
+
+Chip 3 has only codes 309 and 310 so far; 311 and 312 follow. The sawtooth model predicts chip 3's
+crossings recover upward at 312, as chip 1's did. That is the next test and it is already running.
