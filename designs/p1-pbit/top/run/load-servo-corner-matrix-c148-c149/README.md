@@ -3,6 +3,18 @@
 Public-experiment record, 2026-08-06 evening — 2026-08-07 morning. In simulation only
 (IHP SG13G2 corner libs, ngspice). Nothing here is a signoff or a tape-out claim.
 
+> **This file contains two investigations.** Lines 1-4077 are the 2026-08-06/07 load-servo corner
+> matrix (C148/C149), the study this directory is named for. From line ~4078 onward it records a
+> separate 2026-08-11/12 investigation into the **p-bit comparator's offset distribution and trim
+> array**, appended here rather than in a new directory. If you are looking for the second study,
+> start at **"STATE OF THIS INVESTIGATION"** near the end, which lists what is established, what is
+> recommended, what is pending, and what was withdrawn. The entries before it are chronological and
+> include claims later retracted; the retractions sit beneath the claims rather than replacing them,
+> so the reasoning stays auditable.
+>
+> Both studies are simulation only (IHP SG13G2, ngspice). Neither is a signoff or a tape-out claim.
+
+
 ## The circuit change (C148)
 
 Common-mode feedback moved to the **loads**: the diode PMOS gates (XM3/XM4, 16.0u) are servoed so
