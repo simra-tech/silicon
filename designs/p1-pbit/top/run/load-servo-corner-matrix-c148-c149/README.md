@@ -5070,3 +5070,81 @@ corner is **0.2375 mV/code, bounded ±0.0125**, from two complete sweeps.
 
 Every number in the three-scaling table above now rests on complete sweeps with
 adjacent brackets. Nothing in the comparison changes.
+
+---
+
+# DNL AT THE RECOMMENDED SCALING — MEASURED, 2026-08-12 evening
+
+This section replaces the record's previous treatment of differential linearity
+at 5.75x, which was carried as **inference** from measurements on a differently
+sized array. It is now measured, and the measurement is less comfortable than the
+inference was.
+
+## Method
+
+5.75x deck (`C169-final.spice`), res_wcs + hbt_typ, 27 °C, **mismatch disabled**
+so that every ngspice process is the same nominal chip (verified: two identical
+no-mismatch decks give byte-identical output at 5/5 points, while the
+with-mismatch control differs at every point). This makes the measurement
+parallelisable across cores and removes cross-chip window-placement error — at
+the cost of saying nothing about random device spread.
+
+Three-stage locate: 2.5 mV → 0.25 mV → 0.025 mV. A crossing counts only when its
+two bracketing points are adjacent on the grid; a one-point gap is reported as a
+midpoint with the bound widened to half the gap, stated as such.
+
+## Result 1 — the handover is even with its neighbours
+
+    code 2  +54.9875 mV        step 2 -> 3   0.3000 mV
+    code 3  +54.6875           step 3 -> 4   0.3125      <- binary/unary handover
+    code 4  +54.3750 (±0.025)  step 4 -> 5   0.3125
+    code 5  +54.0625           step 5 -> 6   0.3250
+    code 6  +53.7375
+
+Against the local mean (0.3125 mV) the four steps sit at −0.040, 0.000, 0.000,
++0.040 LSB. **The handover step is exactly on the mean.** Before the weighting
+fix that same boundary carried +3 and +14 LSB on two chips. That is a large,
+real improvement.
+
+## Result 2 — but the whole region is displaced
+
+The array step, measured on **this same chip** by lever over codes 200–400:
+
+    code 200 crossing in (+15.0, +20.0) mV
+    code 400 crossing in (−17.5, −15.0) mV
+    array step = 0.1500 … 0.1875 mV/code
+
+The with-mismatch lever value (0.1625 mV/code) falls inside that range, so
+disabling mismatch did not move the array step. The handover region's 0.3125
+mV/code falls well outside it.
+
+**DNL in codes 2–6: +0.60 … +1.17 LSB of the array unit.**
+
+Codes 0–3 are the binary elements alone, so this points at **b0 carrying roughly
+1.9 LSB instead of 1** — the original defect's exact shape, reduced from 15.6x to
+about 1.9x but **not eliminated**. The weighting fix was a large improvement and
+an incomplete one.
+
+## What this changes, and what it does not
+
+**Unchanged:** the dead-code result and therefore the 5.75x recommendation. Dead
+codes are measured directly at every corner tested, and 5.75x remains the only
+scaling without them. A DNL of ~+0.85 LSB is below the +1 LSB that permits
+non-monotonicity, consistent with that. Note the bound spans 1.0, so this
+measurement does not *independently* prove monotonicity — the direct dead-code
+sweep does.
+
+**Changed:** the record may no longer say differential linearity is clean at
+5.75x. It is clean *locally* and displaced *globally*, and a reader who is told
+only the first will be misled.
+
+**Recommended follow-up, in priority order:**
+1. Re-examine b0's sizing at 5.75x specifically. The residual ~1.9x is systematic
+   and should be correctable by the same method that fixed the 15.6x.
+2. Confirm the displacement is confined to the binary codes by measuring a
+   mid-array handover (codes 298–302) — in progress by the Design Engineer.
+3. Repeat with mismatch enabled on several draws, to add the random component
+   this measurement is blind to.
+
+**Limitations:** systematic only (no mismatch); one handover of 151; one corner;
+27 °C only.
