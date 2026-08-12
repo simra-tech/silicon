@@ -4908,3 +4908,27 @@ The earlier 2.5x recommendation was optimised on *nominal* range at *one* corner
 wasteful at 7.5 sigma against 2.5x's 15.1 sigma. That comparison was between a nominal figure and a
 usable one. **At every corner, on usable range, they are the same design point -- and only one of them
 has no dead codes.**
+
+## Combined worst corner: the 5.75x array has no dead codes at all
+
+    5.75x array, res_wcs + hbt_wcs together:
+      code   1:ok   100:ok   200:ok   400:ok   500:ok   600:ok
+
+**Every code responds at the worst combination of resistor and bipolar corners tested.** The
+single-axis result (hbt_wcs alone) is unchanged when the resistor corner is added, so the two do not
+compound into a saturation problem.
+
+That matters because single-axis corner sweeps establish *sensitivity*, not worst case -- a design can
+pass every axis individually and fail where two meet. Here it does not, on the axes tested.
+
+Outstanding for the worst-case range figure: the **step** on the 5.75x array at res_wcs, which has not
+been measured. On the 2.5x array the resistor corner moved the step from 0.4125 (bcs) to 0.3000 (wcs),
+a 27 % reduction at 3.2 sigma. If the same fraction applies, the 5.75x step at wcs is ~0.15 mV/code
+and the full-scale range is 603 x 0.15 = 90 mV = +/-45 mV = **+/-5.4 sigma against a +/-5 sigma
+requirement -- about 1.1x margin.** Thin, and derived rather than measured. Run launched
+(`pe-fwcs`, 200-code lever, 5.75x array, res_wcs).
+
+**Provisional worst-case position, to be confirmed by that run:** the recommendation passes every
+requirement at every corner tested, with the range margin falling from 1.5x at typical to roughly 1.1x
+at the worst resistor corner. That is the tightest number in the recommendation and the one a reviewer
+should look at first.
