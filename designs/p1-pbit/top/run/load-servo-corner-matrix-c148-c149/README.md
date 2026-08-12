@@ -3839,3 +3839,35 @@ convergence data.
 
 Caveats: one chip, five complete codes, one partial. The recurrence test on an independent draw
 (`recur3`, 53-point window) is running and remains the test that matters.
+
+## Code 314 result: the failure prediction confirmed, the crossing prediction not discriminating
+
+    predicted (period-4 sawtooth):   -23.75 mV
+    predicted (null, no oscillation): -17.50 mV
+    measured:                         -21.25 mV +/-3.75   (26/31 points, 12 failures)
+
+    distance to sawtooth prediction:  2.50 mV = 0.67 sigma
+    distance to null prediction:      3.75 mV = 1.00 sigma
+
+**Consistent with the sawtooth; not inconsistent with the null.** The two hypotheses are separated by
+6.25 mV and this measurement carries +/-3.75, so it cannot discriminate between them. Recorded as weak
+support, not as confirmation.
+
+The other half of the prediction did discriminate. Code 314 is 2 mod 4, predicted to be in the *hard*
+class:
+
+    predicted failure rate: ~50 %      measured: 12/26 = 46 %      CONFIRMED
+
+### Why the crossing prediction could not be sharp
+
+The model's largest predicted deviations are at codes 2 and 3 mod 4 -- and those are exactly the codes
+whose convergence failures are worst, which widens their brackets. **The codes where the model makes
+its sharpest predictions are the codes hardest to measure**, and the same physical mechanism causes
+both. Any test of this model on the crossing alone will be blunted in precisely the places it matters.
+
+That is an argument for testing it on the failure rates, where the signal is a 4x difference in a
+quantity with no bracket to widen, and for the 0.01 ns re-measurement of the hard codes, which is what
+would sharpen the crossings.
+
+Code 314 is still sweeping (26 of 31); the bracket may tighten. Code 315 (3 mod 4) is the last of this
+run and is predicted hard.
