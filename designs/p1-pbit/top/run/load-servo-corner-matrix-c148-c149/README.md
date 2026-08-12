@@ -5187,3 +5187,66 @@ than removing it.
 Code 0 is still in flight and will give a third independent reading of b0 via
 step 0→1. It can refine the residual's magnitude; it cannot reverse a 7.6x
 discrimination.
+
+---
+
+# ⚠ RETRACTION — the two sections above are withdrawn, 2026-08-12 20:45
+
+**"DNL AT THE RECOMMENDED SCALING" and "the residual is localised" both rest on a
+unit error and are withdrawn.** Read this section before either of them.
+
+## What was claimed
+
+That the steps around the binary/unary handover run ~1.85x the array LSB; that
+b0 carries ~1.85 LSB instead of 1; that the binary pair is oversized as a unit
+and needs a further proportional rescale by ~1/1.85.
+
+## Why it is wrong
+
+The encoding, read from the netlist rather than the header comment:
+
+    b0 = code mod 2      b1 = floor(code/2) mod 2      unary = floor(code/4)
+
+So codes 4 and 8 both have b=0, and `code4 − code8` is exactly one unary element.
+Measured against the binaries and the handover step:
+
+    unary element #1  = step(3→4) + b1 + b0 = 0.3125 + 0.6375 + 0.3125 = 1.2625 mV
+    unary element #2  = code4 − code8 > 1.175 mV
+    lever, codes 200–400, implies one unary = 0.600 … 0.750 mV
+
+A unary element at the bottom of the array moves the comparator ~1.8x as far as
+the average element does mid-array. The elements are nominally identical, so this
+is **not a sizing error — the array saturates**: correction per element falls as
+more elements switch in.
+
+Against the *local* unary element rather than the array-average LSB:
+
+    b0 / (unary₁/4) = 0.99          b1 / (unary₁/4) = 2.02
+
+**Both binaries are correct to within resolution. There is no residual binary
+weighting error in evidence.**
+
+## What stands
+
+* The dead-code result and the **5.75x recommendation are untouched** — measured
+  directly at every corner, and never dependent on this analysis.
+* The crossings themselves stand: codes 0–6 at +55.6375, +55.3125, +54.9875,
+  +54.6875, +54.3750(±0.025), +54.0625, +53.7375.
+* The handover step is even with its neighbours — the original reading, which the
+  withdrawn sections talked me out of.
+
+## What this implies instead
+
+The array has **large integral nonlinearity**: step size falls by roughly 1.8x
+between the bottom of the code space and mid-array. That is a property worth
+stating in its own right, and it is consistent with the comparator-limit picture
+that the earlier ratio test lacked the power to confirm.
+
+**Confirming measurement in flight:** codes 200 and 204 — one unary element
+mid-array, directly comparable to codes 4→8 at the bottom. If it lands near
+0.68 mV against 1.26 mV, saturation is confirmed and this retraction is final.
+This section will be updated with that result either way.
+
+**Any DNL number for this array must state which unary element its LSB came
+from.** A single "LSB" for the whole array is not well defined when the array
+saturates, and using one is exactly the error made above.
