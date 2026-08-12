@@ -4870,3 +4870,41 @@ belonged to one mismatch draw rather than to the codes (H-1062, H-1084, H-1090).
                            LSB is a ratio that scaling preserves.
 
 That last line is an inference, not a measurement, and is marked as such.
+
+---
+
+# RECOMMENDATION REVISED: 5.75x, not 2.5x — the usable range belongs to the comparator
+
+Saturation across bipolar corners, both candidate scalings:
+
+    2.5x array (l=210u)
+      hbt_typ    usable codes 100..500      hbt_wcs   usable codes 160..460 (130 and 490 pinned)
+    5.75x array (l=483u)
+      hbt_typ    usable ALL codes 1..600    hbt_wcs   usable ALL codes 1..600
+
+**Usable correction at the worst bipolar corner:**
+
+    2.5x   300 codes x 0.417 mV = 125.1 mV span = +/-62.6 mV = +/-7.5 sigma
+    5.75x  603 codes x 0.208 mV = 125.4 mV span = +/-62.7 mV = +/-7.5 sigma
+    difference: 0.3 mV -- identical to within the measurement
+
+**The usable correction in millivolts is the same for both, because it is set by how much array
+current the comparator can absorb -- a property of the comparator, not of the array sizing.** Changing
+the segment current changes *how many codes* are usable, not *how much correction* is available.
+
+That resolves the trade cleanly, and against the 2.5x choice made earlier:
+
+    both deliver ~7.5 sigma of usable range at the worst corner, against a 5 sigma requirement
+    both meet the step requirement (0.050 sigma at 2.5x, 0.025 at 5.75x; limit 0.100)
+    2.5x  has dead codes at EVERY corner, and the dead region grows at hbt_wcs
+    5.75x has NO dead codes at any corner measured
+
+**Recommend 5.75x (degeneration 84u -> 483u per unit device, binaries matched to unary).** It removes
+the pinned-code failure mode entirely rather than requiring the trim search to be bounded away from it
+-- and the bound would have to be corner-dependent, since the dead region moves from codes 100/500 at
+typical to 130/490 at worst case.
+
+The earlier 2.5x recommendation was optimised on *nominal* range at *one* corner, where 5.75x looked
+wasteful at 7.5 sigma against 2.5x's 15.1 sigma. That comparison was between a nominal figure and a
+usable one. **At every corner, on usable range, they are the same design point -- and only one of them
+has no dead codes.**
