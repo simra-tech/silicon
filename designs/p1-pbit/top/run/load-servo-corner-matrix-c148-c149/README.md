@@ -3553,3 +3553,31 @@ Clean sample, with the 6 resolved parts of the `off9` batch added:
 
 Conclusion and recommendation unchanged (~4 uA/segment). The correction removes two values near the
 centre of the distribution, so sd rises slightly (7.21 -> 7.43 mV) rather than falling.
+
+## n = 48, 2026-08-12 03:3x — a new tail point, and a possible centre offset
+
+    cam6 13   cam5r 8   off6 5   off7 7   off9 6   off10 9      n = 48
+    mean +3.02 mV     sd 8.14 mV     -17.5 .. +27.5 mV
+    sd uncertainty ~10 %      rule of three: 6.2 %
+
+**The maximum moved from +12.5 to +27.5 mV.** That is the first genuinely new tail point in several hours
+and it is exactly what more parts buys: not precision on the centre, which was already adequate, but
+observations where the distribution is thinnest and where the range requirement is actually set.
+sd rose 7.43 -> 8.14 mV as a result, which is the honest direction for a tail discovery.
+
+    requirement:  range >= +/-40.7 mV     step <= 0.81 mV
+    measured step 2.50 mV = 0.31 sigma    -- unchanged, still ~3x too coarse
+
+### The mean may not be zero, and that would be a centring error
+
+    mean +3.02 mV     standard error 1.17 mV     -> 2.6 SE from zero
+
+Marginal on its own, and the batches disagree: `cam6` sits near -0.1 mV while the `off*` batches sit
+near +4.7 to +5.0 mV. Those are 1.5-2 standard errors apart, so the split may be nothing. But if a
+genuine +3 mV mean survives more parts, it means **code 301 is not the centre of the correction range** --
+at 2.50 mV/code the array is centred about 1.2 codes low, and the fix is to centre at code 302.
+
+This costs nothing to watch and would cost a silicon revision to discover late, so it is recorded now
+rather than after it is certain. **Not a conclusion.** The batch disagreement needs explaining before the
+mean is worth acting on, and the two candidate explanations -- sampling noise, or something differing
+between the campaign deck and the offset decks -- have not been separated.
