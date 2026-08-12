@@ -4576,3 +4576,54 @@ The mechanism account is complete. The chain, each link measured rather than ass
 
 **The falsifier did not fire.** It was stated before the run: if the reversal survived a corrected
 weighting, something else contributed and the account had a gap. It did not survive.
+
+---
+
+# STATE — 2026-08-12 12:1x (supersedes the 10:0x summary)
+
+## The block, as characterised
+
+    part-to-part spread     sd 8.32 mV, mean +4.37 mV (systematic), 91 parts
+    trim step               2.49 mV/LSB, three independent routes agreeing to 0.2-0.3 %
+    nominal range           +/-753 mV = 90 sigma
+    usable range at 23 uA   +/-~170 mV = 20 sigma -- beyond +67..+70 codes the array
+                            saturates the comparator and it stops deciding
+    integral linearity      0.3 % over 14 codes
+    differential linearity  DNL -5 to +14 LSB, NON-MONOTONIC, two independent draws
+
+## Cause, measured end to end
+
+    binary sub-elements degenerated 5.4u where the unary uses 84u -> 15.6x over-weight
+      -> within-element steps 2.7-5.5x oversized (two chips)
+      -> boundary step = one unary minus three binary steps
+         (predicted +10.04 / +31.29, measured +10.00 / +32.50, no fitted parameters)
+      -> DNL > 1 LSB -> non-monotonic
+
+## The two changes, both now measured rather than inferred
+
+    segment current 23 -> ~4 uA
+      whole code space usable, both sides (codes 1..600 all respond)
+      converts a range 18x oversized and 3/4 unusable into ~3x oversized and fully usable
+      does NOT fix monotonicity (DNL in LSB is a ratio; scaling preserves it)
+
+    binary degeneration 5.4u -> 84u per unit device
+      within-element DNL +0.40, +0.60, -0.00, +1.00 LSB (two chips) -- mean +0.50, SE ~0.5
+      boundary DNL +0.40 LSB, NO REVERSAL (chip A; chip B sweeping)
+      array monotonic across the boundary that previously reversed
+      does NOT fix step size, range, or saturation
+
+    nominal centre code 301 -> ~303        removes the +4.37 mV systematic offset
+
+**Together these close both ways a trim search can fail** -- overshoot into a dead region, and
+convergence on a wrong code through non-monotonicity.
+
+## Strength of each claim
+
+    measured with confidence   the reversal is gone (6.5 and 34 mV from the original values,
+                               against +/-2.5 mV uncertainty)
+    grid-limited               the residual DNL: consistent with zero, all inside +/-1 LSB,
+                               but individual steps quantise against a 2.5 mV grid on a 2.49 mV step
+    one chip only              the corrected boundary (chip B in progress)
+    unmeasured                 corners, temperature, silicon; the weighting error's phase across
+                               all 150 segments; DNL under a pure current reduction (arithmetic
+                               says unchanged, and it is not worth machine time to confirm)
