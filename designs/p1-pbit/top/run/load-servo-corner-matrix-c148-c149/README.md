@@ -3802,3 +3802,40 @@ With a 2.5 LSB DNL the *effective* resolution is not the 2.50 mV step but the sa
 about 6.25 mV, or **0.79 sigma against sd 7.94 mV**, versus a requirement of 0.1 sigma. That is ~8x
 too coarse rather than ~3x. **Provisional**: one chip, four codes, one unresolved code in the middle,
 and the recurrence test on a second chip still running.
+
+## Corroboration: the convergence failures have period 4 too, 2026-08-12 05:3x
+
+Failure counts per code, complete sweeps only, grouped by code modulo 4:
+
+    mod 4 = 0    code 312 ->  4/31 failed  (13 %)
+    mod 4 = 1    code 309 ->  1/31 ( 3 %),  code 313 -> 4/31 (13 %)
+    mod 4 = 2    code 310 -> 17/31 failed  (55 %)      [code 314, partial: 8/22 = 36 %]
+    mod 4 = 3    code 311 -> 16/31 failed  (52 %)
+
+**Two of the four residue classes are hard and two are easy, splitting 52-55 % against 3-13 %.**
+
+This is corroboration of the period-4 sawtooth (05:3x entry) from a **completely different observable**.
+The sawtooth came from crossing residuals -- four measurements against a two-parameter model, which is
+weak on its own. The failure rates are an independent quantity, computed from which runs converged
+rather than from where the decision points landed, and they show the same period on the same codes.
+
+### It revives the handover mechanism at a different phase
+
+H-1045 set the handover hypothesis aside on the grounds that element boundaries fall at multiples of 4
+and code 310 is not one. That reasoning assumed a phase that was never verified. The data says the
+**difficult codes are those 2 and 3 mod 4** -- so the region where elements overlap sits at that phase,
+not at 4k. The mechanism was right and my phase assumption was wrong, which is a different error from
+the mechanism being wrong.
+
+Physically coherent: codes where the binary sub-elements and the unary element are simultaneously
+partly on are both the hardest to converge (two devices contending) and the largest contributors to
+transfer error. Codes 310 and 311 are those; 309, 312 and 313 are not.
+
+### Prediction, filed before the data
+
+Code 315 is 3 mod 4, so it should be in the **hard** class: failure rate near 50 %, not near 10 %.
+It is the last code in this sweep. A low failure rate at 315 falsifies the period-4 reading of the
+convergence data.
+
+Caveats: one chip, five complete codes, one partial. The recurrence test on an independent draw
+(`recur3`, 53-point window) is running and remains the test that matters.
