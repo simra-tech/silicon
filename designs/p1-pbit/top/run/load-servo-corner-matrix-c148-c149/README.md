@@ -4627,3 +4627,46 @@ convergence on a wrong code through non-monotonicity.
     unmeasured                 corners, temperature, silicon; the weighting error's phase across
                                all 150 segments; DNL under a pure current reduction (arithmetic
                                says unchanged, and it is not worth machine time to confirm)
+
+---
+
+# CONFIRMED ON TWO DRAWS: the corrected weighting removes the reversal
+
+    boundary transition 311 -> 312            step          DNL
+      ORIGINAL   chip 1                     +5.00 mV/code   +3.01 LSB    reversal
+      ORIGINAL   chip 3                    +32.50 mV/code  +14.05 LSB    reversal
+      CORRECTED  chip A                     -1.50 mV/code   +0.40 LSB    no reversal
+      CORRECTED  chip B                     -3.00 mV/code   -0.20 LSB    no reversal
+
+Full corrected transfers, all four codes:
+
+    chip A   -8.50  -10.00  -11.00  -12.50     strictly decreasing
+    chip B  -11.00  -13.50  -13.50  -16.50     non-increasing (one flat, grid-limited)
+
+All six corrected DNL measurements: **+0.40, +0.60, +0.40, -0.00, +1.00, -0.20** -- mean +0.37,
+every one inside the +/-1 LSB band. On the original array **every** measurement on **every** draw sat
+outside it.
+
+**Both chips are monotonic across the element boundary that previously reversed.** The reversal was
++5.00 and +32.50 mV/code; it is now -1.50 and -3.00 -- not reduced, but replaced by a step running in
+the correct direction.
+
+## The result, stated at its actual strength
+
+    measured, two draws       the reversal is gone; the corrected array is monotonic over codes 309-312
+    measured, two draws       within-element and boundary DNL all inside +/-1 LSB, mean +0.37
+    grid-limited              individual DNL values carry +/-1 LSB (2.5 mV grid on a 2.49 mV step);
+                              the aggregate is the meaningful number, not any single step
+    four codes only           one element boundary on each of two chips; not the whole array
+    one corner, one temperature, simulated mismatch, and everything post-dates two repairs made at
+    the start of this session
+
+## Closing position on the block
+
+    defect                              fix                                 status
+    step 3x too coarse                  segment current 23 -> ~4 uA         measured
+    range 18x oversized, 3/4 unusable   same change                         measured (all codes usable)
+    non-monotonic, DNL > 1 LSB          binary degeneration 5.4u -> 84u     measured, two draws
+    centre offset 1.75 LSB              nominal code 301 -> ~303            measured (91 parts)
+
+Two of the four share one change; the other two need one number each. Nothing here is a signoff.
