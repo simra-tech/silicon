@@ -3517,3 +3517,39 @@ unlike the offset". That licensed a cross-process comparison. It is now measured
 
 So the step may legitimately be characterised on one part, and the offset may not -- which is what the
 whole campaign structure assumes.
+
+---
+
+## Correction, 2026-08-12 02:2x — two parts were spliced from two chips; n = 39 clean
+
+**Parts 20 and 26 are withdrawn from the sample.** They were "recovered" earlier by re-running only the
+missing points inside their brackets, in a *new ngspice process*. Mismatch is drawn per process, so
+those points came from a different chip and were spliced into another chip's sweep.
+
+Direct evidence:
+
+    part 20 retry points (+10,+15,+20,+25 mV): LOW, LOW, LOW, LOW -- no sign change of their own
+    part 26 retry points (  0, +5,+10,+15 mV): LOW, LOW, LOW, LOW -- no sign change of their own
+
+Each original sweep was HIGH below its bracket; the retry chip reads LOW throughout. Splicing the two
+manufactures an apparent crossing at the join. The reported +7.5 mV and -2.5 mV were artifacts of the
+seam, not measurements of anything.
+
+That the draw varies per process is directly demonstrated, not assumed: twelve clones of one deck,
+differing only in output filename, returned crossings of +12.5, -7.5, +7.5, +7.5, -2.5 and +12.5 mV.
+
+**The `cam5r` recovery is unaffected and remains valid** -- those decks re-ran the *full* 33-point sweep
+in one process each, so every one is a self-consistent chip. The distinction is exactly whether a
+process contains a complete measurement or a fragment of one.
+
+Clean sample, with the 6 resolved parts of the `off9` batch added:
+
+    cam6 13    cam5r 8    off6 5    off7 7    off9 6      n = 39
+    mean +2.50 mV     sd 7.43 mV     -17.5 .. +12.5 mV
+    sd uncertainty ~11 %       rule of three: 7.7 %
+
+    requirement:  range >= +/-37.2 mV      step <= 0.74 mV
+    measured step 2.50 mV = 0.34 sigma     -- still fails by ~3.4x
+
+Conclusion and recommendation unchanged (~4 uA/segment). The correction removes two values near the
+centre of the distribution, so sd rises slightly (7.21 -> 7.43 mV) rather than falling.
