@@ -4985,3 +4985,77 @@ any corner while 2.5x has them at every corner, which is measured directly.
 other requirement has multiple-times margin. A reviewer should look there first, and a design change
 that trades step margin for range margin -- a milder current reduction -- is worth considering, subject
 to the dead-code constraint that forced 5.75x in the first place.
+
+---
+
+# CORRECTIONS AND CLOSING LIMITATIONS — 2026-08-12 evening
+
+Three changes to what is written above. None alters the sizing recommendation;
+two alter numbers stated in support of it, and one removes a measurement I had
+been presenting as pending rather than failed.
+
+## 1. Uncertainty on the step measurements was overstated 2x, and misdescribed
+
+Each crossing lies between two sweep points 2.5 mV apart, so a midpoint estimate
+is wrong by at most ±1.25 mV. Two crossings over a 200-code lever gives a bound
+of 2.5/200 = **±0.0125 mV/code**. Earlier entries carry ±0.025, twice that, from
+no derivation I can reconstruct.
+
+More seriously, that figure is a **hard bound set by the sweep grid, not a
+standard deviation** — the value lies inside it, with no tail. Statements
+elsewhere in this file that quote distances in "sigma" (models "0.17 sigma" and
+"0.09 sigma" away, a gap of "0.26 sigma") are **withdrawn**: they apply Gaussian
+language to a quantity that has no distribution.
+
+Corrected, at the worst resistor corner:
+
+| scaling | step (mV/code) | bound | usable codes | usable range | dead codes |
+|---------|----------------|-------|--------------|--------------|------------|
+| 2.5x    | 0.3000 | ±0.0125 | 300 | 90.0 mV | yes |
+| 4x      | 0.2375 | ±0.0125 | 400 | 95.0 mV | yes |
+| 5.75x   | 0.1625 | ±0.0125 | 603 | 98.0 mV | **none** |
+
+The ratio step(4x)/step(5.75x) = 1.462, worst-case interval **[1.286, 1.667]**.
+The comparator-limit model predicts 1.508 and pure scaling predicts 1.438; both
+lie inside, so **neither is excluded** — as was recorded before the run. Ratios
+near 1.0 or 2.5 do fall outside and are excluded.
+
+## 2. The +60 °C point failed; it is not pending
+
+Reported twice above as in progress. It was aborting: 63 of 77 points at code
+200 died with `Timestep too small; timestep = 6.25e-23`, 96% of them on the
+comparator input transistor Q1 (`npn13g2v` VBIC). The run is stopped.
+
+This is **a different failure from the 85 °C one** recorded earlier, where no DC
+operating point was found at all. Here the operating point is found and the
+transient collapses 8–29 ns in. Filing them together would hide that.
+
+It is **not evidence that the circuit misbehaves at +60 °C.** A VBIC timestep
+collapse is a statement about the model and the solver. Nor does Q1's appearance
+implicate Q1 — it carries the fastest transition, which is where such a collapse
+surfaces regardless of cause.
+
+**The temperature series therefore closes at two points, −40 °C and 27 °C.**
+Behaviour above 27 °C is unmeasured. The recommendation does not rest on it —
+it rests on dead codes at the resistor and HBT corners, all measured at 27 °C.
+
+## 3. One step value comes from a sweep still in flight
+
+`pe-q4s` code 400 resolved its crossing at −23.75 mV with 52 of 77 points swept.
+The step is unaffected — it uses only the two crossing positions — but a second
+crossing above +32.5 mV has not been ruled out. The corresponding code on the
+5.75x array swept that region and found none, which is an expectation, not a
+measurement. Update this line when the sweep closes.
+
+## What a reviewer should question first
+
+Unchanged and repeated here because it is the tightest number in the
+recommendation: at the worst resistor corner the **step margin is 5.1x** and the
+**range margin is 1.18x**. Under one and a quarter. A design change trading step
+margin for range margin — a milder current reduction — is worth considering, and
+runs directly into the dead-code constraint that selected 5.75x to begin with.
+
+**Still unmeasured, stated as such:** corners beyond resistors and HBT;
+temperature above 27 °C; the weighting error's phase across all 150 unary
+elements; DNL at the recommended scaling, which is carried by a ratio argument
+and is marked in this file as inference, not measurement.
