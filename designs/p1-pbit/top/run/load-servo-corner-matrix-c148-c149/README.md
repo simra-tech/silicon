@@ -3353,3 +3353,63 @@ Everything derived from 20 ns runs tonight -- both step decks, all eight offset 
 0.275 and 1.225 mV -- is suspect in magnitude. The *direction* results survive (the crossing moves down
 with increasing code, and every long lever overshoots the window), because those depend on the sign of
 a large movement rather than on when the decision is read.
+
+---
+
+## MEASURED: the trim step is 2.50 mV/LSB, 2026-08-12 00:5x
+
+One part, one ngspice process, 50 ns runs, 10-code lever (offset cancels between the two crossings):
+
+    VCODE 3.00 (code 300)   crossing +27.50 mV +/-2.50   33 valid, 0 rejected
+    VCODE 3.10 (code 310)   crossing  +2.50 mV +/-2.50   20 valid, 1 rejected
+    -----------------------------------------------------------------------
+    10 codes move the decision point -25.00 mV   =>   LSB = 2.50 mV +/-0.50
+
+**This is a measurement, not a bound and not a derivation.** It supersedes every step figure earlier in
+this file, including the withdrawn 6.0 mV/LSB (which was the same measurement at the bad 20 ns stop --
+inflated 2.4x, exactly the direction H-1023 predicts).
+
+### It agrees with an independent physical calculation
+
+Full-scale from the measured step, against full-scale from device sizes -- two routes that share no
+arithmetic:
+
+    from the measurement:  603 codes x 2.50 mV        = 1507 mV = +/-753 mV
+    from the devices    :  150 seg x 23 uA x 218 ohm x 2 = 1504 mV = +/-752 mV
+
+Agreement to 0.2 %. That is the plausibility check I skipped before reporting 6.0 mV/LSB, which would
+have needed 3.6 V of range from a 2.5 V supply and should never have left my hands.
+
+It also locates my original error exactly: one segment is 23 uA x 218 ohm x 2 = **10.0 mV differential**,
+i.e. 2.50 mV/LSB. My derived 0.43 mV/segment was low by 23x, and dividing it by 4 for the LSB made it
+worse. The device sizes were always sufficient to get this right.
+
+### Sizing verdict, now measured on both sides
+
+    sd = 8.28 mV (n=18)      requirement:  range >= +/-5 sigma = +/-41 mV     step <= 0.1 sigma = 0.83 mV
+
+    at 23 uA/segment (as simulated):  range +/-753 mV = 91 sigma  |  step 2.50 mV = 0.30 sigma
+    at 170 uA/segment (as built)   :  range would exceed the supply |  step ~18.5 mV = 2.2 sigma
+
+**Range is oversized ~18x. Step is ~3x too coarse.** Both at the *reduced* current; as built it is worse
+in both directions. This is the same shape as the claim retracted in H-1017 -- and close to it
+numerically -- but reached by measurement rather than by comparing a segment weight against a per-LSB
+requirement. The retraction stands: that figure was unsupported when published.
+
+### What the current should be
+
+Segment current scales the step and the range together, so one number sets both:
+
+    23.0 uA :  step 0.30 sigma (fails)   range 91 sigma
+     7.6 uA :  step 0.10 sigma (exactly at limit)   range 30 sigma
+     4.0 uA :  step 0.05 sigma            range 16 sigma      <-- comfortable on both
+     1.3 uA :  step 0.016 sigma           range  5 sigma (at the range limit)
+
+Anything from ~1.3 to ~7.6 uA/segment satisfies both requirements; **~4 uA/segment sits centrally with
+margin on each side**, a further 5.75x reduction from the 23 uA already specified for the overdraw fault.
+The array is currently sized as though range were scarce, when range is the requirement it exceeds by
+nearly two orders of magnitude.
+
+Caveats unchanged: n=18 (going to ~35), one corner, one temperature, simulated mismatch, and everything
+post-dates two repairs. The 20-code lever (code 320) is still running and will halve the +/-0.50 mV
+uncertainty and give a linearity check.
