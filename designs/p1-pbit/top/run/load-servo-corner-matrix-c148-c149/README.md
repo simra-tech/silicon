@@ -3315,3 +3315,41 @@ The decks are identical apart from the code list, including solver tolerance (`r
 headline number of this study.** The check is nearly free, because the code-300 sweep *is* an offset
 measurement: run it alone on 6-8 fresh processes and compare the spread against 8.28 mV. Commissioned.
 Until it returns, treat sd = 8.28 mV as unconfirmed by any second method.
+
+### Resolved, 2026-08-12 00:2x — the 45 mV disagreement was self-inflicted; sd 8.28 mV stands
+
+The "open inconsistency" recorded above is closed, and the cause was the 20 ns stop time I introduced
+to speed the step decks up. It was validated in the wrong place.
+
+Reading the campaign's own 50 ns files at 20 ns instead of 50 ns -- same files, same parts, nothing
+changed but the moment the decision is read:
+
+    decision read at 50 ns:   n=15  mean +0.83 mV  sd  9.00 mV   -17.5 .. +12.5
+    decision read at 20 ns:   n=17  mean -1.91 mV  sd 15.40 mV   -27.5 .. +32.5
+
+Settling time measured against distance from the decision point (campaign files, last output
+transition through 0.6 V):
+
+    >30 mV from crossing   n=695   median  8.9 ns   90th 14.9   max 21.9
+    10-30 mV               n=104   median  9.9 ns   90th 20.9   max 28.0
+    <=10 mV                n= 52   median 11.0 ns   90th 25.9   max 45.0
+
+**Near the decision point the comparator can still be resolving at 45 ns.** The 20 ns figure came from
+reading one file at -400 mV -- as far from the decision point as the sweep goes -- and applying its
+settling time to the points near the crossing, which are the only points the measurement depends on.
+Timing was measured in the region where timing does not matter.
+
+Consequences:
+
+  - **sd = 8.28 mV is not contradicted.** The step decks' apparent spread (23.5 mV over 7 parts) is
+    inflated by the short run; the campaign's is not compressed. The 5 sigma alarm was manufactured.
+  - **`tstop` returns to 50 ns** and must not be shortened again without repeating the settling check.
+    50 ns is only just adequate against a 45 ns worst case.
+  - The window narrowing (33 points instead of 161) is unaffected and remains the larger speedup.
+  - **The measured step of 6.0 mV/LSB from the 10-code lever is withdrawn pending a 50 ns re-run.**
+    It was implausible on its face -- 603 codes x 6 mV would need 3.6 V of range on a 2.5 V supply.
+
+Everything derived from 20 ns runs tonight -- both step decks, all eight offset runs, the LSB floors of
+0.275 and 1.225 mV -- is suspect in magnitude. The *direction* results survive (the crossing moves down
+with increasing code, and every long lever overshoots the window), because those depend on the sign of
+a large movement rather than on when the decision is read.
