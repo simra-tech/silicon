@@ -3871,3 +3871,27 @@ would sharpen the crossings.
 
 Code 314 is still sweeping (26 of 31); the bracket may tighten. Code 315 (3 mod 4) is the last of this
 run and is predicted hard.
+
+## Code 314 complete: the residue classes reproduce exactly
+
+    mod 4 = 0    code 312 ->  4/31 (13 %)
+    mod 4 = 1    code 309 ->  1/31 ( 3 %)   code 313 ->  4/31 (13 %)
+    mod 4 = 2    code 310 -> 17/31 (55 %)   code 314 -> 17/31 (55 %)
+    mod 4 = 3    code 311 -> 16/31 (52 %)
+
+**Both codes in class 2 failed 17 of 31 -- the same count, not merely the same rate.** With the two
+hard classes at 16-17 and the two easy classes at 1-4, the split is now four-to-one on counts that
+reproduce across the period.
+
+The transfer picture, one chip, six complete codes:
+
+    309  -11.25 +/-1.25      312   -8.75 +/-1.25
+    310  -18.75 +/-3.75      313  -16.25 +/-1.25
+    311  unresolved          314  -21.25 +/-3.75
+
+Every code in the hard classes carries a +/-3.75 bracket or no crossing at all; every code in the easy
+classes carries +/-1.25. **The measurement precision is itself a function of code modulo 4**, which is
+the same anti-correlation between prediction and precision noted above -- now visible directly in the
+brackets rather than inferred.
+
+Code 315 (3 mod 4, predicted hard) is sweeping and completes this run.
