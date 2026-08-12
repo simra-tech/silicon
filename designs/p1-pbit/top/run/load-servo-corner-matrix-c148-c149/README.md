@@ -5345,3 +5345,26 @@ Element size below code 4 and above code 400 in detail; the position of the
 minimum to better than ~±100 codes; all of this with mismatch enabled, which
 would add the random component this method is blind to by construction; and any
 corner or temperature other than res_wcs/hbt_typ at 27 °C.
+
+## Provenance correction to the element table — 2026-08-12 21:25
+
+The value **1.2625 mV** for element #1 in the table above was an *inference*
+(`step(3→4) + b1 + b0`), not a difference of two directly measured crossings like
+every other entry, and nothing in its formatting said so.
+
+Code 8 has now been measured, giving the neighbouring element directly:
+
+    code 8 crossing   (53.1250, 53.1750)   14 pts at 0.025 mV
+    code 4 crossing   (54.3500, 54.4000)   gap-bracketed
+
+    element #2, directly measured:  **1.175 … 1.275 mV**
+    element #1, inferred:            1.2625 mV — inside that interval
+
+Read the table's first row as **"an element at the bottom of the array is
+1.175–1.275 mV (direct, element #2); a separate inference gives 1.2625 for element
+#1, consistent with it"** — not as a single measured value. Note the two share
+code 4 as an input, so they are not independent, and the direct interval is wider
+than the inferred point.
+
+Nothing about the shape changes: bottom-of-array elements are ~1.2 mV against
+~0.55 mV near code 200.
