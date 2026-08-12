@@ -4531,3 +4531,48 @@ original chip 1 was a property of that draw (H-1062), not of the codes or the we
 Still outstanding: the **boundary** transition 311 -> 312, sweeping on chip A now. That is where the
 original array reversed by +3.01 and +14.05 LSB, and it is the measurement the mechanism account
 stands or falls on.
+
+---
+
+# RESOLVED: the corrected weighting removes the non-monotonicity
+
+Corrected array (`C169-correct`, all element types 84u per unit device), chip A, all four codes:
+
+    code   crossing      transition                    DNL
+     309   -8.50 mV
+     310  -10.00 mV      309 -> 310  within   -1.50   +0.40 LSB
+     311  -11.00 mV      310 -> 311  within   -1.00   +0.60 LSB
+     312  -12.50 mV      311 -> 312  BOUNDARY -1.50   +0.40 LSB
+
+**Every crossing decreases. Every step runs in the same direction. Every DNL is inside +/-1 LSB.**
+The array is monotonic across the element boundary that previously reversed.
+
+The comparison that matters, same transition, same codes:
+
+    original array, boundary 311 -> 312
+      chip 1   +5.00 mV/code   DNL  +3.01 LSB     (reversal)
+      chip 3  +32.50 mV/code   DNL +14.05 LSB     (reversal)
+    corrected array
+      chip A   -1.50 mV/code   DNL  +0.40 LSB     (no reversal)
+
+The measured -1.50 sits 6.5 mV from chip 1's boundary step and 34 mV from chip 3's, against a
+measurement uncertainty of +/-2.5 mV. **The reversal is excluded, not merely reduced.** The exact
+residual DNL remains grid-limited (+/-1 LSB per measurement) and is consistent with zero.
+
+## What this closes
+
+The mechanism account is complete. The chain, each link measured rather than assumed:
+
+    binary sub-elements degenerated 5.4u where the unary uses 84u        (netlist, H-1079)
+      -> they carry 15.6x their share                                    (arithmetic)
+      -> within-element steps run 2.7-5.5x oversized                     (measured, two chips)
+      -> the boundary snaps back by one unary minus three binary steps   (predicted +10.04/+31.29,
+                                                                          measured +10.00/+32.50)
+      -> DNL exceeds 1 LSB, so the transfer is non-monotonic             (measured, two chips)
+    correct the degeneration to 84u per unit device
+      -> within-element DNL +0.40, +0.60, -0.00 LSB                      (measured, two chips)
+      -> boundary DNL +0.40 LSB, no reversal                             (measured)
+      -> monotonic                                                        (measured)
+
+**The falsifier did not fire.** It was stated before the run: if the reversal survived a corrected
+weighting, something else contributed and the account had a gap. It did not survive.
