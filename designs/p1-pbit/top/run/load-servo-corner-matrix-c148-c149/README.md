@@ -3471,3 +3471,24 @@ unary element they hand over to. A flat sitting **on** a handover boundary is a 
 fix; a flat sitting somewhere arbitrary is something else. A fine sweep of every code from 305 to 325 in
 one process, at a 2.5 mV grid, is running -- three points cannot distinguish these and should not be
 asked to.
+
+## n = 33 at code 301, 2026-08-12 01:4x
+
+All four sources pooled, on a deliberately strict gate (the campaign's own report resolves a few more,
+so read this as a floor):
+
+    campaign (cam6)   15      fresh batch (off6)    5
+    recovery (cam5r)   8      fresh batch (off7)    5      ->   n = 33
+
+    mean +1.89 mV     sd 7.37 mV     -17.5 .. +12.5 mV
+    sd uncertainty ~12 %            rule of three: 9.1 % unobserved-fraction bound
+
+    requirement at this sd:   range >= +/-36.8 mV     step <= 0.74 mV
+
+The recovery of already-simulated parts (see 2026-08-12 00:4x entry) contributed **more parts than
+either batch of fresh simulation**, at roughly a third of the cost per part.
+
+sd has moved 8.59 -> 8.28 -> 8.30 -> 7.37 mV as n went 16 -> 18 -> 27 -> 33. The last step is the
+largest recent move and sits at the edge of the ~12 % uncertainty band; it is not yet a reason to
+revise the recommendation, which depends on sd only through a ratio, but it is worth watching rather
+than averaging away.
