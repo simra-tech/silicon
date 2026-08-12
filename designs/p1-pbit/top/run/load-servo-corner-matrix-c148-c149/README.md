@@ -3929,3 +3929,31 @@ not.** On chip 3, code 310 is barely harder than code 309; on chip 1 it was dram
 
 Chip 3 has only codes 309 and 310 so far; 311 and 312 follow. The sawtooth model predicts chip 3's
 crossings recover upward at 312, as chip 1's did. That is the next test and it is already running.
+
+## n = 91 — the distribution has converged, and the drift did not continue
+
+    n = 91     mean +4.37 mV   SE 0.87   (5.0 standard errors from zero)
+               sd 8.32 mV      -17.5 .. +27.5 mV
+               sd uncertainty ~7 %       rule of three: 3.3 %
+
+    requirement:  range >= +/-41.6 mV     step <= 0.83 mV
+    measured step 2.50 mV = 0.30 sigma    -- unchanged across n = 18 .. 91
+
+The mean across the night: +0.42 (n=18), +3.02 (48), +3.29 (63), +4.53 (74), **+4.37 (91)**. It rose
+and then stopped. The apparent monotone drift that prompted a check at n = 74 has not continued, which
+is what the per-part correlation predicted when it came back insignificant -- an implicit prediction,
+now supported by the sample refusing to keep climbing.
+
+sd across the same range: 8.59, 8.28, 8.30, 7.37, 7.94, 8.72, 8.32. **Wandering inside its own ~7-12 %
+uncertainty and going nowhere**, which is what a converged estimate looks like.
+
+### Consolidated verdict on this block
+
+    1. step        2.50 mV = 0.30 sigma against a 0.1 sigma requirement    ~3x too coarse
+    2. range       +/-753 mV = 90 sigma against a 5 sigma requirement      ~18x oversized
+    3. centring    mean +4.37 mV = 1.75 LSB                                nominal centre should be ~code 303
+    4. linearity   step 3-5x nominal at the 309->310 transition, on two independent chips
+
+(1) and (2) are the same knob: reduce segment current to ~4 uA. (3) is one number. (4) is the one that
+may require a design change rather than a parameter change, and it is the least characterised -- two
+chips, one transition each, and the second chip's sweep still running.
