@@ -7,8 +7,9 @@ Public-experiment record, 2026-08-06 evening — 2026-08-07 morning. In simulati
 > matrix (C148/C149), the study this directory is named for. From line ~4078 onward it records a
 > separate 2026-08-11/12 investigation into the **p-bit comparator's offset distribution and trim
 > array**, appended here rather than in a new directory. If you are looking for the second study,
-> start at **"STATE OF THIS INVESTIGATION"** near the end, which lists what is established, what is
-> recommended, what is pending, and what was withdrawn. The entries before it are chronological and
+> start at **"FINAL SIZING RECOMMENDATION"** near the end -- that is the closing position. The
+> **"STATE OF THIS INVESTIGATION"** sections before it are dated snapshots, superseded in order;
+> read the last one only for the list of what was withdrawn and what remains unmeasured. The entries before it are chronological and
 > include claims later retracted; the retractions sit beneath the claims rather than replacing them,
 > so the reasoning stays auditable.
 >
