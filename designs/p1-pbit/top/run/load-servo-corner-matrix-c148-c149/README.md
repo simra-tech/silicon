@@ -5301,3 +5301,47 @@ made and retracted above.
 Added: this array has **large integral nonlinearity**, non-monotonic in element
 size. That is a design property worth stating in its own right and was not
 previously in the record.
+
+## Element size vs position — the shape, established — 2026-08-12 21:10
+
+All on the same no-mismatch chip, 5.75x deck, res_wcs, 27 °C. Intervals, not
+midpoints; orderings stated only where the intervals do not overlap.
+
+    element #1    (codes   4 →   8)     1.2625 mV
+    element #51   (codes 200 → 204)     0.5500 ± 0.025   →  (0.525, 0.575)
+    element #101  (codes 400 → 404)     (0.550, 0.650)
+    mean element over codes 300 → 400   (0.605, 0.707)
+
+Established orderings:
+
+| comparison | result |
+|---|---|
+| #1 vs #51 | **#1 > #51**, gap 0.6875 mV |
+| mean(300–400) vs #51 | **mean > #51**, gap 0.030 mV |
+| #101 vs #51 | overlap — no ordering |
+
+**So element size falls from the bottom of the array to a minimum near code 200,
+and rises again above it.** Both legs are established; the second by the 100-code
+lever rather than by a single-element difference, because a lever divides its
+bracket by the lever length and so is far tighter for this question even though
+it cannot see shape.
+
+**No mechanism is offered.** Two were proposed today (binary over-weighting;
+monotonic saturation) and both were withdrawn against measurement.
+
+### Consequences for the record
+
+* This array has **large, non-monotonic integral nonlinearity** — element size
+  varies by more than 2× across the code space.
+* **Any DNL figure must name which unary element its LSB came from.** Normalising
+  a local step against an array-average LSB manufactures a false DNL of order 1;
+  that error was made, published, and retracted above.
+* The **5.75× recommendation and the dead-code result are unaffected** — measured
+  directly at every corner and never dependent on this analysis.
+
+### Still unmeasured
+
+Element size below code 4 and above code 400 in detail; the position of the
+minimum to better than ~±100 codes; all of this with mismatch enabled, which
+would add the random component this method is blind to by construction; and any
+corner or temperature other than res_wcs/hbt_typ at 27 °C.
