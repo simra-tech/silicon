@@ -5600,3 +5600,36 @@ Code 154 carries a single isolated inversion at 22.125 mV (hard LOW between two
 firm HIGHs, 0.16 mV below the true crossing). Excluded, with justification, in
 the "Element #38" section. An audit of all 16 codes measured at fine resolution
 found no other instance.
+
+## How much the bowl matters — an interpretation, stated conditionally — 2026-08-12 22:20
+
+Tonight's measurement establishes **large integral nonlinearity**: element size
+varies ~2.3× across the code space. That sounds alarming and its actual
+seriousness depends entirely on how the trim code is chosen in operation, which
+this record does not currently state.
+
+**If the code is found by search** — a calibration routine that sweeps or
+binary-searches for the code minimising the comparator's offset — then INL is
+close to irrelevant. What matters is that the mapping is **monotonic** (so a
+search converges) and that the **range** covers the offset distribution. Both are
+measured and both hold: no dead codes at any corner, and ±49 mV of correction
+against an 8.3 mV offset sigma. Under this reading the bowl is a curiosity, not a
+defect.
+
+**If the code is computed** — an offset measured once and converted to a code
+through a linear model — then INL is the error of that model, and a 2.3×
+variation in step size means the computed code can be far from the right one at
+the extremes of the range. Under this reading the bowl is a real problem and the
+calibration would need a lookup or a piecewise fit.
+
+**This is not a question the measurements can answer**, and I am not going to
+guess which the design intends. It belongs to whoever owns the calibration
+strategy. What the record can now supply, which it could not this morning, is the
+curve that either reading needs.
+
+Two things that do not depend on the resolution:
+
+* **Monotonicity is measured directly** (no dead codes, every corner) and is not
+  inferred from the element-size curve.
+* **Any DNL number must still name its LSB.** That obligation stands whichever
+  way the calibration question is answered.
