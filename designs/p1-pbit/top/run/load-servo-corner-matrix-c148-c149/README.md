@@ -4729,3 +4729,32 @@ their combination, even when the physics makes it likely.
 
 Remaining on the combination: step size, DNL and the boundary transition (`pe-final`, codes 309-312,
 54 of 165 points).
+
+## Two points on the scaling curve: 2.5x reduction balances the margins better than 5.75x
+
+Corrected weighting, whole-element (48-code) lever so sub-element contributions cancel:
+
+    resistor scaling   step mV/code   step in sigma   full-scale     range in sigma
+      1.0x (84u)          2.490          0.299          +/-753 mV       90.5
+      2.5x (210u)         0.417 +/-0.104 0.050          +/-126 mV       15.1
+      5.75x (483u)        0.208 +/-0.104 0.025          +/- 63 mV        7.5
+    requirement                          <= 0.100                        >= 5
+
+    margins           step        range
+      2.5x            2.0x        3.0x
+      5.75x           4.0x        1.5x
+
+**2.5x is the better recommendation.** Both margins comfortable and roughly balanced; 5.75x spends
+step margin it does not need and leaves range margin thin. The step does not scale linearly with the
+resistor -- 2.5x of resistance gives 6.0x of step, 5.75x gives 12x -- so the trade is not obvious from
+the netlist and had to be measured at two points.
+
+Note this supersedes the "~4 uA/segment" figure used throughout the earlier entries, which came from
+linear scaling of the current and assumed the step would follow. **The recommendation is now stated in
+the quantity actually controlled -- degeneration resistor length -- rather than in a current that was
+inferred.**
+
+Outstanding before 2.5x can be recommended: saturation must be clear across the code space at that
+scaling. It is clear at 5.75x (measured, both sides) and starts at +67 codes at 1.0x, so 2.5x is
+between a known-good and a known-bad point. **Running now** (`pe-satmid`); until it returns, 2.5x is
+the better-balanced candidate rather than the recommendation.
