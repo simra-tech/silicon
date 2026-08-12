@@ -4509,3 +4509,25 @@ That last point is the practically important one. At 23 uA a trim search that ov
 region where the part stops deciding; there is no such region at 4 uA. Combined with the weighting fix
 removing the non-monotonicity, **both of the ways the calibration search could fail are closed by the
 two recommended changes.**
+
+## Corrected weighting on a second chip: the within-element step is nominal
+
+    chip A (`correct`)       309 -> 310  -1.50 mV/code   DNL +0.40 LSB   (3 and 8 failures)
+                             310 -> 311  -1.00 mV/code   DNL +0.60 LSB   (8 and 6 failures)
+    chip B (`pe-correct2`)   309 -> 310  -2.50 mV/code   DNL -0.00 LSB   (0 and 0 failures)
+
+    ideal step -2.49 mV/code; each DNL carries +/-1.0 from the 2.5 mV grid
+
+**Chip B lands on the ideal step exactly**, and with zero convergence failures across both codes. The
+three within-element measurements on the corrected array are +0.40, +0.60 and -0.00 LSB, mean ~+0.33,
+every one inside the +/-1 LSB band that guarantees monotonicity.
+
+For comparison, the same transition on the original array: **-2.01 LSB (chip 1), -4.02 and -5.02 LSB
+(chip 3)** -- all outside the band, on every draw.
+
+Chip B's clean convergence is also the third independent sign that the solver difficulty seen on the
+original chip 1 was a property of that draw (H-1062), not of the codes or the weighting.
+
+Still outstanding: the **boundary** transition 311 -> 312, sweeping on chip A now. That is where the
+original array reversed by +3.01 and +14.05 LSB, and it is the measurement the mechanism account
+stands or falls on.
