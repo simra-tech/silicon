@@ -6028,3 +6028,60 @@ pass with no search stage.
 
 **Unchanged throughout: the 5.75× recommendation.** Dead codes and monotonicity
 are measured directly at every corner and nothing tonight has touched them.
+
+## ⚠ THE CANCELLATION HYPOTHESIS IS REFUTED — 2026-08-13 03:25
+
+Eight chips, mismatch enabled, each one ngspice process at codes 200, 301 and 400
+so that input offset (from the centre code, where the trim contributes nothing)
+and trim strength (from the 200→400 lever, which cancels the offset) are separated
+within the same device.
+
+| chip | offset (±1.25 mV) | mean element (±0.05 mV) |
+|---|---|---|
+| 1 | +6.250 | 0.5500 |
+| 2 | −1.250 | 0.7000 |
+| 3 | −8.750 | 0.6500 |
+| 4 | −6.250 | 0.6500 |
+| 5 | −1.250 | 0.7500 |
+| 6 | −1.250 | **0.5000** |
+| 7 | +1.250 | **0.8500** |
+| 8 | +1.250 | 0.8000 |
+
+### The test, which needs no statistics
+
+**Chips 2, 5 and 6 all measured offset −1.250** — the same bracket,
+indistinguishable. Their elements are 0.7000, 0.7500 and 0.5000.
+
+    chip 5 > chip 6   ORDERED (gap 0.1500)
+    chip 7 > chip 6   ORDERED (gap 0.2500)
+
+**At an offset that cannot be told apart, trim strength varies by 50%.** Offset
+does not determine trim strength.
+
+### What this closes
+
+Follow-up item 2 — *"the offset/trim-strength correlation, which could remove the
+concern entirely if weak-trim draws also carry smaller offsets"* — is **answered:
+it does not.** This was the one plausible mechanism by which the range-margin
+finding could have dissolved. It has not dissolved.
+
+**The range-margin follow-up therefore stays required**, not optional:
+one chip in four earlier showed a margin below 1× at the worst resistor corner,
+and there is now no reason to expect that chip's offset to have been correspondingly
+small.
+
+### Spread, restated with more samples
+
+Element size across eight chips: **0.5000 … 0.8500 mV, a 70% range**, extremes
+cleanly ordered. Four chips gave 49%. **More samples widened it** — the usual
+direction, and the reason four was never enough.
+
+### Caveats
+
+Eight chips is not a yield number. Offsets are quantised to ±1.25 mV, so
+"indistinguishable offset" means within one 2.5 mV bracket, not identical. And no
+correlation coefficient is quoted here deliberately: eight points cannot support
+one, whereas the fixed-offset comparison above needs no model at all.
+
+**Unchanged: the 5.75× recommendation**, which rests on directly measured dead
+codes and monotonicity.
