@@ -6389,3 +6389,26 @@ contract. The 44/520 fF and 220/400 fF loads are sensitivity references, not
 acceptance loads. Until those interfaces are defined and the effective-sample
 check is repeated with them, this is a reviewable algorithmic contract rather
 than a deployable calibration implementation.
+
+## Operating I/O contract for calibration (G-5)
+
+The bounded `CODE=0..603` calibration scan above is a procedure for the retained
+simulation interface, not yet a deployable measurement contract.  The source-backed
+top and retained interface records give the following dependency boundary:
+
+| dependency | evidence classification | present bound | smallest closing task |
+| --- | --- | --- | --- |
+| `PBIT_OUT` pad, ESD and interconnect | **conflicting / incomplete** | C20-V2 says no pad or ESD model is selected, while C82-V7 instantiates one `sg13g2_IOPadAnalog` pad with its N20N0D/P20N0D clamps, DC diodes and internal resistor. C83-V3 measures about 209.7 fF at the pad pin at 1 GHz. Bondwire, package and trace R/C/L are absent. | Add measured or specified bondwire/package/trace parasitics to the C82-V7 pad path, or measure the assembled path's S-parameters. |
+| operating output load | **absent** | The retained 44/520 fF single-ended and 220/400 fF scalar cases are instrument sensitivity points, explicitly not acceptance loads. The pad capacitance is the only fixed output load. | Specify the 5 GS/s receiver input R/C and rerun the existing buffered pad path against that acceptance load. |
+| receiver threshold and counting path | **absent** | 0.6 V is a delay-measure proxy. Receiver VIH/VIL, an off-chip decision threshold, and the physical path that produces the N-bit block count are unspecified. | Name the receiver, bind VIH/VIL or its decision threshold, and define whether the block count comes from an on-chip counter or a specified instrument trigger. |
+| input-driver common mode and loading | **absent** | C164 expects the level-shifted input common mode near 1.14..1.28 V, but explicitly leaves final common mode, AC loading, gain and device region unknown. | Measure DC operating point and AC loading/backaction for the retained noise-amplifier-to-`ls_pbit` chain. |
+| clock and `CODE` source impedances | **absent** | Retained decks drive `CLK_P`, `CLK_N`, `SACLK` and `CODE` with ideal voltage sources. The board clock is described as differential 5 GS/s, but no real source impedance is bound. | Specify the board clock and code-driver output impedances, then repeat the calibration bench with those source networks. |
+
+Until those tasks close, the scan remains conditional: apply codes in linear order,
+count `PBIT_OUT` only through a named receiver, use power-of-two blocks up to 32,768
+decisions, derive effective sample count from measured serial correlation or a block
+bootstrap, and resolve a code only when its three-sigma interval lies wholly above or
+below 0.5.  Plateaus, reversals, ambiguous codes and range-edge uncertainty remain in
+the record.  The live 5.75x array-degeneration recommendation is unchanged; it is not
+a statistical variance-inflation factor.  No implementation, signoff or tape-out
+readiness is claimed.
