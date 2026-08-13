@@ -6344,3 +6344,48 @@ regenerative load into a local multi-root or basin-selection region. This
 control is consistent with that hypothesis but does not identify or prove it.
 Voltages outside the four stated bands and other topology perturbations are
 not measured. The live **5.75x recommendation is unchanged**.
+
+## Operational trim-code selection contract — 2026-08-13 18:40Z
+
+This is a bounded calibration procedure, not an implementation or signoff
+claim. It uses only retained controls and observations: `CODE` drives the
+0..603 array, and the decision statistic is counted from `PBIT_OUT`.
+
+1. Apply zero differential input at the retained 1.245 V common mode and run
+   `CLK_P`, `CLK_N`, and `SACLK` at the operating cadence. Count ones from
+   `PBIT_OUT`; a single decision is not a calibration observable.
+2. Sweep every code in increasing order over 0..603. Do not use binary search
+   or interpolate across skipped codes. The measured element-size bowl, the
+   code-303 reversal/LOW-island region, and the unary-74 doubled local step make
+   a uniform-LSB or everywhere-monotone search assumption unsupported.
+3. At each code collect decisions in power-of-two blocks, up to **32,768**.
+   Compute the one-fraction confidence interval using an effective sample count
+   that includes measured serial autocorrelations, or an equivalent block
+   bootstrap. Resolve a code only when its 3-sigma interval lies wholly above
+   or below 0.5. If the effective count is insufficient, or the interval still
+   includes 0.5 at 32,768 decisions, label that code ambiguous. The retained
+   analytic rho1 of about -0.0033 applies only to its exact load and window.
+4. Choose the code whose interval is nearest 0.5. If adjacent codes bracket
+   0.5, retain both as the selection bound and choose the smaller bounded
+   imbalance. Report an overlapping plateau's full code interval; midpoint
+   selection is only a deterministic convention. At a local reversal or
+   doubled step, compare measured candidates directly and do not interpolate.
+   If all resolved intervals are on one side of 0.5, declare the part out of
+   trim range and select no code. A selection at code 0 or 603 is
+   range-margin-inconclusive, not evidence of headroom.
+
+The **32,768** ceiling is the already recorded 3-sigma, 1% fraction target; it
+is not multiplied by 5.75. The live **5.75x** number is the array-degeneration
+recommendation supported by dead-code/corner measurements, not a correlation
+variance-inflation factor.
+
+### Dependencies still unsupported
+
+This procedure assumes that the operating receiver can count `PBIT_OUT` and
+that zero differential input can be applied or identified. Pad, ESD,
+interconnect, receiver threshold, operating output load, input-driver common
+mode/loading, and real clock/CODE source impedances are absent from the retained
+contract. The 44/520 fF and 220/400 fF loads are sensitivity references, not
+acceptance loads. Until those interfaces are defined and the effective-sample
+check is repeated with them, this is a reviewable algorithmic contract rather
+than a deployable calibration implementation.
