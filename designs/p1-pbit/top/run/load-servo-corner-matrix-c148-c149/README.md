@@ -6085,3 +6085,38 @@ one, whereas the fixed-offset comparison above needs no model at all.
 
 **Unchanged: the 5.75× recommendation**, which rests on directly measured dead
 codes and monotonicity.
+
+## ⚠ CORRECTION — "one of four below 1" was a midpoint claim — 2026-08-13 03:35
+
+Earlier sections state that **one chip in four has a range margin below 1×** at
+the worst resistor corner, and one is titled "the one thing a reviewer must act
+on". **That claim was made from midpoints with the element bound never applied.**
+
+With the bound applied (±0.05 mV on the element → ±0.096 on the margin), across
+all eight chips:
+
+| chip | element | margin | vs 1.0 |
+|---|---|---|---|
+| 1 | 0.5500 | 1.056 (0.960 … 1.152) | **straddles** |
+| 6 | 0.5000 | 0.960 (0.864 … 1.056) | **straddles** |
+| 2, 3, 4, 5, 7, 8 | 0.65 – 0.85 | 1.25 – 1.63 | established above 1 |
+
+**Nothing is established below 1 — then or now. Two of eight straddle it.**
+
+### What this changes for a reviewer
+
+The concern does **not** vanish. A chip with a margin below 1 is entirely
+consistent with this data; it is simply **not demonstrated**. That is a different
+sentence from "one in four is below", and it warrants different action: the
+follow-up remains required, but as *characterisation of a margin that may be
+inadequate*, not as *a defect observed in one part of four*.
+
+### Note on sample size
+
+Four chips gave "one in four below 1", which reads as a rate. Eight chips give
+"none established below 1, two straddling" — weaker and more honest, and the
+change came **not from the extra samples but from applying a bound that was
+available all along**.
+
+**Unchanged: the 5.75× recommendation**, and the refutation of the cancellation
+hypothesis above, which rests on ordered comparisons rather than midpoints.
