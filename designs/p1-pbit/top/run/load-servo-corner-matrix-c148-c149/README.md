@@ -5909,3 +5909,66 @@ switched current, a 2.3× variation across the code space is the same effect at
 coarser grain. It is the first mechanism proposed tonight that survives contact
 with the netlist; two earlier ones were withdrawn against measurement. A direct
 test (b0 increment versus unary count, b1 held off) is in flight.
+
+## ▶ THE BOWL EXPLAINED — state-dependence, weighting intact — 2026-08-13 02:30
+
+The element-size bowl recorded above now has a measured explanation, arrived at
+jointly and verified independently by both chairs.
+
+### The measurement
+
+b0 increment (b1 held off) versus number of conducting unary segments, all on the
+no-mismatch chip, all at 0.025 mV:
+
+| unary | 0 | 1 | 25 | 50 | 74 | 100 | 149 |
+|---|---|---|---|---|---|---|---|
+| b0 (mV) | 0.3250 | 0.3125 | 0.1750 | 0.1500 | 0.2000 | 0.1500 | 0.3000 |
+
+Established by interval comparison, not midpoints:
+
+    THE FALL   unary 1 > unary 25     ORDERED (gap 0.0750)
+    THE RISE   unary 149 > unary 100  ORDERED (gap 0.1000)
+    25/50/74/100 mutually OVERLAP or TOUCH — the plateau is flat to this grid
+
+**b0 itself bowls** — falls to a mid-array plateau, rises again at the top.
+
+### What it explains
+
+Element size and b0 bowl *together*, and their ratio is constant:
+
+| position | element | b0 | ratio |
+|---|---|---|---|
+| bottom | 1.2625 | 0.3125 | **4.04** |
+| mid | 0.5500 | 0.1500 | **3.67** |
+| top | 1.2500 | 0.3000 | **4.17** |
+
+**~4:1 throughout, the designed weighting.** So:
+
+* The **binary and unary segments respond identically to array state** — the Nx=1
+  and Nx=4 geometries are not behaving differently.
+* The **designed 1:2:4 weighting is intact everywhere in the code space.**
+* The element-size bowl and the b0 bowl are **one effect at two grains**, not two
+  findings.
+
+The dependence is on array *state*, and it is **not** a monotonic function of
+total switched current — current rises monotonically with code while the
+increment bowls.
+
+### Status of earlier entries
+
+* The **bowl** stands, now with a mechanism.
+* The **conditionality correction** above stands and is sharpened: weighting
+  figures are conditional on state, and the *ratio* is what is state-independent.
+* The **"b0 = 0.99 LSB, b1 = 2.02 LSB"** result stands at the bottom of the array
+  and is now understood as one point on a curve rather than an anomaly.
+* No change to the **5.75× recommendation** — dead codes and monotonicity are
+  measured directly and untouched by any of this.
+
+### Provenance note
+
+Two of the seven points needed care. Unary 1 uses code 4, the single
+gap-bracketed crossing in the set (its midpoint fails to converge permanently),
+reported with a widened ±0.0375 bound. Unary 149 combines a code-596 crossing
+measured by the Principal Engineer with a code-597 crossing measured by the Design
+Engineer — legitimate **only** because mismatch is disabled, so every simulator
+process is the same chip. Under mismatch this would be the spliced-chip error.
