@@ -6231,8 +6231,18 @@ and tracks the crossing rather than sitting at a fixed offset, so it is
 referenced to overdrive.
 
 Swept the equivalent band at codes 51, 243 and 363 with the same deck and grid:
-**no island**. On present evidence it is specific to the top of the array, with
-all four positions examined the same way.
+**no island**. This establishes only that the island was absent at those three
+sampled codes in those bands; it does not establish an array-wide or
+top-of-array boundary.
+
+Two code-543 extensions then bounded the observed feature on both sides at a
+0.05 mV grid. Below the known island, all 27 points from -41.00 through
+-39.70 mV were HIGH, with zero flips, so no second LOW island was observed in
+that band. Above the crossing, all 25 points from -38.55 through -37.35 mV were
+LOW, with zero flips, so no mirror HIGH island was observed in that band.
+Together with the already measured region, these results show one observed
+sub-crossing island rather than a repeating pattern only inside the combined
+measured bands. They do not measure any voltage outside those bands.
 
 **Practical consequence for anyone extracting crossings here:** the despike rule
 excludes a point disagreeing with BOTH neighbours, which handles single-point
@@ -6243,6 +6253,14 @@ was found.
 
 ### Not measured
 
-Whether the island exists outside the ~0.4-1.2 mV band below the crossing that
-was swept, or at codes between those examined. Absence outside the swept band is
-not a measurement.
+Whether the island exists outside the code-543 voltage bands now swept, or at
+most codes between 363 and 541 or beyond 543. Code 420 completed all 57 points
+from -20.50 through -17.70 mV at 0.05 mV spacing: its H/L sequence has one
+ordinary flip, with a crossing of -18.025 +/- 0.025 mV, and no island was
+observed in that band. Code 600 produced one ordinary flip and a crossing of
+-54.675 +/- 0.025 mV among 54 converged points from the intended
+-56.10..-53.30 mV band, but -55.20, -55.10 and -54.90 mV did not complete to
+the loader's 49 ns criterion. A combined four-point repair and then three
+isolated one-point retries also stopped short of 49 ns at each missing offset.
+Code 600 therefore remains inconclusive for the full intended band; those
+three offsets and anything outside the band are not measured.
