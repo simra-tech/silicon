@@ -6257,11 +6257,14 @@ Whether the island exists outside the code-543 voltage bands now swept, or at
 most codes between 363 and 541 or beyond 543. Code 420 completed all 57 points
 from -20.50 through -17.70 mV at 0.05 mV spacing: its H/L sequence has one
 ordinary flip, with a crossing of -18.025 +/- 0.025 mV, and no island was
-observed in that band. Code 600 produced one ordinary flip and a crossing of
--54.675 +/- 0.025 mV among 56 converged points from the intended
--56.10..-53.30 mV band. The original -55.20, -55.10 and -54.90 mV traces did
-not complete to the loader's 49 ns criterion; a controlled Gear-method retry
-completed -55.20 and -54.90 mV to 50 ns, while -55.10 mV again stopped on a
-timestep collapse at the comparator input HBT. Code 600 therefore remains
-inconclusive for the full intended band; -55.10 mV and anything outside the
-band are not measured.
+observed in that band. Code 600 also completed all 57 points from -56.10 through
+-53.30 mV at 0.05 mV spacing. Its H/L sequence has one ordinary flip, with a
+crossing of -54.675 +/- 0.025 mV, and no island was observed in that band. The
+original -55.20, -55.10 and -54.90 mV traces did not complete to the loader's
+49 ns criterion. A controlled Gear-method retry completed -55.20 and -54.90 mV
+but again stopped at -55.10 mV on comparator HBT `xq1`; a final single-variable
+retry at -55.10 mV, changing only `reltol` from `1e-3` to `2e-3`, completed to
+50 ns. The combined 57-point dataset was then recounted through the
+bound-preserving comparator. Whether the island exists at unswept codes, or at
+any voltage outside the stated code-420, code-543 and code-600 bands, remains
+not measured.
