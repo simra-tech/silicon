@@ -6268,3 +6268,38 @@ retry at -55.10 mV, changing only `reltol` from `1e-3` to `2e-3`, completed to
 bound-preserving comparator. Whether the island exists at unswept codes, or at
 any voltage outside the stated code-420, code-543 and code-600 bands, remains
 not measured.
+
+## Unary-74 mechanism control: XQB1 instance representation — 2026-08-13
+
+Source review binds the anomalous comparison to codes 296–299. Codes 296/297
+hold `b1=0`; codes 298/299 hold `b1=1`. Within each pair only `b0` changes.
+`XQB0` has `Nx=1`, `XQB1` has `Nx=2`, all asserted unary cells through U74
+have `Nx=4`, and all remaining unary cells are deasserted. Device geometry,
+models, stimulus, degeneration and every other switch state are unchanged.
+
+One topology control replaced only the single `XQB1 Nx=2` instance with two
+parallel `Nx=1` instances connected to the same nodes and driven by the same
+bit state. The reviewed deck swept 21 points per code, 84 total, on a 0.025 mV
+grid over these bounded bands:
+
+| code | swept band (mV) | crossing (mV) |
+|---|---:|---:|
+| 296 | 2.1250..2.6250 | 2.3375 +/- 0.0125 |
+| 297 | 1.8750..2.3750 | 2.1375 +/- 0.0125 |
+| 298 | 1.6250..2.1250 | 1.9125 +/- 0.0125 |
+| 299 | 1.3750..1.8750 | 1.5125 +/- 0.0125 |
+
+All 84 traces reached the 49 ns admission criterion. Bound-preserving dataset
+comparison gives a b0 step of **0.2000 +/- 0.0250 mV** with b1 off and
+**0.4000 +/- 0.0250 mV** with b1 on. The latter is ordered above the former
+with a **0.1500 mV** interval gap.
+
+**Established:** representing the b1 weight as one `Nx=2` instance is not the
+cause of unary 74's local doubled b0 step; the result survives an electrically
+parallel two-by-`Nx=1` representation in the measured bands.
+
+**Still provisional:** b1 steering may move the shared `c_p`/`c_n`
+regenerative load into a local multi-root or basin-selection region. This
+control is consistent with that hypothesis but does not identify or prove it.
+Voltages outside the four stated bands and other topology perturbations are
+not measured. The live **5.75x recommendation is unchanged**.
