@@ -6162,3 +6162,87 @@ positions nobody has examined — is in flight and distinguishes *a genuinely
 special band* from *what any closely-examined band looks like*.
 
 **Unchanged: the 5.75× recommendation.**
+
+## ✔ THE SCRUTINY CONTROL — five untouched positions, and a new feature — 2026-08-13 06:00
+
+### Why this exists
+
+The codes 296-304 band showed four anomalies in nine codes, read as one local
+feature seen four ways. **That reading was indistinguishable from a much duller
+one:** four anomalies in nine codes is also exactly what *any* nine codes look
+like when examined four times, and nowhere else in the array had been examined
+twice. The DE retracted their reading on that argument alone, before any new
+measurement existed, and both chairs agreed in advance what each outcome would
+mean.
+
+The control: measure the b1-on/b1-off element pair at positions chosen **because
+nothing suggested them**, with the same method and the same care.
+
+### Result — five positions, five exclusions
+
+| unary | code | b1-off | b1-on | 2x b1-off | doubling |
+|---|---|---|---|---|---|
+| 12 | 48 | 0.2400 +/- 0.0100 | 0.2400 +/- 0.0100 | 0.4800 +/- 0.0200 | excluded, gap 0.2100 |
+| 37 | 148 | 0.1500 +/- 0.0250 | 0.1500 +/- 0.0250 | 0.3000 +/- 0.0500 | excluded, gap 0.0750 |
+| 60 | 240 | 0.1350 +/- 0.0050 | 0.1350 +/- 0.0050 | 0.2700 +/- 0.0100 | excluded, gap 0.1200 |
+| 90 | 360 | 0.1400 +/- 0.0100 | 0.1400 +/- 0.0100 | 0.2800 +/- 0.0200 | excluded, gap 0.1100 |
+| 135 | 540 | 0.2100 +/- 0.0100 | 0.2200 +/- 0.0100 | 0.4200 +/- 0.0200 | excluded, gap 0.1700 |
+
+All values in mV. Sixth position (unary 120, code 480) in flight.
+
+**The test is b1-on against TWICE b1-off, not against b1-off.** Run the plain
+equality comparison and every position reports OVERLAP -- no ordering -- which
+says nothing. The hypothesis under test is the 2.00x behaviour at unary 74, so
+the quantity to compare against is twice the b1-off element with its bound
+doubled too.
+
+**Established:** at five positions spanning the array, the b1-on element is
+smaller than twice the b1-off element. The 2.00x behaviour at unary 74 is not a
+general property.
+
+**NOT established:** that b1-on equals b1-off. Every position overlaps and none
+can be ordered. Four of the five give *identical* midpoints, which looks like
+proof of equality and is not -- all crossings are grid-quantised, so any true
+difference below one grid step produces exactly that picture. Unary 135 broke the
+pattern by one grid step, which is the useful reminder that it was never a law.
+
+### The bowl, re-drawn from control codes
+
+0.2400 at code 48 -> 0.1350 at 240 -> 0.1400 at 360 -> 0.2100 at 540. A clean
+bowl with its minimum around codes 240-360, measured at codes chosen with **no
+reference to the bowl at all**. Corroboration from a test aimed at something else
+is worth more than re-measuring the original codes.
+
+### NEW: a sub-crossing LOW island at the top of the array
+
+While unblocking the unary-135 position, both chairs' data showed a LOW island
+sitting *inside* the HIGH region, below the crossing:
+
+| code | width | position below crossing |
+|---|---|---|
+| 540 | none | -- |
+| 541 | 1 point (0.25 mV grid) | ~0.9 mV |
+| 542 | 0.35 mV | 0.83 mV |
+| 543 | 0.60 mV | 0.73 mV |
+
+**Replicated across two independently written deck generators on different grids**
+(DE 0.25 mV, PE 0.05 mV), at the same voltages. It widens monotonically with code
+and tracks the crossing rather than sitting at a fixed offset, so it is
+referenced to overdrive.
+
+Swept the equivalent band at codes 51, 243 and 363 with the same deck and grid:
+**no island**. On present evidence it is specific to the top of the array, with
+all four positions examined the same way.
+
+**Practical consequence for anyone extracting crossings here:** the despike rule
+excludes a point disagreeing with BOTH neighbours, which handles single-point
+metastability and **cannot touch a two-point island** -- each island point has a
+neighbour that agrees with it. Extraction will report multiple flips and refuse a
+value. That refusal is correct behaviour, not a bug, and it is how this feature
+was found.
+
+### Not measured
+
+Whether the island exists outside the ~0.4-1.2 mV band below the crossing that
+was swept, or at codes between those examined. Absence outside the swept band is
+not a measurement.
