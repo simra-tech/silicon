@@ -5878,3 +5878,34 @@ Until then, **the element-size curve above stands and the binary weighting resul
 at the bottom of the array stands; neither is contradicted.** What is open is
 whether the weighting is uniform across the code space, which nothing in this
 record previously asserted either way.
+
+## ⚠ CONDITIONALITY CORRECTION — the binary weighting result — 2026-08-13 01:00
+
+Earlier sections report **b0 = 0.99 LSB and b1 = 2.02 LSB**, described as showing
+the binary pair is correctly weighted. That measurement is sound and its numbers
+stand. **What is wrong is the scope claimed for it.**
+
+The elements **do not superpose.** From the netlist, weighting is by emitter
+multiplicity — `XQB0 Nx=1`, `XQB1 Nx=2`, `XQU1 Nx=4`, exactly 1:2:4, with every
+steering switch an identical device. Nothing is mis-sized. But the *increment*
+produced by closing a switch depends on what else is already conducting:
+
+| where | b0 with b1 OFF | b0 with b1 ON | ratio |
+|---|---|---|---|
+| codes 0→1 / 2→3 (0 unary on) | 0.3250 | 0.3000 | 0.92 |
+| codes 296→297 / 298→299 (74 unary on) | 0.2000 | 0.4000 | 2.00 |
+
+So **"b0" is not a number, it is a function of state.** The 0.99 / 2.02 result
+holds **at the bottom of the code space with no unary segments conducting** —
+exactly where it was measured. It is not a general property of the elements, and
+this record previously implied that it was.
+
+**Read every weighting figure in this file as conditional on the number of
+conducting segments**, and state that condition whenever one is quoted.
+
+**Candidate, not a conclusion:** this is also a plausible mechanism for the
+bowl-shaped element-size curve — if each element's contribution depends on total
+switched current, a 2.3× variation across the code space is the same effect at
+coarser grain. It is the first mechanism proposed tonight that survives contact
+with the netlist; two earlier ones were withdrawn against measurement. A direct
+test (b0 increment versus unary count, b1 held off) is in flight.
