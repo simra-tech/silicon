@@ -5972,3 +5972,59 @@ reported with a widened ±0.0375 bound. Unary 149 combines a code-596 crossing
 measured by the Principal Engineer with a code-597 crossing measured by the Design
 Engineer — legitimate **only** because mismatch is disabled, so every simulator
 process is the same chip. Under mismatch this would be the spliced-chip error.
+
+## ✔ CLOSING the open question above, and a new one — 2026-08-13 03:00
+
+### CLOSED: "is the binary weighting position-dependent?"
+
+Recorded as open at 00:50, on refine data showing b0/b1/handover ratios of
+0.667 / 1.333 / 2.000 at code 300 against 0.99 / 2.02 / 1.00 at the bottom.
+
+**Answer: no. The weighting is intact everywhere.** The apparent position
+dependence was the local LSB moving, not the elements' ratio to one another. With
+b0 and the unary element both measured across the code space, their ratio holds at
+**4.04 / 3.67 / 4.17** at bottom, mid and top — the designed 1:4. The refine
+numbers that raised the question carried ±0.25 mV, the same size as the steps
+themselves, and did not survive the fine pass.
+
+**A reader who stopped at the 00:50 section would carry away the wrong
+conclusion.** That is why it is closed here explicitly rather than left to be
+inferred from the later entry.
+
+### NEW OPEN QUESTION: the b0/b1 interaction diverges with position
+
+Measured, ±0.025 each, on the no-mismatch chip:
+
+| position | b0 with b1 OFF | b0 with b1 ON | ratio |
+|---|---|---|---|
+| unary 0 (codes 0→1, 2→3) | 0.3250 | 0.3000 | 0.92 |
+| unary 74 (codes 296→297, 298→299) | 0.2000 | 0.4000 | **2.00** |
+
+`b1 ON > b1 OFF` at unary 74 is **ORDERED, gap 0.1500**.
+
+The bowl explains how the magnitude of any element varies with array state. It
+does **not** explain why these two cases diverge with position. This is a
+second-order interaction between the two binary elements specifically, and at
+mid-array **it is larger in absolute terms than the first-order variation across
+the whole plateau** (0.15 mV against ~0.17 mV).
+
+**Test in flight** (Design Engineer): the same seven-position sweep, on codes
+4k+2 → 4k+3 instead of 4k → 4k+1. Every window is already located, so it is a fine
+pass with no search stage.
+
+### Open items, current as of 03:00
+
+1. **The b0/b1 interaction above** — in flight.
+2. **Offset / trim-strength correlation** — 3 of 8 chips complete; 3 samples show
+   no relationship, which is the expected output of too few samples rather than
+   evidence of none.
+3. **More chips for the range-margin question** — one of four earlier chips had a
+   margin below 1; four chips is not a yield number.
+4. Mismatch at any corner other than res_wcs/hbt_typ, 27 °C.
+5. Temperature above 27 °C (+60 °C aborts in the transient; 85 °C finds no DC
+   operating point).
+6. **How the trim code is selected in operation** — still undocumented, and it
+   determines whether the bowl matters at all.
+
+**Unchanged throughout: the 5.75× recommendation.** Dead codes and monotonicity
+are measured directly at every corner and nothing tonight has touched them.
