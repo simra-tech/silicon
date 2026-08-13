@@ -6412,3 +6412,36 @@ below 0.5.  Plateaus, reversals, ambiguous codes and range-edge uncertainty rema
 the record.  The live 5.75x array-degeneration recommendation is unchanged; it is not
 a statistical variance-inflation factor.  No implementation, signoff or tape-out
 readiness is claimed.
+
+## Minimum counted-output receiver contract (G-6)
+
+The physical path selected for evaluation is the retained buffered `PBIT_OUT`
+driver through one `sg13g2_IOPadAnalog`, then the still-unspecified
+bondwire/package/trace, into an **external real-time oscilloscope used as a
+thresholded acquisition and counting receiver**.  This selects an evaluation
+path, not an instrument model or an implementation.
+
+At 5 GS/s one decision period is 200 ps.  The receiver must acquire one bounded
+decision in each such period at a phase tied to the operating clock.  A maximum
+32,768-decision calibration block therefore spans **6.5536 us**, before any
+instrument setup, transfer or processing time.  The oscilloscope's input R/C,
+decision threshold (or VIH/VIL), analogue bandwidth, sample aperture, timing
+jitter and record-depth behaviour are **UNKNOWN** because no instrument model,
+probe or interconnect has been selected.  The retained approximately 210.2 fF
+pad-pin value at 1 GHz bounds only the pad candidate; it is not the receiver
+load or a complete path model.  The existing scalar capacitive loads remain
+sensitivity points, not acceptance loads.
+
+The smallest integration experiment is source/deck-only and changes one
+controlled item in the retained buffered-pad bench: replace its sensitivity
+load with the complete input network of the selected oscilloscope path,
+including the named probe/cable or 50-ohm termination and their specified
+parasitics.  Hold the source, pad, clock, stimulus, extraction and measures
+otherwise fixed.  No run is authorized until that network, its threshold,
+bandwidth and aperture are copied from authoritative instrument evidence and
+the source/deck diff is reviewed.
+
+This contract does not establish that the pad path can deliver 5 GS/s decisions
+to that receiver.  It does not implement the counter, close the input/clock
+contracts, or support signoff or tape-out readiness.  The live **5.75x**
+array-degeneration recommendation is unchanged.
