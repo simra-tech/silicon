@@ -6120,3 +6120,45 @@ available all along**.
 
 **Unchanged: the 5.75× recommendation**, and the refutation of the cancellation
 hypothesis above, which rests on ordered comparisons rather than midpoints.
+
+## ✔ CLOSED: the b0/b1 interaction — there is no second mechanism — 2026-08-13 04:35
+
+Opened at 03:00 on a single observation at unary 74. **Answered: the two binary
+elements superpose.**
+
+Seven positions, b0 increment with b1 off and on, ±0.025 each:
+
+| unary | 0 | 1 | 25 | 50 | 74 | 100 | 149 |
+|---|---|---|---|---|---|---|---|
+| b1 OFF | 0.3250 | 0.3125 | 0.1750 | 0.1500 | 0.2000 | 0.1500 | 0.3000 |
+| b1 ON | 0.3000 | 0.2995 | 0.1750 | 0.1500 | **0.4000** | 0.1500 | 0.3250 |
+| ratio | 0.92 | 0.96 | 1.00 | 1.00 | **2.00** | 1.00 | 1.08 |
+
+**Six of seven give ratio ~1.0**, all consistent with unity within bounds. Only
+unary 74 diverges (ordered, gap 0.150).
+
+### Correction to an earlier entry
+
+The section stating **"the elements do not superpose"** generalised from that
+single position and is **too broad**. The supported statement is:
+
+> **b0 depends on the unary background — the bowl — and is independent of b1.**
+
+The first half holds across seven positions. The second is the part that was
+wrong.
+
+### What unary 74 is
+
+Codes 296–304 now carry **four independent anomalies**: the code-303 two-point
+reversal, the code-300 metastability spike, element #74's scrambled b0, and this
+2.0 ratio. The Design Engineer's reading — that these are one local feature rather
+than four findings, plausibly the metastability behind the 303 reversal — is the
+most economical account.
+
+**Caveat, unresolved:** the fourfold window widening that confirmed these
+crossings covered codes **296 and 299 only**. Codes 300 and 303, where two of the
+four anomalies sit, have had one measurement each. A test at unary 37, 60 and 90 —
+positions nobody has examined — is in flight and distinguishes *a genuinely
+special band* from *what any closely-examined band looks like*.
+
+**Unchanged: the 5.75× recommendation.**
