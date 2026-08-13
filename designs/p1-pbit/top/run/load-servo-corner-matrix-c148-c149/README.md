@@ -6121,6 +6121,47 @@ available all along**.
 **Unchanged: the 5.75× recommendation**, and the refutation of the cancellation
 hypothesis above, which rests on ordered comparisons rather than midpoints.
 
+## RANGE-MARGIN POPULATION FOLLOW-UP IS INCONCLUSIVE — 2026-08-13 17:20Z
+
+The follow-up was fixed before launch at 29 additional independently seeded
+chips. Each chip kept codes 200, 301 and 400 in one ngspice process. The fixed
+rule was: any complete margin interval wholly below 1 establishes the adverse
+case; all 29 complete intervals wholly above 1 gives 0/29 observed inadequate
+with a one-sided exact 95% upper bound of 9.81%; any straddler or incomplete
+dataset, with none wholly below, makes the campaign inconclusive. Failed draws
+were not to be replaced and the campaign was not to be extended after seeing
+outcomes.
+
+The first fixed batch, seeds 14 through 25, completed its processes. Recounting
+through the bound-preserving dataset comparator, with each 200-to-400 difference
+divided by 50 elements, gives an element bound of +/-0.0500 mV and a margin
+bound of +/-0.0960:
+
+| seed | converged points at codes 200 / 301 / 400 | margin interval | disposition |
+|---|---:|---:|---|
+| 14 | 37 / 36 / 37 | 1.1518 +/- 0.0960 | established above 1 |
+| 15 | 37 / 37 / 37 | 1.0558 +/- 0.0960 | straddles 1 |
+| 16 | 37 / 37 / 37 | 1.3437 +/- 0.0960 | established above 1 |
+| 17 | 37 / 37 / 37 | 1.4397 +/- 0.0960 | established above 1 |
+| 18 | 36 / 36 / 37 | 1.2477 +/- 0.0960 | established above 1; dataset incomplete |
+| 19 | 36 / 37 / 37 | unsupported | code-200 crossing unresolved; dataset incomplete |
+| 20 | 37 / 37 / 36 | 1.1518 +/- 0.0960 | established above 1; dataset incomplete |
+| 21 | 34 / 37 / 36 | unsupported | code-200 crossing unresolved; dataset incomplete |
+| 22 | 37 / 37 / 37 | 1.1518 +/- 0.0960 | established above 1 |
+| 23 | 37 / 37 / 37 | 0.9598 +/- 0.0960 | straddles 1 |
+| 24 | 32 / 36 / 34 | 1.3437 +/- 0.0960 | established above 1; dataset incomplete |
+| 25 | 37 / 37 / 37 | 1.4397 +/- 0.0960 | established above 1 |
+
+No new chip is established below 1. Because the predeclared rule makes any
+incomplete dataset or straddler inconclusive when none is wholly below, the
+campaign stops here as **inconclusive**. Seeds 26 through 42 were not launched;
+the missing points were not retried and no failed draw was replaced. The result
+does not support a yield estimate or a claim that inadequate-margin chips are
+absent.
+
+**Unchanged: the live 5.75x recommendation.** It rests on directly measured
+dead codes and monotonicity, not on this inconclusive population campaign.
+
 ## ✔ CLOSED: the b0/b1 interaction — there is no second mechanism — 2026-08-13 04:35
 
 Opened at 03:00 on a single observation at unary 74. **Answered: the two binary
