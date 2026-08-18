@@ -6555,3 +6555,19 @@ and C156
 `81c708e1587afa7ad137dc117f8b9b2df991713f0f097fa68de796ca05329c0e`;
 their exact runtime identities are **missing**, not inferred.  No new simulation
 is justified by this record error.  The 5.75x recommendation is unchanged.
+
+## Island onset narrowed to codes 526–541 — 2026-08-18 22:40Z
+
+The completed mismatch-off `pe-p526` dataset was collected through
+`/tmp/pe_cmp.py` rather than left unread.  All 51 requested points over
+-37.00..-34.50 mV at 0.05 mV spacing are admitted.  The H/L sequence has exactly
+one transition, between -35.30 and -35.25 mV, giving a crossing of
+**-35.275 +/- 0.025 mV**.  There is no additional flip, so no LOW island was
+observed anywhere inside that exact 2.50 mV band.
+
+Code 526 therefore joins code 511 on the no-island side, while code 541 remains
+the first measured code with the replicated island.  The measured onset bracket
+narrows from 511–541 to **526–541**.  Codes inside that 15-code interval and
+voltages outside the stated band remain **NOT MEASURED**.  Deck SHA-256 is
+`ac71daaabbb31e5457266238ddcd230dd2c9738f6b5731dfcb2e4d700820462a`.
+The 5.75x recommendation is unchanged.
