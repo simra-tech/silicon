@@ -6571,3 +6571,50 @@ narrows from 511–541 to **526–541**.  Codes inside that 15-code interval and
 voltages outside the stated band remain **NOT MEASURED**.  Deck SHA-256 is
 `ac71daaabbb31e5457266238ddcd230dd2c9738f6b5731dfcb2e4d700820462a`.
 The 5.75x recommendation is unchanged.
+
+## ⚠ COVERAGE RULE, and a retraction — 2026-08-18 22:45
+
+### The rule, which applies to every negative in the section above
+
+A sub-crossing island at codes 541-543 is **0.35-0.60 mV wide** — 7 to 12 points
+at the 0.05 mV grid used throughout. Therefore:
+
+**A "no island" result is only valid if the ENTIRE band was swept.** A window that
+covers most of the band and finds nothing has not established absence; it has
+established absence *in the part it looked at*, and a 5-point hole is wide enough
+to hide the feature being hunted.
+
+**The asymmetry is deliberate: a POSITIVE stands on partial coverage** — an
+inversion proves an island regardless of what else was swept — **only a NEGATIVE
+needs the whole band.**
+
+`tools/pe_island.py::island_band()` now enforces this. It computes the expected
+point count from band width and grid, names any unswept edges in `gaps[]`, and
+returns `INCOMPLETE -- NO ISLAND IN SWEPT PART ONLY` rather than a negative.
+**Never cite a negative whose verdict is not exactly `NO ISLAND`.**
+
+### Retraction
+
+**"No island at code 533" is RETRACTED.** It rested on 19 of 21 band points (two
+interior points from non-converged runs). Being re-measured as `pe-s533`.
+
+Codes 535 and 539 were also reported clean on 16 of 21 points with the bottom of
+their bands unswept; neither had been published. All three relaunched with
+corrected windows.
+
+**The onset bracket 537-541 is unaffected**, because it rests on code 537, which
+is complete (20/21, no edge gaps) — but the 533 step must be re-earned before it
+is cited again.
+
+### Onset table, with coverage stated
+
+| code | crossing | band points | verdict |
+|---|---|---|---|
+| 423 | -18.4500 | 21/21 | no island |
+| 483 | -27.6850 | 20/21 | no island |
+| 511 | -32.5250 | 20/21 | no island |
+| 526 | -35.2750 | 20/21 | no island |
+| **533** | -36.6250 | **19/21** | **RETRACTED — re-measuring** |
+| 537 | -37.4250 | 20/21 | no island |
+| 541-543 | -38.4250 / -38.6450 | 18/21 | **ISLAND** (7 and 12 inverted points) |
+| 603 | -55.7000 | 21/21 | no island |
