@@ -6525,3 +6525,33 @@ The code-603 polarity also conflicts with the earlier record above that four
 outward windows were HIGH through -56.4 mV.  Until the exact source, initial
 condition and sweep-direction identities are reconciled, neither result is used
 to claim persistence or to change the live **5.75x** recommendation.
+
+## Code-603 record correction — 2026-08-18 22:20Z
+
+Read-only replay through `/tmp/pe_cmp.py` shows that the sentence above about
+“four outward windows” is not a faithful description of the retained datasets.
+All five decks use code 603, the same explicit nodeset, the same 1.1–8.0 ns
+one-milliamp kick into `c_p1_comp`, 50 ns transients, and increasing differential
+input order.  Their retained identities and admitted classifications are:
+
+| dataset | deck SHA-256 | requested band/grid | admitted replay |
+|---|---|---|---|
+| `pe-k603` | `de5504de3dc74b9d07123bcd66962984b7686c9d411cf8300530f44525ba7a9f` | -50.20..-46.10 mV / 0.10 mV | 41/42, all LOW; -46.80 mV nonconvergent |
+| `pe-k603b` | `70d8222ecd0eaab0fda7785a29ec34c75a24d09f65a9a538e38663321ae36081` | -47.00..-43.00 mV / 0.10 mV | 0 admitted; no CSV retained |
+| `pe-k603c` | `cbef20e45b9322e4983abcd9b3700e18cc98fa172748cf512618c9b688e74dd6` | -55.00..-50.00 mV / 0.10 mV | 51/51, all LOW |
+| `pe-n603` | `e63f4396b317bd529b8ad42b584962657d37a8a31333679058c56ff328d50630` | -68.00..-55.00 mV / 0.20 mV | 65/66, HIGH then LOW; one transition |
+| `pe-q603` | `072f67052d4d18647cce980f7092c4031d02884b1e6871d1dc861665d4b231bb` | -57.10..-55.90 mV / 0.05 mV | 25/25, all HIGH |
+
+Thus the earlier all-HIGH/four-window statement is **retracted**.  The retained
+data themselves place HIGH at -57.10..-55.90 mV and LOW at -55.00..-46.10 mV,
+with `pe-n603` containing the transition between them.  This is consistent
+threshold polarity across adjacent bands, not a conflict between two opposite
+classifications at the same input.
+
+The decks include mutable absolute source paths rather than runtime-bound source
+manifests.  The source hashes observed during this audit are C169
+`a55534db7d2441f0a379321bebadbd7023fb7b32f0ae966c9a55c6f441ab66e6`
+and C156
+`81c708e1587afa7ad137dc117f8b9b2df991713f0f097fa68de796ca05329c0e`;
+their exact runtime identities are **missing**, not inferred.  No new simulation
+is justified by this record error.  The 5.75x recommendation is unchanged.
