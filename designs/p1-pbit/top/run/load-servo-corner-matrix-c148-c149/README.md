@@ -6445,3 +6445,62 @@ This contract does not establish that the pad path can deliver 5 GS/s decisions
 to that receiver.  It does not implement the counter, close the input/clock
 contracts, or support signoff or tape-out readiness.  The live **5.75x**
 array-degeneration recommendation is unchanged.
+
+## ▶ ISLAND ONSET — bracketed to 58 codes — 2026-08-18 19:50
+
+Extends the sub-crossing LOW island recorded on 2026-08-13. That entry reported
+the island at codes 541/542/543 and its absence at 51, 243, 363, and listed two
+things under **Not measured**: whether a second island exists further below, and
+whether a mirror island exists above the crossing. **Both are now measured, and
+the onset has been bracketed.**
+
+### The two "not measured" items, closed
+
+Both at code 543 (crossing -38.6450), 0.05 mV grid:
+
+| sweep | band relative to crossing | result |
+|---|---|---|
+| `pe-jlo` -41.00..-39.70 | 1.05-2.35 mV **below** | 27 pts, all HIGH, **0 flips** |
+| `pe-jhi` -38.55..-37.35 | 0-1.2 mV **above** | 25 pts, all LOW, **0 flips** |
+
+- **No second island** in 1.05-2.35 mV below the crossing.
+- **No mirror island** above the crossing. The LOW-island-inside-HIGH has no
+  HIGH-island-inside-LOW counterpart. It was found below the crossing because that
+  is where the sweeps were pointed; **the asymmetry is now measured, not assumed.**
+
+### Onset bracket
+
+Island band swept at 0.30-1.30 mV below each crossing, 0.05 mV grid throughout:
+
+| code | crossing | result |
+|---|---|---|
+| 51, 243, 363 | — | no island (2026-08-13) |
+| **423** | -18.4500 | 21 pts, all HIGH, **0 flips — no island** |
+| **483** | -27.6850 | 21 pts, all HIGH, **0 flips — no island** |
+| 541, 542, 543 | -38.4250 / -38.6450 | **island present**, widening with code |
+
+**Onset lies between code 483 and code 541** — narrowed from the whole array to
+58 codes. Code 511 is in flight to halve it again.
+
+**Cost note worth repeating for anyone extending this:** code 483 needed no
+crossing search, because its crossing was already measured as part of the
+six-position doubling control. The probe was chosen *because* its coordinates were
+free, and it happened to sit near the midpoint of the bracket. A control built to
+be uninformative about one question makes an unbiased, pre-paid probe for another.
+
+### The crossing walk steepens at the top
+
+Fitting codes 363->543 gives -0.158 mV/code. That fit predicts -48.13 for code 603;
+the true crossing is beyond -56.4 (four windows have missed it going outward, each
+one HIGH throughout). At code 423 the same fit erred 1.2 mV the other way.
+
+**A linear fit through the middle of the array is good to only about +/-1.5 mV and
+under-predicts badly at the top.** Windows placed from it need at least that
+margin. This is the bowl's rising edge seen in the crossing positions rather than
+in the element sizes.
+
+### Still not measured
+
+Whether the island exists outside the ~0.3-2.35 mV band below the crossing that
+has been swept, or at codes between those probed. Absence outside a swept band is
+not a measurement.
