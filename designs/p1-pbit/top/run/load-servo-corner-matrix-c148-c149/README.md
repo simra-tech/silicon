@@ -6504,3 +6504,24 @@ in the element sizes.
 Whether the island exists outside the ~0.3-2.35 mV band below the crossing that
 has been swept, or at codes between those probed. Absence outside a swept band is
 not a measurement.
+
+## Neutral onset/persistence probes (G-8) — 2026-08-18 20:50Z
+
+Two mismatch-off probes used a 0.10 mV grid without selecting their positions for
+an expected result.  The code-423 dataset is complete at 41/41 points over
+-21.70..-17.70 mV.  Its H/L sequence has one transition, between -18.50 and
+-18.40 mV, so the crossing is **-18.45 +/- 0.05 mV**.  No additional flip, and
+therefore no LOW island, was observed inside that exact band.
+
+The code-603 dataset admits 41/42 points over -50.20..-46.10 mV.  Every admitted
+point is LOW; -46.80 mV is explicitly retained as nonconvergent after reaching
+only 15.4825 ns.  Thus **no island was observed among the converged points**, but
+there is no supportable crossing and no complete-band negative.  In particular,
+this probe did not establish the surrounding HIGH region needed to test a LOW
+island.  Everything outside both swept bands and every unmeasured code remains
+**NOT MEASURED**.
+
+The code-603 polarity also conflicts with the earlier record above that four
+outward windows were HIGH through -56.4 mV.  Until the exact source, initial
+condition and sweep-direction identities are reconciled, neither result is used
+to claim persistence or to change the live **5.75x** recommendation.
