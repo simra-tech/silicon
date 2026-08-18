@@ -6618,3 +6618,64 @@ is cited again.
 | 537 | -37.4250 | 20/21 | no island |
 | 541-543 | -38.4250 / -38.6450 | 18/21 | **ISLAND** (7 and 12 inverted points) |
 | 603 | -55.7000 | 21/21 | no island |
+
+## ✔ ONSET CLOSED — the island begins exactly at code 541 — 2026-08-19 00:15
+
+**Supersedes the onset table and the code-533 retraction in the section above.**
+Both are resolved; the entries below are the current state.
+
+### Corrections to the previous section
+
+1. **The "20/21" band-point counts were a TOOL defect, not data gaps.** `expected`
+   was computed as `round((hi-lo)/grid)+1`, which assumes band edges land on grid
+   positions — they never do, since the band is defined off the crossing and the
+   grid off the sweep start. Codes 483, 511, 526 and 537 have exactly 20 grid
+   positions in their bands and all 20 were present: **complete all along.**
+2. **The code-533 retraction is WITHDRAWN.** Its single missing point (-37.40,
+   deterministic across two independent runs) spans 0.05 mV, and a hole narrower
+   than the feature cannot conceal it. **No island at 533** stands.
+
+### The result
+
+| code | crossing | inverted points | island width | verdict |
+|---|---|---|---|---|
+| 423 | -18.4500 | 0 | — | no island (21/21) |
+| 483 | -27.6850 | 0 | — | no island (20/20) |
+| 511 | -32.5250 | 0 | — | no island (20/20) |
+| 526 | -35.2750 | 0 | — | no island (20/20) |
+| 533 | -36.6250 | 0 | — | no island (19/20, 0.05 mV hole) |
+| 535 | -37.0250 | 0 | — | no island (20/20) |
+| 537 | -37.4250 | 0 | — | no island (20/20) |
+| 539 | -37.8250 | 0 | — | no island (20/20) |
+| **540** | **-38.0150** | **0** | — | **no island (20/20)** |
+| **541** | **-38.2250** | **4** | **0.20 mV** | **ISLAND — ONSET** |
+| 542 | -38.4250 | 7 | 0.35 mV | ISLAND |
+| 543 | -38.6450 | 12 | 0.60 mV | ISLAND |
+| 603 | -55.7000 | 0 | — | no island (21/21) |
+
+All at 0.05 mV grid, band 0.30-1.30 mV below each crossing.
+
+**The onset is code 541, closed to adjacent codes.** And the island **widens
+monotonically from onset — 0.20, 0.35, 0.60 mV — roughly doubling every two
+codes.**
+
+### Why the original evidence was necessarily ambiguous
+
+The island was discovered at 0.25 mV grid, reading 1, 2 and 2 points at codes
+541/542/543. **At code 541 the island is 0.20 mV wide — narrower than that grid.**
+The single point seen there was not an under-resolved view of a clear feature; it
+was the largest signal that grid could physically return. Any claim about the
+onset from that data was undecidable in principle, not merely imprecise.
+
+### Open: the upper edge
+
+Present at 543, absent at 603. **Codes 544-602 have never been examined.** If the
+width kept doubling every two codes it would exceed 6 mV by code 553, so the
+feature must turn over inside that range. `pe-u573` is bisecting.
+
+### Method note for anyone extending this
+
+`tools/pe_island.py::island_band()` takes `min_feature_mv` (default 0.35) for the
+hole-vs-feature argument. **Near the onset the island is 0.20 mV**, so pass
+`min_feature_mv=0.20` when probing codes close to 541 — otherwise a 0.20-0.35 mV
+hole could conceal exactly the narrow island being hunted.
