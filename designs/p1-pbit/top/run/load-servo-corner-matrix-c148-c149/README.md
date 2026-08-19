@@ -7309,3 +7309,49 @@ is unambiguous and an excursion is plain. A re-measurement should sweep bands
 placed below the crossing at the 0.7-0.9 mV offsets where confirmed islands sat,
 with the crossing measured separately. **This is a re-run, not a re-analysis** --
 no rate can be recovered from the existing sweeps.
+
+---
+
+## MEASURED: a bisection converged onto the island, 1.00 mV from the true crossing
+
+The claim that a successive-approximation or bisection search is blind to these
+islands has been carried in this record as an argument. It now has a measurement
+behind it, taken on the nominal chip where the island is already documented.
+
+Bisecting code **541** inside a -50..-25 mV bracket returned:
+
+    OFFSET 541   -39.2273 mV
+
+against a recorded crossing of **-38.2250 mV**. The reference records 541's
+island as 0.20 mV wide, ~0.9 mV below that crossing -- placing it near -39.13.
+**The search converged inside the island**, 1.0023 mV from the answer.
+
+The mechanism is the predicted one. Sweeping toward less-negative offsets the
+chip reads `H...H [LLLL] H...H`, then the crossing, then `L...L`. A probe landing
+in the island reads LOW, concludes it is past the crossing, and searches
+downward. It converges on a genuine transition -- the island's edge -- and
+returns it with the confidence it would attach to the real one.
+
+**No warning was emitted.** The generator guards against a bisection pinned to
+its bracket; this result sat 10 mV clear of both edges.
+
+### The control, on the same chip minutes earlier
+
+Bisecting code **540** returned -38.0188 against a recorded -38.0150 --
+**3.8 uV**. The tool is not at fault. **540 is the last island-free code in this
+region; 541 is the onset.** Locating on a clean code and stepping by slope is
+sound; locating on the code under study is sound only if that code has nothing to
+trip over, which cannot be known before measuring it.
+
+### Consequence for the selection procedure
+
+This is the concrete case behind the open question already recorded here -- *if
+selection uses successive approximation, does anything verify that the code it
+lands on actually meets P?* A search of exactly that shape, on a documented
+island, returned a confident wrong answer with no indication of trouble. The
+error is 1.00 mV, against a trim LSB of 0.0784 mV: **12.8 LSB**, and by
+`dP/dVos = 0.0110/mV` a probability error of **0.011, or 22x the +/-0.0005
+tolerance.**
+
+**Still not recommending a procedure.** This strengthens the case that the absent
+one needs to be stated and verified; it does not supply it.
