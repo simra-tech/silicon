@@ -7355,3 +7355,52 @@ tolerance.**
 
 **Still not recommending a procedure.** This strengthens the case that the absent
 one needs to be stated and verified; it does not supply it.
+
+---
+
+## VALIDATED: the island at code 541 reproduced independently, to the point
+
+After the two corrections above withdrew the island rate, the detector was
+rebuilt and then tested against the one known positive in this record -- the
+island at codes 541-543 on the nominal chip.
+
+**Code 541, band 0.40-1.60 mV below the crossing, 0.05 mV grid, mismatch off:**
+
+    -39.799 H  -39.749 H  -39.699 H  -39.649 H  -39.599 H  -39.549 L
+    -39.499 H  -39.449 H  -39.399 H  -39.349 H  -39.299 H  -39.249 H
+    -39.199 L  -39.149 L  -39.099 L  -39.049 L  -38.999 H  ... (25 pts)
+
+| | recorded | this run |
+|---|---|---|
+| crossing, code 540 | -38.0150 | -38.0188 (3.8 uV) |
+| inverted points, 541 | 4 | **4** |
+| island width, 541 | 0.20 mV | **0.20 mV** |
+| position below crossing | ~0.9 mV | **0.82-0.97 mV** |
+| code 540 control | no island, 20/20 | **clean, 25/25** |
+
+Measured by a third deck generator (`mkband.py`), independent of both earlier
+ones, using a **band that excludes the crossing** and two **anchor** points per
+code that confirm the band's placement rather than assuming it: HIGH 0.30 mV
+below the crossing, LOW 0.30 mV above, verified on every code.
+
+**The island at 541-543 is therefore confirmed by three independent generators
+on three grids.** It is a property of the nominal design, not of any one deck.
+
+### A new single-point inversion, below anything previously swept
+
+There is an additional isolated LOW at **-39.549 mV**, one point wide. Earlier
+work swept 0.30-1.30 mV below the crossing, reaching -39.525. **This sits 24 uV
+below the lowest voltage ever measured here** -- it is not in tension with any
+prior result, because that region was never examined.
+
+At 0.05 mV it is narrower than the 0.14-0.20 mV metastable width, so it is
+recorded as **ambiguous, not an island**. Whether single-point inversions of this
+kind are real features or an artifact of sampling phase is under test (the deck
+carries a free-running 1 ns clock, and every measurement in this project reads
+t = 50.000 ns, an exact multiple of that period).
+
+### Method note for anyone extending this
+
+Locate the chip on a code known to be island-free and step to the code under
+study. Bisecting the code under study converged onto the island itself, 1.00 mV
+from the true crossing, with no warning (recorded above).
