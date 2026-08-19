@@ -6922,3 +6922,56 @@ nominal.
 **Recommended regardless of outcome:** future chip campaigns should measure element
 size at a code **away from 296-307**. Codes 360/361 are known-ordinary and were used
 for the paired test.
+
+## ⚠ CORRECTION to the entry above — the displacement claim is withdrawn — 2026-08-19 08:30
+
+The provisional entry above says the 13-chip campaign's 52% element spread may be
+inflated by bump displacement. **The inflation claim is withdrawn. The rest of that
+entry stands.**
+
+### What happened
+
+The evidence for inflation was a paired comparison: bump-code spread against
+ordinary-code spread on the same chips. Then each crossing was given a **verify
+sweep** — 11 raw points around the converged value, to show whether the transition
+is single and monotone. Bisection cannot see an island and returns a tight bound
+either way; one chip had already produced a physically impossible negative element.
+
+Applying that check:
+
+| verified chips | bump spread | ordinary spread | ratio |
+|---|---|---|---|
+| 0 (unverified) | 159% | 26% | **6.0x** |
+| 3 | 68% | 29% | 2.4x |
+| **4** | **68%** | **52%** | **1.3x** |
+
+**The effect shrinks every time a chip is verified.** The filter is blind to
+element size — it only counts H/L transitions — so a real effect should survive it.
+This one does not. The strongest single data point (chip 3, bump element 0.5273)
+came from a chip with an **island at its ordinary code**.
+
+### What still stands
+
+1. **The campaign measured its element at code 301, on the bump plateau.** True,
+   documented, and worth knowing.
+2. **The bump is absent from codes 300/301 on most drawn chips.** Verified chips
+   read **mean 0.2002 against a nominal 0.6200** there, while reading 0.1514
+   against a nominal 0.1400 at the ordinary code. This is a statement about the
+   **mean** and survives verification.
+3. **Islands occur at codes 360/361 on some chips** — codes chosen because they are
+   ordinary on the nominal chip. **No code in this array can be assumed island-free
+   on an arbitrary drawn chip.**
+
+### What is withdrawn
+
+That the campaign's 52% spread is demonstrably inflated by displacement. **At 1.3x
+that is not supported**, and no revised range margin is implied. The two claims —
+"the bump moves" and "its movement inflates the measured spread" — are separate,
+and only the first has evidence.
+
+### Standing recommendation, unchanged
+
+Future chip campaigns should measure element size at a code away from 296-307, and
+**every mismatch-ON crossing should carry a verify sweep**. Crossings taken before
+that check existed cannot be cleared retrospectively, because the chips cannot be
+redrawn.
