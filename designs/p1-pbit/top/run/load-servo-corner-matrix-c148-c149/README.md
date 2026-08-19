@@ -7207,3 +7207,54 @@ the probability tolerance**.
 
 **Not recommending a procedure.** No scheme has been substituted for the absent one,
 because a fabricated procedure in a design record is worse than an acknowledged gap.
+
+---
+
+## CORRECTION: the island rate drops to 1 of 10, and d420 is withdrawn
+
+Supersedes the "**2 of 10 drawn chips**" figure recorded above. The correction is
+to my measurement chain, not to new silicon data.
+
+### Why
+
+The classifier despikes points that disagree with both neighbours, on the stated
+grounds that they are comparator metastability. That premise is wrong: **the deck
+contains no noise source** -- no `trnoise`, no `trrandom`, only a deterministic
+`IKICK2` PWL pulse -- and **100% of sampled outputs sit at a rail**, in the
+scattered region as much as outside it. Every one of those points is a resolved,
+reproducible decision.
+
+The rule assumes sparse spikes on a settled background. Measured across 98
+windows on 10 chips, the fraction of each window it rewrites is median 0.0% and
+90th percentile 12.9%, then a gap, then a tail of seven windows at 19-32%.
+**Six of those seven are d420 at codes 425-429** -- precisely the windows d420's
+island evidence rested on. At code 426 it rewrote 9 of 31 points.
+
+### Effect
+
+`classify()` now returns **ambig** above a 15% rewrite fraction (threshold taken
+from the gap in the measured distribution). Under that guard:
+
+| | before | after |
+|---|---|---|
+| island-carrying chips | 2 of 10 (d420, e420_2) | **1 of 10 (e420_2)** |
+| Wilson 95% | 5.7 - 51.0% | **1.8 - 40.4%** |
+| d420 | 2 islands + progressive degradation | 6 of 10 codes ambig |
+
+The "progressive degradation" gradient across d420's codes 425-429 is better
+explained by the rewrite fraction climbing across those same codes (22.6, 29.0,
+32.3, 25.8, 22.6%) than by anything the chip is doing.
+
+### Scope of the correction
+
+- **Withdrawn:** d420 as island-carrying; the progressive-degradation reading;
+  the threshold reversal at code 422 (that verdict turns on despike removing a
+  single edge point, below the guard -- the guard catches dense reshaping, not
+  one decisive rewrite).
+- **Unchanged:** e420_2's island at 424. Islands remain real and remain
+  **3.3-27x the P tolerance**. The absent selection procedure stands as recorded.
+- **Not established:** that d420 is clean. `ambig` means the measurement cannot
+  support either verdict at this grid.
+
+**The 5.75x recommendation is untouched.** It rests on dead codes and
+monotonicity, neither of which passes through the despike path.
