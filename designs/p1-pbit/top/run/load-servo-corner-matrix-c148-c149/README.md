@@ -7092,3 +7092,63 @@ variable.**
 Measure element size away from codes 296-307, **and classify inversions by distance
 from the crossing, not by width alone.** A separate density campaign is running to
 measure how common genuine islands are; interim result is ~2 per 100 codes.
+
+## ▶ ISLAND OCCURRENCE — a chip property, not a code property — 2026-08-19 13:00
+
+Measured to answer how common the sub-crossing islands are on drawn chips. **The
+answer is not a rate over codes**, and arriving at that was most of the work.
+
+### Method
+
+Eight mismatch-ON chips, each **locating its own crossing** (chip-to-chip offset
+spans ~20 mV, so a fixed window misses several chips entirely), then flat-sweeping
+**ten consecutive codes** at 0.05 mV across +/-0.75 mV of each expected crossing.
+80 code-samples in total. Flat sweeps are required: **bisection finds one transition
+and is blind to islands by construction**, and would have returned zero.
+
+Classification is by **inversion width AND distance from the crossing**:
+
+- comparator metastability sits **at** the crossing (minimum overdrive) and is
+  ~0.14-0.20 mV wide
+- an island is a feature of the transfer curve and can sit anywhere; the confirmed
+  ones at codes 541-543 sat 0.73-0.83 mV out
+
+**Width alone cannot separate them** -- both are ~0.15 mV, a finer grid changes
+neither, and the simulator is deterministic so repetition does not help. Distance
+can. `tools/pe_classify.py` implements this and carries its five-revision history.
+
+### Result
+
+| | |
+|---|---|
+| chips entirely clean | **7 of 8** |
+| chips with anomalies | **1 of 8** (3 anomalies in its 8 codes) |
+| anomalies on that chip | island at 420, **threshold reversal** at 422, island at 426 |
+
+**Two further chips were run on the SAME codes 420-429.** Both are clean at codes
+420 and 422 — the codes where the anomalous chip showed an island and a reversal.
+**Three independent draws, same codes, same method: only one shows anything.**
+
+**So these are properties of a drawn chip, not of a code region.** A pooled "islands
+per 100 codes" figure would average a clean majority with one outlier and describe
+neither.
+
+### The reversal, and what it means for the recommendation
+
+One anomaly is a **threshold moving backward**: at code 422 the crossing lies above
+the directly-measured crossing at code 420 on the same chip. That follows from two
+measured quantities, not from any slope estimate.
+
+**Monotonicity is one of the two legs the 5.75x recommendation stands on.** This does
+not contradict it: monotonicity holds nominally and on 7 of 8 drawn chips.
+**It is a yield caveat** — an occasional drawn chip may be non-monotone at an
+arbitrary code — not a design defect.
+
+**It cannot be confirmed.** Mismatch-ON draws are unreproducible, so the evidence is
+a bound on a chip that cannot be re-measured.
+
+### Not established
+
+**How often such a chip occurs.** 1 in 8 has an interval wide enough to include
+1-in-4 and 1-in-50. Eight chips cannot narrow it. Also, ten codes per chip is a thin
+sample of 603: a "clean" chip here is clean **only in the codes examined**.
