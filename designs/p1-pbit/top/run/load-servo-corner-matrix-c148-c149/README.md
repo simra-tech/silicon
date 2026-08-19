@@ -6679,3 +6679,59 @@ feature must turn over inside that range. `pe-u573` is bisecting.
 hole-vs-feature argument. **Near the onset the island is 0.20 mV**, so pass
 `min_feature_mv=0.20` when probing codes close to 541 — otherwise a 0.20-0.35 mV
 hole could conceal exactly the narrow island being hunted.
+
+## ⚠ NEW: the island MERGES with the decision threshold at code 545 — 2026-08-19 01:15
+
+A design-relevant consequence of the sub-crossing island, found while tracing how
+the island grows. **This is the first effect in this campaign that the element-size
+characterisation could not have revealed.**
+
+### What happens
+
+| code | island width | effective threshold | step |
+|---|---|---|---|
+| 541 | 0.20 mV | -38.2250 | -0.210 |
+| 542 | 0.35 mV | -38.4250 | -0.200 |
+| 543 | 0.60 mV | -38.6450 | -0.220 |
+| 544 | 0.75 mV | -38.8750 | -0.230 |
+| **545** | merged | **-40.1250** | **-1.250** |
+
+At code 544 the island (-39.85..-39.15) is separated from the crossing (-38.875)
+by a **0.275 mV strip of HIGH**. At 545 that strip closes: the comparator never
+returns HIGH above the island's lower edge. Confirmed by `pe-x545`/`pe-x546`, which
+extend 1.5 mV further up and show **2.70 mV of continuous LOW with no HIGH return**.
+
+For this to be a large island rather than a merge, it would have to exceed 2.70 mV
+having measured 0.75 mV one code earlier while **decelerating** (increments 0.15,
+0.25, 0.15).
+
+### Why it matters, and how much
+
+**The effective threshold — what the comparator actually decides on — steps
+-1.250 mV at code 545 against a local step of ~0.205 mV. That is a DNL of roughly
++5 LSB at one code.**
+
+**It does NOT change the 5.75x recommendation.** That rests on directly measured
+dead codes and on monotonicity. The threshold continues to decrease, so this is
+neither a dead code nor a reversal. It is a large local DNL inside the covered
+range, and it should be stated as a caveat rather than treated as a defect.
+
+### Why nothing earlier could have found it
+
+**Element size is measured by differencing two adjacent crossings, and a merge
+moves both.** The difference therefore looks ordinary. The six-position control,
+the bowl, and every element-size result in the sections above are blind to this
+by construction — not through carelessness, but because the quantity they measure
+is insensitive to it.
+
+It surfaced only because the region *between* crossings was swept, looking for
+something else entirely.
+
+### Open
+
+Whether the merge ever reverses. An un-merge would appear as a **positive** step of
+about +1.25 mV. Crossings at codes 550, 558, 565, 573, 580, 595 and 603 show a
+smooth monotone rise from -0.225 to -0.319 mV/code with **no positive step** — but
+those crossings are still being verified: a flip is only a crossing once its LOW
+run exceeds the widest known island (0.75 mV), and several do not yet. **Do not
+cite the "merge is permanent" result until that verification completes.**
