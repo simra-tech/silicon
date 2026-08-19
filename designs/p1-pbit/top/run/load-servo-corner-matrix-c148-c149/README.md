@@ -7258,3 +7258,54 @@ explained by the rewrite fraction climbing across those same codes (22.6, 29.0,
 
 **The 5.75x recommendation is untouched.** It rests on dead codes and
 monotonicity, neither of which passes through the despike path.
+
+---
+
+## CORRECTION 2: the island rate is withdrawn entirely, not revised to 1 of 10
+
+Supersedes **CORRECTION 1** above, which cut the rate from 2 of 10 to 1 of 10.
+That revision was itself too generous. The rate is now withdrawn with no
+replacement figure.
+
+### Two defects in the classifier, both structural
+
+**1. A single window-edge point could decide the verdict.** The surviving island
+(e420_2, code 424) was produced by one `L` at index 0 of the window. `despike`
+scans `range(1, len-1)` and cannot touch the first or last sample, so that point
+persisted, made both ends read `L`, and turned the 20-point `H` run into a
+"1.00 mV island". Dropping that one point makes the window clean.
+
+**2. Islands sharing a window with the crossing were invisible.** The rule
+returned `clean` immediately whenever the window's ends differed, without
+inspecting the interior. A synthetic window containing an unmistakable four-point
+island classified clean. **Every window in the rate study is centred on its
+code's crossing**, so nearly all took that branch: the tool was blind to the
+physical configuration and sensitive only to the artifact.
+
+### Consequence
+
+Under a corrected classifier (edge-stability guard + best-single-step fit with
+residual excursions), the 10-chip dataset gives **3 of 10** with the distance
+discriminator supplied and **1 of 10** without; chip d560 alone swings between 7
+islands and 1 on that choice. A figure that moves that far on a parameter choice
+is not a measurement, so none is reported.
+
+### What is unaffected
+
+- **The confirmed island at codes 541-543 stands.** It was established by a
+  different route -- `crossing()` refusing on multiple flips, with no-island
+  bands verified above and below -- which does not pass through this classifier.
+- **Islands remain real and remain 3.3-27x the P tolerance.** The absent
+  selection procedure, and the quantisation result (86% of the probability budget
+  consumed before any disturbance), are untouched.
+- **The 5.75x recommendation is untouched.** It rests on dead codes and
+  monotonicity, neither of which passes through this path.
+
+### The design error to correct, stated plainly
+
+Centring every window on the crossing was the mistake. The 541-543 island was
+found in a band that did **not** contain the crossing, where the background side
+is unambiguous and an excursion is plain. A re-measurement should sweep bands
+placed below the crossing at the 0.7-0.9 mV offsets where confirmed islands sat,
+with the crossing measured separately. **This is a re-run, not a re-analysis** --
+no rate can be recovered from the existing sweeps.
