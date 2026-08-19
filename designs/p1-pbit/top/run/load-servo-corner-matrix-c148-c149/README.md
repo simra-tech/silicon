@@ -6975,3 +6975,62 @@ Future chip campaigns should measure element size at a code away from 296-307, a
 **every mismatch-ON crossing should carry a verify sweep**. Crossings taken before
 that check existed cannot be cleared retrospectively, because the chips cannot be
 redrawn.
+
+
+## ✔ G-3b FINAL — displacement confirmed at 3.8x; the withdrawal above is itself corrected — 2026-08-19 09:15
+
+**The section above withdraws the displacement-inflation claim. That withdrawal was
+reached by faulty reasoning and is now superseded.** The claim stands, with a
+number.
+
+### Why the withdrawal was wrong
+
+It argued that the effect shrank every time a chip was verified: 6.0x -> 2.4x ->
+1.3x. **That was an artifact of the spread statistic.** Spread was measured as
+`(max - min) / mean`, which **can only grow as n increases** — a range never
+shrinks when a sample is added. Its movement belonged to the sample size, not the
+silicon.
+
+Recomputed with the coefficient of variation (sd/mean), which is stable in n:
+
+| | n | mean | nominal | sd | **CV** |
+|---|---|---|---|---|---|
+| bump (codes 300->301) | 8 | 0.3003 | 0.6200 | 0.2008 | **67%** |
+| ordinary (codes 360->361) | 8 | 0.1416 | 0.1400 | 0.0250 | **18%** |
+
+**Ratio 3.8x, and it read 3.8x at both n=6 and n=8.**
+
+### What is established
+
+1. **Bump displacement is real and quantified.** The element at the bump code is
+   ~4x more variable than at an ordinary code **on the same drawn chip**. Device
+   mismatch acts on the same devices at both codes and would scatter them alike.
+2. **The bump is absent from codes 300/301 on most drawn chips** (mean 0.3003
+   against nominal 0.6200).
+3. **Islands occur at ordinary codes on 33% of chips** (4 of 12). Codes 360/361
+   were chosen *because* they are ordinary on the nominal chip. **No code in this
+   array can be assumed island-free on an arbitrary drawn chip.**
+
+All measurements are paired (both codes in one deck, one drawn chip) and verified
+(11 raw points per crossing showing a single H/L transition). Four island-
+contaminated chips were excluded on that criterion.
+
+### Consequence for the range margin
+
+The 13-chip campaign measured its element at **code 301**. Its **52% spread
+therefore mixes device mismatch with bump displacement**, and the two are now
+separable: the same chips give **CV 18% at an ordinary code against 67% at the
+bump code**.
+
+**This does not revise the range margin.** Doing so requires redoing that
+campaign's measurement at an ordinary code — different work, not yet done. What it
+establishes is that the existing spread is not a clean mismatch figure.
+
+### Standing recommendations, now evidenced
+
+- Measure element size at a code **away from 296-307**; codes 360/361 are
+  known-ordinary on the nominal chip.
+- **Give every mismatch-ON crossing a verify sweep.** At a 33% island rate, an
+  unverified crossing here is a coin-flip on whether the number means anything.
+- Crossings taken before the verify sweep existed **cannot be cleared
+  retrospectively**, because drawn chips cannot be reproduced.
