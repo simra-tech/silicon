@@ -7152,3 +7152,58 @@ a bound on a chip that cannot be re-measured.
 **How often such a chip occurs.** 1 in 8 has an interval wide enough to include
 1-in-4 and 1-in-50. Eight chips cannot narrow it. Also, ten codes per chip is a thin
 sample of 603: a "clean" chip here is clean **only in the codes examined**.
+
+## ⚠ THE OPEN QUESTION THAT DECIDES THE REST — 2026-08-19 14:15
+
+**How the trim code is selected in operation is ABSENT from every retained source.**
+Searched the top-level specification and the comparator design directories for any
+selection or search procedure. The specification defines the **interface** and the
+**target** and stops.
+
+**What the specification does establish:**
+
+- **`TRIM_DAC[9:0]` is an external pad.** The code is supplied from outside; there
+  is no on-chip selection machine.
+- **Target `P(bit=1) = 0.5000 +/- 0.0005`.** Selection is therefore by measuring
+  **bit probability**, not by measuring a threshold.
+- Noise **sigma = 36.4 mV rms**, trim LSB **78.4 uV**, range **+/-40.10 mV**.
+- Trim is **not required for functional survival** -- untrimmed dies still switch --
+  but **is required for probability accuracy and die-to-die uniformity**.
+
+### Why the absence matters more than it looks
+
+Near P = 0.5, `dP/dVos = phi(0)/sigma = 0.0110 per mV`. Against the +/-0.0005
+tolerance:
+
+| effect measured on drawn chips | shift | moves P by | vs tolerance |
+|---|---|---|---|
+| narrowest island | 0.15 mV | 0.0016 | **3.3x** |
+| widest island observed | 0.45 mV | 0.0049 | **9.9x** |
+| the code-545 merge step | 1.25 mV | 0.0137 | **27x** |
+
+**Large noise does not hide small offsets.** It makes P a smooth function of offset,
+and the slope of that function at its centre is what converts millivolts into
+probability error. A 0.15 mV disturbance is 0.4% of the noise amplitude and **more
+than three times the entire probability budget.**
+
+### The question, stated so a one-line answer resolves it
+
+Estimating P to +/-0.0005 needs ~4e6 samples per code, so at 1 GHz an **exhaustive
+1024-code sweep costs ~4 seconds** -- affordable in production test. The procedure
+is therefore a *choice*:
+
+- **Exhaustive sweep** -- visits every code; a disturbed code is seen for what it
+  is. **Robust** to islands and reversals.
+- **Successive approximation / bisection** -- assumes `P` is **monotone in the
+  code**. Islands and threshold reversals violate that, and such a search **cannot
+  detect the violation: it returns a code, confidently, either way.**
+
+**Q: If selection uses successive approximation, does anything verify that the code
+it lands on actually meets P?**
+
+That single answer decides whether the island and reversal findings are a curiosity
+or a test-flow requirement. They occur on **2 of 10 drawn chips** and are **3-27x
+the probability tolerance**.
+
+**Not recommending a procedure.** No scheme has been substituted for the absent one,
+because a fabricated procedure in a design record is worse than an acknowledged gap.
