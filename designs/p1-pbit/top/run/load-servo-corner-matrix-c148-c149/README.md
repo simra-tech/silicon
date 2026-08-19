@@ -7034,3 +7034,61 @@ establishes is that the existing spread is not a clean mismatch figure.
   unverified crossing here is a coin-flip on whether the number means anything.
 - Crossings taken before the verify sweep existed **cannot be cleared
   retrospectively**, because drawn chips cannot be reproduced.
+
+## ⚠ G-3b REVISED — 2.4x, not 3.8x; and the 33% island rate is withdrawn — 2026-08-19 11:45
+
+**Fourth revision of this entry.** Provisional -> withdrawn -> reinstated at 3.8x ->
+now **2.4x**. The direction has held throughout; the magnitude has not.
+
+### The island classifier was wrong, and it fed both results
+
+Islands were originally identified by inversion **width** alone. Width cannot
+separate a narrow island from **comparator metastability** — both are ~0.15 mV here,
+a finer grid changes neither, and the simulator is deterministic so repetition does
+not help.
+
+**Distance can.** Metastability occurs where overdrive is smallest — at the crossing.
+An island is a feature of the transfer curve and can sit anywhere; the confirmed
+islands at codes 541-543 sat 0.73-0.83 mV from their crossing.
+
+Re-scoring the G-3 chips with that discriminator:
+
+| | original | corrected |
+|---|---|---|
+| chips with an island | 4 of 12 (33%) | **0 of 12** |
+| islands in 48 code-samples | 4 | **0** |
+
+**All four were metastability.** The "33% island rate" reported earlier is
+**withdrawn**.
+
+### Consequence for the displacement result
+
+Those four chips had been excluded from the paired analysis as contaminated. Three
+were clean. With them restored:
+
+| | chips | bump CV | ordinary CV | ratio |
+|---|---|---|---|---|
+| as published | 8 | 67% | 18% | 3.8x |
+| **corrected** | **11** | **62%** | **26%** | **2.4x** |
+
+**Bump displacement still stands**: the element at code 301 is ~2.4x more variable
+than at an ordinary code on the same drawn chip, and device mismatch acts on the
+same devices at both codes so would scatter them alike. **The magnitude was inflated
+by excluding three clean chips whose ordinary-code element happened to be more
+variable.**
+
+### Unchanged
+
+- The bump is absent from codes 300/301 on most drawn chips (mean 0.3072 vs nominal
+  0.6200).
+- The 13-chip campaign measured at code 301 and its 52% spread mixes mismatch with
+  displacement.
+- **This still does not revise the range margin**, which needs that campaign's
+  measurement redone at an ordinary code.
+- 5.75x is untouched.
+
+### Standing recommendation, strengthened
+
+Measure element size away from codes 296-307, **and classify inversions by distance
+from the crossing, not by width alone.** A separate density campaign is running to
+measure how common genuine islands are; interim result is ~2 per 100 codes.
