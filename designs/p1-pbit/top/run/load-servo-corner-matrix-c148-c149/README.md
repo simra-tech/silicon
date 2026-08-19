@@ -6748,3 +6748,65 @@ sampled at 14 points, with the merge as the sole discontinuity in it.
 (587→595). An un-merge followed by a re-merge *inside a single gap* would restore
 the displacement before the next sample and be invisible. That requires two
 opposite ~1.25 mV jumps within 8 codes. Not excluded; considered unlikely.
+
+## ▶ THE 296-304 BAND, MEASURED PROPERLY — 2026-08-19 03:00
+
+The band has been described throughout this campaign as showing a **2.00x
+b1-on/b1-off doubling at unary 74**. It has now been measured with the method and
+resolution the six-position control used, and the picture is different from the
+description.
+
+### What the six-position control could and could not establish
+
+The control measured unary 12, 37, 60, 90, 120, 135 — **chosen because nothing
+suggested them**, which is precisely what made it an unbiased test of whether the
+doubling was an artifact of concentrated attention. It established that ordinary
+bands do not double.
+
+**It is silent on the band itself.** None of its positions is near unary 74, so it
+says nothing about how large the elements *inside* the band are. That question
+required measuring the band with the control's own method, which had never been
+done.
+
+### Result by unary group
+
+| unary | codes | b1-off element | b1-on element | verdict |
+|---|---|---|---|---|
+| 73 | 292-295 | mean 0.1667 across the group | | **ordinary** |
+| 74 | 296-299 | 0.2000 +/- 0.10 | **0.4500 +/- 0.15** | ratio 2.25; **doubling not excluded, not established** at 0.1 mV — refining at 0.01 |
+| 75 | 300-303 | **0.6200 +/- 0.0100** | **0.6200 +/- 0.0100** | **no doubling; both elements 4.5x oversized** |
+
+Ordinary interpolated value at these codes, from the control at unary 60/90:
+**~0.137 mV**.
+
+### Two distinct effects, not one
+
+1. **Unary 75: both elements 4.5x oversized, with no ratio anomaly at all.** At
+   0.01 mV with +/-0.01 bounds this is not arguable. The binary devices are the
+   same devices in every group — b0 and b1 do not change with unary count — so this
+   is a **state-dependent effect**: at 75 unary elements on, the binary elements are
+   far more effective than at 73 or 74. Sharp, not smooth, and confined to one
+   unary count among those measured.
+2. **Unary 74: a possible ratio anomaly, ~2.25 by midpoint, unresolved at 0.1 mV.**
+   Being refined.
+
+### On the original 2.00x figure
+
+The original sweeps used a **0.25 mV grid**, giving +/-0.125 per crossing and
+**+/-0.25 per element**. An element of 0.20 measured with a bound of 0.25 has the
+interval (-0.05, 0.45), which contains zero. **A ratio between two such quantities
+is not a measurement**, whatever value it takes.
+
+This is the second quantity in this campaign that was reported confidently from
+that grid while being below its resolution — the island's onset was the first, the
+feature there being 0.20 mV wide against a 0.25 mV grid. **Neither number was
+wrong through carelessness; both were undecidable in principle from the data they
+came from.**
+
+### Correction to an earlier entry in this document
+
+An intermediate finding that **"unary 74 is ordinary"** was published and is
+**RETRACTED**. It was concluded from steps 296->297 and 297->298 — the b1-off
+element and an intra-group step — while **the b1-on element, which is the quantity
+the ratio is about, was still unresolved**. Its code-299 crossing later resolved as
+a gapped bracket at 1.50 +/- 0.10, giving b1-on = 0.45 and a ratio of 2.25.
