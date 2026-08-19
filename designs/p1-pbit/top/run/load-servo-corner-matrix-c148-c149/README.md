@@ -6729,9 +6729,22 @@ something else entirely.
 
 ### Open
 
-Whether the merge ever reverses. An un-merge would appear as a **positive** step of
-about +1.25 mV. Crossings at codes 550, 558, 565, 573, 580, 595 and 603 show a
-smooth monotone rise from -0.225 to -0.319 mV/code with **no positive step** — but
-those crossings are still being verified: a flip is only a crossing once its LOW
-run exceeds the widest known island (0.75 mV), and several do not yet. **Do not
-cite the "merge is permanent" result until that verification completes.**
+**CLOSED — the merge is permanent.** Verified 2026-08-19 02:00.
+
+**14 crossings** now span codes 545→603 (545, 550, 554, 558, 561, 565, 569, 573,
+576, 580, 587, 595, 599, 603). Every one is confirmed a crossing rather than an
+island edge: its LOW run exceeds the widest measured island (0.75 mV) — runs of
+1.40–1.60 mV on the six added for this purpose.
+
+**Every step is negative**, rising smoothly and monotonically from −0.2250 to
+−0.3375 mV/code. **There is no positive step anywhere**, so the −1.25 mV
+displacement acquired at the merge is never recovered, right to the last code in
+the array.
+
+The smooth monotone progression is itself evidence: it is the bowl's rising edge
+sampled at 14 points, with the merge as the sole discontinuity in it.
+
+**Residual caveat, stated not assumed away:** the widest remaining gap is 8 codes
+(587→595). An un-merge followed by a re-merge *inside a single gap* would restore
+the displacement before the next sample and be invisible. That requires two
+opposite ~1.25 mV jumps within 8 codes. Not excluded; considered unlikely.
