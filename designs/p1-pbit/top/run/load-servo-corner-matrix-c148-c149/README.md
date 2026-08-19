@@ -6810,3 +6810,72 @@ An intermediate finding that **"unary 74 is ordinary"** was published and is
 element and an intra-group step — while **the b1-on element, which is the quantity
 the ratio is about, was still unresolved**. Its code-299 crossing later resolved as
 a gapped bracket at 1.50 +/- 0.10, giving b1-on = 0.45 and a ratio of 2.25.
+
+## ✔ THE 296-304 ANOMALY EXPLAINED — a mid-scale element bump — 2026-08-19 04:00
+
+**Supersedes the "b1 doubling" description used throughout this document.** The
+doubling is real as a number and is **not a b1 effect**.
+
+### Element size, laid out by CODE rather than by unary group
+
+| codes | unary | element (mV) |
+|---|---|---|
+| 288-289, 290-291 | 72 | 0.200, 0.200 |
+| 292-293, 294-295 | 73 | 0.19, 0.15 |
+| 296-297 | 74 | 0.20 |
+| **298-299** | 74 | **0.38** |
+| **300-301** | **75** | **0.62** |
+| **302-303** | **75** | **0.62** |
+| **304-305** | 76 | **0.40** |
+| 306-307 | 76 | 0.20 |
+| 312-313, 314-315 | 78 | 0.200, 0.200 |
+
+**A symmetric bump, ~4.5x the ordinary element, confined to roughly codes
+298-305.** Flanks at unary 72 and 78 are identical (0.200/0.200, ratio 1.00) and
+equidistant from the peak.
+
+### Why it looked like a b1 doubling
+
+The b1-off element is measured between codes **4u and 4u+1**; the b1-on element
+between **4u+2 and 4u+3**. **The b1-on pair sits two codes later in the same
+group.** Sampling a bump at two positions two codes apart produces:
+
+| unary | OFF | ON | ratio | position |
+|---|---|---|---|---|
+| 73 | 0.19 | 0.15 | 0.79 | below the bump |
+| **74** | 0.20 | 0.38 | **1.90** | **rising edge — later pair sees more** |
+| 75 | 0.62 | 0.62 | **1.00** | at the plateau |
+| **76** | 0.40 | 0.20 | **0.50** | **falling edge — later pair sees less** |
+
+**The inverted ratio at unary 76 is the decisive observation.** A genuine b1 effect
+has no reason to reverse; a sampling artifact must.
+
+### The bump peaks at exactly half scale
+
+Codes 0..603 with unary = floor(code/4) gives **150 unary elements**. The bump
+peaks at codes 300-303 = **unary 75 = exactly half the array switched on**.
+
+Every position measured away from half scale is ordinary: unary 12 (8%), 37 (25%),
+60 (40%), 72 (48%), 78 (52%), 90 (60%), 120 (80%), 135 (90%).
+
+**Hypothesis, not result:** an effect peaking at balance is the expected shape for
+common-mode excursion or current-source headroom in a steering array, both of which
+modulate how far a given element moves the decision threshold. Nothing in the
+netlist distinguishes unary element 75 — all are `XQU1 Nx=4` with identical
+switches — so a *state* explanation was required. The evidence is a symmetric bump
+centred within one unary count of exact half scale with ordinary flanks; there is
+no direct evidence of the mechanism itself.
+
+### Consequences for this document
+
+- **"2.00x b1 doubling at unary 74"**: the number is right, the attribution is
+  wrong. Replace with the bump.
+- **"b0 depends on the unary background"**: **superseded.** Element size depends on
+  *code*; the apparent bit-dependence is an artifact of where each bit's element is
+  measured within a group.
+- **Reporting elements per unary group as an OFF/ON pair assumes element size is
+  constant within a group.** Where it is not, that pair is two samples of a varying
+  quantity, not two comparable measurements. This affects the *framing* of every
+  element table above, though not their numbers.
+- **5.75x is unchanged.** It rests on dead codes and monotonicity; the bump is
+  smooth, symmetric and monotone throughout.
