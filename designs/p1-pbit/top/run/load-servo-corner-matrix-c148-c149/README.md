@@ -6879,3 +6879,46 @@ no direct evidence of the mechanism itself.
   element table above, though not their numbers.
 - **5.75x is unchanged.** It rests on dead codes and monotonicity; the bump is
   smooth, symmetric and monotone throughout.
+
+## ⚠ PROVISIONAL: the 13-chip element was measured ON the bump — 2026-08-19 06:00
+
+**This bears on the range margin, which is the tightest number in the
+recommendation. It is provisional and stated so.**
+
+The correlation-chip decks (still on disk) sweep `VCODE` at 2.00, 3.01, 4.00 —
+codes **200, 301, 400**. 200 and 400 are a lever pair; **301 is the measurement
+code, and it sits on the mid-scale element bump** documented above (plateau
+300-303, nominal element 0.6200 against ~0.1400 elsewhere).
+
+The campaign's reported element range, **0.5000..0.8500 with mean ~0.675**,
+brackets the bump nominal of 0.62. That is consistent with the element having been
+measured on the plateau throughout.
+
+**Why that may matter.** Mismatch-ON chips measured this session show the element at
+code 301 varying from **0.1343 to 0.6348** — a factor of 4.7. Some chips read
+essentially the bump value (0.6348) and others essentially the ordinary value
+(0.13-0.18). **That pattern is the bump moving along the code axis from chip to
+chip**, not the element varying smoothly: a fixed measurement code lands on the
+plateau for one chip and on ordinary array for another.
+
+If so, the campaign's **52% element spread is part device mismatch and part bump
+displacement**, and those are different physical quantities. The range margin
+derived from that spread would inherit the mixture.
+
+**What is NOT claimed:**
+- That the campaign's measurements are wrong. Codes 200/301/400 were a reasonable
+  choice; the bump was unknown until this session.
+- That the range margin is wrong. Only that its spread term may combine two
+  effects.
+- A revised margin. No number is offered until the paired test completes.
+
+**The test in progress.** Chips that measure **both** code 301 (bump) and code 361
+(ordinary) **in the same deck**, so one drawn chip reports both. If the bump-element
+spread greatly exceeds the ordinary-element spread across the same chips,
+displacement is confirmed and the margin needs re-deriving from an ordinary code.
+One chip has completed cleanly so far: bump 0.6348, ordinary 0.1343 — both at
+nominal.
+
+**Recommended regardless of outcome:** future chip campaigns should measure element
+size at a code **away from 296-307**. Codes 360/361 are known-ordinary and were used
+for the paired test.
