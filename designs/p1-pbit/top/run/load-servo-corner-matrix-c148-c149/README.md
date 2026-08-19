@@ -7404,3 +7404,42 @@ t = 50.000 ns, an exact multiple of that period).
 Locate the chip on a code known to be island-free and step to the code under
 study. Bisecting the code under study converged onto the island itself, 1.00 mV
 from the true crossing, with no warning (recorded above).
+
+---
+
+## The island is not an artifact of sampling phase
+
+A concern raised by the validation rather than by the silicon. The shared deck
+drives the comparator from a **free-running 1 ns clock**:
+
+    VCLK_P CLK_P 0 PULSE(0 1.2 0 50p 50p 400p 1000p)
+
+so a 50 ns transient strobes it ~50 times, and every measurement recorded here
+reads `v(pbit_raw_core)[nn-1]` -- the value at exactly t = 50.000 ns. That is an
+exact multiple of the clock period, so **every sample ever taken for this record
+sits at one fixed clock phase.** All three generators that found the 541-543
+island share that convention, so their agreement could not by itself rule out a
+sampling artifact.
+
+Tested directly: code 541, nominal chip, 21 identical voltages, three stop times
+in a single process.
+
+    50.0 ns  (on the clock edge)     HHHHHHLLLLHHHHHHHHHHH
+    50.5 ns  (clock low, settled)    HHHHHHLLLLHHHHHHHHHHH
+
+**Byte-identical at all 21 points**, island included -- the same four samples at
+-39.229 through -39.079 with the same HIGH boundaries. Moving the sample half a
+clock period changes nothing. **The island is a property of the circuit.**
+
+### Scope
+
+This clears sampling phase for the 0.20 mV island on the nominal chip. It does
+not address single-sample inversions (a separate run is bracketing the isolated
+LOW at -39.549), nor the wide mixed regions seen on some mismatch draws, which
+occur on different chips and were not measured here.
+
+**Worth noting for future work regardless of this result:** sampling at a fixed
+phase of a free-running clock was never a considered choice. 50 ns was a round
+number that happens to divide the period exactly. Any future measurement that
+needs sub-LSB resolution near a crossing should set the stop time off the clock
+grid deliberately.
