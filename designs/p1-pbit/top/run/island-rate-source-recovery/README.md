@@ -30,17 +30,40 @@ single point of failure. The surviving l=5.4u lineage lived only in the Sandboxy
 container workspace, which is not git-backed. This is the durable copy, so the
 re-baseline path does not depend on the container surviving another handover.
 
-## Structural compatibility (verified 2026-08-20 14:48Z)
+## Structural compatibility (verified 2026-08-20 14:48Z, corrected 15:17Z)
 
 The deck head (`/tmp/pe-d560.cir`, sha256 `0a392730…`) instantiates the comparator
 as a 13-port `XCOMP` and names seven internal nodes in its `.nodeset`. The surviving
-`C169-SOURCE-coarse-dac-v7-merged.spice` `p1_comparator` subckt is a **drop-in
-structural match**: the same 13 ports in the exact `XCOMP` order (PBIT_OUT PBIT_RAW
-CLK_OUT_DIV IN_P IN_N CLK_P CLK_N TRIM_P TRIM_N VCC_HBT VDD VSS CODE), and all seven
-`.nodeset` nodes (`c_p1_comp`, `c_p2_comp`, `c_p`, `c_n`, `e_track`, `ef_p`, `ef_n`)
-are present. Path (b) is therefore mechanically clean; the device length is still
-l=5.4u rather than l=483u, which is exactly why re-baselining (not substitution) is
-required for comparability with the published n=8 l=483u sample.
+`C169-SOURCE-coarse-dac-v7-merged.spice` `p1_comparator` subckt matches the same 13
+ports in the exact `XCOMP` order (PBIT_OUT PBIT_RAW CLK_OUT_DIV IN_P IN_N CLK_P CLK_N
+TRIM_P TRIM_N VCC_HBT VDD VSS CODE), and all seven `.nodeset` nodes (`c_p1_comp`,
+`c_p2_comp`, `c_p`, `c_n`, `e_track`, `ef_p`, `ef_n`) are present.
+
+**That match is not complete (H-1343).** The deck head also force-biases two
+comparator-internal nodes that no surviving source contains:
+
+```
+VEDP xcomp.e_dac_p 0 DC 0.687
+VEDN xcomp.e_dac_n 0 DC 0.687
+```
+
+`e_dac_p` / `e_dac_n` appear zero times in either surviving l=5.4u build, which
+instead degenerates each DAC cell individually (`e_dacu1..e_dacu150`, `e_dacb0`,
+`e_dacb1`, each with its own resistor to `VSS`). ngspice silently accepts a source
+on a non-existent subckt-internal node (no error, no warning), so a naive
+reconstruction would run with that bias disconnected. Path (b) is therefore clean at
+the ports and `.nodeset` nodes only, not mechanically clean overall — the two
+VEDP/VEDN targets must be reconstructed or re-derived before any run is trusted.
+The device length is still l=5.4u rather than l=483u, which is exactly why
+re-baselining (not substitution) is required for comparability with the published
+n=8 l=483u sample.
+
+**A second blocker is environmental (H-1342).** The post-handover container's
+ngspice-46 has PSP (level 103) not compiled in — the IHP SG13G2 MOS models
+(`sg13g2_hv_*_psp`, `sg13g2_lv_*_psp`, type `psp103va`) report "Unknown model type"
+and cannot load, so no comparator/island deck simulates in the current container at
+all. This blocks both the l=5.4u re-baseline and a rebuilt l=483u comparator, until
+a PSP-capable ngspice is present.
 
 ## Open decision (G-12)
 
@@ -53,6 +76,7 @@ operator sign-off to either:
   (re-running n=8 and n=20 together to restore comparability).
 
 Both paths are gated on a `--nomismatch` run reproducing the known 541-543
-island before any mismatch draw is counted. The 5.75x scaling recommendation is
+island before any mismatch draw is counted, and that validation itself is blocked
+until a PSP-capable ngspice is present (H-1342). The 5.75x scaling recommendation is
 unchanged by either path — it rests on dead codes and monotonicity, not on the
 island rate.
