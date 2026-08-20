@@ -1,0 +1,378 @@
+* C156: RETAPER BOTH FILES TOGETHER - one equal ratio of 2.29 across
+* all six stages, total widths P+N split ~1.4:1 P over N (first-order,
+* stated): XB1 0.85 (unchanged) -> XB2 1.95 (1.14/0.81) -> XM7/8 4.47
+* (2.61/1.86) -> XM9/10 10.25 (5.98/4.27) -> [isobuf include] XISO1
+* 23.5 (13.71/9.79) -> XISO2 53.87 (31.42/22.45). C155's scope error:
+* XM9/10 (48u) drove a 4.83u gate (0.10) and XISO1 drove 43.2u (8.94);
+* both out of band. Base: C148-SOURCE (NAND, cml, sense amp, CMFB
+* untouched). Prediction (PE): ~24 pc less delay, spread ~520 ps,
+* intersection about +160 ps at 800 ps/bit.
+** sch_path: /volume/user/workspace/cace_ihp_sg13g2_demo/xschem/candidates/p1_top_hier_v3/p1_top_hier.sch
+.subckt p1_top_hier PBIT_OUT PBIT_RAW CLK_OUT_DIV CLK_P CLK_N TRIM_P TRIM_N NOISE_GEN_VCC NOISE_GEN_VSS NOISE_AMP_VCC CODE
++ NOISE_AMP_VSS COMPARATOR_VCC_HBT VDD COMPARATOR_VSS VB1 VB2 IE
+*.opin PBIT_OUT
+*.opin PBIT_RAW
+*.opin CLK_OUT_DIV
+*.ipin CLK_P
+*.ipin CLK_N
+*.ipin TRIM_P
+*.ipin TRIM_N
+*.iopin NOISE_GEN_VCC
+*.iopin NOISE_GEN_VSS
+*.iopin NOISE_AMP_VCC
+*.iopin NOISE_AMP_VSS
+*.iopin COMPARATOR_VCC_HBT
+*.iopin VDD
+*.iopin COMPARATOR_VSS
+*.ipin VB1
+*.ipin VB2
+*.iopin IE
+X1 PBIT_OUT PBIT_RAW CLK_OUT_DIV CLK_P CLK_N TRIM_P TRIM_N NOISE_GEN_VCC NOISE_GEN_VSS NOISE_AMP_VCC NOISE_AMP_VSS CODE
++ COMPARATOR_VCC_HBT VDD COMPARATOR_VSS VB1 VB2 IE p1_top
+.ends
+
+* expanding   symbol:  p1_top.sym # of pins=17
+** sym_path: /volume/user/workspace/cace_ihp_sg13g2_demo/xschem/candidates/p1_top_hier_v3/p1_top.sym
+** sch_path: /volume/user/workspace/cace_ihp_sg13g2_demo/xschem/candidates/p1_top_hier_v3/p1_top.sch
+.subckt p1_top PBIT_OUT PBIT_RAW CLK_OUT_DIV CLK_P CLK_N TRIM_P TRIM_N NOISE_GEN_VCC NOISE_GEN_VSS NOISE_AMP_VCC NOISE_AMP_VSS CODE
++ COMPARATOR_VCC_HBT VDD COMPARATOR_VSS VB1 VB2 IE
+*.opin PBIT_OUT
+*.opin PBIT_RAW
+*.opin CLK_OUT_DIV
+*.ipin CLK_P
+*.ipin CLK_N
+*.ipin TRIM_P
+*.ipin TRIM_N
+*.iopin NOISE_GEN_VCC
+*.iopin NOISE_GEN_VSS
+*.iopin NOISE_AMP_VCC
+*.iopin NOISE_AMP_VSS
+*.iopin COMPARATOR_VCC_HBT
+*.iopin VDD
+*.iopin COMPARATOR_VSS
+*.ipin VB1
+*.ipin VB2
+*.iopin IE
+X1 net1 net2 NOISE_GEN_VCC NOISE_GEN_VSS VB1 VB2 IE p1_noise_gen
+X2 net3 net4 net1 net2 NOISE_AMP_VCC NOISE_AMP_VSS p1_noise_amp
+X3 PBIT_OUT PBIT_RAW CLK_OUT_DIV net3 net4 CLK_P CLK_N TRIM_P TRIM_N COMPARATOR_VCC_HBT VDD COMPARATOR_VSS CODE p1_comparator
+.ends
+
+
+* expanding   symbol:  p1_noise_gen.sym # of pins=7
+** sym_path: /volume/user/workspace/cace_ihp_sg13g2_demo/xschem/candidates/p1_top_hier_v3/p1_noise_gen.sym
+** sch_path: /volume/user/workspace/cace_ihp_sg13g2_demo/xschem/candidates/p1_top_hier_v3/p1_noise_gen.sch
+.subckt p1_noise_gen RAW_NOISE_P RAW_NOISE_N VCC VSS VB1 VB2 IE
+*.opin RAW_NOISE_P
+*.opin RAW_NOISE_N
+*.iopin VCC
+*.iopin VSS
+*.ipin VB1
+*.ipin VB2
+*.iopin IE
+XQ1 RAW_NOISE_N VB1 IE VSS npn13G2 Nx=1 mm_ok=1
+XQ2 RAW_NOISE_P VB2 IE VSS npn13G2 Nx=1 mm_ok=1
+XRC1 VCC RAW_NOISE_N sub! rppd w=1.0u l=3.85u m=1 b=0 mm_ok=1
+XRC2 VCC RAW_NOISE_P sub! rppd w=1.0u l=3.85u m=1 b=0 mm_ok=1
+XTAP1 VSS sub! ptap1 R={ 1.0 / ( 1.0 / ( 9.8e-10 / ( 2.0u * 2.0u ) ) + 1.0 / ( 9.8e-4 / ( 2.0 * ( 2.0u + 2.0u ) ) ) )} w=2.0u l=2.0u
+.ends
+
+
+* expanding   symbol:  p1_noise_amp.sym # of pins=6
+** sym_path: /volume/user/workspace/cace_ihp_sg13g2_demo/xschem/candidates/p1_top_hier_v3/p1_noise_amp.sym
+** sch_path: /volume/user/workspace/cace_ihp_sg13g2_demo/xschem/candidates/p1_top_hier_v3/p1_noise_amp.sch
+.subckt p1_noise_amp NOISE_AMP_P NOISE_AMP_N RAW_NOISE_P RAW_NOISE_N VCC VSS
+*.opin NOISE_AMP_P
+*.opin NOISE_AMP_N
+*.ipin RAW_NOISE_P
+*.ipin RAW_NOISE_N
+*.iopin VCC
+*.iopin VSS
+XQ1 c1_n RAW_NOISE_P e1_1 sub! npn13G2 Nx=2 mm_ok=1
+XQ2 c1_p RAW_NOISE_N e1_2 sub! npn13G2 Nx=2 mm_ok=1
+XRC1_1 VCC c1_n sub! rppd w=1.0u l=0.7115u m=1 b=0 mm_ok=1
+XRC1_2 c1_p VCC sub! rppd w=1.0u l=0.7115u m=1 b=0 mm_ok=1
+XRE1_1 e1_1 e1_common sub! rppd w=13.333u l=0.50u m=1 b=0 mm_ok=1
+XRE1_2 e1_2 e1_common sub! rppd w=13.333u l=0.50u m=1 b=0 mm_ok=1
+XMP1 c_p1 c_p2 VCC VCC sg13_hv_pmos w=20.0u l=1.0u ng=1 m=1 mm_ok=1
+XMP2 c_p2 c_p2 VCC VCC sg13_hv_pmos w=20.0u l=1.0u ng=1 m=1 mm_ok=1
+XQP1 c_p1 c_p1 e_p1 sub! npn13G2 Nx=1 mm_ok=1
+XRDEG_P1 e_p1 VSS sub! rppd w=4.0u l=0.50u m=1 b=0 mm_ok=1
+XQP2 c_p2 c_p1 e_p2 sub! npn13G2 Nx=4 mm_ok=1
+XRPTAT e_p2 VSS sub! rppd w=2.0u l=1.107u m=1 b=0 mm_ok=1
+XQS1 e1_common c_p1 e_s1 sub! npn13G2 Nx=9 mm_ok=1
+XRDEG_S1 e_s1 VSS sub! rppd w=36.0u l=0.50u m=1 b=0 mm_ok=1
+XCAC1 c1_n b2_p cap_cmim w=36.5u l=36.5u m=1 mm_ok=1
+XCAC2 c1_p b2_n cap_cmim w=36.5u l=36.5u m=1 mm_ok=1
+XRBDIV1 VCC vbias2 sub! rppd w=1.0u l=40.50u m=1 b=0 mm_ok=1
+XRBDIV2 vbias2 VSS sub! rppd w=1.0u l=55.115u m=1 b=0 mm_ok=1
+XRB2_1 vbias2 b2_p sub! rppd w=1.0u l=192.0u m=1 b=0 mm_ok=1
+XRB2_2 b2_n vbias2 sub! rppd w=1.0u l=192.0u m=1 b=0 mm_ok=1
+XQ4 NOISE_AMP_P b2_p e2_1 sub! npn13G2 Nx=1 mm_ok=1
+XQ3 NOISE_AMP_N b2_n e2_2 sub! npn13G2 Nx=1 mm_ok=1
+XRC2_2 VCC NOISE_AMP_P sub! rppd w=1.0u l=0.7115u m=1 b=0 mm_ok=1
+XRC2_1 NOISE_AMP_N VCC sub! rppd w=1.0u l=0.7115u m=1 b=0 mm_ok=1
+XRE2_1 e2_1 e2_common sub! rppd w=13.333u l=0.50u m=1 b=0 mm_ok=1
+XRE2_2 e2_2 e2_common sub! rppd w=13.333u l=0.50u m=1 b=0 mm_ok=1
+XQS2 e2_common c_p1 e_s2 sub! npn13G2 Nx=9 mm_ok=1
+XRDEG_S2 e_s2 VSS sub! rppd w=36.0u l=0.50u m=1 b=0 mm_ok=1
+XTAP1 VSS sub! ptap1 R={ 1.0 / ( 1.0 / ( 9.8e-10 / ( 2.0u * 2.0u ) ) + 1.0 / ( 9.8e-4 / ( 2.0 * ( 2.0u + 2.0u ) ) ) )} w=2.0u l=2.0u
+.ends
+
+
+* expanding   symbol:  p1_comparator.sym # of pins=12
+** sym_path: /volume/user/workspace/cace_ihp_sg13g2_demo/xschem/candidates/p1_top_hier_v3/p1_comparator.sym
+** sch_path: /volume/user/workspace/cace_ihp_sg13g2_demo/xschem/candidates/p1_top_hier_v3/p1_comparator.sch
+.subckt p1_comparator PBIT_OUT PBIT_RAW CLK_OUT_DIV IN_P IN_N CLK_P CLK_N TRIM_P TRIM_N VCC_HBT VDD VSS CODE
+*.opin PBIT_OUT
+*.opin PBIT_RAW
+*.opin CLK_OUT_DIV
+*.ipin IN_P
+*.ipin IN_N
+*.ipin CLK_P
+*.ipin CLK_N
+*.ipin TRIM_P
+*.ipin TRIM_N
+*.iopin VCC_HBT
+*.iopin VDD
+*.iopin VSS
+XRC1 VCC_HBT c_n sub! rppd w=1.0u l=0.838u m=1 b=0 mm_ok=1
+XRC2 VCC_HBT c_p sub! rppd w=1.0u l=0.838u m=1 b=0 mm_ok=1
+XQ1 c_n IN_P e_track sub! npn13G2v Nx=4 El=5.0 mm_ok=1
+XQ2 c_p IN_N e_track sub! npn13G2v Nx=4 El=5.0 mm_ok=1
+XQ3 c_n ef_p e_latch sub! npn13G2 Nx=1 mm_ok=1
+XQ4 c_p ef_n e_latch sub! npn13G2 Nx=1 mm_ok=1
+XQCLK_TRACK e_track CLK_P e_tail sub! npn13G2 Nx=1 mm_ok=1
+XQCLK_LATCH e_latch CLK_N e_tail sub! npn13G2 Nx=1 mm_ok=1
+XMP1_COMP c_p1_comp c_p2_comp VCC_HBT VCC_HBT sg13_hv_pmos w=20.0u l=1.0u ng=1 m=1 mm_ok=1
+XMP2_COMP c_p2_comp c_p2_comp VCC_HBT VCC_HBT sg13_hv_pmos w=20.0u l=1.0u ng=1 m=1 mm_ok=1
+XQP1_COMP c_p1_comp c_p1_comp e_p1_comp sub! npn13G2 Nx=1 mm_ok=1
+XRDEG_P1_COMP e_p1_comp VSS sub! rppd w=4.0u l=0.50u m=1 b=0 mm_ok=1
+XQP2_COMP c_p2_comp c_p1_comp e_p2_comp sub! npn13G2 Nx=4 mm_ok=1
+XRPTAT_COMP e_p2_comp VSS sub! rppd w=2.0u l=1.107u m=1 b=0 mm_ok=1
+XCSTAB_COMP VSS c_p1_comp cap_cmim w=80.0u l=83.3u m=1 mm_ok=1
+XQS_COMP e_tail c_p1_comp e_scomp sub! npn13G2 Nx=6 mm_ok=1
+XRDEG_SCOMP e_scomp VSS sub! rppd w=24.0u l=0.50u m=1 b=0 mm_ok=1
+XQEF1 VCC_HBT c_p ef_p sub! npn13G2 Nx=1 mm_ok=1
+XQEF2 VCC_HBT c_n ef_n sub! npn13G2 Nx=1 mm_ok=1
+XR1_P ef_p g_p sub! rppd w=1.0u l=22.0u m=1 b=0 mm_ok=1
+XR2_P g_p VSS sub! rppd w=1.0u l=14.5u m=1 b=0 mm_ok=1
+XR1_N ef_n g_n sub! rppd w=1.0u l=22.0u m=1 b=0 mm_ok=1
+XR2_N g_n VSS sub! rppd w=1.0u l=14.5u m=1 b=0 mm_ok=1
+XM1 cml_out_n g_p e_cmos VSS sg13_lv_nmos w=6.0u l=0.13u ng=1 m=1 mm_ok=1
+XM2 cml_out_p g_n e_cmos VSS sg13_lv_nmos w=6.0u l=0.13u ng=1 m=1 mm_ok=1
+XMTAIL e_cmos VDD VSS VSS sg13_lv_nmos w=2.5u l=0.50u ng=1 m=1 mm_ok=1
+XM3 cml_out_n VLOAD VDD VDD sg13_lv_pmos w=16.0u l=0.13u ng=1 m=1 mm_ok=1
+* C122: symmetric cml load - XM4 changed from the mirror (gate
+* cml_out_n) to a MATCHED DIODE-CONNECTED load (gate cml_out_p), so
+* cml_out_p and cml_out_n swing equally about a common level. The
+* C120/C121 latch experiments were fed a full-swing signal against a
+* near-constant 0.65 V bias node (cml_out_n is the diode side of the
+* mirror) - the latch was fed the wrong thing, not refuted. With the
+* true pair, feed the C121 precharged latch unchanged.
+XM4 cml_out_p VLOAD VDD VDD sg13_lv_pmos w=16.0u l=0.13u ng=1 m=1 mm_ok=1
+* C148: CMFB acting on the LOAD, not the tail. The C146 loop changed
+* two things at once (cm AND tail current) - it refuted "cm alone is
+* sufficient" but never raised cm with the current held. Here the
+* diode pmos gates are servoed to hold cm at 0.75 V (gate = VLOAD, the
+* loop output), XMTAIL stays FIXED at 2.5u with its gate at VDD - cm
+* and tail current become independent. Amp and sense as C146
+* (first-order, stated): XCMR1/2 rppd w=1.0u l=40u, VCMREF 0.75 V
+* ideal, XCMT/XCMA/XCMB/XCMP1/2 w=2.0u/1.0u. Polarity: cm_sense >
+* ref -> VLOAD up -> loads weaker -> cm down.
+XCMR1 cml_out_p cm_sense sub! rppd w=1.0u l=40u m=1 b=0 mm_ok=1
+XCMR2 cml_out_n cm_sense sub! rppd w=1.0u l=40u m=1 b=0 mm_ok=1
+VCMREF cm_ref 0 0.75
+XCMT e_cm VDD VSS VSS sg13_lv_nmos w=2.0u l=0.50u ng=1 m=1 mm_ok=1
+XCMA a cm_sense e_cm VSS sg13_lv_nmos w=1.0u l=0.13u ng=1 m=1 mm_ok=1
+XCMB VLOAD cm_ref e_cm VSS sg13_lv_nmos w=1.0u l=0.13u ng=1 m=1 mm_ok=1
+XCMP1 a a VDD VDD sg13_lv_pmos w=2.0u l=0.13u ng=1 m=1 mm_ok=1
+XCMP2 VLOAD a VDD VDD sg13_lv_pmos w=2.0u l=0.13u ng=1 m=1 mm_ok=1
+
+XCDAMP1 cml_out_p VSS cap_cmim w=2.0u l=2.0u m=1 mm_ok=1
+XCDAMP2 cml_out_n VSS cap_cmim w=2.0u l=2.0u m=1 mm_ok=1
+* C120: clocked regenerative latch (sense-amp) replacing XM5/XM6/XRFB
+* Sense amp evaluates on CLK_N high (the comparator's latch phase, when
+* the cml differential is settled): tail XSA_T, input pair XSA1/XSA2
+* (gates cml_out_p/cml_out_n), cross-coupled pmos XSA3/XSA4 and nmos
+* XSA5/XSA6 - the sense nodes regenerate to the rails. Hold latch
+* XHL1/XHL1N/XHL2/XHL2N (cross-coupled inverters) holds raw_inv/sa_n
+* between strobes. raw_inv = NOT(cml_out_p) polarity preserved; XM7
+* through XM10 unchanged.
+* Sizing PROVISIONAL first-order (STATED, not fitted): input pair
+* w=2.0u (XM6 geometry), cross-coupled pmos w=2.83u (XM5 geometry),
+* cross-coupled nmos w=2.0u, tail w=4.0u.
+XSA_T e_sa SACLK VSS VSS sg13_lv_nmos w=4.0u l=0.13u ng=1 m=1 mm_ok=1
+XSA1 raw_inv cml_out_p e_sa VSS sg13_lv_nmos w=2.0u l=0.13u ng=1 m=1 mm_ok=1
+XSA2 sa_n cml_out_n e_sa VSS sg13_lv_nmos w=2.0u l=0.13u ng=1 m=1 mm_ok=1
+XSA3 raw_inv sa_n VDD VDD sg13_lv_pmos w=2.83u l=0.13u ng=1 m=1 mm_ok=1
+XSA4 sa_n raw_inv VDD VDD sg13_lv_pmos w=2.83u l=0.13u ng=1 m=1 mm_ok=1
+XSA5 raw_inv sa_n e_sa VSS sg13_lv_nmos w=2.0u l=0.13u ng=1 m=1 mm_ok=1
+XSA6 sa_n raw_inv e_sa VSS sg13_lv_nmos w=2.0u l=0.13u ng=1 m=1 mm_ok=1
+* C125: hold latch MOVED OFF the sense nodes - the C120 spec put
+* precharge and hold on the same two nodes, they fought, and the hold
+* won on sa_n (never wiped; +0.4815 V mean strobe-start imbalance vs a
+* 0.10 V input differential - the latch was 480 mV pre-committed).
+* Now: raw_inv/sa_n carry ONLY precharge (XPC1/XPC2, CLK_N low) and the
+* sense amp - no hold devices, turbulent. The cross-coupled hold latch
+* sits AFTER the buffers on the separate raw_buf/sa_buf pair, which is
+* what XM7 reads (sa_buf, polarity preserved).
+* C127: NAND2 SR latch - the sense amp is a StrongARM (both sense
+* nodes precharge HIGH, exactly one falls on evaluate) - self-timed
+* for a cross-coupled NAND SR with active-low inputs: both high
+* (precharge) = HOLD, one falling = SET. No write window, no strength
+* fight (NAND inputs are gates; the sense amp drives pure capacitance).
+* Q = NAND(raw_inv, qbar), qbar = NAND(sa_n, Q). XM7 reads Q.
+* Minimum size w=0.5u l=0.13u, STATED not fitted.
+XN1P1 Q raw_inv VDD VDD sg13_lv_pmos w=0.5u l=0.13u ng=1 m=1 mm_ok=1
+XN1P2 Q qbar VDD VDD sg13_lv_pmos w=0.5u l=0.13u ng=1 m=1 mm_ok=1
+XN1N1 Q raw_inv n1a VSS sg13_lv_nmos w=0.5u l=0.13u ng=1 m=1 mm_ok=1
+XN1N2 n1a qbar VSS VSS sg13_lv_nmos w=0.5u l=0.13u ng=1 m=1 mm_ok=1
+XN2P1 qbar sa_n VDD VDD sg13_lv_pmos w=0.5u l=0.13u ng=1 m=1 mm_ok=1
+XN2P2 qbar Q VDD VDD sg13_lv_pmos w=0.5u l=0.13u ng=1 m=1 mm_ok=1
+XN2N1 qbar sa_n n2a VSS sg13_lv_nmos w=0.5u l=0.13u ng=1 m=1 mm_ok=1
+XN2N2 n2a Q VSS VSS sg13_lv_nmos w=0.5u l=0.13u ng=1 m=1 mm_ok=1
+* C121: precharge pmos - pull raw_inv and sa_n to VDD while CLK_N is low
+* (gate=CLK_N), so each strobe starts with both sense nodes clean at
+* VDD (the C120 latch regenerated once and never released - no
+* precharge). Sized strong (w=6.0u) to override the hold latch,
+* PROVISIONAL first-order, STATED not fitted.
+XPC1 raw_inv SACLK VDD VDD sg13_lv_pmos w=6.0u l=0.13u ng=1 m=1 mm_ok=1
+XPC2 sa_n SACLK VDD VDD sg13_lv_pmos w=6.0u l=0.13u ng=1 m=1 mm_ok=1
+* C123: buffer the latch. raw_inv carries XM7-XM10 (four gates) while
+* sa_n carries nothing - identical precharge devices, asymmetric load,
+* so raw_inv floors at ~0.675 V and the latch cannot pull it down.
+* Fix: minimum-size inverter on raw_inv (BUF_R) and on sa_n (BUF_S);
+* the latch now sees only the two buffer gates. XM7-XM10 are driven
+* from sa_buf = NOT(sa_n) = raw_inv-sense (the cross-coupling makes
+* NOT(sa_n) equal to raw_inv's polarity), so the chain polarity is
+* preserved: PBIT_OUT = NOT(sa_n) = raw_inv as in the original.
+* Buffer size w=0.5u (minimum-class), STATED not fitted.
+* C133: two-inverter buffer between Q and XM7 - the 0.5u NAND cannot
+* drive XM7's 2.83u/2.0u gates inside the 100 ps evaluate (Q maxed at
+* 0.297 V, never a logic high). Buffer: stage 1 pmos 0.8u / nmos 0.6u,
+* stage 2 pmos 2.4u / nmos 1.8u, non-inverting (polarity preserved:
+* QBUF = Q), NAND left at minimum size so the latch stays fast.
+* Sizes STATED, not fitted.
+XB1P QBUF1 Q VDD VDD sg13_lv_pmos w=0.5u l=0.13u ng=1 m=1 mm_ok=1
+XB1N QBUF1 Q VSS VSS sg13_lv_nmos w=0.35u l=0.13u ng=1 m=1 mm_ok=1
+XB2P QBUF QBUF1 VDD VDD sg13_lv_pmos w=1.14u l=0.13u ng=1 m=1 mm_ok=1
+XB2N QBUF QBUF1 VSS VSS sg13_lv_nmos w=0.81u l=0.13u ng=1 m=1 mm_ok=1
+XM7 PBIT_RAW QBUF VDD VDD sg13_lv_pmos w=2.61u l=0.13u ng=1 m=1 mm_ok=1
+XM8 PBIT_RAW QBUF VSS VSS sg13_lv_nmos w=1.86u l=0.13u ng=1 m=1 mm_ok=1
+XM9 PBIT_OUT PBIT_RAW VDD VDD sg13_lv_pmos w=5.98u l=0.13u ng=1 m=1 mm_ok=1
+XM10 PBIT_OUT PBIT_RAW VSS VSS sg13_lv_nmos w=4.27u l=0.13u ng=1 m=1 mm_ok=1
+XM11 CLK_OUT_DIV CLK_P VDD VDD sg13_lv_pmos w=2.83u l=0.13u ng=1 m=1 mm_ok=1
+XM12 CLK_OUT_DIV CLK_P VSS VSS sg13_lv_nmos w=2.0u l=0.13u ng=1 m=1 mm_ok=1
+* C169 rebuild: 7-unary top bits (Nx=128, monotonic by construction) + 7-binary lower
+* decoder scale fixed: floor(v(code)*100/2^k) -- v(code) is VOLTS at 0.01 V per code
+XQU1 vsegu1 c_p1_comp e_dacu1 sub! npn13G2 Nx=128 mm_ok=1
+XRCU1 e_dacu1 VSS sub! rppd w=1.0u l=5.4u m=128 b=0 mm_ok=1
+XSWUP1 c_p ubar1 vsegu1 VSS sg13_lv_nmos w=2.0u l=0.13u ng=1 m=1 mm_ok=1
+XSWUN1 c_n u1 vsegu1 VSS sg13_lv_nmos w=2.0u l=0.13u ng=1 m=1 mm_ok=1
+XQU2 vsegu2 c_p1_comp e_dacu2 sub! npn13G2 Nx=128 mm_ok=1
+XRCU2 e_dacu2 VSS sub! rppd w=1.0u l=5.4u m=128 b=0 mm_ok=1
+XSWUP2 c_p ubar2 vsegu2 VSS sg13_lv_nmos w=2.0u l=0.13u ng=1 m=1 mm_ok=1
+XSWUN2 c_n u2 vsegu2 VSS sg13_lv_nmos w=2.0u l=0.13u ng=1 m=1 mm_ok=1
+XQU3 vsegu3 c_p1_comp e_dacu3 sub! npn13G2 Nx=128 mm_ok=1
+XRCU3 e_dacu3 VSS sub! rppd w=1.0u l=5.4u m=128 b=0 mm_ok=1
+XSWUP3 c_p ubar3 vsegu3 VSS sg13_lv_nmos w=2.0u l=0.13u ng=1 m=1 mm_ok=1
+XSWUN3 c_n u3 vsegu3 VSS sg13_lv_nmos w=2.0u l=0.13u ng=1 m=1 mm_ok=1
+XQU4 vsegu4 c_p1_comp e_dacu4 sub! npn13G2 Nx=128 mm_ok=1
+XRCU4 e_dacu4 VSS sub! rppd w=1.0u l=5.4u m=128 b=0 mm_ok=1
+XSWUP4 c_p ubar4 vsegu4 VSS sg13_lv_nmos w=2.0u l=0.13u ng=1 m=1 mm_ok=1
+XSWUN4 c_n u4 vsegu4 VSS sg13_lv_nmos w=2.0u l=0.13u ng=1 m=1 mm_ok=1
+XQU5 vsegu5 c_p1_comp e_dacu5 sub! npn13G2 Nx=128 mm_ok=1
+XRCU5 e_dacu5 VSS sub! rppd w=1.0u l=5.4u m=128 b=0 mm_ok=1
+XSWUP5 c_p ubar5 vsegu5 VSS sg13_lv_nmos w=2.0u l=0.13u ng=1 m=1 mm_ok=1
+XSWUN5 c_n u5 vsegu5 VSS sg13_lv_nmos w=2.0u l=0.13u ng=1 m=1 mm_ok=1
+XQU6 vsegu6 c_p1_comp e_dacu6 sub! npn13G2 Nx=128 mm_ok=1
+XRCU6 e_dacu6 VSS sub! rppd w=1.0u l=5.4u m=128 b=0 mm_ok=1
+XSWUP6 c_p ubar6 vsegu6 VSS sg13_lv_nmos w=2.0u l=0.13u ng=1 m=1 mm_ok=1
+XSWUN6 c_n u6 vsegu6 VSS sg13_lv_nmos w=2.0u l=0.13u ng=1 m=1 mm_ok=1
+XQU7 vsegu7 c_p1_comp e_dacu7 sub! npn13G2 Nx=128 mm_ok=1
+XRCU7 e_dacu7 VSS sub! rppd w=1.0u l=5.4u m=128 b=0 mm_ok=1
+XSWUP7 c_p ubar7 vsegu7 VSS sg13_lv_nmos w=2.0u l=0.13u ng=1 m=1 mm_ok=1
+XSWUN7 c_n u7 vsegu7 VSS sg13_lv_nmos w=2.0u l=0.13u ng=1 m=1 mm_ok=1
+XQB0 vsegb0 c_p1_comp e_dacb0 sub! npn13G2 Nx=1 mm_ok=1
+XRCB0 e_dacb0 VSS sub! rppd w=1.0u l=5.4u m=1 b=0 mm_ok=1
+XSWBP0 c_p bbar0 vsegb0 VSS sg13_lv_nmos w=2.0u l=0.13u ng=1 m=1 mm_ok=1
+XSWBN0 c_n b0 vsegb0 VSS sg13_lv_nmos w=2.0u l=0.13u ng=1 m=1 mm_ok=1
+XQB1 vsegb1 c_p1_comp e_dacb1 sub! npn13G2 Nx=2 mm_ok=1
+XRCB1 e_dacb1 VSS sub! rppd w=1.0u l=5.4u m=2 b=0 mm_ok=1
+XSWBP1 c_p bbar1 vsegb1 VSS sg13_lv_nmos w=2.0u l=0.13u ng=1 m=1 mm_ok=1
+XSWBN1 c_n b1 vsegb1 VSS sg13_lv_nmos w=2.0u l=0.13u ng=1 m=1 mm_ok=1
+XQB2 vsegb2 c_p1_comp e_dacb2 sub! npn13G2 Nx=4 mm_ok=1
+XRCB2 e_dacb2 VSS sub! rppd w=1.0u l=5.4u m=4 b=0 mm_ok=1
+XSWBP2 c_p bbar2 vsegb2 VSS sg13_lv_nmos w=2.0u l=0.13u ng=1 m=1 mm_ok=1
+XSWBN2 c_n b2 vsegb2 VSS sg13_lv_nmos w=2.0u l=0.13u ng=1 m=1 mm_ok=1
+XQB3 vsegb3 c_p1_comp e_dacb3 sub! npn13G2 Nx=8 mm_ok=1
+XRCB3 e_dacb3 VSS sub! rppd w=1.0u l=5.4u m=8 b=0 mm_ok=1
+XSWBP3 c_p bbar3 vsegb3 VSS sg13_lv_nmos w=2.0u l=0.13u ng=1 m=1 mm_ok=1
+XSWBN3 c_n b3 vsegb3 VSS sg13_lv_nmos w=2.0u l=0.13u ng=1 m=1 mm_ok=1
+XQB4 vsegb4 c_p1_comp e_dacb4 sub! npn13G2 Nx=16 mm_ok=1
+XRCB4 e_dacb4 VSS sub! rppd w=1.0u l=5.4u m=16 b=0 mm_ok=1
+XSWBP4 c_p bbar4 vsegb4 VSS sg13_lv_nmos w=2.0u l=0.13u ng=1 m=1 mm_ok=1
+XSWBN4 c_n b4 vsegb4 VSS sg13_lv_nmos w=2.0u l=0.13u ng=1 m=1 mm_ok=1
+XQB5 vsegb5 c_p1_comp e_dacb5 sub! npn13G2 Nx=32 mm_ok=1
+XRCB5 e_dacb5 VSS sub! rppd w=1.0u l=5.4u m=32 b=0 mm_ok=1
+XSWBP5 c_p bbar5 vsegb5 VSS sg13_lv_nmos w=2.0u l=0.13u ng=1 m=1 mm_ok=1
+XSWBN5 c_n b5 vsegb5 VSS sg13_lv_nmos w=2.0u l=0.13u ng=1 m=1 mm_ok=1
+XQB6 vsegb6 c_p1_comp e_dacb6 sub! npn13G2 Nx=64 mm_ok=1
+XRCB6 e_dacb6 VSS sub! rppd w=1.0u l=5.4u m=64 b=0 mm_ok=1
+XSWBP6 c_p bbar6 vsegb6 VSS sg13_lv_nmos w=2.0u l=0.13u ng=1 m=1 mm_ok=1
+XSWBN6 c_n b6 vsegb6 VSS sg13_lv_nmos w=2.0u l=0.13u ng=1 m=1 mm_ok=1
+EU1 u1 0 VALUE {floor((v(code)*100+0.5)/128) >= 1}
+EUB1 ubar1 0 VALUE {1-(floor((v(code)*100+0.5)/128) >= 1)}
+EU2 u2 0 VALUE {floor((v(code)*100+0.5)/128) >= 2}
+EUB2 ubar2 0 VALUE {1-(floor((v(code)*100+0.5)/128) >= 2)}
+EU3 u3 0 VALUE {floor((v(code)*100+0.5)/128) >= 3}
+EUB3 ubar3 0 VALUE {1-(floor((v(code)*100+0.5)/128) >= 3)}
+EU4 u4 0 VALUE {floor((v(code)*100+0.5)/128) >= 4}
+EUB4 ubar4 0 VALUE {1-(floor((v(code)*100+0.5)/128) >= 4)}
+EU5 u5 0 VALUE {floor((v(code)*100+0.5)/128) >= 5}
+EUB5 ubar5 0 VALUE {1-(floor((v(code)*100+0.5)/128) >= 5)}
+EU6 u6 0 VALUE {floor((v(code)*100+0.5)/128) >= 6}
+EUB6 ubar6 0 VALUE {1-(floor((v(code)*100+0.5)/128) >= 6)}
+EU7 u7 0 VALUE {floor((v(code)*100+0.5)/128) >= 7}
+EUB7 ubar7 0 VALUE {1-(floor((v(code)*100+0.5)/128) >= 7)}
+EB0 b0 0 VALUE {floor((v(code)*100+0.5)/1)-2*floor((v(code)*100+0.5)/2)}
+EBB0 bbar0 0 VALUE {1-(floor((v(code)*100+0.5)/1)-2*floor((v(code)*100+0.5)/2))}
+EB1 b1 0 VALUE {floor((v(code)*100+0.5)/2)-2*floor((v(code)*100+0.5)/4)}
+EBB1 bbar1 0 VALUE {1-(floor((v(code)*100+0.5)/2)-2*floor((v(code)*100+0.5)/4))}
+EB2 b2 0 VALUE {floor((v(code)*100+0.5)/4)-2*floor((v(code)*100+0.5)/8)}
+EBB2 bbar2 0 VALUE {1-(floor((v(code)*100+0.5)/4)-2*floor((v(code)*100+0.5)/8))}
+EB3 b3 0 VALUE {floor((v(code)*100+0.5)/8)-2*floor((v(code)*100+0.5)/16)}
+EBB3 bbar3 0 VALUE {1-(floor((v(code)*100+0.5)/8)-2*floor((v(code)*100+0.5)/16))}
+EB4 b4 0 VALUE {floor((v(code)*100+0.5)/16)-2*floor((v(code)*100+0.5)/32)}
+EBB4 bbar4 0 VALUE {1-(floor((v(code)*100+0.5)/16)-2*floor((v(code)*100+0.5)/32))}
+EB5 b5 0 VALUE {floor((v(code)*100+0.5)/32)-2*floor((v(code)*100+0.5)/64)}
+EBB5 bbar5 0 VALUE {1-(floor((v(code)*100+0.5)/32)-2*floor((v(code)*100+0.5)/64))}
+EB6 b6 0 VALUE {floor((v(code)*100+0.5)/64)-2*floor((v(code)*100+0.5)/128)}
+EBB6 bbar6 0 VALUE {1-(floor((v(code)*100+0.5)/64)-2*floor((v(code)*100+0.5)/128))}
+XTAP1 VSS sub! ptap1 R={ 1.0 / ( 1.0 / ( 9.8e-10 / ( 2.0u * 2.0u ) ) + 1.0 / ( 9.8e-4 / ( 2.0 * ( 2.0u + 2.0u ) ) ) )} w=2.0u l=2.0u
+.ends
+
+* C42-V3 interface block: matched NPN emitter-follower level shift (PDK-only).
+* Physical CM conditioning between the published preamp outputs
+* (NOISE_AMP_P/N, CM ~2.02-2.19 V) and the comparator input stage
+* (design CM ~1.44 V). PROVISIONAL: external VCB = VCC_HBT - V_B is
+* expected positive from the stated rails (2.5 V - 2.035..2.168 V);
+* actual device region remains UNKNOWN pending waveform review.
+* rppd res_typ: rsh = 260 ohm/sq,
+* dw = 0.006u -> XRLS w=1.0u l=3.85u gives about one source-derived
+* 1 kohm (3.85/1.006 * 260 = 995 ohm). Retained amplifier HBT evidence:
+* VBE = 0.886-0.893 V at 1.35-1.53 mA (NOT 0.75 V) -> expected LS CM
+* about 1.14-1.28 V (amp CM 2.035-2.168 - VBE 0.886-0.893).
+* AC loading/gain/region and final CM are UNKNOWN pending runtime;
+* npn13G2 Nx=1 m=1 (IC target ~1.1-1.3 mA < 3.5 mA max, Nx <= 10,
+* selft=1). No beta, capacitance, gain-fraction, loading-percent or
+* reliability claims are made (unverified).
+.subckt ls_pbit LS_P LS_N VCC_HBT VSS NOISE_AMP_P NOISE_AMP_N
+XLS_P VCC_HBT NOISE_AMP_P LS_P sub! npn13G2 Nx=1 mm_ok=1
+XLS_N VCC_HBT NOISE_AMP_N LS_N sub! npn13G2 Nx=1 mm_ok=1
+XRLS_P LS_P VSS sub! rppd w=1.0u l=3.85u m=1 b=0 mm_ok=1
+XRLS_N LS_N VSS sub! rppd w=1.0u l=3.85u m=1 b=0 mm_ok=1
+.ends
+
+.end

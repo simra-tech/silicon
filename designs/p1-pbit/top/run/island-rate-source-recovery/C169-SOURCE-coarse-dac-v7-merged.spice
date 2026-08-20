@@ -1,0 +1,1208 @@
+* C156: RETAPER BOTH FILES TOGETHER - one equal ratio of 2.29 across
+* all six stages, total widths P+N split ~1.4:1 P over N (first-order,
+* stated): XB1 0.85 (unchanged) -> XB2 1.95 (1.14/0.81) -> XM7/8 4.47
+* (2.61/1.86) -> XM9/10 10.25 (5.98/4.27) -> [isobuf include] XISO1
+* 23.5 (13.71/9.79) -> XISO2 53.87 (31.42/22.45). C155's scope error:
+* XM9/10 (48u) drove a 4.83u gate (0.10) and XISO1 drove 43.2u (8.94);
+* both out of band. Base: C148-SOURCE (NAND, cml, sense amp, CMFB
+* untouched). Prediction (PE): ~24 pc less delay, spread ~520 ps,
+* intersection about +160 ps at 800 ps/bit.
+** sch_path: /volume/user/workspace/cace_ihp_sg13g2_demo/xschem/candidates/p1_top_hier_v3/p1_top_hier.sch
+.subckt p1_top_hier PBIT_OUT PBIT_RAW CLK_OUT_DIV CLK_P CLK_N TRIM_P TRIM_N NOISE_GEN_VCC NOISE_GEN_VSS NOISE_AMP_VCC CODE
++ NOISE_AMP_VSS COMPARATOR_VCC_HBT VDD COMPARATOR_VSS VB1 VB2 IE
+*.opin PBIT_OUT
+*.opin PBIT_RAW
+*.opin CLK_OUT_DIV
+*.ipin CLK_P
+*.ipin CLK_N
+*.ipin TRIM_P
+*.ipin TRIM_N
+*.iopin NOISE_GEN_VCC
+*.iopin NOISE_GEN_VSS
+*.iopin NOISE_AMP_VCC
+*.iopin NOISE_AMP_VSS
+*.iopin COMPARATOR_VCC_HBT
+*.iopin VDD
+*.iopin COMPARATOR_VSS
+*.ipin VB1
+*.ipin VB2
+*.iopin IE
+X1 PBIT_OUT PBIT_RAW CLK_OUT_DIV CLK_P CLK_N TRIM_P TRIM_N NOISE_GEN_VCC NOISE_GEN_VSS NOISE_AMP_VCC NOISE_AMP_VSS CODE
++ COMPARATOR_VCC_HBT VDD COMPARATOR_VSS VB1 VB2 IE p1_top
+.ends
+
+* expanding   symbol:  p1_top.sym # of pins=17
+** sym_path: /volume/user/workspace/cace_ihp_sg13g2_demo/xschem/candidates/p1_top_hier_v3/p1_top.sym
+** sch_path: /volume/user/workspace/cace_ihp_sg13g2_demo/xschem/candidates/p1_top_hier_v3/p1_top.sch
+.subckt p1_top PBIT_OUT PBIT_RAW CLK_OUT_DIV CLK_P CLK_N TRIM_P TRIM_N NOISE_GEN_VCC NOISE_GEN_VSS NOISE_AMP_VCC NOISE_AMP_VSS CODE
++ COMPARATOR_VCC_HBT VDD COMPARATOR_VSS VB1 VB2 IE
+*.opin PBIT_OUT
+*.opin PBIT_RAW
+*.opin CLK_OUT_DIV
+*.ipin CLK_P
+*.ipin CLK_N
+*.ipin TRIM_P
+*.ipin TRIM_N
+*.iopin NOISE_GEN_VCC
+*.iopin NOISE_GEN_VSS
+*.iopin NOISE_AMP_VCC
+*.iopin NOISE_AMP_VSS
+*.iopin COMPARATOR_VCC_HBT
+*.iopin VDD
+*.iopin COMPARATOR_VSS
+*.ipin VB1
+*.ipin VB2
+*.iopin IE
+X1 net1 net2 NOISE_GEN_VCC NOISE_GEN_VSS VB1 VB2 IE p1_noise_gen
+X2 net3 net4 net1 net2 NOISE_AMP_VCC NOISE_AMP_VSS p1_noise_amp
+X3 PBIT_OUT PBIT_RAW CLK_OUT_DIV net3 net4 CLK_P CLK_N TRIM_P TRIM_N COMPARATOR_VCC_HBT VDD COMPARATOR_VSS CODE p1_comparator
+.ends
+
+
+* expanding   symbol:  p1_noise_gen.sym # of pins=7
+** sym_path: /volume/user/workspace/cace_ihp_sg13g2_demo/xschem/candidates/p1_top_hier_v3/p1_noise_gen.sym
+** sch_path: /volume/user/workspace/cace_ihp_sg13g2_demo/xschem/candidates/p1_top_hier_v3/p1_noise_gen.sch
+.subckt p1_noise_gen RAW_NOISE_P RAW_NOISE_N VCC VSS VB1 VB2 IE
+*.opin RAW_NOISE_P
+*.opin RAW_NOISE_N
+*.iopin VCC
+*.iopin VSS
+*.ipin VB1
+*.ipin VB2
+*.iopin IE
+XQ1 RAW_NOISE_N VB1 IE VSS npn13G2 Nx=1 mm_ok=1
+XQ2 RAW_NOISE_P VB2 IE VSS npn13G2 Nx=1 mm_ok=1
+XRC1 VCC RAW_NOISE_N sub! rppd w=1.0u l=3.85u m=1 b=0 mm_ok=1
+XRC2 VCC RAW_NOISE_P sub! rppd w=1.0u l=3.85u m=1 b=0 mm_ok=1
+XTAP1 VSS sub! ptap1 R={ 1.0 / ( 1.0 / ( 9.8e-10 / ( 2.0u * 2.0u ) ) + 1.0 / ( 9.8e-4 / ( 2.0 * ( 2.0u + 2.0u ) ) ) )} w=2.0u l=2.0u
+.ends
+
+
+* expanding   symbol:  p1_noise_amp.sym # of pins=6
+** sym_path: /volume/user/workspace/cace_ihp_sg13g2_demo/xschem/candidates/p1_top_hier_v3/p1_noise_amp.sym
+** sch_path: /volume/user/workspace/cace_ihp_sg13g2_demo/xschem/candidates/p1_top_hier_v3/p1_noise_amp.sch
+.subckt p1_noise_amp NOISE_AMP_P NOISE_AMP_N RAW_NOISE_P RAW_NOISE_N VCC VSS
+*.opin NOISE_AMP_P
+*.opin NOISE_AMP_N
+*.ipin RAW_NOISE_P
+*.ipin RAW_NOISE_N
+*.iopin VCC
+*.iopin VSS
+XQ1 c1_n RAW_NOISE_P e1_1 sub! npn13G2 Nx=2 mm_ok=1
+XQ2 c1_p RAW_NOISE_N e1_2 sub! npn13G2 Nx=2 mm_ok=1
+XRC1_1 VCC c1_n sub! rppd w=1.0u l=0.7115u m=1 b=0 mm_ok=1
+XRC1_2 c1_p VCC sub! rppd w=1.0u l=0.7115u m=1 b=0 mm_ok=1
+XRE1_1 e1_1 e1_common sub! rppd w=13.333u l=0.50u m=1 b=0 mm_ok=1
+XRE1_2 e1_2 e1_common sub! rppd w=13.333u l=0.50u m=1 b=0 mm_ok=1
+XMP1 c_p1 c_p2 VCC VCC sg13_hv_pmos w=20.0u l=1.0u ng=1 m=1 mm_ok=1
+XMP2 c_p2 c_p2 VCC VCC sg13_hv_pmos w=20.0u l=1.0u ng=1 m=1 mm_ok=1
+XQP1 c_p1 c_p1 e_p1 sub! npn13G2 Nx=1 mm_ok=1
+XRDEG_P1 e_p1 VSS sub! rppd w=4.0u l=0.50u m=1 b=0 mm_ok=1
+XQP2 c_p2 c_p1 e_p2 sub! npn13G2 Nx=4 mm_ok=1
+XRPTAT e_p2 VSS sub! rppd w=2.0u l=1.107u m=1 b=0 mm_ok=1
+XQS1 e1_common c_p1 e_s1 sub! npn13G2 Nx=9 mm_ok=1
+XRDEG_S1 e_s1 VSS sub! rppd w=36.0u l=0.50u m=1 b=0 mm_ok=1
+XCAC1 c1_n b2_p cap_cmim w=36.5u l=36.5u m=1 mm_ok=1
+XCAC2 c1_p b2_n cap_cmim w=36.5u l=36.5u m=1 mm_ok=1
+XRBDIV1 VCC vbias2 sub! rppd w=1.0u l=40.50u m=1 b=0 mm_ok=1
+XRBDIV2 vbias2 VSS sub! rppd w=1.0u l=55.115u m=1 b=0 mm_ok=1
+XRB2_1 vbias2 b2_p sub! rppd w=1.0u l=192.0u m=1 b=0 mm_ok=1
+XRB2_2 b2_n vbias2 sub! rppd w=1.0u l=192.0u m=1 b=0 mm_ok=1
+XQ4 NOISE_AMP_P b2_p e2_1 sub! npn13G2 Nx=1 mm_ok=1
+XQ3 NOISE_AMP_N b2_n e2_2 sub! npn13G2 Nx=1 mm_ok=1
+XRC2_2 VCC NOISE_AMP_P sub! rppd w=1.0u l=0.7115u m=1 b=0 mm_ok=1
+XRC2_1 NOISE_AMP_N VCC sub! rppd w=1.0u l=0.7115u m=1 b=0 mm_ok=1
+XRE2_1 e2_1 e2_common sub! rppd w=13.333u l=0.50u m=1 b=0 mm_ok=1
+XRE2_2 e2_2 e2_common sub! rppd w=13.333u l=0.50u m=1 b=0 mm_ok=1
+XQS2 e2_common c_p1 e_s2 sub! npn13G2 Nx=9 mm_ok=1
+XRDEG_S2 e_s2 VSS sub! rppd w=36.0u l=0.50u m=1 b=0 mm_ok=1
+XTAP1 VSS sub! ptap1 R={ 1.0 / ( 1.0 / ( 9.8e-10 / ( 2.0u * 2.0u ) ) + 1.0 / ( 9.8e-4 / ( 2.0 * ( 2.0u + 2.0u ) ) ) )} w=2.0u l=2.0u
+.ends
+
+
+* expanding   symbol:  p1_comparator.sym # of pins=12
+** sym_path: /volume/user/workspace/cace_ihp_sg13g2_demo/xschem/candidates/p1_top_hier_v3/p1_comparator.sym
+** sch_path: /volume/user/workspace/cace_ihp_sg13g2_demo/xschem/candidates/p1_top_hier_v3/p1_comparator.sch
+.subckt p1_comparator PBIT_OUT PBIT_RAW CLK_OUT_DIV IN_P IN_N CLK_P CLK_N TRIM_P TRIM_N VCC_HBT VDD VSS CODE
+*.opin PBIT_OUT
+*.opin PBIT_RAW
+*.opin CLK_OUT_DIV
+*.ipin IN_P
+*.ipin IN_N
+*.ipin CLK_P
+*.ipin CLK_N
+*.ipin TRIM_P
+*.ipin TRIM_N
+*.iopin VCC_HBT
+*.iopin VDD
+*.iopin VSS
+XRC1 VCC_HBT c_n sub! rppd w=1.0u l=0.838u m=1 b=0 mm_ok=1
+XRC2 VCC_HBT c_p sub! rppd w=1.0u l=0.838u m=1 b=0 mm_ok=1
+XQ1 c_n IN_P e_track sub! npn13G2v Nx=4 El=5.0 mm_ok=1
+XQ2 c_p IN_N e_track sub! npn13G2v Nx=4 El=5.0 mm_ok=1
+XQ3 c_n ef_p e_latch sub! npn13G2 Nx=1 mm_ok=1
+XQ4 c_p ef_n e_latch sub! npn13G2 Nx=1 mm_ok=1
+XQCLK_TRACK e_track CLK_P e_tail sub! npn13G2 Nx=1 mm_ok=1
+XQCLK_LATCH e_latch CLK_N e_tail sub! npn13G2 Nx=1 mm_ok=1
+XMP1_COMP c_p1_comp c_p2_comp VCC_HBT VCC_HBT sg13_hv_pmos w=20.0u l=1.0u ng=1 m=1 mm_ok=1
+XMP2_COMP c_p2_comp c_p2_comp VCC_HBT VCC_HBT sg13_hv_pmos w=20.0u l=1.0u ng=1 m=1 mm_ok=1
+XQP1_COMP c_p1_comp c_p1_comp e_p1_comp sub! npn13G2 Nx=1 mm_ok=1
+XRDEG_P1_COMP e_p1_comp VSS sub! rppd w=4.0u l=0.50u m=1 b=0 mm_ok=1
+XQP2_COMP c_p2_comp c_p1_comp e_p2_comp sub! npn13G2 Nx=4 mm_ok=1
+XRPTAT_COMP e_p2_comp VSS sub! rppd w=2.0u l=1.107u m=1 b=0 mm_ok=1
+XCSTAB_COMP VSS c_p1_comp cap_cmim w=80.0u l=83.3u m=1 mm_ok=1
+XQS_COMP e_tail c_p1_comp e_scomp sub! npn13G2 Nx=6 mm_ok=1
+XRDEG_SCOMP e_scomp VSS sub! rppd w=24.0u l=0.50u m=1 b=0 mm_ok=1
+XQEF1 VCC_HBT c_p ef_p sub! npn13G2 Nx=1 mm_ok=1
+XQEF2 VCC_HBT c_n ef_n sub! npn13G2 Nx=1 mm_ok=1
+XR1_P ef_p g_p sub! rppd w=1.0u l=22.0u m=1 b=0 mm_ok=1
+XR2_P g_p VSS sub! rppd w=1.0u l=14.5u m=1 b=0 mm_ok=1
+XR1_N ef_n g_n sub! rppd w=1.0u l=22.0u m=1 b=0 mm_ok=1
+XR2_N g_n VSS sub! rppd w=1.0u l=14.5u m=1 b=0 mm_ok=1
+XM1 cml_out_n g_p e_cmos VSS sg13_lv_nmos w=6.0u l=0.13u ng=1 m=1 mm_ok=1
+XM2 cml_out_p g_n e_cmos VSS sg13_lv_nmos w=6.0u l=0.13u ng=1 m=1 mm_ok=1
+XMTAIL e_cmos VDD VSS VSS sg13_lv_nmos w=2.5u l=0.50u ng=1 m=1 mm_ok=1
+XM3 cml_out_n VLOAD VDD VDD sg13_lv_pmos w=16.0u l=0.13u ng=1 m=1 mm_ok=1
+* C122: symmetric cml load - XM4 changed from the mirror (gate
+* cml_out_n) to a MATCHED DIODE-CONNECTED load (gate cml_out_p), so
+* cml_out_p and cml_out_n swing equally about a common level. The
+* C120/C121 latch experiments were fed a full-swing signal against a
+* near-constant 0.65 V bias node (cml_out_n is the diode side of the
+* mirror) - the latch was fed the wrong thing, not refuted. With the
+* true pair, feed the C121 precharged latch unchanged.
+XM4 cml_out_p VLOAD VDD VDD sg13_lv_pmos w=16.0u l=0.13u ng=1 m=1 mm_ok=1
+* C148: CMFB acting on the LOAD, not the tail. The C146 loop changed
+* two things at once (cm AND tail current) - it refuted "cm alone is
+* sufficient" but never raised cm with the current held. Here the
+* diode pmos gates are servoed to hold cm at 0.75 V (gate = VLOAD, the
+* loop output), XMTAIL stays FIXED at 2.5u with its gate at VDD - cm
+* and tail current become independent. Amp and sense as C146
+* (first-order, stated): XCMR1/2 rppd w=1.0u l=40u, VCMREF 0.75 V
+* ideal, XCMT/XCMA/XCMB/XCMP1/2 w=2.0u/1.0u. Polarity: cm_sense >
+* ref -> VLOAD up -> loads weaker -> cm down.
+XCMR1 cml_out_p cm_sense sub! rppd w=1.0u l=40u m=1 b=0 mm_ok=1
+XCMR2 cml_out_n cm_sense sub! rppd w=1.0u l=40u m=1 b=0 mm_ok=1
+VCMREF cm_ref 0 0.75
+XCMT e_cm VDD VSS VSS sg13_lv_nmos w=2.0u l=0.50u ng=1 m=1 mm_ok=1
+XCMA a cm_sense e_cm VSS sg13_lv_nmos w=1.0u l=0.13u ng=1 m=1 mm_ok=1
+XCMB VLOAD cm_ref e_cm VSS sg13_lv_nmos w=1.0u l=0.13u ng=1 m=1 mm_ok=1
+XCMP1 a a VDD VDD sg13_lv_pmos w=2.0u l=0.13u ng=1 m=1 mm_ok=1
+XCMP2 VLOAD a VDD VDD sg13_lv_pmos w=2.0u l=0.13u ng=1 m=1 mm_ok=1
+
+XCDAMP1 cml_out_p VSS cap_cmim w=2.0u l=2.0u m=1 mm_ok=1
+XCDAMP2 cml_out_n VSS cap_cmim w=2.0u l=2.0u m=1 mm_ok=1
+* C120: clocked regenerative latch (sense-amp) replacing XM5/XM6/XRFB
+* Sense amp evaluates on CLK_N high (the comparator's latch phase, when
+* the cml differential is settled): tail XSA_T, input pair XSA1/XSA2
+* (gates cml_out_p/cml_out_n), cross-coupled pmos XSA3/XSA4 and nmos
+* XSA5/XSA6 - the sense nodes regenerate to the rails. Hold latch
+* XHL1/XHL1N/XHL2/XHL2N (cross-coupled inverters) holds raw_inv/sa_n
+* between strobes. raw_inv = NOT(cml_out_p) polarity preserved; XM7
+* through XM10 unchanged.
+* Sizing PROVISIONAL first-order (STATED, not fitted): input pair
+* w=2.0u (XM6 geometry), cross-coupled pmos w=2.83u (XM5 geometry),
+* cross-coupled nmos w=2.0u, tail w=4.0u.
+XSA_T e_sa SACLK VSS VSS sg13_lv_nmos w=4.0u l=0.13u ng=1 m=1 mm_ok=1
+XSA1 raw_inv cml_out_p e_sa VSS sg13_lv_nmos w=2.0u l=0.13u ng=1 m=1 mm_ok=1
+XSA2 sa_n cml_out_n e_sa VSS sg13_lv_nmos w=2.0u l=0.13u ng=1 m=1 mm_ok=1
+XSA3 raw_inv sa_n VDD VDD sg13_lv_pmos w=2.83u l=0.13u ng=1 m=1 mm_ok=1
+XSA4 sa_n raw_inv VDD VDD sg13_lv_pmos w=2.83u l=0.13u ng=1 m=1 mm_ok=1
+XSA5 raw_inv sa_n e_sa VSS sg13_lv_nmos w=2.0u l=0.13u ng=1 m=1 mm_ok=1
+XSA6 sa_n raw_inv e_sa VSS sg13_lv_nmos w=2.0u l=0.13u ng=1 m=1 mm_ok=1
+* C125: hold latch MOVED OFF the sense nodes - the C120 spec put
+* precharge and hold on the same two nodes, they fought, and the hold
+* won on sa_n (never wiped; +0.4815 V mean strobe-start imbalance vs a
+* 0.10 V input differential - the latch was 480 mV pre-committed).
+* Now: raw_inv/sa_n carry ONLY precharge (XPC1/XPC2, CLK_N low) and the
+* sense amp - no hold devices, turbulent. The cross-coupled hold latch
+* sits AFTER the buffers on the separate raw_buf/sa_buf pair, which is
+* what XM7 reads (sa_buf, polarity preserved).
+* C127: NAND2 SR latch - the sense amp is a StrongARM (both sense
+* nodes precharge HIGH, exactly one falls on evaluate) - self-timed
+* for a cross-coupled NAND SR with active-low inputs: both high
+* (precharge) = HOLD, one falling = SET. No write window, no strength
+* fight (NAND inputs are gates; the sense amp drives pure capacitance).
+* Q = NAND(raw_inv, qbar), qbar = NAND(sa_n, Q). XM7 reads Q.
+* Minimum size w=0.5u l=0.13u, STATED not fitted.
+XN1P1 Q raw_inv VDD VDD sg13_lv_pmos w=0.5u l=0.13u ng=1 m=1 mm_ok=1
+XN1P2 Q qbar VDD VDD sg13_lv_pmos w=0.5u l=0.13u ng=1 m=1 mm_ok=1
+XN1N1 Q raw_inv n1a VSS sg13_lv_nmos w=0.5u l=0.13u ng=1 m=1 mm_ok=1
+XN1N2 n1a qbar VSS VSS sg13_lv_nmos w=0.5u l=0.13u ng=1 m=1 mm_ok=1
+XN2P1 qbar sa_n VDD VDD sg13_lv_pmos w=0.5u l=0.13u ng=1 m=1 mm_ok=1
+XN2P2 qbar Q VDD VDD sg13_lv_pmos w=0.5u l=0.13u ng=1 m=1 mm_ok=1
+XN2N1 qbar sa_n n2a VSS sg13_lv_nmos w=0.5u l=0.13u ng=1 m=1 mm_ok=1
+XN2N2 n2a Q VSS VSS sg13_lv_nmos w=0.5u l=0.13u ng=1 m=1 mm_ok=1
+* C121: precharge pmos - pull raw_inv and sa_n to VDD while CLK_N is low
+* (gate=CLK_N), so each strobe starts with both sense nodes clean at
+* VDD (the C120 latch regenerated once and never released - no
+* precharge). Sized strong (w=6.0u) to override the hold latch,
+* PROVISIONAL first-order, STATED not fitted.
+XPC1 raw_inv SACLK VDD VDD sg13_lv_pmos w=6.0u l=0.13u ng=1 m=1 mm_ok=1
+XPC2 sa_n SACLK VDD VDD sg13_lv_pmos w=6.0u l=0.13u ng=1 m=1 mm_ok=1
+* C123: buffer the latch. raw_inv carries XM7-XM10 (four gates) while
+* sa_n carries nothing - identical precharge devices, asymmetric load,
+* so raw_inv floors at ~0.675 V and the latch cannot pull it down.
+* Fix: minimum-size inverter on raw_inv (BUF_R) and on sa_n (BUF_S);
+* the latch now sees only the two buffer gates. XM7-XM10 are driven
+* from sa_buf = NOT(sa_n) = raw_inv-sense (the cross-coupling makes
+* NOT(sa_n) equal to raw_inv's polarity), so the chain polarity is
+* preserved: PBIT_OUT = NOT(sa_n) = raw_inv as in the original.
+* Buffer size w=0.5u (minimum-class), STATED not fitted.
+* C133: two-inverter buffer between Q and XM7 - the 0.5u NAND cannot
+* drive XM7's 2.83u/2.0u gates inside the 100 ps evaluate (Q maxed at
+* 0.297 V, never a logic high). Buffer: stage 1 pmos 0.8u / nmos 0.6u,
+* stage 2 pmos 2.4u / nmos 1.8u, non-inverting (polarity preserved:
+* QBUF = Q), NAND left at minimum size so the latch stays fast.
+* Sizes STATED, not fitted.
+XB1P QBUF1 Q VDD VDD sg13_lv_pmos w=0.5u l=0.13u ng=1 m=1 mm_ok=1
+XB1N QBUF1 Q VSS VSS sg13_lv_nmos w=0.35u l=0.13u ng=1 m=1 mm_ok=1
+XB2P QBUF QBUF1 VDD VDD sg13_lv_pmos w=1.14u l=0.13u ng=1 m=1 mm_ok=1
+XB2N QBUF QBUF1 VSS VSS sg13_lv_nmos w=0.81u l=0.13u ng=1 m=1 mm_ok=1
+XM7 PBIT_RAW QBUF VDD VDD sg13_lv_pmos w=2.61u l=0.13u ng=1 m=1 mm_ok=1
+XM8 PBIT_RAW QBUF VSS VSS sg13_lv_nmos w=1.86u l=0.13u ng=1 m=1 mm_ok=1
+XM9 PBIT_OUT PBIT_RAW VDD VDD sg13_lv_pmos w=5.98u l=0.13u ng=1 m=1 mm_ok=1
+XM10 PBIT_OUT PBIT_RAW VSS VSS sg13_lv_nmos w=4.27u l=0.13u ng=1 m=1 mm_ok=1
+XM11 CLK_OUT_DIV CLK_P VDD VDD sg13_lv_pmos w=2.83u l=0.13u ng=1 m=1 mm_ok=1
+XM12 CLK_OUT_DIV CLK_P VSS VSS sg13_lv_nmos w=2.0u l=0.13u ng=1 m=1 mm_ok=1
+* V7 MERGE: 2-binary (codes 0-3) + 150 unary elements of 4 LSB (codes 4-603).
+* 603 codes, 151 handovers, segmenting at b1. Handover = code 3->4 = VCODE 0.03->0.04.
+* NO 1.037u compensation encoded (H-742 one-draw artifact); mechanism = delta-VBE =
+* kT/q*ln4 at the unary current sources; re-tune on the ensemble targeting x=1.03.
+XQU1 vsegu1 c_p1_comp e_dacu1 sub! npn13G2 Nx=4 mm_ok=1
+XRCU1 e_dacu1 VSS sub! rppd w=1.0u l=5.4u m=4 b=0 mm_ok=1
+XSWUP1 c_p ubar1 vsegu1 VSS sg13_lv_nmos w=2.0u l=0.13u ng=1 m=1 mm_ok=1
+XSWUN1 c_n u1 vsegu1 VSS sg13_lv_nmos w=2.0u l=0.13u ng=1 m=1 mm_ok=1
+XQU2 vsegu2 c_p1_comp e_dacu2 sub! npn13G2 Nx=4 mm_ok=1
+XRCU2 e_dacu2 VSS sub! rppd w=1.0u l=5.4u m=4 b=0 mm_ok=1
+XSWUP2 c_p ubar2 vsegu2 VSS sg13_lv_nmos w=2.0u l=0.13u ng=1 m=1 mm_ok=1
+XSWUN2 c_n u2 vsegu2 VSS sg13_lv_nmos w=2.0u l=0.13u ng=1 m=1 mm_ok=1
+XQU3 vsegu3 c_p1_comp e_dacu3 sub! npn13G2 Nx=4 mm_ok=1
+XRCU3 e_dacu3 VSS sub! rppd w=1.0u l=5.4u m=4 b=0 mm_ok=1
+XSWUP3 c_p ubar3 vsegu3 VSS sg13_lv_nmos w=2.0u l=0.13u ng=1 m=1 mm_ok=1
+XSWUN3 c_n u3 vsegu3 VSS sg13_lv_nmos w=2.0u l=0.13u ng=1 m=1 mm_ok=1
+XQU4 vsegu4 c_p1_comp e_dacu4 sub! npn13G2 Nx=4 mm_ok=1
+XRCU4 e_dacu4 VSS sub! rppd w=1.0u l=5.4u m=4 b=0 mm_ok=1
+XSWUP4 c_p ubar4 vsegu4 VSS sg13_lv_nmos w=2.0u l=0.13u ng=1 m=1 mm_ok=1
+XSWUN4 c_n u4 vsegu4 VSS sg13_lv_nmos w=2.0u l=0.13u ng=1 m=1 mm_ok=1
+XQU5 vsegu5 c_p1_comp e_dacu5 sub! npn13G2 Nx=4 mm_ok=1
+XRCU5 e_dacu5 VSS sub! rppd w=1.0u l=5.4u m=4 b=0 mm_ok=1
+XSWUP5 c_p ubar5 vsegu5 VSS sg13_lv_nmos w=2.0u l=0.13u ng=1 m=1 mm_ok=1
+XSWUN5 c_n u5 vsegu5 VSS sg13_lv_nmos w=2.0u l=0.13u ng=1 m=1 mm_ok=1
+XQU6 vsegu6 c_p1_comp e_dacu6 sub! npn13G2 Nx=4 mm_ok=1
+XRCU6 e_dacu6 VSS sub! rppd w=1.0u l=5.4u m=4 b=0 mm_ok=1
+XSWUP6 c_p ubar6 vsegu6 VSS sg13_lv_nmos w=2.0u l=0.13u ng=1 m=1 mm_ok=1
+XSWUN6 c_n u6 vsegu6 VSS sg13_lv_nmos w=2.0u l=0.13u ng=1 m=1 mm_ok=1
+XQU7 vsegu7 c_p1_comp e_dacu7 sub! npn13G2 Nx=4 mm_ok=1
+XRCU7 e_dacu7 VSS sub! rppd w=1.0u l=5.4u m=4 b=0 mm_ok=1
+XSWUP7 c_p ubar7 vsegu7 VSS sg13_lv_nmos w=2.0u l=0.13u ng=1 m=1 mm_ok=1
+XSWUN7 c_n u7 vsegu7 VSS sg13_lv_nmos w=2.0u l=0.13u ng=1 m=1 mm_ok=1
+XQU8 vsegu8 c_p1_comp e_dacu8 sub! npn13G2 Nx=4 mm_ok=1
+XRCU8 e_dacu8 VSS sub! rppd w=1.0u l=5.4u m=4 b=0 mm_ok=1
+XSWUP8 c_p ubar8 vsegu8 VSS sg13_lv_nmos w=2.0u l=0.13u ng=1 m=1 mm_ok=1
+XSWUN8 c_n u8 vsegu8 VSS sg13_lv_nmos w=2.0u l=0.13u ng=1 m=1 mm_ok=1
+XQU9 vsegu9 c_p1_comp e_dacu9 sub! npn13G2 Nx=4 mm_ok=1
+XRCU9 e_dacu9 VSS sub! rppd w=1.0u l=5.4u m=4 b=0 mm_ok=1
+XSWUP9 c_p ubar9 vsegu9 VSS sg13_lv_nmos w=2.0u l=0.13u ng=1 m=1 mm_ok=1
+XSWUN9 c_n u9 vsegu9 VSS sg13_lv_nmos w=2.0u l=0.13u ng=1 m=1 mm_ok=1
+XQU10 vsegu10 c_p1_comp e_dacu10 sub! npn13G2 Nx=4 mm_ok=1
+XRCU10 e_dacu10 VSS sub! rppd w=1.0u l=5.4u m=4 b=0 mm_ok=1
+XSWUP10 c_p ubar10 vsegu10 VSS sg13_lv_nmos w=2.0u l=0.13u ng=1 m=1 mm_ok=1
+XSWUN10 c_n u10 vsegu10 VSS sg13_lv_nmos w=2.0u l=0.13u ng=1 m=1 mm_ok=1
+XQU11 vsegu11 c_p1_comp e_dacu11 sub! npn13G2 Nx=4 mm_ok=1
+XRCU11 e_dacu11 VSS sub! rppd w=1.0u l=5.4u m=4 b=0 mm_ok=1
+XSWUP11 c_p ubar11 vsegu11 VSS sg13_lv_nmos w=2.0u l=0.13u ng=1 m=1 mm_ok=1
+XSWUN11 c_n u11 vsegu11 VSS sg13_lv_nmos w=2.0u l=0.13u ng=1 m=1 mm_ok=1
+XQU12 vsegu12 c_p1_comp e_dacu12 sub! npn13G2 Nx=4 mm_ok=1
+XRCU12 e_dacu12 VSS sub! rppd w=1.0u l=5.4u m=4 b=0 mm_ok=1
+XSWUP12 c_p ubar12 vsegu12 VSS sg13_lv_nmos w=2.0u l=0.13u ng=1 m=1 mm_ok=1
+XSWUN12 c_n u12 vsegu12 VSS sg13_lv_nmos w=2.0u l=0.13u ng=1 m=1 mm_ok=1
+XQU13 vsegu13 c_p1_comp e_dacu13 sub! npn13G2 Nx=4 mm_ok=1
+XRCU13 e_dacu13 VSS sub! rppd w=1.0u l=5.4u m=4 b=0 mm_ok=1
+XSWUP13 c_p ubar13 vsegu13 VSS sg13_lv_nmos w=2.0u l=0.13u ng=1 m=1 mm_ok=1
+XSWUN13 c_n u13 vsegu13 VSS sg13_lv_nmos w=2.0u l=0.13u ng=1 m=1 mm_ok=1
+XQU14 vsegu14 c_p1_comp e_dacu14 sub! npn13G2 Nx=4 mm_ok=1
+XRCU14 e_dacu14 VSS sub! rppd w=1.0u l=5.4u m=4 b=0 mm_ok=1
+XSWUP14 c_p ubar14 vsegu14 VSS sg13_lv_nmos w=2.0u l=0.13u ng=1 m=1 mm_ok=1
+XSWUN14 c_n u14 vsegu14 VSS sg13_lv_nmos w=2.0u l=0.13u ng=1 m=1 mm_ok=1
+XQU15 vsegu15 c_p1_comp e_dacu15 sub! npn13G2 Nx=4 mm_ok=1
+XRCU15 e_dacu15 VSS sub! rppd w=1.0u l=5.4u m=4 b=0 mm_ok=1
+XSWUP15 c_p ubar15 vsegu15 VSS sg13_lv_nmos w=2.0u l=0.13u ng=1 m=1 mm_ok=1
+XSWUN15 c_n u15 vsegu15 VSS sg13_lv_nmos w=2.0u l=0.13u ng=1 m=1 mm_ok=1
+XQU16 vsegu16 c_p1_comp e_dacu16 sub! npn13G2 Nx=4 mm_ok=1
+XRCU16 e_dacu16 VSS sub! rppd w=1.0u l=5.4u m=4 b=0 mm_ok=1
+XSWUP16 c_p ubar16 vsegu16 VSS sg13_lv_nmos w=2.0u l=0.13u ng=1 m=1 mm_ok=1
+XSWUN16 c_n u16 vsegu16 VSS sg13_lv_nmos w=2.0u l=0.13u ng=1 m=1 mm_ok=1
+XQU17 vsegu17 c_p1_comp e_dacu17 sub! npn13G2 Nx=4 mm_ok=1
+XRCU17 e_dacu17 VSS sub! rppd w=1.0u l=5.4u m=4 b=0 mm_ok=1
+XSWUP17 c_p ubar17 vsegu17 VSS sg13_lv_nmos w=2.0u l=0.13u ng=1 m=1 mm_ok=1
+XSWUN17 c_n u17 vsegu17 VSS sg13_lv_nmos w=2.0u l=0.13u ng=1 m=1 mm_ok=1
+XQU18 vsegu18 c_p1_comp e_dacu18 sub! npn13G2 Nx=4 mm_ok=1
+XRCU18 e_dacu18 VSS sub! rppd w=1.0u l=5.4u m=4 b=0 mm_ok=1
+XSWUP18 c_p ubar18 vsegu18 VSS sg13_lv_nmos w=2.0u l=0.13u ng=1 m=1 mm_ok=1
+XSWUN18 c_n u18 vsegu18 VSS sg13_lv_nmos w=2.0u l=0.13u ng=1 m=1 mm_ok=1
+XQU19 vsegu19 c_p1_comp e_dacu19 sub! npn13G2 Nx=4 mm_ok=1
+XRCU19 e_dacu19 VSS sub! rppd w=1.0u l=5.4u m=4 b=0 mm_ok=1
+XSWUP19 c_p ubar19 vsegu19 VSS sg13_lv_nmos w=2.0u l=0.13u ng=1 m=1 mm_ok=1
+XSWUN19 c_n u19 vsegu19 VSS sg13_lv_nmos w=2.0u l=0.13u ng=1 m=1 mm_ok=1
+XQU20 vsegu20 c_p1_comp e_dacu20 sub! npn13G2 Nx=4 mm_ok=1
+XRCU20 e_dacu20 VSS sub! rppd w=1.0u l=5.4u m=4 b=0 mm_ok=1
+XSWUP20 c_p ubar20 vsegu20 VSS sg13_lv_nmos w=2.0u l=0.13u ng=1 m=1 mm_ok=1
+XSWUN20 c_n u20 vsegu20 VSS sg13_lv_nmos w=2.0u l=0.13u ng=1 m=1 mm_ok=1
+XQU21 vsegu21 c_p1_comp e_dacu21 sub! npn13G2 Nx=4 mm_ok=1
+XRCU21 e_dacu21 VSS sub! rppd w=1.0u l=5.4u m=4 b=0 mm_ok=1
+XSWUP21 c_p ubar21 vsegu21 VSS sg13_lv_nmos w=2.0u l=0.13u ng=1 m=1 mm_ok=1
+XSWUN21 c_n u21 vsegu21 VSS sg13_lv_nmos w=2.0u l=0.13u ng=1 m=1 mm_ok=1
+XQU22 vsegu22 c_p1_comp e_dacu22 sub! npn13G2 Nx=4 mm_ok=1
+XRCU22 e_dacu22 VSS sub! rppd w=1.0u l=5.4u m=4 b=0 mm_ok=1
+XSWUP22 c_p ubar22 vsegu22 VSS sg13_lv_nmos w=2.0u l=0.13u ng=1 m=1 mm_ok=1
+XSWUN22 c_n u22 vsegu22 VSS sg13_lv_nmos w=2.0u l=0.13u ng=1 m=1 mm_ok=1
+XQU23 vsegu23 c_p1_comp e_dacu23 sub! npn13G2 Nx=4 mm_ok=1
+XRCU23 e_dacu23 VSS sub! rppd w=1.0u l=5.4u m=4 b=0 mm_ok=1
+XSWUP23 c_p ubar23 vsegu23 VSS sg13_lv_nmos w=2.0u l=0.13u ng=1 m=1 mm_ok=1
+XSWUN23 c_n u23 vsegu23 VSS sg13_lv_nmos w=2.0u l=0.13u ng=1 m=1 mm_ok=1
+XQU24 vsegu24 c_p1_comp e_dacu24 sub! npn13G2 Nx=4 mm_ok=1
+XRCU24 e_dacu24 VSS sub! rppd w=1.0u l=5.4u m=4 b=0 mm_ok=1
+XSWUP24 c_p ubar24 vsegu24 VSS sg13_lv_nmos w=2.0u l=0.13u ng=1 m=1 mm_ok=1
+XSWUN24 c_n u24 vsegu24 VSS sg13_lv_nmos w=2.0u l=0.13u ng=1 m=1 mm_ok=1
+XQU25 vsegu25 c_p1_comp e_dacu25 sub! npn13G2 Nx=4 mm_ok=1
+XRCU25 e_dacu25 VSS sub! rppd w=1.0u l=5.4u m=4 b=0 mm_ok=1
+XSWUP25 c_p ubar25 vsegu25 VSS sg13_lv_nmos w=2.0u l=0.13u ng=1 m=1 mm_ok=1
+XSWUN25 c_n u25 vsegu25 VSS sg13_lv_nmos w=2.0u l=0.13u ng=1 m=1 mm_ok=1
+XQU26 vsegu26 c_p1_comp e_dacu26 sub! npn13G2 Nx=4 mm_ok=1
+XRCU26 e_dacu26 VSS sub! rppd w=1.0u l=5.4u m=4 b=0 mm_ok=1
+XSWUP26 c_p ubar26 vsegu26 VSS sg13_lv_nmos w=2.0u l=0.13u ng=1 m=1 mm_ok=1
+XSWUN26 c_n u26 vsegu26 VSS sg13_lv_nmos w=2.0u l=0.13u ng=1 m=1 mm_ok=1
+XQU27 vsegu27 c_p1_comp e_dacu27 sub! npn13G2 Nx=4 mm_ok=1
+XRCU27 e_dacu27 VSS sub! rppd w=1.0u l=5.4u m=4 b=0 mm_ok=1
+XSWUP27 c_p ubar27 vsegu27 VSS sg13_lv_nmos w=2.0u l=0.13u ng=1 m=1 mm_ok=1
+XSWUN27 c_n u27 vsegu27 VSS sg13_lv_nmos w=2.0u l=0.13u ng=1 m=1 mm_ok=1
+XQU28 vsegu28 c_p1_comp e_dacu28 sub! npn13G2 Nx=4 mm_ok=1
+XRCU28 e_dacu28 VSS sub! rppd w=1.0u l=5.4u m=4 b=0 mm_ok=1
+XSWUP28 c_p ubar28 vsegu28 VSS sg13_lv_nmos w=2.0u l=0.13u ng=1 m=1 mm_ok=1
+XSWUN28 c_n u28 vsegu28 VSS sg13_lv_nmos w=2.0u l=0.13u ng=1 m=1 mm_ok=1
+XQU29 vsegu29 c_p1_comp e_dacu29 sub! npn13G2 Nx=4 mm_ok=1
+XRCU29 e_dacu29 VSS sub! rppd w=1.0u l=5.4u m=4 b=0 mm_ok=1
+XSWUP29 c_p ubar29 vsegu29 VSS sg13_lv_nmos w=2.0u l=0.13u ng=1 m=1 mm_ok=1
+XSWUN29 c_n u29 vsegu29 VSS sg13_lv_nmos w=2.0u l=0.13u ng=1 m=1 mm_ok=1
+XQU30 vsegu30 c_p1_comp e_dacu30 sub! npn13G2 Nx=4 mm_ok=1
+XRCU30 e_dacu30 VSS sub! rppd w=1.0u l=5.4u m=4 b=0 mm_ok=1
+XSWUP30 c_p ubar30 vsegu30 VSS sg13_lv_nmos w=2.0u l=0.13u ng=1 m=1 mm_ok=1
+XSWUN30 c_n u30 vsegu30 VSS sg13_lv_nmos w=2.0u l=0.13u ng=1 m=1 mm_ok=1
+XQU31 vsegu31 c_p1_comp e_dacu31 sub! npn13G2 Nx=4 mm_ok=1
+XRCU31 e_dacu31 VSS sub! rppd w=1.0u l=5.4u m=4 b=0 mm_ok=1
+XSWUP31 c_p ubar31 vsegu31 VSS sg13_lv_nmos w=2.0u l=0.13u ng=1 m=1 mm_ok=1
+XSWUN31 c_n u31 vsegu31 VSS sg13_lv_nmos w=2.0u l=0.13u ng=1 m=1 mm_ok=1
+XQU32 vsegu32 c_p1_comp e_dacu32 sub! npn13G2 Nx=4 mm_ok=1
+XRCU32 e_dacu32 VSS sub! rppd w=1.0u l=5.4u m=4 b=0 mm_ok=1
+XSWUP32 c_p ubar32 vsegu32 VSS sg13_lv_nmos w=2.0u l=0.13u ng=1 m=1 mm_ok=1
+XSWUN32 c_n u32 vsegu32 VSS sg13_lv_nmos w=2.0u l=0.13u ng=1 m=1 mm_ok=1
+XQU33 vsegu33 c_p1_comp e_dacu33 sub! npn13G2 Nx=4 mm_ok=1
+XRCU33 e_dacu33 VSS sub! rppd w=1.0u l=5.4u m=4 b=0 mm_ok=1
+XSWUP33 c_p ubar33 vsegu33 VSS sg13_lv_nmos w=2.0u l=0.13u ng=1 m=1 mm_ok=1
+XSWUN33 c_n u33 vsegu33 VSS sg13_lv_nmos w=2.0u l=0.13u ng=1 m=1 mm_ok=1
+XQU34 vsegu34 c_p1_comp e_dacu34 sub! npn13G2 Nx=4 mm_ok=1
+XRCU34 e_dacu34 VSS sub! rppd w=1.0u l=5.4u m=4 b=0 mm_ok=1
+XSWUP34 c_p ubar34 vsegu34 VSS sg13_lv_nmos w=2.0u l=0.13u ng=1 m=1 mm_ok=1
+XSWUN34 c_n u34 vsegu34 VSS sg13_lv_nmos w=2.0u l=0.13u ng=1 m=1 mm_ok=1
+XQU35 vsegu35 c_p1_comp e_dacu35 sub! npn13G2 Nx=4 mm_ok=1
+XRCU35 e_dacu35 VSS sub! rppd w=1.0u l=5.4u m=4 b=0 mm_ok=1
+XSWUP35 c_p ubar35 vsegu35 VSS sg13_lv_nmos w=2.0u l=0.13u ng=1 m=1 mm_ok=1
+XSWUN35 c_n u35 vsegu35 VSS sg13_lv_nmos w=2.0u l=0.13u ng=1 m=1 mm_ok=1
+XQU36 vsegu36 c_p1_comp e_dacu36 sub! npn13G2 Nx=4 mm_ok=1
+XRCU36 e_dacu36 VSS sub! rppd w=1.0u l=5.4u m=4 b=0 mm_ok=1
+XSWUP36 c_p ubar36 vsegu36 VSS sg13_lv_nmos w=2.0u l=0.13u ng=1 m=1 mm_ok=1
+XSWUN36 c_n u36 vsegu36 VSS sg13_lv_nmos w=2.0u l=0.13u ng=1 m=1 mm_ok=1
+XQU37 vsegu37 c_p1_comp e_dacu37 sub! npn13G2 Nx=4 mm_ok=1
+XRCU37 e_dacu37 VSS sub! rppd w=1.0u l=5.4u m=4 b=0 mm_ok=1
+XSWUP37 c_p ubar37 vsegu37 VSS sg13_lv_nmos w=2.0u l=0.13u ng=1 m=1 mm_ok=1
+XSWUN37 c_n u37 vsegu37 VSS sg13_lv_nmos w=2.0u l=0.13u ng=1 m=1 mm_ok=1
+XQU38 vsegu38 c_p1_comp e_dacu38 sub! npn13G2 Nx=4 mm_ok=1
+XRCU38 e_dacu38 VSS sub! rppd w=1.0u l=5.4u m=4 b=0 mm_ok=1
+XSWUP38 c_p ubar38 vsegu38 VSS sg13_lv_nmos w=2.0u l=0.13u ng=1 m=1 mm_ok=1
+XSWUN38 c_n u38 vsegu38 VSS sg13_lv_nmos w=2.0u l=0.13u ng=1 m=1 mm_ok=1
+XQU39 vsegu39 c_p1_comp e_dacu39 sub! npn13G2 Nx=4 mm_ok=1
+XRCU39 e_dacu39 VSS sub! rppd w=1.0u l=5.4u m=4 b=0 mm_ok=1
+XSWUP39 c_p ubar39 vsegu39 VSS sg13_lv_nmos w=2.0u l=0.13u ng=1 m=1 mm_ok=1
+XSWUN39 c_n u39 vsegu39 VSS sg13_lv_nmos w=2.0u l=0.13u ng=1 m=1 mm_ok=1
+XQU40 vsegu40 c_p1_comp e_dacu40 sub! npn13G2 Nx=4 mm_ok=1
+XRCU40 e_dacu40 VSS sub! rppd w=1.0u l=5.4u m=4 b=0 mm_ok=1
+XSWUP40 c_p ubar40 vsegu40 VSS sg13_lv_nmos w=2.0u l=0.13u ng=1 m=1 mm_ok=1
+XSWUN40 c_n u40 vsegu40 VSS sg13_lv_nmos w=2.0u l=0.13u ng=1 m=1 mm_ok=1
+XQU41 vsegu41 c_p1_comp e_dacu41 sub! npn13G2 Nx=4 mm_ok=1
+XRCU41 e_dacu41 VSS sub! rppd w=1.0u l=5.4u m=4 b=0 mm_ok=1
+XSWUP41 c_p ubar41 vsegu41 VSS sg13_lv_nmos w=2.0u l=0.13u ng=1 m=1 mm_ok=1
+XSWUN41 c_n u41 vsegu41 VSS sg13_lv_nmos w=2.0u l=0.13u ng=1 m=1 mm_ok=1
+XQU42 vsegu42 c_p1_comp e_dacu42 sub! npn13G2 Nx=4 mm_ok=1
+XRCU42 e_dacu42 VSS sub! rppd w=1.0u l=5.4u m=4 b=0 mm_ok=1
+XSWUP42 c_p ubar42 vsegu42 VSS sg13_lv_nmos w=2.0u l=0.13u ng=1 m=1 mm_ok=1
+XSWUN42 c_n u42 vsegu42 VSS sg13_lv_nmos w=2.0u l=0.13u ng=1 m=1 mm_ok=1
+XQU43 vsegu43 c_p1_comp e_dacu43 sub! npn13G2 Nx=4 mm_ok=1
+XRCU43 e_dacu43 VSS sub! rppd w=1.0u l=5.4u m=4 b=0 mm_ok=1
+XSWUP43 c_p ubar43 vsegu43 VSS sg13_lv_nmos w=2.0u l=0.13u ng=1 m=1 mm_ok=1
+XSWUN43 c_n u43 vsegu43 VSS sg13_lv_nmos w=2.0u l=0.13u ng=1 m=1 mm_ok=1
+XQU44 vsegu44 c_p1_comp e_dacu44 sub! npn13G2 Nx=4 mm_ok=1
+XRCU44 e_dacu44 VSS sub! rppd w=1.0u l=5.4u m=4 b=0 mm_ok=1
+XSWUP44 c_p ubar44 vsegu44 VSS sg13_lv_nmos w=2.0u l=0.13u ng=1 m=1 mm_ok=1
+XSWUN44 c_n u44 vsegu44 VSS sg13_lv_nmos w=2.0u l=0.13u ng=1 m=1 mm_ok=1
+XQU45 vsegu45 c_p1_comp e_dacu45 sub! npn13G2 Nx=4 mm_ok=1
+XRCU45 e_dacu45 VSS sub! rppd w=1.0u l=5.4u m=4 b=0 mm_ok=1
+XSWUP45 c_p ubar45 vsegu45 VSS sg13_lv_nmos w=2.0u l=0.13u ng=1 m=1 mm_ok=1
+XSWUN45 c_n u45 vsegu45 VSS sg13_lv_nmos w=2.0u l=0.13u ng=1 m=1 mm_ok=1
+XQU46 vsegu46 c_p1_comp e_dacu46 sub! npn13G2 Nx=4 mm_ok=1
+XRCU46 e_dacu46 VSS sub! rppd w=1.0u l=5.4u m=4 b=0 mm_ok=1
+XSWUP46 c_p ubar46 vsegu46 VSS sg13_lv_nmos w=2.0u l=0.13u ng=1 m=1 mm_ok=1
+XSWUN46 c_n u46 vsegu46 VSS sg13_lv_nmos w=2.0u l=0.13u ng=1 m=1 mm_ok=1
+XQU47 vsegu47 c_p1_comp e_dacu47 sub! npn13G2 Nx=4 mm_ok=1
+XRCU47 e_dacu47 VSS sub! rppd w=1.0u l=5.4u m=4 b=0 mm_ok=1
+XSWUP47 c_p ubar47 vsegu47 VSS sg13_lv_nmos w=2.0u l=0.13u ng=1 m=1 mm_ok=1
+XSWUN47 c_n u47 vsegu47 VSS sg13_lv_nmos w=2.0u l=0.13u ng=1 m=1 mm_ok=1
+XQU48 vsegu48 c_p1_comp e_dacu48 sub! npn13G2 Nx=4 mm_ok=1
+XRCU48 e_dacu48 VSS sub! rppd w=1.0u l=5.4u m=4 b=0 mm_ok=1
+XSWUP48 c_p ubar48 vsegu48 VSS sg13_lv_nmos w=2.0u l=0.13u ng=1 m=1 mm_ok=1
+XSWUN48 c_n u48 vsegu48 VSS sg13_lv_nmos w=2.0u l=0.13u ng=1 m=1 mm_ok=1
+XQU49 vsegu49 c_p1_comp e_dacu49 sub! npn13G2 Nx=4 mm_ok=1
+XRCU49 e_dacu49 VSS sub! rppd w=1.0u l=5.4u m=4 b=0 mm_ok=1
+XSWUP49 c_p ubar49 vsegu49 VSS sg13_lv_nmos w=2.0u l=0.13u ng=1 m=1 mm_ok=1
+XSWUN49 c_n u49 vsegu49 VSS sg13_lv_nmos w=2.0u l=0.13u ng=1 m=1 mm_ok=1
+XQU50 vsegu50 c_p1_comp e_dacu50 sub! npn13G2 Nx=4 mm_ok=1
+XRCU50 e_dacu50 VSS sub! rppd w=1.0u l=5.4u m=4 b=0 mm_ok=1
+XSWUP50 c_p ubar50 vsegu50 VSS sg13_lv_nmos w=2.0u l=0.13u ng=1 m=1 mm_ok=1
+XSWUN50 c_n u50 vsegu50 VSS sg13_lv_nmos w=2.0u l=0.13u ng=1 m=1 mm_ok=1
+XQU51 vsegu51 c_p1_comp e_dacu51 sub! npn13G2 Nx=4 mm_ok=1
+XRCU51 e_dacu51 VSS sub! rppd w=1.0u l=5.4u m=4 b=0 mm_ok=1
+XSWUP51 c_p ubar51 vsegu51 VSS sg13_lv_nmos w=2.0u l=0.13u ng=1 m=1 mm_ok=1
+XSWUN51 c_n u51 vsegu51 VSS sg13_lv_nmos w=2.0u l=0.13u ng=1 m=1 mm_ok=1
+XQU52 vsegu52 c_p1_comp e_dacu52 sub! npn13G2 Nx=4 mm_ok=1
+XRCU52 e_dacu52 VSS sub! rppd w=1.0u l=5.4u m=4 b=0 mm_ok=1
+XSWUP52 c_p ubar52 vsegu52 VSS sg13_lv_nmos w=2.0u l=0.13u ng=1 m=1 mm_ok=1
+XSWUN52 c_n u52 vsegu52 VSS sg13_lv_nmos w=2.0u l=0.13u ng=1 m=1 mm_ok=1
+XQU53 vsegu53 c_p1_comp e_dacu53 sub! npn13G2 Nx=4 mm_ok=1
+XRCU53 e_dacu53 VSS sub! rppd w=1.0u l=5.4u m=4 b=0 mm_ok=1
+XSWUP53 c_p ubar53 vsegu53 VSS sg13_lv_nmos w=2.0u l=0.13u ng=1 m=1 mm_ok=1
+XSWUN53 c_n u53 vsegu53 VSS sg13_lv_nmos w=2.0u l=0.13u ng=1 m=1 mm_ok=1
+XQU54 vsegu54 c_p1_comp e_dacu54 sub! npn13G2 Nx=4 mm_ok=1
+XRCU54 e_dacu54 VSS sub! rppd w=1.0u l=5.4u m=4 b=0 mm_ok=1
+XSWUP54 c_p ubar54 vsegu54 VSS sg13_lv_nmos w=2.0u l=0.13u ng=1 m=1 mm_ok=1
+XSWUN54 c_n u54 vsegu54 VSS sg13_lv_nmos w=2.0u l=0.13u ng=1 m=1 mm_ok=1
+XQU55 vsegu55 c_p1_comp e_dacu55 sub! npn13G2 Nx=4 mm_ok=1
+XRCU55 e_dacu55 VSS sub! rppd w=1.0u l=5.4u m=4 b=0 mm_ok=1
+XSWUP55 c_p ubar55 vsegu55 VSS sg13_lv_nmos w=2.0u l=0.13u ng=1 m=1 mm_ok=1
+XSWUN55 c_n u55 vsegu55 VSS sg13_lv_nmos w=2.0u l=0.13u ng=1 m=1 mm_ok=1
+XQU56 vsegu56 c_p1_comp e_dacu56 sub! npn13G2 Nx=4 mm_ok=1
+XRCU56 e_dacu56 VSS sub! rppd w=1.0u l=5.4u m=4 b=0 mm_ok=1
+XSWUP56 c_p ubar56 vsegu56 VSS sg13_lv_nmos w=2.0u l=0.13u ng=1 m=1 mm_ok=1
+XSWUN56 c_n u56 vsegu56 VSS sg13_lv_nmos w=2.0u l=0.13u ng=1 m=1 mm_ok=1
+XQU57 vsegu57 c_p1_comp e_dacu57 sub! npn13G2 Nx=4 mm_ok=1
+XRCU57 e_dacu57 VSS sub! rppd w=1.0u l=5.4u m=4 b=0 mm_ok=1
+XSWUP57 c_p ubar57 vsegu57 VSS sg13_lv_nmos w=2.0u l=0.13u ng=1 m=1 mm_ok=1
+XSWUN57 c_n u57 vsegu57 VSS sg13_lv_nmos w=2.0u l=0.13u ng=1 m=1 mm_ok=1
+XQU58 vsegu58 c_p1_comp e_dacu58 sub! npn13G2 Nx=4 mm_ok=1
+XRCU58 e_dacu58 VSS sub! rppd w=1.0u l=5.4u m=4 b=0 mm_ok=1
+XSWUP58 c_p ubar58 vsegu58 VSS sg13_lv_nmos w=2.0u l=0.13u ng=1 m=1 mm_ok=1
+XSWUN58 c_n u58 vsegu58 VSS sg13_lv_nmos w=2.0u l=0.13u ng=1 m=1 mm_ok=1
+XQU59 vsegu59 c_p1_comp e_dacu59 sub! npn13G2 Nx=4 mm_ok=1
+XRCU59 e_dacu59 VSS sub! rppd w=1.0u l=5.4u m=4 b=0 mm_ok=1
+XSWUP59 c_p ubar59 vsegu59 VSS sg13_lv_nmos w=2.0u l=0.13u ng=1 m=1 mm_ok=1
+XSWUN59 c_n u59 vsegu59 VSS sg13_lv_nmos w=2.0u l=0.13u ng=1 m=1 mm_ok=1
+XQU60 vsegu60 c_p1_comp e_dacu60 sub! npn13G2 Nx=4 mm_ok=1
+XRCU60 e_dacu60 VSS sub! rppd w=1.0u l=5.4u m=4 b=0 mm_ok=1
+XSWUP60 c_p ubar60 vsegu60 VSS sg13_lv_nmos w=2.0u l=0.13u ng=1 m=1 mm_ok=1
+XSWUN60 c_n u60 vsegu60 VSS sg13_lv_nmos w=2.0u l=0.13u ng=1 m=1 mm_ok=1
+XQU61 vsegu61 c_p1_comp e_dacu61 sub! npn13G2 Nx=4 mm_ok=1
+XRCU61 e_dacu61 VSS sub! rppd w=1.0u l=5.4u m=4 b=0 mm_ok=1
+XSWUP61 c_p ubar61 vsegu61 VSS sg13_lv_nmos w=2.0u l=0.13u ng=1 m=1 mm_ok=1
+XSWUN61 c_n u61 vsegu61 VSS sg13_lv_nmos w=2.0u l=0.13u ng=1 m=1 mm_ok=1
+XQU62 vsegu62 c_p1_comp e_dacu62 sub! npn13G2 Nx=4 mm_ok=1
+XRCU62 e_dacu62 VSS sub! rppd w=1.0u l=5.4u m=4 b=0 mm_ok=1
+XSWUP62 c_p ubar62 vsegu62 VSS sg13_lv_nmos w=2.0u l=0.13u ng=1 m=1 mm_ok=1
+XSWUN62 c_n u62 vsegu62 VSS sg13_lv_nmos w=2.0u l=0.13u ng=1 m=1 mm_ok=1
+XQU63 vsegu63 c_p1_comp e_dacu63 sub! npn13G2 Nx=4 mm_ok=1
+XRCU63 e_dacu63 VSS sub! rppd w=1.0u l=5.4u m=4 b=0 mm_ok=1
+XSWUP63 c_p ubar63 vsegu63 VSS sg13_lv_nmos w=2.0u l=0.13u ng=1 m=1 mm_ok=1
+XSWUN63 c_n u63 vsegu63 VSS sg13_lv_nmos w=2.0u l=0.13u ng=1 m=1 mm_ok=1
+XQU64 vsegu64 c_p1_comp e_dacu64 sub! npn13G2 Nx=4 mm_ok=1
+XRCU64 e_dacu64 VSS sub! rppd w=1.0u l=5.4u m=4 b=0 mm_ok=1
+XSWUP64 c_p ubar64 vsegu64 VSS sg13_lv_nmos w=2.0u l=0.13u ng=1 m=1 mm_ok=1
+XSWUN64 c_n u64 vsegu64 VSS sg13_lv_nmos w=2.0u l=0.13u ng=1 m=1 mm_ok=1
+XQU65 vsegu65 c_p1_comp e_dacu65 sub! npn13G2 Nx=4 mm_ok=1
+XRCU65 e_dacu65 VSS sub! rppd w=1.0u l=5.4u m=4 b=0 mm_ok=1
+XSWUP65 c_p ubar65 vsegu65 VSS sg13_lv_nmos w=2.0u l=0.13u ng=1 m=1 mm_ok=1
+XSWUN65 c_n u65 vsegu65 VSS sg13_lv_nmos w=2.0u l=0.13u ng=1 m=1 mm_ok=1
+XQU66 vsegu66 c_p1_comp e_dacu66 sub! npn13G2 Nx=4 mm_ok=1
+XRCU66 e_dacu66 VSS sub! rppd w=1.0u l=5.4u m=4 b=0 mm_ok=1
+XSWUP66 c_p ubar66 vsegu66 VSS sg13_lv_nmos w=2.0u l=0.13u ng=1 m=1 mm_ok=1
+XSWUN66 c_n u66 vsegu66 VSS sg13_lv_nmos w=2.0u l=0.13u ng=1 m=1 mm_ok=1
+XQU67 vsegu67 c_p1_comp e_dacu67 sub! npn13G2 Nx=4 mm_ok=1
+XRCU67 e_dacu67 VSS sub! rppd w=1.0u l=5.4u m=4 b=0 mm_ok=1
+XSWUP67 c_p ubar67 vsegu67 VSS sg13_lv_nmos w=2.0u l=0.13u ng=1 m=1 mm_ok=1
+XSWUN67 c_n u67 vsegu67 VSS sg13_lv_nmos w=2.0u l=0.13u ng=1 m=1 mm_ok=1
+XQU68 vsegu68 c_p1_comp e_dacu68 sub! npn13G2 Nx=4 mm_ok=1
+XRCU68 e_dacu68 VSS sub! rppd w=1.0u l=5.4u m=4 b=0 mm_ok=1
+XSWUP68 c_p ubar68 vsegu68 VSS sg13_lv_nmos w=2.0u l=0.13u ng=1 m=1 mm_ok=1
+XSWUN68 c_n u68 vsegu68 VSS sg13_lv_nmos w=2.0u l=0.13u ng=1 m=1 mm_ok=1
+XQU69 vsegu69 c_p1_comp e_dacu69 sub! npn13G2 Nx=4 mm_ok=1
+XRCU69 e_dacu69 VSS sub! rppd w=1.0u l=5.4u m=4 b=0 mm_ok=1
+XSWUP69 c_p ubar69 vsegu69 VSS sg13_lv_nmos w=2.0u l=0.13u ng=1 m=1 mm_ok=1
+XSWUN69 c_n u69 vsegu69 VSS sg13_lv_nmos w=2.0u l=0.13u ng=1 m=1 mm_ok=1
+XQU70 vsegu70 c_p1_comp e_dacu70 sub! npn13G2 Nx=4 mm_ok=1
+XRCU70 e_dacu70 VSS sub! rppd w=1.0u l=5.4u m=4 b=0 mm_ok=1
+XSWUP70 c_p ubar70 vsegu70 VSS sg13_lv_nmos w=2.0u l=0.13u ng=1 m=1 mm_ok=1
+XSWUN70 c_n u70 vsegu70 VSS sg13_lv_nmos w=2.0u l=0.13u ng=1 m=1 mm_ok=1
+XQU71 vsegu71 c_p1_comp e_dacu71 sub! npn13G2 Nx=4 mm_ok=1
+XRCU71 e_dacu71 VSS sub! rppd w=1.0u l=5.4u m=4 b=0 mm_ok=1
+XSWUP71 c_p ubar71 vsegu71 VSS sg13_lv_nmos w=2.0u l=0.13u ng=1 m=1 mm_ok=1
+XSWUN71 c_n u71 vsegu71 VSS sg13_lv_nmos w=2.0u l=0.13u ng=1 m=1 mm_ok=1
+XQU72 vsegu72 c_p1_comp e_dacu72 sub! npn13G2 Nx=4 mm_ok=1
+XRCU72 e_dacu72 VSS sub! rppd w=1.0u l=5.4u m=4 b=0 mm_ok=1
+XSWUP72 c_p ubar72 vsegu72 VSS sg13_lv_nmos w=2.0u l=0.13u ng=1 m=1 mm_ok=1
+XSWUN72 c_n u72 vsegu72 VSS sg13_lv_nmos w=2.0u l=0.13u ng=1 m=1 mm_ok=1
+XQU73 vsegu73 c_p1_comp e_dacu73 sub! npn13G2 Nx=4 mm_ok=1
+XRCU73 e_dacu73 VSS sub! rppd w=1.0u l=5.4u m=4 b=0 mm_ok=1
+XSWUP73 c_p ubar73 vsegu73 VSS sg13_lv_nmos w=2.0u l=0.13u ng=1 m=1 mm_ok=1
+XSWUN73 c_n u73 vsegu73 VSS sg13_lv_nmos w=2.0u l=0.13u ng=1 m=1 mm_ok=1
+XQU74 vsegu74 c_p1_comp e_dacu74 sub! npn13G2 Nx=4 mm_ok=1
+XRCU74 e_dacu74 VSS sub! rppd w=1.0u l=5.4u m=4 b=0 mm_ok=1
+XSWUP74 c_p ubar74 vsegu74 VSS sg13_lv_nmos w=2.0u l=0.13u ng=1 m=1 mm_ok=1
+XSWUN74 c_n u74 vsegu74 VSS sg13_lv_nmos w=2.0u l=0.13u ng=1 m=1 mm_ok=1
+XQU75 vsegu75 c_p1_comp e_dacu75 sub! npn13G2 Nx=4 mm_ok=1
+XRCU75 e_dacu75 VSS sub! rppd w=1.0u l=5.4u m=4 b=0 mm_ok=1
+XSWUP75 c_p ubar75 vsegu75 VSS sg13_lv_nmos w=2.0u l=0.13u ng=1 m=1 mm_ok=1
+XSWUN75 c_n u75 vsegu75 VSS sg13_lv_nmos w=2.0u l=0.13u ng=1 m=1 mm_ok=1
+XQU76 vsegu76 c_p1_comp e_dacu76 sub! npn13G2 Nx=4 mm_ok=1
+XRCU76 e_dacu76 VSS sub! rppd w=1.0u l=5.4u m=4 b=0 mm_ok=1
+XSWUP76 c_p ubar76 vsegu76 VSS sg13_lv_nmos w=2.0u l=0.13u ng=1 m=1 mm_ok=1
+XSWUN76 c_n u76 vsegu76 VSS sg13_lv_nmos w=2.0u l=0.13u ng=1 m=1 mm_ok=1
+XQU77 vsegu77 c_p1_comp e_dacu77 sub! npn13G2 Nx=4 mm_ok=1
+XRCU77 e_dacu77 VSS sub! rppd w=1.0u l=5.4u m=4 b=0 mm_ok=1
+XSWUP77 c_p ubar77 vsegu77 VSS sg13_lv_nmos w=2.0u l=0.13u ng=1 m=1 mm_ok=1
+XSWUN77 c_n u77 vsegu77 VSS sg13_lv_nmos w=2.0u l=0.13u ng=1 m=1 mm_ok=1
+XQU78 vsegu78 c_p1_comp e_dacu78 sub! npn13G2 Nx=4 mm_ok=1
+XRCU78 e_dacu78 VSS sub! rppd w=1.0u l=5.4u m=4 b=0 mm_ok=1
+XSWUP78 c_p ubar78 vsegu78 VSS sg13_lv_nmos w=2.0u l=0.13u ng=1 m=1 mm_ok=1
+XSWUN78 c_n u78 vsegu78 VSS sg13_lv_nmos w=2.0u l=0.13u ng=1 m=1 mm_ok=1
+XQU79 vsegu79 c_p1_comp e_dacu79 sub! npn13G2 Nx=4 mm_ok=1
+XRCU79 e_dacu79 VSS sub! rppd w=1.0u l=5.4u m=4 b=0 mm_ok=1
+XSWUP79 c_p ubar79 vsegu79 VSS sg13_lv_nmos w=2.0u l=0.13u ng=1 m=1 mm_ok=1
+XSWUN79 c_n u79 vsegu79 VSS sg13_lv_nmos w=2.0u l=0.13u ng=1 m=1 mm_ok=1
+XQU80 vsegu80 c_p1_comp e_dacu80 sub! npn13G2 Nx=4 mm_ok=1
+XRCU80 e_dacu80 VSS sub! rppd w=1.0u l=5.4u m=4 b=0 mm_ok=1
+XSWUP80 c_p ubar80 vsegu80 VSS sg13_lv_nmos w=2.0u l=0.13u ng=1 m=1 mm_ok=1
+XSWUN80 c_n u80 vsegu80 VSS sg13_lv_nmos w=2.0u l=0.13u ng=1 m=1 mm_ok=1
+XQU81 vsegu81 c_p1_comp e_dacu81 sub! npn13G2 Nx=4 mm_ok=1
+XRCU81 e_dacu81 VSS sub! rppd w=1.0u l=5.4u m=4 b=0 mm_ok=1
+XSWUP81 c_p ubar81 vsegu81 VSS sg13_lv_nmos w=2.0u l=0.13u ng=1 m=1 mm_ok=1
+XSWUN81 c_n u81 vsegu81 VSS sg13_lv_nmos w=2.0u l=0.13u ng=1 m=1 mm_ok=1
+XQU82 vsegu82 c_p1_comp e_dacu82 sub! npn13G2 Nx=4 mm_ok=1
+XRCU82 e_dacu82 VSS sub! rppd w=1.0u l=5.4u m=4 b=0 mm_ok=1
+XSWUP82 c_p ubar82 vsegu82 VSS sg13_lv_nmos w=2.0u l=0.13u ng=1 m=1 mm_ok=1
+XSWUN82 c_n u82 vsegu82 VSS sg13_lv_nmos w=2.0u l=0.13u ng=1 m=1 mm_ok=1
+XQU83 vsegu83 c_p1_comp e_dacu83 sub! npn13G2 Nx=4 mm_ok=1
+XRCU83 e_dacu83 VSS sub! rppd w=1.0u l=5.4u m=4 b=0 mm_ok=1
+XSWUP83 c_p ubar83 vsegu83 VSS sg13_lv_nmos w=2.0u l=0.13u ng=1 m=1 mm_ok=1
+XSWUN83 c_n u83 vsegu83 VSS sg13_lv_nmos w=2.0u l=0.13u ng=1 m=1 mm_ok=1
+XQU84 vsegu84 c_p1_comp e_dacu84 sub! npn13G2 Nx=4 mm_ok=1
+XRCU84 e_dacu84 VSS sub! rppd w=1.0u l=5.4u m=4 b=0 mm_ok=1
+XSWUP84 c_p ubar84 vsegu84 VSS sg13_lv_nmos w=2.0u l=0.13u ng=1 m=1 mm_ok=1
+XSWUN84 c_n u84 vsegu84 VSS sg13_lv_nmos w=2.0u l=0.13u ng=1 m=1 mm_ok=1
+XQU85 vsegu85 c_p1_comp e_dacu85 sub! npn13G2 Nx=4 mm_ok=1
+XRCU85 e_dacu85 VSS sub! rppd w=1.0u l=5.4u m=4 b=0 mm_ok=1
+XSWUP85 c_p ubar85 vsegu85 VSS sg13_lv_nmos w=2.0u l=0.13u ng=1 m=1 mm_ok=1
+XSWUN85 c_n u85 vsegu85 VSS sg13_lv_nmos w=2.0u l=0.13u ng=1 m=1 mm_ok=1
+XQU86 vsegu86 c_p1_comp e_dacu86 sub! npn13G2 Nx=4 mm_ok=1
+XRCU86 e_dacu86 VSS sub! rppd w=1.0u l=5.4u m=4 b=0 mm_ok=1
+XSWUP86 c_p ubar86 vsegu86 VSS sg13_lv_nmos w=2.0u l=0.13u ng=1 m=1 mm_ok=1
+XSWUN86 c_n u86 vsegu86 VSS sg13_lv_nmos w=2.0u l=0.13u ng=1 m=1 mm_ok=1
+XQU87 vsegu87 c_p1_comp e_dacu87 sub! npn13G2 Nx=4 mm_ok=1
+XRCU87 e_dacu87 VSS sub! rppd w=1.0u l=5.4u m=4 b=0 mm_ok=1
+XSWUP87 c_p ubar87 vsegu87 VSS sg13_lv_nmos w=2.0u l=0.13u ng=1 m=1 mm_ok=1
+XSWUN87 c_n u87 vsegu87 VSS sg13_lv_nmos w=2.0u l=0.13u ng=1 m=1 mm_ok=1
+XQU88 vsegu88 c_p1_comp e_dacu88 sub! npn13G2 Nx=4 mm_ok=1
+XRCU88 e_dacu88 VSS sub! rppd w=1.0u l=5.4u m=4 b=0 mm_ok=1
+XSWUP88 c_p ubar88 vsegu88 VSS sg13_lv_nmos w=2.0u l=0.13u ng=1 m=1 mm_ok=1
+XSWUN88 c_n u88 vsegu88 VSS sg13_lv_nmos w=2.0u l=0.13u ng=1 m=1 mm_ok=1
+XQU89 vsegu89 c_p1_comp e_dacu89 sub! npn13G2 Nx=4 mm_ok=1
+XRCU89 e_dacu89 VSS sub! rppd w=1.0u l=5.4u m=4 b=0 mm_ok=1
+XSWUP89 c_p ubar89 vsegu89 VSS sg13_lv_nmos w=2.0u l=0.13u ng=1 m=1 mm_ok=1
+XSWUN89 c_n u89 vsegu89 VSS sg13_lv_nmos w=2.0u l=0.13u ng=1 m=1 mm_ok=1
+XQU90 vsegu90 c_p1_comp e_dacu90 sub! npn13G2 Nx=4 mm_ok=1
+XRCU90 e_dacu90 VSS sub! rppd w=1.0u l=5.4u m=4 b=0 mm_ok=1
+XSWUP90 c_p ubar90 vsegu90 VSS sg13_lv_nmos w=2.0u l=0.13u ng=1 m=1 mm_ok=1
+XSWUN90 c_n u90 vsegu90 VSS sg13_lv_nmos w=2.0u l=0.13u ng=1 m=1 mm_ok=1
+XQU91 vsegu91 c_p1_comp e_dacu91 sub! npn13G2 Nx=4 mm_ok=1
+XRCU91 e_dacu91 VSS sub! rppd w=1.0u l=5.4u m=4 b=0 mm_ok=1
+XSWUP91 c_p ubar91 vsegu91 VSS sg13_lv_nmos w=2.0u l=0.13u ng=1 m=1 mm_ok=1
+XSWUN91 c_n u91 vsegu91 VSS sg13_lv_nmos w=2.0u l=0.13u ng=1 m=1 mm_ok=1
+XQU92 vsegu92 c_p1_comp e_dacu92 sub! npn13G2 Nx=4 mm_ok=1
+XRCU92 e_dacu92 VSS sub! rppd w=1.0u l=5.4u m=4 b=0 mm_ok=1
+XSWUP92 c_p ubar92 vsegu92 VSS sg13_lv_nmos w=2.0u l=0.13u ng=1 m=1 mm_ok=1
+XSWUN92 c_n u92 vsegu92 VSS sg13_lv_nmos w=2.0u l=0.13u ng=1 m=1 mm_ok=1
+XQU93 vsegu93 c_p1_comp e_dacu93 sub! npn13G2 Nx=4 mm_ok=1
+XRCU93 e_dacu93 VSS sub! rppd w=1.0u l=5.4u m=4 b=0 mm_ok=1
+XSWUP93 c_p ubar93 vsegu93 VSS sg13_lv_nmos w=2.0u l=0.13u ng=1 m=1 mm_ok=1
+XSWUN93 c_n u93 vsegu93 VSS sg13_lv_nmos w=2.0u l=0.13u ng=1 m=1 mm_ok=1
+XQU94 vsegu94 c_p1_comp e_dacu94 sub! npn13G2 Nx=4 mm_ok=1
+XRCU94 e_dacu94 VSS sub! rppd w=1.0u l=5.4u m=4 b=0 mm_ok=1
+XSWUP94 c_p ubar94 vsegu94 VSS sg13_lv_nmos w=2.0u l=0.13u ng=1 m=1 mm_ok=1
+XSWUN94 c_n u94 vsegu94 VSS sg13_lv_nmos w=2.0u l=0.13u ng=1 m=1 mm_ok=1
+XQU95 vsegu95 c_p1_comp e_dacu95 sub! npn13G2 Nx=4 mm_ok=1
+XRCU95 e_dacu95 VSS sub! rppd w=1.0u l=5.4u m=4 b=0 mm_ok=1
+XSWUP95 c_p ubar95 vsegu95 VSS sg13_lv_nmos w=2.0u l=0.13u ng=1 m=1 mm_ok=1
+XSWUN95 c_n u95 vsegu95 VSS sg13_lv_nmos w=2.0u l=0.13u ng=1 m=1 mm_ok=1
+XQU96 vsegu96 c_p1_comp e_dacu96 sub! npn13G2 Nx=4 mm_ok=1
+XRCU96 e_dacu96 VSS sub! rppd w=1.0u l=5.4u m=4 b=0 mm_ok=1
+XSWUP96 c_p ubar96 vsegu96 VSS sg13_lv_nmos w=2.0u l=0.13u ng=1 m=1 mm_ok=1
+XSWUN96 c_n u96 vsegu96 VSS sg13_lv_nmos w=2.0u l=0.13u ng=1 m=1 mm_ok=1
+XQU97 vsegu97 c_p1_comp e_dacu97 sub! npn13G2 Nx=4 mm_ok=1
+XRCU97 e_dacu97 VSS sub! rppd w=1.0u l=5.4u m=4 b=0 mm_ok=1
+XSWUP97 c_p ubar97 vsegu97 VSS sg13_lv_nmos w=2.0u l=0.13u ng=1 m=1 mm_ok=1
+XSWUN97 c_n u97 vsegu97 VSS sg13_lv_nmos w=2.0u l=0.13u ng=1 m=1 mm_ok=1
+XQU98 vsegu98 c_p1_comp e_dacu98 sub! npn13G2 Nx=4 mm_ok=1
+XRCU98 e_dacu98 VSS sub! rppd w=1.0u l=5.4u m=4 b=0 mm_ok=1
+XSWUP98 c_p ubar98 vsegu98 VSS sg13_lv_nmos w=2.0u l=0.13u ng=1 m=1 mm_ok=1
+XSWUN98 c_n u98 vsegu98 VSS sg13_lv_nmos w=2.0u l=0.13u ng=1 m=1 mm_ok=1
+XQU99 vsegu99 c_p1_comp e_dacu99 sub! npn13G2 Nx=4 mm_ok=1
+XRCU99 e_dacu99 VSS sub! rppd w=1.0u l=5.4u m=4 b=0 mm_ok=1
+XSWUP99 c_p ubar99 vsegu99 VSS sg13_lv_nmos w=2.0u l=0.13u ng=1 m=1 mm_ok=1
+XSWUN99 c_n u99 vsegu99 VSS sg13_lv_nmos w=2.0u l=0.13u ng=1 m=1 mm_ok=1
+XQU100 vsegu100 c_p1_comp e_dacu100 sub! npn13G2 Nx=4 mm_ok=1
+XRCU100 e_dacu100 VSS sub! rppd w=1.0u l=5.4u m=4 b=0 mm_ok=1
+XSWUP100 c_p ubar100 vsegu100 VSS sg13_lv_nmos w=2.0u l=0.13u ng=1 m=1 mm_ok=1
+XSWUN100 c_n u100 vsegu100 VSS sg13_lv_nmos w=2.0u l=0.13u ng=1 m=1 mm_ok=1
+XQU101 vsegu101 c_p1_comp e_dacu101 sub! npn13G2 Nx=4 mm_ok=1
+XRCU101 e_dacu101 VSS sub! rppd w=1.0u l=5.4u m=4 b=0 mm_ok=1
+XSWUP101 c_p ubar101 vsegu101 VSS sg13_lv_nmos w=2.0u l=0.13u ng=1 m=1 mm_ok=1
+XSWUN101 c_n u101 vsegu101 VSS sg13_lv_nmos w=2.0u l=0.13u ng=1 m=1 mm_ok=1
+XQU102 vsegu102 c_p1_comp e_dacu102 sub! npn13G2 Nx=4 mm_ok=1
+XRCU102 e_dacu102 VSS sub! rppd w=1.0u l=5.4u m=4 b=0 mm_ok=1
+XSWUP102 c_p ubar102 vsegu102 VSS sg13_lv_nmos w=2.0u l=0.13u ng=1 m=1 mm_ok=1
+XSWUN102 c_n u102 vsegu102 VSS sg13_lv_nmos w=2.0u l=0.13u ng=1 m=1 mm_ok=1
+XQU103 vsegu103 c_p1_comp e_dacu103 sub! npn13G2 Nx=4 mm_ok=1
+XRCU103 e_dacu103 VSS sub! rppd w=1.0u l=5.4u m=4 b=0 mm_ok=1
+XSWUP103 c_p ubar103 vsegu103 VSS sg13_lv_nmos w=2.0u l=0.13u ng=1 m=1 mm_ok=1
+XSWUN103 c_n u103 vsegu103 VSS sg13_lv_nmos w=2.0u l=0.13u ng=1 m=1 mm_ok=1
+XQU104 vsegu104 c_p1_comp e_dacu104 sub! npn13G2 Nx=4 mm_ok=1
+XRCU104 e_dacu104 VSS sub! rppd w=1.0u l=5.4u m=4 b=0 mm_ok=1
+XSWUP104 c_p ubar104 vsegu104 VSS sg13_lv_nmos w=2.0u l=0.13u ng=1 m=1 mm_ok=1
+XSWUN104 c_n u104 vsegu104 VSS sg13_lv_nmos w=2.0u l=0.13u ng=1 m=1 mm_ok=1
+XQU105 vsegu105 c_p1_comp e_dacu105 sub! npn13G2 Nx=4 mm_ok=1
+XRCU105 e_dacu105 VSS sub! rppd w=1.0u l=5.4u m=4 b=0 mm_ok=1
+XSWUP105 c_p ubar105 vsegu105 VSS sg13_lv_nmos w=2.0u l=0.13u ng=1 m=1 mm_ok=1
+XSWUN105 c_n u105 vsegu105 VSS sg13_lv_nmos w=2.0u l=0.13u ng=1 m=1 mm_ok=1
+XQU106 vsegu106 c_p1_comp e_dacu106 sub! npn13G2 Nx=4 mm_ok=1
+XRCU106 e_dacu106 VSS sub! rppd w=1.0u l=5.4u m=4 b=0 mm_ok=1
+XSWUP106 c_p ubar106 vsegu106 VSS sg13_lv_nmos w=2.0u l=0.13u ng=1 m=1 mm_ok=1
+XSWUN106 c_n u106 vsegu106 VSS sg13_lv_nmos w=2.0u l=0.13u ng=1 m=1 mm_ok=1
+XQU107 vsegu107 c_p1_comp e_dacu107 sub! npn13G2 Nx=4 mm_ok=1
+XRCU107 e_dacu107 VSS sub! rppd w=1.0u l=5.4u m=4 b=0 mm_ok=1
+XSWUP107 c_p ubar107 vsegu107 VSS sg13_lv_nmos w=2.0u l=0.13u ng=1 m=1 mm_ok=1
+XSWUN107 c_n u107 vsegu107 VSS sg13_lv_nmos w=2.0u l=0.13u ng=1 m=1 mm_ok=1
+XQU108 vsegu108 c_p1_comp e_dacu108 sub! npn13G2 Nx=4 mm_ok=1
+XRCU108 e_dacu108 VSS sub! rppd w=1.0u l=5.4u m=4 b=0 mm_ok=1
+XSWUP108 c_p ubar108 vsegu108 VSS sg13_lv_nmos w=2.0u l=0.13u ng=1 m=1 mm_ok=1
+XSWUN108 c_n u108 vsegu108 VSS sg13_lv_nmos w=2.0u l=0.13u ng=1 m=1 mm_ok=1
+XQU109 vsegu109 c_p1_comp e_dacu109 sub! npn13G2 Nx=4 mm_ok=1
+XRCU109 e_dacu109 VSS sub! rppd w=1.0u l=5.4u m=4 b=0 mm_ok=1
+XSWUP109 c_p ubar109 vsegu109 VSS sg13_lv_nmos w=2.0u l=0.13u ng=1 m=1 mm_ok=1
+XSWUN109 c_n u109 vsegu109 VSS sg13_lv_nmos w=2.0u l=0.13u ng=1 m=1 mm_ok=1
+XQU110 vsegu110 c_p1_comp e_dacu110 sub! npn13G2 Nx=4 mm_ok=1
+XRCU110 e_dacu110 VSS sub! rppd w=1.0u l=5.4u m=4 b=0 mm_ok=1
+XSWUP110 c_p ubar110 vsegu110 VSS sg13_lv_nmos w=2.0u l=0.13u ng=1 m=1 mm_ok=1
+XSWUN110 c_n u110 vsegu110 VSS sg13_lv_nmos w=2.0u l=0.13u ng=1 m=1 mm_ok=1
+XQU111 vsegu111 c_p1_comp e_dacu111 sub! npn13G2 Nx=4 mm_ok=1
+XRCU111 e_dacu111 VSS sub! rppd w=1.0u l=5.4u m=4 b=0 mm_ok=1
+XSWUP111 c_p ubar111 vsegu111 VSS sg13_lv_nmos w=2.0u l=0.13u ng=1 m=1 mm_ok=1
+XSWUN111 c_n u111 vsegu111 VSS sg13_lv_nmos w=2.0u l=0.13u ng=1 m=1 mm_ok=1
+XQU112 vsegu112 c_p1_comp e_dacu112 sub! npn13G2 Nx=4 mm_ok=1
+XRCU112 e_dacu112 VSS sub! rppd w=1.0u l=5.4u m=4 b=0 mm_ok=1
+XSWUP112 c_p ubar112 vsegu112 VSS sg13_lv_nmos w=2.0u l=0.13u ng=1 m=1 mm_ok=1
+XSWUN112 c_n u112 vsegu112 VSS sg13_lv_nmos w=2.0u l=0.13u ng=1 m=1 mm_ok=1
+XQU113 vsegu113 c_p1_comp e_dacu113 sub! npn13G2 Nx=4 mm_ok=1
+XRCU113 e_dacu113 VSS sub! rppd w=1.0u l=5.4u m=4 b=0 mm_ok=1
+XSWUP113 c_p ubar113 vsegu113 VSS sg13_lv_nmos w=2.0u l=0.13u ng=1 m=1 mm_ok=1
+XSWUN113 c_n u113 vsegu113 VSS sg13_lv_nmos w=2.0u l=0.13u ng=1 m=1 mm_ok=1
+XQU114 vsegu114 c_p1_comp e_dacu114 sub! npn13G2 Nx=4 mm_ok=1
+XRCU114 e_dacu114 VSS sub! rppd w=1.0u l=5.4u m=4 b=0 mm_ok=1
+XSWUP114 c_p ubar114 vsegu114 VSS sg13_lv_nmos w=2.0u l=0.13u ng=1 m=1 mm_ok=1
+XSWUN114 c_n u114 vsegu114 VSS sg13_lv_nmos w=2.0u l=0.13u ng=1 m=1 mm_ok=1
+XQU115 vsegu115 c_p1_comp e_dacu115 sub! npn13G2 Nx=4 mm_ok=1
+XRCU115 e_dacu115 VSS sub! rppd w=1.0u l=5.4u m=4 b=0 mm_ok=1
+XSWUP115 c_p ubar115 vsegu115 VSS sg13_lv_nmos w=2.0u l=0.13u ng=1 m=1 mm_ok=1
+XSWUN115 c_n u115 vsegu115 VSS sg13_lv_nmos w=2.0u l=0.13u ng=1 m=1 mm_ok=1
+XQU116 vsegu116 c_p1_comp e_dacu116 sub! npn13G2 Nx=4 mm_ok=1
+XRCU116 e_dacu116 VSS sub! rppd w=1.0u l=5.4u m=4 b=0 mm_ok=1
+XSWUP116 c_p ubar116 vsegu116 VSS sg13_lv_nmos w=2.0u l=0.13u ng=1 m=1 mm_ok=1
+XSWUN116 c_n u116 vsegu116 VSS sg13_lv_nmos w=2.0u l=0.13u ng=1 m=1 mm_ok=1
+XQU117 vsegu117 c_p1_comp e_dacu117 sub! npn13G2 Nx=4 mm_ok=1
+XRCU117 e_dacu117 VSS sub! rppd w=1.0u l=5.4u m=4 b=0 mm_ok=1
+XSWUP117 c_p ubar117 vsegu117 VSS sg13_lv_nmos w=2.0u l=0.13u ng=1 m=1 mm_ok=1
+XSWUN117 c_n u117 vsegu117 VSS sg13_lv_nmos w=2.0u l=0.13u ng=1 m=1 mm_ok=1
+XQU118 vsegu118 c_p1_comp e_dacu118 sub! npn13G2 Nx=4 mm_ok=1
+XRCU118 e_dacu118 VSS sub! rppd w=1.0u l=5.4u m=4 b=0 mm_ok=1
+XSWUP118 c_p ubar118 vsegu118 VSS sg13_lv_nmos w=2.0u l=0.13u ng=1 m=1 mm_ok=1
+XSWUN118 c_n u118 vsegu118 VSS sg13_lv_nmos w=2.0u l=0.13u ng=1 m=1 mm_ok=1
+XQU119 vsegu119 c_p1_comp e_dacu119 sub! npn13G2 Nx=4 mm_ok=1
+XRCU119 e_dacu119 VSS sub! rppd w=1.0u l=5.4u m=4 b=0 mm_ok=1
+XSWUP119 c_p ubar119 vsegu119 VSS sg13_lv_nmos w=2.0u l=0.13u ng=1 m=1 mm_ok=1
+XSWUN119 c_n u119 vsegu119 VSS sg13_lv_nmos w=2.0u l=0.13u ng=1 m=1 mm_ok=1
+XQU120 vsegu120 c_p1_comp e_dacu120 sub! npn13G2 Nx=4 mm_ok=1
+XRCU120 e_dacu120 VSS sub! rppd w=1.0u l=5.4u m=4 b=0 mm_ok=1
+XSWUP120 c_p ubar120 vsegu120 VSS sg13_lv_nmos w=2.0u l=0.13u ng=1 m=1 mm_ok=1
+XSWUN120 c_n u120 vsegu120 VSS sg13_lv_nmos w=2.0u l=0.13u ng=1 m=1 mm_ok=1
+XQU121 vsegu121 c_p1_comp e_dacu121 sub! npn13G2 Nx=4 mm_ok=1
+XRCU121 e_dacu121 VSS sub! rppd w=1.0u l=5.4u m=4 b=0 mm_ok=1
+XSWUP121 c_p ubar121 vsegu121 VSS sg13_lv_nmos w=2.0u l=0.13u ng=1 m=1 mm_ok=1
+XSWUN121 c_n u121 vsegu121 VSS sg13_lv_nmos w=2.0u l=0.13u ng=1 m=1 mm_ok=1
+XQU122 vsegu122 c_p1_comp e_dacu122 sub! npn13G2 Nx=4 mm_ok=1
+XRCU122 e_dacu122 VSS sub! rppd w=1.0u l=5.4u m=4 b=0 mm_ok=1
+XSWUP122 c_p ubar122 vsegu122 VSS sg13_lv_nmos w=2.0u l=0.13u ng=1 m=1 mm_ok=1
+XSWUN122 c_n u122 vsegu122 VSS sg13_lv_nmos w=2.0u l=0.13u ng=1 m=1 mm_ok=1
+XQU123 vsegu123 c_p1_comp e_dacu123 sub! npn13G2 Nx=4 mm_ok=1
+XRCU123 e_dacu123 VSS sub! rppd w=1.0u l=5.4u m=4 b=0 mm_ok=1
+XSWUP123 c_p ubar123 vsegu123 VSS sg13_lv_nmos w=2.0u l=0.13u ng=1 m=1 mm_ok=1
+XSWUN123 c_n u123 vsegu123 VSS sg13_lv_nmos w=2.0u l=0.13u ng=1 m=1 mm_ok=1
+XQU124 vsegu124 c_p1_comp e_dacu124 sub! npn13G2 Nx=4 mm_ok=1
+XRCU124 e_dacu124 VSS sub! rppd w=1.0u l=5.4u m=4 b=0 mm_ok=1
+XSWUP124 c_p ubar124 vsegu124 VSS sg13_lv_nmos w=2.0u l=0.13u ng=1 m=1 mm_ok=1
+XSWUN124 c_n u124 vsegu124 VSS sg13_lv_nmos w=2.0u l=0.13u ng=1 m=1 mm_ok=1
+XQU125 vsegu125 c_p1_comp e_dacu125 sub! npn13G2 Nx=4 mm_ok=1
+XRCU125 e_dacu125 VSS sub! rppd w=1.0u l=5.4u m=4 b=0 mm_ok=1
+XSWUP125 c_p ubar125 vsegu125 VSS sg13_lv_nmos w=2.0u l=0.13u ng=1 m=1 mm_ok=1
+XSWUN125 c_n u125 vsegu125 VSS sg13_lv_nmos w=2.0u l=0.13u ng=1 m=1 mm_ok=1
+XQU126 vsegu126 c_p1_comp e_dacu126 sub! npn13G2 Nx=4 mm_ok=1
+XRCU126 e_dacu126 VSS sub! rppd w=1.0u l=5.4u m=4 b=0 mm_ok=1
+XSWUP126 c_p ubar126 vsegu126 VSS sg13_lv_nmos w=2.0u l=0.13u ng=1 m=1 mm_ok=1
+XSWUN126 c_n u126 vsegu126 VSS sg13_lv_nmos w=2.0u l=0.13u ng=1 m=1 mm_ok=1
+XQU127 vsegu127 c_p1_comp e_dacu127 sub! npn13G2 Nx=4 mm_ok=1
+XRCU127 e_dacu127 VSS sub! rppd w=1.0u l=5.4u m=4 b=0 mm_ok=1
+XSWUP127 c_p ubar127 vsegu127 VSS sg13_lv_nmos w=2.0u l=0.13u ng=1 m=1 mm_ok=1
+XSWUN127 c_n u127 vsegu127 VSS sg13_lv_nmos w=2.0u l=0.13u ng=1 m=1 mm_ok=1
+XQU128 vsegu128 c_p1_comp e_dacu128 sub! npn13G2 Nx=4 mm_ok=1
+XRCU128 e_dacu128 VSS sub! rppd w=1.0u l=5.4u m=4 b=0 mm_ok=1
+XSWUP128 c_p ubar128 vsegu128 VSS sg13_lv_nmos w=2.0u l=0.13u ng=1 m=1 mm_ok=1
+XSWUN128 c_n u128 vsegu128 VSS sg13_lv_nmos w=2.0u l=0.13u ng=1 m=1 mm_ok=1
+XQU129 vsegu129 c_p1_comp e_dacu129 sub! npn13G2 Nx=4 mm_ok=1
+XRCU129 e_dacu129 VSS sub! rppd w=1.0u l=5.4u m=4 b=0 mm_ok=1
+XSWUP129 c_p ubar129 vsegu129 VSS sg13_lv_nmos w=2.0u l=0.13u ng=1 m=1 mm_ok=1
+XSWUN129 c_n u129 vsegu129 VSS sg13_lv_nmos w=2.0u l=0.13u ng=1 m=1 mm_ok=1
+XQU130 vsegu130 c_p1_comp e_dacu130 sub! npn13G2 Nx=4 mm_ok=1
+XRCU130 e_dacu130 VSS sub! rppd w=1.0u l=5.4u m=4 b=0 mm_ok=1
+XSWUP130 c_p ubar130 vsegu130 VSS sg13_lv_nmos w=2.0u l=0.13u ng=1 m=1 mm_ok=1
+XSWUN130 c_n u130 vsegu130 VSS sg13_lv_nmos w=2.0u l=0.13u ng=1 m=1 mm_ok=1
+XQU131 vsegu131 c_p1_comp e_dacu131 sub! npn13G2 Nx=4 mm_ok=1
+XRCU131 e_dacu131 VSS sub! rppd w=1.0u l=5.4u m=4 b=0 mm_ok=1
+XSWUP131 c_p ubar131 vsegu131 VSS sg13_lv_nmos w=2.0u l=0.13u ng=1 m=1 mm_ok=1
+XSWUN131 c_n u131 vsegu131 VSS sg13_lv_nmos w=2.0u l=0.13u ng=1 m=1 mm_ok=1
+XQU132 vsegu132 c_p1_comp e_dacu132 sub! npn13G2 Nx=4 mm_ok=1
+XRCU132 e_dacu132 VSS sub! rppd w=1.0u l=5.4u m=4 b=0 mm_ok=1
+XSWUP132 c_p ubar132 vsegu132 VSS sg13_lv_nmos w=2.0u l=0.13u ng=1 m=1 mm_ok=1
+XSWUN132 c_n u132 vsegu132 VSS sg13_lv_nmos w=2.0u l=0.13u ng=1 m=1 mm_ok=1
+XQU133 vsegu133 c_p1_comp e_dacu133 sub! npn13G2 Nx=4 mm_ok=1
+XRCU133 e_dacu133 VSS sub! rppd w=1.0u l=5.4u m=4 b=0 mm_ok=1
+XSWUP133 c_p ubar133 vsegu133 VSS sg13_lv_nmos w=2.0u l=0.13u ng=1 m=1 mm_ok=1
+XSWUN133 c_n u133 vsegu133 VSS sg13_lv_nmos w=2.0u l=0.13u ng=1 m=1 mm_ok=1
+XQU134 vsegu134 c_p1_comp e_dacu134 sub! npn13G2 Nx=4 mm_ok=1
+XRCU134 e_dacu134 VSS sub! rppd w=1.0u l=5.4u m=4 b=0 mm_ok=1
+XSWUP134 c_p ubar134 vsegu134 VSS sg13_lv_nmos w=2.0u l=0.13u ng=1 m=1 mm_ok=1
+XSWUN134 c_n u134 vsegu134 VSS sg13_lv_nmos w=2.0u l=0.13u ng=1 m=1 mm_ok=1
+XQU135 vsegu135 c_p1_comp e_dacu135 sub! npn13G2 Nx=4 mm_ok=1
+XRCU135 e_dacu135 VSS sub! rppd w=1.0u l=5.4u m=4 b=0 mm_ok=1
+XSWUP135 c_p ubar135 vsegu135 VSS sg13_lv_nmos w=2.0u l=0.13u ng=1 m=1 mm_ok=1
+XSWUN135 c_n u135 vsegu135 VSS sg13_lv_nmos w=2.0u l=0.13u ng=1 m=1 mm_ok=1
+XQU136 vsegu136 c_p1_comp e_dacu136 sub! npn13G2 Nx=4 mm_ok=1
+XRCU136 e_dacu136 VSS sub! rppd w=1.0u l=5.4u m=4 b=0 mm_ok=1
+XSWUP136 c_p ubar136 vsegu136 VSS sg13_lv_nmos w=2.0u l=0.13u ng=1 m=1 mm_ok=1
+XSWUN136 c_n u136 vsegu136 VSS sg13_lv_nmos w=2.0u l=0.13u ng=1 m=1 mm_ok=1
+XQU137 vsegu137 c_p1_comp e_dacu137 sub! npn13G2 Nx=4 mm_ok=1
+XRCU137 e_dacu137 VSS sub! rppd w=1.0u l=5.4u m=4 b=0 mm_ok=1
+XSWUP137 c_p ubar137 vsegu137 VSS sg13_lv_nmos w=2.0u l=0.13u ng=1 m=1 mm_ok=1
+XSWUN137 c_n u137 vsegu137 VSS sg13_lv_nmos w=2.0u l=0.13u ng=1 m=1 mm_ok=1
+XQU138 vsegu138 c_p1_comp e_dacu138 sub! npn13G2 Nx=4 mm_ok=1
+XRCU138 e_dacu138 VSS sub! rppd w=1.0u l=5.4u m=4 b=0 mm_ok=1
+XSWUP138 c_p ubar138 vsegu138 VSS sg13_lv_nmos w=2.0u l=0.13u ng=1 m=1 mm_ok=1
+XSWUN138 c_n u138 vsegu138 VSS sg13_lv_nmos w=2.0u l=0.13u ng=1 m=1 mm_ok=1
+XQU139 vsegu139 c_p1_comp e_dacu139 sub! npn13G2 Nx=4 mm_ok=1
+XRCU139 e_dacu139 VSS sub! rppd w=1.0u l=5.4u m=4 b=0 mm_ok=1
+XSWUP139 c_p ubar139 vsegu139 VSS sg13_lv_nmos w=2.0u l=0.13u ng=1 m=1 mm_ok=1
+XSWUN139 c_n u139 vsegu139 VSS sg13_lv_nmos w=2.0u l=0.13u ng=1 m=1 mm_ok=1
+XQU140 vsegu140 c_p1_comp e_dacu140 sub! npn13G2 Nx=4 mm_ok=1
+XRCU140 e_dacu140 VSS sub! rppd w=1.0u l=5.4u m=4 b=0 mm_ok=1
+XSWUP140 c_p ubar140 vsegu140 VSS sg13_lv_nmos w=2.0u l=0.13u ng=1 m=1 mm_ok=1
+XSWUN140 c_n u140 vsegu140 VSS sg13_lv_nmos w=2.0u l=0.13u ng=1 m=1 mm_ok=1
+XQU141 vsegu141 c_p1_comp e_dacu141 sub! npn13G2 Nx=4 mm_ok=1
+XRCU141 e_dacu141 VSS sub! rppd w=1.0u l=5.4u m=4 b=0 mm_ok=1
+XSWUP141 c_p ubar141 vsegu141 VSS sg13_lv_nmos w=2.0u l=0.13u ng=1 m=1 mm_ok=1
+XSWUN141 c_n u141 vsegu141 VSS sg13_lv_nmos w=2.0u l=0.13u ng=1 m=1 mm_ok=1
+XQU142 vsegu142 c_p1_comp e_dacu142 sub! npn13G2 Nx=4 mm_ok=1
+XRCU142 e_dacu142 VSS sub! rppd w=1.0u l=5.4u m=4 b=0 mm_ok=1
+XSWUP142 c_p ubar142 vsegu142 VSS sg13_lv_nmos w=2.0u l=0.13u ng=1 m=1 mm_ok=1
+XSWUN142 c_n u142 vsegu142 VSS sg13_lv_nmos w=2.0u l=0.13u ng=1 m=1 mm_ok=1
+XQU143 vsegu143 c_p1_comp e_dacu143 sub! npn13G2 Nx=4 mm_ok=1
+XRCU143 e_dacu143 VSS sub! rppd w=1.0u l=5.4u m=4 b=0 mm_ok=1
+XSWUP143 c_p ubar143 vsegu143 VSS sg13_lv_nmos w=2.0u l=0.13u ng=1 m=1 mm_ok=1
+XSWUN143 c_n u143 vsegu143 VSS sg13_lv_nmos w=2.0u l=0.13u ng=1 m=1 mm_ok=1
+XQU144 vsegu144 c_p1_comp e_dacu144 sub! npn13G2 Nx=4 mm_ok=1
+XRCU144 e_dacu144 VSS sub! rppd w=1.0u l=5.4u m=4 b=0 mm_ok=1
+XSWUP144 c_p ubar144 vsegu144 VSS sg13_lv_nmos w=2.0u l=0.13u ng=1 m=1 mm_ok=1
+XSWUN144 c_n u144 vsegu144 VSS sg13_lv_nmos w=2.0u l=0.13u ng=1 m=1 mm_ok=1
+XQU145 vsegu145 c_p1_comp e_dacu145 sub! npn13G2 Nx=4 mm_ok=1
+XRCU145 e_dacu145 VSS sub! rppd w=1.0u l=5.4u m=4 b=0 mm_ok=1
+XSWUP145 c_p ubar145 vsegu145 VSS sg13_lv_nmos w=2.0u l=0.13u ng=1 m=1 mm_ok=1
+XSWUN145 c_n u145 vsegu145 VSS sg13_lv_nmos w=2.0u l=0.13u ng=1 m=1 mm_ok=1
+XQU146 vsegu146 c_p1_comp e_dacu146 sub! npn13G2 Nx=4 mm_ok=1
+XRCU146 e_dacu146 VSS sub! rppd w=1.0u l=5.4u m=4 b=0 mm_ok=1
+XSWUP146 c_p ubar146 vsegu146 VSS sg13_lv_nmos w=2.0u l=0.13u ng=1 m=1 mm_ok=1
+XSWUN146 c_n u146 vsegu146 VSS sg13_lv_nmos w=2.0u l=0.13u ng=1 m=1 mm_ok=1
+XQU147 vsegu147 c_p1_comp e_dacu147 sub! npn13G2 Nx=4 mm_ok=1
+XRCU147 e_dacu147 VSS sub! rppd w=1.0u l=5.4u m=4 b=0 mm_ok=1
+XSWUP147 c_p ubar147 vsegu147 VSS sg13_lv_nmos w=2.0u l=0.13u ng=1 m=1 mm_ok=1
+XSWUN147 c_n u147 vsegu147 VSS sg13_lv_nmos w=2.0u l=0.13u ng=1 m=1 mm_ok=1
+XQU148 vsegu148 c_p1_comp e_dacu148 sub! npn13G2 Nx=4 mm_ok=1
+XRCU148 e_dacu148 VSS sub! rppd w=1.0u l=5.4u m=4 b=0 mm_ok=1
+XSWUP148 c_p ubar148 vsegu148 VSS sg13_lv_nmos w=2.0u l=0.13u ng=1 m=1 mm_ok=1
+XSWUN148 c_n u148 vsegu148 VSS sg13_lv_nmos w=2.0u l=0.13u ng=1 m=1 mm_ok=1
+XQU149 vsegu149 c_p1_comp e_dacu149 sub! npn13G2 Nx=4 mm_ok=1
+XRCU149 e_dacu149 VSS sub! rppd w=1.0u l=5.4u m=4 b=0 mm_ok=1
+XSWUP149 c_p ubar149 vsegu149 VSS sg13_lv_nmos w=2.0u l=0.13u ng=1 m=1 mm_ok=1
+XSWUN149 c_n u149 vsegu149 VSS sg13_lv_nmos w=2.0u l=0.13u ng=1 m=1 mm_ok=1
+XQU150 vsegu150 c_p1_comp e_dacu150 sub! npn13G2 Nx=4 mm_ok=1
+XRCU150 e_dacu150 VSS sub! rppd w=1.0u l=5.4u m=4 b=0 mm_ok=1
+XSWUP150 c_p ubar150 vsegu150 VSS sg13_lv_nmos w=2.0u l=0.13u ng=1 m=1 mm_ok=1
+XSWUN150 c_n u150 vsegu150 VSS sg13_lv_nmos w=2.0u l=0.13u ng=1 m=1 mm_ok=1
+XQB0 vsegb0 c_p1_comp e_dacb0 sub! npn13G2 Nx=1 mm_ok=1
+XRCB0 e_dacb0 VSS sub! rppd w=1.0u l=5.4u m=1 b=0 mm_ok=1
+XSWBP0 c_p bbar0 vsegb0 VSS sg13_lv_nmos w=2.0u l=0.13u ng=1 m=1 mm_ok=1
+XSWBN0 c_n b0 vsegb0 VSS sg13_lv_nmos w=2.0u l=0.13u ng=1 m=1 mm_ok=1
+XQB1 vsegb1 c_p1_comp e_dacb1 sub! npn13G2 Nx=2 mm_ok=1
+XRCB1 e_dacb1 VSS sub! rppd w=1.0u l=5.4u m=2 b=0 mm_ok=1
+XSWBP1 c_p bbar1 vsegb1 VSS sg13_lv_nmos w=2.0u l=0.13u ng=1 m=1 mm_ok=1
+XSWBN1 c_n b1 vsegb1 VSS sg13_lv_nmos w=2.0u l=0.13u ng=1 m=1 mm_ok=1
+EU1 u1 0 VALUE {floor((v(code)*100+0.5)/4) >= 1}
+EUB1 ubar1 0 VALUE {1-(floor((v(code)*100+0.5)/4) >= 1)}
+EU2 u2 0 VALUE {floor((v(code)*100+0.5)/4) >= 2}
+EUB2 ubar2 0 VALUE {1-(floor((v(code)*100+0.5)/4) >= 2)}
+EU3 u3 0 VALUE {floor((v(code)*100+0.5)/4) >= 3}
+EUB3 ubar3 0 VALUE {1-(floor((v(code)*100+0.5)/4) >= 3)}
+EU4 u4 0 VALUE {floor((v(code)*100+0.5)/4) >= 4}
+EUB4 ubar4 0 VALUE {1-(floor((v(code)*100+0.5)/4) >= 4)}
+EU5 u5 0 VALUE {floor((v(code)*100+0.5)/4) >= 5}
+EUB5 ubar5 0 VALUE {1-(floor((v(code)*100+0.5)/4) >= 5)}
+EU6 u6 0 VALUE {floor((v(code)*100+0.5)/4) >= 6}
+EUB6 ubar6 0 VALUE {1-(floor((v(code)*100+0.5)/4) >= 6)}
+EU7 u7 0 VALUE {floor((v(code)*100+0.5)/4) >= 7}
+EUB7 ubar7 0 VALUE {1-(floor((v(code)*100+0.5)/4) >= 7)}
+EU8 u8 0 VALUE {floor((v(code)*100+0.5)/4) >= 8}
+EUB8 ubar8 0 VALUE {1-(floor((v(code)*100+0.5)/4) >= 8)}
+EU9 u9 0 VALUE {floor((v(code)*100+0.5)/4) >= 9}
+EUB9 ubar9 0 VALUE {1-(floor((v(code)*100+0.5)/4) >= 9)}
+EU10 u10 0 VALUE {floor((v(code)*100+0.5)/4) >= 10}
+EUB10 ubar10 0 VALUE {1-(floor((v(code)*100+0.5)/4) >= 10)}
+EU11 u11 0 VALUE {floor((v(code)*100+0.5)/4) >= 11}
+EUB11 ubar11 0 VALUE {1-(floor((v(code)*100+0.5)/4) >= 11)}
+EU12 u12 0 VALUE {floor((v(code)*100+0.5)/4) >= 12}
+EUB12 ubar12 0 VALUE {1-(floor((v(code)*100+0.5)/4) >= 12)}
+EU13 u13 0 VALUE {floor((v(code)*100+0.5)/4) >= 13}
+EUB13 ubar13 0 VALUE {1-(floor((v(code)*100+0.5)/4) >= 13)}
+EU14 u14 0 VALUE {floor((v(code)*100+0.5)/4) >= 14}
+EUB14 ubar14 0 VALUE {1-(floor((v(code)*100+0.5)/4) >= 14)}
+EU15 u15 0 VALUE {floor((v(code)*100+0.5)/4) >= 15}
+EUB15 ubar15 0 VALUE {1-(floor((v(code)*100+0.5)/4) >= 15)}
+EU16 u16 0 VALUE {floor((v(code)*100+0.5)/4) >= 16}
+EUB16 ubar16 0 VALUE {1-(floor((v(code)*100+0.5)/4) >= 16)}
+EU17 u17 0 VALUE {floor((v(code)*100+0.5)/4) >= 17}
+EUB17 ubar17 0 VALUE {1-(floor((v(code)*100+0.5)/4) >= 17)}
+EU18 u18 0 VALUE {floor((v(code)*100+0.5)/4) >= 18}
+EUB18 ubar18 0 VALUE {1-(floor((v(code)*100+0.5)/4) >= 18)}
+EU19 u19 0 VALUE {floor((v(code)*100+0.5)/4) >= 19}
+EUB19 ubar19 0 VALUE {1-(floor((v(code)*100+0.5)/4) >= 19)}
+EU20 u20 0 VALUE {floor((v(code)*100+0.5)/4) >= 20}
+EUB20 ubar20 0 VALUE {1-(floor((v(code)*100+0.5)/4) >= 20)}
+EU21 u21 0 VALUE {floor((v(code)*100+0.5)/4) >= 21}
+EUB21 ubar21 0 VALUE {1-(floor((v(code)*100+0.5)/4) >= 21)}
+EU22 u22 0 VALUE {floor((v(code)*100+0.5)/4) >= 22}
+EUB22 ubar22 0 VALUE {1-(floor((v(code)*100+0.5)/4) >= 22)}
+EU23 u23 0 VALUE {floor((v(code)*100+0.5)/4) >= 23}
+EUB23 ubar23 0 VALUE {1-(floor((v(code)*100+0.5)/4) >= 23)}
+EU24 u24 0 VALUE {floor((v(code)*100+0.5)/4) >= 24}
+EUB24 ubar24 0 VALUE {1-(floor((v(code)*100+0.5)/4) >= 24)}
+EU25 u25 0 VALUE {floor((v(code)*100+0.5)/4) >= 25}
+EUB25 ubar25 0 VALUE {1-(floor((v(code)*100+0.5)/4) >= 25)}
+EU26 u26 0 VALUE {floor((v(code)*100+0.5)/4) >= 26}
+EUB26 ubar26 0 VALUE {1-(floor((v(code)*100+0.5)/4) >= 26)}
+EU27 u27 0 VALUE {floor((v(code)*100+0.5)/4) >= 27}
+EUB27 ubar27 0 VALUE {1-(floor((v(code)*100+0.5)/4) >= 27)}
+EU28 u28 0 VALUE {floor((v(code)*100+0.5)/4) >= 28}
+EUB28 ubar28 0 VALUE {1-(floor((v(code)*100+0.5)/4) >= 28)}
+EU29 u29 0 VALUE {floor((v(code)*100+0.5)/4) >= 29}
+EUB29 ubar29 0 VALUE {1-(floor((v(code)*100+0.5)/4) >= 29)}
+EU30 u30 0 VALUE {floor((v(code)*100+0.5)/4) >= 30}
+EUB30 ubar30 0 VALUE {1-(floor((v(code)*100+0.5)/4) >= 30)}
+EU31 u31 0 VALUE {floor((v(code)*100+0.5)/4) >= 31}
+EUB31 ubar31 0 VALUE {1-(floor((v(code)*100+0.5)/4) >= 31)}
+EU32 u32 0 VALUE {floor((v(code)*100+0.5)/4) >= 32}
+EUB32 ubar32 0 VALUE {1-(floor((v(code)*100+0.5)/4) >= 32)}
+EU33 u33 0 VALUE {floor((v(code)*100+0.5)/4) >= 33}
+EUB33 ubar33 0 VALUE {1-(floor((v(code)*100+0.5)/4) >= 33)}
+EU34 u34 0 VALUE {floor((v(code)*100+0.5)/4) >= 34}
+EUB34 ubar34 0 VALUE {1-(floor((v(code)*100+0.5)/4) >= 34)}
+EU35 u35 0 VALUE {floor((v(code)*100+0.5)/4) >= 35}
+EUB35 ubar35 0 VALUE {1-(floor((v(code)*100+0.5)/4) >= 35)}
+EU36 u36 0 VALUE {floor((v(code)*100+0.5)/4) >= 36}
+EUB36 ubar36 0 VALUE {1-(floor((v(code)*100+0.5)/4) >= 36)}
+EU37 u37 0 VALUE {floor((v(code)*100+0.5)/4) >= 37}
+EUB37 ubar37 0 VALUE {1-(floor((v(code)*100+0.5)/4) >= 37)}
+EU38 u38 0 VALUE {floor((v(code)*100+0.5)/4) >= 38}
+EUB38 ubar38 0 VALUE {1-(floor((v(code)*100+0.5)/4) >= 38)}
+EU39 u39 0 VALUE {floor((v(code)*100+0.5)/4) >= 39}
+EUB39 ubar39 0 VALUE {1-(floor((v(code)*100+0.5)/4) >= 39)}
+EU40 u40 0 VALUE {floor((v(code)*100+0.5)/4) >= 40}
+EUB40 ubar40 0 VALUE {1-(floor((v(code)*100+0.5)/4) >= 40)}
+EU41 u41 0 VALUE {floor((v(code)*100+0.5)/4) >= 41}
+EUB41 ubar41 0 VALUE {1-(floor((v(code)*100+0.5)/4) >= 41)}
+EU42 u42 0 VALUE {floor((v(code)*100+0.5)/4) >= 42}
+EUB42 ubar42 0 VALUE {1-(floor((v(code)*100+0.5)/4) >= 42)}
+EU43 u43 0 VALUE {floor((v(code)*100+0.5)/4) >= 43}
+EUB43 ubar43 0 VALUE {1-(floor((v(code)*100+0.5)/4) >= 43)}
+EU44 u44 0 VALUE {floor((v(code)*100+0.5)/4) >= 44}
+EUB44 ubar44 0 VALUE {1-(floor((v(code)*100+0.5)/4) >= 44)}
+EU45 u45 0 VALUE {floor((v(code)*100+0.5)/4) >= 45}
+EUB45 ubar45 0 VALUE {1-(floor((v(code)*100+0.5)/4) >= 45)}
+EU46 u46 0 VALUE {floor((v(code)*100+0.5)/4) >= 46}
+EUB46 ubar46 0 VALUE {1-(floor((v(code)*100+0.5)/4) >= 46)}
+EU47 u47 0 VALUE {floor((v(code)*100+0.5)/4) >= 47}
+EUB47 ubar47 0 VALUE {1-(floor((v(code)*100+0.5)/4) >= 47)}
+EU48 u48 0 VALUE {floor((v(code)*100+0.5)/4) >= 48}
+EUB48 ubar48 0 VALUE {1-(floor((v(code)*100+0.5)/4) >= 48)}
+EU49 u49 0 VALUE {floor((v(code)*100+0.5)/4) >= 49}
+EUB49 ubar49 0 VALUE {1-(floor((v(code)*100+0.5)/4) >= 49)}
+EU50 u50 0 VALUE {floor((v(code)*100+0.5)/4) >= 50}
+EUB50 ubar50 0 VALUE {1-(floor((v(code)*100+0.5)/4) >= 50)}
+EU51 u51 0 VALUE {floor((v(code)*100+0.5)/4) >= 51}
+EUB51 ubar51 0 VALUE {1-(floor((v(code)*100+0.5)/4) >= 51)}
+EU52 u52 0 VALUE {floor((v(code)*100+0.5)/4) >= 52}
+EUB52 ubar52 0 VALUE {1-(floor((v(code)*100+0.5)/4) >= 52)}
+EU53 u53 0 VALUE {floor((v(code)*100+0.5)/4) >= 53}
+EUB53 ubar53 0 VALUE {1-(floor((v(code)*100+0.5)/4) >= 53)}
+EU54 u54 0 VALUE {floor((v(code)*100+0.5)/4) >= 54}
+EUB54 ubar54 0 VALUE {1-(floor((v(code)*100+0.5)/4) >= 54)}
+EU55 u55 0 VALUE {floor((v(code)*100+0.5)/4) >= 55}
+EUB55 ubar55 0 VALUE {1-(floor((v(code)*100+0.5)/4) >= 55)}
+EU56 u56 0 VALUE {floor((v(code)*100+0.5)/4) >= 56}
+EUB56 ubar56 0 VALUE {1-(floor((v(code)*100+0.5)/4) >= 56)}
+EU57 u57 0 VALUE {floor((v(code)*100+0.5)/4) >= 57}
+EUB57 ubar57 0 VALUE {1-(floor((v(code)*100+0.5)/4) >= 57)}
+EU58 u58 0 VALUE {floor((v(code)*100+0.5)/4) >= 58}
+EUB58 ubar58 0 VALUE {1-(floor((v(code)*100+0.5)/4) >= 58)}
+EU59 u59 0 VALUE {floor((v(code)*100+0.5)/4) >= 59}
+EUB59 ubar59 0 VALUE {1-(floor((v(code)*100+0.5)/4) >= 59)}
+EU60 u60 0 VALUE {floor((v(code)*100+0.5)/4) >= 60}
+EUB60 ubar60 0 VALUE {1-(floor((v(code)*100+0.5)/4) >= 60)}
+EU61 u61 0 VALUE {floor((v(code)*100+0.5)/4) >= 61}
+EUB61 ubar61 0 VALUE {1-(floor((v(code)*100+0.5)/4) >= 61)}
+EU62 u62 0 VALUE {floor((v(code)*100+0.5)/4) >= 62}
+EUB62 ubar62 0 VALUE {1-(floor((v(code)*100+0.5)/4) >= 62)}
+EU63 u63 0 VALUE {floor((v(code)*100+0.5)/4) >= 63}
+EUB63 ubar63 0 VALUE {1-(floor((v(code)*100+0.5)/4) >= 63)}
+EU64 u64 0 VALUE {floor((v(code)*100+0.5)/4) >= 64}
+EUB64 ubar64 0 VALUE {1-(floor((v(code)*100+0.5)/4) >= 64)}
+EU65 u65 0 VALUE {floor((v(code)*100+0.5)/4) >= 65}
+EUB65 ubar65 0 VALUE {1-(floor((v(code)*100+0.5)/4) >= 65)}
+EU66 u66 0 VALUE {floor((v(code)*100+0.5)/4) >= 66}
+EUB66 ubar66 0 VALUE {1-(floor((v(code)*100+0.5)/4) >= 66)}
+EU67 u67 0 VALUE {floor((v(code)*100+0.5)/4) >= 67}
+EUB67 ubar67 0 VALUE {1-(floor((v(code)*100+0.5)/4) >= 67)}
+EU68 u68 0 VALUE {floor((v(code)*100+0.5)/4) >= 68}
+EUB68 ubar68 0 VALUE {1-(floor((v(code)*100+0.5)/4) >= 68)}
+EU69 u69 0 VALUE {floor((v(code)*100+0.5)/4) >= 69}
+EUB69 ubar69 0 VALUE {1-(floor((v(code)*100+0.5)/4) >= 69)}
+EU70 u70 0 VALUE {floor((v(code)*100+0.5)/4) >= 70}
+EUB70 ubar70 0 VALUE {1-(floor((v(code)*100+0.5)/4) >= 70)}
+EU71 u71 0 VALUE {floor((v(code)*100+0.5)/4) >= 71}
+EUB71 ubar71 0 VALUE {1-(floor((v(code)*100+0.5)/4) >= 71)}
+EU72 u72 0 VALUE {floor((v(code)*100+0.5)/4) >= 72}
+EUB72 ubar72 0 VALUE {1-(floor((v(code)*100+0.5)/4) >= 72)}
+EU73 u73 0 VALUE {floor((v(code)*100+0.5)/4) >= 73}
+EUB73 ubar73 0 VALUE {1-(floor((v(code)*100+0.5)/4) >= 73)}
+EU74 u74 0 VALUE {floor((v(code)*100+0.5)/4) >= 74}
+EUB74 ubar74 0 VALUE {1-(floor((v(code)*100+0.5)/4) >= 74)}
+EU75 u75 0 VALUE {floor((v(code)*100+0.5)/4) >= 75}
+EUB75 ubar75 0 VALUE {1-(floor((v(code)*100+0.5)/4) >= 75)}
+EU76 u76 0 VALUE {floor((v(code)*100+0.5)/4) >= 76}
+EUB76 ubar76 0 VALUE {1-(floor((v(code)*100+0.5)/4) >= 76)}
+EU77 u77 0 VALUE {floor((v(code)*100+0.5)/4) >= 77}
+EUB77 ubar77 0 VALUE {1-(floor((v(code)*100+0.5)/4) >= 77)}
+EU78 u78 0 VALUE {floor((v(code)*100+0.5)/4) >= 78}
+EUB78 ubar78 0 VALUE {1-(floor((v(code)*100+0.5)/4) >= 78)}
+EU79 u79 0 VALUE {floor((v(code)*100+0.5)/4) >= 79}
+EUB79 ubar79 0 VALUE {1-(floor((v(code)*100+0.5)/4) >= 79)}
+EU80 u80 0 VALUE {floor((v(code)*100+0.5)/4) >= 80}
+EUB80 ubar80 0 VALUE {1-(floor((v(code)*100+0.5)/4) >= 80)}
+EU81 u81 0 VALUE {floor((v(code)*100+0.5)/4) >= 81}
+EUB81 ubar81 0 VALUE {1-(floor((v(code)*100+0.5)/4) >= 81)}
+EU82 u82 0 VALUE {floor((v(code)*100+0.5)/4) >= 82}
+EUB82 ubar82 0 VALUE {1-(floor((v(code)*100+0.5)/4) >= 82)}
+EU83 u83 0 VALUE {floor((v(code)*100+0.5)/4) >= 83}
+EUB83 ubar83 0 VALUE {1-(floor((v(code)*100+0.5)/4) >= 83)}
+EU84 u84 0 VALUE {floor((v(code)*100+0.5)/4) >= 84}
+EUB84 ubar84 0 VALUE {1-(floor((v(code)*100+0.5)/4) >= 84)}
+EU85 u85 0 VALUE {floor((v(code)*100+0.5)/4) >= 85}
+EUB85 ubar85 0 VALUE {1-(floor((v(code)*100+0.5)/4) >= 85)}
+EU86 u86 0 VALUE {floor((v(code)*100+0.5)/4) >= 86}
+EUB86 ubar86 0 VALUE {1-(floor((v(code)*100+0.5)/4) >= 86)}
+EU87 u87 0 VALUE {floor((v(code)*100+0.5)/4) >= 87}
+EUB87 ubar87 0 VALUE {1-(floor((v(code)*100+0.5)/4) >= 87)}
+EU88 u88 0 VALUE {floor((v(code)*100+0.5)/4) >= 88}
+EUB88 ubar88 0 VALUE {1-(floor((v(code)*100+0.5)/4) >= 88)}
+EU89 u89 0 VALUE {floor((v(code)*100+0.5)/4) >= 89}
+EUB89 ubar89 0 VALUE {1-(floor((v(code)*100+0.5)/4) >= 89)}
+EU90 u90 0 VALUE {floor((v(code)*100+0.5)/4) >= 90}
+EUB90 ubar90 0 VALUE {1-(floor((v(code)*100+0.5)/4) >= 90)}
+EU91 u91 0 VALUE {floor((v(code)*100+0.5)/4) >= 91}
+EUB91 ubar91 0 VALUE {1-(floor((v(code)*100+0.5)/4) >= 91)}
+EU92 u92 0 VALUE {floor((v(code)*100+0.5)/4) >= 92}
+EUB92 ubar92 0 VALUE {1-(floor((v(code)*100+0.5)/4) >= 92)}
+EU93 u93 0 VALUE {floor((v(code)*100+0.5)/4) >= 93}
+EUB93 ubar93 0 VALUE {1-(floor((v(code)*100+0.5)/4) >= 93)}
+EU94 u94 0 VALUE {floor((v(code)*100+0.5)/4) >= 94}
+EUB94 ubar94 0 VALUE {1-(floor((v(code)*100+0.5)/4) >= 94)}
+EU95 u95 0 VALUE {floor((v(code)*100+0.5)/4) >= 95}
+EUB95 ubar95 0 VALUE {1-(floor((v(code)*100+0.5)/4) >= 95)}
+EU96 u96 0 VALUE {floor((v(code)*100+0.5)/4) >= 96}
+EUB96 ubar96 0 VALUE {1-(floor((v(code)*100+0.5)/4) >= 96)}
+EU97 u97 0 VALUE {floor((v(code)*100+0.5)/4) >= 97}
+EUB97 ubar97 0 VALUE {1-(floor((v(code)*100+0.5)/4) >= 97)}
+EU98 u98 0 VALUE {floor((v(code)*100+0.5)/4) >= 98}
+EUB98 ubar98 0 VALUE {1-(floor((v(code)*100+0.5)/4) >= 98)}
+EU99 u99 0 VALUE {floor((v(code)*100+0.5)/4) >= 99}
+EUB99 ubar99 0 VALUE {1-(floor((v(code)*100+0.5)/4) >= 99)}
+EU100 u100 0 VALUE {floor((v(code)*100+0.5)/4) >= 100}
+EUB100 ubar100 0 VALUE {1-(floor((v(code)*100+0.5)/4) >= 100)}
+EU101 u101 0 VALUE {floor((v(code)*100+0.5)/4) >= 101}
+EUB101 ubar101 0 VALUE {1-(floor((v(code)*100+0.5)/4) >= 101)}
+EU102 u102 0 VALUE {floor((v(code)*100+0.5)/4) >= 102}
+EUB102 ubar102 0 VALUE {1-(floor((v(code)*100+0.5)/4) >= 102)}
+EU103 u103 0 VALUE {floor((v(code)*100+0.5)/4) >= 103}
+EUB103 ubar103 0 VALUE {1-(floor((v(code)*100+0.5)/4) >= 103)}
+EU104 u104 0 VALUE {floor((v(code)*100+0.5)/4) >= 104}
+EUB104 ubar104 0 VALUE {1-(floor((v(code)*100+0.5)/4) >= 104)}
+EU105 u105 0 VALUE {floor((v(code)*100+0.5)/4) >= 105}
+EUB105 ubar105 0 VALUE {1-(floor((v(code)*100+0.5)/4) >= 105)}
+EU106 u106 0 VALUE {floor((v(code)*100+0.5)/4) >= 106}
+EUB106 ubar106 0 VALUE {1-(floor((v(code)*100+0.5)/4) >= 106)}
+EU107 u107 0 VALUE {floor((v(code)*100+0.5)/4) >= 107}
+EUB107 ubar107 0 VALUE {1-(floor((v(code)*100+0.5)/4) >= 107)}
+EU108 u108 0 VALUE {floor((v(code)*100+0.5)/4) >= 108}
+EUB108 ubar108 0 VALUE {1-(floor((v(code)*100+0.5)/4) >= 108)}
+EU109 u109 0 VALUE {floor((v(code)*100+0.5)/4) >= 109}
+EUB109 ubar109 0 VALUE {1-(floor((v(code)*100+0.5)/4) >= 109)}
+EU110 u110 0 VALUE {floor((v(code)*100+0.5)/4) >= 110}
+EUB110 ubar110 0 VALUE {1-(floor((v(code)*100+0.5)/4) >= 110)}
+EU111 u111 0 VALUE {floor((v(code)*100+0.5)/4) >= 111}
+EUB111 ubar111 0 VALUE {1-(floor((v(code)*100+0.5)/4) >= 111)}
+EU112 u112 0 VALUE {floor((v(code)*100+0.5)/4) >= 112}
+EUB112 ubar112 0 VALUE {1-(floor((v(code)*100+0.5)/4) >= 112)}
+EU113 u113 0 VALUE {floor((v(code)*100+0.5)/4) >= 113}
+EUB113 ubar113 0 VALUE {1-(floor((v(code)*100+0.5)/4) >= 113)}
+EU114 u114 0 VALUE {floor((v(code)*100+0.5)/4) >= 114}
+EUB114 ubar114 0 VALUE {1-(floor((v(code)*100+0.5)/4) >= 114)}
+EU115 u115 0 VALUE {floor((v(code)*100+0.5)/4) >= 115}
+EUB115 ubar115 0 VALUE {1-(floor((v(code)*100+0.5)/4) >= 115)}
+EU116 u116 0 VALUE {floor((v(code)*100+0.5)/4) >= 116}
+EUB116 ubar116 0 VALUE {1-(floor((v(code)*100+0.5)/4) >= 116)}
+EU117 u117 0 VALUE {floor((v(code)*100+0.5)/4) >= 117}
+EUB117 ubar117 0 VALUE {1-(floor((v(code)*100+0.5)/4) >= 117)}
+EU118 u118 0 VALUE {floor((v(code)*100+0.5)/4) >= 118}
+EUB118 ubar118 0 VALUE {1-(floor((v(code)*100+0.5)/4) >= 118)}
+EU119 u119 0 VALUE {floor((v(code)*100+0.5)/4) >= 119}
+EUB119 ubar119 0 VALUE {1-(floor((v(code)*100+0.5)/4) >= 119)}
+EU120 u120 0 VALUE {floor((v(code)*100+0.5)/4) >= 120}
+EUB120 ubar120 0 VALUE {1-(floor((v(code)*100+0.5)/4) >= 120)}
+EU121 u121 0 VALUE {floor((v(code)*100+0.5)/4) >= 121}
+EUB121 ubar121 0 VALUE {1-(floor((v(code)*100+0.5)/4) >= 121)}
+EU122 u122 0 VALUE {floor((v(code)*100+0.5)/4) >= 122}
+EUB122 ubar122 0 VALUE {1-(floor((v(code)*100+0.5)/4) >= 122)}
+EU123 u123 0 VALUE {floor((v(code)*100+0.5)/4) >= 123}
+EUB123 ubar123 0 VALUE {1-(floor((v(code)*100+0.5)/4) >= 123)}
+EU124 u124 0 VALUE {floor((v(code)*100+0.5)/4) >= 124}
+EUB124 ubar124 0 VALUE {1-(floor((v(code)*100+0.5)/4) >= 124)}
+EU125 u125 0 VALUE {floor((v(code)*100+0.5)/4) >= 125}
+EUB125 ubar125 0 VALUE {1-(floor((v(code)*100+0.5)/4) >= 125)}
+EU126 u126 0 VALUE {floor((v(code)*100+0.5)/4) >= 126}
+EUB126 ubar126 0 VALUE {1-(floor((v(code)*100+0.5)/4) >= 126)}
+EU127 u127 0 VALUE {floor((v(code)*100+0.5)/4) >= 127}
+EUB127 ubar127 0 VALUE {1-(floor((v(code)*100+0.5)/4) >= 127)}
+EU128 u128 0 VALUE {floor((v(code)*100+0.5)/4) >= 128}
+EUB128 ubar128 0 VALUE {1-(floor((v(code)*100+0.5)/4) >= 128)}
+EU129 u129 0 VALUE {floor((v(code)*100+0.5)/4) >= 129}
+EUB129 ubar129 0 VALUE {1-(floor((v(code)*100+0.5)/4) >= 129)}
+EU130 u130 0 VALUE {floor((v(code)*100+0.5)/4) >= 130}
+EUB130 ubar130 0 VALUE {1-(floor((v(code)*100+0.5)/4) >= 130)}
+EU131 u131 0 VALUE {floor((v(code)*100+0.5)/4) >= 131}
+EUB131 ubar131 0 VALUE {1-(floor((v(code)*100+0.5)/4) >= 131)}
+EU132 u132 0 VALUE {floor((v(code)*100+0.5)/4) >= 132}
+EUB132 ubar132 0 VALUE {1-(floor((v(code)*100+0.5)/4) >= 132)}
+EU133 u133 0 VALUE {floor((v(code)*100+0.5)/4) >= 133}
+EUB133 ubar133 0 VALUE {1-(floor((v(code)*100+0.5)/4) >= 133)}
+EU134 u134 0 VALUE {floor((v(code)*100+0.5)/4) >= 134}
+EUB134 ubar134 0 VALUE {1-(floor((v(code)*100+0.5)/4) >= 134)}
+EU135 u135 0 VALUE {floor((v(code)*100+0.5)/4) >= 135}
+EUB135 ubar135 0 VALUE {1-(floor((v(code)*100+0.5)/4) >= 135)}
+EU136 u136 0 VALUE {floor((v(code)*100+0.5)/4) >= 136}
+EUB136 ubar136 0 VALUE {1-(floor((v(code)*100+0.5)/4) >= 136)}
+EU137 u137 0 VALUE {floor((v(code)*100+0.5)/4) >= 137}
+EUB137 ubar137 0 VALUE {1-(floor((v(code)*100+0.5)/4) >= 137)}
+EU138 u138 0 VALUE {floor((v(code)*100+0.5)/4) >= 138}
+EUB138 ubar138 0 VALUE {1-(floor((v(code)*100+0.5)/4) >= 138)}
+EU139 u139 0 VALUE {floor((v(code)*100+0.5)/4) >= 139}
+EUB139 ubar139 0 VALUE {1-(floor((v(code)*100+0.5)/4) >= 139)}
+EU140 u140 0 VALUE {floor((v(code)*100+0.5)/4) >= 140}
+EUB140 ubar140 0 VALUE {1-(floor((v(code)*100+0.5)/4) >= 140)}
+EU141 u141 0 VALUE {floor((v(code)*100+0.5)/4) >= 141}
+EUB141 ubar141 0 VALUE {1-(floor((v(code)*100+0.5)/4) >= 141)}
+EU142 u142 0 VALUE {floor((v(code)*100+0.5)/4) >= 142}
+EUB142 ubar142 0 VALUE {1-(floor((v(code)*100+0.5)/4) >= 142)}
+EU143 u143 0 VALUE {floor((v(code)*100+0.5)/4) >= 143}
+EUB143 ubar143 0 VALUE {1-(floor((v(code)*100+0.5)/4) >= 143)}
+EU144 u144 0 VALUE {floor((v(code)*100+0.5)/4) >= 144}
+EUB144 ubar144 0 VALUE {1-(floor((v(code)*100+0.5)/4) >= 144)}
+EU145 u145 0 VALUE {floor((v(code)*100+0.5)/4) >= 145}
+EUB145 ubar145 0 VALUE {1-(floor((v(code)*100+0.5)/4) >= 145)}
+EU146 u146 0 VALUE {floor((v(code)*100+0.5)/4) >= 146}
+EUB146 ubar146 0 VALUE {1-(floor((v(code)*100+0.5)/4) >= 146)}
+EU147 u147 0 VALUE {floor((v(code)*100+0.5)/4) >= 147}
+EUB147 ubar147 0 VALUE {1-(floor((v(code)*100+0.5)/4) >= 147)}
+EU148 u148 0 VALUE {floor((v(code)*100+0.5)/4) >= 148}
+EUB148 ubar148 0 VALUE {1-(floor((v(code)*100+0.5)/4) >= 148)}
+EU149 u149 0 VALUE {floor((v(code)*100+0.5)/4) >= 149}
+EUB149 ubar149 0 VALUE {1-(floor((v(code)*100+0.5)/4) >= 149)}
+EU150 u150 0 VALUE {floor((v(code)*100+0.5)/4) >= 150}
+EUB150 ubar150 0 VALUE {1-(floor((v(code)*100+0.5)/4) >= 150)}
+EB0 b0 0 VALUE {floor((v(code)*100+0.5)/1)-2*floor((v(code)*100+0.5)/2)}
+EBB0 bbar0 0 VALUE {1-(floor((v(code)*100+0.5)/1)-2*floor((v(code)*100+0.5)/2))}
+EB1 b1 0 VALUE {floor((v(code)*100+0.5)/2)-2*floor((v(code)*100+0.5)/4)}
+EBB1 bbar1 0 VALUE {1-(floor((v(code)*100+0.5)/2)-2*floor((v(code)*100+0.5)/4))}
+XTAP1 VSS sub! ptap1 R={ 1.0 / ( 1.0 / ( 9.8e-10 / ( 2.0u * 2.0u ) ) + 1.0 / ( 9.8e-4 / ( 2.0 * ( 2.0u + 2.0u ) ) ) )} w=2.0u l=2.0u
+.ends
+
+* C42-V3 interface block: matched NPN emitter-follower level shift (PDK-only).
+* Physical CM conditioning between the published preamp outputs
+* (NOISE_AMP_P/N, CM ~2.02-2.19 V) and the comparator input stage
+* (design CM ~1.44 V). PROVISIONAL: external VCB = VCC_HBT - V_B is
+* expected positive from the stated rails (2.5 V - 2.035..2.168 V);
+* actual device region remains UNKNOWN pending waveform review.
+* rppd res_typ: rsh = 260 ohm/sq,
+* dw = 0.006u -> XRLS w=1.0u l=3.85u gives about one source-derived
+* 1 kohm (3.85/1.006 * 260 = 995 ohm). Retained amplifier HBT evidence:
+* VBE = 0.886-0.893 V at 1.35-1.53 mA (NOT 0.75 V) -> expected LS CM
+* about 1.14-1.28 V (amp CM 2.035-2.168 - VBE 0.886-0.893).
+* AC loading/gain/region and final CM are UNKNOWN pending runtime;
+* npn13G2 Nx=1 m=1 (IC target ~1.1-1.3 mA < 3.5 mA max, Nx <= 10,
+* selft=1). No beta, capacitance, gain-fraction, loading-percent or
+* reliability claims are made (unverified).
+.subckt ls_pbit LS_P LS_N VCC_HBT VSS NOISE_AMP_P NOISE_AMP_N
+XLS_P VCC_HBT NOISE_AMP_P LS_P sub! npn13G2 Nx=1 mm_ok=1
+XLS_N VCC_HBT NOISE_AMP_N LS_N sub! npn13G2 Nx=1 mm_ok=1
+XRLS_P LS_P VSS sub! rppd w=1.0u l=3.85u m=1 b=0 mm_ok=1
+XRLS_N LS_N VSS sub! rppd w=1.0u l=3.85u m=1 b=0 mm_ok=1
+.ends
+
+.end
