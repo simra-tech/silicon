@@ -13,6 +13,19 @@ rather than trusting a filename.
 | `C169-SOURCE-coarse-dac.spice` | `cff25fb5…` | l=5.4u full-top source; earlier, non-merged |
 | `C169-gen-standalone.py` | `edc2854c…` | standalone DAC deck generator (emits l=5.4u) |
 | `C156-ISOBUF-PBIT_OUT.spice` | `81c708e1…` | PBIT_OUT isolation-buffer include; intact, matches the audit |
+| `pe-d560.cir` | `0a392730…` | island-harness deck head: the retained n=8 sample deck, instantiated the comparator as 13-port `XCOMP` |
+| `pe-fwcs.cir` | `bab04da3…` | reconstructed island source: deck head + reviewed `p1_comparator`/isolation-buffer includes |
+
+The two `pe-*.cir` files were the last `/tmp`-resident reconstruction assets. They are
+now git-backed here so G-12 done-when #1 does not depend on the host `/tmp` surviving
+another handover (the exact H-1340 failure). They are byte-identical to the retained deck
+head and reconstructed source; copy and re-hash rather than trusting a filename.
+
+Their `.include`/`.lib` lines carry the container run paths, which map onto this
+directory: `/tmp/C169-final.spice` is byte-identical to
+`C169-SOURCE-coarse-dac-v7-merged.spice` (`97938952…`) and
+`/volume/user/workspace/2026-08-03_p1-cml-div2-cml-div4-c11-iso-buffer/C156-ISOBUF-PBIT_OUT.spice`
+resolves to `C156-ISOBUF-PBIT_OUT.spice` (`81c708e1…`).
 
 ## What is NOT here
 
@@ -32,7 +45,7 @@ re-baseline path does not depend on the container surviving another handover.
 
 ## Structural compatibility (verified 2026-08-20 14:48Z, corrected 15:17Z)
 
-The deck head (`/tmp/pe-d560.cir`, sha256 `0a392730…`) instantiates the comparator
+The deck head (`pe-d560.cir` in this directory, sha256 `0a392730…`) instantiates the comparator
 as a 13-port `XCOMP` and names seven internal nodes in its `.nodeset`. The surviving
 `C169-SOURCE-coarse-dac-v7-merged.spice` `p1_comparator` subckt matches the same 13
 ports in the exact `XCOMP` order (PBIT_OUT PBIT_RAW CLK_OUT_DIV IN_P IN_N CLK_P CLK_N
