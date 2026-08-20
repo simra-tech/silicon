@@ -7443,3 +7443,49 @@ phase of a free-running clock was never a considered choice. 50 ns was a round
 number that happens to divide the period exactly. Any future measurement that
 needs sub-LSB resolution near a crossing should set the stop time off the clock
 grid deliberately.
+
+---
+
+## Island rate at codes 540-545: zero of eight drawn chips
+
+Replaces the withdrawn 2-of-10 figure. Measured with band geometry that excludes
+the crossing, anchor points proving each band's placement, and a detector first
+validated against the known island at 541-543 (recorded above).
+
+Eight mismatch-ON draws, offsets -34.0 to -55.9 mV, codes 540-545:
+
+    48 anchored bands: 29 clean, 8 ambiguous, 11 refused (misplaced band)
+    islands >= 0.20 mV: NONE
+
+    0 of 6 chips with all three island-bearing codes interpretable   Wilson 95%  0.0 - 39.0%
+    0 of 8 chips swept                                              Wilson 95%  0.0 - 32.4%
+
+The nominal parameter set carries islands at 541 (0.20 mV), 542 (0.40 mV) and
+543 (0.60 mV). **No drawn chip reproduced any of them.** Every excursion observed
+was 0.05-0.15 mV, below the island threshold and of the kind separately shown not
+to reproduce between simulator processes.
+
+### Reading this correctly
+
+- **The island is a property of the nominal design point.** A mismatch draw
+  perturbs the transfer curve away from it.
+- **This does not bound the rate at zero.** With n=8 the upper bound is about a
+  third. It is a null result with a wide interval, not an absence.
+- **Only codes 540-545 were examined.** A drawn chip may carry an island at codes
+  not swept. The feature is referenced to overdrive rather than to a fixed
+  voltage, but nothing establishes that it is confined to this code range.
+
+### Why 11 bands were refused, and the fix
+
+Refusals rise monotonically with distance from the located code -- 1, 1, 2, 3, 4
+across codes 541 to 545 -- because bands are stepped from code 540 at a fixed
+-0.21 mV/code and a chip whose real slope differs accumulates placement error
+until the anchors stop bracketing the crossing. The refusal is correct behaviour:
+a misplaced band is excluded, not read. It cost 23% of the measurement, and one
+chip lost five of six bands.
+
+**Measure the slope per chip.** Two additional bisections at the ends of the code
+range would pin it for ~24 transients, against 11 bands lost here.
+
+**No change to the 5.75x recommendation**, which rests on dead codes and
+monotonicity and does not pass through this path.
