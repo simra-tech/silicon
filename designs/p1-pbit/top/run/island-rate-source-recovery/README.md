@@ -30,6 +30,18 @@ single point of failure. The surviving l=5.4u lineage lived only in the Sandboxy
 container workspace, which is not git-backed. This is the durable copy, so the
 re-baseline path does not depend on the container surviving another handover.
 
+## Structural compatibility (verified 2026-08-20 14:48Z)
+
+The deck head (`/tmp/pe-d560.cir`, sha256 `0a392730…`) instantiates the comparator
+as a 13-port `XCOMP` and names seven internal nodes in its `.nodeset`. The surviving
+`C169-SOURCE-coarse-dac-v7-merged.spice` `p1_comparator` subckt is a **drop-in
+structural match**: the same 13 ports in the exact `XCOMP` order (PBIT_OUT PBIT_RAW
+CLK_OUT_DIV IN_P IN_N CLK_P CLK_N TRIM_P TRIM_N VCC_HBT VDD VSS CODE), and all seven
+`.nodeset` nodes (`c_p1_comp`, `c_p2_comp`, `c_p`, `c_n`, `e_track`, `ef_p`, `ef_n`)
+are present. Path (b) is therefore mechanically clean; the device length is still
+l=5.4u rather than l=483u, which is exactly why re-baselining (not substitution) is
+required for comparability with the published n=8 l=483u sample.
+
 ## Open decision (G-12)
 
 The n=20 island-rate tightening (`mb9`–`mb20`) was launched 2026-08-20 08:55Z,
