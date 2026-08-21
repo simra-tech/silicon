@@ -98,3 +98,14 @@ The recommended path is still gated on operator sign-off, and on a `--nomismatch
 reproducing the known 541-543 island before any mismatch draw is counted. The 5.75x
 scaling recommendation is unchanged by either path — it rests on dead codes and
 monotonicity, not on the island rate.
+
+## 2026-08-21 — done-when #2 hit a bounded negative (see `l54u-crossing-probe/`)
+
+Before the island can be reproduced, the l=5.4u build's code-540 crossing must be
+located. A three-deck native probe (`l54u-crossing-probe/`) found **no pbit crossing
+in [-200, +200] mV**: `pbit_raw_core` stays LOW (6.4e-8..8.6e-8 V) at every point while
+the comparator core `c_p`/`c_n` latches and stays single-signed. The l=483u build's
+code-543 crossing (-38.645 mV) lies inside that band, so the l=5.4u build does NOT share
+the l=483u trim origin. This is a bounded negative (absence outside ±200 mV is not
+measured), and it puts the comparability premise of option (b) back in question — the
+operator's sign-off on (b) was still absent as of this sweep. 5.75x unchanged.
