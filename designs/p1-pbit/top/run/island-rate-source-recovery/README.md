@@ -109,3 +109,19 @@ code-543 crossing (-38.645 mV) lies inside that band, so the l=5.4u build does N
 the l=483u trim origin. This is a bounded negative (absence outside ±200 mV is not
 measured), and it puts the comparability premise of option (b) back in question — the
 operator's sign-off on (b) was still absent as of this sweep. 5.75x unchanged.
+
+## 2026-08-22 — done-when #2 is now MEASURED negative (see `val540-nomismatch-negative/`)
+
+The `--nomismatch` validation (`val540.cir`, codes 540-543) ran to completion and the
+known 541-543 island does **not** reproduce: all 109 markers (25 band pts + 2 anchors
+per code, plus the code-540 bisection offset) read `pbit_raw_core` ≈ 8.4e-8…8.6e-8 V
+(LOW), with `pbit_out_core` HIGH (1.2 V) everywhere. The deck's locate-bisection
+bottomed out at its left bracket edge (−38.9922 mV) because the l=5.4u build has no
+crossing in [−39, −37] mV, so the bands landed in a uniform-LOW region. Two follow-on
+code-540 probes (`probe540.cir` −45…+5 mV, `probe540b.cir` +7.5…+50 mV, both 2.5 mV
+steps) find no crossing at 2.5 mV resolution across −45…+50 mV. Combined with the ±200 mV
+probe, the l=5.4u build does **not** share the l=483u trim origin — the comparability
+premise of option (b) is measured false, not merely questionable. The island-rate
+tightening (G-12 done-when #3, `mb9`–`mb20`) cannot be re-based onto the surviving build
+and returns to the operator: either the lost l=483u source resurfaces or that question
+stays unanswered. 5.75x unchanged (it rests on dead codes and monotonicity).
