@@ -1,0 +1,51 @@
+* probe540p: POSITIVE-range crossing probe, code 540 on C169-final. The analog
+* c_p/c_n gap closes ~0.475 mV per mV of vv and extrapolates to balance near
+* vv ~ +230 mV. Sweep vv = +100..+400 mV in 20 mV steps, record digital
+* (pbit_raw_core/pbit_out_core) and analog (c_p, c_n) at t=50ns.
+.include /tmp/C169-final.spice
+.include /volume/user/workspace/2026-08-03_p1-cml-div2-cml-div4-c11-iso-buffer/C156-ISOBUF-PBIT_OUT.spice
+.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerHBT.lib hbt_typ
+.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerRES.lib res_wcs
+.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerCAP.lib cap_typ
+.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerMOShv.lib mos_tt
+.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerMOSlv.lib mos_tt
+.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerDIO.lib dio_tt
+VCC_HBT VCC_HBT 0 DC 2.500
+VDD VDD 0 DC 1.200
+VBUF_VDD VDD_BUF 0 DC 1.200
+VCLK_P CLK_P 0 PULSE(0 1.2 0 50p 50p 400p 1000p)
+VCLK_N CLK_N 0 PULSE(1.2 0 0 50p 50p 400p 1000p)
+VTRIM_P TRIM_P 0 DC 1.245
+VTRIM_N TRIM_N 0 DC 1.245
+VCODE code 0 DC 0.0
+VEDP xcomp.e_dac_p 0 DC 0.687
+VEDN xcomp.e_dac_n 0 DC 0.687
+VIN_P IN_P 0 DC 1.245
+EIN_N IN_N 0 VALUE {2.49 - v(IN_P)}
+XCOMP pbit_out_core pbit_raw_core clk_replica IN_P IN_N CLK_P CLK_N TRIM_P TRIM_N VCC_HBT VDD VSS code p1_comparator
+XISO pbit_out_core PBIT_OUT VDD_BUF VSS iso_buf_pbit_out
+CLOAD PBIT_OUT 0 210f
+
+VVSS VSS 0 DC 0
+VSUB sub! 0 DC 0
+.options reltol=1e-3 abstol=1e-12 vntol=1e-6 gmin=1e-14 method=trapezoidal itl4=2000
+IKICK2 0 xcomp.c_p1_comp PWL(0 0 1n 0 1.1n 1m 8n 1m 8.2n 0)
+.nodeset v(xcomp.c_p1_comp)=0.85 v(xcomp.c_p2_comp)=1.52463 v(xcomp.c_p)=1.78656 v(xcomp.c_n)=1.80281 v(xcomp.e_track)=0.62797 v(xcomp.ef_p)=1.00128 v(xcomp.ef_n)=1.01148 v(pbit_raw)=1.2 v(pbit_out)=7.52874e-08 v(IN_P)=1.245 v(IN_N)=1.245 v(TRIM_P)=1.245 v(TRIM_N)=1.245 v(CLK_P)=0 v(CLK_N)=1.2
+.control
+alter VCODE dc 5.400000
+let vv = 100.0
+while vv <= 400.0001
+  alter VIN_P dc {1.245 + $&vv/2000}
+  tran 0.05n 50n
+  let nn = length(v(pbit_raw_core))
+  let raw = v(pbit_raw_core)[nn-1]
+  let out = v(pbit_out_core)[nn-1]
+  let cp  = v(xcomp.c_p)[nn-1]
+  let cn  = v(xcomp.c_n)[nn-1]
+  echo "P540P" $&vv $&raw $&out $&cp $&cn
+  destroy all
+  let vv = vv + 20.0
+end
+quit
+.endc
+.end

@@ -125,3 +125,25 @@ premise of option (b) is measured false, not merely questionable. The island-rat
 tightening (G-12 done-when #3, `mb9`–`mb20`) cannot be re-based onto the surviving build
 and returns to the operator: either the lost l=483u source resurfaces or that question
 stays unanswered. 5.75x unchanged (it rests on dead codes and monotonicity).
+
+## 2026-08-24 — the flat-LOW mechanism is now bounded: a saturated comparator (see `code-540-relocation-refuted/`)
+
+The code-540 crossing re-location attempt (a headless Design Engineer task, delivered
+via `/tmp/dsh-task.txt`) is complete and its premise is **refuted**: there is **no
+`pbit_raw_core` crossing to re-locate** at code 540 on `C169-final.spice`. Widened
+native probes show the comparator is **saturated LOW** — `pbit_raw_core` pinned LOW at
+every sampled offset from −400 to +160 mV while the analog collector gap `c_p−c_n` is
+U-shaped and **never ≤ 0** (min +0.145 V at −70 mV). The code-0 control gives the clean
+opposite state (HIGH), so the latch chain works and code 540 is a DAC-bias effect.
+
+Two root causes are verified from the netlist (lines 205/240/241/269-270): (1) **V7 DAC
+over-drive** — 135/150 unary elements ON at code 540, each steering into `c_n`, with the
+"NO 1.037u compensation" comment confirming a several-× larger LSB than the l=483u build
+that produced the −38 mV crossing; (2) **undriven `SACLK`** — gate-only, floats ≈0.719 V,
+design says it should be `CLK_N`.
+
+So the val540 "all four codes flat LOW" was a **saturated comparator, not a wrong band**:
+re-banding cannot produce the island, and option (b) is invalidated on a second,
+mechanistic ground. Reproducing the 541-543 island requires a source fix (re-tune the V7
+DAC LSB and tie `SACLK`=`CLK_N`) — a source modification gated on operator sign-off. The
+island-rate result stands at n=8 (Wilson 95% 0–32.4%); 5.75x unchanged.
