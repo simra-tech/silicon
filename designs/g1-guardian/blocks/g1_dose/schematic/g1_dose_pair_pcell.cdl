@@ -1,0 +1,6 @@
+* G1_DOSE default variant (PCells only): thick-oxide 3.3 V NMOS and LV NMOS, shared gate, source and body on VSS.
+* The HV drain sits on the pad named D_ELT in the pin map (pin 21); the LV drain on D_STD (pin 20).
+.subckt g1_dose_pair_pcell D_ELT D_STD G_SHARED VSS
+MHV D_ELT G_SHARED VSS VSS sg13_hv_nmos w=3.98u l=0.45u ng=1 m=1
+MLV D_STD G_SHARED VSS VSS sg13_lv_nmos w=3.98u l=0.13u ng=1 m=1
+.ends g1_dose_pair_pcell

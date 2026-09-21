@@ -1,0 +1,107 @@
+* G1_TRIP 8-bit string DAC: transfer (coarse code sweep through the mux), settling, output impedance
+.param VDD=1.2 VREF=1.04
+.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerMOSlv.lib @@MOS@@
+.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerMOShv.lib @@MOS@@
+.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerRES.lib @@RES@@
+.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerCAP.lib cap_typ
+.temp @@TEMP@@
+* the off switches leave the mux tree nodes floating at DC: give the solver a 1 TOhm path per node
+.option rshunt=1e12 gmin=1e-13
+.include netlist/g1_dac8.spice
+Vdd vdd 0 dc {VDD}
+Vdda vdda 0 dc 3.3
+Vref vref 0 dc {VREF}
+Vd0 d0 0 dc 0
+Vd1 d1 0 dc 0
+Vd2 d2 0 dc 0
+Vd3 d3 0 dc 0
+Vd4 d4 0 dc 0
+Vd5 d5 0 dc 0
+Vd6 d6 0 dc 0
+Vd7 d7 0 dc 0
+Iload out 0 dc 0
+X1 vref d0 d1 d2 d3 d4 d5 d6 d7 out vdd vdda 0 g1_dac8
+XCH out 0 cap_cmim w=26u l=26u m=1
+.control
+set filetype=ascii
+foreach c 0 1 2 3 4 7 8 15 16 31 32 63 64 96 127 128 129 130 160 191 192 224 250 253 254 255
+  let code = $c
+  let b0 = floor(code/1) - 2*floor(code/2)
+  let b1 = floor(code/2) - 2*floor(code/4)
+  let b2 = floor(code/4) - 2*floor(code/8)
+  let b3 = floor(code/8) - 2*floor(code/16)
+  let b4 = floor(code/16) - 2*floor(code/32)
+  let b5 = floor(code/32) - 2*floor(code/64)
+  let b6 = floor(code/64) - 2*floor(code/128)
+  let b7 = floor(code/128) - 2*floor(code/256)
+  alter Vd0 dc = $&b0
+  alter Vd1 dc = $&b1
+  alter Vd2 dc = $&b2
+  alter Vd3 dc = $&b3
+  alter Vd4 dc = $&b4
+  alter Vd5 dc = $&b5
+  alter Vd6 dc = $&b6
+  alter Vd7 dc = $&b7
+  op
+  let vo = v(out)
+  let ideal = 1.04*(255+code)/530
+  let err_lsb = (vo - ideal)/(1.04/530)
+  let iref = -i(vref)*1e6
+  echo "DAC code=" $c " out=" $&vo " err_LSB=" $&err_lsb " iref_uA=" $&iref
+end
+* output impedance at code 255 (all ones already set), 128 and 0 : +1 uA load
+alter Iload dc = 1u
+op
+let v1 = v(out)
+set sv1 = $&v1
+alter Iload dc = 0
+op
+let rout255 = ( v(out) - $sv1 ) / 1e-6
+echo "ROUT code=255 :" $&rout255
+alter Vd7 dc = 1
+alter Vd0 dc = 0
+alter Vd1 dc = 0
+alter Vd2 dc = 0
+alter Vd3 dc = 0
+alter Vd4 dc = 0
+alter Vd5 dc = 0
+alter Vd6 dc = 0
+op
+let v0 = v(out)
+set sv0 = $&v0
+alter Iload dc = 1u
+op
+let rout128 = ( $sv0 - v(out) ) / 1e-6
+echo "ROUT code=128 :" $&rout128
+alter Iload dc = 0
+alter Vd7 dc = 0
+op
+let v0 = v(out)
+set sv0 = $&v0
+alter Iload dc = 1u
+op
+let rout0 = ( $sv0 - v(out) ) / 1e-6
+echo "ROUT code=0 :" $&rout0
+alter Iload dc = 0
+* settling: code 0 -> 255 -> 0 with 1 pF hold
+alter Vd0 pulse = [ 0 1.2 100n 0.2n 0.2n 2u 4u ]
+alter Vd1 pulse = [ 0 1.2 100n 0.2n 0.2n 2u 4u ]
+alter Vd2 pulse = [ 0 1.2 100n 0.2n 0.2n 2u 4u ]
+alter Vd3 pulse = [ 0 1.2 100n 0.2n 0.2n 2u 4u ]
+alter Vd4 pulse = [ 0 1.2 100n 0.2n 0.2n 2u 4u ]
+alter Vd5 pulse = [ 0 1.2 100n 0.2n 0.2n 2u 4u ]
+alter Vd6 pulse = [ 0 1.2 100n 0.2n 0.2n 2u 4u ]
+alter Vd7 pulse = [ 0 1.2 100n 0.2n 0.2n 2u 4u ]
+tran 1n 4.1u
+let vo = v(out)
+meas tran vhi find vo at=2.09u
+meas tran vlo find vo at=4.05u
+let vh1 = vhi - 0.00196
+let vl1 = vlo + 0.00196
+meas tran tup when vo=vh1 rise=1 from=100n
+meas tran tdn when vo=vl1 fall=1 from=2.1u
+let tsu = (tup-100n)*1e9
+let tsd = (tdn-2.1u)*1e9
+echo "SETTLE 0->255 to 1LSB ns=" $&tsu " 255->0 ns=" $&tsd " vhi=" $&vhi " vlo=" $&vlo
+.endc
+.end

@@ -1,0 +1,10 @@
+.control
+option temp=@@TEMP@@
+op
+ac dec 10 1 10meg
+let psrr_db = db(v(vref))
+meas ac psrr_dc find psrr_db at=1
+meas ac psrr_1k find psrr_db at=1k
+meas ac psrr_100k find psrr_db at=100k
+meas ac psrr_1m find psrr_db at=1meg
+.endc

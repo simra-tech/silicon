@@ -1,0 +1,18 @@
+# Liberty-mapped synthesis of g1_digital for cell count and area (sg13g2_stdcell typ 1.2 V 25 C)
+read_liberty -lib /foss/pdks/ihp-sg13g2/libs.ref/sg13g2_stdcell/lib/sg13g2_stdcell_typ_1p20V_25C.lib
+read_verilog -sv /work/designs/g1-guardian/blocks/g1_ctrl/rtl/g1_sync2.v
+read_verilog -sv /work/designs/g1-guardian/blocks/g1_ctrl/rtl/g1_serial.v
+read_verilog -sv /work/designs/g1-guardian/blocks/g1_ctrl/rtl/g1_trip_timer.v
+read_verilog -sv /work/designs/g1-guardian/blocks/g1_ctrl/rtl/g1_regfile.v
+read_verilog -sv /work/designs/g1-guardian/blocks/g1_seu/rtl/g1_tmr_reg.v
+read_verilog -sv /work/designs/g1-guardian/blocks/g1_seu/rtl/g1_seu_chain.v
+read_verilog -sv /work/designs/g1-guardian/blocks/g1_seu/rtl/g1_seu.v
+read_verilog -sv /work/designs/g1-guardian/blocks/g1_ctrl/rtl/g1_digital_top.v
+read_verilog -sv /work/designs/g1-guardian/blocks/g1_ctrl/rtl/g1_digital.v
+hierarchy -check -top g1_digital
+synth -top g1_digital -flatten
+dfflibmap -liberty /foss/pdks/ihp-sg13g2/libs.ref/sg13g2_stdcell/lib/sg13g2_stdcell_typ_1p20V_25C.lib
+abc -liberty /foss/pdks/ihp-sg13g2/libs.ref/sg13g2_stdcell/lib/sg13g2_stdcell_typ_1p20V_25C.lib
+opt_clean
+stat -liberty /foss/pdks/ihp-sg13g2/libs.ref/sg13g2_stdcell/lib/sg13g2_stdcell_typ_1p20V_25C.lib
+# per-block area: SEU alone

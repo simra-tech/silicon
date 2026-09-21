@@ -1,0 +1,12 @@
+read_verilog -sv /work/designs/g1-guardian/blocks/g1_ctrl/rtl/g1_sync2.v
+read_verilog -sv /work/designs/g1-guardian/blocks/g1_ctrl/rtl/g1_serial.v
+read_verilog -sv /work/designs/g1-guardian/blocks/g1_ctrl/rtl/g1_trip_timer.v
+read_verilog -sv /work/designs/g1-guardian/blocks/g1_ctrl/rtl/g1_regfile.v
+read_verilog -sv /work/designs/g1-guardian/blocks/g1_seu/rtl/g1_tmr_reg.v
+read_verilog -sv /work/designs/g1-guardian/blocks/g1_seu/rtl/g1_seu_chain.v
+read_verilog -sv /work/designs/g1-guardian/blocks/g1_seu/rtl/g1_seu.v
+read_verilog -sv /work/designs/g1-guardian/blocks/g1_ctrl/rtl/g1_digital_top.v
+read_verilog -sv /work/designs/g1-guardian/blocks/g1_ctrl/rtl/g1_digital.v
+hierarchy -check -top g1_digital
+synth -top g1_digital -flatten
+stat

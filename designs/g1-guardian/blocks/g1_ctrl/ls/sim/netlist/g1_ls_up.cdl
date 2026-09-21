@@ -1,0 +1,16 @@
+** sch_path: /work/designs/g1-guardian/blocks/g1_ctrl/ls/xschem/g1_ls_up.sch
+.subckt g1_ls_up in out vdd vdda vss
+*.ipin in
+*.opin out
+*.iopin vdd
+*.iopin vdda
+*.iopin vss
+MPI inb in vdd vdd sg13_lv_pmos w=2u l=0.13u ng=1 m=1
+MNI inb in vss vss sg13_lv_nmos w=1u l=0.13u ng=1 m=1
+MN1 nb in vss vss sg13_hv_nmos w=3.8u l=0.45u ng=1 m=1
+MN2 n inb vss vss sg13_hv_nmos w=3.8u l=0.45u ng=1 m=1
+MP1 nb n vdda vdda sg13_hv_pmos w=0.3u l=0.45u ng=1 m=1
+MP2 n nb vdda vdda sg13_hv_pmos w=0.3u l=0.45u ng=1 m=1
+MPO out nb vdda vdda sg13_hv_pmos w=3.9u l=0.45u ng=1 m=1
+MNO out nb vss vss sg13_hv_nmos w=1.9u l=0.45u ng=1 m=1
+.ends

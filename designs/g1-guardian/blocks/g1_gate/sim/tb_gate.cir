@@ -1,0 +1,80 @@
+* G1_GATE functional + timing testbench with the sg13g2_IOPadOut30mA pad model and 5 nF external gate load
+.param VDDA=@@VDDA@@ VDD=@@VDD@@
+.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerMOSlv.lib @@MOS@@
+.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerMOShv.lib @@MOS@@
+.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerRES.lib res_typ
+.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerCAP.lib cap_typ
+.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerDIO.lib dio_tt
+.include /foss/pdks/ihp-sg13g2/libs.ref/sg13g2_io/spice/sg13g2_io.spi
+.include netlist/g1_gate.spice
+.temp @@TEMP@@
+.global sub!
+Vsub sub! 0 dc 0
+* convergence with the IO pad model: supplies through 0.5 Ohm with 1 nF local decoupling, gear integration
+.option method=gear reltol=0.005 itl4=100 abstol=1e-9 vntol=1e-5 chgtol=1e-13
+Rsa vdda_s vdda 0.5
+Cda vdda 0 1n
+Rsd vdd_s vdd 0.5
+Cdd vdd 0 1n
+Vdda vdda_s 0 dc {VDDA}
+Vdd vdd_s 0 dc {VDD}
+* stimulus (1.2 V): en high at 0.2us; trip_d pulse at 2us; clr_d pulse at 4us; hard_cmp pulse at 6us (fast_en=0) and 8us (fast_en=1); en low at 10us
+Ven en_core 0 pwl(0 0 0.2u 0 0.202u {VDD} 10u {VDD} 10.002u 0 12u 0 12.002u {VDD})
+Vtrip trip_d 0 pwl(0 0 2u 0 2.002u {VDD} 2.3u {VDD} 2.302u 0)
+Vclr clr_d 0 pwl(0 0 4u 0 4.002u {VDD} 4.3u {VDD} 4.302u 0)
+Vhard hard_cmp 0 pwl(0 0 6u 0 6.0005u {VDD} 6.2u {VDD} 6.2005u 0 8u 0 8.0005u {VDD} 8.2u {VDD} 8.2005u 0)
+Vfast fast_en 0 pwl(0 0 7u 0 7.002u {VDD})
+XG trip_d clr_d fast_en hard_cmp en_core gate_core fault_core tripped vdd vdda 0 g1_gate
+* pads: pad c2p vdd vss iovdd iovss
+XPG gate gate_core vdd 0 vdda 0 sg13g2_IOPadOut30mA
+XPF fault_n fault_core vdd 0 vdda 0 sg13g2_IOPadOut4mA
+* external gate network: 10 Ohm series (board gate resistor) + 5 nF
+Rg gate gfet 10
+Cgate gfet 0 5n
+Cfault fault_n 0 20p
+Ctrip tripped 0 20f
+.control
+set filetype=ascii
+tran 1n 13u
+let g = v(gate)
+meas tran g_pre find g at=0.19u
+meas tran g_armed find g at=1.9u
+meas tran g_trip find g at=3.9u
+meas tran g_clr find g at=5.9u
+meas tran g_hard0 find g at=7.9u
+meas tran g_hard1 find g at=9.9u
+meas tran g_enlow find g at=11.9u
+meas tran g_rearm find g at=12.9u
+meas tran f_trip find v(fault_n) at=3.9u
+meas tran f_armed find v(fault_n) at=1.9u
+meas tran t_trip find v(tripped) at=3.9u
+echo "STATES gate: pre_en=" $&g_pre " armed=" $&g_armed " after_trip_d=" $&g_trip " after_clr=" $&g_clr " hard_fast_en0=" $&g_hard0 " hard_fast_en1=" $&g_hard1 " en_low=" $&g_enlow " rearmed=" $&g_rearm
+echo "STATES fault_n armed=" $&f_armed " tripped=" $&f_trip " ; tripped(core) after trip=" $&t_trip
+* timing of the fast path: hard_cmp rise at 8.0us -> gate_core fall -> pad 90%/10%
+meas tran tgc when v(gate_core)=0.6 fall=1 from=8u
+meas tran tg90 when g=2.97 fall=1 from=8u
+meas tran tg10 when g=0.33 fall=1 from=8u
+meas tran tg1v when g=1.0 fall=1 from=8u
+let d_core = (tgc-8u)*1e9
+let d_90 = (tg90-8u)*1e9
+let d_10 = (tg10-8u)*1e9
+let tfall = (tg10-tg90)*1e9
+let d_1v = (tg1v-8u)*1e9
+echo "FASTPATH ns: hard_cmp->gate_core=" $&d_core " ->GATE 90%=" $&d_90 " ->GATE 1V=" $&d_1v " ->GATE 10%=" $&d_10 " fall_90_10=" $&tfall
+meas tran tgd when v(gate_core)=0.6 fall=1 from=2u
+let d_core_d = (tgd-2u)*1e9
+echo "DIGITAL trip_d->gate_core ns=" $&d_core_d
+let ia_v = -i(vdda)
+let ic_v = -i(vdd)
+meas tran ipk max ia_v from=8u to=9u
+meas tran idda avg ia_v from=7.0u to=7.9u
+meas tran iddc avg ic_v from=7.0u to=7.9u
+meas tran tr90 when g=2.97 rise=1 from=0.2u
+let trise = (tr90-0.2u)*1e9
+echo "ARM en->GATE 90% ns=" $&trise
+let ipk_ma = ipk*1e3
+let ia = idda*1e6
+let ic = iddc*1e6
+echo "SUPPLY: iovdd peak mA during GATE fall=" $&ipk_ma " static vdda uA (armed, 7.0-7.9us)=" $&ia " vdd uA=" $&ic
+.endc
+.end

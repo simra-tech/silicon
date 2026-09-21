@@ -1,0 +1,36 @@
+* G1_DUT npn13G2 characterisation: corner hbt_bcs, T = -40 C
+* device: npn13G2, Nx=1 (default emitter 0.07 x 0.90 um^2), substrate node to 0
+.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerHBT.lib hbt_bcs
+.option gmin=1e-15 abstol=1e-15 reltol=1e-4
+.temp -40
+
+Vbe b 0 dc 0.8
+Vc  b c dc 0
+XQ1 c b e 0 npn13G2 Nx=1
+Ve e 0 dc 0
+
+.control
+set filetype=ascii
+set wr_singlescale
+set wr_vecnames
+* ---- forward Gummel, VCB = 0 ----
+dc Vbe 0.30 1.00 0.001
+let ic = i(vc)
+let ib = -i(vbe) - i(vc)
+let beta = ic/ib
+wrdata hbt_bcs_Tm40C_gummel.dat ic ib beta
+meas dc vbe_1u  find v(b) when ic=1e-6
+meas dc vbe_8u  find v(b) when ic=8e-6
+meas dc vbe_10u find v(b) when ic=1e-5
+meas dc vbe_100n find v(b) when ic=1e-7
+meas dc ib_1u   find ib when ic=1e-6
+meas dc ib_10u  find ib when ic=1e-5
+meas dc beta_1u  find beta when ic=1e-6
+meas dc beta_10u find beta when ic=1e-5
+meas dc beta_100u find beta when ic=1e-4
+meas dc beta_max max beta from=0.5 to=1.0
+let dvbe_8 = vbe_8u - vbe_1u
+print vbe_1u vbe_8u vbe_10u vbe_100n dvbe_8 ib_1u ib_10u beta_1u beta_10u beta_100u beta_max
+.endc
+
+.end

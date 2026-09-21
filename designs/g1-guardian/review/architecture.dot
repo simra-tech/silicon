@@ -1,0 +1,9 @@
+digraph G {
+ graph [rankdir=LR,bgcolor="white",pad=.2,nodesep=.25,ranksep=.35];
+ node [shape=box,style="rounded,filled",fillcolor="#E8EEF5",fontname="Helvetica",fontsize=11,color="#526779"];
+ edge [fontname="Helvetica",fontsize=9,color="#526779"];
+ shunt [label="External shunt"]; sense [label="SENSE\n3.3 V"]; trip [label="TRIP\nDACs + comparators"]; ctrl [label="CTRL / SEU\n1.2 V"]; gate [label="GATE + IO\nExternal FET"];
+ bgr [label="BGR\nReference + bias"]; osc [label="OSC\n1.2 V RC clock"]; t2f [label="T2F\nFrequency output"]; coupons [label="DOSE / DUT\nDirect analog pads"];
+ shunt -> sense -> trip -> ctrl -> gate; trip -> gate [label="FAST_EN path"];
+ bgr -> sense; bgr -> t2f; osc -> ctrl; ctrl -> trip [label="Codes / strobe"]; ctrl -> t2f [label="Mode / enable"];
+}

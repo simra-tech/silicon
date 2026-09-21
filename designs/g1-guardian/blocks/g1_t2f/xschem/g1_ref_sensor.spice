@@ -1,0 +1,169 @@
+** sch_path: /work/designs/g1-guardian/blocks/g1_t2f/xschem/g1_ref_sensor.sch
+.subckt g1_ref_sensor vdd vdd12 vss r4 en mode vref iptat fout vbe dvbe
+*.iopin vdd
+*.iopin vdd12
+*.iopin vss
+*.ipin r4
+*.ipin en
+*.ipin mode
+*.opin vref
+*.opin iptat
+*.opin fout
+*.opin vbe
+*.opin dvbe
+xbgr vdd vss r4 vref iptat pbias pcasc vbe dvbe g1_bgr
+xt2f vdd vdd12 vss pbias pcasc vref en mode fout g1_t2f
+.ends
+
+* expanding   symbol:  g1_bgr.sym # of pins=9
+** sym_path: /work/designs/g1-guardian/blocks/g1_bgr/xschem/g1_bgr.sym
+** sch_path: /work/designs/g1-guardian/blocks/g1_bgr/xschem/g1_bgr.sch
+.subckt g1_bgr vdd vss r4 vref iptat pbias pcasc vbe dvbe
+*.iopin vdd
+*.iopin vss
+*.ipin r4
+*.opin vref
+*.opin iptat
+*.opin pbias
+*.opin pcasc
+*.opin vbe
+*.opin dvbe
+XMP1 d1 pbias vdd vdd sg13_hv_pmos w=10u l=4u ng=1 m=1 mm_ok=1
+XMC1 n1 pcasc d1 d1 sg13_hv_pmos w=10u l=4u ng=1 m=1 mm_ok=1
+XMP2 d2 pbias vdd vdd sg13_hv_pmos w=10u l=4u ng=1 m=1 mm_ok=1
+XMC2 pbias pcasc d2 d2 sg13_hv_pmos w=10u l=4u ng=1 m=1 mm_ok=1
+XRB pbias pcasc sub! rppd w=1u l=500u m=1 b=0 mm_ok=1
+XMNC1 n1 vb2 vbe vss sg13_hv_nmos w=20u l=1u ng=1 m=1 mm_ok=1
+XMNC2 pcasc vb2 c2 vss sg13_hv_nmos w=20u l=1u ng=1 m=1 mm_ok=1
+XMP5 d5 pbias vdd vdd sg13_hv_pmos w=10u l=4u ng=1 m=1 mm_ok=1
+XMC5 vb2 pcasc d5 d5 sg13_hv_pmos w=10u l=4u ng=1 m=1 mm_ok=1
+XRX vb2 vd1 sub! rppd w=1u l=192u m=1 b=0 mm_ok=1
+XQD1 vd1 vd1 vd2 vss npn13G2 Nx=1 mm_ok=1
+XQD2 vd2 vd2 vss vss npn13G2 Nx=1 mm_ok=1
+XQ1 vbe vbe vss vss npn13G2 Nx=1 mm_ok=1
+XQ1B vbe b1b vss vss npn13G2 Nx=1 mm_ok=1
+XQ2A c2 vbe dvbe vss npn13G2 Nx=1 mm_ok=1
+XQ2B c2 vbe dvbe vss npn13G2 Nx=1 mm_ok=1
+XQ2C c2 vbe dvbe vss npn13G2 Nx=1 mm_ok=1
+XQ2D c2 vbe dvbe vss npn13G2 Nx=1 mm_ok=1
+XQ2E c2 vbe dvbe vss npn13G2 Nx=1 mm_ok=1
+XQ2F c2 vbe dvbe vss npn13G2 Nx=1 mm_ok=1
+XQ2G c2 vbe dvbe vss npn13G2 Nx=1 mm_ok=1
+XQ2H c2 vbe dvbe vss npn13G2 Nx=1 mm_ok=1
+XR1 dvbe vss sub! rppd w=1u l=51.5u m=1 b=0 mm_ok=1
+XMP3 d3 pbias vdd vdd sg13_hv_pmos w=10u l=4u ng=1 m=1 mm_ok=1
+XMC3 vref pcasc d3 d3 sg13_hv_pmos w=10u l=4u ng=1 m=1 mm_ok=1
+XR2 vref vbe3 sub! rppd w=1u l=315u m=1 b=0 mm_ok=1
+XQ3 vbe3 vbe3 vss vss npn13G2 Nx=1 mm_ok=1
+XMP4 d4 pbias vdd vdd sg13_hv_pmos w=10u l=4u ng=1 m=1 mm_ok=1
+XMC4 iptat pcasc d4 d4 sg13_hv_pmos w=10u l=4u ng=1 m=1 mm_ok=1
+XMPS det pbias vdd vdd sg13_hv_pmos w=10u l=4u ng=1 m=1 mm_ok=1
+XRDET det vss sub! rhigh w=0.5u l=735u m=1 b=0 mm_ok=1
+XMNI kick det vss vss sg13_hv_nmos w=1u l=0.5u ng=1 m=1 mm_ok=1
+XMPI kick det vdd vdd sg13_hv_pmos w=2u l=0.5u ng=1 m=1 mm_ok=1
+XMKFB pbias kick vss vss sg13_hv_nmos w=1u l=4u ng=1 m=1 mm_ok=1
+XMSW1 vbe r4 b1b vss sg13_hv_nmos w=2u l=0.5u ng=1 m=1 mm_ok=1
+XMSW2 b1b r4n vss vss sg13_hv_nmos w=1u l=0.5u ng=1 m=1 mm_ok=1
+XMNI2 r4n r4 vss vss sg13_hv_nmos w=1u l=0.5u ng=1 m=1 mm_ok=1
+XMPI2 r4n r4 vdd vdd sg13_hv_pmos w=2u l=0.5u ng=1 m=1 mm_ok=1
+.ends
+
+
+* expanding   symbol:  g1_t2f.sym # of pins=9
+** sym_path: /work/designs/g1-guardian/blocks/g1_t2f/xschem/g1_t2f.sym
+** sch_path: /work/designs/g1-guardian/blocks/g1_t2f/xschem/g1_t2f.sch
+.subckt g1_t2f vdd vdd12 vss pbias pcasc vref en mode fout
+*.iopin vdd
+*.iopin vdd12
+*.iopin vss
+*.ipin pbias
+*.ipin pcasc
+*.ipin vref
+*.ipin en
+*.ipin mode
+*.opin fout
+XMPO do pbias vdd vdd sg13_hv_pmos w=10u l=4u ng=1 m=1 mm_ok=1
+XMCO isrc pcasc do do sg13_hv_pmos w=10u l=4u ng=1 m=1 mm_ok=1
+XMPR dr pbias vdd vdd sg13_hv_pmos w=10u l=4u ng=1 m=2 mm_ok=1
+XMCR vr pcasc dr dr sg13_hv_pmos w=10u l=4u ng=1 m=2 mm_ok=1
+XRREF1 vr vr_1 sub! rppd w=0.5u l=24.5u m=1 b=0 mm_ok=1
+XRREF2 vr_1 vr_2 sub! rppd w=0.5u l=24.5u m=1 b=0 mm_ok=1
+XRREF3 vr_2 vr_3 sub! rppd w=0.5u l=24.5u m=1 b=0 mm_ok=1
+XRREF4 vr_3 vr_4 sub! rppd w=0.5u l=24.5u m=1 b=0 mm_ok=1
+XRREF5 vr_4 vr_5 sub! rppd w=0.5u l=24.5u m=1 b=0 mm_ok=1
+XRREF6 vr_5 vr_6 sub! rppd w=0.5u l=24.5u m=1 b=0 mm_ok=1
+XRREF7 vr_6 vr_7 sub! rppd w=0.5u l=24.5u m=1 b=0 mm_ok=1
+XRREF8 vr_7 vr_8 sub! rppd w=0.5u l=24.5u m=1 b=0 mm_ok=1
+XRREF9 vr_8 vr_9 sub! rppd w=0.5u l=24.5u m=1 b=0 mm_ok=1
+XRREF10 vr_9 vss sub! rppd w=0.5u l=24.5u m=1 b=0 mm_ok=1
+XMPB db pbias vdd vdd sg13_hv_pmos w=10u l=4u ng=1 m=1 mm_ok=1
+XMCB nbias pcasc db db sg13_hv_pmos w=10u l=4u ng=1 m=1 mm_ok=1
+XMNB nbias nbias vss vss sg13_hv_nmos w=10u l=2u ng=1 m=1 mm_ok=1
+XMPF vcg pbias vdd vdd sg13_hv_pmos w=10u l=4u ng=1 m=1 mm_ok=1
+XMSF vss vth vcg vcg sg13_hv_pmos w=2u l=2u ng=1 m=1 mm_ok=1
+XMX1 vref moden vth vss sg13_hv_nmos w=4u l=0.5u ng=1 m=1 mm_ok=1
+XMX2 vr mode vth vss sg13_hv_nmos w=4u l=0.5u ng=1 m=1 mm_ok=1
+XIMN moden mode vss vss sg13_hv_nmos w=1u l=0.5u ng=1 m=1 mm_ok=1
+XIMP moden mode vdd vdd sg13_hv_pmos w=2u l=0.5u ng=1 m=1 mm_ok=1
+XQA1 ca1 vth tail1 vss npn13G2 Nx=1 mm_ok=1
+XQB1 cb1 cap1 tail1 vss npn13G2 Nx=1 mm_ok=1
+XMCA1 oa1 vcg ca1 vss sg13_hv_nmos w=4u l=1u ng=1 m=1 mm_ok=1
+XMCB1 ob1 vcg cb1 vss sg13_hv_nmos w=4u l=1u ng=1 m=1 mm_ok=1
+XMBA1 ca1 nbias vss vss sg13_hv_nmos w=0.5u l=2u ng=1 m=1 mm_ok=1
+XMBB1 cb1 nbias vss vss sg13_hv_nmos w=0.5u l=2u ng=1 m=1 mm_ok=1
+XMLA1 oa1 oa1 vdd vdd sg13_hv_pmos w=4u l=1u ng=1 m=1 mm_ok=1
+XMLB1 ob1 oa1 vdd vdd sg13_hv_pmos w=4u l=1u ng=1 m=1 mm_ok=1
+XMT1 tail1 nbias vss vss sg13_hv_nmos w=20u l=2u ng=1 m=1 mm_ok=1
+XIC1AN c1 ob1 vss vss sg13_hv_nmos w=1u l=0.5u ng=1 m=1 mm_ok=1
+XIC1AP c1 ob1 vdd vdd sg13_hv_pmos w=2u l=0.5u ng=1 m=1 mm_ok=1
+XIC1BN sn c1 vss vss sg13_hv_nmos w=2u l=0.5u ng=1 m=1 mm_ok=1
+XIC1BP sn c1 vdd vdd sg13_hv_pmos w=4u l=0.5u ng=1 m=1 mm_ok=1
+XQA2 ca2 vth tail2 vss npn13G2 Nx=1 mm_ok=1
+XQB2 cb2 cap2 tail2 vss npn13G2 Nx=1 mm_ok=1
+XMCA2 oa2 vcg ca2 vss sg13_hv_nmos w=4u l=1u ng=1 m=1 mm_ok=1
+XMCB2 ob2 vcg cb2 vss sg13_hv_nmos w=4u l=1u ng=1 m=1 mm_ok=1
+XMBA2 ca2 nbias vss vss sg13_hv_nmos w=0.5u l=2u ng=1 m=1 mm_ok=1
+XMBB2 cb2 nbias vss vss sg13_hv_nmos w=0.5u l=2u ng=1 m=1 mm_ok=1
+XMLA2 oa2 oa2 vdd vdd sg13_hv_pmos w=4u l=1u ng=1 m=1 mm_ok=1
+XMLB2 ob2 oa2 vdd vdd sg13_hv_pmos w=4u l=1u ng=1 m=1 mm_ok=1
+XMT2 tail2 nbias vss vss sg13_hv_nmos w=20u l=2u ng=1 m=1 mm_ok=1
+XIC2AN c2 ob2 vss vss sg13_hv_nmos w=1u l=0.5u ng=1 m=1 mm_ok=1
+XIC2AP c2 ob2 vdd vdd sg13_hv_pmos w=2u l=0.5u ng=1 m=1 mm_ok=1
+XIC2BN rn c2 vss vss sg13_hv_nmos w=2u l=0.5u ng=1 m=1 mm_ok=1
+XIC2BP rn c2 vdd vdd sg13_hv_pmos w=4u l=0.5u ng=1 m=1 mm_ok=1
+XNQPA q sn vdd vdd sg13_hv_pmos w=2u l=0.5u ng=1 m=1 mm_ok=1
+XNQPB q qn vdd vdd sg13_hv_pmos w=2u l=0.5u ng=1 m=1 mm_ok=1
+XNQNA q sn NQ_i vss sg13_hv_nmos w=2u l=0.5u ng=1 m=1 mm_ok=1
+XNQNB NQ_i qn vss vss sg13_hv_nmos w=2u l=0.5u ng=1 m=1 mm_ok=1
+XNQNPA qn rn vdd vdd sg13_hv_pmos w=2u l=0.5u ng=1 m=1 mm_ok=1
+XNQNPB qn q vdd vdd sg13_hv_pmos w=2u l=0.5u ng=1 m=1 mm_ok=1
+XNQNPC qn en vdd vdd sg13_hv_pmos w=2u l=0.5u ng=1 m=1 mm_ok=1
+XNQNNA qn rn NQN_i vss sg13_hv_nmos w=3u l=0.5u ng=1 m=1 mm_ok=1
+XNQNNB NQN_i q NQN_j vss sg13_hv_nmos w=3u l=0.5u ng=1 m=1 mm_ok=1
+XNQNNC NQN_j en vss vss sg13_hv_nmos w=3u l=0.5u ng=1 m=1 mm_ok=1
+XND1PA d1g qn vdd vdd sg13_hv_pmos w=2u l=0.5u ng=1 m=1 mm_ok=1
+XND1PB d1g en vdd vdd sg13_hv_pmos w=2u l=0.5u ng=1 m=1 mm_ok=1
+XND1NA d1g qn ND1_i vss sg13_hv_nmos w=2u l=0.5u ng=1 m=1 mm_ok=1
+XND1NB ND1_i en vss vss sg13_hv_nmos w=2u l=0.5u ng=1 m=1 mm_ok=1
+XND2PA d2g q vdd vdd sg13_hv_pmos w=2u l=0.5u ng=1 m=1 mm_ok=1
+XND2PB d2g en vdd vdd sg13_hv_pmos w=2u l=0.5u ng=1 m=1 mm_ok=1
+XND2NA d2g q ND2_i vss sg13_hv_nmos w=2u l=0.5u ng=1 m=1 mm_ok=1
+XND2NB ND2_i en vss vss sg13_hv_nmos w=2u l=0.5u ng=1 m=1 mm_ok=1
+XSW1 cap1 d1g isrc vdd sg13_hv_pmos w=4u l=0.5u ng=1 m=1 mm_ok=1
+XD1 cap1 d1g vss vss sg13_hv_nmos w=4u l=0.5u ng=1 m=1 mm_ok=1
+XSW2 cap2 d2g isrc vdd sg13_hv_pmos w=4u l=0.5u ng=1 m=1 mm_ok=1
+XD2 cap2 d2g vss vss sg13_hv_nmos w=4u l=0.5u ng=1 m=1 mm_ok=1
+XC1 cap1 vss cap_cmim w=28u l=28u m=1 mm_ok=1
+XC2 cap2 vss cap_cmim w=28u l=28u m=1 mm_ok=1
+XIAN a d2g vss vss sg13_hv_nmos w=1u l=0.5u ng=1 m=1 mm_ok=1
+XIAP a d2g vdd vdd sg13_hv_pmos w=2u l=0.5u ng=1 m=1 mm_ok=1
+XMLSA lsa a vss vss sg13_hv_nmos w=2u l=0.5u ng=1 m=1 mm_ok=1
+XMLSB lsb d2g vss vss sg13_hv_nmos w=2u l=0.5u ng=1 m=1 mm_ok=1
+XMLPA lsa lsb vdd12 vdd12 sg13_lv_pmos w=0.5u l=0.3u ng=1 m=1 mm_ok=1
+XMLPB lsb lsa vdd12 vdd12 sg13_lv_pmos w=0.5u l=0.3u ng=1 m=1 mm_ok=1
+XIO1N fon lsb vss vss sg13_lv_nmos w=0.5u l=0.13u ng=1 m=1 mm_ok=1
+XIO1P fon lsb vdd12 vdd12 sg13_lv_pmos w=1u l=0.13u ng=1 m=1 mm_ok=1
+XIO2N fout fon vss vss sg13_lv_nmos w=1u l=0.13u ng=1 m=1 mm_ok=1
+XIO2P fout fon vdd12 vdd12 sg13_lv_pmos w=2u l=0.13u ng=1 m=1 mm_ok=1
+.ends
+

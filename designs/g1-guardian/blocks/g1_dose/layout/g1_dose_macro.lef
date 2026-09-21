@@ -1,0 +1,53 @@
+VERSION 5.8 ;
+BUSBITCHARS "[]" ;
+DIVIDERCHAR "/" ;
+
+MACRO g1_dose_macro
+  CLASS BLOCK ;
+  ORIGIN 0 0 ;
+  FOREIGN g1_dose_macro 0 0 ;
+  SIZE 30 BY 30 ;
+  SYMMETRY X Y ;
+  PIN D_ELT
+    DIRECTION INOUT ;
+    USE SIGNAL ;
+    PORT
+      LAYER Metal3 ;
+        RECT 0 14.85 1.5 15.15 ;
+    END
+  END D_ELT
+  PIN G_SHARED
+    DIRECTION INPUT ;
+    USE SIGNAL ;
+    PORT
+      LAYER Metal3 ;
+        RECT 0 12.46 1.5 12.76 ;
+    END
+  END G_SHARED
+  PIN D_STD
+    DIRECTION INOUT ;
+    USE SIGNAL ;
+    PORT
+      LAYER Metal3 ;
+        RECT 0 19.02 1.5 19.32 ;
+    END
+  END D_STD
+  PIN vss
+    DIRECTION INOUT ;
+    USE GROUND ;
+    PORT
+      LAYER Metal3 ;
+        RECT 0 0 30 2 ;
+    END
+  END vss
+  OBS
+    LAYER Metal1 ;
+      RECT 0 0 30 30 ;
+    LAYER Metal2 ;
+      RECT 0 0 30 30 ;
+    LAYER Metal3 ;
+      RECT 1.8 2.6 30 30 ;
+  END
+END g1_dose_macro
+
+END LIBRARY

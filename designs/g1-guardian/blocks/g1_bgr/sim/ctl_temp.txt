@@ -1,0 +1,29 @@
+.control
+set filetype=ascii
+set wr_singlescale
+set wr_vecnames
+dc temp -40 175 5
+let iptat = i(vload)
+let itot = -i(vdd)
+wrdata @@OUT@@.dat v(vref) iptat itot v(vbe) v(dvbe) v(pbias) v(pcasc)
+meas dc v27 find v(vref) at=27
+meas dc vm40 find v(vref) at=-40
+meas dc v85 find v(vref) at=85
+meas dc v125 find v(vref) at=125
+meas dc v150 find v(vref) at=150
+meas dc v175 find v(vref) at=175
+meas dc vmax_ind max v(vref) from=-40 to=125
+meas dc vmin_ind min v(vref) from=-40 to=125
+meas dc vmax_full max v(vref) from=-40 to=175
+meas dc vmin_full min v(vref) from=-40 to=175
+meas dc ip27 find iptat at=27
+meas dc ipm40 find iptat at=-40
+meas dc ip125 find iptat at=125
+meas dc ip175 find iptat at=175
+meas dc itot27 find itot at=27
+meas dc itot175 find itot at=175
+meas dc dvbe27 find v(dvbe) at=27
+let tc_ind = (vmax_ind-vmin_ind)/v27/165*1e6
+let tc_full = (vmax_full-vmin_full)/v27/215*1e6
+print tc_ind tc_full
+.endc

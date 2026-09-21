@@ -1,0 +1,45 @@
+* G1_BGR testbench temp sweep: hbt=hbt_bcs mos=mos_tt res=res_wcs vdd=3.0 V
+.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerHBT.lib hbt_bcs
+.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerMOShv.lib mos_tt
+.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerRES.lib res_wcs
+.include ../../xschem/g1_bgr.spice
+.option gmin=1e-15 abstol=1e-14 reltol=1e-5 vntol=1e-7
+.global sub!
+Vsub sub! 0 dc 0
+Vdd vdd 0 dc 3.0 
+Vr4 r4 0 dc 0
+Xbgr vdd 0 r4 vref iptat pbias pcasc vbe dvbe g1_bgr
+* PTAT output leg sinks into a 1.0 V node (top of a DAC string stand-in)
+Vload iptat 0 dc 1.0
+Cload vref 0 1p
+.control
+set filetype=ascii
+set wr_singlescale
+set wr_vecnames
+dc temp -40 175 5
+let iptat = i(vload)
+let itot = -i(vdd)
+wrdata ../results/temp_hbt_bcs_mos_tt_res_wcs_3.0.dat v(vref) iptat itot v(vbe) v(dvbe) v(pbias) v(pcasc)
+meas dc v27 find v(vref) at=27
+meas dc vm40 find v(vref) at=-40
+meas dc v85 find v(vref) at=85
+meas dc v125 find v(vref) at=125
+meas dc v150 find v(vref) at=150
+meas dc v175 find v(vref) at=175
+meas dc vmax_ind max v(vref) from=-40 to=125
+meas dc vmin_ind min v(vref) from=-40 to=125
+meas dc vmax_full max v(vref) from=-40 to=175
+meas dc vmin_full min v(vref) from=-40 to=175
+meas dc ip27 find iptat at=27
+meas dc ipm40 find iptat at=-40
+meas dc ip125 find iptat at=125
+meas dc ip175 find iptat at=175
+meas dc itot27 find itot at=27
+meas dc itot175 find itot at=175
+meas dc dvbe27 find v(dvbe) at=27
+let tc_ind = (vmax_ind-vmin_ind)/v27/165*1e6
+let tc_full = (vmax_full-vmin_full)/v27/215*1e6
+print tc_ind tc_full
+.endc
+
+.end

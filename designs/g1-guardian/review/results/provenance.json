@@ -1,0 +1,198 @@
+{
+  "generation_command": "flow/run.sh python3 designs/g1-guardian/review/results/plot_saved_results.py",
+  "python": "3.12.3",
+  "matplotlib": "3.11.1",
+  "numpy": "2.5.1",
+  "simulation_status": "No new simulations run. All plots derived from saved simulated data.",
+  "pdk_commit": "84374023ee8b4b126bebbba67fcbada0a9c0ff0b",
+  "simulation_tool": "ngspice 46",
+  "figures": [
+    {
+      "name": "01_bgr_temperature",
+      "data_columns": [
+        "model",
+        "temperature_C",
+        "vref_V",
+        "iptat_A",
+        "total_current_A"
+      ],
+      "notes": "Nominal process, 3.3 V; shaded region >125 \u00b0C is model extrapolation.",
+      "sources": [
+        {
+          "path": "designs/g1-guardian/blocks/g1_bgr/sim/postlayout/results/temp_hbt_typ_mos_tt_res_typ_3.3.dat",
+          "sha256": "31393bc075e2651f500b6e7af039be5a0143c3332f0f5522fe532c8e40268257"
+        },
+        {
+          "path": "designs/g1-guardian/blocks/g1_bgr/sim/postlayout/results/wire_hbt_typ_mos_tt_res_typ_temp_3.3.dat",
+          "sha256": "3fc5c60585c52a0546669e9805a8c32edd7a89d22882c6668615b70e0bee8539"
+        },
+        {
+          "path": "designs/g1-guardian/blocks/g1_bgr/sim/results/temp_hbt_typ_mos_tt_res_typ_3.3.dat",
+          "sha256": "82547373b38acf40eddcfad550650441c125e67c038687c21e9760602e496254"
+        }
+      ]
+    },
+    {
+      "name": "02_bgr_startup",
+      "data_columns": [
+        "model",
+        "time_s",
+        "vref_V",
+        "iptat_A",
+        "pbias_V",
+        "vdd_V"
+      ],
+      "notes": "27 \u00b0C, 0 \u2192 3.0 V in 1 ms; right panel shows actual startup detail.",
+      "sources": [
+        {
+          "path": "designs/g1-guardian/blocks/g1_bgr/sim/postlayout/results/startup_hbt_typ_mos_tt_res_typ_T27_3.0.dat",
+          "sha256": "537262d8edfbfe77f28fadb1c1b94e6ba2f9a1667147ee06a4d6c1f6e55e019c"
+        },
+        {
+          "path": "designs/g1-guardian/blocks/g1_bgr/sim/results/startup_hbt_typ_mos_tt_res_typ_T27_3.0.dat",
+          "sha256": "762cbc02000bb1af2cc357b0702170478e5770a8696f96436bad0b9b5e44bb90"
+        }
+      ]
+    },
+    {
+      "name": "03_t2f_calibration",
+      "data_columns": [
+        "model",
+        "temperature_C",
+        "frequency_Hz",
+        "calibrated_error_C",
+        "fit_slope_Hz_per_C"
+      ],
+      "notes": "25/100 \u00b0C fit per model; >125 \u00b0C extrapolated. Cold schematic runs aborted after measurements.",
+      "sources": [
+        {
+          "path": "designs/g1-guardian/blocks/g1_t2f/sim/postlayout/results/ftemp_summary.csv",
+          "sha256": "58ae1270d1a8662e9624371726b58572c2b16df19029f5241bab35469fc291fa"
+        },
+        {
+          "path": "designs/g1-guardian/blocks/g1_t2f/sim/results/ftemp_summary.csv",
+          "sha256": "b2fa518cbb119304fe8cdf4e85aa759b685fe32295fa94b2c252ac6e0064f5e6"
+        }
+      ]
+    },
+    {
+      "name": "04_osc_trim",
+      "data_columns": [
+        "model",
+        "MOS_corner",
+        "trim_code",
+        "frequency_MHz"
+      ],
+      "notes": "1.2 V / 27 \u00b0C; plotted markers are saved measurements; lines are visual guides only.",
+      "sources": [
+        {
+          "path": "designs/g1-guardian/blocks/g1_osc/sim/postlayout/results_postlayout.txt",
+          "sha256": "8b66ac303645adc1e4f56e4292f31ddd182326edb71b72adccff91eeb85f2af5"
+        },
+        {
+          "path": "designs/g1-guardian/blocks/g1_osc/sim/results_osc.txt",
+          "sha256": "b944cfc4a1e2b2bc39e74f32862c872f4842965fac3c12bb51c81a5a3a590b80"
+        }
+      ]
+    },
+    {
+      "name": "05_sense_dynamics",
+      "data_columns": [
+        "run",
+        "quantity",
+        "model",
+        "value"
+      ],
+      "notes": "3.3 V, common-mode 0 V. *175 \u00b0C is extrapolated. Bars are summary measurements, not waveforms.",
+      "sources": [
+        {
+          "path": "designs/g1-guardian/blocks/g1_sense/sim/postlayout/results/compare.md",
+          "sha256": "5ade9b3be0c8e1a9d589faf32764241b957b6e45e49e4a1792af675ad1438090"
+        }
+      ]
+    },
+    {
+      "name": "06_trip_delay",
+      "data_columns": [
+        "run",
+        "model",
+        "commanded_overdrive_mV",
+        "effective_overdrive_mV",
+        "delay_ns"
+      ],
+      "notes": "5 MHz strobe, DAC code 128. Effective overdrive differs because of kickback; see CSV.",
+      "sources": [
+        {
+          "path": "designs/g1-guardian/blocks/g1_trip/sim/postlayout/results_postlayout.txt",
+          "sha256": "7fe956a8ea20861a1c1467d622401987dae75dd1e51ff2981af52a53255c14d9"
+        }
+      ]
+    },
+    {
+      "name": "07_gate_delay",
+      "data_columns": [
+        "model",
+        "temperature_C",
+        "hard_cmp_to_core_ns",
+        "hard_cmp_to_GATE_10percent_ns"
+      ],
+      "notes": "TT, 3.3 V IO / 1.2 V core. Complete matched cases only; failed extreme pad cases omitted, not passed.",
+      "sources": [
+        {
+          "path": "designs/g1-guardian/blocks/g1_gate/sim/postlayout/results_postlayout.txt",
+          "sha256": "94fb1010f87e70471dd8cff7e03c93f2b24ed4652b8f9d1c96c769342e3b55a0"
+        },
+        {
+          "path": "designs/g1-guardian/blocks/g1_gate/sim/results_gate.txt",
+          "sha256": "d86c494602e033135bcc4907edf235ff1629faa7315278105b8dfa5fe2dfce87"
+        }
+      ]
+    },
+    {
+      "name": "08_dose_leakage",
+      "data_columns": [
+        "MOS_corner",
+        "temperature_C",
+        "HV_current_A",
+        "LV_current_A",
+        "LV_over_HV_ratio"
+      ],
+      "notes": "VGS=0, VDS=0.1 V. No radiation or pad-leakage model; these are device-only simulated currents.",
+      "sources": [
+        {
+          "path": "designs/g1-guardian/blocks/g1_dose/sim/results_variants.md",
+          "sha256": "0b48b84a7e4c3d1e51cbe690fc24f679757f47eb9cd2870a11a663c9e52da55c"
+        }
+      ]
+    },
+    {
+      "name": "09_dut_gummel",
+      "data_columns": [
+        "temperature_C",
+        "VBE_V",
+        "collector_current_A",
+        "base_current_A",
+        "beta"
+      ],
+      "notes": "Typical HBT, Nx=1, VCB=0. Solid = IC; dashed = IB (left). Plotting recorded data, not new runs.",
+      "sources": [
+        {
+          "path": "designs/g1-guardian/blocks/g1_dut/sim/decks/hbt_typ_Tm40C_gummel.dat",
+          "sha256": "6e6b677c6162d8819458d8ddfe25e3aa47d0ebf39c0772efb8dad04d692cf1e0"
+        },
+        {
+          "path": "designs/g1-guardian/blocks/g1_dut/sim/decks/hbt_typ_Tp125C_gummel.dat",
+          "sha256": "113dd288499d454118c5541549d2f927d4177cfceddb4eaa2ff05e2877abbea5"
+        },
+        {
+          "path": "designs/g1-guardian/blocks/g1_dut/sim/decks/hbt_typ_Tp27C_gummel.dat",
+          "sha256": "f3e5f2074fb51197c4c95d5cb469dd60b0abfb9f9d57efcf7c4bb55d41f98cef"
+        },
+        {
+          "path": "designs/g1-guardian/blocks/g1_dut/sim/decks/hbt_typ_Tp85C_gummel.dat",
+          "sha256": "3446fefff9a08f43f9bcdcbf8f34f0e3d9c2c278b38a671e7273da10e9041017"
+        }
+      ]
+    }
+  ]
+}

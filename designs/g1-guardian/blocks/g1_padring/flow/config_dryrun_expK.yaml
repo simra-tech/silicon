@@ -1,0 +1,242 @@
+# SPDX-License-Identifier: Apache-2.0
+# G1 integration dry run: flow/config.yaml (1350 um ring) with every macro of
+# record as a black box (rtl/g1_core_dryrun.sv). Generated from config.yaml;
+# keep the two in step (diff them). Floorplan table: ../INTEGRATION.md.
+# Derived from iic-jku/ihp-sg13g2-ams-chip-template flow/librelane/config.yaml
+# (commit 6524ffdd, Apache-2.0 WITH SHL-2.1); reduced to the ring, the stock
+# PDK sg13g2_io library and the PDK's 1.2 V corners (PDK defaults, not overridden).
+# Geometry arithmetic is in ../README.md.
+
+meta:
+  version: 3
+  flow: Chip
+  substituting_steps:
+    # As in the template: Magic reports abutment overlaps between IO cells that
+    # are intentional; the checker is recorded as "not run" in the README.
+    Checker.IllegalOverlap: null
+
+DESIGN_NAME: g1_chip_top
+VERILOG_FILES:
+  - dir::../rtl/g1_chip_top.sv
+  - dir::../rtl/g1_core_dryrun.sv
+
+PRIMARY_GDSII_STREAMOUT_TOOL: klayout
+# Six of the eight macro GDS files carry no prBoundary (189/4) yet (only
+# g1_digital and g1_t2f do), which Magic.StreamOut needs to read the macros
+# as abstracts; with "PDK" it takes the standard cells from the PDK GDS and
+# does not look for the boundary. Block owners: add the prBoundary.
+MAGIC_MACRO_STD_CELL_SOURCE: PDK
+
+# ---------------------------------------------------------------------------
+# Pad ring: pin map of specification section 3.
+#   PAD_SOUTH / PAD_NORTH: left to right; PAD_EAST / PAD_WEST: bottom to top.
+# ---------------------------------------------------------------------------
+PAD_SOUTH: [pad01_vdd, pad02_vss, pad03_iovdd, pad04_iovss, pad05_vss, pad06_iovss]
+PAD_EAST:  [pad07_vdda, pad08_sense_p, pad09_sense_n, pad10_gate, pad11_fault_n, pad12_en]
+PAD_NORTH: [pad13_trip_set, pad14_sclk, pad15_sdi, pad16_sdo, pad17_temp_out, pad18_vref]
+PAD_WEST:  [pad19_g_shared, pad20_d_std, pad21_d_elt, pad22_hbt_e, pad23_hbt_b, pad24_hbt_c]
+
+# Die edge to IO-cell row (PDK default is 140: sealring 0..36.4 from the edge,
+# bondpad 70..140, pad opening 36.2 um from the EdgeSeal, above the 25 um
+# recommended clearance). 141 so that the pad gaps below land on grid
+# (140.5 for the 1200 and 1130 um frames).
+PAD_EDGE_SPACING: 141
+
+# Pad placement (OpenROAD.PadRing, librelane/scripts/openroad/common/pad_cfg.tcl):
+#   side  = DIE - 2*PAD_EDGE_SPACING - 2*180 (corners) = 1350 - 281 - 360 = 709
+#   fill  = side - 6*80 = 229
+#   gap   = floor(fill / (6+1) / MULTIPLE) * MULTIPLE = floor(229/7) = 32 um
+#   ends  = (229 - 5*32) / 2 = 34.5 um   -> NOT on the 1 um sg13g2_ioSite grid
+# so MULTIPLE = 2: gap = floor(229/7/2)*2 = 32 um, ends = 34.5 -> still off grid;
+# the parity of (fill - 5*gap) decides: fill 229 is odd, 5*gap is even for any
+# even gap and odd for any odd gap, so gap must be odd: MULTIPLE = 1 and
+# gap = 32 gives ends 34.5 (off grid), gap = 31 gives ends 37. The placer takes
+# floor(229/7) = 32, so the die-edge spacing is moved by 0.5 um instead:
+# PAD_EDGE_SPACING 141 -> side 708, fill 228, gap = floor(228/7) = 32,
+# ends = (228 - 160) / 2 = 34 um. Pitch 112 um.
+# (1200 um frame: edge 140.5, side 559, fill 79, gap 11, ends 12, pitch 91;
+#  1130 um frame: side 489, fill 9, gap 1, ends 2, pitch 81.)
+PAD_SPACING_MULTIPLE: 1
+
+# Bondpad: 70 x 70 um from the PDK 'bondpad' PCell, TopMetal1/TopMetal2 only
+# (ip/bondpad_70x70_tm1; the Metal3-up stack failed the antenna deck on the
+# three input pads, see ../README.md). Placed by the PDK default
+# PAD_BONDPAD_OFFSETS (5.0, -70.0), i.e. outside the IO cell towards the die
+# edge, abutting the cell's 70 x 3 um 'pad' stub at y = 0.
+PAD_BONDPAD_NAME: bondpad_70x70_tm1
+EXTRA_GDS:
+  - dir::../ip/bondpad_70x70_tm1/gds/bondpad_70x70_tm1.gds
+EXTRA_LEFS:
+  - dir::../ip/bondpad_70x70_tm1/lef/bondpad_70x70_tm1.lef
+IGNORE_DISCONNECTED_MODULES:
+  - bondpad_70x70_tm1
+  - g1_bgr
+  - g1_sense
+  - g1_gate
+  - g1_t2f
+  - g1_trip
+  - g1_osc
+  - g1_ls_up
+
+# ---------------------------------------------------------------------------
+# IO library views: stock PDK GDS/CDL/SPICE; LEF, Verilog and liberty from
+# ip/sg13g2_io_padbare (sg13g2_IOPadAnalog core-side pad port exposed as pin
+# `padbare`, see that directory's README). Corners: the PDK's three 1.2 V ones.
+# ---------------------------------------------------------------------------
+PAD_LEFS:           dir::../ip/sg13g2_io_padbare/lef/sg13g2_io.lef
+PAD_VERILOG_MODELS: dir::../ip/sg13g2_io_padbare/verilog/sg13g2_io.v
+LIB:
+  "*_typ_1p20V_25C":
+    - pdk_dir::libs.ref/sg13g2_stdcell/lib/sg13g2_stdcell_typ_1p20V_25C.lib
+    - dir::../ip/sg13g2_io_padbare/lib/sg13g2_io_typ_1p2V_3p3V_25C.lib
+  "*_fast_1p32V_m40C":
+    - pdk_dir::libs.ref/sg13g2_stdcell/lib/sg13g2_stdcell_fast_1p32V_m40C.lib
+    - dir::../ip/sg13g2_io_padbare/lib/sg13g2_io_fast_1p32V_3p6V_m40C.lib
+  "*_slow_1p08V_125C":
+    - pdk_dir::libs.ref/sg13g2_stdcell/lib/sg13g2_stdcell_slow_1p08V_125C.lib
+    - dir::../ip/sg13g2_io_padbare/lib/sg13g2_io_slow_1p08V_3p0V_125C.lib
+# Analog nets are never buffered or resized
+RSZ_DONT_TOUCH_RX: "^VDDA$|^(sense_p|sense_n|g_shared|d_std|d_elt|hbt_e|hbt_b|hbt_c)_bare$|^(trip_set|vref)_res$|^i_core\\.(iptat|pbias|pcasc|vref_bgr|vbe|dvbe|isense|vref_buf|vped)$"
+
+# ---------------------------------------------------------------------------
+# Timing
+# ---------------------------------------------------------------------------
+PNR_SDC_FILE:     dir::g1_chip_top.sdc
+SIGNOFF_SDC_FILE: dir::g1_chip_top.sdc
+FALLBACK_SDC:     dir::g1_chip_top.sdc
+CLOCK_PORT: SCLK
+CLOCK_NET:  pad14_sclk/p2c
+CLOCK_PERIOD: 100   # ns; 10 MHz serial clock
+
+# ---------------------------------------------------------------------------
+# Power
+# ---------------------------------------------------------------------------
+# VDDA (pin 7, D14) is the secondary PDN net for the 3.3 V macros; analog
+# ground is the core VSS. IOVDD/IOVSS power only the ring.
+VDD_NETS: [VDD]
+GND_NETS: [VSS]
+PDN_CFG: dir::pdn_cfg_g1.tcl
+VERILOG_POWER_DEFINE: USE_POWER_PINS
+PDN_CORE_RING: true
+# 15 um is below the 30 um slotting limit (Slt.c); 5 um spacing for long metals.
+PDN_CORE_RING_VWIDTH: 15
+PDN_CORE_RING_HWIDTH: 15
+PDN_CORE_RING_VSPACING: 5
+PDN_CORE_RING_HSPACING: 5
+PDN_CORE_RING_CONNECT_TO_PADS: true
+PDN_ENABLE_PINS: false
+# several pads carry the same supply net
+MAGIC_EXT_UNIQUE: notopports
+
+# ---------------------------------------------------------------------------
+# Floorplan: 1350 x 1350 um die (PLAN D13), IO-cell inner edge at 141 + 180 = 321,
+# core window 622 x 622 um leaving 43 um for the core ring
+# (4.5 offset + 15 + 5 + 15 = 39.5, 3.5 um to the IO cells).
+# (1200 um frame: DIE_AREA [0,0,1200,1200], CORE_AREA [364,364,836,836].)
+# ---------------------------------------------------------------------------
+FP_SIZING: absolute
+DIE_AREA:  [0, 0, 1350, 1350]
+CORE_AREA: [364, 364, 986, 986]
+
+PL_TARGET_DENSITY_PCT: 10
+GRT_ALLOW_CONGESTION: true
+
+# ---------------------------------------------------------------------------
+# Seal ring: PDK 'sealring' PCell via our own driver (same interface as the PDK
+# script). The PCell is broken above 1000 um in this PDK/KLayout combination;
+# sealring_g1.py builds the 1000 um ring and stretches it to the die (see file).
+# ---------------------------------------------------------------------------
+KLAYOUT_SEALRING_SCRIPT: dir::sealring_g1.py
+
+# ---------------------------------------------------------------------------
+# KLayout DRC: the PDK deck tests its booleans with `to_s.downcase == 'true'`;
+# LibreLane turns the PDK default (Tcl "true") into "1", which the deck reads
+# as false, so the recommended rules ran in the first runs (Pad.fR markers).
+# Pass the literal string.
+# ---------------------------------------------------------------------------
+KLAYOUT_DRC_OPTIONS:
+  no_recommended: "TRUE"   # not "true": LibreLane would turn that into a bool and pass 1
+  run_mode: deep
+
+# ---------------------------------------------------------------------------
+# Macros of record (paths relative to this file; views under each block's
+# layout/). Placement: INTEGRATION.md, "Floorplan (1350 um frame)".
+# ---------------------------------------------------------------------------
+MACROS:
+  g1_digital:
+    gds: [dir::../../g1_ctrl/layout/g1_digital.gds]
+    lef: [dir::../../g1_ctrl/layout/g1_digital.lef]
+    nl:  [dir::../../g1_ctrl/layout/g1_digital.nl.v]
+    pnl: [dir::../../g1_ctrl/layout/g1_digital.pnl.v]
+    spef: {nom_*: dir::../../g1_ctrl/layout/g1_digital.nom.spef}
+    lib:
+      nom_typ_1p20V_25C:   dir::../../g1_ctrl/layout/lib/g1_digital__nom_typ_1p20V_25C.lib
+      nom_fast_1p32V_m40C: dir::../../g1_ctrl/layout/lib/g1_digital__nom_fast_1p32V_m40C.lib
+      nom_slow_1p08V_125C: dir::../../g1_ctrl/layout/lib/g1_digital__nom_slow_1p08V_125C.lib
+    instances:
+      i_core.u_digital: {location: [367, 372], orientation: N}
+  g1_sense:
+    gds: [dir::../../g1_sense/layout/g1_sense.gds]
+    lef: [dir::../../g1_sense/layout/g1_sense.lef]
+    vh:  [dir::../rtl/bb/g1_sense.vh]
+    instances:
+      i_core.u_sense: {location: [733, 440], orientation: N}
+  g1_trip:
+    gds: [dir::../../g1_trip/layout/g1_trip.gds]
+    lef: [dir::dryrun_lef/g1_trip.lef]    # dry-run companion view (Metal4/5 OBS inset), see dryrun_lef/inset_obs.py
+    vh:  [dir::../../g1_trip/layout/g1_trip.vh]
+    instances:
+      i_core.u_trip: {location: [737, 648], orientation: N}
+  g1_gate:
+    gds: [dir::../../g1_gate/layout/g1_gate.gds]
+    lef: [dir::../../g1_gate/layout/g1_gate.lef]
+    vh:  [dir::../rtl/bb/g1_gate.vh]
+    instances:
+      i_core.u_gate: {location: [850, 862], orientation: N}
+  g1_osc:
+    gds: [dir::../../g1_osc/layout/g1_osc.gds]
+    lef: [dir::dryrun_lef/g1_osc.lef]     # dry-run companion view (Metal4/5 OBS inset), see dryrun_lef/inset_obs.py
+    vh:  [dir::../../g1_osc/layout/g1_osc.vh]
+    instances:
+      i_core.u_osc: {location: [366.5, 848], orientation: N}
+  g1_t2f:
+    gds: [dir::../../g1_t2f/layout/g1_t2f.gds]
+    lef: [dir::dryrun_lef/g1_t2f.lef]     # dry-run companion view (capacitor OBS start at y = 3), see dryrun_lef/
+    vh:  [dir::../../g1_t2f/layout/g1_t2f.vh]
+    instances:
+      i_core.u_t2f: {location: [546, 883], orientation: N}
+  g1_bgr:
+    gds: [dir::../../g1_bgr/layout/g1_bgr.gds]
+    lef: [dir::../../g1_bgr/layout/g1_bgr.lef]
+    vh:  [dir::../../g1_bgr/layout/g1_bgr.vh]
+    instances:
+      i_core.u_bgr: {location: [645, 862], orientation: N}
+  g1_ls_up:
+    gds: [dir::../../g1_ctrl/ls/layout/g1_ls_up.gds]
+    lef: [dir::../../g1_ctrl/ls/layout/g1_ls_up.lef]
+    vh:  [dir::../../g1_ctrl/ls/layout/g1_ls_up.vh]
+    instances:
+      i_core.u_ls_r4:   {location: [546, 860], orientation: N}
+      i_core.u_ls_mode: {location: [566, 860], orientation: N}
+      i_core.u_ls_en:   {location: [586, 860], orientation: N}
+
+# Row fragments narrower than 160 um between the macros are pruned
+# (cut_rows -row_min_width): the 6..30 um channels would otherwise keep
+# standard-cell row slivers that no PDN stripe crosses ("PDN-0179 Unable to
+# repair all channels"). The glue cells live in the wide south band.
+FP_PRUNE_THRESHOLD: 160
+
+# power pins of each macro -> chip nets (instance, VDD net, GND net, pin, pin).
+# The g1_ls_up shifters are absent on purpose: their Metal1 rails are routed
+# like signals (rtl/g1_core_dryrun.sv ties them to the supply ports).
+PDN_MACRO_CONNECTIONS:
+  - "i_core.u_digital VDD VSS VDD VSS"
+  - "i_core.u_osc VDD VSS VDD VSS"
+  - "i_core.u_trip VDD VSS VDD VSS"
+  - "i_core.u_trip VDDA VSS IOVDD VSS"
+  - "i_core.u_gate VDD VSS vdd vss"
+  - "i_core.u_gate VDDA VSS vdda vss"
+  - "i_core.u_t2f VDDA VSS vdd vss"
+  - "i_core.u_t2f VDD VSS vdd12 vss"
+  - "i_core.u_bgr VDDA VSS vdd vss"
+  - "i_core.u_sense VDDA VSS vdd vss"

@@ -1,0 +1,106 @@
+* G1_TRIP post-layout: soft DAC transfer through the macro (all 256 codes, op each), hard DAC at 26
+* codes, settling of vth_soft for a 0->255->0 code step (the 1 pF hold capacitor is inside the macro)
+.param VDD=1.2 VREF=1.04
+.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerMOSlv.lib @@MOS@@
+.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerMOShv.lib @@MOS@@
+.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerRES.lib @@RES@@
+.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerCAP.lib cap_typ
+.temp @@TEMP@@
+.option rshunt=1e12 gmin=1e-13
+.include postlayout/g1_trip_pex.spice
+Vdd vdd 0 dc {VDD}
+Vdda vdda 0 dc 3.3
+Vref vref 0 dc {VREF}
+Visense isense 0 dc 1.5
+Vclk cmp_clk 0 dc 0
+Vs0 s0 0 dc 0
+Vs1 s1 0 dc 0
+Vs2 s2 0 dc 0
+Vs3 s3 0 dc 0
+Vs4 s4 0 dc 0
+Vs5 s5 0 dc 0
+Vs6 s6 0 dc 0
+Vs7 s7 0 dc 0
+Vh0 h0 0 dc 0
+Vh1 h1 0 dc 0
+Vh2 h2 0 dc 0
+Vh3 h3 0 dc 0
+Vh4 h4 0 dc 0
+Vh5 h5 0 dc 0
+Vh6 h6 0 dc 0
+Vh7 h7 0 dc 0
+X1 isense vref cmp_clk s0 s1 s2 s3 s4 s5 s6 s7 h0 h1 h2 h3 h4 h5 h6 h7 cmp_soft cmp_hard vdd vdda 0 g1_trip
+.control
+set filetype=ascii
+let code = 0
+while code < 256
+  let b0 = floor(code/1) - 2*floor(code/2)
+  let b1 = floor(code/2) - 2*floor(code/4)
+  let b2 = floor(code/4) - 2*floor(code/8)
+  let b3 = floor(code/8) - 2*floor(code/16)
+  let b4 = floor(code/16) - 2*floor(code/32)
+  let b5 = floor(code/32) - 2*floor(code/64)
+  let b6 = floor(code/64) - 2*floor(code/128)
+  let b7 = floor(code/128) - 2*floor(code/256)
+  alter Vs0 dc = $&b0
+  alter Vs1 dc = $&b1
+  alter Vs2 dc = $&b2
+  alter Vs3 dc = $&b3
+  alter Vs4 dc = $&b4
+  alter Vs5 dc = $&b5
+  alter Vs6 dc = $&b6
+  alter Vs7 dc = $&b7
+  op
+  let vo = v(x1.vth_soft)
+  let ideal = 1.04*(255+code)/530
+  let err_lsb = (vo - ideal)/(1.04/530)
+  let iref = -i(vref)*1e6
+  echo "DACS code=" $&code " out=" $&vo " err_LSB=" $&err_lsb " iref_uA=" $&iref
+  let code = code + 1
+end
+foreach c 0 1 2 3 4 7 8 15 16 31 32 63 64 96 127 128 129 130 160 191 192 224 250 253 254 255
+  let code = $c
+  let b0 = floor(code/1) - 2*floor(code/2)
+  let b1 = floor(code/2) - 2*floor(code/4)
+  let b2 = floor(code/4) - 2*floor(code/8)
+  let b3 = floor(code/8) - 2*floor(code/16)
+  let b4 = floor(code/16) - 2*floor(code/32)
+  let b5 = floor(code/32) - 2*floor(code/64)
+  let b6 = floor(code/64) - 2*floor(code/128)
+  let b7 = floor(code/128) - 2*floor(code/256)
+  alter Vh0 dc = $&b0
+  alter Vh1 dc = $&b1
+  alter Vh2 dc = $&b2
+  alter Vh3 dc = $&b3
+  alter Vh4 dc = $&b4
+  alter Vh5 dc = $&b5
+  alter Vh6 dc = $&b6
+  alter Vh7 dc = $&b7
+  op
+  let vo = v(x1.vth_hard)
+  let ideal = 1.04*(255+code)/530
+  let err_lsb = (vo - ideal)/(1.04/530)
+  echo "DACH code=" $c " out=" $&vo " err_LSB=" $&err_lsb
+end
+* settling of the soft DAC: code 0 -> 255 -> 0 (all bits pulsed together)
+alter Vs0 pulse = [ 0 1.2 100n 0.2n 0.2n 2u 4u ]
+alter Vs1 pulse = [ 0 1.2 100n 0.2n 0.2n 2u 4u ]
+alter Vs2 pulse = [ 0 1.2 100n 0.2n 0.2n 2u 4u ]
+alter Vs3 pulse = [ 0 1.2 100n 0.2n 0.2n 2u 4u ]
+alter Vs4 pulse = [ 0 1.2 100n 0.2n 0.2n 2u 4u ]
+alter Vs5 pulse = [ 0 1.2 100n 0.2n 0.2n 2u 4u ]
+alter Vs6 pulse = [ 0 1.2 100n 0.2n 0.2n 2u 4u ]
+alter Vs7 pulse = [ 0 1.2 100n 0.2n 0.2n 2u 4u ]
+tran 1n 4.1u
+let vo = v(x1.vth_soft)
+meas tran vhi find vo at=2.09u
+meas tran vlo find vo at=4.05u
+let vh1 = vhi - 0.00196
+let vl1 = vlo + 0.00196
+meas tran tup when vo=vh1 rise=1 from=100n
+meas tran tdn when vo=vl1 fall=1 from=2.1u
+let tsu = (tup-100n)*1e9
+let tsd = (tdn-2.1u)*1e9
+echo "SETTLE 0->255 to 1LSB ns=" $&tsu " 255->0 ns=" $&tsd " vhi=" $&vhi " vlo=" $&vlo
+.endc
+.end

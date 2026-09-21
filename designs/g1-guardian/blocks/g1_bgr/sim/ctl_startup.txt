@@ -1,0 +1,15 @@
+.control
+set filetype=ascii
+set wr_singlescale
+set wr_vecnames
+option temp=@@TEMP@@
+alter @vdd[pwl] = [ 0 0 @@TRAMP@@ @@VDD@@ @@TEND@@ @@VDD@@ ]
+tran @@TSTEP@@ @@TEND@@ uic
+let iptat = i(vload)
+meas tran vref_end find v(vref) at=@@TEND@@
+meas tran iptat_end find iptat at=@@TEND@@
+meas tran pbias_end find v(pbias) at=@@TEND@@
+meas tran t_90 when v(vref)=0.93 rise=1
+meas tran vref_max max v(vref)
+wrdata @@OUT@@.dat v(vref) iptat v(pbias) v(vdd)
+.endc

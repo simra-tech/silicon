@@ -1,0 +1,124 @@
+** sch_path: /work/designs/g1-guardian/blocks/g1_gate/schematic/g1_gate.sch
+.subckt g1_gate trip_d clr_d fast_en hard_cmp en_core gate_core fault_core tripped vdd vdda vss
+*.ipin trip_d
+*.ipin clr_d
+*.ipin fast_en
+*.ipin hard_cmp
+*.ipin en_core
+*.opin gate_core
+*.opin fault_core
+*.opin tripped
+*.iopin vdd
+*.iopin vdda
+*.iopin vss
+XNA hard_cmp fast_en fast_n vdd vss g1_lv_nand2
+XIA fast_n fast vdd vss g1_lv_inv
+XU0 fast fast_h vdd vdda vss g1_lvlup
+XU1 trip_d trip_h vdd vdda vss g1_lvlup
+XU2 clr_d clr_h vdd vdda vss g1_lvlup
+XU3 en_core en_h vdd vdda vss g1_lvlup
+XN1 fast_h trip_h set_n vdda vss g1_hv_nor2
+XI1 set_n set vdda vss g1_hv_inv
+XI2 en_h en_hn vdda vss g1_hv_inv
+XN2 en_hn clr_h rst_n vdda vss g1_hv_nor2
+XI3 rst_n rst vdda vss g1_hv_inv
+XL1 rst qb q vdda vss g1_hv_nor2
+XL2 set q qb vdda vss g1_hv_nor2
+XG en_hn q gate_h vdda vss g1_hv_nor2
+XGI gate_h gate_hn vdda vss g1_hv_inv
+XD1 gate_h gate_hn gate_core vdd vss g1_lvldn
+XD2 qb q fault_core vdd vss g1_lvldn
+XD3 q qb tripped vdd vss g1_lvldn
+.ends
+
+* expanding   symbol:  g1_lv_nand2.sym # of pins=5
+** sym_path: /work/designs/g1-guardian/blocks/g1_gate/schematic/g1_lv_nand2.sym
+** sch_path: /work/designs/g1-guardian/blocks/g1_gate/schematic/g1_lv_nand2.sch
+.subckt g1_lv_nand2 a b y vdd vss
+*.ipin a
+*.ipin b
+*.opin y
+*.iopin vdd
+*.iopin vss
+XMP1 y a vdd vdd sg13_lv_pmos w=2u l=0.13u ng=1 m=1 mm_ok=1
+XMP2 y b vdd vdd sg13_lv_pmos w=2u l=0.13u ng=1 m=1 mm_ok=1
+XMN1 y a m vss sg13_lv_nmos w=2u l=0.13u ng=1 m=1 mm_ok=1
+XMN2 m b vss vss sg13_lv_nmos w=2u l=0.13u ng=1 m=1 mm_ok=1
+.ends
+
+
+* expanding   symbol:  g1_lv_inv.sym # of pins=4
+** sym_path: /work/designs/g1-guardian/blocks/g1_gate/schematic/g1_lv_inv.sym
+** sch_path: /work/designs/g1-guardian/blocks/g1_gate/schematic/g1_lv_inv.sch
+.subckt g1_lv_inv a y vdd vss
+*.ipin a
+*.opin y
+*.iopin vdd
+*.iopin vss
+XMP y a vdd vdd sg13_lv_pmos w=2u l=0.13u ng=1 m=1 mm_ok=1
+XMN y a vss vss sg13_lv_nmos w=1u l=0.13u ng=1 m=1 mm_ok=1
+.ends
+
+
+* expanding   symbol:  g1_lvlup.sym # of pins=5
+** sym_path: /work/designs/g1-guardian/blocks/g1_gate/schematic/g1_lvlup.sym
+** sch_path: /work/designs/g1-guardian/blocks/g1_gate/schematic/g1_lvlup.sch
+.subckt g1_lvlup a y vdd vdda vss
+*.ipin a
+*.opin y
+*.iopin vdd
+*.iopin vdda
+*.iopin vss
+XI a ab vdd vss g1_lv_inv
+XMN1 nb a vss vss sg13_hv_nmos w=1.9u l=0.45u ng=1 m=1 mm_ok=1
+XMN2 n ab vss vss sg13_hv_nmos w=1.9u l=0.45u ng=1 m=1 mm_ok=1
+XMP1 nb n vdda vdda sg13_hv_pmos w=0.3u l=0.45u ng=1 m=1 mm_ok=1
+XMP2 n nb vdda vdda sg13_hv_pmos w=0.3u l=0.45u ng=1 m=1 mm_ok=1
+XO nb y vdda vss g1_hv_inv
+.ends
+
+
+* expanding   symbol:  g1_hv_nor2.sym # of pins=5
+** sym_path: /work/designs/g1-guardian/blocks/g1_gate/schematic/g1_hv_nor2.sym
+** sch_path: /work/designs/g1-guardian/blocks/g1_gate/schematic/g1_hv_nor2.sch
+.subckt g1_hv_nor2 a b y vdda vss
+*.ipin a
+*.ipin b
+*.opin y
+*.iopin vdda
+*.iopin vss
+XMP1 m a vdda vdda sg13_hv_pmos w=7.8u l=0.45u ng=1 m=1 mm_ok=1
+XMP2 y b m vdda sg13_hv_pmos w=7.8u l=0.45u ng=1 m=1 mm_ok=1
+XMN1 y a vss vss sg13_hv_nmos w=1.9u l=0.45u ng=1 m=1 mm_ok=1
+XMN2 y b vss vss sg13_hv_nmos w=1.9u l=0.45u ng=1 m=1 mm_ok=1
+.ends
+
+
+* expanding   symbol:  g1_hv_inv.sym # of pins=4
+** sym_path: /work/designs/g1-guardian/blocks/g1_gate/schematic/g1_hv_inv.sym
+** sch_path: /work/designs/g1-guardian/blocks/g1_gate/schematic/g1_hv_inv.sch
+.subckt g1_hv_inv a y vdda vss
+*.ipin a
+*.opin y
+*.iopin vdda
+*.iopin vss
+XMP y a vdda vdda sg13_hv_pmos w=3.9u l=0.45u ng=1 m=1 mm_ok=1
+XMN y a vss vss sg13_hv_nmos w=1.9u l=0.45u ng=1 m=1 mm_ok=1
+.ends
+
+
+* expanding   symbol:  g1_lvldn.sym # of pins=5
+** sym_path: /work/designs/g1-guardian/blocks/g1_gate/schematic/g1_lvldn.sym
+** sch_path: /work/designs/g1-guardian/blocks/g1_gate/schematic/g1_lvldn.sch
+.subckt g1_lvldn a ab y vdd vss
+*.ipin a
+*.ipin ab
+*.opin y
+*.iopin vdd
+*.iopin vss
+XMN1 yb a vss vss sg13_hv_nmos w=2u l=0.45u ng=1 m=1 mm_ok=1
+XMN2 y ab vss vss sg13_hv_nmos w=2u l=0.45u ng=1 m=1 mm_ok=1
+XMP1 y yb vdd vdd sg13_lv_pmos w=1u l=0.13u ng=1 m=1 mm_ok=1
+XMP2 yb y vdd vdd sg13_lv_pmos w=1u l=0.13u ng=1 m=1 mm_ok=1
+.ends
+

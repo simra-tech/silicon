@@ -1,0 +1,177 @@
+*********************************************************
+*** NGSPICE file created by KLayout-PEX 0.3.12
+*** -----------------------------------------------------
+***     Extraction Engine: KPEX/2.5D
+***     Technology: ihp_sg13g2
+***     Date: 2026-09-19 12:52:56
+*********************************************************
+
+.SUBCKT g1_t2f a c1 c2 ca1 ca2 cap1 cap2 cb1 cb2 d1g d2g db do dr en fon fout
++ isrc lsa lsb mode moden nbias oa1 oa2 ob1 ob2 pbias pcasc q qn rn sn tail1
++ tail2 vcg vdd vdd12 vr vref vss vth
+M$1 vth moden vref vss sg13_hv_nmos L=0.5U W=4U AS=1.36P AD=0.76P PS=8.68U
++ PD=4.38U rfmode=0
+M$2 vr mode vth vss sg13_hv_nmos L=0.5U W=4U AS=0.76P AD=1.36P PS=4.38U
++ PD=8.68U rfmode=0
+R$3 vr \$2 vss 0.5 rppd l=24.5 ps=0 b=0 m=1
+R$4 vss \$11 vss 0.5 rppd l=24.5 ps=0 b=0 m=1
+R$5 \$4 \$2 vss 0.5 rppd l=24.5 ps=0 b=0 m=1
+R$6 \$4 \$5 vss 0.5 rppd l=24.5 ps=0 b=0 m=1
+R$7 \$6 \$7 vss 0.5 rppd l=24.5 ps=0 b=0 m=1
+R$8 \$8 \$7 vss 0.5 rppd l=24.5 ps=0 b=0 m=1
+R$9 \$8 \$9 vss 0.5 rppd l=24.5 ps=0 b=0 m=1
+R$10 \$10 \$9 vss 0.5 rppd l=24.5 ps=0 b=0 m=1
+R$11 \$10 \$11 vss 0.5 rppd l=24.5 ps=0 b=0 m=1
+R$12 \$6 \$5 vss 0.5 rppd l=24.5 ps=0 b=0 m=1
+M$13 cap1 d1g vss vss sg13_hv_nmos L=0.5U W=4U AS=1.36P AD=1.36P PS=8.68U
++ PD=8.68U rfmode=0
+M$14 cap2 d2g vss vss sg13_hv_nmos L=0.5U W=4U AS=1.36P AD=1.36P PS=8.68U
++ PD=8.68U rfmode=0
+M$15 fon lsb vdd12 vdd12 sg13_lv_pmos L=0.13U W=1U AS=0.34P AD=0.34P PS=2.68U
++ PD=2.68U rfmode=0
+M$16 fon lsb vss vss sg13_lv_nmos L=0.13U W=0.5U AS=0.17P AD=0.17P PS=1.68U
++ PD=1.68U rfmode=0
+M$17 fout fon vss vss sg13_lv_nmos L=0.13U W=1U AS=0.34P AD=0.34P PS=2.68U
++ PD=2.68U rfmode=0
+M$18 vdd12 lsb lsa vdd12 sg13_lv_pmos L=0.3U W=0.5U AS=0.17P AD=0.095P PS=1.68U
++ PD=0.88U rfmode=0
+M$19 lsb lsa vdd12 vdd12 sg13_lv_pmos L=0.3U W=0.5U AS=0.095P AD=0.17P PS=0.88U
++ PD=1.68U rfmode=0
+M$20 qn en vdd vdd sg13_hv_pmos L=0.5U W=2U AS=0.68P AD=0.38P PS=4.68U PD=2.38U
++ rfmode=0
+M$21 vdd q qn vdd sg13_hv_pmos L=0.5U W=2U AS=0.38P AD=0.38P PS=2.38U PD=2.38U
++ rfmode=0
+M$22 qn rn vdd vdd sg13_hv_pmos L=0.5U W=2U AS=0.38P AD=0.68P PS=2.38U PD=4.68U
++ rfmode=0
+M$23 \$I973 en vss vss sg13_hv_nmos L=0.5U W=3U AS=1.02P AD=0.57P PS=6.68U
++ PD=3.38U rfmode=0
+M$24 \$I974 q \$I973 vss sg13_hv_nmos L=0.5U W=3U AS=0.57P AD=0.57P PS=3.38U
++ PD=3.38U rfmode=0
+M$25 qn rn \$I974 vss sg13_hv_nmos L=0.5U W=3U AS=0.57P AD=1.02P PS=3.38U
++ PD=6.68U rfmode=0
+M$26 d2g en vdd vdd sg13_hv_pmos L=0.5U W=2U AS=0.68P AD=0.38P PS=4.68U
++ PD=2.38U rfmode=0
+M$27 vdd q d2g vdd sg13_hv_pmos L=0.5U W=2U AS=0.38P AD=0.68P PS=2.38U PD=4.68U
++ rfmode=0
+M$28 q qn vdd vdd sg13_hv_pmos L=0.5U W=2U AS=0.68P AD=0.38P PS=4.68U PD=2.38U
++ rfmode=0
+M$29 vdd sn q vdd sg13_hv_pmos L=0.5U W=2U AS=0.38P AD=0.68P PS=2.38U PD=4.68U
++ rfmode=0
+M$30 d1g en vdd vdd sg13_hv_pmos L=0.5U W=2U AS=0.68P AD=0.38P PS=4.68U
++ PD=2.38U rfmode=0
+M$31 vdd qn d1g vdd sg13_hv_pmos L=0.5U W=2U AS=0.38P AD=0.68P PS=2.38U
++ PD=4.68U rfmode=0
+M$32 cap2 d2g isrc vdd sg13_hv_pmos L=0.5U W=4U AS=1.36P AD=1.36P PS=8.68U
++ PD=8.68U rfmode=0
+M$33 rn c2 vdd vdd sg13_hv_pmos L=0.5U W=4U AS=1.36P AD=1.36P PS=8.68U PD=8.68U
++ rfmode=0
+M$34 sn c1 vdd vdd sg13_hv_pmos L=0.5U W=4U AS=1.36P AD=1.36P PS=8.68U PD=8.68U
++ rfmode=0
+M$35 cap1 d1g isrc vdd sg13_hv_pmos L=0.5U W=4U AS=1.36P AD=1.36P PS=8.68U
++ PD=8.68U rfmode=0
+M$36 tail1 nbias vss vss sg13_hv_nmos L=2U W=10U AS=3.4P AD=1.9P PS=20.68U
++ PD=10.38U rfmode=0
+M$37 vss nbias tail1 vss sg13_hv_nmos L=2U W=10U AS=1.9P AD=3.4P PS=10.38U
++ PD=20.68U rfmode=0
+M$38 tail2 nbias vss vss sg13_hv_nmos L=2U W=10U AS=3.4P AD=1.9P PS=20.68U
++ PD=10.38U rfmode=0
+M$39 vss nbias tail2 vss sg13_hv_nmos L=2U W=10U AS=1.9P AD=3.4P PS=10.38U
++ PD=20.68U rfmode=0
+Q$40 vss vss vss vss npn13G2 we=0.07 le=0.9 Nx=1 m=1
+Q$41 vss vss vss vss npn13G2 we=0.07 le=0.9 Nx=1 m=1
+Q$42 ca1 vth tail1 vss npn13G2 we=0.07 le=0.9 Nx=1 m=1
+Q$43 cb2 cap2 tail2 vss npn13G2 we=0.07 le=0.9 Nx=1 m=1
+Q$44 ca2 vth tail2 vss npn13G2 we=0.07 le=0.9 Nx=1 m=1
+Q$45 cb1 cap1 tail1 vss npn13G2 we=0.07 le=0.9 Nx=1 m=1
+M$46 ob2 oa2 vdd vdd sg13_hv_pmos L=1U W=4U AS=1.36P AD=1.36P PS=8.68U PD=8.68U
++ rfmode=0
+M$47 oa2 oa2 vdd vdd sg13_hv_pmos L=1U W=4U AS=1.36P AD=1.36P PS=8.68U PD=8.68U
++ rfmode=0
+M$48 ob1 oa1 vdd vdd sg13_hv_pmos L=1U W=4U AS=1.36P AD=1.36P PS=8.68U PD=8.68U
++ rfmode=0
+M$49 oa1 oa1 vdd vdd sg13_hv_pmos L=1U W=4U AS=1.36P AD=1.36P PS=8.68U PD=8.68U
++ rfmode=0
+M$50 vss nbias ca1 vss sg13_hv_nmos L=2U W=0.5U AS=0.17P AD=0.17P PS=1.68U
++ PD=1.68U rfmode=0
+M$51 vss nbias ca2 vss sg13_hv_nmos L=2U W=0.5U AS=0.17P AD=0.17P PS=1.68U
++ PD=1.68U rfmode=0
+M$52 vss nbias cb2 vss sg13_hv_nmos L=2U W=0.5U AS=0.17P AD=0.17P PS=1.68U
++ PD=1.68U rfmode=0
+M$53 vss nbias cb1 vss sg13_hv_nmos L=2U W=0.5U AS=0.17P AD=0.17P PS=1.68U
++ PD=1.68U rfmode=0
+M$54 oa1 vcg ca1 vss sg13_hv_nmos L=1U W=2U AS=0.68P AD=0.38P PS=4.68U PD=2.38U
++ rfmode=0
+M$55 ca1 vcg oa1 vss sg13_hv_nmos L=1U W=2U AS=0.38P AD=0.68P PS=2.38U PD=4.68U
++ rfmode=0
+M$56 oa2 vcg ca2 vss sg13_hv_nmos L=1U W=2U AS=0.68P AD=0.38P PS=4.68U PD=2.38U
++ rfmode=0
+M$57 ca2 vcg oa2 vss sg13_hv_nmos L=1U W=2U AS=0.38P AD=0.68P PS=2.38U PD=4.68U
++ rfmode=0
+M$58 ob1 vcg cb1 vss sg13_hv_nmos L=1U W=2U AS=0.68P AD=0.38P PS=4.68U PD=2.38U
++ rfmode=0
+M$59 cb1 vcg ob1 vss sg13_hv_nmos L=1U W=2U AS=0.38P AD=0.68P PS=2.38U PD=4.68U
++ rfmode=0
+M$60 ob2 vcg cb2 vss sg13_hv_nmos L=1U W=2U AS=0.68P AD=0.38P PS=4.68U PD=2.38U
++ rfmode=0
+M$61 cb2 vcg ob2 vss sg13_hv_nmos L=1U W=2U AS=0.38P AD=0.68P PS=2.38U PD=4.68U
++ rfmode=0
+M$62 nbias nbias vss vss sg13_hv_nmos L=2U W=10U AS=3.4P AD=3.4P PS=20.68U
++ PD=20.68U rfmode=0
+M$63 sn c1 vss vss sg13_hv_nmos L=0.5U W=2U AS=0.68P AD=0.68P PS=4.68U PD=4.68U
++ rfmode=0
+M$64 rn c2 vss vss sg13_hv_nmos L=0.5U W=2U AS=0.68P AD=0.68P PS=4.68U PD=4.68U
++ rfmode=0
+M$65 moden mode vss vss sg13_hv_nmos L=0.5U W=1U AS=0.34P AD=0.34P PS=2.68U
++ PD=2.68U rfmode=0
+M$66 c1 ob1 vss vss sg13_hv_nmos L=0.5U W=1U AS=0.34P AD=0.34P PS=2.68U
++ PD=2.68U rfmode=0
+M$67 c2 ob2 vss vss sg13_hv_nmos L=0.5U W=1U AS=0.34P AD=0.34P PS=2.68U
++ PD=2.68U rfmode=0
+M$68 a d2g vss vss sg13_hv_nmos L=0.5U W=1U AS=0.34P AD=0.34P PS=2.68U PD=2.68U
++ rfmode=0
+M$69 \$I961 en vss vss sg13_hv_nmos L=0.5U W=2U AS=0.68P AD=0.38P PS=4.68U
++ PD=2.38U rfmode=0
+M$70 d1g qn \$I961 vss sg13_hv_nmos L=0.5U W=2U AS=0.38P AD=0.68P PS=2.38U
++ PD=4.68U rfmode=0
+M$71 vss a lsa vss sg13_hv_nmos L=0.5U W=2U AS=0.68P AD=0.38P PS=4.68U PD=2.38U
++ rfmode=0
+M$72 lsb d2g vss vss sg13_hv_nmos L=0.5U W=2U AS=0.38P AD=0.68P PS=2.38U
++ PD=4.68U rfmode=0
+M$73 \$I962 en vss vss sg13_hv_nmos L=0.5U W=2U AS=0.68P AD=0.38P PS=4.68U
++ PD=2.38U rfmode=0
+M$74 d2g q \$I962 vss sg13_hv_nmos L=0.5U W=2U AS=0.38P AD=0.68P PS=2.38U
++ PD=4.68U rfmode=0
+M$75 \$I960 qn vss vss sg13_hv_nmos L=0.5U W=2U AS=0.68P AD=0.38P PS=4.68U
++ PD=2.38U rfmode=0
+M$76 q sn \$I960 vss sg13_hv_nmos L=0.5U W=2U AS=0.38P AD=0.68P PS=2.38U
++ PD=4.68U rfmode=0
+M$77 c2 ob2 vdd vdd sg13_hv_pmos L=0.5U W=2U AS=0.68P AD=0.68P PS=4.68U
++ PD=4.68U rfmode=0
+M$78 a d2g vdd vdd sg13_hv_pmos L=0.5U W=2U AS=0.68P AD=0.68P PS=4.68U PD=4.68U
++ rfmode=0
+M$79 c1 ob1 vdd vdd sg13_hv_pmos L=0.5U W=2U AS=0.68P AD=0.68P PS=4.68U
++ PD=4.68U rfmode=0
+M$80 moden mode vdd vdd sg13_hv_pmos L=0.5U W=2U AS=0.68P AD=0.68P PS=4.68U
++ PD=4.68U rfmode=0
+M$81 dr pbias vdd vdd sg13_hv_pmos L=4U W=10U AS=3.4P AD=1.9P PS=20.68U
++ PD=10.38U rfmode=0
+M$82 vdd pbias dr vdd sg13_hv_pmos L=4U W=10U AS=1.9P AD=3.4P PS=10.38U
++ PD=20.68U rfmode=0
+M$83 dr pcasc vr dr sg13_hv_pmos L=4U W=10U AS=3.4P AD=1.9P PS=20.68U PD=10.38U
++ rfmode=0
+M$84 vr pcasc dr dr sg13_hv_pmos L=4U W=10U AS=1.9P AD=3.4P PS=10.38U PD=20.68U
++ rfmode=0
+M$85 vss vth vcg vcg sg13_hv_pmos L=2U W=2U AS=0.68P AD=0.68P PS=4.68U PD=4.68U
++ rfmode=0
+M$86 vcg pbias vdd vdd sg13_hv_pmos L=4U W=10U AS=3.4P AD=3.4P PS=20.68U
++ PD=20.68U rfmode=0
+M$87 nbias pcasc db db sg13_hv_pmos L=4U W=10U AS=3.4P AD=3.4P PS=20.68U
++ PD=20.68U rfmode=0
+M$88 db pbias vdd vdd sg13_hv_pmos L=4U W=10U AS=3.4P AD=3.4P PS=20.68U
++ PD=20.68U rfmode=0
+M$89 do pbias vdd vdd sg13_hv_pmos L=4U W=10U AS=3.4P AD=3.4P PS=20.68U
++ PD=20.68U rfmode=0
+M$90 isrc pcasc do do sg13_hv_pmos L=4U W=10U AS=3.4P AD=3.4P PS=20.68U
++ PD=20.68U rfmode=0
+M$91 fout fon vdd12 vdd12 sg13_lv_pmos L=0.13U W=2U AS=0.68P AD=0.68P PS=4.68U
++ PD=4.68U rfmode=0

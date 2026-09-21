@@ -1,0 +1,111 @@
+* ============================================================================
+* sg13g2-comparator -- DERIVED NETLIST.  DO NOT EDIT BY HAND.
+* ============================================================================
+*
+* Generated from the xschem sources in design/ by:
+*
+*     python3 design/netlist.py
+*
+* The schematics are the source of record:
+*
+*   design/comparator.sch              the design -- a single-tail StrongARM
+*                                      dynamic latch (spec/decision-records/
+*                                      0001-comparator-topology.md), plus the
+*                                      isolation inverters and NOR SR latch
+*                                      that make its outputs HELD between
+*                                      strobes as the interface contract
+*                                      requires
+*   design/comparator_dut.sch          contract wrapper: tail-bias reference
+*                                      on the `ibias` pin + the core
+*   design/comparator_dut_latch.sch    contract wrapper: the core with its
+*                                      tail-bias node tied to vdd
+*   design/comparator_dut_analog.sch   the LOOP-BROKEN reduced sub-model --
+*                                      an offset/noise LOWER BOUND, not the
+*                                      design's front end.  Read
+*                                      design/README.md before quoting any
+*                                      number measured against it.
+*
+* Interface contract: sim/dut/README.md.  Asserted at generation time by
+* design/netlist.py (against sim/harness/dut.py's own REQUIRED_SUBCKTS) and
+* again at load time by the harness.
+*
+* Parameters supplied by the harness, not by this file: dut_ib, dut_vcm,
+* vdd_val, vdd_nom, temp_c (sim/harness/runner.py compose_deck).  This file
+* deliberately contains no .include / .lib / .temp / .control / .endc / .end.
+* ============================================================================
+
+.subckt comparator vinp vinn clk vbias dout doutb vdd vss
+*.iopin vinp
+*.iopin vinn
+*.iopin clk
+*.iopin vbias
+*.iopin dout
+*.iopin doutb
+*.iopin vdd
+*.iopin vss
+XMT tmid vbias vss vss sg13_lv_nmos w=40u l=0.5u ng=1 m=1
+XMSW tail clk tmid vss sg13_lv_nmos w=40u l=0.13u ng=1 m=1
+XM1 np vinp tail vss sg13_lv_nmos w=12u l=0.34u ng=1 m=1
+XM2 nn vinn tail vss sg13_lv_nmos w=12u l=0.34u ng=1 m=1
+XM3 ln lp np vss sg13_lv_nmos w=3u l=0.13u ng=1 m=1
+XM4 lp ln nn vss sg13_lv_nmos w=3u l=0.13u ng=1 m=1
+XM5 ln lp vdd vdd sg13_lv_pmos w=3u l=0.13u ng=1 m=1
+XM6 lp ln vdd vdd sg13_lv_pmos w=3u l=0.13u ng=1 m=1
+XM7 ln clk vdd vdd sg13_lv_pmos w=6u l=0.13u ng=1 m=1
+XM8 lp clk vdd vdd sg13_lv_pmos w=6u l=0.13u ng=1 m=1
+XM9 np clk vdd vdd sg13_lv_pmos w=3u l=0.13u ng=1 m=1
+XM10 nn clk vdd vdd sg13_lv_pmos w=3u l=0.13u ng=1 m=1
+XMIAP lnb ln vdd vdd sg13_lv_pmos w=3u l=0.13u ng=1 m=1
+XMIAN lnb ln vss vss sg13_lv_nmos w=1.5u l=0.13u ng=1 m=1
+XMIBP lpb lp vdd vdd sg13_lv_pmos w=3u l=0.13u ng=1 m=1
+XMIBN lpb lp vss vss sg13_lv_nmos w=1.5u l=0.13u ng=1 m=1
+XMNAP1 na lnb vdd vdd sg13_lv_pmos w=4u l=0.13u ng=1 m=1
+XMNAP2 doutb dout na vdd sg13_lv_pmos w=4u l=0.13u ng=1 m=1
+XMNAN1 doutb lnb vss vss sg13_lv_nmos w=1.5u l=0.13u ng=1 m=1
+XMNAN2 doutb dout vss vss sg13_lv_nmos w=1.5u l=0.13u ng=1 m=1
+XMNBP1 nb lpb vdd vdd sg13_lv_pmos w=4u l=0.13u ng=1 m=1
+XMNBP2 dout doutb nb vdd sg13_lv_pmos w=4u l=0.13u ng=1 m=1
+XMNBN1 dout lpb vss vss sg13_lv_nmos w=1.5u l=0.13u ng=1 m=1
+XMNBN2 dout doutb vss vss sg13_lv_nmos w=1.5u l=0.13u ng=1 m=1
+.ends
+
+.subckt comparator_dut_analog vinp vinn ibias aop aon vdd vss
+*.iopin vinp
+*.iopin vinn
+*.iopin ibias
+*.iopin aop
+*.iopin aon
+*.iopin vdd
+*.iopin vss
+XMBA ibias ibias vss vss sg13_lv_nmos w=10u l=0.5u ng=1 m=1
+XMTA tmid ibias vss vss sg13_lv_nmos w=40u l=0.5u ng=1 m=1
+XMSWA tail vdd tmid vss sg13_lv_nmos w=40u l=0.13u ng=1 m=1
+XM1A aon vinp tail vss sg13_lv_nmos w=12u l=0.34u ng=1 m=1
+XM2A aop vinn tail vss sg13_lv_nmos w=12u l=0.34u ng=1 m=1
+XM5A aon aon vdd vdd sg13_lv_pmos w=3u l=0.13u ng=1 m=1
+XM6A aop aop vdd vdd sg13_lv_pmos w=3u l=0.13u ng=1 m=1
+.ends
+
+.subckt comparator_dut_latch inp inn clk dout doutb vdd vss
+*.iopin inp
+*.iopin inn
+*.iopin clk
+*.iopin dout
+*.iopin doutb
+*.iopin vdd
+*.iopin vss
+x1 inp inn clk vdd dout doutb vdd vss comparator
+.ends
+
+.subckt comparator_dut vinp vinn clk ibias dout doutb vdd vss
+*.iopin vinp
+*.iopin vinn
+*.iopin clk
+*.iopin ibias
+*.iopin dout
+*.iopin doutb
+*.iopin vdd
+*.iopin vss
+XMB ibias ibias vss vss sg13_lv_nmos w=10u l=0.5u ng=1 m=1
+x1 vinp vinn clk ibias dout doutb vdd vss comparator
+.ends
