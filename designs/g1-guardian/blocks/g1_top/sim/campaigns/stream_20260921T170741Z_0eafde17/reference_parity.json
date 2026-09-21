@@ -1,0 +1,66 @@
+{
+  "stream": "stream_20260921T170741Z_0eafde17",
+  "reference": "c_pex_beh_tt_27C_clockfix_threads1_t4_prefix_20260921T164131Z_193d8a45",
+  "criterion": "Compare streaming records with saved control-mode reference vectors.\n\nEight binary64 ULPs allow the reference's 16-significant-digit text rounding.\nNo interpolation is used: every compared time and value must match in row order.\nPartial-prefix parity never promotes a timed-out run to completed status.\n",
+  "tests": {
+    "columns": true,
+    "row_count": true,
+    "eight_ulp_values": true,
+    "columns_state": true,
+    "row_count_state": true,
+    "eight_ulp_values_state": true
+  },
+  "comparison": [
+    {
+      "reference": "results/waves/c_pex_beh_tt_27C_clockfix_threads1_t4_prefix_20260921T164131Z_193d8a45.txt",
+      "reference_sha256": "797799ea8dc03dbad51cdd486c2852e5c59bcf8665ce8b8a311bf9290473ca56",
+      "reference_rows": 1603,
+      "compared_rows": 1603,
+      "failed_values": 0,
+      "max_ulp_by_column": {
+        "time": 2.0,
+        "v(vref)": 0.0,
+        "v(isense)": 2.0,
+        "v(gate)": 2.0,
+        "v(vdd)": 2.0,
+        "v(vdda)": 1.0,
+        "v(osc_clk)": 4.0,
+        "v(cmp_clk)": 1.0
+      }
+    },
+    {
+      "reference": "results/waves/c_pex_beh_tt_27C_clockfix_threads1_t4_prefix_20260921T164131Z_193d8a45_state.txt",
+      "reference_sha256": "572bc09a70a6e89b9160ea9b599073479b41092244fe31dc178b56e8c4ee78c1",
+      "reference_rows": 1603,
+      "compared_rows": 1603,
+      "failed_values": 0,
+      "max_ulp_by_column": {
+        "time": 2.0,
+        "v(en_core)": 2.0,
+        "v(inrush_active)": 1.0,
+        "v(dig_trip)": 0.0,
+        "v(fast_en)": 0.0,
+        "v(soft0)": 1.0,
+        "v(soft1)": 0.0,
+        "v(soft2)": 0.0,
+        "v(soft3)": 1.0,
+        "v(soft4)": 1.0,
+        "v(soft5)": 0.0,
+        "v(soft6)": 0.0,
+        "v(soft7)": 1.0,
+        "v(hard0)": 0.0,
+        "v(hard1)": 1.0,
+        "v(hard2)": 1.0,
+        "v(hard3)": 1.0,
+        "v(hard4)": 1.0,
+        "v(hard5)": 1.0,
+        "v(hard6)": 1.0,
+        "v(hard7)": 1.0
+      }
+    }
+  ],
+  "parity": "passed",
+  "endpoint_completion": "passed",
+  "observation_sha256": "5a4c76e610a51db887874f3cec17c5435da74593cf44d6bc35a38aefee0e5f4b",
+  "scope": "Only the reference saved columns; other streamed signals lack a separate original vector reference. Circuit acceptance remains separate."
+}

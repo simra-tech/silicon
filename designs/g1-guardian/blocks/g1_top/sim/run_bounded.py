@@ -95,7 +95,12 @@ def run_bounded(command, log, manifest_path, timeout_s, cwd=None, env=None, meta
                     except subprocess.TimeoutExpired:
                         stop_group(signal.SIGKILL); proc.wait()
                     break
-                time.sleep(min(interval_s, max(.01, timeout_s - elapsed)))
+                # Wake as soon as the child exits: polling-only sleep rounds short
+                # simulation timings up by an entire reporting interval.
+                try:
+                    proc.wait(timeout=min(interval_s, max(.01, timeout_s - elapsed)))
+                except subprocess.TimeoutExpired:
+                    pass
     finally:
         if proc.poll() is None:
             stop_group(signal.SIGKILL); proc.wait()

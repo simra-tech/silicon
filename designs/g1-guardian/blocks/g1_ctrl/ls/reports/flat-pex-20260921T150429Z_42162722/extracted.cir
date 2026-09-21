@@ -1,0 +1,38 @@
+
+* cell g1_ls_up
+* pin in
+* pin out
+* pin vdd
+* pin vdda
+* pin vss
+.SUBCKT g1_ls_up 2 6 8 7 1
+* net 1 vss
+* net 2 in
+* net 6 out
+* net 7 vdda
+* net 8 vdd
+* device instance $1 r0 *1 1.005,2.4 sg13_lv_nmos
+M$1 4 2 1 1 sg13_lv_nmos L=0.13U W=1U AS=0.34P AD=0.34P PS=2.68U PD=2.68U
++ rfmode=0
+* device instance $2 r0 *1 6.265,3.8 sg13_hv_nmos
+M$2 3 4 1 1 sg13_hv_nmos L=0.45U W=3.8U AS=1.292P AD=1.292P PS=8.28U PD=8.28U
++ rfmode=0
+* device instance $3 r0 *1 4.865,3.8 sg13_hv_nmos
+M$3 5 2 1 1 sg13_hv_nmos L=0.45U W=3.8U AS=1.292P AD=1.292P PS=8.28U PD=8.28U
++ rfmode=0
+* device instance $4 r0 *1 7.665,2.85 sg13_hv_nmos
+M$4 6 5 1 1 sg13_hv_nmos L=0.45U W=1.9U AS=0.646P AD=0.646P PS=4.48U PD=4.48U
++ rfmode=0
+* device instance $5 r0 *1 1.005,8 sg13_lv_pmos
+M$5 4 2 8 8 sg13_lv_pmos L=0.13U W=2U AS=0.68P AD=0.68P PS=4.68U PD=4.68U
++ rfmode=0
+* device instance $6 r0 *1 7.665,8.95 sg13_hv_pmos
+M$6 6 5 7 7 sg13_hv_pmos L=0.45U W=3.9U AS=1.326P AD=1.326P PS=8.48U PD=8.48U
++ rfmode=0
+* device instance $7 r0 *1 6.265,7.15 sg13_hv_pmos
+M$7 3 5 7 7 sg13_hv_pmos L=0.45U W=0.3U AS=0.102P AD=0.102P PS=1.28U PD=1.28U
++ rfmode=0
+* device instance $8 r0 *1 4.865,7.15 sg13_hv_pmos
+M$8 5 3 7 7 sg13_hv_pmos L=0.45U W=0.3U AS=0.102P AD=0.102P PS=1.28U PD=1.28U
++ rfmode=0
+.ENDS g1_ls_up

@@ -1,0 +1,48 @@
+* G1_OSC testbench: frequency, duty cycle, supply current at one corner/temperature/supply/trim code
+* @@ fields are substituted by run_osc.sh (variants written to build/g1_osc/).
+.param VDD=1.32
+.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerMOSlv.lib mos_ff
+.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerRES.lib res_bcs
+.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerCAP.lib cap_bcs
+.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerDIO.lib dio_tt
+* (dio_tt: the antenna diode dantenna on vth, revision 5; the diode library has one corner set)
+.temp -40
+* rshunt: 1 TOhm from every node to ground; without it the operating point with the antenna diode
+* (revision 5) does not converge and the transient crawls (the rppd body node sub! is floating)
+.option rshunt=1e12
+.include osc.spice
+Vdd vdd 0 dc {VDD}
+Ven en 0 pulse(0 {VDD} 50n 1n 1n 100 200)
+Vt0 trim0 0 dc {VDD*0}
+Vt1 trim1 0 dc {VDD*0}
+Vt2 trim2 0 dc {VDD*0}
+Vt3 trim3 0 dc {VDD*1}
+X1 en trim0 trim1 trim2 trim3 osc_clk vdd 0 g1_osc
+Cload osc_clk 0 50f
+.control
+set num_threads=1
+set filetype=ascii
+set numdgt=15
+set wr_singlescale
+set wr_vecnames
+tran 0.2n 6.0u
+let vh = 0.5*1.32
+meas tran t1 when v(osc_clk)=vh rise=10
+meas tran t2 when v(osc_clk)=vh rise=20
+meas tran th1 when v(osc_clk)=vh fall=10
+let per = (t2-t1)/10
+let fmhz = 1e-6/per
+let duty = (th1-t1)/per*100
+let idd = -i(vdd)
+meas tran iavg avg idd from=2u to=3u
+let iua = iavg*1e6
+meas tran vamax max v(x1.va) from=2u to=3u
+meas tran vth find v(x1.vth) at=3u
+meas tran vthmin min v(x1.vth) from=2u to=3u
+echo "VTHMIN" $&vthmin
+echo "OSC f_MHz=" $&fmhz " duty_pct=" $&duty " idd_uA=" $&iua " va_peak=" $&vamax " vth=" $&vth
+print fmhz duty iua
+wrdata ff_bcs_bcs_1.32_-40_c8.dat v(osc_clk) i(vdd) v(x1.va) v(x1.vb)
+quit
+.endc
+.end

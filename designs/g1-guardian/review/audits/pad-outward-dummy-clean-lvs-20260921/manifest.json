@@ -1,0 +1,99 @@
+{
+  "candidate": "build/scratch/pad-outward-dummy-clean-20260921/g1_chip_top.gds",
+  "candidate_sha256": "2d895efbb0e1c35ed7c891d376b010e041005d731ecd6d5448d872adfe55c9ca",
+  "baseline_sha256": "38c1d6d13bbfee4ed0e3c01477742c3d2d28317d9215d9e5bd9a35551285ae59",
+  "stock_chip_cdl_sha256": "e5e149c903e4c5e937c3abd89db732af04a52c3ddfd2525798b987950b9c7077",
+  "intentional_reference_sha256": "7cb640547f03a664fa446ff278ffd5f523b1d3d4fa8664cad305b8f60932d8c0",
+  "intentional_reference_delta": {
+    "cell": "sg13g2_IOPadIn",
+    "added_device": "MP_G1_VDD_ANT vdd vdd vdd vdd sg13_hv_pmos m=1 w=4.65u l=450n ng=1",
+    "source": "Independent parallel all-VDD dummy design intent; no extracted netlist used as reference"
+  },
+  "pdk_commit": "84374023ee8b4b126bebbba67fcbada0a9c0ff0b",
+  "script_sha256": "ae2423a7bea5fec7c5638fc8e28b69ed54a08eddafe084fa72c7e4c86116e684",
+  "scope": "Non-production exact-candidate comparisons; no waived rules/devices",
+  "checks": [
+    {
+      "name": "input_pad_baseline",
+      "command": [
+        "python3",
+        "/foss/pdks/ihp-sg13g2/libs.tech/klayout/tech/lvs/run_lvs.py",
+        "--layout",
+        "/work/designs/g1-guardian/blocks/g1_padring/layout/g1_chip_top.gds",
+        "--netlist",
+        "/work/designs/g1-guardian/blocks/g1_padring/netlist/g1_chip_top.cdl",
+        "--topcell",
+        "sg13g2_IOPadIn",
+        "--run_mode",
+        "deep",
+        "--run_dir",
+        "/work/designs/g1-guardian/review/audits/pad-outward-dummy-clean-lvs-20260921/input_pad_baseline",
+        "--top_lvl_pins",
+        "--spice_comments"
+      ],
+      "exit_code": 0,
+      "timed_out": false,
+      "wall_seconds": 10.665230988000985,
+      "status": "failed"
+    },
+    {
+      "name": "input_pad_candidate_stock_reference",
+      "command": [
+        "python3",
+        "/foss/pdks/ihp-sg13g2/libs.tech/klayout/tech/lvs/run_lvs.py",
+        "--layout",
+        "/work/build/scratch/pad-outward-dummy-clean-20260921/g1_chip_top.gds",
+        "--netlist",
+        "/work/designs/g1-guardian/blocks/g1_padring/netlist/g1_chip_top.cdl",
+        "--topcell",
+        "sg13g2_IOPadIn",
+        "--run_mode",
+        "deep",
+        "--run_dir",
+        "/work/designs/g1-guardian/review/audits/pad-outward-dummy-clean-lvs-20260921/input_pad_candidate_stock_reference",
+        "--top_lvl_pins",
+        "--spice_comments"
+      ],
+      "exit_code": 0,
+      "timed_out": false,
+      "wall_seconds": 10.436258517001988,
+      "status": "failed"
+    },
+    {
+      "name": "input_pad_candidate_intentional_reference",
+      "command": [
+        "python3",
+        "/foss/pdks/ihp-sg13g2/libs.tech/klayout/tech/lvs/run_lvs.py",
+        "--layout",
+        "/work/build/scratch/pad-outward-dummy-clean-20260921/g1_chip_top.gds",
+        "--netlist",
+        "/work/build/scratch/pad-outward-dummy-clean-lvs-20260921/g1_chip_top_intentional_dummy.cdl",
+        "--topcell",
+        "sg13g2_IOPadIn",
+        "--run_mode",
+        "deep",
+        "--run_dir",
+        "/work/designs/g1-guardian/review/audits/pad-outward-dummy-clean-lvs-20260921/input_pad_candidate_intentional_reference",
+        "--top_lvl_pins",
+        "--spice_comments"
+      ],
+      "exit_code": 0,
+      "timed_out": false,
+      "wall_seconds": 10.58317760200589,
+      "status": "failed"
+    },
+    {
+      "name": "core_lvs",
+      "command": [
+        "bash",
+        "/work/designs/g1-guardian/blocks/g1_padring/flow/lvs/run_core_lvs.sh",
+        "/work/build/scratch/pad-outward-dummy-clean-lvs-20260921/candidate_run",
+        "/work/build/scratch/pad-outward-dummy-clean-lvs-20260921/core"
+      ],
+      "exit_code": 0,
+      "timed_out": false,
+      "wall_seconds": 1153.7929161750071,
+      "status": "passed"
+    }
+  ]
+}

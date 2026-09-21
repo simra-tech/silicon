@@ -16,9 +16,10 @@ HERE="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 BLOCK="designs/g1-guardian/blocks/g1_padring"
 TAG="${G1_RUN_TAG:-assembly-1350}"
 LL="librelane flow/config_dryrun.yaml --pdk ihp-sg13g2 --pdk-root /foss/pdks --manual-pdk --run-tag $TAG"
+flow_failed=0
 
 echo "[run_dryrun] 1/3 flow to OpenROAD.GeneratePDN"
-G1_WORKDIR="$BLOCK" "$HERE/run.sh" $LL --overwrite --to OpenROAD.GeneratePDN || true
+G1_WORKDIR="$BLOCK" "$HERE/run.sh" $LL --overwrite --to OpenROAD.GeneratePDN || flow_failed=1
 STEP=$(ls -d "$HERE/../$BLOCK/flow/runs/$TAG"/*-openroad-generatepdn | head -1)
 [ -f "$STEP/g1_chip_top.odb" ] || { echo "[run_dryrun] GeneratePDN produced no ODB, see $STEP"; exit 1; }
 STEP_REL="${STEP#$HERE/../}"
@@ -33,30 +34,10 @@ grep -h "analog_straps\|PSM-0040\|PSM-0069" "$STEP/analog_straps.log" | grep -v 
 # The step's recorded metric still holds pdngen's pre-strap count and would stop
 # the flow at Checker.PowerGridViolations; replace it with the post-strap count
 # (number of nets whose check_power_grid did not report PSM-0040).
-python3 - "$STEP" <<'PY'
-import json, re, sys
-step = sys.argv[1]
-log = open(step + "/analog_straps.log").read()
-nets = re.findall(r"check_power_grid -net (\w+)", log)
-ok = set(re.findall(r"All shapes on net (\w+) are connected", log))
-# VDDA: the only unconnected shapes allowed are the analog pad's own bond-side
-# 'pad' pin and its bondpad (joined inside the PDK cell, invisible to the check)
-unc = re.findall(r"Unconnected (?:shape on net (\w+) at \(([\d.]+)um|instance (\S+) at)", log)
-vdda_core = [u for u in unc if (u[0] == "VDDA" and float(u[1]) < 1000.0) or (u[2] and u[2].startswith("i_core"))]
-if "VDDA" in nets and "VDDA" not in ok and not vdda_core:
-    ok.add("VDDA"); print("[run_dryrun] VDDA: only the pad-side pin/bondpad shapes are unconnected (PDK-cell-internal join), counted as connected")
-st = json.load(open(step + "/state_out.json"))
-m = st["metrics"]
-for n in nets:
-    m["design__power_grid_violation__count__net:" + n] = 0 if n in ok else m.get("design__power_grid_violation__count__net:" + n, 1)
-m["design__power_grid_violation__count"] = sum(m["design__power_grid_violation__count__net:" + n] for n in nets)
-m["design__power_grid_violation__count__source"] = "flow/analog_straps.tcl check_power_grid after strapping"
-json.dump(st, open(step + "/state_out.json", "w"), indent=2)
-print("[run_dryrun] power grid violations after straps:", m["design__power_grid_violation__count"], "(nets:", ", ".join(nets) + ")")
-PY
+python3 "$HERE/update_pdn_metrics.py" "$STEP"
 
 echo "[run_dryrun] 3/3 flow from Odb.RemovePDNObstructions $*"
-G1_WORKDIR="$BLOCK" "$HERE/run.sh" $LL --from Odb.RemovePDNObstructions "$@" || true
+G1_WORKDIR="$BLOCK" "$HERE/run.sh" $LL --from Odb.RemovePDNObstructions "$@" || flow_failed=1
 
 # ---- evidence: netlists of record ------------------------------------------
 # Verilog (powered and plain) netlists from the flow, plus the chip CDL assembled
@@ -79,5 +60,6 @@ if [ -f "$RUN/final/pnl/g1_chip_top.pnl.v" ]; then
     --macro g1_dose_macro=$M/g1_dose/schematic/g1_dose_macro.cdl --macro g1_dut_macro=$M/g1_dut/schematic/g1_dut_macro.cdl \
     --macro g1_ls_up=$M/g1_ctrl/ls/sim/netlist/g1_ls_up.cdl \
     --digital $M/g1_ctrl/layout/g1_digital.pnl.v \
-    && echo "[run_dryrun] chip CDL assembled: $BLOCK/netlist/g1_chip_top.cdl"
+    && echo "[run_dryrun] chip CDL assembled: $BLOCK/netlist/g1_chip_top.cdl" || flow_failed=1
 fi
+exit "$flow_failed"

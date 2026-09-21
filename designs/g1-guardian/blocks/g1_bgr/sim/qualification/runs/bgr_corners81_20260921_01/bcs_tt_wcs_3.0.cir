@@ -1,0 +1,25 @@
+* G1_BGR standalone capacitance-PEX qualification
+.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerHBT.lib hbt_bcs
+.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerMOShv.lib mos_tt
+.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerRES.lib res_wcs
+.include pex_nominal.spice
+.option seed=42001 gmin=1e-15 abstol=1e-14 reltol=1e-5 vntol=1e-7
+.global sub!
+Vsub sub! 0 0
+Vdd vdd 0 3.0
+Vr4 r4 0 0
+Xbgr vdd 0 r4 vref iptat pbias pcasc vbe dvbe g1_bgr
+Vload iptat 0 1
+Cload vref 0 1p
+.control
+set numdgt=15
+set wr_singlescale
+set wr_vecnames
+op
+print @n.xbgr.xm34.nsg13_hv_nmos[delvto] @n.xbgr.xr16.nr1[nsmm_rsh] @q.xbgr.xq56.qnpn13g2[area]
+dc temp -40 125 5
+print @n.xbgr.xm34.nsg13_hv_nmos[delvto] @n.xbgr.xr16.nr1[nsmm_rsh] @q.xbgr.xq56.qnpn13g2[area]
+wrdata bcs_tt_wcs_3.0.dat v(vref) i(vload) i(vdd) v(vbe) v(dvbe) v(pbias) v(pcasc) v(xbgr.c2) v(xbgr.vbe3) v(xbgr.vd1) v(xbgr.vd2)
+quit
+.endc
+.end

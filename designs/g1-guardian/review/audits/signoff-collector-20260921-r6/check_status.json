@@ -1,0 +1,140 @@
+{
+  "checks": [
+    {
+      "name": "retained_hard_drc",
+      "status": "passed",
+      "markers": 0,
+      "evidence": "retained/drc.klayout.json",
+      "scope": "Retained original run; not a new final-GDS check"
+    },
+    {
+      "name": "retained_density",
+      "status": "passed",
+      "markers": 0,
+      "evidence": "retained/density.klayout.json",
+      "scope": "Retained original run; not a new final-GDS check"
+    },
+    {
+      "name": "retained_antenna",
+      "status": "failed",
+      "markers": 9,
+      "evidence": "retained/antenna.klayout.json",
+      "scope": "Retained original run; not a new final-GDS check"
+    },
+    {
+      "name": "retained_streamout_xor",
+      "status": "failed",
+      "differences": 30632,
+      "scope": "Retained original pre-fill streamout"
+    },
+    {
+      "name": "retained_routing",
+      "status": "passed",
+      "metric": "route__drc_errors",
+      "value": 0,
+      "scope": "Retained flow metric, narrower than full physical signoff"
+    },
+    {
+      "name": "retained_sta",
+      "status": "passed",
+      "slacks_ns": {
+        "timing__setup__ws__corner:nom_fast_1p32V_m40C": 28.114496415589354,
+        "timing__hold__ws__corner:nom_fast_1p32V_m40C": 0.10601270161789475,
+        "timing__setup__ws__corner:nom_typ_1p20V_25C": 27.428286196408006,
+        "timing__hold__ws__corner:nom_typ_1p20V_25C": 0.18512450429928326,
+        "timing__setup__ws__corner:nom_slow_1p08V_125C": 25.971940000437428,
+        "timing__hold__ws__corner:nom_slow_1p08V_125C": 0.32614215029555804
+      },
+      "scope": "Retained three-corner setup/hold metrics; no new timing or CDC analysis"
+    },
+    {
+      "name": "retained_magic_drc",
+      "status": "failed",
+      "metric": "magic__drc_error__count",
+      "value": 675,
+      "scope": "Retained flow metric, narrower than full physical signoff"
+    },
+    {
+      "name": "retained_netgen_lvs",
+      "status": "failed",
+      "metric": "design__lvs_error__count",
+      "value": 42,
+      "scope": "Retained flow metric, narrower than full physical signoff"
+    },
+    {
+      "name": "retained_supply_grid",
+      "status": "failed",
+      "evidence": "retained/analog_straps.log",
+      "reason": "Raw post-strapping checker reports disconnected supply geometry",
+      "failed_nets": [
+        "VDDA"
+      ],
+      "aggregate_metric": 0,
+      "unconnected_shape_warnings": 6,
+      "scope": "OpenROAD abstract-view check; physical GDS connectivity requires separate evidence"
+    },
+    {
+      "name": "retained_critical_pins",
+      "status": "passed",
+      "metric": "design__critical_disconnected_pin__count",
+      "value": 0,
+      "scope": "Retained flow metric, narrower than full physical signoff"
+    },
+    {
+      "name": "hard_drc",
+      "status": "not run",
+      "reason": "Collection-only invocation; execution intentionally not requested"
+    },
+    {
+      "name": "recommended_drc",
+      "status": "not run",
+      "reason": "Collection-only invocation; execution intentionally not requested"
+    },
+    {
+      "name": "precheck_drc",
+      "status": "not run",
+      "reason": "Collection-only invocation; execution intentionally not requested"
+    },
+    {
+      "name": "density",
+      "status": "not run",
+      "reason": "Collection-only invocation; execution intentionally not requested"
+    },
+    {
+      "name": "density_precheck",
+      "status": "not run",
+      "reason": "Collection-only invocation; execution intentionally not requested"
+    },
+    {
+      "name": "antenna",
+      "status": "not run",
+      "reason": "Collection-only invocation; execution intentionally not requested"
+    },
+    {
+      "name": "pdn_net_overlap",
+      "status": "not run",
+      "reason": "Collection-only invocation; execution intentionally not requested"
+    },
+    {
+      "name": "pdn_macro_overlap",
+      "status": "not run",
+      "reason": "Collection-only invocation; execution intentionally not requested"
+    },
+    {
+      "name": "supply_isolation",
+      "status": "not run",
+      "reason": "Collection-only invocation; execution intentionally not requested"
+    },
+    {
+      "name": "core_lvs",
+      "status": "not run",
+      "reason": "Collection-only invocation; execution intentionally not requested"
+    },
+    {
+      "name": "full_io_lvs",
+      "status": "not run",
+      "reason": "Core-only comparison excludes IO. No qualified full-IO procedure is implemented; no waiver inferred."
+    }
+  ],
+  "overall": "incomplete or failed"
+}

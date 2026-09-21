@@ -1,0 +1,44 @@
+* Joint BGR/T2F and three extracted up-shifters: slowcold
+.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerHBT.lib hbt_wcs
+.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerMOShv.lib mos_ss
+.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerMOSlv.lib mos_ss
+.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerRES.lib res_wcs
+.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerCAP.lib cap_wcs
+.include bgr.spice
+.include t2f.spice
+.include ls.spice
+.option gmin=1e-15 abstol=1e-13 reltol=1e-4 vntol=1e-6 method=gear
+.temp -40
+.global sub!
+Vsub sub! 0 0
+Vdd vdd 0 3.0
+Vdd12 vdd12 0 1.08
+Ven en_in 0 pwl(0 0 1u 0 1.01u 1.08 12u 1.08 12.01u 0 18u 0 18.01u 1.08)
+Vmode mode_in 0 pwl(0 0 30u 0 30.01u 1.08 42u 1.08 42.01u 0)
+Vr4 r4_in 0 pwl(0 0 60u 0 60.01u 1.08 72u 1.08 72.01u 0)
+Xbgr vdd 0 r4 vref iptat pbias pcasc vbe dvbe g1_bgr
+Vload iptat 0 1
+Xt2f vdd vdd12 0 pbias pcasc vref en mode fout g1_t2f
+Cout fout 0 50f
+Xls_r4 r4_in r4_drv vdd12 vdd 0 g1_ls_up
+Rroute_r4 r4_drv r4 143.78799999999995
+Cnear_r4 r4_drv 0 1.2679046839999999e-14
+Cfar_r4 r4 0 1.2679046839999999e-14
+Xls_en en_in en_drv vdd12 vdd 0 g1_ls_up
+Rroute_en en_drv en 76.19939999999995
+Cnear_en en_drv 0 6.7937834399999975e-15
+Cfar_en en 0 6.7937834399999975e-15
+Xls_mode mode_in mode_drv vdd12 vdd 0 g1_ls_up
+Rroute_mode mode_drv mode 60.007799999999975
+Cnear_mode mode_drv 0 5.419814999999996e-15
+Cfar_mode mode 0 5.419814999999996e-15
+.control
+set num_threads=1
+set numdgt=15
+set wr_singlescale
+set wr_vecnames
+tran 5n 90u
+wrdata transitions.dat v(fout) v(vref) i(vdd) i(vdd12) v(en_in) v(en) v(mode_in) v(mode) v(r4_in) v(r4) v(xt2f.ca1) v(xt2f.tail1) v(xt2f.cb1) v(xt2f.ca2) v(xt2f.tail2) v(xt2f.cb2) v(xt2f.vth)
+quit
+.endc
+.end

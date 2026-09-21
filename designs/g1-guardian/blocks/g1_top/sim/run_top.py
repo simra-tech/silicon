@@ -198,6 +198,9 @@ def make_cases():
                   load=step_profile(1.0, 20), tstop=44, frames=[INRUSH0], expect='no trip', quiet=(32, 44))
     C['c'] = dict(desc='(c) fast step to 3x nominal (20 ns rise): hard trip through the digital path, HARD_N = 4',
                   load=step_profile(3.0, 20), tstop=36, frames=[INRUSH0], expect='hard trip')
+    C['c_mid'] = dict(desc='in-range hard trip: code 200 (~39.25mV), 1.8A/45mV fault in 20ns; HARD_N=4',
+                      load=step_profile(1.8, 20), tstop=42,
+                      frames=[INRUSH0, (0x03, 200)], expect='hard trip')
     C['c_fast'] = dict(desc='(c-fast) as (c) with MODE.FAST_EN = 1 written over the serial interface (0x0B = 0x23): analog fast path cmp_hard -> G1_GATE latch',
                        load=step_profile(3.0, 20), tstop=36, frames=[INRUSH0, (0x0B, 0x23)], expect='hard trip')
     C['e'] = dict(desc='(e) latch-up signature: step to 4x nominal with 100 ns rise: hard trip',
@@ -634,6 +637,8 @@ def build_deck(case, name, netlist, front, temp, corner, tag, tstop_override=Non
     waves = 'v(gate) v(gfet) v(tripped) v(isense) v(cmp_soft) v(cmp_hard) v(cmp_clk) v(trip_d) v(osc_clk) v(vref) v(en_core) v(shp) v(fault_n) v(vdda) v(vdd) v(iprof) %s %s %s v(dig_trip) v(inrush_active) i(vim) i(vma) i(vmi) i(v12)' % (icmp, vths, vthh)
     A('linearize ' + waves)
     A('wrdata %s %s' % (os.path.join(BUILD, 'waves_%s.txt' % tag), waves))
+    state_signals = 'v(en_core) v(inrush_active) v(dig_trip) v(fast_en) v(cause1) v(cause0) ' + ' '.join('v(%s%d)' % (p, i) for p in ('soft', 'hard') for i in range(8))
+    A('wrdata %s %s' % (os.path.join(BUILD, 'state_%s.txt' % tag), state_signals))
     A('.endc')
     A('.end')
     return '\n'.join(L) + '\n'
@@ -651,6 +656,11 @@ def diagnostic_deck(deck, analysis, tstop, tag):
         lines += [tran, 'let observed_end = time[length(time)-1]',
                   'echo DIAGNOSTIC_PREFIX_END_S $&observed_end',
                   'wrdata %s %s' % (os.path.join(BUILD, 'waves_%s.txt' % tag), signals)]
+        # Preserve configuration observables separately; the primary prefix
+        # schema stays compatible with prior diagnostic evidence.
+        state_signals = 'v(en_core) v(inrush_active) v(dig_trip) v(fast_en) ' + \
+                        ' '.join('v(%s%d)' % (p, i) for p in ('soft', 'hard') for i in range(8))
+        lines += ['wrdata %s %s' % (os.path.join(BUILD, 'state_%s.txt' % tag), state_signals)]
     lines += ['rusage all', '.endc', '.end']
     return before + '\n'.join(lines) + '\n'
 
@@ -710,6 +720,24 @@ def decimate(src, dst, every):
                 g.write(line)
 
 
+def checkpoint_deck(deck, times_us, stop_us, tag):
+    """Save observations in one live simulator process; these are not restart states."""
+    times = sorted(set(times_us))
+    if any(not math.isfinite(t) or not 0 < t < stop_us for t in times):
+        raise ValueError('checkpoint times must be finite, positive and before endpoint')
+    match = re.search(r'^tran .+$', deck, re.M)
+    if not match:
+        raise ValueError('checkpoints require transient analysis')
+    vectors = ' '.join('v(%s)' % n for n in
+        ['vref','isense','gate','gfet','gate_core','tripped','vdd','vdda','iovdd','osc_clk','cmp_clk','cmp_soft','cmp_hard','dig_trip','inrush_active','en_core','cause0','cause1'] +
+        ['soft%d' % i for i in range(8)] + ['hard%d' % i for i in range(8)])
+    vectors += ' i(vim) i(vma) i(vmi) i(v12)'
+    control = ['stop when time = %gu' % t for t in times] + [match[0]]
+    for t in times:
+        control += ['wrdata %s %s' % (os.path.join(BUILD,'checkpoint_%s_%gus.txt' % (tag,t)),vectors),'resume']
+    return deck[:match.start()] + '\n'.join(control) + deck[match.end():]
+
+
 def main():
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument('cases', nargs='*')
@@ -720,12 +748,21 @@ def main():
     ap.add_argument('--corner', default='tt', choices=tuple(CORNERS))
     ap.add_argument('--analysis', choices=('functional', 'prefix', 'op'), default='functional')
     ap.add_argument('--timeout', type=float, default=300, help='wall seconds per ngspice process (default 300)')
+    ap.add_argument('--threads', type=int, choices=(1, 2, 4, 8), default=None,
+                    help='explicit ngspice model-evaluation threads; unset retains simulator default')
+    ap.add_argument('--solver', choices=('sparse', 'klu'), default='sparse',
+                    help='linear solver qualification; default preserves SPARSE baseline')
     ap.add_argument('--image-id', default=None, help='EDA image content digest recorded by the launcher')
     ap.add_argument('--run-id', default=None, help='unique evidence suffix, auto generated if omitted')
     ap.add_argument('--tstop', type=float, default=None, help='override end time (us)')
     ap.add_argument('--inpads', default='ideal', choices=('ideal', 'model'), help='EN/SCLK/SDI input pads: ideal level copies (default) or the PDK sg13g2_IOPadIn models')
     ap.add_argument('--outpads', default=None, choices=('beh', 'model'), help='GATE/FAULT_N pads: behavioural drivers fitted to the g1_gate results (default for the transistor-level front end) or the PDK models (default for the behavioural front end and the power-up cases)')
     ap.add_argument('--method', default=None, choices=('gear', 'trap'), help='integration method (default: trap for the transistor-level front end, gear otherwise)')
+    ap.add_argument('--accuracy', choices=('baseline', 'tight'), default='baseline',
+                    help='tight comparator qualification: reltol1e-5, abstol1e-14, vntol1e-7; baseline remains unchanged')
+    ap.add_argument('--maxstep-ns', type=float, default=None, help='explicit transient maximum step in ns for numerical qualification')
+    ap.add_argument('--timeline',choices=('baseline','compact'),default='baseline',help='compact c_mid only: serial4us,fault16us,stop28us; SEU fill not qualified')
+    ap.add_argument('--checkpoint-us',type=float,nargs='+',default=[],help='save partial observations then resume within the same running simulator; not restart checkpoints')
     ap.add_argument('--dry', action='store_true')
     ap.add_argument('--tedge', type=float, default=None, help='edge time of EN/SCLK/SDI (s), default 2 ns')
     ap.add_argument('--list', action='store_true')
@@ -733,12 +770,20 @@ def main():
     a = ap.parse_args()
     if a.timeout <= 0 or (a.tstop is not None and a.tstop <= 0):
         ap.error('timeout and tstop must be positive')
+    if a.maxstep_ns is not None and a.maxstep_ns <= 0:
+        ap.error('maxstep must be positive')
     if a.analysis == 'prefix' and a.tstop is None:
         ap.error('--analysis prefix requires --tstop US')
     if a.run_id and not re.fullmatch(r'[A-Za-z0-9_-]+', a.run_id):
         ap.error('--run-id must contain only letters, digits, underscore or hyphen')
     run_id = a.run_id or time.strftime('%Y%m%dT%H%M%SZ', time.gmtime()) + '_' + uuid.uuid4().hex[:8]
-    global TEDGE
+    global TEDGE, T_SER, T_STEP, CASES
+    if a.timeline == 'compact':
+        if a.cases != ['c_mid'] or a.analysis != 'functional':
+            ap.error('compact timeline supports c_mid functional only')
+        T_SER,T_STEP=4.0,16.0
+        CASES=make_cases()
+        CASES['c_mid']['tstop']=28
     if a.tedge:
         TEDGE = a.tedge
     if a.list:
@@ -753,11 +798,24 @@ def main():
     for name in a.cases:
         if name not in CASES:
             raise SystemExit('unknown case %s (use --list)' % name)
-        case = CASES[name]
+        case = dict(CASES[name])
+        if a.accuracy == 'tight':
+            case['tol'] = 'reltol=1e-5 abstol=1e-14 vntol=1e-7 chgtol=1e-14'
+        if a.maxstep_ns is not None:
+            case['tmax'] = a.maxstep_ns * 1e-9
         front = a.front or case.get('front', 'tl')
         osc = a.osc or case.get('osc', 'ideal')
         tag = '%s_%s_%s_%s_%gC' % (name, a.netlist, front, a.corner, a.temp) + ('_osctl' if osc == 'tl' and name != 'osc' else '') + ('_inpads' if a.inpads == 'model' else '') + ('_outpads' if a.outpads == 'model' and front == 'tl' else '') + ('_%s' % a.method if a.method else '')
         tag += '_clockfix'
+        if a.timeline != 'baseline':tag += '_compact'
+        if a.accuracy != 'baseline':
+            tag += '_' + a.accuracy
+        if a.maxstep_ns is not None:
+            tag += '_maxstep%gns' % a.maxstep_ns
+        if a.threads is not None:
+            tag += '_threads%d' % a.threads
+        if a.solver == 'klu':
+            tag += '_klu'
         if a.tstop:
             tag += '_t%g' % a.tstop
         tag += '_' + a.analysis + '_' + run_id
@@ -770,6 +828,13 @@ def main():
         deck = build_deck(case, name, a.netlist, front, a.temp, a.corner, tag, a.tstop, osc, inpads, outpads, method)
         if a.analysis != 'functional':
             deck = diagnostic_deck(deck, a.analysis, a.tstop, tag)
+        if a.checkpoint_us:
+            try:deck = checkpoint_deck(deck,a.checkpoint_us,a.tstop or case['tstop'],tag)
+            except ValueError as exc:ap.error(str(exc))
+        if a.threads is not None:
+            deck = deck.replace('.control\n', '.control\nset num_threads=%d\n' % a.threads, 1)
+        if a.solver == 'klu':
+            deck = deck.replace('.control\n', '.option klu\n.control\n', 1)
         deck_path = os.path.join(BUILD, tag + '.cir')
         with open(deck_path, 'w') as f:
             f.write(deck)
@@ -801,7 +866,10 @@ def main():
                 directory = os.path.dirname(os.path.join(BLOCKS, source))
                 inputs.update(os.path.join(directory, f) for f in os.listdir(directory) if f.endswith('.spice'))
             meta = dict(tag=tag, analysis=a.analysis, options=vars(a),
-                        effective=dict(front=front, osc=osc, inpads=inpads, outpads=outpads, method=method),
+                        effective=dict(front=front, osc=osc, inpads=inpads, outpads=outpads, method=method,
+                                       threads=a.threads, solver=a.solver),
+                        git_revision=subprocess.check_output(['git', '-c', 'safe.directory=' + ROOT,
+                                                              'rev-parse', 'HEAD'], cwd=ROOT, text=True).strip(),
                         ngspice_version=next((l.strip('* ') for l in v if 'ngspice-' in l), None),
                         iverilog_version=iv_version, image_id=a.image_id,
                         pdk_commit=open(PDK + '/COMMIT').read().strip() if os.path.exists(PDK + '/COMMIT') else None,
@@ -837,12 +905,27 @@ def main():
                 valid, detail = validate_prefix(out, os.path.join(BUILD, 'waves_%s.txt' % tag), a.tstop * 1e-6)
                 outcome['diagnostic_detail'] = detail
             outcome['diagnostic_acceptance'] = 'passed' if outcome['status'] == 'completed' and valid and not bad else ('not run to completion' if outcome['status'] in ('timeout', 'interrupted') else 'failed')
+        outcome['observation_checkpoints'] = []
+        for t in sorted(set(a.checkpoint_us)):
+            cp = os.path.join(BUILD,'checkpoint_%s_%gus.txt' % (tag,t))
+            item = dict(requested_s=t*1e-6,status='not run')
+            if os.path.exists(cp):
+                with open(cp) as f:
+                    header=f.readline().split();rows=[list(map(float,line.split())) for line in f if line.strip()]
+                valid=bool(rows) and abs(rows[-1][0]-t*1e-6)<1e-12 and all(len(row)==len(header) and all(map(math.isfinite,row)) for row in rows)
+                item.update(status='passed' if valid else 'failed',observed_s=rows[-1][0] if rows else None,sha256=sha256(cp),scope='partial saved observations, not functional acceptance or a restart state')
+                dst=os.path.join(HERE,'results','waves',os.path.basename(cp))
+                decimate(cp,dst,max(1,len(rows)//2000));item['review_copy']=os.path.relpath(dst,ROOT)
+            outcome['observation_checkpoints'].append(item)
         atomic_json(os.path.join(HERE, 'logs', tag + '.json'), outcome)
         waves = os.path.join(BUILD, 'waves_%s.txt' % tag)
         if os.path.exists(waves):
             n = sum(1 for _ in open(waves)) - 1
             every = a.decimate or max(1, n // 2000)
             decimate(waves, os.path.join(HERE, 'results', 'waves', tag + '.txt'), every)
+        state_wave = os.path.join(BUILD, 'state_%s.txt' % tag)
+        if os.path.exists(state_wave):
+            decimate(state_wave, os.path.join(HERE, 'results', 'waves', tag + '_state.txt'), every)
         with open(os.path.join(HERE, 'results_top.txt'), 'a') as f:
             f.write('== %s | %s; analysis=%s | wall %.0f s, ngspice exit %s\n' % (tag, case['desc'], a.analysis, dt, returncode))
             for l in lines + err[:3]:

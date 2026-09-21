@@ -1,0 +1,24 @@
+* BGR local stability diagnostic
+.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerHBT.lib hbt_typ
+.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerMOShv.lib mos_tt
+.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerRES.lib res_typ
+.include pz_typ_tt_typ_3.3_27.spice
+.option gmin=1e-15 abstol=1e-14 reltol=1e-5 vntol=1e-7
+.temp 27
+.global sub!
+Vsub sub! 0 0
+Vdd vdd 0 3.3
+Vr4 r4 0 0
+Xbgr vdd 0 r4 vref iptat pbias pcasc vbe dvbe g1_bgr
+Vload iptat 0 1
+Cload vref 0 1p
+.control
+set num_threads=1
+set numdgt=15
+op
+print v(vref) v(pbias) v(pcasc)
+pz vref 0 vref 0 cur pol
+print all
+quit
+.endc
+.end

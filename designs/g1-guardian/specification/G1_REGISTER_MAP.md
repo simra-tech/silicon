@@ -9,9 +9,9 @@ The analog side of the same contract is `blocks/g1_trip/INTERFACE.md` (breaker
 path) and `blocks/g1_t2f/INTERFACE.md` (sensor control bits).
 
 All time windows are expressed in cycles of the internal oscillator `osc_clk`
-(`G1_OSC`), nominally 10 MHz. The oscillator is uncalibrated: **every time
-given in microseconds below is nominal ±20 %**. The host can measure the
-actual frequency through `OSC_CNT` (section 4.6) and correct its settings.
+(`G1_OSC`), nominally 10 MHz. The oscillator is uncalibrated: **times below assume 10 MHz; an assumed 8–12 MHz range makes time
++25%/−16.7% relative to nominal**. The host can measure the
+actual frequency through `OSC_CNT` (section 4.5) and correct its settings.
 
 ## 1. Three-wire serial interface
 
@@ -212,8 +212,8 @@ while the soft path is disabled.
 
 | Addr | Name | Access | Reset | Description |
 | --- | --- | --- | --- | --- |
-| 0x18 | `SEU_CTRL` | RW | 0x01 | bit 0 `SCRUB_EN`: compare and count (the registers shift regardless). Bits 2:1 `PATTERN`: 0 = checkerboard (alternating 0/1, 0x55 stream, every flop toggles each clock: dynamic test), 1 = all zeros, 2 = all ones (flops hold static data while clocked: static test), 3 = checkerboard. Bits 7:3 reserved. Enabling or changing `PATTERN` restarts the 1024-shift fill. |
-| 0x19 | `SEU_CMD` | WO | — | self-clearing. Bit 0 `CLR_CNT`: zero the SEU counters and `SEU_RUN`. Bit 1 `INJ_PLAIN`: invert one bit entering the plain register (self-test; one `SEU_PLAIN` count 1024 clocks later). Bit 2 `INJ_TMR`: invert one bit entering copy A of the TMR register (one `SEU_CORR` count, no `SEU_UNC`). Others ignored. |
+| 0x18 | `SEU_CTRL` | RW | 0x01 | bit 0 `SCRUB_EN`: compare and count (the registers shift regardless). Bits 2:1 `PATTERN`: 0 = checkerboard (alternating 0/1, 0x55 stream, every flop toggles each clock: dynamic test), 1 = all zeros, 2 = all ones (flops hold static data while clocked: static test), 3 = checkerboard. Bits 7:3 reserved. Enabling or changing `PATTERN` restarts the 256-shift fill in the built configuration. |
+| 0x19 | `SEU_CMD` | WO | — | self-clearing. Bit 0 `CLR_CNT`: zero the SEU counters and `SEU_RUN`. Bit 1 `INJ_PLAIN`: invert one bit entering the plain register (self-test; one `SEU_PLAIN` count after propagation through the built 256-stage chain). Bit 2 `INJ_TMR`: invert one bit entering copy A of the TMR register (one `SEU_CORR` count, no `SEU_UNC`). Others ignored. |
 | 0x1A | `SEU_STATUS` | RO | — | bit 0 `ACTIVE`: comparing; bit 1 `FILLING`. Bits 7:2 reserved. |
 | 0x1B | `SEU_PLAIN_L` | RO | 0x00 | bit errors at the output of the plain register, 16-bit saturating (latches `_H`) |
 | 0x1C | `SEU_PLAIN_H` | RO | 0x00 | |
@@ -234,7 +234,7 @@ while the soft path is disabled.
 
 | Addr | Name | Access | Reset | Description |
 | --- | --- | --- | --- | --- |
-| 0x27 | `SENSE_OFS` | RW | 0x00 | sense-path offset trim, 8-bit two's complement (−128 to +127). Added to both DAC codes before they are driven, with saturation at 0 and 255; LSB = 0.196 mV shunt-referred, ±127 LSB = ±24.9 mV (sized from the G1_SENSE Monte Carlo, σ = 4.0 mV). Applied after the digital hysteresis on the soft code. The host determines it on the bench by finding the code at which the comparator toggles with the shunt shorted and writing its negative here. |
+| 0x27 | `SENSE_OFS` | RW | 0x00 | sense-path offset trim, 8-bit two's complement (−128 to +127). Added to both DAC codes before they are driven, with saturation at 0 and 255; LSB = 0.196 mV shunt-referred, the register spans −25.1 to +24.9 mV, but the usable DAC range is smaller near either endpoint (historical revision-A SENSE MC σ≈4 mV). Applied after the digital hysteresis on the soft code. Available correction is limited by each nominal threshold: at reset hard code 254 only +1 is usable without clipping. With a bracketed interior known-current crossing, use crossing code minus ideal code (positive crossing shift requires positive correction); see the top-level acceptance contract. Analog calibration qualification is incomplete. |
 | 0x28 | `OSC_CTRL` | RW | 0x18 | bits 3:0 `OSC_TRIM`: G1_OSC capacitor trim, 8 = nominal, higher = slower (~2.7 %/LSB, `blocks/g1_osc/README.md`). Bit 4 `OSC_EN`: 1 = oscillator runs. **Writing 0 stops the clock of the core itself**: the register file, timers and scrubber halt and the serial interface can no longer complete a write; the only recovery is an `EN` cycle or power-on, which restores the reset value. Provided for test only. Bits 7:5 reserved. |
 | 0x29 | `TEMP_CTRL` | RW | 0x01 | bit 0 `T2F_EN`: 1 = sensor oscillator runs, `TEMP_OUT` toggles. Bit 1 `T2F_MODE`: 0 = PTAT (f ∝ T), 1 = REF (f ≈ constant); the ratio of the two readings removes C, the threshold and the comparator delay. Bit 2 `BGR_R4`: 1 = bandgap HBT ratio test 1:4 (diagnostic; V<sub>REF</sub> and all thresholds fall by about 12 %, do not use while the breaker is armed). Bits 7:3 reserved. All three go to the 3.3 V domain through `g1_ls_up`. |
 | 0x2A | `DAC_SOFT_EFF` | RO | 0x99 | the code currently driven on `dac_soft[7:0]` (register − hysteresis + offset, saturated) |
@@ -332,7 +332,7 @@ under which every flop toggles each clock; a *static-data* test uses the
 all-0 or all-1 pattern, under which the flops are clocked but never change
 state. The patterns have period 1 or 2 and both register lengths are even, so
 the expected output bit at every clock is the bit being fed in; no delayed
-reference generator is needed. Comparison is enabled once 1024 clocks have
+reference generator is needed. Comparison is enabled once max(SEU_PLAIN_LEN, SEU_TMR_LEN) clocks (256 in this build) have
 refilled both registers after reset, enable or a pattern change.
 
 Per clock: plain output ≠ expected counts one `SEU_PLAIN` (and extends the

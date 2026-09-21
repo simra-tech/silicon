@@ -4,22 +4,23 @@
 
 G1 is a mixed-signal test chip on the IHP SG13G2 0.13 µm SiGe BiCMOS open PDK.
 It sits between a power rail and a commercial compute load and does four things:
-limits and cuts the load current on a latch-up signature while letting ordinary
+disconnects an external FET on a programmed overcurrent signature while letting ordinary
 load steps through; measures its own temperature with an HBT-based sensor;
-tracks accumulated ionizing dose with a transistor-leakage canary; and counts
+provides transistor-leakage coupons for dose characterization; and counts
 upsets in a scrubbed register. Telemetry and settings go over a three-wire
 serial interface.
 
 Design principles:
 
-- **HBTs where their physics matters:** the sense-amplifier input pair, the
-  bandgap and the temperature sensor use `npn13G2`, for offset, ideality and
-  wide-temperature behaviour. Digital and switching functions use CMOS.
+- **Device implementation:** the bandgap and temperature sensor use
+  `npn13G2`; the SENSE revision-B input pairs are thick-oxide PMOS.
+  Digital and switching functions use CMOS.
 - **Board-measurable:** every signal is DC or below 10 MHz. The die is packaged
   in QFN24 and measured in a socket. No RF pads.
-- **Two canaries, two mechanisms:** dose is observed through NMOS STI-edge
-  leakage (standard versus enclosed layout) and through HBT base current at
-  low V<sub>BE</sub>. They fail differently, which is the point.
+- **Device characterization:** the assembled NMOS coupons are standard LV
+  and HV PCells with shared gate; a separate HBT exposes base current.
+  No dose calibration or radiation qualification has been measured. The
+  experimental enclosed-layout device is absent from the assembled chip.
 - **Direct device access:** one HBT and the canary transistors are pinned out
   so the physics can be measured without the on-chip readout.
 - **Area:** 1.35 × 1.35 mm die including sealring and IO ring. The 1 × 1 mm allocation was withdrawn on 2026-09-18 because the IO cells need an external bondpad and sealring clearance (`PLAN.md` D10); 1.2 mm was withdrawn on 2026-09-19 when the laid-out macros exceeded its core window (D13).
@@ -33,8 +34,8 @@ Design principles:
 | `G1_GATE` | Drives an external low-side logic-level N-FET. On `TRIP`: gate low within the response target, then latched off or retriggered after a programmable hold. Enable input. | `sg13g2_IOPadOut30mA`, LV/HV level shift | out: `GATE`, `FAULT_N`; in: `EN` |
 | `G1_BGR` | First-order op-amp-less cascoded HBT bandgap in the 3.3 V domain, 1:8 emitter units. V<sub>REF</sub> nominal 1.04 V (simulated, untrimmed), TC 11 to 52 ppm/°C over −40 to 125 °C across corners; I<sub>PTAT</sub> 4.1 µA at 27 °C for the sensor and DACs; 1:4 ratio test mode. | `npn13G2`, thick-oxide MOS, `rppd`, `rhigh` | out: `VREF`, internal `IPTAT`, `VBE`, `dVBE` |
 | `G1_T2F` | HBTs at a 1:8 current ratio; ΔV<sub>BE</sub> converted to a PTAT current that charges a `cmim` relaxation oscillator against a V<sub>REF</sub>-derived threshold, so frequency is linear in T (`PLAN.md` D2); register-selectable reference mode runs the same oscillator from V<sub>REF</sub>/R so the ratio cancels C and thresholds. About 1.6 MHz at 27 °C (simulated). | `npn13G2`, thick-oxide MOS, `rppd`, `cmim`, LV CMOS output | out: `TEMP_OUT`; mode bits from registers |
-| `G1_DOSE` | Two NMOS canaries with a shared gate and both drains pinned out: default a thin-oxide `sg13_lv_nmos` beside a thick-oxide `sg13_hv_nmos` (the dose-sensitive device on this process); alternative, gated on foundry acceptance of a bent gate, a drawn enclosed-layout NMOS in place of the HV device (`PLAN.md` D11). No on-chip readout in run 1. | `sg13_lv_nmos`, `sg13_hv_nmos`, optional drawn ELT | pins: `G_SHARED`, `D_STD`, `D_ELT` |
-| `G1_SEU` | Plain shift register and per-stage-voted TMR register (depth parameterised, 256 + 3 × 128 bits hardened on day 1, final depth fixed at floorplan per `PLAN.md` D12), continuously shifted and scrubbed against a selectable pattern (checkerboard, all-0, all-1; constant patterns give the static-data case); TMR-protected counters for plain errors, TMR corrected events and TMR uncorrectable errors. | LV CMOS standard cells | registers |
+| `G1_DOSE` | Two NMOS canaries with a shared gate and both drains pinned out: a thin-oxide `sg13_lv_nmos` beside a thick-oxide `sg13_hv_nmos`. `D_ELT` is a legacy pin name for the HV drain; experimental ELT geometry is excluded. No on-chip readout in run 1. | `sg13_lv_nmos`, `sg13_hv_nmos` | pins: `G_SHARED`, `D_STD`, `D_ELT` |
+| `G1_SEU` | Plain shift register and per-stage-voted TMR register (depth parameterised, 256 + 3 × 128 bits in the assembled macro), continuously shifted and scrubbed against a selectable pattern (checkerboard, all-0, all-1; constant patterns give the static-data case); TMR-protected counters for plain errors, TMR corrected events and TMR uncorrectable errors. | LV CMOS standard cells | registers |
 | `G1_CTRL` | Register file, three-wire serial (mode-0 SPI-like, 7-bit address + R/W bit, 8-bit data, 24-clock read frame), trip timers, scrub state machine, event counters; full map in `G1_REGISTER_MAP.md`. | LV CMOS standard cells | `SCLK`, `SDI`, `SDO` |
 | `G1_DUT` | One `npn13G2` HBT, all three terminals on analog pads, substrate to `VSS`. | `npn13G2` | `HBT_E`, `HBT_B`, `HBT_C` |
 
@@ -48,7 +49,7 @@ Design principles:
 | 4 | `IOVSS` | `sg13g2_IOPadIOVss` | 0 V | IO ground |
 | 5 | `VSS` | `sg13g2_IOPadVss` | 0 V | second ground pad |
 | 6 | `IOVSS` | `sg13g2_IOPadIOVss` | 0 V | second IO ground pad |
-| 7 | `VDDA` | `sg13g2_IOPadAnalog` (bare terminal) | 3.3 V | analog supply for the 3.3 V core blocks (bandgap, sensor, sense amplifier, comparator DACs, gate latch, oscillator); tied to the same 3.3 V rail as `IOVDD` on the board (`PLAN.md` D14) |
+| 7 | `VDDA` | `sg13g2_IOPadAnalog` (bare terminal) | 3.3 V | analog supply for the 3.3 V core blocks (bandgap, sensor, sense amplifier, comparator DACs, gate latch; G1_OSC uses 1.2 V VDD); tied to the same 3.3 V rail as `IOVDD` on the board (`PLAN.md` D14) |
 | 8 | `SENSE_P` | `sg13g2_IOPadAnalog` | analog | shunt Kelvin, positive |
 | 9 | `SENSE_N` | `sg13g2_IOPadAnalog` | analog | shunt Kelvin, negative |
 | 10 | `GATE` | `sg13g2_IOPadOut30mA` | 3.3 V | external N-FET gate |
@@ -62,7 +63,7 @@ Design principles:
 | 18 | `VREF` | `sg13g2_IOPadAnalog` | analog | bandgap output, for test |
 | 19 | `G_SHARED` | `sg13g2_IOPadAnalog` | analog | canary pair gate |
 | 20 | `D_STD` | `sg13g2_IOPadAnalog` | analog | standard NMOS drain |
-| 21 | `D_ELT` | `sg13g2_IOPadAnalog` | analog | second canary drain: thick-oxide NMOS by default, enclosed-layout NMOS if approved (D11) |
+| 21 | `D_ELT` | `sg13g2_IOPadAnalog` | analog | HV NMOS drain in the assembled chip; legacy pin name |
 | 22 | `HBT_E` | `sg13g2_IOPadAnalog` | analog | test HBT emitter |
 | 23 | `HBT_B` | `sg13g2_IOPadAnalog` | analog | test HBT base |
 | 24 | `HBT_C` | `sg13g2_IOPadAnalog` | analog | test HBT collector |
@@ -89,40 +90,111 @@ device currents in the nanoampere-to-microampere range for that reason.
 | Die | 1350 × 1350 µm incl. sealring | Specified | macro area budget, `PLAN.md` D13; QFN24 accepts up to 2 × 2 mm |
 | Package | QFN24, 4 × 4 mm, 0.5 mm pitch, 200 µm die | Specified | packaging offer |
 | Shunt sense range | 0 to 50 mV differential, low-side; `ISENSE` = 1.0 V pedestal + 20 × V<sub>shunt</sub>, i.e. 1.0 to 2.0 V | Specified | `blocks/g1_sense/README.md` (simulated gain 19.98 to 19.99, bandwidth 3.6 to 4.8 MHz) |
-| Trip response | < 10 µs from overcurrent to `GATE` low; simulated chain: sense settling ≤ 164 ns, comparator ≤ 1.3 ns, hard-path blanking N × 100 ns, gate fall into 5 nF 0.42 to 0.61 µs | Specified (schematic level) | `blocks/g1_trip`, `blocks/g1_gate` READMEs; post-layout not run |
+| Trip response | <10 µs from a persistent hard fault outside the guard band to `GATE` <1.0 V; only after arming and outside the inrush mask, for declared settings/clock/load | Specified target | `HARD_N` counts decisions every 2 oscillator cycles; default N=4. Corrected integrated PEX fault verification not run to completion; see acceptance contract below |
 | I²t window | 50 µs to 10 ms, programmable | Assumed | design target |
 | Hard threshold | 8-bit DAC code, 0.5 to 1.0 of the sense full scale (about 25 to 50 mV of shunt drop), programmable; nominal load current is mapped to 20 to 25 mV of the 50 mV range | Specified | `blocks/g1_trip/INTERFACE.md`; the earlier "1.5× to 8× nominal" was unreachable |
 | `TEMP_OUT` frequency | 1.59 MHz at 25 °C (simulated, PTAT mode), 5.2 kHz/°C; 1.2 to 2.4 MHz over −40 to 175 °C; ±15 % process spread before calibration | Specified (simulated) | `blocks/g1_t2f/README.md` |
 | Sensor accuracy | ±2 °C after two-point calibration, −40 to 125 °C; simulated post-layout residual −0.85 to +0.17 °C over −40 to 150 °C in PTAT mode (the frequency-ratio mode is less linear, +4.9 °C at 175 °C, and is a diagnostic, not the calibrated reading) | Specified (simulated) | `blocks/g1_t2f/README.md`; mismatch and package stress not simulated |
 | Characterisation range | 77 K to 175 °C | Assumed | package limits, not verified |
-| Sense-amp input offset | σ = 4.0 mV shunt-referred before trim (200-sample MC, simulated); trimmed digitally by an 8-bit signed code offset on both DAC codes, LSB 0.196 mV, range ±24.9 mV, residual ≤ 0.1 mV | Specified | `blocks/g1_sense/README.md` |
-| ELT NMOS extraction | recognised as `sg13_lv_nmos`, W 3.98 µm, L 0.50 µm (simulated LVS); DRC fails `Gat.f` | Specified | `blocks/g1_dose/README.md` |
-| Total power | < 10 mW | Unknown | to be simulated |
+| Sense-amp input offset | Residual <0.5 mV after calibration; revision-A simulated σ≈4 mV is historical, not revision-B qualification. Signed digital correction −128…127, ~0.196 mV/code; available range depends on threshold | Specified target | Code 254 permits only +1 step; see calibration contract. Joint calibrated rev-B MC not run to completion |
+| ELT NMOS | Experimental layout excluded from assembled chip | Not applicable to assembled chip | `blocks/g1_dose/README.md`; historical `Gat.f` failure retained |
+| Total power | <10 mW, sum of core, analog and IO rail input power, declared load/activity | Specified target | Full operating-state coverage not run |
+| BGR temperature coefficient | ≤50 ppm/°C over −40…125 °C | Specified target | Existing worst schematic corner exceeds target; failed subset retained |
+| SENSE gain / bandwidth | 20 ±0.1 / ≥2 MHz, common mode −0.1…+0.3 V | Specified target | Selected block results exist; complete corners and joint loaded PEX not run |
+| OSC trim reach | 10 MHz reachable by a code 0…15 at supported PVT | Specified target | Selected PEX results only; complete matrix not run |
 
 ## 5. Verification gates
 
-| Gate | Scope | Status |
+Status is scoped to the recorded subset; a passed subset does not pass its
+unrun extensions. Evidence index: `../review/G1_DESIGN_REVIEW.md`, block
+READMEs, and `../blocks/g1_top/sim/DIAGNOSTICS_20260921.md`. These are baseline
+facts, not claims that the closure campaigns have completed.
+
+| Gate | Scope | Status / remaining coverage |
 | --- | --- | --- |
-| Schematic simulation per block, nominal | all blocks | not run |
-| Corner and Monte Carlo | `G1_SENSE`, `G1_BGR`, `G1_T2F` | not run |
-| Temperature sweep −196 to 175 °C in the model | `G1_BGR`, `G1_T2F`, `G1_DUT` | not run |
-| RTL simulation | `G1_TRIP` timer, `G1_SEU`, `G1_CTRL` | not run |
-| AMS co-simulation of breaker path with load model | `G1_TOP` | not run |
-| DRC per block | all | not run |
-| LVS per block | all | not run |
-| PEX and post-layout simulation | `G1_SENSE`, `G1_TRIP`, `G1_T2F`, `G1_BGR` | not run |
-| Full-chip DRC incl. precheck rules | `G1_TOP` | not run |
-| Density and fill | `G1_TOP` | not run |
-| Antenna | `G1_TOP` | not run |
-| Full-chip LVS against final netlist | `G1_TOP` | not run |
+| Schematic simulation | Recorded nominal block cases | passed subsets; complete corner/load matrix not run |
+| Corner / mismatch | Historical block campaigns | passed subsets and failed BGR TC corner; qualified joint rev-B calibrated chain not run |
+| Temperature | Model-supported −40…125 °C | selected subsets passed; cold numerical failures retained; full joint PEX not run |
+| Beyond-range temperature | 150/175 °C and 77 K | selected exploratory data only; qualification not applicable with nominal model extrapolation |
+| RTL / functional GLS | Recorded built 256 + 3×128 configuration | passed; timed GLS / expanded CDC campaign not run |
+| Breaker co-simulation | Corrected-clock schematic cases | passed subsets; old clock-bridge timings invalid for acceptance |
+| Integrated PEX | OP, 1 µs, 4 µs prefixes | passed startup diagnostics; prior 10 µs watchdog not run to completion; configured fault acceptance not run |
+| Block DRC / LVS | Assembled macro versions | passed recorded checks; experimental ELT excluded |
+| Block PEX | Existing capacitance extraction and selected tests | passed subsets; full wire-R, fill coupling and statistical scaling not established |
+| Assembled hard DRC / precheck | 1350 µm final GDS | passed recorded checks |
+| Density | 1350 µm filled GDS | passed recorded checks |
+| Recommended pad rules | Final assembly | failed; unresolved |
+| Antenna | Final assembly | failed; unresolved |
+| Core-only LVS | 52 matched circuit pairs | passed; excludes full IO-ring verification |
+| IO-inclusive LVS | Final assembly | failed; unresolved |
+| Streamout comparison | Final views | failed; unresolved differences |
+| Power-order safety | IO first, core absent, EN low | failed schematic GATE-high case, including 10 kΩ pulldown; expanded PEX sequences not run |
+| Physical measurement / irradiation | No fabricated samples | not run |
 
-## 6. Settlement plan for unknowns
+## 6. Acceptance and calibration contract
 
-1. Run the HBT model over temperature and fix the ΔV<sub>BE</sub> ratio and
-   readout topology for `G1_T2F`. This decides the sensor's frequency range.
-2. Monte Carlo the `G1_SENSE` input pair; decide trim range and bits.
-3. Simulate the breaker path against a synthetic load-step library; fix the
-   default I²t profile and the hard-threshold range.
-4. Draw the ELT NMOS, run DRC, and write the extraction rule; confirm the
-   drawn geometry is acceptable for the shuttle (assumed, confirmation pending).
-5. Assemble the ring in LibreLane, place the macros, close DRC and density.
+The breaker disconnects an external switch; analog constant-current regulation
+is not implemented. The soft path accumulates time above threshold minus
+programmable decay, not a measurement of the integral of current squared.
+
+Use `G1_REGISTER_MAP.md` for timer units: hard decisions every 2/fOSC;
+soft accumulation every 1/fOSC; soft window = SOFT_TIME×256/fOSC;
+inrush = INRUSH×512/fOSC; hold = max(1,HOLD_TIME)×8192/fOSC.
+A ±20% frequency range does not imply ±20% time: an 8–12 MHz clock gives
++25%/−16.7% time relative to 10 MHz. Wider unverified PVT extrema remain open.
+The <10 µs target cannot apply to every programmable blanking/window value,
+to masked faults, or to a stopped clock with FAST_EN disabled.
+
+For closure screening, adopt ±10% total calibrated shunt-threshold error as an
+**engineering acceptance assumption**, as suggested by the existing trip
+interface. At a requested threshold T, stimuli ≤0.9T are the no-trip region,
+and persistent stimuli ≥1.1T are the trip region. The region between is a
+characterization band, not a promised exact decision. Evaluate soft and hard
+paths separately with the other path disabled; a persistent soft-band stimulus
+must trip only after its configured accumulation window. Characterize smaller
+±0.1/0.25/0.5/1 mV offsets separately without falsely labeling every decision
+inside this guard band a system failure.
+
+GATE-low means the first downward crossing of 1.0 V that remains below 1.0 V
+for the remainder of the observed tripped interval. Measure external drain
+current decay and let-through energy separately. The existing fixture is a
+5 nF gate with 10 Ω series resistance and a switched synthetic load. A selected
+real FET model, board/package impedance and declared bus/load are required
+before claiming real-load safety. The existing nominal shunt fixture is 25 mΩ at 1 A (25 mV); fault
+profiles reach 3 A or 4 A (75/100 mV, above the specified 50 mV input range;
+these are fault-stress fixtures, not in-range accuracy tests). The `c_mid`
+fixture programs hard code 200 and applies 1.8 A/45 mV, above its 10% trip
+guard band while remaining in-range. The behavioral current source has no declared
+load-bus voltage. Shunt tolerance
+and temperature coefficient are idealized unless explicitly swept. No physical
+shunt tolerance allocation has yet been verified.
+
+Keep EN low until both rails are stable, the analog bias is settled, and the
+required reset delay has elapsed. Existing evidence supports a selected
+core-first startup only. IO-first is failed. Simultaneous ramps, missing rails,
+brownout and shutdown are unqualified until their detailed pad-model tests
+complete; “core before or with IO” is not a general safety guarantee.
+
+For calibration, with automatic load arming externally inhibited, inject a
+known interior shunt voltage (nominally 25 mV), use zero SENSE_OFS and disable
+hysteresis. Sweep each threshold independently after settling and locate a
+bracketed crossing Ccross. Under the nominal mapping Cideal=Vin/LSB, the shared
+correction is **Ccross−Cideal**, rounded to a representable integer. A positive
+input-path offset needs a positive correction, because the RTL adds SENSE_OFS
+to the DAC code. The old instruction to negate a zero-input crossing had the
+wrong sign under this convention and cannot bracket negative offsets at code 0.
+The 25 mV fixture demonstrates policy arithmetic; analog calibration yield
+requires the joint loaded-chain simulations and measurements.
+
+A nominal threshold C can accept correction O only if 0≤C+O≤255. For the reset
+hard code 254 the positive allowance is +1 (~0.196 mV). A sample needing +20
+must use C≤235 (~46.1 mV), or be rejected for the intended threshold. Independent
+threshold programming may compensate comparator differences; it cannot extend
+the DAC range. One offset cannot independently correct gain, both comparators,
+and temperature drift. Freeze each sample's calibration at room temperature,
+then evaluate residual <0.5 mV and threshold error at temperature/common-mode
+and supply endpoints. Recalibration at each test point is not acceptance.
+
+For valid feedback-loop measurements, phase margin ≥60° and gain margin ≥10 dB
+are proposed screening limits. They do not replace a valid loop-injection model
+or establish stability from transient appearance alone.

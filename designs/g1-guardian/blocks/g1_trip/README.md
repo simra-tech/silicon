@@ -12,6 +12,20 @@ comparator layout was revised once for parasitic symmetry after the first extrac
 obstructions leave the supply-bar zones free for the chip PDN.** Interface to the digital macro:
 `INTERFACE.md`.
 
+The 2026-09-21 [loaded-chain qualification](sim/KICKBACK_QUALIFICATION_20260921.md) preserves two fine-step PEX timeouts, confirms a narrow near-threshold boundary shift, and tests isolated hold-capacitor/source candidates. Historical nominal claims above do not establish joint calibrated yield or accuracy across the adopted system bands.
+
+**Numerical qualification update:** default-tolerance comparator offset results, including the historical MC accuracy claim, need requalification before use in joint yield estimates. [The statistical qualification report](sim/STATISTICAL_QUALIFICATION_20260921.md) records architecture, step and tolerance comparisons, DAC pilot timeouts and the actual-BGR calibration probe.
+
+**Joint calibration update:** sample71001 needs independent soft/hard corrections
++18/+36; hard code254 clips to255 and fails the45mV no-trip guard at25/−40/125°C.
+The same frozen sample at nominal hard204 (40.030mV), corrected to240, passes all
+six in-range36.027/44.033mV guards across those temperatures. This is one simulated
+sample, not yield or adopted defaults. Hard-positive55mV-class anchors exceed the
+specified SENSE range and are diagnostics only. Three original300s timeouts are
+retained alongside exact-deck completed replays; the resumed joint campaign uses
+600s for new leaves with unchanged numerical settings. The statistical report
+tracks incomplete calibration, headroom candidates and qualified scope.
+
 ## What it is
 
 ```
@@ -19,6 +33,9 @@ isense_cmp = ISENSE / 2                       (g1_cond: 5+5 units of the G1_SENS
 V_DAC(code) = VREF × (255 + code) / 530        (g1_dac8: 0.5004 V .. 1.0008 V at VREF = 1.04 V, LSB 1.962 mV)
 cmp_x = 1  while isense_cmp > V_DAC(code_x)    i.e. shunt voltage > code_x × 0.1962 mV × (VREF / 1.04 V)
 ```
+
+These equations describe the nominal DC transfer; dynamic kickback and mismatch
+are assessed separately in the loaded-chain qualification.
 
 Two identical StrongARM comparators (`g1_cmp`) share `isense_cmp`; the soft one is strobed on the
 rising edge of `cmp_clk`, the hard one on the falling edge (inverter inside `g1_trip`). Each has an
@@ -450,14 +467,16 @@ stays well inside the 1 µs the digital macro waits after a code change (`INTERF
 - Comparator noise (no transient-noise run) and metastability rate.
 - Comparator offset MC at other common modes than 0.75 V and at temperature. The systematic
   post-layout offset was only bracketed by the two 1 mV decisions (between −2.0 and +0.2 mV at tt)
-  and by the cell-level parasitic symmetry (0.2 %); it was not swept finely, and the residual
-  asymmetry of the input wiring outside the cell (`icmp` on Metal3 from the divider, `vth` from the
-  DAC output through the hold capacitor tab) was not separated from it. No post-layout Monte Carlo.
+  and by cell-level parasitic symmetry (0.2%) in the historical campaign. New standalone
+  cell-PEX sweeps and two statistical samples characterize an ambiguous decision interval,
+  with a remaining trap/Gear envelope. Full macro-PEX MC and separation of routing
+  asymmetry from cell offset remain incomplete; see the statistical qualification report.
 - DAC linearity through the switch tree with mismatch (only the string was Monte-Carlo'd; the
   switches carry no DC current so they add no static error beyond leakage, which was simulated at
   the corners); the post-layout 256-code sweep uses typical models without mismatch.
-- Kickback after layout with the real G1_SENSE source (only the schematic deck `tb_kickback.cir`
-  was run); the post-layout comparator run includes the extracted hold nodes and the DAC tree.
+- Complete kickback PVT/phase/ramp coverage after layout with the real G1_SENSE source.
+  Nominal loaded PEX anchors now exist, but fine long runs timed out and tightly solved
+  PEX system-band coverage remains incomplete; see the loaded-chain qualification.
 - Wiring resistance: kpex 0.3.12 RC mode is not usable (devices left off the resistor trees, see
   the G1_BGR README), so the post-layout netlist has capacitances only. Hand estimate from the PDK
   LEF values (Metal1 0.135 Ω/sq, Metal2–5 0.103 Ω/sq, contacts/vias 20–22 Ω per cut): a DAC tap

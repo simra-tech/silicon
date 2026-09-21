@@ -447,3 +447,7 @@ generator; `Gat.f` remains.
   fallback of PLAN section 7 frees pins, a second pair in `sg13_hv_nmos`
   (3.3 V thick oxide, by far the more dose-sensitive device) is preferred
   over an ELT PMOS, which shows no STI leakage.
+
+## 2026-09-21 macro C-PEX characterization
+
+Flat macro LVS and polygon identity passed; bounded C-PEX electrical characterization and detailed evidence are in the design review [macro PEX report](../../review/MACRO_PEX_20260921.md). The report distinguishes model characterization from acceptance and lists remaining checks.
