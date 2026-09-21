@@ -221,3 +221,7 @@ a plain p+ tie that connects `pwell` to `VSS`.
 - Inverse-mode Gummel (E and C swapped), planned as a dose observable, is not
   simulated; the bench plan covers it.
 - PEX and post-layout simulation: not run.
+
+## 2026-09-21 macro C-PEX characterization
+
+Flat macro LVS and polygon identity passed; bounded C-PEX electrical characterization and detailed evidence are in the design review [macro PEX report](../../review/MACRO_PEX_20260921.md). The report distinguishes model characterization from acceptance and lists remaining checks.

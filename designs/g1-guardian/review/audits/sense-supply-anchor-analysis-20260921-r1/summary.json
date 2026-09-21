@@ -1,0 +1,714 @@
+{
+  "scope": "Schematic SENSE with tied resistor substrates, ideal fixed global VREF/PTAT/input/load fixture. Actual routing model single-access max supply/return R applied to SENSE alone, not all chip loads. No PEX/pad/package or reference-interaction qualification.",
+  "inputs": {
+    "designs/g1-guardian/review/audits/sense-supply-anchor-20260921-r2/summary.json": "060da3ee5e52e4c4e385ba818190577ce602835f1f1806bce504fb3cbd13fcc3",
+    "designs/g1-guardian/review/audits/sense-supply-anchor-20260921-r2/provenance.json": "9bdbdd4827cf956bb4734095ea9584ff12565ed5203db2642fdda0cce26b4724",
+    "designs/g1-guardian/review/audits/sense-supply-anchor-20260921-r2/sense_substrate_tied.spice": "8880157bd2a88c92a248c4865fc79b9242954d1920ce6e3834b776cae6eee57f"
+  },
+  "case_count": 6,
+  "OP_count": 54,
+  "gain_target": "20 +/-0.1 V/V, checked at3 global common modes and0/25/50mV shunt; TT27C only",
+  "global_vs_local": "Input/VREF/load retain global0; outputs reported global0 and localVSS. No comparator/reference shared-ground cancellation assumed.",
+  "rounding": "Retained ngspice echo values have about6 significant digits despite numdgt15. Resistor consistency tolerance10uV covers output rounding; small output shifts below5uV are not resolved.",
+  "results": [
+    {
+      "name": "v3.3_r0",
+      "source_V": 3.3,
+      "R_scale": 0,
+      "solver": "passed",
+      "gain_checks": [
+        {
+          "global_average_CM_V": -0.1,
+          "gain_V_per_V": 19.988099999999996,
+          "gain_target_status": "passed",
+          "midpoint_nonlinearity_output_V": -1.7500000000003624e-05,
+          "zero_shunt_global_output_V": 0.999225,
+          "zero_shunt_global_input_referred_offset_from_51over53Vref_V": -7.648584905660672e-05
+        },
+        {
+          "global_average_CM_V": 0.0,
+          "gain_V_per_V": 19.987979999999997,
+          "gain_target_status": "passed",
+          "midpoint_nonlinearity_output_V": -1.0499999999913356e-05,
+          "zero_shunt_global_output_V": 0.999241,
+          "zero_shunt_global_input_referred_offset_from_51over53Vref_V": -7.568584905660591e-05
+        },
+        {
+          "global_average_CM_V": 0.3,
+          "gain_V_per_V": 19.98804,
+          "gain_target_status": "passed",
+          "midpoint_nonlinearity_output_V": -1.8999999999991246e-05,
+          "zero_shunt_global_output_V": 0.999288,
+          "zero_shunt_global_input_referred_offset_from_51over53Vref_V": -7.33358490566105e-05
+        }
+      ],
+      "point_deltas": [
+        {
+          "point": "t0_c-0.1_s0",
+          "global_output_change_V": 0.0,
+          "input_referred_global_output_change_V": 0.0,
+          "local_output_change_V": 0.0,
+          "local_average_CM_V": -0.10000000000096321,
+          "local_rail_V": 3.2999999999990366
+        },
+        {
+          "point": "t0_c-0.1_s0.025",
+          "global_output_change_V": 0.0,
+          "input_referred_global_output_change_V": 0.0,
+          "local_output_change_V": 0.0,
+          "local_average_CM_V": -0.10000000000096866,
+          "local_rail_V": 3.2999999999990313
+        },
+        {
+          "point": "t0_c-0.1_s0.05",
+          "global_output_change_V": 0.0,
+          "input_referred_global_output_change_V": 0.0,
+          "local_output_change_V": 0.0,
+          "local_average_CM_V": -0.10000000000097377,
+          "local_rail_V": 3.299999999999026
+        },
+        {
+          "point": "t0_c0_s0",
+          "global_output_change_V": 0.0,
+          "input_referred_global_output_change_V": 0.0,
+          "local_output_change_V": 0.0,
+          "local_average_CM_V": -9.63202e-13,
+          "local_rail_V": 3.2999999999990366
+        },
+        {
+          "point": "t0_c0_s0.025",
+          "global_output_change_V": 0.0,
+          "input_referred_global_output_change_V": 0.0,
+          "local_output_change_V": 0.0,
+          "local_average_CM_V": -9.68657e-13,
+          "local_rail_V": 3.2999999999990313
+        },
+        {
+          "point": "t0_c0_s0.05",
+          "global_output_change_V": 0.0,
+          "input_referred_global_output_change_V": 0.0,
+          "local_output_change_V": 0.0,
+          "local_average_CM_V": -9.73756e-13,
+          "local_rail_V": 3.299999999999026
+        },
+        {
+          "point": "t0_c0.3_s0",
+          "global_output_change_V": 0.0,
+          "input_referred_global_output_change_V": 0.0,
+          "local_output_change_V": 0.0,
+          "local_average_CM_V": 0.2999999999990368,
+          "local_rail_V": 3.2999999999990366
+        },
+        {
+          "point": "t0_c0.3_s0.025",
+          "global_output_change_V": 0.0,
+          "input_referred_global_output_change_V": 0.0,
+          "local_output_change_V": 0.0,
+          "local_average_CM_V": 0.2999999999990313,
+          "local_rail_V": 3.2999999999990313
+        },
+        {
+          "point": "t0_c0.3_s0.05",
+          "global_output_change_V": 0.0,
+          "input_referred_global_output_change_V": 0.0,
+          "local_output_change_V": 0.0,
+          "local_average_CM_V": 0.29999999999902627,
+          "local_rail_V": 3.299999999999026
+        }
+      ],
+      "minimum_local_rail_V": 3.299999999999026,
+      "maximum_local_VSS_V": 9.7376e-13,
+      "source_current_range_A": [
+        0.000983238,
+        0.00101233
+      ],
+      "maximum_abs_global_input_referred_output_shift_V": 0.0,
+      "maximum_supply_resistor_voltage_residual_V": 9.7376e-13,
+      "resistor_residual_status": "passed",
+      "resistor_residual_tolerance_V": 1e-05
+    },
+    {
+      "name": "v3.3_r1",
+      "source_V": 3.3,
+      "R_scale": 1,
+      "solver": "passed",
+      "gain_checks": [
+        {
+          "global_average_CM_V": -0.1,
+          "gain_V_per_V": 19.988339999999997,
+          "gain_target_status": "passed",
+          "midpoint_nonlinearity_output_V": -1.1500000000053134e-05,
+          "zero_shunt_global_output_V": 0.999663,
+          "zero_shunt_global_input_referred_offset_from_51over53Vref_V": -5.458584905660979e-05
+        },
+        {
+          "global_average_CM_V": 0.0,
+          "gain_V_per_V": 19.98846,
+          "gain_target_status": "passed",
+          "midpoint_nonlinearity_output_V": -1.8499999999921357e-05,
+          "zero_shunt_global_output_V": 0.999677,
+          "zero_shunt_global_input_referred_offset_from_51over53Vref_V": -5.3885849056606316e-05
+        },
+        {
+          "global_average_CM_V": 0.3,
+          "gain_V_per_V": 19.988120000000002,
+          "gain_target_status": "passed",
+          "midpoint_nonlinearity_output_V": -7.000000000090267e-06,
+          "zero_shunt_global_output_V": 0.999724,
+          "zero_shunt_global_input_referred_offset_from_51over53Vref_V": -5.153584905661091e-05
+        }
+      ],
+      "point_deltas": [
+        {
+          "point": "t0_c-0.1_s0",
+          "global_output_change_V": 0.00043799999999993844,
+          "input_referred_global_output_change_V": 2.189999999999692e-05,
+          "local_output_change_V": -0.010278399999036791,
+          "local_average_CM_V": -0.1107164,
+          "local_rail_V": 3.2746936
+        },
+        {
+          "point": "t0_c-0.1_s0.025",
+          "global_output_change_V": 0.00045000000000006146,
+          "input_referred_global_output_change_V": 2.2500000000003074e-05,
+          "local_output_change_V": -0.010327199999031311,
+          "local_average_CM_V": -0.1107772,
+          "local_rail_V": 3.2744427999999997
+        },
+        {
+          "point": "t0_c-0.1_s0.05",
+          "global_output_change_V": 0.00045000000000006146,
+          "input_referred_global_output_change_V": 2.2500000000003074e-05,
+          "local_output_change_V": -0.010383899999026225,
+          "local_average_CM_V": -0.11083390000000001,
+          "local_rail_V": 3.2742061
+        },
+        {
+          "point": "t0_c0_s0",
+          "global_output_change_V": 0.00043599999999999195,
+          "input_referred_global_output_change_V": 2.1799999999999598e-05,
+          "local_output_change_V": -0.01028029999903679,
+          "local_average_CM_V": -0.0107163,
+          "local_rail_V": 3.2747137
+        },
+        {
+          "point": "t0_c0_s0.025",
+          "global_output_change_V": 0.00043999999999999595,
+          "input_referred_global_output_change_V": 2.1999999999999796e-05,
+          "local_output_change_V": -0.010337199999031377,
+          "local_average_CM_V": -0.0107772,
+          "local_rail_V": 3.2744628
+        },
+        {
+          "point": "t0_c0_s0.05",
+          "global_output_change_V": 0.000460000000000127,
+          "input_referred_global_output_change_V": 2.300000000000635e-05,
+          "local_output_change_V": -0.01037389999902616,
+          "local_average_CM_V": -0.0108339,
+          "local_rail_V": 3.2742161
+        },
+        {
+          "point": "t0_c0.3_s0",
+          "global_output_change_V": 0.00043599999999999195,
+          "input_referred_global_output_change_V": 2.1799999999999598e-05,
+          "local_output_change_V": -0.010280199999036732,
+          "local_average_CM_V": 0.2892838,
+          "local_rail_V": 3.2747538
+        },
+        {
+          "point": "t0_c0.3_s0.025",
+          "global_output_change_V": 0.00045000000000006146,
+          "input_referred_global_output_change_V": 2.2500000000003074e-05,
+          "local_output_change_V": -0.010326999999031417,
+          "local_average_CM_V": 0.289223,
+          "local_rail_V": 3.274503
+        },
+        {
+          "point": "t0_c0.3_s0.05",
+          "global_output_change_V": 0.00043999999999999595,
+          "input_referred_global_output_change_V": 2.1999999999999796e-05,
+          "local_output_change_V": -0.010393799999026232,
+          "local_average_CM_V": 0.2891662,
+          "local_rail_V": 3.2742562
+        }
+      ],
+      "minimum_local_rail_V": 3.2742061,
+      "maximum_local_VSS_V": 0.0108339,
+      "source_current_range_A": [
+        0.000979173,
+        0.00100841
+      ],
+      "maximum_abs_global_input_referred_output_shift_V": 2.300000000000635e-05,
+      "maximum_supply_resistor_voltage_residual_V": 4.274758444755208e-06,
+      "resistor_residual_status": "passed",
+      "resistor_residual_tolerance_V": 1e-05
+    },
+    {
+      "name": "v3.3_r2",
+      "source_V": 3.3,
+      "R_scale": 2,
+      "solver": "passed",
+      "gain_checks": [
+        {
+          "global_average_CM_V": -0.1,
+          "gain_V_per_V": 19.988599999999998,
+          "gain_target_status": "passed",
+          "midpoint_nonlinearity_output_V": -4.999999999810711e-06,
+          "zero_shunt_global_output_V": 1.00009,
+          "zero_shunt_global_input_referred_offset_from_51over53Vref_V": -3.3235849056612035e-05
+        },
+        {
+          "global_average_CM_V": 0.0,
+          "gain_V_per_V": 19.9884,
+          "gain_target_status": "passed",
+          "midpoint_nonlinearity_output_V": -1.0000000000065512e-05,
+          "zero_shunt_global_output_V": 1.00011,
+          "zero_shunt_global_input_referred_offset_from_51over53Vref_V": -3.223584905660548e-05
+        },
+        {
+          "global_average_CM_V": 0.3,
+          "gain_V_per_V": 19.9884,
+          "gain_target_status": "passed",
+          "midpoint_nonlinearity_output_V": -2.0000000000131024e-05,
+          "zero_shunt_global_output_V": 1.00016,
+          "zero_shunt_global_input_referred_offset_from_51over53Vref_V": -2.9735849056611306e-05
+        }
+      ],
+      "point_deltas": [
+        {
+          "point": "t0_c-0.1_s0",
+          "global_output_change_V": 0.0008649999999998936,
+          "input_referred_global_output_change_V": 4.324999999999468e-05,
+          "local_output_change_V": -0.02055039999903685,
+          "local_average_CM_V": -0.1214154,
+          "local_rail_V": 3.2494346
+        },
+        {
+          "point": "t0_c-0.1_s0.025",
+          "global_output_change_V": 0.0008900000000000574,
+          "input_referred_global_output_change_V": 4.450000000000287e-05,
+          "local_output_change_V": -0.02064709999903136,
+          "local_average_CM_V": -0.12153710000000001,
+          "local_rail_V": 3.2489329
+        },
+        {
+          "point": "t0_c-0.1_s0.05",
+          "global_output_change_V": 0.0008900000000000574,
+          "input_referred_global_output_change_V": 4.450000000000287e-05,
+          "local_output_change_V": -0.020760599999026352,
+          "local_average_CM_V": -0.1216506,
+          "local_rail_V": 3.2484493999999997
+        },
+        {
+          "point": "t0_c0_s0",
+          "global_output_change_V": 0.0008690000000000087,
+          "input_referred_global_output_change_V": 4.345000000000043e-05,
+          "local_output_change_V": -0.020546299999036788,
+          "local_average_CM_V": -0.0214153,
+          "local_rail_V": 3.2494647
+        },
+        {
+          "point": "t0_c0_s0.025",
+          "global_output_change_V": 0.0008799999999999919,
+          "input_referred_global_output_change_V": 4.399999999999959e-05,
+          "local_output_change_V": -0.020656999999031367,
+          "local_average_CM_V": -0.021537,
+          "local_rail_V": 3.2489630000000003
+        },
+        {
+          "point": "t0_c0_s0.05",
+          "global_output_change_V": 0.0008900000000000574,
+          "input_referred_global_output_change_V": 4.450000000000287e-05,
+          "local_output_change_V": -0.020760499999026294,
+          "local_average_CM_V": -0.0216505,
+          "local_rail_V": 3.2484795
+        },
+        {
+          "point": "t0_c0.3_s0",
+          "global_output_change_V": 0.0008719999999999839,
+          "input_referred_global_output_change_V": 4.3599999999999196e-05,
+          "local_output_change_V": -0.020543099999036807,
+          "local_average_CM_V": 0.27858489999999997,
+          "local_rail_V": 3.2495549
+        },
+        {
+          "point": "t0_c0.3_s0.025",
+          "global_output_change_V": 0.0008799999999999919,
+          "input_referred_global_output_change_V": 4.399999999999959e-05,
+          "local_output_change_V": -0.020656799999031472,
+          "local_average_CM_V": 0.27846319999999997,
+          "local_rail_V": 3.2490432
+        },
+        {
+          "point": "t0_c0.3_s0.05",
+          "global_output_change_V": 0.0008899999999998354,
+          "input_referred_global_output_change_V": 4.449999999999177e-05,
+          "local_output_change_V": -0.0207602999990264,
+          "local_average_CM_V": 0.2783497,
+          "local_rail_V": 3.2485597
+        }
+      ],
+      "minimum_local_rail_V": 3.2484493999999997,
+      "maximum_local_VSS_V": 0.0216506,
+      "source_current_range_A": [
+        0.000978401,
+        0.00100765
+      ],
+      "maximum_abs_global_input_referred_output_shift_V": 4.450000000000287e-05,
+      "maximum_supply_resistor_voltage_residual_V": 4.863637303606505e-06,
+      "resistor_residual_status": "passed",
+      "resistor_residual_tolerance_V": 1e-05
+    },
+    {
+      "name": "v3_r0",
+      "source_V": 3.0,
+      "R_scale": 0,
+      "solver": "passed",
+      "gain_checks": [
+        {
+          "global_average_CM_V": -0.1,
+          "gain_V_per_V": 19.98882,
+          "gain_target_status": "passed",
+          "midpoint_nonlinearity_output_V": -9.499999999995623e-06,
+          "zero_shunt_global_output_V": 0.999409,
+          "zero_shunt_global_input_referred_offset_from_51over53Vref_V": -6.728584905660862e-05
+        },
+        {
+          "global_average_CM_V": 0.0,
+          "gain_V_per_V": 19.98874,
+          "gain_target_status": "passed",
+          "midpoint_nonlinearity_output_V": -1.149999999983109e-05,
+          "zero_shunt_global_output_V": 0.999423,
+          "zero_shunt_global_input_referred_offset_from_51over53Vref_V": -6.658584905661069e-05
+        },
+        {
+          "global_average_CM_V": 0.3,
+          "gain_V_per_V": 19.988659999999996,
+          "gain_target_status": "passed",
+          "midpoint_nonlinearity_output_V": -1.3500000000110646e-05,
+          "zero_shunt_global_output_V": 0.999467,
+          "zero_shunt_global_input_referred_offset_from_51over53Vref_V": -6.43858490566085e-05
+        }
+      ],
+      "point_deltas": [
+        {
+          "point": "t0_c-0.1_s0",
+          "global_output_change_V": 0.0,
+          "input_referred_global_output_change_V": 0.0,
+          "local_output_change_V": 0.0,
+          "local_average_CM_V": -0.10000000000095847,
+          "local_rail_V": 2.9999999999990417
+        },
+        {
+          "point": "t0_c-0.1_s0.025",
+          "global_output_change_V": 0.0,
+          "input_referred_global_output_change_V": 0.0,
+          "local_output_change_V": 0.0,
+          "local_average_CM_V": -0.10000000000096393,
+          "local_rail_V": 2.999999999999036
+        },
+        {
+          "point": "t0_c-0.1_s0.05",
+          "global_output_change_V": 0.0,
+          "input_referred_global_output_change_V": 0.0,
+          "local_output_change_V": 0.0,
+          "local_average_CM_V": -0.10000000000096902,
+          "local_rail_V": 2.999999999999031
+        },
+        {
+          "point": "t0_c0_s0",
+          "global_output_change_V": 0.0,
+          "input_referred_global_output_change_V": 0.0,
+          "local_output_change_V": 0.0,
+          "local_average_CM_V": -9.58459e-13,
+          "local_rail_V": 2.9999999999990417
+        },
+        {
+          "point": "t0_c0_s0.025",
+          "global_output_change_V": 0.0,
+          "input_referred_global_output_change_V": 0.0,
+          "local_output_change_V": 0.0,
+          "local_average_CM_V": -9.63914e-13,
+          "local_rail_V": 2.999999999999036
+        },
+        {
+          "point": "t0_c0_s0.05",
+          "global_output_change_V": 0.0,
+          "input_referred_global_output_change_V": 0.0,
+          "local_output_change_V": 0.0,
+          "local_average_CM_V": -9.69013e-13,
+          "local_rail_V": 2.999999999999031
+        },
+        {
+          "point": "t0_c0.3_s0",
+          "global_output_change_V": 0.0,
+          "input_referred_global_output_change_V": 0.0,
+          "local_output_change_V": 0.0,
+          "local_average_CM_V": 0.29999999999904153,
+          "local_rail_V": 2.9999999999990417
+        },
+        {
+          "point": "t0_c0.3_s0.025",
+          "global_output_change_V": 0.0,
+          "input_referred_global_output_change_V": 0.0,
+          "local_output_change_V": 0.0,
+          "local_average_CM_V": 0.2999999999990361,
+          "local_rail_V": 2.999999999999036
+        },
+        {
+          "point": "t0_c0.3_s0.05",
+          "global_output_change_V": 0.0,
+          "input_referred_global_output_change_V": 0.0,
+          "local_output_change_V": 0.0,
+          "local_average_CM_V": 0.299999999999031,
+          "local_rail_V": 2.999999999999031
+        }
+      ],
+      "minimum_local_rail_V": 2.999999999999031,
+      "maximum_local_VSS_V": 9.69017e-13,
+      "source_current_range_A": [
+        0.000975609,
+        0.0010066
+      ],
+      "maximum_abs_global_input_referred_output_shift_V": 0.0,
+      "maximum_supply_resistor_voltage_residual_V": 9.69017e-13,
+      "resistor_residual_status": "passed",
+      "resistor_residual_tolerance_V": 1e-05
+    },
+    {
+      "name": "v3_r1",
+      "source_V": 3.0,
+      "R_scale": 1,
+      "solver": "passed",
+      "gain_checks": [
+        {
+          "global_average_CM_V": -0.1,
+          "gain_V_per_V": 19.988879999999998,
+          "gain_target_status": "passed",
+          "midpoint_nonlinearity_output_V": -8.000000000008e-06,
+          "zero_shunt_global_output_V": 0.999816,
+          "zero_shunt_global_input_referred_offset_from_51over53Vref_V": -4.69358490566063e-05
+        },
+        {
+          "global_average_CM_V": 0.0,
+          "gain_V_per_V": 19.988780000000002,
+          "gain_target_status": "passed",
+          "midpoint_nonlinearity_output_V": -1.0499999999913356e-05,
+          "zero_shunt_global_output_V": 0.999831,
+          "zero_shunt_global_input_referred_offset_from_51over53Vref_V": -4.618584905660694e-05
+        },
+        {
+          "global_average_CM_V": 0.3,
+          "gain_V_per_V": 19.98868,
+          "gain_target_status": "passed",
+          "midpoint_nonlinearity_output_V": -1.3000000000040757e-05,
+          "zero_shunt_global_output_V": 0.999876,
+          "zero_shunt_global_input_referred_offset_from_51over53Vref_V": -4.393584905660885e-05
+        }
+      ],
+      "point_deltas": [
+        {
+          "point": "t0_c-0.1_s0",
+          "global_output_change_V": 0.0004070000000000462,
+          "input_referred_global_output_change_V": 2.035000000000231e-05,
+          "local_output_change_V": -0.010256599999041494,
+          "local_average_CM_V": -0.1106636,
+          "local_rail_V": 2.9748164
+        },
+        {
+          "point": "t0_c-0.1_s0.025",
+          "global_output_change_V": 0.00041000000000002146,
+          "input_referred_global_output_change_V": 2.0500000000001074e-05,
+          "local_output_change_V": -0.01031439999903605,
+          "local_average_CM_V": -0.1107244,
+          "local_rail_V": 2.9745656
+        },
+        {
+          "point": "t0_c-0.1_s0.05",
+          "global_output_change_V": 0.00041000000000002146,
+          "input_referred_global_output_change_V": 2.0500000000001074e-05,
+          "local_output_change_V": -0.010371199999031022,
+          "local_average_CM_V": -0.11078120000000001,
+          "local_rail_V": 2.9743288000000003
+        },
+        {
+          "point": "t0_c0_s0",
+          "global_output_change_V": 0.00040800000000007497,
+          "input_referred_global_output_change_V": 2.040000000000375e-05,
+          "local_output_change_V": -0.010255599999041465,
+          "local_average_CM_V": -0.0106636,
+          "local_rail_V": 2.9748364
+        },
+        {
+          "point": "t0_c0_s0.025",
+          "global_output_change_V": 0.00041000000000002146,
+          "input_referred_global_output_change_V": 2.0500000000001074e-05,
+          "local_output_change_V": -0.01031439999903605,
+          "local_average_CM_V": -0.0107244,
+          "local_rail_V": 2.9745856
+        },
+        {
+          "point": "t0_c0_s0.05",
+          "global_output_change_V": 0.00041000000000002146,
+          "input_referred_global_output_change_V": 2.0500000000001074e-05,
+          "local_output_change_V": -0.010371099999030964,
+          "local_average_CM_V": -0.0107811,
+          "local_rail_V": 2.9743389000000002
+        },
+        {
+          "point": "t0_c0.3_s0",
+          "global_output_change_V": 0.0004089999999999927,
+          "input_referred_global_output_change_V": 2.0449999999999636e-05,
+          "local_output_change_V": -0.010254399999041541,
+          "local_average_CM_V": 0.2893366,
+          "local_rail_V": 2.9748766
+        },
+        {
+          "point": "t0_c0.3_s0.025",
+          "global_output_change_V": 0.00041000000000002146,
+          "input_referred_global_output_change_V": 2.0500000000001074e-05,
+          "local_output_change_V": -0.010314199999036155,
+          "local_average_CM_V": 0.28927579999999997,
+          "local_rail_V": 2.9746258
+        },
+        {
+          "point": "t0_c0.3_s0.05",
+          "global_output_change_V": 0.00041000000000002146,
+          "input_referred_global_output_change_V": 2.0500000000001074e-05,
+          "local_output_change_V": -0.010370999999030905,
+          "local_average_CM_V": 0.289219,
+          "local_rail_V": 2.974379
+        }
+      ],
+      "minimum_local_rail_V": 2.9743288000000003,
+      "maximum_local_VSS_V": 0.0107812,
+      "source_current_range_A": [
+        0.000974434,
+        0.00100368
+      ],
+      "maximum_abs_global_input_referred_output_shift_V": 2.0500000000001074e-05,
+      "maximum_supply_resistor_voltage_residual_V": 4.576804289717351e-06,
+      "resistor_residual_status": "passed",
+      "resistor_residual_tolerance_V": 1e-05
+    },
+    {
+      "name": "v3_r2",
+      "source_V": 3.0,
+      "R_scale": 2,
+      "solver": "passed",
+      "gain_checks": [
+        {
+          "global_average_CM_V": -0.1,
+          "gain_V_per_V": 19.988799999999998,
+          "gain_target_status": "passed",
+          "midpoint_nonlinearity_output_V": -1.0000000000065512e-05,
+          "zero_shunt_global_output_V": 1.00022,
+          "zero_shunt_global_input_referred_offset_from_51over53Vref_V": -2.6735849056602756e-05
+        },
+        {
+          "global_average_CM_V": 0.0,
+          "gain_V_per_V": 19.9926,
+          "gain_target_status": "passed",
+          "midpoint_nonlinearity_output_V": -0.00010500000000024379,
+          "zero_shunt_global_output_V": 1.00024,
+          "zero_shunt_global_input_referred_offset_from_51over53Vref_V": -2.5735849056607306e-05
+        },
+        {
+          "global_average_CM_V": 0.3,
+          "gain_V_per_V": 19.988799999999998,
+          "gain_target_status": "passed",
+          "midpoint_nonlinearity_output_V": -1.0000000000065512e-05,
+          "zero_shunt_global_output_V": 1.00028,
+          "zero_shunt_global_input_referred_offset_from_51over53Vref_V": -2.3735849056605306e-05
+        }
+      ],
+      "point_deltas": [
+        {
+          "point": "t0_c-0.1_s0",
+          "global_output_change_V": 0.0008110000000001172,
+          "input_referred_global_output_change_V": 4.055000000000586e-05,
+          "local_output_change_V": -0.02049889999904142,
+          "local_average_CM_V": -0.1213099,
+          "local_rail_V": 2.9496801
+        },
+        {
+          "point": "t0_c-0.1_s0.025",
+          "global_output_change_V": 0.0008099999999999774,
+          "input_referred_global_output_change_V": 4.049999999999887e-05,
+          "local_output_change_V": -0.020621599999036233,
+          "local_average_CM_V": -0.1214316,
+          "local_rail_V": 2.9491784
+        },
+        {
+          "point": "t0_c-0.1_s0.05",
+          "global_output_change_V": 0.0008099999999999774,
+          "input_referred_global_output_change_V": 4.049999999999887e-05,
+          "local_output_change_V": -0.020735099999031004,
+          "local_average_CM_V": -0.1215451,
+          "local_rail_V": 2.9486949
+        },
+        {
+          "point": "t0_c0_s0",
+          "global_output_change_V": 0.0008170000000000677,
+          "input_referred_global_output_change_V": 4.0850000000003385e-05,
+          "local_output_change_V": -0.020492799999041522,
+          "local_average_CM_V": -0.0213098,
+          "local_rail_V": 2.9497102
+        },
+        {
+          "point": "t0_c0_s0.025",
+          "global_output_change_V": 0.0008199999999998209,
+          "input_referred_global_output_change_V": 4.099999999999104e-05,
+          "local_output_change_V": -0.02061149999903633,
+          "local_average_CM_V": -0.0214315,
+          "local_rail_V": 2.9492085
+        },
+        {
+          "point": "t0_c0_s0.05",
+          "global_output_change_V": 0.0010099999999999554,
+          "input_referred_global_output_change_V": 5.049999999999777e-05,
+          "local_output_change_V": -0.020534999999030967,
+          "local_average_CM_V": -0.021545,
+          "local_rail_V": 2.948725
+        },
+        {
+          "point": "t0_c0.3_s0",
+          "global_output_change_V": 0.0008130000000000637,
+          "input_referred_global_output_change_V": 4.0650000000003184e-05,
+          "local_output_change_V": -0.020496499999041462,
+          "local_average_CM_V": 0.2786905,
+          "local_rail_V": 2.9498005
+        },
+        {
+          "point": "t0_c0.3_s0.025",
+          "global_output_change_V": 0.0008200000000000429,
+          "input_referred_global_output_change_V": 4.100000000000215e-05,
+          "local_output_change_V": -0.020611199999036156,
+          "local_average_CM_V": 0.2785688,
+          "local_rail_V": 2.9492888
+        },
+        {
+          "point": "t0_c0.3_s0.05",
+          "global_output_change_V": 0.0008200000000000429,
+          "input_referred_global_output_change_V": 4.100000000000215e-05,
+          "local_output_change_V": -0.020724699999030927,
+          "local_average_CM_V": 0.27845529999999996,
+          "local_rail_V": 2.9488052999999996
+        }
+      ],
+      "minimum_local_rail_V": 2.9486949,
+      "maximum_local_VSS_V": 0.0215451,
+      "source_current_range_A": [
+        0.000973663,
+        0.00100291
+      ],
+      "maximum_abs_global_input_referred_output_shift_V": 5.049999999999777e-05,
+      "maximum_supply_resistor_voltage_residual_V": 4.259545613234661e-06,
+      "resistor_residual_status": "passed",
+      "resistor_residual_tolerance_V": 1e-05
+    }
+  ],
+  "all_gain_checks": "passed",
+  "transient_and_bandwidth": "not run",
+  "whole_chip_IR_function": "not run"
+}

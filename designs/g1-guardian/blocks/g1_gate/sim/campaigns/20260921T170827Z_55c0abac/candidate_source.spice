@@ -1,0 +1,11 @@
+* Unadopted IO-powered receiver/driver candidate; no layout or sign-off evidence.
+* Skewed HV receiver accepts the core GATE signal without core-powered pad logic.
+* All devices use unchanged pinned IHP HV model cards. Widths/lengths in metres.
+* Static receiver current, thresholds, startup and device limits require checks.
+.subckt g1_io_buffer_candidate core output iovdd iovss
+Rinput core iovss 100k
+MPsense sense core iovdd iovdd sg13_hv_pmos w=1u l=2u
+MNsense sense core iovss iovss sg13_hv_nmos w=10u l=0.45u
+MPout output sense iovdd iovdd sg13_hv_pmos w=80u l=0.45u
+MNout output sense iovss iovss sg13_hv_nmos w=40u l=0.45u
+.ends g1_io_buffer_candidate

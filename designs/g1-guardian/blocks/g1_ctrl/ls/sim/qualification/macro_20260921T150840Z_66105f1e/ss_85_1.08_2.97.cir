@@ -1,0 +1,27 @@
+* ls extracted macro characterization
+.include /work/designs/g1-guardian/blocks/g1_ctrl/ls/reports/flat-pex-20260921T150429Z_42162722/ngspice_pex.spice
+.temp 85
+.option method=gear reltol=1e-4 abstol=1e-16 vntol=1e-7 gmin=1e-16
+.global sub!
+Vsub sub! 0 0
+Vdd vdd 0 1.08
+Vdda vdda 0 2.97
+.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerMOSlv.lib mos_ss
+.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerMOShv.lib mos_ss
+.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerHBT.lib hbt_wcs
+.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerRES.lib res_typ
+.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerCAP.lib cap_typ
+.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerDIO.lib dio_ss
+X1 in out vdd vdda 0 g1_ls_up
+Cload out 0 100.0f
+Vin in 0 pwl(0 0 300n 0 301n 1.08 600n 1.08 601n 0 900n 0)
+.control
+set num_threads=1
+set numdgt=15
+set wr_singlescale
+set wr_vecnames
+tran 100p 900n
+wrdata /work/designs/g1-guardian/blocks/g1_ctrl/ls/sim/qualification/macro_20260921T150840Z_66105f1e/ss_85_1.08_2.97.tsv v(in) v(out) i(vdd) i(vdda)
+quit
+.endc
+.end

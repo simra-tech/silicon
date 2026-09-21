@@ -429,7 +429,7 @@ Reading:
 | Monte Carlo 300 samples, mismatch, 27 °C | passed (numbers above) | `sim/results/mc_summary.csv` |
 | Cryogenic extrapolation to −196 °C | run, **model extrapolated**, no pass criterion | `sim/results/extrap_summary.csv` |
 | Loop stability (AC loop gain / phase) | not run | |
-| Noise | not run | |
+| Nominal standalone C-PEX AC output noise (2026-09-21) | passed execution; simulated 196.046 µV RMS over 1 Hz–10 MHz; no acceptance budget adopted | `sim/qualification/runs/bgr_noise_20260921_01/manifest.json` |
 | Layout generator self-check (Metal2 spacing between nets) | passed (0 conflicts) | `layout/g1_bgr_layout.py` (aborts on a conflict) |
 | Fill, PDK filler inside the macro (Activ, GatPoly, Metal1-3; no-fill over the matched structures) | run: 1 / 1 / 157 / 104 / 85 fill shapes | `reports/fill/fill_g1_bgr.log` |
 | DRC on the filled GDS, `run_drc.py --run_mode=deep --no_density` (main table + `sg13g2_maximal` extra rules incl. the fill rules, recommended rules on) | **passed, 0 markers** | `reports/drc/drc_run_2026_09_19_10_53_29.log`, `reports/drc/g1_bgr_g1_bgr_main.log`, `reports/drc/g1_bgr_g1_bgr_sg13g2_maximal.log`, `reports/drc/g1_bgr_g1_bgr_full.lyrdb` |
@@ -445,7 +445,9 @@ Reading:
 | Post-layout start-up, 1 ms ramp, 27 °C nominal | passed (V_REF 1.0393 V at 3 ms, 0.93 V at 0.519 ms) | `sim/postlayout/results/startup_summary.csv` |
 | Post-layout PSRR, −40/27/175 °C nominal | run (−103 dB DC, −75 dB at 1 kHz, pessimistic bound, see above) | `sim/postlayout/results/psrr_summary.csv`, `psrrvar_summary.csv` |
 | Wiring resistance, hand-counted variant C (estimate, not an extraction) | run (V_REF 1.0373 V, I_PTAT −0.75 % at 27 °C) | `sim/postlayout/results/wire_summary.csv`, `sim/postlayout/logs/wire_*.log` |
-| Post-layout 27-corner / MC / 100 ms start-up re-run | not run | |
+| Post-layout 27 corners ×3 supplies, −40..125 °C (2026-09-21) | passed, 81/81; maximum TC 49.341 ppm/°C | `sim/qualification/runs/bgr_corners81_20260921_01/manifest.json` |
+| Post-layout mismatch temperature sweep (2026-09-21) | **failed TC: 54/100**; all 100 simulations complete, worst TC 178.540 ppm/°C | `sim/qualification/README.md`, `sim/qualification/summary.csv` |
+| Post-layout 1 ms / 100 ms startup, three screened tuples (2026-09-21) | passed, 6/6 endpoints; real downstream loads and dips not run | `sim/qualification/runs/bgr_startup6_20260921_01/manifest.json` |
 
 Extractor view against the schematic (`reports/lvs/g1_bgr_extracted.cir`): the deck combines the
 parallel PMOS half fingers (`W=10u`) and NMOS fingers (`W=20u`), the eight Q2 units (`m=8`) and the
@@ -479,12 +481,12 @@ HBTs `QDUM1..9` with all four terminals on `vss`.
   in all numbers above but is a systematic term the two-point sensor calibration does
   not remove exactly.
 - Wiring resistance is a hand count from the PDK LEF values (variant C), not an extraction (kpex
-  RC mode unusable); post-layout corners, mismatch MC and the 100 ms start-up are schematic results
-  only.
+  RC mode unusable). New capacitance-PEX corner, mismatch-temperature and screened slow-startup
+  results are in `sim/qualification/README.md`; loaded joint behavior remains incomplete.
 - The post-layout PSRR above DC is a bound, not a value (2.5D engine without a well conductor).
-- Matching is by construction (common centroid, dummies, one orientation) and not simulated:
-  the schematic mismatch MC uses the PDK's per-device mismatch model, which does not know the
-  layout.
+- Matching geometry (common centroid, dummies, one orientation) does not establish silicon
+  mismatch: schematic and extracted-unit MC use the PDK per-device model, which does not
+  include physical spatial correlations or gradients.
 - Density (chip level after the chip fill; the block fill adds 157/104/85 Metal1/2/3 squares and
   the matched arrays stay unfilled by design), the macro inside the ring (LibreLane run, PDN straps
   to the Metal3 power bars) and the top-level LVS with the macro CDL: not run here.

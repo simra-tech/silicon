@@ -1,0 +1,1509 @@
+{
+  "scope": "Conditional analytical budget; not joint electrical simulation or whole-chip power/IR acceptance",
+  "inputs": {
+    "designs/g1-guardian/review/audits/supply-mesh-20260921-r3/mesh.json": "5b22452d208c1ef7800b34a6e040c41a82dd36fe6ce7d5d41fd0002290d6d1bf",
+    "designs/g1-guardian/blocks/g1_sense/sim/qualification/corners-20260921-a/summary.json": "4d27816c1efd8fbef20bd45c42859d0994211a97d2b4872dd3441ee0d88baee3",
+    "designs/g1-guardian/review/audits/power-evidence-20260921.json": "6932687837142d10f3d5d97d325822176aff55cea0c60b91b268cc03893be4e2",
+    "designs/g1-guardian/blocks/g1_t2f/sim/qualification/transition_current_selected.json": "24761b602bbcce9dfcc46fd311b9a801a9776ed6fcce7c8b1858fc9686dbb6fe",
+    "designs/g1-guardian/blocks/g1_t2f/sim/qualification/runs/t2f_joint_temp7_20260921_01/manifest.json": "ec8ffbfe569884af6a6d942aec47236af5eb1fc5bf4908a60071cda640dca8fd",
+    "designs/g1-guardian/blocks/g1_osc/sim/qualification/runs/osc_trim80_shard0_20260921_01/manifest.json": "c857e103f6848cafd5cef575e1778de123142d3c835d118dd6a35f9047d4e4d4",
+    "designs/g1-guardian/blocks/g1_osc/sim/qualification/runs/osc_trim80_shard1_20260921_01/manifest.json": "11edde35599b9a6d86ff0d056bf6a953683d7ca571b49749a2b0d029d6d9ec12",
+    "designs/g1-guardian/blocks/g1_osc/sim/qualification/runs/osc_trim80_shard2_20260921_01/manifest.json": "36f5a208b92031615f75f47cdc766a9ac51b32b365dc049517573ee4b1d41de8",
+    "designs/g1-guardian/blocks/g1_osc/sim/qualification/runs/osc_trim80_shard3_20260921_01/manifest.json": "f97667bef00135a057979d819e746cac8d48f7941f54289f009c2c60ff4f02fa",
+    "designs/g1-guardian/blocks/g1_padring/flow/runs/assembly-1350/22-openroad-generatepdn/analog_straps.log": "6be70d5eef6c3bbb37477dc8b55087fbeb014c0bb8ea0afa2a2896f381a0bbc6"
+  },
+  "mesh_validation": {
+    "connected_terminal_count": 36,
+    "max_linear_residual": 5.684341886080802e-14,
+    "max_reciprocity_residual": 1.5543122344752192e-15
+  },
+  "feed_approximation_ohm": {
+    "M4_parallel_M5_85p48um_by_5p10um": 0.8631803921568628,
+    "six_TopVia1_cuts": 0.6666666666666666,
+    "four_hundred_Via3_cuts": 0.05,
+    "four_hundred_Via4_cuts": 0.05
+  },
+  "feed_sum_ohm": 1.6298470588235294,
+  "feed_exclusions": [
+    "M3 patch spreading",
+    "pad metal and Via2",
+    "bondpad/package/board/regulator"
+  ],
+  "loop_R_estimates": [
+    {
+      "instance": "i_core.u_bgr",
+      "supply": "VDDA",
+      "mode": "mesh_parallel",
+      "supply_R_range_ohm": [
+        15.060267239008894,
+        15.060267239008894
+      ],
+      "return_R_range_ohm": [
+        12.16941619760589,
+        12.16941619760589
+      ],
+      "single_access_loop_R_range_ohm": [
+        27.229683436614785,
+        27.229683436614785
+      ]
+    },
+    {
+      "instance": "i_core.u_bgr",
+      "supply": "VDDA",
+      "mode": "single_path",
+      "supply_R_range_ohm": [
+        23.207169786096255,
+        23.207169786096255
+      ],
+      "return_R_range_ohm": [
+        19.203798597402596,
+        19.203798597402596
+      ],
+      "single_access_loop_R_range_ohm": [
+        42.410968383498854,
+        42.410968383498854
+      ]
+    },
+    {
+      "instance": "i_core.u_sense",
+      "supply": "VDDA",
+      "mode": "mesh_parallel",
+      "supply_R_range_ohm": [
+        13.356525002738573,
+        14.837915965592467
+      ],
+      "return_R_range_ohm": [
+        10.93072125265975,
+        11.13479317082453
+      ],
+      "single_access_loop_R_range_ohm": [
+        24.287246255398323,
+        25.972709136416995
+      ]
+    },
+    {
+      "instance": "i_core.u_sense",
+      "supply": "VDDA",
+      "mode": "single_path",
+      "supply_R_range_ohm": [
+        13.876942513368984,
+        19.67840614973262
+      ],
+      "return_R_range_ohm": [
+        11.60937444155844,
+        11.755534441558442
+      ],
+      "single_access_loop_R_range_ohm": [
+        25.486316954927425,
+        31.433940591291062
+      ]
+    },
+    {
+      "instance": "i_core.u_t2f",
+      "supply": "VDDA",
+      "mode": "mesh_parallel",
+      "supply_R_range_ohm": [
+        17.85822243506246,
+        17.85822243506246
+      ],
+      "return_R_range_ohm": [
+        12.5909195092926,
+        12.5909195092926
+      ],
+      "single_access_loop_R_range_ohm": [
+        30.44914194435506,
+        30.44914194435506
+      ]
+    },
+    {
+      "instance": "i_core.u_t2f",
+      "supply": "VDDA",
+      "mode": "single_path",
+      "supply_R_range_ohm": [
+        24.198942513368983,
+        24.198942513368983
+      ],
+      "return_R_range_ohm": [
+        19.170084779220772,
+        19.170084779220772
+      ],
+      "single_access_loop_R_range_ohm": [
+        43.369027292589756,
+        43.369027292589756
+      ]
+    },
+    {
+      "instance": "i_core.u_trip",
+      "supply": "VDDA",
+      "mode": "mesh_parallel",
+      "supply_R_range_ohm": [
+        14.216869053762782,
+        15.56198956321244
+      ],
+      "return_R_range_ohm": [
+        11.374452827017635,
+        12.025878232737249
+      ],
+      "single_access_loop_R_range_ohm": [
+        25.591321880780416,
+        27.58786779594969
+      ]
+    },
+    {
+      "instance": "i_core.u_trip",
+      "supply": "VDDA",
+      "mode": "single_path",
+      "supply_R_range_ohm": [
+        16.03421524064171,
+        21.850951604278073
+      ],
+      "return_R_range_ohm": [
+        13.561419896103896,
+        18.459692623376625
+      ],
+      "single_access_loop_R_range_ohm": [
+        29.595635136745607,
+        40.3106442276547
+      ]
+    },
+    {
+      "instance": "i_core.u_gate",
+      "supply": "VDDA",
+      "mode": "mesh_parallel",
+      "supply_R_range_ohm": [
+        14.487370726691513,
+        14.526430236716244
+      ],
+      "return_R_range_ohm": [
+        12.098067423265675,
+        12.098067423265675
+      ],
+      "single_access_loop_R_range_ohm": [
+        26.585438149957188,
+        26.62449765998192
+      ]
+    },
+    {
+      "instance": "i_core.u_gate",
+      "supply": "VDDA",
+      "mode": "single_path",
+      "supply_R_range_ohm": [
+        16.596442513368984,
+        21.49471524064171
+      ],
+      "return_R_range_ohm": [
+        18.482009506493505,
+        18.482009506493505
+      ],
+      "single_access_loop_R_range_ohm": [
+        35.07845201986249,
+        39.976724747135215
+      ]
+    },
+    {
+      "instance": "i_core.u_ls_r4",
+      "supply": "VDDA",
+      "mode": "mesh_parallel",
+      "supply_R_range_ohm": [
+        25.85950043709176,
+        25.85950043709176
+      ],
+      "return_R_range_ohm": [
+        23.007332397034173,
+        23.007332397034173
+      ],
+      "single_access_loop_R_range_ohm": [
+        48.86683283412593,
+        48.86683283412593
+      ]
+    },
+    {
+      "instance": "i_core.u_ls_r4",
+      "supply": "VDDA",
+      "mode": "single_path",
+      "supply_R_range_ohm": [
+        34.36101251336899,
+        34.36101251336899
+      ],
+      "return_R_range_ohm": [
+        29.299760688311686,
+        29.299760688311686
+      ],
+      "single_access_loop_R_range_ohm": [
+        63.660773201680676,
+        63.660773201680676
+      ]
+    },
+    {
+      "instance": "i_core.u_ls_mode",
+      "supply": "VDDA",
+      "mode": "mesh_parallel",
+      "supply_R_range_ohm": [
+        23.50286043709175,
+        23.50286043709175
+      ],
+      "return_R_range_ohm": [
+        26.75278694248872,
+        26.75278694248872
+      ],
+      "single_access_loop_R_range_ohm": [
+        50.255647379580466,
+        50.255647379580466
+      ]
+    },
+    {
+      "instance": "i_core.u_ls_mode",
+      "supply": "VDDA",
+      "mode": "single_path",
+      "supply_R_range_ohm": [
+        32.00437251336898,
+        32.00437251336898
+      ],
+      "return_R_range_ohm": [
+        33.045215233766235,
+        33.045215233766235
+      ],
+      "single_access_loop_R_range_ohm": [
+        65.0495877471352,
+        65.0495877471352
+      ]
+    },
+    {
+      "instance": "i_core.u_ls_en",
+      "supply": "VDDA",
+      "mode": "mesh_parallel",
+      "supply_R_range_ohm": [
+        27.62286043709175,
+        27.62286043709175
+      ],
+      "return_R_range_ohm": [
+        30.49824148794326,
+        30.49824148794326
+      ],
+      "single_access_loop_R_range_ohm": [
+        58.121101925035006,
+        58.121101925035006
+      ]
+    },
+    {
+      "instance": "i_core.u_ls_en",
+      "supply": "VDDA",
+      "mode": "single_path",
+      "supply_R_range_ohm": [
+        36.124372513368975,
+        36.124372513368975
+      ],
+      "return_R_range_ohm": [
+        36.79066977922078,
+        36.79066977922078
+      ],
+      "single_access_loop_R_range_ohm": [
+        72.91504229258976,
+        72.91504229258976
+      ]
+    },
+    {
+      "instance": "i_core.u_t2f",
+      "supply": "VDD",
+      "mode": "mesh_parallel",
+      "supply_R_range_ohm": [
+        13.916506884745944,
+        13.916506884745944
+      ],
+      "return_R_range_ohm": [
+        12.5909195092926,
+        12.5909195092926
+      ],
+      "single_access_loop_R_range_ohm": [
+        26.507426394038546,
+        26.507426394038546
+      ]
+    },
+    {
+      "instance": "i_core.u_t2f",
+      "supply": "VDD",
+      "mode": "single_path",
+      "supply_R_range_ohm": [
+        15.85775191589363,
+        15.85775191589363
+      ],
+      "return_R_range_ohm": [
+        19.170084779220772,
+        19.170084779220772
+      ],
+      "single_access_loop_R_range_ohm": [
+        35.0278366951144,
+        35.0278366951144
+      ]
+    },
+    {
+      "instance": "i_core.u_trip",
+      "supply": "VDD",
+      "mode": "mesh_parallel",
+      "supply_R_range_ohm": [
+        10.999233569526558,
+        10.999233569526558
+      ],
+      "return_R_range_ohm": [
+        11.374452827017635,
+        12.025878232737249
+      ],
+      "single_access_loop_R_range_ohm": [
+        22.373686396544194,
+        23.025111802263808
+      ]
+    },
+    {
+      "instance": "i_core.u_trip",
+      "supply": "VDD",
+      "mode": "single_path",
+      "supply_R_range_ohm": [
+        13.075681632653062,
+        13.075681632653062
+      ],
+      "return_R_range_ohm": [
+        13.561419896103896,
+        18.459692623376625
+      ],
+      "single_access_loop_R_range_ohm": [
+        26.637101528756958,
+        31.535374256029687
+      ]
+    },
+    {
+      "instance": "i_core.u_osc",
+      "supply": "VDD",
+      "mode": "mesh_parallel",
+      "supply_R_range_ohm": [
+        10.778612457917637,
+        10.78727370630243
+      ],
+      "return_R_range_ohm": [
+        12.12126399675915,
+        12.12126399675915
+      ],
+      "single_access_loop_R_range_ohm": [
+        22.899876454676786,
+        22.908537703061583
+      ]
+    },
+    {
+      "instance": "i_core.u_osc",
+      "supply": "VDD",
+      "mode": "single_path",
+      "supply_R_range_ohm": [
+        11.463931632653061,
+        11.61009163265306
+      ],
+      "return_R_range_ohm": [
+        17.35929023376623,
+        17.35929023376623
+      ],
+      "single_access_loop_R_range_ohm": [
+        28.823221866419292,
+        28.96938186641929
+      ]
+    },
+    {
+      "instance": "i_core.u_gate",
+      "supply": "VDD",
+      "mode": "mesh_parallel",
+      "supply_R_range_ohm": [
+        30.58709305668722,
+        30.58709305668722
+      ],
+      "return_R_range_ohm": [
+        12.098067423265675,
+        12.098067423265675
+      ],
+      "single_access_loop_R_range_ohm": [
+        42.6851604799529,
+        42.6851604799529
+      ]
+    },
+    {
+      "instance": "i_core.u_gate",
+      "supply": "VDD",
+      "mode": "single_path",
+      "supply_R_range_ohm": [
+        32.44901163265307,
+        32.44901163265307
+      ],
+      "return_R_range_ohm": [
+        18.482009506493505,
+        18.482009506493505
+      ],
+      "single_access_loop_R_range_ohm": [
+        50.93102113914657,
+        50.93102113914657
+      ]
+    },
+    {
+      "instance": "i_core.u_ls_r4",
+      "supply": "VDD",
+      "mode": "mesh_parallel",
+      "supply_R_range_ohm": [
+        31.604525540941587,
+        31.604525540941587
+      ],
+      "return_R_range_ohm": [
+        23.007332397034173,
+        23.007332397034173
+      ],
+      "single_access_loop_R_range_ohm": [
+        54.611857937975756,
+        54.611857937975756
+      ]
+    },
+    {
+      "instance": "i_core.u_ls_r4",
+      "supply": "VDD",
+      "mode": "single_path",
+      "supply_R_range_ohm": [
+        35.17015918862091,
+        35.17015918862091
+      ],
+      "return_R_range_ohm": [
+        29.299760688311686,
+        29.299760688311686
+      ],
+      "single_access_loop_R_range_ohm": [
+        64.4699198769326,
+        64.4699198769326
+      ]
+    },
+    {
+      "instance": "i_core.u_ls_mode",
+      "supply": "VDD",
+      "mode": "mesh_parallel",
+      "supply_R_range_ohm": [
+        27.48452554094159,
+        27.48452554094159
+      ],
+      "return_R_range_ohm": [
+        26.75278694248872,
+        26.75278694248872
+      ],
+      "single_access_loop_R_range_ohm": [
+        54.23731248343031,
+        54.23731248343031
+      ]
+    },
+    {
+      "instance": "i_core.u_ls_mode",
+      "supply": "VDD",
+      "mode": "single_path",
+      "supply_R_range_ohm": [
+        31.05015918862091,
+        31.05015918862091
+      ],
+      "return_R_range_ohm": [
+        33.045215233766235,
+        33.045215233766235
+      ],
+      "single_access_loop_R_range_ohm": [
+        64.09537442238715,
+        64.09537442238715
+      ]
+    },
+    {
+      "instance": "i_core.u_ls_en",
+      "supply": "VDD",
+      "mode": "mesh_parallel",
+      "supply_R_range_ohm": [
+        23.36452554094159,
+        23.36452554094159
+      ],
+      "return_R_range_ohm": [
+        30.49824148794326,
+        30.49824148794326
+      ],
+      "single_access_loop_R_range_ohm": [
+        53.862767028884846,
+        53.862767028884846
+      ]
+    },
+    {
+      "instance": "i_core.u_ls_en",
+      "supply": "VDD",
+      "mode": "single_path",
+      "supply_R_range_ohm": [
+        26.930159188620905,
+        26.930159188620905
+      ],
+      "return_R_range_ohm": [
+        36.79066977922078,
+        36.79066977922078
+      ],
+      "single_access_loop_R_range_ohm": [
+        63.72082896784168,
+        63.72082896784168
+      ]
+    }
+  ],
+  "current_evidence": {
+    "sense_near_room": {
+      "case": "tt_typ_3.3V_27C",
+      "corner": [
+        "tt",
+        "typ",
+        3.3,
+        27
+      ],
+      "point": "t0_c0_s0.05",
+      "draw_A": 0.00100822
+    },
+    "sense_screen_max": {
+      "case": "ff_bcs_3.6V_125C",
+      "corner": [
+        "ff",
+        "bcs",
+        3.6,
+        125
+      ],
+      "point": "t0_c-0.1_s0.05",
+      "draw_A": 0.00139743
+    },
+    "sense_screen_min": {
+      "case": "ss_wcs_3.0V_-40C",
+      "corner": [
+        "ss",
+        "wcs",
+        3.0,
+        -40
+      ],
+      "point": "t0_c0.3_s0",
+      "draw_A": 0.000722482
+    },
+    "joint_near_room": {
+      "vdda_mean_A": 6.341760031003777e-05,
+      "vdda_max_sampled_A": 0.0008687982620999331,
+      "vdd_mean_A": 2.42404989298474e-07,
+      "vdd_max_sampled_A": 0.0003598410065599889
+    },
+    "joint_scope": "Combined BGR+T2F+three actual upshifters, includes all three loads; cannot isolate LS current. Estimate routeRC,50fF output,ideal1V IPTAT termination. Sampled peaks are not worst-case bounds.",
+    "osc_near_room": {
+      "name": "tt_typ_typ_1.2_27_c0",
+      "code": 0,
+      "mos": "tt",
+      "res": "typ",
+      "cap": "typ",
+      "vdd": 1.2,
+      "temp": 27,
+      "tstop_us": 6.0,
+      "watchdog_seconds": 300,
+      "timed_out": false,
+      "solver_exit": 0,
+      "wall_seconds": 16.094350155995926,
+      "status": "passed",
+      "measurements": {
+        "t1": 7.86397e-07,
+        "t2": 1.55999e-06,
+        "th1": 8.24541e-07,
+        "iavg": 0.000112562,
+        "vamax": 0.650841,
+        "vth": 0.597872,
+        "vthmin": 0.597361,
+        "fmhz": 12.92677589016687,
+        "duty": 49.30854029424698,
+        "iua": 112.5622
+      },
+      "deck_sha256": "16f1026813298b0c6803986f4fe969157b7df11c20c8ceb517f16ba4ffaafdff",
+      "high_width_s": 3.814399999999995e-08,
+      "low_width_s": 3.9215300000000053e-08
+    },
+    "osc_max_power_case": {
+      "name": "ff_bcs_bcs_1.32_125_c0",
+      "code": 0,
+      "mos": "ff",
+      "res": "bcs",
+      "cap": "bcs",
+      "vdd": 1.32,
+      "temp": 125,
+      "tstop_us": 6.0,
+      "watchdog_seconds": 300,
+      "timed_out": false,
+      "solver_exit": 0,
+      "wall_seconds": 15.218883154011564,
+      "status": "passed",
+      "measurements": {
+        "t1": 6.28728e-07,
+        "t2": 1.23647e-06,
+        "th1": 6.58769e-07,
+        "iavg": 0.000154272,
+        "vamax": 0.698175,
+        "vth": 0.659195,
+        "vthmin": 0.655678,
+        "fmhz": 16.45437776947746,
+        "duty": 49.4299380821765,
+        "iua": 154.2715
+      },
+      "deck_sha256": "95d7ad175e5649a2425f5ce7cdc5e9f6b0b52acbc9cfe6e43385f87a1f3545ed",
+      "high_width_s": 3.0041e-08,
+      "low_width_s": 3.07332e-08
+    },
+    "osc_fastest_case": {
+      "name": "ff_bcs_bcs_1.32_-40_c0",
+      "code": 0,
+      "mos": "ff",
+      "res": "bcs",
+      "cap": "bcs",
+      "vdd": 1.32,
+      "temp": -40,
+      "tstop_us": 6.0,
+      "watchdog_seconds": 300,
+      "timed_out": false,
+      "solver_exit": 0,
+      "wall_seconds": 18.832832750980742,
+      "status": "passed",
+      "measurements": {
+        "t1": 6.17261e-07,
+        "t2": 1.21333e-06,
+        "th1": 6.4669e-07,
+        "iavg": 0.00014866,
+        "vamax": 0.703828,
+        "vth": 0.664504,
+        "vthmin": 0.656469,
+        "fmhz": 16.77661500923218,
+        "duty": 49.37206807681944,
+        "iua": 148.6599
+      },
+      "deck_sha256": "6b89ed0b82100aac713ccd68432e31f7e667db9985b2cdda02d7623cdc74be9c",
+      "high_width_s": 2.9429000000000045e-08,
+      "low_width_s": 3.017789999999996e-08
+    },
+    "ctrl_TT_10MHz_W": 0.0009700592,
+    "ctrl_TT_all_dynamic_scaled_to_OSC_W": 0.0012533334837591696,
+    "ctrl_frequency_scale": 1.2926775890166868
+  },
+  "near_room_known_rail_currents_A": {
+    "VDDA": 0.0010716376003100379,
+    "VDD": 0.0009211872716559653
+  },
+  "partial_accounting": {
+    "near_room_known_only_power_W": 0.004641828807010283,
+    "near_room_all_dynamic_scaled_power_W": 0.004925103090769453,
+    "mixed_screen_maxima_partial_power_W": 0.006714382717200001,
+    "near_room_unallocated_10mW_remainder_W": 0.005358171192989717,
+    "mixed_unallocated_10mW_remainder_W": 0.003285617282799999,
+    "qualification": "not run: these are incomplete sums from different fixtures/temperatures, not coherent whole-chip corners"
+  },
+  "conditional_DC_bounds": [
+    {
+      "case": "CTRL_at_10MHz",
+      "instance": "i_core.u_bgr",
+      "resistance_scale_assumed": 1,
+      "additional_loop_R_assumed_ohm": 0,
+      "known_load_only_drop_bound_V": 0.011016815253267663,
+      "conditional_voltage_at_3p3V": 3.288983184746732,
+      "qualification_floor_used_V": 3.0,
+      "missing_loads_included": false
+    },
+    {
+      "case": "CTRL_at_10MHz",
+      "instance": "i_core.u_sense",
+      "resistance_scale_assumed": 1,
+      "additional_loop_R_assumed_ohm": 0,
+      "known_load_only_drop_bound_V": 0.02761033671122542,
+      "conditional_voltage_at_3p3V": 3.2723896632887746,
+      "qualification_floor_used_V": 3.0,
+      "missing_loads_included": false
+    },
+    {
+      "case": "CTRL_at_10MHz",
+      "instance": "i_core.u_t2f",
+      "resistance_scale_assumed": 1,
+      "additional_loop_R_assumed_ohm": 0,
+      "known_load_only_drop_bound_V": 0.013901412418406832,
+      "conditional_voltage_at_3p3V": 3.286098587581593,
+      "qualification_floor_used_V": 3.0,
+      "missing_loads_included": false
+    },
+    {
+      "case": "CTRL_at_10MHz",
+      "instance": "i_core.u_ls_r4",
+      "resistance_scale_assumed": 1,
+      "additional_loop_R_assumed_ohm": 0,
+      "known_load_only_drop_bound_V": 0.01195756475695725,
+      "conditional_voltage_at_3p3V": 3.2880424352430424,
+      "qualification_floor_used_V": 3.0,
+      "missing_loads_included": false
+    },
+    {
+      "case": "CTRL_at_10MHz",
+      "instance": "i_core.u_ls_mode",
+      "resistance_scale_assumed": 1,
+      "additional_loop_R_assumed_ohm": 0,
+      "known_load_only_drop_bound_V": 0.01204654795957466,
+      "conditional_voltage_at_3p3V": 3.287953452040425,
+      "qualification_floor_used_V": 3.0,
+      "missing_loads_included": false
+    },
+    {
+      "case": "CTRL_at_10MHz",
+      "instance": "i_core.u_ls_en",
+      "resistance_scale_assumed": 1,
+      "additional_loop_R_assumed_ohm": 0,
+      "known_load_only_drop_bound_V": 0.012546264129064075,
+      "conditional_voltage_at_3p3V": 3.287453735870936,
+      "qualification_floor_used_V": 3.0,
+      "missing_loads_included": false
+    },
+    {
+      "case": "CTRL_at_10MHz",
+      "instance": "i_core.u_bgr",
+      "resistance_scale_assumed": 1,
+      "additional_loop_R_assumed_ohm": 1,
+      "known_load_only_drop_bound_V": 0.013009640125233667,
+      "conditional_voltage_at_3p3V": 3.2869903598747663,
+      "qualification_floor_used_V": 3.0,
+      "missing_loads_included": false
+    },
+    {
+      "case": "CTRL_at_10MHz",
+      "instance": "i_core.u_sense",
+      "resistance_scale_assumed": 1,
+      "additional_loop_R_assumed_ohm": 1,
+      "known_load_only_drop_bound_V": 0.029603161583191425,
+      "conditional_voltage_at_3p3V": 3.2703968384168083,
+      "qualification_floor_used_V": 3.0,
+      "missing_loads_included": false
+    },
+    {
+      "case": "CTRL_at_10MHz",
+      "instance": "i_core.u_t2f",
+      "resistance_scale_assumed": 1,
+      "additional_loop_R_assumed_ohm": 1,
+      "known_load_only_drop_bound_V": 0.015894237290372835,
+      "conditional_voltage_at_3p3V": 3.284105762709627,
+      "qualification_floor_used_V": 3.0,
+      "missing_loads_included": false
+    },
+    {
+      "case": "CTRL_at_10MHz",
+      "instance": "i_core.u_ls_r4",
+      "resistance_scale_assumed": 1,
+      "additional_loop_R_assumed_ohm": 1,
+      "known_load_only_drop_bound_V": 0.013950389628923254,
+      "conditional_voltage_at_3p3V": 3.2860496103710766,
+      "qualification_floor_used_V": 3.0,
+      "missing_loads_included": false
+    },
+    {
+      "case": "CTRL_at_10MHz",
+      "instance": "i_core.u_ls_mode",
+      "resistance_scale_assumed": 1,
+      "additional_loop_R_assumed_ohm": 1,
+      "known_load_only_drop_bound_V": 0.014039372831540664,
+      "conditional_voltage_at_3p3V": 3.285960627168459,
+      "qualification_floor_used_V": 3.0,
+      "missing_loads_included": false
+    },
+    {
+      "case": "CTRL_at_10MHz",
+      "instance": "i_core.u_ls_en",
+      "resistance_scale_assumed": 1,
+      "additional_loop_R_assumed_ohm": 1,
+      "known_load_only_drop_bound_V": 0.014539089001030079,
+      "conditional_voltage_at_3p3V": 3.2854609109989696,
+      "qualification_floor_used_V": 3.0,
+      "missing_loads_included": false
+    },
+    {
+      "case": "CTRL_at_10MHz",
+      "instance": "i_core.u_bgr",
+      "resistance_scale_assumed": 1,
+      "additional_loop_R_assumed_ohm": 5,
+      "known_load_only_drop_bound_V": 0.02098093961309768,
+      "conditional_voltage_at_3p3V": 3.279019060386902,
+      "qualification_floor_used_V": 3.0,
+      "missing_loads_included": false
+    },
+    {
+      "case": "CTRL_at_10MHz",
+      "instance": "i_core.u_sense",
+      "resistance_scale_assumed": 1,
+      "additional_loop_R_assumed_ohm": 5,
+      "known_load_only_drop_bound_V": 0.037574461071055436,
+      "conditional_voltage_at_3p3V": 3.2624255389289445,
+      "qualification_floor_used_V": 3.0,
+      "missing_loads_included": false
+    },
+    {
+      "case": "CTRL_at_10MHz",
+      "instance": "i_core.u_t2f",
+      "resistance_scale_assumed": 1,
+      "additional_loop_R_assumed_ohm": 5,
+      "known_load_only_drop_bound_V": 0.02386553677823685,
+      "conditional_voltage_at_3p3V": 3.276134463221763,
+      "qualification_floor_used_V": 3.0,
+      "missing_loads_included": false
+    },
+    {
+      "case": "CTRL_at_10MHz",
+      "instance": "i_core.u_ls_r4",
+      "resistance_scale_assumed": 1,
+      "additional_loop_R_assumed_ohm": 5,
+      "known_load_only_drop_bound_V": 0.02192168911678727,
+      "conditional_voltage_at_3p3V": 3.2780783108832123,
+      "qualification_floor_used_V": 3.0,
+      "missing_loads_included": false
+    },
+    {
+      "case": "CTRL_at_10MHz",
+      "instance": "i_core.u_ls_mode",
+      "resistance_scale_assumed": 1,
+      "additional_loop_R_assumed_ohm": 5,
+      "known_load_only_drop_bound_V": 0.02201067231940468,
+      "conditional_voltage_at_3p3V": 3.2779893276805954,
+      "qualification_floor_used_V": 3.0,
+      "missing_loads_included": false
+    },
+    {
+      "case": "CTRL_at_10MHz",
+      "instance": "i_core.u_ls_en",
+      "resistance_scale_assumed": 1,
+      "additional_loop_R_assumed_ohm": 5,
+      "known_load_only_drop_bound_V": 0.02251038848889409,
+      "conditional_voltage_at_3p3V": 3.277489611511106,
+      "qualification_floor_used_V": 3.0,
+      "missing_loads_included": false
+    },
+    {
+      "case": "CTRL_at_10MHz",
+      "instance": "i_core.u_bgr",
+      "resistance_scale_assumed": 2,
+      "additional_loop_R_assumed_ohm": 0,
+      "known_load_only_drop_bound_V": 0.022033630506535326,
+      "conditional_voltage_at_3p3V": 3.2779663694934644,
+      "qualification_floor_used_V": 3.0,
+      "missing_loads_included": false
+    },
+    {
+      "case": "CTRL_at_10MHz",
+      "instance": "i_core.u_sense",
+      "resistance_scale_assumed": 2,
+      "additional_loop_R_assumed_ohm": 0,
+      "known_load_only_drop_bound_V": 0.05522067342245084,
+      "conditional_voltage_at_3p3V": 3.244779326577549,
+      "qualification_floor_used_V": 3.0,
+      "missing_loads_included": false
+    },
+    {
+      "case": "CTRL_at_10MHz",
+      "instance": "i_core.u_t2f",
+      "resistance_scale_assumed": 2,
+      "additional_loop_R_assumed_ohm": 0,
+      "known_load_only_drop_bound_V": 0.027802824836813664,
+      "conditional_voltage_at_3p3V": 3.272197175163186,
+      "qualification_floor_used_V": 3.0,
+      "missing_loads_included": false
+    },
+    {
+      "case": "CTRL_at_10MHz",
+      "instance": "i_core.u_ls_r4",
+      "resistance_scale_assumed": 2,
+      "additional_loop_R_assumed_ohm": 0,
+      "known_load_only_drop_bound_V": 0.0239151295139145,
+      "conditional_voltage_at_3p3V": 3.2760848704860854,
+      "qualification_floor_used_V": 3.0,
+      "missing_loads_included": false
+    },
+    {
+      "case": "CTRL_at_10MHz",
+      "instance": "i_core.u_ls_mode",
+      "resistance_scale_assumed": 2,
+      "additional_loop_R_assumed_ohm": 0,
+      "known_load_only_drop_bound_V": 0.02409309591914932,
+      "conditional_voltage_at_3p3V": 3.2759069040808506,
+      "qualification_floor_used_V": 3.0,
+      "missing_loads_included": false
+    },
+    {
+      "case": "CTRL_at_10MHz",
+      "instance": "i_core.u_ls_en",
+      "resistance_scale_assumed": 2,
+      "additional_loop_R_assumed_ohm": 0,
+      "known_load_only_drop_bound_V": 0.02509252825812815,
+      "conditional_voltage_at_3p3V": 3.2749074717418716,
+      "qualification_floor_used_V": 3.0,
+      "missing_loads_included": false
+    },
+    {
+      "case": "CTRL_at_10MHz",
+      "instance": "i_core.u_bgr",
+      "resistance_scale_assumed": 2,
+      "additional_loop_R_assumed_ohm": 1,
+      "known_load_only_drop_bound_V": 0.02402645537850133,
+      "conditional_voltage_at_3p3V": 3.2759735446214986,
+      "qualification_floor_used_V": 3.0,
+      "missing_loads_included": false
+    },
+    {
+      "case": "CTRL_at_10MHz",
+      "instance": "i_core.u_sense",
+      "resistance_scale_assumed": 2,
+      "additional_loop_R_assumed_ohm": 1,
+      "known_load_only_drop_bound_V": 0.05721349829441685,
+      "conditional_voltage_at_3p3V": 3.242786501705583,
+      "qualification_floor_used_V": 3.0,
+      "missing_loads_included": false
+    },
+    {
+      "case": "CTRL_at_10MHz",
+      "instance": "i_core.u_t2f",
+      "resistance_scale_assumed": 2,
+      "additional_loop_R_assumed_ohm": 1,
+      "known_load_only_drop_bound_V": 0.029795649708779667,
+      "conditional_voltage_at_3p3V": 3.27020435029122,
+      "qualification_floor_used_V": 3.0,
+      "missing_loads_included": false
+    },
+    {
+      "case": "CTRL_at_10MHz",
+      "instance": "i_core.u_ls_r4",
+      "resistance_scale_assumed": 2,
+      "additional_loop_R_assumed_ohm": 1,
+      "known_load_only_drop_bound_V": 0.025907954385880505,
+      "conditional_voltage_at_3p3V": 3.274092045614119,
+      "qualification_floor_used_V": 3.0,
+      "missing_loads_included": false
+    },
+    {
+      "case": "CTRL_at_10MHz",
+      "instance": "i_core.u_ls_mode",
+      "resistance_scale_assumed": 2,
+      "additional_loop_R_assumed_ohm": 1,
+      "known_load_only_drop_bound_V": 0.026085920791115325,
+      "conditional_voltage_at_3p3V": 3.2739140792088843,
+      "qualification_floor_used_V": 3.0,
+      "missing_loads_included": false
+    },
+    {
+      "case": "CTRL_at_10MHz",
+      "instance": "i_core.u_ls_en",
+      "resistance_scale_assumed": 2,
+      "additional_loop_R_assumed_ohm": 1,
+      "known_load_only_drop_bound_V": 0.027085353130094154,
+      "conditional_voltage_at_3p3V": 3.2729146468699057,
+      "qualification_floor_used_V": 3.0,
+      "missing_loads_included": false
+    },
+    {
+      "case": "CTRL_at_10MHz",
+      "instance": "i_core.u_bgr",
+      "resistance_scale_assumed": 2,
+      "additional_loop_R_assumed_ohm": 5,
+      "known_load_only_drop_bound_V": 0.031997754866365344,
+      "conditional_voltage_at_3p3V": 3.2680022451336344,
+      "qualification_floor_used_V": 3.0,
+      "missing_loads_included": false
+    },
+    {
+      "case": "CTRL_at_10MHz",
+      "instance": "i_core.u_sense",
+      "resistance_scale_assumed": 2,
+      "additional_loop_R_assumed_ohm": 5,
+      "known_load_only_drop_bound_V": 0.06518479778228085,
+      "conditional_voltage_at_3p3V": 3.234815202217719,
+      "qualification_floor_used_V": 3.0,
+      "missing_loads_included": false
+    },
+    {
+      "case": "CTRL_at_10MHz",
+      "instance": "i_core.u_t2f",
+      "resistance_scale_assumed": 2,
+      "additional_loop_R_assumed_ohm": 5,
+      "known_load_only_drop_bound_V": 0.03776694919664368,
+      "conditional_voltage_at_3p3V": 3.2622330508033563,
+      "qualification_floor_used_V": 3.0,
+      "missing_loads_included": false
+    },
+    {
+      "case": "CTRL_at_10MHz",
+      "instance": "i_core.u_ls_r4",
+      "resistance_scale_assumed": 2,
+      "additional_loop_R_assumed_ohm": 5,
+      "known_load_only_drop_bound_V": 0.03387925387374452,
+      "conditional_voltage_at_3p3V": 3.2661207461262554,
+      "qualification_floor_used_V": 3.0,
+      "missing_loads_included": false
+    },
+    {
+      "case": "CTRL_at_10MHz",
+      "instance": "i_core.u_ls_mode",
+      "resistance_scale_assumed": 2,
+      "additional_loop_R_assumed_ohm": 5,
+      "known_load_only_drop_bound_V": 0.03405722027897934,
+      "conditional_voltage_at_3p3V": 3.2659427797210205,
+      "qualification_floor_used_V": 3.0,
+      "missing_loads_included": false
+    },
+    {
+      "case": "CTRL_at_10MHz",
+      "instance": "i_core.u_ls_en",
+      "resistance_scale_assumed": 2,
+      "additional_loop_R_assumed_ohm": 5,
+      "known_load_only_drop_bound_V": 0.035056652617958164,
+      "conditional_voltage_at_3p3V": 3.2649433473820415,
+      "qualification_floor_used_V": 3.0,
+      "missing_loads_included": false
+    },
+    {
+      "case": "CTRL_all_dynamic_scaled_to_OSC",
+      "instance": "i_core.u_bgr",
+      "resistance_scale_assumed": 1,
+      "additional_loop_R_assumed_ohm": 0,
+      "known_load_only_drop_bound_V": 0.011528931769561289,
+      "conditional_voltage_at_3p3V": 3.2884710682304386,
+      "qualification_floor_used_V": 3.0,
+      "missing_loads_included": false
+    },
+    {
+      "case": "CTRL_all_dynamic_scaled_to_OSC",
+      "instance": "i_core.u_sense",
+      "resistance_scale_assumed": 1,
+      "additional_loop_R_assumed_ohm": 0,
+      "known_load_only_drop_bound_V": 0.027878218146792186,
+      "conditional_voltage_at_3p3V": 3.272121781853208,
+      "qualification_floor_used_V": 3.0,
+      "missing_loads_included": false
+    },
+    {
+      "case": "CTRL_all_dynamic_scaled_to_OSC",
+      "instance": "i_core.u_t2f",
+      "resistance_scale_assumed": 1,
+      "additional_loop_R_assumed_ohm": 0,
+      "known_load_only_drop_bound_V": 0.014396320803725157,
+      "conditional_voltage_at_3p3V": 3.285603679196275,
+      "qualification_floor_used_V": 3.0,
+      "missing_loads_included": false
+    },
+    {
+      "case": "CTRL_all_dynamic_scaled_to_OSC",
+      "instance": "i_core.u_ls_r4",
+      "resistance_scale_assumed": 1,
+      "additional_loop_R_assumed_ohm": 0,
+      "known_load_only_drop_bound_V": 0.012470738791813634,
+      "conditional_voltage_at_3p3V": 3.2875292612081863,
+      "qualification_floor_used_V": 3.0,
+      "missing_loads_included": false
+    },
+    {
+      "case": "CTRL_all_dynamic_scaled_to_OSC",
+      "instance": "i_core.u_ls_mode",
+      "resistance_scale_assumed": 1,
+      "additional_loop_R_assumed_ohm": 0,
+      "known_load_only_drop_bound_V": 0.012559721994431047,
+      "conditional_voltage_at_3p3V": 3.287440278005569,
+      "qualification_floor_used_V": 3.0,
+      "missing_loads_included": false
+    },
+    {
+      "case": "CTRL_all_dynamic_scaled_to_OSC",
+      "instance": "i_core.u_ls_en",
+      "resistance_scale_assumed": 1,
+      "additional_loop_R_assumed_ohm": 0,
+      "known_load_only_drop_bound_V": 0.01305943816392046,
+      "conditional_voltage_at_3p3V": 3.2869405618360794,
+      "qualification_floor_used_V": 3.0,
+      "missing_loads_included": false
+    },
+    {
+      "case": "CTRL_all_dynamic_scaled_to_OSC",
+      "instance": "i_core.u_bgr",
+      "resistance_scale_assumed": 1,
+      "additional_loop_R_assumed_ohm": 1,
+      "known_load_only_drop_bound_V": 0.013757818544659933,
+      "conditional_voltage_at_3p3V": 3.2862421814553398,
+      "qualification_floor_used_V": 3.0,
+      "missing_loads_included": false
+    },
+    {
+      "case": "CTRL_all_dynamic_scaled_to_OSC",
+      "instance": "i_core.u_sense",
+      "resistance_scale_assumed": 1,
+      "additional_loop_R_assumed_ohm": 1,
+      "known_load_only_drop_bound_V": 0.03010710492189083,
+      "conditional_voltage_at_3p3V": 3.269892895078109,
+      "qualification_floor_used_V": 3.0,
+      "missing_loads_included": false
+    },
+    {
+      "case": "CTRL_all_dynamic_scaled_to_OSC",
+      "instance": "i_core.u_t2f",
+      "resistance_scale_assumed": 1,
+      "additional_loop_R_assumed_ohm": 1,
+      "known_load_only_drop_bound_V": 0.0166252075788238,
+      "conditional_voltage_at_3p3V": 3.283374792421176,
+      "qualification_floor_used_V": 3.0,
+      "missing_loads_included": false
+    },
+    {
+      "case": "CTRL_all_dynamic_scaled_to_OSC",
+      "instance": "i_core.u_ls_r4",
+      "resistance_scale_assumed": 1,
+      "additional_loop_R_assumed_ohm": 1,
+      "known_load_only_drop_bound_V": 0.014699625566912278,
+      "conditional_voltage_at_3p3V": 3.2853003744330875,
+      "qualification_floor_used_V": 3.0,
+      "missing_loads_included": false
+    },
+    {
+      "case": "CTRL_all_dynamic_scaled_to_OSC",
+      "instance": "i_core.u_ls_mode",
+      "resistance_scale_assumed": 1,
+      "additional_loop_R_assumed_ohm": 1,
+      "known_load_only_drop_bound_V": 0.014788608769529692,
+      "conditional_voltage_at_3p3V": 3.28521139123047,
+      "qualification_floor_used_V": 3.0,
+      "missing_loads_included": false
+    },
+    {
+      "case": "CTRL_all_dynamic_scaled_to_OSC",
+      "instance": "i_core.u_ls_en",
+      "resistance_scale_assumed": 1,
+      "additional_loop_R_assumed_ohm": 1,
+      "known_load_only_drop_bound_V": 0.015288324939019104,
+      "conditional_voltage_at_3p3V": 3.2847116750609806,
+      "qualification_floor_used_V": 3.0,
+      "missing_loads_included": false
+    },
+    {
+      "case": "CTRL_all_dynamic_scaled_to_OSC",
+      "instance": "i_core.u_bgr",
+      "resistance_scale_assumed": 1,
+      "additional_loop_R_assumed_ohm": 5,
+      "known_load_only_drop_bound_V": 0.02267336564505451,
+      "conditional_voltage_at_3p3V": 3.2773266343549454,
+      "qualification_floor_used_V": 3.0,
+      "missing_loads_included": false
+    },
+    {
+      "case": "CTRL_all_dynamic_scaled_to_OSC",
+      "instance": "i_core.u_sense",
+      "resistance_scale_assumed": 1,
+      "additional_loop_R_assumed_ohm": 5,
+      "known_load_only_drop_bound_V": 0.03902265202228541,
+      "conditional_voltage_at_3p3V": 3.260977347977714,
+      "qualification_floor_used_V": 3.0,
+      "missing_loads_included": false
+    },
+    {
+      "case": "CTRL_all_dynamic_scaled_to_OSC",
+      "instance": "i_core.u_t2f",
+      "resistance_scale_assumed": 1,
+      "additional_loop_R_assumed_ohm": 5,
+      "known_load_only_drop_bound_V": 0.02554075467921838,
+      "conditional_voltage_at_3p3V": 3.2744592453207813,
+      "qualification_floor_used_V": 3.0,
+      "missing_loads_included": false
+    },
+    {
+      "case": "CTRL_all_dynamic_scaled_to_OSC",
+      "instance": "i_core.u_ls_r4",
+      "resistance_scale_assumed": 1,
+      "additional_loop_R_assumed_ohm": 5,
+      "known_load_only_drop_bound_V": 0.023615172667306856,
+      "conditional_voltage_at_3p3V": 3.2763848273326928,
+      "qualification_floor_used_V": 3.0,
+      "missing_loads_included": false
+    },
+    {
+      "case": "CTRL_all_dynamic_scaled_to_OSC",
+      "instance": "i_core.u_ls_mode",
+      "resistance_scale_assumed": 1,
+      "additional_loop_R_assumed_ohm": 5,
+      "known_load_only_drop_bound_V": 0.02370415586992427,
+      "conditional_voltage_at_3p3V": 3.2762958441300754,
+      "qualification_floor_used_V": 3.0,
+      "missing_loads_included": false
+    },
+    {
+      "case": "CTRL_all_dynamic_scaled_to_OSC",
+      "instance": "i_core.u_ls_en",
+      "resistance_scale_assumed": 1,
+      "additional_loop_R_assumed_ohm": 5,
+      "known_load_only_drop_bound_V": 0.024203872039413682,
+      "conditional_voltage_at_3p3V": 3.2757961279605863,
+      "qualification_floor_used_V": 3.0,
+      "missing_loads_included": false
+    },
+    {
+      "case": "CTRL_all_dynamic_scaled_to_OSC",
+      "instance": "i_core.u_bgr",
+      "resistance_scale_assumed": 2,
+      "additional_loop_R_assumed_ohm": 0,
+      "known_load_only_drop_bound_V": 0.023057863539122578,
+      "conditional_voltage_at_3p3V": 3.2769421364608773,
+      "qualification_floor_used_V": 3.0,
+      "missing_loads_included": false
+    },
+    {
+      "case": "CTRL_all_dynamic_scaled_to_OSC",
+      "instance": "i_core.u_sense",
+      "resistance_scale_assumed": 2,
+      "additional_loop_R_assumed_ohm": 0,
+      "known_load_only_drop_bound_V": 0.05575643629358437,
+      "conditional_voltage_at_3p3V": 3.2442435637064153,
+      "qualification_floor_used_V": 3.0,
+      "missing_loads_included": false
+    },
+    {
+      "case": "CTRL_all_dynamic_scaled_to_OSC",
+      "instance": "i_core.u_t2f",
+      "resistance_scale_assumed": 2,
+      "additional_loop_R_assumed_ohm": 0,
+      "known_load_only_drop_bound_V": 0.028792641607450313,
+      "conditional_voltage_at_3p3V": 3.2712073583925494,
+      "qualification_floor_used_V": 3.0,
+      "missing_loads_included": false
+    },
+    {
+      "case": "CTRL_all_dynamic_scaled_to_OSC",
+      "instance": "i_core.u_ls_r4",
+      "resistance_scale_assumed": 2,
+      "additional_loop_R_assumed_ohm": 0,
+      "known_load_only_drop_bound_V": 0.024941477583627268,
+      "conditional_voltage_at_3p3V": 3.2750585224163724,
+      "qualification_floor_used_V": 3.0,
+      "missing_loads_included": false
+    },
+    {
+      "case": "CTRL_all_dynamic_scaled_to_OSC",
+      "instance": "i_core.u_ls_mode",
+      "resistance_scale_assumed": 2,
+      "additional_loop_R_assumed_ohm": 0,
+      "known_load_only_drop_bound_V": 0.025119443988862095,
+      "conditional_voltage_at_3p3V": 3.2748805560111376,
+      "qualification_floor_used_V": 3.0,
+      "missing_loads_included": false
+    },
+    {
+      "case": "CTRL_all_dynamic_scaled_to_OSC",
+      "instance": "i_core.u_ls_en",
+      "resistance_scale_assumed": 2,
+      "additional_loop_R_assumed_ohm": 0,
+      "known_load_only_drop_bound_V": 0.02611887632784092,
+      "conditional_voltage_at_3p3V": 3.273881123672159,
+      "qualification_floor_used_V": 3.0,
+      "missing_loads_included": false
+    },
+    {
+      "case": "CTRL_all_dynamic_scaled_to_OSC",
+      "instance": "i_core.u_bgr",
+      "resistance_scale_assumed": 2,
+      "additional_loop_R_assumed_ohm": 1,
+      "known_load_only_drop_bound_V": 0.025286750314221222,
+      "conditional_voltage_at_3p3V": 3.2747132496857785,
+      "qualification_floor_used_V": 3.0,
+      "missing_loads_included": false
+    },
+    {
+      "case": "CTRL_all_dynamic_scaled_to_OSC",
+      "instance": "i_core.u_sense",
+      "resistance_scale_assumed": 2,
+      "additional_loop_R_assumed_ohm": 1,
+      "known_load_only_drop_bound_V": 0.057985323068683016,
+      "conditional_voltage_at_3p3V": 3.242014676931317,
+      "qualification_floor_used_V": 3.0,
+      "missing_loads_included": false
+    },
+    {
+      "case": "CTRL_all_dynamic_scaled_to_OSC",
+      "instance": "i_core.u_t2f",
+      "resistance_scale_assumed": 2,
+      "additional_loop_R_assumed_ohm": 1,
+      "known_load_only_drop_bound_V": 0.031021528382548957,
+      "conditional_voltage_at_3p3V": 3.268978471617451,
+      "qualification_floor_used_V": 3.0,
+      "missing_loads_included": false
+    },
+    {
+      "case": "CTRL_all_dynamic_scaled_to_OSC",
+      "instance": "i_core.u_ls_r4",
+      "resistance_scale_assumed": 2,
+      "additional_loop_R_assumed_ohm": 1,
+      "known_load_only_drop_bound_V": 0.027170364358725912,
+      "conditional_voltage_at_3p3V": 3.272829635641274,
+      "qualification_floor_used_V": 3.0,
+      "missing_loads_included": false
+    },
+    {
+      "case": "CTRL_all_dynamic_scaled_to_OSC",
+      "instance": "i_core.u_ls_mode",
+      "resistance_scale_assumed": 2,
+      "additional_loop_R_assumed_ohm": 1,
+      "known_load_only_drop_bound_V": 0.02734833076396074,
+      "conditional_voltage_at_3p3V": 3.2726516692360392,
+      "qualification_floor_used_V": 3.0,
+      "missing_loads_included": false
+    },
+    {
+      "case": "CTRL_all_dynamic_scaled_to_OSC",
+      "instance": "i_core.u_ls_en",
+      "resistance_scale_assumed": 2,
+      "additional_loop_R_assumed_ohm": 1,
+      "known_load_only_drop_bound_V": 0.028347763102939565,
+      "conditional_voltage_at_3p3V": 3.27165223689706,
+      "qualification_floor_used_V": 3.0,
+      "missing_loads_included": false
+    },
+    {
+      "case": "CTRL_all_dynamic_scaled_to_OSC",
+      "instance": "i_core.u_bgr",
+      "resistance_scale_assumed": 2,
+      "additional_loop_R_assumed_ohm": 5,
+      "known_load_only_drop_bound_V": 0.0342022974146158,
+      "conditional_voltage_at_3p3V": 3.265797702585384,
+      "qualification_floor_used_V": 3.0,
+      "missing_loads_included": false
+    },
+    {
+      "case": "CTRL_all_dynamic_scaled_to_OSC",
+      "instance": "i_core.u_sense",
+      "resistance_scale_assumed": 2,
+      "additional_loop_R_assumed_ohm": 5,
+      "known_load_only_drop_bound_V": 0.06690087016907759,
+      "conditional_voltage_at_3p3V": 3.233099129830922,
+      "qualification_floor_used_V": 3.0,
+      "missing_loads_included": false
+    },
+    {
+      "case": "CTRL_all_dynamic_scaled_to_OSC",
+      "instance": "i_core.u_t2f",
+      "resistance_scale_assumed": 2,
+      "additional_loop_R_assumed_ohm": 5,
+      "known_load_only_drop_bound_V": 0.039937075482943535,
+      "conditional_voltage_at_3p3V": 3.2600629245170563,
+      "qualification_floor_used_V": 3.0,
+      "missing_loads_included": false
+    },
+    {
+      "case": "CTRL_all_dynamic_scaled_to_OSC",
+      "instance": "i_core.u_ls_r4",
+      "resistance_scale_assumed": 2,
+      "additional_loop_R_assumed_ohm": 5,
+      "known_load_only_drop_bound_V": 0.03608591145912049,
+      "conditional_voltage_at_3p3V": 3.2639140885408793,
+      "qualification_floor_used_V": 3.0,
+      "missing_loads_included": false
+    },
+    {
+      "case": "CTRL_all_dynamic_scaled_to_OSC",
+      "instance": "i_core.u_ls_mode",
+      "resistance_scale_assumed": 2,
+      "additional_loop_R_assumed_ohm": 5,
+      "known_load_only_drop_bound_V": 0.036263877864355316,
+      "conditional_voltage_at_3p3V": 3.2637361221356445,
+      "qualification_floor_used_V": 3.0,
+      "missing_loads_included": false
+    },
+    {
+      "case": "CTRL_all_dynamic_scaled_to_OSC",
+      "instance": "i_core.u_ls_en",
+      "resistance_scale_assumed": 2,
+      "additional_loop_R_assumed_ohm": 5,
+      "known_load_only_drop_bound_V": 0.03726331020333414,
+      "conditional_voltage_at_3p3V": 3.262736689796666,
+      "qualification_floor_used_V": 3.0,
+      "missing_loads_included": false
+    }
+  ],
+  "headroom_current_sensitivity": [
+    {
+      "loop_R_assumed_ohm": 20,
+      "source_V": 3.3,
+      "qualification_floor_V": 3.0,
+      "Imax_from_headroom_A": 0.01499999999999999,
+      "scope": "Only Ohms-law sensitivity; not measured/extracted complete loop and not a functional limit"
+    },
+    {
+      "loop_R_assumed_ohm": 20,
+      "source_V": 3.0,
+      "qualification_floor_V": 3.0,
+      "Imax_from_headroom_A": 0,
+      "scope": "Only Ohms-law sensitivity; not measured/extracted complete loop and not a functional limit"
+    },
+    {
+      "loop_R_assumed_ohm": 20,
+      "source_V": 1.2,
+      "qualification_floor_V": 1.08,
+      "Imax_from_headroom_A": 0.005999999999999994,
+      "scope": "Only Ohms-law sensitivity; not measured/extracted complete loop and not a functional limit"
+    },
+    {
+      "loop_R_assumed_ohm": 20,
+      "source_V": 1.08,
+      "qualification_floor_V": 1.08,
+      "Imax_from_headroom_A": 0,
+      "scope": "Only Ohms-law sensitivity; not measured/extracted complete loop and not a functional limit"
+    },
+    {
+      "loop_R_assumed_ohm": 40,
+      "source_V": 3.3,
+      "qualification_floor_V": 3.0,
+      "Imax_from_headroom_A": 0.007499999999999995,
+      "scope": "Only Ohms-law sensitivity; not measured/extracted complete loop and not a functional limit"
+    },
+    {
+      "loop_R_assumed_ohm": 40,
+      "source_V": 3.0,
+      "qualification_floor_V": 3.0,
+      "Imax_from_headroom_A": 0,
+      "scope": "Only Ohms-law sensitivity; not measured/extracted complete loop and not a functional limit"
+    },
+    {
+      "loop_R_assumed_ohm": 40,
+      "source_V": 1.2,
+      "qualification_floor_V": 1.08,
+      "Imax_from_headroom_A": 0.002999999999999997,
+      "scope": "Only Ohms-law sensitivity; not measured/extracted complete loop and not a functional limit"
+    },
+    {
+      "loop_R_assumed_ohm": 40,
+      "source_V": 1.08,
+      "qualification_floor_V": 1.08,
+      "Imax_from_headroom_A": 0,
+      "scope": "Only Ohms-law sensitivity; not measured/extracted complete loop and not a functional limit"
+    },
+    {
+      "loop_R_assumed_ohm": 80,
+      "source_V": 3.3,
+      "qualification_floor_V": 3.0,
+      "Imax_from_headroom_A": 0.0037499999999999977,
+      "scope": "Only Ohms-law sensitivity; not measured/extracted complete loop and not a functional limit"
+    },
+    {
+      "loop_R_assumed_ohm": 80,
+      "source_V": 3.0,
+      "qualification_floor_V": 3.0,
+      "Imax_from_headroom_A": 0,
+      "scope": "Only Ohms-law sensitivity; not measured/extracted complete loop and not a functional limit"
+    },
+    {
+      "loop_R_assumed_ohm": 80,
+      "source_V": 1.2,
+      "qualification_floor_V": 1.08,
+      "Imax_from_headroom_A": 0.0014999999999999985,
+      "scope": "Only Ohms-law sensitivity; not measured/extracted complete loop and not a functional limit"
+    },
+    {
+      "loop_R_assumed_ohm": 80,
+      "source_V": 1.08,
+      "qualification_floor_V": 1.08,
+      "Imax_from_headroom_A": 0,
+      "scope": "Only Ohms-law sensitivity; not measured/extracted complete loop and not a functional limit"
+    }
+  ],
+  "missing": [
+    "Active GATE and TRIP power",
+    "Actual pad/IO load and workload activity",
+    "Transient SENSE current and actual reference-bias interaction",
+    "Coherent PVT/workload assignment",
+    "Whole-system substrate/ground/package impedance",
+    "IR-aware functional block validation"
+  ],
+  "whole_chip_below_10mW": "not run",
+  "loaded_whole_chip_IR": "not run"
+}

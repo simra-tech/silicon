@@ -1,0 +1,90 @@
+* G1_SENSE testbench: DC transfer, AC gain/bandwidth, step, PSRR, CMRR
+* Corner/temperature are substituted by run_sense.sh into the @@ fields.
+.param VDDA=3.3 VREF=1.04 VPEDN=1.000755 VCM=0
+.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerMOSlv.lib mos_tt
+.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerMOShv.lib mos_tt
+.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerRES.lib res_typ
+.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerCAP.lib cap_typ
+.temp 27
+.include qualification/highrail-20260921-a/sense_substrate_tied.spice
+.option gmin=1e-13
+* three unity/inverting OTA loops: give the DC solver their operating points
+.nodeset v(vref_buf)={VREF} v(vped)={VPEDN} v(isense)={VPEDN} v(xdut.vp)=0.047 v(xdut.vn)=0.047 v(xdut.iptat)=0.76
++ v(xdut.xref.out1)={VDDA-0.79} v(xdut.xbuf.out1)={VDDA-0.79} v(xdut.xota.out1)={VDDA-0.79} v(xdut.xref.mir)={VDDA-0.79} v(xdut.xbuf.mir)={VDDA-0.79} v(xdut.xota.mir)={VDDA-0.79}
++ v(xdut.xref.tail)=1.65 v(xdut.xbuf.tail)=1.65 v(xdut.xota.tail)=1.6 v(xdut.xref.fn)=0.2 v(xdut.xref.fp)=0.2 v(xdut.xbuf.fn)=0.2 v(xdut.xbuf.fp)=0.2 v(xdut.xota.fn)=0.2 v(xdut.xota.fp)=0.2
+.option itl1=400 itl2=200
+Vdd vdd 0 dc {VDDA} ac 0
+Vref vref 0 dc {VREF}
+* G1_BGR iptat: 4.13 uA at 27 C, PTAT
+Iib vdd iptat dc {4.13u*(27+273.15)/300.15}
+Vcm cm 0 dc {VCM} ac 0
+Vsh shp cm dc 0 ac 1
+XDUT shp cm vref iptat isense vped vref_buf vdd 0 g1_sense
+* load = G1_TRIP conditioning divider (2 x 50k rppd, 5 units each) with 1 pF hold cap, plus 300 fF wiring
+XRL1 isense icmp 0 rppd w=2u l=384.3u m=1 b=0
+XRL2 icmp 0 0 rppd w=2u l=384.3u m=1 b=0
+XCH icmp 0 cap_cmim w=26u l=26u m=1
+CL isense 0 300f
+.control
+set filetype=ascii
+set num_threads=1
+op
+let idd_ua = -i(vdd)*1e6
+echo "OP: isense=" $&v(isense) " vped=" $&v(vped) " vref_buf=" $&v(vref_buf) " icmp=" $&v(icmp) " idd_uA=" $&idd_ua " vp=" $&v(xdut.vp) " vn=" $&v(xdut.vn) " tail=" $&v(xdut.xota.tail) " fn=" $&v(xdut.xota.fn) " mir=" $&v(xdut.xota.mir) " vbnc=" $&v(xdut.xota.vbnc) " vbpc=" $&v(xdut.xota.vbpc)
+dc Vsh -0.005 0.055 0.001
+let vo = v(isense)
+meas dc vo0 find vo at=0
+meas dc vo5 find vo at=0.005
+meas dc vo45 find vo at=0.045
+meas dc vo50 find vo at=0.050
+meas dc vo55 find vo at=0.055
+let gdc = (vo45-vo5)/0.040
+let gep = (vo50-vo0)/0.05
+echo "DC: ped=" $&vo0 " gain=" $&gdc " vo50=" $&vo50 " vo55=" $&vo55 " endpt_gain=" $&gep
+ac dec 20 1k 200meg
+let g = vdb(isense)
+meas ac g1k find g at=1k
+let g3 = g1k - 3
+meas ac f3db when g=g3 fall=1
+meas ac gpk max g from=1k to=200meg
+echo "AC: gain_1k_dB=" $&g1k " f3dB=" $&f3db " peak_dB=" $&gpk
+* PSRR: 1 V ac on VDDA, input ac off
+alter @Vsh[acmag] = 0
+alter @Vdd[acmag] = 1
+ac dec 10 1k 100meg
+let ps = vdb(isense)
+meas ac psrr1k find ps at=1k
+meas ac psrr100k find ps at=100k
+meas ac psrr1m find ps at=1meg
+echo "PSRR_dB(out/vdd): 1k=" $&psrr1k " 100k=" $&psrr100k " 1M=" $&psrr1m
+* CMRR: 1 V ac on both inputs
+alter @Vdd[acmag] = 0
+alter @Vcm[acmag] = 1
+ac dec 10 1k 100meg
+let cm = vdb(isense)
+meas ac cmg1k find cm at=1k
+meas ac cmg1m find cm at=1meg
+echo "CM gain dB(out/cm): 1k=" $&cmg1k " 1M=" $&cmg1m " (CMRR = 26 dB - this)"
+alter @Vcm[acmag] = 0
+* step 0 -> 50 mV
+alter Vsh dc = 0
+alter Vsh pulse = [ 0 0.05 1u 1n 1n 5u 10u ]
+tran 2n 4u
+let vo = v(isense)
+meas tran vlo find vo at=0.9u
+meas tran vhi find vo at=3.9u
+let vlo1 = vlo + 0.99*(vhi-vlo)
+let vlo9 = vlo + 0.9*(vhi-vlo)
+let vlo10 = vlo + 0.1*(vhi-vlo)
+meas tran t10 when vo=vlo10 rise=1
+meas tran t90 when vo=vlo9 rise=1
+meas tran vmax max vo from=1u to=4u
+meas tran tsettle when vo=vlo1 rise=1
+let tr = t90-t10
+let ts = tsettle-1u
+let ovs = (vmax-vhi)*1e3
+echo "STEP: vlo=" $&vlo " vhi=" $&vhi " trise10_90=" $&tr " t_to_99pct=" $&ts " overshoot_mV=" $&ovs
+echo QUALIFICATION_END
+quit 0
+.endc
+.end

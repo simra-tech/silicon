@@ -1,0 +1,30 @@
+#!/usr/bin/env python3
+"""Evaluate retained six-case SENSE DC rail-impedance anchor, no new simulation."""
+import argparse,hashlib,json,re,shutil
+from pathlib import Path
+p=argparse.ArgumentParser(description=__doc__);p.add_argument('--run',type=Path,required=True);p.add_argument('--output',type=Path,required=True);p.add_argument('--baseline-run',type=Path);a=p.parse_args();a.output.mkdir(exist_ok=False);shutil.copyfile(Path(__file__),a.output/'runner.py');data=json.loads((a.run/'summary.json').read_text());provenance=json.loads((a.run/'provenance.json').read_text());assert len(data)==6 and all(c['status']=='passed' for c in data)
+if a.baseline_run:
+    corrected=json.loads((a.baseline_run/'summary.json').read_text());assert len(corrected)==2 and all(c['status']=='passed' and c['resistance_scale']==0 for c in corrected)
+    data=[c for c in data if c['resistance_scale']!=0]+corrected
+data.sort(key=lambda c:(-c['rail_V'],c['resistance_scale']))
+baselines={c['rail_V']:c for c in data if c['resistance_scale']==0};results=[]
+for c in data:
+ rows=c['rows'];base=baselines[c['rail_V']]['rows'];gains=[];delta=[];levels=[];currents=[];rsource=provenance['nominal_supply_R_ohm']*c['resistance_scale'];rreturn=provenance['nominal_return_R_ohm']*c['resistance_scale'];rerrors=[]
+ for cm in ['-0.1','0','0.3']:
+  zero=rows[f't0_c{cm}_s0'];full=rows[f't0_c{cm}_s0.05'];half=rows[f't0_c{cm}_s0.025'];gain=(full[0]-zero[0])/.05;gains.append({'global_average_CM_V':float(cm),'gain_V_per_V':gain,'gain_target_status':'passed' if 19.9<=gain<=20.1 else 'failed','midpoint_nonlinearity_output_V':half[0]-(zero[0]+full[0])/2,'zero_shunt_global_output_V':zero[0],'zero_shunt_global_input_referred_offset_from_51over53Vref_V':(zero[0]-1.04*51/53)/20})
+ for key,r in rows.items():
+  sh=float(key.split('_s')[1]);cm=float(re.search('_c(.*?)_s',key)[1]);delta.append({'point':key,'global_output_change_V':r[0]-base[key][0],'input_referred_global_output_change_V':(r[0]-base[key][0])/20,'local_output_change_V':(r[0]-r[9])-(base[key][0]-base[key][9]),'local_average_CM_V':cm-r[9],'local_rail_V':r[8]-r[9]});levels.append(r[8]-r[9]);currents.append(-r[6]);rerrors += [abs((c['rail_V']-r[8])-rsource*(-r[6])),abs(r[9]-rreturn*r[7])]
+ results.append({'name':c['name'],'source_V':c['rail_V'],'R_scale':c['resistance_scale'],'solver':'passed','gain_checks':gains,'point_deltas':delta,'minimum_local_rail_V':min(levels),'maximum_local_VSS_V':max(r[9] for r in rows.values()),'source_current_range_A':[min(currents),max(currents)],'maximum_abs_global_input_referred_output_shift_V':max(abs(d['input_referred_global_output_change_V']) for d in delta),'maximum_supply_resistor_voltage_residual_V':max(rerrors),'resistor_residual_status':'passed' if max(rerrors)<1e-5 else 'failed','resistor_residual_tolerance_V':1e-5})
+summary={'scope':provenance['scope'],'inputs':{str(a.run/x):hashlib.sha256((a.run/x).read_bytes()).hexdigest() for x in ['summary.json','provenance.json','sense_substrate_tied.spice']},'case_count':len(data),'OP_count':sum(len(c['rows']) for c in data),'gain_target':'20 +/-0.1 V/V, checked at3 global common modes and0/25/50mV shunt; TT27C only','global_vs_local':'Input/VREF/load retain global0; outputs reported global0 and localVSS. No comparator/reference shared-ground cancellation assumed.','rounding':'Retained ngspice echo values have about6 significant digits despite numdgt15. Resistor consistency tolerance10uV covers output rounding; small output shifts below5uV are not resolved.','results':results,'all_gain_checks':'passed' if all(x['gain_target_status']=='passed' for c in results for x in c['gain_checks']) else 'failed','transient_and_bandwidth':'not run','whole_chip_IR_function':'not run'}
+if a.baseline_run:
+ summary['baseline_correction']={'run':str(a.baseline_run),'summary_sha256':hashlib.sha256((a.baseline_run/'summary.json').read_bytes()).hexdigest(),'reason':'Replace 1e-9ohm approximate zero resistors with ideal zero-volt probes to avoid ill-conditioned supply current. Original six-case data retained; only two baseline OP decks rerun.'}
+if a.baseline_run:
+ original=Path(__file__).resolve().parents[4]/'designs/g1-guardian/blocks/g1_sense/sim/qualification/corners-20260921-a/summary.json'
+ old=json.loads(original.read_text());checks=[]
+ for c in data:
+  if c['resistance_scale']!=0:continue
+  prior=next(x for x in old if x['name']==f"tt_typ_{c['rail_V']}V_27C")
+  difference=max(abs(row[i]-prior['rows'][key][i]) for key,row in c['rows'].items() for i in range(7))
+  checks.append({'case':c['name'],'maximum_original_output_and_current_difference':difference,'status':'passed' if difference==0 else 'failed'})
+ summary['baseline_equivalence']={'source_sha256':hashlib.sha256(original.read_bytes()).hexdigest(),'comparisons':checks,'scope':'Exact equality of retained rounded7 original columns at all9 OP points per baseline'}
+(a.output/'summary.json').write_text(json.dumps(summary,indent=2)+'\n');print(json.dumps([{k:v for k,v in r.items() if k not in ['gain_checks','point_deltas']} for r in results],indent=2))

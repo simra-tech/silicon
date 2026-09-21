@@ -175,3 +175,7 @@ capacitances set the delay and were not extracted); the cell's delay into the
 real `g1_t2f.en`/`mode` and `g1_bgr.r4` loads (simulated with 20 fF); mismatch
 statistics of the keeper/pull-down contention; behaviour below −40 °C;
 anything on silicon.
+
+## 2026-09-21 macro C-PEX characterization
+
+Flat macro LVS and polygon identity passed; bounded C-PEX electrical characterization and detailed evidence are in the design review [macro PEX report](../../../review/MACRO_PEX_20260921.md). The report distinguishes model characterization from acceptance and lists remaining checks.

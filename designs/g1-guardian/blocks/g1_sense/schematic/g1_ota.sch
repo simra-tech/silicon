@@ -100,7 +100,7 @@ C {devices/lab_pin.sym} 1270 -330 0 0 {name=l73 lab=out}
 C {devices/lab_pin.sym} 1230 -300 0 0 {name=l74 lab=vbn}
 C {devices/lab_pin.sym} 1270 -270 0 0 {name=l75 lab=vss}
 C {devices/lab_pin.sym} 1270 -300 0 0 {name=l76 lab=vss}
-C {sg13g2_pr/rppd.sym} 1150 -200 0 0 {name=RZ w=1u l=6.2u model=rppd b=0 m=1}
+C {sg13g2_pr/rppd.sym} 1150 -200 0 0 {name=RZ w=1u l=6.2u model=rppd b=0 m=1 body=vss}
 C {devices/lab_pin.sym} 1150 -230 0 0 {name=l77 lab=out1}
 C {devices/lab_pin.sym} 1150 -170 0 0 {name=l78 lab=cz}
 C {sg13g2_pr/cap_cmim.sym} 1250 -150 0 0 {name=CC model=cap_cmim w=23u l=23u m=1}
