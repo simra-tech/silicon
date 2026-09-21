@@ -44,9 +44,9 @@ class Sch:
             dx, dy = PINS[kind][pin]
             self._lab(x + dx, y + dy, net)
 
-    def res(self, name, x, y, w, l, P, M, b=0, m=1, model="rppd"):
+    def res(self, name, x, y, w, l, P, M, b=0, m=1, model="rppd", body="vss"):
         sym, kind = SYM[model]
-        self.lines.append("C {%s} %g %g 0 0 {name=%s w=%s l=%s model=%s b=%d m=%d}\n" % (sym, x, y, name, w, l, model, b, m))
+        self.lines.append("C {%s} %g %g 0 0 {name=%s w=%s l=%s model=%s b=%d m=%d body=%s}\n" % (sym, x, y, name, w, l, model, b, m, body))
         dx, dy = PINS[kind]["P"]; self._lab(x + dx, y + dy, P)
         dx, dy = PINS[kind]["M"]; self._lab(x + dx, y + dy, M)
 

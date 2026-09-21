@@ -1,0 +1,32 @@
+* G1_T2F post-layout testbench (g1_t2f_pex.spice, bandgap C-PEX view) post-layout f(T): hbt=hbt_typ mos=mos_tt res=res_typ cap=cap_typ vdd=3.3 V vdd12=1.2 V T=-40 C mode=ptat
+.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerHBT.lib hbt_typ_mismatch
+.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerMOShv.lib mos_tt_mismatch
+.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerMOSlv.lib mos_tt_mismatch
+.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerRES.lib res_typ_mismatch
+.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerCAP.lib cap_typ_mismatch
+.include bgr.spice
+.include t2f.spice
+.option seed=51001
+.option gmin=1e-15 abstol=1e-13 reltol=1e-4 vntol=1e-6 method=gear
+.temp 100.0
+.global sub!
+Vsub sub! 0 dc 0
+Vdd vdd 0 dc 3.3
+Vdd12 vdd12 0 dc 1.2
+Vr4 r4 0 dc 0
+Ven en 0 pwl(0 0 1u 0 1.01u 3.3)
+Vmode mode 0 dc 0
+Xbgr vdd 0 r4 vref iptat pbias pcasc vbe dvbe g1_bgr
+Vload iptat 0 dc 1.0
+Xt2f vdd vdd12 0 pbias pcasc vref en mode fout g1_t2f
+* TEMP_OUT pad stand-in: ~50 fF of core wiring plus the IO cell input
+Cout fout 0 50f
+.control
+set num_threads=1
+set numdgt=15
+op
+print @n.xbgr.xm34.nsg13_hv_nmos[delvto] @n.xbgr.xr16.nr1[nsmm_rsh] @q.xbgr.xq56.qnpn13g2[area] @q.xt2f.xq42.qnpn13g2[area] @c.xt2f.xc1.c1[scale]
+print v(vref)
+quit
+.endc
+.end

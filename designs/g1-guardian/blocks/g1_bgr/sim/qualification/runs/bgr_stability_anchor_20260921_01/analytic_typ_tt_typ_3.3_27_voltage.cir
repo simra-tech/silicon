@@ -1,0 +1,22 @@
+* Analytic bilateral feedback anchor
+Re e 0 1k
+Rf f 0 500
+Cf f 0 1n
+Gforward f 0 e 0 .01
+Greverse e 0 f 0 .002
+Vprobe e f dc 0 ac {pv}
+Iprobe 0 e dc 0 ac {pi}
+.param pv=1 pi=0
+.control
+set num_threads=1
+set numdgt=15
+set wr_singlescale
+set wr_vecnames
+op
+ac dec 100 1 1g
+let ifout=-i(Vprobe)
+let ve=v(e)
+wrdata analytic_typ_tt_typ_3.3_27_voltage.dat real(ifout) imag(ifout) real(ve) imag(ve)
+quit
+.endc
+.end

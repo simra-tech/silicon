@@ -1,0 +1,85 @@
+{
+  "mode": "pad",
+  "scope": "NON-PRODUCTION DIAGNOSTIC; delivered GDS and PDK untouched",
+  "command": "flow/run.sh python3 designs/g1-guardian/review/audits/geometry_candidates.py --mode pad --work build/scratch/pad-exit-20260921 --report designs/g1-guardian/review/audits/pad-exit-20260921",
+  "base_sha256": "38c1d6d13bbfee4ed0e3c01477742c3d2d28317d9215d9e5bd9a35551285ae59",
+  "candidate_sha256": "5a3e2c64618d450f6622e46b59c55fce388c5b5545e0318f6289cc5e87596e00",
+  "script_sha256": "d5e9538a1e2e39aba87d573ab5033dfd6f435304ea73db6140b20de716fcb5df",
+  "pdk_commit": "84374023ee8b4b126bebbba67fcbada0a9c0ff0b",
+  "klayout_version": "0.30.9",
+  "pad_marker_sha256": "3b4e2e275b7208439ca5ff591807ba4e9325042da8e59e252c16c0dff9a7d714",
+  "pad_added_area_um2_by_layer": {
+    "126": 6720.0,
+    "134": 5840.16
+  },
+  "dummy": null,
+  "checks": [
+    {
+      "name": "drc_recommended",
+      "command": [
+        "klayout",
+        "-b",
+        "-zz",
+        "-r",
+        "/foss/pdks/ihp-sg13g2/libs.tech/klayout/tech/drc/ihp-sg13g2.drc",
+        "-rd",
+        "input=/work/build/scratch/pad-exit-20260921/g1_chip_top.gds",
+        "-rd",
+        "topcell=g1_chip_top",
+        "-rd",
+        "report=/work/designs/g1-guardian/review/audits/pad-exit-20260921/drc_recommended.lyrdb",
+        "-rd",
+        "threads=2",
+        "-rd",
+        "run_mode=deep"
+      ],
+      "exit_code": 0,
+      "timed_out": false,
+      "wall_seconds": 255.65990991401486,
+      "deck_sha256": "22a570bfb43d564b7ce3de9d7df0795197be79f86c8a484b4959932c8dd75961",
+      "status": "failed",
+      "markers": 58,
+      "categories": {
+        "TM2.b": 58
+      },
+      "hard_rule_status": "failed",
+      "recommended_pad_status": "passed"
+    },
+    {
+      "name": "antenna",
+      "command": [
+        "klayout",
+        "-b",
+        "-zz",
+        "-r",
+        "/foss/pdks/ihp-sg13g2/libs.tech/klayout/tech/drc/rule_decks/antenna.drc",
+        "-rd",
+        "input=/work/build/scratch/pad-exit-20260921/g1_chip_top.gds",
+        "-rd",
+        "topcell=g1_chip_top",
+        "-rd",
+        "report=/work/designs/g1-guardian/review/audits/pad-exit-20260921/antenna.lyrdb",
+        "-rd",
+        "threads=2"
+      ],
+      "exit_code": 0,
+      "timed_out": false,
+      "wall_seconds": 133.93557050000527,
+      "deck_sha256": "e3e925d918d2d4e2067751326122fd1a9be9bc3cb4fa10a8aca2fc9349975362",
+      "status": "failed",
+      "markers": 9,
+      "categories": {
+        "Ant.e_Metal5": 3,
+        "Ant.e_TopMetal1": 3,
+        "Ant.e_TopMetal2": 3
+      }
+    }
+  ],
+  "not_run": [
+    "Full IO-inclusive LVS",
+    "Core LVS",
+    "PEX and electrical startup",
+    "Density rerun",
+    "Production adoption"
+  ]
+}

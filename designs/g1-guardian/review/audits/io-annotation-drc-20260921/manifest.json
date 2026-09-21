@@ -1,0 +1,61 @@
+{
+  "scope": "Non-production standalone pad diagnostic; stock full hard+recommended rules unchanged",
+  "pdk_commit": "84374023ee8b4b126bebbba67fcbada0a9c0ff0b",
+  "klayout_version": "0.30.9",
+  "deck_sha256": "22a570bfb43d564b7ce3de9d7df0795197be79f86c8a484b4959932c8dd75961",
+  "script_sha256": "34444fbd2f15b5a73c5d57c40cbb6006d376de4f71f433ac258712e2df7f98c0",
+  "checks": [
+    {
+      "name": "baseline",
+      "command": [
+        "klayout",
+        "-b",
+        "-zz",
+        "-r",
+        "/foss/pdks/ihp-sg13g2/libs.tech/klayout/tech/drc/ihp-sg13g2.drc",
+        "-rd",
+        "input=/foss/pdks/ihp-sg13g2/libs.ref/sg13g2_io/gds/sg13g2_io.gds",
+        "-rd",
+        "topcell=sg13g2_IOPadAnalog",
+        "-rd",
+        "report=designs/g1-guardian/review/audits/io-annotation-drc-20260921/baseline.lyrdb",
+        "-rd",
+        "run_mode=deep",
+        "-rd",
+        "threads=1"
+      ],
+      "input_sha256": "4281a855377b6a1ca46356e9391258dc14e8efc3b8051a65befc0fe9db3c7825",
+      "status": "passed",
+      "exit_code": 0,
+      "wall_seconds": 12.410796649026452,
+      "categories": {},
+      "markers": 0
+    },
+    {
+      "name": "annotation",
+      "command": [
+        "klayout",
+        "-b",
+        "-zz",
+        "-r",
+        "/foss/pdks/ihp-sg13g2/libs.tech/klayout/tech/drc/ihp-sg13g2.drc",
+        "-rd",
+        "input=build/scratch/io-recognition-20260921/sg13g2_io_annotation_only.gds",
+        "-rd",
+        "topcell=sg13g2_IOPadAnalog",
+        "-rd",
+        "report=designs/g1-guardian/review/audits/io-annotation-drc-20260921/annotation.lyrdb",
+        "-rd",
+        "run_mode=deep",
+        "-rd",
+        "threads=1"
+      ],
+      "input_sha256": "aca14a3d6efce6ea83dc7823e49f4b567ff673d81437f0f61983040d1079ff30",
+      "status": "passed",
+      "exit_code": 0,
+      "wall_seconds": 12.505147671006853,
+      "categories": {},
+      "markers": 0
+    }
+  ]
+}

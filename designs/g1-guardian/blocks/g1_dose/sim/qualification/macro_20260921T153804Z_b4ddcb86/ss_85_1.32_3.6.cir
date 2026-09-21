@@ -1,0 +1,44 @@
+* dose extracted macro characterization
+.include /work/designs/g1-guardian/blocks/g1_dose/reports/flat-pex-20260921T150428Z_7652097b/ngspice_pex.spice
+.temp 85
+.option method=gear reltol=1e-4 abstol=1e-16 vntol=1e-7 gmin=1e-16
+.global sub!
+Vsub sub! 0 0
+Vdd vdd 0 1.32
+Vdda vdda 0 3.6
+.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerMOSlv.lib mos_ss
+.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerMOShv.lib mos_ss
+.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerHBT.lib hbt_wcs
+.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerRES.lib res_typ
+.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerCAP.lib cap_typ
+.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerDIO.lib dio_ss
+.include /foss/pdks/ihp-sg13g2/libs.ref/sg13g2_io/spice/sg13g2_io.spi
+XP_g g_pad g_unused vdd 0 vdda 0 sg13g2_IOPadAnalog
+R_g g_pad g_wire 27.104449999999996
+CRa_g g_pad 0 2.42020938f
+CRb_g g_wire 0 2.42020938f
+VM_g g_wire g 0
+XP_dh dh_pad dh_unused vdd 0 vdda 0 sg13g2_IOPadAnalog
+R_dh dh_pad dh_wire 142.1812
+CRa_dh dh_pad 0 12.673852799999999f
+CRb_dh dh_wire 0 12.673852799999999f
+VM_dh dh_wire dh 0
+XP_dl dl_pad dl_unused vdd 0 vdda 0 sg13g2_IOPadAnalog
+R_dl dl_pad dl_wire 83.70295000000002
+CRa_dl dl_pad 0 7.464010860000002f
+CRb_dl dl_wire 0 7.464010860000002f
+VM_dl dl_wire dl 0
+X1 dh dl g 0 g1_dose_macro
+Vg g_pad 0 0
+Vdh dh_pad 0 1.2
+Vdl dl_pad 0 1.2
+.control
+set num_threads=1
+set numdgt=15
+set wr_singlescale
+set wr_vecnames
+dc Vg -0.3 1.2 0.01
+wrdata /work/designs/g1-guardian/blocks/g1_dose/sim/qualification/macro_20260921T153804Z_b4ddcb86/ss_85_1.32_3.6.tsv v(g) v(dh) v(dl) i(vm_g) i(vm_dh) i(vm_dl) i(vg) i(vdh) i(vdl) i(vdd) i(vdda)
+quit
+.endc
+.end

@@ -1,0 +1,75 @@
+{
+  "criteria": {
+    "frequency_difference_ppm": 100,
+    "calibrated_error_difference_C": 0.05
+  },
+  "criteria_rationale": "Frequency100ppm and temperature0.05C numerical screening tolerances, set before these native runs;0.05C is2.5% of2C acceptance limit. Exact model/netlist/fingerprint agreement and same electrical outcomes also required. These are numerical equivalence checks, not design requirement relaxation.",
+  "scope": "Joint BGR/T2F typical process,3.3/1.2V, C-PEX32us, same frozen physical samples. No global simulator or IO startup acceptance.",
+  "samples": [
+    {
+      "seed": 51002,
+      "legacy_run": "t2f_mc_s51002_20260921_01",
+      "native_run": "t2f_native47_qualification_s51002_20260921_01",
+      "status": "passed",
+      "legacy_image": "sha256:5fd78498e578c6e9ec10828c248ca3790fc88250ff6caf545521b29e448ea3c0",
+      "native_image": "sha256:ab853b72c0b95f467d562afc77b09cfb7093a87910e26bf671ad46566dadd82e",
+      "fingerprints_match": true,
+      "models_match": true,
+      "netlists_match": true,
+      "frequency_delta_ppm": {
+        "-40.0": -3.028949181804741,
+        "25.0": 1.9255419871910817,
+        "100.0": 0.0,
+        "125.0": 11.186871088142425
+      },
+      "legacy_errors_C": {
+        "-40": -1.3804947737720852,
+        "125": -0.37833652649230487
+      },
+      "native_errors_C": {
+        "-40": -1.3823642493607906,
+        "125": -0.37354693244185455
+      },
+      "calibrated_error_delta_C": {
+        "-40": -0.001869475588705427,
+        "125": 0.004789594050450319
+      },
+      "legacy_linear_pass": true,
+      "native_linear_pass": true,
+      "hbt_status_match": true
+    },
+    {
+      "seed": 51010,
+      "legacy_run": "t2f_mc20_20260921_01_s51010",
+      "native_run": "t2f_native47_qualification_s51010_20260921_01",
+      "status": "failed",
+      "legacy_image": "sha256:5fd78498e578c6e9ec10828c248ca3790fc88250ff6caf545521b29e448ea3c0",
+      "native_image": "sha256:ab853b72c0b95f467d562afc77b09cfb7093a87910e26bf671ad46566dadd82e",
+      "fingerprints_match": false,
+      "models_match": true,
+      "netlists_match": true,
+      "frequency_delta_ppm": {
+        "-40.0": -5.048122038386893,
+        "25.0": -6.996326723074375,
+        "100.0": 6.714518803629943,
+        "125.0": 3.4938488113755994
+      },
+      "legacy_errors_C": {
+        "-40": -2.644540265034024,
+        "125": -0.7666532969795554
+      },
+      "native_errors_C": {
+        "-40": -2.6391039005755346,
+        "125": -0.7694532700123489
+      },
+      "calibrated_error_delta_C": {
+        "-40": 0.0054363644584896065,
+        "125": -0.0027999730327934458
+      },
+      "legacy_linear_pass": false,
+      "native_linear_pass": false,
+      "hbt_status_match": true
+    }
+  ],
+  "status": "failed"
+}

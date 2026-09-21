@@ -1,0 +1,18 @@
+* Isolated vendor parser/model validation: threshold
+.param ptrc1=3.25e-3 ptrc2=9.0e-6 pwidth=1.3392864 perim=2.7
+.incpslt /work/build/g1_gate/vendor/CSD16340Q3.lib
+.temp 25
+.option method=gear reltol=1e-5 abstol=1e-13 vntol=1e-7
+XFET d g 0 CSD16340Q3
+Vg g 0 .8
+Vtie g d 0
+.control
+set num_threads=1
+set numdgt=15
+set wr_singlescale
+set wr_vecnames
+dc Vg .5 1.2 .001
+wrdata /work/designs/g1-guardian/blocks/g1_gate/sim/campaigns/vendorcheck_20260921T155119Z_d2089bcd/threshold.tsv v(d) v(g) i(vtie)
+quit
+.endc
+.end

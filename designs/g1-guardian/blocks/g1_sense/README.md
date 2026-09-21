@@ -11,6 +11,17 @@ re-derived, the OTA bias diode moved into this block, and a third OTA instance n
 G1_TRIP DAC strings. Revision A (VREF 1.2 V, 20 µA fixed bias, two OTAs) was simulated first and its
 Monte Carlo is the one reported below; the corner sweep was rerun on revision B.
 
+
+**2026-09-21 update:** schematic resistor bulk connections are now explicitly
+`vss`, matching the physical substrate and existing LVS reference. The corrected
+3.6 V AC/step run passed (gain 19.98425, bandwidth 4.204 MHz), and fresh filled-macro
+LVS passed. Revision-B mismatch screen completed 100/100 samples without solver
+failures; **43/100 failed** the 0.5 mV residual target after an ideal continuous
+25 °C offset correction was frozen over the tested temperature/input points
+(worst 1.5361 mV). This is a SENSE-only diagnostic with ideal BGR sources, not
+joint-chain calibrated yield. See [qualification evidence](sim/QUALIFICATION_20260921.md).
+The older tables below retain their dated fixture and revision scope.
+
 ## What it is
 
 Difference amplifier with a single two-stage OTA and four `rppd` resistor arms
@@ -316,7 +327,7 @@ every parasitic capacitor removed (`sim/postlayout/variants/pex_nocap.spice`, i.
 the layout's per-finger junction areas only; log `sim/postlayout/logs/pl_variant_nocap_mos_tt_res_typ_3.3V_27C_cm0.log`)
 gives −49.8 dB at 1 MHz, 2.0 mV overshoot, 3.96 MHz and 151 ns settling: the junction areas of the
 layout (not the wiring) move the common-mode figure, and the wiring capacitance is what adds the
-overshoot (2.0 → 18.2 mV) and the last 70 ns of settling. No mismatch Monte Carlo was run on the
+overshoot (2.0 → 18.2 mV) and the last 70 ns of settling. No qualified mismatch Monte Carlo was run on the
 post-layout netlist (see Unverified).
 
 ## Checks
@@ -324,8 +335,8 @@ post-layout netlist (see Unverified).
 | Check | Status | Evidence |
 | --- | --- | --- |
 | Schematic simulation, nominal | passed | `sim/results_sense.txt`, run `sense_mos_tt_res_typ_3.3V_27C_cm0` |
-| Corners / temperature (gain within 20 ± 0.1, BW ≥ 2 MHz, no instability) | passed on 15 of 16 revision-B runs (175 °C model extrapolated); 3.6 V AC/transient **not run** (ngspice did not converge), its DC transfer passed | `sim/results_sense.txt` |
-| Monte Carlo offset, 200 samples (revision A) | run; 3σ = 12 mV untrimmed **fails** the 0.5 mV target, met only with the code-offset trim (design decision above); not rerun on revision B | `sim/results_sense_mc_27C.txt` |
+| Corners / temperature (gain within 20 ± 0.1, BW ≥ 2 MHz, no instability) | historical 15/16 revision-B runs completed; old 3.6 V AC/transient **failed** numerically. Corrected substrate fixture 3.6 V AC/step now **passed** (2026-09-21); 108-tuple DC corner screen passed; adverse PEX/AC coverage remains incomplete | `sim/results_sense.txt` |
+| Monte Carlo offset, 200 samples (revision A) | run; 3σ = 12 mV untrimmed **fails** the 0.5 mV target, historical trim proposal was not joint-chain closure; revision-B screen now fails frozen residual in 43/100 samples (2026-09-21 record) | `sim/results_sense_mc_27C.txt` |
 | DRC `g1_ota` cell, `run_drc.py --run_mode=deep --no_density`, full rule set incl. extra rules | **passed, 0 errors** | `reports/drc_ota/drc_run_2026_09_19_12_40_38.log`, `reports/drc_ota/g1_ota_g1_ota_main.log` |
 | LVS `g1_ota` vs `layout/g1_ota.cdl`, `run_lvs.py --run_mode=deep` | **passed** (22 devices) | `reports/lvs_ota/lvs_run_2026_09_19_07_35_37.log`, `reports/lvs_ota/g1_ota_extracted.cir` |
 | DRC `g1_sense` macro, same options, full rule set | **passed, 0 errors** | `reports/drc/drc_run_2026_09_19_07_35_09.log`, `reports/drc/g1_sense_g1_sense_main.log` |
@@ -336,18 +347,24 @@ post-layout netlist (see Unverified).
 | PEX on the filled GDS | run; **fill is excluded from PEX**: kpex's technology maps conductors to datatype 0 only, the 942 capacitor values are identical to the unfilled run (md5 of the sorted values equal), so no post-layout rerun | `reports/pex/cc_fill/kpex_plain.log`, `reports/pex/cc_fill/capacitor_values_md5_filled_vs_unfilled.txt` |
 | PEX with the MIM layers present | **failed** (kpex 0.3.12 has no MIM model, engine aborts) | `reports/pex/kpex_with_mim_failed.log` |
 | Post-layout simulation (tb_sense on the kpex netlist), tt 27 °C, tt 175 °C, tt −40 °C, ss/wcs 175 °C, ff/bcs 27 °C | run, see table | `sim/postlayout/results_postlayout.txt`, `sim/postlayout/results/compare.md` |
-| Density, antenna | not run (chip level) | — |
+| Density / antenna at assembly | Density **passed** (0 failing windows); antenna remains **failed** (9 receiver-pad markers, not waived) | `../g1_padring/INTEGRATION.md`, assembly-1350 evidence |
 
 ## Unverified
 
-- Noise (no `.noise` run); irrelevant for the ±10 % trip budget but not shown.
-- Behaviour with the real G1_BGR `VREF`/`iptat` (ideal sources were used; the BGR README gives
-  σ(IPTAT) = 5 %, which moves the OTA currents, not the transfer).
-- Revision-B Monte Carlo and the 3.6 V AC/step response (solver, see above).
+- Noise allocation with actual BGR/pads and decision-aperture/aliasing effects.
+  Nominal schematic `.noise` now exists (simulated input RMS108.8µV over1Hz–10MHz;
+  see the 2026-09-21 record), but no system noise acceptance is established.
+- Full behavior with actual G1_BGR bias/reference over joint statistics, input and supply
+  coverage. Actual-BGR joint calibration pilots now run under G1_TRIP; the standalone
+  SENSE100-sample screen retains ideal reference/bias and does not establish joint yield.
+- Complete revision-B schematic/PEX MC campaigns. A 100-sample schematic screen now
+  exists and fails frozen offset residual in 43 samples; the corrected 3.6 V AC/step
+  fixture completed (see the 2026-09-21 qualification record).
 - Recovery after an input transient beyond the 50 mV range (the OTA is class A, output limited to
   ≈ 0.1–3.1 V; the shunt side is protected by the pad ESD and the 10 kΩ input resistors, no
   extra clamps were added because the OTA inputs are only gates).
-- MC at other temperatures than 27 °C; process corners combined with mismatch.
+- Process corners combined with mismatch and qualified PEX statistics. The new
+  schematic100-sample screen includes25/−40/125°C with frozen sampled parameters.
 - Post-layout: only capacitances are extracted (kpex RC mode unusable, wiring resistance estimated
   above); the MIM dielectric itself is not in the extraction (the Miller capacitors are the schematic
   devices); the metal fill is not in the extraction either (kpex reads datatype 0 only), so the
@@ -356,7 +373,8 @@ post-layout netlist (see Unverified).
   and the ±0.3 V common-mode points were not rerun.
 - The OTA layout is not the silicon-proven `TO_Nov2024` layout (that source has no GDS); every
   device is a PDK PCell but the arrangement is new and has no measurement behind it.
-- Antenna and density (chip level). Latch-up ties follow LU.a/LU.b by the PDK deck only.
+- Assembly antenna findings remain unresolved; assembled density passed (see
+  `../g1_padring/INTEGRATION.md`). Latch-up ties follow LU.a/LU.b by the PDK deck only.
 - The macro is larger than the 200 × 150 µm target given at layout start (252 × 189 µm): the 95-unit
   resistor array (7.3 mm of 2 µm poly at 2.5 µm pitch) alone needs ≈ 135 × 165 µm, and the OTA cell
   is 98 × 51 µm; no attempt was made to fold the OTA rows or to narrow the unit resistor.

@@ -1,0 +1,44 @@
+* dut extracted macro characterization
+.include /work/designs/g1-guardian/blocks/g1_dut/reports/flat-pex-20260921T150414Z_3db2c2ca/ngspice_pex.spice
+.temp 85
+.option method=gear reltol=1e-4 abstol=1e-16 vntol=1e-7 gmin=1e-16
+.global sub!
+Vsub sub! 0 0
+Vdd vdd 0 1.2
+Vdda vdda 0 3.3
+.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerMOSlv.lib mos_tt
+.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerMOShv.lib mos_tt
+.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerHBT.lib hbt_typ
+.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerRES.lib res_typ
+.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerCAP.lib cap_typ
+.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerDIO.lib dio_tt
+.include /foss/pdks/ihp-sg13g2/libs.ref/sg13g2_io/spice/sg13g2_io.spi
+XP_b b_pad b_unused vdd 0 vdda 0 sg13g2_IOPadAnalog
+R_b b_pad b_wire 35.89549999999999
+CRa_b b_pad 0 3.2037217199999994f
+CRb_b b_wire 0 3.2037217199999994f
+VM_b b_wire b 0
+XP_c c_pad c_unused vdd 0 vdda 0 sg13g2_IOPadAnalog
+R_c c_pad c_wire 90.01170000000002
+CRa_c c_pad 0 8.026263240000002f
+CRb_c c_wire 0 8.026263240000002f
+VM_c c_wire c 0
+XP_e e_pad e_unused vdd 0 vdda 0 sg13g2_IOPadAnalog
+R_e e_pad e_wire 69.8649
+CRa_e e_pad 0 6.2309662800000005f
+CRb_e e_wire 0 6.2309662800000005f
+VM_e e_wire e 0
+X1 b c e 0 g1_dut_macro
+Vb b_pad 0 0.7
+Vc c_pad 0 1.0
+Ve e_pad 0 0
+.control
+set num_threads=1
+set numdgt=15
+set wr_singlescale
+set wr_vecnames
+dc Vb 0.30 0.85 0.001
+wrdata /work/designs/g1-guardian/blocks/g1_dut/sim/qualification/macro_20260921T151046Z_10a5beaa/tt_85_1.2_3.3.tsv v(b) v(c) v(e) i(vm_b) i(vm_c) i(vm_e) i(vb) i(vc) i(ve) i(vdd) i(vdda)
+quit
+.endc
+.end

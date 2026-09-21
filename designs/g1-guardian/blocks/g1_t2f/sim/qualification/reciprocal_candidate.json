@@ -1,0 +1,36 @@
+{
+  "equation_freeze": {
+    "frozen_utc": "2026-09-21T15:32:20.127967+00:00",
+    "equation": "1/f=A/T_K+B; T_C=A/(1/f-B)-273.15; A,B determined only from each physical sample frequencies at25C and100C",
+    "purpose": "Physical correction for affine VREF temperature drift in f proportional T_K/VREF; not empirical ensemble fit",
+    "equation_source_sha256": "925d3c2fd6b89c78bb83edb7a03e04ccebd467842ced0510188689cb972e0ea0",
+    "independent_outcomes_used_to_fit_equation": "none; nominal-only arithmetic diagnostic preceded freeze; expanded MC reciprocal outcomes not inspected before freeze",
+    "acceptance_diagnostic": "independent residual magnitude<=2C; no clipping, refitting or LUT adjustment"
+  },
+  "groups": {
+    "expanded_endpoint_samples": {
+      "samples": 80,
+      "independent_points": 160,
+      "failed_samples": 0,
+      "failed_points": 0,
+      "maximum_abs_residual_C": 0.9153354611039219
+    },
+    "nominal_and_between_knots": {
+      "samples": 1,
+      "independent_points": 10,
+      "failed_samples": 0,
+      "failed_points": 0,
+      "maximum_abs_residual_C": 0.45268375731106403
+    },
+    "smoke20_eight_temperatures": {
+      "samples": 20,
+      "independent_points": 120,
+      "failed_samples": 0,
+      "failed_points": 0,
+      "maximum_abs_residual_C": 0.8916221625166827
+    }
+  },
+  "status": "unadopted physical-model candidate; original linear and nominal-LUT results unchanged",
+  "selection_context": "Physical model chosen after reviewing linear-error/reference-drift diagnostics. Equation frozen before expanded reciprocal errors were computed; expanded cohort is not represented as a wholly blind model-selection holdout.",
+  "limitations": "No ensemble regression or additional calibration point. Typical-process nominal-rail samples only; supply policy, process extremes, nonlinear PDK effects and packaged calibration require independent validation. No clamping of inferred temperature."
+}

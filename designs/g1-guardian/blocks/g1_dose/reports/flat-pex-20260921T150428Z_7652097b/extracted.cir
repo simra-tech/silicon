@@ -1,0 +1,18 @@
+
+* cell g1_dose_macro
+* pin D_ELT
+* pin D_STD
+* pin G_SHARED
+* pin vss
+.SUBCKT g1_dose_macro 3 4 2 1
+* net 1 vss
+* net 2 G_SHARED
+* net 3 D_ELT
+* net 4 D_STD
+* device instance $1 r0 *1 16.765,15 sg13_lv_nmos
+M$1 4 2 1 1 sg13_lv_nmos L=0.13U W=3.98U AS=1.3532P AD=1.3532P PS=8.64U
++ PD=8.64U rfmode=0
+* device instance $2 r0 *1 13.545,15 sg13_hv_nmos
+M$2 3 2 1 1 sg13_hv_nmos L=0.45U W=3.98U AS=1.3532P AD=1.3532P PS=8.64U
++ PD=8.64U rfmode=0
+.ENDS g1_dose_macro

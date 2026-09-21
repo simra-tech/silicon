@@ -1,0 +1,35 @@
+** sch_path: /work/designs/g1-guardian/blocks/g1_trip/schematic/g1_cmp.sch
+.subckt g1_cmp inp inn clk q qb vdd vss
+*.ipin inp
+*.ipin inn
+*.ipin clk
+*.opin q
+*.opin qb
+*.iopin vdd
+*.iopin vss
+XMTAIL tail clk vss vss sg13_lv_nmos w=16u l=0.13u ng=1 m=1 mm_ok=1
+XM1 xp inp tail vss sg13_lv_nmos w=12u l=0.34u ng=1 m=1 mm_ok=1
+XM2 xq inn tail vss sg13_lv_nmos w=12u l=0.34u ng=1 m=1 mm_ok=1
+XMD1 xq inp xq vss sg13_lv_nmos w=6u l=0.13u ng=1 m=1 mm_ok=1
+XMD2 xp inn xp vss sg13_lv_nmos w=6u l=0.13u ng=1 m=1 mm_ok=1
+XM3 xn yn xp vss sg13_lv_nmos w=3u l=0.13u ng=1 m=1 mm_ok=1
+XM4 yn xn xq vss sg13_lv_nmos w=3u l=0.13u ng=1 m=1 mm_ok=1
+XM5 xn yn vdd vdd sg13_lv_pmos w=3u l=0.13u ng=1 m=1 mm_ok=1
+XM6 yn xn vdd vdd sg13_lv_pmos w=3u l=0.13u ng=1 m=1 mm_ok=1
+XM7 xn clk vdd vdd sg13_lv_pmos w=6u l=0.13u ng=1 m=1 mm_ok=1
+XM8 yn clk vdd vdd sg13_lv_pmos w=6u l=0.13u ng=1 m=1 mm_ok=1
+XM9 xp clk vdd vdd sg13_lv_pmos w=3u l=0.13u ng=1 m=1 mm_ok=1
+XM10 xq clk vdd vdd sg13_lv_pmos w=3u l=0.13u ng=1 m=1 mm_ok=1
+XMIAP xnb xn vdd vdd sg13_lv_pmos w=1u l=0.13u ng=1 m=1 mm_ok=1
+XMIAN xnb xn vss vss sg13_lv_nmos w=4u l=0.13u ng=1 m=1 mm_ok=1
+XMIBP ynb yn vdd vdd sg13_lv_pmos w=1u l=0.13u ng=1 m=1 mm_ok=1
+XMIBN ynb yn vss vss sg13_lv_nmos w=4u l=0.13u ng=1 m=1 mm_ok=1
+XMNAP1 na xnb vdd vdd sg13_lv_pmos w=4u l=0.13u ng=1 m=1 mm_ok=1
+XMNAP2 qb q na vdd sg13_lv_pmos w=4u l=0.13u ng=1 m=1 mm_ok=1
+XMNAN1 qb xnb vss vss sg13_lv_nmos w=1.5u l=0.13u ng=1 m=1 mm_ok=1
+XMNAN2 qb q vss vss sg13_lv_nmos w=1.5u l=0.13u ng=1 m=1 mm_ok=1
+XMNBP1 nb ynb vdd vdd sg13_lv_pmos w=4u l=0.13u ng=1 m=1 mm_ok=1
+XMNBP2 q qb nb vdd sg13_lv_pmos w=4u l=0.13u ng=1 m=1 mm_ok=1
+XMNBN1 q ynb vss vss sg13_lv_nmos w=1.5u l=0.13u ng=1 m=1 mm_ok=1
+XMNBN2 q qb vss vss sg13_lv_nmos w=1.5u l=0.13u ng=1 m=1 mm_ok=1
+.ends

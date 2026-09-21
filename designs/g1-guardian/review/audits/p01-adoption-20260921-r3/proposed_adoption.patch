@@ -1,0 +1,118 @@
+--- a/designs/g1-guardian/blocks/g1_padring/flow/config.yaml
++++ b/designs/g1-guardian/blocks/g1_padring/flow/config.yaml
+@@ -56,31 +56,33 @@
+ # three input pads, see ../README.md). Placed by the PDK default
+ # PAD_BONDPAD_OFFSETS (5.0, -70.0), i.e. outside the IO cell towards the die
+ # edge, abutting the cell's 70 x 3 um 'pad' stub at y = 0.
+-PAD_BONDPAD_NAME: bondpad_70x70_tm1
++PAD_BONDPAD_NAME: bondpad_70x70_tm1_g1_exit
++PAD_BONDPAD_OFFSETS: [5.0, -74.0]
+ EXTRA_GDS:
+-  - dir::../ip/bondpad_70x70_tm1/gds/bondpad_70x70_tm1.gds
++  - dir::../ip/g1_p01/bondpad_70x70_tm1_g1_exit.gds
++  - dir::../ip/g1_p01/sg13g2_IOPadIn_g1_vdddummy.gds
+ EXTRA_LEFS:
+-  - dir::../ip/bondpad_70x70_tm1/lef/bondpad_70x70_tm1.lef
++  - dir::../ip/g1_p01/bondpad_70x70_tm1_g1_exit.lef
+ IGNORE_DISCONNECTED_MODULES:
+-  - bondpad_70x70_tm1
++  - bondpad_70x70_tm1_g1_exit
+ 
+ # ---------------------------------------------------------------------------
+ # IO library views: stock PDK GDS/CDL/SPICE; LEF, Verilog and liberty from
+ # ip/sg13g2_io_padbare (sg13g2_IOPadAnalog core-side pad port exposed as pin
+ # `padbare`, see that directory's README). Corners: the PDK's three 1.2 V ones.
+ # ---------------------------------------------------------------------------
+-PAD_LEFS:           dir::../ip/sg13g2_io_padbare/lef/sg13g2_io.lef
+-PAD_VERILOG_MODELS: dir::../ip/sg13g2_io_padbare/verilog/sg13g2_io.v
++PAD_LEFS:           dir::../ip/g1_p01/sg13g2_io_with_g1.lef
++PAD_VERILOG_MODELS: dir::../ip/g1_p01/sg13g2_io_with_g1.v
+ LIB:
+   "*_typ_1p20V_25C":
+     - pdk_dir::libs.ref/sg13g2_stdcell/lib/sg13g2_stdcell_typ_1p20V_25C.lib
+-    - dir::../ip/sg13g2_io_padbare/lib/sg13g2_io_typ_1p2V_3p3V_25C.lib
++    - dir::../ip/g1_p01/sg13g2_io_typ_1p2V_3p3V_25C.lib
+   "*_fast_1p32V_m40C":
+     - pdk_dir::libs.ref/sg13g2_stdcell/lib/sg13g2_stdcell_fast_1p32V_m40C.lib
+-    - dir::../ip/sg13g2_io_padbare/lib/sg13g2_io_fast_1p32V_3p6V_m40C.lib
++    - dir::../ip/g1_p01/sg13g2_io_fast_1p32V_3p6V_m40C.lib
+   "*_slow_1p08V_125C":
+     - pdk_dir::libs.ref/sg13g2_stdcell/lib/sg13g2_stdcell_slow_1p08V_125C.lib
+-    - dir::../ip/sg13g2_io_padbare/lib/sg13g2_io_slow_1p08V_3p0V_125C.lib
++    - dir::../ip/g1_p01/sg13g2_io_slow_1p08V_3p0V_125C.lib
+ # Analog nets are never buffered or resized
+ RSZ_DONT_TOUCH_RX: "^VDDA$|^(sense_p|sense_n|g_shared|d_std|d_elt|hbt_e|hbt_b|hbt_c)_bare$|^(trip_set|vref)_res$"
+ 
+--- a/designs/g1-guardian/blocks/g1_padring/flow/config_dryrun.yaml
++++ b/designs/g1-guardian/blocks/g1_padring/flow/config_dryrun.yaml
+@@ -63,13 +63,15 @@
+ # three input pads, see ../README.md). Placed by the PDK default
+ # PAD_BONDPAD_OFFSETS (5.0, -70.0), i.e. outside the IO cell towards the die
+ # edge, abutting the cell's 70 x 3 um 'pad' stub at y = 0.
+-PAD_BONDPAD_NAME: bondpad_70x70_tm1
++PAD_BONDPAD_NAME: bondpad_70x70_tm1_g1_exit
++PAD_BONDPAD_OFFSETS: [5.0, -74.0]
+ EXTRA_GDS:
+-  - dir::../ip/bondpad_70x70_tm1/gds/bondpad_70x70_tm1.gds
++  - dir::../ip/g1_p01/bondpad_70x70_tm1_g1_exit.gds
++  - dir::../ip/g1_p01/sg13g2_IOPadIn_g1_vdddummy.gds
+ EXTRA_LEFS:
+-  - dir::../ip/bondpad_70x70_tm1/lef/bondpad_70x70_tm1.lef
++  - dir::../ip/g1_p01/bondpad_70x70_tm1_g1_exit.lef
+ IGNORE_DISCONNECTED_MODULES:
+-  - bondpad_70x70_tm1
++  - bondpad_70x70_tm1_g1_exit
+   - g1_dose_macro
+   - g1_dut_macro
+   - g1_bgr
+@@ -85,18 +87,18 @@
+ # ip/sg13g2_io_padbare (sg13g2_IOPadAnalog core-side pad port exposed as pin
+ # `padbare`, see that directory's README). Corners: the PDK's three 1.2 V ones.
+ # ---------------------------------------------------------------------------
+-PAD_LEFS:           dir::../ip/sg13g2_io_padbare/lef/sg13g2_io.lef
+-PAD_VERILOG_MODELS: dir::../ip/sg13g2_io_padbare/verilog/sg13g2_io.v
++PAD_LEFS:           dir::../ip/g1_p01/sg13g2_io_with_g1.lef
++PAD_VERILOG_MODELS: dir::../ip/g1_p01/sg13g2_io_with_g1.v
+ LIB:
+   "*_typ_1p20V_25C":
+     - pdk_dir::libs.ref/sg13g2_stdcell/lib/sg13g2_stdcell_typ_1p20V_25C.lib
+-    - dir::../ip/sg13g2_io_padbare/lib/sg13g2_io_typ_1p2V_3p3V_25C.lib
++    - dir::../ip/g1_p01/sg13g2_io_typ_1p2V_3p3V_25C.lib
+   "*_fast_1p32V_m40C":
+     - pdk_dir::libs.ref/sg13g2_stdcell/lib/sg13g2_stdcell_fast_1p32V_m40C.lib
+-    - dir::../ip/sg13g2_io_padbare/lib/sg13g2_io_fast_1p32V_3p6V_m40C.lib
++    - dir::../ip/g1_p01/sg13g2_io_fast_1p32V_3p6V_m40C.lib
+   "*_slow_1p08V_125C":
+     - pdk_dir::libs.ref/sg13g2_stdcell/lib/sg13g2_stdcell_slow_1p08V_125C.lib
+-    - dir::../ip/sg13g2_io_padbare/lib/sg13g2_io_slow_1p08V_3p0V_125C.lib
++    - dir::../ip/g1_p01/sg13g2_io_slow_1p08V_3p0V_125C.lib
+ # Analog nets are never buffered or resized
+ RSZ_DONT_TOUCH_RX: "^VDDA$|^(sense_p|sense_n|g_shared|d_std|d_elt|hbt_e|hbt_b|hbt_c)_bare$|^(trip_set|vref)_res$|^i_core\\.(iptat|pbias|pcasc|vref_bgr|vbe|dvbe|isense|vref_buf|vped)$"
+ 
+--- a/designs/g1-guardian/blocks/g1_padring/rtl/g1_chip_top.sv
++++ b/designs/g1-guardian/blocks/g1_padring/rtl/g1_chip_top.sv
+@@ -106,7 +106,7 @@
+ `endif
+         .c2p(fault_n_o), .pad(FAULT_N));
+ 
+-    sg13g2_IOPadIn pad12_en (
++    sg13g2_IOPadIn_g1_vdddummy pad12_en (
+ `ifdef USE_POWER_PINS
+         .vdd(VDD), .vss(VSS), .iovdd(IOVDD), .iovss(IOVSS),
+ `endif
+@@ -119,13 +119,13 @@
+ `endif
+         .pad(TRIP_SET), .padres(trip_set_res), .padbare());
+ 
+-    sg13g2_IOPadIn pad14_sclk (
++    sg13g2_IOPadIn_g1_vdddummy pad14_sclk (
+ `ifdef USE_POWER_PINS
+         .vdd(VDD), .vss(VSS), .iovdd(IOVDD), .iovss(IOVSS),
+ `endif
+         .p2c(sclk_i), .pad(SCLK));
+ 
+-    sg13g2_IOPadIn pad15_sdi (
++    sg13g2_IOPadIn_g1_vdddummy pad15_sdi (
+ `ifdef USE_POWER_PINS
+         .vdd(VDD), .vss(VSS), .iovdd(IOVDD), .iovss(IOVSS),
+ `endif

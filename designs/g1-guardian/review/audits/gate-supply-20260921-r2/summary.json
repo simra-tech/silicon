@@ -1,0 +1,223 @@
+{
+  "scope": "Simulated source currents of actual GATE, 30mA gate pad, 4mA fault pad, vendor-FET fixture at nominal rails/PVT; ideal sources include 0.5ohm series resistor and 1nF local capacitor per rail. External 5V load source power is excluded. Source current is not instantaneous internal device current. No assembled PDN/package qualification.",
+  "inputs": {
+    "designs/g1-guardian/blocks/g1_gate/sim/campaigns/fet_20260921T165316Z_0f0cfcb4/power_wave.tsv": "ee703e9311c327bcc313116d8a27be5625f55cdbc9619093184889eec7d17548",
+    "designs/g1-guardian/blocks/g1_gate/sim/campaigns/fet_20260921T165316Z_0f0cfcb4/fixture.cir": "92c3ee9b532bfe1634031cae45f240262027020cebc2bdc0aa117f8e98e29420",
+    "designs/g1-guardian/blocks/g1_gate/sim/campaigns/fet_20260921T165316Z_0f0cfcb4/run.json": "4c6a3270a427d273a5c6f034033cc1037890e6540e0bee5e7af137a669f89667",
+    "designs/g1-guardian/blocks/g1_gate/sim/campaigns/fet_20260921T165316Z_0f0cfcb4/run.log": "966b04c2cb9fd1a0ae6dbf7862510663d958bfe5698827caff6ca60c0fe0d5c2",
+    "designs/g1-guardian/blocks/g1_padring/netlist/g1_chip_top.cdl": "e5e149c903e4c5e937c3abd89db732af04a52c3ddfd2525798b987950b9c7077"
+  },
+  "wave_header": [
+    "time",
+    "v(vdd_s)",
+    "v(vdda_s)",
+    "v(vdd)",
+    "v(vdda)",
+    "i(vdd)",
+    "i(vdda)"
+  ],
+  "rows": 12029,
+  "time_s": [
+    0.0,
+    1.2e-05
+  ],
+  "assembled_rail_connections": [
+    "Xpad10_gate GATE gate_o VDD VSS IOVDD IOVSS / sg13g2_IOPadOut30mA",
+    "Xpad11_fault_n FAULT_N fault_n_o VDD VSS IOVDD IOVSS / sg13g2_IOPadOut4mA"
+  ],
+  "maximum_source_resistor_current_residual_A": {
+    "VDD": 1.3323218396588121e-15,
+    "VDDA": 1.779826286352204e-15
+  },
+  "assembled_rail_scope": "Pads use IOVDD/IOVSS while core uses VDDA/VSS; fixture combines both. Do not assign the combined current to the core VDDA mesh.",
+  "integration": "Piecewise-linear endpoint interpolation and trapezoidal integration; source current sign inverted so supply draw is positive. Peaks are sampled, not guaranteed continuous extrema.",
+  "windows": {
+    "disabled": {
+      "start_s": 0.0,
+      "end_s": 1.9e-07,
+      "sample_count_including_interpolated_bounds": 198,
+      "rails": {
+        "VDD": {
+          "mean_source_current_A": 1.5321032078574636e-09,
+          "source_charge_C": 2.910996094929181e-16,
+          "source_energy_J": 3.4931953139150046e-16,
+          "mean_source_power_W": 1.8385238494289496e-09,
+          "sampled_peak_source_current_A": 1.532105553536667e-09,
+          "peak_time_s": 3.28e-09,
+          "minimum_source_current_A": 1.532084681343804e-09,
+          "minimum_pin_voltage_V": 1.199999999233947,
+          "local_1nF_energy_change_J": -1.1102230246251566e-24
+        },
+        "VDDA": {
+          "mean_source_current_A": 1.6693494457800796e-09,
+          "source_charge_C": 3.1717639469821516e-16,
+          "source_energy_J": 1.0466821025041107e-15,
+          "mean_source_power_W": 5.508853171074266e-09,
+          "sampled_peak_source_current_A": 1.669373972390531e-09,
+          "peak_time_s": 2.28e-09,
+          "minimum_source_current_A": 1.669218541167083e-09,
+          "minimum_pin_voltage_V": 3.299999999165313,
+          "local_1nF_energy_change_J": -1.9362289549462732e-22
+        }
+      },
+      "total_mean_source_power_W": 7.347377020503216e-09
+    },
+    "armed": {
+      "start_s": 2e-06,
+      "end_s": 4e-06,
+      "sample_count_including_interpolated_bounds": 2002,
+      "rails": {
+        "VDD": {
+          "mean_source_current_A": 1.7292287596039406e-09,
+          "source_charge_C": 3.458457519207881e-15,
+          "source_energy_J": 4.1501490230493615e-15,
+          "mean_source_power_W": 2.0750745115246808e-09,
+          "sampled_peak_source_current_A": 1.729230092450962e-09,
+          "peak_time_s": 3.503471201884047e-06,
+          "minimum_source_current_A": 1.729227872004913e-09,
+          "minimum_pin_voltage_V": 1.199999999135385,
+          "local_1nF_energy_change_J": 0.0
+        },
+        "VDDA": {
+          "mean_source_current_A": 0.0003149920917377858,
+          "source_charge_C": 6.299841834755716e-10,
+          "source_energy_J": 2.078947805469414e-09,
+          "mean_source_power_W": 0.001039473902734707,
+          "sampled_peak_source_current_A": 0.000314992141658561,
+          "peak_time_s": 2e-06,
+          "minimum_source_current_A": 0.0003149920894713887,
+          "minimum_pin_voltage_V": 3.2998425039291703,
+          "local_1nF_energy_change_J": 8.609823964889075e-20
+        }
+      },
+      "total_mean_source_power_W": 0.0010394759778092186
+    },
+    "tripped": {
+      "start_s": 8e-06,
+      "end_s": 1.2e-05,
+      "sample_count_including_interpolated_bounds": 4002,
+      "rails": {
+        "VDD": {
+          "mean_source_current_A": 1.3965890968161456e-09,
+          "source_charge_C": 5.586356387264583e-15,
+          "source_energy_J": 6.703627664717735e-15,
+          "mean_source_power_W": 1.6759069161794335e-09,
+          "sampled_peak_source_current_A": 1.39659350750776e-09,
+          "peak_time_s": 1.17531982327909e-05,
+          "minimum_source_current_A": 1.396584625723563e-09,
+          "minimum_pin_voltage_V": 1.199999999301703,
+          "local_1nF_energy_change_J": -3.774758283725532e-24
+        },
+        "VDDA": {
+          "mean_source_current_A": 1.1957958535385195e-09,
+          "source_charge_C": 4.783183414154079e-15,
+          "source_energy_J": 1.5784505266708274e-14,
+          "mean_source_power_W": 3.946126316677068e-09,
+          "sampled_peak_source_current_A": 1.195823884359015e-09,
+          "peak_time_s": 1.2e-05,
+          "minimum_source_current_A": 1.195783028151709e-09,
+          "minimum_pin_voltage_V": 3.299999999402088,
+          "local_1nF_energy_change_J": -6.039613253960852e-23
+        }
+      },
+      "total_mean_source_power_W": 5.622033232856501e-09
+    },
+    "enable_event": {
+      "start_s": 1.9e-07,
+      "end_s": 1e-06,
+      "sample_count_including_interpolated_bounds": 821,
+      "rails": {
+        "VDD": {
+          "mean_source_current_A": 2.467931038856923e-07,
+          "source_charge_C": 1.9990241414741078e-13,
+          "source_energy_J": 2.3988289697689295e-13,
+          "mean_source_power_W": 2.9615172466283083e-07,
+          "sampled_peak_source_current_A": 0.0001367655747821495,
+          "peak_time_s": 2.031891728893471e-07,
+          "minimum_source_current_A": -2.321304516605949e-06,
+          "minimum_pin_voltage_V": 1.199931617212609,
+          "local_1nF_energy_change_J": -1.1802314681119696e-19,
+          "excess_source_charge_over_piecewise_steady_C": 1.9850371010764906e-13
+        },
+        "VDDA": {
+          "mean_source_current_A": 0.0058403145159464384,
+          "source_charge_C": 4.730654757916615e-09,
+          "source_energy_J": 1.5611160701124896e-08,
+          "mean_source_power_W": 0.01927303790262333,
+          "sampled_peak_source_current_A": 0.02961253019330812,
+          "peak_time_s": 2.084712018838646e-07,
+          "minimum_source_current_A": -1.028850064699327e-06,
+          "minimum_pin_voltage_V": 3.285193734903346,
+          "local_1nF_energy_change_J": -5.290655189069682e-13,
+          "excess_source_charge_over_piecewise_steady_C": 4.478661067832892e-09
+        }
+      },
+      "total_mean_source_power_W": 0.019273334054347994,
+      "baseline_definition": "disabled mean before 2e-07s, armed mean after; removes assumed piecewise steady source current"
+    },
+    "trip_event": {
+      "start_s": 4.99e-06,
+      "end_s": 6e-06,
+      "sample_count_including_interpolated_bounds": 1024,
+      "rails": {
+        "VDD": {
+          "mean_source_current_A": 3.9511585328870594e-07,
+          "source_charge_C": 3.990670118215932e-13,
+          "source_energy_J": 4.788804141859112e-13,
+          "mean_source_power_W": 4.7413902394644654e-07,
+          "sampled_peak_source_current_A": 0.0003596729489392381,
+          "peak_time_s": 5.003699709455418e-06,
+          "minimum_source_current_A": -5.003123977331825e-06,
+          "minimum_pin_voltage_V": 1.199820163525531,
+          "local_1nF_energy_change_J": 1.9958756869442596e-19,
+          "excess_source_charge_over_piecewise_steady_C": 3.97653130437181e-13
+        },
+        "VDDA": {
+          "mean_source_current_A": 1.4677798257923336e-05,
+          "source_charge_C": 1.4824576240502578e-11,
+          "source_energy_J": 4.8921101593658646e-11,
+          "mean_source_power_W": 4.843673425114715e-05,
+          "sampled_peak_source_current_A": 0.004473006563687321,
+          "peak_time_s": 5.005129058373342e-06,
+          "minimum_source_current_A": -7.395482432137612e-05,
+          "minimum_pin_voltage_V": 3.297763496718157,
+          "local_1nF_energy_change_J": 5.19732609484791e-13,
+          "excess_source_charge_over_piecewise_steady_C": 1.1673459527270943e-11
+        }
+      },
+      "total_mean_source_power_W": 4.891087327509359e-05,
+      "baseline_definition": "armed mean before 5e-06s, tripped mean after; removes assumed piecewise steady source current"
+    },
+    "whole_trace": {
+      "start_s": 0.0,
+      "end_s": 1.2e-05,
+      "sample_count_including_interpolated_bounds": 12029,
+      "rails": {
+        "VDD": {
+          "mean_source_current_A": 5.1211636120879104e-08,
+          "source_charge_C": 6.145396334505492e-13,
+          "source_energy_J": 7.374475601406907e-13,
+          "mean_source_power_W": 6.145396334505756e-08,
+          "sampled_peak_source_current_A": 0.0003596729489392381,
+          "peak_time_s": 5.003699709455418e-06,
+          "minimum_source_current_A": -5.003123977331825e-06,
+          "minimum_pin_voltage_V": 1.199820163525531,
+          "local_1nF_energy_change_J": 8.130718320842334e-20
+        },
+        "VDDA": {
+          "mean_source_current_A": 0.0005002325332145548,
+          "source_charge_C": 6.002790398574658e-09,
+          "source_energy_J": 1.9809208315295967e-08,
+          "mean_source_power_W": 0.0016507673596079973,
+          "sampled_peak_source_current_A": 0.02961253019330812,
+          "peak_time_s": 2.084712018838646e-07,
+          "minimum_source_current_A": -7.395482432137612e-05,
+          "minimum_pin_voltage_V": 3.285193734903346,
+          "local_1nF_energy_change_J": 7.811227220599904e-19
+        }
+      },
+      "total_mean_source_power_W": 0.0016508288135713423
+    }
+  },
+  "whole_chip_power_and_IR": "not run"
+}

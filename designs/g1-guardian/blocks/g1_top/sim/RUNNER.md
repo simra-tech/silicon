@@ -52,3 +52,17 @@ Process-level watchdog tests (no PDK or circuit simulation):
 ```
 python3 -m unittest discover -s designs/g1-guardian/blocks/g1_top/sim -p test_run_bounded.py -v
 ```
+
+## Optional observation checkpoints (unqualified pilot)
+
+`--checkpoint-us T1 T2 ...` inserts ngspice `stop when time = ...`, writes partial observations, then `resume` within the same process. These files cannot restart a terminated analog/RTL simulation. This option remains unqualified: the initial1µs integrated pilot with0.5/0.8µs requested stops (`...20260921T160232Z_62a38463`) timed out120s before either checkpoint, near1.8ns reported progress. Baseline runs do not enable it. A simple isolated stop/resume test and mixed-signal waveform parity are still not run; do not assume useful checkpoints were saved.
+
+## Observation capture follow-up
+
+The isolated RC stop/resume test completed, but the mixed-signal4µs behavioral-front pilot (`...164049Z_ed3805c6`) reports `Too many iterations without convergence` at its first requested stop, despite saving all three checkpoints and its final endpoint. Qualification **failed**. The uninterrupted reference (`...164131Z_193d8a45`) completes cleanly. Saved digital states agree; interpolated analog GATE differs by up to58.37mV. Comparison evidence is `campaigns/checkpoint_comparison_20260921/comparison.json`. This option remains disabled by default.
+
+`run_stream.py` instead executes the same generated circuit as batch `.tran` with `ngspice -b -r transient.raw`. Complete binary records survive a terminated simulation; the untouched raw header may lack its final point count and its final record may be incomplete. The parser preserves only complete finite monotonic records and reports discarded trailing bytes. Four parser tests cover incomplete headers/trailing bytes, current names, nonfinite records and reversed time. Raw observations cannot restore analog integrator or RTL process state.
+
+Initial stream `164538Z_648a2faf` failed because the Icarus library path was missing; later runs supply it. Behavioral-front stream `165437Z_bd880fb2` completes4µs and matches all original saved analog/state columns within4binary64 ULPs, consistent with reference text rounding. PEX stream `165151Z_34cb6ddb` times out360s, preserving2,203records through3.771112µs; its complete records likewise match the original PEX reference within4ULPs. The predeclared comparison allowance is8ULPs. This qualifies only saved-prefix parity; PEX endpoint qualification is still pending. A timed-out run is **not run to completion** regardless of prefix parity. Later runner versions compile an independent per-run RTL executable and copy their stimulus to avoid mutable shared build files.
+
+PEX streaming endpoint follow-up `stream_20260921T165925Z_e2a0d65a` completes4µs in415.63s and all2,429rows of original saved analog/state vectors match within4ULPs. New independent RTL/stimulus-copy runner pilot `stream_20260921T170741Z_0eafde17` also passes4µs behavioral-front parity, with observations byte-identical to the earlier streaming pilot. The compact28µs in-range fault fixture is now being rerun with streaming; its endpoint and electrical acceptance are not yet established.

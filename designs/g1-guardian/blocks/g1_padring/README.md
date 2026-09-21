@@ -5,7 +5,9 @@ KLayout DRC (hard rules) 0 markers and density 0 markers after fill; KLayout
 antenna, Magic DRC and LVS fail for the library/deck reasons given in
 "Checks". Assembly of record with all twelve macros and the VDDA supply (D14):
 KLayout DRC 0 (hard rules and precheck), density 0, routing DRC 0, PDN
-connected on VDD/VSS/VDDA, STA clean with the digital owner's SDC, supply nets
+connected on VDD/VSS; the retained VDDA abstract-view check **failed** despite
+an aggregate zero metric (physical GDS probes connect the reported pad residue
+to the macro supply grid; see `INTEGRATION.md`), STA clean with the digital owner's SDC, supply nets
 isolated (three geometric checks), core-only KLayout LVS **passed (52 circuit pairs matched)**
 (`INTEGRATION.md`, `reports/assembly-1350/`). The first assembly run passed
 all flow checks with VDDA, VSS and VDD shorted together by the supply straps;

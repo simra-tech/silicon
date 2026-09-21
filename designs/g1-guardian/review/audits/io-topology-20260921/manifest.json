@@ -1,0 +1,81 @@
+{
+  "scope": "NON-PRODUCTION topology diagnostic; no global assumption adopted without full assembly validation",
+  "reference_delta": ".GLOBAL sub!; original devices and parameters unchanged",
+  "checks": [
+    {
+      "name": "flat_baseline",
+      "command": [
+        "python3",
+        "/foss/pdks/ihp-sg13g2/libs.tech/klayout/tech/lvs/run_lvs.py",
+        "--layout",
+        "/foss/pdks/ihp-sg13g2/libs.ref/sg13g2_io/gds/sg13g2_io.gds",
+        "--netlist",
+        "/foss/pdks/ihp-sg13g2/libs.ref/sg13g2_io/cdl/sg13g2_io.cdl",
+        "--topcell",
+        "sg13g2_IOPadAnalog",
+        "--run_mode",
+        "flat",
+        "--combine_devices",
+        "--run_dir",
+        "/work/designs/g1-guardian/review/audits/io-topology-20260921/flat_baseline",
+        "--top_lvl_pins",
+        "--spice_comments"
+      ],
+      "exit_code": 0,
+      "status": "failed",
+      "wall_seconds": 8.972583683993435,
+      "layout_sha256": "4281a855377b6a1ca46356e9391258dc14e8efc3b8051a65befc0fe9db3c7825",
+      "reference_sha256": "7a30e902099e8a8f85e0ae853167904df3793357a793a7b4dc82237b72b3eec4"
+    },
+    {
+      "name": "flat_global_substrate",
+      "command": [
+        "python3",
+        "/foss/pdks/ihp-sg13g2/libs.tech/klayout/tech/lvs/run_lvs.py",
+        "--layout",
+        "/foss/pdks/ihp-sg13g2/libs.ref/sg13g2_io/gds/sg13g2_io.gds",
+        "--netlist",
+        "/work/build/scratch/io-topology-20260921/sg13g2_io_global_sub.cdl",
+        "--topcell",
+        "sg13g2_IOPadAnalog",
+        "--run_mode",
+        "flat",
+        "--combine_devices",
+        "--run_dir",
+        "/work/designs/g1-guardian/review/audits/io-topology-20260921/flat_global_substrate",
+        "--top_lvl_pins",
+        "--spice_comments"
+      ],
+      "exit_code": 0,
+      "status": "failed",
+      "wall_seconds": 9.372004228993319,
+      "layout_sha256": "4281a855377b6a1ca46356e9391258dc14e8efc3b8051a65befc0fe9db3c7825",
+      "reference_sha256": "24427e4fbc7af882b8e0022df9831a55cfd78ccbf16a9a422725edc1bcb5e376"
+    },
+    {
+      "name": "flat_global_and_polyres",
+      "command": [
+        "python3",
+        "/foss/pdks/ihp-sg13g2/libs.tech/klayout/tech/lvs/run_lvs.py",
+        "--layout",
+        "/work/build/scratch/io-recognition-20260921/sg13g2_io_annotation_only.gds",
+        "--netlist",
+        "/work/build/scratch/io-topology-20260921/sg13g2_io_global_sub.cdl",
+        "--topcell",
+        "sg13g2_IOPadAnalog",
+        "--run_mode",
+        "flat",
+        "--combine_devices",
+        "--run_dir",
+        "/work/designs/g1-guardian/review/audits/io-topology-20260921/flat_global_and_polyres",
+        "--top_lvl_pins",
+        "--spice_comments"
+      ],
+      "exit_code": 0,
+      "status": "failed",
+      "wall_seconds": 9.493694748001872,
+      "layout_sha256": "aca14a3d6efce6ea83dc7823e49f4b567ff673d81437f0f61983040d1079ff30",
+      "reference_sha256": "24427e4fbc7af882b8e0022df9831a55cfd78ccbf16a9a422725edc1bcb5e376"
+    }
+  ]
+}

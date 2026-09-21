@@ -243,3 +243,17 @@ the same corner pad-free passes the full state table (1.79 ns / 2.97 ns). The wh
 - Wiring resistance (kpex RC mode unusable at this version; estimated negligible, see Post-layout).
 - Power-up simulation was not repeated on the post-layout netlist (the finding is an IO-cell property).
 - Density and antenna (chip level); the block uses nothing above Metal3.
+
+## 2026-09-21 continuation evidence
+
+The bounded nine-case detailed-pad PEX power screen is in
+`sim/campaigns/20260921T140450Z_b8966582`: IO-first and missing-core fail
+(GATE about3.288V with EN low), six selected sequences pass, and core-off-first
+hits the300s watchdog at last reported12.2804us (electrical acceptance **not run**).
+A selected simultaneous ramp passing does not qualify arbitrary power skew.
+
+[Real-FET characterization](sim/REAL_FET_20260921.md) adds an unchanged TI
+CSD16340Q3 model with explicitly assumed5V/12V R-L fixtures. Selected GATE/latch
+checks pass; the12V100uH fixture takes25.54us for load current to fall below1%
+even though GATE falls below1V in144ns. These are core-trip-to-output results,
+not integrated sense-to-trip or final-board qualification.

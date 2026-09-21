@@ -1,0 +1,303 @@
+* Fine symmetric comparator staircase
+.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerMOSlv.lib mos_tt_mismatch
+.temp 25
+.include qualification/cmp-cellpex-steady-mc-trap-20260921-a/cmp.spice
+Vdd vdd 0 1.2
+Vcm cm 0 .75
+Vod od 0 dc 0
+Ep inp0 0 value={v(cm)+v(od)/2}
+En inn0 0 value={v(cm)-v(od)/2}
+Rp inp0 inp 1000
+Rn inn0 inn 1000
+Cp inp 0 1p
+Cn inn 0 1p
+Vclk clk 0 pulse(0 1.2 20n .2n .2n 50n 100n)
+X1 inp inn clk q qb vdd 0 g1_cmp
+Cq q 0 10f
+Cqb qb 0 10f
+.save v(q) v(qb) v(inp) v(inn) v(clk)
+.option reltol=1e-5 vntol=1e-7 abstol=1e-14 method=trap
+.control
+set num_threads=1
+set numdgt=15
+setseed 62001
+reset
+set temp=25.0
+alter Vcm dc=0.75
+set b_lo=-0.02
+set b_hi=0.02
+set b_mixed=0
+set b_endpoints=1
+set b_trial=$b_lo
+alter Vod dc=$b_trial
+tran .2n .52u 0 0.2n
+meas tran q2 find v(q) at=.24u
+meas tran q3 find v(q) at=.34u
+meas tran q4 find v(q) at=.44u
+let b_state=(q2>.6)+(q3>.6)+(q4>.6)
+echo BROW seed62001_t0_cm0.75 0 $b_trial $&q2 $&q3 $&q4
+set wr_singlescale
+set wr_vecnames
+wrdata qualification/cmp-cellpex-steady-mc-trap-20260921-a/seed62001_t0_cm0.75_p0.dat v(q) v(qb) v(inp) v(inn) v(clk)
+if b_state > .5
+set b_endpoints=0
+end
+set b_trial=$b_hi
+alter Vod dc=$b_trial
+tran .2n .52u 0 0.2n
+meas tran q2 find v(q) at=.24u
+meas tran q3 find v(q) at=.34u
+meas tran q4 find v(q) at=.44u
+let b_state=(q2>.6)+(q3>.6)+(q4>.6)
+echo BROW seed62001_t0_cm0.75 1 $b_trial $&q2 $&q3 $&q4
+set wr_singlescale
+set wr_vecnames
+wrdata qualification/cmp-cellpex-steady-mc-trap-20260921-a/seed62001_t0_cm0.75_p1.dat v(q) v(qb) v(inp) v(inn) v(clk)
+if b_state < 2.5
+set b_endpoints=0
+end
+if $b_mixed < .5
+let b_mid=($b_lo+$b_hi)/2
+set b_trial=$&b_mid
+alter Vod dc=$b_trial
+tran .2n .52u 0 0.2n
+meas tran q2 find v(q) at=.24u
+meas tran q3 find v(q) at=.34u
+meas tran q4 find v(q) at=.44u
+let b_state=(q2>.6)+(q3>.6)+(q4>.6)
+echo BROW seed62001_t0_cm0.75 2 $b_trial $&q2 $&q3 $&q4
+set wr_singlescale
+set wr_vecnames
+wrdata qualification/cmp-cellpex-steady-mc-trap-20260921-a/seed62001_t0_cm0.75_p2.dat v(q) v(qb) v(inp) v(inn) v(clk)
+if b_state > 2.5
+set b_hi=$b_trial
+else
+if b_state < .5
+set b_lo=$b_trial
+else
+set b_mixed=1
+end
+end
+end
+if $b_mixed < .5
+let b_mid=($b_lo+$b_hi)/2
+set b_trial=$&b_mid
+alter Vod dc=$b_trial
+tran .2n .52u 0 0.2n
+meas tran q2 find v(q) at=.24u
+meas tran q3 find v(q) at=.34u
+meas tran q4 find v(q) at=.44u
+let b_state=(q2>.6)+(q3>.6)+(q4>.6)
+echo BROW seed62001_t0_cm0.75 3 $b_trial $&q2 $&q3 $&q4
+set wr_singlescale
+set wr_vecnames
+wrdata qualification/cmp-cellpex-steady-mc-trap-20260921-a/seed62001_t0_cm0.75_p3.dat v(q) v(qb) v(inp) v(inn) v(clk)
+if b_state > 2.5
+set b_hi=$b_trial
+else
+if b_state < .5
+set b_lo=$b_trial
+else
+set b_mixed=1
+end
+end
+end
+if $b_mixed < .5
+let b_mid=($b_lo+$b_hi)/2
+set b_trial=$&b_mid
+alter Vod dc=$b_trial
+tran .2n .52u 0 0.2n
+meas tran q2 find v(q) at=.24u
+meas tran q3 find v(q) at=.34u
+meas tran q4 find v(q) at=.44u
+let b_state=(q2>.6)+(q3>.6)+(q4>.6)
+echo BROW seed62001_t0_cm0.75 4 $b_trial $&q2 $&q3 $&q4
+set wr_singlescale
+set wr_vecnames
+wrdata qualification/cmp-cellpex-steady-mc-trap-20260921-a/seed62001_t0_cm0.75_p4.dat v(q) v(qb) v(inp) v(inn) v(clk)
+if b_state > 2.5
+set b_hi=$b_trial
+else
+if b_state < .5
+set b_lo=$b_trial
+else
+set b_mixed=1
+end
+end
+end
+if $b_mixed < .5
+let b_mid=($b_lo+$b_hi)/2
+set b_trial=$&b_mid
+alter Vod dc=$b_trial
+tran .2n .52u 0 0.2n
+meas tran q2 find v(q) at=.24u
+meas tran q3 find v(q) at=.34u
+meas tran q4 find v(q) at=.44u
+let b_state=(q2>.6)+(q3>.6)+(q4>.6)
+echo BROW seed62001_t0_cm0.75 5 $b_trial $&q2 $&q3 $&q4
+set wr_singlescale
+set wr_vecnames
+wrdata qualification/cmp-cellpex-steady-mc-trap-20260921-a/seed62001_t0_cm0.75_p5.dat v(q) v(qb) v(inp) v(inn) v(clk)
+if b_state > 2.5
+set b_hi=$b_trial
+else
+if b_state < .5
+set b_lo=$b_trial
+else
+set b_mixed=1
+end
+end
+end
+if $b_mixed < .5
+let b_mid=($b_lo+$b_hi)/2
+set b_trial=$&b_mid
+alter Vod dc=$b_trial
+tran .2n .52u 0 0.2n
+meas tran q2 find v(q) at=.24u
+meas tran q3 find v(q) at=.34u
+meas tran q4 find v(q) at=.44u
+let b_state=(q2>.6)+(q3>.6)+(q4>.6)
+echo BROW seed62001_t0_cm0.75 6 $b_trial $&q2 $&q3 $&q4
+set wr_singlescale
+set wr_vecnames
+wrdata qualification/cmp-cellpex-steady-mc-trap-20260921-a/seed62001_t0_cm0.75_p6.dat v(q) v(qb) v(inp) v(inn) v(clk)
+if b_state > 2.5
+set b_hi=$b_trial
+else
+if b_state < .5
+set b_lo=$b_trial
+else
+set b_mixed=1
+end
+end
+end
+if $b_mixed < .5
+let b_mid=($b_lo+$b_hi)/2
+set b_trial=$&b_mid
+alter Vod dc=$b_trial
+tran .2n .52u 0 0.2n
+meas tran q2 find v(q) at=.24u
+meas tran q3 find v(q) at=.34u
+meas tran q4 find v(q) at=.44u
+let b_state=(q2>.6)+(q3>.6)+(q4>.6)
+echo BROW seed62001_t0_cm0.75 7 $b_trial $&q2 $&q3 $&q4
+set wr_singlescale
+set wr_vecnames
+wrdata qualification/cmp-cellpex-steady-mc-trap-20260921-a/seed62001_t0_cm0.75_p7.dat v(q) v(qb) v(inp) v(inn) v(clk)
+if b_state > 2.5
+set b_hi=$b_trial
+else
+if b_state < .5
+set b_lo=$b_trial
+else
+set b_mixed=1
+end
+end
+end
+if $b_mixed < .5
+let b_mid=($b_lo+$b_hi)/2
+set b_trial=$&b_mid
+alter Vod dc=$b_trial
+tran .2n .52u 0 0.2n
+meas tran q2 find v(q) at=.24u
+meas tran q3 find v(q) at=.34u
+meas tran q4 find v(q) at=.44u
+let b_state=(q2>.6)+(q3>.6)+(q4>.6)
+echo BROW seed62001_t0_cm0.75 8 $b_trial $&q2 $&q3 $&q4
+set wr_singlescale
+set wr_vecnames
+wrdata qualification/cmp-cellpex-steady-mc-trap-20260921-a/seed62001_t0_cm0.75_p8.dat v(q) v(qb) v(inp) v(inn) v(clk)
+if b_state > 2.5
+set b_hi=$b_trial
+else
+if b_state < .5
+set b_lo=$b_trial
+else
+set b_mixed=1
+end
+end
+end
+if $b_mixed < .5
+let b_mid=($b_lo+$b_hi)/2
+set b_trial=$&b_mid
+alter Vod dc=$b_trial
+tran .2n .52u 0 0.2n
+meas tran q2 find v(q) at=.24u
+meas tran q3 find v(q) at=.34u
+meas tran q4 find v(q) at=.44u
+let b_state=(q2>.6)+(q3>.6)+(q4>.6)
+echo BROW seed62001_t0_cm0.75 9 $b_trial $&q2 $&q3 $&q4
+set wr_singlescale
+set wr_vecnames
+wrdata qualification/cmp-cellpex-steady-mc-trap-20260921-a/seed62001_t0_cm0.75_p9.dat v(q) v(qb) v(inp) v(inn) v(clk)
+if b_state > 2.5
+set b_hi=$b_trial
+else
+if b_state < .5
+set b_lo=$b_trial
+else
+set b_mixed=1
+end
+end
+end
+if $b_mixed < .5
+let b_mid=($b_lo+$b_hi)/2
+set b_trial=$&b_mid
+alter Vod dc=$b_trial
+tran .2n .52u 0 0.2n
+meas tran q2 find v(q) at=.24u
+meas tran q3 find v(q) at=.34u
+meas tran q4 find v(q) at=.44u
+let b_state=(q2>.6)+(q3>.6)+(q4>.6)
+echo BROW seed62001_t0_cm0.75 10 $b_trial $&q2 $&q3 $&q4
+set wr_singlescale
+set wr_vecnames
+wrdata qualification/cmp-cellpex-steady-mc-trap-20260921-a/seed62001_t0_cm0.75_p10.dat v(q) v(qb) v(inp) v(inn) v(clk)
+if b_state > 2.5
+set b_hi=$b_trial
+else
+if b_state < .5
+set b_lo=$b_trial
+else
+set b_mixed=1
+end
+end
+end
+echo BRACKET seed62001_t0_cm0.75 $b_lo $b_hi $b_mixed $b_endpoints
+echo FINGERPRINT seed62001_t0_cm0.75
+print @n.x1.xm6.nsg13_lv_nmos[w]
+print @n.x1.xm6.nsg13_lv_nmos[l]
+print @n.x1.xm6.nsg13_lv_nmos[delvto]
+print @n.x1.xm6.nsg13_lv_nmos[factuo]
+print @n.x1.xm7.nsg13_lv_nmos[w]
+print @n.x1.xm7.nsg13_lv_nmos[l]
+print @n.x1.xm7.nsg13_lv_nmos[delvto]
+print @n.x1.xm7.nsg13_lv_nmos[factuo]
+print @n.x1.xm8.nsg13_lv_nmos[w]
+print @n.x1.xm8.nsg13_lv_nmos[l]
+print @n.x1.xm8.nsg13_lv_nmos[delvto]
+print @n.x1.xm8.nsg13_lv_nmos[factuo]
+print @n.x1.xm9.nsg13_lv_nmos[w]
+print @n.x1.xm9.nsg13_lv_nmos[l]
+print @n.x1.xm9.nsg13_lv_nmos[delvto]
+print @n.x1.xm9.nsg13_lv_nmos[factuo]
+print @n.x1.xm12.nsg13_lv_nmos[w]
+print @n.x1.xm12.nsg13_lv_nmos[l]
+print @n.x1.xm12.nsg13_lv_nmos[delvto]
+print @n.x1.xm12.nsg13_lv_nmos[factuo]
+print @n.x1.xm13.nsg13_lv_nmos[w]
+print @n.x1.xm13.nsg13_lv_nmos[l]
+print @n.x1.xm13.nsg13_lv_nmos[delvto]
+print @n.x1.xm13.nsg13_lv_nmos[factuo]
+print @n.x1.xm14.nsg13_lv_nmos[w]
+print @n.x1.xm14.nsg13_lv_nmos[l]
+print @n.x1.xm14.nsg13_lv_nmos[delvto]
+print @n.x1.xm14.nsg13_lv_nmos[factuo]
+print @n.x1.xm15.nsg13_lv_nmos[w]
+print @n.x1.xm15.nsg13_lv_nmos[l]
+print @n.x1.xm15.nsg13_lv_nmos[delvto]
+print @n.x1.xm15.nsg13_lv_nmos[factuo]
+echo QUALIFICATION_END
+quit 0
+.endc
+.end

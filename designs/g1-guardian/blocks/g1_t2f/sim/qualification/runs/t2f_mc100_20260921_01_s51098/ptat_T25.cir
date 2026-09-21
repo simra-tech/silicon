@@ -1,0 +1,52 @@
+* G1_T2F joint C-PEX: T=25.0 C, VDDA=3.3 V, VDD=1.2 V, HBT=typ, MOS=tt, R=typ, C=typ, mismatch=True, seed=51098
+.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerHBT.lib hbt_typ_mismatch
+.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerMOShv.lib mos_tt_mismatch
+.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerMOSlv.lib mos_tt_mismatch
+.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerRES.lib res_typ_mismatch
+.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerCAP.lib cap_typ_mismatch
+.include bgr.spice
+.include t2f.spice
+.option seed=51098
+.option gmin=1e-15 abstol=1e-13 reltol=1e-4 vntol=1e-6 method=gear
+.temp 25.0
+.global sub!
+Vsub sub! 0 dc 0
+Vdd vdd 0 dc 3.3
+Vdd12 vdd12 0 dc 1.2
+Vr4 r4 0 dc 0
+Ven en 0 pwl(0 0 1u 0 1.01u 3.3)
+Vmode mode 0 dc 0
+Xbgr vdd 0 r4 vref iptat pbias pcasc vbe dvbe g1_bgr
+Vload iptat 0 dc 1.0
+Xt2f vdd vdd12 0 pbias pcasc vref en mode fout g1_t2f
+* TEMP_OUT pad stand-in: ~50 fF of core wiring plus the IO cell input
+Cout fout 0 50f
+.control
+set num_threads=1
+set filetype=ascii
+set numdgt=15
+set wr_singlescale
+set wr_vecnames
+op
+print @n.xbgr.xm34.nsg13_hv_nmos[delvto] @n.xbgr.xr16.nr1[nsmm_rsh] @q.xbgr.xq56.qnpn13g2[area] @q.xt2f.xq42.qnpn13g2[area] @c.xt2f.xc1.c1[scale]
+tran 5n 32u
+print @n.xbgr.xm34.nsg13_hv_nmos[delvto] @n.xbgr.xr16.nr1[nsmm_rsh] @q.xbgr.xq56.qnpn13g2[area] @q.xt2f.xq42.qnpn13g2[area] @c.xt2f.xc1.c1[scale]
+
+meas tran t_a when v(fout)=0.6 rise=8
+meas tran t_b when v(fout)=0.6 rise=24
+let freq = (24-8)/(t_b-t_a)
+print freq
+meas tran i33_avg avg i(vdd) from=t_a to=t_b
+meas tran i12_avg avg i(vdd12) from=t_a to=t_b
+meas tran vref_avg avg v(vref) from=t_a to=t_b
+meas tran vth_avg avg v(xt2f.vth) from=t_a to=t_b
+meas tran cap1_max max v(xt2f.cap1) from=t_a to=t_b
+meas tran fout_hi max v(fout) from=t_a to=t_b
+meas tran fout_lo min v(fout) from=t_a to=t_b
+meas tran t_half_a trig v(fout) val=0.6 rise=8 targ v(fout) val=0.6 fall=8
+
+wrdata ptat_T25.dat v(fout) v(vref) i(vdd) i(vdd12) v(xt2f.cap1) v(xt2f.cap2) v(xt2f.ca1) v(xt2f.tail1) v(xt2f.cb1) v(xt2f.ca2) v(xt2f.tail2) v(xt2f.cb2)
+quit
+.endc
+
+.end

@@ -1,0 +1,35 @@
+* Extracted by KLayout with SG13G2 LVS runset on : 21/09/2026 17:06
+
+* cell sg13g2_IOPadAnalog
+* pin anode,cathode,core,pad,padres
+* pin anode,guard,iovss,minus
+* pin cathode,iovdd
+* pin iovdd,plus
+* pin vss
+.SUBCKT sg13g2_IOPadAnalog anode|cathode|core|pad|padres
++ anode|guard|iovss|minus cathode|iovdd iovdd|plus vss
+* device instance $1 r0 *1 25.52,10.95 sg13_hv_nmos
+M$1 anode|guard|iovss|minus \$5 anode|cathode|core|pad|padres \$1 sg13_hv_nmos
++ L=0.6u W=88u AS=40.7p AD=40.7p PS=110.9u PD=110.9u rfmode=0
+* device instance $21 r0 *1 25.52,71.08 sg13_hv_pmos
+M$21 cathode|iovdd \$17 anode|cathode|core|pad|padres cathode|iovdd
++ sg13_hv_pmos L=0.6u W=266.4u AS=123.21p AD=123.21p PS=316.72u PD=316.72u
++ rfmode=0
+* device instance $61 r0 *1 40,20.44 dantenna
+D$61 \$1 anode|cathode|core|pad|padres dantenna A=35.0028p P=58.08u m=2
+* device instance $63 r0 *1 57.63,142.54 dantenna
+D$63 \$1 anode|cathode|core|pad|padres dantenna A=1.984p P=7.48u m=1
+* device instance $64 r0 *1 40,55.96 dpantenna
+D$64 anode|cathode|core|pad|padres cathode|iovdd dpantenna A=35.0028p P=58.08u
++ m=2
+* device instance $66 r0 *1 55.46,147.51 dpantenna
+D$66 anode|cathode|core|pad|padres iovdd|plus dpantenna A=3.1872p P=11.24u m=1
+* device instance $67 r0 *1 66.3,9.175 rppd
+R$67 anode|guard|iovss|minus \$5 \$1 rppd w=0.5u l=3.54u ps=0u b=0 m=1
+* device instance $68 r0 *1 66.3,68.175 rppd
+R$68 cathode|iovdd \$17 cathode|iovdd rppd w=0.5u l=12.9u ps=0u b=0 m=1
+* device instance $69 r0 *1 40,11 ptap1
+R$69 anode|guard|iovss|minus \$1 ptap1 A=4580.0452p P=1715.26u
+* device instance $75 r0 *1 40,157 ptap1
+R$75 vss \$1 ptap1 A=23.85p P=159.6u
+.ENDS sg13g2_IOPadAnalog

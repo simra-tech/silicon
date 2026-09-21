@@ -319,6 +319,18 @@ README) no frequency changed by more than 0.01 %: 12.927 / 8.994 / 7.174 MHz at 
 (tt), 10.370 MHz at the slow corner's code 0, 10.342 MHz at the fast corner's code 11, start-up
 8.994 → 8.995 MHz, as expected for 0.5 fF and fA-class leakage on a 1 pF DC node.
 
+## Additional extracted trim screen (2026-09-21)
+
+The [80-case screen](sim/qualification/README.md) completes all 16 codes at
+five explicit PVT tuples. All runs complete and code transfer is monotonic,
+but strict 10 MHz bracketing **fails** at ss/wcs/wcs, 1.08 V, 125 °C:
+maximum frequency is 9.974814 MHz. The earlier “every corner” statement
+above applies only to the previously listed tests; it does not establish
+combined low-voltage/hot coverage. Across this new screen all-code frequency
+is 5.560405–16.776615 MHz, and default code 8 reaches as low as 6.963740 MHz.
+These simulated ranges use the 50 fF stand-in, not final receiver loading.
+Mismatch, real load, slow startup/re-enable and jitter remain incomplete.
+
 ## Unverified
 
 - Period jitter and phase noise (no transient-noise run); comparator noise near the crossing.

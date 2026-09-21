@@ -270,7 +270,7 @@ GDS sha256 in `reports/assembly-1350/final_gds.sha256`; GDS 51 MB, kept under
 
 | Check | Result | Log / report (`reports/assembly-1350/`) |
 | --- | --- | --- |
-| PDN connectivity (`check_power_grid` after the straps) | **passed**: VDD, VSS, VDDA connected, 0 violations (36 via stacks + VDDA grid, feed and the two helper stripes; VDDA residue = the pad's bond-side pin/bondpad only). Every stack/jog and every skipped candidate is logged with coordinates | `analog_straps.log` |
+| PDN connectivity (`check_power_grid` after the straps) | **failed for VDDA in the retained abstract-view check**: six unconnected shapes and two instances, `PSM-0069`; VDD/VSS passed. The aggregate zero metric does not represent this log. Independent 2026-09-21 GDS probes connect the reported residue to the macro supply grid; see below | `analog_straps.log` |
 | **Supply nets: same-layer overlaps between different nets** (`flow/lvs/pdn_net_overlap.py`, DEF special nets + via cells) | **passed, 0** (r1: VDDA × VSS on TopMetal2 + 8 TopVia2 cuts) | `pdn_net_overlap.log` |
 | **Supply shapes on macro / IO-cell metal outside their pins** (`flow/lvs/pdn_macro_overlap.py`, all 12 macros, 24 pads, corners, fillers) | **passed, 0**; every supply shape over a cell lies on that cell's pin of the same net (r1: 5 — VDDA patches on the pad's `vdd`/`vss` rails, VDD stack on `g1_osc` metal) | `pdn_macro_overlap.log` |
 | **Supply isolation** (`flow/lvs/supply_isolation.py`, metal-only connectivity of the whole GDS, chip-pin labels) | **passed**: 22 labelled nets, none carrying two pin labels — VDD, VSS, VDDA, IOVDD, IOVSS and the 17 signals are separate conductors (r1: `VDD,VDDA,VSS`) | `supply_isolation.log` |
@@ -432,12 +432,18 @@ via stack on the bar 12 Ω → **≈ 21 Ω worst single path, ≈ 11 Ω with the
 sharing the long runs; ≈ 32 mV at the blocks' 1.5 mA** (version 1: 26 / 13 Ω).
 The bar via stacks dominate; doubling them would halve it if ever needed.
 
-`check_power_grid` on VDDA reports two remaining "unconnected" shapes,
-`pad07_vdda/pad` and `IO_BOND_pad07_vdda/pad` (the bond-side pin geometry and
-the bondpad, 180 µm from the `padbare` strip): they are joined to `padbare`
-by metal inside the PDK cell, which the LEF-based check cannot see. Everything
-inside the core is connected; `flow/run_dryrun.sh` records VDDA as connected
-when these two are the only residue.
+The retained `check_power_grid` invocation **failed** on VDDA (`PSM-0069`):
+six shapes on Metal2–TopMetal2 and two instances, `pad07_vdda/pad` and
+`IO_BOND_pad07_vdda/pad`. `flow/run_dryrun.sh` recorded a zero aggregate
+metric despite this failure; the corrected signoff collector preserves the
+raw failure. A 2026-09-21 independent GDS metal/via extraction, without labels
+or same-name/virtual connections, places every reported stub layer, bondpad,
+padbare feed, feed strap, and BGR/SENSE/T2F/TRIP/GATE/LS supply-stack probe
+on one physical conductor in the delivered layout. This supports the
+LEF abstraction explanation for these particular reported residues. It is
+not a pass of the failed OpenROAD check or of loaded VDDA IR analysis.
+See [`VDDA_AND_POWER_20260921.md`](../../review/audits/VDDA_AND_POWER_20260921.md)
+and the hashed probe records for exact scope and reproduction.
 
 ## Earlier dry run: g1_digital run4 alone on the 1200 µm frame (`reports/dryrun-digital/`)
 

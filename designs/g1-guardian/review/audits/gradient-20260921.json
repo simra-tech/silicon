@@ -1,0 +1,19 @@
+{
+  "method": "Ideal-resistor sensitivity from audited GDS positions; not PDK simulation.\n\nR_i = R_unit [1 + gx (x_i-x0) + gy (y_i-y0)]. Identical nominal\nunits, ideal OTAs, no contact/route R, self-heating, mismatch or gradients\nin active devices. Values are deliberately specified perturbations, not\npredictions of a physical gradient distribution.\n",
+  "geometry": "designs/g1-guardian/review/audits/physical-20260921-r2.json",
+  "geometry_sha256": "94f5b3471977ef86edb7abacf9dae67afd40ddc34db448c5b1866b1217aa2085",
+  "script_sha256": "fd50affe11013d190f56acd3ae34c3e949d7f9978ce8c4004d95b6e044025a4f",
+  "command": "python3 designs/g1-guardian/review/audits/gradient_sensitivity.py --geometry designs/g1-guardian/review/audits/physical-20260921-r2.json --output designs/g1-guardian/review/audits/gradient-20260921.csv",
+  "rows": 120,
+  "origin_um": [
+    178.41,
+    93.31
+  ],
+  "zero_gradient_max_abs_error_uV": 4.440892098500626e-11,
+  "not_run": [
+    "PDK circuit gradient simulation",
+    "Active-device thermal/gradient simulation",
+    "Physical distribution or yield inference",
+    "Frozen-calibration drift simulation"
+  ]
+}

@@ -1,0 +1,72 @@
+* G1_TRIP kickback: real source (G1_SENSE output through the conditioning divider) and real DAC tap,
+* both comparators clocked (soft on cmp_clk, hard on its inverse), 10 MHz. Soft threshold code 153
+* (30.0 mV shunt), shunt input set 0.0438415094339623 so the soft comparator sits at/near its threshold.
+.param VDDA=3.3 VDD=1.2 VREF=1.04
+.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerMOSlv.lib mos_tt
+.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerMOShv.lib mos_tt
+.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerRES.lib res_typ
+.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerCAP.lib cap_typ
+.temp 27
+* the off switches leave the mux tree nodes floating at DC: give the solver a 1 TOhm path per node
+.option rshunt=1e12 gmin=1e-13
+.include qualification/band-hard-sch-tight-20260921-a/sense.spice
+.include qualification/band-hard-sch-tight-20260921-a/trip.spice
+Vdda vdda 0 dc {VDDA}
+Vdd vdd 0 dc {VDD}
+Vref vref 0 dc {VREF}
+Iib vdda iptat dc 4.13u
+Vsh shp 0 dc 0.0438415094339623
+XS shp 0 vref iptat isense vped vref_buf vdda 0 g1_sense
+CL isense 0 300f
+* soft code 153 = 1001 1001b (30.0 mV) ; hard code 254 = 1111 1110b (49.8 mV)
+Vs0 s0 0 dc 1.2
+Vs1 s1 0 dc 0
+Vs2 s2 0 dc 0
+Vs3 s3 0 dc 1.2
+Vs4 s4 0 dc 1.2
+Vs5 s5 0 dc 0
+Vs6 s6 0 dc 0
+Vs7 s7 0 dc 1.2
+Vh0 h0 0 dc 0
+Vh1 h1 0 dc 1.2
+Vh2 h2 0 dc 1.2
+Vh3 h3 0 dc 1.2
+Vh4 h4 0 dc 1.2
+Vh5 h5 0 dc 1.2
+Vh6 h6 0 dc 1.2
+Vh7 h7 0 dc 1.2
+Vclk clk 0 pulse(0 1.2 20n 0.2n 0.2n 50n 100n)
+XT isense vref_buf clk s0 s1 s2 s3 s4 s5 s6 s7 h0 h1 h2 h3 h4 h5 h6 h7 cmp_soft cmp_hard vdd vdda 0 g1_trip
+Cs cmp_soft 0 10f
+Ch cmp_hard 0 10f
+* keep only the nodes of interest (the full 1200-device transient exhausts the output memory)
+.save v(clk) v(vref) v(iptat) v(vref_buf) v(xt.icmp) v(xt.vth_soft) v(xt.vth_hard) v(cmp_soft) v(cmp_hard) v(isense)
+.option reltol=1e-5 vntol=1e-7 abstol=1e-14
+.option method=gear
+.control
+set num_threads=1
+set numdgt=15
+set filetype=ascii
+op
+print v(xt.icmp) v(xt.vth_soft) v(xt.vth_hard)
+let dqsoft = v(xt.icmp)-v(xt.vth_soft)
+let dqhard = v(xt.icmp)-v(xt.vth_hard)
+echo QUIET $&dqsoft $&dqhard
+tran 0.2n 1.52u 0 0.2n
+let ds = v(xt.icmp)-v(xt.vth_soft)
+let dh = v(xt.icmp)-v(xt.vth_hard)
+meas tran ds_pre find ds at=1.4198e-06
+meas tran ds_kick find ds at=1.421e-06
+meas tran ds_sample find ds at=1.44e-06
+meas tran qs_sample find v(cmp_soft) at=1.44e-06
+meas tran dh_pre find dh at=1.47e-06
+meas tran dh_kick find dh at=1.4712e-06
+meas tran dh_sample find dh at=1.4902e-06
+meas tran qh_sample find v(cmp_hard) at=1.4902e-06
+set wr_singlescale
+set wr_vecnames
+wrdata qualification/band-hard-sch-tight-20260921-a/hard_-6mV.dat v(clk) v(xt.icmp) v(xt.vth_soft) v(xt.vth_hard) v(cmp_soft) v(cmp_hard) v(isense)
+echo QUALIFICATION_END
+quit 0
+.endc
+.end

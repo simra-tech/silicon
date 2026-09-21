@@ -1,0 +1,25 @@
+* Exploratory latch current pulse, not a particle model
+.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerMOSlv.lib mos_tt
+.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerMOShv.lib mos_tt
+.include /work/designs/g1-guardian/blocks/g1_gate/sim/postlayout/g1_gate_pex.spice
+.option method=gear reltol=1e-5 abstol=1e-14 vntol=1e-7
+.temp 27
+Vdd vdd 0 1.2
+Vdda vdda 0 3.3
+Ven en 0 pwl(0 0 0.2u 0 0.201u 1.2)
+Vtrip td 0 pwl(0 0 1u 0 1.001u 1.2 1.1u 1.2 1.101u 0)
+XG td 0 0 0 en gate fault tripped vdd vdda 0 g1_gate
+Cgate gate 0 20f
+Cfault fault 0 20f
+Ctrip tripped 0 20f
+Iinj 0 xg.n_35 pwl(0 0 2u 0 2.00001u -9.999999999999999e-05 2.001u -9.999999999999999e-05 2.00101u 0)
+.control
+set num_threads=1
+set numdgt=15
+set wr_singlescale
+set wr_vecnames
+tran 100p 3u 0 100p
+wrdata /work/designs/g1-guardian/blocks/g1_gate/sim/campaigns/set_20260921T152225Z_a2af03f0/tripped_n_35_-1_100fC.tsv v(gate) v(fault) v(tripped) v(xg.n_34) v(xg.n_35)
+quit
+.endc
+.end

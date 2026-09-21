@@ -45,6 +45,7 @@ one-to-one, see "Extractor view"); that adds the units' heads to the simulated R
 | --- | --- | --- |
 | PDK | IHP SG13G2 open PDK, commit `84374023ee8b4b126bebbba67fcbada0a9c0ff0b` | `/foss/pdks/ihp-sg13g2/COMMIT` in the pinned container (`../../PLAN.md` §2) |
 | ngspice | 46 | `../../PLAN.md` §2 (`ngspice -v` in the pinned container; the batch logs in `sim/logs/` carry no banner) |
+| Scoped native MC runtime | 47, ARM | `sim/qualification/README.md`; explicit image/tool manifests and legacy comparisons. Applies only to the indicated new joint MC samples, not all block or chip evidence. |
 | xschem | 3.4.8RC | `xschem/g1_t2f.spice` header (`xschem -n -q -x`) |
 | KLayout | 0.30.9, PDK PCell library `SG13_dev`, PDK DRC and LVS decks | `reports/drc/drc_run_*.log`, `reports/lvs/lvs_run_*.log` |
 | kpex | 0.3.12 (KLayout-PEX), 2.5D engine | `reports/pex/cc/kpex_plain.log` |
@@ -635,6 +636,10 @@ Reading:
 | PEX, kpex 2.5D `--mode RC` | not run (unusable in kpex 0.3.12, see the bandgap README; wiring resistance estimated by hand) | |
 | Post-layout f(T) −40 .. 175 °C, both modes, and supply 3.0 .. 3.6 V | run: f PTAT -3.6 .. -3.9 %, f REF -3.3 .. -4.0 %, two-point residual within 0.13 °C of the schematic, supply -3.26 °C/V PTAT | `sim/postlayout/results/compare.md`, `sim/postlayout/results/ftemp_summary.csv`, `sim/postlayout/results/supply_summary.csv`, `sim/postlayout/logs/` |
 | Post-layout corners, mismatch MC | not run | |
+| Joint extracted BGR/T2F eight-temperature PTAT sweep (2026-09-21) | passed at nominal rails/process; frozen 25/100 °C calibration maximum independent residual 0.903 °C; statistical/supply coverage not run | `sim/qualification/README.md`, `sim/qualification/nominal_calibration.csv` |
+| Joint extracted BGR/T2F mismatch endpoint smoke (2026-09-21) | **failed linear calibration in 1/20 samples**, worst −2.645 °C at −40 °C; 80/80 transients complete | `sim/qualification/mc20_summary.json`, `sim/qualification/README.md` |
+| Same 20 physical samples at four intermediate temperatures | passed 80/80 transients; frozen linear calibration maximum residual 1.610 °C; cold endpoint failure retained | `sim/qualification/mc20_intermediate_summary.json` |
+| Frozen nominal-curvature diagnostic | unadopted candidate; separate intermediate and nominal between-knot checks complete; larger MC campaign status recorded separately | `sim/qualification/curvature_candidate100.json`, `sim/qualification/interpolation_probe.json` |
 
 ## Unverified
 

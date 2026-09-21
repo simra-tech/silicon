@@ -1,0 +1,147 @@
+* G1_TRIP kickback: real source (G1_SENSE output through the conditioning divider) and real DAC tap,
+* both comparators clocked (soft on cmp_clk, hard on its inverse), 10 MHz. Soft threshold code 153
+* (30.0 mV shunt), shunt input set .025 so the soft comparator sits at/near its threshold.
+.param VDDA=3.3 VDD=1.2 VREF=1.04
+.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerMOSlv.lib mos_tt_mismatch
+.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerMOShv.lib mos_tt_mismatch
+.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerRES.lib res_typ_mismatch
+.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerCAP.lib cap_typ
+.temp 25
+* the off switches leave the mux tree nodes floating at DC: give the solver a 1 TOhm path per node
+.option rshunt=1e12 gmin=1e-13
+.include qualification/dac-full-pilot-20260921-c/sense.spice
+.include qualification/dac-full-pilot-20260921-c/trip.spice
+Vdda vdda 0 dc {VDDA}
+Vdd vdd 0 dc {VDD}
+Vref vref 0 dc {VREF}
+Iib vdda iptat dc 4.13u
+Vsh shp 0 dc .025
+XS shp 0 vref iptat isense vped vref_buf vdda 0 g1_sense
+CL isense 0 300f
+* soft code 153 = 1001 1001b (30.0 mV) ; hard code 254 = 1111 1110b (49.8 mV)
+Bs0 s0 0 V=1.2*(floor(v(code)/1)-2*floor(v(code)/2))
+Bs1 s1 0 V=1.2*(floor(v(code)/2)-2*floor(v(code)/4))
+Bs2 s2 0 V=1.2*(floor(v(code)/4)-2*floor(v(code)/8))
+Bs3 s3 0 V=1.2*(floor(v(code)/8)-2*floor(v(code)/16))
+Bs4 s4 0 V=1.2*(floor(v(code)/16)-2*floor(v(code)/32))
+Bs5 s5 0 V=1.2*(floor(v(code)/32)-2*floor(v(code)/64))
+Bs6 s6 0 V=1.2*(floor(v(code)/64)-2*floor(v(code)/128))
+Bs7 s7 0 V=1.2*(floor(v(code)/128)-2*floor(v(code)/256))
+Bh0 h0 0 V=1.2*(floor(v(code)/1)-2*floor(v(code)/2))
+Bh1 h1 0 V=1.2*(floor(v(code)/2)-2*floor(v(code)/4))
+Bh2 h2 0 V=1.2*(floor(v(code)/4)-2*floor(v(code)/8))
+Bh3 h3 0 V=1.2*(floor(v(code)/8)-2*floor(v(code)/16))
+Bh4 h4 0 V=1.2*(floor(v(code)/16)-2*floor(v(code)/32))
+Bh5 h5 0 V=1.2*(floor(v(code)/32)-2*floor(v(code)/64))
+Bh6 h6 0 V=1.2*(floor(v(code)/64)-2*floor(v(code)/128))
+Bh7 h7 0 V=1.2*(floor(v(code)/128)-2*floor(v(code)/256))
+Vclk clk 0 dc 0
+XT isense vref_buf clk s0 s1 s2 s3 s4 s5 s6 s7 h0 h1 h2 h3 h4 h5 h6 h7 cmp_soft cmp_hard vdd vdda 0 g1_trip
+Cs cmp_soft 0 10f
+Ch cmp_hard 0 10f
+* keep only the nodes of interest (the full 1200-device transient exhausts the output memory)
+.save v(vref_buf) i(vdda) v(xt.icmp) v(xt.vth_soft) v(xt.vth_hard) v(cmp_soft) v(cmp_hard) v(isense)
+.nodeset v(vref_buf)={VREF} v(vped)=1.000755 v(isense)=1.000755 v(xs.vp)=0.047 v(xs.vn)=0.047 v(xs.iptat)=0.76
++ v(xs.xref.out1)={VDDA-0.79} v(xs.xbuf.out1)={VDDA-0.79} v(xs.xota.out1)={VDDA-0.79} v(xs.xref.mir)={VDDA-0.79} v(xs.xbuf.mir)={VDDA-0.79} v(xs.xota.mir)={VDDA-0.79}
++ v(xs.xref.tail)=1.65 v(xs.xbuf.tail)=1.65 v(xs.xota.tail)=1.6 v(xs.xref.fn)=0.2 v(xs.xref.fp)=0.2 v(xs.xbuf.fn)=0.2 v(xs.xbuf.fp)=0.2 v(xs.xota.fn)=0.2 v(xs.xota.fp)=0.2
+.option itl1=400 itl2=200
+Vcode code 0 0
+.control
+set num_threads=1
+set numdgt=15
+setseed 51001
+reset
+set temp=25.0
+alter Iib dc=4.10248042645344e-06
+dc Vcode 0 255 1
+set wr_singlescale
+set wr_vecnames
+wrdata qualification/dac-full-pilot-20260921-c/seed51001_t0.dat v(xt.vth_soft) v(xt.vth_hard) v(vref_buf) v(isense) i(vdda)
+echo FINGERPRINT 0
+print @n.xt.xdacs.xms7_0a.nsg13_hv_nmos[w]
+print @n.xt.xdacs.xms7_0a.nsg13_hv_nmos[l]
+print @n.xt.xdacs.xms7_0a.nsg13_hv_nmos[delvto]
+print @n.xt.xdacs.xms7_0a.nsg13_hv_nmos[factuo]
+print @n.xt.xdach.xms7_0b.nsg13_hv_nmos[w]
+print @n.xt.xdach.xms7_0b.nsg13_hv_nmos[l]
+print @n.xt.xdach.xms7_0b.nsg13_hv_nmos[delvto]
+print @n.xt.xdach.xms7_0b.nsg13_hv_nmos[factuo]
+print @n.xt.xcs.xm1.nsg13_lv_nmos[w]
+print @n.xt.xcs.xm1.nsg13_lv_nmos[l]
+print @n.xt.xcs.xm1.nsg13_lv_nmos[delvto]
+print @n.xt.xcs.xm1.nsg13_lv_nmos[factuo]
+print @n.xt.xch.xm1.nsg13_lv_nmos[w]
+print @n.xt.xch.xm1.nsg13_lv_nmos[l]
+print @n.xt.xch.xm1.nsg13_lv_nmos[delvto]
+print @n.xt.xch.xm1.nsg13_lv_nmos[factuo]
+print @n.xs.xref.xm1.nsg13_hv_pmos[w]
+print @n.xs.xref.xm1.nsg13_hv_pmos[l]
+print @n.xs.xref.xm1.nsg13_hv_pmos[delvto]
+print @n.xs.xref.xm1.nsg13_hv_pmos[factuo]
+print @n.xt.xdacs.xru0.nr1[nsmm_rsh]
+print @n.xt.xdacs.xru0.nr1[nsmm_w]
+print @n.xt.xdacs.xru0.nr1[nsmm_l]
+set temp=125.0
+alter Iib dc=5.478459103781443e-06
+dc Vcode 0 255 1
+set wr_singlescale
+set wr_vecnames
+wrdata qualification/dac-full-pilot-20260921-c/seed51001_t1.dat v(xt.vth_soft) v(xt.vth_hard) v(vref_buf) v(isense) i(vdda)
+echo FINGERPRINT 1
+print @n.xt.xdacs.xms7_0a.nsg13_hv_nmos[w]
+print @n.xt.xdacs.xms7_0a.nsg13_hv_nmos[l]
+print @n.xt.xdacs.xms7_0a.nsg13_hv_nmos[delvto]
+print @n.xt.xdacs.xms7_0a.nsg13_hv_nmos[factuo]
+print @n.xt.xdach.xms7_0b.nsg13_hv_nmos[w]
+print @n.xt.xdach.xms7_0b.nsg13_hv_nmos[l]
+print @n.xt.xdach.xms7_0b.nsg13_hv_nmos[delvto]
+print @n.xt.xdach.xms7_0b.nsg13_hv_nmos[factuo]
+print @n.xt.xcs.xm1.nsg13_lv_nmos[w]
+print @n.xt.xcs.xm1.nsg13_lv_nmos[l]
+print @n.xt.xcs.xm1.nsg13_lv_nmos[delvto]
+print @n.xt.xcs.xm1.nsg13_lv_nmos[factuo]
+print @n.xt.xch.xm1.nsg13_lv_nmos[w]
+print @n.xt.xch.xm1.nsg13_lv_nmos[l]
+print @n.xt.xch.xm1.nsg13_lv_nmos[delvto]
+print @n.xt.xch.xm1.nsg13_lv_nmos[factuo]
+print @n.xs.xref.xm1.nsg13_hv_pmos[w]
+print @n.xs.xref.xm1.nsg13_hv_pmos[l]
+print @n.xs.xref.xm1.nsg13_hv_pmos[delvto]
+print @n.xs.xref.xm1.nsg13_hv_pmos[factuo]
+print @n.xt.xdacs.xru0.nr1[nsmm_rsh]
+print @n.xt.xdacs.xru0.nr1[nsmm_w]
+print @n.xt.xdacs.xru0.nr1[nsmm_l]
+set temp=25.0
+alter Iib dc=4.10248042645344e-06
+dc Vcode 0 255 1
+set wr_singlescale
+set wr_vecnames
+wrdata qualification/dac-full-pilot-20260921-c/seed51001_t2.dat v(xt.vth_soft) v(xt.vth_hard) v(vref_buf) v(isense) i(vdda)
+echo FINGERPRINT 2
+print @n.xt.xdacs.xms7_0a.nsg13_hv_nmos[w]
+print @n.xt.xdacs.xms7_0a.nsg13_hv_nmos[l]
+print @n.xt.xdacs.xms7_0a.nsg13_hv_nmos[delvto]
+print @n.xt.xdacs.xms7_0a.nsg13_hv_nmos[factuo]
+print @n.xt.xdach.xms7_0b.nsg13_hv_nmos[w]
+print @n.xt.xdach.xms7_0b.nsg13_hv_nmos[l]
+print @n.xt.xdach.xms7_0b.nsg13_hv_nmos[delvto]
+print @n.xt.xdach.xms7_0b.nsg13_hv_nmos[factuo]
+print @n.xt.xcs.xm1.nsg13_lv_nmos[w]
+print @n.xt.xcs.xm1.nsg13_lv_nmos[l]
+print @n.xt.xcs.xm1.nsg13_lv_nmos[delvto]
+print @n.xt.xcs.xm1.nsg13_lv_nmos[factuo]
+print @n.xt.xch.xm1.nsg13_lv_nmos[w]
+print @n.xt.xch.xm1.nsg13_lv_nmos[l]
+print @n.xt.xch.xm1.nsg13_lv_nmos[delvto]
+print @n.xt.xch.xm1.nsg13_lv_nmos[factuo]
+print @n.xs.xref.xm1.nsg13_hv_pmos[w]
+print @n.xs.xref.xm1.nsg13_hv_pmos[l]
+print @n.xs.xref.xm1.nsg13_hv_pmos[delvto]
+print @n.xs.xref.xm1.nsg13_hv_pmos[factuo]
+print @n.xt.xdacs.xru0.nr1[nsmm_rsh]
+print @n.xt.xdacs.xru0.nr1[nsmm_w]
+print @n.xt.xdacs.xru0.nr1[nsmm_l]
+echo QUALIFICATION_END
+quit 0
+.endc
+.end

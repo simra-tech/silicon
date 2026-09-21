@@ -1,0 +1,116 @@
+{
+  "status": "failed",
+  "baseline": "designs/g1-guardian/review/runtime/20260921T142901Z_x86_46_31213c49",
+  "candidate": "designs/g1-guardian/review/runtime/20260921T143715Z_arm_46_d29d4b02",
+  "tests": {
+    "bgr_noise": {
+      "both_complete": true,
+      "psrr.dat_parity": true,
+      "noise.dat_parity": true
+    },
+    "bgr_mc": {
+      "both_complete": true,
+      "mc_42001.dat_parity": true
+    },
+    "sense_noise": {
+      "both_complete": true,
+      "noise_spectrum.dat_parity": true
+    },
+    "osc": {
+      "both_complete": true,
+      "fmhz_parity": true,
+      "duty_parity": true,
+      "iua_parity": true
+    },
+    "gate_io_first": {
+      "both_complete": false
+    },
+    "gate_core_first": {
+      "both_complete": true,
+      "gate_max_parity": true,
+      "gate_safety_class": true,
+      "gfet_max_parity": true,
+      "gfet_safety_class": true
+    }
+  },
+  "metrics": {
+    "bgr_noise": {
+      "psrr.dat": {
+        "max_tolerance_ratio": 0.00014839387300090553,
+        "max_abs_difference_mixed_units": 1.527844609938711e-05
+      },
+      "noise.dat": {
+        "max_tolerance_ratio": 4.8548623031573635e-09,
+        "max_abs_difference_mixed_units": 1.0414100679902172e-16
+      },
+      "observed_wall_s": [
+        5.0194432889984455,
+        0.29429244899074547
+      ]
+    },
+    "bgr_mc": {
+      "mc_42001.dat": {
+        "max_tolerance_ratio": 5.0407877627108606e-08,
+        "max_abs_difference_mixed_units": 3.505506995793439e-11
+      },
+      "observed_wall_s": [
+        5.020736652018968,
+        0.28174349598702975
+      ]
+    },
+    "sense_noise": {
+      "noise_spectrum.dat": {
+        "max_tolerance_ratio": 3.5932971888814468e-09,
+        "max_abs_difference_mixed_units": 7.253041483384903e-16
+      },
+      "observed_wall_s": [
+        5.014487929991446,
+        0.7347856419801246
+      ]
+    },
+    "osc": {
+      "fmhz": {
+        "values": [
+          8.994415367498318,
+          8.994415367498318
+        ],
+        "tolerance": 0.008994416367498318
+      },
+      "duty": {
+        "values": [
+          49.53584319496027,
+          49.53584319496027
+        ],
+        "tolerance": 0.1
+      },
+      "iua": {
+        "values": [
+          110.0618,
+          110.0618
+        ],
+        "tolerance": 0.110061801
+      },
+      "observed_wall_s": [
+        20.02625119901495,
+        10.680724236997776
+      ]
+    },
+    "gate_io_first": {},
+    "gate_core_first": {
+      "gate_max_V": [
+        0.088808587646973,
+        0.0917589394781298
+      ],
+      "gfet_max_V": [
+        0.06587755820219553,
+        0.06849800637281878
+      ],
+      "observed_wall_s": [
+        5.014859643008094,
+        2.0624645710049663
+      ]
+    }
+  },
+  "tolerances": "DC/AC vectors abs1e-9+rel0.1%; OSC frequency/current0.1%,duty0.1pp; gate maxima10mV and same1V safety class. Exploratory runtime parity, not specification acceptance.",
+  "timing_note": "First x86 fixture batch uses old5s polling timing floor; rerun with updatedhelper before speed ratio claims."
+}
