@@ -1,0 +1,33 @@
+* G1_TRIP DAC string INL/DNL Monte Carlo (rppd mismatch), string only (netlist/g1_dac8_string.spice)
+.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerRES.lib res_typ_mismatch
+.temp @@TEMP@@
+.global sub!
+.include netlist/g1_dac8_string.spice
+Vref vref 0 dc 1.04
+* the extracted string subckt references the substrate node; declare it global and tie it (a floating
+* body node produced "singular matrix" warnings that interleaved with the tap print-out)
+Vsub sub! 0 dc 0
+X1 vref 0 g1_dac8_string
+.control
+set filetype=ascii
+let n = @@N@@
+let i = 0
+while i < n
+  reset
+  op
+  let t0 = v(x1.t0)
+  let t255 = v(x1.t255)
+  let lsb = (t255 - t0)/255
+  let inlmax = 0
+  let dnlmax = 0
+  let k = 1
+  while k < 255
+    let tk = v(x1.t{$&k})
+    let tk1 = v(x1.t{$&k}) - v(x1.t{$&k})
+    let k = k + 1
+  end
+  echo "MC" $&i " t0=" $&t0 " t255=" $&t255 " lsb=" $&lsb
+  let i = i + 1
+end
+.endc
+.end

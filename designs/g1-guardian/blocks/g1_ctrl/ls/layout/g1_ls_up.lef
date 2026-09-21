@@ -1,0 +1,82 @@
+VERSION 5.8 ;
+BUSBITCHARS "[]" ;
+DIVIDERCHAR "/" ;
+
+MACRO g1_ls_up
+  CLASS BLOCK ;
+  ORIGIN 0 0 ;
+  FOREIGN g1_ls_up 0 0 ;
+  SIZE 9.200 BY 11.700 ;
+  SYMMETRY X Y ;
+  PIN vdd
+    DIRECTION INOUT ;
+    USE POWER ;
+    PORT
+      LAYER Metal1 ;
+        RECT 0.200 9.800 1.800 10.200 ;
+    END
+  END vdd
+  PIN vdda
+    DIRECTION INOUT ;
+    USE POWER ;
+    PORT
+      LAYER Metal1 ;
+        RECT 4.000 11.200 8.600 11.600 ;
+    END
+  END vdda
+  PIN out
+    DIRECTION OUTPUT ;
+    USE SIGNAL ;
+    PORT
+      LAYER Metal1 ;
+        RECT 8.000 4.100 9.200 5.700 ;
+    END
+  END out
+  PIN in
+    DIRECTION INPUT ;
+    USE SIGNAL ;
+    PORT
+      LAYER Metal2 ;
+        RECT 0.000 4.800 0.850 5.000 ;
+    END
+  END in
+  PIN vss
+    DIRECTION INOUT ;
+    USE GROUND ;
+    PORT
+      LAYER Metal1 ;
+        RECT 0.200 0.300 8.700 0.850 ;
+    END
+  END vss
+  OBS
+    LAYER Metal1 ;
+      RECT 0.000 0.000 9.200 0.120 ;
+      RECT 0.000 0.120 0.020 1.030 ;
+      RECT 8.880 0.120 9.200 1.030 ;
+      RECT 0.000 1.030 9.200 3.920 ;
+      RECT 0.000 3.920 7.820 5.880 ;
+      RECT 0.000 5.880 9.200 9.620 ;
+      RECT 0.000 9.620 0.020 10.380 ;
+      RECT 1.980 9.620 9.200 10.380 ;
+      RECT 0.000 10.380 9.200 11.020 ;
+      RECT 0.000 11.020 3.820 11.700 ;
+      RECT 8.780 11.020 9.200 11.700 ;
+    LAYER Metal2 ;
+      RECT 0.000 0.000 9.200 0.300 ;
+      RECT 0.000 0.300 0.200 0.850 ;
+      RECT 8.700 0.300 9.200 0.850 ;
+      RECT 0.000 0.850 9.200 4.100 ;
+      RECT 0.000 4.100 8.300 4.590 ;
+      RECT 1.060 4.590 8.300 5.210 ;
+      RECT 0.000 5.210 8.300 5.700 ;
+      RECT 0.000 5.700 9.200 9.800 ;
+      RECT 0.000 9.800 0.200 10.200 ;
+      RECT 1.800 9.800 9.200 10.200 ;
+      RECT 0.000 10.200 9.200 11.200 ;
+      RECT 0.000 11.200 4.000 11.600 ;
+      RECT 8.600 11.200 9.200 11.600 ;
+      RECT 0.000 11.600 9.200 11.700 ;
+  END
+END g1_ls_up
+
+END LIBRARY

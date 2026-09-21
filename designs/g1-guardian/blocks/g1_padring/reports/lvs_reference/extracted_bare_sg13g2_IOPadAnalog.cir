@@ -1,0 +1,17 @@
+.SUBCKT sg13g2_IOPadAnalog anode|cathode|core|pad|padres
++ anode|guard|iovss|minus cathode|iovdd iovdd|plus vss
+M$1 anode|guard|iovss|minus \$5 anode|cathode|core|pad|padres \$1 sg13_hv_nmos
++ L=0.6u W=88u AS=40.7p AD=40.7p PS=110.9u PD=110.9u rfmode=0
+M$21 cathode|iovdd \$17 anode|cathode|core|pad|padres cathode|iovdd
++ sg13_hv_pmos L=0.6u W=266.4u AS=123.21p AD=123.21p PS=316.72u PD=316.72u
++ rfmode=0
+D$61 \$1 anode|cathode|core|pad|padres dantenna A=35.0028p P=58.08u m=2
+D$63 \$1 anode|cathode|core|pad|padres dantenna A=1.984p P=7.48u m=1
+D$64 anode|cathode|core|pad|padres cathode|iovdd dpantenna A=35.0028p P=58.08u
++ m=2
+D$66 anode|cathode|core|pad|padres iovdd|plus dpantenna A=3.1872p P=11.24u m=1
+R$67 anode|guard|iovss|minus \$5 \$1 rppd w=0.5u l=3.54u ps=0u b=0 m=1
+R$68 cathode|iovdd \$17 cathode|iovdd rppd w=0.5u l=12.9u ps=0u b=0 m=1
+R$69 anode|guard|iovss|minus \$1 ptap1 A=4580.0452p P=1715.26u
+R$75 vss \$1 ptap1 A=23.85p P=159.6u
+.ENDS sg13g2_IOPadAnalog

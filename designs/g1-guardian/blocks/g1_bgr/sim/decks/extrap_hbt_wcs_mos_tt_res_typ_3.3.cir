@@ -1,0 +1,33 @@
+* G1_BGR testbench MODEL EXTRAPOLATED below -40 C: hbt=hbt_wcs mos=mos_tt res=res_typ vdd=3.3 V
+.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerHBT.lib hbt_wcs
+.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerMOShv.lib mos_tt
+.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerRES.lib res_typ
+.include ../../xschem/g1_bgr.spice
+.option gmin=1e-15 abstol=1e-14 reltol=1e-5 vntol=1e-7
+.global sub!
+Vsub sub! 0 dc 0
+Vdd vdd 0 dc 3.3 
+Vr4 r4 0 dc 0
+Xbgr vdd 0 r4 vref iptat pbias pcasc vbe dvbe g1_bgr
+* PTAT output leg sinks into a 1.0 V node (top of a DAC string stand-in)
+Vload iptat 0 dc 1.0
+Cload vref 0 1p
+.control
+set filetype=ascii
+set wr_singlescale
+set wr_vecnames
+* MODEL EXTRAPOLATED: the PDK model cards are not characterised below -40 C
+dc temp -196 -40 4
+let iptat = i(vload)
+let itot = -i(vdd)
+wrdata ../results/extrap_hbt_wcs_mos_tt_res_typ_3.3.dat v(vref) iptat itot v(vbe) v(dvbe) v(pbias) v(pcasc)
+meas dc vm196 find v(vref) at=-196
+meas dc vm150 find v(vref) at=-150
+meas dc vm100 find v(vref) at=-100
+meas dc vm40 find v(vref) at=-40
+meas dc ipm196 find iptat at=-196
+meas dc vbem196 find v(vbe) at=-196
+meas dc dvbem196 find v(dvbe) at=-196
+.endc
+
+.end

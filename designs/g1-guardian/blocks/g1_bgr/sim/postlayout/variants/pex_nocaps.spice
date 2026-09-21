@@ -1,0 +1,92 @@
+* G1_BGR post-layout netlist: kpex 2.5D extraction (--mode CC) of layout/g1_bgr.gds, reformatted for ngspice
+* by sim/postlayout/make_pex_netlist.py (see its docstring; no circuit content changed).
+* source: g1_bgr_k25d_pex_netlist.spice
+* VARIANT B: all parasitic capacitors removed, extracted device geometry only
+.subckt g1_bgr vdd vss r4 vref iptat pbias pcasc vbe dvbe
+XR1 vss n_23 vss rhigh w=0.5u l=49u b=0 m=1
+XR2 n_12 det vss rhigh w=0.5u l=49u b=0 m=1
+XR3 n_13 n_24 vss rhigh w=0.5u l=49u b=0 m=1
+XR4 n_14 n_24 vss rhigh w=0.5u l=49u b=0 m=1
+XR5 n_14 n_26 vss rhigh w=0.5u l=49u b=0 m=1
+XR6 n_15 n_26 vss rhigh w=0.5u l=49u b=0 m=1
+XR7 n_15 n_27 vss rhigh w=0.5u l=49u b=0 m=1
+XR8 n_16 n_27 vss rhigh w=0.5u l=49u b=0 m=1
+XR9 n_16 n_21 vss rhigh w=0.5u l=49u b=0 m=1
+XR10 n_12 n_25 vss rhigh w=0.5u l=49u b=0 m=1
+XR11 n_13 n_25 vss rhigh w=0.5u l=49u b=0 m=1
+XR12 n_17 n_22 vss rhigh w=0.5u l=49u b=0 m=1
+XR13 n_18 n_22 vss rhigh w=0.5u l=49u b=0 m=1
+XR14 n_18 n_23 vss rhigh w=0.5u l=49u b=0 m=1
+XR15 n_17 n_21 vss rhigh w=0.5u l=49u b=0 m=1
+XR16 vss dvbe vss rppd w=1u l=51.5u b=0 m=1
+XR17 n_7 vref vss rppd w=1u l=52.5u b=0 m=1
+XR18 n_2 n_36 vss rppd w=1u l=52.5u b=0 m=1
+XR19 n_7 n_36 vss rppd w=1u l=52.5u b=0 m=1
+XR20 n_2 n_37 vss rppd w=1u l=52.5u b=0 m=1
+XR21 n_8 n_37 vss rppd w=1u l=52.5u b=0 m=1
+XR22 n_8 vbe3 vss rppd w=1u l=52.5u b=0 m=1
+XR23 n_6 vb2 vss rppd w=1u l=48u b=0 m=1
+XR24 n_9 vd1 vss rppd w=1u l=48u b=0 m=1
+XR25 n_6 n_19 vss rppd w=1u l=48u b=0 m=1
+XR26 n_9 n_19 vss rppd w=1u l=48u b=0 m=1
+XM27 kick det vdd vdd sg13_hv_pmos l=0.5u w=2u as=0.68p ad=0.68p ps=4.68u pd=4.68u rfmode=0
+XM28 r4n r4 vdd vdd sg13_hv_pmos l=0.5u w=2u as=0.68p ad=0.68p ps=4.68u pd=4.68u rfmode=0
+XM29 vbe r4 b1b vss sg13_hv_nmos l=0.5u w=2u as=0.68p ad=0.68p ps=4.68u pd=4.68u rfmode=0
+XM30 pbias kick vss vss sg13_hv_nmos l=4u w=1u as=0.34p ad=0.34p ps=2.68u pd=2.68u rfmode=0
+XM31 kick det vss vss sg13_hv_nmos l=0.5u w=1u as=0.34p ad=0.34p ps=2.68u pd=2.68u rfmode=0
+XM32 r4n r4 vss vss sg13_hv_nmos l=0.5u w=1u as=0.34p ad=0.34p ps=2.68u pd=2.68u rfmode=0
+XM33 b1b r4n vss vss sg13_hv_nmos l=0.5u w=1u as=0.34p ad=0.34p ps=2.68u pd=2.68u rfmode=0
+XM34 n1 vb2 vbe vss sg13_hv_nmos l=1u w=10u as=3.4p ad=3.4p ps=20.68u pd=20.68u rfmode=0
+XM35 c2 vb2 pcasc vss sg13_hv_nmos l=1u w=10u as=3.4p ad=3.4p ps=20.68u pd=20.68u rfmode=0
+XM36 vbe vb2 n1 vss sg13_hv_nmos l=1u w=10u as=3.4p ad=3.4p ps=20.68u pd=20.68u rfmode=0
+XM37 pcasc vb2 c2 vss sg13_hv_nmos l=1u w=10u as=3.4p ad=3.4p ps=20.68u pd=20.68u rfmode=0
+XM38 d1 pbias vdd vdd sg13_hv_pmos l=4u w=5u as=1.7p ad=1.7p ps=10.68u pd=10.68u rfmode=0
+XM39 d2 pbias vdd vdd sg13_hv_pmos l=4u w=5u as=1.7p ad=1.7p ps=10.68u pd=10.68u rfmode=0
+XM40 d4 pbias vdd vdd sg13_hv_pmos l=4u w=5u as=1.7p ad=1.7p ps=10.68u pd=10.68u rfmode=0
+XM41 d5 pbias vdd vdd sg13_hv_pmos l=4u w=5u as=1.7p ad=1.7p ps=10.68u pd=10.68u rfmode=0
+XM42 det pbias vdd vdd sg13_hv_pmos l=4u w=5u as=1.7p ad=1.7p ps=10.68u pd=10.68u rfmode=0
+XM43 d3 pbias vdd vdd sg13_hv_pmos l=4u w=5u as=1.7p ad=1.7p ps=10.68u pd=10.68u rfmode=0
+XM44 d3 pbias vdd vdd sg13_hv_pmos l=4u w=5u as=1.7p ad=1.7p ps=10.68u pd=10.68u rfmode=0
+XM45 d5 pbias vdd vdd sg13_hv_pmos l=4u w=5u as=1.7p ad=1.7p ps=10.68u pd=10.68u rfmode=0
+XM46 d4 pbias vdd vdd sg13_hv_pmos l=4u w=5u as=1.7p ad=1.7p ps=10.68u pd=10.68u rfmode=0
+XM47 d2 pbias vdd vdd sg13_hv_pmos l=4u w=5u as=1.7p ad=1.7p ps=10.68u pd=10.68u rfmode=0
+XM48 d1 pbias vdd vdd sg13_hv_pmos l=4u w=5u as=1.7p ad=1.7p ps=10.68u pd=10.68u rfmode=0
+XM49 det pbias vdd vdd sg13_hv_pmos l=4u w=5u as=1.7p ad=1.7p ps=10.68u pd=10.68u rfmode=0
+XM50 vb2 pcasc d5 d5 sg13_hv_pmos l=4u w=10u as=3.4p ad=3.4p ps=20.68u pd=20.68u rfmode=0
+XM51 vref pcasc d3 d3 sg13_hv_pmos l=4u w=10u as=3.4p ad=3.4p ps=20.68u pd=20.68u rfmode=0
+XM52 n1 pcasc d1 d1 sg13_hv_pmos l=4u w=10u as=3.4p ad=3.4p ps=20.68u pd=20.68u rfmode=0
+XM53 iptat pcasc d4 d4 sg13_hv_pmos l=4u w=10u as=3.4p ad=3.4p ps=20.68u pd=20.68u rfmode=0
+XM54 pbias pcasc d2 d2 sg13_hv_pmos l=4u w=10u as=3.4p ad=3.4p ps=20.68u pd=20.68u rfmode=0
+XQ55 vss vss vss vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ56 vbe vbe vss vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ57 vss vss vss vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ58 vss vss vss vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ59 vss vss vss vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ60 vbe3 vbe3 vss vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ61 vss vss vss vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ62 vd2 vd2 vss vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ63 vss vss vss vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ64 vss vss vss vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ65 vss vss vss vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ66 vss vss vss vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ67 vbe b1b vss vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ68 c2 vbe dvbe vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ69 c2 vbe dvbe vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ70 c2 vbe dvbe vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ71 c2 vbe dvbe vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ72 c2 vbe dvbe vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ73 c2 vbe dvbe vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ74 c2 vbe dvbe vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ75 vd1 vd1 vd2 vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ76 c2 vbe dvbe vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XR77 n_4 pbias vss rppd w=1u l=50u b=0 m=1
+XR78 n_11 n_34 vss rppd w=1u l=50u b=0 m=1
+XR79 n_10 n_34 vss rppd w=1u l=50u b=0 m=1
+XR80 n_3 n_31 vss rppd w=1u l=50u b=0 m=1
+XR81 n_10 n_33 vss rppd w=1u l=50u b=0 m=1
+XR82 n_5 n_31 vss rppd w=1u l=50u b=0 m=1
+XR83 n_5 n_30 vss rppd w=1u l=50u b=0 m=1
+XR84 n_4 n_30 vss rppd w=1u l=50u b=0 m=1
+XR85 n_3 n_33 vss rppd w=1u l=50u b=0 m=1
+XR86 n_11 pcasc vss rppd w=1u l=50u b=0 m=1
+.ends g1_bgr

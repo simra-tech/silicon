@@ -1,0 +1,61 @@
+* G1_T2F testbench V_CE check (revision 1 netlist): hbt=hbt_typ mos=mos_tt res=res_typ cap=cap_typ vdd=3.3 V vdd12=1.2 V T=27 C mode=ptat
+.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerHBT.lib hbt_typ
+.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerMOShv.lib mos_tt
+.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerMOSlv.lib mos_tt
+.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerRES.lib res_typ
+.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerCAP.lib cap_typ
+.include ../../../g1_bgr/xschem/g1_bgr.spice
+.include ../../rev1/xschem/g1_t2f.spice
+.option gmin=1e-15 abstol=1e-13 reltol=1e-5 vntol=1e-6 method=gear
+.temp 27
+.global sub!
+Vsub sub! 0 dc 0
+Vdd vdd 0 dc 3.3
+Vdd12 vdd12 0 dc 1.2
+Vr4 r4 0 dc 0
+Ven en 0 pwl(0 0 1u 0 1.01u 3.3)
+Vmode mode 0 dc 0
+Xbgr vdd 0 r4 vref iptat pbias pcasc vbe dvbe g1_bgr
+Vload iptat 0 dc 1.0
+Xt2f vdd vdd12 0 pbias pcasc vref en mode fout g1_t2f
+* TEMP_OUT pad stand-in: ~50 fF of core wiring plus the IO cell input
+Cout fout 0 50f
+.control
+set filetype=ascii
+tran 5n 32u 0 10n
+* V_CE of every HBT in the sensor (whole run, including the en=0 hold before 1 us)
+let vce_qa1 = v(xt2f.oa1) - v(xt2f.tail1)
+let vce_qb1 = v(xt2f.ob1) - v(xt2f.tail1)
+let vce_qa2 = v(xt2f.oa2) - v(xt2f.tail2)
+let vce_qb2 = v(xt2f.ob2) - v(xt2f.tail2)
+meas tran vce_qa1_max max vce_qa1
+meas tran vce_qb1_max max vce_qb1
+meas tran vce_qa2_max max vce_qa2
+meas tran vce_qb2_max max vce_qb2
+meas tran vce_qa1_min min vce_qa1 from=2u
+meas tran vce_qb1_min min vce_qb1 from=2u
+meas tran vce_qa2_min min vce_qa2 from=2u
+meas tran vce_qb2_min min vce_qb2 from=2u
+* bandgap HBTs in the same run, for reference (Q1/Q3/QD2 diode-connected: V_CE = V_BE; Q1B off)
+let vce_bq1 = v(vbe)
+let vce_bq2 = v(xbgr.c2) - v(dvbe)
+let vce_bq3 = v(xbgr.vbe3)
+let vce_bqd1 = v(xbgr.vd1) - v(xbgr.vd2)
+let vce_bqd2 = v(xbgr.vd2)
+meas tran vce_bgr_q1_max max vce_bq1
+meas tran vce_bgr_q2_max max vce_bq2
+meas tran vce_bgr_q3_max max vce_bq3
+meas tran vce_bgr_qd1_max max vce_bqd1
+meas tran vce_bgr_qd2_max max vce_bqd2
+* the oscillator itself in the same run
+meas tran t_a when v(fout)=0.6 rise=8
+meas tran t_b when v(fout)=0.6 rise=24
+let freq = (24-8)/(t_b-t_a)
+print freq
+meas tran vth_avg avg v(xt2f.vth) from=t_a to=t_b
+meas tran vref_avg avg v(vref) from=t_a to=t_b
+meas tran cap1_max max v(xt2f.cap1) from=t_a to=t_b
+meas tran i33_avg avg i(vdd) from=t_a to=t_b
+.endc
+
+.end

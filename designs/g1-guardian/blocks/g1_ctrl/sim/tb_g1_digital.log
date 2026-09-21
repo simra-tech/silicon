@@ -1,0 +1,23 @@
+# tb_g1_digital
+# 2026-09-18T23:19:46Z  Icarus Verilog version 14.0 (devel) (s20260301-328-geda9fdcd-dirty)
+# iverilog -g2005 -Wall -Wno-timescale -o /work/build/g1_digital/tb_g1_digital.vvp /work/designs/g1-guardian/blocks/g1_ctrl/rtl/g1_sync2.v /work/designs/g1-guardian/blocks/g1_ctrl/rtl/g1_serial.v /work/designs/g1-guardian/blocks/g1_ctrl/rtl/g1_trip_timer.v /work/designs/g1-guardian/blocks/g1_ctrl/rtl/g1_regfile.v /work/designs/g1-guardian/blocks/g1_ctrl/rtl/g1_digital_top.v /work/designs/g1-guardian/blocks/g1_seu/rtl/g1_tmr_reg.v /work/designs/g1-guardian/blocks/g1_seu/rtl/g1_seu_chain.v /work/designs/g1-guardian/blocks/g1_seu/rtl/g1_seu.v /work/designs/g1-guardian/blocks/g1_ctrl/sim/tb_g1_digital.v
+VCD info: dumpfile tb_g1_digital.vcd opened for output.
+PASS T01 reset values of every register
+PASS T02 write/read-back of every RW register
+PASS T03 serial at f_SCLK = f_OSC (10 MHz) and idle-timeout resync
+PASS T04 EN low resets configuration; STATUS.EN
+PASS T05 inrush mask after EN, then hard trip
+PASS T06 hard path: N-1 consecutive decisions do not trip, N do; gap resets
+PASS T07 soft path: short pulse no trip, long trips, decay, peak, hysteresis
+PASS T08 force trip, path enables
+PASS T09 retrigger mode: hold, re-enable, inrush restart, give-up
+PASS T10 SEU self-test injection through registers
+PASS T11 SEU constant pattern (static data): upsets by hierarchical flip
+PASS T12 OSC_CNT L/H consistency and OSC_DIV
+PASS T13 sense offset: signed add to both DAC codes, saturation, hysteresis stacking
+PASS T14 G1_GATE fast path: analog trip adopted, clr_d clears it, no re-trip
+  clr_d pulses 14, minimum width 200.000000 ns (>= 100 ns required)
+PASS T15 clr_d pulse width and trip_d hold
+SUMMARY tests_pass=15 tests_fail=0 checks=204 errors=0
+ALL TESTS PASSED
+/work/designs/g1-guardian/blocks/g1_ctrl/sim/tb_g1_digital.v:588: $finish called at 27975251000 (1ps)

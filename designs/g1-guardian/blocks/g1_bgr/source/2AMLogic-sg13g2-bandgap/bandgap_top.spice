@@ -1,0 +1,68 @@
+**.subckt bandgap_top vdd vss vref
+*.iopin vdd
+*.iopin vss
+*.iopin vref
+Xx1 vdd vss fb sns1 sns2 vref bandgap_core
+Xx2 sns2 sns1 vss fb vdd bandgap_amp
+Xx3 vdd vss sns1 fb bandgap_startup
+**.ends
+
+* expanding   symbol:  bandgap_core.sym # of pins=6
+.subckt bandgap_core vdd vss fb sns1 sns2 vref
+
+
+*.iopin vdd
+*.iopin vss
+*.iopin fb
+*.iopin sns1
+*.iopin sns2
+*.iopin vref
+XM1 sns1 fb vdd vdd sg13_hv_pmos w=10u l=1u ng=1 m=1
+XQ1 sns1 sns1 vss vss npn13G2 Nx=1
+XM2A sns2 fb vdd vdd sg13_hv_pmos w=9u l=1u ng=1 m=1
+XM2B sns2 fb vdd vdd sg13_hv_pmos w=1u l=1u ng=1 m=1
+XR2 sns2 cb2 sub! rppd w=2u l=82.7u m=1 b=0
+XQ2 cb2 cb2 vss vss npn13G2 Nx=8
+XM3A vref fb vdd vdd sg13_hv_pmos w=8u l=1u ng=1 m=1
+XM3B vref fb vdd vdd sg13_hv_pmos w=1u l=1u ng=1 m=1
+XM3C vref fb vdd vdd sg13_hv_pmos w=1u l=1u ng=1 m=1
+XR1 vref cb3 sub! rppd w=2u l=511u m=1 b=0
+XQ3 cb3 cb3 vss vss npn13G2 Nx=1
+.ends
+
+
+* expanding   symbol:  bandgap_amp.sym # of pins=5
+.subckt bandgap_amp in_p in_n vss out vdd
+
+
+*.iopin vdd
+*.iopin vss
+*.iopin in_p
+*.iopin in_n
+*.iopin out
+XMTAIL tail out vdd vdd sg13_hv_pmos w=10u l=1u ng=1 m=1
+XMP1 d1 in_p tail vdd sg13_hv_pmos w=20u l=1u ng=1 m=1
+XMP2 d2 in_n tail vdd sg13_hv_pmos w=20u l=1u ng=1 m=1
+XMP3 pn pn vdd vdd sg13_hv_pmos w=10u l=1u ng=1 m=1
+XMP4 out pn vdd vdd sg13_hv_pmos w=10u l=1u ng=1 m=1
+XMN1 d1 d1 vss vss sg13_hv_nmos w=10u l=1u ng=1 m=1
+XMN2 d2 d2 vss vss sg13_hv_nmos w=10u l=1u ng=1 m=1
+XMN3 out d1 vss vss sg13_hv_nmos w=10u l=1u ng=1 m=1
+XMN4 pn d2 vss vss sg13_hv_nmos w=10u l=1u ng=1 m=1
+.ends
+
+
+* expanding   symbol:  bandgap_startup.sym # of pins=4
+.subckt bandgap_startup vdd vss sns1 fb
+
+
+*.iopin vdd
+*.iopin vss
+*.iopin sns1
+*.iopin fb
+XRPU vdd det sub! rhigh w=1u l=1411.3u m=1 b=0
+XMSENSE det sns1 vss vss sg13_hv_nmos w=10u l=0.5u ng=1 m=1
+XMKFB fb det vss vss sg13_hv_nmos w=2u l=0.5u ng=1 m=1
+.ends
+
+.end

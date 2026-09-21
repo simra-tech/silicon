@@ -1,0 +1,134 @@
+VERSION 5.8 ;
+BUSBITCHARS "[]" ;
+DIVIDERCHAR "/" ;
+UNITS
+  DATABASE MICRONS 1000 ;
+END UNITS
+
+MACRO g1_t2f
+  CLASS BLOCK ;
+  ORIGIN 0 0 ;
+  FOREIGN g1_t2f 0 0 ;
+  SIZE 92 BY 100.4 ;
+  SYMMETRY X Y ;
+  PIN vdd
+    DIRECTION INOUT ;
+    USE POWER ;
+    PORT
+      LAYER Metal3 ;
+        RECT 0 97.8 92 100.4 ;
+    END
+  END vdd
+  PIN vdd12
+    DIRECTION INOUT ;
+    USE POWER ;
+    PORT
+      LAYER Metal3 ;
+        RECT 90.4 92 92 92.8 ;
+    END
+    PORT
+      LAYER Metal3 ;
+        RECT 46.62 92.15 92 92.65 ;
+    END
+  END vdd12
+  PIN vss
+    DIRECTION INOUT ;
+    USE GROUND ;
+    PORT
+      LAYER Metal3 ;
+        RECT 0 0 92 2.6 ;
+    END
+    PORT
+      LAYER Metal3 ;
+        RECT 0.6 0.6 3 97 ;
+    END
+  END vss
+  PIN pbias
+    DIRECTION INPUT ;
+    USE SIGNAL ;
+    PORT
+      LAYER Metal3 ;
+        RECT 90.4 67.7 92 68.5 ;
+    END
+    PORT
+      LAYER Metal3 ;
+        RECT 83.8 67.85 92 68.35 ;
+    END
+  END pbias
+  PIN pcasc
+    DIRECTION INPUT ;
+    USE SIGNAL ;
+    PORT
+      LAYER Metal3 ;
+        RECT 90.4 65.5 92 66.3 ;
+    END
+    PORT
+      LAYER Metal3 ;
+        RECT 83.8 65.65 92 66.15 ;
+    END
+  END pcasc
+  PIN vref
+    DIRECTION INPUT ;
+    USE SIGNAL ;
+    PORT
+      LAYER Metal3 ;
+        RECT 90.4 50.1 92 50.9 ;
+    END
+    PORT
+      LAYER Metal3 ;
+        RECT 83.8 50.25 92 50.75 ;
+    END
+  END vref
+  PIN en
+    DIRECTION INPUT ;
+    USE SIGNAL ;
+    PORT
+      LAYER Metal3 ;
+        RECT 90.4 96.5 92 97.3 ;
+    END
+    PORT
+      LAYER Metal3 ;
+        RECT 18.74 96.65 92 97.15 ;
+    END
+  END en
+  PIN mode
+    DIRECTION INPUT ;
+    USE SIGNAL ;
+    PORT
+      LAYER Metal3 ;
+        RECT 90.4 34.8 92 35.6 ;
+    END
+    PORT
+      LAYER Metal3 ;
+        RECT 83.8 34.95 92 35.45 ;
+    END
+  END mode
+  PIN fout
+    DIRECTION OUTPUT ;
+    USE SIGNAL ;
+    PORT
+      LAYER Metal3 ;
+        RECT 90.4 94.1 92 94.9 ;
+    END
+    PORT
+      LAYER Metal3 ;
+        RECT 44.87 94.25 92 94.75 ;
+    END
+  END fout
+  OBS
+    LAYER Metal1 ;
+      RECT 0 0 92 100.4 ;
+    LAYER Metal2 ;
+      RECT 0 0 92 100.4 ;
+    LAYER Metal3 ;
+      RECT 3.4 3.0 89.9 97.4 ;
+    LAYER Metal4 ;
+      RECT 0 0 66 36.8 ;
+    LAYER Metal5 ;
+      RECT 0 0 66 36.8 ;
+    LAYER TopMetal1 ;
+      RECT 0 0 66 36.8 ;
+  END
+END g1_t2f
+
+END LIBRARY

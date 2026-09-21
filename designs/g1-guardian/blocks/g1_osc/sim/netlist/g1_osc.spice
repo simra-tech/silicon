@@ -1,0 +1,138 @@
+** sch_path: /work/designs/g1-guardian/blocks/g1_osc/schematic/g1_osc.sch
+.subckt g1_osc en trim0 trim1 trim2 trim3 osc_clk vdd vss
+*.ipin en
+*.ipin trim0
+*.ipin trim1
+*.ipin trim2
+*.ipin trim3
+*.opin osc_clk
+*.iopin vdd
+*.iopin vss
+XRA vdd va sub! rppd w=1u l=117u m=1 b=0 mm_ok=1
+XRB vdd vb sub! rppd w=1u l=117u m=1 b=0 mm_ok=1
+XCA trim0 trim1 trim2 trim3 va vss g1_osc_cbank
+XCB trim0 trim1 trim2 trim3 vb vss g1_osc_cbank
+XMRA va rsta vss vss sg13_lv_nmos w=4u l=0.13u ng=1 m=1 mm_ok=1
+XMRB vb rstb vss vss sg13_lv_nmos w=4u l=0.13u ng=1 m=1 mm_ok=1
+XRT1 vdd vth sub! rppd w=1u l=384.3u m=1 b=0 mm_ok=1
+XRT2 vth vss sub! rppd w=1u l=384.3u m=1 b=0 mm_ok=1
+XCTH vth vss cap_cmim w=26u l=26u m=1 mm_ok=1
+XDANT vth vdd dpantenna l=0.78u w=0.78u
+XRBIAS vdd vbn sub! rppd w=1u l=134.3u m=1 b=0 mm_ok=1
+XMBD vbn vbn vss vss sg13_lv_nmos w=2u l=0.5u ng=1 m=1 mm_ok=1
+XCMPA va vth vbn ca vdd vss g1_osc_cmp
+XCMPB vb vth vbn cb vdd vss g1_osc_cmp
+XEN en en_n vdd vss g1_osc_inv
+XNQ ca en_n qb q vdd vss g1_osc_nor3
+XNQB cb q qb vdd vss g1_osc_nor2
+XRSTB qb en rstb vdd vss g1_osc_nand2
+XRSTA q rsta vdd vss g1_osc_inv
+XB1 q qn_b vdd vss g1_osc_inv
+XB2 qn_b osc_clk vdd vss g1_osc_inv
+.ends
+
+* expanding   symbol:  g1_osc_cbank.sym # of pins=6
+** sym_path: /work/designs/g1-guardian/blocks/g1_osc/schematic/g1_osc_cbank.sym
+** sch_path: /work/designs/g1-guardian/blocks/g1_osc/schematic/g1_osc_cbank.sch
+.subckt g1_osc_cbank t0 t1 t2 t3 top vss
+*.ipin t0
+*.ipin t1
+*.ipin t2
+*.ipin t3
+*.iopin top
+*.iopin vss
+XCF top vss cap_cmim w=31.65u l=31.65u m=1 mm_ok=1
+XCT0 top b0 cap_cmim w=8.16u l=8.16u m=1 mm_ok=1
+XMS0 b0 t0 vss vss sg13_lv_nmos w=4u l=0.13u ng=1 m=1 mm_ok=1
+XCT1 top b1 cap_cmim w=11.55u l=11.55u m=1 mm_ok=1
+XMS1 b1 t1 vss vss sg13_lv_nmos w=4u l=0.13u ng=1 m=1 mm_ok=1
+XCT2 top b2 cap_cmim w=16.33u l=16.33u m=1 mm_ok=1
+XMS2 b2 t2 vss vss sg13_lv_nmos w=4u l=0.13u ng=1 m=1 mm_ok=1
+XCT3 top b3 cap_cmim w=23.09u l=23.09u m=1 mm_ok=1
+XMS3 b3 t3 vss vss sg13_lv_nmos w=4u l=0.13u ng=1 m=1 mm_ok=1
+.ends
+
+
+* expanding   symbol:  g1_osc_cmp.sym # of pins=6
+** sym_path: /work/designs/g1-guardian/blocks/g1_osc/schematic/g1_osc_cmp.sym
+** sch_path: /work/designs/g1-guardian/blocks/g1_osc/schematic/g1_osc_cmp.sch
+.subckt g1_osc_cmp inp inn vbn out vdd vss
+*.ipin inp
+*.ipin inn
+*.ipin vbn
+*.opin out
+*.iopin vdd
+*.iopin vss
+XMT tail vbn vss vss sg13_lv_nmos w=2u l=0.5u ng=1 m=1 mm_ok=1
+XM1 d1 inp tail vss sg13_lv_nmos w=4u l=0.3u ng=1 m=1 mm_ok=1
+XM2 o1 inn tail vss sg13_lv_nmos w=4u l=0.3u ng=1 m=1 mm_ok=1
+XM3 d1 d1 vdd vdd sg13_lv_pmos w=2u l=0.3u ng=1 m=1 mm_ok=1
+XM4 o1 d1 vdd vdd sg13_lv_pmos w=2u l=0.3u ng=1 m=1 mm_ok=1
+XI1 o1 o2 vdd vss g1_osc_inv
+XI2 o2 out vdd vss g1_osc_inv
+.ends
+
+
+* expanding   symbol:  g1_osc_inv.sym # of pins=4
+** sym_path: /work/designs/g1-guardian/blocks/g1_osc/schematic/g1_osc_inv.sym
+** sch_path: /work/designs/g1-guardian/blocks/g1_osc/schematic/g1_osc_inv.sch
+.subckt g1_osc_inv a y vdd vss
+*.ipin a
+*.opin y
+*.iopin vdd
+*.iopin vss
+XMP y a vdd vdd sg13_lv_pmos w=1u l=0.13u ng=1 m=1 mm_ok=1
+XMN y a vss vss sg13_lv_nmos w=0.5u l=0.13u ng=1 m=1 mm_ok=1
+.ends
+
+
+* expanding   symbol:  g1_osc_nor3.sym # of pins=6
+** sym_path: /work/designs/g1-guardian/blocks/g1_osc/schematic/g1_osc_nor3.sym
+** sch_path: /work/designs/g1-guardian/blocks/g1_osc/schematic/g1_osc_nor3.sch
+.subckt g1_osc_nor3 a0 a1 a2 y vdd vss
+*.ipin a0
+*.ipin a1
+*.ipin a2
+*.opin y
+*.iopin vdd
+*.iopin vss
+XMP0 p0 a0 vdd vdd sg13_lv_pmos w=3u l=0.13u ng=1 m=1 mm_ok=1
+XMP1 p1 a1 p0 vdd sg13_lv_pmos w=3u l=0.13u ng=1 m=1 mm_ok=1
+XMP2 y a2 p1 vdd sg13_lv_pmos w=3u l=0.13u ng=1 m=1 mm_ok=1
+XMN0 y a0 vss vss sg13_lv_nmos w=0.5u l=0.13u ng=1 m=1 mm_ok=1
+XMN1 y a1 vss vss sg13_lv_nmos w=0.5u l=0.13u ng=1 m=1 mm_ok=1
+XMN2 y a2 vss vss sg13_lv_nmos w=0.5u l=0.13u ng=1 m=1 mm_ok=1
+.ends
+
+
+* expanding   symbol:  g1_osc_nor2.sym # of pins=5
+** sym_path: /work/designs/g1-guardian/blocks/g1_osc/schematic/g1_osc_nor2.sym
+** sch_path: /work/designs/g1-guardian/blocks/g1_osc/schematic/g1_osc_nor2.sch
+.subckt g1_osc_nor2 a0 a1 y vdd vss
+*.ipin a0
+*.ipin a1
+*.opin y
+*.iopin vdd
+*.iopin vss
+XMP0 p0 a0 vdd vdd sg13_lv_pmos w=2u l=0.13u ng=1 m=1 mm_ok=1
+XMP1 y a1 p0 vdd sg13_lv_pmos w=2u l=0.13u ng=1 m=1 mm_ok=1
+XMN0 y a0 vss vss sg13_lv_nmos w=0.5u l=0.13u ng=1 m=1 mm_ok=1
+XMN1 y a1 vss vss sg13_lv_nmos w=0.5u l=0.13u ng=1 m=1 mm_ok=1
+.ends
+
+
+* expanding   symbol:  g1_osc_nand2.sym # of pins=5
+** sym_path: /work/designs/g1-guardian/blocks/g1_osc/schematic/g1_osc_nand2.sym
+** sch_path: /work/designs/g1-guardian/blocks/g1_osc/schematic/g1_osc_nand2.sch
+.subckt g1_osc_nand2 a0 a1 y vdd vss
+*.ipin a0
+*.ipin a1
+*.opin y
+*.iopin vdd
+*.iopin vss
+XMP0 y a0 vdd vdd sg13_lv_pmos w=1u l=0.13u ng=1 m=1 mm_ok=1
+XMP1 y a1 vdd vdd sg13_lv_pmos w=1u l=0.13u ng=1 m=1 mm_ok=1
+XMN0 y a0 n0 vss sg13_lv_nmos w=1u l=0.13u ng=1 m=1 mm_ok=1
+XMN1 n0 a1 vss vss sg13_lv_nmos w=1u l=0.13u ng=1 m=1 mm_ok=1
+.ends
+

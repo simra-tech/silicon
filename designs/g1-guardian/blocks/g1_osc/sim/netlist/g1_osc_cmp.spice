@@ -1,0 +1,29 @@
+** sch_path: /work/designs/g1-guardian/blocks/g1_osc/schematic/g1_osc_cmp.sch
+.subckt g1_osc_cmp inp inn vbn out vdd vss
+*.ipin inp
+*.ipin inn
+*.ipin vbn
+*.opin out
+*.iopin vdd
+*.iopin vss
+XMT tail vbn vss vss sg13_lv_nmos w=2u l=0.5u ng=1 m=1 mm_ok=1
+XM1 d1 inp tail vss sg13_lv_nmos w=4u l=0.3u ng=1 m=1 mm_ok=1
+XM2 o1 inn tail vss sg13_lv_nmos w=4u l=0.3u ng=1 m=1 mm_ok=1
+XM3 d1 d1 vdd vdd sg13_lv_pmos w=2u l=0.3u ng=1 m=1 mm_ok=1
+XM4 o1 d1 vdd vdd sg13_lv_pmos w=2u l=0.3u ng=1 m=1 mm_ok=1
+XI1 o1 o2 vdd vss g1_osc_inv
+XI2 o2 out vdd vss g1_osc_inv
+.ends
+
+* expanding   symbol:  g1_osc_inv.sym # of pins=4
+** sym_path: /work/designs/g1-guardian/blocks/g1_osc/schematic/g1_osc_inv.sym
+** sch_path: /work/designs/g1-guardian/blocks/g1_osc/schematic/g1_osc_inv.sch
+.subckt g1_osc_inv a y vdd vss
+*.ipin a
+*.opin y
+*.iopin vdd
+*.iopin vss
+XMP y a vdd vdd sg13_lv_pmos w=1u l=0.13u ng=1 m=1 mm_ok=1
+XMN y a vss vss sg13_lv_nmos w=0.5u l=0.13u ng=1 m=1 mm_ok=1
+.ends
+

@@ -1,0 +1,222 @@
+* G1_TOP breaker path, chip level: (a) step to 1.5x nominal for 100 us then back (1 us edges), SOFT_TIME default (~1 ms): must not trip
+* case a | block netlists sch | front end beh | clock to the RTL ideal | corner tt (mos_tt res_typ cap_typ hbt_typ) | 27 degC | run_top.py
+.param VDDA=3.3 VDD=1.2 IOVDD=3.3 RSH=25m RGND=10m INOM=1 CVREF=1e-08
+.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerMOSlv.lib mos_tt
+.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerMOShv.lib mos_tt
+.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerRES.lib res_typ
+.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerCAP.lib cap_typ
+.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerHBT.lib hbt_typ
+.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerDIO.lib dio_tt
+.include /foss/pdks/ihp-sg13g2/libs.ref/sg13g2_io/spice/sg13g2_io.spi
+.include /work/designs/g1-guardian/blocks/g1_gate/sim/netlist/g1_gate.spice
+.temp 27
+.global sub!
+Vsub sub! 0 dc 0
+* solver (README, "Numerical notes"): gear integration and loose absolute tolerances are what the PDK IO-pad
+* models need when XSPICE events fall on their switching edges (with abstol 1e-9 / vntol 1e-5 the diode
+* internal nodes stop converging: "timestep too small"); the DAC mux-tree nodes need rshunt; XSPICE forces
+* trtol = 1, which the comparator decisions need at this reltol; default gmin (1e-13 stalls the pads)
+.option method=gear itl4=100 reltol=0.002 abstol=1e-8 vntol=1e-4 chgtol=1e-12 rshunt=1e12
+* ---- supplies: one 3.3 V board rail feeds VDDA (pin 7) and IOVDD (pin 3), PLAN D14; 1.2 V VDD (pin 1)
+V33 rail33 0 dc 3.3
+Vma rail33 vdda_s dc 0
+Vmi rail33 iovdd_s dc 0
+Rsa vdda_s vdda 0.5
+Cda vdda 0 1n
+Rsi iovdd_s iovdd 0.5
+Cdi iovdd 0 1n
+V12 vdd_s 0 dc 1.2
+Rsd vdd_s vdd 0.5
+Cdd vdd 0 1n
+* ---- board: load current profile (1 V = 1 A) x switch on the FET gate node, shunt, Kelvin traces, FET gate
+Vprof iprof 0 pwl(0 1 3e-05 1 3.1e-05 1.5 0.00013 1.5 0.000131 1)
+Bload 0 ldi I = v(iprof) * (0.5 + 0.5*tanh((v(gfet) - 1.5)/0.15))
+Vim ldi shp dc 0
+Rsh shp shn {RSH}
+Rgnd shn 0 {RGND}
+Rkp shp sense_p 1
+Rkn shn sense_n 1
+Rg gate gfet 10
+Cgate gfet 0 5n
+Cfault fault_n 0 20p
+* ---- pads (PDK sg13g2_io SPICE models): SENSE_P/N on the bare pad terminal, VREF on the padres terminal
+* (587 Ohm secondary protection, padframe/README.md); the VREF bond pad carries the board capacitor CVREF
+XPSP sense_p sense_p_res vdd 0 iovdd 0 sg13g2_IOPadAnalog
+XPSN sense_n sense_n_res vdd 0 iovdd 0 sg13g2_IOPadAnalog
+XPVREF vref_pad vref vdd 0 iovdd 0 sg13g2_IOPadAnalog
+Cvref_ext vref_pad 0 {CVREF}
+* digital input pads (EN, SCLK, SDI) as ideal 3.3 V -> 1.2 V level copies: the sg13g2_IOPadIn SPICE
+* models abort the event-driven solver at their input edges with the charge tolerance the comparators
+* need (README, "Numerical notes"); the pads are functionally verified in blocks/g1_gate (EN pad)
+Ben_core en_core 0 V = v(en_pad)*1.2/3.3
+Bsclk_core sclk_core 0 V = v(sclk_pad)*1.2/3.3
+Bsdi_core sdi_core 0 V = v(sdi_pad)*1.2/3.3
+XPG gate gate_core vdd 0 iovdd 0 sg13g2_IOPadOut30mA
+XPF fault_n fault_core vdd 0 iovdd 0 sg13g2_IOPadOut4mA
+Ven en_pad 0 pwl(0 0 3.07409013005e-06 0 3.07499013005e-06 1.485 3.07519013005e-06 1.815 3.07609013005e-06 3.3)
+Vsclk sclk_pad 0 pwl(0 0 1.80957657022e-05 0 1.81965823168e-05 0 1.81965823168e-05 0 1.81974823168e-05 1.485 1.81976823168e-05 1.815 1.81985823168e-05 3.3 1.82973989313e-05 3.3 1.82982989313e-05 1.815 1.82984989313e-05 1.485 1.82993989313e-05 0 1.83982155459e-05 0 1.83982155459e-05 0 1.83991155459e-05 1.485 1.83993155459e-05 1.815 1.84002155459e-05 3.3 1.84990321605e-05 3.3 1.84999321605e-05 1.815 1.85001321605e-05 1.485 1.85010321605e-05 0 1.85998487751e-05 0 1.85998487751e-05 0 1.86007487751e-05 1.485 1.86009487751e-05 1.815 1.86018487751e-05 3.3 1.87006653897e-05 3.3 1.87015653897e-05 1.815 1.87017653897e-05 1.485 1.87026653897e-05 0 1.88014820042e-05 0 1.88014820042e-05 0 1.88023820042e-05 1.485 1.88025820042e-05 1.815 1.88034820042e-05 3.3 1.89022986188e-05 3.3 1.89031986188e-05 1.815 1.89033986188e-05 1.485 1.89042986188e-05 0 1.90031152334e-05 0 1.90031152334e-05 0 1.90040152334e-05 1.485 1.90042152334e-05 1.815 1.90051152334e-05 3.3 1.9103931848e-05 3.3 1.9104831848e-05 1.815 1.9105031848e-05 1.485 1.9105931848e-05 0 1.92047484625e-05 0 1.92047484625e-05 0 1.92056484625e-05 1.485 1.92058484625e-05 1.815 1.92067484625e-05 3.3 1.93055650771e-05 3.3 1.93064650771e-05 1.815 1.93066650771e-05 1.485 1.93075650771e-05 0 1.94063816917e-05 0 1.94063816917e-05 0 1.94072816917e-05 1.485 1.94074816917e-05 1.815 1.94083816917e-05 3.3 1.95071983063e-05 3.3 1.95080983063e-05 1.815 1.95082983063e-05 1.485 1.95091983063e-05 0 1.96080149209e-05 0 1.96080149209e-05 0 1.96089149209e-05 1.485 1.96091149209e-05 1.815 1.96100149209e-05 3.3 1.97088315354e-05 3.3 1.97097315354e-05 1.815 1.97099315354e-05 1.485 1.97108315354e-05 0 1.980964815e-05 0 1.980964815e-05 0 1.981054815e-05 1.485 1.981074815e-05 1.815 1.981164815e-05 3.3 1.99104647646e-05 3.3 1.99113647646e-05 1.815 1.99115647646e-05 1.485 1.99124647646e-05 0 2.00112813792e-05 0 2.00112813792e-05 0 2.00121813792e-05 1.485 2.00123813792e-05 1.815 2.00132813792e-05 3.3 2.01120979937e-05 3.3 2.01129979937e-05 1.815 2.01131979937e-05 1.485 2.01140979937e-05 0 2.02129146083e-05 0 2.02129146083e-05 0 2.02138146083e-05 1.485 2.02140146083e-05 1.815 2.02149146083e-05 3.3 2.03137312229e-05 3.3 2.03146312229e-05 1.815 2.03148312229e-05 1.485 2.03157312229e-05 0 2.04145478375e-05 0 2.04145478375e-05 0 2.04154478375e-05 1.485 2.04156478375e-05 1.815 2.04165478375e-05 3.3 2.05153644521e-05 3.3 2.05162644521e-05 1.815 2.05164644521e-05 1.485 2.05173644521e-05 0 2.06161810666e-05 0 2.06161810666e-05 0 2.06170810666e-05 1.485 2.06172810666e-05 1.815 2.06181810666e-05 3.3 2.07169976812e-05 3.3 2.07178976812e-05 1.815 2.07180976812e-05 1.485 2.07189976812e-05 0 2.08178142958e-05 0 2.08178142958e-05 0 2.08187142958e-05 1.485 2.08189142958e-05 1.815 2.08198142958e-05 3.3 2.09186309104e-05 3.3 2.09195309104e-05 1.815 2.09197309104e-05 1.485 2.09206309104e-05 0 2.1019447525e-05 0 2.1019447525e-05 0 2.1020347525e-05 1.485 2.1020547525e-05 1.815 2.1021447525e-05 3.3 2.11202641395e-05 3.3 2.11211641395e-05 1.815 2.11213641395e-05 1.485 2.11222641395e-05 0 2.12210807541e-05 0 2.12210807541e-05 0 2.12219807541e-05 1.485 2.12221807541e-05 1.815 2.12230807541e-05 3.3 2.13218973687e-05 3.3 2.13227973687e-05 1.815 2.13229973687e-05 1.485 2.13238973687e-05 0)
+Vsdi sdi_pad 0 pwl(0 0 1.80957657022e-05 0 1.89022986188e-05 0 1.89031986188e-05 1.485 1.89033986188e-05 1.815 1.89042986188e-05 3.3 1.9103931848e-05 3.3 1.9104831848e-05 1.815 1.9105031848e-05 1.485 1.9105931848e-05 0)
+Cw_en en_core 0 20f
+Cw_sclk sclk_core 0 20f
+Cw_sdi sdi_core 0 20f
+* the RTL reads EN / SCLK / SDI as a digital stimulus (XSPICE d_source) with the same edge times as the pad
+* PWLs (event at the middle of each edge); the pad models still drive en_core for G1_GATE (README, "Numerical notes")
+.model dsrc d_source(input_file="/work/build/g1_top/stim_a_sch_beh_tt_27C_clockfix.txt")
+adsrc [d_en d_sclk d_sdi] dsrc
+* ---- oscillator enable gate (testbench): RTL osc_en, released at 0.1 us
+Bosc osc_en_g 0 V = v(osc_en) * min(1, max(0, (time - 0.1u) / 50n))
+* ---- behavioural front end (README "Behavioural front end"): parameters from the sch block results
+* VREF and the bandgap: fixed 1.0399 V (the VREF pad model stays connected)
+Vvref vref 0 dc 1.0399
+Vm_bgr vdda vdda_bgr dc 0
+Rbgr_dummy vdda_bgr 0 1e12
+* G1_SENSE: ISENSE = VPED + GAIN x (SENSE_P - SENSE_N), single pole at the simulated -3 dB bandwidth
+Bis isense_b 0 V = 0.9992 + 19.99*(v(sense_p) - v(sense_n))
+Ris isense_b isense 1k
+Cis isense 0 3.79845e-11
+Vm_sense vdda vdda_sense dc 0
+Rsense_dummy vdda_sense 0 1e12
+* G1_TRIP: conditioning divider (25 kOhm source, 1 pF hold), DAC taps VREF x (255 + code)/530, ideal clocked comparators
+Bic icmp_b 0 V = v(isense)/2
+Ric icmp_b icmp 25k
+Cic icmp 0 1p
+Bvths vth_soft 0 V = 1.0399*(255 + v(cs))/530
+Bvthh vth_hard 0 V = 1.0399*(255 + v(ch))/530
+Bcs cs 0 V = 1*(0.5 + 0.5*tanh((v(soft0) - 0.6)/0.05)) + 2*(0.5 + 0.5*tanh((v(soft1) - 0.6)/0.05)) + 4*(0.5 + 0.5*tanh((v(soft2) - 0.6)/0.05)) + 8*(0.5 + 0.5*tanh((v(soft3) - 0.6)/0.05)) + 16*(0.5 + 0.5*tanh((v(soft4) - 0.6)/0.05)) + 32*(0.5 + 0.5*tanh((v(soft5) - 0.6)/0.05)) + 64*(0.5 + 0.5*tanh((v(soft6) - 0.6)/0.05)) + 128*(0.5 + 0.5*tanh((v(soft7) - 0.6)/0.05))
+Bch ch 0 V = 1*(0.5 + 0.5*tanh((v(hard0) - 0.6)/0.05)) + 2*(0.5 + 0.5*tanh((v(hard1) - 0.6)/0.05)) + 4*(0.5 + 0.5*tanh((v(hard2) - 0.6)/0.05)) + 8*(0.5 + 0.5*tanh((v(hard3) - 0.6)/0.05)) + 16*(0.5 + 0.5*tanh((v(hard4) - 0.6)/0.05)) + 32*(0.5 + 0.5*tanh((v(hard5) - 0.6)/0.05)) + 64*(0.5 + 0.5*tanh((v(hard6) - 0.6)/0.05)) + 128*(0.5 + 0.5*tanh((v(hard7) - 0.6)/0.05))
+* comparator decisions as smooth (2 mV wide) functions of the input difference, sampled by ideal flip-flops
+Bcmps cmps_a 0 V = 0.6 + 0.6*tanh((v(icmp) - v(vth_soft))/2m)
+Bcmph cmph_a 0 V = 0.6 + 0.6*tanh((v(icmp) - v(vth_hard))/2m)
+.model dffm d_dff(clk_delay=1n set_delay=1n reset_delay=1n ic=0 rise_delay=0.5n fall_delay=0.5n)
+.model dinv d_inverter(rise_delay=0.2n fall_delay=0.2n)
+Vzero zero_a 0 dc 0
+acmpa [cmps_a cmph_a zero_a] [d_cmps_a d_cmph_a d_zero] adc
+acinv d_cmp_clk d_cmp_clk_n dinv
+* d_dff ports: data clk set reset out nout (set/reset tied to a digital 0: a null port reads as unknown)
+acs d_cmps_a d_cmp_clk d_zero d_zero d_cmps_q null dffm
+ach d_cmph_a d_cmp_clk_n d_zero d_zero d_cmph_q null dffm
+acmpd [d_cmps_q d_cmph_q] [cmp_soft cmp_hard] dac
+Vm_tripa vdda vdda_trip dc 0
+Vm_tripd vdd vdd_trip dc 0
+Rtripa_dummy vdda_trip 0 1e12
+Rtripd_dummy vdd_trip 0 1e12
+* G1_OSC: ideal square wave at the block-simulated frequency, gated by the enable
+Vosc_i osc_i 0 pulse(0 1.2 1e-07 1n 1n 4.94083e-08 1.00817e-07)
+Bosc_clk osc_clk 0 V = v(osc_i) * (0.5 + 0.5*tanh((v(osc_en_g) - 0.6)/0.05))
+Vm_osc vdd vdd_osc dc 0
+Rosc_dummy vdd_osc 0 1e12
+Vm_gatea vdda vdda_gate dc 0
+Vm_gated vdd vdd_gate dc 0
+XGATE trip_d clr_d fast_en cmp_hard en_core gate_core fault_core tripped vdd_gate vdda_gate 0 g1_gate
+Cw_tripped tripped 0 20f
+* ---- digital macro: the real RTL through XSPICE d_cosim (Icarus Verilog shim ivlng)
+.model adc adc_bridge(in_low=0.55 in_high=0.65 rise_delay=1e-12 fall_delay=1e-12)
+.model adc_clock adc_bridge(in_low=0.6 in_high=0.6 rise_delay=1e-12 fall_delay=1e-12)
+.model dac dac_bridge(out_low=0 out_high=1.2 out_undef=0.6 t_rise=0.3n t_fall=0.3n)
+.model rtl d_cosim simulation="ivlng" sim_args=["/work/build/g1_top/g1_dig_cosim.vvp"]
+aclock [osc_clk] [d_osc_clk] adc_clock
+aadc [cmp_soft cmp_hard tripped] [d_cmp_soft d_cmp_hard d_tripped] adc
+adig [d_osc_clk d_en d_sclk d_sdi d_cmp_soft d_cmp_hard d_tripped] [d_cmp_clk d_s7 d_s6 d_s5 d_s4 d_s3 d_s2 d_s1 d_s0 d_h7 d_h6 d_h5 d_h4 d_h3 d_h2 d_h1 d_h0 d_trip_d d_clr_d d_fast_en d_osc_en d_t3 d_t2 d_t1 d_t0 d_trip d_gate_en d_cause1 d_cause0 d_sdo d_sp15 d_sp14 d_sp13 d_sp12 d_sp11 d_sp10 d_sp9 d_sp8 d_sp7 d_sp6 d_sp5 d_sp4 d_sp3 d_sp2 d_sp1 d_sp0 d_inrush d_softarmed] rtl
+adac [d_cmp_clk d_s7 d_s6 d_s5 d_s4 d_s3 d_s2 d_s1 d_s0 d_h7 d_h6 d_h5 d_h4 d_h3 d_h2 d_h1 d_h0 d_trip_d d_clr_d d_fast_en d_osc_en d_t3 d_t2 d_t1 d_t0 d_trip d_gate_en d_cause1 d_cause0 d_sdo d_sp15 d_sp14 d_sp13 d_sp12 d_sp11 d_sp10 d_sp9 d_sp8 d_sp7 d_sp6 d_sp5 d_sp4 d_sp3 d_sp2 d_sp1 d_sp0 d_inrush d_softarmed] [cmp_clk soft7 soft6 soft5 soft4 soft3 soft2 soft1 soft0 hard7 hard6 hard5 hard4 hard3 hard2 hard1 hard0 trip_d clr_d fast_en osc_en trim3 trim2 trim1 trim0 dig_trip dig_gate_en cause1 cause0 sdo sp15 sp14 sp13 sp12 sp11 sp10 sp9 sp8 sp7 sp6 sp5 sp4 sp3 sp2 sp1 sp0 inrush_active soft_armed] dac
+.save v(gate) v(gfet) v(tripped) v(isense) v(cmp_soft) v(cmp_hard) v(trip_d) v(clr_d) v(fast_en) v(osc_clk) v(cmp_clk)
++ v(vref) v(iptat) v(en_core) v(shp) v(shn) v(fault_n) v(gate_core) v(vdda) v(vdd) v(iovdd) v(iprof) v(osc_en_g)
++ v(icmp) v(vth_soft) v(vth_hard) v(dig_trip) v(cause1) v(cause0) v(sclk_pad) v(sdi_pad)
++ v(soft0) v(soft1) v(soft2) v(soft3) v(soft4) v(soft5) v(soft6) v(soft7) v(hard0) v(hard1) v(hard2) v(hard3) v(hard4) v(hard5) v(hard6) v(hard7)
++ v(sp0) v(sp1) v(sp2) v(sp3) v(sp4) v(sp5) v(sp6) v(sp7) v(sp8) v(sp9) v(sp10) v(sp11) v(sp12) v(sp13) v(sp14) v(sp15) v(inrush_active) v(soft_armed)
++ i(vim) i(vma) i(vmi) i(v12) i(vm_bgr) i(vm_sense) i(vm_tripa) i(vm_tripd) i(vm_osc) i(vm_gatea) i(vm_gated)
+.control
+set filetype=ascii
+set wr_singlescale
+set wr_vecnames
+tran 1e-07 250u 0 5e-09
+* quiet operating values after the register write(s)
+meas tran vref_q find v(vref) at=23.3219u
+meas tran isense_q find v(isense) at=23.3219u
+meas tran icmp_q find v(icmp) at=23.3219u
+meas tran vths_q find v(vth_soft) at=23.3219u
+meas tran vthh_q find v(vth_hard) at=23.3219u
+meas tran iload_q find i(vim) at=23.3219u
+meas tran gate_q find v(gate) at=23.3219u
+meas tran fastq find v(fast_en) at=23.3219u
+meas tran t_inrush_off when v(inrush_active)=0.6 fall=1 from=3u
+meas tran inrush_q find v(inrush_active) at=23.3219u
+meas tran softarmed_end find v(soft_armed) at=250u
+let cs_v = 1*(v(soft0) gt 0.6) + 2*(v(soft1) gt 0.6) + 4*(v(soft2) gt 0.6) + 8*(v(soft3) gt 0.6) + 16*(v(soft4) gt 0.6) + 32*(v(soft5) gt 0.6) + 64*(v(soft6) gt 0.6) + 128*(v(soft7) gt 0.6)
+let ch_v = 1*(v(hard0) gt 0.6) + 2*(v(hard1) gt 0.6) + 4*(v(hard2) gt 0.6) + 8*(v(hard3) gt 0.6) + 16*(v(hard4) gt 0.6) + 32*(v(hard5) gt 0.6) + 64*(v(hard6) gt 0.6) + 128*(v(hard7) gt 0.6)
+meas tran code_soft find cs_v at=23.3219u
+meas tran code_hard find ch_v at=23.3219u
+let t_inrush_off_us = t_inrush_off*1e6
+echo "QUIET vref=" $&vref_q " isense=" $&isense_q " icmp=" $&icmp_q " vth_soft=" $&vths_q " vth_hard=" $&vthh_q " iload_A=" $&iload_q " gate=" $&gate_q " code_soft=" $&code_soft " code_hard=" $&code_hard " fast_en=" $&fastq " inrush_active=" $&inrush_q " t_inrush_off_us=" $&t_inrush_off_us " soft_armed_end=" $&softarmed_end
+* clocks: 20 oscillator periods and 10 strobe periods after the configuration
+meas tran tosc1 when v(osc_clk)=0.6 rise=1 from=22.3219u
+meas tran tosc2 when v(osc_clk)=0.6 rise=21 from=22.3219u
+let fosc_mhz = 20e-6/(tosc2 - tosc1)
+meas tran tcc1 when v(cmp_clk)=0.6 rise=1 from=22.3219u
+meas tran tcc2 when v(cmp_clk)=0.6 rise=11 from=22.3219u
+let fcmp_mhz = 10e-6/(tcc2 - tcc1)
+echo "CLOCK f_osc_MHz=" $&fosc_mhz " f_cmp_MHz=" $&fcmp_mhz " (RTL clock: ideal source at the block-simulated frequency)"
+* supply currents averaged over the quiet armed window
+let i_vdda = i(vma)
+meas tran ia_vdda avg i_vdda from=24.3219u to=30u
+let ua_vdda = ia_vdda*1e6
+let i_iovdd = i(vmi)
+meas tran ia_iovdd avg i_iovdd from=24.3219u to=30u
+let ua_iovdd = ia_iovdd*1e6
+let i_vdd = -i(v12)
+meas tran ia_vdd avg i_vdd from=24.3219u to=30u
+let ua_vdd = ia_vdd*1e6
+let i_bgr = i(vm_bgr)
+meas tran ia_bgr avg i_bgr from=24.3219u to=30u
+let ua_bgr = ia_bgr*1e6
+let i_sense = i(vm_sense)
+meas tran ia_sense avg i_sense from=24.3219u to=30u
+let ua_sense = ia_sense*1e6
+let i_tripa = i(vm_tripa)
+meas tran ia_tripa avg i_tripa from=24.3219u to=30u
+let ua_tripa = ia_tripa*1e6
+let i_tripd = i(vm_tripd)
+meas tran ia_tripd avg i_tripd from=24.3219u to=30u
+let ua_tripd = ia_tripd*1e6
+let i_osc = i(vm_osc)
+meas tran ia_osc avg i_osc from=24.3219u to=30u
+let ua_osc = ia_osc*1e6
+let i_gatea = i(vm_gatea)
+meas tran ia_gatea avg i_gatea from=24.3219u to=30u
+let ua_gatea = ia_gatea*1e6
+let i_gated = i(vm_gated)
+meas tran ia_gated avg i_gated from=24.3219u to=30u
+let ua_gated = ia_gated*1e6
+echo "SUPPLY_uA window=24.3219-30us VDDA=" $&ua_vdda " IOVDD=" $&ua_iovdd " VDD=" $&ua_vdd " | bgr=" $&ua_bgr " sense=" $&ua_sense " trip_3v3=" $&ua_tripa " trip_1v2=" $&ua_tripd " osc=" $&ua_osc " gate_3v3=" $&ua_gatea " gate_1v2=" $&ua_gated
+* trip evaluation after the load event at T_STEP
+let tstep_s = 30u
+meas tran tripped_max max v(tripped) from=22.3219u to=250u
+meas tran tripped_pre max v(tripped) from=22.3219u to=30u
+meas tran t_tripped when v(tripped)=0.6 rise=1 from=30u
+meas tran t_trip_d when v(trip_d)=0.6 rise=1 from=30u
+meas tran t_gate1v when v(gate)=1.0 fall=1 from=30u
+meas tran t_gate03 when v(gate)=0.33 fall=1 from=30u
+meas tran gate_min min v(gate) from=30u to=250u
+meas tran gate_end find v(gate) at=250u
+meas tran ipk max i(vim) from=30u to=250u
+meas tran i_end find i(vim) at=250u
+meas tran isense_pk max v(isense) from=30u to=250u
+meas tran cause1e find v(cause1) at=250u
+meas tran cause0e find v(cause0) at=250u
+meas tran fault_end find v(fault_n) at=250u
+let sp_v = 1*(v(sp0) gt 0.6) + 2*(v(sp1) gt 0.6) + 4*(v(sp2) gt 0.6) + 8*(v(sp3) gt 0.6) + 16*(v(sp4) gt 0.6) + 32*(v(sp5) gt 0.6) + 64*(v(sp6) gt 0.6) + 128*(v(sp7) gt 0.6) + 256*(v(sp8) gt 0.6) + 512*(v(sp9) gt 0.6) + 1024*(v(sp10) gt 0.6) + 2048*(v(sp11) gt 0.6) + 4096*(v(sp12) gt 0.6) + 8192*(v(sp13) gt 0.6) + 16384*(v(sp14) gt 0.6) + 32768*(v(sp15) gt 0.6)
+meas tran soft_peak find sp_v at=250u
+let cause = 2*(cause1e gt 0.6) + (cause0e gt 0.6)
+let dt_gate1v_us = (t_gate1v - tstep_s)*1e6
+let dt_gate03_us = (t_gate03 - tstep_s)*1e6
+let dt_tripped_us = (t_tripped - tstep_s)*1e6
+let dt_trip_d_us = (t_trip_d - tstep_s)*1e6
+echo "TRIP tripped_max=" $&tripped_max " tripped_before_event=" $&tripped_pre " t_tripped_us=" $&dt_tripped_us " t_trip_d_us=" $&dt_trip_d_us " t_gate_1V_us=" $&dt_gate1v_us " t_gate_0.33V_us=" $&dt_gate03_us " gate_min=" $&gate_min " gate_end=" $&gate_end " ipk_A=" $&ipk " i_end_A=" $&i_end " isense_pk=" $&isense_pk " cause=" $&cause " fault_n_end=" $&fault_end " soft_peak=" $&soft_peak
+let qi = integ(i(vim))
+meas tran q_step find qi at=30u
+meas tran q_end find qi at=250u
+let q_passed = q_end - q_step
+echo "CHARGE after_event_As=" $&q_passed
+linearize v(gate) v(gfet) v(tripped) v(isense) v(cmp_soft) v(cmp_hard) v(cmp_clk) v(trip_d) v(osc_clk) v(vref) v(en_core) v(shp) v(fault_n) v(vdda) v(vdd) v(iprof) v(icmp) v(vth_soft) v(vth_hard) v(dig_trip) v(inrush_active) i(vim) i(vma) i(vmi) i(v12)
+wrdata /work/build/g1_top/waves_a_sch_beh_tt_27C_clockfix.txt v(gate) v(gfet) v(tripped) v(isense) v(cmp_soft) v(cmp_hard) v(cmp_clk) v(trip_d) v(osc_clk) v(vref) v(en_core) v(shp) v(fault_n) v(vdda) v(vdd) v(iprof) v(icmp) v(vth_soft) v(vth_hard) v(dig_trip) v(inrush_active) i(vim) i(vma) i(vmi) i(v12)
+.endc
+.end

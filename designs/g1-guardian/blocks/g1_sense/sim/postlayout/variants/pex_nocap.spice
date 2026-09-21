@@ -1,0 +1,625 @@
+* variant: postlayout/g1_sense_pex.spice with every parasitic capacitor removed (devices with the layout's junction areas only); made by: grep -v '^C[0-9]'
+* G1_SENSE post-layout netlist: kpex 2.5D extraction (--mode CC), reformatted for ngspice by
+* sim/postlayout/make_pex_netlist.py (see its docstring). source: g1_sense_k25d_pex_netlist.spice
+* flat netlist: OTA internal nets renamed by connectivity to <inst>_<net>: vped_ref<-n_228, xbuf_cz<-n_229, xbuf_fn<-n_139, xbuf_fp<-n_141, xbuf_mir<-n_143, xbuf_out1<-n_144, xbuf_tail<-n_202, xbuf_vbnc<-n_140, xbuf_vbpc<-n_137, xota_cz<-n_75, xota_fn<-n_5, xota_fp<-n_6, xota_mir<-n_34, xota_out1<-n_35, xota_tail<-n_68, xota_vbnc<-n_4, xota_vbpc<-n_2, xref_cz<-n_332, xref_fn<-n_245, xref_fp<-n_247, xref_mir<-n_249, xref_out1<-n_250, xref_tail<-n_326, xref_vbnc<-n_246, xref_vbpc<-n_243
+* top nets renamed: vp<-n_74 vn<-n_69
+.subckt g1_sense sense_p sense_n vref iptat isense vped vref_buf vdd vss
+XM1 xota_vbnc xota_vbnc vss vss sg13_hv_nmos l=1u w=1.6u as=0.544p ad=0.544p ps=3.88u pd=3.88u
+XM2 n_3 iptat vss vss sg13_hv_nmos l=1u w=8u as=2.72p ad=2.72p ps=16.68u pd=16.68u
+XM3 xota_vbpc iptat vss vss sg13_hv_nmos l=1u w=8u as=2.72p ad=2.72p ps=16.68u pd=16.68u
+XM4 xota_fn iptat vss vss sg13_hv_nmos l=1u w=8u as=2.72p ad=1.52p ps=16.68u pd=8.38u
+XM5 vss iptat xota_fn vss sg13_hv_nmos l=1u w=8u as=1.52p ad=1.52p ps=8.38u pd=8.38u
+XM6 xota_fn iptat vss vss sg13_hv_nmos l=1u w=8u as=1.52p ad=1.52p ps=8.38u pd=8.38u
+XM7 vss iptat xota_fn vss sg13_hv_nmos l=1u w=8u as=1.52p ad=1.52p ps=8.38u pd=8.38u
+XM8 xota_fn iptat vss vss sg13_hv_nmos l=1u w=8u as=1.52p ad=1.52p ps=8.38u pd=8.38u
+XM9 vss iptat xota_fn vss sg13_hv_nmos l=1u w=8u as=1.52p ad=1.52p ps=8.38u pd=8.38u
+XM10 xota_fn iptat vss vss sg13_hv_nmos l=1u w=8u as=1.52p ad=1.52p ps=8.38u pd=8.38u
+XM11 vss iptat xota_fn vss sg13_hv_nmos l=1u w=8u as=1.52p ad=1.52p ps=8.38u pd=8.38u
+XM12 xota_fn iptat vss vss sg13_hv_nmos l=1u w=8u as=1.52p ad=1.52p ps=8.38u pd=8.38u
+XM13 vss iptat xota_fn vss sg13_hv_nmos l=1u w=8u as=1.52p ad=2.72p ps=8.38u pd=16.68u
+XM14 xota_mir xota_vbnc xota_fn vss sg13_hv_nmos l=1u w=8u as=2.72p ad=1.52p ps=16.68u pd=8.38u
+XM15 xota_fn xota_vbnc xota_mir vss sg13_hv_nmos l=1u w=8u as=1.52p ad=1.52p ps=8.38u pd=8.38u
+XM16 xota_mir xota_vbnc xota_fn vss sg13_hv_nmos l=1u w=8u as=1.52p ad=1.52p ps=8.38u pd=8.38u
+XM17 xota_fn xota_vbnc xota_mir vss sg13_hv_nmos l=1u w=8u as=1.52p ad=1.52p ps=8.38u pd=8.38u
+XM18 xota_mir xota_vbnc xota_fn vss sg13_hv_nmos l=1u w=8u as=1.52p ad=1.52p ps=8.38u pd=8.38u
+XM19 xota_fn xota_vbnc xota_mir vss sg13_hv_nmos l=1u w=8u as=1.52p ad=2.72p ps=8.38u pd=16.68u
+XM20 xota_out1 xota_vbnc xota_fp vss sg13_hv_nmos l=1u w=8u as=2.72p ad=1.52p ps=16.68u pd=8.38u
+XM21 xota_fp xota_vbnc xota_out1 vss sg13_hv_nmos l=1u w=8u as=1.52p ad=1.52p ps=8.38u pd=8.38u
+XM22 xota_out1 xota_vbnc xota_fp vss sg13_hv_nmos l=1u w=8u as=1.52p ad=1.52p ps=8.38u pd=8.38u
+XM23 xota_fp xota_vbnc xota_out1 vss sg13_hv_nmos l=1u w=8u as=1.52p ad=1.52p ps=8.38u pd=8.38u
+XM24 xota_out1 xota_vbnc xota_fp vss sg13_hv_nmos l=1u w=8u as=1.52p ad=1.52p ps=8.38u pd=8.38u
+XM25 xota_fp xota_vbnc xota_out1 vss sg13_hv_nmos l=1u w=8u as=1.52p ad=2.72p ps=8.38u pd=16.68u
+XM26 xota_fp iptat vss vss sg13_hv_nmos l=1u w=8u as=2.72p ad=1.52p ps=16.68u pd=8.38u
+XM27 vss iptat xota_fp vss sg13_hv_nmos l=1u w=8u as=1.52p ad=1.52p ps=8.38u pd=8.38u
+XM28 xota_fp iptat vss vss sg13_hv_nmos l=1u w=8u as=1.52p ad=1.52p ps=8.38u pd=8.38u
+XM29 vss iptat xota_fp vss sg13_hv_nmos l=1u w=8u as=1.52p ad=1.52p ps=8.38u pd=8.38u
+XM30 xota_fp iptat vss vss sg13_hv_nmos l=1u w=8u as=1.52p ad=1.52p ps=8.38u pd=8.38u
+XM31 vss iptat xota_fp vss sg13_hv_nmos l=1u w=8u as=1.52p ad=1.52p ps=8.38u pd=8.38u
+XM32 xota_fp iptat vss vss sg13_hv_nmos l=1u w=8u as=1.52p ad=1.52p ps=8.38u pd=8.38u
+XM33 vss iptat xota_fp vss sg13_hv_nmos l=1u w=8u as=1.52p ad=1.52p ps=8.38u pd=8.38u
+XM34 xota_fp iptat vss vss sg13_hv_nmos l=1u w=8u as=1.52p ad=1.52p ps=8.38u pd=8.38u
+XM35 vss iptat xota_fp vss sg13_hv_nmos l=1u w=8u as=1.52p ad=2.72p ps=8.38u pd=16.68u
+XM36 isense iptat vss vss sg13_hv_nmos l=1u w=8u as=2.72p ad=1.52p ps=16.68u pd=8.38u
+XM37 vss iptat isense vss sg13_hv_nmos l=1u w=8u as=1.52p ad=1.52p ps=8.38u pd=8.38u
+XM38 isense iptat vss vss sg13_hv_nmos l=1u w=8u as=1.52p ad=1.52p ps=8.38u pd=8.38u
+XM39 vss iptat isense vss sg13_hv_nmos l=1u w=8u as=1.52p ad=1.52p ps=8.38u pd=8.38u
+XM40 isense iptat vss vss sg13_hv_nmos l=1u w=8u as=1.52p ad=1.52p ps=8.38u pd=8.38u
+XM41 vss iptat isense vss sg13_hv_nmos l=1u w=8u as=1.52p ad=1.52p ps=8.38u pd=8.38u
+XM42 isense iptat vss vss sg13_hv_nmos l=1u w=8u as=1.52p ad=1.52p ps=8.38u pd=8.38u
+XM43 vss iptat isense vss sg13_hv_nmos l=1u w=8u as=1.52p ad=1.52p ps=8.38u pd=8.38u
+XM44 isense iptat vss vss sg13_hv_nmos l=1u w=8u as=1.52p ad=1.52p ps=8.38u pd=8.38u
+XM45 vss iptat isense vss sg13_hv_nmos l=1u w=8u as=1.52p ad=1.52p ps=8.38u pd=8.38u
+XM46 isense iptat vss vss sg13_hv_nmos l=1u w=8u as=1.52p ad=1.52p ps=8.38u pd=8.38u
+XM47 vss iptat isense vss sg13_hv_nmos l=1u w=8u as=1.52p ad=2.72p ps=8.38u pd=16.68u
+XM48 xbuf_vbnc xbuf_vbnc vss vss sg13_hv_nmos l=1u w=1.6u as=0.544p ad=0.544p ps=3.88u pd=3.88u
+XM49 n_138 iptat vss vss sg13_hv_nmos l=1u w=8u as=2.72p ad=2.72p ps=16.68u pd=16.68u
+XM50 xbuf_vbpc iptat vss vss sg13_hv_nmos l=1u w=8u as=2.72p ad=2.72p ps=16.68u pd=16.68u
+XM51 xbuf_fn iptat vss vss sg13_hv_nmos l=1u w=8u as=2.72p ad=1.52p ps=16.68u pd=8.38u
+XM52 vss iptat xbuf_fn vss sg13_hv_nmos l=1u w=8u as=1.52p ad=1.52p ps=8.38u pd=8.38u
+XM53 xbuf_fn iptat vss vss sg13_hv_nmos l=1u w=8u as=1.52p ad=1.52p ps=8.38u pd=8.38u
+XM54 vss iptat xbuf_fn vss sg13_hv_nmos l=1u w=8u as=1.52p ad=1.52p ps=8.38u pd=8.38u
+XM55 xbuf_fn iptat vss vss sg13_hv_nmos l=1u w=8u as=1.52p ad=1.52p ps=8.38u pd=8.38u
+XM56 vss iptat xbuf_fn vss sg13_hv_nmos l=1u w=8u as=1.52p ad=1.52p ps=8.38u pd=8.38u
+XM57 xbuf_fn iptat vss vss sg13_hv_nmos l=1u w=8u as=1.52p ad=1.52p ps=8.38u pd=8.38u
+XM58 vss iptat xbuf_fn vss sg13_hv_nmos l=1u w=8u as=1.52p ad=1.52p ps=8.38u pd=8.38u
+XM59 xbuf_fn iptat vss vss sg13_hv_nmos l=1u w=8u as=1.52p ad=1.52p ps=8.38u pd=8.38u
+XM60 vss iptat xbuf_fn vss sg13_hv_nmos l=1u w=8u as=1.52p ad=2.72p ps=8.38u pd=16.68u
+XM61 xbuf_mir xbuf_vbnc xbuf_fn vss sg13_hv_nmos l=1u w=8u as=2.72p ad=1.52p ps=16.68u pd=8.38u
+XM62 xbuf_fn xbuf_vbnc xbuf_mir vss sg13_hv_nmos l=1u w=8u as=1.52p ad=1.52p ps=8.38u pd=8.38u
+XM63 xbuf_mir xbuf_vbnc xbuf_fn vss sg13_hv_nmos l=1u w=8u as=1.52p ad=1.52p ps=8.38u pd=8.38u
+XM64 xbuf_fn xbuf_vbnc xbuf_mir vss sg13_hv_nmos l=1u w=8u as=1.52p ad=1.52p ps=8.38u pd=8.38u
+XM65 xbuf_mir xbuf_vbnc xbuf_fn vss sg13_hv_nmos l=1u w=8u as=1.52p ad=1.52p ps=8.38u pd=8.38u
+XM66 xbuf_fn xbuf_vbnc xbuf_mir vss sg13_hv_nmos l=1u w=8u as=1.52p ad=2.72p ps=8.38u pd=16.68u
+XM67 xbuf_out1 xbuf_vbnc xbuf_fp vss sg13_hv_nmos l=1u w=8u as=2.72p ad=1.52p ps=16.68u pd=8.38u
+XM68 xbuf_fp xbuf_vbnc xbuf_out1 vss sg13_hv_nmos l=1u w=8u as=1.52p ad=1.52p ps=8.38u pd=8.38u
+XM69 xbuf_out1 xbuf_vbnc xbuf_fp vss sg13_hv_nmos l=1u w=8u as=1.52p ad=1.52p ps=8.38u pd=8.38u
+XM70 xbuf_fp xbuf_vbnc xbuf_out1 vss sg13_hv_nmos l=1u w=8u as=1.52p ad=1.52p ps=8.38u pd=8.38u
+XM71 xbuf_out1 xbuf_vbnc xbuf_fp vss sg13_hv_nmos l=1u w=8u as=1.52p ad=1.52p ps=8.38u pd=8.38u
+XM72 xbuf_fp xbuf_vbnc xbuf_out1 vss sg13_hv_nmos l=1u w=8u as=1.52p ad=2.72p ps=8.38u pd=16.68u
+XM73 xbuf_fp iptat vss vss sg13_hv_nmos l=1u w=8u as=2.72p ad=1.52p ps=16.68u pd=8.38u
+XM74 vss iptat xbuf_fp vss sg13_hv_nmos l=1u w=8u as=1.52p ad=1.52p ps=8.38u pd=8.38u
+XM75 xbuf_fp iptat vss vss sg13_hv_nmos l=1u w=8u as=1.52p ad=1.52p ps=8.38u pd=8.38u
+XM76 vss iptat xbuf_fp vss sg13_hv_nmos l=1u w=8u as=1.52p ad=1.52p ps=8.38u pd=8.38u
+XM77 xbuf_fp iptat vss vss sg13_hv_nmos l=1u w=8u as=1.52p ad=1.52p ps=8.38u pd=8.38u
+XM78 vss iptat xbuf_fp vss sg13_hv_nmos l=1u w=8u as=1.52p ad=1.52p ps=8.38u pd=8.38u
+XM79 xbuf_fp iptat vss vss sg13_hv_nmos l=1u w=8u as=1.52p ad=1.52p ps=8.38u pd=8.38u
+XM80 vss iptat xbuf_fp vss sg13_hv_nmos l=1u w=8u as=1.52p ad=1.52p ps=8.38u pd=8.38u
+XM81 xbuf_fp iptat vss vss sg13_hv_nmos l=1u w=8u as=1.52p ad=1.52p ps=8.38u pd=8.38u
+XM82 vss iptat xbuf_fp vss sg13_hv_nmos l=1u w=8u as=1.52p ad=2.72p ps=8.38u pd=16.68u
+XM83 vped iptat vss vss sg13_hv_nmos l=1u w=8u as=2.72p ad=1.52p ps=16.68u pd=8.38u
+XM84 vss iptat vped vss sg13_hv_nmos l=1u w=8u as=1.52p ad=1.52p ps=8.38u pd=8.38u
+XM85 vped iptat vss vss sg13_hv_nmos l=1u w=8u as=1.52p ad=1.52p ps=8.38u pd=8.38u
+XM86 vss iptat vped vss sg13_hv_nmos l=1u w=8u as=1.52p ad=1.52p ps=8.38u pd=8.38u
+XM87 vped iptat vss vss sg13_hv_nmos l=1u w=8u as=1.52p ad=1.52p ps=8.38u pd=8.38u
+XM88 vss iptat vped vss sg13_hv_nmos l=1u w=8u as=1.52p ad=1.52p ps=8.38u pd=8.38u
+XM89 vped iptat vss vss sg13_hv_nmos l=1u w=8u as=1.52p ad=1.52p ps=8.38u pd=8.38u
+XM90 vss iptat vped vss sg13_hv_nmos l=1u w=8u as=1.52p ad=1.52p ps=8.38u pd=8.38u
+XM91 vped iptat vss vss sg13_hv_nmos l=1u w=8u as=1.52p ad=1.52p ps=8.38u pd=8.38u
+XM92 vss iptat vped vss sg13_hv_nmos l=1u w=8u as=1.52p ad=1.52p ps=8.38u pd=8.38u
+XM93 vped iptat vss vss sg13_hv_nmos l=1u w=8u as=1.52p ad=1.52p ps=8.38u pd=8.38u
+XM94 vss iptat vped vss sg13_hv_nmos l=1u w=8u as=1.52p ad=2.72p ps=8.38u pd=16.68u
+XM95 iptat iptat vss vss sg13_hv_nmos l=1u w=3.3u as=1.122p ad=1.122p ps=7.28u pd=7.28u
+XM96 xref_vbnc xref_vbnc vss vss sg13_hv_nmos l=1u w=1.6u as=0.544p ad=0.544p ps=3.88u pd=3.88u
+XM97 n_244 iptat vss vss sg13_hv_nmos l=1u w=8u as=2.72p ad=2.72p ps=16.68u pd=16.68u
+XM98 xref_vbpc iptat vss vss sg13_hv_nmos l=1u w=8u as=2.72p ad=2.72p ps=16.68u pd=16.68u
+XM99 xref_fn iptat vss vss sg13_hv_nmos l=1u w=8u as=2.72p ad=1.52p ps=16.68u pd=8.38u
+XM100 vss iptat xref_fn vss sg13_hv_nmos l=1u w=8u as=1.52p ad=1.52p ps=8.38u pd=8.38u
+XM101 xref_fn iptat vss vss sg13_hv_nmos l=1u w=8u as=1.52p ad=1.52p ps=8.38u pd=8.38u
+XM102 vss iptat xref_fn vss sg13_hv_nmos l=1u w=8u as=1.52p ad=1.52p ps=8.38u pd=8.38u
+XM103 xref_fn iptat vss vss sg13_hv_nmos l=1u w=8u as=1.52p ad=1.52p ps=8.38u pd=8.38u
+XM104 vss iptat xref_fn vss sg13_hv_nmos l=1u w=8u as=1.52p ad=1.52p ps=8.38u pd=8.38u
+XM105 xref_fn iptat vss vss sg13_hv_nmos l=1u w=8u as=1.52p ad=1.52p ps=8.38u pd=8.38u
+XM106 vss iptat xref_fn vss sg13_hv_nmos l=1u w=8u as=1.52p ad=1.52p ps=8.38u pd=8.38u
+XM107 xref_fn iptat vss vss sg13_hv_nmos l=1u w=8u as=1.52p ad=1.52p ps=8.38u pd=8.38u
+XM108 vss iptat xref_fn vss sg13_hv_nmos l=1u w=8u as=1.52p ad=2.72p ps=8.38u pd=16.68u
+XM109 xref_mir xref_vbnc xref_fn vss sg13_hv_nmos l=1u w=8u as=2.72p ad=1.52p ps=16.68u pd=8.38u
+XM110 xref_fn xref_vbnc xref_mir vss sg13_hv_nmos l=1u w=8u as=1.52p ad=1.52p ps=8.38u pd=8.38u
+XM111 xref_mir xref_vbnc xref_fn vss sg13_hv_nmos l=1u w=8u as=1.52p ad=1.52p ps=8.38u pd=8.38u
+XM112 xref_fn xref_vbnc xref_mir vss sg13_hv_nmos l=1u w=8u as=1.52p ad=1.52p ps=8.38u pd=8.38u
+XM113 xref_mir xref_vbnc xref_fn vss sg13_hv_nmos l=1u w=8u as=1.52p ad=1.52p ps=8.38u pd=8.38u
+XM114 xref_fn xref_vbnc xref_mir vss sg13_hv_nmos l=1u w=8u as=1.52p ad=2.72p ps=8.38u pd=16.68u
+XM115 xref_out1 xref_vbnc xref_fp vss sg13_hv_nmos l=1u w=8u as=2.72p ad=1.52p ps=16.68u pd=8.38u
+XM116 xref_fp xref_vbnc xref_out1 vss sg13_hv_nmos l=1u w=8u as=1.52p ad=1.52p ps=8.38u pd=8.38u
+XM117 xref_out1 xref_vbnc xref_fp vss sg13_hv_nmos l=1u w=8u as=1.52p ad=1.52p ps=8.38u pd=8.38u
+XM118 xref_fp xref_vbnc xref_out1 vss sg13_hv_nmos l=1u w=8u as=1.52p ad=1.52p ps=8.38u pd=8.38u
+XM119 xref_out1 xref_vbnc xref_fp vss sg13_hv_nmos l=1u w=8u as=1.52p ad=1.52p ps=8.38u pd=8.38u
+XM120 xref_fp xref_vbnc xref_out1 vss sg13_hv_nmos l=1u w=8u as=1.52p ad=2.72p ps=8.38u pd=16.68u
+XM121 xref_fp iptat vss vss sg13_hv_nmos l=1u w=8u as=2.72p ad=1.52p ps=16.68u pd=8.38u
+XM122 vss iptat xref_fp vss sg13_hv_nmos l=1u w=8u as=1.52p ad=1.52p ps=8.38u pd=8.38u
+XM123 xref_fp iptat vss vss sg13_hv_nmos l=1u w=8u as=1.52p ad=1.52p ps=8.38u pd=8.38u
+XM124 vss iptat xref_fp vss sg13_hv_nmos l=1u w=8u as=1.52p ad=1.52p ps=8.38u pd=8.38u
+XM125 xref_fp iptat vss vss sg13_hv_nmos l=1u w=8u as=1.52p ad=1.52p ps=8.38u pd=8.38u
+XM126 vss iptat xref_fp vss sg13_hv_nmos l=1u w=8u as=1.52p ad=1.52p ps=8.38u pd=8.38u
+XM127 xref_fp iptat vss vss sg13_hv_nmos l=1u w=8u as=1.52p ad=1.52p ps=8.38u pd=8.38u
+XM128 vss iptat xref_fp vss sg13_hv_nmos l=1u w=8u as=1.52p ad=1.52p ps=8.38u pd=8.38u
+XM129 xref_fp iptat vss vss sg13_hv_nmos l=1u w=8u as=1.52p ad=1.52p ps=8.38u pd=8.38u
+XM130 vss iptat xref_fp vss sg13_hv_nmos l=1u w=8u as=1.52p ad=2.72p ps=8.38u pd=16.68u
+XM131 vref_buf iptat vss vss sg13_hv_nmos l=1u w=8u as=2.72p ad=1.52p ps=16.68u pd=8.38u
+XM132 vss iptat vref_buf vss sg13_hv_nmos l=1u w=8u as=1.52p ad=1.52p ps=8.38u pd=8.38u
+XM133 vref_buf iptat vss vss sg13_hv_nmos l=1u w=8u as=1.52p ad=1.52p ps=8.38u pd=8.38u
+XM134 vss iptat vref_buf vss sg13_hv_nmos l=1u w=8u as=1.52p ad=1.52p ps=8.38u pd=8.38u
+XM135 vref_buf iptat vss vss sg13_hv_nmos l=1u w=8u as=1.52p ad=1.52p ps=8.38u pd=8.38u
+XM136 vss iptat vref_buf vss sg13_hv_nmos l=1u w=8u as=1.52p ad=1.52p ps=8.38u pd=8.38u
+XM137 vref_buf iptat vss vss sg13_hv_nmos l=1u w=8u as=1.52p ad=1.52p ps=8.38u pd=8.38u
+XM138 vss iptat vref_buf vss sg13_hv_nmos l=1u w=8u as=1.52p ad=1.52p ps=8.38u pd=8.38u
+XM139 vref_buf iptat vss vss sg13_hv_nmos l=1u w=8u as=1.52p ad=1.52p ps=8.38u pd=8.38u
+XM140 vss iptat vref_buf vss sg13_hv_nmos l=1u w=8u as=1.52p ad=1.52p ps=8.38u pd=8.38u
+XM141 vref_buf iptat vss vss sg13_hv_nmos l=1u w=8u as=1.52p ad=1.52p ps=8.38u pd=8.38u
+XM142 vss iptat vref_buf vss sg13_hv_nmos l=1u w=8u as=1.52p ad=2.72p ps=8.38u pd=16.68u
+XM143 n_57 xota_mir vdd vdd sg13_hv_pmos l=1u w=8u as=2.72p ad=1.52p ps=16.68u pd=8.38u
+XM144 vdd xota_mir n_57 vdd sg13_hv_pmos l=1u w=8u as=1.52p ad=1.52p ps=8.38u pd=8.38u
+XM145 n_57 xota_mir vdd vdd sg13_hv_pmos l=1u w=8u as=1.52p ad=1.52p ps=8.38u pd=8.38u
+XM146 vdd xota_mir n_57 vdd sg13_hv_pmos l=1u w=8u as=1.52p ad=1.52p ps=8.38u pd=8.38u
+XM147 n_57 xota_mir vdd vdd sg13_hv_pmos l=1u w=8u as=1.52p ad=1.52p ps=8.38u pd=8.38u
+XM148 vdd xota_mir n_57 vdd sg13_hv_pmos l=1u w=8u as=1.52p ad=1.52p ps=8.38u pd=8.38u
+XM149 n_57 xota_mir vdd vdd sg13_hv_pmos l=1u w=8u as=1.52p ad=1.52p ps=8.38u pd=8.38u
+XM150 vdd xota_mir n_57 vdd sg13_hv_pmos l=1u w=8u as=1.52p ad=1.52p ps=8.38u pd=8.38u
+XM151 n_57 xota_mir vdd vdd sg13_hv_pmos l=1u w=8u as=1.52p ad=1.52p ps=8.38u pd=8.38u
+XM152 vdd xota_mir n_57 vdd sg13_hv_pmos l=1u w=8u as=1.52p ad=1.52p ps=8.38u pd=8.38u
+XM153 n_57 xota_mir vdd vdd sg13_hv_pmos l=1u w=8u as=1.52p ad=1.52p ps=8.38u pd=8.38u
+XM154 vdd xota_mir n_57 vdd sg13_hv_pmos l=1u w=8u as=1.52p ad=2.72p ps=8.38u pd=16.68u
+XM155 xota_mir xota_vbpc n_57 vdd sg13_hv_pmos l=1u w=8u as=2.72p ad=1.52p ps=16.68u pd=8.38u
+XM156 n_57 xota_vbpc xota_mir vdd sg13_hv_pmos l=1u w=8u as=1.52p ad=1.52p ps=8.38u pd=8.38u
+XM157 xota_mir xota_vbpc n_57 vdd sg13_hv_pmos l=1u w=8u as=1.52p ad=1.52p ps=8.38u pd=8.38u
+XM158 n_57 xota_vbpc xota_mir vdd sg13_hv_pmos l=1u w=8u as=1.52p ad=1.52p ps=8.38u pd=8.38u
+XM159 xota_mir xota_vbpc n_57 vdd sg13_hv_pmos l=1u w=8u as=1.52p ad=1.52p ps=8.38u pd=8.38u
+XM160 n_57 xota_vbpc xota_mir vdd sg13_hv_pmos l=1u w=8u as=1.52p ad=1.52p ps=8.38u pd=8.38u
+XM161 xota_mir xota_vbpc n_57 vdd sg13_hv_pmos l=1u w=8u as=1.52p ad=1.52p ps=8.38u pd=8.38u
+XM162 n_57 xota_vbpc xota_mir vdd sg13_hv_pmos l=1u w=8u as=1.52p ad=1.52p ps=8.38u pd=8.38u
+XM163 xota_mir xota_vbpc n_57 vdd sg13_hv_pmos l=1u w=8u as=1.52p ad=1.52p ps=8.38u pd=8.38u
+XM164 n_57 xota_vbpc xota_mir vdd sg13_hv_pmos l=1u w=8u as=1.52p ad=1.52p ps=8.38u pd=8.38u
+XM165 xota_mir xota_vbpc n_57 vdd sg13_hv_pmos l=1u w=8u as=1.52p ad=1.52p ps=8.38u pd=8.38u
+XM166 n_57 xota_vbpc xota_mir vdd sg13_hv_pmos l=1u w=8u as=1.52p ad=2.72p ps=8.38u pd=16.68u
+XM167 xota_out1 xota_vbpc n_58 vdd sg13_hv_pmos l=1u w=8u as=2.72p ad=1.52p ps=16.68u pd=8.38u
+XM168 n_58 xota_vbpc xota_out1 vdd sg13_hv_pmos l=1u w=8u as=1.52p ad=1.52p ps=8.38u pd=8.38u
+XM169 xota_out1 xota_vbpc n_58 vdd sg13_hv_pmos l=1u w=8u as=1.52p ad=1.52p ps=8.38u pd=8.38u
+XM170 n_58 xota_vbpc xota_out1 vdd sg13_hv_pmos l=1u w=8u as=1.52p ad=1.52p ps=8.38u pd=8.38u
+XM171 xota_out1 xota_vbpc n_58 vdd sg13_hv_pmos l=1u w=8u as=1.52p ad=1.52p ps=8.38u pd=8.38u
+XM172 n_58 xota_vbpc xota_out1 vdd sg13_hv_pmos l=1u w=8u as=1.52p ad=1.52p ps=8.38u pd=8.38u
+XM173 xota_out1 xota_vbpc n_58 vdd sg13_hv_pmos l=1u w=8u as=1.52p ad=1.52p ps=8.38u pd=8.38u
+XM174 n_58 xota_vbpc xota_out1 vdd sg13_hv_pmos l=1u w=8u as=1.52p ad=1.52p ps=8.38u pd=8.38u
+XM175 xota_out1 xota_vbpc n_58 vdd sg13_hv_pmos l=1u w=8u as=1.52p ad=1.52p ps=8.38u pd=8.38u
+XM176 n_58 xota_vbpc xota_out1 vdd sg13_hv_pmos l=1u w=8u as=1.52p ad=1.52p ps=8.38u pd=8.38u
+XM177 xota_out1 xota_vbpc n_58 vdd sg13_hv_pmos l=1u w=8u as=1.52p ad=1.52p ps=8.38u pd=8.38u
+XM178 n_58 xota_vbpc xota_out1 vdd sg13_hv_pmos l=1u w=8u as=1.52p ad=2.72p ps=8.38u pd=16.68u
+XM179 n_58 xota_mir vdd vdd sg13_hv_pmos l=1u w=8u as=2.72p ad=1.52p ps=16.68u pd=8.38u
+XM180 vdd xota_mir n_58 vdd sg13_hv_pmos l=1u w=8u as=1.52p ad=1.52p ps=8.38u pd=8.38u
+XM181 n_58 xota_mir vdd vdd sg13_hv_pmos l=1u w=8u as=1.52p ad=1.52p ps=8.38u pd=8.38u
+XM182 vdd xota_mir n_58 vdd sg13_hv_pmos l=1u w=8u as=1.52p ad=1.52p ps=8.38u pd=8.38u
+XM183 n_58 xota_mir vdd vdd sg13_hv_pmos l=1u w=8u as=1.52p ad=1.52p ps=8.38u pd=8.38u
+XM184 vdd xota_mir n_58 vdd sg13_hv_pmos l=1u w=8u as=1.52p ad=1.52p ps=8.38u pd=8.38u
+XM185 n_58 xota_mir vdd vdd sg13_hv_pmos l=1u w=8u as=1.52p ad=1.52p ps=8.38u pd=8.38u
+XM186 vdd xota_mir n_58 vdd sg13_hv_pmos l=1u w=8u as=1.52p ad=1.52p ps=8.38u pd=8.38u
+XM187 n_58 xota_mir vdd vdd sg13_hv_pmos l=1u w=8u as=1.52p ad=1.52p ps=8.38u pd=8.38u
+XM188 vdd xota_mir n_58 vdd sg13_hv_pmos l=1u w=8u as=1.52p ad=1.52p ps=8.38u pd=8.38u
+XM189 n_58 xota_mir vdd vdd sg13_hv_pmos l=1u w=8u as=1.52p ad=1.52p ps=8.38u pd=8.38u
+XM190 vdd xota_mir n_58 vdd sg13_hv_pmos l=1u w=8u as=1.52p ad=2.72p ps=8.38u pd=16.68u
+XM191 xota_fn vn xota_tail vdd sg13_hv_pmos l=2u w=6u as=2.04p ad=1.14p ps=12.68u pd=6.38u
+XM192 xota_tail vn xota_fn vdd sg13_hv_pmos l=2u w=6u as=1.14p ad=1.14p ps=6.38u pd=6.38u
+XM193 xota_fp vp xota_tail vdd sg13_hv_pmos l=2u w=6u as=1.14p ad=1.14p ps=6.38u pd=6.38u
+XM194 xota_tail vp xota_fp vdd sg13_hv_pmos l=2u w=6u as=1.14p ad=1.14p ps=6.38u pd=6.38u
+XM195 xota_fp vp xota_tail vdd sg13_hv_pmos l=2u w=6u as=1.14p ad=1.14p ps=6.38u pd=6.38u
+XM196 xota_tail vp xota_fp vdd sg13_hv_pmos l=2u w=6u as=1.14p ad=1.14p ps=6.38u pd=6.38u
+XM197 xota_fn vn xota_tail vdd sg13_hv_pmos l=2u w=6u as=1.14p ad=1.14p ps=6.38u pd=6.38u
+XM198 xota_tail vn xota_fn vdd sg13_hv_pmos l=2u w=6u as=1.14p ad=1.14p ps=6.38u pd=6.38u
+XM199 xota_fn vn xota_tail vdd sg13_hv_pmos l=2u w=6u as=1.14p ad=1.14p ps=6.38u pd=6.38u
+XM200 xota_tail vn xota_fn vdd sg13_hv_pmos l=2u w=6u as=1.14p ad=1.14p ps=6.38u pd=6.38u
+XM201 xota_fp vp xota_tail vdd sg13_hv_pmos l=2u w=6u as=1.14p ad=1.14p ps=6.38u pd=6.38u
+XM202 xota_tail vp xota_fp vdd sg13_hv_pmos l=2u w=6u as=1.14p ad=1.14p ps=6.38u pd=6.38u
+XM203 xota_fp vp xota_tail vdd sg13_hv_pmos l=2u w=6u as=1.14p ad=1.14p ps=6.38u pd=6.38u
+XM204 xota_tail vp xota_fp vdd sg13_hv_pmos l=2u w=6u as=1.14p ad=1.14p ps=6.38u pd=6.38u
+XM205 xota_fn vn xota_tail vdd sg13_hv_pmos l=2u w=6u as=1.14p ad=1.14p ps=6.38u pd=6.38u
+XM206 xota_tail vn xota_fn vdd sg13_hv_pmos l=2u w=6u as=1.14p ad=1.14p ps=6.38u pd=6.38u
+XM207 xota_fn vn xota_tail vdd sg13_hv_pmos l=2u w=6u as=1.14p ad=1.14p ps=6.38u pd=6.38u
+XM208 xota_tail vn xota_fn vdd sg13_hv_pmos l=2u w=6u as=1.14p ad=1.14p ps=6.38u pd=6.38u
+XM209 xota_fp vp xota_tail vdd sg13_hv_pmos l=2u w=6u as=1.14p ad=1.14p ps=6.38u pd=6.38u
+XM210 xota_tail vp xota_fp vdd sg13_hv_pmos l=2u w=6u as=1.14p ad=1.14p ps=6.38u pd=6.38u
+XM211 xota_fp vp xota_tail vdd sg13_hv_pmos l=2u w=6u as=1.14p ad=1.14p ps=6.38u pd=6.38u
+XM212 xota_tail vp xota_fp vdd sg13_hv_pmos l=2u w=6u as=1.14p ad=1.14p ps=6.38u pd=6.38u
+XM213 xota_fn vn xota_tail vdd sg13_hv_pmos l=2u w=6u as=1.14p ad=1.14p ps=6.38u pd=6.38u
+XM214 xota_tail vn xota_fn vdd sg13_hv_pmos l=2u w=6u as=1.14p ad=1.14p ps=6.38u pd=6.38u
+XM215 xota_fn vn xota_tail vdd sg13_hv_pmos l=2u w=6u as=1.14p ad=1.14p ps=6.38u pd=6.38u
+XM216 xota_tail vn xota_fn vdd sg13_hv_pmos l=2u w=6u as=1.14p ad=1.14p ps=6.38u pd=6.38u
+XM217 xota_fp vp xota_tail vdd sg13_hv_pmos l=2u w=6u as=1.14p ad=1.14p ps=6.38u pd=6.38u
+XM218 xota_tail vp xota_fp vdd sg13_hv_pmos l=2u w=6u as=1.14p ad=1.14p ps=6.38u pd=6.38u
+XM219 xota_fp vp xota_tail vdd sg13_hv_pmos l=2u w=6u as=1.14p ad=1.14p ps=6.38u pd=6.38u
+XM220 xota_tail vp xota_fp vdd sg13_hv_pmos l=2u w=6u as=1.14p ad=1.14p ps=6.38u pd=6.38u
+XM221 xota_fn vn xota_tail vdd sg13_hv_pmos l=2u w=6u as=1.14p ad=1.14p ps=6.38u pd=6.38u
+XM222 xota_tail vn xota_fn vdd sg13_hv_pmos l=2u w=6u as=1.14p ad=2.04p ps=6.38u pd=12.68u
+XM223 xota_vbpc xota_vbpc vdd vdd sg13_hv_pmos l=1u w=3.2u as=1.088p ad=1.088p ps=7.08u pd=7.08u
+XM224 xota_vbnc n_3 vdd vdd sg13_hv_pmos l=1u w=8u as=2.72p ad=1.52p ps=16.68u pd=8.38u
+XM225 vdd n_3 xota_vbnc vdd sg13_hv_pmos l=1u w=8u as=1.52p ad=2.72p ps=8.38u pd=16.68u
+XM226 n_3 n_3 vdd vdd sg13_hv_pmos l=1u w=8u as=2.72p ad=1.52p ps=16.68u pd=8.38u
+XM227 vdd n_3 n_3 vdd sg13_hv_pmos l=1u w=8u as=1.52p ad=2.72p ps=8.38u pd=16.68u
+XM228 xota_tail n_3 vdd vdd sg13_hv_pmos l=1u w=8u as=2.72p ad=1.52p ps=16.68u pd=8.38u
+XM229 vdd n_3 xota_tail vdd sg13_hv_pmos l=1u w=8u as=1.52p ad=1.52p ps=8.38u pd=8.38u
+XM230 xota_tail n_3 vdd vdd sg13_hv_pmos l=1u w=8u as=1.52p ad=1.52p ps=8.38u pd=8.38u
+XM231 vdd n_3 xota_tail vdd sg13_hv_pmos l=1u w=8u as=1.52p ad=1.52p ps=8.38u pd=8.38u
+XM232 xota_tail n_3 vdd vdd sg13_hv_pmos l=1u w=8u as=1.52p ad=1.52p ps=8.38u pd=8.38u
+XM233 vdd n_3 xota_tail vdd sg13_hv_pmos l=1u w=8u as=1.52p ad=1.52p ps=8.38u pd=8.38u
+XM234 xota_tail n_3 vdd vdd sg13_hv_pmos l=1u w=8u as=1.52p ad=1.52p ps=8.38u pd=8.38u
+XM235 vdd n_3 xota_tail vdd sg13_hv_pmos l=1u w=8u as=1.52p ad=1.52p ps=8.38u pd=8.38u
+XM236 xota_tail n_3 vdd vdd sg13_hv_pmos l=1u w=8u as=1.52p ad=1.52p ps=8.38u pd=8.38u
+XM237 vdd n_3 xota_tail vdd sg13_hv_pmos l=1u w=8u as=1.52p ad=1.52p ps=8.38u pd=8.38u
+XM238 xota_tail n_3 vdd vdd sg13_hv_pmos l=1u w=8u as=1.52p ad=1.52p ps=8.38u pd=8.38u
+XM239 vdd n_3 xota_tail vdd sg13_hv_pmos l=1u w=8u as=1.52p ad=1.52p ps=8.38u pd=8.38u
+XM240 xota_tail n_3 vdd vdd sg13_hv_pmos l=1u w=8u as=1.52p ad=1.52p ps=8.38u pd=8.38u
+XM241 vdd n_3 xota_tail vdd sg13_hv_pmos l=1u w=8u as=1.52p ad=1.52p ps=8.38u pd=8.38u
+XM242 xota_tail n_3 vdd vdd sg13_hv_pmos l=1u w=8u as=1.52p ad=1.52p ps=8.38u pd=8.38u
+XM243 vdd n_3 xota_tail vdd sg13_hv_pmos l=1u w=8u as=1.52p ad=2.72p ps=8.38u pd=16.68u
+XM244 isense xota_out1 vdd vdd sg13_hv_pmos l=1u w=8u as=2.72p ad=1.52p ps=16.68u pd=8.38u
+XM245 vdd xota_out1 isense vdd sg13_hv_pmos l=1u w=8u as=1.52p ad=1.52p ps=8.38u pd=8.38u
+XM246 isense xota_out1 vdd vdd sg13_hv_pmos l=1u w=8u as=1.52p ad=1.52p ps=8.38u pd=8.38u
+XM247 vdd xota_out1 isense vdd sg13_hv_pmos l=1u w=8u as=1.52p ad=1.52p ps=8.38u pd=8.38u
+XM248 isense xota_out1 vdd vdd sg13_hv_pmos l=1u w=8u as=1.52p ad=1.52p ps=8.38u pd=8.38u
+XM249 vdd xota_out1 isense vdd sg13_hv_pmos l=1u w=8u as=1.52p ad=1.52p ps=8.38u pd=8.38u
+XM250 isense xota_out1 vdd vdd sg13_hv_pmos l=1u w=8u as=1.52p ad=1.52p ps=8.38u pd=8.38u
+XM251 vdd xota_out1 isense vdd sg13_hv_pmos l=1u w=8u as=1.52p ad=1.52p ps=8.38u pd=8.38u
+XM252 isense xota_out1 vdd vdd sg13_hv_pmos l=1u w=8u as=1.52p ad=1.52p ps=8.38u pd=8.38u
+XM253 vdd xota_out1 isense vdd sg13_hv_pmos l=1u w=8u as=1.52p ad=1.52p ps=8.38u pd=8.38u
+XM254 isense xota_out1 vdd vdd sg13_hv_pmos l=1u w=8u as=1.52p ad=1.52p ps=8.38u pd=8.38u
+XM255 vdd xota_out1 isense vdd sg13_hv_pmos l=1u w=8u as=1.52p ad=1.52p ps=8.38u pd=8.38u
+XM256 isense xota_out1 vdd vdd sg13_hv_pmos l=1u w=8u as=1.52p ad=1.52p ps=8.38u pd=8.38u
+XM257 vdd xota_out1 isense vdd sg13_hv_pmos l=1u w=8u as=1.52p ad=1.52p ps=8.38u pd=8.38u
+XM258 isense xota_out1 vdd vdd sg13_hv_pmos l=1u w=8u as=1.52p ad=1.52p ps=8.38u pd=8.38u
+XM259 vdd xota_out1 isense vdd sg13_hv_pmos l=1u w=8u as=1.52p ad=1.52p ps=8.38u pd=8.38u
+XM260 isense xota_out1 vdd vdd sg13_hv_pmos l=1u w=8u as=1.52p ad=1.52p ps=8.38u pd=8.38u
+XM261 vdd xota_out1 isense vdd sg13_hv_pmos l=1u w=8u as=1.52p ad=1.52p ps=8.38u pd=8.38u
+XM262 isense xota_out1 vdd vdd sg13_hv_pmos l=1u w=8u as=1.52p ad=1.52p ps=8.38u pd=8.38u
+XM263 vdd xota_out1 isense vdd sg13_hv_pmos l=1u w=8u as=1.52p ad=1.52p ps=8.38u pd=8.38u
+XM264 isense xota_out1 vdd vdd sg13_hv_pmos l=1u w=8u as=1.52p ad=1.52p ps=8.38u pd=8.38u
+XM265 vdd xota_out1 isense vdd sg13_hv_pmos l=1u w=8u as=1.52p ad=1.52p ps=8.38u pd=8.38u
+XM266 isense xota_out1 vdd vdd sg13_hv_pmos l=1u w=8u as=1.52p ad=1.52p ps=8.38u pd=8.38u
+XM267 vdd xota_out1 isense vdd sg13_hv_pmos l=1u w=8u as=1.52p ad=2.72p ps=8.38u pd=16.68u
+XM268 n_162 xbuf_mir vdd vdd sg13_hv_pmos l=1u w=8u as=2.72p ad=1.52p ps=16.68u pd=8.38u
+XM269 vdd xbuf_mir n_162 vdd sg13_hv_pmos l=1u w=8u as=1.52p ad=1.52p ps=8.38u pd=8.38u
+XM270 n_162 xbuf_mir vdd vdd sg13_hv_pmos l=1u w=8u as=1.52p ad=1.52p ps=8.38u pd=8.38u
+XM271 vdd xbuf_mir n_162 vdd sg13_hv_pmos l=1u w=8u as=1.52p ad=1.52p ps=8.38u pd=8.38u
+XM272 n_162 xbuf_mir vdd vdd sg13_hv_pmos l=1u w=8u as=1.52p ad=1.52p ps=8.38u pd=8.38u
+XM273 vdd xbuf_mir n_162 vdd sg13_hv_pmos l=1u w=8u as=1.52p ad=1.52p ps=8.38u pd=8.38u
+XM274 n_162 xbuf_mir vdd vdd sg13_hv_pmos l=1u w=8u as=1.52p ad=1.52p ps=8.38u pd=8.38u
+XM275 vdd xbuf_mir n_162 vdd sg13_hv_pmos l=1u w=8u as=1.52p ad=1.52p ps=8.38u pd=8.38u
+XM276 n_162 xbuf_mir vdd vdd sg13_hv_pmos l=1u w=8u as=1.52p ad=1.52p ps=8.38u pd=8.38u
+XM277 vdd xbuf_mir n_162 vdd sg13_hv_pmos l=1u w=8u as=1.52p ad=1.52p ps=8.38u pd=8.38u
+XM278 n_162 xbuf_mir vdd vdd sg13_hv_pmos l=1u w=8u as=1.52p ad=1.52p ps=8.38u pd=8.38u
+XM279 vdd xbuf_mir n_162 vdd sg13_hv_pmos l=1u w=8u as=1.52p ad=2.72p ps=8.38u pd=16.68u
+XM280 xbuf_mir xbuf_vbpc n_162 vdd sg13_hv_pmos l=1u w=8u as=2.72p ad=1.52p ps=16.68u pd=8.38u
+XM281 n_162 xbuf_vbpc xbuf_mir vdd sg13_hv_pmos l=1u w=8u as=1.52p ad=1.52p ps=8.38u pd=8.38u
+XM282 xbuf_mir xbuf_vbpc n_162 vdd sg13_hv_pmos l=1u w=8u as=1.52p ad=1.52p ps=8.38u pd=8.38u
+XM283 n_162 xbuf_vbpc xbuf_mir vdd sg13_hv_pmos l=1u w=8u as=1.52p ad=1.52p ps=8.38u pd=8.38u
+XM284 xbuf_mir xbuf_vbpc n_162 vdd sg13_hv_pmos l=1u w=8u as=1.52p ad=1.52p ps=8.38u pd=8.38u
+XM285 n_162 xbuf_vbpc xbuf_mir vdd sg13_hv_pmos l=1u w=8u as=1.52p ad=1.52p ps=8.38u pd=8.38u
+XM286 xbuf_mir xbuf_vbpc n_162 vdd sg13_hv_pmos l=1u w=8u as=1.52p ad=1.52p ps=8.38u pd=8.38u
+XM287 n_162 xbuf_vbpc xbuf_mir vdd sg13_hv_pmos l=1u w=8u as=1.52p ad=1.52p ps=8.38u pd=8.38u
+XM288 xbuf_mir xbuf_vbpc n_162 vdd sg13_hv_pmos l=1u w=8u as=1.52p ad=1.52p ps=8.38u pd=8.38u
+XM289 n_162 xbuf_vbpc xbuf_mir vdd sg13_hv_pmos l=1u w=8u as=1.52p ad=1.52p ps=8.38u pd=8.38u
+XM290 xbuf_mir xbuf_vbpc n_162 vdd sg13_hv_pmos l=1u w=8u as=1.52p ad=1.52p ps=8.38u pd=8.38u
+XM291 n_162 xbuf_vbpc xbuf_mir vdd sg13_hv_pmos l=1u w=8u as=1.52p ad=2.72p ps=8.38u pd=16.68u
+XM292 xbuf_out1 xbuf_vbpc n_163 vdd sg13_hv_pmos l=1u w=8u as=2.72p ad=1.52p ps=16.68u pd=8.38u
+XM293 n_163 xbuf_vbpc xbuf_out1 vdd sg13_hv_pmos l=1u w=8u as=1.52p ad=1.52p ps=8.38u pd=8.38u
+XM294 xbuf_out1 xbuf_vbpc n_163 vdd sg13_hv_pmos l=1u w=8u as=1.52p ad=1.52p ps=8.38u pd=8.38u
+XM295 n_163 xbuf_vbpc xbuf_out1 vdd sg13_hv_pmos l=1u w=8u as=1.52p ad=1.52p ps=8.38u pd=8.38u
+XM296 xbuf_out1 xbuf_vbpc n_163 vdd sg13_hv_pmos l=1u w=8u as=1.52p ad=1.52p ps=8.38u pd=8.38u
+XM297 n_163 xbuf_vbpc xbuf_out1 vdd sg13_hv_pmos l=1u w=8u as=1.52p ad=1.52p ps=8.38u pd=8.38u
+XM298 xbuf_out1 xbuf_vbpc n_163 vdd sg13_hv_pmos l=1u w=8u as=1.52p ad=1.52p ps=8.38u pd=8.38u
+XM299 n_163 xbuf_vbpc xbuf_out1 vdd sg13_hv_pmos l=1u w=8u as=1.52p ad=1.52p ps=8.38u pd=8.38u
+XM300 xbuf_out1 xbuf_vbpc n_163 vdd sg13_hv_pmos l=1u w=8u as=1.52p ad=1.52p ps=8.38u pd=8.38u
+XM301 n_163 xbuf_vbpc xbuf_out1 vdd sg13_hv_pmos l=1u w=8u as=1.52p ad=1.52p ps=8.38u pd=8.38u
+XM302 xbuf_out1 xbuf_vbpc n_163 vdd sg13_hv_pmos l=1u w=8u as=1.52p ad=1.52p ps=8.38u pd=8.38u
+XM303 n_163 xbuf_vbpc xbuf_out1 vdd sg13_hv_pmos l=1u w=8u as=1.52p ad=2.72p ps=8.38u pd=16.68u
+XM304 n_163 xbuf_mir vdd vdd sg13_hv_pmos l=1u w=8u as=2.72p ad=1.52p ps=16.68u pd=8.38u
+XM305 vdd xbuf_mir n_163 vdd sg13_hv_pmos l=1u w=8u as=1.52p ad=1.52p ps=8.38u pd=8.38u
+XM306 n_163 xbuf_mir vdd vdd sg13_hv_pmos l=1u w=8u as=1.52p ad=1.52p ps=8.38u pd=8.38u
+XM307 vdd xbuf_mir n_163 vdd sg13_hv_pmos l=1u w=8u as=1.52p ad=1.52p ps=8.38u pd=8.38u
+XM308 n_163 xbuf_mir vdd vdd sg13_hv_pmos l=1u w=8u as=1.52p ad=1.52p ps=8.38u pd=8.38u
+XM309 vdd xbuf_mir n_163 vdd sg13_hv_pmos l=1u w=8u as=1.52p ad=1.52p ps=8.38u pd=8.38u
+XM310 n_163 xbuf_mir vdd vdd sg13_hv_pmos l=1u w=8u as=1.52p ad=1.52p ps=8.38u pd=8.38u
+XM311 vdd xbuf_mir n_163 vdd sg13_hv_pmos l=1u w=8u as=1.52p ad=1.52p ps=8.38u pd=8.38u
+XM312 n_163 xbuf_mir vdd vdd sg13_hv_pmos l=1u w=8u as=1.52p ad=1.52p ps=8.38u pd=8.38u
+XM313 vdd xbuf_mir n_163 vdd sg13_hv_pmos l=1u w=8u as=1.52p ad=1.52p ps=8.38u pd=8.38u
+XM314 n_163 xbuf_mir vdd vdd sg13_hv_pmos l=1u w=8u as=1.52p ad=1.52p ps=8.38u pd=8.38u
+XM315 vdd xbuf_mir n_163 vdd sg13_hv_pmos l=1u w=8u as=1.52p ad=2.72p ps=8.38u pd=16.68u
+XM316 xbuf_fn vped xbuf_tail vdd sg13_hv_pmos l=2u w=6u as=2.04p ad=1.14p ps=12.68u pd=6.38u
+XM317 xbuf_tail vped xbuf_fn vdd sg13_hv_pmos l=2u w=6u as=1.14p ad=1.14p ps=6.38u pd=6.38u
+XM318 xbuf_fp vped_ref xbuf_tail vdd sg13_hv_pmos l=2u w=6u as=1.14p ad=1.14p ps=6.38u pd=6.38u
+XM319 xbuf_tail vped_ref xbuf_fp vdd sg13_hv_pmos l=2u w=6u as=1.14p ad=1.14p ps=6.38u pd=6.38u
+XM320 xbuf_fp vped_ref xbuf_tail vdd sg13_hv_pmos l=2u w=6u as=1.14p ad=1.14p ps=6.38u pd=6.38u
+XM321 xbuf_tail vped_ref xbuf_fp vdd sg13_hv_pmos l=2u w=6u as=1.14p ad=1.14p ps=6.38u pd=6.38u
+XM322 xbuf_fn vped xbuf_tail vdd sg13_hv_pmos l=2u w=6u as=1.14p ad=1.14p ps=6.38u pd=6.38u
+XM323 xbuf_tail vped xbuf_fn vdd sg13_hv_pmos l=2u w=6u as=1.14p ad=1.14p ps=6.38u pd=6.38u
+XM324 xbuf_fn vped xbuf_tail vdd sg13_hv_pmos l=2u w=6u as=1.14p ad=1.14p ps=6.38u pd=6.38u
+XM325 xbuf_tail vped xbuf_fn vdd sg13_hv_pmos l=2u w=6u as=1.14p ad=1.14p ps=6.38u pd=6.38u
+XM326 xbuf_fp vped_ref xbuf_tail vdd sg13_hv_pmos l=2u w=6u as=1.14p ad=1.14p ps=6.38u pd=6.38u
+XM327 xbuf_tail vped_ref xbuf_fp vdd sg13_hv_pmos l=2u w=6u as=1.14p ad=1.14p ps=6.38u pd=6.38u
+XM328 xbuf_fp vped_ref xbuf_tail vdd sg13_hv_pmos l=2u w=6u as=1.14p ad=1.14p ps=6.38u pd=6.38u
+XM329 xbuf_tail vped_ref xbuf_fp vdd sg13_hv_pmos l=2u w=6u as=1.14p ad=1.14p ps=6.38u pd=6.38u
+XM330 xbuf_fn vped xbuf_tail vdd sg13_hv_pmos l=2u w=6u as=1.14p ad=1.14p ps=6.38u pd=6.38u
+XM331 xbuf_tail vped xbuf_fn vdd sg13_hv_pmos l=2u w=6u as=1.14p ad=1.14p ps=6.38u pd=6.38u
+XM332 xbuf_fn vped xbuf_tail vdd sg13_hv_pmos l=2u w=6u as=1.14p ad=1.14p ps=6.38u pd=6.38u
+XM333 xbuf_tail vped xbuf_fn vdd sg13_hv_pmos l=2u w=6u as=1.14p ad=1.14p ps=6.38u pd=6.38u
+XM334 xbuf_fp vped_ref xbuf_tail vdd sg13_hv_pmos l=2u w=6u as=1.14p ad=1.14p ps=6.38u pd=6.38u
+XM335 xbuf_tail vped_ref xbuf_fp vdd sg13_hv_pmos l=2u w=6u as=1.14p ad=1.14p ps=6.38u pd=6.38u
+XM336 xbuf_fp vped_ref xbuf_tail vdd sg13_hv_pmos l=2u w=6u as=1.14p ad=1.14p ps=6.38u pd=6.38u
+XM337 xbuf_tail vped_ref xbuf_fp vdd sg13_hv_pmos l=2u w=6u as=1.14p ad=1.14p ps=6.38u pd=6.38u
+XM338 xbuf_fn vped xbuf_tail vdd sg13_hv_pmos l=2u w=6u as=1.14p ad=1.14p ps=6.38u pd=6.38u
+XM339 xbuf_tail vped xbuf_fn vdd sg13_hv_pmos l=2u w=6u as=1.14p ad=1.14p ps=6.38u pd=6.38u
+XM340 xbuf_fn vped xbuf_tail vdd sg13_hv_pmos l=2u w=6u as=1.14p ad=1.14p ps=6.38u pd=6.38u
+XM341 xbuf_tail vped xbuf_fn vdd sg13_hv_pmos l=2u w=6u as=1.14p ad=1.14p ps=6.38u pd=6.38u
+XM342 xbuf_fp vped_ref xbuf_tail vdd sg13_hv_pmos l=2u w=6u as=1.14p ad=1.14p ps=6.38u pd=6.38u
+XM343 xbuf_tail vped_ref xbuf_fp vdd sg13_hv_pmos l=2u w=6u as=1.14p ad=1.14p ps=6.38u pd=6.38u
+XM344 xbuf_fp vped_ref xbuf_tail vdd sg13_hv_pmos l=2u w=6u as=1.14p ad=1.14p ps=6.38u pd=6.38u
+XM345 xbuf_tail vped_ref xbuf_fp vdd sg13_hv_pmos l=2u w=6u as=1.14p ad=1.14p ps=6.38u pd=6.38u
+XM346 xbuf_fn vped xbuf_tail vdd sg13_hv_pmos l=2u w=6u as=1.14p ad=1.14p ps=6.38u pd=6.38u
+XM347 xbuf_tail vped xbuf_fn vdd sg13_hv_pmos l=2u w=6u as=1.14p ad=2.04p ps=6.38u pd=12.68u
+XM348 xbuf_vbpc xbuf_vbpc vdd vdd sg13_hv_pmos l=1u w=3.2u as=1.088p ad=1.088p ps=7.08u pd=7.08u
+XM349 xbuf_vbnc n_138 vdd vdd sg13_hv_pmos l=1u w=8u as=2.72p ad=1.52p ps=16.68u pd=8.38u
+XM350 vdd n_138 xbuf_vbnc vdd sg13_hv_pmos l=1u w=8u as=1.52p ad=2.72p ps=8.38u pd=16.68u
+XM351 n_138 n_138 vdd vdd sg13_hv_pmos l=1u w=8u as=2.72p ad=1.52p ps=16.68u pd=8.38u
+XM352 vdd n_138 n_138 vdd sg13_hv_pmos l=1u w=8u as=1.52p ad=2.72p ps=8.38u pd=16.68u
+XM353 xbuf_tail n_138 vdd vdd sg13_hv_pmos l=1u w=8u as=2.72p ad=1.52p ps=16.68u pd=8.38u
+XM354 vdd n_138 xbuf_tail vdd sg13_hv_pmos l=1u w=8u as=1.52p ad=1.52p ps=8.38u pd=8.38u
+XM355 xbuf_tail n_138 vdd vdd sg13_hv_pmos l=1u w=8u as=1.52p ad=1.52p ps=8.38u pd=8.38u
+XM356 vdd n_138 xbuf_tail vdd sg13_hv_pmos l=1u w=8u as=1.52p ad=1.52p ps=8.38u pd=8.38u
+XM357 xbuf_tail n_138 vdd vdd sg13_hv_pmos l=1u w=8u as=1.52p ad=1.52p ps=8.38u pd=8.38u
+XM358 vdd n_138 xbuf_tail vdd sg13_hv_pmos l=1u w=8u as=1.52p ad=1.52p ps=8.38u pd=8.38u
+XM359 xbuf_tail n_138 vdd vdd sg13_hv_pmos l=1u w=8u as=1.52p ad=1.52p ps=8.38u pd=8.38u
+XM360 vdd n_138 xbuf_tail vdd sg13_hv_pmos l=1u w=8u as=1.52p ad=1.52p ps=8.38u pd=8.38u
+XM361 xbuf_tail n_138 vdd vdd sg13_hv_pmos l=1u w=8u as=1.52p ad=1.52p ps=8.38u pd=8.38u
+XM362 vdd n_138 xbuf_tail vdd sg13_hv_pmos l=1u w=8u as=1.52p ad=1.52p ps=8.38u pd=8.38u
+XM363 xbuf_tail n_138 vdd vdd sg13_hv_pmos l=1u w=8u as=1.52p ad=1.52p ps=8.38u pd=8.38u
+XM364 vdd n_138 xbuf_tail vdd sg13_hv_pmos l=1u w=8u as=1.52p ad=1.52p ps=8.38u pd=8.38u
+XM365 xbuf_tail n_138 vdd vdd sg13_hv_pmos l=1u w=8u as=1.52p ad=1.52p ps=8.38u pd=8.38u
+XM366 vdd n_138 xbuf_tail vdd sg13_hv_pmos l=1u w=8u as=1.52p ad=1.52p ps=8.38u pd=8.38u
+XM367 xbuf_tail n_138 vdd vdd sg13_hv_pmos l=1u w=8u as=1.52p ad=1.52p ps=8.38u pd=8.38u
+XM368 vdd n_138 xbuf_tail vdd sg13_hv_pmos l=1u w=8u as=1.52p ad=2.72p ps=8.38u pd=16.68u
+XM369 vped xbuf_out1 vdd vdd sg13_hv_pmos l=1u w=8u as=2.72p ad=1.52p ps=16.68u pd=8.38u
+XM370 vdd xbuf_out1 vped vdd sg13_hv_pmos l=1u w=8u as=1.52p ad=1.52p ps=8.38u pd=8.38u
+XM371 vped xbuf_out1 vdd vdd sg13_hv_pmos l=1u w=8u as=1.52p ad=1.52p ps=8.38u pd=8.38u
+XM372 vdd xbuf_out1 vped vdd sg13_hv_pmos l=1u w=8u as=1.52p ad=1.52p ps=8.38u pd=8.38u
+XM373 vped xbuf_out1 vdd vdd sg13_hv_pmos l=1u w=8u as=1.52p ad=1.52p ps=8.38u pd=8.38u
+XM374 vdd xbuf_out1 vped vdd sg13_hv_pmos l=1u w=8u as=1.52p ad=1.52p ps=8.38u pd=8.38u
+XM375 vped xbuf_out1 vdd vdd sg13_hv_pmos l=1u w=8u as=1.52p ad=1.52p ps=8.38u pd=8.38u
+XM376 vdd xbuf_out1 vped vdd sg13_hv_pmos l=1u w=8u as=1.52p ad=1.52p ps=8.38u pd=8.38u
+XM377 vped xbuf_out1 vdd vdd sg13_hv_pmos l=1u w=8u as=1.52p ad=1.52p ps=8.38u pd=8.38u
+XM378 vdd xbuf_out1 vped vdd sg13_hv_pmos l=1u w=8u as=1.52p ad=1.52p ps=8.38u pd=8.38u
+XM379 vped xbuf_out1 vdd vdd sg13_hv_pmos l=1u w=8u as=1.52p ad=1.52p ps=8.38u pd=8.38u
+XM380 vdd xbuf_out1 vped vdd sg13_hv_pmos l=1u w=8u as=1.52p ad=1.52p ps=8.38u pd=8.38u
+XM381 vped xbuf_out1 vdd vdd sg13_hv_pmos l=1u w=8u as=1.52p ad=1.52p ps=8.38u pd=8.38u
+XM382 vdd xbuf_out1 vped vdd sg13_hv_pmos l=1u w=8u as=1.52p ad=1.52p ps=8.38u pd=8.38u
+XM383 vped xbuf_out1 vdd vdd sg13_hv_pmos l=1u w=8u as=1.52p ad=1.52p ps=8.38u pd=8.38u
+XM384 vdd xbuf_out1 vped vdd sg13_hv_pmos l=1u w=8u as=1.52p ad=1.52p ps=8.38u pd=8.38u
+XM385 vped xbuf_out1 vdd vdd sg13_hv_pmos l=1u w=8u as=1.52p ad=1.52p ps=8.38u pd=8.38u
+XM386 vdd xbuf_out1 vped vdd sg13_hv_pmos l=1u w=8u as=1.52p ad=1.52p ps=8.38u pd=8.38u
+XM387 vped xbuf_out1 vdd vdd sg13_hv_pmos l=1u w=8u as=1.52p ad=1.52p ps=8.38u pd=8.38u
+XM388 vdd xbuf_out1 vped vdd sg13_hv_pmos l=1u w=8u as=1.52p ad=1.52p ps=8.38u pd=8.38u
+XM389 vped xbuf_out1 vdd vdd sg13_hv_pmos l=1u w=8u as=1.52p ad=1.52p ps=8.38u pd=8.38u
+XM390 vdd xbuf_out1 vped vdd sg13_hv_pmos l=1u w=8u as=1.52p ad=1.52p ps=8.38u pd=8.38u
+XM391 vped xbuf_out1 vdd vdd sg13_hv_pmos l=1u w=8u as=1.52p ad=1.52p ps=8.38u pd=8.38u
+XM392 vdd xbuf_out1 vped vdd sg13_hv_pmos l=1u w=8u as=1.52p ad=2.72p ps=8.38u pd=16.68u
+XM393 n_315 xref_mir vdd vdd sg13_hv_pmos l=1u w=8u as=2.72p ad=1.52p ps=16.68u pd=8.38u
+XM394 vdd xref_mir n_315 vdd sg13_hv_pmos l=1u w=8u as=1.52p ad=1.52p ps=8.38u pd=8.38u
+XM395 n_315 xref_mir vdd vdd sg13_hv_pmos l=1u w=8u as=1.52p ad=1.52p ps=8.38u pd=8.38u
+XM396 vdd xref_mir n_315 vdd sg13_hv_pmos l=1u w=8u as=1.52p ad=1.52p ps=8.38u pd=8.38u
+XM397 n_315 xref_mir vdd vdd sg13_hv_pmos l=1u w=8u as=1.52p ad=1.52p ps=8.38u pd=8.38u
+XM398 vdd xref_mir n_315 vdd sg13_hv_pmos l=1u w=8u as=1.52p ad=1.52p ps=8.38u pd=8.38u
+XM399 n_315 xref_mir vdd vdd sg13_hv_pmos l=1u w=8u as=1.52p ad=1.52p ps=8.38u pd=8.38u
+XM400 vdd xref_mir n_315 vdd sg13_hv_pmos l=1u w=8u as=1.52p ad=1.52p ps=8.38u pd=8.38u
+XM401 n_315 xref_mir vdd vdd sg13_hv_pmos l=1u w=8u as=1.52p ad=1.52p ps=8.38u pd=8.38u
+XM402 vdd xref_mir n_315 vdd sg13_hv_pmos l=1u w=8u as=1.52p ad=1.52p ps=8.38u pd=8.38u
+XM403 n_315 xref_mir vdd vdd sg13_hv_pmos l=1u w=8u as=1.52p ad=1.52p ps=8.38u pd=8.38u
+XM404 vdd xref_mir n_315 vdd sg13_hv_pmos l=1u w=8u as=1.52p ad=2.72p ps=8.38u pd=16.68u
+XM405 xref_mir xref_vbpc n_315 vdd sg13_hv_pmos l=1u w=8u as=2.72p ad=1.52p ps=16.68u pd=8.38u
+XM406 n_315 xref_vbpc xref_mir vdd sg13_hv_pmos l=1u w=8u as=1.52p ad=1.52p ps=8.38u pd=8.38u
+XM407 xref_mir xref_vbpc n_315 vdd sg13_hv_pmos l=1u w=8u as=1.52p ad=1.52p ps=8.38u pd=8.38u
+XM408 n_315 xref_vbpc xref_mir vdd sg13_hv_pmos l=1u w=8u as=1.52p ad=1.52p ps=8.38u pd=8.38u
+XM409 xref_mir xref_vbpc n_315 vdd sg13_hv_pmos l=1u w=8u as=1.52p ad=1.52p ps=8.38u pd=8.38u
+XM410 n_315 xref_vbpc xref_mir vdd sg13_hv_pmos l=1u w=8u as=1.52p ad=1.52p ps=8.38u pd=8.38u
+XM411 xref_mir xref_vbpc n_315 vdd sg13_hv_pmos l=1u w=8u as=1.52p ad=1.52p ps=8.38u pd=8.38u
+XM412 n_315 xref_vbpc xref_mir vdd sg13_hv_pmos l=1u w=8u as=1.52p ad=1.52p ps=8.38u pd=8.38u
+XM413 xref_mir xref_vbpc n_315 vdd sg13_hv_pmos l=1u w=8u as=1.52p ad=1.52p ps=8.38u pd=8.38u
+XM414 n_315 xref_vbpc xref_mir vdd sg13_hv_pmos l=1u w=8u as=1.52p ad=1.52p ps=8.38u pd=8.38u
+XM415 xref_mir xref_vbpc n_315 vdd sg13_hv_pmos l=1u w=8u as=1.52p ad=1.52p ps=8.38u pd=8.38u
+XM416 n_315 xref_vbpc xref_mir vdd sg13_hv_pmos l=1u w=8u as=1.52p ad=2.72p ps=8.38u pd=16.68u
+XM417 xref_out1 xref_vbpc n_316 vdd sg13_hv_pmos l=1u w=8u as=2.72p ad=1.52p ps=16.68u pd=8.38u
+XM418 n_316 xref_vbpc xref_out1 vdd sg13_hv_pmos l=1u w=8u as=1.52p ad=1.52p ps=8.38u pd=8.38u
+XM419 xref_out1 xref_vbpc n_316 vdd sg13_hv_pmos l=1u w=8u as=1.52p ad=1.52p ps=8.38u pd=8.38u
+XM420 n_316 xref_vbpc xref_out1 vdd sg13_hv_pmos l=1u w=8u as=1.52p ad=1.52p ps=8.38u pd=8.38u
+XM421 xref_out1 xref_vbpc n_316 vdd sg13_hv_pmos l=1u w=8u as=1.52p ad=1.52p ps=8.38u pd=8.38u
+XM422 n_316 xref_vbpc xref_out1 vdd sg13_hv_pmos l=1u w=8u as=1.52p ad=1.52p ps=8.38u pd=8.38u
+XM423 xref_out1 xref_vbpc n_316 vdd sg13_hv_pmos l=1u w=8u as=1.52p ad=1.52p ps=8.38u pd=8.38u
+XM424 n_316 xref_vbpc xref_out1 vdd sg13_hv_pmos l=1u w=8u as=1.52p ad=1.52p ps=8.38u pd=8.38u
+XM425 xref_out1 xref_vbpc n_316 vdd sg13_hv_pmos l=1u w=8u as=1.52p ad=1.52p ps=8.38u pd=8.38u
+XM426 n_316 xref_vbpc xref_out1 vdd sg13_hv_pmos l=1u w=8u as=1.52p ad=1.52p ps=8.38u pd=8.38u
+XM427 xref_out1 xref_vbpc n_316 vdd sg13_hv_pmos l=1u w=8u as=1.52p ad=1.52p ps=8.38u pd=8.38u
+XM428 n_316 xref_vbpc xref_out1 vdd sg13_hv_pmos l=1u w=8u as=1.52p ad=2.72p ps=8.38u pd=16.68u
+XM429 n_316 xref_mir vdd vdd sg13_hv_pmos l=1u w=8u as=2.72p ad=1.52p ps=16.68u pd=8.38u
+XM430 vdd xref_mir n_316 vdd sg13_hv_pmos l=1u w=8u as=1.52p ad=1.52p ps=8.38u pd=8.38u
+XM431 n_316 xref_mir vdd vdd sg13_hv_pmos l=1u w=8u as=1.52p ad=1.52p ps=8.38u pd=8.38u
+XM432 vdd xref_mir n_316 vdd sg13_hv_pmos l=1u w=8u as=1.52p ad=1.52p ps=8.38u pd=8.38u
+XM433 n_316 xref_mir vdd vdd sg13_hv_pmos l=1u w=8u as=1.52p ad=1.52p ps=8.38u pd=8.38u
+XM434 vdd xref_mir n_316 vdd sg13_hv_pmos l=1u w=8u as=1.52p ad=1.52p ps=8.38u pd=8.38u
+XM435 n_316 xref_mir vdd vdd sg13_hv_pmos l=1u w=8u as=1.52p ad=1.52p ps=8.38u pd=8.38u
+XM436 vdd xref_mir n_316 vdd sg13_hv_pmos l=1u w=8u as=1.52p ad=1.52p ps=8.38u pd=8.38u
+XM437 n_316 xref_mir vdd vdd sg13_hv_pmos l=1u w=8u as=1.52p ad=1.52p ps=8.38u pd=8.38u
+XM438 vdd xref_mir n_316 vdd sg13_hv_pmos l=1u w=8u as=1.52p ad=1.52p ps=8.38u pd=8.38u
+XM439 n_316 xref_mir vdd vdd sg13_hv_pmos l=1u w=8u as=1.52p ad=1.52p ps=8.38u pd=8.38u
+XM440 vdd xref_mir n_316 vdd sg13_hv_pmos l=1u w=8u as=1.52p ad=2.72p ps=8.38u pd=16.68u
+XM441 xref_fn vref_buf xref_tail vdd sg13_hv_pmos l=2u w=6u as=2.04p ad=1.14p ps=12.68u pd=6.38u
+XM442 xref_tail vref_buf xref_fn vdd sg13_hv_pmos l=2u w=6u as=1.14p ad=1.14p ps=6.38u pd=6.38u
+XM443 xref_fp vref xref_tail vdd sg13_hv_pmos l=2u w=6u as=1.14p ad=1.14p ps=6.38u pd=6.38u
+XM444 xref_tail vref xref_fp vdd sg13_hv_pmos l=2u w=6u as=1.14p ad=1.14p ps=6.38u pd=6.38u
+XM445 xref_fp vref xref_tail vdd sg13_hv_pmos l=2u w=6u as=1.14p ad=1.14p ps=6.38u pd=6.38u
+XM446 xref_tail vref xref_fp vdd sg13_hv_pmos l=2u w=6u as=1.14p ad=1.14p ps=6.38u pd=6.38u
+XM447 xref_fn vref_buf xref_tail vdd sg13_hv_pmos l=2u w=6u as=1.14p ad=1.14p ps=6.38u pd=6.38u
+XM448 xref_tail vref_buf xref_fn vdd sg13_hv_pmos l=2u w=6u as=1.14p ad=1.14p ps=6.38u pd=6.38u
+XM449 xref_fn vref_buf xref_tail vdd sg13_hv_pmos l=2u w=6u as=1.14p ad=1.14p ps=6.38u pd=6.38u
+XM450 xref_tail vref_buf xref_fn vdd sg13_hv_pmos l=2u w=6u as=1.14p ad=1.14p ps=6.38u pd=6.38u
+XM451 xref_fp vref xref_tail vdd sg13_hv_pmos l=2u w=6u as=1.14p ad=1.14p ps=6.38u pd=6.38u
+XM452 xref_tail vref xref_fp vdd sg13_hv_pmos l=2u w=6u as=1.14p ad=1.14p ps=6.38u pd=6.38u
+XM453 xref_fp vref xref_tail vdd sg13_hv_pmos l=2u w=6u as=1.14p ad=1.14p ps=6.38u pd=6.38u
+XM454 xref_tail vref xref_fp vdd sg13_hv_pmos l=2u w=6u as=1.14p ad=1.14p ps=6.38u pd=6.38u
+XM455 xref_fn vref_buf xref_tail vdd sg13_hv_pmos l=2u w=6u as=1.14p ad=1.14p ps=6.38u pd=6.38u
+XM456 xref_tail vref_buf xref_fn vdd sg13_hv_pmos l=2u w=6u as=1.14p ad=1.14p ps=6.38u pd=6.38u
+XM457 xref_fn vref_buf xref_tail vdd sg13_hv_pmos l=2u w=6u as=1.14p ad=1.14p ps=6.38u pd=6.38u
+XM458 xref_tail vref_buf xref_fn vdd sg13_hv_pmos l=2u w=6u as=1.14p ad=1.14p ps=6.38u pd=6.38u
+XM459 xref_fp vref xref_tail vdd sg13_hv_pmos l=2u w=6u as=1.14p ad=1.14p ps=6.38u pd=6.38u
+XM460 xref_tail vref xref_fp vdd sg13_hv_pmos l=2u w=6u as=1.14p ad=1.14p ps=6.38u pd=6.38u
+XM461 xref_fp vref xref_tail vdd sg13_hv_pmos l=2u w=6u as=1.14p ad=1.14p ps=6.38u pd=6.38u
+XM462 xref_tail vref xref_fp vdd sg13_hv_pmos l=2u w=6u as=1.14p ad=1.14p ps=6.38u pd=6.38u
+XM463 xref_fn vref_buf xref_tail vdd sg13_hv_pmos l=2u w=6u as=1.14p ad=1.14p ps=6.38u pd=6.38u
+XM464 xref_tail vref_buf xref_fn vdd sg13_hv_pmos l=2u w=6u as=1.14p ad=1.14p ps=6.38u pd=6.38u
+XM465 xref_fn vref_buf xref_tail vdd sg13_hv_pmos l=2u w=6u as=1.14p ad=1.14p ps=6.38u pd=6.38u
+XM466 xref_tail vref_buf xref_fn vdd sg13_hv_pmos l=2u w=6u as=1.14p ad=1.14p ps=6.38u pd=6.38u
+XM467 xref_fp vref xref_tail vdd sg13_hv_pmos l=2u w=6u as=1.14p ad=1.14p ps=6.38u pd=6.38u
+XM468 xref_tail vref xref_fp vdd sg13_hv_pmos l=2u w=6u as=1.14p ad=1.14p ps=6.38u pd=6.38u
+XM469 xref_fp vref xref_tail vdd sg13_hv_pmos l=2u w=6u as=1.14p ad=1.14p ps=6.38u pd=6.38u
+XM470 xref_tail vref xref_fp vdd sg13_hv_pmos l=2u w=6u as=1.14p ad=1.14p ps=6.38u pd=6.38u
+XM471 xref_fn vref_buf xref_tail vdd sg13_hv_pmos l=2u w=6u as=1.14p ad=1.14p ps=6.38u pd=6.38u
+XM472 xref_tail vref_buf xref_fn vdd sg13_hv_pmos l=2u w=6u as=1.14p ad=2.04p ps=6.38u pd=12.68u
+XM473 xref_vbpc xref_vbpc vdd vdd sg13_hv_pmos l=1u w=3.2u as=1.088p ad=1.088p ps=7.08u pd=7.08u
+XM474 xref_vbnc n_244 vdd vdd sg13_hv_pmos l=1u w=8u as=2.72p ad=1.52p ps=16.68u pd=8.38u
+XM475 vdd n_244 xref_vbnc vdd sg13_hv_pmos l=1u w=8u as=1.52p ad=2.72p ps=8.38u pd=16.68u
+XM476 n_244 n_244 vdd vdd sg13_hv_pmos l=1u w=8u as=2.72p ad=1.52p ps=16.68u pd=8.38u
+XM477 vdd n_244 n_244 vdd sg13_hv_pmos l=1u w=8u as=1.52p ad=2.72p ps=8.38u pd=16.68u
+XM478 xref_tail n_244 vdd vdd sg13_hv_pmos l=1u w=8u as=2.72p ad=1.52p ps=16.68u pd=8.38u
+XM479 vdd n_244 xref_tail vdd sg13_hv_pmos l=1u w=8u as=1.52p ad=1.52p ps=8.38u pd=8.38u
+XM480 xref_tail n_244 vdd vdd sg13_hv_pmos l=1u w=8u as=1.52p ad=1.52p ps=8.38u pd=8.38u
+XM481 vdd n_244 xref_tail vdd sg13_hv_pmos l=1u w=8u as=1.52p ad=1.52p ps=8.38u pd=8.38u
+XM482 xref_tail n_244 vdd vdd sg13_hv_pmos l=1u w=8u as=1.52p ad=1.52p ps=8.38u pd=8.38u
+XM483 vdd n_244 xref_tail vdd sg13_hv_pmos l=1u w=8u as=1.52p ad=1.52p ps=8.38u pd=8.38u
+XM484 xref_tail n_244 vdd vdd sg13_hv_pmos l=1u w=8u as=1.52p ad=1.52p ps=8.38u pd=8.38u
+XM485 vdd n_244 xref_tail vdd sg13_hv_pmos l=1u w=8u as=1.52p ad=1.52p ps=8.38u pd=8.38u
+XM486 xref_tail n_244 vdd vdd sg13_hv_pmos l=1u w=8u as=1.52p ad=1.52p ps=8.38u pd=8.38u
+XM487 vdd n_244 xref_tail vdd sg13_hv_pmos l=1u w=8u as=1.52p ad=1.52p ps=8.38u pd=8.38u
+XM488 xref_tail n_244 vdd vdd sg13_hv_pmos l=1u w=8u as=1.52p ad=1.52p ps=8.38u pd=8.38u
+XM489 vdd n_244 xref_tail vdd sg13_hv_pmos l=1u w=8u as=1.52p ad=1.52p ps=8.38u pd=8.38u
+XM490 xref_tail n_244 vdd vdd sg13_hv_pmos l=1u w=8u as=1.52p ad=1.52p ps=8.38u pd=8.38u
+XM491 vdd n_244 xref_tail vdd sg13_hv_pmos l=1u w=8u as=1.52p ad=1.52p ps=8.38u pd=8.38u
+XM492 xref_tail n_244 vdd vdd sg13_hv_pmos l=1u w=8u as=1.52p ad=1.52p ps=8.38u pd=8.38u
+XM493 vdd n_244 xref_tail vdd sg13_hv_pmos l=1u w=8u as=1.52p ad=2.72p ps=8.38u pd=16.68u
+XM494 vref_buf xref_out1 vdd vdd sg13_hv_pmos l=1u w=8u as=2.72p ad=1.52p ps=16.68u pd=8.38u
+XM495 vdd xref_out1 vref_buf vdd sg13_hv_pmos l=1u w=8u as=1.52p ad=1.52p ps=8.38u pd=8.38u
+XM496 vref_buf xref_out1 vdd vdd sg13_hv_pmos l=1u w=8u as=1.52p ad=1.52p ps=8.38u pd=8.38u
+XM497 vdd xref_out1 vref_buf vdd sg13_hv_pmos l=1u w=8u as=1.52p ad=1.52p ps=8.38u pd=8.38u
+XM498 vref_buf xref_out1 vdd vdd sg13_hv_pmos l=1u w=8u as=1.52p ad=1.52p ps=8.38u pd=8.38u
+XM499 vdd xref_out1 vref_buf vdd sg13_hv_pmos l=1u w=8u as=1.52p ad=1.52p ps=8.38u pd=8.38u
+XM500 vref_buf xref_out1 vdd vdd sg13_hv_pmos l=1u w=8u as=1.52p ad=1.52p ps=8.38u pd=8.38u
+XM501 vdd xref_out1 vref_buf vdd sg13_hv_pmos l=1u w=8u as=1.52p ad=1.52p ps=8.38u pd=8.38u
+XM502 vref_buf xref_out1 vdd vdd sg13_hv_pmos l=1u w=8u as=1.52p ad=1.52p ps=8.38u pd=8.38u
+XM503 vdd xref_out1 vref_buf vdd sg13_hv_pmos l=1u w=8u as=1.52p ad=1.52p ps=8.38u pd=8.38u
+XM504 vref_buf xref_out1 vdd vdd sg13_hv_pmos l=1u w=8u as=1.52p ad=1.52p ps=8.38u pd=8.38u
+XM505 vdd xref_out1 vref_buf vdd sg13_hv_pmos l=1u w=8u as=1.52p ad=1.52p ps=8.38u pd=8.38u
+XM506 vref_buf xref_out1 vdd vdd sg13_hv_pmos l=1u w=8u as=1.52p ad=1.52p ps=8.38u pd=8.38u
+XM507 vdd xref_out1 vref_buf vdd sg13_hv_pmos l=1u w=8u as=1.52p ad=1.52p ps=8.38u pd=8.38u
+XM508 vref_buf xref_out1 vdd vdd sg13_hv_pmos l=1u w=8u as=1.52p ad=1.52p ps=8.38u pd=8.38u
+XM509 vdd xref_out1 vref_buf vdd sg13_hv_pmos l=1u w=8u as=1.52p ad=1.52p ps=8.38u pd=8.38u
+XM510 vref_buf xref_out1 vdd vdd sg13_hv_pmos l=1u w=8u as=1.52p ad=1.52p ps=8.38u pd=8.38u
+XM511 vdd xref_out1 vref_buf vdd sg13_hv_pmos l=1u w=8u as=1.52p ad=1.52p ps=8.38u pd=8.38u
+XM512 vref_buf xref_out1 vdd vdd sg13_hv_pmos l=1u w=8u as=1.52p ad=1.52p ps=8.38u pd=8.38u
+XM513 vdd xref_out1 vref_buf vdd sg13_hv_pmos l=1u w=8u as=1.52p ad=1.52p ps=8.38u pd=8.38u
+XM514 vref_buf xref_out1 vdd vdd sg13_hv_pmos l=1u w=8u as=1.52p ad=1.52p ps=8.38u pd=8.38u
+XM515 vdd xref_out1 vref_buf vdd sg13_hv_pmos l=1u w=8u as=1.52p ad=1.52p ps=8.38u pd=8.38u
+XM516 vref_buf xref_out1 vdd vdd sg13_hv_pmos l=1u w=8u as=1.52p ad=1.52p ps=8.38u pd=8.38u
+XM517 vdd xref_out1 vref_buf vdd sg13_hv_pmos l=1u w=8u as=1.52p ad=2.72p ps=8.38u pd=16.68u
+XR518 n_8 vped_ref vss rppd w=2u l=76.7u b=0 m=1
+XR519 n_8 n_168 vss rppd w=2u l=76.7u b=0 m=1
+XR520 n_9 n_168 vss rppd w=2u l=76.7u b=0 m=1
+XR521 n_9 n_169 vss rppd w=2u l=76.7u b=0 m=1
+XR522 n_10 n_169 vss rppd w=2u l=76.7u b=0 m=1
+XR523 n_10 n_170 vss rppd w=2u l=76.7u b=0 m=1
+XR524 n_11 n_170 vss rppd w=2u l=76.7u b=0 m=1
+XR525 n_11 n_171 vss rppd w=2u l=76.7u b=0 m=1
+XR526 n_12 n_171 vss rppd w=2u l=76.7u b=0 m=1
+XR527 n_12 n_172 vss rppd w=2u l=76.7u b=0 m=1
+XR528 n_13 n_172 vss rppd w=2u l=76.7u b=0 m=1
+XR529 n_13 n_173 vss rppd w=2u l=76.7u b=0 m=1
+XR530 n_14 n_173 vss rppd w=2u l=76.7u b=0 m=1
+XR531 n_15 vn vss rppd w=2u l=76.7u b=0 m=1
+XR532 n_15 n_174 vss rppd w=2u l=76.7u b=0 m=1
+XR533 n_16 n_174 vss rppd w=2u l=76.7u b=0 m=1
+XR534 n_16 n_175 vss rppd w=2u l=76.7u b=0 m=1
+XR535 n_17 n_175 vss rppd w=2u l=76.7u b=0 m=1
+XR536 n_17 n_176 vss rppd w=2u l=76.7u b=0 m=1
+XR537 n_18 n_176 vss rppd w=2u l=76.7u b=0 m=1
+XR538 n_18 n_177 vss rppd w=2u l=76.7u b=0 m=1
+XR539 n_19 n_177 vss rppd w=2u l=76.7u b=0 m=1
+XR540 n_19 n_178 vss rppd w=2u l=76.7u b=0 m=1
+XR541 sense_n vn vss rppd w=2u l=76.7u b=0 m=1
+XR542 sense_p vp vss rppd w=2u l=76.7u b=0 m=1
+XR543 n_22 vp vss rppd w=2u l=76.7u b=0 m=1
+XR544 n_22 n_179 vss rppd w=2u l=76.7u b=0 m=1
+XR545 n_23 n_179 vss rppd w=2u l=76.7u b=0 m=1
+XR546 n_23 n_180 vss rppd w=2u l=76.7u b=0 m=1
+XR547 n_24 n_180 vss rppd w=2u l=76.7u b=0 m=1
+XR548 n_24 n_181 vss rppd w=2u l=76.7u b=0 m=1
+XR549 n_25 n_181 vss rppd w=2u l=76.7u b=0 m=1
+XR550 n_25 n_182 vss rppd w=2u l=76.7u b=0 m=1
+XR551 n_26 n_182 vss rppd w=2u l=76.7u b=0 m=1
+XR552 n_26 n_183 vss rppd w=2u l=76.7u b=0 m=1
+XR553 n_27 n_184 vss rppd w=2u l=76.7u b=0 m=1
+XR554 n_27 n_185 vss rppd w=2u l=76.7u b=0 m=1
+XR555 n_28 n_185 vss rppd w=2u l=76.7u b=0 m=1
+XR556 n_28 n_186 vss rppd w=2u l=76.7u b=0 m=1
+XR557 n_29 n_186 vss rppd w=2u l=76.7u b=0 m=1
+XR558 n_29 n_187 vss rppd w=2u l=76.7u b=0 m=1
+XR559 n_30 n_187 vss rppd w=2u l=76.7u b=0 m=1
+XR560 n_30 n_188 vss rppd w=2u l=76.7u b=0 m=1
+XR561 n_31 n_188 vss rppd w=2u l=76.7u b=0 m=1
+XR562 n_31 n_189 vss rppd w=2u l=76.7u b=0 m=1
+XR563 n_32 n_189 vss rppd w=2u l=76.7u b=0 m=1
+XR564 n_32 n_190 vss rppd w=2u l=76.7u b=0 m=1
+XR565 n_14 n_190 vss rppd w=2u l=76.7u b=0 m=1
+XR566 xbuf_out1 xbuf_cz vss rppd w=1u l=6.2u b=0 m=1
+XR567 xota_out1 xota_cz vss rppd w=1u l=6.2u b=0 m=1
+XR568 n_203 n_351 vss rppd w=2u l=76.7u b=0 m=1
+XR569 n_203 n_352 vss rppd w=2u l=76.7u b=0 m=1
+XR570 n_204 n_352 vss rppd w=2u l=76.7u b=0 m=1
+XR571 n_204 n_353 vss rppd w=2u l=76.7u b=0 m=1
+XR572 n_205 n_353 vss rppd w=2u l=76.7u b=0 m=1
+XR573 n_205 n_354 vss rppd w=2u l=76.7u b=0 m=1
+XR574 n_206 n_354 vss rppd w=2u l=76.7u b=0 m=1
+XR575 n_206 n_355 vss rppd w=2u l=76.7u b=0 m=1
+XR576 n_207 n_355 vss rppd w=2u l=76.7u b=0 m=1
+XR577 n_207 n_356 vss rppd w=2u l=76.7u b=0 m=1
+XR578 n_208 n_356 vss rppd w=2u l=76.7u b=0 m=1
+XR579 n_208 n_357 vss rppd w=2u l=76.7u b=0 m=1
+XR580 n_184 n_357 vss rppd w=2u l=76.7u b=0 m=1
+XR581 n_209 n_183 vss rppd w=2u l=76.7u b=0 m=1
+XR582 n_209 n_358 vss rppd w=2u l=76.7u b=0 m=1
+XR583 n_210 n_358 vss rppd w=2u l=76.7u b=0 m=1
+XR584 n_210 n_359 vss rppd w=2u l=76.7u b=0 m=1
+XR585 n_211 n_359 vss rppd w=2u l=76.7u b=0 m=1
+XR586 n_211 n_360 vss rppd w=2u l=76.7u b=0 m=1
+XR587 n_212 n_360 vss rppd w=2u l=76.7u b=0 m=1
+XR588 n_212 n_361 vss rppd w=2u l=76.7u b=0 m=1
+XR589 n_213 n_361 vss rppd w=2u l=76.7u b=0 m=1
+XR590 n_213 vped vss rppd w=2u l=76.7u b=0 m=1
+XR591 n_214 vref_buf vss rppd w=2u l=76.7u b=0 m=1
+XR592 n_214 vped_ref vss rppd w=2u l=76.7u b=0 m=1
+XR593 n_215 n_178 vss rppd w=2u l=76.7u b=0 m=1
+XR594 n_215 n_362 vss rppd w=2u l=76.7u b=0 m=1
+XR595 n_216 n_362 vss rppd w=2u l=76.7u b=0 m=1
+XR596 n_216 n_363 vss rppd w=2u l=76.7u b=0 m=1
+XR597 n_217 n_363 vss rppd w=2u l=76.7u b=0 m=1
+XR598 n_217 n_364 vss rppd w=2u l=76.7u b=0 m=1
+XR599 n_218 n_364 vss rppd w=2u l=76.7u b=0 m=1
+XR600 n_218 n_365 vss rppd w=2u l=76.7u b=0 m=1
+XR601 n_219 n_365 vss rppd w=2u l=76.7u b=0 m=1
+XR602 n_219 isense vss rppd w=2u l=76.7u b=0 m=1
+XR603 n_220 n_351 vss rppd w=2u l=76.7u b=0 m=1
+XR604 n_220 n_366 vss rppd w=2u l=76.7u b=0 m=1
+XR605 n_221 n_366 vss rppd w=2u l=76.7u b=0 m=1
+XR606 n_221 n_367 vss rppd w=2u l=76.7u b=0 m=1
+XR607 n_222 n_367 vss rppd w=2u l=76.7u b=0 m=1
+XR608 n_222 n_368 vss rppd w=2u l=76.7u b=0 m=1
+XR609 n_223 n_368 vss rppd w=2u l=76.7u b=0 m=1
+XR610 n_223 n_369 vss rppd w=2u l=76.7u b=0 m=1
+XR611 n_224 n_369 vss rppd w=2u l=76.7u b=0 m=1
+XR612 n_224 n_370 vss rppd w=2u l=76.7u b=0 m=1
+XR613 n_225 n_370 vss rppd w=2u l=76.7u b=0 m=1
+XR614 n_225 vss vss rppd w=2u l=76.7u b=0 m=1
+XR615 xref_out1 xref_cz vss rppd w=1u l=6.2u b=0 m=1
+XCC_xota xota_cz isense cap_cmim w=23u l=23u m=1
+XCC_xbuf xbuf_cz vped cap_cmim w=23u l=23u m=1
+XCC_xref xref_cz vref_buf cap_cmim w=23u l=23u m=1
+.ends g1_sense

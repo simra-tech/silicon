@@ -1,0 +1,17 @@
+.control
+set filetype=ascii
+set wr_singlescale
+set wr_vecnames
+* MODEL EXTRAPOLATED: the PDK model cards are not characterised below -40 C
+dc temp -196 -40 4
+let iptat = i(vload)
+let itot = -i(vdd)
+wrdata @@OUT@@.dat v(vref) iptat itot v(vbe) v(dvbe) v(pbias) v(pcasc)
+meas dc vm196 find v(vref) at=-196
+meas dc vm150 find v(vref) at=-150
+meas dc vm100 find v(vref) at=-100
+meas dc vm40 find v(vref) at=-40
+meas dc ipm196 find iptat at=-196
+meas dc vbem196 find v(vbe) at=-196
+meas dc dvbem196 find v(dvbe) at=-196
+.endc
