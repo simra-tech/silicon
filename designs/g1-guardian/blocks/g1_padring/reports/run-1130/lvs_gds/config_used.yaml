@@ -1,0 +1,105 @@
+# SPDX-License-Identifier: Apache-2.0
+# G1_PADRING: LibreLane Chip flow for the 24-pin G1 ring with a placeholder core.
+# Derived from iic-jku/ihp-sg13g2-ams-chip-template flow/librelane/config.yaml
+# (commit 6524ffdd, Apache-2.0 WITH SHL-2.1); reduced to the ring, the stock
+# PDK sg13g2_io library and the PDK's 1.2 V corners (PDK defaults, not overridden).
+# Geometry arithmetic is in ../README.md.
+
+meta:
+  version: 3
+  flow: Chip
+  substituting_steps:
+    # As in the template: Magic reports abutment overlaps between IO cells that
+    # are intentional; the checker is recorded as "not run" in the README.
+    Checker.IllegalOverlap: null
+
+DESIGN_NAME: g1_chip_top
+VERILOG_FILES:
+  - dir::../../../designs/g1-guardian/blocks/g1_padring/rtl/g1_chip_top.sv
+  - dir::../../../designs/g1-guardian/blocks/g1_padring/rtl/g1_core_placeholder.sv
+
+PRIMARY_GDSII_STREAMOUT_TOOL: klayout
+
+# ---------------------------------------------------------------------------
+# Pad ring: pin map of specification section 3.
+#   PAD_SOUTH / PAD_NORTH: left to right; PAD_EAST / PAD_WEST: bottom to top.
+# ---------------------------------------------------------------------------
+PAD_SOUTH: [pad01_vdd, pad02_vss, pad03_iovdd, pad04_iovss, pad05_vss, pad06_iovss]
+PAD_EAST:  [pad07_vdd, pad08_sense_p, pad09_sense_n, pad10_gate, pad11_fault_n, pad12_en]
+PAD_NORTH: [pad13_trip_set, pad14_sclk, pad15_sdi, pad16_sdo, pad17_temp_out, pad18_vref]
+PAD_WEST:  [pad19_g_shared, pad20_d_std, pad21_d_elt, pad22_hbt_e, pad23_hbt_b, pad24_hbt_c]
+
+# Die edge to IO-cell row (PDK default is 140: sealring 0..36.4 from the edge,
+# bondpad 70..140, pad opening 36.2 um from the EdgeSeal, above the 25 um
+# recommended clearance). 140.5 so that the pad gaps below land on grid.
+PAD_EDGE_SPACING: 140.5
+
+# Pad placement (OpenROAD.PadRing, librelane/scripts/openroad/common/pad_cfg.tcl):
+#   side  = DIE - 2*PAD_EDGE_SPACING - 2*180 (corners) = 1200 - 281 - 360 = 559
+#   fill  = side - 6*80 = 79
+#   gap   = floor(fill / (6+1) / MULTIPLE) * MULTIPLE = floor(79/7) = 11 um
+#   ends  = (fill - 5*gap) / 2 = 12 um          -> on the 1 um sg13g2_ioSite grid
+# Pitch 91 um. A gap is required anyway between abutted supply pads (contact
+# spacing, PLAN.md R10); the placer applies one gap per side.
+# (The earlier 1130 um frame: side 489, fill 9, gap 1, ends 2, pitch 81 um.)
+PAD_SPACING_MULTIPLE: 1
+
+# Bondpad: 70 x 70 um from the PDK 'bondpad' PCell, TopMetal1/TopMetal2 only
+# (ip/bondpad_70x70_tm1; the Metal3-up stack failed the antenna deck on the
+# three input pads, see ../README.md). Placed by the PDK default
+# PAD_BONDPAD_OFFSETS (5.0, -70.0), i.e. outside the IO cell towards the die
+# edge, abutting the cell's 70 x 3 um 'pad' stub at y = 0.
+PAD_BONDPAD_NAME: bondpad_70x70_tm1
+EXTRA_GDS:
+  - dir::../../../designs/g1-guardian/blocks/g1_padring/ip/bondpad_70x70_tm1/gds/bondpad_70x70_tm1.gds
+EXTRA_LEFS:
+  - dir::../../../designs/g1-guardian/blocks/g1_padring/ip/bondpad_70x70_tm1/lef/bondpad_70x70_tm1.lef
+IGNORE_DISCONNECTED_MODULES:
+  - bondpad_70x70_tm1
+
+# ---------------------------------------------------------------------------
+# Timing
+# ---------------------------------------------------------------------------
+PNR_SDC_FILE:     dir::../../../designs/g1-guardian/blocks/g1_padring/flow/g1_chip_top.sdc
+SIGNOFF_SDC_FILE: dir::../../../designs/g1-guardian/blocks/g1_padring/flow/g1_chip_top.sdc
+FALLBACK_SDC:     dir::../../../designs/g1-guardian/blocks/g1_padring/flow/g1_chip_top.sdc
+CLOCK_PORT: SCLK
+CLOCK_NET:  pad14_sclk/p2c
+CLOCK_PERIOD: 100   # ns; 10 MHz serial clock
+
+# ---------------------------------------------------------------------------
+# Power
+# ---------------------------------------------------------------------------
+VDD_NETS: [VDD]
+GND_NETS: [VSS]
+VERILOG_POWER_DEFINE: USE_POWER_PINS
+PDN_CORE_RING: true
+# 15 um is below the 30 um slotting limit (Slt.c); 5 um spacing for long metals.
+PDN_CORE_RING_VWIDTH: 15
+PDN_CORE_RING_HWIDTH: 15
+PDN_CORE_RING_VSPACING: 5
+PDN_CORE_RING_HSPACING: 5
+PDN_CORE_RING_CONNECT_TO_PADS: true
+PDN_ENABLE_PINS: false
+# several pads carry the same supply net
+MAGIC_EXT_UNIQUE: notopports
+MAGIC_EXT_USE_GDS: true
+
+# ---------------------------------------------------------------------------
+# Floorplan: 1200 x 1200 um die, IO-cell inner edge at 140.5 + 180 = 320.5,
+# core window 472 x 472 um leaving 43.5 um for the core ring
+# (4.5 offset + 15 + 5 + 15 = 39.5, 4 um to the IO cells).
+# ---------------------------------------------------------------------------
+FP_SIZING: absolute
+DIE_AREA:  [0, 0, 1200, 1200]
+CORE_AREA: [364, 364, 836, 836]
+
+PL_TARGET_DENSITY_PCT: 10
+GRT_ALLOW_CONGESTION: true
+
+# ---------------------------------------------------------------------------
+# Seal ring: PDK 'sealring' PCell via our own driver (same interface as the PDK
+# script). The PCell is broken above 1000 um in this PDK/KLayout combination;
+# sealring_g1.py builds the 1000 um ring and stretches it to the die (see file).
+# ---------------------------------------------------------------------------
+KLAYOUT_SEALRING_SCRIPT: dir::../../../designs/g1-guardian/blocks/g1_padring/flow/sealring_g1.py

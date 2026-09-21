@@ -1,0 +1,53 @@
+VERSION 5.8 ;
+BUSBITCHARS "[]" ;
+DIVIDERCHAR "/" ;
+
+MACRO g1_dut_macro
+  CLASS BLOCK ;
+  ORIGIN 0 0 ;
+  FOREIGN g1_dut_macro 0 0 ;
+  SIZE 34 BY 34 ;
+  SYMMETRY X Y ;
+  PIN HBT_C
+    DIRECTION INOUT ;
+    USE SIGNAL ;
+    PORT
+      LAYER Metal3 ;
+        RECT 0 21.85 1.5 22.15 ;
+    END
+  END HBT_C
+  PIN HBT_B
+    DIRECTION INOUT ;
+    USE SIGNAL ;
+    PORT
+      LAYER Metal3 ;
+        RECT 0 11.85 1.5 12.15 ;
+    END
+  END HBT_B
+  PIN HBT_E
+    DIRECTION INOUT ;
+    USE SIGNAL ;
+    PORT
+      LAYER Metal3 ;
+        RECT 0 23.35 1.5 23.65 ;
+    END
+  END HBT_E
+  PIN vss
+    DIRECTION INOUT ;
+    USE GROUND ;
+    PORT
+      LAYER Metal3 ;
+        RECT 0 0 34 2 ;
+    END
+  END vss
+  OBS
+    LAYER Metal1 ;
+      RECT 0 0 34 34 ;
+    LAYER Metal2 ;
+      RECT 0 0 34 34 ;
+    LAYER Metal3 ;
+      RECT 1.8 2.6 34 34 ;
+  END
+END g1_dut_macro
+
+END LIBRARY

@@ -1,0 +1,23 @@
+* G1_BGR testbench op: hbt=hbt_typ mos=mos_tt res=res_typ vdd=3.3 V
+.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerHBT.lib hbt_typ
+.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerMOShv.lib mos_tt
+.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerRES.lib res_typ
+.include ../../xschem/g1_bgr.spice
+.option gmin=1e-15 abstol=1e-14 reltol=1e-5 vntol=1e-7
+.global sub!
+Vsub sub! 0 dc 0
+Vdd vdd 0 dc 3.3 
+Vr4 r4 0 dc 0
+Xbgr vdd 0 r4 vref iptat pbias pcasc vbe dvbe g1_bgr
+* PTAT output leg sinks into a 1.0 V node (top of a DAC string stand-in)
+Vload iptat 0 dc 1.0
+Cload vref 0 1p
+.control
+option temp=-40
+op
+let iptat = i(vload)
+let itot = -i(vdd)
+print v(vref) v(vbe) v(dvbe) v(pbias) v(pcasc) v(xbgr.d1) v(xbgr.d2) v(xbgr.det) v(xbgr.kick) v(xbgr.vbe3) iptat itot
+.endc
+
+.end

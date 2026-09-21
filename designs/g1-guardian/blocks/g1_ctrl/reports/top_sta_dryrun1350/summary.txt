@@ -1,0 +1,15 @@
+# Chip-level signoff STA (OpenROAD.STAPostPnR of LibreLane 3.1.0.dev2) re-run on the padring dry run of record
+# (blocks/g1_padring, run tag dryrun-1350, step 54-openroad-stapostpnr: same ODB, netlists, SPEF and config.json),
+# once with the ring owner's flow/g1_chip_top.sdc (baseline) and once with blocks/g1_ctrl/layout/g1_digital_top.sdc
+# appended to it (test). Command (repository root, per case):
+#   G1_WORKDIR=build/g1_digital/topsta flow/run.sh python3 -m librelane.steps run --id OpenROAD.STAPostPnR -c <config.json> -i state_in.json -o <out>
+# where config.json is the step's own config.json with PNR_SDC_FILE/SIGNOFF_SDC_FILE/FALLBACK_SDC pointing at the SDC under test.
+# 2026-09-19T10:58Z. Worst slack per path group from report_checks; 'hold violations' = VIOLATED lines of the min report.
+== baseline: g1_chip_top.sdc as in the dry run
+nom_fast_1p32V_m40C: osc_clk paths reported=0 | worst hold (ns) per group: SCLK=-0.093989 | hold violations: 48 | worst setup (ns) per group: SCLK=28.546684 
+nom_typ_1p20V_25C: osc_clk paths reported=0 | worst hold (ns) per group: SCLK=-0.014877 | hold violations: 5 | worst setup (ns) per group: SCLK=27.957247 
+nom_slow_1p08V_125C: osc_clk paths reported=0 | worst hold (ns) per group: SCLK=0.126141 | hold violations: 0 | worst setup (ns) per group: SCLK=26.640514 
+== test: g1_chip_top.sdc + g1_digital_top.sdc
+nom_fast_1p32V_m40C: osc_clk paths reported=6003 | worst hold (ns) per group: SCLK=0.106011 osc_clk=0.125481 asynchronous=0.491170 | hold violations: 0 | worst setup (ns) per group: SCLK=28.296680 osc_clk=96.561920 asynchronous=98.040909 
+nom_typ_1p20V_25C: osc_clk paths reported=6003 | worst hold (ns) per group: SCLK=0.185123 osc_clk=0.204896 asynchronous=0.819073 | hold violations: 0 | worst setup (ns) per group: SCLK=27.707241 osc_clk=95.042213 asynchronous=97.193466 
+nom_slow_1p08V_125C: osc_clk paths reported=6003 | worst hold (ns) per group: SCLK=0.326141 osc_clk=0.347639 asynchronous=1.373440 | hold violations: 0 | worst setup (ns) per group: SCLK=26.390511 osc_clk=92.337410 asynchronous=95.825439 

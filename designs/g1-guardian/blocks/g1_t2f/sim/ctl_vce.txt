@@ -1,0 +1,37 @@
+.control
+set filetype=ascii
+tran 5n @@TEND@@ 0 10n
+* V_CE of every HBT in the sensor (whole run, including the en=0 hold before 1 us)
+let vce_qa1 = v(xt2f.@@CA1@@) - v(xt2f.tail1)
+let vce_qb1 = v(xt2f.@@CB1@@) - v(xt2f.tail1)
+let vce_qa2 = v(xt2f.@@CA2@@) - v(xt2f.tail2)
+let vce_qb2 = v(xt2f.@@CB2@@) - v(xt2f.tail2)
+meas tran vce_qa1_max max vce_qa1
+meas tran vce_qb1_max max vce_qb1
+meas tran vce_qa2_max max vce_qa2
+meas tran vce_qb2_max max vce_qb2
+meas tran vce_qa1_min min vce_qa1 from=2u
+meas tran vce_qb1_min min vce_qb1 from=2u
+meas tran vce_qa2_min min vce_qa2 from=2u
+meas tran vce_qb2_min min vce_qb2 from=2u
+* bandgap HBTs in the same run, for reference (Q1/Q3/QD2 diode-connected: V_CE = V_BE; Q1B off)
+let vce_bq1 = v(vbe)
+let vce_bq2 = v(xbgr.c2) - v(dvbe)
+let vce_bq3 = v(xbgr.vbe3)
+let vce_bqd1 = v(xbgr.vd1) - v(xbgr.vd2)
+let vce_bqd2 = v(xbgr.vd2)
+meas tran vce_bgr_q1_max max vce_bq1
+meas tran vce_bgr_q2_max max vce_bq2
+meas tran vce_bgr_q3_max max vce_bq3
+meas tran vce_bgr_qd1_max max vce_bqd1
+meas tran vce_bgr_qd2_max max vce_bqd2
+* the oscillator itself in the same run
+meas tran t_a when v(fout)=0.6 rise=@@NA@@
+meas tran t_b when v(fout)=0.6 rise=@@NB@@
+let freq = (@@NB@@-@@NA@@)/(t_b-t_a)
+print freq
+meas tran vth_avg avg v(xt2f.vth) from=t_a to=t_b
+meas tran vref_avg avg v(vref) from=t_a to=t_b
+meas tran cap1_max max v(xt2f.cap1) from=t_a to=t_b
+meas tran i33_avg avg i(vdd) from=t_a to=t_b
+.endc

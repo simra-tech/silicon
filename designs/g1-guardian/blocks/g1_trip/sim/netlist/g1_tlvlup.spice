@@ -1,0 +1,42 @@
+** sch_path: /work/designs/g1-guardian/blocks/g1_trip/schematic/g1_tlvlup.sch
+.subckt g1_tlvlup a y yb vdd vdda vss
+*.ipin a
+*.opin y
+*.opin yb
+*.iopin vdd
+*.iopin vdda
+*.iopin vss
+XI a ab vdd vss g1_inv
+XMN1 nb a vss vss sg13_hv_nmos w=1.9u l=0.45u ng=1 m=1 mm_ok=1
+XMN2 n ab vss vss sg13_hv_nmos w=1.9u l=0.45u ng=1 m=1 mm_ok=1
+XMP1 nb n vdda vdda sg13_hv_pmos w=0.3u l=0.45u ng=1 m=1 mm_ok=1
+XMP2 n nb vdda vdda sg13_hv_pmos w=0.3u l=0.45u ng=1 m=1 mm_ok=1
+XO nb y vdda vss g1_thv_inv
+XOB y yb vdda vss g1_thv_inv
+.ends
+
+* expanding   symbol:  g1_inv.sym # of pins=4
+** sym_path: /work/designs/g1-guardian/blocks/g1_trip/schematic/g1_inv.sym
+** sch_path: /work/designs/g1-guardian/blocks/g1_trip/schematic/g1_inv.sch
+.subckt g1_inv a y vdd vss
+*.ipin a
+*.opin y
+*.iopin vdd
+*.iopin vss
+XMP y a vdd vdd sg13_lv_pmos w=1u l=0.13u ng=1 m=1 mm_ok=1
+XMN y a vss vss sg13_lv_nmos w=0.5u l=0.13u ng=1 m=1 mm_ok=1
+.ends
+
+
+* expanding   symbol:  g1_thv_inv.sym # of pins=4
+** sym_path: /work/designs/g1-guardian/blocks/g1_trip/schematic/g1_thv_inv.sym
+** sch_path: /work/designs/g1-guardian/blocks/g1_trip/schematic/g1_thv_inv.sch
+.subckt g1_thv_inv a y vdda vss
+*.ipin a
+*.opin y
+*.iopin vdda
+*.iopin vss
+XMP y a vdda vdda sg13_hv_pmos w=3.9u l=0.45u ng=1 m=1 mm_ok=1
+XMN y a vss vss sg13_hv_nmos w=1.9u l=0.45u ng=1 m=1 mm_ok=1
+.ends
+

@@ -1,0 +1,11 @@
+* G1_DOSE schematic netlist (CDL) for LVS: standard sg13_lv_nmos PCell and the drawn ELT NMOS,
+* shared gate, common source and body on VSS. Intended (drawn) sizes:
+*   MSTD  PCell nmos w=3.98u l=0.5u ng=1 (single finger; W set to the extractor W of the ELT)
+*   MELT  ring gate L=0.5u, inner (drain) Activ 0.42u square: mean-perimeter W = 4(d+L) = 3.68u.
+*         The KLayout extractor reports W=3.98u (mean perimeter + the gate tab's two edges across the
+*         0.45u source ring: (2*0.45-0.30)/2 = 0.30u) and L=0.496231u (gate area 1.975 um^2 / W).
+*         The line below is written to the extractor's values (PLAN risk R4, option c).
+.subckt g1_dose_pair D_ELT D_STD G_SHARED VSS
+MSTD D_STD G_SHARED VSS VSS sg13_lv_nmos w=3.98u l=0.5u ng=1 m=1
+MELT D_ELT G_SHARED VSS VSS sg13_lv_nmos w=3.98u l=0.496231u ng=1 m=1
+.ends g1_dose_pair

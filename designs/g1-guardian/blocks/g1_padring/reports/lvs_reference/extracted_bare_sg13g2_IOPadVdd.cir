@@ -1,0 +1,15 @@
+.SUBCKT sg13g2_IOPadVdd gate|out in|pad|pin1|pin2|supply|vdd iovss iovss$1 vss
+M$1 iovss gate|out in|pad|pin1|pin2|supply|vdd \$1 sg13_hv_nmos L=0.6u W=756.8u
++ AS=344.608p AD=349.36p PS=931.04u PD=933.2u rfmode=0
+M$173 iovss$1 in|pad|pin1|pin2|supply|vdd gate|out \$1 sg13_hv_nmos L=0.5u
++ W=108u AS=23.22p AD=20.52p PS=131.16u PD=112.56u rfmode=0
+M$179 iovss$1 in|pad|pin1|pin2|supply|vdd iovss$1 \$1 sg13_hv_nmos L=9.5u
++ W=126u AS=23.94p AD=26.64p PS=131.32u PD=149.92u rfmode=0
+M$199 in|pad|pin1|pin2|supply|vdd in|pad|pin1|pin2|supply|vdd gate|out
++ in|pad|pin1|pin2|supply|vdd sg13_hv_pmos L=0.5u W=350u AS=67.55p AD=67.55p
++ PS=376.3u PD=376.3u rfmode=0
+D$249 \$1 gate|out dantenna A=0.2304p P=1.92u m=1
+R$250 iovss \$1 ptap1 A=65.6472p P=386.16u
+R$251 iovss$1 \$1 ptap1 A=2051.93485p P=727.53u
+R$252 vss \$1 ptap1 A=24p P=160.6u
+.ENDS sg13g2_IOPadVdd

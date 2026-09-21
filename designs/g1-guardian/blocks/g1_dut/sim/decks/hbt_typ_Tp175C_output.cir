@@ -1,0 +1,19 @@
+* G1_DUT npn13G2 output curves: corner hbt_typ, T = 175 C  (MODEL EXTRAPOLATED: outside the -40..125 C card range)
+.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerHBT.lib hbt_typ
+.option gmin=1e-15 abstol=1e-15 reltol=1e-4
+.temp 175
+
+Ib 0 b dc 1u
+Vce c 0 dc 1.0
+XQ1 c b e 0 npn13G2 Nx=1
+Ve e 0 dc 0
+
+.control
+set filetype=ascii
+set wr_singlescale
+set wr_vecnames
+dc Vce 0 1.6 0.01 Ib 1u 8u 1u
+let ic = -i(vce)
+wrdata hbt_typ_Tp175C_output.dat ic
+.endc
+.end

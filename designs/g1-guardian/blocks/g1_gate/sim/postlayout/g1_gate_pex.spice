@@ -1,0 +1,636 @@
+* G1_GATE post-layout netlist: kpex 2.5D extraction (--mode CC), reformatted for ngspice by
+* sim/postlayout/make_pex_netlist.py (see its docstring). source: g1_gate_k25d_pex_netlist.spice
+.subckt g1_gate trip_d clr_d fast_en hard_cmp en_core gate_core fault_core tripped vdd vdda vss
+XM1 vdd n_11 gate_core vdd sg13_lv_pmos l=0.13u w=1u as=0.34p ad=0.19p ps=2.68u pd=1.38u
+XM2 n_11 gate_core vdd vdd sg13_lv_pmos l=0.13u w=1u as=0.19p ad=0.34p ps=1.38u pd=2.68u
+XM3 vdd n_13 tripped vdd sg13_lv_pmos l=0.13u w=1u as=0.34p ad=0.19p ps=2.68u pd=1.38u
+XM4 n_13 tripped vdd vdd sg13_lv_pmos l=0.13u w=1u as=0.19p ad=0.34p ps=1.38u pd=2.68u
+XM5 vdd n_12 fault_core vdd sg13_lv_pmos l=0.13u w=1u as=0.34p ad=0.19p ps=2.68u pd=1.38u
+XM6 n_12 fault_core vdd vdd sg13_lv_pmos l=0.13u w=1u as=0.19p ad=0.34p ps=1.38u pd=2.68u
+XM7 n_6 n_4 vss vss sg13_lv_nmos l=0.13u w=1u as=0.34p ad=0.34p ps=2.68u pd=2.68u
+XM8 n_10 en_core vss vss sg13_lv_nmos l=0.13u w=1u as=0.34p ad=0.34p ps=2.68u pd=2.68u
+XM9 n_9 clr_d vss vss sg13_lv_nmos l=0.13u w=1u as=0.34p ad=0.34p ps=2.68u pd=2.68u
+XM10 n_8 trip_d vss vss sg13_lv_nmos l=0.13u w=1u as=0.34p ad=0.34p ps=2.68u pd=2.68u
+XM11 n_7 n_6 vss vss sg13_lv_nmos l=0.13u w=1u as=0.34p ad=0.34p ps=2.68u pd=2.68u
+XM12 n_6 n_4 vdd vdd sg13_lv_pmos l=0.13u w=2u as=0.68p ad=0.68p ps=4.68u pd=4.68u
+XM13 n_10 en_core vdd vdd sg13_lv_pmos l=0.13u w=2u as=0.68p ad=0.68p ps=4.68u pd=4.68u
+XM14 n_9 clr_d vdd vdd sg13_lv_pmos l=0.13u w=2u as=0.68p ad=0.68p ps=4.68u pd=4.68u
+XM15 n_8 trip_d vdd vdd sg13_lv_pmos l=0.13u w=2u as=0.68p ad=0.68p ps=4.68u pd=4.68u
+XM16 n_7 n_6 vdd vdd sg13_lv_pmos l=0.13u w=2u as=0.68p ad=0.68p ps=4.68u pd=4.68u
+XM17 n_I233 hard_cmp n_4 vss sg13_lv_nmos l=0.13u w=2u as=0.68p ad=0.38p ps=4.68u pd=2.38u
+XM18 vss fast_en n_I233 vss sg13_lv_nmos l=0.13u w=2u as=0.38p ad=0.68p ps=2.38u pd=4.68u
+XM19 vdd hard_cmp n_4 vdd sg13_lv_pmos l=0.13u w=2u as=0.68p ad=0.38p ps=4.68u pd=2.38u
+XM20 n_4 fast_en vdd vdd sg13_lv_pmos l=0.13u w=2u as=0.38p ad=0.68p ps=2.38u pd=4.68u
+XM21 vss n_36 n_11 vss sg13_hv_nmos l=0.45u w=2u as=0.68p ad=0.38p ps=4.68u pd=2.38u
+XM22 gate_core n_37 vss vss sg13_hv_nmos l=0.45u w=2u as=0.38p ad=0.68p ps=2.38u pd=4.68u
+XM23 vss n_35 n_12 vss sg13_hv_nmos l=0.45u w=2u as=0.68p ad=0.38p ps=4.68u pd=2.38u
+XM24 fault_core n_34 vss vss sg13_hv_nmos l=0.45u w=2u as=0.38p ad=0.68p ps=2.38u pd=4.68u
+XM25 vss n_34 n_13 vss sg13_hv_nmos l=0.45u w=2u as=0.68p ad=0.38p ps=4.68u pd=2.38u
+XM26 tripped n_35 vss vss sg13_hv_nmos l=0.45u w=2u as=0.38p ad=0.68p ps=2.38u pd=4.68u
+XM27 n_I234 n_19 vdda vdda sg13_hv_pmos l=0.45u w=7.8u as=2.652p ad=1.482p ps=16.28u pd=8.18u
+XM28 n_29 n_22 n_I234 vdda sg13_hv_pmos l=0.45u w=7.8u as=1.482p ad=2.652p ps=8.18u pd=16.28u
+XM29 n_I235 n_31 vdda vdda sg13_hv_pmos l=0.45u w=7.8u as=2.652p ad=1.482p ps=16.28u pd=8.18u
+XM30 n_32 n_25 n_I235 vdda sg13_hv_pmos l=0.45u w=7.8u as=1.482p ad=2.652p ps=8.18u pd=16.28u
+XM31 n_I236 n_30 vdda vdda sg13_hv_pmos l=0.45u w=7.8u as=2.652p ad=1.482p ps=16.28u pd=8.18u
+XM32 n_35 n_34 n_I236 vdda sg13_hv_pmos l=0.45u w=7.8u as=1.482p ad=2.652p ps=8.18u pd=16.28u
+XM33 n_I237 n_31 vdda vdda sg13_hv_pmos l=0.45u w=7.8u as=2.652p ad=1.482p ps=16.28u pd=8.18u
+XM34 n_36 n_34 n_I237 vdda sg13_hv_pmos l=0.45u w=7.8u as=1.482p ad=2.652p ps=8.18u pd=16.28u
+XM35 n_I238 n_33 vdda vdda sg13_hv_pmos l=0.45u w=7.8u as=2.652p ad=1.482p ps=16.28u pd=8.18u
+XM36 n_34 n_35 n_I238 vdda sg13_hv_pmos l=0.45u w=7.8u as=1.482p ad=2.652p ps=8.18u pd=16.28u
+XM37 n_19 n_18 vss vss sg13_hv_nmos l=0.45u w=1.9u as=0.646p ad=0.646p ps=4.48u pd=4.48u
+XM38 n_22 n_21 vss vss sg13_hv_nmos l=0.45u w=1.9u as=0.646p ad=0.646p ps=4.48u pd=4.48u
+XM39 n_37 n_36 vss vss sg13_hv_nmos l=0.45u w=1.9u as=0.646p ad=0.646p ps=4.48u pd=4.48u
+XM40 n_33 n_32 vss vss sg13_hv_nmos l=0.45u w=1.9u as=0.646p ad=0.646p ps=4.48u pd=4.48u
+XM41 n_25 n_24 vss vss sg13_hv_nmos l=0.45u w=1.9u as=0.646p ad=0.646p ps=4.48u pd=4.48u
+XM42 n_31 n_28 vss vss sg13_hv_nmos l=0.45u w=1.9u as=0.646p ad=0.646p ps=4.48u pd=4.48u
+XM43 n_30 n_29 vss vss sg13_hv_nmos l=0.45u w=1.9u as=0.646p ad=0.646p ps=4.48u pd=4.48u
+XM44 n_28 n_27 vss vss sg13_hv_nmos l=0.45u w=1.9u as=0.646p ad=0.646p ps=4.48u pd=4.48u
+XM45 n_19 n_18 vdda vdda sg13_hv_pmos l=0.45u w=3.9u as=1.326p ad=1.326p ps=8.48u pd=8.48u
+XM46 n_22 n_21 vdda vdda sg13_hv_pmos l=0.45u w=3.9u as=1.326p ad=1.326p ps=8.48u pd=8.48u
+XM47 n_25 n_24 vdda vdda sg13_hv_pmos l=0.45u w=3.9u as=1.326p ad=1.326p ps=8.48u pd=8.48u
+XM48 n_28 n_27 vdda vdda sg13_hv_pmos l=0.45u w=3.9u as=1.326p ad=1.326p ps=8.48u pd=8.48u
+XM49 n_30 n_29 vdda vdda sg13_hv_pmos l=0.45u w=3.9u as=1.326p ad=1.326p ps=8.48u pd=8.48u
+XM50 n_31 n_28 vdda vdda sg13_hv_pmos l=0.45u w=3.9u as=1.326p ad=1.326p ps=8.48u pd=8.48u
+XM51 n_37 n_36 vdda vdda sg13_hv_pmos l=0.45u w=3.9u as=1.326p ad=1.326p ps=8.48u pd=8.48u
+XM52 n_33 n_32 vdda vdda sg13_hv_pmos l=0.45u w=3.9u as=1.326p ad=1.326p ps=8.48u pd=8.48u
+XM53 n_18 n_17 vdda vdda sg13_hv_pmos l=0.45u w=0.3u as=0.102p ad=0.102p ps=1.28u pd=1.28u
+XM54 n_26 n_27 vdda vdda sg13_hv_pmos l=0.45u w=0.3u as=0.102p ad=0.102p ps=1.28u pd=1.28u
+XM55 n_27 n_26 vdda vdda sg13_hv_pmos l=0.45u w=0.3u as=0.102p ad=0.102p ps=1.28u pd=1.28u
+XM56 n_17 n_18 vdda vdda sg13_hv_pmos l=0.45u w=0.3u as=0.102p ad=0.102p ps=1.28u pd=1.28u
+XM57 n_23 n_24 vdda vdda sg13_hv_pmos l=0.45u w=0.3u as=0.102p ad=0.102p ps=1.28u pd=1.28u
+XM58 n_24 n_23 vdda vdda sg13_hv_pmos l=0.45u w=0.3u as=0.102p ad=0.102p ps=1.28u pd=1.28u
+XM59 n_21 n_20 vdda vdda sg13_hv_pmos l=0.45u w=0.3u as=0.102p ad=0.102p ps=1.28u pd=1.28u
+XM60 n_20 n_21 vdda vdda sg13_hv_pmos l=0.45u w=0.3u as=0.102p ad=0.102p ps=1.28u pd=1.28u
+XM61 vss n_6 n_18 vss sg13_hv_nmos l=0.45u w=1.9u as=0.646p ad=0.361p ps=4.48u pd=2.28u
+XM62 n_17 n_7 vss vss sg13_hv_nmos l=0.45u w=1.9u as=0.361p ad=0.646p ps=2.28u pd=4.48u
+XM63 vss n_31 n_36 vss sg13_hv_nmos l=0.45u w=1.9u as=0.646p ad=0.361p ps=4.48u pd=2.28u
+XM64 n_36 n_34 vss vss sg13_hv_nmos l=0.45u w=1.9u as=0.361p ad=0.646p ps=2.28u pd=4.48u
+XM65 vss trip_d n_21 vss sg13_hv_nmos l=0.45u w=1.9u as=0.646p ad=0.361p ps=4.48u pd=2.28u
+XM66 n_20 n_8 vss vss sg13_hv_nmos l=0.45u w=1.9u as=0.361p ad=0.646p ps=2.28u pd=4.48u
+XM67 vss n_30 n_35 vss sg13_hv_nmos l=0.45u w=1.9u as=0.646p ad=0.361p ps=4.48u pd=2.28u
+XM68 n_35 n_34 vss vss sg13_hv_nmos l=0.45u w=1.9u as=0.361p ad=0.646p ps=2.28u pd=4.48u
+XM69 vss n_33 n_34 vss sg13_hv_nmos l=0.45u w=1.9u as=0.646p ad=0.361p ps=4.48u pd=2.28u
+XM70 n_34 n_35 vss vss sg13_hv_nmos l=0.45u w=1.9u as=0.361p ad=0.646p ps=2.28u pd=4.48u
+XM71 vss n_31 n_32 vss sg13_hv_nmos l=0.45u w=1.9u as=0.646p ad=0.361p ps=4.48u pd=2.28u
+XM72 n_32 n_25 vss vss sg13_hv_nmos l=0.45u w=1.9u as=0.361p ad=0.646p ps=2.28u pd=4.48u
+XM73 vss en_core n_27 vss sg13_hv_nmos l=0.45u w=1.9u as=0.646p ad=0.361p ps=4.48u pd=2.28u
+XM74 n_26 n_10 vss vss sg13_hv_nmos l=0.45u w=1.9u as=0.361p ad=0.646p ps=2.28u pd=4.48u
+XM75 vss n_19 n_29 vss sg13_hv_nmos l=0.45u w=1.9u as=0.646p ad=0.361p ps=4.48u pd=2.28u
+XM76 n_29 n_22 vss vss sg13_hv_nmos l=0.45u w=1.9u as=0.361p ad=0.646p ps=2.28u pd=4.48u
+XM77 vss clr_d n_24 vss sg13_hv_nmos l=0.45u w=1.9u as=0.646p ad=0.361p ps=4.48u pd=2.28u
+XM78 n_23 n_9 vss vss sg13_hv_nmos l=0.45u w=1.9u as=0.361p ad=0.646p ps=2.28u pd=4.48u
+C1 n_10 n_11 2.96552f
+C2 n_10 n_12 83.47e-18
+C3 n_10 n_13 1.69989e-18
+C4 n_10 n_19 43.4069e-18
+C5 n_10 n_22 35.3936e-18
+C6 n_10 n_24 0.449634e-18
+C7 n_10 n_25 39.2196e-18
+C8 n_10 n_26 2.24119f
+C9 n_10 n_27 558.37e-18
+C10 n_10 n_28 99.5163e-18
+C11 n_10 n_29 444.682e-18
+C12 n_10 n_30 87.4333e-18
+C13 n_10 n_31 130.713e-18
+C14 n_10 n_32 126.658e-18
+C15 n_10 n_33 91.8792e-18
+C16 n_10 n_34 227.023e-18
+C17 n_10 n_35 189.908e-18
+C18 n_10 n_36 167.522e-18
+C19 n_10 n_37 81.5768e-18
+C20 n_10 n_4 0.438331e-18
+C21 n_10 n_7 0.20253e-18
+C22 n_10 n_8 0.456216e-18
+C23 n_10 n_9 1.20754f
+C24 n_10 n_I234 0.391101e-18
+C25 n_10 n_I235 0.391101e-18
+C26 n_10 n_I236 0.391101e-18
+C27 n_10 n_I237 0.391101e-18
+C28 n_10 n_I238 0.391101e-18
+C29 n_10 clr_d 0.143699e-18
+C30 n_10 en_core 505.508e-18
+C31 n_10 fault_core 1.90722f
+C32 n_10 gate_core 101.729e-18
+C33 n_10 tripped 80.2715e-18
+C34 n_10 vdd 296.638e-18
+C35 n_10 vdda 158.026e-18
+C36 n_10 vss 217.473e-18
+C37 n_10 vss 3.74362f
+C38 n_11 n_12 145.085e-18
+C39 n_11 n_13 1.20266e-18
+C40 n_11 n_34 67.4656e-18
+C41 n_11 n_35 61.8158e-18
+C42 n_11 n_36 1.47419f
+C43 n_11 n_37 99.1315e-18
+C44 n_11 n_4 0.684325e-18
+C45 n_11 n_6 0.303795e-18
+C46 n_11 n_7 0.292221e-18
+C47 n_11 n_8 0.80177e-18
+C48 n_11 n_9 2.14822f
+C49 n_11 en_core 20.4915e-18
+C50 n_11 fault_core 242.816e-18
+C51 n_11 gate_core 3.01561f
+C52 n_11 tripped 325.042e-18
+C53 n_11 vdd 223.148e-18
+C54 n_11 vdda 49.8561e-18
+C55 n_11 vss 137.046e-18
+C56 n_11 vss 1.77203f
+C57 n_12 n_13 3.68387e-18
+C58 n_12 n_34 100.219e-18
+C59 n_12 n_35 1.80936f
+C60 n_12 n_36 0.943543e-18
+C61 n_12 n_37 91.9972e-18
+C62 n_12 n_4 117.243e-18
+C63 n_12 n_6 1.30441f
+C64 n_12 n_7 121.679e-18
+C65 n_12 n_8 121.354e-18
+C66 n_12 n_9 79.3314e-18
+C67 n_12 clr_d 0.292221e-18
+C68 n_12 en_core 0.588398e-18
+C69 n_12 fast_en 1.69989e-18
+C70 n_12 fault_core 3.09498f
+C71 n_12 gate_core 3.60085f
+C72 n_12 hard_cmp 0.80177e-18
+C73 n_12 trip_d 0.20253e-18
+C74 n_12 tripped 161.463e-18
+C75 n_12 vdd 219.925e-18
+C76 n_12 vdda 36.1873e-18
+C77 n_12 vss 135.954e-18
+C78 n_12 vss 1.82738f
+C79 n_13 n_34 1.24738f
+C80 n_13 n_35 50.7589e-18
+C81 n_13 n_8 0.20253e-18
+C82 n_13 n_9 0.456216e-18
+C83 n_13 fault_core 4.21957f
+C84 n_13 gate_core 82.051e-18
+C85 n_13 tripped 4.11802f
+C86 n_13 vdd 217.506e-18
+C87 n_13 vdda 313.524e-18
+C88 n_13 vss 218.951e-18
+C89 n_13 vss 2.3172f
+C90 n_17 n_18 2.81343f
+C91 n_17 n_19 26.6714e-18
+C92 n_17 n_21 2.20121e-18
+C93 n_17 n_6 84.391e-18
+C94 n_17 n_7 3.26082f
+C95 n_17 clr_d 0.684325e-18
+C96 n_17 en_core 1.20266e-18
+C97 n_17 fast_en 590.839e-18
+C98 n_17 hard_cmp 2.54983e-18
+C99 n_17 trip_d 0.438331e-18
+C100 n_17 vdd 3.10913e-18
+C101 n_17 vdda 322.693e-18
+C102 n_17 vss 134.39e-18
+C103 n_17 vss 1.78049f
+C104 n_18 n_19 800.855e-18
+C105 n_18 n_20 11.7471e-18
+C106 n_18 n_21 1.34626e-18
+C107 n_18 n_6 4.09325f
+C108 n_18 n_7 225.147e-18
+C109 n_18 n_8 0.449634e-18
+C110 n_18 clr_d 0.584441e-18
+C111 n_18 en_core 0.912433e-18
+C112 n_18 fast_en 80.4734e-18
+C113 n_18 hard_cmp 1.60354e-18
+C114 n_18 trip_d 8.23989e-18
+C115 n_18 vdd 2.36296e-18
+C116 n_18 vdda 477.189e-18
+C117 n_18 vss 187.617e-18
+C118 n_18 vss 3.5457f
+C119 n_19 n_20 804.735e-18
+C120 n_19 n_21 47.4615e-18
+C121 n_19 n_22 2.89389f
+C122 n_19 n_23 0.684325e-18
+C123 n_19 n_24 0.40506e-18
+C124 n_19 n_25 43.2418e-18
+C125 n_19 n_26 0.523575e-18
+C126 n_19 n_27 68.3289e-18
+C127 n_19 n_28 543.732e-18
+C128 n_19 n_29 1.50486f
+C129 n_19 n_30 9.48147e-18
+C130 n_19 n_6 273.06e-18
+C131 n_19 n_7 89.9446e-18
+C132 n_19 n_8 43.3995e-18
+C133 n_19 n_9 41.9892e-18
+C134 n_19 n_I234 170.217e-18
+C135 n_19 clr_d 45.0961e-18
+C136 n_19 en_core 45.4417e-18
+C137 n_19 fast_en 3.4328f
+C138 n_19 hard_cmp 1.69989e-18
+C139 n_19 trip_d 119.741e-18
+C140 n_19 vdd 7.72419e-18
+C141 n_19 vdda 511.355e-18
+C142 n_19 vss 176.934e-18
+C143 n_19 vss 3.35265f
+C144 n_20 n_21 1.97338f
+C145 n_20 n_22 43.4877e-18
+C146 n_20 n_24 2.20121e-18
+C147 n_20 n_6 697.791e-18
+C148 n_20 n_7 121.6e-18
+C149 n_20 n_8 2.92092f
+C150 n_20 clr_d 0.438331e-18
+C151 n_20 en_core 0.684325e-18
+C152 n_20 fast_en 2.54983e-18
+C153 n_20 hard_cmp 1.20266e-18
+C154 n_20 trip_d 141.128e-18
+C155 n_20 vdd 1.56212e-18
+C156 n_20 vdda 336.706e-18
+C157 n_20 vss 126.722e-18
+C158 n_20 vss 1.46379f
+C159 n_21 n_22 727.633e-18
+C160 n_21 n_23 11.7471e-18
+C161 n_21 n_24 1.34626e-18
+C162 n_21 n_6 3.39978e-18
+C163 n_21 n_7 658.788e-18
+C164 n_21 n_8 550.046e-18
+C165 n_21 n_9 0.449634e-18
+C166 n_21 clr_d 7.83483e-18
+C167 n_21 fast_en 0.584441e-18
+C168 n_21 hard_cmp 0.40506e-18
+C169 n_21 trip_d 3.08911f
+C170 n_21 vdda 476.302e-18
+C171 n_21 vss 182.267e-18
+C172 n_21 vss 3.42901f
+C173 n_22 n_23 168.843e-18
+C174 n_22 n_24 47.1335e-18
+C175 n_22 n_25 40.8937e-18
+C176 n_22 n_26 0.613985e-18
+C177 n_22 n_28 41.4103e-18
+C178 n_22 n_29 3.00377f
+C179 n_22 n_30 105.089e-18
+C180 n_22 n_31 3.53795e-18
+C181 n_22 n_6 2.70515f
+C182 n_22 n_7 86.7021e-18
+C183 n_22 n_8 90.8639e-18
+C184 n_22 n_9 40.8338e-18
+C185 n_22 n_I234 170.098e-18
+C186 n_22 clr_d 133.744e-18
+C187 n_22 en_core 45.0961e-18
+C188 n_22 fast_en 104.441e-18
+C189 n_22 hard_cmp 0.80177e-18
+C190 n_22 trip_d 0.20253e-18
+C191 n_22 vdd 4.58667e-18
+C192 n_22 vdda 319.212e-18
+C193 n_22 vss 177.39e-18
+C194 n_22 vss 3.03935f
+C195 n_23 n_24 1.70727f
+C196 n_23 n_25 35.0796e-18
+C197 n_23 n_27 2.20121e-18
+C198 n_23 n_6 2.54983e-18
+C199 n_23 n_7 590.839e-18
+C200 n_23 n_8 713.787e-18
+C201 n_23 n_9 2.58123f
+C202 n_23 clr_d 110.83e-18
+C203 n_23 fast_en 0.438331e-18
+C204 n_23 hard_cmp 0.303795e-18
+C205 n_23 vdda 336.239e-18
+C206 n_23 vss 126.722e-18
+C207 n_23 vss 1.33878f
+C208 n_24 n_25 678.818e-18
+C209 n_24 n_26 11.7471e-18
+C210 n_24 n_27 1.34626e-18
+C211 n_24 n_6 0.912433e-18
+C212 n_24 n_7 1.60354e-18
+C213 n_24 n_8 658.788e-18
+C214 n_24 n_9 552.964e-18
+C215 n_24 clr_d 2.74947f
+C216 n_24 en_core 7.83483e-18
+C217 n_24 vdda 476e-18
+C218 n_24 vss 182.267e-18
+C219 n_24 vss 3.31442f
+C220 n_25 n_26 139.353e-18
+C221 n_25 n_27 47.4615e-18
+C222 n_25 n_28 1.69989e-18
+C223 n_25 n_29 0.684325e-18
+C224 n_25 n_30 40.695e-18
+C225 n_25 n_31 528.377e-18
+C226 n_25 n_32 3.28682f
+C227 n_25 n_33 39.7162e-18
+C228 n_25 n_6 1.69989e-18
+C229 n_25 n_7 2.44119f
+C230 n_25 n_8 2.52255f
+C231 n_25 n_9 82.3887e-18
+C232 n_25 n_I235 170.098e-18
+C233 n_25 en_core 126.45e-18
+C234 n_25 fast_en 0.292221e-18
+C235 n_25 hard_cmp 0.20253e-18
+C236 n_25 vdd 0.961963e-18
+C237 n_25 vdda 321.312e-18
+C238 n_25 vss 177.39e-18
+C239 n_25 vss 2.8408f
+C240 n_26 n_27 1.44027f
+C241 n_26 n_28 35.2092e-18
+C242 n_26 n_6 0.684325e-18
+C243 n_26 n_7 1.20266e-18
+C244 n_26 n_8 590.839e-18
+C245 n_26 n_9 716.312e-18
+C246 n_26 en_core 110.83e-18
+C247 n_26 vdda 335.772e-18
+C248 n_26 vss 126.722e-18
+C249 n_26 vss 1.25371f
+C250 n_27 n_28 630.531e-18
+C251 n_27 n_29 8.34903e-18
+C252 n_27 n_6 0.40506e-18
+C253 n_27 n_7 0.584441e-18
+C254 n_27 n_8 1.60354e-18
+C255 n_27 n_9 658.788e-18
+C256 n_27 en_core 2.40983f
+C257 n_27 vdda 486.535e-18
+C258 n_27 vss 182.405e-18
+C259 n_27 vss 3.14391f
+C260 n_28 n_29 141.82e-18
+C261 n_28 n_30 550.664e-18
+C262 n_28 n_31 747.545e-18
+C263 n_28 n_32 7.94781e-18
+C264 n_28 n_6 0.456216e-18
+C265 n_28 n_7 0.80177e-18
+C266 n_28 n_8 806.335e-18
+C267 n_28 n_9 882.766e-18
+C268 n_28 n_I234 0.174713e-18
+C269 n_28 vdda 491.66e-18
+C270 n_28 vss 182.405e-18
+C271 n_28 vss 2.63923f
+C272 n_29 n_30 660.865e-18
+C273 n_29 n_31 1.34521e-18
+C274 n_29 n_6 0.303795e-18
+C275 n_29 n_7 0.438331e-18
+C276 n_29 n_8 1.20266e-18
+C277 n_29 n_9 336.353e-18
+C278 n_29 n_I234 407.445e-18
+C279 n_29 vdda 343.905e-18
+C280 n_29 vss 324.456e-18
+C281 n_29 vss 2.72345f
+C282 n_30 n_31 1.31396f
+C283 n_30 n_32 0.303795e-18
+C284 n_30 n_33 0.674133e-18
+C285 n_30 n_34 471.206e-18
+C286 n_30 n_35 3.36743f
+C287 n_30 n_36 11.3572e-18
+C288 n_30 n_6 189.106e-18
+C289 n_30 n_7 84.0229e-18
+C290 n_30 n_8 66.8054e-18
+C291 n_30 n_9 70.8732e-18
+C292 n_30 n_I234 0.108651e-18
+C293 n_30 n_I236 170.217e-18
+C294 n_30 clr_d 0.456216e-18
+C295 n_30 en_core 0.80177e-18
+C296 n_30 fast_en 1.42851f
+C297 n_30 hard_cmp 1.69989e-18
+C298 n_30 trip_d 0.292221e-18
+C299 n_30 vdd 3.9469e-18
+C300 n_30 vdda 553.211e-18
+C301 n_30 vss 205.089e-18
+C302 n_30 vss 2.60328f
+C303 n_31 n_32 1.72298f
+C304 n_31 n_33 3.73353e-18
+C305 n_31 n_34 1.86307f
+C306 n_31 n_35 98.327e-18
+C307 n_31 n_36 2.02697f
+C308 n_31 n_37 3.67912e-18
+C309 n_31 n_6 1.61272f
+C310 n_31 n_7 112.863e-18
+C311 n_31 n_8 114.737e-18
+C312 n_31 n_9 110.139e-18
+C313 n_31 n_I235 170.391e-18
+C314 n_31 n_I237 170.217e-18
+C315 n_31 clr_d 0.438331e-18
+C316 n_31 en_core 0.684325e-18
+C317 n_31 fast_en 131.167e-18
+C318 n_31 hard_cmp 1.20266e-18
+C319 n_31 trip_d 0.303795e-18
+C320 n_31 vdd 2.85536e-18
+C321 n_31 vdda 804.781e-18
+C322 n_31 vss 240.428e-18
+C323 n_31 vss 4.05679f
+C324 n_32 n_33 779.556e-18
+C325 n_32 n_34 11.0521e-18
+C326 n_32 n_35 0.213367e-18
+C327 n_32 n_6 0.684325e-18
+C328 n_32 n_7 1.20266e-18
+C329 n_32 n_8 336.353e-18
+C330 n_32 n_9 432.332e-18
+C331 n_32 n_I235 407.631e-18
+C332 n_32 vdda 372.2e-18
+C333 n_32 vss 322.547e-18
+C334 n_32 vss 2.77037f
+C335 n_33 n_34 1.7224f
+C336 n_33 n_35 458.218e-18
+C337 n_33 n_6 1.69989e-18
+C338 n_33 n_7 184.161e-18
+C339 n_33 n_8 261.906e-18
+C340 n_33 n_9 80.36e-18
+C341 n_33 n_I235 0.108651e-18
+C342 n_33 n_I238 170.391e-18
+C343 n_33 fast_en 0.292221e-18
+C344 n_33 hard_cmp 0.20253e-18
+C345 n_33 vdda 562.609e-18
+C346 n_33 vss 176.934e-18
+C347 n_33 vss 2.22692f
+C348 n_34 n_35 4.18818f
+C349 n_34 n_36 3.39258f
+C350 n_34 n_37 63.4136e-18
+C351 n_34 n_6 1.36865e-18
+C352 n_34 n_7 2.40531e-18
+C353 n_34 n_8 2.0206f
+C354 n_34 n_9 2.19983f
+C355 n_34 n_I236 170.273e-18
+C356 n_34 n_I237 170.098e-18
+C357 n_34 n_I238 407.473e-18
+C358 n_34 fault_core 1.39173f
+C359 n_34 gate_core 32.9762e-18
+C360 n_34 tripped 90.7796e-18
+C361 n_34 vdda 417.962e-18
+C362 n_34 vss 489.511e-18
+C363 n_34 vss 5.2897f
+C364 n_35 n_36 214.82e-18
+C365 n_35 n_37 1.58897f
+C366 n_35 n_4 32.0715e-18
+C367 n_35 n_6 4.24972e-18
+C368 n_35 n_7 2.0799f
+C369 n_35 n_8 2.23856f
+C370 n_35 n_9 160.546e-18
+C371 n_35 n_I236 407.473e-18
+C372 n_35 n_I238 170.098e-18
+C373 n_35 fast_en 0.730551e-18
+C374 n_35 fault_core 44.5259e-18
+C375 n_35 gate_core 34.2575e-18
+C376 n_35 hard_cmp 0.506325e-18
+C377 n_35 tripped 1.65134f
+C378 n_35 vdd 0.269115e-18
+C379 n_35 vdda 385.067e-18
+C380 n_35 vss 425.435e-18
+C381 n_35 vss 4.39606f
+C382 n_36 n_37 1.83585f
+C383 n_36 n_6 307.203e-18
+C384 n_36 n_7 140.739e-18
+C385 n_36 n_8 140.739e-18
+C386 n_36 n_9 145.128e-18
+C387 n_36 n_I237 407.631e-18
+C388 n_36 clr_d 0.912433e-18
+C389 n_36 en_core 1.60354e-18
+C390 n_36 fast_en 617.543e-18
+C391 n_36 gate_core 136.921e-18
+C392 n_36 hard_cmp 3.39978e-18
+C393 n_36 trip_d 0.584441e-18
+C394 n_36 vdd 3.87264e-18
+C395 n_36 vdda 382.214e-18
+C396 n_36 vss 391.136e-18
+C397 n_36 vss 3.86974f
+C398 n_37 n_6 522.723e-18
+C399 n_37 n_7 66.599e-18
+C400 n_37 n_8 62.1531e-18
+C401 n_37 n_9 65.5934e-18
+C402 n_37 n_I237 0.108651e-18
+C403 n_37 clr_d 0.292221e-18
+C404 n_37 en_core 0.456216e-18
+C405 n_37 fast_en 66.7132e-18
+C406 n_37 fault_core 0.688212e-18
+C407 n_37 gate_core 2.13331f
+C408 n_37 hard_cmp 0.80177e-18
+C409 n_37 trip_d 0.20253e-18
+C410 n_37 vdd 1.16331e-18
+C411 n_37 vdda 286.713e-18
+C412 n_37 vss 180.902e-18
+C413 n_37 vss 1.46935f
+C414 n_4 n_6 692.514e-18
+C415 n_4 n_7 389.908e-18
+C416 n_4 n_8 284.803e-18
+C417 n_4 n_9 1.20266e-18
+C418 n_4 n_I233 228.488e-18
+C419 n_4 clr_d 86.276e-18
+C420 n_4 en_core 97.9398e-18
+C421 n_4 fast_en 1.62132f
+C422 n_4 fault_core 0.303795e-18
+C423 n_4 gate_core 109.822e-18
+C424 n_4 hard_cmp 865.886e-18
+C425 n_4 trip_d 126.722e-18
+C426 n_4 tripped 2.54983e-18
+C427 n_4 vdd 644.627e-18
+C428 n_4 vdda 0.578145e-18
+C429 n_4 vss 62.9242e-18
+C430 n_4 vss 1.62275f
+C431 n_6 n_7 8.95664f
+C432 n_6 n_8 1.34635e-18
+C433 n_6 n_9 0.438331e-18
+C434 n_6 n_I233 1.05374e-18
+C435 n_6 clr_d 112.93e-18
+C436 n_6 en_core 123.312e-18
+C437 n_6 fast_en 72.6943e-18
+C438 n_6 gate_core 148.496e-18
+C439 n_6 hard_cmp 1.36931e-18
+C440 n_6 trip_d 177.718e-18
+C441 n_6 tripped 0.684325e-18
+C442 n_6 vdd 398.787e-18
+C443 n_6 vdda 33.9956e-18
+C444 n_6 vss 270.565e-18
+C445 n_6 vss 3.82904f
+C446 n_7 n_8 684.534e-18
+C447 n_7 n_9 0.456216e-18
+C448 n_7 clr_d 80.8489e-18
+C449 n_7 en_core 86.5042e-18
+C450 n_7 fast_en 0.456216e-18
+C451 n_7 gate_core 74.5367e-18
+C452 n_7 hard_cmp 0.292221e-18
+C453 n_7 trip_d 260.554e-18
+C454 n_7 tripped 0.80177e-18
+C455 n_7 vdd 316.338e-18
+C456 n_7 vdda 41.3962e-18
+C457 n_7 vss 232.815e-18
+C458 n_7 vss 3.07445f
+C459 n_8 n_9 671.002e-18
+C460 n_8 clr_d 288.304e-18
+C461 n_8 en_core 89.3631e-18
+C462 n_8 fast_en 0.20253e-18
+C463 n_8 fault_core 0.292221e-18
+C464 n_8 gate_core 78.2676e-18
+C465 n_8 trip_d 439.576e-18
+C466 n_8 tripped 1.06082f
+C467 n_8 vdd 310.942e-18
+C468 n_8 vdda 46.6449e-18
+C469 n_8 vss 232.572e-18
+C470 n_8 vss 3.16635f
+C471 n_9 clr_d 472.502e-18
+C472 n_9 en_core 317.571e-18
+C473 n_9 fault_core 0.80177e-18
+C474 n_9 gate_core 78.2676e-18
+C475 n_9 trip_d 0.143699e-18
+C476 n_9 tripped 1.38337f
+C477 n_9 vdd 311.241e-18
+C478 n_9 vdda 54.7043e-18
+C479 n_9 vss 232.572e-18
+C480 n_9 vss 3.09485f
+C481 n_I233 fast_en 19.7307e-18
+C482 n_I233 hard_cmp 19.5475e-18
+C483 n_I233 trip_d 0.206486e-18
+C484 n_I233 vdd 6.72088e-18
+C485 n_I233 vss 210.241e-18
+C486 n_I233 vss 32.0764e-18
+C487 n_I234 vdda 373.74e-18
+C488 n_I234 vss 4.17642e-18
+C489 n_I234 vss 111.326e-18
+C490 n_I235 vdda 373.74e-18
+C491 n_I235 vss 4.17642e-18
+C492 n_I235 vss 111.418e-18
+C493 n_I236 vdda 373.74e-18
+C494 n_I236 vss 4.17642e-18
+C495 n_I236 vss 111.418e-18
+C496 n_I237 vdda 373.74e-18
+C497 n_I237 vss 4.17642e-18
+C498 n_I237 vss 111.418e-18
+C499 n_I238 vdda 373.74e-18
+C500 n_I238 vss 4.17642e-18
+C501 n_I238 vss 111.418e-18
+C502 clr_d en_core 10.0154f
+C503 clr_d fast_en 70.9784e-18
+C504 clr_d gate_core 0.456216e-18
+C505 clr_d hard_cmp 79.8891e-18
+C506 clr_d trip_d 9.76996f
+C507 clr_d vdd 254.912e-18
+C508 clr_d vdda 33.5476e-18
+C509 clr_d vss 106.222e-18
+C510 en_core fast_en 156.331e-18
+C511 en_core fault_core 0.108315e-18
+C512 en_core gate_core 241.254e-18
+C513 en_core hard_cmp 8.96438f
+C514 en_core trip_d 46.3398e-18
+C515 en_core vdd 168.086e-18
+C516 en_core vdda 33.2904e-18
+C517 en_core vss 106.222e-18
+C518 fast_en gate_core 1.08188f
+C519 fast_en hard_cmp 9.22032f
+C520 fast_en trip_d 86.5393e-18
+C521 fast_en vdd 79.2612e-18
+C522 fast_en vss 67.4735e-18
+C523 fault_core gate_core 78.7036e-18
+C524 fault_core tripped 319.173e-18
+C525 fault_core vdd 218.096e-18
+C526 fault_core vdda 104.728e-18
+C527 fault_core vss 258.652e-18
+C528 gate_core hard_cmp 1.69989e-18
+C529 gate_core trip_d 0.292221e-18
+C530 gate_core tripped 178.401e-18
+C531 gate_core vdd 225.862e-18
+C532 gate_core vdda 36.3798e-18
+C533 gate_core vss 260.013e-18
+C534 hard_cmp trip_d 95.4499e-18
+C535 hard_cmp vdd 115.436e-18
+C536 hard_cmp vss 29.1333e-18
+C537 trip_d vdd 1.72988f
+C538 trip_d vdda 33.7893e-18
+C539 trip_d vss 108.567e-18
+C540 tripped vdd 214.891e-18
+C541 tripped vdda 40.7942e-18
+C542 tripped vss 646.655e-18
+C543 vdd vss 1.03895f
+C544 vdda vss 3.95855f
+C545 vss clr_d 3.57746f
+C546 vss en_core 3.86372f
+C547 vss fast_en 2.52639f
+C548 vss fault_core 2.28672f
+C549 vss gate_core 2.56262f
+C550 vss hard_cmp 2.32883f
+C551 vss trip_d 5.8624f
+C552 vss tripped 2.4752f
+C553 vss vdd 15.556f
+C554 vss vdda 31.0924f
+.ends g1_gate

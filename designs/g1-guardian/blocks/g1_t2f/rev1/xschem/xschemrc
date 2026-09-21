@@ -1,0 +1,14 @@
+# Project xschemrc for the G1 analog blocks. Use: xschem --rcfile xschemrc -n -q -x <sch>
+# Netlists are written next to the schematic; netlist.sh turns the commented top-level
+# **.subckt / **.ends lines into a real subcircuit for the simulation decks and LVS.
+set XSCHEM_LIBRARY_PATH {}
+append XSCHEM_LIBRARY_PATH :${XSCHEM_SHAREDIR}/xschem_library/devices
+append XSCHEM_LIBRARY_PATH :${XSCHEM_SHAREDIR}/xschem_library
+set PDK_ROOT $env(PDK_ROOT)
+set PDK $env(PDK)
+append XSCHEM_LIBRARY_PATH :${PDK_ROOT}/${PDK}/libs.tech/xschem
+append XSCHEM_LIBRARY_PATH :${PDK_ROOT}/${PDK}/libs.tech/xschem/sg13g2_pr
+append XSCHEM_LIBRARY_PATH :[pwd]
+append XSCHEM_LIBRARY_PATH :[pwd]/../../g1_bgr/xschem
+set netlist_dir [pwd]
+set XSCHEM_START_WINDOW {}

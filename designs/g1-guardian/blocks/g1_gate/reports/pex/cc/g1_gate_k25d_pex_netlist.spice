@@ -1,0 +1,722 @@
+*********************************************************
+*** NGSPICE file created by KLayout-PEX 0.3.12
+*** -----------------------------------------------------
+***     Extraction Engine: KPEX/2.5D
+***     Technology: ihp_sg13g2
+***     Date: 2026-09-19 09:37:12
+*********************************************************
+
+.SUBCKT g1_gate clr_d en_core fast_en fault_core gate_core hard_cmp trip_d
++ tripped vdd vdda vss
+M$1 vdd \$11 gate_core vdd sg13_lv_pmos L=0.13U W=1U AS=0.34P AD=0.19P PS=2.68U
++ PD=1.38U rfmode=0
+M$2 \$11 gate_core vdd vdd sg13_lv_pmos L=0.13U W=1U AS=0.19P AD=0.34P PS=1.38U
++ PD=2.68U rfmode=0
+M$3 vdd \$13 tripped vdd sg13_lv_pmos L=0.13U W=1U AS=0.34P AD=0.19P PS=2.68U
++ PD=1.38U rfmode=0
+M$4 \$13 tripped vdd vdd sg13_lv_pmos L=0.13U W=1U AS=0.19P AD=0.34P PS=1.38U
++ PD=2.68U rfmode=0
+M$5 vdd \$12 fault_core vdd sg13_lv_pmos L=0.13U W=1U AS=0.34P AD=0.19P
++ PS=2.68U PD=1.38U rfmode=0
+M$6 \$12 fault_core vdd vdd sg13_lv_pmos L=0.13U W=1U AS=0.19P AD=0.34P
++ PS=1.38U PD=2.68U rfmode=0
+M$7 \$6 \$4 vss vss sg13_lv_nmos L=0.13U W=1U AS=0.34P AD=0.34P PS=2.68U
++ PD=2.68U rfmode=0
+M$8 \$10 en_core vss vss sg13_lv_nmos L=0.13U W=1U AS=0.34P AD=0.34P PS=2.68U
++ PD=2.68U rfmode=0
+M$9 \$9 clr_d vss vss sg13_lv_nmos L=0.13U W=1U AS=0.34P AD=0.34P PS=2.68U
++ PD=2.68U rfmode=0
+M$10 \$8 trip_d vss vss sg13_lv_nmos L=0.13U W=1U AS=0.34P AD=0.34P PS=2.68U
++ PD=2.68U rfmode=0
+M$11 \$7 \$6 vss vss sg13_lv_nmos L=0.13U W=1U AS=0.34P AD=0.34P PS=2.68U
++ PD=2.68U rfmode=0
+M$12 \$6 \$4 vdd vdd sg13_lv_pmos L=0.13U W=2U AS=0.68P AD=0.68P PS=4.68U
++ PD=4.68U rfmode=0
+M$13 \$10 en_core vdd vdd sg13_lv_pmos L=0.13U W=2U AS=0.68P AD=0.68P PS=4.68U
++ PD=4.68U rfmode=0
+M$14 \$9 clr_d vdd vdd sg13_lv_pmos L=0.13U W=2U AS=0.68P AD=0.68P PS=4.68U
++ PD=4.68U rfmode=0
+M$15 \$8 trip_d vdd vdd sg13_lv_pmos L=0.13U W=2U AS=0.68P AD=0.68P PS=4.68U
++ PD=4.68U rfmode=0
+M$16 \$7 \$6 vdd vdd sg13_lv_pmos L=0.13U W=2U AS=0.68P AD=0.68P PS=4.68U
++ PD=4.68U rfmode=0
+M$17 \$I233 hard_cmp \$4 vss sg13_lv_nmos L=0.13U W=2U AS=0.68P AD=0.38P
++ PS=4.68U PD=2.38U rfmode=0
+M$18 vss fast_en \$I233 vss sg13_lv_nmos L=0.13U W=2U AS=0.38P AD=0.68P
++ PS=2.38U PD=4.68U rfmode=0
+M$19 vdd hard_cmp \$4 vdd sg13_lv_pmos L=0.13U W=2U AS=0.68P AD=0.38P PS=4.68U
++ PD=2.38U rfmode=0
+M$20 \$4 fast_en vdd vdd sg13_lv_pmos L=0.13U W=2U AS=0.38P AD=0.68P PS=2.38U
++ PD=4.68U rfmode=0
+M$21 vss \$36 \$11 vss sg13_hv_nmos L=0.45U W=2U AS=0.68P AD=0.38P PS=4.68U
++ PD=2.38U rfmode=0
+M$22 gate_core \$37 vss vss sg13_hv_nmos L=0.45U W=2U AS=0.38P AD=0.68P
++ PS=2.38U PD=4.68U rfmode=0
+M$23 vss \$35 \$12 vss sg13_hv_nmos L=0.45U W=2U AS=0.68P AD=0.38P PS=4.68U
++ PD=2.38U rfmode=0
+M$24 fault_core \$34 vss vss sg13_hv_nmos L=0.45U W=2U AS=0.38P AD=0.68P
++ PS=2.38U PD=4.68U rfmode=0
+M$25 vss \$34 \$13 vss sg13_hv_nmos L=0.45U W=2U AS=0.68P AD=0.38P PS=4.68U
++ PD=2.38U rfmode=0
+M$26 tripped \$35 vss vss sg13_hv_nmos L=0.45U W=2U AS=0.38P AD=0.68P PS=2.38U
++ PD=4.68U rfmode=0
+M$27 \$I234 \$19 vdda vdda sg13_hv_pmos L=0.45U W=7.8U AS=2.652P AD=1.482P
++ PS=16.28U PD=8.18U rfmode=0
+M$28 \$29 \$22 \$I234 vdda sg13_hv_pmos L=0.45U W=7.8U AS=1.482P AD=2.652P
++ PS=8.18U PD=16.28U rfmode=0
+M$29 \$I235 \$31 vdda vdda sg13_hv_pmos L=0.45U W=7.8U AS=2.652P AD=1.482P
++ PS=16.28U PD=8.18U rfmode=0
+M$30 \$32 \$25 \$I235 vdda sg13_hv_pmos L=0.45U W=7.8U AS=1.482P AD=2.652P
++ PS=8.18U PD=16.28U rfmode=0
+M$31 \$I236 \$30 vdda vdda sg13_hv_pmos L=0.45U W=7.8U AS=2.652P AD=1.482P
++ PS=16.28U PD=8.18U rfmode=0
+M$32 \$35 \$34 \$I236 vdda sg13_hv_pmos L=0.45U W=7.8U AS=1.482P AD=2.652P
++ PS=8.18U PD=16.28U rfmode=0
+M$33 \$I237 \$31 vdda vdda sg13_hv_pmos L=0.45U W=7.8U AS=2.652P AD=1.482P
++ PS=16.28U PD=8.18U rfmode=0
+M$34 \$36 \$34 \$I237 vdda sg13_hv_pmos L=0.45U W=7.8U AS=1.482P AD=2.652P
++ PS=8.18U PD=16.28U rfmode=0
+M$35 \$I238 \$33 vdda vdda sg13_hv_pmos L=0.45U W=7.8U AS=2.652P AD=1.482P
++ PS=16.28U PD=8.18U rfmode=0
+M$36 \$34 \$35 \$I238 vdda sg13_hv_pmos L=0.45U W=7.8U AS=1.482P AD=2.652P
++ PS=8.18U PD=16.28U rfmode=0
+M$37 \$19 \$18 vss vss sg13_hv_nmos L=0.45U W=1.9U AS=0.646P AD=0.646P PS=4.48U
++ PD=4.48U rfmode=0
+M$38 \$22 \$21 vss vss sg13_hv_nmos L=0.45U W=1.9U AS=0.646P AD=0.646P PS=4.48U
++ PD=4.48U rfmode=0
+M$39 \$37 \$36 vss vss sg13_hv_nmos L=0.45U W=1.9U AS=0.646P AD=0.646P PS=4.48U
++ PD=4.48U rfmode=0
+M$40 \$33 \$32 vss vss sg13_hv_nmos L=0.45U W=1.9U AS=0.646P AD=0.646P PS=4.48U
++ PD=4.48U rfmode=0
+M$41 \$25 \$24 vss vss sg13_hv_nmos L=0.45U W=1.9U AS=0.646P AD=0.646P PS=4.48U
++ PD=4.48U rfmode=0
+M$42 \$31 \$28 vss vss sg13_hv_nmos L=0.45U W=1.9U AS=0.646P AD=0.646P PS=4.48U
++ PD=4.48U rfmode=0
+M$43 \$30 \$29 vss vss sg13_hv_nmos L=0.45U W=1.9U AS=0.646P AD=0.646P PS=4.48U
++ PD=4.48U rfmode=0
+M$44 \$28 \$27 vss vss sg13_hv_nmos L=0.45U W=1.9U AS=0.646P AD=0.646P PS=4.48U
++ PD=4.48U rfmode=0
+M$45 \$19 \$18 vdda vdda sg13_hv_pmos L=0.45U W=3.9U AS=1.326P AD=1.326P
++ PS=8.48U PD=8.48U rfmode=0
+M$46 \$22 \$21 vdda vdda sg13_hv_pmos L=0.45U W=3.9U AS=1.326P AD=1.326P
++ PS=8.48U PD=8.48U rfmode=0
+M$47 \$25 \$24 vdda vdda sg13_hv_pmos L=0.45U W=3.9U AS=1.326P AD=1.326P
++ PS=8.48U PD=8.48U rfmode=0
+M$48 \$28 \$27 vdda vdda sg13_hv_pmos L=0.45U W=3.9U AS=1.326P AD=1.326P
++ PS=8.48U PD=8.48U rfmode=0
+M$49 \$30 \$29 vdda vdda sg13_hv_pmos L=0.45U W=3.9U AS=1.326P AD=1.326P
++ PS=8.48U PD=8.48U rfmode=0
+M$50 \$31 \$28 vdda vdda sg13_hv_pmos L=0.45U W=3.9U AS=1.326P AD=1.326P
++ PS=8.48U PD=8.48U rfmode=0
+M$51 \$37 \$36 vdda vdda sg13_hv_pmos L=0.45U W=3.9U AS=1.326P AD=1.326P
++ PS=8.48U PD=8.48U rfmode=0
+M$52 \$33 \$32 vdda vdda sg13_hv_pmos L=0.45U W=3.9U AS=1.326P AD=1.326P
++ PS=8.48U PD=8.48U rfmode=0
+M$53 \$18 \$17 vdda vdda sg13_hv_pmos L=0.45U W=0.3U AS=0.102P AD=0.102P
++ PS=1.28U PD=1.28U rfmode=0
+M$54 \$26 \$27 vdda vdda sg13_hv_pmos L=0.45U W=0.3U AS=0.102P AD=0.102P
++ PS=1.28U PD=1.28U rfmode=0
+M$55 \$27 \$26 vdda vdda sg13_hv_pmos L=0.45U W=0.3U AS=0.102P AD=0.102P
++ PS=1.28U PD=1.28U rfmode=0
+M$56 \$17 \$18 vdda vdda sg13_hv_pmos L=0.45U W=0.3U AS=0.102P AD=0.102P
++ PS=1.28U PD=1.28U rfmode=0
+M$57 \$23 \$24 vdda vdda sg13_hv_pmos L=0.45U W=0.3U AS=0.102P AD=0.102P
++ PS=1.28U PD=1.28U rfmode=0
+M$58 \$24 \$23 vdda vdda sg13_hv_pmos L=0.45U W=0.3U AS=0.102P AD=0.102P
++ PS=1.28U PD=1.28U rfmode=0
+M$59 \$21 \$20 vdda vdda sg13_hv_pmos L=0.45U W=0.3U AS=0.102P AD=0.102P
++ PS=1.28U PD=1.28U rfmode=0
+M$60 \$20 \$21 vdda vdda sg13_hv_pmos L=0.45U W=0.3U AS=0.102P AD=0.102P
++ PS=1.28U PD=1.28U rfmode=0
+M$61 vss \$6 \$18 vss sg13_hv_nmos L=0.45U W=1.9U AS=0.646P AD=0.361P PS=4.48U
++ PD=2.28U rfmode=0
+M$62 \$17 \$7 vss vss sg13_hv_nmos L=0.45U W=1.9U AS=0.361P AD=0.646P PS=2.28U
++ PD=4.48U rfmode=0
+M$63 vss \$31 \$36 vss sg13_hv_nmos L=0.45U W=1.9U AS=0.646P AD=0.361P PS=4.48U
++ PD=2.28U rfmode=0
+M$64 \$36 \$34 vss vss sg13_hv_nmos L=0.45U W=1.9U AS=0.361P AD=0.646P PS=2.28U
++ PD=4.48U rfmode=0
+M$65 vss trip_d \$21 vss sg13_hv_nmos L=0.45U W=1.9U AS=0.646P AD=0.361P
++ PS=4.48U PD=2.28U rfmode=0
+M$66 \$20 \$8 vss vss sg13_hv_nmos L=0.45U W=1.9U AS=0.361P AD=0.646P PS=2.28U
++ PD=4.48U rfmode=0
+M$67 vss \$30 \$35 vss sg13_hv_nmos L=0.45U W=1.9U AS=0.646P AD=0.361P PS=4.48U
++ PD=2.28U rfmode=0
+M$68 \$35 \$34 vss vss sg13_hv_nmos L=0.45U W=1.9U AS=0.361P AD=0.646P PS=2.28U
++ PD=4.48U rfmode=0
+M$69 vss \$33 \$34 vss sg13_hv_nmos L=0.45U W=1.9U AS=0.646P AD=0.361P PS=4.48U
++ PD=2.28U rfmode=0
+M$70 \$34 \$35 vss vss sg13_hv_nmos L=0.45U W=1.9U AS=0.361P AD=0.646P PS=2.28U
++ PD=4.48U rfmode=0
+M$71 vss \$31 \$32 vss sg13_hv_nmos L=0.45U W=1.9U AS=0.646P AD=0.361P PS=4.48U
++ PD=2.28U rfmode=0
+M$72 \$32 \$25 vss vss sg13_hv_nmos L=0.45U W=1.9U AS=0.361P AD=0.646P PS=2.28U
++ PD=4.48U rfmode=0
+M$73 vss en_core \$27 vss sg13_hv_nmos L=0.45U W=1.9U AS=0.646P AD=0.361P
++ PS=4.48U PD=2.28U rfmode=0
+M$74 \$26 \$10 vss vss sg13_hv_nmos L=0.45U W=1.9U AS=0.361P AD=0.646P PS=2.28U
++ PD=4.48U rfmode=0
+M$75 vss \$19 \$29 vss sg13_hv_nmos L=0.45U W=1.9U AS=0.646P AD=0.361P PS=4.48U
++ PD=2.28U rfmode=0
+M$76 \$29 \$22 vss vss sg13_hv_nmos L=0.45U W=1.9U AS=0.361P AD=0.646P PS=2.28U
++ PD=4.48U rfmode=0
+M$77 vss clr_d \$24 vss sg13_hv_nmos L=0.45U W=1.9U AS=0.646P AD=0.361P
++ PS=4.48U PD=2.28U rfmode=0
+M$78 \$23 \$9 vss vss sg13_hv_nmos L=0.45U W=1.9U AS=0.361P AD=0.646P PS=2.28U
++ PD=4.48U rfmode=0
+Cext_1 \$10 \$11 2.96552f
+Cext_2 \$10 \$12 83.47a
+Cext_3 \$10 \$13 1.69989a
+Cext_4 \$10 \$19 43.4069a
+Cext_5 \$10 \$22 35.3936a
+Cext_6 \$10 \$24 0.449634a
+Cext_7 \$10 \$25 39.2196a
+Cext_8 \$10 \$26 2.24119f
+Cext_9 \$10 \$27 558.37a
+Cext_10 \$10 \$28 99.5163a
+Cext_11 \$10 \$29 444.682a
+Cext_12 \$10 \$30 87.4333a
+Cext_13 \$10 \$31 130.713a
+Cext_14 \$10 \$32 126.658a
+Cext_15 \$10 \$33 91.8792a
+Cext_16 \$10 \$34 227.023a
+Cext_17 \$10 \$35 189.908a
+Cext_18 \$10 \$36 167.522a
+Cext_19 \$10 \$37 81.5768a
+Cext_20 \$10 \$4 0.438331a
+Cext_21 \$10 \$7 0.20253a
+Cext_22 \$10 \$8 0.456216a
+Cext_23 \$10 \$9 1.20754f
+Cext_24 \$10 \$I234 0.391101a
+Cext_25 \$10 \$I235 0.391101a
+Cext_26 \$10 \$I236 0.391101a
+Cext_27 \$10 \$I237 0.391101a
+Cext_28 \$10 \$I238 0.391101a
+Cext_29 \$10 clr_d 0.143699a
+Cext_30 \$10 en_core 505.508a
+Cext_31 \$10 fault_core 1.90722f
+Cext_32 \$10 gate_core 101.729a
+Cext_33 \$10 tripped 80.2715a
+Cext_34 \$10 vdd 296.638a
+Cext_35 \$10 vdda 158.026a
+Cext_36 \$10 vss 217.473a
+Cext_37 \$10 VSUBS 3.74362f
+Cext_38 \$11 \$12 145.085a
+Cext_39 \$11 \$13 1.20266a
+Cext_40 \$11 \$34 67.4656a
+Cext_41 \$11 \$35 61.8158a
+Cext_42 \$11 \$36 1.47419f
+Cext_43 \$11 \$37 99.1315a
+Cext_44 \$11 \$4 0.684325a
+Cext_45 \$11 \$6 0.303795a
+Cext_46 \$11 \$7 0.292221a
+Cext_47 \$11 \$8 0.80177a
+Cext_48 \$11 \$9 2.14822f
+Cext_49 \$11 en_core 20.4915a
+Cext_50 \$11 fault_core 242.816a
+Cext_51 \$11 gate_core 3.01561f
+Cext_52 \$11 tripped 325.042a
+Cext_53 \$11 vdd 223.148a
+Cext_54 \$11 vdda 49.8561a
+Cext_55 \$11 vss 137.046a
+Cext_56 \$11 VSUBS 1.77203f
+Cext_57 \$12 \$13 3.68387a
+Cext_58 \$12 \$34 100.219a
+Cext_59 \$12 \$35 1.80936f
+Cext_60 \$12 \$36 0.943543a
+Cext_61 \$12 \$37 91.9972a
+Cext_62 \$12 \$4 117.243a
+Cext_63 \$12 \$6 1.30441f
+Cext_64 \$12 \$7 121.679a
+Cext_65 \$12 \$8 121.354a
+Cext_66 \$12 \$9 79.3314a
+Cext_67 \$12 clr_d 0.292221a
+Cext_68 \$12 en_core 0.588398a
+Cext_69 \$12 fast_en 1.69989a
+Cext_70 \$12 fault_core 3.09498f
+Cext_71 \$12 gate_core 3.60085f
+Cext_72 \$12 hard_cmp 0.80177a
+Cext_73 \$12 trip_d 0.20253a
+Cext_74 \$12 tripped 161.463a
+Cext_75 \$12 vdd 219.925a
+Cext_76 \$12 vdda 36.1873a
+Cext_77 \$12 vss 135.954a
+Cext_78 \$12 VSUBS 1.82738f
+Cext_79 \$13 \$34 1.24738f
+Cext_80 \$13 \$35 50.7589a
+Cext_81 \$13 \$8 0.20253a
+Cext_82 \$13 \$9 0.456216a
+Cext_83 \$13 fault_core 4.21957f
+Cext_84 \$13 gate_core 82.051a
+Cext_85 \$13 tripped 4.11802f
+Cext_86 \$13 vdd 217.506a
+Cext_87 \$13 vdda 313.524a
+Cext_88 \$13 vss 218.951a
+Cext_89 \$13 VSUBS 2.3172f
+Cext_90 \$17 \$18 2.81343f
+Cext_91 \$17 \$19 26.6714a
+Cext_92 \$17 \$21 2.20121a
+Cext_93 \$17 \$6 84.391a
+Cext_94 \$17 \$7 3.26082f
+Cext_95 \$17 clr_d 0.684325a
+Cext_96 \$17 en_core 1.20266a
+Cext_97 \$17 fast_en 590.839a
+Cext_98 \$17 hard_cmp 2.54983a
+Cext_99 \$17 trip_d 0.438331a
+Cext_100 \$17 vdd 3.10913a
+Cext_101 \$17 vdda 322.693a
+Cext_102 \$17 vss 134.39a
+Cext_103 \$17 VSUBS 1.78049f
+Cext_104 \$18 \$19 800.855a
+Cext_105 \$18 \$20 11.7471a
+Cext_106 \$18 \$21 1.34626a
+Cext_107 \$18 \$6 4.09325f
+Cext_108 \$18 \$7 225.147a
+Cext_109 \$18 \$8 0.449634a
+Cext_110 \$18 clr_d 0.584441a
+Cext_111 \$18 en_core 0.912433a
+Cext_112 \$18 fast_en 80.4734a
+Cext_113 \$18 hard_cmp 1.60354a
+Cext_114 \$18 trip_d 8.23989a
+Cext_115 \$18 vdd 2.36296a
+Cext_116 \$18 vdda 477.189a
+Cext_117 \$18 vss 187.617a
+Cext_118 \$18 VSUBS 3.5457f
+Cext_119 \$19 \$20 804.735a
+Cext_120 \$19 \$21 47.4615a
+Cext_121 \$19 \$22 2.89389f
+Cext_122 \$19 \$23 0.684325a
+Cext_123 \$19 \$24 0.40506a
+Cext_124 \$19 \$25 43.2418a
+Cext_125 \$19 \$26 0.523575a
+Cext_126 \$19 \$27 68.3289a
+Cext_127 \$19 \$28 543.732a
+Cext_128 \$19 \$29 1.50486f
+Cext_129 \$19 \$30 9.48147a
+Cext_130 \$19 \$6 273.06a
+Cext_131 \$19 \$7 89.9446a
+Cext_132 \$19 \$8 43.3995a
+Cext_133 \$19 \$9 41.9892a
+Cext_134 \$19 \$I234 170.217a
+Cext_135 \$19 clr_d 45.0961a
+Cext_136 \$19 en_core 45.4417a
+Cext_137 \$19 fast_en 3.4328f
+Cext_138 \$19 hard_cmp 1.69989a
+Cext_139 \$19 trip_d 119.741a
+Cext_140 \$19 vdd 7.72419a
+Cext_141 \$19 vdda 511.355a
+Cext_142 \$19 vss 176.934a
+Cext_143 \$19 VSUBS 3.35265f
+Cext_144 \$20 \$21 1.97338f
+Cext_145 \$20 \$22 43.4877a
+Cext_146 \$20 \$24 2.20121a
+Cext_147 \$20 \$6 697.791a
+Cext_148 \$20 \$7 121.6a
+Cext_149 \$20 \$8 2.92092f
+Cext_150 \$20 clr_d 0.438331a
+Cext_151 \$20 en_core 0.684325a
+Cext_152 \$20 fast_en 2.54983a
+Cext_153 \$20 hard_cmp 1.20266a
+Cext_154 \$20 trip_d 141.128a
+Cext_155 \$20 vdd 1.56212a
+Cext_156 \$20 vdda 336.706a
+Cext_157 \$20 vss 126.722a
+Cext_158 \$20 VSUBS 1.46379f
+Cext_159 \$21 \$22 727.633a
+Cext_160 \$21 \$23 11.7471a
+Cext_161 \$21 \$24 1.34626a
+Cext_162 \$21 \$6 3.39978a
+Cext_163 \$21 \$7 658.788a
+Cext_164 \$21 \$8 550.046a
+Cext_165 \$21 \$9 0.449634a
+Cext_166 \$21 clr_d 7.83483a
+Cext_167 \$21 fast_en 0.584441a
+Cext_168 \$21 hard_cmp 0.40506a
+Cext_169 \$21 trip_d 3.08911f
+Cext_170 \$21 vdda 476.302a
+Cext_171 \$21 vss 182.267a
+Cext_172 \$21 VSUBS 3.42901f
+Cext_173 \$22 \$23 168.843a
+Cext_174 \$22 \$24 47.1335a
+Cext_175 \$22 \$25 40.8937a
+Cext_176 \$22 \$26 0.613985a
+Cext_177 \$22 \$28 41.4103a
+Cext_178 \$22 \$29 3.00377f
+Cext_179 \$22 \$30 105.089a
+Cext_180 \$22 \$31 3.53795a
+Cext_181 \$22 \$6 2.70515f
+Cext_182 \$22 \$7 86.7021a
+Cext_183 \$22 \$8 90.8639a
+Cext_184 \$22 \$9 40.8338a
+Cext_185 \$22 \$I234 170.098a
+Cext_186 \$22 clr_d 133.744a
+Cext_187 \$22 en_core 45.0961a
+Cext_188 \$22 fast_en 104.441a
+Cext_189 \$22 hard_cmp 0.80177a
+Cext_190 \$22 trip_d 0.20253a
+Cext_191 \$22 vdd 4.58667a
+Cext_192 \$22 vdda 319.212a
+Cext_193 \$22 vss 177.39a
+Cext_194 \$22 VSUBS 3.03935f
+Cext_195 \$23 \$24 1.70727f
+Cext_196 \$23 \$25 35.0796a
+Cext_197 \$23 \$27 2.20121a
+Cext_198 \$23 \$6 2.54983a
+Cext_199 \$23 \$7 590.839a
+Cext_200 \$23 \$8 713.787a
+Cext_201 \$23 \$9 2.58123f
+Cext_202 \$23 clr_d 110.83a
+Cext_203 \$23 fast_en 0.438331a
+Cext_204 \$23 hard_cmp 0.303795a
+Cext_205 \$23 vdda 336.239a
+Cext_206 \$23 vss 126.722a
+Cext_207 \$23 VSUBS 1.33878f
+Cext_208 \$24 \$25 678.818a
+Cext_209 \$24 \$26 11.7471a
+Cext_210 \$24 \$27 1.34626a
+Cext_211 \$24 \$6 0.912433a
+Cext_212 \$24 \$7 1.60354a
+Cext_213 \$24 \$8 658.788a
+Cext_214 \$24 \$9 552.964a
+Cext_215 \$24 clr_d 2.74947f
+Cext_216 \$24 en_core 7.83483a
+Cext_217 \$24 vdda 476a
+Cext_218 \$24 vss 182.267a
+Cext_219 \$24 VSUBS 3.31442f
+Cext_220 \$25 \$26 139.353a
+Cext_221 \$25 \$27 47.4615a
+Cext_222 \$25 \$28 1.69989a
+Cext_223 \$25 \$29 0.684325a
+Cext_224 \$25 \$30 40.695a
+Cext_225 \$25 \$31 528.377a
+Cext_226 \$25 \$32 3.28682f
+Cext_227 \$25 \$33 39.7162a
+Cext_228 \$25 \$6 1.69989a
+Cext_229 \$25 \$7 2.44119f
+Cext_230 \$25 \$8 2.52255f
+Cext_231 \$25 \$9 82.3887a
+Cext_232 \$25 \$I235 170.098a
+Cext_233 \$25 en_core 126.45a
+Cext_234 \$25 fast_en 0.292221a
+Cext_235 \$25 hard_cmp 0.20253a
+Cext_236 \$25 vdd 0.961963a
+Cext_237 \$25 vdda 321.312a
+Cext_238 \$25 vss 177.39a
+Cext_239 \$25 VSUBS 2.8408f
+Cext_240 \$26 \$27 1.44027f
+Cext_241 \$26 \$28 35.2092a
+Cext_242 \$26 \$6 0.684325a
+Cext_243 \$26 \$7 1.20266a
+Cext_244 \$26 \$8 590.839a
+Cext_245 \$26 \$9 716.312a
+Cext_246 \$26 en_core 110.83a
+Cext_247 \$26 vdda 335.772a
+Cext_248 \$26 vss 126.722a
+Cext_249 \$26 VSUBS 1.25371f
+Cext_250 \$27 \$28 630.531a
+Cext_251 \$27 \$29 8.34903a
+Cext_252 \$27 \$6 0.40506a
+Cext_253 \$27 \$7 0.584441a
+Cext_254 \$27 \$8 1.60354a
+Cext_255 \$27 \$9 658.788a
+Cext_256 \$27 en_core 2.40983f
+Cext_257 \$27 vdda 486.535a
+Cext_258 \$27 vss 182.405a
+Cext_259 \$27 VSUBS 3.14391f
+Cext_260 \$28 \$29 141.82a
+Cext_261 \$28 \$30 550.664a
+Cext_262 \$28 \$31 747.545a
+Cext_263 \$28 \$32 7.94781a
+Cext_264 \$28 \$6 0.456216a
+Cext_265 \$28 \$7 0.80177a
+Cext_266 \$28 \$8 806.335a
+Cext_267 \$28 \$9 882.766a
+Cext_268 \$28 \$I234 0.174713a
+Cext_269 \$28 vdda 491.66a
+Cext_270 \$28 vss 182.405a
+Cext_271 \$28 VSUBS 2.63923f
+Cext_272 \$29 \$30 660.865a
+Cext_273 \$29 \$31 1.34521a
+Cext_274 \$29 \$6 0.303795a
+Cext_275 \$29 \$7 0.438331a
+Cext_276 \$29 \$8 1.20266a
+Cext_277 \$29 \$9 336.353a
+Cext_278 \$29 \$I234 407.445a
+Cext_279 \$29 vdda 343.905a
+Cext_280 \$29 vss 324.456a
+Cext_281 \$29 VSUBS 2.72345f
+Cext_282 \$30 \$31 1.31396f
+Cext_283 \$30 \$32 0.303795a
+Cext_284 \$30 \$33 0.674133a
+Cext_285 \$30 \$34 471.206a
+Cext_286 \$30 \$35 3.36743f
+Cext_287 \$30 \$36 11.3572a
+Cext_288 \$30 \$6 189.106a
+Cext_289 \$30 \$7 84.0229a
+Cext_290 \$30 \$8 66.8054a
+Cext_291 \$30 \$9 70.8732a
+Cext_292 \$30 \$I234 0.108651a
+Cext_293 \$30 \$I236 170.217a
+Cext_294 \$30 clr_d 0.456216a
+Cext_295 \$30 en_core 0.80177a
+Cext_296 \$30 fast_en 1.42851f
+Cext_297 \$30 hard_cmp 1.69989a
+Cext_298 \$30 trip_d 0.292221a
+Cext_299 \$30 vdd 3.9469a
+Cext_300 \$30 vdda 553.211a
+Cext_301 \$30 vss 205.089a
+Cext_302 \$30 VSUBS 2.60328f
+Cext_303 \$31 \$32 1.72298f
+Cext_304 \$31 \$33 3.73353a
+Cext_305 \$31 \$34 1.86307f
+Cext_306 \$31 \$35 98.327a
+Cext_307 \$31 \$36 2.02697f
+Cext_308 \$31 \$37 3.67912a
+Cext_309 \$31 \$6 1.61272f
+Cext_310 \$31 \$7 112.863a
+Cext_311 \$31 \$8 114.737a
+Cext_312 \$31 \$9 110.139a
+Cext_313 \$31 \$I235 170.391a
+Cext_314 \$31 \$I237 170.217a
+Cext_315 \$31 clr_d 0.438331a
+Cext_316 \$31 en_core 0.684325a
+Cext_317 \$31 fast_en 131.167a
+Cext_318 \$31 hard_cmp 1.20266a
+Cext_319 \$31 trip_d 0.303795a
+Cext_320 \$31 vdd 2.85536a
+Cext_321 \$31 vdda 804.781a
+Cext_322 \$31 vss 240.428a
+Cext_323 \$31 VSUBS 4.05679f
+Cext_324 \$32 \$33 779.556a
+Cext_325 \$32 \$34 11.0521a
+Cext_326 \$32 \$35 0.213367a
+Cext_327 \$32 \$6 0.684325a
+Cext_328 \$32 \$7 1.20266a
+Cext_329 \$32 \$8 336.353a
+Cext_330 \$32 \$9 432.332a
+Cext_331 \$32 \$I235 407.631a
+Cext_332 \$32 vdda 372.2a
+Cext_333 \$32 vss 322.547a
+Cext_334 \$32 VSUBS 2.77037f
+Cext_335 \$33 \$34 1.7224f
+Cext_336 \$33 \$35 458.218a
+Cext_337 \$33 \$6 1.69989a
+Cext_338 \$33 \$7 184.161a
+Cext_339 \$33 \$8 261.906a
+Cext_340 \$33 \$9 80.36a
+Cext_341 \$33 \$I235 0.108651a
+Cext_342 \$33 \$I238 170.391a
+Cext_343 \$33 fast_en 0.292221a
+Cext_344 \$33 hard_cmp 0.20253a
+Cext_345 \$33 vdda 562.609a
+Cext_346 \$33 vss 176.934a
+Cext_347 \$33 VSUBS 2.22692f
+Cext_348 \$34 \$35 4.18818f
+Cext_349 \$34 \$36 3.39258f
+Cext_350 \$34 \$37 63.4136a
+Cext_351 \$34 \$6 1.36865a
+Cext_352 \$34 \$7 2.40531a
+Cext_353 \$34 \$8 2.0206f
+Cext_354 \$34 \$9 2.19983f
+Cext_355 \$34 \$I236 170.273a
+Cext_356 \$34 \$I237 170.098a
+Cext_357 \$34 \$I238 407.473a
+Cext_358 \$34 fault_core 1.39173f
+Cext_359 \$34 gate_core 32.9762a
+Cext_360 \$34 tripped 90.7796a
+Cext_361 \$34 vdda 417.962a
+Cext_362 \$34 vss 489.511a
+Cext_363 \$34 VSUBS 5.2897f
+Cext_364 \$35 \$36 214.82a
+Cext_365 \$35 \$37 1.58897f
+Cext_366 \$35 \$4 32.0715a
+Cext_367 \$35 \$6 4.24972a
+Cext_368 \$35 \$7 2.0799f
+Cext_369 \$35 \$8 2.23856f
+Cext_370 \$35 \$9 160.546a
+Cext_371 \$35 \$I236 407.473a
+Cext_372 \$35 \$I238 170.098a
+Cext_373 \$35 fast_en 0.730551a
+Cext_374 \$35 fault_core 44.5259a
+Cext_375 \$35 gate_core 34.2575a
+Cext_376 \$35 hard_cmp 0.506325a
+Cext_377 \$35 tripped 1.65134f
+Cext_378 \$35 vdd 0.269115a
+Cext_379 \$35 vdda 385.067a
+Cext_380 \$35 vss 425.435a
+Cext_381 \$35 VSUBS 4.39606f
+Cext_382 \$36 \$37 1.83585f
+Cext_383 \$36 \$6 307.203a
+Cext_384 \$36 \$7 140.739a
+Cext_385 \$36 \$8 140.739a
+Cext_386 \$36 \$9 145.128a
+Cext_387 \$36 \$I237 407.631a
+Cext_388 \$36 clr_d 0.912433a
+Cext_389 \$36 en_core 1.60354a
+Cext_390 \$36 fast_en 617.543a
+Cext_391 \$36 gate_core 136.921a
+Cext_392 \$36 hard_cmp 3.39978a
+Cext_393 \$36 trip_d 0.584441a
+Cext_394 \$36 vdd 3.87264a
+Cext_395 \$36 vdda 382.214a
+Cext_396 \$36 vss 391.136a
+Cext_397 \$36 VSUBS 3.86974f
+Cext_398 \$37 \$6 522.723a
+Cext_399 \$37 \$7 66.599a
+Cext_400 \$37 \$8 62.1531a
+Cext_401 \$37 \$9 65.5934a
+Cext_402 \$37 \$I237 0.108651a
+Cext_403 \$37 clr_d 0.292221a
+Cext_404 \$37 en_core 0.456216a
+Cext_405 \$37 fast_en 66.7132a
+Cext_406 \$37 fault_core 0.688212a
+Cext_407 \$37 gate_core 2.13331f
+Cext_408 \$37 hard_cmp 0.80177a
+Cext_409 \$37 trip_d 0.20253a
+Cext_410 \$37 vdd 1.16331a
+Cext_411 \$37 vdda 286.713a
+Cext_412 \$37 vss 180.902a
+Cext_413 \$37 VSUBS 1.46935f
+Cext_414 \$4 \$6 692.514a
+Cext_415 \$4 \$7 389.908a
+Cext_416 \$4 \$8 284.803a
+Cext_417 \$4 \$9 1.20266a
+Cext_418 \$4 \$I233 228.488a
+Cext_419 \$4 clr_d 86.276a
+Cext_420 \$4 en_core 97.9398a
+Cext_421 \$4 fast_en 1.62132f
+Cext_422 \$4 fault_core 0.303795a
+Cext_423 \$4 gate_core 109.822a
+Cext_424 \$4 hard_cmp 865.886a
+Cext_425 \$4 trip_d 126.722a
+Cext_426 \$4 tripped 2.54983a
+Cext_427 \$4 vdd 644.627a
+Cext_428 \$4 vdda 0.578145a
+Cext_429 \$4 vss 62.9242a
+Cext_430 \$4 VSUBS 1.62275f
+Cext_431 \$6 \$7 8.95664f
+Cext_432 \$6 \$8 1.34635a
+Cext_433 \$6 \$9 0.438331a
+Cext_434 \$6 \$I233 1.05374a
+Cext_435 \$6 clr_d 112.93a
+Cext_436 \$6 en_core 123.312a
+Cext_437 \$6 fast_en 72.6943a
+Cext_438 \$6 gate_core 148.496a
+Cext_439 \$6 hard_cmp 1.36931a
+Cext_440 \$6 trip_d 177.718a
+Cext_441 \$6 tripped 0.684325a
+Cext_442 \$6 vdd 398.787a
+Cext_443 \$6 vdda 33.9956a
+Cext_444 \$6 vss 270.565a
+Cext_445 \$6 VSUBS 3.82904f
+Cext_446 \$7 \$8 684.534a
+Cext_447 \$7 \$9 0.456216a
+Cext_448 \$7 clr_d 80.8489a
+Cext_449 \$7 en_core 86.5042a
+Cext_450 \$7 fast_en 0.456216a
+Cext_451 \$7 gate_core 74.5367a
+Cext_452 \$7 hard_cmp 0.292221a
+Cext_453 \$7 trip_d 260.554a
+Cext_454 \$7 tripped 0.80177a
+Cext_455 \$7 vdd 316.338a
+Cext_456 \$7 vdda 41.3962a
+Cext_457 \$7 vss 232.815a
+Cext_458 \$7 VSUBS 3.07445f
+Cext_459 \$8 \$9 671.002a
+Cext_460 \$8 clr_d 288.304a
+Cext_461 \$8 en_core 89.3631a
+Cext_462 \$8 fast_en 0.20253a
+Cext_463 \$8 fault_core 0.292221a
+Cext_464 \$8 gate_core 78.2676a
+Cext_465 \$8 trip_d 439.576a
+Cext_466 \$8 tripped 1.06082f
+Cext_467 \$8 vdd 310.942a
+Cext_468 \$8 vdda 46.6449a
+Cext_469 \$8 vss 232.572a
+Cext_470 \$8 VSUBS 3.16635f
+Cext_471 \$9 clr_d 472.502a
+Cext_472 \$9 en_core 317.571a
+Cext_473 \$9 fault_core 0.80177a
+Cext_474 \$9 gate_core 78.2676a
+Cext_475 \$9 trip_d 0.143699a
+Cext_476 \$9 tripped 1.38337f
+Cext_477 \$9 vdd 311.241a
+Cext_478 \$9 vdda 54.7043a
+Cext_479 \$9 vss 232.572a
+Cext_480 \$9 VSUBS 3.09485f
+Cext_481 \$I233 fast_en 19.7307a
+Cext_482 \$I233 hard_cmp 19.5475a
+Cext_483 \$I233 trip_d 0.206486a
+Cext_484 \$I233 vdd 6.72088a
+Cext_485 \$I233 vss 210.241a
+Cext_486 \$I233 VSUBS 32.0764a
+Cext_487 \$I234 vdda 373.74a
+Cext_488 \$I234 vss 4.17642a
+Cext_489 \$I234 VSUBS 111.326a
+Cext_490 \$I235 vdda 373.74a
+Cext_491 \$I235 vss 4.17642a
+Cext_492 \$I235 VSUBS 111.418a
+Cext_493 \$I236 vdda 373.74a
+Cext_494 \$I236 vss 4.17642a
+Cext_495 \$I236 VSUBS 111.418a
+Cext_496 \$I237 vdda 373.74a
+Cext_497 \$I237 vss 4.17642a
+Cext_498 \$I237 VSUBS 111.418a
+Cext_499 \$I238 vdda 373.74a
+Cext_500 \$I238 vss 4.17642a
+Cext_501 \$I238 VSUBS 111.418a
+Cext_502 clr_d en_core 10.0154f
+Cext_503 clr_d fast_en 70.9784a
+Cext_504 clr_d gate_core 0.456216a
+Cext_505 clr_d hard_cmp 79.8891a
+Cext_506 clr_d trip_d 9.76996f
+Cext_507 clr_d vdd 254.912a
+Cext_508 clr_d vdda 33.5476a
+Cext_509 clr_d vss 106.222a
+Cext_510 en_core fast_en 156.331a
+Cext_511 en_core fault_core 0.108315a
+Cext_512 en_core gate_core 241.254a
+Cext_513 en_core hard_cmp 8.96438f
+Cext_514 en_core trip_d 46.3398a
+Cext_515 en_core vdd 168.086a
+Cext_516 en_core vdda 33.2904a
+Cext_517 en_core vss 106.222a
+Cext_518 fast_en gate_core 1.08188f
+Cext_519 fast_en hard_cmp 9.22032f
+Cext_520 fast_en trip_d 86.5393a
+Cext_521 fast_en vdd 79.2612a
+Cext_522 fast_en vss 67.4735a
+Cext_523 fault_core gate_core 78.7036a
+Cext_524 fault_core tripped 319.173a
+Cext_525 fault_core vdd 218.096a
+Cext_526 fault_core vdda 104.728a
+Cext_527 fault_core vss 258.652a
+Cext_528 gate_core hard_cmp 1.69989a
+Cext_529 gate_core trip_d 0.292221a
+Cext_530 gate_core tripped 178.401a
+Cext_531 gate_core vdd 225.862a
+Cext_532 gate_core vdda 36.3798a
+Cext_533 gate_core vss 260.013a
+Cext_534 hard_cmp trip_d 95.4499a
+Cext_535 hard_cmp vdd 115.436a
+Cext_536 hard_cmp vss 29.1333a
+Cext_537 trip_d vdd 1.72988f
+Cext_538 trip_d vdda 33.7893a
+Cext_539 trip_d vss 108.567a
+Cext_540 tripped vdd 214.891a
+Cext_541 tripped vdda 40.7942a
+Cext_542 tripped vss 646.655a
+Cext_543 vdd vss 1.03895f
+Cext_544 vdda vss 3.95855f
+Cext_545 VSUBS clr_d 3.57746f
+Cext_546 VSUBS en_core 3.86372f
+Cext_547 VSUBS fast_en 2.52639f
+Cext_548 VSUBS fault_core 2.28672f
+Cext_549 VSUBS gate_core 2.56262f
+Cext_550 VSUBS hard_cmp 2.32883f
+Cext_551 VSUBS trip_d 5.8624f
+Cext_552 VSUBS tripped 2.4752f
+Cext_553 VSUBS vdd 15.556f
+Cext_554 VSUBS vdda 31.0924f
+Cext_555 VSUBS vss 76.0887f
+.ENDS g1_gate

@@ -1,0 +1,43 @@
+* G1_T2F testbench process corners: hbt=hbt_bcs mos=mos_ff res=res_bcs cap=cap_typ vdd=3.3 V vdd12=1.2 V T=175 C mode=ptat
+.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerHBT.lib hbt_bcs
+.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerMOShv.lib mos_ff
+.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerMOSlv.lib mos_ff
+.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerRES.lib res_bcs
+.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerCAP.lib cap_typ
+.include ../../../g1_bgr/xschem/g1_bgr.spice
+.include ../../xschem/g1_t2f.spice
+.option gmin=1e-15 abstol=1e-13 reltol=1e-4 vntol=1e-6 method=gear
+.temp 175
+.global sub!
+Vsub sub! 0 dc 0
+Vdd vdd 0 dc 3.3
+Vdd12 vdd12 0 dc 1.2
+Vr4 r4 0 dc 0
+Ven en 0 pwl(0 0 1u 0 1.01u 3.3)
+Vmode mode 0 dc 0
+Xbgr vdd 0 r4 vref iptat pbias pcasc vbe dvbe g1_bgr
+Vload iptat 0 dc 1.0
+Xt2f vdd vdd12 0 pbias pcasc vref en mode fout g1_t2f
+* TEMP_OUT pad stand-in: ~50 fF of core wiring plus the IO cell input
+Cout fout 0 50f
+.control
+set filetype=ascii
+set wr_singlescale
+set wr_vecnames
+tran 5n 32u
+meas tran t_a when v(fout)=0.6 rise=8
+meas tran t_b when v(fout)=0.6 rise=24
+let freq = (24-8)/(t_b-t_a)
+print freq
+meas tran i33_avg avg i(vdd) from=t_a to=t_b
+meas tran i12_avg avg i(vdd12) from=t_a to=t_b
+meas tran vref_avg avg v(vref) from=t_a to=t_b
+meas tran vth_avg avg v(xt2f.vth) from=t_a to=t_b
+meas tran cap1_max max v(xt2f.cap1) from=t_a to=t_b
+meas tran fout_hi max v(fout) from=t_a to=t_b
+meas tran fout_lo min v(fout) from=t_a to=t_b
+meas tran t_half_a trig v(fout) val=0.6 rise=8 targ v(fout) val=0.6 fall=8
+
+.endc
+
+.end

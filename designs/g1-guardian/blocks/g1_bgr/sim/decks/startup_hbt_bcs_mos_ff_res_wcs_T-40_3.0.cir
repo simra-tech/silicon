@@ -1,0 +1,31 @@
+* G1_BGR testbench start-up 1 ms ramp: hbt=hbt_bcs mos=mos_ff res=res_wcs vdd=3.0 V
+.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerHBT.lib hbt_bcs
+.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerMOShv.lib mos_ff
+.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerRES.lib res_wcs
+.include ../../xschem/g1_bgr.spice
+.option gmin=1e-15 abstol=1e-14 reltol=1e-5 vntol=1e-7
+.global sub!
+Vsub sub! 0 dc 0
+Vdd vdd 0 dc 3.0 
+Vr4 r4 0 dc 0
+Xbgr vdd 0 r4 vref iptat pbias pcasc vbe dvbe g1_bgr
+* PTAT output leg sinks into a 1.0 V node (top of a DAC string stand-in)
+Vload iptat 0 dc 1.0
+Cload vref 0 1p
+.control
+set filetype=ascii
+set wr_singlescale
+set wr_vecnames
+option temp=-40
+alter @vdd[pwl] = [ 0 0 1m 3.0 3m 3.0 ]
+tran 2u 3m uic
+let iptat = i(vload)
+meas tran vref_end find v(vref) at=3m
+meas tran iptat_end find iptat at=3m
+meas tran pbias_end find v(pbias) at=3m
+meas tran t_90 when v(vref)=0.93 rise=1
+meas tran vref_max max v(vref)
+wrdata ../results/startup_hbt_bcs_mos_ff_res_wcs_T-40_3.0.dat v(vref) iptat v(pbias) v(vdd)
+.endc
+
+.end

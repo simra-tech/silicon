@@ -1,0 +1,50 @@
+** sch_path: /work/designs/g1-guardian/blocks/g1_bgr/xschem/g1_bgr.sch
+.subckt g1_bgr vdd vss r4 vref iptat pbias pcasc vbe dvbe
+*.iopin vdd
+*.iopin vss
+*.ipin r4
+*.opin vref
+*.opin iptat
+*.opin pbias
+*.opin pcasc
+*.opin vbe
+*.opin dvbe
+XMP1 d1 pbias vdd vdd sg13_hv_pmos w=10u l=4u ng=1 m=1 mm_ok=1
+XMC1 n1 pcasc d1 d1 sg13_hv_pmos w=10u l=4u ng=1 m=1 mm_ok=1
+XMP2 d2 pbias vdd vdd sg13_hv_pmos w=10u l=4u ng=1 m=1 mm_ok=1
+XMC2 pbias pcasc d2 d2 sg13_hv_pmos w=10u l=4u ng=1 m=1 mm_ok=1
+XRB pbias pcasc sub! rppd w=1u l=500u m=1 b=0 mm_ok=1
+XMNC1 n1 vb2 vbe vss sg13_hv_nmos w=20u l=1u ng=1 m=1 mm_ok=1
+XMNC2 pcasc vb2 c2 vss sg13_hv_nmos w=20u l=1u ng=1 m=1 mm_ok=1
+XMP5 d5 pbias vdd vdd sg13_hv_pmos w=10u l=4u ng=1 m=1 mm_ok=1
+XMC5 vb2 pcasc d5 d5 sg13_hv_pmos w=10u l=4u ng=1 m=1 mm_ok=1
+XRX vb2 vd1 sub! rppd w=1u l=192u m=1 b=0 mm_ok=1
+XQD1 vd1 vd1 vd2 vss npn13G2 Nx=1 mm_ok=1
+XQD2 vd2 vd2 vss vss npn13G2 Nx=1 mm_ok=1
+XQ1 vbe vbe vss vss npn13G2 Nx=1 mm_ok=1
+XQ1B vbe b1b vss vss npn13G2 Nx=1 mm_ok=1
+XQ2A c2 vbe dvbe vss npn13G2 Nx=1 mm_ok=1
+XQ2B c2 vbe dvbe vss npn13G2 Nx=1 mm_ok=1
+XQ2C c2 vbe dvbe vss npn13G2 Nx=1 mm_ok=1
+XQ2D c2 vbe dvbe vss npn13G2 Nx=1 mm_ok=1
+XQ2E c2 vbe dvbe vss npn13G2 Nx=1 mm_ok=1
+XQ2F c2 vbe dvbe vss npn13G2 Nx=1 mm_ok=1
+XQ2G c2 vbe dvbe vss npn13G2 Nx=1 mm_ok=1
+XQ2H c2 vbe dvbe vss npn13G2 Nx=1 mm_ok=1
+XR1 dvbe vss sub! rppd w=1u l=51.5u m=1 b=0 mm_ok=1
+XMP3 d3 pbias vdd vdd sg13_hv_pmos w=10u l=4u ng=1 m=1 mm_ok=1
+XMC3 vref pcasc d3 d3 sg13_hv_pmos w=10u l=4u ng=1 m=1 mm_ok=1
+XR2 vref vbe3 sub! rppd w=1u l=315u m=1 b=0 mm_ok=1
+XQ3 vbe3 vbe3 vss vss npn13G2 Nx=1 mm_ok=1
+XMP4 d4 pbias vdd vdd sg13_hv_pmos w=10u l=4u ng=1 m=1 mm_ok=1
+XMC4 iptat pcasc d4 d4 sg13_hv_pmos w=10u l=4u ng=1 m=1 mm_ok=1
+XMPS det pbias vdd vdd sg13_hv_pmos w=10u l=4u ng=1 m=1 mm_ok=1
+XRDET det vss sub! rhigh w=0.5u l=735u m=1 b=0 mm_ok=1
+XMNI kick det vss vss sg13_hv_nmos w=1u l=0.5u ng=1 m=1 mm_ok=1
+XMPI kick det vdd vdd sg13_hv_pmos w=2u l=0.5u ng=1 m=1 mm_ok=1
+XMKFB pbias kick vss vss sg13_hv_nmos w=1u l=4u ng=1 m=1 mm_ok=1
+XMSW1 vbe r4 b1b vss sg13_hv_nmos w=2u l=0.5u ng=1 m=1 mm_ok=1
+XMSW2 b1b r4n vss vss sg13_hv_nmos w=1u l=0.5u ng=1 m=1 mm_ok=1
+XMNI2 r4n r4 vss vss sg13_hv_nmos w=1u l=0.5u ng=1 m=1 mm_ok=1
+XMPI2 r4n r4 vdd vdd sg13_hv_pmos w=2u l=0.5u ng=1 m=1 mm_ok=1
+.ends

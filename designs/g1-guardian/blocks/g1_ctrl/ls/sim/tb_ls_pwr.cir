@@ -1,0 +1,28 @@
+* g1_ls_up power-up: in held low, supplies ramped in either order (@@ORDER@@: A = vdda first, D = vdd first),
+* then in pulsed once; finally vdd removed while vdda stays (vdd-absent case). 20 fF load.
+.param VDDA=3.3 VDD=1.2
+.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerMOSlv.lib @@MOS@@
+.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerMOShv.lib @@MOS@@
+.include netlist/g1_ls_up.spice
+.temp 27
+.option reltol=0.001 abstol=1e-12 vntol=1e-6 chgtol=1e-14
+Vdda vdda 0 pwl(@@PWLA@@)
+Vdd  vdd  0 pwl(@@PWLD@@)
+Vin in 0 pwl(0 0 6u 0 6.001u 1.2 7u 1.2 7.001u 0 12u 0)
+X1 in out vdd vdda 0 g1_ls_up
+Cload out 0 20f
+.control
+set filetype=ascii
+tran 50p 12u
+meas tran o_first find v(out) at=1.9u
+meas tran o_both find v(out) at=4.9u
+meas tran o_pulse find v(out) at=6.9u
+meas tran o_after find v(out) at=7.9u
+meas tran o_vddoff find v(out) at=11.9u
+meas tran o_max_settled max v(out) from=4u to=5.9u
+let ia = -i(vdda)
+meas tran ia_vddoff avg ia from=10u to=11.9u
+let ia_vddoff_na = ia_vddoff*1e9
+echo "POWERUP @@MOS@@ order=@@ORDER@@ out@1.9us(first rail only)=" $&o_first " out@4.9us(both rails)=" $&o_both " out@6.9us(in=1)=" $&o_pulse " out@7.9us(in=0)=" $&o_after " out_max(4-5.9us)=" $&o_max_settled " out@11.9us(vdd removed, vdda on)=" $&o_vddoff " Ivdda_nA(vdd off)=" $&ia_vddoff_na
+.endc
+.end

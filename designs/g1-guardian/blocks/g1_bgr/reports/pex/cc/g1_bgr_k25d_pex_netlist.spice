@@ -1,0 +1,455 @@
+*********************************************************
+*** NGSPICE file created by KLayout-PEX 0.3.12
+*** -----------------------------------------------------
+***     Extraction Engine: KPEX/2.5D
+***     Technology: ihp_sg13g2
+***     Date: 2026-09-19 12:55:01
+*********************************************************
+
+.SUBCKT g1_bgr b1b c2 d1 d2 d3 d4 d5 det dvbe iptat kick n1 pbias pcasc r4 r4n
++ vb2 vbe vbe3 vd1 vd2 vdd vref vss
+R$1 vss \$23 vss 0.5 rhigh l=49 ps=0 b=0 m=1
+R$2 \$12 det vss 0.5 rhigh l=49 ps=0 b=0 m=1
+R$3 \$13 \$24 vss 0.5 rhigh l=49 ps=0 b=0 m=1
+R$4 \$14 \$24 vss 0.5 rhigh l=49 ps=0 b=0 m=1
+R$5 \$14 \$26 vss 0.5 rhigh l=49 ps=0 b=0 m=1
+R$6 \$15 \$26 vss 0.5 rhigh l=49 ps=0 b=0 m=1
+R$7 \$15 \$27 vss 0.5 rhigh l=49 ps=0 b=0 m=1
+R$8 \$16 \$27 vss 0.5 rhigh l=49 ps=0 b=0 m=1
+R$9 \$16 \$21 vss 0.5 rhigh l=49 ps=0 b=0 m=1
+R$10 \$12 \$25 vss 0.5 rhigh l=49 ps=0 b=0 m=1
+R$11 \$13 \$25 vss 0.5 rhigh l=49 ps=0 b=0 m=1
+R$12 \$17 \$22 vss 0.5 rhigh l=49 ps=0 b=0 m=1
+R$13 \$18 \$22 vss 0.5 rhigh l=49 ps=0 b=0 m=1
+R$14 \$18 \$23 vss 0.5 rhigh l=49 ps=0 b=0 m=1
+R$15 \$17 \$21 vss 0.5 rhigh l=49 ps=0 b=0 m=1
+R$16 vss dvbe vss 1 rppd l=51.5 ps=0 b=0 m=1
+R$17 \$7 vref vss 1 rppd l=52.5 ps=0 b=0 m=1
+R$18 \$2 \$36 vss 1 rppd l=52.5 ps=0 b=0 m=1
+R$19 \$7 \$36 vss 1 rppd l=52.5 ps=0 b=0 m=1
+R$20 \$2 \$37 vss 1 rppd l=52.5 ps=0 b=0 m=1
+R$21 \$8 \$37 vss 1 rppd l=52.5 ps=0 b=0 m=1
+R$22 \$8 vbe3 vss 1 rppd l=52.5 ps=0 b=0 m=1
+R$23 \$6 vb2 vss 1 rppd l=48 ps=0 b=0 m=1
+R$24 \$9 vd1 vss 1 rppd l=48 ps=0 b=0 m=1
+R$25 \$6 \$19 vss 1 rppd l=48 ps=0 b=0 m=1
+R$26 \$9 \$19 vss 1 rppd l=48 ps=0 b=0 m=1
+M$27 kick det vdd vdd sg13_hv_pmos L=0.5U W=2U AS=0.68P AD=0.68P PS=4.68U
++ PD=4.68U rfmode=0
+M$28 r4n r4 vdd vdd sg13_hv_pmos L=0.5U W=2U AS=0.68P AD=0.68P PS=4.68U
++ PD=4.68U rfmode=0
+M$29 vbe r4 b1b vss sg13_hv_nmos L=0.5U W=2U AS=0.68P AD=0.68P PS=4.68U
++ PD=4.68U rfmode=0
+M$30 pbias kick vss vss sg13_hv_nmos L=4U W=1U AS=0.34P AD=0.34P PS=2.68U
++ PD=2.68U rfmode=0
+M$31 kick det vss vss sg13_hv_nmos L=0.5U W=1U AS=0.34P AD=0.34P PS=2.68U
++ PD=2.68U rfmode=0
+M$32 r4n r4 vss vss sg13_hv_nmos L=0.5U W=1U AS=0.34P AD=0.34P PS=2.68U
++ PD=2.68U rfmode=0
+M$33 b1b r4n vss vss sg13_hv_nmos L=0.5U W=1U AS=0.34P AD=0.34P PS=2.68U
++ PD=2.68U rfmode=0
+M$34 n1 vb2 vbe vss sg13_hv_nmos L=1U W=10U AS=3.4P AD=3.4P PS=20.68U PD=20.68U
++ rfmode=0
+M$35 c2 vb2 pcasc vss sg13_hv_nmos L=1U W=10U AS=3.4P AD=3.4P PS=20.68U
++ PD=20.68U rfmode=0
+M$36 vbe vb2 n1 vss sg13_hv_nmos L=1U W=10U AS=3.4P AD=3.4P PS=20.68U PD=20.68U
++ rfmode=0
+M$37 pcasc vb2 c2 vss sg13_hv_nmos L=1U W=10U AS=3.4P AD=3.4P PS=20.68U
++ PD=20.68U rfmode=0
+M$38 d1 pbias vdd vdd sg13_hv_pmos L=4U W=5U AS=1.7P AD=1.7P PS=10.68U
++ PD=10.68U rfmode=0
+M$39 d2 pbias vdd vdd sg13_hv_pmos L=4U W=5U AS=1.7P AD=1.7P PS=10.68U
++ PD=10.68U rfmode=0
+M$40 d4 pbias vdd vdd sg13_hv_pmos L=4U W=5U AS=1.7P AD=1.7P PS=10.68U
++ PD=10.68U rfmode=0
+M$41 d5 pbias vdd vdd sg13_hv_pmos L=4U W=5U AS=1.7P AD=1.7P PS=10.68U
++ PD=10.68U rfmode=0
+M$42 det pbias vdd vdd sg13_hv_pmos L=4U W=5U AS=1.7P AD=1.7P PS=10.68U
++ PD=10.68U rfmode=0
+M$43 d3 pbias vdd vdd sg13_hv_pmos L=4U W=5U AS=1.7P AD=1.7P PS=10.68U
++ PD=10.68U rfmode=0
+M$44 d3 pbias vdd vdd sg13_hv_pmos L=4U W=5U AS=1.7P AD=1.7P PS=10.68U
++ PD=10.68U rfmode=0
+M$45 d5 pbias vdd vdd sg13_hv_pmos L=4U W=5U AS=1.7P AD=1.7P PS=10.68U
++ PD=10.68U rfmode=0
+M$46 d4 pbias vdd vdd sg13_hv_pmos L=4U W=5U AS=1.7P AD=1.7P PS=10.68U
++ PD=10.68U rfmode=0
+M$47 d2 pbias vdd vdd sg13_hv_pmos L=4U W=5U AS=1.7P AD=1.7P PS=10.68U
++ PD=10.68U rfmode=0
+M$48 d1 pbias vdd vdd sg13_hv_pmos L=4U W=5U AS=1.7P AD=1.7P PS=10.68U
++ PD=10.68U rfmode=0
+M$49 det pbias vdd vdd sg13_hv_pmos L=4U W=5U AS=1.7P AD=1.7P PS=10.68U
++ PD=10.68U rfmode=0
+M$50 vb2 pcasc d5 d5 sg13_hv_pmos L=4U W=10U AS=3.4P AD=3.4P PS=20.68U
++ PD=20.68U rfmode=0
+M$51 vref pcasc d3 d3 sg13_hv_pmos L=4U W=10U AS=3.4P AD=3.4P PS=20.68U
++ PD=20.68U rfmode=0
+M$52 n1 pcasc d1 d1 sg13_hv_pmos L=4U W=10U AS=3.4P AD=3.4P PS=20.68U PD=20.68U
++ rfmode=0
+M$53 iptat pcasc d4 d4 sg13_hv_pmos L=4U W=10U AS=3.4P AD=3.4P PS=20.68U
++ PD=20.68U rfmode=0
+M$54 pbias pcasc d2 d2 sg13_hv_pmos L=4U W=10U AS=3.4P AD=3.4P PS=20.68U
++ PD=20.68U rfmode=0
+Q$55 vss vss vss vss npn13G2 we=0.07 le=0.9 Nx=1 m=1
+Q$56 vbe vbe vss vss npn13G2 we=0.07 le=0.9 Nx=1 m=1
+Q$57 vss vss vss vss npn13G2 we=0.07 le=0.9 Nx=1 m=1
+Q$58 vss vss vss vss npn13G2 we=0.07 le=0.9 Nx=1 m=1
+Q$59 vss vss vss vss npn13G2 we=0.07 le=0.9 Nx=1 m=1
+Q$60 vbe3 vbe3 vss vss npn13G2 we=0.07 le=0.9 Nx=1 m=1
+Q$61 vss vss vss vss npn13G2 we=0.07 le=0.9 Nx=1 m=1
+Q$62 vd2 vd2 vss vss npn13G2 we=0.07 le=0.9 Nx=1 m=1
+Q$63 vss vss vss vss npn13G2 we=0.07 le=0.9 Nx=1 m=1
+Q$64 vss vss vss vss npn13G2 we=0.07 le=0.9 Nx=1 m=1
+Q$65 vss vss vss vss npn13G2 we=0.07 le=0.9 Nx=1 m=1
+Q$66 vss vss vss vss npn13G2 we=0.07 le=0.9 Nx=1 m=1
+Q$67 vbe b1b vss vss npn13G2 we=0.07 le=0.9 Nx=1 m=1
+Q$68 c2 vbe dvbe vss npn13G2 we=0.07 le=0.9 Nx=1 m=1
+Q$69 c2 vbe dvbe vss npn13G2 we=0.07 le=0.9 Nx=1 m=1
+Q$70 c2 vbe dvbe vss npn13G2 we=0.07 le=0.9 Nx=1 m=1
+Q$71 c2 vbe dvbe vss npn13G2 we=0.07 le=0.9 Nx=1 m=1
+Q$72 c2 vbe dvbe vss npn13G2 we=0.07 le=0.9 Nx=1 m=1
+Q$73 c2 vbe dvbe vss npn13G2 we=0.07 le=0.9 Nx=1 m=1
+Q$74 c2 vbe dvbe vss npn13G2 we=0.07 le=0.9 Nx=1 m=1
+Q$75 vd1 vd1 vd2 vss npn13G2 we=0.07 le=0.9 Nx=1 m=1
+Q$76 c2 vbe dvbe vss npn13G2 we=0.07 le=0.9 Nx=1 m=1
+R$77 \$4 pbias vss 1 rppd l=50 ps=0 b=0 m=1
+R$78 \$11 \$34 vss 1 rppd l=50 ps=0 b=0 m=1
+R$79 \$10 \$34 vss 1 rppd l=50 ps=0 b=0 m=1
+R$80 \$3 \$31 vss 1 rppd l=50 ps=0 b=0 m=1
+R$81 \$10 \$33 vss 1 rppd l=50 ps=0 b=0 m=1
+R$82 \$5 \$31 vss 1 rppd l=50 ps=0 b=0 m=1
+R$83 \$5 \$30 vss 1 rppd l=50 ps=0 b=0 m=1
+R$84 \$4 \$30 vss 1 rppd l=50 ps=0 b=0 m=1
+R$85 \$3 \$33 vss 1 rppd l=50 ps=0 b=0 m=1
+R$86 \$11 pcasc vss 1 rppd l=50 ps=0 b=0 m=1
+Cext_1 \$10 \$11 15.5101a
+Cext_2 \$10 \$3 19.0458a
+Cext_3 \$10 vss 100.194a
+Cext_4 \$10 VSUBS 481.031a
+Cext_5 \$11 \$12 2.09203a
+Cext_6 \$11 \$3 0.524321a
+Cext_7 \$11 vss 100.194a
+Cext_8 \$11 VSUBS 493.568a
+Cext_9 \$12 \$13 14.2084a
+Cext_10 \$12 vss 62.783a
+Cext_11 \$12 VSUBS 309.014a
+Cext_12 \$13 \$14 14.2084a
+Cext_13 \$13 vss 62.783a
+Cext_14 \$13 VSUBS 297.347a
+Cext_15 \$14 \$15 14.2084a
+Cext_16 \$14 vss 62.783a
+Cext_17 \$14 VSUBS 297.347a
+Cext_18 \$15 \$16 14.2084a
+Cext_19 \$15 vss 62.783a
+Cext_20 \$15 VSUBS 297.347a
+Cext_21 \$16 \$17 14.2084a
+Cext_22 \$16 vss 71.2957a
+Cext_23 \$16 VSUBS 295.974a
+Cext_24 \$17 \$18 14.2084a
+Cext_25 \$17 vss 63.3242a
+Cext_26 \$17 VSUBS 297.347a
+Cext_27 \$18 vss 81.0158a
+Cext_28 \$18 VSUBS 297.347a
+Cext_29 \$19 \$31 0.26116a
+Cext_30 \$19 \$33 0.26116a
+Cext_31 \$19 \$36 14.9703a
+Cext_32 \$19 \$37 14.9703a
+Cext_33 \$19 dvbe 159.131a
+Cext_34 \$19 pbias 5.07141a
+Cext_35 \$19 vb2 172.86a
+Cext_36 \$19 vbe3 95.8794a
+Cext_37 \$19 vd1 193.63a
+Cext_38 \$19 vd2 410.357a
+Cext_39 \$19 vref 95.1702a
+Cext_40 \$19 vss 223.967a
+Cext_41 \$19 VSUBS 1.72175f
+Cext_42 \$2 \$3 694.791a
+Cext_43 \$2 \$6 0.524321a
+Cext_44 \$2 \$7 19.0458a
+Cext_45 \$2 \$8 19.0458a
+Cext_46 \$2 \$9 0.524321a
+Cext_47 \$2 vss 501.967a
+Cext_48 \$2 VSUBS 734.815a
+Cext_49 \$21 \$22 14.2084a
+Cext_50 \$21 \$27 14.2084a
+Cext_51 \$21 b1b 0.735115a
+Cext_52 \$21 vss 12.0025a
+Cext_53 \$21 VSUBS 331.598a
+Cext_54 \$22 \$23 14.2084a
+Cext_55 \$22 b1b 0.735115a
+Cext_56 \$22 vss 12.0025a
+Cext_57 \$22 VSUBS 331.598a
+Cext_58 \$23 b1b 0.735115a
+Cext_59 \$23 vss 14.9704a
+Cext_60 \$23 VSUBS 341.848a
+Cext_61 \$24 \$25 14.2084a
+Cext_62 \$24 \$26 14.2084a
+Cext_63 \$24 b1b 0.735115a
+Cext_64 \$24 det 0.541131a
+Cext_65 \$24 vss 12.0025a
+Cext_66 \$24 VSUBS 331.598a
+Cext_67 \$25 b1b 0.735115a
+Cext_68 \$25 det 18.2327a
+Cext_69 \$25 vss 12.0025a
+Cext_70 \$25 VSUBS 331.598a
+Cext_71 \$26 \$27 14.2084a
+Cext_72 \$26 b1b 0.735115a
+Cext_73 \$26 det 0.167332a
+Cext_74 \$26 vss 12.0025a
+Cext_75 \$26 VSUBS 331.598a
+Cext_76 \$27 b1b 0.735115a
+Cext_77 \$27 vss 12.0025a
+Cext_78 \$27 VSUBS 331.598a
+Cext_79 \$3 \$4 0.524321a
+Cext_80 \$3 \$5 19.0458a
+Cext_81 \$3 \$6 31.1754a
+Cext_82 \$3 \$7 12.6539a
+Cext_83 \$3 \$8 12.6539a
+Cext_84 \$3 \$9 30.9049a
+Cext_85 \$3 vss 903.669a
+Cext_86 \$3 VSUBS 1.48902f
+Cext_87 \$30 \$31 15.5101a
+Cext_88 \$30 dvbe 1.65454a
+Cext_89 \$30 pbias 19.0458a
+Cext_90 \$30 vb2 0.855051a
+Cext_91 \$30 vss 24.3204a
+Cext_92 \$30 VSUBS 527.822a
+Cext_93 \$31 dvbe 1.65454a
+Cext_94 \$31 pbias 0.524321a
+Cext_95 \$31 vb2 5.91722a
+Cext_96 \$31 vss 24.3204a
+Cext_97 \$31 VSUBS 541.141a
+Cext_98 \$33 \$34 15.5101a
+Cext_99 \$33 b1b 0.120904a
+Cext_100 \$33 pcasc 0.524321a
+Cext_101 \$33 vbe3 2.26884a
+Cext_102 \$33 vd1 5.91722a
+Cext_103 \$33 vss 24.2823a
+Cext_104 \$33 VSUBS 541.141a
+Cext_105 \$34 b1b 0.247176a
+Cext_106 \$34 pcasc 19.0458a
+Cext_107 \$34 vbe3 2.29766a
+Cext_108 \$34 vd1 0.855051a
+Cext_109 \$34 vss 24.3204a
+Cext_110 \$34 VSUBS 527.822a
+Cext_111 \$36 \$37 4.91263a
+Cext_112 \$36 dvbe 1.31773a
+Cext_113 \$36 pbias 0.253448a
+Cext_114 \$36 vref 19.777a
+Cext_115 \$36 vss 103.246a
+Cext_116 \$36 VSUBS 490.2a
+Cext_117 \$37 dvbe 5.91722a
+Cext_118 \$37 pbias 0.253448a
+Cext_119 \$37 vbe3 19.777a
+Cext_120 \$37 vd2 0.820484a
+Cext_121 \$37 vss 91.632a
+Cext_122 \$37 VSUBS 490.2a
+Cext_123 \$4 \$5 15.5101a
+Cext_124 \$4 vss 111.854a
+Cext_125 \$4 VSUBS 490.996a
+Cext_126 \$5 vss 100.194a
+Cext_127 \$5 VSUBS 481.031a
+Cext_128 \$6 \$7 15.5101a
+Cext_129 \$6 vss 94.7854a
+Cext_130 \$6 VSUBS 481.031a
+Cext_131 \$7 vss 95.5187a
+Cext_132 \$7 VSUBS 481.031a
+Cext_133 \$8 \$9 15.5101a
+Cext_134 \$8 vss 95.1057a
+Cext_135 \$8 VSUBS 481.031a
+Cext_136 \$9 vss 99.5028a
+Cext_137 \$9 VSUBS 480.311a
+Cext_138 b1b det 3.08988f
+Cext_139 b1b kick 18.9647a
+Cext_140 b1b pbias 847.105a
+Cext_141 b1b pcasc 735.082a
+Cext_142 b1b r4 332.534a
+Cext_143 b1b r4n 197.625a
+Cext_144 b1b vbe 741.197a
+Cext_145 b1b vbe3 1.07019f
+Cext_146 b1b vd1 42.3574a
+Cext_147 b1b vd2 0.214735a
+Cext_148 b1b vss 1.39679f
+Cext_149 c2 det 1.09491a
+Cext_150 c2 dvbe 14.8445f
+Cext_151 c2 n1 1.78008f
+Cext_152 c2 pbias 3.1973a
+Cext_153 c2 pcasc 683.913a
+Cext_154 c2 vb2 1.28399f
+Cext_155 c2 vbe 407.234a
+Cext_156 c2 vref 0.457024a
+Cext_157 c2 vss 1.76096f
+Cext_158 d1 d2 3.38132f
+Cext_159 d1 d3 369.77a
+Cext_160 d1 d4 105.35a
+Cext_161 d1 d5 67.0643a
+Cext_162 d1 det 66.6465a
+Cext_163 d1 iptat 1.22759a
+Cext_164 d1 kick 66.4272a
+Cext_165 d1 n1 69.0247a
+Cext_166 d1 pbias 5.54508f
+Cext_167 d1 pcasc 539.684a
+Cext_168 d1 r4 89.8574a
+Cext_169 d1 r4n 66.3707a
+Cext_170 d1 vb2 3.51936a
+Cext_171 d1 vdd 478.72a
+Cext_172 d1 vref 85.5231a
+Cext_173 d1 vss 7.31884a
+Cext_174 d2 d3 2.47943f
+Cext_175 d2 d4 603.724a
+Cext_176 d2 d5 62.4898a
+Cext_177 d2 det 270.036a
+Cext_178 d2 iptat 1.22759a
+Cext_179 d2 kick 84.8402a
+Cext_180 d2 n1 85.2692a
+Cext_181 d2 pbias 1.59819f
+Cext_182 d2 pcasc 541.399a
+Cext_183 d2 r4 89.9071a
+Cext_184 d2 r4n 66.4466a
+Cext_185 d2 vb2 0.58192a
+Cext_186 d2 vdd 478.512a
+Cext_187 d2 vss 8.38671a
+Cext_188 d3 d4 3.36401f
+Cext_189 d3 d5 495.887a
+Cext_190 d3 det 67.4106a
+Cext_191 d3 iptat 1.22759a
+Cext_192 d3 kick 66.5915a
+Cext_193 d3 pbias 1.54168f
+Cext_194 d3 pcasc 541.425a
+Cext_195 d3 r4 89.9115a
+Cext_196 d3 r4n 66.4676a
+Cext_197 d3 vb2 86.7912a
+Cext_198 d3 vdd 478.512a
+Cext_199 d3 vref 69.0247a
+Cext_200 d3 vss 1.8489a
+Cext_201 d4 d5 5.71403f
+Cext_202 d4 det 99.591a
+Cext_203 d4 iptat 70.2523a
+Cext_204 d4 kick 248.615a
+Cext_205 d4 pbias 1.56219f
+Cext_206 d4 pcasc 540.29a
+Cext_207 d4 r4 90.2237a
+Cext_208 d4 r4n 71.5847a
+Cext_209 d4 vb2 0.238401a
+Cext_210 d4 vdd 480.244a
+Cext_211 d4 vss 13.0714a
+Cext_212 d5 det 9.09587f
+Cext_213 d5 iptat 1.22759a
+Cext_214 d5 kick 86.0785a
+Cext_215 d5 pbias 1.34059f
+Cext_216 d5 pcasc 545.423a
+Cext_217 d5 r4 241.428a
+Cext_218 d5 r4n 170.512a
+Cext_219 d5 vb2 69.4934a
+Cext_220 d5 vdd 478.512a
+Cext_221 d5 vss 9.92566a
+Cext_222 det dvbe 1.47054a
+Cext_223 det kick 10.5027f
+Cext_224 det n1 2.03967a
+Cext_225 det pbias 2.27172f
+Cext_226 det pcasc 7.15985f
+Cext_227 det r4 360.612a
+Cext_228 det r4n 824.601a
+Cext_229 det vb2 60.8768a
+Cext_230 det vbe 32.2826a
+Cext_231 det vbe3 34.4541a
+Cext_232 det vdd 339.328a
+Cext_233 det vss 783.982a
+Cext_234 dvbe iptat 0.236884a
+Cext_235 dvbe kick 0.311768a
+Cext_236 dvbe n1 3.63074a
+Cext_237 dvbe pbias 193.075a
+Cext_238 dvbe pcasc 5.36919a
+Cext_239 dvbe vb2 89.4959a
+Cext_240 dvbe vbe 11.6494f
+Cext_241 dvbe vbe3 15.8721a
+Cext_242 dvbe vd1 0.145608a
+Cext_243 dvbe vd2 156.801a
+Cext_244 dvbe vref 4.6575f
+Cext_245 dvbe vss 3.91955f
+Cext_246 iptat n1 45.5207a
+Cext_247 iptat pbias 6.1594a
+Cext_248 iptat pcasc 975.203a
+Cext_249 iptat vb2 6.11366f
+Cext_250 iptat vbe 70.5206a
+Cext_251 iptat vref 223.508a
+Cext_252 iptat vss 289.493a
+Cext_253 kick pbias 1.11756f
+Cext_254 kick pcasc 12.9977a
+Cext_255 kick r4 126.975a
+Cext_256 kick r4n 7.98667f
+Cext_257 kick vb2 3.0592a
+Cext_258 kick vbe 0.356062a
+Cext_259 kick vdd 152.428a
+Cext_260 kick vss 519.69a
+Cext_261 n1 pbias 6.39949a
+Cext_262 n1 pcasc 4.83147f
+Cext_263 n1 vb2 1.32414f
+Cext_264 n1 vbe 1.91233f
+Cext_265 n1 vref 6.41414a
+Cext_266 n1 vss 116.638a
+Cext_267 pbias pcasc 9.33416f
+Cext_268 pbias r4 2.50831f
+Cext_269 pbias r4n 732.455a
+Cext_270 pbias vb2 1.54255f
+Cext_271 pbias vbe 3.71289a
+Cext_272 pbias vbe3 157.678a
+Cext_273 pbias vd1 49.6104a
+Cext_274 pbias vd2 147.156a
+Cext_275 pbias vdd 3.85011f
+Cext_276 pbias vref 213.907a
+Cext_277 pbias vss 3.75278f
+Cext_278 pcasc r4 2.77052a
+Cext_279 pcasc r4n 2.04066a
+Cext_280 pcasc vb2 3.71047f
+Cext_281 pcasc vbe 953.297a
+Cext_282 pcasc vbe3 313.659a
+Cext_283 pcasc vref 2.31913f
+Cext_284 pcasc vss 598.224a
+Cext_285 r4 r4n 12.2762f
+Cext_286 r4 vbe 285.464a
+Cext_287 r4 vdd 83.346a
+Cext_288 r4 vss 415.346a
+Cext_289 r4n vbe 62.6373a
+Cext_290 r4n vdd 158.562a
+Cext_291 r4n vss 591.385a
+Cext_292 vb2 vbe 1.27566f
+Cext_293 vb2 vref 6.68835f
+Cext_294 vb2 vss 708.188a
+Cext_295 vbe vbe3 11.0316a
+Cext_296 vbe vd1 10.5784a
+Cext_297 vbe vd2 29.0277a
+Cext_298 vbe vref 223.747a
+Cext_299 vbe vss 5.2939f
+Cext_300 vbe3 vd1 394.468a
+Cext_301 vbe3 vd2 245.219a
+Cext_302 vbe3 vss 1.39267f
+Cext_303 vd1 vd2 2.03701f
+Cext_304 vd1 vss 364.135a
+Cext_305 vd2 vss 1.51724f
+Cext_306 vref vss 480.6a
+Cext_307 VSUBS b1b 4.41403f
+Cext_308 VSUBS c2 4.95536f
+Cext_309 VSUBS d1 2.31262f
+Cext_310 VSUBS d2 2.22418f
+Cext_311 VSUBS d3 2.35423f
+Cext_312 VSUBS d4 2.28807f
+Cext_313 VSUBS d5 2.73371f
+Cext_314 VSUBS det 6.4979f
+Cext_315 VSUBS dvbe 6.69786f
+Cext_316 VSUBS iptat 1.94954f
+Cext_317 VSUBS kick 3.02926f
+Cext_318 VSUBS n1 2.16318f
+Cext_319 VSUBS pbias 45.0447f
+Cext_320 VSUBS pcasc 30.7628f
+Cext_321 VSUBS r4 4.25325f
+Cext_322 VSUBS r4n 2.48056f
+Cext_323 VSUBS vb2 11.6562f
+Cext_324 VSUBS vbe 8.8365f
+Cext_325 VSUBS vbe3 1.77779f
+Cext_326 VSUBS vd1 1.42461f
+Cext_327 VSUBS vd2 1.56685f
+Cext_328 VSUBS vdd 18.8574f
+Cext_329 VSUBS vref 2.41436f
+Cext_330 VSUBS vss 108.76f
+.ENDS g1_bgr

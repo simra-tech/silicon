@@ -1,0 +1,24 @@
+* G1_T2F post-layout testbench (g1_t2f_pex.spice, bandgap schematic view) @@KIND@@: hbt=@@HBT@@ mos=@@MOS@@ res=@@RES@@ cap=@@CAP@@ vdd=@@VDD@@ V vdd12=@@VDD12@@ V T=@@TEMP@@ C mode=@@MODE@@
+.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerHBT.lib @@HBT@@
+.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerMOShv.lib @@MOS@@
+.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerMOSlv.lib @@MOS@@
+.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerRES.lib @@RES@@
+.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerCAP.lib @@CAP@@
+.include ../../../../g1_bgr/xschem/g1_bgr.spice
+.include ../g1_t2f_pex.spice
+.option gmin=1e-15 abstol=1e-13 reltol=1e-4 vntol=1e-6 method=gear
+.temp @@TEMP@@
+.global sub!
+Vsub sub! 0 dc 0
+Vdd vdd 0 dc @@VDD@@
+Vdd12 vdd12 0 dc @@VDD12@@
+Vr4 r4 0 dc 0
+Ven en 0 pwl(0 0 1u 0 1.01u @@VDD@@)
+Vmode mode 0 dc @@MODEV@@
+Xbgr vdd 0 r4 vref iptat pbias pcasc vbe dvbe g1_bgr
+Vload iptat 0 dc 1.0
+Xt2f vdd vdd12 0 pbias pcasc vref en mode fout g1_t2f
+* TEMP_OUT pad stand-in: ~50 fF of core wiring plus the IO cell input
+Cout fout 0 50f
+@@CONTROL@@
+.end

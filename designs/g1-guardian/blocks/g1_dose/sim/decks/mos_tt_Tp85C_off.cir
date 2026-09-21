@@ -1,0 +1,40 @@
+* G1_DOSE off-current baseline: corner mos_tt, T = 85 C
+.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerMOSlv.lib mos_tt
+.include ../g1_dose_pair_extracted.cir
+.option gmin=1e-16 abstol=1e-16 reltol=1e-4
+.temp 85
+X1 D_ELT D_STD G_SHARED VSS g1_dose_pair
+Vg G_SHARED 0 dc 0
+Vs VSS 0 dc 0
+Vdstd D_STD 0 dc 0.1
+Vdelt D_ELT 0 dc 0.1
+.control
+* PSP 103.6 is a Verilog-A model: load the PDK's compiled OSDI object before the circuit is parsed
+pre_osdi /foss/pdks/ihp-sg13g2/libs.tech/ngspice/osdi/psp103.osdi
+set filetype=ascii
+set wr_singlescale
+set wr_vecnames
+op
+let id_std_v01 = -i(vdstd)
+let id_elt_v01 = -i(vdelt)
+let ratio_v01 = id_std_v01/id_elt_v01
+print id_std_v01 id_elt_v01 ratio_v01
+alter vdstd dc = 1.2
+alter vdelt dc = 1.2
+op
+let id_std_v12 = -i(vdstd)
+let id_elt_v12 = -i(vdelt)
+let ratio_v12 = id_std_v12/id_elt_v12
+print id_std_v12 id_elt_v12 ratio_v12
+dc Vg -0.3 1.2 0.01
+let id_std = -i(vdstd)
+let id_elt = -i(vdelt)
+wrdata mos_tt_Tp85C_idvg_v12.dat id_std id_elt
+alter vdstd dc = 0.1
+alter vdelt dc = 0.1
+dc Vg -0.3 1.2 0.01
+let id_std = -i(vdstd)
+let id_elt = -i(vdelt)
+wrdata mos_tt_Tp85C_idvg_v01.dat id_std id_elt
+.endc
+.end

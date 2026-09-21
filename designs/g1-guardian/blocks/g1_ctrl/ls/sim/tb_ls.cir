@@ -1,0 +1,43 @@
+* g1_ls_up functional/timing testbench: 1.2 V step in (1 ns edges), 20 fF load on out
+* placeholders filled by run_ls.sh: @@MOS@@ @@VDD@@ @@VDDA@@ @@TEMP@@
+.param VDDA=@@VDDA@@ VDD=@@VDD@@
+.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerMOSlv.lib @@MOS@@
+.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerMOShv.lib @@MOS@@
+.include netlist/g1_ls_up.spice
+.temp @@TEMP@@
+.option reltol=0.001 abstol=1e-12 vntol=1e-6 chgtol=1e-14
+Vdda vdda 0 dc {VDDA}
+Vdd  vdd  0 dc {VDD}
+* in: low, rise at 300 ns (1 ns edge), fall at 600 ns (1 ns edge)
+Vin in 0 pwl(0 0 300n 0 301n {VDD} 600n {VDD} 601n 0 900n 0)
+X1 in out vdd vdda 0 g1_ls_up
+Cload out 0 20f
+.control
+set filetype=ascii
+tran 10p 900n
+let th_in = @@VDD@@/2
+let th_out = @@VDDA@@/2
+meas tran tr trig v(in) val=$&th_in rise=1 targ v(out) val=$&th_out rise=1
+meas tran tf trig v(in) val=$&th_in fall=1 targ v(out) val=$&th_out fall=1
+meas tran vh find v(out) at=590n
+meas tran vl find v(out) at=890n
+meas tran vl0 find v(out) at=290n
+meas tran omax max v(out) from=100n to=900n
+meas tran omin min v(out) from=100n to=900n
+let ia = -i(vdda)
+let ic = -i(vdd)
+meas tran ia0 avg ia from=100n to=290n
+meas tran ia1 avg ia from=400n to=590n
+meas tran ic0 avg ic from=100n to=290n
+meas tran ic1 avg ic from=400n to=590n
+meas tran iapk max ia from=299n to=400n
+let tr_ps = tr*1e12
+let tf_ps = tf*1e12
+let ia0_na = ia0*1e9
+let ia1_na = ia1*1e9
+let ic0_na = ic0*1e9
+let ic1_na = ic1*1e9
+let iapk_ua = iapk*1e6
+echo "RES @@MOS@@ @@VDD@@ @@VDDA@@ @@TEMP@@ tr_ps=" $&tr_ps " tf_ps=" $&tf_ps " vh=" $&vh " vl=" $&vl " vl0=" $&vl0 " omin=" $&omin " omax=" $&omax " Ivdda_nA(in0/in1)=" $&ia0_na $&ia1_na " Ivdd_nA(in0/in1)=" $&ic0_na $&ic1_na " Ivdda_pk_uA=" $&iapk_ua
+.endc
+.end

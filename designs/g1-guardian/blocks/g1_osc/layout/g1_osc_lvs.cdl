@@ -1,0 +1,68 @@
+* LVS reference netlist derived from g1_osc.spice by lvs_netlist.py (see docstring)
+.subckt g1_osc en trim[0] trim[1] trim[2] trim[3] osc_clk VDD VSS
+RRA VDD va VSS rppd w=1u l=117u b=0 m=1
+RRB VDD vb VSS rppd w=1u l=117u b=0 m=1
+XCA trim[0] trim[1] trim[2] trim[3] va VSS g1_osc_cbank
+XCB trim[0] trim[1] trim[2] trim[3] vb VSS g1_osc_cbank
+MMRA va rsta VSS VSS sg13_lv_nmos w=4u l=0.13u m=1
+MMRB vb rstb VSS VSS sg13_lv_nmos w=4u l=0.13u m=1
+RRT1 VDD vth VSS rppd w=1u l=384.3u b=0 m=1
+RRT2 vth VSS VSS rppd w=1u l=384.3u b=0 m=1
+CCTH vth VSS cap_cmim w=26u l=26u m=1
+DDANT vth VDD dpantenna w=0.78u l=0.78u
+RRBIAS VDD vbn VSS rppd w=1u l=134.3u b=0 m=1
+MMBD vbn vbn VSS VSS sg13_lv_nmos w=2u l=0.5u m=1
+XCMPA va vth vbn ca VDD VSS g1_osc_cmp
+XCMPB vb vth vbn cb VDD VSS g1_osc_cmp
+XEN en en_n VDD VSS g1_osc_inv
+XNQ ca en_n qb q VDD VSS g1_osc_nor3
+XNQB cb q qb VDD VSS g1_osc_nor2
+XRSTB qb en rstb VDD VSS g1_osc_nand2
+XRSTA q rsta VDD VSS g1_osc_inv
+XB1 q qn_b VDD VSS g1_osc_inv
+XB2 qn_b osc_clk VDD VSS g1_osc_inv
+.ends
+.subckt g1_osc_cbank t0 t1 t2 t3 top vss
+CCF top vss cap_cmim w=31.65u l=31.65u m=1
+CCT0 top b0 cap_cmim w=8.16u l=8.16u m=1
+MMS0 b0 t0 vss vss sg13_lv_nmos w=4u l=0.13u m=1
+CCT1 top b1 cap_cmim w=11.55u l=11.55u m=1
+MMS1 b1 t1 vss vss sg13_lv_nmos w=4u l=0.13u m=1
+CCT2 top b2 cap_cmim w=16.33u l=16.33u m=1
+MMS2 b2 t2 vss vss sg13_lv_nmos w=4u l=0.13u m=1
+CCT3 top b3 cap_cmim w=23.09u l=23.09u m=1
+MMS3 b3 t3 vss vss sg13_lv_nmos w=4u l=0.13u m=1
+.ends
+.subckt g1_osc_cmp inp inn vbn out vdd vss
+MMT tail vbn vss vss sg13_lv_nmos w=2u l=0.5u m=1
+MM1 d1 inp tail vss sg13_lv_nmos w=4u l=0.3u m=1
+MM2 o1 inn tail vss sg13_lv_nmos w=4u l=0.3u m=1
+MM3 d1 d1 vdd vdd sg13_lv_pmos w=2u l=0.3u m=1
+MM4 o1 d1 vdd vdd sg13_lv_pmos w=2u l=0.3u m=1
+XI1 o1 o2 vdd vss g1_osc_inv
+XI2 o2 out vdd vss g1_osc_inv
+.ends
+.subckt g1_osc_inv a y vdd vss
+MMP y a vdd vdd sg13_lv_pmos w=1u l=0.13u m=1
+MMN y a vss vss sg13_lv_nmos w=0.5u l=0.13u m=1
+.ends
+.subckt g1_osc_nor3 a0 a1 a2 y vdd vss
+MMP0 p0 a0 vdd vdd sg13_lv_pmos w=3u l=0.13u m=1
+MMP1 p1 a1 p0 vdd sg13_lv_pmos w=3u l=0.13u m=1
+MMP2 y a2 p1 vdd sg13_lv_pmos w=3u l=0.13u m=1
+MMN0 y a0 vss vss sg13_lv_nmos w=0.5u l=0.13u m=1
+MMN1 y a1 vss vss sg13_lv_nmos w=0.5u l=0.13u m=1
+MMN2 y a2 vss vss sg13_lv_nmos w=0.5u l=0.13u m=1
+.ends
+.subckt g1_osc_nor2 a0 a1 y vdd vss
+MMP0 p0 a0 vdd vdd sg13_lv_pmos w=2u l=0.13u m=1
+MMP1 y a1 p0 vdd sg13_lv_pmos w=2u l=0.13u m=1
+MMN0 y a0 vss vss sg13_lv_nmos w=0.5u l=0.13u m=1
+MMN1 y a1 vss vss sg13_lv_nmos w=0.5u l=0.13u m=1
+.ends
+.subckt g1_osc_nand2 a0 a1 y vdd vss
+MMP0 y a0 vdd vdd sg13_lv_pmos w=1u l=0.13u m=1
+MMP1 y a1 vdd vdd sg13_lv_pmos w=1u l=0.13u m=1
+MMN0 y a0 n0 vss sg13_lv_nmos w=1u l=0.13u m=1
+MMN1 n0 a1 vss vss sg13_lv_nmos w=1u l=0.13u m=1
+.ends

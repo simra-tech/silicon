@@ -1,0 +1,1090 @@
+
+ /----------------------------------------------------------------------------\
+ |  yosys -- Yosys Open SYnthesis Suite                                       |
+ |  Copyright (C) 2012 - 2026  Claire Xenia Wolf <claire@yosyshq.com>         |
+ |  Distributed under an ISC-like license, type "license" to see terms        |
+ \----------------------------------------------------------------------------/
+ Yosys 0.67 (git sha1 2d1509d1b, Release, GNU /usr/bin/c++ 13.3.0)
+
+-- Executing script file `synth_seu_sg13g2.ys' --
+
+1. Executing Liberty frontend: /foss/pdks/ihp-sg13g2/libs.ref/sg13g2_stdcell/lib/sg13g2_stdcell_typ_1p20V_25C.lib
+Imported 84 cell types from liberty file.
+
+2. Executing Verilog-2005 frontend: /work/designs/g1-guardian/blocks/g1_seu/rtl/g1_tmr_reg.v
+Parsing SystemVerilog input from `/work/designs/g1-guardian/blocks/g1_seu/rtl/g1_tmr_reg.v' to AST representation.
+Generating RTLIL representation for module `\g1_tmr_copy'.
+Generating RTLIL representation for module `\g1_tmr_reg'.
+Successfully finished Verilog frontend.
+
+3. Executing Verilog-2005 frontend: /work/designs/g1-guardian/blocks/g1_seu/rtl/g1_seu_chain.v
+Parsing SystemVerilog input from `/work/designs/g1-guardian/blocks/g1_seu/rtl/g1_seu_chain.v' to AST representation.
+Generating RTLIL representation for module `\g1_seu_chain'.
+Successfully finished Verilog frontend.
+
+4. Executing Verilog-2005 frontend: /work/designs/g1-guardian/blocks/g1_seu/rtl/g1_seu.v
+Parsing SystemVerilog input from `/work/designs/g1-guardian/blocks/g1_seu/rtl/g1_seu.v' to AST representation.
+Generating RTLIL representation for module `\g1_seu'.
+Successfully finished Verilog frontend.
+
+5. Executing HIERARCHY pass (managing design hierarchy).
+
+5.1. Analyzing design hierarchy..
+Top module:  \g1_seu
+Used module:     \g1_tmr_reg
+Used module:         \g1_tmr_copy
+Used module:     \g1_seu_chain
+Parameter \W = 8
+Parameter \RST = 8'00000000
+
+5.2. Executing AST frontend in derive mode using pre-parsed AST for module `\g1_tmr_copy'.
+Parameter \W = 8
+Parameter \RST = 8'00000000
+Generating RTLIL representation for module `$paramod\g1_tmr_copy\W=s32'00000000000000000000000000001000\RST=8'00000000'.
+Parameter \W = 8
+Parameter \RST = 8'00000000
+Found cached RTLIL representation for module `$paramod\g1_tmr_copy\W=s32'00000000000000000000000000001000\RST=8'00000000'.
+Parameter \W = 8
+Parameter \RST = 8'00000000
+Found cached RTLIL representation for module `$paramod\g1_tmr_copy\W=s32'00000000000000000000000000001000\RST=8'00000000'.
+Parameter \W = 8
+
+5.3. Executing AST frontend in derive mode using pre-parsed AST for module `\g1_tmr_reg'.
+Parameter \W = 8
+Generating RTLIL representation for module `$paramod\g1_tmr_reg\W=s32'00000000000000000000000000001000'.
+Parameter \W = 8
+Found cached RTLIL representation for module `$paramod\g1_tmr_reg\W=s32'00000000000000000000000000001000'.
+Parameter \W = 8
+Found cached RTLIL representation for module `$paramod\g1_tmr_reg\W=s32'00000000000000000000000000001000'.
+Parameter \W = 16
+
+5.4. Executing AST frontend in derive mode using pre-parsed AST for module `\g1_tmr_reg'.
+Parameter \W = 16
+Generating RTLIL representation for module `$paramod\g1_tmr_reg\W=s32'00000000000000000000000000010000'.
+Parameter \W = 16
+Found cached RTLIL representation for module `$paramod\g1_tmr_reg\W=s32'00000000000000000000000000010000'.
+Parameter \LEN = 256
+
+5.5. Executing AST frontend in derive mode using pre-parsed AST for module `\g1_seu_chain'.
+Parameter \LEN = 256
+Generating RTLIL representation for module `$paramod\g1_seu_chain\LEN=s32'00000000000000000000000100000000'.
+Parameter \LEN = 256
+Found cached RTLIL representation for module `$paramod\g1_seu_chain\LEN=s32'00000000000000000000000100000000'.
+Parameter \LEN = 256
+Found cached RTLIL representation for module `$paramod\g1_seu_chain\LEN=s32'00000000000000000000000100000000'.
+Parameter \LEN = 1024
+
+5.6. Executing AST frontend in derive mode using pre-parsed AST for module `\g1_seu_chain'.
+Parameter \LEN = 1024
+Generating RTLIL representation for module `$paramod\g1_seu_chain\LEN=s32'00000000000000000000010000000000'.
+Parameter \W = 1
+
+5.7. Executing AST frontend in derive mode using pre-parsed AST for module `\g1_tmr_reg'.
+Parameter \W = 1
+Generating RTLIL representation for module `$paramod\g1_tmr_reg\W=s32'00000000000000000000000000000001'.
+Parameter \W = 2
+
+5.8. Executing AST frontend in derive mode using pre-parsed AST for module `\g1_tmr_reg'.
+Parameter \W = 2
+Generating RTLIL representation for module `$paramod\g1_tmr_reg\W=s32'00000000000000000000000000000010'.
+Parameter \W = 11
+
+5.9. Executing AST frontend in derive mode using pre-parsed AST for module `\g1_tmr_reg'.
+Parameter \W = 11
+Generating RTLIL representation for module `$paramod\g1_tmr_reg\W=s32'00000000000000000000000000001011'.
+Parameter \W = 1
+Found cached RTLIL representation for module `$paramod\g1_tmr_reg\W=s32'00000000000000000000000000000001'.
+
+5.10. Analyzing design hierarchy..
+Top module:  \g1_seu
+Used module:     $paramod\g1_tmr_reg\W=s32'00000000000000000000000000001000
+Used module:         \g1_tmr_copy
+Used module:     $paramod\g1_tmr_reg\W=s32'00000000000000000000000000010000
+Used module:     $paramod\g1_seu_chain\LEN=s32'00000000000000000000000100000000
+Used module:     $paramod\g1_seu_chain\LEN=s32'00000000000000000000010000000000
+Used module:     $paramod\g1_tmr_reg\W=s32'00000000000000000000000000000001
+Used module:     $paramod\g1_tmr_reg\W=s32'00000000000000000000000000000010
+Used module:     $paramod\g1_tmr_reg\W=s32'00000000000000000000000000001011
+Parameter \W = 8
+Parameter \RST = 8'00000000
+Found cached RTLIL representation for module `$paramod\g1_tmr_copy\W=s32'00000000000000000000000000001000\RST=8'00000000'.
+Parameter \W = 8
+Parameter \RST = 8'00000000
+Found cached RTLIL representation for module `$paramod\g1_tmr_copy\W=s32'00000000000000000000000000001000\RST=8'00000000'.
+Parameter \W = 8
+Parameter \RST = 8'00000000
+Found cached RTLIL representation for module `$paramod\g1_tmr_copy\W=s32'00000000000000000000000000001000\RST=8'00000000'.
+Parameter \W = 16
+Parameter \RST = 16'0000000000000000
+
+5.11. Executing AST frontend in derive mode using pre-parsed AST for module `\g1_tmr_copy'.
+Parameter \W = 16
+Parameter \RST = 16'0000000000000000
+Generating RTLIL representation for module `$paramod$8541b5f35354f640665a7f7c1d1215e141bb33c4\g1_tmr_copy'.
+Parameter \W = 16
+Parameter \RST = 16'0000000000000000
+Found cached RTLIL representation for module `$paramod$8541b5f35354f640665a7f7c1d1215e141bb33c4\g1_tmr_copy'.
+Parameter \W = 16
+Parameter \RST = 16'0000000000000000
+Found cached RTLIL representation for module `$paramod$8541b5f35354f640665a7f7c1d1215e141bb33c4\g1_tmr_copy'.
+Parameter \W = 1
+Parameter \RST = 1'0
+
+5.12. Executing AST frontend in derive mode using pre-parsed AST for module `\g1_tmr_copy'.
+Parameter \W = 1
+Parameter \RST = 1'0
+Generating RTLIL representation for module `$paramod\g1_tmr_copy\W=s32'00000000000000000000000000000001\RST=1'0'.
+Parameter \W = 1
+Parameter \RST = 1'0
+Found cached RTLIL representation for module `$paramod\g1_tmr_copy\W=s32'00000000000000000000000000000001\RST=1'0'.
+Parameter \W = 1
+Parameter \RST = 1'0
+Found cached RTLIL representation for module `$paramod\g1_tmr_copy\W=s32'00000000000000000000000000000001\RST=1'0'.
+Parameter \W = 2
+Parameter \RST = 2'00
+
+5.13. Executing AST frontend in derive mode using pre-parsed AST for module `\g1_tmr_copy'.
+Parameter \W = 2
+Parameter \RST = 2'00
+Generating RTLIL representation for module `$paramod\g1_tmr_copy\W=s32'00000000000000000000000000000010\RST=2'00'.
+Parameter \W = 2
+Parameter \RST = 2'00
+Found cached RTLIL representation for module `$paramod\g1_tmr_copy\W=s32'00000000000000000000000000000010\RST=2'00'.
+Parameter \W = 2
+Parameter \RST = 2'00
+Found cached RTLIL representation for module `$paramod\g1_tmr_copy\W=s32'00000000000000000000000000000010\RST=2'00'.
+Parameter \W = 11
+Parameter \RST = 11'00000000000
+
+5.14. Executing AST frontend in derive mode using pre-parsed AST for module `\g1_tmr_copy'.
+Parameter \W = 11
+Parameter \RST = 11'00000000000
+Generating RTLIL representation for module `$paramod\g1_tmr_copy\W=s32'00000000000000000000000000001011\RST=11'00000000000'.
+Parameter \W = 11
+Parameter \RST = 11'00000000000
+Found cached RTLIL representation for module `$paramod\g1_tmr_copy\W=s32'00000000000000000000000000001011\RST=11'00000000000'.
+Parameter \W = 11
+Parameter \RST = 11'00000000000
+Found cached RTLIL representation for module `$paramod\g1_tmr_copy\W=s32'00000000000000000000000000001011\RST=11'00000000000'.
+
+5.15. Analyzing design hierarchy..
+Top module:  \g1_seu
+Used module:     $paramod\g1_tmr_reg\W=s32'00000000000000000000000000001000
+Used module:         $paramod\g1_tmr_copy\W=s32'00000000000000000000000000001000\RST=8'00000000
+Used module:     $paramod\g1_tmr_reg\W=s32'00000000000000000000000000010000
+Used module:         $paramod$8541b5f35354f640665a7f7c1d1215e141bb33c4\g1_tmr_copy
+Used module:     $paramod\g1_seu_chain\LEN=s32'00000000000000000000000100000000
+Used module:     $paramod\g1_seu_chain\LEN=s32'00000000000000000000010000000000
+Used module:     $paramod\g1_tmr_reg\W=s32'00000000000000000000000000000001
+Used module:         $paramod\g1_tmr_copy\W=s32'00000000000000000000000000000001\RST=1'0
+Used module:     $paramod\g1_tmr_reg\W=s32'00000000000000000000000000000010
+Used module:         $paramod\g1_tmr_copy\W=s32'00000000000000000000000000000010\RST=2'00
+Used module:     $paramod\g1_tmr_reg\W=s32'00000000000000000000000000001011
+Used module:         $paramod\g1_tmr_copy\W=s32'00000000000000000000000000001011\RST=11'00000000000
+
+5.16. Analyzing design hierarchy..
+Top module:  \g1_seu
+Used module:     $paramod\g1_tmr_reg\W=s32'00000000000000000000000000001000
+Used module:         $paramod\g1_tmr_copy\W=s32'00000000000000000000000000001000\RST=8'00000000
+Used module:     $paramod\g1_tmr_reg\W=s32'00000000000000000000000000010000
+Used module:         $paramod$8541b5f35354f640665a7f7c1d1215e141bb33c4\g1_tmr_copy
+Used module:     $paramod\g1_seu_chain\LEN=s32'00000000000000000000000100000000
+Used module:     $paramod\g1_seu_chain\LEN=s32'00000000000000000000010000000000
+Used module:     $paramod\g1_tmr_reg\W=s32'00000000000000000000000000000001
+Used module:         $paramod\g1_tmr_copy\W=s32'00000000000000000000000000000001\RST=1'0
+Used module:     $paramod\g1_tmr_reg\W=s32'00000000000000000000000000000010
+Used module:         $paramod\g1_tmr_copy\W=s32'00000000000000000000000000000010\RST=2'00
+Used module:     $paramod\g1_tmr_reg\W=s32'00000000000000000000000000001011
+Used module:         $paramod\g1_tmr_copy\W=s32'00000000000000000000000000001011\RST=11'00000000000
+Removing unused module `\g1_seu_chain'.
+Removing unused module `\g1_tmr_reg'.
+Removing unused module `\g1_tmr_copy'.
+Removed 3 unused modules.
+
+6. Executing SYNTH pass.
+
+6.1. Executing HIERARCHY pass (managing design hierarchy).
+
+6.1.1. Analyzing design hierarchy..
+Top module:  \g1_seu
+Used module:     $paramod\g1_tmr_reg\W=s32'00000000000000000000000000001000
+Used module:         $paramod\g1_tmr_copy\W=s32'00000000000000000000000000001000\RST=8'00000000
+Used module:     $paramod\g1_tmr_reg\W=s32'00000000000000000000000000010000
+Used module:         $paramod$8541b5f35354f640665a7f7c1d1215e141bb33c4\g1_tmr_copy
+Used module:     $paramod\g1_seu_chain\LEN=s32'00000000000000000000000100000000
+Used module:     $paramod\g1_seu_chain\LEN=s32'00000000000000000000010000000000
+Used module:     $paramod\g1_tmr_reg\W=s32'00000000000000000000000000000001
+Used module:         $paramod\g1_tmr_copy\W=s32'00000000000000000000000000000001\RST=1'0
+Used module:     $paramod\g1_tmr_reg\W=s32'00000000000000000000000000000010
+Used module:         $paramod\g1_tmr_copy\W=s32'00000000000000000000000000000010\RST=2'00
+Used module:     $paramod\g1_tmr_reg\W=s32'00000000000000000000000000001011
+Used module:         $paramod\g1_tmr_copy\W=s32'00000000000000000000000000001011\RST=11'00000000000
+
+6.1.2. Analyzing design hierarchy..
+Top module:  \g1_seu
+Used module:     $paramod\g1_tmr_reg\W=s32'00000000000000000000000000001000
+Used module:         $paramod\g1_tmr_copy\W=s32'00000000000000000000000000001000\RST=8'00000000
+Used module:     $paramod\g1_tmr_reg\W=s32'00000000000000000000000000010000
+Used module:         $paramod$8541b5f35354f640665a7f7c1d1215e141bb33c4\g1_tmr_copy
+Used module:     $paramod\g1_seu_chain\LEN=s32'00000000000000000000000100000000
+Used module:     $paramod\g1_seu_chain\LEN=s32'00000000000000000000010000000000
+Used module:     $paramod\g1_tmr_reg\W=s32'00000000000000000000000000000001
+Used module:         $paramod\g1_tmr_copy\W=s32'00000000000000000000000000000001\RST=1'0
+Used module:     $paramod\g1_tmr_reg\W=s32'00000000000000000000000000000010
+Used module:         $paramod\g1_tmr_copy\W=s32'00000000000000000000000000000010\RST=2'00
+Used module:     $paramod\g1_tmr_reg\W=s32'00000000000000000000000000001011
+Used module:         $paramod\g1_tmr_copy\W=s32'00000000000000000000000000001011\RST=11'00000000000
+Removed 0 unused modules.
+
+6.2. Executing PROC pass (convert processes to netlists).
+
+6.2.1. Executing PROC_CLEAN pass (remove empty switches from decision trees).
+Cleaned up 0 empty switches.
+
+6.2.2. Executing PROC_RMDEAD pass (remove dead branches from decision trees).
+Marked 1 switch rules as full_case in process $proc$/work/designs/g1-guardian/blocks/g1_seu/rtl/g1_tmr_reg.v:20$89 in module $paramod$8541b5f35354f640665a7f7c1d1215e141bb33c4\g1_tmr_copy.
+Marked 1 switch rules as full_case in process $proc$/work/designs/g1-guardian/blocks/g1_seu/rtl/g1_seu_chain.v:20$72 in module $paramod\g1_seu_chain\LEN=s32'00000000000000000000010000000000.
+Marked 1 switch rules as full_case in process $proc$/work/designs/g1-guardian/blocks/g1_seu/rtl/g1_seu_chain.v:20$70 in module $paramod\g1_seu_chain\LEN=s32'00000000000000000000000100000000.
+Marked 1 switch rules as full_case in process $proc$/work/designs/g1-guardian/blocks/g1_seu/rtl/g1_tmr_reg.v:20$58 in module $paramod\g1_tmr_copy\W=s32'00000000000000000000000000001000\RST=8'00000000.
+Marked 8 switch rules as full_case in process $proc$/work/designs/g1-guardian/blocks/g1_seu/rtl/g1_seu.v:100$45 in module g1_seu.
+Marked 2 switch rules as full_case in process $proc$/work/designs/g1-guardian/blocks/g1_seu/rtl/g1_seu.v:51$16 in module g1_seu.
+Marked 1 switch rules as full_case in process $proc$/work/designs/g1-guardian/blocks/g1_seu/rtl/g1_tmr_reg.v:20$95 in module $paramod\g1_tmr_copy\W=s32'00000000000000000000000000001011\RST=11'00000000000.
+Marked 1 switch rules as full_case in process $proc$/work/designs/g1-guardian/blocks/g1_seu/rtl/g1_tmr_reg.v:20$93 in module $paramod\g1_tmr_copy\W=s32'00000000000000000000000000000010\RST=2'00.
+Marked 1 switch rules as full_case in process $proc$/work/designs/g1-guardian/blocks/g1_seu/rtl/g1_tmr_reg.v:20$91 in module $paramod\g1_tmr_copy\W=s32'00000000000000000000000000000001\RST=1'0.
+Removed a total of 0 dead cases.
+
+6.2.3. Executing PROC_PRUNE pass (remove redundant assignments in processes).
+Removed 7 redundant assignments.
+Promoted 6 assignments to connections.
+
+6.2.4. Executing PROC_INIT pass (extract init attributes).
+
+6.2.5. Executing PROC_ARST pass (detect async resets in processes).
+Found async reset \rst_n in `$paramod$8541b5f35354f640665a7f7c1d1215e141bb33c4\g1_tmr_copy.$proc$/work/designs/g1-guardian/blocks/g1_seu/rtl/g1_tmr_reg.v:20$89'.
+Found async reset \rst_n in `$paramod\g1_seu_chain\LEN=s32'00000000000000000000010000000000.$proc$/work/designs/g1-guardian/blocks/g1_seu/rtl/g1_seu_chain.v:20$72'.
+Found async reset \rst_n in `$paramod\g1_seu_chain\LEN=s32'00000000000000000000000100000000.$proc$/work/designs/g1-guardian/blocks/g1_seu/rtl/g1_seu_chain.v:20$70'.
+Found async reset \rst_n in `$paramod\g1_tmr_copy\W=s32'00000000000000000000000000001000\RST=8'00000000.$proc$/work/designs/g1-guardian/blocks/g1_seu/rtl/g1_tmr_reg.v:20$58'.
+Found async reset \rst_n in `$paramod\g1_tmr_copy\W=s32'00000000000000000000000000001011\RST=11'00000000000.$proc$/work/designs/g1-guardian/blocks/g1_seu/rtl/g1_tmr_reg.v:20$95'.
+Found async reset \rst_n in `$paramod\g1_tmr_copy\W=s32'00000000000000000000000000000010\RST=2'00.$proc$/work/designs/g1-guardian/blocks/g1_seu/rtl/g1_tmr_reg.v:20$93'.
+Found async reset \rst_n in `$paramod\g1_tmr_copy\W=s32'00000000000000000000000000000001\RST=1'0.$proc$/work/designs/g1-guardian/blocks/g1_seu/rtl/g1_tmr_reg.v:20$91'.
+
+6.2.6. Executing PROC_ROM pass (convert switches to ROMs).
+Converted 0 switches.
+<suppressed ~10 debug messages>
+
+6.2.7. Executing PROC_MUX pass (convert decision trees to multiplexers).
+Creating decoders for process `$paramod$8541b5f35354f640665a7f7c1d1215e141bb33c4\g1_tmr_copy.$proc$/work/designs/g1-guardian/blocks/g1_seu/rtl/g1_tmr_reg.v:20$89'.
+     1/1: $0\q[15:0]
+Creating decoders for process `$paramod\g1_seu_chain\LEN=s32'00000000000000000000010000000000.$proc$/work/designs/g1-guardian/blocks/g1_seu/rtl/g1_seu_chain.v:20$72'.
+     1/1: $0\q[1023:0]
+Creating decoders for process `$paramod\g1_seu_chain\LEN=s32'00000000000000000000000100000000.$proc$/work/designs/g1-guardian/blocks/g1_seu/rtl/g1_seu_chain.v:20$70'.
+     1/1: $0\q[255:0]
+Creating decoders for process `$paramod\g1_tmr_copy\W=s32'00000000000000000000000000001000\RST=8'00000000.$proc$/work/designs/g1-guardian/blocks/g1_seu/rtl/g1_tmr_reg.v:20$58'.
+     1/1: $0\q[7:0]
+Creating decoders for process `\g1_seu.$proc$/work/designs/g1-guardian/blocks/g1_seu/rtl/g1_seu.v:100$45'.
+     1/14: $4\run_max_n[7:0]
+     2/14: $4\run_cur_n[7:0]
+     3/14: $3\run_max_n[7:0]
+     4/14: $3\run_cur_n[7:0]
+     5/14: $2\run_cur_n[7:0]
+     6/14: $2\run_max_n[7:0]
+     7/14: $2\cnt_unc_n[7:0]
+     8/14: $2\cnt_corr_n[15:0]
+     9/14: $2\cnt_plain_n[15:0]
+    10/14: $1\run_cur_n[7:0]
+    11/14: $1\run_max_n[7:0]
+    12/14: $1\cnt_unc_n[7:0]
+    13/14: $1\cnt_corr_n[15:0]
+    14/14: $1\cnt_plain_n[15:0]
+Creating decoders for process `\g1_seu.$proc$/work/designs/g1-guardian/blocks/g1_seu/rtl/g1_seu.v:51$16'.
+     1/2: $2\fill_cnt_n[10:0]
+     2/2: $1\fill_cnt_n[10:0]
+Creating decoders for process `$paramod\g1_tmr_copy\W=s32'00000000000000000000000000001011\RST=11'00000000000.$proc$/work/designs/g1-guardian/blocks/g1_seu/rtl/g1_tmr_reg.v:20$95'.
+     1/1: $0\q[10:0]
+Creating decoders for process `$paramod\g1_tmr_copy\W=s32'00000000000000000000000000000010\RST=2'00.$proc$/work/designs/g1-guardian/blocks/g1_seu/rtl/g1_tmr_reg.v:20$93'.
+     1/1: $0\q[1:0]
+Creating decoders for process `$paramod\g1_tmr_copy\W=s32'00000000000000000000000000000001\RST=1'0.$proc$/work/designs/g1-guardian/blocks/g1_seu/rtl/g1_tmr_reg.v:20$91'.
+     1/1: $0\q[0:0]
+
+6.2.8. Executing PROC_DLATCH pass (convert process syncs to latches).
+No latch inferred for signal `\g1_seu.\cnt_plain_n' from process `\g1_seu.$proc$/work/designs/g1-guardian/blocks/g1_seu/rtl/g1_seu.v:100$45'.
+No latch inferred for signal `\g1_seu.\cnt_corr_n' from process `\g1_seu.$proc$/work/designs/g1-guardian/blocks/g1_seu/rtl/g1_seu.v:100$45'.
+No latch inferred for signal `\g1_seu.\cnt_unc_n' from process `\g1_seu.$proc$/work/designs/g1-guardian/blocks/g1_seu/rtl/g1_seu.v:100$45'.
+No latch inferred for signal `\g1_seu.\run_max_n' from process `\g1_seu.$proc$/work/designs/g1-guardian/blocks/g1_seu/rtl/g1_seu.v:100$45'.
+No latch inferred for signal `\g1_seu.\run_cur_n' from process `\g1_seu.$proc$/work/designs/g1-guardian/blocks/g1_seu/rtl/g1_seu.v:100$45'.
+No latch inferred for signal `\g1_seu.\fill_cnt_n' from process `\g1_seu.$proc$/work/designs/g1-guardian/blocks/g1_seu/rtl/g1_seu.v:51$16'.
+
+6.2.9. Executing PROC_DFF pass (convert process syncs to FFs).
+Creating register for signal `$paramod$8541b5f35354f640665a7f7c1d1215e141bb33c4\g1_tmr_copy.\q' using process `$paramod$8541b5f35354f640665a7f7c1d1215e141bb33c4\g1_tmr_copy.$proc$/work/designs/g1-guardian/blocks/g1_seu/rtl/g1_tmr_reg.v:20$89'.
+  created $adff cell `$procdff$197' with positive edge clock and positive level reset.
+Creating register for signal `$paramod\g1_seu_chain\LEN=s32'00000000000000000000010000000000.\q' using process `$paramod\g1_seu_chain\LEN=s32'00000000000000000000010000000000.$proc$/work/designs/g1-guardian/blocks/g1_seu/rtl/g1_seu_chain.v:20$72'.
+  created $adff cell `$procdff$202' with positive edge clock and positive level reset.
+Creating register for signal `$paramod\g1_seu_chain\LEN=s32'00000000000000000000000100000000.\q' using process `$paramod\g1_seu_chain\LEN=s32'00000000000000000000000100000000.$proc$/work/designs/g1-guardian/blocks/g1_seu/rtl/g1_seu_chain.v:20$70'.
+  created $adff cell `$procdff$207' with positive edge clock and positive level reset.
+Creating register for signal `$paramod\g1_tmr_copy\W=s32'00000000000000000000000000001000\RST=8'00000000.\q' using process `$paramod\g1_tmr_copy\W=s32'00000000000000000000000000001000\RST=8'00000000.$proc$/work/designs/g1-guardian/blocks/g1_seu/rtl/g1_tmr_reg.v:20$58'.
+  created $adff cell `$procdff$212' with positive edge clock and positive level reset.
+Creating register for signal `$paramod\g1_tmr_copy\W=s32'00000000000000000000000000001011\RST=11'00000000000.\q' using process `$paramod\g1_tmr_copy\W=s32'00000000000000000000000000001011\RST=11'00000000000.$proc$/work/designs/g1-guardian/blocks/g1_seu/rtl/g1_tmr_reg.v:20$95'.
+  created $adff cell `$procdff$217' with positive edge clock and positive level reset.
+Creating register for signal `$paramod\g1_tmr_copy\W=s32'00000000000000000000000000000010\RST=2'00.\q' using process `$paramod\g1_tmr_copy\W=s32'00000000000000000000000000000010\RST=2'00.$proc$/work/designs/g1-guardian/blocks/g1_seu/rtl/g1_tmr_reg.v:20$93'.
+  created $adff cell `$procdff$222' with positive edge clock and positive level reset.
+Creating register for signal `$paramod\g1_tmr_copy\W=s32'00000000000000000000000000000001\RST=1'0.\q' using process `$paramod\g1_tmr_copy\W=s32'00000000000000000000000000000001\RST=1'0.$proc$/work/designs/g1-guardian/blocks/g1_seu/rtl/g1_tmr_reg.v:20$91'.
+  created $adff cell `$procdff$227' with positive edge clock and positive level reset.
+
+6.2.10. Executing PROC_MEMWR pass (convert process memory writes to cells).
+
+6.2.11. Executing PROC_CLEAN pass (remove empty switches from decision trees).
+Removing empty process `$paramod$8541b5f35354f640665a7f7c1d1215e141bb33c4\g1_tmr_copy.$proc$/work/designs/g1-guardian/blocks/g1_seu/rtl/g1_tmr_reg.v:20$89'.
+Removing empty process `$paramod\g1_seu_chain\LEN=s32'00000000000000000000010000000000.$proc$/work/designs/g1-guardian/blocks/g1_seu/rtl/g1_seu_chain.v:20$72'.
+Removing empty process `$paramod\g1_seu_chain\LEN=s32'00000000000000000000000100000000.$proc$/work/designs/g1-guardian/blocks/g1_seu/rtl/g1_seu_chain.v:20$70'.
+Removing empty process `$paramod\g1_tmr_copy\W=s32'00000000000000000000000000001000\RST=8'00000000.$proc$/work/designs/g1-guardian/blocks/g1_seu/rtl/g1_tmr_reg.v:20$58'.
+Found and cleaned up 8 empty switches in `\g1_seu.$proc$/work/designs/g1-guardian/blocks/g1_seu/rtl/g1_seu.v:100$45'.
+Removing empty process `g1_seu.$proc$/work/designs/g1-guardian/blocks/g1_seu/rtl/g1_seu.v:100$45'.
+Found and cleaned up 2 empty switches in `\g1_seu.$proc$/work/designs/g1-guardian/blocks/g1_seu/rtl/g1_seu.v:51$16'.
+Removing empty process `g1_seu.$proc$/work/designs/g1-guardian/blocks/g1_seu/rtl/g1_seu.v:51$16'.
+Removing empty process `$paramod\g1_tmr_copy\W=s32'00000000000000000000000000001011\RST=11'00000000000.$proc$/work/designs/g1-guardian/blocks/g1_seu/rtl/g1_tmr_reg.v:20$95'.
+Removing empty process `$paramod\g1_tmr_copy\W=s32'00000000000000000000000000000010\RST=2'00.$proc$/work/designs/g1-guardian/blocks/g1_seu/rtl/g1_tmr_reg.v:20$93'.
+Removing empty process `$paramod\g1_tmr_copy\W=s32'00000000000000000000000000000001\RST=1'0.$proc$/work/designs/g1-guardian/blocks/g1_seu/rtl/g1_tmr_reg.v:20$91'.
+Cleaned up 10 empty switches.
+
+6.2.12. Executing OPT_EXPR pass (perform const folding).
+Optimizing module $paramod$8541b5f35354f640665a7f7c1d1215e141bb33c4\g1_tmr_copy.
+<suppressed ~2 debug messages>
+Optimizing module $paramod\g1_tmr_reg\W=s32'00000000000000000000000000001011.
+Optimizing module $paramod\g1_tmr_reg\W=s32'00000000000000000000000000000010.
+Optimizing module $paramod\g1_tmr_reg\W=s32'00000000000000000000000000000001.
+Optimizing module $paramod\g1_seu_chain\LEN=s32'00000000000000000000010000000000.
+<suppressed ~2 debug messages>
+Optimizing module $paramod\g1_seu_chain\LEN=s32'00000000000000000000000100000000.
+<suppressed ~2 debug messages>
+Optimizing module $paramod\g1_tmr_reg\W=s32'00000000000000000000000000010000.
+Optimizing module $paramod\g1_tmr_reg\W=s32'00000000000000000000000000001000.
+Optimizing module $paramod\g1_tmr_copy\W=s32'00000000000000000000000000001000\RST=8'00000000.
+<suppressed ~2 debug messages>
+Optimizing module g1_seu.
+<suppressed ~1 debug messages>
+Optimizing module $paramod\g1_tmr_copy\W=s32'00000000000000000000000000001011\RST=11'00000000000.
+<suppressed ~2 debug messages>
+Optimizing module $paramod\g1_tmr_copy\W=s32'00000000000000000000000000000010\RST=2'00.
+<suppressed ~2 debug messages>
+Optimizing module $paramod\g1_tmr_copy\W=s32'00000000000000000000000000000001\RST=1'0.
+<suppressed ~2 debug messages>
+
+6.3. Executing CHECK pass (checking for obvious problems).
+Checking module $paramod$8541b5f35354f640665a7f7c1d1215e141bb33c4\g1_tmr_copy...
+Checking module $paramod\g1_tmr_reg\W=s32'00000000000000000000000000001011...
+Checking module $paramod\g1_tmr_reg\W=s32'00000000000000000000000000000010...
+Checking module $paramod\g1_tmr_reg\W=s32'00000000000000000000000000000001...
+Checking module $paramod\g1_seu_chain\LEN=s32'00000000000000000000010000000000...
+Checking module $paramod\g1_seu_chain\LEN=s32'00000000000000000000000100000000...
+Checking module $paramod\g1_tmr_reg\W=s32'00000000000000000000000000010000...
+Checking module $paramod\g1_tmr_reg\W=s32'00000000000000000000000000001000...
+Checking module $paramod\g1_tmr_copy\W=s32'00000000000000000000000000001000\RST=8'00000000...
+Checking module g1_seu...
+Checking module $paramod\g1_tmr_copy\W=s32'00000000000000000000000000001011\RST=11'00000000000...
+Checking module $paramod\g1_tmr_copy\W=s32'00000000000000000000000000000010\RST=2'00...
+Checking module $paramod\g1_tmr_copy\W=s32'00000000000000000000000000000001\RST=1'0...
+Found and reported 0 problems.
+
+6.4. Executing FLATTEN pass (flatten design).
+Deleting now unused module $paramod$8541b5f35354f640665a7f7c1d1215e141bb33c4\g1_tmr_copy.
+Deleting now unused module $paramod\g1_tmr_reg\W=s32'00000000000000000000000000001011.
+Deleting now unused module $paramod\g1_tmr_reg\W=s32'00000000000000000000000000000010.
+Deleting now unused module $paramod\g1_tmr_reg\W=s32'00000000000000000000000000000001.
+Deleting now unused module $paramod\g1_seu_chain\LEN=s32'00000000000000000000010000000000.
+Deleting now unused module $paramod\g1_seu_chain\LEN=s32'00000000000000000000000100000000.
+Deleting now unused module $paramod\g1_tmr_reg\W=s32'00000000000000000000000000010000.
+Deleting now unused module $paramod\g1_tmr_reg\W=s32'00000000000000000000000000001000.
+Deleting now unused module $paramod\g1_tmr_copy\W=s32'00000000000000000000000000001000\RST=8'00000000.
+Deleting now unused module $paramod\g1_tmr_copy\W=s32'00000000000000000000000000001011\RST=11'00000000000.
+Deleting now unused module $paramod\g1_tmr_copy\W=s32'00000000000000000000000000000010\RST=2'00.
+Deleting now unused module $paramod\g1_tmr_copy\W=s32'00000000000000000000000000000001\RST=1'0.
+<suppressed ~28 debug messages>
+
+6.5. Executing OPT_EXPR pass (perform const folding).
+Optimizing module g1_seu.
+
+6.6. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \g1_seu..
+Removed 63 unused cells and 208 unused wires.
+<suppressed ~64 debug messages>
+
+6.7. Executing CHECK pass (checking for obvious problems).
+Checking module g1_seu...
+Found and reported 0 problems.
+
+6.8. Executing OPT pass (performing simple optimizations).
+
+6.8.1. Executing OPT_EXPR pass (perform const folding).
+Optimizing module g1_seu.
+
+6.8.2. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\g1_seu'.
+Computing hashes of 193 cells of `\g1_seu'.
+Finding duplicate cells in `\g1_seu'.
+Computing hashes of 192 cells of `\g1_seu'.
+Finding duplicate cells in `\g1_seu'.
+<suppressed ~3 debug messages>
+Removed a total of 1 cells.
+
+6.8.3. Executing OPT_MUXTREE pass (detect dead branches in mux trees).
+Running muxtree optimizer on module \g1_seu..
+  Creating internal representation of mux trees.
+  Evaluating internal representation of mux trees.
+  Analyzing evaluation results.
+    dead port 1/2 on $mux $procmux$188.
+    dead port 1/2 on $mux $procmux$167.
+    dead port 1/2 on $mux $procmux$161.
+    dead port 1/2 on $mux $procmux$155.
+    dead port 1/2 on $mux $procmux$149.
+    dead port 1/2 on $mux $procmux$143.
+    dead port 1/2 on $mux $procmux$137.
+    dead port 2/2 on $mux $procmux$134.
+    dead port 1/2 on $mux $procmux$128.
+    dead port 2/2 on $mux $procmux$125.
+    dead port 1/2 on $mux $procmux$107.
+    dead port 2/2 on $mux $procmux$104.
+    dead port 2/2 on $mux $procmux$102.
+Removed 13 multiplexer ports.
+<suppressed ~42 debug messages>
+
+6.8.4. Executing OPT_REDUCE pass (consolidate $*mux and $reduce_* inputs).
+  Optimizing cells in module \g1_seu.
+Performed a total of 0 changes.
+
+6.8.5. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\g1_seu'.
+Computing hashes of 179 cells of `\g1_seu'.
+Finding duplicate cells in `\g1_seu'.
+Removed a total of 0 cells.
+
+6.8.6. Executing OPT_DFF pass (perform DFF optimizations).
+
+6.8.7. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \g1_seu..
+Removed 0 unused cells and 14 unused wires.
+<suppressed ~1 debug messages>
+
+6.8.8. Executing OPT_EXPR pass (perform const folding).
+Optimizing module g1_seu.
+
+6.8.9. Rerunning OPT passes. (Maybe there is more to do..)
+
+6.8.10. Executing OPT_MUXTREE pass (detect dead branches in mux trees).
+Running muxtree optimizer on module \g1_seu..
+  Creating internal representation of mux trees.
+  Evaluating internal representation of mux trees.
+  Analyzing evaluation results.
+Removed 0 multiplexer ports.
+<suppressed ~29 debug messages>
+
+6.8.11. Executing OPT_REDUCE pass (consolidate $*mux and $reduce_* inputs).
+  Optimizing cells in module \g1_seu.
+Performed a total of 0 changes.
+
+6.8.12. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\g1_seu'.
+Computing hashes of 179 cells of `\g1_seu'.
+Finding duplicate cells in `\g1_seu'.
+Removed a total of 0 cells.
+
+6.8.13. Executing OPT_DFF pass (perform DFF optimizations).
+
+6.8.14. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \g1_seu..
+
+6.8.15. Executing OPT_EXPR pass (perform const folding).
+Optimizing module g1_seu.
+
+6.8.16. Finished fast OPT passes. (There is nothing left to do.)
+
+6.9. Executing FSM pass (extract and optimize FSM).
+
+6.9.1. Executing FSM_DETECT pass (finding FSMs in design).
+
+6.9.2. Executing FSM_EXTRACT pass (extracting FSM from design).
+
+6.9.3. Executing FSM_OPT pass (simple optimizations of FSMs).
+
+6.9.4. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \g1_seu..
+
+6.9.5. Executing FSM_OPT pass (simple optimizations of FSMs).
+
+6.9.6. Executing FSM_RECODE pass (re-assigning FSM state encoding).
+
+6.9.7. Executing FSM_INFO pass (dumping all available information on FSM cells).
+
+6.9.8. Executing FSM_MAP pass (mapping FSMs to basic logic).
+
+6.10. Executing OPT pass (performing simple optimizations).
+
+6.10.1. Executing OPT_EXPR pass (perform const folding).
+Optimizing module g1_seu.
+
+6.10.2. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\g1_seu'.
+Computing hashes of 179 cells of `\g1_seu'.
+Finding duplicate cells in `\g1_seu'.
+Removed a total of 0 cells.
+
+6.10.3. Executing OPT_MUXTREE pass (detect dead branches in mux trees).
+Running muxtree optimizer on module \g1_seu..
+  Creating internal representation of mux trees.
+  Evaluating internal representation of mux trees.
+  Analyzing evaluation results.
+Removed 0 multiplexer ports.
+<suppressed ~29 debug messages>
+
+6.10.4. Executing OPT_REDUCE pass (consolidate $*mux and $reduce_* inputs).
+  Optimizing cells in module \g1_seu.
+Performed a total of 0 changes.
+
+6.10.5. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\g1_seu'.
+Computing hashes of 179 cells of `\g1_seu'.
+Finding duplicate cells in `\g1_seu'.
+Removed a total of 0 cells.
+
+6.10.6. Executing OPT_DFF pass (perform DFF optimizations).
+
+6.10.7. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \g1_seu..
+
+6.10.8. Executing OPT_EXPR pass (perform const folding).
+Optimizing module g1_seu.
+
+6.10.9. Finished fast OPT passes. (There is nothing left to do.)
+
+6.11. Executing WREDUCE pass (reducing word size of cells).
+Removed top 10 bits (of 11) from port B of cell g1_seu.$add$/work/designs/g1-guardian/blocks/g1_seu/rtl/g1_seu.v:53$18 ($add).
+Removed top 1 bits (of 2) from port B of cell g1_seu.$eq$/work/designs/g1-guardian/blocks/g1_seu/rtl/g1_seu.v:63$25 ($eq).
+Removed top 15 bits (of 16) from port B of cell g1_seu.$add$/work/designs/g1-guardian/blocks/g1_seu/rtl/g1_seu.v:113$48 ($add).
+Removed top 15 bits (of 16) from port B of cell g1_seu.$add$/work/designs/g1-guardian/blocks/g1_seu/rtl/g1_seu.v:114$51 ($add).
+Removed top 7 bits (of 8) from port B of cell g1_seu.$add$/work/designs/g1-guardian/blocks/g1_seu/rtl/g1_seu.v:115$54 ($add).
+Removed top 7 bits (of 8) from port B of cell g1_seu.$add$/work/designs/g1-guardian/blocks/g1_seu/rtl/g1_seu.v:118$56 ($add).
+
+6.12. Executing PEEPOPT pass (run peephole optimizers).
+
+6.13. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \g1_seu..
+
+6.14. Executing ALUMACC pass (create $alu and $macc cells).
+Extracting $alu and $macc cells in module g1_seu:
+  creating $macc model for $add$/work/designs/g1-guardian/blocks/g1_seu/rtl/g1_seu.v:118$56 ($add).
+  creating $macc model for $add$/work/designs/g1-guardian/blocks/g1_seu/rtl/g1_seu.v:115$54 ($add).
+  creating $macc model for $add$/work/designs/g1-guardian/blocks/g1_seu/rtl/g1_seu.v:114$51 ($add).
+  creating $macc model for $add$/work/designs/g1-guardian/blocks/g1_seu/rtl/g1_seu.v:113$48 ($add).
+  creating $macc model for $add$/work/designs/g1-guardian/blocks/g1_seu/rtl/g1_seu.v:53$18 ($add).
+  creating $alu model for $macc $add$/work/designs/g1-guardian/blocks/g1_seu/rtl/g1_seu.v:53$18.
+  creating $alu model for $macc $add$/work/designs/g1-guardian/blocks/g1_seu/rtl/g1_seu.v:113$48.
+  creating $alu model for $macc $add$/work/designs/g1-guardian/blocks/g1_seu/rtl/g1_seu.v:114$51.
+  creating $alu model for $macc $add$/work/designs/g1-guardian/blocks/g1_seu/rtl/g1_seu.v:115$54.
+  creating $alu model for $macc $add$/work/designs/g1-guardian/blocks/g1_seu/rtl/g1_seu.v:118$56.
+  creating $alu model for $gt$/work/designs/g1-guardian/blocks/g1_seu/rtl/g1_seu.v:119$57 ($gt): new $alu
+  creating $alu cell for $gt$/work/designs/g1-guardian/blocks/g1_seu/rtl/g1_seu.v:119$57: $auto$alumacc.cc:512:replace_alu$257
+  creating $alu cell for $add$/work/designs/g1-guardian/blocks/g1_seu/rtl/g1_seu.v:118$56: $auto$alumacc.cc:512:replace_alu$268
+  creating $alu cell for $add$/work/designs/g1-guardian/blocks/g1_seu/rtl/g1_seu.v:115$54: $auto$alumacc.cc:512:replace_alu$271
+  creating $alu cell for $add$/work/designs/g1-guardian/blocks/g1_seu/rtl/g1_seu.v:114$51: $auto$alumacc.cc:512:replace_alu$274
+  creating $alu cell for $add$/work/designs/g1-guardian/blocks/g1_seu/rtl/g1_seu.v:113$48: $auto$alumacc.cc:512:replace_alu$277
+  creating $alu cell for $add$/work/designs/g1-guardian/blocks/g1_seu/rtl/g1_seu.v:53$18: $auto$alumacc.cc:512:replace_alu$280
+  created 6 $alu and 0 $macc cells.
+
+6.15. Executing SHARE pass (SAT-based resource sharing).
+
+6.16. Executing OPT pass (performing simple optimizations).
+
+6.16.1. Executing OPT_EXPR pass (perform const folding).
+Optimizing module g1_seu.
+<suppressed ~1 debug messages>
+
+6.16.2. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\g1_seu'.
+Computing hashes of 183 cells of `\g1_seu'.
+Finding duplicate cells in `\g1_seu'.
+Removed a total of 0 cells.
+
+6.16.3. Executing OPT_MUXTREE pass (detect dead branches in mux trees).
+Running muxtree optimizer on module \g1_seu..
+  Creating internal representation of mux trees.
+  Evaluating internal representation of mux trees.
+  Analyzing evaluation results.
+Removed 0 multiplexer ports.
+<suppressed ~29 debug messages>
+
+6.16.4. Executing OPT_REDUCE pass (consolidate $*mux and $reduce_* inputs).
+  Optimizing cells in module \g1_seu.
+Performed a total of 0 changes.
+
+6.16.5. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\g1_seu'.
+Computing hashes of 183 cells of `\g1_seu'.
+Finding duplicate cells in `\g1_seu'.
+Removed a total of 0 cells.
+
+6.16.6. Executing OPT_DFF pass (perform DFF optimizations).
+
+6.16.7. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \g1_seu..
+Removed 1 unused cells and 2 unused wires.
+<suppressed ~2 debug messages>
+
+6.16.8. Executing OPT_EXPR pass (perform const folding).
+Optimizing module g1_seu.
+
+6.16.9. Rerunning OPT passes. (Maybe there is more to do..)
+
+6.16.10. Executing OPT_MUXTREE pass (detect dead branches in mux trees).
+Running muxtree optimizer on module \g1_seu..
+  Creating internal representation of mux trees.
+  Evaluating internal representation of mux trees.
+  Analyzing evaluation results.
+Removed 0 multiplexer ports.
+<suppressed ~29 debug messages>
+
+6.16.11. Executing OPT_REDUCE pass (consolidate $*mux and $reduce_* inputs).
+  Optimizing cells in module \g1_seu.
+Performed a total of 0 changes.
+
+6.16.12. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\g1_seu'.
+Computing hashes of 182 cells of `\g1_seu'.
+Finding duplicate cells in `\g1_seu'.
+Removed a total of 0 cells.
+
+6.16.13. Executing OPT_DFF pass (perform DFF optimizations).
+
+6.16.14. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \g1_seu..
+
+6.16.15. Executing OPT_EXPR pass (perform const folding).
+Optimizing module g1_seu.
+
+6.16.16. Finished fast OPT passes. (There is nothing left to do.)
+
+6.17. Executing MEMORY pass.
+
+6.17.1. Executing OPT_MEM pass (optimize memories).
+Performed a total of 0 transformations.
+
+6.17.2. Executing OPT_MEM_PRIORITY pass (removing unnecessary memory write priority relations).
+Performed a total of 0 transformations.
+
+6.17.3. Executing OPT_MEM_FEEDBACK pass (finding memory read-to-write feedback paths).
+
+6.17.4. Executing MEMORY_BMUX2ROM pass (converting muxes to ROMs).
+
+6.17.5. Executing MEMORY_DFF pass (merging $dff cells to $memrd).
+
+6.17.6. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \g1_seu..
+
+6.17.7. Executing MEMORY_SHARE pass (consolidating $memrd/$memwr cells).
+
+6.17.8. Executing OPT_MEM_WIDEN pass (optimize memories where all ports are wide).
+Performed a total of 0 transformations.
+
+6.17.9. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \g1_seu..
+
+6.17.10. Executing MEMORY_COLLECT pass (generating $mem cells).
+
+6.18. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \g1_seu..
+
+6.19. Executing OPT pass (performing simple optimizations).
+
+6.19.1. Executing OPT_EXPR pass (perform const folding).
+Optimizing module g1_seu.
+<suppressed ~4 debug messages>
+
+6.19.2. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\g1_seu'.
+Computing hashes of 179 cells of `\g1_seu'.
+Finding duplicate cells in `\g1_seu'.
+Removed a total of 0 cells.
+
+6.19.3. Executing OPT_DFF pass (perform DFF optimizations).
+
+6.19.4. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \g1_seu..
+Removed 0 unused cells and 3 unused wires.
+<suppressed ~1 debug messages>
+
+6.19.5. Finished fast OPT passes.
+
+6.20. Executing MEMORY_MAP pass (converting memories to logic and flip-flops).
+
+6.21. Executing OPT pass (performing simple optimizations).
+
+6.21.1. Executing OPT_EXPR pass (perform const folding).
+Optimizing module g1_seu.
+
+6.21.2. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\g1_seu'.
+Computing hashes of 179 cells of `\g1_seu'.
+Finding duplicate cells in `\g1_seu'.
+Removed a total of 0 cells.
+
+6.21.3. Executing OPT_MUXTREE pass (detect dead branches in mux trees).
+Running muxtree optimizer on module \g1_seu..
+  Creating internal representation of mux trees.
+  Evaluating internal representation of mux trees.
+  Analyzing evaluation results.
+Removed 0 multiplexer ports.
+<suppressed ~25 debug messages>
+
+6.21.4. Executing OPT_REDUCE pass (consolidate $*mux and $reduce_* inputs).
+  Optimizing cells in module \g1_seu.
+Performed a total of 0 changes.
+
+6.21.5. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\g1_seu'.
+Computing hashes of 179 cells of `\g1_seu'.
+Finding duplicate cells in `\g1_seu'.
+Removed a total of 0 cells.
+
+6.21.6. Executing OPT_SHARE pass.
+
+6.21.7. Executing OPT_DFF pass (perform DFF optimizations).
+
+6.21.8. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \g1_seu..
+
+6.21.9. Executing OPT_EXPR pass (perform const folding).
+Optimizing module g1_seu.
+
+6.21.10. Finished fast OPT passes. (There is nothing left to do.)
+
+6.22. Executing TECHMAP pass (map to technology primitives).
+
+6.22.1. Executing Verilog-2005 frontend: /foss/tools/yosys/bin/../share/yosys/techmap.v
+Parsing Verilog input from `/foss/tools/yosys/bin/../share/yosys/techmap.v' to AST representation.
+Generating RTLIL representation for module `\_90_simplemap_bool_ops'.
+Generating RTLIL representation for module `\_90_simplemap_reduce_ops'.
+Generating RTLIL representation for module `\_90_simplemap_logic_ops'.
+Generating RTLIL representation for module `\_90_simplemap_compare_ops'.
+Generating RTLIL representation for module `\_90_simplemap_various'.
+Generating RTLIL representation for module `\_90_simplemap_registers'.
+Generating RTLIL representation for module `\_90_shift_ops_shr_shl_sshl_sshr'.
+Generating RTLIL representation for module `\_90_shift_shiftx'.
+Generating RTLIL representation for module `\_90_fa'.
+Generating RTLIL representation for module `\_90_lcu_brent_kung'.
+Generating RTLIL representation for module `\_90_alu'.
+Generating RTLIL representation for module `\_90_macc'.
+Generating RTLIL representation for module `\_90_alumacc'.
+Generating RTLIL representation for module `$__div_mod_u'.
+Generating RTLIL representation for module `$__div_mod_trunc'.
+Generating RTLIL representation for module `\_90_div'.
+Generating RTLIL representation for module `\_90_mod'.
+Generating RTLIL representation for module `$__div_mod_floor'.
+Generating RTLIL representation for module `\_90_divfloor'.
+Generating RTLIL representation for module `\_90_modfloor'.
+Generating RTLIL representation for module `\_90_pow'.
+Generating RTLIL representation for module `\_90_demux'.
+Generating RTLIL representation for module `\_90_lut'.
+Generating RTLIL representation for module `$connect'.
+Generating RTLIL representation for module `$input_port'.
+Successfully finished Verilog frontend.
+
+6.22.2. Continuing TECHMAP pass.
+Using template $paramod$2f5fb04daf2da94d981bf9455fa4454c6ec8b705\_90_alu for cells of type $alu.
+Using template $paramod$2af30114e9bd4ccb04dad757b3f0a8f6bf0615b0\_90_alu for cells of type $alu.
+Using template $paramod$c3cd1564c35d873179656addd6052d7ea8b6d991\_90_alu for cells of type $alu.
+Using extmapper simplemap for cells of type $or.
+Using extmapper simplemap for cells of type $reduce_and.
+Using extmapper simplemap for cells of type $not.
+Using template $paramod$a1bc51c02ce12ac21eb18988e83292af48ed7d72\_90_alu for cells of type $alu.
+Using extmapper simplemap for cells of type $eq.
+Using extmapper simplemap for cells of type $and.
+Using extmapper simplemap for cells of type $ne.
+Using extmapper simplemap for cells of type $mux.
+Using extmapper simplemap for cells of type $xor.
+Using extmapper simplemap for cells of type $reduce_or.
+Using extmapper simplemap for cells of type $logic_and.
+Using extmapper simplemap for cells of type $adff.
+Using extmapper simplemap for cells of type $pos.
+Using template $paramod\_90_fa\WIDTH=32'00000000000000000000000000001000 for cells of type $fa.
+Using template $paramod\_90_lcu_brent_kung\WIDTH=32'00000000000000000000000000001000 for cells of type $lcu.
+Using template $paramod\_90_fa\WIDTH=32'00000000000000000000000000010000 for cells of type $fa.
+Using template $paramod\_90_lcu_brent_kung\WIDTH=32'00000000000000000000000000010000 for cells of type $lcu.
+Using template $paramod\_90_fa\WIDTH=32'00000000000000000000000000001011 for cells of type $fa.
+Using template $paramod\_90_lcu_brent_kung\WIDTH=32'00000000000000000000000000001011 for cells of type $lcu.
+No more expansions possible.
+<suppressed ~1004 debug messages>
+
+6.23. Executing OPT pass (performing simple optimizations).
+
+6.23.1. Executing OPT_EXPR pass (perform const folding).
+Optimizing module g1_seu.
+<suppressed ~609 debug messages>
+
+6.23.2. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\g1_seu'.
+Computing hashes of 5277 cells of `\g1_seu'.
+Finding duplicate cells in `\g1_seu'.
+Computing hashes of 5220 cells of `\g1_seu'.
+Finding duplicate cells in `\g1_seu'.
+Computing hashes of 5219 cells of `\g1_seu'.
+Finding duplicate cells in `\g1_seu'.
+<suppressed ~174 debug messages>
+Removed a total of 58 cells.
+
+6.23.3. Executing OPT_DFF pass (perform DFF optimizations).
+
+6.23.4. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \g1_seu..
+Removed 41 unused cells and 410 unused wires.
+<suppressed ~42 debug messages>
+
+6.23.5. Finished fast OPT passes.
+
+6.24. Executing ABC pass (technology mapping using ABC).
+
+6.24.1. Extracting gate netlist of module `\g1_seu' to `<abc-temp-dir>/input.blif'..
+
+6.24.1.1. Executed ABC.
+Extracted 3133 gates and 4122 wires to a netlist network with 988 inputs and 376 outputs.
+Running ABC script: <abc-temp-dir>/abc.script
+ABC: UC Berkeley, ABC 1.01 (compiled Jul 27 2026 18:12:25)
+ABC: abc 01> empty
+ABC: abc 01> source <abc-temp-dir>/abc.script
+ABC: + read_blif <abc-temp-dir>/input.blif 
+ABC: + read_library <abc-temp-dir>/stdcells.genlib 
+ABC: + strash 
+ABC: + &get -n 
+ABC: + &fraig -x 
+ABC: + &put 
+ABC: + scorr 
+ABC: Warning: The network is combinational (run "fraig" or "fraig_sweep").
+ABC: + dc2 
+ABC: + dretime 
+ABC: + strash 
+ABC: + &get -n 
+ABC: + &dch -f 
+ABC: + &nf 
+ABC: + &put 
+ABC: + write_blif <abc-temp-dir>/output.blif 
+ABC: 
+ABC: YOSYS_ABC_DONE 
+
+6.24.1.2. Re-integrating ABC results.
+ABC RESULTS:               AND cells:      476
+ABC RESULTS:            ANDNOT cells:      168
+ABC RESULTS:               MUX cells:      228
+ABC RESULTS:              NAND cells:      808
+ABC RESULTS:               NOR cells:      193
+ABC RESULTS:               NOT cells:       46
+ABC RESULTS:                OR cells:      382
+ABC RESULTS:             ORNOT cells:       11
+ABC RESULTS:              XNOR cells:       14
+ABC RESULTS:        internal signals:     2758
+ABC RESULTS:           input signals:      988
+ABC RESULTS:          output signals:      376
+Removing temp directory.
+Removing global temp directory.
+
+6.25. Executing OPT pass (performing simple optimizations).
+
+6.25.1. Executing OPT_EXPR pass (perform const folding).
+Optimizing module g1_seu.
+
+6.25.2. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\g1_seu'.
+Computing hashes of 4371 cells of `\g1_seu'.
+Finding duplicate cells in `\g1_seu'.
+Removed a total of 0 cells.
+
+6.25.3. Executing OPT_DFF pass (perform DFF optimizations).
+
+6.25.4. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \g1_seu..
+Removed 0 unused cells and 1581 unused wires.
+<suppressed ~19 debug messages>
+
+6.25.5. Finished fast OPT passes.
+
+6.26. Executing HIERARCHY pass (managing design hierarchy).
+Attribute `top' found on module `g1_seu'. Setting top module to g1_seu.
+
+6.26.1. Analyzing design hierarchy..
+Top module:  \g1_seu
+
+6.26.2. Analyzing design hierarchy..
+Top module:  \g1_seu
+Removed 0 unused modules.
+
+6.27. Printing statistics.
+
+=== g1_seu ===
+
+        +----------Local Count, excluding submodules.
+        | 
+     2158 wires
+     8547 wire bits
+      208 public wires
+     6597 public wire bits
+       13 ports
+       58 port bits
+     4371 cells
+      168   $_ANDNOT_
+      476   $_AND_
+     2005   $_DFF_PN0_
+      228   $_MUX_
+      808   $_NAND_
+      193   $_NOR_
+       46   $_NOT_
+       11   $_ORNOT_
+      382   $_OR_
+       14   $_XNOR_
+       40   $scopeinfo
+
+6.28. Executing CHECK pass (checking for obvious problems).
+Checking module g1_seu...
+Found and reported 0 problems.
+
+7. Executing DFFLIBMAP pass (mapping DFF cells to sequential cells from liberty file).
+  cell sg13g2_dfrbpq_1 (noninv, pins=4, area=48.99) is a direct match for cell type $_DFF_PN0_.
+  final dff cell mappings:
+    unmapped dff cell: $_DFF_N_
+    unmapped dff cell: $_DFF_P_
+    unmapped dff cell: $_DFF_NN0_
+    unmapped dff cell: $_DFF_NN1_
+    unmapped dff cell: $_DFF_NP0_
+    unmapped dff cell: $_DFF_NP1_
+    \sg13g2_dfrbpq_1 _DFF_PN0_ (.CLK( C), .D( D), .Q( Q), .RESET_B( R));
+    unmapped dff cell: $_DFF_PN1_
+    unmapped dff cell: $_DFF_PP0_
+    unmapped dff cell: $_DFF_PP1_
+    unmapped dff cell: $_DFFE_NN_
+    unmapped dff cell: $_DFFE_NP_
+    unmapped dff cell: $_DFFE_PN_
+    unmapped dff cell: $_DFFE_PP_
+    unmapped dff cell: $_DFFSR_NNN_
+    unmapped dff cell: $_DFFSR_NNP_
+    unmapped dff cell: $_DFFSR_NPN_
+    unmapped dff cell: $_DFFSR_NPP_
+    unmapped dff cell: $_DFFSR_PNN_
+    unmapped dff cell: $_DFFSR_PNP_
+    unmapped dff cell: $_DFFSR_PPN_
+    unmapped dff cell: $_DFFSR_PPP_
+
+7.1. Executing DFFLEGALIZE pass (convert FFs to types supported by the target).
+<suppressed ~4 debug messages>
+Mapping DFF cells in module `\g1_seu':
+  mapped 2005 $_DFF_PN0_ cells to \sg13g2_dfrbpq_1 cells.
+
+8. Executing ABC pass (technology mapping using ABC).
+
+8.1. Extracting gate netlist of module `\g1_seu' to `<abc-temp-dir>/input.blif'..
+ABC: using cached merged SCL: /tmp/yosys-liberty-scl-cache/yosys_merged_a12c89cb.scl (1 files)
+
+8.1.1. Executed ABC.
+Extracted 2326 gates and 3314 wires to a netlist network with 988 inputs and 376 outputs.
+Running ABC script: <abc-temp-dir>/abc.script
+ABC: UC Berkeley, ABC 1.01 (compiled Jul 27 2026 18:12:25)
+ABC: abc 01> empty
+ABC: abc 01> source <abc-temp-dir>/abc.script
+ABC: + read_blif <abc-temp-dir>/input.blif 
+ABC: + read_scl /tmp/yosys-liberty-scl-cache/yosys_merged_a12c89cb.scl 
+ABC: + strash 
+ABC: + &get -n 
+ABC: + &fraig -x 
+ABC: + &put 
+ABC: + scorr 
+ABC: Warning: The network is combinational (run "fraig" or "fraig_sweep").
+ABC: + dc2 
+ABC: + dretime 
+ABC: + strash 
+ABC: + &get -n 
+ABC: + &dch -f 
+ABC: + &nf 
+ABC: + &put 
+ABC: + write_blif <abc-temp-dir>/output.blif 
+ABC: 
+ABC: YOSYS_ABC_DONE 
+
+8.1.2. Re-integrating ABC results.
+ABC RESULTS:     sg13g2_a21o_1 cells:       26
+ABC RESULTS:    sg13g2_a21oi_1 cells:      217
+ABC RESULTS:   sg13g2_a221oi_1 cells:        8
+ABC RESULTS:    sg13g2_a22oi_1 cells:      187
+ABC RESULTS:     sg13g2_and2_1 cells:       73
+ABC RESULTS:     sg13g2_and3_1 cells:        9
+ABC RESULTS:     sg13g2_and4_1 cells:        8
+ABC RESULTS:      sg13g2_inv_1 cells:      210
+ABC RESULTS:     sg13g2_mux2_1 cells:       34
+ABC RESULTS:    sg13g2_nand2_1 cells:      385
+ABC RESULTS:   sg13g2_nand2b_1 cells:        9
+ABC RESULTS:    sg13g2_nand3_1 cells:       55
+ABC RESULTS:   sg13g2_nand3b_1 cells:        2
+ABC RESULTS:    sg13g2_nand4_1 cells:       81
+ABC RESULTS:     sg13g2_nor2_1 cells:      373
+ABC RESULTS:    sg13g2_nor2b_1 cells:        4
+ABC RESULTS:     sg13g2_nor3_1 cells:       26
+ABC RESULTS:     sg13g2_nor4_1 cells:       26
+ABC RESULTS:    sg13g2_o21ai_1 cells:      116
+ABC RESULTS:      sg13g2_or2_1 cells:      176
+ABC RESULTS:      sg13g2_or3_1 cells:       39
+ABC RESULTS:      sg13g2_or4_1 cells:        2
+ABC RESULTS:    sg13g2_xnor2_1 cells:        6
+ABC RESULTS:     sg13g2_xor2_1 cells:        2
+ABC RESULTS:        internal signals:     1950
+ABC RESULTS:           input signals:      988
+ABC RESULTS:          output signals:      376
+Removing temp directory.
+Removing global temp directory.
+
+9. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \g1_seu..
+Removed 0 unused cells and 3314 unused wires.
+<suppressed ~1 debug messages>
+
+10. Printing statistics.
+
+=== g1_seu ===
+
+        +----------Local Count, excluding submodules.
+        |        +-Local Area, excluding submodules.
+        |        | 
+     1906        - wires
+     8295        - wire bits
+      208        - public wires
+     6597        - public wire bits
+       13        - ports
+       58        - port bits
+     4119 1.16E+05 cells
+       40        -   $scopeinfo
+       26  330.221   sg13g2_a21o_1
+      217 1.97E+03   sg13g2_a21oi_1
+        8  116.122   sg13g2_a221oi_1
+      187 2.03E+03   sg13g2_a22oi_1
+       73  662.256   sg13g2_and2_1
+        9  114.307   sg13g2_and3_1
+        8  116.122   sg13g2_and4_1
+     2005 9.82E+04   sg13g2_dfrbpq_1
+      210 1.14E+03   sg13g2_inv_1
+       34  616.896   sg13g2_mux2_1
+      385 2.79E+03   sg13g2_nand2_1
+        9   81.648   sg13g2_nand2b_1
+       55   498.96   sg13g2_nand3_1
+        2   25.402   sg13g2_nand3b_1
+       81  881.798   sg13g2_nand4_1
+      373 2.71E+03   sg13g2_nor2_1
+        4   36.288   sg13g2_nor2b_1
+       26  235.872   sg13g2_nor3_1
+       26  283.046   sg13g2_nor4_1
+      116 1.05E+03   sg13g2_o21ai_1
+      176  1.6E+03   sg13g2_or2_1
+       39  495.331   sg13g2_or3_1
+        2    29.03   sg13g2_or4_1
+        6   87.091   sg13g2_xnor2_1
+        2    29.03   sg13g2_xor2_1
+
+   Area for cell type $scopeinfo is unknown!
+
+   Chip area for module '\g1_seu': 116152.633800
+     of which used for sequential elements: 98222.544000 (84.56%)
+
+End of script. Logfile hash: 59c1254dc2, time: 1.81s, user: 0.80s, system: 0.07s, MEM: 80.50 MB peak
+Yosys 0.67 (git sha1 2d1509d1b, Release, GNU /usr/bin/c++ 13.3.0)
+Time spent: 59% 2x abc (0 sec), 9% 19x opt_clean (0 sec), ...

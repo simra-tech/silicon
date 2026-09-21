@@ -1,0 +1,73 @@
+# kpex 2.5D CC on the g1_cmp cell alone (klayout -b -r gen_trip_layout.py -rd what=cmp -rd out=g1_cmp.gds, then
+# pex_input.py / kpex settings as the macro), 2026-09-19; net names from the devices: $11 = xp (drain of the
+# inp device), $7 = xq, $10 = xn, $4 = yn, $12 = tail, $9 = xnb, $13 = ynb.
+# python3 captab.py g1_cmp_k25d_pex_netlist.spice '$11=xp(inp),$7=xq(inn),$10=xn(inp latch),$4=yn(inn latch),$12=tail,$9=xnb,$13=ynb'
+$11    xp(inp)                total 12.431 fF
+$7     xq(inn)                total 12.403 fF
+$10    xn(inp latch)          total 18.123 fF
+$4     yn(inn latch)          total 18.089 fF
+$12    tail                   total 4.684 fF
+$9     xnb                    total 6.571 fF
+$13    ynb                    total 6.575 fF
+clk                           total 14.176 fF
+inp                           total 4.079 fF
+inn                           total 4.067 fF
+q                             total 13.873 fF
+qb                            total 13.166 fF
+
+$10    $11    xn(inp latch)  xp(inp)        3.780
+$4     $7     yn(inn latch)  xq(inn)        3.780
+$10    $4     xn(inp latch)  yn(inn latch)  3.210
+$4     q      yn(inn latch)  q              3.159
+$10    qb     xn(inp latch)  qb             3.154
+$10    VSUBS  xn(inp latch)  VSUBS          3.146
+$4     VSUBS  yn(inn latch)  VSUBS          3.140
+$11    clk    xp(inp)        clk            2.686
+$7     clk    xq(inn)        clk            2.660
+$13    q      ynb            q              2.207
+$11    $7     xp(inp)        xq(inn)        2.000
+$11    VSUBS  xp(inp)        VSUBS          1.854
+$7     VSUBS  xq(inn)        VSUBS          1.854
+$9     qb     xnb            qb             1.719
+$13    $4     ynb            yn(inn latch)  1.548
+$10    $9     xn(inp latch)  xnb            1.547
+$9     VSUBS  xnb            VSUBS          1.523
+$13    VSUBS  ynb            VSUBS          1.523
+$4     vdd    yn(inn latch)  vdd            1.180
+$10    vdd    xn(inp latch)  vdd            1.180
+$10    clk    xn(inp latch)  clk            0.844
+$4     clk    yn(inn latch)  clk            0.818
+$11    $12    xp(inp)        tail           0.729
+$12    $7     tail           xq(inn)        0.729
+$13    vss    ynb            vss            0.657
+$9     vss    xnb            vss            0.657
+$9     q      xnb            q              0.611
+$10    vss    xn(inp latch)  vss            0.611
+$4     vss    yn(inn latch)  vss            0.611
+$7     vdd    xq(inn)        vdd            0.449
+$11    vdd    xp(inp)        vdd            0.449
+$11    inp    xp(inp)        inp            0.252
+$7     inn    xq(inn)        inn            0.252
+$10    $13    xn(inp latch)  ynb            0.246
+$4     $9     yn(inn latch)  xnb            0.246
+$11    inn    xp(inp)        inn            0.193
+$7     inp    xq(inn)        inp            0.192
+$13    vdd    ynb            vdd            0.169
+$9     vdd    xnb            vdd            0.169
+$10    $7     xn(inp latch)  xq(inn)        0.157
+$11    $4     xp(inp)        yn(inn latch)  0.157
+$11    vss    xp(inp)        vss            0.132
+$7     vss    xq(inn)        vss            0.132
+$13    qb     ynb            qb             0.126
+$11    qb     xp(inp)        qb             0.106
+$7     qb     xq(inn)        qb             0.104
+$10    q      xn(inp latch)  q              0.103
+$4     qb     yn(inn latch)  qb             0.099
+$7     q      xq(inn)        q              0.094
+$11    q      xp(inp)        q              0.091
+$10    inn    xn(inp latch)  inn            0.084
+$4     inp    yn(inn latch)  inp            0.084
+$10    inp    xn(inp latch)  inp            0.059
+$4     inn    yn(inn latch)  inn            0.057
+$13    $16    ynb            $16            0.057
+$14    $9     $14            xnb            0.057

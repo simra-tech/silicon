@@ -1,0 +1,38 @@
+* G1_DOSE g1_dose_pair_nw off-current baseline: corner mos_ss, T = 125 C
+.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerMOSlv.lib mos_ss
+.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerMOShv.lib mos_ss
+.include ../g1_dose_pair_nw_extracted.cir
+.option gmin=1e-16 abstol=1e-16 reltol=1e-4
+.temp 125
+X1 D_ELT D_STD G_SHARED VSS g1_dose_pair_nw
+Vg G_SHARED 0 dc 0
+Vs VSS 0 dc 0
+Vda D_ELT 0 dc 0.1
+Vdb D_STD 0 dc 0.1
+.control
+pre_osdi /foss/pdks/ihp-sg13g2/libs.tech/ngspice/osdi/psp103.osdi
+set filetype=ascii
+set wr_singlescale
+set wr_vecnames
+alter vda dc = 0.1
+alter vdb dc = 0.1
+op
+let id_narrow_v01 = -i(vda)
+let id_wide_v01 = -i(vdb)
+let ratio_v01 = id_wide_v01/id_narrow_v01
+print id_narrow_v01 id_wide_v01 ratio_v01
+alter vda dc = 1.2
+alter vdb dc = 1.2
+op
+let id_narrow_v12 = -i(vda)
+let id_wide_v12 = -i(vdb)
+let ratio_v12 = id_wide_v12/id_narrow_v12
+print id_narrow_v12 id_wide_v12 ratio_v12
+alter vda dc = 0.1
+alter vdb dc = 0.1
+dc Vg -0.3 1.2 0.01
+let id_narrow = -i(vda)
+let id_wide = -i(vdb)
+wrdata nw_mos_ss_Tp125C_idvg_v01.dat id_narrow id_wide
+.endc
+.end

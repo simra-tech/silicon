@@ -1,0 +1,30 @@
+** sch_path: /work/designs/g1-guardian/blocks/g1_sense/schematic/g1_ota.sch
+.subckt g1_ota inp inn vbn out vdd vss
+*.ipin inp
+*.ipin inn
+*.ipin vbn
+*.opin out
+*.iopin vdd
+*.iopin vss
+XMB2 vbp vbn vss vss sg13_hv_nmos w=8u l=1u ng=2 m=1 mm_ok=1
+XMB3 vbp vbp vdd vdd sg13_hv_pmos w=16u l=1u ng=4 m=1 mm_ok=1
+XMB5 vbnc vbp vdd vdd sg13_hv_pmos w=16u l=1u ng=4 m=1 mm_ok=1
+XMB4 vbnc vbnc vss vss sg13_hv_nmos w=1.6u l=1u ng=1 m=1 mm_ok=1
+XMB6 vbpc vbn vss vss sg13_hv_nmos w=8u l=1u ng=2 m=1 mm_ok=1
+XMB7 vbpc vbpc vdd vdd sg13_hv_pmos w=3.2u l=1u ng=1 m=1 mm_ok=1
+XMT tail vbp vdd vdd sg13_hv_pmos w=128u l=1u ng=16 m=1 mm_ok=1
+XM1 fn inn tail vdd sg13_hv_pmos w=96u l=2u ng=16 m=1 mm_ok=1
+XM2 fp inp tail vdd sg13_hv_pmos w=96u l=2u ng=16 m=1 mm_ok=1
+XM3 fn vbn vss vss sg13_hv_nmos w=80u l=1u ng=10 m=1 mm_ok=1
+XM4 fp vbn vss vss sg13_hv_nmos w=80u l=1u ng=10 m=1 mm_ok=1
+XM13 mir vbnc fn vss sg13_hv_nmos w=48u l=1u ng=6 m=1 mm_ok=1
+XM16 out1 vbnc fp vss sg13_hv_nmos w=48u l=1u ng=6 m=1 mm_ok=1
+XM14 pc1 mir vdd vdd sg13_hv_pmos w=96u l=1u ng=12 m=1 mm_ok=1
+XM11 pc2 mir vdd vdd sg13_hv_pmos w=96u l=1u ng=12 m=1 mm_ok=1
+XM15 mir vbpc pc1 vdd sg13_hv_pmos w=96u l=1u ng=12 m=1 mm_ok=1
+XM12 out1 vbpc pc2 vdd sg13_hv_pmos w=96u l=1u ng=12 m=1 mm_ok=1
+XM20 out out1 vdd vdd sg13_hv_pmos w=192u l=1u ng=24 m=1 mm_ok=1
+XM21 out vbn vss vss sg13_hv_nmos w=96u l=1u ng=12 m=1 mm_ok=1
+XRZ out1 cz sub! rppd w=1u l=6.2u m=1 b=0 mm_ok=1
+XCC cz out cap_cmim w=23u l=23u m=1 mm_ok=1
+.ends
