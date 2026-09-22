@@ -1,0 +1,18 @@
+* no_fill grounded drive P; diagnostic capacitor-network AC only
+C1 0 N 5.7975900000000006e-16
+C2 0 P 4.1395900000000006e-16
+C4 0 P 3.0444000000000002e-17
+C6 N P 3.4877500000000003e-15
+C7 N 0 6.5945700000000002e-16
+C8 P 0 6.5945700000000002e-16
+VP P 0 DC 0 AC 1
+VN N 0 DC 0 AC 0
+.control
+set numdgt=17
+ac lin 1 1Meg 1Meg
+let cp = -imag(i(VP))/(2*pi*1e6)
+let cn = -imag(i(VN))/(2*pi*1e6)
+print cp cn
+quit
+.endc
+.end

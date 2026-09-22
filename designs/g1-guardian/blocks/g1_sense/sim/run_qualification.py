@@ -19,6 +19,9 @@ def main():
     ap.add_argument('--threads',type=int,default=1)
     ap.add_argument('--main-pair-scale',type=float,default=1)
     ap.add_argument('--main-comp-scale',type=float,default=1,help='Scale only main OTA Miller capacitance area for isolated compensation regression')
+    ap.add_argument('--extended-fingerprints',action='store_true',help='Also record resized main folded-sink and upper-mirror parameters')
+    ap.add_argument('--corner-case',help='For highrail mode only: MOS,RES,CAP,VDDA,TEMP, e.g. ss,wcs,wcs,3.0,-40')
+    ap.add_argument('--tight',action='store_true',help='Explicit reltol1e-5/vntol1e-7/abstol1e-14 regression')
     ap.add_argument('--main-matching-scale',type=float,default=1,help='Scale W and L together in selected folded/mirror devices')
     ap.add_argument('--matching-group',choices=['fold','mirror','both'],default='both')
     ap.add_argument('--nominalize-main-group',choices=['input','fold','cascade','mirror','bias'],help='Counterfactual instance-parameter attribution, not a physical sample or adopted design')
@@ -28,6 +31,13 @@ def main():
     ap.add_argument('--start-seed', type=int, default=41001)
     ap.add_argument('--mode', choices=['mc','corner','highrail','noise'], default='mc')
     args = ap.parse_args()
+    cap_corner='typ'
+    selected_corner=None
+    if args.corner_case:
+        assert args.mode=='highrail'
+        m,r,cap_corner,v,t=args.corner_case.split(',')
+        assert m in ['tt','ss','ff'] and r in ['typ','bcs','wcs'] and cap_corner in ['typ','bcs','wcs']
+        selected_corner=(m,r,float(v),float(t))
     out = SIM / 'qualification' / args.run_id
     out.mkdir(parents=True, exist_ok=False)
     (out/'runner.py').write_text(Path(__file__).read_text())
@@ -75,10 +85,16 @@ def main():
         cases=[(f'seed{s}',s,None) for s in (list(map(int,args.seeds.split(','))) if args.seeds else range(args.start_seed,args.start_seed+args.samples))]
     elif args.mode=='corner':
         cases=[(f'{m}_{r}_{v}V_{t}C',None,(m,r,v,t)) for m,r,v,t in itertools.product(['tt','ss','ff'],['typ','bcs','wcs'],[3.0,3.3,3.6],[-40,27,85,125])]
-    elif args.mode=='highrail': cases=[(f'highrail_tied_{v}',None,('tt','typ',v,27)) for v in [3.3,3.6]]
+    elif args.mode=='highrail':
+        cases=[(f'highrail_tied_{v}',None,('tt','typ',v,27)) for v in [3.3,3.6]]
+        if selected_corner:cases=[('corner_'+args.corner_case.replace(',','_'),None,selected_corner)]
     else: cases=[('noise_tt_3.3V_27C',None,('tt','typ',3.3,27))]
     summary=[]
     for case_index,(name,seed,corner) in enumerate(cases):
+        if (out/'PAUSE_REQUESTED').exists():
+            (out/'not_run.json').write_text(json.dumps({'reason':'owner pause before next leaf','cases':cases[case_index:]},indent=2)+'\n')
+            print('PAUSED before '+name,flush=True)
+            break
         deck=base
         controls=['set numdgt=15','set filetype=ascii',f'set num_threads={args.threads}']
         if seed is not None:
@@ -117,11 +133,16 @@ def main():
                             controls += [f'print @n.xdut.{ota}.{mos}.nsg13_hv_pmos[{par}]']
                 for par in ['nsmm_rsh','nsmm_w','nsmm_l']:
                     controls += [f'print @n.xdut.xr1n0.nr1[{par}]']
+                if args.extended_fingerprints:
+                    for mos in ['xm3','xm4','xm14','xm11','xm15','xm12']:
+                        model='nmos' if mos in ['xm3','xm4'] else 'pmos'
+                        for par in ['w','l','delvto','factuo']:
+                            controls += [f'print @n.xdut.xota.{mos}.nsg13_hv_{model}[{par}]']
         controls += ['echo QUALIFICATION_END','quit 0']
         deck += '.control\n'+'\n'.join(controls)+'\n.endc\n.end\n'
         if args.mode=='highrail':
             deck=(SIM/'tb_sense.cir').read_text()
-            for key,val in {'VDDA':v,'VREF':1.04,'VCM':0,'MOS':'mos_tt','RES':'res_typ','CAP':'cap_typ','TEMP':27}.items():
+            for key,val in {'VDDA':v,'VREF':1.04,'VCM':0,'MOS':'mos_'+m,'RES':'res_'+r,'CAP':'cap_'+cap_corner,'TEMP':t}.items():
                 deck=deck.replace('@@'+key+'@@',str(val))
             deck=deck.replace(' sub! ',' 0 ').replace('.include netlist/g1_sense.spice','.include '+str(derived.relative_to(SIM)))
             deck=deck.replace('set filetype=ascii',f'set filetype=ascii\nset num_threads={args.threads}')
@@ -131,6 +152,7 @@ def main():
             deck=re.sub(r'^Iib .+$','Iib vdd iptat dc 4.13u',deck,flags=re.M)+'CL isense 0 300f\n'
             deck += '.control\nset num_threads=1\nset numdgt=15\nnoise v(isense) Vsh dec 40 1 10meg\nprint onoise_total inoise_total\nsetplot noise1\nset wr_singlescale\nset wr_vecnames\nwrdata '+str((out/'noise_spectrum.dat').relative_to(SIM))+' onoise_spectrum inoise_spectrum\necho QUALIFICATION_END\nquit 0\n.endc\n.end\n'
         if args.mode=='noise': deck=deck.replace('noise v(isense) Vsh dec 40','noise v(isense) Vsh dec '+str(args.noise_points))
+        if args.tight:deck=deck.replace('.control\n','.option reltol=1e-5 vntol=1e-7 abstol=1e-14\n.control\n',1)
         dp=out/(name+'.cir'); dp.write_text(deck)
         with (out/(name+'.log')).open('x') as log:
             state=run_bounded(['ngspice','-b',str(dp.relative_to(SIM))],log,out/(name+'.json'),300 if args.mode=='highrail' else 120,cwd=SIM,env=dict(os.environ,OMP_NUM_THREADS=str(args.threads)),metadata={'seed':seed,'corner':corner,'omp_threads':args.threads,'deck_sha256':sha(dp)},interval_s=0.2)
@@ -156,13 +178,14 @@ def main():
                 result['gain_target_status']='passed' if 19.9<=result['gain']<=20.1 else 'failed'
                 result['bandwidth_target_status']='passed' if measures['f3db']>=2e6 else 'failed'
             result['status']='passed' if state['returncode']==0 and all(k in measures and math.isfinite(measures[k]) for k in required) and not errors else 'failed'
-        if state['status']=='timeout': result['status']='not run to completion'
+        if state['status'] in ['timeout','interrupted']: result['status']='not run to completion'
         if seed is not None:
             fps=re.findall(r'FINGERPRINT \d+\n(.*?)(?=\n(?:Doing analysis|ROW|FINGERPRINT|QUALIFICATION_END)|\Z)',log,re.S)
             # Keep only parameter outputs, ignoring simulator temperature chatter.
             fps=['\n'.join(l for l in f.splitlines() if l.startswith('@n.')) for f in fps]
             result['fingerprint_count']=len(fps)
-            result['frozen_sample']=len(fps)==4 and len(set(fps))==1 and len(fps[0].splitlines())==27
+            result['expected_fingerprint_parameter_count']=51 if args.extended_fingerprints else 27
+            result['frozen_sample']=len(fps)==4 and len(set(fps))==1 and len(fps[0].splitlines())==result['expected_fingerprint_parameter_count']
             result['fingerprint_sha256']=[hashlib.sha256(f.encode()).hexdigest() for f in fps]
         summary.append(result)
         (out/'summary.json').write_text(json.dumps(summary,indent=2)+'\n')

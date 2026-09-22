@@ -1,0 +1,1786 @@
+{
+  "pdk_commit": "84374023ee8b4b126bebbba67fcbada0a9c0ff0b",
+  "primary_document": "libs.doc/doc/SG13G2_os_process_spec.pdf",
+  "document_sha256": "974d505886ee62932a50c52c22fbc290db4a70d8a7ce129c0ca8d7934aee160e",
+  "revision": "1.2",
+  "document_scope": [
+    {
+      "page": 4,
+      "statement": "Thick-oxide CMOS module described for3.3V supply."
+    },
+    {
+      "page": 9,
+      "statement": "HV NMOS maximum VGS3.3V at27C stated for gate length>=0.6um; HV PMOS maximum VGS3.3V at27C stated for gate length>=0.5um."
+    },
+    {
+      "page": 8,
+      "statement": "LV PMOS VGS1.65V at125C stated; not generalized to all terminal pairs."
+    }
+  ],
+  "model_parameters": {
+    "sg13g2_moshv_mod.lib": "SWSOA default0",
+    "sg13g2_moshv_parm.lib": {
+      "VGS_MAX": 3.0,
+      "VGD_MAX": 3.0,
+      "VGB_MAX": 3.0,
+      "VDS_MAX": 3.0,
+      "VDB_MAX": 1.6,
+      "VSB_MAX": 1.6
+    },
+    "sg13g2_moslv_parm.lib": {
+      "VGS_MAX": 1.6,
+      "VGD_MAX": 1.6,
+      "VGB_MAX": 1.6,
+      "VDS_MAX": 1.6,
+      "VDB_MAX": 1.6,
+      "VSB_MAX": 1.6
+    }
+  },
+  "interpretation": "Literal simulator SOA parameters and documentary operating scope differ. Neither substantiates a general3.6V gate operating rating. Breakdown voltages are not operating ratings. Simulation completion alone does not close reliability or out-of-scope geometry/temperature. No cards or rules changed.",
+  "netlist_inventory": {
+    "g1_bgr": {
+      "source": "designs/g1-guardian/blocks/g1_bgr/sim/postlayout/g1_bgr_pex.spice",
+      "sha256": "72417e072003d2ce28a108c47ef6ac86927ce6c6f89f3a614f360165a31c9d77",
+      "MOS_instances": [
+        {
+          "instance": "XM27",
+          "model": "sg13_hv_pmos",
+          "length": "0.5u",
+          "nodes_d_g_s_b": [
+            "kick",
+            "det",
+            "vdd",
+            "vdd"
+          ]
+        },
+        {
+          "instance": "XM28",
+          "model": "sg13_hv_pmos",
+          "length": "0.5u",
+          "nodes_d_g_s_b": [
+            "r4n",
+            "r4",
+            "vdd",
+            "vdd"
+          ]
+        },
+        {
+          "instance": "XM29",
+          "model": "sg13_hv_nmos",
+          "length": "0.5u",
+          "nodes_d_g_s_b": [
+            "vbe",
+            "r4",
+            "b1b",
+            "vss"
+          ]
+        },
+        {
+          "instance": "XM30",
+          "model": "sg13_hv_nmos",
+          "length": "4u",
+          "nodes_d_g_s_b": [
+            "pbias",
+            "kick",
+            "vss",
+            "vss"
+          ]
+        },
+        {
+          "instance": "XM31",
+          "model": "sg13_hv_nmos",
+          "length": "0.5u",
+          "nodes_d_g_s_b": [
+            "kick",
+            "det",
+            "vss",
+            "vss"
+          ]
+        },
+        {
+          "instance": "XM32",
+          "model": "sg13_hv_nmos",
+          "length": "0.5u",
+          "nodes_d_g_s_b": [
+            "r4n",
+            "r4",
+            "vss",
+            "vss"
+          ]
+        },
+        {
+          "instance": "XM33",
+          "model": "sg13_hv_nmos",
+          "length": "0.5u",
+          "nodes_d_g_s_b": [
+            "b1b",
+            "r4n",
+            "vss",
+            "vss"
+          ]
+        },
+        {
+          "instance": "XM34",
+          "model": "sg13_hv_nmos",
+          "length": "1u",
+          "nodes_d_g_s_b": [
+            "n1",
+            "vb2",
+            "vbe",
+            "vss"
+          ]
+        },
+        {
+          "instance": "XM35",
+          "model": "sg13_hv_nmos",
+          "length": "1u",
+          "nodes_d_g_s_b": [
+            "c2",
+            "vb2",
+            "pcasc",
+            "vss"
+          ]
+        },
+        {
+          "instance": "XM36",
+          "model": "sg13_hv_nmos",
+          "length": "1u",
+          "nodes_d_g_s_b": [
+            "vbe",
+            "vb2",
+            "n1",
+            "vss"
+          ]
+        },
+        {
+          "instance": "XM37",
+          "model": "sg13_hv_nmos",
+          "length": "1u",
+          "nodes_d_g_s_b": [
+            "pcasc",
+            "vb2",
+            "c2",
+            "vss"
+          ]
+        },
+        {
+          "instance": "XM38",
+          "model": "sg13_hv_pmos",
+          "length": "4u",
+          "nodes_d_g_s_b": [
+            "d1",
+            "pbias",
+            "vdd",
+            "vdd"
+          ]
+        },
+        {
+          "instance": "XM39",
+          "model": "sg13_hv_pmos",
+          "length": "4u",
+          "nodes_d_g_s_b": [
+            "d2",
+            "pbias",
+            "vdd",
+            "vdd"
+          ]
+        },
+        {
+          "instance": "XM40",
+          "model": "sg13_hv_pmos",
+          "length": "4u",
+          "nodes_d_g_s_b": [
+            "d4",
+            "pbias",
+            "vdd",
+            "vdd"
+          ]
+        },
+        {
+          "instance": "XM41",
+          "model": "sg13_hv_pmos",
+          "length": "4u",
+          "nodes_d_g_s_b": [
+            "d5",
+            "pbias",
+            "vdd",
+            "vdd"
+          ]
+        },
+        {
+          "instance": "XM42",
+          "model": "sg13_hv_pmos",
+          "length": "4u",
+          "nodes_d_g_s_b": [
+            "det",
+            "pbias",
+            "vdd",
+            "vdd"
+          ]
+        },
+        {
+          "instance": "XM43",
+          "model": "sg13_hv_pmos",
+          "length": "4u",
+          "nodes_d_g_s_b": [
+            "d3",
+            "pbias",
+            "vdd",
+            "vdd"
+          ]
+        },
+        {
+          "instance": "XM44",
+          "model": "sg13_hv_pmos",
+          "length": "4u",
+          "nodes_d_g_s_b": [
+            "d3",
+            "pbias",
+            "vdd",
+            "vdd"
+          ]
+        },
+        {
+          "instance": "XM45",
+          "model": "sg13_hv_pmos",
+          "length": "4u",
+          "nodes_d_g_s_b": [
+            "d5",
+            "pbias",
+            "vdd",
+            "vdd"
+          ]
+        },
+        {
+          "instance": "XM46",
+          "model": "sg13_hv_pmos",
+          "length": "4u",
+          "nodes_d_g_s_b": [
+            "d4",
+            "pbias",
+            "vdd",
+            "vdd"
+          ]
+        },
+        {
+          "instance": "XM47",
+          "model": "sg13_hv_pmos",
+          "length": "4u",
+          "nodes_d_g_s_b": [
+            "d2",
+            "pbias",
+            "vdd",
+            "vdd"
+          ]
+        },
+        {
+          "instance": "XM48",
+          "model": "sg13_hv_pmos",
+          "length": "4u",
+          "nodes_d_g_s_b": [
+            "d1",
+            "pbias",
+            "vdd",
+            "vdd"
+          ]
+        },
+        {
+          "instance": "XM49",
+          "model": "sg13_hv_pmos",
+          "length": "4u",
+          "nodes_d_g_s_b": [
+            "det",
+            "pbias",
+            "vdd",
+            "vdd"
+          ]
+        },
+        {
+          "instance": "XM50",
+          "model": "sg13_hv_pmos",
+          "length": "4u",
+          "nodes_d_g_s_b": [
+            "vb2",
+            "pcasc",
+            "d5",
+            "d5"
+          ]
+        },
+        {
+          "instance": "XM51",
+          "model": "sg13_hv_pmos",
+          "length": "4u",
+          "nodes_d_g_s_b": [
+            "vref",
+            "pcasc",
+            "d3",
+            "d3"
+          ]
+        },
+        {
+          "instance": "XM52",
+          "model": "sg13_hv_pmos",
+          "length": "4u",
+          "nodes_d_g_s_b": [
+            "n1",
+            "pcasc",
+            "d1",
+            "d1"
+          ]
+        },
+        {
+          "instance": "XM53",
+          "model": "sg13_hv_pmos",
+          "length": "4u",
+          "nodes_d_g_s_b": [
+            "iptat",
+            "pcasc",
+            "d4",
+            "d4"
+          ]
+        },
+        {
+          "instance": "XM54",
+          "model": "sg13_hv_pmos",
+          "length": "4u",
+          "nodes_d_g_s_b": [
+            "pbias",
+            "pcasc",
+            "d2",
+            "d2"
+          ]
+        }
+      ],
+      "instances_shorter_than_documented_3p3V_gate_condition": [
+        "XM29",
+        "XM31",
+        "XM32",
+        "XM33"
+      ]
+    },
+    "g1_t2f": {
+      "source": "designs/g1-guardian/blocks/g1_t2f/sim/postlayout/g1_t2f_pex.spice",
+      "sha256": "441edabc0484c9de1e035d585369f37d460afe32370e73935044693bbfd0c78a",
+      "MOS_instances": [
+        {
+          "instance": "XM1",
+          "model": "sg13_hv_nmos",
+          "length": "0.5u",
+          "nodes_d_g_s_b": [
+            "vth",
+            "moden",
+            "vref",
+            "vss"
+          ]
+        },
+        {
+          "instance": "XM2",
+          "model": "sg13_hv_nmos",
+          "length": "0.5u",
+          "nodes_d_g_s_b": [
+            "vr",
+            "mode",
+            "vth",
+            "vss"
+          ]
+        },
+        {
+          "instance": "XM13",
+          "model": "sg13_hv_nmos",
+          "length": "0.5u",
+          "nodes_d_g_s_b": [
+            "cap1",
+            "d1g",
+            "vss",
+            "vss"
+          ]
+        },
+        {
+          "instance": "XM14",
+          "model": "sg13_hv_nmos",
+          "length": "0.5u",
+          "nodes_d_g_s_b": [
+            "cap2",
+            "d2g",
+            "vss",
+            "vss"
+          ]
+        },
+        {
+          "instance": "XM15",
+          "model": "sg13_lv_pmos",
+          "length": "0.13u",
+          "nodes_d_g_s_b": [
+            "fon",
+            "lsb",
+            "vdd12",
+            "vdd12"
+          ]
+        },
+        {
+          "instance": "XM16",
+          "model": "sg13_lv_nmos",
+          "length": "0.13u",
+          "nodes_d_g_s_b": [
+            "fon",
+            "lsb",
+            "vss",
+            "vss"
+          ]
+        },
+        {
+          "instance": "XM17",
+          "model": "sg13_lv_nmos",
+          "length": "0.13u",
+          "nodes_d_g_s_b": [
+            "fout",
+            "fon",
+            "vss",
+            "vss"
+          ]
+        },
+        {
+          "instance": "XM18",
+          "model": "sg13_lv_pmos",
+          "length": "0.3u",
+          "nodes_d_g_s_b": [
+            "vdd12",
+            "lsb",
+            "lsa",
+            "vdd12"
+          ]
+        },
+        {
+          "instance": "XM19",
+          "model": "sg13_lv_pmos",
+          "length": "0.3u",
+          "nodes_d_g_s_b": [
+            "lsb",
+            "lsa",
+            "vdd12",
+            "vdd12"
+          ]
+        },
+        {
+          "instance": "XM20",
+          "model": "sg13_hv_pmos",
+          "length": "0.5u",
+          "nodes_d_g_s_b": [
+            "qn",
+            "en",
+            "vdd",
+            "vdd"
+          ]
+        },
+        {
+          "instance": "XM21",
+          "model": "sg13_hv_pmos",
+          "length": "0.5u",
+          "nodes_d_g_s_b": [
+            "vdd",
+            "q",
+            "qn",
+            "vdd"
+          ]
+        },
+        {
+          "instance": "XM22",
+          "model": "sg13_hv_pmos",
+          "length": "0.5u",
+          "nodes_d_g_s_b": [
+            "qn",
+            "rn",
+            "vdd",
+            "vdd"
+          ]
+        },
+        {
+          "instance": "XM23",
+          "model": "sg13_hv_nmos",
+          "length": "0.5u",
+          "nodes_d_g_s_b": [
+            "nI973",
+            "en",
+            "vss",
+            "vss"
+          ]
+        },
+        {
+          "instance": "XM24",
+          "model": "sg13_hv_nmos",
+          "length": "0.5u",
+          "nodes_d_g_s_b": [
+            "nI974",
+            "q",
+            "nI973",
+            "vss"
+          ]
+        },
+        {
+          "instance": "XM25",
+          "model": "sg13_hv_nmos",
+          "length": "0.5u",
+          "nodes_d_g_s_b": [
+            "qn",
+            "rn",
+            "nI974",
+            "vss"
+          ]
+        },
+        {
+          "instance": "XM26",
+          "model": "sg13_hv_pmos",
+          "length": "0.5u",
+          "nodes_d_g_s_b": [
+            "d2g",
+            "en",
+            "vdd",
+            "vdd"
+          ]
+        },
+        {
+          "instance": "XM27",
+          "model": "sg13_hv_pmos",
+          "length": "0.5u",
+          "nodes_d_g_s_b": [
+            "vdd",
+            "q",
+            "d2g",
+            "vdd"
+          ]
+        },
+        {
+          "instance": "XM28",
+          "model": "sg13_hv_pmos",
+          "length": "0.5u",
+          "nodes_d_g_s_b": [
+            "q",
+            "qn",
+            "vdd",
+            "vdd"
+          ]
+        },
+        {
+          "instance": "XM29",
+          "model": "sg13_hv_pmos",
+          "length": "0.5u",
+          "nodes_d_g_s_b": [
+            "vdd",
+            "sn",
+            "q",
+            "vdd"
+          ]
+        },
+        {
+          "instance": "XM30",
+          "model": "sg13_hv_pmos",
+          "length": "0.5u",
+          "nodes_d_g_s_b": [
+            "d1g",
+            "en",
+            "vdd",
+            "vdd"
+          ]
+        },
+        {
+          "instance": "XM31",
+          "model": "sg13_hv_pmos",
+          "length": "0.5u",
+          "nodes_d_g_s_b": [
+            "vdd",
+            "qn",
+            "d1g",
+            "vdd"
+          ]
+        },
+        {
+          "instance": "XM32",
+          "model": "sg13_hv_pmos",
+          "length": "0.5u",
+          "nodes_d_g_s_b": [
+            "cap2",
+            "d2g",
+            "isrc",
+            "vdd"
+          ]
+        },
+        {
+          "instance": "XM33",
+          "model": "sg13_hv_pmos",
+          "length": "0.5u",
+          "nodes_d_g_s_b": [
+            "rn",
+            "c2",
+            "vdd",
+            "vdd"
+          ]
+        },
+        {
+          "instance": "XM34",
+          "model": "sg13_hv_pmos",
+          "length": "0.5u",
+          "nodes_d_g_s_b": [
+            "sn",
+            "c1",
+            "vdd",
+            "vdd"
+          ]
+        },
+        {
+          "instance": "XM35",
+          "model": "sg13_hv_pmos",
+          "length": "0.5u",
+          "nodes_d_g_s_b": [
+            "cap1",
+            "d1g",
+            "isrc",
+            "vdd"
+          ]
+        },
+        {
+          "instance": "XM36",
+          "model": "sg13_hv_nmos",
+          "length": "2u",
+          "nodes_d_g_s_b": [
+            "tail1",
+            "nbias",
+            "vss",
+            "vss"
+          ]
+        },
+        {
+          "instance": "XM37",
+          "model": "sg13_hv_nmos",
+          "length": "2u",
+          "nodes_d_g_s_b": [
+            "vss",
+            "nbias",
+            "tail1",
+            "vss"
+          ]
+        },
+        {
+          "instance": "XM38",
+          "model": "sg13_hv_nmos",
+          "length": "2u",
+          "nodes_d_g_s_b": [
+            "tail2",
+            "nbias",
+            "vss",
+            "vss"
+          ]
+        },
+        {
+          "instance": "XM39",
+          "model": "sg13_hv_nmos",
+          "length": "2u",
+          "nodes_d_g_s_b": [
+            "vss",
+            "nbias",
+            "tail2",
+            "vss"
+          ]
+        },
+        {
+          "instance": "XM46",
+          "model": "sg13_hv_pmos",
+          "length": "1u",
+          "nodes_d_g_s_b": [
+            "ob2",
+            "oa2",
+            "vdd",
+            "vdd"
+          ]
+        },
+        {
+          "instance": "XM47",
+          "model": "sg13_hv_pmos",
+          "length": "1u",
+          "nodes_d_g_s_b": [
+            "oa2",
+            "oa2",
+            "vdd",
+            "vdd"
+          ]
+        },
+        {
+          "instance": "XM48",
+          "model": "sg13_hv_pmos",
+          "length": "1u",
+          "nodes_d_g_s_b": [
+            "ob1",
+            "oa1",
+            "vdd",
+            "vdd"
+          ]
+        },
+        {
+          "instance": "XM49",
+          "model": "sg13_hv_pmos",
+          "length": "1u",
+          "nodes_d_g_s_b": [
+            "oa1",
+            "oa1",
+            "vdd",
+            "vdd"
+          ]
+        },
+        {
+          "instance": "XM50",
+          "model": "sg13_hv_nmos",
+          "length": "2u",
+          "nodes_d_g_s_b": [
+            "vss",
+            "nbias",
+            "ca1",
+            "vss"
+          ]
+        },
+        {
+          "instance": "XM51",
+          "model": "sg13_hv_nmos",
+          "length": "2u",
+          "nodes_d_g_s_b": [
+            "vss",
+            "nbias",
+            "ca2",
+            "vss"
+          ]
+        },
+        {
+          "instance": "XM52",
+          "model": "sg13_hv_nmos",
+          "length": "2u",
+          "nodes_d_g_s_b": [
+            "vss",
+            "nbias",
+            "cb2",
+            "vss"
+          ]
+        },
+        {
+          "instance": "XM53",
+          "model": "sg13_hv_nmos",
+          "length": "2u",
+          "nodes_d_g_s_b": [
+            "vss",
+            "nbias",
+            "cb1",
+            "vss"
+          ]
+        },
+        {
+          "instance": "XM54",
+          "model": "sg13_hv_nmos",
+          "length": "1u",
+          "nodes_d_g_s_b": [
+            "oa1",
+            "vcg",
+            "ca1",
+            "vss"
+          ]
+        },
+        {
+          "instance": "XM55",
+          "model": "sg13_hv_nmos",
+          "length": "1u",
+          "nodes_d_g_s_b": [
+            "ca1",
+            "vcg",
+            "oa1",
+            "vss"
+          ]
+        },
+        {
+          "instance": "XM56",
+          "model": "sg13_hv_nmos",
+          "length": "1u",
+          "nodes_d_g_s_b": [
+            "oa2",
+            "vcg",
+            "ca2",
+            "vss"
+          ]
+        },
+        {
+          "instance": "XM57",
+          "model": "sg13_hv_nmos",
+          "length": "1u",
+          "nodes_d_g_s_b": [
+            "ca2",
+            "vcg",
+            "oa2",
+            "vss"
+          ]
+        },
+        {
+          "instance": "XM58",
+          "model": "sg13_hv_nmos",
+          "length": "1u",
+          "nodes_d_g_s_b": [
+            "ob1",
+            "vcg",
+            "cb1",
+            "vss"
+          ]
+        },
+        {
+          "instance": "XM59",
+          "model": "sg13_hv_nmos",
+          "length": "1u",
+          "nodes_d_g_s_b": [
+            "cb1",
+            "vcg",
+            "ob1",
+            "vss"
+          ]
+        },
+        {
+          "instance": "XM60",
+          "model": "sg13_hv_nmos",
+          "length": "1u",
+          "nodes_d_g_s_b": [
+            "ob2",
+            "vcg",
+            "cb2",
+            "vss"
+          ]
+        },
+        {
+          "instance": "XM61",
+          "model": "sg13_hv_nmos",
+          "length": "1u",
+          "nodes_d_g_s_b": [
+            "cb2",
+            "vcg",
+            "ob2",
+            "vss"
+          ]
+        },
+        {
+          "instance": "XM62",
+          "model": "sg13_hv_nmos",
+          "length": "2u",
+          "nodes_d_g_s_b": [
+            "nbias",
+            "nbias",
+            "vss",
+            "vss"
+          ]
+        },
+        {
+          "instance": "XM63",
+          "model": "sg13_hv_nmos",
+          "length": "0.5u",
+          "nodes_d_g_s_b": [
+            "sn",
+            "c1",
+            "vss",
+            "vss"
+          ]
+        },
+        {
+          "instance": "XM64",
+          "model": "sg13_hv_nmos",
+          "length": "0.5u",
+          "nodes_d_g_s_b": [
+            "rn",
+            "c2",
+            "vss",
+            "vss"
+          ]
+        },
+        {
+          "instance": "XM65",
+          "model": "sg13_hv_nmos",
+          "length": "0.5u",
+          "nodes_d_g_s_b": [
+            "moden",
+            "mode",
+            "vss",
+            "vss"
+          ]
+        },
+        {
+          "instance": "XM66",
+          "model": "sg13_hv_nmos",
+          "length": "0.5u",
+          "nodes_d_g_s_b": [
+            "c1",
+            "ob1",
+            "vss",
+            "vss"
+          ]
+        },
+        {
+          "instance": "XM67",
+          "model": "sg13_hv_nmos",
+          "length": "0.5u",
+          "nodes_d_g_s_b": [
+            "c2",
+            "ob2",
+            "vss",
+            "vss"
+          ]
+        },
+        {
+          "instance": "XM68",
+          "model": "sg13_hv_nmos",
+          "length": "0.5u",
+          "nodes_d_g_s_b": [
+            "a",
+            "d2g",
+            "vss",
+            "vss"
+          ]
+        },
+        {
+          "instance": "XM69",
+          "model": "sg13_hv_nmos",
+          "length": "0.5u",
+          "nodes_d_g_s_b": [
+            "nI961",
+            "en",
+            "vss",
+            "vss"
+          ]
+        },
+        {
+          "instance": "XM70",
+          "model": "sg13_hv_nmos",
+          "length": "0.5u",
+          "nodes_d_g_s_b": [
+            "d1g",
+            "qn",
+            "nI961",
+            "vss"
+          ]
+        },
+        {
+          "instance": "XM71",
+          "model": "sg13_hv_nmos",
+          "length": "0.5u",
+          "nodes_d_g_s_b": [
+            "vss",
+            "a",
+            "lsa",
+            "vss"
+          ]
+        },
+        {
+          "instance": "XM72",
+          "model": "sg13_hv_nmos",
+          "length": "0.5u",
+          "nodes_d_g_s_b": [
+            "lsb",
+            "d2g",
+            "vss",
+            "vss"
+          ]
+        },
+        {
+          "instance": "XM73",
+          "model": "sg13_hv_nmos",
+          "length": "0.5u",
+          "nodes_d_g_s_b": [
+            "nI962",
+            "en",
+            "vss",
+            "vss"
+          ]
+        },
+        {
+          "instance": "XM74",
+          "model": "sg13_hv_nmos",
+          "length": "0.5u",
+          "nodes_d_g_s_b": [
+            "d2g",
+            "q",
+            "nI962",
+            "vss"
+          ]
+        },
+        {
+          "instance": "XM75",
+          "model": "sg13_hv_nmos",
+          "length": "0.5u",
+          "nodes_d_g_s_b": [
+            "nI960",
+            "qn",
+            "vss",
+            "vss"
+          ]
+        },
+        {
+          "instance": "XM76",
+          "model": "sg13_hv_nmos",
+          "length": "0.5u",
+          "nodes_d_g_s_b": [
+            "q",
+            "sn",
+            "nI960",
+            "vss"
+          ]
+        },
+        {
+          "instance": "XM77",
+          "model": "sg13_hv_pmos",
+          "length": "0.5u",
+          "nodes_d_g_s_b": [
+            "c2",
+            "ob2",
+            "vdd",
+            "vdd"
+          ]
+        },
+        {
+          "instance": "XM78",
+          "model": "sg13_hv_pmos",
+          "length": "0.5u",
+          "nodes_d_g_s_b": [
+            "a",
+            "d2g",
+            "vdd",
+            "vdd"
+          ]
+        },
+        {
+          "instance": "XM79",
+          "model": "sg13_hv_pmos",
+          "length": "0.5u",
+          "nodes_d_g_s_b": [
+            "c1",
+            "ob1",
+            "vdd",
+            "vdd"
+          ]
+        },
+        {
+          "instance": "XM80",
+          "model": "sg13_hv_pmos",
+          "length": "0.5u",
+          "nodes_d_g_s_b": [
+            "moden",
+            "mode",
+            "vdd",
+            "vdd"
+          ]
+        },
+        {
+          "instance": "XM81",
+          "model": "sg13_hv_pmos",
+          "length": "4u",
+          "nodes_d_g_s_b": [
+            "dr",
+            "pbias",
+            "vdd",
+            "vdd"
+          ]
+        },
+        {
+          "instance": "XM82",
+          "model": "sg13_hv_pmos",
+          "length": "4u",
+          "nodes_d_g_s_b": [
+            "vdd",
+            "pbias",
+            "dr",
+            "vdd"
+          ]
+        },
+        {
+          "instance": "XM83",
+          "model": "sg13_hv_pmos",
+          "length": "4u",
+          "nodes_d_g_s_b": [
+            "dr",
+            "pcasc",
+            "vr",
+            "dr"
+          ]
+        },
+        {
+          "instance": "XM84",
+          "model": "sg13_hv_pmos",
+          "length": "4u",
+          "nodes_d_g_s_b": [
+            "vr",
+            "pcasc",
+            "dr",
+            "dr"
+          ]
+        },
+        {
+          "instance": "XM85",
+          "model": "sg13_hv_pmos",
+          "length": "2u",
+          "nodes_d_g_s_b": [
+            "vss",
+            "vth",
+            "vcg",
+            "vcg"
+          ]
+        },
+        {
+          "instance": "XM86",
+          "model": "sg13_hv_pmos",
+          "length": "4u",
+          "nodes_d_g_s_b": [
+            "vcg",
+            "pbias",
+            "vdd",
+            "vdd"
+          ]
+        },
+        {
+          "instance": "XM87",
+          "model": "sg13_hv_pmos",
+          "length": "4u",
+          "nodes_d_g_s_b": [
+            "nbias",
+            "pcasc",
+            "db",
+            "db"
+          ]
+        },
+        {
+          "instance": "XM88",
+          "model": "sg13_hv_pmos",
+          "length": "4u",
+          "nodes_d_g_s_b": [
+            "db",
+            "pbias",
+            "vdd",
+            "vdd"
+          ]
+        },
+        {
+          "instance": "XM89",
+          "model": "sg13_hv_pmos",
+          "length": "4u",
+          "nodes_d_g_s_b": [
+            "do",
+            "pbias",
+            "vdd",
+            "vdd"
+          ]
+        },
+        {
+          "instance": "XM90",
+          "model": "sg13_hv_pmos",
+          "length": "4u",
+          "nodes_d_g_s_b": [
+            "isrc",
+            "pcasc",
+            "do",
+            "do"
+          ]
+        },
+        {
+          "instance": "XM91",
+          "model": "sg13_lv_pmos",
+          "length": "0.13u",
+          "nodes_d_g_s_b": [
+            "fout",
+            "fon",
+            "vdd12",
+            "vdd12"
+          ]
+        }
+      ],
+      "instances_shorter_than_documented_3p3V_gate_condition": [
+        "XM1",
+        "XM2",
+        "XM13",
+        "XM14",
+        "XM23",
+        "XM24",
+        "XM25",
+        "XM63",
+        "XM64",
+        "XM65",
+        "XM66",
+        "XM67",
+        "XM68",
+        "XM69",
+        "XM70",
+        "XM71",
+        "XM72",
+        "XM73",
+        "XM74",
+        "XM75",
+        "XM76"
+      ]
+    },
+    "g1_osc": {
+      "source": "designs/g1-guardian/blocks/g1_osc/sim/postlayout/g1_osc_pex.spice",
+      "sha256": "e1b30a6f679b551c9ccf093dafdd5c8361411c1c503099f2d8a1eab7f80d6ea7",
+      "MOS_instances": [
+        {
+          "instance": "XM1",
+          "model": "sg13_lv_nmos",
+          "length": "0.13u",
+          "nodes_d_g_s_b": [
+            "vb",
+            "n22",
+            "vss",
+            "vss"
+          ]
+        },
+        {
+          "instance": "XM2",
+          "model": "sg13_lv_nmos",
+          "length": "0.13u",
+          "nodes_d_g_s_b": [
+            "va",
+            "n20",
+            "vss",
+            "vss"
+          ]
+        },
+        {
+          "instance": "XM3",
+          "model": "sg13_lv_nmos",
+          "length": "0.13u",
+          "nodes_d_g_s_b": [
+            "bb3",
+            "trim3",
+            "vss",
+            "vss"
+          ]
+        },
+        {
+          "instance": "XM4",
+          "model": "sg13_lv_nmos",
+          "length": "0.13u",
+          "nodes_d_g_s_b": [
+            "n22",
+            "n25",
+            "n26",
+            "vss"
+          ]
+        },
+        {
+          "instance": "XM5",
+          "model": "sg13_lv_nmos",
+          "length": "0.13u",
+          "nodes_d_g_s_b": [
+            "osc_clk",
+            "n27",
+            "vss",
+            "vss"
+          ]
+        },
+        {
+          "instance": "XM6",
+          "model": "sg13_lv_nmos",
+          "length": "0.13u",
+          "nodes_d_g_s_b": [
+            "n14",
+            "n31",
+            "vss",
+            "vss"
+          ]
+        },
+        {
+          "instance": "XM7",
+          "model": "sg13_lv_nmos",
+          "length": "0.5u",
+          "nodes_d_g_s_b": [
+            "n32",
+            "vbn",
+            "vss",
+            "vss"
+          ]
+        },
+        {
+          "instance": "XM8",
+          "model": "sg13_lv_nmos",
+          "length": "0.13u",
+          "nodes_d_g_s_b": [
+            "n27",
+            "n24",
+            "vss",
+            "vss"
+          ]
+        },
+        {
+          "instance": "XM9",
+          "model": "sg13_lv_nmos",
+          "length": "0.13u",
+          "nodes_d_g_s_b": [
+            "n26",
+            "en",
+            "vss",
+            "vss"
+          ]
+        },
+        {
+          "instance": "XM10",
+          "model": "sg13_lv_nmos",
+          "length": "0.13u",
+          "nodes_d_g_s_b": [
+            "n20",
+            "n24",
+            "vss",
+            "vss"
+          ]
+        },
+        {
+          "instance": "XM11",
+          "model": "sg13_lv_nmos",
+          "length": "0.13u",
+          "nodes_d_g_s_b": [
+            "n24",
+            "n25",
+            "vss",
+            "vss"
+          ]
+        },
+        {
+          "instance": "XM12",
+          "model": "sg13_lv_nmos",
+          "length": "0.5u",
+          "nodes_d_g_s_b": [
+            "vbn",
+            "vbn",
+            "vss",
+            "vss"
+          ]
+        },
+        {
+          "instance": "XM13",
+          "model": "sg13_lv_nmos",
+          "length": "0.13u",
+          "nodes_d_g_s_b": [
+            "n25",
+            "n36",
+            "vss",
+            "vss"
+          ]
+        },
+        {
+          "instance": "XM14",
+          "model": "sg13_lv_nmos",
+          "length": "0.3u",
+          "nodes_d_g_s_b": [
+            "n31",
+            "vth",
+            "n29",
+            "vss"
+          ]
+        },
+        {
+          "instance": "XM15",
+          "model": "sg13_lv_nmos",
+          "length": "0.13u",
+          "nodes_d_g_s_b": [
+            "n36",
+            "n35",
+            "vss",
+            "vss"
+          ]
+        },
+        {
+          "instance": "XM16",
+          "model": "sg13_lv_nmos",
+          "length": "0.3u",
+          "nodes_d_g_s_b": [
+            "n34",
+            "vth",
+            "n32",
+            "vss"
+          ]
+        },
+        {
+          "instance": "XM17",
+          "model": "sg13_lv_nmos",
+          "length": "0.5u",
+          "nodes_d_g_s_b": [
+            "n29",
+            "vbn",
+            "vss",
+            "vss"
+          ]
+        },
+        {
+          "instance": "XM18",
+          "model": "sg13_lv_nmos",
+          "length": "0.13u",
+          "nodes_d_g_s_b": [
+            "n15",
+            "n14",
+            "vss",
+            "vss"
+          ]
+        },
+        {
+          "instance": "XM19",
+          "model": "sg13_lv_nmos",
+          "length": "0.13u",
+          "nodes_d_g_s_b": [
+            "b1",
+            "trim1",
+            "vss",
+            "vss"
+          ]
+        },
+        {
+          "instance": "XM20",
+          "model": "sg13_lv_nmos",
+          "length": "0.13u",
+          "nodes_d_g_s_b": [
+            "n25",
+            "n24",
+            "vss",
+            "vss"
+          ]
+        },
+        {
+          "instance": "XM21",
+          "model": "sg13_lv_nmos",
+          "length": "0.13u",
+          "nodes_d_g_s_b": [
+            "n24",
+            "n15",
+            "vss",
+            "vss"
+          ]
+        },
+        {
+          "instance": "XM22",
+          "model": "sg13_lv_nmos",
+          "length": "0.13u",
+          "nodes_d_g_s_b": [
+            "n35",
+            "n34",
+            "vss",
+            "vss"
+          ]
+        },
+        {
+          "instance": "XM23",
+          "model": "sg13_lv_nmos",
+          "length": "0.3u",
+          "nodes_d_g_s_b": [
+            "n30",
+            "va",
+            "n29",
+            "vss"
+          ]
+        },
+        {
+          "instance": "XM24",
+          "model": "sg13_lv_nmos",
+          "length": "0.13u",
+          "nodes_d_g_s_b": [
+            "n47",
+            "en",
+            "vss",
+            "vss"
+          ]
+        },
+        {
+          "instance": "XM25",
+          "model": "sg13_lv_nmos",
+          "length": "0.13u",
+          "nodes_d_g_s_b": [
+            "bb0",
+            "trim0",
+            "vss",
+            "vss"
+          ]
+        },
+        {
+          "instance": "XM26",
+          "model": "sg13_lv_nmos",
+          "length": "0.13u",
+          "nodes_d_g_s_b": [
+            "n24",
+            "n47",
+            "vss",
+            "vss"
+          ]
+        },
+        {
+          "instance": "XM27",
+          "model": "sg13_lv_nmos",
+          "length": "0.13u",
+          "nodes_d_g_s_b": [
+            "b0",
+            "trim0",
+            "vss",
+            "vss"
+          ]
+        },
+        {
+          "instance": "XM28",
+          "model": "sg13_lv_nmos",
+          "length": "0.13u",
+          "nodes_d_g_s_b": [
+            "bb1",
+            "trim1",
+            "vss",
+            "vss"
+          ]
+        },
+        {
+          "instance": "XM29",
+          "model": "sg13_lv_nmos",
+          "length": "0.13u",
+          "nodes_d_g_s_b": [
+            "b3",
+            "trim3",
+            "vss",
+            "vss"
+          ]
+        },
+        {
+          "instance": "XM30",
+          "model": "sg13_lv_nmos",
+          "length": "0.3u",
+          "nodes_d_g_s_b": [
+            "n33",
+            "vb",
+            "n32",
+            "vss"
+          ]
+        },
+        {
+          "instance": "XM31",
+          "model": "sg13_lv_nmos",
+          "length": "0.13u",
+          "nodes_d_g_s_b": [
+            "b2",
+            "trim2",
+            "vss",
+            "vss"
+          ]
+        },
+        {
+          "instance": "XM32",
+          "model": "sg13_lv_nmos",
+          "length": "0.13u",
+          "nodes_d_g_s_b": [
+            "bb2",
+            "trim2",
+            "vss",
+            "vss"
+          ]
+        },
+        {
+          "instance": "XM33",
+          "model": "sg13_lv_pmos",
+          "length": "0.13u",
+          "nodes_d_g_s_b": [
+            "n24",
+            "n25",
+            "n50",
+            "vdd"
+          ]
+        },
+        {
+          "instance": "XM34",
+          "model": "sg13_lv_pmos",
+          "length": "0.13u",
+          "nodes_d_g_s_b": [
+            "n50",
+            "n47",
+            "n48",
+            "vdd"
+          ]
+        },
+        {
+          "instance": "XM35",
+          "model": "sg13_lv_pmos",
+          "length": "0.13u",
+          "nodes_d_g_s_b": [
+            "n48",
+            "n15",
+            "vdd",
+            "vdd"
+          ]
+        },
+        {
+          "instance": "XM36",
+          "model": "sg13_lv_pmos",
+          "length": "0.13u",
+          "nodes_d_g_s_b": [
+            "n25",
+            "n24",
+            "n49",
+            "vdd"
+          ]
+        },
+        {
+          "instance": "XM37",
+          "model": "sg13_lv_pmos",
+          "length": "0.13u",
+          "nodes_d_g_s_b": [
+            "n49",
+            "n36",
+            "vdd",
+            "vdd"
+          ]
+        },
+        {
+          "instance": "XM38",
+          "model": "sg13_lv_pmos",
+          "length": "0.13u",
+          "nodes_d_g_s_b": [
+            "n47",
+            "en",
+            "vdd",
+            "vdd"
+          ]
+        },
+        {
+          "instance": "XM39",
+          "model": "sg13_lv_pmos",
+          "length": "0.13u",
+          "nodes_d_g_s_b": [
+            "n36",
+            "n35",
+            "vdd",
+            "vdd"
+          ]
+        },
+        {
+          "instance": "XM40",
+          "model": "sg13_lv_pmos",
+          "length": "0.13u",
+          "nodes_d_g_s_b": [
+            "n27",
+            "n24",
+            "vdd",
+            "vdd"
+          ]
+        },
+        {
+          "instance": "XM41",
+          "model": "sg13_lv_pmos",
+          "length": "0.13u",
+          "nodes_d_g_s_b": [
+            "n22",
+            "n25",
+            "vdd",
+            "vdd"
+          ]
+        },
+        {
+          "instance": "XM42",
+          "model": "sg13_lv_pmos",
+          "length": "0.3u",
+          "nodes_d_g_s_b": [
+            "n33",
+            "n33",
+            "vdd",
+            "vdd"
+          ]
+        },
+        {
+          "instance": "XM43",
+          "model": "sg13_lv_pmos",
+          "length": "0.3u",
+          "nodes_d_g_s_b": [
+            "n34",
+            "n33",
+            "vdd",
+            "vdd"
+          ]
+        },
+        {
+          "instance": "XM44",
+          "model": "sg13_lv_pmos",
+          "length": "0.13u",
+          "nodes_d_g_s_b": [
+            "n35",
+            "n34",
+            "vdd",
+            "vdd"
+          ]
+        },
+        {
+          "instance": "XM45",
+          "model": "sg13_lv_pmos",
+          "length": "0.13u",
+          "nodes_d_g_s_b": [
+            "n22",
+            "en",
+            "vdd",
+            "vdd"
+          ]
+        },
+        {
+          "instance": "XM46",
+          "model": "sg13_lv_pmos",
+          "length": "0.13u",
+          "nodes_d_g_s_b": [
+            "n15",
+            "n14",
+            "vdd",
+            "vdd"
+          ]
+        },
+        {
+          "instance": "XM47",
+          "model": "sg13_lv_pmos",
+          "length": "0.3u",
+          "nodes_d_g_s_b": [
+            "n31",
+            "n30",
+            "vdd",
+            "vdd"
+          ]
+        },
+        {
+          "instance": "XM48",
+          "model": "sg13_lv_pmos",
+          "length": "0.13u",
+          "nodes_d_g_s_b": [
+            "osc_clk",
+            "n27",
+            "vdd",
+            "vdd"
+          ]
+        },
+        {
+          "instance": "XM49",
+          "model": "sg13_lv_pmos",
+          "length": "0.13u",
+          "nodes_d_g_s_b": [
+            "n20",
+            "n24",
+            "vdd",
+            "vdd"
+          ]
+        },
+        {
+          "instance": "XM50",
+          "model": "sg13_lv_pmos",
+          "length": "0.13u",
+          "nodes_d_g_s_b": [
+            "n14",
+            "n31",
+            "vdd",
+            "vdd"
+          ]
+        },
+        {
+          "instance": "XM51",
+          "model": "sg13_lv_pmos",
+          "length": "0.3u",
+          "nodes_d_g_s_b": [
+            "n30",
+            "n30",
+            "vdd",
+            "vdd"
+          ]
+        }
+      ],
+      "instances_shorter_than_documented_3p3V_gate_condition": []
+    }
+  },
+  "terminal_measurements": "Additional terminal export queued separately; this inventory alone is not a measured voltage audit.",
+  "length_screen_caveat": "Shorter devices are listed for voltage-specific review; this does not declare every shorter device invalid at its actual lower gate bias."
+}

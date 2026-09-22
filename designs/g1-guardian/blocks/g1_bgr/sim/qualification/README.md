@@ -15,7 +15,7 @@ extraction. No circuit, layout, rule deck, or PDK model card changed.
 | Nominal dip, r4 and load-step diagnostics | passed execution | Three 40 µs characterization cases; no recovery-time acceptance budget adopted. |
 | Joint actual downstream loads | not run here | Standalone IPTAT clamp and VREF testbench loads; joint BGR/T2F subset is recorded in the T2F qualification directory. |
 | Nominal AC PSRR / output noise | passed execution | Simulated 196.05 µV RMS over 1 Hz–10 MHz; 102.956 dB / 75.350 dB PSRR rejection at 1 Hz / 1 kHz. No noise acceptance budget adopted. |
-| Feedback-loop stability and switched-capacitance loads | not run | Not established by the current-load step or AC noise results. |
+| Feedback-loop stability and switched-capacitance loads | partially complete | Nine capacitive-load cases and six conditional local-loop probes complete; global pole-zero solve failed. Global stability remains unqualified. |
 | Full device voltage audit | not run | HBT external VCE sampled; other terminals/reliability limits need separate checks. |
 | Wire R, fill/well coupling, global process MC, spatial correlation | not run | Existing capacitance extraction/model limitations apply. |
 
@@ -210,3 +210,47 @@ ngspice reached its pole-zero iteration limit after1426 trials. It printed
 unqualified roots including right-half-plane values. These are retained but
 cannot establish physical instability or stability without a converged,
 validated pole solution. Global stability closure remains **not run**.
+
+## Density-preserving array candidates, 2026-09-22
+
+Two isolated four-unit candidates now have qualified mismatch evidence. Both
+replicate the physical core MOS/HBT units while preserving the output mirror
+XM40/XM46/XM53. The first uses quarter-length resistors; the second uses four
+parallel original-geometry resistor units. The earlier candidate incorrectly
+excluded XM41 instead of XM40: its IPTAT rose to10.06µA and it failed the
+intended current-preservation check. That result is retained, not adopted.
+
+| Simulated candidate | Nominal TC (ppm/°C) | IPTAT25 (µA) | Current25 at3.3V (µA) | TC failures /100 | Worst TC (ppm/°C) |
+|---|---|---|---|---|---|
+| Baseline |22.5578|4.10669|21.8926|54|178.540|
+| Four-unit core, quarter-length R |23.4507|4.04260|74.1276|23|104.762|
+| Four-unit core, parallel full-length R |22.5578|4.10669|75.2502|19|100.763|
+
+The candidates improve the modeled failure fraction but **neither closes the
+50ppm/°C requirement**. Fresh seeds43001–43100 were retained in `mc20` and
+`mc80` runs with prefixes `bgr_array4_density_v2` and
+`bgr_array4_parallel_r`, suffix `_20260922_01`. All200 candidate samples
+completed; all581/905 recorded parameters respectively remained fixed across
+temperature. Separate qualification runs verify exact seed repeats, reverse
+sweeps, disabled-seed invariance and variation in each device class. No failing
+sample was removed. Added units and changed geometry prevent a paired-yield
+interpretation even where original-device fingerprints remain identical.
+
+`run_density_probe.py` directly measures VBIC collector/base currents. The
+quarter-length candidate retains98.33–98.61% of baseline per-unit HBT current
+at−40/25/125°C; nominal Q2 VBE25 is0.650235V. The parallel-resistor candidate
+preserves baseline nominal VREF/IPTAT/bias to numerical precision. Resistor
+body area is four times baseline for parallel units; added routes, legal
+placement, DRC/LVS and fresh extraction remain **not run**. Independent PDK
+unit draws do not model physical spatial correlation. Neither candidate has
+been adopted. `analyze_candidate.py RUN_ID` reproduces qualification and
+separate numerical/TC outcomes; each manifest records the complete command,
+image, model, source and deck hashes.
+
+A proposed16× expansion was rejected as a credible local implementation before
+simulation: actual PCell bounding boxes total58,020.53µm² before new guards,
+routing and dummies, versus a broad36,888µm² neighboring region already containing
+routes/decoupling. The4× parallel-resistor device boxes total14,932µm² versus the
+existing84×124µm macro, so its physical fit is also unproven. This is area
+accounting, not an optimal-packing proof. See the [GDS area audit](../../../../review/audits/BGR_ARRAY_AREA_20260922.md).
+No16× circuit simulation, production adoption or die expansion was performed.

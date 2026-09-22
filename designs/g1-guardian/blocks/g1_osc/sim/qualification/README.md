@@ -29,8 +29,8 @@ assumed untrimmed lower bound of 8 MHz is not supported by this screen.
 | Remaining check | Status |
 |---|---|
 | Full Cartesian process/temperature/rail coverage | not run |
-| Bank/comparator/passive mismatch | not run |
-| Real routed clock/receiver load | not run |
+| Bank/comparator/passive mismatch | qualified20-sample nominal endpoint smoke complete; expanded/adverse coverage incomplete |
+| Real routed clock/receiver load | nominal pilot complete | Actual root buf16 plus16 buf8 and internal SPEF; assembly RC and leaf loads remain estimates. |
 | Slow startup and disable/re-enable at adverse corners | not run in this campaign |
 | Physical jitter/phase noise | not run |
 | Wire R, MIM plate/fill coupling | not run; known extraction limitations |
@@ -87,3 +87,67 @@ Run directories `osc_r098_candidate_shard[0-1]_20260921_01` and
 decks, manifests and vectors. Reproduce each with a new ID, `--suite trim
 --tuples candidate --shards 2 --shard-index 0 --r-charge-scale 0.98` or
 `0.95`, then shard index 1. Pilot code subsets remain independent evidence.
+
+## Mismatch qualification and smoke screen, 2026-09-22
+
+`osc_mc_qualification_20260922_01` passes all nine legacy-ngspice qualification
+cases. Explicit mismatch flags cover80 physical MOS/resistor/CMIM instances;
+all269 recorded parameters remain fixed across temperature, trim code and
+transient analysis. Same-seed waveforms repeat byte for byte, disabled devices
+are seed-invariant, and each device class varies with enabled seeds.
+
+`osc_mc20_endpoints_20260922_01` completes40/40 transients for20 nominal samples
+(seeds61001–61020), with no numerical failures or timeouts. All samples bracket
+10MHz between codes0/15 and retain identical parameters across codes. This
+endpoint smoke screen does not establish all-code mismatch monotonicity,
+adverse-corner yield, receiver loading or physical jitter. The baseline
+slow/hot reach failure above remains unchanged. Use `analyze_mc.py RUN_ID` to
+reproduce the saved qualification/screen analysis.
+
+The native-ngspice47 pilot passes its own nine qualification cases and matches
+measured frequency/duty/current, but **fails** the predeclared strict
+cross-runtime fingerprint gate. The separate four-ULP diagnostic also fails:
+maximum51ULP, absolute difference7.08e−16. Both results are retained in
+`native_runtime_comparison_20260922.json` and
+`native_fingerprint_diagnostic_20260922.json`; this OSC campaign continues on
+the legacy runtime. No global native-runtime qualification is claimed.
+
+## Actual clock receiver pilot
+
+`osc_actual_receiver_nominal_20260922_01` replaces the50fF stand-in with the
+actual `sg13g2_buf_16` root and16 immediate `sg13g2_buf_8` receivers. Their
+internal input/output SPEF networks are copied from the retained CTRL run.
+The assembly link uses a459.7558Ω/60.3853fF pi sensitivity estimate: summed
+whole-tree resistance is not an extracted driver-to-receiver path. Each leaf
+output has an explicit assumed100fF load, and one15.4008aF external coupling
+is clamped quiet. Further clock-tree stages and DFF loads are absent.
+
+At nominal27°C/code8, the6µs run completes and all19 observed clock nodes
+have34 rising edges in the2–5.8µs window. Simulated frequency is8.99456067MHz;
+minimum high/low widths are54.9923/56.0684ns. These are characterization
+results without a newly invented pulse-width acceptance budget. Supply
+integration in `actual_receiver_current_20260922.json` gives0.168636mW
+combined OSC and immediate clock-tree power. Sampled clock receiver current
+peaks at20.517mA under ideal rails; this is not a worst-case current bound.
+Adverse startup/re-enable and leaf-load sensitivity fixtures are queued
+separately and remain not run until their manifests complete.
+
+## Completed overnight campaigns, migration pause 2026-09-22
+
+Nominal100 endpoint samples complete200/200 leaves with no10MHz bracket or
+fingerprint failures. A separate20-sample all16-code campaign completes
+320/320 leaves; all20 trim curves are strictly monotonic and bracket10MHz.
+Slow/hot baseline20 completes40/40 leaves with **nine bracket failures**.
+The isolated R0.95 candidate completes its separately qualified20-sample
+slow/hot screen with zero bracket failures. `completed_mc_screens_20260922.json`
+retains these populations separately; the candidate remains unadopted and
+has no regenerated physical extraction.
+
+Actual receiver slow/hot code0 completes at9.974853MHz baseline(still below
+10MHz) and10.445340MHz for R0.95. Fast/cold with1µs enable ramp and nominal
+1000fF leaf loads also complete. The slow/cold disable/re-enable run **fails**
+ngspice's output-memory availability check, with solver exit1 and no acceptance
+waveform. All three synthetic OSC rail perturbation leaves fail the same type
+of output-memory check. They are retained failures, not timeouts or passed
+jitter evidence. Targeted retries need new run IDs after resource/output
+diagnosis. Owner paused simulations for migration; no OSC runner remains active.

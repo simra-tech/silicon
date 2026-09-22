@@ -1,0 +1,26 @@
+* Unchanged PDK diode/pad convergence reduction
+.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerMOSlv.lib mos_tt
+.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerMOShv.lib mos_tt
+.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerRES.lib res_typ
+.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerCAP.lib cap_typ
+.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerDIO.lib dio_tt
+.include /foss/pdks/ihp-sg13g2/libs.ref/sg13g2_io/spice/sg13g2_io.spi
+.global sub!
+Vsub sub! 0 0
+.temp 27
+.option method=gear reltol=1e-5 abstol=1e-14 vntol=1e-7 chgtol=1e-14 itl4=100
+Va va 0 3.3
+Vd vd 0 1.2
+Vin input 0 pwl(0 0 .1u 0 .2u 3.3 1u 3.3 1.1u 0 2u 0)
+Rinput input drive 50
+Xdiode drive va dpantenna l=4.98u w=640n m=1
+.control
+set num_threads=1
+set numdgt=17
+set wr_singlescale
+set wr_vecnames
+tran .5n 2u 0 .5n
+wrdata /work/designs/g1-guardian/blocks/g1_gate/sim/campaigns/diode_20260921T221046Z_9b690af6/dpantenna.tsv v(input) v(drive) i(va) i(vin)
+quit 0
+.endc
+.end

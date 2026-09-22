@@ -1,0 +1,170 @@
+{
+  "status": "passed: reservedrectangles/nonoverlap/firstmoment arithmetic only",
+  "scope": "Floorplan feasibility screen, not actualconnectedlayout or adoption. Shows a bounded southwardregrouping option absent from priorareaenvelope.",
+  "inputs": {
+    "bgr-array-area-20260922-r2/inventory.json": "9bdb292aafc68fdd72aeac25ec9afdcf7032d3721e4f0cdf8991c4d41e60e866",
+    "sense-candidate-area-20260922-r2/summary.json": "c0814960d13652b495db546cff2c29e30adee9826973fbe4f4424632128d3661"
+  },
+  "expanded_local_region_um": [
+    727,
+    321,
+    1029,
+    648
+  ],
+  "expanded_region_area_um2": 98754,
+  "proposals": [
+    {
+      "name": "Main OTA: folded candidate",
+      "bbox_um": [
+        735,
+        335,
+        995,
+        463
+      ],
+      "status": "routing/guards not implemented",
+      "color": "#e7a74d"
+    },
+    {
+      "name": "Resistor array: rotate90\u00b0",
+      "bbox_um": [
+        735,
+        480,
+        915,
+        622
+      ],
+      "status": "original132.50\u00d7170.48um guard+tracks, rotated and reserved180\u00d7142um; rerouting required",
+      "color": "#6eadd4"
+    },
+    {
+      "name": "Baseline buffer OTA",
+      "bbox_um": [
+        925,
+        482,
+        1025,
+        536
+      ],
+      "status": "97.85\u00d751.2um cell plus small allowance; relocated",
+      "color": "#8abe86"
+    },
+    {
+      "name": "Baseline VREF OTA",
+      "bbox_um": [
+        925,
+        544,
+        1025,
+        598
+      ],
+      "status": "97.85\u00d751.2um cell plus small allowance; relocated",
+      "color": "#b5ce91"
+    }
+  ],
+  "fixed_macro_IO_bbox_collisions": [],
+  "pa_chunk_map": [
+    "ABCD",
+    "DCBA",
+    "CDAB",
+    "BADC"
+  ],
+  "pa_centroids": {
+    "A": {
+      "chunks": 4,
+      "fingers": 48,
+      "column_centroid": 1.5,
+      "row_centroid": 1.5
+    },
+    "B": {
+      "chunks": 4,
+      "fingers": 48,
+      "column_centroid": 1.5,
+      "row_centroid": 1.5
+    },
+    "C": {
+      "chunks": 4,
+      "fingers": 48,
+      "column_centroid": 1.5,
+      "row_centroid": 1.5
+    },
+    "D": {
+      "chunks": 4,
+      "fingers": 48,
+      "column_centroid": 1.5,
+      "row_centroid": 1.5
+    }
+  },
+  "NMOS_chunk_map": [
+    "ABBA",
+    "BAAB"
+  ],
+  "NMOS_centroids": {
+    "A": {
+      "chunks": 4,
+      "fingers": 40,
+      "column_centroid": 1.5,
+      "row_centroid": 0.5
+    },
+    "B": {
+      "chunks": 4,
+      "fingers": 40,
+      "column_centroid": 1.5,
+      "row_centroid": 0.5
+    }
+  },
+  "input_pair_pattern": "ABBAABBAABBAABBAABBAABBAABBAABBAABBAABBAABBAABBAABBAABBAABBAABBAABBAABBAABBAABBAABBAABBAABBAABBA",
+  "input_pair_centroids": {
+    "A": {
+      "fingers": 48,
+      "index_centroid": 47.5
+    },
+    "B": {
+      "fingers": 48,
+      "index_centroid": 47.5
+    }
+  },
+  "main_row_height_allocations": [
+    {
+      "group": "NMOS folded+fixed",
+      "height_um": 27,
+      "width_limit_um": 239.4
+    },
+    {
+      "group": "PA4centroidrows",
+      "height_um": 53,
+      "width_limit_um": 239.4
+    },
+    {
+      "group": "Input96fingers",
+      "height_um": 10,
+      "width_limit_um": 239.4
+    },
+    {
+      "group": "PC unchanged",
+      "height_um": 12,
+      "width_limit_um": 239.4
+    }
+  ],
+  "main_reserved_area_um2": 33280,
+  "resistor_original_guard_and_tracks_um": [
+    132.5,
+    170.48
+  ],
+  "preserved_die_um": [
+    1350,
+    1350
+  ],
+  "not_run": [
+    "PCellsegmentedconnectedplacement",
+    "DRC/LVS/density/antenna",
+    "guard/tapspacingimplementation",
+    "routecongestionandpinassignment",
+    "PDN/decap/fillregeneration",
+    "newPEX/stability/mismatchlayoutverification",
+    "adoption"
+  ],
+  "cautions": [
+    "No device/macro is actually moved. Existing PDN/decaps/fill/routes inside proposal are not free and require regeneration.",
+    "PAlettermapping must map exactsource/drain/bodylogicaldevicesbeforelayout. Equalfirstmoments do not establishbalancedRCor higherordergradient cancellation.",
+    "Nativeenclosureoverlap/segmentedfingers require carefulDRC; schematicngandMCstatisticscannotbesilentlychanged.",
+    "10umnewroutingcorridor and assumedrowspacing are reservations,notrouted proof.",
+    "ExistingneighborPadbboxenclosuresusedasobstacles;fullguard/latchup/ESDclearancenotqualified."
+  ]
+}
