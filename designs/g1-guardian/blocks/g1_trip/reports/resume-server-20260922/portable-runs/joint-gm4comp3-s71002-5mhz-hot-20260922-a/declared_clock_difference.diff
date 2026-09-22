@@ -1,0 +1,53 @@
+--- preserved10MHz
++++ prepared5MHz
+@@ -33,12 +33,12 @@
+ Vh5 h5 0 dc 0
+ Vh6 h6 0 dc 0
+ Vh7 h7 0 dc 1.2
+-Vclk clk 0 pulse(0 1.2 20n 0.2n 0.2n 50n 100n)
++Vclk clk 0 pulse(0 1.2 20n 0.2n 0.2n 100n 200n)
+ XT isense vref_buf clk s0 s1 s2 s3 s4 s5 s6 s7 h0 h1 h2 h3 h4 h5 h6 h7 cmp_soft cmp_hard vdd vdda 0 g1_trip
+ Cs cmp_soft 0 10f
+ Ch cmp_hard 0 10f
+ * keep only the nodes of interest (the full 1200-device transient exhausts the output memory)
+-.save v(clk) v(vref) v(iptat) v(vref_buf) v(xt.icmp) v(xt.vth_soft) v(xt.vth_hard) v(cmp_soft) v(cmp_hard) v(isense)
++.save v(clk) v(vref) v(iptat) v(vref_buf) v(xt.icmp) v(xt.vth_soft) v(xt.vth_hard) v(cmp_soft) v(cmp_hard) v(isense) v(xt.cmp_clk_n) v(xt.xch.xp) v(xt.xch.xq) v(xt.xch.xn) v(xt.xch.yn)
+ .lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerHBT.lib hbt_typ_mismatch
+ .include qualification/@RUN@/bgr.spice
+ Vr4 r4 0 0
+@@ -59,17 +59,17 @@
+ let dqsoft = v(xt.icmp)-v(xt.vth_soft)
+ let dqhard = v(xt.icmp)-v(xt.vth_hard)
+ echo QUIET $&dqsoft $&dqhard
+-tran 0.2n 0.52u 0 0.2n
++tran 0.2n 1.02u 0 0.2n
+ let ds = v(xt.icmp)-v(xt.vth_soft)
+ let dh = v(xt.icmp)-v(xt.vth_hard)
+-meas tran ds_pre find ds at=4.198e-07
+-meas tran ds_kick find ds at=4.21e-07
+-meas tran ds_sample find ds at=4.4e-07
+-meas tran qs_sample find v(cmp_soft) at=4.4e-07
+-meas tran dh_pre find dh at=4.7e-07
+-meas tran dh_kick find dh at=4.712e-07
+-meas tran dh_sample find dh at=4.902e-07
+-meas tran qh_sample find v(cmp_hard) at=4.902e-07
++meas tran ds_pre find ds at=8.198e-07
++meas tran ds_kick find ds at=8.21e-07
++meas tran ds_sample find ds at=8.4e-07
++meas tran qs_sample find v(cmp_soft) at=8.4e-07
++meas tran dh_pre find dh at=9.2e-07
++meas tran dh_kick find dh at=9.212e-07
++meas tran dh_sample find dh at=9.402e-07
++meas tran qh_sample find v(cmp_hard) at=9.402e-07
+ echo SAMPLE_PARAMETERS
+ print @n.xs.xota.xm1.nsg13_hv_pmos[w]
+ print @n.xs.xota.xm1.nsg13_hv_pmos[l]
+@@ -100,7 +100,7 @@
+ print @q.xbgr.xq56.qnpn13g2[area]
+ set wr_singlescale
+ set wr_vecnames
+-wrdata qualification/@RUN@/hard_+0mV.dat v(clk) v(xt.icmp) v(xt.vth_soft) v(xt.vth_hard) v(cmp_soft) v(cmp_hard) v(isense)
++wrdata qualification/@RUN@/hard_+0mV.dat v(clk) v(xt.icmp) v(xt.vth_soft) v(xt.vth_hard) v(cmp_soft) v(cmp_hard) v(isense) v(xt.cmp_clk_n) v(xt.xch.xp) v(xt.xch.xq) v(xt.xch.xn) v(xt.xch.yn)
+ echo QUALIFICATION_END
+ quit 0
+ .endc
