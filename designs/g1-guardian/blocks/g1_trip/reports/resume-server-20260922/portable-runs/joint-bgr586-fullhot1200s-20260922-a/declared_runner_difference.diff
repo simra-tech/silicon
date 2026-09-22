@@ -1,0 +1,102 @@
+--- archivedFullHot600sRunner
++++ freshFullHot1200sPrefixGatedRunner
+@@ -1,5 +1,5 @@
+ #!/usr/bin/env python3
+-"""Execute one reviewed nominalBGR substitution; require complete draw inventories."""
++"""One fresh1200s fullhot diagnostic, gated by exact saved200ns prefix parity."""
+ import argparse
+ import hashlib
+ import json
+@@ -11,7 +11,9 @@
+ from run_nominal_clock_probe import analyze_wave, validate_saved_nodes, run_bounded
+ from run_bias_observation_probe import quiet_values
+ from run_bgr_substitution_draw_audit import read_group
+-from wave_archive import archive_new_wave
++from wave_archive import archive_new_wave, open_wave, wave_sha
++from bgr_prefix_parity import select_prefix, compare_prefix_waves
++from prepare_bgr_prefix_probe import require_measurements_inside_prefix
+ 
+ SIM = Path(__file__).resolve().parent
+ ROOT = SIM.parents[4]
+@@ -50,13 +52,15 @@
+     parser = argparse.ArgumentParser(description=__doc__)
+     parser.add_argument('--run-id', required=True)
+     parser.add_argument('--image-id', required=True)
+-    parser.add_argument('--timeout-s', type=float, default=600)
++    parser.add_argument('--timeout-s', type=float, default=1200)
+     args = parser.parse_args()
+-    assert '/' not in args.run_id and args.run_id not in ['.', '..'] and 0 < args.timeout_s <= 600
++    assert args.run_id == 'joint-bgr586-fullhot1200s-20260922-a' and 0 < args.timeout_s <= 1200
+     out = SIM / 'qualification' / args.run_id
+     prep = json.loads((out / 'preparation.json').read_text())
+     assert prep['status'] == 'prepared only; simulator not run' and prep['run'] == args.run_id
+-    assert prep['seed'] == 71002 and prep['temperature_C'] in [25, 125]
++    assert prep['seed'] == 71002 and prep['temperature_C'] == 125
++    assert prep['planning']['watchdog_s'] == 1200
++    assert sha(Path(__file__)) == prep['prepared_runner_sha256']
+     assert prep['fixed_soft_hard_codes'] == [136, 154] and prep['shunt_V'] == .0245
+     assert not (out / 'summary.json').exists() and not (out / 'run.log').exists()
+     reference = SIM / 'qualification' / prep['reference_run']
+@@ -73,6 +77,20 @@
+     assert bindings['sha256'][prep['candidate_nominal_reference']] == prep['candidate_nominal_reference_sha256']
+     deck = out / (prep['case'] + '.cir')
+     deck_text = deck.read_text()
++    full_reference = SIM / 'qualification' / prep['fullhot_reference_run']
++    assert deck_text.replace(out.name, full_reference.name) == (full_reference / deck.name).read_text()
++    assert len(require_measurements_inside_prefix(deck_text, endpoint_s=1.02e-6)) == 8
++    prefix_reference = SIM / 'qualification' / prep['prefix_reference_run']
++    observation_path = ROOT / prep['prefix_observation_audit']
++    assert sha(observation_path) == prep['prefix_observation_audit_sha256']
++    observation = json.loads(observation_path.read_text())
++    assert observation['original_fixture_status'] == 'failed; unchanged'
++    assert observation['limited_observation_status'].startswith('passed finite saved219ns')
++    assert observation['summary_sha256'] == sha(prefix_reference / 'summary.json')
++    assert observation['decoded_wave_sha256'] == wave_sha(prefix_reference / 'hard_+0mV.dat')
++    with open_wave(prefix_reference / 'hard_+0mV.dat', 'rb') as stream:
++        prepared_prefix = select_prefix(stream.read())
++    assert all(prepared_prefix[key] == prep['strict_prefix_contract'][key] for key in ['sha256', 'byte_count', 'row_count', 'last_included_time_s'])
+     clean, count = re.subn(BLOCKS, '', deck_text, flags=re.M | re.S)
+     assert count == 4 and clean.replace(out.name, '@RUN@') == (reference / (prep['case'] + '.cir')).read_text().replace(reference.name, '@RUN@')
+     for block in re.finditer(BLOCKS, deck_text, re.M | re.S):
+@@ -103,7 +121,8 @@
+                       'inherited-fidelity-20260922-r2.json': '9df9a9742e1d4309839de4905ccfa6dfb76de6ea092241472934d4fc1c723a75',
+                       'junction-defaults-20260922-r1.json': '596c406af6ded2475c326b473ac79f353c9f22bd2cd52d22358a0f170517dbb3',
+                       'terminal-nets-20260922-r1.json': '1d9de2a4d502d559548aab72d1ee9256981ae3bbe1adfac99926df6bcb79a07c'},
+-                  'scope': 'NominalBGR substitution with preservednonBGRrealization andoldcodes. No samewholechipsample or waveformparity claim.'}
++                  'strict_prefix_contract': prep['strict_prefix_contract'], 'fresh_fullhot_scope': prep['scope'],
++                  'scope': 'Freshfullhot diagnostic; exact200ns prefix parity required. Original600stimeout andprefixmeasurementfailure preserved; no physicalqualification.'}
+     (out / 'provenance.json').write_text(json.dumps(provenance, indent=2) + '\n')
+     (out / 'runner.py').write_text(Path(__file__).read_text())
+     assert all(checks.values()), 'Source/reference/input preflight failed; no simulator launch'
+@@ -116,6 +135,7 @@
+     wave = out / (prep['case'] + '.dat')
+     complete = state['status'] == 'completed' and state['returncode'] == 0 and not errors and 'QUALIFICATION_END' in log and wave.exists()
+     params, analysis, quiet = {'checks': {}}, {'sampling_status': 'not run'}, {}
++    prefix_parity = {'status': 'not run'}
+     if complete:
+         try:
+             params = parameter_audit(log, prep, inventory, baseline_values)
+@@ -125,19 +145,20 @@
+             assert all(len(row) == 18 and all(math.isfinite(v) for v in row) for row in data)
+             analysis = analyze_wave([row[:13] for row in data], prep['prospective_sampling'])
+             quiet = quiet_values(log)
++            prefix_parity = compare_prefix_waves(prefix_reference / 'hard_+0mV.dat', wave)
+         except (AssertionError, ValueError, KeyError, IndexError) as error:
+             errors.append('Strict substitution comparison failed: ' + str(error))
+-    valid = complete and not errors and bool(params['checks']) and all(params['checks'].values()) and analysis['sampling_status'] == 'passed' and bool(quiet)
++    valid = complete and not errors and bool(params['checks']) and all(params['checks'].values()) and analysis['sampling_status'] == 'passed' and bool(quiet) and prefix_parity['status'].startswith('passed')
+     decisions = {key: value['measured_edge_decision'] for key, value in analysis.get('comparators', {}).items()}
+     low = all(value is False for value in decisions.values()) if valid else None
+     result = {'seed': 71002, 'temperature_C': prep['temperature_C'], 'case': prep['case'], 'shunt_V': .0245,
+               'fixed_soft_hard_codes': [136, 154], 'solver_status': 'passed' if complete else 'failed',
+               'watchdog_status': state['status'], 'returncode': state['returncode'], 'wall_s': state['wall_s'],
+               'errors': errors, 'warning_lines': warnings, 'quiet_op_V': quiet, 'parameter_audit': params,
+-              'wave_analysis': analysis, 'controlled_substitution_status': 'passed comparison contract' if valid else 'failed comparison contract',
++              'wave_analysis': analysis, 'strict_200ns_prefix_parity': prefix_parity, 'controlled_substitution_status': 'passed comparison contract' if valid else 'failed comparison contract',
+               'selected_lower_point_both_LOW': low,
+               'inherited_physical_fidelity_gate': provenance['inherited_physical_fidelity_gate'],
+-              'scope': 'Only controlledexistingmodel-level fixedoldcode room/hot nominalBGRsubstitution diagnostic. DifferentBGRnominallevel anddrift; no recalibration, population, physicalqualification, candidateadoption, reliability ororiginalfailure waiver.'}
++              'scope': 'One freshfullhot diagnostic,1200s cap; original600stimeout/prefixmeasurementfailure preserved. Original late3decisions plus exact200ns decoded/numeric prefix parity required. DifferentBGRnominallevel; no recalibration/population/physicaladoption/originalfailure waiver.'}
+     (out / 'summary.json').write_text(json.dumps([result], indent=2) + '\n')
+     if wave.exists():
+         archive_new_wave(wave)
