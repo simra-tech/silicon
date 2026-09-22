@@ -27,7 +27,8 @@ def main():
                  'same_deck_replay.json', 'recovery_validation.json', 'host_parity.json',
                  'controlled_solver_preflight.json', 'failed_solver_diagnostic_preflight.json',
                  'partition_comparison.json', 'solver_comparison.json', 'runner.py', 'driver.py', 'replay_driver.py',
-                 'preparation.json', 'preparer.py', 'declared_clock_difference.diff'}
+                 'preparation.json', 'preparer.py', 'declared_clock_difference.diff',
+                 'declared_output_difference.diff'}
     for run in args.runs:
         # Do not resolve: source is a portable repository-relative run identity,
         # even when its directory is an ignored external-storage symlink.
