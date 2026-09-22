@@ -37,7 +37,11 @@ def main():
                  'recovery_contract.json', 'recovery_wrapper.py',
                  'population_inventory.json', 'declared_population_deck_difference.diff',
                  'declared_population_source_difference.json',
-                 'declared_population_transient_difference.diff'}
+                 'declared_population_transient_difference.diff',
+                 'declared_current_source_difference.diff', 'declared_current_deck_difference.diff',
+                 'declared_monitor_output_difference.diff', 'declared_accounted_current_difference.diff',
+                 'declared_terminal_metadata_output.diff', 'declared_terminal_ledger_output.diff',
+                 'declared_external_port_source.diff', 'declared_external_port_deck.diff'}
     for run in args.runs:
         # Do not resolve: source is a portable repository-relative run identity,
         # even when its directory is an ignored external-storage symlink.

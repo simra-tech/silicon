@@ -1,0 +1,146 @@
+--- qualifiedTransient
++++ opCurrentControl
+@@ -14,7 +14,8 @@
+ Vdda vdda 0 dc {VDDA}
+ Vdd vdd 0 dc {VDD}
+ Vsh shp 0 dc 0.025000000000000001
+-XS shp 0 vref iptat isense vped vref_buf vdda 0 g1_sense
++XS shp 0 vref iptat isense vped vref_buf sense_vdd_monitor 0 g1_sense
++Vsense_total vdda sense_vdd_monitor 0
+ CL isense 0 300f
+ * soft code 153 = 1001 1001b (30.0 mV) ; hard code 254 = 1111 1110b (49.8 mV)
+ Vs0 s0 0 dc 1.2
+@@ -38,7 +39,7 @@
+ Cs cmp_soft 0 10f
+ Ch cmp_hard 0 10f
+ * keep only the nodes of interest (the full 1200-device transient exhausts the output memory)
+-.save v(clk) v(vref) v(iptat) v(vref_buf) v(xt.icmp) v(xt.vth_soft) v(xt.vth_hard) v(cmp_soft) v(cmp_hard) v(isense) v(xt.cmp_clk_n) v(xt.xch.xp) v(xt.xch.xq) v(xt.xch.xn) v(xt.xch.yn) v(vped) v(shp)
++.save v(clk) v(vref) v(iptat) v(vref_buf) v(xt.icmp) v(xt.vth_soft) v(xt.vth_hard) v(cmp_soft) v(cmp_hard) v(isense) v(xt.cmp_clk_n) v(xt.xch.xp) v(xt.xch.xq) v(xt.xch.xn) v(xt.xch.yn) v(vped) v(shp) i(vsense_total) i(v.xs.vbranch_ota) i(v.xs.vbranch_buf) i(v.xs.vbranch_ref)
+ .lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerHBT.lib hbt_typ_mismatch
+ .include qualification/@RUN@/bgr.spice
+ Vr4 r4 0 0
+@@ -52,18 +53,13 @@
+ set num_threads=1
+ set numdgt=15
+ set filetype=ascii
++set wr_singlescale
++set wr_vecnames
+ setseed 73001
+ reset
+-echo PHASE0_BEGIN
++set temp=25
+ op
+-print v(xt.icmp) v(xt.vth_soft) v(xt.vth_hard)
+-let dqsoft = v(xt.icmp)-v(xt.vth_soft)
+-let dqhard = v(xt.icmp)-v(xt.vth_hard)
+-echo QUIET $&dqsoft $&dqhard
+-echo BIAS_OBSERVATION_OP
+-print v(vref) v(iptat) v(vref_buf) v(vped) v(shp) v(isense) v(xt.icmp) v(xt.vth_soft) v(xt.vth_hard)
+-echo BIAS_OBSERVATION_OP_END
+-echo NON_BGR_BEFORE_BEGIN
++echo P0_NON_BGR_BEFORE_BEGIN
+ print @n.xs.xr1n0.nr1[nsmm_rsh]
+ print @n.xs.xr1n0.nr1[nsmm_w]
+ print @n.xs.xr1n0.nr1[nsmm_l]
+@@ -8734,8 +8730,8 @@
+ print @n.xt.xch.xmnbn2.nsg13_lv_nmos[l]
+ print @n.xt.xch.xmnbn2.nsg13_lv_nmos[delvto]
+ print @n.xt.xch.xmnbn2.nsg13_lv_nmos[factuo]
+-echo NON_BGR_BEFORE_END
+-echo BGR_BEFORE_BEGIN
++echo P0_NON_BGR_BEFORE_END
++echo P0_BGR_BEFORE_BEGIN
+ print @n.xbgr.xr1.nr1[nsmm_rsh]
+ print @n.xbgr.xr1.nr1[nsmm_w]
+ print @n.xbgr.xr1.nr1[nsmm_l]
+@@ -11578,9 +11574,38 @@
+ print @n.xbgr.xr86_u24.nr1[nsmm_rsh]
+ print @n.xbgr.xr86_u24.nr1[nsmm_w]
+ print @n.xbgr.xr86_u24.nr1[nsmm_l]
+-echo BGR_BEFORE_END
+-tran 0.2n 1.02u 0 0.2n
+-echo NON_BGR_AFTER_BEGIN
++echo P0_BGR_BEFORE_END
++echo P0_LEGACY27_BEFORE_BEGIN
++print @n.xs.xota.xm1.nsg13_hv_pmos[w]
++print @n.xs.xota.xm1.nsg13_hv_pmos[l]
++print @n.xs.xota.xm1.nsg13_hv_pmos[delvto]
++print @n.xs.xota.xm1.nsg13_hv_pmos[factuo]
++print @n.xs.xref.xm1.nsg13_hv_pmos[w]
++print @n.xs.xref.xm1.nsg13_hv_pmos[l]
++print @n.xs.xref.xm1.nsg13_hv_pmos[delvto]
++print @n.xs.xref.xm1.nsg13_hv_pmos[factuo]
++print @n.xt.xdacs.xms7_0a.nsg13_hv_nmos[w]
++print @n.xt.xdacs.xms7_0a.nsg13_hv_nmos[l]
++print @n.xt.xdacs.xms7_0a.nsg13_hv_nmos[delvto]
++print @n.xt.xdacs.xms7_0a.nsg13_hv_nmos[factuo]
++print @n.xt.xdach.xms7_0a.nsg13_hv_nmos[w]
++print @n.xt.xdach.xms7_0a.nsg13_hv_nmos[l]
++print @n.xt.xdach.xms7_0a.nsg13_hv_nmos[delvto]
++print @n.xt.xdach.xms7_0a.nsg13_hv_nmos[factuo]
++print @n.xt.xcs.xm1.nsg13_lv_nmos[w]
++print @n.xt.xcs.xm1.nsg13_lv_nmos[l]
++print @n.xt.xcs.xm1.nsg13_lv_nmos[delvto]
++print @n.xt.xcs.xm1.nsg13_lv_nmos[factuo]
++print @n.xt.xch.xm1.nsg13_lv_nmos[w]
++print @n.xt.xch.xm1.nsg13_lv_nmos[l]
++print @n.xt.xch.xm1.nsg13_lv_nmos[delvto]
++print @n.xt.xch.xm1.nsg13_lv_nmos[factuo]
++print @n.xbgr.xm34.nsg13_hv_nmos[delvto]
++print @n.xbgr.xr16.nr1[nsmm_rsh]
++print @q.xbgr.xq56.qnpn13g2[area]
++echo P0_LEGACY27_BEFORE_END
++op
++echo P0_NON_BGR_AFTER_BEGIN
+ print @n.xs.xr1n0.nr1[nsmm_rsh]
+ print @n.xs.xr1n0.nr1[nsmm_w]
+ print @n.xs.xr1n0.nr1[nsmm_l]
+@@ -20251,8 +20276,8 @@
+ print @n.xt.xch.xmnbn2.nsg13_lv_nmos[l]
+ print @n.xt.xch.xmnbn2.nsg13_lv_nmos[delvto]
+ print @n.xt.xch.xmnbn2.nsg13_lv_nmos[factuo]
+-echo NON_BGR_AFTER_END
+-echo BGR_AFTER_BEGIN
++echo P0_NON_BGR_AFTER_END
++echo P0_BGR_AFTER_BEGIN
+ print @n.xbgr.xr1.nr1[nsmm_rsh]
+ print @n.xbgr.xr1.nr1[nsmm_w]
+ print @n.xbgr.xr1.nr1[nsmm_l]
+@@ -23095,18 +23120,8 @@
+ print @n.xbgr.xr86_u24.nr1[nsmm_rsh]
+ print @n.xbgr.xr86_u24.nr1[nsmm_w]
+ print @n.xbgr.xr86_u24.nr1[nsmm_l]
+-echo BGR_AFTER_END
+-let ds = v(xt.icmp)-v(xt.vth_soft)
+-let dh = v(xt.icmp)-v(xt.vth_hard)
+-meas tran ds_pre find ds at=8.198e-07
+-meas tran ds_kick find ds at=8.21e-07
+-meas tran ds_sample find ds at=8.4e-07
+-meas tran qs_sample find v(cmp_soft) at=8.4e-07
+-meas tran dh_pre find dh at=9.2e-07
+-meas tran dh_kick find dh at=9.212e-07
+-meas tran dh_sample find dh at=9.402e-07
+-meas tran qh_sample find v(cmp_hard) at=9.402e-07
+-echo SAMPLE_PARAMETERS
++echo P0_BGR_AFTER_END
++echo P0_LEGACY27_AFTER_BEGIN
+ print @n.xs.xota.xm1.nsg13_hv_pmos[w]
+ print @n.xs.xota.xm1.nsg13_hv_pmos[l]
+ print @n.xs.xota.xm1.nsg13_hv_pmos[delvto]
+@@ -23134,12 +23149,10 @@
+ print @n.xbgr.xm34.nsg13_hv_nmos[delvto]
+ print @n.xbgr.xr16.nr1[nsmm_rsh]
+ print @q.xbgr.xq56.qnpn13g2[area]
+-set wr_singlescale
+-set wr_vecnames
+-wrdata qualification/@RUN@/phase0.dat v(clk) v(xt.icmp) v(xt.vth_soft) v(xt.vth_hard) v(cmp_soft) v(cmp_hard) v(isense) v(xt.cmp_clk_n) v(xt.xch.xp) v(xt.xch.xq) v(xt.xch.xn) v(xt.xch.yn) v(vref) v(iptat) v(vref_buf) v(vped) v(shp)
+-echo QUALIFICATION_END
+-echo PHASE0_END
+-echo JOINT_POPULATION_TRAN_END
++echo P0_LEGACY27_AFTER_END
++wrdata qualification/@RUN@/op0.dat v(vref) v(iptat) v(vref_buf) v(vped) v(shp) v(isense) v(xt.icmp) v(xt.vth_soft) v(xt.vth_hard)
++wrdata qualification/@RUN@/currents.dat i(vsense_total) i(v.xs.vbranch_ota) i(v.xs.vbranch_buf) i(v.xs.vbranch_ref)
++echo POPULATION_OP_END
+ quit 0
+ .endc
+ .end
