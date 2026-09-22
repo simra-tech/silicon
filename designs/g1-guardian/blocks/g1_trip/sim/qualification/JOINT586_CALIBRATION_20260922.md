@@ -13,6 +13,20 @@ audit and the remaining 264 sample launches have **not run to completion**.
 No 300-sample calibration accuracy or yield result is claimed. Electrical or
 numerical failures remain in the attempted population.
 
+## First completed independent sample
+
+Seed 73033 completed the full original calibration, all 12 guards and all six
+half-millivolt residual conditions. The [independent evidence audit](joint586-calibration-s73033-firstcomplete-audit-20260922.json)
+passes all saved full-parameter, waveform, source/runtime and decision checks.
+Its completed one-thread leaves took 10,004.812 seconds of summed wall time. The
+[portable export](portable_evidence/joint586-firstcomplete-s73033-20260922)
+preserves the full sample realization, frozen source objects and every leaf's
+artifact hashes without duplicating bulk waveforms.
+
+This one completed sample does not release the first-20 gate or establish
+300-sample accuracy, yield or new-geometry physical qualification. The seed
+73034 failures below remain in the attempted population.
+
 ## Preserved seed 73034 failure
 
 Seed 73034's first nine calibration leaves completed with exact full parameter
