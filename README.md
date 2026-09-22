@@ -11,7 +11,6 @@ disagree with us. Everything is Apache 2.0.
 
 | Design | Target shuttle | State |
 | --- | --- | --- |
-| [P1 p-bit](designs/p1-pbit/) | IHP SG13G2, registration 2026-09-21 | in specification |
 | [G1 guardian](designs/g1-guardian/) | IHP SG13G2, registration 2026-09-21, QFN24 | in specification |
 
 Nothing has been fabricated yet. When something has, this table will say so, and
