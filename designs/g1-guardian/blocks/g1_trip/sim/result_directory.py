@@ -6,11 +6,13 @@ import re
 import subprocess
 
 
-def allocate_run(sim, run_id):
+def allocate_run(sim, run_id, relative_parent='qualification'):
     sim = Path(sim)
     if not re.fullmatch(r'[A-Za-z0-9][A-Za-z0-9_.-]*', run_id):
         raise ValueError('Run ID must be a single safe path component')
-    local = sim / 'qualification' / run_id
+    if relative_parent not in ['qualification', 'qualification/runs']:
+        raise ValueError('Unsupported public run hierarchy')
+    local = sim / relative_parent / run_id
     if os.path.lexists(str(local)):
         raise FileExistsError('Run ID already exists: ' + str(local))
     result_root = os.environ.get('G1_RESULTS_ROOT')
