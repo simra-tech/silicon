@@ -1,0 +1,17 @@
+ERROR: In /foss/pdks/ihp-sg13g2/libs.tech/klayout/tech/drc/ihp-sg13g2.drc: No such file or directory @ rb_sysopen - ${BULK}/sense-power-interface-coupon-20260922-r1/reports/power_overlay_sense_power_interface_NOT_ADOPTED_main.log
+ERROR: Errno::ENOENT: No such file or directory @ rb_sysopen - ${BULK}/sense-power-interface-coupon-20260922-r1/reports/power_overlay_sense_power_interface_NOT_ADOPTED_main.log in Executable::execute
+  /foss/pdks/ihp-sg13g2/libs.tech/klayout/tech/drc/ihp-sg13g2.drc:37:in `new'
+  /foss/pdks/ihp-sg13g2/libs.tech/klayout/tech/drc/ihp-sg13g2.drc:37:in `execute'
+  :/built-in-macros/drc_interpreters.lym:31:in `instance_eval'
+  :/built-in-macros/drc_interpreters.lym:31:in `execute'
+Traceback (most recent call last):
+  File "${REPO}/designs/g1-guardian/review/audits/sense_power_interface/check_overlay_stock.py", line 67, in <module>
+    if __name__=='__main__':main()
+                            ^^^^^^
+  File "${REPO}/designs/g1-guardian/review/audits/sense_power_interface/check_overlay_stock.py", line 42, in main
+    stock.run_check(DRC/'ihp-sg13g2.drc',['main'],str(gds),a.output/'reports',switches)
+  File "/foss/pdks/ihp-sg13g2/libs.tech/klayout/tech/drc/run_drc.py", line 614, in run_check
+    check_call(run_cmd, shell=True)
+  File "/usr/lib/python3.12/subprocess.py", line 413, in check_call
+    raise CalledProcessError(retcode, cmd)
+subprocess.CalledProcessError: Command 'klayout -b -r '/foss/pdks/ihp-sg13g2/libs.tech/klayout/tech/drc/ihp-sg13g2.drc' -rd threads='1' -rd drc_json_default='/foss/pdks/ihp-sg13g2/libs.tech/klayout/tech/drc/rule_decks/sg13g2_tech_default.json' -rd drc_json='/foss/pdks/ihp-sg13g2/libs.tech/klayout/python/sg13g2_pycell_lib/sg13g2_tech_mod.json' -rd run_mode='deep' -rd precheck_drc='false' -rd disable_extra_rules='false' -rd no_feol='false' -rd no_beol='false' -rd no_offgrid='false' -rd no_angle='false' -rd density_sanity='false' -rd density='false' -rd no_forbidden='false' -rd no_pin='false' -rd no_recommended='false' -rd topcell='sense_power_interface_NOT_ADOPTED' -rd input='${BULK}/sense-power-interface-build-20260922-r1/power_overlay.gds' -rd report='${BULK}/sense-power-interface-coupon-20260922-r1/reports/power_overlay_sense_power_interface_NOT_ADOPTED_main.lyrdb' -rd log='${BULK}/sense-power-interface-coupon-20260922-r1/reports/power_overlay_sense_power_interface_NOT_ADOPTED_main.log' -rd tables="main"' returned non-zero exit status 1.
