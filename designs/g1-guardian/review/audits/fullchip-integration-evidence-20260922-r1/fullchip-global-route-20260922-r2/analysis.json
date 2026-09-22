@@ -1,0 +1,38 @@
+{
+  "status": "passed isolated strict global-route guide probe",
+  "inputs": {
+    "@RESULTS@/fullchip-def-odb-20260922-r4/unrouted_fullchip.odb": "c005bd1b65b3f645d038e78e1eed23815fcd74d42b7edb3ae0f99f9a3f44fa66",
+    "@RESULTS@/core-routing-obstacles-20260922-r1/core_obstacles.tcl": "853de2a2ed517c311156e2bbcc42b7191961cc33e12c32400e26976383cd21df",
+    "/work/designs/g1-guardian/blocks/g1_padring/flow/runs/assembly-1350/38-openroad-globalrouting/_env.tcl": "4e816ab40bf9f570a6256b8757e66d94c2a4792d763ad73a0c6e4310545d00b5",
+    "/work/designs/g1-guardian/blocks/g1_padring/flow/g1_chip_top.sdc": "cf7a8c510a9bf10c0f8b1fddb1b686032c8d08243a2ed53c658ddb259634ca16",
+    "/work/designs/g1-guardian/blocks/g1_ctrl/layout/g1_digital_top.sdc": "bd370c5408f5c2d1ae3df050c100f0a0a48a4295abc9c667d841252fd40b5249",
+    "/foss/tools/openroad-librelane/bin/openroad": "a20f82ef703596ff75e8ddba7a89c8447f62c5113dcb9d8be8740eb229a44ddc",
+    "/foss/pdks/ihp-sg13g2/libs.ref/sg13g2_stdcell/lib/sg13g2_stdcell_typ_1p20V_25C.lib": "7677a8918689f452e80405ad16a83e744709342574f2aedcc507c2758986b396",
+    "/work/designs/g1-guardian/blocks/g1_padring/ip/sg13g2_io_padbare/lib/sg13g2_io_typ_1p2V_3p3V_25C.lib": "89ca872dd6590089756d6acbdab1affc4ad02f5b73380c4c56182cdaa6f08865",
+    "/work/designs/g1-guardian/blocks/g1_ctrl/layout/lib/g1_digital__nom_typ_1p20V_25C.lib": "7265419a24cb55e8eca8a06f91fb82538fbb7924eae8b9eaf399153e6f9ff661"
+  },
+  "script_sha256": "177b3e62a4fe16fb24bdf828bdf92223e1ad199eb6cb913a712db90d8a988289",
+  "routing_scope": "signal guide probe, unchanged libraries/constraints, strict no-overflow; no detailed metal/PDN adoption",
+  "not_run": [
+    "detailed routing",
+    "full new PDN/powerfeed connectivity",
+    "fullchip DRC/LVS/PEX/density/antenna/STA/currentIR",
+    "electrical adoption"
+  ],
+  "command": [
+    "timeout",
+    "--kill-after=5",
+    "300",
+    "/foss/tools/openroad-librelane/bin/openroad",
+    "-exit",
+    "@RESULTS@/fullchip-global-route-20260922-r2/route.tcl"
+  ],
+  "returncode": 0,
+  "wall_s": 1.2702354341745377,
+  "pre_route_instance_connectivity_held": "passed",
+  "all_native_obstacle_rectangles_held": "passed",
+  "inputs_unchanged": true,
+  "post_route_instance_connectivity_held": "passed",
+  "guide_sha256": "1203a3fed7a77964c3eac1daaa3b0fb3259c6f987e87d81eaddfbd8d5210f985",
+  "global_ODB_sha256": "4eb72110ceab00197a5eabcc50551844d4250385988121548d907c08ce71099f"
+}
