@@ -3,6 +3,7 @@
 import argparse,json
 from pathlib import Path
 import numpy as np
+from wave_archive import resolve_wave, open_wave
 SIM=Path(__file__).resolve().parent
 
 def crossings(a,col):
@@ -11,9 +12,10 @@ def crossings(a,col):
 def compare(candidate):
  d=SIM/'qualification'/candidate;preflight='controlled_profile_preflight.json' if (d/'controlled_profile_preflight.json').exists() else 'controlled_solver_preflight.json';p=json.loads((d/preflight).read_text());ref=SIM/'qualification'/p['reference_run']
  x=json.loads((ref/'summary.json').read_text())[0];y=json.loads((d/'summary.json').read_text())[0]
- a=np.loadtxt(next(ref.glob('*.dat')),skiprows=1);b=np.loadtxt(next(d.glob('*.dat')),skiprows=1)
+ aw=ref/(x['case']+'.dat');bw=d/(y['case']+'.dat')
+ a=np.loadtxt(resolve_wave(aw),skiprows=1);b=np.loadtxt(resolve_wave(bw),skiprows=1)
  grid=np.linspace(0,min(a[-1,0],b[-1,0]),52001);aa=np.column_stack([np.interp(grid,a[:,0],a[:,i]) for i in range(1,a.shape[1])]);bb=np.column_stack([np.interp(grid,b[:,0],b[:,i]) for i in range(1,b.shape[1])])
- header=next(d.glob('*.dat')).read_text().splitlines()[0].split()[1:]
+ with open_wave(bw) as stream:header=stream.readline().split()[1:]
  transitions={}
  for col,name in [(5,'soft'),(6,'hard')]:
   u,v=crossings(a,col),crossings(b,col);same=len(u)==len(v) and all(i['rising']==j['rising'] for i,j in zip(u,v))

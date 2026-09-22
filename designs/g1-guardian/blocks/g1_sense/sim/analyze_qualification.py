@@ -2,7 +2,8 @@
 """Analyze saved SENSE OP rows; no inference of joint-chain trim reach or yield."""
 import argparse,json,math,statistics
 from pathlib import Path
-p=argparse.ArgumentParser();p.add_argument('directory',type=Path);p.add_argument('--extra',type=Path,nargs='*',default=[]);a=p.parse_args()
+p=argparse.ArgumentParser();p.add_argument('directory',type=Path);p.add_argument('--extra',type=Path,nargs='*',default=[]);p.add_argument('--output',type=Path,help='Fresh aggregate report, preserving earlier run-local analyses');a=p.parse_args()
+if a.output:assert not a.output.exists(), 'Explicit aggregate output must be fresh'
 rows=json.loads((a.directory/'summary.json').read_text())
 for extra in a.extra: rows+=json.loads((extra/'summary.json').read_text())
 assert len({r['seed'] for r in rows})==len(rows), 'duplicate seeds cannot be counted as independent samples'
@@ -62,5 +63,6 @@ if results:
         ideal_DAC_hard_clipping_samples=sum(r['ideal_DAC_headroom_diagnostic']['hard_clipped'] for r in results),
         ideal_DAC_soft_clipping_samples=sum(r['ideal_DAC_headroom_diagnostic']['soft_clipped'] for r in results),
         headroom_scope='Offline SENSE-only diagnostic using sample VREF_BUF and an ideal(255+code)/530 DAC, zero comparator offset, nominal interior25mV calibration. Actual DAC loading/mismatch/BGR/comparator not included; not joint-chain yield.')
-(a.directory/'analysis.json').write_text(json.dumps(summary,indent=2)+'\n')
+destination=a.output if a.output else a.directory/'analysis.json'
+destination.write_text(json.dumps(summary,indent=2)+'\n')
 print(json.dumps({k:v for k,v in summary.items() if k!='sample_results'},indent=2))
