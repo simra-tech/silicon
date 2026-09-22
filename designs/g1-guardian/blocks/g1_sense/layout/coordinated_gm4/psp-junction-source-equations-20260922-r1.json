@@ -1,0 +1,893 @@
+{
+  "status": "completed read-only source-equation inspection; applicability not qualified",
+  "PDK_commit": "84374023ee8b4b126bebbba67fcbada0a9c0ff0b",
+  "script_sha256": "04147351b07bb57e39f598acbfd1f73c8506cd49439f1ceeaadf37135ebfc449",
+  "file_hashes": {
+    "libs.tech/verilog-a/psp103/Common103_macrodefs.include": "14fb6781da0b440a7627aa605c3c59fbf9f755c8eca2b641765bb8d6248029e7",
+    "libs.tech/verilog-a/psp103/JUNCAP200_InitModel.include": "335c2b2e8d1ffc9a9c7d820cbe82308e4a91894455f6bbae0e62cdfa9049c690",
+    "libs.tech/verilog-a/psp103/JUNCAP200_macrodefs.include": "00d5153fe0a5f1da6523e67354e05c1ae08db2196bf711534fe44b65fb907b65",
+    "libs.tech/verilog-a/psp103/JUNCAP200_parlist.include": "d4350de852c966098f74adbd24f70b3e2ed8fec87c7f7d3569ee18168ece5901",
+    "libs.tech/verilog-a/psp103/JUNCAP200_varlist.include": "ee30317a2f4a03bfb6bdca471d72feacfa02d5f7cce664fe6ede99482fed37e7",
+    "libs.tech/verilog-a/psp103/PSP103_macrodefs.include": "fcb3d0830353c28710645cd28c9caf7610ebc0a05ed1ef89e0ef3e0799581d2b",
+    "libs.tech/verilog-a/psp103/PSP103_module.include": "cc9f02e72fda8c907f9e6befe0dcdc2ff1dc13e45fb2f48263935c06317d3197",
+    "libs.tech/verilog-a/psp103/PSP103_nqs_macrodefs.include": "d4e44d3c8634ce08502f9b25b4f6a56fbe75ce5b8a7d7be987af535b83f16746",
+    "libs.tech/verilog-a/psp103/PSP103_parlist.include": "7adbc8e7010fdc6b9c906dace441f2a443c4079693733387dad0d3e3a737ec6f",
+    "libs.tech/verilog-a/psp103/PSP103_scaling.include": "1a560ceffd722940f3aa67d64bcfc8f7925d4aa55a0c2caf0c933cf7a47dd54b",
+    "libs.tech/verilog-a/psp103/juncap200.va": "4833ba0c95cd9922d2277fe41ba7aa81028866b1850357273c4f62cd635d96e0",
+    "libs.tech/verilog-a/psp103/psp103.va": "9bab5086f8e203a820043538ede898d0812d07371b1aa6f081d806aaad95cd50",
+    "libs.tech/verilog-a/psp103/psp103_nqs.va": "084ca6b4932a7db2717e7143345c9a9ff1bd62a1fb0db9af3100f7428aba91dd",
+    "libs.tech/verilog-a/psp103/psp103t.va": "856166de39aaa247204763e8e347c912fde8f27312f6a34e4cac975389810fd2",
+    "libs.tech/ngspice/models/sg13g2_moshv_mod.lib": "58ce3084c253f2d3753c3b95386e8f4b81dcadfed4f4503dce56862a556c3328",
+    "libs.tech/ngspice/models/sg13g2_moshv_mod_mismatch.lib": "75c30f6975aad4cfe95af7c80fcea142ab0df6c9d7667c09120c7d0c9b814801",
+    "libs.tech/ngspice/models/sg13g2_moshv_parm.lib": "eea5bbed39184cb1e2654ae29425a9ed6ee2f2341d6cb76c472591c75237bd35",
+    "libs.tech/ngspice/osdi/psp103.osdi": "6538578a272040e70cf4542884e86d1aecd3c6936eee9e43564db49d2d05d5ab",
+    "libs.tech/ngspice/osdi/psp103_nqs.osdi": "7fe02ceb21c5da52da2c666e5f6e2dd64b3ef67fd536b62be0dc8f563f52f21b"
+  },
+  "source_excerpts": {
+    "PSP103_module.include": [
+      {
+        "line": 664,
+        "text": "        W_i         =  W;"
+      },
+      {
+        "line": 669,
+        "text": "        XGW_i       =  XGW;"
+      },
+      {
+        "line": 670,
+        "text": "        ABSOURCE_i  =  ABSOURCE;"
+      },
+      {
+        "line": 671,
+        "text": "        LSSOURCE_i  =  LSSOURCE;"
+      },
+      {
+        "line": 672,
+        "text": "        LGSOURCE_i  =  LGSOURCE;"
+      },
+      {
+        "line": 679,
+        "text": "        AS_i        =  AS;"
+      },
+      {
+        "line": 680,
+        "text": "        PS_i        =  PS;"
+      },
+      {
+        "line": 684,
+        "text": "        JW_i        =  JW;"
+      },
+      {
+        "line": 692,
+        "text": "        W_i          = `CLIP_LOW(W_i * invNF, 1.0e-9);"
+      },
+      {
+        "line": 856,
+        "text": "        ABS_i        =  0.0;"
+      },
+      {
+        "line": 857,
+        "text": "        LSS_i        =  0.0;"
+      },
+      {
+        "line": 858,
+        "text": "        LGS_i        =  0.0;"
+      },
+      {
+        "line": 862,
+        "text": "        jwcorr       =  0.0;"
+      },
+      {
+        "line": 863,
+        "text": "        jww          =  WE;"
+      },
+      {
+        "line": 865,
+        "text": "            jww          = `CLIP_LOW(JW_i, `LG_cliplow);"
+      },
+      {
+        "line": 868,
+        "text": "            jwcorr       =  1.0;"
+      },
+      {
+        "line": 870,
+        "text": "        ABS_i        =  ABSOURCE_i * invNF;"
+      },
+      {
+        "line": 871,
+        "text": "        LSS_i        =  LSSOURCE_i * invNF;"
+      },
+      {
+        "line": 872,
+        "text": "        LGS_i        =  LGSOURCE_i * invNF;"
+      },
+      {
+        "line": 877,
+        "text": "            ABS_i        =  AS_i * invNF;"
+      },
+      {
+        "line": 878,
+        "text": "            LSS_i        =  PS_i * invNF - jwcorr * jww;"
+      },
+      {
+        "line": 879,
+        "text": "            LGS_i        =  jww;"
+      },
+      {
+        "line": 885,
+        "text": "            ABSOURCE_i   = `CLIP_LOW(ABS_i, `AB_cliplow);"
+      },
+      {
+        "line": 886,
+        "text": "            LSSOURCE_i   = `CLIP_LOW(LSS_i, `LS_cliplow);"
+      },
+      {
+        "line": 887,
+        "text": "            LGSOURCE_i   = `CLIP_LOW(LGS_i, `LG_cliplow);"
+      },
+      {
+        "line": 892,
+        "text": "            ABSOURCE_i   =  0.0;"
+      },
+      {
+        "line": 893,
+        "text": "            LSSOURCE_i   =  0.0;"
+      },
+      {
+        "line": 894,
+        "text": "            LGSOURCE_i   =  0.0;"
+      },
+      {
+        "line": 1040,
+        "text": "                Vjun_s       = -V(SI, BS);"
+      },
+      {
+        "line": 1046,
+        "text": "                Vjun_s       =  V(SI, BS);"
+      },
+      {
+        "line": 1667,
+        "text": "                    ijun_s = ABSOURCE_i * ijunbot_s + LSSOURCE_i * ijunsti_s + LGSOURCE_i * ijungat_s;"
+      },
+      {
+        "line": 1715,
+        "text": "            I(BS, SI)    <+  CHNL_TYPE * MULT_i * ijun_s;"
+      },
+      {
+        "line": 1721,
+        "text": "            `CollapsableR(gbulk,   RBULK_i, rbulknoise,   BP, BI, \"rbulk\")"
+      },
+      {
+        "line": 1722,
+        "text": "            `CollapsableR(gjuns,   RJUNS_i, rjunsnoise,   BS, BI, \"rjuns\")"
+      },
+      {
+        "line": 1724,
+        "text": "            `CollapsableR(gwell,   RWELL_i, rwellnoise,   B,  BI, \"rwell\")"
+      },
+      {
+        "line": 1778,
+        "text": "            qjun_s       =  ABSOURCE_i * qjunbot_s + LSSOURCE_i * qjunsti_s + LGSOURCE_i * qjungat_s;"
+      },
+      {
+        "line": 1794,
+        "text": "            I(BS, SI)    <+  ddt(CHNL_TYPE * MULT_i * qjun_s);"
+      }
+    ],
+    "PSP103_scaling.include": [
+      {
+        "line": 28,
+        "text": "iL           = `LEN / L_i;"
+      },
+      {
+        "line": 31,
+        "text": "delWOD       =  WVARO * (1.0 + WVARL * iL) * (1.0 + WVARW * iW);"
+      },
+      {
+        "line": 37,
+        "text": "WE           = `CLIP_LOW(W_i + delWOD - 2.0 * WOT, 1.0e-9);"
+      },
+      {
+        "line": 209,
+        "text": "RWELL_p      =  RWELL;"
+      },
+      {
+        "line": 210,
+        "text": "RBULK_p      =  RBULK;"
+      },
+      {
+        "line": 211,
+        "text": "RJUNS_p      =  RJUNS;"
+      },
+      {
+        "line": 612,
+        "text": "    RWELL_p      =  NF_i * RWELLO;"
+      },
+      {
+        "line": 613,
+        "text": "    RBULK_p      =  NF_i * RBULKO;"
+      },
+      {
+        "line": 614,
+        "text": "    RJUNS_p      =  NF_i * RJUNSO;"
+      },
+      {
+        "line": 820,
+        "text": "RJUNS_i      = `CLIP_LOW(RJUNS_p, 0.0);"
+      },
+      {
+        "line": 829,
+        "text": "FACTUO_i     =  FACTUO;"
+      },
+      {
+        "line": 830,
+        "text": "DELVTO_i     =  DELVTO;"
+      }
+    ],
+    "PSP103_macrodefs.include": [
+      {
+        "line": 358,
+        "text": "    VFB_T      =  VFB_i + STVFB_i * delT * (1.0 + ST2VFB_i * delT)+ DELVTO_i; \\"
+      },
+      {
+        "line": 368,
+        "text": "    BET_i      =  FACTUO_i * BETN_T * CoxPrime; \\"
+      }
+    ],
+    "JUNCAP200_macrodefs.include": [
+      {
+        "line": 157,
+        "text": "        vmaxbot      =  phitd * ln(IMAX / (idsatbot * AB_i) + 1.0); \\"
+      },
+      {
+        "line": 159,
+        "text": "        vmaxbot      = `vmaxlarge; \\"
+      },
+      {
+        "line": 162,
+        "text": "        vmaxsti      =  phitd * ln(IMAX / (idsatsti * LS_i) + 1.0); \\"
+      },
+      {
+        "line": 164,
+        "text": "        vmaxsti      = `vmaxlarge; \\"
+      },
+      {
+        "line": 167,
+        "text": "        vmaxgat      =  phitd * ln(IMAX / (idsatgat * LG_i) + 1.0); \\"
+      },
+      {
+        "line": 169,
+        "text": "        vmaxgat      = `vmaxlarge; \\"
+      },
+      {
+        "line": 171,
+        "text": "    VMAX         =  min(min(vmaxbot, vmaxsti), vmaxgat); \\"
+      },
+      {
+        "line": 401,
+        "text": "    I1           =  AB_i * ijunbot + LS_i * ijunsti + LG_i * ijungat; \\"
+      },
+      {
+        "line": 403,
+        "text": "    I2           =  AB_i * ijunbot + LS_i * ijunsti + LG_i * ijungat; \\"
+      },
+      {
+        "line": 405,
+        "text": "    I3           =  AB_i * ijunbot + LS_i * ijunsti + LG_i * ijungat;"
+      },
+      {
+        "line": 411,
+        "text": "    I4           =  AB_i * ijunbot + LS_i * ijunsti + LG_i * ijungat; \\"
+      },
+      {
+        "line": 413,
+        "text": "    I5           =  AB_i * ijunbot + LS_i * ijunsti + LG_i * ijungat;"
+      },
+      {
+        "line": 418,
+        "text": "    ISATFOR1     =  AB_i * idsatbot + LS_i * idsatsti + LG_i * idsatgat; \\"
+      },
+      {
+        "line": 460,
+        "text": "    zfrac        =  FJUNQ_i * (AB_i * cjobot + LS_i * cjosti + LG_i * cjogat); \\"
+      },
+      {
+        "line": 461,
+        "text": "    if ((AB_i * cjobot) <= zfrac) begin \\"
+      },
+      {
+        "line": 464,
+        "text": "    if ((LS_i * cjosti) <= zfrac) begin \\"
+      },
+      {
+        "line": 467,
+        "text": "    if ((LG_i * cjogat) <= zfrac) begin \\"
+      }
+    ]
+  },
+  "model_parameters": {
+    "sg13g2_hv_nmos_psp": {
+      "declaration": ".model sg13g2_hv_nmos_psp psp103va             type          =  +1",
+      "line": 62,
+      "parameters": {
+        "swgeo": {
+          "value": "1.0",
+          "line": 64
+        },
+        "swjuncap": {
+          "value": "3.0",
+          "line": 65
+        },
+        "swjunasym": {
+          "value": "0.0",
+          "line": 65
+        },
+        "wvaro": {
+          "value": "0.0",
+          "line": 69
+        },
+        "wvarl": {
+          "value": "0.0",
+          "line": 69
+        },
+        "wvarw": {
+          "value": "0.0",
+          "line": 69
+        },
+        "wot": {
+          "value": "3e-08",
+          "line": 70
+        },
+        "swjunexp": {
+          "value": "0.0",
+          "line": 152
+        },
+        "imax": {
+          "value": "0.0020128",
+          "line": 153
+        },
+        "rsh": {
+          "value": "0.0",
+          "line": 184
+        },
+        "rshd": {
+          "value": "0.0",
+          "line": 184
+        },
+        "rbulko": {
+          "value": "'0.002 * ng/w'",
+          "line": 187
+        },
+        "rwello": {
+          "value": "'0.002 * ng/w'",
+          "line": 187
+        },
+        "rjunso": {
+          "value": "'5000.0 * l/w'",
+          "line": 188
+        },
+        "rjundo": {
+          "value": "'5000.0 * l/w'",
+          "line": 188
+        }
+      }
+    },
+    "sg13g2_hv_nmos_psp_rf": {
+      "declaration": ".model sg13g2_hv_nmos_psp_rf pspnqs103va       type          =  +1",
+      "line": 193,
+      "parameters": {
+        "swgeo": {
+          "value": "1.0",
+          "line": 195
+        },
+        "swjuncap": {
+          "value": "3.0",
+          "line": 196
+        },
+        "swjunasym": {
+          "value": "0.0",
+          "line": 196
+        },
+        "wvaro": {
+          "value": "0.0",
+          "line": 200
+        },
+        "wvarl": {
+          "value": "0.0",
+          "line": 200
+        },
+        "wvarw": {
+          "value": "0.0",
+          "line": 200
+        },
+        "wot": {
+          "value": "3e-08",
+          "line": 201
+        },
+        "swjunexp": {
+          "value": "0.0",
+          "line": 283
+        },
+        "imax": {
+          "value": "0.0020128",
+          "line": 284
+        },
+        "rsh": {
+          "value": "0.0",
+          "line": 315
+        },
+        "rshd": {
+          "value": "0.0",
+          "line": 315
+        },
+        "rbulko": {
+          "value": "'rfmode * 0.002 * ng/w'",
+          "line": 319
+        },
+        "rwello": {
+          "value": "'rfmode * 0.002 * ng/w'",
+          "line": 319
+        },
+        "rjunso": {
+          "value": "'rfmode * 5000.0 * l/w'",
+          "line": 320
+        },
+        "rjundo": {
+          "value": "'rfmode * 5000.0 * l/w'",
+          "line": 320
+        }
+      }
+    },
+    "sg13g2_hv_pmos_psp": {
+      "declaration": ".model sg13g2_hv_pmos_psp psp103va             type          =  -1",
+      "line": 345,
+      "parameters": {
+        "swgeo": {
+          "value": "1.0",
+          "line": 347
+        },
+        "swjuncap": {
+          "value": "3.0",
+          "line": 348
+        },
+        "swjunasym": {
+          "value": "0.0",
+          "line": 348
+        },
+        "wvaro": {
+          "value": "0.0",
+          "line": 352
+        },
+        "wvarl": {
+          "value": "0.0",
+          "line": 352
+        },
+        "wvarw": {
+          "value": "0.0",
+          "line": 352
+        },
+        "wot": {
+          "value": "0.0",
+          "line": 353
+        },
+        "swjunexp": {
+          "value": "0.0",
+          "line": 435
+        },
+        "imax": {
+          "value": "0.0024527",
+          "line": 436
+        },
+        "rsh": {
+          "value": "0.0",
+          "line": 467
+        },
+        "rshd": {
+          "value": "0.0",
+          "line": 467
+        },
+        "rbulko": {
+          "value": "'0.002 * ng/w'",
+          "line": 470
+        },
+        "rwello": {
+          "value": "'0.001 * ng/w'",
+          "line": 470
+        },
+        "rjunso": {
+          "value": "'5000.0 * l/w'",
+          "line": 471
+        },
+        "rjundo": {
+          "value": "'5000.0 * l/w'",
+          "line": 471
+        }
+      }
+    },
+    "sg13g2_hv_pmos_psp_rf": {
+      "declaration": ".model sg13g2_hv_pmos_psp_rf pspnqs103va       type          =  -1",
+      "line": 476,
+      "parameters": {
+        "swgeo": {
+          "value": "1.0",
+          "line": 478
+        },
+        "swjuncap": {
+          "value": "3.0",
+          "line": 479
+        },
+        "swjunasym": {
+          "value": "0.0",
+          "line": 479
+        },
+        "wvaro": {
+          "value": "0.0",
+          "line": 483
+        },
+        "wvarl": {
+          "value": "0.0",
+          "line": 483
+        },
+        "wvarw": {
+          "value": "0.0",
+          "line": 483
+        },
+        "wot": {
+          "value": "0.0",
+          "line": 484
+        },
+        "swjunexp": {
+          "value": "0.0",
+          "line": 566
+        },
+        "imax": {
+          "value": "0.0024527",
+          "line": 567
+        },
+        "rsh": {
+          "value": "0.0",
+          "line": 598
+        },
+        "rshd": {
+          "value": "0.0",
+          "line": 598
+        },
+        "rbulko": {
+          "value": "'rfmode * 0.002 * ng/w'",
+          "line": 602
+        },
+        "rwello": {
+          "value": "'rfmode * 0.001 * ng/w'",
+          "line": 602
+        },
+        "rjunso": {
+          "value": "'rfmode * 5000.0 * l/w'",
+          "line": 603
+        },
+        "rjundo": {
+          "value": "'rfmode * 5000.0 * l/w'",
+          "line": 603
+        }
+      }
+    }
+  },
+  "mismatch_instance_lines": [
+    {
+      "line": 67,
+      "text": "+ w=0.35u l=0.34u ng=1 m=1 mm_ok=0 as=0 ad=0 pd=0 ps=0 trise=0 z1=0.34e-6 z2=0.38e-6 wmin=0.15e-6 rfmode=0 pre_layout=1"
+    },
+    {
+      "line": 78,
+      "text": "              + w='agauss(w, sg13g2_hv_nmos_dw_mm, (mm_ok != 1 ? 0 : 1))'"
+    },
+    {
+      "line": 79,
+      "text": "              + l='agauss(l, sg13g2_hv_nmos_dl_mm, (mm_ok != 1 ? 0 : 1))'"
+    },
+    {
+      "line": 80,
+      "text": "              + nf='ng' mult='m'"
+    },
+    {
+      "line": 81,
+      "text": "              + as='max(w/ng,wmin)*(z1+((ng-1)/2)*z2)'"
+    },
+    {
+      "line": 83,
+      "text": "              + ps='2*(max(w/ng,wmin)*((ng-1)/2+1)+z1+(ng-1)/2*z2)'"
+    },
+    {
+      "line": 87,
+      "text": "              + delvto='agauss(0, sg13g2_hv_nmos_delvto_mm/sqrt(m*l*w*1e12), (mm_ok != 1 ? 0 : 1))'"
+    },
+    {
+      "line": 88,
+      "text": "              + factuo='agauss(1, sg13g2_hv_nmos_factuo_mm/sqrt(m*l*w*1e12), (mm_ok != 1 ? 0 : 1))'"
+    },
+    {
+      "line": 91,
+      "text": "              + w='agauss(w, sg13g2_hv_nmos_dw_mm, (mm_ok != 1 ? 0 : 1))'"
+    },
+    {
+      "line": 92,
+      "text": "              + l='agauss(l, sg13g2_hv_nmos_dl_mm, (mm_ok != 1 ? 0 : 1))'"
+    },
+    {
+      "line": 93,
+      "text": "              + nf='ng' mult='m'"
+    },
+    {
+      "line": 94,
+      "text": "              + as='max(w/ng,wmin)*(2*z1+max(0,(ng-2)/2)*z2)'"
+    },
+    {
+      "line": 96,
+      "text": "              + ps='2*(max(w/ng,wmin)*(2+max(ng-2,0)/2)+2*z1+max(ng-2,0)/2*z2)'"
+    },
+    {
+      "line": 100,
+      "text": "              + delvto='agauss(0, sg13g2_hv_nmos_delvto_mm/sqrt(m*l*w*1e12), (mm_ok != 1 ? 0 : 1))'"
+    },
+    {
+      "line": 101,
+      "text": "              + factuo='agauss(1, sg13g2_hv_nmos_factuo_mm/sqrt(m*l*w*1e12), (mm_ok != 1 ? 0 : 1))'"
+    },
+    {
+      "line": 105,
+      "text": "          + w='agauss(w, sg13g2_hv_nmos_dw_mm, (mm_ok != 1 ? 0 : 1))'"
+    },
+    {
+      "line": 106,
+      "text": "          + l='agauss(l, sg13g2_hv_nmos_dl_mm, (mm_ok != 1 ? 0 : 1))'"
+    },
+    {
+      "line": 107,
+      "text": "          + as='as' ad='ad' pd='pd' ps='ps' nf='ng' mult='m'"
+    },
+    {
+      "line": 110,
+      "text": "          + delvto='agauss(0, sg13g2_hv_nmos_delvto_mm/sqrt(m*l*w*1e12), (mm_ok != 1 ? 0 : 1))'"
+    },
+    {
+      "line": 111,
+      "text": "          + factuo='agauss(1, sg13g2_hv_nmos_factuo_mm/sqrt(m*l*w*1e12), (mm_ok != 1 ? 0 : 1))'"
+    },
+    {
+      "line": 117,
+      "text": "              + w='agauss(w, sg13g2_hv_nmos_dw_mm, (mm_ok != 1 ? 0 : 1))'"
+    },
+    {
+      "line": 118,
+      "text": "              + l='agauss(l, sg13g2_hv_nmos_dl_mm, (mm_ok != 1 ? 0 : 1))'"
+    },
+    {
+      "line": 119,
+      "text": "              + nf='ng' mult='m'"
+    },
+    {
+      "line": 120,
+      "text": "              + as='max(w/ng,wmin)*(z1+((ng-1)/2)*z2)'"
+    },
+    {
+      "line": 122,
+      "text": "              + ps='2*(max(w/ng,wmin)*((ng-1)/2+1)+z1+(ng-1)/2*z2)'"
+    },
+    {
+      "line": 126,
+      "text": "              + delvto='agauss(0, sg13g2_hv_nmos_delvto_mm/sqrt(m*l*w*1e12), (mm_ok != 1 ? 0 : 1))'"
+    },
+    {
+      "line": 127,
+      "text": "              + factuo='agauss(1, sg13g2_hv_nmos_factuo_mm/sqrt(m*l*w*1e12), (mm_ok != 1 ? 0 : 1))'"
+    },
+    {
+      "line": 130,
+      "text": "              + w='agauss(w, sg13g2_hv_nmos_dw_mm, (mm_ok != 1 ? 0 : 1))'"
+    },
+    {
+      "line": 131,
+      "text": "              + l='agauss(l, sg13g2_hv_nmos_dl_mm, (mm_ok != 1 ? 0 : 1))'"
+    },
+    {
+      "line": 132,
+      "text": "              + nf='ng' mult='m'"
+    },
+    {
+      "line": 133,
+      "text": "              + as='max(w/ng,wmin)*(2*z1+max(0,(ng-2)/2)*z2)'"
+    },
+    {
+      "line": 135,
+      "text": "              + ps='2*(max(w/ng,wmin)*(2+max(ng-2,0)/2)+2*z1+max(ng-2,0)/2*z2)'"
+    },
+    {
+      "line": 139,
+      "text": "              + delvto='agauss(0, sg13g2_hv_nmos_delvto_mm/sqrt(m*l*w*1e12), (mm_ok != 1 ? 0 : 1))'"
+    },
+    {
+      "line": 140,
+      "text": "              + factuo='agauss(1, sg13g2_hv_nmos_factuo_mm/sqrt(m*l*w*1e12), (mm_ok != 1 ? 0 : 1))'"
+    },
+    {
+      "line": 144,
+      "text": "          + w='agauss(w, sg13g2_hv_nmos_dw_mm, (mm_ok != 1 ? 0 : 1))'"
+    },
+    {
+      "line": 145,
+      "text": "          + l='agauss(l, sg13g2_hv_nmos_dl_mm, (mm_ok != 1 ? 0 : 1))'"
+    },
+    {
+      "line": 146,
+      "text": "          + as='as' ad='ad' pd='pd' ps='ps' nf='ng' mult='m'"
+    },
+    {
+      "line": 149,
+      "text": "          + delvto='agauss(0, sg13g2_hv_nmos_delvto_mm/sqrt(m*l*w*1e12), (mm_ok != 1 ? 0 : 1))'"
+    },
+    {
+      "line": 150,
+      "text": "          + factuo='agauss(1, sg13g2_hv_nmos_factuo_mm/sqrt(m*l*w*1e12), (mm_ok != 1 ? 0 : 1))'"
+    },
+    {
+      "line": 156,
+      "text": "+ w=0.35u l=0.28u ng=1 m=1 mm_ok=0 as=0 ad=0 pd=0 ps=0 trise=0 z1=0.34e-6 z2=0.38e-6 wmin=0.15e-6 rfmode=0 pre_layout=1"
+    },
+    {
+      "line": 164,
+      "text": "              + w='agauss(w, sg13g2_hv_pmos_dw_mm, (mm_ok != 1 ? 0 : 1))'"
+    },
+    {
+      "line": 165,
+      "text": "              + l='agauss(l, sg13g2_hv_pmos_dl_mm, (mm_ok != 1 ? 0 : 1))'"
+    },
+    {
+      "line": 166,
+      "text": "              + nf='ng' mult='m'"
+    },
+    {
+      "line": 167,
+      "text": "              + as='max(w/ng,wmin)*(z1+((ng-1)/2)*z2)'"
+    },
+    {
+      "line": 169,
+      "text": "              + ps='2*(max(w/ng,wmin)*((ng-1)/2+1)+z1+(ng-1)/2*z2)'"
+    },
+    {
+      "line": 173,
+      "text": "              + delvto='agauss(0, sg13g2_hv_pmos_delvto_mm/sqrt(m*l*w*1e12), (mm_ok != 1 ? 0 : 1))'"
+    },
+    {
+      "line": 174,
+      "text": "              + factuo='agauss(1, sg13g2_hv_pmos_factuo_mm/sqrt(m*l*w*1e12), (mm_ok != 1 ? 0 : 1))'"
+    },
+    {
+      "line": 177,
+      "text": "              + w='agauss(w, sg13g2_hv_pmos_dw_mm, (mm_ok != 1 ? 0 : 1))'"
+    },
+    {
+      "line": 178,
+      "text": "              + l='agauss(l, sg13g2_hv_pmos_dl_mm, (mm_ok != 1 ? 0 : 1))'"
+    },
+    {
+      "line": 179,
+      "text": "              + nf='ng' mult='m'"
+    },
+    {
+      "line": 180,
+      "text": "              + as='max(w/ng,wmin)*(2*z1+max(0,(ng-2)/2)*z2)'"
+    },
+    {
+      "line": 182,
+      "text": "              + ps='2*(max(w/ng,wmin)*(2+max(ng-2,0)/2)+2*z1+max(ng-2,0)/2*z2)'"
+    },
+    {
+      "line": 186,
+      "text": "              + delvto='agauss(0, sg13g2_hv_pmos_delvto_mm/sqrt(m*l*w*1e12), (mm_ok != 1 ? 0 : 1))'"
+    },
+    {
+      "line": 187,
+      "text": "              + factuo='agauss(1, sg13g2_hv_pmos_factuo_mm/sqrt(m*l*w*1e12), (mm_ok != 1 ? 0 : 1))'"
+    },
+    {
+      "line": 191,
+      "text": "          + w='agauss(w, sg13g2_hv_pmos_dw_mm, (mm_ok != 1 ? 0 : 1))'"
+    },
+    {
+      "line": 192,
+      "text": "          + l='agauss(l, sg13g2_hv_pmos_dl_mm, (mm_ok != 1 ? 0 : 1))'"
+    },
+    {
+      "line": 193,
+      "text": "          + as='as' ad='ad' pd='pd' ps='ps' nf='ng' mult='m'"
+    },
+    {
+      "line": 196,
+      "text": "          + delvto='agauss(0, sg13g2_hv_pmos_delvto_mm/sqrt(m*l*w*1e12), (mm_ok != 1 ? 0 : 1))'"
+    },
+    {
+      "line": 197,
+      "text": "          + factuo='agauss(1, sg13g2_hv_pmos_factuo_mm/sqrt(m*l*w*1e12), (mm_ok != 1 ? 0 : 1))'"
+    },
+    {
+      "line": 203,
+      "text": "              + w='agauss(w, sg13g2_hv_pmos_dw_mm, (mm_ok != 1 ? 0 : 1))'"
+    },
+    {
+      "line": 204,
+      "text": "              + l='agauss(l, sg13g2_hv_pmos_dl_mm, (mm_ok != 1 ? 0 : 1))'"
+    },
+    {
+      "line": 205,
+      "text": "              + nf='ng' mult='m'"
+    },
+    {
+      "line": 206,
+      "text": "              + as='max(w/ng,wmin)*(z1+((ng-1)/2)*z2)'"
+    },
+    {
+      "line": 208,
+      "text": "              + ps='2*(max(w/ng,wmin)*((ng-1)/2+1)+z1+(ng-1)/2*z2)'"
+    },
+    {
+      "line": 212,
+      "text": "              + delvto='agauss(0, sg13g2_hv_pmos_delvto_mm/sqrt(m*l*w*1e12), (mm_ok != 1 ? 0 : 1))'"
+    },
+    {
+      "line": 213,
+      "text": "              + factuo='agauss(1, sg13g2_hv_pmos_factuo_mm/sqrt(m*l*w*1e12), (mm_ok != 1 ? 0 : 1))'"
+    },
+    {
+      "line": 216,
+      "text": "              + w='agauss(w, sg13g2_hv_pmos_dw_mm, (mm_ok != 1 ? 0 : 1))'"
+    },
+    {
+      "line": 217,
+      "text": "              + l='agauss(l, sg13g2_hv_pmos_dl_mm, (mm_ok != 1 ? 0 : 1))'"
+    },
+    {
+      "line": 218,
+      "text": "              + nf='ng' mult='m'"
+    },
+    {
+      "line": 219,
+      "text": "              + as='max(w/ng,wmin)*(2*z1+max(0,(ng-2)/2)*z2)'"
+    },
+    {
+      "line": 221,
+      "text": "              + ps='2*(max(w/ng,wmin)*(2+max(ng-2,0)/2)+2*z1+max(ng-2,0)/2*z2)'"
+    },
+    {
+      "line": 225,
+      "text": "              + delvto='agauss(0, sg13g2_hv_pmos_delvto_mm/sqrt(m*l*w*1e12), (mm_ok != 1 ? 0 : 1))'"
+    },
+    {
+      "line": 226,
+      "text": "              + factuo='agauss(1, sg13g2_hv_pmos_factuo_mm/sqrt(m*l*w*1e12), (mm_ok != 1 ? 0 : 1))'"
+    },
+    {
+      "line": 230,
+      "text": "          + w='agauss(w, sg13g2_hv_pmos_dw_mm, (mm_ok != 1 ? 0 : 1))'"
+    },
+    {
+      "line": 231,
+      "text": "          + l='agauss(l, sg13g2_hv_pmos_dl_mm, (mm_ok != 1 ? 0 : 1))'"
+    },
+    {
+      "line": 232,
+      "text": "          + as='as' ad='ad' pd='pd' ps='ps' nf='ng' mult='m'"
+    },
+    {
+      "line": 235,
+      "text": "          + delvto='agauss(0, sg13g2_hv_pmos_delvto_mm/sqrt(m*l*w*1e12), (mm_ok != 1 ? 0 : 1))'"
+    },
+    {
+      "line": 236,
+      "text": "          + factuo='agauss(1, sg13g2_hv_pmos_factuo_mm/sqrt(m*l*w*1e12), (mm_ok != 1 ? 0 : 1))'"
+    }
+  ],
+  "executable_source_rebuild_binding": "not run; OSDI hashes recorded, no assertion that inspected source was rebuilt into these binaries",
+  "simulation": "not run",
+  "GDS_saved": false,
+  "cards_modified": false,
+  "unconditional_shared_junction_equivalence": "not established"
+}
