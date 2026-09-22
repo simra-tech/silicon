@@ -33,7 +33,8 @@ def main():
                  'declared_substitution_difference.diff', 'substitution_structure_audit.json',
                  'declared_prefix_difference.diff', 'prefix_structure_audit.json',
                  'declared_fullhot_difference.diff', 'declared_runner_difference.diff',
-                 'fullhot_structure_audit.json'}
+                 'fullhot_structure_audit.json', 'declared_calibration_difference.diff',
+                 'recovery_contract.json', 'recovery_wrapper.py'}
     for run in args.runs:
         # Do not resolve: source is a portable repository-relative run identity,
         # even when its directory is an ignored external-storage symlink.
@@ -51,7 +52,8 @@ def main():
             copy = (path.name in permitted or path.name.endswith('.dat.archive.json')
                     or path.name.startswith(('resume_configuration.', 'resume_driver.', 'recovery_map.')))
             if copy:
-                assert size < 5*1024*1024, 'Unexpectedly large compact artifact'
+                # A frozen17-sample BGR parent includes both full2842 vectors.
+                assert size < 16*1024*1024, 'Unexpectedly large compact artifact'
                 text = path.read_text()
                 assert not re.search(r'/(?:home/|Users/|opt/sim/)', text), 'Machine-specific path must not enter public export'
                 shutil.copyfile(str(path), str(destination / path.name))

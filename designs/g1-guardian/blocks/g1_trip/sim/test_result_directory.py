@@ -36,6 +36,17 @@ class ResultDirectory(unittest.TestCase):
         self.assertTrue(result.is_dir())
         self.assertFalse(result.is_symlink())
 
+    def test_nested_existing_public_hierarchy(self):
+        with patch.dict(os.environ, {'G1_RESULTS_ROOT': str(self.external)}):
+            result = allocate_run(self.sim, 'nested-run', relative_parent='qualification/runs')
+        self.assertEqual(result, self.sim / 'qualification/runs/nested-run')
+        self.assertTrue(result.is_symlink())
+        self.assertEqual(subprocess.run(['git', 'check-ignore', '--quiet', str(result)], cwd=self.repository).returncode, 0)
+
+    def test_invalid_run_hierarchy_rejected(self):
+        with self.assertRaises(ValueError):
+            allocate_run(self.sim, 'bad-parent', relative_parent='../outside')
+
     def test_existing_run_is_preserved(self):
         with patch.dict(os.environ, {'G1_RESULTS_ROOT': str(self.external)}):
             result = allocate_run(self.sim, 'existing')
