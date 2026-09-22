@@ -1,0 +1,33 @@
+{
+  "command": [
+    "flow/run.sh",
+    "timeout",
+    "--kill-after=5",
+    "300",
+    "python3",
+    "designs/g1-guardian/review/audits/streamout_native_signal_routes.py",
+    "--native",
+    "@RESULTS@/fullchip-native-instances-20260922-r3",
+    "--gds-name",
+    "fullchip_instances_unrouted.gds",
+    "--route",
+    "@RESULTS@/fullchip-detailed-route-20260922-r2",
+    "--odb-check",
+    "@RESULTS@/fullchip-def-odb-20260922-r4",
+    "--output",
+    "@RESULTS@/native-signal-streamout-20260922-r2"
+  ],
+  "started_utc": "2026-09-22T22:21:51.783008+00:00",
+  "cwd": "@REPO@",
+  "env": {
+    "G1_CPUSET": "40",
+    "G1_CONTAINER_ENGINE": "podman",
+    "G1_RESULTS_ROOT": "@RESULTS@",
+    "G1_CPUS": "1"
+  },
+  "status": "failed",
+  "returncode": 1,
+  "wall_s": 90.23832429386675,
+  "finished_utc": "2026-09-22T22:23:22.021344+00:00",
+  "log_sha256": "78e0b602ec10aceefff759a1a901b7c35cd4cfdf8d5d634456b486163c829143"
+}
