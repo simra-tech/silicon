@@ -90,6 +90,31 @@ only, TopMetal2 not at all.
 
 ## Current acceptance contract
 
+### Unqualified automatic code-update timing (2026-09-22)
+
+The effective soft DAC code is not always static: the delivered timer RTL
+changes it automatically when hysteresis arms or clears. A digital-only timing
+replay showed a 128→127 transition 100 ns before a soft evaluation and the
+reverse transition on an evaluation edge, without a settling-valid mask. This
+conflicts with the ≥1 µs post-update requirement above; it is **not** a simulated
+analog misdecision. The loaded DAC/comparator/RTL feedback loop, including
+major carries and stale synchronized decisions, is **not run** for this case.
+Host software cannot insert a pause into autonomous hysteresis.
+
+Retain the 1 µs requirement until a source-specific shorter bound or a verified
+update/validity implementation is established, including missed-fault blind time.
+For the proposed initial supervised demo, disable hysteresis and FAST_EN and
+keep threshold/offset configuration static while the load is energized. Make
+configuration changes under the independent load inhibit, then wait for settled
+analog decisions before applying the load. This restriction does not qualify
+the omitted features. Live hard-code/offset writes and the asynchronous fast
+latch require their own safe-update contract: a digital counter mask alone
+cannot protect the fast latch from a transient comparator pulse.
+
+Late comparator samples do not establish fast-path pulse immunity. Observe the
+actual loaded fast latch throughout evaluation and precharge; ensemble/PVT
+qualification of that receiver remains **not run**.
+
 `../../specification/G1_TOP_LEVEL_SPECIFICATION.md` section 6 defines timer
 units, guard bands, GATE-low criterion, startup restrictions and interior-current
 calibration sign/headroom. Shared trim cannot correct both comparator offsets or

@@ -29,15 +29,30 @@ bandwidth, probe loading and current compliance must accompany results.
 ## Before enabling a load
 
 1. Check unpowered continuity and pin isolation with bounded test current.
-   Confirm pin map, paddle/ground connectivity and separate supply currents.
-2. Hold external EN low. Bring 1.2 V VDD up before the 3.3 V IO/analog rail;
-   observe GATE throughout both ramps with the real FET attached and initially
-   no energized load bus. IO-first is a known simulated unsafe condition.
+   Confirm pin map, paddle/ground connectivity, both Kelvin sense leads and
+   separate supply currents. Keep the load bus physically isolated or inhibited
+   by an independent external device; document and verify that device's state.
+   EN is not a configuration-preserving load-bus inhibit.
+2. Hold external EN low and keep the independent load-bus inhibit asserted.
+   Bring 1.2 V VDD up before the 3.3 V IO/analog rail; observe GATE throughout
+   both ramps with the real FET attached but no energized load bus.
+   IO-first is a known simulated unsafe condition.
    Simultaneous startup is not generally qualified by one passing ramp shape.
-3. Verify reset defaults, register write/readback and reference settling. Keep
-   the core rail present until the IO rail is down during shutdown. Test each
-   permitted ramp, brownout and missing-rail response on a current-limited fixture
-   before a load-energy test. Capture actual rail/GATE/FET VGS waveforms.
+3. Establish rail/reference settling and the required reset delay with EN low.
+   With the load bus still independently isolated, raise EN and allow synchronous
+   reset release. EN high can permit GATE arming before custom configuration.
+   Only now verify reset defaults, program/read back the required configuration
+   and perform calibration. EN low holds the serial interface and registers in
+   reset; register access while EN low is not a valid verification step.
+4. Confirm calibrated settings, fault/inrush state and intact sense wiring, then
+   deliberately release the independent load-bus inhibit using a current-limited
+   fixture. Test a persistent fault already present when the bus is applied,
+   with the declared inrush/mask policy; do not assume immediate protection
+   under reset defaults. Reassert the independent inhibit before cycling EN,
+   and repeat configuration/readback after every EN reset.
+5. During shutdown isolate the load bus, lower EN, and keep the core rail present
+   until the IO rail is down. Test each permitted ramp, brownout and missing-rail
+   response before a load-energy test. Capture actual rail/GATE/FET VGS waveforms.
 
 Determine reference settling from the observed waveform and a declared error
 band before releasing EN. The selected simulated 10 nF VREF fixture needed
@@ -46,6 +61,17 @@ numerical DC value after a 1 ms supply ramp; its 125 °C startup did not complet
 These are characterization results, not a guaranteed delay. The integrated
 functional fixture starts from solved DC and does not establish cold power-up
 settling. See [VREF dynamic evidence](../review/audits/VREF_PAD_DYNAMIC_20260922.md).
+
+The corrected sequence is consistent with `g1_digital_top.v` resetting both
+serial and register-file state from EN. An [isolated RTL regression](../blocks/g1_ctrl/sim/BENCH_SEQUENCE_CONTRACT_20260922.md)
+passed two scenarios and 2,888 checks, using ideal external inhibition and
+comparator signals; this does not validate physical protection. Execution of this complete procedure
+with real pads, FET, load-bus inhibit and instruments is **not run**. The inhibit
+hardware/BOM and verified fault-energy limits remain unspecified. The
+[proposed supervised-demo envelope](../specification/FEASIBILITY_DEMO_ENVELOPE_20260922.md)
+is an assumption, not a qualified board: keep hysteresis/FAST_EN off and codes
+static while energized. Response to open/shorted Kelvin wiring remains unqualified; do not infer sensor
+single-fault tolerance or overload survival from ordinary breaker tests.
 
 ## Calibration and breaker tests
 

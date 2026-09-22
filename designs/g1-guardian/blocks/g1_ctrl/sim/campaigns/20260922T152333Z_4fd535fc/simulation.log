@@ -1,0 +1,31 @@
+READ addr=00 value=00 expected=00 EN=0 inhibit=1
+READ addr=00 value=47 expected=47 EN=1 inhibit=1
+READ addr=03 value=fe expected=fe EN=1 inhibit=1
+READ addr=27 value=00 expected=00 EN=1 inhibit=1
+READ addr=08 value=14 expected=14 EN=1 inhibit=1
+READ addr=0b value=02 expected=02 EN=1 inhibit=1
+READ addr=07 value=04 expected=04 EN=1 inhibit=1
+READ addr=02 value=96 expected=96 EN=1 inhibit=1
+READ addr=03 value=c8 expected=c8 EN=1 inhibit=1
+READ addr=27 value=03 expected=03 EN=1 inhibit=1
+READ addr=08 value=00 expected=00 EN=1 inhibit=1
+READ addr=2a value=99 expected=99 EN=1 inhibit=1
+READ addr=2b value=cb expected=cb EN=1 inhibit=1
+SCENARIO mask=0 residual_mask_cycles=0 post_mask_trip_clocks=11
+READ addr=00 value=00 expected=00 EN=0 inhibit=1
+READ addr=00 value=47 expected=47 EN=1 inhibit=1
+READ addr=03 value=fe expected=fe EN=1 inhibit=1
+READ addr=27 value=00 expected=00 EN=1 inhibit=1
+READ addr=08 value=14 expected=14 EN=1 inhibit=1
+READ addr=0b value=02 expected=02 EN=1 inhibit=1
+READ addr=07 value=04 expected=04 EN=1 inhibit=1
+READ addr=02 value=96 expected=96 EN=1 inhibit=1
+READ addr=03 value=c8 expected=c8 EN=1 inhibit=1
+READ addr=27 value=03 expected=03 EN=1 inhibit=1
+READ addr=08 value=08 expected=08 EN=1 inhibit=1
+READ addr=2a value=99 expected=99 EN=1 inhibit=1
+READ addr=2b value=cb expected=cb EN=1 inhibit=1
+SCENARIO mask=8 residual_mask_cycles=2840 post_mask_trip_clocks=7
+BENCH_CONTRACT scenarios=2 checks=2888 errors=0 analog_validation=not_run physical_inhibit_validation=not_run
+ALL TESTS PASSED
+/work/designs/g1-guardian/blocks/g1_ctrl/sim/tb_bench_contract.v:101: $finish called at 568552000 (1ps)
