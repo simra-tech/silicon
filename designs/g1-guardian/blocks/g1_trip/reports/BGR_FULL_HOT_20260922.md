@@ -60,3 +60,9 @@ The earlier [failed-prefix result](BGR_PREFIX_OBSERVATION_20260922.md) and
 [substitution results](BGR_SUBSTITUTION_TRANSIENT_20260922.md) remain historical
 evidence, not superseded failures. Recalibration is needed before interpreting
 this changed nominal level as a threshold-accuracy improvement.
+
+Commit-review correction: exact artifact/hash/privacy and92 tests passed.
+The strict staged whitespace check **failed** one trailing-space context line
+in the frozen `declared_runner_difference.diff`; the artifact was preserved
+byte-exact. The initial milestone commit message incorrectly said whitespace
+checks passed. This correction does not change any simulation evidence.
