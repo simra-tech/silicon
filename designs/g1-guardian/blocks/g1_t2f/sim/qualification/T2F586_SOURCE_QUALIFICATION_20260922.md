@@ -98,3 +98,23 @@ The remaining labels are `old-inventory`, `new-paired`, `new-t25`, `new-t100`,
 `new-tm40` and `new-t125`. Seven focused regression tests passed with the host
 Python environment providing NumPy. A separate Python 3.11 test attempt lacked
 NumPy and did not execute tests; it was not a simulation failure.
+
+## Additional held-out nominal temperatures
+
+The separate [intermediate-temperature audit](t2f586-nominal-intermediates-analysis-20260922.json)
+retains the same original 25/100 °C calibration. Simulated −20, 0 and 50 °C
+checks passed with residuals −0.770671, −0.347579 and +0.192089 °C,
+respectively. Their full 3,180 BEFORE/AFTER values match the nominal reference.
+
+The 75 °C attempt **failed its 600-second numerical watchdog**, reaching a
+reported 27.4819 µs of the required 32 µs. Full 3,180 BEFORE values and all
+source/deck/runtime bindings passed. AFTER inventory, exported waveform,
+frequency and calibration residual are **not run to completion**. All 3,176
+warning lines preceded the initial transient solution; none occurred afterward,
+and no simulator error lines were recorded. This does not establish the cause
+of slow progress. No held-out result is inferred or fitted for the missing point.
+
+[Portable intermediate evidence](portable_evidence/t2f586-nominal-intermediates-20260922)
+preserves all four attempted outcomes, including the failed 75 °C run. The four
+original anchor passes above remain valid; expanded nominal temperature
+coverage is incomplete, and no full-range or population claim follows.
