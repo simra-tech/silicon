@@ -2,12 +2,15 @@
 """Characterize actual comparator common mode and kickback in retained joint traces."""
 import argparse,bisect,json
 from pathlib import Path
+from wave_archive import open_wave
 
 def analyze(run):
  summary=json.loads((run/'summary.json').read_text())[0]
  if summary['solver_status']!='passed':
   return {'run':run.name,'status':'not run to completion','reason':'requires complete waveform'}
- points=[list(map(float,line.split())) for line in next(run.glob('*.dat')).read_text().splitlines()[1:]]
+ with open_wave(run/(summary['case']+'.dat')) as stream:
+  next(stream)
+  points=[list(map(float,line.split())) for line in stream if line.strip()]
  time=[r[0] for r in points]
  def at(t):
   i=bisect.bisect_left(time,t);left,right=points[i-1],points[i]

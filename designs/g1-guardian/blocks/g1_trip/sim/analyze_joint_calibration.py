@@ -93,6 +93,10 @@ def summarize(paths):
                    'programmed_codes': sample.get('corrected_codes'),
                    'clipped': sample.get('clipped'),
                    'completed_probe_count': len(probes),
+                   'frozen27_sample_parameters_exact': bool(probes)
+                   and len(probes[0].get('fingerprints', [])) == 27
+                   and all(p.get('fingerprints') == probes[0]['fingerprints'] for p in probes),
+                   'missing_or_short_fingerprint_probes': sum(len(p.get('fingerprints', [])) != 27 for p in probes),
                    'solver_status_counts': dict(collections.Counter(p.get('solver_status','not run') for p in probes)),
                    'retained_recovery_attempts': recoveries,
                    'probe_solver_failures': sum(p.get('solver_status') == 'failed' for p in probes),
@@ -133,6 +137,9 @@ def summarize(paths):
         'retained_original_incomplete_or_failed_attempts': sum(len(r.get('retained_recovery_attempts', [])) for r in rows),
         'decision_rejections': sum(r.get('probe_decision_rejections', 0) for r in rows),
         'fingerprint_mismatches': sum(r.get('fingerprint_mismatches', 0) for r in rows),
+        'explicit_frozen27_audit_failures': sum(r.get('frozen27_sample_parameters_exact') is not True for r in rows),
+        'missing_or_short_fingerprint_probes': sum(r.get('missing_or_short_fingerprint_probes', 0) for r in rows),
+        'selected_probe_count': sum(r.get('completed_probe_count', 0) for r in rows),
         'probe_wall_s_median': statistics.median(times) if times else None,
         'forecast_100_samples_4cores_hours': statistics.median(times)*28*100/4/3600 if times else None,
         'forecast_300_samples_4cores_hours': statistics.median(times)*28*300/4/3600 if times else None,
@@ -145,13 +152,14 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('campaigns', nargs='+', type=Path)
     parser.add_argument('--output', type=Path, help='New snapshot file; existing files are not overwritten')
+    parser.add_argument('--summary-only', action='store_true', help='Keep full output file, print aggregate fields only')
     args = parser.parse_args()
     result = summarize(args.campaigns)
     data = json.dumps(result, indent=2) + '\n'
     if args.output:
         with args.output.open('x') as f:
             f.write(data)
-    print(data, end='')
+    print(json.dumps({k:v for k,v in result.items() if k != 'samples'}, indent=2) if args.summary_only else data, end='\n' if args.summary_only else '')
 
 
 if __name__ == '__main__':
