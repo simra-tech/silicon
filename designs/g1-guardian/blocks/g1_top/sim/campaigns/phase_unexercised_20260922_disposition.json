@@ -1,0 +1,12 @@
+{
+  "prior_batch": "phase_20260922t134404z_9ba71163",
+  "prior_completed_cases": 6,
+  "prior_passed_cases": 5,
+  "prior_failed_cases": 1,
+  "failure": "55.593ns hard_pulse remains armed/no-trip with requested load and complete clean waveform, but hard_comparator_exercised is false. Strict coverage failure remains failed.",
+  "waveform_sha256": "3e1f7770ff0fca4a692756ec368fc882c95617360ca83d2da7a40b101b676747",
+  "diagnosis": "The behavioral hard comparator samples the inverted cmp_clk (falling comparator-clock edge). On the saved20ns grid, icmp-vth_hard exceeds the adc high requirement167.054uV at30.16..30.28us. Estimated adjacent hard sampling edges30.13us and30.35us bracket that interval, with negative differential on both surrounding samples. Saved hard output is identically zero. This supports a phase-missed analog pulse, not a demonstrated hard-persistence-filter exercise or false trip. Edge estimates are interpolated diagnostics, not extra simulator samples.",
+  "continuation": "Run only remaining83.389/138.981/166.778/194.574ns phase pairs. Keep original strict checker and all failures. A comparator-unexercised-only failure may continue grid characterization but stays failed in summary; any other electrical/numerical failure stops the batch. No repeated55.593ns run or relaxed acceptance.",
+  "remaining_new_cases": 8,
+  "scope": "Behavioral front-end sampled logic fixture, not analog comparator qualification. All16 phase points will be reconciled with the two corrected pilots and preserved six-case partial batch."
+}

@@ -1,0 +1,18 @@
+{
+  "status": "prepared; endpoint and electrical checks not run",
+  "case": "b_s",
+  "run_id": "server_soft_20260922_r1",
+  "netlist": "pex",
+  "front": "tl",
+  "outpads": "beh",
+  "oscillator": "ideal",
+  "temperature_C": 27,
+  "corner": "tt",
+  "threads": 2,
+  "timeout_s": 5400,
+  "endpoint_us": 64,
+  "rationale": "Actual analog soft-path anchor missing after corrected-clock reduced-front checks. Preserve baseline serial preamble and existing 256-cycle soft-window stimulus. Completed 4us host parity took220.326s; live42us baseline about11.3us at881s suggests approximately5000s for64us before event-dependent variability.5400s is a bounded pilot, not assumed completion.",
+  "acceptance": "Existing check_campaign.py b_s full endpoint, clean solver log, prior arming, soft153/hard254, exercised soft comparator/inactive hard comparator, configured256cycle window, latched soft cause, load current below1percent and asserted fault. Failure is retained rather than changing limits.",
+  "limitations": "Block C-PEX; behavioral external switch/fitted output pads and ideal clock. Not actual IO-pad, real-FET, comparator numerical-accuracy or full assembled-RC qualification. No candidate adoption.",
+  "on_failure": "Preserve timeout or numerical/electrical failure and diagnose before any repeated launch. Do not change PDK cards, rule decks or acceptance tolerances."
+}

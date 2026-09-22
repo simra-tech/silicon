@@ -24,3 +24,18 @@ timestamps in logs are therefore two hours behind the CEST host during the
 
 The image itself is not part of this repository; its digest is recorded in the
 plan so a run can be attributed to it.
+
+`run.sh` verifies the known image config identity and PDK commit before executing
+tools, and runs the immutable config ID without pulling. Docker is preferred;
+Podman is used when Docker is absent, or through `G1_CONTAINER_ENGINE=podman`.
+Rootless Podman with cgroups v1 requires an allocated `G1_CPUSET` (for example
+`G1_CPUSET=0 G1_CPUS=1`). Affinity is enforced inside the container; memory is
+only a reservation on that host configuration, so the coordinator must monitor
+actual usage. Rootless container root maps to the invoking host user.
+Custom image names require `G1_EXPECTED_IMAGE_ID`; changing the image still
+requires explicit runtime and circuit qualification before campaign use.
+
+`G1_RESULTS_ROOT` optionally mounts a dedicated external results directory at
+the same path inside the container. Supported runners can use it for new raw
+evidence; it does not relocate historical runs. Machine-specific result links
+must remain ignored, with portable compact summaries retained separately.
