@@ -1,4 +1,0 @@
-*ng_script_with_params
-set noaskquit
-source tb_p1_cml_div2_front_tran_v5_selft0_diagnostic.public.cir
-quit
