@@ -44,10 +44,18 @@ auditor representation bugs (audit-only fields and tuple-versus-JSON arrays);
 the auditor alone was corrected and three regression tests passed. Simulator
 inputs, original data and acceptance criteria were not changed.
 
-One separately declared 2,400-second same-input recovery has been launched
-under a distinct run ID. Only its waveform output path differs in the SPICE
-deck. Its completed numerical, full-before/after and decision checks are
-**not run to completion** at this record. The original 1,200-second failure
-remains unchanged regardless of that diagnostic outcome. No automatic repeat,
-sample exclusion, threshold waiver or population-expansion gate bypass is
-authorized by this record.
+The separately declared 2,400-second same-input recovery also **failed its
+watchdog**, after 2,400.191 s at a reported simulated time of 362.025 ns. Only
+its waveform output path differs in the SPICE deck. Its full 11,512 BEFORE
+inventory is exactly the original realization. The AFTER inventory, independent
+27-anchor output, waveform and decisions did **not run to completion**. All
+12,561 warnings again preceded the initial transient solution; zero occurred
+after it, and no simulator error lines were logged. Reporting points alone
+do not establish a cause or constitute a waveform.
+
+The [recovery audit](joint586-s73034-recovery-audit-20260922.json) verifies the
+frozen inputs and complete BEFORE inventory while retaining the numerical
+failure. [Portable recovery evidence](portable_evidence/joint586-s73034-failed-recovery-20260922)
+preserves the distinct failed attempt. The original 1,200-second failure and
+failed sample remain unchanged. No further retry, sample exclusion, threshold
+waiver or population-expansion gate bypass is authorized by this record.
