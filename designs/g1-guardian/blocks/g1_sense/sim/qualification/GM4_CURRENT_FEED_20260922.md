@@ -73,3 +73,107 @@ VSS envelopes, individual source-contact currents, a worst-case VDD bound,
 and hot lifetime/electromigration qualification: **not run** by this record.
 The physical remedy's exploratory 2 mA sizing and 50% engineering utilization
 target are not a qualified current bound or hot lifetime rating.
+
+## Eleven combined source/body stages
+
+Four further copied-source controls (room/hot OP, then room/hot transient)
+passed all 11,512 parameters, 27 anchors and the explicitly accounted 1 pA KCL
+bound. The transient runs completed 1.02 µs in 400.358/391.248 seconds.
+The source copy is
+`3a0958fb699feda1686eb0bf7c4fc045e3a0100a828fa911e6f7da8ec2d4f6bc`;
+its exact restoration to the prior macro-instrumented copy is checked before
+simulation. The same representative conditions above apply.
+
+These probes combine both rail-connected source and body terminals of each
+listed MOS. They therefore observe a signed device supply-stage current,
+**not** an individual physical source contact or body/well-tap current. Separate
+physical islands and possible source/body cancellation prevent using this table
+as an individual contact-capacity qualification.
+
+| Combined stage | 25 C sampled absolute peak (mA) | 125 C sampled absolute peak (mA) |
+|---|---:|---:|
+| XOTA XM11, VDD | 0.072623 | 0.105366 |
+| XOTA XM14, VDD | 0.072495 | 0.105233 |
+| XOTA XMT, VDD | 0.094614 | 0.122045 |
+| XOTA XM20, VDD | 0.145388 | 0.187847 |
+| XOTA XM3, VSS | 0.119726 | 0.166221 |
+| XOTA XM4, VSS | 0.119951 | 0.166382 |
+| XOTA XM21, VSS | 0.122969 | 0.165931 |
+| XBUF XM11, VDD | 0.040388 | 0.062372 |
+| XBUF XM14, VDD | 0.040158 | 0.061970 |
+| XREF XM11, VDD | 0.041189 | 0.063192 |
+| XREF XM14, VDD | 0.041022 | 0.063012 |
+
+The remaining VDD current after subtracting the two selected combined stages
+from each accounted macro branch has sampled peaks 0.247828/0.328144 mA
+for XBUF and 0.284870/0.365186 mA for XREF (room/hot). This remainder includes
+all remaining rail-connected contributions; it is not a per-contact allocation.
+
+All twelve added VDD monitor voltages are measured at 3.3 V, giving 39.6 pA
+total added shunt current. The three added VSS nodes are measured at zero.
+Accounted KCL residuals are below 9×10⁻¹⁹ A; raw KCL still **fails** at
+approximately 3.3 pA. Both original-voltage byte/numeric/time-grid comparisons
+**fail**. Maximum reference-interpolated voltage differences are 0.9052 µV
+and 7.014 nV; interpolation does not replace exact equality. Actual-edge and
+legacy late-three policies agree on LOW/LOW in both runs, without an accuracy
+or physical-adoption claim.
+
+[Four-control portable evidence](../../../g1_trip/sim/qualification/portable_evidence/sense-supply-stage-20260922)
+preserves declared source/deck differences, all parameter vectors, the failed
+exact comparisons, runtime/tool/model identities, and bulk-wave hashes.
+Separate source/body currents, buffer VSS groups and the resistor-bank VSS
+current are **not run** in this eleven-stage fixture; their new independent
+fixture must qualify separately.
+
+## Separately metered external source and body terminals
+
+A separate four-control fixture has now completed room/hot OP and 1.02 µs
+transients. Its 102 zero-volt meters observe each rail-connected MOS external
+terminal individually, each OTA compensation-resistor substrate, and one
+explicitly signed resistor-bank VSS aggregate. The latter contains 96 original
+source-call pins, not 96 individually measured currents. The MOS source and
+body meters are distinct, so their individual extrema remain visible even if
+their signed sum cancels. This fixture does not infer physical terminal identity
+from possibly collapsed OSDI internal-node labels.
+
+The copied SENSE source
+`4f7999919b8c14506c5f409d810f0931bdbf63febbb851134fd57a6702385300`
+restores exactly to the prior macro-current copy. Canonical devices and model
+cards remain unchanged. All four controls pass the original full 11,512-vector
+and 27-anchor contracts. The new 54 VDD monitors plus the four prior monitors
+are each measured at 3.3 V: 191.4 pA of explicitly added shunt current in total.
+All 48 new VSS monitor nodes are measured at zero. Corrected total KCL remains
+below 9×10⁻¹⁹ A, and each macro's independent VDD branch-versus-all-terminal
+current sum closes within 2.5×10⁻¹⁹ A. Raw top KCL still fails its 1 pA check.
+
+The transients completed in 399.283/395.415 seconds. Representative hot
+external **source-terminal** sampled absolute peaks are 0.105365, 0.105232,
+0.122045 and 0.187836 mA for XOTA XM11, XM14, XMT and XM20, respectively.
+Main VSS-source peaks for XM3, XM4 and XM21 are 0.166221, 0.166381 and
+0.165927 mA. The largest separately observed body-terminal peak across all
+58 MOS bodies is approximately 30.54 nA at XOTA XM16. All signed extrema and
+last-200-ns means, including smaller body currents, are retained in the ledger.
+
+| Signed external-terminal group | 25 C absolute peak (mA) | 125 C absolute peak (mA) |
+|---|---:|---:|
+| XBUF VSS: XM3/XMB2/XMB4/XMB6 source and body | 0.121521 | 0.167462 |
+| XBUF VSS: XM21/XM4 source and body | 0.202115 | 0.280392 |
+| XREF VSS: XM3/XMB2/XMB4/XMB6 source and body | 0.120384 | 0.166252 |
+| XREF VSS: XM21/XM4 source and body | 0.203040 | 0.281555 |
+| Top resistor-bank VSS aggregate | 0.001994 | 0.001952 |
+
+These sums contain only the listed external terminals. Separate physical source
+and tap islands must use the individual records, not a signed group sum as a
+cancellation-proof capacity bound. VSS was measured directly, never inferred
+from VDD. Remaining-buffer VDD groups also enumerate their exact members.
+
+Original 18-column byte/numeric/time-grid comparisons **fail** in both runs.
+Reference-interpolated maxima are 0.9739 µV and 7.817 nV; those observations do
+not waive exact failure. Both actual-edge and legacy late-three decisions remain
+LOW/LOW. The fixtures remain representative nominal-process, fixed-input,
+DC-initialized model-level observations, not startup, statistical/corner current
+envelopes, physical RC adoption, or lifetime qualification.
+
+[Separate-terminal portable evidence](../../../g1_trip/sim/qualification/portable_evidence/sense-rail-terminals-20260922)
+contains all four controls, 102-port mappings, measured monitor voltages,
+accounted and raw checks, original exact failures and complete bulk hashes.

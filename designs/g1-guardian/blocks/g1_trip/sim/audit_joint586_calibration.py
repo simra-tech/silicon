@@ -16,6 +16,13 @@ SIM = Path(__file__).resolve().parent
 ROOT = SIM.parents[4]
 
 
+def replay_parent_tree(probes):
+    selected = [r for r in probes if r['kind'] == 'calibration']
+    # The saved contract is JSON: tuple brackets are arrays on disk. Compare
+    # that same representation, not Python tuple identity or audit-only fields.
+    return json.loads(json.dumps(replay(selected))) if len(selected) >= 2 else None
+
+
 def inspect(run):
     summary_bytes = (run/'summary.json').read_bytes()
     result, = json.loads(summary_bytes.decode())
@@ -63,8 +70,9 @@ def inspect(run):
         else:
             record['full11512_wave_and_decision_reaudit'] = 'not applicable; failed leaf retained'
         records.append(record)
-    selected = [r for r in records if r['kind'] == 'calibration']
-    tree = replay(selected) if len(selected) >= 2 else None
+    # Replay the original parent entries. Audit-only log hashes and recheck
+    # labels added to records are not fields in the frozen stored tree.
+    tree = replay_parent_tree(result['probes'])
     complete = result['status'] not in ['running', 'paused before next leaf']
     if complete and tree and 'calibration' in result:
         assert all(result['calibration'][k] == v for k, v in tree.items() if k != 'scope')

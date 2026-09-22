@@ -1,0 +1,19 @@
+--- priorAccountedControl
++++ declaredSupplyStageControl
+@@ -39,7 +39,7 @@
+ Cs cmp_soft 0 10f
+ Ch cmp_hard 0 10f
+ * keep only the nodes of interest (the full 1200-device transient exhausts the output memory)
+-.save v(clk) v(vref) v(iptat) v(vref_buf) v(xt.icmp) v(xt.vth_soft) v(xt.vth_hard) v(cmp_soft) v(cmp_hard) v(isense) v(xt.cmp_clk_n) v(xt.xch.xp) v(xt.xch.xq) v(xt.xch.xn) v(xt.xch.yn) v(vped) v(shp) i(vsense_total) i(v.xs.vbranch_ota) i(v.xs.vbranch_buf) i(v.xs.vbranch_ref) v(sense_vdd_monitor) v(xs.vdd_ota_monitor) v(xs.vdd_buf_monitor) v(xs.vdd_ref_monitor)
++.save v(clk) v(vref) v(iptat) v(vref_buf) v(xt.icmp) v(xt.vth_soft) v(xt.vth_hard) v(cmp_soft) v(cmp_hard) v(isense) v(xt.cmp_clk_n) v(xt.xch.xp) v(xt.xch.xq) v(xt.xch.xn) v(xt.xch.yn) v(vped) v(shp) i(vsense_total) i(v.xs.vbranch_ota) i(v.xs.vbranch_buf) i(v.xs.vbranch_ref) v(sense_vdd_monitor) v(xs.vdd_ota_monitor) v(xs.vdd_buf_monitor) v(xs.vdd_ref_monitor) i(v.xs.xota.vstage_xm11) i(v.xs.xota.vstage_xm14) i(v.xs.xota.vstage_xmt) i(v.xs.xota.vstage_xm20) i(v.xs.xota.vstage_xm3) i(v.xs.xota.vstage_xm4) i(v.xs.xota.vstage_xm21) i(v.xs.xbuf.vstage_xm11) i(v.xs.xbuf.vstage_xm14) i(v.xs.xref.vstage_xm11) i(v.xs.xref.vstage_xm14) v(xs.xota.stage_xm11_supply) v(xs.xota.stage_xm14_supply) v(xs.xota.stage_xmt_supply) v(xs.xota.stage_xm20_supply) v(xs.xota.stage_xm3_supply) v(xs.xota.stage_xm4_supply) v(xs.xota.stage_xm21_supply) v(xs.xbuf.stage_xm11_supply) v(xs.xbuf.stage_xm14_supply) v(xs.xref.stage_xm11_supply) v(xs.xref.stage_xm14_supply)
+ .lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerHBT.lib hbt_typ_mismatch
+ .include qualification/@RUN@/bgr.spice
+ Vr4 r4 0 0
+@@ -23142,6 +23142,7 @@
+ echo PHASE0_END
+ wrdata qualification/@RUN@/currents.dat i(vsense_total) i(v.xs.vbranch_ota) i(v.xs.vbranch_buf) i(v.xs.vbranch_ref)
+ wrdata qualification/@RUN@/monitor_voltages.dat v(sense_vdd_monitor) v(xs.vdd_ota_monitor) v(xs.vdd_buf_monitor) v(xs.vdd_ref_monitor)
++wrdata qualification/@RUN@/stages.dat i(v.xs.xota.vstage_xm11) i(v.xs.xota.vstage_xm14) i(v.xs.xota.vstage_xmt) i(v.xs.xota.vstage_xm20) i(v.xs.xota.vstage_xm3) i(v.xs.xota.vstage_xm4) i(v.xs.xota.vstage_xm21) i(v.xs.xbuf.vstage_xm11) i(v.xs.xbuf.vstage_xm14) i(v.xs.xref.vstage_xm11) i(v.xs.xref.vstage_xm14) v(xs.xota.stage_xm11_supply) v(xs.xota.stage_xm14_supply) v(xs.xota.stage_xmt_supply) v(xs.xota.stage_xm20_supply) v(xs.xota.stage_xm3_supply) v(xs.xota.stage_xm4_supply) v(xs.xota.stage_xm21_supply) v(xs.xbuf.stage_xm11_supply) v(xs.xbuf.stage_xm14_supply) v(xs.xref.stage_xm11_supply) v(xs.xref.stage_xm14_supply)
+ echo JOINT_POPULATION_TRAN_END
+ quit 0
+ .endc
