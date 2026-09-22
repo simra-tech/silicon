@@ -1,0 +1,37 @@
+{
+  "status": "source table verified; implementation current-margin qualification not run",
+  "pdk_commit": "84374023ee8b4b126bebbba67fcbada0a9c0ff0b",
+  "source": "libs.doc/doc/SG13G2_os_process_spec.pdf",
+  "source_sha256": "974d505886ee62932a50c52c22fbc290db4a70d8a7ce129c0ca8d7934aee160e",
+  "revision": "1.2",
+  "table_section": "2.15",
+  "table_page": 16,
+  "conditions_section": "A.v",
+  "conditions_page": 24,
+  "temperature_C": 105,
+  "lifetime_years": 11,
+  "source_estimated_failure_fraction_upper": 0.0001,
+  "source_scope_note": "Source describes process electromigration qualification estimates, not a probability established for this implementation. SG13RH20years/125C parenthetical is not applied to SG13G2.",
+  "metal_limits": {
+    "Metal1": {"minimum_width_um": 0.16, "constant_through_width_um": 0.36, "constant_limit_mA": 0.36, "above_boundary_mA_per_um": 1.0},
+    "Metal2": {"minimum_width_um": 0.2, "constant_through_width_um": 0.3, "constant_limit_mA": 0.6, "above_boundary_mA_per_um": 2.0},
+    "Metal3": {"minimum_width_um": 0.2, "constant_through_width_um": 0.3, "constant_limit_mA": 0.6, "above_boundary_mA_per_um": 2.0},
+    "Metal4": {"minimum_width_um": 0.2, "constant_through_width_um": 0.3, "constant_limit_mA": 0.6, "above_boundary_mA_per_um": 2.0},
+    "Metal5": {"minimum_width_um": 0.2, "constant_through_width_um": 0.3, "constant_limit_mA": 0.6, "above_boundary_mA_per_um": 2.0},
+    "TopMetal1": {"mA_per_um": 15.0},
+    "TopMetal2": {"mA_per_um": 16.0}
+  },
+  "cut_limit_mA": {"Contact": 0.3, "Via1": 0.4, "Via2": 0.4, "Via3": 0.4, "Via4": 0.4, "TopVia1": 1.4, "TopVia2": 10.0},
+  "engineering_screen": {
+    "utilization_target": 0.5,
+    "basis": "Prospectively chosen design headroom below the pinned table, to expose bottlenecks and reserve nominal margin. This is an engineering target, NOT a foundry derating rule or proof covering temperature, lifetime, current crowding or unequal sharing.",
+    "rules": [
+      "Use legal geometry, actual minimum width and every stack level; an upper array does not remove a lower single-cut bottleneck.",
+      "Report branch total, per-cut allocation assumptions, and both worst-single-cut and equal-sharing diagnostic utilizations separately.",
+      "Unknown branch current, current sharing, local temperature or applicable waveform/lifetime conditions cannot produce a qualified pass.",
+      "Compute DC, relevant RMS and sampled absolute peak separately. This table does not establish a pulse duty-cycle or peak-current relaxation rule; a peak screen is only conditional.",
+      "One-cut-unavailable connectivity and remaining equal-sharing margin are robustness diagnostics, not manufacturing-yield qualification.",
+      "No105C-to125C extrapolation or use of the separate SG13RH lifetime note. Obtain applicable bounds before claiming supported-hot lifetime compliance."
+    ]
+  }
+}
