@@ -1,0 +1,2020 @@
+* G1_BGR post-layout netlist: kpex 2.5D extraction (--mode CC) of layout/g1_bgr.gds, reformatted for ngspice
+* by sim/postlayout/make_pex_netlist.py (see its docstring; no circuit content changed).
+* source: g1_bgr_k25d_pex_netlist.spice
+.subckt g1_bgr vdd vss r4 vref iptat pbias pcasc vbe dvbe
+XR1 vss n_23 vss rhigh w=0.5u l=49u b=0 m=1
+XR2 n_12 det vss rhigh w=0.5u l=49u b=0 m=1
+XR3 n_13 n_24 vss rhigh w=0.5u l=49u b=0 m=1
+XR4 n_14 n_24 vss rhigh w=0.5u l=49u b=0 m=1
+XR5 n_14 n_26 vss rhigh w=0.5u l=49u b=0 m=1
+XR6 n_15 n_26 vss rhigh w=0.5u l=49u b=0 m=1
+XR7 n_15 n_27 vss rhigh w=0.5u l=49u b=0 m=1
+XR8 n_16 n_27 vss rhigh w=0.5u l=49u b=0 m=1
+XR9 n_16 n_21 vss rhigh w=0.5u l=49u b=0 m=1
+XR10 n_12 n_25 vss rhigh w=0.5u l=49u b=0 m=1
+XR11 n_13 n_25 vss rhigh w=0.5u l=49u b=0 m=1
+XR12 n_17 n_22 vss rhigh w=0.5u l=49u b=0 m=1
+XR13 n_18 n_22 vss rhigh w=0.5u l=49u b=0 m=1
+XR14 n_18 n_23 vss rhigh w=0.5u l=49u b=0 m=1
+XR15 n_17 n_21 vss rhigh w=0.5u l=49u b=0 m=1
+XR16 vss dvbe vss rppd w=1u l=51.5u b=0 m=1
+XR17 n_7 vref vss rppd w=1u l=53.465u b=0 m=1
+XR18 n_2 n_36 vss rppd w=1u l=53.465u b=0 m=1
+XR19 n_7 n_36 vss rppd w=1u l=53.465u b=0 m=1
+XR20 n_2 n_37 vss rppd w=1u l=53.465u b=0 m=1
+XR21 n_8 n_37 vss rppd w=1u l=53.465u b=0 m=1
+XR22 n_8 vbe3 vss rppd w=1u l=53.465u b=0 m=1
+XR23 n_6 vb2 vss rppd w=1u l=48u b=0 m=1
+XR24 n_9 vd1 vss rppd w=1u l=48u b=0 m=1
+XR25 n_6 n_19 vss rppd w=1u l=48u b=0 m=1
+XR26 n_9 n_19 vss rppd w=1u l=48u b=0 m=1
+XM27 kick det vdd vdd sg13_hv_pmos l=0.5u w=2u as=0.68p ad=0.68p ps=4.68u pd=4.68u rfmode=0
+XM28 r4n r4 vdd vdd sg13_hv_pmos l=0.5u w=2u as=0.68p ad=0.68p ps=4.68u pd=4.68u rfmode=0
+XM29 vbe r4 b1b vss sg13_hv_nmos l=0.5u w=2u as=0.68p ad=0.68p ps=4.68u pd=4.68u rfmode=0
+XM30 pbias kick vss vss sg13_hv_nmos l=4u w=1u as=0.34p ad=0.34p ps=2.68u pd=2.68u rfmode=0
+XM31 kick det vss vss sg13_hv_nmos l=0.6u w=1u as=0.34p ad=0.34p ps=2.68u pd=2.68u rfmode=0
+XM32 r4n r4 vss vss sg13_hv_nmos l=0.5u w=1u as=0.34p ad=0.34p ps=2.68u pd=2.68u rfmode=0
+XM33 b1b r4n vss vss sg13_hv_nmos l=0.6u w=1u as=0.34p ad=0.34p ps=2.68u pd=2.68u rfmode=0
+XM34 n1 vb2 vbe vss sg13_hv_nmos l=1u w=10u as=3.4p ad=3.4p ps=20.68u pd=20.68u rfmode=0
+XM35 c2 vb2 pcasc vss sg13_hv_nmos l=1u w=10u as=3.4p ad=3.4p ps=20.68u pd=20.68u rfmode=0
+XM36 vbe vb2 n1 vss sg13_hv_nmos l=1u w=10u as=3.4p ad=3.4p ps=20.68u pd=20.68u rfmode=0
+XM37 pcasc vb2 c2 vss sg13_hv_nmos l=1u w=10u as=3.4p ad=3.4p ps=20.68u pd=20.68u rfmode=0
+XM38 d1 pbias vdd vdd sg13_hv_pmos l=4u w=5u as=1.7p ad=1.7p ps=10.68u pd=10.68u rfmode=0
+XM39 d2 pbias vdd vdd sg13_hv_pmos l=4u w=5u as=1.7p ad=1.7p ps=10.68u pd=10.68u rfmode=0
+XM40 d4 pbias vdd vdd sg13_hv_pmos l=4u w=5u as=1.7p ad=1.7p ps=10.68u pd=10.68u rfmode=0
+XM41 d5 pbias vdd vdd sg13_hv_pmos l=4u w=5u as=1.7p ad=1.7p ps=10.68u pd=10.68u rfmode=0
+XM42 det pbias vdd vdd sg13_hv_pmos l=4u w=5u as=1.7p ad=1.7p ps=10.68u pd=10.68u rfmode=0
+XM43 d3 pbias vdd vdd sg13_hv_pmos l=4u w=5u as=1.7p ad=1.7p ps=10.68u pd=10.68u rfmode=0
+XM44 d3 pbias vdd vdd sg13_hv_pmos l=4u w=5u as=1.7p ad=1.7p ps=10.68u pd=10.68u rfmode=0
+XM45 d5 pbias vdd vdd sg13_hv_pmos l=4u w=5u as=1.7p ad=1.7p ps=10.68u pd=10.68u rfmode=0
+XM46 d4 pbias vdd vdd sg13_hv_pmos l=4u w=5u as=1.7p ad=1.7p ps=10.68u pd=10.68u rfmode=0
+XM47 d2 pbias vdd vdd sg13_hv_pmos l=4u w=5u as=1.7p ad=1.7p ps=10.68u pd=10.68u rfmode=0
+XM48 d1 pbias vdd vdd sg13_hv_pmos l=4u w=5u as=1.7p ad=1.7p ps=10.68u pd=10.68u rfmode=0
+XM49 det pbias vdd vdd sg13_hv_pmos l=4u w=5u as=1.7p ad=1.7p ps=10.68u pd=10.68u rfmode=0
+XM50 vb2 pcasc d5 d5 sg13_hv_pmos l=4u w=10u as=3.4p ad=3.4p ps=20.68u pd=20.68u rfmode=0
+XM51 vref pcasc d3 d3 sg13_hv_pmos l=4u w=10u as=3.4p ad=3.4p ps=20.68u pd=20.68u rfmode=0
+XM52 n1 pcasc d1 d1 sg13_hv_pmos l=4u w=10u as=3.4p ad=3.4p ps=20.68u pd=20.68u rfmode=0
+XM53 iptat pcasc d4 d4 sg13_hv_pmos l=4u w=10u as=3.4p ad=3.4p ps=20.68u pd=20.68u rfmode=0
+XM54 pbias pcasc d2 d2 sg13_hv_pmos l=4u w=10u as=3.4p ad=3.4p ps=20.68u pd=20.68u rfmode=0
+XQ55 vss vss vss vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ56 vbe vbe vss vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ57 vss vss vss vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ58 vss vss vss vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ59 vss vss vss vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ60 vbe3 vbe3 vss vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ61 vss vss vss vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ62 vd2 vd2 vss vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ63 vss vss vss vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ64 vss vss vss vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ65 vss vss vss vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ66 vss vss vss vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ67 vbe b1b vss vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ68 c2 vbe dvbe vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ69 c2 vbe dvbe vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ70 c2 vbe dvbe vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ71 c2 vbe dvbe vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ72 c2 vbe dvbe vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ73 c2 vbe dvbe vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ74 c2 vbe dvbe vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ75 vd1 vd1 vd2 vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ76 c2 vbe dvbe vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XR77 n_4 pbias vss rppd w=1u l=50u b=0 m=1
+XR78 n_11 n_34 vss rppd w=1u l=50u b=0 m=1
+XR79 n_10 n_34 vss rppd w=1u l=50u b=0 m=1
+XR80 n_3 n_31 vss rppd w=1u l=50u b=0 m=1
+XR81 n_10 n_33 vss rppd w=1u l=50u b=0 m=1
+XR82 n_5 n_31 vss rppd w=1u l=50u b=0 m=1
+XR83 n_5 n_30 vss rppd w=1u l=50u b=0 m=1
+XR84 n_4 n_30 vss rppd w=1u l=50u b=0 m=1
+XR85 n_3 n_33 vss rppd w=1u l=50u b=0 m=1
+XR86 n_11 pcasc vss rppd w=1u l=50u b=0 m=1
+XR16_u2 vss dvbe vss rppd w=1u l=51.5u b=0 m=1
+XR16_u3 vss dvbe vss rppd w=1u l=51.5u b=0 m=1
+XR16_u4 vss dvbe vss rppd w=1u l=51.5u b=0 m=1
+XR16_u5 vss dvbe vss rppd w=1u l=51.5u b=0 m=1
+XR16_u6 vss dvbe vss rppd w=1u l=51.5u b=0 m=1
+XR16_u7 vss dvbe vss rppd w=1u l=51.5u b=0 m=1
+XR16_u8 vss dvbe vss rppd w=1u l=51.5u b=0 m=1
+XR16_u9 vss dvbe vss rppd w=1u l=51.5u b=0 m=1
+XR16_u10 vss dvbe vss rppd w=1u l=51.5u b=0 m=1
+XR16_u11 vss dvbe vss rppd w=1u l=51.5u b=0 m=1
+XR16_u12 vss dvbe vss rppd w=1u l=51.5u b=0 m=1
+XR16_u13 vss dvbe vss rppd w=1u l=51.5u b=0 m=1
+XR16_u14 vss dvbe vss rppd w=1u l=51.5u b=0 m=1
+XR16_u15 vss dvbe vss rppd w=1u l=51.5u b=0 m=1
+XR16_u16 vss dvbe vss rppd w=1u l=51.5u b=0 m=1
+XR16_u17 vss dvbe vss rppd w=1u l=51.5u b=0 m=1
+XR16_u18 vss dvbe vss rppd w=1u l=51.5u b=0 m=1
+XR16_u19 vss dvbe vss rppd w=1u l=51.5u b=0 m=1
+XR16_u20 vss dvbe vss rppd w=1u l=51.5u b=0 m=1
+XR16_u21 vss dvbe vss rppd w=1u l=51.5u b=0 m=1
+XR16_u22 vss dvbe vss rppd w=1u l=51.5u b=0 m=1
+XR16_u23 vss dvbe vss rppd w=1u l=51.5u b=0 m=1
+XR16_u24 vss dvbe vss rppd w=1u l=51.5u b=0 m=1
+XR17_u2 n_7 vref vss rppd w=1u l=53.465u b=0 m=1
+XR17_u3 n_7 vref vss rppd w=1u l=53.465u b=0 m=1
+XR17_u4 n_7 vref vss rppd w=1u l=53.465u b=0 m=1
+XR18_u2 n_2 n_36 vss rppd w=1u l=53.465u b=0 m=1
+XR18_u3 n_2 n_36 vss rppd w=1u l=53.465u b=0 m=1
+XR18_u4 n_2 n_36 vss rppd w=1u l=53.465u b=0 m=1
+XR19_u2 n_7 n_36 vss rppd w=1u l=53.465u b=0 m=1
+XR19_u3 n_7 n_36 vss rppd w=1u l=53.465u b=0 m=1
+XR19_u4 n_7 n_36 vss rppd w=1u l=53.465u b=0 m=1
+XR20_u2 n_2 n_37 vss rppd w=1u l=53.465u b=0 m=1
+XR20_u3 n_2 n_37 vss rppd w=1u l=53.465u b=0 m=1
+XR20_u4 n_2 n_37 vss rppd w=1u l=53.465u b=0 m=1
+XR21_u2 n_8 n_37 vss rppd w=1u l=53.465u b=0 m=1
+XR21_u3 n_8 n_37 vss rppd w=1u l=53.465u b=0 m=1
+XR21_u4 n_8 n_37 vss rppd w=1u l=53.465u b=0 m=1
+XR22_u2 n_8 vbe3 vss rppd w=1u l=53.465u b=0 m=1
+XR22_u3 n_8 vbe3 vss rppd w=1u l=53.465u b=0 m=1
+XR22_u4 n_8 vbe3 vss rppd w=1u l=53.465u b=0 m=1
+XR23_u2 n_6 vb2 vss rppd w=1u l=48u b=0 m=1
+XR23_u3 n_6 vb2 vss rppd w=1u l=48u b=0 m=1
+XR23_u4 n_6 vb2 vss rppd w=1u l=48u b=0 m=1
+XR23_u5 n_6 vb2 vss rppd w=1u l=48u b=0 m=1
+XR23_u6 n_6 vb2 vss rppd w=1u l=48u b=0 m=1
+XR23_u7 n_6 vb2 vss rppd w=1u l=48u b=0 m=1
+XR23_u8 n_6 vb2 vss rppd w=1u l=48u b=0 m=1
+XR23_u9 n_6 vb2 vss rppd w=1u l=48u b=0 m=1
+XR23_u10 n_6 vb2 vss rppd w=1u l=48u b=0 m=1
+XR23_u11 n_6 vb2 vss rppd w=1u l=48u b=0 m=1
+XR23_u12 n_6 vb2 vss rppd w=1u l=48u b=0 m=1
+XR23_u13 n_6 vb2 vss rppd w=1u l=48u b=0 m=1
+XR23_u14 n_6 vb2 vss rppd w=1u l=48u b=0 m=1
+XR23_u15 n_6 vb2 vss rppd w=1u l=48u b=0 m=1
+XR23_u16 n_6 vb2 vss rppd w=1u l=48u b=0 m=1
+XR23_u17 n_6 vb2 vss rppd w=1u l=48u b=0 m=1
+XR23_u18 n_6 vb2 vss rppd w=1u l=48u b=0 m=1
+XR23_u19 n_6 vb2 vss rppd w=1u l=48u b=0 m=1
+XR23_u20 n_6 vb2 vss rppd w=1u l=48u b=0 m=1
+XR23_u21 n_6 vb2 vss rppd w=1u l=48u b=0 m=1
+XR23_u22 n_6 vb2 vss rppd w=1u l=48u b=0 m=1
+XR23_u23 n_6 vb2 vss rppd w=1u l=48u b=0 m=1
+XR23_u24 n_6 vb2 vss rppd w=1u l=48u b=0 m=1
+XR24_u2 n_9 vd1 vss rppd w=1u l=48u b=0 m=1
+XR24_u3 n_9 vd1 vss rppd w=1u l=48u b=0 m=1
+XR24_u4 n_9 vd1 vss rppd w=1u l=48u b=0 m=1
+XR24_u5 n_9 vd1 vss rppd w=1u l=48u b=0 m=1
+XR24_u6 n_9 vd1 vss rppd w=1u l=48u b=0 m=1
+XR24_u7 n_9 vd1 vss rppd w=1u l=48u b=0 m=1
+XR24_u8 n_9 vd1 vss rppd w=1u l=48u b=0 m=1
+XR24_u9 n_9 vd1 vss rppd w=1u l=48u b=0 m=1
+XR24_u10 n_9 vd1 vss rppd w=1u l=48u b=0 m=1
+XR24_u11 n_9 vd1 vss rppd w=1u l=48u b=0 m=1
+XR24_u12 n_9 vd1 vss rppd w=1u l=48u b=0 m=1
+XR24_u13 n_9 vd1 vss rppd w=1u l=48u b=0 m=1
+XR24_u14 n_9 vd1 vss rppd w=1u l=48u b=0 m=1
+XR24_u15 n_9 vd1 vss rppd w=1u l=48u b=0 m=1
+XR24_u16 n_9 vd1 vss rppd w=1u l=48u b=0 m=1
+XR24_u17 n_9 vd1 vss rppd w=1u l=48u b=0 m=1
+XR24_u18 n_9 vd1 vss rppd w=1u l=48u b=0 m=1
+XR24_u19 n_9 vd1 vss rppd w=1u l=48u b=0 m=1
+XR24_u20 n_9 vd1 vss rppd w=1u l=48u b=0 m=1
+XR24_u21 n_9 vd1 vss rppd w=1u l=48u b=0 m=1
+XR24_u22 n_9 vd1 vss rppd w=1u l=48u b=0 m=1
+XR24_u23 n_9 vd1 vss rppd w=1u l=48u b=0 m=1
+XR24_u24 n_9 vd1 vss rppd w=1u l=48u b=0 m=1
+XR25_u2 n_6 n_19 vss rppd w=1u l=48u b=0 m=1
+XR25_u3 n_6 n_19 vss rppd w=1u l=48u b=0 m=1
+XR25_u4 n_6 n_19 vss rppd w=1u l=48u b=0 m=1
+XR25_u5 n_6 n_19 vss rppd w=1u l=48u b=0 m=1
+XR25_u6 n_6 n_19 vss rppd w=1u l=48u b=0 m=1
+XR25_u7 n_6 n_19 vss rppd w=1u l=48u b=0 m=1
+XR25_u8 n_6 n_19 vss rppd w=1u l=48u b=0 m=1
+XR25_u9 n_6 n_19 vss rppd w=1u l=48u b=0 m=1
+XR25_u10 n_6 n_19 vss rppd w=1u l=48u b=0 m=1
+XR25_u11 n_6 n_19 vss rppd w=1u l=48u b=0 m=1
+XR25_u12 n_6 n_19 vss rppd w=1u l=48u b=0 m=1
+XR25_u13 n_6 n_19 vss rppd w=1u l=48u b=0 m=1
+XR25_u14 n_6 n_19 vss rppd w=1u l=48u b=0 m=1
+XR25_u15 n_6 n_19 vss rppd w=1u l=48u b=0 m=1
+XR25_u16 n_6 n_19 vss rppd w=1u l=48u b=0 m=1
+XR25_u17 n_6 n_19 vss rppd w=1u l=48u b=0 m=1
+XR25_u18 n_6 n_19 vss rppd w=1u l=48u b=0 m=1
+XR25_u19 n_6 n_19 vss rppd w=1u l=48u b=0 m=1
+XR25_u20 n_6 n_19 vss rppd w=1u l=48u b=0 m=1
+XR25_u21 n_6 n_19 vss rppd w=1u l=48u b=0 m=1
+XR25_u22 n_6 n_19 vss rppd w=1u l=48u b=0 m=1
+XR25_u23 n_6 n_19 vss rppd w=1u l=48u b=0 m=1
+XR25_u24 n_6 n_19 vss rppd w=1u l=48u b=0 m=1
+XR26_u2 n_9 n_19 vss rppd w=1u l=48u b=0 m=1
+XR26_u3 n_9 n_19 vss rppd w=1u l=48u b=0 m=1
+XR26_u4 n_9 n_19 vss rppd w=1u l=48u b=0 m=1
+XR26_u5 n_9 n_19 vss rppd w=1u l=48u b=0 m=1
+XR26_u6 n_9 n_19 vss rppd w=1u l=48u b=0 m=1
+XR26_u7 n_9 n_19 vss rppd w=1u l=48u b=0 m=1
+XR26_u8 n_9 n_19 vss rppd w=1u l=48u b=0 m=1
+XR26_u9 n_9 n_19 vss rppd w=1u l=48u b=0 m=1
+XR26_u10 n_9 n_19 vss rppd w=1u l=48u b=0 m=1
+XR26_u11 n_9 n_19 vss rppd w=1u l=48u b=0 m=1
+XR26_u12 n_9 n_19 vss rppd w=1u l=48u b=0 m=1
+XR26_u13 n_9 n_19 vss rppd w=1u l=48u b=0 m=1
+XR26_u14 n_9 n_19 vss rppd w=1u l=48u b=0 m=1
+XR26_u15 n_9 n_19 vss rppd w=1u l=48u b=0 m=1
+XR26_u16 n_9 n_19 vss rppd w=1u l=48u b=0 m=1
+XR26_u17 n_9 n_19 vss rppd w=1u l=48u b=0 m=1
+XR26_u18 n_9 n_19 vss rppd w=1u l=48u b=0 m=1
+XR26_u19 n_9 n_19 vss rppd w=1u l=48u b=0 m=1
+XR26_u20 n_9 n_19 vss rppd w=1u l=48u b=0 m=1
+XR26_u21 n_9 n_19 vss rppd w=1u l=48u b=0 m=1
+XR26_u22 n_9 n_19 vss rppd w=1u l=48u b=0 m=1
+XR26_u23 n_9 n_19 vss rppd w=1u l=48u b=0 m=1
+XR26_u24 n_9 n_19 vss rppd w=1u l=48u b=0 m=1
+XM34_u2 n1 vb2 vbe vss sg13_hv_nmos l=1u w=10u as=3.4p ad=3.4p ps=20.68u pd=20.68u rfmode=0
+XM34_u3 n1 vb2 vbe vss sg13_hv_nmos l=1u w=10u as=3.4p ad=3.4p ps=20.68u pd=20.68u rfmode=0
+XM34_u4 n1 vb2 vbe vss sg13_hv_nmos l=1u w=10u as=3.4p ad=3.4p ps=20.68u pd=20.68u rfmode=0
+XM34_u5 n1 vb2 vbe vss sg13_hv_nmos l=1u w=10u as=3.4p ad=3.4p ps=20.68u pd=20.68u rfmode=0
+XM34_u6 n1 vb2 vbe vss sg13_hv_nmos l=1u w=10u as=3.4p ad=3.4p ps=20.68u pd=20.68u rfmode=0
+XM34_u7 n1 vb2 vbe vss sg13_hv_nmos l=1u w=10u as=3.4p ad=3.4p ps=20.68u pd=20.68u rfmode=0
+XM34_u8 n1 vb2 vbe vss sg13_hv_nmos l=1u w=10u as=3.4p ad=3.4p ps=20.68u pd=20.68u rfmode=0
+XM34_u9 n1 vb2 vbe vss sg13_hv_nmos l=1u w=10u as=3.4p ad=3.4p ps=20.68u pd=20.68u rfmode=0
+XM34_u10 n1 vb2 vbe vss sg13_hv_nmos l=1u w=10u as=3.4p ad=3.4p ps=20.68u pd=20.68u rfmode=0
+XM34_u11 n1 vb2 vbe vss sg13_hv_nmos l=1u w=10u as=3.4p ad=3.4p ps=20.68u pd=20.68u rfmode=0
+XM34_u12 n1 vb2 vbe vss sg13_hv_nmos l=1u w=10u as=3.4p ad=3.4p ps=20.68u pd=20.68u rfmode=0
+XM34_u13 n1 vb2 vbe vss sg13_hv_nmos l=1u w=10u as=3.4p ad=3.4p ps=20.68u pd=20.68u rfmode=0
+XM34_u14 n1 vb2 vbe vss sg13_hv_nmos l=1u w=10u as=3.4p ad=3.4p ps=20.68u pd=20.68u rfmode=0
+XM34_u15 n1 vb2 vbe vss sg13_hv_nmos l=1u w=10u as=3.4p ad=3.4p ps=20.68u pd=20.68u rfmode=0
+XM34_u16 n1 vb2 vbe vss sg13_hv_nmos l=1u w=10u as=3.4p ad=3.4p ps=20.68u pd=20.68u rfmode=0
+XM34_u17 n1 vb2 vbe vss sg13_hv_nmos l=1u w=10u as=3.4p ad=3.4p ps=20.68u pd=20.68u rfmode=0
+XM34_u18 n1 vb2 vbe vss sg13_hv_nmos l=1u w=10u as=3.4p ad=3.4p ps=20.68u pd=20.68u rfmode=0
+XM34_u19 n1 vb2 vbe vss sg13_hv_nmos l=1u w=10u as=3.4p ad=3.4p ps=20.68u pd=20.68u rfmode=0
+XM34_u20 n1 vb2 vbe vss sg13_hv_nmos l=1u w=10u as=3.4p ad=3.4p ps=20.68u pd=20.68u rfmode=0
+XM34_u21 n1 vb2 vbe vss sg13_hv_nmos l=1u w=10u as=3.4p ad=3.4p ps=20.68u pd=20.68u rfmode=0
+XM34_u22 n1 vb2 vbe vss sg13_hv_nmos l=1u w=10u as=3.4p ad=3.4p ps=20.68u pd=20.68u rfmode=0
+XM34_u23 n1 vb2 vbe vss sg13_hv_nmos l=1u w=10u as=3.4p ad=3.4p ps=20.68u pd=20.68u rfmode=0
+XM34_u24 n1 vb2 vbe vss sg13_hv_nmos l=1u w=10u as=3.4p ad=3.4p ps=20.68u pd=20.68u rfmode=0
+XM35_u2 c2 vb2 pcasc vss sg13_hv_nmos l=1u w=10u as=3.4p ad=3.4p ps=20.68u pd=20.68u rfmode=0
+XM35_u3 c2 vb2 pcasc vss sg13_hv_nmos l=1u w=10u as=3.4p ad=3.4p ps=20.68u pd=20.68u rfmode=0
+XM35_u4 c2 vb2 pcasc vss sg13_hv_nmos l=1u w=10u as=3.4p ad=3.4p ps=20.68u pd=20.68u rfmode=0
+XM35_u5 c2 vb2 pcasc vss sg13_hv_nmos l=1u w=10u as=3.4p ad=3.4p ps=20.68u pd=20.68u rfmode=0
+XM35_u6 c2 vb2 pcasc vss sg13_hv_nmos l=1u w=10u as=3.4p ad=3.4p ps=20.68u pd=20.68u rfmode=0
+XM35_u7 c2 vb2 pcasc vss sg13_hv_nmos l=1u w=10u as=3.4p ad=3.4p ps=20.68u pd=20.68u rfmode=0
+XM35_u8 c2 vb2 pcasc vss sg13_hv_nmos l=1u w=10u as=3.4p ad=3.4p ps=20.68u pd=20.68u rfmode=0
+XM35_u9 c2 vb2 pcasc vss sg13_hv_nmos l=1u w=10u as=3.4p ad=3.4p ps=20.68u pd=20.68u rfmode=0
+XM35_u10 c2 vb2 pcasc vss sg13_hv_nmos l=1u w=10u as=3.4p ad=3.4p ps=20.68u pd=20.68u rfmode=0
+XM35_u11 c2 vb2 pcasc vss sg13_hv_nmos l=1u w=10u as=3.4p ad=3.4p ps=20.68u pd=20.68u rfmode=0
+XM35_u12 c2 vb2 pcasc vss sg13_hv_nmos l=1u w=10u as=3.4p ad=3.4p ps=20.68u pd=20.68u rfmode=0
+XM35_u13 c2 vb2 pcasc vss sg13_hv_nmos l=1u w=10u as=3.4p ad=3.4p ps=20.68u pd=20.68u rfmode=0
+XM35_u14 c2 vb2 pcasc vss sg13_hv_nmos l=1u w=10u as=3.4p ad=3.4p ps=20.68u pd=20.68u rfmode=0
+XM35_u15 c2 vb2 pcasc vss sg13_hv_nmos l=1u w=10u as=3.4p ad=3.4p ps=20.68u pd=20.68u rfmode=0
+XM35_u16 c2 vb2 pcasc vss sg13_hv_nmos l=1u w=10u as=3.4p ad=3.4p ps=20.68u pd=20.68u rfmode=0
+XM35_u17 c2 vb2 pcasc vss sg13_hv_nmos l=1u w=10u as=3.4p ad=3.4p ps=20.68u pd=20.68u rfmode=0
+XM35_u18 c2 vb2 pcasc vss sg13_hv_nmos l=1u w=10u as=3.4p ad=3.4p ps=20.68u pd=20.68u rfmode=0
+XM35_u19 c2 vb2 pcasc vss sg13_hv_nmos l=1u w=10u as=3.4p ad=3.4p ps=20.68u pd=20.68u rfmode=0
+XM35_u20 c2 vb2 pcasc vss sg13_hv_nmos l=1u w=10u as=3.4p ad=3.4p ps=20.68u pd=20.68u rfmode=0
+XM35_u21 c2 vb2 pcasc vss sg13_hv_nmos l=1u w=10u as=3.4p ad=3.4p ps=20.68u pd=20.68u rfmode=0
+XM35_u22 c2 vb2 pcasc vss sg13_hv_nmos l=1u w=10u as=3.4p ad=3.4p ps=20.68u pd=20.68u rfmode=0
+XM35_u23 c2 vb2 pcasc vss sg13_hv_nmos l=1u w=10u as=3.4p ad=3.4p ps=20.68u pd=20.68u rfmode=0
+XM35_u24 c2 vb2 pcasc vss sg13_hv_nmos l=1u w=10u as=3.4p ad=3.4p ps=20.68u pd=20.68u rfmode=0
+XM36_u2 vbe vb2 n1 vss sg13_hv_nmos l=1u w=10u as=3.4p ad=3.4p ps=20.68u pd=20.68u rfmode=0
+XM36_u3 vbe vb2 n1 vss sg13_hv_nmos l=1u w=10u as=3.4p ad=3.4p ps=20.68u pd=20.68u rfmode=0
+XM36_u4 vbe vb2 n1 vss sg13_hv_nmos l=1u w=10u as=3.4p ad=3.4p ps=20.68u pd=20.68u rfmode=0
+XM36_u5 vbe vb2 n1 vss sg13_hv_nmos l=1u w=10u as=3.4p ad=3.4p ps=20.68u pd=20.68u rfmode=0
+XM36_u6 vbe vb2 n1 vss sg13_hv_nmos l=1u w=10u as=3.4p ad=3.4p ps=20.68u pd=20.68u rfmode=0
+XM36_u7 vbe vb2 n1 vss sg13_hv_nmos l=1u w=10u as=3.4p ad=3.4p ps=20.68u pd=20.68u rfmode=0
+XM36_u8 vbe vb2 n1 vss sg13_hv_nmos l=1u w=10u as=3.4p ad=3.4p ps=20.68u pd=20.68u rfmode=0
+XM36_u9 vbe vb2 n1 vss sg13_hv_nmos l=1u w=10u as=3.4p ad=3.4p ps=20.68u pd=20.68u rfmode=0
+XM36_u10 vbe vb2 n1 vss sg13_hv_nmos l=1u w=10u as=3.4p ad=3.4p ps=20.68u pd=20.68u rfmode=0
+XM36_u11 vbe vb2 n1 vss sg13_hv_nmos l=1u w=10u as=3.4p ad=3.4p ps=20.68u pd=20.68u rfmode=0
+XM36_u12 vbe vb2 n1 vss sg13_hv_nmos l=1u w=10u as=3.4p ad=3.4p ps=20.68u pd=20.68u rfmode=0
+XM36_u13 vbe vb2 n1 vss sg13_hv_nmos l=1u w=10u as=3.4p ad=3.4p ps=20.68u pd=20.68u rfmode=0
+XM36_u14 vbe vb2 n1 vss sg13_hv_nmos l=1u w=10u as=3.4p ad=3.4p ps=20.68u pd=20.68u rfmode=0
+XM36_u15 vbe vb2 n1 vss sg13_hv_nmos l=1u w=10u as=3.4p ad=3.4p ps=20.68u pd=20.68u rfmode=0
+XM36_u16 vbe vb2 n1 vss sg13_hv_nmos l=1u w=10u as=3.4p ad=3.4p ps=20.68u pd=20.68u rfmode=0
+XM36_u17 vbe vb2 n1 vss sg13_hv_nmos l=1u w=10u as=3.4p ad=3.4p ps=20.68u pd=20.68u rfmode=0
+XM36_u18 vbe vb2 n1 vss sg13_hv_nmos l=1u w=10u as=3.4p ad=3.4p ps=20.68u pd=20.68u rfmode=0
+XM36_u19 vbe vb2 n1 vss sg13_hv_nmos l=1u w=10u as=3.4p ad=3.4p ps=20.68u pd=20.68u rfmode=0
+XM36_u20 vbe vb2 n1 vss sg13_hv_nmos l=1u w=10u as=3.4p ad=3.4p ps=20.68u pd=20.68u rfmode=0
+XM36_u21 vbe vb2 n1 vss sg13_hv_nmos l=1u w=10u as=3.4p ad=3.4p ps=20.68u pd=20.68u rfmode=0
+XM36_u22 vbe vb2 n1 vss sg13_hv_nmos l=1u w=10u as=3.4p ad=3.4p ps=20.68u pd=20.68u rfmode=0
+XM36_u23 vbe vb2 n1 vss sg13_hv_nmos l=1u w=10u as=3.4p ad=3.4p ps=20.68u pd=20.68u rfmode=0
+XM36_u24 vbe vb2 n1 vss sg13_hv_nmos l=1u w=10u as=3.4p ad=3.4p ps=20.68u pd=20.68u rfmode=0
+XM37_u2 pcasc vb2 c2 vss sg13_hv_nmos l=1u w=10u as=3.4p ad=3.4p ps=20.68u pd=20.68u rfmode=0
+XM37_u3 pcasc vb2 c2 vss sg13_hv_nmos l=1u w=10u as=3.4p ad=3.4p ps=20.68u pd=20.68u rfmode=0
+XM37_u4 pcasc vb2 c2 vss sg13_hv_nmos l=1u w=10u as=3.4p ad=3.4p ps=20.68u pd=20.68u rfmode=0
+XM37_u5 pcasc vb2 c2 vss sg13_hv_nmos l=1u w=10u as=3.4p ad=3.4p ps=20.68u pd=20.68u rfmode=0
+XM37_u6 pcasc vb2 c2 vss sg13_hv_nmos l=1u w=10u as=3.4p ad=3.4p ps=20.68u pd=20.68u rfmode=0
+XM37_u7 pcasc vb2 c2 vss sg13_hv_nmos l=1u w=10u as=3.4p ad=3.4p ps=20.68u pd=20.68u rfmode=0
+XM37_u8 pcasc vb2 c2 vss sg13_hv_nmos l=1u w=10u as=3.4p ad=3.4p ps=20.68u pd=20.68u rfmode=0
+XM37_u9 pcasc vb2 c2 vss sg13_hv_nmos l=1u w=10u as=3.4p ad=3.4p ps=20.68u pd=20.68u rfmode=0
+XM37_u10 pcasc vb2 c2 vss sg13_hv_nmos l=1u w=10u as=3.4p ad=3.4p ps=20.68u pd=20.68u rfmode=0
+XM37_u11 pcasc vb2 c2 vss sg13_hv_nmos l=1u w=10u as=3.4p ad=3.4p ps=20.68u pd=20.68u rfmode=0
+XM37_u12 pcasc vb2 c2 vss sg13_hv_nmos l=1u w=10u as=3.4p ad=3.4p ps=20.68u pd=20.68u rfmode=0
+XM37_u13 pcasc vb2 c2 vss sg13_hv_nmos l=1u w=10u as=3.4p ad=3.4p ps=20.68u pd=20.68u rfmode=0
+XM37_u14 pcasc vb2 c2 vss sg13_hv_nmos l=1u w=10u as=3.4p ad=3.4p ps=20.68u pd=20.68u rfmode=0
+XM37_u15 pcasc vb2 c2 vss sg13_hv_nmos l=1u w=10u as=3.4p ad=3.4p ps=20.68u pd=20.68u rfmode=0
+XM37_u16 pcasc vb2 c2 vss sg13_hv_nmos l=1u w=10u as=3.4p ad=3.4p ps=20.68u pd=20.68u rfmode=0
+XM37_u17 pcasc vb2 c2 vss sg13_hv_nmos l=1u w=10u as=3.4p ad=3.4p ps=20.68u pd=20.68u rfmode=0
+XM37_u18 pcasc vb2 c2 vss sg13_hv_nmos l=1u w=10u as=3.4p ad=3.4p ps=20.68u pd=20.68u rfmode=0
+XM37_u19 pcasc vb2 c2 vss sg13_hv_nmos l=1u w=10u as=3.4p ad=3.4p ps=20.68u pd=20.68u rfmode=0
+XM37_u20 pcasc vb2 c2 vss sg13_hv_nmos l=1u w=10u as=3.4p ad=3.4p ps=20.68u pd=20.68u rfmode=0
+XM37_u21 pcasc vb2 c2 vss sg13_hv_nmos l=1u w=10u as=3.4p ad=3.4p ps=20.68u pd=20.68u rfmode=0
+XM37_u22 pcasc vb2 c2 vss sg13_hv_nmos l=1u w=10u as=3.4p ad=3.4p ps=20.68u pd=20.68u rfmode=0
+XM37_u23 pcasc vb2 c2 vss sg13_hv_nmos l=1u w=10u as=3.4p ad=3.4p ps=20.68u pd=20.68u rfmode=0
+XM37_u24 pcasc vb2 c2 vss sg13_hv_nmos l=1u w=10u as=3.4p ad=3.4p ps=20.68u pd=20.68u rfmode=0
+XM38_u2 d1 pbias vdd vdd sg13_hv_pmos l=4u w=5u as=1.7p ad=1.7p ps=10.68u pd=10.68u rfmode=0
+XM38_u3 d1 pbias vdd vdd sg13_hv_pmos l=4u w=5u as=1.7p ad=1.7p ps=10.68u pd=10.68u rfmode=0
+XM38_u4 d1 pbias vdd vdd sg13_hv_pmos l=4u w=5u as=1.7p ad=1.7p ps=10.68u pd=10.68u rfmode=0
+XM38_u5 d1 pbias vdd vdd sg13_hv_pmos l=4u w=5u as=1.7p ad=1.7p ps=10.68u pd=10.68u rfmode=0
+XM38_u6 d1 pbias vdd vdd sg13_hv_pmos l=4u w=5u as=1.7p ad=1.7p ps=10.68u pd=10.68u rfmode=0
+XM38_u7 d1 pbias vdd vdd sg13_hv_pmos l=4u w=5u as=1.7p ad=1.7p ps=10.68u pd=10.68u rfmode=0
+XM38_u8 d1 pbias vdd vdd sg13_hv_pmos l=4u w=5u as=1.7p ad=1.7p ps=10.68u pd=10.68u rfmode=0
+XM38_u9 d1 pbias vdd vdd sg13_hv_pmos l=4u w=5u as=1.7p ad=1.7p ps=10.68u pd=10.68u rfmode=0
+XM38_u10 d1 pbias vdd vdd sg13_hv_pmos l=4u w=5u as=1.7p ad=1.7p ps=10.68u pd=10.68u rfmode=0
+XM38_u11 d1 pbias vdd vdd sg13_hv_pmos l=4u w=5u as=1.7p ad=1.7p ps=10.68u pd=10.68u rfmode=0
+XM38_u12 d1 pbias vdd vdd sg13_hv_pmos l=4u w=5u as=1.7p ad=1.7p ps=10.68u pd=10.68u rfmode=0
+XM38_u13 d1 pbias vdd vdd sg13_hv_pmos l=4u w=5u as=1.7p ad=1.7p ps=10.68u pd=10.68u rfmode=0
+XM38_u14 d1 pbias vdd vdd sg13_hv_pmos l=4u w=5u as=1.7p ad=1.7p ps=10.68u pd=10.68u rfmode=0
+XM38_u15 d1 pbias vdd vdd sg13_hv_pmos l=4u w=5u as=1.7p ad=1.7p ps=10.68u pd=10.68u rfmode=0
+XM38_u16 d1 pbias vdd vdd sg13_hv_pmos l=4u w=5u as=1.7p ad=1.7p ps=10.68u pd=10.68u rfmode=0
+XM38_u17 d1 pbias vdd vdd sg13_hv_pmos l=4u w=5u as=1.7p ad=1.7p ps=10.68u pd=10.68u rfmode=0
+XM38_u18 d1 pbias vdd vdd sg13_hv_pmos l=4u w=5u as=1.7p ad=1.7p ps=10.68u pd=10.68u rfmode=0
+XM38_u19 d1 pbias vdd vdd sg13_hv_pmos l=4u w=5u as=1.7p ad=1.7p ps=10.68u pd=10.68u rfmode=0
+XM38_u20 d1 pbias vdd vdd sg13_hv_pmos l=4u w=5u as=1.7p ad=1.7p ps=10.68u pd=10.68u rfmode=0
+XM38_u21 d1 pbias vdd vdd sg13_hv_pmos l=4u w=5u as=1.7p ad=1.7p ps=10.68u pd=10.68u rfmode=0
+XM38_u22 d1 pbias vdd vdd sg13_hv_pmos l=4u w=5u as=1.7p ad=1.7p ps=10.68u pd=10.68u rfmode=0
+XM38_u23 d1 pbias vdd vdd sg13_hv_pmos l=4u w=5u as=1.7p ad=1.7p ps=10.68u pd=10.68u rfmode=0
+XM38_u24 d1 pbias vdd vdd sg13_hv_pmos l=4u w=5u as=1.7p ad=1.7p ps=10.68u pd=10.68u rfmode=0
+XM39_u2 d2 pbias vdd vdd sg13_hv_pmos l=4u w=5u as=1.7p ad=1.7p ps=10.68u pd=10.68u rfmode=0
+XM39_u3 d2 pbias vdd vdd sg13_hv_pmos l=4u w=5u as=1.7p ad=1.7p ps=10.68u pd=10.68u rfmode=0
+XM39_u4 d2 pbias vdd vdd sg13_hv_pmos l=4u w=5u as=1.7p ad=1.7p ps=10.68u pd=10.68u rfmode=0
+XM39_u5 d2 pbias vdd vdd sg13_hv_pmos l=4u w=5u as=1.7p ad=1.7p ps=10.68u pd=10.68u rfmode=0
+XM39_u6 d2 pbias vdd vdd sg13_hv_pmos l=4u w=5u as=1.7p ad=1.7p ps=10.68u pd=10.68u rfmode=0
+XM39_u7 d2 pbias vdd vdd sg13_hv_pmos l=4u w=5u as=1.7p ad=1.7p ps=10.68u pd=10.68u rfmode=0
+XM39_u8 d2 pbias vdd vdd sg13_hv_pmos l=4u w=5u as=1.7p ad=1.7p ps=10.68u pd=10.68u rfmode=0
+XM39_u9 d2 pbias vdd vdd sg13_hv_pmos l=4u w=5u as=1.7p ad=1.7p ps=10.68u pd=10.68u rfmode=0
+XM39_u10 d2 pbias vdd vdd sg13_hv_pmos l=4u w=5u as=1.7p ad=1.7p ps=10.68u pd=10.68u rfmode=0
+XM39_u11 d2 pbias vdd vdd sg13_hv_pmos l=4u w=5u as=1.7p ad=1.7p ps=10.68u pd=10.68u rfmode=0
+XM39_u12 d2 pbias vdd vdd sg13_hv_pmos l=4u w=5u as=1.7p ad=1.7p ps=10.68u pd=10.68u rfmode=0
+XM39_u13 d2 pbias vdd vdd sg13_hv_pmos l=4u w=5u as=1.7p ad=1.7p ps=10.68u pd=10.68u rfmode=0
+XM39_u14 d2 pbias vdd vdd sg13_hv_pmos l=4u w=5u as=1.7p ad=1.7p ps=10.68u pd=10.68u rfmode=0
+XM39_u15 d2 pbias vdd vdd sg13_hv_pmos l=4u w=5u as=1.7p ad=1.7p ps=10.68u pd=10.68u rfmode=0
+XM39_u16 d2 pbias vdd vdd sg13_hv_pmos l=4u w=5u as=1.7p ad=1.7p ps=10.68u pd=10.68u rfmode=0
+XM39_u17 d2 pbias vdd vdd sg13_hv_pmos l=4u w=5u as=1.7p ad=1.7p ps=10.68u pd=10.68u rfmode=0
+XM39_u18 d2 pbias vdd vdd sg13_hv_pmos l=4u w=5u as=1.7p ad=1.7p ps=10.68u pd=10.68u rfmode=0
+XM39_u19 d2 pbias vdd vdd sg13_hv_pmos l=4u w=5u as=1.7p ad=1.7p ps=10.68u pd=10.68u rfmode=0
+XM39_u20 d2 pbias vdd vdd sg13_hv_pmos l=4u w=5u as=1.7p ad=1.7p ps=10.68u pd=10.68u rfmode=0
+XM39_u21 d2 pbias vdd vdd sg13_hv_pmos l=4u w=5u as=1.7p ad=1.7p ps=10.68u pd=10.68u rfmode=0
+XM39_u22 d2 pbias vdd vdd sg13_hv_pmos l=4u w=5u as=1.7p ad=1.7p ps=10.68u pd=10.68u rfmode=0
+XM39_u23 d2 pbias vdd vdd sg13_hv_pmos l=4u w=5u as=1.7p ad=1.7p ps=10.68u pd=10.68u rfmode=0
+XM39_u24 d2 pbias vdd vdd sg13_hv_pmos l=4u w=5u as=1.7p ad=1.7p ps=10.68u pd=10.68u rfmode=0
+XM41_u2 d5 pbias vdd vdd sg13_hv_pmos l=4u w=5u as=1.7p ad=1.7p ps=10.68u pd=10.68u rfmode=0
+XM41_u3 d5 pbias vdd vdd sg13_hv_pmos l=4u w=5u as=1.7p ad=1.7p ps=10.68u pd=10.68u rfmode=0
+XM41_u4 d5 pbias vdd vdd sg13_hv_pmos l=4u w=5u as=1.7p ad=1.7p ps=10.68u pd=10.68u rfmode=0
+XM41_u5 d5 pbias vdd vdd sg13_hv_pmos l=4u w=5u as=1.7p ad=1.7p ps=10.68u pd=10.68u rfmode=0
+XM41_u6 d5 pbias vdd vdd sg13_hv_pmos l=4u w=5u as=1.7p ad=1.7p ps=10.68u pd=10.68u rfmode=0
+XM41_u7 d5 pbias vdd vdd sg13_hv_pmos l=4u w=5u as=1.7p ad=1.7p ps=10.68u pd=10.68u rfmode=0
+XM41_u8 d5 pbias vdd vdd sg13_hv_pmos l=4u w=5u as=1.7p ad=1.7p ps=10.68u pd=10.68u rfmode=0
+XM41_u9 d5 pbias vdd vdd sg13_hv_pmos l=4u w=5u as=1.7p ad=1.7p ps=10.68u pd=10.68u rfmode=0
+XM41_u10 d5 pbias vdd vdd sg13_hv_pmos l=4u w=5u as=1.7p ad=1.7p ps=10.68u pd=10.68u rfmode=0
+XM41_u11 d5 pbias vdd vdd sg13_hv_pmos l=4u w=5u as=1.7p ad=1.7p ps=10.68u pd=10.68u rfmode=0
+XM41_u12 d5 pbias vdd vdd sg13_hv_pmos l=4u w=5u as=1.7p ad=1.7p ps=10.68u pd=10.68u rfmode=0
+XM41_u13 d5 pbias vdd vdd sg13_hv_pmos l=4u w=5u as=1.7p ad=1.7p ps=10.68u pd=10.68u rfmode=0
+XM41_u14 d5 pbias vdd vdd sg13_hv_pmos l=4u w=5u as=1.7p ad=1.7p ps=10.68u pd=10.68u rfmode=0
+XM41_u15 d5 pbias vdd vdd sg13_hv_pmos l=4u w=5u as=1.7p ad=1.7p ps=10.68u pd=10.68u rfmode=0
+XM41_u16 d5 pbias vdd vdd sg13_hv_pmos l=4u w=5u as=1.7p ad=1.7p ps=10.68u pd=10.68u rfmode=0
+XM41_u17 d5 pbias vdd vdd sg13_hv_pmos l=4u w=5u as=1.7p ad=1.7p ps=10.68u pd=10.68u rfmode=0
+XM41_u18 d5 pbias vdd vdd sg13_hv_pmos l=4u w=5u as=1.7p ad=1.7p ps=10.68u pd=10.68u rfmode=0
+XM41_u19 d5 pbias vdd vdd sg13_hv_pmos l=4u w=5u as=1.7p ad=1.7p ps=10.68u pd=10.68u rfmode=0
+XM41_u20 d5 pbias vdd vdd sg13_hv_pmos l=4u w=5u as=1.7p ad=1.7p ps=10.68u pd=10.68u rfmode=0
+XM41_u21 d5 pbias vdd vdd sg13_hv_pmos l=4u w=5u as=1.7p ad=1.7p ps=10.68u pd=10.68u rfmode=0
+XM41_u22 d5 pbias vdd vdd sg13_hv_pmos l=4u w=5u as=1.7p ad=1.7p ps=10.68u pd=10.68u rfmode=0
+XM41_u23 d5 pbias vdd vdd sg13_hv_pmos l=4u w=5u as=1.7p ad=1.7p ps=10.68u pd=10.68u rfmode=0
+XM41_u24 d5 pbias vdd vdd sg13_hv_pmos l=4u w=5u as=1.7p ad=1.7p ps=10.68u pd=10.68u rfmode=0
+XM43_u2 d3 pbias vdd vdd sg13_hv_pmos l=4u w=5u as=1.7p ad=1.7p ps=10.68u pd=10.68u rfmode=0
+XM43_u3 d3 pbias vdd vdd sg13_hv_pmos l=4u w=5u as=1.7p ad=1.7p ps=10.68u pd=10.68u rfmode=0
+XM43_u4 d3 pbias vdd vdd sg13_hv_pmos l=4u w=5u as=1.7p ad=1.7p ps=10.68u pd=10.68u rfmode=0
+XM44_u2 d3 pbias vdd vdd sg13_hv_pmos l=4u w=5u as=1.7p ad=1.7p ps=10.68u pd=10.68u rfmode=0
+XM44_u3 d3 pbias vdd vdd sg13_hv_pmos l=4u w=5u as=1.7p ad=1.7p ps=10.68u pd=10.68u rfmode=0
+XM44_u4 d3 pbias vdd vdd sg13_hv_pmos l=4u w=5u as=1.7p ad=1.7p ps=10.68u pd=10.68u rfmode=0
+XM45_u2 d5 pbias vdd vdd sg13_hv_pmos l=4u w=5u as=1.7p ad=1.7p ps=10.68u pd=10.68u rfmode=0
+XM45_u3 d5 pbias vdd vdd sg13_hv_pmos l=4u w=5u as=1.7p ad=1.7p ps=10.68u pd=10.68u rfmode=0
+XM45_u4 d5 pbias vdd vdd sg13_hv_pmos l=4u w=5u as=1.7p ad=1.7p ps=10.68u pd=10.68u rfmode=0
+XM45_u5 d5 pbias vdd vdd sg13_hv_pmos l=4u w=5u as=1.7p ad=1.7p ps=10.68u pd=10.68u rfmode=0
+XM45_u6 d5 pbias vdd vdd sg13_hv_pmos l=4u w=5u as=1.7p ad=1.7p ps=10.68u pd=10.68u rfmode=0
+XM45_u7 d5 pbias vdd vdd sg13_hv_pmos l=4u w=5u as=1.7p ad=1.7p ps=10.68u pd=10.68u rfmode=0
+XM45_u8 d5 pbias vdd vdd sg13_hv_pmos l=4u w=5u as=1.7p ad=1.7p ps=10.68u pd=10.68u rfmode=0
+XM45_u9 d5 pbias vdd vdd sg13_hv_pmos l=4u w=5u as=1.7p ad=1.7p ps=10.68u pd=10.68u rfmode=0
+XM45_u10 d5 pbias vdd vdd sg13_hv_pmos l=4u w=5u as=1.7p ad=1.7p ps=10.68u pd=10.68u rfmode=0
+XM45_u11 d5 pbias vdd vdd sg13_hv_pmos l=4u w=5u as=1.7p ad=1.7p ps=10.68u pd=10.68u rfmode=0
+XM45_u12 d5 pbias vdd vdd sg13_hv_pmos l=4u w=5u as=1.7p ad=1.7p ps=10.68u pd=10.68u rfmode=0
+XM45_u13 d5 pbias vdd vdd sg13_hv_pmos l=4u w=5u as=1.7p ad=1.7p ps=10.68u pd=10.68u rfmode=0
+XM45_u14 d5 pbias vdd vdd sg13_hv_pmos l=4u w=5u as=1.7p ad=1.7p ps=10.68u pd=10.68u rfmode=0
+XM45_u15 d5 pbias vdd vdd sg13_hv_pmos l=4u w=5u as=1.7p ad=1.7p ps=10.68u pd=10.68u rfmode=0
+XM45_u16 d5 pbias vdd vdd sg13_hv_pmos l=4u w=5u as=1.7p ad=1.7p ps=10.68u pd=10.68u rfmode=0
+XM45_u17 d5 pbias vdd vdd sg13_hv_pmos l=4u w=5u as=1.7p ad=1.7p ps=10.68u pd=10.68u rfmode=0
+XM45_u18 d5 pbias vdd vdd sg13_hv_pmos l=4u w=5u as=1.7p ad=1.7p ps=10.68u pd=10.68u rfmode=0
+XM45_u19 d5 pbias vdd vdd sg13_hv_pmos l=4u w=5u as=1.7p ad=1.7p ps=10.68u pd=10.68u rfmode=0
+XM45_u20 d5 pbias vdd vdd sg13_hv_pmos l=4u w=5u as=1.7p ad=1.7p ps=10.68u pd=10.68u rfmode=0
+XM45_u21 d5 pbias vdd vdd sg13_hv_pmos l=4u w=5u as=1.7p ad=1.7p ps=10.68u pd=10.68u rfmode=0
+XM45_u22 d5 pbias vdd vdd sg13_hv_pmos l=4u w=5u as=1.7p ad=1.7p ps=10.68u pd=10.68u rfmode=0
+XM45_u23 d5 pbias vdd vdd sg13_hv_pmos l=4u w=5u as=1.7p ad=1.7p ps=10.68u pd=10.68u rfmode=0
+XM45_u24 d5 pbias vdd vdd sg13_hv_pmos l=4u w=5u as=1.7p ad=1.7p ps=10.68u pd=10.68u rfmode=0
+XM47_u2 d2 pbias vdd vdd sg13_hv_pmos l=4u w=5u as=1.7p ad=1.7p ps=10.68u pd=10.68u rfmode=0
+XM47_u3 d2 pbias vdd vdd sg13_hv_pmos l=4u w=5u as=1.7p ad=1.7p ps=10.68u pd=10.68u rfmode=0
+XM47_u4 d2 pbias vdd vdd sg13_hv_pmos l=4u w=5u as=1.7p ad=1.7p ps=10.68u pd=10.68u rfmode=0
+XM47_u5 d2 pbias vdd vdd sg13_hv_pmos l=4u w=5u as=1.7p ad=1.7p ps=10.68u pd=10.68u rfmode=0
+XM47_u6 d2 pbias vdd vdd sg13_hv_pmos l=4u w=5u as=1.7p ad=1.7p ps=10.68u pd=10.68u rfmode=0
+XM47_u7 d2 pbias vdd vdd sg13_hv_pmos l=4u w=5u as=1.7p ad=1.7p ps=10.68u pd=10.68u rfmode=0
+XM47_u8 d2 pbias vdd vdd sg13_hv_pmos l=4u w=5u as=1.7p ad=1.7p ps=10.68u pd=10.68u rfmode=0
+XM47_u9 d2 pbias vdd vdd sg13_hv_pmos l=4u w=5u as=1.7p ad=1.7p ps=10.68u pd=10.68u rfmode=0
+XM47_u10 d2 pbias vdd vdd sg13_hv_pmos l=4u w=5u as=1.7p ad=1.7p ps=10.68u pd=10.68u rfmode=0
+XM47_u11 d2 pbias vdd vdd sg13_hv_pmos l=4u w=5u as=1.7p ad=1.7p ps=10.68u pd=10.68u rfmode=0
+XM47_u12 d2 pbias vdd vdd sg13_hv_pmos l=4u w=5u as=1.7p ad=1.7p ps=10.68u pd=10.68u rfmode=0
+XM47_u13 d2 pbias vdd vdd sg13_hv_pmos l=4u w=5u as=1.7p ad=1.7p ps=10.68u pd=10.68u rfmode=0
+XM47_u14 d2 pbias vdd vdd sg13_hv_pmos l=4u w=5u as=1.7p ad=1.7p ps=10.68u pd=10.68u rfmode=0
+XM47_u15 d2 pbias vdd vdd sg13_hv_pmos l=4u w=5u as=1.7p ad=1.7p ps=10.68u pd=10.68u rfmode=0
+XM47_u16 d2 pbias vdd vdd sg13_hv_pmos l=4u w=5u as=1.7p ad=1.7p ps=10.68u pd=10.68u rfmode=0
+XM47_u17 d2 pbias vdd vdd sg13_hv_pmos l=4u w=5u as=1.7p ad=1.7p ps=10.68u pd=10.68u rfmode=0
+XM47_u18 d2 pbias vdd vdd sg13_hv_pmos l=4u w=5u as=1.7p ad=1.7p ps=10.68u pd=10.68u rfmode=0
+XM47_u19 d2 pbias vdd vdd sg13_hv_pmos l=4u w=5u as=1.7p ad=1.7p ps=10.68u pd=10.68u rfmode=0
+XM47_u20 d2 pbias vdd vdd sg13_hv_pmos l=4u w=5u as=1.7p ad=1.7p ps=10.68u pd=10.68u rfmode=0
+XM47_u21 d2 pbias vdd vdd sg13_hv_pmos l=4u w=5u as=1.7p ad=1.7p ps=10.68u pd=10.68u rfmode=0
+XM47_u22 d2 pbias vdd vdd sg13_hv_pmos l=4u w=5u as=1.7p ad=1.7p ps=10.68u pd=10.68u rfmode=0
+XM47_u23 d2 pbias vdd vdd sg13_hv_pmos l=4u w=5u as=1.7p ad=1.7p ps=10.68u pd=10.68u rfmode=0
+XM47_u24 d2 pbias vdd vdd sg13_hv_pmos l=4u w=5u as=1.7p ad=1.7p ps=10.68u pd=10.68u rfmode=0
+XM48_u2 d1 pbias vdd vdd sg13_hv_pmos l=4u w=5u as=1.7p ad=1.7p ps=10.68u pd=10.68u rfmode=0
+XM48_u3 d1 pbias vdd vdd sg13_hv_pmos l=4u w=5u as=1.7p ad=1.7p ps=10.68u pd=10.68u rfmode=0
+XM48_u4 d1 pbias vdd vdd sg13_hv_pmos l=4u w=5u as=1.7p ad=1.7p ps=10.68u pd=10.68u rfmode=0
+XM48_u5 d1 pbias vdd vdd sg13_hv_pmos l=4u w=5u as=1.7p ad=1.7p ps=10.68u pd=10.68u rfmode=0
+XM48_u6 d1 pbias vdd vdd sg13_hv_pmos l=4u w=5u as=1.7p ad=1.7p ps=10.68u pd=10.68u rfmode=0
+XM48_u7 d1 pbias vdd vdd sg13_hv_pmos l=4u w=5u as=1.7p ad=1.7p ps=10.68u pd=10.68u rfmode=0
+XM48_u8 d1 pbias vdd vdd sg13_hv_pmos l=4u w=5u as=1.7p ad=1.7p ps=10.68u pd=10.68u rfmode=0
+XM48_u9 d1 pbias vdd vdd sg13_hv_pmos l=4u w=5u as=1.7p ad=1.7p ps=10.68u pd=10.68u rfmode=0
+XM48_u10 d1 pbias vdd vdd sg13_hv_pmos l=4u w=5u as=1.7p ad=1.7p ps=10.68u pd=10.68u rfmode=0
+XM48_u11 d1 pbias vdd vdd sg13_hv_pmos l=4u w=5u as=1.7p ad=1.7p ps=10.68u pd=10.68u rfmode=0
+XM48_u12 d1 pbias vdd vdd sg13_hv_pmos l=4u w=5u as=1.7p ad=1.7p ps=10.68u pd=10.68u rfmode=0
+XM48_u13 d1 pbias vdd vdd sg13_hv_pmos l=4u w=5u as=1.7p ad=1.7p ps=10.68u pd=10.68u rfmode=0
+XM48_u14 d1 pbias vdd vdd sg13_hv_pmos l=4u w=5u as=1.7p ad=1.7p ps=10.68u pd=10.68u rfmode=0
+XM48_u15 d1 pbias vdd vdd sg13_hv_pmos l=4u w=5u as=1.7p ad=1.7p ps=10.68u pd=10.68u rfmode=0
+XM48_u16 d1 pbias vdd vdd sg13_hv_pmos l=4u w=5u as=1.7p ad=1.7p ps=10.68u pd=10.68u rfmode=0
+XM48_u17 d1 pbias vdd vdd sg13_hv_pmos l=4u w=5u as=1.7p ad=1.7p ps=10.68u pd=10.68u rfmode=0
+XM48_u18 d1 pbias vdd vdd sg13_hv_pmos l=4u w=5u as=1.7p ad=1.7p ps=10.68u pd=10.68u rfmode=0
+XM48_u19 d1 pbias vdd vdd sg13_hv_pmos l=4u w=5u as=1.7p ad=1.7p ps=10.68u pd=10.68u rfmode=0
+XM48_u20 d1 pbias vdd vdd sg13_hv_pmos l=4u w=5u as=1.7p ad=1.7p ps=10.68u pd=10.68u rfmode=0
+XM48_u21 d1 pbias vdd vdd sg13_hv_pmos l=4u w=5u as=1.7p ad=1.7p ps=10.68u pd=10.68u rfmode=0
+XM48_u22 d1 pbias vdd vdd sg13_hv_pmos l=4u w=5u as=1.7p ad=1.7p ps=10.68u pd=10.68u rfmode=0
+XM48_u23 d1 pbias vdd vdd sg13_hv_pmos l=4u w=5u as=1.7p ad=1.7p ps=10.68u pd=10.68u rfmode=0
+XM48_u24 d1 pbias vdd vdd sg13_hv_pmos l=4u w=5u as=1.7p ad=1.7p ps=10.68u pd=10.68u rfmode=0
+XM50_u2 vb2 pcasc d5 d5 sg13_hv_pmos l=4u w=10u as=3.4p ad=3.4p ps=20.68u pd=20.68u rfmode=0
+XM50_u3 vb2 pcasc d5 d5 sg13_hv_pmos l=4u w=10u as=3.4p ad=3.4p ps=20.68u pd=20.68u rfmode=0
+XM50_u4 vb2 pcasc d5 d5 sg13_hv_pmos l=4u w=10u as=3.4p ad=3.4p ps=20.68u pd=20.68u rfmode=0
+XM50_u5 vb2 pcasc d5 d5 sg13_hv_pmos l=4u w=10u as=3.4p ad=3.4p ps=20.68u pd=20.68u rfmode=0
+XM50_u6 vb2 pcasc d5 d5 sg13_hv_pmos l=4u w=10u as=3.4p ad=3.4p ps=20.68u pd=20.68u rfmode=0
+XM50_u7 vb2 pcasc d5 d5 sg13_hv_pmos l=4u w=10u as=3.4p ad=3.4p ps=20.68u pd=20.68u rfmode=0
+XM50_u8 vb2 pcasc d5 d5 sg13_hv_pmos l=4u w=10u as=3.4p ad=3.4p ps=20.68u pd=20.68u rfmode=0
+XM50_u9 vb2 pcasc d5 d5 sg13_hv_pmos l=4u w=10u as=3.4p ad=3.4p ps=20.68u pd=20.68u rfmode=0
+XM50_u10 vb2 pcasc d5 d5 sg13_hv_pmos l=4u w=10u as=3.4p ad=3.4p ps=20.68u pd=20.68u rfmode=0
+XM50_u11 vb2 pcasc d5 d5 sg13_hv_pmos l=4u w=10u as=3.4p ad=3.4p ps=20.68u pd=20.68u rfmode=0
+XM50_u12 vb2 pcasc d5 d5 sg13_hv_pmos l=4u w=10u as=3.4p ad=3.4p ps=20.68u pd=20.68u rfmode=0
+XM50_u13 vb2 pcasc d5 d5 sg13_hv_pmos l=4u w=10u as=3.4p ad=3.4p ps=20.68u pd=20.68u rfmode=0
+XM50_u14 vb2 pcasc d5 d5 sg13_hv_pmos l=4u w=10u as=3.4p ad=3.4p ps=20.68u pd=20.68u rfmode=0
+XM50_u15 vb2 pcasc d5 d5 sg13_hv_pmos l=4u w=10u as=3.4p ad=3.4p ps=20.68u pd=20.68u rfmode=0
+XM50_u16 vb2 pcasc d5 d5 sg13_hv_pmos l=4u w=10u as=3.4p ad=3.4p ps=20.68u pd=20.68u rfmode=0
+XM50_u17 vb2 pcasc d5 d5 sg13_hv_pmos l=4u w=10u as=3.4p ad=3.4p ps=20.68u pd=20.68u rfmode=0
+XM50_u18 vb2 pcasc d5 d5 sg13_hv_pmos l=4u w=10u as=3.4p ad=3.4p ps=20.68u pd=20.68u rfmode=0
+XM50_u19 vb2 pcasc d5 d5 sg13_hv_pmos l=4u w=10u as=3.4p ad=3.4p ps=20.68u pd=20.68u rfmode=0
+XM50_u20 vb2 pcasc d5 d5 sg13_hv_pmos l=4u w=10u as=3.4p ad=3.4p ps=20.68u pd=20.68u rfmode=0
+XM50_u21 vb2 pcasc d5 d5 sg13_hv_pmos l=4u w=10u as=3.4p ad=3.4p ps=20.68u pd=20.68u rfmode=0
+XM50_u22 vb2 pcasc d5 d5 sg13_hv_pmos l=4u w=10u as=3.4p ad=3.4p ps=20.68u pd=20.68u rfmode=0
+XM50_u23 vb2 pcasc d5 d5 sg13_hv_pmos l=4u w=10u as=3.4p ad=3.4p ps=20.68u pd=20.68u rfmode=0
+XM50_u24 vb2 pcasc d5 d5 sg13_hv_pmos l=4u w=10u as=3.4p ad=3.4p ps=20.68u pd=20.68u rfmode=0
+XM51_u2 vref pcasc d3 d3 sg13_hv_pmos l=4u w=10u as=3.4p ad=3.4p ps=20.68u pd=20.68u rfmode=0
+XM51_u3 vref pcasc d3 d3 sg13_hv_pmos l=4u w=10u as=3.4p ad=3.4p ps=20.68u pd=20.68u rfmode=0
+XM51_u4 vref pcasc d3 d3 sg13_hv_pmos l=4u w=10u as=3.4p ad=3.4p ps=20.68u pd=20.68u rfmode=0
+XM52_u2 n1 pcasc d1 d1 sg13_hv_pmos l=4u w=10u as=3.4p ad=3.4p ps=20.68u pd=20.68u rfmode=0
+XM52_u3 n1 pcasc d1 d1 sg13_hv_pmos l=4u w=10u as=3.4p ad=3.4p ps=20.68u pd=20.68u rfmode=0
+XM52_u4 n1 pcasc d1 d1 sg13_hv_pmos l=4u w=10u as=3.4p ad=3.4p ps=20.68u pd=20.68u rfmode=0
+XM52_u5 n1 pcasc d1 d1 sg13_hv_pmos l=4u w=10u as=3.4p ad=3.4p ps=20.68u pd=20.68u rfmode=0
+XM52_u6 n1 pcasc d1 d1 sg13_hv_pmos l=4u w=10u as=3.4p ad=3.4p ps=20.68u pd=20.68u rfmode=0
+XM52_u7 n1 pcasc d1 d1 sg13_hv_pmos l=4u w=10u as=3.4p ad=3.4p ps=20.68u pd=20.68u rfmode=0
+XM52_u8 n1 pcasc d1 d1 sg13_hv_pmos l=4u w=10u as=3.4p ad=3.4p ps=20.68u pd=20.68u rfmode=0
+XM52_u9 n1 pcasc d1 d1 sg13_hv_pmos l=4u w=10u as=3.4p ad=3.4p ps=20.68u pd=20.68u rfmode=0
+XM52_u10 n1 pcasc d1 d1 sg13_hv_pmos l=4u w=10u as=3.4p ad=3.4p ps=20.68u pd=20.68u rfmode=0
+XM52_u11 n1 pcasc d1 d1 sg13_hv_pmos l=4u w=10u as=3.4p ad=3.4p ps=20.68u pd=20.68u rfmode=0
+XM52_u12 n1 pcasc d1 d1 sg13_hv_pmos l=4u w=10u as=3.4p ad=3.4p ps=20.68u pd=20.68u rfmode=0
+XM52_u13 n1 pcasc d1 d1 sg13_hv_pmos l=4u w=10u as=3.4p ad=3.4p ps=20.68u pd=20.68u rfmode=0
+XM52_u14 n1 pcasc d1 d1 sg13_hv_pmos l=4u w=10u as=3.4p ad=3.4p ps=20.68u pd=20.68u rfmode=0
+XM52_u15 n1 pcasc d1 d1 sg13_hv_pmos l=4u w=10u as=3.4p ad=3.4p ps=20.68u pd=20.68u rfmode=0
+XM52_u16 n1 pcasc d1 d1 sg13_hv_pmos l=4u w=10u as=3.4p ad=3.4p ps=20.68u pd=20.68u rfmode=0
+XM52_u17 n1 pcasc d1 d1 sg13_hv_pmos l=4u w=10u as=3.4p ad=3.4p ps=20.68u pd=20.68u rfmode=0
+XM52_u18 n1 pcasc d1 d1 sg13_hv_pmos l=4u w=10u as=3.4p ad=3.4p ps=20.68u pd=20.68u rfmode=0
+XM52_u19 n1 pcasc d1 d1 sg13_hv_pmos l=4u w=10u as=3.4p ad=3.4p ps=20.68u pd=20.68u rfmode=0
+XM52_u20 n1 pcasc d1 d1 sg13_hv_pmos l=4u w=10u as=3.4p ad=3.4p ps=20.68u pd=20.68u rfmode=0
+XM52_u21 n1 pcasc d1 d1 sg13_hv_pmos l=4u w=10u as=3.4p ad=3.4p ps=20.68u pd=20.68u rfmode=0
+XM52_u22 n1 pcasc d1 d1 sg13_hv_pmos l=4u w=10u as=3.4p ad=3.4p ps=20.68u pd=20.68u rfmode=0
+XM52_u23 n1 pcasc d1 d1 sg13_hv_pmos l=4u w=10u as=3.4p ad=3.4p ps=20.68u pd=20.68u rfmode=0
+XM52_u24 n1 pcasc d1 d1 sg13_hv_pmos l=4u w=10u as=3.4p ad=3.4p ps=20.68u pd=20.68u rfmode=0
+XM54_u2 pbias pcasc d2 d2 sg13_hv_pmos l=4u w=10u as=3.4p ad=3.4p ps=20.68u pd=20.68u rfmode=0
+XM54_u3 pbias pcasc d2 d2 sg13_hv_pmos l=4u w=10u as=3.4p ad=3.4p ps=20.68u pd=20.68u rfmode=0
+XM54_u4 pbias pcasc d2 d2 sg13_hv_pmos l=4u w=10u as=3.4p ad=3.4p ps=20.68u pd=20.68u rfmode=0
+XM54_u5 pbias pcasc d2 d2 sg13_hv_pmos l=4u w=10u as=3.4p ad=3.4p ps=20.68u pd=20.68u rfmode=0
+XM54_u6 pbias pcasc d2 d2 sg13_hv_pmos l=4u w=10u as=3.4p ad=3.4p ps=20.68u pd=20.68u rfmode=0
+XM54_u7 pbias pcasc d2 d2 sg13_hv_pmos l=4u w=10u as=3.4p ad=3.4p ps=20.68u pd=20.68u rfmode=0
+XM54_u8 pbias pcasc d2 d2 sg13_hv_pmos l=4u w=10u as=3.4p ad=3.4p ps=20.68u pd=20.68u rfmode=0
+XM54_u9 pbias pcasc d2 d2 sg13_hv_pmos l=4u w=10u as=3.4p ad=3.4p ps=20.68u pd=20.68u rfmode=0
+XM54_u10 pbias pcasc d2 d2 sg13_hv_pmos l=4u w=10u as=3.4p ad=3.4p ps=20.68u pd=20.68u rfmode=0
+XM54_u11 pbias pcasc d2 d2 sg13_hv_pmos l=4u w=10u as=3.4p ad=3.4p ps=20.68u pd=20.68u rfmode=0
+XM54_u12 pbias pcasc d2 d2 sg13_hv_pmos l=4u w=10u as=3.4p ad=3.4p ps=20.68u pd=20.68u rfmode=0
+XM54_u13 pbias pcasc d2 d2 sg13_hv_pmos l=4u w=10u as=3.4p ad=3.4p ps=20.68u pd=20.68u rfmode=0
+XM54_u14 pbias pcasc d2 d2 sg13_hv_pmos l=4u w=10u as=3.4p ad=3.4p ps=20.68u pd=20.68u rfmode=0
+XM54_u15 pbias pcasc d2 d2 sg13_hv_pmos l=4u w=10u as=3.4p ad=3.4p ps=20.68u pd=20.68u rfmode=0
+XM54_u16 pbias pcasc d2 d2 sg13_hv_pmos l=4u w=10u as=3.4p ad=3.4p ps=20.68u pd=20.68u rfmode=0
+XM54_u17 pbias pcasc d2 d2 sg13_hv_pmos l=4u w=10u as=3.4p ad=3.4p ps=20.68u pd=20.68u rfmode=0
+XM54_u18 pbias pcasc d2 d2 sg13_hv_pmos l=4u w=10u as=3.4p ad=3.4p ps=20.68u pd=20.68u rfmode=0
+XM54_u19 pbias pcasc d2 d2 sg13_hv_pmos l=4u w=10u as=3.4p ad=3.4p ps=20.68u pd=20.68u rfmode=0
+XM54_u20 pbias pcasc d2 d2 sg13_hv_pmos l=4u w=10u as=3.4p ad=3.4p ps=20.68u pd=20.68u rfmode=0
+XM54_u21 pbias pcasc d2 d2 sg13_hv_pmos l=4u w=10u as=3.4p ad=3.4p ps=20.68u pd=20.68u rfmode=0
+XM54_u22 pbias pcasc d2 d2 sg13_hv_pmos l=4u w=10u as=3.4p ad=3.4p ps=20.68u pd=20.68u rfmode=0
+XM54_u23 pbias pcasc d2 d2 sg13_hv_pmos l=4u w=10u as=3.4p ad=3.4p ps=20.68u pd=20.68u rfmode=0
+XM54_u24 pbias pcasc d2 d2 sg13_hv_pmos l=4u w=10u as=3.4p ad=3.4p ps=20.68u pd=20.68u rfmode=0
+XQ56_u2 vbe vbe vss vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ56_u3 vbe vbe vss vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ56_u4 vbe vbe vss vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ56_u5 vbe vbe vss vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ56_u6 vbe vbe vss vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ56_u7 vbe vbe vss vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ56_u8 vbe vbe vss vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ56_u9 vbe vbe vss vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ56_u10 vbe vbe vss vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ56_u11 vbe vbe vss vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ56_u12 vbe vbe vss vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ56_u13 vbe vbe vss vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ56_u14 vbe vbe vss vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ56_u15 vbe vbe vss vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ56_u16 vbe vbe vss vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ56_u17 vbe vbe vss vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ56_u18 vbe vbe vss vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ56_u19 vbe vbe vss vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ56_u20 vbe vbe vss vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ56_u21 vbe vbe vss vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ56_u22 vbe vbe vss vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ56_u23 vbe vbe vss vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ56_u24 vbe vbe vss vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ60_u2 vbe3 vbe3 vss vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ60_u3 vbe3 vbe3 vss vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ60_u4 vbe3 vbe3 vss vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ62_u2 vd2 vd2 vss vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ62_u3 vd2 vd2 vss vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ62_u4 vd2 vd2 vss vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ62_u5 vd2 vd2 vss vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ62_u6 vd2 vd2 vss vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ62_u7 vd2 vd2 vss vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ62_u8 vd2 vd2 vss vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ62_u9 vd2 vd2 vss vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ62_u10 vd2 vd2 vss vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ62_u11 vd2 vd2 vss vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ62_u12 vd2 vd2 vss vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ62_u13 vd2 vd2 vss vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ62_u14 vd2 vd2 vss vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ62_u15 vd2 vd2 vss vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ62_u16 vd2 vd2 vss vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ62_u17 vd2 vd2 vss vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ62_u18 vd2 vd2 vss vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ62_u19 vd2 vd2 vss vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ62_u20 vd2 vd2 vss vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ62_u21 vd2 vd2 vss vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ62_u22 vd2 vd2 vss vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ62_u23 vd2 vd2 vss vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ62_u24 vd2 vd2 vss vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ67_u2 vbe b1b vss vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ67_u3 vbe b1b vss vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ67_u4 vbe b1b vss vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ67_u5 vbe b1b vss vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ67_u6 vbe b1b vss vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ67_u7 vbe b1b vss vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ67_u8 vbe b1b vss vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ67_u9 vbe b1b vss vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ67_u10 vbe b1b vss vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ67_u11 vbe b1b vss vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ67_u12 vbe b1b vss vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ67_u13 vbe b1b vss vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ67_u14 vbe b1b vss vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ67_u15 vbe b1b vss vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ67_u16 vbe b1b vss vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ67_u17 vbe b1b vss vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ67_u18 vbe b1b vss vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ67_u19 vbe b1b vss vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ67_u20 vbe b1b vss vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ67_u21 vbe b1b vss vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ67_u22 vbe b1b vss vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ67_u23 vbe b1b vss vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ67_u24 vbe b1b vss vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ68_u2 c2 vbe dvbe vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ68_u3 c2 vbe dvbe vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ68_u4 c2 vbe dvbe vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ68_u5 c2 vbe dvbe vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ68_u6 c2 vbe dvbe vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ68_u7 c2 vbe dvbe vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ68_u8 c2 vbe dvbe vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ68_u9 c2 vbe dvbe vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ68_u10 c2 vbe dvbe vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ68_u11 c2 vbe dvbe vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ68_u12 c2 vbe dvbe vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ68_u13 c2 vbe dvbe vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ68_u14 c2 vbe dvbe vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ68_u15 c2 vbe dvbe vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ68_u16 c2 vbe dvbe vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ68_u17 c2 vbe dvbe vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ68_u18 c2 vbe dvbe vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ68_u19 c2 vbe dvbe vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ68_u20 c2 vbe dvbe vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ68_u21 c2 vbe dvbe vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ68_u22 c2 vbe dvbe vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ68_u23 c2 vbe dvbe vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ68_u24 c2 vbe dvbe vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ69_u2 c2 vbe dvbe vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ69_u3 c2 vbe dvbe vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ69_u4 c2 vbe dvbe vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ69_u5 c2 vbe dvbe vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ69_u6 c2 vbe dvbe vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ69_u7 c2 vbe dvbe vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ69_u8 c2 vbe dvbe vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ69_u9 c2 vbe dvbe vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ69_u10 c2 vbe dvbe vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ69_u11 c2 vbe dvbe vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ69_u12 c2 vbe dvbe vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ69_u13 c2 vbe dvbe vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ69_u14 c2 vbe dvbe vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ69_u15 c2 vbe dvbe vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ69_u16 c2 vbe dvbe vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ69_u17 c2 vbe dvbe vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ69_u18 c2 vbe dvbe vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ69_u19 c2 vbe dvbe vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ69_u20 c2 vbe dvbe vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ69_u21 c2 vbe dvbe vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ69_u22 c2 vbe dvbe vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ69_u23 c2 vbe dvbe vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ69_u24 c2 vbe dvbe vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ70_u2 c2 vbe dvbe vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ70_u3 c2 vbe dvbe vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ70_u4 c2 vbe dvbe vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ70_u5 c2 vbe dvbe vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ70_u6 c2 vbe dvbe vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ70_u7 c2 vbe dvbe vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ70_u8 c2 vbe dvbe vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ70_u9 c2 vbe dvbe vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ70_u10 c2 vbe dvbe vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ70_u11 c2 vbe dvbe vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ70_u12 c2 vbe dvbe vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ70_u13 c2 vbe dvbe vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ70_u14 c2 vbe dvbe vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ70_u15 c2 vbe dvbe vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ70_u16 c2 vbe dvbe vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ70_u17 c2 vbe dvbe vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ70_u18 c2 vbe dvbe vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ70_u19 c2 vbe dvbe vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ70_u20 c2 vbe dvbe vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ70_u21 c2 vbe dvbe vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ70_u22 c2 vbe dvbe vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ70_u23 c2 vbe dvbe vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ70_u24 c2 vbe dvbe vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ71_u2 c2 vbe dvbe vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ71_u3 c2 vbe dvbe vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ71_u4 c2 vbe dvbe vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ71_u5 c2 vbe dvbe vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ71_u6 c2 vbe dvbe vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ71_u7 c2 vbe dvbe vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ71_u8 c2 vbe dvbe vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ71_u9 c2 vbe dvbe vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ71_u10 c2 vbe dvbe vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ71_u11 c2 vbe dvbe vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ71_u12 c2 vbe dvbe vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ71_u13 c2 vbe dvbe vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ71_u14 c2 vbe dvbe vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ71_u15 c2 vbe dvbe vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ71_u16 c2 vbe dvbe vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ71_u17 c2 vbe dvbe vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ71_u18 c2 vbe dvbe vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ71_u19 c2 vbe dvbe vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ71_u20 c2 vbe dvbe vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ71_u21 c2 vbe dvbe vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ71_u22 c2 vbe dvbe vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ71_u23 c2 vbe dvbe vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ71_u24 c2 vbe dvbe vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ72_u2 c2 vbe dvbe vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ72_u3 c2 vbe dvbe vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ72_u4 c2 vbe dvbe vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ72_u5 c2 vbe dvbe vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ72_u6 c2 vbe dvbe vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ72_u7 c2 vbe dvbe vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ72_u8 c2 vbe dvbe vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ72_u9 c2 vbe dvbe vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ72_u10 c2 vbe dvbe vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ72_u11 c2 vbe dvbe vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ72_u12 c2 vbe dvbe vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ72_u13 c2 vbe dvbe vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ72_u14 c2 vbe dvbe vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ72_u15 c2 vbe dvbe vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ72_u16 c2 vbe dvbe vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ72_u17 c2 vbe dvbe vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ72_u18 c2 vbe dvbe vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ72_u19 c2 vbe dvbe vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ72_u20 c2 vbe dvbe vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ72_u21 c2 vbe dvbe vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ72_u22 c2 vbe dvbe vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ72_u23 c2 vbe dvbe vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ72_u24 c2 vbe dvbe vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ73_u2 c2 vbe dvbe vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ73_u3 c2 vbe dvbe vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ73_u4 c2 vbe dvbe vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ73_u5 c2 vbe dvbe vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ73_u6 c2 vbe dvbe vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ73_u7 c2 vbe dvbe vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ73_u8 c2 vbe dvbe vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ73_u9 c2 vbe dvbe vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ73_u10 c2 vbe dvbe vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ73_u11 c2 vbe dvbe vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ73_u12 c2 vbe dvbe vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ73_u13 c2 vbe dvbe vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ73_u14 c2 vbe dvbe vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ73_u15 c2 vbe dvbe vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ73_u16 c2 vbe dvbe vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ73_u17 c2 vbe dvbe vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ73_u18 c2 vbe dvbe vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ73_u19 c2 vbe dvbe vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ73_u20 c2 vbe dvbe vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ73_u21 c2 vbe dvbe vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ73_u22 c2 vbe dvbe vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ73_u23 c2 vbe dvbe vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ73_u24 c2 vbe dvbe vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ74_u2 c2 vbe dvbe vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ74_u3 c2 vbe dvbe vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ74_u4 c2 vbe dvbe vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ74_u5 c2 vbe dvbe vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ74_u6 c2 vbe dvbe vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ74_u7 c2 vbe dvbe vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ74_u8 c2 vbe dvbe vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ74_u9 c2 vbe dvbe vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ74_u10 c2 vbe dvbe vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ74_u11 c2 vbe dvbe vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ74_u12 c2 vbe dvbe vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ74_u13 c2 vbe dvbe vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ74_u14 c2 vbe dvbe vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ74_u15 c2 vbe dvbe vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ74_u16 c2 vbe dvbe vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ74_u17 c2 vbe dvbe vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ74_u18 c2 vbe dvbe vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ74_u19 c2 vbe dvbe vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ74_u20 c2 vbe dvbe vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ74_u21 c2 vbe dvbe vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ74_u22 c2 vbe dvbe vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ74_u23 c2 vbe dvbe vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ74_u24 c2 vbe dvbe vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ75_u2 vd1 vd1 vd2 vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ75_u3 vd1 vd1 vd2 vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ75_u4 vd1 vd1 vd2 vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ75_u5 vd1 vd1 vd2 vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ75_u6 vd1 vd1 vd2 vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ75_u7 vd1 vd1 vd2 vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ75_u8 vd1 vd1 vd2 vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ75_u9 vd1 vd1 vd2 vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ75_u10 vd1 vd1 vd2 vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ75_u11 vd1 vd1 vd2 vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ75_u12 vd1 vd1 vd2 vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ75_u13 vd1 vd1 vd2 vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ75_u14 vd1 vd1 vd2 vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ75_u15 vd1 vd1 vd2 vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ75_u16 vd1 vd1 vd2 vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ75_u17 vd1 vd1 vd2 vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ75_u18 vd1 vd1 vd2 vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ75_u19 vd1 vd1 vd2 vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ75_u20 vd1 vd1 vd2 vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ75_u21 vd1 vd1 vd2 vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ75_u22 vd1 vd1 vd2 vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ75_u23 vd1 vd1 vd2 vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ75_u24 vd1 vd1 vd2 vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ76_u2 c2 vbe dvbe vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ76_u3 c2 vbe dvbe vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ76_u4 c2 vbe dvbe vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ76_u5 c2 vbe dvbe vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ76_u6 c2 vbe dvbe vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ76_u7 c2 vbe dvbe vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ76_u8 c2 vbe dvbe vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ76_u9 c2 vbe dvbe vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ76_u10 c2 vbe dvbe vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ76_u11 c2 vbe dvbe vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ76_u12 c2 vbe dvbe vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ76_u13 c2 vbe dvbe vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ76_u14 c2 vbe dvbe vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ76_u15 c2 vbe dvbe vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ76_u16 c2 vbe dvbe vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ76_u17 c2 vbe dvbe vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ76_u18 c2 vbe dvbe vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ76_u19 c2 vbe dvbe vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ76_u20 c2 vbe dvbe vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ76_u21 c2 vbe dvbe vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ76_u22 c2 vbe dvbe vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ76_u23 c2 vbe dvbe vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ76_u24 c2 vbe dvbe vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XR77_u2 n_4 pbias vss rppd w=1u l=50u b=0 m=1
+XR77_u3 n_4 pbias vss rppd w=1u l=50u b=0 m=1
+XR77_u4 n_4 pbias vss rppd w=1u l=50u b=0 m=1
+XR77_u5 n_4 pbias vss rppd w=1u l=50u b=0 m=1
+XR77_u6 n_4 pbias vss rppd w=1u l=50u b=0 m=1
+XR77_u7 n_4 pbias vss rppd w=1u l=50u b=0 m=1
+XR77_u8 n_4 pbias vss rppd w=1u l=50u b=0 m=1
+XR77_u9 n_4 pbias vss rppd w=1u l=50u b=0 m=1
+XR77_u10 n_4 pbias vss rppd w=1u l=50u b=0 m=1
+XR77_u11 n_4 pbias vss rppd w=1u l=50u b=0 m=1
+XR77_u12 n_4 pbias vss rppd w=1u l=50u b=0 m=1
+XR77_u13 n_4 pbias vss rppd w=1u l=50u b=0 m=1
+XR77_u14 n_4 pbias vss rppd w=1u l=50u b=0 m=1
+XR77_u15 n_4 pbias vss rppd w=1u l=50u b=0 m=1
+XR77_u16 n_4 pbias vss rppd w=1u l=50u b=0 m=1
+XR77_u17 n_4 pbias vss rppd w=1u l=50u b=0 m=1
+XR77_u18 n_4 pbias vss rppd w=1u l=50u b=0 m=1
+XR77_u19 n_4 pbias vss rppd w=1u l=50u b=0 m=1
+XR77_u20 n_4 pbias vss rppd w=1u l=50u b=0 m=1
+XR77_u21 n_4 pbias vss rppd w=1u l=50u b=0 m=1
+XR77_u22 n_4 pbias vss rppd w=1u l=50u b=0 m=1
+XR77_u23 n_4 pbias vss rppd w=1u l=50u b=0 m=1
+XR77_u24 n_4 pbias vss rppd w=1u l=50u b=0 m=1
+XR78_u2 n_11 n_34 vss rppd w=1u l=50u b=0 m=1
+XR78_u3 n_11 n_34 vss rppd w=1u l=50u b=0 m=1
+XR78_u4 n_11 n_34 vss rppd w=1u l=50u b=0 m=1
+XR78_u5 n_11 n_34 vss rppd w=1u l=50u b=0 m=1
+XR78_u6 n_11 n_34 vss rppd w=1u l=50u b=0 m=1
+XR78_u7 n_11 n_34 vss rppd w=1u l=50u b=0 m=1
+XR78_u8 n_11 n_34 vss rppd w=1u l=50u b=0 m=1
+XR78_u9 n_11 n_34 vss rppd w=1u l=50u b=0 m=1
+XR78_u10 n_11 n_34 vss rppd w=1u l=50u b=0 m=1
+XR78_u11 n_11 n_34 vss rppd w=1u l=50u b=0 m=1
+XR78_u12 n_11 n_34 vss rppd w=1u l=50u b=0 m=1
+XR78_u13 n_11 n_34 vss rppd w=1u l=50u b=0 m=1
+XR78_u14 n_11 n_34 vss rppd w=1u l=50u b=0 m=1
+XR78_u15 n_11 n_34 vss rppd w=1u l=50u b=0 m=1
+XR78_u16 n_11 n_34 vss rppd w=1u l=50u b=0 m=1
+XR78_u17 n_11 n_34 vss rppd w=1u l=50u b=0 m=1
+XR78_u18 n_11 n_34 vss rppd w=1u l=50u b=0 m=1
+XR78_u19 n_11 n_34 vss rppd w=1u l=50u b=0 m=1
+XR78_u20 n_11 n_34 vss rppd w=1u l=50u b=0 m=1
+XR78_u21 n_11 n_34 vss rppd w=1u l=50u b=0 m=1
+XR78_u22 n_11 n_34 vss rppd w=1u l=50u b=0 m=1
+XR78_u23 n_11 n_34 vss rppd w=1u l=50u b=0 m=1
+XR78_u24 n_11 n_34 vss rppd w=1u l=50u b=0 m=1
+XR79_u2 n_10 n_34 vss rppd w=1u l=50u b=0 m=1
+XR79_u3 n_10 n_34 vss rppd w=1u l=50u b=0 m=1
+XR79_u4 n_10 n_34 vss rppd w=1u l=50u b=0 m=1
+XR79_u5 n_10 n_34 vss rppd w=1u l=50u b=0 m=1
+XR79_u6 n_10 n_34 vss rppd w=1u l=50u b=0 m=1
+XR79_u7 n_10 n_34 vss rppd w=1u l=50u b=0 m=1
+XR79_u8 n_10 n_34 vss rppd w=1u l=50u b=0 m=1
+XR79_u9 n_10 n_34 vss rppd w=1u l=50u b=0 m=1
+XR79_u10 n_10 n_34 vss rppd w=1u l=50u b=0 m=1
+XR79_u11 n_10 n_34 vss rppd w=1u l=50u b=0 m=1
+XR79_u12 n_10 n_34 vss rppd w=1u l=50u b=0 m=1
+XR79_u13 n_10 n_34 vss rppd w=1u l=50u b=0 m=1
+XR79_u14 n_10 n_34 vss rppd w=1u l=50u b=0 m=1
+XR79_u15 n_10 n_34 vss rppd w=1u l=50u b=0 m=1
+XR79_u16 n_10 n_34 vss rppd w=1u l=50u b=0 m=1
+XR79_u17 n_10 n_34 vss rppd w=1u l=50u b=0 m=1
+XR79_u18 n_10 n_34 vss rppd w=1u l=50u b=0 m=1
+XR79_u19 n_10 n_34 vss rppd w=1u l=50u b=0 m=1
+XR79_u20 n_10 n_34 vss rppd w=1u l=50u b=0 m=1
+XR79_u21 n_10 n_34 vss rppd w=1u l=50u b=0 m=1
+XR79_u22 n_10 n_34 vss rppd w=1u l=50u b=0 m=1
+XR79_u23 n_10 n_34 vss rppd w=1u l=50u b=0 m=1
+XR79_u24 n_10 n_34 vss rppd w=1u l=50u b=0 m=1
+XR80_u2 n_3 n_31 vss rppd w=1u l=50u b=0 m=1
+XR80_u3 n_3 n_31 vss rppd w=1u l=50u b=0 m=1
+XR80_u4 n_3 n_31 vss rppd w=1u l=50u b=0 m=1
+XR80_u5 n_3 n_31 vss rppd w=1u l=50u b=0 m=1
+XR80_u6 n_3 n_31 vss rppd w=1u l=50u b=0 m=1
+XR80_u7 n_3 n_31 vss rppd w=1u l=50u b=0 m=1
+XR80_u8 n_3 n_31 vss rppd w=1u l=50u b=0 m=1
+XR80_u9 n_3 n_31 vss rppd w=1u l=50u b=0 m=1
+XR80_u10 n_3 n_31 vss rppd w=1u l=50u b=0 m=1
+XR80_u11 n_3 n_31 vss rppd w=1u l=50u b=0 m=1
+XR80_u12 n_3 n_31 vss rppd w=1u l=50u b=0 m=1
+XR80_u13 n_3 n_31 vss rppd w=1u l=50u b=0 m=1
+XR80_u14 n_3 n_31 vss rppd w=1u l=50u b=0 m=1
+XR80_u15 n_3 n_31 vss rppd w=1u l=50u b=0 m=1
+XR80_u16 n_3 n_31 vss rppd w=1u l=50u b=0 m=1
+XR80_u17 n_3 n_31 vss rppd w=1u l=50u b=0 m=1
+XR80_u18 n_3 n_31 vss rppd w=1u l=50u b=0 m=1
+XR80_u19 n_3 n_31 vss rppd w=1u l=50u b=0 m=1
+XR80_u20 n_3 n_31 vss rppd w=1u l=50u b=0 m=1
+XR80_u21 n_3 n_31 vss rppd w=1u l=50u b=0 m=1
+XR80_u22 n_3 n_31 vss rppd w=1u l=50u b=0 m=1
+XR80_u23 n_3 n_31 vss rppd w=1u l=50u b=0 m=1
+XR80_u24 n_3 n_31 vss rppd w=1u l=50u b=0 m=1
+XR81_u2 n_10 n_33 vss rppd w=1u l=50u b=0 m=1
+XR81_u3 n_10 n_33 vss rppd w=1u l=50u b=0 m=1
+XR81_u4 n_10 n_33 vss rppd w=1u l=50u b=0 m=1
+XR81_u5 n_10 n_33 vss rppd w=1u l=50u b=0 m=1
+XR81_u6 n_10 n_33 vss rppd w=1u l=50u b=0 m=1
+XR81_u7 n_10 n_33 vss rppd w=1u l=50u b=0 m=1
+XR81_u8 n_10 n_33 vss rppd w=1u l=50u b=0 m=1
+XR81_u9 n_10 n_33 vss rppd w=1u l=50u b=0 m=1
+XR81_u10 n_10 n_33 vss rppd w=1u l=50u b=0 m=1
+XR81_u11 n_10 n_33 vss rppd w=1u l=50u b=0 m=1
+XR81_u12 n_10 n_33 vss rppd w=1u l=50u b=0 m=1
+XR81_u13 n_10 n_33 vss rppd w=1u l=50u b=0 m=1
+XR81_u14 n_10 n_33 vss rppd w=1u l=50u b=0 m=1
+XR81_u15 n_10 n_33 vss rppd w=1u l=50u b=0 m=1
+XR81_u16 n_10 n_33 vss rppd w=1u l=50u b=0 m=1
+XR81_u17 n_10 n_33 vss rppd w=1u l=50u b=0 m=1
+XR81_u18 n_10 n_33 vss rppd w=1u l=50u b=0 m=1
+XR81_u19 n_10 n_33 vss rppd w=1u l=50u b=0 m=1
+XR81_u20 n_10 n_33 vss rppd w=1u l=50u b=0 m=1
+XR81_u21 n_10 n_33 vss rppd w=1u l=50u b=0 m=1
+XR81_u22 n_10 n_33 vss rppd w=1u l=50u b=0 m=1
+XR81_u23 n_10 n_33 vss rppd w=1u l=50u b=0 m=1
+XR81_u24 n_10 n_33 vss rppd w=1u l=50u b=0 m=1
+XR82_u2 n_5 n_31 vss rppd w=1u l=50u b=0 m=1
+XR82_u3 n_5 n_31 vss rppd w=1u l=50u b=0 m=1
+XR82_u4 n_5 n_31 vss rppd w=1u l=50u b=0 m=1
+XR82_u5 n_5 n_31 vss rppd w=1u l=50u b=0 m=1
+XR82_u6 n_5 n_31 vss rppd w=1u l=50u b=0 m=1
+XR82_u7 n_5 n_31 vss rppd w=1u l=50u b=0 m=1
+XR82_u8 n_5 n_31 vss rppd w=1u l=50u b=0 m=1
+XR82_u9 n_5 n_31 vss rppd w=1u l=50u b=0 m=1
+XR82_u10 n_5 n_31 vss rppd w=1u l=50u b=0 m=1
+XR82_u11 n_5 n_31 vss rppd w=1u l=50u b=0 m=1
+XR82_u12 n_5 n_31 vss rppd w=1u l=50u b=0 m=1
+XR82_u13 n_5 n_31 vss rppd w=1u l=50u b=0 m=1
+XR82_u14 n_5 n_31 vss rppd w=1u l=50u b=0 m=1
+XR82_u15 n_5 n_31 vss rppd w=1u l=50u b=0 m=1
+XR82_u16 n_5 n_31 vss rppd w=1u l=50u b=0 m=1
+XR82_u17 n_5 n_31 vss rppd w=1u l=50u b=0 m=1
+XR82_u18 n_5 n_31 vss rppd w=1u l=50u b=0 m=1
+XR82_u19 n_5 n_31 vss rppd w=1u l=50u b=0 m=1
+XR82_u20 n_5 n_31 vss rppd w=1u l=50u b=0 m=1
+XR82_u21 n_5 n_31 vss rppd w=1u l=50u b=0 m=1
+XR82_u22 n_5 n_31 vss rppd w=1u l=50u b=0 m=1
+XR82_u23 n_5 n_31 vss rppd w=1u l=50u b=0 m=1
+XR82_u24 n_5 n_31 vss rppd w=1u l=50u b=0 m=1
+XR83_u2 n_5 n_30 vss rppd w=1u l=50u b=0 m=1
+XR83_u3 n_5 n_30 vss rppd w=1u l=50u b=0 m=1
+XR83_u4 n_5 n_30 vss rppd w=1u l=50u b=0 m=1
+XR83_u5 n_5 n_30 vss rppd w=1u l=50u b=0 m=1
+XR83_u6 n_5 n_30 vss rppd w=1u l=50u b=0 m=1
+XR83_u7 n_5 n_30 vss rppd w=1u l=50u b=0 m=1
+XR83_u8 n_5 n_30 vss rppd w=1u l=50u b=0 m=1
+XR83_u9 n_5 n_30 vss rppd w=1u l=50u b=0 m=1
+XR83_u10 n_5 n_30 vss rppd w=1u l=50u b=0 m=1
+XR83_u11 n_5 n_30 vss rppd w=1u l=50u b=0 m=1
+XR83_u12 n_5 n_30 vss rppd w=1u l=50u b=0 m=1
+XR83_u13 n_5 n_30 vss rppd w=1u l=50u b=0 m=1
+XR83_u14 n_5 n_30 vss rppd w=1u l=50u b=0 m=1
+XR83_u15 n_5 n_30 vss rppd w=1u l=50u b=0 m=1
+XR83_u16 n_5 n_30 vss rppd w=1u l=50u b=0 m=1
+XR83_u17 n_5 n_30 vss rppd w=1u l=50u b=0 m=1
+XR83_u18 n_5 n_30 vss rppd w=1u l=50u b=0 m=1
+XR83_u19 n_5 n_30 vss rppd w=1u l=50u b=0 m=1
+XR83_u20 n_5 n_30 vss rppd w=1u l=50u b=0 m=1
+XR83_u21 n_5 n_30 vss rppd w=1u l=50u b=0 m=1
+XR83_u22 n_5 n_30 vss rppd w=1u l=50u b=0 m=1
+XR83_u23 n_5 n_30 vss rppd w=1u l=50u b=0 m=1
+XR83_u24 n_5 n_30 vss rppd w=1u l=50u b=0 m=1
+XR84_u2 n_4 n_30 vss rppd w=1u l=50u b=0 m=1
+XR84_u3 n_4 n_30 vss rppd w=1u l=50u b=0 m=1
+XR84_u4 n_4 n_30 vss rppd w=1u l=50u b=0 m=1
+XR84_u5 n_4 n_30 vss rppd w=1u l=50u b=0 m=1
+XR84_u6 n_4 n_30 vss rppd w=1u l=50u b=0 m=1
+XR84_u7 n_4 n_30 vss rppd w=1u l=50u b=0 m=1
+XR84_u8 n_4 n_30 vss rppd w=1u l=50u b=0 m=1
+XR84_u9 n_4 n_30 vss rppd w=1u l=50u b=0 m=1
+XR84_u10 n_4 n_30 vss rppd w=1u l=50u b=0 m=1
+XR84_u11 n_4 n_30 vss rppd w=1u l=50u b=0 m=1
+XR84_u12 n_4 n_30 vss rppd w=1u l=50u b=0 m=1
+XR84_u13 n_4 n_30 vss rppd w=1u l=50u b=0 m=1
+XR84_u14 n_4 n_30 vss rppd w=1u l=50u b=0 m=1
+XR84_u15 n_4 n_30 vss rppd w=1u l=50u b=0 m=1
+XR84_u16 n_4 n_30 vss rppd w=1u l=50u b=0 m=1
+XR84_u17 n_4 n_30 vss rppd w=1u l=50u b=0 m=1
+XR84_u18 n_4 n_30 vss rppd w=1u l=50u b=0 m=1
+XR84_u19 n_4 n_30 vss rppd w=1u l=50u b=0 m=1
+XR84_u20 n_4 n_30 vss rppd w=1u l=50u b=0 m=1
+XR84_u21 n_4 n_30 vss rppd w=1u l=50u b=0 m=1
+XR84_u22 n_4 n_30 vss rppd w=1u l=50u b=0 m=1
+XR84_u23 n_4 n_30 vss rppd w=1u l=50u b=0 m=1
+XR84_u24 n_4 n_30 vss rppd w=1u l=50u b=0 m=1
+XR85_u2 n_3 n_33 vss rppd w=1u l=50u b=0 m=1
+XR85_u3 n_3 n_33 vss rppd w=1u l=50u b=0 m=1
+XR85_u4 n_3 n_33 vss rppd w=1u l=50u b=0 m=1
+XR85_u5 n_3 n_33 vss rppd w=1u l=50u b=0 m=1
+XR85_u6 n_3 n_33 vss rppd w=1u l=50u b=0 m=1
+XR85_u7 n_3 n_33 vss rppd w=1u l=50u b=0 m=1
+XR85_u8 n_3 n_33 vss rppd w=1u l=50u b=0 m=1
+XR85_u9 n_3 n_33 vss rppd w=1u l=50u b=0 m=1
+XR85_u10 n_3 n_33 vss rppd w=1u l=50u b=0 m=1
+XR85_u11 n_3 n_33 vss rppd w=1u l=50u b=0 m=1
+XR85_u12 n_3 n_33 vss rppd w=1u l=50u b=0 m=1
+XR85_u13 n_3 n_33 vss rppd w=1u l=50u b=0 m=1
+XR85_u14 n_3 n_33 vss rppd w=1u l=50u b=0 m=1
+XR85_u15 n_3 n_33 vss rppd w=1u l=50u b=0 m=1
+XR85_u16 n_3 n_33 vss rppd w=1u l=50u b=0 m=1
+XR85_u17 n_3 n_33 vss rppd w=1u l=50u b=0 m=1
+XR85_u18 n_3 n_33 vss rppd w=1u l=50u b=0 m=1
+XR85_u19 n_3 n_33 vss rppd w=1u l=50u b=0 m=1
+XR85_u20 n_3 n_33 vss rppd w=1u l=50u b=0 m=1
+XR85_u21 n_3 n_33 vss rppd w=1u l=50u b=0 m=1
+XR85_u22 n_3 n_33 vss rppd w=1u l=50u b=0 m=1
+XR85_u23 n_3 n_33 vss rppd w=1u l=50u b=0 m=1
+XR85_u24 n_3 n_33 vss rppd w=1u l=50u b=0 m=1
+XR86_u2 n_11 pcasc vss rppd w=1u l=50u b=0 m=1
+XR86_u3 n_11 pcasc vss rppd w=1u l=50u b=0 m=1
+XR86_u4 n_11 pcasc vss rppd w=1u l=50u b=0 m=1
+XR86_u5 n_11 pcasc vss rppd w=1u l=50u b=0 m=1
+XR86_u6 n_11 pcasc vss rppd w=1u l=50u b=0 m=1
+XR86_u7 n_11 pcasc vss rppd w=1u l=50u b=0 m=1
+XR86_u8 n_11 pcasc vss rppd w=1u l=50u b=0 m=1
+XR86_u9 n_11 pcasc vss rppd w=1u l=50u b=0 m=1
+XR86_u10 n_11 pcasc vss rppd w=1u l=50u b=0 m=1
+XR86_u11 n_11 pcasc vss rppd w=1u l=50u b=0 m=1
+XR86_u12 n_11 pcasc vss rppd w=1u l=50u b=0 m=1
+XR86_u13 n_11 pcasc vss rppd w=1u l=50u b=0 m=1
+XR86_u14 n_11 pcasc vss rppd w=1u l=50u b=0 m=1
+XR86_u15 n_11 pcasc vss rppd w=1u l=50u b=0 m=1
+XR86_u16 n_11 pcasc vss rppd w=1u l=50u b=0 m=1
+XR86_u17 n_11 pcasc vss rppd w=1u l=50u b=0 m=1
+XR86_u18 n_11 pcasc vss rppd w=1u l=50u b=0 m=1
+XR86_u19 n_11 pcasc vss rppd w=1u l=50u b=0 m=1
+XR86_u20 n_11 pcasc vss rppd w=1u l=50u b=0 m=1
+XR86_u21 n_11 pcasc vss rppd w=1u l=50u b=0 m=1
+XR86_u22 n_11 pcasc vss rppd w=1u l=50u b=0 m=1
+XR86_u23 n_11 pcasc vss rppd w=1u l=50u b=0 m=1
+XR86_u24 n_11 pcasc vss rppd w=1u l=50u b=0 m=1
+Ccoord_1 n_10 det 9.66743857948845874972221281495876610279083251953125E-16
+Ccoord_2 n_10 n_14 1.001341303019774198190816605347208678722381591796875E-15
+Ccoord_3 n_10 n_15 9.98208583593689358082201579236425459384918212890625E-16
+Ccoord_4 n_10 n_16 9.979999699274799684900472129811532795429229736328125E-16
+Ccoord_5 n_10 n_21 9.979999699274799684900472129811532795429229736328125E-16
+Ccoord_6 n_10 n_2 1.15099177958573140045928084873594343662261962890625E-15
+Ccoord_7 n_10 n_19 9.979999699274799684900472129811532795429229736328125E-16
+Ccoord_8 n_10 n_23 9.979999699274799684900472129811532795429229736328125E-16
+Ccoord_9 n_10 n_25 9.979999699274799684900472129811532795429229736328125E-16
+Ccoord_10 n_10 n_6 1.666946616658989466230877951602451503276824951171875E-15
+Ccoord_11 n_10 n_22 9.979999699274799684900472129811532795429229736328125E-16
+Ccoord_12 n_10 n_27 9.904979845428296680864832524093799293041229248046875E-16
+Ccoord_13 n_10 n_3 3.2481253374439109649074453045614063739776611328125E-15
+Ccoord_14 n_10 n_36 7.568342555848259767259378349990583956241607666015625E-16
+Ccoord_15 n_10 n_33 8.806574210826369153437553904950618743896484375E-14
+Ccoord_16 n_10 n_31 4.97877387348821098811413321527652442455291748046875E-15
+Ccoord_17 n_10 n_34 8.57797196873807905603825929574668407440185546875E-14
+Ccoord_18 n_10 n_8 9.115171066218843431983032132848165929317474365234375E-16
+Ccoord_19 n_10 n_37 7.568342555848259767259378349990583956241607666015625E-16
+Ccoord_20 n_10 n_30 9.83611666154031727415940622449852526187896728515625E-16
+Ccoord_21 n_10 n_7 9.0982606524307729767286900823819451034069061279296875E-16
+Ccoord_22 n_10 n_4 1.67478511353433390240752487443387508392333984375E-15
+Ccoord_23 n_10 n_5 1.97778879253626893586215373943559825420379638671875E-15
+Ccoord_24 n_10 vbe3 7.568342555848259767259378349990583956241607666015625E-16
+Ccoord_25 n_10 vd1 7.568342555848259767259378349990583956241607666015625E-16
+Ccoord_26 n_10 n_9 1.659191223149992122642970571178011596202850341796875E-15
+Ccoord_27 n_10 n_12 1.0781735894670436692877046880312263965606689453125E-15
+Ccoord_28 n_10 n_24 9.979999699274799684900472129811532795429229736328125E-16
+Ccoord_29 n_10 n_26 9.979999699274799684900472129811532795429229736328125E-16
+Ccoord_30 n_10 vb2 7.568342555848259767259378349990583956241607666015625E-16
+Ccoord_31 n_10 n_13 1.042139624815787701805902543128468096256256103515625E-15
+Ccoord_32 n_10 n_17 1.0744958747566055734523615683428943157196044921875E-15
+Ccoord_33 n_10 n_18 1.0744958747566055734523615683428943157196044921875E-15
+Ccoord_34 n_10 n_11 2.636773190904069252837871317751705646514892578125E-14
+Ccoord_35 n_10 dvbe 2.467322713854949967071661376394331455230712890625E-14
+Ccoord_36 n_10 pbias 7.568342555848259767259378349990583956241607666015625E-16
+Ccoord_37 n_10 pcasc 7.568342555848259767259378349990583956241607666015625E-16
+Ccoord_38 n_10 vref 8.9777943542561988721217858255840837955474853515625E-16
+Ccoord_39 n_10 vss 4.4354820476233811632482684217393398284912109375E-15
+Ccoord_40 n_10 vss 4.059563320054623858368358924053609371185302734375E-14
+Ccoord_41 det n_14 4.15452300268181751174978444396401755511760711669921875E-17
+Ccoord_42 det n_15 4.15452300268181751174978444396401755511760711669921875E-17
+Ccoord_43 det n_16 4.15452300268181751174978444396401755511760711669921875E-17
+Ccoord_44 det n_21 9.1517566719699383614994303570711053907871246337890625E-16
+Ccoord_45 det n_2 1.952087189853946302964260439694044180214405059814453125E-16
+Ccoord_46 det n_19 4.32930795434740278704310867396998219192028045654296875E-17
+Ccoord_47 det n_23 4.1019262109195368803948866798236849717795848846435546875E-17
+Ccoord_48 det n_25 4.0727791279223234111039886329308501444756984710693359375E-17
+Ccoord_49 det n_6 9.614396614558289311247563091455958783626556396484375E-16
+Ccoord_50 det n_22 4.0727791279223234111039886329308501444756984710693359375E-17
+Ccoord_51 det n_27 4.0727791279223234111039886329308501444756984710693359375E-17
+Ccoord_52 det n_3 9.549134922997637442421137166093103587627410888671875E-16
+Ccoord_53 det n_36 4.0727791279223234111039886329308501444756984710693359375E-17
+Ccoord_54 det n_33 4.0727791279223234111039886329308501444756984710693359375E-17
+Ccoord_55 det n_31 4.0727791279223234111039886329308501444756984710693359375E-17
+Ccoord_56 det n_34 4.0727791279223234111039886329308501444756984710693359375E-17
+Ccoord_57 det n_8 1.9330648271136607885267721940181218087673187255859375E-16
+Ccoord_58 det n_37 4.0727791279223234111039886329308501444756984710693359375E-17
+Ccoord_59 det n_30 4.0727791279223234111039886329308501444756984710693359375E-17
+Ccoord_60 det n_7 1.92643430721143815720353131837327964603900909423828125E-16
+Ccoord_61 det n_4 9.563592113824219698159367908374406397342681884765625E-16
+Ccoord_62 det n_5 9.563592113824219698159367908374406397342681884765625E-16
+Ccoord_63 det vbe3 4.0727791279223234111039886329308501444756984710693359375E-17
+Ccoord_64 det vd1 4.0727791279223234111039886329308501444756984710693359375E-17
+Ccoord_65 det n_9 9.588743731915780887931077813846059143543243408203125E-16
+Ccoord_66 det n_12 8.5926204887175072766325456541380845010280609130859375E-16
+Ccoord_67 det n_24 4.0727791279223234111039886329308501444756984710693359375E-17
+Ccoord_68 det n_26 4.0727791279223234111039886329308501444756984710693359375E-17
+Ccoord_69 det vb2 1.956007110046693586724586566560901701450347900390625E-16
+Ccoord_70 det d1 5.9097080430331028200185983223491348326206207275390625E-16
+Ccoord_71 det n1 1.61002449005185521713201524107716977596282958984375E-15
+Ccoord_72 det d5 2.980793752417372388663352467119693756103515625E-14
+Ccoord_73 det n_13 7.937144937325678328843281406079768203198909759521484375E-17
+Ccoord_74 det b1b 3.0592591458317190955540354480035603046417236328125E-15
+Ccoord_75 det n_17 2.12731481855689519289143163405242376029491424560546875E-16
+Ccoord_76 det d2 3.5652045210833105404191201159846968948841094970703125E-16
+Ccoord_77 det d3 3.7680433286080339261303606690489687025547027587890625E-16
+Ccoord_78 det d4 1.7997541877102197105386949260719120502471923828125E-14
+Ccoord_79 det kick 6.162730056690872260105606983415782451629638671875E-15
+Ccoord_80 det r4n 1.184523364080181384583312365066376514732837677001953125E-16
+Ccoord_81 det n_18 1.28380538946287092727516210288740694522857666015625E-16
+Ccoord_82 det c2 1.00352850781163294158204735140316188335418701171875E-16
+Ccoord_83 det n_11 9.58213214966003423711526920669712126255035400390625E-16
+Ccoord_84 det dvbe 2.3334075697464442100681480951607227325439453125E-14
+Ccoord_85 det iptat 3.1482152657298197340196566074155271053314208984375E-14
+Ccoord_86 det pbias 1.46562684468541899462934452458284795284271240234375E-14
+Ccoord_87 det pcasc 2.121064595818307196850582840852439403533935546875E-15
+Ccoord_88 det r4 1.19797422289219801516679808628396131098270416259765625E-16
+Ccoord_89 det vbe 1.905267723540424729122833014116622507572174072265625E-16
+Ccoord_90 det vdd 1.275958809783483527411362956627272069454193115234375E-15
+Ccoord_91 det vref 2.65360220407811209231141447162372060120105743408203125E-16
+Ccoord_92 det vss 2.5436304440710653551604991662316024303436279296875E-14
+Ccoord_93 det vss 1.986205338641691042766979080624878406524658203125E-14
+Ccoord_94 n_14 n_15 2.280208732924770487215937464497983455657958984375E-14
+Ccoord_95 n_14 n_16 8.378542318239710906535577805698267184197902679443359375E-17
+Ccoord_96 n_14 n_21 8.23058743620236066274031827560975216329097747802734375E-17
+Ccoord_97 n_14 n_2 2.35297684020274899818758740366320125758647918701171875E-16
+Ccoord_98 n_14 n_19 8.480923835653560172165299491098267026245594024658203125E-17
+Ccoord_99 n_14 n_23 8.23058743620236066274031827560975216329097747802734375E-17
+Ccoord_100 n_14 n_25 7.0632985146221460848181550318258814513683319091796875E-17
+Ccoord_101 n_14 n_6 9.794895379372601240675066947005689144134521484375E-16
+Ccoord_102 n_14 n_22 8.23058743620236066274031827560975216329097747802734375E-17
+Ccoord_103 n_14 n_27 6.3069521298735498060494819583254866302013397216796875E-17
+Ccoord_104 n_14 n_3 9.887162440409957842035737485275603830814361572265625E-16
+Ccoord_105 n_14 n_36 6.3069521298735498060494819583254866302013397216796875E-17
+Ccoord_106 n_14 n_33 6.3069521298735498060494819583254866302013397216796875E-17
+Ccoord_107 n_14 n_31 6.3069521298735498060494819583254866302013397216796875E-17
+Ccoord_108 n_14 n_34 6.3069521298735498060494819583254866302013397216796875E-17
+Ccoord_109 n_14 n_8 2.18560293987625942069286111291148699820041656494140625E-16
+Ccoord_110 n_14 n_37 6.3069521298735498060494819583254866302013397216796875E-17
+Ccoord_111 n_14 n_30 6.3069521298735498060494819583254866302013397216796875E-17
+Ccoord_112 n_14 n_7 2.186266192212376058279232893255539238452911376953125E-16
+Ccoord_113 n_14 n_4 9.83585667512494321584881618036888539791107177734375E-16
+Ccoord_114 n_14 n_5 9.8358566751249421056257915552123449742794036865234375E-16
+Ccoord_115 n_14 vbe3 6.3069521298735498060494819583254866302013397216796875E-17
+Ccoord_116 n_14 vd1 6.3069521298735498060494819583254866302013397216796875E-17
+Ccoord_117 n_14 n_9 9.8102037924824347925323309027589857578277587890625E-16
+Ccoord_118 n_14 n_12 2.581870557766425926249365119247158872894942760467529296875E-18
+Ccoord_119 n_14 n_24 1.1072261784066942169602043577469885349273681640625E-14
+Ccoord_120 n_14 n_26 6.5886327214566104970572268939577043056488037109375E-15
+Ccoord_121 n_14 vb2 6.3069521298735498060494819583254866302013397216796875E-17
+Ccoord_122 n_14 n_13 2.2736312655071390764760508318431675434112548828125E-14
+Ccoord_123 n_14 n_17 1.621181809693833242302929420475265942513942718505859375E-16
+Ccoord_124 n_14 n_18 1.588017791911492671008687693756655789911746978759765625E-16
+Ccoord_125 n_14 n_11 1.0042037173996600785130794974975287914276123046875E-15
+Ccoord_126 n_14 dvbe 1.2779699309536660667419027959113009274005889892578125E-15
+Ccoord_127 n_14 pbias 6.3069521298735498060494819583254866302013397216796875E-17
+Ccoord_128 n_14 pcasc 6.3069521298735498060494819583254866302013397216796875E-17
+Ccoord_129 n_14 vref 7.48149529521349998528734204228385351598262786865234375E-17
+Ccoord_130 n_14 vss 4.30699051937698695891043598749092780053615570068359375E-16
+Ccoord_131 n_14 vss 6.0306407419971197469976686988957226276397705078125E-15
+Ccoord_132 n_15 n_16 2.280208732924770487215937464497983455657958984375E-14
+Ccoord_133 n_15 n_21 8.23058743620236066274031827560975216329097747802734375E-17
+Ccoord_134 n_15 n_2 2.35714911352693567980765010361210443079471588134765625E-16
+Ccoord_135 n_15 n_19 8.934468518904518929968361362625728361308574676513671875E-17
+Ccoord_136 n_15 n_23 8.23058743620236066274031827560975216329097747802734375E-17
+Ccoord_137 n_15 n_25 8.23058743620236066274031827560975216329097747802734375E-17
+Ccoord_138 n_15 n_6 9.794895379372601240675066947005689144134521484375E-16
+Ccoord_139 n_15 n_22 8.23058743620236066274031827560975216329097747802734375E-17
+Ccoord_140 n_15 n_27 6.4257182446618390514458951656706631183624267578125E-15
+Ccoord_141 n_15 n_3 9.887162440409957842035737485275603830814361572265625E-16
+Ccoord_142 n_15 n_36 6.3069521298735498060494819583254866302013397216796875E-17
+Ccoord_143 n_15 n_33 6.3069521298735498060494819583254866302013397216796875E-17
+Ccoord_144 n_15 n_31 6.3069521298735498060494819583254866302013397216796875E-17
+Ccoord_145 n_15 n_34 6.3069521298735498060494819583254866302013397216796875E-17
+Ccoord_146 n_15 n_8 2.18560293987625942069286111291148699820041656494140625E-16
+Ccoord_147 n_15 n_37 6.3069521298735498060494819583254866302013397216796875E-17
+Ccoord_148 n_15 n_30 6.3069521298735498060494819583254866302013397216796875E-17
+Ccoord_149 n_15 n_7 2.186266192212376058279232893255539238452911376953125E-16
+Ccoord_150 n_15 n_4 9.8358566751249421056257915552123449742794036865234375E-16
+Ccoord_151 n_15 n_5 9.8358566751249421056257915552123449742794036865234375E-16
+Ccoord_152 n_15 vbe3 6.3069521298735498060494819583254866302013397216796875E-17
+Ccoord_153 n_15 vd1 6.3069521298735498060494819583254866302013397216796875E-17
+Ccoord_154 n_15 n_9 9.8102037924824347925323309027589857578277587890625E-16
+Ccoord_155 n_15 n_12 1.089061453146594575513983471637402544729411602020263671875E-18
+Ccoord_156 n_15 n_24 8.2637577798632122494382201693952083587646484375E-17
+Ccoord_157 n_15 n_26 1.0549118085588194304591524996794760227203369140625E-14
+Ccoord_158 n_15 vb2 6.3069521298735498060494819583254866302013397216796875E-17
+Ccoord_159 n_15 n_13 4.59117507566356441994770420933491550385951995849609375E-17
+Ccoord_160 n_15 n_17 1.6211818096938335198586855767644010484218597412109375E-16
+Ccoord_161 n_15 n_18 1.588017791911492671008687693756655789911746978759765625E-16
+Ccoord_162 n_15 n_11 1.001341303019774198190816605347208678722381591796875E-15
+Ccoord_163 n_15 dvbe 1.2792028321655928291278314645751379430294036865234375E-15
+Ccoord_164 n_15 pbias 6.3069521298735498060494819583254866302013397216796875E-17
+Ccoord_165 n_15 pcasc 6.3069521298735498060494819583254866302013397216796875E-17
+Ccoord_166 n_15 vref 7.48149529521349998528734204228385351598262786865234375E-17
+Ccoord_167 n_15 vss 4.10462335772104058850828778304276056587696075439453125E-16
+Ccoord_168 n_15 vss 6.02321134373455624455573342856951057910919189453125E-15
+Ccoord_169 n_16 n_21 7.41498230147937231748755948501639068126678466796875E-15
+Ccoord_170 n_16 n_2 2.39413111893715224720580181383411400020122528076171875E-16
+Ccoord_171 n_16 n_19 9.8817770994181708399395347441895864903926849365234375E-17
+Ccoord_172 n_16 n_23 7.47424105145376438397164520210935734212398529052734375E-17
+Ccoord_173 n_16 n_25 7.47424105145376438397164520210935734212398529052734375E-17
+Ccoord_174 n_16 n_6 9.794895379372601240675066947005689144134521484375E-16
+Ccoord_175 n_16 n_22 7.47424105145376438397164520210935734212398529052734375E-17
+Ccoord_176 n_16 n_27 1.027998277250133440929857897572219371795654296875E-14
+Ccoord_177 n_16 n_3 9.887162440409957842035737485275603830814361572265625E-16
+Ccoord_178 n_16 n_36 6.3069521298735498060494819583254866302013397216796875E-17
+Ccoord_179 n_16 n_33 6.3069521298735498060494819583254866302013397216796875E-17
+Ccoord_180 n_16 n_31 6.3069521298735498060494819583254866302013397216796875E-17
+Ccoord_181 n_16 n_34 6.3069521298735498060494819583254866302013397216796875E-17
+Ccoord_182 n_16 n_8 2.19649316676947814475084896912449039518833160400390625E-16
+Ccoord_183 n_16 n_37 6.3069521298735498060494819583254866302013397216796875E-17
+Ccoord_184 n_16 n_30 6.3069521298735498060494819583254866302013397216796875E-17
+Ccoord_185 n_16 n_7 2.186266192212376058279232893255539238452911376953125E-16
+Ccoord_186 n_16 n_4 9.8358566751249421056257915552123449742794036865234375E-16
+Ccoord_187 n_16 n_5 9.8358566751249421056257915552123449742794036865234375E-16
+Ccoord_188 n_16 vbe3 6.353770071035136357551209584926255047321319580078125E-17
+Ccoord_189 n_16 vd1 6.3069521298735498060494819583254866302013397216796875E-17
+Ccoord_190 n_16 n_9 9.8102037924824347925323309027589857578277587890625E-16
+Ccoord_191 n_16 n_12 5.86567568918465258830108322030127965263091027736663818359375E-19
+Ccoord_192 n_16 n_24 7.47424105145376438397164520210935734212398529052734375E-17
+Ccoord_193 n_16 n_26 7.507411395114617358448327877340489067137241363525390625E-17
+Ccoord_194 n_16 vb2 6.3069521298735498060494819583254866302013397216796875E-17
+Ccoord_195 n_16 n_13 4.4737616792574382007519062653955188579857349395751953125E-17
+Ccoord_196 n_16 n_17 2.2467827462075060651613966911099851131439208984375E-14
+Ccoord_197 n_16 n_18 1.622449383855482374361400843554292805492877960205078125E-16
+Ccoord_198 n_16 n_11 9.98208583593689358082201579236425459384918212890625E-16
+Ccoord_199 n_16 dvbe 1.263714511697939801848633578629232943058013916015625E-15
+Ccoord_200 n_16 pbias 6.3069521298735498060494819583254866302013397216796875E-17
+Ccoord_201 n_16 pcasc 6.3069521298735498060494819583254866302013397216796875E-17
+Ccoord_202 n_16 vref 7.48149529521349998528734204228385351598262786865234375E-17
+Ccoord_203 n_16 vss 4.06711343079778853137895566760562360286712646484375E-16
+Ccoord_204 n_16 vss 6.0863620310590675899220514111220836639404296875E-15
+Ccoord_205 n_21 n_2 2.2564791673713127551081925048492848873138427734375E-14
+Ccoord_206 n_21 n_19 1.741816579405032872074343686108477413654327392578125E-15
+Ccoord_207 n_21 n_23 8.9852574240844429454000419354997575283050537109375E-16
+Ccoord_208 n_21 n_25 7.553101817188544175873943231636076234281063079833984375E-17
+Ccoord_209 n_21 n_6 8.978651733080520447316530407988466322422027587890625E-16
+Ccoord_210 n_21 n_22 2.2399319959257955048315125168301165103912353515625E-14
+Ccoord_211 n_21 n_27 1.674457162456441938758189280633814632892608642578125E-15
+Ccoord_212 n_21 n_3 1.000927307684747802341007627546787261962890625E-15
+Ccoord_213 n_21 n_36 7.528058494248764109801896893259254284203052520751953125E-17
+Ccoord_214 n_21 n_33 7.528058494248764109801896893259254284203052520751953125E-17
+Ccoord_215 n_21 n_31 7.528058494248764109801896893259254284203052520751953125E-17
+Ccoord_216 n_21 n_34 7.528058494248764109801896893259254284203052520751953125E-17
+Ccoord_217 n_21 n_8 6.5454220206351065858285664944560267031192779541015625E-16
+Ccoord_218 n_21 n_37 1.093921060111796850211618448156514205038547515869140625E-16
+Ccoord_219 n_21 n_30 7.528058494248764109801896893259254284203052520751953125E-17
+Ccoord_220 n_21 n_7 2.37451416780027957376120184562751092016696929931640625E-16
+Ccoord_221 n_21 n_4 9.941768673595199334869221274857409298419952392578125E-16
+Ccoord_222 n_21 n_5 9.957077086705032886726485230610705912113189697265625E-16
+Ccoord_223 n_21 vbe3 8.078342307896313467807658525998704135417938232421875E-16
+Ccoord_224 n_21 vd1 7.36881982695629655921720768674276769161224365234375E-17
+Ccoord_225 n_21 n_9 9.056480439408509663934410127694718539714813232421875E-16
+Ccoord_226 n_21 n_24 7.59046749393584574416848909095278941094875335693359375E-17
+Ccoord_227 n_21 n_26 7.548919860869697517902210393003770150244235992431640625E-17
+Ccoord_228 n_21 vb2 7.36881982695629655921720768674276769161224365234375E-17
+Ccoord_229 n_21 n_13 4.3881041067565677848971716912274132482707500457763671875E-17
+Ccoord_230 n_21 n_17 5.4371701385703160962215019225141077185980975627899169921875E-19
+Ccoord_231 n_21 n_18 1.00950218284907486908374973921809214516542851924896240234375E-18
+Ccoord_232 n_21 n_11 9.975556494537016760659753344953060150146484375E-16
+Ccoord_233 n_21 dvbe 1.36675733702106416700416957610286772251129150390625E-15
+Ccoord_234 n_21 pbias 7.36881982695629655921720768674276769161224365234375E-17
+Ccoord_235 n_21 pcasc 7.36881982695629655921720768674276769161224365234375E-17
+Ccoord_236 n_21 vref 8.6788799392420623579624816557043232023715972900390625E-17
+Ccoord_237 n_21 vss 5.3619538406667610619393826709710992872714996337890625E-16
+Ccoord_238 n_21 vss 8.3385234637359548770518813398666679859161376953125E-15
+Ccoord_239 n_2 n_19 2.4733632024668633420105834375135600566864013671875E-14
+Ccoord_240 n_2 n_23 1.78446338449134989101452219983912073075771331787109375E-16
+Ccoord_241 n_2 n_25 1.77051424080307662212163677395437844097614288330078125E-16
+Ccoord_242 n_2 n_6 1.4964428966240748142269012532779015600681304931640625E-15
+Ccoord_243 n_2 n_22 1.80358389292486431809692248862120322883129119873046875E-16
+Ccoord_244 n_2 n_27 1.77051424080307662212163677395437844097614288330078125E-16
+Ccoord_245 n_2 n_3 1.102698146822568059377545068855397403240203857421875E-15
+Ccoord_246 n_2 n_36 1.3276937559210107764329222845844924449920654296875E-14
+Ccoord_247 n_2 n_33 1.77051424080307662212163677395437844097614288330078125E-16
+Ccoord_248 n_2 n_31 1.77051424080307662212163677395437844097614288330078125E-16
+Ccoord_249 n_2 n_34 1.77051424080307662212163677395437844097614288330078125E-16
+Ccoord_250 n_2 n_8 9.1035554156481779397580567092518322169780731201171875E-16
+Ccoord_251 n_2 n_37 1.28056648942429109894192151841707527637481689453125E-14
+Ccoord_252 n_2 n_30 1.77051424080307662212163677395437844097614288330078125E-16
+Ccoord_253 n_2 n_7 2.158861463758779297705814315122552216053009033203125E-15
+Ccoord_254 n_2 n_4 1.0451243475002465199708012733026407659053802490234375E-15
+Ccoord_255 n_2 n_5 1.0391532034265793527083587832748889923095703125E-15
+Ccoord_256 n_2 vbe3 1.2613904259747099612098963916650973260402679443359375E-16
+Ccoord_257 n_2 vd1 1.2613904259747099612098963916650973260402679443359375E-16
+Ccoord_258 n_2 n_9 9.580988882687593299891659626155160367488861083984375E-16
+Ccoord_259 n_2 n_12 1.5299180965825132094693117323913611471652984619140625E-16
+Ccoord_260 n_2 n_24 1.77888424878623940816879667181638069450855255126953125E-16
+Ccoord_261 n_2 n_26 1.77051424080307662212163677395437844097614288330078125E-16
+Ccoord_262 n_2 vb2 3.35499981786954115658971886659855954349040985107421875E-16
+Ccoord_263 n_2 n_13 1.96872850725817005734796794058638624846935272216796875E-16
+Ccoord_264 n_2 n_17 1.547049611082687292640258647224982269108295440673828125E-16
+Ccoord_265 n_2 n_18 1.57053229036391239770154015786829404532909393310546875E-16
+Ccoord_266 n_2 n_11 1.2696884681187399213087019234080798923969268798828125E-15
+Ccoord_267 n_2 dvbe 1.106116277574542561268344798008911311626434326171875E-15
+Ccoord_268 n_2 pbias 1.2613904259747099612098963916650973260402679443359375E-16
+Ccoord_269 n_2 pcasc 1.2613904259747099612098963916650973260402679443359375E-16
+Ccoord_270 n_2 vref 1.50168594631852447829345464924699626863002777099609375E-16
+Ccoord_271 n_2 vss 1.1456894839712774558648789025028236210346221923828125E-15
+Ccoord_272 n_2 vss 1.1886028039300189362847959273494780063629150390625E-14
+Ccoord_273 n_19 n_23 1.74077607735554718004777896567247807979583740234375E-15
+Ccoord_274 n_19 n_25 1.7405256441261496291872390429489314556121826171875E-15
+Ccoord_275 n_19 n_6 1.215120401973027668418581015430390834808349609375E-13
+Ccoord_276 n_19 n_22 1.74099061558242507175009450293146073818206787109375E-15
+Ccoord_277 n_19 n_27 1.7405256441261496291872390429489314556121826171875E-15
+Ccoord_278 n_19 n_3 4.08801644017390852781090870848856866359710693359375E-15
+Ccoord_279 n_19 n_36 1.7405256441261496291872390429489314556121826171875E-15
+Ccoord_280 n_19 n_33 4.219009224788816680984382401220500469207763671875E-15
+Ccoord_281 n_19 n_31 1.6397963228983627459456329233944416046142578125E-15
+Ccoord_282 n_19 n_34 1.706949203716887186743633719743229448795318603515625E-15
+Ccoord_283 n_19 n_8 1.8676923793837445497700855412404052913188934326171875E-15
+Ccoord_284 n_19 n_37 1.7405256441261496291872390429489314556121826171875E-15
+Ccoord_285 n_19 n_30 6.974326806439673731574657722376286983489990234375E-15
+Ccoord_286 n_19 n_7 1.8676923793837445497700855412404052913188934326171875E-15
+Ccoord_287 n_19 n_4 5.845570052888678702629476902075111865997314453125E-15
+Ccoord_288 n_19 n_5 3.466933283551755895501855775364674627780914306640625E-15
+Ccoord_289 n_19 vbe3 1.677350401798584744739173402194865047931671142578125E-15
+Ccoord_290 n_19 vd1 3.491550768951097172276831770432181656360626220703125E-15
+Ccoord_291 n_19 n_9 1.217584173491932375554824830032885074615478515625E-13
+Ccoord_292 n_19 n_24 1.740734257792359240823998334235511720180511474609375E-15
+Ccoord_293 n_19 n_26 1.7405256441261496291872390429489314556121826171875E-15
+Ccoord_294 n_19 vb2 1.677350401798584744739173402194865047931671142578125E-15
+Ccoord_295 n_19 n_13 4.3881041067565677848971716912274132482707500457763671875E-17
+Ccoord_296 n_19 b1b 1.1222962450271535550516688317657099105417728424072265625E-16
+Ccoord_297 n_19 n_17 3.208476843059003547065088923773146234452724456787109375E-17
+Ccoord_298 n_19 n_18 2.2977214578914907150419821846298873424530029296875E-14
+Ccoord_299 n_19 n_11 9.979999699274799684900472129811532795429229736328125E-16
+Ccoord_300 n_19 dvbe 8.7018813345286971649983343013445846736431121826171875E-16
+Ccoord_301 n_19 pbias 3.500693616971080501798496698029339313507080078125E-15
+Ccoord_302 n_19 pcasc 1.677350401798584744739173402194865047931671142578125E-15
+Ccoord_303 n_19 vref 1.991261349194988650168625099468044936656951904296875E-15
+Ccoord_304 n_19 vss 5.4519749068872958019937868812121450901031494140625E-16
+Ccoord_305 n_19 vss 7.3863123273120692147131194360554218292236328125E-14
+Ccoord_306 n_23 n_25 8.482534608534706421778537333011627197265625E-16
+Ccoord_307 n_23 n_6 9.0927318924800892840920596427167765796184539794921875E-16
+Ccoord_308 n_23 n_22 2.3226226431266074001769084134139120578765869140625E-14
+Ccoord_309 n_23 n_27 7.7649477916241271824304703841335140168666839599609375E-17
+Ccoord_310 n_23 n_3 1.0053591234803882503712202378665097057819366455078125E-15
+Ccoord_311 n_23 n_36 7.731334357672060841881744863712810911238193511962890625E-17
+Ccoord_312 n_23 n_33 7.731334357672060841881744863712810911238193511962890625E-17
+Ccoord_313 n_23 n_31 7.731334357672060841881744863712810911238193511962890625E-17
+Ccoord_314 n_23 n_34 7.731334357672060841881744863712810911238193511962890625E-17
+Ccoord_315 n_23 n_8 5.53375574321355312434889128780923783779144287109375E-16
+Ccoord_316 n_23 n_37 1.0907800834379101362348052361994632519781589508056640625E-16
+Ccoord_317 n_23 n_30 7.731334357672060841881744863712810911238193511962890625E-17
+Ccoord_318 n_23 n_7 2.395731979000037537019807132310234010219573974609375E-16
+Ccoord_319 n_23 n_4 9.9629864847949611839084127495880238711833953857421875E-16
+Ccoord_320 n_23 n_5 9.978294897904793625542652080184780061244964599609375E-16
+Ccoord_321 n_23 vbe3 3.2946890911634907350702405892661772668361663818359375E-16
+Ccoord_322 n_23 vd1 7.6495904829125660473465586619568057358264923095703125E-17
+Ccoord_323 n_23 n_9 9.1069000263400756711718031510827131569385528564453125E-16
+Ccoord_324 n_23 n_24 2.239062938361929155917096068151295185089111328125E-14
+Ccoord_325 n_23 n_26 7.79374335735914247624833706140634603798389434814453125E-17
+Ccoord_326 n_23 vb2 7.873015696271935814909426198937580920755863189697265625E-17
+Ccoord_327 n_23 n_13 4.3881041067565677848971716912274132482707500457763671875E-17
+Ccoord_328 n_23 n_11 9.975556494537016760659753344953060150146484375E-16
+Ccoord_329 n_23 dvbe 1.274726977010095740894257687614299356937408447265625E-15
+Ccoord_330 n_23 pbias 7.873015696271935814909426198937580920755863189697265625E-17
+Ccoord_331 n_23 pcasc 7.873015696271935814909426198937580920755863189697265625E-17
+Ccoord_332 n_23 vref 9.0951675421441502411568080788129009306430816650390625E-17
+Ccoord_333 n_23 vss 6.352365666792041398736046176054514944553375244140625E-16
+Ccoord_334 n_23 vss 7.2283388717239329679387083160690963268280029296875E-15
+Ccoord_335 n_25 n_6 9.0845575050041393883049067881074734032154083251953125E-16
+Ccoord_336 n_25 n_22 8.4709014265473070448564385515055619180202484130859375E-16
+Ccoord_337 n_25 n_27 7.797545364949916291141818192045320756733417510986328125E-17
+Ccoord_338 n_25 n_3 1.009579700034096472194278248935006558895111083984375E-15
+Ccoord_339 n_25 n_36 7.6495904829125660473465586619568057358264923095703125E-17
+Ccoord_340 n_25 n_33 7.6495904829125660473465586619568057358264923095703125E-17
+Ccoord_341 n_25 n_31 7.899926882363765556771539877445320598781108856201171875E-17
+Ccoord_342 n_25 n_34 7.6495904829125660473465586619568057358264923095703125E-17
+Ccoord_343 n_25 n_8 2.32973753265716732041568093336536549031734466552734375E-16
+Ccoord_344 n_25 n_37 7.6495904829125660473465586619568057358264923095703125E-17
+Ccoord_345 n_25 n_30 8.35347156561472570235338253041845746338367462158203125E-17
+Ccoord_346 n_25 n_7 2.38755759152408819634416659027920104563236236572265625E-16
+Ccoord_347 n_25 n_4 9.9548120973190112881212598949787206947803497314453125E-16
+Ccoord_348 n_25 n_5 9.9701205104288437297554992255754768848419189453125E-16
+Ccoord_349 n_25 vbe3 7.67873756590977951663745670884964056313037872314453125E-17
+Ccoord_350 n_25 vd1 7.6495904829125660473465586619568057358264923095703125E-17
+Ccoord_351 n_25 n_9 9.0845575050041393883049067881074734032154083251953125E-16
+Ccoord_352 n_25 n_24 2.237375214031550996196529013104736804962158203125E-14
+Ccoord_353 n_25 n_26 2.2387577692738101831082531134597957134246826171875E-14
+Ccoord_354 n_25 vb2 7.6495904829125660473465586619568057358264923095703125E-17
+Ccoord_355 n_25 n_13 3.6317577220079715061284986177270184271037578582763671875E-17
+Ccoord_356 n_25 n_11 9.975556494537016760659753344953060150146484375E-16
+Ccoord_357 n_25 dvbe 1.2263684926060374191791879638913087546825408935546875E-15
+Ccoord_358 n_25 pbias 7.6495904829125660473465586619568057358264923095703125E-17
+Ccoord_359 n_25 pcasc 7.6495904829125660473465586619568057358264923095703125E-17
+Ccoord_360 n_25 vref 9.0951675421441502411568080788129009306430816650390625E-17
+Ccoord_361 n_25 vss 6.1518194090574229715429055431741289794445037841796875E-16
+Ccoord_362 n_25 vss 6.8724659975115596211026058881543576717376708984375E-15
+Ccoord_363 n_6 n_22 9.0845575050041393883049067881074734032154083251953125E-16
+Ccoord_364 n_6 n_27 8.76456897330062378870252359774895012378692626953125E-16
+Ccoord_365 n_6 n_3 2.1715698032982029275217428221367299556732177734375E-15
+Ccoord_366 n_6 n_36 1.7632198859254877287838780830497853457927703857421875E-15
+Ccoord_367 n_6 n_33 3.27919055600103792613708719727583229541778564453125E-15
+Ccoord_368 n_6 n_31 2.506744959205622347298003660398535430431365966796875E-15
+Ccoord_369 n_6 n_34 2.5118136114643849765570848830975592136383056640625E-15
+Ccoord_370 n_6 n_8 1.026779019076734744686518752132542431354522705078125E-15
+Ccoord_371 n_6 n_37 1.37796299974360891837932285852730274200439453125E-15
+Ccoord_372 n_6 n_30 3.00291115581976431059274545987136662006378173828125E-15
+Ccoord_373 n_6 n_7 2.4210084450445112480565512669272720813751220703125E-14
+Ccoord_374 n_6 n_4 1.9009188709710198583735518695903010666370391845703125E-15
+Ccoord_375 n_6 n_5 2.4899236726921724738303964841179549694061279296875E-14
+Ccoord_376 n_6 vbe3 7.59001921596189621510575307183898985385894775390625E-16
+Ccoord_377 n_6 vd1 1.82202926655602670535927245509810745716094970703125E-15
+Ccoord_378 n_6 n_9 4.3752316280991152552815037779510021209716796875E-15
+Ccoord_379 n_6 n_12 9.071337818185438717222268678597174584865570068359375E-16
+Ccoord_380 n_6 n_24 8.95029366970023776417519911774434149265289306640625E-16
+Ccoord_381 n_6 n_26 8.95029366970023776417519911774434149265289306640625E-16
+Ccoord_382 n_6 vb2 5.971122456255186961016079294495284557342529296875E-14
+Ccoord_383 n_6 n_13 9.527375938586042369848883026861585676670074462890625E-16
+Ccoord_384 n_6 n_17 9.164200166385245704958606438594870269298553466796875E-16
+Ccoord_385 n_6 n_18 9.164200166385245704958606438594870269298553466796875E-16
+Ccoord_386 n_6 n_11 2.46044340962366714364861763897351920604705810546875E-15
+Ccoord_387 n_6 dvbe 3.012609169975942524644096920383162796497344970703125E-15
+Ccoord_388 n_6 pbias 8.787769781308387706530993455089628696441650390625E-16
+Ccoord_389 n_6 pcasc 1.1882240327644886246361011217231862246990203857421875E-15
+Ccoord_390 n_6 vref 1.02224772579038702957632267498411238193511962890625E-15
+Ccoord_391 n_6 vss 4.67023458361841736774522360065020620822906494140625E-15
+Ccoord_392 n_6 vss 5.12210540441616188900297856889665126800537109375E-14
+Ccoord_393 n_22 n_27 7.67045184953349945544687216170132160186767578125E-17
+Ccoord_394 n_22 n_3 1.0021426275713858355942420530482195317745208740234375E-15
+Ccoord_395 n_22 n_36 7.6495904829125660473465586619568057358264923095703125E-17
+Ccoord_396 n_22 n_33 7.6495904829125660473465586619568057358264923095703125E-17
+Ccoord_397 n_22 n_31 7.6495904829125660473465586619568057358264923095703125E-17
+Ccoord_398 n_22 n_34 7.6495904829125660473465586619568057358264923095703125E-17
+Ccoord_399 n_22 n_8 2.394875715257796799928513564736931584775447845458984375E-16
+Ccoord_400 n_22 n_37 7.6495904829125660473465586619568057358264923095703125E-17
+Ccoord_401 n_22 n_30 7.6495904829125660473465586619568057358264923095703125E-17
+Ccoord_402 n_22 n_7 2.38755759152408819634416659027920104563236236572265625E-16
+Ccoord_403 n_22 n_4 9.9548120973190112881212598949787206947803497314453125E-16
+Ccoord_404 n_22 n_5 9.9701205104288437297554992255754768848419189453125E-16
+Ccoord_405 n_22 vbe3 7.6495904829125660473465586619568057358264923095703125E-17
+Ccoord_406 n_22 vd1 7.6495904829125660473465586619568057358264923095703125E-17
+Ccoord_407 n_22 n_9 9.0845575050041393883049067881074734032154083251953125E-16
+Ccoord_408 n_22 n_24 8.02097057830928605870468572902609594166278839111328125E-17
+Ccoord_409 n_22 n_26 7.683203916864632387895284182377508841454982757568359375E-17
+Ccoord_410 n_22 vb2 7.6495904829125660473465586619568057358264923095703125E-17
+Ccoord_411 n_22 n_13 4.3881041067565677848971716912274132482707500457763671875E-17
+Ccoord_412 n_22 n_18 5.008664587955978519939748139222501777112483978271484375E-19
+Ccoord_413 n_22 n_11 9.975556494537016760659753344953060150146484375E-16
+Ccoord_414 n_22 dvbe 1.2622816446295310743863637981121428310871124267578125E-15
+Ccoord_415 n_22 pbias 7.6495904829125660473465586619568057358264923095703125E-17
+Ccoord_416 n_22 pcasc 7.6495904829125660473465586619568057358264923095703125E-17
+Ccoord_417 n_22 vref 9.0951675421441502411568080788129009306430816650390625E-17
+Ccoord_418 n_22 vss 6.36502693088814464061897524516098201274871826171875E-16
+Ccoord_419 n_22 vss 7.1631051809720478473764160298742353916168212890625E-15
+Ccoord_420 n_27 n_3 2.376058686248554607800542726181447505950927734375E-14
+Ccoord_421 n_27 n_36 6.3069521298735498060494819583254866302013397216796875E-17
+Ccoord_422 n_27 n_33 7.010833212575708073277525045341462828218936920166015625E-17
+Ccoord_423 n_27 n_31 7.61382587364946294972156692892895080149173736572265625E-17
+Ccoord_424 n_27 n_34 6.557288529324749315474463173814001493155956268310546875E-17
+Ccoord_425 n_27 n_8 2.19329672506056727598888755892403423786163330078125E-16
+Ccoord_426 n_27 n_37 6.3069521298735498060494819583254866302013397216796875E-17
+Ccoord_427 n_27 n_30 9.40519679919326334616158646895200945436954498291015625E-17
+Ccoord_428 n_27 n_7 2.25329375622018712732597123249433934688568115234375E-16
+Ccoord_429 n_27 n_4 9.82054826201510966399155222461558878421783447265625E-16
+Ccoord_430 n_27 n_5 9.83585667512494321584881618036888539791107177734375E-16
+Ccoord_431 n_27 vbe3 6.3069521298735498060494819583254866302013397216796875E-17
+Ccoord_432 n_27 vd1 6.3069521298735498060494819583254866302013397216796875E-17
+Ccoord_433 n_27 n_9 8.85743132150043077643886135774664580821990966796875E-16
+Ccoord_434 n_27 n_24 6.369361129560631440416074156019021756947040557861328125E-17
+Ccoord_435 n_27 n_26 2.3974455479306438832054482190869748592376708984375E-14
+Ccoord_436 n_27 vb2 6.3069521298735498060494819583254866302013397216796875E-17
+Ccoord_437 n_27 n_13 3.6317577220079715061284986177270184271037578582763671875E-17
+Ccoord_438 n_27 n_11 9.975556494537016760659753344953060150146484375E-16
+Ccoord_439 n_27 dvbe 1.2252660301136604203975366544909775257110595703125E-15
+Ccoord_440 n_27 pbias 6.3069521298735498060494819583254866302013397216796875E-17
+Ccoord_441 n_27 pcasc 6.3069521298735498060494819583254866302013397216796875E-17
+Ccoord_442 n_27 vref 7.48149529521349998528734204228385351598262786865234375E-17
+Ccoord_443 n_27 vss 4.19794267408564569787898790309554897248744964599609375E-16
+Ccoord_444 n_27 vss 7.4568197913730358550310484133660793304443359375E-15
+Ccoord_445 n_3 n_36 7.59306195601402666994772516773082315921783447265625E-16
+Ccoord_446 n_3 n_33 8.8914178925747961557135568000376224517822265625E-14
+Ccoord_447 n_3 n_31 9.0485425277323884074576199054718017578125E-14
+Ccoord_448 n_3 n_34 1.175738643081039480620120230014435946941375732421875E-15
+Ccoord_449 n_3 n_8 9.0743048342377363724153838120400905609130859375E-16
+Ccoord_450 n_3 n_37 7.588889682689841098550687092938460409641265869140625E-16
+Ccoord_451 n_3 n_30 2.446786083298452041390191880054771900177001953125E-14
+Ccoord_452 n_3 n_7 9.0614485182296633514198447301168926060199737548828125E-16
+Ccoord_453 n_3 n_4 2.470509975209767450365916374721564352512359619140625E-15
+Ccoord_454 n_3 n_5 1.66440114371344183297196650528348982334136962890625E-15
+Ccoord_455 n_3 vbe3 1.256050609134118811738289878121577203273773193359375E-15
+Ccoord_456 n_3 vd1 1.4859590137513836172189485296257771551609039306640625E-15
+Ccoord_457 n_3 n_9 1.94139464001002526316597140976227819919586181640625E-15
+Ccoord_458 n_3 n_12 9.2564672274226023063192769768647849559783935546875E-16
+Ccoord_459 n_3 n_24 9.927218449202837025069356968742795288562774658203125E-16
+Ccoord_460 n_3 n_26 1.0064708298854778689701561233960092067718505859375E-15
+Ccoord_461 n_3 vb2 7.568342555848259767259378349990583956241607666015625E-16
+Ccoord_462 n_3 n_13 9.61964299962339897120955356513150036334991455078125E-16
+Ccoord_463 n_3 n_17 9.2564672274226023063192769768647849559783935546875E-16
+Ccoord_464 n_3 n_18 9.2564672274226023063192769768647849559783935546875E-16
+Ccoord_465 n_3 n_11 2.688222379268371042826402117498219013214111328125E-15
+Ccoord_466 n_3 dvbe 2.94222775898660149351826476049609482288360595703125E-15
+Ccoord_467 n_3 pbias 7.51386982884333587406899823690764605998992919921875E-16
+Ccoord_468 n_3 pcasc 1.92014795027304696617420631810091435909271240234375E-15
+Ccoord_469 n_3 vref 8.9777943542561988721217858255840837955474853515625E-16
+Ccoord_470 n_3 vss 4.405785230857720335961857927031815052032470703125E-15
+Ccoord_471 n_3 vss 5.016863356284468267176634981296956539154052734375E-14
+Ccoord_472 n_36 n_33 1.6454013260823661113363414187915623188018798828125E-15
+Ccoord_473 n_36 n_31 1.65397096924408426588115617050789296627044677734375E-15
+Ccoord_474 n_36 n_34 2.4455767477729768444305591401644051074981689453125E-14
+Ccoord_475 n_36 n_8 4.4621019054810340254135780924116261303424835205078125E-16
+Ccoord_476 n_36 n_37 2.5212679881358592837159449118189513683319091796875E-14
+Ccoord_477 n_36 n_30 1.73634330218617183305696016759611666202545166015625E-15
+Ccoord_478 n_36 n_7 1.3814239934083122562924472731538116931915283203125E-14
+Ccoord_479 n_36 n_4 1.13668320644926534868091039243154227733612060546875E-15
+Ccoord_480 n_36 n_5 1.041140090852402000365373169188387691974639892578125E-15
+Ccoord_481 n_36 vbe3 2.6457688418468483515511024961597286164760589599609375E-16
+Ccoord_482 n_36 vd1 2.81365104389316000865761679960996843874454498291015625E-16
+Ccoord_483 n_36 n_9 1.1136559861912613822454432010999880731105804443359375E-15
+Ccoord_484 n_36 n_24 6.3069521298735498060494819583254866302013397216796875E-17
+Ccoord_485 n_36 n_26 6.3069521298735498060494819583254866302013397216796875E-17
+Ccoord_486 n_36 vb2 1.087342204553519930954053052118979394435882568359375E-15
+Ccoord_487 n_36 n_13 3.6317577220079715061284986177270184271037578582763671875E-17
+Ccoord_488 n_36 n_11 9.268450222669424309884789181523956358432769775390625E-16
+Ccoord_489 n_36 dvbe 8.52370699577746027131297523737885057926177978515625E-16
+Ccoord_490 n_36 pbias 2.81696140519973103888418108908808790147304534912109375E-16
+Ccoord_491 n_36 pcasc 2.95119831076098682043351573156542144715785980224609375E-16
+Ccoord_492 n_36 vref 2.362580248359593237950093680410645902156829833984375E-15
+Ccoord_493 n_36 vss 4.74055353288079128759591185371391475200653076171875E-16
+Ccoord_494 n_36 vss 1.50681747949600293168259668163955211639404296875E-14
+Ccoord_495 n_33 n_31 2.9292072329539632136174986953847110271453857421875E-14
+Ccoord_496 n_33 n_34 2.8837840137953065777765004895627498626708984375E-14
+Ccoord_497 n_33 n_8 1.8333939023380245725292070346768014132976531982421875E-15
+Ccoord_498 n_33 n_37 1.680052396078052456829254879266954958438873291015625E-15
+Ccoord_499 n_33 n_30 4.16046542582932676879181599360890686511993408203125E-15
+Ccoord_500 n_33 n_7 1.8396102561218679039001244746032170951366424560546875E-15
+Ccoord_501 n_33 n_4 4.023229928967143820273122400976717472076416015625E-15
+Ccoord_502 n_33 n_5 2.6769120655314200263319435180164873600006103515625E-15
+Ccoord_503 n_33 vbe3 1.65799689332970245914111728779971599578857421875E-15
+Ccoord_504 n_33 vd1 2.35364092964673243812967484700493514537811279296875E-15
+Ccoord_505 n_33 n_9 3.09365173560834971766553280758671462535858154296875E-15
+Ccoord_506 n_33 n_24 6.3069521298735498060494819583254866302013397216796875E-17
+Ccoord_507 n_33 n_26 6.557288529324749315474463173814001493155956268310546875E-17
+Ccoord_508 n_33 vb2 1.67478511353433390240752487443387508392333984375E-15
+Ccoord_509 n_33 n_13 3.6317577220079715061284986177270184271037578582763671875E-17
+Ccoord_510 n_33 n_11 1.4342358282845550920825417051673866808414459228515625E-15
+Ccoord_511 n_33 dvbe 8.5891228625671356411430679145269095897674560546875E-16
+Ccoord_512 n_33 pbias 1.677350401798584744739173402194865047931671142578125E-15
+Ccoord_513 n_33 pcasc 3.657913967746837524686043252586387097835540771484375E-15
+Ccoord_514 n_33 vref 1.9766163370455718251150756259448826313018798828125E-15
+Ccoord_515 n_33 vss 5.8625568627790258791065980403800494968891143798828125E-16
+Ccoord_516 n_33 vss 6.852933932211482215279829688370227813720703125E-14
+Ccoord_517 n_31 n_34 7.57094844383316267766304008546285331249237060546875E-15
+Ccoord_518 n_31 n_8 1.8308286140737737301975585069158114492893218994140625E-15
+Ccoord_519 n_31 n_37 1.70333064208952134066521466593258082866668701171875E-15
+Ccoord_520 n_31 n_30 2.7374782430454661863450382952578365802764892578125E-14
+Ccoord_521 n_31 n_7 1.8370449678576170615684759468422271311283111572265625E-15
+Ccoord_522 n_31 n_4 3.223280795077474447651866285013966262340545654296875E-15
+Ccoord_523 n_31 n_5 9.25274438663077347655416815541684627532958984375E-14
+Ccoord_524 n_31 vbe3 3.8379106275939438575051099178381264209747314453125E-15
+Ccoord_525 n_31 vd1 3.799604981291086147621172131039202213287353515625E-15
+Ccoord_526 n_31 n_9 2.489956739000991348120805923826992511749267578125E-15
+Ccoord_527 n_31 n_24 6.3069521298735498060494819583254866302013397216796875E-17
+Ccoord_528 n_31 n_26 7.010833212575708073277525045341462828218936920166015625E-17
+Ccoord_529 n_31 vb2 1.67478511353433390240752487443387508392333984375E-15
+Ccoord_530 n_31 n_13 3.6317577220079715061284986177270184271037578582763671875E-17
+Ccoord_531 n_31 b1b 3.651037820052090154820945144820143468677997589111328125E-17
+Ccoord_532 n_31 c2 8.7433057707124624269301449430713546462357044219970703125E-19
+Ccoord_533 n_31 n_11 1.70486000410765115020694793201982975006103515625E-15
+Ccoord_534 n_31 dvbe 2.8744758753892067915103325503878295421600341796875E-15
+Ccoord_535 n_31 pbias 2.53676716759228870756714968592859804630279541015625E-15
+Ccoord_536 n_31 pcasc 1.65799689332970245914111728779971599578857421875E-15
+Ccoord_537 n_31 vref 1.993302102424736599317611762671731412410736083984375E-15
+Ccoord_538 n_31 vss 5.8614385475542041259444658862776122987270355224609375E-16
+Ccoord_539 n_31 vss 6.845918872400017107793246395885944366455078125E-14
+Ccoord_540 n_34 n_8 1.8333939023380245725292070346768014132976531982421875E-15
+Ccoord_541 n_34 n_37 1.686264165276018633932153534260578453540802001953125E-15
+Ccoord_542 n_34 n_30 1.748238904486094202894719273899681866168975830078125E-15
+Ccoord_543 n_34 n_7 1.8396102561218679039001244746032170951366424560546875E-15
+Ccoord_544 n_34 n_4 4.0965119271703951397967102820985019207000732421875E-15
+Ccoord_545 n_34 n_5 3.217114562937174238044235607958398759365081787109375E-15
+Ccoord_546 n_34 vbe3 1.67478511353433390240752487443387508392333984375E-15
+Ccoord_547 n_34 vd1 1.67478511353433390240752487443387508392333984375E-15
+Ccoord_548 n_34 n_9 2.509310247469873189629652188159525394439697265625E-15
+Ccoord_549 n_34 n_24 6.3069521298735498060494819583254866302013397216796875E-17
+Ccoord_550 n_34 n_26 6.3069521298735498060494819583254866302013397216796875E-17
+Ccoord_551 n_34 vb2 1.67478511353433390240752487443387508392333984375E-15
+Ccoord_552 n_34 n_13 3.6317577220079715061284986177270184271037578582763671875E-17
+Ccoord_553 n_34 b1b 9.768617866443547737009822640175116248428821563720703125E-17
+Ccoord_554 n_34 n_11 8.64593590463911283450215705670416355133056640625E-14
+Ccoord_555 n_34 dvbe 8.633341051103451402326527386321686208248138427734375E-16
+Ccoord_556 n_34 pbias 3.684066487841441084327698263223282992839813232421875E-15
+Ccoord_557 n_34 pcasc 1.67478511353433390240752487443387508392333984375E-15
+Ccoord_558 n_34 vref 1.993404557250202824292273362516425549983978271484375E-15
+Ccoord_559 n_34 vss 5.8625568627790258791065980403800494968891143798828125E-16
+Ccoord_560 n_34 vss 6.72269444294082632040954194962978363037109375E-14
+Ccoord_561 n_8 n_37 1.23043166547991287274044225341640412807464599609375E-14
+Ccoord_562 n_8 n_30 1.8308286140737737301975585069158114492893218994140625E-15
+Ccoord_563 n_8 n_7 2.280347152810191602156919543631374835968017578125E-14
+Ccoord_564 n_8 n_4 9.97914905277224928425994221470318734645843505859375E-16
+Ccoord_565 n_8 n_5 8.941066793843861493229496772983111441135406494140625E-16
+Ccoord_566 n_8 vbe3 8.56555937304010939215004327706992626190185546875E-15
+Ccoord_567 n_8 vd1 1.30195514239335119466289825140847824513912200927734375E-16
+Ccoord_568 n_8 n_9 2.39297276786217452126948046498000621795654296875E-14
+Ccoord_569 n_8 n_12 2.30624276739012146197893571297754533588886260986328125E-16
+Ccoord_570 n_8 n_24 2.19113021838175436872830914580845274031162261962890625E-16
+Ccoord_571 n_8 n_26 2.19113021838175436872830914580845274031162261962890625E-16
+Ccoord_572 n_8 vb2 1.545872766022343414160644670118927024304866790771484375E-16
+Ccoord_573 n_8 n_13 1.991793757347781745892234539496712386608123779296875E-16
+Ccoord_574 n_8 n_17 1.78048086018688989096148134194663725793361663818359375E-16
+Ccoord_575 n_8 n_18 1.555570979225021355230040853712125681340694427490234375E-16
+Ccoord_576 n_8 n_11 1.011931254232312227259171777404844760894775390625E-15
+Ccoord_577 n_8 dvbe 1.7911836242002807662032637381344102323055267333984375E-15
+Ccoord_578 n_8 pbias 1.66976747687775872730497894735890440642833709716796875E-16
+Ccoord_579 n_8 pcasc 1.5674519249782259411318818820291198790073394775390625E-16
+Ccoord_580 n_8 vref 1.53535391109902386030938714611693285405635833740234375E-16
+Ccoord_581 n_8 vss 1.9573210306730268737140931989415548741817474365234375E-15
+Ccoord_582 n_8 vss 1.39311849949666228809519452624954283237457275390625E-14
+Ccoord_583 n_37 n_30 1.73558739438075360084212661604396998882293701171875E-15
+Ccoord_584 n_37 n_7 1.70250167770208360451533735613338649272918701171875E-15
+Ccoord_585 n_37 n_4 2.3963095827780165336662321351468563079833984375E-14
+Ccoord_586 n_37 n_5 1.02876372978425134618873926228843629360198974609375E-15
+Ccoord_587 n_37 vbe3 2.353922456198859425313685278524644672870635986328125E-15
+Ccoord_588 n_37 vd1 2.79130852255722317067920812405645847320556640625E-16
+Ccoord_589 n_37 n_9 1.0947524804206427706532167576369829475879669189453125E-15
+Ccoord_590 n_37 n_24 6.3069521298735498060494819583254866302013397216796875E-17
+Ccoord_591 n_37 n_26 6.3069521298735498060494819583254866302013397216796875E-17
+Ccoord_592 n_37 vb2 6.8498600716537705324071794166229665279388427734375E-16
+Ccoord_593 n_37 n_13 3.6317577220079715061284986177270184271037578582763671875E-17
+Ccoord_594 n_37 n_11 8.7508174277453587563968540052883327007293701171875E-16
+Ccoord_595 n_37 dvbe 1.492812863657817512574865759233944118022918701171875E-15
+Ccoord_596 n_37 pbias 2.81365104389316000865761679960996843874454498291015625E-16
+Ccoord_597 n_37 pcasc 2.729709942870004457660115804173983633518218994140625E-16
+Ccoord_598 n_37 vref 3.316995745033473053098305172170512378215789794921875E-16
+Ccoord_599 n_37 vss 6.813388372779327628592227483750320971012115478515625E-16
+Ccoord_600 n_37 vss 1.47305494325891235263270573341287672519683837890625E-14
+Ccoord_601 n_30 n_7 1.8370449678576170615684759468422271311283111572265625E-15
+Ccoord_602 n_30 n_4 9.654985860331674984990968368947505950927734375E-14
+Ccoord_603 n_30 n_5 9.7536475949177969368975027464330196380615234375E-14
+Ccoord_604 n_30 vbe3 1.67478511353433390240752487443387508392333984375E-15
+Ccoord_605 n_30 vd1 1.67478511353433390240752487443387508392333984375E-15
+Ccoord_606 n_30 n_9 3.88425741381121536477394329267553985118865966796875E-15
+Ccoord_607 n_30 n_24 6.557288529324749315474463173814001493155956268310546875E-17
+Ccoord_608 n_30 n_26 7.61382587364946294972156692892895080149173736572265625E-17
+Ccoord_609 n_30 vb2 1.67478511353433390240752487443387508392333984375E-15
+Ccoord_610 n_30 n_13 3.6317577220079715061284986177270184271037578582763671875E-17
+Ccoord_611 n_30 n_11 9.941124902593025947084015569998882710933685302734375E-16
+Ccoord_612 n_30 dvbe 8.626606987058511588628562094527296721935272216796875E-16
+Ccoord_613 n_30 pbias 3.399115964296746117412340026930905878543853759765625E-15
+Ccoord_614 n_30 pcasc 1.641208673125071459963919551228173077106475830078125E-15
+Ccoord_615 n_30 vref 1.993404557250202824292273362516425549983978271484375E-15
+Ccoord_616 n_30 vss 5.8625568627790258791065980403800494968891143798828125E-16
+Ccoord_617 n_30 vss 6.82831325068056997906751348637044429779052734375E-14
+Ccoord_618 n_7 n_4 1.012663390274345598385252742446027696132659912109375E-15
+Ccoord_619 n_7 n_5 9.0812446376792210767092683454393409192562103271484375E-16
+Ccoord_620 n_7 vbe3 1.4347166941283273633445105588180013000965118408203125E-16
+Ccoord_621 n_7 vd1 1.434336363038065942365761884502717293798923492431640625E-16
+Ccoord_622 n_7 n_9 9.9862248497900285570949563407339155673980712890625E-16
+Ccoord_623 n_7 n_12 1.555570979225021355230040853712125681340694427490234375E-16
+Ccoord_624 n_7 n_24 2.25329375622018712732597123249433934688568115234375E-16
+Ccoord_625 n_7 n_26 2.25329375622018712732597123249433934688568115234375E-16
+Ccoord_626 n_7 vb2 4.0145693739786791898183082594186998903751373291015625E-16
+Ccoord_627 n_7 n_13 1.918746751425818575231829754557111300528049468994140625E-16
+Ccoord_628 n_7 n_17 1.555570979225021355230040853712125681340694427490234375E-16
+Ccoord_629 n_7 n_18 1.555570979225021355230040853712125681340694427490234375E-16
+Ccoord_630 n_7 n_11 1.517951002945763239182497272850014269351959228515625E-15
+Ccoord_631 n_7 dvbe 1.018546035804374749744738437584601342678070068359375E-15
+Ccoord_632 n_7 pbias 1.50784994608032130170016671399935148656368255615234375E-16
+Ccoord_633 n_7 pcasc 1.505370538811458269723431158126913942396640777587890625E-16
+Ccoord_634 n_7 vref 6.85523786937325585455482723773457109928131103515625E-15
+Ccoord_635 n_7 vss 1.118853815603359169728037159075029194355010986328125E-15
+Ccoord_636 n_7 vss 1.4254026619739565973077333183027803897857666015625E-14
+Ccoord_637 n_4 n_5 2.657105063282208590180744067765772342681884765625E-14
+Ccoord_638 n_4 vbe3 7.568342555848259767259378349990583956241607666015625E-16
+Ccoord_639 n_4 vd1 7.568342555848259767259378349990583956241607666015625E-16
+Ccoord_640 n_4 n_9 2.57459742376006683883815640001557767391204833984375E-15
+Ccoord_641 n_4 n_12 9.205161462137587680132355671958066523075103759765625E-16
+Ccoord_642 n_4 n_24 9.82054826201510966399155222461558878421783447265625E-16
+Ccoord_643 n_4 n_26 9.82054826201510966399155222461558878421783447265625E-16
+Ccoord_644 n_4 vb2 7.568342555848259767259378349990583956241607666015625E-16
+Ccoord_645 n_4 n_13 9.568337234338384345022632260224781930446624755859375E-16
+Ccoord_646 n_4 n_17 9.205161462137587680132355671958066523075103759765625E-16
+Ccoord_647 n_4 n_18 9.205161462137587680132355671958066523075103759765625E-16
+Ccoord_648 n_4 n_11 2.12563452554746756817394270910881459712982177734375E-15
+Ccoord_649 n_4 dvbe 1.771447613359525607990008211345411837100982666015625E-15
+Ccoord_650 n_4 pbias 6.219715167779560260896687395870685577392578125E-14
+Ccoord_651 n_4 pcasc 7.568342555848259767259378349990583956241607666015625E-16
+Ccoord_652 n_4 vref 8.9777943542561988721217858255840837955474853515625E-16
+Ccoord_653 n_4 vss 4.405785230857720335961857927031815052032470703125E-15
+Ccoord_654 n_4 vss 5.260316251371261131453138659708201885223388671875E-14
+Ccoord_655 n_5 vbe3 7.568342555848259767259378349990583956241607666015625E-16
+Ccoord_656 n_5 vd1 7.568342555848259767259378349990583956241607666015625E-16
+Ccoord_657 n_5 n_9 1.7799373944081764431501824219594709575176239013671875E-15
+Ccoord_658 n_5 n_12 9.01943676573797148421363090164959430694580078125E-16
+Ccoord_659 n_5 n_24 9.8358566751249421056257915552123449742794036865234375E-16
+Ccoord_660 n_5 n_26 9.83585667512494321584881618036888539791107177734375E-16
+Ccoord_661 n_5 vb2 7.568342555848259767259378349990583956241607666015625E-16
+Ccoord_662 n_5 n_13 9.568337234338384345022632260224781930446624755859375E-16
+Ccoord_663 n_5 n_17 9.205161462137587680132355671958066523075103759765625E-16
+Ccoord_664 n_5 n_18 9.205161462137587680132355671958066523075103759765625E-16
+Ccoord_665 n_5 n_11 3.077335821586130837346217958838678896427154541015625E-15
+Ccoord_666 n_5 dvbe 1.7798417234618408855340021545998752117156982421875E-15
+Ccoord_667 n_5 pbias 1.5579780215613094895843460108153522014617919921875E-15
+Ccoord_668 n_5 pcasc 7.568342555848259767259378349990583956241607666015625E-16
+Ccoord_669 n_5 vref 8.9777943542561988721217858255840837955474853515625E-16
+Ccoord_670 n_5 vss 4.405785230857720335961857927031815052032470703125E-15
+Ccoord_671 n_5 vss 5.156755533449251061028917320072650909423828125E-14
+Ccoord_672 vbe3 vd1 3.328528839206121148208694648928940296173095703125E-14
+Ccoord_673 vbe3 n_9 8.74259621741224624003052667831070721149444580078125E-16
+Ccoord_674 vbe3 n_24 6.3069521298735498060494819583254866302013397216796875E-17
+Ccoord_675 vbe3 n_26 6.3069521298735498060494819583254866302013397216796875E-17
+Ccoord_676 vbe3 vd2 1.687747404281387531010949487608741037547588348388671875E-16
+Ccoord_677 vbe3 vb2 2.338369761007285063669769442640244960784912109375E-14
+Ccoord_678 vbe3 n_13 3.6317577220079715061284986177270184271037578582763671875E-17
+Ccoord_679 vbe3 b1b 1.137730489551363188827082240095478482544422149658203125E-16
+Ccoord_680 vbe3 c2 1.20902335421724738129256593310856260359287261962890625E-16
+Ccoord_681 vbe3 n_11 7.588889682689841098550687092938460409641265869140625E-16
+Ccoord_682 vbe3 dvbe 2.8415096474117262914660386741161346435546875E-15
+Ccoord_683 vbe3 pbias 8.392538582786721601536328307702206075191497802734375E-16
+Ccoord_684 vbe3 pcasc 8.13367766208946019190761944628320634365081787109375E-16
+Ccoord_685 vbe3 vbe 3.469519800530252240378104033879935741424560546875E-14
+Ccoord_686 vbe3 vref 1.887894459580632122719379140107776038348674774169921875E-16
+Ccoord_687 vbe3 vss 3.522269565217474251994644873775541782379150390625E-14
+Ccoord_688 vbe3 vss 1.8279441315689922475939965806901454925537109375E-14
+Ccoord_689 vd1 n_9 5.47209514574446558299314347095787525177001953125E-14
+Ccoord_690 vd1 n_24 6.3069521298735498060494819583254866302013397216796875E-17
+Ccoord_691 vd1 n_26 6.3069521298735498060494819583254866302013397216796875E-17
+Ccoord_692 vd1 vd2 2.2803349853186478668476411257870495319366455078125E-14
+Ccoord_693 vd1 vb2 2.66269873040078408621411654166877269744873046875E-15
+Ccoord_694 vd1 d5 2.1224300572252975671805330648567178286612033843994140625E-17
+Ccoord_695 vd1 n_13 3.6317577220079715061284986177270184271037578582763671875E-17
+Ccoord_696 vd1 b1b 1.701557955964580204355485193445929326117038726806640625E-16
+Ccoord_697 vd1 c2 2.395563067378684574126879169853054918348789215087890625E-16
+Ccoord_698 vd1 n_11 1.15308344299201426252921010018326342105865478515625E-15
+Ccoord_699 vd1 dvbe 1.082874694292855988209112183540128171443939208984375E-15
+Ccoord_700 vd1 pbias 8.41382156319813834244314421084709465503692626953125E-16
+Ccoord_701 vd1 pcasc 2.225758579147574689471866804524324834346771240234375E-15
+Ccoord_702 vd1 vbe 4.732228622953970642583954031579196453094482421875E-14
+Ccoord_703 vd1 vref 2.3587393423256319380243439809419214725494384765625E-14
+Ccoord_704 vd1 vss 4.826687619153832287111072218976914882659912109375E-14
+Ccoord_705 vd1 vss 5.25181443180198783693413133732974529266357421875E-14
+Ccoord_706 n_9 n_12 8.993783883095465281343194874352775514125823974609375E-16
+Ccoord_707 n_9 n_24 8.95029366970023776417519911774434149265289306640625E-16
+Ccoord_708 n_9 n_26 8.95029366970023776417519911774434149265289306640625E-16
+Ccoord_709 n_9 vb2 8.8273066759603846520576553302817046642303466796875E-16
+Ccoord_710 n_9 n_13 9.542684351695875921706146982614882290363311767578125E-16
+Ccoord_711 n_9 n_17 9.179508579495079256815870394348166882991790771484375E-16
+Ccoord_712 n_9 n_18 9.179508579495079256815870394348166882991790771484375E-16
+Ccoord_713 n_9 n_11 3.193596884329692020543234320939518511295318603515625E-15
+Ccoord_714 n_9 dvbe 1.787536529091863002349782618694007396697998046875E-15
+Ccoord_715 n_9 pbias 2.5321019513364038999725380563177168369293212890625E-14
+Ccoord_716 n_9 pcasc 1.5278533509223866104775879648514091968536376953125E-15
+Ccoord_717 n_9 vref 8.9777943542561988721217858255840837955474853515625E-16
+Ccoord_718 n_9 vss 4.36492920577797161030275674420408904552459716796875E-15
+Ccoord_719 n_9 vss 5.2790472153567549185027019120752811431884765625E-14
+Ccoord_720 n_12 n_13 2.2632108860635952396478387527167797088623046875E-14
+Ccoord_721 n_12 n_17 3.56003894223695660503636872817878611385822296142578125E-16
+Ccoord_722 n_12 n_18 7.67873756590977951663745670884964056313037872314453125E-17
+Ccoord_723 n_12 n_11 2.3906135092418242749090495635755360126495361328125E-14
+Ccoord_724 n_12 dvbe 9.9188664791959180178082533529959619045257568359375E-16
+Ccoord_725 n_12 vss 9.725484239402295560950051367399282753467559814453125E-16
+Ccoord_726 n_12 vss 5.748440670416531617092914530076086521148681640625E-15
+Ccoord_727 n_24 n_26 1.66396111550016900793025342863984405994415283203125E-15
+Ccoord_728 n_24 vb2 6.3069521298735498060494819583254866302013397216796875E-17
+Ccoord_729 n_24 n_13 6.88717104223991416489525363431312143802642822265625E-15
+Ccoord_730 n_24 n_11 9.975556494537016760659753344953060150146484375E-16
+Ccoord_731 n_24 dvbe 1.250680708819561726130586976069025695323944091796875E-15
+Ccoord_732 n_24 pbias 6.3069521298735498060494819583254866302013397216796875E-17
+Ccoord_733 n_24 pcasc 6.3069521298735498060494819583254866302013397216796875E-17
+Ccoord_734 n_24 vref 7.48149529521349998528734204228385351598262786865234375E-17
+Ccoord_735 n_24 vss 5.3160469651860886575178710700129158794879913330078125E-16
+Ccoord_736 n_24 vss 8.5121770313783482464486951357685029506683349609375E-15
+Ccoord_737 n_26 vb2 6.3069521298735498060494819583254866302013397216796875E-17
+Ccoord_738 n_26 n_13 3.6317577220079715061284986177270184271037578582763671875E-17
+Ccoord_739 n_26 n_11 9.975556494537016760659753344953060150146484375E-16
+Ccoord_740 n_26 dvbe 1.231779966939421822047506793751381337642669677734375E-15
+Ccoord_741 n_26 pbias 6.3069521298735498060494819583254866302013397216796875E-17
+Ccoord_742 n_26 pcasc 6.3069521298735498060494819583254866302013397216796875E-17
+Ccoord_743 n_26 vref 7.48149529521349998528734204228385351598262786865234375E-17
+Ccoord_744 n_26 vss 4.30690803201919936160635415944852866232395172119140625E-16
+Ccoord_745 n_26 vss 7.469206561897987484144323389045894145965576171875E-15
+Ccoord_746 vd2 d1 1.69452214453073217274858830450057212146930396556854248046875E-18
+Ccoord_747 vd2 d5 7.75163043939535649322347676815070371958427131175994873046875E-19
+Ccoord_748 vd2 b1b 2.626631186677031593035280820913612842559814453125E-14
+Ccoord_749 vd2 c2 1.3910318767736864487005732371471822261810302734375E-15
+Ccoord_750 vd2 dvbe 4.66985670083005999231318128295242786407470703125E-14
+Ccoord_751 vd2 pcasc 2.1677932345528726741645808573366593918763101100921630859375E-18
+Ccoord_752 vd2 vbe 2.8712795823896524183282963349483907222747802734375E-14
+Ccoord_753 vd2 vss 1.59208610846563033192069269716739654541015625E-13
+Ccoord_754 vd2 vss 4.46992829869748362625614390708506107330322265625E-14
+Ccoord_755 vb2 d1 5.6877385012636505479122206452302634716033935546875E-16
+Ccoord_756 vb2 n1 4.2966429404208071218818076886236667633056640625E-14
+Ccoord_757 vb2 d5 4.4089959290945586189991445280611515045166015625E-15
+Ccoord_758 vb2 n_13 3.6317577220079715061284986177270184271037578582763671875E-17
+Ccoord_759 vb2 b1b 1.868089329085122207718683284838334657251834869384765625E-16
+Ccoord_760 vb2 d2 3.997123441994323567172386901802383363246917724609375E-16
+Ccoord_761 vb2 d3 1.44588134489477937449919409118592739105224609375E-16
+Ccoord_762 vb2 d4 1.2151051137594574835798511003304156474769115447998046875E-16
+Ccoord_763 vb2 kick 1.3446902700591711887767587541020475327968597412109375E-16
+Ccoord_764 vb2 r4n 2.2820728063949953678957172087393701076507568359375E-14
+Ccoord_765 vb2 c2 3.336335446258186721024685539305210113525390625E-14
+Ccoord_766 vb2 n_11 1.008666275108580645536449083010666072368621826171875E-15
+Ccoord_767 vb2 dvbe 2.680072011059092318419061484746634960174560546875E-15
+Ccoord_768 vb2 iptat 1.05613957018559634359888832477736286818981170654296875E-16
+Ccoord_769 vb2 pbias 1.584341289743911307397183918510563671588897705078125E-15
+Ccoord_770 vb2 pcasc 1.20247445702274973200474050827324390411376953125E-13
+Ccoord_771 vb2 r4 9.82625709910599776097939184182905592024326324462890625E-17
+Ccoord_772 vb2 vbe 1.06047305130152295760126435197889804840087890625E-13
+Ccoord_773 vb2 vdd 4.961922687349680227697490408900193870067596435546875E-16
+Ccoord_774 vb2 vref 3.7616463257477672499362597591243684291839599609375E-15
+Ccoord_775 vb2 vss 2.4573965148759707943781904759816825389862060546875E-14
+Ccoord_776 vb2 vss 2.6935220456705570768463076092302799224853515625E-13
+Ccoord_777 d1 n1 1.01323171226701393976554754772223532199859619140625E-14
+Ccoord_778 d1 d5 4.99925219669610765294009979697875678539276123046875E-15
+Ccoord_779 d1 b1b 3.40098078513076662598990651531494222581386566162109375E-16
+Ccoord_780 d1 d2 5.123161746137929384303788538090884685516357421875E-14
+Ccoord_781 d1 d3 6.02983914113234842346855657524429261684417724609375E-15
+Ccoord_782 d1 d4 5.198888624505713096368708647787570953369140625E-16
+Ccoord_783 d1 kick 6.982008894164216938893474662108928896486759185791015625E-17
+Ccoord_784 d1 r4n 7.769211789568809811701299850028590299189090728759765625E-17
+Ccoord_785 d1 c2 3.345555101907215345136137329973280429840087890625E-14
+Ccoord_786 d1 iptat 3.8480202139205728351090129990552668459713459014892578125E-17
+Ccoord_787 d1 pbias 3.606498335125183274385562981478869915008544921875E-14
+Ccoord_788 d1 pcasc 2.4856175557183092905688681639730930328369140625E-14
+Ccoord_789 d1 r4 7.74977221815416894568073757909587584435939788818359375E-17
+Ccoord_790 d1 vbe 6.37978897846277703820305760018527507781982421875E-16
+Ccoord_791 d1 vdd 8.8455354201849303308335947804152965545654296875E-15
+Ccoord_792 d1 vref 2.3314948361280041222443060178193263709545135498046875E-16
+Ccoord_793 d1 vss 2.6017465074846146677600700058974325656890869140625E-15
+Ccoord_794 d1 vss 7.484875458724906138741062022745609283447265625E-14
+Ccoord_795 n1 d5 4.99318921676292237776806359761394560337066650390625E-15
+Ccoord_796 n1 b1b 8.716625505962315167973741836249246262013912200927734375E-17
+Ccoord_797 n1 d2 4.004924918179114001759444363415241241455078125E-15
+Ccoord_798 n1 d3 1.9191311028043711583990216240636073052883148193359375E-16
+Ccoord_799 n1 d4 1.702973047255322835979995943489484488964080810546875E-16
+Ccoord_800 n1 kick 2.37236727463849064179157721810042858123779296875E-14
+Ccoord_801 n1 r4n 6.98449417957288376523905526482849381864070892333984375E-17
+Ccoord_802 n1 c2 2.8334712089297934056730809970758855342864990234375E-14
+Ccoord_803 n1 iptat 6.938883071289569937079022565740160644054412841796875E-17
+Ccoord_804 n1 pbias 4.522015826718926945204657386057078838348388671875E-14
+Ccoord_805 n1 pcasc 6.4782676761959436362303677015006542205810546875E-14
+Ccoord_806 n1 r4 7.0556085474223539932836501975543797016143798828125E-17
+Ccoord_807 n1 vbe 1.771957735288970781084572081454098224639892578125E-14
+Ccoord_808 n1 vdd 6.929724975935436237506337420199997723102569580078125E-16
+Ccoord_809 n1 vref 2.20531487382690460918865937856025993824005126953125E-16
+Ccoord_810 n1 vss 2.2552739715496141315043132635764777660369873046875E-14
+Ccoord_811 n1 vss 6.1818381514608319093895261175930500030517578125E-14
+Ccoord_812 d5 b1b 1.2020165621482582773982272783541702665388584136962890625E-16
+Ccoord_813 d5 d2 1.55286099514203446148030707263387739658355712890625E-14
+Ccoord_814 d5 d3 6.2618868182629972007902097175247035920619964599609375E-16
+Ccoord_815 d5 d4 2.9908955614719491933328754385001957416534423828125E-14
+Ccoord_816 d5 kick 7.186206408538424461607263538098777644336223602294921875E-17
+Ccoord_817 d5 r4n 1.1241155562057325578706468149903230369091033935546875E-16
+Ccoord_818 d5 c2 1.945439262589304385553390375207527540624141693115234375E-16
+Ccoord_819 d5 iptat 5.51244878995733877946605616671149618923664093017578125E-17
+Ccoord_820 d5 pbias 6.48120755877733785155214718542993068695068359375E-14
+Ccoord_821 d5 pcasc 2.6602557069900893083058690535835921764373779296875E-14
+Ccoord_822 d5 r4 7.217417372820227050578267835589940659701824188232421875E-17
+Ccoord_823 d5 vbe 2.83125922879544023036402222714968957006931304931640625E-16
+Ccoord_824 d5 vdd 7.724342699785683663549207267351448535919189453125E-15
+Ccoord_825 d5 vref 1.268620431906305190405959137933677993714809417724609375E-16
+Ccoord_826 d5 vss 3.81295983277591121751726177535601891577243804931640625E-16
+Ccoord_827 d5 vss 6.2362503134909047730616293847560882568359375E-14
+Ccoord_828 n_13 n_17 4.26688639918186451982506923741311766207218170166015625E-16
+Ccoord_829 n_13 n_18 1.20668416726663452198664572279085405170917510986328125E-16
+Ccoord_830 n_13 n_11 1.0502155576009446491525523015297949314117431640625E-15
+Ccoord_831 n_13 dvbe 1.0667383281096773917084874483407475054264068603515625E-15
+Ccoord_832 n_13 pbias 3.6317577220079715061284986177270184271037578582763671875E-17
+Ccoord_833 n_13 pcasc 3.6317577220079715061284986177270184271037578582763671875E-17
+Ccoord_834 n_13 vref 4.219029304677945901858038268983364105224609375E-17
+Ccoord_835 n_13 vss 7.1608820659923211326969294532318599522113800048828125E-16
+Ccoord_836 n_13 vss 7.00280893115757319122849366976879537105560302734375E-15
+Ccoord_837 b1b d2 2.410463442731542560437674183049239218235015869140625E-15
+Ccoord_838 b1b d3 4.51021350891648797887256705507752485573291778564453125E-16
+Ccoord_839 b1b d4 1.965966094759319660045804312176187522709369659423828125E-16
+Ccoord_840 b1b kick 9.98271788728934683643245762141305021941661834716796875E-17
+Ccoord_841 b1b r4n 2.84902053441778602138612086491775698959827423095703125E-16
+Ccoord_842 b1b c2 5.938289216272179515954121598042547702789306640625E-14
+Ccoord_843 b1b dvbe 9.6974113235059034021645629763952456414699554443359375E-16
+Ccoord_844 b1b iptat 6.813409199107854641308534837662591598927974700927734375E-17
+Ccoord_845 b1b pbias 3.7721777926310517958796708626323379576206207275390625E-16
+Ccoord_846 b1b pcasc 2.930965023591681539727460403810255229473114013671875E-15
+Ccoord_847 b1b r4 4.52651221730649477859032003834727220237255096435546875E-16
+Ccoord_848 b1b vbe 3.235987312137365989883619477041065692901611328125E-14
+Ccoord_849 b1b vdd 6.51838836817817679492037541422178037464618682861328125E-17
+Ccoord_850 b1b vref 1.043541901383614189935400418107747100293636322021484375E-16
+Ccoord_851 b1b vss 2.18179495284026501167318201623857021331787109375E-14
+Ccoord_852 b1b vss 5.19560660559591269702650606632232666015625E-14
+Ccoord_853 n_17 n_18 2.3206827578863407524067952181212604045867919921875E-14
+Ccoord_854 n_17 n_11 1.0744958747566055734523615683428943157196044921875E-15
+Ccoord_855 n_17 dvbe 1.036636446960326196631285711191594600677490234375E-15
+Ccoord_856 n_17 vss 8.8660369080815382147875425289385020732879638671875E-16
+Ccoord_857 n_17 vss 6.10450416024075526166825511609204113483428955078125E-15
+Ccoord_858 d2 d3 3.804796006856779655436184839345514774322509765625E-14
+Ccoord_859 d2 d4 3.1748841231813196284150535575463436543941497802734375E-16
+Ccoord_860 d2 kick 1.850419334514483704623444282333366572856903076171875E-16
+Ccoord_861 d2 r4n 1.464699368210355123753885209225700236856937408447265625E-16
+Ccoord_862 d2 c2 2.96468364526358330035549215608625672757625579833984375E-16
+Ccoord_863 d2 iptat 1.412125406392651105758062612949288450181484222412109375E-16
+Ccoord_864 d2 pbias 5.538588111822485871016397140920162200927734375E-14
+Ccoord_865 d2 pcasc 1.9642963712860183278507975046522915363311767578125E-14
+Ccoord_866 d2 r4 1.507741039283894413092212971605476923286914825439453125E-16
+Ccoord_867 d2 vbe 5.0463519979983051388927606240031309425830841064453125E-16
+Ccoord_868 d2 vdd 9.62786493787592689841403625905513763427734375E-15
+Ccoord_869 d2 vref 2.81087352998874440146437336807139217853546142578125E-16
+Ccoord_870 d2 vss 4.328787930325324051494817467755638062953948974609375E-16
+Ccoord_871 d2 vss 6.85252389042060485735419206321239471435546875E-14
+Ccoord_872 d3 d4 4.49441692097906440039878361858427524566650390625E-14
+Ccoord_873 d3 kick 9.947724585230917349054635678839986212551593780517578125E-17
+Ccoord_874 d3 r4n 7.31882898809984305810161231420352123677730560302734375E-17
+Ccoord_875 d3 c2 9.792230619890714138353615680898656137287616729736328125E-17
+Ccoord_876 d3 iptat 6.247074149944252530186616922946996055543422698974609375E-17
+Ccoord_877 d3 pbias 7.8620476620189077010536493617109954357147216796875E-15
+Ccoord_878 d3 pcasc 5.043368611836296366845999727956950664520263671875E-15
+Ccoord_879 d3 r4 8.4041973728824659328751067732810042798519134521484375E-17
+Ccoord_880 d3 vbe 2.19344862232316029082568320518475957214832305908203125E-16
+Ccoord_881 d3 vdd 1.419477814839455565021353322663344442844390869140625E-15
+Ccoord_882 d3 vref 7.23059278217117906706334906630218029022216796875E-16
+Ccoord_883 d3 vss 1.6680019530649381476195003415341489017009735107421875E-16
+Ccoord_884 d3 vss 1.288386819650532544301313464529812335968017578125E-14
+Ccoord_885 d4 kick 8.6316523094034980356781261434662155807018280029296875E-17
+Ccoord_886 d4 r4n 6.755697199122913387814293173505575396120548248291015625E-17
+Ccoord_887 d4 c2 3.676808040769392361968304072661339887417852878570556640625E-18
+Ccoord_888 d4 iptat 1.19262711882027916399096056920825503766536712646484375E-16
+Ccoord_889 d4 pbias 2.6342172022004550768770059221424162387847900390625E-15
+Ccoord_890 d4 pcasc 2.419780513241459818374323731404729187488555908203125E-15
+Ccoord_891 d4 r4 7.97739447860845440896326863366994075477123260498046875E-17
+Ccoord_892 d4 vbe 1.6987781492451825560152656180434860289096832275390625E-16
+Ccoord_893 d4 vdd 5.6502720206736356534094056769390590488910675048828125E-16
+Ccoord_894 d4 vref 2.60508056203585802723665665325825102627277374267578125E-16
+Ccoord_895 d4 vss 1.5792169094469843404482389814802445471286773681640625E-16
+Ccoord_896 d4 vss 5.74945367518319727651032735593616962432861328125E-15
+Ccoord_897 kick r4n 1.1534880200331787403200678454595617949962615966796875E-16
+Ccoord_898 kick c2 3.9106980686435977023762688986607827246189117431640625E-17
+Ccoord_899 kick iptat 3.113985359057856072695358307100832462310791015625E-14
+Ccoord_900 kick pbias 8.604144427206232847993305767886340618133544921875E-15
+Ccoord_901 kick pcasc 1.8172823675062599324547818469000048935413360595703125E-15
+Ccoord_902 kick r4 2.18652927152831633161866875525447539985179901123046875E-16
+Ccoord_903 kick vbe 7.92288847953423747139112265358562581241130828857421875E-17
+Ccoord_904 kick vdd 2.57037420554116380344567005522549152374267578125E-16
+Ccoord_905 kick vref 1.583326626129342162840885066543705761432647705078125E-16
+Ccoord_906 kick vss 6.9409462048656778154764879218419082462787628173828125E-16
+Ccoord_907 kick vss 5.664609273234727737644789158366620540618896484375E-15
+Ccoord_908 r4n c2 3.83272647555918111184070085073472000658512115478515625E-17
+Ccoord_909 r4n iptat 3.152924516838473412150278818444348871707916259765625E-17
+Ccoord_910 r4n pbias 1.56256846070278621052551670800312422215938568115234375E-16
+Ccoord_911 r4n pcasc 2.804945614102194451078275960753671824932098388671875E-16
+Ccoord_912 r4n r4 3.8192489397659073802060447633266448974609375E-14
+Ccoord_913 r4n vbe 9.241221301077725769346216111443936824798583984375E-15
+Ccoord_914 r4n vdd 2.347238205665239940689303921317332424223423004150390625E-16
+Ccoord_915 r4n vref 1.2499409944924833038015776764950715005397796630859375E-16
+Ccoord_916 r4n vss 5.31640939782869192953285164549015462398529052734375E-15
+Ccoord_917 r4n vss 4.71027392579173831421712748124264180660247802734375E-15
+Ccoord_918 n_18 n_11 1.0744958747566055734523615683428943157196044921875E-15
+Ccoord_919 n_18 dvbe 1.039374386785054671378247803659178316593170166015625E-15
+Ccoord_920 n_18 vss 8.846411344155509226538924849592149257659912109375E-16
+Ccoord_921 n_18 vss 6.0782584585391727927117244689725339412689208984375E-15
+Ccoord_922 c2 dvbe 4.6992216245871480850837542675435543060302734375E-13
+Ccoord_923 c2 iptat 1.2632825127338628661000097253008789266459643840789794921875E-18
+Ccoord_924 c2 pbias 1.2456884446367328944660357592510990798473358154296875E-15
+Ccoord_925 c2 pcasc 1.8525429882712355578178176074288785457611083984375E-14
+Ccoord_926 c2 r4 3.8575567849772028627963749158880091272294521331787109375E-17
+Ccoord_927 c2 vbe 3.949821205857409722739248536527156829833984375E-14
+Ccoord_928 c2 vdd 5.9669906354583723828710617453907616436481475830078125E-16
+Ccoord_929 c2 vref 5.50075760832238469522081913964939303696155548095703125E-17
+Ccoord_930 c2 vss 6.87681081796268500738733564503490924835205078125E-14
+Ccoord_931 c2 vss 1.90849206897173417019075714051723480224609375E-13
+Ccoord_932 n_11 dvbe 1.802628242874171338172573086922056972980499267578125E-15
+Ccoord_933 n_11 pbias 8.57787091922836086865800098166801035404205322265625E-16
+Ccoord_934 n_11 pcasc 5.971122456255186961016079294495284557342529296875E-14
+Ccoord_935 n_11 vref 1.865471531509734770537534132017754018306732177734375E-15
+Ccoord_936 n_11 vss 4.419077731945609599506497033871710300445556640625E-15
+Ccoord_937 n_11 vss 4.152972899244499416226972243748605251312255859375E-14
+Ccoord_938 dvbe pbias 8.641818399822620566652631168835796415805816650390625E-16
+Ccoord_939 dvbe pcasc 8.641818399822620566652631168835796415805816650390625E-16
+Ccoord_940 dvbe vbe 8.492713968184165196362300775945186614990234375E-14
+Ccoord_941 dvbe vref 1.0181632696391409442782105543301440775394439697265625E-15
+Ccoord_942 dvbe vss 2.7473613160604645599960349500179290771484375E-13
+Ccoord_943 iptat pbias 4.71139523411220562110202081385068595409393310546875E-16
+Ccoord_944 iptat pcasc 1.8162754511817043034938023993163369596004486083984375E-15
+Ccoord_945 iptat r4 3.273082657307645193522915860739885829389095306396484375E-17
+Ccoord_946 iptat vbe 8.266915541627038732652721364502212963998317718505859375E-17
+Ccoord_947 iptat vdd 7.08193121949798054526326041013817302882671356201171875E-17
+Ccoord_948 iptat vref 1.4008094642777224603236163602559827268123626708984375E-16
+Ccoord_949 iptat vss 6.487127138829799910535456319848890416324138641357421875E-17
+Ccoord_950 pbias pcasc 1.0275385368018413601021165959537029266357421875E-13
+Ccoord_951 pbias r4 4.6798729110076298098874758579768240451812744140625E-15
+Ccoord_952 pbias vbe 4.55112767149222552376386374817229807376861572265625E-16
+Ccoord_953 pbias vdd 1.99622537860124708686271333135664463043212890625E-13
+Ccoord_954 pbias vref 1.2321136765716829142291999232838861644268035888671875E-15
+Ccoord_955 pbias vss 2.539222157474736452087427096557803452014923095703125E-15
+Ccoord_956 pcasc r4 3.100259009361860051967596518807113170623779296875E-14
+Ccoord_957 pcasc vbe 3.71768534239871950575206938083283603191375732421875E-15
+Ccoord_958 pcasc vdd 1.9768372774918814283040546797565184533596038818359375E-15
+Ccoord_959 pcasc vref 1.07746097891690393311137086129747331142425537109375E-14
+Ccoord_960 pcasc vss 2.0078234048967630087645375169813632965087890625E-14
+Ccoord_961 r4 vbe 1.2172041830035826848188662552274763584136962890625E-15
+Ccoord_962 r4 vdd 8.5339500608649532242822033367701806128025054931640625E-16
+Ccoord_963 r4 vref 1.2332717062526066253980161491199396550655364990234375E-16
+Ccoord_964 r4 vss 6.75619558474333192776839496218599379062652587890625E-16
+Ccoord_965 vbe vdd 3.999157224887697026360910967923700809478759765625E-14
+Ccoord_966 vbe vref 6.473564753604692523225594413815997540950775146484375E-16
+Ccoord_967 vbe vss 2.9939241288910244520593550987541675567626953125E-13
+Ccoord_968 vdd vref 3.0156546658946798089573348988778889179229736328125E-14
+Ccoord_969 vdd vss 5.02053702160745984883760684169828891754150390625E-15
+Ccoord_970 vref vss 4.0310638691109289766245638020336627960205078125E-14
+Ccoord_971 vss dvbe 1.77550322642488282554040779359638690948486328125E-13
+Ccoord_972 vss iptat 2.58558805394273338862376476754434406757354736328125E-15
+Ccoord_973 vss pbias 5.30270447048356800223700702190399169921875E-13
+Ccoord_974 vss pcasc 4.882177599061952832926181145012378692626953125E-13
+Ccoord_975 vss r4 6.2348369668665295506571055739186704158782958984375E-15
+Ccoord_976 vss vbe 2.42049615820823220246893470175564289093017578125E-13
+Ccoord_977 vss vdd 1.58321170579181938364854431711137294769287109375E-13
+Ccoord_978 vss vref 2.605736160029989179065523785538971424102783203125E-14
+Ccoord_979 vss vss 1.357773707098210024923901073634624481201171875E-12
+.ends g1_bgr
