@@ -1,0 +1,220 @@
+{
+  "status": "passed native primitive-ownership recovery; complete extraction boundary not qualified",
+  "script_sha256": "8814c6090b293524b2733ba54a2e89a8c0361bd94d0da9f57bd17b1b94ec2038",
+  "LVSDB_sha256": "95e8683146bc38ecf9a78e3fde3fe8541c9a888707a77c378b816c9136a1af67",
+  "GDS_sha256": "cb9617c97ae522596c5d4aaa7ee91f65e59b418a14d1095e5e0514d4e8c7e010",
+  "owners": [
+    {
+      "stock_device_id": 934,
+      "native_W_um": 23.0,
+      "native_L_um": 23.0,
+      "terminals": {
+        "mim_top": {
+          "layer_name": "cmim_top",
+          "net": "$192",
+          "area_um2": 529.0,
+          "perimeter_um": 92.0,
+          "bbox_um": [
+            43.910000000000004,
+            198.20000000000002,
+            66.91,
+            221.20000000000002
+          ]
+        },
+        "mim_btm": {
+          "layer_name": "cmim_btm",
+          "net": "vped",
+          "area_um2": 529.0,
+          "perimeter_um": 92.0,
+          "bbox_um": [
+            43.910000000000004,
+            198.20000000000002,
+            66.91,
+            221.20000000000002
+          ]
+        }
+      },
+      "analytic_nominal_27C_area_fF": 793.5,
+      "analytic_nominal_27C_perimeter_fF": 3.68
+    },
+    {
+      "stock_device_id": 935,
+      "native_W_um": 69.0,
+      "native_L_um": 23.0,
+      "terminals": {
+        "mim_top": {
+          "layer_name": "cmim_top",
+          "net": "n__xota__cz",
+          "area_um2": 1587.0,
+          "perimeter_um": 184.0,
+          "bbox_um": [
+            61.06,
+            122.60000000000001,
+            130.06,
+            145.6
+          ]
+        },
+        "mim_btm": {
+          "layer_name": "cmim_btm",
+          "net": "isense",
+          "area_um2": 1587.0,
+          "perimeter_um": 184.0,
+          "bbox_um": [
+            61.06,
+            122.60000000000001,
+            130.06,
+            145.6
+          ]
+        }
+      },
+      "analytic_nominal_27C_area_fF": 2380.5,
+      "analytic_nominal_27C_perimeter_fF": 7.36
+    },
+    {
+      "stock_device_id": 936,
+      "native_W_um": 23.0,
+      "native_L_um": 23.0,
+      "terminals": {
+        "mim_top": {
+          "layer_name": "cmim_top",
+          "net": "$193",
+          "area_um2": 529.0,
+          "perimeter_um": 92.0,
+          "bbox_um": [
+            163.91,
+            198.20000000000002,
+            186.91,
+            221.20000000000002
+          ]
+        },
+        "mim_btm": {
+          "layer_name": "cmim_btm",
+          "net": "vref_buf",
+          "area_um2": 529.0,
+          "perimeter_um": 92.0,
+          "bbox_um": [
+            163.91,
+            198.20000000000002,
+            186.91,
+            221.20000000000002
+          ]
+        }
+      },
+      "analytic_nominal_27C_area_fF": 793.5,
+      "analytic_nominal_27C_perimeter_fF": 3.68
+    }
+  ],
+  "same_device_top_bottom_mask_XOR_um2": 0.0,
+  "between_device_mask_overlap_um2": 0.0,
+  "native_MIM_union_XOR_um2": 0.0,
+  "owned_bottom_M5_area_um2": 2645.0,
+  "remaining_M5_area_um2": 1010.1748,
+  "M5_owned_remaining_partition_XOR_um2": 0.0,
+  "M5_owned_remaining_overlap_um2": 0.0,
+  "installed_source_sha256": {
+    "fastercap/fastercap_input_builder.py": "723d006ab894e5bc05dbe811bb84e4d4cdf60422ae11815d152b7b5cd3e3b2e1",
+    "fastercap/fastercap_model_generator.py": "bcd2865c7f68a97f3b295699eef1cbc42265635599ded72a9ded426ea79d7f12",
+    "fastercap/fastercap_runner.py": "0dbd264214e2227a3c4291dc5aa9ee7cfba9bc5bfaf33527f49d07db3290b13a",
+    "rcx25/c/overlap_extractor.py": "9b90b81dab73a41b13bfd1e9e369a48b3a1d6b98999c397b3db50ecfb130e2b1",
+    "rcx25/c/sidewall_and_fringe_extractor.py": "47c1943653187b1079bd52d6b4daf99dc171bd9a12324d55ea7437316c8b0d02"
+  },
+  "model_PCell_sha256": {
+    "libs.tech/ngspice/models/capacitors_mod.lib": "94b569e695fd8a223a5a49a5b5a6b0d8a62408820bf0c2ed9dbcb0a8ab7d957e",
+    "libs.tech/ngspice/models/capacitors_mod_mismatch.lib": "ed188acac7c5830656ef218871f99b2ace021e37b332ea9adaf505eed3d9d937",
+    "libs.tech/ngspice/models/cornerCAP.lib": "4fc4a0f17ca2aef66ca38c2d2e7cead3307b69508d304ed073129565ec1c3e56",
+    "libs.tech/klayout/python/sg13g2_pycell_lib/ihp/cmim_code.py": "7b6103455054c5ba385441951f7a33b1881fe372b308f2b8a6e279b56d1374ef"
+  },
+  "model_formula": "[CJ*L_um*W_um + 2*CJSW*(L_um+W_um)] * instance_scale * [1+TC1*(T-27)+TC2*(T-27)^2], with source cmim_core CJ=cap_carea, CJSW=40e-18F and mm scaling unchanged",
+  "model_formula_reference": "ngspice-46 manual section3.3.8 equations3.10-3.13, https://ngspice.sourceforge.io/docs/ngspice-46-manual.pdf#page=83",
+  "model_internal_series_resistance_ohm": 0.055,
+  "conductor_API_signature": "(self, net_name: 'str', layer: 'kdb.Region', z: 'float', height: 'float')",
+  "tech_json_sha256": "6ece2ac73930696f77b257d14fcf9d29d9e02451e7df99c72239746c18369a92",
+  "tech_MIM_rows": [
+    {
+      "line": 392,
+      "text": "\"name\": \"metal5_n_cap\","
+    },
+    {
+      "line": 393,
+      "text": "\"description\": \"Computed layer for Metal5 (case where no MiM cap)\","
+    },
+    {
+      "line": 516,
+      "text": "\"description\": \"Original TopVia1 is 125/0 (case where no MiM cap)\","
+    },
+    {
+      "line": 539,
+      "text": "\"name\": \"mim_via\","
+    },
+    {
+      "line": 540,
+      "text": "\"description\": \"Original TopVia1 is 125/0, case MiM cap\","
+    },
+    {
+      "line": 551,
+      "text": "\"purpose\": \"PURPOSE_MIM_CAP\","
+    },
+    {
+      "line": 552,
+      "text": "\"name\": \"metal5_cap\","
+    },
+    {
+      "line": 553,
+      "text": "\"description\": \"Computed layer for Metal5, case MiM cap\","
+    },
+    {
+      "line": 563,
+      "text": "\"purpose\": \"PURPOSE_MIM_CAP\","
+    },
+    {
+      "line": 564,
+      "text": "\"name\": \"cmim_top\","
+    },
+    {
+      "line": 565,
+      "text": "\"description\": \"Computed layer for MiM cap above Metal5\","
+    },
+    {
+      "line": 951,
+      "text": "\"metal_above\": \"metal5_n_cap\","
+    },
+    {
+      "line": 967,
+      "text": "\"name\": \"metal5_n_cap\","
+    },
+    {
+      "line": 974,
+      "text": "\"layer_below\": \"metal5_n_cap\","
+    },
+    {
+      "line": 992,
+      "text": "\"name\": \"metal5_cap\","
+    },
+    {
+      "line": 1000,
+      "text": "\"name\": \"ismim\","
+    },
+    {
+      "line": 1005,
+      "text": "\"reference\": \"metal5_cap\""
+    },
+    {
+      "line": 1017,
+      "text": "\"name\": \"cmim_top\","
+    },
+    {
+      "line": 1023,
+      "text": "\"name\": \"mim_via\","
+    },
+    {
+      "line": 1024,
+      "text": "\"layer_below\": \"cmim_top\","
+    }
+  ],
+  "supported_primitive_pair_deembedding": false,
+  "limitation": "Stock3D builder merges geometry by electrical net before surface generation; output matrix has net-conductor indices, no primitive-owned field terms. Stock2.5D visitors retain geometry before summation but fringe shielding recreates properties with net only and groups by net; owner-aware masking would require a new validated extraction path.",
+  "no_new_extraction": true,
+  "no_meshing": true,
+  "no_solver": true,
+  "no_source_card_deck_or_geometry_mutation": true
+}
