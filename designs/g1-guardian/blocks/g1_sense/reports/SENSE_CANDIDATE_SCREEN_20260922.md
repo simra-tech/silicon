@@ -23,7 +23,7 @@ has the same hash; it is a qualification artifact, not an adopted netlist.
 | Gain screening | passed100/100 | 19.9–20.1 declared screen |
 | Loaded AC bandwidth | passed selected3.3/3.6V | 2.574/2.676MHz; not allPVT |
 | Selected Tian loop screens | passed7/7 | Conditional phase margin61.160–69.163°; DC-equivalent injection, ideal bias/passive load |
-| Joint actual-BGR/digital-code calibration | not run to completion | Separate three-sample pilots underway; no result implied here |
+| Joint actual-BGR/digital-code calibration | failed residual qualification | Three pilots complete;84numeric probes/36guards passed, seed71002hard-channel125°C residual failed |
 | Candidate layout/DRC/LVS/PEX | not run | No physical adoption |
 | Measurement | not run | No silicon sample |
 
@@ -36,6 +36,15 @@ The2µV worst-case margin is not a robustness claim. Uncalibrated population
 sigma is0.7473mV. An offline ideal-DAC calculation still clips the hard code254
 for46/100samples; it omits actual BGR/DAC/comparator mismatch and is not measured
 or joint-chain yield. There is no claim that these larger devices fix code reach.
+
+The subsequent actual-BGR loaded-chain screen at calibrated nominalsoft30mV/
+hard40mV completed all three seeds71001/71002/71012, with no code clipping and
+all frozen-temperature guards passed. Residual qualification **failed** for
+71002: at125°C and24.5mV shunt, the hard comparator remains high with its
+room-temperature calibration code frozen. The other two seeds pass this check.
+[Joint pilot report](../../g1_trip/reports/JOINT_GM4COMP3_PILOTS_20260922.md)
+preserves the failure; the standalone100screen cannot establish joint residual
+compliance. The710xxjoint samples are not the410xxstandalone sample identities.
 
 Loaded nominal input-noise PSD integrated1Hz–2MHz changes from60.03µVrms baseline
 to36.64µVrms candidate. Output noise divided by nominal20 through10MHz changes
