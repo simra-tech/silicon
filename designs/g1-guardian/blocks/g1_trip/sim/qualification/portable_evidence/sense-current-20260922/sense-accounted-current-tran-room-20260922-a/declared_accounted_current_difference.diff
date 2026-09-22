@@ -1,0 +1,30 @@
+--- qualifiedOriginal
++++ declaredCurrentCharacterization
+@@ -14,7 +14,8 @@
+ Vdda vdda 0 dc {VDDA}
+ Vdd vdd 0 dc {VDD}
+ Vsh shp 0 dc 0.025000000000000001
+-XS shp 0 vref iptat isense vped vref_buf vdda 0 g1_sense
++XS shp 0 vref iptat isense vped vref_buf sense_vdd_monitor 0 g1_sense
++Vsense_total vdda sense_vdd_monitor 0
+ CL isense 0 300f
+ * soft code 153 = 1001 1001b (30.0 mV) ; hard code 254 = 1111 1110b (49.8 mV)
+ Vs0 s0 0 dc 1.2
+@@ -38,7 +39,7 @@
+ Cs cmp_soft 0 10f
+ Ch cmp_hard 0 10f
+ * keep only the nodes of interest (the full 1200-device transient exhausts the output memory)
+-.save v(clk) v(vref) v(iptat) v(vref_buf) v(xt.icmp) v(xt.vth_soft) v(xt.vth_hard) v(cmp_soft) v(cmp_hard) v(isense) v(xt.cmp_clk_n) v(xt.xch.xp) v(xt.xch.xq) v(xt.xch.xn) v(xt.xch.yn) v(vped) v(shp)
++.save v(clk) v(vref) v(iptat) v(vref_buf) v(xt.icmp) v(xt.vth_soft) v(xt.vth_hard) v(cmp_soft) v(cmp_hard) v(isense) v(xt.cmp_clk_n) v(xt.xch.xp) v(xt.xch.xq) v(xt.xch.xn) v(xt.xch.yn) v(vped) v(shp) i(vsense_total) i(v.xs.vbranch_ota) i(v.xs.vbranch_buf) i(v.xs.vbranch_ref) v(sense_vdd_monitor) v(xs.vdd_ota_monitor) v(xs.vdd_buf_monitor) v(xs.vdd_ref_monitor)
+ .lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerHBT.lib hbt_typ_mismatch
+ .include qualification/@RUN@/bgr.spice
+ Vr4 r4 0 0
+@@ -23139,6 +23140,8 @@
+ wrdata qualification/@RUN@/phase0.dat v(clk) v(xt.icmp) v(xt.vth_soft) v(xt.vth_hard) v(cmp_soft) v(cmp_hard) v(isense) v(xt.cmp_clk_n) v(xt.xch.xp) v(xt.xch.xq) v(xt.xch.xn) v(xt.xch.yn) v(vref) v(iptat) v(vref_buf) v(vped) v(shp)
+ echo QUALIFICATION_END
+ echo PHASE0_END
++wrdata qualification/@RUN@/currents.dat i(vsense_total) i(v.xs.vbranch_ota) i(v.xs.vbranch_buf) i(v.xs.vbranch_ref)
++wrdata qualification/@RUN@/monitor_voltages.dat v(sense_vdd_monitor) v(xs.vdd_ota_monitor) v(xs.vdd_buf_monitor) v(xs.vdd_ref_monitor)
+ echo JOINT_POPULATION_TRAN_END
+ quit 0
+ .endc

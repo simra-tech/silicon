@@ -1,0 +1,66 @@
+--- canonical586
++++ copied22PortProbes
+@@ -2,7 +2,10 @@
+ * by sim/postlayout/make_pex_netlist.py (see its docstring; no circuit content changed).
+ * source: g1_bgr_k25d_pex_netlist.spice
+ .subckt g1_bgr vdd vss r4 vref iptat pbias pcasc vbe dvbe
+-XR1 vss n_23 vss rhigh w=0.5u l=49u b=0 m=1
++XR1 obs_xr1_1 obs_xr1_2 obs_xr1_bn rhigh w=0.5u l=49u b=0 m=1
++Vobs_xr1_1 vss obs_xr1_1 0
++Vobs_xr1_2 n_23 obs_xr1_2 0
++Vobs_xr1_bn vss obs_xr1_bn 0
+ XR2 n_12 det vss rhigh w=0.5u l=49u b=0 m=1
+ XR3 n_13 n_24 vss rhigh w=0.5u l=49u b=0 m=1
+ XR4 n_14 n_24 vss rhigh w=0.5u l=49u b=0 m=1
+@@ -17,7 +20,10 @@
+ XR13 n_18 n_22 vss rhigh w=0.5u l=49u b=0 m=1
+ XR14 n_18 n_23 vss rhigh w=0.5u l=49u b=0 m=1
+ XR15 n_17 n_21 vss rhigh w=0.5u l=49u b=0 m=1
+-XR16 vss dvbe vss rppd w=1u l=51.5u b=0 m=1
++XR16 obs_xr16_1 obs_xr16_2 obs_xr16_bn rppd w=1u l=51.5u b=0 m=1
++Vobs_xr16_1 vss obs_xr16_1 0
++Vobs_xr16_2 dvbe obs_xr16_2 0
++Vobs_xr16_bn vss obs_xr16_bn 0
+ XR17 n_7 vref vss rppd w=1u l=53.465u b=0 m=1
+ XR18 n_2 n_36 vss rppd w=1u l=53.465u b=0 m=1
+ XR19 n_7 n_36 vss rppd w=1u l=53.465u b=0 m=1
+@@ -35,11 +41,23 @@
+ XM31 kick det vss vss sg13_hv_nmos l=0.6u w=1u as=0.34p ad=0.34p ps=2.68u pd=2.68u rfmode=0
+ XM32 r4n r4 vss vss sg13_hv_nmos l=0.5u w=1u as=0.34p ad=0.34p ps=2.68u pd=2.68u rfmode=0
+ XM33 b1b r4n vss vss sg13_hv_nmos l=0.6u w=1u as=0.34p ad=0.34p ps=2.68u pd=2.68u rfmode=0
+-XM34 n1 vb2 vbe vss sg13_hv_nmos l=1u w=10u as=3.4p ad=3.4p ps=20.68u pd=20.68u rfmode=0
+-XM35 c2 vb2 pcasc vss sg13_hv_nmos l=1u w=10u as=3.4p ad=3.4p ps=20.68u pd=20.68u rfmode=0
++XM34 obs_xm34_d obs_xm34_g obs_xm34_s obs_xm34_b sg13_hv_nmos l=1u w=10u as=3.4p ad=3.4p ps=20.68u pd=20.68u rfmode=0
++Vobs_xm34_d n1 obs_xm34_d 0
++Vobs_xm34_g vb2 obs_xm34_g 0
++Vobs_xm34_s vbe obs_xm34_s 0
++Vobs_xm34_b vss obs_xm34_b 0
++XM35 obs_xm35_d obs_xm35_g obs_xm35_s obs_xm35_b sg13_hv_nmos l=1u w=10u as=3.4p ad=3.4p ps=20.68u pd=20.68u rfmode=0
++Vobs_xm35_d c2 obs_xm35_d 0
++Vobs_xm35_g vb2 obs_xm35_g 0
++Vobs_xm35_s pcasc obs_xm35_s 0
++Vobs_xm35_b vss obs_xm35_b 0
+ XM36 vbe vb2 n1 vss sg13_hv_nmos l=1u w=10u as=3.4p ad=3.4p ps=20.68u pd=20.68u rfmode=0
+ XM37 pcasc vb2 c2 vss sg13_hv_nmos l=1u w=10u as=3.4p ad=3.4p ps=20.68u pd=20.68u rfmode=0
+-XM38 d1 pbias vdd vdd sg13_hv_pmos l=4u w=5u as=1.7p ad=1.7p ps=10.68u pd=10.68u rfmode=0
++XM38 obs_xm38_d obs_xm38_g obs_xm38_s obs_xm38_b sg13_hv_pmos l=4u w=5u as=1.7p ad=1.7p ps=10.68u pd=10.68u rfmode=0
++Vobs_xm38_d d1 obs_xm38_d 0
++Vobs_xm38_g pbias obs_xm38_g 0
++Vobs_xm38_s vdd obs_xm38_s 0
++Vobs_xm38_b vdd obs_xm38_b 0
+ XM39 d2 pbias vdd vdd sg13_hv_pmos l=4u w=5u as=1.7p ad=1.7p ps=10.68u pd=10.68u rfmode=0
+ XM40 d4 pbias vdd vdd sg13_hv_pmos l=4u w=5u as=1.7p ad=1.7p ps=10.68u pd=10.68u rfmode=0
+ XM41 d5 pbias vdd vdd sg13_hv_pmos l=4u w=5u as=1.7p ad=1.7p ps=10.68u pd=10.68u rfmode=0
+@@ -57,7 +75,11 @@
+ XM53 iptat pcasc d4 d4 sg13_hv_pmos l=4u w=10u as=3.4p ad=3.4p ps=20.68u pd=20.68u rfmode=0
+ XM54 pbias pcasc d2 d2 sg13_hv_pmos l=4u w=10u as=3.4p ad=3.4p ps=20.68u pd=20.68u rfmode=0
+ XQ55 vss vss vss vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+-XQ56 vbe vbe vss vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
++XQ56 obs_xq56_c obs_xq56_b obs_xq56_e obs_xq56_bn npn13G2 we=0.07u le=0.9u Nx=1 m=1
++Vobs_xq56_c vbe obs_xq56_c 0
++Vobs_xq56_b vbe obs_xq56_b 0
++Vobs_xq56_e vss obs_xq56_e 0
++Vobs_xq56_bn vss obs_xq56_bn 0
+ XQ57 vss vss vss vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+ XQ58 vss vss vss vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+ XQ59 vss vss vss vss npn13G2 we=0.07u le=0.9u Nx=1 m=1

@@ -12,6 +12,21 @@ DC progress30C. No completed sweep, AFTER vector or TC is inferred for it.
 The81-condition campaign is not an all-pass result and supplies no survivor-yield
 claim. The original failed leaf remains in[portable evidence](portable_evidence/required-ac-pvt-20260922).
 
+### Explicit recovery coverage
+
+A separately named, exact-input 240-second recovery of that one failed
+condition completed in 175.485 seconds. Its 2,842 BEFORE parameters match the
+original failed run and its own AFTER vector exactly; all 34 temperature points
+are finite. Simulated TC is 8.488893 ppm/C. The original 120-second timeout
+remains failed. It exported no waveform, so overlapping DC-wave parity is
+**not run**, not inferred from matching parameters.
+
+The [explicit coverage join](bgr586-pvt81-recovery-coverage-20260922.json) now
+accounts for all 81 distinct conditions using 80 original completions and this
+one recovery. All completed conditions meet the unchanged 50 ppm/C criterion;
+maximum TC remains 31.438815 ppm/C. This does not rewrite the original-attempt
+audit or establish mismatch yield or new physical-capacitance coverage.
+
 Thirteen standalone AC analyses completed numerically using literal historical
 decks with only the source replaced by exact nominal586. Noise is simulated
 100.111µV RMS over1Hz–10MHz; PSRR rejection is102.807dB at1Hz and81.953dB at1kHz.
@@ -51,5 +66,15 @@ simulator wall times were 166.445, 152.951 and 154.351 seconds respectively.
 [Portable receipts](portable_evidence/capload-nominal3-20260922) retain exact
 commands, source/deck hashes, numerical results and raw-wave hashes.
 These are numerical load-response observations: no new recovery-error or
-stability acceptance budget was adopted. The six slow/fast capacitive-load
-conditions and the new physical capacitance view remain **not run** here.
+stability acceptance budget was adopted.
+
+The six required slow/fast load cases subsequently completed too. The
+[nine-case audit](bgr586-capload9-audit-20260922.json) verifies exact historical
+deck bytes, unchanged source/runtime and all 20,020 finite rows per case.
+The largest simulated VREF drop is 2.505826 mV in the slow cases; the largest
+absolute final return difference at 40 µs is 0.861429 µV at slow/100 pF.
+These numerical observations do not establish an unallocated recovery or
+global-stability margin. Full 2,842-parameter queries were **not run inside
+these literal load fixtures**. The new physical capacitance view remains
+**not run** here. [Adverse-case receipts](portable_evidence/capload-adverse6-20260922)
+retain commands, warnings and exact artifact hashes.

@@ -1,0 +1,18 @@
+--- canonical
++++ copiedCurrentInstrumentation
+@@ -105,9 +105,12 @@
+ XRD249 RD2_48 RD2_49 vss rppd w=2u l=76.7u m=1 b=0 mm_ok=1
+ XRD250 RD2_49 vss vss rppd w=2u l=76.7u m=1 b=0 mm_ok=1
+ XMBI iptat iptat vss vss sg13_hv_nmos w=3.3u l=1u ng=1 m=1 mm_ok=1
+-XOTA vp vn iptat isense vdd vss g1_ota_main_candidate
+-XBUF vped_ref vped iptat vped vdd vss g1_ota
+-XREF vref vref_buf iptat vref_buf vdd vss g1_ota
++XOTA vp vn iptat isense vdd_ota_monitor vss g1_ota_main_candidate
++VBRANCH_OTA vdd vdd_ota_monitor 0
++XBUF vped_ref vped iptat vped vdd_buf_monitor vss g1_ota
++VBRANCH_BUF vdd vdd_buf_monitor 0
++XREF vref vref_buf iptat vref_buf vdd_ref_monitor vss g1_ota
++VBRANCH_REF vdd vdd_ref_monitor 0
+ .ends
+ 
+ * expanding   symbol:  g1_ota.sym # of pins=6
