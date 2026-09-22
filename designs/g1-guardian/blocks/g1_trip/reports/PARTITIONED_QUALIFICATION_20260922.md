@@ -53,6 +53,11 @@ maximum width remains0.5mV. No unique offset or system-yield result is inferred.
 retains the original20 and all80new samples. Eight parent summaries and240new
 leaf summaries/provenance/hash inventories are exported alongside it.
 
+The subsequent [300-sample completion](COMPARATOR300_COMPLETION_20260922.md)
+covers seeds62001–62300 and900numerical cases, with all900locally nonmonotonic
+finite ambiguity intervals. Exact32parameter/source/runtime audit passed;
+no unique offset, loaded-chain yield or physical adoption is inferred.
+
 ## Actual-BGR DAC full256 nominal pilot results
 
 `dac-chunks256-tight-pilot-20260922-b`, seed51001 at25°C, completed32independent
