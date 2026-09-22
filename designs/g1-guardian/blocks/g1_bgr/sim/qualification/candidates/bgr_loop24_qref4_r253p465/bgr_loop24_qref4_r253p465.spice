@@ -1,0 +1,1370 @@
+* G1_BGR post-layout netlist: kpex 2.5D extraction (--mode CC) of layout/g1_bgr.gds, reformatted for ngspice
+* by sim/postlayout/make_pex_netlist.py (see its docstring; no circuit content changed).
+* source: g1_bgr_k25d_pex_netlist.spice
+.subckt g1_bgr vdd vss r4 vref iptat pbias pcasc vbe dvbe
+XR1 vss n_23 vss rhigh w=0.5u l=49u b=0 m=1
+XR2 n_12 det vss rhigh w=0.5u l=49u b=0 m=1
+XR3 n_13 n_24 vss rhigh w=0.5u l=49u b=0 m=1
+XR4 n_14 n_24 vss rhigh w=0.5u l=49u b=0 m=1
+XR5 n_14 n_26 vss rhigh w=0.5u l=49u b=0 m=1
+XR6 n_15 n_26 vss rhigh w=0.5u l=49u b=0 m=1
+XR7 n_15 n_27 vss rhigh w=0.5u l=49u b=0 m=1
+XR8 n_16 n_27 vss rhigh w=0.5u l=49u b=0 m=1
+XR9 n_16 n_21 vss rhigh w=0.5u l=49u b=0 m=1
+XR10 n_12 n_25 vss rhigh w=0.5u l=49u b=0 m=1
+XR11 n_13 n_25 vss rhigh w=0.5u l=49u b=0 m=1
+XR12 n_17 n_22 vss rhigh w=0.5u l=49u b=0 m=1
+XR13 n_18 n_22 vss rhigh w=0.5u l=49u b=0 m=1
+XR14 n_18 n_23 vss rhigh w=0.5u l=49u b=0 m=1
+XR15 n_17 n_21 vss rhigh w=0.5u l=49u b=0 m=1
+XR16 vss dvbe vss rppd w=1u l=51.5u b=0 m=1
+XR17 n_7 vref vss rppd w=1u l=53.465u b=0 m=1
+XR18 n_2 n_36 vss rppd w=1u l=53.465u b=0 m=1
+XR19 n_7 n_36 vss rppd w=1u l=53.465u b=0 m=1
+XR20 n_2 n_37 vss rppd w=1u l=53.465u b=0 m=1
+XR21 n_8 n_37 vss rppd w=1u l=53.465u b=0 m=1
+XR22 n_8 vbe3 vss rppd w=1u l=53.465u b=0 m=1
+XR23 n_6 vb2 vss rppd w=1u l=48u b=0 m=1
+XR24 n_9 vd1 vss rppd w=1u l=48u b=0 m=1
+XR25 n_6 n_19 vss rppd w=1u l=48u b=0 m=1
+XR26 n_9 n_19 vss rppd w=1u l=48u b=0 m=1
+XM27 kick det vdd vdd sg13_hv_pmos l=0.5u w=2u as=0.68p ad=0.68p ps=4.68u pd=4.68u rfmode=0
+XM28 r4n r4 vdd vdd sg13_hv_pmos l=0.5u w=2u as=0.68p ad=0.68p ps=4.68u pd=4.68u rfmode=0
+XM29 vbe r4 b1b vss sg13_hv_nmos l=0.5u w=2u as=0.68p ad=0.68p ps=4.68u pd=4.68u rfmode=0
+XM30 pbias kick vss vss sg13_hv_nmos l=4u w=1u as=0.34p ad=0.34p ps=2.68u pd=2.68u rfmode=0
+XM31 kick det vss vss sg13_hv_nmos l=0.5u w=1u as=0.34p ad=0.34p ps=2.68u pd=2.68u rfmode=0
+XM32 r4n r4 vss vss sg13_hv_nmos l=0.5u w=1u as=0.34p ad=0.34p ps=2.68u pd=2.68u rfmode=0
+XM33 b1b r4n vss vss sg13_hv_nmos l=0.5u w=1u as=0.34p ad=0.34p ps=2.68u pd=2.68u rfmode=0
+XM34 n1 vb2 vbe vss sg13_hv_nmos l=1u w=10u as=3.4p ad=3.4p ps=20.68u pd=20.68u rfmode=0
+XM35 c2 vb2 pcasc vss sg13_hv_nmos l=1u w=10u as=3.4p ad=3.4p ps=20.68u pd=20.68u rfmode=0
+XM36 vbe vb2 n1 vss sg13_hv_nmos l=1u w=10u as=3.4p ad=3.4p ps=20.68u pd=20.68u rfmode=0
+XM37 pcasc vb2 c2 vss sg13_hv_nmos l=1u w=10u as=3.4p ad=3.4p ps=20.68u pd=20.68u rfmode=0
+XM38 d1 pbias vdd vdd sg13_hv_pmos l=4u w=5u as=1.7p ad=1.7p ps=10.68u pd=10.68u rfmode=0
+XM39 d2 pbias vdd vdd sg13_hv_pmos l=4u w=5u as=1.7p ad=1.7p ps=10.68u pd=10.68u rfmode=0
+XM40 d4 pbias vdd vdd sg13_hv_pmos l=4u w=5u as=1.7p ad=1.7p ps=10.68u pd=10.68u rfmode=0
+XM41 d5 pbias vdd vdd sg13_hv_pmos l=4u w=5u as=1.7p ad=1.7p ps=10.68u pd=10.68u rfmode=0
+XM42 det pbias vdd vdd sg13_hv_pmos l=4u w=5u as=1.7p ad=1.7p ps=10.68u pd=10.68u rfmode=0
+XM43 d3 pbias vdd vdd sg13_hv_pmos l=4u w=5u as=1.7p ad=1.7p ps=10.68u pd=10.68u rfmode=0
+XM44 d3 pbias vdd vdd sg13_hv_pmos l=4u w=5u as=1.7p ad=1.7p ps=10.68u pd=10.68u rfmode=0
+XM45 d5 pbias vdd vdd sg13_hv_pmos l=4u w=5u as=1.7p ad=1.7p ps=10.68u pd=10.68u rfmode=0
+XM46 d4 pbias vdd vdd sg13_hv_pmos l=4u w=5u as=1.7p ad=1.7p ps=10.68u pd=10.68u rfmode=0
+XM47 d2 pbias vdd vdd sg13_hv_pmos l=4u w=5u as=1.7p ad=1.7p ps=10.68u pd=10.68u rfmode=0
+XM48 d1 pbias vdd vdd sg13_hv_pmos l=4u w=5u as=1.7p ad=1.7p ps=10.68u pd=10.68u rfmode=0
+XM49 det pbias vdd vdd sg13_hv_pmos l=4u w=5u as=1.7p ad=1.7p ps=10.68u pd=10.68u rfmode=0
+XM50 vb2 pcasc d5 d5 sg13_hv_pmos l=4u w=10u as=3.4p ad=3.4p ps=20.68u pd=20.68u rfmode=0
+XM51 vref pcasc d3 d3 sg13_hv_pmos l=4u w=10u as=3.4p ad=3.4p ps=20.68u pd=20.68u rfmode=0
+XM52 n1 pcasc d1 d1 sg13_hv_pmos l=4u w=10u as=3.4p ad=3.4p ps=20.68u pd=20.68u rfmode=0
+XM53 iptat pcasc d4 d4 sg13_hv_pmos l=4u w=10u as=3.4p ad=3.4p ps=20.68u pd=20.68u rfmode=0
+XM54 pbias pcasc d2 d2 sg13_hv_pmos l=4u w=10u as=3.4p ad=3.4p ps=20.68u pd=20.68u rfmode=0
+XQ55 vss vss vss vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ56 vbe vbe vss vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ57 vss vss vss vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ58 vss vss vss vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ59 vss vss vss vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ60 vbe3 vbe3 vss vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ61 vss vss vss vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ62 vd2 vd2 vss vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ63 vss vss vss vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ64 vss vss vss vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ65 vss vss vss vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ66 vss vss vss vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ67 vbe b1b vss vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ68 c2 vbe dvbe vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ69 c2 vbe dvbe vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ70 c2 vbe dvbe vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ71 c2 vbe dvbe vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ72 c2 vbe dvbe vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ73 c2 vbe dvbe vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ74 c2 vbe dvbe vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ75 vd1 vd1 vd2 vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ76 c2 vbe dvbe vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XR77 n_4 pbias vss rppd w=1u l=50u b=0 m=1
+XR78 n_11 n_34 vss rppd w=1u l=50u b=0 m=1
+XR79 n_10 n_34 vss rppd w=1u l=50u b=0 m=1
+XR80 n_3 n_31 vss rppd w=1u l=50u b=0 m=1
+XR81 n_10 n_33 vss rppd w=1u l=50u b=0 m=1
+XR82 n_5 n_31 vss rppd w=1u l=50u b=0 m=1
+XR83 n_5 n_30 vss rppd w=1u l=50u b=0 m=1
+XR84 n_4 n_30 vss rppd w=1u l=50u b=0 m=1
+XR85 n_3 n_33 vss rppd w=1u l=50u b=0 m=1
+XR86 n_11 pcasc vss rppd w=1u l=50u b=0 m=1
+Cext_1 n_10 n_11 15.5101e-18
+Cext_2 n_10 n_3 19.0458e-18
+Cext_3 n_10 vss 100.194e-18
+Cext_4 n_10 vss 481.031e-18
+Cext_5 n_11 n_12 2.09203e-18
+Cext_6 n_11 n_3 0.524321e-18
+Cext_7 n_11 vss 100.194e-18
+Cext_8 n_11 vss 493.568e-18
+Cext_9 n_12 n_13 14.2084e-18
+Cext_10 n_12 vss 62.783e-18
+Cext_11 n_12 vss 309.014e-18
+Cext_12 n_13 n_14 14.2084e-18
+Cext_13 n_13 vss 62.783e-18
+Cext_14 n_13 vss 297.347e-18
+Cext_15 n_14 n_15 14.2084e-18
+Cext_16 n_14 vss 62.783e-18
+Cext_17 n_14 vss 297.347e-18
+Cext_18 n_15 n_16 14.2084e-18
+Cext_19 n_15 vss 62.783e-18
+Cext_20 n_15 vss 297.347e-18
+Cext_21 n_16 n_17 14.2084e-18
+Cext_22 n_16 vss 71.2957e-18
+Cext_23 n_16 vss 295.974e-18
+Cext_24 n_17 n_18 14.2084e-18
+Cext_25 n_17 vss 63.3242e-18
+Cext_26 n_17 vss 297.347e-18
+Cext_27 n_18 vss 81.0158e-18
+Cext_28 n_18 vss 297.347e-18
+Cext_29 n_19 n_31 0.26116e-18
+Cext_30 n_19 n_33 0.26116e-18
+Cext_31 n_19 n_36 14.9703e-18
+Cext_32 n_19 n_37 14.9703e-18
+Cext_33 n_19 dvbe 159.131e-18
+Cext_34 n_19 pbias 5.07141e-18
+Cext_35 n_19 vb2 172.86e-18
+Cext_36 n_19 vbe3 95.8794e-18
+Cext_37 n_19 vd1 193.63e-18
+Cext_38 n_19 vd2 410.357e-18
+Cext_39 n_19 vref 95.1702e-18
+Cext_40 n_19 vss 223.967e-18
+Cext_41 n_19 vss 1.72175f
+Cext_42 n_2 n_3 694.791e-18
+Cext_43 n_2 n_6 0.524321e-18
+Cext_44 n_2 n_7 19.0458e-18
+Cext_45 n_2 n_8 19.0458e-18
+Cext_46 n_2 n_9 0.524321e-18
+Cext_47 n_2 vss 501.967e-18
+Cext_48 n_2 vss 734.815e-18
+Cext_49 n_21 n_22 14.2084e-18
+Cext_50 n_21 n_27 14.2084e-18
+Cext_51 n_21 b1b 0.735115e-18
+Cext_52 n_21 vss 12.0025e-18
+Cext_53 n_21 vss 331.598e-18
+Cext_54 n_22 n_23 14.2084e-18
+Cext_55 n_22 b1b 0.735115e-18
+Cext_56 n_22 vss 12.0025e-18
+Cext_57 n_22 vss 331.598e-18
+Cext_58 n_23 b1b 0.735115e-18
+Cext_59 n_23 vss 14.9704e-18
+Cext_60 n_23 vss 341.848e-18
+Cext_61 n_24 n_25 14.2084e-18
+Cext_62 n_24 n_26 14.2084e-18
+Cext_63 n_24 b1b 0.735115e-18
+Cext_64 n_24 det 0.541131e-18
+Cext_65 n_24 vss 12.0025e-18
+Cext_66 n_24 vss 331.598e-18
+Cext_67 n_25 b1b 0.735115e-18
+Cext_68 n_25 det 18.2327e-18
+Cext_69 n_25 vss 12.0025e-18
+Cext_70 n_25 vss 331.598e-18
+Cext_71 n_26 n_27 14.2084e-18
+Cext_72 n_26 b1b 0.735115e-18
+Cext_73 n_26 det 0.167332e-18
+Cext_74 n_26 vss 12.0025e-18
+Cext_75 n_26 vss 331.598e-18
+Cext_76 n_27 b1b 0.735115e-18
+Cext_77 n_27 vss 12.0025e-18
+Cext_78 n_27 vss 331.598e-18
+Cext_79 n_3 n_4 0.524321e-18
+Cext_80 n_3 n_5 19.0458e-18
+Cext_81 n_3 n_6 31.1754e-18
+Cext_82 n_3 n_7 12.6539e-18
+Cext_83 n_3 n_8 12.6539e-18
+Cext_84 n_3 n_9 30.9049e-18
+Cext_85 n_3 vss 903.669e-18
+Cext_86 n_3 vss 1.48902f
+Cext_87 n_30 n_31 15.5101e-18
+Cext_88 n_30 dvbe 1.65454e-18
+Cext_89 n_30 pbias 19.0458e-18
+Cext_90 n_30 vb2 0.855051e-18
+Cext_91 n_30 vss 24.3204e-18
+Cext_92 n_30 vss 527.822e-18
+Cext_93 n_31 dvbe 1.65454e-18
+Cext_94 n_31 pbias 0.524321e-18
+Cext_95 n_31 vb2 5.91722e-18
+Cext_96 n_31 vss 24.3204e-18
+Cext_97 n_31 vss 541.141e-18
+Cext_98 n_33 n_34 15.5101e-18
+Cext_99 n_33 b1b 0.120904e-18
+Cext_100 n_33 pcasc 0.524321e-18
+Cext_101 n_33 vbe3 2.26884e-18
+Cext_102 n_33 vd1 5.91722e-18
+Cext_103 n_33 vss 24.2823e-18
+Cext_104 n_33 vss 541.141e-18
+Cext_105 n_34 b1b 0.247176e-18
+Cext_106 n_34 pcasc 19.0458e-18
+Cext_107 n_34 vbe3 2.29766e-18
+Cext_108 n_34 vd1 0.855051e-18
+Cext_109 n_34 vss 24.3204e-18
+Cext_110 n_34 vss 527.822e-18
+Cext_111 n_36 n_37 4.91263e-18
+Cext_112 n_36 dvbe 1.31773e-18
+Cext_113 n_36 pbias 0.253448e-18
+Cext_114 n_36 vref 19.777e-18
+Cext_115 n_36 vss 103.246e-18
+Cext_116 n_36 vss 490.2e-18
+Cext_117 n_37 dvbe 5.91722e-18
+Cext_118 n_37 pbias 0.253448e-18
+Cext_119 n_37 vbe3 19.777e-18
+Cext_120 n_37 vd2 0.820484e-18
+Cext_121 n_37 vss 91.632e-18
+Cext_122 n_37 vss 490.2e-18
+Cext_123 n_4 n_5 15.5101e-18
+Cext_124 n_4 vss 111.854e-18
+Cext_125 n_4 vss 490.996e-18
+Cext_126 n_5 vss 100.194e-18
+Cext_127 n_5 vss 481.031e-18
+Cext_128 n_6 n_7 15.5101e-18
+Cext_129 n_6 vss 94.7854e-18
+Cext_130 n_6 vss 481.031e-18
+Cext_131 n_7 vss 95.5187e-18
+Cext_132 n_7 vss 481.031e-18
+Cext_133 n_8 n_9 15.5101e-18
+Cext_134 n_8 vss 95.1057e-18
+Cext_135 n_8 vss 481.031e-18
+Cext_136 n_9 vss 99.5028e-18
+Cext_137 n_9 vss 480.311e-18
+Cext_138 b1b det 3.08988f
+Cext_139 b1b kick 18.9647e-18
+Cext_140 b1b pbias 847.105e-18
+Cext_141 b1b pcasc 735.082e-18
+Cext_142 b1b r4 332.534e-18
+Cext_143 b1b r4n 197.625e-18
+Cext_144 b1b vbe 741.197e-18
+Cext_145 b1b vbe3 1.07019f
+Cext_146 b1b vd1 42.3574e-18
+Cext_147 b1b vd2 0.214735e-18
+Cext_148 b1b vss 1.39679f
+Cext_149 c2 det 1.09491e-18
+Cext_150 c2 dvbe 14.8445f
+Cext_151 c2 n1 1.78008f
+Cext_152 c2 pbias 3.1973e-18
+Cext_153 c2 pcasc 683.913e-18
+Cext_154 c2 vb2 1.28399f
+Cext_155 c2 vbe 407.234e-18
+Cext_156 c2 vref 0.457024e-18
+Cext_157 c2 vss 1.76096f
+Cext_158 d1 d2 3.38132f
+Cext_159 d1 d3 369.77e-18
+Cext_160 d1 d4 105.35e-18
+Cext_161 d1 d5 67.0643e-18
+Cext_162 d1 det 66.6465e-18
+Cext_163 d1 iptat 1.22759e-18
+Cext_164 d1 kick 66.4272e-18
+Cext_165 d1 n1 69.0247e-18
+Cext_166 d1 pbias 5.54508f
+Cext_167 d1 pcasc 539.684e-18
+Cext_168 d1 r4 89.8574e-18
+Cext_169 d1 r4n 66.3707e-18
+Cext_170 d1 vb2 3.51936e-18
+Cext_171 d1 vdd 478.72e-18
+Cext_172 d1 vref 85.5231e-18
+Cext_173 d1 vss 7.31884e-18
+Cext_174 d2 d3 2.47943f
+Cext_175 d2 d4 603.724e-18
+Cext_176 d2 d5 62.4898e-18
+Cext_177 d2 det 270.036e-18
+Cext_178 d2 iptat 1.22759e-18
+Cext_179 d2 kick 84.8402e-18
+Cext_180 d2 n1 85.2692e-18
+Cext_181 d2 pbias 1.59819f
+Cext_182 d2 pcasc 541.399e-18
+Cext_183 d2 r4 89.9071e-18
+Cext_184 d2 r4n 66.4466e-18
+Cext_185 d2 vb2 0.58192e-18
+Cext_186 d2 vdd 478.512e-18
+Cext_187 d2 vss 8.38671e-18
+Cext_188 d3 d4 3.36401f
+Cext_189 d3 d5 495.887e-18
+Cext_190 d3 det 67.4106e-18
+Cext_191 d3 iptat 1.22759e-18
+Cext_192 d3 kick 66.5915e-18
+Cext_193 d3 pbias 1.54168f
+Cext_194 d3 pcasc 541.425e-18
+Cext_195 d3 r4 89.9115e-18
+Cext_196 d3 r4n 66.4676e-18
+Cext_197 d3 vb2 86.7912e-18
+Cext_198 d3 vdd 478.512e-18
+Cext_199 d3 vref 69.0247e-18
+Cext_200 d3 vss 1.8489e-18
+Cext_201 d4 d5 5.71403f
+Cext_202 d4 det 99.591e-18
+Cext_203 d4 iptat 70.2523e-18
+Cext_204 d4 kick 248.615e-18
+Cext_205 d4 pbias 1.56219f
+Cext_206 d4 pcasc 540.29e-18
+Cext_207 d4 r4 90.2237e-18
+Cext_208 d4 r4n 71.5847e-18
+Cext_209 d4 vb2 0.238401e-18
+Cext_210 d4 vdd 480.244e-18
+Cext_211 d4 vss 13.0714e-18
+Cext_212 d5 det 9.09587f
+Cext_213 d5 iptat 1.22759e-18
+Cext_214 d5 kick 86.0785e-18
+Cext_215 d5 pbias 1.34059f
+Cext_216 d5 pcasc 545.423e-18
+Cext_217 d5 r4 241.428e-18
+Cext_218 d5 r4n 170.512e-18
+Cext_219 d5 vb2 69.4934e-18
+Cext_220 d5 vdd 478.512e-18
+Cext_221 d5 vss 9.92566e-18
+Cext_222 det dvbe 1.47054e-18
+Cext_223 det kick 10.5027f
+Cext_224 det n1 2.03967e-18
+Cext_225 det pbias 2.27172f
+Cext_226 det pcasc 7.15985f
+Cext_227 det r4 360.612e-18
+Cext_228 det r4n 824.601e-18
+Cext_229 det vb2 60.8768e-18
+Cext_230 det vbe 32.2826e-18
+Cext_231 det vbe3 34.4541e-18
+Cext_232 det vdd 339.328e-18
+Cext_233 det vss 783.982e-18
+Cext_234 dvbe iptat 0.236884e-18
+Cext_235 dvbe kick 0.311768e-18
+Cext_236 dvbe n1 3.63074e-18
+Cext_237 dvbe pbias 193.075e-18
+Cext_238 dvbe pcasc 5.36919e-18
+Cext_239 dvbe vb2 89.4959e-18
+Cext_240 dvbe vbe 11.6494f
+Cext_241 dvbe vbe3 15.8721e-18
+Cext_242 dvbe vd1 0.145608e-18
+Cext_243 dvbe vd2 156.801e-18
+Cext_244 dvbe vref 4.6575f
+Cext_245 dvbe vss 3.91955f
+Cext_246 iptat n1 45.5207e-18
+Cext_247 iptat pbias 6.1594e-18
+Cext_248 iptat pcasc 975.203e-18
+Cext_249 iptat vb2 6.11366f
+Cext_250 iptat vbe 70.5206e-18
+Cext_251 iptat vref 223.508e-18
+Cext_252 iptat vss 289.493e-18
+Cext_253 kick pbias 1.11756f
+Cext_254 kick pcasc 12.9977e-18
+Cext_255 kick r4 126.975e-18
+Cext_256 kick r4n 7.98667f
+Cext_257 kick vb2 3.0592e-18
+Cext_258 kick vbe 0.356062e-18
+Cext_259 kick vdd 152.428e-18
+Cext_260 kick vss 519.69e-18
+Cext_261 n1 pbias 6.39949e-18
+Cext_262 n1 pcasc 4.83147f
+Cext_263 n1 vb2 1.32414f
+Cext_264 n1 vbe 1.91233f
+Cext_265 n1 vref 6.41414e-18
+Cext_266 n1 vss 116.638e-18
+Cext_267 pbias pcasc 9.33416f
+Cext_268 pbias r4 2.50831f
+Cext_269 pbias r4n 732.455e-18
+Cext_270 pbias vb2 1.54255f
+Cext_271 pbias vbe 3.71289e-18
+Cext_272 pbias vbe3 157.678e-18
+Cext_273 pbias vd1 49.6104e-18
+Cext_274 pbias vd2 147.156e-18
+Cext_275 pbias vdd 3.85011f
+Cext_276 pbias vref 213.907e-18
+Cext_277 pbias vss 3.75278f
+Cext_278 pcasc r4 2.77052e-18
+Cext_279 pcasc r4n 2.04066e-18
+Cext_280 pcasc vb2 3.71047f
+Cext_281 pcasc vbe 953.297e-18
+Cext_282 pcasc vbe3 313.659e-18
+Cext_283 pcasc vref 2.31913f
+Cext_284 pcasc vss 598.224e-18
+Cext_285 r4 r4n 12.2762f
+Cext_286 r4 vbe 285.464e-18
+Cext_287 r4 vdd 83.346e-18
+Cext_288 r4 vss 415.346e-18
+Cext_289 r4n vbe 62.6373e-18
+Cext_290 r4n vdd 158.562e-18
+Cext_291 r4n vss 591.385e-18
+Cext_292 vb2 vbe 1.27566f
+Cext_293 vb2 vref 6.68835f
+Cext_294 vb2 vss 708.188e-18
+Cext_295 vbe vbe3 11.0316e-18
+Cext_296 vbe vd1 10.5784e-18
+Cext_297 vbe vd2 29.0277e-18
+Cext_298 vbe vref 223.747e-18
+Cext_299 vbe vss 5.2939f
+Cext_300 vbe3 vd1 394.468e-18
+Cext_301 vbe3 vd2 245.219e-18
+Cext_302 vbe3 vss 1.39267f
+Cext_303 vd1 vd2 2.03701f
+Cext_304 vd1 vss 364.135e-18
+Cext_305 vd2 vss 1.51724f
+Cext_306 vref vss 480.6e-18
+Cext_307 vss b1b 4.41403f
+Cext_308 vss c2 4.95536f
+Cext_309 vss d1 2.31262f
+Cext_310 vss d2 2.22418f
+Cext_311 vss d3 2.35423f
+Cext_312 vss d4 2.28807f
+Cext_313 vss d5 2.73371f
+Cext_314 vss det 6.4979f
+Cext_315 vss dvbe 6.69786f
+Cext_316 vss iptat 1.94954f
+Cext_317 vss kick 3.02926f
+Cext_318 vss n1 2.16318f
+Cext_319 vss pbias 45.0447f
+Cext_320 vss pcasc 30.7628f
+Cext_321 vss r4 4.25325f
+Cext_322 vss r4n 2.48056f
+Cext_323 vss vb2 11.6562f
+Cext_324 vss vbe 8.8365f
+Cext_325 vss vbe3 1.77779f
+Cext_326 vss vd1 1.42461f
+Cext_327 vss vd2 1.56685f
+Cext_328 vss vdd 18.8574f
+Cext_329 vss vref 2.41436f
+XR16_u2 vss dvbe vss rppd w=1u l=51.5u b=0 m=1
+XR16_u3 vss dvbe vss rppd w=1u l=51.5u b=0 m=1
+XR16_u4 vss dvbe vss rppd w=1u l=51.5u b=0 m=1
+XR16_u5 vss dvbe vss rppd w=1u l=51.5u b=0 m=1
+XR16_u6 vss dvbe vss rppd w=1u l=51.5u b=0 m=1
+XR16_u7 vss dvbe vss rppd w=1u l=51.5u b=0 m=1
+XR16_u8 vss dvbe vss rppd w=1u l=51.5u b=0 m=1
+XR16_u9 vss dvbe vss rppd w=1u l=51.5u b=0 m=1
+XR16_u10 vss dvbe vss rppd w=1u l=51.5u b=0 m=1
+XR16_u11 vss dvbe vss rppd w=1u l=51.5u b=0 m=1
+XR16_u12 vss dvbe vss rppd w=1u l=51.5u b=0 m=1
+XR16_u13 vss dvbe vss rppd w=1u l=51.5u b=0 m=1
+XR16_u14 vss dvbe vss rppd w=1u l=51.5u b=0 m=1
+XR16_u15 vss dvbe vss rppd w=1u l=51.5u b=0 m=1
+XR16_u16 vss dvbe vss rppd w=1u l=51.5u b=0 m=1
+XR16_u17 vss dvbe vss rppd w=1u l=51.5u b=0 m=1
+XR16_u18 vss dvbe vss rppd w=1u l=51.5u b=0 m=1
+XR16_u19 vss dvbe vss rppd w=1u l=51.5u b=0 m=1
+XR16_u20 vss dvbe vss rppd w=1u l=51.5u b=0 m=1
+XR16_u21 vss dvbe vss rppd w=1u l=51.5u b=0 m=1
+XR16_u22 vss dvbe vss rppd w=1u l=51.5u b=0 m=1
+XR16_u23 vss dvbe vss rppd w=1u l=51.5u b=0 m=1
+XR16_u24 vss dvbe vss rppd w=1u l=51.5u b=0 m=1
+XR17_u2 n_7 vref vss rppd w=1u l=53.465u b=0 m=1
+XR17_u3 n_7 vref vss rppd w=1u l=53.465u b=0 m=1
+XR17_u4 n_7 vref vss rppd w=1u l=53.465u b=0 m=1
+XR18_u2 n_2 n_36 vss rppd w=1u l=53.465u b=0 m=1
+XR18_u3 n_2 n_36 vss rppd w=1u l=53.465u b=0 m=1
+XR18_u4 n_2 n_36 vss rppd w=1u l=53.465u b=0 m=1
+XR19_u2 n_7 n_36 vss rppd w=1u l=53.465u b=0 m=1
+XR19_u3 n_7 n_36 vss rppd w=1u l=53.465u b=0 m=1
+XR19_u4 n_7 n_36 vss rppd w=1u l=53.465u b=0 m=1
+XR20_u2 n_2 n_37 vss rppd w=1u l=53.465u b=0 m=1
+XR20_u3 n_2 n_37 vss rppd w=1u l=53.465u b=0 m=1
+XR20_u4 n_2 n_37 vss rppd w=1u l=53.465u b=0 m=1
+XR21_u2 n_8 n_37 vss rppd w=1u l=53.465u b=0 m=1
+XR21_u3 n_8 n_37 vss rppd w=1u l=53.465u b=0 m=1
+XR21_u4 n_8 n_37 vss rppd w=1u l=53.465u b=0 m=1
+XR22_u2 n_8 vbe3 vss rppd w=1u l=53.465u b=0 m=1
+XR22_u3 n_8 vbe3 vss rppd w=1u l=53.465u b=0 m=1
+XR22_u4 n_8 vbe3 vss rppd w=1u l=53.465u b=0 m=1
+XR23_u2 n_6 vb2 vss rppd w=1u l=48u b=0 m=1
+XR23_u3 n_6 vb2 vss rppd w=1u l=48u b=0 m=1
+XR23_u4 n_6 vb2 vss rppd w=1u l=48u b=0 m=1
+XR23_u5 n_6 vb2 vss rppd w=1u l=48u b=0 m=1
+XR23_u6 n_6 vb2 vss rppd w=1u l=48u b=0 m=1
+XR23_u7 n_6 vb2 vss rppd w=1u l=48u b=0 m=1
+XR23_u8 n_6 vb2 vss rppd w=1u l=48u b=0 m=1
+XR23_u9 n_6 vb2 vss rppd w=1u l=48u b=0 m=1
+XR23_u10 n_6 vb2 vss rppd w=1u l=48u b=0 m=1
+XR23_u11 n_6 vb2 vss rppd w=1u l=48u b=0 m=1
+XR23_u12 n_6 vb2 vss rppd w=1u l=48u b=0 m=1
+XR23_u13 n_6 vb2 vss rppd w=1u l=48u b=0 m=1
+XR23_u14 n_6 vb2 vss rppd w=1u l=48u b=0 m=1
+XR23_u15 n_6 vb2 vss rppd w=1u l=48u b=0 m=1
+XR23_u16 n_6 vb2 vss rppd w=1u l=48u b=0 m=1
+XR23_u17 n_6 vb2 vss rppd w=1u l=48u b=0 m=1
+XR23_u18 n_6 vb2 vss rppd w=1u l=48u b=0 m=1
+XR23_u19 n_6 vb2 vss rppd w=1u l=48u b=0 m=1
+XR23_u20 n_6 vb2 vss rppd w=1u l=48u b=0 m=1
+XR23_u21 n_6 vb2 vss rppd w=1u l=48u b=0 m=1
+XR23_u22 n_6 vb2 vss rppd w=1u l=48u b=0 m=1
+XR23_u23 n_6 vb2 vss rppd w=1u l=48u b=0 m=1
+XR23_u24 n_6 vb2 vss rppd w=1u l=48u b=0 m=1
+XR24_u2 n_9 vd1 vss rppd w=1u l=48u b=0 m=1
+XR24_u3 n_9 vd1 vss rppd w=1u l=48u b=0 m=1
+XR24_u4 n_9 vd1 vss rppd w=1u l=48u b=0 m=1
+XR24_u5 n_9 vd1 vss rppd w=1u l=48u b=0 m=1
+XR24_u6 n_9 vd1 vss rppd w=1u l=48u b=0 m=1
+XR24_u7 n_9 vd1 vss rppd w=1u l=48u b=0 m=1
+XR24_u8 n_9 vd1 vss rppd w=1u l=48u b=0 m=1
+XR24_u9 n_9 vd1 vss rppd w=1u l=48u b=0 m=1
+XR24_u10 n_9 vd1 vss rppd w=1u l=48u b=0 m=1
+XR24_u11 n_9 vd1 vss rppd w=1u l=48u b=0 m=1
+XR24_u12 n_9 vd1 vss rppd w=1u l=48u b=0 m=1
+XR24_u13 n_9 vd1 vss rppd w=1u l=48u b=0 m=1
+XR24_u14 n_9 vd1 vss rppd w=1u l=48u b=0 m=1
+XR24_u15 n_9 vd1 vss rppd w=1u l=48u b=0 m=1
+XR24_u16 n_9 vd1 vss rppd w=1u l=48u b=0 m=1
+XR24_u17 n_9 vd1 vss rppd w=1u l=48u b=0 m=1
+XR24_u18 n_9 vd1 vss rppd w=1u l=48u b=0 m=1
+XR24_u19 n_9 vd1 vss rppd w=1u l=48u b=0 m=1
+XR24_u20 n_9 vd1 vss rppd w=1u l=48u b=0 m=1
+XR24_u21 n_9 vd1 vss rppd w=1u l=48u b=0 m=1
+XR24_u22 n_9 vd1 vss rppd w=1u l=48u b=0 m=1
+XR24_u23 n_9 vd1 vss rppd w=1u l=48u b=0 m=1
+XR24_u24 n_9 vd1 vss rppd w=1u l=48u b=0 m=1
+XR25_u2 n_6 n_19 vss rppd w=1u l=48u b=0 m=1
+XR25_u3 n_6 n_19 vss rppd w=1u l=48u b=0 m=1
+XR25_u4 n_6 n_19 vss rppd w=1u l=48u b=0 m=1
+XR25_u5 n_6 n_19 vss rppd w=1u l=48u b=0 m=1
+XR25_u6 n_6 n_19 vss rppd w=1u l=48u b=0 m=1
+XR25_u7 n_6 n_19 vss rppd w=1u l=48u b=0 m=1
+XR25_u8 n_6 n_19 vss rppd w=1u l=48u b=0 m=1
+XR25_u9 n_6 n_19 vss rppd w=1u l=48u b=0 m=1
+XR25_u10 n_6 n_19 vss rppd w=1u l=48u b=0 m=1
+XR25_u11 n_6 n_19 vss rppd w=1u l=48u b=0 m=1
+XR25_u12 n_6 n_19 vss rppd w=1u l=48u b=0 m=1
+XR25_u13 n_6 n_19 vss rppd w=1u l=48u b=0 m=1
+XR25_u14 n_6 n_19 vss rppd w=1u l=48u b=0 m=1
+XR25_u15 n_6 n_19 vss rppd w=1u l=48u b=0 m=1
+XR25_u16 n_6 n_19 vss rppd w=1u l=48u b=0 m=1
+XR25_u17 n_6 n_19 vss rppd w=1u l=48u b=0 m=1
+XR25_u18 n_6 n_19 vss rppd w=1u l=48u b=0 m=1
+XR25_u19 n_6 n_19 vss rppd w=1u l=48u b=0 m=1
+XR25_u20 n_6 n_19 vss rppd w=1u l=48u b=0 m=1
+XR25_u21 n_6 n_19 vss rppd w=1u l=48u b=0 m=1
+XR25_u22 n_6 n_19 vss rppd w=1u l=48u b=0 m=1
+XR25_u23 n_6 n_19 vss rppd w=1u l=48u b=0 m=1
+XR25_u24 n_6 n_19 vss rppd w=1u l=48u b=0 m=1
+XR26_u2 n_9 n_19 vss rppd w=1u l=48u b=0 m=1
+XR26_u3 n_9 n_19 vss rppd w=1u l=48u b=0 m=1
+XR26_u4 n_9 n_19 vss rppd w=1u l=48u b=0 m=1
+XR26_u5 n_9 n_19 vss rppd w=1u l=48u b=0 m=1
+XR26_u6 n_9 n_19 vss rppd w=1u l=48u b=0 m=1
+XR26_u7 n_9 n_19 vss rppd w=1u l=48u b=0 m=1
+XR26_u8 n_9 n_19 vss rppd w=1u l=48u b=0 m=1
+XR26_u9 n_9 n_19 vss rppd w=1u l=48u b=0 m=1
+XR26_u10 n_9 n_19 vss rppd w=1u l=48u b=0 m=1
+XR26_u11 n_9 n_19 vss rppd w=1u l=48u b=0 m=1
+XR26_u12 n_9 n_19 vss rppd w=1u l=48u b=0 m=1
+XR26_u13 n_9 n_19 vss rppd w=1u l=48u b=0 m=1
+XR26_u14 n_9 n_19 vss rppd w=1u l=48u b=0 m=1
+XR26_u15 n_9 n_19 vss rppd w=1u l=48u b=0 m=1
+XR26_u16 n_9 n_19 vss rppd w=1u l=48u b=0 m=1
+XR26_u17 n_9 n_19 vss rppd w=1u l=48u b=0 m=1
+XR26_u18 n_9 n_19 vss rppd w=1u l=48u b=0 m=1
+XR26_u19 n_9 n_19 vss rppd w=1u l=48u b=0 m=1
+XR26_u20 n_9 n_19 vss rppd w=1u l=48u b=0 m=1
+XR26_u21 n_9 n_19 vss rppd w=1u l=48u b=0 m=1
+XR26_u22 n_9 n_19 vss rppd w=1u l=48u b=0 m=1
+XR26_u23 n_9 n_19 vss rppd w=1u l=48u b=0 m=1
+XR26_u24 n_9 n_19 vss rppd w=1u l=48u b=0 m=1
+XM34_u2 n1 vb2 vbe vss sg13_hv_nmos l=1u w=10u as=3.4p ad=3.4p ps=20.68u pd=20.68u rfmode=0
+XM34_u3 n1 vb2 vbe vss sg13_hv_nmos l=1u w=10u as=3.4p ad=3.4p ps=20.68u pd=20.68u rfmode=0
+XM34_u4 n1 vb2 vbe vss sg13_hv_nmos l=1u w=10u as=3.4p ad=3.4p ps=20.68u pd=20.68u rfmode=0
+XM34_u5 n1 vb2 vbe vss sg13_hv_nmos l=1u w=10u as=3.4p ad=3.4p ps=20.68u pd=20.68u rfmode=0
+XM34_u6 n1 vb2 vbe vss sg13_hv_nmos l=1u w=10u as=3.4p ad=3.4p ps=20.68u pd=20.68u rfmode=0
+XM34_u7 n1 vb2 vbe vss sg13_hv_nmos l=1u w=10u as=3.4p ad=3.4p ps=20.68u pd=20.68u rfmode=0
+XM34_u8 n1 vb2 vbe vss sg13_hv_nmos l=1u w=10u as=3.4p ad=3.4p ps=20.68u pd=20.68u rfmode=0
+XM34_u9 n1 vb2 vbe vss sg13_hv_nmos l=1u w=10u as=3.4p ad=3.4p ps=20.68u pd=20.68u rfmode=0
+XM34_u10 n1 vb2 vbe vss sg13_hv_nmos l=1u w=10u as=3.4p ad=3.4p ps=20.68u pd=20.68u rfmode=0
+XM34_u11 n1 vb2 vbe vss sg13_hv_nmos l=1u w=10u as=3.4p ad=3.4p ps=20.68u pd=20.68u rfmode=0
+XM34_u12 n1 vb2 vbe vss sg13_hv_nmos l=1u w=10u as=3.4p ad=3.4p ps=20.68u pd=20.68u rfmode=0
+XM34_u13 n1 vb2 vbe vss sg13_hv_nmos l=1u w=10u as=3.4p ad=3.4p ps=20.68u pd=20.68u rfmode=0
+XM34_u14 n1 vb2 vbe vss sg13_hv_nmos l=1u w=10u as=3.4p ad=3.4p ps=20.68u pd=20.68u rfmode=0
+XM34_u15 n1 vb2 vbe vss sg13_hv_nmos l=1u w=10u as=3.4p ad=3.4p ps=20.68u pd=20.68u rfmode=0
+XM34_u16 n1 vb2 vbe vss sg13_hv_nmos l=1u w=10u as=3.4p ad=3.4p ps=20.68u pd=20.68u rfmode=0
+XM34_u17 n1 vb2 vbe vss sg13_hv_nmos l=1u w=10u as=3.4p ad=3.4p ps=20.68u pd=20.68u rfmode=0
+XM34_u18 n1 vb2 vbe vss sg13_hv_nmos l=1u w=10u as=3.4p ad=3.4p ps=20.68u pd=20.68u rfmode=0
+XM34_u19 n1 vb2 vbe vss sg13_hv_nmos l=1u w=10u as=3.4p ad=3.4p ps=20.68u pd=20.68u rfmode=0
+XM34_u20 n1 vb2 vbe vss sg13_hv_nmos l=1u w=10u as=3.4p ad=3.4p ps=20.68u pd=20.68u rfmode=0
+XM34_u21 n1 vb2 vbe vss sg13_hv_nmos l=1u w=10u as=3.4p ad=3.4p ps=20.68u pd=20.68u rfmode=0
+XM34_u22 n1 vb2 vbe vss sg13_hv_nmos l=1u w=10u as=3.4p ad=3.4p ps=20.68u pd=20.68u rfmode=0
+XM34_u23 n1 vb2 vbe vss sg13_hv_nmos l=1u w=10u as=3.4p ad=3.4p ps=20.68u pd=20.68u rfmode=0
+XM34_u24 n1 vb2 vbe vss sg13_hv_nmos l=1u w=10u as=3.4p ad=3.4p ps=20.68u pd=20.68u rfmode=0
+XM35_u2 c2 vb2 pcasc vss sg13_hv_nmos l=1u w=10u as=3.4p ad=3.4p ps=20.68u pd=20.68u rfmode=0
+XM35_u3 c2 vb2 pcasc vss sg13_hv_nmos l=1u w=10u as=3.4p ad=3.4p ps=20.68u pd=20.68u rfmode=0
+XM35_u4 c2 vb2 pcasc vss sg13_hv_nmos l=1u w=10u as=3.4p ad=3.4p ps=20.68u pd=20.68u rfmode=0
+XM35_u5 c2 vb2 pcasc vss sg13_hv_nmos l=1u w=10u as=3.4p ad=3.4p ps=20.68u pd=20.68u rfmode=0
+XM35_u6 c2 vb2 pcasc vss sg13_hv_nmos l=1u w=10u as=3.4p ad=3.4p ps=20.68u pd=20.68u rfmode=0
+XM35_u7 c2 vb2 pcasc vss sg13_hv_nmos l=1u w=10u as=3.4p ad=3.4p ps=20.68u pd=20.68u rfmode=0
+XM35_u8 c2 vb2 pcasc vss sg13_hv_nmos l=1u w=10u as=3.4p ad=3.4p ps=20.68u pd=20.68u rfmode=0
+XM35_u9 c2 vb2 pcasc vss sg13_hv_nmos l=1u w=10u as=3.4p ad=3.4p ps=20.68u pd=20.68u rfmode=0
+XM35_u10 c2 vb2 pcasc vss sg13_hv_nmos l=1u w=10u as=3.4p ad=3.4p ps=20.68u pd=20.68u rfmode=0
+XM35_u11 c2 vb2 pcasc vss sg13_hv_nmos l=1u w=10u as=3.4p ad=3.4p ps=20.68u pd=20.68u rfmode=0
+XM35_u12 c2 vb2 pcasc vss sg13_hv_nmos l=1u w=10u as=3.4p ad=3.4p ps=20.68u pd=20.68u rfmode=0
+XM35_u13 c2 vb2 pcasc vss sg13_hv_nmos l=1u w=10u as=3.4p ad=3.4p ps=20.68u pd=20.68u rfmode=0
+XM35_u14 c2 vb2 pcasc vss sg13_hv_nmos l=1u w=10u as=3.4p ad=3.4p ps=20.68u pd=20.68u rfmode=0
+XM35_u15 c2 vb2 pcasc vss sg13_hv_nmos l=1u w=10u as=3.4p ad=3.4p ps=20.68u pd=20.68u rfmode=0
+XM35_u16 c2 vb2 pcasc vss sg13_hv_nmos l=1u w=10u as=3.4p ad=3.4p ps=20.68u pd=20.68u rfmode=0
+XM35_u17 c2 vb2 pcasc vss sg13_hv_nmos l=1u w=10u as=3.4p ad=3.4p ps=20.68u pd=20.68u rfmode=0
+XM35_u18 c2 vb2 pcasc vss sg13_hv_nmos l=1u w=10u as=3.4p ad=3.4p ps=20.68u pd=20.68u rfmode=0
+XM35_u19 c2 vb2 pcasc vss sg13_hv_nmos l=1u w=10u as=3.4p ad=3.4p ps=20.68u pd=20.68u rfmode=0
+XM35_u20 c2 vb2 pcasc vss sg13_hv_nmos l=1u w=10u as=3.4p ad=3.4p ps=20.68u pd=20.68u rfmode=0
+XM35_u21 c2 vb2 pcasc vss sg13_hv_nmos l=1u w=10u as=3.4p ad=3.4p ps=20.68u pd=20.68u rfmode=0
+XM35_u22 c2 vb2 pcasc vss sg13_hv_nmos l=1u w=10u as=3.4p ad=3.4p ps=20.68u pd=20.68u rfmode=0
+XM35_u23 c2 vb2 pcasc vss sg13_hv_nmos l=1u w=10u as=3.4p ad=3.4p ps=20.68u pd=20.68u rfmode=0
+XM35_u24 c2 vb2 pcasc vss sg13_hv_nmos l=1u w=10u as=3.4p ad=3.4p ps=20.68u pd=20.68u rfmode=0
+XM36_u2 vbe vb2 n1 vss sg13_hv_nmos l=1u w=10u as=3.4p ad=3.4p ps=20.68u pd=20.68u rfmode=0
+XM36_u3 vbe vb2 n1 vss sg13_hv_nmos l=1u w=10u as=3.4p ad=3.4p ps=20.68u pd=20.68u rfmode=0
+XM36_u4 vbe vb2 n1 vss sg13_hv_nmos l=1u w=10u as=3.4p ad=3.4p ps=20.68u pd=20.68u rfmode=0
+XM36_u5 vbe vb2 n1 vss sg13_hv_nmos l=1u w=10u as=3.4p ad=3.4p ps=20.68u pd=20.68u rfmode=0
+XM36_u6 vbe vb2 n1 vss sg13_hv_nmos l=1u w=10u as=3.4p ad=3.4p ps=20.68u pd=20.68u rfmode=0
+XM36_u7 vbe vb2 n1 vss sg13_hv_nmos l=1u w=10u as=3.4p ad=3.4p ps=20.68u pd=20.68u rfmode=0
+XM36_u8 vbe vb2 n1 vss sg13_hv_nmos l=1u w=10u as=3.4p ad=3.4p ps=20.68u pd=20.68u rfmode=0
+XM36_u9 vbe vb2 n1 vss sg13_hv_nmos l=1u w=10u as=3.4p ad=3.4p ps=20.68u pd=20.68u rfmode=0
+XM36_u10 vbe vb2 n1 vss sg13_hv_nmos l=1u w=10u as=3.4p ad=3.4p ps=20.68u pd=20.68u rfmode=0
+XM36_u11 vbe vb2 n1 vss sg13_hv_nmos l=1u w=10u as=3.4p ad=3.4p ps=20.68u pd=20.68u rfmode=0
+XM36_u12 vbe vb2 n1 vss sg13_hv_nmos l=1u w=10u as=3.4p ad=3.4p ps=20.68u pd=20.68u rfmode=0
+XM36_u13 vbe vb2 n1 vss sg13_hv_nmos l=1u w=10u as=3.4p ad=3.4p ps=20.68u pd=20.68u rfmode=0
+XM36_u14 vbe vb2 n1 vss sg13_hv_nmos l=1u w=10u as=3.4p ad=3.4p ps=20.68u pd=20.68u rfmode=0
+XM36_u15 vbe vb2 n1 vss sg13_hv_nmos l=1u w=10u as=3.4p ad=3.4p ps=20.68u pd=20.68u rfmode=0
+XM36_u16 vbe vb2 n1 vss sg13_hv_nmos l=1u w=10u as=3.4p ad=3.4p ps=20.68u pd=20.68u rfmode=0
+XM36_u17 vbe vb2 n1 vss sg13_hv_nmos l=1u w=10u as=3.4p ad=3.4p ps=20.68u pd=20.68u rfmode=0
+XM36_u18 vbe vb2 n1 vss sg13_hv_nmos l=1u w=10u as=3.4p ad=3.4p ps=20.68u pd=20.68u rfmode=0
+XM36_u19 vbe vb2 n1 vss sg13_hv_nmos l=1u w=10u as=3.4p ad=3.4p ps=20.68u pd=20.68u rfmode=0
+XM36_u20 vbe vb2 n1 vss sg13_hv_nmos l=1u w=10u as=3.4p ad=3.4p ps=20.68u pd=20.68u rfmode=0
+XM36_u21 vbe vb2 n1 vss sg13_hv_nmos l=1u w=10u as=3.4p ad=3.4p ps=20.68u pd=20.68u rfmode=0
+XM36_u22 vbe vb2 n1 vss sg13_hv_nmos l=1u w=10u as=3.4p ad=3.4p ps=20.68u pd=20.68u rfmode=0
+XM36_u23 vbe vb2 n1 vss sg13_hv_nmos l=1u w=10u as=3.4p ad=3.4p ps=20.68u pd=20.68u rfmode=0
+XM36_u24 vbe vb2 n1 vss sg13_hv_nmos l=1u w=10u as=3.4p ad=3.4p ps=20.68u pd=20.68u rfmode=0
+XM37_u2 pcasc vb2 c2 vss sg13_hv_nmos l=1u w=10u as=3.4p ad=3.4p ps=20.68u pd=20.68u rfmode=0
+XM37_u3 pcasc vb2 c2 vss sg13_hv_nmos l=1u w=10u as=3.4p ad=3.4p ps=20.68u pd=20.68u rfmode=0
+XM37_u4 pcasc vb2 c2 vss sg13_hv_nmos l=1u w=10u as=3.4p ad=3.4p ps=20.68u pd=20.68u rfmode=0
+XM37_u5 pcasc vb2 c2 vss sg13_hv_nmos l=1u w=10u as=3.4p ad=3.4p ps=20.68u pd=20.68u rfmode=0
+XM37_u6 pcasc vb2 c2 vss sg13_hv_nmos l=1u w=10u as=3.4p ad=3.4p ps=20.68u pd=20.68u rfmode=0
+XM37_u7 pcasc vb2 c2 vss sg13_hv_nmos l=1u w=10u as=3.4p ad=3.4p ps=20.68u pd=20.68u rfmode=0
+XM37_u8 pcasc vb2 c2 vss sg13_hv_nmos l=1u w=10u as=3.4p ad=3.4p ps=20.68u pd=20.68u rfmode=0
+XM37_u9 pcasc vb2 c2 vss sg13_hv_nmos l=1u w=10u as=3.4p ad=3.4p ps=20.68u pd=20.68u rfmode=0
+XM37_u10 pcasc vb2 c2 vss sg13_hv_nmos l=1u w=10u as=3.4p ad=3.4p ps=20.68u pd=20.68u rfmode=0
+XM37_u11 pcasc vb2 c2 vss sg13_hv_nmos l=1u w=10u as=3.4p ad=3.4p ps=20.68u pd=20.68u rfmode=0
+XM37_u12 pcasc vb2 c2 vss sg13_hv_nmos l=1u w=10u as=3.4p ad=3.4p ps=20.68u pd=20.68u rfmode=0
+XM37_u13 pcasc vb2 c2 vss sg13_hv_nmos l=1u w=10u as=3.4p ad=3.4p ps=20.68u pd=20.68u rfmode=0
+XM37_u14 pcasc vb2 c2 vss sg13_hv_nmos l=1u w=10u as=3.4p ad=3.4p ps=20.68u pd=20.68u rfmode=0
+XM37_u15 pcasc vb2 c2 vss sg13_hv_nmos l=1u w=10u as=3.4p ad=3.4p ps=20.68u pd=20.68u rfmode=0
+XM37_u16 pcasc vb2 c2 vss sg13_hv_nmos l=1u w=10u as=3.4p ad=3.4p ps=20.68u pd=20.68u rfmode=0
+XM37_u17 pcasc vb2 c2 vss sg13_hv_nmos l=1u w=10u as=3.4p ad=3.4p ps=20.68u pd=20.68u rfmode=0
+XM37_u18 pcasc vb2 c2 vss sg13_hv_nmos l=1u w=10u as=3.4p ad=3.4p ps=20.68u pd=20.68u rfmode=0
+XM37_u19 pcasc vb2 c2 vss sg13_hv_nmos l=1u w=10u as=3.4p ad=3.4p ps=20.68u pd=20.68u rfmode=0
+XM37_u20 pcasc vb2 c2 vss sg13_hv_nmos l=1u w=10u as=3.4p ad=3.4p ps=20.68u pd=20.68u rfmode=0
+XM37_u21 pcasc vb2 c2 vss sg13_hv_nmos l=1u w=10u as=3.4p ad=3.4p ps=20.68u pd=20.68u rfmode=0
+XM37_u22 pcasc vb2 c2 vss sg13_hv_nmos l=1u w=10u as=3.4p ad=3.4p ps=20.68u pd=20.68u rfmode=0
+XM37_u23 pcasc vb2 c2 vss sg13_hv_nmos l=1u w=10u as=3.4p ad=3.4p ps=20.68u pd=20.68u rfmode=0
+XM37_u24 pcasc vb2 c2 vss sg13_hv_nmos l=1u w=10u as=3.4p ad=3.4p ps=20.68u pd=20.68u rfmode=0
+XM38_u2 d1 pbias vdd vdd sg13_hv_pmos l=4u w=5u as=1.7p ad=1.7p ps=10.68u pd=10.68u rfmode=0
+XM38_u3 d1 pbias vdd vdd sg13_hv_pmos l=4u w=5u as=1.7p ad=1.7p ps=10.68u pd=10.68u rfmode=0
+XM38_u4 d1 pbias vdd vdd sg13_hv_pmos l=4u w=5u as=1.7p ad=1.7p ps=10.68u pd=10.68u rfmode=0
+XM38_u5 d1 pbias vdd vdd sg13_hv_pmos l=4u w=5u as=1.7p ad=1.7p ps=10.68u pd=10.68u rfmode=0
+XM38_u6 d1 pbias vdd vdd sg13_hv_pmos l=4u w=5u as=1.7p ad=1.7p ps=10.68u pd=10.68u rfmode=0
+XM38_u7 d1 pbias vdd vdd sg13_hv_pmos l=4u w=5u as=1.7p ad=1.7p ps=10.68u pd=10.68u rfmode=0
+XM38_u8 d1 pbias vdd vdd sg13_hv_pmos l=4u w=5u as=1.7p ad=1.7p ps=10.68u pd=10.68u rfmode=0
+XM38_u9 d1 pbias vdd vdd sg13_hv_pmos l=4u w=5u as=1.7p ad=1.7p ps=10.68u pd=10.68u rfmode=0
+XM38_u10 d1 pbias vdd vdd sg13_hv_pmos l=4u w=5u as=1.7p ad=1.7p ps=10.68u pd=10.68u rfmode=0
+XM38_u11 d1 pbias vdd vdd sg13_hv_pmos l=4u w=5u as=1.7p ad=1.7p ps=10.68u pd=10.68u rfmode=0
+XM38_u12 d1 pbias vdd vdd sg13_hv_pmos l=4u w=5u as=1.7p ad=1.7p ps=10.68u pd=10.68u rfmode=0
+XM38_u13 d1 pbias vdd vdd sg13_hv_pmos l=4u w=5u as=1.7p ad=1.7p ps=10.68u pd=10.68u rfmode=0
+XM38_u14 d1 pbias vdd vdd sg13_hv_pmos l=4u w=5u as=1.7p ad=1.7p ps=10.68u pd=10.68u rfmode=0
+XM38_u15 d1 pbias vdd vdd sg13_hv_pmos l=4u w=5u as=1.7p ad=1.7p ps=10.68u pd=10.68u rfmode=0
+XM38_u16 d1 pbias vdd vdd sg13_hv_pmos l=4u w=5u as=1.7p ad=1.7p ps=10.68u pd=10.68u rfmode=0
+XM38_u17 d1 pbias vdd vdd sg13_hv_pmos l=4u w=5u as=1.7p ad=1.7p ps=10.68u pd=10.68u rfmode=0
+XM38_u18 d1 pbias vdd vdd sg13_hv_pmos l=4u w=5u as=1.7p ad=1.7p ps=10.68u pd=10.68u rfmode=0
+XM38_u19 d1 pbias vdd vdd sg13_hv_pmos l=4u w=5u as=1.7p ad=1.7p ps=10.68u pd=10.68u rfmode=0
+XM38_u20 d1 pbias vdd vdd sg13_hv_pmos l=4u w=5u as=1.7p ad=1.7p ps=10.68u pd=10.68u rfmode=0
+XM38_u21 d1 pbias vdd vdd sg13_hv_pmos l=4u w=5u as=1.7p ad=1.7p ps=10.68u pd=10.68u rfmode=0
+XM38_u22 d1 pbias vdd vdd sg13_hv_pmos l=4u w=5u as=1.7p ad=1.7p ps=10.68u pd=10.68u rfmode=0
+XM38_u23 d1 pbias vdd vdd sg13_hv_pmos l=4u w=5u as=1.7p ad=1.7p ps=10.68u pd=10.68u rfmode=0
+XM38_u24 d1 pbias vdd vdd sg13_hv_pmos l=4u w=5u as=1.7p ad=1.7p ps=10.68u pd=10.68u rfmode=0
+XM39_u2 d2 pbias vdd vdd sg13_hv_pmos l=4u w=5u as=1.7p ad=1.7p ps=10.68u pd=10.68u rfmode=0
+XM39_u3 d2 pbias vdd vdd sg13_hv_pmos l=4u w=5u as=1.7p ad=1.7p ps=10.68u pd=10.68u rfmode=0
+XM39_u4 d2 pbias vdd vdd sg13_hv_pmos l=4u w=5u as=1.7p ad=1.7p ps=10.68u pd=10.68u rfmode=0
+XM39_u5 d2 pbias vdd vdd sg13_hv_pmos l=4u w=5u as=1.7p ad=1.7p ps=10.68u pd=10.68u rfmode=0
+XM39_u6 d2 pbias vdd vdd sg13_hv_pmos l=4u w=5u as=1.7p ad=1.7p ps=10.68u pd=10.68u rfmode=0
+XM39_u7 d2 pbias vdd vdd sg13_hv_pmos l=4u w=5u as=1.7p ad=1.7p ps=10.68u pd=10.68u rfmode=0
+XM39_u8 d2 pbias vdd vdd sg13_hv_pmos l=4u w=5u as=1.7p ad=1.7p ps=10.68u pd=10.68u rfmode=0
+XM39_u9 d2 pbias vdd vdd sg13_hv_pmos l=4u w=5u as=1.7p ad=1.7p ps=10.68u pd=10.68u rfmode=0
+XM39_u10 d2 pbias vdd vdd sg13_hv_pmos l=4u w=5u as=1.7p ad=1.7p ps=10.68u pd=10.68u rfmode=0
+XM39_u11 d2 pbias vdd vdd sg13_hv_pmos l=4u w=5u as=1.7p ad=1.7p ps=10.68u pd=10.68u rfmode=0
+XM39_u12 d2 pbias vdd vdd sg13_hv_pmos l=4u w=5u as=1.7p ad=1.7p ps=10.68u pd=10.68u rfmode=0
+XM39_u13 d2 pbias vdd vdd sg13_hv_pmos l=4u w=5u as=1.7p ad=1.7p ps=10.68u pd=10.68u rfmode=0
+XM39_u14 d2 pbias vdd vdd sg13_hv_pmos l=4u w=5u as=1.7p ad=1.7p ps=10.68u pd=10.68u rfmode=0
+XM39_u15 d2 pbias vdd vdd sg13_hv_pmos l=4u w=5u as=1.7p ad=1.7p ps=10.68u pd=10.68u rfmode=0
+XM39_u16 d2 pbias vdd vdd sg13_hv_pmos l=4u w=5u as=1.7p ad=1.7p ps=10.68u pd=10.68u rfmode=0
+XM39_u17 d2 pbias vdd vdd sg13_hv_pmos l=4u w=5u as=1.7p ad=1.7p ps=10.68u pd=10.68u rfmode=0
+XM39_u18 d2 pbias vdd vdd sg13_hv_pmos l=4u w=5u as=1.7p ad=1.7p ps=10.68u pd=10.68u rfmode=0
+XM39_u19 d2 pbias vdd vdd sg13_hv_pmos l=4u w=5u as=1.7p ad=1.7p ps=10.68u pd=10.68u rfmode=0
+XM39_u20 d2 pbias vdd vdd sg13_hv_pmos l=4u w=5u as=1.7p ad=1.7p ps=10.68u pd=10.68u rfmode=0
+XM39_u21 d2 pbias vdd vdd sg13_hv_pmos l=4u w=5u as=1.7p ad=1.7p ps=10.68u pd=10.68u rfmode=0
+XM39_u22 d2 pbias vdd vdd sg13_hv_pmos l=4u w=5u as=1.7p ad=1.7p ps=10.68u pd=10.68u rfmode=0
+XM39_u23 d2 pbias vdd vdd sg13_hv_pmos l=4u w=5u as=1.7p ad=1.7p ps=10.68u pd=10.68u rfmode=0
+XM39_u24 d2 pbias vdd vdd sg13_hv_pmos l=4u w=5u as=1.7p ad=1.7p ps=10.68u pd=10.68u rfmode=0
+XM41_u2 d5 pbias vdd vdd sg13_hv_pmos l=4u w=5u as=1.7p ad=1.7p ps=10.68u pd=10.68u rfmode=0
+XM41_u3 d5 pbias vdd vdd sg13_hv_pmos l=4u w=5u as=1.7p ad=1.7p ps=10.68u pd=10.68u rfmode=0
+XM41_u4 d5 pbias vdd vdd sg13_hv_pmos l=4u w=5u as=1.7p ad=1.7p ps=10.68u pd=10.68u rfmode=0
+XM41_u5 d5 pbias vdd vdd sg13_hv_pmos l=4u w=5u as=1.7p ad=1.7p ps=10.68u pd=10.68u rfmode=0
+XM41_u6 d5 pbias vdd vdd sg13_hv_pmos l=4u w=5u as=1.7p ad=1.7p ps=10.68u pd=10.68u rfmode=0
+XM41_u7 d5 pbias vdd vdd sg13_hv_pmos l=4u w=5u as=1.7p ad=1.7p ps=10.68u pd=10.68u rfmode=0
+XM41_u8 d5 pbias vdd vdd sg13_hv_pmos l=4u w=5u as=1.7p ad=1.7p ps=10.68u pd=10.68u rfmode=0
+XM41_u9 d5 pbias vdd vdd sg13_hv_pmos l=4u w=5u as=1.7p ad=1.7p ps=10.68u pd=10.68u rfmode=0
+XM41_u10 d5 pbias vdd vdd sg13_hv_pmos l=4u w=5u as=1.7p ad=1.7p ps=10.68u pd=10.68u rfmode=0
+XM41_u11 d5 pbias vdd vdd sg13_hv_pmos l=4u w=5u as=1.7p ad=1.7p ps=10.68u pd=10.68u rfmode=0
+XM41_u12 d5 pbias vdd vdd sg13_hv_pmos l=4u w=5u as=1.7p ad=1.7p ps=10.68u pd=10.68u rfmode=0
+XM41_u13 d5 pbias vdd vdd sg13_hv_pmos l=4u w=5u as=1.7p ad=1.7p ps=10.68u pd=10.68u rfmode=0
+XM41_u14 d5 pbias vdd vdd sg13_hv_pmos l=4u w=5u as=1.7p ad=1.7p ps=10.68u pd=10.68u rfmode=0
+XM41_u15 d5 pbias vdd vdd sg13_hv_pmos l=4u w=5u as=1.7p ad=1.7p ps=10.68u pd=10.68u rfmode=0
+XM41_u16 d5 pbias vdd vdd sg13_hv_pmos l=4u w=5u as=1.7p ad=1.7p ps=10.68u pd=10.68u rfmode=0
+XM41_u17 d5 pbias vdd vdd sg13_hv_pmos l=4u w=5u as=1.7p ad=1.7p ps=10.68u pd=10.68u rfmode=0
+XM41_u18 d5 pbias vdd vdd sg13_hv_pmos l=4u w=5u as=1.7p ad=1.7p ps=10.68u pd=10.68u rfmode=0
+XM41_u19 d5 pbias vdd vdd sg13_hv_pmos l=4u w=5u as=1.7p ad=1.7p ps=10.68u pd=10.68u rfmode=0
+XM41_u20 d5 pbias vdd vdd sg13_hv_pmos l=4u w=5u as=1.7p ad=1.7p ps=10.68u pd=10.68u rfmode=0
+XM41_u21 d5 pbias vdd vdd sg13_hv_pmos l=4u w=5u as=1.7p ad=1.7p ps=10.68u pd=10.68u rfmode=0
+XM41_u22 d5 pbias vdd vdd sg13_hv_pmos l=4u w=5u as=1.7p ad=1.7p ps=10.68u pd=10.68u rfmode=0
+XM41_u23 d5 pbias vdd vdd sg13_hv_pmos l=4u w=5u as=1.7p ad=1.7p ps=10.68u pd=10.68u rfmode=0
+XM41_u24 d5 pbias vdd vdd sg13_hv_pmos l=4u w=5u as=1.7p ad=1.7p ps=10.68u pd=10.68u rfmode=0
+XM43_u2 d3 pbias vdd vdd sg13_hv_pmos l=4u w=5u as=1.7p ad=1.7p ps=10.68u pd=10.68u rfmode=0
+XM43_u3 d3 pbias vdd vdd sg13_hv_pmos l=4u w=5u as=1.7p ad=1.7p ps=10.68u pd=10.68u rfmode=0
+XM43_u4 d3 pbias vdd vdd sg13_hv_pmos l=4u w=5u as=1.7p ad=1.7p ps=10.68u pd=10.68u rfmode=0
+XM44_u2 d3 pbias vdd vdd sg13_hv_pmos l=4u w=5u as=1.7p ad=1.7p ps=10.68u pd=10.68u rfmode=0
+XM44_u3 d3 pbias vdd vdd sg13_hv_pmos l=4u w=5u as=1.7p ad=1.7p ps=10.68u pd=10.68u rfmode=0
+XM44_u4 d3 pbias vdd vdd sg13_hv_pmos l=4u w=5u as=1.7p ad=1.7p ps=10.68u pd=10.68u rfmode=0
+XM45_u2 d5 pbias vdd vdd sg13_hv_pmos l=4u w=5u as=1.7p ad=1.7p ps=10.68u pd=10.68u rfmode=0
+XM45_u3 d5 pbias vdd vdd sg13_hv_pmos l=4u w=5u as=1.7p ad=1.7p ps=10.68u pd=10.68u rfmode=0
+XM45_u4 d5 pbias vdd vdd sg13_hv_pmos l=4u w=5u as=1.7p ad=1.7p ps=10.68u pd=10.68u rfmode=0
+XM45_u5 d5 pbias vdd vdd sg13_hv_pmos l=4u w=5u as=1.7p ad=1.7p ps=10.68u pd=10.68u rfmode=0
+XM45_u6 d5 pbias vdd vdd sg13_hv_pmos l=4u w=5u as=1.7p ad=1.7p ps=10.68u pd=10.68u rfmode=0
+XM45_u7 d5 pbias vdd vdd sg13_hv_pmos l=4u w=5u as=1.7p ad=1.7p ps=10.68u pd=10.68u rfmode=0
+XM45_u8 d5 pbias vdd vdd sg13_hv_pmos l=4u w=5u as=1.7p ad=1.7p ps=10.68u pd=10.68u rfmode=0
+XM45_u9 d5 pbias vdd vdd sg13_hv_pmos l=4u w=5u as=1.7p ad=1.7p ps=10.68u pd=10.68u rfmode=0
+XM45_u10 d5 pbias vdd vdd sg13_hv_pmos l=4u w=5u as=1.7p ad=1.7p ps=10.68u pd=10.68u rfmode=0
+XM45_u11 d5 pbias vdd vdd sg13_hv_pmos l=4u w=5u as=1.7p ad=1.7p ps=10.68u pd=10.68u rfmode=0
+XM45_u12 d5 pbias vdd vdd sg13_hv_pmos l=4u w=5u as=1.7p ad=1.7p ps=10.68u pd=10.68u rfmode=0
+XM45_u13 d5 pbias vdd vdd sg13_hv_pmos l=4u w=5u as=1.7p ad=1.7p ps=10.68u pd=10.68u rfmode=0
+XM45_u14 d5 pbias vdd vdd sg13_hv_pmos l=4u w=5u as=1.7p ad=1.7p ps=10.68u pd=10.68u rfmode=0
+XM45_u15 d5 pbias vdd vdd sg13_hv_pmos l=4u w=5u as=1.7p ad=1.7p ps=10.68u pd=10.68u rfmode=0
+XM45_u16 d5 pbias vdd vdd sg13_hv_pmos l=4u w=5u as=1.7p ad=1.7p ps=10.68u pd=10.68u rfmode=0
+XM45_u17 d5 pbias vdd vdd sg13_hv_pmos l=4u w=5u as=1.7p ad=1.7p ps=10.68u pd=10.68u rfmode=0
+XM45_u18 d5 pbias vdd vdd sg13_hv_pmos l=4u w=5u as=1.7p ad=1.7p ps=10.68u pd=10.68u rfmode=0
+XM45_u19 d5 pbias vdd vdd sg13_hv_pmos l=4u w=5u as=1.7p ad=1.7p ps=10.68u pd=10.68u rfmode=0
+XM45_u20 d5 pbias vdd vdd sg13_hv_pmos l=4u w=5u as=1.7p ad=1.7p ps=10.68u pd=10.68u rfmode=0
+XM45_u21 d5 pbias vdd vdd sg13_hv_pmos l=4u w=5u as=1.7p ad=1.7p ps=10.68u pd=10.68u rfmode=0
+XM45_u22 d5 pbias vdd vdd sg13_hv_pmos l=4u w=5u as=1.7p ad=1.7p ps=10.68u pd=10.68u rfmode=0
+XM45_u23 d5 pbias vdd vdd sg13_hv_pmos l=4u w=5u as=1.7p ad=1.7p ps=10.68u pd=10.68u rfmode=0
+XM45_u24 d5 pbias vdd vdd sg13_hv_pmos l=4u w=5u as=1.7p ad=1.7p ps=10.68u pd=10.68u rfmode=0
+XM47_u2 d2 pbias vdd vdd sg13_hv_pmos l=4u w=5u as=1.7p ad=1.7p ps=10.68u pd=10.68u rfmode=0
+XM47_u3 d2 pbias vdd vdd sg13_hv_pmos l=4u w=5u as=1.7p ad=1.7p ps=10.68u pd=10.68u rfmode=0
+XM47_u4 d2 pbias vdd vdd sg13_hv_pmos l=4u w=5u as=1.7p ad=1.7p ps=10.68u pd=10.68u rfmode=0
+XM47_u5 d2 pbias vdd vdd sg13_hv_pmos l=4u w=5u as=1.7p ad=1.7p ps=10.68u pd=10.68u rfmode=0
+XM47_u6 d2 pbias vdd vdd sg13_hv_pmos l=4u w=5u as=1.7p ad=1.7p ps=10.68u pd=10.68u rfmode=0
+XM47_u7 d2 pbias vdd vdd sg13_hv_pmos l=4u w=5u as=1.7p ad=1.7p ps=10.68u pd=10.68u rfmode=0
+XM47_u8 d2 pbias vdd vdd sg13_hv_pmos l=4u w=5u as=1.7p ad=1.7p ps=10.68u pd=10.68u rfmode=0
+XM47_u9 d2 pbias vdd vdd sg13_hv_pmos l=4u w=5u as=1.7p ad=1.7p ps=10.68u pd=10.68u rfmode=0
+XM47_u10 d2 pbias vdd vdd sg13_hv_pmos l=4u w=5u as=1.7p ad=1.7p ps=10.68u pd=10.68u rfmode=0
+XM47_u11 d2 pbias vdd vdd sg13_hv_pmos l=4u w=5u as=1.7p ad=1.7p ps=10.68u pd=10.68u rfmode=0
+XM47_u12 d2 pbias vdd vdd sg13_hv_pmos l=4u w=5u as=1.7p ad=1.7p ps=10.68u pd=10.68u rfmode=0
+XM47_u13 d2 pbias vdd vdd sg13_hv_pmos l=4u w=5u as=1.7p ad=1.7p ps=10.68u pd=10.68u rfmode=0
+XM47_u14 d2 pbias vdd vdd sg13_hv_pmos l=4u w=5u as=1.7p ad=1.7p ps=10.68u pd=10.68u rfmode=0
+XM47_u15 d2 pbias vdd vdd sg13_hv_pmos l=4u w=5u as=1.7p ad=1.7p ps=10.68u pd=10.68u rfmode=0
+XM47_u16 d2 pbias vdd vdd sg13_hv_pmos l=4u w=5u as=1.7p ad=1.7p ps=10.68u pd=10.68u rfmode=0
+XM47_u17 d2 pbias vdd vdd sg13_hv_pmos l=4u w=5u as=1.7p ad=1.7p ps=10.68u pd=10.68u rfmode=0
+XM47_u18 d2 pbias vdd vdd sg13_hv_pmos l=4u w=5u as=1.7p ad=1.7p ps=10.68u pd=10.68u rfmode=0
+XM47_u19 d2 pbias vdd vdd sg13_hv_pmos l=4u w=5u as=1.7p ad=1.7p ps=10.68u pd=10.68u rfmode=0
+XM47_u20 d2 pbias vdd vdd sg13_hv_pmos l=4u w=5u as=1.7p ad=1.7p ps=10.68u pd=10.68u rfmode=0
+XM47_u21 d2 pbias vdd vdd sg13_hv_pmos l=4u w=5u as=1.7p ad=1.7p ps=10.68u pd=10.68u rfmode=0
+XM47_u22 d2 pbias vdd vdd sg13_hv_pmos l=4u w=5u as=1.7p ad=1.7p ps=10.68u pd=10.68u rfmode=0
+XM47_u23 d2 pbias vdd vdd sg13_hv_pmos l=4u w=5u as=1.7p ad=1.7p ps=10.68u pd=10.68u rfmode=0
+XM47_u24 d2 pbias vdd vdd sg13_hv_pmos l=4u w=5u as=1.7p ad=1.7p ps=10.68u pd=10.68u rfmode=0
+XM48_u2 d1 pbias vdd vdd sg13_hv_pmos l=4u w=5u as=1.7p ad=1.7p ps=10.68u pd=10.68u rfmode=0
+XM48_u3 d1 pbias vdd vdd sg13_hv_pmos l=4u w=5u as=1.7p ad=1.7p ps=10.68u pd=10.68u rfmode=0
+XM48_u4 d1 pbias vdd vdd sg13_hv_pmos l=4u w=5u as=1.7p ad=1.7p ps=10.68u pd=10.68u rfmode=0
+XM48_u5 d1 pbias vdd vdd sg13_hv_pmos l=4u w=5u as=1.7p ad=1.7p ps=10.68u pd=10.68u rfmode=0
+XM48_u6 d1 pbias vdd vdd sg13_hv_pmos l=4u w=5u as=1.7p ad=1.7p ps=10.68u pd=10.68u rfmode=0
+XM48_u7 d1 pbias vdd vdd sg13_hv_pmos l=4u w=5u as=1.7p ad=1.7p ps=10.68u pd=10.68u rfmode=0
+XM48_u8 d1 pbias vdd vdd sg13_hv_pmos l=4u w=5u as=1.7p ad=1.7p ps=10.68u pd=10.68u rfmode=0
+XM48_u9 d1 pbias vdd vdd sg13_hv_pmos l=4u w=5u as=1.7p ad=1.7p ps=10.68u pd=10.68u rfmode=0
+XM48_u10 d1 pbias vdd vdd sg13_hv_pmos l=4u w=5u as=1.7p ad=1.7p ps=10.68u pd=10.68u rfmode=0
+XM48_u11 d1 pbias vdd vdd sg13_hv_pmos l=4u w=5u as=1.7p ad=1.7p ps=10.68u pd=10.68u rfmode=0
+XM48_u12 d1 pbias vdd vdd sg13_hv_pmos l=4u w=5u as=1.7p ad=1.7p ps=10.68u pd=10.68u rfmode=0
+XM48_u13 d1 pbias vdd vdd sg13_hv_pmos l=4u w=5u as=1.7p ad=1.7p ps=10.68u pd=10.68u rfmode=0
+XM48_u14 d1 pbias vdd vdd sg13_hv_pmos l=4u w=5u as=1.7p ad=1.7p ps=10.68u pd=10.68u rfmode=0
+XM48_u15 d1 pbias vdd vdd sg13_hv_pmos l=4u w=5u as=1.7p ad=1.7p ps=10.68u pd=10.68u rfmode=0
+XM48_u16 d1 pbias vdd vdd sg13_hv_pmos l=4u w=5u as=1.7p ad=1.7p ps=10.68u pd=10.68u rfmode=0
+XM48_u17 d1 pbias vdd vdd sg13_hv_pmos l=4u w=5u as=1.7p ad=1.7p ps=10.68u pd=10.68u rfmode=0
+XM48_u18 d1 pbias vdd vdd sg13_hv_pmos l=4u w=5u as=1.7p ad=1.7p ps=10.68u pd=10.68u rfmode=0
+XM48_u19 d1 pbias vdd vdd sg13_hv_pmos l=4u w=5u as=1.7p ad=1.7p ps=10.68u pd=10.68u rfmode=0
+XM48_u20 d1 pbias vdd vdd sg13_hv_pmos l=4u w=5u as=1.7p ad=1.7p ps=10.68u pd=10.68u rfmode=0
+XM48_u21 d1 pbias vdd vdd sg13_hv_pmos l=4u w=5u as=1.7p ad=1.7p ps=10.68u pd=10.68u rfmode=0
+XM48_u22 d1 pbias vdd vdd sg13_hv_pmos l=4u w=5u as=1.7p ad=1.7p ps=10.68u pd=10.68u rfmode=0
+XM48_u23 d1 pbias vdd vdd sg13_hv_pmos l=4u w=5u as=1.7p ad=1.7p ps=10.68u pd=10.68u rfmode=0
+XM48_u24 d1 pbias vdd vdd sg13_hv_pmos l=4u w=5u as=1.7p ad=1.7p ps=10.68u pd=10.68u rfmode=0
+XM50_u2 vb2 pcasc d5 d5 sg13_hv_pmos l=4u w=10u as=3.4p ad=3.4p ps=20.68u pd=20.68u rfmode=0
+XM50_u3 vb2 pcasc d5 d5 sg13_hv_pmos l=4u w=10u as=3.4p ad=3.4p ps=20.68u pd=20.68u rfmode=0
+XM50_u4 vb2 pcasc d5 d5 sg13_hv_pmos l=4u w=10u as=3.4p ad=3.4p ps=20.68u pd=20.68u rfmode=0
+XM50_u5 vb2 pcasc d5 d5 sg13_hv_pmos l=4u w=10u as=3.4p ad=3.4p ps=20.68u pd=20.68u rfmode=0
+XM50_u6 vb2 pcasc d5 d5 sg13_hv_pmos l=4u w=10u as=3.4p ad=3.4p ps=20.68u pd=20.68u rfmode=0
+XM50_u7 vb2 pcasc d5 d5 sg13_hv_pmos l=4u w=10u as=3.4p ad=3.4p ps=20.68u pd=20.68u rfmode=0
+XM50_u8 vb2 pcasc d5 d5 sg13_hv_pmos l=4u w=10u as=3.4p ad=3.4p ps=20.68u pd=20.68u rfmode=0
+XM50_u9 vb2 pcasc d5 d5 sg13_hv_pmos l=4u w=10u as=3.4p ad=3.4p ps=20.68u pd=20.68u rfmode=0
+XM50_u10 vb2 pcasc d5 d5 sg13_hv_pmos l=4u w=10u as=3.4p ad=3.4p ps=20.68u pd=20.68u rfmode=0
+XM50_u11 vb2 pcasc d5 d5 sg13_hv_pmos l=4u w=10u as=3.4p ad=3.4p ps=20.68u pd=20.68u rfmode=0
+XM50_u12 vb2 pcasc d5 d5 sg13_hv_pmos l=4u w=10u as=3.4p ad=3.4p ps=20.68u pd=20.68u rfmode=0
+XM50_u13 vb2 pcasc d5 d5 sg13_hv_pmos l=4u w=10u as=3.4p ad=3.4p ps=20.68u pd=20.68u rfmode=0
+XM50_u14 vb2 pcasc d5 d5 sg13_hv_pmos l=4u w=10u as=3.4p ad=3.4p ps=20.68u pd=20.68u rfmode=0
+XM50_u15 vb2 pcasc d5 d5 sg13_hv_pmos l=4u w=10u as=3.4p ad=3.4p ps=20.68u pd=20.68u rfmode=0
+XM50_u16 vb2 pcasc d5 d5 sg13_hv_pmos l=4u w=10u as=3.4p ad=3.4p ps=20.68u pd=20.68u rfmode=0
+XM50_u17 vb2 pcasc d5 d5 sg13_hv_pmos l=4u w=10u as=3.4p ad=3.4p ps=20.68u pd=20.68u rfmode=0
+XM50_u18 vb2 pcasc d5 d5 sg13_hv_pmos l=4u w=10u as=3.4p ad=3.4p ps=20.68u pd=20.68u rfmode=0
+XM50_u19 vb2 pcasc d5 d5 sg13_hv_pmos l=4u w=10u as=3.4p ad=3.4p ps=20.68u pd=20.68u rfmode=0
+XM50_u20 vb2 pcasc d5 d5 sg13_hv_pmos l=4u w=10u as=3.4p ad=3.4p ps=20.68u pd=20.68u rfmode=0
+XM50_u21 vb2 pcasc d5 d5 sg13_hv_pmos l=4u w=10u as=3.4p ad=3.4p ps=20.68u pd=20.68u rfmode=0
+XM50_u22 vb2 pcasc d5 d5 sg13_hv_pmos l=4u w=10u as=3.4p ad=3.4p ps=20.68u pd=20.68u rfmode=0
+XM50_u23 vb2 pcasc d5 d5 sg13_hv_pmos l=4u w=10u as=3.4p ad=3.4p ps=20.68u pd=20.68u rfmode=0
+XM50_u24 vb2 pcasc d5 d5 sg13_hv_pmos l=4u w=10u as=3.4p ad=3.4p ps=20.68u pd=20.68u rfmode=0
+XM51_u2 vref pcasc d3 d3 sg13_hv_pmos l=4u w=10u as=3.4p ad=3.4p ps=20.68u pd=20.68u rfmode=0
+XM51_u3 vref pcasc d3 d3 sg13_hv_pmos l=4u w=10u as=3.4p ad=3.4p ps=20.68u pd=20.68u rfmode=0
+XM51_u4 vref pcasc d3 d3 sg13_hv_pmos l=4u w=10u as=3.4p ad=3.4p ps=20.68u pd=20.68u rfmode=0
+XM52_u2 n1 pcasc d1 d1 sg13_hv_pmos l=4u w=10u as=3.4p ad=3.4p ps=20.68u pd=20.68u rfmode=0
+XM52_u3 n1 pcasc d1 d1 sg13_hv_pmos l=4u w=10u as=3.4p ad=3.4p ps=20.68u pd=20.68u rfmode=0
+XM52_u4 n1 pcasc d1 d1 sg13_hv_pmos l=4u w=10u as=3.4p ad=3.4p ps=20.68u pd=20.68u rfmode=0
+XM52_u5 n1 pcasc d1 d1 sg13_hv_pmos l=4u w=10u as=3.4p ad=3.4p ps=20.68u pd=20.68u rfmode=0
+XM52_u6 n1 pcasc d1 d1 sg13_hv_pmos l=4u w=10u as=3.4p ad=3.4p ps=20.68u pd=20.68u rfmode=0
+XM52_u7 n1 pcasc d1 d1 sg13_hv_pmos l=4u w=10u as=3.4p ad=3.4p ps=20.68u pd=20.68u rfmode=0
+XM52_u8 n1 pcasc d1 d1 sg13_hv_pmos l=4u w=10u as=3.4p ad=3.4p ps=20.68u pd=20.68u rfmode=0
+XM52_u9 n1 pcasc d1 d1 sg13_hv_pmos l=4u w=10u as=3.4p ad=3.4p ps=20.68u pd=20.68u rfmode=0
+XM52_u10 n1 pcasc d1 d1 sg13_hv_pmos l=4u w=10u as=3.4p ad=3.4p ps=20.68u pd=20.68u rfmode=0
+XM52_u11 n1 pcasc d1 d1 sg13_hv_pmos l=4u w=10u as=3.4p ad=3.4p ps=20.68u pd=20.68u rfmode=0
+XM52_u12 n1 pcasc d1 d1 sg13_hv_pmos l=4u w=10u as=3.4p ad=3.4p ps=20.68u pd=20.68u rfmode=0
+XM52_u13 n1 pcasc d1 d1 sg13_hv_pmos l=4u w=10u as=3.4p ad=3.4p ps=20.68u pd=20.68u rfmode=0
+XM52_u14 n1 pcasc d1 d1 sg13_hv_pmos l=4u w=10u as=3.4p ad=3.4p ps=20.68u pd=20.68u rfmode=0
+XM52_u15 n1 pcasc d1 d1 sg13_hv_pmos l=4u w=10u as=3.4p ad=3.4p ps=20.68u pd=20.68u rfmode=0
+XM52_u16 n1 pcasc d1 d1 sg13_hv_pmos l=4u w=10u as=3.4p ad=3.4p ps=20.68u pd=20.68u rfmode=0
+XM52_u17 n1 pcasc d1 d1 sg13_hv_pmos l=4u w=10u as=3.4p ad=3.4p ps=20.68u pd=20.68u rfmode=0
+XM52_u18 n1 pcasc d1 d1 sg13_hv_pmos l=4u w=10u as=3.4p ad=3.4p ps=20.68u pd=20.68u rfmode=0
+XM52_u19 n1 pcasc d1 d1 sg13_hv_pmos l=4u w=10u as=3.4p ad=3.4p ps=20.68u pd=20.68u rfmode=0
+XM52_u20 n1 pcasc d1 d1 sg13_hv_pmos l=4u w=10u as=3.4p ad=3.4p ps=20.68u pd=20.68u rfmode=0
+XM52_u21 n1 pcasc d1 d1 sg13_hv_pmos l=4u w=10u as=3.4p ad=3.4p ps=20.68u pd=20.68u rfmode=0
+XM52_u22 n1 pcasc d1 d1 sg13_hv_pmos l=4u w=10u as=3.4p ad=3.4p ps=20.68u pd=20.68u rfmode=0
+XM52_u23 n1 pcasc d1 d1 sg13_hv_pmos l=4u w=10u as=3.4p ad=3.4p ps=20.68u pd=20.68u rfmode=0
+XM52_u24 n1 pcasc d1 d1 sg13_hv_pmos l=4u w=10u as=3.4p ad=3.4p ps=20.68u pd=20.68u rfmode=0
+XM54_u2 pbias pcasc d2 d2 sg13_hv_pmos l=4u w=10u as=3.4p ad=3.4p ps=20.68u pd=20.68u rfmode=0
+XM54_u3 pbias pcasc d2 d2 sg13_hv_pmos l=4u w=10u as=3.4p ad=3.4p ps=20.68u pd=20.68u rfmode=0
+XM54_u4 pbias pcasc d2 d2 sg13_hv_pmos l=4u w=10u as=3.4p ad=3.4p ps=20.68u pd=20.68u rfmode=0
+XM54_u5 pbias pcasc d2 d2 sg13_hv_pmos l=4u w=10u as=3.4p ad=3.4p ps=20.68u pd=20.68u rfmode=0
+XM54_u6 pbias pcasc d2 d2 sg13_hv_pmos l=4u w=10u as=3.4p ad=3.4p ps=20.68u pd=20.68u rfmode=0
+XM54_u7 pbias pcasc d2 d2 sg13_hv_pmos l=4u w=10u as=3.4p ad=3.4p ps=20.68u pd=20.68u rfmode=0
+XM54_u8 pbias pcasc d2 d2 sg13_hv_pmos l=4u w=10u as=3.4p ad=3.4p ps=20.68u pd=20.68u rfmode=0
+XM54_u9 pbias pcasc d2 d2 sg13_hv_pmos l=4u w=10u as=3.4p ad=3.4p ps=20.68u pd=20.68u rfmode=0
+XM54_u10 pbias pcasc d2 d2 sg13_hv_pmos l=4u w=10u as=3.4p ad=3.4p ps=20.68u pd=20.68u rfmode=0
+XM54_u11 pbias pcasc d2 d2 sg13_hv_pmos l=4u w=10u as=3.4p ad=3.4p ps=20.68u pd=20.68u rfmode=0
+XM54_u12 pbias pcasc d2 d2 sg13_hv_pmos l=4u w=10u as=3.4p ad=3.4p ps=20.68u pd=20.68u rfmode=0
+XM54_u13 pbias pcasc d2 d2 sg13_hv_pmos l=4u w=10u as=3.4p ad=3.4p ps=20.68u pd=20.68u rfmode=0
+XM54_u14 pbias pcasc d2 d2 sg13_hv_pmos l=4u w=10u as=3.4p ad=3.4p ps=20.68u pd=20.68u rfmode=0
+XM54_u15 pbias pcasc d2 d2 sg13_hv_pmos l=4u w=10u as=3.4p ad=3.4p ps=20.68u pd=20.68u rfmode=0
+XM54_u16 pbias pcasc d2 d2 sg13_hv_pmos l=4u w=10u as=3.4p ad=3.4p ps=20.68u pd=20.68u rfmode=0
+XM54_u17 pbias pcasc d2 d2 sg13_hv_pmos l=4u w=10u as=3.4p ad=3.4p ps=20.68u pd=20.68u rfmode=0
+XM54_u18 pbias pcasc d2 d2 sg13_hv_pmos l=4u w=10u as=3.4p ad=3.4p ps=20.68u pd=20.68u rfmode=0
+XM54_u19 pbias pcasc d2 d2 sg13_hv_pmos l=4u w=10u as=3.4p ad=3.4p ps=20.68u pd=20.68u rfmode=0
+XM54_u20 pbias pcasc d2 d2 sg13_hv_pmos l=4u w=10u as=3.4p ad=3.4p ps=20.68u pd=20.68u rfmode=0
+XM54_u21 pbias pcasc d2 d2 sg13_hv_pmos l=4u w=10u as=3.4p ad=3.4p ps=20.68u pd=20.68u rfmode=0
+XM54_u22 pbias pcasc d2 d2 sg13_hv_pmos l=4u w=10u as=3.4p ad=3.4p ps=20.68u pd=20.68u rfmode=0
+XM54_u23 pbias pcasc d2 d2 sg13_hv_pmos l=4u w=10u as=3.4p ad=3.4p ps=20.68u pd=20.68u rfmode=0
+XM54_u24 pbias pcasc d2 d2 sg13_hv_pmos l=4u w=10u as=3.4p ad=3.4p ps=20.68u pd=20.68u rfmode=0
+XQ56_u2 vbe vbe vss vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ56_u3 vbe vbe vss vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ56_u4 vbe vbe vss vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ56_u5 vbe vbe vss vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ56_u6 vbe vbe vss vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ56_u7 vbe vbe vss vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ56_u8 vbe vbe vss vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ56_u9 vbe vbe vss vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ56_u10 vbe vbe vss vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ56_u11 vbe vbe vss vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ56_u12 vbe vbe vss vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ56_u13 vbe vbe vss vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ56_u14 vbe vbe vss vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ56_u15 vbe vbe vss vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ56_u16 vbe vbe vss vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ56_u17 vbe vbe vss vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ56_u18 vbe vbe vss vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ56_u19 vbe vbe vss vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ56_u20 vbe vbe vss vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ56_u21 vbe vbe vss vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ56_u22 vbe vbe vss vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ56_u23 vbe vbe vss vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ56_u24 vbe vbe vss vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ60_u2 vbe3 vbe3 vss vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ60_u3 vbe3 vbe3 vss vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ60_u4 vbe3 vbe3 vss vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ62_u2 vd2 vd2 vss vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ62_u3 vd2 vd2 vss vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ62_u4 vd2 vd2 vss vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ62_u5 vd2 vd2 vss vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ62_u6 vd2 vd2 vss vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ62_u7 vd2 vd2 vss vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ62_u8 vd2 vd2 vss vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ62_u9 vd2 vd2 vss vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ62_u10 vd2 vd2 vss vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ62_u11 vd2 vd2 vss vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ62_u12 vd2 vd2 vss vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ62_u13 vd2 vd2 vss vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ62_u14 vd2 vd2 vss vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ62_u15 vd2 vd2 vss vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ62_u16 vd2 vd2 vss vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ62_u17 vd2 vd2 vss vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ62_u18 vd2 vd2 vss vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ62_u19 vd2 vd2 vss vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ62_u20 vd2 vd2 vss vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ62_u21 vd2 vd2 vss vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ62_u22 vd2 vd2 vss vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ62_u23 vd2 vd2 vss vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ62_u24 vd2 vd2 vss vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ67_u2 vbe b1b vss vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ67_u3 vbe b1b vss vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ67_u4 vbe b1b vss vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ67_u5 vbe b1b vss vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ67_u6 vbe b1b vss vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ67_u7 vbe b1b vss vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ67_u8 vbe b1b vss vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ67_u9 vbe b1b vss vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ67_u10 vbe b1b vss vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ67_u11 vbe b1b vss vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ67_u12 vbe b1b vss vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ67_u13 vbe b1b vss vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ67_u14 vbe b1b vss vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ67_u15 vbe b1b vss vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ67_u16 vbe b1b vss vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ67_u17 vbe b1b vss vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ67_u18 vbe b1b vss vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ67_u19 vbe b1b vss vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ67_u20 vbe b1b vss vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ67_u21 vbe b1b vss vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ67_u22 vbe b1b vss vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ67_u23 vbe b1b vss vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ67_u24 vbe b1b vss vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ68_u2 c2 vbe dvbe vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ68_u3 c2 vbe dvbe vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ68_u4 c2 vbe dvbe vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ68_u5 c2 vbe dvbe vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ68_u6 c2 vbe dvbe vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ68_u7 c2 vbe dvbe vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ68_u8 c2 vbe dvbe vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ68_u9 c2 vbe dvbe vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ68_u10 c2 vbe dvbe vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ68_u11 c2 vbe dvbe vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ68_u12 c2 vbe dvbe vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ68_u13 c2 vbe dvbe vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ68_u14 c2 vbe dvbe vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ68_u15 c2 vbe dvbe vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ68_u16 c2 vbe dvbe vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ68_u17 c2 vbe dvbe vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ68_u18 c2 vbe dvbe vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ68_u19 c2 vbe dvbe vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ68_u20 c2 vbe dvbe vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ68_u21 c2 vbe dvbe vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ68_u22 c2 vbe dvbe vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ68_u23 c2 vbe dvbe vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ68_u24 c2 vbe dvbe vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ69_u2 c2 vbe dvbe vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ69_u3 c2 vbe dvbe vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ69_u4 c2 vbe dvbe vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ69_u5 c2 vbe dvbe vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ69_u6 c2 vbe dvbe vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ69_u7 c2 vbe dvbe vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ69_u8 c2 vbe dvbe vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ69_u9 c2 vbe dvbe vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ69_u10 c2 vbe dvbe vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ69_u11 c2 vbe dvbe vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ69_u12 c2 vbe dvbe vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ69_u13 c2 vbe dvbe vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ69_u14 c2 vbe dvbe vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ69_u15 c2 vbe dvbe vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ69_u16 c2 vbe dvbe vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ69_u17 c2 vbe dvbe vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ69_u18 c2 vbe dvbe vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ69_u19 c2 vbe dvbe vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ69_u20 c2 vbe dvbe vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ69_u21 c2 vbe dvbe vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ69_u22 c2 vbe dvbe vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ69_u23 c2 vbe dvbe vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ69_u24 c2 vbe dvbe vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ70_u2 c2 vbe dvbe vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ70_u3 c2 vbe dvbe vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ70_u4 c2 vbe dvbe vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ70_u5 c2 vbe dvbe vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ70_u6 c2 vbe dvbe vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ70_u7 c2 vbe dvbe vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ70_u8 c2 vbe dvbe vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ70_u9 c2 vbe dvbe vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ70_u10 c2 vbe dvbe vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ70_u11 c2 vbe dvbe vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ70_u12 c2 vbe dvbe vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ70_u13 c2 vbe dvbe vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ70_u14 c2 vbe dvbe vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ70_u15 c2 vbe dvbe vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ70_u16 c2 vbe dvbe vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ70_u17 c2 vbe dvbe vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ70_u18 c2 vbe dvbe vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ70_u19 c2 vbe dvbe vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ70_u20 c2 vbe dvbe vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ70_u21 c2 vbe dvbe vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ70_u22 c2 vbe dvbe vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ70_u23 c2 vbe dvbe vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ70_u24 c2 vbe dvbe vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ71_u2 c2 vbe dvbe vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ71_u3 c2 vbe dvbe vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ71_u4 c2 vbe dvbe vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ71_u5 c2 vbe dvbe vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ71_u6 c2 vbe dvbe vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ71_u7 c2 vbe dvbe vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ71_u8 c2 vbe dvbe vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ71_u9 c2 vbe dvbe vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ71_u10 c2 vbe dvbe vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ71_u11 c2 vbe dvbe vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ71_u12 c2 vbe dvbe vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ71_u13 c2 vbe dvbe vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ71_u14 c2 vbe dvbe vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ71_u15 c2 vbe dvbe vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ71_u16 c2 vbe dvbe vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ71_u17 c2 vbe dvbe vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ71_u18 c2 vbe dvbe vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ71_u19 c2 vbe dvbe vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ71_u20 c2 vbe dvbe vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ71_u21 c2 vbe dvbe vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ71_u22 c2 vbe dvbe vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ71_u23 c2 vbe dvbe vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ71_u24 c2 vbe dvbe vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ72_u2 c2 vbe dvbe vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ72_u3 c2 vbe dvbe vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ72_u4 c2 vbe dvbe vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ72_u5 c2 vbe dvbe vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ72_u6 c2 vbe dvbe vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ72_u7 c2 vbe dvbe vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ72_u8 c2 vbe dvbe vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ72_u9 c2 vbe dvbe vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ72_u10 c2 vbe dvbe vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ72_u11 c2 vbe dvbe vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ72_u12 c2 vbe dvbe vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ72_u13 c2 vbe dvbe vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ72_u14 c2 vbe dvbe vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ72_u15 c2 vbe dvbe vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ72_u16 c2 vbe dvbe vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ72_u17 c2 vbe dvbe vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ72_u18 c2 vbe dvbe vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ72_u19 c2 vbe dvbe vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ72_u20 c2 vbe dvbe vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ72_u21 c2 vbe dvbe vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ72_u22 c2 vbe dvbe vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ72_u23 c2 vbe dvbe vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ72_u24 c2 vbe dvbe vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ73_u2 c2 vbe dvbe vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ73_u3 c2 vbe dvbe vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ73_u4 c2 vbe dvbe vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ73_u5 c2 vbe dvbe vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ73_u6 c2 vbe dvbe vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ73_u7 c2 vbe dvbe vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ73_u8 c2 vbe dvbe vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ73_u9 c2 vbe dvbe vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ73_u10 c2 vbe dvbe vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ73_u11 c2 vbe dvbe vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ73_u12 c2 vbe dvbe vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ73_u13 c2 vbe dvbe vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ73_u14 c2 vbe dvbe vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ73_u15 c2 vbe dvbe vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ73_u16 c2 vbe dvbe vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ73_u17 c2 vbe dvbe vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ73_u18 c2 vbe dvbe vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ73_u19 c2 vbe dvbe vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ73_u20 c2 vbe dvbe vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ73_u21 c2 vbe dvbe vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ73_u22 c2 vbe dvbe vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ73_u23 c2 vbe dvbe vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ73_u24 c2 vbe dvbe vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ74_u2 c2 vbe dvbe vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ74_u3 c2 vbe dvbe vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ74_u4 c2 vbe dvbe vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ74_u5 c2 vbe dvbe vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ74_u6 c2 vbe dvbe vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ74_u7 c2 vbe dvbe vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ74_u8 c2 vbe dvbe vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ74_u9 c2 vbe dvbe vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ74_u10 c2 vbe dvbe vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ74_u11 c2 vbe dvbe vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ74_u12 c2 vbe dvbe vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ74_u13 c2 vbe dvbe vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ74_u14 c2 vbe dvbe vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ74_u15 c2 vbe dvbe vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ74_u16 c2 vbe dvbe vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ74_u17 c2 vbe dvbe vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ74_u18 c2 vbe dvbe vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ74_u19 c2 vbe dvbe vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ74_u20 c2 vbe dvbe vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ74_u21 c2 vbe dvbe vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ74_u22 c2 vbe dvbe vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ74_u23 c2 vbe dvbe vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ74_u24 c2 vbe dvbe vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ75_u2 vd1 vd1 vd2 vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ75_u3 vd1 vd1 vd2 vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ75_u4 vd1 vd1 vd2 vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ75_u5 vd1 vd1 vd2 vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ75_u6 vd1 vd1 vd2 vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ75_u7 vd1 vd1 vd2 vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ75_u8 vd1 vd1 vd2 vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ75_u9 vd1 vd1 vd2 vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ75_u10 vd1 vd1 vd2 vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ75_u11 vd1 vd1 vd2 vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ75_u12 vd1 vd1 vd2 vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ75_u13 vd1 vd1 vd2 vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ75_u14 vd1 vd1 vd2 vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ75_u15 vd1 vd1 vd2 vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ75_u16 vd1 vd1 vd2 vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ75_u17 vd1 vd1 vd2 vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ75_u18 vd1 vd1 vd2 vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ75_u19 vd1 vd1 vd2 vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ75_u20 vd1 vd1 vd2 vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ75_u21 vd1 vd1 vd2 vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ75_u22 vd1 vd1 vd2 vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ75_u23 vd1 vd1 vd2 vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ75_u24 vd1 vd1 vd2 vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ76_u2 c2 vbe dvbe vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ76_u3 c2 vbe dvbe vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ76_u4 c2 vbe dvbe vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ76_u5 c2 vbe dvbe vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ76_u6 c2 vbe dvbe vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ76_u7 c2 vbe dvbe vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ76_u8 c2 vbe dvbe vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ76_u9 c2 vbe dvbe vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ76_u10 c2 vbe dvbe vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ76_u11 c2 vbe dvbe vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ76_u12 c2 vbe dvbe vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ76_u13 c2 vbe dvbe vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ76_u14 c2 vbe dvbe vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ76_u15 c2 vbe dvbe vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ76_u16 c2 vbe dvbe vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ76_u17 c2 vbe dvbe vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ76_u18 c2 vbe dvbe vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ76_u19 c2 vbe dvbe vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ76_u20 c2 vbe dvbe vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ76_u21 c2 vbe dvbe vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ76_u22 c2 vbe dvbe vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ76_u23 c2 vbe dvbe vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ76_u24 c2 vbe dvbe vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XR77_u2 n_4 pbias vss rppd w=1u l=50u b=0 m=1
+XR77_u3 n_4 pbias vss rppd w=1u l=50u b=0 m=1
+XR77_u4 n_4 pbias vss rppd w=1u l=50u b=0 m=1
+XR77_u5 n_4 pbias vss rppd w=1u l=50u b=0 m=1
+XR77_u6 n_4 pbias vss rppd w=1u l=50u b=0 m=1
+XR77_u7 n_4 pbias vss rppd w=1u l=50u b=0 m=1
+XR77_u8 n_4 pbias vss rppd w=1u l=50u b=0 m=1
+XR77_u9 n_4 pbias vss rppd w=1u l=50u b=0 m=1
+XR77_u10 n_4 pbias vss rppd w=1u l=50u b=0 m=1
+XR77_u11 n_4 pbias vss rppd w=1u l=50u b=0 m=1
+XR77_u12 n_4 pbias vss rppd w=1u l=50u b=0 m=1
+XR77_u13 n_4 pbias vss rppd w=1u l=50u b=0 m=1
+XR77_u14 n_4 pbias vss rppd w=1u l=50u b=0 m=1
+XR77_u15 n_4 pbias vss rppd w=1u l=50u b=0 m=1
+XR77_u16 n_4 pbias vss rppd w=1u l=50u b=0 m=1
+XR77_u17 n_4 pbias vss rppd w=1u l=50u b=0 m=1
+XR77_u18 n_4 pbias vss rppd w=1u l=50u b=0 m=1
+XR77_u19 n_4 pbias vss rppd w=1u l=50u b=0 m=1
+XR77_u20 n_4 pbias vss rppd w=1u l=50u b=0 m=1
+XR77_u21 n_4 pbias vss rppd w=1u l=50u b=0 m=1
+XR77_u22 n_4 pbias vss rppd w=1u l=50u b=0 m=1
+XR77_u23 n_4 pbias vss rppd w=1u l=50u b=0 m=1
+XR77_u24 n_4 pbias vss rppd w=1u l=50u b=0 m=1
+XR78_u2 n_11 n_34 vss rppd w=1u l=50u b=0 m=1
+XR78_u3 n_11 n_34 vss rppd w=1u l=50u b=0 m=1
+XR78_u4 n_11 n_34 vss rppd w=1u l=50u b=0 m=1
+XR78_u5 n_11 n_34 vss rppd w=1u l=50u b=0 m=1
+XR78_u6 n_11 n_34 vss rppd w=1u l=50u b=0 m=1
+XR78_u7 n_11 n_34 vss rppd w=1u l=50u b=0 m=1
+XR78_u8 n_11 n_34 vss rppd w=1u l=50u b=0 m=1
+XR78_u9 n_11 n_34 vss rppd w=1u l=50u b=0 m=1
+XR78_u10 n_11 n_34 vss rppd w=1u l=50u b=0 m=1
+XR78_u11 n_11 n_34 vss rppd w=1u l=50u b=0 m=1
+XR78_u12 n_11 n_34 vss rppd w=1u l=50u b=0 m=1
+XR78_u13 n_11 n_34 vss rppd w=1u l=50u b=0 m=1
+XR78_u14 n_11 n_34 vss rppd w=1u l=50u b=0 m=1
+XR78_u15 n_11 n_34 vss rppd w=1u l=50u b=0 m=1
+XR78_u16 n_11 n_34 vss rppd w=1u l=50u b=0 m=1
+XR78_u17 n_11 n_34 vss rppd w=1u l=50u b=0 m=1
+XR78_u18 n_11 n_34 vss rppd w=1u l=50u b=0 m=1
+XR78_u19 n_11 n_34 vss rppd w=1u l=50u b=0 m=1
+XR78_u20 n_11 n_34 vss rppd w=1u l=50u b=0 m=1
+XR78_u21 n_11 n_34 vss rppd w=1u l=50u b=0 m=1
+XR78_u22 n_11 n_34 vss rppd w=1u l=50u b=0 m=1
+XR78_u23 n_11 n_34 vss rppd w=1u l=50u b=0 m=1
+XR78_u24 n_11 n_34 vss rppd w=1u l=50u b=0 m=1
+XR79_u2 n_10 n_34 vss rppd w=1u l=50u b=0 m=1
+XR79_u3 n_10 n_34 vss rppd w=1u l=50u b=0 m=1
+XR79_u4 n_10 n_34 vss rppd w=1u l=50u b=0 m=1
+XR79_u5 n_10 n_34 vss rppd w=1u l=50u b=0 m=1
+XR79_u6 n_10 n_34 vss rppd w=1u l=50u b=0 m=1
+XR79_u7 n_10 n_34 vss rppd w=1u l=50u b=0 m=1
+XR79_u8 n_10 n_34 vss rppd w=1u l=50u b=0 m=1
+XR79_u9 n_10 n_34 vss rppd w=1u l=50u b=0 m=1
+XR79_u10 n_10 n_34 vss rppd w=1u l=50u b=0 m=1
+XR79_u11 n_10 n_34 vss rppd w=1u l=50u b=0 m=1
+XR79_u12 n_10 n_34 vss rppd w=1u l=50u b=0 m=1
+XR79_u13 n_10 n_34 vss rppd w=1u l=50u b=0 m=1
+XR79_u14 n_10 n_34 vss rppd w=1u l=50u b=0 m=1
+XR79_u15 n_10 n_34 vss rppd w=1u l=50u b=0 m=1
+XR79_u16 n_10 n_34 vss rppd w=1u l=50u b=0 m=1
+XR79_u17 n_10 n_34 vss rppd w=1u l=50u b=0 m=1
+XR79_u18 n_10 n_34 vss rppd w=1u l=50u b=0 m=1
+XR79_u19 n_10 n_34 vss rppd w=1u l=50u b=0 m=1
+XR79_u20 n_10 n_34 vss rppd w=1u l=50u b=0 m=1
+XR79_u21 n_10 n_34 vss rppd w=1u l=50u b=0 m=1
+XR79_u22 n_10 n_34 vss rppd w=1u l=50u b=0 m=1
+XR79_u23 n_10 n_34 vss rppd w=1u l=50u b=0 m=1
+XR79_u24 n_10 n_34 vss rppd w=1u l=50u b=0 m=1
+XR80_u2 n_3 n_31 vss rppd w=1u l=50u b=0 m=1
+XR80_u3 n_3 n_31 vss rppd w=1u l=50u b=0 m=1
+XR80_u4 n_3 n_31 vss rppd w=1u l=50u b=0 m=1
+XR80_u5 n_3 n_31 vss rppd w=1u l=50u b=0 m=1
+XR80_u6 n_3 n_31 vss rppd w=1u l=50u b=0 m=1
+XR80_u7 n_3 n_31 vss rppd w=1u l=50u b=0 m=1
+XR80_u8 n_3 n_31 vss rppd w=1u l=50u b=0 m=1
+XR80_u9 n_3 n_31 vss rppd w=1u l=50u b=0 m=1
+XR80_u10 n_3 n_31 vss rppd w=1u l=50u b=0 m=1
+XR80_u11 n_3 n_31 vss rppd w=1u l=50u b=0 m=1
+XR80_u12 n_3 n_31 vss rppd w=1u l=50u b=0 m=1
+XR80_u13 n_3 n_31 vss rppd w=1u l=50u b=0 m=1
+XR80_u14 n_3 n_31 vss rppd w=1u l=50u b=0 m=1
+XR80_u15 n_3 n_31 vss rppd w=1u l=50u b=0 m=1
+XR80_u16 n_3 n_31 vss rppd w=1u l=50u b=0 m=1
+XR80_u17 n_3 n_31 vss rppd w=1u l=50u b=0 m=1
+XR80_u18 n_3 n_31 vss rppd w=1u l=50u b=0 m=1
+XR80_u19 n_3 n_31 vss rppd w=1u l=50u b=0 m=1
+XR80_u20 n_3 n_31 vss rppd w=1u l=50u b=0 m=1
+XR80_u21 n_3 n_31 vss rppd w=1u l=50u b=0 m=1
+XR80_u22 n_3 n_31 vss rppd w=1u l=50u b=0 m=1
+XR80_u23 n_3 n_31 vss rppd w=1u l=50u b=0 m=1
+XR80_u24 n_3 n_31 vss rppd w=1u l=50u b=0 m=1
+XR81_u2 n_10 n_33 vss rppd w=1u l=50u b=0 m=1
+XR81_u3 n_10 n_33 vss rppd w=1u l=50u b=0 m=1
+XR81_u4 n_10 n_33 vss rppd w=1u l=50u b=0 m=1
+XR81_u5 n_10 n_33 vss rppd w=1u l=50u b=0 m=1
+XR81_u6 n_10 n_33 vss rppd w=1u l=50u b=0 m=1
+XR81_u7 n_10 n_33 vss rppd w=1u l=50u b=0 m=1
+XR81_u8 n_10 n_33 vss rppd w=1u l=50u b=0 m=1
+XR81_u9 n_10 n_33 vss rppd w=1u l=50u b=0 m=1
+XR81_u10 n_10 n_33 vss rppd w=1u l=50u b=0 m=1
+XR81_u11 n_10 n_33 vss rppd w=1u l=50u b=0 m=1
+XR81_u12 n_10 n_33 vss rppd w=1u l=50u b=0 m=1
+XR81_u13 n_10 n_33 vss rppd w=1u l=50u b=0 m=1
+XR81_u14 n_10 n_33 vss rppd w=1u l=50u b=0 m=1
+XR81_u15 n_10 n_33 vss rppd w=1u l=50u b=0 m=1
+XR81_u16 n_10 n_33 vss rppd w=1u l=50u b=0 m=1
+XR81_u17 n_10 n_33 vss rppd w=1u l=50u b=0 m=1
+XR81_u18 n_10 n_33 vss rppd w=1u l=50u b=0 m=1
+XR81_u19 n_10 n_33 vss rppd w=1u l=50u b=0 m=1
+XR81_u20 n_10 n_33 vss rppd w=1u l=50u b=0 m=1
+XR81_u21 n_10 n_33 vss rppd w=1u l=50u b=0 m=1
+XR81_u22 n_10 n_33 vss rppd w=1u l=50u b=0 m=1
+XR81_u23 n_10 n_33 vss rppd w=1u l=50u b=0 m=1
+XR81_u24 n_10 n_33 vss rppd w=1u l=50u b=0 m=1
+XR82_u2 n_5 n_31 vss rppd w=1u l=50u b=0 m=1
+XR82_u3 n_5 n_31 vss rppd w=1u l=50u b=0 m=1
+XR82_u4 n_5 n_31 vss rppd w=1u l=50u b=0 m=1
+XR82_u5 n_5 n_31 vss rppd w=1u l=50u b=0 m=1
+XR82_u6 n_5 n_31 vss rppd w=1u l=50u b=0 m=1
+XR82_u7 n_5 n_31 vss rppd w=1u l=50u b=0 m=1
+XR82_u8 n_5 n_31 vss rppd w=1u l=50u b=0 m=1
+XR82_u9 n_5 n_31 vss rppd w=1u l=50u b=0 m=1
+XR82_u10 n_5 n_31 vss rppd w=1u l=50u b=0 m=1
+XR82_u11 n_5 n_31 vss rppd w=1u l=50u b=0 m=1
+XR82_u12 n_5 n_31 vss rppd w=1u l=50u b=0 m=1
+XR82_u13 n_5 n_31 vss rppd w=1u l=50u b=0 m=1
+XR82_u14 n_5 n_31 vss rppd w=1u l=50u b=0 m=1
+XR82_u15 n_5 n_31 vss rppd w=1u l=50u b=0 m=1
+XR82_u16 n_5 n_31 vss rppd w=1u l=50u b=0 m=1
+XR82_u17 n_5 n_31 vss rppd w=1u l=50u b=0 m=1
+XR82_u18 n_5 n_31 vss rppd w=1u l=50u b=0 m=1
+XR82_u19 n_5 n_31 vss rppd w=1u l=50u b=0 m=1
+XR82_u20 n_5 n_31 vss rppd w=1u l=50u b=0 m=1
+XR82_u21 n_5 n_31 vss rppd w=1u l=50u b=0 m=1
+XR82_u22 n_5 n_31 vss rppd w=1u l=50u b=0 m=1
+XR82_u23 n_5 n_31 vss rppd w=1u l=50u b=0 m=1
+XR82_u24 n_5 n_31 vss rppd w=1u l=50u b=0 m=1
+XR83_u2 n_5 n_30 vss rppd w=1u l=50u b=0 m=1
+XR83_u3 n_5 n_30 vss rppd w=1u l=50u b=0 m=1
+XR83_u4 n_5 n_30 vss rppd w=1u l=50u b=0 m=1
+XR83_u5 n_5 n_30 vss rppd w=1u l=50u b=0 m=1
+XR83_u6 n_5 n_30 vss rppd w=1u l=50u b=0 m=1
+XR83_u7 n_5 n_30 vss rppd w=1u l=50u b=0 m=1
+XR83_u8 n_5 n_30 vss rppd w=1u l=50u b=0 m=1
+XR83_u9 n_5 n_30 vss rppd w=1u l=50u b=0 m=1
+XR83_u10 n_5 n_30 vss rppd w=1u l=50u b=0 m=1
+XR83_u11 n_5 n_30 vss rppd w=1u l=50u b=0 m=1
+XR83_u12 n_5 n_30 vss rppd w=1u l=50u b=0 m=1
+XR83_u13 n_5 n_30 vss rppd w=1u l=50u b=0 m=1
+XR83_u14 n_5 n_30 vss rppd w=1u l=50u b=0 m=1
+XR83_u15 n_5 n_30 vss rppd w=1u l=50u b=0 m=1
+XR83_u16 n_5 n_30 vss rppd w=1u l=50u b=0 m=1
+XR83_u17 n_5 n_30 vss rppd w=1u l=50u b=0 m=1
+XR83_u18 n_5 n_30 vss rppd w=1u l=50u b=0 m=1
+XR83_u19 n_5 n_30 vss rppd w=1u l=50u b=0 m=1
+XR83_u20 n_5 n_30 vss rppd w=1u l=50u b=0 m=1
+XR83_u21 n_5 n_30 vss rppd w=1u l=50u b=0 m=1
+XR83_u22 n_5 n_30 vss rppd w=1u l=50u b=0 m=1
+XR83_u23 n_5 n_30 vss rppd w=1u l=50u b=0 m=1
+XR83_u24 n_5 n_30 vss rppd w=1u l=50u b=0 m=1
+XR84_u2 n_4 n_30 vss rppd w=1u l=50u b=0 m=1
+XR84_u3 n_4 n_30 vss rppd w=1u l=50u b=0 m=1
+XR84_u4 n_4 n_30 vss rppd w=1u l=50u b=0 m=1
+XR84_u5 n_4 n_30 vss rppd w=1u l=50u b=0 m=1
+XR84_u6 n_4 n_30 vss rppd w=1u l=50u b=0 m=1
+XR84_u7 n_4 n_30 vss rppd w=1u l=50u b=0 m=1
+XR84_u8 n_4 n_30 vss rppd w=1u l=50u b=0 m=1
+XR84_u9 n_4 n_30 vss rppd w=1u l=50u b=0 m=1
+XR84_u10 n_4 n_30 vss rppd w=1u l=50u b=0 m=1
+XR84_u11 n_4 n_30 vss rppd w=1u l=50u b=0 m=1
+XR84_u12 n_4 n_30 vss rppd w=1u l=50u b=0 m=1
+XR84_u13 n_4 n_30 vss rppd w=1u l=50u b=0 m=1
+XR84_u14 n_4 n_30 vss rppd w=1u l=50u b=0 m=1
+XR84_u15 n_4 n_30 vss rppd w=1u l=50u b=0 m=1
+XR84_u16 n_4 n_30 vss rppd w=1u l=50u b=0 m=1
+XR84_u17 n_4 n_30 vss rppd w=1u l=50u b=0 m=1
+XR84_u18 n_4 n_30 vss rppd w=1u l=50u b=0 m=1
+XR84_u19 n_4 n_30 vss rppd w=1u l=50u b=0 m=1
+XR84_u20 n_4 n_30 vss rppd w=1u l=50u b=0 m=1
+XR84_u21 n_4 n_30 vss rppd w=1u l=50u b=0 m=1
+XR84_u22 n_4 n_30 vss rppd w=1u l=50u b=0 m=1
+XR84_u23 n_4 n_30 vss rppd w=1u l=50u b=0 m=1
+XR84_u24 n_4 n_30 vss rppd w=1u l=50u b=0 m=1
+XR85_u2 n_3 n_33 vss rppd w=1u l=50u b=0 m=1
+XR85_u3 n_3 n_33 vss rppd w=1u l=50u b=0 m=1
+XR85_u4 n_3 n_33 vss rppd w=1u l=50u b=0 m=1
+XR85_u5 n_3 n_33 vss rppd w=1u l=50u b=0 m=1
+XR85_u6 n_3 n_33 vss rppd w=1u l=50u b=0 m=1
+XR85_u7 n_3 n_33 vss rppd w=1u l=50u b=0 m=1
+XR85_u8 n_3 n_33 vss rppd w=1u l=50u b=0 m=1
+XR85_u9 n_3 n_33 vss rppd w=1u l=50u b=0 m=1
+XR85_u10 n_3 n_33 vss rppd w=1u l=50u b=0 m=1
+XR85_u11 n_3 n_33 vss rppd w=1u l=50u b=0 m=1
+XR85_u12 n_3 n_33 vss rppd w=1u l=50u b=0 m=1
+XR85_u13 n_3 n_33 vss rppd w=1u l=50u b=0 m=1
+XR85_u14 n_3 n_33 vss rppd w=1u l=50u b=0 m=1
+XR85_u15 n_3 n_33 vss rppd w=1u l=50u b=0 m=1
+XR85_u16 n_3 n_33 vss rppd w=1u l=50u b=0 m=1
+XR85_u17 n_3 n_33 vss rppd w=1u l=50u b=0 m=1
+XR85_u18 n_3 n_33 vss rppd w=1u l=50u b=0 m=1
+XR85_u19 n_3 n_33 vss rppd w=1u l=50u b=0 m=1
+XR85_u20 n_3 n_33 vss rppd w=1u l=50u b=0 m=1
+XR85_u21 n_3 n_33 vss rppd w=1u l=50u b=0 m=1
+XR85_u22 n_3 n_33 vss rppd w=1u l=50u b=0 m=1
+XR85_u23 n_3 n_33 vss rppd w=1u l=50u b=0 m=1
+XR85_u24 n_3 n_33 vss rppd w=1u l=50u b=0 m=1
+XR86_u2 n_11 pcasc vss rppd w=1u l=50u b=0 m=1
+XR86_u3 n_11 pcasc vss rppd w=1u l=50u b=0 m=1
+XR86_u4 n_11 pcasc vss rppd w=1u l=50u b=0 m=1
+XR86_u5 n_11 pcasc vss rppd w=1u l=50u b=0 m=1
+XR86_u6 n_11 pcasc vss rppd w=1u l=50u b=0 m=1
+XR86_u7 n_11 pcasc vss rppd w=1u l=50u b=0 m=1
+XR86_u8 n_11 pcasc vss rppd w=1u l=50u b=0 m=1
+XR86_u9 n_11 pcasc vss rppd w=1u l=50u b=0 m=1
+XR86_u10 n_11 pcasc vss rppd w=1u l=50u b=0 m=1
+XR86_u11 n_11 pcasc vss rppd w=1u l=50u b=0 m=1
+XR86_u12 n_11 pcasc vss rppd w=1u l=50u b=0 m=1
+XR86_u13 n_11 pcasc vss rppd w=1u l=50u b=0 m=1
+XR86_u14 n_11 pcasc vss rppd w=1u l=50u b=0 m=1
+XR86_u15 n_11 pcasc vss rppd w=1u l=50u b=0 m=1
+XR86_u16 n_11 pcasc vss rppd w=1u l=50u b=0 m=1
+XR86_u17 n_11 pcasc vss rppd w=1u l=50u b=0 m=1
+XR86_u18 n_11 pcasc vss rppd w=1u l=50u b=0 m=1
+XR86_u19 n_11 pcasc vss rppd w=1u l=50u b=0 m=1
+XR86_u20 n_11 pcasc vss rppd w=1u l=50u b=0 m=1
+XR86_u21 n_11 pcasc vss rppd w=1u l=50u b=0 m=1
+XR86_u22 n_11 pcasc vss rppd w=1u l=50u b=0 m=1
+XR86_u23 n_11 pcasc vss rppd w=1u l=50u b=0 m=1
+XR86_u24 n_11 pcasc vss rppd w=1u l=50u b=0 m=1
+.ends g1_bgr
