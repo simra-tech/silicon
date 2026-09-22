@@ -1,0 +1,43 @@
+* Joint BGR/T2F C-PEX with actual stock TEMP_OUT pad; explicit load sensitivity
+.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerHBT.lib hbt_typ
+.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerMOShv.lib mos_tt
+.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerMOSlv.lib mos_tt
+.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerRES.lib res_typ
+.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerCAP.lib cap_typ
+.include bgr.spice
+.include t2f.spice
+.include io.spi
+.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerDIO.lib dio_tt
+.option gmin=1e-15 abstol=1e-13 reltol=1e-4 vntol=1e-6 method=gear
+.temp 25
+.global sub!
+Vsub sub! 0 dc 0
+Vdd vdd 0 dc 3.3
+Vdd12 vdd12 0 dc 1.2
+Vr4 r4 0 dc 0
+Ven en 0 pwl(0 0 1u 0 1.01u 3.3)
+Vmode mode 0 dc 0
+Xbgr vdd 0 r4 vref iptat pbias pcasc vbe dvbe g1_bgr
+Vload iptat 0 dc 1.0
+Xt2f vdd vdd12 0 pbias pcasc vref en mode fout g1_t2f
+* TEMP_OUT pad stand-in: ~50 fF of core wiring plus the IO cell input
+* Stock pad and estimated assembly pi RC replace50fF stand-in
+Rroute fout pad_c2p 210.936
+Croute_near fout 0 11.72035f
+Croute_far pad_c2p 0 11.72035f
+Vpad12 pad_vdd 0 1.2
+Vpad33 pad_iovdd 0 3.3
+Xpad temp_pad pad_c2p pad_vdd 0 pad_iovdd 0 sg13g2_IOPadOut16mA
+Cexternal temp_pad 0 10p
+
+.control
+set num_threads=1
+set numdgt=15
+set wr_singlescale
+set wr_vecnames
+save v(fout) v(pad_c2p) v(temp_pad) v(vref) i(vdd) i(vdd12) i(vpad33) i(vpad12)
+tran 2n 32u
+wrdata pad.dat v(fout) v(pad_c2p) v(temp_pad) v(vref) i(vdd) i(vdd12) i(vpad33) i(vpad12)
+quit
+.endc
+.end

@@ -263,8 +263,11 @@ The typical-process campaign now completes **300/300 physical samples and
 solver or within-sample fingerprint failures. The frozen LUT and reciprocal
 candidates have zero endpoint failures; they remain unadopted. The prospective
 200-sample reciprocal maximum is0.975771°C. `mc300_summary.json` and the
-corresponding candidate reports contain the final counts. The comparison PNG
-is still explicitly labeled220/300 and must be regenerated before final use.
+corresponding candidate reports contain the final counts.
+`calibration_comparison_final300_20260922.png/.svg` now shows all300 samples;
+its JSON records source hashes and the analysis runtime. The original
+`calibration_comparison_20260922` artifacts remain the220/300 historical
+snapshot. The plot performs no calibration refitting.
 
 The fast-process fixed-calibration campaign completes30/30 samples and180/180
 transients on the legacy runtime. Original linear calibration fails11 samples,
@@ -278,11 +281,20 @@ strict580-parameter equality and the separate four-ULP diagnostic(max18ULP).
 Numerical frequency/error differences remain within18.071ppm/0.005748°C,
 and classifications agree. This does not authorize native adverse campaigns;
 all30 samples above used legacy. Three additional prospective legacy checks
-(seeds51148,51296,51111) remain not run.
+(seeds51148,51296,51111) now complete12/12 transients under fresh run prefix
+`t2f_prospective_legacy_20260922_r1_s`. The strict five-parameter fingerprint
+comparison **fails** for seeds51148 and51111: XR16's `nsmm_rsh` differs by
+four and one binary64 ULP respectively. Seed51296 matches exactly. The separate
+four-ULP diagnostic passes; it does not replace strict failure. Maximum frequency
+and calibrated residual differences are17.795203ppm and0.010830577°C, and all
+three calibration classifications agree. `prospective_legacy_comparison_20260922_r1.json`
+retains both assessments. This is not full runtime parity.
 
 T2F synthetic external-reference perturbation0/1/5mV completes all three
 leaves; period standard deviations are1.88957ps,424.957ps and1.98554ns over
 the finite saved window. This is external sensitivity, not physical device
-phase noise or a passed jitter budget. The actual TEMP_OUT pad fixture is
-prepared but not run. Owner paused simulations for migration; no reference
-queue or container remains active.
+phase noise or a passed jitter budget. After authorized server resumption, the
+actual TEMP_OUT10pF nominal fixture fails numerically at1.59569µs of32µs despite
+solver exit0. A pad-only saved-wave replay also fails, whereas the matched
+core-plus-route/no-pad control completes32µs. See `PAD_DIAGNOSTICS_20260922.md`;
+actual-pad electrical acceptance remains **not run**.
