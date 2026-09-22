@@ -1,0 +1,194 @@
+{
+  "status": "passed diagnostic isolation of reversed-terminal combiner AP attribution failure",
+  "KLayout": "0.30.9",
+  "script_sha256": "e7ec1a1b4864371be79be1c2c575d349c4541b7db3fab34bf54821aeefa3ea98",
+  "controls": [
+    {
+      "reversed_SD_second_device": false,
+      "before": [
+        {
+          "name": "M0",
+          "terminals": {
+            "S": "s",
+            "G": "g",
+            "D": "d",
+            "B": "b"
+          },
+          "parameters": {
+            "L": 2.0,
+            "W": 6.0,
+            "AS": 2.04,
+            "AD": 1.14,
+            "PS": 12.68,
+            "PD": 6.38
+          }
+        },
+        {
+          "name": "M1",
+          "terminals": {
+            "S": "s",
+            "G": "g",
+            "D": "d",
+            "B": "b"
+          },
+          "parameters": {
+            "L": 2.0,
+            "W": 6.0,
+            "AS": 2.04,
+            "AD": 1.14,
+            "PS": 12.68,
+            "PD": 6.38
+          }
+        }
+      ],
+      "after": [
+        {
+          "name": "M0",
+          "terminals": {
+            "S": "s",
+            "G": "g",
+            "D": "d",
+            "B": "b"
+          },
+          "parameters": {
+            "L": 2.0,
+            "W": 12.0,
+            "AS": 4.08,
+            "AD": 2.28,
+            "PS": 25.36,
+            "PD": 12.76
+          }
+        }
+      ],
+      "expected_per_physical_net": {
+        "s": {
+          "area_um2": 4.08,
+          "perimeter_um": 25.36
+        },
+        "d": {
+          "area_um2": 2.28,
+          "perimeter_um": 12.76
+        }
+      },
+      "actual_per_physical_net": {
+        "s": {
+          "area_um2": 4.08,
+          "perimeter_um": 25.36
+        },
+        "d": {
+          "area_um2": 2.28,
+          "perimeter_um": 12.76
+        }
+      },
+      "delta": {
+        "s": {
+          "area_um2": 0.0,
+          "perimeter_um": 0.0
+        },
+        "d": {
+          "area_um2": 0.0,
+          "perimeter_um": 0.0
+        }
+      },
+      "per_net_AP_conserved": true
+    },
+    {
+      "reversed_SD_second_device": true,
+      "before": [
+        {
+          "name": "M0",
+          "terminals": {
+            "S": "s",
+            "G": "g",
+            "D": "d",
+            "B": "b"
+          },
+          "parameters": {
+            "L": 2.0,
+            "W": 6.0,
+            "AS": 2.04,
+            "AD": 1.14,
+            "PS": 12.68,
+            "PD": 6.38
+          }
+        },
+        {
+          "name": "M1",
+          "terminals": {
+            "S": "d",
+            "G": "g",
+            "D": "s",
+            "B": "b"
+          },
+          "parameters": {
+            "L": 2.0,
+            "W": 6.0,
+            "AS": 1.14,
+            "AD": 2.04,
+            "PS": 6.38,
+            "PD": 12.68
+          }
+        }
+      ],
+      "after": [
+        {
+          "name": "M0",
+          "terminals": {
+            "S": "s",
+            "G": "g",
+            "D": "d",
+            "B": "b"
+          },
+          "parameters": {
+            "L": 2.0,
+            "W": 12.0,
+            "AS": 3.1799999999999997,
+            "AD": 3.1799999999999997,
+            "PS": 19.06,
+            "PD": 19.06
+          }
+        }
+      ],
+      "expected_per_physical_net": {
+        "s": {
+          "area_um2": 4.08,
+          "perimeter_um": 25.36
+        },
+        "d": {
+          "area_um2": 2.28,
+          "perimeter_um": 12.76
+        }
+      },
+      "actual_per_physical_net": {
+        "s": {
+          "area_um2": 3.1799999999999997,
+          "perimeter_um": 19.06
+        },
+        "d": {
+          "area_um2": 3.1799999999999997,
+          "perimeter_um": 19.06
+        }
+      },
+      "delta": {
+        "s": {
+          "area_um2": -0.9000000000000004,
+          "perimeter_um": -6.300000000000001
+        },
+        "d": {
+          "area_um2": 0.8999999999999999,
+          "perimeter_um": 6.299999999999999
+        }
+      },
+      "per_net_AP_conserved": false
+    }
+  ],
+  "source_reference": "https://github.com/KLayout/klayout/blob/v0.30.9/src/db/db/dbNetlistDeviceClasses.cc#L279-L365",
+  "source_binary_rebuild_binding": "not run; native installed behavior independently tested",
+  "changed_decks": false,
+  "changed_models": false,
+  "changed_design": false,
+  "saved_GDS": false,
+  "simulation": "not run",
+  "intrinsic_shared_PSP_applicability": "not run",
+  "scope": "Diagnostic netlist only. No correction of canonical extraction or golden source."
+}
