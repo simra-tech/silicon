@@ -1,0 +1,124 @@
+--- nominal586CalibrationFullTransient
++++ newPopulationOpOnly
+@@ -52,17 +52,13 @@
+ set num_threads=1
+ set numdgt=15
+ set filetype=ascii
+-setseed 71002
++set wr_singlescale
++set wr_vecnames
++setseed 73002
+ reset
++set temp=25
+ op
+-print v(xt.icmp) v(xt.vth_soft) v(xt.vth_hard)
+-let dqsoft = v(xt.icmp)-v(xt.vth_soft)
+-let dqhard = v(xt.icmp)-v(xt.vth_hard)
+-echo QUIET $&dqsoft $&dqhard
+-echo BIAS_OBSERVATION_OP
+-print v(vref) v(iptat) v(vref_buf) v(vped) v(shp) v(isense) v(xt.icmp) v(xt.vth_soft) v(xt.vth_hard)
+-echo BIAS_OBSERVATION_OP_END
+-echo NON_BGR_BEFORE_BEGIN
++echo P0_NON_BGR_BEFORE_BEGIN
+ print @n.xs.xr1n0.nr1[nsmm_rsh]
+ print @n.xs.xr1n0.nr1[nsmm_w]
+ print @n.xs.xr1n0.nr1[nsmm_l]
+@@ -8733,8 +8729,8 @@
+ print @n.xt.xch.xmnbn2.nsg13_lv_nmos[l]
+ print @n.xt.xch.xmnbn2.nsg13_lv_nmos[delvto]
+ print @n.xt.xch.xmnbn2.nsg13_lv_nmos[factuo]
+-echo NON_BGR_BEFORE_END
+-echo BGR_BEFORE_BEGIN
++echo P0_NON_BGR_BEFORE_END
++echo P0_BGR_BEFORE_BEGIN
+ print @n.xbgr.xr1.nr1[nsmm_rsh]
+ print @n.xbgr.xr1.nr1[nsmm_w]
+ print @n.xbgr.xr1.nr1[nsmm_l]
+@@ -11577,9 +11573,38 @@
+ print @n.xbgr.xr86_u24.nr1[nsmm_rsh]
+ print @n.xbgr.xr86_u24.nr1[nsmm_w]
+ print @n.xbgr.xr86_u24.nr1[nsmm_l]
+-echo BGR_BEFORE_END
+-tran 0.2n 1.02u 0 0.2n
+-echo NON_BGR_AFTER_BEGIN
++echo P0_BGR_BEFORE_END
++echo P0_LEGACY27_BEFORE_BEGIN
++print @n.xs.xota.xm1.nsg13_hv_pmos[w]
++print @n.xs.xota.xm1.nsg13_hv_pmos[l]
++print @n.xs.xota.xm1.nsg13_hv_pmos[delvto]
++print @n.xs.xota.xm1.nsg13_hv_pmos[factuo]
++print @n.xs.xref.xm1.nsg13_hv_pmos[w]
++print @n.xs.xref.xm1.nsg13_hv_pmos[l]
++print @n.xs.xref.xm1.nsg13_hv_pmos[delvto]
++print @n.xs.xref.xm1.nsg13_hv_pmos[factuo]
++print @n.xt.xdacs.xms7_0a.nsg13_hv_nmos[w]
++print @n.xt.xdacs.xms7_0a.nsg13_hv_nmos[l]
++print @n.xt.xdacs.xms7_0a.nsg13_hv_nmos[delvto]
++print @n.xt.xdacs.xms7_0a.nsg13_hv_nmos[factuo]
++print @n.xt.xdach.xms7_0a.nsg13_hv_nmos[w]
++print @n.xt.xdach.xms7_0a.nsg13_hv_nmos[l]
++print @n.xt.xdach.xms7_0a.nsg13_hv_nmos[delvto]
++print @n.xt.xdach.xms7_0a.nsg13_hv_nmos[factuo]
++print @n.xt.xcs.xm1.nsg13_lv_nmos[w]
++print @n.xt.xcs.xm1.nsg13_lv_nmos[l]
++print @n.xt.xcs.xm1.nsg13_lv_nmos[delvto]
++print @n.xt.xcs.xm1.nsg13_lv_nmos[factuo]
++print @n.xt.xch.xm1.nsg13_lv_nmos[w]
++print @n.xt.xch.xm1.nsg13_lv_nmos[l]
++print @n.xt.xch.xm1.nsg13_lv_nmos[delvto]
++print @n.xt.xch.xm1.nsg13_lv_nmos[factuo]
++print @n.xbgr.xm34.nsg13_hv_nmos[delvto]
++print @n.xbgr.xr16.nr1[nsmm_rsh]
++print @q.xbgr.xq56.qnpn13g2[area]
++echo P0_LEGACY27_BEFORE_END
++op
++echo P0_NON_BGR_AFTER_BEGIN
+ print @n.xs.xr1n0.nr1[nsmm_rsh]
+ print @n.xs.xr1n0.nr1[nsmm_w]
+ print @n.xs.xr1n0.nr1[nsmm_l]
+@@ -20250,8 +20275,8 @@
+ print @n.xt.xch.xmnbn2.nsg13_lv_nmos[l]
+ print @n.xt.xch.xmnbn2.nsg13_lv_nmos[delvto]
+ print @n.xt.xch.xmnbn2.nsg13_lv_nmos[factuo]
+-echo NON_BGR_AFTER_END
+-echo BGR_AFTER_BEGIN
++echo P0_NON_BGR_AFTER_END
++echo P0_BGR_AFTER_BEGIN
+ print @n.xbgr.xr1.nr1[nsmm_rsh]
+ print @n.xbgr.xr1.nr1[nsmm_w]
+ print @n.xbgr.xr1.nr1[nsmm_l]
+@@ -23094,18 +23119,8 @@
+ print @n.xbgr.xr86_u24.nr1[nsmm_rsh]
+ print @n.xbgr.xr86_u24.nr1[nsmm_w]
+ print @n.xbgr.xr86_u24.nr1[nsmm_l]
+-echo BGR_AFTER_END
+-let ds = v(xt.icmp)-v(xt.vth_soft)
+-let dh = v(xt.icmp)-v(xt.vth_hard)
+-meas tran ds_pre find ds at=8.198e-07
+-meas tran ds_kick find ds at=8.21e-07
+-meas tran ds_sample find ds at=8.4e-07
+-meas tran qs_sample find v(cmp_soft) at=8.4e-07
+-meas tran dh_pre find dh at=9.2e-07
+-meas tran dh_kick find dh at=9.212e-07
+-meas tran dh_sample find dh at=9.402e-07
+-meas tran qh_sample find v(cmp_hard) at=9.402e-07
+-echo SAMPLE_PARAMETERS
++echo P0_BGR_AFTER_END
++echo P0_LEGACY27_AFTER_BEGIN
+ print @n.xs.xota.xm1.nsg13_hv_pmos[w]
+ print @n.xs.xota.xm1.nsg13_hv_pmos[l]
+ print @n.xs.xota.xm1.nsg13_hv_pmos[delvto]
+@@ -23133,10 +23148,9 @@
+ print @n.xbgr.xm34.nsg13_hv_nmos[delvto]
+ print @n.xbgr.xr16.nr1[nsmm_rsh]
+ print @q.xbgr.xq56.qnpn13g2[area]
+-set wr_singlescale
+-set wr_vecnames
+-wrdata qualification/@RUN@/hard_+0mV.dat v(clk) v(xt.icmp) v(xt.vth_soft) v(xt.vth_hard) v(cmp_soft) v(cmp_hard) v(isense) v(xt.cmp_clk_n) v(xt.xch.xp) v(xt.xch.xq) v(xt.xch.xn) v(xt.xch.yn) v(vref) v(iptat) v(vref_buf) v(vped) v(shp)
+-echo QUALIFICATION_END
++echo P0_LEGACY27_AFTER_END
++wrdata qualification/@RUN@/op0.dat v(vref) v(iptat) v(vref_buf) v(vped) v(shp) v(isense) v(xt.icmp) v(xt.vth_soft) v(xt.vth_hard)
++echo POPULATION_OP_END
+ quit 0
+ .endc
+ .end

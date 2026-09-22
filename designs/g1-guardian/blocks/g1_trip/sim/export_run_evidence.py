@@ -34,7 +34,10 @@ def main():
                  'declared_prefix_difference.diff', 'prefix_structure_audit.json',
                  'declared_fullhot_difference.diff', 'declared_runner_difference.diff',
                  'fullhot_structure_audit.json', 'declared_calibration_difference.diff',
-                 'recovery_contract.json', 'recovery_wrapper.py'}
+                 'recovery_contract.json', 'recovery_wrapper.py',
+                 'population_inventory.json', 'declared_population_deck_difference.diff',
+                 'declared_population_source_difference.json',
+                 'declared_population_transient_difference.diff'}
     for run in args.runs:
         # Do not resolve: source is a portable repository-relative run identity,
         # even when its directory is an ignored external-storage symlink.
