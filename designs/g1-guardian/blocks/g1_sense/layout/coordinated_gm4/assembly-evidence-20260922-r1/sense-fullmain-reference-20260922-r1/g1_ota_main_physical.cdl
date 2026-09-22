@@ -1,0 +1,23 @@
+.subckt g1_ota_main_physical inp inn vbn out vdd vss
+MMB2 vbp vbn vss vss sg13_hv_nmos w=8u l=1u m=1
+MMB3 vbp vbp vdd vdd sg13_hv_pmos w=16u l=1u m=1
+MMB5 vbnc vbp vdd vdd sg13_hv_pmos w=16u l=1u m=1
+MMB4 vbnc vbnc vss vss sg13_hv_nmos w=1.6u l=1u m=1
+MMB6 vbpc vbn vss vss sg13_hv_nmos w=8u l=1u m=1
+MMB7 vbpc vbpc vdd vdd sg13_hv_pmos w=3.2u l=1u m=1
+MMT tail vbp vdd vdd sg13_hv_pmos w=128u l=1u m=1
+MM1 fn inn tail vdd sg13_hv_pmos w=384u l=2u m=1
+MM2 fp inp tail vdd sg13_hv_pmos w=384u l=2u m=1
+MM3 fn vbn vss vss sg13_hv_nmos w=320u l=4u m=1
+MM4 fp vbn vss vss sg13_hv_nmos w=320u l=4u m=1
+MM13 mir vbnc fn vss sg13_hv_nmos w=48u l=1u m=1
+MM16 out1 vbnc fp vss sg13_hv_nmos w=48u l=1u m=1
+MM14 pc1 mir vdd vdd sg13_hv_pmos w=384u l=4u m=1
+MM11 pc2 mir vdd vdd sg13_hv_pmos w=384u l=4u m=1
+MM15 mir vbpc pc1 vdd sg13_hv_pmos w=384u l=4u m=1
+MM12 out1 vbpc pc2 vdd sg13_hv_pmos w=384u l=4u m=1
+MM20 out out1 vdd vdd sg13_hv_pmos w=192u l=1u m=1
+MM21 out vbn vss vss sg13_hv_nmos w=96u l=1u m=1
+RRZ out1 cz vss rppd w=1u l=6.2u m=1 b=0
+CCC cz out cap_cmim w=69u l=23u m=1
+.ends g1_ota_main_physical

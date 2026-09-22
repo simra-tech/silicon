@@ -1,8 +1,11 @@
 # g1_ls — level shifter cells for the G1 analog wrapper
 
 State: **one cell, `g1_ls_up` (1.2 V → 3.3 V): schematic simulated over
-corners, laid out, DRC clean (full rule set), LVS clean.** No PEX, no
-post-layout simulation, no silicon. Owner: the digital track (`G1_CTRL`); the
+corners, laid out, DRC clean (full rule set), LVS clean; scoped CPEX simulation
+and qualified 100-sample mismatch screen completed.** No silicon. Full route/
+receiver and back-powering qualification remains incomplete. See
+[current mismatch evidence](sim/qualification/MISMATCH_RESULTS_20260922.md).
+Owner: the digital track (`G1_CTRL`); the
 cells are placed by the analog wrapper / integration owner (`PLAN.md` D8).
 
 ## Why and how many
@@ -81,9 +84,10 @@ before `vdd` (order A) or after it (order D), `in` low during the ramps, then
 one 1.2 V pulse on `in`, then `vdd` removed while `vdda` stays. In all six
 cases `out` stays at 0 V (< 10 µV transient, nV static) with either rail alone
 and with both rails, follows the pulse to 3.3 V, and stays low with `vdd`
-absent (`vdda` current 12–22 pA). The cell therefore does not produce a false
-3.3 V level in any supply sequence, which matters because `t2f_en` is the
-sensor's enable and `bgr_r4` changes the reference.
+absent (`vdda` current 12–22 pA). No false high was observed in these six
+schematic cases. This does not establish all supply sequences, floating-rail
+back-powering, or actual receiver behavior. These remain important because
+`t2f_en` is the sensor's enable and `bgr_r4` changes the reference.
 
 −196 °C (the `PLAN.md` step-2 extrapolation run): not run for this cell.
 

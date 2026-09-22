@@ -2,6 +2,12 @@
 
 Inherited source-to-physical fidelity is **failed**. This folder holds diagnostic controls and isolated contact prototypes, not adopted layout. The original audits saved no GDS; the subsequent bounded prototype gate generated only a separate candidate GDS, preserving canonical geometry. Exact source is gm4comp3 SHA-256 `baab6183c364477da1dd332e4585ae7201b3776bf0f836014744a42809e13877`; delivered GDS remains `38c1d6d13bbfee4ed0e3c01477742c3d2d28317d9215d9e5bd9a35551285ae59`.
 
+Latest isolated milestone: [complete nine-port SENSE assembly](ASSEMBLY_RESULTS_20260922.md)
+passes independent58MOS/835-channel geometry and stock DRC/LVS within385×240µm.
+It is unfilled and unadopted. Stock per-node junction attribution fails51/58
+records; intrinsic shared PSP applicability, new PEX and whole-chip fit remain
+not run. Earlier proposals and failed controls below remain historical evidence.
+
 ## Evidence and scope
 
 | Check | Status | Evidence |
@@ -14,8 +20,8 @@ Inherited source-to-physical fidelity is **failed**. This folder holds diagnosti
 | Six isolated source-native/contact prototypes | Passed scoped native and terminal gate, including independent saved-GDS repeat | [Prototype manifest](native-prototypes-20260922-r1/manifest.json), [saved-GDS audit](native-saved-audit-20260922-r1.json) |
 | Isolated assembly DRC and six strict stock LVS | Passed: zero markers, only Match statuses | [Seven-check stock summary](native-stock-20260922-r1/summary.json) |
 | Stock-written per-node junction A/P versus source defaults | Failed for all10 MOS, identically in split and independent controls | [Attribution audit](stock-junction-attribution-20260922-r1.json) |
-| New source-faithful routed buffers/main OTA, stock DRC/LVS/PEX | Not run | No candidate GDS |
-| New well/substrate isolation, matching, extracted electrical performance | Not run | Separate required gates |
+| New source-faithful routed buffers/main/full SENSE, stock DRC/LVS | Passed isolated scope; new PEX not run | [Assembly results](ASSEMBLY_RESULTS_20260922.md) |
+| Whole-chip well/substrate isolation, model matching, extracted electrical performance | Not run | Separate required gates |
 
 The first inventory invocation failed on an omitted PCell origin argument; [r1 failure](inherited-fidelity-20260922-r1-failure.json) is retained. The fresh r2 invocation uses explicit origin(0,0). The independent terminal audit copies polygons into a separate in-memory layout and connects actual channel-subtracted Activ/GatPoly/contact/six-metal geometry. Labels are sampled as terminal anchors, never used to merge nets.
 
