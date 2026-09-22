@@ -1,0 +1,111 @@
+time="2026-09-23T01:43:04+02:00" level=warning msg="Network file system detected as backing store.  Enforcing overlay option `force_mask=\"700\"`.  Add it to storage.conf to silence this warning"
+time="2026-09-23T01:43:05+02:00" level=warning msg="Network file system detected as backing store.  Enforcing overlay option `force_mask=\"700\"`.  Add it to storage.conf to silence this warning"
+Resource enforcement: CPU affinity; memory reservation only (rootless cgroups v1).
+time="2026-09-23T01:43:06+02:00" level=warning msg="Network file system detected as backing store.  Enforcing overlay option `force_mask=\"700\"`.  Add it to storage.conf to silence this warning"
+{
+  "status": "passed scoped main and maximal DRC",
+  "GDS_sha256": "a29441d3851000077aaf3d90c46a9a0ed782e504eff59acc04d62d863ab988d6",
+  "candidate_metadata_sha256": "805200bff35980898b2fa9f260d42d34f5475621132842d5bd0e88408d093636",
+  "script_sha256": "1c00e0dd3e3f45892159e1f9e45bfdae92d6ba596b9dfa487393f6717ab2b338",
+  "switch_helper_sha256": "21541b289491b8fcb70c6135d2d0cd411ea27f025cc0a07222d7825368322277",
+  "switches": {
+    "threads": "1",
+    "drc_json_default": "/foss/pdks/ihp-sg13g2/libs.tech/klayout/tech/drc/rule_decks/sg13g2_tech_default.json",
+    "drc_json": "/foss/pdks/ihp-sg13g2/libs.tech/klayout/python/sg13g2_pycell_lib/sg13g2_tech_mod.json",
+    "run_mode": "deep",
+    "precheck_drc": "false",
+    "disable_extra_rules": "false",
+    "no_feol": "false",
+    "no_beol": "false",
+    "no_offgrid": "false",
+    "no_angle": "false",
+    "density_sanity": "false",
+    "density": "false",
+    "no_forbidden": "false",
+    "no_pin": "false",
+    "no_recommended": "false",
+    "topcell": "sealring_top",
+    "input": "@RESULTS@/sealring-1414-20260922-r4/sealring.gds"
+  },
+  "decks": [
+    {
+      "name": "main",
+      "returncode": 0,
+      "wall_s": 6.905696952715516,
+      "command": [
+        "timeout",
+        "--kill-after=5",
+        "180",
+        "python3",
+        "/work/designs/g1-guardian/review/audits/run_core_candidate_drc.py",
+        "--candidate",
+        "@RESULTS@/sealring-1414-20260922-r4",
+        "--gds-name",
+        "sealring.gds",
+        "--topcell",
+        "sealring_top",
+        "--main-watchdog",
+        "180",
+        "--maximal-watchdog",
+        "300",
+        "--output",
+        "@RESULTS@/sealring-stock-drc-20260922-r3",
+        "--execute",
+        "main"
+      ],
+      "watchdog_s": 180,
+      "reports": [
+        {
+          "path": "reports/sealring_sealring_top_main.lyrdb",
+          "sha256": "90e54332f53ff8f619b68d2b71aeff9f54ed21429560587a39094a882a953275",
+          "markers": 0,
+          "categories": {}
+        }
+      ],
+      "status": "passed"
+    },
+    {
+      "name": "maximal",
+      "returncode": 0,
+      "wall_s": 3.8834340274333954,
+      "command": [
+        "timeout",
+        "--kill-after=5",
+        "300",
+        "python3",
+        "/work/designs/g1-guardian/review/audits/run_core_candidate_drc.py",
+        "--candidate",
+        "@RESULTS@/sealring-1414-20260922-r4",
+        "--gds-name",
+        "sealring.gds",
+        "--topcell",
+        "sealring_top",
+        "--main-watchdog",
+        "180",
+        "--maximal-watchdog",
+        "300",
+        "--output",
+        "@RESULTS@/sealring-stock-drc-20260922-r3",
+        "--execute",
+        "maximal"
+      ],
+      "watchdog_s": 300,
+      "reports": [
+        {
+          "path": "reports/sealring_sealring_top_sg13g2_maximal.lyrdb",
+          "sha256": "19c0b0123c9b971a86c337a91cb1a8a51e43ef3e1602677c5a0ab1d301365dfe",
+          "markers": 0,
+          "categories": {}
+        }
+      ],
+      "status": "passed"
+    }
+  ],
+  "not_run": [
+    "density/fill",
+    "antenna",
+    "connected fullchip LVS/PEX/currentIR/EM",
+    "electrical adoption"
+  ],
+  "inputs_rules_unchanged": true
+}

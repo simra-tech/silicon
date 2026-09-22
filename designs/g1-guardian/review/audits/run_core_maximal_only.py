@@ -22,11 +22,11 @@ def sha(path):
     return hashlib.sha256(path.read_bytes()).hexdigest()
 
 
-def switches(module,gds):
+def switches(module,gds,topcell='placed_core_NOT_CONNECTED_FULLCHIP'):
     args=SimpleNamespace(density_thr=1,drc_json=None,run_mode='deep',precheck_drc=False,
                          disable_extra_rules=False,no_feol=False,no_beol=False,no_offgrid=False,
                          no_angle=False,density_sanity=False,no_density=True,no_recommended=False,
-                         table=[],topcell='placed_core_NOT_CONNECTED_FULLCHIP')
+                         table=[],topcell=topcell)
     return module.generate_klayout_switches(args,str(gds))
 
 

@@ -1,0 +1,76 @@
+time="2026-09-23T00:45:24+02:00" level=warning msg="Network file system detected as backing store.  Enforcing overlay option `force_mask=\"700\"`.  Add it to storage.conf to silence this warning"
+time="2026-09-23T00:45:25+02:00" level=warning msg="Network file system detected as backing store.  Enforcing overlay option `force_mask=\"700\"`.  Add it to storage.conf to silence this warning"
+Resource enforcement: CPU affinity; memory reservation only (rootless cgroups v1).
+time="2026-09-23T00:45:26+02:00" level=warning msg="Network file system detected as backing store.  Enforcing overlay option `force_mask=\"700\"`.  Add it to storage.conf to silence this warning"
+{
+  "status": "failed scoped candidate DRC",
+  "GDS_sha256": "301cb530b14dd7e36c8a30b7f840aac62295f95642ed9264423de2b455bfc6f7",
+  "candidate_metadata_sha256": "86cf025811f7ca312ac1ac87dc827032f4d9ee6d0f1fe1b53229fccea03985f6",
+  "script_sha256": "0b8e98b4be17d65195da419bd3828807736bd908a1189b4b4da507962561a3a3",
+  "switch_helper_sha256": "9b3ff688509d6fb7b9ff9f62cc4159e13cb5b615b3a294bc0d203c558d2a62d2",
+  "switches": {
+    "threads": "1",
+    "drc_json_default": "/foss/pdks/ihp-sg13g2/libs.tech/klayout/tech/drc/rule_decks/sg13g2_tech_default.json",
+    "drc_json": "/foss/pdks/ihp-sg13g2/libs.tech/klayout/python/sg13g2_pycell_lib/sg13g2_tech_mod.json",
+    "run_mode": "deep",
+    "precheck_drc": "false",
+    "disable_extra_rules": "false",
+    "no_feol": "false",
+    "no_beol": "false",
+    "no_offgrid": "false",
+    "no_angle": "false",
+    "density_sanity": "false",
+    "density": "false",
+    "no_forbidden": "false",
+    "no_pin": "false",
+    "no_recommended": "false",
+    "topcell": "placed_core_NOT_CONNECTED_FULLCHIP",
+    "input": "@RESULTS@/native-signal-streamout-20260922-r3/signal_routed_native.gds"
+  },
+  "decks": [
+    {
+      "name": "maximal",
+      "returncode": 0,
+      "wall_s": 627.6486555729061,
+      "command": [
+        "timeout",
+        "--kill-after=5",
+        "900",
+        "python3",
+        "/work/designs/g1-guardian/review/audits/run_core_candidate_drc.py",
+        "--candidate",
+        "@RESULTS@/native-signal-streamout-20260922-r3",
+        "--gds-name",
+        "signal_routed_native.gds",
+        "--only",
+        "maximal",
+        "--maximal-watchdog",
+        "900",
+        "--output",
+        "@RESULTS@/native-signal-maximal-20260922-r1",
+        "--execute",
+        "maximal"
+      ],
+      "watchdog_s": 900,
+      "reports": [
+        {
+          "path": "reports/signal_routed_native_placed_core_NOT_CONNECTED_FULLCHIP_sg13g2_maximal.lyrdb",
+          "sha256": "904444f0f3a988baa65483932753287210ab32ab87681c9df9d9bec9573b1424",
+          "markers": 4,
+          "categories": {
+            "'Pad.d1R'": 4
+          }
+        }
+      ],
+      "status": "failed"
+    }
+  ],
+  "not_run": [
+    "density/fill",
+    "antenna",
+    "connected fullchip LVS/PEX/currentIR/EM",
+    "electrical adoption",
+    "other stock deck in this independent invocation"
+  ],
+  "inputs_rules_unchanged": true
+}

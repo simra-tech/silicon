@@ -1,0 +1,66 @@
+time="2026-09-23T01:32:57+02:00" level=warning msg="Network file system detected as backing store.  Enforcing overlay option `force_mask=\"700\"`.  Add it to storage.conf to silence this warning"
+time="2026-09-23T01:32:58+02:00" level=warning msg="Network file system detected as backing store.  Enforcing overlay option `force_mask=\"700\"`.  Add it to storage.conf to silence this warning"
+Resource enforcement: CPU affinity; memory reservation only (rootless cgroups v1).
+time="2026-09-23T01:32:59+02:00" level=warning msg="Network file system detected as backing store.  Enforcing overlay option `force_mask=\"700\"`.  Add it to storage.conf to silence this warning"
+{
+  "status": "failed scoped candidate DRC",
+  "GDS_sha256": "a29441d3851000077aaf3d90c46a9a0ed782e504eff59acc04d62d863ab988d6",
+  "candidate_metadata_sha256": "805200bff35980898b2fa9f260d42d34f5475621132842d5bd0e88408d093636",
+  "script_sha256": "0b8e98b4be17d65195da419bd3828807736bd908a1189b4b4da507962561a3a3",
+  "switch_helper_sha256": "9b3ff688509d6fb7b9ff9f62cc4159e13cb5b615b3a294bc0d203c558d2a62d2",
+  "switches": {
+    "threads": "1",
+    "drc_json_default": "/foss/pdks/ihp-sg13g2/libs.tech/klayout/tech/drc/rule_decks/sg13g2_tech_default.json",
+    "drc_json": "/foss/pdks/ihp-sg13g2/libs.tech/klayout/python/sg13g2_pycell_lib/sg13g2_tech_mod.json",
+    "run_mode": "deep",
+    "precheck_drc": "false",
+    "disable_extra_rules": "false",
+    "no_feol": "false",
+    "no_beol": "false",
+    "no_offgrid": "false",
+    "no_angle": "false",
+    "density_sanity": "false",
+    "density": "false",
+    "no_forbidden": "false",
+    "no_pin": "false",
+    "no_recommended": "false",
+    "topcell": "placed_core_NOT_CONNECTED_FULLCHIP",
+    "input": "@RESULTS@/sealring-1414-20260922-r4/sealring.gds"
+  },
+  "decks": [
+    {
+      "name": "main",
+      "returncode": 1,
+      "wall_s": 3.176688449457288,
+      "command": [
+        "timeout",
+        "--kill-after=5",
+        "180",
+        "python3",
+        "/work/designs/g1-guardian/review/audits/run_core_candidate_drc.py",
+        "--candidate",
+        "@RESULTS@/sealring-1414-20260922-r4",
+        "--gds-name",
+        "sealring.gds",
+        "--main-watchdog",
+        "180",
+        "--maximal-watchdog",
+        "300",
+        "--output",
+        "@RESULTS@/sealring-1414-drc-20260922-r2",
+        "--execute",
+        "main"
+      ],
+      "watchdog_s": 180,
+      "reports": [],
+      "status": "failed"
+    }
+  ],
+  "not_run": [
+    "density/fill",
+    "antenna",
+    "connected fullchip LVS/PEX/currentIR/EM",
+    "electrical adoption"
+  ],
+  "inputs_rules_unchanged": true
+}

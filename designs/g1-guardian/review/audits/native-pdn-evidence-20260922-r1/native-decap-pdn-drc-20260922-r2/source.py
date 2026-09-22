@@ -18,7 +18,6 @@ def main():
     p=argparse.ArgumentParser(description=__doc__)
     p.add_argument('--candidate',type=Path,required=True)
     p.add_argument('--gds-name',required=True)
-    p.add_argument('--topcell',default='placed_core_NOT_CONNECTED_FULLCHIP')
     p.add_argument('--output',type=Path,required=True)
     p.add_argument('--execute',choices=['main','maximal'])
     p.add_argument('--only',choices=['main','maximal'])
@@ -32,12 +31,10 @@ def main():
     source=a.candidate/a.gds_name
     metadata=json.loads((a.candidate/'analysis.json').read_text())
     assert metadata['status'].startswith('passed') and sha(source)==metadata['GDS_sha256']
-    layout=pya.Layout();layout.read(str(source))
-    assert layout.cell(a.topcell) is not None, 'Requested DRC topcell absent from hash-bound GDS'
     sys.path.insert(0,str(DRC))
     spec=importlib.util.spec_from_file_location('pinned_stock_drc',DRC/'run_drc.py')
     module=importlib.util.module_from_spec(spec);spec.loader.exec_module(module)
-    sw=switches(module,source,a.topcell)
+    sw=switches(module,source)
     if a.execute:
         deck=DRC/'ihp-sg13g2.drc' if a.execute=='main' else DRC/'rule_decks/sg13g2_maximal.drc'
         table='main' if a.execute=='main' else 'sg13g2_maximal'
