@@ -1,0 +1,45 @@
+{
+  "status": "failed",
+  "mode": "controls",
+  "scenario": "KPEX",
+  "resistance_values": {
+    "sheet_ohm": {
+      "M1": 0.11,
+      "M2": 0.088,
+      "M3": 0.088,
+      "M4": 0.088,
+      "M5": 0.088
+    },
+    "cut_ohm": {
+      "Via1": 9.0,
+      "Via2": 9.0,
+      "Via3": 9.0,
+      "Via4": 9.0
+    }
+  },
+  "worker_sha256": "fd6108cc26cad739b7130af068ffbe6002f6ac78ad1c9db28ae50e7576f0746a",
+  "preparation_sha256": "244f2428138d10306d89844c283665568ab095bb37320054af529c7e63f699dc",
+  "native_engine_file": "/usr/local/lib/python3.12/dist-packages/klayout/pexcore.cpython-312-x86_64-linux-gnu.so",
+  "native_engine_sha256": "99e5f8d32fbebe4e72c97c40d4190800f698cc93164251ef0d6b14e26ca5c3fb",
+  "domain": "conditional actual metallization only; internal/electrode/substrate model boundaries not qualified",
+  "physical_IR_qualification": "not run",
+  "nonlinear_redistribution": "not run",
+  "adoption": "not run",
+  "seed": "not applicable",
+  "error": "AssertionError()",
+  "wall_s": 0.02562985196709633,
+  "peak_RSS_bytes": 124547072
+}
+Traceback (most recent call last):
+  File "/work/designs/g1-guardian/blocks/g1_bgr/layout/coordinated_return_remedy/extract_metal_r.py", line 257, in <module>
+    main()
+  File "/work/designs/g1-guardian/blocks/g1_bgr/layout/coordinated_return_remedy/extract_metal_r.py", line 228, in main
+    cases = controls(scenario)
+            ^^^^^^^^^^^^^^^^^^
+  File "/work/designs/g1-guardian/blocks/g1_bgr/layout/coordinated_return_remedy/extract_metal_r.py", line 184, in controls
+    result, _ = solve(raw, ports, 1)
+                ^^^^^^^^^^^^^^^^^^^^
+  File "/work/designs/g1-guardian/blocks/g1_bgr/layout/coordinated_return_remedy/extract_metal_r.py", line 167, in solve
+    assert abs(power - supplied) <= 1e-9 * max(abs(power), abs(supplied), 1e-12)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError

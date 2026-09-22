@@ -1,0 +1,43 @@
+{
+  "status": "failed",
+  "mode": "full",
+  "scenario": "LEF",
+  "resistance_values": {
+    "sheet_ohm": {
+      "M1": 0.135,
+      "M2": 0.103,
+      "M3": 0.103,
+      "M4": 0.103,
+      "M5": 0.103
+    },
+    "cut_ohm": {
+      "Via1": 20.0,
+      "Via2": 20.0,
+      "Via3": 20.0,
+      "Via4": 20.0
+    }
+  },
+  "worker_sha256": "d197ec63948e26adaa4cf79a72d25a98344a4ca512844974e8171eb541be29b6",
+  "preparation_sha256": "244f2428138d10306d89844c283665568ab095bb37320054af529c7e63f699dc",
+  "native_engine_file": "/usr/local/lib/python3.12/dist-packages/klayout/pexcore.cpython-312-x86_64-linux-gnu.so",
+  "native_engine_sha256": "99e5f8d32fbebe4e72c97c40d4190800f698cc93164251ef0d6b14e26ca5c3fb",
+  "domain": "conditional actual metallization only; internal/electrode/substrate model boundaries not qualified",
+  "physical_IR_qualification": "not run",
+  "nonlinear_redistribution": "not run",
+  "adoption": "not run",
+  "seed": "not applicable",
+  "extraction_wall_s": 0.9737725928425789,
+  "error": "AssertionError({'power_W': np.float64(4.362804385456885e-05), 'source_power_W': 4.362804398128061e-05, 'absolute_delta_W': np.float64(1.267117582192355e-13), 'free_KCL_residual_A': 5.946935652256791e-14, 'nodes': 33585, 'positive_edges': 42720})",
+  "wall_s": 1.8310712482780218,
+  "peak_RSS_bytes": 221884416
+}
+Traceback (most recent call last):
+  File "/work/designs/g1-guardian/blocks/g1_bgr/layout/coordinated_return_remedy/extract_metal_r.py", line 267, in <module>
+    main()
+  File "/work/designs/g1-guardian/blocks/g1_bgr/layout/coordinated_return_remedy/extract_metal_r.py", line 251, in main
+    result, voltage = solve(raw, points, 55)
+                      ^^^^^^^^^^^^^^^^^^^^^^
+  File "/work/designs/g1-guardian/blocks/g1_bgr/layout/coordinated_return_remedy/extract_metal_r.py", line 167, in solve
+    assert abs(power - supplied) <= 1e-9 * max(abs(power), abs(supplied), 1e-12), dict(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: {'power_W': np.float64(4.362804385456885e-05), 'source_power_W': 4.362804398128061e-05, 'absolute_delta_W': np.float64(1.267117582192355e-13), 'free_KCL_residual_A': 5.946935652256791e-14, 'nodes': 33585, 'positive_edges': 42720}
