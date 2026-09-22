@@ -28,7 +28,9 @@ def main():
                  'controlled_solver_preflight.json', 'failed_solver_diagnostic_preflight.json',
                  'partition_comparison.json', 'solver_comparison.json', 'runner.py', 'driver.py', 'replay_driver.py',
                  'preparation.json', 'preparer.py', 'declared_clock_difference.diff',
-                 'declared_output_difference.diff'}
+                 'declared_output_difference.diff', 'declared_draw_audit_difference.diff',
+                 'non_bgr_inventory.json', 'prelaunch_reference_bindings.json',
+                 'declared_substitution_difference.diff', 'substitution_structure_audit.json'}
     for run in args.runs:
         # Do not resolve: source is a portable repository-relative run identity,
         # even when its directory is an ignored external-storage symlink.
