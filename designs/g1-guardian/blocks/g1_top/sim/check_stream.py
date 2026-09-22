@@ -6,6 +6,7 @@ import json
 from pathlib import Path
 from check_campaign import read_wave
 from run_bounded import atomic_json
+from simulation_errors import solver_failure
 
 HERE = Path(__file__).resolve().parent
 ROOT = HERE.parents[4]
@@ -70,6 +71,9 @@ def main():
         ap.error('observation hash changed')
     cols, rows = read_wave(p)
     r = evaluate(cols, rows, assessment['completion'],event=contract['event'],end=contract['end'])
+    r['checks']['solver_log_clean'] = not solver_failure((out/'run.log').read_text())
+    if not r['checks']['solver_log_clean']:
+        r['status'] = 'failed'
     r.update(checker_sha256=sha(Path(__file__)), waveform_sha256=sha(p), manifest_sha256=sha(out/'run.json'), completion_assessment_sha256=sha(out/'assessment.json'), source_deck_sha256=manifest['source_deck_sha256'])
     atomic_json(dest,r)
     print(json.dumps(r,indent=2))

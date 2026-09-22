@@ -1,0 +1,13 @@
+{
+  "status": "not run",
+  "case": "hard_pulse400",
+  "cases": ["hard_pulse400"],
+  "pulse_half_height_width_ns": 400,
+  "width_acceptance_ns": 10,
+  "event_shifts_ns": [0, 27.796, 55.593, 83.389, 111.185, 138.981, 166.778, 194.574],
+  "pilot_shift_ns": 55.593,
+  "leaf_timeout_s": 300,
+  "checks": ["complete clean solver and analog/state endpoints", "configured thresholds, FAST disabled, unmasked and armed", "correct pulse amplitude and 400ns width", "hard comparator exercised", "no trip, no cause, load tracking"],
+  "reason": "Distinct longer pulse exercises the sampled comparator at phases where the original200ns stimulus missed a sampling edge. Original200ns coverage failures remain failed; this is not a replacement or waiver.",
+  "scope": "Behavioral analog front, actual RTL/GATE C-PEX, ideal8.994MHz oscillator, fittedpads and modeledswitch attt27C. Four consecutive hard decisions are in cmp_clk periods (osc/2). No actual-analog accuracy, arbitraryphase or realFET qualification."
+}

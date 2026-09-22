@@ -1,0 +1,13 @@
+{
+  "status": "prepared; corrected export-endpoint pilot required",
+  "supersedes": "fault_phase_server_20260922_contract.json",
+  "prior_outcome": "Both111.185ns pilot cases reached the requested transient but failed waveform/state endpoint acceptance: six-digit SPICE stop formatting rounded42.111185us to42.1112us, then linearize exported analog data through42.12us while state ended42.1112us. Original decks, waves and failed assessments are retained.",
+  "correction": "Shift fault times only. Keep original integer-grid42us or44us endpoint, with at least11.8us observation after the held fault. No extrapolation or interpolation repair of old outputs, and no acceptance tolerance relaxation.",
+  "cases": ["c_mid", "hard_pulse"],
+  "event_shifts_ns": [0, 27.796, 55.593, 83.389, 111.185, 138.981, 166.778, 194.574],
+  "pilot_shift_ns": 111.185,
+  "timeout_s_per_case": 300,
+  "threads_per_case": 1,
+  "acceptance": "Same held-fault and rejected200ns-pulse checks as original contract, but original42/44us complete endpoints remain fixed. Require clean logs, actual stimulus and saved states, no false trip, and held-fault gate-low within10us of actual shifted event.",
+  "scope": "ActualRTL/GATE C-PEX with behavioral front, idealclock/fittedpads/modeledswitch attt27C. Not analogaccuracy, realFET, arbitraryphaseproof or physicalmeasurements."
+}

@@ -1,0 +1,13 @@
+{
+  "status": "prepared; two-case pilot must pass before remaining phases",
+  "cases": ["c_mid", "hard_pulse"],
+  "event_shifts_ns": [0, 27.796, 55.593, 83.389, 111.185, 138.981, 166.778, 194.574],
+  "rationale": "Eight evenly spaced positions across the nominal2/8.994MHz comparator-clock period. Only fault PWL times and final endpoint shift; serial preamble, requested45mV-equivalent fault,20ns edges and hard_pulse200ns width remain fixed.",
+  "pilot_shift_ns": 111.185,
+  "fixture": "Actual RTL, GATE C-PEX, behavioral front-end, ideal oscillator and fitted output pads, modeled cutoff switch;27C/tt",
+  "timeout_s_per_case": 300,
+  "threads_per_case": 1,
+  "acceptance": "Existing complete-waveform c_mid held-hard-fault or hard_pulse rejection checks. Require clean logs, full shifted endpoint and actual requested stimulus, correct configured registers, arming, latch/cause/load/fault behavior. Held fault gate-low within10us of shifted event. Short pulse must exercise comparator without a trip.",
+  "on_failure": "Retain failure and diagnose before remaining phase batch. Do not adapt acceptance or suppress unexpected trips.",
+  "limitations": "Discrete phase samples, not exhaustive clock/CDC signoff; not comparator or analog threshold accuracy, actual-pad power safety, real-FET or assembled RC qualification. Physical measurements not run."
+}

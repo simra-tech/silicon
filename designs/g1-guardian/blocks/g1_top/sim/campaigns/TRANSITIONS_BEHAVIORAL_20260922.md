@@ -45,5 +45,6 @@ G1_CPUS=1 G1_MEMORY=2g G1_WORKDIR=designs/g1-guardian/blocks/g1_top/sim \
  --image-id sha256:5fd78498e578c6e9ec10828c248ca3790fc88250ff6caf545521b29e448ea3c0
 ```
 
-Long retry/give-up, phase/threshold sweeps, adverse rails and transistor-level
-front-end anchors for these transitions remain incomplete.
+The full retry/give-up and serial counter fixture subsequently passed; see
+[retry recovery](RETRY_RECOVERY_20260922.md). Phase/threshold sweeps, adverse
+rails and transistor-level front-end anchors remain incomplete.
