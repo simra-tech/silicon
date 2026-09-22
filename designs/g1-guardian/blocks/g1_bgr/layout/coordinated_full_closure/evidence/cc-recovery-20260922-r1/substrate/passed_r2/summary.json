@@ -1,0 +1,253 @@
+{
+  "status": "passed physical generalVSS substrate ownership; synthetic-plane accuracy not qualified",
+  "inputs": {
+    "<results-root>/bgr-pex-prepare-20260922-r3/extraction.lvsdb": "6bc87673405b26f4cbc9f23c7ddf77d49c35b2ae12ec70dc0c0786f8d797856f",
+    "<results-root>/bgr-pex-prepare-20260922-r3/source_device_audit.json": "b7e34e2f40436510355aaa50de4dd341f15ddab0d7774d499795c361bf0f5389",
+    "/work/designs/g1-guardian/blocks/g1_bgr/layout/coordinated_full_closure/prove_substrate_binding.py": "0059f2c1049e7186a3ed86cd0d13ec88b45daac94f32db001f1ad03c62ba26d0"
+  },
+  "synthetic_VSUBS_plane_accuracy": "not run",
+  "finite_substrate_resistance": "not run",
+  "internal_HBT_s1_t_equivalence": "not applicable: no physical mapping asserted",
+  "electrical": "not run",
+  "adoption": "not run",
+  "region_net_area_um2": {
+    "nwell_drw": {
+      "d1": 1849.8816,
+      "d2": 1849.8816,
+      "d3": 308.3136,
+      "d4": 77.0784,
+      "d5": 1849.8816,
+      "vdd": 7430.9272
+    },
+    "pwell": {
+      "vss": 134343.83599999998
+    },
+    "pwell_sub": {
+      "vss": 147709.8
+    },
+    "ntap": {
+      "d1": 39.36,
+      "d2": 39.36,
+      "d3": 6.56,
+      "d4": 1.64,
+      "d5": 39.36,
+      "vdd": 256.32
+    },
+    "ptap": {
+      "vss": 5024.398
+    }
+  },
+  "extracted_device_body_counts": {
+    "npn13G2": {
+      "vss": 292
+    },
+    "rhigh": {
+      "vss": 15
+    },
+    "rppd": {
+      "vss": 384
+    },
+    "sg13_hv_nmos": {
+      "vss": 101
+    },
+    "sg13_hv_pmos": {
+      "vdd": 158,
+      "d5": 24,
+      "d3": 4,
+      "d1": 24,
+      "d4": 1,
+      "d2": 24
+    }
+  },
+  "nine_grounded_dummies": "separate proof0d146e08 retained; not extracted here",
+  "pinned_connectivity_semantics": {
+    "general_connections.lvs": {
+      "sha256": "bb61656b3564cf08558b83cf27d09854049eb30b5b7ade6610045d43c4b53e97",
+      "relevant_lines": [
+        {
+          "line": 27,
+          "text": "connect(pwell_sub, pwell)"
+        },
+        {
+          "line": 28,
+          "text": "connect(pwell, ptap)"
+        },
+        {
+          "line": 29,
+          "text": "connect(nwell_drw, ntap)"
+        },
+        {
+          "line": 30,
+          "text": "connect(ntap, cont_drw)"
+        },
+        {
+          "line": 31,
+          "text": "connect(ptap, cont_drw)"
+        },
+        {
+          "line": 35,
+          "text": "connect(cont_drw, metal1_con)"
+        },
+        {
+          "line": 50,
+          "text": "connect(nsd_fet, nsd_ptap_abutt)"
+        },
+        {
+          "line": 51,
+          "text": "connect(nsd_ptap_abutt, ptap)"
+        },
+        {
+          "line": 52,
+          "text": "connect(psd_fet, psd_ntap_abutt)"
+        },
+        {
+          "line": 53,
+          "text": "connect(psd_ntap_abutt, ntap)"
+        }
+      ]
+    },
+    "general_derivations.lvs": {
+      "sha256": "9604bfc7bf433d1e38e147aac55d96e4777efacb2380bdce08e02908df46540c",
+      "relevant_lines": [
+        {
+          "line": 41,
+          "text": "# pwell"
+        },
+        {
+          "line": 42,
+          "text": "pwell_allowed = CHIP.not(pwell_block)"
+        },
+        {
+          "line": 44,
+          "text": "pwell = pwell_allowed.not(nwell_drw).not(digisub_gap)"
+        },
+        {
+          "line": 45,
+          "text": "iso_pwell = nbulay_drw.and(nwell_holes)"
+        },
+        {
+          "line": 47,
+          "text": "# General pwell"
+        },
+        {
+          "line": 48,
+          "text": "pwell_sub = pwell_allowed.not(digisub_drw).not(nbulay_drw.interacting(nwell_holes))"
+        },
+        {
+          "line": 84,
+          "text": "ntap1_lbl = text_drw.texts(well_patt)"
+        },
+        {
+          "line": 85,
+          "text": "ptap1_lbl = text_drw.texts(sub_patt)"
+        },
+        {
+          "line": 86,
+          "text": "# ntap1 marker"
+        },
+        {
+          "line": 87,
+          "text": "ntap1_mk = nwell_drw.interacting(ntap1_lbl)"
+        },
+        {
+          "line": 88,
+          "text": "# ptap1 marker"
+        },
+        {
+          "line": 89,
+          "text": "ptap1_mk = substrate_drw.and(pwell).interacting(ptap1_lbl)"
+        },
+        {
+          "line": 92,
+          "text": "ntap = nactiv.and(nwell_drw).not(ntap1_mk).not(recog_diode).not(gatpoly)"
+        },
+        {
+          "line": 93,
+          "text": "ptap_all = pactiv.and(pwell).not(recog_diode).not(gatpoly)"
+        },
+        {
+          "line": 94,
+          "text": "ptap = ptap_all.not(ptap1_mk)"
+        },
+        {
+          "line": 95,
+          "text": "ptap_holes = ptap_all.not(edgeseal_drw).holes"
+        },
+        {
+          "line": 96,
+          "text": "ntap_holes = ntap.holes"
+        },
+        {
+          "line": 103,
+          "text": "ntap_sal = ntap.not(salblock_drw)"
+        },
+        {
+          "line": 104,
+          "text": "ptap_sal = ptap.not(salblock_drw)"
+        },
+        {
+          "line": 107,
+          "text": "nsd_ptap_abutt = nsd_sal.edges.and(ptap_sal.edges).extended(:in => 1.nm, :out => 1.nm)"
+        },
+        {
+          "line": 108,
+          "text": "psd_ntap_abutt = psd_sal.edges.and(ntap_sal.edges).extended(:in => 1.nm, :out => 1.nm)"
+        }
+      ]
+    },
+    "bjt_connections.lvs": {
+      "sha256": "0b3f536a25d8b8d5b37dc5eeb8e1bc8554e78694bb4398f6dd48ac3d9e528c8c",
+      "relevant_lines": [
+        {
+          "line": 31,
+          "text": "connect(npn_sub, pwell)"
+        },
+        {
+          "line": 40,
+          "text": "connect(npn_sub, pwell)"
+        },
+        {
+          "line": 51,
+          "text": "connect(npn_sub, pwell)"
+        },
+        {
+          "line": 60,
+          "text": "connect(npn_sub, pwell)"
+        }
+      ]
+    },
+    "res_connections.lvs": {
+      "sha256": "a42d02de14a62c239850946bd0f1831408b9076ee43c5a38bb261c72659bc448",
+      "relevant_lines": [
+        {
+          "line": 28,
+          "text": "connect(rsil_sub, pwell)"
+        },
+        {
+          "line": 29,
+          "text": "connect(rsil_sub, iso_pwell)"
+        },
+        {
+          "line": 34,
+          "text": "connect(rppd_sub, pwell)"
+        },
+        {
+          "line": 35,
+          "text": "connect(rppd_sub, iso_pwell)"
+        },
+        {
+          "line": 40,
+          "text": "connect(rhigh_sub, pwell)"
+        },
+        {
+          "line": 41,
+          "text": "connect(rhigh_sub, iso_pwell)"
+        }
+      ]
+    }
+  },
+  "synthetic_substrate_name": "VSUBS",
+  "conclusion": "Physical pwell_sub/pwell/ptap are VSS; selecting generalVSS for the synthetic CC reference is node-consistent, not proof of ideal equipotential/field accuracy.",
+  "PMOS_nwell_domains": "six distinct domains preserved; not merged into physical VSS",
+  "unchanged": true
+}
