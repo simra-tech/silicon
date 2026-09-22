@@ -178,7 +178,15 @@ core-first startup only. IO-first is failed. Simultaneous ramps, missing rails,
 brownout and shutdown are unqualified until their detailed pad-model tests
 complete; “core before or with IO” is not a general safety guarantee.
 
-For calibration, with automatic load arming externally inhibited, inject a
+For calibration, keep the load bus isolated by an independent external inhibit,
+then raise EN, allow synchronous reset release, and program/read back the
+configuration. EN low resets serial/register state and cannot preserve custom
+configuration while holding the gate off. Keep the external inhibit asserted
+through calibration; reassert it before any EN cycle and reprogram afterward.
+The bench sequence and its unrun hardware checks are in
+`../measurement/README.md`.
+
+With automatic load arming externally inhibited, inject a
 known interior shunt voltage (nominally 25 mV), use zero SENSE_OFS and disable
 hysteresis. Sweep each threshold independently after settling and locate a
 bracketed crossing Ccross. Under the nominal mapping Cideal=Vin/LSB, the shared
