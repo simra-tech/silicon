@@ -1,0 +1,6 @@
+# Export-only wrapper around the installed, unchanged KPEX LVS deck.
+# No extraction, matching, tolerance or rule expression is changed.
+# Explicitly writes the API database after comparison for tool interoperability.
+# %include /usr/local/lib/python3.12/dist-packages/klayout_pex/pdk/ihp-sg13g2/libs.tech/kpex/sg13g2.lvs
+lvs_data.write($report)
+netlist.write($export_netlist, RBA::NetlistSpiceWriter.new)

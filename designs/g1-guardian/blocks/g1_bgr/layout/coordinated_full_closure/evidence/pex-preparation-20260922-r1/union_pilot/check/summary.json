@@ -1,0 +1,1545 @@
+{
+  "status": "passed strictLVS and exactCC representation parity",
+  "inputs": {
+    "<results-root>/bgr-union-pilot-geometry-20260922-r1/summary.json": "4f3e3d1a8893f1d83bae1a4c639432281e6e7f3f72c5fe6f828848a1dc1cb5e2",
+    "<results-root>/bgr-union-pilot-geometry-20260922-r1/flat.gds": "f6738e5ec68c4e0db8b25b75b41d0b9e9de0c13858512d65bf2df0b87078992d",
+    "<results-root>/bgr-union-pilot-geometry-20260922-r1/union.gds": "00ed82310324eb7b40700ff71309f154436fa886c5267cb023bc58a6d21b668b",
+    "/work/build/scratch/bgr-hbt-worstrows-20260922-r2/pilot.cdl": "8aeac3748ccc6c00a6804bb75e63f07332a67acf64b27daf6cac71f8e3990e72",
+    "/work/flow/pex/export_lvsdb.lvs": "236cc96826b197544edb045a4d2730ab45ac93568b497fe31e3a7b9798af0a5d",
+    "/work/designs/g1-guardian/blocks/g1_bgr/layout/coordinated_full_closure/run_union_pilot.py": "3ad226a3609376e7ec66bcc4544098df0932c1d3576802c0937662a44790d418",
+    "/work/designs/g1-guardian/blocks/g1_bgr/layout/coordinated_full_closure/prepare_capacitance_views.py": "7afc488c44486021bc6c49d749719331e4d3c5a03c6e9f5c999b6749d36cb292",
+    "/work/designs/g1-guardian/blocks/g1_bgr/layout/coordinated_full_closure/run_stock.py": "ebfa2b8a94746cc79523071b656b6b477109383adfe8d0058af4594918ea7325"
+  },
+  "support_hashes": {
+    "libs.tech/kpex/sg13g2.lyt": "bec60c325ab5f4b2c141f2c697b6c2b47d87c8404943ee38e375c4adbca27039",
+    "libs.tech/kpex/sg13g2.lvs": "b714418a941ba025d28f553209300534be78617f39a0a9751ae8ae016277a878",
+    "libs.tech/kpex/sg13g2.lyp": "5d2a8f297dc951d97e1a0a1a4a2604eb756604b8ac443f5a69f31fc623d03974",
+    "libs.tech/kpex/rule_decks/mos_extraction.lvs": "dea4df60fced945fb182e2d2e511a73b6b2863d70acfbbb9875e8535bc0caa49",
+    "libs.tech/kpex/rule_decks/cap_extraction.lvs": "1094c75123eb6892166b183f5ba3a1ea8fbfa9af5543dd77963c134d21edb9f0",
+    "libs.tech/kpex/rule_decks/diode_derivations.lvs": "aa366ee04f0ab5030131d12d26e421c9bdf7dc4d7b0840f0ac43309557b411bf",
+    "libs.tech/kpex/rule_decks/custom_combiner.lvs": "2e9f341023b96ab64ef83110d0a57d5f8be8a6906e67db60edbb62cfadeed56d",
+    "libs.tech/kpex/rule_decks/res_extraction.lvs": "f3913114d4eafc36f6baf8c47a5de4867270e41955572af7f25c5f498ccec4b1",
+    "libs.tech/kpex/rule_decks/res_connections.lvs": "a42d02de14a62c239850946bd0f1831408b9076ee43c5a38bb261c72659bc448",
+    "libs.tech/kpex/rule_decks/custom_isolbox_extractor.lvs": "1ca2293fa3c5c45f04c15e277b0b1fa0ac21735e0504911269580e4afd77499e",
+    "libs.tech/kpex/rule_decks/ind_extraction.lvs": "6f6b901384c089c9a8226a0cfa11c06db0a7e2ea701d294b4fb647fd3704b178",
+    "libs.tech/kpex/rule_decks/custom_extractor.lvs": "c20391c829768bc03cf0686fe4cd68895e10db62891578e121f6fa16fa117d3e",
+    "libs.tech/kpex/rule_decks/sram_integration.lvs": "447e02305b8896fde8b3ce71de31a686775953695322b88298f04949b4f123de",
+    "libs.tech/kpex/rule_decks/ind_connections.lvs": "a38dbf6f321d06ec4fafa353430ec1254e0d883b9a9a4921bf789615927d73a2",
+    "libs.tech/kpex/rule_decks/cap_derivations.lvs": "c706b2c1b7583084ba5c15690d7f7cb1b0b0add01b4c8d431304419f286d459c",
+    "libs.tech/kpex/rule_decks/rfmos_connections.lvs": "88d8335742119b8b88811f408defb789cc8fbde2c910c1deb33d9a4837a5b2d3",
+    "libs.tech/kpex/rule_decks/custom_bjt_extractor.lvs": "0cd07122454e4ffefb702861e1c11bdc0cef779a9564649462bbb750d9b4229b",
+    "libs.tech/kpex/rule_decks/tap_derivations.lvs": "b6e9ff382b6f8c392ab699d09832ea7e0ad120bc1b35b51a778e8b188b0ce6c2",
+    "libs.tech/kpex/rule_decks/rfmos_extraction.lvs": "114bafea13d39aff60411442efb768f45b9460068b0fa25f85e36762ee89e3cd",
+    "libs.tech/kpex/rule_decks/general_connections.lvs": "bb61656b3564cf08558b83cf27d09854049eb30b5b7ade6610045d43c4b53e97",
+    "libs.tech/kpex/rule_decks/res_derivations.lvs": "3c32e371d71ddbb7190769db6aac4676d65f75eff1ca994fbf720ceb06255754",
+    "libs.tech/kpex/rule_decks/custom_mim_extractor.lvs": "8658d8586926cc2456bb03242d5e182eb455e25c5ee6c9a52a811fded7df6f44",
+    "libs.tech/kpex/rule_decks/custom_writer.lvs": "bada63cfda80316f64ffbd1f6ed2a9cc06cd337b7244fe7d608ae4a20dfc0c36",
+    "libs.tech/kpex/rule_decks/bjt_extraction.lvs": "8989e8263a6de8cb40077b5995b559fb938025fd991a3e4f7a52a7ab89d524a3",
+    "libs.tech/kpex/rule_decks/mos_connections.lvs": "f53e17c1f315f49fc973b8ec949ae343e2bb99c2862a51acdaa3f37f49907770",
+    "libs.tech/kpex/rule_decks/globals.lvs": "02614ce6a48249401a10faaa09982c740ad9543d1781077ad7fda2cec36019e4",
+    "libs.tech/kpex/rule_decks/ind_derivations.lvs": "fdcfc1b87a23362d5a8d96015616bcc05639f61647ff10416051388b18769330",
+    "libs.tech/kpex/rule_decks/rfmos_derivations.lvs": "5ae022be71ec90487ebf4636820563bc665815dfc12a36068b331d9571f54677",
+    "libs.tech/kpex/rule_decks/rfmos_model_mapping.lvs": "9cba1b823a1b805bb82dacb31cc5f18b3135da44db1b87f683b248713cde8584",
+    "libs.tech/kpex/rule_decks/esd_connections.lvs": "cdd0aad08c99bfdda7f38ced6a87531192bb4e2051e84c8fb6a6cb35f782f27c",
+    "libs.tech/kpex/rule_decks/bjt_connections.lvs": "0b3f536a25d8b8d5b37dc5eeb8e1bc8554e78694bb4398f6dd48ac3d9e528c8c",
+    "libs.tech/kpex/rule_decks/general_derivations.lvs": "9604bfc7bf433d1e38e147aac55d96e4777efacb2380bdce08e02908df46540c",
+    "libs.tech/kpex/rule_decks/diode_extraction.lvs": "9d060ddb655bf8fce7363aabb02800ffe8138b745aa9cff724b34c248770e006",
+    "libs.tech/kpex/rule_decks/esd_extraction.lvs": "93a26d226548c5a4b871f5016de21ce812eca1d561af781f2909521659d82a86",
+    "libs.tech/kpex/rule_decks/diode_connections.lvs": "a55896d567a14240ae33faa8799daed545b06bd777245c3731fa4c632e9833f3",
+    "libs.tech/kpex/rule_decks/tap_extraction.lvs": "e5c6db8cab2aa8c199d30ba2c3f2f9e8ffdaf2d3922d04d5c5eea22903431b4b",
+    "libs.tech/kpex/rule_decks/mos_derivations.lvs": "ad04426ad8de9bf2bdffd05cf4afd43d75af286a0bc95d01c371a0afef30f264",
+    "libs.tech/kpex/rule_decks/custom_reader.lvs": "8100bf1192b3d20538839dd888df95a8453127cc49ffc177cab3ac67cde18b29",
+    "libs.tech/kpex/rule_decks/custom_classes.lvs": "65eb31e73784b6d5df279b6e9f4a0beca378b4c0ddccc105f6c4312faf8215b1",
+    "libs.tech/kpex/rule_decks/esd_derivations.lvs": "b1c584735c3228bb6abb178da577d1495debb15669748f5879c9261710757ffd",
+    "libs.tech/kpex/rule_decks/cap_connections.lvs": "d9ddc6a3cedb507dcd1d1de12e304b1d69e1690762c8f29690179cef4bd76b3a",
+    "libs.tech/kpex/rule_decks/bjt_derivations.lvs": "03fa1f8a2d22639d4e5e478fb89cdc818de8a45ee81fed7a2c799b95b5a94c0b",
+    "libs.tech/kpex/rule_decks/tap_connections.lvs": "b5a1ee6fec6ba442f1ad327a4f6b83aa6b967a4ce1d4b3ba5d3045a8e5ad5dd9",
+    "libs.tech/kpex/rule_decks/custom_devices.lvs": "91bd6e1c5b4a96fc1018cdb208d8f0c2f90ad20d8601a647c00b6040c9314720",
+    "libs.tech/kpex/rule_decks/devices_connections.lvs": "13b67d90c20c2fa4b7be911712182cce8019684d3958200ce6b094e06668bd49",
+    "libs.tech/kpex/rule_decks/layers_definitions.lvs": "c8d3cb88106fd44bcab762c15335bd2902ccedd0d0722ea4ebef7fbc5f7f4709"
+  },
+  "steps": [
+    {
+      "name": "flat_lvs",
+      "command": [
+        "klayout",
+        "-b",
+        "-r",
+        "/work/flow/pex/export_lvsdb.lvs",
+        "-rd",
+        "input=<results-root>/bgr-union-pilot-geometry-20260922-r1/flat.gds",
+        "-rd",
+        "topcell=bgr_hbt_worstrows",
+        "-rd",
+        "schematic=/work/build/scratch/bgr-hbt-worstrows-20260922-r2/pilot.cdl",
+        "-rd",
+        "report=<results-root>/bgr-union-pilot-check-20260922-r1/flat.lvsdb",
+        "-rd",
+        "export_netlist=<results-root>/bgr-union-pilot-check-20260922-r1/flat.cir",
+        "-rd",
+        "target_netlist=<results-root>/bgr-union-pilot-check-20260922-r1/flat_stock.cir",
+        "-rd",
+        "log=<results-root>/bgr-union-pilot-check-20260922-r1/flat_detail.log",
+        "-rd",
+        "thr=1",
+        "-rd",
+        "run_mode=deep",
+        "-rd",
+        "no_simplify=true",
+        "-rd",
+        "combine_devices=false",
+        "-rd",
+        "purge=false",
+        "-rd",
+        "purge_nets=false",
+        "-rd",
+        "top_lvl_pins=true",
+        "-rd",
+        "no_series_res=true",
+        "-rd",
+        "no_parallel_res=true"
+      ],
+      "watchdog_s": 180,
+      "returncode": 0,
+      "wall_s": 4.820177838206291
+    },
+    {
+      "name": "flat_cc",
+      "command": [
+        "kpex",
+        "--threads",
+        "1",
+        "--pdk",
+        "ihp-sg13g2",
+        "--lvsdb",
+        "<results-root>/bgr-union-pilot-check-20260922-r1/flat.lvsdb",
+        "--cell",
+        "bgr_hbt_worstrows",
+        "--2.5D",
+        "--mode",
+        "CC",
+        "--out_dir",
+        "<results-root>/bgr-union-pilot-check-20260922-r1/flat_kpex"
+      ],
+      "watchdog_s": 300,
+      "returncode": 0,
+      "wall_s": 14.022205665707588
+    },
+    {
+      "name": "union_lvs",
+      "command": [
+        "klayout",
+        "-b",
+        "-r",
+        "/work/flow/pex/export_lvsdb.lvs",
+        "-rd",
+        "input=<results-root>/bgr-union-pilot-geometry-20260922-r1/union.gds",
+        "-rd",
+        "topcell=bgr_hbt_worstrows",
+        "-rd",
+        "schematic=/work/build/scratch/bgr-hbt-worstrows-20260922-r2/pilot.cdl",
+        "-rd",
+        "report=<results-root>/bgr-union-pilot-check-20260922-r1/union.lvsdb",
+        "-rd",
+        "export_netlist=<results-root>/bgr-union-pilot-check-20260922-r1/union.cir",
+        "-rd",
+        "target_netlist=<results-root>/bgr-union-pilot-check-20260922-r1/union_stock.cir",
+        "-rd",
+        "log=<results-root>/bgr-union-pilot-check-20260922-r1/union_detail.log",
+        "-rd",
+        "thr=1",
+        "-rd",
+        "run_mode=deep",
+        "-rd",
+        "no_simplify=true",
+        "-rd",
+        "combine_devices=false",
+        "-rd",
+        "purge=false",
+        "-rd",
+        "purge_nets=false",
+        "-rd",
+        "top_lvl_pins=true",
+        "-rd",
+        "no_series_res=true",
+        "-rd",
+        "no_parallel_res=true"
+      ],
+      "watchdog_s": 180,
+      "returncode": 0,
+      "wall_s": 3.9959447495639324
+    },
+    {
+      "name": "union_cc",
+      "command": [
+        "kpex",
+        "--threads",
+        "1",
+        "--pdk",
+        "ihp-sg13g2",
+        "--lvsdb",
+        "<results-root>/bgr-union-pilot-check-20260922-r1/union.lvsdb",
+        "--cell",
+        "bgr_hbt_worstrows",
+        "--2.5D",
+        "--mode",
+        "CC",
+        "--out_dir",
+        "<results-root>/bgr-union-pilot-check-20260922-r1/union_kpex"
+      ],
+      "watchdog_s": 300,
+      "returncode": 0,
+      "wall_s": 11.699033746495843
+    }
+  ],
+  "variants": {
+    "flat": {
+      "strict_lvs": {
+        "status": "passed",
+        "circuits": [
+          {
+            "status": "Match",
+            "children": {
+              "device": {
+                "Match": 34
+              },
+              "net": {
+                "Match": 6
+              },
+              "pin": {
+                "Match": 6
+              },
+              "subcircuit": {}
+            }
+          }
+        ],
+        "sha256": "ef1cde99f71a18d6f712c9403bb716f270c76e7d72dc8bd78374adf2a4c500ed"
+      },
+      "device_records": [
+        {
+          "reference_name": "74_U23",
+          "parameters": {
+            "we": 0.07,
+            "le": 0.9,
+            "Nx": 1.0,
+            "m": 1.0
+          },
+          "nodes": {
+            "C": "c2",
+            "B": "vbe",
+            "E": "dvbe",
+            "S": "vss"
+          }
+        },
+        {
+          "reference_name": "74_U24",
+          "parameters": {
+            "we": 0.07,
+            "le": 0.9,
+            "Nx": 1.0,
+            "m": 1.0
+          },
+          "nodes": {
+            "C": "c2",
+            "B": "vbe",
+            "E": "dvbe",
+            "S": "vss"
+          }
+        },
+        {
+          "reference_name": "75",
+          "parameters": {
+            "we": 0.07,
+            "le": 0.9,
+            "Nx": 1.0,
+            "m": 1.0
+          },
+          "nodes": {
+            "C": "vd1",
+            "B": "vd1",
+            "E": "vd2",
+            "S": "vss"
+          }
+        },
+        {
+          "reference_name": "75_U10",
+          "parameters": {
+            "we": 0.07,
+            "le": 0.9,
+            "Nx": 1.0,
+            "m": 1.0
+          },
+          "nodes": {
+            "C": "vd1",
+            "B": "vd1",
+            "E": "vd2",
+            "S": "vss"
+          }
+        },
+        {
+          "reference_name": "75_U11",
+          "parameters": {
+            "we": 0.07,
+            "le": 0.9,
+            "Nx": 1.0,
+            "m": 1.0
+          },
+          "nodes": {
+            "C": "vd1",
+            "B": "vd1",
+            "E": "vd2",
+            "S": "vss"
+          }
+        },
+        {
+          "reference_name": "75_U12",
+          "parameters": {
+            "we": 0.07,
+            "le": 0.9,
+            "Nx": 1.0,
+            "m": 1.0
+          },
+          "nodes": {
+            "C": "vd1",
+            "B": "vd1",
+            "E": "vd2",
+            "S": "vss"
+          }
+        },
+        {
+          "reference_name": "75_U13",
+          "parameters": {
+            "we": 0.07,
+            "le": 0.9,
+            "Nx": 1.0,
+            "m": 1.0
+          },
+          "nodes": {
+            "C": "vd1",
+            "B": "vd1",
+            "E": "vd2",
+            "S": "vss"
+          }
+        },
+        {
+          "reference_name": "75_U14",
+          "parameters": {
+            "we": 0.07,
+            "le": 0.9,
+            "Nx": 1.0,
+            "m": 1.0
+          },
+          "nodes": {
+            "C": "vd1",
+            "B": "vd1",
+            "E": "vd2",
+            "S": "vss"
+          }
+        },
+        {
+          "reference_name": "75_U15",
+          "parameters": {
+            "we": 0.07,
+            "le": 0.9,
+            "Nx": 1.0,
+            "m": 1.0
+          },
+          "nodes": {
+            "C": "vd1",
+            "B": "vd1",
+            "E": "vd2",
+            "S": "vss"
+          }
+        },
+        {
+          "reference_name": "75_U16",
+          "parameters": {
+            "we": 0.07,
+            "le": 0.9,
+            "Nx": 1.0,
+            "m": 1.0
+          },
+          "nodes": {
+            "C": "vd1",
+            "B": "vd1",
+            "E": "vd2",
+            "S": "vss"
+          }
+        },
+        {
+          "reference_name": "75_U17",
+          "parameters": {
+            "we": 0.07,
+            "le": 0.9,
+            "Nx": 1.0,
+            "m": 1.0
+          },
+          "nodes": {
+            "C": "vd1",
+            "B": "vd1",
+            "E": "vd2",
+            "S": "vss"
+          }
+        },
+        {
+          "reference_name": "75_U18",
+          "parameters": {
+            "we": 0.07,
+            "le": 0.9,
+            "Nx": 1.0,
+            "m": 1.0
+          },
+          "nodes": {
+            "C": "vd1",
+            "B": "vd1",
+            "E": "vd2",
+            "S": "vss"
+          }
+        },
+        {
+          "reference_name": "75_U19",
+          "parameters": {
+            "we": 0.07,
+            "le": 0.9,
+            "Nx": 1.0,
+            "m": 1.0
+          },
+          "nodes": {
+            "C": "vd1",
+            "B": "vd1",
+            "E": "vd2",
+            "S": "vss"
+          }
+        },
+        {
+          "reference_name": "75_U2",
+          "parameters": {
+            "we": 0.07,
+            "le": 0.9,
+            "Nx": 1.0,
+            "m": 1.0
+          },
+          "nodes": {
+            "C": "vd1",
+            "B": "vd1",
+            "E": "vd2",
+            "S": "vss"
+          }
+        },
+        {
+          "reference_name": "75_U20",
+          "parameters": {
+            "we": 0.07,
+            "le": 0.9,
+            "Nx": 1.0,
+            "m": 1.0
+          },
+          "nodes": {
+            "C": "vd1",
+            "B": "vd1",
+            "E": "vd2",
+            "S": "vss"
+          }
+        },
+        {
+          "reference_name": "75_U21",
+          "parameters": {
+            "we": 0.07,
+            "le": 0.9,
+            "Nx": 1.0,
+            "m": 1.0
+          },
+          "nodes": {
+            "C": "vd1",
+            "B": "vd1",
+            "E": "vd2",
+            "S": "vss"
+          }
+        },
+        {
+          "reference_name": "75_U22",
+          "parameters": {
+            "we": 0.07,
+            "le": 0.9,
+            "Nx": 1.0,
+            "m": 1.0
+          },
+          "nodes": {
+            "C": "vd1",
+            "B": "vd1",
+            "E": "vd2",
+            "S": "vss"
+          }
+        },
+        {
+          "reference_name": "75_U23",
+          "parameters": {
+            "we": 0.07,
+            "le": 0.9,
+            "Nx": 1.0,
+            "m": 1.0
+          },
+          "nodes": {
+            "C": "vd1",
+            "B": "vd1",
+            "E": "vd2",
+            "S": "vss"
+          }
+        },
+        {
+          "reference_name": "75_U24",
+          "parameters": {
+            "we": 0.07,
+            "le": 0.9,
+            "Nx": 1.0,
+            "m": 1.0
+          },
+          "nodes": {
+            "C": "vd1",
+            "B": "vd1",
+            "E": "vd2",
+            "S": "vss"
+          }
+        },
+        {
+          "reference_name": "75_U3",
+          "parameters": {
+            "we": 0.07,
+            "le": 0.9,
+            "Nx": 1.0,
+            "m": 1.0
+          },
+          "nodes": {
+            "C": "vd1",
+            "B": "vd1",
+            "E": "vd2",
+            "S": "vss"
+          }
+        },
+        {
+          "reference_name": "75_U4",
+          "parameters": {
+            "we": 0.07,
+            "le": 0.9,
+            "Nx": 1.0,
+            "m": 1.0
+          },
+          "nodes": {
+            "C": "vd1",
+            "B": "vd1",
+            "E": "vd2",
+            "S": "vss"
+          }
+        },
+        {
+          "reference_name": "75_U5",
+          "parameters": {
+            "we": 0.07,
+            "le": 0.9,
+            "Nx": 1.0,
+            "m": 1.0
+          },
+          "nodes": {
+            "C": "vd1",
+            "B": "vd1",
+            "E": "vd2",
+            "S": "vss"
+          }
+        },
+        {
+          "reference_name": "75_U6",
+          "parameters": {
+            "we": 0.07,
+            "le": 0.9,
+            "Nx": 1.0,
+            "m": 1.0
+          },
+          "nodes": {
+            "C": "vd1",
+            "B": "vd1",
+            "E": "vd2",
+            "S": "vss"
+          }
+        },
+        {
+          "reference_name": "75_U7",
+          "parameters": {
+            "we": 0.07,
+            "le": 0.9,
+            "Nx": 1.0,
+            "m": 1.0
+          },
+          "nodes": {
+            "C": "vd1",
+            "B": "vd1",
+            "E": "vd2",
+            "S": "vss"
+          }
+        },
+        {
+          "reference_name": "75_U8",
+          "parameters": {
+            "we": 0.07,
+            "le": 0.9,
+            "Nx": 1.0,
+            "m": 1.0
+          },
+          "nodes": {
+            "C": "vd1",
+            "B": "vd1",
+            "E": "vd2",
+            "S": "vss"
+          }
+        },
+        {
+          "reference_name": "75_U9",
+          "parameters": {
+            "we": 0.07,
+            "le": 0.9,
+            "Nx": 1.0,
+            "m": 1.0
+          },
+          "nodes": {
+            "C": "vd1",
+            "B": "vd1",
+            "E": "vd2",
+            "S": "vss"
+          }
+        },
+        {
+          "reference_name": "76",
+          "parameters": {
+            "we": 0.07,
+            "le": 0.9,
+            "Nx": 1.0,
+            "m": 1.0
+          },
+          "nodes": {
+            "C": "c2",
+            "B": "vbe",
+            "E": "dvbe",
+            "S": "vss"
+          }
+        },
+        {
+          "reference_name": "76_U2",
+          "parameters": {
+            "we": 0.07,
+            "le": 0.9,
+            "Nx": 1.0,
+            "m": 1.0
+          },
+          "nodes": {
+            "C": "c2",
+            "B": "vbe",
+            "E": "dvbe",
+            "S": "vss"
+          }
+        },
+        {
+          "reference_name": "76_U3",
+          "parameters": {
+            "we": 0.07,
+            "le": 0.9,
+            "Nx": 1.0,
+            "m": 1.0
+          },
+          "nodes": {
+            "C": "c2",
+            "B": "vbe",
+            "E": "dvbe",
+            "S": "vss"
+          }
+        },
+        {
+          "reference_name": "76_U4",
+          "parameters": {
+            "we": 0.07,
+            "le": 0.9,
+            "Nx": 1.0,
+            "m": 1.0
+          },
+          "nodes": {
+            "C": "c2",
+            "B": "vbe",
+            "E": "dvbe",
+            "S": "vss"
+          }
+        },
+        {
+          "reference_name": "76_U5",
+          "parameters": {
+            "we": 0.07,
+            "le": 0.9,
+            "Nx": 1.0,
+            "m": 1.0
+          },
+          "nodes": {
+            "C": "c2",
+            "B": "vbe",
+            "E": "dvbe",
+            "S": "vss"
+          }
+        },
+        {
+          "reference_name": "76_U6",
+          "parameters": {
+            "we": 0.07,
+            "le": 0.9,
+            "Nx": 1.0,
+            "m": 1.0
+          },
+          "nodes": {
+            "C": "c2",
+            "B": "vbe",
+            "E": "dvbe",
+            "S": "vss"
+          }
+        },
+        {
+          "reference_name": "76_U7",
+          "parameters": {
+            "we": 0.07,
+            "le": 0.9,
+            "Nx": 1.0,
+            "m": 1.0
+          },
+          "nodes": {
+            "C": "c2",
+            "B": "vbe",
+            "E": "dvbe",
+            "S": "vss"
+          }
+        },
+        {
+          "reference_name": "76_U8",
+          "parameters": {
+            "we": 0.07,
+            "le": 0.9,
+            "Nx": 1.0,
+            "m": 1.0
+          },
+          "nodes": {
+            "C": "c2",
+            "B": "vbe",
+            "E": "dvbe",
+            "S": "vss"
+          }
+        }
+      ],
+      "raw_pex_sha256": "0da71f21ed16932f9f8631aa6583fae8a0207dd6282e989a94a75df1439b6054",
+      "capacitors": [
+        [
+          "VSUBS",
+          "c2",
+          "1.05594E-14"
+        ],
+        [
+          "VSUBS",
+          "dvbe",
+          "1.78361E-14"
+        ],
+        [
+          "VSUBS",
+          "vbe",
+          "1.88123E-14"
+        ],
+        [
+          "VSUBS",
+          "vd1",
+          "2.83875E-14"
+        ],
+        [
+          "VSUBS",
+          "vd2",
+          "1.75393E-14"
+        ],
+        [
+          "VSUBS",
+          "vss",
+          "1.00366E-13"
+        ],
+        [
+          "c2",
+          "dvbe",
+          "1.09621E-14"
+        ],
+        [
+          "c2",
+          "vbe",
+          "2.99481E-16"
+        ],
+        [
+          "c2",
+          "vd1",
+          "8.69413E-17"
+        ],
+        [
+          "c2",
+          "vd2",
+          "4.51513E-14"
+        ],
+        [
+          "c2",
+          "vss",
+          "6.79752E-14"
+        ],
+        [
+          "dvbe",
+          "vbe",
+          "5.51158E-15"
+        ],
+        [
+          "dvbe",
+          "vd1",
+          "1.78958E-16"
+        ],
+        [
+          "dvbe",
+          "vd2",
+          "4.64531E-14"
+        ],
+        [
+          "dvbe",
+          "vss",
+          "4.65641E-15"
+        ],
+        [
+          "vbe",
+          "vd1",
+          "5.03535E-14"
+        ],
+        [
+          "vbe",
+          "vd2",
+          "2.76804E-16"
+        ],
+        [
+          "vbe",
+          "vss",
+          "2.84917E-15"
+        ],
+        [
+          "vd1",
+          "vd2",
+          "1.88482E-14"
+        ],
+        [
+          "vd1",
+          "vss",
+          "5.51553E-15"
+        ],
+        [
+          "vd2",
+          "vss",
+          "1.14828E-14"
+        ]
+      ],
+      "matrix": {
+        "VSUBS,c2": "1.05594E-14",
+        "VSUBS,dvbe": "1.78361E-14",
+        "VSUBS,vbe": "1.88123E-14",
+        "VSUBS,vd1": "2.83875E-14",
+        "VSUBS,vd2": "1.75393E-14",
+        "VSUBS,vss": "1.00366E-13",
+        "c2,dvbe": "1.09621E-14",
+        "c2,vbe": "2.99481E-16",
+        "c2,vd1": "8.69413E-17",
+        "c2,vd2": "4.51513E-14",
+        "c2,vss": "6.79752E-14",
+        "dvbe,vbe": "5.51158E-15",
+        "dvbe,vd1": "1.78958E-16",
+        "dvbe,vd2": "4.64531E-14",
+        "dvbe,vss": "4.65641E-15",
+        "vbe,vd1": "5.03535E-14",
+        "vbe,vd2": "2.76804E-16",
+        "vbe,vss": "2.84917E-15",
+        "vd1,vd2": "1.88482E-14",
+        "vd1,vss": "5.51553E-15",
+        "vd2,vss": "1.14828E-14"
+      },
+      "capacitor_count": 21
+    },
+    "union": {
+      "strict_lvs": {
+        "status": "passed",
+        "circuits": [
+          {
+            "status": "Match",
+            "children": {
+              "device": {
+                "Match": 34
+              },
+              "net": {
+                "Match": 6
+              },
+              "pin": {
+                "Match": 6
+              },
+              "subcircuit": {}
+            }
+          }
+        ],
+        "sha256": "01742a9ad52ba2329b4f77883269ef7259452003921fbe547907d758c608990a"
+      },
+      "device_records": [
+        {
+          "reference_name": "74_U23",
+          "parameters": {
+            "we": 0.07,
+            "le": 0.9,
+            "Nx": 1.0,
+            "m": 1.0
+          },
+          "nodes": {
+            "C": "c2",
+            "B": "vbe",
+            "E": "dvbe",
+            "S": "vss"
+          }
+        },
+        {
+          "reference_name": "74_U24",
+          "parameters": {
+            "we": 0.07,
+            "le": 0.9,
+            "Nx": 1.0,
+            "m": 1.0
+          },
+          "nodes": {
+            "C": "c2",
+            "B": "vbe",
+            "E": "dvbe",
+            "S": "vss"
+          }
+        },
+        {
+          "reference_name": "75",
+          "parameters": {
+            "we": 0.07,
+            "le": 0.9,
+            "Nx": 1.0,
+            "m": 1.0
+          },
+          "nodes": {
+            "C": "vd1",
+            "B": "vd1",
+            "E": "vd2",
+            "S": "vss"
+          }
+        },
+        {
+          "reference_name": "75_U10",
+          "parameters": {
+            "we": 0.07,
+            "le": 0.9,
+            "Nx": 1.0,
+            "m": 1.0
+          },
+          "nodes": {
+            "C": "vd1",
+            "B": "vd1",
+            "E": "vd2",
+            "S": "vss"
+          }
+        },
+        {
+          "reference_name": "75_U11",
+          "parameters": {
+            "we": 0.07,
+            "le": 0.9,
+            "Nx": 1.0,
+            "m": 1.0
+          },
+          "nodes": {
+            "C": "vd1",
+            "B": "vd1",
+            "E": "vd2",
+            "S": "vss"
+          }
+        },
+        {
+          "reference_name": "75_U12",
+          "parameters": {
+            "we": 0.07,
+            "le": 0.9,
+            "Nx": 1.0,
+            "m": 1.0
+          },
+          "nodes": {
+            "C": "vd1",
+            "B": "vd1",
+            "E": "vd2",
+            "S": "vss"
+          }
+        },
+        {
+          "reference_name": "75_U13",
+          "parameters": {
+            "we": 0.07,
+            "le": 0.9,
+            "Nx": 1.0,
+            "m": 1.0
+          },
+          "nodes": {
+            "C": "vd1",
+            "B": "vd1",
+            "E": "vd2",
+            "S": "vss"
+          }
+        },
+        {
+          "reference_name": "75_U14",
+          "parameters": {
+            "we": 0.07,
+            "le": 0.9,
+            "Nx": 1.0,
+            "m": 1.0
+          },
+          "nodes": {
+            "C": "vd1",
+            "B": "vd1",
+            "E": "vd2",
+            "S": "vss"
+          }
+        },
+        {
+          "reference_name": "75_U15",
+          "parameters": {
+            "we": 0.07,
+            "le": 0.9,
+            "Nx": 1.0,
+            "m": 1.0
+          },
+          "nodes": {
+            "C": "vd1",
+            "B": "vd1",
+            "E": "vd2",
+            "S": "vss"
+          }
+        },
+        {
+          "reference_name": "75_U16",
+          "parameters": {
+            "we": 0.07,
+            "le": 0.9,
+            "Nx": 1.0,
+            "m": 1.0
+          },
+          "nodes": {
+            "C": "vd1",
+            "B": "vd1",
+            "E": "vd2",
+            "S": "vss"
+          }
+        },
+        {
+          "reference_name": "75_U17",
+          "parameters": {
+            "we": 0.07,
+            "le": 0.9,
+            "Nx": 1.0,
+            "m": 1.0
+          },
+          "nodes": {
+            "C": "vd1",
+            "B": "vd1",
+            "E": "vd2",
+            "S": "vss"
+          }
+        },
+        {
+          "reference_name": "75_U18",
+          "parameters": {
+            "we": 0.07,
+            "le": 0.9,
+            "Nx": 1.0,
+            "m": 1.0
+          },
+          "nodes": {
+            "C": "vd1",
+            "B": "vd1",
+            "E": "vd2",
+            "S": "vss"
+          }
+        },
+        {
+          "reference_name": "75_U19",
+          "parameters": {
+            "we": 0.07,
+            "le": 0.9,
+            "Nx": 1.0,
+            "m": 1.0
+          },
+          "nodes": {
+            "C": "vd1",
+            "B": "vd1",
+            "E": "vd2",
+            "S": "vss"
+          }
+        },
+        {
+          "reference_name": "75_U2",
+          "parameters": {
+            "we": 0.07,
+            "le": 0.9,
+            "Nx": 1.0,
+            "m": 1.0
+          },
+          "nodes": {
+            "C": "vd1",
+            "B": "vd1",
+            "E": "vd2",
+            "S": "vss"
+          }
+        },
+        {
+          "reference_name": "75_U20",
+          "parameters": {
+            "we": 0.07,
+            "le": 0.9,
+            "Nx": 1.0,
+            "m": 1.0
+          },
+          "nodes": {
+            "C": "vd1",
+            "B": "vd1",
+            "E": "vd2",
+            "S": "vss"
+          }
+        },
+        {
+          "reference_name": "75_U21",
+          "parameters": {
+            "we": 0.07,
+            "le": 0.9,
+            "Nx": 1.0,
+            "m": 1.0
+          },
+          "nodes": {
+            "C": "vd1",
+            "B": "vd1",
+            "E": "vd2",
+            "S": "vss"
+          }
+        },
+        {
+          "reference_name": "75_U22",
+          "parameters": {
+            "we": 0.07,
+            "le": 0.9,
+            "Nx": 1.0,
+            "m": 1.0
+          },
+          "nodes": {
+            "C": "vd1",
+            "B": "vd1",
+            "E": "vd2",
+            "S": "vss"
+          }
+        },
+        {
+          "reference_name": "75_U23",
+          "parameters": {
+            "we": 0.07,
+            "le": 0.9,
+            "Nx": 1.0,
+            "m": 1.0
+          },
+          "nodes": {
+            "C": "vd1",
+            "B": "vd1",
+            "E": "vd2",
+            "S": "vss"
+          }
+        },
+        {
+          "reference_name": "75_U24",
+          "parameters": {
+            "we": 0.07,
+            "le": 0.9,
+            "Nx": 1.0,
+            "m": 1.0
+          },
+          "nodes": {
+            "C": "vd1",
+            "B": "vd1",
+            "E": "vd2",
+            "S": "vss"
+          }
+        },
+        {
+          "reference_name": "75_U3",
+          "parameters": {
+            "we": 0.07,
+            "le": 0.9,
+            "Nx": 1.0,
+            "m": 1.0
+          },
+          "nodes": {
+            "C": "vd1",
+            "B": "vd1",
+            "E": "vd2",
+            "S": "vss"
+          }
+        },
+        {
+          "reference_name": "75_U4",
+          "parameters": {
+            "we": 0.07,
+            "le": 0.9,
+            "Nx": 1.0,
+            "m": 1.0
+          },
+          "nodes": {
+            "C": "vd1",
+            "B": "vd1",
+            "E": "vd2",
+            "S": "vss"
+          }
+        },
+        {
+          "reference_name": "75_U5",
+          "parameters": {
+            "we": 0.07,
+            "le": 0.9,
+            "Nx": 1.0,
+            "m": 1.0
+          },
+          "nodes": {
+            "C": "vd1",
+            "B": "vd1",
+            "E": "vd2",
+            "S": "vss"
+          }
+        },
+        {
+          "reference_name": "75_U6",
+          "parameters": {
+            "we": 0.07,
+            "le": 0.9,
+            "Nx": 1.0,
+            "m": 1.0
+          },
+          "nodes": {
+            "C": "vd1",
+            "B": "vd1",
+            "E": "vd2",
+            "S": "vss"
+          }
+        },
+        {
+          "reference_name": "75_U7",
+          "parameters": {
+            "we": 0.07,
+            "le": 0.9,
+            "Nx": 1.0,
+            "m": 1.0
+          },
+          "nodes": {
+            "C": "vd1",
+            "B": "vd1",
+            "E": "vd2",
+            "S": "vss"
+          }
+        },
+        {
+          "reference_name": "75_U8",
+          "parameters": {
+            "we": 0.07,
+            "le": 0.9,
+            "Nx": 1.0,
+            "m": 1.0
+          },
+          "nodes": {
+            "C": "vd1",
+            "B": "vd1",
+            "E": "vd2",
+            "S": "vss"
+          }
+        },
+        {
+          "reference_name": "75_U9",
+          "parameters": {
+            "we": 0.07,
+            "le": 0.9,
+            "Nx": 1.0,
+            "m": 1.0
+          },
+          "nodes": {
+            "C": "vd1",
+            "B": "vd1",
+            "E": "vd2",
+            "S": "vss"
+          }
+        },
+        {
+          "reference_name": "76",
+          "parameters": {
+            "we": 0.07,
+            "le": 0.9,
+            "Nx": 1.0,
+            "m": 1.0
+          },
+          "nodes": {
+            "C": "c2",
+            "B": "vbe",
+            "E": "dvbe",
+            "S": "vss"
+          }
+        },
+        {
+          "reference_name": "76_U2",
+          "parameters": {
+            "we": 0.07,
+            "le": 0.9,
+            "Nx": 1.0,
+            "m": 1.0
+          },
+          "nodes": {
+            "C": "c2",
+            "B": "vbe",
+            "E": "dvbe",
+            "S": "vss"
+          }
+        },
+        {
+          "reference_name": "76_U3",
+          "parameters": {
+            "we": 0.07,
+            "le": 0.9,
+            "Nx": 1.0,
+            "m": 1.0
+          },
+          "nodes": {
+            "C": "c2",
+            "B": "vbe",
+            "E": "dvbe",
+            "S": "vss"
+          }
+        },
+        {
+          "reference_name": "76_U4",
+          "parameters": {
+            "we": 0.07,
+            "le": 0.9,
+            "Nx": 1.0,
+            "m": 1.0
+          },
+          "nodes": {
+            "C": "c2",
+            "B": "vbe",
+            "E": "dvbe",
+            "S": "vss"
+          }
+        },
+        {
+          "reference_name": "76_U5",
+          "parameters": {
+            "we": 0.07,
+            "le": 0.9,
+            "Nx": 1.0,
+            "m": 1.0
+          },
+          "nodes": {
+            "C": "c2",
+            "B": "vbe",
+            "E": "dvbe",
+            "S": "vss"
+          }
+        },
+        {
+          "reference_name": "76_U6",
+          "parameters": {
+            "we": 0.07,
+            "le": 0.9,
+            "Nx": 1.0,
+            "m": 1.0
+          },
+          "nodes": {
+            "C": "c2",
+            "B": "vbe",
+            "E": "dvbe",
+            "S": "vss"
+          }
+        },
+        {
+          "reference_name": "76_U7",
+          "parameters": {
+            "we": 0.07,
+            "le": 0.9,
+            "Nx": 1.0,
+            "m": 1.0
+          },
+          "nodes": {
+            "C": "c2",
+            "B": "vbe",
+            "E": "dvbe",
+            "S": "vss"
+          }
+        },
+        {
+          "reference_name": "76_U8",
+          "parameters": {
+            "we": 0.07,
+            "le": 0.9,
+            "Nx": 1.0,
+            "m": 1.0
+          },
+          "nodes": {
+            "C": "c2",
+            "B": "vbe",
+            "E": "dvbe",
+            "S": "vss"
+          }
+        }
+      ],
+      "raw_pex_sha256": "7cc01473ef70f840ed4348165858cbaf49f2a3185e0c449739a315efb3e7bdb4",
+      "capacitors": [
+        [
+          "VSUBS",
+          "c2",
+          "1.05594E-14"
+        ],
+        [
+          "VSUBS",
+          "dvbe",
+          "1.78361E-14"
+        ],
+        [
+          "VSUBS",
+          "vbe",
+          "1.88123E-14"
+        ],
+        [
+          "VSUBS",
+          "vd1",
+          "2.83875E-14"
+        ],
+        [
+          "VSUBS",
+          "vd2",
+          "1.75393E-14"
+        ],
+        [
+          "VSUBS",
+          "vss",
+          "1.00366E-13"
+        ],
+        [
+          "c2",
+          "dvbe",
+          "1.09621E-14"
+        ],
+        [
+          "c2",
+          "vbe",
+          "2.99481E-16"
+        ],
+        [
+          "c2",
+          "vd1",
+          "8.69413E-17"
+        ],
+        [
+          "c2",
+          "vd2",
+          "4.51513E-14"
+        ],
+        [
+          "c2",
+          "vss",
+          "6.79752E-14"
+        ],
+        [
+          "dvbe",
+          "vbe",
+          "5.51158E-15"
+        ],
+        [
+          "dvbe",
+          "vd1",
+          "1.78958E-16"
+        ],
+        [
+          "dvbe",
+          "vd2",
+          "4.64531E-14"
+        ],
+        [
+          "dvbe",
+          "vss",
+          "4.65641E-15"
+        ],
+        [
+          "vbe",
+          "vd1",
+          "5.03535E-14"
+        ],
+        [
+          "vbe",
+          "vd2",
+          "2.76804E-16"
+        ],
+        [
+          "vbe",
+          "vss",
+          "2.84917E-15"
+        ],
+        [
+          "vd1",
+          "vd2",
+          "1.88482E-14"
+        ],
+        [
+          "vd1",
+          "vss",
+          "5.51553E-15"
+        ],
+        [
+          "vd2",
+          "vss",
+          "1.14828E-14"
+        ]
+      ],
+      "matrix": {
+        "VSUBS,c2": "1.05594E-14",
+        "VSUBS,dvbe": "1.78361E-14",
+        "VSUBS,vbe": "1.88123E-14",
+        "VSUBS,vd1": "2.83875E-14",
+        "VSUBS,vd2": "1.75393E-14",
+        "VSUBS,vss": "1.00366E-13",
+        "c2,dvbe": "1.09621E-14",
+        "c2,vbe": "2.99481E-16",
+        "c2,vd1": "8.69413E-17",
+        "c2,vd2": "4.51513E-14",
+        "c2,vss": "6.79752E-14",
+        "dvbe,vbe": "5.51158E-15",
+        "dvbe,vd1": "1.78958E-16",
+        "dvbe,vd2": "4.64531E-14",
+        "dvbe,vss": "4.65641E-15",
+        "vbe,vd1": "5.03535E-14",
+        "vbe,vd2": "2.76804E-16",
+        "vbe,vss": "2.84917E-15",
+        "vd1,vd2": "1.88482E-14",
+        "vd1,vss": "5.51553E-15",
+        "vd2,vss": "1.14828E-14"
+      },
+      "capacitor_count": 21
+    }
+  },
+  "resource_gate_sha256": "35afde2276ebd95e1cf4affba985193e356f9eed397bd25e6bdfffcb4c759da8",
+  "scope": "34HBT fixedgeometry representation control, not fullBGR extraction",
+  "prospective_cc_parity": "Exact mapped capacitor multiset and exact unpruned netpair matrix; no tolerance or pruning.",
+  "wire_R_electrical": "not run",
+  "seed": "not applicable",
+  "checks": {
+    "all_device_records_exact": true,
+    "capacitor_multiset_exact": true,
+    "unpruned_matrix_exact": true
+  },
+  "inputs_support_unchanged": true,
+  "output_bytes": 3471285,
+  "wall_s": 34.711176965385675,
+  "finished_utc": "2026-09-22T20:17:53.061125+00:00"
+}
