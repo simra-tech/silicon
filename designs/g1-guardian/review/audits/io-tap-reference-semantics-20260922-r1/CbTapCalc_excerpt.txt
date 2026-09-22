@@ -1,0 +1,23 @@
+def CbTapCalc(calc, r, l, w, cell) :
+
+    global techparams
+
+    raspec = Numeric(techparams[cell+'_raspec'])*1.0e12 ;# specific res per sq. [um] (float)
+    rpspec = Numeric(techparams[cell+'_rpspec'])*1.0e6  ;# specific res. per [um] perimeter (float)
+
+    w = w*1.0e6 ;# um (needed for contact calculation)
+    l = l*1.0e6
+    a = l*w
+    p = 2.0*(l+w)
+
+    result = 0
+    if calc == 'R' :
+        result = 1.0/(1.0/(raspec/a) + 1.0/(rpspec/p))
+    elif calc == 'l' :
+        result = (raspec*rpspec- r*raspec*2.0*w)/(r*raspec*2.0+r*rpspec*w)*1.0e-6
+    elif calc == 'w' :
+        result = (raspec*rpspec- r*raspec*2.0*l)/(r*raspec*2.0+r*rpspec*l)*1.0e-6
+    elif calc == 'wl' :
+        result = ((-4.0*r*raspec + sqrt(16.0*r*r*raspec*raspec + 4.0*r*rpspec*rpspec*raspec))/(2.0*r*rpspec))*1.0e-6
+
+    return result

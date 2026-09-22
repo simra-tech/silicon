@@ -46,6 +46,8 @@ def summarize(paths):
                             .033: {'soft': True, 'hard': False},
                             .045: {'soft': True, 'hard': False},
                             .055: {'soft': True, 'hard': True}}
+            if sample.get('guard_definitions'):
+                guard_expect={g['shunt_V']:g['expected'] for g in sample['guard_definitions']}
             observed_guards = [
                 {'run': probe['run'], 'shunt_V': probe['shunt_V'],
                  'temp_C': probe['temp_C'],
@@ -82,9 +84,10 @@ def summarize(paths):
                    'interrupted calibration' if rejected and any(p.get('watchdog_status')=='interrupted' for p in probes) else 'rejected calibration' if rejected else 'not run to completion',
                    'bracket_status': bracket, 'guards_status': guards,
                    'residual_half_mV_status': residual,
-                   'hard_full_robust_band_status': 'not qualified: nominal50mV upper guard55mV is outside specified SENSE range',
+                   'hard_full_robust_band_status': sample.get('hard_full_robust_band_status','not qualified: nominal50mV upper guard55mV is outside specified SENSE range'),
+                   'hard_nominal_code':sample.get('hard_nominal_code',254),
                    'outside_range_probe_ids': [p['run'] for p in probes if p.get('shunt_V', 0) > .05 or p.get('shunt_V', 0) < 0],
-                   'guard_scope': '27/33/45mV within specified range;55mV outside-contract diagnostic. Raw guards_status is not full-band acceptance.',
+                   'guard_scope': 'Expected guard definitions are explicit; each point carries its range scope. Outside-range probes do not establish full-band acceptance.',
                    'brackets': sample.get('brackets'),
                    'correction_codes': sample.get('signed_correction_codes'),
                    'programmed_codes': sample.get('corrected_codes'),

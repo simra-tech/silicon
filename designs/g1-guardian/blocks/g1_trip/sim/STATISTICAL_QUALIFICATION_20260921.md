@@ -284,3 +284,95 @@ guard completes, the next is interrupted. The headroom candidate retains seven
 completed calibration probes and one interruption, with no final bracket.
 The six supported40mV guards reported above are complete. No100/300-sample
 campaign or proposed combined compensation/matching candidate has run.
+
+## Resumed interruption recovery — 2026-09-22 local session
+
+Four owner-interrupted leaves were recovered under separate
+`joint-pause1713-recovery*-20260922-a` IDs with the same600s bounds. Exact
+normalized deck, source snapshots, model inventory, image and simulator checks
+passed before launch. All four completed in150.31–155.01s; all27 observed sampled
+parameters match their preserved sample anchors. Original interrupted records
+remain untouched. `joint-recovery-map-20260922-c.json` adds validated aliases to
+the earlier three timeout recoveries; no sample is counted twice.
+
+Baseline20 and the isolated headroom pilot resumed from cached completed probes.
+Sample71012 now brackets soft[158,159],hard[174,175], giving corrections+31/+47;
+its original nominal254 hard setting clips to255. Frozen checks remain pending.
+
+The driver now accepts an explicit `--hard-nominal-code 204` for new supported
+setting campaigns. It preserves the same independent bracketing and saturated
+calibration arithmetic, evaluates exact±10% hard guards within0–50mV, and
+records per-sample guard definitions. Default254 and all original campaigns
+remain unchanged. Analyzer interpretation follows those recorded definitions.
+Seven focused arithmetic/recovery tests passed, including unchanged correction
+between254 and204 and removal of clipping for the known71001 case. A new
+100-sample supported-setting campaign has not run; no default adoption or yield
+claim follows from this implementation.
+
+### Resumed numerical qualification (22 September local date)
+
+Baseline physical sample71002 completes all28 probes. Its hot125°C,24.5mV
+fixed-calibration check fails; other five fixed-calibration checks pass. This is
+an electrical residual failure, independent of baseline hard254 clipping. The
+failure remains included when its exact calibration evidence is reused at the
+supported hard204 setting. Baseline71001 retains its three45mV no-trip failures.
+
+The first controlled KLU replay,`joint-klu-calibration71001-20260922-a`, changes
+only the linear solver. Exact normalized-deck/source/model/image/engine checks
+pass; all27 sampled parameters and both comparators' three late decisions agree.
+The saved0.52µs traces are compared on52001 points: maximum difference0.117µV,
+with analog input/threshold nodes below0.001µV. Printed pre/kick/sample measures
+are identical. Cold supported40mV no-trip replay also agrees (all saved nodes
+within0.003µV). Hot and second-seed residual comparisons are still running under
+`joint-klu-guards-residual-20260922-a`. Neither a shorter endpoint nor a global
+KLU qualification follows. Full traces, transitions and differences are retained
+in each`solver_comparison.json`; concurrent loads limit timing comparisons.
+
+V14 actual-BGR/reset KLU9OP pilot passes with all31 parameters frozen at three
+temperatures and all9 printed OP rows identical to sparse. Runtime73.53s versus
+96.89s for sparse is a single controlled fixture observation. The full256code
+sparse sweep still times out120s with no final transfer table; full-code KLU
+and statistical monotonicity are not run. V15 tight-trap cellPEX20-sample smoke
+has started with62001–62010 at25/−40/125°C; numerical completion, bracketing and
+nonmonotonic cases are recorded separately. No default-tolerance offset MC is
+rehabilitated by these new runs.
+
+The supported204 reuse harness requires a fresh exact normalized-deck, source,
+model, image and engine preflight for every referenced completed analysis. Each
+logical leaf records the original evidence run; it is not a new simulation.
+Only identical calibration/fixed-residual analyses can be reused. Changed-code
+guards rerun, except any already completed guard that passes the same exact
+preflight. Original timeout/interruption/electrical failures remain preserved.
+
+### Migration pause,22September2026
+
+All simulation jobs stopped at owner request, originals retained. Baseline20 has
+525 numerically completed probes and17 complete28-probe samples. Two current
+leaves were interrupted; remaining35 probes are incomplete. Supported204 SPARSE
+reuse3 completes all84 logical probes (54 exact archived analyses and30 new
+changed-code guards):all guard checks pass,71002/71012 residual failures remain.
+Headroom candidate71001 completes28 checks with all guards/residual checks passed;
+55mV upper guard remains outside specifiedrange, and otherselected samples unrun.
+
+Fresh supported204 KLU batch contains274 completed solver probes,6 completed
+numerical-failure leaves and1 owner interruption. Only6 samples have all28 solver
+analyses complete. Failed OP/timestep cases involve BGR xbgr.xq55:71022 endpoints,
+71024-p19,71025-p13,71026-p12,71031-p19.71031-p26 was interrupted and already showed
+similarOP errors. This limits broad KLU MC qualification despite four selected
+parity anchors. The raw driver's failed guard/residual status can include solver
+failures; assess per-probe numerical completion before interpreting electrical
+acceptance. No failed sample is dropped.
+
+V15 first6 cellPEX samples complete all3temperatures.62007/08 hit300s after saving
+25/−40°C cases; their125°C cases remain unrun. Individual-temperature cold/hot
+qualification for62001 matches all32 parameters,401 sampled outputs and full
+400901-point waveform comparisons exactly. Prepared partitioned continuation
+retains partialattempts and every missingtemperature; it has not run. V14 chunked
+all-code pilot and expandedheadroom samples also remain not run.
+
+The instrumented KLU profiling replay `joint-rusage71021-code255-20260922-a`
+reproduces its complete reference waveform exactly. Transient analysis184.313s
+includes141.586s matrixload,17.8925s factor,4.9868s solve and7.70249s truncation.
+This is one profiled source/sample. Recent valid-leaf runtime is retained in
+`joint-runtime-migration-20260922-a.json`; earlier loadedperiods were muchslower,
+and no newserver timing has been qualified.

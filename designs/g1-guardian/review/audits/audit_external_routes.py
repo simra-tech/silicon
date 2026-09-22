@@ -12,7 +12,8 @@ import pya
 ROOT=Path(__file__).resolve().parents[4];B=ROOT/'designs/g1-guardian/blocks/g1_padring'
 METALS={'Metal1':8,'Metal2':10,'Metal3':30,'Metal4':50,'Metal5':67,'TopMetal1':126,'TopMetal2':134}
 WANTED={'d_elt_bare','d_std_bare','g_shared_bare','hbt_b_bare','hbt_c_bare','hbt_e_bare','i_core.bgr_r4_33','i_core.t2f_en_33','i_core.t2f_mode_33'}
-p=argparse.ArgumentParser(description=__doc__);p.add_argument('output',type=Path);a=p.parse_args()
+p=argparse.ArgumentParser(description=__doc__);p.add_argument('output',type=Path);p.add_argument('--nets',help='Comma-separated exact DEF net names; default retains original nine-net audit');a=p.parse_args()
+if a.nets:WANTED=set(a.nets.split(','))
 if a.output.exists():raise FileExistsError('Preserve prior audit')
 gds=B/'layout/g1_chip_top.gds';deffile=B/'flow/runs/assembly-1350/final/def/g1_chip_top.def'
 l=pya.Layout();l.read(str(gds));top=l.cell('g1_chip_top');dbu=l.dbu;regions={}

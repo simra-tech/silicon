@@ -1,0 +1,61 @@
+* Direct unitHBT current probe; unchangedmodelcards
+.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerHBT.lib hbt_typ
+.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerMOShv.lib mos_tt
+.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerRES.lib res_typ
+.include baseline.spice
+.temp 125
+.option gmin=1e-15 abstol=1e-14 reltol=1e-5 vntol=1e-7
+.global sub!
+Vsub sub! 0 0
+Vdd vdd 0 3.3
+Vr4 r4 0 0
+Xbgr vdd 0 r4 vref iptat pbias pcasc vbe dvbe g1_bgr
+Vload iptat 0 1
+Cload vref 0 1p
+.control
+set num_threads=1
+set numdgt=15
+op
+print @q.xbgr.xq56.qnpn13g2[area]
+print @q.xbgr.xq56.qnpn13g2[ic]
+print @q.xbgr.xq56.qnpn13g2[ib]
+print @q.xbgr.xq60.qnpn13g2[area]
+print @q.xbgr.xq60.qnpn13g2[ic]
+print @q.xbgr.xq60.qnpn13g2[ib]
+print @q.xbgr.xq62.qnpn13g2[area]
+print @q.xbgr.xq62.qnpn13g2[ic]
+print @q.xbgr.xq62.qnpn13g2[ib]
+print @q.xbgr.xq67.qnpn13g2[area]
+print @q.xbgr.xq67.qnpn13g2[ic]
+print @q.xbgr.xq67.qnpn13g2[ib]
+print @q.xbgr.xq68.qnpn13g2[area]
+print @q.xbgr.xq68.qnpn13g2[ic]
+print @q.xbgr.xq68.qnpn13g2[ib]
+print @q.xbgr.xq69.qnpn13g2[area]
+print @q.xbgr.xq69.qnpn13g2[ic]
+print @q.xbgr.xq69.qnpn13g2[ib]
+print @q.xbgr.xq70.qnpn13g2[area]
+print @q.xbgr.xq70.qnpn13g2[ic]
+print @q.xbgr.xq70.qnpn13g2[ib]
+print @q.xbgr.xq71.qnpn13g2[area]
+print @q.xbgr.xq71.qnpn13g2[ic]
+print @q.xbgr.xq71.qnpn13g2[ib]
+print @q.xbgr.xq72.qnpn13g2[area]
+print @q.xbgr.xq72.qnpn13g2[ic]
+print @q.xbgr.xq72.qnpn13g2[ib]
+print @q.xbgr.xq73.qnpn13g2[area]
+print @q.xbgr.xq73.qnpn13g2[ic]
+print @q.xbgr.xq73.qnpn13g2[ib]
+print @q.xbgr.xq74.qnpn13g2[area]
+print @q.xbgr.xq74.qnpn13g2[ic]
+print @q.xbgr.xq74.qnpn13g2[ib]
+print @q.xbgr.xq75.qnpn13g2[area]
+print @q.xbgr.xq75.qnpn13g2[ic]
+print @q.xbgr.xq75.qnpn13g2[ib]
+print @q.xbgr.xq76.qnpn13g2[area]
+print @q.xbgr.xq76.qnpn13g2[ic]
+print @q.xbgr.xq76.qnpn13g2[ib]
+print v(vref) i(vload) i(vdd) v(vbe) v(dvbe) v(pbias) v(pcasc)
+quit
+.endc
+.end

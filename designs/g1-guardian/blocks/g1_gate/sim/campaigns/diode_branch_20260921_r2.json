@@ -1,0 +1,73 @@
+{
+  "scope": "Evaluate the installed ngspice diode branch equations without changing cards.\n\nRestricted to nominal27C darea/dperim at the SecondaryProtection geometry.\nThis is a simulator equation diagnostic, not a physical diode model correction.\n",
+  "pdk_commit": "84374023ee8b4b126bebbba67fcbada0a9c0ff0b",
+  "diodes_sha256": "66fa37819fa8a5c8af4dbb85f11208c3e38faa49c117de55c35a1538786715e8",
+  "source_sha256": {
+    "dioload.c": "865bbecef98de2237a1cceccf088fb77e6d868f9f913023827ac910232c35b38",
+    "diotemp.c": "5d5d3837da15148c5e865cc5b85f3f4189dd45798beb1644f6986929df6c6c49",
+    "diosetup.c": "a180c434a4b90d6ee5fe9af756916ffb098b36d40120a33f0f0db422a838ec74"
+  },
+  "assumptions": "ngspice level1, nominal27C, no selfheat; default NR2 verified in diosetup.c; GMIN term cancels across branch; no model edits.",
+  "references": [
+    "https://ngspice.sourceforge.io/docs/ngspice-46-manual.pdf",
+    "https://github.com/IHP-GmbH/IHP-Open-PDK/issues/921"
+  ],
+  "results": [
+    {
+      "model": "darea",
+      "area_factor": 1.9840000000000002,
+      "parameters": {
+        "tnom": 27.0,
+        "is": 2.315e-19,
+        "n": 1.009,
+        "ik": 1.434e-07,
+        "rs": 219300.0,
+        "cj0": 9.371e-16,
+        "m": 0.3036,
+        "vj": 0.696,
+        "fc": 0.5,
+        "bv": 11.64,
+        "ibv": 3.458e-07,
+        "tcv": 0.001,
+        "nbv": 48.9,
+        "isr": 7.413e-19,
+        "xti": 5.039,
+        "trs": 0.0,
+        "trs2": 0.0,
+        "tt": 7.009e-07
+      },
+      "effective_breakdown_V": -22.948581609669766,
+      "branch_voltage_V": -0.0782931303552155,
+      "current_forward_side_A": -1.621855588800477e-18,
+      "current_breakdown_side_A": -3.7056521391857384e-11,
+      "branch_current_jump_A": -3.70565197700018e-11,
+      "negative_effective_breakdown": true
+    },
+    {
+      "model": "dperim",
+      "area_factor": 7.48,
+      "parameters": {
+        "tnom": 27.0,
+        "is": 3.851e-21,
+        "n": 1.022,
+        "rs": 1688000.0,
+        "ik": 7.838e-08,
+        "isr": 1.011e-17,
+        "xti": 3.0,
+        "bv": 31.86,
+        "ibv": 6.115e-14,
+        "nbv": 112.1,
+        "cj": 1.821e-17,
+        "m": 0.01923,
+        "vj": 0.598,
+        "tt": 7.009e-07
+      },
+      "effective_breakdown_V": -10.380652945075369,
+      "branch_voltage_V": -0.0793018624608823,
+      "current_forward_side_A": -5.946857735850936e-17,
+      "current_breakdown_side_A": -6.050343057918278e-17,
+      "branch_current_jump_A": -1.0348532206734232e-18,
+      "negative_effective_breakdown": true
+    }
+  ]
+}

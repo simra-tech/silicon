@@ -1,5 +1,19 @@
 # Bounded G1_TOP runner
 
+Latest scoped evidence (2026-09-22): the compact28µs actual analog C-PEX/RTL
+hard-trip anchor [completed and passed](campaigns/INTEGRATED_ANCHOR_20260922.md).
+The [six transition/readback regressions](campaigns/TRANSITIONS_BEHAVIORAL_20260922.md)
+also passed with a behavioral front end. Earlier dated incomplete runs below
+remain historical evidence. [Native integrated-prefix qualification](campaigns/NATIVE_PREFIX_20260922.md)
+did not complete; the legacy simulator remains selected for integrated work.
+
+New functional runs preserve full analog and state vectors in deterministic
+gzip archives, with decompressed and archive hashes in the run manifest.
+`check_campaign.py` can evaluate these archives without the build directory.
+The generator rejects exported voltage/current vectors missing from an
+explicit `.save` list before launch. Six archived transition fixtures were
+independently rechecked with build-file access disabled; all passed.
+
 `run_top.py` generates unique run tags by default and refuses to overwrite any
 existing deck/log/manifest with the same tag. `--run-id` selects an explicit
 suffix for reproduction. Existing simulation evidence remains unchanged.
@@ -66,3 +80,29 @@ The isolated RC stop/resume test completed, but the mixed-signal4µs behavioral-
 Initial stream `164538Z_648a2faf` failed because the Icarus library path was missing; later runs supply it. Behavioral-front stream `165437Z_bd880fb2` completes4µs and matches all original saved analog/state columns within4binary64 ULPs, consistent with reference text rounding. PEX stream `165151Z_34cb6ddb` times out360s, preserving2,203records through3.771112µs; its complete records likewise match the original PEX reference within4ULPs. The predeclared comparison allowance is8ULPs. This qualifies only saved-prefix parity; PEX endpoint qualification is still pending. A timed-out run is **not run to completion** regardless of prefix parity. Later runner versions compile an independent per-run RTL executable and copy their stimulus to avoid mutable shared build files.
 
 PEX streaming endpoint follow-up `stream_20260921T165925Z_e2a0d65a` completes4µs in415.63s and all2,429rows of original saved analog/state vectors match within4ULPs. New independent RTL/stimulus-copy runner pilot `stream_20260921T170741Z_0eafde17` also passes4µs behavioral-front parity, with observations byte-identical to the earlier streaming pilot. The compact28µs in-range fault fixture is now being rerun with streaming; its endpoint and electrical acceptance are not yet established.
+
+
+## Functional waveform completeness correction, 2026-09-22
+
+`run_top.py` now saves configuration/cause vectors before `linearize` switches
+to a plot containing only the selected analog vectors. `check_campaign.py`
+requires the state endpoint, configuration/cause checks and a clean solver log.
+The first behavioral compact fixture `...20260921T221520Z_672e1d7f` completed
+its analog waveform but failed the state export (`fast_en` absent). Its initial
+permissive assessment is retained and superseded by
+`campaigns/behavioral_compact_20260921T221520Z_assessment_corrected.json`:
+**failed**, required configuration/cause checks not run. It is not accepted.
+
+Fresh corrected `...20260921T221716Z_dc63af92` passes all saved-vector checks,
+including soft153/hard200 and hard cause. Its analog waveform hash exactly
+matches the prior waveform; only export ordering changed. Simulated GATE<1V
+occurs1.4004us after the fault by ngspice crossing measurement and1.42us at the
+first exported grid point. This is a behavioral BGR/SENSE/TRIP front end with
+actual RTL and GATE C-PEX, ideal oscillator, fitted output pads and modeled
+external switch. It is not an integrated analog-chain PEX acceptance result.
+
+`check_stream.py` evaluates the fixed compact c_mid source hash directly from
+streamed observations: completion, arming, threshold codes, cause, latch,
+GATE latency/hold and end current. It does not treat partial records as a pass.
+Four distinct electrical-checker tests cover valid acceptance, missing state,
+solver errors, incomplete endpoints, wrong configuration/cause and rearming.

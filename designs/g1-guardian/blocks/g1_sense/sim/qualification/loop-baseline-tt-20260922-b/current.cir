@@ -1,0 +1,46 @@
+* G1_SENSE testbench: DC transfer, AC gain/bandwidth, step, PSRR, CMRR
+* Corner/temperature are substituted by run_sense.sh into the @@ fields.
+.param VDDA=3.3 VREF=1.04 VPEDN=1.000755 VCM=-0.0125
+.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerMOSlv.lib mos_tt
+.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerMOShv.lib mos_tt
+.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerRES.lib res_typ
+.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerCAP.lib cap_typ
+.temp 27
+.include qualification/loop-baseline-tt-20260922-b/probe.spice
+.option gmin=1e-13
+* three unity/inverting OTA loops: give the DC solver their operating points
+.nodeset v(vref_buf)={VREF} v(vped)={VPEDN} v(isense)={VPEDN} v(xdut.vp)=0.047 v(xdut.vn)=0.047 v(xdut.iptat)=0.76
++ v(xdut.xref.out1)={VDDA-0.79} v(xdut.xbuf.out1)={VDDA-0.79} v(xdut.xota.out1)={VDDA-0.79} v(xdut.xref.mir)={VDDA-0.79} v(xdut.xbuf.mir)={VDDA-0.79} v(xdut.xota.mir)={VDDA-0.79}
++ v(xdut.xref.tail)=1.65 v(xdut.xbuf.tail)=1.65 v(xdut.xota.tail)=1.6 v(xdut.xref.fn)=0.2 v(xdut.xref.fp)=0.2 v(xdut.xbuf.fn)=0.2 v(xdut.xbuf.fp)=0.2 v(xdut.xota.fn)=0.2 v(xdut.xota.fp)=0.2
+.option itl1=400 itl2=200
+Vdd vdd 0 dc {VDDA} ac 0
+Vref vref 0 dc {VREF}
+* G1_BGR iptat: 4.13 uA at 27 C, PTAT
+Iib vdd iptat dc {4.13u*(27+273.15)/300.15}
+Vcm cm 0 dc {VCM} ac 0
+Vsh shp cm dc 0.025 ac 0
+XDUT shp cm vref iptat isense vped vref_buf vdd 0 g1_sense
+* load = G1_TRIP conditioning divider (2 x 50k rppd, 5 units each) with 1 pF hold cap, plus 300 fF wiring
+XRL1 isense icmp 0 rppd w=2u l=384.3u m=1 b=0
+XRL2 icmp 0 0 rppd w=2u l=384.3u m=1 b=0
+XCH icmp 0 cap_cmim w=26u l=26u m=1
+CL isense 0 300f
+.option reltol=1e-5 vntol=1e-7 abstol=1e-14
+.param pv=0 pi=1
+.control
+set num_threads=1
+set numdgt=15
+set wr_singlescale
+set wr_vecnames
+op
+echo OP_BEGIN
+print v(isense) v(vped) v(vref_buf) v(xdut.vp) v(xdut.vn) i(vdd)
+echo OP_END
+ac dec 100 1 1g
+let ifout=-i(v.xdut.vmain_probe)
+let ve=v(xdut.main_loop_e)
+wrdata qualification/loop-baseline-tt-20260922-b/current.dat real(ifout) imag(ifout) real(ve) imag(ve)
+echo QUALIFICATION_END
+quit 0
+.endc
+.end

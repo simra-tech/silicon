@@ -193,6 +193,10 @@ selects those repeats without overwriting originals or counting extra samples.
 Pass this file to `analyze_mc.py --samples 300 --run-aliases PATH`;
 the LUT and reciprocal analyzers consume the
 resulting run IDs in `mc300_samples.csv`. Frozen candidate hashes are unchanged.
+A later pause also left51137–51139 partial. Full repeats under
+`t2f_mc300_resume_20260922_01` reproduce all overlapping−40/25°C vectors
+byte-for-byte and preserve model, source and physical-parameter fingerprints.
+The alias file records these replacements without deleting original evidence.
 
 `run_mc_batch.py` now limits queued jobs to active worker count and accepts
 `--stop-file`; the same option is forwarded to `run_joint.py`. Once the file
@@ -209,7 +213,15 @@ PTAT/REF and r4-return checks pass; maximum midpoint delays are3.593/4.911ns
 with10ns input edges. Disabled output has no rising edges. Route piRC uses
 explicit geometry estimates, not extracted route parasitics; via resistance,
 coupling and fill remain omitted. The50fF output and ideal1V IPTAT termination
-also limit scope. Fasthot is not yet run. `transition_current_selected.json`
+also limit scope. The legacy fast/hot run timed out after300.067s at77.499µs
+of the required90µs; its acceptance checks remain not run. A separate6µs
+legacy/native anchor agrees within0.0275ppm frequency and76fs matched edge
+time; `ls_fasthot_runtime_comparison_20260922.json` records that limited
+qualification. `t2f_ls_transitions_fasthot_native_20260922_01` then completes
+the full90µs in125.092s. All frequency windows, disable, receiver logic and
+HBT VCE checks pass; maximum receiver delay is2.35838ns and maximum HBT
+VCE is1.23886V. This does not establish global native-runtime equivalence.
+`transition_current_selected.json`
 records combined BGR/T2F/three-up-shifter currents and sampled peaks; these
 cannot be separated into an isolated up-shifter power number.
 
@@ -220,3 +232,57 @@ maximum frequency difference39.145ppm, maximum linear residual difference
 have exact parameter fingerprints; seed51096 **fails strict equality** by
 2binary64ULP and passes the separately stated4ULP roundoff diagnostic. This
 extends scoped T2F runtime evidence without asserting global equivalence.
+
+## Fixed-calibration supply and process screening
+
+`run_joint_adverse.py` selects the PDK's existing corner-specific mismatch
+libraries without editing model cards. It captures all580 realized MOS,
+resistor, HBT and MIM parameters. `adverse_op_qualification_20260922.json`
+records two seeds at each slow/fast corner and a repeated slow seed: all
+parameters remain fixed across temperature and rails, repetition is exact,
+and changing the seed changes each randomized device class. Equal seed
+integers at different process corners do not represent paired physical samples.
+
+`run_adverse_calibration.py` calibrates each physical sample at25/100°C with
+3.3/1.2V rails, then freezes those coefficients for independent−40/125°C
+points at3.0/1.08V and3.6/1.32V. Separate linear, frozen nominal-LUT and
+reciprocal results retain the original acceptance rule. Slow and fast pilot
+seed51901 each complete all six transients with all580 parameters fixed.
+Original linear calibration fails high-rail/cold at−2.37540°C and−2.70757°C,
+respectively. Both frozen candidates pass these pilot points; reciprocal
+maximum absolute error is1.48832°C slow and1.61663°C fast. These are screening
+pilots, not ensemble or yield qualification. The nominal pilot and selected
+30-sample expansion are tracked separately; they are not counted as completed
+by the pilot results. `run_adverse_batch.py` supports bounded independent
+samples with explicit stop-file and incomplete-point accounting.
+
+## Completed overnight campaigns, migration pause 2026-09-22
+
+The typical-process campaign now completes **300/300 physical samples and
+1200/1200 transients**, with14 original linear-calibration failures and no
+solver or within-sample fingerprint failures. The frozen LUT and reciprocal
+candidates have zero endpoint failures; they remain unadopted. The prospective
+200-sample reciprocal maximum is0.975771°C. `mc300_summary.json` and the
+corresponding candidate reports contain the final counts. The comparison PNG
+is still explicitly labeled220/300 and must be regenerated before final use.
+
+The fast-process fixed-calibration campaign completes30/30 samples and180/180
+transients on the legacy runtime. Original linear calibration fails11 samples,
+frozen LUT fails4, and reciprocal fails0; their maximum absolute errors are
+3.617875°C,2.667278°C and1.787973°C respectively. Four independent rail/
+temperature points per sample do not establish continuous-range or packaged
+accuracy. `adverse_fast30_summary_20260922.json` retains every sample.
+
+The adverse native comparison completes all six anchor leaves but **fails**
+strict580-parameter equality and the separate four-ULP diagnostic(max18ULP).
+Numerical frequency/error differences remain within18.071ppm/0.005748°C,
+and classifications agree. This does not authorize native adverse campaigns;
+all30 samples above used legacy. Three additional prospective legacy checks
+(seeds51148,51296,51111) remain not run.
+
+T2F synthetic external-reference perturbation0/1/5mV completes all three
+leaves; period standard deviations are1.88957ps,424.957ps and1.98554ns over
+the finite saved window. This is external sensitivity, not physical device
+phase noise or a passed jitter budget. The actual TEMP_OUT pad fixture is
+prepared but not run. Owner paused simulations for migration; no reference
+queue or container remains active.

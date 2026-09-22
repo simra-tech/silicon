@@ -30,6 +30,7 @@ One summary block per run is appended to results_top.txt.
 """
 import argparse
 import hashlib
+import gzip
 import os
 import re
 import subprocess
@@ -90,9 +91,10 @@ BEH = {
 
 
 def frame_bits(addr, data):
-    """Write frame: command byte (bit 7 = 0 write, bits 6:0 address) then the data byte, MSB first."""
-    cmd = addr & 0x7F
-    return [(cmd >> (7 - i)) & 1 for i in range(8)] + [(data >> (7 - i)) & 1 for i in range(8)]
+    """Command bit7 selects read: 24 clocks (turnaround/data), or16 for write."""
+    if not 0<=addr<=255 or not 0<=data<=255:raise ValueError('serial command/data outside byte range')
+    command=[(addr >> (7-i)) & 1 for i in range(8)]
+    return command + ([0]*16 if addr&0x80 else [(data >> (7-i)) & 1 for i in range(8)])
 
 
 # Digital pad inputs (EN, SCLK, SDI) are 3.3 V PWL sources with 2 ns edges. The RTL reads them through
@@ -210,6 +212,25 @@ def make_cases():
     C['f'] = dict(desc='(f) hard trip on a 3x step (load profile back to 1x at 36 us), EN low 40-42 us: GATE re-arms, load current resumes',
                   load=step_profile(3.0, 20, t_back_us=36), tstop=50, frames=[INRUSH0],
                   en=[(T_EN, 1), (40.0, 0), (42.0, 1)], expect='hard trip, then re-arm')
+    C['f_mid'] = dict(desc='in-range hard trip at45mV, load returns36us, EN low40-42us clears both latches and restores nominal load',
+                     load=step_profile(1.8, 20, t_back_us=36), tstop=50,
+                     frames=[INRUSH0, (0x03, 200)], en=[(T_EN, 1), (40.0, 0), (42.0, 1)],
+                     expect='hard trip, then re-arm')
+    C['hard_pulse'] = dict(desc='in-range45mV pulse200ns shorter than four hard decisions; no trip with FAST_EN=0',
+                          load=step_profile(1.8, 20, t_back_us=T_STEP+.2), tstop=44,
+                          frames=[INRUSH0, (0x03, 200)], expect='no trip')
+    C['inrush_pulse'] = dict(desc='in-range45mV pulse30-35us while INRUSH=1 (512cycles) masks digital decisions; FAST_EN=0',
+                            load=step_profile(1.8, 20, t_back_us=35), tstop=68,
+                            frames=[(0x08, 1), (0x03, 200)], expect='no trip')
+    C['clear_read'] = dict(desc='in-range45mV hard trip, load returns35us; serial STATUS/TRIP_CNT readback, CLEAR command, repeat readback and re-arm',
+                          load=step_profile(1.8, 20, t_back_us=35), tstop=72,
+                          frames=[INRUSH0,(0x03,200)], expect='hard trip, then serial clear',
+                          late_frames=(36,[(0x8D,0),(0x8F,0),(0x90,0),(0x0C,1),(0x8D,0),(0x8F,0)]))
+    C['retry_read'] = dict(desc='held45mV fault40us, HOLD_TIME=0 means8192cycles, one automaticretry then giveup; serialSTATUS/STATUS2/TRIP_CNT',
+                          load=[(0,1),(40e-6,1),(40.02e-6,1.8)], event_us=40,tstop=1140,tstep=100e-9,
+                          frames=[INRUSH0,(0x03,200),(0x0B,7),(0x09,0),(0x0A,1)],
+                          expect='hard trip, one retry, then latched giveup',front='beh',
+                          late_frames=(1100,[(0x8D,0),(0x8E,0),(0x8F,0),(0x90,0)]))
     # long-window cases at the register default SOFT_TIME = 0x27 (~1 ms): behavioural front end (README)
     C['a'] = dict(desc='(a) step to 1.5x nominal for 100 us then back (1 us edges), SOFT_TIME default (~1 ms): must not trip',
                   load=step_profile(1.5, 1000, t_back_us=T_STEP + 100), tstop=250, frames=[INRUSH0], expect='no trip',
@@ -256,6 +277,22 @@ def sha256(path):
         h.update(f.read())
     return h.hexdigest()
 
+def validate_exports(deck):
+    """Reject missing explicitly saved voltage/current vectors before simulation."""
+    saved=set();in_save=False
+    for line in deck.splitlines():
+        if line.startswith('.save '):
+            saved.update(line.split()[1:]);in_save=True
+        elif in_save and line.startswith('+ '):saved.update(line.split()[1:])
+        else:in_save=False
+    if 'all' in saved:return
+    exported=set()
+    for line in deck.splitlines():
+        if line.startswith(('wrdata ','linearize ')):
+            exported.update(re.findall(r'\b[vi]\([^()]+\)',line))
+    missing=exported-saved
+    if missing:raise ValueError('exported vectors absent from .save: '+', '.join(sorted(missing)))
+
 
 def nodesets(netlist):
     """Operating-point help for the three G1_SENSE OTA loops (from blocks/g1_sense/sim/tb_sense.cir);
@@ -270,6 +307,7 @@ def nodesets(netlist):
 
 def build_deck(case, name, netlist, front, temp, corner, tag, tstop_override=None, osc='ideal', inpads='ideal', outpads='beh', method='gear'):
     c = dict(case)
+    event_us=c.get('event_us',T_STEP)
     tstop = tstop_override if tstop_override else c['tstop']
     tstep = c.get('tstep', 20e-9)
     powerup = c.get('powerup', False)
@@ -300,6 +338,12 @@ def build_deck(case, name, netlist, front, temp, corner, tag, tstop_override=Non
         sclk_pts, sdi_pts, t_ser_end = serial_pwl(c['frames'], t_ser, fsclk, vio)
     else:
         sclk_pts, sdi_pts, t_ser_end = [(0, 0)], [(0, 0)], 0.0
+    if c.get('late_frames'):
+        late_start,late_frames=c['late_frames']
+        late_start=grid(late_start) if osc!='tl' else late_start
+        if late_start<=t_ser_end:raise ValueError('late serial sequence overlaps initial configuration')
+        late_clk,late_data,_=serial_pwl(late_frames,late_start,fsclk,vio)
+        sclk_pts+=late_clk[1:];sdi_pts+=late_data[1:]
     en_pts, lvl = [(0, 0)], 0
     for t, lv in en_tr:
         en_pts += edge(t * 1e-6, vio * lvl, vio * lv, vio)
@@ -307,7 +351,7 @@ def build_deck(case, name, netlist, front, temp, corner, tag, tstop_override=Non
     stim_path = os.path.join(BUILD, 'stim_%s.txt' % tag)
     write_stim(stim_path, en_pts, sclk_pts, sdi_pts, vio)
     t_cfg = t_ser_end + 1.0     # the register write lands a few osc_clk after the 16th edge
-    quiet = c.get('quiet', (t_cfg + 2.0, T_STEP) if not powerup else None)
+    quiet = c.get('quiet', (t_cfg + 2.0, event_us) if not powerup else None)
     vvp = os.path.join(BUILD, 'g1_dig_cosim.vvp')
     rpd = c.get('rpd')
 
@@ -533,7 +577,7 @@ def build_deck(case, name, netlist, front, temp, corner, tag, tstop_override=Non
     A('adac [%s] [%s] dac' % (' '.join(outs), ' '.join(an)))
     A('.save v(gate) v(gfet) v(tripped) v(isense) v(cmp_soft) v(cmp_hard) v(trip_d) v(clr_d) v(fast_en) v(osc_clk) v(cmp_clk)')
     A('+ v(vref) v(iptat) v(en_core) v(shp) v(shn) v(fault_n) v(gate_core) v(vdda) v(vdd) v(iovdd) v(iprof) v(osc_en_g)')
-    A('+ %s %s %s v(dig_trip) v(cause1) v(cause0) v(sclk_pad) v(sdi_pad)' % (icmp, vths, vthh))
+    A('+ %s %s %s v(dig_trip) v(cause1) v(cause0) v(sclk_pad) v(sdi_pad) v(sdo)' % (icmp, vths, vthh))
     A('+ ' + ' '.join('v(soft%d)' % i for i in range(8)) + ' ' + ' '.join('v(hard%d)' % i for i in range(8)))
     A('+ ' + ' '.join('v(sp%d)' % i for i in range(16)) + ' v(inrush_active) v(soft_armed)')
     A('+ i(vim) i(vma) i(vmi) i(v12) i(vm_bgr) i(vm_sense) i(vm_tripa) i(vm_tripd) i(vm_osc) i(vm_gatea) i(vm_gated)')
@@ -583,31 +627,35 @@ def build_deck(case, name, netlist, front, temp, corner, tag, tstop_override=Non
             A('let ua_%s = ia_%s*1e6' % (nm, nm))
         A('echo "SUPPLY_uA window=%g-%gus VDDA=" $&ua_vdda " IOVDD=" $&ua_iovdd " VDD=" $&ua_vdd " | bgr=" $&ua_bgr " sense=" $&ua_sense " trip_3v3=" $&ua_tripa " trip_1v2=" $&ua_tripd " osc=" $&ua_osc " gate_3v3=" $&ua_gatea " gate_1v2=" $&ua_gated' % (quiet[0], quiet[1]))
         A('* trip evaluation after the load event at T_STEP')
-        A('let tstep_s = %gu' % T_STEP)
+        A('let tstep_s = %gu' % event_us)
         A('meas tran tripped_max max v(tripped) from=%gu to=%gu' % (t_cfg, tstop))
-        A('meas tran tripped_pre max v(tripped) from=%gu to=%gu' % (t_cfg, T_STEP))
-        A('meas tran t_tripped when v(tripped)=0.6 rise=1 from=%gu' % T_STEP)
-        A('meas tran t_trip_d when v(trip_d)=0.6 rise=1 from=%gu' % T_STEP)
-        A('meas tran t_gate1v when v(gate)=1.0 fall=1 from=%gu' % T_STEP)
-        A('meas tran t_gate03 when v(gate)=0.33 fall=1 from=%gu' % T_STEP)
-        A('meas tran gate_min min v(gate) from=%gu to=%gu' % (T_STEP, tstop))
+        A('meas tran tripped_pre max v(tripped) from=%gu to=%gu' % (t_cfg, event_us))
+        if c.get('expect') != 'no trip':
+            A('meas tran t_tripped when v(tripped)=0.6 rise=1 from=%gu' % event_us)
+            A('meas tran t_trip_d when v(trip_d)=0.6 rise=1 from=%gu' % event_us)
+            A('meas tran t_gate1v when v(gate)=1.0 fall=1 from=%gu' % event_us)
+            A('meas tran t_gate03 when v(gate)=0.33 fall=1 from=%gu' % event_us)
+        A('meas tran gate_min min v(gate) from=%gu to=%gu' % (event_us, tstop))
         A('meas tran gate_end find v(gate) at=%gu' % tstop)
-        A('meas tran ipk max i(vim) from=%gu to=%gu' % (T_STEP, tstop))
+        A('meas tran ipk max i(vim) from=%gu to=%gu' % (event_us, tstop))
         A('meas tran i_end find i(vim) at=%gu' % tstop)
-        A('meas tran isense_pk max v(isense) from=%gu to=%gu' % (T_STEP, tstop))
+        A('meas tran isense_pk max v(isense) from=%gu to=%gu' % (event_us, tstop))
         A('meas tran cause1e find v(cause1) at=%gu' % tstop)
         A('meas tran cause0e find v(cause0) at=%gu' % tstop)
         A('meas tran fault_end find v(fault_n) at=%gu' % tstop)
         A('let sp_v = ' + bits('sp', 16))
         A('meas tran soft_peak find sp_v at=%gu' % tstop)
         A('let cause = 2*(cause1e gt 0.6) + (cause0e gt 0.6)')
-        A('let dt_gate1v_us = (t_gate1v - tstep_s)*1e6')
-        A('let dt_gate03_us = (t_gate03 - tstep_s)*1e6')
-        A('let dt_tripped_us = (t_tripped - tstep_s)*1e6')
-        A('let dt_trip_d_us = (t_trip_d - tstep_s)*1e6')
-        A('echo "TRIP tripped_max=" $&tripped_max " tripped_before_event=" $&tripped_pre " t_tripped_us=" $&dt_tripped_us " t_trip_d_us=" $&dt_trip_d_us " t_gate_1V_us=" $&dt_gate1v_us " t_gate_0.33V_us=" $&dt_gate03_us " gate_min=" $&gate_min " gate_end=" $&gate_end " ipk_A=" $&ipk " i_end_A=" $&i_end " isense_pk=" $&isense_pk " cause=" $&cause " fault_n_end=" $&fault_end " soft_peak=" $&soft_peak')
+        if c.get('expect') != 'no trip':
+            A('let dt_gate1v_us = (t_gate1v - tstep_s)*1e6')
+            A('let dt_gate03_us = (t_gate03 - tstep_s)*1e6')
+            A('let dt_tripped_us = (t_tripped - tstep_s)*1e6')
+            A('let dt_trip_d_us = (t_trip_d - tstep_s)*1e6')
+            A('echo "TRIP tripped_max=" $&tripped_max " tripped_before_event=" $&tripped_pre " t_tripped_us=" $&dt_tripped_us " t_trip_d_us=" $&dt_trip_d_us " t_gate_1V_us=" $&dt_gate1v_us " t_gate_0.33V_us=" $&dt_gate03_us " gate_min=" $&gate_min " gate_end=" $&gate_end " ipk_A=" $&ipk " i_end_A=" $&i_end " isense_pk=" $&isense_pk " cause=" $&cause " fault_n_end=" $&fault_end " soft_peak=" $&soft_peak')
+        else:
+            A('echo "NO_TRIP_EXPECTED tripped_max=" $&tripped_max " gate_min=" $&gate_min " gate_end=" $&gate_end " ipk_A=" $&ipk " i_end_A=" $&i_end " cause=" $&cause " fault_n_end=" $&fault_end " soft_peak=" $&soft_peak')
         A('let qi = integ(i(vim))')
-        A('meas tran q_step find qi at=%gu' % T_STEP)
+        A('meas tran q_step find qi at=%gu' % event_us)
         A('meas tran q_end find qi at=%gu' % tstop)
         A('let q_passed = q_end - q_step')
         A('echo "CHARGE after_event_As=" $&q_passed')
@@ -635,10 +683,14 @@ def build_deck(case, name, netlist, front, temp, corner, tag, tstop_override=Non
         A('meas tran en_core_max max v(en_core) from=0 to=%gu' % (t_en0 - 0.1))
         A('echo "POWERUP GATE_max_EN_low=" $&gmax_ramps " gate_core_max=" $&gc_max " en_core_max=" $&en_core_max " GATE_above_1V_from_us=" $&t_g1r " to_us=" $&t_g1f " duration_us=" $&t_high_us " load_peak_A=" $&ipk_ramps " charge_As=" $&q_ramps " tripped_max=" $&tripped_ramps " GATE_after_EN=" $&g_end')
     waves = 'v(gate) v(gfet) v(tripped) v(isense) v(cmp_soft) v(cmp_hard) v(cmp_clk) v(trip_d) v(osc_clk) v(vref) v(en_core) v(shp) v(fault_n) v(vdda) v(vdd) v(iprof) %s %s %s v(dig_trip) v(inrush_active) i(vim) i(vma) i(vmi) i(v12)' % (icmp, vths, vthh)
+    state_signals = 'v(en_core) v(inrush_active) v(dig_trip) v(fast_en) v(cause1) v(cause0) ' + ' '.join('v(%s%d)' % (p, i) for p in ('soft', 'hard') for i in range(8))
+    state_signals += ' v(soft_armed) ' + ' '.join('v(sp%d)' % i for i in range(16))
+    state_signals += ' v(sclk_pad) v(sdi_pad) v(sdo) v(clr_d)'
+    # linearize selects a new plot containing only its requested vectors.
+    # Preserve configuration/cause from the original transient before switching.
+    A('wrdata %s %s' % (os.path.join(BUILD, 'state_%s.txt' % tag), state_signals))
     A('linearize ' + waves)
     A('wrdata %s %s' % (os.path.join(BUILD, 'waves_%s.txt' % tag), waves))
-    state_signals = 'v(en_core) v(inrush_active) v(dig_trip) v(fast_en) v(cause1) v(cause0) ' + ' '.join('v(%s%d)' % (p, i) for p in ('soft', 'hard') for i in range(8))
-    A('wrdata %s %s' % (os.path.join(BUILD, 'state_%s.txt' % tag), state_signals))
     A('.endc')
     A('.end')
     return '\n'.join(L) + '\n'
@@ -835,6 +887,7 @@ def main():
             deck = deck.replace('.control\n', '.control\nset num_threads=%d\n' % a.threads, 1)
         if a.solver == 'klu':
             deck = deck.replace('.control\n', '.option klu\n.control\n', 1)
+        validate_exports(deck)
         deck_path = os.path.join(BUILD, tag + '.cir')
         with open(deck_path, 'w') as f:
             f.write(deck)
@@ -925,7 +978,15 @@ def main():
             decimate(waves, os.path.join(HERE, 'results', 'waves', tag + '.txt'), every)
         state_wave = os.path.join(BUILD, 'state_%s.txt' % tag)
         if os.path.exists(state_wave):
-            decimate(state_wave, os.path.join(HERE, 'results', 'waves', tag + '_state.txt'), every)
+            decimate(state_wave, os.path.join(HERE, 'results', 'waves', tag + '_state.txt'), every if os.path.exists(waves) else 1)
+        outcome['full_waveforms']={}
+        for source,kind in [(waves,'analog'),(state_wave,'state')]:
+            if os.path.exists(source):
+                with open(source,'rb') as f:data=f.read()
+                archive=os.path.join(HERE,'results','waves',tag+'_'+kind+'_full.txt.gz')
+                with open(archive,'xb') as f:f.write(gzip.compress(data,mtime=0))
+                outcome['full_waveforms'][kind]=dict(path=os.path.relpath(archive,ROOT),sha256=hashlib.sha256(data).hexdigest(),gzip_sha256=sha256(archive))
+        atomic_json(os.path.join(HERE,'logs',tag+'.json'),outcome)
         with open(os.path.join(HERE, 'results_top.txt'), 'a') as f:
             f.write('== %s | %s; analysis=%s | wall %.0f s, ngspice exit %s\n' % (tag, case['desc'], a.analysis, dt, returncode))
             for l in lines + err[:3]:

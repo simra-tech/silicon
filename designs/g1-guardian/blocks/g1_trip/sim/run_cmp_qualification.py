@@ -29,14 +29,17 @@ def main():
   net='\n'.join(converted+['.ends'])+'\n';fp_mos=['xm6','xm7','xm8','xm9','xm12','xm13','xm14','xm15']
  (out/'cmp.spice').write_text(net)
  assert (PDK/'COMMIT').read_text().strip()=='84374023ee8b4b126bebbba67fcbada0a9c0ff0b'
- prov={'arguments':sys.argv[1:],'image_id':a.image_id,'pdk_commit':(PDK/'COMMIT').read_text().strip(),'ngspice':subprocess.check_output(['ngspice','--version'],text=True),'source_hashes':{str(x.relative_to(ROOT)):sha(x) for x in [src,Path(__file__)]},'model_hashes':{str(x.relative_to(PDK)):sha(x) for x in (PDK/'libs.tech/ngspice/models').rglob('*') if x.is_file()},'steady_bisection':a.steady_bisection,'netlist':a.netlist,'nominal':a.nominal,'cell_pex_note':'Existing revision1 standalonecell extraction; all30MOS and109parasiticcaps retained. W/L/ng/m model convention matches existing macro converter; AS/AD/PS/PD omitted. Two6um input fingers per side, four4um tail fingers. Independent flags per physicalfinger, no cross-topology seed pairing. Surrounding macro routing not included.' if a.netlist=='cell-pex' else None,'scope':'Comparator schematic all MOS mismatch flags1; input staircase with 1pF and declared equal source resistances. Both inputs change symmetrically around true average common mode. Sample20ns after10MHz strobe. Frozen random parameters across temperature/common mode; no reset between conditions. Not loaded SENSE/DAC chain or PEX.'}
+ prov={'arguments':sys.argv[1:],'git_head':subprocess.check_output(['git','-c','safe.directory=/work','rev-parse','HEAD'],cwd=ROOT,text=True).strip(),'image_id':a.image_id,'pdk_commit':(PDK/'COMMIT').read_text().strip(),'ngspice':subprocess.check_output(['ngspice','--version'],text=True),'source_hashes':{str(x.relative_to(ROOT)):sha(x) for x in [src,Path(__file__)]},'model_hashes':{str(x.relative_to(PDK)):sha(x) for x in (PDK/'libs.tech/ngspice/models').rglob('*') if x.is_file()},'steady_bisection':a.steady_bisection,'netlist':a.netlist,'nominal':a.nominal,'cell_pex_note':'Existing revision1 standalonecell extraction; all30MOS and109parasiticcaps retained. W/L/ng/m model convention matches existing macro converter; AS/AD/PS/PD omitted. Two6um input fingers per side, four4um tail fingers. Independent flags per physicalfinger, no cross-topology seed pairing. Surrounding macro routing not included.' if a.netlist=='cell-pex' else None,'scope':'Comparator schematic all MOS mismatch flags1; input staircase with 1pF and declared equal source resistances. Both inputs change symmetrically around true average common mode. Sample20ns after10MHz strobe. Frozen random parameters across temperature/common mode; no reset between conditions. Not loaded SENSE/DAC chain; extraction scope recorded separately by netlist/cell_pex_note.'}
  (out/'provenance.json').write_text(json.dumps(prov,indent=2)+'\n');summary=[]
  diffs=[(-a.range_mv+i*a.step_mv)*.001 for i in range(round(2*a.range_mv/a.step_mv)+1)];pwl=[]
  for i,d in enumerate(diffs):
   if i:pwl.append(f'{i*100e-9-1e-9:.15g} {diffs[i-1]:.15g}')
   pwl.append(f'{i*100e-9:.15g} {d:.15g}')
  end=(len(diffs)-1)*100e-9+90e-9
- for seed in map(int,a.seeds.split(',')):
+ seed_list=list(map(int,a.seeds.split(',')))
+ for seed_index,seed in enumerate(seed_list):
+  if (out/'PAUSE_REQUESTED').exists():
+   (out/'not_run.json').write_text(json.dumps({'reason':'campaign stop marker before next seed; see PAUSE_REQUESTED for owner or scheduler reason','seeds':seed_list[seed_index:]},indent=2)+'\n');print('PAUSED before seed',seed,flush=True);break
   base=f'''* Fine symmetric comparator staircase
 .lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerMOSlv.lib mos_tt_mismatch
 .temp25
@@ -84,7 +87,7 @@ Cqb qb 0 10f
   ctl+=['echo QUALIFICATION_END','quit 0'];name=f'seed{seed}';dp=out/(name+'.cir');dp.write_text(base+'.control\n'+'\n'.join(ctl)+'\n.endc\n.end\n')
   with (out/(name+'.log')).open('x') as log:state=run_bounded(['ngspice','-b',str(dp.relative_to(SIM))],log,out/(name+'.json'),300,cwd=SIM,metadata={'seed':seed,'deck_sha256':sha(dp)},interval_s=.5)
   log=(out/(name+'.log')).read_text();errors=[l for l in log.splitlines() if re.search(r'(?i)(^error|timestep too small|doAnalyses:|no such)',l)];fps=[re.findall(r'^(@[^=]+) = (\S+)',x,re.M) for x in log.split('FINGERPRINT ')[1:]]
-  r={'seed':seed,'wall_s':state['wall_s'],'watchdog_status':state['status'],'returncode':state['returncode'],'errors':errors,'fingerprints':fps,'frozen_fingerprints':bool(fps) and len(fps[0])==4*len(fp_mos) and all(f==fps[0] for f in fps),'cases':[]}
+  r={'seed':seed,'wall_s':state['wall_s'],'watchdog_status':state['status'],'returncode':state['returncode'],'errors':errors,'fingerprints':fps,'expected_fingerprint_blocks':len(cases),'observed_fingerprint_blocks':len(fps),'frozen_fingerprints':len(fps)==len(cases) and bool(fps) and len(fps[0])==4*len(fp_mos) and all(f==fps[0] for f in fps),'cases':[]}
   for tag,temp,cm,wave in cases:
    row={'tag':tag,'temp_C':temp,'average_CM_V':cm,'status':'not run'}
    if a.steady_bisection:
@@ -106,6 +109,6 @@ Cqb qb 0 10f
      row.update(ambiguity_interval_V=[diffs[first-1],diffs[lastlow+1]] if first is not None and first>0 and lastlow is not None and lastlow+1<len(diffs) else None,status='passed',sampled_q_V=qs,monotonic_decisions=all(not a or b for a,b in zip(highs,highs[1:])),bracketed=first is not None and first>0 and all(highs[first:]),crossing_bracket_V=[diffs[first-1],diffs[first]] if first is not None and first>0 else None)
    r['cases'].append(row)
   r['status']='passed' if state['returncode']==0 and not errors and all(c['status']=='passed' for c in r['cases']) and 'QUALIFICATION_END' in log else 'failed'
-  if state['status']=='timeout':r['status']='not run to completion'
+  if state['status'] in ['timeout','interrupted']:r['status']='not run to completion'
   summary.append(r);(out/'summary.json').write_text(json.dumps(summary,indent=2)+'\n');print(name,r['status'],round(r['wall_s'],2),r['frozen_fingerprints'],flush=True)
 if __name__=='__main__':main()

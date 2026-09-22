@@ -11,3 +11,5 @@ Initial six cases failed parsing because primitive-M instances were used for PDK
 Tight-tolerance late-EN tests (`...171148Z_1bab10f8`) **fail numerically** near9.05389µs at `vh#branch` or `vf#branch`; arming acceptance is not run to completion. The nominal4A vendor-FET test (`fet_20260921T171147Z_a602296e`) **fails numerically** at5.82444µs at `xfet.10`. Thus no completed active-load timing or qualified arming evidence exists for this candidate. Do not adopt it from the EN-low passes.
 
 No candidate layout, DRC, LVS, extracted parasitics, mismatch campaign, EM/ESD or full integrated verification has run. Delivered padframe and GATE design remain unchanged. `run_power_campaign.py --pad buffered_analog` and `run_fet_campaign.py --pad buffered_analog` preserve a per-run candidate source snapshot. Default `--pad out` continues to use the original output pad.
+
+See [2026-09-22 diagnostics](DIAGNOSTICS_20260922.md) for the isolated driver passes, unchanged single-diode reproducer and retained failures. Candidate remains unadopted.

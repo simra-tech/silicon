@@ -159,3 +159,39 @@ expected number of failures for the full ring. No new dummy-specific mismatch
 was established, and no conclusion of dummy equivalence follows. Production
 adoption remains blocked by this full IO failure, the disposition requirements
 above, and outstanding electrical/ESD/power-sequence checks.
+
+## Independent tap electrical-reference semantics — 2026-09-22
+
+A new read-only audit pins the public PCell callback, technology constants,
+stock SPICE/CDL, raw-geometry audit and electrical model in
+[io-tap-reference-semantics-20260922-r1/summary.json](io-tap-reference-semantics-20260922-r1/summary.json).
+The unchanged `CbTapCalc` defines `R = 1 / (A/raspec + P/rpspec)`;
+`ptap1_raspec=980 ohm*um²`, `ptap1_rpspec=980 ohm*um`. The ngspice `ptap1`
+model uses suppliedR directly; its source says schematic capture calculatesR.
+Thus area and perimeter carry electrical meaning in the public PCell model.
+
+| Cell | Stock SPICE R | R from stock CDL A/P | Conditional R from raw guard geometry |
+|---|---:|---:|---:|
+| SecondaryProtection | 46.556 ohm | 46.55582 ohm | 15.76820 ohm |
+| Clamp_N20N0D | 11.438 ohm | 11.43778 ohm | 2.55306 ohm |
+| Clamp_P20N0D | 9.826 ohm | 9.82614 ohm | 2.12418 ohm |
+| DCNDiode | 5.191 ohm | 5.19087 ohm | 2.69931 ohm |
+| DCPDiode | 17.289 ohm | 17.28883 ohm | 4.24922 ohm |
+
+The CDL equivalent-square perimeter and stock SPICE resistance agree within
+0.003%. Applying the same formula to raw guard geometry gives1.92–4.63times
+lowerR, but that last column is an inference: the rectangular PCell's model
+validity for arbitrary guard-ring geometry has not been established. It is
+not a validated replacement resistance.
+
+This strengthens the disposition boundary. The reference perimeter is not
+merely harmless comparison metadata: rewriting it alone would create a
+mismatch between reference geometry and its existing electrical-model intent.
+Neither a reference rewrite nor a physical guard-ring change is justified by
+this audit. Independent guard-ring parameter/model intent and library
+reconciliation remain required. No PDK/model/rule changes, production adoption,
+new LVS rerun, or external message was performed for this read-only check.
+
+```sh
+G1_CPUS=1 flow/run.sh python3 designs/g1-guardian/review/audits/audit_tap_reference_semantics.py --output build/scratch/io-tap-reference-repeat
+```

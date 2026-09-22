@@ -1,0 +1,116 @@
+{
+  "scope": "Read-only independent PCell/reference semantic audit; not electrical validation of arbitrary guard-ring geometry, not schematic rewrite, no LVS closure.",
+  "pdk_commit": "84374023ee8b4b126bebbba67fcbada0a9c0ff0b",
+  "inputs": {
+    "geometry_audit": {
+      "path": "designs/g1-guardian/review/audits/io-tap-geometry-20260921.json",
+      "sha256": "b5c6632719479575ec3c4db257c42b8f95c947c886d3a84cedcb63e370e153a5"
+    },
+    "tech": {
+      "path": "libs.tech/klayout/python/sg13g2_pycell_lib/sg13g2_tech.json",
+      "sha256": "dd12fd60a1141478155ed0fdc26e2b50861d46d75b3bcaac215a20f7a9c646c9"
+    },
+    "utility": {
+      "path": "libs.tech/klayout/python/sg13g2_pycell_lib/ihp/utility_functions.py",
+      "sha256": "0d5c287ede8decd8b69c8f94bfe72231758e607c02b64650951fcb5be269c861"
+    },
+    "pcell": {
+      "path": "libs.tech/klayout/python/sg13g2_pycell_lib/ihp/ptap1_code.py",
+      "sha256": "f2772537417ee992a5ecea8539f5e96732b38c086826b16c8a21eb1a1096f500"
+    },
+    "cdl": {
+      "path": "libs.ref/sg13g2_io/cdl/sg13g2_io.cdl",
+      "sha256": "7a30e902099e8a8f85e0ae853167904df3793357a793a7b4dc82237b72b3eec4"
+    },
+    "spice": {
+      "path": "libs.ref/sg13g2_io/spice/sg13g2_io.spi",
+      "sha256": "1d53ab7df431b717ef5aff43e1117c0224681d5cc84886da37a319280ee958d6"
+    },
+    "electrical_model": {
+      "path": "libs.tech/ngspice/models/resistors_mod.lib",
+      "sha256": "7c77da0c0419c8a332550da3f934f530262bd452734090db827b68ff88d09c43"
+    },
+    "tap_extraction": {
+      "path": "libs.tech/klayout/tech/lvs/rule_decks/tap_extraction.lvs",
+      "sha256": "e17c779eacdcab3bfa2287ca265d7836dde0e9e7fec4b4e7bf79bf2b2dd9120b"
+    }
+  },
+  "formula": "R=1/(A/raspec+P/rpspec), with A inum\u00b2,P inum; publicCbTapCalc function",
+  "raspec_ohm_um2": 980.0000000000001,
+  "rpspec_ohm_um": 980.0,
+  "rows": [
+    {
+      "cell": "sg13g2_SecondaryProtection",
+      "stock_spice": "XR1 minus sub! ptap1 R=46.556",
+      "stock_R_ohm": 46.556,
+      "stock_CDL_A_um2": 9.03,
+      "stock_CDL_P_um": 12.019999999999998,
+      "CDL_formula_R_ohm": 46.55581947743468,
+      "CDL_formula_relative_to_stock_error": -3.877535984964098e-06,
+      "raw_geometry_A_um2": 9.0304,
+      "raw_geometry_P_um": 53.120000000000005,
+      "geometry_formula_R_ohm_conditional": 15.768201009164864,
+      "stock_over_geometry_formula_R": 2.9525245126530613,
+      "square_perimeter_relative_error": 1.384273681903636e-06
+    },
+    {
+      "cell": "sg13g2_Clamp_N20N0D",
+      "stock_spice": "XR1 iovss sub! ptap1 R=11.438",
+      "stock_R_ohm": 11.438,
+      "stock_CDL_A_um2": 55.801,
+      "stock_CDL_P_um": 29.88,
+      "CDL_formula_R_ohm": 11.43777500262602,
+      "CDL_formula_relative_to_stock_error": -1.9671041613933404e-05,
+      "raw_geometry_A_um2": 55.773599999999995,
+      "raw_geometry_P_um": 328.08,
+      "geometry_formula_R_ohm_conditional": 2.553056686194945,
+      "stock_over_geometry_formula_R": 4.480119874285714,
+      "square_perimeter_relative_error": -8.960416910674951e-07
+    },
+    {
+      "cell": "sg13g2_Clamp_P20N0D",
+      "stock_spice": "XR1 iovss sub! ptap1 R=9.826",
+      "stock_R_ohm": 9.826,
+      "stock_CDL_A_um2": 66.994,
+      "stock_CDL_P_um": 32.74,
+      "CDL_formula_R_ohm": 9.826137525818678,
+      "CDL_formula_relative_to_stock_error": 1.3996114255787617e-05,
+      "raw_geometry_A_um2": 67.03439999999999,
+      "raw_geometry_P_um": 394.32,
+      "geometry_formula_R_ohm_conditional": 2.1241804564993854,
+      "stock_over_geometry_formula_R": 4.625784014693878,
+      "square_perimeter_relative_error": 1.679253448738649e-06
+    },
+    {
+      "cell": "sg13g2_DCNDiode",
+      "stock_spice": "XR0 anode sub! ptap1 R=5.191",
+      "stock_R_ohm": 5.191,
+      "stock_CDL_A_um2": 141.253,
+      "stock_CDL_P_um": 47.53999999999999,
+      "CDL_formula_R_ohm": 5.190870424221238,
+      "CDL_formula_relative_to_stock_error": -2.496162179965733e-05,
+      "raw_geometry_A_um2": 141.2964,
+      "raw_geometry_P_um": 221.76,
+      "geometry_formula_R_ohm_conditional": 2.6993051217386608,
+      "stock_over_geometry_formula_R": 1.923087522857143,
+      "square_perimeter_relative_error": 7.964429440399101e-07
+    },
+    {
+      "cell": "sg13g2_DCPDiode",
+      "stock_spice": "XR0 guard sub! ptap1 R=17.289",
+      "stock_R_ohm": 17.289,
+      "stock_CDL_A_um2": 33.524,
+      "stock_CDL_P_um": 23.16,
+      "CDL_formula_R_ohm": 17.288829299273164,
+      "CDL_formula_relative_to_stock_error": -9.873371903390549e-06,
+      "raw_geometry_A_um2": 33.5104,
+      "raw_geometry_P_um": 197.12,
+      "geometry_formula_R_ohm_conditional": 4.249222999222999,
+      "stock_over_geometry_formula_R": 4.0687438628571435,
+      "square_perimeter_relative_error": 1.4914676862431975e-06
+    }
+  ],
+  "CDL_SPICE_same_equivalent_square_model": "passed",
+  "geometry_electrical_model_validity": "not run: applying rectangle-PCell A/P equation to arbitrary guard rings is a conditional inference",
+  "full_IO_LVS": "failed; unchanged prior result"
+}

@@ -30,5 +30,5 @@ complete=[r for r in rows if 'maximum_abs_residual_C' in r]
 if complete:summary['worst_sample']=max(complete,key=lambda r:r['maximum_abs_residual_C'])
 (ROOT/f'mc{args.samples}_summary.json').write_text(json.dumps(summary,indent=2)+'\n')
 with (ROOT/f'mc{args.samples}_samples.csv').open('w') as f:
- writer=csv.DictWriter(f,fieldnames=sorted({k for row in rows for k in row}));writer.writeheader();writer.writerows(rows)
+ writer=csv.DictWriter(f,lineterminator="\n",fieldnames=sorted({k for row in rows for k in row}));writer.writeheader();writer.writerows(rows)
 print(json.dumps(summary,indent=2))

@@ -1,0 +1,107 @@
+* G1_TRIP kickback: real source (G1_SENSE output through the conditioning divider) and real DAC tap,
+* both comparators clocked (soft on cmp_clk, hard on its inverse), 10 MHz. Soft threshold code 153
+* (30.0 mV shunt), shunt input set 0.045 so the soft comparator sits at/near its threshold.
+.param VDDA=3.3 VDD=1.2 VREF=1.04
+.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerMOSlv.lib mos_tt_mismatch
+.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerMOShv.lib mos_tt_mismatch
+.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerRES.lib res_typ_mismatch
+.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerCAP.lib cap_typ_mismatch
+.temp 125.0
+* the off switches leave the mux tree nodes floating at DC: give the solver a 1 TOhm path per node
+.option rshunt=1e12 gmin=1e-13
+.include qualification/joint-calibrated-smoke-b2-20260921-a-s71012-p20/sense.spice
+.include qualification/joint-calibrated-smoke-b2-20260921-a-s71012-p20/trip.spice
+Vdda vdda 0 dc {VDDA}
+Vdd vdd 0 dc {VDD}
+Vsh shp 0 dc 0.045
+XS shp 0 vref iptat isense vped vref_buf vdda 0 g1_sense
+CL isense 0 300f
+* soft code 153 = 1001 1001b (30.0 mV) ; hard code 254 = 1111 1110b (49.8 mV)
+Vs0 s0 0 dc 0
+Vs1 s1 0 dc 0
+Vs2 s2 0 dc 0
+Vs3 s3 0 dc 1.2
+Vs4 s4 0 dc 1.2
+Vs5 s5 0 dc 1.2
+Vs6 s6 0 dc 0
+Vs7 s7 0 dc 1.2
+Vh0 h0 0 dc 1.2
+Vh1 h1 0 dc 1.2
+Vh2 h2 0 dc 1.2
+Vh3 h3 0 dc 1.2
+Vh4 h4 0 dc 1.2
+Vh5 h5 0 dc 1.2
+Vh6 h6 0 dc 1.2
+Vh7 h7 0 dc 1.2
+Vclk clk 0 pulse(0 1.2 20n 0.2n 0.2n 50n 100n)
+XT isense vref_buf clk s0 s1 s2 s3 s4 s5 s6 s7 h0 h1 h2 h3 h4 h5 h6 h7 cmp_soft cmp_hard vdd vdda 0 g1_trip
+Cs cmp_soft 0 10f
+Ch cmp_hard 0 10f
+* keep only the nodes of interest (the full 1200-device transient exhausts the output memory)
+.save v(clk) v(vref) v(iptat) v(vref_buf) v(xt.icmp) v(xt.vth_soft) v(xt.vth_hard) v(cmp_soft) v(cmp_hard) v(isense)
+.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerHBT.lib hbt_typ_mismatch
+.include qualification/joint-calibrated-smoke-b2-20260921-a-s71012-p20/bgr.spice
+Vr4 r4 0 0
+Xbgr vdda 0 r4 vref iptat pbias pcasc vbe dvbe g1_bgr
+.global sub!
+Vsub sub! 0 0
+.option gmin=1e-15 abstol=1e-14 reltol=1e-5 vntol=1e-7
+.option reltol=1e-5 vntol=1e-7 abstol=1e-14
+.option method=gear
+.control
+set num_threads=1
+set numdgt=15
+set filetype=ascii
+setseed 71012
+reset
+op
+print v(xt.icmp) v(xt.vth_soft) v(xt.vth_hard)
+let dqsoft = v(xt.icmp)-v(xt.vth_soft)
+let dqhard = v(xt.icmp)-v(xt.vth_hard)
+echo QUIET $&dqsoft $&dqhard
+tran 0.2n 0.52u 0 0.2n
+let ds = v(xt.icmp)-v(xt.vth_soft)
+let dh = v(xt.icmp)-v(xt.vth_hard)
+meas tran ds_pre find ds at=4.198e-07
+meas tran ds_kick find ds at=4.21e-07
+meas tran ds_sample find ds at=4.4e-07
+meas tran qs_sample find v(cmp_soft) at=4.4e-07
+meas tran dh_pre find dh at=4.7e-07
+meas tran dh_kick find dh at=4.712e-07
+meas tran dh_sample find dh at=4.902e-07
+meas tran qh_sample find v(cmp_hard) at=4.902e-07
+echo SAMPLE_PARAMETERS
+print @n.xs.xota.xm1.nsg13_hv_pmos[w]
+print @n.xs.xota.xm1.nsg13_hv_pmos[l]
+print @n.xs.xota.xm1.nsg13_hv_pmos[delvto]
+print @n.xs.xota.xm1.nsg13_hv_pmos[factuo]
+print @n.xs.xref.xm1.nsg13_hv_pmos[w]
+print @n.xs.xref.xm1.nsg13_hv_pmos[l]
+print @n.xs.xref.xm1.nsg13_hv_pmos[delvto]
+print @n.xs.xref.xm1.nsg13_hv_pmos[factuo]
+print @n.xt.xdacs.xms7_0a.nsg13_hv_nmos[w]
+print @n.xt.xdacs.xms7_0a.nsg13_hv_nmos[l]
+print @n.xt.xdacs.xms7_0a.nsg13_hv_nmos[delvto]
+print @n.xt.xdacs.xms7_0a.nsg13_hv_nmos[factuo]
+print @n.xt.xdach.xms7_0a.nsg13_hv_nmos[w]
+print @n.xt.xdach.xms7_0a.nsg13_hv_nmos[l]
+print @n.xt.xdach.xms7_0a.nsg13_hv_nmos[delvto]
+print @n.xt.xdach.xms7_0a.nsg13_hv_nmos[factuo]
+print @n.xt.xcs.xm1.nsg13_lv_nmos[w]
+print @n.xt.xcs.xm1.nsg13_lv_nmos[l]
+print @n.xt.xcs.xm1.nsg13_lv_nmos[delvto]
+print @n.xt.xcs.xm1.nsg13_lv_nmos[factuo]
+print @n.xt.xch.xm1.nsg13_lv_nmos[w]
+print @n.xt.xch.xm1.nsg13_lv_nmos[l]
+print @n.xt.xch.xm1.nsg13_lv_nmos[delvto]
+print @n.xt.xch.xm1.nsg13_lv_nmos[factuo]
+print @n.xbgr.xm34.nsg13_hv_nmos[delvto]
+print @n.xbgr.xr16.nr1[nsmm_rsh]
+print @q.xbgr.xq56.qnpn13g2[area]
+set wr_singlescale
+set wr_vecnames
+wrdata qualification/joint-calibrated-smoke-b2-20260921-a-s71012-p20/hard_+0mV.dat v(clk) v(xt.icmp) v(xt.vth_soft) v(xt.vth_hard) v(cmp_soft) v(cmp_hard) v(isense)
+echo QUALIFICATION_END
+quit 0
+.endc
+.end

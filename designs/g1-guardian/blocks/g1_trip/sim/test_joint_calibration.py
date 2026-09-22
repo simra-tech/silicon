@@ -19,6 +19,14 @@ class CalibrationArithmetic(unittest.TestCase):
   self.assertEqual(r['signed_correction_codes']['soft'],127)
   self.assertEqual(r['corrected_codes'],{'soft':255,'hard':255})
   self.assertTrue(all(r['clipped'].values()))
+ def test_supported_hard_setting_reuses_same_independent_correction(self):
+  brackets={'soft':[145,146],'hard':[163,164]}
+  baseline=calibration_codes(brackets)
+  supported=calibration_codes(brackets,hard_nominal_code=204)
+  self.assertEqual(supported['signed_correction_codes'],baseline['signed_correction_codes'])
+  self.assertEqual(supported['corrected_codes'],{'soft':171,'hard':240})
+  self.assertFalse(supported['clipped']['hard'])
+  self.assertTrue(baseline['clipped']['hard'])
 class RecoveryArguments(unittest.TestCase):
  def test_only_run_and_watchdog_metadata_may_change(self):
   old=['--run-id','old','--seed','71002','--maxstep-ns','.2','--tight','--gear']

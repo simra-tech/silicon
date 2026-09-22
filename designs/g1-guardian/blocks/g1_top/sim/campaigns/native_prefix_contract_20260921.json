@@ -1,0 +1,31 @@
+{
+  "scope": "Deterministic4us CPEX/RTL startup prefix only; no MC or functional trip qualification",
+  "reference": "stream_20260921T165925Z_e2a0d65a",
+  "source_sha256": "4c784bc386d90cb8c0854efb3125fbe65149a1f9971392c4771b25056c41b308",
+  "candidate_image": "sha256:ab853b72c0b95f467d562afc77b09cfb7093a87910e26bf671ad46566dadd82e",
+  "candidate_ngspice": 47,
+  "endpoint_s": 4e-06,
+  "analog_max_difference_V": 0.001,
+  "analog_vectors": [
+    "v(vref)",
+    "v(iptat)",
+    "v(isense)",
+    "v(gate)",
+    "v(xtrip.icmp)",
+    "v(xtrip.vth_soft)",
+    "v(xtrip.vth_hard)"
+  ],
+  "edge_tolerance_s": 1e-09,
+  "digital_vectors": [
+    "v(osc_clk)",
+    "v(cmp_clk)",
+    "v(en_core)",
+    "v(dig_trip)",
+    "v(inrush_active)",
+    "v(fast_en)"
+  ],
+  "comparison": "Linear interpolation on archived reference timepoints; identical edge counts and corresponding0.6V crossings within1ns; identical source/card/RTL hashes. All checks required; no relaxation on failure.",
+  "timeout_s": 180,
+  "threads": 1,
+  "limitations": "Does not qualify MC sample identity, alternatePVT, fullfaultbehavior or native numerical accuracy generally. PDK model cards unchanged; OSDI binaries rebuilt forarchitecture."
+}

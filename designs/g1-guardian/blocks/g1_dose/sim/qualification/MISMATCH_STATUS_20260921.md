@@ -57,3 +57,9 @@ the same qualification path and a fresh run-id. Compare first27C fingerprints
 and waves to the corresponding nominal leaves; identical seed alone is not
 proof of the same physical draw if source/order/library changes. A summary
 analyzer and final100-sample report remain **not run/not written** at pause.
+
+## Resumed result — 2026-09-22
+
+The owner resumed execution. [The completed characterization](MISMATCH_20260922.md)
+now records100/100 nominal samples and5/5 selected hot anchors. The paused state
+above remains historical evidence, not the current campaign status.
