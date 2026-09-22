@@ -41,7 +41,10 @@ def main():
                  'declared_current_source_difference.diff', 'declared_current_deck_difference.diff',
                  'declared_monitor_output_difference.diff', 'declared_accounted_current_difference.diff',
                  'declared_terminal_metadata_output.diff', 'declared_terminal_ledger_output.diff',
-                 'declared_external_port_source.diff', 'declared_external_port_deck.diff'}
+                 'declared_external_port_source.diff', 'declared_external_port_deck.diff',
+                 'declared_supply_stage_source.diff', 'declared_supply_stage_deck.diff',
+                 'declared_rail_terminal_source.diff', 'declared_rail_terminal_deck.diff',
+                 'declared_watchdog_recovery_output.diff', 'original_failure_diagnosis.json'}
     for run in args.runs:
         # Do not resolve: source is a portable repository-relative run identity,
         # even when its directory is an ignored external-storage symlink.
