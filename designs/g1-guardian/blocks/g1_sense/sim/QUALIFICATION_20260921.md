@@ -262,3 +262,81 @@ candidate ensemble are **not run**. The residual requirement remains failed;
 this candidate is not adopted. A two-point inverse-square-root extrapolation
 cannot establish a statistical variance or guarantee that further area closes
 this requirement, particularly with the input-pair and other groups unchanged.
+
+## Combined main-OTA candidate, resumed session20260922
+
+The isolated `mc-gm2-matching16-comp2-selected-20260922-a` candidate doubles
+main input-pair width/finger count, multiplies folded-sink and upper-mirror W
+and L by4 (16×area at constantW/L), and doubles main Miller-capacitor area
+(46×23µm). Canonical sources/layout remain unchanged. The same three previously
+selected worst baseline seeds41022/41070/41064 complete108OP with frozen
+parameters and exact25°C return. Their19 observed unaffected buffer/resistor
+parameters match baseline; resized devices do not imply the same physical
+sample across different layouts.
+
+Residuals are0.4056mV passed,0.5180mV failed and0.5355mV failed, respectively.
+All gains remain within20±0.1. Main closed-loop input difference dominates the
+remaining two worst residuals; their pedestal contributions are only48.5µV
+and−2.0µV. These deliberately selected points are not an ensemble/yield result.
+
+`highrail-gm2-matching16-comp2-20260922-a` completes nominal3.3/3.6V AC/step:
+bandwidth2.905/3.018MHz, zero observed AC peaking, step overshoot0.696/0.934%.
+This passes the≥2MHz bandwidth screen; return-ratio phase margin, adverse
+corners, PEX and actualBGR/pad stability remain not run. Residual acceptance is
+still failed, so the candidate is not adopted. A bounded3×input-width follow-on
+with the same matching area and compensation is running on these three seeds.
+
+The follow-on3×input-width candidate with16×fold/mirror area completes all
+three selected samples with residuals0.3489/0.4580/0.4515mV, all below0.5mV.
+The2×Miller version has7.24/7.80% step overshoot. Screening3× and2.5×Miller
+versions selected2.5× as the next test candidate:2.775/2.886MHz bandwidth,
+1.66/2.01% overshoot and about311ns final1% settling at3.3/3.6V. The new
+`analyze_step_qualification.py` distinguishes final band entry from the existing
+first99% crossing measure. This remains a schematic candidate.
+
+`mc-gm3-matching16-comp2p5-smoke-20260922-a` completes20samples/720OP with
+zero numerical/gain/residual failures; worst residual0.386mV. All27 observed
+parameters remain frozen and returned25°C rows are exact. The analyzer also
+reports only points within average common mode[-0.1,0.3]V: the older SENSE_N
+fixture has21 such points plus6 outside-range diagnostic points/sample. The
+baseline100 still has43 failures after this range filter; none is dismissed.
+80 additional samples41021–41100 now run separately with51 observed parameters,
+including all resized folded/mirror devices. This is not100completed samples yet.
+
+Conditional main-feedback two-injection checks use the Tian et al. method
+([primary paper](https://kenkundert.com/docs/cd2001-01.pdf)); the arithmetic
+agrees with the preserved bilateral-RC anchor to2.37e−13 relative error. Other
+internal/pedestal/reference loops remain closed. Zero-source probe continuity
+matches unmodified DC points to numerical precision. BaselineTT conditional
+phase margin is70.12°; candidateTT65.88°, selectedSS/3.0V/−40°C/Cmax69.74°,
+and selectedFF/3.6V/125°C/Cmin61.60°. Four additional hot input-range endpoints
+give61.62–61.73°. Eachpasses the proposed conditional60° screen; no global
+stability, actualBGR/pad, PEX or layout qualification is claimed. Run IDs begin
+`loop-gm3-matching16-comp2p5-`; baseline refined precision is`loop-baseline-tt-20260922-b`.
+
+Partial final-candidate100 snapshot,`mc-gm3-matching16-comp2p5-progress-20260922-a`,
+contains62 completed samples and2232 OP rows with no solver/gain failures. It has
+one residual failure:41039 reaches0.5395mV at125°C, trueCM0.3V,shunt0V. The
+contributions at that point are main closed-loop input difference384.825µV,
+pedestal31.5µV and resistor-network remainder123.175µV. The0.5mV limit remains
+unchanged. Full100 continues; first20 success is not a full-campaign result.
+
+Postprocessing the preserved conditional return ratios gives minimum gain
+margin14.571dB over the candidate TT/cold/hot and four hot endpoint fixtures,
+versus16.605dB for baselineTT. All sampled negative-real crossings are retained
+in`conditional-gain-margin-20260922-a.json`; interpolation is on100points/decade.
+The same conditional-loop/ideal-reference/load scope and global-stability
+limitations apply. No additional simulation was performed for gain margins.
+
+`run_noise_qualification.py` is prepared but not run. Its declared scope is
+TT27°C3.3V25mVshunt/trueCM0 with idealVREF/PTAT and actual passive divider/hold
+load; it will not establish actualBGR/pad/clocked comparator noise. No allocated
+block noise acceptance limit exists in this evidence set.
+
+Final combined candidate100 completed before migration pause:100/100 numerical
+samples,3600 OP rows,zero gain/solver failures and **one residual failure41039,
+0.5395mV**. Both original27point and supported21point CM evaluations fail that
+sample. `mc-gm3-matching16-comp2p5-screen80-20260922-a/analysis.json` explicitly
+aggregates the20smoke and80extension; they are not duplicate samples. A gm4
+selected remedy and candidate actualBGR/PEX/layout/noise qualification remain
+not run. No canonical candidate adoption occurred.

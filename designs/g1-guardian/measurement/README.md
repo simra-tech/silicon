@@ -39,6 +39,14 @@ bandwidth, probe loading and current compliance must accompany results.
    permitted ramp, brownout and missing-rail response on a current-limited fixture
    before a load-energy test. Capture actual rail/GATE/FET VGS waveforms.
 
+Determine reference settling from the observed waveform and a declared error
+band before releasing EN. The selected simulated 10 nF VREF fixture needed
+about 7.35 ms at 27 °C and 7.84 ms at −40 °C to remain within 0.1% of its
+numerical DC value after a 1 ms supply ramp; its 125 °C startup did not complete.
+These are characterization results, not a guaranteed delay. The integrated
+functional fixture starts from solved DC and does not establish cold power-up
+settling. See [VREF dynamic evidence](../review/audits/VREF_PAD_DYNAMIC_20260922.md).
+
 ## Calibration and breaker tests
 
 1. Apply a traceable interior shunt voltage, initially 25 mV (1 A at nominal
@@ -73,6 +81,13 @@ VREF, IPTAT observables, oscillator trim/frequency, supply current and threshold
 residuals at each point. Compare the original linear calibration and any
 predeclared fixed correction separately; do not fit the verification points.
 Repeat selected cycles to expose hysteresis and package stress.
+
+Characterize VREF probe loading before treating its reading as the unloaded
+reference. The selected pad-inclusive simulation predicts about 9.07 mV of
+core-reference droop with a 10 MΩ load at 25 °C. Record the instrument's
+input resistance, bias/leakage and capacitance, and compare controlled loading
+states or a characterized buffer. A nominally high-impedance probe can alter
+the circuit being calibrated; see [pad loading evidence](../review/audits/VREF_PAD_LOADING_20260922.md).
 
 For HBT_E/B/C, use SMUs with explicit compliance and VCE≤1.6 V in normal tests.
 Record base/collector currents and local heating. Destructive breakdown testing,

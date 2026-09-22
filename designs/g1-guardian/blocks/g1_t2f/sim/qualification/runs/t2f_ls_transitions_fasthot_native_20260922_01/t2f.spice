@@ -1,0 +1,495 @@
+* G1_T2F post-layout netlist: kpex 2.5D extraction (--mode CC --blackbox true) of layout/g1_t2f.gds,
+* reformatted for ngspice by sim/postlayout/make_pex_netlist.py (see its docstring; no circuit content changed).
+.subckt g1_t2f vdd vdd12 vss pbias pcasc vref en mode fout
+XM1 vth moden vref vss sg13_hv_nmos l=0.5u w=4u as=1.36p ad=0.76p ps=8.68u pd=4.38u rfmode=0
+XM2 vr mode vth vss sg13_hv_nmos l=0.5u w=4u as=0.76p ad=1.36p ps=4.38u pd=8.68u rfmode=0
+XR3 vr n2 vss rppd w=0.5u l=24.5u b=0 m=1
+XR4 vss n11 vss rppd w=0.5u l=24.5u b=0 m=1
+XR5 n4 n2 vss rppd w=0.5u l=24.5u b=0 m=1
+XR6 n4 n5 vss rppd w=0.5u l=24.5u b=0 m=1
+XR7 n6 n7 vss rppd w=0.5u l=24.5u b=0 m=1
+XR8 n8 n7 vss rppd w=0.5u l=24.5u b=0 m=1
+XR9 n8 n9 vss rppd w=0.5u l=24.5u b=0 m=1
+XR10 n10 n9 vss rppd w=0.5u l=24.5u b=0 m=1
+XR11 n10 n11 vss rppd w=0.5u l=24.5u b=0 m=1
+XR12 n6 n5 vss rppd w=0.5u l=24.5u b=0 m=1
+XM13 cap1 d1g vss vss sg13_hv_nmos l=0.5u w=4u as=1.36p ad=1.36p ps=8.68u pd=8.68u rfmode=0
+XM14 cap2 d2g vss vss sg13_hv_nmos l=0.5u w=4u as=1.36p ad=1.36p ps=8.68u pd=8.68u rfmode=0
+XM15 fon lsb vdd12 vdd12 sg13_lv_pmos l=0.13u w=1u as=0.34p ad=0.34p ps=2.68u pd=2.68u rfmode=0
+XM16 fon lsb vss vss sg13_lv_nmos l=0.13u w=0.5u as=0.17p ad=0.17p ps=1.68u pd=1.68u rfmode=0
+XM17 fout fon vss vss sg13_lv_nmos l=0.13u w=1u as=0.34p ad=0.34p ps=2.68u pd=2.68u rfmode=0
+XM18 vdd12 lsb lsa vdd12 sg13_lv_pmos l=0.3u w=0.5u as=0.17p ad=0.095p ps=1.68u pd=0.88u rfmode=0
+XM19 lsb lsa vdd12 vdd12 sg13_lv_pmos l=0.3u w=0.5u as=0.095p ad=0.17p ps=0.88u pd=1.68u rfmode=0
+XM20 qn en vdd vdd sg13_hv_pmos l=0.5u w=2u as=0.68p ad=0.38p ps=4.68u pd=2.38u rfmode=0
+XM21 vdd q qn vdd sg13_hv_pmos l=0.5u w=2u as=0.38p ad=0.38p ps=2.38u pd=2.38u rfmode=0
+XM22 qn rn vdd vdd sg13_hv_pmos l=0.5u w=2u as=0.38p ad=0.68p ps=2.38u pd=4.68u rfmode=0
+XM23 nI973 en vss vss sg13_hv_nmos l=0.5u w=3u as=1.02p ad=0.57p ps=6.68u pd=3.38u rfmode=0
+XM24 nI974 q nI973 vss sg13_hv_nmos l=0.5u w=3u as=0.57p ad=0.57p ps=3.38u pd=3.38u rfmode=0
+XM25 qn rn nI974 vss sg13_hv_nmos l=0.5u w=3u as=0.57p ad=1.02p ps=3.38u pd=6.68u rfmode=0
+XM26 d2g en vdd vdd sg13_hv_pmos l=0.5u w=2u as=0.68p ad=0.38p ps=4.68u pd=2.38u rfmode=0
+XM27 vdd q d2g vdd sg13_hv_pmos l=0.5u w=2u as=0.38p ad=0.68p ps=2.38u pd=4.68u rfmode=0
+XM28 q qn vdd vdd sg13_hv_pmos l=0.5u w=2u as=0.68p ad=0.38p ps=4.68u pd=2.38u rfmode=0
+XM29 vdd sn q vdd sg13_hv_pmos l=0.5u w=2u as=0.38p ad=0.68p ps=2.38u pd=4.68u rfmode=0
+XM30 d1g en vdd vdd sg13_hv_pmos l=0.5u w=2u as=0.68p ad=0.38p ps=4.68u pd=2.38u rfmode=0
+XM31 vdd qn d1g vdd sg13_hv_pmos l=0.5u w=2u as=0.38p ad=0.68p ps=2.38u pd=4.68u rfmode=0
+XM32 cap2 d2g isrc vdd sg13_hv_pmos l=0.5u w=4u as=1.36p ad=1.36p ps=8.68u pd=8.68u rfmode=0
+XM33 rn c2 vdd vdd sg13_hv_pmos l=0.5u w=4u as=1.36p ad=1.36p ps=8.68u pd=8.68u rfmode=0
+XM34 sn c1 vdd vdd sg13_hv_pmos l=0.5u w=4u as=1.36p ad=1.36p ps=8.68u pd=8.68u rfmode=0
+XM35 cap1 d1g isrc vdd sg13_hv_pmos l=0.5u w=4u as=1.36p ad=1.36p ps=8.68u pd=8.68u rfmode=0
+XM36 tail1 nbias vss vss sg13_hv_nmos l=2u w=10u as=3.4p ad=1.9p ps=20.68u pd=10.38u rfmode=0
+XM37 vss nbias tail1 vss sg13_hv_nmos l=2u w=10u as=1.9p ad=3.4p ps=10.38u pd=20.68u rfmode=0
+XM38 tail2 nbias vss vss sg13_hv_nmos l=2u w=10u as=3.4p ad=1.9p ps=20.68u pd=10.38u rfmode=0
+XM39 vss nbias tail2 vss sg13_hv_nmos l=2u w=10u as=1.9p ad=3.4p ps=10.38u pd=20.68u rfmode=0
+XQ40 vss vss vss vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ41 vss vss vss vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ42 ca1 vth tail1 vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ43 cb2 cap2 tail2 vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ44 ca2 vth tail2 vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XQ45 cb1 cap1 tail1 vss npn13G2 we=0.07u le=0.9u Nx=1 m=1
+XM46 ob2 oa2 vdd vdd sg13_hv_pmos l=1u w=4u as=1.36p ad=1.36p ps=8.68u pd=8.68u rfmode=0
+XM47 oa2 oa2 vdd vdd sg13_hv_pmos l=1u w=4u as=1.36p ad=1.36p ps=8.68u pd=8.68u rfmode=0
+XM48 ob1 oa1 vdd vdd sg13_hv_pmos l=1u w=4u as=1.36p ad=1.36p ps=8.68u pd=8.68u rfmode=0
+XM49 oa1 oa1 vdd vdd sg13_hv_pmos l=1u w=4u as=1.36p ad=1.36p ps=8.68u pd=8.68u rfmode=0
+XM50 vss nbias ca1 vss sg13_hv_nmos l=2u w=0.5u as=0.17p ad=0.17p ps=1.68u pd=1.68u rfmode=0
+XM51 vss nbias ca2 vss sg13_hv_nmos l=2u w=0.5u as=0.17p ad=0.17p ps=1.68u pd=1.68u rfmode=0
+XM52 vss nbias cb2 vss sg13_hv_nmos l=2u w=0.5u as=0.17p ad=0.17p ps=1.68u pd=1.68u rfmode=0
+XM53 vss nbias cb1 vss sg13_hv_nmos l=2u w=0.5u as=0.17p ad=0.17p ps=1.68u pd=1.68u rfmode=0
+XM54 oa1 vcg ca1 vss sg13_hv_nmos l=1u w=2u as=0.68p ad=0.38p ps=4.68u pd=2.38u rfmode=0
+XM55 ca1 vcg oa1 vss sg13_hv_nmos l=1u w=2u as=0.38p ad=0.68p ps=2.38u pd=4.68u rfmode=0
+XM56 oa2 vcg ca2 vss sg13_hv_nmos l=1u w=2u as=0.68p ad=0.38p ps=4.68u pd=2.38u rfmode=0
+XM57 ca2 vcg oa2 vss sg13_hv_nmos l=1u w=2u as=0.38p ad=0.68p ps=2.38u pd=4.68u rfmode=0
+XM58 ob1 vcg cb1 vss sg13_hv_nmos l=1u w=2u as=0.68p ad=0.38p ps=4.68u pd=2.38u rfmode=0
+XM59 cb1 vcg ob1 vss sg13_hv_nmos l=1u w=2u as=0.38p ad=0.68p ps=2.38u pd=4.68u rfmode=0
+XM60 ob2 vcg cb2 vss sg13_hv_nmos l=1u w=2u as=0.68p ad=0.38p ps=4.68u pd=2.38u rfmode=0
+XM61 cb2 vcg ob2 vss sg13_hv_nmos l=1u w=2u as=0.38p ad=0.68p ps=2.38u pd=4.68u rfmode=0
+XM62 nbias nbias vss vss sg13_hv_nmos l=2u w=10u as=3.4p ad=3.4p ps=20.68u pd=20.68u rfmode=0
+XM63 sn c1 vss vss sg13_hv_nmos l=0.5u w=2u as=0.68p ad=0.68p ps=4.68u pd=4.68u rfmode=0
+XM64 rn c2 vss vss sg13_hv_nmos l=0.5u w=2u as=0.68p ad=0.68p ps=4.68u pd=4.68u rfmode=0
+XM65 moden mode vss vss sg13_hv_nmos l=0.5u w=1u as=0.34p ad=0.34p ps=2.68u pd=2.68u rfmode=0
+XM66 c1 ob1 vss vss sg13_hv_nmos l=0.5u w=1u as=0.34p ad=0.34p ps=2.68u pd=2.68u rfmode=0
+XM67 c2 ob2 vss vss sg13_hv_nmos l=0.5u w=1u as=0.34p ad=0.34p ps=2.68u pd=2.68u rfmode=0
+XM68 a d2g vss vss sg13_hv_nmos l=0.5u w=1u as=0.34p ad=0.34p ps=2.68u pd=2.68u rfmode=0
+XM69 nI961 en vss vss sg13_hv_nmos l=0.5u w=2u as=0.68p ad=0.38p ps=4.68u pd=2.38u rfmode=0
+XM70 d1g qn nI961 vss sg13_hv_nmos l=0.5u w=2u as=0.38p ad=0.68p ps=2.38u pd=4.68u rfmode=0
+XM71 vss a lsa vss sg13_hv_nmos l=0.5u w=2u as=0.68p ad=0.38p ps=4.68u pd=2.38u rfmode=0
+XM72 lsb d2g vss vss sg13_hv_nmos l=0.5u w=2u as=0.38p ad=0.68p ps=2.38u pd=4.68u rfmode=0
+XM73 nI962 en vss vss sg13_hv_nmos l=0.5u w=2u as=0.68p ad=0.38p ps=4.68u pd=2.38u rfmode=0
+XM74 d2g q nI962 vss sg13_hv_nmos l=0.5u w=2u as=0.38p ad=0.68p ps=2.38u pd=4.68u rfmode=0
+XM75 nI960 qn vss vss sg13_hv_nmos l=0.5u w=2u as=0.68p ad=0.38p ps=4.68u pd=2.38u rfmode=0
+XM76 q sn nI960 vss sg13_hv_nmos l=0.5u w=2u as=0.38p ad=0.68p ps=2.38u pd=4.68u rfmode=0
+XM77 c2 ob2 vdd vdd sg13_hv_pmos l=0.5u w=2u as=0.68p ad=0.68p ps=4.68u pd=4.68u rfmode=0
+XM78 a d2g vdd vdd sg13_hv_pmos l=0.5u w=2u as=0.68p ad=0.68p ps=4.68u pd=4.68u rfmode=0
+XM79 c1 ob1 vdd vdd sg13_hv_pmos l=0.5u w=2u as=0.68p ad=0.68p ps=4.68u pd=4.68u rfmode=0
+XM80 moden mode vdd vdd sg13_hv_pmos l=0.5u w=2u as=0.68p ad=0.68p ps=4.68u pd=4.68u rfmode=0
+XM81 dr pbias vdd vdd sg13_hv_pmos l=4u w=10u as=3.4p ad=1.9p ps=20.68u pd=10.38u rfmode=0
+XM82 vdd pbias dr vdd sg13_hv_pmos l=4u w=10u as=1.9p ad=3.4p ps=10.38u pd=20.68u rfmode=0
+XM83 dr pcasc vr dr sg13_hv_pmos l=4u w=10u as=3.4p ad=1.9p ps=20.68u pd=10.38u rfmode=0
+XM84 vr pcasc dr dr sg13_hv_pmos l=4u w=10u as=1.9p ad=3.4p ps=10.38u pd=20.68u rfmode=0
+XM85 vss vth vcg vcg sg13_hv_pmos l=2u w=2u as=0.68p ad=0.68p ps=4.68u pd=4.68u rfmode=0
+XM86 vcg pbias vdd vdd sg13_hv_pmos l=4u w=10u as=3.4p ad=3.4p ps=20.68u pd=20.68u rfmode=0
+XM87 nbias pcasc db db sg13_hv_pmos l=4u w=10u as=3.4p ad=3.4p ps=20.68u pd=20.68u rfmode=0
+XM88 db pbias vdd vdd sg13_hv_pmos l=4u w=10u as=3.4p ad=3.4p ps=20.68u pd=20.68u rfmode=0
+XM89 do pbias vdd vdd sg13_hv_pmos l=4u w=10u as=3.4p ad=3.4p ps=20.68u pd=20.68u rfmode=0
+XM90 isrc pcasc do do sg13_hv_pmos l=4u w=10u as=3.4p ad=3.4p ps=20.68u pd=20.68u rfmode=0
+XM91 fout fon vdd12 vdd12 sg13_lv_pmos l=0.13u w=2u as=0.68p ad=0.68p ps=4.68u pd=4.68u rfmode=0
+XC1 cap1 vss cap_cmim w=28u l=28u m=1
+XC2 cap2 vss cap_cmim w=28u l=28u m=1
+Cext_1 n10 n8 0.016f
+Cext_2 n10 vss 0.075f
+Cext_3 n10 vss 0.307f
+Cext_4 n11 n9 0.016f
+Cext_5 n11 mode 0.001f
+Cext_6 n11 vss 0.009f
+Cext_7 n11 vss 0.354f
+Cext_8 n2 n5 0.016f
+Cext_9 n2 cap2 0.001f
+Cext_10 n2 mode 0.001f
+Cext_11 n2 vr 0.037f
+Cext_12 n2 vss 0.008f
+Cext_13 n2 vss 0.354f
+Cext_14 n4 n6 0.016f
+Cext_15 n4 vr 0.02f
+Cext_16 n4 vss 0.058f
+Cext_17 n4 vss 0.307f
+Cext_18 n5 n7 0.016f
+Cext_19 n5 mode 0.001f
+Cext_20 n5 vr 0.002f
+Cext_21 n5 vss 0.007f
+Cext_22 n5 vss 0.341f
+Cext_23 n6 n8 0.016f
+Cext_24 n6 vr 0.001f
+Cext_25 n6 vss 0.058f
+Cext_26 n6 vss 0.307f
+Cext_27 n7 n9 0.016f
+Cext_28 n7 mode 0.001f
+Cext_29 n7 vr 0f
+Cext_30 n7 vss 0.007f
+Cext_31 n7 vss 0.341f
+Cext_32 n8 vr 0f
+Cext_33 n8 vss 0.058f
+Cext_34 n8 vss 0.307f
+Cext_35 n9 mode 0.001f
+Cext_36 n9 vss 0.007f
+Cext_37 n9 vss 0.341f
+Cext_38 nI960 q 0.12f
+Cext_39 nI960 qn 0.056f
+Cext_40 nI960 sn 0.056f
+Cext_41 nI960 vss 0.091f
+Cext_42 nI960 vss 0.035f
+Cext_43 nI961 d1g 0.12f
+Cext_44 nI961 en 0.056f
+Cext_45 nI961 qn 0.056f
+Cext_46 nI961 vss 0.091f
+Cext_47 nI961 vss 0.035f
+Cext_48 nI962 d2g 0.12f
+Cext_49 nI962 en 0.056f
+Cext_50 nI962 q 0.056f
+Cext_51 nI962 vss 0.091f
+Cext_52 nI962 vss 0.035f
+Cext_53 nI973 nI974 0.13f
+Cext_54 nI973 en 0.083f
+Cext_55 nI973 q 0.083f
+Cext_56 nI973 qn 0.046f
+Cext_57 nI973 vss 0.134f
+Cext_58 nI973 vss 0.047f
+Cext_59 nI974 d2g 0.001f
+Cext_60 nI974 q 0.101f
+Cext_61 nI974 qn 0.134f
+Cext_62 nI974 rn 0.101f
+Cext_63 nI974 vss 0.004f
+Cext_64 nI974 vss 0.047f
+Cext_65 a c2 0.03f
+Cext_66 a d2g 2.212f
+Cext_67 a en 0.001f
+Cext_68 a lsa 1.195f
+Cext_69 a lsb 0.012f
+Cext_70 a ob2 0.045f
+Cext_71 a q 0.006f
+Cext_72 a qn 0.084f
+Cext_73 a rn 0.297f
+Cext_74 a vdd 0.111f
+Cext_75 a vss 0.227f
+Cext_76 c1 d1g 0.03f
+Cext_77 c1 en 0.078f
+Cext_78 c1 oa1 0.002f
+Cext_79 c1 ob1 1.846f
+Cext_80 c1 q 0.002f
+Cext_81 c1 qn 0f
+Cext_82 c1 sn 1.722f
+Cext_83 c1 vdd 0.308f
+Cext_84 c1 vss 0.339f
+Cext_85 c2 d2g 0.261f
+Cext_86 c2 en 0.012f
+Cext_87 c2 lsa 0.137f
+Cext_88 c2 lsb 0.069f
+Cext_89 c2 oa2 0.004f
+Cext_90 c2 ob2 1.904f
+Cext_91 c2 rn 1.658f
+Cext_92 c2 vcg 0f
+Cext_93 c2 vdd 0.378f
+Cext_94 c2 vdd12 0.001f
+Cext_95 c2 vss 0.335f
+Cext_96 ca1 cb1 0.027f
+Cext_97 ca1 d1g 0.057f
+Cext_98 ca1 nbias 0.063f
+Cext_99 ca1 oa1 0.147f
+Cext_100 ca1 tail1 0.437f
+Cext_101 ca1 vcg 0.307f
+Cext_102 ca1 vdd 0.003f
+Cext_103 ca1 vss 0.367f
+Cext_104 ca1 vth 0.017f
+Cext_105 ca2 cb2 0.027f
+Cext_106 ca2 d2g 0.001f
+Cext_107 ca2 nbias 0.107f
+Cext_108 ca2 oa2 0.145f
+Cext_109 ca2 tail2 0.437f
+Cext_110 ca2 vcg 0.336f
+Cext_111 ca2 vss 0.541f
+Cext_112 ca2 vth 0.017f
+Cext_113 cap1 cap2 1.779f
+Cext_114 cap1 cb1 0.017f
+Cext_115 cap1 d1g 2.598f
+Cext_116 cap1 isrc 0.633f
+Cext_117 cap1 nbias 0.485f
+Cext_118 cap1 tail1 0.476f
+Cext_119 cap1 vdd 0.061f
+Cext_120 cap1 vss 9.385f
+Cext_121 cap1 vth 0.103f
+Cext_122 cap2 cb2 0.017f
+Cext_123 cap2 d2g 2.729f
+Cext_124 cap2 do 0.023f
+Cext_125 cap2 isrc 1.159f
+Cext_126 cap2 mode 0.067f
+Cext_127 cap2 moden 0.039f
+Cext_128 cap2 nbias 0.594f
+Cext_129 cap2 tail2 0.479f
+Cext_130 cap2 vdd 0.064f
+Cext_131 cap2 vr 0.033f
+Cext_132 cap2 vref 0.092f
+Cext_133 cap2 vss 8.545f
+Cext_134 cap2 vth 0.154f
+Cext_135 cb1 cb2 0.004f
+Cext_136 cb1 d2g 0.001f
+Cext_137 cb1 nbias 0.153f
+Cext_138 cb1 oa1 0.002f
+Cext_139 cb1 ob1 0.143f
+Cext_140 cb1 tail1 0.437f
+Cext_141 cb1 vcg 0.336f
+Cext_142 cb1 vss 0.538f
+Cext_143 cb2 d2g 0.001f
+Cext_144 cb2 nbias 0.164f
+Cext_145 cb2 oa2 0.002f
+Cext_146 cb2 ob2 0.143f
+Cext_147 cb2 tail2 0.437f
+Cext_148 cb2 vcg 0.336f
+Cext_149 cb2 vss 0.536f
+Cext_150 d1g d2g 0.051f
+Cext_151 d1g en 2.107f
+Cext_152 d1g isrc 1.287f
+Cext_153 d1g nbias 0.069f
+Cext_154 d1g oa1 0.097f
+Cext_155 d1g ob1 0.036f
+Cext_156 d1g q 0.006f
+Cext_157 d1g qn 1.919f
+Cext_158 d1g sn 0.12f
+Cext_159 d1g tail1 0.039f
+Cext_160 d1g vcg 0.028f
+Cext_161 d1g vdd 0.4f
+Cext_162 d1g vss 0.697f
+Cext_163 d1g vth 0.324f
+Cext_164 d2g do 0.152f
+Cext_165 d2g en 2.639f
+Cext_166 d2g fon 0.001f
+Cext_167 d2g fout 0f
+Cext_168 d2g isrc 1.278f
+Cext_169 d2g lsa 0.266f
+Cext_170 d2g lsb 0.777f
+Cext_171 d2g moden 0.008f
+Cext_172 d2g nbias 0.103f
+Cext_173 d2g oa1 0.023f
+Cext_174 d2g oa2 0.053f
+Cext_175 d2g ob1 0.151f
+Cext_176 d2g ob2 0.632f
+Cext_177 d2g pbias 0.075f
+Cext_178 d2g pcasc 0.188f
+Cext_179 d2g q 1.756f
+Cext_180 d2g qn 0.142f
+Cext_181 d2g rn 0.328f
+Cext_182 d2g sn 0.028f
+Cext_183 d2g vcg 0.146f
+Cext_184 d2g vdd 0.845f
+Cext_185 d2g vref 0f
+Cext_186 d2g vss 0.514f
+Cext_187 d2g vth 0.029f
+Cext_188 db dr 0.021f
+Cext_189 db nbias 0.118f
+Cext_190 db pbias 0.649f
+Cext_191 db pcasc 0.697f
+Cext_192 db vcg 0.051f
+Cext_193 db vdd 0.556f
+Cext_194 db vr 0.096f
+Cext_195 db vref 0.002f
+Cext_196 db vth 0.003f
+Cext_197 do dr 0.025f
+Cext_198 do isrc 0.128f
+Cext_199 do nbias 0.005f
+Cext_200 do pbias 0.679f
+Cext_201 do pcasc 0.715f
+Cext_202 do vcg 0.015f
+Cext_203 do vdd 0.531f
+Cext_204 do vth 0.003f
+Cext_205 dr nbias 0.041f
+Cext_206 dr pbias 1.03f
+Cext_207 dr pcasc 1.187f
+Cext_208 dr vcg 0.019f
+Cext_209 dr vdd 0.232f
+Cext_210 dr vr 0.21f
+Cext_211 dr vref 0.004f
+Cext_212 dr vth 0.006f
+Cext_213 en fon 0.001f
+Cext_214 en fout 0.964f
+Cext_215 en lsa 0.001f
+Cext_216 en lsb 0.001f
+Cext_217 en nbias 0.002f
+Cext_218 en oa1 0.001f
+Cext_219 en ob1 0.155f
+Cext_220 en ob2 0.015f
+Cext_221 en q 0.615f
+Cext_222 en qn 3.81f
+Cext_223 en rn 0.009f
+Cext_224 en sn 0.725f
+Cext_225 en vcg 0.001f
+Cext_226 en vdd 6.446f
+Cext_227 en vdd12 0.01f
+Cext_228 en vss 0.757f
+Cext_229 fon fout 0.216f
+Cext_230 fon lsa 0.001f
+Cext_231 fon lsb 0.28f
+Cext_232 fon vdd12 0.198f
+Cext_233 fon vss 0.128f
+Cext_234 fout lsb 0.007f
+Cext_235 fout vdd 0.491f
+Cext_236 fout vdd12 1.481f
+Cext_237 fout vss 0.168f
+Cext_238 isrc nbias 4.302f
+Cext_239 isrc pbias 0f
+Cext_240 isrc pcasc 0.567f
+Cext_241 isrc vdd 0.128f
+Cext_242 isrc vr 0.135f
+Cext_243 isrc vss 0.088f
+Cext_244 isrc vth 0.338f
+Cext_245 lsa lsb 2.913f
+Cext_246 lsa oa2 0f
+Cext_247 lsa ob2 0.524f
+Cext_248 lsa rn 0.149f
+Cext_249 lsa sn 0.002f
+Cext_250 lsa vdd 0.064f
+Cext_251 lsa vdd12 0.062f
+Cext_252 lsa vss 0.287f
+Cext_253 lsb ob2 0.163f
+Cext_254 lsb rn 0.603f
+Cext_255 lsb vdd 0.017f
+Cext_256 lsb vdd12 0.127f
+Cext_257 lsb vss 0.415f
+Cext_258 mode moden 2.689f
+Cext_259 mode vdd 0.056f
+Cext_260 mode vr 1.182f
+Cext_261 mode vref 0.004f
+Cext_262 mode vss 0.513f
+Cext_263 mode vth 1.038f
+Cext_264 moden vdd 0.09f
+Cext_265 moden vr 0.047f
+Cext_266 moden vref 1.038f
+Cext_267 moden vss 0.228f
+Cext_268 moden vth 1.04f
+Cext_269 nbias oa1 0.024f
+Cext_270 nbias oa2 0.062f
+Cext_271 nbias ob1 0.02f
+Cext_272 nbias ob2 0.02f
+Cext_273 nbias pbias 0f
+Cext_274 nbias pcasc 0.661f
+Cext_275 nbias tail1 0.989f
+Cext_276 nbias tail2 0.993f
+Cext_277 nbias vcg 0.571f
+Cext_278 nbias vdd 0.045f
+Cext_279 nbias vr 2.042f
+Cext_280 nbias vref 0.001f
+Cext_281 nbias vss 3.966f
+Cext_282 nbias vth 2.086f
+Cext_283 oa1 oa2 0.012f
+Cext_284 oa1 ob1 0.228f
+Cext_285 oa1 q 0.003f
+Cext_286 oa1 tail1 0f
+Cext_287 oa1 vcg 0.746f
+Cext_288 oa1 vdd 0.501f
+Cext_289 oa1 vss 0.001f
+Cext_290 oa2 ob1 0.008f
+Cext_291 oa2 ob2 0.287f
+Cext_292 oa2 rn 0.002f
+Cext_293 oa2 tail2 0f
+Cext_294 oa2 vcg 0.806f
+Cext_295 oa2 vdd 0.478f
+Cext_296 oa2 vss 0f
+Cext_297 ob1 ob2 0.052f
+Cext_298 ob1 q 0.283f
+Cext_299 ob1 qn 0.188f
+Cext_300 ob1 rn 0.002f
+Cext_301 ob1 sn 0.267f
+Cext_302 ob1 vcg 0.241f
+Cext_303 ob1 vdd 0.275f
+Cext_304 ob1 vss 0.186f
+Cext_305 ob2 qn 0.012f
+Cext_306 ob2 rn 0.064f
+Cext_307 ob2 vcg 0.232f
+Cext_308 ob2 vdd 0.302f
+Cext_309 ob2 vss 0.116f
+Cext_310 pbias pcasc 0.788f
+Cext_311 pbias vcg 1.841f
+Cext_312 pbias vdd 3.068f
+Cext_313 pbias vss 0.058f
+Cext_314 pcasc vcg 0.113f
+Cext_315 pcasc vdd 0.231f
+Cext_316 pcasc vr 1.021f
+Cext_317 pcasc vref 0.002f
+Cext_318 pcasc vss 0.057f
+Cext_319 pcasc vth 0.016f
+Cext_320 q qn 3.357f
+Cext_321 q rn 0.672f
+Cext_322 q sn 2.151f
+Cext_323 q vdd 0.369f
+Cext_324 q vss 0.323f
+Cext_325 qn rn 0.322f
+Cext_326 qn sn 1.179f
+Cext_327 qn vcg 0f
+Cext_328 qn vdd 0.556f
+Cext_329 qn vss 0.293f
+Cext_330 rn sn 0f
+Cext_331 rn vdd 0.259f
+Cext_332 rn vdd12 0.024f
+Cext_333 rn vss 0.289f
+Cext_334 sn vdd 0.472f
+Cext_335 sn vss 0.319f
+Cext_336 tail1 vcg 0.01f
+Cext_337 tail1 vss 0.62f
+Cext_338 tail1 vth 0.476f
+Cext_339 tail2 vcg 0.01f
+Cext_340 tail2 vss 0.607f
+Cext_341 tail2 vth 0.476f
+Cext_342 vcg vdd 0.337f
+Cext_343 vcg vref 0.003f
+Cext_344 vcg vss 0.167f
+Cext_345 vcg vth 0.249f
+Cext_346 vdd vdd12 0.319f
+Cext_347 vdd vr 0.167f
+Cext_348 vdd vref 0.553f
+Cext_349 vdd vss 6.473f
+Cext_350 vdd vth 0.327f
+Cext_351 vdd12 vss 0.103f
+Cext_352 vr vref 0.073f
+Cext_353 vr vss 0.157f
+Cext_354 vr vth 2.71f
+Cext_355 vref vss 0.083f
+Cext_356 vref vth 4.064f
+Cext_357 vss vth 0.606f
+Cext_358 vss a 0.967f
+Cext_359 vss c1 1.699f
+Cext_360 vss c2 1.803f
+Cext_361 vss ca1 0.612f
+Cext_362 vss ca2 0.574f
+Cext_363 vss cap1 9.156f
+Cext_364 vss cap2 10.06f
+Cext_365 vss cb1 0.546f
+Cext_366 vss cb2 0.534f
+Cext_367 vss d1g 4.211f
+Cext_368 vss d2g 6.438f
+Cext_369 vss db 1.295f
+Cext_370 vss do 1.578f
+Cext_371 vss dr 1.078f
+Cext_372 vss en 4.871f
+Cext_373 vss fon 0.787f
+Cext_374 vss fout 1.906f
+Cext_375 vss isrc 2.018f
+Cext_376 vss lsa 1.074f
+Cext_377 vss lsb 1.609f
+Cext_378 vss mode 4.116f
+Cext_379 vss moden 1.68f
+Cext_380 vss nbias 19.809f
+Cext_381 vss oa1 2.464f
+Cext_382 vss oa2 2.516f
+Cext_383 vss ob1 1.998f
+Cext_384 vss ob2 1.694f
+Cext_385 vss pbias 25.813f
+Cext_386 vss pcasc 21.699f
+Cext_387 vss q 1.926f
+Cext_388 vss qn 2.155f
+Cext_389 vss rn 1.747f
+Cext_390 vss sn 1.349f
+Cext_391 vss tail1 1.012f
+Cext_392 vss tail2 1.024f
+Cext_393 vss vcg 8.203f
+Cext_394 vss vdd 40.297f
+Cext_395 vss vdd12 3.284f
+Cext_396 vss vr 5.739f
+Cext_397 vss vref 2.187f
+Cext_399 vss vth 5.461f
+.ends g1_t2f

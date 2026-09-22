@@ -90,18 +90,18 @@ device currents in the nanoampere-to-microampere range for that reason.
 | Die | 1350 × 1350 µm incl. sealring | Specified | macro area budget, `PLAN.md` D13; QFN24 accepts up to 2 × 2 mm |
 | Package | QFN24, 4 × 4 mm, 0.5 mm pitch, 200 µm die | Specified | packaging offer |
 | Shunt sense range | 0 to 50 mV differential, low-side; `ISENSE` = 1.0 V pedestal + 20 × V<sub>shunt</sub>, i.e. 1.0 to 2.0 V | Specified | `blocks/g1_sense/README.md` (simulated gain 19.98 to 19.99, bandwidth 3.6 to 4.8 MHz) |
-| Trip response | <10 µs from a persistent hard fault outside the guard band to `GATE` <1.0 V; only after arming and outside the inrush mask, for declared settings/clock/load | Specified target | `HARD_N` counts decisions every 2 oscillator cycles; default N=4. Corrected integrated PEX fault verification not run to completion; see acceptance contract below |
+| Trip response | <10 µs from a persistent hard fault outside the guard band to `GATE` <1.0 V; only after arming and outside the inrush mask, for declared settings/clock/load | Specified target | `HARD_N` counts decisions every 2 oscillator cycles; default N=4. Nominal compact C-PEX/RTL anchor passed at simulated 1.40346 µs with ideal clock and fitted pad; broader coverage remains incomplete |
 | I²t window | 50 µs to 10 ms, programmable | Assumed | design target |
 | Hard threshold | 8-bit DAC code, 0.5 to 1.0 of the sense full scale (about 25 to 50 mV of shunt drop), programmable; nominal load current is mapped to 20 to 25 mV of the 50 mV range | Specified | `blocks/g1_trip/INTERFACE.md`; the earlier "1.5× to 8× nominal" was unreachable |
 | `TEMP_OUT` frequency | 1.59 MHz at 25 °C (simulated, PTAT mode), 5.2 kHz/°C; 1.2 to 2.4 MHz over −40 to 175 °C; ±15 % process spread before calibration | Specified (simulated) | `blocks/g1_t2f/README.md` |
-| Sensor accuracy | ±2 °C after two-point calibration, −40 to 125 °C; simulated post-layout residual −0.85 to +0.17 °C over −40 to 150 °C in PTAT mode (the frequency-ratio mode is less linear, +4.9 °C at 175 °C, and is a diagnostic, not the calibrated reading) | Specified (simulated) | `blocks/g1_t2f/README.md`; mismatch and package stress not simulated |
+| Sensor accuracy | ±2 °C after fixed per-sample two-point calibration, −40 to 125 °C | Specified target | Joint extracted mismatch subsets contain failures under the original linear calibration; alternative mappings remain unadopted. Historical nominal residual and beyond-range results do not establish mismatch or package-stress accuracy |
 | Characterisation range | 77 K to 175 °C | Assumed | package limits, not verified |
 | Sense-amp input offset | Residual <0.5 mV after calibration; revision-A simulated σ≈4 mV is historical, not revision-B qualification. Signed digital correction −128…127, ~0.196 mV/code; available range depends on threshold | Specified target | Code 254 permits only +1 step; see calibration contract. Joint calibrated rev-B MC not run to completion |
 | ELT NMOS | Experimental layout excluded from assembled chip | Not applicable to assembled chip | `blocks/g1_dose/README.md`; historical `Gat.f` failure retained |
 | Total power | <10 mW, sum of core, analog and IO rail input power, declared load/activity | Specified target | Full operating-state coverage not run |
-| BGR temperature coefficient | ≤50 ppm/°C over −40…125 °C | Specified target | Existing worst schematic corner exceeds target; failed subset retained |
+| BGR temperature coefficient | ≤50 ppm/°C over −40…125 °C | Specified target | Baseline qualified 100-sample screen has 54 failures; enlarged-array candidates also fail and remain unadopted |
 | SENSE gain / bandwidth | 20 ±0.1 / ≥2 MHz, common mode −0.1…+0.3 V | Specified target | Selected block results exist; complete corners and joint loaded PEX not run |
-| OSC trim reach | 10 MHz reachable by a code 0…15 at supported PVT | Specified target | Selected PEX results only; complete matrix not run |
+| OSC trim reach | 10 MHz reachable by a code 0…15 at supported PVT | Specified target | Screen contains a slow/hot 9.9748 MHz maximum failure; actual-receiver loading and expanded mismatch coverage remain incomplete |
 
 ## 5. Verification gates
 
@@ -113,12 +113,12 @@ facts, not claims that the closure campaigns have completed.
 | Gate | Scope | Status / remaining coverage |
 | --- | --- | --- |
 | Schematic simulation | Recorded nominal block cases | passed subsets; complete corner/load matrix not run |
-| Corner / mismatch | Historical block campaigns | passed subsets and failed BGR TC corner; qualified joint rev-B calibrated chain not run |
-| Temperature | Model-supported −40…125 °C | selected subsets passed; cold numerical failures retained; full joint PEX not run |
+| Corner / mismatch | Qualified block ensembles and joint calibration pilots | baseline SENSE residual failed 43/100 and BGR TC failed 54/100; joint pilots expose hard-code clipping; complete joint qualification remains incomplete |
+| Temperature | Model-supported −40…125 °C | joint extracted subsets completed with linear-calibration failures; numerical failures retained; 300-sample and adverse coverage incomplete |
 | Beyond-range temperature | 150/175 °C and 77 K | selected exploratory data only; qualification not applicable with nominal model extrapolation |
-| RTL / functional GLS | Recorded built 256 + 3×128 configuration | passed; timed GLS / expanded CDC campaign not run |
+| RTL / functional GLS | Recorded built 256 + 3×128 configuration | functional, expanded CDC and fault-injection subsets passed; missing-clock and unprotected-configuration hazards remain; timed GLS is unqualified because timing checks are unsupported |
 | Breaker co-simulation | Corrected-clock schematic cases | passed subsets; old clock-bridge timings invalid for acceptance |
-| Integrated PEX | OP, 1 µs, 4 µs prefixes | passed startup diagnostics; prior 10 µs watchdog not run to completion; configured fault acceptance not run |
+| Integrated PEX | OP, 1/4/10/24 µs prefixes and compact 28 µs configured fault | startup subsets and nominal compact hard-trip acceptance passed; historical interrupted runs retained; baseline-preamble equivalence and broader fault coverage incomplete |
 | Block DRC / LVS | Assembled macro versions | passed recorded checks; experimental ELT excluded |
 | Block PEX | Existing capacitance extraction and selected tests | passed subsets; full wire-R, fill coupling and statistical scaling not established |
 | Assembled hard DRC / precheck | 1350 µm final GDS | passed recorded checks |
@@ -127,8 +127,8 @@ facts, not claims that the closure campaigns have completed.
 | Antenna | Final assembly | failed; unresolved |
 | Core-only LVS | 52 matched circuit pairs | passed; excludes full IO-ring verification |
 | IO-inclusive LVS | Final assembly | failed; unresolved |
-| Streamout comparison | Final views | failed; unresolved differences |
-| Power-order safety | IO first, core absent, EN low | failed schematic GATE-high case, including 10 kΩ pulldown; expanded PEX sequences not run |
+| Streamout comparison | Delivered final views and separate candidate | delivered differences unresolved; scoped namespaced prefill comparison passed, final filled-view closure incomplete |
+| Power-order safety | IO first, core absent, EN low and expanded fixtures | original unsafe-high case failed; 216-case expanded screen has 156 passes, 22 failures and 38 timeouts; no general sequencing qualification |
 | Physical measurement / irradiation | No fabricated samples | not run |
 
 ## 6. Acceptance and calibration contract
@@ -160,7 +160,10 @@ for the remainder of the observed tripped interval. Measure external drain
 current decay and let-through energy separately. The existing fixture is a
 5 nF gate with 10 Ω series resistance and a switched synthetic load. A selected
 real FET model, board/package impedance and declared bus/load are required
-before claiming real-load safety. The existing nominal shunt fixture is 25 mΩ at 1 A (25 mV); fault
+before claiming real-load safety. Separate CSD16340Q3 model tests use explicitly
+assumed 5/12 V loads; no board BOM or operating bus was selected. Selected
+nominal cases complete, but the timestep-refinement ladder fails numerically
+at 250 ps and does not establish convergence. The existing nominal shunt fixture is 25 mΩ at 1 A (25 mV); fault
 profiles reach 3 A or 4 A (75/100 mV, above the specified 50 mV input range;
 these are fault-stress fixtures, not in-range accuracy tests). The `c_mid`
 fixture programs hard code 200 and applies 1.8 A/45 mV, above its 10% trip

@@ -1,0 +1,36 @@
+* G1_BGR standalone capacitance-PEX qualification
+.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerHBT.lib hbt_typ
+.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerMOShv.lib mos_tt
+.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerRES.lib res_typ
+.include ../pex_nominal.spice
+.option seed=42001 gmin=1e-15 abstol=1e-14 reltol=1e-5 vntol=1e-7
+.global sub!
+Vsub sub! 0 0
+Vdd vdd 0 pwl(0 0 1m 3.3 20m 3.3)
+Vr4 r4 0 0
+Xbgr vdd 0 r4 vref iptat pbias pcasc vbe dvbe g1_bgr
+Vload iptat 0 1
+Cload vref 0 1e-12
+.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerMOSlv.lib mos_tt
+.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerCAP.lib cap_typ
+.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerDIO.lib dio_tt
+.include /foss/pdks/ihp-sg13g2/libs.ref/sg13g2_io/spice/sg13g2_io.spi
+Vdigital vd 0 pwl(0 0 1m 1.2 20m 1.2)
+XP pad padres vd 0 vdd 0 sg13g2_IOPadAnalog
+Rroute vref route_end 613.3424975252701
+Vmeasure route_end padres 0
+CRa vref 0 3.894078648125e-14
+CRb padres 0 3.894078648125e-14
+Cboard pad 0 10n
+.temp 27.0
+.control
+set num_threads=1
+set numdgt=15
+set wr_singlescale
+set wr_vecnames
+tran 1u 20m 0 1u uic
+wrdata wave.tsv v(vref) v(padres) v(pad) v(vdd) i(vmeasure) i(vload) i(vdd) i(vdigital)
+echo VREF_DYNAMIC_END
+quit 0
+.endc
+.end

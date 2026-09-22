@@ -35,6 +35,6 @@ for group in sorted({r['group'] for r in rows}):
  ss=[s for s in samples if s['group']==group];rr=[r for r in rows if r['group']==group and r['role']=='independent'];groups[group]={'samples':len(ss),'independent_points':len(rr),'failed_samples':sum(s['failed_points']>0 for s in ss),'failed_points':sum(r['status']=='failed' for r in rr),'maximum_abs_residual_C':max((abs(r['residual_C']) for r in rr if 'residual_C' in r),default=None)}
 for name,data in [(stem+'_points.csv',rows),(stem+'_samples.csv',samples)]:
  with (HERE/name).open('w') as f:
-  writer=csv.DictWriter(f,fieldnames=sorted({k for r in data for k in r}));writer.writeheader();writer.writerows(data)
+  writer=csv.DictWriter(f,lineterminator="\n",fieldnames=sorted({k for r in data for k in r}));writer.writeheader();writer.writerows(data)
 summary={'equation_freeze':frozen,'groups':groups,'status':'unadopted physical-model candidate; original linear and nominal-LUT results unchanged','selection_context':'Physical model chosen after reviewing linear-error/reference-drift diagnostics. Equation frozen before expanded reciprocal errors were computed; expanded cohort is not represented as a wholly blind model-selection holdout.','limitations':'No ensemble regression or additional calibration point. Typical-process nominal-rail samples only; supply policy, process extremes, nonlinear PDK effects and packaged calibration require independent validation. No clamping of inferred temperature.'}
 (HERE/(stem+'.json')).write_text(json.dumps(summary,indent=2)+'\n');print(json.dumps(summary,indent=2))
