@@ -1,0 +1,34 @@
+--- nominal586Control
++++ qualifiedFullPopulationTransient
+@@ -6,7 +6,7 @@
+ .lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerMOShv.lib mos_tt_mismatch
+ .lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerRES.lib res_typ_mismatch
+ .lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerCAP.lib cap_typ_mismatch
+-.temp 25.0
++.temp 125.0
+ * the off switches leave the mux tree nodes floating at DC: give the solver a 1 TOhm path per node
+ .option rshunt=1e12 gmin=1e-13
+ .include qualification/@RUN@/sense.spice
+@@ -52,8 +52,9 @@
+ set num_threads=1
+ set numdgt=15
+ set filetype=ascii
+-setseed 71002
++setseed 73001
+ reset
++echo PHASE0_BEGIN
+ op
+ print v(xt.icmp) v(xt.vth_soft) v(xt.vth_hard)
+ let dqsoft = v(xt.icmp)-v(xt.vth_soft)
+@@ -23135,8 +23136,10 @@
+ print @q.xbgr.xq56.qnpn13g2[area]
+ set wr_singlescale
+ set wr_vecnames
+-wrdata qualification/@RUN@/hard_+0mV.dat v(clk) v(xt.icmp) v(xt.vth_soft) v(xt.vth_hard) v(cmp_soft) v(cmp_hard) v(isense) v(xt.cmp_clk_n) v(xt.xch.xp) v(xt.xch.xq) v(xt.xch.xn) v(xt.xch.yn) v(vref) v(iptat) v(vref_buf) v(vped) v(shp)
++wrdata qualification/@RUN@/phase0.dat v(clk) v(xt.icmp) v(xt.vth_soft) v(xt.vth_hard) v(cmp_soft) v(cmp_hard) v(isense) v(xt.cmp_clk_n) v(xt.xch.xp) v(xt.xch.xq) v(xt.xch.xn) v(xt.xch.yn) v(vref) v(iptat) v(vref_buf) v(vped) v(shp)
+ echo QUALIFICATION_END
++echo PHASE0_END
++echo JOINT_POPULATION_TRAN_END
+ quit 0
+ .endc
+ .end
