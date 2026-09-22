@@ -1,0 +1,229 @@
+{
+  "status": "passed preparation",
+  "inputs": {
+    "<results-root>/bgr-assembly-precisionstem-20260922-r1/bank.gds": "71892e4308000401f857c88eda21c8590dc03c1d7534fecc4851104baec17383",
+    "<results-root>/bgr-assembly-precisionstem-20260922-r1/bank.cdl": "7f8e6e8c606b1e04321c5c9b20e94610d34d42055c8818d03d79352b3a4710b2",
+    "<results-root>/bgr-assembly-precisionstem-20260922-r1/preparation.json": "8e87bf9522514b814d9bf6eb119798ae51b22b88072ac25db0cf78079924a310",
+    "<results-root>/bgr-global-widening-preflight-20260922-r1.json": "7075bf83b703efbc8bc357f802fe3b213768393dd96488b033bfef507b39344d",
+    "<private>/research/verification/bgr_global_widen_r2_gate_20260922_r1.json": "42f2781de9f0d425fc2c8e30b45bb2737cd71254ddf64ca400ab7491e32e699d",
+    "/work/designs/g1-guardian/blocks/g1_bgr/sim/qualification/candidates/bgr_loop24_qref4_r253p465_hv06/bgr_loop24_qref4_r253p465_hv06.spice": "586ffb58b6af31c77a2e7cbcb83b173ffa4713ec62401da30901c5a7e606283b",
+    "/work/designs/g1-guardian/blocks/g1_bgr/layout/coordinated_return_remedy/build_global_widening_r2.py": "7789af23513a88b45e8b0fe322acef5623aceb4385ed71c5781f4134fec3567e",
+    "/work/designs/g1-guardian/blocks/g1_bgr/layout/coordinated_return_remedy/build_viaquad.py": "80c5be1764fb202a6e91b00848d2afd67e0a25305129e5cc41fbe6b5512795a6",
+    "/work/designs/g1-guardian/blocks/g1_bgr/layout/coordinated_full_closure/build_assembly.py": "99fade7a43ff9a57d0bcc4afa5e8771ad8ba2c37864203f8dec4fb20d994590b",
+    "<results-root>/bgr-assembly-20260922-r5/routing.json": "66adfb41d57e85ab4f415d67fda556fb8a766a4d48b06f2dd01c19ac17bc12b9",
+    "<results-root>/bgr-assembly-viaquad-20260922-r3/changed_shapes.json": "ce708b3def1d66ca1b533720f7f7e32494fbc91dad0b1b9a9f78288deae95722"
+  },
+  "source_count": 1036,
+  "source_ports": [
+    "vdd",
+    "vss",
+    "r4",
+    "vref",
+    "iptat",
+    "pbias",
+    "pcasc",
+    "vbe",
+    "dvbe"
+  ],
+  "source_nets": [
+    "b1b",
+    "c2",
+    "d1",
+    "d2",
+    "d3",
+    "d4",
+    "d5",
+    "det",
+    "dvbe",
+    "iptat",
+    "kick",
+    "n1",
+    "n_10",
+    "n_11",
+    "n_12",
+    "n_13",
+    "n_14",
+    "n_15",
+    "n_16",
+    "n_17",
+    "n_18",
+    "n_19",
+    "n_2",
+    "n_21",
+    "n_22",
+    "n_23",
+    "n_24",
+    "n_25",
+    "n_26",
+    "n_27",
+    "n_3",
+    "n_30",
+    "n_31",
+    "n_33",
+    "n_34",
+    "n_36",
+    "n_37",
+    "n_4",
+    "n_5",
+    "n_6",
+    "n_7",
+    "n_8",
+    "n_9",
+    "pbias",
+    "pcasc",
+    "r4",
+    "r4n",
+    "vb2",
+    "vbe",
+    "vbe3",
+    "vd1",
+    "vd2",
+    "vdd",
+    "vref",
+    "vss"
+  ],
+  "additive_route_ledger": [
+    {
+      "name": "general_VSS_collector",
+      "net": "vss",
+      "layer": "M3",
+      "bbox": [
+        16400,
+        12660,
+        417950,
+        15460
+      ],
+      "reason": "Add below existing general rail, leaving precision rail and finite star untouched.",
+      "original_net_area_um2": 3810.1733999999997,
+      "added_area_um2": 810.563,
+      "touches_existing_own_net": true,
+      "crossnet_overlap_um2": 0.0,
+      "other_net_within_210nm_area_um2": 0.0,
+      "near_obstacle_bboxes_dbu": [],
+      "same_net_union_connected": true,
+      "passed": true,
+      "actual_added_rectangle_dbu": [
+        16400,
+        12660,
+        417950,
+        15460
+      ]
+    },
+    {
+      "name": "east_VSS_trunk",
+      "net": "vss",
+      "layer": "M5",
+      "bbox": [
+        417800,
+        14910,
+        419500,
+        143550
+      ],
+      "reason": "Widen outward into existing reservation; same layer and endpoints.",
+      "original_net_area_um2": 38.844,
+      "added_area_um2": 179.97,
+      "touches_existing_own_net": true,
+      "crossnet_overlap_um2": 0.0,
+      "other_net_within_210nm_area_um2": 0.0,
+      "near_obstacle_bboxes_dbu": [],
+      "same_net_union_connected": true,
+      "passed": true,
+      "actual_added_rectangle_dbu": [
+        417800,
+        14910,
+        419500,
+        143550
+      ]
+    },
+    {
+      "name": "east_VDD_port_link",
+      "net": "vdd",
+      "layer": "M3",
+      "bbox": [
+        287210,
+        141960,
+        418750,
+        142440
+      ],
+      "reason": "Same centerline, .48um width; neighboring .60um pitch permits only limited widening.",
+      "original_net_area_um2": 514.41,
+      "added_area_um2": 23.6772,
+      "touches_existing_own_net": true,
+      "crossnet_overlap_um2": 0.0,
+      "other_net_within_210nm_area_um2": 0.0,
+      "near_obstacle_bboxes_dbu": [],
+      "same_net_union_connected": true,
+      "passed": true,
+      "actual_added_rectangle_dbu": [
+        287210,
+        142000,
+        418750,
+        142400
+      ]
+    },
+    {
+      "name": "VDD_MOS_vertical",
+      "net": "vdd",
+      "layer": "M4",
+      "bbox": [
+        286640,
+        142200,
+        287360,
+        312000
+      ],
+      "reason": "Same vertical routing column, .72um width; actual obstacles decide.",
+      "original_net_area_um2": 47.693999999999996,
+      "added_area_um2": 74.67,
+      "touches_existing_own_net": true,
+      "crossnet_overlap_um2": 0.0,
+      "other_net_within_210nm_area_um2": 0.0,
+      "near_obstacle_bboxes_dbu": [],
+      "same_net_union_connected": true,
+      "passed": true,
+      "actual_added_rectangle_dbu": [
+        286640,
+        142200,
+        287360,
+        296830
+      ]
+    }
+  ],
+  "actual_layer_delta": [
+    {
+      "layer": [
+        30,
+        0
+      ],
+      "added_area_um2": 823.717,
+      "removed_area_um2": 0
+    },
+    {
+      "layer": [
+        50,
+        0
+      ],
+      "added_area_um2": 63.7476,
+      "removed_area_um2": 0
+    },
+    {
+      "layer": [
+        67,
+        0
+      ],
+      "added_area_um2": 179.97,
+      "removed_area_um2": 0
+    }
+  ],
+  "all_other_layers_XOR_zero": true,
+  "original_polygons_preserved": true,
+  "text_hierarchy_port_parity": true,
+  "native_devices_placement_source_unchanged": true,
+  "all55nets_seven_star_cuts": true,
+  "additional_metal_over_resistors": "present; field coupling not qualified",
+  "gds_sha256": "4b5a92c08ba56d44d558f962c48330b6edcb89f8fcc53e54e2108da0cb8b239f",
+  "cdl_sha256": "7f8e6e8c606b1e04321c5c9b20e94610d34d42055c8818d03d79352b3a4710b2",
+  "stock_DRC_LVS_AP": "not run",
+  "conditional_R": "not run",
+  "electrical_qualification": "not run",
+  "adoption": "not run"
+}
