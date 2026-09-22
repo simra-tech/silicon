@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """Plot retained independent endpoint errors; do not refit any calibration."""
-import csv, hashlib, json
+import argparse, csv, hashlib, json, platform
 from pathlib import Path
 import matplotlib
 matplotlib.use('Agg')
@@ -10,6 +10,14 @@ HERE=Path(__file__).resolve().parent
 
 
 def main():
+    parser=argparse.ArgumentParser()
+    parser.add_argument('--output-prefix',default='calibration_comparison_final300_20260922')
+    args=parser.parse_args()
+    if Path(args.output_prefix).name!=args.output_prefix:
+        parser.error('--output-prefix must be a filename stem')
+    destinations=[HERE/f'{args.output_prefix}.{suffix}' for suffix in ['png','svg','json']]
+    if any(p.exists() for p in destinations):
+        parser.error('output exists; select a fresh prefix to preserve prior evidence')
     sources=['mc300_samples.csv','curvature_candidate300_samples.csv',
              'reciprocal_candidate300_points.csv','adverse_pilot_summary_20260922.json']
     linear={int(r['seed']):r for r in csv.DictReader((HERE/sources[0]).open()) if r['calibration_status']!='not run'}
@@ -49,11 +57,12 @@ def main():
     fig.suptitle('Simulated joint BGR/T2F calibration comparison',fontsize=15,y=.98)
     fig.text(.5,.025,'* Unadopted candidates. Left/center: nominal rails and two independent endpoints per sample. Right: four rail/temperature points per process sample.\nModel-local mismatch, C-PEX and ideal IPTAT/output fixtures; no packaged-silicon yield claim. Original linear failures retained.',ha='center',fontsize=9)
     fig.tight_layout(rect=(0,.13,1,.94))
-    for suffix in ['png','svg']:fig.savefig(HERE/f'calibration_comparison_20260922.{suffix}',dpi=170)
+    for suffix in ['png','svg']:fig.savefig(HERE/f'{args.output_prefix}.{suffix}',dpi=170)
     result={'completed_samples':len(seeds),'expected_samples':300,'source_sha256':{n:hashlib.sha256((HERE/n).read_bytes()).hexdigest() for n in sources},
             'endpoint_failure_counts':{label:sum(max(map(abs,p))>2 for p in pairs) for (label,_),pairs in zip(methods,arrays)},
-            'scope':'Plot only; no calibration refitting or altered acceptance. Active campaign plot remains explicitly incomplete until300.'}
-    (HERE/'calibration_comparison_20260922.json').write_text(json.dumps(result,indent=2)+'\n')
+            'analysis_runtime':{'python':platform.python_version(),'matplotlib':matplotlib.__version__},
+            'scope':'Plot only; no calibration refitting or altered acceptance. Completion count applies to nominal endpoint samples; rail pilots are separate.'}
+    (HERE/f'{args.output_prefix}.json').write_text(json.dumps(result,indent=2)+'\n')
     print(json.dumps(result,indent=2))
 
 

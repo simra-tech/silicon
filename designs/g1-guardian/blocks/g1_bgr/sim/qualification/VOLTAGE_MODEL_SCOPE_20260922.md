@@ -31,8 +31,20 @@ terminal export and requires the original saved vectors to remain byte
 identical. The81 DC and6 startup repeats now complete with byte-identical original
 vectors. All87 contain at least one literal PSP MAX exceedance. Maximum
 DC gate-source magnitude is3.6V at XM28; maximum HBT collector-emitter
-magnitude is0.858884V for DC and0.784589V for startup. Detailed comparison
-with documentary voltage/length/temperature scope remains incomplete. Intrinsic model nodes, every assembled load,
+magnitude is0.858884V for DC and0.784589V for startup.
+
+`analyze_terminal_ranking.py` regenerates `terminal_ranking_20260922.json`
+from all87 completed manifests, checking source-deck hashes and original
+waveform byte identity. Among the four0.5µm HV NMOS devices, DC maximum
+|VGS| is0.147µV at XM29,3.568170V at XM31,0V at XM32, and3.600000V at
+XM33. Thus the documentary geometry issue includes devices with nearly
+the full3.6V gate bias. The six startup fixtures reach2.973299V at XM31
+and3.000000020V at XM33; these fixtures use3.0V ramps and do not qualify
+3.6V startup. All values are simulated external-terminal values, and
+each extremum's case and temperature/time are retained in the ranking.
+The3.3V/27°C documentary condition does not cover these NMOS lengths.
+No lower allowable voltage has been inferred for them. T2F terminal ranking,
+intrinsic model nodes, every assembled load,
 temperature-dependent reliability and lifetime are outside that export.
 
 `model_warning_audit_20260922.json` inventories original warnings without

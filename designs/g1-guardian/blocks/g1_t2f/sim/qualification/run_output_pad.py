@@ -60,6 +60,7 @@ set num_threads=1
 set numdgt=15
 set wr_singlescale
 set wr_vecnames
+save v(fout) v(pad_c2p) v(temp_pad) v(vref) i(vdd) i(vdd12) i(vpad33) i(vpad12)
 tran 2n 32u
 wrdata pad.dat v(fout) v(pad_c2p) v(temp_pad) v(vref) i(vdd) i(vdd12) i(vpad33) i(vpad12)
 quit
@@ -83,8 +84,14 @@ quit
     try:
         with (out/'pad.dat').open() as f:next(f);rows=[list(map(float,line.split())) for line in f if line.strip()]
         log=(out/'pad.log').read_text()+'\n'+(out/'pad.stderr').read_text()
-        assert rc==0 and rows and abs(rows[-1][0]-32e-6)<1e-12 and all(len(r)==9 and all(map(math.isfinite,r)) for r in rows)
-        assert not re.search(r'(?im)^Error|analysis aborted|Timestep too small',log)
+        result['saved_rows']=len(rows)
+        result['last_saved_time_s']=rows[-1][0] if rows else None
+        result['numerical_errors']=re.findall(r'(?im)^.*(?:Timestep too small|analysis aborted|simulation\(s\) aborted|^Error).*$' ,log)
+        assert rc==0, 'solver exit is not zero'
+        assert rows, 'no saved waveform rows'
+        assert all(len(r)==9 and all(map(math.isfinite,r)) for r in rows), 'invalid/nonfinite saved waveform'
+        assert not result['numerical_errors'], 'solver reported a numerical failure'
+        assert abs(rows[-1][0]-32e-6)<1e-12, 'required32us endpoint not reached'
         result['status']='passed';clocks={}
         for name,col,rail in [('core',1,v12),('pad_input',2,v12),('pad_output',3,v33)]:
             ee=[t for t in edges(rows,col,rail/2) if 8e-6<=t<=31e-6]
