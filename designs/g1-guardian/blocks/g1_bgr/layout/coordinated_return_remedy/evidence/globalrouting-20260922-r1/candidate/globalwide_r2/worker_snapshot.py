@@ -1,0 +1,118 @@
+#!/usr/bin/env python3
+"""R2 global widening: only VDD M3 narrowed to satisfy retained M3.e failure."""
+import argparse
+import datetime
+import json
+import os
+from pathlib import Path
+import sys
+import time
+import pya
+from build_viaquad import texts
+
+HERE = Path(__file__).resolve().parent
+sys.path.insert(0, str(HERE.parent / 'coordinated_full_closure'))
+from build_assembly import Assembly, PAIRS, region, sha, dump, SOURCE
+
+
+def main():
+    ap = argparse.ArgumentParser()
+    for name in ('output', 'resource-gate', 'preflight'):
+        ap.add_argument('--' + name, type=Path, required=True)
+    args = ap.parse_args()
+    gate = json.loads(args.resource_gate.read_text())
+    age = (datetime.datetime.now(datetime.timezone.utc)-datetime.datetime.fromisoformat(gate['utc'])).total_seconds()
+    assert gate['status'] == 'passed' and 0 <= age < 1800
+    assert len(os.sched_getaffinity(0)) == 1 and next(iter(os.sched_getaffinity(0))) == 1
+    bulk = Path(os.environ['G1_RESULTS_ROOT'])
+    base = bulk / 'bgr-assembly-precisionstem-20260922-r1'
+    assert sha(base / 'bank.gds') == '71892e4308000401f857c88eda21c8590dc03c1d7534fecc4851104baec17383'
+    preflight = json.loads(args.preflight.read_text())
+    assert preflight['status'] == 'passed' and all(r['passed'] for r in preflight['proposals'])
+    assert all(sha(Path(p)) == h for p,h in preflight['inputs'].items())
+    assert sha(SOURCE) == '586ffb58b6af31c77a2e7cbcb83b173ffa4713ec62401da30901c5a7e606283b'
+    args.output.mkdir(exist_ok=False)
+    (args.output/'worker_snapshot.py').write_bytes(Path(__file__).read_bytes())
+    start = time.monotonic()
+    receipt = dict(status='running', cpu=1, watchdog_s=180, memory_reservation_gib=4, memory_enforced=False)
+    dump(args.output/'run.json', receipt)
+    try:
+        ly = pya.Layout()
+        ly.read(str(base/'bank.gds'))
+        top = ly.top_cell()
+        before = {(ly.get_info(i).layer,ly.get_info(i).datatype):region(top,i) for i in ly.layer_indices()}
+        text_before = texts(top)
+        hierarchy = sorted((c.name,c.child_instances()) for c in ly.each_cell())
+        additions = {}
+        ledger = []
+        for proposal in preflight['proposals']:
+            bbox = list(proposal['bbox'])
+            if proposal['name'] == 'east_VDD_port_link':
+                # Stock M3.e requires .24um long-edge spacing. Keep .25um.
+                # R1 .48um width failed two markers; its geometry is retained.
+                bbox[1], bbox[3] = 142000, 142400
+            if proposal['name'] == 'VDD_MOS_vertical':
+                # Restrict preflight-cleared superset to the existing route's
+                # actual upper end; no unused vertical stub is introduced.
+                bbox[3] = 296830
+            pair = PAIRS[proposal['layer']]
+            shape = pya.Box(*bbox)
+            assert (pya.Region(shape)-pya.Region(pya.Box(*proposal['bbox']))).is_empty()
+            additions.setdefault(pair,pya.Region()).insert(shape)
+            top.shapes(ly.layer(*pair)).insert(shape)
+            ledger.append(dict(proposal, actual_added_rectangle_dbu=bbox))
+        ly.write(str(args.output/'bank.gds'))
+        (args.output/'bank.cdl').write_bytes((base/'bank.cdl').read_bytes())
+        saved = pya.Layout()
+        saved.read(str(args.output/'bank.gds'))
+        actual = saved.top_cell()
+        assert texts(actual) == text_before
+        assert sorted((c.name,c.child_instances()) for c in saved.each_cell()) == hierarchy
+        deltas = []
+        for pair,old in before.items():
+            current = region(actual,saved.layer(*pair))
+            expected = old + additions.get(pair,pya.Region())
+            assert (current^expected).is_empty(),pair
+            assert (old-current).is_empty(),pair
+            if pair in additions:
+                delta = current-old
+                deltas.append(dict(layer=list(pair),added_area_um2=delta.area()*1e-6,removed_area_um2=0))
+        original = bulk/'bgr-assembly-20260922-r5'
+        viaquad = bulk/'bgr-assembly-viaquad-20260922-r3'
+        graph = Assembly(args.output)
+        graph.probes = json.loads((original/'routing.json').read_text())['source_probes']
+        graph.star = json.loads((viaquad/'changed_shapes.json').read_text())['star_interfaces']
+        full = graph.graph(actual)
+        cuts = [graph.graph(actual,(role,)) for role in graph.star]
+        cuts += [graph.graph(actual,tuple(graph.star)),graph.graph(actual,precision=True)]
+        dump(args.output/'terminal_graph.json',full)
+        dump(args.output/'star_cuts.json',cuts)
+        assert full['status'] == 'passed' and len(cuts)==7 and all(c['status']=='passed' for c in cuts)
+        assert (pya.Region(actual.bbox())-pya.Region(pya.Box(0,0,420000,354000))).is_empty()
+        assert all(p.x%5==p.y%5==0 for i in saved.layer_indices() for poly in region(actual,i).each() for p in poly.each_point_hull())
+        paths = [base/'bank.gds',base/'bank.cdl',base/'preparation.json',args.preflight,args.resource_gate,
+                 SOURCE,Path(__file__),HERE/'build_viaquad.py',HERE.parent/'coordinated_full_closure/build_assembly.py',
+                 original/'routing.json',viaquad/'changed_shapes.json']
+        prep = json.loads((base/'preparation.json').read_text())
+        result = dict(status='passed preparation',inputs={str(p):sha(p) for p in paths},
+            source_count=1036,source_ports=prep['source_ports'],source_nets=prep['source_nets'],
+            additive_route_ledger=ledger,actual_layer_delta=deltas,all_other_layers_XOR_zero=True,
+            original_polygons_preserved=True,text_hierarchy_port_parity=True,
+            native_devices_placement_source_unchanged=True,all55nets_seven_star_cuts=True,
+            additional_metal_over_resistors='present; field coupling not qualified',
+            gds_sha256=sha(args.output/'bank.gds'),cdl_sha256=sha(args.output/'bank.cdl'),
+            stock_DRC_LVS_AP='not run',conditional_R='not run',electrical_qualification='not run',adoption='not run')
+        dump(args.output/'preparation.json',result)
+        receipt.update(status='passed',preparation_sha256=sha(args.output/'preparation.json'))
+    except Exception as error:
+        receipt.update(status='failed',error=repr(error))
+        raise
+    finally:
+        receipt.update(wall_s=time.monotonic()-start)
+        dump(args.output/'run.json',receipt)
+        print(json.dumps(receipt,indent=2))
+
+
+if __name__ == '__main__':
+    main()
+
