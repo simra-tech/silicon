@@ -13,6 +13,14 @@ sys.path.insert(0,str(SIM.parents[1]/'g1_top/sim'))
 from run_bounded import run_bounded
 
 def sha(p): return hashlib.sha256(p.read_bytes()).hexdigest()
+def frozen_source_text(path, expected_sha256=None):
+    if expected_sha256 is None:return path.read_text()
+    source_bytes=path.read_bytes()
+    if hashlib.sha256(source_bytes).hexdigest()!=expected_sha256:
+        raise ValueError('Frozen candidate source bytes changed before leaf simulation')
+    # Match read_text universal-newline behavior while using the exact bytes
+    # whose hash was checked, avoiding a second source read.
+    return source_bytes.decode().replace('\r\n','\n').replace('\r','\n')
 def main():
     p=argparse.ArgumentParser()
     p.add_argument('--run-id',required=True)
@@ -28,6 +36,7 @@ def main():
     p.add_argument('--seed',type=int)
     p.add_argument('--actual-bgr',action='store_true')
     p.add_argument('--sense-candidate',help='Immutable g1_sense/sim/qualification run containing sense_substrate_tied.spice; isolated source only')
+    p.add_argument('--sense-candidate-sha256',help='Require exact consumed candidate bytes before simulation; no circuit change')
     p.add_argument('--code',type=int)
     p.add_argument('--soft-code',type=int)
     p.add_argument('--hard-code',type=int)
@@ -48,6 +57,7 @@ def main():
     assert sum(bool(x) for x in [a.replay_reference,a.solver_reference,a.failed_solver_reference,a.profile_reference])<=1, 'Reference modes are distinct evidence'
     assert not a.profile_reference or a.profile_rusage
     assert not a.prepare_only or a.replay_reference, 'Preparation requires exact archived reference'
+    assert not a.sense_candidate_sha256 or (a.sense_candidate and re.fullmatch('[0-9a-f]{64}',a.sense_candidate_sha256)), 'Candidate hash requires explicit candidate and64lowercase hex digits'
     out=allocate_run(SIM,a.run_id)
     (out/'runner.py').write_text(Path(__file__).read_text())
     pd=Path('/foss/pdks/ihp-sg13g2')
@@ -59,7 +69,7 @@ def main():
         assert sense.is_file()
     trip=SIM/('netlist/g1_trip.spice' if a.netlist=='sch' else 'postlayout/g1_trip_pex.spice')
     for name,src in [('sense',sense),('trip',trip)]:
-        text=src.read_text().replace(' sub! ',' vss ')
+        text=frozen_source_text(src,a.sense_candidate_sha256 if name=='sense' else None).replace(' sub! ',' vss ')
         if name=='trip' and a.headroom_candidate:
             assert a.netlist=='sch','Candidate requires fresh layout/PEX before extracted validation'
             # Keep all resistor instances/order: two unused lower units become grounded dummies.

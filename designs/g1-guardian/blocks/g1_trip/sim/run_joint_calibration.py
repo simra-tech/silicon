@@ -3,7 +3,7 @@
 Each probe is a fresh archived simulator process with same seed/device order;
 observed sampled parameters must match exactly. Not a shortcut around V14 monotonicity.
 """
-import argparse,datetime,json,math,subprocess,sys
+import argparse,datetime,json,math,re,subprocess,sys
 from pathlib import Path
 from result_directory import allocate_run
 SIM=Path(__file__).resolve().parent
@@ -32,7 +32,8 @@ def calibration_codes(brackets, known_shunt=.025, candidate=False, hard_nominal_
  return {'raw_independent_correction_codes':raw_delta,'signed_correction_codes':delta,'corrected_codes':code,'clipped':{k:raw_code[k]!=code[k] or raw_delta[k]!=delta[k] for k in brackets}}
 
 def main():
- p=argparse.ArgumentParser();p.add_argument('--run-id',required=True);p.add_argument('--image-id',required=True);p.add_argument('--seeds',default='71001');p.add_argument('--guards',action='store_true');p.add_argument('--solver',choices=['sparse','klu'],default='sparse');p.add_argument('--temperatures',default='25,-40,125');p.add_argument('--headroom-candidate',action='store_true');p.add_argument('--sense-candidate');p.add_argument('--hard-nominal-code',type=int,help='Isolated baseline setting with both hard guards inside0–50mV; canonical default unchanged');p.add_argument('--resume',action='store_true');p.add_argument('--leaf-timeout-s',type=float,default=600);p.add_argument('--reuse-map',type=Path,help='Explicit identical-analysis references; each alias requires fresh exact-deck/source/model preflight');p.add_argument('--recovery-map',type=Path);p.add_argument('--rebuild-only',action='store_true',help='Replay preserved leaf summaries; never launch simulation');a=p.parse_args()
+ p=argparse.ArgumentParser();p.add_argument('--run-id',required=True);p.add_argument('--image-id',required=True);p.add_argument('--seeds',default='71001');p.add_argument('--guards',action='store_true');p.add_argument('--solver',choices=['sparse','klu'],default='sparse');p.add_argument('--temperatures',default='25,-40,125');p.add_argument('--headroom-candidate',action='store_true');p.add_argument('--sense-candidate');p.add_argument('--sense-candidate-sha256',help='Require exact candidate bytes in every new leaf');p.add_argument('--hard-nominal-code',type=int,help='Isolated baseline setting with both hard guards inside0–50mV; canonical default unchanged');p.add_argument('--resume',action='store_true');p.add_argument('--leaf-timeout-s',type=float,default=600);p.add_argument('--reuse-map',type=Path,help='Explicit identical-analysis references; each alias requires fresh exact-deck/source/model preflight');p.add_argument('--recovery-map',type=Path);p.add_argument('--rebuild-only',action='store_true',help='Replay preserved leaf summaries; never launch simulation');a=p.parse_args()
+ if a.sense_candidate_sha256 and not (a.sense_candidate and re.fullmatch('[0-9a-f]{64}',a.sense_candidate_sha256)):raise ValueError('Explicit candidate and64lowercase hex digits required')
  if not 0<a.leaf_timeout_s<=600: raise ValueError('Joint watchdog must be positive and at most600s')
  guard_points=[(.027,{'soft':False,'hard':False}),(.033,{'soft':True,'hard':False}),(.045,{'soft':True,'hard':False}),(.055,{'soft':True,'hard':True})]
  if a.hard_nominal_code is not None:
@@ -69,6 +70,7 @@ def main():
    if a.solver!='sparse':cmd += ['--solver',a.solver]
    if a.headroom_candidate:cmd.append('--headroom-candidate')
    if a.sense_candidate:cmd += ['--sense-candidate',a.sense_candidate]
+   if a.sense_candidate_sha256:cmd += ['--sense-candidate-sha256',a.sense_candidate_sha256]
    cmd += ['--timeout-s',str(a.leaf_timeout_s)]
    if leaf in reuse_map and leaf in recovery_map:raise ValueError('Reuse and recovery aliases must be disjoint')
    reused=leaf in reuse_map
