@@ -25,6 +25,7 @@ def transform(xy,orient,size):
 def main():
     p=argparse.ArgumentParser(description=__doc__)
     p.add_argument('--core',type=Path,required=True)
+    p.add_argument('--core-gds-name',default='refreshed_core.gds')
     p.add_argument('--prepared',type=Path,required=True)
     p.add_argument('--odb-check',type=Path,required=True)
     p.add_argument('--output',type=Path,required=True)
@@ -33,7 +34,8 @@ def main():
     coremeta=json.loads((a.core/'analysis.json').read_text())
     prepared=json.loads((a.prepared/'analysis.json').read_text())
     odb=json.loads((a.odb_check/'analysis.json').read_text())
-    core=a.core/'refreshed_core.gds'
+    assert Path(a.core_gds_name).name == a.core_gds_name
+    core=a.core/a.core_gds_name
     assert coremeta['status'].startswith('passed') and sha(core)==coremeta['GDS_sha256']
     assert prepared['DEF_sha256']==odb['source_DEF_sha256']
     assert odb['status'].startswith('passed') and odb['instances']==4904

@@ -1,0 +1,107 @@
+time="2026-09-23T01:31:51+02:00" level=warning msg="Network file system detected as backing store.  Enforcing overlay option `force_mask=\"700\"`.  Add it to storage.conf to silence this warning"
+time="2026-09-23T01:31:52+02:00" level=warning msg="Network file system detected as backing store.  Enforcing overlay option `force_mask=\"700\"`.  Add it to storage.conf to silence this warning"
+Resource enforcement: CPU affinity; memory reservation only (rootless cgroups v1).
+time="2026-09-23T01:31:54+02:00" level=warning msg="Network file system detected as backing store.  Enforcing overlay option `force_mask=\"700\"`.  Add it to storage.conf to silence this warning"
+{
+  "status": "passed scoped main and maximal DRC",
+  "GDS_sha256": "88e5911aeaa4f0ae9c3c4712f4f2430563affa32bae0fe6c6c48c142e9611bdb",
+  "candidate_metadata_sha256": "6ab9b170df5ce4793e0f389065d5ca8c47f9a0ec3eefdf14522a8d1c95d61541",
+  "script_sha256": "0b8e98b4be17d65195da419bd3828807736bd908a1189b4b4da507962561a3a3",
+  "switch_helper_sha256": "9b3ff688509d6fb7b9ff9f62cc4159e13cb5b615b3a294bc0d203c558d2a62d2",
+  "switches": {
+    "threads": "1",
+    "drc_json_default": "/foss/pdks/ihp-sg13g2/libs.tech/klayout/tech/drc/rule_decks/sg13g2_tech_default.json",
+    "drc_json": "/foss/pdks/ihp-sg13g2/libs.tech/klayout/python/sg13g2_pycell_lib/sg13g2_tech_mod.json",
+    "run_mode": "deep",
+    "precheck_drc": "false",
+    "disable_extra_rules": "false",
+    "no_feol": "false",
+    "no_beol": "false",
+    "no_offgrid": "false",
+    "no_angle": "false",
+    "density_sanity": "false",
+    "density": "false",
+    "no_forbidden": "false",
+    "no_pin": "false",
+    "no_recommended": "false",
+    "topcell": "placed_core_NOT_CONNECTED_FULLCHIP",
+    "input": "@RESULTS@/native-decap-pdn-20260922-r4/decap_pdn_core.gds"
+  },
+  "decks": [
+    {
+      "name": "main",
+      "returncode": 0,
+      "wall_s": 117.53448764421046,
+      "command": [
+        "timeout",
+        "--kill-after=5",
+        "600",
+        "python3",
+        "/work/designs/g1-guardian/review/audits/run_core_candidate_drc.py",
+        "--candidate",
+        "@RESULTS@/native-decap-pdn-20260922-r4",
+        "--gds-name",
+        "decap_pdn_core.gds",
+        "--main-watchdog",
+        "600",
+        "--maximal-watchdog",
+        "900",
+        "--output",
+        "@RESULTS@/native-decap-pdn-drc-20260922-r4",
+        "--execute",
+        "main"
+      ],
+      "watchdog_s": 600,
+      "reports": [
+        {
+          "path": "reports/decap_pdn_core_placed_core_NOT_CONNECTED_FULLCHIP_main.lyrdb",
+          "sha256": "7b72add1cb760bc1e42ad8607a47ff8548dafc24e95c8b04978bf4969a4e6e4f",
+          "markers": 0,
+          "categories": {}
+        }
+      ],
+      "status": "passed"
+    },
+    {
+      "name": "maximal",
+      "returncode": 0,
+      "wall_s": 318.6224026605487,
+      "command": [
+        "timeout",
+        "--kill-after=5",
+        "900",
+        "python3",
+        "/work/designs/g1-guardian/review/audits/run_core_candidate_drc.py",
+        "--candidate",
+        "@RESULTS@/native-decap-pdn-20260922-r4",
+        "--gds-name",
+        "decap_pdn_core.gds",
+        "--main-watchdog",
+        "600",
+        "--maximal-watchdog",
+        "900",
+        "--output",
+        "@RESULTS@/native-decap-pdn-drc-20260922-r4",
+        "--execute",
+        "maximal"
+      ],
+      "watchdog_s": 900,
+      "reports": [
+        {
+          "path": "reports/decap_pdn_core_placed_core_NOT_CONNECTED_FULLCHIP_sg13g2_maximal.lyrdb",
+          "sha256": "e185ce2b4407738709d5ffb8c4fec819b4aef4e8ce1be765b80a4b9e6d472c14",
+          "markers": 0,
+          "categories": {}
+        }
+      ],
+      "status": "passed"
+    }
+  ],
+  "not_run": [
+    "density/fill",
+    "antenna",
+    "connected fullchip LVS/PEX/currentIR/EM",
+    "electrical adoption"
+  ],
+  "inputs_rules_unchanged": true
+}
