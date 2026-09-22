@@ -1,0 +1,16 @@
+{
+  "status": "prospective frozen prototype contract",
+  "source_sha256": "baab6183c364477da1dd332e4585ae7201b3776bf0f836014744a42809e13877",
+  "PDK_commit": "84374023ee8b4b126bebbba67fcbada0a9c0ff0b",
+  "KLayout": "0.30.9",
+  "scope": "Isolated native/contact structures only, no full macro or broad extraction",
+  "cells": ["bias_n2", "bias_p4", "pair_split16", "pair_control16", "pair_split64", "pair_control64"],
+  "bias_geometries": [{"kind":"nmosHV","W_um":8,"L_um":1,"ng":2,"source_instances":["XMB2","XMB6"]}, {"kind":"pmosHV","W_um":16,"L_um":1,"ng":4,"source_instances":["XMB3","XMB5"]}],
+  "pair_geometries": [{"logical_W_um":96,"L_um":2,"logical_ng":16,"chain_count":2}, {"logical_W_um":384,"L_um":2,"logical_ng":64,"chain_count":2}],
+  "pair_control": "Two independent whole native chains, one per logical input, same total native geometry as split case",
+  "split_assignment": "First chain repeated ABBA groups, second BAAB; each drain group owns two consecutive gates",
+  "required_before_stock": ["explicit flat polygon snapshots before any contact/tap mutation", "native Activ and channel geometry unchanged except separately enumerated body taps", "exact logical W/L/ng", "every source/drain/gate contact probe has intended physical net with no extra opens/shorts", "aggregate source A/P exact and adjacent-gate per-logical allocation exact, not intrinsic ownership claim", "control pair per-device junction geometry exact", "split logical gate centroids coincide", "all source and model hashes unchanged"],
+  "bounds": {"CPU_count":1,"CPU_set":7,"geometry_child_seconds":60,"output_MiB":30},
+  "stock_checks": "Not run until geometry/terminal gate passed and unchanged-deck command frozen/reviewed",
+  "explicit_not_pass": ["per-device shared-junction mismatch applicability", "well/substrate stock legality", "guard/feed routing legal fit", "electrical matching", "new extracted performance", "production adoption"]
+}

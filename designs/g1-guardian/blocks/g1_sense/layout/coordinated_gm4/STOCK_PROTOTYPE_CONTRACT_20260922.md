@@ -1,0 +1,11 @@
+# First SENSE native/contact stock gate
+
+Prospective scope is exactly the six isolated cells in `native-prototypes-20260922-r1/native_prototypes.gds`, SHA-256 `dfef42cc9384e44c7ad1d8851d0fd4cfa057ee61b700911859252d3557114db4`: bias_n2, bias_p4, split/control16 and split/control64. This is not a routed SENSE macro. Require the saved-GDS independent native/terminal audit to pass before stock checks.
+
+First run the unchanged pinned stock DRC wrapper on assembly top `g1_sense_contact_prototypes`, deep mode, one process, including hard and recommended/off-grid/angle rules. Exclude density only for this isolated-device gate; density and antenna remain explicitly not run. Require wrapper completion, at least one completed report and zero markers in every produced report. A DRC failure stops expansion to LVS in this first gate; every failing report remains.
+
+If DRC passes, run unchanged stock LVS sequentially on all six exact tops with their separate source-derived CDL sidecars. Require both explicit stock comparison success and every circuit/device/net/pin/subcircuit cross-reference status `Match`. `MatchWithWarning`, missing reports/databases, unknown completion, timeout or a nonzero return code are failed, not accepted. The source conversion drops ng/mm_ok as the original flow does; independent native/finger/junction gates remain mandatory and are not replaced by LVS. No extracted-to-golden copying or added tap-device fitting is permitted. Any actual tap/reference binding discrepancy remains failed for diagnosis.
+
+Each child invocation is bounded to180seconds with a5second kill grace, CPU7 only. Total output stops above30MiB after every child; this is a phase cap, not a filesystem quota. Fresh resource gate requires0.03GiB growth plus the existing reserve. Inputs, source-CDL mappings, actual tool/PDK/deck hashes, exact commands, report markers, strict cross-reference statuses and source preservation are recorded. No timeout escalation, next full macro, PEX, broad MC or production adoption follows automatically.
+
+PDK commit is `84374023ee8b4b126bebbba67fcbada0a9c0ff0b`; KLayout is0.30.9. No random seed applies. Shared-source per-device mismatch-model applicability, matching gradients, macro-scale wells/guards/feed routing and legal whole-floorplan fit remain not run regardless of these stock results.
