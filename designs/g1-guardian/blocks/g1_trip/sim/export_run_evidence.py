@@ -31,7 +31,9 @@ def main():
                  'declared_output_difference.diff', 'declared_draw_audit_difference.diff',
                  'non_bgr_inventory.json', 'prelaunch_reference_bindings.json',
                  'declared_substitution_difference.diff', 'substitution_structure_audit.json',
-                 'declared_prefix_difference.diff', 'prefix_structure_audit.json'}
+                 'declared_prefix_difference.diff', 'prefix_structure_audit.json',
+                 'declared_fullhot_difference.diff', 'declared_runner_difference.diff',
+                 'fullhot_structure_audit.json'}
     for run in args.runs:
         # Do not resolve: source is a portable repository-relative run identity,
         # even when its directory is an ignored external-storage symlink.
