@@ -102,3 +102,8 @@ are in both portable exports. `analyze_bgr_substitution_outcomes.py --output
 <fresh JSON>` performs only read-only diagnosis. Both successful and failed
 run exports retain compact summaries, full source/deck difference declarations,
 parameter inventories, input bindings and hashes of all separately retained logs.
+
+The later [219 ns prefix observation report](BGR_PREFIX_OBSERVATION_20260922.md)
+preserves a separate fixture failure from eight inherited out-of-interval
+measurements. Its explicitly separate saved-waveform/inventory audit does not
+recover this full-hot timeout or establish missing late-cycle acceptance.
