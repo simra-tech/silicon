@@ -1,0 +1,26 @@
+--- qualifiedTypicalPopulation/disabled
++++ slow/disabled
+@@ -1,9 +1,9 @@
+ * G1_T2F joint C-PEX: T=12.5 C, VDDA=3.3 V, VDD=1.2 V, HBT=typ, MOS=tt, R=typ, C=typ, mismatch=False, seed=51001
+-.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerHBT.lib hbt_typ_mismatch
+-.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerMOShv.lib mos_tt_mismatch
+-.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerMOSlv.lib mos_tt_mismatch
+-.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerRES.lib res_typ_mismatch
+-.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerCAP.lib cap_typ_mismatch
++.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerHBT.lib hbt_wcs_mismatch
++.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerMOShv.lib mos_ss_mismatch
++.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerMOSlv.lib mos_ss_mismatch
++.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerRES.lib res_wcs_mismatch
++.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerCAP.lib cap_wcs_mismatch
+ .include bgr.spice
+ .include t2f.spice
+ .option gmin=1e-15 abstol=1e-13 reltol=1e-4 vntol=1e-6 method=gear
+@@ -26,7 +26,7 @@
+ set numdgt=15
+ set wr_singlescale
+ set wr_vecnames
+-setseed 74001
++setseed 75001
+ reset
+ echo PHASE0_BEGIN
+ set temp=25
