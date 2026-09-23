@@ -2,7 +2,7 @@
 """Mutation tests against a retained paired-method packet, without simulation."""
 import argparse,shutil,tempfile,unittest
 from pathlib import Path
-from analyze_rz100_mc_smoke import bound_inputs
+from analyze_rz100_mc_smoke import bound_inputs,validate_dispatch
 from analyze_rz100_error_budget import controls
 
 class Tests(unittest.TestCase):
@@ -26,6 +26,14 @@ class Tests(unittest.TestCase):
         p=self.packet/'candidate.spice';p.write_text(p.read_text()+'\n')
         with self.assertRaises(AssertionError):bound_inputs(self.packet,self.method)
     def test_algebra(self):self.assertEqual(len(controls()),3)
+    def test_plan_exact(self):
+        validate_dispatch(dict(seeds=[1,2],samples={'1':{'status':'terminal'},'2':{'status':'not run'}},no_future_launches=True),[1,2],True)
+    def test_duplicate_seed(self):
+        with self.assertRaises(AssertionError):validate_dispatch(dict(seeds=[1,1],samples={'1':{'status':'terminal'}}),[1,2],False)
+    def test_missing_claim(self):
+        with self.assertRaises(AssertionError):validate_dispatch(dict(seeds=[1,2],samples={'1':{'status':'terminal'}}),[1,2],False)
+    def test_live_final_rejected(self):
+        with self.assertRaises(AssertionError):validate_dispatch(dict(seeds=[1],samples={'1':{'status':'running'}},no_future_launches=False),[1],True)
 
 if __name__=='__main__':
     ap=argparse.ArgumentParser()
