@@ -1,0 +1,31 @@
+--- qualifiedTyp25
++++ fast-highcold
+@@ -1,19 +1,19 @@
+ * G1_T2F joint C-PEX: T=12.5 C, VDDA=3.3 V, VDD=1.2 V, HBT=typ, MOS=tt, R=typ, C=typ, mismatch=False, seed=51001
+-.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerHBT.lib hbt_typ
+-.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerMOShv.lib mos_tt
+-.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerMOSlv.lib mos_tt
+-.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerRES.lib res_typ
+-.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerCAP.lib cap_typ
++.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerHBT.lib hbt_bcs
++.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerMOShv.lib mos_ff
++.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerMOSlv.lib mos_ff
++.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerRES.lib res_bcs
++.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerCAP.lib cap_bcs
+ .include bgr.spice
+ .include t2f.spice
+ .option gmin=1e-15 abstol=1e-13 reltol=1e-4 vntol=1e-6 method=gear
+-.temp 25.0
++.temp -40.0
+ .global sub!
+ Vsub sub! 0 dc 0
+-Vdd vdd 0 dc 3.3
+-Vdd12 vdd12 0 dc 1.2
++Vdd vdd 0 dc 3.6
++Vdd12 vdd12 0 dc 1.32
+ Vr4 r4 0 dc 0
+-Ven en 0 pwl(0 0 1u 0 1.01u 3.3)
++Ven en 0 pwl(0 0 1u 0 1.01u 3.6)
+ Vmode mode 0 dc 0
+ Xbgr vdd 0 r4 vref iptat pbias pcasc vbe dvbe g1_bgr
+ Vload iptat 0 dc 1.0
