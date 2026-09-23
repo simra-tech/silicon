@@ -1,0 +1,58 @@
+{
+  "status": "passed exact source revision",
+  "original_sha256": "399aa14e0b126e9acf8ef2ca0ac1f7c28d98ccf886efe3b379728400ee6bc0de",
+  "source_route_ledger_sha256": "99a734d096ab00af99d697279066d7383a65a24dfe5df4b4c1f52ba5170ecb02",
+  "held_source_obstacles": [
+    {
+      "layer": "M3",
+      "role": "vbe",
+      "net": "vbe",
+      "bbox_dbu": [
+        13800,
+        141500,
+        194250,
+        141800
+      ],
+      "purpose": "row_collector"
+    },
+    {
+      "layer": "M3",
+      "role": "vd2",
+      "net": "vd2",
+      "bbox_dbu": [
+        142200,
+        140900,
+        197550,
+        141200
+      ],
+      "purpose": "row_collector"
+    }
+  ],
+  "derived_sha256": "7e7520ac7535fabfa25788837ef73d8210dd2bbc9ce6b3f3e08ba24f6b2cfd26",
+  "substitutions": [
+    {
+      "before": "set(os.sched_getaffinity(0)) == {2}",
+      "after": "set(os.sched_getaffinity(0)) == {0}",
+      "occurrences": 1
+    },
+    {
+      "before": "140220",
+      "after": "142220",
+      "occurrences": 3
+    },
+    {
+      "before": "141780",
+      "after": "143780",
+      "occurrences": 4
+    },
+    {
+      "before": "141000",
+      "after": "143000",
+      "occurrences": 2
+    }
+  ],
+  "scope": "Only upper landing/cut y coordinates move from141 to143um; M5 starts at136.9um and all lower shapes are unchanged. Exclusive coordinator CPU0 loan replaces returned CPU2 lease.",
+  "reason": "Source-bound native VBE M3 spans y141.5..141.8 and VD2 spans140.9..141.2; candidate lower boundary142.22 gives420nm to VBE.",
+  "previous_screen": "failed preserved",
+  "candidate_generation": "not run"
+}
