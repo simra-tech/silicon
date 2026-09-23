@@ -1,0 +1,36 @@
+{
+  "resource_sha256": "02bffd2cae626fbe21f79aabef05403f886f2945be626e2443f3f97430b393f9",
+  "CPU": 1,
+  "reservation_GiB": 8,
+  "memory_enforced": false,
+  "runner_sha256": "834e3537b11ad19e53a8399d56eeae7452b7f8abb74ac3f1852c765877e86483",
+  "command": [
+    "stdbuf",
+    "-o0",
+    "-e0",
+    "flow/run.sh",
+    "python3",
+    "-c",
+    "import pya,sys;sys.path.insert(0,\"designs/g1-guardian/review/audits/fullchip_reference_closure/physical_lvs/full_marker_candidate\");from prepare_full_marker import paths,SPECS; l=pya.Layout();l.read(\"<results>/bondpad-outward-20260923-r3/pad_outward_native.gds\");names={c.name for c in l.each_cell() if any(c.name.endswith(s[0])for s in SPECS)}; p=paths(l.top_cell(),names);print({k:len(v)for k,v in p.items()});print({k:[str(t)for t in v]for k,v in p.items()})"
+  ],
+  "started_utc": "2026-09-23T06:04:06.852135+00:00",
+  "status": "completed",
+  "timeout_s": 90,
+  "runtime_arch": "x86_64",
+  "stdio_unbuffered": true,
+  "pid": 4007322,
+  "wall_s": 11.093538653105497,
+  "sampled_utc": "2026-09-23T06:04:17.947080+00:00",
+  "log_bytes": 1086,
+  "resources": {
+    "VmHWM": "51652 kB",
+    "VmRSS": "51652 kB",
+    "Threads": "21"
+  },
+  "cpu_ticks": [
+    "8",
+    "15"
+  ],
+  "returncode": 0,
+  "finished_utc": "2026-09-23T06:04:17.950051+00:00"
+}

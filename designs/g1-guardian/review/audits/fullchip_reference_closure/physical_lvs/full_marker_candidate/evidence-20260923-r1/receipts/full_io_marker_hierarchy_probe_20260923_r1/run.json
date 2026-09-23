@@ -1,0 +1,36 @@
+{
+  "resource_sha256": "3ac2da8a6302b33d9f7303e4da050f7cbb0d5ad0c1153df33ebe0e53cad56e13",
+  "CPU": 1,
+  "reservation_GiB": 8,
+  "memory_enforced": false,
+  "runner_sha256": "834e3537b11ad19e53a8399d56eeae7452b7f8abb74ac3f1852c765877e86483",
+  "command": [
+    "stdbuf",
+    "-o0",
+    "-e0",
+    "flow/run.sh",
+    "python3",
+    "-c",
+    "import pya; l=pya.Layout();l.read(\"<results>/bondpad-outward-20260923-r3/pad_outward_native.gds\");[(print(c.name,[(i.cell.name,str(i.cplx_trans))for i in c.each_inst()]))for c in l.each_cell()if any(s.lower()in c.name.lower()for s in [\"Secondary\",\"RCClamp\",\"LevelDown\",\"IOPadIn\",\"IOVdd\"])]"
+  ],
+  "started_utc": "2026-09-23T06:08:39.700664+00:00",
+  "status": "completed",
+  "timeout_s": 90,
+  "runtime_arch": "x86_64",
+  "stdio_unbuffered": true,
+  "pid": 4031918,
+  "wall_s": 9.068899117410183,
+  "sampled_utc": "2026-09-23T06:08:48.772687+00:00",
+  "log_bytes": 1411,
+  "resources": {
+    "VmHWM": "51736 kB",
+    "VmRSS": "51736 kB",
+    "Threads": "21"
+  },
+  "cpu_ticks": [
+    "6",
+    "15"
+  ],
+  "returncode": 0,
+  "finished_utc": "2026-09-23T06:08:48.775425+00:00"
+}

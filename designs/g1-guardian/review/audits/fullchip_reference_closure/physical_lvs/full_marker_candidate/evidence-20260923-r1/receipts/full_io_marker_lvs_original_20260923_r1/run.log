@@ -1,0 +1,179 @@
+time="2026-09-23T08:13:13+02:00" level=warning msg="Network file system detected as backing store.  Enforcing overlay option `force_mask=\"700\"`.  Add it to storage.conf to silence this warning"
+time="2026-09-23T08:13:14+02:00" level=warning msg="Network file system detected as backing store.  Enforcing overlay option `force_mask=\"700\"`.  Add it to storage.conf to silence this warning"
+Resource enforcement: CPU affinity; memory reservation only (rootless cgroups v1).
+time="2026-09-23T08:13:14+02:00" level=warning msg="Network file system detected as backing store.  Enforcing overlay option `force_mask=\"700\"`.  Add it to storage.conf to silence this warning"
+{
+  "status": "failed strict fullchip stock comparison",
+  "physical_extraction": "attempted; see actual engine report",
+  "fullchip_LVS": "failed",
+  "resource_gate_sha256": "686f856e68a8057d435ffea392107eb3c9185700e2169a204af6ec427594dd87",
+  "source_top_pins": [
+    "D_ELT",
+    "D_STD",
+    "EN",
+    "FAULT_N",
+    "GATE",
+    "G_SHARED",
+    "HBT_B",
+    "HBT_C",
+    "HBT_E",
+    "SCLK",
+    "SDI",
+    "SDO",
+    "SENSE_N",
+    "SENSE_P",
+    "TEMP_OUT",
+    "TRIP_SET",
+    "VDDA",
+    "VREF",
+    "VDD",
+    "VSS",
+    "IOVDD",
+    "IOVSS"
+  ],
+  "command": [
+    "python3",
+    "/foss/pdks/ihp-sg13g2/libs.tech/klayout/tech/lvs/run_lvs.py",
+    "--layout",
+    "<results>/full-io-marker-20260923-r2/io_marker_native.gds",
+    "--netlist",
+    "<results>/fullchip-name-interface-20260923-r1/g1_chip_top_layout_name_only.cdl",
+    "--topcell",
+    "placed_core_NOT_CONNECTED_FULLCHIP",
+    "--run_mode",
+    "deep",
+    "--top_lvl_pins",
+    "--spice_comments",
+    "--run_dir",
+    "<results>/full-io-marker-lvs-original-20260923-r1/reports"
+  ],
+  "requested_mode": "deep",
+  "runtime": {
+    "klayout": "0.30.9",
+    "pdk_commit": "84374023ee8b4b126bebbba67fcbada0a9c0ff0b",
+    "image_config": "ddeb69576f2808676d1c5d474ecf04f6d1d6f8abdcff6b72b39790ded924bab2",
+    "pinned_launcher_sha256": "3076155a0c0d8cdac8a6f0ba204bf5b0795e85f3cf6cd51a6a2503cfcccf71d6"
+  },
+  "watchdog_seconds": 900,
+  "kill_grace_seconds": 5,
+  "analysis_watchdog_seconds": 120,
+  "reservation_GiB": 16,
+  "memory_enforced": false,
+  "expected_external_growth_GiB": 2,
+  "known_prior_failure": "IO tap source/native A/P mismatch retained; no reference tailoring",
+  "not_run": [
+    "new physical PEX",
+    "electrical adoption",
+    "model applicability qualification"
+  ],
+  "seed": "not applicable",
+  "run": {
+    "command": [
+      "stdbuf",
+      "-o0",
+      "-e0",
+      "python3",
+      "/foss/pdks/ihp-sg13g2/libs.tech/klayout/tech/lvs/run_lvs.py",
+      "--layout",
+      "<results>/full-io-marker-20260923-r2/io_marker_native.gds",
+      "--netlist",
+      "<results>/fullchip-name-interface-20260923-r1/g1_chip_top_layout_name_only.cdl",
+      "--topcell",
+      "placed_core_NOT_CONNECTED_FULLCHIP",
+      "--run_mode",
+      "deep",
+      "--top_lvl_pins",
+      "--spice_comments",
+      "--run_dir",
+      "<results>/full-io-marker-lvs-original-20260923-r1/reports"
+    ],
+    "started_utc": "2026-09-23T06:13:21.373318+00:00",
+    "status": "completed",
+    "timeout_s": 900,
+    "runtime_arch": "x86_64",
+    "stdio_unbuffered": true,
+    "pid": 8,
+    "wall_s": 396.68911049701273,
+    "sampled_utc": "2026-09-23T06:19:58.060297+00:00",
+    "log_bytes": 38491,
+    "resources": {
+      "VmHWM": "75452 kB",
+      "VmRSS": "75452 kB",
+      "Threads": "1"
+    },
+    "cpu_ticks": [
+      "11",
+      "4"
+    ],
+    "returncode": 0,
+    "finished_utc": "2026-09-23T06:19:58.062962+00:00"
+  },
+  "analysis_run": {
+    "command": [
+      "stdbuf",
+      "-o0",
+      "-e0",
+      "python3",
+      "/work/designs/g1-guardian/review/audits/fullchip_reference_closure/physical_lvs/inspect_stock_result_r4.py",
+      "--reports",
+      "<results>/full-io-marker-lvs-original-20260923-r1/reports",
+      "--returncode",
+      "0",
+      "--top",
+      "placed_core_NOT_CONNECTED_FULLCHIP",
+      "--pins-json",
+      "<results>/full-io-marker-lvs-original-20260923-r1/expected_source_pins.json",
+      "--mode",
+      "deep",
+      "--output",
+      "<results>/full-io-marker-lvs-original-20260923-r1/strict_analysis.json"
+    ],
+    "started_utc": "2026-09-23T06:19:58.066591+00:00",
+    "status": "failed",
+    "timeout_s": 120,
+    "runtime_arch": "x86_64",
+    "stdio_unbuffered": true,
+    "pid": 285,
+    "wall_s": 19.107438631355762,
+    "sampled_utc": "2026-09-23T06:20:17.100334+00:00",
+    "log_bytes": 905,
+    "resources": {
+      "VmHWM": "2069012 kB",
+      "VmRSS": "2069012 kB",
+      "Threads": "1"
+    },
+    "cpu_ticks": [
+      "1359",
+      "141"
+    ],
+    "returncode": 1,
+    "finished_utc": "2026-09-23T06:20:17.174408+00:00"
+  },
+  "strict_analysis": {
+    "status": "failed strict saved comparison",
+    "checks": {
+      "process_exit_zero": true,
+      "explicit_engine_match_only": false,
+      "no_engine_error": false,
+      "saved_database": true,
+      "strict_all_pairs_Match": false,
+      "layout_top_present_nonempty": true,
+      "layout_source_top_pin_set_exact": false,
+      "reference_top_present_nonempty": true,
+      "reference_source_top_pin_set_exact": true,
+      "native_extraction_strict_unrelaxed_switches": true,
+      "observed_extraction_mode_exact": true
+    },
+    "explicit_engine_match": false,
+    "explicit_engine_mismatch": true,
+    "process_returncode": 0,
+    "wrapper_summary_not_used": true,
+    "engine_log": "io_marker_native.log",
+    "engine_log_sha256": "afa3072aeeae39750b2a7342017ede552bf381be70a51fddd5b47a6992a36096",
+    "parser_sha256": "e53c46f698af2825e8a3a127bfe8b04d5ed5e4783ba45ec49b5ef63f0f04c361",
+    "physical_extraction_required": true
+  },
+  "inputs_rules_unchanged": true,
+  "output_bytes": 258757692,
+  "output_growth_gate": "passed"
+}

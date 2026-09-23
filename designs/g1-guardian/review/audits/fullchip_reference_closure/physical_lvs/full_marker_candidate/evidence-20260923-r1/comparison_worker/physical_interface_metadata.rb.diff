@@ -1,0 +1,11 @@
+--- physical_interface_metadata.rb:prior
++++ physical_interface_metadata.rb:current
+@@ -41,7 +41,7 @@
+   end
+ 
+   def self.apply(circuit, path, source_pins)
+-    raise 'Physical certificate changed' unless Digest::SHA256.file(path).hexdigest == 'e7f9c8eef1ca1631aaa9fd7c2fdbc142bf5f7c3fe33afb1dc4eefc831c308177'
++    raise 'Physical certificate changed' unless Digest::SHA256.file(path).hexdigest == '56bbb3b4b65eb31e95b9666cb59ff6c3b272135e3a06fdf2879a78bf4d00c33d'
+     proof = JSON.parse(File.read(path))
+     raise 'Physical certificate incomplete' unless proof['status'].start_with?('passed read-only 24 physical ports / 22 distinct') && proof['ports'].size == 24
+     expected = proof['logical_bindings']
