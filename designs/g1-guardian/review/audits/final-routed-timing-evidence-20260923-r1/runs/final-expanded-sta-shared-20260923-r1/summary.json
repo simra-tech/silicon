@@ -1,0 +1,109 @@
+{
+  "status": "passed STA execution and original clock-register coverage; independent acceptance pending",
+  "corner": "fast",
+  "inputs": {
+    "@RESULTS@/final-routed-rcx-20260923-r1/final_signal.nl.v": "337db3b1e5bc4686b421c185e25cc6bcd44327bc6b8eb0411a16a2f764e533c4",
+    "@RESULTS@/final-routed-rcx-20260923-r1/final_signal.nom.spef": "ceb5651e41c4dfc3ede324dd10febcbe53ddf3809c3db20aebbea0234cfd638d",
+    "@REPO@/designs/g1-guardian/blocks/g1_ctrl/layout/g1_digital.nl.v": "fce1437553a1a7b3a052c3b92f00ad0c7fa4ddc9a329576aa0506b484c4c547f",
+    "@REPO@/designs/g1-guardian/blocks/g1_ctrl/layout/g1_digital.nom.spef": "42dbd01860089eda6028278815a5572a6f3e8e1560063b6e0a748c8d77f0abc7",
+    "@REPO@/designs/g1-guardian/blocks/g1_padring/flow/g1_chip_top.sdc": "cf7a8c510a9bf10c0f8b1fddb1b686032c8d08243a2ed53c658ddb259634ca16",
+    "@REPO@/designs/g1-guardian/blocks/g1_ctrl/layout/g1_digital_top.sdc": "bd370c5408f5c2d1ae3df050c100f0a0a48a4295abc9c667d841252fd40b5249",
+    "@REPO@/designs/g1-guardian/blocks/g1_padring/flow/runs/assembly-1350/38-openroad-globalrouting/_env.tcl": "4e816ab40bf9f570a6256b8757e66d94c2a4792d763ad73a0c6e4310545d00b5",
+    "/foss/tools/bin/sta": "49ddbd40385e6b54152aed6d7435e4114e409e5f168884d8945374a42f00301b",
+    "/foss/pdks/ihp-sg13g2/libs.ref/sg13g2_stdcell/lib/sg13g2_stdcell_fast_1p32V_m40C.lib": "f191a3132d0f2f59ca2721884cdb1d8360c8fbf3e0012056af62583dd69ae701",
+    "@REPO@/designs/g1-guardian/blocks/g1_padring/ip/sg13g2_io_padbare/lib/sg13g2_io_fast_1p32V_3p6V_m40C.lib": "1508ffb6e67187d853e2d58f6963edc01e80a026ff60dc7bd01848b805b553da",
+    "@REPO@/designs/g1-guardian/review/audits/final_route_context/lef_port_stub.py": "f788447dafc5e96e3cc7d24b015d020e034cf16bd4e3eb8b6adc5cfb32616cc6",
+    "@REPO@/designs/g1-guardian/blocks/g1_trip/layout/g1_trip.lef": "3c6bc36403ab583005b3e51ab298d710a4b661418a233b486f81a0bd5e8e1000",
+    "@REPO@/designs/g1-guardian/blocks/g1_osc/layout/g1_osc.lef": "6c43533865dbf48bd5b340916988b0cc8c9e3bf4f6d55342ac75a8091ec02b91"
+  },
+  "command": [
+    "timeout",
+    "--kill-after=5",
+    "180",
+    "/foss/tools/bin/sta",
+    "-no_splash",
+    "-exit",
+    "@RESULTS@/final-expanded-sta-shared-20260923-r1/sta.tcl"
+  ],
+  "stub_pins": {
+    "g1_trip": {
+      "VREF": "input",
+      "ISENSE": "input",
+      "cmp_soft": "output",
+      "cmp_hard": "output",
+      "clk": "input",
+      "VDD": "inout",
+      "IOVDD": "inout",
+      "VSS": "inout",
+      "dac_soft[0]": "input",
+      "dac_soft[1]": "input",
+      "dac_soft[2]": "input",
+      "dac_soft[3]": "input",
+      "dac_soft[4]": "input",
+      "dac_soft[5]": "input",
+      "dac_soft[6]": "input",
+      "dac_soft[7]": "input",
+      "dac_hard[0]": "input",
+      "dac_hard[1]": "input",
+      "dac_hard[2]": "input",
+      "dac_hard[3]": "input",
+      "dac_hard[4]": "input",
+      "dac_hard[5]": "input",
+      "dac_hard[6]": "input",
+      "dac_hard[7]": "input"
+    },
+    "g1_osc": {
+      "en": "input",
+      "trim[0]": "input",
+      "trim[1]": "input",
+      "trim[2]": "input",
+      "trim[3]": "input",
+      "osc_clk": "output",
+      "VDD": "inout",
+      "VSS": "inout"
+    }
+  },
+  "macro_first": false,
+  "shared_parasitics": true,
+  "scope": "Expanded unchanged digital macro plus final routed signal SPEF; analog cells have no timing models",
+  "assumptions": "Unchanged existing SDC clock periods, uncertainty, IO delays and loads; not new physical bounds",
+  "not_run": [
+    "Independent timing coverage and slack acceptance audit",
+    "Analog comparator/LS timing",
+    "Native fill and supplemental terminal metal parasitics",
+    "Clock/load-bound qualification"
+  ],
+  "returncode": 0,
+  "wall_s": 1.511659974232316,
+  "counts": {
+    "SCLK": "52",
+    "osc_clk": "1148"
+  },
+  "reports": [
+    {
+      "name": "violators.rpt",
+      "sha256": "e732d9e4f3acafc4935c5f44cf3a1af5f12711a6b7cadb89652fc37d0bfddfbc",
+      "bytes": 7177
+    },
+    {
+      "name": "hold.rpt",
+      "sha256": "2cf741e2e930c0d0b1e7f37620b004ec55f81a596a5544834b0f2890ea6b45bf",
+      "bytes": 312836
+    },
+    {
+      "name": "annotation.rpt",
+      "sha256": "efbd48a7ed662bc317c2f1c49baa618fdf03ad5f980fa65b6c81194aa1f79fa2",
+      "bytes": 2402
+    },
+    {
+      "name": "coverage.rpt",
+      "sha256": "39d7cfd68b9bcf0e997dfbf7073991ff251151af43d42e351a7620dcf5f2914f",
+      "bytes": 455
+    },
+    {
+      "name": "setup.rpt",
+      "sha256": "4a6b2e6e174c539a826a3b6a7c2fb1755eafe1809b52b112ea20cdd52398bb33",
+      "bytes": 432094
+    }
+  ]
+}

@@ -1,0 +1,102 @@
+time="2026-09-23T07:46:05+02:00" level=warning msg="Network file system detected as backing store.  Enforcing overlay option `force_mask=\"700\"`.  Add it to storage.conf to silence this warning"
+time="2026-09-23T07:46:06+02:00" level=warning msg="Network file system detected as backing store.  Enforcing overlay option `force_mask=\"700\"`.  Add it to storage.conf to silence this warning"
+Resource enforcement: CPU affinity; memory reservation only (rootless cgroups v1).
+time="2026-09-23T07:46:07+02:00" level=warning msg="Network file system detected as backing store.  Enforcing overlay option `force_mask=\"700\"`.  Add it to storage.conf to silence this warning"
+{
+  "status": "passed",
+  "GDS_sha256": "4b8a82d4a19127e5975d558381cd0f1057235cf51dfbbc58e2219b0f0c4a8bd1",
+  "source_sha256": "baab6183c364477da1dd332e4585ae7201b3776bf0f836014744a42809e13877",
+  "CDL_sha256": "e3e3c22fa0e59c61f5acc79f3733833ec2a144fe3f133ed09f7922a395deec20",
+  "reference_manifest_sha256": "9f0344c9ab81bc1de88393f874ace943e90702e3d6e1ec68196b48c0df87a3b8",
+  "DRC_summary_sha256": "a3c3dceb120480e4cb52d41a1a8b90be30e7ebf827d8570dc1bd0dd1cadd1627",
+  "script_sha256": "49c35bb80059c57d995fcccb3898cc62d988c422da6155ecba3c675ac37072c2",
+  "command": [
+    "timeout",
+    "--kill-after=5",
+    "120",
+    "python3",
+    "/foss/pdks/ihp-sg13g2/libs.tech/klayout/tech/lvs/run_lvs.py",
+    "--run_mode=deep",
+    "--topcell=g1_sense_physical",
+    "--run_dir=${BULK}/sense-m2-feed-lvs-20260923-r1/lvs",
+    "--layout=${BULK}/sense-m2-feed-build-20260923-r1/g1_sense_physical.gds",
+    "--netlist=${BULK}/sense-m2-feed-reference-20260923-r1/g1_sense_physical.cdl",
+    "--no_series_res"
+  ],
+  "child_limit_s": 120,
+  "not_run": [
+    "Intrinsic A/P and gate resistance applicability",
+    "Zero-R/electrical parity",
+    "PEX",
+    "Fullchip adoption"
+  ],
+  "returncode": 0,
+  "wall_s": 5.727212652564049,
+  "explicit_comparison_pass": true,
+  "databases": [
+    {
+      "path": "lvs/g1_sense_physical.lvsdb",
+      "sha256": "da9b71c338bf5763a3f86e24a8c4cf2e1861db8b4dfab588ff0804c2ce859127",
+      "xref": {
+        "status": "passed",
+        "circuits": [
+          {
+            "first": "g1_ota",
+            "second": "G1_OTA",
+            "status": "Match",
+            "children": {
+              "device": {
+                "Match": 21
+              },
+              "net": {
+                "Match": 17
+              },
+              "pin": {
+                "Match": 6
+              },
+              "subcircuit": {}
+            }
+          },
+          {
+            "first": "g1_ota_main_candidate",
+            "second": "G1_OTA_MAIN_CANDIDATE",
+            "status": "Match",
+            "children": {
+              "device": {
+                "Match": 21
+              },
+              "net": {
+                "Match": 17
+              },
+              "pin": {
+                "Match": 6
+              },
+              "subcircuit": {}
+            }
+          },
+          {
+            "first": "g1_sense_physical",
+            "second": "G1_SENSE_PHYSICAL",
+            "status": "Match",
+            "children": {
+              "device": {
+                "Match": 96
+              },
+              "net": {
+                "Match": 101
+              },
+              "pin": {
+                "Match": 9
+              },
+              "subcircuit": {
+                "Match": 3
+              }
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "nine_top_pins_match": true,
+  "source_rules_unchanged": true
+}

@@ -1,0 +1,473 @@
+time="2026-09-23T07:56:11+02:00" level=warning msg="Network file system detected as backing store.  Enforcing overlay option `force_mask=\"700\"`.  Add it to storage.conf to silence this warning"
+time="2026-09-23T07:56:13+02:00" level=warning msg="Network file system detected as backing store.  Enforcing overlay option `force_mask=\"700\"`.  Add it to storage.conf to silence this warning"
+Resource enforcement: CPU affinity; memory reservation only (rootless cgroups v1).
+time="2026-09-23T07:56:13+02:00" level=warning msg="Network file system detected as backing store.  Enforcing overlay option `force_mask=\"700\"`.  Add it to storage.conf to silence this warning"
+{
+  "status": "passed STA execution and original clock-register coverage; independent acceptance pending",
+  "corner": "slow",
+  "inputs": {
+    "@RESULTS@/final-routed-rcx-20260923-r1/final_signal.nl.v": "337db3b1e5bc4686b421c185e25cc6bcd44327bc6b8eb0411a16a2f764e533c4",
+    "@RESULTS@/final-routed-rcx-20260923-r1/final_signal.nom.spef": "ceb5651e41c4dfc3ede324dd10febcbe53ddf3809c3db20aebbea0234cfd638d",
+    "@REPO@/designs/g1-guardian/blocks/g1_ctrl/layout/g1_digital.nl.v": "fce1437553a1a7b3a052c3b92f00ad0c7fa4ddc9a329576aa0506b484c4c547f",
+    "@REPO@/designs/g1-guardian/blocks/g1_ctrl/layout/g1_digital.nom.spef": "42dbd01860089eda6028278815a5572a6f3e8e1560063b6e0a748c8d77f0abc7",
+    "@REPO@/designs/g1-guardian/blocks/g1_padring/flow/g1_chip_top.sdc": "cf7a8c510a9bf10c0f8b1fddb1b686032c8d08243a2ed53c658ddb259634ca16",
+    "@REPO@/designs/g1-guardian/blocks/g1_ctrl/layout/g1_digital_top.sdc": "bd370c5408f5c2d1ae3df050c100f0a0a48a4295abc9c667d841252fd40b5249",
+    "@REPO@/designs/g1-guardian/blocks/g1_padring/flow/runs/assembly-1350/38-openroad-globalrouting/_env.tcl": "4e816ab40bf9f570a6256b8757e66d94c2a4792d763ad73a0c6e4310545d00b5",
+    "/foss/tools/bin/sta": "49ddbd40385e6b54152aed6d7435e4114e409e5f168884d8945374a42f00301b",
+    "@RESULTS@/final-routed-rcx-20260923-r1/independent_audit_r2.json": "42ef72abec4234e29e4b5811cba6ab1460a053c5590aeb9339b11a735accf2c4",
+    "/foss/pdks/ihp-sg13g2/libs.ref/sg13g2_stdcell/lib/sg13g2_stdcell_slow_1p08V_125C.lib": "1ac6a0301184b3a8aa1a4a01910967f624c8e869517777f529985f11f04588c3",
+    "@REPO@/designs/g1-guardian/blocks/g1_padring/ip/sg13g2_io_padbare/lib/sg13g2_io_slow_1p08V_3p0V_125C.lib": "79e098d0e3df63b3471c1385d0e15d366a57773c4844c4cb8628d45c2c987389",
+    "@REPO@/designs/g1-guardian/review/audits/final_route_context/lef_port_stub.py": "f788447dafc5e96e3cc7d24b015d020e034cf16bd4e3eb8b6adc5cfb32616cc6",
+    "@REPO@/designs/g1-guardian/blocks/g1_trip/layout/g1_trip.lef": "3c6bc36403ab583005b3e51ab298d710a4b661418a233b486f81a0bd5e8e1000",
+    "@REPO@/designs/g1-guardian/blocks/g1_osc/layout/g1_osc.lef": "6c43533865dbf48bd5b340916988b0cc8c9e3bf4f6d55342ac75a8091ec02b91"
+  },
+  "command": [
+    "timeout",
+    "--kill-after=5",
+    "180",
+    "/foss/tools/bin/sta",
+    "-no_splash",
+    "-exit",
+    "@RESULTS@/final-sta-allnets-slow-20260923-r1/sta.tcl"
+  ],
+  "stub_pins": {
+    "g1_trip": {
+      "VREF": "input",
+      "ISENSE": "input",
+      "cmp_soft": "output",
+      "cmp_hard": "output",
+      "clk": "input",
+      "VDD": "inout",
+      "IOVDD": "inout",
+      "VSS": "inout",
+      "dac_soft[0]": "input",
+      "dac_soft[1]": "input",
+      "dac_soft[2]": "input",
+      "dac_soft[3]": "input",
+      "dac_soft[4]": "input",
+      "dac_soft[5]": "input",
+      "dac_soft[6]": "input",
+      "dac_soft[7]": "input",
+      "dac_hard[0]": "input",
+      "dac_hard[1]": "input",
+      "dac_hard[2]": "input",
+      "dac_hard[3]": "input",
+      "dac_hard[4]": "input",
+      "dac_hard[5]": "input",
+      "dac_hard[6]": "input",
+      "dac_hard[7]": "input"
+    },
+    "g1_osc": {
+      "en": "input",
+      "trim[0]": "input",
+      "trim[1]": "input",
+      "trim[2]": "input",
+      "trim[3]": "input",
+      "osc_clk": "output",
+      "VDD": "inout",
+      "VSS": "inout"
+    }
+  },
+  "macro_first": false,
+  "shared_parasitics": true,
+  "keep_couplings": true,
+  "net_reports": {
+    "net_00.rpt": "d_elt_bare",
+    "net_01.rpt": "d_std_bare",
+    "net_02.rpt": "en_i",
+    "net_03.rpt": "fault_n_o",
+    "net_04.rpt": "g_shared_bare",
+    "net_05.rpt": "gate_o",
+    "net_06.rpt": "hbt_b_bare",
+    "net_07.rpt": "hbt_c_bare",
+    "net_08.rpt": "hbt_e_bare",
+    "net_09.rpt": "i_core.bgr_r4_12",
+    "net_10.rpt": "i_core.bgr_r4_33",
+    "net_11.rpt": "i_core.clr_d",
+    "net_12.rpt": "i_core.cmp_clk",
+    "net_13.rpt": "i_core.cmp_hard",
+    "net_14.rpt": "i_core.cmp_soft",
+    "net_15.rpt": "i_core.dac_hard[0]",
+    "net_16.rpt": "i_core.dac_hard[1]",
+    "net_17.rpt": "i_core.dac_hard[2]",
+    "net_18.rpt": "i_core.dac_hard[3]",
+    "net_19.rpt": "i_core.dac_hard[4]",
+    "net_20.rpt": "i_core.dac_hard[5]",
+    "net_21.rpt": "i_core.dac_hard[6]",
+    "net_22.rpt": "i_core.dac_hard[7]",
+    "net_23.rpt": "i_core.dac_soft[0]",
+    "net_24.rpt": "i_core.dac_soft[1]",
+    "net_25.rpt": "i_core.dac_soft[2]",
+    "net_26.rpt": "i_core.dac_soft[3]",
+    "net_27.rpt": "i_core.dac_soft[4]",
+    "net_28.rpt": "i_core.dac_soft[5]",
+    "net_29.rpt": "i_core.dac_soft[6]",
+    "net_30.rpt": "i_core.dac_soft[7]",
+    "net_31.rpt": "i_core.fast_en",
+    "net_32.rpt": "i_core.iptat",
+    "net_33.rpt": "i_core.isense",
+    "net_34.rpt": "i_core.osc_clk",
+    "net_35.rpt": "i_core.osc_en",
+    "net_36.rpt": "i_core.osc_trim[0]",
+    "net_37.rpt": "i_core.osc_trim[1]",
+    "net_38.rpt": "i_core.osc_trim[2]",
+    "net_39.rpt": "i_core.osc_trim[3]",
+    "net_40.rpt": "i_core.pbias",
+    "net_41.rpt": "i_core.pcasc",
+    "net_42.rpt": "i_core.sclk_i",
+    "net_43.rpt": "i_core.sdi_i",
+    "net_44.rpt": "i_core.sdo_o",
+    "net_45.rpt": "i_core.sense_n",
+    "net_46.rpt": "i_core.sense_p",
+    "net_47.rpt": "i_core.t2f_en_12",
+    "net_48.rpt": "i_core.t2f_en_33",
+    "net_49.rpt": "i_core.t2f_mode_12",
+    "net_50.rpt": "i_core.t2f_mode_33",
+    "net_51.rpt": "i_core.temp_out_o",
+    "net_52.rpt": "i_core.trip_d",
+    "net_53.rpt": "i_core.tripped",
+    "net_54.rpt": "i_core.vref",
+    "net_55.rpt": "i_core.vref_buf",
+    "net_56.rpt": "net"
+  },
+  "scope": "Expanded unchanged digital macro plus final routed signal SPEF; analog cells have no timing models",
+  "assumptions": "Unchanged existing SDC clock periods, uncertainty, IO delays and loads; not new physical bounds",
+  "not_run": [
+    "Independent timing coverage and slack acceptance audit",
+    "Analog comparator/LS timing",
+    "Native fill and supplemental terminal metal parasitics",
+    "Clock/load-bound qualification"
+  ],
+  "returncode": 0,
+  "wall_s": 1.5956718400120735,
+  "counts": {
+    "SCLK": "52",
+    "osc_clk": "1148"
+  },
+  "slacks_ns": {
+    "hold": 0.3261437323634129,
+    "setup": 25.751415950730077
+  },
+  "reports": [
+    {
+      "name": "net_53.rpt",
+      "sha256": "0bb66ac98dd348ccbb92ea8c5facb7d7cdc27a8c01668feb88cabe8813c6b4a4",
+      "bytes": 497
+    },
+    {
+      "name": "net_05.rpt",
+      "sha256": "0104edb9bbf1f091d00f0694d5d5dbc281ed1af2135424e72f771e1e82bf54f0",
+      "bytes": 324
+    },
+    {
+      "name": "net_16.rpt",
+      "sha256": "ccc2b009abfc3f65f51c6976e51502767996e7af2470a1b194d4079de9893ebd",
+      "bytes": 331
+    },
+    {
+      "name": "net_41.rpt",
+      "sha256": "d359932e4f4fcc69e4fc8f480ed478f4cf6cf5fabf23b01e1fa9c65f97530f0b",
+      "bytes": 257
+    },
+    {
+      "name": "violators.rpt",
+      "sha256": "e732d9e4f3acafc4935c5f44cf3a1af5f12711a6b7cadb89652fc37d0bfddfbc",
+      "bytes": 7177
+    },
+    {
+      "name": "net_23.rpt",
+      "sha256": "6968cec13e5be7a0d08f2a3a0412de137aaea8ab9d41062684ccd64105a3e0fd",
+      "bytes": 331
+    },
+    {
+      "name": "net_30.rpt",
+      "sha256": "7ac4464b15a0ce661069eb9b6f851a4761f0495a270bec7081297871b6a28a89",
+      "bytes": 331
+    },
+    {
+      "name": "net_29.rpt",
+      "sha256": "96c6475e3fb7cc8fdac3fb75d450527630516f2e3694e88549bcac36711b2ff3",
+      "bytes": 331
+    },
+    {
+      "name": "net_37.rpt",
+      "sha256": "cdeeb65db8c44d3ccc18aae7c1bd7c17b6c02bf2db767d0f7a127320628189c5",
+      "bytes": 326
+    },
+    {
+      "name": "sclk_net.rpt",
+      "sha256": "c93e7e65f4468e6be4bc25f6563aafc537e6f3af9ebac4d646b281ae721d3303",
+      "bytes": 474
+    },
+    {
+      "name": "net_15.rpt",
+      "sha256": "cc94b5c2bd53f695108487eeeeccc79c9aaf335255b62055989787b7a55f676b",
+      "bytes": 331
+    },
+    {
+      "name": "net_33.rpt",
+      "sha256": "3dfff23dbdb5cb20d1ed4c4cdde14589bf08826afc6f7c87cd47244fabdfe1b2",
+      "bytes": 273
+    },
+    {
+      "name": "net_25.rpt",
+      "sha256": "523aa71595250beced123cce80aebb02bb0ce17552af073d7d519a10d0d56dea",
+      "bytes": 331
+    },
+    {
+      "name": "net_06.rpt",
+      "sha256": "61d86d81824be714cfe1e277918095d8702b4c85f6b24f6c1a2c7c04aac79a10",
+      "bytes": 411
+    },
+    {
+      "name": "net_03.rpt",
+      "sha256": "b205be38465056da6695cb4bfb5e4ebbb531fc4e42e15eb0fd05569860ca7f92",
+      "bytes": 330
+    },
+    {
+      "name": "net_14.rpt",
+      "sha256": "b11b06cde5569cdbfe5af22c40ff6329057529c306b03d2a2f20a7a168d9e1b8",
+      "bytes": 501
+    },
+    {
+      "name": "net_27.rpt",
+      "sha256": "3a77d3dba4cc41d04a6f05e7daa5e2b3fac327b44b56f6cc946d71950df5c4df",
+      "bytes": 331
+    },
+    {
+      "name": "net_11.rpt",
+      "sha256": "78f003087a545102107261db12da01438ae82cceb54df73e96794b2cc8d9af1b",
+      "bytes": 335
+    },
+    {
+      "name": "net_45.rpt",
+      "sha256": "8c6228cb82cfd27b0efd07d7d7a46b7c7cfa444fc4113afa0ed4d2fd79d70937",
+      "bytes": 419
+    },
+    {
+      "name": "net_52.rpt",
+      "sha256": "e05e41f8efc577975ee9fbaa14397c4b46bbe7d52a2d03a51d313e24422eae09",
+      "bytes": 339
+    },
+    {
+      "name": "net_10.rpt",
+      "sha256": "15bf948558f437a31aea553bdadad83d1056b45b59c03a9c9bdba31106e4db16",
+      "bytes": 260
+    },
+    {
+      "name": "hold.rpt",
+      "sha256": "38f6016da727ed0617d719ebbadcc37e4d163d22eb0c628684f32e6b3f497460",
+      "bytes": 312861
+    },
+    {
+      "name": "net_36.rpt",
+      "sha256": "9b2fbb17a7906e71addfc59d25005625baf71cb6d19c794ecdf32140e59a790a",
+      "bytes": 326
+    },
+    {
+      "name": "net_56.rpt",
+      "sha256": "eb3ac3e4119f3389c6273b601b91935be76987e7e423ca5963cd575d24ad002d",
+      "bytes": 379
+    },
+    {
+      "name": "net_09.rpt",
+      "sha256": "54baad3dbab9d6481a776ecb6fd807cc0aa38bdcb50250b78a0b2fa69330741c",
+      "bytes": 339
+    },
+    {
+      "name": "net_51.rpt",
+      "sha256": "e39b17142b17c55621d9cda2ebd362d7acab56a50be246f4b3165ef99582450b",
+      "bytes": 332
+    },
+    {
+      "name": "net_08.rpt",
+      "sha256": "7bb19a76e54c980652264e87b728e2d056a3d2440ff5f57e898761e1267d1443",
+      "bytes": 411
+    },
+    {
+      "name": "net_04.rpt",
+      "sha256": "b490f226e492308b5973af9f9939b9d9263802e23ed738fed10c54d048b3dfe7",
+      "bytes": 425
+    },
+    {
+      "name": "net_42.rpt",
+      "sha256": "c93e7e65f4468e6be4bc25f6563aafc537e6f3af9ebac4d646b281ae721d3303",
+      "bytes": 474
+    },
+    {
+      "name": "net_20.rpt",
+      "sha256": "613fde9494a4ddc9e67acc77202d60ccd92b09b08477750bcfcf638ddd8b8f71",
+      "bytes": 331
+    },
+    {
+      "name": "net_48.rpt",
+      "sha256": "bbe2e21fbe147f02cc43f2b8e0321cc9b5a88ff0bb581274c2196be5c225dea4",
+      "bytes": 260
+    },
+    {
+      "name": "net_01.rpt",
+      "sha256": "36db2c57a504db73263fb1691390cbf2b2eeb62357b84d88b2c749cce0c8552b",
+      "bytes": 413
+    },
+    {
+      "name": "net_34.rpt",
+      "sha256": "71754596581e6fcc686367dc0a67d985435414d7dc7341b51ffc8b92f7c70065",
+      "bytes": 372
+    },
+    {
+      "name": "net_32.rpt",
+      "sha256": "e4c6ec4b3399ec63110b1559b53f8def10b8ef51cd3d2ddc394c14d2d2b9c878",
+      "bytes": 261
+    },
+    {
+      "name": "net_50.rpt",
+      "sha256": "bd43d83c6df14e6db907af4ab85a6a70e6c2707cbe0b7f4f9260d1d290053e1e",
+      "bytes": 266
+    },
+    {
+      "name": "net_07.rpt",
+      "sha256": "5fbdf98e9ae109247a81d88139bd47cc82e084ec959ee7db3274535a90ad765c",
+      "bytes": 423
+    },
+    {
+      "name": "net_55.rpt",
+      "sha256": "0ff037527a22f7bdda00c43680dc9169e6182f1003480a879d58b7fbb9c91db8",
+      "bytes": 275
+    },
+    {
+      "name": "net_40.rpt",
+      "sha256": "04365baa3e2559ec42322eab93d04c8938715a5e6f5044f7d12426a65f056116",
+      "bytes": 257
+    },
+    {
+      "name": "net_17.rpt",
+      "sha256": "aafe327a037fd1ecd83f95c602bdec26aa7abc7cefb4035a3b9b27e3a2543ca1",
+      "bytes": 331
+    },
+    {
+      "name": "net_22.rpt",
+      "sha256": "ada50d29473e84f96a35a6bb480dd9b21b7414ba99d77f107aff56e850fda6c6",
+      "bytes": 331
+    },
+    {
+      "name": "net_02.rpt",
+      "sha256": "41c23fed81309a7bed09c6d851030ce8994ca0dbc693d224b3926be62e356af1",
+      "bytes": 471
+    },
+    {
+      "name": "annotation.rpt",
+      "sha256": "efbd48a7ed662bc317c2f1c49baa618fdf03ad5f980fa65b6c81194aa1f79fa2",
+      "bytes": 2402
+    },
+    {
+      "name": "net_13.rpt",
+      "sha256": "c073287e46dde1906eb92f8122fdf57c145cfa31f1e7869c5cc24f4d92fb5b5f",
+      "bytes": 419
+    },
+    {
+      "name": "sdo_net.rpt",
+      "sha256": "d24148b9424960a0f76ed581b09b48e83963210ba07875c9ec14d74d2875bdf0",
+      "bytes": 397
+    },
+    {
+      "name": "net_19.rpt",
+      "sha256": "922abfe64c13ad1953d6b7d385695cd8da5c152faefd76d95e4aea5e0e3ff856",
+      "bytes": 331
+    },
+    {
+      "name": "net_54.rpt",
+      "sha256": "934f7eec2a8fcd73098d0c97d85ecebbfaafd620728c7975d01e87e308e38f1f",
+      "bytes": 477
+    },
+    {
+      "name": "net_24.rpt",
+      "sha256": "bab0aec222bfb3e8613e94ea4bd43d46636533e8061d37bf115d654efdf2dabe",
+      "bytes": 331
+    },
+    {
+      "name": "net_18.rpt",
+      "sha256": "cb7a079b14a4745f83cd0bbaa19af7525a07ef7ac39abdbcb17a6bd1083ff622",
+      "bytes": 331
+    },
+    {
+      "name": "net_26.rpt",
+      "sha256": "f7c061dbd86a00bc4fab85fe55252a9f9be180755005be5311d8e8ea6438c7a8",
+      "bytes": 331
+    },
+    {
+      "name": "net_46.rpt",
+      "sha256": "8e1325a9334345752d17748e24ceb7b26822ee09532617416c6b0ca94dbbde55",
+      "bytes": 419
+    },
+    {
+      "name": "net_44.rpt",
+      "sha256": "d24148b9424960a0f76ed581b09b48e83963210ba07875c9ec14d74d2875bdf0",
+      "bytes": 397
+    },
+    {
+      "name": "coverage.rpt",
+      "sha256": "39d7cfd68b9bcf0e997dfbf7073991ff251151af43d42e351a7620dcf5f2914f",
+      "bytes": 455
+    },
+    {
+      "name": "net_00.rpt",
+      "sha256": "6173d37e86c9820f9a2d2ba6ccfe69053d957a067c6f6b90ea075e13fd1bdc32",
+      "bytes": 413
+    },
+    {
+      "name": "net_31.rpt",
+      "sha256": "b44f2b7e23d7ae53d7f28e16788c2335ea4b6c1ea85e3d287c223ce6d509dd4a",
+      "bytes": 342
+    },
+    {
+      "name": "net_49.rpt",
+      "sha256": "8fa93134171dbf61c65a2cbe8f7ee227727be9aee032abe55830476eb138135b",
+      "bytes": 346
+    },
+    {
+      "name": "net_35.rpt",
+      "sha256": "e006b6a1cfcf5de25cdacfd77f8df7f158471030cc59be0f510cb510b8f7e569",
+      "bytes": 311
+    },
+    {
+      "name": "net_43.rpt",
+      "sha256": "f6b21830353858728806acc235baa6860198180d4b87fe462cddf429d3d66e3d",
+      "bytes": 440
+    },
+    {
+      "name": "net_28.rpt",
+      "sha256": "dc942eb4af85ee68da80272acf82cd5a8d55d56a8175cf18d3925c9f2517d1d0",
+      "bytes": 331
+    },
+    {
+      "name": "net_21.rpt",
+      "sha256": "68f5d3538519a24fe792f7b4e18536592a575d3b1ffb37ad92420a6c0667f8e0",
+      "bytes": 331
+    },
+    {
+      "name": "net_47.rpt",
+      "sha256": "2d0ef97e9c2876e6e7dc6ea24e4158f7e0a56e5dc57367ce501f898e3882410f",
+      "bytes": 340
+    },
+    {
+      "name": "net_38.rpt",
+      "sha256": "c4a3245c5695eee6fdc6a32a54997ef4a9abdeb7f12accf8797727154939467d",
+      "bytes": 326
+    },
+    {
+      "name": "net_39.rpt",
+      "sha256": "a30f7d7207ff012372fc6fef509926ab2b1d6a51479994063993c523d56ebd70",
+      "bytes": 326
+    },
+    {
+      "name": "setup.rpt",
+      "sha256": "721bd6f324d206a82eceb552c04341220bc292e0014d9bca4e71163aa2d13012",
+      "bytes": 433075
+    },
+    {
+      "name": "net_12.rpt",
+      "sha256": "38b5f0a86f549ce7b444720686a615478128d07da99757f8b967f840691d8682",
+      "bytes": 315
+    }
+  ]
+}

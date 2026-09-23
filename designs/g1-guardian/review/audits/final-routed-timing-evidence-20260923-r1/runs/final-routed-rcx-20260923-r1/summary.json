@@ -1,0 +1,40 @@
+{
+  "status": "passed stock RCX tool completion and unchanged functional DB connectivity; independent audit pending",
+  "inputs": {
+    "@RESULTS@/final-detailed-route-20260923-r1/detailed.odb": "88143d849e5c599423c04e4824c14463b53a08d997aa50d9ea6e6441c811e8d7",
+    "/foss/pdks/ihp-sg13g2/libs.tech/librelane/openrcx/IHP_rcx_patterns.rules": "ffda02d57a6ecb39b02268be9511d89ef072911f17bd2dcd095f3f3cbeb5a905",
+    "/foss/tools/openroad-librelane/bin/openroad": "a20f82ef703596ff75e8ddba7a89c8447f62c5113dcb9d8be8740eb229a44ddc"
+  },
+  "script_sha256": "2a2aa8ea37692902bee67ff62669aaf0556c19c3276d47105948ffa46984d073",
+  "command": [
+    "timeout",
+    "--kill-after=5",
+    "300",
+    "/foss/tools/openroad-librelane/bin/openroad",
+    "-exit",
+    "@RESULTS@/final-routed-rcx-20260923-r1/extract.tcl"
+  ],
+  "stock_options": "Default via/wire merging and -lef_res, as pinned LibreLane RCX script",
+  "scope": "Detailed signal routing DB only; no full filled native GDS or macro-internal extraction",
+  "not_run": [
+    "Independent SPEF connectivity/completeness audit",
+    "Final expanded-macro STA",
+    "Native supplemental supply/terminal metal and fill parasitics",
+    "Actual-source electrical, current and power acceptance"
+  ],
+  "returncode": 0,
+  "wall_s": 1.0329004749655724,
+  "functional_instance_and_net_connectivity_unchanged": "passed",
+  "outputs": [
+    {
+      "name": "final_signal.nom.spef",
+      "bytes": 138586,
+      "sha256": "ceb5651e41c4dfc3ede324dd10febcbe53ddf3809c3db20aebbea0234cfd638d"
+    },
+    {
+      "name": "final_signal.nl.v",
+      "bytes": 173987,
+      "sha256": "337db3b1e5bc4686b421c185e25cc6bcd44327bc6b8eb0411a16a2f764e533c4"
+    }
+  ]
+}
