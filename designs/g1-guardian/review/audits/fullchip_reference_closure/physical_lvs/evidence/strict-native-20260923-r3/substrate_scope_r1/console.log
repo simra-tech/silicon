@@ -1,0 +1,60 @@
+ERROR: RuntimeError: ArgumentError: Poly resistor should have 3 nodes, please recheck in NetlistSpiceReaderDelegate::element
+  /foss/pdks/ihp-sg13g2/libs.tech/klayout/tech/lvs/rule_decks/custom_reader.lvs:412:in `create_resistor'
+  /foss/pdks/ihp-sg13g2/libs.tech/klayout/tech/lvs/rule_decks/custom_reader.lvs:362:in `create_device_class'
+  /foss/pdks/ihp-sg13g2/libs.tech/klayout/tech/lvs/rule_decks/custom_reader.lvs:330:in `process_device'
+  /foss/pdks/ihp-sg13g2/libs.tech/klayout/tech/lvs/rule_decks/custom_reader.lvs:284:in `element'
+  /work/designs/g1-guardian/review/audits/fullchip_reference_closure/physical_lvs/probe_substrate_scope.rb:33:in `read'
+  /work/designs/g1-guardian/review/audits/fullchip_reference_closure/physical_lvs/probe_substrate_scope.rb:33:in `block in <main>'
+  /work/designs/g1-guardian/review/audits/fullchip_reference_closure/physical_lvs/probe_substrate_scope.rb:28:in `each'
+  /work/designs/g1-guardian/review/audits/fullchip_reference_closure/physical_lvs/probe_substrate_scope.rb:28:in `<main>' in <results>/fullchip-substrate-scope-20260923-r1/diagnostic/scope_absent.cir, line 4 in Netlist::read
+  /work/designs/g1-guardian/review/audits/fullchip_reference_closure/physical_lvs/probe_substrate_scope.rb:33:in `read'
+  /work/designs/g1-guardian/review/audits/fullchip_reference_closure/physical_lvs/probe_substrate_scope.rb:33:in `block in <main>'
+  /work/designs/g1-guardian/review/audits/fullchip_reference_closure/physical_lvs/probe_substrate_scope.rb:28:in `each'
+  /work/designs/g1-guardian/review/audits/fullchip_reference_closure/physical_lvs/probe_substrate_scope.rb:28:in `<main>'
+{
+  "status": "passed pinned-reader syntax binding only; strict LVS not run",
+  "source_sha256": "f4ce6848bd7dd179d2ef4cbd8a4ea6bf9788bcfa1ff4b93fabae8bf18b6378f9",
+  "adapted_sha256": "7395c32d170a787dbc81fd10c67148301d168e51f5ac38de3f0866efe5894006",
+  "reader_rule_hashes": {
+    "globals.lvs": "02614ce6a48249401a10faaa09982c740ad9543d1781077ad7fda2cec36019e4",
+    "custom_reader.lvs": "8100bf1192b3d20538839dd888df95a8453127cc49ffc177cab3ac67cde18b29",
+    "custom_writer.lvs": "bada63cfda80316f64ffbd1f6ed2a9cc06cd337b7244fe7d608ae4a20dfc0c36",
+    "custom_devices.lvs": "5870aa77ba332045d19d15e552c881fbd91b336c25c98e9dcb6758bd9873af5c",
+    "custom_combiner.lvs": "2e9f341023b96ab64ef83110d0a57d5f8be8a6906e67db60edbb62cfadeed56d",
+    "custom_extractor.lvs": "c20391c829768bc03cf0686fe4cd68895e10db62891578e121f6fa16fa117d3e",
+    "custom_mim_extractor.lvs": "8658d8586926cc2456bb03242d5e182eb455e25c5ee6c9a52a811fded7df6f44",
+    "custom_bjt_extractor.lvs": "0cd07122454e4ffefb702861e1c11bdc0cef779a9564649462bbb750d9b4229b",
+    "custom_isolbox_extractor.lvs": "1ca2293fa3c5c45f04c15e277b0b1fa0ac21735e0504911269580e4afd77499e"
+  },
+  "script_sha256": "832e082c79eb0a2194f8e42f1e972e444ff57ada44b441627a06519c9f120ca6",
+  "stock_class_include_closure": [
+    "custom_classes.lvs",
+    "globals.lvs",
+    "custom_reader.lvs",
+    "custom_writer.lvs",
+    "custom_devices.lvs",
+    "custom_combiner.lvs",
+    "custom_extractor.lvs",
+    "custom_mim_extractor.lvs",
+    "custom_bjt_extractor.lvs",
+    "custom_isolbox_extractor.lvs"
+  ],
+  "stock_class_manifest_sha256": "65eb31e73784b6d5df279b6e9f4a0beca378b4c0ddccc105f6c4312faf8215b1",
+  "stock_default_definitions": [
+    "SERIES_RES = !bool_check?($no_series_res)\n",
+    "PARALLEL_RES = !bool_check?($no_parallel_res)\n"
+  ],
+  "stock_program_sha256": "ea1b690ce0f4b9d77d84fa91a913a048b4e14f1da4889a41ae03ca9fe9bfba43",
+  "stock_original_engine_log_sha256": "e1e14cd9e4378f29db70f1b285a924bc11fe5402afbc06233ed274a2d186c2a8",
+  "tap_records": 63,
+  "source_cell_count": 41,
+  "checks": {
+    "all_original_suffix_bytes": "passed by separately bound preparation",
+    "reader_TIE_WELL_model_identity": "passed all 63",
+    "non_tap_model_parameter_terminal_identity": "passed",
+    "declared_interfaces": "passed",
+    "native_LVS": "not run",
+    "source_A_P_applicability": "failed retained native discrepancy",
+    "new_geometry_or_model_changes": "not applicable"
+  }
+}
