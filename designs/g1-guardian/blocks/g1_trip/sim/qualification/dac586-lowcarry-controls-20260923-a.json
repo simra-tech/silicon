@@ -1,0 +1,49 @@
+{
+  "status": "prepared only; runner/auditor review and explicit CPU lease required",
+  "controls": [
+    {
+      "label": "room",
+      "run": "dac586-lowcarry-controls-20260923-a-room",
+      "preparation_sha256": "558109c527b36e30d1b46b869fa1813d2e406183f7b0ad074ebc3a334795e403",
+      "deck_sha256": "ba78624eed871635cd6ece62667e234b401a80b8432992243028763e419dac6c",
+      "watchdog_s": 600
+    },
+    {
+      "label": "room-repeat",
+      "run": "dac586-lowcarry-controls-20260923-a-room-repeat",
+      "preparation_sha256": "aba78a9622467179c826397acf6c3729c6a9242eefa938b68730b73fff53273a",
+      "deck_sha256": "435d033855ffa3c139ea959f06e0e052c90dbcdf47bcdb6f8280e6058c358ee3",
+      "watchdog_s": 600
+    }
+  ],
+  "bindings_sha256": {
+    "designs/g1-guardian/blocks/g1_trip/sim/qualification/dac586-dc-method-audit-20260923-a.json": "d518ce4faf592aa633989a8af76514abcf96f4d2dc365afbc50c9b8e40e70ed2",
+    "designs/g1-guardian/blocks/g1_trip/sim/prepare_dac586_lowcarry_probe.py": "af708a9b2e3e0828814b7fe142e3e2e55c4358628ecc6ccfb0a1671a93ce3dba",
+    "designs/g1-guardian/blocks/g1_trip/sim/test_dac586_lowcarry_probe.py": "79093c5c0c601f0dab8eb87068b9d70199207af6a7e5b65ed751c34084733121",
+    "designs/g1-guardian/blocks/g1_trip/sim/prepare_dac586_dc_controls.py": "14e6fa61a0c81d3b7b598f6a04d8e16bf45194a54705cd2fb80fbdef0d42ae72",
+    "designs/g1-guardian/blocks/g1_trip/sim/prepare_dac586_static_controls.py": "97fb9f7d2d5a2429a7649997849143b993f0d3a900c7ef54f1f088527e04b182",
+    "designs/g1-guardian/blocks/g1_trip/sim/result_directory.py": "a463817215eb1e148694d6332adee841496c8b47d583e4cafdc99832a48507ae",
+    "designs/g1-guardian/blocks/g1_trip/sim/qualification/dac586-static-controls-20260923-a-c0-room/preparation.json": "a8dd5511c7a87792eb8855a09f2d4cceef028130ba19813908d5cb6bfbc20866",
+    "designs/g1-guardian/blocks/g1_trip/sim/qualification/dac586-static-controls-20260923-a-c0-room/dac_static.cir": "1bfce77844c3dae4fa89621429d026baf218c076b28cb7ade0d9de0a2c83d1c7",
+    "designs/g1-guardian/blocks/g1_trip/sim/qualification/dac586-static-controls-20260923-a-c0-room/run.json": "1bdf6206e908770430467090ebbe975507e4813e43fcfac6e881b386f0c5bc6b",
+    "designs/g1-guardian/blocks/g1_trip/sim/qualification/dac586-static-controls-20260923-a-c0-room/run.log": "30e127ba2aa78ac6bc1ae53672d24112e3fd6647bb720911fae7bd5d1804e5cd",
+    "designs/g1-guardian/blocks/g1_trip/sim/qualification/dac586-static-controls-20260923-a-c0-room/summary.json": "893cda966c97ac7eef4ea84068d0fee17618362c8f22b2bc45c539ebeadc514a",
+    "designs/g1-guardian/blocks/g1_trip/sim/qualification/dac586-static-controls-20260923-a-c0-room/op0.dat": "55139573034af3e03285b9100457eb49434e326571b594c951a6060086481a01"
+  },
+  "hypothesis": "Determine whether contiguous low-bit transitions avoid the per-point dynamic-gmin fallback observed at127\u2194128. Two fresh identical chunks permit actual same-method repeat testing; no speedup assumed.",
+  "gates": [
+    "Full11512+27 exact original OP before/after and after each completed sweep pair; source/runtime and originalSPARSE unchanged.",
+    "Named30 finite columns, exact16actual bit voltages for every integer0..7 in forward/reverse order; actualVcode exact.",
+    "Original code0 static comparison reports strict equality separately from prospective100nV/1nA method screen; no originalstatic comparison exists for codes1..7.",
+    "Same-method literal repeat requires exact full30-column OP and both completeDC tables; report forward/reverse differences separately.",
+    "Preserve fatalzeroexit errors, timeout/partial output and all original exact failures. Completion is not DAC acceptance.",
+    "Count dynamicgmin attempts separately for initial2OP/forward8/reverse8 and bracket elapsed sections from saved progress. No extrapolated all256 acceptance."
+  ],
+  "bound": {
+    "children": 2,
+    "seconds_each": 600,
+    "serial_cpu_count": 1,
+    "expected_bulk_GiB": 0.08
+  },
+  "uncertainty": "100nV/1nA remains a prospective consistency screen, not a proved uniform solver error; no unanchored DNL/monotonicity or guard claim."
+}
