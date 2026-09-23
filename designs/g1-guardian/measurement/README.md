@@ -26,6 +26,17 @@ revision, software revision, actual rail voltages and local case/shunt
 readback and uncertainty calculation. Instrument ranges, input impedance,
 bandwidth, probe loading and current compliance must accompany results.
 
+Before testing, issue a revisioned run sheet for each sample and fixture. Pin
+the released 24-pad/bond-map revision, package/board continuity record,
+instrument connection diagram, rail and load-source current limits, interlock
+and external cut-off settings, capture channels/skew, calibration files and
+analysis-script version. Save raw data with an immutable sample/run identifier;
+keep aborted and out-of-range runs rather than replacing them with a successful
+repeat. State the specified acceptance limit, assumed stimulus and unknown
+fixture limit separately. Log the measured value, uncertainty, and
+pass/fail/not-run decision against the predeclared limit. Reserve and identify
+unpowered controls and separately designated stress samples before exposure.
+
 ## Before enabling a load
 
 1. Check unpowered continuity and pin isolation with bounded test current.
@@ -53,6 +64,18 @@ bandwidth, probe loading and current compliance must accompany results.
 5. During shutdown isolate the load bus, lower EN, and keep the core rail present
    until the IO rail is down. Test each permitted ramp, brownout and missing-rail
    response before a load-energy test. Capture actual rail/GATE/FET VGS waveforms.
+
+Qualify the independent protection fixture without relying on G1 before any
+energized load test: inject a bounded external fault while the DUT is isolated,
+measure the inhibit's actual open/close state, cut-off delay, source-current
+overshoot at the intended Kelvin pins and maximum delivered/stored energy, and
+verify that removing control power cannot silently energize the bus. Record
+source-compliance transients and the clamp return path, not just set points.
+Permitted fault-energy and FET/package limits are **unknown** until the BOM and
+fixture test establish them; a 50 mV sense-range setting is not a survival
+limit. Keep the supervised, current-limited, non-inductive
+[feasibility envelope](../specification/FEASIBILITY_DEMO_ENVELOPE_20260922.md)
+separate from later real-use load qualification.
 
 Determine reference settling from the observed waveform and a declared error
 band before releasing EN. The selected simulated 10 nF VREF fixture needed
@@ -97,6 +120,17 @@ single-fault tolerance or overload survival from ordinary breaker tests.
    shape. The implemented soft path uses comparator persistence; do not label
    it an established I²t estimator.
 
+For a real FET/load run, capture the commanded and independently measured bus
+voltage/current and shunt-pin differential before and after each fault. Preserve
+the FET part/lot, gate resistor, wiring/clamp topology and board temperature.
+Test only the prequalified current-limited resistive envelope first, with fixed
+codes and FAST_EN/hysteresis off. Predeclare normal steps, sustained faults,
+event phases, reset/rearm and stop conditions; repeat boundary cases with the
+same configuration readback. Analyze GATE crossing, current decay, peak VDS and
+energy as distinct outcomes. Inductive or autonomous-load testing is **not
+run** and requires a separately established energy/thermal envelope; passed
+GATE timing alone cannot release it.
+
 ## Temperature, reference and device coupons
 
 Calibrate TEMP_OUT separately for each part at25/100 °C. Freeze those coefficients
@@ -107,6 +141,18 @@ VREF, IPTAT observables, oscillator trim/frequency, supply current and threshold
 residuals at each point. Compare the original linear calibration and any
 predeclared fixed correction separately; do not fit the verification points.
 Repeat selected cycles to expose hysteresis and package stress.
+
+For thermal cycling, define chamber set points, ramp/dwell schedule, maximum
+allowed package-to-reference temperature difference, humidity/condensation
+controls and cooldown before placing a sample in the chamber. Log time-stamped
+chamber, adjacent reference, case and shunt temperatures and rail currents;
+start a measurement only after the declared stability window. Keep initial
+calibration coefficients frozen through verification cycles and report each
+point's residual and pre/post room-temperature shift by sample. If a package,
+socket, probe or board exceeds its documented rating, stop and mark the point
+**not run**. Cycle count/dwell and hardware limits remain **unknown** until
+fixture selection; the −40…125 °C sensor target does not qualify a package or
+77 K/175 °C exposure.
 
 Characterize VREF probe loading before treating its reading as the unloaded
 reference. The selected pad-inclusive simulation predicts about 9.07 mV of
@@ -126,6 +172,16 @@ noise/leakage floor and uncertainty. Subtraction only identifies the DUT when
 reference paths are demonstrably comparable; it cannot automatically recover
 fA device leakage behind much larger pad leakage.
 
+Before each DOSE bias sweep, measure instrument zero, guarded fixture-open,
+short and pad/reference controls at the same range, cable routing, voltage,
+temperature and settling time. Record bias polarity/direction, compliance,
+current versus settling time and noise-floor distribution; retain raw currents
+before subtraction. Sweep only within approved pad/device terminal limits and
+stop on unexpected leakage or self-heating. Compare LV and HV drains separately
+and state when reference-path mismatch or instrument floor makes DUT leakage
+unresolvable. No fA-resolution or dose-response claim follows from an
+unqualified subtraction.
+
 ## Exploratory temperature and irradiation
 
 150/175 °C and77 K are separate beyond-range experiments. Qualify the package,
@@ -141,3 +197,14 @@ readout for SEU observations. Keep TID leakage/drift and single-event results
 separate. Ordinary transistor simulations establish neither LET thresholds nor
 radiation hardness. Irradiation, annealing and packaged measurements remain
 **not run**.
+
+Before facility booking, freeze sample/control allocation, powered versus
+unpowered bias states, the same pre/post electrical measurement script, counter
+initialization/scrub/readout cadence, timestamps, dosimeter placement and
+chain-of-custody identifiers. The licensed facility must approve beam safety,
+dosimetry, shielding, handling, dose steps and annealing/storage protocol;
+these are **unknown**, not a board-team default. Record interruptions and
+annealing time between exposure and readout. Report counter upset rates with
+observed fluence and uncertainty, and leakage/threshold drift with absorbed
+dose and controls, without converting either into an unmeasured LET threshold
+or radiation-qualification claim.
