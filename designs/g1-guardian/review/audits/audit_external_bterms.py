@@ -17,9 +17,11 @@ def main():
     for key in ('candidate','prepared','observations','output'):
         p.add_argument('--'+key,type=Path,required=True)
     p.add_argument('--flat-physical',action='store_true')
+    p.add_argument('--gds-name',default='signal_routed_native.gds')
     a=p.parse_args()
     assert not a.output.exists() and len(os.sched_getaffinity(0))==1 and pya.__version__=='0.30.9'
-    source=a.candidate/'signal_routed_native.gds';m=json.loads((a.candidate/'analysis.json').read_text())
+    assert Path(a.gds_name).name==a.gds_name and a.gds_name.endswith('.gds')
+    source=a.candidate/a.gds_name;m=json.loads((a.candidate/'analysis.json').read_text())
     obs=json.loads(a.observations.read_text());prepared=json.loads((a.prepared/'analysis.json').read_text())
     deffile=a.prepared/'g1_chip_top_unrouted.def'
     assert m['status'].startswith('passed') and sha(source)==m['GDS_sha256']==obs['GDS_sha256']

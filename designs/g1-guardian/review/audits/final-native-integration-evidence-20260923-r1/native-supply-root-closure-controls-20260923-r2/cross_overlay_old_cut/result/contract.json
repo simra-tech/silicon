@@ -1,0 +1,111 @@
+{
+  "schema": "native-supply-integration-v1",
+  "parent": {
+    "path": "@RESULTS@/native-supply-root-closure-controls-20260923-r2/cross_overlay_old_cut/source.gds",
+    "sha256": "75a8a884e33cfb9a3d448ddbfdce9318efd38e3501c1aa1652364727b488b248"
+  },
+  "parent_metadata": {
+    "path": "@RESULTS@/native-supply-root-closure-controls-20260923-r2/cross_overlay_old_cut/metadata.json",
+    "sha256": "e5a5283cb61daa504a92f6c842a2a7af43ddecfe3b2cbfb8f19cb093c97b25be"
+  },
+  "native_probes": {
+    "VDD": {
+      "root": {
+        "layer": 30,
+        "xy": [
+          500,
+          500
+        ]
+      },
+      "target": {
+        "layer": 30,
+        "xy": [
+          6500,
+          500
+        ]
+      }
+    },
+    "VSS": {
+      "root": {
+        "layer": 30,
+        "xy": [
+          500,
+          10500
+        ]
+      }
+    },
+    "VDDA": {
+      "root": {
+        "layer": 30,
+        "xy": [
+          500,
+          20500
+        ]
+      }
+    },
+    "IOVDD": {
+      "root": {
+        "layer": 30,
+        "xy": [
+          500,
+          30500
+        ]
+      }
+    },
+    "IOVSS": {
+      "root": {
+        "layer": 30,
+        "xy": [
+          500,
+          40500
+        ]
+      }
+    }
+  },
+  "overlays": [
+    {
+      "name": "synthetic",
+      "gds": {
+        "path": "@RESULTS@/native-supply-root-closure-controls-20260923-r2/cross_overlay_old_cut/overlay.gds",
+        "sha256": "75196728124a5edd60c3dd9b81d1850469b57b8025de814c5e666652739cdae6"
+      },
+      "evidence": [
+        {
+          "path": "@RESULTS@/native-supply-root-closure-controls-20260923-r2/cross_overlay_old_cut/evidence.json",
+          "sha256": "d7158417f8da5451d9bb7a6db6b666859997045afe3fcfbd49c5155210a7f7f2",
+          "assertions": [
+            {
+              "keys": [
+                "status"
+              ],
+              "equals": "passed synthetic fixture only"
+            }
+          ]
+        }
+      ],
+      "single_net": "VDD"
+    },
+    {
+      "name": "opposite",
+      "gds": {
+        "path": "@RESULTS@/native-supply-root-closure-controls-20260923-r2/cross_overlay_old_cut/second.gds",
+        "sha256": "7bbc268374b3939d306366c158aba76d149d1260f9ad362a829df1c681bfe981"
+      },
+      "evidence": [
+        {
+          "path": "@RESULTS@/native-supply-root-closure-controls-20260923-r2/cross_overlay_old_cut/evidence.json",
+          "sha256": "d7158417f8da5451d9bb7a6db6b666859997045afe3fcfbd49c5155210a7f7f2",
+          "assertions": [
+            {
+              "keys": [
+                "status"
+              ],
+              "equals": "passed synthetic fixture only"
+            }
+          ]
+        }
+      ],
+      "single_net": "VSS"
+    }
+  ]
+}
