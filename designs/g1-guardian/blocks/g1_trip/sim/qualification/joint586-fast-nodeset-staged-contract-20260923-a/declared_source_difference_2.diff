@@ -1,0 +1,22 @@
+--- audit_joint586_adverse_staged.py
++++ audit_joint586_fast_nodeset_staged.py
+@@ -3,8 +3,8 @@
+ import argparse
+ import json
+ from pathlib import Path
+-from audit_joint586_adverse_calibration import inspect, first_sample_gate
+-from run_joint586_adverse_staged import SIM, ROOT, sha, heldout_plan
++from audit_joint586_fast_nodeset_calibration import inspect, first_sample_gate
++from run_joint586_fast_nodeset_staged import SIM, ROOT, sha, heldout_plan
+ 
+ 
+ def staged_inspect(run, contract):
+@@ -51,7 +51,7 @@
+         row = dict(run=a.run_id,status='failed evidence audit',complete=False,evidence_status='failed',error=repr(error))
+     result = dict(status='passed read-only evidence audit; electrical failures separate' if row['evidence_status']=='passed' else 'failed evidence audit',
+         requested_samples=1,completed_samples=int(row['complete']),records=[row],campaign_contract_sha256=sha(a.contract),
+-        auditor_sha256=sha(Path(__file__)),base_auditor_sha256=sha(SIM/'audit_joint586_adverse_calibration.py'))
++        auditor_sha256=sha(Path(__file__)),base_auditor_sha256=sha(SIM/'audit_joint586_fast_nodeset_calibration.py'))
+     result['first_sample_gate_passed'] = first_sample_gate(result)
+     with a.output.open('x') as stream:json.dump(result,stream,indent=2);stream.write('\n')
+     print(json.dumps({k:v for k,v in result.items() if k!='records'},indent=2))

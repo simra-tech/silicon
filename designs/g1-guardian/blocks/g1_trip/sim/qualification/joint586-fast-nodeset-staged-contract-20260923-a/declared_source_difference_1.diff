@@ -1,0 +1,47 @@
+--- audit_joint586_adverse_calibration.py
++++ audit_joint586_fast_nodeset_calibration.py
+@@ -1,5 +1,5 @@
+ #!/usr/bin/env python3
+-"""Independent owncorner adverse sample audit; no filtering or population launch."""
++"""Independent fixed-nodeset fast sample audit; old failures retained."""
+ import argparse
+ import hashlib
+ import json
+@@ -7,7 +7,7 @@
+ from pathlib import Path
+ import re
+ import time
+-from run_joint586_adverse_calibration import adverse_deck, REFERENCE, sha, CONDITIONS, qualification
++from run_joint586_fast_nodeset_staged import adverse_deck, REFERENCE, sha, CONDITIONS, qualification, NODESET_PACKET_SHA, NODESET_AUDIT_SHA
+ from audit_bgr_calibration_tree import replay
+ from run_joint586_transients import phase_parameters
+ from run_nominal_clock_probe import analyze_wave
+@@ -69,7 +69,9 @@
+     assert all(sha(ROOT/n)==v for n,v in contract['live_bindings_sha256'].items())
+     assert result['corner']==prov['corner'] and prov['conditions']==[list(c) for c in CONDITIONS]
+     trans_path=ROOT/prov['qualified_audit']
+-    fixture_path=SIM/'qualification'/('joint586-'+result['corner']+'-fixture-qualification-20260923.json')
++    fixture_path=trans_path
++    assert prov['fixed_nodeset_contract_sha256']==NODESET_PACKET_SHA
++    assert prov['fixed_nodeset_qualification_sha256']==NODESET_AUDIT_SHA
+     assert sha(fixture_path)==prov['fixture_audit_sha256']
+     qualification(trans_path,fixture_path,result['corner'])
+     vector = result['parameters_before_first_probe']
+@@ -136,7 +138,7 @@
+     assert all(r['condition']==list(CONDITIONS[0]) and r['shunt_V']==.025 for r in calibration_entries)
+     changed=None
+     if vector:
+-        control=SIM/'qualification'/('joint586-'+result['corner']+'-transqual-shn-20260923-b-enabled')
++        control=SIM/'qualification'/'joint586-fast-nodeset-rescue-own-enabled-20260923-a'
+         control_row,=json.loads((control/'summary.json').read_text())
+         changed=variation(control_row['phases'][0]['parameters_before'],vector)
+         assert all(v['primitive_count']==v['primitives_with_changed_values'] for v in changed.values())
+@@ -153,7 +155,7 @@
+     parser.add_argument('--first-seed', type=int, required=True)
+     parser.add_argument('--last-seed', type=int, required=True)
+     parser.add_argument('--output', type=Path, required=True)
+-    parser.add_argument('--corner', choices=['slow','fast'],required=True)
++    parser.add_argument('--corner', choices=['fast'],required=True)
+     parser.add_argument('--contract',type=Path,required=True)
+     args = parser.parse_args()
+     first={'slow':77101,'fast':78101}[args.corner]
