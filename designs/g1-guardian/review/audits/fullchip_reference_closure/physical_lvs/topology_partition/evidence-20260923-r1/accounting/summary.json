@@ -1,0 +1,349 @@
+{
+  "status": "passed exact partition accounting and minimal witness controls; equivalence FAILED",
+  "inputs": {
+    "<results>/fullchip-name-interface-20260923-r1/g1_chip_top_layout_name_only.cdl": "f4ce6848bd7dd179d2ef4cbd8a4ea6bf9788bcfa1ff4b93fabae8bf18b6378f9",
+    "<results>/full-io-topology-partition-20260923-r1/summary.json": "b68af95c7a3dbc6fc3ccb4b30a0c9436eb5f45d36b0daf1782296f89a40678bd",
+    "<results>/fullchip-substrate-scope-20260923-r2/diagnostic/summary.json": "df91e269283a4c5ad121445a3f265925212d6c3bb4fad23acfba7898a5a35794",
+    "designs/g1-guardian/review/audits/fullchip_reference_closure/physical_lvs/topology_partition/summarize_partition.py": "61fac185d911b34d90eaf1922a763c6ac418ee28bd15efb187be8ac8df873930"
+  },
+  "counts": {
+    "source": {
+      "well_partitions": 243,
+      "tap_records": 386,
+      "external_WELL_terminals": 0,
+      "TIE_equals_WELL": 0,
+      "degree_one_WELL": 37,
+      "TIE_external_ports": {
+        "VSS": 151,
+        "IOVSS": 235
+      },
+      "all_terminal_incidence_count": 889,
+      "terminal_incidence": [
+        {
+          "model": "dantenna",
+          "terminal": "a",
+          "count": 64
+        },
+        {
+          "model": "ptap1",
+          "terminal": "well",
+          "count": 386
+        },
+        {
+          "model": "rppd",
+          "terminal": "rppd_sub",
+          "count": 25
+        },
+        {
+          "model": "sg13_hv_nmos",
+          "terminal": "b",
+          "count": 403
+        },
+        {
+          "model": "sg13_lv_nmos",
+          "terminal": "b",
+          "count": 11
+        }
+      ]
+    },
+    "native": {
+      "well_partitions": 1,
+      "tap_records": 46,
+      "external_WELL_terminals": 46,
+      "TIE_equals_WELL": 6,
+      "degree_one_WELL": 0,
+      "TIE_external_ports": {
+        "IOVSS": 40,
+        "VSS": 6
+      },
+      "all_terminal_incidence_count": 50530,
+      "terminal_incidence": [
+        {
+          "model": "cap_cmim",
+          "terminal": "mim_btm",
+          "count": 8
+        },
+        {
+          "model": "dantenna",
+          "terminal": "a",
+          "count": 49
+        },
+        {
+          "model": "dantenna",
+          "terminal": "c",
+          "count": 4
+        },
+        {
+          "model": "dpantenna",
+          "terminal": "a",
+          "count": 4
+        },
+        {
+          "model": "npn13g2",
+          "terminal": "b",
+          "count": 1
+        },
+        {
+          "model": "npn13g2",
+          "terminal": "c",
+          "count": 1
+        },
+        {
+          "model": "npn13g2",
+          "terminal": "e",
+          "count": 5
+        },
+        {
+          "model": "npn13g2",
+          "terminal": "s",
+          "count": 12
+        },
+        {
+          "model": "ptap1",
+          "terminal": "tie",
+          "count": 6
+        },
+        {
+          "model": "ptap1",
+          "terminal": "well",
+          "count": 46
+        },
+        {
+          "model": "rhigh",
+          "terminal": "rhigh_1",
+          "count": 1
+        },
+        {
+          "model": "rhigh",
+          "terminal": "rhigh_sub",
+          "count": 1
+        },
+        {
+          "model": "rppd",
+          "terminal": "rppd_1",
+          "count": 5
+        },
+        {
+          "model": "rppd",
+          "terminal": "rppd_2",
+          "count": 2
+        },
+        {
+          "model": "rppd",
+          "terminal": "rppd_sub",
+          "count": 562
+        },
+        {
+          "model": "sg13_hv_nmos",
+          "terminal": "b",
+          "count": 1377
+        },
+        {
+          "model": "sg13_hv_nmos",
+          "terminal": "d",
+          "count": 25
+        },
+        {
+          "model": "sg13_hv_nmos",
+          "terminal": "s",
+          "count": 152
+        },
+        {
+          "model": "sg13_hv_pmos",
+          "terminal": "d",
+          "count": 1
+        },
+        {
+          "model": "sg13_lv_nmos",
+          "terminal": "b",
+          "count": 29537
+        },
+        {
+          "model": "sg13_lv_nmos",
+          "terminal": "d",
+          "count": 6006
+        },
+        {
+          "model": "sg13_lv_nmos",
+          "terminal": "s",
+          "count": 12724
+        },
+        {
+          "model": "sg13_lv_pmos",
+          "terminal": "g",
+          "count": 1
+        }
+      ]
+    }
+  },
+  "source_chain": [
+    {
+      "text": "Xpad02_vss VDD VSS IOVDD IOVSS / sg13g2_IOPadVss",
+      "source_line_numbers": [
+        18094
+      ]
+    },
+    {
+      "text": ".SUBCKT sg13g2_IOPadVss vdd vss iovdd iovss",
+      "source_line_numbers": [
+        2119
+      ]
+    },
+    {
+      "text": "XI2 vss iovdd iovss / sg13g2_DCPDiode",
+      "source_line_numbers": [
+        2122
+      ]
+    },
+    {
+      "text": ".SUBCKT sg13g2_DCPDiode anode cathode guard",
+      "source_line_numbers": [
+        1826
+      ]
+    },
+    {
+      "text": "XR0 guard sub! ptap1 A=33.524p P=23.16u",
+      "source_line_numbers": [
+        1830
+      ]
+    }
+  ],
+  "shortest_witness": {
+    "name": "PAD02_VSS.I2._G1_TAP_SYNTAX_XR0",
+    "parameters": {
+      "A": 33.524,
+      "P": 23.16
+    },
+    "terminals": {
+      "TIE": {
+        "net": "IOVSS",
+        "physical_external": "IOVSS",
+        "degree": 631
+      },
+      "WELL": {
+        "net": "PAD02_VSS.I2.SUB!",
+        "physical_external": null,
+        "degree": 1
+      }
+    }
+  },
+  "predicate_controls": {
+    "positive": true,
+    "source_WELL_external_rejected": true,
+    "native_nonexternal_WELL_rejected": true,
+    "empty_native_inventory_rejected": true
+  },
+  "explicit_CDL_or_SPICE_global_declarations": [],
+  "pinned_reader_global_controls": [
+    {
+      "case": "absent",
+      "input_sha256": "2f43e257ffd35822b87d3d22db94521d0edac99e270e3af994bae57bdac756f5",
+      "actual_terminals": [
+        {
+          "RPPD_1": "A",
+          "RPPD_2": "1.SUB!",
+          "RPPD_sub": "A"
+        },
+        {
+          "RPPD_1": "B",
+          "RPPD_2": "2.SUB!",
+          "RPPD_sub": "B"
+        }
+      ],
+      "substrate_net_count": 2,
+      "parameters": [
+        {
+          "w": 1.0,
+          "l": 2.0,
+          "ps": 0.0,
+          "b": 0.0,
+          "m": 1.0
+        },
+        {
+          "w": 1.0,
+          "l": 2.0,
+          "ps": 0.0,
+          "b": 0.0,
+          "m": 1.0
+        }
+      ],
+      "status": "passed exact expected scope"
+    },
+    {
+      "case": "explicit",
+      "input_sha256": "9868050efa1eddc9c760164242e20d941c2d7b4d9276f29abae329005db66ab1",
+      "actual_terminals": [
+        {
+          "RPPD_1": "A",
+          "RPPD_2": "SUB!",
+          "RPPD_sub": "A"
+        },
+        {
+          "RPPD_1": "B",
+          "RPPD_2": "SUB!",
+          "RPPD_sub": "B"
+        }
+      ],
+      "substrate_net_count": 1,
+      "parameters": [
+        {
+          "w": 1.0,
+          "l": 2.0,
+          "ps": 0.0,
+          "b": 0.0,
+          "m": 1.0
+        },
+        {
+          "w": 1.0,
+          "l": 2.0,
+          "ps": 0.0,
+          "b": 0.0,
+          "m": 1.0
+        }
+      ],
+      "status": "passed exact expected scope"
+    },
+    {
+      "case": "wrong_name",
+      "input_sha256": "c56eafeeabcb08a9182bca47ec3ae75a0137473ac068adeaf32c7866736670e3",
+      "actual_terminals": [
+        {
+          "RPPD_1": "A",
+          "RPPD_2": "1.SUB!",
+          "RPPD_sub": "A"
+        },
+        {
+          "RPPD_1": "B",
+          "RPPD_2": "2.SUB!",
+          "RPPD_sub": "B"
+        }
+      ],
+      "substrate_net_count": 2,
+      "parameters": [
+        {
+          "w": 1.0,
+          "l": 2.0,
+          "ps": 0.0,
+          "b": 0.0,
+          "m": 1.0
+        },
+        {
+          "w": 1.0,
+          "l": 2.0,
+          "ps": 0.0,
+          "b": 0.0,
+          "m": 1.0
+        }
+      ],
+      "status": "passed exact expected scope"
+    }
+  ],
+  "interpretation": "243 source body nodes are not equivalent to the one native external VSS body component. A/P does not affect this witness. This does not attribute every failed comparer pair to that cause.",
+  "remedy_authority": "not established: explicit source intent for substrate partition and VSS relationship is required before changing node binding",
+  "not_run": [
+    "global substrate source correction",
+    "tap A/P correction",
+    "new geometry or extraction",
+    "electrical/ESD qualification"
+  ]
+}

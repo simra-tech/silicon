@@ -1,0 +1,46 @@
+{
+  "status": "passed binary/version/unchanged technology load only",
+  "CPU": 6,
+  "executable": "/foss/tools/bin/magic",
+  "source_sha256": "a09bbf9a3b17a6b4778313d92837c5ccbc7657d7527b251512566280cacfb665",
+  "required_version": "8.3.617",
+  "steps": [
+    {
+      "name": "version",
+      "command": [
+        "/foss/tools/bin/magic",
+        "--version"
+      ],
+      "timeout_s": 10,
+      "returncode": 0,
+      "status": "completed",
+      "log_sha256": "ec1557cccc338ae9376412d127eda104fef39e62498ba7edbd5a8e3d776898d4"
+    },
+    {
+      "name": "technology_load",
+      "command": [
+        "/foss/tools/bin/magic",
+        "-dnull",
+        "-noconsole",
+        "-rcfile",
+        "/foss/pdks/ihp-sg13g2/libs.tech/magic/ihp-sg13g2.magicrc",
+        "${REPO}/${RECEIPTS}/sense_magic_identity_20260923.tcl"
+      ],
+      "timeout_s": 30,
+      "returncode": 0,
+      "status": "completed",
+      "log_sha256": "8bf0b355260d609623b9fe5a687c8d614e9ee162679b231509419fde2088bbe3"
+    }
+  ],
+  "not_run": [
+    "Geometry import",
+    "Extraction",
+    "Backend adoption"
+  ],
+  "resolved_executable": "/foss/tools/magic/bin/magic",
+  "executable_sha256": "17f68edb3134f5f539e7e004a45c9ee59e1b459a087efb7c5e93fb0dc3025411",
+  "wall_s": 0.6732835564762354,
+  "version": "8.3.678",
+  "tcl_sha256": "511b738575da63df092e46d025797ae3a0d18bbe69db4fdc87d66ff6e39453b7",
+  "error_lines": []
+}
