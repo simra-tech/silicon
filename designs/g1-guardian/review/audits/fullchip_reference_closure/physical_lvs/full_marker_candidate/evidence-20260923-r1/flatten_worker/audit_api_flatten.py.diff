@@ -1,0 +1,11 @@
+--- audit_api_flatten.py:prior
++++ audit_api_flatten.py:current
+@@ -24,7 +24,7 @@
+     ap.add_argument('--output', type=Path, required=True)
+     a = ap.parse_args()
+     assert not a.output.exists() and set(os.sched_getaffinity(0)) == {1}
+-    assert sha(a.database) == '1c8f3f91b8be00e0fbbdf4c2a40734fb5f8fe8b0388b1780768699e1a2afcbcf'
++    assert sha(a.database) == '3ed5cd2b78b3d4f4ed724730fcba2388148340d6442249e143c17a9f7ac99f04'
+     assert pya.__version__ == '0.30.9'
+     a.output.mkdir(parents=True)
+     (a.output / 'worker_snapshot.py').write_bytes(Path(__file__).read_bytes())

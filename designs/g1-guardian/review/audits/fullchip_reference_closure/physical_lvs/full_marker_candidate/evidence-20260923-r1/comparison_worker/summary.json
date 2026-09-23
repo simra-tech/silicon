@@ -1,0 +1,68 @@
+{
+  "status": "passed exact diagnostic-input rebinding; execution not run",
+  "stage": "compare",
+  "database_sha256": "3ed5cd2b78b3d4f4ed724730fcba2388148340d6442249e143c17a9f7ac99f04",
+  "script_sha256": "ffcdce2e5272d94668046347577e2cef9cabbe765641d6bcd99aef02266beac9",
+  "workers": [
+    {
+      "file": "compare_saved_flat.rb",
+      "prior_sha256": "8297f92b8d9c643cfa3178666ada5f1e25bff8be75f1df078202c49320ded63a",
+      "prepared_sha256": "1c00aaef03b3879187ac9fa4d83eddee4a0bf176a08ffe3acf87c86a64a1aace",
+      "exact_edits": [
+        [
+          "1c8f3f91b8be00e0fbbdf4c2a40734fb5f8fe8b0388b1780768699e1a2afcbcf",
+          "3ed5cd2b78b3d4f4ed724730fcba2388148340d6442249e143c17a9f7ac99f04"
+        ],
+        [
+          "count == 61_516",
+          "count == 61521"
+        ],
+        [
+          "lc.each_pin.to_a.size == 71",
+          "lc.each_pin.to_a.size == 71"
+        ],
+        [
+          "raise 'Original 71 pins changed'",
+          "raise 'Original observed pins changed'"
+        ],
+        [
+          "all_61516_primitive_records:",
+          "all_61521_primitive_records:"
+        ],
+        [
+          "'passed 71 unchanged'",
+          "'passed 71 unchanged'"
+        ],
+        [
+          "reference.read($variant == 'original' ? $original : $adapted, RBA::NetlistSpiceReader.new(CustomReader.new))",
+          "comparison_source = $variant == 'original' ? $original : $adapted\nif $comparison_reference\n  allowed = %w[69cc033cfdd08721fa31dfed892a5bd4fd5d9f17a037e4ab32ce0a033ce39254 5cf81d6f94cc7b204d0c347d5af94d9f6b1e501ebfc779030005fbfa5f0a399e]\n  expected = allowed[$variant == 'original' ? 0 : 1]\n  raise 'Unqualified extraction-only reference' unless Digest::SHA256.file($comparison_reference).hexdigest == expected\n  comparison_source = $comparison_reference\nend\nreport[:actual_comparison_source_sha256] = Digest::SHA256.file(comparison_source).hexdigest\nreport[:extraction_reference_excludes_exact_three_dummies] = !!$comparison_reference\nreport[:canonical_electrical_and_physical_dummies] = 'retained'\nreference.read(comparison_source, RBA::NetlistSpiceReader.new(CustomReader.new))"
+        ]
+      ]
+    },
+    {
+      "file": "physical_interface_metadata.rb",
+      "prior_sha256": "5d776ca8c2a09cbbf62ca6be099008a146ccbcfb1b80b9c8b544dc0e8fd6e4fc",
+      "prepared_sha256": "95280f8b2b440acf37bf758f3195cd5a286afaa570bb2a12981b581eefbbaa8e",
+      "exact_edits": [
+        [
+          "e7f9c8eef1ca1631aaa9fd7c2fdbc142bf5f7c3fe33afb1dc4eefc831c308177",
+          "56bbb3b4b65eb31e95b9666cb59ff6c3b272135e3a06fdf2879a78bf4d00c33d"
+        ],
+        [
+          "original.size == 71",
+          "original.size == 71"
+        ]
+      ]
+    },
+    {
+      "file": "probe_tap_adapter.rb",
+      "prior_sha256": "832e082c79eb0a2194f8e42f1e972e444ff57ada44b441627a06519c9f120ca6",
+      "prepared_sha256": "832e082c79eb0a2194f8e42f1e972e444ff57ada44b441627a06519c9f120ca6",
+      "exact_edits": []
+    }
+  ],
+  "flatten_proof_sha256": "180151529f3e470d2031cfb96070175048fbd4e5e9c5567cbe627a1947479d0c",
+  "interface_proof_sha256": "56bbb3b4b65eb31e95b9666cb59ff6c3b272135e3a06fdf2879a78bf4d00c33d",
+  "rule_model_source_changes": "not applicable",
+  "new_LVS": "not run"
+}

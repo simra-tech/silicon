@@ -1,0 +1,89 @@
+{
+  "status": "passed independent unique DUT/dose electrode-to-physical-pad incidence",
+  "inputs": {
+    "<results>/full-io-marker-lvs-original-20260923-r1/reports/io_marker_native.lvsdb": "3ed5cd2b78b3d4f4ed724730fcba2388148340d6442249e143c17a9f7ac99f04",
+    "<results>/full-io-marker-ports-20260923-r2/summary.json": "56bbb3b4b65eb31e95b9666cb59ff6c3b272135e3a06fdf2879a78bf4d00c33d",
+    "<results>/fullchip-name-interface-20260923-r1/g1_chip_top_layout_name_only.cdl": "f4ce6848bd7dd179d2ef4cbd8a4ea6bf9788bcfa1ff4b93fabae8bf18b6378f9"
+  },
+  "script_sha256": "d1145e7f052ac5c044682fec56aba804a6c07c4b62ffdae822bc7fbdf58d3edc",
+  "devices": [
+    {
+      "design_instance": "HBT",
+      "original_source_record": "Q1 HBT_C HBT_B HBT_E vss npn13G2 le=900e-9 we=70.0n Nx=1",
+      "original_parent_call": "Xi_core_u_dut HBT_C HBT_B HBT_E VSS / g1_dut_macro",
+      "unique_actual_native_device": {
+        "name": "$1",
+        "terminals": {
+          "C": "HBT_C",
+          "B": "HBT_B",
+          "E": "HBT_E",
+          "S": "VSS"
+        },
+        "parameters": {
+          "we": 0.07,
+          "le": 0.9,
+          "Nx": 1.0,
+          "m": 1.0
+        }
+      },
+      "scoped_electrode_incidence": "passed",
+      "complete_parameter_model_applicability": "not run"
+    },
+    {
+      "design_instance": "HV_DOSE",
+      "original_source_record": "MHV D_ELT G_SHARED vss vss sg13_hv_nmos w=3.98u l=0.45u ng=1 m=1",
+      "original_parent_call": "Xi_core_u_dose D_ELT D_STD G_SHARED VSS / g1_dose_macro",
+      "unique_actual_native_device": {
+        "name": "$3",
+        "terminals": {
+          "S": "VSS",
+          "G": "G_SHARED",
+          "D": "D_ELT",
+          "B": "VSS"
+        },
+        "parameters": {
+          "L": 0.45,
+          "W": 3.98,
+          "AS": 1.3532,
+          "AD": 1.3532,
+          "PS": 8.64,
+          "PD": 8.64,
+          "rfmode": 0.0
+        }
+      },
+      "scoped_electrode_incidence": "passed",
+      "complete_parameter_model_applicability": "not run"
+    },
+    {
+      "design_instance": "LV_DOSE",
+      "original_source_record": "MLV D_STD G_SHARED vss vss sg13_lv_nmos w=3.98u l=0.13u ng=1 m=1",
+      "original_parent_call": "Xi_core_u_dose D_ELT D_STD G_SHARED VSS / g1_dose_macro",
+      "unique_actual_native_device": {
+        "name": "$2",
+        "terminals": {
+          "S": "VSS",
+          "G": "G_SHARED",
+          "D": "D_STD",
+          "B": "VSS"
+        },
+        "parameters": {
+          "L": 0.13,
+          "W": 3.98,
+          "AS": 1.3532,
+          "AD": 1.3532,
+          "PS": 8.64,
+          "PD": 8.64,
+          "rfmode": 0.0
+        }
+      },
+      "scoped_electrode_incidence": "passed",
+      "complete_parameter_model_applicability": "not run"
+    }
+  ],
+  "not_run": [
+    "global strict LVS acceptance",
+    "MOS written-zero/native-positive junction A/P applicability",
+    "electrical or ESD qualification"
+  ],
+  "preserved_failure": "All three remain in actual global comparator mismatch ledger; no same-net hint was used."
+}

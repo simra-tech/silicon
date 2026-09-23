@@ -1,0 +1,43 @@
+--- compare_saved_flat.rb:prior
++++ compare_saved_flat.rb:current
+@@ -8,7 +8,7 @@
+ diagnostic_dir = $output_dir
+ FileUtils.mkdir_p(diagnostic_dir)
+ FileUtils.cp(__FILE__, File.join(diagnostic_dir, 'worker_snapshot.rb'))
+-raise 'Saved database changed' unless Digest::SHA256.file($database).hexdigest == '1c8f3f91b8be00e0fbbdf4c2a40734fb5f8fe8b0388b1780768699e1a2afcbcf'
++raise 'Saved database changed' unless Digest::SHA256.file($database).hexdigest == '3ed5cd2b78b3d4f4ed724730fcba2388148340d6442249e143c17a9f7ac99f04'
+ # Reuse the proven, complete pinned class setup and original/adapter reader
+ # control. This executes no geometry extraction and no model-card changes.
+ $output_dir = File.join(diagnostic_dir, 'reader_control')
+@@ -149,10 +149,19 @@
+   new_pin = lc.create_pin(pin.name)
+   lc.connect_pin(new_pin.id, nets.fetch(old.net_for_pin(pin.id).property('G1_DIAGNOSTIC_NET_ID')))
+ end
+-raise 'Primitive count changed' unless count == 61_516 && lc.each_device.to_a.size == count
+-raise 'Original 71 pins changed' unless lc.each_pin.map(&:name) == old.each_pin.map(&:name) && lc.each_pin.to_a.size == 71
++raise 'Primitive count changed' unless count == 61521 && lc.each_device.to_a.size == count
++raise 'Original observed pins changed' unless lc.each_pin.map(&:name) == old.each_pin.map(&:name) && lc.each_pin.to_a.size == 71
+ reference = RBA::Netlist.new
+-reference.read($variant == 'original' ? $original : $adapted, RBA::NetlistSpiceReader.new(CustomReader.new))
++comparison_source = $variant == 'original' ? $original : $adapted
++if $comparison_reference
++  allowed = %w[69cc033cfdd08721fa31dfed892a5bd4fd5d9f17a037e4ab32ce0a033ce39254 5cf81d6f94cc7b204d0c347d5af94d9f6b1e501ebfc779030005fbfa5f0a399e]
++  expected = allowed[$variant == 'original' ? 0 : 1]
++  raise 'Unqualified extraction-only reference' unless Digest::SHA256.file($comparison_reference).hexdigest == expected
++  comparison_source = $comparison_reference
++end
++report[:actual_comparison_source_sha256] = Digest::SHA256.file(comparison_source).hexdigest
++report[:three_physical_dummies_retained] = !!$comparison_reference
++reference.read(comparison_source, RBA::NetlistSpiceReader.new(CustomReader.new))
+ # Bind source reachability before flattening: other top-level library roots
+ # are definitions, not occurrences in the requested fullchip source graph.
+ source_top = reference.circuit_by_name('PLACED_CORE_NOT_CONNECTED_FULLCHIP')
+@@ -187,7 +196,7 @@
+ end
+ report[:before_simplify] = {layout: inventory.call(lc), reference: inventory.call(rc)}
+ report[:class_factory_projection] = class_rows
+-report[:clone_checks] = {all_61516_primitive_records: 'passed', binary64_parameters: parameter_count,
++report[:clone_checks] = {all_61521_primitive_records: 'passed', binary64_parameters: parameter_count,
+                          actual_terminal_bindings: terminals, full_native_pin_inventory: 'passed 71 unchanged',
+                          geometry_or_source_model_edits: 'not applicable'}
+ save.call

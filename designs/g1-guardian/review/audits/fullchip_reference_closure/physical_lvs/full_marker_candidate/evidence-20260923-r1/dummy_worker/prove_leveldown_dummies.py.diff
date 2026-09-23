@@ -1,0 +1,39 @@
+--- marker_remedy/prove_leveldown_dummies.py:prior
++++ marker_remedy/prove_leveldown_dummies.py:current
+@@ -25,11 +25,11 @@
+     assert gate['status']=='passed' and gate['project_cpu_budget']>=44 and 0<=age<1800
+     assert pya.__version__=='0.30.9'
+     a.output.mkdir(parents=True);(a.output/'worker_snapshot.py').write_bytes(Path(__file__).read_bytes())
+-    gds=a.bulk/'final-native-sealring-20260923-r1/sealed_native.gds'
++    gds=a.bulk/'full-io-marker-20260923-r2/io_marker_native.gds'
+     stock=PDK/'libs.ref/sg13g2_io/gds/sg13g2_io.gds'
+     source=a.bulk/'fullchip-name-interface-20260923-r1/g1_chip_top_layout_name_only.cdl'
+     rule=PDK/'libs.tech/klayout/tech/lvs/rule_decks/rfmos_model_mapping.lvs'
+-    assert sha(gds)=='3a24f4d76b3d91141d09515e498383ec36bec4f5bbcffbb7a53456f82259c0e9'
++    assert sha(gds)=='ae62bf68aa001144c08a37c58ac3553c6e5f2013a6824b340218e84962066aca'
+     assert sha(stock)=='4281a855377b6a1ca46356e9391258dc14e8efc3b8051a65befc0fe9db3c7825'
+     assert sha(source)=='f4ce6848bd7dd179d2ef4cbd8a4ea6bf9788bcfa1ff4b93fabae8bf18b6378f9'
+     text=source.read_text();body=re.search(r'(?m)^\.SUBCKT sg13g2_LevelDown .*?^\.ENDS',text,re.S).group(0)
+@@ -63,7 +63,13 @@
+     cell=ly.cell(actual_names[0]);native=lib.cell('sg13g2_IOPadIn')
+     assert cell and native
+     for layer in {(i.layer,i.datatype) for l in (ly,lib) for i in l.layer_infos()}:
+-        assert (pya.Region(cell.begin_shapes_rec(ly.layer(*layer)))^pya.Region(native.begin_shapes_rec(lib.layer(*layer)))).is_empty(),str(layer)
++        delta = pya.Region(cell.begin_shapes_rec(ly.layer(*layer))) ^ pya.Region(native.begin_shapes_rec(lib.layer(*layer)))
++        if layer == (128, 0):
++            # Exact isolated Secondary body translated through its held
++            # LevelDown and IOPadIn instances; no other marker is permitted.
++            assert (delta ^ pya.Region(pya.Box(40685, 141540, 41685, 143540))).is_empty()
++        else:
++            assert delta.is_empty(), str(layer)
+     reg=lambda layer:pya.Region(cell.begin_shapes_rec(ly.layer(layer,0))).merged()
+     gatebox=pya.Box(41540,161620,41990,166270)
+     gatepoly=(reg(1)&reg(5))&pya.Region(gatebox)
+@@ -102,6 +108,7 @@
+     result=dict(status='passed independent three-dummy source/native-terminal proof',
+                 source_occurrences=occurrences,physical_instances=physical,native_gate_area_um2=2.0925,
+                 actual_native_source_alias=actual_names[0],
++                sole_native_delta='One declared 128/0 Secondary body; all dummy electrode and conductor layers unchanged',
+                 local_terminal_probes=probes,unconditional_purge_rule=ruletext,
+                 inputs={str(p):sha(p) for p in (gds,stock,source,rule)},script_sha256=sha(Path(__file__)),
+                 not_run=['extraction-only source derivative','fullchip strict LVS with exclusion','electrical/ESD qualification'],
