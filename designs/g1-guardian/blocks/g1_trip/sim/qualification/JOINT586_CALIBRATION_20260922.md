@@ -8,10 +8,46 @@ pinned runtime/models, 11,512 mismatch parameters, 27 anchors, 5 MHz clock,
 sample parent runs the original binary algorithm, then all 12 guard conditions
 and six half-millivolt residual conditions with frozen calibrated codes.
 
-The first 36 parents use seeds 73001–73036. The required first-20 completed
-audit and the remaining 264 sample launches have **not run to completion**.
-No 300-sample calibration accuracy or yield result is claimed. Electrical or
-numerical failures remain in the attempted population.
+The first 36 parents use seeds 73001–73036. The independent first-20 audit has
+**passed** all 560 leaves and the original calibration, guard and half-millivolt
+residual criteria. The remaining 264 samples are in progress and have **not run
+to completion**. No 300-sample calibration accuracy or yield result is claimed.
+Electrical and numerical failures remain in the attempted population.
+
+## First-20 gate and complete initial-attempt denominator
+
+The [first-20 audit](joint586-first20-audit-20260922.json), SHA-256
+`9f9f9aa4e2a642250d2bf86b70406cd7e038406c2f727168247c742d7f4b7ad9`,
+independently checks full 11,512-entry inventories, 27 anchors, source/deck/runtime,
+waveforms and decisions for seeds 73001–73020. All twenty full parameter vectors
+are distinct. Their 560 completed leaves used 245,835.936 summed wall seconds,
+about 3.414 CPU-hours per sample. This gives a planning estimate of roughly
+30 hours for the remaining 264 samples on thirty one-thread slots, excluding
+runtime variation and final audits; it is not a completion guarantee.
+
+[Portable first-20 evidence](portable_evidence/joint586-first20-20260923)
+retains exact sample receipts, content-addressed sources and every leaf artifact
+hash without copying bulk waveforms. The audit also binds a separate snapshot
+of **all 36 initial attempts**, not just the passing gate subset. That snapshot
+is parent-level accounting, not an independent full-wave audit of every sample
+outside the requested first twenty.
+
+The 36 parent outcomes comprise 33 reported full passes and these three distinct
+failures, all retained in the denominator:
+
+- **73023:** numerical completion and parameter checks passed, but hot residual
+  p26 at 24.5 mV, codes 128/143, observed soft LOW / hard HIGH instead of LOW /
+  LOW. This is an electrical decision failure.
+- **73025:** cold residual p24 at 24.5 mV, codes 139/154, hit its 1,200-second
+  watchdog. Its decision is missing, not an observed wrong decision. All 28
+  conditions were attempted; complete numerical coverage did not pass.
+- **73034:** calibration p09 and its one distinct longer-watchdog recovery
+  failed as detailed below. Guards and residuals remain not run.
+
+The source, algorithm, clock, per-leaf watchdog and acceptance criteria are
+unchanged for seeds 73037–73300. Thirty initial children of this remaining queue
+started after the full gate and a fresh CPU/RAM/storage check. Independent
+one-sample dispatch changes scheduling only; failed seeds are not replaced.
 
 ## First completed independent sample
 
