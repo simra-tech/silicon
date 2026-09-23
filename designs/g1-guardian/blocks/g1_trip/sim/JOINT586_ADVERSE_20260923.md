@@ -16,9 +16,10 @@ change; model cards and canonical sources are unchanged.
 
 | Required scope | Status at this checkpoint |
 |---|---|
-| Slow and fast six-control operating-point qualification | In progress; full gate not run to completion |
-| Same-corner transient repeat/disabled/temperature return | Not run |
-| Actual SHN append-only observation, exact original-18-column parity | Prepared implementation; not run |
+| Slow and fast six-control operating-point qualification | Passed both full 11,512-parameter gates, changed draws, exact repeat/disabled/return controls |
+| Same-corner transient repeat/disabled/temperature return | Slow ten-control independent audit passed; fast controls in progress |
+| Actual SHN append-only observation, exact original-18-column parity | Slow passed: 6,710 rows, exact original-18-column projection and actual mean/differential; fast pending |
+| Six required rail/common-mode fixtures per corner | Slow in progress after its own gate; fast dependent gate pending |
 | Thirty slow samples, seeds 77101–77130 | Not run |
 | Thirty fast samples, seeds 78101–78130 | Not run |
 | Crossed extreme common mode with cold/hot and rails | Not run; explicitly separate deterministic coverage |
@@ -38,6 +39,24 @@ declared deterministic common-mode interactions and qualification overhead.
 This is a planning estimate, not a measured adverse-corner throughput guarantee.
 The original 1,200-second leaf caps permit a much larger 1,400 CPU-hour total.
 No corner population launches before its own source/parameter/harness gate.
+
+The [slow transient audit](qualification/joint586-slow-transient-qualification-20260923.json)
+passed all twelve checks. Its four-phase temperature-return control completed
+in 1,637.069 seconds of simulation wall time with exact initial/final room waveform
+bytes and all 11,512 parameters unchanged. Compact portable receipts are retained
+under [slow qualification evidence](qualification/portable_evidence/joint586-slow-transqual-20260923/).
+This qualifies the stated model-level fixture, not physical parasitic adoption.
+
+The additive [staged scheduling contract](qualification/joint586-adverse30-contract-20260923-b/contract.json)
+leaves the original serial contract intact. Binary calibration remains sequential.
+After its codes and full parameter vector are frozen, the exact original 40 guard
+and 20 residual leaves may run as independent one-thread processes. Every deck is
+prehashed, each leaf owns a distinct directory, and only the final assembler writes
+the ordered parent ledger after all children are terminal. Fifteen software tests
+passed, including all 120 held-out deck comparisons across both corners,
+unchanged watchdog/analysis calls, missing and duplicate rejection, and failed-leaf
+retention. These tests are not analog simulation results. First-sample strict audit,
+then first-twenty and final-thirty disposition, remain required.
 
 The typical campaign's missing 100-sample scheduling boundary was corrected
 prospectively: already-running samples continue, exact unclaimed seeds resume

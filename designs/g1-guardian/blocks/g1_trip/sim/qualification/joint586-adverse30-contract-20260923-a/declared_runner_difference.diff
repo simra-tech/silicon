@@ -1,0 +1,181 @@
+--- frozenTypical300Runner
++++ requiredOwncorner30Runner
+@@ -1,5 +1,5 @@
+ #!/usr/bin/env python3
+-"""One new-population sample: original binary calibration, guards and residuals."""
++"""One owncorner sample: frozen binary calibration and ten-condition adverse checks."""
+ import argparse
+ import hashlib
+ import json
+@@ -17,6 +17,8 @@
+ from run_nominal_clock_probe import analyze_wave, validate_saved_nodes, run_bounded
+ from analyze_bgr_substitution_outcomes import warning_inventory
+ from wave_archive import archive_new_wave
++from prepare_joint586_adverse import CONDITIONS, transform_fixture
++from prepare_joint586_adverse_transients import append_shn
+ 
+ SIM = Path(__file__).resolve().parent
+ ROOT = SIM.parents[4]
+@@ -36,6 +38,31 @@
+ def check_pause(path):
+     if path is not None and path.exists():
+         raise InterruptedError('Explicit pause before next leaf')
++
++
++def adverse_deck(original, old_id, new_id, seed, codes, shunt, condition, corner):
++    label, temp, vdda, vdd, cm = condition
++    deck = calibration_deck(original, old_id, new_id, seed, codes, shunt, temp)
++    deck, changes = transform_fixture(deck, corner, vdda, vdd, cm, shunt)
++    return append_shn(deck) if cm is not None else deck
++
++
++def qualification(trans_path, fixture_path, corner):
++    trans = json.loads(trans_path.read_text())
++    assert trans['status'] == 'passed strict owncorner TRANS qualification' and trans['corner'] == corner
++    assert all(trans['checks'].values()) and not trans['audit_errors']
++    fixture = json.loads(fixture_path.read_text())
++    assert fixture['status'] == 'passed six required owncorner fixture controls' and fixture['corner'] == corner
++    assert fixture['transient_audit_sha256'] == sha(trans_path)
++    for row in fixture['records']:
++        run = SIM/'qualification'/row['run']
++        assert row['status'] == 'passed required fixture control'
++        assert all(sha(run/n) == v for n,v in row['receipts_sha256'].items())
++    assert len(fixture['records']) == 6
++    for label,receipts in trans['receipts_sha256'].items():
++        run = SIM/'qualification'/('joint586-'+corner+'-transqual-shn-20260923-b-'+label)
++        assert all(sha(run/n) == v for n,v in receipts.items())
++    return trans, fixture
+ 
+ 
+ def main():
+@@ -44,18 +71,23 @@
+     p.add_argument('--image-id', required=True)
+     p.add_argument('--seed', type=int, required=True)
+     p.add_argument('--qualification-audit', type=Path, required=True)
++    p.add_argument('--fixture-audit', type=Path, required=True)
++    p.add_argument('--corner', choices=['slow','fast'], required=True)
++    p.add_argument('--campaign-contract', type=Path, required=True)
+     p.add_argument('--stop-file', type=Path)
+     a = p.parse_args()
+-    assert 73001 <= a.seed <= 73300
+-    audit = json.loads(a.qualification_audit.read_text())
+-    assert audit['status'] == 'passed strict transient controls' and all(audit['strict_checks'].values())
++    first = {'slow':77101,'fast':78101}[a.corner]
++    assert first <= a.seed < first+30
++    contract=json.loads(a.campaign_contract.read_text())
++    assert contract['population_seeds'][a.corner]==list(range(first,first+30))
++    assert contract['conditions']==[list(c) for c in CONDITIONS]
++    assert contract['sample_count_per_corner']==30 and contract['watchdog_per_leaf_s']==1200
++    assert all(sha(ROOT/n)==v for n,v in contract['live_bindings_sha256'].items())
++    audit, fixture_audit = qualification(a.qualification_audit, a.fixture_audit, a.corner)
+     ref = SIM/'qualification'/REFERENCE
+     prep = json.loads((ref/'preparation.json').read_text())
+     original = (ref/'population_transient.cir').read_text()
+     assert prep['fixed_codes'] == [135, 151] and prep['shunt_V'] == .025 and prep['mismatch_enabled']
+-    assert audit['individual_controls']['enabled']['run'] == ref.name
+-    for name, digest in audit['individual_controls']['enabled']['receipts_sha256'].items():
+-        assert sha(ref/name) == digest
+     pd = Path('/foss/pdks/ihp-sg13g2')
+     runtime = {'image_id_observed_by_host': a.image_id, 'pdk_commit': (pd/'COMMIT').read_text().strip(),
+                'ngspice_version': subprocess.check_output(['ngspice', '--version'], universal_newlines=True),
+@@ -72,13 +104,15 @@
+                   'source_hashes': prep['source_hashes'], 'inventory_sha256': prep['inventory_sha256'],
+                   'qualified_transient_run': REFERENCE, 'qualified_audit': str(qualification_path.relative_to(ROOT)),
+                   'qualified_audit_sha256': sha(a.qualification_audit), 'qualified_preparation_sha256': sha(ref/'preparation.json'),
++                  'fixture_audit_sha256': sha(a.fixture_audit), 'corner':a.corner, 'conditions':CONDITIONS,
++                  'campaign_contract_sha256':sha(a.campaign_contract),
+                   'qualified_deck_sha256': sha(ref/'population_transient.cir'),
+                   'original_binary_algorithm_sha256': sha(SIM/'run_joint_calibration.py'),
+                   'decision_replay_sha256': sha(SIM/'audit_bgr_calibration_tree.py'),
+                   'physical_scope': prep['physical_scope'],
+-                  'scope': 'One independent full11512 mismatch realization. Exact qualified5MHz/1.02us/18vectors and actual+legacylate3decision contract; originalbinary/signedcorrection/rounding/clipping/guards/residual unchanged, hardnominal204. No actualnewphysicalCC or siliconyield qualification.'}
++                  'scope': 'One independent owncorner full11512 draw, fixed30 denominator. Samecorner25C nominalrail SHN0 originalbinary calibration; frozen signedcorrection/rounding/clipping/hard204. Ten declared temp/rail/trueCM conditions each four originalguards plus two halfmV residuals; no heldout recalibration. Clock/codeHIGH tracks VDD, original0.6V/20ns actual+legacy rules,1.02us/1200s. ActualSHN19 append only at trueCM conditions; legacy18 otherwise. No physicalCC/siliconyield qualification.'}
+     (out/'provenance.json').write_text(json.dumps(provenance, indent=2)+'\n')
+-    result = {'seed': a.seed, 'status': 'running', 'bracket_status': 'not run', 'guards_status': 'not run',
++    result = {'seed': a.seed, 'corner':a.corner, 'status': 'running', 'bracket_status': 'not run', 'guards_status': 'not run',
+               'residual_half_mV_status': 'not run', 'probes': [], 'source_hashes': prep['source_hashes'],
+               'scope': provenance['scope'], 'parameters_before_first_probe': None}
+ 
+@@ -88,14 +122,15 @@
+     persist()
+     vector = None
+ 
+-    def probe(codes, shunt=.025, temp=25, kind='calibration'):
++    def probe(codes, shunt=.025, condition=CONDITIONS[0], kind='calibration'):
+         nonlocal vector
+         check_pause(a.stop_file)
+         index = len(result['probes'])
+         leaf = out/('p%02d' % index)
+         leaf.mkdir()
+         # Sources stay at the parent logical path; only wave output moves below it.
+-        deck = calibration_deck(original, ref.name, out.name, a.seed, codes, shunt, temp)
++        label,temp,vdda,vdd,cm = condition
++        deck = adverse_deck(original, ref.name, out.name, a.seed, codes, shunt, condition, a.corner)
+         oldwave = 'qualification/'+out.name+'/phase0.dat'
+         newwave = 'qualification/'+out.name+'/'+leaf.name+'/phase0.dat'
+         assert deck.count(oldwave) == 1
+@@ -107,6 +142,7 @@
+         log = (leaf/'run.log').read_text()
+         errors = [line for line in log.splitlines() if re.search(r'(?im)^Error|Timestep too small|analysis aborted|doAnalyses:|no such vector|no such parameter|not available|cannot parse', line)]
+         entry = {'run': out.name+'/'+leaf.name, 'kind': kind, 'codes': codes, 'shunt_V': shunt, 'temperature_C': temp,
++                 'condition':list(condition),'corner':a.corner,'wave_columns':19 if cm is not None else 18,
+                  'status': 'failed', 'wall_s': state['wall_s'], 'watchdog_status': state['status'], 'returncode': state['returncode'],
+                  'errors': errors, 'deck_sha256': sha(leaf/'probe.cir'), 'decisions': {}}
+         full = {'warnings': warning_inventory(log)}
+@@ -117,18 +153,16 @@
+             expected = vector if vector is not None else before
+             params = phase_parameters(section, prep['groups'], expected)
+             if vector is None:
+-                if a.seed == 73001:
+-                    reference_result, = json.loads((ref/'summary.json').read_text())
+-                    assert before == reference_result['phases'][0]['parameters_before']
+-                elif a.seed == 73002:
+-                    changed, = json.loads((SIM/'qualification/joint586-mm-opqual-20260922-a-changed/summary.json').read_text())
+-                    assert changed['op_qualification_status'] == 'passed'
+-                    assert before == changed['phases'][0]['parameters_before']
+                 vector = before
+                 result['parameters_before_first_probe'] = before
+             data = [list(map(float, line.split())) for line in (leaf/'phase0.dat').read_text().splitlines()[1:] if line.strip()]
+-            assert data and all(len(row) == 18 and all(math.isfinite(v) for v in row) for row in data)
++            assert data and all(len(row) == entry['wave_columns'] and all(math.isfinite(v) for v in row) for row in data)
+             assert abs(data[-1][0]-1.02e-6) < 1e-18
++            if cm is not None:
++                mean=[(r[17]+r[18])/2 for r in data];diff=[r[17]-r[18] for r in data]
++                assert max(abs(v-cm) for v in mean)<1e-12 and max(abs(v-shunt) for v in diff)<1e-12
++                full['actual_input_observation']=dict(mean_common_mode_minmax_V=[min(mean),max(mean)],
++                    differential_minmax_V=[min(diff),max(diff)],shn_minmax_V=[min(r[18] for r in data),max(r[18] for r in data)])
+             analysis = analyze_wave([row[:13] for row in data], prep['prospective_sampling'])
+             assert analysis['sampling_status'] == 'passed'
+             decisions = {key: row['measured_edge_decision'] for key, row in analysis['comparators'].items()}
+@@ -151,7 +185,7 @@
+         probe([255, 255])
+         while True:
+             tree = replay([r for r in result['probes'] if r['kind'] == 'calibration'])
+-            tree['scope'] = 'Original binary rule and exact code-pair policy, now applied to the explicitly qualified fulljoint586 mismatch population; no nominalBGR equivalence.'
++            tree['scope'] = 'Original binary rule and code-pair policy at samecorner25C nominalrails originalSHN0; no recalibration at heldout conditions.'
+             result['calibration'] = tree
+             persist()
+             if 'next_required_codes' not in tree or tree['bracket_status'].startswith('failed'):
+@@ -165,18 +199,18 @@
+             guards = [(.027, {'soft': False, 'hard': False}), (.033, {'soft': True, 'hard': False}),
+                       (.9*204*1.04/5300, {'soft': True, 'hard': False}), (1.1*204*1.04/5300, {'soft': True, 'hard': True})]
+             statuses = []
+-            for temp in [25, -40, 125]:
++            for condition in CONDITIONS:
+                 for shunt, expected in guards:
+-                    entry = probe(codes, shunt, temp, 'guard')
++                    entry = probe(codes, shunt, condition, 'guard')
+                     entry['expected_decisions'] = expected
+                     statuses.append(entry['status'] == 'passed' and entry['decisions'] == expected)
+                     persist()
+             result['guards_status'] = 'passed' if all(statuses) else 'failed'
+             codes = [tree['fixed_residual_codes'][k] for k in ['soft', 'hard']]
+             statuses = []
+-            for temp in [25, -40, 125]:
++            for condition in CONDITIONS:
+                 for shunt, high in [(.0245, False), (.0255, True)]:
+-                    entry = probe(codes, shunt, temp, 'residual')
++                    entry = probe(codes, shunt, condition, 'residual')
+                     entry['expected_decisions'] = {'soft': high, 'hard': high}
+                     statuses.append(entry['status'] == 'passed' and entry['decisions'] == entry['expected_decisions'])
+                     persist()
