@@ -1,0 +1,102 @@
+{
+  "status": "passed",
+  "criterion": "Existing interface contract: every 2x2 entry changes <=1% from24to48um relative to48um value",
+  "tolerance": 0.01,
+  "checks": [
+    {
+      "boundary": "no_fill_grounded",
+      "relative_errors": [
+        [
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0
+        ]
+      ],
+      "maximum_relative_error": 0.0,
+      "status": "passed"
+    },
+    {
+      "boundary": "no_fill_floating",
+      "relative_errors": [
+        [
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0
+        ]
+      ],
+      "maximum_relative_error": 0.0,
+      "status": "passed"
+    },
+    {
+      "boundary": "actual_fill_grounded",
+      "relative_errors": [
+        [
+          1.3905911146417756e-16,
+          0.0
+        ],
+        [
+          0.0,
+          0.0
+        ]
+      ],
+      "maximum_relative_error": 1.3905911146417756e-16,
+      "status": "passed"
+    },
+    {
+      "boundary": "actual_fill_floating",
+      "relative_errors": [
+        [
+          9.835505310570267e-05,
+          5.2477920544705966e-05
+        ],
+        [
+          5.2477920544705966e-05,
+          9.582909670376327e-06
+        ]
+      ],
+      "maximum_relative_error": 9.835505310570267e-05,
+      "status": "passed"
+    }
+  ],
+  "identity": {
+    "source_gds_sha256": "4d3907c50f07946ef27a6d53402cf319264499a21379d2de80e9c4f1adbae299",
+    "inventory_sha256": "7218d6830bc619ab5c5f7893697e300d989d9b76b4fb53b10e8867e9d5df9568",
+    "geometry_audit_sha256": "8d00da78994ec0a2c3af89fc36eba39bfcb4ed3548093eadb019f7646adcf79a",
+    "script_sha256": "3d9bfb2f18e408c9e17bee7af05607ba3dddf07867fb864df6b91953422f9b2b",
+    "pair": {
+      "victim": "i_core.vref_buf",
+      "neighbor": "i_core.dac_hard[2]",
+      "victim_segment": 1,
+      "neighbor_segment": 8,
+      "victim_layer": "Metal5",
+      "neighbor_layer": "Metal5",
+      "longitudinal_axis": "x",
+      "shared_interval_dbu": [
+        772320,
+        847680
+      ],
+      "victim_transverse_dbu": 723660,
+      "neighbor_transverse_dbu": 724080,
+      "overlap_um": 75.36,
+      "centerline_separation_um": 0.42
+    },
+    "length_um": 20
+  },
+  "script_sha256": "f18c39cbf404de24cdeb4d93e0afc79a784e0e320b007897e93cc55335473332",
+  "numerical_graph_AC_checks": "passed all24",
+  "not_run": [
+    "longitudinal convergence",
+    "whole-route extraction",
+    "actual-source electrical acceptance"
+  ],
+  "not_applicable": [
+    "random seed for deterministic capacitor-network checks"
+  ],
+  "scope": "One fixed20um metal-only midpoint under explicit context-grounding assumptions, not fullchip parasitic acceptance"
+}
