@@ -1,0 +1,1666 @@
+[
+  {
+    "path": "libs.tech/klayout/tech/lvs/rule_decks/custom_devices.lvs",
+    "sha256": "5870aa77ba332045d19d15e552c881fbd91b336c25c98e9dcb6758bd9873af5c",
+    "selected_lines": [
+      {
+        "line": 65,
+        "text": "      equal_res_parameters += RBA::EqualDeviceParameters::new(parameter_id('ps'), 0.0, 0.0)"
+      },
+      {
+        "line": 66,
+        "text": "      equal_res_parameters += RBA::EqualDeviceParameters::new(parameter_id('m'), 0.0, 0.0)"
+      },
+      {
+        "line": 67,
+        "text": "      self.equal_parameters = equal_res_parameters"
+      },
+      {
+        "line": 68,
+        "text": "    end"
+      },
+      {
+        "line": 69,
+        "text": ""
+      },
+      {
+        "line": 70,
+        "text": "    if SERIES_RES || PARALLEL_RES"
+      },
+      {
+        "line": 71,
+        "text": "      self.combiner = RESDeviceCombiner.new"
+      },
+      {
+        "line": 72,
+        "text": "    else"
+      },
+      {
+        "line": 73,
+        "text": "      self.combiner =nil"
+      },
+      {
+        "line": 74,
+        "text": "    end"
+      },
+      {
+        "line": 75,
+        "text": ""
+      },
+      {
+        "line": 76,
+        "text": "    add_terminals(name, num, sub_en)"
+      },
+      {
+        "line": 77,
+        "text": "  end"
+      },
+      {
+        "line": 78,
+        "text": "end"
+      },
+      {
+        "line": 96,
+        "text": "    equal_ind_parameters += RBA::EqualDeviceParameters::new(parameter_id('d'), 0.0, 0.05)"
+      },
+      {
+        "line": 97,
+        "text": "    # applies the compare delegate:"
+      },
+      {
+        "line": 98,
+        "text": "    self.equal_parameters = equal_ind_parameters"
+      },
+      {
+        "line": 99,
+        "text": ""
+      },
+      {
+        "line": 100,
+        "text": "    self.combiner = nil"
+      },
+      {
+        "line": 101,
+        "text": "    self.supports_serial_combination=false"
+      },
+      {
+        "line": 102,
+        "text": "    self.supports_parallel_combination=false"
+      },
+      {
+        "line": 103,
+        "text": "  end"
+      },
+      {
+        "line": 104,
+        "text": "end"
+      },
+      {
+        "line": 105,
+        "text": ""
+      },
+      {
+        "line": 106,
+        "text": "# Varactor-custom device calss"
+      },
+      {
+        "line": 107,
+        "text": "class DeviceCustomVaractor < RBA::DeviceClassCapacitorWithBulk"
+      },
+      {
+        "line": 108,
+        "text": "  include DeviceClassMethods"
+      },
+      {
+        "line": 109,
+        "text": ""
+      },
+      {
+        "line": 151,
+        "text": "    equal_diode_parameters += RBA::EqualDeviceParameters::new(parameter_id('P'), 0.0, 0.01)"
+      },
+      {
+        "line": 152,
+        "text": "    # applies the compare delegate:"
+      },
+      {
+        "line": 153,
+        "text": "    self.equal_parameters = equal_diode_parameters"
+      },
+      {
+        "line": 154,
+        "text": ""
+      },
+      {
+        "line": 155,
+        "text": "    # combiner"
+      },
+      {
+        "line": 156,
+        "text": "    self.combiner = DiodeDeviceCombiner.new"
+      },
+      {
+        "line": 157,
+        "text": "    self.supports_serial_combination=true"
+      },
+      {
+        "line": 158,
+        "text": "    self.supports_parallel_combination=true"
+      },
+      {
+        "line": 159,
+        "text": ""
+      },
+      {
+        "line": 160,
+        "text": "    add_parameter(RBA::DeviceParameterDefinition.new('m', 'multiplier', 1, true))"
+      },
+      {
+        "line": 161,
+        "text": "    enable_parameter('A', true)"
+      },
+      {
+        "line": 162,
+        "text": "    enable_parameter('P', true)"
+      },
+      {
+        "line": 163,
+        "text": "    enable_parameter('m', true)"
+      },
+      {
+        "line": 164,
+        "text": "  end"
+      },
+      {
+        "line": 177,
+        "text": ""
+      },
+      {
+        "line": 178,
+        "text": "# Taps device class"
+      },
+      {
+        "line": 179,
+        "text": "class CustomTap < RBA::DeviceClassResistor"
+      },
+      {
+        "line": 180,
+        "text": "  def initialize"
+      },
+      {
+        "line": 181,
+        "text": "    super"
+      },
+      {
+        "line": 182,
+        "text": "    clear_terminals"
+      },
+      {
+        "line": 183,
+        "text": "    clear_parameters"
+      },
+      {
+        "line": 184,
+        "text": "    clear_equivalent_terminal_ids"
+      },
+      {
+        "line": 185,
+        "text": ""
+      },
+      {
+        "line": 186,
+        "text": "    # Keep taps visible as resistor-class devices in LVS DB, but"
+      },
+      {
+        "line": 187,
+        "text": "    # preserve terminal polarity (TIE/WELL). Allow parallel-only reduction"
+      },
+      {
+        "line": 188,
+        "text": "    # using tap-specific combiner; disallow serial reduction."
+      },
+      {
+        "line": 189,
+        "text": "    self.combiner = TapDeviceCombiner.new"
+      },
+      {
+        "line": 190,
+        "text": "    self.supports_serial_combination = false"
+      },
+      {
+        "line": 191,
+        "text": "    self.supports_parallel_combination = true"
+      },
+      {
+        "line": 192,
+        "text": ""
+      },
+      {
+        "line": 193,
+        "text": "    tie = add_terminal(RBA::DeviceTerminalDefinition.new('TIE'))"
+      },
+      {
+        "line": 194,
+        "text": "    tie.name = 'TIE'"
+      },
+      {
+        "line": 195,
+        "text": "    well = add_terminal(RBA::DeviceTerminalDefinition.new('WELL'))"
+      },
+      {
+        "line": 196,
+        "text": "    well.name = 'WELL'"
+      },
+      {
+        "line": 197,
+        "text": "    add_parameter(RBA::DeviceParameterDefinition.new('A', 'Area', 0, true))"
+      },
+      {
+        "line": 198,
+        "text": "    add_parameter(RBA::DeviceParameterDefinition.new('P', 'Perimeter', 0, true))"
+      },
+      {
+        "line": 199,
+        "text": "    enable_parameter('A', true)"
+      },
+      {
+        "line": 200,
+        "text": "    enable_parameter('P', true)"
+      },
+      {
+        "line": 201,
+        "text": "  end"
+      },
+      {
+        "line": 202,
+        "text": "end"
+      },
+      {
+        "line": 203,
+        "text": ""
+      },
+      {
+        "line": 204,
+        "text": "# ESD-3term device class"
+      },
+      {
+        "line": 205,
+        "text": "class Esd3Term < RBA::DeviceClassBJT3Transistor"
+      },
+      {
+        "line": 206,
+        "text": "  def initialize"
+      },
+      {
+        "line": 207,
+        "text": "    super"
+      },
+      {
+        "line": 208,
+        "text": "    clear_parameters"
+      },
+      {
+        "line": 209,
+        "text": "    add_parameter(RBA::DeviceParameterDefinition.new('m', 'area', 1, true))"
+      }
+    ]
+  },
+  {
+    "path": "libs.tech/klayout/tech/lvs/rule_decks/custom_combiner.lvs",
+    "sha256": "2e9f341023b96ab64ef83110d0a57d5f8be8a6906e67db60edbb62cfadeed56d",
+    "selected_lines": [
+      {
+        "line": 207,
+        "text": "end"
+      },
+      {
+        "line": 208,
+        "text": ""
+      },
+      {
+        "line": 209,
+        "text": "class TapDeviceCombiner < RBA::GenericDeviceCombiner"
+      },
+      {
+        "line": 210,
+        "text": "  include DeviceCombinerMethods"
+      },
+      {
+        "line": 211,
+        "text": ""
+      },
+      {
+        "line": 212,
+        "text": "  # Combine only in parallel with preserved terminal polarity:"
+      },
+      {
+        "line": 213,
+        "text": "  # TIE->TIE and WELL->WELL. No serial combination for taps."
+      },
+      {
+        "line": 214,
+        "text": "  def combine_devices(a, b)"
+      },
+      {
+        "line": 215,
+        "text": "    return false unless PARALLEL_RES"
+      },
+      {
+        "line": 216,
+        "text": "    return false unless same_net(a, b, 'TIE') && same_net(a, b, 'WELL')"
+      },
+      {
+        "line": 217,
+        "text": ""
+      },
+      {
+        "line": 218,
+        "text": "    a.set_parameter('A', a.parameter('A') + b.parameter('A'))"
+      },
+      {
+        "line": 219,
+        "text": "    a.set_parameter('P', a.parameter('P') + b.parameter('P'))"
+      },
+      {
+        "line": 220,
+        "text": ""
+      }
+    ]
+  },
+  {
+    "path": "libs.tech/klayout/tech/lvs/rule_decks/custom_reader.lvs",
+    "sha256": "8100bf1192b3d20538839dd888df95a8453127cc49ffc177cab3ac67cde18b29",
+    "selected_lines": [
+      {
+        "line": 416,
+        "text": "      DeviceCustomRes.new(model, 2, 1)"
+      },
+      {
+        "line": 417,
+        "text": "    elsif num_nets == 2 && model.downcase.include?('tap')"
+      },
+      {
+        "line": 418,
+        "text": "      CustomTap.new"
+      },
+      {
+        "line": 419,
+        "text": "    elsif num_nets == 2"
+      },
+      {
+        "line": 420,
+        "text": "      RBA::DeviceClassResistor.new"
+      },
+      {
+        "line": 421,
+        "text": "    elsif num_nets == 3"
+      },
+      {
+        "line": 422,
+        "text": "      RBA::DeviceClassResistorWithBulk.new"
+      },
+      {
+        "line": 423,
+        "text": "    else"
+      },
+      {
+        "line": 424,
+        "text": "      raise ArgumentError, 'Resistor should have two or three nodes, please recheck'"
+      },
+      {
+        "line": 425,
+        "text": "    end"
+      },
+      {
+        "line": 426,
+        "text": "  end"
+      },
+      {
+        "line": 427,
+        "text": ""
+      },
+      {
+        "line": 428,
+        "text": "  # Create a bjt device class."
+      },
+      {
+        "line": 429,
+        "text": "  def create_bjt(model, _num_nets)"
+      },
+      {
+        "line": 629,
+        "text": "      device.set_parameter('A', (params['A'] || ((params['W'] || 0.0) * (params['L'] || 0.0))) * 1e12)"
+      },
+      {
+        "line": 630,
+        "text": "      device.set_parameter('P',"
+      },
+      {
+        "line": 631,
+        "text": "                           (params['P'] || params['PERIM'] || (((params['W'] || 0.0) + (params['L'] || 0.0)) * 2)) * 1e6)"
+      },
+      {
+        "line": 632,
+        "text": "    elsif RES_DEV.include?(model.downcase)"
+      },
+      {
+        "line": 633,
+        "text": "      device.set_parameter('w', (params['W'] || 0.0) * 1e6)"
+      },
+      {
+        "line": 634,
+        "text": "      device.set_parameter('l', (params['L'] || 0.0) * 1e6)"
+      },
+      {
+        "line": 635,
+        "text": "      device.set_parameter('ps', (params['PS'] || 0.0) * 1e6)"
+      },
+      {
+        "line": 636,
+        "text": "      device.set_parameter('b', params['B'] || 0.0)"
+      },
+      {
+        "line": 637,
+        "text": "      device.set_parameter('m', params['M'] || 1.0)"
+      },
+      {
+        "line": 638,
+        "text": "    else"
+      },
+      {
+        "line": 639,
+        "text": "      device.set_parameter('W', (params['W'] || params['WIDTH'] || 0.0) * (params['M'] || 1.0) * 1e6)"
+      },
+      {
+        "line": 640,
+        "text": "      device.set_parameter('L', (params['L'] || params['LENGTH'] || 0.0) * (params['S'] || 1.0) * 1e6)"
+      },
+      {
+        "line": 641,
+        "text": "      device.set_parameter('R', (params['R'] || 0.0) * (params['S'] || 1.0) / (params['M'] || 1.0))"
+      },
+      {
+        "line": 642,
+        "text": "    end"
+      }
+    ]
+  },
+  {
+    "path": "libs.tech/klayout/tech/lvs/rule_decks/tap_derivations.lvs",
+    "sha256": "b6e9ff382b6f8c392ab699d09832ea7e0ad120bc1b35b51a778e8b188b0ce6c2",
+    "selected_lines": [
+      {
+        "line": 30,
+        "text": "                .join(ind_drw).join(ind_pin)"
+      },
+      {
+        "line": 31,
+        "text": ""
+      },
+      {
+        "line": 32,
+        "text": "# === ntap1 ==="
+      },
+      {
+        "line": 33,
+        "text": "ntap1_exc = pwell.join(psd_drw).join(taps_exclude)"
+      },
+      {
+        "line": 34,
+        "text": ""
+      },
+      {
+        "line": 35,
+        "text": "ntap1_tie = nactiv.and(ntap1_mk).not(ntap1_exc)"
+      },
+      {
+        "line": 36,
+        "text": "# NOTE: the initial \"nwell_drw.and(...)\" does not change the layer"
+      },
+      {
+        "line": 37,
+        "text": "# logically, but does a re-hierarchisation of the layer in deep mode"
+      },
+      {
+        "line": 38,
+        "text": "# This is important to support cheats for cell-local extraction of "
+      },
+      {
+        "line": 39,
+        "text": "# guard rings through \"cheats\" (see tap_extraction.lvs)."
+      },
+      {
+        "line": 40,
+        "text": "ntap1_well = nwell_drw.and(ntap1_mk.covering(ntap1_tie))"
+      },
+      {
+        "line": 41,
+        "text": ""
+      },
+      {
+        "line": 42,
+        "text": "# === ptap1 ==="
+      },
+      {
+        "line": 43,
+        "text": "ptap1_exc = nwell_drw.join(taps_exclude)"
+      },
+      {
+        "line": 44,
+        "text": ""
+      },
+      {
+        "line": 45,
+        "text": "ptap1_tie = pactiv.and(ptap1_mk).not(ptap1_exc)"
+      },
+      {
+        "line": 46,
+        "text": "# NOTE: the initial \"substrate_drw.and(...)\" does not change the layer"
+      },
+      {
+        "line": 47,
+        "text": "# logically, but does a re-hierarchisation of the layer in deep mode"
+      },
+      {
+        "line": 48,
+        "text": "# This is important to support cheats for cell-local extraction of "
+      },
+      {
+        "line": 49,
+        "text": "# guard rings through \"cheats\" (see tap_extraction.lvs)."
+      },
+      {
+        "line": 50,
+        "text": "ptap1_sub = substrate_drw.and(ptap1_mk.covering(ptap1_tie))"
+      },
+      {
+        "line": 51,
+        "text": ""
+      }
+    ]
+  },
+  {
+    "path": "libs.tech/klayout/tech/lvs/rule_decks/tap_extraction.lvs",
+    "sha256": "e17c779eacdcab3bfa2287ca265d7836dde0e9e7fec4b4e7bf79bf2b2dd9120b",
+    "selected_lines": [
+      {
+        "line": 24,
+        "text": "logger.info('Starting Taps EXTRACTION')"
+      },
+      {
+        "line": 25,
+        "text": ""
+      },
+      {
+        "line": 26,
+        "text": "# ntap1/ptap1 device extraction is gated by DISABLE_TAP_EXTRACTION (see sg13g2.lvs)."
+      },
+      {
+        "line": 27,
+        "text": "# Extraction is enabled by default. When it is disabled, taps are not extracted as"
+      },
+      {
+        "line": 28,
+        "text": "# devices so the schematic does not need to contain them, matching Magic+Netgen LVS"
+      },
+      {
+        "line": 29,
+        "text": "# behavior. The tap tie regions are still connected to their well/substrate nets via"
+      },
+      {
+        "line": 30,
+        "text": "# tap_connections.lvs."
+      },
+      {
+        "line": 31,
+        "text": "unless DISABLE_TAP_EXTRACTION"
+      },
+      {
+        "line": 32,
+        "text": "  # ntap1"
+      },
+      {
+        "line": 33,
+        "text": "  logger.info('Extracting ntap1 device')"
+      },
+      {
+        "line": 34,
+        "text": "  # ntap1 is extracted with the diode extractor because the geometry is a nested"
+      },
+      {
+        "line": 35,
+        "text": "  # junction (tie inside well). We map diode regions as:"
+      },
+      {
+        "line": 36,
+        "text": "  #   - P => ntap1_tie  (tie contact)"
+      },
+      {
+        "line": 37,
+        "text": "  #   - N => ntap1_well (nwell body)"
+      },
+      {
+        "line": 38,
+        "text": "  # This preserves PDK terminal order in the written netlist as \"TIE WELL\"."
+      },
+      {
+        "line": 39,
+        "text": "  # See: https://www.klayout.de/doc/manual/lvs_device_extractors.html#h2-117"
+      },
+      {
+        "line": 40,
+        "text": "  cheat(\"*\") {"
+      },
+      {
+        "line": 41,
+        "text": "    extract_devices(diode('ntap1', CustomTap), { 'P' => ntap1_tie, 'N' => ntap1_well })"
+      },
+      {
+        "line": 42,
+        "text": "  }"
+      },
+      {
+        "line": 43,
+        "text": ""
+      },
+      {
+        "line": 44,
+        "text": "  # ptap1"
+      },
+      {
+        "line": 45,
+        "text": "  logger.info('Extracting ptap1 device')"
+      },
+      {
+        "line": 46,
+        "text": "  # ptap1 follows the same P/N region mapping rule:"
+      },
+      {
+        "line": 47,
+        "text": "  #   - P => ptap1_tie (tie contact)"
+      },
+      {
+        "line": 48,
+        "text": "  #   - N => ptap1_sub (substrate/body region)"
+      },
+      {
+        "line": 49,
+        "text": "  cheat(\"*\") {"
+      },
+      {
+        "line": 50,
+        "text": "    extract_devices(diode('ptap1', CustomTap), { 'P' => ptap1_tie, 'N' => ptap1_sub })"
+      },
+      {
+        "line": 51,
+        "text": "  }"
+      },
+      {
+        "line": 52,
+        "text": "else"
+      },
+      {
+        "line": 53,
+        "text": "  logger.info('DISABLE_TAP_EXTRACTION is enabled: skipping ntap1/ptap1 device extraction.')"
+      },
+      {
+        "line": 54,
+        "text": "end"
+      }
+    ]
+  },
+  {
+    "path": "libs.tech/klayout/tech/lvs/rule_decks/tap_connections.lvs",
+    "sha256": "b78c5b3cf4e328c915d52f210c6457790ec7ef56eb08d88dedb825ca3bc59b3b",
+    "selected_lines": [
+      {
+        "line": 24,
+        "text": "logger.info('Starting LVS Taps CONNECTIONS')"
+      },
+      {
+        "line": 25,
+        "text": ""
+      },
+      {
+        "line": 26,
+        "text": "# ntap1"
+      },
+      {
+        "line": 27,
+        "text": "connect(ntap1_tie, cont_drw)"
+      },
+      {
+        "line": 28,
+        "text": "connect(ntap1_well, nwell_drw)"
+      },
+      {
+        "line": 29,
+        "text": ""
+      },
+      {
+        "line": 30,
+        "text": "# ptap1"
+      },
+      {
+        "line": 31,
+        "text": "connect(ptap1_tie, cont_drw)"
+      },
+      {
+        "line": 32,
+        "text": "connect(ptap1_sub, pwell)"
+      },
+      {
+        "line": 33,
+        "text": ""
+      },
+      {
+        "line": 34,
+        "text": "# When tap extraction is disabled (see DISABLE_TAP_EXTRACTION in sg13g2.lvs), the"
+      },
+      {
+        "line": 35,
+        "text": "# ntap1/ptap1 devices are not created. The n+/p+ tie is physically the same node as"
+      },
+      {
+        "line": 36,
+        "text": "# its well/substrate, so merge them here. This keeps the well/substrate bulk connected"
+      },
+      {
+        "line": 37,
+        "text": "# to the power nets through the tie contact, matching Magic+Netgen LVS."
+      },
+      {
+        "line": 38,
+        "text": "if DISABLE_TAP_EXTRACTION"
+      },
+      {
+        "line": 39,
+        "text": "  connect(ntap1_tie, ntap1_well)"
+      },
+      {
+        "line": 40,
+        "text": "  connect(ptap1_tie, ptap1_sub)"
+      },
+      {
+        "line": 41,
+        "text": "end"
+      }
+    ]
+  },
+  {
+    "path": "libs.tech/klayout/tech/lvs/README.md",
+    "sha256": "50bccaaf677b9648ceb472189c41c013230488c9871765dff039d20fb68e501b",
+    "selected_lines": [
+      {
+        "line": 61,
+        "text": "           [--no_net_names] [--spice_comments] [--net_only] [--no_simplify]"
+      },
+      {
+        "line": 62,
+        "text": "           [--no_series_res] [--no_parallel_res] [--combine_devices] [--top_lvl_pins]"
+      },
+      {
+        "line": 63,
+        "text": "           [--disable_tap_extraction]"
+      },
+      {
+        "line": 64,
+        "text": "           [--purge] [--purge_nets] [--ignore_top_ports_mismatch]"
+      },
+      {
+        "line": 65,
+        "text": "           [--implicit_nets=<nets>]"
+      },
+      {
+        "line": 66,
+        "text": "```"
+      },
+      {
+        "line": 67,
+        "text": ""
+      },
+      {
+        "line": 68,
+        "text": "**Options:**"
+      },
+      {
+        "line": 69,
+        "text": ""
+      },
+      {
+        "line": 70,
+        "text": "- `--help -h`                         Displays this help message."
+      },
+      {
+        "line": 71,
+        "text": ""
+      },
+      {
+        "line": 72,
+        "text": "- `--layout=<layout_path>`            Optional path to the input GDS file. Required unless `--layout_netlist` is provided."
+      },
+      {
+        "line": 73,
+        "text": ""
+      },
+      {
+        "line": 74,
+        "text": "- `--netlist=<netlist_path>`          Optional path to the schematic netlist file."
+      },
+      {
+        "line": 76,
+        "text": "- `--layout_netlist=<layout_netlist_path>` Optional path to a layout-side netlist file. When provided, layout extraction is skipped and this netlist is used for comparison/output."
+      },
+      {
+        "line": 77,
+        "text": ""
+      },
+      {
+        "line": 78,
+        "text": "- `--run_dir=<run_dir_path>`          Run directory to save generated results. By default, a timestamped run directory is created in the current directory."
+      },
+      {
+        "line": 79,
+        "text": ""
+      },
+      {
+        "line": 80,
+        "text": "- `--topcell=<topcell_name>`          Specifies the name of the top cell to be used."
+      },
+      {
+        "line": 81,
+        "text": ""
+      },
+      {
+        "line": 82,
+        "text": "- `--run_mode=<run_mode>`             Selects the allowed KLayout mode (`flat`, `deep`). [default: flat]"
+      },
+      {
+        "line": 83,
+        "text": ""
+      },
+      {
+        "line": 84,
+        "text": "- `--no_net_names`                    Omits net names in the extracted netlist."
+      },
+      {
+        "line": 85,
+        "text": ""
+      },
+      {
+        "line": 86,
+        "text": "- `--spice_comments`                  Includes netlist comments in the extracted netlist."
+      },
+      {
+        "line": 87,
+        "text": ""
+      },
+      {
+        "line": 88,
+        "text": "- `--net_only`                        Generates netlist objects only in the extracted netlist."
+      },
+      {
+        "line": 89,
+        "text": ""
+      },
+      {
+        "line": 96,
+        "text": "- `--combine_devices`                 Enables device combination for both layout and schematic netlists."
+      },
+      {
+        "line": 97,
+        "text": ""
+      },
+      {
+        "line": 98,
+        "text": "- `--disable_tap_extraction`          Skips `ntap1`/`ptap1` device extraction so taps are not required in the schematic, matching Magic+Netgen LVS behavior. Extraction is enabled by default."
+      },
+      {
+        "line": 99,
+        "text": ""
+      },
+      {
+        "line": 100,
+        "text": "- `--top_lvl_pins`                    Creates pins for top-level circuits in both layout and schematic netlists."
+      },
+      {
+        "line": 101,
+        "text": ""
+      },
+      {
+        "line": 102,
+        "text": "- `--purge`                           Removes unused nets from both layout and schematic netlists."
+      },
+      {
+        "line": 103,
+        "text": ""
+      },
+      {
+        "line": 104,
+        "text": "- `--purge_nets`                      Purges floating nets from both layout and schematic netlists."
+      },
+      {
+        "line": 105,
+        "text": ""
+      },
+      {
+        "line": 106,
+        "text": "- `--ignore_top_ports_mismatch`       Ignores top-level port mismatches during comparison mode."
+      },
+      {
+        "line": 107,
+        "text": ""
+      },
+      {
+        "line": 108,
+        "text": "- `--implicit_nets=<nets>`            Comma-separated net names/patterns for implicit connections (case-sensitive), e.g., `\"VDD,VSS\"` or `\"*\"`."
+      },
+      {
+        "line": 109,
+        "text": ""
+      },
+      {
+        "line": 148,
+        "text": ""
+      },
+      {
+        "line": 149,
+        "text": "```bash"
+      },
+      {
+        "line": 150,
+        "text": "    python3 run_lvs.py --layout=testing/testcases/unit/mos_devices/layout/sg13_lv_nmos.gds --netlist=testing/testcases/unit/mos_devices/netlist/sg13_lv_nmos.cdl --run_dir=test_nmos --ignore_top_ports_mismatch --implicit_nets=VDD,VSS"
+      },
+      {
+        "line": 151,
+        "text": "```"
+      },
+      {
+        "line": 152,
+        "text": ""
+      },
+      {
+        "line": 153,
+        "text": "#### LVS Outputs"
+      },
+      {
+        "line": 154,
+        "text": ""
+      },
+      {
+        "line": 155,
+        "text": "You could find the run results at your run directory if you previously specified it through `--run_dir=<run_dir_path>`. Default path of run directory is `lvs_run_<date>_<time>` in current directory."
+      },
+      {
+        "line": 156,
+        "text": ""
+      },
+      {
+        "line": 157,
+        "text": "**Folder Structure of run results**"
+      },
+      {
+        "line": 158,
+        "text": ""
+      },
+      {
+        "line": 159,
+        "text": "```text"
+      },
+      {
+        "line": 160,
+        "text": "\ud83d\udcc1 lvs_run_<date>_<time>"
+      },
+      {
+        "line": 161,
+        "text": " \u2523 \ud83d\udcdc lvs_run_<date>_<time>.log"
+      },
+      {
+        "line": 197,
+        "text": "</p>"
+      },
+      {
+        "line": 198,
+        "text": ""
+      },
+      {
+        "line": 199,
+        "text": "Additionally, you can find the extracted netlist generated from your design at (`<device_name>_extracted.cir`) in the output run directory."
+      },
+      {
+        "line": 200,
+        "text": ""
+      },
+      {
+        "line": 201,
+        "text": "At the end of each CLI run, `run_lvs.py` prints an **Important Summary** table that highlights:"
+      },
+      {
+        "line": 202,
+        "text": "- run status and mode"
+      },
+      {
+        "line": 203,
+        "text": "- final LVS outcome"
+      },
+      {
+        "line": 204,
+        "text": "- results directory path"
+      },
+      {
+        "line": 205,
+        "text": "- warning/error counts and key messages"
+      },
+      {
+        "line": 206,
+        "text": ""
+      },
+      {
+        "line": 207,
+        "text": "### GUI"
+      },
+      {
+        "line": 208,
+        "text": ""
+      },
+      {
+        "line": 209,
+        "text": "The SG13G2 also facilitates LVS execution via Klayout menus as depicted below:"
+      },
+      {
+        "line": 210,
+        "text": ""
+      },
+      {
+        "line": 261,
+        "text": "</p>"
+      },
+      {
+        "line": 262,
+        "text": ""
+      },
+      {
+        "line": 263,
+        "text": "Upon executing the LVS, a live log window is shown and the generated result database is loaded on your layout interface automatically, allowing you to verify the outcome as shown above in Fig. 4."
+      },
+      {
+        "line": 264,
+        "text": ""
+      },
+      {
+        "line": 265,
+        "text": "Additionally, all run outputs (log, extracted netlist, report database) are available in the selected `Output Run Directory`."
+      }
+    ]
+  },
+  {
+    "path": "libs.tech/xschem/sg13g2_pr/ptap1.sym",
+    "sha256": "8d4286ec5619cf2dcbe63e3811ffb69a1256ad299a0d52569e365e3b21649976",
+    "selected_lines": [
+      {
+        "line": 17,
+        "text": "G {}"
+      },
+      {
+        "line": 18,
+        "text": "K {type=res"
+      },
+      {
+        "line": 19,
+        "text": "lvs_format=\"tcleval(R@name @pinlist @model A=[ev7 \\{ @w * @l \\} ] P=[ev7 \\{ 2 * ( @w + @l ) \\} ] )\""
+      },
+      {
+        "line": 20,
+        "text": "*lvs_format=\"@name @pinlist @model w=@w l=@l\""
+      },
+      {
+        "line": 21,
+        "text": "format=\"tcleval(@spiceprefix@name @pinlist @model R=[ev7 \\{  1.0 / ( 1.0 / ( 9.8e-10 / ( @w * @l ) ) + 1.0 / ( 9.8e-4 / ( 2.0 * ( @w + @l ) ) ) )\\}] w=@w l=@l )\""
+      },
+      {
+        "line": 22,
+        "text": "spectre_format=\"tcleval(@spiceprefix@name ( @pinlist ) @model r=[ev7 \\{  1.0 / ( 1.0 / ( 9.8e-10 / ( @w * @l ) ) + 1.0 / ( 9.8e-4 / ( 2.0 * ( @w + @l ) ) ) )\\}] w=@w l=@l )\""
+      },
+      {
+        "line": 23,
+        "text": "template=\"name=R1"
+      },
+      {
+        "line": 24,
+        "text": "model=ptap1"
+      },
+      {
+        "line": 25,
+        "text": "spiceprefix=X"
+      },
+      {
+        "line": 26,
+        "text": "w=0.78e-6"
+      },
+      {
+        "line": 27,
+        "text": "l=0.78e-6"
+      },
+      {
+        "line": 28,
+        "text": "\""
+      },
+      {
+        "line": 29,
+        "text": "}"
+      },
+      {
+        "line": 30,
+        "text": "V {}"
+      },
+      {
+        "line": 31,
+        "text": "S {}"
+      },
+      {
+        "line": 32,
+        "text": "F {}"
+      },
+      {
+        "line": 33,
+        "text": "E {}"
+      },
+      {
+        "line": 34,
+        "text": "L 4 0 20 0 30 {}"
+      },
+      {
+        "line": 35,
+        "text": "L 4 0 20 7.5 17.5 {}"
+      }
+    ]
+  },
+  {
+    "path": "libs.tech/xschem/sg13g2_pr/ptap1_ring.sym",
+    "sha256": "70bc070fc157dfdebe2cc07e7c0ccf3fd9b0980144760e9e00d602e23c95cd45",
+    "selected_lines": [
+      {
+        "line": 17,
+        "text": "G {}"
+      },
+      {
+        "line": 18,
+        "text": "K {type=res"
+      },
+      {
+        "line": 19,
+        "text": "lvs_format=\"tcleval(R@name @pinlist @model A=[ev \\{ 2 * @rw * ( @w + @l - 2 * @rw ) \\} ] P=[ev \\{ 4 * ( @w + @l - 2 * @rw ) \\} ] )\""
+      },
+      {
+        "line": 20,
+        "text": "*lvs_format=\"@name @pinlist @model w=@w l=@l\""
+      },
+      {
+        "line": 21,
+        "text": "format=\"tcleval(@spiceprefix@name @pinlist @model R=[ev \\{  1.0 / ( 1.0 / ( 9.8e-10 / ( 2 * @rw * ( @w + @l - 2 * @rw ) ) ) + 1.0 / ( 9.8e-4 / ( 2.0 * ( 4 * ( @w + @l - 2 * @rw ) ) ) ) )\\}] w=@w l=@l )\""
+      },
+      {
+        "line": 22,
+        "text": "spectre_format=\"tcleval(@spiceprefix@name ( @pinlist ) @model r=[ev \\{  1.0 / ( 1.0 / ( 9.8e-10 / ( 2 * @rw * ( @w + @l - 2 * @rw ) ) ) + 1.0 / ( 9.8e-4 / ( 2.0 * ( 4 * ( @w + @l - 2 * @rw ) ) ) ) )\\}] w=@w l=@l )\""
+      },
+      {
+        "line": 23,
+        "text": "template=\"name=R1"
+      },
+      {
+        "line": 24,
+        "text": "model=ptap1"
+      },
+      {
+        "line": 25,
+        "text": "spiceprefix=X"
+      },
+      {
+        "line": 26,
+        "text": "w=3e-6"
+      },
+      {
+        "line": 27,
+        "text": "l=3e-6"
+      },
+      {
+        "line": 28,
+        "text": "rw=0.3e-6"
+      },
+      {
+        "line": 29,
+        "text": "\""
+      },
+      {
+        "line": 30,
+        "text": "}"
+      },
+      {
+        "line": 31,
+        "text": "V {}"
+      },
+      {
+        "line": 32,
+        "text": "S {}"
+      },
+      {
+        "line": 33,
+        "text": "F {}"
+      },
+      {
+        "line": 34,
+        "text": "E {}"
+      },
+      {
+        "line": 35,
+        "text": "L 4 0 20 0 30 {}"
+      }
+    ]
+  },
+  {
+    "path": "libs.tech/ngspice/models/resistors_mod.lib",
+    "sha256": "7c77da0c0419c8a332550da3f934f530262bd452734090db827b68ff88d09c43",
+    "selected_lines": [
+      {
+        "line": 17,
+        "text": "*#######################################################################"
+      },
+      {
+        "line": 18,
+        "text": ""
+      },
+      {
+        "line": 19,
+        "text": "**ptap1 (TIE SUB)"
+      },
+      {
+        "line": 20,
+        "text": "* In order to have consistency between the netlisted device format "
+      },
+      {
+        "line": 21,
+        "text": "* the w and l parameters are defined but not used."
+      },
+      {
+        "line": 22,
+        "text": "* The value of R is calculated by schematic capture tool."
+      },
+      {
+        "line": 23,
+        "text": ".subckt ptap1 1 2 "
+      },
+      {
+        "line": 24,
+        "text": ".param R=262.8 w=0.78e-6 l=0.78e-6"
+      },
+      {
+        "line": 25,
+        "text": "R1 1 2 R=R"
+      },
+      {
+        "line": 26,
+        "text": ".ends ptap1"
+      },
+      {
+        "line": 27,
+        "text": ""
+      },
+      {
+        "line": 28,
+        "text": "**ntap1 (TIE WELL)"
+      },
+      {
+        "line": 29,
+        "text": "* In order to have consistency between the netlisted device format "
+      },
+      {
+        "line": 30,
+        "text": "* the w and l parameters are defined but not used."
+      },
+      {
+        "line": 31,
+        "text": "* The value of R is calculated by schematic capture tool."
+      },
+      {
+        "line": 32,
+        "text": ".subckt ntap1 1 2 "
+      },
+      {
+        "line": 33,
+        "text": ".param R=262.8 w=0.78e-6 l=0.78e-6"
+      },
+      {
+        "line": 34,
+        "text": "R1 1 2 R=R"
+      },
+      {
+        "line": 35,
+        "text": ".ends ntap1"
+      },
+      {
+        "line": 36,
+        "text": ""
+      },
+      {
+        "line": 37,
+        "text": "* Parasitic R/C models"
+      },
+      {
+        "line": 38,
+        "text": "* aluminum: prozess tol. res_rpara"
+      },
+      {
+        "line": 39,
+        "text": "* value is taken from extraction routine"
+      },
+      {
+        "line": 40,
+        "text": ".subckt Rparasitic 1 2"
+      },
+      {
+        "line": 41,
+        "text": ".param R=0 w=0 l=0 TC1=0.00353 TC2=0"
+      },
+      {
+        "line": 42,
+        "text": "R1 1 2 R=r*res_rpara TC1=TC1 TC2=TC2"
+      },
+      {
+        "line": 43,
+        "text": ".ends Rparasitic"
+      },
+      {
+        "line": 44,
+        "text": ""
+      },
+      {
+        "line": 45,
+        "text": ".subckt rsil 1 2 bn"
+      },
+      {
+        "line": 46,
+        "text": ".param w=0.5e-6 l=0.5e-6 mm_ok=0 m=1 trise=0 sw_et=0"
+      }
+    ]
+  },
+  {
+    "path": "libs.tech/klayout/python/sg13g2_pycell_lib/ihp/utility_functions.py",
+    "sha256": "0d5c287ede8decd8b69c8f94bfe72231758e607c02b64650951fcb5be269c861",
+    "selected_lines": [
+      {
+        "line": 520,
+        "text": ""
+      },
+      {
+        "line": 521,
+        "text": "    caspec = Numeric(techparams[cell+'_caspec'])*1e-12 # specific cap per sq. [um] (float)"
+      },
+      {
+        "line": 522,
+        "text": "    cpspec = Numeric(techparams[cell+'_cpspec'])*1e-6  # specific cap. per [um] perimeter (float)"
+      },
+      {
+        "line": 523,
+        "text": "    lwd    = Numeric(techparams[cell+'_lwd'])          # line width delta [m] ; 30.7.05 GG: fixed"
+      },
+      {
+        "line": 524,
+        "text": ""
+      },
+      {
+        "line": 525,
+        "text": "    if type(c) == str :"
+      },
+      {
+        "line": 526,
+        "text": "        c = Numeric(c)"
+      },
+      {
+        "line": 527,
+        "text": "    if type(l) == str :"
+      },
+      {
+        "line": 528,
+        "text": "        l = Numeric(l)"
+      },
+      {
+        "line": 529,
+        "text": "    if type(w) == str :"
+      },
+      {
+        "line": 530,
+        "text": "        w = Numeric(w)"
+      },
+      {
+        "line": 531,
+        "text": ""
+      },
+      {
+        "line": 532,
+        "text": "    w = w * 1e6 # um (needed for contact calculation)"
+      },
+      {
+        "line": 533,
+        "text": "    l = l * 1e6"
+      },
+      {
+        "line": 551,
+        "text": ""
+      },
+      {
+        "line": 552,
+        "text": "#***********************************************************************************************************************"
+      },
+      {
+        "line": 553,
+        "text": "# CbTapCalc"
+      },
+      {
+        "line": 554,
+        "text": "#***********************************************************************************************************************"
+      },
+      {
+        "line": 555,
+        "text": "def CbTapCalc(calc, r, l, w, cell) :"
+      },
+      {
+        "line": 556,
+        "text": ""
+      },
+      {
+        "line": 557,
+        "text": "    global techparams"
+      },
+      {
+        "line": 558,
+        "text": ""
+      },
+      {
+        "line": 559,
+        "text": "    raspec = Numeric(techparams[cell+'_raspec'])*1.0e12 ;# specific res per sq. [um] (float)"
+      },
+      {
+        "line": 560,
+        "text": "    rpspec = Numeric(techparams[cell+'_rpspec'])*1.0e6  ;# specific res. per [um] perimeter (float)"
+      },
+      {
+        "line": 561,
+        "text": ""
+      },
+      {
+        "line": 562,
+        "text": "    w = w*1.0e6 ;# um (needed for contact calculation)"
+      },
+      {
+        "line": 563,
+        "text": "    l = l*1.0e6"
+      },
+      {
+        "line": 564,
+        "text": "    a = l*w"
+      },
+      {
+        "line": 565,
+        "text": "    p = 2.0*(l+w)"
+      },
+      {
+        "line": 566,
+        "text": ""
+      },
+      {
+        "line": 567,
+        "text": "    result = 0"
+      },
+      {
+        "line": 568,
+        "text": "    if calc == 'R' :"
+      },
+      {
+        "line": 569,
+        "text": "        result = 1.0/(1.0/(raspec/a) + 1.0/(rpspec/p))"
+      },
+      {
+        "line": 570,
+        "text": "    elif calc == 'l' :"
+      },
+      {
+        "line": 571,
+        "text": "        result = (raspec*rpspec- r*raspec*2.0*w)/(r*raspec*2.0+r*rpspec*w)*1.0e-6"
+      }
+    ]
+  },
+  {
+    "path": "libs.ref/sg13g2_io/doc/README.md",
+    "sha256": "5da422c931fa6ff5ada9081a1e266b8b7541df7b723f02eaea677440a2bcbba5",
+    "selected_lines": [
+      {
+        "line": 12,
+        "text": "  or power data is available in this file."
+      },
+      {
+        "line": 13,
+        "text": ""
+      },
+      {
+        "line": 14,
+        "text": "These files are generated from python scripts of the Chips4Makers based IHP SG13G2"
+      },
+      {
+        "line": 15,
+        "text": "PDK. The code can be found in the"
+      },
+      {
+        "line": 16,
+        "text": "[c4m-pdk-ihpsg13g2](https://gitlab.com/Chips4Makers/c4m-pdk-ihpsg13g2.git) repo."
+      },
+      {
+        "line": 17,
+        "text": "This library is built from version `0.0.4` of that source code."
+      },
+      {
+        "line": 18,
+        "text": "The `README.md` file of this project explains how to use the code in there. The whole"
+      },
+      {
+        "line": 19,
+        "text": "build of the files plus preparation of the files described above for upstreaming can be"
+      },
+      {
+        "line": 20,
+        "text": "generated with the command `pdm doit patch4upstream`."
+      },
+      {
+        "line": 21,
+        "text": ""
+      },
+      {
+        "line": 22,
+        "text": "It also contains externally contributed files:"
+      },
+      {
+        "line": 23,
+        "text": ""
+      },
+      {
+        "line": 24,
+        "text": "* cdl/sg13g2_io.cdl: CDL netlist"
+      },
+      {
+        "line": 25,
+        "text": "* verilog/sg13g2_io.v: Verilog netlist"
+      },
+      {
+        "line": 26,
+        "text": "* lib/sg13g2_io_*.lib: Liberty files with timing"
+      },
+      {
+        "line": 27,
+        "text": ""
+      },
+      {
+        "line": 28,
+        "text": "18.06.2026  I/O Update 2 resolved issues:"
+      },
+      {
+        "line": 29,
+        "text": "=========================================================================================="
+      },
+      {
+        "line": 30,
+        "text": "\t  - VIH/VIL input threshold parameters are fixed (cdl and layout) to be in spec."
+      },
+      {
+        "line": 31,
+        "text": "\t  - Receiver (input): Delay balance is fixed (cdl and layout)."
+      },
+      {
+        "line": 32,
+        "text": "\t  - Issue #401. Analog Pad current capability is improved."
+      },
+      {
+        "line": 33,
+        "text": "\t  - Issue #385. M2 connections in ground pads are improved."
+      },
+      {
+        "line": 34,
+        "text": "\t  - Issue #419. Antenna diode structures were added to core inputs (layout fix)."
+      },
+      {
+        "line": 35,
+        "text": "\t  - Issue #835. Layout of edges of cells is aligned to provide abutment without DRC errors."
+      },
+      {
+        "line": 36,
+        "text": "\t  - Issue #676. Liberty models are updated. New look-up tables with increased loads are used. Fillers and corner are added in Liberty and verilog model."
+      },
+      {
+        "line": 37,
+        "text": "\t  - Issue #909. Contacts are added in Filler200 cell."
+      },
+      {
+        "line": 38,
+        "text": "\t  - Celllist is updated: subblocks are not library cells."
+      },
+      {
+        "line": 39,
+        "text": "\t  - \"sg13g2_Galery\" top layout is removed from GDS 2 layout view."
+      },
+      {
+        "line": 40,
+        "text": "\t  - CDL netlist is regenerated."
+      },
+      {
+        "line": 41,
+        "text": "\t  - SPICE netlist is regenerated and renamed to \"sg13g2_io.spice\" to align the naming with sg13g2_stdcell library."
+      },
+      {
+        "line": 42,
+        "text": "\t  - Pin direction in LEF is fixed."
+      },
+      {
+        "line": 43,
+        "text": "\t   "
+      }
+    ]
+  }
+]

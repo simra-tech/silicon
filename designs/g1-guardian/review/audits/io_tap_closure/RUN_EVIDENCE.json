@@ -1,0 +1,29 @@
+{
+  "scope": "Read-only IO source/native applicability, parameter reader and hierarchy audit",
+  "resource_gate": {
+    "utc": "2026-09-22T23:43:34.747106+00:00",
+    "sha256": "8060b882aec5d3a54c091cb7247cf24ca04e0df0c80f276ddd2cc5519e2a4b57",
+    "status": "passed",
+    "observed_global_cpu_budget": 47,
+    "worker_concurrency": 1,
+    "worker_cpu": 0,
+    "memory_reservation_GiB": 2,
+    "memory_enforcement": "not available under rootless cgroups v1",
+    "HOME_growth_reservation_GiB": 0.02,
+    "external_growth_reservation_GiB": 0.10,
+    "all_audit_launches_within_1800_seconds": true
+  },
+  "runs": [
+    {"id": "pinned-20260922-r1", "status": "failed", "reason": "Helper lacked supported PERIM alias", "cap_seconds": 180},
+    {"id": "pinned-20260922-r2", "status": "passed read-only audit", "cap_seconds": 180},
+    {"id": "reader-20260922-r1", "status": "failed helper float assertion", "cap_seconds": 60},
+    {"id": "reader-20260922-r2", "status": "failed helper float assertion", "cap_seconds": 60},
+    {"id": "reader-20260922-r3", "status": "passed reader semantics", "cap_seconds": 60},
+    {"id": "reachability-20260922-r1", "status": "passed", "cap_seconds": 60}
+  ],
+  "kill_grace_seconds": 5,
+  "new_LVS": "not run",
+  "source_native_model_deck_edits": "not run",
+  "strict_IO_closure": "failed prior result; unresolved applicability retained",
+  "seed": "not applicable"
+}
