@@ -55,7 +55,11 @@ source path and mismatch draw. An ideal multiport adapter imposes terminal
 voltage `u = sum(w_i*v_i)` and physical-port current `i_i = w_i*I`, with
 nonnegative weights summing to one. Signed KCL and instantaneous power are
 then conserved, including displacement current. Exact-rational algebra
-controls pass, but simulator syntax/runtime controls are **not run**.
+controls pass. Subsequent passive coupon syntax/KCL/power controls completed,
+but exact direct-versus-adapter zero-R time/model-wave parity **failed**
+(1,266 versus 1,275 rows), including the sole equivalent-expression control.
+The frontend precision recovery and original failures are preserved. No
+actual SENSE weights were used and no adapter is qualified by those coupons.
 
 Fixed weights are a declared homogenization assumption, not an exact local
 nonlinear finger solution. No weight or single injection point is selected
