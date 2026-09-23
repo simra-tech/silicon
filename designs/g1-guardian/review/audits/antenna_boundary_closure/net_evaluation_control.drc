@@ -1,0 +1,13 @@
+# Synthetic API timing control, not a PDK rule deck or signoff check.
+source($input, 'CONTROL')
+report('Independent evaluate_nets timing control', $report)
+deep
+g = input(1, 0)
+m1 = input(8, 0)
+m2 = input(10, 0)
+connect(g, m1)
+before = evaluate_nets(g, {'m' => m1}, "put('ratio', area(m) / area)")
+connect(m1, m2)
+after = evaluate_nets(g, {'m' => m1}, "put('ratio', area(m) / area)")
+before.output('BEFORE', 'Ratio evaluated before later M2 bridge is connected')
+after.output('AFTER', 'Ratio evaluated after later M2 bridge is connected')
