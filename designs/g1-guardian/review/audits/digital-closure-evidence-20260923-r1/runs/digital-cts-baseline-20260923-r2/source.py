@@ -67,58 +67,12 @@ def corner_environment(config, serialize, excluded):
     return result
 
 
-def root_split_tcl():
-    """Exactly two same-polarity clock buffers on the observed 16-load root."""
-    return '''
-set root_inst [$::block findInst clkbuf_0_osc_clk]
-if {$root_inst == "NULL"} {error "Root missing"}
-set root_net [[$root_inst findITerm X] getNet]
-set sinks [list]
-foreach term [$root_net getITerms] {
-    set name [[$term getInst] getName]
-    set pin [[$term getMTerm] getName]
-    if {$name eq "clkbuf_0_osc_clk" && $pin eq "X"} {continue}
-    if {![string match clkbuf_* $name] || $pin ne "A"} {error "Unexpected root sink $name/$pin"}
-    lappend sinks $name
-}
-set sinks [lsort $sinks]
-if {[llength $sinks] != 16} {error "Expected exactly 16 original root sinks"}
-set master [$::db findMaster sg13g2_buf_16]
-if {$master == "NULL"} {error "Missing source buffer master"}
-lassign [$root_inst getLocation] x y
-for {set group 0} {$group < 2} {incr group} {
-    set name clkbuf_fanout_split${group}_osc_clk
-    set inst_name ${name}_cell
-    if {[$::block findInst $inst_name] != "NULL" || [$::block findNet $name] != "NULL"} {error "Nonfresh split names"}
-    set inserted [odb::dbInst_create $::block $master $inst_name]
-    set net [odb::dbNet_create $::block $name]
-    $net setSigType CLOCK
-    $inserted setLocation $x $y
-    $inserted setPlacementStatus PLACED
-    [$inserted findITerm A] connect $root_net
-    [$inserted findITerm X] connect $net
-    foreach sink [lrange $sinks [expr {$group*8}] [expr {$group*8+7}]] {
-        set term [[$::block findInst $sink] findITerm A]
-        $term disconnect
-        $term connect $net
-        puts "CTS_SPLIT $name $sink/A"
-    }
-}
-source $::env(SCRIPTS_DIR)/openroad/common/dpl.tcl
-estimate_parasitics -placement
-write_views
-'''
-
-
 def main():
     p = argparse.ArgumentParser(description=__doc__)
     p.add_argument('--output', required=True, type=Path)
     p.add_argument('--cluster', required=True, type=int, choices=(0, 8))
-    p.add_argument('--openroad', type=Path, help='Explicit pinned-image executable; identity is recorded')
-    p.add_argument('--split-root', action='store_true', help='Add two proved noninverting buffers, eight original root branches each')
     a = p.parse_args()
     assert not a.output.exists() and len(os.sched_getaffinity(0)) == 1
-    assert not a.split_root or a.cluster == 8
     root = Path('/work')
     flow = root / 'designs/g1-guardian/blocks/g1_ctrl/flow'
     old = flow / 'runs/run7/35-openroad-cts/_env.tcl'
@@ -135,7 +89,7 @@ def main():
     excluded_file = Path(config['PNR_EXCLUDED_CELL_FILE'])
     derived = corner_environment(config, TclStep.value_to_tcl,
                                  process_list_file(str(excluded_file)))
-    tool = (a.openroad if a.openroad else Path(shutil.which('openroad'))).resolve()
+    tool = Path(shutil.which('openroad')).resolve()
     inputs = [old, odb, sdc, tool, config_path, excluded_file,
               scripts.parent / 'steps/openroad.py', scripts.parent / 'steps/tclstep.py'] + sorted((scripts / 'openroad').rglob('*.tcl'))
     pdk = Path('/foss/pdks/ihp-sg13g2')
@@ -150,8 +104,7 @@ def main():
     wrapper = a.output / 'run.tcl'
     wrapper.write_text('\n'.join([
         'set_thread_count 1',
-        'if {[catch {source {' + str(scripts / 'openroad/cts.tcl') + '}} detail options]} {puts [dict get $options -errorinfo]; exit 1}',
-        root_split_tcl() if a.split_root else '# Original CTS topology retained',
+        'source {' + str(scripts / 'openroad/cts.tcl') + '}',
         # Report both unchanged macro constraints and the integrated fanout
         # constraint. The second report does not alter the CTS algorithm.
         'report_check_types -max_slew -max_capacitance -max_fanout -violators > {' + str(a.output / 'macro_violators.rpt') + '}',
@@ -168,7 +121,7 @@ def main():
     env.update(derived)
     (a.output / 'derived_environment.json').write_text(json.dumps(derived, indent=2) + '\n')
     command = ['timeout', '--kill-after=5', '240', str(tool), '-exit', '-no_splash', str(wrapper)]
-    result = dict(status='running', cluster=a.cluster, split_root=a.split_root, inputs=hashes, command=command,
+    result = dict(status='running', cluster=a.cluster, inputs=hashes, command=command,
                   tool_version=subprocess.check_output([str(tool), '-version'], universal_newlines=True).strip(),
                   not_run=['Routed timing', 'Functional equivalence', 'TMR separation',
                            'Pin geometry preservation', 'DRC/LVS/antenna/density',

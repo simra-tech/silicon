@@ -1,0 +1,42 @@
+{
+  "status": "failed",
+  "records": [
+    {
+      "name": "buffer",
+      "expected": true,
+      "observed": false,
+      "negative_reached_assertion": false,
+      "proof": {
+        "status": "failed Boolean equivalence attempt",
+        "inputs_sha256": {
+          "${RESULTS_ROOT}/digital-equivalence-controls-20260923-r1/buffer/gold.v": "008249aa005fd74a9e89db37223da3bc87b41a694465837089e21fc87893b24f",
+          "${RESULTS_ROOT}/digital-equivalence-controls-20260923-r1/buffer/gate.v": "b226a654ba97b566178e7f075f18b3826ac7ea3f143b2ae6183dda57f7f3f68f",
+          "/foss/pdks/ihp-sg13g2/libs.ref/sg13g2_stdcell/lib/sg13g2_stdcell_typ_1p20V_25C.lib": "7677a8918689f452e80405ad16a83e744709342574f2aedcc507c2758986b396",
+          "/foss/tools/bin/yosys": "543197da7252a6f2323974ae35addfd53a6d812459dd211e3ccc0ba1893c064c"
+        },
+        "command": [
+          "timeout",
+          "--kill-after=5",
+          "180",
+          "/foss/tools/bin/yosys",
+          "-Q",
+          "-T",
+          "-s",
+          "${RESULTS_ROOT}/digital-equivalence-controls-20260923-r1/buffer/proof/proof.ys"
+        ],
+        "scope": "Mapped netlist Boolean equivalence under unchanged functional Liberty; not timing, reset analog behavior or CDC proof",
+        "not_run": [
+          "Post-route timing equivalence",
+          "Silicon measurement"
+        ],
+        "not_applicable": [
+          "Statistical seed"
+        ],
+        "returncode": 1,
+        "wall_s": 0.1534628290683031,
+        "source_held": true,
+        "log_sha256": "cd5e4180b48797feb250dae212acc5b8273b7ee998302880838ad1e9e8304ffc"
+      }
+    }
+  ]
+}

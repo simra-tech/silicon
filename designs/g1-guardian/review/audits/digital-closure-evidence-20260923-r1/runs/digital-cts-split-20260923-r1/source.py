@@ -88,9 +88,8 @@ if {$master == "NULL"} {error "Missing source buffer master"}
 lassign [$root_inst getLocation] x y
 for {set group 0} {$group < 2} {incr group} {
     set name clkbuf_fanout_split${group}_osc_clk
-    set inst_name ${name}_cell
-    if {[$::block findInst $inst_name] != "NULL" || [$::block findNet $name] != "NULL"} {error "Nonfresh split names"}
-    set inserted [odb::dbInst_create $::block $master $inst_name]
+    if {[$::block findInst $name] != "NULL" || [$::block findNet $name] != "NULL"} {error "Nonfresh split names"}
+    set inserted [odb::dbInst_create $::block $master $name]
     set net [odb::dbNet_create $::block $name]
     $net setSigType CLOCK
     $inserted setLocation $x $y

@@ -1,0 +1,22 @@
+{
+  "command": [
+    "timeout",
+    "--kill-after=5",
+    "60",
+    "flow/run.sh",
+    "python3",
+    "-c",
+    "from pathlib import Path;import librelane,inspect;from librelane.flows import Flow;import librelane.common as c;p=Path(librelane.__file__).parent;print(\"COMMON\",[x for x in dir(c) if any(s in x.lower() for s in (\"tpe\",\"thread\",\"process\",\"limit\"))]);print(\"FROMCONFIG\",inspect.signature(Flow.from_config));t=(p/\"__main__.py\").read_text().splitlines();print(\"\\n\".join(str(i+1)+\":\"+x for i,x in enumerate(t) if any(s in x for s in (\"jobs\",\"ThreadPool\",\"set_tpe\",\"process_limit\"))))"
+  ],
+  "started_utc": "2026-09-23T07:33:22.980445+00:00",
+  "cwd": "${HOST_REPOSITORY}",
+  "env": {
+    "G1_CPUSET": "15",
+    "G1_CPUS": "1"
+  },
+  "status": "failed",
+  "returncode": 1,
+  "wall_s": 24.700495444238186,
+  "finished_utc": "2026-09-23T07:33:47.680960+00:00",
+  "log_sha256": "db0e96017e7f57862837fc897e34991c5a1ccf949c75ae532905086d1d1c3122"
+}

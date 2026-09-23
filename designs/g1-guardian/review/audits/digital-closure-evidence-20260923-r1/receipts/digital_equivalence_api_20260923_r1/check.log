@@ -1,0 +1,136 @@
+time="2026-09-23T09:45:15+02:00" level=warning msg="Network file system detected as backing store.  Enforcing overlay option `force_mask=\"700\"`.  Add it to storage.conf to silence this warning"
+time="2026-09-23T09:45:16+02:00" level=warning msg="Network file system detected as backing store.  Enforcing overlay option `force_mask=\"700\"`.  Add it to storage.conf to silence this warning"
+Resource enforcement: CPU affinity; memory reservation only (rootless cgroups v1).
+time="2026-09-23T09:45:16+02:00" level=warning msg="Network file system detected as backing store.  Enforcing overlay option `force_mask=\"700\"`.  Add it to storage.conf to silence this warning"
+@Step.factory.register()
+class EQY(Step):
+    """
+    Experimental: Uses the `EQY <https://github.com/yosyshq/eqy>`_ utility to
+    perform an RTL vs. Netlist equivalence check.
+
+    Currently, you are expected to provide your own EQY script if you want this
+    to work properly.
+    """
+
+    id = "Yosys.EQY"
+    name = "Equivalence Check"
+    long_name = "RTL/Netlist Equivalence Check"
+
+    inputs = [DesignFormat.NETLIST]
+    outputs = []
+
+    config_vars = (
+        YosysStep.config_vars
+        + verilog_rtl_cfg_vars
+        + [
+            Variable(
+                "EQY_SCRIPT",
+                Optional[Path],
+                "The EQY script to use. If unset, a generic EQY script will be generated, but this fails in a number of scenarios.",
+            ),
+            Variable(
+                "MACRO_PLACEMENT_CFG",
+                Optional[Path],
+                "This step will warn if this deprecated variable is used, as it indicates Macros are used without the new Macro object.",
+            ),
+            Variable(
+                "EQY_FORCE_ACCEPT_PDK",
+                bool,
+                "Attempt to run EQY even if the PDK's Verilog models are supported by this step. Will likely result in a failure.",
+                default=False,
+            ),
+        ]
+    )
+
+    def run(self, state_in: State, **kwargs) -> Tuple[ViewsUpdate, MetricsUpdate]:
+        processed_pdk = os.path.join(self.step_dir, "formal_pdk.v")
+
+        if self.config["PDK"].startswith("sky130A"):
+            subprocess.check_call(
+                [
+                    "eqy.formal_pdk_proc",
+                    "--output",
+                    processed_pdk,
+                ]
+                + [str(model) for model in self.config["CELL_VERILOG_MODELS"]]
+            )
+        elif self.config["EQY_FORCE_ACCEPT_PDK"]:
+            subprocess.check_call(
+                ["iverilog", "-E", "-o", processed_pdk, "-DFUNCTIONAL"]
+                + [str(model) for model in self.config["CELL_VERILOG_MODELS"]]
+            )
+        else:
+            info(
+                f"PDK {self.config['PDK']} is not supported by the EQY step. Skipping '{self.id}'…"
+            )
+            return {}, {}
+
+        eqy_script_path = os.path.join(
+            self.step_dir, f"{self.config['DESIGN_NAME']}.eqy"
+        )
+
+        with open(eqy_script_path, "w", encoding="utf8") as f:
+            if eqy_script := self.config["EQY_SCRIPT"]:
+                for line in open(eqy_script, "r", encoding="utf8"):
+                    f.write(line)
+            else:
+                script = textwrap.dedent(
+                    """
+                    [script]
+                    {dep_commands}
+                    blackbox
+
+                    [gold]
+                    read_verilog -formal -sv {files}
+
+                    [gate]
+                    read_verilog -formal -sv {processed_pdk} {nl}
+
+                    [script]
+                    hierarchy -top {design_name}
+                    proc
+                    prep -top {design_name} -flatten
+
+                    memory -nomap
+                    async2sync
+
+                    [gold]
+                    write_verilog {step_dir}/gold.v
+                    
+                    [gate]
+                    write_verilog {step_dir}/gate.v
+
+                    [strategy sat]
+                    use sat
+                    depth 5
+
+                    [strategy pdr]
+                    use sby
+                    engine abc pdr -rfi
+
+                    [strategy bitwuzla]
+                    use sby
+                    depth 2
+                    engine smtbmc bitwuzla
+                    """
+                ).format(
+                    design_name=self.config["DESIGN_NAME"],
+                    dep_commands=_generate_read_deps(
+                        self.config, self.toolbox, tcl=False
+                    ),
+                    files=TclUtils.join(
+                        [str(file) for file in self.config["VERILOG_FILES"]]
+                    ),
+                    nl=state_in[DesignFormat.NETLIST],
+                    processed_pdk=processed_pdk,
+                    step_dir=self.step_dir,
+                )
+                f.write(script)
+        work_dir = os.path.join(self.step_dir, "scratch")
+
+        subprocess_result = self.run_subprocess(
+            ["eqy", "-f", eqy_script_path, "-d", work_dir]
+        )
+
+        return {}, subprocess_result["generated_metrics"]
+

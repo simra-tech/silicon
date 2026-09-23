@@ -1,0 +1,22 @@
+{
+  "command": [
+    "flow/run.sh",
+    "python3",
+    "-c",
+    "import pya,json,collections; from pathlib import Path; d=pya.LayoutVsSchematic(); paths=list(Path(\"${RESULTS_ROOT}/digital-strict-lvs-20260923-r1/reports\").glob(\"*.lvsdb\")); assert len(paths)==1;d.read(str(paths[0])); r=d.reference.circuit_by_name(\"G1_DIGITAL\"); xr=d.xref(); pair=next(p for p in xr.each_circuit_pair() if p.second() and p.second().name==\"G1_DIGITAL\"); paired={p.second().qname() for p in xr.each_net_pair(pair) if p.second()}; degree=collections.Counter(); [degree.update([r.net_for_pin(p.id()).qname()]) for p in r.each_pin() if r.net_for_pin(p.id())]; [degree.update([i.net_for_pin(p.id()).qname()]) for i in r.each_subcircuit() for p in i.circuit_ref().each_pin() if i.net_for_pin(p.id())]; missing=[dict(name=n.name,qname=n.qname(),degree=degree[n.qname()]) for n in r.each_net() if n.qname() not in paired];print(json.dumps(dict(missing=missing,devices=sum(1 for x in r.each_device()),paired=len(paired)),indent=2))"
+  ],
+  "started_utc": "2026-09-23T08:36:51.290735+00:00",
+  "cwd": "${HOST_REPOSITORY}",
+  "env": {
+    "G1_CPUSET": "2",
+    "G1_RESULTS_ROOT": "${RESULTS_ROOT}",
+    "G1_CPUS": "1"
+  },
+  "status": "passed",
+  "pid": 1106938,
+  "start_token": "966962480",
+  "returncode": 0,
+  "wall_s": 9.26686978712678,
+  "finished_utc": "2026-09-23T08:37:00.557612+00:00",
+  "log_sha256": "fb76deaa3342cccf61a57c537903eb6275472280ef557a9a5b5baf8e9f09775c"
+}

@@ -1,0 +1,22 @@
+{
+  "command": [
+    "flow/run.sh",
+    "python3",
+    "-c",
+    "import pya,json;from pathlib import Path;d=pya.LayoutVsSchematic();d.read(str(next(Path(\"${RESULTS_ROOT}/digital-strict-lvs-20260923-r1/reports\").glob(\"*.lvsdb\"))));xr=d.xref();cp=next(p for p in xr.each_circuit_pair() if p.second() and p.second().name==\"G1_DIGITAL\"); paired={p.second().qname() for p in xr.each_net_pair(cp) if p.second()}; rows=[]\nfor pair in xr.each_subcircuit_pair(cp):\n s=pair.second();n=pair.first()\n for pin in s.circuit_ref().each_pin():\n  net=s.net_for_pin(pin.id())\n  if net and net.qname() not in paired:\n   pins=[p for p in n.circuit_ref().each_pin() if p.name().casefold()==pin.name().casefold()]; assert len(pins)==1; nn=n.net_for_pin(pins[0].id());rows.append(dict(source=s.expanded_name(),sourcepin=pin.name(),sourcenet=net.name,layout=n.expanded_name(),layoutnet=nn.qname() if nn else None,status=str(pair.status())))\nprint(json.dumps(rows,indent=2));assert len(rows)==29"
+  ],
+  "started_utc": "2026-09-23T08:37:42.059949+00:00",
+  "cwd": "${HOST_REPOSITORY}",
+  "env": {
+    "G1_CPUSET": "2",
+    "G1_RESULTS_ROOT": "${RESULTS_ROOT}",
+    "G1_CPUS": "1"
+  },
+  "status": "failed",
+  "pid": 1109013,
+  "start_token": "966967557",
+  "returncode": 1,
+  "wall_s": 10.246480574831367,
+  "finished_utc": "2026-09-23T08:37:52.306438+00:00",
+  "log_sha256": "5aadb37b677efe3cdb04a496ea4cbbf004396dd4466f96cfa46485513478c9bb"
+}

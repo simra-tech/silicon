@@ -1,0 +1,23 @@
+{
+  "command": [
+    "timeout",
+    "--kill-after=5",
+    "60",
+    "flow/run.sh",
+    "python3",
+    "-c",
+    "import subprocess; from pathlib import Path; import re,hashlib; p=Path(\"${RESULTS_ROOT}/digital-cts-split-20260923-r1\"); a=Path(\"${REPOSITORY}/designs/g1-guardian/blocks/g1_ctrl/flow/runs/run7/34-openroad-detailedplacement/g1_digital.def\"); pattern=r\"\\nPINS (\\d+) ;(.*?)END PINS\"; x=re.search(pattern,a.read_text(),re.S);y=re.search(pattern,(p/\"g1_digital.def\").read_text(),re.S);assert x and y and x.group(1)==y.group(1);assert re.sub(r\"\\s+\",\" \",x.group(2))==re.sub(r\"\\s+\",\" \",y.group(2));print(\"EXACT_DEF_PINS_PASSED\",x.group(1));print(subprocess.check_output([\"python3\",\"${REPOSITORY}/designs/g1-guardian/blocks/g1_ctrl/flow/tmr_check.py\",str(p/\"g1_digital.nl.v\"),str(p/\"g1_digital.def\")],text=True));print(subprocess.check_output([\"librelane\",\"--help\"],text=True));print(subprocess.check_output([\"python3\",\"-m\",\"librelane.steps\",\"--help\"],text=True))"
+  ],
+  "started_utc": "2026-09-23T07:26:16.162150+00:00",
+  "cwd": "${HOST_REPOSITORY}",
+  "env": {
+    "G1_CPUSET": "15",
+    "G1_CPUS": "1",
+    "G1_RESULTS_ROOT": "${RESULTS_ROOT}"
+  },
+  "status": "passed",
+  "returncode": 0,
+  "wall_s": 26.164411200210452,
+  "finished_utc": "2026-09-23T07:26:42.326572+00:00",
+  "log_sha256": "9a9926149953d214082b009813b3419e5a162c19620fbbf68e44817470c96b8f"
+}

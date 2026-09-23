@@ -1,0 +1,22 @@
+{
+  "command": [
+    "timeout",
+    "--kill-after=5",
+    "60",
+    "flow/run.sh",
+    "python3",
+    "-c",
+    "from pathlib import Path; import librelane,inspect; from librelane.config import Config; from librelane.steps import Step; p=Path(librelane.__file__).parent; print(\"CONFIG\",inspect.signature(Config),\"START\",inspect.signature(Step.start)); print(\"\\n\".join((p/\"steps/openroad.py\").read_text().splitlines()[297:453])); print((p/\"scripts/openroad/common/set_rc.tcl\").read_text())"
+  ],
+  "started_utc": "2026-09-23T07:14:53.061259+00:00",
+  "cwd": "${HOST_REPOSITORY}",
+  "env": {
+    "G1_CPUSET": "48",
+    "G1_CPUS": "1"
+  },
+  "status": "passed",
+  "returncode": 0,
+  "wall_s": 26.590821197256446,
+  "finished_utc": "2026-09-23T07:15:19.652087+00:00",
+  "log_sha256": "ae0c27865f4a47d997cbeaf14a40f47448ac02ae873b00bca242d4ba35bedb92"
+}

@@ -1,0 +1,22 @@
+{
+  "command": [
+    "timeout",
+    "--kill-after=5",
+    "60",
+    "flow/run.sh",
+    "python3",
+    "-c",
+    "import inspect; from librelane.flows import Flow,SequentialFlow;from librelane.config import Config;from librelane.state import State;print(inspect.signature(Flow));print(inspect.signature(Flow.start));print(inspect.signature(Config.load));print(inspect.signature(State.load));print(inspect.getsource(Flow.start)[:12000]);print(inspect.getsource(SequentialFlow.run)[:5000])"
+  ],
+  "started_utc": "2026-09-23T07:32:06.729259+00:00",
+  "cwd": "${HOST_REPOSITORY}",
+  "env": {
+    "G1_CPUSET": "15",
+    "G1_CPUS": "1"
+  },
+  "status": "passed",
+  "returncode": 0,
+  "wall_s": 24.3703395947814,
+  "finished_utc": "2026-09-23T07:32:31.099608+00:00",
+  "log_sha256": "6c4b94a8e6c24a04120d98483ae51f5993466851ceb76d5c5c5069aa40f97785"
+}

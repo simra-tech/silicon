@@ -1,0 +1,22 @@
+{
+  "command": [
+    "flow/run.sh",
+    "python3",
+    "-c",
+    "import pya,json;from pathlib import Path;d=pya.LayoutVsSchematic();d.read(str(next(Path(\"${RESULTS_ROOT}/digital-strict-lvs-20260923-r1/reports\").glob(\"*.lvsdb\"))));xr=d.xref();cp=next(p for p in xr.each_circuit_pair() if p.second() and p.second().name==\"G1_DIGITAL\"); paired={p.second().qname() for p in xr.each_net_pair(cp) if p.second()}; rows=[]\nfor pair in xr.each_subcircuit_pair(cp):\n s=pair.second();n=pair.first()\n for pin in s.circuit_ref().each_pin():\n  net=s.net_for_pin(pin.id())\n  if net and net.qname() not in paired:\n   pins=[p for p in n.circuit_ref().each_pin() if p.name().casefold()==pin.name().casefold()]; nn=n.net_for_pin(pins[0].id()) if len(pins)==1 else None;rows.append(dict(source=s.expanded_name(),sourcemaster=s.circuit_ref().name,sourcepin=pin.name(),sourcenet=net.name,layout=n.expanded_name(),layoutmaster=n.circuit_ref().name,layoutpins=[dict(name=p.name(),id=p.id(),net=n.net_for_pin(p.id()).qname() if n.net_for_pin(p.id()) else None) for p in n.circuit_ref().each_pin()],layoutnet=nn.qname() if nn else None,status=str(pair.status())))\nprint(json.dumps(rows,indent=2));assert len(rows)==29"
+  ],
+  "started_utc": "2026-09-23T08:38:18.131874+00:00",
+  "cwd": "${HOST_REPOSITORY}",
+  "env": {
+    "G1_CPUSET": "2",
+    "G1_RESULTS_ROOT": "${RESULTS_ROOT}",
+    "G1_CPUS": "1"
+  },
+  "status": "passed",
+  "pid": 1112075,
+  "start_token": "966971164",
+  "returncode": 0,
+  "wall_s": 8.207006618380547,
+  "finished_utc": "2026-09-23T08:38:26.338893+00:00",
+  "log_sha256": "2c5d2d1bb6f659765553a4c052ff30f049e5ed9ccdcce630673d5e119fac8110"
+}
