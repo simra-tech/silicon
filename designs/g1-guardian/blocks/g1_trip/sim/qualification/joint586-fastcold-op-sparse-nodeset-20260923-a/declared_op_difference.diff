@@ -1,0 +1,55 @@
+--- originalFailedFastLowcold
++++ sparse_nodeset
+@@ -49,6 +49,7 @@
+ .option gmin=1e-15 abstol=1e-14 reltol=1e-5 vntol=1e-7
+ .option reltol=1e-5 vntol=1e-7 abstol=1e-14
+ .option method=gear
++.nodeset v(vref)=1.035588476178594e+00 v(iptat)=7.300313129137468e-01 v(vref_buf)=1.037402077440337e+00 v(vped)=9.934641950628779e-01 v(isense)=1.518970453538353e+00 v(xt.icmp)=7.589399050758404e-01 v(xt.vth_soft)=7.632528084204684e-01 v(xt.vth_hard)=7.947040300067932e-01
+ .control
+ set num_threads=1
+ set numdgt=15
+@@ -11583,7 +11584,7 @@
+ print @n.xbgr.xr86_u24.nr1[nsmm_w]
+ print @n.xbgr.xr86_u24.nr1[nsmm_l]
+ echo BGR_BEFORE_END
+-tran 0.2n 1.02u 0 0.2n
++* OP-only diagnostic: no transient requested
+ echo NON_BGR_AFTER_BEGIN
+ print @n.xs.xr1n0.nr1[nsmm_rsh]
+ print @n.xs.xr1n0.nr1[nsmm_w]
+@@ -23102,14 +23103,14 @@
+ echo BGR_AFTER_END
+ let ds = v(xt.icmp)-v(xt.vth_soft)
+ let dh = v(xt.icmp)-v(xt.vth_hard)
+-meas tran ds_pre find ds at=8.198e-07
+-meas tran ds_kick find ds at=8.21e-07
+-meas tran ds_sample find ds at=8.4e-07
+-meas tran qs_sample find v(cmp_soft) at=8.4e-07
+-meas tran dh_pre find dh at=9.2e-07
+-meas tran dh_kick find dh at=9.212e-07
+-meas tran dh_sample find dh at=9.402e-07
+-meas tran qh_sample find v(cmp_hard) at=9.402e-07
++* OP-only diagnostic: removed meas tran ds_pre find ds at=8.198e-07
++* OP-only diagnostic: removed meas tran ds_kick find ds at=8.21e-07
++* OP-only diagnostic: removed meas tran ds_sample find ds at=8.4e-07
++* OP-only diagnostic: removed meas tran qs_sample find v(cmp_soft) at=8.4e-07
++* OP-only diagnostic: removed meas tran dh_pre find dh at=9.2e-07
++* OP-only diagnostic: removed meas tran dh_kick find dh at=9.212e-07
++* OP-only diagnostic: removed meas tran dh_sample find dh at=9.402e-07
++* OP-only diagnostic: removed meas tran qh_sample find v(cmp_hard) at=9.402e-07
+ echo SAMPLE_PARAMETERS
+ print @n.xs.xota.xm1.nsg13_hv_pmos[w]
+ print @n.xs.xota.xm1.nsg13_hv_pmos[l]
+@@ -23140,10 +23141,10 @@
+ print @q.xbgr.xq56.qnpn13g2[area]
+ set wr_singlescale
+ set wr_vecnames
+-wrdata qualification/joint586-fast-fixture-controls-20260923-b-low_cold_cm0/phase0.dat v(clk) v(xt.icmp) v(xt.vth_soft) v(xt.vth_hard) v(cmp_soft) v(cmp_hard) v(isense) v(xt.cmp_clk_n) v(xt.xch.xp) v(xt.xch.xq) v(xt.xch.xn) v(xt.xch.yn) v(vref) v(iptat) v(vref_buf) v(vped) v(shp) v(shn)
++wrdata qualification/joint586-fastcold-op-sparse-nodeset-20260923-a/op.dat v(vref) v(iptat) v(vref_buf) v(vped) v(isense) v(xt.icmp) v(xt.vth_soft) v(xt.vth_hard)
+ echo QUALIFICATION_END
+ echo PHASE0_END
+-echo JOINT_POPULATION_TRAN_END
++echo JOINT_NODESET_OP_END
+ quit 0
+ .endc
+ .end
