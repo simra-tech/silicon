@@ -10,6 +10,17 @@ PDK=Path('/foss/pdks/ihp-sg13g2')
 
 def sha(path):return hashlib.sha256(path.read_bytes()).hexdigest()
 
+def combined_status(result):
+    """Numerical completion alone never establishes output-function acceptance."""
+    if result.get('timed_out'):
+        return 'not run'
+    return 'passed' if (
+        result.get('solver_exit') == 0
+        and result.get('numerical_status') == 'passed'
+        and result.get('output_function_status') == 'passed'
+        and 'analysis_error' not in result
+    ) else 'failed'
+
 
 def edges(rows,col,level,rising=True):
     out=[]
@@ -80,7 +91,9 @@ quit
     with (out/'pad.log').open('w') as log,(out/'pad.stderr').open('w') as err:
         try:rc=subprocess.run(['ngspice','-b','pad.cir'],cwd=out,stdout=log,stderr=err,timeout=300).returncode;timed=False
         except subprocess.TimeoutExpired:rc=None;timed=True
-    result.update(solver_exit=rc,timed_out=timed,wall_seconds=time.monotonic()-start,status='not run' if timed else 'failed')
+    result.update(solver_exit=rc,timed_out=timed,wall_seconds=time.monotonic()-start,
+                  numerical_status='not run' if timed else 'failed',
+                  status='not run' if timed else 'failed')
     try:
         with (out/'pad.dat').open() as f:next(f);rows=[list(map(float,line.split())) for line in f if line.strip()]
         log=(out/'pad.log').read_text()+'\n'+(out/'pad.stderr').read_text()
@@ -92,7 +105,7 @@ quit
         assert all(len(r)==9 and all(map(math.isfinite,r)) for r in rows), 'invalid/nonfinite saved waveform'
         assert not result['numerical_errors'], 'solver reported a numerical failure'
         assert abs(rows[-1][0]-32e-6)<1e-12, 'required32us endpoint not reached'
-        result['status']='passed';clocks={}
+        result['numerical_status']='passed';clocks={}
         for name,col,rail in [('core',1,v12),('pad_input',2,v12),('pad_output',3,v33)]:
             ee=[t for t in edges(rows,col,rail/2) if 8e-6<=t<=31e-6]
             vv=[r[col] for r in rows if 8e-6<=r[0]<=31e-6]
@@ -106,7 +119,9 @@ quit
             avg=-sum((b[0]-a[0])*(a[col]+b[col])/2 for a,b in zip(rr,rr[1:]))/(rr[-1][0]-rr[0][0])
             powers[name]={'mean_A':avg,'mean_power_W':avg*rail,'maximum_sampled_A':max(-r[col] for r in rr)}
         result['supply_windows']=powers
-    except (OSError,ValueError,IndexError,StopIteration,AssertionError) as exc:result['analysis_error']=str(exc)
+    except (OSError,ValueError,IndexError,StopIteration,AssertionError) as exc:
+        result['analysis_error']=str(exc) or type(exc).__name__
+    result['status']=combined_status(result)
     save();print(json.dumps({k:v for k,v in result.items() if k not in ['source_sha256','model_sha256','ngspice']},indent=2))
 
 
