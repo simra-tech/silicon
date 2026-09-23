@@ -1,0 +1,31 @@
+--- preservedFailed32us76002
++++ separateWaveformOnly2us76002
+@@ -3215,7 +3215,7 @@
+ print @c.xt2f.xc1.c1[scale]
+ print @c.xt2f.xc2.c1[scale]
+ echo P0_T2F_BEFORE_END
+-tran 5n 32u
++tran 5n 2u
+ echo P0_BGR_AFTER_BEGIN
+ print @n.xbgr.xr1.nr1[nsmm_rsh]
+ print @n.xbgr.xr1.nr1[nsmm_w]
+@@ -6400,19 +6400,6 @@
+ print @c.xt2f.xc1.c1[scale]
+ print @c.xt2f.xc2.c1[scale]
+ echo P0_T2F_AFTER_END
+-meas tran t_a when v(fout)=0.6 rise=8
+-meas tran t_b when v(fout)=0.6 rise=24
+-let freq = (24-8)/(t_b-t_a)
+-print freq
+-meas tran i33_avg avg i(vdd) from=t_a to=t_b
+-meas tran i12_avg avg i(vdd12) from=t_a to=t_b
+-meas tran vref_avg avg v(vref) from=t_a to=t_b
+-meas tran vth_avg avg v(xt2f.vth) from=t_a to=t_b
+-meas tran cap1_max max v(xt2f.cap1) from=t_a to=t_b
+-meas tran fout_hi max v(fout) from=t_a to=t_b
+-meas tran fout_lo min v(fout) from=t_a to=t_b
+-meas tran t_half_a trig v(fout) val=0.6 rise=8 targ v(fout) val=0.6 fall=8
+-
+ wrdata phase0.dat v(fout) v(vref) i(vdd) i(vdd12) v(xt2f.cap1) v(xt2f.cap2) v(xt2f.ca1) v(xt2f.tail1) v(xt2f.cb1) v(xt2f.ca2) v(xt2f.tail2) v(xt2f.cb2)
+ echo PHASE0_END
+ quit
