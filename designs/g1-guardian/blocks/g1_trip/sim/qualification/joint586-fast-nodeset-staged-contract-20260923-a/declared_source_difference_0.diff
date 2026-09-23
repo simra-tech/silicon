@@ -1,0 +1,106 @@
+--- run_joint586_adverse_staged.py
++++ run_joint586_fast_nodeset_staged.py
+@@ -1,5 +1,5 @@
+ #!/usr/bin/env python3
+-"""Staged owncorner sample; independent held-out leaves, unchanged serial inputs."""
++"""Fast fixed-nodeset staged sample; original binary and60 heldout rules."""
+ import argparse
+ import hashlib
+ import json
+@@ -19,10 +19,14 @@
+ from wave_archive import archive_new_wave
+ from prepare_joint586_adverse import CONDITIONS, transform_fixture
+ from prepare_joint586_adverse_transients import append_shn
++from prepare_joint586_fastcold_nodeset import NODES
+ 
+ SIM = Path(__file__).resolve().parent
+ ROOT = SIM.parents[4]
+ REFERENCE = 'joint586-mm-tranqual-20260922-a-enabled'
++NODESET_PACKET = SIM/'qualification/joint586-fast-nodeset-rescue-contract-20260923-b.json'
++NODESET_PACKET_SHA = 'c75fc0398debd9c7b481899ab6ba61f3490d71b16749ca5acf518e7ffae40463'
++NODESET_AUDIT_SHA = '394fb2748f821e2477fbe29050f80c07b18136850ce5b92119b4187abd0830d6'
+ 
+ 
+ def sha(path):
+@@ -44,25 +48,34 @@
+     label, temp, vdda, vdd, cm = condition
+     deck = calibration_deck(original, old_id, new_id, seed, codes, shunt, temp)
+     deck, changes = transform_fixture(deck, corner, vdda, vdd, cm, shunt)
+-    return append_shn(deck) if cm is not None else deck
+-
+-
+-def qualification(trans_path, fixture_path, corner):
+-    trans = json.loads(trans_path.read_text())
+-    assert trans['status'] == 'passed strict owncorner TRANS qualification' and trans['corner'] == corner
+-    assert all(trans['checks'].values()) and not trans['audit_errors']
+-    fixture = json.loads(fixture_path.read_text())
+-    assert fixture['status'] == 'passed six required owncorner fixture controls' and fixture['corner'] == corner
+-    assert fixture['transient_audit_sha256'] == sha(trans_path)
+-    for row in fixture['records']:
+-        run = SIM/'qualification'/row['run']
+-        assert row['status'] == 'passed required fixture control'
+-        assert all(sha(run/n) == v for n,v in row['receipts_sha256'].items())
+-    assert len(fixture['records']) == 6
+-    for label,receipts in trans['receipts_sha256'].items():
+-        run = SIM/'qualification'/('joint586-'+corner+'-transqual-shn-20260923-b-'+label)
+-        assert all(sha(run/n) == v for n,v in receipts.items())
+-    return trans, fixture
++    return add_fixed_nodeset(append_shn(deck) if cm is not None else deck)
++
++
++def add_fixed_nodeset(deck):
++    assert sha(NODESET_PACKET)==NODESET_PACKET_SHA
++    values=json.loads(NODESET_PACKET.read_text())['fixed_guesses']
++    assert list(values)==NODES and '.nodeset' not in deck and '.options klu' not in deck
++    assert deck.count('\n.control\n')==1
++    line='.nodeset '+' '.join('v('+n+')='+values[n] for n in NODES)+'\n'
++    result=deck.replace('\n.control\n','\n'+line+'.control\n')
++    assert result.replace('\n'+line+'.control\n','\n.control\n')==deck
++    return result
++
++
++def qualification(trans_path,fixture_path,corner):
++    assert corner=='fast' and sha(trans_path)==sha(fixture_path)==NODESET_AUDIT_SHA
++    assert sha(NODESET_PACKET)==NODESET_PACKET_SHA
++    packet=json.loads(NODESET_PACKET.read_text())
++    assert all(sha(ROOT/n)==v for n,v in packet['bindings_sha256'].items())
++    audit=json.loads(trans_path.read_text())
++    assert audit['status']=='passed fixed-nodeset own6/SHN/sixfixture consistency qualification'
++    assert audit['contract_sha256']==NODESET_PACKET_SHA and len(audit['records'])==14
++    assert audit['own_checks'] and all(audit['own_checks'].values()) and not audit['audit_errors']
++    for record in audit['records']:
++        assert record['status']=='passed finite fullparameter evidence' and record['sampling_status']=='passed'
++        run=SIM/'qualification'/record['run']
++        assert all(sha(run/n)==v for n,v in record['receipts_sha256'].items())
++    return audit,audit
+ 
+ 
+ def heldout_plan(tree, first_index):
+@@ -134,7 +147,7 @@
+     p.add_argument('--seed', type=int, required=True)
+     p.add_argument('--qualification-audit', type=Path, required=True)
+     p.add_argument('--fixture-audit', type=Path, required=True)
+-    p.add_argument('--corner', choices=['slow','fast'], required=True)
++    p.add_argument('--corner', choices=['fast'], required=True)
+     p.add_argument('--campaign-contract', type=Path, required=True)
+     p.add_argument('--stop-file', type=Path)
+     p.add_argument('--stage', choices=['calibrate','leaf','assemble'], required=True)
+@@ -175,14 +188,16 @@
+                   'source_hashes': prep['source_hashes'], 'inventory_sha256': prep['inventory_sha256'],
+                   'qualified_transient_run': REFERENCE, 'qualified_audit': str(qualification_path.relative_to(ROOT)),
+                   'qualified_audit_sha256': sha(a.qualification_audit), 'qualified_preparation_sha256': sha(ref/'preparation.json'),
+-                  'fixture_audit_sha256': sha(a.fixture_audit), 'corner':a.corner, 'conditions':CONDITIONS,
++                  'fixture_audit_sha256': sha(a.fixture_audit), 'corner':a.corner, 'conditions':[list(c) for c in CONDITIONS],
+                   'campaign_contract_sha256':sha(a.campaign_contract),
++                  'fixed_nodeset_contract_sha256': NODESET_PACKET_SHA,
++                  'fixed_nodeset_qualification_sha256': NODESET_AUDIT_SHA,
+                   'execution_schedule': 'Sequential binary calibration; immutable indexed60 heldout leaves; parent-only ordered assembly. Each leaf is an independent one-thread ngspice process with original1200s bound.',
+                   'qualified_deck_sha256': sha(ref/'population_transient.cir'),
+                   'original_binary_algorithm_sha256': sha(SIM/'run_joint_calibration.py'),
+                   'decision_replay_sha256': sha(SIM/'audit_bgr_calibration_tree.py'),
+                   'physical_scope': prep['physical_scope'],
+-                  'scope': 'One independent owncorner full11512 draw, fixed30 denominator. Samecorner25C nominalrail SHN0 originalbinary calibration; frozen signedcorrection/rounding/clipping/hard204. Ten declared temp/rail/trueCM conditions each four originalguards plus two halfmV residuals; no heldout recalibration. Clock/codeHIGH tracks VDD, original0.6V/20ns actual+legacy rules,1.02us/1200s. ActualSHN19 append only at trueCM conditions; legacy18 otherwise. No physicalCC/siliconyield qualification.'}
++                  'scope': 'Fixed canonical eight-node SPARSE nodeset from original78001, identical for allcodes/seeds/conditions; no IC/UIC/tolerance change. New14 consistency gate, original cross-method exactwave failures retained separately. One independent owncorner full11512 draw, fixed30 denominator. Samecorner25C nominalrail SHN0 originalbinary calibration; frozen signedcorrection/rounding/clipping/hard204. Ten declared temp/rail/trueCM conditions each four originalguards plus two halfmV residuals; no heldout recalibration. Clock/codeHIGH tracks VDD, original0.6V/20ns actual+legacy rules,1.02us/1200s. ActualSHN19 append only at trueCM conditions; legacy18 otherwise. No physicalCC/siliconyield qualification.'}
+     if a.stage == 'calibrate':
+         (out/'provenance.json').write_text(json.dumps(provenance, indent=2)+'\n')
+     else:
