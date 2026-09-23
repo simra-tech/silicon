@@ -1,0 +1,41 @@
+{
+  "command": [
+    "flow/run.sh",
+    "timeout",
+    "--kill-after=5",
+    "120",
+    "python3",
+    "designs/g1-guardian/review/audits/export_core_routing_obstacles.py",
+    "--core",
+    "@RESULTS@/native-decap-pdn-20260922-r4",
+    "--core-gds-name",
+    "decap_pdn_core.gds",
+    "--power-overlay",
+    "@RESULTS@/sense-power-interface-build-20260922-r1",
+    "--power-overlay",
+    "@RESULTS@/bgr-power-interface-build-20260922-r3",
+    "--power-overlay",
+    "@RESULTS@/osc-power-interface-build-20260922-r1",
+    "--power-overlay",
+    "@RESULTS@/t2f-power-interface-build-20260922-r1",
+    "--power-overlay",
+    "@RESULTS@/gate-power-interface-build-20260923-r1",
+    "--m5-halo-dbu",
+    "40",
+    "--output",
+    "@RESULTS@/pdn-routing-obstacles-20260923-r4"
+  ],
+  "started_utc": "2026-09-23T00:44:23.083068+00:00",
+  "cwd": "@REPO@",
+  "env": {
+    "G1_CONTAINER_ENGINE": "podman",
+    "G1_CPUSET": "40",
+    "G1_RESULTS_ROOT": "@RESULTS@",
+    "G1_CPUS": "1"
+  },
+  "status": "passed",
+  "returncode": 0,
+  "wall_s": 9.078705560415983,
+  "finished_utc": "2026-09-23T00:44:32.161789+00:00",
+  "log_sha256": "6d51e3132567ae3fb34da9a59627bcff1bb5e3d536d8e229b867425b311b1b16"
+}

@@ -1,0 +1,87 @@
+time="2026-09-23T02:52:56+02:00" level=warning msg="Network file system detected as backing store.  Enforcing overlay option `force_mask=\"700\"`.  Add it to storage.conf to silence this warning"
+time="2026-09-23T02:52:58+02:00" level=warning msg="Network file system detected as backing store.  Enforcing overlay option `force_mask=\"700\"`.  Add it to storage.conf to silence this warning"
+Resource enforcement: CPU affinity; memory reservation only (rootless cgroups v1).
+time="2026-09-23T02:53:00+02:00" level=warning msg="Network file system detected as backing store.  Enforcing overlay option `force_mask=\"700\"`.  Add it to storage.conf to silence this warning"
+{
+  "status": "failed",
+  "check": "density",
+  "command": [
+    "klayout",
+    "-b",
+    "-zz",
+    "-r",
+    "/foss/pdks/ihp-sg13g2/libs.tech/klayout/tech/drc/rule_decks/density.drc",
+    "-rd",
+    "input=@RESULTS@/native-stock-fill-20260923-r1/filled_native.gds",
+    "-rd",
+    "topcell=placed_core_NOT_CONNECTED_FULLCHIP",
+    "-rd",
+    "report=@RESULTS@/native-filled-density-20260923-r1/density.lyrdb",
+    "-rd",
+    "threads=1",
+    "-rd",
+    "density_sanity=true"
+  ],
+  "GDS_sha256": "7cb67330445e1a2e57d7aea5c0d9669d2e3bf61a18c91b873e1c66831b900e61",
+  "candidate_metadata_sha256": "49d9360f61c3ecd4cedd61789ed4c208f92333b7fb449f00fb11cda9b0b1f13d",
+  "script_sha256": "755018acf22b8ff7a4f773f0451ef6ee4e7f48b8bd2acf35d842f0feba407696",
+  "PDK_commit": "84374023ee8b4b126bebbba67fcbada0a9c0ff0b",
+  "KLayout": "KLayout 0.30.9",
+  "density_boundary_area_um2": 1999396,
+  "density_boundary": "single native EdgeSeal.boundary; prBoundary absent",
+  "not_run": [
+    "other stock decks in this invocation",
+    "complete LVS/PEX/currentIR/EM",
+    "electrical adoption"
+  ],
+  "runtime": {
+    "command": [
+      "stdbuf",
+      "-o0",
+      "-e0",
+      "klayout",
+      "-b",
+      "-zz",
+      "-r",
+      "/foss/pdks/ihp-sg13g2/libs.tech/klayout/tech/drc/rule_decks/density.drc",
+      "-rd",
+      "input=@RESULTS@/native-stock-fill-20260923-r1/filled_native.gds",
+      "-rd",
+      "topcell=placed_core_NOT_CONNECTED_FULLCHIP",
+      "-rd",
+      "report=@RESULTS@/native-filled-density-20260923-r1/density.lyrdb",
+      "-rd",
+      "threads=1",
+      "-rd",
+      "density_sanity=true"
+    ],
+    "started_utc": "2026-09-23T00:53:08.446503+00:00",
+    "status": "completed",
+    "timeout_s": 600,
+    "runtime_arch": "x86_64",
+    "stdio_unbuffered": true,
+    "pid": 10,
+    "wall_s": 42.75157403387129,
+    "sampled_utc": "2026-09-23T00:53:51.196135+00:00",
+    "log_bytes": 11793,
+    "resources": {
+      "VmHWM": "521300 kB",
+      "VmRSS": "521292 kB",
+      "Threads": "1"
+    },
+    "cpu_ticks": [
+      "4078",
+      "47"
+    ],
+    "returncode": 0,
+    "finished_utc": "2026-09-23T00:53:51.198602+00:00"
+  },
+  "inputs_rules_unchanged": true,
+  "completed_rule_result": "failed",
+  "markers": 1,
+  "categories": {
+    "GFil.g": 1
+  },
+  "report_sha256": "dd0f90bb12ec0eb99bfb7ab68308c8edafcf8821f99b73aaffbbee07fca43c5b",
+  "boundary_log_consistent": true
+}

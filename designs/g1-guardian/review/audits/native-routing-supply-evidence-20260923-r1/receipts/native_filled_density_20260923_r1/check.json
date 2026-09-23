@@ -1,0 +1,33 @@
+{
+  "command": [
+    "flow/run.sh",
+    "timeout",
+    "--kill-after=5",
+    "660",
+    "python3",
+    "designs/g1-guardian/review/audits/run_native_aux_checks.py",
+    "--candidate",
+    "@RESULTS@/native-stock-fill-20260923-r1",
+    "--gds-name",
+    "filled_native.gds",
+    "--check",
+    "density",
+    "--watchdog",
+    "600",
+    "--output",
+    "@RESULTS@/native-filled-density-20260923-r1"
+  ],
+  "started_utc": "2026-09-23T00:52:56.685588+00:00",
+  "cwd": "@REPO@",
+  "env": {
+    "G1_CONTAINER_ENGINE": "podman",
+    "G1_CPUSET": "41",
+    "G1_RESULTS_ROOT": "@RESULTS@",
+    "G1_CPUS": "1"
+  },
+  "status": "failed",
+  "returncode": 1,
+  "wall_s": 55.22360273450613,
+  "finished_utc": "2026-09-23T00:53:51.909204+00:00",
+  "log_sha256": "5ab5bb6c65684291d032db375fc435507d88f5bc28c5bb4bd03e21e181fe5cc9"
+}
