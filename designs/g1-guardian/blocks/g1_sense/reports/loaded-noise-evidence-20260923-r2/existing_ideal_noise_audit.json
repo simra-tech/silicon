@@ -1,0 +1,182 @@
+{
+  "status": "passed exact preserved-band replay and independent integrator controls",
+  "sha256": {
+    "sense.spice": "baab6183c364477da1dd332e4585ae7201b3776bf0f836014744a42809e13877",
+    "noise.cir": "b21349cc5de31137a22accd83f8bbb2bdb3abf24fb4b4019ba21b4a5d8086d67",
+    "noise.dat": "862799212d67be817ad994e84dcc80ac74fe8706c6bfb67b5408fb64d1d83fe8",
+    "noise.log": "9be74124d77fd9bf10e07de00a0e6489125b44bafc7246ab456da5cdc6a46f76",
+    "summary.json": "b36bca7e8b29d12341e7aae679a30298829346f3268a4222666aa1dbe3bb00e9",
+    "provenance.json": "fde2ba53541e6cf1fda29248a0af330a8bfa789b82297f7c6b869af1a0f23276"
+  },
+  "rows": 701,
+  "source_exact": true,
+  "controls": {
+    "white": {
+      "expected_V2": 3.9999996e-11,
+      "observed_V2": 3.999999599999999e-11
+    },
+    "flicker": {
+      "expected_V2": 4.8354286952874964e-11,
+      "observed_V2": 4.8354286952875203e-11
+    },
+    "boxcar": {
+      "expected_V2": 9.499389397673103e-12,
+      "observed_V2": 9.499389397673103e-12
+    },
+    "negative_zero_nonfinite_rejection_and_ASD_units": "passed",
+    "swapped_header_rejected": true
+  },
+  "bands": [
+    {
+      "requested_upper_Hz": 1000.0,
+      "actual_upper_Hz": 1000.0,
+      "preserved_trapezoid_rms_V": [
+        0.00013215121577320183,
+        6.614344026063634e-06
+      ],
+      "loglinear_rms_V": [
+        0.00013214503559988203,
+        6.61403470017757e-06
+      ],
+      "assumed_boxcar": [
+        {
+          "duration_s": 2e-08,
+          "rms_V": [
+            0.0001321450355941093,
+            6.6140346998886344e-06
+          ]
+        },
+        {
+          "duration_s": 2e-07,
+          "rms_V": [
+            0.0001321450350225989,
+            6.614034671283778e-06
+          ]
+        },
+        {
+          "duration_s": 1e-06,
+          "rms_V": [
+            0.00013214502116781193,
+            6.61403397783325e-06
+          ]
+        }
+      ]
+    },
+    {
+      "requested_upper_Hz": 100000.0,
+      "actual_upper_Hz": 100000.0,
+      "preserved_trapezoid_rms_V": [
+        0.00022535300025569333,
+        1.1279947943263509e-05
+      ],
+      "loglinear_rms_V": [
+        0.00022534801155681057,
+        1.12796983427521e-05
+      ],
+      "assumed_boxcar": [
+        {
+          "duration_s": 2e-08,
+          "rms_V": [
+            0.00022534774597026967,
+            1.1279685044987165e-05
+          ]
+        },
+        {
+          "duration_s": 2e-07,
+          "rms_V": [
+            0.00022532145950869404,
+            1.1278368897029058e-05
+          ]
+        },
+        {
+          "duration_s": 1e-06,
+          "rms_V": [
+            0.0002246882010517337,
+            1.1246662019288935e-05
+          ]
+        }
+      ]
+    },
+    {
+      "requested_upper_Hz": 2000000.0,
+      "actual_upper_Hz": 2000000.0,
+      "preserved_trapezoid_rms_V": [
+        0.0006982005919631237,
+        3.663760778405486e-05
+      ],
+      "loglinear_rms_V": [
+        0.0006981951097285983,
+        3.663755963198366e-05
+      ],
+      "assumed_boxcar": [
+        {
+          "duration_s": 2e-08,
+          "rms_V": [
+            0.0006976565218762368,
+            3.660652415649713e-05
+          ]
+        },
+        {
+          "duration_s": 2e-07,
+          "rms_V": [
+            0.0006486226672072781,
+            3.378558421169753e-05
+          ]
+        },
+        {
+          "duration_s": 1e-06,
+          "rms_V": [
+            0.0003793459048365464,
+            1.910464580754285e-05
+          ]
+        }
+      ]
+    },
+    {
+      "requested_upper_Hz": 10000000.0,
+      "actual_upper_Hz": 9999999.999999788,
+      "preserved_trapezoid_rms_V": [
+        0.0008890246334641924,
+        0.0001122533544754524
+      ],
+      "loglinear_rms_V": [
+        0.0008889651400339121,
+        0.00011224966373241789
+      ],
+      "assumed_boxcar": [
+        {
+          "duration_s": 2e-08,
+          "rms_V": [
+            0.0008851887264706071,
+            0.00010869349764106773
+          ]
+        },
+        {
+          "duration_s": 2e-07,
+          "rms_V": [
+            0.0007043252336931192,
+            4.166868118712034e-05
+          ]
+        },
+        {
+          "duration_s": 1e-06,
+          "rms_V": [
+            0.0003815596091232889,
+            1.9596075822939317e-05
+          ]
+        }
+      ]
+    }
+  ],
+  "native_integrated_total_relative_to_saved_trapezoid": {
+    "output": -7.20700244757344e-05,
+    "input": 0.023197441906014804
+  },
+  "limitations": [
+    "Ideal reference/PTAT, passive TRIP load, not actualBGR/fullTRIP.",
+    "No allocated noise limit; no physicalPEX or device-boundary closure.",
+    "Native input-total vs independently integrated PSD discrepancy retained, not waived.",
+    "20ns latency is not measurement aperture; all boxcar filters are declared sensitivity assumptions.",
+    "No new simulator run. Finite1Hz..10MHz band, out-of-band variance unknown."
+  ]
+}
