@@ -1,0 +1,35 @@
+{
+  "command": [
+    "flow/run.sh",
+    "timeout",
+    "--kill-after=5",
+    "90",
+    "python3",
+    "designs/g1-guardian/blocks/g1_bgr/sim/qualification/audit_586_required_startup.py",
+    "--run",
+    "@RESULTS@/bgr586-startup-nominal-instrumented-20260923-r1",
+    "--run",
+    "@RESULTS@/bgr586-startup-slow1ms-20260923-r1",
+    "--run",
+    "@RESULTS@/bgr586-startup-fast1ms-20260923-r1",
+    "--run",
+    "@RESULTS@/bgr586-startup-slow100ms-20260923-r1",
+    "--run",
+    "@RESULTS@/bgr586-startup-fast100ms-20260923-r1",
+    "--output",
+    "@RESULTS@/bgr586-startup-fast100ms-20260923-r1/independent_startup_audit.json"
+  ],
+  "started_utc": "2026-09-23T06:27:00.444702+00:00",
+  "cwd": "@REPO@",
+  "env": {
+    "G1_CONTAINER_ENGINE": "podman",
+    "G1_CPUSET": "0",
+    "G1_RESULTS_ROOT": "@RESULTS@",
+    "G1_CPUS": "1"
+  },
+  "status": "passed",
+  "returncode": 0,
+  "wall_s": 9.751896642148495,
+  "finished_utc": "2026-09-23T06:27:10.196608+00:00",
+  "log_sha256": "bd2a6998ed74969a4ec42044c6c344ef1f9ceb6efd8e6dce09b304c3bc57a5cf"
+}
