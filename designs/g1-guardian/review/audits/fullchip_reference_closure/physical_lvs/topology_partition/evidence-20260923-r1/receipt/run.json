@@ -1,0 +1,55 @@
+{
+  "inputs": {
+    "<results>/full-io-marker-lvs-original-20260923-r1/reports/io_marker_native.lvsdb": "3ed5cd2b78b3d4f4ed724730fcba2388148340d6442249e143c17a9f7ac99f04",
+    "<results>/full-io-marker-ports-20260923-r2/summary.json": "56bbb3b4b65eb31e95b9666cb59ff6c3b272135e3a06fdf2879a78bf4d00c33d",
+    "<results>/fullchip-name-interface-20260923-r1/g1_chip_top_layout_name_only.cdl": "f4ce6848bd7dd179d2ef4cbd8a4ea6bf9788bcfa1ff4b93fabae8bf18b6378f9",
+    "<results>/fullchip-tap-prefix-adapter-20260923-r1/fullchip_tap_prefix_only.cdl": "7395c32d170a787dbc81fd10c67148301d168e51f5ac38de3f0866efe5894006",
+    "<repository>/designs/g1-guardian/review/audits/fullchip_reference_closure/physical_lvs/probe_tap_adapter.rb": "832e082c79eb0a2194f8e42f1e972e444ff57ada44b441627a06519c9f120ca6",
+    "<repository>/designs/g1-guardian/review/audits/fullchip_reference_closure/physical_lvs/topology_partition/audit_partition.rb": "95300e7b2b7ee1553ff4dfb5e7c6ce78a27899eec1e1d11da9631cf1e42443ab"
+  },
+  "command": [
+    "stdbuf",
+    "-o0",
+    "-e0",
+    "flow/run.sh",
+    "klayout",
+    "-b",
+    "-r",
+    "/work/designs/g1-guardian/review/audits/fullchip_reference_closure/physical_lvs/topology_partition/audit_partition.rb",
+    "-rd",
+    "database=<results>/full-io-marker-lvs-original-20260923-r1/reports/io_marker_native.lvsdb",
+    "-rd",
+    "ports=<results>/full-io-marker-ports-20260923-r2/summary.json",
+    "-rd",
+    "original=<results>/fullchip-name-interface-20260923-r1/g1_chip_top_layout_name_only.cdl",
+    "-rd",
+    "adapted=<results>/fullchip-tap-prefix-adapter-20260923-r1/fullchip_tap_prefix_only.cdl",
+    "-rd",
+    "reader=/work/designs/g1-guardian/review/audits/fullchip_reference_closure/physical_lvs/probe_tap_adapter.rb",
+    "-rd",
+    "output_dir=<results>/full-io-topology-partition-20260923-r1"
+  ],
+  "CPU": 1,
+  "reservation_GiB": 8,
+  "memory_enforced": false,
+  "started_utc": "2026-09-23T07:00:55.537680+00:00",
+  "status": "completed",
+  "timeout_s": 120,
+  "runtime_arch": "x86_64",
+  "stdio_unbuffered": true,
+  "pid": 125830,
+  "wall_s": 41.319228971377015,
+  "sampled_utc": "2026-09-23T07:01:36.862238+00:00",
+  "log_bytes": 5282,
+  "resources": {
+    "VmHWM": "59624 kB",
+    "VmRSS": "59624 kB",
+    "Threads": "21"
+  },
+  "cpu_ticks": [
+    "12",
+    "16"
+  ],
+  "returncode": 0,
+  "finished_utc": "2026-09-23T07:01:36.864544+00:00"
+}
