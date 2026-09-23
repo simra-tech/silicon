@@ -6,6 +6,7 @@ import json
 import math
 from pathlib import Path
 import re
+import time
 from run_joint586_calibration import calibration_deck, REFERENCE, sha
 from audit_bgr_calibration_tree import replay
 from run_joint586_transients import phase_parameters
@@ -21,6 +22,43 @@ def replay_parent_tree(probes):
     # The saved contract is JSON: tuple brackets are arrays on disk. Compare
     # that same representation, not Python tuple identity or audit-only fields.
     return json.loads(json.dumps(replay(selected))) if len(selected) >= 2 else None
+
+
+def outcome_snapshot(result):
+    probes = result.get('probes', [])
+    return dict(seed=result['seed'], status=result['status'], attempted_leaf_count=len(probes),
+        numerical_failed_leaves=[r['run'] for r in probes if r['status'] != 'passed'],
+        observed_wrong_decision_leaves=[r['run'] for r in probes if r['status'] == 'passed'
+            and 'expected_decisions' in r and r['decisions'] != r['expected_decisions']],
+        bracket_status=result['bracket_status'], guards_status=result['guards_status'],
+        residual_half_mV_status=result['residual_half_mV_status'],
+        full_expected_leaf_coverage=result['bracket_status'] == 'passed selected probes'
+            and len([r for r in probes if r['kind'] == 'guard']) == 12
+            and len([r for r in probes if r['kind'] == 'residual']) == 6)
+
+
+def known_first36():
+    rows = []
+    for seed in range(73001, 73037):
+        path = SIM/'qualification'/('joint586-calibration-s%d-20260922-a' % seed)/'summary.json'
+        if not path.exists():
+            rows.append(dict(seed=seed, status='not run'))
+            continue
+        # A live parent's non-atomic checkpoint write is not a numerical failure.
+        for attempt in range(5):
+            payload = path.read_bytes()
+            try:
+                result, = json.loads(payload.decode())
+                break
+            except ValueError:
+                if attempt == 4:
+                    raise
+                time.sleep(.1)
+        row = outcome_snapshot(result)
+        row['summary_sha256'] = hashlib.sha256(payload).hexdigest()
+        rows.append(row)
+    return dict(attempted_population=36, records=rows,
+        scope='All36 known parent outcomes at audit snapshot, including outsidefirst20. Nonrequested parents receive summary/hash review only, not full waveform re-audit. Numerical missingdecisions are not observed wrongdecisions. No failure is filtered from denominator.')
 
 
 def inspect(run):
@@ -117,11 +155,14 @@ def main():
               'fully_passed_samples': sum(r['status'] == 'passed fullcalibration guard residual' for r in records),
               'failed_completed_samples': sum(r['complete'] and r['status'] != 'passed fullcalibration guard residual' for r in records),
               'distinct_full_parameter_vectors': len(hashes), 'total_completed_leaf_core_seconds': sum(r.get('total_core_seconds', 0) for r in records),
-              'records': records, 'scope': 'Original frozen binary calibration, guard and halfmV residual criteria. All attempted outcomes retained. New586 fullmismatch population, not nominalBGR equivalence or newphysicalCC qualification; no survivor-yield inference.'}
+              'records': records, 'auditor_sha256': sha(Path(__file__)),
+              'scope': 'Original frozen binary calibration, guard and halfmV residual criteria. All attempted outcomes retained. New586 fullmismatch population, not nominalBGR equivalence or newphysicalCC qualification; no survivor-yield inference.'}
+    if args.first_seed == 73001 and args.last_seed == 73020:
+        result['known_first36_outcomes'] = known_first36()
     with args.output.open('x') as stream:
         json.dump(result, stream, indent=2)
         stream.write('\n')
-    print(json.dumps({k: v for k, v in result.items() if k != 'records'}, indent=2))
+    print(json.dumps({k: v for k, v in result.items() if k not in ['records', 'known_first36_outcomes']}, indent=2))
 
 
 if __name__ == '__main__':
