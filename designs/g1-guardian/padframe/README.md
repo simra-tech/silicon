@@ -1,6 +1,32 @@
 # G1 pad ring and package
 
-## Ring geometry
+## Current 1414 µm candidate bonding map — not for tapeout
+
+The [2026-09-23 candidate bonding map](bondmap_candidate_20260923.csv) gives
+the **24 physical passivation-opening centres**, in µm from the lower-left
+corner of the unchanged 1414 × 1414 µm die. The logical pin assignments and
+112 µm pitch are unchanged. Each bondpad moved exactly 5 µm outward: south
+and west centres are at 101 µm, north and east at 1313 µm. Openings remain
+65.8 × 65.8 µm; the original metal connection is retained with an additive
+swept-frame bridge.
+
+This map is bound to candidate GDS SHA256
+`ab02b653c6b0e29e7693bed55e097081e6e41f67e24c59102494e6fbc1724541`.
+See the [geometry, connectivity and stock-check evidence](../review/audits/bondpad_outward_closure/RESULTS_20260923.md).
+Full stock main, maximal, antenna and density checks **passed with zero
+markers**, and all 10,222 internal terminal probes plus 24 external pad
+rectangles passed the source-aliased connectivity checks. The five supply
+domains remain distinct. This does **not** establish full-chip device-aware
+LVS, final physical PEX/electrical qualification, bonding-service acceptance,
+or tapeout readiness. New pad RC and package measurements are **not run**;
+earlier routed-wire RC remains tied to its original database.
+
+The original 1350 µm geometry and earlier bonding records below are retained
+as history, not as the coordinate source for this candidate. Earlier
+[four-micrometre pad-map experiments](../review/audits/p01-adoption-20260921-r3/padmap_delta.csv)
+also remain historical and must not be mixed with this map.
+
+## Historical 1350 µm ring geometry
 
 Numbers from the LibreLane Chip run of `blocks/g1_padring/` (evidence there,
 run `ring-1350`; `PLAN.md` D13). The 1000 µm allocation was infeasible: six

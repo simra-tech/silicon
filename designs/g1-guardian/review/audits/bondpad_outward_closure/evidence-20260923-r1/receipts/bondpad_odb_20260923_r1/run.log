@@ -1,0 +1,106 @@
+time="2026-09-23T07:26:05+02:00" level=warning msg="Network file system detected as backing store.  Enforcing overlay option `force_mask=\"700\"`.  Add it to storage.conf to silence this warning"
+time="2026-09-23T07:26:06+02:00" level=warning msg="Network file system detected as backing store.  Enforcing overlay option `force_mask=\"700\"`.  Add it to storage.conf to silence this warning"
+Resource enforcement: CPU affinity; memory reservation only (rootless cgroups v1).
+time="2026-09-23T07:26:07+02:00" level=warning msg="Network file system detected as backing store.  Enforcing overlay option `force_mask=\"700\"`.  Add it to storage.conf to silence this warning"
+{
+  "status": "passed full-chip native LEF import and OpenDB placement/connectivity roundtrip",
+  "source_DEF_sha256": "f28c7a20bfec277f44143619edd1d8f7fde6233c9efc9b5222cd4f2dc2c361a1",
+  "ODB_sha256": "dac5e668f6a90feadb6bf55899969b1776fe10770f677ff5e8eadc9b51066d7d",
+  "script_sha256": "97859ce4de4c7ec1b408536888f07d399b06de1b89439c16bf03d77864f7959b",
+  "OpenROAD_sha256": "a20f82ef703596ff75e8ddba7a89c8447f62c5113dcb9d8be8740eb229a44ddc",
+  "LEFs": [
+    {
+      "path": "/foss/pdks/ihp-sg13g2/libs.ref/sg13g2_stdcell/lef/sg13g2_tech.lef",
+      "sha256": "054f5b7b24d72365b4b1088be1331e04c1c2e3805de9f99c37e71938ed231efc"
+    },
+    {
+      "path": "/foss/pdks/ihp-sg13g2/libs.ref/sg13g2_stdcell/lef/sg13g2_stdcell.lef",
+      "sha256": "c9bbc02d0c2cba3b15cd89a208750d25de882f02a2927ae78ba6422109fb01d0"
+    },
+    {
+      "path": "<repository>/designs/g1-guardian/blocks/g1_padring/ip/sg13g2_io_padbare/lef/sg13g2_io.lef",
+      "sha256": "b6de6cd1926270c4ee8ebee3c331ca4570300836a066645af36c1308481fc951"
+    },
+    {
+      "path": "<repository>/designs/g1-guardian/blocks/g1_padring/ip/bondpad_70x70_tm1/lef/bondpad_70x70_tm1.lef",
+      "sha256": "c33cd4bf15ed367facf6ca4562c9b1b2ae9e9d55335c72604235916dde8d4e46"
+    },
+    {
+      "path": "<results>/bgr-closed-lef-egress-20260922-r3/g1_bgr.lef",
+      "sha256": "a5710796272c9b629b5f0f5a02779dcf498509e07b33347cecefe715586f692a"
+    },
+    {
+      "path": "<results>/sense-closed-lef-egress-20260922-r2/g1_sense.lef",
+      "sha256": "128d8b114f44a352228f2489300b55b27d8026f7eedc07511aec3bbb66a80be4"
+    },
+    {
+      "path": "<repository>/designs/g1-guardian/blocks/g1_ctrl/layout/g1_digital.lef",
+      "sha256": "7519083e4154ae9d8487cc8a0268f1e8b013a2a95521d71fb9213b0db5878f82"
+    },
+    {
+      "path": "<repository>/designs/g1-guardian/blocks/g1_trip/layout/g1_trip.lef",
+      "sha256": "3c6bc36403ab583005b3e51ab298d710a4b661418a233b486f81a0bd5e8e1000"
+    },
+    {
+      "path": "<repository>/designs/g1-guardian/blocks/g1_gate/layout/g1_gate.lef",
+      "sha256": "afd0b7f54b26b828af992590ef8c06aa2cce3f7dd060a8463a6895ce40577f78"
+    },
+    {
+      "path": "<repository>/designs/g1-guardian/blocks/g1_osc/layout/g1_osc.lef",
+      "sha256": "6c43533865dbf48bd5b340916988b0cc8c9e3bf4f6d55342ac75a8091ec02b91"
+    },
+    {
+      "path": "<repository>/designs/g1-guardian/blocks/g1_t2f/layout/g1_t2f.lef",
+      "sha256": "3ed6da8517bcb52acdd9e45c63788f750eccd88b0abdcb8cad61cb36c35c277d"
+    },
+    {
+      "path": "<repository>/designs/g1-guardian/blocks/g1_dut/layout/g1_dut_macro.lef",
+      "sha256": "ddd0fb83639dd4f7d7131736d2d2f675f4eefe8a725ba786cc1d8d769b139f34"
+    },
+    {
+      "path": "<repository>/designs/g1-guardian/blocks/g1_dose/layout/g1_dose_macro.lef",
+      "sha256": "da7c5dcef861a3aa0591ba48730eb31c022a199cde2633f5bce691dbe5a91749"
+    },
+    {
+      "path": "<repository>/designs/g1-guardian/blocks/g1_ctrl/ls/layout/g1_ls_up.lef",
+      "sha256": "d67765cb55fd013d92771aee6201cb482a6a297f89910925f67251c2f5429088"
+    }
+  ],
+  "instances": 4904,
+  "nets": 90,
+  "terminal_connections": 10244,
+  "runs": [
+    {
+      "mode": "import",
+      "command": [
+        "timeout",
+        "--kill-after=5",
+        "120",
+        "/foss/tools/openroad-librelane/bin/openroad",
+        "-exit",
+        "<results>/bondpad-outward-odb-20260923-r1/import.tcl"
+      ],
+      "returncode": 0,
+      "wall_s": 0.8070198241621256
+    },
+    {
+      "mode": "roundtrip",
+      "command": [
+        "timeout",
+        "--kill-after=5",
+        "120",
+        "/foss/tools/openroad-librelane/bin/openroad",
+        "-exit",
+        "<results>/bondpad-outward-odb-20260923-r1/roundtrip.tcl"
+      ],
+      "returncode": 0,
+      "wall_s": 0.4185219705104828
+    }
+  ],
+  "not_run": [
+    "macro obstacle/IO native geometry roundtrip",
+    "PDN and signal routing",
+    "fullchip LVS/PEX/DRC/density/antenna/STA/currentIR",
+    "electrical adoption"
+  ]
+}

@@ -1,0 +1,35 @@
+{
+  "resource_sha256": "9022dcea07c08db3a4636c616e30d1e56f893b52b3f435cce143f37e19e2fa7a",
+  "CPU": 1,
+  "reservation_GiB": 8,
+  "memory_enforced": false,
+  "command": [
+    "stdbuf",
+    "-o0",
+    "-e0",
+    "flow/run.sh",
+    "python3",
+    "-c",
+    "import pya; l=pya.Layout();l.read(\"<results>/bondpad-outward-20260923-r1/pad_outward_native.gds\");c=l.cell(\"bondpad_outward_5um_retained_metal\");print(c.name);print([(str(l.get_info(k)),[str(s) for s in c.shapes(k).each()][:2]) for k in l.layer_indexes() if not c.shapes(k).is_empty()]);print(len(list(l.each_cell())))"
+  ],
+  "started_utc": "2026-09-23T05:23:04.850151+00:00",
+  "status": "completed",
+  "timeout_s": 90,
+  "runtime_arch": "x86_64",
+  "stdio_unbuffered": true,
+  "pid": 3803062,
+  "wall_s": 8.371603969484568,
+  "sampled_utc": "2026-09-23T05:23:13.225551+00:00",
+  "log_bytes": 1138,
+  "resources": {
+    "VmHWM": "52408 kB",
+    "VmRSS": "52408 kB",
+    "Threads": "21"
+  },
+  "cpu_ticks": [
+    "9",
+    "14"
+  ],
+  "returncode": 0,
+  "finished_utc": "2026-09-23T05:23:13.228150+00:00"
+}

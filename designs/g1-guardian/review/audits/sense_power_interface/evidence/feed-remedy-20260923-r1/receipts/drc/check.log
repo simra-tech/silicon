@@ -1,0 +1,111 @@
+time="2026-09-23T07:45:09+02:00" level=warning msg="Network file system detected as backing store.  Enforcing overlay option `force_mask=\"700\"`.  Add it to storage.conf to silence this warning"
+time="2026-09-23T07:45:10+02:00" level=warning msg="Network file system detected as backing store.  Enforcing overlay option `force_mask=\"700\"`.  Add it to storage.conf to silence this warning"
+Resource enforcement: CPU affinity; memory reservation only (rootless cgroups v1).
+time="2026-09-23T07:45:11+02:00" level=warning msg="Network file system detected as backing store.  Enforcing overlay option `force_mask=\"700\"`.  Add it to storage.conf to silence this warning"
+{
+  "status": "passed scoped main and maximal DRC",
+  "GDS_sha256": "4b8a82d4a19127e5975d558381cd0f1057235cf51dfbbc58e2219b0f0c4a8bd1",
+  "candidate_metadata_sha256": "0c2c430aa70e1c2375c82954adcea61ad8b17b955822198cdaa74dbe046f9aa6",
+  "script_sha256": "4323454098bdeb744ba6dc52fbfb075ba8e6c0905290e4bbcd9d05cf06e09c1e",
+  "switch_helper_sha256": "21541b289491b8fcb70c6135d2d0cd411ea27f025cc0a07222d7825368322277",
+  "switches": {
+    "threads": "1",
+    "drc_json_default": "/foss/pdks/ihp-sg13g2/libs.tech/klayout/tech/drc/rule_decks/sg13g2_tech_default.json",
+    "drc_json": "/foss/pdks/ihp-sg13g2/libs.tech/klayout/python/sg13g2_pycell_lib/sg13g2_tech_mod.json",
+    "run_mode": "deep",
+    "precheck_drc": "false",
+    "disable_extra_rules": "false",
+    "no_feol": "false",
+    "no_beol": "false",
+    "no_offgrid": "false",
+    "no_angle": "false",
+    "density_sanity": "false",
+    "density": "false",
+    "no_forbidden": "false",
+    "no_pin": "false",
+    "no_recommended": "false",
+    "topcell": "g1_sense_physical",
+    "input": "${BULK}/sense-m2-feed-build-20260923-r1/g1_sense_physical.gds"
+  },
+  "decks": [
+    {
+      "name": "main",
+      "returncode": 0,
+      "wall_s": 10.45802141726017,
+      "command": [
+        "timeout",
+        "--kill-after=5",
+        "120",
+        "python3",
+        "${BULK}/sense-m2-feed-drc-20260923-r1-preparation/derived_stock_drc.py",
+        "--candidate",
+        "${BULK}/sense-m2-feed-build-20260923-r1",
+        "--gds-name",
+        "g1_sense_physical.gds",
+        "--topcell",
+        "g1_sense_physical",
+        "--output",
+        "${BULK}/sense-m2-feed-drc-20260923-r1",
+        "--main-watchdog",
+        "120",
+        "--maximal-watchdog",
+        "120",
+        "--execute",
+        "main"
+      ],
+      "watchdog_s": 120,
+      "reports": [
+        {
+          "path": "reports/g1_sense_physical_g1_sense_physical_main.lyrdb",
+          "sha256": "ae341bb41785060cf326b0c41aa3df747db2fe43cced9a2f412f19d67b3268c0",
+          "markers": 0,
+          "categories": {}
+        }
+      ],
+      "status": "passed"
+    },
+    {
+      "name": "maximal",
+      "returncode": 0,
+      "wall_s": 10.143407501280308,
+      "command": [
+        "timeout",
+        "--kill-after=5",
+        "120",
+        "python3",
+        "${BULK}/sense-m2-feed-drc-20260923-r1-preparation/derived_stock_drc.py",
+        "--candidate",
+        "${BULK}/sense-m2-feed-build-20260923-r1",
+        "--gds-name",
+        "g1_sense_physical.gds",
+        "--topcell",
+        "g1_sense_physical",
+        "--output",
+        "${BULK}/sense-m2-feed-drc-20260923-r1",
+        "--main-watchdog",
+        "120",
+        "--maximal-watchdog",
+        "120",
+        "--execute",
+        "maximal"
+      ],
+      "watchdog_s": 120,
+      "reports": [
+        {
+          "path": "reports/g1_sense_physical_g1_sense_physical_sg13g2_maximal.lyrdb",
+          "sha256": "b3939088169a52fc59e71805fca666deaed3a2a9d452e3dce36802550a49896b",
+          "markers": 0,
+          "categories": {}
+        }
+      ],
+      "status": "passed"
+    }
+  ],
+  "not_run": [
+    "density/fill",
+    "antenna",
+    "connected fullchip LVS/PEX/currentIR/EM",
+    "electrical adoption"
+  ],
+  "inputs_rules_unchanged": true
+}

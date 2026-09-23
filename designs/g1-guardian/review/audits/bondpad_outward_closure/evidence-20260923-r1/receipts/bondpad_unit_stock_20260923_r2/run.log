@@ -1,0 +1,112 @@
+time="2026-09-23T07:31:29+02:00" level=warning msg="Network file system detected as backing store.  Enforcing overlay option `force_mask=\"700\"`.  Add it to storage.conf to silence this warning"
+time="2026-09-23T07:31:31+02:00" level=warning msg="Network file system detected as backing store.  Enforcing overlay option `force_mask=\"700\"`.  Add it to storage.conf to silence this warning"
+Resource enforcement: CPU affinity; memory reservation only (rootless cgroups v1).
+time="2026-09-23T07:31:31+02:00" level=warning msg="Network file system detected as backing store.  Enforcing overlay option `force_mask=\"700\"`.  Add it to storage.conf to silence this warning"
+{
+  "status": "passed exact isolated pad and retained-frame extraction",
+  "GDS_sha256": "097a131b8f0b5d53c872487cdc9d7aa1c8d8dc12853a7611f2ef935a04e86e95",
+  "parent_GDS_sha256": "ab02b653c6b0e29e7693bed55e097081e6e41f67e24c59102494e6fbc1724541",
+  "script_sha256": "b6c7f65ef986d883ae258bd32dadb03bc02124e613c90ce23aad5711df802661",
+  "layers": {
+    "9": {
+      "area_um2": 4329.639999999999,
+      "polygons": 1
+    },
+    "41": {
+      "area_um2": 4900.0,
+      "polygons": 1
+    },
+    "126": {
+      "area_um2": 1732.6404,
+      "polygons": 1
+    },
+    "133": {
+      "area_um2": 106.92,
+      "polygons": 132
+    },
+    "134": {
+      "area_um2": 5250.0,
+      "polygons": 1
+    }
+  },
+  "not_run": [
+    "full-chip/context DRC",
+    "connectivity",
+    "electrical qualification"
+  ]
+}
+{
+  "status": "failed scoped candidate DRC",
+  "GDS_sha256": "097a131b8f0b5d53c872487cdc9d7aa1c8d8dc12853a7611f2ef935a04e86e95",
+  "candidate_metadata_sha256": "b48f5fea6d76dbd9b87f465013e60383778e156a887efb55f88bb457fa40c00c",
+  "script_sha256": "1c00e0dd3e3f45892159e1f9e45bfdae92d6ba596b9dfa487393f6717ab2b338",
+  "switch_helper_sha256": "21541b289491b8fcb70c6135d2d0cd411ea27f025cc0a07222d7825368322277",
+  "switches": {
+    "threads": "1",
+    "drc_json_default": "/foss/pdks/ihp-sg13g2/libs.tech/klayout/tech/drc/rule_decks/sg13g2_tech_default.json",
+    "drc_json": "/foss/pdks/ihp-sg13g2/libs.tech/klayout/python/sg13g2_pycell_lib/sg13g2_tech_mod.json",
+    "run_mode": "deep",
+    "precheck_drc": "false",
+    "disable_extra_rules": "false",
+    "no_feol": "false",
+    "no_beol": "false",
+    "no_offgrid": "false",
+    "no_angle": "false",
+    "density_sanity": "false",
+    "density": "false",
+    "no_forbidden": "false",
+    "no_pin": "false",
+    "no_recommended": "false",
+    "topcell": "pad_bridge_unit",
+    "input": "<results>/bondpad-outward-unit-20260923-r2/pad_unit.gds"
+  },
+  "decks": [
+    {
+      "name": "main",
+      "returncode": 0,
+      "wall_s": 7.206255463883281,
+      "command": [
+        "timeout",
+        "--kill-after=5",
+        "120",
+        "python3",
+        "<repository>/designs/g1-guardian/review/audits/run_core_candidate_drc.py",
+        "--candidate",
+        "<results>/bondpad-outward-unit-20260923-r2",
+        "--gds-name",
+        "pad_unit.gds",
+        "--topcell",
+        "pad_bridge_unit",
+        "--output",
+        "<results>/bondpad-outward-unit-stock-20260923-r2",
+        "--only",
+        "main",
+        "--main-watchdog",
+        "120",
+        "--execute",
+        "main"
+      ],
+      "watchdog_s": 120,
+      "reports": [
+        {
+          "path": "reports/pad_unit_pad_bridge_unit_main.lyrdb",
+          "sha256": "c0729993a7c829ac18452e8cd89969343e8aac9b42aeb5788af24715966d54b9",
+          "markers": 2,
+          "categories": {
+            "'Pad.fR_TM1'": 1,
+            "'Pad.fR_TM2'": 1
+          }
+        }
+      ],
+      "status": "failed"
+    }
+  ],
+  "not_run": [
+    "density/fill",
+    "antenna",
+    "connected fullchip LVS/PEX/currentIR/EM",
+    "electrical adoption",
+    "other stock deck in this independent invocation"
+  ],
+  "inputs_rules_unchanged": true
+}

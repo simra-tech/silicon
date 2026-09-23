@@ -1,0 +1,80 @@
+time="2026-09-23T07:29:12+02:00" level=warning msg="Network file system detected as backing store.  Enforcing overlay option `force_mask=\"700\"`.  Add it to storage.conf to silence this warning"
+time="2026-09-23T07:29:13+02:00" level=warning msg="Network file system detected as backing store.  Enforcing overlay option `force_mask=\"700\"`.  Add it to storage.conf to silence this warning"
+Resource enforcement: CPU affinity; memory reservation only (rootless cgroups v1).
+time="2026-09-23T07:29:13+02:00" level=warning msg="Network file system detected as backing store.  Enforcing overlay option `force_mask=\"700\"`.  Add it to storage.conf to silence this warning"
+{
+  "status": "failed scoped candidate DRC",
+  "GDS_sha256": "0d7b1b7818a349b9598a4e05ef583478ac70912aa6f0e18c8b1a73794fc0e047",
+  "candidate_metadata_sha256": "acdfc85580cc7c45d36b3f0161651d913bbfd39967c31883a57a4be1816f9ab7",
+  "script_sha256": "1c00e0dd3e3f45892159e1f9e45bfdae92d6ba596b9dfa487393f6717ab2b338",
+  "switch_helper_sha256": "21541b289491b8fcb70c6135d2d0cd411ea27f025cc0a07222d7825368322277",
+  "switches": {
+    "threads": "1",
+    "drc_json_default": "/foss/pdks/ihp-sg13g2/libs.tech/klayout/tech/drc/rule_decks/sg13g2_tech_default.json",
+    "drc_json": "/foss/pdks/ihp-sg13g2/libs.tech/klayout/python/sg13g2_pycell_lib/sg13g2_tech_mod.json",
+    "run_mode": "deep",
+    "precheck_drc": "false",
+    "disable_extra_rules": "false",
+    "no_feol": "false",
+    "no_beol": "false",
+    "no_offgrid": "false",
+    "no_angle": "false",
+    "density_sanity": "false",
+    "density": "false",
+    "no_forbidden": "false",
+    "no_pin": "false",
+    "no_recommended": "false",
+    "topcell": "pad_bridge_unit",
+    "input": "<results>/bondpad-outward-unit-20260923-r1/pad_unit.gds"
+  },
+  "decks": [
+    {
+      "name": "main",
+      "returncode": 0,
+      "wall_s": 7.373319044709206,
+      "command": [
+        "timeout",
+        "--kill-after=5",
+        "120",
+        "python3",
+        "<repository>/designs/g1-guardian/review/audits/run_core_candidate_drc.py",
+        "--candidate",
+        "<results>/bondpad-outward-unit-20260923-r1",
+        "--gds-name",
+        "pad_unit.gds",
+        "--topcell",
+        "pad_bridge_unit",
+        "--output",
+        "<results>/bondpad-outward-unit-stock-20260923-r1",
+        "--only",
+        "main",
+        "--main-watchdog",
+        "120",
+        "--execute",
+        "main"
+      ],
+      "watchdog_s": 120,
+      "reports": [
+        {
+          "path": "reports/pad_unit_pad_bridge_unit_main.lyrdb",
+          "sha256": "8de36323e6d9d61400f60bdc6d01fed60d6c44dcf170127102eedc06ffe6155a",
+          "markers": 5,
+          "categories": {
+            "'TM1.b'": 2,
+            "'Pad.fR_TM1'": 2,
+            "'Pad.fR_TM2'": 1
+          }
+        }
+      ],
+      "status": "failed"
+    }
+  ],
+  "not_run": [
+    "density/fill",
+    "antenna",
+    "connected fullchip LVS/PEX/currentIR/EM",
+    "electrical adoption",
+    "other stock deck in this independent invocation"
+  ],
+  "inputs_rules_unchanged": true
+}
