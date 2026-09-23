@@ -38,6 +38,7 @@ def controls():
 def main():
     ap=argparse.ArgumentParser()
     ap.add_argument('--run',type=Path,required=True)
+    ap.add_argument('--screen',type=Path,help='Remaining80 directory for a combined100 audit')
     ap.add_argument('--packet',type=Path,required=True)
     ap.add_argument('--audit',type=Path,required=True)
     ap.add_argument('--output',type=Path,required=True)
@@ -52,7 +53,9 @@ def main():
     samples=[]
     for entry in audit['rows']:
         if entry['controls']!='passed':continue
-        folder=a.run/f"seed{entry['seed']}"
+        directory=a.run if entry['seed']<=41020 else a.screen
+        assert directory is not None, 'Combined audit requires the remaining80 directory'
+        folder=directory/f"seed{entry['seed']}"
         assert sha(folder/'run.log')==entry['log_sha256']
         observed=parse((folder/'run.log').read_text(),pc['queries'])
         rows=observed['rows'];cal=rows['t0_c0_s0.025'];e=electrical(rows);points=[]
