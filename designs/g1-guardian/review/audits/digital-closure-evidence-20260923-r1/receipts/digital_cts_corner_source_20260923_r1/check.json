@@ -1,0 +1,22 @@
+{
+  "command": [
+    "timeout",
+    "--kill-after=5",
+    "60",
+    "flow/run.sh",
+    "python3",
+    "-c",
+    "from pathlib import Path; import librelane; p=Path(librelane.__file__).parent; t=(p/\"scripts/openroad/common/io.tcl\").read_text(); print(t[t.index(\"proc read_libs\"):]); t=(p/\"steps/openroad.py\").read_text().splitlines(); print(\"\\n\".join(str(i+1)+\":\"+x for i,x in enumerate(t) if \"env[\" in x or \"LIB_CORNER\" in x or \"_CORNER\" in x))"
+  ],
+  "started_utc": "2026-09-23T07:13:10.548067+00:00",
+  "cwd": "${HOST_REPOSITORY}",
+  "env": {
+    "G1_CPUSET": "48",
+    "G1_CPUS": "1"
+  },
+  "status": "failed",
+  "returncode": 1,
+  "wall_s": 25.78477351553738,
+  "finished_utc": "2026-09-23T07:13:36.332849+00:00",
+  "log_sha256": "9c0c7ce7b9b7a86e1453e21f6774e349814c255d6d57a94704b3ebc5220b5797"
+}

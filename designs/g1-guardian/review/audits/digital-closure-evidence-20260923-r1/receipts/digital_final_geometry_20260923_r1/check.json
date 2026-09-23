@@ -1,0 +1,22 @@
+{
+  "command": [
+    "flow/run.sh",
+    "python3",
+    "-c",
+    "from pathlib import Path; import re,subprocess; a=Path(\"${REPOSITORY}/designs/g1-guardian/blocks/g1_ctrl/flow/runs/run7/34-openroad-detailedplacement/g1_digital.def\"); b=Path(\"${RESULTS_ROOT}/digital-final-dbrename-20260923-r1/g1_digital.def\"); pattern=r\"\\nPINS (\\d+) ;(.*?)END PINS\"; x=re.search(pattern,a.read_text(),re.S); y=re.search(pattern,b.read_text(),re.S); assert x and y and x.group(1)==y.group(1)==\"46\"; assert re.sub(r\"\\s+\",\" \",x.group(2))==re.sub(r\"\\s+\",\" \",y.group(2)); print(\"EXACT_DEF_PINS_PASSED\",x.group(1)); log=subprocess.check_output([\"python3\",\"${REPOSITORY}/designs/g1-guardian/blocks/g1_ctrl/flow/tmr_check.py\",\"${RESULTS_ROOT}/digital-final-nlrename-20260923-r1/g1_digital.nl.v\",str(b)],text=True); print(log); assert \"199 stages\" in log and \"597 flops, all placed\" in log; assert re.search(r\"stages with a copy pair closer than 20 um: 0\\n\",log); print(\"EXACT_199_STAGE_TMR_GEOMETRY_PASSED\")"
+  ],
+  "started_utc": "2026-09-23T08:18:17.770062+00:00",
+  "cwd": "${HOST_REPOSITORY}",
+  "env": {
+    "G1_CPUSET": "1",
+    "G1_RESULTS_ROOT": "${RESULTS_ROOT}",
+    "G1_CPUS": "1"
+  },
+  "status": "passed",
+  "pid": 898979,
+  "start_token": "966851128",
+  "returncode": 0,
+  "wall_s": 7.452129365876317,
+  "finished_utc": "2026-09-23T08:18:25.222201+00:00",
+  "log_sha256": "0fb8c635b3f852bd7745b011d52bbb68487e1182c6746eea51ae19e7bd2c0f28"
+}

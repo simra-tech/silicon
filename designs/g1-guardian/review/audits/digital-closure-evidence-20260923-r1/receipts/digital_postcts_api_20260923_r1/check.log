@@ -1,0 +1,325 @@
+time="2026-09-23T09:32:06+02:00" level=warning msg="Network file system detected as backing store.  Enforcing overlay option `force_mask=\"700\"`.  Add it to storage.conf to silence this warning"
+time="2026-09-23T09:32:08+02:00" level=warning msg="Network file system detected as backing store.  Enforcing overlay option `force_mask=\"700\"`.  Add it to storage.conf to silence this warning"
+Resource enforcement: CPU affinity; memory reservation only (rootless cgroups v1).
+time="2026-09-23T09:32:08+02:00" level=warning msg="Network file system detected as backing store.  Enforcing overlay option `force_mask=\"700\"`.  Add it to storage.conf to silence this warning"
+(config: 'AnyConfigs', *, name: 'Optional[str]' = None, pdk: 'Optional[str]' = None, pdk_root: 'Optional[str]' = None, scl: 'Optional[str]' = None, pad: 'Optional[str]' = None, design_dir: 'Optional[str]' = None, config_override_strings: 'Optional[Sequence[str]]' = None)
+(self, with_initial_state: 'Optional[State]' = None, tag: 'Optional[str]' = None, last_run: 'bool' = False, _force_run_dir: 'Optional[str]' = None, _no_load_previous_steps: 'bool' = False, *, overwrite: 'bool' = False, **kwargs) -> 'State'
+(config_in: Union[str, os.PathLike, Mapping[str, Any], Sequence[Union[str, os.PathLike, Mapping[str, Any]]]], flow_config_vars: Sequence[librelane.config.variable.Variable], *, config_override_strings: Optional[Sequence[str]] = None, pdk: Optional[str] = None, pdk_root: Optional[str] = None, scl: Optional[str] = None, pad: Optional[str] = None, design_dir: Optional[str] = None, _load_pdk_configs: bool = True) -> Tuple[ForwardRef('Config'), str]
+(dict_in: 'dict', validate_path: 'bool' = True) -> "'State'"
+    @final
+    def start(
+        self,
+        with_initial_state: Optional[State] = None,
+        tag: Optional[str] = None,
+        last_run: bool = False,
+        _force_run_dir: Optional[str] = None,
+        _no_load_previous_steps: bool = False,
+        *,
+        overwrite: bool = False,
+        **kwargs,
+    ) -> State:
+        """
+        The entry point for a flow.
+
+        :param with_initial_state: An optional initial state object to use.
+            If not provided:
+
+            * If resuming a previous run, the latest ``state_out.json`` (by filesystem modification date)
+
+            * If not, an empty state object is created.
+
+        :param tag: A name for this invocation of the flow. If not provided,
+            one based on a date string will be created.
+
+            This tag is used to create the "run directory", which will be placed
+            under the directory ``runs/`` in the design directory.
+        :param last_run: Use the latest run (by modification time) as the tag.
+
+            If no runs exist, a :class:`FlowException` will be raised.
+
+            If ``last_run`` and ``tag`` are both set, a :class:`FlowException` will
+            also be raised.
+        :param overwrite: If true and a run with the desired tag was found, the
+            contents will be deleted instead of appended.
+
+        :returns: ``(success, state_list)``
+        """
+
+        handlers: List[logging.Handler] = []
+
+        warning_handler = Flow._StepWarningHandler()
+        warning_handler.addFilter(LevelFilter("WARNING"))
+        handlers.append(warning_handler)
+        register_additional_handler(warning_handler)
+
+        if last_run and tag is not None:
+            raise FlowException("tag and last_run cannot be used simultaneously.")
+
+        tag = tag or datetime.datetime.now().astimezone().strftime(
+            "RUN_%Y-%m-%d_%H-%M-%S"
+        )
+        if last_run:
+            runs = sorted(glob.glob(os.path.join(self.design_dir, "runs", "*")))
+
+            latest_time: float = 0
+            latest_run: Optional[str] = None
+            for run in runs:
+                time = os.path.getmtime(run)
+                if time > latest_time:
+                    latest_time = time
+                    latest_run = run
+
+            if latest_run is not None:
+                tag = os.path.basename(latest_run)
+            else:
+                raise FlowException("last_run used without any existing runs")
+
+        # Stored until next start()
+        self.run_dir = os.path.abspath(
+            _force_run_dir or os.path.join(self.design_dir, "runs", tag)
+        )
+        initial_state = with_initial_state or State()
+
+        self.step_objects = []
+        starting_ordinal = 1
+        try:
+            entries = os.listdir(self.run_dir)
+            if len(entries) == 0:
+                raise FileNotFoundError(self.run_dir)  # Treat as non-existent directory
+            elif overwrite:
+                verbose(f"Removing '{self.run_dir}'…")
+                shutil.rmtree(self.run_dir)
+                raise FileNotFoundError(self.run_dir)  # Treat as non-existent directory
+
+            info(f"Using existing run at '{tag}' with the '{self.name}' flow.")
+
+            # Extract maximum step ordinal + load finished steps
+            entries_sorted = sorted(
+                filter(
+                    lambda x: "-" in x and x.split("-", maxsplit=1)[0].isdigit(),
+                    entries,
+                ),
+                key=lambda x: int(x.split("-", maxsplit=1)[0]),
+            )
+            for entry in entries_sorted:
+                components = entry.split("-", maxsplit=1)
+
+                try:
+                    extracted_ordinal = int(components[0])
+                except ValueError:
+                    continue
+
+                if not _no_load_previous_steps:
+                    try:
+                        self.step_objects.append(
+                            Step.load_finished(
+                                os.path.join(self.run_dir, entry),
+                                self.config["PDK_ROOT"],
+                                self.Steps,
+                            )
+                        )
+                    except StepNotFound as e:
+                        raise FlowException(
+                            f"Error while loading concluded step in {entry}: {e}"
+                        )
+                    except FileNotFoundError:
+                        pass
+
+                starting_ordinal = max(starting_ordinal, extracted_ordinal + 1)
+
+            # Extract Maximum State
+            if with_initial_state is None:
+                if latest_json := get_latest_file(self.run_dir, "state_out.json"):
+                    verbose(f"Using state at '{latest_json}'.")
+
+                    initial_state = State.loads(
+                        open(latest_json, encoding="utf8").read()
+                    )
+
+        except NotADirectoryError:
+            raise FlowException(
+                f"Run directory for '{tag}' already exists as a file and not a directory."
+            )
+        except FileNotFoundError:
+            info(f"Starting a new run of the '{self.name}' flow with the tag '{tag}'.")
+            mkdirp(self.run_dir)
+
+        # Stored until next start()
+        self.toolbox = Toolbox(os.path.join(self.run_dir, "tmp"))
+
+        for level in ["WARNING", "ERROR"]:
+            path = os.path.join(self.run_dir, f"{level.lower()}.log")
+            handler = logging.FileHandler(path, mode="a+")
+            handler.setLevel(level)
+            handler.addFilter(LevelFilter([level]))
+            handlers.append(handler)
+            register_additional_handler(handler)
+
+        path = os.path.join(self.run_dir, "flow.log")
+        handler = logging.FileHandler(path, mode="a+")
+        handler.setLevel("VERBOSE")
+        handlers.append(handler)
+        register_additional_handler(handler)
+
+        try:
+            self.config_resolved_path = os.path.join(self.run_dir, "resolved.json")
+            with open(self.config_resolved_path, "w") as f:
+                f.write(self.config.dumps())
+
+            self.progress_bar = FlowProgressBar(
+                self.name, starting_ordinal=starting_ordinal
+            )
+            self.progress_bar.start()
+            final_state, step_objects = self.run(
+                initial_state=initial_state,
+                starting_ordinal=starting_ordinal,
+                **kwargs,
+            )
+            self.progress_bar.end()
+
+            # Stored until next start()
+            self.step_objects += step_objects
+
+            return final_state
+        finally:
+            self.progress_bar.end()
+            for registered_handlers in handlers:
+                deregister_additional_handler(registered_handlers)
+            if len(warning_handler.warnings):
+                warn("The following warnings were generated by the flow:")
+                for record in warning_handler.warnings.values():
+                    warn(f"{record}")
+
+    def run(
+        self,
+        initial_state: State,
+        frm: Optional[str] = None,
+        to: Optional[str] = None,
+        skip: Optional[Iterable[str]] = None,
+        reproducible: Optional[str] = None,
+        **kwargs,
+    ) -> Tuple[State, List[Step]]:
+        debug(f"Starting run ▶ '{self.run_dir}'")
+        step_ids = {cls.id.lower(): cls.id for cls in reversed(self.Steps)}
+        skipped_ids: List[str] = []
+
+        def resolve_step(matchable: Optional[str], multiple_ok: bool = False):
+            nonlocal step_ids
+            dangerous_fuzzy_matching = (
+                os.getenv(
+                    "_i_want_librelane_to_fuzzy_match_steps_and_im_willing_to_accept_the_risks",
+                    None,
+                )
+                == "1"
+            )
+            if matchable is None:
+                return None
+            ids = list(Filter([matchable.lower()]).filter(step_ids))
+            if len(ids) > 0:
+                if multiple_ok:
+                    return [step_ids[id] for id in ids]
+                if len(ids) > 1:
+                    raise FlowException(f"{matchable} matched multiple steps.")
+                if len(ids) == 1:
+                    return step_ids[ids[0]]
+            else:
+                matchTuple = process.extractOne(
+                    matchable,
+                    step_ids,
+                    scorer=fuzz.partial_ratio,
+                    score_cutoff=80,
+                    processor=utils.default_process,
+                )
+                suggestion = ""
+                if matchTuple is not None:
+                    match, _, _ = matchTuple
+                    if dangerous_fuzzy_matching:
+                        return [match] if multiple_ok else match
+                    else:
+                        suggestion = f" Did you mean: '{match}'?"
+                raise FlowException(
+                    f"Failed to process '{matchable}': no step(s) with ID '{matchable}' found in flow.{suggestion}"
+                )
+
+        frm_resolved = resolve_step(frm)
+
+        to_resolved = resolve_step(to)
+
+        reproducible_resolved = resolve_step(reproducible)
+
+        if skipped_steps := skip:
+            for skipped_step in skipped_steps:
+                skipped_ids += resolve_step(skipped_step, multiple_ok=True)
+
+        step_count = len(self.Steps)
+        self.progress_bar.set_max_stage_count(step_count)
+
+        step_list = []
+
+        info("Starting…")
+
+        executing = frm is None
+        deferred_errors = []
+
+        gating_cvars_expanded: Dict[str, List[str]] = {}
+        for key, value in self.gating_config_vars.items():
+            if key in step_ids.values():
+                gating_cvars_expanded[key] = value
+                continue
+            for id in Filter([key]).filter(step_ids.values()):
+                gating_cvars_expanded[id] = value
+
+        current_state = initial_state
+        for cls in self.Steps:
+            step = cls(config=self.config, state_in=current_state)
+            if frm_resolved is not None and frm_resolved == step.id:
+                executing = True
+
+            gated = False
+            if gating_cvars := gating_cvars_expanded.get(step.id):
+                for variable in gating_cvars:
+                    if not self.config[variable]:
+                        info(
+                            f"Gating variable for step '{step.id}' set to 'False'- the step will be skipped."
+                        )
+                        gated = True
+
+            self.progress_bar.start_stage(step.name)
+            increment_ordinal = True
+            if not executing or cls.id in skipped_ids or gated:
+                info(f"Skipping step '{step.name}'…")
+                increment_ordinal = False
+            elif cls.id == reproducible_resolved:
+                step.create_reproducible(
+                    os.path.join(
+                        self.dir_for_step(step),
+                        "reproducible",
+                    )
+                )
+                break
+            else:
+                step_list.append(step)
+                try:
+                    current_state = step.start(
+                        toolbox=self.toolbox,
+                        step_dir=self.dir_for_step(step),
+                    )
+                except StepException as e:
+                    raise FlowException(str(e)) from None
+                except DeferredStepError as e:
+                    deferred_errors.append(str(e))
+                except StepError as e:
+                    raise FlowError(str(e)) from None
+
+            self.progress_bar.end_stage(increment_ordinal=increment_ordinal)
+
+            if to_resolved and to_resolved == step.id:
+                executing = False
+
+        assert self.run_dir is not None
+        debug(f"Run concluded ▶ '{self.run_dir}'")
+        final_views_path = os.path.join(self.run_dir, "final")
+        try:
+            current_state.save_snapshot(final_views_path)
+        except Exception as e:
+         

@@ -1,0 +1,22 @@
+{
+  "command": [
+    "timeout",
+    "--kill-after=5",
+    "60",
+    "flow/run.sh",
+    "python3",
+    "-c",
+    "import pathlib,librelane,subprocess; print(\"LIBRELANE\",librelane.__file__); print(subprocess.check_output([\"openroad\",\"-version\"],text=True)); p=pathlib.Path(librelane.__file__).parent; print((p/\"scripts/openroad/cts.tcl\").read_text())"
+  ],
+  "started_utc": "2026-09-23T07:07:56.293712+00:00",
+  "cwd": "${HOST_REPOSITORY}",
+  "env": {
+    "G1_CPUSET": "48",
+    "G1_CPUS": "1"
+  },
+  "status": "passed",
+  "returncode": 0,
+  "wall_s": 23.882061006501317,
+  "finished_utc": "2026-09-23T07:08:20.175785+00:00",
+  "log_sha256": "c3750296d8d9f7176d9a239f28a8651d3b699db79986c3820680a55b64047222"
+}

@@ -1,0 +1,20 @@
+time="2026-09-23T10:15:47+02:00" level=warning msg="Network file system detected as backing store.  Enforcing overlay option `force_mask=\"700\"`.  Add it to storage.conf to silence this warning"
+time="2026-09-23T10:15:48+02:00" level=warning msg="Network file system detected as backing store.  Enforcing overlay option `force_mask=\"700\"`.  Add it to storage.conf to silence this warning"
+Resource enforcement: CPU affinity; memory reservation only (rootless cgroups v1).
+time="2026-09-23T10:15:49+02:00" level=warning msg="Network file system detected as backing store.  Enforcing overlay option `force_mask=\"700\"`.  Add it to storage.conf to silence this warning"
+Traceback (most recent call last):
+  File "${REPOSITORY}/designs/g1-guardian/review/audits/run_digital_equivalence.py", line 74, in <module>
+    main()
+  File "${REPOSITORY}/designs/g1-guardian/review/audits/run_digital_equivalence.py", line 49, in main
+    held = {str(path): sha(path) for path in (a.reference, a.candidate, lib, tool)}
+                       ^^^^^^^^^
+  File "${REPOSITORY}/designs/g1-guardian/review/audits/run_digital_equivalence.py", line 15, in sha
+    return hashlib.sha256(path.read_bytes()).hexdigest()
+                          ^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/pathlib.py", line 1021, in read_bytes
+    with self.open(mode='rb') as f:
+         ^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/pathlib.py", line 1015, in open
+    return io.open(self, mode, buffering, encoding, errors, newline)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: '${REPOSITORY}/designs/g1-guardian/blocks/g1_ctrl/flow/runs/run7/34-odb-reportwirelength/g1_digital.nl.v'

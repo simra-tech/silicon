@@ -1,0 +1,354 @@
+time="2026-09-23T09:14:53+02:00" level=warning msg="Network file system detected as backing store.  Enforcing overlay option `force_mask=\"700\"`.  Add it to storage.conf to silence this warning"
+time="2026-09-23T09:14:54+02:00" level=warning msg="Network file system detected as backing store.  Enforcing overlay option `force_mask=\"700\"`.  Add it to storage.conf to silence this warning"
+Resource enforcement: CPU affinity; memory reservation only (rootless cgroups v1).
+time="2026-09-23T09:14:54+02:00" level=warning msg="Network file system detected as backing store.  Enforcing overlay option `force_mask=\"700\"`.  Add it to storage.conf to silence this warning"
+CONFIG (*args, meta: Optional[librelane.config.config.Meta] = None, **kwargs) START (self, toolbox: 'Optional[Toolbox]' = None, step_dir: 'Optional[str]' = None, _no_rule: 'bool' = False, **kwargs) -> 'State'
+        return os.getenv("_LLN_OVERRIDE_OPENROAD", "openroad")
+
+    @abstractmethod
+    def get_script_path(self) -> str:
+        pass
+
+    def on_alert(self, alert: OpenROADAlert) -> OpenROADAlert:
+        if alert.code in [
+            "ORD-0039",  # .openroad ignored with -python
+            "ODB-0220",  # lef parsing/NOWIREEXTENSIONATPIN statement is obsolete in version 5.6 or later.
+            "STA-1256",  # table template \w+ not found
+        ]:
+            return alert
+        if alert.cls == "error":
+            self.err(str(alert), extra={"key": alert.code})
+        elif alert.cls == "warning":
+            self.warn(str(alert), extra={"key": alert.code})
+        return alert
+
+    def prepare_env(self, env: dict, state: State) -> dict:
+        env = super().prepare_env(env, state)
+
+        lib_list = self.toolbox.filter_views(self.config, self.config["CELL_LIBS"])
+        lib_list += self.toolbox.filter_views(self.config, self.config["PAD_LIBS"])
+        lib_list += self.toolbox.get_macro_views(self.config, DesignFormat.LIB)
+
+        env["_SDC_IN"] = self.config["PNR_SDC_FILE"] or self.config["FALLBACK_SDC"]
+        env["_PNR_LIBS"] = TclStep.value_to_tcl(lib_list)
+        env["_MACRO_LIBS"] = TclStep.value_to_tcl(
+            self.toolbox.get_macro_views(self.config, DesignFormat.LIB)
+        )
+        if self.config["STA_EXTRA_CORNER_TCL_FILE"]:
+            env["_EXTRA_CORNER_TCL_FILE"] = self.config["STA_EXTRA_CORNER_TCL_FILE"]
+
+        excluded_cells: Set[str] = set(self.config["EXTRA_EXCLUDED_CELLS"] or [])
+        excluded_cells.update(process_list_file(self.config["PNR_EXCLUDED_CELL_FILE"]))
+        env["_PNR_EXCLUDED_CELLS"] = TclUtils.join(excluded_cells)
+
+        return env
+
+    def run(self, state_in, **kwargs) -> Tuple[ViewsUpdate, MetricsUpdate]:
+        """
+        The `run()` override for the OpenROADStep class handles two things:
+
+        1. Before the `super()` call: Process _LIB_CORNER_<i> for liberty/corner
+        pairs.
+
+        2. After the `super()` call: Processes the `or_metrics_out.json` file and
+        updates the State's `metrics` property with any new metrics in that object.
+        """
+        self.alerts = None
+        kwargs, env = self.extract_env(kwargs)
+        env = self.prepare_env(env, state_in)
+
+        corners: List[str] = self.config["PNR_CORNERS"] or [
+            self.config["DEFAULT_CORNER"]
+        ]
+
+        @dataclass
+        class IPVTCorner:
+            name: str
+            libs: List[Path]
+            layers_rc: Optional[Dict[str, Dict[str, Decimal]]]
+            vias_r: Optional[Dict[str, Dict[str, Decimal]]]
+
+            def __eq__(self, other):
+                if not isinstance(other, IPVTCorner):
+                    return False
+                return (
+                    self.libs == other.libs
+                    and self.layers_rc == other.layers_rc
+                    and self.vias_r == other.vias_r
+                )
+
+            def __hash__(self):
+                return hash(
+                    (
+                        frozenset([str(lib) for lib in self.libs]),
+                        TclStep.value_to_tcl(self.layers_rc),
+                        TclStep.value_to_tcl(self.vias_r),
+                    )
+                )
+
+        if "corners" in kwargs:
+            corners = kwargs.pop("corners")
+            debug(f"Corners Override {corners}")
+
+        count = 0
+        ipvt_corners = {}
+        for corner in corners:
+            _, libs, _, _ = self.toolbox.get_timing_files_categorized(
+                self.config, corner
+            )
+            ipvt_corners[corner] = IPVTCorner(corner, libs, None, None)
+            # debug(f"Liberty files for '{corner}' added: {libs}")
+            count += 1
+
+        check = False
+        if "check" in kwargs:
+            check = kwargs.pop("check")
+
+        layers_rc = self.config["LAYERS_RC"]
+        if layers_rc is not None:
+            for corner_wildcard, metal_layers in layers_rc.items():
+                for corner in Filter([corner_wildcard]).filter(corners):
+                    ipvt_corners[corner].layers_rc = metal_layers
+
+        vias_r = self.config["VIAS_R"]
+        if vias_r is not None:
+            for corner_wildcard, metal_layers in vias_r.items():
+                for corner in Filter(corner_wildcard).filter(corners):
+                    ipvt_corners[corner].vias_r = metal_layers
+
+        filtered_ipvt_corners_names_sorted = corners
+        if self.config["DEDUPLICATE_CORNERS"]:
+            filtered_ipvt_corners = {
+                k: v
+                for k, v in ipvt_corners.items()
+                if k in [corner.name for corner in set(ipvt_corners.values())]
+            }
+            filtered_ipvt_corners_names_sorted = [
+                x for _, x in sorted(zip(corners, filtered_ipvt_corners.keys()))
+            ]
+        count = 0
+        for corner_name in filtered_ipvt_corners_names_sorted:
+            vias_r = ipvt_corners[corner_name].vias_r
+            if vias_r is not None:
+                for via, rc in vias_r.items():
+                    res = rc["res"]
+                    env[f"_VIA_R_{count}"] = TclStep.value_to_tcl(
+                        [corner_name, via, res]
+                    )
+                    count += 1
+        count = 0
+        for corner_name in filtered_ipvt_corners_names_sorted:
+            layers_rc = ipvt_corners[corner_name].layers_rc
+            if layers_rc is not None:
+                for layer, rc in layers_rc.items():
+                    res = rc["res"]
+                    cap = rc["cap"]
+                    env[f"_LAYER_RC_{count}"] = TclStep.value_to_tcl(
+                        [corner_name, layer, res, cap]
+                    )
+                    count += 1
+
+        count = 0
+        for corner_name in filtered_ipvt_corners_names_sorted:
+            env[f"_LIB_CORNER_{count}"] = TclStep.value_to_tcl(
+                [corner_name] + ipvt_corners[corner_name].libs
+            )
+            count += 1
+
+        command = self.get_command()
+
+        subprocess_result = self.run_subprocess(
+            command,
+# Copyright 2021-2022 Efabless Corporation
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#      http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+# Resistance/Capacitance Overrides
+# Via resistance
+
+proc log_cmd_rc {cmd args} {
+    if { $::env(SET_RC_VERBOSE) } {
+        log_cmd $cmd {*}$args
+    } else {
+        $cmd {*}$args
+    }
+}
+
+proc set_layers_custom_rc {args} {
+    # Returns: All corner names for which RC values were found
+    set i "0"
+    set tc_key "_LAYER_RC_$i"
+    set custom_corner_rc [list]
+    while { [info exists ::env($tc_key)] } {
+        # [$corner] + [layer] + [str(round(res, 8))] + [str(round(cap, 8))]
+        set corner_name [lindex $::env($tc_key) 0]
+        set layer_name [lindex $::env($tc_key) 1]
+        set res_value [lindex $::env($tc_key) 2]
+        set cap_value [lindex $::env($tc_key) 3]
+        log_cmd_rc set_layer_rc \
+            -layer $layer_name\
+            -capacitance $cap_value\
+            -corner $corner_name\
+            -resistance $res_value
+        incr i
+        set tc_key "_LAYER_RC_$i"
+        if { [lsearch $custom_corner_rc $corner_name] == -1 } {
+            lappend custom_corner_rc $corner_name
+        }
+    }
+    return $custom_corner_rc
+}
+
+proc set_via_custom_r {args} {
+    set i "0"
+    set tc_key "_VIA_R_$i"
+    set custom_corner_r [list]
+    while { [info exists ::env($tc_key)] } {
+        set corner_name [lindex $::env($tc_key) 0]
+        set via_name [lindex $::env($tc_key) 1]
+        set res_value [lindex $::env($tc_key) 2]
+        log_cmd_rc set_layer_rc \
+            -via $via_name\
+            -resistance $res_value\
+            -corner $corner_name
+        incr i
+        set tc_key "_VIA_R_$i"
+        if { [lsearch $custom_corner_r $corner_name] == -1 } {
+            lappend custom_corner_r $corner_name
+        }
+    }
+    return $custom_corner_r
+}
+
+proc set_layers_default_rc {corners} {
+    foreach layer [get_layers -type ROUTING] {
+        set layer_name [$layer getName]
+        lassign [est::dblayer_wire_rc $layer] layer_wire_res_ohm_m layer_wire_cap_farad_m
+        set layer_wire_res_per_unit_distance [expr $layer_wire_res_ohm_m * [sta::unit_scale distance] / [sta::unit_scale resistance]]
+        set layer_wire_cap_per_unit_distance [expr $layer_wire_cap_farad_m * [sta::unit_scale distance] / [sta::unit_scale capacitance]]
+        foreach corner $corners {
+            log_cmd_rc set_layer_rc \
+                -layer $layer_name\
+                -corner $corner\
+                -resistance $layer_wire_res_per_unit_distance\
+                -capacitance $layer_wire_cap_per_unit_distance
+        }
+    }
+}
+
+proc set_vias_default_r {corners} {
+    foreach layer [get_layers -types "CUT"] {
+        set layer_name [$layer getName]
+        set res [expr [$layer getResistance] / [sta::unit_scale resistance]]
+        foreach corner $corners {
+            log_cmd_rc set_layer_rc \
+                -corner $corner\
+                -resistance $res\
+                -via $layer_name
+        }
+    }
+}
+
+proc set_wire_rc_wrapper {args} {
+    sta::parse_key_args "set_wire_rc_wrapper" args \
+        keys {}\
+        flags {-use_corners}
+
+    # We only want the layers that will actually be used for set_wire_rc's estimations.
+    set layer_names [get_layers -constrained -type ROUTING -map getName]
+    set signal_wire_rc_layers $layer_names
+    set clock_wire_rc_layers $layer_names
+    if { [info exist ::env(SIGNAL_WIRE_RC_LAYERS)] } {
+        set signal_wire_rc_layers $::env(SIGNAL_WIRE_RC_LAYERS)
+    }
+    if { [info exist ::env(CLOCK_WIRE_RC_LAYERS)] } {
+        set clock_wire_rc_layers $::env(CLOCK_WIRE_RC_LAYERS)
+    }
+    set signal_args [list]
+    lappend signal_args -signal
+    if { [llength $signal_wire_rc_layers] > 1 } {
+        lappend signal_args -layers "$signal_wire_rc_layers"
+    } else {
+        lappend signal_args -layer "$signal_wire_rc_layers"
+    }
+
+    set clock_args [list]
+    lappend clock_args -clock
+    if { [llength $clock_wire_rc_layers] > 1 } {
+        lappend clock_args -layers "$clock_wire_rc_layers"
+    } else {
+        lappend clock_args -layer "$clock_wire_rc_layers"
+    }
+
+    if { [info exists flags(-use_corners)] } {
+        foreach corner [lln::get_corner_names] {
+            log_cmd_rc set_wire_rc {*}$clock_args -corner $corner
+            log_cmd_rc set_wire_rc {*}$signal_args -corner $corner
+        }
+    } else {
+        log_cmd_rc set_wire_rc {*}$clock_args
+        log_cmd_rc set_wire_rc {*}$signal_args
+    }
+}
+
+# TODO: Replace with actual Tcl sets once we have access to the standard library
+proc set_diff {setA setB} {
+    set setC [list]
+    foreach element $setA {
+        if {[lsearch $setB $element] == -1} {
+            lappend setC $element
+        }
+    }
+    return $setC
+}
+
+# Flow as follows
+# 1. Set layers custom rc - if defined
+# 2. Set vias custom r - if defined
+# 3. If (1) doesn't override all the corners, set the default techlef value for the remaining corners for layers
+# 3.a If (2) doesn't override all the corners, set the default techlef value for the remaining corners for vias
+# 4. If (1) doesn't override the corners at all, call set_wire_rc without -corner, to ensure the default behavior
+# 5. If (1) does override (some) corners, we must use set_wire_rc with -corner, becuase otherwise set_wire_rc will set the default techlef value for all existing corners
+
+set corners_with_custom_layer_rc [set_layers_custom_rc]
+set corners_with_custom_via_r [set_via_custom_r]
+set corners_without_custom_layer_rc [set_diff [lln::get_corner_names] $corners_with_custom_layer_rc]
+set corners_without_custom_via_r [set_diff [lln::get_corner_names] $corners_with_custom_via_r]
+
+# If ANY CORNERS have custom RC values set, set the tech LEF values for the
+# remaining corners.
+#
+# If NO CORNERS have custom RC values set, do nothing. The set_wire_rc LATER
+# will automatically average the Tech LEF values.
+#
+# This is because, technically, while both behaviors SHOULD be identical, they
+# aren't because of roundoff errors emblematic of IEEE 754.
+if { [llength $corners_with_custom_layer_rc] } {
+    log_cmd_rc set_layers_default_rc $corners_without_custom_layer_rc
+}
+if { [llength $corners_with_custom_via_r] } {
+    log_cmd_rc set_vias_default_r $corners_without_custom_via_r
+}
+
+
+# If ANY corners are set, supply -corner with the set_wire_rc command.
+#
+# If NONE are set, just use set_wire_rc and let it handle all corners.
+# For some godforsaken reason, set_wire_rc actually alters its own calculations
+# slightly depending on if -corner is passed or not.
+if { [llength $corners_with_custom_layer_rc] } {
+    log_cmd_rc set_wire_rc_wrapper -use_corners
+} else {
+    log_cmd_rc set_wire_rc_wrapper
+}
+

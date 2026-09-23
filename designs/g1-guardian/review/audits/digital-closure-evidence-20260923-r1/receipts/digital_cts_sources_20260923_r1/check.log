@@ -1,0 +1,656 @@
+time="2026-09-23T09:09:01+02:00" level=warning msg="Network file system detected as backing store.  Enforcing overlay option `force_mask=\"700\"`.  Add it to storage.conf to silence this warning"
+time="2026-09-23T09:09:02+02:00" level=warning msg="Network file system detected as backing store.  Enforcing overlay option `force_mask=\"700\"`.  Add it to storage.conf to silence this warning"
+Resource enforcement: CPU affinity; memory reservation only (rootless cgroups v1).
+time="2026-09-23T09:09:03+02:00" level=warning msg="Network file system detected as backing store.  Enforcing overlay option `force_mask=\"700\"`.  Add it to storage.conf to silence this warning"
+# Copyright 2025 LibreLane Contributors
+#
+# Adapted from OpenLane
+#
+# Copyright 2022-2025 Efabless Corporation
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#      http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+source $::env(_TCL_ENV_IN)
+source $::env(SCRIPTS_DIR)/openroad/common/set_global_connections.tcl
+
+namespace eval lln {
+    proc get_corner_names {} {
+        # returns: names as a Tcl list, compatible with both OpenSTA 2 and 3
+        if {[string length [namespace which sta::scenes]] != 0} {
+            # scenes are bridged as a list of strings
+            return [sta::scenes]
+        } else {
+            # corners are not bridged as strings
+            set result [list]
+            foreach corner [sta::corners] {
+                lappend result [$corner name]
+            }
+            return $result
+        }
+    }
+    proc get_corner_dict {} {
+        # returns: Tcl dictionary from corner names to whatever object is
+        # interpreted as a corner for internal commands that expect corners:
+        # - in OpenSTA 3, that's the scene's name again
+        # - in OpenSTA 2, that's an opaque Tcl pointer
+        set result [dict create]
+        if {[string length [namespace which sta::scenes]] != 0} {
+            foreach scene [sta::scenes] {
+                dict set result $scene $scene
+            }
+        } else {
+            foreach corner [sta::corners] {
+                dict set result [$corner name] $corner
+            }
+        }
+        return $result
+    }
+
+    proc set_sta_cmd_corner {corner_name} {
+        if {[string length [namespace which sta::set_cmd_scene]] != 0} {
+            sta::set_cmd_scene $corner_name
+        } else {
+            set corner_object [sta::find_corner $corner_name]
+            sta::set_cmd_corner $corner_object
+        }
+    }
+};
+
+proc string_in_file {file_path substring} {
+    set f [open $file_path r]
+    set data [read $f]
+    close $f
+
+    if { [string first $substring $data] != -1} {
+        return 1
+    }
+    return 0
+}
+
+proc env_var_used {file var} {
+    return [string_in_file $file "\$::env($var)"]
+}
+
+proc set_global_vars {} {
+    if { [namespace exists ::ord] } {
+        set ::db [::ord::get_db]
+        set ::chip [$::db getChip]
+        set ::tech [$::db getTech]
+        set ::block [$::chip getBlock]
+        set ::dbu [$::tech getDbUnitsPerMicron]
+        set ::libs [$::db getLibs]
+    }
+}
+
+proc read_current_sdc {} {
+    if { ![info exists ::env(_SDC_IN)]} {
+        puts "\[INFO\] _SDC_IN not found. Not reading an SDC file."
+        return
+    }
+
+    # Compatibility Layer for Deprecated Variables That May Still Be Used By
+    # User Files
+    set ::env(IO_PCT) [expr $::env(IO_DELAY_CONSTRAINT) / 100]
+    set ::env(SYNTH_TIMING_DERATE) [expr $::env(TIME_DERATING_CONSTRAINT) / 100]
+    set ::env(SYNTH_MAX_FANOUT) $::env(MAX_FANOUT_CONSTRAINT)
+    set ::env(SYNTH_CLOCK_UNCERTAINTY) $::env(CLOCK_UNCERTAINTY_CONSTRAINT)
+    set ::env(SYNTH_CLOCK_TRANSITION) $::env(CLOCK_TRANSITION_CONSTRAINT)
+    set ::env(SYNTH_CAP_LOAD) $::env(OUTPUT_CAP_LOAD)
+    if { [info exists ::env(MAX_TRANSITION_CONSTRAINT)] } {
+        set ::env(SYNTH_MAX_TRAN) $::env(MAX_TRANSITION_CONSTRAINT)
+    }
+    if { [env_var_used $::env(_SDC_IN) SYNTH_DRIVING_CELL_PIN] == 1 } {
+        set synth_driving_cell_bk $::env(SYNTH_DRIVING_CELL)
+        set ::env(SYNTH_DRIVING_CELL_PIN) [lindex [split $::env(SYNTH_DRIVING_CELL) "/"] 1]
+        set ::env(SYNTH_DRIVING_CELL) [lindex [split $::env(SYNTH_DRIVING_CELL) "/"] 0]
+    }
+
+    puts "Reading design constraints file at '$::env(_SDC_IN)'…"
+    if {[catch {read_sdc $::env(_SDC_IN)} errmsg]} {
+        puts stderr $errmsg
+        exit 1
+    }
+
+    if { ![string_in_file $::env(_SDC_IN) "set_propagated_clock"] && ![string_in_file $::env(_SDC_IN) "unset_propagated_clock"] } {
+        if { [info exists ::env(OPENLANE_SDC_IDEAL_CLOCKS)] && $::env(OPENLANE_SDC_IDEAL_CLOCKS) } {
+            puts "\[INFO\] No information on clock propagation in input SDC file-- unpropagating all clocks."
+            unset_propagated_clock [all_clocks]
+        } else {
+            puts "\[INFO\] No information on clock propagation in input SDC file-- propagating all clocks."
+            set_propagated_clock [all_clocks]
+        }
+    }
+
+    # Restore Environment
+    unset ::env(IO_PCT)
+    unset ::env(SYNTH_TIMING_DERATE)
+    unset ::env(SYNTH_MAX_FANOUT)
+    unset ::env(SYNTH_CLOCK_UNCERTAINTY)
+    unset ::env(SYNTH_CLOCK_TRANSITION)
+    unset ::env(SYNTH_CAP_LOAD)
+    if { [info exists ::env(SYNTH_MAX_TRAN)] } {
+        unset ::env(SYNTH_MAX_TRAN)
+    }
+    if { [info exists ::env(SYNTH_DRIVING_CELL_PIN)] } {
+        unset ::env(SYNTH_DRIVING_CELL_PIN)
+        set ::env(SYNTH_DRIVING_CELL) $synth_driving_cell_bk
+    }
+}
+
+proc read_pad_cfg {} {
+    if {[catch {source $::env(PAD_CFG)} errmsg]} {
+        puts stderr $errmsg
+        exit 1
+    }
+}
+
+proc read_pdn_cfg {} {
+
+    # Compatibility Layer for Deprecated Variables That May Still Be Used By
+    # User Files
+    set unset_list {
+        DESIGN_IS_CORE
+        PDN_ENABLE_MACROS_GRID
+        PDN_RAILS_LAYER
+        PDN_UPPER_LAYER
+        PDN_LOWER_LAYER
+    }
+    set ::env(DESIGN_IS_CORE) $::env(PDN_MULTILAYER)
+    set ::env(PDN_ENABLE_MACROS_GRID) $::env(PDN_CONNECT_MACROS_TO_GRID)
+    set ::env(PDN_RAILS_LAYER) $::env(PDN_RAIL_LAYER)
+    set ::env(PDN_UPPER_LAYER) $::env(PDN_HORIZONTAL_LAYER)
+    set ::env(PDN_LOWER_LAYER) $::env(PDN_VERTICAL_LAYER)
+    foreach key [array names ::env] {
+        if { [string match PDN_* $key] } {
+            set fp_name FP_$key
+            lappend unset_list $fp_name
+            set ::env($fp_name) $::env($key)
+        }
+    }
+
+    if {[catch {source $::env(PDN_CFG)} errmsg]} {
+        puts stderr $errmsg
+        exit 1
+    }
+
+    # Restore Environment
+    foreach unsettable $unset_list {
+        unset ::env($unsettable)
+    }
+}
+
+
+proc read_current_netlist {args} {
+    sta::parse_key_args "read_current_netlist" args \
+        keys {}\
+        flags {-powered}
+
+    if { [info exists flags(-powered)] } {
+        puts "Reading top-level powered netlist at '$::env(CURRENT_PNL)'…"
+        if {[catch {read_verilog $::env(CURRENT_PNL)} errmsg]} {
+            puts stderr $errmsg
+            exit 1
+        }
+    } else {
+        puts "Reading top-level netlist at '$::env(CURRENT_NL)'…"
+        if {[catch {read_verilog $::env(CURRENT_NL)} errmsg]} {
+            puts stderr $errmsg
+            exit 1
+        }
+    }
+
+    puts "Linking design '$::env(DESIGN_NAME)' from netlist…"
+    link_design $::env(DESIGN_NAME)
+    set_global_vars
+    read_current_sdc
+}
+
+proc read_timing_info {args} {
+    sta::parse_key_args "read_timing_info" args \
+        keys {}\
+        flags {-powered}
+
+    if { ![info exists ::env(_CURRENT_CORNER_NAME)] } {
+        return
+    }
+    set corner_name $::env(_CURRENT_CORNER_NAME)
+    log_cm define_corners $corner_name
+
+    puts "Reading timing models for corner $corner_name…"
+
+    foreach lib $::env(_CURRENT_CORNER_LIBS) {
+        puts "Reading cell library for the '$corner_name' corner at '$lib'…"
+        read_liberty -corner $corner_name $lib
+    }
+
+    if { [info exists ::env(EXTRA_LIBS) ] } {
+        puts "Reading explicitly-specified extra libs for $corner_name…"
+        foreach extra_lib $::env(EXTRA_LIBS) {
+            puts "Reading extra timing library for the '$corner_name' corner at '$extra_lib'…"
+            read_liberty -corner $corner_name $extra_lib
+        }
+    }
+
+    set blackbox_wildcard {/// sta-blackbox}
+    foreach nl $::env(_CURRENT_CORNER_NETLISTS) {
+        puts "Reading macro netlist at '$nl'…"
+        if { [catch {read_verilog $nl} err] } {
+            puts stderr "Error while reading macro netlist '$nl':"
+            puts stderr $err
+            puts stderr "Make sure that this a gate-level netlist and not an RTL file."
+            exit 1
+        }
+    }
+    if { [info exists ::env(EXTRA_VERILOG_MODELS)] } {
+        foreach verilog_file $::env(EXTRA_VERILOG_MODELS) {
+            if { [string_in_file $verilog_file $blackbox_wildcard] } {
+                puts "Found '$blackbox_wildcard' in '$verilog_file', skipping…"
+            } elseif { [catch {puts "Reading Verilog model at '$verilog_file'…"; read_verilog $verilog_file} err] } {
+                puts stderr "Error while reading $verilog_file:"
+                puts stderr $err
+                puts stderr "Make sure that this a gate-level netlist and not an RTL file, otherwise, you can add the following comment '$blackbox_wildcard' in the file to skip it and blackbox the modules inside if needed."
+                exit 1
+            }
+        }
+    }
+    if { [info exists flags(-powered)] } {
+        read_current_netlist -powered
+    } else {
+        read_current_netlist
+    }
+}
+
+proc lshift {inputlist} {
+    upvar $inputlist argv
+    set arg  [lindex $argv 0]
+    #set argv [lrange $argv 1 end] ;# below is much faster - lreplace can make use of unshared Tcl_Obj to avoid alloc'ing the result
+    set argv [lreplace $argv[set argv {}] 0 0]
+    return $arg
+}
+
+proc read_spefs {} {
+    if { [info exists ::env(_CURRENT_SPEF_BY_CORNER)] } {
+        set corner_name $::env(_CURRENT_CORNER_NAME)
+        puts "Reading top-level design parasitics for the '$corner_name' corner at '$::env(_CURRENT_SPEF_BY_CORNER)'…"
+        read_spef -corner $corner_name $::env(_CURRENT_SPEF_BY_CORNER)
+    }
+    if { [info exists ::env(_CURRENT_CORNER_SPEFS)] } {
+        set corner_name $::env(_CURRENT_CORNER_NAME)
+        foreach spefs $::env(_CURRENT_CORNER_SPEFS) {
+            set instance_path [lshift spefs]
+            foreach spef $spefs {
+                puts "Reading '$instance_path' parasitics for the '$corner_name' corner at '$spef'…"
+                read_spef -corner $corner_name -path $instance_path $spef
+            }
+        }
+    }
+    if { [info exists ::env(_CURRENT_CORNER_EXTRA_SPEFS_BACKCOMPAT)] } {
+        set corner_name $::env(_CURRENT_CORNER_NAME)
+        foreach pair $::env(_CURRENT_CORNER_EXTRA_SPEFS_BACKCOMPAT) {
+            set module_name [lindex $pair 0]
+            set spef [lindex $pair 1]
+            foreach cell [get_cells * -hierarchical] {
+                if { "[get_property $cell ref_name]" eq "$module_name"} {
+                    set instance_path [get_property $cell full_name]
+                    puts "Reading '$instance_path' parasitics for the '$corner_name' corner at '$spef'…"
+                    read_spef -corner $corner_name -path $instance_path $spef
+                }
+            }
+        }
+    }
+}
+
+proc read_pnr_libs {args} {
+    set i "0"
+    set tc_key "_LIB_CORNER_$i"
+    set corner_names [list]
+    while { [info exists ::env($tc_key)] } {
+        set corner_name [lindex $::env($tc_key) 0]
+        set corner_libs [lreplace $::env($tc_key) 0 0]
+        set corner($corner_name) $corner_libs
+        incr i
+        set tc_key "_LIB_CORNER_$i"
+        lappend corner_names $corner_name
+    }
+
+    define_corners {*}[array name corner]
+
+    foreach corner_name [array name corner] {
+        puts "Reading timing models for corner $corner_name…"
+
+        set corner_models $corner($corner_name)
+        foreach model $corner_models {
+            puts "Reading timing library for the '$corner_name' corner at '$model'…"
+            read_liberty -corner $corner_name $model
+        }
+
+        if { [info exists ::env(EXTRA_LIBS) ] } {
+            puts "Reading explicitly-specified extra libs for $corner_name…"
+            foreach extra_lib $::env(EXTRA_LIBS) {
+                puts "Reading extra timing library for the '$corner
+# Copyright 2022 Efabless Corporation
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#      http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+source $::env(SCRIPTS_DIR)/openroad/common/dpl_cell_pad.tcl
+
+remove_fillers
+
+log_cmd detailed_placement\
+    -max_displacement [subst { $::env(PL_MAX_DISPLACEMENT_X) $::env(PL_MAX_DISPLACEMENT_Y) }]
+
+if { [info exists ::env(PL_OPTIMIZE_MIRRORING)] && $::env(PL_OPTIMIZE_MIRRORING) } {
+    optimize_mirroring
+}
+check_placement -verbose
+
+# Copyright 2023 Efabless Corporation
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#      http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+from __future__ import annotations
+
+import os
+import threading
+from enum import Enum
+from decimal import Decimal
+from abc import abstractmethod
+from dataclasses import is_dataclass, asdict
+from typing import (
+    Any,
+    ClassVar,
+    Iterable,
+    List,
+    Mapping,
+    Optional,
+    Sequence,
+    Tuple,
+    Dict,
+    Union,
+)
+
+from .step import ViewsUpdate, MetricsUpdate, Step, StepException
+
+from ..state import State, DesignFormat
+from ..common import (
+    Path,
+    TclUtils,
+    get_script_dir,
+    protected,
+    is_string,
+)
+
+
+class TclStep(Step):
+    """
+    A subclass of :class:`Step` that primarily deals with running Tcl-based utilities,
+    such as Yosys, OpenROAD and Magic.
+
+    A TclStep Step should ideally correspond to running one Tcl script with such
+    a utility.
+
+    :cvar reproducibles_allowed: Whether this class can generate reproducibles.
+    """
+
+    reproducibles_allowed: ClassVar[bool] = True
+
+    @staticmethod
+    def value_to_tcl(value: Any) -> str:
+        """
+        Converts an arbitrary Python value to Tcl as follows:
+
+        * If the value is an instance of a dataclass, it is serialized as a JSON object.
+        * If the value is a list, it is joined using :meth:`TclUtils.join`.
+        * If the value is a dict, the keys and values are escaped recursively using:
+            joined using :meth:`TclUtils.join`.
+        * If the value is an Enum, its name is returned.
+        * If the value is Boolean, "1" is returned for True and "0" for False.
+        * If the value is numeric, it is converted to a string.
+        * Otherwise, the value is passed to ``str()``.
+        """
+        if not isinstance(value, type) and is_dataclass(value):
+            return TclStep.value_to_tcl(asdict(value))
+        elif isinstance(value, Mapping):
+            result = []
+            for v_key, v_value in value.items():
+                result.append(TclStep.value_to_tcl(v_key))
+                result.append(TclStep.value_to_tcl(v_value))
+            return TclUtils.join(result)
+        elif isinstance(value, Iterable) and not is_string(value):
+            result = []
+            for item in value:
+                result.append(TclStep.value_to_tcl(item))
+            return TclUtils.join(result)
+        elif isinstance(value, Enum):
+            return value.name
+        elif isinstance(value, bool):
+            return "1" if value else "0"
+        elif isinstance(value, Decimal):
+            return str(value)  # f"{value:e}"
+        elif isinstance(value, int):
+            return str(value)
+        else:
+            return str(value)
+
+    @protected
+    @abstractmethod
+    def get_script_path(self) -> str:
+        """
+        :returns: A path to the Tcl script to be run by this step.
+        """
+        pass
+
+    @protected
+    def get_command(self) -> List[str]:
+        """
+        This command should be overridden by subclasses and replaced with a
+        command incorporating the  appropriate tool: e.g. ``openroad``,
+        ``yosys``, et cetera.
+
+        :returns: A list of strings representing the command used to run the script,
+            including the result of :meth:`get_script_path`.
+        """
+        return ["tclsh", self.get_script_path()]
+
+    @protected
+    def prepare_env(self, env: dict, state: State) -> dict:
+        """
+        Creates a copy of an environment dictionary, then converts all accessible
+        ``self.config`` variables and state inputs to environment variables so
+        they may be used as inputs to the scripts.
+
+        Inputs are assigned the keys ``CURRENT_{ID}`` where ID is
+        the relevant :class:`DesignFormat`'s enum name.
+
+        Outputs are assigned the keys ``CURRENT_{ID}`` where ID is
+        the relevant :class:`DesignFormat`'s enum name, although outputs with
+        multiple values (SPEF, etc) will be skipped and a step is expected to
+        handle creating variables for them on its own.
+
+        The values are converted to strings as per :meth:`value_to_tcl`.
+
+        :param env: The input environment dictionary
+        :param state: The input state
+        :returns: a copy of the environment dictionary where ``self.config`` variables
+        """
+        env = env.copy()
+
+        env["STEP_ID"] = self.get_implementation_id()
+        env["SCRIPTS_DIR"] = os.path.abspath(get_script_dir())
+        env["STEP_DIR"] = os.path.abspath(self.step_dir)
+
+        tech_lefs = self.toolbox.filter_views(self.config, self.config["TECH_LEFS"])
+        if len(tech_lefs) != 1:
+            raise StepException(
+                "Misconfigured SCL: 'TECH_LEFS' must return exactly one Tech LEF for its default timing corner."
+            )
+
+        env["TECH_LEF"] = tech_lefs[0]
+
+        macro_lefs = self.toolbox.get_macro_views(self.config, DesignFormat.LEF)
+        env["MACRO_LEFS"] = TclUtils.join([str(lef) for lef in macro_lefs])
+
+        for element in self.config.keys():
+            value = self.config[element]
+            if value is None:
+                continue
+            env[element] = TclStep.value_to_tcl(value)
+
+        for input in self.inputs:
+            key = f"CURRENT_{input.id.upper()}"
+            if input_path := state.get_by_df(input):
+                env[key] = TclStep.value_to_tcl(input_path)
+
+        for output in self.outputs:
+            if output.multiple:
+                # Too step-specific.
+                continue
+            filename = f"{self.config['DESIGN_NAME']}.{output.extension}"
+            env[f"SAVE_{output.id.upper()}"] = os.path.join(self.step_dir, filename)
+
+        return env
+
+    @protected
+    def run(self, state_in: State, **kwargs) -> Tuple[ViewsUpdate, MetricsUpdate]:
+        """
+        This overridden :meth:`run` function prepares configuration variables and
+        inputs for use with Tcl: specifically, it converts them all to
+        environment variables so they may be used by the Tcl scripts being called.
+        See :meth:`prepare_env` for more info.
+
+        Additionally, it logs the output to a ``.log`` file named after the script.
+
+        When overriding in a subclass, you may find it useful to use this pattern:
+
+        .. code-block:: python
+
+            kwargs, env = self.extract_env(kwargs)
+            env["CUSTOM_ENV_VARIABLE"] = "1"
+            return super().run(state_in, env=env, **kwargs)
+
+        This will allow you to add further custom environment variables to a call
+        while still respecting an ``env`` argument further up the call-stack.
+
+        :param state_in: See superclass.
+        :param \\*\\*kwargs: Passed on to subprocess execution: useful if you want to
+            redirect stdin, stdout, etc.
+        :returns: see superclass
+        """
+        command = self.get_command()
+
+        kwargs, env = self.extract_env(kwargs)
+
+        env = self.prepare_env(env, state_in)
+
+        subprocess_result = self.run_subprocess(
+            command,
+            env=env,
+            **kwargs,
+        )
+
+        overrides: ViewsUpdate = {}
+        for output in self.outputs:
+            if output.multiple:
+                # Too step-specific.
+                continue
+            path = Path(env[f"SAVE_{output.id.upper()}"])
+            if not path.exists():
+                continue
+            overrides[output] = path
+
+        return overrides, subprocess_result["generated_metrics"]
+
+    def _reroute_env(
+        self,
+        env: Dict[str, str],
+        report_dir: Optional[Union[str, os.PathLike]] = None,
+    ):
+        thread_postfix = f"_{threading.current_thread().name}"
+        if threading.current_thread() is threading.main_thread():
+            thread_postfix = ""
+
+        env_in_dir = report_dir or self.step_dir
+        env_in_file = os.path.join(env_in_dir, f"_env{thread_postfix}.tcl")
+
+        ENV_ALLOWLIST = [
+            "PATH",
+            "PYTHONPATH",
+            "SCRIPTS_DIR",
+            "DESIGN_DIR",
+            "STEP_DIR",
+            "PDK_ROOT",
+            "PDK",
+            "_TCL_ENV_IN",
+        ]
+        env_in: List[Tuple[str, str]] = list(env.items())
+
+        # Create new "blank" env dict
+        #
+        # For all values:
+        # If a value is unchanged: keep as is
+        # If a value is changed and is in ENV_ALLOWLIST: emplace in dict
+        # If a value is changed and is not in ENV_ALLOWLIST: write to file
+        #
+        # Emplace file to be sourced in dict with key ``_TCL_ENV_IN``
+        env = os.environ.copy()
+        with open(env_in_file, "w") as f:
+            for key, value in env_in:
+                if key in env and env[key] == value:
+                    continue
+                if key in ENV_ALLOWLIST or key.startswith("_"):
+                    env[key] = value
+                else:
+                    f.write(
+                        f"set ::env({key}) {TclUtils.escape(TclStep.value_to_tcl(value))}\n"
+                    )
+        env["_TCL_ENV_IN"] = env_in_file
+        return env
+
+    @protected
+    def run_subprocess(
+        self,
+        cmd: Sequence[Union[str, os.PathLike]],
+        log_to: Optional[Union[str, os.PathLike]] = None,
+        silent: bool = False,
+        report_dir: Optional[Union[str, os.PathLike]] = None,
+        env: Optional[Dict[str, str]] = None,
+        **kwargs,
+    ) -> Dict[str, Any]:
+        if env is not None:
+            env = self._reroute_env(env, report_dir=report_dir)
+        return super().run_subprocess(
+            cmd=cmd,
+            log_to=log_to,
+            silent=silent,
+            report_dir=report_dir,
+            env=env,
+            **kwargs,
+        )
+

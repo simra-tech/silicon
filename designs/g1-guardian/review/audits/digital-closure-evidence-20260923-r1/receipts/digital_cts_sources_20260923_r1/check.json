@@ -1,0 +1,22 @@
+{
+  "command": [
+    "timeout",
+    "--kill-after=5",
+    "60",
+    "flow/run.sh",
+    "python3",
+    "-c",
+    "from pathlib import Path; import librelane; p=Path(librelane.__file__).parent; print((p/\"scripts/openroad/common/io.tcl\").read_text()[:12000]); print((p/\"scripts/openroad/common/dpl.tcl\").read_text()); print((p/\"steps/tclstep.py\").read_text()[:12000])"
+  ],
+  "started_utc": "2026-09-23T07:09:01.464659+00:00",
+  "cwd": "${HOST_REPOSITORY}",
+  "env": {
+    "G1_CPUSET": "48",
+    "G1_CPUS": "1"
+  },
+  "status": "passed",
+  "returncode": 0,
+  "wall_s": 23.75760538689792,
+  "finished_utc": "2026-09-23T07:09:25.222275+00:00",
+  "log_sha256": "c7a3521eee9ec9122a1e46e430d383d5e2e244c238b36cdfc3cf9fe968fc6266"
+}

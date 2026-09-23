@@ -1,0 +1,35 @@
+time="2026-09-23T10:16:09+02:00" level=warning msg="Network file system detected as backing store.  Enforcing overlay option `force_mask=\"700\"`.  Add it to storage.conf to silence this warning"
+time="2026-09-23T10:16:10+02:00" level=warning msg="Network file system detected as backing store.  Enforcing overlay option `force_mask=\"700\"`.  Add it to storage.conf to silence this warning"
+Resource enforcement: CPU affinity; memory reservation only (rootless cgroups v1).
+time="2026-09-23T10:16:11+02:00" level=warning msg="Network file system detected as backing store.  Enforcing overlay option `force_mask=\"700\"`.  Add it to storage.conf to silence this warning"
+{
+  "status": "passed Boolean equivalence",
+  "inputs_sha256": {
+    "${REPOSITORY}/designs/g1-guardian/blocks/g1_ctrl/flow/runs/run7/34-openroad-detailedplacement/g1_digital.nl.v": "2b342c2457a99da99f7c9b3c65a1f519fcc75676264e47d0f266b5ae0883da88",
+    "${RESULTS_ROOT}/digital-final-nlrename-20260923-r1/g1_digital.nl.v": "6181b988eeaa28953a37bc11b2f4fb4b66325ed518c4cfa74387bfb83845a301",
+    "/foss/pdks/ihp-sg13g2/libs.ref/sg13g2_stdcell/lib/sg13g2_stdcell_typ_1p20V_25C.lib": "7677a8918689f452e80405ad16a83e744709342574f2aedcc507c2758986b396",
+    "/foss/tools/bin/yosys": "543197da7252a6f2323974ae35addfd53a6d812459dd211e3ccc0ba1893c064c"
+  },
+  "command": [
+    "timeout",
+    "--kill-after=5",
+    "180",
+    "/foss/tools/bin/yosys",
+    "-Q",
+    "-T",
+    "-s",
+    "${RESULTS_ROOT}/digital-equivalence-final-20260923-r2/proof.ys"
+  ],
+  "scope": "Mapped netlist Boolean equivalence under unchanged functional Liberty and clk2fflogic global-step/negative-async-hold semantics; not timing, reset analog behavior or CDC proof",
+  "not_run": [
+    "Post-route timing equivalence",
+    "Silicon measurement"
+  ],
+  "not_applicable": [
+    "Statistical seed"
+  ],
+  "returncode": 0,
+  "wall_s": 34.17035134509206,
+  "source_held": true,
+  "log_sha256": "74158ba164d63770499772cc69e6743cd23121305965c681bf4ab28eff4c27e1"
+}
