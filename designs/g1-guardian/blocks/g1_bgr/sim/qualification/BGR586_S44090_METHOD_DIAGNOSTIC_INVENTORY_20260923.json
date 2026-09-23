@@ -1,0 +1,70 @@
+{
+  "status": "passed compact evidence inventory; method parity failed; original population unchanged",
+  "files": [
+    {
+      "path": "designs/g1-guardian/blocks/g1_bgr/sim/qualification/BGR586_S44090_OP30_DIAGNOSTIC_20260923.md",
+      "bytes": 2798,
+      "sha256": "2c383d66b756edfd9a1eca160401b5e2b5775acc3639aa4519b04ce5f4cefa37"
+    },
+    {
+      "path": "designs/g1-guardian/blocks/g1_bgr/sim/qualification/BGR586_S44090_REVERSE_GRID_DIAGNOSTIC_20260923.md",
+      "bytes": 3058,
+      "sha256": "a1472fddc14efe8227dc7cd85ca384cd2c52512c59798f224fa11fbb4fa4b64c"
+    },
+    {
+      "path": "designs/g1-guardian/blocks/g1_bgr/sim/qualification/run_586_seed44090_op30_diagnostic.py",
+      "bytes": 9235,
+      "sha256": "0ba0f885cee8955961d0e71564f0aca7f26a7d7ff44a490f9b81da4fbfebc0de"
+    },
+    {
+      "path": "designs/g1-guardian/blocks/g1_bgr/sim/qualification/run_586_reverse_grid_diagnostic.py",
+      "bytes": 11253,
+      "sha256": "fd5d9a13318b227a67aee3908c0819727285186ee09e7e52831486a439c97cb3"
+    }
+  ],
+  "baseline": {
+    "source_sha256": "586ffb58b6af31c77a2e7cbcb83b173ffa4713ec62401da30901c5a7e606283b",
+    "seed44090_original_full_sweep_status": "failed watchdog120s; separate exact-deck 240s attempt also failed",
+    "seed44090_original_before_parameters": 2842,
+    "seed44089_forward_status": "passed saved control"
+  },
+  "diagnostics": [
+    {
+      "logical_result": "bgr586-s44090-op30-diagnostic-20260923-r1",
+      "saved_audit_sha256": "4f76c6a3a9bd2043715cce11ff52b9b73cd26b4f98b92a19870b761f099e077e",
+      "engine": "completed; wrapper summary serialization failed afterward",
+      "parameters_before_exact": 2842,
+      "parameters_after_exact": 2842,
+      "temperature_C": 30,
+      "tc": "not run",
+      "population_credit": "not applicable"
+    },
+    {
+      "logical_result": "bgr586-s44090-reverse-diagnostic-20260923-r1",
+      "summary_sha256": "87fd44a1fccd7d9692d589a9a7960f86cb3f689ede8af53268131c35673d27c6",
+      "finite_temperature_points": 34,
+      "parameters_before_exact": 2842,
+      "parameters_after_exact": 2842,
+      "comparison": "failed bit-exact versus OP30: 11/12 cells differ",
+      "diagnostic_tc_ppm_C": 10.014969879578272,
+      "population_credit": "not applicable"
+    },
+    {
+      "logical_result": "bgr586-s44089-reverse-control-20260923-r1",
+      "summary_sha256": "7e5ff692a77a18e37a5c7a4253107ac4a19de331ef3f2c2867a9b11af1204373",
+      "finite_temperature_points": 34,
+      "parameters_before_exact": 2842,
+      "parameters_after_exact": 2842,
+      "comparison": "failed bit-exact versus saved forward grid: 374/408 cells differ",
+      "diagnostic_tc_ppm_C": 9.798811122247496,
+      "population_credit": "not applicable"
+    }
+  ],
+  "not_run": [
+    "44090 original forward-grid TC completion",
+    "population recovery or yield estimate",
+    "model-validity qualification",
+    "full-chip electrical qualification"
+  ],
+  "privacy": "No host-machine absolute paths or private-context content in the four listed public files; bulk outputs retained under logical result identities."
+}
