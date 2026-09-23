@@ -1,0 +1,87 @@
+time="2026-09-23T06:03:15+02:00" level=warning msg="Network file system detected as backing store.  Enforcing overlay option `force_mask=\"700\"`.  Add it to storage.conf to silence this warning"
+time="2026-09-23T06:03:16+02:00" level=warning msg="Network file system detected as backing store.  Enforcing overlay option `force_mask=\"700\"`.  Add it to storage.conf to silence this warning"
+Resource enforcement: CPU affinity; memory reservation only (rootless cgroups v1).
+time="2026-09-23T06:03:17+02:00" level=warning msg="Network file system detected as backing store.  Enforcing overlay option `force_mask=\"700\"`.  Add it to storage.conf to silence this warning"
+{
+  "status": "passed local paired extraction and independent capacitor-network AC check",
+  "context_um": 24,
+  "sources": {
+    "@REPO@/designs/g1-guardian/review/audits/final_route_context/prepare_clip.py": "3d9bfb2f18e408c9e17bee7af05607ba3dddf07867fb864df6b91953422f9b2b",
+    "@REPO@/designs/g1-guardian/review/audits/final_route_context/route_inventory.py": "221468d93fbef4bda05c245794e027ae97a8abdaecf2ce2534d831fc6afa60e1",
+    "@REPO@/designs/g1-guardian/review/audits/final_route_context/audit_geometry.py": "1b34ed8ce7fd44b549bfa8c4c0e577ba75eeebf7da71ee05dc35672110e5829a",
+    "@REPO@/designs/g1-guardian/review/audits/run_fill_clip_pex.py": "ee9418dca3f55c24a4ad92fa16231ada468be56b6d9c7b1d35612a51fbe7ee09",
+    "@REPO@/designs/g1-guardian/review/audits/export_clip_lvsdb.lvs": "0df9eb0dc562947fa4d076cbfc2c93d0ec625e964bd2d7419d509cbffd1ed68b",
+    "@REPO@/designs/g1-guardian/review/audits/analyze_interface_clip.py": "ce90a512442641e8b6c5fe4e8ddc582f298813654bad27d370bc2d4276371eda",
+    "@REPO@/designs/g1-guardian/review/audits/clip_cap_graph.py": "a599bbcf2fa2bf5f0a4d25cca3f460f99b3485ba6261818b6838eb41f669bba6",
+    "@REPO@/designs/g1-guardian/review/audits/check_fill_clip_ac.py": "23b7e8a521f098a7a90aa2828c3d9b9a9dc8b1dbfa9e0f9074e53ddb5bea6e11",
+    "@REPO@/designs/g1-guardian/blocks/g1_top/sim/run_bounded.py": "a78744ac63045581b85bd99aba9c53985e938814cdf6ca59d4fd682051918df3"
+  },
+  "steps": [
+    {
+      "command": [
+        "/foss/tools/bin/python3",
+        "@REPO@/designs/g1-guardian/review/audits/final_route_context/prepare_clip.py",
+        "--inventory",
+        "@RESULTS@/final-route-inventory-20260923-r2/analysis.json",
+        "--geometry",
+        "@RESULTS@/final-route-geometry-20260923-r1/analysis.json",
+        "--candidate",
+        "@RESULTS@/final-native-poly-fill-20260923-r2",
+        "--victim",
+        "i_core.vref",
+        "--neighbor",
+        "i_core.osc_clk",
+        "--victim-segment",
+        "8",
+        "--neighbor-segment",
+        "5",
+        "--context-um",
+        "24",
+        "--output",
+        "@RESULTS@/final-vref-clock-clip-20260923-r1/clip"
+      ],
+      "returncode": 0,
+      "wall_s": 1.8692031111568213
+    },
+    {
+      "command": [
+        "/foss/tools/bin/python3",
+        "@REPO@/designs/g1-guardian/review/audits/run_fill_clip_pex.py",
+        "--clip",
+        "@RESULTS@/final-vref-clock-clip-20260923-r1/clip",
+        "--output",
+        "@RESULTS@/final-vref-clock-clip-20260923-r1/pex"
+      ],
+      "returncode": 0,
+      "wall_s": 10.288570519536734
+    },
+    {
+      "command": [
+        "/foss/tools/bin/python3",
+        "@REPO@/designs/g1-guardian/review/audits/analyze_interface_clip.py",
+        "--input",
+        "@RESULTS@/final-vref-clock-clip-20260923-r1/pex",
+        "--output",
+        "@RESULTS@/final-vref-clock-clip-20260923-r1/analysis"
+      ],
+      "returncode": 0,
+      "wall_s": 0.4948487523943186
+    },
+    {
+      "command": [
+        "/foss/tools/bin/python3",
+        "@REPO@/designs/g1-guardian/review/audits/check_fill_clip_ac.py",
+        "@RESULTS@/final-vref-clock-clip-20260923-r1/analysis"
+      ],
+      "returncode": 0,
+      "wall_s": 0.30848366022109985
+    }
+  ],
+  "scope": "One final VREF/OSC midpoint20um metal-only clip with explicit grounded-context boundary; no full-route scaling/adoption.",
+  "not_run": [
+    "24-to48um context convergence",
+    "longitudinal/end context",
+    "actual-source electrical acceptance",
+    "fullchip PEX"
+  ]
+}
