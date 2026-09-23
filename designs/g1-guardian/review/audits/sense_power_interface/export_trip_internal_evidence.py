@@ -16,12 +16,17 @@ def sha(data):return hashlib.sha256(data).hexdigest()
 def main():
     p=argparse.ArgumentParser(description=__doc__)
     p.add_argument('--bulk-root',type=Path,required=True);p.add_argument('--output',type=Path,required=True)
+    p.add_argument('--actual-source-r4',action='store_true')
     a=p.parse_args();a.bulk_root=a.bulk_root.resolve();a.output=a.output.resolve()
     assert not a.output.exists()and HERE in a.output.parents
     groups=['trip-internal-screen-20260923-r'+str(i)for i in(1,2,3)]
     groups+=['trip-internal-'+kind+'-20260923-r'+str(i)for kind in('build','drc','lvs')for i in(2,3)]
     groups+=['trip-fill-inventory-20260923-r'+str(i)for i in(1,2)]
     groups+=['trip-internal-global-20260923-r3','trip-internal-cuts-20260923-r3']
+    if a.actual_source_r4:
+        groups=['trip-parent-fill-diagnosis-20260923-r1','trip-actual-source-20260923-r4']
+        groups+=['trip-internal-'+kind+'-20260923-r4'for kind in('build','drc','lvs','global','cuts')]
+        groups+=['trip-actual-source-drc-20260923-r4']
     files=[];statuses=[]
     for name in groups:
         base=a.bulk_root/name
@@ -50,6 +55,10 @@ def main():
     helpers=['screen_trip_internal_access.py','build_trip_internal.py','check_trip_internal_lvs.py',
              'inspect_trip_fill_conflicts.py','export_trip_internal_global.py','prune_trip_fill.py',
              'audit_trip_internal_cuts.py','TRIP_INTERNAL_ACCESS_CONTRACT.md','export_trip_internal_evidence.py']
+    if a.actual_source_r4:
+        helpers=['diagnose_trip_parent_fill.py','prepare_trip_actual_source.py','build_trip_internal.py',
+                 'check_trip_internal_lvs.py','export_trip_internal_global.py','prune_trip_fill.py',
+                 'export_trip_internal_evidence.py','TRIP_ACTUAL_SOURCE_REVIEW.md']
     paths=sorted([HERE/name for name in helpers]+[q for q in a.output.rglob('*')if q.is_file()])
     inventory=dict(status='frozen compact internal-remedy milestone; no adoption',files=[
         dict(path=str(q.relative_to(REPO)),sha256=sha(q.read_bytes()),bytes=q.stat().st_size)for q in paths])

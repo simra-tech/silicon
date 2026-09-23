@@ -24,8 +24,9 @@ def compatible(actual,expected):
     return expected['child_cell']in actual['child_cell']and all(actual[k]==v for k,v in expected.items()if k!='child_cell')
 
 
-def prune_from_ledger(layout,top,ledger):
-    assert layout.dbu==.001 and ledger['source_GDS_sha256']=='c99f3ae11b4501610939aa09b4581535a42d257f76951a25b4c84dd72a3afb90'
+def prune_from_ledger(layout,top,ledger,bound_source_sha256=None):
+    expected=bound_source_sha256 or 'c99f3ae11b4501610939aa09b4581535a42d257f76951a25b4c84dd72a3afb90'
+    assert layout.dbu==.001 and ledger['source_GDS_sha256']==expected
     assert ledger['spacing_um']==.42
     before={str(info):region(layout,top,info)for info in layout.layer_infos()}
     texts=text_records(layout,top)
