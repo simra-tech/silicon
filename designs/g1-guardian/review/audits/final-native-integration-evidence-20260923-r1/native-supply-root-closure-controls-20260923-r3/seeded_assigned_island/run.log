@@ -1,0 +1,14 @@
+{
+  "status": "failed native supply integration",
+  "source_GDS_sha256": "4fc6b9ef936c638844084d86fb0ae1ce28956305a80dedc2c30cf5becdefedd0",
+  "contract_sha256": "d89dd85e4429879a8d94e892e07c4a20988b8c75be5338c286cfc533b3a07702",
+  "script_sha256": "3febcc9e20386e5b254adc38f2c7e2bbee3e25ffc016fbb0d2d6ebc093632085",
+  "error": "AssertionError([{'net': 'VDD', 'layer': 30, 'xy': [2000, 2000], 'actual': ('instance_resolved_metal_graph', 2), 'expected': ('instance_resolved_metal_graph', 1), 'reason': 'added metal root closure'}, {'net': 'VDD', 'layer': 30, 'xy': [2500, 2500], 'actual': ('instance_resolved_metal_graph', 2), 'expected': ('instance_resolved_metal_graph', 1), 'reason': 'declared seed root closure'}])"
+}
+Traceback (most recent call last):
+  File "/work/designs/g1-guardian/review/audits/merge_native_supply_manifest.py", line 262, in <module>
+    main()
+  File "/work/designs/g1-guardian/review/audits/merge_native_supply_manifest.py", line 241, in main
+    assert not closure_errors, closure_errors[:12]
+           ^^^^^^^^^^^^^^^^^^
+AssertionError: [{'net': 'VDD', 'layer': 30, 'xy': [2000, 2000], 'actual': ('instance_resolved_metal_graph', 2), 'expected': ('instance_resolved_metal_graph', 1), 'reason': 'added metal root closure'}, {'net': 'VDD', 'layer': 30, 'xy': [2500, 2500], 'actual': ('instance_resolved_metal_graph', 2), 'expected': ('instance_resolved_metal_graph', 1), 'reason': 'declared seed root closure'}]
