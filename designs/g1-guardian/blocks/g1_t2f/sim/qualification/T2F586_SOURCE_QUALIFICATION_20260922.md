@@ -118,3 +118,20 @@ of slow progress. No held-out result is inferred or fitted for the missing point
 preserves all four attempted outcomes, including the failed 75 °C run. The four
 original anchor passes above remain valid; expanded nominal temperature
 coverage is incomplete, and no full-range or population claim follows.
+
+### Separate exact-input 75 °C recovery
+
+The original failure above remains unchanged. A separately authorized run,
+`t2f586-nominal75-recovery900-20260922-b`, used the identical SPICE deck and
+source/model/settings with a 900-second host watchdog. It completed in
+605.470778 seconds, passed all 3,180 BEFORE/AFTER values, finite 32 µs waveform
+and external HBT VCE checks, and gave a simulated frozen-calibration residual
+of +0.189487 °C. Its deck SHA-256 is
+`7143f7573686afd9a42740a0fb14f16519c23529bb11e5328824f2cc1c5da216`.
+The original timed-out run exported no waveform, so prefix waveform parity is
+**not run**, rather than assumed. The eight selected nominal temperatures now
+have completed outcomes; continuous-temperature and statistical coverage are
+not established by these deterministic points.
+
+[Portable recovery evidence](portable_evidence/t2f586-nominal75-recovery-20260923)
+records both the successful distinct recovery and the original failure binding.
