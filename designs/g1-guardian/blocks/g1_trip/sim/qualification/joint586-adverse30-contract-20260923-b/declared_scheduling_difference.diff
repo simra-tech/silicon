@@ -1,0 +1,246 @@
+--- frozenSerialAdverseRunner
++++ stagedIndependentHeldoutRunner
+@@ -1,5 +1,5 @@
+ #!/usr/bin/env python3
+-"""One owncorner sample: frozen binary calibration and ten-condition adverse checks."""
++"""Staged owncorner sample; independent held-out leaves, unchanged serial inputs."""
+ import argparse
+ import hashlib
+ import json
+@@ -65,6 +65,68 @@
+     return trans, fixture
+ 
+ 
++def heldout_plan(tree, first_index):
++    guards = [(.027, {'soft': False, 'hard': False}), (.033, {'soft': True, 'hard': False}),
++              (.9*204*1.04/5300, {'soft': True, 'hard': False}), (1.1*204*1.04/5300, {'soft': True, 'hard': True})]
++    residuals = [(.0245, {'soft': False, 'hard': False}), (.0255, {'soft': True, 'hard': True})]
++    rows = []
++    for kind, key, values in [('guard', 'corrected_codes', guards), ('residual', 'fixed_residual_codes', residuals)]:
++        codes = [tree[key][k] for k in ['soft', 'hard']]
++        for condition in CONDITIONS:
++            for shunt, expected in values:
++                rows.append(dict(index=first_index+len(rows), codes=codes[:], shunt_V=shunt,
++                                 condition=list(condition), kind=kind, expected_decisions=expected.copy()))
++    assert len(rows) == 60 and len({r['index'] for r in rows}) == 60
++    return rows
++
++
++def freeze_plan(out, result, original, reference):
++    assert result['bracket_status'] == 'passed selected probes'
++    rows = heldout_plan(result['calibration'], len(result['probes']))
++    for row in rows:
++        deck = adverse_deck(original, reference, out.name, result['seed'], row['codes'],
++                            row['shunt_V'], row['condition'], result['corner'])
++        deck = deck.replace('qualification/'+out.name+'/phase0.dat',
++                            'qualification/'+out.name+'/p%02d/phase0.dat' % row['index'])
++        row['deck_sha256'] = hashlib.sha256(deck.encode()).hexdigest()
++    packet = dict(seed=result['seed'], corner=result['corner'], rows=rows,
++                  vector=result['parameters_before_first_probe'],
++                  calibration_summary_sha256=sha(out/'summary.json'),
++                  provenance_sha256=sha(out/'provenance.json'),
++                  runner_sha256=sha(Path(__file__)))
++    with (out/'heldout_plan.json').open('x') as stream:
++        json.dump(packet, stream, indent=2); stream.write('\n')
++    with (out/'heldout_plan.sha256').open('x') as stream:
++        stream.write(sha(out/'heldout_plan.json')+'\n')
++    return packet
++
++
++def load_plan(out, result):
++    assert sha(out/'heldout_plan.json') == (out/'heldout_plan.sha256').read_text().strip()
++    plan = json.loads((out/'heldout_plan.json').read_text())
++    assert plan['runner_sha256'] == sha(Path(__file__)) == sha(out/'runner.py')
++    assert plan['provenance_sha256'] == sha(out/'provenance.json')
++    assert plan['calibration_summary_sha256'] == sha(out/'summary.json')
++    assert plan['vector'] == result['parameters_before_first_probe'] and len(plan['vector']) == 11512
++    assert (plan['seed'], plan['corner']) == (result['seed'], result['corner'])
++    expected = heldout_plan(result['calibration'], len(result['probes']))
++    assert [{k:v for k,v in row.items() if k != 'deck_sha256'} for row in plan['rows']] == expected
++    return plan
++
++
++def collect_entries(out, plan):
++    entries = []
++    for row in plan['rows']:
++        leaf = out/('p%02d' % row['index'])
++        entry = json.loads((leaf/'entry.json').read_text())
++        assert entry['run'] == out.name+'/'+leaf.name
++        assert sha(leaf/'summary.json') == entry['summary_sha256']
++        assert sha(leaf/'probe.cir') == row['deck_sha256'] == entry['deck_sha256']
++        assert all(entry[k] == row[k] for k in ['codes','shunt_V','condition','kind','expected_decisions'])
++        entries.append(entry)
++    return entries
++
++
+ def main():
+     p = argparse.ArgumentParser(description=__doc__)
+     p.add_argument('--run-id', required=True)
+@@ -75,10 +137,14 @@
+     p.add_argument('--corner', choices=['slow','fast'], required=True)
+     p.add_argument('--campaign-contract', type=Path, required=True)
+     p.add_argument('--stop-file', type=Path)
++    p.add_argument('--stage', choices=['calibrate','leaf','assemble'], required=True)
++    p.add_argument('--leaf-index', type=int)
+     a = p.parse_args()
++    assert (a.stage == 'leaf') == (a.leaf_index is not None)
+     first = {'slow':77101,'fast':78101}[a.corner]
+     assert first <= a.seed < first+30
+     contract=json.loads(a.campaign_contract.read_text())
++    assert contract['staged_execution']['runner_sha256'] == sha(Path(__file__))
+     assert contract['population_seeds'][a.corner]==list(range(first,first+30))
+     assert contract['conditions']==[list(c) for c in CONDITIONS]
+     assert contract['sample_count_per_corner']==30 and contract['watchdog_per_leaf_s']==1200
+@@ -95,10 +161,15 @@
+     assert runtime == prep['expected_runtime_identity']
+     assert all(sha(ref/name) == digest for name, digest in prep['source_hashes'].items())
+     assert sha(ref/'population_inventory.json') == prep['inventory_sha256']
+-    out = allocate_run(SIM, a.run_id)
+-    for name in ['sense.spice', 'trip.spice', 'bgr.spice', 'population_inventory.json']:
+-        shutil.copyfile(str(ref/name), str(out/name))
+-    shutil.copyfile(str(Path(__file__)), str(out/'runner.py'))
++    out = allocate_run(SIM, a.run_id) if a.stage == 'calibrate' else SIM/'qualification'/a.run_id
++    if a.stage == 'calibrate':
++        for name in ['sense.spice', 'trip.spice', 'bgr.spice', 'population_inventory.json']:
++            shutil.copyfile(str(ref/name), str(out/name))
++        shutil.copyfile(str(Path(__file__)), str(out/'runner.py'))
++    else:
++        assert all(sha(out/n) == v for n,v in prep['source_hashes'].items())
++        assert sha(out/'population_inventory.json') == prep['inventory_sha256']
++        assert sha(out/'runner.py') == sha(Path(__file__))
+     qualification_path = a.qualification_audit if a.qualification_audit.is_absolute() else Path.cwd()/a.qualification_audit
+     provenance = {'arguments': sys.argv[1:], 'runner_sha256': sha(Path(__file__)), 'runtime_identity': runtime,
+                   'source_hashes': prep['source_hashes'], 'inventory_sha256': prep['inventory_sha256'],
+@@ -106,12 +177,17 @@
+                   'qualified_audit_sha256': sha(a.qualification_audit), 'qualified_preparation_sha256': sha(ref/'preparation.json'),
+                   'fixture_audit_sha256': sha(a.fixture_audit), 'corner':a.corner, 'conditions':CONDITIONS,
+                   'campaign_contract_sha256':sha(a.campaign_contract),
++                  'execution_schedule': 'Sequential binary calibration; immutable indexed60 heldout leaves; parent-only ordered assembly. Each leaf is an independent one-thread ngspice process with original1200s bound.',
+                   'qualified_deck_sha256': sha(ref/'population_transient.cir'),
+                   'original_binary_algorithm_sha256': sha(SIM/'run_joint_calibration.py'),
+                   'decision_replay_sha256': sha(SIM/'audit_bgr_calibration_tree.py'),
+                   'physical_scope': prep['physical_scope'],
+                   'scope': 'One independent owncorner full11512 draw, fixed30 denominator. Samecorner25C nominalrail SHN0 originalbinary calibration; frozen signedcorrection/rounding/clipping/hard204. Ten declared temp/rail/trueCM conditions each four originalguards plus two halfmV residuals; no heldout recalibration. Clock/codeHIGH tracks VDD, original0.6V/20ns actual+legacy rules,1.02us/1200s. ActualSHN19 append only at trueCM conditions; legacy18 otherwise. No physicalCC/siliconyield qualification.'}
+-    (out/'provenance.json').write_text(json.dumps(provenance, indent=2)+'\n')
++    if a.stage == 'calibrate':
++        (out/'provenance.json').write_text(json.dumps(provenance, indent=2)+'\n')
++    else:
++        saved = json.loads((out/'provenance.json').read_text())
++        assert all(saved[k] == v for k,v in provenance.items() if k != 'arguments')
+     result = {'seed': a.seed, 'corner':a.corner, 'status': 'running', 'bracket_status': 'not run', 'guards_status': 'not run',
+               'residual_half_mV_status': 'not run', 'probes': [], 'source_hashes': prep['source_hashes'],
+               'scope': provenance['scope'], 'parameters_before_first_probe': None}
+@@ -119,13 +195,19 @@
+     def persist():
+         (out/'summary.json').write_text(json.dumps([result], indent=2)+'\n')
+ 
+-    persist()
+-    vector = None
+-
+-    def probe(codes, shunt=.025, condition=CONDITIONS[0], kind='calibration'):
++    if a.stage == 'calibrate':
++        persist()
++        vector = None
++        plan = None
++    else:
++        result, = json.loads((out/'summary.json').read_text())
++        plan = load_plan(out, result)
++        vector = plan['vector']
++
++    def probe(codes, shunt=.025, condition=CONDITIONS[0], kind='calibration', explicit_index=None):
+         nonlocal vector
+         check_pause(a.stop_file)
+-        index = len(result['probes'])
++        index = len(result['probes']) if explicit_index is None else explicit_index
+         leaf = out/('p%02d' % index)
+         leaf.mkdir()
+         # Sources stay at the parent logical path; only wave output moves below it.
+@@ -135,6 +217,9 @@
+         newwave = 'qualification/'+out.name+'/'+leaf.name+'/phase0.dat'
+         assert deck.count(oldwave) == 1
+         deck = deck.replace(oldwave, newwave)
++        if explicit_index is not None:
++            declared, = [r for r in plan['rows'] if r['index'] == explicit_index]
++            assert hashlib.sha256(deck.encode()).hexdigest() == declared['deck_sha256']
+         validate_saved_nodes(deck, (out/'trip.spice').read_text())
+         (leaf/'probe.cir').write_text(deck)
+         with (leaf/'run.log').open('x') as logstream:
+@@ -153,6 +238,7 @@
+             expected = vector if vector is not None else before
+             params = phase_parameters(section, prep['groups'], expected)
+             if vector is None:
++                assert a.stage == 'calibrate'
+                 vector = before
+                 result['parameters_before_first_probe'] = before
+             data = [list(map(float, line.split())) for line in (leaf/'phase0.dat').read_text().splitlines()[1:] if line.strip()]
+@@ -173,11 +259,36 @@
+             entry['analysis_error'] = repr(error)
+         (leaf/'summary.json').write_text(json.dumps(dict(entry, **full), indent=2)+'\n')
+         entry['summary_sha256'] = sha(leaf/'summary.json')
+-        result['probes'].append(entry)
+-        persist()
++        if explicit_index is None:
++            result['probes'].append(entry)
++            persist()
+         if (leaf/'phase0.dat').exists():
+             archive_new_wave(leaf/'phase0.dat')
+         return entry
++
++    if a.stage == 'leaf':
++        row, = [r for r in plan['rows'] if r['index'] == a.leaf_index]
++        entry = probe(row['codes'], row['shunt_V'], row['condition'], row['kind'], row['index'])
++        entry['expected_decisions'] = row['expected_decisions']
++        leaf = out/('p%02d' % row['index'])
++        with (leaf/'entry.json').open('x') as stream:
++            json.dump(entry, stream, indent=2); stream.write('\n')
++        print(json.dumps(entry, indent=2))
++        return
++
++    if a.stage == 'assemble':
++        entries = collect_entries(out, plan)
++        result['probes'] += entries
++        for kind, key in [('guard','guards_status'),('residual','residual_half_mV_status')]:
++            rows = [r for r in entries if r['kind'] == kind]
++            result[key] = 'passed' if all(r['status']=='passed' and r['decisions']==r['expected_decisions'] for r in rows) else 'failed'
++        result['status'] = 'passed fullcalibration guard residual' if result['guards_status'] == result['residual_half_mV_status'] == 'passed' else 'failed electrical or numerical check'
++        result['total_core_seconds'] = sum(p['wall_s'] for p in result['probes'])
++        # Preserve the immutable calibration checkpoint used by all independent leaves.
++        shutil.copyfile(str(out/'summary.json'), str(out/'calibration_checkpoint.json'))
++        persist()
++        print(json.dumps(dict(status=result['status'], heldout_count=len(entries)), indent=2))
++        return
+ 
+     try:
+         # Exact original endpoints and midpoint decisions; no speculative cache.
+@@ -195,27 +306,10 @@
+         if tree['bracket_status'] != 'passed selected probes':
+             result['status'] = 'failed calibration'
+         else:
+-            codes = [tree['corrected_codes'][k] for k in ['soft', 'hard']]
+-            guards = [(.027, {'soft': False, 'hard': False}), (.033, {'soft': True, 'hard': False}),
+-                      (.9*204*1.04/5300, {'soft': True, 'hard': False}), (1.1*204*1.04/5300, {'soft': True, 'hard': True})]
+-            statuses = []
+-            for condition in CONDITIONS:
+-                for shunt, expected in guards:
+-                    entry = probe(codes, shunt, condition, 'guard')
+-                    entry['expected_decisions'] = expected
+-                    statuses.append(entry['status'] == 'passed' and entry['decisions'] == expected)
+-                    persist()
+-            result['guards_status'] = 'passed' if all(statuses) else 'failed'
+-            codes = [tree['fixed_residual_codes'][k] for k in ['soft', 'hard']]
+-            statuses = []
+-            for condition in CONDITIONS:
+-                for shunt, high in [(.0245, False), (.0255, True)]:
+-                    entry = probe(codes, shunt, condition, 'residual')
+-                    entry['expected_decisions'] = {'soft': high, 'hard': high}
+-                    statuses.append(entry['status'] == 'passed' and entry['decisions'] == entry['expected_decisions'])
+-                    persist()
+-            result['residual_half_mV_status'] = 'passed' if all(statuses) else 'failed'
+-            result['status'] = 'passed fullcalibration guard residual' if result['guards_status'] == result['residual_half_mV_status'] == 'passed' else 'failed electrical or numerical check'
++            result['status'] = 'calibration frozen; independent heldout leaves not run'
++            persist()
++            freeze_plan(out, result, original, ref.name)
++            return
+     except InterruptedError as error:
+         result['status'] = 'paused before next leaf'
+         result['pause_reason'] = str(error)
