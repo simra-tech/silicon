@@ -51,3 +51,21 @@ Runtime is ngspice 46, image manifest
 PDK `84374023ee8b4b126bebbba67fcbada0a9c0ff0b`.
 This campaign does not adopt the new coordinated physical capacitance or
 qualify actual pad loading; those affected checks remain **not run** here.
+# First twenty final-source samples completed
+
+The independent [first-20 evidence audit](t2f586-first20-audit-20260923.json)
+**passed** for seeds 74101–74120: all 80 leaves completed, all twenty samples
+passed the original frozen 25/100 °C linear-calibration ±2 °C endpoint criterion,
+all 3,180 parameters remained fixed within each sample, and all 1,129 randomized
+primitives varied across the twenty independent samples. Deck, source, pinned
+runtime, decoded waveforms and recorded decisions were independently checked.
+The audit SHA-256 is
+`db094a41787ad1b1d0ae7900f340009853d4973eec316994996efe3bfc192906`.
+
+[Portable evidence](portable_evidence/t2f586-first20-20260923/) retains compact
+receipts, source identities and hashes without requiring machine-specific paths.
+The remaining predeclared samples have begun with exclusive per-sample claims;
+a separate fixed-100 evidence/disposition gate blocks sample 101 until audited.
+Electrical failures and separately diagnosed numerical failures remain in the
+fixed denominator. The full 100 and 300 outcomes are **not run to completion**,
+and twenty successful modeled samples are not a yield or physical-PEX claim.
