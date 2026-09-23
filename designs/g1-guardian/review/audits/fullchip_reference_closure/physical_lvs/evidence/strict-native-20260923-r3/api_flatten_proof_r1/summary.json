@@ -1,0 +1,7 @@
+{
+  "status": "failed API flatten audit",
+  "new_extraction": "not run",
+  "comparison": "not run",
+  "exception": "TypeError('No overload with matching arguments. Variants are:\\n  const const Net ptr net_for_terminal(unsigned long terminal_id) const [match candidate]\\n  Net ptr net_for_terminal(unsigned long terminal_id) [match candidate]\\n  const const Net ptr net_for_terminal(string terminal_name) const [match candidate]\\n  Net ptr net_for_terminal(string terminal_name) [match candidate]\\n in Device.net_for_terminal')",
+  "traceback": "Traceback (most recent call last):\n  File \"/work/designs/g1-guardian/review/audits/fullchip_reference_closure/physical_lvs/audit_api_flatten.py\", line 69, in main\n    top_nets = walk(top, [])\n               ^^^^^^^^^^^^^\n  File \"/work/designs/g1-guardian/review/audits/fullchip_reference_closure/physical_lvs/audit_api_flatten.py\", line 60, in walk\n    terminals={t.name: nets[d.net_for_terminal(t.id).cluster_id] for t in d.device_class().terminal_definitions()})\n                            ^^^^^^^^^^^^^^^^^^^^^^^^\nTypeError: No overload with matching arguments. Variants are:\n  const const Net ptr net_for_terminal(unsigned long terminal_id) const [match candidate]\n  Net ptr net_for_terminal(unsigned long terminal_id) [match candidate]\n  const const Net ptr net_for_terminal(string terminal_name) const [match candidate]\n  Net ptr net_for_terminal(string terminal_name) [match candidate]\n in Device.net_for_terminal\n"
+}

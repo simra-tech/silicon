@@ -1,0 +1,80 @@
+{
+  "status": "failed diagnostic harness or timeout",
+  "inputs": {
+    "<results>/fullchip-name-interface-20260923-r1/g1_chip_top_layout_name_only.cdl": "f4ce6848bd7dd179d2ef4cbd8a4ea6bf9788bcfa1ff4b93fabae8bf18b6378f9",
+    "<results>/fullchip-tap-prefix-adapter-20260923-r1/fullchip_tap_prefix_only.cdl": "7395c32d170a787dbc81fd10c67148301d168e51f5ac38de3f0866efe5894006",
+    "<results>/fullchip-native-strict-lvs-20260923-r2/reports/sealed_native.lvsdb": "1c8f3f91b8be00e0fbbdf4c2a40734fb5f8fe8b0388b1780768699e1a2afcbcf",
+    "<results>/fullchip-api-flatten-proof-20260923-r3/summary.json": "6fa352a04e0830fdd9df9a88cfcfae505ff718446c2eeab9cc7c4ecf55e143c3",
+    "/work/designs/g1-guardian/review/audits/fullchip_reference_closure/physical_lvs/probe_substrate_scope.rb": "03304d968afe25412043234dd7b394cbf12c65769ad12d79c5b9f92bb12be71f",
+    "/work/designs/g1-guardian/review/audits/fullchip_reference_closure/physical_lvs/probe_tap_adapter.rb": "832e082c79eb0a2194f8e42f1e972e444ff57ada44b441627a06519c9f120ca6",
+    "/work/designs/g1-guardian/review/audits/fullchip_reference_closure/physical_lvs/run_saved_flat.py": "0fcea16ea2525c251383fb2c8bf4320324922f04080b900b3d30f5671e7e05ec"
+  },
+  "command": [
+    "klayout",
+    "-b",
+    "-r",
+    "/work/designs/g1-guardian/review/audits/fullchip_reference_closure/physical_lvs/probe_substrate_scope.rb",
+    "-rd",
+    "original=<results>/fullchip-name-interface-20260923-r1/g1_chip_top_layout_name_only.cdl",
+    "-rd",
+    "adapted=<results>/fullchip-tap-prefix-adapter-20260923-r1/fullchip_tap_prefix_only.cdl",
+    "-rd",
+    "database=<results>/fullchip-native-strict-lvs-20260923-r2/reports/sealed_native.lvsdb",
+    "-rd",
+    "variant=adapter",
+    "-rd",
+    "output_dir=<results>/fullchip-substrate-scope-20260923-r1/diagnostic"
+  ],
+  "watchdog_seconds": 120,
+  "memory_reservation_GiB": 8,
+  "memory_enforced": false,
+  "resource_gate_sha256": "5696a604157ae1248024018ba5550625eb7f3572921e4eac2070e74bc94cdf9a",
+  "native_LVS": "not run",
+  "electrical_simulation": "not applicable",
+  "variant": "adapter",
+  "diagnostic": "scope",
+  "run": {
+    "command": [
+      "stdbuf",
+      "-o0",
+      "-e0",
+      "klayout",
+      "-b",
+      "-r",
+      "/work/designs/g1-guardian/review/audits/fullchip_reference_closure/physical_lvs/probe_substrate_scope.rb",
+      "-rd",
+      "original=<results>/fullchip-name-interface-20260923-r1/g1_chip_top_layout_name_only.cdl",
+      "-rd",
+      "adapted=<results>/fullchip-tap-prefix-adapter-20260923-r1/fullchip_tap_prefix_only.cdl",
+      "-rd",
+      "database=<results>/fullchip-native-strict-lvs-20260923-r2/reports/sealed_native.lvsdb",
+      "-rd",
+      "variant=adapter",
+      "-rd",
+      "output_dir=<results>/fullchip-substrate-scope-20260923-r1/diagnostic"
+    ],
+    "started_utc": "2026-09-23T04:19:58.865576+00:00",
+    "status": "failed",
+    "timeout_s": 120,
+    "runtime_arch": "x86_64",
+    "stdio_unbuffered": true,
+    "pid": 8,
+    "wall_s": 4.4448691587895155,
+    "sampled_utc": "2026-09-23T04:20:03.308269+00:00",
+    "log_bytes": 4078,
+    "resources": {
+      "VmHWM": "424536 kB",
+      "VmRSS": "424536 kB",
+      "Threads": "1"
+    },
+    "cpu_ticks": [
+      "190",
+      "29"
+    ],
+    "returncode": 1,
+    "finished_utc": "2026-09-23T04:20:03.310889+00:00"
+  },
+  "inputs_unchanged": true,
+  "diagnostic_report": null,
+  "output_bytes": 3297639
+}

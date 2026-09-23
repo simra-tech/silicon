@@ -1,0 +1,100 @@
+{
+  "status": "failed diagnostic harness or timeout",
+  "inputs": {
+    "<results>/fullchip-name-interface-20260923-r1/g1_chip_top_layout_name_only.cdl": "f4ce6848bd7dd179d2ef4cbd8a4ea6bf9788bcfa1ff4b93fabae8bf18b6378f9",
+    "<results>/fullchip-tap-prefix-adapter-20260923-r1/fullchip_tap_prefix_only.cdl": "7395c32d170a787dbc81fd10c67148301d168e51f5ac38de3f0866efe5894006",
+    "<results>/fullchip-native-strict-lvs-20260923-r2/reports/sealed_native.lvsdb": "1c8f3f91b8be00e0fbbdf4c2a40734fb5f8fe8b0388b1780768699e1a2afcbcf",
+    "<results>/fullchip-api-flatten-proof-20260923-r3/summary.json": "6fa352a04e0830fdd9df9a88cfcfae505ff718446c2eeab9cc7c4ecf55e143c3",
+    "/work/designs/g1-guardian/review/audits/fullchip_reference_closure/physical_lvs/compare_saved_flat.rb": "5c8c71d3d1178173c2ee5c40ef97124a61b718de06c4868316c920ed343e045f",
+    "/work/designs/g1-guardian/review/audits/fullchip_reference_closure/physical_lvs/probe_tap_adapter.rb": "832e082c79eb0a2194f8e42f1e972e444ff57ada44b441627a06519c9f120ca6",
+    "/work/designs/g1-guardian/review/audits/fullchip_reference_closure/physical_lvs/run_saved_flat.py": "2854ea57d82c86726cd8d92534b3fe695bdff2b96800b517317cc142ad1d8e35"
+  },
+  "command": [
+    "klayout",
+    "-b",
+    "-r",
+    "/work/designs/g1-guardian/review/audits/fullchip_reference_closure/physical_lvs/compare_saved_flat.rb",
+    "-rd",
+    "original=<results>/fullchip-name-interface-20260923-r1/g1_chip_top_layout_name_only.cdl",
+    "-rd",
+    "adapted=<results>/fullchip-tap-prefix-adapter-20260923-r1/fullchip_tap_prefix_only.cdl",
+    "-rd",
+    "database=<results>/fullchip-native-strict-lvs-20260923-r2/reports/sealed_native.lvsdb",
+    "-rd",
+    "variant=original",
+    "-rd",
+    "output_dir=<results>/fullchip-api-original-20260923-r3/diagnostic"
+  ],
+  "watchdog_seconds": 180,
+  "memory_reservation_GiB": 8,
+  "memory_enforced": false,
+  "resource_gate_sha256": "c92facaae1e04b4845ab4cb1f88f3a8184b37ff7a0568a1ee4f2a96f604efbcf",
+  "native_LVS": "not run",
+  "electrical_simulation": "not applicable",
+  "variant": "original",
+  "run": {
+    "command": [
+      "stdbuf",
+      "-o0",
+      "-e0",
+      "klayout",
+      "-b",
+      "-r",
+      "/work/designs/g1-guardian/review/audits/fullchip_reference_closure/physical_lvs/compare_saved_flat.rb",
+      "-rd",
+      "original=<results>/fullchip-name-interface-20260923-r1/g1_chip_top_layout_name_only.cdl",
+      "-rd",
+      "adapted=<results>/fullchip-tap-prefix-adapter-20260923-r1/fullchip_tap_prefix_only.cdl",
+      "-rd",
+      "database=<results>/fullchip-native-strict-lvs-20260923-r2/reports/sealed_native.lvsdb",
+      "-rd",
+      "variant=original",
+      "-rd",
+      "output_dir=<results>/fullchip-api-original-20260923-r3/diagnostic"
+    ],
+    "started_utc": "2026-09-23T04:07:16.976299+00:00",
+    "status": "failed",
+    "timeout_s": 180,
+    "runtime_arch": "x86_64",
+    "stdio_unbuffered": true,
+    "pid": 8,
+    "wall_s": 7.546100502833724,
+    "sampled_utc": "2026-09-23T04:07:24.520294+00:00",
+    "log_bytes": 2857,
+    "resources": {
+      "VmHWM": "442372 kB",
+      "VmRSS": "441664 kB",
+      "Threads": "1"
+    },
+    "cpu_ticks": [
+      "485",
+      "38"
+    ],
+    "returncode": 1,
+    "finished_utc": "2026-09-23T04:07:24.522960+00:00"
+  },
+  "inputs_unchanged": true,
+  "diagnostic_report": {
+    "status": "running native API preparation",
+    "variant": "original",
+    "comparison_scope": "Saved parent-connected netlist API diagnostic, NOT new native extraction or adoption",
+    "database_sha256": "1c8f3f91b8be00e0fbbdf4c2a40734fb5f8fe8b0388b1780768699e1a2afcbcf",
+    "source_sha256": "f4ce6848bd7dd179d2ef4cbd8a4ea6bf9788bcfa1ff4b93fabae8bf18b6378f9",
+    "independent_flatten_proof": "Required externally before launch; original hierarchy terminal unions and binary64 parameters",
+    "API_controls": [
+      {
+        "case": "none",
+        "engine_equivalent": true,
+        "strict": true,
+        "status": "passed expected disposition"
+      },
+      {
+        "case": "wire",
+        "engine_equivalent": true,
+        "strict": true,
+        "status": "passed expected disposition"
+      }
+    ]
+  },
+  "output_bytes": 3313693
+}
