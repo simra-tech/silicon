@@ -1,0 +1,162 @@
+{
+  "status": "failed conditional passive implementation controls",
+  "contract_sha256": "212ea95f736e2b1cca0fe26d28f332abbcbabc4f9c585867f3df4c3d36ab5b52",
+  "script_sha256": "71150f989f22305a7ed02d94c5afe1590cf8f2c3c23917114e59d0e93adf2213",
+  "analyzer_sha256": "548b688023e7f51c519e8a2387be58096fee81d9fb520913ccca3731bbd7161c",
+  "cases": [
+    {
+      "name": "direct-zero-r",
+      "returncode": 0,
+      "wall_s": 0.11601442843675613,
+      "command": [
+        "timeout",
+        "--kill-after=2",
+        "30",
+        "ngspice",
+        "-b",
+        "coupon.cir"
+      ],
+      "log_sha256": "15299b88ea336a4d5df166d7e288c1effe94617e5036433cd73ce5ef6919652f",
+      "status": "passed expected diagnostic disposition",
+      "simulator_log": {
+        "status": "passed",
+        "fatal_lines": [],
+        "warning_lines": []
+      },
+      "control": {
+        "status": "passed",
+        "voltage_residual_V": 0.0
+      },
+      "output_bytes": 181677
+    },
+    {
+      "name": "adapter-zero-r",
+      "returncode": 0,
+      "wall_s": 0.10614424012601376,
+      "command": [
+        "timeout",
+        "--kill-after=2",
+        "30",
+        "ngspice",
+        "-b",
+        "coupon.cir"
+      ],
+      "log_sha256": "cc01bdcfadac04b0b16dd6bc3372eac8282a49c1d8f34ec40dbafb541f6fd53a",
+      "status": "passed expected diagnostic disposition",
+      "simulator_log": {
+        "status": "passed",
+        "fatal_lines": [],
+        "warning_lines": []
+      },
+      "control": {
+        "voltage_residual_V": 3.3306690738754696e-16,
+        "contact_voltage_residual_V": 0.0,
+        "signed_current_residual_A": 1.0842021724855044e-19,
+        "signed_KCL_residual_A": 1.0842021724855044e-19,
+        "power_residual_W": 4.336808689942018e-19,
+        "status": "passed",
+        "rows": 1275
+      },
+      "output_bytes": 568702
+    },
+    {
+      "name": "distributed-r",
+      "returncode": 0,
+      "wall_s": 0.11253585107624531,
+      "command": [
+        "timeout",
+        "--kill-after=2",
+        "30",
+        "ngspice",
+        "-b",
+        "coupon.cir"
+      ],
+      "log_sha256": "3211b8ca8269b72df0e41539d5c88d6cc8a30066c45dbc4efda4efbc8e61d249",
+      "status": "passed expected diagnostic disposition",
+      "simulator_log": {
+        "status": "passed",
+        "fatal_lines": [],
+        "warning_lines": []
+      },
+      "control": {
+        "voltage_residual_V": 2.294942014202661e-12,
+        "contact_voltage_residual_V": 0.0,
+        "signed_current_residual_A": 2.168404344971009e-19,
+        "signed_KCL_residual_A": 2.168404344971009e-19,
+        "power_residual_W": 2.4056277803108372e-15,
+        "status": "passed",
+        "rows": 1663
+      },
+      "output_bytes": 1072253
+    },
+    {
+      "name": "unequal-voltage",
+      "returncode": 0,
+      "wall_s": 0.06876114010810852,
+      "command": [
+        "timeout",
+        "--kill-after=2",
+        "30",
+        "ngspice",
+        "-b",
+        "coupon.cir"
+      ],
+      "log_sha256": "efadc2c0f96861497c5f6eb4d0c4c4627297447a4eaa1c58aa03931302717c8a",
+      "status": "passed expected diagnostic disposition",
+      "simulator_log": {
+        "status": "passed",
+        "fatal_lines": [],
+        "warning_lines": []
+      },
+      "control": {
+        "voltage_residual_V": 0.0,
+        "contact_voltage_residual_V": 0.0,
+        "signed_current_residual_A": 0.0,
+        "signed_KCL_residual_A": 0.0,
+        "power_residual_W": 0.0,
+        "status": "passed",
+        "rows": 1223
+      },
+      "output_bytes": 1443513
+    },
+    {
+      "name": "wrong-current-sign",
+      "returncode": 0,
+      "wall_s": 0.08057450130581856,
+      "command": [
+        "timeout",
+        "--kill-after=2",
+        "30",
+        "ngspice",
+        "-b",
+        "coupon.cir"
+      ],
+      "log_sha256": "3471303ffe3934258dc36cfdcd0f256e039ba17b89da1854d3dcfacc0abe4342",
+      "status": "passed expected diagnostic disposition",
+      "simulator_log": {
+        "status": "passed",
+        "fatal_lines": [],
+        "warning_lines": []
+      },
+      "control": {
+        "voltage_residual_V": 1.112887559884257e-12,
+        "contact_voltage_residual_V": 0.0,
+        "signed_current_residual_A": 0.000699186131252511,
+        "signed_KCL_residual_A": 0.0006991861312525111,
+        "power_residual_W": 0.0006996749924958485,
+        "status": "failed",
+        "rows": 1613
+      },
+      "output_bytes": 1931942
+    }
+  ],
+  "source_models_changed": false,
+  "actual_SENSE_contact_weights": "not selected",
+  "analysis_returncode": 1,
+  "not_run": [
+    "Actual SENSE contact allocation",
+    "Full11512 source-model/wave parity",
+    "Intrinsic geometry/model applicability",
+    "Metal R/field/electrical adoption"
+  ]
+}

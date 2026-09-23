@@ -1,0 +1,60 @@
+{
+  "status": "failed or incomplete conditional passive controls",
+  "contract_sha256": "0331d13f885380618fdef6793b446ff92da66f0494ae2f723bde283164a70b9e",
+  "script_sha256": "548b688023e7f51c519e8a2387be58096fee81d9fb520913ccca3731bbd7161c",
+  "cases": [
+    {
+      "name": "direct-zero-r",
+      "status": "passed",
+      "accepted": true,
+      "simulator_log": {
+        "status": "passed",
+        "fatal_lines": [],
+        "warning_lines": []
+      },
+      "voltage_residual_V": 0.0,
+      "waveform_sha256": "2b1e28ca007b3482658998c5e115a9aaea3fe6886b0cb26a384d63c33e97bdf8",
+      "expected_status": "passed"
+    },
+    {
+      "name": "adapter-zero-r",
+      "status": "failed",
+      "accepted": false,
+      "simulator_log": {
+        "status": "passed",
+        "fatal_lines": [],
+        "warning_lines": []
+      },
+      "reason": "nonmonotonic or incomplete transient",
+      "waveform_sha256": "d846625feb99efcb8973ef67e1d22fd7ac38cda0ec134dd4bd6cffc2aa48a037",
+      "expected_status": "passed"
+    },
+    {
+      "name": "distributed-r",
+      "status": "not run",
+      "accepted": false
+    },
+    {
+      "name": "unequal-voltage",
+      "status": "not run",
+      "accepted": false
+    },
+    {
+      "name": "wrong-current-sign",
+      "status": "not run",
+      "accepted": false
+    }
+  ],
+  "zero_R": {
+    "status": "failed",
+    "exact_time_grid": false,
+    "exact_model_voltage": false,
+    "scope": "Passive coupon model-node voltage only, not full SENSE parity; no interpolation"
+  },
+  "not_run": [
+    "Actual SENSE distributed weights",
+    "Full11512 parameter/wave parity",
+    "Intrinsic compact-model applicability",
+    "Physical PEX/electrical adoption"
+  ]
+}

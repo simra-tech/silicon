@@ -1,0 +1,27 @@
+* Conditional distributed-terminal implementation coupon; no PDK models.
+.options reltol=1e-9 abstol=1e-14 vntol=1e-10 rshunt=1e12 numdgt=17
+Vdrive a 0 PWL(0 0 0.2u 1 0.4u 0 0.6u -1 0.8u 0 1u 1 1.2u 0)
+Rload m 0 1000
+Cload m 0 10p
+Rleft a p0 2
+Rright a p1 3
+Xattach m p0 p1 terminal_diagnostic
+.subckt terminal_diagnostic m p0 p1
+Eaverage av 0 POLY(2) p0 0 p1 0 0 {1/3} {2/3}
+Vmeasure av m 0
+Vport0 p0 f0 0
+Vport1 p1 f1 0
+Fcontact0 f0 0 Vmeasure {-1/3}
+Fcontact1 f1 0 Vmeasure {2/3}
+.ends terminal_diagnostic
+.control
+set noaskquit
+set numdgt=17
+set wr_singlescale
+set wr_vecnames
+save all
+tran 1n 1.2u 0 1n
+wrdata waveform.dat v(a) v(m) v(p0) v(p1) i(Vdrive) i(v.xattach.vmeasure) i(v.xattach.vport0) i(v.xattach.vport1) v(xattach.av) v(xattach.f0) v(xattach.f1)
+quit
+.endc
+.end

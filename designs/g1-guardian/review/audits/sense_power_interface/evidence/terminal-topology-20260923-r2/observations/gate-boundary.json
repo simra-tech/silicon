@@ -1,0 +1,241 @@
+{
+  "status": "passed read-only boundary inventory; model applicability unresolved",
+  "image_config_sha256": "sha256:ddeb69576f2808676d1c5d474ecf04f6d1d6f8abdcff6b72b39790ded924bab2",
+  "PDK_commit": "84374023ee8b4b126bebbba67fcbada0a9c0ff0b",
+  "stock_summary_sha256": "df96a5b4b1a0d2df8354ffbdda04e09a1c3042dc4d458baa1b28e4347e45856c",
+  "script_sha256": "f486706ded4ddbeed8dfee153710f78083c971e06832d0e3bd6a78afcc9ca301",
+  "files": {
+    "libs.tech/klayout/tech/drc/rule_decks/feol/5_14_cont.drc": {
+      "sha256": "1f541374c9b12f74bf806d2013e87aacc368535edec07e0c55661f6b4a7b821f",
+      "bytes": 4857,
+      "completed_stock_hash_exact": true
+    },
+    "libs.tech/klayout/tech/drc/rule_decks/sg13g2_tech_default.json": {
+      "sha256": "07930b016cdffe14c2cb82b47fbec193643347607db6d44aa1abfdece056cd2f",
+      "bytes": 9078,
+      "completed_stock_hash_exact": true
+    },
+    "libs.tech/klayout/python/sg13g2_pycell_lib/sg13g2_tech_mod.json": {
+      "sha256": "cfb576915468d94d01dc26b6f3dded18ffa004e8c978777141d3866661e33c8f",
+      "bytes": 26884,
+      "completed_stock_hash_exact": false
+    },
+    "libs.tech/verilog-a/psp103/PSP103_module.include": {
+      "sha256": "cc9f02e72fda8c907f9e6befe0dcdc2ff1dc13e45fb2f48263935c06317d3197",
+      "bytes": 128000,
+      "completed_stock_hash_exact": false
+    },
+    "libs.tech/ngspice/models/sg13g2_moshv_mod.lib": {
+      "sha256": "58ce3084c253f2d3753c3b95386e8f4b81dcadfed4f4503dce56862a556c3328",
+      "bytes": 9279,
+      "completed_stock_hash_exact": false
+    },
+    "libs.tech/ngspice/models/sg13g2_moshv_mod_mismatch.lib": {
+      "sha256": "75c30f6975aad4cfe95af7c80fcea142ab0df6c9d7667c09120c7d0c9b814801",
+      "bytes": 12375,
+      "completed_stock_hash_exact": false
+    },
+    "libs.tech/ngspice/models/sg13g2_moshv_parm.lib": {
+      "sha256": "eea5bbed39184cb1e2654ae29425a9ed6ee2f2341d6cb76c472591c75237bd35",
+      "bytes": 64329,
+      "completed_stock_hash_exact": false
+    }
+  },
+  "rule_values": [
+    {
+      "path": "libs.tech/klayout/tech/drc/rule_decks/sg13g2_tech_default.json/drc_rules/Cnt_a",
+      "value": 0.16
+    },
+    {
+      "path": "libs.tech/klayout/tech/drc/rule_decks/sg13g2_tech_default.json/drc_rules/Cnt_e",
+      "value": 0.14
+    },
+    {
+      "path": "libs.tech/klayout/python/sg13g2_pycell_lib/sg13g2_tech_mod.json/drc_rules/Cnt_a",
+      "value": 0.16
+    },
+    {
+      "path": "libs.tech/klayout/python/sg13g2_pycell_lib/sg13g2_tech_mod.json/drc_rules/Cnt_e",
+      "value": 0.14
+    }
+  ],
+  "excerpts": {
+    "libs.tech/klayout/tech/drc/rule_decks/feol/5_14_cont.drc": [
+      {
+        "line": 31,
+        "text": "  # Rule Cnt.a: Min. and max. Cont width is 0.16\u00b5m"
+      },
+      {
+        "line": 34,
+        "text": "  logger.info('Executing rule Cnt.a')"
+      },
+      {
+        "line": 37,
+        "text": "  cnt_a_l.output('Cnt.a', \"5.14. Cnt.a : Min. and max. Cont width: #{cnt_a_value} \u00b5m\")"
+      },
+      {
+        "line": 80,
+        "text": "    # Rule Cnt.e: Min. Cont on GatPoly space to Activ is 0.14 um"
+      },
+      {
+        "line": 81,
+        "text": "    logger.info('Executing rule Cnt.e')"
+      },
+      {
+        "line": 82,
+        "text": "    cnt_e_value = drc_rules['Cnt_e'].to_f"
+      },
+      {
+        "line": 83,
+        "text": "    cnt_e_l1 = cont_sq.and(gatpoly_drw).not(svaricap)"
+      },
+      {
+        "line": 84,
+        "text": "    cnt_e_l = cnt_e_l1.sep(activ_drw, cnt_e_value.um, euclidian)"
+      },
+      {
+        "line": 85,
+        "text": "    cnt_e_l.output('Cnt.e', \"5.14. Cnt.e Min. Cont on GatPoly space to Activ is #{cnt_e_value} um\")"
+      },
+      {
+        "line": 86,
+        "text": "    cnt_e_l1.forget"
+      },
+      {
+        "line": 87,
+        "text": "    cnt_e_l.forget"
+      }
+    ],
+    "libs.tech/klayout/tech/drc/rule_decks/sg13g2_tech_default.json": [],
+    "libs.tech/klayout/python/sg13g2_pycell_lib/sg13g2_tech_mod.json": [],
+    "libs.tech/verilog-a/psp103/PSP103_module.include": [
+      {
+        "line": 110,
+        "text": "`IPRnb(XGW            ,1.0e-7     ,\"m\"                                  ,\"Distance from the gate contact to the channel edge\")"
+      },
+      {
+        "line": 669,
+        "text": "        XGW_i       =  XGW;"
+      }
+    ],
+    "libs.tech/ngspice/models/sg13g2_moshv_mod.lib": [
+      {
+        "line": 86,
+        "text": "              + ngcon=2"
+      },
+      {
+        "line": 99,
+        "text": "              + ngcon=2"
+      },
+      {
+        "line": 109,
+        "text": "          + ngcon=2"
+      },
+      {
+        "line": 125,
+        "text": "              + ngcon=2"
+      },
+      {
+        "line": 138,
+        "text": "              + ngcon=2"
+      },
+      {
+        "line": 148,
+        "text": "          + ngcon=2"
+      },
+      {
+        "line": 172,
+        "text": "              + ngcon=2"
+      },
+      {
+        "line": 185,
+        "text": "              + ngcon=2"
+      },
+      {
+        "line": 195,
+        "text": "          + ngcon=2"
+      },
+      {
+        "line": 211,
+        "text": "              + ngcon=2"
+      },
+      {
+        "line": 224,
+        "text": "              + ngcon=2"
+      },
+      {
+        "line": 234,
+        "text": "          + ngcon=2"
+      }
+    ],
+    "libs.tech/ngspice/models/sg13g2_moshv_mod_mismatch.lib": [
+      {
+        "line": 86,
+        "text": "              + ngcon=2"
+      },
+      {
+        "line": 99,
+        "text": "              + ngcon=2"
+      },
+      {
+        "line": 109,
+        "text": "          + ngcon=2"
+      },
+      {
+        "line": 125,
+        "text": "              + ngcon=2"
+      },
+      {
+        "line": 138,
+        "text": "              + ngcon=2"
+      },
+      {
+        "line": 148,
+        "text": "          + ngcon=2"
+      },
+      {
+        "line": 172,
+        "text": "              + ngcon=2"
+      },
+      {
+        "line": 185,
+        "text": "              + ngcon=2"
+      },
+      {
+        "line": 195,
+        "text": "          + ngcon=2"
+      },
+      {
+        "line": 211,
+        "text": "              + ngcon=2"
+      },
+      {
+        "line": 224,
+        "text": "              + ngcon=2"
+      },
+      {
+        "line": 234,
+        "text": "          + ngcon=2"
+      }
+    ],
+    "libs.tech/ngspice/models/sg13g2_moshv_parm.lib": []
+  },
+  "literal_geometry_um": {
+    "contact_width": 0.16,
+    "minimum_contact_edge_to_Active": 0.14,
+    "minimum_contact_center_to_Active": 0.22,
+    "prototype_contact_edge_to_Active": 0.25,
+    "prototype_contact_center_to_Active": 0.33,
+    "model_XGW_default": 0.1
+  },
+  "wrapper_or_model_XGW_override_present": false,
+  "interpretation": "A literal 0.10um drawn gate-contact edge or center distance cannot satisfy Cnt.e. This does not prove that an effective/calibrated compact-model XGW is intended as that literal drawn distance; that convention and RGO ownership remain unqualified.",
+  "no_container_process_executed": true,
+  "no_source_or_geometry_modified": true,
+  "not_run": [
+    "Model-card change",
+    "Geometry relocation",
+    "Full gate-resistance applicability",
+    "Electrical sensitivity or acceptance waiver"
+  ]
+}

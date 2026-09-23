@@ -1,0 +1,127 @@
+{
+  "status": "prepared conditional passive coupon; no simulation run",
+  "script_sha256": "a527fc11c34e05618ee0f5586e63383529c137d465770499112a6eae0dba3478",
+  "cases": [
+    {
+      "name": "direct-zero-r",
+      "deck_sha256": "11f33423bb7dafbc728d27659c3dd285587fb539197a7fd0f4e5e06105dc9f44",
+      "columns": [
+        "time",
+        "v(a)",
+        "v(m)",
+        "i(Vdrive)",
+        "i(Vmeasure)"
+      ],
+      "expected": "passed prospective coupon gates",
+      "runtime": "not run"
+    },
+    {
+      "name": "adapter-zero-r",
+      "deck_sha256": "ae25b677cce54896695acc0ea62a77e263912970ee49a71aa647c26da65075e9",
+      "columns": [
+        "time",
+        "v(a)",
+        "v(m)",
+        "v(p0)",
+        "v(p1)",
+        "i(Vdrive)",
+        "i(v.xattach.vmeasure)",
+        "i(v.xattach.vport0)",
+        "i(v.xattach.vport1)",
+        "v(xattach.av)",
+        "v(xattach.f0)",
+        "v(xattach.f1)"
+      ],
+      "expected": "passed prospective coupon gates",
+      "runtime": "not run"
+    },
+    {
+      "name": "distributed-r",
+      "deck_sha256": "d575288d38f6076d27c092f2a2dea7c1ac0d40c07503f28558479a2e33d769b5",
+      "columns": [
+        "time",
+        "v(a)",
+        "v(m)",
+        "v(p0)",
+        "v(p1)",
+        "i(Vdrive)",
+        "i(v.xattach.vmeasure)",
+        "i(v.xattach.vport0)",
+        "i(v.xattach.vport1)",
+        "v(xattach.av)",
+        "v(xattach.f0)",
+        "v(xattach.f1)"
+      ],
+      "expected": "passed prospective coupon gates",
+      "runtime": "not run"
+    },
+    {
+      "name": "unequal-voltage",
+      "deck_sha256": "c342bc76bf0397f22bbdc104e0a42812f88ead9e0fc80d5e96b7c36257f499a4",
+      "columns": [
+        "time",
+        "v(a)",
+        "v(m)",
+        "v(p0)",
+        "v(p1)",
+        "i(Vdrive)",
+        "i(v.xattach.vmeasure)",
+        "i(v.xattach.vport0)",
+        "i(v.xattach.vport1)",
+        "v(xattach.av)",
+        "v(xattach.f0)",
+        "v(xattach.f1)"
+      ],
+      "expected": "passed prospective coupon gates",
+      "runtime": "not run"
+    },
+    {
+      "name": "wrong-current-sign",
+      "deck_sha256": "d7a001c299cc85b29ff14796bb2864b65119543424ef0738f16644fbb35e81bc",
+      "columns": [
+        "time",
+        "v(a)",
+        "v(m)",
+        "v(p0)",
+        "v(p1)",
+        "i(Vdrive)",
+        "i(v.xattach.vmeasure)",
+        "i(v.xattach.vport0)",
+        "i(v.xattach.vport1)",
+        "v(xattach.av)",
+        "v(xattach.f0)",
+        "v(xattach.f1)"
+      ],
+      "expected": "failed signed-current gate",
+      "runtime": "not run"
+    }
+  ],
+  "fixed_diagnostic_weights": [
+    "1/3",
+    "2/3"
+  ],
+  "actual_SENSE_weights": "not selected",
+  "original_SENSE_source_or_models_changed": false,
+  "prospective_gates": {
+    "child_watchdog_s": 30,
+    "finite_all_vectors": true,
+    "header_identity": "Exact ordered vector identity; only case and explicit name#branch to i(name) normalization.",
+    "simulator_log": "Fatal/error/no-such-vector/unknown-vector/device/parameter/aborted/failed-analysis/timestep/segfault/singular-matrix lines fail independently of exit0; all warning lines retained.",
+    "required_final_time_s": 1.2e-06,
+    "voltage_identity_abs_V": 5e-11,
+    "signed_current_identity_abs_A": 1e-12,
+    "power_identity_abs_W": 1e-12,
+    "branch_shunt_conductance_S": 1e-12,
+    "shunt_accounting": "Vport_i includes its f_i node shunt; subtract v(f_i)*1e-12 before comparing weighted current. Vmeasure includes the m node shunt, which is retained in both direct and adapter controls.",
+    "zero_R_model_voltage": "Exact timestamp and voltage arrays compared; any mismatch retained, not replaced by interpolation.",
+    "negative_control": "The wrong Fcontact0 sign MUST fail signed-current and power gates."
+  },
+  "boundary": "Passive RC coupon only; no PDK compact-model applicability, full11512 parity, actual distributed-current weighting or electrical acceptance claim.",
+  "not_run": [
+    "All five ngspice coupons",
+    "Actual SENSE adapter",
+    "Full parameter/wave parity",
+    "Positive metal-R extraction",
+    "Intrinsic gate/body/junction and MIM ownership qualification"
+  ]
+}

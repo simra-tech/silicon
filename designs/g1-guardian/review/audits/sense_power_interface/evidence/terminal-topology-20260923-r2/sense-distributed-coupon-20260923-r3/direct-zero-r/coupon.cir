@@ -1,0 +1,17 @@
+* Conditional distributed-terminal implementation coupon; no PDK models.
+.options reltol=1e-9 abstol=1e-14 vntol=1e-10 rshunt=1e12 numdgt=17
+Vdrive a 0 PWL(0 0 0.2u 1 0.4u 0 0.6u -1 0.8u 0 1u 1 1.2u 0)
+Rload m 0 1000
+Cload m 0 10p
+Vmeasure a m 0
+.control
+set noaskquit
+set numdgt=17
+set wr_singlescale
+set wr_vecnames
+save all
+tran 1n 1.2u 0 1n
+wrdata waveform.dat v(a) v(m) i(Vdrive) i(Vmeasure)
+quit
+.endc
+.end

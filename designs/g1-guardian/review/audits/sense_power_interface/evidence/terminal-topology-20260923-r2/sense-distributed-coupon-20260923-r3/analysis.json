@@ -1,0 +1,104 @@
+{
+  "status": "failed or incomplete conditional passive controls",
+  "contract_sha256": "12dfeec6a3c034f507a3b7351e3c23ae5c5023b88ec47f193fadf18ed0da453a",
+  "script_sha256": "548b688023e7f51c519e8a2387be58096fee81d9fb520913ccca3731bbd7161c",
+  "cases": [
+    {
+      "name": "direct-zero-r",
+      "status": "passed",
+      "accepted": true,
+      "simulator_log": {
+        "status": "passed",
+        "fatal_lines": [],
+        "warning_lines": []
+      },
+      "voltage_residual_V": 0.0,
+      "waveform_sha256": "eefcfad4d094150e5b7707924507a79a462ad7baad4a7cc1dc8c616fe121d63d",
+      "expected_status": "passed"
+    },
+    {
+      "name": "adapter-zero-r",
+      "status": "passed",
+      "accepted": true,
+      "simulator_log": {
+        "status": "passed",
+        "fatal_lines": [],
+        "warning_lines": []
+      },
+      "voltage_residual_V": 1.1102230246251565e-16,
+      "contact_voltage_residual_V": 0.0,
+      "signed_current_residual_A": 1.0842021724855044e-19,
+      "signed_KCL_residual_A": 1.0842021724855044e-19,
+      "power_residual_W": 3.2526065174565133e-19,
+      "rows": 1275,
+      "waveform_sha256": "89b281aa83ec37a429eef00783384c72b06dd3aaf5bce72c2d42e63220c175ed",
+      "expected_status": "passed"
+    },
+    {
+      "name": "distributed-r",
+      "status": "passed",
+      "accepted": true,
+      "simulator_log": {
+        "status": "passed",
+        "fatal_lines": [],
+        "warning_lines": []
+      },
+      "voltage_residual_V": 8.804068585277491e-13,
+      "contact_voltage_residual_V": 0.0,
+      "signed_current_residual_A": 2.168404344971009e-19,
+      "signed_KCL_residual_A": 2.168404344971009e-19,
+      "power_residual_W": 9.228728892196614e-16,
+      "rows": 1663,
+      "waveform_sha256": "d5326b590f6fbdfb9ca281316d569ce7877121297cbec758f4f7cf66d9dce8e0",
+      "expected_status": "passed"
+    },
+    {
+      "name": "unequal-voltage",
+      "status": "passed",
+      "accepted": true,
+      "simulator_log": {
+        "status": "passed",
+        "fatal_lines": [],
+        "warning_lines": []
+      },
+      "voltage_residual_V": 5.551115123125783e-17,
+      "contact_voltage_residual_V": 0.0,
+      "signed_current_residual_A": 7.397222471374298e-29,
+      "signed_KCL_residual_A": 1.209424301246908e-28,
+      "power_residual_W": 5.048715533889415e-29,
+      "rows": 1223,
+      "waveform_sha256": "0c291ab24eca798d8ed6cca514e5acacbf438b534c5b04a6c66584a17a762c50",
+      "expected_status": "passed"
+    },
+    {
+      "name": "wrong-current-sign",
+      "status": "failed",
+      "accepted": true,
+      "simulator_log": {
+        "status": "passed",
+        "fatal_lines": [],
+        "warning_lines": []
+      },
+      "voltage_residual_V": 1.112887559884257e-12,
+      "contact_voltage_residual_V": 0.0,
+      "signed_current_residual_A": 0.0006991861312525063,
+      "signed_KCL_residual_A": 0.0006991861312525066,
+      "power_residual_W": 0.0006996749924958439,
+      "rows": 1613,
+      "waveform_sha256": "b3946a8661dcec76a7b7d29c2b86ca7cdbda3a0698a10b00b01b330cab449307",
+      "expected_status": "failed"
+    }
+  ],
+  "zero_R": {
+    "status": "failed",
+    "exact_time_grid": false,
+    "exact_model_voltage": false,
+    "scope": "Passive coupon model-node voltage only, not full SENSE parity; no interpolation"
+  },
+  "not_run": [
+    "Actual SENSE distributed weights",
+    "Full11512 parameter/wave parity",
+    "Intrinsic compact-model applicability",
+    "Physical PEX/electrical adoption"
+  ]
+}
