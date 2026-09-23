@@ -1,0 +1,70 @@
+{
+  "status": "passed top-name-only exact differential and control preparation",
+  "original_reference_sha256": "d680bbcc6d66fc13bcebb225b9e94d667c617bc6bb7402bf7a35255ae462c4cc",
+  "derived_reference_sha256": "f4ce6848bd7dd179d2ef4cbd8a4ea6bf9788bcfa1ff4b93fabae8bf18b6378f9",
+  "byte_offset": 772761,
+  "byte_edit": {
+    "before": "g1_chip_top",
+    "after": "placed_core_NOT_CONNECTED_FULLCHIP"
+  },
+  "token_edits": [
+    [
+      97399,
+      "g1_chip_top",
+      "placed_core_NOT_CONNECTED_FULLCHIP"
+    ]
+  ],
+  "unchanged_prefix_sha256": "8b2b9bd912d77ae87c860e000acc8f2e5ca421a529c421166574e2ac8dd05e97",
+  "unchanged_suffix_sha256": "d1be06764ef4a3d389d6c78d8ea4034e2282bda3a9c1703b751e2aa99ff83607",
+  "control_reference_sha256": "b8a452cceafbdd65a3433cd88cedf906afaf9eb3a515ac6dfac2bf37bd618fdb",
+  "cases": [
+    {
+      "name": "same_names",
+      "leaf": "LOGICAL_INV",
+      "top": "NAME_CONTROL_TOP",
+      "second_input": "N",
+      "expected_match": true,
+      "layout_netlist": "same_names_layout.cdl",
+      "sha256": "b8a452cceafbdd65a3433cd88cedf906afaf9eb3a515ac6dfac2bf37bd618fdb"
+    },
+    {
+      "name": "child_alias",
+      "leaf": "RETAINED_INV",
+      "top": "NAME_CONTROL_TOP",
+      "second_input": "N",
+      "expected_match": true,
+      "layout_netlist": "child_alias_layout.cdl",
+      "sha256": "18b4112136e7cb846b08db52571cdadc2a02bd71b4116a767dd3a2165e5631c2"
+    },
+    {
+      "name": "wrong_connection",
+      "leaf": "RETAINED_INV",
+      "top": "NAME_CONTROL_TOP",
+      "second_input": "A",
+      "expected_match": false,
+      "layout_netlist": "wrong_connection_layout.cdl",
+      "sha256": "ac26f08eab54b87b852539025030f9eeb24827d2a14c2a1a1e249bb257a0975b"
+    },
+    {
+      "name": "top_alias_observation",
+      "leaf": "RETAINED_INV",
+      "top": "OTHER_TOP",
+      "second_input": "N",
+      "expected_match": null,
+      "layout_netlist": "top_alias_observation_layout.cdl",
+      "sha256": "7fb3365f0730c07c734ac5fbb105bcbb3730b97290fef7607a9b81d5106f1552"
+    }
+  ],
+  "checks": {
+    "exact_single_name_token_change": "passed",
+    "all_body_library_bytes": "passed",
+    "inverse_reconstruction": "passed",
+    "original_reference_unchanged": "passed",
+    "unchanged_stock_name_controls": "not run",
+    "physical_extraction": "not run",
+    "fullchip_LVS": "not run",
+    "model_deck_changes": "not run",
+    "seed": "not applicable"
+  },
+  "script_sha256": "ea2c668b7f6aab84e1e112c893843cb049b28765cb6b17ff51a1343942a959aa"
+}
