@@ -1,0 +1,52 @@
+{
+  "case": "fast",
+  "mode": "differential",
+  "reference_run": "joint586-fast-fixture-controls-20260923-b-high_hot_cm0",
+  "original_source_sha256": "baab6183c364477da1dd332e4585ae7201b3776bf0f836014744a42809e13877",
+  "candidate_source_sha256": "edde372083bbe7ac10da42d30d694d7a636f184bb1716e543115b40236a097d4",
+  "other_source_hashes": {
+    "trip.spice": "f49e17db24fc85f4f62aab3cc98dce996d027567417ad80cfea13d11609ba2e1",
+    "bgr.spice": "7de0fc30697d1e81d40c3200a511faf0479cfd8b397bbaa3cec6dbc4fa758c61"
+  },
+  "source_inverse_exact": true,
+  "changes": [
+    {
+      "old": "XCC cz out cap_cmim w=69u l=23u m=1 mm_ok=1",
+      "new": "XCC cz out cap_cmim w=50u l=23u m=1 mm_ok=1"
+    },
+    {
+      "old": "XRZ out1 cz vss rppd w=1u l=6.2u m=1 b=0 mm_ok=1",
+      "new": "XRZ out1 cz vss rppd w=1u l=37.2u m=1 b=0 mm_ok=1",
+      "scope": "main OTA only"
+    }
+  ],
+  "main_MIM_area_um2": {
+    "original": 1587,
+    "candidate": 1150,
+    "delta": -437
+  },
+  "main_RZ_body_area_um2": {
+    "original": 6.2,
+    "candidate": 37.2,
+    "delta": 31.000000000000004
+  },
+  "baseline_summary_sha256": null,
+  "original_differential_summary_sha256": "6622df769226bc63beec665e54a0fb2458af94939e5bcd9e150958946a5522d1",
+  "cross_source_dc_mode": "bounded",
+  "unchanged11511_plus27_exact_required": true,
+  "candidate11512_before_after_exact_required": true,
+  "intentional_model_scale": "Native mismatch area law; held random realization checked with decimal-print and outward binary64 operation intervals. All other recorded model fingerprints exact; changed resistor dimensions are not an unchanged circuit.",
+  "criteria": {
+    "gain_V_per_V": [
+      19.9,
+      20.1
+    ],
+    "BW_Hz_min": 2000000.0,
+    "PM_deg_min": 60,
+    "GM_dB_min": 10,
+    "probe_DC_V_max": 1e-06,
+    "probe_DC_A_max": 1e-09
+  },
+  "watchdog_s": 120,
+  "scope": "Isolated source candidate only; no production, old MC, native geometry, field model or PEX qualification inherited."
+}
