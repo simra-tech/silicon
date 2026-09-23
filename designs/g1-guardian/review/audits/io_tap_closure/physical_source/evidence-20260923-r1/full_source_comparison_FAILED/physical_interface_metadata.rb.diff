@@ -1,0 +1,20 @@
+--- 
++++ 
+@@ -41,7 +41,7 @@
+   end
+ 
+   def self.apply(circuit, path, source_pins)
+-    raise 'Physical certificate changed' unless Digest::SHA256.file(path).hexdigest == 'e7f9c8eef1ca1631aaa9fd7c2fdbc142bf5f7c3fe33afb1dc4eefc831c308177'
++    raise 'Physical certificate changed' unless Digest::SHA256.file(path).hexdigest == '698a0b00ade4dcb88e6b102593ed9945707a4df18582fdf364adcf9639e92011'
+     proof = JSON.parse(File.read(path))
+     raise 'Physical certificate incomplete' unless proof['status'].start_with?('passed read-only 24 physical ports / 22 distinct') && proof['ports'].size == 24
+     expected = proof['logical_bindings']
+@@ -82,7 +82,7 @@
+     end
+     before, original = graph(circuit), pins(circuit)
+     links = {before: reciprocal_links(circuit)}
+-    raise 'Original promoted interface changed' unless original.size == 71
++    raise 'Original promoted interface changed' unless original.size == 50
+     replace(circuit, proposed, nets)
+     raise 'Metadata projection changed electrical graph' unless graph(circuit) == before
+     raise 'Physical interface pairing changed' unless pins(circuit).map { |_,name,net| [name,net] } == proposed

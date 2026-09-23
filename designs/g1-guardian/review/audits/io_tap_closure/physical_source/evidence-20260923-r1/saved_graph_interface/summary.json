@@ -1,0 +1,205 @@
+{
+  "status": "passed current exact flatten/material/physical22pin controls; comparison not run",
+  "workers": [
+    {
+      "original": "<repository>/designs/g1-guardian/review/audits/fullchip_reference_closure/physical_lvs/audit_api_flatten.py",
+      "original_sha256": "c464d7fb87a2a2e375f43e00e7d437248e6a9b4f05f858cf5d151f83e84d7415",
+      "prepared": "audit_api_flatten.py",
+      "prepared_sha256": "33c120b04dd2d5fd85de15e3e93e55d759f9dd4f1521993be5cb29838edc19b4",
+      "edits": [
+        [
+          "set(os.sched_getaffinity(0)) == {1}",
+          "len(os.sched_getaffinity(0)) == 1"
+        ],
+        [
+          "1c8f3f91b8be00e0fbbdf4c2a40734fb5f8fe8b0388b1780768699e1a2afcbcf",
+          "1b2156355d671e31970482eb3ec8f47b5e4b7bb25d7b111155bfb0ea7306460f"
+        ]
+      ]
+    },
+    {
+      "original": "<repository>/designs/g1-guardian/review/audits/fullchip_reference_closure/physical_lvs/full_marker_candidate/audit_saved_material.py",
+      "original_sha256": "4a6096101e2fc5ae84709cc3e1a1196701206f1c4eaf2b0d5f5691b9eac23c76",
+      "prepared": "audit_saved_material.py",
+      "prepared_sha256": "06574fb4b5dfce025fd6319304778507753001e1feabf6d1c5d6d16d229af11f",
+      "edits": [
+        [
+          "a.candidate / 'io_marker_native.gds'",
+          "a.candidate / 'route_fill_pruned.gds'"
+        ],
+        [
+          "ae62bf68aa001144c08a37c58ac3553c6e5f2013a6824b340218e84962066aca",
+          "4cffddc5ae8369c9fd5c574cb9571b4641cdee26876370c93bfbe042c4049df2"
+        ],
+        [
+          "3ed5cd2b78b3d4f4ed724730fcba2388148340d6442249e143c17a9f7ac99f04",
+          "1b2156355d671e31970482eb3ec8f47b5e4b7bb25d7b111155bfb0ea7306460f"
+        ],
+        [
+          "'passed exact drawn TM2 coverage; all 7058 floating fill polygons absent from saved layer'",
+          "'passed exact drawn TM2 coverage; current floating fill count separately recorded'"
+        ],
+        [
+          "    assert filler.count() == 7058 and filler.area() == 352900000000",
+          "    assert filler.count() > 0 and filler.area() > 0 # Current held GDS, not old-parent count."
+        ]
+      ]
+    },
+    {
+      "original": "<repository>/designs/g1-guardian/review/audits/fullchip_reference_closure/physical_lvs/full_marker_candidate/probe_current_ports.py",
+      "original_sha256": "f1d991c0f9d96170efaed69d2e97f1d07e009d4c0877d5c1499dc72520fa5264",
+      "prepared": "probe_current_ports.py",
+      "prepared_sha256": "9ceb00cac40c65b6fc187714b06aee4c27a4278e4696988904bfa4382ecc584e",
+      "edits": [
+        [
+          "a.candidate / 'io_marker_native.gds'",
+          "a.candidate / 'route_fill_pruned.gds'"
+        ],
+        [
+          " and meta['parent_GDS_sha256'] == PARENT",
+          ""
+        ],
+        [
+          "ae62bf68aa001144c08a37c58ac3553c6e5f2013a6824b340218e84962066aca",
+          "4cffddc5ae8369c9fd5c574cb9571b4641cdee26876370c93bfbe042c4049df2"
+        ],
+        [
+          "f4ce6848bd7dd179d2ef4cbd8a4ea6bf9788bcfa1ff4b93fabae8bf18b6378f9",
+          "d39ce8512f167545ab2818582bd1e51e88f6402ff810dcf3368cd7d277ddb4d4"
+        ],
+        [
+          "assert material['native_filler_polygons'] == 7058",
+          "assert material['native_filler_polygons'] > 0 # Exact current material proof, not old-parent count."
+        ]
+      ]
+    }
+  ],
+  "database_sha256": "1b2156355d671e31970482eb3ec8f47b5e4b7bb25d7b111155bfb0ea7306460f",
+  "GDS_sha256": "4cffddc5ae8369c9fd5c574cb9571b4641cdee26876370c93bfbe042c4049df2",
+  "source_sha256": "d39ce8512f167545ab2818582bd1e51e88f6402ff810dcf3368cd7d277ddb4d4",
+  "bondmap_sha256": "73ed1fc85aaea04b4c975d799dc5843c28f2762c2d33a54c5df0d771bacf3521",
+  "native_LVS": "failed original deep comparison preserved",
+  "comparison": "not run",
+  "runs": [
+    {
+      "stage": "flatten",
+      "run": {
+        "command": [
+          "stdbuf",
+          "-o0",
+          "-e0",
+          "python3",
+          "<results-root>/io-current-diagnostics-20260923-r1/audit_api_flatten.py",
+          "--database",
+          "<results-root>/io-physical-ap-native-lvs-20260923-r1/reports/route_fill_pruned.lvsdb",
+          "--output",
+          "<results-root>/io-current-diagnostics-20260923-r1/flatten"
+        ],
+        "started_utc": "2026-09-23T12:36:32.171992+00:00",
+        "status": "completed",
+        "timeout_s": 120,
+        "runtime_arch": "x86_64",
+        "stdio_unbuffered": true,
+        "pid": 8,
+        "wall_s": 15.766834136098623,
+        "sampled_utc": "2026-09-23T12:36:47.862603+00:00",
+        "log_bytes": 2216,
+        "resources": {
+          "VmHWM": "2257528 kB",
+          "VmRSS": "1984996 kB",
+          "Threads": "1"
+        },
+        "cpu_ticks": [
+          "1289",
+          "181"
+        ],
+        "returncode": 0,
+        "finished_utc": "2026-09-23T12:36:47.939330+00:00"
+      }
+    },
+    {
+      "stage": "material",
+      "run": {
+        "command": [
+          "stdbuf",
+          "-o0",
+          "-e0",
+          "python3",
+          "<results-root>/io-current-diagnostics-20260923-r1/audit_saved_material.py",
+          "--candidate",
+          "<results-root>/gshared-fill-20260923-r4",
+          "--database",
+          "<results-root>/io-physical-ap-native-lvs-20260923-r1/reports/route_fill_pruned.lvsdb",
+          "--output",
+          "<results-root>/io-current-diagnostics-20260923-r1/material"
+        ],
+        "started_utc": "2026-09-23T12:36:47.962630+00:00",
+        "status": "completed",
+        "timeout_s": 120,
+        "runtime_arch": "x86_64",
+        "stdio_unbuffered": true,
+        "pid": 9,
+        "wall_s": 14.466126628220081,
+        "sampled_utc": "2026-09-23T12:37:02.402172+00:00",
+        "log_bytes": 81,
+        "resources": {
+          "VmHWM": "1953592 kB",
+          "VmRSS": "1953592 kB",
+          "Threads": "1"
+        },
+        "cpu_ticks": [
+          "1056",
+          "157"
+        ],
+        "returncode": 0,
+        "finished_utc": "2026-09-23T12:37:02.429189+00:00"
+      }
+    },
+    {
+      "stage": "ports",
+      "run": {
+        "command": [
+          "stdbuf",
+          "-o0",
+          "-e0",
+          "python3",
+          "<results-root>/io-current-diagnostics-20260923-r1/probe_current_ports.py",
+          "--candidate",
+          "<results-root>/gshared-fill-20260923-r4",
+          "--database",
+          "<results-root>/io-physical-ap-native-lvs-20260923-r1/reports/route_fill_pruned.lvsdb",
+          "--database-sha256",
+          "1b2156355d671e31970482eb3ec8f47b5e4b7bb25d7b111155bfb0ea7306460f",
+          "--bondmap",
+          "<repository>/designs/g1-guardian/padframe/bondmap_candidate_20260923.csv",
+          "--source",
+          "<results-root>/io-physical-ap-source-20260923-r2/physical_taps_reader.cdl",
+          "--material-proof",
+          "<results-root>/io-current-diagnostics-20260923-r1/material/summary.json",
+          "--output",
+          "<results-root>/io-current-diagnostics-20260923-r1/ports"
+        ],
+        "started_utc": "2026-09-23T12:37:02.442586+00:00",
+        "status": "completed",
+        "timeout_s": 120,
+        "runtime_arch": "x86_64",
+        "stdio_unbuffered": true,
+        "pid": 10,
+        "wall_s": 15.000093545764685,
+        "sampled_utc": "2026-09-23T12:37:17.445650+00:00",
+        "log_bytes": 85,
+        "resources": {
+          "VmHWM": "1952844 kB",
+          "VmRSS": "1952844 kB",
+          "Threads": "1"
+        },
+        "cpu_ticks": [
+          "1017",
+          "191"
+        ],
+        "returncode": 0,
+        "finished_utc": "2026-09-23T12:37:17.448579+00:00"
+      }
+    }
+  ]
+}

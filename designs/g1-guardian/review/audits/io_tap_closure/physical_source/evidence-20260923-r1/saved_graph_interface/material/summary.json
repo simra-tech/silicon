@@ -1,0 +1,145 @@
+{
+  "status": "passed exact drawn TM2 coverage; current floating fill count separately recorded",
+  "GDS_sha256": "4cffddc5ae8369c9fd5c574cb9571b4641cdee26876370c93bfbe042c4049df2",
+  "database_sha256": "1b2156355d671e31970482eb3ec8f47b5e4b7bb25d7b111155bfb0ea7306460f",
+  "script_sha256": "06574fb4b5dfce025fd6319304778507753001e1feabf6d1c5d6d16d229af11f",
+  "exact_drawn_matches": [
+    {
+      "index": 31,
+      "name": "l22",
+      "drawn_XOR_area_dbu2": 0,
+      "missing_area_um2": 347100.0,
+      "missing_polygons": 6942,
+      "missing_exactly_native_filler": true,
+      "extra_area_um2": 0.0,
+      "extra_empty": true
+    }
+  ],
+  "pinned_rule_snippets": [
+    {
+      "file": "libs.tech/klayout/tech/lvs/rule_decks/general_connections.lvs",
+      "sha256": "bb61656b3564cf08558b83cf27d09854049eb30b5b7ade6610045d43c4b53e97",
+      "selected_lines": [
+        [
+          47,
+          "connect(topvia2_drw, topmetal2_con)"
+        ],
+        [
+          63,
+          "connect(topmetal2_con, topmetal2_text)"
+        ]
+      ]
+    },
+    {
+      "file": "libs.tech/klayout/tech/lvs/rule_decks/general_derivations.lvs",
+      "sha256": "9604bfc7bf433d1e38e147aac55d96e4777efacb2380bdce08e02908df46540c",
+      "selected_lines": [
+        [
+          63,
+          "topmetal2_con = topmetal2.not(topmetal2_res).not(ind_drw)"
+        ]
+      ]
+    },
+    {
+      "file": "libs.tech/klayout/tech/lvs/rule_decks/ind_connections.lvs",
+      "sha256": "a38dbf6f321d06ec4fafa353430ec1254e0d883b9a9a4921bf789615927d73a2",
+      "selected_lines": [
+        [
+          29,
+          "connect(ind_pin, topmetal2_con)"
+        ]
+      ]
+    },
+    {
+      "file": "libs.tech/klayout/tech/lvs/rule_decks/layers_definitions.lvs",
+      "sha256": "c8d3cb88106fd44bcab762c15335bd2902ccedd0d0722ea4ebef7fbc5f7f4709",
+      "selected_lines": [
+        [
+          1200,
+          "topmetal2_drw = get_polygons(134, 0)"
+        ],
+        [
+          1205,
+          "topmetal2_filler = get_polygons(134, 22)"
+        ],
+        [
+          1210,
+          "topmetal2_slit = get_polygons(134, 24)"
+        ],
+        [
+          1216,
+          "topmetal2 = topmetal2_drw.join(topmetal2_filler).not(topmetal2_slit)"
+        ]
+      ]
+    },
+    {
+      "file": "libs.tech/klayout/tech/lvs/rule_decks/res_derivations.lvs",
+      "sha256": "3c32e371d71ddbb7190769db6aac4676d65f75eff1ca994fbf720ceb06255754",
+      "selected_lines": [
+        [
+          81,
+          "res_topmetal2 = topmetal2.and(topmetal2_res)"
+        ]
+      ]
+    },
+    {
+      "file": "libs.tech/klayout/tech/lvs/rule_decks/res_extraction.lvs",
+      "sha256": "f3913114d4eafc36f6baf8c47a5de4867270e41955572af7f25c5f498ccec4b1",
+      "selected_lines": [
+        [
+          99,
+          "extract_devices(resistor('res_topmetal2', RSH_RES_TOPMETAL2, RES2), { 'R' => res_topmetal2, 'C' => topmetal2_con })"
+        ]
+      ]
+    },
+    {
+      "file": "libs.tech/klayout/tech/lvs/rule_decks/rfmos_model_mapping.lvs",
+      "sha256": "9cba1b823a1b805bb82dacb31cc5f18b3135da44db1b87f683b248713cde8584",
+      "selected_lines": [
+        [
+          119,
+          "  target_netlist.purge_devices"
+        ],
+        [
+          120,
+          "  target_netlist.purge"
+        ]
+      ]
+    },
+    {
+      "file": "libs.tech/klayout/tech/lvs/sg13g2.lvs",
+      "sha256": "ea1b690ce0f4b9d77d84fa91a913a048b4e14f1da4889a41ae03ca9fe9bfba43",
+      "selected_lines": [
+        [
+          162,
+          "PURGE_NETS = bool_check?($purge_nets)"
+        ],
+        [
+          450,
+          "  target_netlist.simplify if SIMPLIFY"
+        ],
+        [
+          459,
+          "  target_netlist.purge if PURGE"
+        ],
+        [
+          461,
+          "  log_option_action.call(label, 'purge_nets', PURGE_NETS)"
+        ],
+        [
+          462,
+          "  target_netlist.purge_nets if PURGE_NETS"
+        ]
+      ]
+    }
+  ],
+  "native_filler_polygons": 6942,
+  "native_filler_area_um2": 347100.0,
+  "filler_drawn_overlap_area_um2": 0.0,
+  "full_native_TM2_area_um2": 936474.026,
+  "caveat": "Saved connected-conductor material is not a complete floating-fill PEX domain.",
+  "fill_disconnected_from_drawn": "passed exact interaction-empty",
+  "complete_floating_fill_material_coverage": "failed",
+  "full_PEX": "not run",
+  "source_geometry_changes": "not applicable"
+}
