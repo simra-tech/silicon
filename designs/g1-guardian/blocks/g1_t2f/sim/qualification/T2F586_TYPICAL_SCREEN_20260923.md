@@ -25,3 +25,17 @@ Host telemetry reaches 2/4/6/8 µs at approximately 99/236/363/501 seconds.
 This describes progress, not accepted-step waveform data or a demonstrated
 numerical cause. No retry, replacement, solver change or acceptance change is
 made by this report. The declared 300-sample denominator remains intact.
+
+Samples 74131–74135 also passed the independent full-source, runtime, parameter,
+waveform and original linear-error audit, including distinct draws for every
+one of the 1,129 randomized primitives across all five samples. See their
+[audit](t2f586-s74131-74135-audit-20260923.json) and
+[portable receipts](portable_evidence/t2f586-s74131-74135-20260923/).
+
+Seed 74140's 25 °C leaf reached the original 600 s watchdog at a reported
+29.0854 µs. Its full BEFORE inventory exactly matches its completed 100 °C
+phase; AFTER and the full 25 °C waveform are not run to completion. The
+[read-only failure analysis](t2f586-s74140-cal25-failure-analysis-20260923.json)
+retains 3,272 initialization warnings and no positive-time warnings. Remaining
+required phases continue independently. The failed initial calibration is not
+replaced by a fit from other temperatures or by a solver diagnostic.

@@ -47,6 +47,7 @@ def main():
                  'declared_fixture_difference.diff', 'declared_bgr_source_difference.diff',
                  'declared_corner_deck_difference.diff',
                  'declared_adverse_transient_difference.diff', 'declared_method_difference.diff',
+                 'declared_solver_difference.diff',
                  'declared_watchdog_recovery_output.diff', 'original_failure_diagnosis.json'}
     for run in args.runs:
         # Do not resolve: source is a portable repository-relative run identity,
