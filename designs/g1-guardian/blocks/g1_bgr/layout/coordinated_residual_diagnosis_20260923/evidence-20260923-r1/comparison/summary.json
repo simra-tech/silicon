@@ -1,0 +1,90 @@
+{
+  "status": "passed complete saved-data comparisons; conditional not qualified",
+  "inputs": {
+    "<repository>/designs/g1-guardian/blocks/g1_bgr/layout/coordinated_model_boundary/analyze_external_pin.py": "afccf7e9b592c8020638b71441f16e2baa91820feadf7d10556e94cce2f9b5e4",
+    "<repository>/designs/g1-guardian/blocks/g1_bgr/layout/coordinated_dvbe_remedy_20260923/compare_dvbe.py": "0e10e0b22f9cb502ec8e5b08123b1b05677579d06f8840f448eb23266f46e9e4",
+    "<repository>/designs/g1-guardian/blocks/g1_bgr/sim/qualification/candidates/bgr_loop24_qref4_r253p465_hv06/bgr_loop24_qref4_r253p465_hv06.spice": "586ffb58b6af31c77a2e7cbcb83b173ffa4713ec62401da30901c5a7e606283b",
+    "<results-root>/bgr-dvbe-cuts-BN-audit-20260923-r1/analysis.json": "7e8f3776923ff2c2bdf3ad3e0397a3b42704bf54c40c5ae88bc15c9c1d8a01d8",
+    "<repository>/designs/g1-guardian/blocks/g1_bgr/layout/coordinated_residual_diagnosis_20260923/audit_complete_dc_kcl.py": "2e88dd21eb4f4a6c2ba7b5bc4574f8a988762c941c8b998de049d72c753955a0",
+    "<results-root>/bgr-dvbe-cuts-kpex-20260923-r1/summary.json": "a6215a1ebb85552b152fee44fea9b637291d60fa62e9059b020dfef5426e3e21",
+    "<results-root>/bgr-dvbe-cuts-kpex-20260923-r1/metal_node_voltages.json": "2ffc0497c3b3219757f04fe713e827452439f0a92cb41219b10ed38eab87e4e7",
+    "<results-root>/bgr-dvbe-cuts-fixture-20260923-r1/summary.json": "a709898ba70f563510df9acc8f238668b498b39e611d4a7b977b2a00a1e8f089",
+    "<repository>/designs/g1-guardian/blocks/g1_bgr/layout/coordinated_residual_diagnosis_20260923/analyze_saved.py": "2642abf9ac4c14e105bf493096399a8ada36cd15f15b4a3c976fbaecb8c6e1d8"
+  },
+  "stages": [
+    {
+      "command": [
+        "/foss/tools/bin/python3",
+        "<repository>/designs/g1-guardian/blocks/g1_bgr/layout/coordinated_model_boundary/analyze_external_pin.py",
+        "--run",
+        "<results-root>/bgr-dvbe-cuts-kpex-20260923-r1",
+        "--prepared",
+        "<results-root>/bgr-dvbe-cuts-fixture-20260923-r1"
+      ],
+      "returncode": 0
+    },
+    {
+      "command": [
+        "/foss/tools/bin/python3",
+        "<repository>/designs/g1-guardian/blocks/g1_bgr/layout/coordinated_dvbe_remedy_20260923/compare_dvbe.py",
+        "--baseline-prepared",
+        "<results-root>/bgr-supply-fixture-20260923-r1",
+        "--candidate-prepared",
+        "<results-root>/bgr-dvbe-cuts-fixture-20260923-r1",
+        "--baseline-run",
+        "<results-root>/bgr-supply-kpex-20260923-r1",
+        "--candidate-run",
+        "<results-root>/bgr-dvbe-cuts-kpex-20260923-r1",
+        "--source",
+        "<repository>/designs/g1-guardian/blocks/g1_bgr/sim/qualification/candidates/bgr_loop24_qref4_r253p465_hv06/bgr_loop24_qref4_r253p465_hv06.spice",
+        "--output",
+        "<results-root>/bgr-dvbe-cuts-comparison-20260923-r1/vs_supply_parent.json"
+      ],
+      "returncode": 0
+    },
+    {
+      "command": [
+        "/foss/tools/bin/python3",
+        "<repository>/designs/g1-guardian/blocks/g1_bgr/layout/coordinated_dvbe_remedy_20260923/compare_dvbe.py",
+        "--baseline-prepared",
+        "<results-root>/bgr-external-pin-source-20260923-r1",
+        "--candidate-prepared",
+        "<results-root>/bgr-dvbe-cuts-fixture-20260923-r1",
+        "--baseline-run",
+        "<results-root>/bgr-external-pin-kpex-20260923-r1",
+        "--candidate-run",
+        "<results-root>/bgr-dvbe-cuts-kpex-20260923-r1",
+        "--source",
+        "<repository>/designs/g1-guardian/blocks/g1_bgr/sim/qualification/candidates/bgr_loop24_qref4_r253p465_hv06/bgr_loop24_qref4_r253p465_hv06.spice",
+        "--output",
+        "<results-root>/bgr-dvbe-cuts-comparison-20260923-r1/vs_original.json"
+      ],
+      "returncode": 0
+    },
+    {
+      "command": [
+        "/foss/tools/bin/python3",
+        "<repository>/designs/g1-guardian/blocks/g1_bgr/layout/coordinated_residual_diagnosis_20260923/audit_complete_dc_kcl.py",
+        "--run",
+        "<results-root>/bgr-dvbe-cuts-kpex-20260923-r1",
+        "--prepared",
+        "<results-root>/bgr-dvbe-cuts-fixture-20260923-r1",
+        "--BN-proof",
+        "<results-root>/bgr-dvbe-cuts-BN-audit-20260923-r1/analysis.json",
+        "--output",
+        "<results-root>/bgr-dvbe-cuts-comparison-20260923-r1/stationary_model_KCL.json"
+      ],
+      "returncode": 0
+    }
+  ],
+  "new_simulation": "not run",
+  "delta_VREF_V": 0.012397999083281874,
+  "remaining_VREF_error_V": -0.00115241248214204,
+  "exact_maximum_principle": "failed",
+  "exact_maximum_excursion_V": 1.2212453270876722e-15,
+  "physical_BN_attachment": "not run/unresolved",
+  "model_contact_partition": "unresolved",
+  "PVT_startup_stability": "not run",
+  "integration": "not run",
+  "adoption": "not run"
+}

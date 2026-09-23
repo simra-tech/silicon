@@ -1,0 +1,54 @@
+time="2026-09-23T12:50:19+02:00" level=warning msg="Network file system detected as backing store.  Enforcing overlay option `force_mask=\"700\"`.  Add it to storage.conf to silence this warning"
+time="2026-09-23T12:50:20+02:00" level=warning msg="Network file system detected as backing store.  Enforcing overlay option `force_mask=\"700\"`.  Add it to storage.conf to silence this warning"
+Resource enforcement: CPU affinity; memory reservation only (rootless cgroups v1).
+time="2026-09-23T12:50:21+02:00" level=warning msg="Network file system detected as backing store.  Enforcing overlay option `force_mask=\"700\"`.  Add it to storage.conf to silence this warning"
+{
+  "status": "passed",
+  "command": [
+    "python3",
+    "/foss/pdks/ihp-sg13g2/libs.tech/klayout/tech/lvs/run_lvs.py",
+    "--run_mode=deep",
+    "--topcell=g1_bgr",
+    "--run_dir=<results-root>/bgr-dvbe-cuts-lvs-20260923-r2/reports",
+    "--layout=<results-root>/bgr-dvbe-cuts-candidate-20260923-r2/bank.gds",
+    "--netlist=<results-root>/bgr-dvbe-cuts-candidate-20260923-r2/bank.cdl",
+    "--top_lvl_pins",
+    "--spice_comments"
+  ],
+  "resource_gate_sha256": "dce056aab8f5e93e337ccdf7f4a1c976e4945fbff6facdfaf5e3fa2a9c69ef0a",
+  "cpu": 48,
+  "watchdog_s": 180,
+  "kill_grace_s": 5,
+  "memory_reservation_gib": 4,
+  "memory_enforced": false,
+  "seed": "not applicable",
+  "density_antenna_electrical_adoption": "not run",
+  "strict_lvs": [
+    {
+      "status": "passed",
+      "circuits": [
+        {
+          "status": "Match",
+          "children": {
+            "device": {
+              "Match": 32
+            },
+            "net": {
+              "Match": 24
+            },
+            "pin": {
+              "Match": 9
+            },
+            "subcircuit": {}
+          }
+        }
+      ],
+      "sha256": "648ccc65eafbb9a4d7750a8995c1402f5cb94795128cf2304c59396b0b898d06"
+    }
+  ],
+  "explicit_match": true,
+  "returncode": 0,
+  "wall_s": 6.748163018375635,
+  "inputs_rules_held": true,
+  "output_bytes": 3229800
+}
