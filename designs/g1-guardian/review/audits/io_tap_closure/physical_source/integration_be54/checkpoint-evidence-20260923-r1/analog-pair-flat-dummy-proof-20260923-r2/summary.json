@@ -1,0 +1,118 @@
+{
+  "status": "passed independent three-dummy source/native-terminal proof",
+  "source_occurrences": [
+    {
+      "path": "PAD12_EN.I0.MP0",
+      "model": "sg13_hv_pmos",
+      "source_record": "MP0 vdd vdd vdd vdd sg13_hv_pmos m=1 w=4.65u l=450.00n ng=1",
+      "terminal_nodes": {
+        "D": "VDD",
+        "G": "VDD",
+        "S": "VDD",
+        "B": "VDD"
+      }
+    },
+    {
+      "path": "PAD14_SCLK.I0.MP0",
+      "model": "sg13_hv_pmos",
+      "source_record": "MP0 vdd vdd vdd vdd sg13_hv_pmos m=1 w=4.65u l=450.00n ng=1",
+      "terminal_nodes": {
+        "D": "VDD",
+        "G": "VDD",
+        "S": "VDD",
+        "B": "VDD"
+      }
+    },
+    {
+      "path": "PAD15_SDI.I0.MP0",
+      "model": "sg13_hv_pmos",
+      "source_record": "MP0 vdd vdd vdd vdd sg13_hv_pmos m=1 w=4.65u l=450.00n ng=1",
+      "terminal_nodes": {
+        "D": "VDD",
+        "G": "VDD",
+        "S": "VDD",
+        "B": "VDD"
+      }
+    }
+  ],
+  "physical_instances": [
+    {
+      "source_instance": "PAD12_EN",
+      "transform": "r90 1273000,915000",
+      "gate_box_dbu": "(1106730,956540;1111380,956990)",
+      "all_four_terminals_to_native_VDD": "passed local physical graph with held exact instance transform"
+    },
+    {
+      "source_instance": "PAD14_SCLK",
+      "transform": "m0 467000,1273000",
+      "gate_box_dbu": "(508540,1106730;508990,1111380)",
+      "all_four_terminals_to_native_VDD": "passed local physical graph with held exact instance transform"
+    },
+    {
+      "source_instance": "PAD15_SDI",
+      "transform": "m0 579000,1273000",
+      "gate_box_dbu": "(620540,1106730;620990,1111380)",
+      "all_four_terminals_to_native_VDD": "passed local physical graph with held exact instance transform"
+    }
+  ],
+  "native_gate_area_um2": 2.0925,
+  "actual_native_source_alias": "retained_fullchip_sg13g2_IOPadIn",
+  "local_terminal_probes": {
+    "G": {
+      "layer": "poly",
+      "point_dbu": [
+        41765,
+        164000
+      ],
+      "cluster": 6
+    },
+    "S": {
+      "layer": "pdiff",
+      "point_dbu": [
+        41350,
+        164000
+      ],
+      "cluster": 6
+    },
+    "D": {
+      "layer": "pdiff",
+      "point_dbu": [
+        42180,
+        164000
+      ],
+      "cluster": 6
+    },
+    "B": {
+      "layer": "nwell",
+      "point_dbu": [
+        41765,
+        164000
+      ],
+      "cluster": 6
+    },
+    "VDD_native_pin": {
+      "layer": "30",
+      "point_dbu": [
+        41120,
+        171000
+      ],
+      "cluster": 6
+    }
+  },
+  "unconditional_purge_rule": "# frozen_string_literal: true\n\n#==========================================================================\n# Copyright 2026 IHP PDK Authors\n#\n# Licensed under the Apache License, Version 2.0 (the \"License\");\n# you may not use this file except in compliance with the License.\n# You may obtain a copy of the License at\n#\n#    https://www.apache.org/licenses/LICENSE-2.0\n#\n# Unless required by applicable law or agreed to in writing, software\n# distributed under the License is distributed on an \"AS IS\" BASIS,\n# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.\n# See the License for the specific language governing permissions and\n# limitations under the License.\n# SPDX-License-Identifier: Apache-2.0\n#==========================================================================\n\n# Add rfmode parameter when a MOS class does not provide it yet.\nensure_rfmode_parameter = lambda do |device_class|\n  next if device_class.nil? || device_class.has_parameter?('rfmode')\n  device_class.add_parameter(RBA::DeviceParameterDefinition.new('rfmode', 'rf mode', 0, true))\nend\n\n# Build a name->class lookup from classes that are already attached to devices.\n# This avoids creating duplicate class definitions with the same name.\nbuild_device_class_index = lambda do |target_netlist|\n  class_index = {}\n\n  target_netlist.each_circuit do |circuit|\n    circuit.each_device do |device|\n      klass = device.device_class\n      next if klass.nil?\n\n      class_index[klass.name.to_s.downcase] ||= klass\n    end\n  end\n\n  class_index\nend\n\n# Map RF MOS models to base MOS models in a netlist:\n# - RF models (rfnmos/rfpmos...) are mapped to base MOS classes (sg13_lv_nmos/sg13_lv_pmos...).\n# - rfmode is set to 1 for RF devices\napply_rfmos_model_mapping = lambda do |target_netlist, label|\n  logger.info(\"[#{label}] Apply RF MOS model mapping and rfmode parameter.\")\n\n  class_index = build_device_class_index.call(target_netlist)\n\n  # Lookup base classes from the index first, then from netlist DB, and create only when missing.\n  find_or_create_base_class = lambda do |base_name|\n    device_class = class_index[base_name]\n    device_class ||= target_netlist.device_class_by_name(base_name)\n\n    if device_class.nil?\n      device_class = RBA::DeviceClassMOS4Transistor.new\n      device_class.name = base_name\n      target_netlist.add(device_class)\n    end\n\n    ensure_rfmode_parameter.call(device_class)\n    class_index[base_name] = device_class\n    device_class\n  end\n\n  target_netlist.each_circuit do |circuit|\n    devices_to_remove = []\n    devices_to_process = []\n\n    # Snapshot first so newly created migrated devices are not revisited in the same pass.\n    circuit.each_device { |device| devices_to_process << device }\n    devices_to_process.each do |device|\n      source_class = device.device_class\n      source_model = source_class.name.to_s.downcase\n\n      # If this is already a base MOS model, only force rfmode to 0/1 and keep class/name.\n      if RF_TO_BASE_MOS_MODEL.value?(source_model)\n        ensure_rfmode_parameter.call(source_class)\n        source_rfmode = nil\n        if source_class.has_parameter?('rfmode')\n          source_rfmode_param_id = source_class.parameter_id('rfmode')\n          source_rfmode = device.parameter(source_rfmode_param_id) unless source_rfmode_param_id.nil?\n        end\n        device.set_parameter('rfmode', RFMODE_TO_BINARY.call(source_rfmode) || 0)\n        next\n      end\n\n      # If this is not an RF MOS alias, no migration is needed.\n      base_name = RF_TO_BASE_MOS_MODEL[source_model]\n      next if base_name.nil?\n\n      # Create migrated device with base class and copy all connectivity/geometry parameters.\n      target_class = find_or_create_base_class.call(base_name)\n      migrated = circuit.create_device(target_class, device.name)\n\n      %w[D G S B].each do |term_name|\n        source_term_id = source_class.terminal_id(term_name)\n        target_term_id = target_class.terminal_id(term_name)\n        net = device.net_for_terminal(source_term_id)\n        migrated.connect_terminal(target_term_id, net) unless net.nil?\n      end\n\n      %w[L W AS AD PS PD].each do |param_name|\n        source_param_id = source_class.parameter_id(param_name)\n        target_param_id = target_class.parameter_id(param_name)\n        next if source_param_id.nil? || target_param_id.nil?\n\n        migrated.set_parameter(param_name, device.parameter(source_param_id))\n      end\n\n      migrated.set_parameter('rfmode', 1)\n      devices_to_remove << device\n    end\n\n    devices_to_remove.each { |device| circuit.remove_device(device) }\n  end\n\n  target_netlist.purge_devices\n  target_netlist.purge\nend\n\n# Apply mapping on layout side before align/compare.\napply_rfmos_model_mapping.call(netlist, 'layout_netlist')\n",
+  "inputs": {
+    "<results-root>/analog-pair-overlay-flat-20260923-r1/overlay_flattened.gds": "dcca5f47f6d397e8c6811116f092ac0f9adbbe761617a87ba69cec8216417333",
+    "/foss/pdks/ihp-sg13g2/libs.ref/sg13g2_io/gds/sg13g2_io.gds": "4281a855377b6a1ca46356e9391258dc14e8efc3b8051a65befc0fe9db3c7825",
+    "<results-root>/analog-pair-reference-20260923-r1/physical_taps.cdl": "ac740690d87f2c1b27ecfa803aba8b11541da617e39e2e7f131aa90fa930fb2e",
+    "/foss/pdks/ihp-sg13g2/libs.tech/klayout/tech/lvs/rule_decks/rfmos_model_mapping.lvs": "9cba1b823a1b805bb82dacb31cc5f18b3135da44db1b87f683b248713cde8584"
+  },
+  "script_sha256": "24f4fb47bd603802dcb93d47f04dfdb7cd3b706128ef946b650b6be77c3273fb",
+  "not_run": [
+    "extraction-only source derivative",
+    "fullchip strict LVS with exclusion",
+    "electrical/ESD qualification"
+  ],
+  "original_fullchip_LVS": "failed retained",
+  "source_or_geometry_changes": "not applicable",
+  "scope": "Three original all-VDD source dummies, not deletion from canonical design; body proved through actual nwell/ntap/contact/metal path."
+}

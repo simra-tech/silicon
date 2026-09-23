@@ -1,0 +1,20 @@
+require "json"
+source("<results-root>/l2n-capture-control-20260923-r4/input.gds")
+m=input(8,0)
+t=input(8,25)
+connect(m,t)
+nl=netlist
+klass=RBA::DeviceClassResistor.new
+klass.name="CONTROL_R"
+nl.add(klass)
+c=nl.circuit_by_name("CAPTURE_CONTROL")
+dev=c.create_device(klass,"R1")
+dev.connect_terminal("A",c.net_by_name("A"))
+dev.connect_terminal("B",c.net_by_name("B"))
+dev.set_parameter("R",123.456789012345)
+before=nl.to_s
+rows=[]
+nl.each_circuit { |c| c.each_device { |d| d.device_class.parameter_definitions.each { |p| rows << [c.name,d.id,d.name,d.device_class.name,p.name,[d.parameter(p.id)].pack("G").unpack1("H*")] } } }
+File.write("<results-root>/l2n-capture-control-20260923-r4/exact.json",JSON.generate(rows))
+l2n_data.write_l2n("<results-root>/l2n-capture-control-20260923-r4/before.l2n")
+raise "capture mutated native graph" unless before==nl.to_s

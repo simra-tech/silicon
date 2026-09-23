@@ -1,0 +1,19 @@
+source("<results-root>/l2n-capture-control-20260923-r3/input.gds")
+m=input(8,0)
+t=input(8,25)
+connect(m,t)
+nl=netlist
+klass=RBA::DeviceClassResistor.new
+klass.name="CONTROL_R"
+nl.add(klass)
+c=nl.circuit_by_name("CAPTURE_CONTROL")
+dev=c.create_device(klass,"R1")
+dev.connect_terminal("A",c.net_by_name("A"))
+dev.connect_terminal("B",c.net_by_name("B"))
+dev.set_parameter("R",123.456789012345)
+capture = lambda do |target_netlist|
+  before = target_netlist.to_s
+  l2n_data.write_l2n("<results-root>/l2n-capture-control-20260923-r3/before.l2n")
+  raise "snapshot mutated native graph" unless before == target_netlist.to_s
+end
+capture.call(netlist)

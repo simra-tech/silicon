@@ -1,0 +1,10 @@
+source("<results-root>/l2n-capture-control-20260923-r1/input.gds")
+m=input(8,0)
+t=input(8,25)
+connect(m,t)
+capture = lambda do |target_netlist|
+  before = target_netlist.to_s
+  l2n_data.write("<results-root>/l2n-capture-control-20260923-r1/before.l2n")
+  raise "snapshot mutated native graph" unless before == target_netlist.to_s
+end
+capture.call(netlist)
