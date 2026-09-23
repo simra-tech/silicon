@@ -1,0 +1,13 @@
+--- 
++++ 
+@@ -23,8 +23,8 @@
+     ap.add_argument('--database', type=Path, required=True)
+     ap.add_argument('--output', type=Path, required=True)
+     a = ap.parse_args()
+-    assert not a.output.exists() and set(os.sched_getaffinity(0)) == {1}
+-    assert sha(a.database) == '1c8f3f91b8be00e0fbbdf4c2a40734fb5f8fe8b0388b1780768699e1a2afcbcf'
++    assert not a.output.exists() and len(os.sched_getaffinity(0)) == 1
++    assert sha(a.database) == '1b2156355d671e31970482eb3ec8f47b5e4b7bb25d7b111155bfb0ea7306460f'
+     assert pya.__version__ == '0.30.9'
+     a.output.mkdir(parents=True)
+     (a.output / 'worker_snapshot.py').write_bytes(Path(__file__).read_bytes())

@@ -1,0 +1,179 @@
+time="2026-09-23T14:25:29+02:00" level=warning msg="Network file system detected as backing store.  Enforcing overlay option `force_mask=\"700\"`.  Add it to storage.conf to silence this warning"
+time="2026-09-23T14:25:31+02:00" level=warning msg="Network file system detected as backing store.  Enforcing overlay option `force_mask=\"700\"`.  Add it to storage.conf to silence this warning"
+Resource enforcement: CPU affinity; memory reservation only (rootless cgroups v1).
+time="2026-09-23T14:25:31+02:00" level=warning msg="Network file system detected as backing store.  Enforcing overlay option `force_mask=\"700\"`.  Add it to storage.conf to silence this warning"
+{
+  "status": "failed strict native fullchip LVS",
+  "native_extraction": "attempted; actual report determines completion",
+  "strict_fullchip_LVS": "failed",
+  "command": [
+    "python3",
+    "/foss/pdks/ihp-sg13g2/libs.tech/klayout/tech/lvs/run_lvs.py",
+    "--layout",
+    "<results-root>/gshared-fill-20260923-r4/route_fill_pruned.gds",
+    "--netlist",
+    "<results-root>/io-physical-ap-source-20260923-r2/physical_taps_reader.cdl",
+    "--topcell",
+    "placed_core_NOT_CONNECTED_FULLCHIP",
+    "--run_mode",
+    "deep",
+    "--top_lvl_pins",
+    "--spice_comments",
+    "--run_dir",
+    "<results-root>/io-physical-ap-native-lvs-20260923-r1/reports"
+  ],
+  "source_pins": [
+    "D_ELT",
+    "D_STD",
+    "EN",
+    "FAULT_N",
+    "GATE",
+    "G_SHARED",
+    "HBT_B",
+    "HBT_C",
+    "HBT_E",
+    "SCLK",
+    "SDI",
+    "SDO",
+    "SENSE_N",
+    "SENSE_P",
+    "TEMP_OUT",
+    "TRIP_SET",
+    "VDDA",
+    "VREF",
+    "VDD",
+    "VSS",
+    "IOVDD",
+    "IOVSS"
+  ],
+  "watchdog_seconds": 900,
+  "analysis_watchdog_seconds": 60,
+  "memory_reservation_GiB": 16,
+  "memory_enforced": false,
+  "output_bound_GiB": 2,
+  "runtime": {
+    "klayout": "0.30.9",
+    "pdk_commit": "84374023ee8b4b126bebbba67fcbada0a9c0ff0b",
+    "image": "ddeb69576f2808676d1c5d474ecf04f6d1d6f8abdcff6b72b39790ded924bab2"
+  },
+  "scope": "Current digital source; owner-authorized explicit VSS and independently derived physical tap A/P. Reversible X-to-R tap reader syntax. All three all-VDD source dummies retained.",
+  "not_run": [
+    "electrical tap-R applicability",
+    "new SPI sequencing",
+    "PEX",
+    "adoption"
+  ],
+  "not_applicable": [
+    "random seed",
+    "device/model/rule tuning"
+  ],
+  "run": {
+    "command": [
+      "stdbuf",
+      "-o0",
+      "-e0",
+      "python3",
+      "/foss/pdks/ihp-sg13g2/libs.tech/klayout/tech/lvs/run_lvs.py",
+      "--layout",
+      "<results-root>/gshared-fill-20260923-r4/route_fill_pruned.gds",
+      "--netlist",
+      "<results-root>/io-physical-ap-source-20260923-r2/physical_taps_reader.cdl",
+      "--topcell",
+      "placed_core_NOT_CONNECTED_FULLCHIP",
+      "--run_mode",
+      "deep",
+      "--top_lvl_pins",
+      "--spice_comments",
+      "--run_dir",
+      "<results-root>/io-physical-ap-native-lvs-20260923-r1/reports"
+    ],
+    "started_utc": "2026-09-23T12:25:39.986430+00:00",
+    "status": "completed",
+    "timeout_s": 900,
+    "runtime_arch": "x86_64",
+    "stdio_unbuffered": true,
+    "pid": 8,
+    "wall_s": 388.5889278072864,
+    "sampled_utc": "2026-09-23T12:32:08.573303+00:00",
+    "log_bytes": 38455,
+    "resources": {
+      "VmHWM": "75560 kB",
+      "VmRSS": "75560 kB",
+      "Threads": "1"
+    },
+    "cpu_ticks": [
+      "11",
+      "3"
+    ],
+    "returncode": 0,
+    "finished_utc": "2026-09-23T12:32:08.575802+00:00"
+  },
+  "analysis_run": {
+    "command": [
+      "stdbuf",
+      "-o0",
+      "-e0",
+      "python3",
+      "<repository>/designs/g1-guardian/review/audits/fullchip_reference_closure/physical_lvs/inspect_stock_result_r4.py",
+      "--reports",
+      "<results-root>/io-physical-ap-native-lvs-20260923-r1/reports",
+      "--returncode",
+      "0",
+      "--top",
+      "placed_core_NOT_CONNECTED_FULLCHIP",
+      "--pins-json",
+      "<results-root>/io-physical-ap-native-lvs-20260923-r1/expected_source_pins.json",
+      "--mode",
+      "deep",
+      "--output",
+      "<results-root>/io-physical-ap-native-lvs-20260923-r1/strict_analysis.json"
+    ],
+    "started_utc": "2026-09-23T12:32:08.579185+00:00",
+    "status": "failed",
+    "timeout_s": 60,
+    "runtime_arch": "x86_64",
+    "stdio_unbuffered": true,
+    "pid": 285,
+    "wall_s": 13.861058002337813,
+    "sampled_utc": "2026-09-23T12:32:22.434502+00:00",
+    "log_bytes": 906,
+    "resources": {
+      "VmHWM": "1515812 kB",
+      "VmRSS": "1515812 kB",
+      "Threads": "1"
+    },
+    "cpu_ticks": [
+      "905",
+      "89"
+    ],
+    "returncode": 1,
+    "finished_utc": "2026-09-23T12:32:22.440621+00:00"
+  },
+  "analysis_summary": {
+    "status": "failed strict saved comparison",
+    "checks": {
+      "process_exit_zero": true,
+      "explicit_engine_match_only": false,
+      "no_engine_error": false,
+      "saved_database": true,
+      "strict_all_pairs_Match": false,
+      "layout_top_present_nonempty": true,
+      "layout_source_top_pin_set_exact": false,
+      "reference_top_present_nonempty": true,
+      "reference_source_top_pin_set_exact": true,
+      "native_extraction_strict_unrelaxed_switches": true,
+      "observed_extraction_mode_exact": true
+    },
+    "explicit_engine_match": false,
+    "explicit_engine_mismatch": true,
+    "process_returncode": 0,
+    "wrapper_summary_not_used": true,
+    "engine_log": "route_fill_pruned.log",
+    "engine_log_sha256": "24fd8b6e3e992fcb8690d239f3cf9e4e595a0d7d2d0c2ae4745f0dc06ec7be4d",
+    "parser_sha256": "e53c46f698af2825e8a3a127bfe8b04d5ed5e4783ba45ec49b5ef63f0f04c361",
+    "physical_extraction_required": true
+  },
+  "input_rule_parity": "passed",
+  "output_bytes": 201409947,
+  "output_bound": "passed"
+}
