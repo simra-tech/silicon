@@ -1,0 +1,83 @@
+time="2026-09-23T02:50:01+02:00" level=warning msg="Network file system detected as backing store.  Enforcing overlay option `force_mask=\"700\"`.  Add it to storage.conf to silence this warning"
+time="2026-09-23T02:50:02+02:00" level=warning msg="Network file system detected as backing store.  Enforcing overlay option `force_mask=\"700\"`.  Add it to storage.conf to silence this warning"
+Resource enforcement: CPU affinity; memory reservation only (rootless cgroups v1).
+time="2026-09-23T02:50:02+02:00" level=warning msg="Network file system detected as backing store.  Enforcing overlay option `force_mask=\"700\"`.  Add it to storage.conf to silence this warning"
+{
+  "status": "failed",
+  "check": "antenna",
+  "command": [
+    "klayout",
+    "-b",
+    "-zz",
+    "-r",
+    "/foss/pdks/ihp-sg13g2/libs.tech/klayout/tech/drc/rule_decks/antenna.drc",
+    "-rd",
+    "input=@RESULTS@/native-sealring-merge-20260923-r1/sealed_native.gds",
+    "-rd",
+    "topcell=placed_core_NOT_CONNECTED_FULLCHIP",
+    "-rd",
+    "report=@RESULTS@/native-sealed-antenna-20260923-r1/antenna.lyrdb",
+    "-rd",
+    "threads=1"
+  ],
+  "GDS_sha256": "393b485183dc7d7624365a2119590ed1babdf945ce298f848a0b1c228da736c7",
+  "candidate_metadata_sha256": "dcb75b326ee5a247990a82ea0eb8c4a54a534da39b244ba001a246fb9f977778",
+  "script_sha256": "755018acf22b8ff7a4f773f0451ef6ee4e7f48b8bd2acf35d842f0feba407696",
+  "PDK_commit": "84374023ee8b4b126bebbba67fcbada0a9c0ff0b",
+  "KLayout": "KLayout 0.30.9",
+  "density_boundary_area_um2": 1999396,
+  "density_boundary": "single native EdgeSeal.boundary; prBoundary absent",
+  "not_run": [
+    "other stock decks in this invocation",
+    "complete LVS/PEX/currentIR/EM",
+    "electrical adoption"
+  ],
+  "runtime": {
+    "command": [
+      "stdbuf",
+      "-o0",
+      "-e0",
+      "klayout",
+      "-b",
+      "-zz",
+      "-r",
+      "/foss/pdks/ihp-sg13g2/libs.tech/klayout/tech/drc/rule_decks/antenna.drc",
+      "-rd",
+      "input=@RESULTS@/native-sealring-merge-20260923-r1/sealed_native.gds",
+      "-rd",
+      "topcell=placed_core_NOT_CONNECTED_FULLCHIP",
+      "-rd",
+      "report=@RESULTS@/native-sealed-antenna-20260923-r1/antenna.lyrdb",
+      "-rd",
+      "threads=1"
+    ],
+    "started_utc": "2026-09-23T00:50:11.031183+00:00",
+    "status": "completed",
+    "timeout_s": 600,
+    "runtime_arch": "x86_64",
+    "stdio_unbuffered": true,
+    "pid": 10,
+    "wall_s": 134.32702427729964,
+    "sampled_utc": "2026-09-23T00:52:25.289099+00:00",
+    "log_bytes": 9197,
+    "resources": {
+      "Threads": "1"
+    },
+    "cpu_ticks": [
+      "13073",
+      "127"
+    ],
+    "returncode": 0,
+    "finished_utc": "2026-09-23T00:52:25.358810+00:00"
+  },
+  "inputs_rules_unchanged": true,
+  "completed_rule_result": "failed",
+  "markers": 9,
+  "categories": {
+    "Ant.e_Metal5": 3,
+    "Ant.e_TopMetal1": 3,
+    "Ant.e_TopMetal2": 3
+  },
+  "report_sha256": "e6395e21d52fa14ad4c471b6b8f797b35912b271a204b30df2aca88d852aaec8",
+  "boundary_log_consistent": true
+}

@@ -1,0 +1,97 @@
+time="2026-09-23T02:36:16+02:00" level=warning msg="Network file system detected as backing store.  Enforcing overlay option `force_mask=\"700\"`.  Add it to storage.conf to silence this warning"
+time="2026-09-23T02:36:17+02:00" level=warning msg="Network file system detected as backing store.  Enforcing overlay option `force_mask=\"700\"`.  Add it to storage.conf to silence this warning"
+Resource enforcement: CPU affinity; memory reservation only (rootless cgroups v1).
+time="2026-09-23T02:36:18+02:00" level=warning msg="Network file system detected as backing store.  Enforcing overlay option `force_mask=\"700\"`.  Add it to storage.conf to silence this warning"
+{
+  "status": "failed",
+  "check": "density",
+  "command": [
+    "klayout",
+    "-b",
+    "-zz",
+    "-r",
+    "/foss/pdks/ihp-sg13g2/libs.tech/klayout/tech/drc/rule_decks/density.drc",
+    "-rd",
+    "input=@RESULTS@/native-sealring-merge-20260923-r1/sealed_native.gds",
+    "-rd",
+    "topcell=placed_core_NOT_CONNECTED_FULLCHIP",
+    "-rd",
+    "report=@RESULTS@/native-sealed-density-20260923-r1/density.lyrdb",
+    "-rd",
+    "threads=1",
+    "-rd",
+    "density_sanity=true"
+  ],
+  "GDS_sha256": "393b485183dc7d7624365a2119590ed1babdf945ce298f848a0b1c228da736c7",
+  "candidate_metadata_sha256": "dcb75b326ee5a247990a82ea0eb8c4a54a534da39b244ba001a246fb9f977778",
+  "script_sha256": "755018acf22b8ff7a4f773f0451ef6ee4e7f48b8bd2acf35d842f0feba407696",
+  "PDK_commit": "84374023ee8b4b126bebbba67fcbada0a9c0ff0b",
+  "KLayout": "KLayout 0.30.9",
+  "density_boundary_area_um2": 1999396,
+  "density_boundary": "single native EdgeSeal.boundary; prBoundary absent",
+  "not_run": [
+    "other stock decks in this invocation",
+    "complete LVS/PEX/currentIR/EM",
+    "electrical adoption"
+  ],
+  "runtime": {
+    "command": [
+      "stdbuf",
+      "-o0",
+      "-e0",
+      "klayout",
+      "-b",
+      "-zz",
+      "-r",
+      "/foss/pdks/ihp-sg13g2/libs.tech/klayout/tech/drc/rule_decks/density.drc",
+      "-rd",
+      "input=@RESULTS@/native-sealring-merge-20260923-r1/sealed_native.gds",
+      "-rd",
+      "topcell=placed_core_NOT_CONNECTED_FULLCHIP",
+      "-rd",
+      "report=@RESULTS@/native-sealed-density-20260923-r1/density.lyrdb",
+      "-rd",
+      "threads=1",
+      "-rd",
+      "density_sanity=true"
+    ],
+    "started_utc": "2026-09-23T00:36:26.446410+00:00",
+    "status": "completed",
+    "timeout_s": 600,
+    "runtime_arch": "x86_64",
+    "stdio_unbuffered": true,
+    "pid": 10,
+    "wall_s": 32.999106062576175,
+    "sampled_utc": "2026-09-23T00:36:59.442853+00:00",
+    "log_bytes": 11774,
+    "resources": {
+      "VmHWM": "549096 kB",
+      "VmRSS": "528076 kB",
+      "Threads": "1"
+    },
+    "cpu_ticks": [
+      "3108",
+      "45"
+    ],
+    "returncode": 0,
+    "finished_utc": "2026-09-23T00:36:59.445968+00:00"
+  },
+  "inputs_rules_unchanged": true,
+  "completed_rule_result": "failed",
+  "markers": 19,
+  "categories": {
+    "AFil.g": 1,
+    "GFil.g": 1,
+    "M1.j": 1,
+    "M2.j": 1,
+    "M3.j": 1,
+    "M4.j": 1,
+    "M5.j": 1,
+    "M1Fil.h": 1,
+    "M2Fil.h": 9,
+    "M4Fil.h": 1,
+    "M5Fil.h": 1
+  },
+  "report_sha256": "95fee4d2065fe3d5d225d31681172a2d34c935bdceb1978ae87766c04bfe9b6f",
+  "boundary_log_consistent": true
+}

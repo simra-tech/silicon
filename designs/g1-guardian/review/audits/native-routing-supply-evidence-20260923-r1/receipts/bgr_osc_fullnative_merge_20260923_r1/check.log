@@ -1,0 +1,91 @@
+time="2026-09-23T02:00:09+02:00" level=warning msg="Network file system detected as backing store.  Enforcing overlay option `force_mask=\"700\"`.  Add it to storage.conf to silence this warning"
+time="2026-09-23T02:00:10+02:00" level=warning msg="Network file system detected as backing store.  Enforcing overlay option `force_mask=\"700\"`.  Add it to storage.conf to silence this warning"
+Resource enforcement: CPU affinity; memory reservation only (rootless cgroups v1).
+time="2026-09-23T02:00:10+02:00" level=warning msg="Network file system detected as backing store.  Enforcing overlay option `force_mask=\"700\"`.  Add it to storage.conf to silence this warning"
+Timeout (0:01:00)!
+Thread 0x00007f3073d59080 (most recent call first):
+  File "/work/designs/g1-guardian/review/audits/place_closed_analog.py", line 23 in region
+  File "/work/designs/g1-guardian/review/audits/merge_bgr_osc_power.py", line 118 in main
+  File "/work/designs/g1-guardian/review/audits/merge_bgr_osc_power.py", line 138 in <module>
+Timeout (0:01:00)!
+Thread 0x00007f3073d59080 (most recent call first):
+  File "/work/designs/g1-guardian/review/audits/place_closed_analog.py", line 23 in region
+  File "/work/designs/g1-guardian/review/audits/merge_bgr_osc_power.py", line 125 in main
+  File "/work/designs/g1-guardian/review/audits/merge_bgr_osc_power.py", line 138 in <module>
+{
+  "status": "passed scoped BGR ground and OSC supply integration; BGR VDDA unpowered",
+  "GDS_sha256": "226c5aad876b9aea1ec2cd5874c828b2ae87ffb80a3efded7f8d9a2389cd8e05",
+  "native_GDS_sha256": "4e9f6248652e15b43ff250337e33f9813fdc9761dd3bf3f3b6e3789fc20ea5cc",
+  "script_sha256": "bc3f4023e2f95f19e29421c12e03fe943bdf1493fb8db2d721db974ca55d5c25",
+  "overlays": [
+    {
+      "macro": "bgr",
+      "overlay_sha256": "a164d870d685b91877f23ddcf5d9d7aeb725c60b7f54c330d4c3b0e04d1c269b",
+      "metadata_sha256": "ec8b7b97a713c54bcf7e76bf47c7dc89dd4a4ed1c7d0f44bcad2cd197b2e38a7",
+      "stock_proof_sha256": "3fa9dad47e24b1f67041f7a6dae911873c6b8677b217b1ceb57d1dc5fb80024b",
+      "candidate_core_GDS_sha256": "07684964ed17401611944080d44450011664bcd4393c2dde48247e471e450041"
+    },
+    {
+      "macro": "osc",
+      "overlay_sha256": "c833f4ff2f5e842fdf68b0d8b13b219cba80a9fbd488eb20cb78ba35bf460bca",
+      "metadata_sha256": "67f00fa269a6f540daebe71365d144bb14116c73e9bd927bbd4d51c6f737d905",
+      "stock_proof_sha256": "06a56e3e6aa5d76a7a3de29f85cbca02714b0a1f0f3c621cc19edef143b8dc64",
+      "candidate_core_GDS_sha256": "3104ab9a1cd6e8bb6d136ae0ff91c70ab8fc47fce40a25326a9341dc7c55274d"
+    }
+  ],
+  "native_instances_retained": 4904,
+  "decap_pin_pairs_held": 9324,
+  "placement_sha256": "01077a15ed3f561adb9c5a408c79dabc7782e34fd0151d62c3acb3e132f5e8bd",
+  "exact_additive_native_polygons_texts_roundtrip": "passed",
+  "no_foreign_contact": "passed",
+  "probes": {
+    "bgr_vdda": [
+      "placed_core_NOT_CONNECTED_FULLCHIP",
+      4
+    ],
+    "bgr_vss": [
+      "placed_core_NOT_CONNECTED_FULLCHIP",
+      1
+    ],
+    "osc_vdd": [
+      "placed_core_NOT_CONNECTED_FULLCHIP",
+      2
+    ],
+    "osc_vss": [
+      "placed_core_NOT_CONNECTED_FULLCHIP",
+      1
+    ],
+    "core_vdd": [
+      "placed_core_NOT_CONNECTED_FULLCHIP",
+      2
+    ],
+    "core_vss": [
+      "placed_core_NOT_CONNECTED_FULLCHIP",
+      1
+    ],
+    "sense_vdda": [
+      "placed_core_NOT_CONNECTED_FULLCHIP",
+      3
+    ],
+    "sense_vss": [
+      "placed_core_NOT_CONNECTED_FULLCHIP",
+      1
+    ],
+    "pad07_external": [
+      "placed_core_NOT_CONNECTED_FULLCHIP",
+      3
+    ]
+  },
+  "BGR_VDDA_handoff_unpowered": "passed",
+  "not_run": [
+    "aggregate VDDA trunk and pad current capacity",
+    "other macro feeds",
+    "new-context stock DRC/LVS",
+    "signal routing in this candidate",
+    "full PEX/density/antenna/currentIR/EM",
+    "electrical adoption"
+  ],
+  "not_applicable": [
+    "qualified supply current from exploratory 1 mA branch sizing"
+  ]
+}

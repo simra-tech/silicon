@@ -20,8 +20,8 @@ def main():
     p.add_argument('--core',type=Path,required=True)
     p.add_argument('--core-gds-name',default='refreshed_core.gds')
     p.add_argument('--power-overlay',type=Path,action='append',default=[])
-    p.add_argument('--m5-halo-dbu',type=int,choices=[0,20,40],default=0,
-                   help='Optional conservative M5 obstacle reservation; no source geometry change')
+    p.add_argument('--m5-halo-dbu',type=int,choices=[0,20],default=0,
+                   help='Optional conservative20nm M5 obstacle reservation; no source geometry change')
     p.add_argument('--output',type=Path,required=True)
     a=p.parse_args()
     assert not a.output.exists() and pya.__version__=='0.30.9' and len(os.sched_getaffinity(0))==1
@@ -71,7 +71,7 @@ def main():
     script=a.output/'core_obstacles.tcl';script.write_text('\n'.join(lines)+'\n')
     result=dict(status='passed conservative native top-conductor obstacle export',GDS_sha256=sha(source),
                 M5_clearance_halo_dbu=a.m5_halo_dbu,
-                routing_policy='Exact native/overlay rectangles plus optional M5 reservation.20nm retained230nm stock M5.e failures;40nm tests additional routing clearance. No rule or source geometry changes',
+                routing_policy='Exact native/overlay rectangles plus optional20nm M5 reservation following stock M5.e230nm-versus240nm failures; no rule or source geometry changes',
                 power_overlays=[dict(path=str(gds),sha256=sha(gds),metadata_sha256=sha(gds.parent/'analysis.json'))
                                 for ol,ot,gds,metadata in overlays],
                 script_sha256=sha(Path(__file__)),Tcl_sha256=sha(script),obstacles=rows,layer_coverage=coverage,

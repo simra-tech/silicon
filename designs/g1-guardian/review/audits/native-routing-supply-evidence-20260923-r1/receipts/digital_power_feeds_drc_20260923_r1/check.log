@@ -1,0 +1,107 @@
+time="2026-09-23T03:05:37+02:00" level=warning msg="Network file system detected as backing store.  Enforcing overlay option `force_mask=\"700\"`.  Add it to storage.conf to silence this warning"
+time="2026-09-23T03:05:38+02:00" level=warning msg="Network file system detected as backing store.  Enforcing overlay option `force_mask=\"700\"`.  Add it to storage.conf to silence this warning"
+Resource enforcement: CPU affinity; memory reservation only (rootless cgroups v1).
+time="2026-09-23T03:05:39+02:00" level=warning msg="Network file system detected as backing store.  Enforcing overlay option `force_mask=\"700\"`.  Add it to storage.conf to silence this warning"
+{
+  "status": "passed scoped main and maximal DRC",
+  "GDS_sha256": "e10e6ec241f8deab410bf47219e6a34b5534b8ec38fac910f8bae0c5bbb191b2",
+  "candidate_metadata_sha256": "ceefa66267d4dcd8ca7dfca84b5b9c217a8e29a47744bb7653588c7052b82c26",
+  "script_sha256": "1c00e0dd3e3f45892159e1f9e45bfdae92d6ba596b9dfa487393f6717ab2b338",
+  "switch_helper_sha256": "21541b289491b8fcb70c6135d2d0cd411ea27f025cc0a07222d7825368322277",
+  "switches": {
+    "threads": "1",
+    "drc_json_default": "/foss/pdks/ihp-sg13g2/libs.tech/klayout/tech/drc/rule_decks/sg13g2_tech_default.json",
+    "drc_json": "/foss/pdks/ihp-sg13g2/libs.tech/klayout/python/sg13g2_pycell_lib/sg13g2_tech_mod.json",
+    "run_mode": "deep",
+    "precheck_drc": "false",
+    "disable_extra_rules": "false",
+    "no_feol": "false",
+    "no_beol": "false",
+    "no_offgrid": "false",
+    "no_angle": "false",
+    "density_sanity": "false",
+    "density": "false",
+    "no_forbidden": "false",
+    "no_pin": "false",
+    "no_recommended": "false",
+    "topcell": "placed_core_NOT_CONNECTED_FULLCHIP",
+    "input": "@RESULTS@/digital-power-feeds-20260923-r1/candidate_core.gds"
+  },
+  "decks": [
+    {
+      "name": "main",
+      "returncode": 0,
+      "wall_s": 114.92708938196301,
+      "command": [
+        "timeout",
+        "--kill-after=5",
+        "600",
+        "python3",
+        "/work/designs/g1-guardian/review/audits/run_core_candidate_drc.py",
+        "--candidate",
+        "@RESULTS@/digital-power-feeds-20260923-r1",
+        "--gds-name",
+        "candidate_core.gds",
+        "--main-watchdog",
+        "600",
+        "--maximal-watchdog",
+        "450",
+        "--output",
+        "@RESULTS@/digital-power-feeds-drc-20260923-r1",
+        "--execute",
+        "main"
+      ],
+      "watchdog_s": 600,
+      "reports": [
+        {
+          "path": "reports/candidate_core_placed_core_NOT_CONNECTED_FULLCHIP_main.lyrdb",
+          "sha256": "7b72add1cb760bc1e42ad8607a47ff8548dafc24e95c8b04978bf4969a4e6e4f",
+          "markers": 0,
+          "categories": {}
+        }
+      ],
+      "status": "passed"
+    },
+    {
+      "name": "maximal",
+      "returncode": 0,
+      "wall_s": 314.43285304680467,
+      "command": [
+        "timeout",
+        "--kill-after=5",
+        "450",
+        "python3",
+        "/work/designs/g1-guardian/review/audits/run_core_candidate_drc.py",
+        "--candidate",
+        "@RESULTS@/digital-power-feeds-20260923-r1",
+        "--gds-name",
+        "candidate_core.gds",
+        "--main-watchdog",
+        "600",
+        "--maximal-watchdog",
+        "450",
+        "--output",
+        "@RESULTS@/digital-power-feeds-drc-20260923-r1",
+        "--execute",
+        "maximal"
+      ],
+      "watchdog_s": 450,
+      "reports": [
+        {
+          "path": "reports/candidate_core_placed_core_NOT_CONNECTED_FULLCHIP_sg13g2_maximal.lyrdb",
+          "sha256": "e185ce2b4407738709d5ffb8c4fec819b4aef4e8ce1be765b80a4b9e6d472c14",
+          "markers": 0,
+          "categories": {}
+        }
+      ],
+      "status": "passed"
+    }
+  ],
+  "not_run": [
+    "density/fill",
+    "antenna",
+    "connected fullchip LVS/PEX/currentIR/EM",
+    "electrical adoption"
+  ],
+  "inputs_rules_unchanged": true
+}
