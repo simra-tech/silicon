@@ -1,0 +1,2546 @@
+{
+  "libs.tech/ngspice/models/sg13g2_hbt_mod.lib": {
+    "sha256": "ae9288f885dd30fab24b07ed1e7e02e69eac9154022a0a6da576985183b0bd79",
+    "excerpts": [
+      {
+        "first": 20,
+        "last": 57,
+        "lines": [
+          {
+            "line": 20,
+            "text": "*"
+          },
+          {
+            "line": 21,
+            "text": "* Model:                                VBIC (Rev.1.15)"
+          },
+          {
+            "line": 22,
+            "text": "* Date:                                 25.05.18"
+          },
+          {
+            "line": 23,
+            "text": "* Lot:                                  EDJ802"
+          },
+          {
+            "line": 24,
+            "text": "* WAFER:                                02"
+          },
+          {
+            "line": 25,
+            "text": "* CHIP Nr:                              3.3"
+          },
+          {
+            "line": 26,
+            "text": "* Emitter size (mask):                  Nx *(0.07 x 0.90) \ufffdm^2 with Nx = 1 - 10"
+          },
+          {
+            "line": 27,
+            "text": "* Maximum collector-to-emitter voltage: 1.6"
+          },
+          {
+            "line": 28,
+            "text": "* Measurement data:                     T356_EDJ802_W02_3.3"
+          },
+          {
+            "line": 29,
+            "text": "* Meas. Range forward gummel:           vbe = (0.3 - 1.04)V"
+          },
+          {
+            "line": 30,
+            "text": "* Meas. Range forward output:           vce = (0.4 - 2.0)V"
+          },
+          {
+            "line": 31,
+            "text": "* Nom. Temperature  (TNOM):             27 grd C"
+          },
+          {
+            "line": 32,
+            "text": "* Meas. Temperature (TEMP):             27 grd C"
+          },
+          {
+            "line": 33,
+            "text": "* Valid range for model                 "
+          },
+          {
+            "line": 34,
+            "text": "* ic: <(0.003*Nx) A  vbe :(0.65 - 0.96) V  vce :(0.4 - 2.0) V"
+          },
+          {
+            "line": 35,
+            "text": "* Temp: -40\ufffdC - +125\ufffdC"
+          },
+          {
+            "line": 36,
+            "text": "* Valid numbers: NX = 1 - 10"
+          },
+          {
+            "line": 37,
+            "text": "* ________________________________________________________________________"
+          },
+          {
+            "line": 38,
+            "text": ""
+          },
+          {
+            "line": 39,
+            "text": ""
+          },
+          {
+            "line": 40,
+            "text": "* a four terminal regular npn13G2 device "
+          },
+          {
+            "line": 41,
+            "text": ".subckt npn13G2 c b e bn "
+          },
+          {
+            "line": 42,
+            "text": ".param Nx=1 dtemp=0"
+          },
+          {
+            "line": 43,
+            "text": "+Ny=1 le=0.96e-6 we=0.12e-6"
+          },
+          {
+            "line": 44,
+            "text": "+El=le*1e6"
+          },
+          {
+            "line": 45,
+            "text": "+selft=1"
+          },
+          {
+            "line": 46,
+            "text": "+sw_nqs=0"
+          },
+          {
+            "line": 47,
+            "text": ""
+          },
+          {
+            "line": 48,
+            "text": "Qnpn13G2 c b e s1 t npn13G2_NX_vbic dtemp=dtemp m=1"
+          },
+          {
+            "line": 49,
+            "text": ""
+          },
+          {
+            "line": 50,
+            "text": ".model npn13G2_NX_vbic npn"
+          },
+          {
+            "line": 51,
+            "text": "+ level = 9"
+          },
+          {
+            "line": 52,
+            "text": "+ vbe_max = 1.6"
+          },
+          {
+            "line": 53,
+            "text": "+ vbc_max = 5.1"
+          },
+          {
+            "line": 54,
+            "text": "+ vce_max = 1.6"
+          },
+          {
+            "line": 55,
+            "text": "+ tnom = 27"
+          },
+          {
+            "line": 56,
+            "text": "+ cbeo = '8.00E-16*(Nx*0.25)**0.975'"
+          },
+          {
+            "line": 57,
+            "text": "+ cje = '8.418E-15*(Nx*0.25)**0.975*vbic_cje'"
+          }
+        ]
+      },
+      {
+        "first": 110,
+        "last": 130,
+        "lines": [
+          {
+            "line": 110,
+            "text": "+ avc2 = 10.81"
+          },
+          {
+            "line": 111,
+            "text": "+ tf = '2.08E-13*vbic_tf*((temper+273)/300)**0.7'"
+          },
+          {
+            "line": 112,
+            "text": "+ qtf = 1.00E-18"
+          },
+          {
+            "line": 113,
+            "text": "+ xtf = 10.0"
+          },
+          {
+            "line": 114,
+            "text": "+ vtf = 20.0"
+          },
+          {
+            "line": 115,
+            "text": "+ itf = '0.585*(Nx*0.25)'"
+          },
+          {
+            "line": 116,
+            "text": "+ tr = 3.50E-13"
+          },
+          {
+            "line": 117,
+            "text": "+ td = 'sw_nqs*2.80E-13*(Nx*0.25)**0'"
+          },
+          {
+            "line": 118,
+            "text": "+ cth = '1.60E-12*(Nx*0.25)**0.95'"
+          },
+          {
+            "line": 119,
+            "text": "+ rth = '1*selft*3.26E+03*(4/Nx)**0.9'"
+          },
+          {
+            "line": 120,
+            "text": "+ ea = 1.056"
+          },
+          {
+            "line": 121,
+            "text": "+ eaie = 1.056"
+          },
+          {
+            "line": 122,
+            "text": "+ eaic = 1.12"
+          },
+          {
+            "line": 123,
+            "text": "+ eais = 1.12"
+          },
+          {
+            "line": 124,
+            "text": "+ eane = 1.12"
+          },
+          {
+            "line": 125,
+            "text": "+ eanc = 1.12"
+          },
+          {
+            "line": 126,
+            "text": "+ eans = 1.12"
+          },
+          {
+            "line": 127,
+            "text": "+ xre = -0.42"
+          },
+          {
+            "line": 128,
+            "text": "+ xrb = 0.90"
+          },
+          {
+            "line": 129,
+            "text": "+ xrc = 0.245"
+          },
+          {
+            "line": 130,
+            "text": "+ xrs = 1.50"
+          }
+        ]
+      },
+      {
+        "first": 150,
+        "last": 160,
+        "lines": [
+          {
+            "line": 150,
+            "text": ".param Nx=1 dtemp=0"
+          },
+          {
+            "line": 151,
+            "text": "+Ny=1 le=0.96e-6 we=0.12e-6"
+          },
+          {
+            "line": 152,
+            "text": "+El=le*1e6"
+          },
+          {
+            "line": 153,
+            "text": "+selft=1"
+          },
+          {
+            "line": 154,
+            "text": "+sw_nqs=0"
+          },
+          {
+            "line": 155,
+            "text": ""
+          },
+          {
+            "line": 156,
+            "text": "Qnpn13G2 c b e s1 t npn13G2_NX_vbic dtemp=dtemp m=1"
+          },
+          {
+            "line": 157,
+            "text": ""
+          },
+          {
+            "line": 158,
+            "text": ".model npn13G2_NX_vbic npn"
+          },
+          {
+            "line": 159,
+            "text": "+ level = 9"
+          },
+          {
+            "line": 160,
+            "text": "+ vbe_max = 1.6"
+          }
+        ]
+      }
+    ]
+  },
+  "libs.tech/ngspice/models/resistors_mod.lib": {
+    "sha256": "7c77da0c0419c8a332550da3f934f530262bd452734090db827b68ff88d09c43",
+    "excerpts": [
+      {
+        "first": 106,
+        "last": 148,
+        "lines": [
+          {
+            "line": 106,
+            "text": ""
+          },
+          {
+            "line": 107,
+            "text": ".subckt rhigh 1 2 bn"
+          },
+          {
+            "line": 108,
+            "text": ".param w=0.5e-6 l=0.96e-6 mm_ok=0 b=0 trise=0 m=1 sw_et=0"
+          },
+          {
+            "line": 109,
+            "text": "+postsim=0"
+          },
+          {
+            "line": 110,
+            "text": "+kappa=1.85"
+          },
+          {
+            "line": 111,
+            "text": "+ps=0.18e-6"
+          },
+          {
+            "line": 112,
+            "text": "+weff=w+dw_rhigh_par"
+          },
+          {
+            "line": 113,
+            "text": "+leff=(b+1)*l+(2/kappa*weff+ps)*b"
+          },
+          {
+            "line": 114,
+            "text": "+lhead=0.86e-6"
+          },
+          {
+            "line": 115,
+            "text": "+rzspec=80e-6"
+          },
+          {
+            "line": 116,
+            "text": "+cax=90e-18"
+          },
+          {
+            "line": 117,
+            "text": "+cpx=25e-18"
+          },
+          {
+            "line": 118,
+            "text": "+ax=175e-18*(1-1/(1.5*leff*1e6+1))/cax"
+          },
+          {
+            "line": 119,
+            "text": "+px=115e-18/cpx"
+          },
+          {
+            "line": 120,
+            "text": "+a0=0.5*(leff+lhead)*w-(postsim>0)*w*ax*1e-6"
+          },
+          {
+            "line": 121,
+            "text": "+a=(a0>0)*a0"
+          },
+          {
+            "line": 122,
+            "text": "+p0=leff+lhead+w-(postsim>0)*px*1e-6"
+          },
+          {
+            "line": 123,
+            "text": "+p=(p0>0)*p0"
+          },
+          {
+            "line": 124,
+            "text": "+rshspec=1360"
+          },
+          {
+            "line": 125,
+            "text": "+rqrc=4.5e-6"
+          },
+          {
+            "line": 126,
+            "text": "+rz=rzspec/w-(postsim>0)*rqrc/w"
+          },
+          {
+            "line": 127,
+            "text": ""
+          },
+          {
+            "line": 128,
+            "text": "NR1 1 bn 2 dt rmod_rhigh L=leff W=weff m=m"
+          },
+          {
+            "line": 129,
+            "text": "+a1=a a2=a"
+          },
+          {
+            "line": 130,
+            "text": "+p1=p p2=p"
+          },
+          {
+            "line": 131,
+            "text": "+c1=1 c2=1"
+          },
+          {
+            "line": 132,
+            "text": "+trise=trise"
+          },
+          {
+            "line": 133,
+            "text": "+sw_et=sw_et"
+          },
+          {
+            "line": 134,
+            "text": "+sw_mman=0"
+          },
+          {
+            "line": 135,
+            "text": ""
+          },
+          {
+            "line": 136,
+            "text": ".model rmod_rhigh r3_cmc"
+          },
+          {
+            "line": 137,
+            "text": "+rsh=rsh_rhigh"
+          },
+          {
+            "line": 138,
+            "text": "+ecrit=1000"
+          },
+          {
+            "line": 139,
+            "text": "+dfinf=1e-4"
+          },
+          {
+            "line": 140,
+            "text": "+dp=1000"
+          },
+          {
+            "line": 141,
+            "text": "+xw=-0.04"
+          },
+          {
+            "line": 142,
+            "text": "+rc=rz"
+          },
+          {
+            "line": 143,
+            "text": "+ca=cax"
+          },
+          {
+            "line": 144,
+            "text": "+cp=cpx"
+          },
+          {
+            "line": 145,
+            "text": "+tc1=-2300e-6"
+          },
+          {
+            "line": 146,
+            "text": "+tc2=2.1e-6"
+          },
+          {
+            "line": 147,
+            "text": "+tc1rc=-2300e-6"
+          },
+          {
+            "line": 148,
+            "text": "+tc2rc=2.1e-6"
+          }
+        ]
+      },
+      {
+        "first": 168,
+        "last": 208,
+        "lines": [
+          {
+            "line": 168,
+            "text": ""
+          },
+          {
+            "line": 169,
+            "text": ".subckt rppd 1 2 bn"
+          },
+          {
+            "line": 170,
+            "text": ".param w=0.5e-6 l=0.5e-6 mm_ok=0 b=0 ps=0.18e-6 trise=0 m=1 sw_et=0"
+          },
+          {
+            "line": 171,
+            "text": "+postsim=0"
+          },
+          {
+            "line": 172,
+            "text": "+kappa=1.85"
+          },
+          {
+            "line": 173,
+            "text": "+weff=w+dw_rppd_par"
+          },
+          {
+            "line": 174,
+            "text": "+leff=(b+1)*l+(2/kappa*weff+ps)*b"
+          },
+          {
+            "line": 175,
+            "text": "+lhead=0.86e-6"
+          },
+          {
+            "line": 176,
+            "text": "+rzspec=35e-6"
+          },
+          {
+            "line": 177,
+            "text": "+cax=90e-18"
+          },
+          {
+            "line": 178,
+            "text": "+cpx=25e-18"
+          },
+          {
+            "line": 179,
+            "text": "+ax=175e-18*(1-1/(1.5*leff*1e6+1))/cax"
+          },
+          {
+            "line": 180,
+            "text": "+px=115e-18/cpx"
+          },
+          {
+            "line": 181,
+            "text": "+a0=0.5*(leff+lhead)*w-(postsim>0)*w*ax*1e-6"
+          },
+          {
+            "line": 182,
+            "text": "+a=(a0>0)*a0"
+          },
+          {
+            "line": 183,
+            "text": "+p0=leff+lhead+w-(postsim>0)*px*1e-6"
+          },
+          {
+            "line": 184,
+            "text": "+p=(p0>0)*p0"
+          },
+          {
+            "line": 185,
+            "text": "+rqrc=4.5e-6"
+          },
+          {
+            "line": 186,
+            "text": "+rz=rzspec/w-(postsim>0)*rqrc/w"
+          },
+          {
+            "line": 187,
+            "text": ""
+          },
+          {
+            "line": 188,
+            "text": "NR1 1 bn 2 dt res_rppd L=leff W=weff m=m"
+          },
+          {
+            "line": 189,
+            "text": "+a1=a a2=a"
+          },
+          {
+            "line": 190,
+            "text": "+p1=p p2=p"
+          },
+          {
+            "line": 191,
+            "text": "+c1=1 c2=1"
+          },
+          {
+            "line": 192,
+            "text": "+trise=trise"
+          },
+          {
+            "line": 193,
+            "text": "+sw_et=sw_et"
+          },
+          {
+            "line": 194,
+            "text": "+sw_mman=0"
+          },
+          {
+            "line": 195,
+            "text": ""
+          },
+          {
+            "line": 196,
+            "text": ".model res_rppd r3_cmc"
+          },
+          {
+            "line": 197,
+            "text": "+rsh=rsh_rppd"
+          },
+          {
+            "line": 198,
+            "text": "+ecrit=1000"
+          },
+          {
+            "line": 199,
+            "text": "+dfinf=1e-4"
+          },
+          {
+            "line": 200,
+            "text": "+dp=1000"
+          },
+          {
+            "line": 201,
+            "text": "+xw=0.006"
+          },
+          {
+            "line": 202,
+            "text": "+rc=rz"
+          },
+          {
+            "line": 203,
+            "text": "+ca=cax"
+          },
+          {
+            "line": 204,
+            "text": "+cp=cpx"
+          },
+          {
+            "line": 205,
+            "text": "+tc1=170e-6"
+          },
+          {
+            "line": 206,
+            "text": "+tc2=0.4e-6"
+          },
+          {
+            "line": 207,
+            "text": "+tc1rc=-950e-6"
+          },
+          {
+            "line": 208,
+            "text": "+gth0=1e-12"
+          }
+        ]
+      }
+    ]
+  },
+  "libs.tech/ngspice/models/cornerHBT.lib": {
+    "sha256": "bae3d705445de8d6b8de4aa798a0e3e5e7cab617d6495d9c56473bc5377de462",
+    "excerpts": [
+      {
+        "first": 1,
+        "last": 100,
+        "lines": [
+          {
+            "line": 1,
+            "text": "*#######################################################################"
+          },
+          {
+            "line": 2,
+            "text": "*"
+          },
+          {
+            "line": 3,
+            "text": "* Copyright 2023 IHP PDK Authors"
+          },
+          {
+            "line": 4,
+            "text": "*"
+          },
+          {
+            "line": 5,
+            "text": "* Licensed under the Apache License, Version 2.0 (the \"License\");"
+          },
+          {
+            "line": 6,
+            "text": "* you may not use this file except in compliance with the License."
+          },
+          {
+            "line": 7,
+            "text": "* You may obtain a copy of the License at"
+          },
+          {
+            "line": 8,
+            "text": "*"
+          },
+          {
+            "line": 9,
+            "text": "*    https://www.apache.org/licenses/LICENSE-2.0"
+          },
+          {
+            "line": 10,
+            "text": "*"
+          },
+          {
+            "line": 11,
+            "text": "* Unless required by applicable law or agreed to in writing, software"
+          },
+          {
+            "line": 12,
+            "text": "*distributed under the License is distributed on an \"AS IS\" BASIS,"
+          },
+          {
+            "line": 13,
+            "text": "* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied."
+          },
+          {
+            "line": 14,
+            "text": "* See the License for the specific language governing permissions and"
+          },
+          {
+            "line": 15,
+            "text": "* limitations under the License."
+          },
+          {
+            "line": 16,
+            "text": "*"
+          },
+          {
+            "line": 17,
+            "text": "*#######################################################################"
+          },
+          {
+            "line": 18,
+            "text": ""
+          },
+          {
+            "line": 19,
+            "text": ".LIB hbt_typ"
+          },
+          {
+            "line": 20,
+            "text": ".param vbic_cje = 1.0"
+          },
+          {
+            "line": 21,
+            "text": ".param vbic_cjc = 1.0"
+          },
+          {
+            "line": 22,
+            "text": ".param vbic_cjcp = 1.0"
+          },
+          {
+            "line": 23,
+            "text": ".param vbic_is = 1.0"
+          },
+          {
+            "line": 24,
+            "text": ".param vbic_ibei = 1.0"
+          },
+          {
+            "line": 25,
+            "text": ".param vbic_re = 1.0"
+          },
+          {
+            "line": 26,
+            "text": ".param vbic_rcx = 1.0"
+          },
+          {
+            "line": 27,
+            "text": ".param vbic_rbx = 1.0"
+          },
+          {
+            "line": 28,
+            "text": ".param vbic_tf = 1.0"
+          },
+          {
+            "line": 29,
+            "text": ""
+          },
+          {
+            "line": 30,
+            "text": ".param sgp_mpa_cje = 1.0"
+          },
+          {
+            "line": 31,
+            "text": ".param sgp_mpa_cjc = 1.0"
+          },
+          {
+            "line": 32,
+            "text": ".param sgp_mpa_is = 1.0"
+          },
+          {
+            "line": 33,
+            "text": ".param sgp_mpa_bf = 1.0"
+          },
+          {
+            "line": 34,
+            "text": ".param sgp_mpa_re = 1.0"
+          },
+          {
+            "line": 35,
+            "text": ".param sgp_mpa_rb = 1.0"
+          },
+          {
+            "line": 36,
+            "text": ".param sgp_mpa_rc = 1.0"
+          },
+          {
+            "line": 37,
+            "text": ""
+          },
+          {
+            "line": 38,
+            "text": ".include sg13g2_hbt_mod.lib"
+          },
+          {
+            "line": 39,
+            "text": ".ENDL hbt_typ"
+          },
+          {
+            "line": 40,
+            "text": ""
+          },
+          {
+            "line": 41,
+            "text": ".LIB hbt_typ_mismatch"
+          },
+          {
+            "line": 42,
+            "text": ".param vbic_cje = 1.0"
+          },
+          {
+            "line": 43,
+            "text": ".param vbic_cjc = 1.0"
+          },
+          {
+            "line": 44,
+            "text": ".param vbic_cjcp = 1.0"
+          },
+          {
+            "line": 45,
+            "text": ".param vbic_is = 1.0"
+          },
+          {
+            "line": 46,
+            "text": ".param vbic_ibei = 1.0"
+          },
+          {
+            "line": 47,
+            "text": ".param vbic_re = 1.0"
+          },
+          {
+            "line": 48,
+            "text": ".param vbic_rcx = 1.0"
+          },
+          {
+            "line": 49,
+            "text": ".param vbic_rbx = 1.0"
+          },
+          {
+            "line": 50,
+            "text": ".param vbic_tf = 1.0"
+          },
+          {
+            "line": 51,
+            "text": ""
+          },
+          {
+            "line": 52,
+            "text": ".param sgp_mpa_cje = 1.0"
+          },
+          {
+            "line": 53,
+            "text": ".param sgp_mpa_cjc = 1.0"
+          },
+          {
+            "line": 54,
+            "text": ".param sgp_mpa_is = 1.0"
+          },
+          {
+            "line": 55,
+            "text": ".param sgp_mpa_bf = 1.0"
+          },
+          {
+            "line": 56,
+            "text": ".param sgp_mpa_re = 1.0"
+          },
+          {
+            "line": 57,
+            "text": ".param sgp_mpa_rb = 1.0"
+          },
+          {
+            "line": 58,
+            "text": ".param sgp_mpa_rc = 1.0"
+          },
+          {
+            "line": 59,
+            "text": ""
+          },
+          {
+            "line": 60,
+            "text": ".include sg13g2_hbt_mod_mismatch.lib"
+          },
+          {
+            "line": 61,
+            "text": ".ENDL hbt_typ_mismatch"
+          },
+          {
+            "line": 62,
+            "text": ""
+          },
+          {
+            "line": 63,
+            "text": ".LIB hbt_typ_stat"
+          },
+          {
+            "line": 64,
+            "text": ".param vbic_cje_norm = 1.0"
+          },
+          {
+            "line": 65,
+            "text": ".param vbic_cjc_norm = 1.0"
+          },
+          {
+            "line": 66,
+            "text": ".param vbic_cjcp_norm = 1.0"
+          },
+          {
+            "line": 67,
+            "text": ".param vbic_is_norm = 1.0"
+          },
+          {
+            "line": 68,
+            "text": ".param vbic_ibei_norm = 1.0"
+          },
+          {
+            "line": 69,
+            "text": ".param vbic_re_norm = 1.0"
+          },
+          {
+            "line": 70,
+            "text": ".param vbic_rcx_norm = 1.0"
+          },
+          {
+            "line": 71,
+            "text": ".param vbic_rbx_norm = 1.0"
+          },
+          {
+            "line": 72,
+            "text": ".param vbic_tf = 1.0"
+          },
+          {
+            "line": 73,
+            "text": ""
+          },
+          {
+            "line": 74,
+            "text": ".param sgp_mpa_cje_norm = 1.0"
+          },
+          {
+            "line": 75,
+            "text": ".param sgp_mpa_cjc_norm = 1.0"
+          },
+          {
+            "line": 76,
+            "text": ".param sgp_mpa_is_norm = 1.0"
+          },
+          {
+            "line": 77,
+            "text": ".param sgp_mpa_bf_norm = 1.0"
+          },
+          {
+            "line": 78,
+            "text": ".param sgp_mpa_re_norm = 1.0"
+          },
+          {
+            "line": 79,
+            "text": ".param sgp_mpa_rb_norm = 1.0"
+          },
+          {
+            "line": 80,
+            "text": ".param sgp_mpa_rc_norm = 1.0"
+          },
+          {
+            "line": 81,
+            "text": ""
+          },
+          {
+            "line": 82,
+            "text": ".include sg13g2_hbt_stat.lib"
+          },
+          {
+            "line": 83,
+            "text": ".include sg13g2_hbt_mod.lib"
+          },
+          {
+            "line": 84,
+            "text": ".ENDL hbt_typ_stat"
+          },
+          {
+            "line": 85,
+            "text": ""
+          },
+          {
+            "line": 86,
+            "text": ".LIB hbt_bcs"
+          },
+          {
+            "line": 87,
+            "text": ".param vbic_cje = 0.83"
+          },
+          {
+            "line": 88,
+            "text": ".param vbic_cjc = 0.87"
+          },
+          {
+            "line": 89,
+            "text": ".param vbic_cjcp = 0.89"
+          },
+          {
+            "line": 90,
+            "text": ".param vbic_is = 1.26"
+          },
+          {
+            "line": 91,
+            "text": ".param vbic_ibei = 0.67"
+          },
+          {
+            "line": 92,
+            "text": ".param vbic_re = 0.73"
+          },
+          {
+            "line": 93,
+            "text": ".param vbic_rcx = 0.79"
+          },
+          {
+            "line": 94,
+            "text": ".param vbic_rbx = 0.88"
+          },
+          {
+            "line": 95,
+            "text": ".param vbic_tf = 0.89"
+          },
+          {
+            "line": 96,
+            "text": ""
+          },
+          {
+            "line": 97,
+            "text": ".param sgp_mpa_cje = 0.955"
+          },
+          {
+            "line": 98,
+            "text": ".param sgp_mpa_cjc = 0.98"
+          },
+          {
+            "line": 99,
+            "text": ".param sgp_mpa_is = 1.13"
+          },
+          {
+            "line": 100,
+            "text": ".param sgp_mpa_bf = 1.24"
+          }
+        ]
+      }
+    ]
+  },
+  "libs.tech/ngspice/models/cornerRES.lib": {
+    "sha256": "a18170ecf22f739ebf336b3fc5e249cf39f9d93941da1749681693b9ee19fcae",
+    "excerpts": [
+      {
+        "first": 1,
+        "last": 100,
+        "lines": [
+          {
+            "line": 1,
+            "text": "*#######################################################################"
+          },
+          {
+            "line": 2,
+            "text": "*"
+          },
+          {
+            "line": 3,
+            "text": "* Copyright 2023 IHP PDK Authors"
+          },
+          {
+            "line": 4,
+            "text": "*"
+          },
+          {
+            "line": 5,
+            "text": "* Licensed under the Apache License, Version 2.0 (the \"License\");"
+          },
+          {
+            "line": 6,
+            "text": "* you may not use this file except in compliance with the License."
+          },
+          {
+            "line": 7,
+            "text": "* You may obtain a copy of the License at"
+          },
+          {
+            "line": 8,
+            "text": "*"
+          },
+          {
+            "line": 9,
+            "text": "*    https://www.apache.org/licenses/LICENSE-2.0"
+          },
+          {
+            "line": 10,
+            "text": "*"
+          },
+          {
+            "line": 11,
+            "text": "* Unless required by applicable law or agreed to in writing, software"
+          },
+          {
+            "line": 12,
+            "text": "* distributed under the License is distributed on an \"AS IS\" BASIS,"
+          },
+          {
+            "line": 13,
+            "text": "* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied."
+          },
+          {
+            "line": 14,
+            "text": "* See the License for the specific language governing permissions and"
+          },
+          {
+            "line": 15,
+            "text": "* limitations under the License."
+          },
+          {
+            "line": 16,
+            "text": "*"
+          },
+          {
+            "line": 17,
+            "text": "*#######################################################################"
+          },
+          {
+            "line": 18,
+            "text": "* Typical"
+          },
+          {
+            "line": 19,
+            "text": ".LIB res_typ"
+          },
+          {
+            "line": 20,
+            "text": "  .param rsh_rhigh = 1360"
+          },
+          {
+            "line": 21,
+            "text": "  .param rsh_rppd  = 260.0"
+          },
+          {
+            "line": 22,
+            "text": "  .param rsh_rsil  = 7.0"
+          },
+          {
+            "line": 23,
+            "text": "  .param drsh_rhigh = 0.0"
+          },
+          {
+            "line": 24,
+            "text": "  .param drsh_rsil  = 0.0"
+          },
+          {
+            "line": 25,
+            "text": "  .param drsh_rppd  = 0.0"
+          },
+          {
+            "line": 26,
+            "text": "  .param dl_rhigh  = 0.0"
+          },
+          {
+            "line": 27,
+            "text": "  .param dw_rhigh  = 0.0"
+          },
+          {
+            "line": 28,
+            "text": "  .param dl_rsil   = 0.0"
+          },
+          {
+            "line": 29,
+            "text": "  .param dw_rsil   = 0.0"
+          },
+          {
+            "line": 30,
+            "text": "  .param dl_rppd   = 0.0"
+          },
+          {
+            "line": 31,
+            "text": "  .param dw_rppd   = 0.0"
+          },
+          {
+            "line": 32,
+            "text": "  .param dw_rsil_par  =  0.01e-6"
+          },
+          {
+            "line": 33,
+            "text": "  .param dw_rppd_par  =  0.006e-6"
+          },
+          {
+            "line": 34,
+            "text": "  .param dw_rhigh_par = -0.04e-6"
+          },
+          {
+            "line": 35,
+            "text": ""
+          },
+          {
+            "line": 36,
+            "text": ".include resistors_mod.lib"
+          },
+          {
+            "line": 37,
+            "text": ".ENDL res_typ"
+          },
+          {
+            "line": 38,
+            "text": ""
+          },
+          {
+            "line": 39,
+            "text": "* Typical with mismatch modeling"
+          },
+          {
+            "line": 40,
+            "text": ".LIB res_typ_mismatch"
+          },
+          {
+            "line": 41,
+            "text": "  .param rsh_rhigh = 1360"
+          },
+          {
+            "line": 42,
+            "text": "  .param rsh_rppd  = 260.0"
+          },
+          {
+            "line": 43,
+            "text": "  .param rsh_rsil  = 7.0"
+          },
+          {
+            "line": 44,
+            "text": "  .param drsh_rhigh = 0.0"
+          },
+          {
+            "line": 45,
+            "text": "  .param drsh_rsil  = 0.0"
+          },
+          {
+            "line": 46,
+            "text": "  .param drsh_rppd  = 0.0"
+          },
+          {
+            "line": 47,
+            "text": "  .param dl_rhigh  = 0.0"
+          },
+          {
+            "line": 48,
+            "text": "  .param dw_rhigh  = 0.0"
+          },
+          {
+            "line": 49,
+            "text": "  .param dl_rsil   = 0.0"
+          },
+          {
+            "line": 50,
+            "text": "  .param dw_rsil   = 0.0"
+          },
+          {
+            "line": 51,
+            "text": "  .param dl_rppd   = 0.0"
+          },
+          {
+            "line": 52,
+            "text": "  .param dw_rppd   = 0.0"
+          },
+          {
+            "line": 53,
+            "text": "  .param dw_rsil_par  =  0.01e-6"
+          },
+          {
+            "line": 54,
+            "text": "  .param dw_rppd_par  =  0.006e-6"
+          },
+          {
+            "line": 55,
+            "text": "  .param dw_rhigh_par = -0.04e-6"
+          },
+          {
+            "line": 56,
+            "text": "  .param nsig_rsil_rsh=0  ; global number of standard deviations for rsh"
+          },
+          {
+            "line": 57,
+            "text": "  .param nsig_rsil_w=0    ; global number of standard deviations for w"
+          },
+          {
+            "line": 58,
+            "text": "  .param nsig_rsil_l=0    ; global number of standard deviations for l"
+          },
+          {
+            "line": 59,
+            "text": "  .param nsig_rppd_rsh=0  ; global number of standard deviations for rsh"
+          },
+          {
+            "line": 60,
+            "text": "  .param nsig_rppd_w=0    ; global number of standard deviations for w"
+          },
+          {
+            "line": 61,
+            "text": "  .param nsig_rppd_l=0    ; global number of standard deviations for l"
+          },
+          {
+            "line": 62,
+            "text": "  .param nsig_rhigh_rsh=0 ; global number of standard deviations for rsh"
+          },
+          {
+            "line": 63,
+            "text": "  .param nsig_rhigh_w=0   ; global number of standard deviations for w"
+          },
+          {
+            "line": 64,
+            "text": "  .param nsig_rhigh_l=0   ; global number of standard deviations for l"
+          },
+          {
+            "line": 65,
+            "text": "  .param rsh_rsil_mm  = 1.7   ; local %um of 1 Sigma"
+          },
+          {
+            "line": 66,
+            "text": "  .param rsh_rppd_mm  = 2.0   ; local %um of 1 Sigma"
+          },
+          {
+            "line": 67,
+            "text": "  .param rsh_rhigh_mm = 5.0   ; local %um of 1 Sigma"
+          },
+          {
+            "line": 68,
+            "text": "  .param dl_rsil_mm   = 0.006 ; local um of 1 Sigma"
+          },
+          {
+            "line": 69,
+            "text": "  .param dw_rsil_mm   = 0.006 ; local um of 1 Sigma"
+          },
+          {
+            "line": 70,
+            "text": "  .param dl_rppd_mm   = 0.006 ; local um of 1 Sigma"
+          },
+          {
+            "line": 71,
+            "text": "  .param dw_rppd_mm   = 0.006 ; local um of 1 Sigma"
+          },
+          {
+            "line": 72,
+            "text": "  .param dl_rhigh_mm  = 0.009 ; local um of 1 Sigma"
+          },
+          {
+            "line": 73,
+            "text": "  .param dw_rhigh_mm  = 0.009 ; local um of 1 Sigma"
+          },
+          {
+            "line": 74,
+            "text": ""
+          },
+          {
+            "line": 75,
+            "text": ".include resistors_mod_mismatch.lib"
+          },
+          {
+            "line": 76,
+            "text": ".ENDL res_typ_mismatch"
+          },
+          {
+            "line": 77,
+            "text": ""
+          },
+          {
+            "line": 78,
+            "text": "* Typical with statistical modeling"
+          },
+          {
+            "line": 79,
+            "text": ".LIB res_stat"
+          },
+          {
+            "line": 80,
+            "text": "  .param rsh_rhigh = 1360"
+          },
+          {
+            "line": 81,
+            "text": "  .param rsh_rppd  = 260.0"
+          },
+          {
+            "line": 82,
+            "text": "  .param rsh_rsil  = 7.0"
+          },
+          {
+            "line": 83,
+            "text": "  .param dw_rsil_par  =  0.01e-6"
+          },
+          {
+            "line": 84,
+            "text": "  .param dw_rppd_par  =  0.006e-6"
+          },
+          {
+            "line": 85,
+            "text": "  .param dw_rhigh_par = -0.04e-6"
+          },
+          {
+            "line": 86,
+            "text": ""
+          },
+          {
+            "line": 87,
+            "text": ".include resistors_stat.lib"
+          },
+          {
+            "line": 88,
+            "text": ".include resistors_mod.lib"
+          },
+          {
+            "line": 89,
+            "text": ".ENDL res_stat"
+          },
+          {
+            "line": 90,
+            "text": ""
+          },
+          {
+            "line": 91,
+            "text": "* Best Case"
+          },
+          {
+            "line": 92,
+            "text": ".LIB res_bcs"
+          },
+          {
+            "line": 93,
+            "text": "  .param rsh_rhigh = 1020"
+          },
+          {
+            "line": 94,
+            "text": "  .param rsh_rppd  = 234.0"
+          },
+          {
+            "line": 95,
+            "text": "  .param rsh_rsil  = 6.02"
+          },
+          {
+            "line": 96,
+            "text": "  .param drsh_rhigh = 0.0"
+          },
+          {
+            "line": 97,
+            "text": "  .param drsh_rsil  = 0.0"
+          },
+          {
+            "line": 98,
+            "text": "  .param drsh_rppd  = 0.0"
+          },
+          {
+            "line": 99,
+            "text": "  .param dl_rhigh  = 0.0"
+          },
+          {
+            "line": 100,
+            "text": "  .param dw_rhigh  = 0.0"
+          }
+        ]
+      }
+    ]
+  },
+  "libs.tech/verilog-a/r3_cmc/r3_cmc-patched.va": {
+    "sha256": "8a2c7a9049a1c4a47617bfd0a444bc76169b39e1399337ec580ff588b5924417",
+    "excerpts": [
+      {
+        "first": 65,
+        "last": 101,
+        "lines": [
+          {
+            "line": 65,
+            "text": ""
+          },
+          {
+            "line": 66,
+            "text": "//"
+          },
+          {
+            "line": 67,
+            "text": "//  Node definitions"
+          },
+          {
+            "line": 68,
+            "text": "//"
+          },
+          {
+            "line": 69,
+            "text": ""
+          },
+          {
+            "line": 70,
+            "text": "inout      n1,n2,nc,dt;"
+          },
+          {
+            "line": 71,
+            "text": "electrical n1,n2,nc;"
+          },
+          {
+            "line": 72,
+            "text": "electrical i1,i2;"
+          },
+          {
+            "line": 73,
+            "text": "thermal    dt;"
+          },
+          {
+            "line": 74,
+            "text": ""
+          },
+          {
+            "line": 75,
+            "text": "//"
+          },
+          {
+            "line": 76,
+            "text": "//  Branch definitions"
+          },
+          {
+            "line": 77,
+            "text": "//"
+          },
+          {
+            "line": 78,
+            "text": ""
+          },
+          {
+            "line": 79,
+            "text": "branch (n1,i1)   b_re1;   // terminal 1 end resistance"
+          },
+          {
+            "line": 80,
+            "text": "branch (n1,i1)   b_ne1;   // terminal 1 end resistance noise"
+          },
+          {
+            "line": 81,
+            "text": "branch (n2,i2)   b_re2;   // terminal 2 end resistance"
+          },
+          {
+            "line": 82,
+            "text": "branch (n2,i2)   b_ne2;   // terminal 2 end resistance noise"
+          },
+          {
+            "line": 83,
+            "text": "branch (i2,i1)   b_rb;    // main resistor body branch"
+          },
+          {
+            "line": 84,
+            "text": "branch (nc,i1)   b_pc1;   // terminal 1 parasitics and nc resistance modulation control"
+          },
+          {
+            "line": 85,
+            "text": "branch (nc,i2)   b_pc2;   // terminal 2 parasitics and nc resistance modulation control"
+          },
+          {
+            "line": 86,
+            "text": "branch (dt   )   b_rth;   // local thermal branch"
+          },
+          {
+            "line": 87,
+            "text": ""
+          },
+          {
+            "line": 88,
+            "text": "//"
+          },
+          {
+            "line": 89,
+            "text": "//  Instance parameters"
+          },
+          {
+            "line": 90,
+            "text": "//"
+          },
+          {
+            "line": 91,
+            "text": ""
+          },
+          {
+            "line": 92,
+            "text": "`IPRoz( w         ,   1.0e-06 ,\"m\"                       , \"design width  of resistor body\")"
+          },
+          {
+            "line": 93,
+            "text": "`IPRoz( l         ,   1.0e-06 ,\"m\"                       , \"design length of resistor body\")"
+          },
+          {
+            "line": 94,
+            "text": "`IPRcz( wd        ,   0.0     ,\"m\"                       , \"dogbone width (total; not per side)\")"
+          },
+          {
+            "line": 95,
+            "text": "`IPRcz( a1        ,   0.0     ,\"m^2\"                     , \"area       of node n1 partition\")"
+          },
+          {
+            "line": 96,
+            "text": "`IPRcz( p1        ,   0.0     ,\"m\"                       , \"perimeter  of node n1 partition\")"
+          },
+          {
+            "line": 97,
+            "text": "`IPIcz( c1        ,   0       ,\"\"                        , \"# contacts at node n1 terminal\")"
+          },
+          {
+            "line": 98,
+            "text": "`IPRcz( a2        ,   0.0     ,\"m^2\"                     , \"area       of node n2 partition\")"
+          },
+          {
+            "line": 99,
+            "text": "`IPRcz( p2        ,   0.0     ,\"m\"                       , \"perimeter  of node n2 partition\")"
+          },
+          {
+            "line": 100,
+            "text": "`IPIcz( c2        ,   0       ,\"\"                        , \"# contacts at node n2 terminal\")"
+          },
+          {
+            "line": 101,
+            "text": "`IPRnb( trise     ,   0.0     ,\"degC\"                    , \"local temperature offset from ambient (before self-heating)\")"
+          }
+        ]
+      },
+      {
+        "first": 179,
+        "last": 184,
+        "lines": [
+          {
+            "line": 179,
+            "text": "`MPRoc( grpo      ,   1.0e-12 ,\"\"          ,   0.0,   0.1, \"minimum body conductance in pinch-off (ratio w.r.t. Vc=0)\")"
+          },
+          {
+            "line": 180,
+            "text": "`MPRcc( du        ,   0.02    ,\"\"          ,   0.0,1000.0, \"mobility reduction at ecorn\")"
+          },
+          {
+            "line": 181,
+            "text": "`MPRcz( rc        ,   0.0     ,\"Ohm\"                     , \"resistance per contact\")"
+          },
+          {
+            "line": 182,
+            "text": "`MPRcz( rcw       ,   0.0     ,\"Ohm*um\"                  , \"width adjustment for contact resistance\")"
+          },
+          {
+            "line": 183,
+            "text": ""
+          },
+          {
+            "line": 184,
+            "text": "//"
+          }
+        ]
+      },
+      {
+        "first": 485,
+        "last": 498,
+        "lines": [
+          {
+            "line": 485,
+            "text": "        if (r0<=1.0e-99) begin"
+          },
+          {
+            "line": 486,
+            "text": "            $error(\"ERROR: calculated zero bias resistance is too small\");"
+          },
+          {
+            "line": 487,
+            "text": "        end"
+          },
+          {
+            "line": 488,
+            "text": "        if ((rc>0.0)&&(c1>0)) begin"
+          },
+          {
+            "line": 489,
+            "text": "            rc1_tnom =  (rc+rcw/w_um)/c1;"
+          },
+          {
+            "line": 490,
+            "text": "        end else begin"
+          },
+          {
+            "line": 491,
+            "text": "            rc1_tnom =  0.0;"
+          },
+          {
+            "line": 492,
+            "text": "        end"
+          },
+          {
+            "line": 493,
+            "text": "        if ((rc>0.0)&&(c2>0)) begin"
+          },
+          {
+            "line": 494,
+            "text": "            rc2_tnom =  (rc+rcw/w_um)/c2;"
+          },
+          {
+            "line": 495,
+            "text": "        end else begin"
+          },
+          {
+            "line": 496,
+            "text": "            rc2_tnom =  0.0;"
+          },
+          {
+            "line": 497,
+            "text": "        end"
+          },
+          {
+            "line": 498,
+            "text": "        if (sw_lin) begin"
+          }
+        ]
+      },
+      {
+        "first": 749,
+        "last": 764,
+        "lines": [
+          {
+            "line": 749,
+            "text": "        Pwr(b_rth) <+  Ith;"
+          },
+          {
+            "line": 750,
+            "text": "`ifdef __XYCE__"
+          },
+          {
+            "line": 751,
+            "text": "        I(b_re1) <+  V(b_re1)/(rc1_tnom*tcrc);"
+          },
+          {
+            "line": 752,
+            "text": "        I(b_re2) <+  V(b_re2)/(rc2_tnom*tcrc);"
+          },
+          {
+            "line": 753,
+            "text": "`else"
+          },
+          {
+            "line": 754,
+            "text": "        if ((rc1_tnom/mMod)<=rthresh) begin    // V=R*I formulation"
+          },
+          {
+            "line": 755,
+            "text": "            V(b_re1) <+  I(b_re1)*rc1_tnom*tcrc;"
+          },
+          {
+            "line": 756,
+            "text": "        end else begin                         // I=G*V formulation"
+          },
+          {
+            "line": 757,
+            "text": "            I(b_re1) <+  V(b_re1)/(rc1_tnom*tcrc);"
+          },
+          {
+            "line": 758,
+            "text": "        end"
+          },
+          {
+            "line": 759,
+            "text": "        if ((rc2_tnom/mMod)<=rthresh) begin    // V=R*I formulation"
+          },
+          {
+            "line": 760,
+            "text": "            V(b_re2) <+  I(b_re2)*rc2_tnom*tcrc;"
+          },
+          {
+            "line": 761,
+            "text": "        end else begin                         // I=G*V formulation"
+          },
+          {
+            "line": 762,
+            "text": "            I(b_re2) <+  V(b_re2)/(rc2_tnom*tcrc);"
+          },
+          {
+            "line": 763,
+            "text": "        end"
+          },
+          {
+            "line": 764,
+            "text": "`endif"
+          }
+        ]
+      }
+    ]
+  },
+  "libs.tech/klayout/python/sg13g2_pycell_lib/ihp/npn13G2_code.py": {
+    "sha256": "bb2c6e22e3258b0eae61e7c5cb72a19758bf6c9b4c44f056e71916ecde9b09d8",
+    "excerpts": [
+      {
+        "first": 142,
+        "last": 181,
+        "lines": [
+          {
+            "line": 142,
+            "text": "        for pcIndexX in range(int(math.floor(Nx))):"
+          },
+          {
+            "line": 143,
+            "text": "            # loop for generate the given number of vias in variable pcRepeatY"
+          },
+          {
+            "line": 144,
+            "text": "            # two vias are generated per loop"
+          },
+          {
+            "line": 145,
+            "text": "            for pcIndexY in range(int((math.floor(pcRepeatY)))):"
+          },
+          {
+            "line": 146,
+            "text": "                # Via on left side"
+          },
+          {
+            "line": 147,
+            "text": "                pcInst = dbCreateRect("
+          },
+          {
+            "line": 148,
+            "text": "                    self,"
+          },
+          {
+            "line": 149,
+            "text": "                    Layer('Via1', pcPurpose),"
+          },
+          {
+            "line": 150,
+            "text": "                    Box("
+          },
+          {
+            "line": 151,
+            "text": "                        (stepX * pcIndexX) - 0.3,"
+          },
+          {
+            "line": 152,
+            "text": "                        -((-0.3 - yOffset - leoffset - bipwinyoffset - empolyyoffset) + (pcIndexY * pcStepY)) + 0.2,"
+          },
+          {
+            "line": 153,
+            "text": "                        (stepX * pcIndexX) - 0.11,"
+          },
+          {
+            "line": 154,
+            "text": "                        -((-0.11 - yOffset - leoffset - bipwinyoffset - empolyyoffset) + (pcIndexY * pcStepY)) + 0.2,"
+          },
+          {
+            "line": 155,
+            "text": "                    ),"
+          },
+          {
+            "line": 156,
+            "text": "                )"
+          },
+          {
+            "line": 157,
+            "text": "                # Via on right side"
+          },
+          {
+            "line": 158,
+            "text": "                pcInst = dbCreateRect("
+          },
+          {
+            "line": 159,
+            "text": "                    self,"
+          },
+          {
+            "line": 160,
+            "text": "                    Layer('Via1', pcPurpose),"
+          },
+          {
+            "line": 161,
+            "text": "                    Box("
+          },
+          {
+            "line": 162,
+            "text": "                        (stepX * pcIndexX) + 0.11,"
+          },
+          {
+            "line": 163,
+            "text": "                        -((-0.3 - yOffset - leoffset - bipwinyoffset - empolyyoffset) + (pcIndexY * pcStepY)) + 0.2,"
+          },
+          {
+            "line": 164,
+            "text": "                        (stepX * pcIndexX) + 0.3,"
+          },
+          {
+            "line": 165,
+            "text": "                        -((-0.11 - yOffset - leoffset - bipwinyoffset - empolyyoffset) + (pcIndexY * pcStepY)) + 0.2,"
+          },
+          {
+            "line": 166,
+            "text": "                    ),"
+          },
+          {
+            "line": 167,
+            "text": "                )"
+          },
+          {
+            "line": 168,
+            "text": ""
+          },
+          {
+            "line": 169,
+            "text": "            # Emitter metal"
+          },
+          {
+            "line": 170,
+            "text": "            pcLayer = 'Metal1'"
+          },
+          {
+            "line": 171,
+            "text": "            pcInst = dbCreateRect("
+          },
+          {
+            "line": 172,
+            "text": "                self,"
+          },
+          {
+            "line": 173,
+            "text": "                Layer(pcLayer, pcPurpose),"
+          },
+          {
+            "line": 174,
+            "text": "                Box("
+          },
+          {
+            "line": 175,
+            "text": "                    stepX * pcIndexX - 0.35,"
+          },
+          {
+            "line": 176,
+            "text": "                    -(-0.32 - we / 2 - leoffset - bipwinyoffset - empolyyoffset),"
+          },
+          {
+            "line": 177,
+            "text": "                    stepX * pcIndexX + 0.35,"
+          },
+          {
+            "line": 178,
+            "text": "                    -(0.335 + we / 2 + leoffset + bipwinyoffset + empolyyoffset),"
+          },
+          {
+            "line": 179,
+            "text": "                ),"
+          },
+          {
+            "line": 180,
+            "text": "            )"
+          },
+          {
+            "line": 181,
+            "text": ""
+          }
+        ]
+      },
+      {
+        "first": 310,
+        "last": 346,
+        "lines": [
+          {
+            "line": 310,
+            "text": "        "
+          },
+          {
+            "line": 311,
+            "text": "        pcLayer = 'Metal1'"
+          },
+          {
+            "line": 312,
+            "text": "        # Collector metal"
+          },
+          {
+            "line": 313,
+            "text": "        pcInst = dbCreateRect("
+          },
+          {
+            "line": 314,
+            "text": "            self,"
+          },
+          {
+            "line": 315,
+            "text": "            Layer(pcLayer, pcPurpose),"
+          },
+          {
+            "line": 316,
+            "text": "            Box(-0.89 - le / 2, CMetY1, stretchX + 0.89 + le / 2, CMetY2),"
+          },
+          {
+            "line": 317,
+            "text": "        )"
+          },
+          {
+            "line": 318,
+            "text": "        "
+          },
+          {
+            "line": 319,
+            "text": "        # Base metal"
+          },
+          {
+            "line": 320,
+            "text": "        pcInst = dbCreateRect("
+          },
+          {
+            "line": 321,
+            "text": "            self,"
+          },
+          {
+            "line": 322,
+            "text": "            Layer(pcLayer, pcPurpose),"
+          },
+          {
+            "line": 323,
+            "text": "            Box("
+          },
+          {
+            "line": 324,
+            "text": "                -0.94 - le / 2,"
+          },
+          {
+            "line": 325,
+            "text": "                -(0.57 + we / 2 + leoffset + bipwinyoffset + empolyyoffset),"
+          },
+          {
+            "line": 326,
+            "text": "                stretchX + 0.94 + le / 2,"
+          },
+          {
+            "line": 327,
+            "text": "                -(0.81 + we / 2 + leoffset + bipwinyoffset + empolyyoffset),"
+          },
+          {
+            "line": 328,
+            "text": "            ),"
+          },
+          {
+            "line": 329,
+            "text": "        )"
+          },
+          {
+            "line": 330,
+            "text": ""
+          },
+          {
+            "line": 331,
+            "text": "        pcLayer = 'Metal2'"
+          },
+          {
+            "line": 332,
+            "text": "        pcInst = dbCreateRect("
+          },
+          {
+            "line": 333,
+            "text": "            self,"
+          },
+          {
+            "line": 334,
+            "text": "            Layer(pcLayer, pcPurpose),"
+          },
+          {
+            "line": 335,
+            "text": "            Box("
+          },
+          {
+            "line": 336,
+            "text": "                -0.89 - le / 2,"
+          },
+          {
+            "line": 337,
+            "text": "                -(-0.32 - we / 2 - leoffset - bipwinyoffset - empolyyoffset),"
+          },
+          {
+            "line": 338,
+            "text": "                stretchX + 0.89 + le / 2,"
+          },
+          {
+            "line": 339,
+            "text": "                -(0.335 + we / 2 + leoffset + bipwinyoffset + empolyyoffset),"
+          },
+          {
+            "line": 340,
+            "text": "            ),"
+          },
+          {
+            "line": 341,
+            "text": "        )"
+          },
+          {
+            "line": 342,
+            "text": ""
+          },
+          {
+            "line": 343,
+            "text": "        pcLayer = 'TEXT'"
+          },
+          {
+            "line": 344,
+            "text": "        pcLabelText = self.Text"
+          },
+          {
+            "line": 345,
+            "text": "        pcLabelHeight = 0.35"
+          },
+          {
+            "line": 346,
+            "text": "        pcInst = dbCreateLabel("
+          }
+        ]
+      },
+      {
+        "first": 387,
+        "last": 396,
+        "lines": [
+          {
+            "line": 387,
+            "text": "                                                                    Point(-3.15-ActivShift, (-2.68 - we/2 - leoffset - bipwinyoffset - empolyyoffset-ActivShift)),"
+          },
+          {
+            "line": 388,
+            "text": "                                                                    Point(stretchX+3.15+ActivShift, (-2.68 - we/2 - leoffset - bipwinyoffset - empolyyoffset-ActivShift))]))"
+          },
+          {
+            "line": 389,
+            "text": "        if Nx >  1 :"
+          },
+          {
+            "line": 390,
+            "text": "            MkPin(self, 'C', 1, Box(-0.89-le/2, (0.57+we/2-leoffset-bipwinyoffset-empolyyoffset), (stretchX+0.89+le/2), (1.01+we/2-leoffset-bipwinyoffset-empolyyoffset)), Layer('Metal1', 'pin'), True)"
+          },
+          {
+            "line": 391,
+            "text": "        else :"
+          },
+          {
+            "line": 392,
+            "text": "            MkPin(self, 'C', 1, Box(-0.89-le/2, (0.56+we/2+leoffset+bipwinyoffset+empolyyoffset), (stretchX+0.89+le/2), (0.8+we/2+leoffset+bipwinyoffset+empolyyoffset)), Layer('Metal1', 'pin'), True)"
+          },
+          {
+            "line": 393,
+            "text": ""
+          },
+          {
+            "line": 394,
+            "text": "        MkPin(self, 'B', 2, Box(-0.94-le/2, (-0.81-we/2-leoffset-bipwinyoffset-empolyyoffset), (stretchX+0.94+le/2), (-0.57-we/2-leoffset-bipwinyoffset-empolyyoffset)), Layer('Metal1', 'pin'), True)"
+          },
+          {
+            "line": 395,
+            "text": "        MkPin(self, 'E', 3, Box(-0.71-le/2, (0.32+we/2+leoffset+bipwinyoffset+empolyyoffset), stretchX+0.71+le/2, (-0.335-we/2-leoffset-bipwinyoffset-empolyyoffset)), Layer('Metal2', 'pin'), True)"
+          },
+          {
+            "line": 396,
+            "text": ""
+          }
+        ]
+      }
+    ]
+  },
+  "libs.tech/klayout/python/sg13g2_pycell_lib/ihp/rhigh_code.py": {
+    "sha256": "9b9e0f58c0f2035b3a0f68d497a5393b4f5f8d110663f826d566f6cc7c4cd5d4",
+    "excerpts": [
+      {
+        "first": 325,
+        "last": 343,
+        "lines": [
+          {
+            "line": 325,
+            "text": "            dbCreateRect(self, sallayer, Box(xpos1-salover, ypos1-contactpush*dir, xpos1+stripes*(w+ps)-ps+salover, ypos1+l+w+salover))"
+          },
+          {
+            "line": 326,
+            "text": "            # 09.02.07 GGa added EXTBlock"
+          },
+          {
+            "line": 327,
+            "text": "            dbCreateRect(self, extBlocklayer, Box(xpos1-salover, ypos1-contactpush*dir, xpos1+stripes*(w+ps)-ps+salover, ypos1+l+w+salover))"
+          },
+          {
+            "line": 328,
+            "text": "            # pSD over Stripes and bend"
+          },
+          {
+            "line": 329,
+            "text": "            dbCreateRect(self, psdlayer, Box(xpos1-psdover, ypos1-(contactpush-salblock_nsd_enc)*dir, xpos1+stripes*(w+ps)-ps+psdover, ypos1+(l+w+psdover)*dir))"
+          },
+          {
+            "line": 330,
+            "text": "            # nsdBlock over Stripes and Bends"
+          },
+          {
+            "line": 331,
+            "text": "            dbCreateRect(self, nsdlayer, Box(xpos1-nsdover, ypos1-(contactpush-salblock_nsd_enc)*dir, xpos1+stripes*(w+ps)-ps+nsdover, ypos1+(l+w+nsdover)*dir))"
+          },
+          {
+            "line": 332,
+            "text": "            "
+          },
+          {
+            "line": 333,
+            "text": "            # *********************************************************"
+          },
+          {
+            "line": 334,
+            "text": "            # maybe draw extra salblock for longer last stripe"
+          },
+          {
+            "line": 335,
+            "text": "            if lcor > 0 :"
+          },
+          {
+            "line": 336,
+            "text": "                if oddp(stripes) :"
+          },
+          {
+            "line": 337,
+            "text": "                    # draw new rect topright"
+          },
+          {
+            "line": 338,
+            "text": "                    # SalBlock"
+          },
+          {
+            "line": 339,
+            "text": "                    dbCreateRect(self, sallayer, Box(xpos1+stripes*(w+ps)-ps-w-salover, ypos1+l+w+salover, xpos1+stripes*(w+ps)-ps+salover, ypos1+l+w+salover+lcor))"
+          },
+          {
+            "line": 340,
+            "text": "                    # 09.02.07 GGa added EXTBlock"
+          },
+          {
+            "line": 341,
+            "text": "                    dbCreateRect(self, extBlocklayer, Box(xpos1+stripes*(w+ps)-ps-w-salover, ypos1+l+w+salover, xpos1+stripes*(w+ps)-ps+salover, ypos1+l+w+salover+lcor))"
+          },
+          {
+            "line": 342,
+            "text": "                    # pSD"
+          },
+          {
+            "line": 343,
+            "text": "                    dbCreateRect(self, psdlayer, Box(xpos1+stripes*(w+ps)-ps-w-psdover, ypos1+l+w+salover-salblock_nsd_enc, xpos1+stripes*(w+ps)-ps+psdover, ypos1+l+w+salover+lcor-salblock_nsd_enc))"
+          }
+        ]
+      },
+      {
+        "first": 477,
+        "last": 496,
+        "lines": [
+          {
+            "line": 477,
+            "text": "        # *********************************************************"
+          },
+          {
+            "line": 478,
+            "text": "        # Metal and pin"
+          },
+          {
+            "line": 479,
+            "text": "        bBox = lastCont.getBBox()"
+          },
+          {
+            "line": 480,
+            "text": "        dbCreateRect(self, metlayer, Box(bBox.left-endcap, bBox.bottom-endcap, bBox.right+endcap, bBox.top+endcap))"
+          },
+          {
+            "line": 481,
+            "text": "    "
+          },
+          {
+            "line": 482,
+            "text": "        minus_pin_box = Box(bBox.left-endcap, bBox.bottom-endcap, bBox.right+endcap, bBox.top+endcap)"
+          },
+          {
+            "line": 483,
+            "text": "        MkPin(self, f\"MINUS{index}\", 2, minus_pin_box, metlayer)"
+          },
+          {
+            "line": 484,
+            "text": ""
+          },
+          {
+            "line": 485,
+            "text": "        # *********************************************************"
+          },
+          {
+            "line": 486,
+            "text": "        # fill notches in pSD, nSD and EXTBlock layers (issue #996)"
+          },
+          {
+            "line": 487,
+            "text": "        # When the contact heads are not pushed out of the resistor body"
+          },
+          {
+            "line": 488,
+            "text": "        # (contactpush == 0), the gap between the pSD/nSD/EXTBlock cover"
+          },
+          {
+            "line": 489,
+            "text": "        # of a contact head and the adjacent bend cover is ps-2*psdover"
+          },
+          {
+            "line": 490,
+            "text": "        # (pSD/nSD) resp. ps-psdover-salover (EXTBlock). If this gap is"
+          },
+          {
+            "line": 491,
+            "text": "        # smaller than the minimum space of the layer (pSD.b / EXTB.b),"
+          },
+          {
+            "line": 492,
+            "text": "        # fill it so the shapes merge and no space violation remains."
+          },
+          {
+            "line": 493,
+            "text": "        psdNotchWidth = ps-2.0*psdover"
+          },
+          {
+            "line": 494,
+            "text": "        extBlockNotchWidth = ps-psdover-salover"
+          },
+          {
+            "line": 495,
+            "text": "        notchXpos1 = xpos1-w-ps"
+          },
+          {
+            "line": 496,
+            "text": ""
+          }
+        ]
+      }
+    ]
+  },
+  "libs.tech/klayout/python/sg13g2_pycell_lib/ihp/rppd_code.py": {
+    "sha256": "161278645c4ba76e7fc8aea63bad997d3d1af755f7b2846140472e9eb1acd21f",
+    "excerpts": [
+      {
+        "first": 290,
+        "last": 320,
+        "lines": [
+          {
+            "line": 290,
+            "text": "        # set xpos1/xpos2 back to right for resistorbody"
+          },
+          {
+            "line": 291,
+            "text": "        if asymcont :"
+          },
+          {
+            "line": 292,
+            "text": "            xpos1=xpos1+contoverlay"
+          },
+          {
+            "line": 293,
+            "text": "            xpos2=xpos2+contoverlay        "
+          },
+          {
+            "line": 294,
+            "text": ""
+          },
+          {
+            "line": 295,
+            "text": "        ypos1 = 0.0 - contactpush*dir"
+          },
+          {
+            "line": 296,
+            "text": ""
+          },
+          {
+            "line": 297,
+            "text": "        # **************************************************************"
+          },
+          {
+            "line": 298,
+            "text": "        # resistorbody:"
+          },
+          {
+            "line": 299,
+            "text": "        # **************************************************************"
+          },
+          {
+            "line": 300,
+            "text": "        dir = 1;"
+          },
+          {
+            "line": 301,
+            "text": "        xpos1 = xpos1+contoverlay"
+          },
+          {
+            "line": 302,
+            "text": "        xpos2 = xpos1+self.w-contoverlay;"
+          },
+          {
+            "line": 303,
+            "text": "        ypos2 = ypos1+(self.l-resshort)*dir;"
+          },
+          {
+            "line": 304,
+            "text": "        # **************************************************************"
+          },
+          {
+            "line": 305,
+            "text": "        # normal contacts or outlying contacts?"
+          },
+          {
+            "line": 306,
+            "text": "        if contactpush > 0 :   # Contacts are out of Resitorsquare->draw rectangle"
+          },
+          {
+            "line": 307,
+            "text": "            # **************************************************************"
+          },
+          {
+            "line": 308,
+            "text": "            # draw one salblock and pSD over resistor and bends"
+          },
+          {
+            "line": 309,
+            "text": "            # Sal Block over stripes and bends"
+          },
+          {
+            "line": 310,
+            "text": "            dbCreateRect(self, sallayer, Box(xpos1-salover, ypos1-contactpush,"
+          },
+          {
+            "line": 311,
+            "text": "                                             xpos1+stripes*(self.w+self.ps)-self.ps+salover, ypos1+self.l+self.w+salover))"
+          },
+          {
+            "line": 312,
+            "text": "        "
+          },
+          {
+            "line": 313,
+            "text": "            dbCreateRect(self, extBlocklayer, Box(xpos1-salover, ypos1-contactpush,"
+          },
+          {
+            "line": 314,
+            "text": "                                                  xpos1+stripes*(self.w+self.ps)-self.ps+salover, ypos1+self.l+self.w+salover))"
+          },
+          {
+            "line": 315,
+            "text": "            # pSD over Stripes and bends"
+          },
+          {
+            "line": 316,
+            "text": "            # lower bends are salover obove 0.0, need to have psdover, so this psd has to be psdover-salover under 0.0"
+          },
+          {
+            "line": 317,
+            "text": "            dbCreateRect(self, psdlayer, Box(xpos1-psdover, ypos1-contactpush+salover-psdover,"
+          },
+          {
+            "line": 318,
+            "text": "                                             xpos1+stripes*(self.w+self.ps)-self.ps+psdover, ypos1+self.l+self.w+psdover))"
+          },
+          {
+            "line": 319,
+            "text": "            "
+          },
+          {
+            "line": 320,
+            "text": "            yyy = ypos1-contactpush+salover-psdover"
+          }
+        ]
+      },
+      {
+        "first": 447,
+        "last": 461,
+        "lines": [
+          {
+            "line": 447,
+            "text": "        # Metal and Pin"
+          },
+          {
+            "line": 448,
+            "text": ""
+          },
+          {
+            "line": 449,
+            "text": "        # metal block"
+          },
+          {
+            "line": 450,
+            "text": "        dbCreateRect(self, metlayer, Box(xpos1+contbar_poly_over-endcap, "
+          },
+          {
+            "line": 451,
+            "text": "                                         ypos2+(contactpush+li_salblock+li_poly_over-metover+lcor)*dir,"
+          },
+          {
+            "line": 452,
+            "text": "                                         xpos2-contbar_poly_over+endcap, "
+          },
+          {
+            "line": 453,
+            "text": "                                         ypos2+(contactpush+consize+li_salblock+li_poly_over+metover+lcor)*dir))"
+          },
+          {
+            "line": 454,
+            "text": "        "
+          },
+          {
+            "line": 455,
+            "text": "        minus_pin_box = Box(xpos1+contbar_poly_over-endcap,"
+          },
+          {
+            "line": 456,
+            "text": "                            ypos2+(contactpush+li_salblock+li_poly_over-metover+lcor)*dir,"
+          },
+          {
+            "line": 457,
+            "text": "                            xpos2-contbar_poly_over+endcap,"
+          },
+          {
+            "line": 458,
+            "text": "                            ypos2+(contactpush+consize+li_salblock+li_poly_over+metover+lcor)*dir)"
+          },
+          {
+            "line": 459,
+            "text": "        MkPin(self, f\"MINUS{index}\", 2, minus_pin_box, metlayer_pin)"
+          },
+          {
+            "line": 460,
+            "text": ""
+          },
+          {
+            "line": 461,
+            "text": "        # fill notches in pSD and EXTBlock layers"
+          }
+        ]
+      }
+    ]
+  }
+}
