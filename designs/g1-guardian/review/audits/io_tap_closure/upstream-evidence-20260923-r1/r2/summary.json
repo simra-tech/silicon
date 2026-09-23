@@ -1,0 +1,380 @@
+{
+  "status": "passed read-only alternative-source audit; strict IO LVS applicability remains unresolved",
+  "pdk_commit": "84374023ee8b4b126bebbba67fcbada0a9c0ff0b",
+  "upstream_commits": {
+    "": "03db2a692d3969b29128c15b0ec02c6ff605087f",
+    "deps/c4m-flexio": "1072d3240273f8ef43486a40712ca264687bb05b",
+    "deps/PDKMaster": "06f01e66f5cb5bfa61770f8b713814537ed91e33"
+  },
+  "upstream_url": "https://gitlab.com/Chips4Makers/c4m-pdk-ihpsg13g2/-/tree/v0.0.4",
+  "source_hashes": {
+    ".gitmodules": "e3d9ffb7b15c6b15b89d1ab24f87f766d93e059a94c2f45ae01b045862ecb45c",
+    "pdm.lock": "8cda8a4508db5c5d98c07c5c4dc23774e9c328d30a33d179293dadf9647649ca",
+    "pyproject.toml": "bece43d7b40954286c4a9e445bc0f7627f87c0bf4f1a22f93095634b48762693",
+    "scripts/gen_spice.py": "0e4b7c14f7bafe5851e22b187f8dd742595139041fa4b3dbe9b45a3e1886dfbe",
+    "c4m/pdk/ihpsg13g2/pyspice.py": "2bac284fd80821a2c3b45cbae54b33a2318f0376827889cecb6d3d0b1329ca82",
+    "c4m/pdk/ihpsg13g2/pdkmaster.py": "51d8282068a861620dee6c9f37d5e538a12aa5928b7a0fa64db638bacc51d245",
+    "c4m/pdk/ihpsg13g2/io.py": "04e7f93236222d58f045a8cef3f357fc906cb59db594ab4b621f5eeceba93618",
+    "c4m/pdk/ihpsg13g2/_io_compliance.py": "b8870df643df1f12c9082ec1cd7a08343ccd483063f0c23d4737305b6a1635d9",
+    "deps/c4m-flexio/c4m/flexio/factory.py": "db30c330ce4b284650e9170dd044f205b6bd69ecfe1e708569b0acc5d7a72e5b",
+    "deps/PDKMaster/pdkmaster/design/cell.py": "79f962d716b6592d2ac986d04a77fb7ece978bcf6491afe13bdb72f334296109",
+    "deps/PDKMaster/pdkmaster/design/circuit.py": "f6c3df0663a62b604e24c2c9d5224aa60fd4956c70d49536cb819a926e8df5f6",
+    "deps/PDKMaster/pdkmaster/io/spice/pyspice.py": "11777fa8fa37be5af58b699435a24f212bc86731b6728636ffcfa66ae30d41ec"
+  },
+  "pinned_hashes": {
+    "libs.ref/sg13g2_io/cdl/sg13g2_io.cdl": "7a30e902099e8a8f85e0ae853167904df3793357a793a7b4dc82237b72b3eec4",
+    "libs.ref/sg13g2_io/spice/sg13g2_io.spice": "1d53ab7df431b717ef5aff43e1117c0224681d5cc84886da37a319280ee958d6",
+    "libs.ref/sg13g2_io/spice/sg13g2_io.spi": "1d53ab7df431b717ef5aff43e1117c0224681d5cc84886da37a319280ee958d6",
+    "libs.ref/sg13g2_io/vacask/sg13g2_io.inc": "51cca9aa8f7eecf12ad26a1211c89157dbd9325f45199a0edfe076bb7222271f",
+    "libs.ref/sg13g2_io/doc/README.md": "5da422c931fa6ff5ada9081a1e266b8b7541df7b723f02eaea677440a2bcbba5"
+  },
+  "generator_LevelUpInv": {
+    "method_lines": [
+      2368,
+      2440
+    ],
+    "instantiations": [
+      {
+        "line": 2380,
+        "primitive": "spec.nmos",
+        "name": "n_i_inv"
+      },
+      {
+        "line": 2381,
+        "primitive": "spec.pmos",
+        "name": "p_i_inv"
+      },
+      {
+        "line": 2384,
+        "primitive": "spec.ionmos",
+        "name": "n_lvld_n"
+      },
+      {
+        "line": 2387,
+        "primitive": "spec.ionmos",
+        "name": "n_lvld"
+      },
+      {
+        "line": 2390,
+        "primitive": "spec.iopmos",
+        "name": "p_lvld_n"
+      },
+      {
+        "line": 2393,
+        "primitive": "spec.iopmos",
+        "name": "p_lvld"
+      },
+      {
+        "line": 2398,
+        "primitive": "spec.ionmos",
+        "name": "n_lvld_n_inv"
+      },
+      {
+        "line": 2401,
+        "primitive": "spec.iopmos",
+        "name": "p_lvld_n_inv"
+      }
+    ],
+    "vss": {
+      "line": 2414,
+      "arguments": {
+        "name": "'vss'",
+        "external": "True",
+        "childports": "(n_i_inv.ports.sourcedrain2, n_i_inv.ports.bulk, n_lvld_n.ports.sourcedrain1, n_lvld_n.ports.bulk, n_lvld.ports.sourcedrain2, n_lvld.ports.bulk, n_lvld_n_inv.ports.sourcedrain1, n_lvld_n_inv.ports.bulk)"
+      }
+    },
+    "direct_vss_body_instances": [
+      "n_i_inv",
+      "n_lvld_n",
+      "n_lvld",
+      "n_lvld_n_inv"
+    ],
+    "explicit_tap_instances": 0
+  },
+  "current_LevelUpInv": {
+    "cdl_block": ".SUBCKT sg13g2_LevelUpInv o i iovdd vdd vss\n*.PININFO i:I o:O iovdd:B vdd:B vss:B\nMN1 net2 i vss sub! sg13_lv_nmos m=1 w=2.75u l=130.00n ng=1\nMP3 net2 i vdd vdd sg13_lv_pmos m=1 w=4.75u l=130.00n ng=1\nMN0 o net4 vss sub! sg13_hv_nmos m=1 w=1.9u l=450.00n ng=1\nMN3 net4 net2 vss sub! sg13_hv_nmos m=1 w=1.9u l=450.00n ng=1\nMN2 net3 i vss sub! sg13_hv_nmos m=1 w=1.9u l=450.00n ng=1\nMP0 o net4 iovdd iovdd sg13_hv_pmos m=1 w=3.9u l=450.00n ng=1\nMP1 net3 net4 iovdd iovdd sg13_hv_pmos m=1 w=300.0n l=450.00n ng=1\nMP2 net4 net3 iovdd iovdd sg13_hv_pmos m=1 w=300.0n l=450.00n ng=1\nXR0 vss sub! ptap1 A=1.051p P=4.1u\n.ENDS",
+    "spice_block": ".subckt sg13g2_LevelUpInv o i iovdd vdd vss\nXN1 net2 i vss sub! sg13_lv_nmos w=2.75u l=130.00n ng=1 ad=9.35e-13 as=9.35e-13 pd=6.18e-06 ps=6.18e-06 m=1\nXP3 net2 i vdd vdd sg13_lv_pmos w=4.75u l=130.00n ng=1 ad=1.615e-12 as=1.615e-12 pd=1.018e-05 ps=1.018e-05 m=1\nXN0 o net4 vss sub! sg13_hv_nmos w=1.9u l=450.00n ng=1 ad=0.0 as=0.0 pd=0.0 ps=0.0 m=1\nXN3 net4 net2 vss sub! sg13_hv_nmos w=1.9u l=450.00n ng=1 ad=0.0 as=0.0 pd=0.0 ps=0.0 m=1\nXN2 net3 i vss sub! sg13_hv_nmos w=1.9u l=450.00n ng=1 ad=0.0 as=0.0 pd=0.0 ps=0.0 m=1\nXP0 o net4 iovdd iovdd sg13_hv_pmos w=3.9u l=450.00n ng=1 ad=1.326e-12 as=1.326e-12 pd=8.48e-06 ps=8.48e-06 m=1\nXP1 net3 net4 iovdd iovdd sg13_hv_pmos w=300.0n l=450.00n ng=1 ad=1.02e-13 as=1.02e-13 pd=1.28e-06 ps=1.28e-06 m=1\nXP2 net4 net3 iovdd iovdd sg13_hv_pmos w=300.0n l=450.00n ng=1 ad=0.0 as=0.0 pd=0.0 ps=0.0 m=1\nXR0 vss sub! ptap1 R=190.268\n.ends",
+    "devices": 9,
+    "explicit_taps": [
+      "XR0 vss sub! ptap1 A=1.051p P=4.1u"
+    ],
+    "nmos_body_node": "sub!"
+  },
+  "vacask_taps": [
+    {
+      "line": 27,
+      "text": "xr0 (anode sub_) ptap1  r=5.191"
+    },
+    {
+      "line": 37,
+      "text": "xr0 (guard sub_) ptap1  r=17.289"
+    },
+    {
+      "line": 47,
+      "text": "xr1 (vss sub_) ptap1  r=22.472"
+    },
+    {
+      "line": 48,
+      "text": "xr0 (iovss sub_) ptap1  r=169.45m"
+    },
+    {
+      "line": 572,
+      "text": "xr0 (iovss sub_) ptap1  r=9.999"
+    },
+    {
+      "line": 626,
+      "text": "xr0 (iovss sub_) ptap1  r=9.59"
+    },
+    {
+      "line": 639,
+      "text": "xr1 (iovss sub_) ptap1  r=456.33m"
+    },
+    {
+      "line": 640,
+      "text": "xr0 (vss sub_) ptap1  r=22.472"
+    },
+    {
+      "line": 652,
+      "text": "xr1 (iovss sub_) ptap1  r=453.388m"
+    },
+    {
+      "line": 653,
+      "text": "xr0 (vss sub_) ptap1  r=22.472"
+    },
+    {
+      "line": 663,
+      "text": "xr1 (iovss sub_) ptap1  r=174.346m"
+    },
+    {
+      "line": 664,
+      "text": "xr0 (vss sub_) ptap1  r=22.832"
+    },
+    {
+      "line": 672,
+      "text": "xr1 (vss sub_) ptap1  r=101.912"
+    },
+    {
+      "line": 673,
+      "text": "xr0 (iovss sub_) ptap1  r=1.224"
+    },
+    {
+      "line": 687,
+      "text": "xr0 (vss sub_) ptap1  r=258.978"
+    },
+    {
+      "line": 719,
+      "text": "xr0 (vss sub_) ptap1  r=207.099"
+    },
+    {
+      "line": 739,
+      "text": "xr0 (vss sub_) ptap1  r=251.534"
+    },
+    {
+      "line": 747,
+      "text": "xr0 (vss sub_) ptap1  r=258.978"
+    },
+    {
+      "line": 767,
+      "text": "xr0 (vss sub_) ptap1  r=251.534"
+    },
+    {
+      "line": 788,
+      "text": "xr0 (iovss sub_) ptap1  r=11.438"
+    },
+    {
+      "line": 807,
+      "text": "xr0 (iovss sub_) ptap1  r=9.826"
+    },
+    {
+      "line": 817,
+      "text": "xr1 (minus sub_) ptap1  r=46.556"
+    },
+    {
+      "line": 853,
+      "text": "xr1 (iovss sub_) ptap1  r=199.584"
+    },
+    {
+      "line": 854,
+      "text": "xr0 (vss sub_) ptap1  r=127.332"
+    },
+    {
+      "line": 868,
+      "text": "xr0 (vss sub_) ptap1  r=26.933"
+    },
+    {
+      "line": 869,
+      "text": "xr1 (iovss sub_) ptap1  r=214.134m"
+    },
+    {
+      "line": 879,
+      "text": "xr0 (iovss sub_) ptap1  r=9.826"
+    },
+    {
+      "line": 893,
+      "text": "xr0 (iovss sub_) ptap1  r=11.438"
+    },
+    {
+      "line": 910,
+      "text": "xr0 (vss sub_) ptap1  r=26.746"
+    },
+    {
+      "line": 911,
+      "text": "xr1 (iovss sub_) ptap1  r=214.165m"
+    },
+    {
+      "line": 944,
+      "text": "xr0 (vss sub_) ptap1  r=190.268"
+    },
+    {
+      "line": 966,
+      "text": "xr1 (iovss sub_) ptap1  r=212.747m"
+    },
+    {
+      "line": 967,
+      "text": "xr0 (vss sub_) ptap1  r=24.125"
+    },
+    {
+      "line": 980,
+      "text": "xr0 (vss sub_) ptap1  r=24.125"
+    },
+    {
+      "line": 981,
+      "text": "xr1 (iovss sub_) ptap1  r=214.165m"
+    },
+    {
+      "line": 992,
+      "text": "xr0 (vss sub_) ptap1  r=24.69"
+    },
+    {
+      "line": 993,
+      "text": "xr1 (iovss sub_) ptap1  r=173.674m"
+    },
+    {
+      "line": 1001,
+      "text": "xr0 (iovss sub_) ptap1  r=9.826"
+    },
+    {
+      "line": 1016,
+      "text": "xr0 (iovss sub_) ptap1  r=11.438"
+    },
+    {
+      "line": 1034,
+      "text": "xr0 (vss sub_) ptap1  r=26.933"
+    },
+    {
+      "line": 1035,
+      "text": "xr1 (iovss sub_) ptap1  r=207.756m"
+    },
+    {
+      "line": 1048,
+      "text": "xr0 (vss sub_) ptap1  r=23.888"
+    },
+    {
+      "line": 1049,
+      "text": "xr1 (iovss sub_) ptap1  r=208.667m"
+    },
+    {
+      "line": 1062,
+      "text": "xr0 (vss sub_) ptap1  r=24.567"
+    },
+    {
+      "line": 1063,
+      "text": "xr1 (iovss sub_) ptap1  r=208.667m"
+    },
+    {
+      "line": 1076,
+      "text": "xr0 (vss sub_) ptap1  r=24.897"
+    },
+    {
+      "line": 1077,
+      "text": "xr1 (iovss sub_) ptap1  r=208.211m"
+    },
+    {
+      "line": 1090,
+      "text": "xr0 (vss sub_) ptap1  r=24.649"
+    },
+    {
+      "line": 1091,
+      "text": "xr1 (iovss sub_) ptap1  r=208.667m"
+    },
+    {
+      "line": 1099,
+      "text": "xr1 (vss sub_) ptap1  r=35.383"
+    },
+    {
+      "line": 1100,
+      "text": "xr0 (iovss sub_) ptap1  r=93.041m"
+    },
+    {
+      "line": 1108,
+      "text": "xr1 (vss sub_) ptap1  r=63.078"
+    },
+    {
+      "line": 1109,
+      "text": "xr0 (iovss sub_) ptap1  r=625.742m"
+    },
+    {
+      "line": 1117,
+      "text": "xr1 (vss sub_) ptap1  r=162.013"
+    },
+    {
+      "line": 1118,
+      "text": "xr0 (iovss sub_) ptap1  r=2.443"
+    },
+    {
+      "line": 1126,
+      "text": "xr1 (vss sub_) ptap1  r=246.192"
+    },
+    {
+      "line": 1127,
+      "text": "xr0 (iovss sub_) ptap1  r=14.724"
+    },
+    {
+      "line": 1135,
+      "text": "xr1 (vss sub_) ptap1  r=246.192"
+    },
+    {
+      "line": 1136,
+      "text": "xr0 (iovss sub_) ptap1  r=6.246"
+    },
+    {
+      "line": 1144,
+      "text": "xr1 (vss sub_) ptap1  r=32.364"
+    },
+    {
+      "line": 1145,
+      "text": "xr0 (iovss sub_) ptap1  r=253.731m"
+    },
+    {
+      "line": 1160,
+      "text": "xr1 (iovss sub_) ptap1  r=9.826"
+    },
+    {
+      "line": 1171,
+      "text": "xr1 (iovss sub_) ptap1  r=11.438"
+    },
+    {
+      "line": 1185,
+      "text": "xr0 (vss sub_) ptap1  r=22.579"
+    },
+    {
+      "line": 1186,
+      "text": "xr1 (iovss sub_) ptap1  r=214.8m"
+    }
+  ],
+  "checks": {
+    "exact_upstream_and_dependency_commits": "passed",
+    "pinned_spice_spi_byte_identity": "passed",
+    "explicit_generator_eight_MOS_body_connections": "passed",
+    "current_nine_device_source": "passed",
+    "VACASK_independent_physical_AP_source": "failed: converted electrical R-only view",
+    "old_generator_drop_in_reference_equivalence": "failed: removes explicit substrate resistor",
+    "independently_source_consistent_current_native_IO_reference": "not run: none established",
+    "generator_execution_or_repin": "not run",
+    "new_LVS": "not run",
+    "geometry_source_model_deck_changes": "not run",
+    "analog_seed": "not applicable"
+  },
+  "scope": "AST inspection only; no downloaded Python import or execution, no reference rewrite or extraction-derived parameters.",
+  "worker_sha256": "34a5c53ff7ade8f0ce9b9f757894a0b8a70769589a8b1924886e0041dbd3bdca"
+}

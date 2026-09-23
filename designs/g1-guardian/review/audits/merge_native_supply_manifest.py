@@ -45,6 +45,8 @@ def main():
     contract = json.loads(a.contract.read_text())
     assert contract['schema'] == 'native-supply-integration-v1'
     source = bound_file(contract['parent'])
+    for artifact in contract.get('evidence_artifacts', []):
+        bound_file(artifact)
     meta = predicates(contract['parent_metadata'])
     assert meta['GDS_sha256'] == sha(source) and meta['status'].startswith('passed')
     assert meta['native_instances_retained'] == 4904 and meta['decap_pin_pairs_held'] == 9324

@@ -1,0 +1,139 @@
+{
+  "status": "completed conditional actual-pad metallic R; full current qualification not run",
+  "script_sha256": "7f4b582c15ff71ea3299a4e11db83f272b6ec67f1f5899f91f8de0c4e12c162b",
+  "inventory_sha256": "544d913eea2c01571a007c848c9a9f2c10b5b169d9d5367bbdf0c243d8463231",
+  "candidate_sha256": "e8c418265cb6b218175874f7b44589a87971e7ef4a5612d037037c5ab008e6b8",
+  "overlay_sha256": "e0d8add8e852d500cbe68eeca0d61ddec2f35f1f13f412b34eed98b83d82d6d9",
+  "controls_sha256": "6397c7514e24b1b5e2aa6cfde0e81a75404decc7f53c0edac08eba54d48b7113",
+  "target_A": 0.01,
+  "scope": "Pure actual pad metallic net plus new feed only; point-boundary source/sink, no compact devices, no existing parallel SENSE feed.",
+  "not_run": [
+    "wire cross-section current-capacity qualification",
+    "mesh/source-boundary convergence",
+    "one-cut-loss R redistribution",
+    "actual load partition/ESD leakage/bond/package",
+    "temperature/PVT/EM/lifetime",
+    "complete pad current qualification",
+    "adoption"
+  ],
+  "raw_cut_identity_controls": [
+    {
+      "path": "Via1_1.json",
+      "sha256": "3830123d87be304a877b59707f9ec5d767a64063acaa193fbfa6ee7330f92f32",
+      "cuts": 1
+    },
+    {
+      "path": "Via1_2.json",
+      "sha256": "6eae9767133b688c670cff5e78a5c02edfff1e1dbe99f36b247011be25eb7f1d",
+      "cuts": 2
+    },
+    {
+      "path": "Via2_1.json",
+      "sha256": "b21d0ac20baaff70d9a3a0737d93879431112850a8f669a8c6251bc85853ecf5",
+      "cuts": 1
+    },
+    {
+      "path": "Via2_2.json",
+      "sha256": "0f0b5eb3f4f9dfae96a55c6e33be83d4192fd5fd90618799b94f2622f6b56bf3",
+      "cuts": 2
+    },
+    {
+      "path": "Via3_1.json",
+      "sha256": "d797ebe7cc97466afbaca5473189a765c7b58c0773db954d2aca62db12f0d3b6",
+      "cuts": 1
+    },
+    {
+      "path": "Via3_2.json",
+      "sha256": "f2524c65a54d451f421d308aa9c4904b126d9f8359df6a83d1b030ce386f0305",
+      "cuts": 2
+    },
+    {
+      "path": "Via4_1.json",
+      "sha256": "ece060925e41bd301c0a44fa1adf072ce84357cf97fef34ef7bd3868bbc2a923",
+      "cuts": 1
+    },
+    {
+      "path": "Via4_2.json",
+      "sha256": "1bc0c031b0c2501510e4b858109abd34c602ea5075fca538f6377bdc534f4361",
+      "cuts": 2
+    },
+    {
+      "path": "TopVia1_1.json",
+      "sha256": "017dac88d83e1d2b140917ae432edb0e237af710a56225a9636a1c911f034a08",
+      "cuts": 1
+    },
+    {
+      "path": "TopVia1_2.json",
+      "sha256": "0937a4605e003e2486c778085fbaf9f4c1e23952288bf8746aa866ebc86ffcbe",
+      "cuts": 2
+    },
+    {
+      "path": "TopVia2_1.json",
+      "sha256": "b3fc5793d2f5ce3dc4c33a6da4f0281b7a3efb25b86036ea78045071092b0f2e",
+      "cuts": 1
+    },
+    {
+      "path": "TopVia2_2.json",
+      "sha256": "d08ec546d9302ce8693502a0111a2831fe6394a3794285ec3de128667a2c6d0f",
+      "cuts": 2
+    }
+  ],
+  "scenario": {
+    "sheet_ohm": {
+      "M1": 0.135,
+      "M2": 0.103,
+      "M3": 0.103,
+      "M4": 0.103,
+      "M5": 0.103,
+      "TM1": 0.021,
+      "TM2": 0.0145
+    },
+    "cut_ohm": {
+      "Via1": 20.0,
+      "Via2": 20.0,
+      "Via3": 20.0,
+      "Via4": 20.0,
+      "TopVia1": 4.0,
+      "TopVia2": 2.2
+    },
+    "LEF_sha256": "054f5b7b24d72365b4b1088be1331e04c1c2e3805de9f99c37e71938ed231efc",
+    "scope": "Pinned LEF resistance scenario; .103ohm/square and20ohm Via1\u20134 are tabulated maxima, not nominal/hot bounds"
+  },
+  "native_cut_counts": {
+    "TopVia1": 35,
+    "TopVia2": 35,
+    "Via1": 918,
+    "Via2": 918,
+    "Via3": 70,
+    "Via4": 70
+  },
+  "actual_cut_counts": {
+    "Via1": 918,
+    "Via2": 918,
+    "Via3": 134,
+    "Via4": 134,
+    "TopVia1": 51,
+    "TopVia2": 39
+  },
+  "every_cut_geometry_binding": "passed",
+  "KCL_residual_A": 5.684341886080802e-14,
+  "maximum_delta_V": 0.04347015342893022,
+  "effective_R_ohm": 4.347015342893022,
+  "conditional_cut_target": "passed",
+  "cut_failures": [],
+  "worst_cut": {
+    "cut": "TopVia1",
+    "bbox_dbu": [
+      1049050,
+      400030,
+      1049470,
+      400450
+    ],
+    "current_A": 0.0006267814508198328,
+    "half_table_A": 0.0007,
+    "utilization": 0.8954020725997612
+  },
+  "nodes": 4410,
+  "edges": 6566,
+  "wall_s": 0.23985213413834572
+}
