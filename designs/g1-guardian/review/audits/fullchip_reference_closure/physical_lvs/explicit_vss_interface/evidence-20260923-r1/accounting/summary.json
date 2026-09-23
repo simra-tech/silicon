@@ -1,0 +1,121 @@
+{
+  "status": "passed independent residual accounting; strict comparison FAILED",
+  "inputs": {
+    "<results-root>/io-explicit-vss-reference-20260923-r5/summary.json": "cd3bc10e649dc4167db70f608e402506796377dfcecf1d5f4a1e158a2a205492",
+    "<results-root>/io-explicit-vss-comparison-20260923-r2/diagnostic/summary.json": "241507ac3e2b26ff5dd2396ee1169ce1d4a439622bcf3db875558a845e3d8ed7",
+    "<results-root>/io-explicit-vss-comparison-20260923-r2/diagnostic/comparison.json": "f13ae916d72fafab2cc667508ad29c7bc0f3aceeff2695eaef60cc7ba1eafb81",
+    "<repository>/designs/g1-guardian/review/audits/fullchip_reference_closure/physical_lvs/explicit_vss_interface/audit_result.py": "264cfc97302f3e127b1fd249e77a4f970a90a3961881eb1d7447aefde986854e"
+  },
+  "counts": {
+    "device": {
+      "Mismatch": 1,
+      "Match": 61230,
+      "MatchWithWarning": 2
+    },
+    "net": {
+      "Mismatch": 3,
+      "Match": 30942
+    },
+    "pin": {
+      "Match": 22
+    },
+    "subcircuit": {}
+  },
+  "actual_22_pin_pairs": "passed",
+  "explicit_941_body_connections": "passed",
+  "remaining_tap_AP": [
+    {
+      "source_terminals": {
+        "TIE": "VSS",
+        "WELL": "VSS"
+      },
+      "source_AP": {
+        "A": 968.5445000000014,
+        "P": 1292.0599999999972
+      },
+      "native_AP": {
+        "A": 978.9156,
+        "P": 6603.096000000001
+      },
+      "native_minus_source_A_um2": "10.3710999999986",
+      "native_minus_source_P_um": "5311.0360000000038",
+      "conditional_rectangle_formula_source_ohm": "0.4335123636177848035414018971",
+      "conditional_rectangle_formula_native_ohm": "0.1292532973703179075519618870",
+      "resistance_scope": "Formula illustration only; not qualified native/effective tap resistance; no source or model edit"
+    },
+    {
+      "source_terminals": {
+        "TIE": "IOVSS",
+        "WELL": "VSS"
+      },
+      "source_AP": {
+        "A": 234096.11567499986,
+        "P": 21621.340000000007
+      },
+      "native_AP": {
+        "A": 234246.65229999984,
+        "P": 64107.90800000004
+      },
+      "native_minus_source_A_um2": "150.53662499998",
+      "native_minus_source_P_um": "42486.568000000033",
+      "conditional_rectangle_formula_source_ohm": "0.003832354726872911624527012939",
+      "conditional_rectangle_formula_native_ohm": "0.003284682489902603289157430011",
+      "resistance_scope": "Formula illustration only; not qualified native/effective tap resistance; no source or model edit"
+    }
+  ],
+  "remaining_combined_all_VDD_dummy": {
+    "status": "Mismatch",
+    "layout": null,
+    "reference": {
+      "name": "PAD12_EN.I0.P0",
+      "model": "sg13_hv_pmos",
+      "parameters": {
+        "L": 0.45,
+        "W": 13.950000000000001,
+        "AS": 0.0,
+        "AD": 0.0,
+        "PS": 0.0,
+        "PD": 0.0,
+        "rfmode": 0.0
+      },
+      "terminals": {
+        "S": "VDD",
+        "G": "VDD",
+        "D": "VDD",
+        "B": "VDD"
+      }
+    }
+  },
+  "remaining_supply_net_mismatches": [
+    {
+      "status": "Mismatch",
+      "layout": "$1",
+      "reference": "VSS"
+    },
+    {
+      "status": "Mismatch",
+      "layout": "$16119",
+      "reference": "VDD"
+    },
+    {
+      "status": "Mismatch",
+      "layout": "$I297781",
+      "reference": "IOVSS"
+    }
+  ],
+  "inherited_metadata_error": {
+    "field": "comparer.physical_pin_or_source_edits",
+    "observed": false,
+    "disposition": "FAILED inherited scope annotation: physical pins unchanged, but source body connections intentionally changed. Exact source hash and intentional_source_interface_change field govern; original report preserved."
+  },
+  "checks": {
+    "source_controls": "passed",
+    "physical_pin_identity": "passed",
+    "strict_device_match": "failed",
+    "complete_new_native_extraction": "not run",
+    "dummy_extraction_reference": "not run in this arm",
+    "power_sequencing_ESD_latchup": "not run",
+    "tap_model_AP_applicability": "failed to establish",
+    "seed_or_analog_solver": "not applicable"
+  }
+}

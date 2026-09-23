@@ -1,0 +1,20 @@
+[
+  {
+    "file": "compare_saved_flat.rb",
+    "original_sha256": "1c00aaef03b3879187ac9fa4d83eddee4a0bf176a08ffe3acf87c86a64a1aace",
+    "prepared_sha256": "8fb463d78d34824191096525a7b4d03722b2a5e306d71a8af5f840504159ab37",
+    "diff": "--- \n+++ \n@@ -152,15 +152,12 @@\n raise 'Primitive count changed' unless count == 61521 && lc.each_device.to_a.size == count\n raise 'Original observed pins changed' unless lc.each_pin.map(&:name) == old.each_pin.map(&:name) && lc.each_pin.to_a.size == 71\n reference = RBA::Netlist.new\n-comparison_source = $variant == 'original' ? $original : $adapted\n-if $comparison_reference\n-  allowed = %w[69cc033cfdd08721fa31dfed892a5bd4fd5d9f17a037e4ab32ce0a033ce39254 5cf81d6f94cc7b204d0c347d5af94d9f6b1e501ebfc779030005fbfa5f0a399e]\n-  expected = allowed[$variant == 'original' ? 0 : 1]\n-  raise 'Unqualified extraction-only reference' unless Digest::SHA256.file($comparison_reference).hexdigest == expected\n-  comparison_source = $comparison_reference\n-end\n+raise 'Explicit body derivative missing' unless $comparison_reference\n+raise 'Explicit body derivative hash changed' unless Digest::SHA256.file($comparison_reference).hexdigest == 'c97e0d76b6e853974406cbad7ed8b0f78ab1a3b49cda4b565b202ae8bcdc873b'\n+comparison_source = $comparison_reference\n report[:actual_comparison_source_sha256] = Digest::SHA256.file(comparison_source).hexdigest\n-report[:extraction_reference_excludes_exact_three_dummies] = !!$comparison_reference\n+report[:intentional_source_interface_change] = 'All 245 originally local IO substrate domains explicitly connected to VSS; 941 terminal incidences, all devices/models/AP held'\n+report[:extraction_reference_excludes_exact_three_dummies] = false\n report[:canonical_electrical_and_physical_dummies] = 'retained'\n reference.read(comparison_source, RBA::NetlistSpiceReader.new(CustomReader.new))\n # Bind source reachability before flattening: other top-level library roots\n@@ -195,6 +192,18 @@\n   {devices: circuit.each_device.to_a.size, nets: circuit.each_net.to_a.size,\n    pins: circuit.each_pin.map(&:name), models: circuit.each_device.group_by { |d| d.device_class.name }.transform_values(&:size)}\n end\n+vss_pin = rc.each_pin.find { |p| p.name.upcase == 'VSS' }\n+raise 'Missing VSS source pin' unless vss_pin\n+rc.net_for_pin(vss_pin.id).set_property('G1_EXPLICIT_VSS_SOURCE_NODE', true)\n+taps = rc.each_device.select { |d| d.device_class.name.downcase == 'ptap1' }\n+raise 'Reachable PTAP count changed' unless taps.size == 386\n+raise 'Explicit PTAP WELL not on VSS' unless taps.all? { |d| d.net_for_terminal('WELL').property('G1_EXPLICIT_VSS_SOURCE_NODE') == true }\n+raise 'Unpropagated local substrate survived' if rc.each_net.any? { |n| n.expanded_name.upcase.split('.').last == 'SUB!' }\n+%w[IOVSS VDD IOVDD].each do |name|\n+  p = rc.each_pin.find { |q| q.name.upcase == name }\n+  raise 'Supply domain missing or merged' unless p && rc.net_for_pin(p.id).property('G1_EXPLICIT_VSS_SOURCE_NODE') != true\n+end\n+report[:explicit_body_reader_controls] = {reachable_PTAP: taps.size, all_WELL_on_VSS: true, no_local_SUB: true, three_other_supply_domains_distinct_from_VSS: true}\n report[:before_simplify] = {layout: inventory.call(lc), reference: inventory.call(rc)}\n report[:class_factory_projection] = class_rows\n report[:clone_checks] = {all_61521_primitive_records: 'passed', binary64_parameters: parameter_count,\n"
+  },
+  {
+    "file": "physical_interface_metadata.rb",
+    "original_sha256": "95280f8b2b440acf37bf758f3195cd5a286afaa570bb2a12981b581eefbbaa8e",
+    "prepared_sha256": "95280f8b2b440acf37bf758f3195cd5a286afaa570bb2a12981b581eefbbaa8e",
+    "diff": ""
+  },
+  {
+    "file": "probe_tap_adapter.rb",
+    "original_sha256": "832e082c79eb0a2194f8e42f1e972e444ff57ada44b441627a06519c9f120ca6",
+    "prepared_sha256": "832e082c79eb0a2194f8e42f1e972e444ff57ada44b441627a06519c9f120ca6",
+    "diff": ""
+  }
+]
