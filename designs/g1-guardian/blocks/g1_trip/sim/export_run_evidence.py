@@ -45,6 +45,7 @@ def main():
                  'declared_supply_stage_source.diff', 'declared_supply_stage_deck.diff',
                  'declared_rail_terminal_source.diff', 'declared_rail_terminal_deck.diff',
                  'declared_fixture_difference.diff', 'declared_bgr_source_difference.diff',
+                 'declared_corner_deck_difference.diff',
                  'declared_watchdog_recovery_output.diff', 'original_failure_diagnosis.json'}
     for run in args.runs:
         # Do not resolve: source is a portable repository-relative run identity,
