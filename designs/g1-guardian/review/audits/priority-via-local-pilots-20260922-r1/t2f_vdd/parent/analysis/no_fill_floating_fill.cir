@@ -1,0 +1,17 @@
+* Declared idealoutsideequipotential target pieces; othercontexts ground.
+C4 0 P 6.07069e-16
+C8 0 P 9.1970000000000006e-17
+C11 0 P 6.9621000000000009e-18
+C14 0 P 1.0593700000000001e-17
+C16 0 P 4.6862900000000007e-17
+C18 P 0 1.5809800000000001e-15
+VP P 0 DC 0 AC 1
+.control
+set numdgt=17
+ac lin 1 1Meg 1Meg
+let ceff = -imag(i(VP))/(2*pi*1e6)
+print ceff
+echo LOCAL_CAP_AC_END
+quit
+.endc
+.end

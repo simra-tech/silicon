@@ -1,0 +1,82 @@
+{
+  "status": "failed conditional passive implementation controls",
+  "contract_sha256": "0331d13f885380618fdef6793b446ff92da66f0494ae2f723bde283164a70b9e",
+  "script_sha256": "71150f989f22305a7ed02d94c5afe1590cf8f2c3c23917114e59d0e93adf2213",
+  "analyzer_sha256": "548b688023e7f51c519e8a2387be58096fee81d9fb520913ccca3731bbd7161c",
+  "cases": [
+    {
+      "name": "direct-zero-r",
+      "returncode": 0,
+      "wall_s": 0.10910746827721596,
+      "command": [
+        "timeout",
+        "--kill-after=2",
+        "30",
+        "ngspice",
+        "-b",
+        "coupon.cir"
+      ],
+      "log_sha256": "15299b88ea336a4d5df166d7e288c1effe94617e5036433cd73ce5ef6919652f",
+      "status": "passed expected diagnostic disposition",
+      "simulator_log": {
+        "status": "passed",
+        "fatal_lines": [],
+        "warning_lines": []
+      },
+      "control": {
+        "status": "passed",
+        "voltage_residual_V": 0.0
+      },
+      "output_bytes": 124631
+    },
+    {
+      "name": "adapter-zero-r",
+      "returncode": 0,
+      "wall_s": 0.0651690773665905,
+      "command": [
+        "timeout",
+        "--kill-after=2",
+        "30",
+        "ngspice",
+        "-b",
+        "coupon.cir"
+      ],
+      "log_sha256": "cc01bdcfadac04b0b16dd6bc3372eac8282a49c1d8f34ec40dbafb541f6fd53a",
+      "status": "failed",
+      "simulator_log": {
+        "status": "passed",
+        "fatal_lines": [],
+        "warning_lines": []
+      },
+      "control": {
+        "status": "failed",
+        "reason": "nonmonotonic or incomplete transient"
+      },
+      "output_bytes": 373848
+    },
+    {
+      "name": "distributed-r",
+      "status": "not run",
+      "reason": "earlier execution/control failed"
+    },
+    {
+      "name": "unequal-voltage",
+      "status": "not run",
+      "reason": "earlier execution/control failed"
+    },
+    {
+      "name": "wrong-current-sign",
+      "status": "not run",
+      "reason": "earlier execution/control failed"
+    }
+  ],
+  "source_models_changed": false,
+  "actual_SENSE_contact_weights": "not selected",
+  "analysis_returncode": 1,
+  "not_run": [
+    "Actual SENSE contact allocation",
+    "Full11512 source-model/wave parity",
+    "Intrinsic geometry/model applicability",
+    "Metal R/field/electrical adoption"
+  ]
+}

@@ -116,14 +116,26 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     for argument in ('route', 'output'):
         parser.add_argument('--'+argument, type=Path, required=True)
+    parser.add_argument('--route-metadata-sha256',help='Explicit immutable successor binding; default original route is unchanged')
     args = parser.parse_args()
     assert not args.output.exists()
     args.output.mkdir(parents=True)
     (args.output/'source.py').write_bytes(Path(__file__).read_bytes())
     source = args.route/'detailed.def'
     metadata = json.loads((args.route/'analysis.json').read_text())
-    assert metadata['status'] == 'passed isolated detailed-route candidate with zero router markers'
-    assert sha(source) == metadata['detailed.def_sha256'] == '348dba8bc4db2f4aeefb9233f7aa5fb60512e7132963628dce7df5a0bfb2b612'
+    if metadata['status']=='passed exact three-segment g_shared_bare spacing repair; stock checks not run':
+        assert args.route_metadata_sha256
+        import sys
+        sys.path.insert(0,str(Path(__file__).resolve().parents[1]))
+        from repair_gshared_route_spacing import validate_patch
+        validate_patch(args.route)
+    else:
+        assert metadata['status'] == 'passed isolated detailed-route candidate with zero router markers'
+    assert sha(source) == metadata['detailed.def_sha256']
+    if args.route_metadata_sha256:
+        assert sha(args.route/'analysis.json')==args.route_metadata_sha256
+    else:
+        assert sha(source)=='348dba8bc4db2f4aeefb9233f7aa5fb60512e7132963628dce7df5a0bfb2b612'
     units, nets = parse(source.read_text())
     assert units == 1000 and VICTIMS <= {net['net'] for net in nets}
     result = dict(status='passed exact DEF grammar and route inventory', DEF_sha256=sha(source),

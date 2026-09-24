@@ -20,6 +20,7 @@ def main():
     p.add_argument('--core',type=Path,required=True)
     p.add_argument('--core-gds-name',default='refreshed_core.gds')
     p.add_argument('--power-overlay',type=Path,action='append',default=[])
+    p.add_argument('--native-overlay-cell',action='append',default=[],help='Explicit direct native additive conductor cell to reserve too')
     p.add_argument('--m5-halo-dbu',type=int,choices=[0,20,40],default=0,
                    help='Optional conservative M5 obstacle reservation; no source geometry change')
     p.add_argument('--output',type=Path,required=True)
@@ -31,6 +32,12 @@ def main():
     assert meta['status'].startswith('passed') and sha(source)==meta['GDS_sha256']
     ly=pya.Layout();ly.read(str(source));top=ly.top_cell()
     assert ly.dbu==.001
+    native_overlays=[]
+    assert len(a.native_overlay_cell)==len(set(a.native_overlay_cell))
+    for name in a.native_overlay_cell:
+        instance,=[i for i in top.each_inst() if i.cell.name==name]
+        assert instance.na<=1 and instance.nb<=1
+        native_overlays.append(instance)
     overlays=[]
     for folder in a.power_overlay:
         metadata=json.loads((folder/'analysis.json').read_text())
@@ -41,6 +48,8 @@ def main():
     rows=[];coverage=[]
     for number,name in LAYERS.items():
         native=pya.Region(top.shapes(ly.layer(number,0))).merged()
+        for instance in native_overlays:
+            native+=region(ly,instance.cell,pya.LayerInfo(number,0)).transformed(instance.cplx_trans)
         for ol,ot,gds,metadata in overlays:
             native+=region(ol,ot,pya.LayerInfo(number,0))
         native.merge()
@@ -71,6 +80,7 @@ def main():
     script=a.output/'core_obstacles.tcl';script.write_text('\n'.join(lines)+'\n')
     result=dict(status='passed conservative native top-conductor obstacle export',GDS_sha256=sha(source),
                 M5_clearance_halo_dbu=a.m5_halo_dbu,
+                native_overlay_cells=[dict(cell=i.cell.name,transform=str(i.cplx_trans)) for i in native_overlays],
                 routing_policy='Exact native/overlay rectangles plus optional M5 reservation.20nm retained230nm stock M5.e failures;40nm tests additional routing clearance. No rule or source geometry changes',
                 power_overlays=[dict(path=str(gds),sha256=sha(gds),metadata_sha256=sha(gds.parent/'analysis.json'))
                                 for ol,ot,gds,metadata in overlays],

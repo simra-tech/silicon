@@ -1,0 +1,74 @@
+* G1_SENSE Monte Carlo: input-referred offset, mismatch models (MOS lv+hv, rppd), 200 samples
+* Offset referred to the shunt: vos_tot = (ISENSE(Vsh=0) - 1.0 V)/20 with ideal VREF = 1.04 V (pedestal 51/53 VREF = 1.000755 V)
+* (includes main OTA offset, pedestal divider + buffer errors /20, resistor mismatch).
+.param VDDA=3.0 VREF=1.04 VPEDN=1.000755
+.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerMOSlv.lib mos_ff
+.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerMOShv.lib mos_ff
+.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerRES.lib res_wcs
+.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerCAP.lib cap_typ
+.temp 85
+.include ../../sense_substrate_tied.spice
+.option gmin=1e-13
+* three unity/inverting OTA loops: give the DC solver their operating points
+.nodeset v(vref_buf)={VREF} v(vped)={VPEDN} v(isense)={VPEDN} v(xdut.vp)=0.047 v(xdut.vn)=0.047 v(xdut.iptat)=0.76
++ v(xdut.xref.out1)={VDDA-0.79} v(xdut.xbuf.out1)={VDDA-0.79} v(xdut.xota.out1)={VDDA-0.79} v(xdut.xref.mir)={VDDA-0.79} v(xdut.xbuf.mir)={VDDA-0.79} v(xdut.xota.mir)={VDDA-0.79}
++ v(xdut.xref.tail)=1.65 v(xdut.xbuf.tail)=1.65 v(xdut.xota.tail)=1.6 v(xdut.xref.fn)=0.2 v(xdut.xref.fp)=0.2 v(xdut.xbuf.fn)=0.2 v(xdut.xbuf.fp)=0.2 v(xdut.xota.fn)=0.2 v(xdut.xota.fp)=0.2
+.option itl1=400 itl2=200
+Vdd vdd 0 dc {VDDA}
+Vref vref 0 dc {VREF}
+* G1_BGR iptat: 4.13 uA at 27 C, PTAT
+Iib vdd iptat dc {4.13u*(25+273.15)/300.15}
+Vcm cm 0 dc 0
+Vsh shp cm dc 0
+Rrp shp corep 20.51836
+Rrn cm coren 20.587576
+XDUT corep coren vref iptat isense vped vref_buf vdd 0 g1_sense
+XRL1 isense icmp 0 rppd w=2u l=384.3u m=1 b=0
+XRL2 icmp 0 0 rppd w=2u l=384.3u m=1 b=0
+XCH icmp 0 cap_cmim w=26u l=26u m=1
+.control
+set numdgt=15
+set filetype=ascii
+set num_threads=1
+set temp=85
+alter Iib dc=4.928067632850242e-06
+alter Vcm dc=-0.1
+alter Vsh dc=0
+op
+echo ROW t0_c-0.1_s0 $&v(isense) $&v(vped) $&v(vref_buf) $&v(xdut.vp) $&v(xdut.vn) $&v(xdut.vped_ref) $&i(vdd) $&v(shp) $&v(cm) $&v(corep) $&v(coren)
+alter Vcm dc=-0.1125
+alter Vsh dc=0.025
+op
+echo ROW t0_c-0.1_s0.025 $&v(isense) $&v(vped) $&v(vref_buf) $&v(xdut.vp) $&v(xdut.vn) $&v(xdut.vped_ref) $&i(vdd) $&v(shp) $&v(cm) $&v(corep) $&v(coren)
+alter Vcm dc=-0.125
+alter Vsh dc=0.05
+op
+echo ROW t0_c-0.1_s0.05 $&v(isense) $&v(vped) $&v(vref_buf) $&v(xdut.vp) $&v(xdut.vn) $&v(xdut.vped_ref) $&i(vdd) $&v(shp) $&v(cm) $&v(corep) $&v(coren)
+alter Vcm dc=0.0
+alter Vsh dc=0
+op
+echo ROW t0_c0_s0 $&v(isense) $&v(vped) $&v(vref_buf) $&v(xdut.vp) $&v(xdut.vn) $&v(xdut.vped_ref) $&i(vdd) $&v(shp) $&v(cm) $&v(corep) $&v(coren)
+alter Vcm dc=-0.0125
+alter Vsh dc=0.025
+op
+echo ROW t0_c0_s0.025 $&v(isense) $&v(vped) $&v(vref_buf) $&v(xdut.vp) $&v(xdut.vn) $&v(xdut.vped_ref) $&i(vdd) $&v(shp) $&v(cm) $&v(corep) $&v(coren)
+alter Vcm dc=-0.025
+alter Vsh dc=0.05
+op
+echo ROW t0_c0_s0.05 $&v(isense) $&v(vped) $&v(vref_buf) $&v(xdut.vp) $&v(xdut.vn) $&v(xdut.vped_ref) $&i(vdd) $&v(shp) $&v(cm) $&v(corep) $&v(coren)
+alter Vcm dc=0.3
+alter Vsh dc=0
+op
+echo ROW t0_c0.3_s0 $&v(isense) $&v(vped) $&v(vref_buf) $&v(xdut.vp) $&v(xdut.vn) $&v(xdut.vped_ref) $&i(vdd) $&v(shp) $&v(cm) $&v(corep) $&v(coren)
+alter Vcm dc=0.2875
+alter Vsh dc=0.025
+op
+echo ROW t0_c0.3_s0.025 $&v(isense) $&v(vped) $&v(vref_buf) $&v(xdut.vp) $&v(xdut.vn) $&v(xdut.vped_ref) $&i(vdd) $&v(shp) $&v(cm) $&v(corep) $&v(coren)
+alter Vcm dc=0.27499999999999997
+alter Vsh dc=0.05
+op
+echo ROW t0_c0.3_s0.05 $&v(isense) $&v(vped) $&v(vref_buf) $&v(xdut.vp) $&v(xdut.vn) $&v(xdut.vped_ref) $&i(vdd) $&v(shp) $&v(cm) $&v(corep) $&v(coren)
+echo QUALIFICATION_END
+quit 0
+.endc
+.end

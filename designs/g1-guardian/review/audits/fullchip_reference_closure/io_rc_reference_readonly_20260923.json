@@ -1,0 +1,58 @@
+{
+  "status": "passed pinned read-only source/calculator observations; electrical qualification not run",
+  "PDK_commit": "84374023ee8b4b126bebbba67fcbada0a9c0ff0b",
+  "inputs": {
+    "CDL": {
+      "path": "libs.ref/sg13g2_io/cdl/sg13g2_io.cdl",
+      "sha256": "7a30e902099e8a8f85e0ae853167904df3793357a793a7b4dc82237b72b3eec4"
+    },
+    "SPICE": {
+      "path": "libs.ref/sg13g2_io/spice/sg13g2_io.spi",
+      "sha256": "1d53ab7df431b717ef5aff43e1117c0224681d5cc84886da37a319280ee958d6"
+    },
+    "model": {
+      "path": "libs.tech/ngspice/models/resistors_mod.lib",
+      "sha256": "7c77da0c0419c8a332550da3f934f530262bd452734090db827b68ff88d09c43"
+    },
+    "technology": {
+      "path": "libs.tech/klayout/python/sg13g2_pycell_lib/sg13g2_tech.json",
+      "sha256": "dd12fd60a1141478155ed0fdc26e2b50861d46d75b3bcaac215a20f7a9c646c9"
+    },
+    "callback": {
+      "path": "libs.tech/klayout/python/sg13g2_pycell_lib/ihp/utility_functions.py",
+      "sha256": "0d5c287ede8decd8b69c8f94bfe72231758e607c02b64650951fcb5be269c861"
+    }
+  },
+  "candidate_preparation_sha256": "cf31ad54f48e65b4a607e38b943950e8971b4459e21ce170ec35316928388d7e",
+  "source_chain_records": 26,
+  "both_CDL_and_SPICE_numeric_R_ohm": 5239,
+  "native_annotation_numeric_R_ohm": 7938,
+  "current_PCell_parameters": {
+    "rppdG2_rspec": "260.0",
+    "rppdG2_lwd": "0.006u",
+    "rppd_rzspec": "35e-6",
+    "rppd_kappa": "1.85"
+  },
+  "calculator_expression": "20/(1+0.006)*260+2*35",
+  "calculated_PCell_R_ohm": 5238.986083499006,
+  "rounded_CDL_match": true,
+  "calculator_formula_literal": "result = l/weff*(b+1)*rspec+(2.0/kappa*weff+ps)*b/weff*rspec+2.0/w*rzspec",
+  "model_observation": "Pinned rppd wrapper contains no standalone R token; primitive resistance uses L/W, rsh_rppd, xw and rc. Passed legacy R is not referenced by this wrapper.",
+  "source_cell_bodies": {
+    "CDL": ".SUBCKT sg13g2_RCClampResistor pin1 pin2\n*.PININFO pin1:B pin2:B\nRR15 net15 net16 5.239K $SUB=sub! $[rppd] l=20u w=1u b=0 m=1 \nRR20 net20 net21 5.239K $SUB=sub! $[rppd] l=20u w=1u b=0 m=1 \nRR23 net23 net24 5.239K $SUB=sub! $[rppd] l=20u w=1u b=0 m=1 \nRR17 net17 net18 5.239K $SUB=sub! $[rppd] l=20u w=1u b=0 m=1 \nRR16 net16 net17 5.239K $SUB=sub! $[rppd] l=20u w=1u b=0 m=1 \nRR25 net25 pin2 5.239K $SUB=sub! $[rppd] l=20u w=1u b=0 m=1 \nRR22 net22 net23 5.239K $SUB=sub! $[rppd] l=20u w=1u b=0 m=1 \nRR19 net19 net20 5.239K $SUB=sub! $[rppd] l=20u w=1u b=0 m=1 \nRR24 net24 net25 5.239K $SUB=sub! $[rppd] l=20u w=1u b=0 m=1 \nRR21 net21 net22 5.239K $SUB=sub! $[rppd] l=20u w=1u b=0 m=1 \nRR18 net18 net19 5.239K $SUB=sub! $[rppd] l=20u w=1u b=0 m=1 \nRR5 net5 net6 5.239K $SUB=sub! $[rppd] l=20u w=1u b=0 m=1\nRR8 net8 net9 5.239K $SUB=sub! $[rppd] l=20u w=1u b=0 m=1\nRR11 net11 net12 5.239K $SUB=sub! $[rppd] l=20u w=1u b=0 m=1 \nRR14 net14 net15 5.239K $SUB=sub! $[rppd] l=20u w=1u b=0 m=1 \nRR2 net2 net3 5.239K $SUB=sub! $[rppd] l=20u w=1u b=0 m=1\nRR1 net1 net2 5.239K $SUB=sub! $[rppd] l=20u w=1u b=0 m=1\nRR13 net13 net14 5.239K $SUB=sub! $[rppd] l=20u w=1u b=0 m=1 \nRR10 net10 net11 5.239K $SUB=sub! $[rppd] l=20u w=1u b=0 m=1 \nRR7 net7 net8 5.239K $SUB=sub! $[rppd] l=20u w=1u b=0 m=1\nRR4 net4 net5 5.239K $SUB=sub! $[rppd] l=20u w=1u b=0 m=1\nRR12 net12 net13 5.239K $SUB=sub! $[rppd] l=20u w=1u b=0 m=1 \nRR9 net9 net10 5.239K $SUB=sub! $[rppd] l=20u w=1u b=0 m=1 \nRR6 net6 net7 5.239K $SUB=sub! $[rppd] l=20u w=1u b=0 m=1\nRR3 net3 net4 5.239K $SUB=sub! $[rppd] l=20u w=1u b=0 m=1\nRR0 pin1 net1 5.239K $SUB=sub! $[rppd] l=20u w=1u b=0 m=1\n.ENDS",
+    "SPICE": ".subckt sg13g2_RCClampResistor pin1 pin2\nXR15 net15 net16 sub! rppd R=5.239K l=20u w=1u\nXR20 net20 net21 sub! rppd R=5.239K l=20u w=1u\nXR23 net23 net24 sub! rppd R=5.239K l=20u w=1u\nXR17 net17 net18 sub! rppd R=5.239K l=20u w=1u\nXR16 net16 net17 sub! rppd R=5.239K l=20u w=1u\nXR25 net25 pin2 sub! rppd R=5.239K l=20u w=1u\nXR22 net22 net23 sub! rppd R=5.239K l=20u w=1u\nXR19 net19 net20 sub! rppd R=5.239K l=20u w=1u\nXR24 net24 net25 sub! rppd R=5.239K l=20u w=1u\nXR21 net21 net22 sub! rppd R=5.239K l=20u w=1u\nXR18 net18 net19 sub! rppd R=5.239K l=20u w=1u\nXR5 net5 net6 sub! rppd R=5.239K l=20u w=1u\nXR8 net8 net9 sub! rppd R=5.239K l=20u w=1u\nXR11 net11 net12 sub! rppd R=5.239K l=20u w=1u\nXR14 net14 net15 sub! rppd R=5.239K l=20u w=1u\nXR2 net2 net3 sub! rppd R=5.239K l=20u w=1u\nXR1 net1 net2 sub! rppd R=5.239K l=20u w=1u\nXR13 net13 net14 sub! rppd R=5.239K l=20u w=1u\nXR10 net10 net11 sub! rppd R=5.239K l=20u w=1u\nXR7 net7 net8 sub! rppd R=5.239K l=20u w=1u\nXR4 net4 net5 sub! rppd R=5.239K l=20u w=1u\nXR12 net12 net13 sub! rppd R=5.239K l=20u w=1u\nXR9 net9 net10 sub! rppd R=5.239K l=20u w=1u\nXR6 net6 net7 sub! rppd R=5.239K l=20u w=1u\nXR3 net3 net4 sub! rppd R=5.239K l=20u w=1u\nXR0 pin1 net1 sub! rppd R=5.239K l=20u w=1u\n.ends"
+  },
+  "model_wrapper": ".subckt rppd 1 2 bn\n.param w=0.5e-6 l=0.5e-6 mm_ok=0 b=0 ps=0.18e-6 trise=0 m=1 sw_et=0\n+postsim=0\n+kappa=1.85\n+weff=w+dw_rppd_par\n+leff=(b+1)*l+(2/kappa*weff+ps)*b\n+lhead=0.86e-6\n+rzspec=35e-6\n+cax=90e-18\n+cpx=25e-18\n+ax=175e-18*(1-1/(1.5*leff*1e6+1))/cax\n+px=115e-18/cpx\n+a0=0.5*(leff+lhead)*w-(postsim>0)*w*ax*1e-6\n+a=(a0>0)*a0\n+p0=leff+lhead+w-(postsim>0)*px*1e-6\n+p=(p0>0)*p0\n+rqrc=4.5e-6\n+rz=rzspec/w-(postsim>0)*rqrc/w\n\nNR1 1 bn 2 dt res_rppd L=leff W=weff m=m\n+a1=a a2=a\n+p1=p p2=p\n+c1=1 c2=1\n+trise=trise\n+sw_et=sw_et\n+sw_mman=0\n\n.model res_rppd r3_cmc\n+rsh=rsh_rppd\n+ecrit=1000\n+dfinf=1e-4\n+dp=1000\n+xw=0.006\n+rc=rz\n+ca=cax\n+cp=cpx\n+tc1=170e-6\n+tc2=0.4e-6\n+tc1rc=-950e-6\n+gth0=1e-12\n+gtha=6e-6\n+gthp=2e-6\n+gthc=1e-12\n+cth0=0\n+cthp=0\n+ctha=594e-15\n+cthc=0\n+kfn=4.601e-11\n+afn=1.886\n+bfn=0.9963\n+nsig_rsh='agauss(0, 1, 1)' ; global number of standard deviations for rsh\n+nsig_w='agauss(0, 1, 1)'   ; global number of standard deviations for w\n+nsig_l='agauss(0, 1, 1)'   ; global number of standard deviations for l\n+sig_rsh=drsh_rppd          ; global relative standard deviation for rsh [%]\n+sig_w=dw_rppd              ; global absolute standard deviation for w [um]\n+sig_l=dl_rppd              ; global absolute standard deviation for l [um]\n\n.ends rppd",
+  "interpretation": "7.938k drawing annotations are inconsistent with current pinned PCell calculation and both electrical source views. Their historical origin is not established; no automatic text/model edit.",
+  "not_run": [
+    "ngspice acceptance/behavior of extra R argument",
+    "compact-model operating resistance",
+    "RC clamp transient/ESD",
+    "fullchip adoption"
+  ],
+  "not_applicable": [
+    "simulation seed",
+    "model/rule changes"
+  ],
+  "script_sha256": "b7297b66423e00d33846c995be909e95fe4131ef0dc7245a4719192a39a796c9"
+}

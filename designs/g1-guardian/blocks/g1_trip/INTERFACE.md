@@ -96,10 +96,18 @@ The effective soft DAC code is not always static: the delivered timer RTL
 changes it automatically when hysteresis arms or clears. A digital-only timing
 replay showed a 128→127 transition 100 ns before a soft evaluation and the
 reverse transition on an evaluation edge, without a settling-valid mask. This
-conflicts with the ≥1 µs post-update requirement above; it is **not** a simulated
-analog misdecision. The loaded DAC/comparator/RTL feedback loop, including
-major carries and stale synchronized decisions, is **not run** for this case.
-Host software cannot insert a pause into autonomous hysteresis.
+conflicts with the ≥1 µs post-update requirement above. The subsequent
+[loaded feedback pilot](sim/HYS_FEEDBACK_PILOT_20260922.md) completed3 µs with
+29 scoped mechanism checks passed, both physical eight-bit carries observed,
+and exact quiet-prefix waveform parity. Its separate settling-interval check
+**failed** at100 ns and0 ns. All24 guarded decisions were correct in this one
+large-margin simulated case; that does not establish near-threshold immunity
+or a shorter settling bound. Three startup evaluations were not classified.
+Adverse PVT, route skew, HYS2 and general feature qualification are **not run**.
+Host software cannot insert a pause into autonomous hysteresis. The
+[interface remedy review](sim/HYS_INTERFACE_REMEDY_REVIEW_20260922.md) describes
+unimplemented options and their fault-timing consequences; production RTL is
+unchanged.
 
 Retain the 1 µs requirement until a source-specific shorter bound or a verified
 update/validity implementation is established, including missed-fault blind time.

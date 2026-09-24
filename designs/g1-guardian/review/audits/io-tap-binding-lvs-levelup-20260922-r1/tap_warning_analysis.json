@@ -1,0 +1,88 @@
+{
+  "scope": "Detailed saved-database diagnosis; MatchWithWarning is not parameter acceptance. No new LVS or golden-reference change.",
+  "binding_repair": "passed",
+  "parameter_comparison": "failed",
+  "standalone_LVS": "failed",
+  "rows": [
+    {
+      "variant": "original",
+      "database_sha256": "33d01a23c3cf71a9b5904f9c059908de3e5ec5402420325664f03b686b7399da",
+      "tap_pair_status": "Mismatch",
+      "layout_tap": {
+        "class": "D$ptap1",
+        "parameters": {
+          "A": 1.053,
+          "P": 7.62
+        },
+        "terminals": {
+          "TIE": "8",
+          "WELL": "5"
+        }
+      },
+      "reference_tap": null,
+      "circuit_status": "failed",
+      "mismatched_net_pairs": [
+        {
+          "layout_net_id": "5",
+          "reference_net_id": "7"
+        },
+        {
+          "layout_net_id": "8",
+          "reference_net_id": "5"
+        }
+      ]
+    },
+    {
+      "variant": "normalized",
+      "database_sha256": "ff946ff06dbeb99212712d35c5c22ac3d28a880da682072dfcd1a4db2c3833af",
+      "tap_pair_status": "MatchWithWarning",
+      "layout_tap": {
+        "class": "D$ptap1",
+        "parameters": {
+          "A": 1.053,
+          "P": 7.62
+        },
+        "terminals": {
+          "TIE": "8",
+          "WELL": "5"
+        }
+      },
+      "reference_tap": {
+        "class": "PTAP1",
+        "parameters": {
+          "A": 1.051,
+          "P": 4.1
+        },
+        "terminals": {
+          "TIE": "5",
+          "WELL": "7"
+        }
+      },
+      "circuit_status": "failed",
+      "mismatched_net_pairs": [
+        {
+          "layout_net_id": "5",
+          "reference_net_id": "7"
+        },
+        {
+          "layout_net_id": "8",
+          "reference_net_id": "5"
+        }
+      ],
+      "parameter_differences": {
+        "A": {
+          "layout": 1.053,
+          "reference": 1.051,
+          "delta": 0.0020000000000000018
+        },
+        "P": {
+          "layout": 7.62,
+          "reference": 4.1,
+          "delta": 3.5200000000000005
+        }
+      },
+      "terminal_mapping_consistent_with_compared_net_pairs": true
+    }
+  ],
+  "interpretation": "Normalized tap TIE/WELL respect existing net pairing, while A and P differ; mismatched nets are incident on that warned device. This diagnoses the local case, not full assembled connectivity."
+}

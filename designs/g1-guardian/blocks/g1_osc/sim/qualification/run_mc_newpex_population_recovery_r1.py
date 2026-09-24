@@ -1,0 +1,88 @@
+#!/usr/bin/env python3
+"""One-shot recovery of fixed nominal samples after pre-container wrapper failures.
+
+This successor is deliberately source-specific. It applies no resistor
+scaling: the four 55.575 um resistor bodies are already in the physical PEX.
+"""
+import argparse,hashlib,json,math,re,shutil,subprocess,sys,time
+from pathlib import Path
+HERE=Path(__file__).resolve().parent;PDK=Path('/foss/pdks/ihp-sg13g2')
+sys.path.insert(0,str(HERE.parents[2]/'g1_trip/sim'))
+from result_directory import allocate_run
+def sha(p):return hashlib.sha256(p.read_bytes()).hexdigest()
+def attempt_classification(timed):
+ return dict(status='failed',failure_kind='numerical watchdog timeout' if timed else None)
+def allowed_case(suite, seed, corner, codes, run_id):
+ if suite=='qualify':
+  return False
+ nominal_endpoints=corner=='nominal' and 63101<=seed<=63109 and codes=='0,15' and run_id=='osc_r095_newpex_nominal100_recovery1_20260924_r1_s%d'%seed
+ nominal_all_codes=False
+ adverse_endpoints=False
+ return suite=='screen' and (nominal_endpoints or nominal_all_codes or adverse_endpoints)
+def main():
+ ap=argparse.ArgumentParser();ap.add_argument('--run-id',required=True);ap.add_argument('--image-id',required=True);ap.add_argument('--suite',choices=['qualify','screen'],required=True);ap.add_argument('--first-seed',type=int,default=63401);ap.add_argument('--tuple',choices=['nominal','slowhot'],default='nominal');ap.add_argument('--codes',default='0,15');ap.add_argument('--pex-source',type=Path,required=True);ap.add_argument('--pex-sha256',required=True);ap.add_argument('--stop-file',type=Path);a=ap.parse_args()
+ assert (PDK/'COMMIT').read_text().strip()=='84374023ee8b4b126bebbba67fcbada0a9c0ff0b'
+ assert allowed_case(a.suite,a.first_seed,a.tuple,a.codes,a.run_id)
+ assert a.image_id=='sha256:5fd78498e578c6e9ec10828c248ca3790fc88250ff6caf545521b29e448ea3c0'
+ assert a.pex_sha256=='8efd7a09faf173da8604a219f73fd3ea5ec2508618d8361a050770c099d8b1c5'
+ assert a.pex_source.is_file() and sha(a.pex_source)==a.pex_sha256
+ out=allocate_run(HERE.parent,a.run_id,relative_parent='qualification/runs');shutil.copy(__file__,out/'run_mc_newpex_population_recovery_r1.py');shutil.copy(HERE.parent/'.spiceinit',out/'.spiceinit');shutil.copy(a.pex_source,out/'baseline.spice')
+ assert sha(out/'baseline.spice')==a.pex_sha256
+ raw=(out/'baseline.spice').read_text();sources={};fp=[]
+ for mm in [False,True]:
+  lines=[]
+  for line in raw.splitlines():
+   words=line.split()
+   if line.startswith(('XM','XR','XC')):
+    if mm:
+     name=words[0].lower()
+     if name.startswith('xm'):var=f'@n.x1.{name}.nsg13_lv_{"pmos" if "sg13_lv_pmos" in words else "nmos"}[delvto]'
+     elif name.startswith('xr'):var=f'@n.x1.{name}.nr1[nsmm_rsh]'
+     else:var=f'@c.x1.{name}.c1[scale]'
+     if name.startswith('xm'):fp.extend(var.replace('[delvto]',f'[{parameter}]') for parameter in ['w','l','delvto','factuo'])
+     elif name.startswith('xr'):fp.extend(var.replace('[nsmm_rsh]',f'[{parameter}]') for parameter in ['nsmm_rsh','nsmm_w','nsmm_l'])
+     else:fp.append(var)
+    line+=' mm_ok='+str(int(mm))
+   lines.append(line)
+  sources[mm]=out/('mismatch.spice' if mm else 'disabled.spice');sources[mm].write_text('\n'.join(lines)+'\n')
+ assert len(fp)==269
+ assert sum(line.startswith('XR') and 'l=55.575u' in line for line in raw.splitlines())==4
+ assert not any(line.startswith('XR') and 'l=58.5u' in line for line in raw.splitlines())
+ public_command=['<bound-pex-source>' if v==str(a.pex_source) else '--pex-source=<bound-pex-source>' if v.startswith('--pex-source=') else v for v in sys.argv]
+ manifest={'command':public_command,'source_kind':'new physical OSC R0.95 CPEX; no additional resistor scaling or prior candidate source reuse','image_id':a.image_id,'ngspice':subprocess.check_output(['ngspice','--version'],text=True),'pdk_commit':(PDK/'COMMIT').read_text().strip(),'source_sha256':{n:sha(out/n) for n in ['run_mc_newpex_population_recovery_r1.py','baseline.spice','mismatch.spice','disabled.spice','.spiceinit']},'model_sha256':{str(p.relative_to(PDK)):sha(p) for p in sorted((PDK/'libs.tech/ngspice/models').glob('*.lib'))},'fingerprint_parameters':fp,'physical_sample_policy':'same source/order/seed and mismatch library family across code/temperature; all269 realized parameters of80 MOS/R/CMIM devices before/after analyses','limitations':'Capacitance-only PEX; reinserted PDK CMIM geometry, not extracted plates; no spatial correlation;50fF output stand-in; no physical jitter; diode one available nominal model; inheritedrshunt1e12 unchanged','cases':[]}
+ def save(): (out/'manifest.json').write_text(json.dumps(manifest,indent=2)+'\n')
+ seed=a.first_seed
+ base_temp=27 if a.tuple=='nominal' else 125
+ cases=[('enabled',seed,8,base_temp,True,True),('repeat',seed,8,base_temp,True,True),('seed2',seed+1,8,base_temp,True,True),('cold',seed,8,-40,True,True),('code15',seed,15,base_temp,True,True),('disabled',seed,8,base_temp,False,True),('disabled_seed2',seed+1,8,base_temp,False,True),('transient',seed,8,base_temp,True,False),('transient_repeat',seed,8,base_temp,True,False)] if a.suite=='qualify' else [(f's{seed}_c{code}',seed,code,base_temp,True,False) for code in map(int,a.codes.split(','))]
+ manifest['expected_cases']=[case[0] for case in cases]
+ save()
+ for name,seed,code,temp,mm,op_only in cases:
+  if a.stop_file and a.stop_file.exists():manifest['campaign_status']='paused at requested leaf boundary';save();break
+  assert 0<=code<=15
+  mos,res,cap,vdd=('tt','typ','typ',1.2) if a.tuple=='nominal' else ('ss','wcs','wcs',1.08)
+  deck=(HERE.parent/'postlayout/tb_osc_pex.cir').read_text();suffix='_mismatch'
+  for k,v in {'MOS':'mos_'+mos+suffix,'RES':'res_'+res+suffix,'CAP':'cap_'+cap+suffix,'VDD':vdd,'TEMP':temp,**{'B'+str(i):(code>>i)&1 for i in range(4)}}.items():deck=deck.replace('@@'+k+'@@',str(v))
+  deck=deck.replace('.include postlayout/g1_osc_pex.spice','.include '+sources[mm].name).replace('.option rshunt=1e12',f'.option seed={seed} rshunt=1e12')
+  fingerprints=''.join('print '+f+'\n' for f in fp)
+  control='set num_threads=1\nset filetype=ascii\nset numdgt=15\nset wr_singlescale\nset wr_vecnames\nop\n'+fingerprints
+  if op_only:deck=deck.split('.control')[0]+'.control\n'+control+'quit\n.endc\n.end\n'
+  else:deck=deck.replace('set filetype=ascii\n',control).replace('tran 0.2n 3.3u','tran 0.2n 6u\n'+fingerprints).replace('.endc',f'print fmhz duty iua\nwrdata {name}.dat v(osc_clk) i(vdd) v(x1.va) v(x1.vb)\nquit\n.endc')
+  (out/(name+'.cir')).write_text(deck);start=time.monotonic();timed=False
+  with (out/(name+'.log')).open('w') as log,(out/(name+'.stderr')).open('w') as err:
+   try:rc=subprocess.run(['ngspice','-b',name+'.cir'],cwd=out,stdout=log,stderr=err,timeout=120 if op_only else 300).returncode
+   except subprocess.TimeoutExpired:rc=None;timed=True
+  log=(out/(name+'.log')).read_text(errors='replace');err=(out/(name+'.stderr')).read_text(errors='replace');measurements={k:float(v) for k,v in re.findall(r'(?m)^(\w+)\s*=\s*([-+0-9.eE]+)',log)}
+  actualfp=re.findall(r'@[^\s]+\s*=\s*([-+0-9.eE]+)',log);row={'name':name,'seed':seed,'code':code,'temperature_C':temp,'mos':mos,'res':res,'cap':cap,'vdd':vdd,'mm':mm,'op_only':op_only,'solver_exit':rc,'timed_out':timed,'wall_seconds':time.monotonic()-start,'deck_sha256':sha(out/(name+'.cir')),'fingerprints':actualfp,'measurements':measurements,**attempt_classification(timed)}
+  try:finite_fp=all(math.isfinite(float(v)) for v in actualfp)
+  except ValueError:finite_fp=False
+  good=finite_fp and rc==0 and len(actualfp)==len(fp)*(1 if op_only else 2) and not re.search(r'(?im)^Error|no such parameter|Timestep too small|analysis aborted',log+'\n'+err)
+  if op_only and good:row['status']='passed'
+  elif good:
+   try:
+    with (out/(name+'.dat')).open() as f:next(f);d=[list(map(float,l.split())) for l in f if l.strip()]
+    if d and all(len(r)==5 and all(map(math.isfinite,r)) for r in d) and abs(d[-1][0]-6e-6)<1e-12 and all(k in measurements for k in ['fmhz','duty','t1','t2','th1']) and actualfp[:len(fp)]==actualfp[len(fp):]:
+     row.update(status='passed',high_width_s=measurements['th1']-measurements['t1'],low_width_s=(measurements['t2']-measurements['t1'])/10-(measurements['th1']-measurements['t1']))
+   except (OSError,ValueError,IndexError):pass
+  manifest['cases'].append(row);save();print(json.dumps({k:v for k,v in row.items() if k!='fingerprints'}),flush=True)
+  if a.suite=='qualify' and row['status']!='passed':manifest['qualification_stop']='First failed case retained; remaining expected cases not run pending diagnosis';save();break
+if __name__=='__main__':main()

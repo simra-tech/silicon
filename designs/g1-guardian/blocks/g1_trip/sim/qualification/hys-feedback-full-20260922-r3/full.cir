@@ -1,0 +1,80 @@
+* Actual timer and loaded original SENSE/TRIP/BGR; HYS1 diagnostic
+.param VDDA=3.3 VDD=1.2 VREF=1.04
+.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerMOSlv.lib mos_tt_mismatch
+.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerMOShv.lib mos_tt_mismatch
+.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerRES.lib res_typ_mismatch
+.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerCAP.lib cap_typ_mismatch
+.temp 25.0
+.option rshunt=1e12 gmin=1e-13
+.include qualification/hys-feedback-direct-prefix-20260922-r2/sense.spice
+.include qualification/hys-feedback-direct-prefix-20260922-r2/trip.spice
+Vdda vdda 0 dc {VDDA}
+Vdd vdd 0 dc {VDD}
+Vsh shp 0 PWL(0 .010 1.2u .010 1.201u .035 1.6u .035 1.601u .010)
+XS shp 0 vref iptat isense vped vref_buf vdda 0 g1_sense
+CL isense 0 300f
+XT isense vref_buf clk s0 s1 s2 s3 s4 s5 s6 s7 h0 h1 h2 h3 h4 h5 h6 h7 cmp_soft cmp_hard vdd vdda 0 g1_trip
+Cs cmp_soft 0 10f
+Ch cmp_hard 0 10f
+.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerHBT.lib hbt_typ_mismatch
+.include qualification/hys-feedback-direct-prefix-20260922-r2/bgr.spice
+Vr4 r4 0 0
+Xbgr vdda 0 r4 vref iptat pbias pcasc vbe dvbe g1_bgr
+.global sub!
+Vsub sub! 0 0
+.option gmin=1e-15 abstol=1e-14 reltol=1e-5 vntol=1e-7
+.option reltol=1e-5 vntol=1e-7 abstol=1e-14
+.option method=gear
+.model adc adc_bridge(in_low=0.55 in_high=0.65 rise_delay=1p fall_delay=1p)
+.model adc_clock adc_bridge(in_low=0.6 in_high=0.6 rise_delay=1p fall_delay=1p)
+.model dac dac_bridge(out_low=0 out_high=1.2 out_undef=0.6 t_rise=0.3n t_fall=0.3n)
+.model rtl d_cosim simulation="ivlng" sim_args=["qualification/hys-feedback-direct-prefix-20260922-r2/g1_hys_diagnostic.vvp"]
+aclock [osc] [d_osc] adc_clock
+aadc [en cmp_soft cmp_hard] [d_en d_cs d_ch] adc
+adig [d_osc d_en d_cs d_ch] [d_clk d_s7 d_s6 d_s5 d_s4 d_s3 d_s2 d_s1 d_s0 d_h7 d_h6 d_h5 d_h4 d_h3 d_h2 d_h1 d_h0 d_count23 d_count22 d_count21 d_count20 d_count19 d_count18 d_count17 d_count16 d_count15 d_count14 d_count13 d_count12 d_count11 d_count10 d_count9 d_count8 d_count7 d_count6 d_count5 d_count4 d_count3 d_count2 d_count1 d_count0 d_sync_soft d_sync_hard d_soft_mask d_soft_armed d_trip d_rst_n] rtl
+adac [d_clk d_s7 d_s6 d_s5 d_s4 d_s3 d_s2 d_s1 d_s0 d_h7 d_h6 d_h5 d_h4 d_h3 d_h2 d_h1 d_h0 d_count23 d_count22 d_count21 d_count20 d_count19 d_count18 d_count17 d_count16 d_count15 d_count14 d_count13 d_count12 d_count11 d_count10 d_count9 d_count8 d_count7 d_count6 d_count5 d_count4 d_count3 d_count2 d_count1 d_count0 d_sync_soft d_sync_hard d_soft_mask d_soft_armed d_trip d_rst_n] [clk s7 s6 s5 s4 s3 s2 s1 s0 h7 h6 h5 h4 h3 h2 h1 h0 count23 count22 count21 count20 count19 count18 count17 count16 count15 count14 count13 count12 count11 count10 count9 count8 count7 count6 count5 count4 count3 count2 count1 count0 sync_soft sync_hard soft_mask soft_armed trip rst_n] dac
+Vosc osc 0 PULSE(0 1.2 20n .2n .2n 50n 100n)
+Ven en 0 PWL(0 0 50n 0 50.3n 1.2)
+.save v(osc) v(en) v(cmp_soft) v(cmp_hard) v(clk) v(s7) v(s6) v(s5) v(s4) v(s3) v(s2) v(s1) v(s0) v(h7) v(h6) v(h5) v(h4) v(h3) v(h2) v(h1) v(h0) v(count23) v(count22) v(count21) v(count20) v(count19) v(count18) v(count17) v(count16) v(count15) v(count14) v(count13) v(count12) v(count11) v(count10) v(count9) v(count8) v(count7) v(count6) v(count5) v(count4) v(count3) v(count2) v(count1) v(count0) v(sync_soft) v(sync_hard) v(soft_mask) v(soft_armed) v(trip) v(rst_n) v(shp) v(vref) v(iptat) v(vref_buf) v(vped) v(isense) v(xt.icmp) v(xt.vth_soft) v(xt.vth_hard) v(xt.cmp_clk_n)
+.control
+set num_threads=1
+set numdgt=15
+set filetype=ascii
+setseed 71001
+reset
+tran .2n 3u 0 .2n
+echo HYS_PARAMETERS_AFTER
+print @n.xs.xota.xm1.nsg13_hv_pmos[w]
+print @n.xs.xota.xm1.nsg13_hv_pmos[l]
+print @n.xs.xota.xm1.nsg13_hv_pmos[delvto]
+print @n.xs.xota.xm1.nsg13_hv_pmos[factuo]
+print @n.xs.xref.xm1.nsg13_hv_pmos[w]
+print @n.xs.xref.xm1.nsg13_hv_pmos[l]
+print @n.xs.xref.xm1.nsg13_hv_pmos[delvto]
+print @n.xs.xref.xm1.nsg13_hv_pmos[factuo]
+print @n.xt.xdacs.xms7_0a.nsg13_hv_nmos[w]
+print @n.xt.xdacs.xms7_0a.nsg13_hv_nmos[l]
+print @n.xt.xdacs.xms7_0a.nsg13_hv_nmos[delvto]
+print @n.xt.xdacs.xms7_0a.nsg13_hv_nmos[factuo]
+print @n.xt.xdach.xms7_0a.nsg13_hv_nmos[w]
+print @n.xt.xdach.xms7_0a.nsg13_hv_nmos[l]
+print @n.xt.xdach.xms7_0a.nsg13_hv_nmos[delvto]
+print @n.xt.xdach.xms7_0a.nsg13_hv_nmos[factuo]
+print @n.xt.xcs.xm1.nsg13_lv_nmos[w]
+print @n.xt.xcs.xm1.nsg13_lv_nmos[l]
+print @n.xt.xcs.xm1.nsg13_lv_nmos[delvto]
+print @n.xt.xcs.xm1.nsg13_lv_nmos[factuo]
+print @n.xt.xch.xm1.nsg13_lv_nmos[w]
+print @n.xt.xch.xm1.nsg13_lv_nmos[l]
+print @n.xt.xch.xm1.nsg13_lv_nmos[delvto]
+print @n.xt.xch.xm1.nsg13_lv_nmos[factuo]
+print @n.xbgr.xm34.nsg13_hv_nmos[delvto]
+print @n.xbgr.xr16.nr1[nsmm_rsh]
+print @q.xbgr.xq56.qnpn13g2[area]
+set wr_singlescale
+set wr_vecnames
+wrdata qualification/hys-feedback-full-20260922-r3/full.dat v(osc) v(en) v(cmp_soft) v(cmp_hard) v(clk) v(s7) v(s6) v(s5) v(s4) v(s3) v(s2) v(s1) v(s0) v(h7) v(h6) v(h5) v(h4) v(h3) v(h2) v(h1) v(h0) v(count23) v(count22) v(count21) v(count20) v(count19) v(count18) v(count17) v(count16) v(count15) v(count14) v(count13) v(count12) v(count11) v(count10) v(count9) v(count8) v(count7) v(count6) v(count5) v(count4) v(count3) v(count2) v(count1) v(count0) v(sync_soft) v(sync_hard) v(soft_mask) v(soft_armed) v(trip) v(rst_n) v(shp) v(vref) v(iptat) v(vref_buf) v(vped) v(isense) v(xt.icmp) v(xt.vth_soft) v(xt.vth_hard) v(xt.cmp_clk_n)
+echo HYS_ANALOG_COMPLETE
+quit 0
+.endc
+.end

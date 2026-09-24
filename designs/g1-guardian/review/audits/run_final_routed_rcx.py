@@ -13,16 +13,33 @@ from check_fullchip_def_odb import observation, OPENROAD, PDK
 def main():
     p=argparse.ArgumentParser(description=__doc__)
     p.add_argument('--source',type=Path,required=True)
+    p.add_argument('--route-metadata',type=Path,help='Explicit checked successor route metadata; original default identity is held')
+    p.add_argument('--route-metadata-sha256')
     p.add_argument('--output',type=Path,required=True)
     a=p.parse_args()
     assert not a.output.exists() and len(os.sched_getaffinity(0))==1
     assert (PDK/'COMMIT').read_text().strip()=='84374023ee8b4b126bebbba67fcbada0a9c0ff0b'
-    assert sha(a.source)=='88143d849e5c599423c04e4824c14463b53a08d997aa50d9ea6e6441c811e8d7'
+    assert bool(a.route_metadata)==bool(a.route_metadata_sha256)
+    if a.route_metadata:
+        assert sha(a.route_metadata)==a.route_metadata_sha256
+        route=json.loads(a.route_metadata.read_text())
+        if route['status']=='passed exact three-segment g_shared_bare spacing repair; stock checks not run':
+            from repair_gshared_route_spacing import validate_patch
+            validate_patch(a.route_metadata.parent)
+        else:
+            assert route['status']=='passed isolated detailed-route candidate with zero router markers'
+        assert a.source.name=='detailed.odb' and a.source.parent==a.route_metadata.parent
+        assert sha(a.source)==route['detailed.odb_sha256']
+        assert sha(a.source.with_suffix('.def'))==route['detailed.def_sha256']
+    else:
+        assert sha(a.source)=='88143d849e5c599423c04e4824c14463b53a08d997aa50d9ea6e6441c811e8d7'
     rules=PDK/'libs.tech/librelane/openrcx/IHP_rcx_patterns.rules'
     assert rules.is_file()
     a.output.mkdir(parents=True)
     (a.output/'source.py').write_bytes(Path(__file__).read_bytes())
     inputs={str(path):sha(path)for path in (a.source,rules,OPENROAD)}
+    if a.route_metadata:
+        inputs.update({str(path):sha(path) for path in [a.route_metadata,a.source.with_suffix('.def')]})
     script=a.output/'extract.tcl'
     lines=['set_thread_count 1','read_db '+quote(a.source)]
     lines+=observation(a.output/'before.tsv')

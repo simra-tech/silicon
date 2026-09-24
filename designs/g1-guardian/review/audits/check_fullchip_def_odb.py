@@ -42,6 +42,7 @@ def main():
     p.add_argument('--prepared',type=Path,required=True)
     p.add_argument('--bgr',type=Path,required=True)
     p.add_argument('--sense',type=Path,required=True)
+    p.add_argument('--digital',type=Path,help='Optional independently bound new conservative digital abstract')
     p.add_argument('--output',type=Path,required=True)
     a = p.parse_args()
     assert not a.output.exists() and len(os.sched_getaffinity(0)) == 1
@@ -62,6 +63,12 @@ def main():
         'g1_ctrl/layout/g1_digital.lef','g1_trip/layout/g1_trip.lef','g1_gate/layout/g1_gate.lef',
         'g1_osc/layout/g1_osc.lef','g1_t2f/layout/g1_t2f.lef','g1_dut/layout/g1_dut_macro.lef',
         'g1_dose/layout/g1_dose_macro.lef','g1_ctrl/ls/layout/g1_ls_up.lef']]
+    if a.digital:
+        digital=json.loads((a.digital/'analysis.json').read_text())
+        assert digital['status']=='passed conservative digital egress LEF with exact original ports'
+        assert digital['reference_LEF_sha256']==sha(DESIGN/'blocks/g1_ctrl/layout/g1_digital.lef')
+        assert digital['LEF_sha256']==sha(a.digital/'g1_digital.lef')
+        lefs=[a.digital/'g1_digital.lef' if q==DESIGN/'blocks/g1_ctrl/layout/g1_digital.lef' else q for q in lefs]
     assert all(path.is_file() for path in lefs)
     a.output.mkdir(parents=True)
     (a.output/'source.py').write_bytes(Path(__file__).read_bytes())

@@ -1,0 +1,382 @@
+{
+  "status": "failed",
+  "pair": "isense_clock",
+  "source_sha256": {
+    "prepare_interface_clip.py": "8898096b2969b84f5a0f814e53603829d92fe3435d9157b15281585e1ce86253",
+    "run_fill_clip_pex.py": "ee9418dca3f55c24a4ad92fa16231ada468be56b6d9c7b1d35612a51fbe7ee09",
+    "analyze_interface_clip.py": "ce90a512442641e8b6c5fe4e8ddc582f298813654bad27d370bc2d4276371eda",
+    "clip_cap_graph.py": "a599bbcf2fa2bf5f0a4d25cca3f460f99b3485ba6261818b6838eb41f669bba6",
+    "check_fill_clip_ac.py": "23b7e8a521f098a7a90aa2828c3d9b9a9dc8b1dbfa9e0f9074e53ddb5bea6e11",
+    "export_clip_lvsdb.lvs": "0df9eb0dc562947fa4d076cbfc2c93d0ec625e964bd2d7419d509cbffd1ed68b",
+    "run_interface_interval_batch.py": "0b4f34c2ad8f62f000449a1efe94437bc67e630462e803dbaf2cf928885710cc"
+  },
+  "gds_sha256": "38c1d6d13bbfee4ed0e3c01477742c3d2d28317d9215d9e5bd9a35551285ae59",
+  "image_id": "sha256:5fd78498e578c6e9ec10828c248ca3790fc88250ff6caf545521b29e448ea3c0",
+  "matrix_context_tolerance": 0.01,
+  "mutual_end_tolerance": 0.01,
+  "contexts_um": [
+    12,
+    24
+  ],
+  "end_margins_um": [
+    10,
+    20
+  ],
+  "cases": [
+    {
+      "context_um": 12,
+      "end_margin_um": 10,
+      "status": "passed",
+      "steps": [
+        {
+          "command": [
+            "/foss/tools/bin/python3",
+            "designs/g1-guardian/review/audits/prepare_interface_clip.py",
+            "--pair",
+            "isense_clock",
+            "--context-um",
+            "12",
+            "--end-margin-um",
+            "10",
+            "--expected-sha256",
+            "38c1d6d13bbfee4ed0e3c01477742c3d2d28317d9215d9e5bd9a35551285ae59",
+            "--output",
+            "designs/g1-guardian/review/audits/interface-clock-interval-20260922-r1/w12_m10/clip"
+          ],
+          "returncode": 0
+        },
+        {
+          "command": [
+            "/foss/tools/bin/python3",
+            "designs/g1-guardian/review/audits/run_fill_clip_pex.py",
+            "--clip",
+            "designs/g1-guardian/review/audits/interface-clock-interval-20260922-r1/w12_m10/clip",
+            "--output",
+            "designs/g1-guardian/review/audits/interface-clock-interval-20260922-r1/w12_m10/pex"
+          ],
+          "returncode": 0,
+          "child_completion_passed": true
+        },
+        {
+          "command": [
+            "/foss/tools/bin/python3",
+            "designs/g1-guardian/review/audits/analyze_interface_clip.py",
+            "--input",
+            "designs/g1-guardian/review/audits/interface-clock-interval-20260922-r1/w12_m10/pex",
+            "--output",
+            "designs/g1-guardian/review/audits/interface-clock-interval-20260922-r1/w12_m10/analysis"
+          ],
+          "returncode": 0
+        },
+        {
+          "command": [
+            "/foss/tools/bin/python3",
+            "designs/g1-guardian/review/audits/check_fill_clip_ac.py",
+            "designs/g1-guardian/review/audits/interface-clock-interval-20260922-r1/w12_m10/analysis"
+          ],
+          "returncode": 0
+        }
+      ],
+      "analysis_sha256": "e6cd5ef3c4a009362e87c151867a8998480a2e0ad22fe23fc2ae90cfb0477c2a"
+    },
+    {
+      "context_um": 12,
+      "end_margin_um": 20,
+      "status": "passed",
+      "steps": [
+        {
+          "command": [
+            "/foss/tools/bin/python3",
+            "designs/g1-guardian/review/audits/prepare_interface_clip.py",
+            "--pair",
+            "isense_clock",
+            "--context-um",
+            "12",
+            "--end-margin-um",
+            "20",
+            "--expected-sha256",
+            "38c1d6d13bbfee4ed0e3c01477742c3d2d28317d9215d9e5bd9a35551285ae59",
+            "--output",
+            "designs/g1-guardian/review/audits/interface-clock-interval-20260922-r1/w12_m20/clip"
+          ],
+          "returncode": 0
+        },
+        {
+          "command": [
+            "/foss/tools/bin/python3",
+            "designs/g1-guardian/review/audits/run_fill_clip_pex.py",
+            "--clip",
+            "designs/g1-guardian/review/audits/interface-clock-interval-20260922-r1/w12_m20/clip",
+            "--output",
+            "designs/g1-guardian/review/audits/interface-clock-interval-20260922-r1/w12_m20/pex"
+          ],
+          "returncode": 0,
+          "child_completion_passed": true
+        },
+        {
+          "command": [
+            "/foss/tools/bin/python3",
+            "designs/g1-guardian/review/audits/analyze_interface_clip.py",
+            "--input",
+            "designs/g1-guardian/review/audits/interface-clock-interval-20260922-r1/w12_m20/pex",
+            "--output",
+            "designs/g1-guardian/review/audits/interface-clock-interval-20260922-r1/w12_m20/analysis"
+          ],
+          "returncode": 0
+        },
+        {
+          "command": [
+            "/foss/tools/bin/python3",
+            "designs/g1-guardian/review/audits/check_fill_clip_ac.py",
+            "designs/g1-guardian/review/audits/interface-clock-interval-20260922-r1/w12_m20/analysis"
+          ],
+          "returncode": 0
+        }
+      ],
+      "analysis_sha256": "90266cd5744fe106c1114ba174d1214214882e245162a1ad14496a5f8660aa56"
+    },
+    {
+      "context_um": 24,
+      "end_margin_um": 10,
+      "status": "passed",
+      "steps": [
+        {
+          "command": [
+            "/foss/tools/bin/python3",
+            "designs/g1-guardian/review/audits/prepare_interface_clip.py",
+            "--pair",
+            "isense_clock",
+            "--context-um",
+            "24",
+            "--end-margin-um",
+            "10",
+            "--expected-sha256",
+            "38c1d6d13bbfee4ed0e3c01477742c3d2d28317d9215d9e5bd9a35551285ae59",
+            "--output",
+            "designs/g1-guardian/review/audits/interface-clock-interval-20260922-r1/w24_m10/clip"
+          ],
+          "returncode": 0
+        },
+        {
+          "command": [
+            "/foss/tools/bin/python3",
+            "designs/g1-guardian/review/audits/run_fill_clip_pex.py",
+            "--clip",
+            "designs/g1-guardian/review/audits/interface-clock-interval-20260922-r1/w24_m10/clip",
+            "--output",
+            "designs/g1-guardian/review/audits/interface-clock-interval-20260922-r1/w24_m10/pex"
+          ],
+          "returncode": 0,
+          "child_completion_passed": true
+        },
+        {
+          "command": [
+            "/foss/tools/bin/python3",
+            "designs/g1-guardian/review/audits/analyze_interface_clip.py",
+            "--input",
+            "designs/g1-guardian/review/audits/interface-clock-interval-20260922-r1/w24_m10/pex",
+            "--output",
+            "designs/g1-guardian/review/audits/interface-clock-interval-20260922-r1/w24_m10/analysis"
+          ],
+          "returncode": 0
+        },
+        {
+          "command": [
+            "/foss/tools/bin/python3",
+            "designs/g1-guardian/review/audits/check_fill_clip_ac.py",
+            "designs/g1-guardian/review/audits/interface-clock-interval-20260922-r1/w24_m10/analysis"
+          ],
+          "returncode": 0
+        }
+      ],
+      "analysis_sha256": "397ceba5691de42863ff338dc2a08f5565a39c7a28b5d3ac5ca16ba36385f6b6"
+    },
+    {
+      "context_um": 24,
+      "end_margin_um": 20,
+      "status": "passed",
+      "steps": [
+        {
+          "command": [
+            "/foss/tools/bin/python3",
+            "designs/g1-guardian/review/audits/prepare_interface_clip.py",
+            "--pair",
+            "isense_clock",
+            "--context-um",
+            "24",
+            "--end-margin-um",
+            "20",
+            "--expected-sha256",
+            "38c1d6d13bbfee4ed0e3c01477742c3d2d28317d9215d9e5bd9a35551285ae59",
+            "--output",
+            "designs/g1-guardian/review/audits/interface-clock-interval-20260922-r1/w24_m20/clip"
+          ],
+          "returncode": 0
+        },
+        {
+          "command": [
+            "/foss/tools/bin/python3",
+            "designs/g1-guardian/review/audits/run_fill_clip_pex.py",
+            "--clip",
+            "designs/g1-guardian/review/audits/interface-clock-interval-20260922-r1/w24_m20/clip",
+            "--output",
+            "designs/g1-guardian/review/audits/interface-clock-interval-20260922-r1/w24_m20/pex"
+          ],
+          "returncode": 0,
+          "child_completion_passed": true
+        },
+        {
+          "command": [
+            "/foss/tools/bin/python3",
+            "designs/g1-guardian/review/audits/analyze_interface_clip.py",
+            "--input",
+            "designs/g1-guardian/review/audits/interface-clock-interval-20260922-r1/w24_m20/pex",
+            "--output",
+            "designs/g1-guardian/review/audits/interface-clock-interval-20260922-r1/w24_m20/analysis"
+          ],
+          "returncode": 0
+        },
+        {
+          "command": [
+            "/foss/tools/bin/python3",
+            "designs/g1-guardian/review/audits/check_fill_clip_ac.py",
+            "designs/g1-guardian/review/audits/interface-clock-interval-20260922-r1/w24_m20/analysis"
+          ],
+          "returncode": 0
+        }
+      ],
+      "analysis_sha256": "8a824d9513af955d1a12669b1a50afa148844fc87c394737dff627e93009848b"
+    }
+  ],
+  "scope": "Exact metal/via clips include shared parallel interval and stated ends, not entire nets. Other context grounded, fill floating/grounded diagnostics. Require1percent matrix convergence12to24um at fixed ends;1percent mutual-C convergence10to20um ends at fixed width. Ground capacitance need not converge with increasing retained target length. No actual-source/time-domain acceptance.",
+  "convergence_checks": [
+    {
+      "type": "transverse_matrix",
+      "variant": "no_fill",
+      "mode": "grounded",
+      "end_margin_um": 10,
+      "relative_error": 0.1525092629468289,
+      "status": "failed"
+    },
+    {
+      "type": "transverse_matrix",
+      "variant": "no_fill",
+      "mode": "grounded",
+      "end_margin_um": 20,
+      "relative_error": 0.15250926294682907,
+      "status": "failed"
+    },
+    {
+      "type": "longitudinal_mutual",
+      "variant": "no_fill",
+      "mode": "grounded",
+      "context_um": 12,
+      "relative_error": 0.0,
+      "status": "passed"
+    },
+    {
+      "type": "longitudinal_mutual",
+      "variant": "no_fill",
+      "mode": "grounded",
+      "context_um": 24,
+      "relative_error": 0.0,
+      "status": "passed"
+    },
+    {
+      "type": "transverse_matrix",
+      "variant": "no_fill",
+      "mode": "floating",
+      "end_margin_um": 10,
+      "relative_error": 0.1525092629468289,
+      "status": "failed"
+    },
+    {
+      "type": "transverse_matrix",
+      "variant": "no_fill",
+      "mode": "floating",
+      "end_margin_um": 20,
+      "relative_error": 0.15250926294682907,
+      "status": "failed"
+    },
+    {
+      "type": "longitudinal_mutual",
+      "variant": "no_fill",
+      "mode": "floating",
+      "context_um": 12,
+      "relative_error": 0.0,
+      "status": "passed"
+    },
+    {
+      "type": "longitudinal_mutual",
+      "variant": "no_fill",
+      "mode": "floating",
+      "context_um": 24,
+      "relative_error": 0.0,
+      "status": "passed"
+    },
+    {
+      "type": "transverse_matrix",
+      "variant": "actual_fill",
+      "mode": "grounded",
+      "end_margin_um": 10,
+      "relative_error": 0.18154181429518113,
+      "status": "failed"
+    },
+    {
+      "type": "transverse_matrix",
+      "variant": "actual_fill",
+      "mode": "grounded",
+      "end_margin_um": 20,
+      "relative_error": 0.18154181429518113,
+      "status": "failed"
+    },
+    {
+      "type": "longitudinal_mutual",
+      "variant": "actual_fill",
+      "mode": "grounded",
+      "context_um": 12,
+      "relative_error": 0.0,
+      "status": "passed"
+    },
+    {
+      "type": "longitudinal_mutual",
+      "variant": "actual_fill",
+      "mode": "grounded",
+      "context_um": 24,
+      "relative_error": 0.0,
+      "status": "passed"
+    },
+    {
+      "type": "transverse_matrix",
+      "variant": "actual_fill",
+      "mode": "floating",
+      "end_margin_um": 10,
+      "relative_error": 0.18271718047265317,
+      "status": "failed"
+    },
+    {
+      "type": "transverse_matrix",
+      "variant": "actual_fill",
+      "mode": "floating",
+      "end_margin_um": 20,
+      "relative_error": 0.18272066151707977,
+      "status": "failed"
+    },
+    {
+      "type": "longitudinal_mutual",
+      "variant": "actual_fill",
+      "mode": "floating",
+      "context_um": 12,
+      "relative_error": 5.179410898441129e-06,
+      "status": "passed"
+    },
+    {
+      "type": "longitudinal_mutual",
+      "variant": "actual_fill",
+      "mode": "floating",
+      "context_um": 24,
+      "relative_error": 7.957901376618871e-06,
+      "status": "passed"
+    }
+  ]
+}

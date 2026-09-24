@@ -41,15 +41,21 @@ def main():
     imported = json.loads((a.odb_check/'analysis.json').read_text())
     source = a.native/a.gds_name; deffile = a.route/'detailed.def'
     assert source.name == a.gds_name and native['status'].startswith('passed') and sha(source) == native['GDS_sha256']
-    assert routed['status'] == 'passed isolated detailed-route candidate with zero router markers'
+    route_ancestor=a.route
+    if routed['status']=='passed exact three-segment g_shared_bare spacing repair; stock checks not run':
+        from repair_gshared_route_spacing import validate_patch
+        route_ancestor,ancestral_route=validate_patch(a.route)
+    else:
+        assert routed['status'] == 'passed isolated detailed-route candidate with zero router markers'
+        ancestral_route=routed
     assert routed['instances_and_terminal_connectivity_held'] == 'passed'
     assert sha(deffile) == routed['detailed.def_sha256']
     # Bind the routed database ancestry to the exact audited LEF/DEF input.
-    route_script = (a.route/'route.tcl').read_text()
+    route_script = (route_ancestor/'route.tcl').read_text()
     global_odb = Path(route_script.split('read_db {', 1)[1].split('}', 1)[0])
     global_meta = json.loads((global_odb.parent/'analysis.json').read_text())
     assert global_meta['inputs'][str(a.odb_check/'unrouted_fullchip.odb')] == imported['ODB_sha256']
-    assert sha(global_odb) == routed['global_ODB_sha256']
+    assert sha(global_odb) == ancestral_route['global_ODB_sha256']
     for row in imported['LEFs']:
         assert sha(Path(row['path'])) == row['sha256']
     a.output.mkdir(parents=True); (a.output/'source.py').write_bytes(Path(__file__).read_bytes())
@@ -98,7 +104,12 @@ def main():
     before = {str(i): region(layout, top, i) for i in layout.layer_infos()}
     texts = text_records(layout, top)
     instances = sorted((i.cell.name, str(i.trans)) for i in top.each_inst())
-    assert len(instances) == 4904
+    if native['status']=='passed exact old-route removal with all other native definitions held':
+        assert len(instances)==native['native_root_instances'] and len(instances)>=4904
+        assert native['all_other_instances_and_definitions']=='passed exact'
+        assert not any(i.cell.name=='new_signal_routes' for i in top.each_inst())
+    else:
+        assert len(instances) == 4904
     copied = layout.create_cell('new_signal_routes'); copied.copy_tree(rtop)
     for cell in layout.each_cell():
         if cell.name in vias:
@@ -124,12 +135,14 @@ def main():
                   GDS_sha256=sha(output), native_GDS_sha256=sha(source), DEF_sha256=sha(deffile),
                   route_only_GDS_sha256=sha(route_gds), script_sha256=sha(Path(__file__)),
                   stock_technology_sha256=sha(techpath), stock_layer_map_sha256=sha(mappath),
-                  removed_LEF_instances=sum(removed.values()), native_instances_retained=4904,
+                  removed_LEF_instances=sum(removed.values()), native_instances_retained=len(instances),
                   route_via_instances=dict(vias), route_layers=layers, native_geometry_and_texts_held='passed',
                   saved_roundtrip='passed',
                   not_run=['independent OpenDB route-polygon comparison', 'full signal physical connectivity',
                            'stock fullchip DRC/LVS/PEX/density/antenna', 'full PDN/feeds', 'electrical adoption'],
                   not_applicable=['PDK cell and rule-deck modifications'])
+    result['route_metadata_sha256']=sha(a.route/'analysis.json')
+    result['route_validation_scope']=routed['status']
     (a.output/'analysis.json').write_text(json.dumps(result, indent=2)+'\n')
     print(json.dumps(result, indent=2))
 

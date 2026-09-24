@@ -1,0 +1,56 @@
+{
+  "status": "passed",
+  "checks": {
+    "compiler_and_simulator_completed": true,
+    "input_freeze": true,
+    "waveform_finite_complete": true,
+    "completion_marker": true,
+    "reset_assert_release": true,
+    "actual_divider_phase": true,
+    "sync_soft_two_flops": true,
+    "sync_hard_two_flops": true,
+    "actual_counter_up_down": true,
+    "soft_code_tracks_armed": true,
+    "major_carry_both_directions": true,
+    "hard_code_port_order": true,
+    "mask_inactive": true,
+    "no_latch": true,
+    "recovered_final_count": true
+  },
+  "commands": [
+    {
+      "stage": "compile",
+      "command": [
+        "timeout",
+        "20",
+        "iverilog",
+        "-g2005",
+        "-Wall",
+        "-Wno-timescale",
+        "-s",
+        "g1_hys_diagnostic",
+        "-o",
+        "/work/designs/g1-guardian/blocks/g1_trip/sim/qualification/hys-feedback-direct-prefix-20260922-r2/g1_hys_diagnostic.vvp",
+        "/work/designs/g1-guardian/blocks/g1_trip/sim/qualification/hys-feedback-direct-prefix-20260922-r2/g1_hys_diagnostic.v",
+        "/work/designs/g1-guardian/blocks/g1_trip/sim/qualification/hys-feedback-direct-prefix-20260922-r2/g1_trip_timer.v",
+        "/work/designs/g1-guardian/blocks/g1_trip/sim/qualification/hys-feedback-direct-prefix-20260922-r2/g1_sync2.v"
+      ],
+      "returncode": 0,
+      "wall_s": 0.0734836682677269
+    },
+    {
+      "stage": "digital",
+      "command": [
+        "timeout",
+        "20",
+        "ngspice",
+        "-b",
+        "qualification/hys-feedback-direct-prefix-20260922-r2/digital.cir"
+      ],
+      "returncode": 0,
+      "wall_s": 1.3936899565160275
+    }
+  ],
+  "analog_status": "not run",
+  "upper_counter_dynamic_toggle_coverage": "not run; upper bits remain zero under this brief pulse"
+}

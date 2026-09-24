@@ -1,0 +1,63 @@
+{
+  "status": "failed",
+  "image_id": "sha256:5fd78498e578c6e9ec10828c248ca3790fc88250ff6caf545521b29e448ea3c0",
+  "source_sha256": {
+    "designs/g1-guardian/review/audits/prepare_interface_clip.py": "8c88eb8a37ee7f56f8da2c00590a6c6918e1a44ef78dfa6d9e60a2791a9037a4",
+    "designs/g1-guardian/review/audits/run_fill_clip_pex.py": "ee9418dca3f55c24a4ad92fa16231ada468be56b6d9c7b1d35612a51fbe7ee09",
+    "designs/g1-guardian/review/audits/analyze_fill_clip.py": "5811bfea9a827fe1de11c52cd7ccc43b46437fd237012c3692d8f38cfcfc0f15",
+    "designs/g1-guardian/review/audits/check_fill_clip_ac.py": "23b7e8a521f098a7a90aa2828c3d9b9a9dc8b1dbfa9e0f9074e53ddb5bea6e11",
+    "designs/g1-guardian/review/audits/export_clip_lvsdb.lvs": "0df9eb0dc562947fa4d076cbfc2c93d0ec625e964bd2d7419d509cbffd1ed68b",
+    "designs/g1-guardian/review/audits/run_interface_clip_batch.py": "662fa5879826c66daf00938ae0c29006644e361767c6773cb0ef934fee3ce3ec",
+    "designs/g1-guardian/blocks/g1_padring/layout/g1_chip_top.gds": "38c1d6d13bbfee4ed0e3c01477742c3d2d28317d9215d9e5bd9a35551285ae59"
+  },
+  "cases": [
+    {
+      "pair": "isense_clock",
+      "context_um": 24,
+      "status": "failed",
+      "steps": [
+        {
+          "command": [
+            "/foss/tools/bin/python3",
+            "designs/g1-guardian/review/audits/prepare_interface_clip.py",
+            "--pair",
+            "isense_clock",
+            "--context-um",
+            "24",
+            "--expected-sha256",
+            "38c1d6d13bbfee4ed0e3c01477742c3d2d28317d9215d9e5bd9a35551285ae59",
+            "--output",
+            "designs/g1-guardian/review/audits/interface-context-20260922-r1/isense_clock_w24/clip"
+          ],
+          "returncode": 0
+        },
+        {
+          "command": [
+            "/foss/tools/bin/python3",
+            "designs/g1-guardian/review/audits/run_fill_clip_pex.py",
+            "--clip",
+            "designs/g1-guardian/review/audits/interface-context-20260922-r1/isense_clock_w24/clip",
+            "--output",
+            "designs/g1-guardian/review/audits/interface-context-20260922-r1/isense_clock_w24/pex"
+          ],
+          "returncode": 0
+        },
+        {
+          "command": [
+            "/foss/tools/bin/python3",
+            "designs/g1-guardian/review/audits/analyze_fill_clip.py",
+            "--input",
+            "designs/g1-guardian/review/audits/interface-context-20260922-r1/isense_clock_w24/pex",
+            "--output",
+            "designs/g1-guardian/review/audits/interface-context-20260922-r1/isense_clock_w24/analysis"
+          ],
+          "returncode": 1
+        }
+      ]
+    }
+  ],
+  "clip_length_um": 20,
+  "relative_context_tolerance": 0.01,
+  "prior_pilot": "interface-isense-clock-w12-20260922-r1",
+  "scope": "Focused delivered-GDS capacitor clips only. Context24to48 comparison uses prospectively declared1percent relative limit for all2x2 matrix entries. No longitudinal/full-route convergence or actual-source electrical acceptance implied."
+}

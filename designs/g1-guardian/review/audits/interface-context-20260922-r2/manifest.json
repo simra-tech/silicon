@@ -1,0 +1,626 @@
+{
+  "status": "passed",
+  "image_id": "sha256:5fd78498e578c6e9ec10828c248ca3790fc88250ff6caf545521b29e448ea3c0",
+  "source_sha256": {
+    "designs/g1-guardian/review/audits/prepare_interface_clip.py": "8c88eb8a37ee7f56f8da2c00590a6c6918e1a44ef78dfa6d9e60a2791a9037a4",
+    "designs/g1-guardian/review/audits/run_fill_clip_pex.py": "ee9418dca3f55c24a4ad92fa16231ada468be56b6d9c7b1d35612a51fbe7ee09",
+    "designs/g1-guardian/review/audits/analyze_interface_clip.py": "ce90a512442641e8b6c5fe4e8ddc582f298813654bad27d370bc2d4276371eda",
+    "designs/g1-guardian/review/audits/clip_cap_graph.py": "a599bbcf2fa2bf5f0a4d25cca3f460f99b3485ba6261818b6838eb41f669bba6",
+    "designs/g1-guardian/review/audits/check_fill_clip_ac.py": "23b7e8a521f098a7a90aa2828c3d9b9a9dc8b1dbfa9e0f9074e53ddb5bea6e11",
+    "designs/g1-guardian/review/audits/export_clip_lvsdb.lvs": "0df9eb0dc562947fa4d076cbfc2c93d0ec625e964bd2d7419d509cbffd1ed68b",
+    "designs/g1-guardian/review/audits/run_interface_clip_batch.py": "82ffc92f46b2b9c878bbb28314fdba28a678fe6d29f55d10e86e21e26d9db5b0",
+    "designs/g1-guardian/blocks/g1_padring/layout/g1_chip_top.gds": "38c1d6d13bbfee4ed0e3c01477742c3d2d28317d9215d9e5bd9a35551285ae59"
+  },
+  "reused_input_sha256": {
+    "designs/g1-guardian/review/audits/interface-context-20260922-r1/isense_clock_w24/clip/provenance.json": "415474a8b0bca74818b06ae452a1f395949aabdfce7951fce075c04bebe4d28e",
+    "designs/g1-guardian/review/audits/interface-context-20260922-r1/isense_clock_w24/pex/manifest.json": "864c57f5d0f25e9828ee5190b9f6695a90571714cf573bfab86b3dfc5e5bc6bf",
+    "designs/g1-guardian/review/audits/interface-context-20260922-r1/isense_clock_w24/pex/actual_fill/kpex/clip__sense_fill_clip/sense_fill_clip_k25d_pex_netlist.spice": "7fc26de7d3212730065ffa8f64640d9c018ba23be6ae08abebbeffe11e5929a7",
+    "designs/g1-guardian/review/audits/interface-context-20260922-r1/isense_clock_w24/pex/no_fill/kpex/clip__sense_fill_clip/sense_fill_clip_k25d_pex_netlist.spice": "381323eaddd98e55da3bad84d4ce91086868ca9a268ef476a4ed0eb6fac1a45a"
+  },
+  "cases": [
+    {
+      "pair": "isense_clock",
+      "context_um": 24,
+      "status": "passed",
+      "steps": [
+        {
+          "command": [
+            "/foss/tools/bin/python3",
+            "designs/g1-guardian/review/audits/analyze_interface_clip.py",
+            "--input",
+            "designs/g1-guardian/review/audits/interface-context-20260922-r1/isense_clock_w24/pex",
+            "--output",
+            "designs/g1-guardian/review/audits/interface-context-20260922-r2/isense_clock_w24/analysis"
+          ],
+          "returncode": 0
+        },
+        {
+          "command": [
+            "/foss/tools/bin/python3",
+            "designs/g1-guardian/review/audits/check_fill_clip_ac.py",
+            "designs/g1-guardian/review/audits/interface-context-20260922-r2/isense_clock_w24/analysis"
+          ],
+          "returncode": 0
+        }
+      ],
+      "reused_extraction": "designs/g1-guardian/review/audits/interface-context-20260922-r1/isense_clock_w24",
+      "analysis_sha256": "2672d967e3ac6312d6047f1babeaf7588bd902f8256daef6d9db2be6aa6bfa2c"
+    },
+    {
+      "pair": "isense_clock",
+      "context_um": 48,
+      "status": "passed",
+      "steps": [
+        {
+          "command": [
+            "/foss/tools/bin/python3",
+            "designs/g1-guardian/review/audits/prepare_interface_clip.py",
+            "--pair",
+            "isense_clock",
+            "--context-um",
+            "48",
+            "--expected-sha256",
+            "38c1d6d13bbfee4ed0e3c01477742c3d2d28317d9215d9e5bd9a35551285ae59",
+            "--output",
+            "designs/g1-guardian/review/audits/interface-context-20260922-r2/isense_clock_w48/clip"
+          ],
+          "returncode": 0
+        },
+        {
+          "command": [
+            "/foss/tools/bin/python3",
+            "designs/g1-guardian/review/audits/run_fill_clip_pex.py",
+            "--clip",
+            "designs/g1-guardian/review/audits/interface-context-20260922-r2/isense_clock_w48/clip",
+            "--output",
+            "designs/g1-guardian/review/audits/interface-context-20260922-r2/isense_clock_w48/pex"
+          ],
+          "returncode": 0
+        },
+        {
+          "command": [
+            "/foss/tools/bin/python3",
+            "designs/g1-guardian/review/audits/analyze_interface_clip.py",
+            "--input",
+            "designs/g1-guardian/review/audits/interface-context-20260922-r2/isense_clock_w48/pex",
+            "--output",
+            "designs/g1-guardian/review/audits/interface-context-20260922-r2/isense_clock_w48/analysis"
+          ],
+          "returncode": 0
+        },
+        {
+          "command": [
+            "/foss/tools/bin/python3",
+            "designs/g1-guardian/review/audits/check_fill_clip_ac.py",
+            "designs/g1-guardian/review/audits/interface-context-20260922-r2/isense_clock_w48/analysis"
+          ],
+          "returncode": 0
+        }
+      ],
+      "analysis_sha256": "88cad2994b3fb7b6612af203cab2355711461fd0c5b1f3fc5b07e4e7262013b1"
+    },
+    {
+      "pair": "vref_dac",
+      "context_um": 12,
+      "status": "passed",
+      "steps": [
+        {
+          "command": [
+            "/foss/tools/bin/python3",
+            "designs/g1-guardian/review/audits/prepare_interface_clip.py",
+            "--pair",
+            "vref_dac",
+            "--context-um",
+            "12",
+            "--expected-sha256",
+            "38c1d6d13bbfee4ed0e3c01477742c3d2d28317d9215d9e5bd9a35551285ae59",
+            "--output",
+            "designs/g1-guardian/review/audits/interface-context-20260922-r2/vref_dac_w12/clip"
+          ],
+          "returncode": 0
+        },
+        {
+          "command": [
+            "/foss/tools/bin/python3",
+            "designs/g1-guardian/review/audits/run_fill_clip_pex.py",
+            "--clip",
+            "designs/g1-guardian/review/audits/interface-context-20260922-r2/vref_dac_w12/clip",
+            "--output",
+            "designs/g1-guardian/review/audits/interface-context-20260922-r2/vref_dac_w12/pex"
+          ],
+          "returncode": 0
+        },
+        {
+          "command": [
+            "/foss/tools/bin/python3",
+            "designs/g1-guardian/review/audits/analyze_interface_clip.py",
+            "--input",
+            "designs/g1-guardian/review/audits/interface-context-20260922-r2/vref_dac_w12/pex",
+            "--output",
+            "designs/g1-guardian/review/audits/interface-context-20260922-r2/vref_dac_w12/analysis"
+          ],
+          "returncode": 0
+        },
+        {
+          "command": [
+            "/foss/tools/bin/python3",
+            "designs/g1-guardian/review/audits/check_fill_clip_ac.py",
+            "designs/g1-guardian/review/audits/interface-context-20260922-r2/vref_dac_w12/analysis"
+          ],
+          "returncode": 0
+        }
+      ],
+      "analysis_sha256": "7dd7d5ac05b4b64aee246c510dda10fe533c800b35e02b1d7a43c2bad92ebd08"
+    },
+    {
+      "pair": "vref_dac",
+      "context_um": 24,
+      "status": "passed",
+      "steps": [
+        {
+          "command": [
+            "/foss/tools/bin/python3",
+            "designs/g1-guardian/review/audits/prepare_interface_clip.py",
+            "--pair",
+            "vref_dac",
+            "--context-um",
+            "24",
+            "--expected-sha256",
+            "38c1d6d13bbfee4ed0e3c01477742c3d2d28317d9215d9e5bd9a35551285ae59",
+            "--output",
+            "designs/g1-guardian/review/audits/interface-context-20260922-r2/vref_dac_w24/clip"
+          ],
+          "returncode": 0
+        },
+        {
+          "command": [
+            "/foss/tools/bin/python3",
+            "designs/g1-guardian/review/audits/run_fill_clip_pex.py",
+            "--clip",
+            "designs/g1-guardian/review/audits/interface-context-20260922-r2/vref_dac_w24/clip",
+            "--output",
+            "designs/g1-guardian/review/audits/interface-context-20260922-r2/vref_dac_w24/pex"
+          ],
+          "returncode": 0
+        },
+        {
+          "command": [
+            "/foss/tools/bin/python3",
+            "designs/g1-guardian/review/audits/analyze_interface_clip.py",
+            "--input",
+            "designs/g1-guardian/review/audits/interface-context-20260922-r2/vref_dac_w24/pex",
+            "--output",
+            "designs/g1-guardian/review/audits/interface-context-20260922-r2/vref_dac_w24/analysis"
+          ],
+          "returncode": 0
+        },
+        {
+          "command": [
+            "/foss/tools/bin/python3",
+            "designs/g1-guardian/review/audits/check_fill_clip_ac.py",
+            "designs/g1-guardian/review/audits/interface-context-20260922-r2/vref_dac_w24/analysis"
+          ],
+          "returncode": 0
+        }
+      ],
+      "analysis_sha256": "81d647ffdba6415b6e5b949b8d776b1fc32c2142ba6dd6bd239cc9aa6674aa9f"
+    },
+    {
+      "pair": "vref_dac",
+      "context_um": 48,
+      "status": "passed",
+      "steps": [
+        {
+          "command": [
+            "/foss/tools/bin/python3",
+            "designs/g1-guardian/review/audits/prepare_interface_clip.py",
+            "--pair",
+            "vref_dac",
+            "--context-um",
+            "48",
+            "--expected-sha256",
+            "38c1d6d13bbfee4ed0e3c01477742c3d2d28317d9215d9e5bd9a35551285ae59",
+            "--output",
+            "designs/g1-guardian/review/audits/interface-context-20260922-r2/vref_dac_w48/clip"
+          ],
+          "returncode": 0
+        },
+        {
+          "command": [
+            "/foss/tools/bin/python3",
+            "designs/g1-guardian/review/audits/run_fill_clip_pex.py",
+            "--clip",
+            "designs/g1-guardian/review/audits/interface-context-20260922-r2/vref_dac_w48/clip",
+            "--output",
+            "designs/g1-guardian/review/audits/interface-context-20260922-r2/vref_dac_w48/pex"
+          ],
+          "returncode": 0
+        },
+        {
+          "command": [
+            "/foss/tools/bin/python3",
+            "designs/g1-guardian/review/audits/analyze_interface_clip.py",
+            "--input",
+            "designs/g1-guardian/review/audits/interface-context-20260922-r2/vref_dac_w48/pex",
+            "--output",
+            "designs/g1-guardian/review/audits/interface-context-20260922-r2/vref_dac_w48/analysis"
+          ],
+          "returncode": 0
+        },
+        {
+          "command": [
+            "/foss/tools/bin/python3",
+            "designs/g1-guardian/review/audits/check_fill_clip_ac.py",
+            "designs/g1-guardian/review/audits/interface-context-20260922-r2/vref_dac_w48/analysis"
+          ],
+          "returncode": 0
+        }
+      ],
+      "analysis_sha256": "367ec4f8fbc7be2be6b678675945550cf68f13fb8bb8cd5db3c49aae1c5aeb7f"
+    },
+    {
+      "pair": "vrefbuf_dac",
+      "context_um": 12,
+      "status": "passed",
+      "steps": [
+        {
+          "command": [
+            "/foss/tools/bin/python3",
+            "designs/g1-guardian/review/audits/prepare_interface_clip.py",
+            "--pair",
+            "vrefbuf_dac",
+            "--context-um",
+            "12",
+            "--expected-sha256",
+            "38c1d6d13bbfee4ed0e3c01477742c3d2d28317d9215d9e5bd9a35551285ae59",
+            "--output",
+            "designs/g1-guardian/review/audits/interface-context-20260922-r2/vrefbuf_dac_w12/clip"
+          ],
+          "returncode": 0
+        },
+        {
+          "command": [
+            "/foss/tools/bin/python3",
+            "designs/g1-guardian/review/audits/run_fill_clip_pex.py",
+            "--clip",
+            "designs/g1-guardian/review/audits/interface-context-20260922-r2/vrefbuf_dac_w12/clip",
+            "--output",
+            "designs/g1-guardian/review/audits/interface-context-20260922-r2/vrefbuf_dac_w12/pex"
+          ],
+          "returncode": 0
+        },
+        {
+          "command": [
+            "/foss/tools/bin/python3",
+            "designs/g1-guardian/review/audits/analyze_interface_clip.py",
+            "--input",
+            "designs/g1-guardian/review/audits/interface-context-20260922-r2/vrefbuf_dac_w12/pex",
+            "--output",
+            "designs/g1-guardian/review/audits/interface-context-20260922-r2/vrefbuf_dac_w12/analysis"
+          ],
+          "returncode": 0
+        },
+        {
+          "command": [
+            "/foss/tools/bin/python3",
+            "designs/g1-guardian/review/audits/check_fill_clip_ac.py",
+            "designs/g1-guardian/review/audits/interface-context-20260922-r2/vrefbuf_dac_w12/analysis"
+          ],
+          "returncode": 0
+        }
+      ],
+      "analysis_sha256": "2bb0af7fe737a8a19dfa73b8cb1202fbd8ac5f402df5744bdb285fe50608d5e4"
+    },
+    {
+      "pair": "vrefbuf_dac",
+      "context_um": 24,
+      "status": "passed",
+      "steps": [
+        {
+          "command": [
+            "/foss/tools/bin/python3",
+            "designs/g1-guardian/review/audits/prepare_interface_clip.py",
+            "--pair",
+            "vrefbuf_dac",
+            "--context-um",
+            "24",
+            "--expected-sha256",
+            "38c1d6d13bbfee4ed0e3c01477742c3d2d28317d9215d9e5bd9a35551285ae59",
+            "--output",
+            "designs/g1-guardian/review/audits/interface-context-20260922-r2/vrefbuf_dac_w24/clip"
+          ],
+          "returncode": 0
+        },
+        {
+          "command": [
+            "/foss/tools/bin/python3",
+            "designs/g1-guardian/review/audits/run_fill_clip_pex.py",
+            "--clip",
+            "designs/g1-guardian/review/audits/interface-context-20260922-r2/vrefbuf_dac_w24/clip",
+            "--output",
+            "designs/g1-guardian/review/audits/interface-context-20260922-r2/vrefbuf_dac_w24/pex"
+          ],
+          "returncode": 0
+        },
+        {
+          "command": [
+            "/foss/tools/bin/python3",
+            "designs/g1-guardian/review/audits/analyze_interface_clip.py",
+            "--input",
+            "designs/g1-guardian/review/audits/interface-context-20260922-r2/vrefbuf_dac_w24/pex",
+            "--output",
+            "designs/g1-guardian/review/audits/interface-context-20260922-r2/vrefbuf_dac_w24/analysis"
+          ],
+          "returncode": 0
+        },
+        {
+          "command": [
+            "/foss/tools/bin/python3",
+            "designs/g1-guardian/review/audits/check_fill_clip_ac.py",
+            "designs/g1-guardian/review/audits/interface-context-20260922-r2/vrefbuf_dac_w24/analysis"
+          ],
+          "returncode": 0
+        }
+      ],
+      "analysis_sha256": "7787eedf6c7ffadc74ed14ec339cac54d07afe2ce65549330eb633ff22dc262f"
+    },
+    {
+      "pair": "vrefbuf_dac",
+      "context_um": 48,
+      "status": "passed",
+      "steps": [
+        {
+          "command": [
+            "/foss/tools/bin/python3",
+            "designs/g1-guardian/review/audits/prepare_interface_clip.py",
+            "--pair",
+            "vrefbuf_dac",
+            "--context-um",
+            "48",
+            "--expected-sha256",
+            "38c1d6d13bbfee4ed0e3c01477742c3d2d28317d9215d9e5bd9a35551285ae59",
+            "--output",
+            "designs/g1-guardian/review/audits/interface-context-20260922-r2/vrefbuf_dac_w48/clip"
+          ],
+          "returncode": 0
+        },
+        {
+          "command": [
+            "/foss/tools/bin/python3",
+            "designs/g1-guardian/review/audits/run_fill_clip_pex.py",
+            "--clip",
+            "designs/g1-guardian/review/audits/interface-context-20260922-r2/vrefbuf_dac_w48/clip",
+            "--output",
+            "designs/g1-guardian/review/audits/interface-context-20260922-r2/vrefbuf_dac_w48/pex"
+          ],
+          "returncode": 0
+        },
+        {
+          "command": [
+            "/foss/tools/bin/python3",
+            "designs/g1-guardian/review/audits/analyze_interface_clip.py",
+            "--input",
+            "designs/g1-guardian/review/audits/interface-context-20260922-r2/vrefbuf_dac_w48/pex",
+            "--output",
+            "designs/g1-guardian/review/audits/interface-context-20260922-r2/vrefbuf_dac_w48/analysis"
+          ],
+          "returncode": 0
+        },
+        {
+          "command": [
+            "/foss/tools/bin/python3",
+            "designs/g1-guardian/review/audits/check_fill_clip_ac.py",
+            "designs/g1-guardian/review/audits/interface-context-20260922-r2/vrefbuf_dac_w48/analysis"
+          ],
+          "returncode": 0
+        }
+      ],
+      "analysis_sha256": "1f9ba96d2688f66406c982d2abf0826a2ab2f439ac79a303bf6f94d37f4e1134"
+    },
+    {
+      "pair": "iptat_isense",
+      "context_um": 12,
+      "status": "passed",
+      "steps": [
+        {
+          "command": [
+            "/foss/tools/bin/python3",
+            "designs/g1-guardian/review/audits/prepare_interface_clip.py",
+            "--pair",
+            "iptat_isense",
+            "--context-um",
+            "12",
+            "--expected-sha256",
+            "38c1d6d13bbfee4ed0e3c01477742c3d2d28317d9215d9e5bd9a35551285ae59",
+            "--output",
+            "designs/g1-guardian/review/audits/interface-context-20260922-r2/iptat_isense_w12/clip"
+          ],
+          "returncode": 0
+        },
+        {
+          "command": [
+            "/foss/tools/bin/python3",
+            "designs/g1-guardian/review/audits/run_fill_clip_pex.py",
+            "--clip",
+            "designs/g1-guardian/review/audits/interface-context-20260922-r2/iptat_isense_w12/clip",
+            "--output",
+            "designs/g1-guardian/review/audits/interface-context-20260922-r2/iptat_isense_w12/pex"
+          ],
+          "returncode": 0
+        },
+        {
+          "command": [
+            "/foss/tools/bin/python3",
+            "designs/g1-guardian/review/audits/analyze_interface_clip.py",
+            "--input",
+            "designs/g1-guardian/review/audits/interface-context-20260922-r2/iptat_isense_w12/pex",
+            "--output",
+            "designs/g1-guardian/review/audits/interface-context-20260922-r2/iptat_isense_w12/analysis"
+          ],
+          "returncode": 0
+        },
+        {
+          "command": [
+            "/foss/tools/bin/python3",
+            "designs/g1-guardian/review/audits/check_fill_clip_ac.py",
+            "designs/g1-guardian/review/audits/interface-context-20260922-r2/iptat_isense_w12/analysis"
+          ],
+          "returncode": 0
+        }
+      ],
+      "analysis_sha256": "205b900495419426327e0eb4e07743b3806697f6c0148be34541c2b097774293"
+    },
+    {
+      "pair": "iptat_isense",
+      "context_um": 24,
+      "status": "passed",
+      "steps": [
+        {
+          "command": [
+            "/foss/tools/bin/python3",
+            "designs/g1-guardian/review/audits/prepare_interface_clip.py",
+            "--pair",
+            "iptat_isense",
+            "--context-um",
+            "24",
+            "--expected-sha256",
+            "38c1d6d13bbfee4ed0e3c01477742c3d2d28317d9215d9e5bd9a35551285ae59",
+            "--output",
+            "designs/g1-guardian/review/audits/interface-context-20260922-r2/iptat_isense_w24/clip"
+          ],
+          "returncode": 0
+        },
+        {
+          "command": [
+            "/foss/tools/bin/python3",
+            "designs/g1-guardian/review/audits/run_fill_clip_pex.py",
+            "--clip",
+            "designs/g1-guardian/review/audits/interface-context-20260922-r2/iptat_isense_w24/clip",
+            "--output",
+            "designs/g1-guardian/review/audits/interface-context-20260922-r2/iptat_isense_w24/pex"
+          ],
+          "returncode": 0
+        },
+        {
+          "command": [
+            "/foss/tools/bin/python3",
+            "designs/g1-guardian/review/audits/analyze_interface_clip.py",
+            "--input",
+            "designs/g1-guardian/review/audits/interface-context-20260922-r2/iptat_isense_w24/pex",
+            "--output",
+            "designs/g1-guardian/review/audits/interface-context-20260922-r2/iptat_isense_w24/analysis"
+          ],
+          "returncode": 0
+        },
+        {
+          "command": [
+            "/foss/tools/bin/python3",
+            "designs/g1-guardian/review/audits/check_fill_clip_ac.py",
+            "designs/g1-guardian/review/audits/interface-context-20260922-r2/iptat_isense_w24/analysis"
+          ],
+          "returncode": 0
+        }
+      ],
+      "analysis_sha256": "2491bb7ca33cb7ebc648808ab91c69853b9a3ae1bba3feb941627050617aec82"
+    },
+    {
+      "pair": "iptat_isense",
+      "context_um": 48,
+      "status": "passed",
+      "steps": [
+        {
+          "command": [
+            "/foss/tools/bin/python3",
+            "designs/g1-guardian/review/audits/prepare_interface_clip.py",
+            "--pair",
+            "iptat_isense",
+            "--context-um",
+            "48",
+            "--expected-sha256",
+            "38c1d6d13bbfee4ed0e3c01477742c3d2d28317d9215d9e5bd9a35551285ae59",
+            "--output",
+            "designs/g1-guardian/review/audits/interface-context-20260922-r2/iptat_isense_w48/clip"
+          ],
+          "returncode": 0
+        },
+        {
+          "command": [
+            "/foss/tools/bin/python3",
+            "designs/g1-guardian/review/audits/run_fill_clip_pex.py",
+            "--clip",
+            "designs/g1-guardian/review/audits/interface-context-20260922-r2/iptat_isense_w48/clip",
+            "--output",
+            "designs/g1-guardian/review/audits/interface-context-20260922-r2/iptat_isense_w48/pex"
+          ],
+          "returncode": 0
+        },
+        {
+          "command": [
+            "/foss/tools/bin/python3",
+            "designs/g1-guardian/review/audits/analyze_interface_clip.py",
+            "--input",
+            "designs/g1-guardian/review/audits/interface-context-20260922-r2/iptat_isense_w48/pex",
+            "--output",
+            "designs/g1-guardian/review/audits/interface-context-20260922-r2/iptat_isense_w48/analysis"
+          ],
+          "returncode": 0
+        },
+        {
+          "command": [
+            "/foss/tools/bin/python3",
+            "designs/g1-guardian/review/audits/check_fill_clip_ac.py",
+            "designs/g1-guardian/review/audits/interface-context-20260922-r2/iptat_isense_w48/analysis"
+          ],
+          "returncode": 0
+        }
+      ],
+      "analysis_sha256": "b45fdc778cbabd6cc13a85062408c43e77a4df0b61a768e3d1170f50d5f96f07"
+    }
+  ],
+  "clip_length_um": 20,
+  "relative_context_tolerance": 0.01,
+  "prior_pilot": "interface-isense-clock-w12-20260922-r1",
+  "scope": "Focused delivered-GDS capacitor clips only. Context24to48 comparison uses prospectively declared1percent relative limit for all2x2 matrix entries. No longitudinal/full-route convergence or actual-source electrical acceptance implied.",
+  "context_checks": [
+    {
+      "pair": "isense_clock",
+      "relative_matrix_errors": {
+        "no_fill_grounded": 0.0,
+        "no_fill_floating": 0.0,
+        "actual_fill_grounded": 0.0,
+        "actual_fill_floating": 5.83358268811715e-06
+      },
+      "status": "passed"
+    },
+    {
+      "pair": "vref_dac",
+      "relative_matrix_errors": {
+        "no_fill_grounded": 0.0,
+        "no_fill_floating": 0.0,
+        "actual_fill_grounded": 0.0,
+        "actual_fill_floating": 2.5197449515081273e-08
+      },
+      "status": "passed"
+    },
+    {
+      "pair": "vrefbuf_dac",
+      "relative_matrix_errors": {
+        "no_fill_grounded": 0.0,
+        "no_fill_floating": 0.0,
+        "actual_fill_grounded": 1.5850513294727343e-16,
+        "actual_fill_floating": 1.203446237413689e-07
+      },
+      "status": "passed"
+    },
+    {
+      "pair": "iptat_isense",
+      "relative_matrix_errors": {
+        "no_fill_grounded": 0.0,
+        "no_fill_floating": 0.0,
+        "actual_fill_grounded": 0.0,
+        "actual_fill_floating": 7.447190733078278e-06
+      },
+      "status": "passed"
+    }
+  ]
+}
