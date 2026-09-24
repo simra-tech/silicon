@@ -1,5 +1,14 @@
 # G1_GATE — trip latch, level shifters and GATE/FAULT_N pad drive
 
+Current verification status (2026-09-22): **not release-qualified**. The original
+IO-first/missing-core unsafe-high failure remains open; a10kΩ pull-down does not
+fix it. The isolated IO-powered buffer candidate is unadopted: nominal EN-low
+passes do not qualify arming, real-FET loading or protection. Its unchanged-pad
+numerical reduction still fails to complete, including the fresh bounded200pA
+diagnostic. See [current diagnostics](sim/candidates/io_buffer/DIAGNOSTICS_20260922.md).
+Historical completed checks below retain their stated scope and do not waive
+these open gates or establish physical measurements.
+
 State: **schematic frozen, simulated at schematic level with the PDK IO-cell SPICE models
 (function, timing into 5 nF, power-up with supply ramps in both orders, corners); layout generated,
 DRC-clean (full rule set) and LVS-clean (2026-09-19); kpex 2.5D capacitance extraction and

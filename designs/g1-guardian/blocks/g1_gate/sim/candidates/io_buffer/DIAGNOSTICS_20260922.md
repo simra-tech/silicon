@@ -39,3 +39,13 @@ The protectedpad adds approximately587Ω to the externalgate path. It is not cha
 The initial equation analysis assumed NR=1 and modern physical constants; r2 corrected the verified defaultNR=2, and r3 reads ngspice’s own `const.h`. These corrections change the tiny recombination term and nanovolt-scale branch value, while the rounded37.06pA jump remains. Both earlier analyses are retained as superseded diagnostics.
 
 A separately declared current-tolerance diagnostic kept reltol1e−5/vntol100nV and all cards/capacitances unchanged, changing only abstol10fA→100pA. Native47 `isolated_20260921T223302Z_5576af1b` still timed out60s at1.06714µs. The planned200pA/step-comparison continuation is **not run** because the first endpoint did not complete. This attempt does not qualify an alternative numerical setting or close the failure. Contract: `campaigns/io_buffer_current_tolerance_contract_20260921.json`.
+
+Server continuation: one bounded ngspice46 diagnostic at200pA and500ps maximum
+step was subsequently run under the verified pinned amd64 runtime. Campaign
+`isolated_20260922T132118Z_986435be` **failed to complete** its120s bound
+(120.236s recorded). Electrical acceptance is **not run** because no completed
+transient waveform was produced. Step-refinement comparison is **not run**;
+physical measurement is **not applicable** to this numerical diagnostic. All
+earlier failures remain. The tolerance ladder is stopped; no further relaxation
+or candidate adoption follows from this attempt. See its `assessment.json`,
+`analog_pad.json`, log and generated deck for the exact settings and identities.

@@ -1,0 +1,58 @@
+* G1_SENSE Monte Carlo: input-referred offset, mismatch models (MOS lv+hv, rppd), 200 samples
+* Offset referred to the shunt: vos_tot = (ISENSE(Vsh=0) - 1.0 V)/20 with ideal VREF = 1.04 V (pedestal 51/53 VREF = 1.000755 V)
+* (includes main OTA offset, pedestal divider + buffer errors /20, resistor mismatch).
+.param VDDA=3.3 VREF=1.04 VPEDN=1.000755
+.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerMOSlv.lib mos_tt
+.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerMOShv.lib mos_tt
+.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerRES.lib res_typ
+.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerCAP.lib cap_typ
+.temp 27
+.include ../sense_substrate_tied.spice
+.option gmin=1e-13
+* three unity/inverting OTA loops: give the DC solver their operating points
+.nodeset v(vref_buf)={VREF} v(vped)={VPEDN} v(isense)={VPEDN} v(xdut.vp)=0.047 v(xdut.vn)=0.047 v(xdut.iptat)=0.76
++ v(xdut.xref.out1)={VDDA-0.79} v(xdut.xbuf.out1)={VDDA-0.79} v(xdut.xota.out1)={VDDA-0.79} v(xdut.xref.mir)={VDDA-0.79} v(xdut.xbuf.mir)={VDDA-0.79} v(xdut.xota.mir)={VDDA-0.79}
++ v(xdut.xref.tail)=1.65 v(xdut.xbuf.tail)=1.65 v(xdut.xota.tail)=1.6 v(xdut.xref.fn)=0.2 v(xdut.xref.fp)=0.2 v(xdut.xbuf.fn)=0.2 v(xdut.xbuf.fp)=0.2 v(xdut.xota.fn)=0.2 v(xdut.xota.fp)=0.2
+.option itl1=400 itl2=200
+Vdd vdd 0 dc {VDDA}
+Vref vref 0 dc {VREF}
+* G1_BGR iptat: 4.13 uA at 27 C, PTAT
+Iib vdd iptat dc {4.13u*(25+273.15)/300.15}
+Vcm cm 0 dc -0.0125 ac 0
+Ish cm shuntp dc 1 ac 40
+Rsh shuntp cm 0.025
+RleadP shuntp leadP 10
+RroutePa leadP midP 10.259179999999994
+RroutePb midP coreP 10.259179999999994
+RleadN cm leadN 10
+RrouteNa leadN midN 10.293787999999992
+RrouteNb midN coreN 10.293787999999992
+CrouteP midP 0 1.9790501209402815f
+CrouteN midN 0 4.3659863154061593f
+CroutePN midP midN 0.79811869293621929f
+XDUT coreP coreN vref iptat isense vped vref_buf vdd 0 g1_sense
+XRL1 isense icmp 0 rppd w=2u l=384.3u m=1 b=0
+XRL2 icmp 0 0 rppd w=2u l=384.3u m=1 b=0
+XCH icmp 0 cap_cmim w=26u l=26u m=1
+.control
+set numdgt=17
+set num_threads=1
+set wr_singlescale
+set wr_vecnames
+alter Iib dc=4.13e-6
+op
+echo OP $&v(isense) $&v(coreP) $&v(coreN)
+ac dec 40 1k 100meg
+let hre=real(v(isense))
+let him=imag(v(isense))
+wrdata differential.dat hre him
+alter @Ish[acmag]=0
+alter @Vcm[acmag]=1
+ac dec 40 1k 100meg
+let hre=real(v(isense))
+let him=imag(v(isense))
+wrdata common_mode.dat hre him
+echo ROUTE_AC_COMPLETE
+quit 0
+.endc
+.end

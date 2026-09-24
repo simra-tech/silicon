@@ -1,0 +1,20 @@
+--- original failed electrical condition
++++ candidate source path/output only
+@@ -9,7 +9,7 @@
+ .temp 125.0
+ * the off switches leave the mux tree nodes floating at DC: give the solver a 1 TOhm path per node
+ .option rshunt=1e12 gmin=1e-13
+-.include qualification/joint586-fast-nodeset-calibration-s78101-20260923-a/sense.spice
++.include qualification/joint586-c45rz62-knownfailure-s78101-p59-20260923-a/sense.spice
+ .include qualification/joint586-fast-nodeset-calibration-s78101-20260923-a/trip.spice
+ Vdda vdda 0 dc {VDDA}
+ Vdd vdd 0 dc {VDD}
+@@ -23141,7 +23141,7 @@
+ print @q.xbgr.xq56.qnpn13g2[area]
+ set wr_singlescale
+ set wr_vecnames
+-wrdata qualification/joint586-fast-nodeset-calibration-s78101-20260923-a/p59/phase0.dat v(clk) v(xt.icmp) v(xt.vth_soft) v(xt.vth_hard) v(cmp_soft) v(cmp_hard) v(isense) v(xt.cmp_clk_n) v(xt.xch.xp) v(xt.xch.xq) v(xt.xch.xn) v(xt.xch.yn) v(vref) v(iptat) v(vref_buf) v(vped) v(shp) v(shn)
++wrdata qualification/joint586-c45rz62-knownfailure-s78101-p59-20260923-a/phase0.dat v(clk) v(xt.icmp) v(xt.vth_soft) v(xt.vth_hard) v(cmp_soft) v(cmp_hard) v(isense) v(xt.cmp_clk_n) v(xt.xch.xp) v(xt.xch.xq) v(xt.xch.xn) v(xt.xch.yn) v(vref) v(iptat) v(vref_buf) v(vped) v(shp) v(shn)
+ echo QUALIFICATION_END
+ echo PHASE0_END
+ echo JOINT_POPULATION_TRAN_END

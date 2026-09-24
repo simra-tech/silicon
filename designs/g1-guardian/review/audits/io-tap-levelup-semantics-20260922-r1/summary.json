@@ -1,0 +1,74 @@
+{
+  "scope": "Read-only independent PCell/reference semantic audit; not electrical validation of arbitrary guard-ring geometry, not schematic rewrite, no LVS closure.",
+  "pdk_commit": "84374023ee8b4b126bebbba67fcbada0a9c0ff0b",
+  "inputs": {
+    "geometry_audit": {
+      "path": "designs/g1-guardian/review/audits/io-tap-levelup-geometry-20260922-r1.json",
+      "sha256": "85b1a4ff0d1baca468b596d8ac48a6e6d4086fc9db34c71576c3ff9c5f9d475e"
+    },
+    "tech": {
+      "path": "libs.tech/klayout/python/sg13g2_pycell_lib/sg13g2_tech.json",
+      "sha256": "dd12fd60a1141478155ed0fdc26e2b50861d46d75b3bcaac215a20f7a9c646c9"
+    },
+    "utility": {
+      "path": "libs.tech/klayout/python/sg13g2_pycell_lib/ihp/utility_functions.py",
+      "sha256": "0d5c287ede8decd8b69c8f94bfe72231758e607c02b64650951fcb5be269c861"
+    },
+    "pcell": {
+      "path": "libs.tech/klayout/python/sg13g2_pycell_lib/ihp/ptap1_code.py",
+      "sha256": "f2772537417ee992a5ecea8539f5e96732b38c086826b16c8a21eb1a1096f500"
+    },
+    "cdl": {
+      "path": "libs.ref/sg13g2_io/cdl/sg13g2_io.cdl",
+      "sha256": "7a30e902099e8a8f85e0ae853167904df3793357a793a7b4dc82237b72b3eec4"
+    },
+    "spice": {
+      "path": "libs.ref/sg13g2_io/spice/sg13g2_io.spi",
+      "sha256": "1d53ab7df431b717ef5aff43e1117c0224681d5cc84886da37a319280ee958d6"
+    },
+    "electrical_model": {
+      "path": "libs.tech/ngspice/models/resistors_mod.lib",
+      "sha256": "7c77da0c0419c8a332550da3f934f530262bd452734090db827b68ff88d09c43"
+    },
+    "tap_extraction": {
+      "path": "libs.tech/klayout/tech/lvs/rule_decks/tap_extraction.lvs",
+      "sha256": "e17c779eacdcab3bfa2287ca265d7836dde0e9e7fec4b4e7bf79bf2b2dd9120b"
+    }
+  },
+  "formula": "R=1/(A/raspec+P/rpspec), with A inum\u00b2,P inum; publicCbTapCalc function",
+  "raspec_ohm_um2": 980.0000000000001,
+  "rpspec_ohm_um": 980.0,
+  "rows": [
+    {
+      "cell": "sg13g2_LevelUpInv",
+      "stock_spice": "XR0 vss sub! ptap1 R=190.268",
+      "stock_R_ohm": 190.268,
+      "stock_CDL_A_um2": 1.051,
+      "stock_CDL_P_um": 4.1,
+      "CDL_formula_R_ohm": 190.25431954960203,
+      "CDL_formula_relative_to_stock_error": -7.190095233022831e-05,
+      "raw_geometry_A_um2": 1.053,
+      "raw_geometry_P_um": 7.62,
+      "geometry_formula_R_ohm_conditional": 112.99435028248587,
+      "stock_over_geometry_formula_R": 1.6838718000000001,
+      "square_perimeter_relative_error": -0.00017841743875091076
+    },
+    {
+      "cell": "sg13g2_RCClampInverter",
+      "stock_spice": "XR0 iovss sub! ptap1 R=9.59",
+      "stock_R_ohm": 9.59,
+      "stock_CDL_A_um2": 68.973,
+      "stock_CDL_P_um": 33.22,
+      "CDL_formula_R_ohm": 9.589697924515379,
+      "CDL_formula_relative_to_stock_error": -3.1499007781099486e-05,
+      "raw_geometry_A_um2": 69.122,
+      "raw_geometry_P_um": 406.6,
+      "geometry_formula_R_ohm_conditional": 2.060026654222424,
+      "stock_over_geometry_formula_R": 4.655279571428571,
+      "square_perimeter_relative_error": 1.812303200843246e-07
+    }
+  ],
+  "CDL_SPICE_same_equivalent_square_model": "passed",
+  "geometry_electrical_model_validity": "not run: applying rectangle-PCell A/P equation to arbitrary guard rings is a conditional inference",
+  "full_IO_LVS": "failed; unchanged prior result"
+}

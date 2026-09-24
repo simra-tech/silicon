@@ -1,0 +1,28 @@
+--- hys-feedback-direct-prefix-20260922-r2/prefix.cir
++++ hys-feedback-full-20260922-r3/full.cir
+@@ -35,14 +35,14 @@
+ adac [d_clk d_s7 d_s6 d_s5 d_s4 d_s3 d_s2 d_s1 d_s0 d_h7 d_h6 d_h5 d_h4 d_h3 d_h2 d_h1 d_h0 d_count23 d_count22 d_count21 d_count20 d_count19 d_count18 d_count17 d_count16 d_count15 d_count14 d_count13 d_count12 d_count11 d_count10 d_count9 d_count8 d_count7 d_count6 d_count5 d_count4 d_count3 d_count2 d_count1 d_count0 d_sync_soft d_sync_hard d_soft_mask d_soft_armed d_trip d_rst_n] [clk s7 s6 s5 s4 s3 s2 s1 s0 h7 h6 h5 h4 h3 h2 h1 h0 count23 count22 count21 count20 count19 count18 count17 count16 count15 count14 count13 count12 count11 count10 count9 count8 count7 count6 count5 count4 count3 count2 count1 count0 sync_soft sync_hard soft_mask soft_armed trip rst_n] dac
+ Vosc osc 0 PULSE(0 1.2 20n .2n .2n 50n 100n)
+ Ven en 0 PWL(0 0 50n 0 50.3n 1.2)
+-.save v(osc) v(en) v(cmp_soft) v(cmp_hard) v(clk) v(s7) v(s6) v(s5) v(s4) v(s3) v(s2) v(s1) v(s0) v(h7) v(h6) v(h5) v(h4) v(h3) v(h2) v(h1) v(h0) v(count23) v(count22) v(count21) v(count20) v(count19) v(count18) v(count17) v(count16) v(count15) v(count14) v(count13) v(count12) v(count11) v(count10) v(count9) v(count8) v(count7) v(count6) v(count5) v(count4) v(count3) v(count2) v(count1) v(count0) v(sync_soft) v(sync_hard) v(soft_mask) v(soft_armed) v(trip) v(rst_n) v(shp) v(vref) v(iptat) v(vref_buf) v(vped) v(isense) v(xt.icmp) v(xt.vth_soft) v(xt.vth_hard)
++.save v(osc) v(en) v(cmp_soft) v(cmp_hard) v(clk) v(s7) v(s6) v(s5) v(s4) v(s3) v(s2) v(s1) v(s0) v(h7) v(h6) v(h5) v(h4) v(h3) v(h2) v(h1) v(h0) v(count23) v(count22) v(count21) v(count20) v(count19) v(count18) v(count17) v(count16) v(count15) v(count14) v(count13) v(count12) v(count11) v(count10) v(count9) v(count8) v(count7) v(count6) v(count5) v(count4) v(count3) v(count2) v(count1) v(count0) v(sync_soft) v(sync_hard) v(soft_mask) v(soft_armed) v(trip) v(rst_n) v(shp) v(vref) v(iptat) v(vref_buf) v(vped) v(isense) v(xt.icmp) v(xt.vth_soft) v(xt.vth_hard) v(xt.cmp_clk_n)
+ .control
+ set num_threads=1
+ set numdgt=15
+ set filetype=ascii
+ setseed 71001
+ reset
+-tran .2n 0.9u 0 .2n
++tran .2n 3u 0 .2n
+ echo HYS_PARAMETERS_AFTER
+ print @n.xs.xota.xm1.nsg13_hv_pmos[w]
+ print @n.xs.xota.xm1.nsg13_hv_pmos[l]
+@@ -73,7 +73,7 @@
+ print @q.xbgr.xq56.qnpn13g2[area]
+ set wr_singlescale
+ set wr_vecnames
+-wrdata qualification/hys-feedback-direct-prefix-20260922-r2/prefix.dat v(osc) v(en) v(cmp_soft) v(cmp_hard) v(clk) v(s7) v(s6) v(s5) v(s4) v(s3) v(s2) v(s1) v(s0) v(h7) v(h6) v(h5) v(h4) v(h3) v(h2) v(h1) v(h0) v(count23) v(count22) v(count21) v(count20) v(count19) v(count18) v(count17) v(count16) v(count15) v(count14) v(count13) v(count12) v(count11) v(count10) v(count9) v(count8) v(count7) v(count6) v(count5) v(count4) v(count3) v(count2) v(count1) v(count0) v(sync_soft) v(sync_hard) v(soft_mask) v(soft_armed) v(trip) v(rst_n) v(shp) v(vref) v(iptat) v(vref_buf) v(vped) v(isense) v(xt.icmp) v(xt.vth_soft) v(xt.vth_hard)
++wrdata qualification/hys-feedback-full-20260922-r3/full.dat v(osc) v(en) v(cmp_soft) v(cmp_hard) v(clk) v(s7) v(s6) v(s5) v(s4) v(s3) v(s2) v(s1) v(s0) v(h7) v(h6) v(h5) v(h4) v(h3) v(h2) v(h1) v(h0) v(count23) v(count22) v(count21) v(count20) v(count19) v(count18) v(count17) v(count16) v(count15) v(count14) v(count13) v(count12) v(count11) v(count10) v(count9) v(count8) v(count7) v(count6) v(count5) v(count4) v(count3) v(count2) v(count1) v(count0) v(sync_soft) v(sync_hard) v(soft_mask) v(soft_armed) v(trip) v(rst_n) v(shp) v(vref) v(iptat) v(vref_buf) v(vped) v(isense) v(xt.icmp) v(xt.vth_soft) v(xt.vth_hard) v(xt.cmp_clk_n)
+ echo HYS_ANALOG_COMPLETE
+ quit 0
+ .endc

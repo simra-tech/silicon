@@ -1,0 +1,8 @@
+# Export-only diagnostic wrapper; installed extraction rules remain unchanged.
+# %include /usr/local/lib/python3.12/dist-packages/klayout_pex/pdk/ihp-sg13g2/libs.tech/kpex/sg13g2.lvs
+clip_db = lvs_data
+clip_db.reset_extracted
+clip_db.extract_netlist
+clip_db.netlist.make_top_level_pins
+clip_db.write($report)
+clip_db.netlist.write($export_netlist, RBA::NetlistSpiceWriter.new)

@@ -1,0 +1,20 @@
+--- qualifiedJointOP
++++ dacStaticControl
+@@ -38,7 +38,7 @@
+ Cs cmp_soft 0 10f
+ Ch cmp_hard 0 10f
+ * keep only the nodes of interest (the full 1200-device transient exhausts the output memory)
+-.save v(clk) v(vref) v(iptat) v(vref_buf) v(xt.icmp) v(xt.vth_soft) v(xt.vth_hard) v(cmp_soft) v(cmp_hard) v(isense) v(xt.cmp_clk_n) v(xt.xch.xp) v(xt.xch.xq) v(xt.xch.xn) v(xt.xch.yn) v(vped) v(shp)
++.save v(clk) v(vref) v(iptat) v(vref_buf) v(xt.icmp) v(xt.vth_soft) v(xt.vth_hard) v(cmp_soft) v(cmp_hard) v(isense) v(xt.cmp_clk_n) v(xt.xch.xp) v(xt.xch.xq) v(xt.xch.xn) v(xt.xch.yn) v(vped) v(shp) i(vdda) i(vdd)
+ .lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerHBT.lib hbt_typ_mismatch
+ .include qualification/@RUN@/bgr.spice
+ Vr4 r4 0 0
+@@ -23149,7 +23149,7 @@
+ print @n.xbgr.xr16.nr1[nsmm_rsh]
+ print @q.xbgr.xq56.qnpn13g2[area]
+ echo P0_LEGACY27_AFTER_END
+-wrdata qualification/@RUN@/op0.dat v(vref) v(iptat) v(vref_buf) v(vped) v(shp) v(isense) v(xt.icmp) v(xt.vth_soft) v(xt.vth_hard)
++wrdata qualification/@RUN@/op0.dat v(vref) v(iptat) v(vref_buf) v(vped) v(shp) v(isense) v(xt.icmp) v(xt.vth_soft) v(xt.vth_hard) i(vdda) i(vdd)
+ echo POPULATION_OP_END
+ quit 0
+ .endc

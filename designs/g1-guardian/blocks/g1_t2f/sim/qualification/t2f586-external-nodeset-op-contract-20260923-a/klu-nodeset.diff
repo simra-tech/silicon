@@ -1,0 +1,41 @@
+--- preservedFailedKLU75201LowCold32us
++++ OPonly/klu-nodeset
+@@ -21,6 +21,7 @@
+ * TEMP_OUT pad stand-in: ~50 fF of core wiring plus the IO cell input
+ Cout fout 0 50f
+ .options klu
++.nodeset v(vref)=1.04208 v(pbias)=2.33602 v(pcasc)=1.80609 v(vbe)=0.702779 v(dvbe)=0.0545998
+ .control
+ set num_threads=1
+ set filetype=ascii
+@@ -3216,7 +3217,7 @@
+ print @c.xt2f.xc1.c1[scale]
+ print @c.xt2f.xc2.c1[scale]
+ echo P0_T2F_BEFORE_END
+-tran 5n 32u
++op
+ echo P0_BGR_AFTER_BEGIN
+ print @n.xbgr.xr1.nr1[nsmm_rsh]
+ print @n.xbgr.xr1.nr1[nsmm_w]
+@@ -6401,20 +6402,7 @@
+ print @c.xt2f.xc1.c1[scale]
+ print @c.xt2f.xc2.c1[scale]
+ echo P0_T2F_AFTER_END
+-meas tran t_a when v(fout)=0.6 rise=8
+-meas tran t_b when v(fout)=0.6 rise=24
+-let freq = (24-8)/(t_b-t_a)
+-print freq
+-meas tran i33_avg avg i(vdd) from=t_a to=t_b
+-meas tran i12_avg avg i(vdd12) from=t_a to=t_b
+-meas tran vref_avg avg v(vref) from=t_a to=t_b
+-meas tran vth_avg avg v(xt2f.vth) from=t_a to=t_b
+-meas tran cap1_max max v(xt2f.cap1) from=t_a to=t_b
+-meas tran fout_hi max v(fout) from=t_a to=t_b
+-meas tran fout_lo min v(fout) from=t_a to=t_b
+-meas tran t_half_a trig v(fout) val=0.6 rise=8 targ v(fout) val=0.6 fall=8
+-
+-wrdata phase0.dat v(fout) v(vref) i(vdd) i(vdd12) v(xt2f.cap1) v(xt2f.cap2) v(xt2f.ca1) v(xt2f.tail1) v(xt2f.cb1) v(xt2f.ca2) v(xt2f.tail2) v(xt2f.cb2)
++wrdata op.dat v(fout) v(vref) i(vdd) i(vdd12) v(xt2f.cap1) v(xt2f.cap2) v(xt2f.ca1) v(xt2f.tail1) v(xt2f.cb1) v(xt2f.ca2) v(xt2f.tail2) v(xt2f.cb2) v(pbias) v(pcasc) v(vbe) v(dvbe)
+ echo PHASE0_END
+ quit
+ .endc

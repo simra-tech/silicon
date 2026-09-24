@@ -1,5 +1,8 @@
 import unittest
-from run_final_expanded_sta import spef_commands
+import hashlib
+from pathlib import Path
+import tempfile
+from run_final_expanded_sta import spef_commands,engine_override
 
 
 class SpefImportTests(unittest.TestCase):
@@ -29,6 +32,19 @@ class SpefImportTests(unittest.TestCase):
 
     def test_unsafe_tcl_path_rejected(self):
         with self.assertRaises(AssertionError):spef_commands('bad}path','m')
+
+    def test_default_engine_held(self):
+        default=Path('/fixed/default/sta')
+        self.assertEqual(engine_override(default,None,None),default)
+
+    def test_explicit_engine_hash_and_path_controls(self):
+        with tempfile.TemporaryDirectory() as folder:
+            source=Path(folder)/'engine';source.write_bytes(b'fixed engine test fixture')
+            digest=hashlib.sha256(source.read_bytes()).hexdigest()
+            self.assertEqual(engine_override(Path('/default'),source,digest),source)
+            for path,expected in [(source,None),(None,digest),(Path('relative'),digest),
+                                  (source,'0'*64),(source,'bad'),(source/'missing',digest)]:
+                with self.assertRaises(AssertionError):engine_override(Path('/default'),path,expected)
 
 
 if __name__=='__main__':unittest.main()

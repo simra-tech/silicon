@@ -8,13 +8,13 @@ from pathlib import Path
 import re
 import pya
 
-p=argparse.ArgumentParser(description=__doc__);p.add_argument('report',type=Path);a=p.parse_args()
+p=argparse.ArgumentParser(description=__doc__);p.add_argument('report',type=Path);p.add_argument('--cells',nargs='+',default=['sg13g2_SecondaryProtection','sg13g2_Clamp_N20N0D','sg13g2_Clamp_P20N0D','sg13g2_DCNDiode','sg13g2_DCPDiode']);a=p.parse_args()
 if a.report.exists():raise FileExistsError('Preserve prior evidence')
 pdk=Path('/foss/pdks/ihp-sg13g2');gds=pdk/'libs.ref/sg13g2_io/gds/sg13g2_io.gds';cdl=pdk/'libs.ref/sg13g2_io/cdl/sg13g2_io.cdl'
 layout=pya.Layout();layout.read(str(gds));source=cdl.read_text();rows=[]
 scale={'p':1e-12,'f':1e-15,'u':1e-6,'n':1e-9}
 def value(token):return float(token[:-1])*scale[token[-1]]
-for name in ['sg13g2_SecondaryProtection','sg13g2_Clamp_N20N0D','sg13g2_Clamp_P20N0D','sg13g2_DCNDiode','sg13g2_DCPDiode']:
+for name in a.cells:
     cell=layout.cell(name)
     def region(number):return pya.Region(cell.begin_shapes_rec(layout.layer(number,0))).merged()
     # Active P+ outside nwell and excluding gates/resistors. These simple IO
@@ -28,6 +28,7 @@ for name in ['sg13g2_SecondaryProtection','sg13g2_Clamp_N20N0D','sg13g2_Clamp_P2
     rows.append({'cell':name,'stock_cdl':line,'cdl_area_um2':area_cdl,'cdl_perimeter_um':perimeter_cdl,
                  'equivalent_square_perimeter_um':4*math.sqrt(area_cdl),
                  'geometry_area_um2':area,'geometry_perimeter_um':perimeter,'geometry_polygons':tap.count(),
+                 'geometry_polygon_details':[{'bbox_um':[poly.bbox().left*layout.dbu,poly.bbox().bottom*layout.dbu,poly.bbox().right*layout.dbu,poly.bbox().top*layout.dbu],'area_um2':poly.area()*layout.dbu**2,'perimeter_um':poly.perimeter()*layout.dbu,'is_box':poly.is_box()} for poly in tap.each()],
                  'geometry_minus_cdl_area_pct':100*(area/area_cdl-1),
                  'geometry_to_cdl_perimeter_ratio':perimeter/perimeter_cdl})
 result={'scope':'Independent raw geometry arithmetic, not extracted-netlist reference generation and not LVS closure',
