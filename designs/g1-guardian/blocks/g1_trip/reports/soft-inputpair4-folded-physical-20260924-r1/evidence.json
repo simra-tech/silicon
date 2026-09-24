@@ -1,0 +1,285 @@
+{
+  "schema": "folded-soft-inputpair-physical-milestone-r1",
+  "scope": "Saved physical evidence only; not source adoption or electrical qualification",
+  "location_normalization": "Only locations normalized to BULK/PDK/REPO/TOOLS placeholders. Original hashes and byte lengths refer to untouched external artifacts, not this derived inventory. External tools are hash-bound, not included; not a self-contained reproduction package. ROOT administrative identities omitted.",
+  "records": [
+    {
+      "path": "${BULK}/soft-inputpair4-parent-20260924-r3/preparation.json",
+      "original_sha256": "fb6d5647b43ac56d21bbe3b7f2f556de69855c784ac73d795f4729c4e82bf428",
+      "original_bytes": 2498,
+      "status": "prepared isolated full-parent candidate; DRC/LVS not run"
+    },
+    {
+      "path": "${BULK}/soft-inputpair4-parent-20260924-r3/independent_geometry_audit.json",
+      "original_sha256": "22f01c29fea535fdf198a1016d59b248a4ffd47b985caef86eb3e6cf4bf04e4d",
+      "original_bytes": 2087,
+      "status": "passed independent exact non-target and bounded soft-cell/q-feed delta audit"
+    },
+    {
+      "path": "${BULK}/soft-inputpair4-parent-20260924-r3/flat-r1/summary.json",
+      "original_sha256": "6f58a555d05fc3d205e6fb838f9bead2f96bc503ad4213bba4f2045725f0418c",
+      "original_bytes": 5482,
+      "status": "passed exact stock-reader source flatten roundtrip"
+    },
+    {
+      "path": "${BULK}/soft-inputpair4-parent-20260924-r3/drc-main.summary.json",
+      "original_sha256": "005f932786db438981065ce4d7e623cbb2555e0dc60a385de7beb8a061dddf46",
+      "original_bytes": 1597,
+      "status": "failed full-parent main/no-density DRC",
+      "returncode": 124,
+      "markers": 0,
+      "wall_s": 1151.6652159318328,
+      "command": [
+        "python3",
+        "${PDK}/libs.tech/klayout/tech/drc/run_drc.py",
+        "--path=${BULK}/soft-inputpair4-parent-20260924-r3/candidate.gds",
+        "--topcell=placed_core_NOT_CONNECTED_FULLCHIP",
+        "--run_mode=deep",
+        "--no_density",
+        "--run_dir=${BULK}/soft-inputpair4-parent-20260924-r3/drc-main"
+      ],
+      "reports_sha256": {
+        "${BULK}/soft-inputpair4-parent-20260924-r3/drc-main/candidate_placed_core_NOT_CONNECTED_FULLCHIP_main.lyrdb": "91a6c1287774652901015f941f98e889a1201fdb219594630093087a1546b3ac"
+      },
+      "stock_rules_held": true,
+      "inputs_held": true
+    },
+    {
+      "path": "${BULK}/soft-inputpair4-parent-20260924-r3/drc-maximal-r2/summary.json",
+      "original_sha256": "8d80fdfb93f37b46debf8125a8dc2523d9d4708447d2271aa9e379029e2f56d6",
+      "original_bytes": 2949,
+      "status": "passed scoped maximal DRC",
+      "returncode": 0,
+      "wall_s": 987.3326319959015,
+      "command": [
+        "timeout",
+        "--kill-after=5",
+        "1130",
+        "python3",
+        "${TOOLS}/run_soft_inputpair4_parent_maximal_r2.py",
+        "--candidate-dir",
+        "${BULK}/soft-inputpair4-parent-20260924-r3",
+        "--execute"
+      ],
+      "reports": [
+        {
+          "path": "${BULK}/soft-inputpair4-parent-20260924-r3/drc-maximal-r2/reports/candidate_placed_core_NOT_CONNECTED_FULLCHIP_sg13g2_maximal.lyrdb",
+          "sha256": "e185ce2b4407738709d5ffb8c4fec819b4aef4e8ce1be765b80a4b9e6d472c14",
+          "markers": 0
+        }
+      ],
+      "reused_main": {
+        "sha256": "91a6c1287774652901015f941f98e889a1201fdb219594630093087a1546b3ac",
+        "markers": 0,
+        "wall_s": 487.47
+      },
+      "stock_rules_and_inputs_held": true
+    },
+    {
+      "path": "${BULK}/soft-inputpair4-parent-20260924-r3/lvs-r1.summary.json",
+      "original_sha256": "3bb605b1556495509805ef4878a7959850c268d4bc834ccf32b97c9a00161da8",
+      "original_bytes": 5397,
+      "status": "passed projected-reference strict stock LVS",
+      "command": [
+        "python3",
+        "${PDK}/libs.tech/klayout/tech/lvs/run_lvs.py",
+        "--layout",
+        "${BULK}/soft-inputpair4-parent-20260924-r3/candidate.gds",
+        "--netlist",
+        "${BULK}/soft-inputpair4-parent-20260924-r3/flat-r1/physical_AP_three_dummy_flat_reference.cdl",
+        "--topcell",
+        "placed_core_NOT_CONNECTED_FULLCHIP",
+        "--run_mode",
+        "deep",
+        "--top_lvl_pins",
+        "--spice_comments",
+        "--run_dir",
+        "${BULK}/soft-inputpair4-parent-20260924-r3/lvs-r1"
+      ],
+      "stock_rules_and_inputs_held": true
+    },
+    {
+      "path": "${BULK}/soft-inputpair4-parent-20260924-r3/lvs-r1/strict_analysis.json",
+      "original_sha256": "64181890e9b6add7a784e6d9d1369a155c9a2b54895d33340c8bda154fc421a5",
+      "original_bytes": 4461,
+      "status": "passed strict saved comparison"
+    },
+    {
+      "path": "${BULK}/soft-inputpair4-parent-20260924-r3/native_boundary_r1.json",
+      "original_sha256": "caf7ed13889026b6260830ddf8622309ddfc981e6064630af9e89becc3579d20",
+      "original_bytes": 28851,
+      "status": "passed saved native geometry and representation-boundary inventory"
+    },
+    {
+      "path": "${BULK}/soft-inputpair4-parent-20260924-r3/density_cpu14_r1/summary.json",
+      "original_sha256": "6791e1a3e9bf356417a7ef85a7a017d8068a72196eeab4a26d911ee8722585ee",
+      "original_bytes": 1604,
+      "status": "passed",
+      "returncode": 0,
+      "markers": 0,
+      "wall_s": 55.17830381914973,
+      "command": [
+        "python3",
+        "${PDK}/libs.tech/klayout/tech/drc/run_drc.py",
+        "--path=${BULK}/soft-inputpair4-parent-20260924-r3/candidate.gds",
+        "--topcell=placed_core_NOT_CONNECTED_FULLCHIP",
+        "--run_mode=deep",
+        "--density_thr=1",
+        "--density_only",
+        "--run_dir=${BULK}/soft-inputpair4-parent-20260924-r3/density_cpu14_r1/reports"
+      ],
+      "klayout_version": "KLayout 0.30.9",
+      "pdk_commit": "84374023ee8b4b126bebbba67fcbada0a9c0ff0b",
+      "reports_sha256": {
+        "candidate_placed_core_NOT_CONNECTED_FULLCHIP_density.lyrdb": "5f888d683d2c9e3363c00f478f291e59687545f29970e07db5f133d0aef7ac88"
+      },
+      "stock_rules_held": true,
+      "inputs_held": true
+    },
+    {
+      "path": "${BULK}/soft-inputpair4-parent-20260924-r3/antenna_cpu14_r1/summary.json",
+      "original_sha256": "b23a7ff26b3383ad4eaec95a1bfe79c43a96cdac82890d3b7ff3b38c637b1122",
+      "original_bytes": 1622,
+      "status": "passed",
+      "returncode": 0,
+      "markers": 0,
+      "wall_s": 153.60181761160493,
+      "command": [
+        "python3",
+        "${PDK}/libs.tech/klayout/tech/drc/run_drc.py",
+        "--path=${BULK}/soft-inputpair4-parent-20260924-r3/candidate.gds",
+        "--topcell=placed_core_NOT_CONNECTED_FULLCHIP",
+        "--run_mode=deep",
+        "--density_thr=1",
+        "--antenna_only",
+        "--run_dir=${BULK}/soft-inputpair4-parent-20260924-r3/antenna_cpu14_r1/reports",
+        "--antenna"
+      ],
+      "klayout_version": "KLayout 0.30.9",
+      "pdk_commit": "84374023ee8b4b126bebbba67fcbada0a9c0ff0b",
+      "reports_sha256": {
+        "candidate_placed_core_NOT_CONNECTED_FULLCHIP_antenna.lyrdb": "4ef034a4bba333fd7dd6969079a11bd5bd07696d6b096a5644fad337f22aa23b"
+      },
+      "stock_rules_held": true,
+      "inputs_held": true
+    }
+  ],
+  "external_tools": [
+    {
+      "path": "${TOOLS}/prepare_soft_inputpair4_folded_native_r1.py",
+      "sha256": "6dd9903f6409e245a49e6c536f7a503614bbc6339a57b4c6192331deea04869e",
+      "bytes": 2830
+    },
+    {
+      "path": "${TOOLS}/prepare_soft_inputpair4_parent_r3.py",
+      "sha256": "208f6c18ebf46cf8d6b072510348fafa871cf48b30d7370d8fedeecfb25e130f",
+      "bytes": 6780
+    },
+    {
+      "path": "${TOOLS}/soft_inputpair4_parent_reference_r1.py",
+      "sha256": "6813a1bb86b050ea22ed563d2459e71a120f5d12aec210bef20c546f4a7dd6ab",
+      "bytes": 1432
+    },
+    {
+      "path": "${TOOLS}/inspect_soft_inputpair4_parent_r1.py",
+      "sha256": "2849882180fd25b99909691d8a0f3cf8d6a188a5d0b0159dae80bf20a1268189",
+      "bytes": 3911
+    },
+    {
+      "path": "${TOOLS}/audit_soft_inputpair4_parent_geometry_r2.py",
+      "sha256": "665e5f9c27f5a3eebcc0a71a2813284415c012338507da89d528b1b851d4d7f6",
+      "bytes": 4733
+    },
+    {
+      "path": "${TOOLS}/flatten_soft_inputpair4_reference_r1.rb",
+      "sha256": "18f9be251f46d25d9c332c6857636f9209d2679fd6866ac0b35a3724aa7670c5",
+      "bytes": 1085
+    },
+    {
+      "path": "${TOOLS}/run_soft_inputpair4_parent_drc_r1.py",
+      "sha256": "5b2c9aaa7786d92387c1b5b872a5225d38e2aa9f1aba3e5875aef555c0a216e4",
+      "bytes": 3080
+    },
+    {
+      "path": "${TOOLS}/run_soft_inputpair4_parent_maximal_r2.py",
+      "sha256": "160dad80f7991f451cb068581f78d33eccfa4ae196a1fd2bcd537f439b5f108d",
+      "bytes": 3807
+    },
+    {
+      "path": "${TOOLS}/run_soft_inputpair4_parent_lvs_r1.py",
+      "sha256": "e9bff1b004d2bbd96edffced99aec79aa5047ba01b6da725e2a233e97afb272d",
+      "bytes": 4954
+    },
+    {
+      "path": "${TOOLS}/inspect_soft_inputpair4_native_boundary_r1.py",
+      "sha256": "bcffc45c346d7817862cae1790b36d839f02ec09526f705d4e0fe37762989c08",
+      "bytes": 5975
+    },
+    {
+      "path": "${TOOLS}/run_soft_parent_density_antenna_r1.py",
+      "sha256": "909eea85c84baf6606608beaa6fbba56b6f97d7279e586eb47747220c2925b11",
+      "bytes": 3571
+    }
+  ],
+  "independent_density_antenna_audit": {
+    "original_sha256": "9c3350e7e6c4520262b537748189c3bcbf37dc51cd1daa5643ab37194a1eac4c",
+    "original_bytes": 1368,
+    "source_gds_sha256": "60730627d24e1fb6b880138edc3e50fdd7c14624bb2dfbbc631e084b7415eca1",
+    "records": [
+      {
+        "mode": "density",
+        "status": "passed",
+        "markers": 0,
+        "summary_sha256": "6791e1a3e9bf356417a7ef85a7a017d8068a72196eeab4a26d911ee8722585ee",
+        "report_sha256": "5f888d683d2c9e3363c00f478f291e59687545f29970e07db5f133d0aef7ac88",
+        "wall_s": 55.17830381914973
+      },
+      {
+        "mode": "antenna",
+        "status": "passed",
+        "markers": 0,
+        "summary_sha256": "b23a7ff26b3383ad4eaec95a1bfe79c43a96cdac82890d3b7ff3b38c637b1122",
+        "report_sha256": "4ef034a4bba333fd7dd6969079a11bd5bd07696d6b096a5644fad337f22aa23b",
+        "wall_s": 153.60181761160493
+      }
+    ],
+    "status": "passed saved density and antenna audit"
+  },
+  "artifacts": [
+    {
+      "role": "parent_gds",
+      "path": "${BULK}/osc-r095-fullchip-integration-20260924-r1/osc_r095_fullchip.gds",
+      "sha256": "18b897feb06b7a02508ea8734d40845d69bcb515955368daba9dd1938a1949c9"
+    },
+    {
+      "role": "parent_canonical_cdl",
+      "path": "${BULK}/osc-r095-physical-20260924-r1/fullchip_r095_candidate.cdl",
+      "sha256": "126acd51cae404f55e9a3470d521d0d90f5115e668fbf393ac48c492e4507333"
+    },
+    {
+      "role": "candidate_gds",
+      "path": "${BULK}/soft-inputpair4-parent-20260924-r3/candidate.gds",
+      "sha256": "60730627d24e1fb6b880138edc3e50fdd7c14624bb2dfbbc631e084b7415eca1"
+    },
+    {
+      "role": "candidate_canonical_cdl",
+      "path": "${BULK}/soft-inputpair4-parent-20260924-r3/candidate.cdl",
+      "sha256": "984f82ddddf256f7077efc614850e15238ac910f6782c5f6d09140da88027f73"
+    },
+    {
+      "role": "comparison_only_reference",
+      "path": "${BULK}/soft-inputpair4-parent-20260924-r3/flat-r1/physical_AP_three_dummy_flat_reference.cdl",
+      "sha256": "417bf0d7ed571345b6fab19a809f6f9497052ac45316d4c0c8f51a1e274dc6f6"
+    },
+    {
+      "role": "native_lvs_database",
+      "path": "${BULK}/soft-inputpair4-parent-20260924-r3/lvs-r1/candidate.lvsdb",
+      "sha256": "386bc14c149d4f83a48988ea3d9b609db83bbd3dd7966e45a09ee8472bbaa303"
+    },
+    {
+      "role": "standalone_gds",
+      "path": "${BULK}/soft-inputpair4-folded-native-20260924-r1/standalone.gds",
+      "sha256": "576427ba66ba273d223d41db64e279686f0810910f35fab658378fdccb21236a"
+    }
+  ]
+}
