@@ -43,7 +43,7 @@ or central VSS feed was rerouted.
 | Stock density | passed | 0 markers; 55.18 s |
 | Stock antenna | passed | 0 markers; 153.60 s |
 | Stock-reader comparison-reference roundtrip | passed | 76,059 primitives and 22 pins |
-| Projected strict disconnected-placement LVS | passed | 11 checks; 61,684 combined devices, 31,173 nets and 22 pins; not assembled routed connectivity |
+| Projected strict candidate-parent LVS | passed | 11 checks; 61,684 combined devices, 31,173 nets and 22 pins; comparison-only reference, not canonical LVS |
 | Native junction/geometry inventory | passed | Both folded input devices independently identified |
 | Canonical, unprojected full-parent LVS | **not run** | Three all-VDD IO-pad PMOS purge discrepancy remains |
 | New native CPEX and loaded-field electrical checks | **not run** | No extracted-field acceptance inferred |
@@ -63,8 +63,12 @@ PMOS devices to match stock-reader purge behavior. That reversible
 **comparison-only** projection is not the canonical circuit definition and does
 not establish unprojected LVS. The compared layout top is
 `placed_core_NOT_CONNECTED_FULLCHIP`, matched against
-`PLACED_CORE_NOT_CONNECTED_FULLCHIP`. The passing comparison does not establish
-fully routed, assembled full-chip connectivity or electrical signoff.
+`PLACED_CORE_NOT_CONNECTED_FULLCHIP`. This legacy identifier is retained across
+the routed/sealed and filled parent lineage; its name does not demonstrate
+disconnected geometry. See the [native routing record](../../../../review/audits/FINAL_NATIVE_INTEGRATION_20260923.md)
+and [filled-parent lineage](../../../../review/audits/sense_power_interface/FINAL_FILL_REVIEW_20260923.md).
+The passing projected comparison does not establish canonical unprojected LVS
+or full-chip electrical signoff.
 
 ## Junction and mismatch boundary
 
