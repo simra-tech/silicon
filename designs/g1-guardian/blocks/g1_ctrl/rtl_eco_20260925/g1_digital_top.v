@@ -6,6 +6,12 @@
 // 2-flop synchroniser), or immediately (combinationally from EN) while EN has
 // never been seen high since power-up; release stays synchronous to osc_clk.
 // The analog EN path (G1_GATE en_core) is outside this macro and unchanged.
+// ECO 2026-09-25 (change 5a): the fast_en port is MODE.FAST_EN gated by fast_dly[2],
+// which is 0 in reset and rises 3 osc_clk edges after reset release, i.e. one
+// edge after the first real hard-comparator decision. While the core is in
+// reset cmp_clk is static and the unstrobed hard comparator output is not a
+// decision (it sits at 1 on the chip netlist, g1_top eco_c_mid run); a fast
+// path enabled at that moment would set the G1_GATE latch as soon as EN rises.
 // Interface names: G1_REGISTER_MAP.md section 2, blocks/g1_trip/INTERFACE.md,
 // blocks/g1_t2f/INTERFACE.md.
 // SPDX-License-Identifier: Apache-2.0
@@ -96,6 +102,15 @@ module g1_digital_top #(
     end
     assign cmp_clk = cmp_clk_q;
 
+    // ---------------- fast path enable qualification (ECO 2026-09-25) ----------------
+    wire       fast_en_reg;       // MODE.FAST_EN from the register file
+    reg  [2:0] fast_dly;          // edges since reset release, saturating at 3
+    always @(posedge osc_clk or negedge rst_n) begin
+        if (!rst_n) fast_dly <= 3'b000;
+        else        fast_dly <= {fast_dly[1:0], 1'b1};
+    end
+    assign fast_en = fast_en_reg & fast_dly[2];
+
     // ---------------- serial ----------------
     wire       wr_en, rd_en;
     wire [6:0] wr_addr, rd_addr;
@@ -133,7 +148,7 @@ module g1_digital_top #(
         .hard_n(hard_n), .inrush(inrush), .hold_time(hold_time), .retry_max(retry_max),
         .soft_en(soft_en), .hard_en(hard_en), .retrig(retrig),
         .trip_set_sel(trip_set_sel), .force_trip(force_trip),
-        .fast_en(fast_en), .sense_ofs(sense_ofs),
+        .fast_en(fast_en_reg), .sense_ofs(sense_ofs),
         .clear(clear), .clr_trip_cnt(clr_trip_cnt), .clr_peak(clr_peak),
         .trip(trip), .trip_cause(trip_cause), .inrush_active(inrush_active),
         .holding(holding), .gave_up(gave_up), .soft_armed(soft_armed),

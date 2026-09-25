@@ -6,6 +6,7 @@
 #     flow/run.sh bash eco_20260925/run_eco.sh [suite|redteam|eco|alt-inrush|all]
 #   suite      existing tb_g1_digital.v (unmodified, v1.1 expectations) and tb_g1_seu.v on the ECO RTL
 #   redteam    existing redteam_20260925/tb_redteam.v (unmodified) on the ECO RTL
+#              and tb_redteam_eco.v (R1 rewritten to the map-1.2 power-up contract)
 #   eco        tb_g1_digital_eco.v: tb_g1_digital.v updated to map 1.2 plus the ECO tests E1..E8
 #   contracts  existing tb_bench/tb_fault/tb_cdc/tb_trim_contract.v (unmodified, v1.1 expectations) on the ECO RTL
 #              (iverilog -g2012 as in run_contract.py), then the map-1.2 copies tb_bench/tb_cdc_contract_eco.v
@@ -56,6 +57,9 @@ if [[ $MODE == suite || $MODE == all ]]; then
 fi
 if [[ $MODE == redteam || $MODE == all ]]; then
     run_tb tb_redteam_on_eco "$SIM/redteam_20260925/tb_redteam.v" "$HERE/tb_redteam_on_eco.log" "RED-TEAM RUN COMPLETE" $CTRL $SEU
+fi
+if [[ $MODE == redteam || $MODE == all ]]; then
+    run_tb tb_redteam_eco "$HERE/tb_redteam_eco.v" "$HERE/tb_redteam_eco.log" "RED-TEAM RUN COMPLETE" $CTRL $SEU
 fi
 if [[ $MODE == eco || $MODE == all ]]; then
     run_tb tb_g1_digital_eco "$HERE/tb_g1_digital_eco.v" "$HERE/tb_g1_digital_eco.log" "ALL TESTS PASSED" $CTRL $SEU

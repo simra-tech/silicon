@@ -22,7 +22,9 @@ Steps
     unconnected in the netlist (CTS dummy clock loads) and whose master is in
     --strip-masters gets an instance-local clone of its cell without that pin's
     label (__eco_port_text_<n>_<master>), as the chip did for its 29
-    sg13g2_inv_{2,4,8} clock loads.
+    sg13g2_inv_{2,4,8} clock loads. sg13g2_buf_4 was added on 2026-09-25: in the r3
+    candidate, three buf_4 dummy loads left synthetic X pins in projected LVS. inv_1 and
+    buf_8 dummy loads have never produced a pin. Projected LVS must show exactly 22 pins.
  4. Checks written to the report: XOR of the old and new cell on every pin layer
     (x/2); new TopMetal1/TopMetal2 drawing inside the old one (the chip's TM1
     stripes cross the macro and the chip's TM fill surrounds its TM shapes); on
@@ -97,7 +99,9 @@ def floating_outputs(nl_path, def_path, masters):
         if cell not in masters:
             continue
         connected = set(pins.findall(body))
-        missing = sorted({'Y', 'X'} & OUT_PINS - connected) if cell.startswith(('sg13g2_inv', 'sg13g2_buf')) else []
+        # output pin of the master: Y for inverters, X for buffers (other masters not handled)
+        out_pin = 'Y' if cell.startswith('sg13g2_inv') else 'X' if cell.startswith('sg13g2_buf') else None
+        missing = [out_pin] if out_pin and out_pin not in connected else []
         if missing:
             want[name] = (cell, missing)
     comp = re.compile(r'^\s*- (\S+) (\S+) .*?\+ (?:PLACED|FIXED) \( (-?\d+) (-?\d+) \) (\S+)', re.M)
@@ -118,7 +122,7 @@ def main():
     ap.add_argument('--macro-top', default='g1_digital')
     ap.add_argument('--netlist')
     ap.add_argument('--def', dest='deff')
-    ap.add_argument('--strip-masters', default='sg13g2_inv_2,sg13g2_inv_4,sg13g2_inv_8')
+    ap.add_argument('--strip-masters', default='sg13g2_inv_2,sg13g2_inv_4,sg13g2_inv_8,sg13g2_buf_4')
     ap.add_argument('--out', required=True)
     ap.add_argument('--report', required=True)
     a = ap.parse_args()

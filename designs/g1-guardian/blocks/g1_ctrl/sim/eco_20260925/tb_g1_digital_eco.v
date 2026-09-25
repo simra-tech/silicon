@@ -12,6 +12,24 @@
 // ChipDesign-BV/spi-slave-ihp (Apache-2.0), adapted to the 3-wire framing.
 // SPDX-License-Identifier: Apache-2.0
 `timescale 1ns/1ps
+// Gate level (-DGLS, flat g1_digital netlist): internal probes use the escaped
+// flop net names the flat netlist keeps (\u_core.rs1 , \u_core.u_trip.inrush_done );
+// checks that poke or read other RTL internals are RTL only. -DSDF: outputs are
+// sampled 20 ns after the clock edge instead of 1 ns (clock tree + clock-to-Q).
+`ifdef GLS
+  `define P_RSTN      p_rstn
+  `define P_INRUSH    p_inrush
+  `define PU_RS1(x)   x``_rs1
+`else
+  `define P_RSTN      dut.rst_n
+  `define P_INRUSH    dut.inrush_active
+  `define PU_RS1(x)   x.u_core.rs1
+`endif
+`ifdef SDF
+  `define SAMP #20
+`else
+  `define SAMP #1
+`endif
 
 module tb_g1_digital_eco;
 
@@ -74,27 +92,50 @@ module tb_g1_digital_eco;
     // (osc_en is a constant 1 in the ECO). Flop state at power-up: pu_x = simulator X
     // (unknown), pu_s0 / pu_s1 = en_seen deposited 0 / 1 at t = 0 (both silicon cases).
     reg en_pu = 0;
+    reg pu_run = 1;                          // the E6 instances are clocked only during E6 (run time)
+    wire pu_clk = osc_clk & pu_run;
     wire [7:0] pux_ds, pux_dh, pu0_ds, pu0_dh, pu1_ds, pu1_dh;
     wire pux_tripd, pux_clrd, pux_fast, pux_osc, pu0_tripd, pu0_clrd, pu0_fast, pu0_osc, pu1_tripd, pu1_clrd, pu1_fast, pu1_osc;
     wire [3:0] pux_trim, pu0_trim, pu1_trim;
-    g1_digital pu_x  (.osc_clk(osc_clk), .por_n(1'b1), .en(en_pu), .sclk(1'b0), .sdi(1'b0), .sdo(),
+    g1_digital pu_x  (.osc_clk(pu_clk), .por_n(1'b1), .en(en_pu), .sclk(1'b0), .sdi(1'b0), .sdo(),
         .cmp_clk(), .cmp_soft(1'b0), .cmp_hard(1'b0), .dac_soft(pux_ds), .dac_hard(pux_dh), .trip_set_sel(),
         .trip_d(pux_tripd), .clr_d(pux_clrd), .fast_en(pux_fast), .tripped(1'b0), .trip(), .gate_en(), .fault_n(),
         .trip_cause(), .osc_en(pux_osc), .osc_trim(pux_trim), .t2f_en(), .t2f_mode(), .bgr_r4(), .clk_div_out());
-    g1_digital pu_s0 (.osc_clk(osc_clk), .por_n(1'b1), .en(en_pu), .sclk(1'b0), .sdi(1'b0), .sdo(),
+    g1_digital pu_s0 (.osc_clk(pu_clk), .por_n(1'b1), .en(en_pu), .sclk(1'b0), .sdi(1'b0), .sdo(),
         .cmp_clk(), .cmp_soft(1'b0), .cmp_hard(1'b0), .dac_soft(pu0_ds), .dac_hard(pu0_dh), .trip_set_sel(),
         .trip_d(pu0_tripd), .clr_d(pu0_clrd), .fast_en(pu0_fast), .tripped(1'b0), .trip(), .gate_en(), .fault_n(),
         .trip_cause(), .osc_en(pu0_osc), .osc_trim(pu0_trim), .t2f_en(), .t2f_mode(), .bgr_r4(), .clk_div_out());
-    g1_digital pu_s1 (.osc_clk(osc_clk), .por_n(1'b1), .en(en_pu), .sclk(1'b0), .sdi(1'b0), .sdo(),
+    g1_digital pu_s1 (.osc_clk(pu_clk), .por_n(1'b1), .en(en_pu), .sclk(1'b0), .sdi(1'b0), .sdo(),
         .cmp_clk(), .cmp_soft(1'b0), .cmp_hard(1'b0), .dac_soft(pu1_ds), .dac_hard(pu1_dh), .trip_set_sel(),
         .trip_d(pu1_tripd), .clr_d(pu1_clrd), .fast_en(pu1_fast), .tripped(1'b0), .trip(), .gate_en(), .fault_n(),
         .trip_cause(), .osc_en(pu1_osc), .osc_trim(pu1_trim), .t2f_en(), .t2f_mode(), .bgr_r4(), .clk_div_out());
+`ifndef GLS
+    // en_seen power-up states (RTL): pu_s0 = 0, pu_s1 = 1; pu_x (and all three at gate level) = X
     initial begin pu_s0.u_core.en_seen = 1'b0; pu_s1.u_core.en_seen = 1'b1; end
+`endif
+    // G1_GATE model per instance (reset-dominant latch, gate_core = en_core & !tripped):
+    // gate_core must be 0 (never 1 or X) while EN is low, whatever the digital outputs are
+    reg lx = 0, l0 = 0, l1 = 0;
+    always @* begin if (~en_pu) lx = 1'b0; else if (pux_tripd === 1'b1) lx = 1'b1; end
+    always @* begin if (~en_pu) l0 = 1'b0; else if (pu0_tripd === 1'b1) l0 = 1'b1; end
+    always @* begin if (~en_pu) l1 = 1'b0; else if (pu1_tripd === 1'b1) l1 = 1'b1; end
+    wire gcx = en_pu & ~lx, gc0 = en_pu & ~l0, gc1 = en_pu & ~l1;
+    integer gc_bad = 0;
+    always @(gcx or gc0 or gc1 or en_pu) if (en_pu === 1'b0 && {gcx, gc0, gc1} !== 3'b000) gc_bad = gc_bad + 1;
 
+`ifdef GLS
+    // flat-netlist probes (escaped flop net names kept by the flow)
+    wire p_rstn    = dut.\u_core.rs1 ;
+    wire p_inrush  = ~dut.\u_core.u_trip.inrush_done ;     // one cycle later than inrush_active
+    wire pu_x_rs1  = pu_x.\u_core.rs1 ;
+    wire pu_s0_rs1 = pu_s0.\u_core.rs1 ;
+    wire pu_s1_rs1 = pu_s1.\u_core.rs1 ;
+`endif
     // E3 monitor: every value the soft window takes (RTL hierarchical probe)
     reg        st_mon = 0;
     reg [15:0] st_old, st_new;
     integer    st_bad = 0, st_changes = 0;
+`ifndef GLS
     always @(dut.u_regfile.soft_time) if (st_mon) begin
         st_changes = st_changes + 1;
         if (dut.u_regfile.soft_time !== st_old && dut.u_regfile.soft_time !== st_new) begin
@@ -102,6 +143,7 @@ module tb_g1_digital_eco;
             $display("  FAIL %0t SOFT_TIME transient 0x%04h (old 0x%04h new 0x%04h)", $time, dut.u_regfile.soft_time, st_old, st_new);
         end
     end
+`endif
 
     // clr_d pulse width monitor (must be >= 100 ns for the G1_GATE latch)
     real    t_clr_rise = 0.0, clr_min_width = 1.0e9;
@@ -184,14 +226,14 @@ module tb_g1_digital_eco;
     endtask
 
     task wait_cycles(input integer n);
-        begin repeat (n) @(posedge osc_clk); #1; end
+        begin repeat (n) @(posedge osc_clk); `SAMP; end
     endtask
 
     // wait until trip == v or timeout (cycles); returns cycles waited
     task wait_trip(input v, input integer max_cycles, output integer waited);
         begin
             waited = 0;
-            while (trip !== v && waited < max_cycles) begin @(posedge osc_clk); #1; waited = waited + 1; end
+            while (trip !== v && waited < max_cycles) begin @(posedge osc_clk); `SAMP; waited = waited + 1; end
         end
     endtask
 
@@ -200,7 +242,7 @@ module tb_g1_digital_eco;
     integer     w, i;
     real        t_trip, t0;
     integer     rst_falls = 0;
-    always @(negedge dut.rst_n) rst_falls = rst_falls + 1;
+    always @(negedge `P_RSTN) rst_falls = rst_falls + 1;
 
     initial begin
 `ifdef GLS
@@ -217,24 +259,33 @@ module tb_g1_digital_eco;
         check("pu_s0 osc_en = 1 at t = 0", pu0_osc, 1);
         check("pu_s1 osc_en = 1 at t = 0", pu1_osc, 1);
         // en_seen = 0: the reset follows EN combinationally, outputs defined before the first clock edge
+`ifndef GLS
         check("pu_s0 in reset before the first osc_clk edge", pu_s0.u_core.rs1, 0);
         check("pu_s0 dac_hard 0xFE before the first edge", pu0_dh, 8'hFE);
         check("pu_s0 dac_soft 0x99 before the first edge", pu0_ds, 8'h99);
-        check("pu_s0 trip_d, clr_d, fast_en = 0,0,1", {pu0_tripd, pu0_clrd, pu0_fast}, 3'b001);
+        check("pu_s0 trip_d, clr_d, fast_en = 0,0,0 (fast_en held in reset)", {pu0_tripd, pu0_clrd, pu0_fast}, 3'b000);
+`endif
         // en_seen = 1 or unknown: the 8-sample filter asserts the reset within 2 + 8 + 1 edges
-        repeat (11) @(posedge osc_clk); #1;
-        check("pu_s1 in reset within 11 edges", pu_s1.u_core.rs1, 0);
-        check("pu_x in reset within 11 edges", pu_x.u_core.rs1, 0);
-        check("pu_s1 outputs at reset values", {pu1_dh, pu1_ds, pu1_tripd, pu1_clrd, pu1_fast, pu1_trim}, {8'hFE, 8'h99, 3'b001, 4'h8});
-        check("pu_x outputs at reset values",  {pux_dh, pux_ds, pux_tripd, pux_clrd, pux_fast, pux_trim}, {8'hFE, 8'h99, 3'b001, 4'h8});
+        repeat (11) @(posedge osc_clk); `SAMP;
+        check("pu_s1 in reset within 11 edges", `PU_RS1(pu_s1), 0);
+        check("pu_x in reset within 11 edges", `PU_RS1(pu_x), 0);
+        check("pu_s0 outputs at reset values", {pu0_dh, pu0_ds, pu0_tripd, pu0_clrd, pu0_fast, pu0_trim}, {8'hFE, 8'h99, 3'b000, 4'h8});
+        check("pu_s1 outputs at reset values", {pu1_dh, pu1_ds, pu1_tripd, pu1_clrd, pu1_fast, pu1_trim}, {8'hFE, 8'h99, 3'b000, 4'h8});
+        check("pu_x outputs at reset values",  {pux_dh, pux_ds, pux_tripd, pux_clrd, pux_fast, pux_trim}, {8'hFE, 8'h99, 3'b000, 4'h8});
+`ifndef GLS
         check("pu_x INRUSH register 0x02", pu_x.u_core.u_regfile.inrush, 8'h02);
-        check("pu_x MODE register 0x23", pu_x.u_core.u_regfile.mode, 6'h23);
+        check("pu_x MODE register 0x03", pu_x.u_core.u_regfile.mode, 6'h03);
+`endif
+        check("gate_core model 0 throughout EN low (en_seen 0/1/X)", gc_bad, 0);
         // EN rises: reset released in <= 6 edges, en_seen set, and a later EN low of 9 cycles resets again
         en_pu = 1;
-        repeat (6) @(posedge osc_clk); #1;
-        check("pu_x released within 6 edges of EN rise", pu_x.u_core.rs1, 1);
-        check("pu_s0 released within 6 edges of EN rise", pu_s0.u_core.rs1, 1);
+        repeat (6) @(posedge osc_clk); `SAMP;
+        check("pu_x released within 6 edges of EN rise", `PU_RS1(pu_x), 1);
+        check("pu_s0 released within 6 edges of EN rise", `PU_RS1(pu_s0), 1);
+`ifndef GLS
         check("pu_s0 en_seen set by EN high", pu_s0.u_core.en_seen, 1);
+`endif
+        @(negedge osc_clk); pu_run = 0;
         end_test;
 
         do_reset;
@@ -252,7 +303,7 @@ module tb_g1_digital_eco;
         ser_check(7'h08, 8'h02, "INRUSH (ECO: reset 0x02)");
         ser_check(7'h09, 8'h0C, "HOLD_TIME");
         ser_check(7'h0A, 8'h03, "RETRY_MAX");
-        ser_check(7'h0B, 8'h23, "MODE (ECO: reset 0x23, FAST_EN)");
+        ser_check(7'h0B, 8'h03, "MODE reset 0x03");
         ser_check(7'h0C, 8'h00, "CTRL");
         ser_check(7'h0D, 8'h80, "STATUS (EN=1; ECO: 1024-cycle inrush already over)");
         ser_check(7'h0E, 8'h04, "STATUS2 (GATE_EN)");
@@ -283,14 +334,14 @@ module tb_g1_digital_eco;
         check("trip port", trip, 0);
         check("trip_d port", trip_d, 0);
         check("clr_d port", clr_d, 0);
-        check("fast_en port (ECO: 1)", fast_en, 1);
+        check("fast_en port 0", fast_en, 0);
         check("osc_en port", osc_en, 1);
         check("osc_trim port", osc_trim, 8);
         check("t2f_en port", t2f_en, 1);
         check("t2f_mode port", t2f_mode, 0);
         check("bgr_r4 port", bgr_r4, 0);
         // cmp_clk = osc_clk / 2: exactly 10 periods in 20 osc_clk cycles
-        w = 0; for (i = 0; i < 20; i = i + 1) begin @(posedge osc_clk); #1; if (cmp_clk) w = w + 1; end
+        w = 0; for (i = 0; i < 20; i = i + 1) begin @(posedge osc_clk); `SAMP; if (cmp_clk) w = w + 1; end
         check("cmp_clk high 10 of 20 cycles", w, 10);
         end_test;
 
@@ -359,7 +410,7 @@ module tb_g1_digital_eco;
         check("trip_d low while EN low", trip_d, 0);
         en = 1; #(130*OSC_T);
         ser_check(7'h03, 8'hFE, "DAC_HARD back to reset after EN cycle");
-        ser_check(7'h0B, 8'h23, "MODE back to reset after EN cycle (ECO: 0x23)");
+        ser_check(7'h0B, 8'h03, "MODE back to reset after EN cycle");
         end_test;
 
         // ------------------------------------------------------------
@@ -402,7 +453,7 @@ module tb_g1_digital_eco;
         begin_test("T06 hard path: N-1 consecutive decisions do not trip, N do; gap resets");
         ser_write(7'h08, 8'h00);            // no inrush for the rest
         ser_write(7'h07, 8'h0A);            // HARD_N = 10 comparator decisions (cmp_clk periods)
-        @(posedge osc_clk); #1;
+        @(posedge osc_clk); `SAMP;
         // one decision per 2 osc_clk: an 18-cycle window holds exactly 9 falling cmp_clk edges
         over_hard = 1; wait_cycles(18); over_hard = 0; wait_cycles(20);
         check("9 decisions: no trip", trip, 0);
@@ -423,7 +474,7 @@ module tb_g1_digital_eco;
         ser_write(7'h04, 8'h02); ser_write(7'h05, 8'h00);   // window 2 x 256 = 512 cycles
         ser_write(7'h06, 8'h04);                            // HYST_EN, 1 LSB
         ser_write(7'h0B, 8'h01);                            // soft only
-        @(posedge osc_clk); #1;
+        @(posedge osc_clk); `SAMP;
         over_soft = 1; wait_cycles(300);                    // cmp_soft high for 300 +/- 2 cycles
         check("dac_soft lowered by 1 LSB while armed", dac_soft, 8'h5F);
         ser_check(7'h0D, 8'hC0, "SOFT_ARMED");
@@ -656,7 +707,7 @@ module tb_g1_digital_eco;
         #(9*OSC_T);                         // ECO: reset after 8 consecutive low samples
         check("trip_d low in reset", trip_d, 0);
         en = 1; #(130*OSC_T);
-        ser_check(7'h0B, 8'h23, "MODE back to reset (ECO: 0x23)");
+        ser_check(7'h0B, 8'h03, "MODE back to reset");
         end_test;
 
         // ------------------------------------------------------------
@@ -670,28 +721,60 @@ module tb_g1_digital_eco;
         // ============================================================
         // ECO 2026-09-25 tests (E6 runs first, at power-up)
         // ------------------------------------------------------------
-        begin_test("E7 defaults: INRUSH 0x02 = 1024 cycles, FAST_EN 1 not masked");
+        begin_test("E7 defaults INRUSH 0x02 = 1024 cycles, MODE 0x03; FAST_EN not masked");
         en = 0; #(12*OSC_T); en = 1;
-        wait (dut.rst_n === 1'b1); t0 = $realtime;
-        wait (dut.inrush_active === 1'b0);
+        wait (`P_RSTN === 1'b1); t0 = $realtime;
+        wait (`P_INRUSH === 1'b0);
         w = ($realtime - t0) / OSC_T;
         $display("  inrush mask after reset release: %0d cycles", w);
         if (w < 1023 || w > 1026) begin errors = errors + 1; $display("  FAIL inrush window %0d cycles", w); end
         checks = checks + 1;
         #(130*OSC_T);
         ser_check(7'h08, 8'h02, "INRUSH reset 0x02");
-        ser_check(7'h0B, 8'h23, "MODE reset 0x23");
-        check("fast_en port 1", fast_en, 1);
+        ser_check(7'h0B, 8'h03, "MODE reset 0x03");
+        check("fast_en port 0", fast_en, 0);
         // hard overload inside the mask window: the analog fast path trips, the core adopts it
         en = 0; #(12*OSC_T); en = 1;
-        wait (dut.rst_n === 1'b1); wait_cycles(50);
-        check("inrush mask active", dut.inrush_active, 1);
+        wait (`P_RSTN === 1'b1); wait_cycles(10);
+        send_byte({1'b0, 7'h0B}); send_byte(8'h23);      // host enables FAST_EN inside the mask
+        wait_cycles(10);
+        check("fast_en enabled by the host", fast_en, 1);
+        check("inrush mask active", `P_INRUSH, 1);
         over_hard = 1; wait_cycles(3);
         check("G1_GATE latch set by the fast path during the mask", tripped, 1);
         wait_trip(1, 10, w);
-        check("adopted, cause hard, during the mask", {trip, trip_cause, dut.inrush_active}, {1'b1, 2'd2, 1'b1});
+        check("adopted, cause hard, during the mask", {trip, trip_cause, `P_INRUSH}, {1'b1, 2'd2, 1'b1});
         over_hard = 0;
         en = 0; #(12*OSC_T); en = 1; #(130*OSC_T);
+        end_test;
+
+        // ------------------------------------------------------------
+        begin_test("E9 unstrobed cmp_hard = 1 in reset: fast_en held until release + 3");
+        // chip netlist: while the core is in reset cmp_clk is static and the hard comparator
+        // output sits at 1 (g1_top eco_c_mid run); model it, with no real overload
+        over_hard = 0;
+        en = 0; #(12*OSC_T);
+        cmp_hard = 1'b1;                    // not a decision: no cmp_clk edge while in reset
+        check("fast_en port 0 while in reset", fast_en, 0);
+`ifndef GLS
+        force dut.u_regfile.mode = 6'h23;   // FAST_EN = 1 through the reset (worst case; RTL force)
+        en = 1;
+        wait (`P_RSTN === 1'b1); t0 = $realtime;
+        wait (fast_en === 1'b1); w = ($realtime - t0) / OSC_T;
+        $display("  fast_en enabled %0d cycles after reset release", w);
+        if (w < 2 || w > 3) begin errors = errors + 1; $display("  FAIL fast_en qualification %0d", w); end
+        checks = checks + 1;
+        check("first real decision made before fast_en (cmp_hard 0)", cmp_hard, 0);
+        wait_cycles(50);
+        check("no analog latch set, no trip after EN rise", {tripped, trip}, 2'b00);
+        #(130*OSC_T);
+        release dut.u_regfile.mode;
+`else
+        en = 1; wait_cycles(60);
+        check("MODE reset 0x03: no latch set, no trip after EN rise", {fast_en, tripped, trip}, 3'b000);
+`endif
+        en = 0; #(12*OSC_T); en = 1; #(130*OSC_T);
+        ser_check(7'h0B, 8'h03, "MODE 0x03 after EN cycle");
         end_test;
 
         // ------------------------------------------------------------
@@ -704,9 +787,11 @@ module tb_g1_digital_eco;
             ser_check(7'h28, {4'b0001, d8[3:0]}, "OSC_CTRL reads OSC_EN = 1");
         end
         ser_write(7'h28, 8'h08);
+`ifndef GLS
         dut.u_regfile.osc_ctrl = ~dut.u_regfile.osc_ctrl; #1;          // upset every trim flop at once
         check("osc_en with all OSC_CTRL flops flipped", osc_en, 1);
         dut.u_regfile.osc_ctrl = 4'h8;
+`endif
         ser_check(7'h00, 8'h47, "serial alive (CHIP_ID)");
         end_test;
 
@@ -714,7 +799,7 @@ module tb_g1_digital_eco;
         begin_test("E2 INRUSH raise: no re-mask when over, extends when running");
         ser_write(7'h0B, 8'h03);                           // digital paths only: test the digital mask
         ser_write(7'h07, 8'h04);
-        wait (dut.inrush_active === 1'b0); #(130*OSC_T);
+        wait (`P_INRUSH === 1'b0); #(130*OSC_T);
         ser_read(7'h0D, d8); check("mask of this EN cycle over", d8[3], 0);
         ser_write(7'h08, 8'h01);
         ser_read(7'h0D, d8); check("INRUSH 0x01 write: INRUSH_ACTIVE stays 0", d8[3], 0);
@@ -728,10 +813,10 @@ module tb_g1_digital_eco;
         check("cleared", trip, 0);
         // a raise while the window is still running extends it (window uses the current value)
         en = 0; #(12*OSC_T); en = 1;
-        wait (dut.rst_n === 1'b1); t0 = $realtime;
+        wait (`P_RSTN === 1'b1); t0 = $realtime;
         #(130*OSC_T);
         ser_write(7'h08, 8'h04);                           // 2048 cycles, written at ~170 cycles
-        wait (dut.inrush_active === 1'b0);
+        wait (`P_INRUSH === 1'b0);
         w = ($realtime - t0) / OSC_T;
         $display("  extended mask: %0d cycles", w);
         if (w < 2047 || w > 2050) begin errors = errors + 1; $display("  FAIL extended mask %0d cycles", w); end
@@ -743,20 +828,42 @@ module tb_g1_digital_eco;
         begin_test("E3 SOFT_TIME atomic on the _L write, no transient, no 0x0000");
         ser_write(7'h0B, 8'h00);
         ser_write(7'h05, 8'h01); ser_write(7'h04, 8'h00);
+        `ifdef GLS
+        ser_read16(7'h04, d16); check("SOFT_TIME = 0x0100 (read-back)", d16, 16'h0100);
+`else
         check("SOFT_TIME = 0x0100", dut.u_regfile.soft_time, 16'h0100);
+`endif
         st_old = 16'h0100; st_new = 16'h00FF; st_changes = 0; st_bad = 0; st_mon = 1;
         ser_write(7'h05, 8'h00);
+        `ifdef GLS
+        ser_read16(7'h04, d16); check("after _H write: unchanged 0x0100 (read-back)", d16, 16'h0100);
+`else
         check("after _H write: unchanged 0x0100", dut.u_regfile.soft_time, 16'h0100);
+`endif
         ser_write(7'h04, 8'hFF);
+        `ifdef GLS
+        ser_read16(7'h04, d16); check("after _L write: 0x00FF (read-back)", d16, 16'h00FF);
+`else
         check("after _L write: 0x00FF", dut.u_regfile.soft_time, 16'h00FF);
+`endif
         st_old = 16'h00FF; st_new = 16'h0100;
         ser_write(7'h05, 8'h01);
+        `ifdef GLS
+        ser_read16(7'h04, d16); check("after _H write: unchanged 0x00FF (read-back)", d16, 16'h00FF);
+`else
         check("after _H write: unchanged 0x00FF", dut.u_regfile.soft_time, 16'h00FF);
+`endif
         ser_write(7'h04, 8'h00);
+        `ifdef GLS
+        ser_read16(7'h04, d16); check("after _L write: 0x0100 (read-back)", d16, 16'h0100);
+`else
         check("after _L write: 0x0100", dut.u_regfile.soft_time, 16'h0100);
+`endif
         st_mon = 0;
+`ifndef GLS
         check("exactly two changes, one per _L write", st_changes, 2);
         check("no transient value", st_bad, 0);
+`endif
         // R5 scenario under load: continuous soft overload, window shortened 0x0100 -> 0x00FF
         ser_write(7'h08, 8'h00); ser_write(7'h0B, 8'h01);
         over_soft = 1; wait_cycles(2000);
@@ -799,7 +906,7 @@ module tb_g1_digital_eco;
         check("9-cycle EN low: latched trip re-adopted (cause hard)", {trip, tripped, trip_cause}, {1'b1, 1'b1, 2'd2});
         #(130*OSC_T);
         ser_check(7'h03, 8'hFE, "DAC_HARD back to reset");
-        ser_check(7'h0B, 8'h23, "MODE back to reset");
+        ser_check(7'h0B, 8'h03, "MODE back to reset");
         // EN low 20 cycles (> 11): trip_d falls while EN is still low, both latches clear
         en = 0; #(20*OSC_T); en = 1; wait_cycles(10);
         check("20-cycle EN low: both latches clear", {trip, tripped}, 2'b00);
@@ -807,14 +914,14 @@ module tb_g1_digital_eco;
         // latency EN fall -> rst_n fall, and EN rise -> rst_n rise
         @(posedge osc_clk); #37;
         en = 0; t0 = $realtime;
-        wait (dut.rst_n === 1'b0); w = ($realtime - t0) / OSC_T;
+        wait (`P_RSTN === 1'b0); w = ($realtime - t0) / OSC_T;
         $display("  EN fall -> core reset: %0d cycles (filter 8 samples + 2 sync + 1)", w);
         if (w < 9 || w > 11) begin errors = errors + 1; $display("  FAIL reset latency %0d", w); end
         checks = checks + 1;
         #(20*OSC_T);
         @(posedge osc_clk); #37;
         en = 1; t0 = $realtime;
-        wait (dut.rst_n === 1'b1); w = ($realtime - t0) / OSC_T;
+        wait (`P_RSTN === 1'b1); w = ($realtime - t0) / OSC_T;
         $display("  E8 EN rise -> core release: %0d cycles (was 2; host rule 128 unchanged)", w);
         if (w > 6) begin errors = errors + 1; $display("  FAIL release latency %0d", w); end
         checks = checks + 1;

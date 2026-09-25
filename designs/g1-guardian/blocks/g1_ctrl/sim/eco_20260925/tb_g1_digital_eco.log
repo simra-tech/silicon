@@ -1,12 +1,12 @@
 # tb_g1_digital_eco (ECO RTL rtl_eco_20260925)
-# 2026-09-25T13:30:54Z  Icarus Verilog version 14.0 (devel) (s20260301-328-geda9fdcd-dirty)
+# 2026-09-25T18:55:24Z  Icarus Verilog version 14.0 (devel) (s20260301-328-geda9fdcd-dirty)
 # PDK commit 84374023ee8b4b126bebbba67fcbada0a9c0ff0b
-# tb sha256: de8ab4bcb91a9bc7
+# tb sha256: 4a7cc9ff8aaa11af
 # rtl sha256: c14906d7d9256a77  designs/g1-guardian/blocks/g1_ctrl/rtl_eco_20260925/g1_sync2.v
 # rtl sha256: df4341e1878caef2  designs/g1-guardian/blocks/g1_ctrl/rtl_eco_20260925/g1_serial.v
 # rtl sha256: 5cab0bc384cef5a7  designs/g1-guardian/blocks/g1_ctrl/rtl_eco_20260925/g1_trip_timer.v
-# rtl sha256: 605d738514124e87  designs/g1-guardian/blocks/g1_ctrl/rtl_eco_20260925/g1_regfile.v
-# rtl sha256: c52918f7e2242096  designs/g1-guardian/blocks/g1_ctrl/rtl_eco_20260925/g1_digital_top.v
+# rtl sha256: 33d549dafc4c097c  designs/g1-guardian/blocks/g1_ctrl/rtl_eco_20260925/g1_regfile.v
+# rtl sha256: 4e3b8ff6cdc13f28  designs/g1-guardian/blocks/g1_ctrl/rtl_eco_20260925/g1_digital_top.v
 # rtl sha256: 36757122c43271df  designs/g1-guardian/blocks/g1_ctrl/rtl_eco_20260925/g1_digital.v
 # rtl sha256: f53f82d97b91d4e8  designs/g1-guardian/blocks/g1_seu/rtl_eco_20260925/g1_tmr_reg.v
 # rtl sha256: 6e10bbc02a8ff291  designs/g1-guardian/blocks/g1_seu/rtl_eco_20260925/g1_seu_chain.v
@@ -31,7 +31,9 @@ PASS T14 G1_GATE fast path: analog trip adopted, clr_d clears it, no re-trip
   clr_d pulses 14, minimum width 200.000000 ns (>= 100 ns required)
 PASS T15 clr_d pulse width and trip_d hold
   inrush mask after reset release: 1024 cycles
-PASS E7 defaults: INRUSH 0x02 = 1024 cycles, FAST_EN 1 not masked
+PASS E7 defaults INRUSH 0x02 = 1024 cycles, MODE 0x03; FAST_EN not masked
+  fast_en enabled 3 cycles after reset release
+PASS E9 unstrobed cmp_hard = 1 in reset: fast_en held until release + 3
 PASS E1 OSC_CTRL.OSC_EN writes ignored, osc_en constant 1
   extended mask: 2048 cycles
 PASS E2 INRUSH raise: no re-mask when over, extends when running
@@ -40,6 +42,6 @@ PASS E4 EN low < 8 samples: no reset, latched trip kept
   EN fall -> core reset: 10 cycles (filter 8 samples + 2 sync + 1)
   E8 EN rise -> core release: 5 cycles (was 2; host rule 128 unchanged)
 PASS E5 EN low >= 8 samples resets; latencies (E8 release)
-SUMMARY tests_pass=22 tests_fail=0 checks=275 errors=0
+SUMMARY tests_pass=23 tests_fail=0 checks=283 errors=0
 ALL TESTS PASSED
-/work/designs/g1-guardian/blocks/g1_ctrl/sim/eco_20260925/tb_g1_digital_eco.v:828: $finish called at 27950750000 (1ps)
+/work/designs/g1-guardian/blocks/g1_ctrl/sim/eco_20260925/tb_g1_digital_eco.v:935: $finish called at 27985150000 (1ps)
