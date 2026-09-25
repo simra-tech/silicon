@@ -45,7 +45,7 @@ and the ideal 9.436194721 MHz RTL clock unless a row says otherwise.
    BGR586 `xq56`/`xq736`/`xq67` and T2F `xqqa1`. This is not CDL-specific:
    - The hand-wired deck with `--t2f tl --method gear` fails the same way (22.69 µs, `xbgr.xq60`), after its trip.
    - Trap failed in every T2F-on deck (0.28–1.9 µs).
-   - Gear passed with the BGR586 extraction (pex, 5 ns maximum step) and with the CDL schematic BGR at a 1 ns maximum step.
+   - Gear passed with the BGR586 extraction (pex, 5 ns maximum step) and with the CDL schematic BGR at a 1 ns maximum step, or at 5 ns with reltol 5e-4.
    - It failed with a 5 ns step at 13.9 µs, and with 2 ns, gmin 1e-11, abstol 1e-12, `selft=0`, itl4 500 and the BGR PEX in sch mode at 0.3–7.3 µs.
    - Treat any CDL-driven run as fragile. Use gear with the pex BGR or a ≤ 1 ns step.
 
@@ -97,7 +97,8 @@ and the ideal 9.436194721 MHz RTL clock unless a row says otherwise.
 | hand-wired sch, trap, nodcn (`cdlref1`) | 1.0578 | 1.344 | 1.660 | 1.04546 | 1.50734 | 0.75401 | 0.80512/0.89737 | 1421.2 (319.7/1101.5/—) | 0.0004 | 1655 | passed |
 | hand-wired sch + `--t2f tl`, gear (`cdlref1`) | 1.0578 | 1.344 | 1.660 | 1.04499 | 1.50689 | 0.75379 | 0.80476/0.89696 | 1462.3 (319.7/1101.4/—) | 0.0004 | 2333 | trip passed; failed at 22.69 µs (`xbgr.xq60`), not run to completion |
 | CDL sch, other numerics (`cdlv1/v2/v3/v4/v5`) | — | — | — | — | — | — | — | — | — | — | failed: trap 0.28 µs; gear 5 ns 13.9 µs; see finding 4. Three v5 variants stopped by me to free CPUs: not run to completion |
-| CDL sch, gear 5 ns, reltol 5e-4 and 1 ns + itl4 500 | — | — | — | — | — | — | — | — | — | — | still running at time of writing |
+| CDL sch, gear 5 ns, reltol 5e-4 (`cdlv2`) | 1.0578 | 1.436 | 1.672 | 1.04500 | 1.50806 | 0.75445 | 0.80483/0.89696 | — | — | 5428 | passed |
+| CDL sch, gear 1 ns + itl4 500 (`cdlv5`) | — | — | — | — | — | — | — | — | — | — | still running at time of writing |
 
 ### q, 6 µs prefix (`--analysis prefix --tstop 6`)
 
@@ -128,15 +129,44 @@ G1_WORKDIR=$W flow/run.sh python3 run_top_cdl.py c_mid --timeline compact --dry 
 Logs: `sim/logs/cdl_*_{cdlv1..cdlv5,cdlpwr}.log/.json`. Summaries: `sim/results_cdl.txt`.
 Decks: `sim/decks/cdl_*.cir`.
 
-## Power-up and full-length q (launched, running at time of writing)
+## Power-up, core first (gB, gB_pd; CDL pex gear deck, `--por-pin`, run-id `cdlpwr`)
 
-These use the CDL pex gear deck with `--por-pin`, in which `por_n` comes from the CDL
-`sg13g2_tiehi` (wrapper `rtl/g1_dig_cosim_cdl_por.v`). Cases gB and gB_pd (VDD 1–3 µs,
-IOVDD/VDDA 5–7 µs, EN low until 12 µs) run at tt 27 °C twice each:
-- with all pad `dantenna` kept (`--pads pdk`);
-- with `--pads nodcn`, as fallback.
+These runs use the CDL pex gear deck with `--por-pin`:
+- `por_n` comes from the CDL `sg13g2_tiehi` (wrapper `rtl/g1_dig_cosim_cdl_por.v`).
+- `EN`, `GATE` and `FAULT_N` are the CDL pad cells.
+- Ramps are as in run_top: `VDD` 1–3 µs, `IOVDD`=`VDDA` 5–7 µs, `EN` low until 12 µs.
 
-`q` full length (44 µs) runs with the pex gear deck (`cdlpwr`, wall 25200 s). Results: not run yet.
+**Pad treatment.** With every pad `dantenna` kept (`--pads pdk`), both tt runs stalled at
+1.377 µs, as `VDD` rose. They were stopped after 806 s: **not run to completion**. The known
+`darea` diode stall applies. The rows below therefore use `--pads nodcn`: all 8 `dantenna`
+instances are removed, including those of the EN/GATE/FAULT_N pads.
+
+| Case | Corner | GATE max, EN low (V) | gate_core max (V) | en_i max, EN low (V) | tripped max (V) | dig_trip max (V) | GATE after EN (V) | tripped end | Wall s | Status |
+|---|---|---|---|---|---|---|---|---|---|---|
+| gB | tt 27 °C | 0.00024 | 0.612 | **0.853** | 1.217 | 1.2 | 3.300 | 0 | 1391 | passed |
+| gB_pd | tt 27 °C | 0.00024 | 0.612 | 0.853 | 1.217 | 1.2 | 3.288 | 0 | 1726 | passed |
+| gB | ss 125 °C | 0.00005 | 0.611 | **0.922** | 1.219 | 1.2 | 3.300 | 0 | 1382 | passed |
+| gB_pd | ss 125 °C | 0.00005 | 0.611 | 0.922 | 1.219 | 1.2 | 3.283 | 0 | 1369 | passed |
+| gB_pd | ff −40 °C | 0.00027 | 0.615 | 0.836 | 1.211 | 1.2 | 3.291 | 0 | 1668 | passed |
+| gB | ff −40 °C | 0.00027 (to 7.42 µs) | 0.615 | 0.836 | 1.211 | 1.2 | — | — | 745 | failed: timestep too small at 7.42 µs (`xbgr.xq784`) |
+
+**Finding 5: `EN` floats high while `IOVDD` is absent.** With `IOVDD` absent (core first),
+the CDL `IOPadIn` (`LevelDown`) output `en_i` rises with `VDD` to 0.84–0.92 V
+(0.70–0.77·VDD). At tt it exceeds 0.6 V from 2.34 µs to 5.70 µs. While it is high, the RTL
+reads `EN` = 1 and its trip latch sets (`dig_trip` 2.86–5.70 µs), and G1_GATE's `tripped`
+latch sets (2.08–5.78 µs).
+- Both clear when `IOVDD` passes about 1.1 V (5.667 µs).
+- `GATE` stays ≤ 0.27 mV, because the GATE pad driver has no `IOVDD`.
+- The outcome is safe, but the latches toggle on an undefined pad output. The ideal EN copy of the hand-wired deck cannot show this.
+
+**Reset timing.** `por_n` (the tiehi output) crosses 0.6 V at 2.0006 µs, with `VDD` crossing
+0.6 V at 2.0006 µs. That is 3.67 µs *before* `IOVDD` reaches 1.1 V (5.667 µs). The RTL
+therefore leaves reset while `EN` is still undefined.
+
+**Artifact.** `osc_en` "rises" at 1 ns because the dac_bridge `out_high` is a fixed 1.2 V,
+independent of `VDD`. RTL output levels before `VDD` is up are not physical.
+
+`q` full length (44 µs, CDL pex gear, `cdlpwr`, wall 25200 s): running at time of writing (9.9 µs reached after about 50 min).
 
 ## Not established
 
