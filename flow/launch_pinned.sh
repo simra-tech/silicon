@@ -4,6 +4,7 @@
 # Writes <logfile> (stdout+stderr) and <logfile>.pid; exit code lands in <logfile>.rc.
 set -euo pipefail
 CPU="$1"; WD="$2"; WALL="$3"; LOG="$4"; shift 4
+if [ "$(nice)" != "0" ]; then echo "warning: launching from a shell at nice level $(nice); the solver will yield to other users' load (cannot be lowered without privileges)" >&2; fi
 REPO="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 mkdir -p "$(dirname "$LOG")"
 (
