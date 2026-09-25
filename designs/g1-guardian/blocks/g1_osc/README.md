@@ -27,6 +27,12 @@ the owner decision of 2026-09-24. Outline and pins are those of the 166 × 137.6
 | Selected PVT trim screen on the R0.95 CPEX (5 tuples × 16 codes, 50 fF stand-in load) | passed: 80/80, every curve monotonic and brackets 10 MHz; ss/1.08 V/125 °C 5.834–10.448 MHz (simulated) | `reports/r095_newpex_pvt_20260924/README.md` |
 | Full Cartesian PVT and mismatch population on the R0.95 CPEX; loaded re-enable; jitter | **not run** | same; `sim/qualification/fulltree_r095_load_20260924/README.md` |
 
+**Schematic drawing: pending.** The committed schematic generator `schematic/gen_osc.py` and the
+xschem sheets it writes still draw RA/RB as `rppd` 1 µm × 117 µm (the baseline); the chip carries
+R0.95 (1 µm × 111.15 µm). The R0.95 netlist of record is the schematic-level source in the table
+above. A generator update that draws R0.95 is in
+progress and not yet committed; until it is, the tracked sheets are the 117 µm history, not the chip.
+
 Everything below this section describes the **117 µm macro (9.919 MHz schematic, 8.994 MHz post-layout
 at trim 8), which is not on the chip**. It is kept as history and as the base of R0.95.
 

@@ -29,6 +29,25 @@ macro with two identical 12/0.34 µm StrongARMs described below. It carries:
 | 2× hold-capacitor candidate `layout/candidates/nf4_hold2x/` | halves the hard offset in simulation (−21 to −25 LSB at code 200); **not adopted**, not on the chip | same §4 |
 | DAC deck, wiring R, mismatch MC on the NF4 extraction | **not run** | `sim/postlayout/README.md` |
 
+**Why regenpair4 and NF4 (reconstruction).** No record states the motivation in one place. The
+reasons below are reconstructed from the qualification runs that led to the two changes. They are
+single-sample, schematic-netlist calibration diagnostics, not population results (simulated).
+
+- **regenpair4 (hard comparator).** `sim/qualification/C45R62_KNOWN_FAILURE_DIAGNOSIS_20260923.md`
+  retains four ±0.5 mV hard-path calibration failures in which the regenerative differential reverses
+  sign while the input difference keeps its sign. The regenerative NMOS pair M3/M4 was enlarged from
+  3/0.13 to 6/0.26 µm (4× gate area). In run `sim/qualification/joint586-regenpair4-c45rz62-20260923-a-p57`
+  (seed 78101, low rails, −40 °C) the hard decision that had failed (decided low) with the original
+  pair decided high, the expected answer.
+- **NF4 (soft input pair).** With regenpair4 and SENSE R100, the held-out hot check p27 of
+  `sim/qualification/joint586-regenpair4-r100-roomcal-s73133-20260923-b` still failed on the soft path
+  (soft decided low). The soft input pair was given 4× gate area (W12/L0.34 → W24/L0.68). The folded
+  four-finger version on the chip passed p27 in
+  `sim/qualification/joint586-softinputpair4-nf4-roomcal-s73133-20260924-r1` (`heldout_audit.json`:
+  numerical and electrical status passed, codes soft 131 / hard 173).
+- Not run for the chip variant: the comparator-delay bench at ff (soft NF4 and hard regenpair4), and
+  the DAC bench (`run_postlayout.sh dac`) on the NF4 extraction; the DAC circuit itself is unchanged.
+
 Model warnings: every TRIP comparator log carries PDK `rppd` OSDI "voltage is greater than specified
 by vmax" warnings (for example 1574 lines in `sim/postlayout/logs/nf4pex_cmp_delay_mos_tt_1.2V_27C_5MHz.log`).
 They are not errors and are not converted into model-validity passes.

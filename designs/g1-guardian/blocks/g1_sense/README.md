@@ -19,11 +19,19 @@ call it "not adopted". The chip cell is 384.3 × 238.7 µm (≈ 0.092 mm²), not
 | Chip SENSE cell vs native build `450a4906` | XOR empty outside fill layers | `../g1_padring/reports/signoff-1414-20260924/blockmap/block_xor.json` |
 | Chip-level DRC, density and antenna on `629d303a…` | passed (0 markers) | `../g1_padring/reports/signoff-1414-20260924/README.md` |
 | Standalone mismatch, 100 samples (ideal VREF/PTAT, passive load) | passed 100/100: gain 19.905–20.050; residual ≤ 498 µV **after an ideal continuous room-temperature correction** (not the implemented digital trim) (simulated) | `reports/R100_MC_100_20260923.md` |
-| Loop margins, slow/low/cold | gain 19.998, −3 dB bandwidth 2.28 MHz, PM 82.1°, GM 16.6 dB; 1 % settling 306.5 ns (simulated, own-source) | `reports/RZ100_PARTIAL_FIELD_20260923.md` |
+| Loop margins, slow/low/cold (ss, 3.0/1.08 V, −40 °C) | gain 19.998, −3 dB bandwidth 2.28 MHz, PM 82.1°, GM 16.6 dB (simulated, own-source) | `reports/RZ100_PARTIAL_FIELD_20260923.md` |
+| Step 25 → 50 mV, entry into the final ±1 % band, nominal tt/25 °C, 3.3/1.2 V, schematic source (no extracted C) | 306.5 ns (fall 25 → 0 mV: 307.3 ns); characterization, no settling limit allocated (simulated) | `reports/RZ100_V06_V07_COVERAGE_20260923.md` |
 | Partial-field extraction (844 C added, 134 VSUBS pairs omitted) | run; recorded field acceptance **failed/unresolved** | same; signoff block map |
 | Full PEX of the comp45 + R100 layout; post-layout MC | **not run** | — |
 | Supply current, chip netlists, tt/27 °C | SENSE 1101.4 µA (of 1421 µA `VDDA`) (simulated) | `../g1_top/sim/campaigns/RESULTS_20260925.md` §1 |
+| Per-OTA supply current of comp45 + R100 | **not run** (not recorded; only the chip-level SENSE total above) | — |
 | `SENSE_P`/`SENSE_N` stock pad models at ≥ 2.3× faults | deck deviation (`inpads nodcn`); stock-pad 3×/4× runs **not run to completion** | same |
+
+Fixtures behind these numbers. The loop-margin, bandwidth, rejection, noise and step runs used the
+extracted BGR netlist carried by the TRIP `joint586` fixture and the full `g1_trip` as load, with one
+mismatch draw per corner (fixed seed per leaf), not a clean typical model and not a population. The
+100-sample mismatch screen and the 108-tuple DC grid used an ideal 1.04 V VREF, an ideal PTAT current
+and a passive TRIP-divider load, so they are not joint-chain results.
 
 Everything below this section (revision B: 252 × 189 µm macro, 982/976 µA, the Sep-19 kpex
 extraction, the assembly-1350 antenna result) describes the **revision-B macro, which is not on the

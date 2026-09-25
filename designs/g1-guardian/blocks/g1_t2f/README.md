@@ -40,7 +40,7 @@ ngspice 46, image `5fd78498…`.
 | Slope of the 25/100 °C line | 4.9085 kHz/°C | same |
 | Nominal held-out residual at −40 / 125 °C | −1.261 / −0.420 °C (criterion ±2 °C: passed) | same; `T2F586_SOURCE_QUALIFICATION_20260922.md` |
 | 300-sample mismatch campaign, seeds 74101–74400 | 300 attempted; **237 completed all four temperatures and passed** the frozen 25/100 °C linear calibration ±2 °C at −40/125 °C; **63 incomplete** (numerical watchdog, 600 s per leaf): failed leaves 14 at 25 °C, 42 at 100 °C, 24 at 125 °C, 0 at −40 °C. For the 63 the accuracy check is **not run to completion**, not passed. No completed sample failed ±2 °C | `sim/qualification/t2f586-300sample-audit-20260923.json` (first 100: `t2f586-first100-stage-disposition-20260923.json`, 85 passed / 15 incomplete / 0 failed) |
-| Worst residual over the 237 completed samples | not tabulated in a committed summary | — |
+| Worst residual over the 237 completed samples (**derived**, not a committed summary) | −40 °C: −1.62 … −0.81 °C; 125 °C: −0.50 … −0.23 °C. Derived from the audit file's per-leaf `frequency_interval_Hz` (interval midpoints; the printed-time interval moves the result by ≤ 0.01 °C) with the same frozen 25/100 °C linear calibration | `sim/qualification/t2f586-300sample-audit-20260923.json` |
 | Supply sensitivity with BGR586 | **not run** | — |
 | Process corners (ss/ff), 85 °C, intermediate temperatures, temperature return with BGR586 | **not run** | `T2F586_SOURCE_QUALIFICATION_20260922.md` |
 | Actual pad load, BGR586 C-PEX (`g1_bgr586_pex.spice`) in the T2F loop | **not run** at block level | — |
@@ -57,7 +57,23 @@ ngspice 46, image `5fd78498…`.
 | 85 °C, ss, ff | **not run** | — |
 
 The chip-level two-point slope from 27 and 125 °C is (1.99692 − 1.51768) MHz / 98 K
-≈ 4.89 kHz/°C (computed from the two runs above), consistent with (b).
+≈ 4.89 kHz/°C (computed from the two runs above), consistent with (b). The (b) line
+predicts 1.507431 + 2 × 0.0049085 = 1.51725 MHz at 27 °C, and (b) gives 1.996224 MHz at
+125 °C; the chip values are 0.03 % above both (computed). Block and chip views agree.
+
+**System check of 2026-09-24 (EN-low bias, start-up): superseded Sep-19 bandgap.**
+`sim/system_checks_20260924/RESULTS.md` ran the T2F C-PEX with the Sep-19 bandgap C-PEX
+(`../g1_bgr/sim/postlayout/g1_bgr_pex.spice`), not BGR586. Its results (EN = 0: no floating
+node and no HBT junction outside the model card at tt/27, ss/125 and ff/−40 °C, passed; start
+after 100 µs at EN = 0, settled to 1 % within 1.04 µs, passed; start-up frequencies
+1.36–1.77 MHz) describe that bench, not the chip. The same checks with BGR586: **not run**.
+
+**VREF loading by the T2F** (DC path only through the QA1/QA2 bases, via MX1 in PTAT mode):
+
+| Condition | Load on VREF | VREF change | Source |
+| --- | --- | --- | --- |
+| Block level, EN = 0 `.op`, T2F C-PEX + **Sep-19** bandgap C-PEX | 5.5 nA (ff/−40 °C), 21 nA (tt/27 °C), 72 nA (ss/125 °C) | −1.8 mV at tt/27 °C (Sep-19 bandgap output, ≈ 21 nA × 88 kΩ) | `sim/system_checks_20260924/RESULTS.md` (1) |
+| Chip netlists, `q`, tt/27 °C, BGR586 `bgr=sch`, 10 nF on the `VREF` pin, T2F on vs off | — | **−0.47 mV** (1.04546 → 1.04499 V) | `../../review/redteam-20260925/ELECTRICAL_SYSTEM.md` N1 |
 
 **What is established about accuracy with the chip's bandgap:** at typical process and
 nominal rails, a per-part 25/100 °C linear calibration predicts −40 and 125 °C within
