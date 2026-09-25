@@ -1,0 +1,121 @@
+Startpoint: _6690_ (rising edge-triggered flip-flop clocked by osc_clk)
+Endpoint: _5935_ (recovery check against rising-edge clock osc_clk)
+Path Group: asynchronous
+Path Type: max
+
+Fanout       Cap      Slew     Delay      Time   Description
+-------------------------------------------------------------------------------------
+                              0.0000    0.0000   clock osc_clk (rise edge)
+                              0.0000    0.0000   clock source latency
+     1    0.0530    0.0000    0.0000    0.0000 ^ osc_clk (in)
+    16    0.2858    0.0429    0.0599    0.0599 ^ clkbuf_0_osc_clk/X (sg13g2_buf_16)
+     5    0.0798    0.0359    0.0960    0.1558 ^ clkbuf_4_14_0_osc_clk/X (sg13g2_buf_8)
+    16    0.0802    0.0351    0.0686    0.2245 ^ clkbuf_leaf_37_osc_clk/X (sg13g2_buf_8)
+                    0.0367    0.0058    0.2303 ^ _6690_/CLK (sg13g2_dfrbpq_1)
+     1    0.0060    0.0228    0.1218    0.3521 ^ _6690_/Q (sg13g2_dfrbpq_1)
+     6    0.0703    0.1872    0.1557    0.5078 ^ fanout333/X (sg13g2_buf_1)
+     4    0.0616    0.1649    0.1913    0.6991 ^ fanout240/X (sg13g2_buf_1)
+     4    0.0471    0.1275    0.1616    0.8607 ^ fanout215/X (sg13g2_buf_1)
+     4    0.0623    0.1664    0.1829    1.0435 ^ fanout205/X (sg13g2_buf_1)
+     8    0.0920    0.2433    0.2356    1.2791 ^ fanout201/X (sg13g2_buf_1)
+     8    0.1130    0.2988    0.2781    1.5572 ^ fanout200/X (sg13g2_buf_1)
+                    0.3021    0.0252    1.5823 ^ _5935_/RESET_B (sg13g2_dfrbpq_1)
+                                        1.5823   data arrival time
+
+                            100.0000  100.0000   clock osc_clk (rise edge)
+                              0.0000  100.0000   clock source latency
+     1    0.0497    0.0000    0.0000  100.0000 ^ osc_clk (in)
+    16    0.2608    0.0398    0.0580  100.0580 ^ clkbuf_0_osc_clk/X (sg13g2_buf_16)
+     5    0.0662    0.0330    0.1410  100.1990 ^ clkbuf_4_11_0_osc_clk/X (sg13g2_buf_8)
+    17    0.0800    0.0349    0.0653  100.2643 ^ clkbuf_leaf_49_osc_clk/X (sg13g2_buf_8)
+                    0.0361    0.0051  100.2694 ^ _5935_/CLK (sg13g2_dfrbpq_1)
+                             -0.5000   99.7694   clock uncertainty
+                              0.0018   99.7712   clock reconvergence pessimism
+                             -0.1448   99.6265   library recovery time
+                                       99.6265   data required time
+-------------------------------------------------------------------------------------
+                                       99.6265   data required time
+                                       -1.5823   data arrival time
+-------------------------------------------------------------------------------------
+                                       98.0441   slack (MET)
+
+
+Startpoint: _5757_ (rising edge-triggered flip-flop clocked by osc_clk)
+Endpoint: dac_soft[2] (output port clocked by osc_clk)
+Path Group: osc_clk
+Path Type: max
+
+Fanout       Cap      Slew     Delay      Time   Description
+-------------------------------------------------------------------------------------
+                              0.0000    0.0000   clock osc_clk (rise edge)
+                              0.0000    0.0000   clock source latency
+     1    0.0530    0.0000    0.0000    0.0000 ^ osc_clk (in)
+    16    0.2858    0.0429    0.0599    0.0599 ^ clkbuf_0_osc_clk/X (sg13g2_buf_16)
+     5    0.0827    0.0372    0.1082    0.1680 ^ clkbuf_4_6_0_osc_clk/X (sg13g2_buf_8)
+    13    0.0727    0.0327    0.0648    0.2328 ^ clkbuf_leaf_27_osc_clk/X (sg13g2_buf_8)
+                    0.0333    0.0034    0.2362 ^ _5757_/CLK (sg13g2_dfrbpq_1)
+     3    0.0233    0.0647    0.1528    0.3890 ^ _5757_/Q (sg13g2_dfrbpq_1)
+     8    0.0563    0.1504    0.1502    0.5392 ^ fanout345/X (sg13g2_buf_1)
+     1    0.0037    0.0459    0.0625    0.6017 v _4095_/Y (sg13g2_nor4_1)
+     2    0.0336    0.0772    0.1170    0.7187 v _4096_/X (sg13g2_and4_1)
+     3    0.0192    0.1918    0.1957    0.9144 ^ _4098_/Y (sg13g2_a221oi_1)
+     6    0.0269    0.0848    0.1983    1.1127 ^ _4101_/X (sg13g2_and4_1)
+     2    0.0126    0.0763    0.0945    1.2072 v _4130_/Y (sg13g2_a22oi_1)
+     2    0.0112    0.0676    0.0983    1.3055 v _4135_/Y (sg13g2_xnor2_1)
+     2    0.0122    0.1075    0.1100    1.4156 ^ _4136_/Y (sg13g2_o21ai_1)
+     2    0.0095    0.0558    0.0750    1.4906 v _4139_/Y (sg13g2_nand2b_1)
+     3    0.0187    0.1159    0.1097    1.6003 ^ _4142_/Y (sg13g2_a21oi_1)
+     2    0.0134    0.0920    0.1086    1.7090 v _4147_/Y (sg13g2_a221oi_1)
+     3    0.0168    0.1345    0.1418    1.8508 ^ _4148_/Y (sg13g2_o21ai_1)
+     7    0.0352    0.1597    0.1741    2.0249 v _4150_/Y (sg13g2_nand2_1)
+     2    0.0179    0.1396    0.1146    2.1396 ^ _4159_/Y (sg13g2_o21ai_1)
+     1    0.0529    0.1421    0.1642    2.3037 ^ output21/X (sg13g2_buf_1)
+                    0.1422    0.0035    2.3073 ^ dac_soft[2] (out)
+                                        2.3073   data arrival time
+
+                            100.0000  100.0000   clock osc_clk (rise edge)
+                              0.0000  100.0000   clock network delay (propagated)
+                             -0.5000   99.5000   clock uncertainty
+                              0.0000   99.5000   clock reconvergence pessimism
+                            -20.0000   79.5000   output external delay
+                                       79.5000   data required time
+-------------------------------------------------------------------------------------
+                                       79.5000   data required time
+                                       -2.3073   data arrival time
+-------------------------------------------------------------------------------------
+                                       77.1927   slack (MET)
+
+
+Startpoint: _6665_ (rising edge-triggered flip-flop clocked by sclk')
+Endpoint: sdo (output port clocked by sclk)
+Path Group: sclk
+Path Type: max
+
+Fanout       Cap      Slew     Delay      Time   Description
+-------------------------------------------------------------------------------------
+                             50.0000   50.0000   clock sclk' (rise edge)
+                              0.0000   50.0000   clock source latency
+     2    0.0505    0.0000    0.0000   50.0000 v sclk (in)
+     1    0.0224    0.0131    0.0451   50.0451 v clkbuf_regs_0_sclk/X (sg13g2_buf_16)
+     8    0.1780    0.0338    0.0560   50.1011 v clkbuf_0_sclk_regs/X (sg13g2_buf_16)
+     7    0.0403    0.0171    0.0756   50.1767 v clkbuf_3_7__f_sclk_regs/X (sg13g2_buf_16)
+     1    0.0059    0.0209    0.0246   50.2013 ^ _2856__369/Y (sg13g2_inv_1)
+                    0.0209    0.0004   50.2016 ^ _6665_/CLK (sg13g2_dfrbpq_1)
+     1    0.0041    0.0186    0.1125   50.3141 ^ _6665_/Q (sg13g2_dfrbpq_1)
+     1    0.0518    0.1389    0.1265   50.4406 ^ output35/X (sg13g2_buf_1)
+                    0.1390    0.0035   50.4441 ^ sdo (out)
+                                       50.4441   data arrival time
+
+                            100.0000  100.0000   clock sclk (rise edge)
+                              0.0000  100.0000   clock network delay (propagated)
+                             -0.5000   99.5000   clock uncertainty
+                              0.0000   99.5000   clock reconvergence pessimism
+                            -20.0000   79.5000   output external delay
+                                       79.5000   data required time
+-------------------------------------------------------------------------------------
+                                       79.5000   data required time
+                                      -50.4441   data arrival time
+-------------------------------------------------------------------------------------
+                                       29.0559   slack (MET)
+
+

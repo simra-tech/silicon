@@ -1,0 +1,27 @@
+* G1_BGR bgr586 standalone fixture (same as sim/qualification/runs/bgr_one_draw_20260922_r1/disabled/nominal.cir,
+* mismatch-parameter prints removed), source: ../../qualification/candidates/bgr_loop24_qref4_r253p465_hv06/bgr_loop24_qref4_r253p465_hv06.spice
+.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerHBT.lib hbt_typ
+.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerMOShv.lib mos_tt
+.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerRES.lib res_typ
+.include ../../qualification/candidates/bgr_loop24_qref4_r253p465_hv06/bgr_loop24_qref4_r253p465_hv06.spice
+.option seed=44001 gmin=1e-15 abstol=1e-14 reltol=1e-5 vntol=1e-7
+.global sub!
+Vsub sub! 0 0
+Vdd vdd 0 3.3
+Vr4 r4 0 0
+Xbgr vdd 0 r4 vref iptat pbias pcasc vbe dvbe g1_bgr
+Vload iptat 0 1
+Cload vref 0 1e-12
+.control
+set num_threads=1
+set numdgt=15
+set wr_singlescale
+set wr_vecnames
+op
+echo "OP27 vref=$&v(vref) iptat=$&i(vload) idd=$&i(vdd) vbe=$&v(vbe) dvbe=$&v(dvbe) pbias=$&v(pbias) pcasc=$&v(pcasc)"
+wrdata op27_sch.dat v(vref) i(vload) i(vdd) v(vbe) v(dvbe) v(pbias) v(pcasc)
+dc temp -40 125 1
+wrdata temp_sch.dat v(vref) i(vload) i(vdd) v(vbe) v(dvbe) v(pbias) v(pcasc)
+quit
+.endc
+.end

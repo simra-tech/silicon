@@ -1,0 +1,250 @@
+# G1_TRIP post-layout results (kpex 2.5D CC, postlayout/g1_trip_nf4_pex.spice), 2026-09-24T10:32Z, ngspice-46
+== nf4pex_cmp_delay_mos_tt_1.2V_27C_5MHz
+VTH code128 = 0.75154
+DELAY od= 0.05  od1_mV= -52.9216  q_after_strobe1= 4.1867E-08  od_eff_mV= 49.7456  td_ns= 0.6746  q_before= 1.66975E-07  q_end= 1.2
+KICK od= 0.05  icmp 25/40/70ns= 0.667107 0.71551 0.766215  min/max(20-40ns)= 0.630203 0.715447  vth 25/40/70ns= 0.693792 0.723868 0.740388  min/max= 0.669766 0.752745
+DELAY od= 0.005  od1_mV= -7.3614  q_after_strobe1= 8.23636E-07  od_eff_mV= 4.7687  td_ns= 0.796  q_before= -6.66138E-08  q_end= 1.2
+KICK od= 0.005  icmp 25/40/70ns= 0.701921 0.721668 0.742266  min/max(20-40ns)= 0.670103 0.747739  vth 25/40/70ns= 0.693599 0.723778 0.740347  min/max= 0.670357 0.752803
+DELAY od= 0.001  od1_mV= -3.8889  q_after_strobe1= 3.3728E-08  od_eff_mV= 0.7701  td_ns= 0.8592  q_before= 1.69727E-07  q_end= 1.2
+KICK od= 0.001  icmp 25/40/70ns= 0.704683 0.722004 0.74005  min/max(20-40ns)= 0.673304 0.751213  vth 25/40/70ns= 0.693659 0.723799 0.740353  min/max= 0.670041 0.75274
+== nf4pex_cmp_delay_mos_ss_1.08V_-40C_5MHz
+VTH code128 = 0.75154
+DELAY od= 0.05  od1_mV= -51.7519  q_after_strobe1= 3.53635E-08  od_eff_mV= 49.9328  td_ns= 1.0137  q_before= 3.16509E-08  q_end= 1.08
+KICK od= 0.05  icmp 25/40/70ns= 0.674315 0.720576 0.768675  min/max(20-40ns)= 0.640439 0.720515  vth 25/40/70ns= 0.705065 0.730066 0.742923  min/max= 0.683643 0.753034
+DELAY od= 0.005  od1_mV= -6.9136  q_after_strobe1= 1.01969E-08  od_eff_mV= 4.9477  td_ns= 1.4352  q_before= 1.19232E-07  q_end= 1.08
+KICK od= 0.005  icmp 25/40/70ns= 0.708872 0.726272 0.744294  min/max(20-40ns)= 0.679794 0.747792  vth 25/40/70ns= 0.705044 0.730038 0.742905  min/max= 0.682013 0.752967
+DELAY od= 0.001  od1_mV= -2.8838  q_after_strobe1= 9.38734E-09  od_eff_mV= 0.9509  td_ns= 1.6935  q_before= 1.20268E-07  q_end= 1.08
+KICK od= 0.001  icmp 25/40/70ns= 0.71187 0.726734 0.742108  min/max(20-40ns)= 0.683389 0.751822  vth 25/40/70ns= 0.70503 0.730032 0.742902  min/max= 0.681924 0.752968
+
+# Strobe-train kickback (tb_trip_kick_train.cir via run_kick_train.sh, analysed by kick_train.py), 2026-09-24T13:07Z, ngspice-46
+# soft 0x99, hard 0xFE; 5 MHz; icmp set <ud> LSB below the DC threshold of the comparator under test; ideal ISENSE source; tags nf4 = g1_trip_nf4_pex.spice, old = g1_trip_pex.spice
+== kick_nf4_mos_ff_1.32V_125C_hard  (DC vth_hard=0.99874 V, icmp=0.99666 V = DC threshold - 1 LSB; 21 strobes, 21 decided high)
+  dvth_hard     worst   +0.137 mV ( +0.07 LSB)  steady   +0.137 mV ( +0.07 LSB)
+  dicmp         worst   -5.037 mV ( -2.57 LSB)  steady   -5.037 mV ( -2.57 LSB)
+  shift         worst   +5.174 mV ( +2.64 LSB)  steady   +5.173 mV ( +2.64 LSB)  | shunt-referred worst +0.517 mV, steady +0.517 mV
+  dvth_soft     worst   -3.725 mV ( -1.90 LSB)  steady   -3.724 mV ( -1.90 LSB)
+  per-strobe dvth/dicmp mV: 0.1/-5.3 0.1/-5.0 0.1/-5.0 0.1/-5.0 0.1/-5.0 0.1/-5.0 0.1/-5.0 0.1/-5.0 0.1/-5.0 0.1/-5.0 0.1/-5.0 0.1/-5.0 0.1/-5.0 0.1/-5.0 0.1/-5.0 0.1/-5.0 0.1/-5.0 0.1/-5.0 0.1/-5.0 0.1/-5.0 0.1/-5.0
+== kick_nf4_mos_ff_1.32V_125C_soft  (DC vth_soft=0.80060 V, icmp=0.79860 V = DC threshold - 1 LSB; 21 strobes, 10 decided high)
+  dvth_soft     worst   +2.938 mV ( +1.50 LSB)  steady   +2.937 mV ( +1.50 LSB)
+  dicmp         worst   +2.806 mV ( +1.43 LSB)  steady   +2.803 mV ( +1.43 LSB)
+  shift         worst   +0.137 mV ( +0.07 LSB)  steady   +0.134 mV ( +0.07 LSB)  | shunt-referred worst +0.014 mV, steady +0.013 mV
+  dvth_hard     worst   -0.097 mV ( -0.05 LSB)  steady   -0.097 mV ( -0.05 LSB)
+  per-strobe dvth/dicmp mV: -0.0/-1.3 2.9/2.8 2.9/2.8 2.9/2.8 2.9/2.8 2.9/2.8 2.9/2.8 2.9/2.8 2.9/2.8 2.9/2.8 2.9/2.8 2.9/2.8 2.9/2.8 2.9/2.8 2.9/2.8 2.9/2.8 2.9/2.8 2.9/2.8 2.9/2.8 2.9/2.8 2.9/2.8
+== kick_nf4_mos_ss_1.08V_-40C_hard  (DC vth_hard=0.99879 V, icmp=0.99682 V = DC threshold - 1 LSB; 21 strobes, 21 decided high)
+  dvth_hard     worst   +0.034 mV ( +0.02 LSB)  steady   +0.034 mV ( +0.02 LSB)
+  dicmp         worst   -3.184 mV ( -1.62 LSB)  steady   -3.183 mV ( -1.62 LSB)
+  shift         worst   +3.218 mV ( +1.64 LSB)  steady   +3.217 mV ( +1.64 LSB)  | shunt-referred worst +0.322 mV, steady +0.322 mV
+  dvth_soft     worst   -1.784 mV ( -0.91 LSB)  steady   -1.783 mV ( -0.91 LSB)
+  per-strobe dvth/dicmp mV: 0.0/-3.4 0.0/-3.2 0.0/-3.2 0.0/-3.2 0.0/-3.2 0.0/-3.2 0.0/-3.2 0.0/-3.2 0.0/-3.2 0.0/-3.2 0.0/-3.2 0.0/-3.2 0.0/-3.2 0.0/-3.2 0.0/-3.2 0.0/-3.2 0.0/-3.2 0.0/-3.2 0.0/-3.2 0.0/-3.2 0.0/-3.2
+== kick_nf4_mos_ss_1.08V_-40C_soft  (DC vth_soft=0.80060 V, icmp=0.79863 V = DC threshold - 1 LSB; 21 strobes, 10 decided high)
+  dvth_soft     worst   +1.518 mV ( +0.77 LSB)  steady   +1.517 mV ( +0.77 LSB)
+  dicmp         worst   +1.863 mV ( +0.95 LSB)  steady   +1.861 mV ( +0.95 LSB)
+  shift         worst   -0.346 mV ( -0.18 LSB)  steady   -0.343 mV ( -0.17 LSB)  | shunt-referred worst -0.035 mV, steady -0.034 mV
+  dvth_hard     worst   -0.018 mV ( -0.01 LSB)  steady   -0.018 mV ( -0.01 LSB)
+  per-strobe dvth/dicmp mV: 0.0/0.0 1.5/1.9 1.5/1.9 1.5/1.9 1.5/1.9 1.5/1.9 1.5/1.9 1.5/1.9 1.5/1.9 1.5/1.9 1.5/1.9 1.5/1.9 1.5/1.9 1.5/1.9 1.5/1.9 1.5/1.9 1.5/1.9 1.5/1.9 1.5/1.9 1.5/1.9 1.5/1.9
+== kick_nf4_mos_tt_1.2V_27C_hard  (DC vth_hard=0.99878 V, icmp=0.99680 V = DC threshold - 1 LSB; 21 strobes, 21 decided high)
+  dvth_hard     worst   +0.061 mV ( +0.03 LSB)  steady   +0.061 mV ( +0.03 LSB)
+  dicmp         worst   -3.801 mV ( -1.94 LSB)  steady   -3.800 mV ( -1.94 LSB)
+  shift         worst   +3.862 mV ( +1.97 LSB)  steady   +3.862 mV ( +1.97 LSB)  | shunt-referred worst +0.386 mV, steady +0.386 mV
+  dvth_soft     worst   -2.435 mV ( -1.24 LSB)  steady   -2.435 mV ( -1.24 LSB)
+  per-strobe dvth/dicmp mV: 0.1/-4.0 0.1/-3.8 0.1/-3.8 0.1/-3.8 0.1/-3.8 0.1/-3.8 0.1/-3.8 0.1/-3.8 0.1/-3.8 0.1/-3.8 0.1/-3.8 0.1/-3.8 0.1/-3.8 0.1/-3.8 0.1/-3.8 0.1/-3.8 0.1/-3.8 0.1/-3.8 0.1/-3.8 0.1/-3.8 0.1/-3.8
+== kick_nf4_mos_tt_1.2V_27C_soft  (DC vth_soft=0.80060 V, icmp=0.79863 V = DC threshold - 1 LSB; 21 strobes, 11 decided high)
+  dvth_soft     worst   +2.052 mV ( +1.05 LSB)  steady   +2.051 mV ( +1.05 LSB)
+  dicmp         worst   +2.303 mV ( +1.17 LSB)  steady   +2.302 mV ( +1.17 LSB)
+  shift         worst   -0.253 mV ( -0.13 LSB)  steady   -0.251 mV ( -0.13 LSB)  | shunt-referred worst -0.025 mV, steady -0.025 mV
+  dvth_hard     worst   -0.030 mV ( -0.02 LSB)  steady   -0.030 mV ( -0.02 LSB)
+  per-strobe dvth/dicmp mV: 0.0/0.0 2.0/2.3 2.1/2.3 2.1/2.3 2.1/2.3 2.1/2.3 2.1/2.3 2.1/2.3 2.1/2.3 2.1/2.3 2.1/2.3 2.1/2.3 2.1/2.3 2.1/2.3 2.1/2.3 2.1/2.3 2.1/2.3 2.1/2.3 2.1/2.3 2.1/2.3 2.1/2.3
+== kick_nf4_mos_tt_1.2V_27C_ud2_hard  (DC vth_hard=0.99878 V, icmp=0.99484 V = DC threshold - 2 LSB; 8 strobes, 8 decided high)
+  dvth_hard     worst   +0.061 mV ( +0.03 LSB)  steady   +0.061 mV ( +0.03 LSB)
+  dicmp         worst   -3.790 mV ( -1.93 LSB)  steady   -3.790 mV ( -1.93 LSB)
+  shift         worst   +3.851 mV ( +1.96 LSB)  steady   +3.851 mV ( +1.96 LSB)  | shunt-referred worst +0.385 mV, steady +0.385 mV
+  dvth_soft     worst   -2.434 mV ( -1.24 LSB)  steady   -2.434 mV ( -1.24 LSB)
+  per-strobe dvth/dicmp mV: 0.1/-4.0 0.1/-3.8 0.1/-3.8 0.1/-3.8 0.1/-3.8 0.1/-3.8 0.1/-3.8 0.1/-3.8
+== kick_nf4_mos_tt_1.2V_27C_ud2_soft  (DC vth_soft=0.80060 V, icmp=0.79667 V = DC threshold - 2 LSB; 8 strobes, 0 decided high)
+  dvth_soft     worst   +2.050 mV ( +1.04 LSB)  steady   +2.050 mV ( +1.04 LSB)
+  dicmp         worst   +2.295 mV ( +1.17 LSB)  steady   +2.295 mV ( +1.17 LSB)
+  shift         worst   -0.248 mV ( -0.13 LSB)  steady   -0.246 mV ( -0.13 LSB)  | shunt-referred worst -0.025 mV, steady -0.025 mV
+  dvth_hard     worst   -0.030 mV ( -0.02 LSB)  steady   -0.030 mV ( -0.02 LSB)
+  per-strobe dvth/dicmp mV: -0.0/-0.0 2.0/2.3 2.0/2.3 2.0/2.3 2.0/2.3 2.0/2.3 2.0/2.3 2.0/2.3
+== kick_nf4_mos_tt_1.2V_27C_ud3_hard  (DC vth_hard=0.99878 V, icmp=0.99287 V = DC threshold - 3 LSB; 8 strobes, 8 decided high)
+  dvth_hard     worst   +0.061 mV ( +0.03 LSB)  steady   +0.061 mV ( +0.03 LSB)
+  dicmp         worst   -3.779 mV ( -1.93 LSB)  steady   -3.779 mV ( -1.93 LSB)
+  shift         worst   +3.840 mV ( +1.96 LSB)  steady   +3.839 mV ( +1.96 LSB)  | shunt-referred worst +0.384 mV, steady +0.384 mV
+  dvth_soft     worst   -2.434 mV ( -1.24 LSB)  steady   -2.434 mV ( -1.24 LSB)
+  per-strobe dvth/dicmp mV: 0.1/-4.0 0.1/-3.8 0.1/-3.8 0.1/-3.8 0.1/-3.8 0.1/-3.8 0.1/-3.8 0.1/-3.8
+== kick_nf4_mos_tt_1.2V_27C_ud3_soft  (DC vth_soft=0.80060 V, icmp=0.79470 V = DC threshold - 3 LSB; 8 strobes, 0 decided high)
+  dvth_soft     worst   +2.049 mV ( +1.04 LSB)  steady   +2.049 mV ( +1.04 LSB)
+  dicmp         worst   +2.287 mV ( +1.17 LSB)  steady   +2.287 mV ( +1.17 LSB)
+  shift         worst   -0.240 mV ( -0.12 LSB)  steady   -0.238 mV ( -0.12 LSB)  | shunt-referred worst -0.024 mV, steady -0.024 mV
+  dvth_hard     worst   -0.030 mV ( -0.02 LSB)  steady   -0.030 mV ( -0.02 LSB)
+  per-strobe dvth/dicmp mV: 0.0/0.0 2.0/2.3 2.0/2.3 2.0/2.3 2.0/2.3 2.0/2.3 2.0/2.3 2.0/2.3
+== kick_nf4_mos_tt_1.2V_27C_ud4_hard  (DC vth_hard=0.99878 V, icmp=0.99091 V = DC threshold - 4 LSB; 8 strobes, 8 decided high)
+  dvth_hard     worst   +0.060 mV ( +0.03 LSB)  steady   +0.060 mV ( +0.03 LSB)
+  dicmp         worst   -3.768 mV ( -1.92 LSB)  steady   -3.768 mV ( -1.92 LSB)
+  shift         worst   +3.829 mV ( +1.95 LSB)  steady   +3.828 mV ( +1.95 LSB)  | shunt-referred worst +0.383 mV, steady +0.383 mV
+  dvth_soft     worst   -2.433 mV ( -1.24 LSB)  steady   -2.433 mV ( -1.24 LSB)
+  per-strobe dvth/dicmp mV: 0.1/-4.0 0.1/-3.8 0.1/-3.8 0.1/-3.8 0.1/-3.8 0.1/-3.8 0.1/-3.8 0.1/-3.8
+== kick_nf4_mos_tt_1.2V_27C_ud6_hard  (DC vth_hard=0.99878 V, icmp=0.98699 V = DC threshold - 6 LSB; 8 strobes, 8 decided high)
+  dvth_hard     worst   +0.060 mV ( +0.03 LSB)  steady   +0.060 mV ( +0.03 LSB)
+  dicmp         worst   -3.747 mV ( -1.91 LSB)  steady   -3.747 mV ( -1.91 LSB)
+  shift         worst   +3.807 mV ( +1.94 LSB)  steady   +3.807 mV ( +1.94 LSB)  | shunt-referred worst +0.381 mV, steady +0.381 mV
+  dvth_soft     worst   -2.432 mV ( -1.24 LSB)  steady   -2.432 mV ( -1.24 LSB)
+  per-strobe dvth/dicmp mV: 0.1/-3.9 0.1/-3.7 0.1/-3.7 0.1/-3.7 0.1/-3.7 0.1/-3.7 0.1/-3.7 0.1/-3.7
+== kick_old_mos_ff_1.32V_125C_hard  (DC vth_hard=0.99873 V, icmp=0.99665 V = DC threshold - 1 LSB; 21 strobes, 21 decided high)
+  dvth_hard     worst   +0.129 mV ( +0.07 LSB)  steady   +0.129 mV ( +0.07 LSB)
+  dicmp         worst   +0.005 mV ( +0.00 LSB)  steady   +0.005 mV ( +0.00 LSB)
+  shift         worst   +0.124 mV ( +0.06 LSB)  steady   +0.124 mV ( +0.06 LSB)  | shunt-referred worst +0.012 mV, steady +0.012 mV
+  dvth_soft     worst   -1.069 mV ( -0.54 LSB)  steady   -1.069 mV ( -0.54 LSB)
+  per-strobe dvth/dicmp mV: 0.1/-0.0 0.1/0.0 0.1/0.0 0.1/0.0 0.1/0.0 0.1/0.0 0.1/0.0 0.1/0.0 0.1/0.0 0.1/0.0 0.1/0.0 0.1/0.0 0.1/0.0 0.1/0.0 0.1/0.0 0.1/0.0 0.1/0.0 0.1/0.0 0.1/0.0 0.1/0.0 0.1/0.0
+== kick_old_mos_ff_1.32V_125C_soft  (DC vth_soft=0.80060 V, icmp=0.79860 V = DC threshold - 1 LSB; 21 strobes, 0 decided high)
+  dvth_soft     worst   +0.970 mV ( +0.49 LSB)  steady   +0.970 mV ( +0.49 LSB)
+  dicmp         worst   -0.051 mV ( -0.03 LSB)  steady   -0.050 mV ( -0.03 LSB)
+  shift         worst   +1.020 mV ( +0.52 LSB)  steady   +1.020 mV ( +0.52 LSB)  | shunt-referred worst +0.102 mV, steady +0.102 mV
+  dvth_hard     worst   -0.089 mV ( -0.05 LSB)  steady   -0.089 mV ( -0.05 LSB)
+  per-strobe dvth/dicmp mV: 0.0/-0.9 1.0/-0.1 1.0/-0.0 1.0/-0.0 1.0/-0.0 1.0/-0.0 1.0/-0.0 1.0/-0.0 1.0/-0.0 1.0/-0.0 1.0/-0.0 1.0/-0.0 1.0/-0.0 1.0/-0.0 1.0/-0.0 1.0/-0.0 1.0/-0.0 1.0/-0.0 1.0/-0.0 1.0/-0.0 1.0/-0.0
+== kick_old_mos_ss_1.08V_-40C_hard  (DC vth_hard=0.99879 V, icmp=0.99682 V = DC threshold - 1 LSB; 21 strobes, 21 decided high)
+  dvth_hard     worst   +0.031 mV ( +0.02 LSB)  steady   +0.031 mV ( +0.02 LSB)
+  dicmp         worst   +0.078 mV ( +0.04 LSB)  steady   +0.078 mV ( +0.04 LSB)
+  shift         worst   -0.048 mV ( -0.02 LSB)  steady   -0.048 mV ( -0.02 LSB)  | shunt-referred worst -0.005 mV, steady -0.005 mV
+  dvth_soft     worst   -0.535 mV ( -0.27 LSB)  steady   -0.535 mV ( -0.27 LSB)
+  per-strobe dvth/dicmp mV: 0.0/0.0 0.0/0.1 0.0/0.1 0.0/0.1 0.0/0.1 0.0/0.1 0.0/0.1 0.0/0.1 0.0/0.1 0.0/0.1 0.0/0.1 0.0/0.1 0.0/0.1 0.0/0.1 0.0/0.1 0.0/0.1 0.0/0.1 0.0/0.1 0.0/0.1 0.0/0.1 0.0/0.1
+== kick_old_mos_ss_1.08V_-40C_soft  (DC vth_soft=0.80060 V, icmp=0.79863 V = DC threshold - 1 LSB; 21 strobes, 0 decided high)
+  dvth_soft     worst   +0.524 mV ( +0.27 LSB)  steady   +0.524 mV ( +0.27 LSB)
+  dicmp         worst   -0.004 mV ( -0.00 LSB)  steady   -0.004 mV ( -0.00 LSB)
+  shift         worst   +0.528 mV ( +0.27 LSB)  steady   +0.528 mV ( +0.27 LSB)  | shunt-referred worst +0.053 mV, steady +0.053 mV
+  dvth_hard     worst   -0.016 mV ( -0.01 LSB)  steady   -0.016 mV ( -0.01 LSB)
+  per-strobe dvth/dicmp mV: 0.0/-0.0 0.5/-0.0 0.5/-0.0 0.5/-0.0 0.5/-0.0 0.5/-0.0 0.5/-0.0 0.5/-0.0 0.5/-0.0 0.5/-0.0 0.5/-0.0 0.5/-0.0 0.5/-0.0 0.5/-0.0 0.5/-0.0 0.5/-0.0 0.5/-0.0 0.5/-0.0 0.5/-0.0 0.5/-0.0 0.5/-0.0
+== kick_old_mos_tt_1.2V_27C_hard  (DC vth_hard=0.99878 V, icmp=0.99680 V = DC threshold - 1 LSB; 21 strobes, 21 decided high)
+  dvth_hard     worst   +0.056 mV ( +0.03 LSB)  steady   +0.056 mV ( +0.03 LSB)
+  dicmp         worst   +0.085 mV ( +0.04 LSB)  steady   +0.085 mV ( +0.04 LSB)
+  shift         worst   -0.029 mV ( -0.01 LSB)  steady   -0.029 mV ( -0.01 LSB)  | shunt-referred worst -0.003 mV, steady -0.003 mV
+  dvth_soft     worst   -0.718 mV ( -0.37 LSB)  steady   -0.718 mV ( -0.37 LSB)
+  per-strobe dvth/dicmp mV: 0.1/0.1 0.1/0.1 0.1/0.1 0.1/0.1 0.1/0.1 0.1/0.1 0.1/0.1 0.1/0.1 0.1/0.1 0.1/0.1 0.1/0.1 0.1/0.1 0.1/0.1 0.1/0.1 0.1/0.1 0.1/0.1 0.1/0.1 0.1/0.1 0.1/0.1 0.1/0.1 0.1/0.1
+== kick_old_mos_tt_1.2V_27C_soft  (DC vth_soft=0.80060 V, icmp=0.79863 V = DC threshold - 1 LSB; 21 strobes, 0 decided high)
+  dvth_soft     worst   +0.704 mV ( +0.36 LSB)  steady   +0.704 mV ( +0.36 LSB)
+  dicmp         worst   +0.014 mV ( +0.01 LSB)  steady   +0.014 mV ( +0.01 LSB)
+  shift         worst   +0.690 mV ( +0.35 LSB)  steady   +0.690 mV ( +0.35 LSB)  | shunt-referred worst +0.069 mV, steady +0.069 mV
+  dvth_hard     worst   -0.028 mV ( -0.01 LSB)  steady   -0.028 mV ( -0.01 LSB)
+  per-strobe dvth/dicmp mV: 0.0/0.0 0.7/0.0 0.7/0.0 0.7/0.0 0.7/0.0 0.7/0.0 0.7/0.0 0.7/0.0 0.7/0.0 0.7/0.0 0.7/0.0 0.7/0.0 0.7/0.0 0.7/0.0 0.7/0.0 0.7/0.0 0.7/0.0 0.7/0.0 0.7/0.0 0.7/0.0 0.7/0.0
+== kick_old_mos_tt_1.2V_27C_ud2_hard  (DC vth_hard=0.99878 V, icmp=0.99484 V = DC threshold - 2 LSB; 8 strobes, 8 decided high)
+  dvth_hard     worst   +0.056 mV ( +0.03 LSB)  steady   +0.056 mV ( +0.03 LSB)
+  dicmp         worst   +0.085 mV ( +0.04 LSB)  steady   +0.085 mV ( +0.04 LSB)
+  shift         worst   -0.029 mV ( -0.01 LSB)  steady   -0.029 mV ( -0.01 LSB)  | shunt-referred worst -0.003 mV, steady -0.003 mV
+  dvth_soft     worst   -0.718 mV ( -0.37 LSB)  steady   -0.718 mV ( -0.37 LSB)
+  per-strobe dvth/dicmp mV: 0.1/0.1 0.1/0.1 0.1/0.1 0.1/0.1 0.1/0.1 0.1/0.1 0.1/0.1 0.1/0.1
+== kick_old_mos_tt_1.2V_27C_ud2_soft  (DC vth_soft=0.80060 V, icmp=0.79667 V = DC threshold - 2 LSB; 8 strobes, 0 decided high)
+  dvth_soft     worst   +0.704 mV ( +0.36 LSB)  steady   +0.704 mV ( +0.36 LSB)
+  dicmp         worst   +0.014 mV ( +0.01 LSB)  steady   +0.014 mV ( +0.01 LSB)
+  shift         worst   +0.690 mV ( +0.35 LSB)  steady   +0.690 mV ( +0.35 LSB)  | shunt-referred worst +0.069 mV, steady +0.069 mV
+  dvth_hard     worst   -0.028 mV ( -0.01 LSB)  steady   -0.028 mV ( -0.01 LSB)
+  per-strobe dvth/dicmp mV: 0.0/0.0 0.7/0.0 0.7/0.0 0.7/0.0 0.7/0.0 0.7/0.0 0.7/0.0 0.7/0.0
+== kick_old_mos_tt_1.2V_27C_ud3_hard  (DC vth_hard=0.99878 V, icmp=0.99287 V = DC threshold - 3 LSB; 8 strobes, 8 decided high)
+  dvth_hard     worst   +0.056 mV ( +0.03 LSB)  steady   +0.056 mV ( +0.03 LSB)
+  dicmp         worst   +0.085 mV ( +0.04 LSB)  steady   +0.085 mV ( +0.04 LSB)
+  shift         worst   -0.029 mV ( -0.01 LSB)  steady   -0.029 mV ( -0.01 LSB)  | shunt-referred worst -0.003 mV, steady -0.003 mV
+  dvth_soft     worst   -0.718 mV ( -0.37 LSB)  steady   -0.717 mV ( -0.37 LSB)
+  per-strobe dvth/dicmp mV: 0.1/0.1 0.1/0.1 0.1/0.1 0.1/0.1 0.1/0.1 0.1/0.1 0.1/0.1 0.1/0.1
+== kick_old_mos_tt_1.2V_27C_ud3_soft  (DC vth_soft=0.80060 V, icmp=0.79470 V = DC threshold - 3 LSB; 8 strobes, 0 decided high)
+  dvth_soft     worst   +0.703 mV ( +0.36 LSB)  steady   +0.703 mV ( +0.36 LSB)
+  dicmp         worst   +0.014 mV ( +0.01 LSB)  steady   +0.014 mV ( +0.01 LSB)
+  shift         worst   +0.690 mV ( +0.35 LSB)  steady   +0.690 mV ( +0.35 LSB)  | shunt-referred worst +0.069 mV, steady +0.069 mV
+  dvth_hard     worst   -0.028 mV ( -0.01 LSB)  steady   -0.028 mV ( -0.01 LSB)
+  per-strobe dvth/dicmp mV: 0.0/0.0 0.7/0.0 0.7/0.0 0.7/0.0 0.7/0.0 0.7/0.0 0.7/0.0 0.7/0.0
+== kick_old_mos_tt_1.2V_27C_ud4_hard  (DC vth_hard=0.99878 V, icmp=0.99091 V = DC threshold - 4 LSB; 8 strobes, 8 decided high)
+  dvth_hard     worst   +0.056 mV ( +0.03 LSB)  steady   +0.056 mV ( +0.03 LSB)
+  dicmp         worst   +0.085 mV ( +0.04 LSB)  steady   +0.085 mV ( +0.04 LSB)
+  shift         worst   -0.030 mV ( -0.02 LSB)  steady   -0.030 mV ( -0.02 LSB)  | shunt-referred worst -0.003 mV, steady -0.003 mV
+  dvth_soft     worst   -0.717 mV ( -0.37 LSB)  steady   -0.717 mV ( -0.37 LSB)
+  per-strobe dvth/dicmp mV: 0.1/0.1 0.1/0.1 0.1/0.1 0.1/0.1 0.1/0.1 0.1/0.1 0.1/0.1 0.1/0.1
+== kick_old_mos_tt_1.2V_27C_ud6_hard  (DC vth_hard=0.99878 V, icmp=0.98699 V = DC threshold - 6 LSB; 8 strobes, 8 decided high)
+  dvth_hard     worst   +0.056 mV ( +0.03 LSB)  steady   +0.056 mV ( +0.03 LSB)
+  dicmp         worst   +0.085 mV ( +0.04 LSB)  steady   +0.085 mV ( +0.04 LSB)
+  shift         worst   -0.029 mV ( -0.01 LSB)  steady   -0.029 mV ( -0.01 LSB)  | shunt-referred worst -0.003 mV, steady -0.003 mV
+  dvth_soft     worst   -0.717 mV ( -0.37 LSB)  steady   -0.717 mV ( -0.37 LSB)
+  per-strobe dvth/dicmp mV: 0.1/0.1 0.1/0.1 0.1/0.1 0.1/0.1 0.1/0.1 0.1/0.1 0.1/0.1 0.1/0.1
+
+# Effective trip point by bisection (kick_threshold.py, 0.8 us strobe trains, decision = >=2 of strobes 1-3 high), 2026-09-24T16:30Z, ngspice-46; soft code 153 in all runs, hard code 254 in the soft runs
+# 'code - N': the largest underdrive N (LSB = VREF/530 below the DC code value) that still trips; negative N = trips only above the code value
+hard nf4  code 200 mos_ff  1.32V  125C  trip point code 200 - 51 LSB (-10.01 mV shunt)  runs {'8': True, '12': True, '16': True, '24': True, '32': True, '48': True, '50': True, '51': True, '52': False, '56': False, '64': False}  mixed at []
+hard nf4  code 200 mos_ss  1.08V  -40C  trip point code 200 - 40 LSB (-7.85 mV shunt)  runs {'8': True, '12': True, '16': True, '24': True, '32': True, '40': True, '41': False, '42': False, '44': False, '48': False}  mixed at []
+hard nf4  code 200 mos_tt   1.2V   27C  trip point code 200 - 46 LSB (-9.03 mV shunt)  runs {'8': True, '12': True, '16': True, '24': True, '32': True, '40': True, '44': True, '46': True, '47': False, '48': False}  mixed at []
+hard old  code 200 mos_ff  1.32V  125C  trip point code 200 - 21 LSB (-4.12 mV shunt)  runs {'8': True, '12': True, '16': True, '20': True, '21': True, '22': False, '24': False}  mixed at []
+hard old  code 200 mos_ss  1.08V  -40C  trip point code 200 - 15 LSB (-2.94 mV shunt)  runs {'8': True, '12': True, '14': True, '15': True, '16': False}  mixed at []
+hard old  code 200 mos_tt   1.2V   27C  trip point code 200 - 18 LSB (-3.53 mV shunt)  runs {'8': True, '12': True, '16': True, '18': True, '19': False, '20': False, '24': False}  mixed at [18]
+hard nf4  code 254 mos_ff  1.32V  125C  trip point code 254 - 56 LSB (-10.99 mV shunt)  runs {'8': True, '12': True, '16': True, '24': True, '32': True, '48': True, '56': True, '57': False, '58': False, '60': False, '64': False}  mixed at []
+hard nf4  code 254 mos_ss  1.08V  -40C  trip point code 254 - 46 LSB (-9.03 mV shunt)  runs {'8': True, '12': True, '16': True, '24': True, '32': True, '40': True, '44': True, '46': True, '47': False, '48': False}  mixed at []
+hard nf4  code 254 mos_tt   1.2V   27C  trip point code 254 - 51 LSB (-10.01 mV shunt)  runs {'8': True, '12': True, '16': True, '24': True, '32': True, '48': True, '50': True, '51': True, '52': False, '56': False, '64': False}  mixed at []
+hard old  code 254 mos_ff  1.32V  125C  trip point code 254 - 23 LSB (-4.51 mV shunt)  runs {'8': True, '12': True, '16': True, '20': True, '22': True, '23': True, '24': False}  mixed at []
+hard old  code 254 mos_ss  1.08V  -40C  trip point code 254 - 17 LSB (-3.34 mV shunt)  runs {'8': True, '12': True, '16': True, '17': True, '18': False, '20': False, '24': False}  mixed at []
+hard old  code 254 mos_tt   1.2V   27C  trip point code 254 - 20 LSB (-3.92 mV shunt)  runs {'8': True, '12': True, '16': True, '20': True, '21': False, '22': False, '24': False}  mixed at []
+soft nf4  code 153 mos_ff  1.32V  125C  trip point code 153 - 1 LSB (-0.20 mV shunt)  runs {'0': True, '1': True, '2': False}  mixed at [1]
+soft nf4  code 153 mos_ss  1.08V  -40C  trip point code 153 - 1 LSB (-0.20 mV shunt)  runs {'0': True, '1': True, '2': False}  mixed at [1]
+soft nf4  code 153 mos_tt   1.2V   27C  trip point code 153 - 0 LSB (+0.00 mV shunt)  runs {'0': True, '1': False, '2': False}  mixed at [1]
+soft old  code 153 mos_ff  1.32V  125C  trip point code 153 - -1 LSB (+0.20 mV shunt)  runs {'-2': True, '-1': True, '0': False}  mixed at []
+soft old  code 153 mos_ss  1.08V  -40C  trip point code 153 - -1 LSB (+0.20 mV shunt)  runs {'-2': True, '-1': True, '0': False}  mixed at []
+soft old  code 153 mos_tt   1.2V   27C  trip point code 153 - -1 LSB (+0.20 mV shunt)  runs {'-2': True, '-1': True, '0': False}  mixed at []
+
+# Simulation-only what-if variants of g1_trip_nf4_pex.spice (make_variant.py; extraction unchanged), 2026-09-24T20:02Z, ngspice-46
+# nf4cK: hold capacitors CHS/CHH/CH x K (K-1 extra 26x26 cap_cmim in parallel); nf4dD: hard clock from an ideal source, delayed D ns after the clock falling edge (d0 = ideal, no delay)
+hard nf4c2 code 200 mos_tt   1.2V   27C  trip point code 200 - 23 LSB (-4.51 mV shunt)  runs {'18': True, '22': True, '23': True, '24': False, '26': False, '30': False}  mixed at []
+hard nf4c4 code 200 mos_ff  1.32V  125C  trip point code 200 - 10 LSB (-1.96 mV shunt)  runs {'8': True, '10': True, '11': False, '12': False, '16': False, '20': False}  mixed at [11]
+hard nf4c4 code 200 mos_ss  1.08V  -40C  trip point code 200 - 9 LSB (-1.77 mV shunt)  runs {'4': True, '8': True, '9': True, '10': False, '12': False, '16': False}  mixed at []
+hard nf4c4 code 200 mos_tt   1.2V   27C  trip point code 200 - 10 LSB (-1.96 mV shunt)  runs {'6': True, '10': True, '11': False, '12': False, '14': False, '18': False}  mixed at []
+hard nf4c8 code 200 mos_tt   1.2V   27C  trip point code 200 - 4 LSB (-0.78 mV shunt)  runs {'-3': True, '1': True, '3': True, '4': True, '5': False, '9': False}  mixed at [4]
+hard nf4c2 code 254 mos_tt   1.2V   27C  trip point code 254 - 26 LSB (-5.10 mV shunt)  runs {'20': True, '24': True, '26': True, '27': False, '28': False, '32': False}  mixed at []
+hard nf4c4 code 254 mos_ff  1.32V  125C  trip point code 254 - 12 LSB (-2.35 mV shunt)  runs {'10': True, '12': True, '13': False, '14': False, '18': False, '22': False}  mixed at [12]
+hard nf4c4 code 254 mos_ss  1.08V  -40C  trip point code 254 - 11 LSB (-2.16 mV shunt)  runs {'6': True, '10': True, '11': True, '12': False, '14': False, '18': False}  mixed at []
+hard nf4c4 code 254 mos_tt   1.2V   27C  trip point code 254 - 11 LSB (-2.16 mV shunt)  runs {'8': True, '10': True, '11': True, '12': False, '16': False, '20': False}  mixed at [12]
+hard nf4c8 code 254 mos_tt   1.2V   27C  trip point code 254 - 4 LSB (-0.78 mV shunt)  runs {'-2': True, '2': True, '4': True, '5': False, '6': False, '10': False}  mixed at [5]
+hard nf4d0 code 254 mos_tt   1.2V   27C  trip point code 254 - 3 LSB (-0.59 mV shunt)  runs {'-9': True, '-1': True, '3': True, '4': False, '5': False, '7': False, '23': False, '39': False, '47': False, '51': False}  mixed at []
+hard nf4d10 code 254 mos_tt   1.2V   27C  trip point code 254 - 41 LSB (-8.04 mV shunt)  runs {'24': True, '28': True, '36': True, '40': True, '41': True, '42': False, '44': False, '52': False}  mixed at [41]
+hard nf4d20 code 254 mos_tt   1.2V   27C  trip point code 254 - 30 LSB (-5.89 mV shunt)  runs {'16': True, '20': True, '28': True, '30': True, '31': False, '32': False, '36': False, '44': False}  mixed at []
+hard nf4d5 code 254 mos_tt   1.2V   27C  trip point code 254 - 47 LSB (-9.22 mV shunt)  runs {'32': True, '36': True, '44': True, '46': True, '47': True, '48': False, '52': False, '60': False}  mixed at []
+soft nf4c2 code 153 mos_tt   1.2V   27C  trip point code 153 - 0 LSB (+0.00 mV shunt)  runs {'0': True, '1': False, '2': False, '4': False}  mixed at []
+soft nf4c4 code 153 mos_ff  1.32V  125C  trip point code 153 - -1 LSB (+0.20 mV shunt)  runs {'-4': True, '-2': True, '-1': True, '0': False}  mixed at [-1]
+soft nf4c4 code 153 mos_ss  1.08V  -40C  trip point code 153 - -1 LSB (+0.20 mV shunt)  runs {'-4': True, '-2': True, '-1': True, '0': False}  mixed at [0]
+soft nf4c4 code 153 mos_tt   1.2V   27C  trip point code 153 - -1 LSB (+0.20 mV shunt)  runs {'-4': True, '-2': True, '-1': True, '0': False}  mixed at []
+soft nf4c8 code 153 mos_tt   1.2V   27C  trip point code 153 - -1 LSB (+0.20 mV shunt)  runs {'-4': True, '-2': True, '-1': True, '0': False}  mixed at [-1]
+# settling (tb_trip_settle.cir, tt, clock static): x1, x2, x4, x8
+SETTLE dac254to200_within1LSB_ns= 104.394  vth_hard_final= 0.89282  icmp_step_within1LSB_ns= 227.245  icmp_final= 0.912439  cross_10LSB_fault_ns= 156.712  cross_2.2V_fault_ns= 95.529
+SETTLE dac254to200_within1LSB_ns= 154.028  vth_hard_final= 0.89282  icmp_step_within1LSB_ns= 357.75  icmp_final= 0.912439  cross_10LSB_fault_ns= 228.74  cross_2.2V_fault_ns= 117.654
+SETTLE dac254to200_within1LSB_ns= 262.548  vth_hard_final= 0.89282  icmp_step_within1LSB_ns= 626.097  icmp_final= 0.912439  cross_10LSB_fault_ns= 380.1  cross_2.2V_fault_ns= 168.307
+SETTLE dac254to200_within1LSB_ns= 486.543  vth_hard_final= 0.89282  icmp_step_within1LSB_ns= 1167.63  icmp_final= 0.912439  cross_10LSB_fault_ns= 687.722  cross_2.2V_fault_ns= 274.497
+# comparator delay deck (tb_trip_cmp_pex.cir) on nf4c4 / nf4c2
+== nf4c2_cmp_delay_mos_tt_1.2V_27C_5MHz
+DELAY od= 0.05  od1_mV= -54.4872  q_after_strobe1= 3.93674E-08  od_eff_mV= 47.4004  td_ns= 0.6771  q_before= 1.69638E-07  q_end= 1.2
+DELAY od= 0.005  od1_mV= -9.4078  q_after_strobe1= 8.51503E-07  od_eff_mV= 4.9585  td_ns= 0.8049  q_before= -7.7021E-08  q_end= 1.2
+DELAY od= 0.001  od1_mV= -5.4046  q_after_strobe1= 8.52022E-07  od_eff_mV= 1.1864  td_ns= 0.8922  q_before= -7.69613E-08  q_end= 1.2
+== nf4c4_cmp_delay_mos_tt_1.2V_27C_5MHz
+DELAY od= 0.05  od1_mV= -54.8088  q_after_strobe1= 3.54734E-08  od_eff_mV= 33.4331  td_ns= 0.693  q_before= 1.71768E-07  q_end= 1.2
+DELAY od= 0.005  od1_mV= -9.7748  q_after_strobe1= 3.02095E-08  od_eff_mV= 2.669  td_ns= 0.8511  q_before= 1.70366E-07  q_end= 1.2
+DELAY od= 0.001  od1_mV= -5.7719  q_after_strobe1= 2.9748E-08  od_eff_mV= -0.066  td_ns=  q_before= 1.68582E-07  q_end= 4.17413E-07
+== nf4c4_cmp_delay_mos_ss_1.08V_-40C_5MHz
+DELAY od= 0.05  od1_mV= -53.5372  q_after_strobe1= 2.7997E-08  od_eff_mV= 34.0649  td_ns= 1.0693  q_before= 4.98135E-08  q_end= 1.08
+DELAY od= 0.005  od1_mV= -8.5808  q_after_strobe1= 6.00895E-09  od_eff_mV= 3.0298  td_ns= 1.6324  q_before= 1.33352E-07  q_end= 1.08
+DELAY od= 0.001  od1_mV= -4.5667  q_after_strobe1= 5.44697E-09  od_eff_mV= 0.2749  td_ns= 2.3399  q_before= 1.34814E-07  q_end= 1.08
+
+# 2x hold caps, ss/ff brackets (nf4c2 parallel-cap variant), 2026-09-24T21:53Z
+hard nf4c2 code 200 mos_ff  1.32V  125C  trip point code 200 - 25 LSB (-4.91 mV shunt)  runs {'25': True, '26': False, '27': False, '29': False}  mixed at []
+hard nf4c2 code 200 mos_ss  1.08V  -40C  trip point code 200 - 21 LSB (-4.12 mV shunt)  runs {'20': True, '21': True, '22': False, '24': False}  mixed at [21]
+hard nf4c2 code 254 mos_ff  1.32V  125C  trip point code 254 - 28 LSB (-5.49 mV shunt)  runs {'28': True, '29': False, '30': False, '32': False}  mixed at []
+hard nf4c2 code 254 mos_ss  1.08V  -40C  trip point code 254 - 24 LSB (-4.71 mV shunt)  runs {'24': True, '25': False, '26': False, '28': False}  mixed at []
+soft nf4c2 code 153 mos_ff  1.32V  125C  trip point code 153 - 0 LSB (+0.00 mV shunt)  runs {'0': True, '1': False, '2': False, '4': False}  mixed at []
+soft nf4c2 code 153 mos_ss  1.08V  -40C  trip point code 153 - 0 LSB (+0.00 mV shunt)  runs {'0': True, '1': False, '2': False, '4': False}  mixed at []
+# UNADOPTED candidate layout/candidates/nf4_hold2x, tt brackets on its kpex extraction g1_trip_nf4_hold2x_pex.spice (tag nf4h2)
+hard nf4h2 code 200 mos_tt   1.2V   27C  trip point code 200 - 23 LSB (-4.51 mV shunt)  runs {'23': True, '24': False, '25': False, '27': False}  mixed at []
+hard nf4h2 code 254 mos_tt   1.2V   27C  trip point code 254 - 26 LSB (-5.10 mV shunt)  runs {'26': True, '27': False, '28': False, '30': False}  mixed at []
+soft nf4h2 code 153 mos_tt   1.2V   27C  trip point code 153 - 0 LSB (+0.00 mV shunt)  runs {'0': True, '1': False, '2': False, '4': False}  mixed at []
+# comparator delay deck, late runs: 5 mV lines
+== logs/nf4c2_cmp_delay_mos_ss_1.08V_-40C_5MHz.log
+DELAY od= 0.05  od1_mV= -53.0366  q_after_strobe1= 3.22938E-08  od_eff_mV= 47.7579  td_ns= 1.0215  q_before= 4.0587E-08  q_end= 1.08
+DELAY od= 0.005  od1_mV= -8.1273  q_after_strobe1= 8.05841E-09  od_eff_mV= 5.2178  td_ns= 1.4738  q_before= 1.30959E-07  q_end= 1.08
+DELAY od= 0.001  od1_mV= -4.1055  q_after_strobe1= 7.30017E-09  od_eff_mV= 1.4407  td_ns= 1.7872  q_before= 1.29176E-07  q_end= 1.08
+== logs/nf4c8_cmp_delay_mos_tt_1.2V_27C_5MHz.log
+DELAY od= 0.05  od1_mV= -53.0841  q_after_strobe1= 3.23168E-08  od_eff_mV= 10.062  td_ns= 0.7618  q_before= 1.69717E-07  q_end= 1.2
+DELAY od= 0.005  od1_mV= -8.0679  q_after_strobe1= 2.90606E-08  od_eff_mV= 0.037  td_ns=  q_before= 1.68372E-07  q_end= 4.42474E-07
+DELAY od= 0.001  od1_mV= -4.0662  q_after_strobe1= 2.87694E-08  od_eff_mV= -0.8546  td_ns=  q_before= 1.68291E-07  q_end= 4.63884E-07
+== logs/nf4c8_cmp_delay_mos_ss_1.08V_-40C_5MHz.log
+DELAY od= 0.05  od1_mV= -52.3891  q_after_strobe1= 2.43653E-08  od_eff_mV= 10.6307  td_ns= 1.3004  q_before= 4.85048E-08  q_end= 1.08
+DELAY od= 0.005  od1_mV= -7.4095  q_after_strobe1= 4.79908E-09  od_eff_mV= 0.2772  td_ns= 2.4445  q_before= 1.38178E-07  q_end= 1.08
+DELAY od= 0.001  od1_mV= -3.4082  q_after_strobe1= 4.44944E-09  od_eff_mV= -0.6432  td_ns=  q_before= 1.37892E-07  q_end= 1.78246E-08

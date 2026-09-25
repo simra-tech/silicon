@@ -73,14 +73,58 @@ if { [info exists ::env(OPENLANE_SDC_IDEAL_CLOCKS)] && $::env(OPENLANE_SDC_IDEAL
     set_propagated_clock [all_clocks]
 }
 
-# Digital macro at chip level (blocks/g1_ctrl/layout/TOP_SDC.md): the oscillator
-# clock osc_clk on the macro's root clock buffer, asynchronous clock groups,
-# the macro's signoff uncertainties (setup 0.5 / hold 0.05 ns, overriding the
-# template's 0.25 ns on both), false paths on EN and the asynchronous macro
-# inputs, SDI minimum input delay. Sourced only when the macro is present
-# (ring-only builds have no i_core.u_digital).
-set g1_digital_sdc [file join [file dirname [info script]] ../../g1_ctrl/layout/g1_digital_top.sdc]
-if { [llength [get_cells -quiet i_core.u_digital]] > 0 && [file exists $g1_digital_sdc] } {
-    puts "\[INFO] Sourcing $g1_digital_sdc"
-    source $g1_digital_sdc
+# ---------------------------------------------------------------------------
+# Digital macro g1_digital (run7) at chip level. Merged inline from
+# ../../g1_ctrl/layout/g1_digital_top.sdc (rationale: ../../g1_ctrl/layout/TOP_SDC.md;
+# evidence: ../../g1_ctrl/reports/sta_merged_sdc_20260924/README.md) so that this
+# file is complete on its own. Keep the two in step if either changes.
+# Applied only when the macro instance exists (ring-only builds have none).
+# ---------------------------------------------------------------------------
+set g1d i_core.u_digital
+if { [llength [get_cells -quiet $g1d]] > 0 } {
+    puts "\[INFO] Applying g1_digital chip-level constraints to $g1d"
+
+    # (1) Oscillator clock: ~10 MHz nominal, +-20 % untrimmed, constrained at
+    #     100 ns like the macro signoff. Defined on the macro's root clock-buffer
+    #     input: g1_osc is a black box without timing model, so a clock created
+    #     on its output or on the macro's hierarchical osc_clk pin reaches no
+    #     register (0 vs 1148 registers, TOP_SDC.md). 0.3 ns transition and
+    #     propagated latency as in the macro SDC.
+    if { [llength [get_clocks -quiet osc_clk]] == 0 } {
+        create_clock -name osc_clk -period 100.0 [get_pins $g1d/clkbuf_0_osc_clk/A]
+    }
+    set_clock_transition 0.3 [get_clocks osc_clk]
+    set_propagated_clock [get_clocks osc_clk]
+
+    # (2) osc_clk and SCLK are asynchronous; every crossing goes through a
+    #     synchroniser inside the macro (register map section 1.3).
+    set_clock_groups -asynchronous -name g1_digital_async \
+        -group [get_clocks osc_clk] -group $clocks
+
+    # (3) Macro signoff uncertainties: 0.5 ns setup (oscillator jitter),
+    #     0.05 ns hold. Overrides the 0.25 ns set above for both checks, which on
+    #     hold is 0.2 ns more than the macro was hardened with (-0.094 ns fast).
+    foreach c [list [get_clocks osc_clk] $clocks] {
+        set_clock_uncertainty -setup 0.5  $c
+        set_clock_uncertainty -hold  0.05 $c
+    }
+
+    # (4) Asynchronous macro inputs, synchronised inside; no timing requirement.
+    #     EN is also the chip reset: its pad input delay must not create
+    #     SCLK-relative checks into the osc_clk domain.
+    set_false_path -from [get_ports EN]
+    foreach p {cmp_soft cmp_hard tripped en por_n} {
+        set_false_path -through [get_pins $g1d/$p]
+    }
+
+    # (5) SDI is driven by the host on the falling SCLK edge, >= 2 ns after it:
+    #     minimum input delay 2 ns (the template above uses 0).
+    set_input_delay -min 2.0 -clock $clocks [get_ports SDI]
+
+    # (6) Other macro outputs (DAC codes, strobe, latch controls, oscillator
+    #     enable/trim, level-shifter inputs) end at analog macros without timing
+    #     models and are quasi-static; they are timed only inside the macro
+    #     signoff (20 ns output delay against osc_clk). Nothing to add here.
+} else {
+    puts "\[WARNING] $g1d not found: g1_digital constraints not applied (ring-only build?)"
 }

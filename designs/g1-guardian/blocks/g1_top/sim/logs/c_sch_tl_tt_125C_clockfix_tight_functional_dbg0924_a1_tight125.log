@@ -1,0 +1,3515 @@
+# G1_TOP run c_sch_tl_tt_125C_clockfix_tight_functional_dbg0924_a1_tight125  2026-09-24T10:16:05Z UTC
+# (c) fast step to 3x nominal (20 ns rise): hard trip through the digital path, HARD_N = 4
+# deck build/g1_top/c_sch_tl_tt_125C_clockfix_tight_functional_dbg0924_a1_tight125.cir
+# netlist sha256 fa92550727c36fc47419001799cf399f58f18ecf5414a47323a706fc8edc9701 blocks/g1_bgr/xschem/g1_bgr.spice
+# netlist sha256 8880157bd2a88c92a248c4865fc79b9242954d1920ce6e3834b776cae6eee57f blocks/g1_sense/sim/netlist/g1_sense.spice
+# netlist sha256 6f2653197660568ecfc4744ac491cb69af8e15d3259e4cef72fc8989069ad829 blocks/g1_trip/sim/netlist/g1_trip.spice
+# netlist sha256 43a1620509c44f2fdab41ce239a4a0f5c6aae6680157651ebfe4528a63cefd65 blocks/g1_osc/sim/netlist/g1_osc.spice
+# netlist sha256 846a55e037c5ab6e63a7490e941dc957292fe93de9d1f88bd25ab9ba5610d97c blocks/g1_gate/sim/netlist/g1_gate.spice
+# IO models sha256 1d53ab7df431b717ef5aff43e1117c0224681d5cc84886da37a319280ee958d6 /foss/pdks/ihp-sg13g2/libs.ref/sg13g2_io/spice/sg13g2_io.spi
+# PDK commit 84374023ee8b4b126bebbba67fcbada0a9c0ff0b
+# ngspice-46 : Circuit level simulation program
+# Icarus Verilog version 14.0 (devel) (s20260301-328-geda9fdcd-dirty)
+# iverilog -g2005 -Wall -Wno-timescale -o /work/build/g1_top/g1_dig_cosim.vvp /work/designs/g1-guardian/blocks/g1_top/sim/rtl/g1_dig_cosim.v /work/designs/g1-guardian/blocks/g1_ctrl/rtl/g1_sync2.v /work/designs/g1-guardian/blocks/g1_ctrl/rtl/g1_serial.v /work/designs/g1-guardian/blocks/g1_ctrl/rtl/g1_trip_timer.v /work/designs/g1-guardian/blocks/g1_ctrl/rtl/g1_regfile.v /work/designs/g1-guardian/blocks/g1_ctrl/rtl/g1_digital_top.v /work/designs/g1-guardian/blocks/g1_ctrl/rtl/g1_digital.v /work/designs/g1-guardian/blocks/g1_seu/rtl/g1_tmr_reg.v /work/designs/g1-guardian/blocks/g1_seu/rtl/g1_seu_chain.v /work/designs/g1-guardian/blocks/g1_seu/rtl/g1_seu.v
+# rtl sha256 63dfb950393fe60c3da1d057f6a5dd86142c8bb670ba0a63b87248675037ccd5 designs/g1-guardian/blocks/g1_top/sim/rtl/g1_dig_cosim.v
+# rtl sha256 c14906d7d9256a771cd8fdc0ab14ba291131e151d24bf06b951b6bc693ad8ef2 designs/g1-guardian/blocks/g1_ctrl/rtl/g1_sync2.v
+# rtl sha256 df4341e1878caef2f7bf27abb273a7a5af3e41b96658ffa02eedb2af97c48a5d designs/g1-guardian/blocks/g1_ctrl/rtl/g1_serial.v
+# rtl sha256 094527d2ccbdfad792d4c2e4d1a602c50051ed1e1c8d1789e4946a44e37af850 designs/g1-guardian/blocks/g1_ctrl/rtl/g1_trip_timer.v
+# rtl sha256 16e48edd1b7ac39d4c3ccd7b76b0ff75ba9d71095e188c7c808d7fb587c10d50 designs/g1-guardian/blocks/g1_ctrl/rtl/g1_regfile.v
+# rtl sha256 42430b79ddf649d832993aca1cf3c8a548afc97383c59a793cf70b972c8256ac designs/g1-guardian/blocks/g1_ctrl/rtl/g1_digital_top.v
+# rtl sha256 36757122c43271dfd439bf1623be6d5413adf3bbb97cbad40d5cccf5892f5c3d designs/g1-guardian/blocks/g1_ctrl/rtl/g1_digital.v
+# rtl sha256 f53f82d97b91d4e815e662e72b40968949c7d74ce135f777dba7789201167ac5 designs/g1-guardian/blocks/g1_seu/rtl/g1_tmr_reg.v
+# rtl sha256 6e10bbc02a8ff29116067f2067f648b959f17b542cb2360c50e7802010048573 designs/g1-guardian/blocks/g1_seu/rtl/g1_seu_chain.v
+# rtl sha256 7c1831c99b5875a2dd48387db70fd5b1a0888a520fe8676bc4e071820b7fa736 designs/g1-guardian/blocks/g1_seu/rtl/g1_seu.v
+
+Note: No compatibility mode selected!
+
+
+Circuit: * g1_top breaker path, chip level: (c) fast step to 3x nominal (20 ns rise): hard trip through the digital path, hard_n = 4
+
+Warning : voltage source vsclk has non-increasing PWL time points.
+Warning : voltage source vsclk has non-increasing PWL time points.
+Warning : voltage source vsclk has non-increasing PWL time points.
+Warning : voltage source vsclk has non-increasing PWL time points.
+Warning : voltage source vsclk has non-increasing PWL time points.
+Warning : voltage source vsclk has non-increasing PWL time points.
+Warning : voltage source vsclk has non-increasing PWL time points.
+Warning : voltage source vsclk has non-increasing PWL time points.
+Warning : voltage source vsclk has non-increasing PWL time points.
+Warning : voltage source vsclk has non-increasing PWL time points.
+Warning : voltage source vsclk has non-increasing PWL time points.
+Warning : voltage source vsclk has non-increasing PWL time points.
+Warning : voltage source vsclk has non-increasing PWL time points.
+Warning : voltage source vsclk has non-increasing PWL time points.
+Warning : voltage source vsclk has non-increasing PWL time points.
+Warning : voltage source vsclk has non-increasing PWL time points.
+Reducing trtol to 1 for xspice 'A' devices
+Doing analysis at TEMP = 125.000000 and TNOM = 27.000000
+
+Using SPARSE 1.3 as Direct Linear Solver
+
+
+The temperature limiting function received NaN.
+Please check your power dissipation and improve your heat sink Rth!
+    This message will be shown only once.
+
+Note: Starting dynamic gmin stepping
+OSDI(debug) n.xbgr.xr2.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr2.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xpvref.xi3.xr0.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xpvref.xi3.xr0.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+Note: Dynamic gmin stepping completed
+
+Initial Transient Solution
+--------------------------
+
+Node                                   Voltage
+----                                   -------
+sub!                                         0
+rail33                                     3.3
+vdda_s                                     3.3
+iovdd_s                                    3.3
+vdda                                   3.29929
+iovdd                                      3.3
+vdd_s                                      1.2
+vdd                                    1.19986
+iprof                                        1
+ldi                                2.10514e-07
+gfet                               1.24592e-10
+shp                                2.10514e-07
+shn                                9.35113e-08
+sense_p                            4.88854e-06
+sense_n                            4.76455e-06
+gate                               1.24592e-10
+fault_n                                    3.3
+xpsp.xi0.net2                              3.3
+xpsp.xi0.xr0.dt                              0
+sense_p_res                        4.89441e-06
+xpsp.xi3.xr0.dt                              0
+xpsp.xi4.net2                                0
+xpsp.xi4.xr0.dt                              0
+xpsn.xi0.net2                              3.3
+xpsn.xi0.xr0.dt                              0
+sense_n_res                        4.77042e-06
+xpsn.xi3.xr0.dt                              0
+xpsn.xi4.net2                                0
+xpsn.xi4.xr0.dt                              0
+vref_pad                               1.03434
+xpvref.xi0.net2                            3.3
+xpvref.xi0.xr0.dt                            0
+vref                                   1.03434
+xpvref.xi3.xr0.dt                            0
+xpvref.xi4.net2                              0
+xpvref.xi4.xr0.dt                            0
+en_core                                      0
+en_pad                                       0
+sclk_core                                    0
+sclk_pad                                     0
+sdi_core                                     0
+sdi_pad                                      0
+gate_drv                           1.24592e-10
+gate_core                          2.61737e-06
+fault_drv                                  3.3
+fault_core                             1.19986
+osc_en_g                                     0
+osc_en                                       0
+r4                                           0
+vdda_bgr                               3.29929
+xbgr.d1                                2.58234
+pbias                                  2.29695
+xbgr.n1                               0.605025
+pcasc                                  1.58102
+xbgr.d2                                 2.5932
+xbgr.xrb.dt                                  0
+xbgr.vb2                               1.44074
+vbe                                   0.582712
+xbgr.c2                               0.683517
+xbgr.d5                                2.58286
+xbgr.vd1                               1.16559
+xbgr.xrx.dt                                  0
+xbgr.vd2                              0.582796
+xbgr.xqd1.s1                       3.44745e-08
+xbgr.xqd1.t                          0.0361164
+xbgr.xqd2.s1                       3.42413e-08
+xbgr.xqd2.t                          0.0361152
+xbgr.xq1.s1                         3.4241e-08
+xbgr.xq1.t                           0.0360254
+xbgr.b1b                           4.78408e-08
+xbgr.xq1b.s1                       3.41318e-08
+xbgr.xq1b.t                        5.76387e-07
+dvbe                                 0.0742151
+xbgr.xq2a.s1                       3.41864e-08
+xbgr.xq2a.t                         0.00472871
+xbgr.xq2b.s1                       3.41864e-08
+xbgr.xq2b.t                         0.00472871
+xbgr.xq2c.s1                       3.41864e-08
+xbgr.xq2c.t                         0.00472871
+xbgr.xq2d.s1                       3.41864e-08
+xbgr.xq2d.t                         0.00472871
+xbgr.xq2e.s1                       3.41864e-08
+xbgr.xq2e.t                         0.00472871
+xbgr.xq2f.s1                       3.41864e-08
+xbgr.xq2f.t                         0.00472871
+xbgr.xq2g.s1                       3.41864e-08
+xbgr.xq2g.t                         0.00472871
+xbgr.xq2h.s1                       3.41864e-08
+xbgr.xq2h.t                         0.00472871
+xbgr.xr1.dt                                  0
+xbgr.d3                                2.58256
+xbgr.vbe3                             0.582822
+xbgr.xr2.dt                                  0
+xbgr.xq3.s1                        3.42414e-08
+xbgr.xq3.t                            0.036143
+xbgr.d4                                2.58239
+iptat                                 0.728731
+xbgr.det                               3.24311
+xbgr.xrdet.dt                                0
+xbgr.kick                          4.19745e-07
+xbgr.r4n                               3.29929
+vdda_sense                             3.29929
+xsense.vn                            0.0473215
+xsense.xr1n0.dt                              0
+xsense.r2n_0                         0.0946381
+xsense.xr2n0.dt                              0
+xsense.r2n_1                          0.141955
+xsense.xr2n1.dt                              0
+xsense.r2n_2                          0.189272
+xsense.xr2n2.dt                              0
+xsense.r2n_3                          0.236588
+xsense.xr2n3.dt                              0
+xsense.r2n_4                          0.283905
+xsense.xr2n4.dt                              0
+xsense.r2n_5                          0.331222
+xsense.xr2n5.dt                              0
+xsense.r2n_6                          0.378539
+xsense.xr2n6.dt                              0
+xsense.r2n_7                          0.425855
+xsense.xr2n7.dt                              0
+xsense.r2n_8                          0.473172
+xsense.xr2n8.dt                              0
+xsense.r2n_9                          0.520489
+xsense.xr2n9.dt                              0
+xsense.r2n_10                         0.567806
+xsense.xr2n10.dt                             0
+xsense.r2n_11                         0.615123
+xsense.xr2n11.dt                             0
+xsense.r2n_12                          0.66244
+xsense.xr2n12.dt                             0
+xsense.r2n_13                         0.709757
+xsense.xr2n13.dt                             0
+xsense.r2n_14                         0.757074
+xsense.xr2n14.dt                             0
+xsense.r2n_15                         0.804391
+xsense.xr2n15.dt                             0
+xsense.r2n_16                         0.851708
+xsense.xr2n16.dt                             0
+xsense.r2n_17                         0.899025
+xsense.xr2n17.dt                             0
+xsense.r2n_18                         0.946342
+xsense.xr2n18.dt                             0
+isense                                0.993659
+xsense.xr2n19.dt                             0
+xsense.vp                            0.0473925
+xsense.xr1p0.dt                              0
+xsense.r2p_0                         0.0947801
+xsense.xr2p0.dt                              0
+xsense.r2p_1                          0.142168
+xsense.xr2p1.dt                              0
+xsense.r2p_2                          0.189555
+xsense.xr2p2.dt                              0
+xsense.r2p_3                          0.236943
+xsense.xr2p3.dt                              0
+xsense.r2p_4                          0.284331
+xsense.xr2p4.dt                              0
+xsense.r2p_5                          0.331718
+xsense.xr2p5.dt                              0
+xsense.r2p_6                          0.379106
+xsense.xr2p6.dt                              0
+xsense.r2p_7                          0.426494
+xsense.xr2p7.dt                              0
+xsense.r2p_8                          0.473882
+xsense.xr2p8.dt                              0
+xsense.r2p_9                          0.521269
+xsense.xr2p9.dt                              0
+xsense.r2p_10                         0.568657
+xsense.xr2p10.dt                             0
+xsense.r2p_11                         0.616045
+xsense.xr2p11.dt                             0
+xsense.r2p_12                         0.663433
+xsense.xr2p12.dt                             0
+xsense.r2p_13                         0.710821
+xsense.xr2p13.dt                             0
+xsense.r2p_14                         0.758208
+xsense.xr2p14.dt                             0
+xsense.r2p_15                         0.805596
+xsense.xr2p15.dt                             0
+xsense.r2p_16                         0.852984
+xsense.xr2p16.dt                             0
+xsense.r2p_17                         0.900372
+xsense.xr2p17.dt                             0
+xsense.r2p_18                          0.94776
+xsense.xr2p18.dt                             0
+vped                                  0.995148
+xsense.xr2p19.dt                             0
+vref_buf                               1.03423
+xsense.rd1_0                           1.01472
+xsense.xrd10.dt                              0
+xsense.vped_ref                       0.995205
+xsense.xrd11.dt                              0
+xsense.rd2_0                           0.97569
+xsense.xrd20.dt                              0
+xsense.rd2_1                          0.956176
+xsense.xrd21.dt                              0
+xsense.rd2_2                          0.936662
+xsense.xrd22.dt                              0
+xsense.rd2_3                          0.917148
+xsense.xrd23.dt                              0
+xsense.rd2_4                          0.897633
+xsense.xrd24.dt                              0
+xsense.rd2_5                          0.878119
+xsense.xrd25.dt                              0
+xsense.rd2_6                          0.858605
+xsense.xrd26.dt                              0
+xsense.rd2_7                          0.839091
+xsense.xrd27.dt                              0
+xsense.rd2_8                          0.819577
+xsense.xrd28.dt                              0
+xsense.rd2_9                          0.800063
+xsense.xrd29.dt                              0
+xsense.rd2_10                         0.780549
+xsense.xrd210.dt                             0
+xsense.rd2_11                         0.761034
+xsense.xrd211.dt                             0
+xsense.rd2_12                          0.74152
+xsense.xrd212.dt                             0
+xsense.rd2_13                         0.722006
+xsense.xrd213.dt                             0
+xsense.rd2_14                         0.702492
+xsense.xrd214.dt                             0
+xsense.rd2_15                         0.682979
+xsense.xrd215.dt                             0
+xsense.rd2_16                         0.663465
+xsense.xrd216.dt                             0
+xsense.rd2_17                         0.643951
+xsense.xrd217.dt                             0
+xsense.rd2_18                         0.624437
+xsense.xrd218.dt                             0
+xsense.rd2_19                         0.604923
+xsense.xrd219.dt                             0
+xsense.rd2_20                         0.585409
+xsense.xrd220.dt                             0
+xsense.rd2_21                         0.565895
+xsense.xrd221.dt                             0
+xsense.rd2_22                         0.546381
+xsense.xrd222.dt                             0
+xsense.rd2_23                         0.526868
+xsense.xrd223.dt                             0
+xsense.rd2_24                         0.507354
+xsense.xrd224.dt                             0
+xsense.rd2_25                          0.48784
+xsense.xrd225.dt                             0
+xsense.rd2_26                         0.468326
+xsense.xrd226.dt                             0
+xsense.rd2_27                         0.448813
+xsense.xrd227.dt                             0
+xsense.rd2_28                         0.429299
+xsense.xrd228.dt                             0
+xsense.rd2_29                         0.409785
+xsense.xrd229.dt                             0
+xsense.rd2_30                         0.390272
+xsense.xrd230.dt                             0
+xsense.rd2_31                         0.370758
+xsense.xrd231.dt                             0
+xsense.rd2_32                         0.351244
+xsense.xrd232.dt                             0
+xsense.rd2_33                         0.331731
+xsense.xrd233.dt                             0
+xsense.rd2_34                         0.312217
+xsense.xrd234.dt                             0
+xsense.rd2_35                         0.292703
+xsense.xrd235.dt                             0
+xsense.rd2_36                          0.27319
+xsense.xrd236.dt                             0
+xsense.rd2_37                         0.253676
+xsense.xrd237.dt                             0
+xsense.rd2_38                         0.234163
+xsense.xrd238.dt                             0
+xsense.rd2_39                         0.214649
+xsense.xrd239.dt                             0
+xsense.rd2_40                         0.195135
+xsense.xrd240.dt                             0
+xsense.rd2_41                         0.175622
+xsense.xrd241.dt                             0
+xsense.rd2_42                         0.156108
+xsense.xrd242.dt                             0
+xsense.rd2_43                         0.136595
+xsense.xrd243.dt                             0
+xsense.rd2_44                         0.117081
+xsense.xrd244.dt                             0
+xsense.rd2_45                        0.0975677
+xsense.xrd245.dt                             0
+xsense.rd2_46                        0.0780541
+xsense.xrd246.dt                             0
+xsense.rd2_47                        0.0585406
+xsense.xrd247.dt                             0
+xsense.rd2_48                        0.0390271
+xsense.xrd248.dt                             0
+xsense.rd2_49                        0.0195135
+xsense.xrd249.dt                             0
+xsense.xrd250.dt                             0
+xsense.xota.vbp                        2.50496
+xsense.xota.vbnc                       1.02925
+xsense.xota.vbpc                       2.13322
+xsense.xota.tail                       1.59164
+xsense.xota.fn                        0.263034
+xsense.xota.fp                         0.26274
+xsense.xota.mir                        2.55846
+xsense.xota.out1                       2.50981
+xsense.xota.pc1                        3.01298
+xsense.xota.pc2                        3.01283
+xsense.xota.cz                         2.50981
+xsense.xota.xrz.dt                           0
+xsense.xota.xcc.1                      2.50981
+xsense.xbuf.vbp                        2.50496
+xsense.xbuf.vbnc                       1.02925
+xsense.xbuf.vbpc                       2.13322
+xsense.xbuf.tail                       2.29371
+xsense.xbuf.fn                        0.262539
+xsense.xbuf.fp                        0.262306
+xsense.xbuf.mir                        2.55762
+xsense.xbuf.out1                        2.5191
+xsense.xbuf.pc1                        3.01352
+xsense.xbuf.pc2                        3.01341
+xsense.xbuf.cz                          2.5191
+xsense.xbuf.xrz.dt                           0
+xsense.xbuf.xcc.1                       2.5191
+xsense.xref.vbp                        2.50496
+xsense.xref.vbnc                       1.02925
+xsense.xref.vbpc                       2.13322
+xsense.xref.tail                       2.32213
+xsense.xref.fn                        0.262524
+xsense.xref.fp                        0.262079
+xsense.xref.mir                         2.5576
+xsense.xref.out1                       2.48393
+xsense.xref.pc1                        3.01354
+xsense.xref.pc2                        3.01333
+xsense.xref.cz                         2.48393
+xsense.xref.xrz.dt                           0
+xsense.xref.xcc.1                      2.48393
+vdda_trip                              3.29929
+vdd_trip                               1.19986
+xtrip.xcond.c0                        0.894293
+xtrip.xcond.xrc0.dt                          0
+xtrip.xcond.c1                        0.794926
+xtrip.xcond.xrc1.dt                          0
+xtrip.xcond.c2                         0.69556
+xtrip.xcond.xrc2.dt                          0
+xtrip.xcond.c3                        0.596194
+xtrip.xcond.xrc3.dt                          0
+xtrip.icmp                            0.496828
+xtrip.xcond.xrc4.dt                          0
+xtrip.xcond.c5                        0.397462
+xtrip.xcond.xrc5.dt                          0
+xtrip.xcond.c6                        0.298097
+xtrip.xcond.xrc6.dt                          0
+xtrip.xcond.c7                        0.198731
+xtrip.xcond.xrc7.dt                          0
+xtrip.xcond.c8                       0.0993656
+xtrip.xcond.xrc8.dt                          0
+xtrip.xcond.xrc9.dt                          0
+xtrip.xcond.xch.1                     0.496828
+xtrip.xdacs.s0                      0.00195133
+xtrip.xdacs.xru0.dt                          0
+xtrip.xdacs.s1                      0.00390266
+xtrip.xdacs.xru1.dt                          0
+xtrip.xdacs.s2                      0.00585399
+xtrip.xdacs.xru2.dt                          0
+xtrip.xdacs.s3                      0.00780532
+xtrip.xdacs.xru3.dt                          0
+xtrip.xdacs.s4                      0.00975666
+xtrip.xdacs.xru4.dt                          0
+xtrip.xdacs.s5                        0.011708
+xtrip.xdacs.xru5.dt                          0
+xtrip.xdacs.s6                       0.0136593
+xtrip.xdacs.xru6.dt                          0
+xtrip.xdacs.s7                       0.0156106
+xtrip.xdacs.xru7.dt                          0
+xtrip.xdacs.s8                        0.017562
+xtrip.xdacs.xru8.dt                          0
+xtrip.xdacs.s9                       0.0195133
+xtrip.xdacs.xru9.dt                          0
+xtrip.xdacs.s10                      0.0214646
+xtrip.xdacs.xru10.dt                         0
+xtrip.xdacs.s11                       0.023416
+xtrip.xdacs.xru11.dt                         0
+xtrip.xdacs.s12                      0.0253673
+xtrip.xdacs.xru12.dt                         0
+xtrip.xdacs.s13                      0.0273186
+xtrip.xdacs.xru13.dt                         0
+xtrip.xdacs.s14                        0.02927
+xtrip.xdacs.xru14.dt                         0
+xtrip.xdacs.s15                      0.0312213
+xtrip.xdacs.xru15.dt                         0
+xtrip.xdacs.s16                      0.0331726
+xtrip.xdacs.xru16.dt                         0
+xtrip.xdacs.s17                       0.035124
+xtrip.xdacs.xru17.dt                         0
+xtrip.xdacs.s18                      0.0370753
+xtrip.xdacs.xru18.dt                         0
+xtrip.xdacs.s19                      0.0390266
+xtrip.xdacs.xru19.dt                         0
+xtrip.xdacs.s20                       0.040978
+xtrip.xdacs.xru20.dt                         0
+xtrip.xdacs.s21                      0.0429293
+xtrip.xdacs.xru21.dt                         0
+xtrip.xdacs.s22                      0.0448806
+xtrip.xdacs.xru22.dt                         0
+xtrip.xdacs.s23                      0.0468319
+xtrip.xdacs.xru23.dt                         0
+xtrip.xdacs.s24                      0.0487833
+xtrip.xdacs.xru24.dt                         0
+xtrip.xdacs.s25                      0.0507346
+xtrip.xdacs.xru25.dt                         0
+xtrip.xdacs.s26                      0.0526859
+xtrip.xdacs.xru26.dt                         0
+xtrip.xdacs.s27                      0.0546373
+xtrip.xdacs.xru27.dt                         0
+xtrip.xdacs.s28                      0.0565886
+xtrip.xdacs.xru28.dt                         0
+xtrip.xdacs.s29                      0.0585399
+xtrip.xdacs.xru29.dt                         0
+xtrip.xdacs.s30                      0.0604913
+xtrip.xdacs.xru30.dt                         0
+xtrip.xdacs.s31                      0.0624426
+xtrip.xdacs.xru31.dt                         0
+xtrip.xdacs.s32                      0.0643939
+xtrip.xdacs.xru32.dt                         0
+xtrip.xdacs.s33                      0.0663453
+xtrip.xdacs.xru33.dt                         0
+xtrip.xdacs.s34                      0.0682966
+xtrip.xdacs.xru34.dt                         0
+xtrip.xdacs.s35                      0.0702479
+xtrip.xdacs.xru35.dt                         0
+xtrip.xdacs.s36                      0.0721993
+xtrip.xdacs.xru36.dt                         0
+xtrip.xdacs.s37                      0.0741506
+xtrip.xdacs.xru37.dt                         0
+xtrip.xdacs.s38                      0.0761019
+xtrip.xdacs.xru38.dt                         0
+xtrip.xdacs.s39                      0.0780533
+xtrip.xdacs.xru39.dt                         0
+xtrip.xdacs.s40                      0.0800046
+xtrip.xdacs.xru40.dt                         0
+xtrip.xdacs.s41                      0.0819559
+xtrip.xdacs.xru41.dt                         0
+xtrip.xdacs.s42                      0.0839073
+xtrip.xdacs.xru42.dt                         0
+xtrip.xdacs.s43                      0.0858586
+xtrip.xdacs.xru43.dt                         0
+xtrip.xdacs.s44                      0.0878099
+xtrip.xdacs.xru44.dt                         0
+xtrip.xdacs.s45                      0.0897612
+xtrip.xdacs.xru45.dt                         0
+xtrip.xdacs.s46                      0.0917126
+xtrip.xdacs.xru46.dt                         0
+xtrip.xdacs.s47                      0.0936639
+xtrip.xdacs.xru47.dt                         0
+xtrip.xdacs.s48                      0.0956152
+xtrip.xdacs.xru48.dt                         0
+xtrip.xdacs.s49                      0.0975666
+xtrip.xdacs.xru49.dt                         0
+xtrip.xdacs.s50                      0.0995179
+xtrip.xdacs.xru50.dt                         0
+xtrip.xdacs.s51                       0.101469
+xtrip.xdacs.xru51.dt                         0
+xtrip.xdacs.s52                       0.103421
+xtrip.xdacs.xru52.dt                         0
+xtrip.xdacs.s53                       0.105372
+xtrip.xdacs.xru53.dt                         0
+xtrip.xdacs.s54                       0.107323
+xtrip.xdacs.xru54.dt                         0
+xtrip.xdacs.s55                       0.109275
+xtrip.xdacs.xru55.dt                         0
+xtrip.xdacs.s56                       0.111226
+xtrip.xdacs.xru56.dt                         0
+xtrip.xdacs.s57                       0.113177
+xtrip.xdacs.xru57.dt                         0
+xtrip.xdacs.s58                       0.115129
+xtrip.xdacs.xru58.dt                         0
+xtrip.xdacs.s59                        0.11708
+xtrip.xdacs.xru59.dt                         0
+xtrip.xdacs.s60                       0.119031
+xtrip.xdacs.xru60.dt                         0
+xtrip.xdacs.s61                       0.120983
+xtrip.xdacs.xru61.dt                         0
+xtrip.xdacs.s62                       0.122934
+xtrip.xdacs.xru62.dt                         0
+xtrip.xdacs.s63                       0.124885
+xtrip.xdacs.xru63.dt                         0
+xtrip.xdacs.s64                       0.126837
+xtrip.xdacs.xru64.dt                         0
+xtrip.xdacs.s65                       0.128788
+xtrip.xdacs.xru65.dt                         0
+xtrip.xdacs.s66                       0.130739
+xtrip.xdacs.xru66.dt                         0
+xtrip.xdacs.s67                       0.132691
+xtrip.xdacs.xru67.dt                         0
+xtrip.xdacs.s68                       0.134642
+xtrip.xdacs.xru68.dt                         0
+xtrip.xdacs.s69                       0.136593
+xtrip.xdacs.xru69.dt                         0
+xtrip.xdacs.s70                       0.138545
+xtrip.xdacs.xru70.dt                         0
+xtrip.xdacs.s71                       0.140496
+xtrip.xdacs.xru71.dt                         0
+xtrip.xdacs.s72                       0.142447
+xtrip.xdacs.xru72.dt                         0
+xtrip.xdacs.s73                       0.144399
+xtrip.xdacs.xru73.dt                         0
+xtrip.xdacs.s74                        0.14635
+xtrip.xdacs.xru74.dt                         0
+xtrip.xdacs.s75                       0.148301
+xtrip.xdacs.xru75.dt                         0
+xtrip.xdacs.s76                       0.150253
+xtrip.xdacs.xru76.dt                         0
+xtrip.xdacs.s77                       0.152204
+xtrip.xdacs.xru77.dt                         0
+xtrip.xdacs.s78                       0.154155
+xtrip.xdacs.xru78.dt                         0
+xtrip.xdacs.s79                       0.156107
+xtrip.xdacs.xru79.dt                         0
+xtrip.xdacs.s80                       0.158058
+xtrip.xdacs.xru80.dt                         0
+xtrip.xdacs.s81                       0.160009
+xtrip.xdacs.xru81.dt                         0
+xtrip.xdacs.s82                       0.161961
+xtrip.xdacs.xru82.dt                         0
+xtrip.xdacs.s83                       0.163912
+xtrip.xdacs.xru83.dt                         0
+xtrip.xdacs.s84                       0.165863
+xtrip.xdacs.xru84.dt                         0
+xtrip.xdacs.s85                       0.167815
+xtrip.xdacs.xru85.dt                         0
+xtrip.xdacs.s86                       0.169766
+xtrip.xdacs.xru86.dt                         0
+xtrip.xdacs.s87                       0.171717
+xtrip.xdacs.xru87.dt                         0
+xtrip.xdacs.s88                       0.173669
+xtrip.xdacs.xru88.dt                         0
+xtrip.xdacs.s89                        0.17562
+xtrip.xdacs.xru89.dt                         0
+xtrip.xdacs.s90                       0.177571
+xtrip.xdacs.xru90.dt                         0
+xtrip.xdacs.s91                       0.179523
+xtrip.xdacs.xru91.dt                         0
+xtrip.xdacs.s92                       0.181474
+xtrip.xdacs.xru92.dt                         0
+xtrip.xdacs.s93                       0.183425
+xtrip.xdacs.xru93.dt                         0
+xtrip.xdacs.s94                       0.185377
+xtrip.xdacs.xru94.dt                         0
+xtrip.xdacs.s95                       0.187328
+xtrip.xdacs.xru95.dt                         0
+xtrip.xdacs.s96                       0.189279
+xtrip.xdacs.xru96.dt                         0
+xtrip.xdacs.s97                       0.191231
+xtrip.xdacs.xru97.dt                         0
+xtrip.xdacs.s98                       0.193182
+xtrip.xdacs.xru98.dt                         0
+xtrip.xdacs.s99                       0.195133
+xtrip.xdacs.xru99.dt                         0
+xtrip.xdacs.s100                      0.197085
+xtrip.xdacs.xru100.dt                        0
+xtrip.xdacs.s101                      0.199036
+xtrip.xdacs.xru101.dt                        0
+xtrip.xdacs.s102                      0.200987
+xtrip.xdacs.xru102.dt                        0
+xtrip.xdacs.s103                      0.202939
+xtrip.xdacs.xru103.dt                        0
+xtrip.xdacs.s104                       0.20489
+xtrip.xdacs.xru104.dt                        0
+xtrip.xdacs.s105                      0.206841
+xtrip.xdacs.xru105.dt                        0
+xtrip.xdacs.s106                      0.208793
+xtrip.xdacs.xru106.dt                        0
+xtrip.xdacs.s107                      0.210744
+xtrip.xdacs.xru107.dt                        0
+xtrip.xdacs.s108                      0.212695
+xtrip.xdacs.xru108.dt                        0
+xtrip.xdacs.s109                      0.214647
+xtrip.xdacs.xru109.dt                        0
+xtrip.xdacs.s110                      0.216598
+xtrip.xdacs.xru110.dt                        0
+xtrip.xdacs.s111                      0.218549
+xtrip.xdacs.xru111.dt                        0
+xtrip.xdacs.s112                      0.220501
+xtrip.xdacs.xru112.dt                        0
+xtrip.xdacs.s113                      0.222452
+xtrip.xdacs.xru113.dt                        0
+xtrip.xdacs.s114                      0.224403
+xtrip.xdacs.xru114.dt                        0
+xtrip.xdacs.s115                      0.226355
+xtrip.xdacs.xru115.dt                        0
+xtrip.xdacs.s116                      0.228306
+xtrip.xdacs.xru116.dt                        0
+xtrip.xdacs.s117                      0.230257
+xtrip.xdacs.xru117.dt                        0
+xtrip.xdacs.s118                      0.232209
+xtrip.xdacs.xru118.dt                        0
+xtrip.xdacs.s119                       0.23416
+xtrip.xdacs.xru119.dt                        0
+xtrip.xdacs.s120                      0.236111
+xtrip.xdacs.xru120.dt                        0
+xtrip.xdacs.s121                      0.238063
+xtrip.xdacs.xru121.dt                        0
+xtrip.xdacs.s122                      0.240014
+xtrip.xdacs.xru122.dt                        0
+xtrip.xdacs.s123                      0.241965
+xtrip.xdacs.xru123.dt                        0
+xtrip.xdacs.s124                      0.243917
+xtrip.xdacs.xru124.dt                        0
+xtrip.xdacs.s125                      0.245868
+xtrip.xdacs.xru125.dt                        0
+xtrip.xdacs.s126                      0.247819
+xtrip.xdacs.xru126.dt                        0
+xtrip.xdacs.s127                      0.249771
+xtrip.xdacs.xru127.dt                        0
+xtrip.xdacs.s128                      0.251722
+xtrip.xdacs.xru128.dt                        0
+xtrip.xdacs.s129                      0.253673
+xtrip.xdacs.xru129.dt                        0
+xtrip.xdacs.s130                      0.255625
+xtrip.xdacs.xru130.dt                        0
+xtrip.xdacs.s131                      0.257576
+xtrip.xdacs.xru131.dt                        0
+xtrip.xdacs.s132                      0.259527
+xtrip.xdacs.xru132.dt                        0
+xtrip.xdacs.s133                      0.261479
+xtrip.xdacs.xru133.dt                        0
+xtrip.xdacs.s134                       0.26343
+xtrip.xdacs.xru134.dt                        0
+xtrip.xdacs.s135                      0.265381
+xtrip.xdacs.xru135.dt                        0
+xtrip.xdacs.s136                      0.267333
+xtrip.xdacs.xru136.dt                        0
+xtrip.xdacs.s137                      0.269284
+xtrip.xdacs.xru137.dt                        0
+xtrip.xdacs.s138                      0.271235
+xtrip.xdacs.xru138.dt                        0
+xtrip.xdacs.s139                      0.273187
+xtrip.xdacs.xru139.dt                        0
+xtrip.xdacs.s140                      0.275138
+xtrip.xdacs.xru140.dt                        0
+xtrip.xdacs.s141                      0.277089
+xtrip.xdacs.xru141.dt                        0
+xtrip.xdacs.s142                      0.279041
+xtrip.xdacs.xru142.dt                        0
+xtrip.xdacs.s143                      0.280992
+xtrip.xdacs.xru143.dt                        0
+xtrip.xdacs.s144                      0.282943
+xtrip.xdacs.xru144.dt                        0
+xtrip.xdacs.s145                      0.284895
+xtrip.xdacs.xru145.dt                        0
+xtrip.xdacs.s146                      0.286846
+xtrip.xdacs.xru146.dt                        0
+xtrip.xdacs.s147                      0.288797
+xtrip.xdacs.xru147.dt                        0
+xtrip.xdacs.s148                      0.290749
+xtrip.xdacs.xru148.dt                        0
+xtrip.xdacs.s149                        0.2927
+xtrip.xdacs.xru149.dt                        0
+xtrip.xdacs.s150                      0.294651
+xtrip.xdacs.xru150.dt                        0
+xtrip.xdacs.s151                      0.296603
+xtrip.xdacs.xru151.dt                        0
+xtrip.xdacs.s152                      0.298554
+xtrip.xdacs.xru152.dt                        0
+xtrip.xdacs.s153                      0.300505
+xtrip.xdacs.xru153.dt                        0
+xtrip.xdacs.s154                      0.302457
+xtrip.xdacs.xru154.dt                        0
+xtrip.xdacs.s155                      0.304408
+xtrip.xdacs.xru155.dt                        0
+xtrip.xdacs.s156                      0.306359
+xtrip.xdacs.xru156.dt                        0
+xtrip.xdacs.s157                      0.308311
+xtrip.xdacs.xru157.dt                        0
+xtrip.xdacs.s158                      0.310262
+xtrip.xdacs.xru158.dt                        0
+xtrip.xdacs.s159                      0.312213
+xtrip.xdacs.xru159.dt                        0
+xtrip.xdacs.s160                      0.314165
+xtrip.xdacs.xru160.dt                        0
+xtrip.xdacs.s161                      0.316116
+xtrip.xdacs.xru161.dt                        0
+xtrip.xdacs.s162                      0.318067
+xtrip.xdacs.xru162.dt                        0
+xtrip.xdacs.s163                      0.320019
+xtrip.xdacs.xru163.dt                        0
+xtrip.xdacs.s164                       0.32197
+xtrip.xdacs.xru164.dt                        0
+xtrip.xdacs.s165                      0.323922
+xtrip.xdacs.xru165.dt                        0
+xtrip.xdacs.s166                      0.325873
+xtrip.xdacs.xru166.dt                        0
+xtrip.xdacs.s167                      0.327824
+xtrip.xdacs.xru167.dt                        0
+xtrip.xdacs.s168                      0.329776
+xtrip.xdacs.xru168.dt                        0
+xtrip.xdacs.s169                      0.331727
+xtrip.xdacs.xru169.dt                        0
+xtrip.xdacs.s170                      0.333678
+xtrip.xdacs.xru170.dt                        0
+xtrip.xdacs.s171                       0.33563
+xtrip.xdacs.xru171.dt                        0
+xtrip.xdacs.s172                      0.337581
+xtrip.xdacs.xru172.dt                        0
+xtrip.xdacs.s173                      0.339532
+xtrip.xdacs.xru173.dt                        0
+xtrip.xdacs.s174                      0.341484
+xtrip.xdacs.xru174.dt                        0
+xtrip.xdacs.s175                      0.343435
+xtrip.xdacs.xru175.dt                        0
+xtrip.xdacs.s176                      0.345386
+xtrip.xdacs.xru176.dt                        0
+xtrip.xdacs.s177                      0.347338
+xtrip.xdacs.xru177.dt                        0
+xtrip.xdacs.s178                      0.349289
+xtrip.xdacs.xru178.dt                        0
+xtrip.xdacs.s179                       0.35124
+xtrip.xdacs.xru179.dt                        0
+xtrip.xdacs.s180                      0.353192
+xtrip.xdacs.xru180.dt                        0
+xtrip.xdacs.s181                      0.355143
+xtrip.xdacs.xru181.dt                        0
+xtrip.xdacs.s182                      0.357094
+xtrip.xdacs.xru182.dt                        0
+xtrip.xdacs.s183                      0.359046
+xtrip.xdacs.xru183.dt                        0
+xtrip.xdacs.s184                      0.360997
+xtrip.xdacs.xru184.dt                        0
+xtrip.xdacs.s185                      0.362948
+xtrip.xdacs.xru185.dt                        0
+xtrip.xdacs.s186                        0.3649
+xtrip.xdacs.xru186.dt                        0
+xtrip.xdacs.s187                      0.366851
+xtrip.xdacs.xru187.dt                        0
+xtrip.xdacs.s188                      0.368802
+xtrip.xdacs.xru188.dt                        0
+xtrip.xdacs.s189                      0.370754
+xtrip.xdacs.xru189.dt                        0
+xtrip.xdacs.s190                      0.372705
+xtrip.xdacs.xru190.dt                        0
+xtrip.xdacs.s191                      0.374656
+xtrip.xdacs.xru191.dt                        0
+xtrip.xdacs.s192                      0.376608
+xtrip.xdacs.xru192.dt                        0
+xtrip.xdacs.s193                      0.378559
+xtrip.xdacs.xru193.dt                        0
+xtrip.xdacs.s194                       0.38051
+xtrip.xdacs.xru194.dt                        0
+xtrip.xdacs.s195                      0.382462
+xtrip.xdacs.xru195.dt                        0
+xtrip.xdacs.s196                      0.384413
+xtrip.xdacs.xru196.dt                        0
+xtrip.xdacs.s197                      0.386364
+xtrip.xdacs.xru197.dt                        0
+xtrip.xdacs.s198                      0.388316
+xtrip.xdacs.xru198.dt                        0
+xtrip.xdacs.s199                      0.390267
+xtrip.xdacs.xru199.dt                        0
+xtrip.xdacs.s200                      0.392218
+xtrip.xdacs.xru200.dt                        0
+xtrip.xdacs.s201                       0.39417
+xtrip.xdacs.xru201.dt                        0
+xtrip.xdacs.s202                      0.396121
+xtrip.xdacs.xru202.dt                        0
+xtrip.xdacs.s203                      0.398073
+xtrip.xdacs.xru203.dt                        0
+xtrip.xdacs.s204                      0.400024
+xtrip.xdacs.xru204.dt                        0
+xtrip.xdacs.s205                      0.401975
+xtrip.xdacs.xru205.dt                        0
+xtrip.xdacs.s206                      0.403927
+xtrip.xdacs.xru206.dt                        0
+xtrip.xdacs.s207                      0.405878
+xtrip.xdacs.xru207.dt                        0
+xtrip.xdacs.s208                      0.407829
+xtrip.xdacs.xru208.dt                        0
+xtrip.xdacs.s209                      0.409781
+xtrip.xdacs.xru209.dt                        0
+xtrip.xdacs.s210                      0.411732
+xtrip.xdacs.xru210.dt                        0
+xtrip.xdacs.s211                      0.413683
+xtrip.xdacs.xru211.dt                        0
+xtrip.xdacs.s212                      0.415635
+xtrip.xdacs.xru212.dt                        0
+xtrip.xdacs.s213                      0.417586
+xtrip.xdacs.xru213.dt                        0
+xtrip.xdacs.s214                      0.419537
+xtrip.xdacs.xru214.dt                        0
+xtrip.xdacs.s215                      0.421489
+xtrip.xdacs.xru215.dt                        0
+xtrip.xdacs.s216                       0.42344
+xtrip.xdacs.xru216.dt                        0
+xtrip.xdacs.s217                      0.425391
+xtrip.xdacs.xru217.dt                        0
+xtrip.xdacs.s218                      0.427343
+xtrip.xdacs.xru218.dt                        0
+xtrip.xdacs.s219                      0.429294
+xtrip.xdacs.xru219.dt                        0
+xtrip.xdacs.s220                      0.431245
+xtrip.xdacs.xru220.dt                        0
+xtrip.xdacs.s221                      0.433197
+xtrip.xdacs.xru221.dt                        0
+xtrip.xdacs.s222                      0.435148
+xtrip.xdacs.xru222.dt                        0
+xtrip.xdacs.s223                      0.437099
+xtrip.xdacs.xru223.dt                        0
+xtrip.xdacs.s224                      0.439051
+xtrip.xdacs.xru224.dt                        0
+xtrip.xdacs.s225                      0.441002
+xtrip.xdacs.xru225.dt                        0
+xtrip.xdacs.s226                      0.442953
+xtrip.xdacs.xru226.dt                        0
+xtrip.xdacs.s227                      0.444905
+xtrip.xdacs.xru227.dt                        0
+xtrip.xdacs.s228                      0.446856
+xtrip.xdacs.xru228.dt                        0
+xtrip.xdacs.s229                      0.448808
+xtrip.xdacs.xru229.dt                        0
+xtrip.xdacs.s230                      0.450759
+xtrip.xdacs.xru230.dt                        0
+xtrip.xdacs.s231                       0.45271
+xtrip.xdacs.xru231.dt                        0
+xtrip.xdacs.s232                      0.454662
+xtrip.xdacs.xru232.dt                        0
+xtrip.xdacs.s233                      0.456613
+xtrip.xdacs.xru233.dt                        0
+xtrip.xdacs.s234                      0.458564
+xtrip.xdacs.xru234.dt                        0
+xtrip.xdacs.s235                      0.460516
+xtrip.xdacs.xru235.dt                        0
+xtrip.xdacs.s236                      0.462467
+xtrip.xdacs.xru236.dt                        0
+xtrip.xdacs.s237                      0.464418
+xtrip.xdacs.xru237.dt                        0
+xtrip.xdacs.s238                       0.46637
+xtrip.xdacs.xru238.dt                        0
+xtrip.xdacs.s239                      0.468321
+xtrip.xdacs.xru239.dt                        0
+xtrip.xdacs.s240                      0.470272
+xtrip.xdacs.xru240.dt                        0
+xtrip.xdacs.s241                      0.472224
+xtrip.xdacs.xru241.dt                        0
+xtrip.xdacs.s242                      0.474175
+xtrip.xdacs.xru242.dt                        0
+xtrip.xdacs.s243                      0.476126
+xtrip.xdacs.xru243.dt                        0
+xtrip.xdacs.s244                      0.478078
+xtrip.xdacs.xru244.dt                        0
+xtrip.xdacs.s245                      0.480029
+xtrip.xdacs.xru245.dt                        0
+xtrip.xdacs.s246                       0.48198
+xtrip.xdacs.xru246.dt                        0
+xtrip.xdacs.s247                      0.483932
+xtrip.xdacs.xru247.dt                        0
+xtrip.xdacs.s248                      0.485883
+xtrip.xdacs.xru248.dt                        0
+xtrip.xdacs.s249                      0.487835
+xtrip.xdacs.xru249.dt                        0
+xtrip.xdacs.s250                      0.489786
+xtrip.xdacs.xru250.dt                        0
+xtrip.xdacs.s251                      0.491737
+xtrip.xdacs.xru251.dt                        0
+xtrip.xdacs.s252                      0.493689
+xtrip.xdacs.xru252.dt                        0
+xtrip.xdacs.s253                       0.49564
+xtrip.xdacs.xru253.dt                        0
+xtrip.xdacs.t0                        0.497591
+xtrip.xdacs.xru254.dt                        0
+xtrip.xdacs.t1                        0.499543
+xtrip.xdacs.xru255.dt                        0
+xtrip.xdacs.t2                        0.501494
+xtrip.xdacs.xru256.dt                        0
+xtrip.xdacs.t3                        0.503445
+xtrip.xdacs.xru257.dt                        0
+xtrip.xdacs.t4                        0.505397
+xtrip.xdacs.xru258.dt                        0
+xtrip.xdacs.t5                        0.507348
+xtrip.xdacs.xru259.dt                        0
+xtrip.xdacs.t6                        0.509299
+xtrip.xdacs.xru260.dt                        0
+xtrip.xdacs.t7                        0.511251
+xtrip.xdacs.xru261.dt                        0
+xtrip.xdacs.t8                        0.513202
+xtrip.xdacs.xru262.dt                        0
+xtrip.xdacs.t9                        0.515153
+xtrip.xdacs.xru263.dt                        0
+xtrip.xdacs.t10                       0.517105
+xtrip.xdacs.xru264.dt                        0
+xtrip.xdacs.t11                       0.519056
+xtrip.xdacs.xru265.dt                        0
+xtrip.xdacs.t12                       0.521008
+xtrip.xdacs.xru266.dt                        0
+xtrip.xdacs.t13                       0.522959
+xtrip.xdacs.xru267.dt                        0
+xtrip.xdacs.t14                        0.52491
+xtrip.xdacs.xru268.dt                        0
+xtrip.xdacs.t15                       0.526862
+xtrip.xdacs.xru269.dt                        0
+xtrip.xdacs.t16                       0.528813
+xtrip.xdacs.xru270.dt                        0
+xtrip.xdacs.t17                       0.530764
+xtrip.xdacs.xru271.dt                        0
+xtrip.xdacs.t18                       0.532716
+xtrip.xdacs.xru272.dt                        0
+xtrip.xdacs.t19                       0.534667
+xtrip.xdacs.xru273.dt                        0
+xtrip.xdacs.t20                       0.536618
+xtrip.xdacs.xru274.dt                        0
+xtrip.xdacs.t21                        0.53857
+xtrip.xdacs.xru275.dt                        0
+xtrip.xdacs.t22                       0.540521
+xtrip.xdacs.xru276.dt                        0
+xtrip.xdacs.t23                       0.542472
+xtrip.xdacs.xru277.dt                        0
+xtrip.xdacs.t24                       0.544424
+xtrip.xdacs.xru278.dt                        0
+xtrip.xdacs.t25                       0.546375
+xtrip.xdacs.xru279.dt                        0
+xtrip.xdacs.t26                       0.548327
+xtrip.xdacs.xru280.dt                        0
+xtrip.xdacs.t27                       0.550278
+xtrip.xdacs.xru281.dt                        0
+xtrip.xdacs.t28                       0.552229
+xtrip.xdacs.xru282.dt                        0
+xtrip.xdacs.t29                       0.554181
+xtrip.xdacs.xru283.dt                        0
+xtrip.xdacs.t30                       0.556132
+xtrip.xdacs.xru284.dt                        0
+xtrip.xdacs.t31                       0.558083
+xtrip.xdacs.xru285.dt                        0
+xtrip.xdacs.t32                       0.560035
+xtrip.xdacs.xru286.dt                        0
+xtrip.xdacs.t33                       0.561986
+xtrip.xdacs.xru287.dt                        0
+xtrip.xdacs.t34                       0.563937
+xtrip.xdacs.xru288.dt                        0
+xtrip.xdacs.t35                       0.565889
+xtrip.xdacs.xru289.dt                        0
+xtrip.xdacs.t36                        0.56784
+xtrip.xdacs.xru290.dt                        0
+xtrip.xdacs.t37                       0.569792
+xtrip.xdacs.xru291.dt                        0
+xtrip.xdacs.t38                       0.571743
+xtrip.xdacs.xru292.dt                        0
+xtrip.xdacs.t39                       0.573694
+xtrip.xdacs.xru293.dt                        0
+xtrip.xdacs.t40                       0.575646
+xtrip.xdacs.xru294.dt                        0
+xtrip.xdacs.t41                       0.577597
+xtrip.xdacs.xru295.dt                        0
+xtrip.xdacs.t42                       0.579548
+xtrip.xdacs.xru296.dt                        0
+xtrip.xdacs.t43                         0.5815
+xtrip.xdacs.xru297.dt                        0
+xtrip.xdacs.t44                       0.583451
+xtrip.xdacs.xru298.dt                        0
+xtrip.xdacs.t45                       0.585403
+xtrip.xdacs.xru299.dt                        0
+xtrip.xdacs.t46                       0.587354
+xtrip.xdacs.xru300.dt                        0
+xtrip.xdacs.t47                       0.589305
+xtrip.xdacs.xru301.dt                        0
+xtrip.xdacs.t48                       0.591257
+xtrip.xdacs.xru302.dt                        0
+xtrip.xdacs.t49                       0.593208
+xtrip.xdacs.xru303.dt                        0
+xtrip.xdacs.t50                       0.595159
+xtrip.xdacs.xru304.dt                        0
+xtrip.xdacs.t51                       0.597111
+xtrip.xdacs.xru305.dt                        0
+xtrip.xdacs.t52                       0.599062
+xtrip.xdacs.xru306.dt                        0
+xtrip.xdacs.t53                       0.601014
+xtrip.xdacs.xru307.dt                        0
+xtrip.xdacs.t54                       0.602965
+xtrip.xdacs.xru308.dt                        0
+xtrip.xdacs.t55                       0.604916
+xtrip.xdacs.xru309.dt                        0
+xtrip.xdacs.t56                       0.606868
+xtrip.xdacs.xru310.dt                        0
+xtrip.xdacs.t57                       0.608819
+xtrip.xdacs.xru311.dt                        0
+xtrip.xdacs.t58                        0.61077
+xtrip.xdacs.xru312.dt                        0
+xtrip.xdacs.t59                       0.612722
+xtrip.xdacs.xru313.dt                        0
+xtrip.xdacs.t60                       0.614673
+xtrip.xdacs.xru314.dt                        0
+xtrip.xdacs.t61                       0.616625
+xtrip.xdacs.xru315.dt                        0
+xtrip.xdacs.t62                       0.618576
+xtrip.xdacs.xru316.dt                        0
+xtrip.xdacs.t63                       0.620527
+xtrip.xdacs.xru317.dt                        0
+xtrip.xdacs.t64                       0.622479
+xtrip.xdacs.xru318.dt                        0
+xtrip.xdacs.t65                        0.62443
+xtrip.xdacs.xru319.dt                        0
+xtrip.xdacs.t66                       0.626381
+xtrip.xdacs.xru320.dt                        0
+xtrip.xdacs.t67                       0.628333
+xtrip.xdacs.xru321.dt                        0
+xtrip.xdacs.t68                       0.630284
+xtrip.xdacs.xru322.dt                        0
+xtrip.xdacs.t69                       0.632236
+xtrip.xdacs.xru323.dt                        0
+xtrip.xdacs.t70                       0.634187
+xtrip.xdacs.xru324.dt                        0
+xtrip.xdacs.t71                       0.636138
+xtrip.xdacs.xru325.dt                        0
+xtrip.xdacs.t72                        0.63809
+xtrip.xdacs.xru326.dt                        0
+xtrip.xdacs.t73                       0.640041
+xtrip.xdacs.xru327.dt                        0
+xtrip.xdacs.t74                       0.641993
+xtrip.xdacs.xru328.dt                        0
+xtrip.xdacs.t75                       0.643944
+xtrip.xdacs.xru329.dt                        0
+xtrip.xdacs.t76                       0.645895
+xtrip.xdacs.xru330.dt                        0
+xtrip.xdacs.t77                       0.647847
+xtrip.xdacs.xru331.dt                        0
+xtrip.xdacs.t78                       0.649798
+xtrip.xdacs.xru332.dt                        0
+xtrip.xdacs.t79                       0.651749
+xtrip.xdacs.xru333.dt                        0
+xtrip.xdacs.t80                       0.653701
+xtrip.xdacs.xru334.dt                        0
+xtrip.xdacs.t81                       0.655652
+xtrip.xdacs.xru335.dt                        0
+xtrip.xdacs.t82                       0.657604
+xtrip.xdacs.xru336.dt                        0
+xtrip.xdacs.t83                       0.659555
+xtrip.xdacs.xru337.dt                        0
+xtrip.xdacs.t84                       0.661506
+xtrip.xdacs.xru338.dt                        0
+xtrip.xdacs.t85                       0.663458
+xtrip.xdacs.xru339.dt                        0
+xtrip.xdacs.t86                       0.665409
+xtrip.xdacs.xru340.dt                        0
+xtrip.xdacs.t87                       0.667361
+xtrip.xdacs.xru341.dt                        0
+xtrip.xdacs.t88                       0.669312
+xtrip.xdacs.xru342.dt                        0
+xtrip.xdacs.t89                       0.671263
+xtrip.xdacs.xru343.dt                        0
+xtrip.xdacs.t90                       0.673215
+xtrip.xdacs.xru344.dt                        0
+xtrip.xdacs.t91                       0.675166
+xtrip.xdacs.xru345.dt                        0
+xtrip.xdacs.t92                       0.677118
+xtrip.xdacs.xru346.dt                        0
+xtrip.xdacs.t93                       0.679069
+xtrip.xdacs.xru347.dt                        0
+xtrip.xdacs.t94                        0.68102
+xtrip.xdacs.xru348.dt                        0
+xtrip.xdacs.t95                       0.682972
+xtrip.xdacs.xru349.dt                        0
+xtrip.xdacs.t96                       0.684923
+xtrip.xdacs.xru350.dt                        0
+xtrip.xdacs.t97                       0.686875
+xtrip.xdacs.xru351.dt                        0
+xtrip.xdacs.t98                       0.688826
+xtrip.xdacs.xru352.dt                        0
+xtrip.xdacs.t99                       0.690777
+xtrip.xdacs.xru353.dt                        0
+xtrip.xdacs.t100                      0.692729
+xtrip.xdacs.xru354.dt                        0
+xtrip.xdacs.t101                       0.69468
+xtrip.xdacs.xru355.dt                        0
+xtrip.xdacs.t102                      0.696632
+xtrip.xdacs.xru356.dt                        0
+xtrip.xdacs.t103                      0.698583
+xtrip.xdacs.xru357.dt                        0
+xtrip.xdacs.t104                      0.700534
+xtrip.xdacs.xru358.dt                        0
+xtrip.xdacs.t105                      0.702486
+xtrip.xdacs.xru359.dt                        0
+xtrip.xdacs.t106                      0.704437
+xtrip.xdacs.xru360.dt                        0
+xtrip.xdacs.t107                      0.706389
+xtrip.xdacs.xru361.dt                        0
+xtrip.xdacs.t108                       0.70834
+xtrip.xdacs.xru362.dt                        0
+xtrip.xdacs.t109                      0.710291
+xtrip.xdacs.xru363.dt                        0
+xtrip.xdacs.t110                      0.712243
+xtrip.xdacs.xru364.dt                        0
+xtrip.xdacs.t111                      0.714194
+xtrip.xdacs.xru365.dt                        0
+xtrip.xdacs.t112                      0.716146
+xtrip.xdacs.xru366.dt                        0
+xtrip.xdacs.t113                      0.718097
+xtrip.xdacs.xru367.dt                        0
+xtrip.xdacs.t114                      0.720048
+xtrip.xdacs.xru368.dt                        0
+xtrip.xdacs.t115                         0.722
+xtrip.xdacs.xru369.dt                        0
+xtrip.xdacs.t116                      0.723951
+xtrip.xdacs.xru370.dt                        0
+xtrip.xdacs.t117                      0.725903
+xtrip.xdacs.xru371.dt                        0
+xtrip.xdacs.t118                      0.727854
+xtrip.xdacs.xru372.dt                        0
+xtrip.xdacs.t119                      0.729805
+xtrip.xdacs.xru373.dt                        0
+xtrip.xdacs.t120                      0.731757
+xtrip.xdacs.xru374.dt                        0
+xtrip.xdacs.t121                      0.733708
+xtrip.xdacs.xru375.dt                        0
+xtrip.xdacs.t122                       0.73566
+xtrip.xdacs.xru376.dt                        0
+xtrip.xdacs.t123                      0.737611
+xtrip.xdacs.xru377.dt                        0
+xtrip.xdacs.t124                      0.739563
+xtrip.xdacs.xru378.dt                        0
+xtrip.xdacs.t125                      0.741514
+xtrip.xdacs.xru379.dt                        0
+xtrip.xdacs.t126                      0.743465
+xtrip.xdacs.xru380.dt                        0
+xtrip.xdacs.t127                      0.745417
+xtrip.xdacs.xru381.dt                        0
+xtrip.xdacs.t128                      0.747368
+xtrip.xdacs.xru382.dt                        0
+xtrip.xdacs.t129                       0.74932
+xtrip.xdacs.xru383.dt                        0
+xtrip.xdacs.t130                      0.751271
+xtrip.xdacs.xru384.dt                        0
+xtrip.xdacs.t131                      0.753222
+xtrip.xdacs.xru385.dt                        0
+xtrip.xdacs.t132                      0.755174
+xtrip.xdacs.xru386.dt                        0
+xtrip.xdacs.t133                      0.757125
+xtrip.xdacs.xru387.dt                        0
+xtrip.xdacs.t134                      0.759077
+xtrip.xdacs.xru388.dt                        0
+xtrip.xdacs.t135                      0.761028
+xtrip.xdacs.xru389.dt                        0
+xtrip.xdacs.t136                       0.76298
+xtrip.xdacs.xru390.dt                        0
+xtrip.xdacs.t137                      0.764931
+xtrip.xdacs.xru391.dt                        0
+xtrip.xdacs.t138                      0.766882
+xtrip.xdacs.xru392.dt                        0
+xtrip.xdacs.t139                      0.768834
+xtrip.xdacs.xru393.dt                        0
+xtrip.xdacs.t140                      0.770785
+xtrip.xdacs.xru394.dt                        0
+xtrip.xdacs.t141                      0.772737
+xtrip.xdacs.xru395.dt                        0
+xtrip.xdacs.t142                      0.774688
+xtrip.xdacs.xru396.dt                        0
+xtrip.xdacs.t143                       0.77664
+xtrip.xdacs.xru397.dt                        0
+xtrip.xdacs.t144                      0.778591
+xtrip.xdacs.xru398.dt                        0
+xtrip.xdacs.t145                      0.780542
+xtrip.xdacs.xru399.dt                        0
+xtrip.xdacs.t146                      0.782494
+xtrip.xdacs.xru400.dt                        0
+xtrip.xdacs.t147                      0.784445
+xtrip.xdacs.xru401.dt                        0
+xtrip.xdacs.t148                      0.786397
+xtrip.xdacs.xru402.dt                        0
+xtrip.xdacs.t149                      0.788348
+xtrip.xdacs.xru403.dt                        0
+xtrip.xdacs.t150                        0.7903
+xtrip.xdacs.xru404.dt                        0
+xtrip.xdacs.t151                      0.792251
+xtrip.xdacs.xru405.dt                        0
+xtrip.xdacs.t152                      0.794202
+xtrip.xdacs.xru406.dt                        0
+xtrip.xdacs.t153                      0.796154
+xtrip.xdacs.xru407.dt                        0
+xtrip.xdacs.t154                      0.798105
+xtrip.xdacs.xru408.dt                        0
+xtrip.xdacs.t155                      0.800057
+xtrip.xdacs.xru409.dt                        0
+xtrip.xdacs.t156                      0.802008
+xtrip.xdacs.xru410.dt                        0
+xtrip.xdacs.t157                       0.80396
+xtrip.xdacs.xru411.dt                        0
+xtrip.xdacs.t158                      0.805911
+xtrip.xdacs.xru412.dt                        0
+xtrip.xdacs.t159                      0.807862
+xtrip.xdacs.xru413.dt                        0
+xtrip.xdacs.t160                      0.809814
+xtrip.xdacs.xru414.dt                        0
+xtrip.xdacs.t161                      0.811765
+xtrip.xdacs.xru415.dt                        0
+xtrip.xdacs.t162                      0.813717
+xtrip.xdacs.xru416.dt                        0
+xtrip.xdacs.t163                      0.815668
+xtrip.xdacs.xru417.dt                        0
+xtrip.xdacs.t164                       0.81762
+xtrip.xdacs.xru418.dt                        0
+xtrip.xdacs.t165                      0.819571
+xtrip.xdacs.xru419.dt                        0
+xtrip.xdacs.t166                      0.821522
+xtrip.xdacs.xru420.dt                        0
+xtrip.xdacs.t167                      0.823474
+xtrip.xdacs.xru421.dt                        0
+xtrip.xdacs.t168                      0.825425
+xtrip.xdacs.xru422.dt                        0
+xtrip.xdacs.t169                      0.827377
+xtrip.xdacs.xru423.dt                        0
+xtrip.xdacs.t170                      0.829328
+xtrip.xdacs.xru424.dt                        0
+xtrip.xdacs.t171                       0.83128
+xtrip.xdacs.xru425.dt                        0
+xtrip.xdacs.t172                      0.833231
+xtrip.xdacs.xru426.dt                        0
+xtrip.xdacs.t173                      0.835183
+xtrip.xdacs.xru427.dt                        0
+xtrip.xdacs.t174                      0.837134
+xtrip.xdacs.xru428.dt                        0
+xtrip.xdacs.t175                      0.839085
+xtrip.xdacs.xru429.dt                        0
+xtrip.xdacs.t176                      0.841037
+xtrip.xdacs.xru430.dt                        0
+xtrip.xdacs.t177                      0.842988
+xtrip.xdacs.xru431.dt                        0
+xtrip.xdacs.t178                       0.84494
+xtrip.xdacs.xru432.dt                        0
+xtrip.xdacs.t179                      0.846891
+xtrip.xdacs.xru433.dt                        0
+xtrip.xdacs.t180                      0.848843
+xtrip.xdacs.xru434.dt                        0
+xtrip.xdacs.t181                      0.850794
+xtrip.xdacs.xru435.dt                        0
+xtrip.xdacs.t182                      0.852746
+xtrip.xdacs.xru436.dt                        0
+xtrip.xdacs.t183                      0.854697
+xtrip.xdacs.xru437.dt                        0
+xtrip.xdacs.t184                      0.856649
+xtrip.xdacs.xru438.dt                        0
+xtrip.xdacs.t185                        0.8586
+xtrip.xdacs.xru439.dt                        0
+xtrip.xdacs.t186                      0.860551
+xtrip.xdacs.xru440.dt                        0
+xtrip.xdacs.t187                      0.862503
+xtrip.xdacs.xru441.dt                        0
+xtrip.xdacs.t188                      0.864454
+xtrip.xdacs.xru442.dt                        0
+xtrip.xdacs.t189                      0.866406
+xtrip.xdacs.xru443.dt                        0
+xtrip.xdacs.t190                      0.868357
+xtrip.xdacs.xru444.dt                        0
+xtrip.xdacs.t191                      0.870309
+xtrip.xdacs.xru445.dt                        0
+xtrip.xdacs.t192                       0.87226
+xtrip.xdacs.xru446.dt                        0
+xtrip.xdacs.t193                      0.874212
+xtrip.xdacs.xru447.dt                        0
+xtrip.xdacs.t194                      0.876163
+xtrip.xdacs.xru448.dt                        0
+xtrip.xdacs.t195                      0.878115
+xtrip.xdacs.xru449.dt                        0
+xtrip.xdacs.t196                      0.880066
+xtrip.xdacs.xru450.dt                        0
+xtrip.xdacs.t197                      0.882017
+xtrip.xdacs.xru451.dt                        0
+xtrip.xdacs.t198                      0.883969
+xtrip.xdacs.xru452.dt                        0
+xtrip.xdacs.t199                       0.88592
+xtrip.xdacs.xru453.dt                        0
+xtrip.xdacs.t200                      0.887872
+xtrip.xdacs.xru454.dt                        0
+xtrip.xdacs.t201                      0.889823
+xtrip.xdacs.xru455.dt                        0
+xtrip.xdacs.t202                      0.891775
+xtrip.xdacs.xru456.dt                        0
+xtrip.xdacs.t203                      0.893726
+xtrip.xdacs.xru457.dt                        0
+xtrip.xdacs.t204                      0.895678
+xtrip.xdacs.xru458.dt                        0
+xtrip.xdacs.t205                      0.897629
+xtrip.xdacs.xru459.dt                        0
+xtrip.xdacs.t206                      0.899581
+xtrip.xdacs.xru460.dt                        0
+xtrip.xdacs.t207                      0.901532
+xtrip.xdacs.xru461.dt                        0
+xtrip.xdacs.t208                      0.903484
+xtrip.xdacs.xru462.dt                        0
+xtrip.xdacs.t209                      0.905435
+xtrip.xdacs.xru463.dt                        0
+xtrip.xdacs.t210                      0.907386
+xtrip.xdacs.xru464.dt                        0
+xtrip.xdacs.t211                      0.909338
+xtrip.xdacs.xru465.dt                        0
+xtrip.xdacs.t212                      0.911289
+xtrip.xdacs.xru466.dt                        0
+xtrip.xdacs.t213                      0.913241
+xtrip.xdacs.xru467.dt                        0
+xtrip.xdacs.t214                      0.915192
+xtrip.xdacs.xru468.dt                        0
+xtrip.xdacs.t215                      0.917144
+xtrip.xdacs.xru469.dt                        0
+xtrip.xdacs.t216                      0.919095
+xtrip.xdacs.xru470.dt                        0
+xtrip.xdacs.t217                      0.921047
+xtrip.xdacs.xru471.dt                        0
+xtrip.xdacs.t218                      0.922998
+xtrip.xdacs.xru472.dt                        0
+xtrip.xdacs.t219                       0.92495
+xtrip.xdacs.xru473.dt                        0
+xtrip.xdacs.t220                      0.926901
+xtrip.xdacs.xru474.dt                        0
+xtrip.xdacs.t221                      0.928853
+xtrip.xdacs.xru475.dt                        0
+xtrip.xdacs.t222                      0.930804
+xtrip.xdacs.xru476.dt                        0
+xtrip.xdacs.t223                      0.932756
+xtrip.xdacs.xru477.dt                        0
+xtrip.xdacs.t224                      0.934707
+xtrip.xdacs.xru478.dt                        0
+xtrip.xdacs.t225                      0.936659
+xtrip.xdacs.xru479.dt                        0
+xtrip.xdacs.t226                       0.93861
+xtrip.xdacs.xru480.dt                        0
+xtrip.xdacs.t227                      0.940562
+xtrip.xdacs.xru481.dt                        0
+xtrip.xdacs.t228                      0.942513
+xtrip.xdacs.xru482.dt                        0
+xtrip.xdacs.t229                      0.944465
+xtrip.xdacs.xru483.dt                        0
+xtrip.xdacs.t230                      0.946416
+xtrip.xdacs.xru484.dt                        0
+xtrip.xdacs.t231                      0.948368
+xtrip.xdacs.xru485.dt                        0
+xtrip.xdacs.t232                      0.950319
+xtrip.xdacs.xru486.dt                        0
+xtrip.xdacs.t233                      0.952271
+xtrip.xdacs.xru487.dt                        0
+xtrip.xdacs.t234                      0.954222
+xtrip.xdacs.xru488.dt                        0
+xtrip.xdacs.t235                      0.956173
+xtrip.xdacs.xru489.dt                        0
+xtrip.xdacs.t236                      0.958125
+xtrip.xdacs.xru490.dt                        0
+xtrip.xdacs.t237                      0.960076
+xtrip.xdacs.xru491.dt                        0
+xtrip.xdacs.t238                      0.962028
+xtrip.xdacs.xru492.dt                        0
+xtrip.xdacs.t239                      0.963979
+xtrip.xdacs.xru493.dt                        0
+xtrip.xdacs.t240                      0.965931
+xtrip.xdacs.xru494.dt                        0
+xtrip.xdacs.t241                      0.967882
+xtrip.xdacs.xru495.dt                        0
+xtrip.xdacs.t242                      0.969834
+xtrip.xdacs.xru496.dt                        0
+xtrip.xdacs.t243                      0.971785
+xtrip.xdacs.xru497.dt                        0
+xtrip.xdacs.t244                      0.973737
+xtrip.xdacs.xru498.dt                        0
+xtrip.xdacs.t245                      0.975688
+xtrip.xdacs.xru499.dt                        0
+xtrip.xdacs.t246                       0.97764
+xtrip.xdacs.xru500.dt                        0
+xtrip.xdacs.t247                      0.979591
+xtrip.xdacs.xru501.dt                        0
+xtrip.xdacs.t248                      0.981543
+xtrip.xdacs.xru502.dt                        0
+xtrip.xdacs.t249                      0.983494
+xtrip.xdacs.xru503.dt                        0
+xtrip.xdacs.t250                      0.985446
+xtrip.xdacs.xru504.dt                        0
+xtrip.xdacs.t251                      0.987397
+xtrip.xdacs.xru505.dt                        0
+xtrip.xdacs.t252                      0.989349
+xtrip.xdacs.xru506.dt                        0
+xtrip.xdacs.t253                        0.9913
+xtrip.xdacs.xru507.dt                        0
+xtrip.xdacs.t254                      0.993252
+xtrip.xdacs.xru508.dt                        0
+xtrip.xdacs.t255                      0.995203
+xtrip.xdacs.xru509.dt                        0
+xtrip.xdacs.s510                      0.997155
+xtrip.xdacs.xru510.dt                        0
+xtrip.xdacs.s511                      0.999106
+xtrip.xdacs.xru511.dt                        0
+xtrip.xdacs.s512                       1.00106
+xtrip.xdacs.xru512.dt                        0
+xtrip.xdacs.s513                       1.00301
+xtrip.xdacs.xru513.dt                        0
+xtrip.xdacs.s514                       1.00496
+xtrip.xdacs.xru514.dt                        0
+xtrip.xdacs.s515                       1.00691
+xtrip.xdacs.xru515.dt                        0
+xtrip.xdacs.s516                       1.00886
+xtrip.xdacs.xru516.dt                        0
+xtrip.xdacs.s517                       1.01082
+xtrip.xdacs.xru517.dt                        0
+xtrip.xdacs.s518                       1.01277
+xtrip.xdacs.xru518.dt                        0
+xtrip.xdacs.s519                       1.01472
+xtrip.xdacs.xru519.dt                        0
+xtrip.xdacs.s520                       1.01667
+xtrip.xdacs.xru520.dt                        0
+xtrip.xdacs.s521                       1.01862
+xtrip.xdacs.xru521.dt                        0
+xtrip.xdacs.s522                       1.02057
+xtrip.xdacs.xru522.dt                        0
+xtrip.xdacs.s523                       1.02252
+xtrip.xdacs.xru523.dt                        0
+xtrip.xdacs.s524                       1.02448
+xtrip.xdacs.xru524.dt                        0
+xtrip.xdacs.s525                       1.02643
+xtrip.xdacs.xru525.dt                        0
+xtrip.xdacs.s526                       1.02838
+xtrip.xdacs.xru526.dt                        0
+xtrip.xdacs.s527                       1.03033
+xtrip.xdacs.xru527.dt                        0
+xtrip.xdacs.s528                       1.03228
+xtrip.xdacs.xru528.dt                        0
+xtrip.xdacs.xru529.dt                        0
+xtrip.xdacs.xlu0.ab                    1.19986
+soft0                                        0
+xtrip.xdacs.xlu0.nb                    3.29929
+xtrip.xdacs.xlu0.n                 1.29204e-07
+xtrip.xdacs.dh0                    1.75724e-07
+xtrip.xdacs.dhn0                       3.29929
+xtrip.xdacs.xlu1.ab                    1.19986
+soft1                                        0
+xtrip.xdacs.xlu1.nb                    3.29929
+xtrip.xdacs.xlu1.n                 1.29204e-07
+xtrip.xdacs.dh1                    1.75724e-07
+xtrip.xdacs.dhn1                       3.29929
+xtrip.xdacs.xlu2.ab                    1.19986
+soft2                                        0
+xtrip.xdacs.xlu2.nb                    3.29929
+xtrip.xdacs.xlu2.n                 1.29204e-07
+xtrip.xdacs.dh2                    1.75724e-07
+xtrip.xdacs.dhn2                       3.29929
+xtrip.xdacs.xlu3.ab                    1.19986
+soft3                                        0
+xtrip.xdacs.xlu3.nb                    3.29929
+xtrip.xdacs.xlu3.n                 1.29204e-07
+xtrip.xdacs.dh3                    1.75724e-07
+xtrip.xdacs.dhn3                       3.29929
+xtrip.xdacs.xlu4.ab                    1.19986
+soft4                                        0
+xtrip.xdacs.xlu4.nb                    3.29929
+xtrip.xdacs.xlu4.n                 1.29204e-07
+xtrip.xdacs.dh4                    1.75724e-07
+xtrip.xdacs.dhn4                       3.29929
+xtrip.xdacs.xlu5.ab                    1.19986
+soft5                                        0
+xtrip.xdacs.xlu5.nb                    3.29929
+xtrip.xdacs.xlu5.n                 1.29204e-07
+xtrip.xdacs.dh5                    1.75724e-07
+xtrip.xdacs.dhn5                       3.29929
+xtrip.xdacs.xlu6.ab                    1.19986
+soft6                                        0
+xtrip.xdacs.xlu6.nb                    3.29929
+xtrip.xdacs.xlu6.n                 1.29204e-07
+xtrip.xdacs.dh6                    1.75724e-07
+xtrip.xdacs.dhn6                       3.29929
+xtrip.xdacs.xlu7.ab                    1.19986
+soft7                                        0
+xtrip.xdacs.xlu7.nb                    3.29929
+xtrip.xdacs.xlu7.n                 1.29204e-07
+xtrip.xdacs.dh7                    1.75724e-07
+xtrip.xdacs.dhn7                       3.29929
+xtrip.xdacs.m0_0                      0.497591
+xtrip.xdacs.m0_1                      0.501494
+xtrip.xdacs.m0_2                      0.505397
+xtrip.xdacs.m0_3                      0.509299
+xtrip.xdacs.m0_4                      0.513202
+xtrip.xdacs.m0_5                      0.517105
+xtrip.xdacs.m0_6                      0.521008
+xtrip.xdacs.m0_7                       0.52491
+xtrip.xdacs.m0_8                      0.528813
+xtrip.xdacs.m0_9                      0.532716
+xtrip.xdacs.m0_10                     0.536618
+xtrip.xdacs.m0_11                     0.540521
+xtrip.xdacs.m0_12                     0.544424
+xtrip.xdacs.m0_13                     0.548327
+xtrip.xdacs.m0_14                     0.552229
+xtrip.xdacs.m0_15                     0.556132
+xtrip.xdacs.m0_16                     0.560035
+xtrip.xdacs.m0_17                     0.563937
+xtrip.xdacs.m0_18                      0.56784
+xtrip.xdacs.m0_19                     0.571743
+xtrip.xdacs.m0_20                     0.575646
+xtrip.xdacs.m0_21                     0.579548
+xtrip.xdacs.m0_22                     0.583451
+xtrip.xdacs.m0_23                     0.587354
+xtrip.xdacs.m0_24                     0.591257
+xtrip.xdacs.m0_25                     0.595159
+xtrip.xdacs.m0_26                     0.599062
+xtrip.xdacs.m0_27                     0.602965
+xtrip.xdacs.m0_28                     0.606868
+xtrip.xdacs.m0_29                      0.61077
+xtrip.xdacs.m0_30                     0.614673
+xtrip.xdacs.m0_31                     0.618576
+xtrip.xdacs.m0_32                     0.622479
+xtrip.xdacs.m0_33                     0.626381
+xtrip.xdacs.m0_34                     0.630284
+xtrip.xdacs.m0_35                     0.634187
+xtrip.xdacs.m0_36                      0.63809
+xtrip.xdacs.m0_37                     0.641993
+xtrip.xdacs.m0_38                     0.645895
+xtrip.xdacs.m0_39                     0.649798
+xtrip.xdacs.m0_40                     0.653701
+xtrip.xdacs.m0_41                     0.657604
+xtrip.xdacs.m0_42                     0.661506
+xtrip.xdacs.m0_43                     0.665409
+xtrip.xdacs.m0_44                     0.669312
+xtrip.xdacs.m0_45                     0.673215
+xtrip.xdacs.m0_46                     0.677118
+xtrip.xdacs.m0_47                      0.68102
+xtrip.xdacs.m0_48                     0.684923
+xtrip.xdacs.m0_49                     0.688826
+xtrip.xdacs.m0_50                     0.692729
+xtrip.xdacs.m0_51                     0.696632
+xtrip.xdacs.m0_52                     0.700534
+xtrip.xdacs.m0_53                     0.704437
+xtrip.xdacs.m0_54                      0.70834
+xtrip.xdacs.m0_55                     0.712243
+xtrip.xdacs.m0_56                     0.716146
+xtrip.xdacs.m0_57                     0.720048
+xtrip.xdacs.m0_58                     0.723951
+xtrip.xdacs.m0_59                     0.727854
+xtrip.xdacs.m0_60                     0.731757
+xtrip.xdacs.m0_61                      0.73566
+xtrip.xdacs.m0_62                     0.739563
+xtrip.xdacs.m0_63                     0.743465
+xtrip.xdacs.m0_64                     0.747368
+xtrip.xdacs.m0_65                     0.751271
+xtrip.xdacs.m0_66                     0.755174
+xtrip.xdacs.m0_67                     0.759077
+xtrip.xdacs.m0_68                      0.76298
+xtrip.xdacs.m0_69                     0.766882
+xtrip.xdacs.m0_70                     0.770785
+xtrip.xdacs.m0_71                     0.774688
+xtrip.xdacs.m0_72                     0.778591
+xtrip.xdacs.m0_73                     0.782494
+xtrip.xdacs.m0_74                     0.786397
+xtrip.xdacs.m0_75                       0.7903
+xtrip.xdacs.m0_76                     0.794202
+xtrip.xdacs.m0_77                     0.798105
+xtrip.xdacs.m0_78                     0.802008
+xtrip.xdacs.m0_79                     0.805911
+xtrip.xdacs.m0_80                     0.809814
+xtrip.xdacs.m0_81                     0.813717
+xtrip.xdacs.m0_82                      0.81762
+xtrip.xdacs.m0_83                     0.821522
+xtrip.xdacs.m0_84                     0.825425
+xtrip.xdacs.m0_85                     0.829328
+xtrip.xdacs.m0_86                     0.833231
+xtrip.xdacs.m0_87                     0.837134
+xtrip.xdacs.m0_88                     0.841037
+xtrip.xdacs.m0_89                      0.84494
+xtrip.xdacs.m0_90                     0.848843
+xtrip.xdacs.m0_91                     0.852746
+xtrip.xdacs.m0_92                     0.856648
+xtrip.xdacs.m0_93                     0.860551
+xtrip.xdacs.m0_94                     0.864454
+xtrip.xdacs.m0_95                     0.868357
+xtrip.xdacs.m0_96                      0.87226
+xtrip.xdacs.m0_97                     0.876163
+xtrip.xdacs.m0_98                     0.880066
+xtrip.xdacs.m0_99                     0.883969
+xtrip.xdacs.m0_100                    0.887872
+xtrip.xdacs.m0_101                    0.891775
+xtrip.xdacs.m0_102                    0.895678
+xtrip.xdacs.m0_103                    0.899581
+xtrip.xdacs.m0_104                    0.903484
+xtrip.xdacs.m0_105                    0.907386
+xtrip.xdacs.m0_106                    0.911289
+xtrip.xdacs.m0_107                    0.915192
+xtrip.xdacs.m0_108                    0.919095
+xtrip.xdacs.m0_109                    0.922998
+xtrip.xdacs.m0_110                    0.926901
+xtrip.xdacs.m0_111                    0.930804
+xtrip.xdacs.m0_112                    0.934707
+xtrip.xdacs.m0_113                     0.93861
+xtrip.xdacs.m0_114                    0.942513
+xtrip.xdacs.m0_115                    0.946416
+xtrip.xdacs.m0_116                    0.950319
+xtrip.xdacs.m0_117                    0.954222
+xtrip.xdacs.m0_118                    0.958125
+xtrip.xdacs.m0_119                    0.962028
+xtrip.xdacs.m0_120                    0.965931
+xtrip.xdacs.m0_121                    0.969834
+xtrip.xdacs.m0_122                    0.973737
+xtrip.xdacs.m0_123                     0.97764
+xtrip.xdacs.m0_124                    0.981543
+xtrip.xdacs.m0_125                    0.985446
+xtrip.xdacs.m0_126                    0.989349
+xtrip.xdacs.m0_127                    0.993252
+xtrip.xdacs.m1_0                      0.497591
+xtrip.xdacs.m1_1                      0.505397
+xtrip.xdacs.m1_2                      0.513202
+xtrip.xdacs.m1_3                      0.521008
+xtrip.xdacs.m1_4                      0.528813
+xtrip.xdacs.m1_5                      0.536618
+xtrip.xdacs.m1_6                      0.544424
+xtrip.xdacs.m1_7                      0.552229
+xtrip.xdacs.m1_8                      0.560035
+xtrip.xdacs.m1_9                       0.56784
+xtrip.xdacs.m1_10                     0.575646
+xtrip.xdacs.m1_11                     0.583451
+xtrip.xdacs.m1_12                     0.591257
+xtrip.xdacs.m1_13                     0.599062
+xtrip.xdacs.m1_14                     0.606868
+xtrip.xdacs.m1_15                     0.614673
+xtrip.xdacs.m1_16                     0.622479
+xtrip.xdacs.m1_17                     0.630284
+xtrip.xdacs.m1_18                      0.63809
+xtrip.xdacs.m1_19                     0.645895
+xtrip.xdacs.m1_20                     0.653701
+xtrip.xdacs.m1_21                     0.661506
+xtrip.xdacs.m1_22                     0.669312
+xtrip.xdacs.m1_23                     0.677118
+xtrip.xdacs.m1_24                     0.684923
+xtrip.xdacs.m1_25                     0.692729
+xtrip.xdacs.m1_26                     0.700534
+xtrip.xdacs.m1_27                      0.70834
+xtrip.xdacs.m1_28                     0.716146
+xtrip.xdacs.m1_29                     0.723951
+xtrip.xdacs.m1_30                     0.731757
+xtrip.xdacs.m1_31                     0.739563
+xtrip.xdacs.m1_32                     0.747368
+xtrip.xdacs.m1_33                     0.755174
+xtrip.xdacs.m1_34                      0.76298
+xtrip.xdacs.m1_35                     0.770785
+xtrip.xdacs.m1_36                     0.778591
+xtrip.xdacs.m1_37                     0.786397
+xtrip.xdacs.m1_38                     0.794202
+xtrip.xdacs.m1_39                     0.802008
+xtrip.xdacs.m1_40                     0.809814
+xtrip.xdacs.m1_41                      0.81762
+xtrip.xdacs.m1_42                     0.825425
+xtrip.xdacs.m1_43                     0.833231
+xtrip.xdacs.m1_44                     0.841037
+xtrip.xdacs.m1_45                     0.848843
+xtrip.xdacs.m1_46                     0.856648
+xtrip.xdacs.m1_47                     0.864454
+xtrip.xdacs.m1_48                      0.87226
+xtrip.xdacs.m1_49                     0.880066
+xtrip.xdacs.m1_50                     0.887872
+xtrip.xdacs.m1_51                     0.895678
+xtrip.xdacs.m1_52                     0.903484
+xtrip.xdacs.m1_53                     0.911289
+xtrip.xdacs.m1_54                     0.919095
+xtrip.xdacs.m1_55                     0.926901
+xtrip.xdacs.m1_56                     0.934707
+xtrip.xdacs.m1_57                     0.942513
+xtrip.xdacs.m1_58                     0.950319
+xtrip.xdacs.m1_59                     0.958125
+xtrip.xdacs.m1_60                     0.965931
+xtrip.xdacs.m1_61                     0.973737
+xtrip.xdacs.m1_62                     0.981543
+xtrip.xdacs.m1_63                     0.989349
+xtrip.xdacs.m2_0                      0.497591
+xtrip.xdacs.m2_1                      0.513202
+xtrip.xdacs.m2_2                      0.528813
+xtrip.xdacs.m2_3                      0.544424
+xtrip.xdacs.m2_4                      0.560035
+xtrip.xdacs.m2_5                      0.575646
+xtrip.xdacs.m2_6                      0.591257
+xtrip.xdacs.m2_7                      0.606868
+xtrip.xdacs.m2_8                      0.622479
+xtrip.xdacs.m2_9                       0.63809
+xtrip.xdacs.m2_10                     0.653701
+xtrip.xdacs.m2_11                     0.669312
+xtrip.xdacs.m2_12                     0.684923
+xtrip.xdacs.m2_13                     0.700534
+xtrip.xdacs.m2_14                     0.716146
+xtrip.xdacs.m2_15                     0.731757
+xtrip.xdacs.m2_16                     0.747368
+xtrip.xdacs.m2_17                      0.76298
+xtrip.xdacs.m2_18                     0.778591
+xtrip.xdacs.m2_19                     0.794202
+xtrip.xdacs.m2_20                     0.809814
+xtrip.xdacs.m2_21                     0.825425
+xtrip.xdacs.m2_22                     0.841037
+xtrip.xdacs.m2_23                     0.856648
+xtrip.xdacs.m2_24                      0.87226
+xtrip.xdacs.m2_25                     0.887872
+xtrip.xdacs.m2_26                     0.903484
+xtrip.xdacs.m2_27                     0.919095
+xtrip.xdacs.m2_28                     0.934707
+xtrip.xdacs.m2_29                     0.950319
+xtrip.xdacs.m2_30                     0.965931
+xtrip.xdacs.m2_31                     0.981543
+xtrip.xdacs.m3_0                      0.497591
+xtrip.xdacs.m3_1                      0.528813
+xtrip.xdacs.m3_2                      0.560035
+xtrip.xdacs.m3_3                      0.591257
+xtrip.xdacs.m3_4                      0.622479
+xtrip.xdacs.m3_5                      0.653701
+xtrip.xdacs.m3_6                      0.684923
+xtrip.xdacs.m3_7                      0.716146
+xtrip.xdacs.m3_8                      0.747368
+xtrip.xdacs.m3_9                      0.778591
+xtrip.xdacs.m3_10                     0.809814
+xtrip.xdacs.m3_11                     0.841037
+xtrip.xdacs.m3_12                      0.87226
+xtrip.xdacs.m3_13                     0.903484
+xtrip.xdacs.m3_14                     0.934707
+xtrip.xdacs.m3_15                     0.965931
+xtrip.xdacs.m4_0                      0.497591
+xtrip.xdacs.m4_1                      0.560035
+xtrip.xdacs.m4_2                      0.622479
+xtrip.xdacs.m4_3                      0.684923
+xtrip.xdacs.m4_4                      0.747368
+xtrip.xdacs.m4_5                      0.809814
+xtrip.xdacs.m4_6                       0.87226
+xtrip.xdacs.m4_7                      0.934707
+xtrip.xdacs.m5_0                      0.497591
+xtrip.xdacs.m5_1                      0.622479
+xtrip.xdacs.m5_2                      0.747368
+xtrip.xdacs.m5_3                       0.87226
+xtrip.xdacs.m6_0                      0.497591
+xtrip.xdacs.m6_1                      0.747368
+xtrip.vth_soft                        0.497591
+xtrip.xdach.s0                      0.00195133
+xtrip.xdach.xru0.dt                          0
+xtrip.xdach.s1                      0.00390266
+xtrip.xdach.xru1.dt                          0
+xtrip.xdach.s2                      0.00585399
+xtrip.xdach.xru2.dt                          0
+xtrip.xdach.s3                      0.00780532
+xtrip.xdach.xru3.dt                          0
+xtrip.xdach.s4                      0.00975665
+xtrip.xdach.xru4.dt                          0
+xtrip.xdach.s5                        0.011708
+xtrip.xdach.xru5.dt                          0
+xtrip.xdach.s6                       0.0136593
+xtrip.xdach.xru6.dt                          0
+xtrip.xdach.s7                       0.0156106
+xtrip.xdach.xru7.dt                          0
+xtrip.xdach.s8                        0.017562
+xtrip.xdach.xru8.dt                          0
+xtrip.xdach.s9                       0.0195133
+xtrip.xdach.xru9.dt                          0
+xtrip.xdach.s10                      0.0214646
+xtrip.xdach.xru10.dt                         0
+xtrip.xdach.s11                       0.023416
+xtrip.xdach.xru11.dt                         0
+xtrip.xdach.s12                      0.0253673
+xtrip.xdach.xru12.dt                         0
+xtrip.xdach.s13                      0.0273186
+xtrip.xdach.xru13.dt                         0
+xtrip.xdach.s14                      0.0292699
+xtrip.xdach.xru14.dt                         0
+xtrip.xdach.s15                      0.0312213
+xtrip.xdach.xru15.dt                         0
+xtrip.xdach.s16                      0.0331726
+xtrip.xdach.xru16.dt                         0
+xtrip.xdach.s17                      0.0351239
+xtrip.xdach.xru17.dt                         0
+xtrip.xdach.s18                      0.0370753
+xtrip.xdach.xru18.dt                         0
+xtrip.xdach.s19                      0.0390266
+xtrip.xdach.xru19.dt                         0
+xtrip.xdach.s20                      0.0409779
+xtrip.xdach.xru20.dt                         0
+xtrip.xdach.s21                      0.0429292
+xtrip.xdach.xru21.dt                         0
+xtrip.xdach.s22                      0.0448806
+xtrip.xdach.xru22.dt                         0
+xtrip.xdach.s23                      0.0468319
+xtrip.xdach.xru23.dt                         0
+xtrip.xdach.s24                      0.0487832
+xtrip.xdach.xru24.dt                         0
+xtrip.xdach.s25                      0.0507346
+xtrip.xdach.xru25.dt                         0
+xtrip.xdach.s26                      0.0526859
+xtrip.xdach.xru26.dt                         0
+xtrip.xdach.s27                      0.0546372
+xtrip.xdach.xru27.dt                         0
+xtrip.xdach.s28                      0.0565886
+xtrip.xdach.xru28.dt                         0
+xtrip.xdach.s29                      0.0585399
+xtrip.xdach.xru29.dt                         0
+xtrip.xdach.s30                      0.0604912
+xtrip.xdach.xru30.dt                         0
+xtrip.xdach.s31                      0.0624425
+xtrip.xdach.xru31.dt                         0
+xtrip.xdach.s32                      0.0643939
+xtrip.xdach.xru32.dt                         0
+xtrip.xdach.s33                      0.0663452
+xtrip.xdach.xru33.dt                         0
+xtrip.xdach.s34                      0.0682965
+xtrip.xdach.xru34.dt                         0
+xtrip.xdach.s35                      0.0702479
+xtrip.xdach.xru35.dt                         0
+xtrip.xdach.s36                      0.0721992
+xtrip.xdach.xru36.dt                         0
+xtrip.xdach.s37                      0.0741505
+xtrip.xdach.xru37.dt                         0
+xtrip.xdach.s38                      0.0761018
+xtrip.xdach.xru38.dt                         0
+xtrip.xdach.s39                      0.0780532
+xtrip.xdach.xru39.dt                         0
+xtrip.xdach.s40                      0.0800045
+xtrip.xdach.xru40.dt                         0
+xtrip.xdach.s41                      0.0819558
+xtrip.xdach.xru41.dt                         0
+xtrip.xdach.s42                      0.0839072
+xtrip.xdach.xru42.dt                         0
+xtrip.xdach.s43                      0.0858585
+xtrip.xdach.xru43.dt                         0
+xtrip.xdach.s44                      0.0878098
+xtrip.xdach.xru44.dt                         0
+xtrip.xdach.s45                      0.0897612
+xtrip.xdach.xru45.dt                         0
+xtrip.xdach.s46                      0.0917125
+xtrip.xdach.xru46.dt                         0
+xtrip.xdach.s47                      0.0936638
+xtrip.xdach.xru47.dt                         0
+xtrip.xdach.s48                      0.0956151
+xtrip.xdach.xru48.dt                         0
+xtrip.xdach.s49                      0.0975665
+xtrip.xdach.xru49.dt                         0
+xtrip.xdach.s50                      0.0995178
+xtrip.xdach.xru50.dt                         0
+xtrip.xdach.s51                       0.101469
+xtrip.xdach.xru51.dt                         0
+xtrip.xdach.s52                        0.10342
+xtrip.xdach.xru52.dt                         0
+xtrip.xdach.s53                       0.105372
+xtrip.xdach.xru53.dt                         0
+xtrip.xdach.s54                       0.107323
+xtrip.xdach.xru54.dt                         0
+xtrip.xdach.s55                       0.109274
+xtrip.xdach.xru55.dt                         0
+xtrip.xdach.s56                       0.111226
+xtrip.xdach.xru56.dt                         0
+xtrip.xdach.s57                       0.113177
+xtrip.xdach.xru57.dt                         0
+xtrip.xdach.s58                       0.115128
+xtrip.xdach.xru58.dt                         0
+xtrip.xdach.s59                        0.11708
+xtrip.xdach.xru59.dt                         0
+xtrip.xdach.s60                       0.119031
+xtrip.xdach.xru60.dt                         0
+xtrip.xdach.s61                       0.120982
+xtrip.xdach.xru61.dt                         0
+xtrip.xdach.s62                       0.122934
+xtrip.xdach.xru62.dt                         0
+xtrip.xdach.s63                       0.124885
+xtrip.xdach.xru63.dt                         0
+xtrip.xdach.s64                       0.126836
+xtrip.xdach.xru64.dt                         0
+xtrip.xdach.s65                       0.128788
+xtrip.xdach.xru65.dt                         0
+xtrip.xdach.s66                       0.130739
+xtrip.xdach.xru66.dt                         0
+xtrip.xdach.s67                        0.13269
+xtrip.xdach.xru67.dt                         0
+xtrip.xdach.s68                       0.134642
+xtrip.xdach.xru68.dt                         0
+xtrip.xdach.s69                       0.136593
+xtrip.xdach.xru69.dt                         0
+xtrip.xdach.s70                       0.138544
+xtrip.xdach.xru70.dt                         0
+xtrip.xdach.s71                       0.140496
+xtrip.xdach.xru71.dt                         0
+xtrip.xdach.s72                       0.142447
+xtrip.xdach.xru72.dt                         0
+xtrip.xdach.s73                       0.144398
+xtrip.xdach.xru73.dt                         0
+xtrip.xdach.s74                        0.14635
+xtrip.xdach.xru74.dt                         0
+xtrip.xdach.s75                       0.148301
+xtrip.xdach.xru75.dt                         0
+xtrip.xdach.s76                       0.150252
+xtrip.xdach.xru76.dt                         0
+xtrip.xdach.s77                       0.152204
+xtrip.xdach.xru77.dt                         0
+xtrip.xdach.s78                       0.154155
+xtrip.xdach.xru78.dt                         0
+xtrip.xdach.s79                       0.156106
+xtrip.xdach.xru79.dt                         0
+xtrip.xdach.s80                       0.158058
+xtrip.xdach.xru80.dt                         0
+xtrip.xdach.s81                       0.160009
+xtrip.xdach.xru81.dt                         0
+xtrip.xdach.s82                        0.16196
+xtrip.xdach.xru82.dt                         0
+xtrip.xdach.s83                       0.163912
+xtrip.xdach.xru83.dt                         0
+xtrip.xdach.s84                       0.165863
+xtrip.xdach.xru84.dt                         0
+xtrip.xdach.s85                       0.167814
+xtrip.xdach.xru85.dt                         0
+xtrip.xdach.s86                       0.169766
+xtrip.xdach.xru86.dt                         0
+xtrip.xdach.s87                       0.171717
+xtrip.xdach.xru87.dt                         0
+xtrip.xdach.s88                       0.173668
+xtrip.xdach.xru88.dt                         0
+xtrip.xdach.s89                        0.17562
+xtrip.xdach.xru89.dt                         0
+xtrip.xdach.s90                       0.177571
+xtrip.xdach.xru90.dt                         0
+xtrip.xdach.s91                       0.179522
+xtrip.xdach.xru91.dt                         0
+xtrip.xdach.s92                       0.181474
+xtrip.xdach.xru92.dt                         0
+xtrip.xdach.s93                       0.183425
+xtrip.xdach.xru93.dt                         0
+xtrip.xdach.s94                       0.185376
+xtrip.xdach.xru94.dt                         0
+xtrip.xdach.s95                       0.187328
+xtrip.xdach.xru95.dt                         0
+xtrip.xdach.s96                       0.189279
+xtrip.xdach.xru96.dt                         0
+xtrip.xdach.s97                        0.19123
+xtrip.xdach.xru97.dt                         0
+xtrip.xdach.s98                       0.193182
+xtrip.xdach.xru98.dt                         0
+xtrip.xdach.s99                       0.195133
+xtrip.xdach.xru99.dt                         0
+xtrip.xdach.s100                      0.197084
+xtrip.xdach.xru100.dt                        0
+xtrip.xdach.s101                      0.199036
+xtrip.xdach.xru101.dt                        0
+xtrip.xdach.s102                      0.200987
+xtrip.xdach.xru102.dt                        0
+xtrip.xdach.s103                      0.202938
+xtrip.xdach.xru103.dt                        0
+xtrip.xdach.s104                       0.20489
+xtrip.xdach.xru104.dt                        0
+xtrip.xdach.s105                      0.206841
+xtrip.xdach.xru105.dt                        0
+xtrip.xdach.s106                      0.208792
+xtrip.xdach.xru106.dt                        0
+xtrip.xdach.s107                      0.210744
+xtrip.xdach.xru107.dt                        0
+xtrip.xdach.s108                      0.212695
+xtrip.xdach.xru108.dt                        0
+xtrip.xdach.s109                      0.214646
+xtrip.xdach.xru109.dt                        0
+xtrip.xdach.s110                      0.216598
+xtrip.xdach.xru110.dt                        0
+xtrip.xdach.s111                      0.218549
+xtrip.xdach.xru111.dt                        0
+xtrip.xdach.s112                        0.2205
+xtrip.xdach.xru112.dt                        0
+xtrip.xdach.s113                      0.222452
+xtrip.xdach.xru113.dt                        0
+xtrip.xdach.s114                      0.224403
+xtrip.xdach.xru114.dt                        0
+xtrip.xdach.s115                      0.226354
+xtrip.xdach.xru115.dt                        0
+xtrip.xdach.s116                      0.228306
+xtrip.xdach.xru116.dt                        0
+xtrip.xdach.s117                      0.230257
+xtrip.xdach.xru117.dt                        0
+xtrip.xdach.s118                      0.232208
+xtrip.xdach.xru118.dt                        0
+xtrip.xdach.s119                       0.23416
+xtrip.xdach.xru119.dt                        0
+xtrip.xdach.s120                      0.236111
+xtrip.xdach.xru120.dt                        0
+xtrip.xdach.s121                      0.238062
+xtrip.xdach.xru121.dt                        0
+xtrip.xdach.s122                      0.240014
+xtrip.xdach.xru122.dt                        0
+xtrip.xdach.s123                      0.241965
+xtrip.xdach.xru123.dt                        0
+xtrip.xdach.s124                      0.243916
+xtrip.xdach.xru124.dt                        0
+xtrip.xdach.s125                      0.245868
+xtrip.xdach.xru125.dt                        0
+xtrip.xdach.s126                      0.247819
+xtrip.xdach.xru126.dt                        0
+xtrip.xdach.s127                       0.24977
+xtrip.xdach.xru127.dt                        0
+xtrip.xdach.s128                      0.251722
+xtrip.xdach.xru128.dt                        0
+xtrip.xdach.s129                      0.253673
+xtrip.xdach.xru129.dt                        0
+xtrip.xdach.s130                      0.255624
+xtrip.xdach.xru130.dt                        0
+xtrip.xdach.s131                      0.257576
+xtrip.xdach.xru131.dt                        0
+xtrip.xdach.s132                      0.259527
+xtrip.xdach.xru132.dt                        0
+xtrip.xdach.s133                      0.261478
+xtrip.xdach.xru133.dt                        0
+xtrip.xdach.s134                       0.26343
+xtrip.xdach.xru134.dt                        0
+xtrip.xdach.s135                      0.265381
+xtrip.xdach.xru135.dt                        0
+xtrip.xdach.s136                      0.267332
+xtrip.xdach.xru136.dt                        0
+xtrip.xdach.s137                      0.269284
+xtrip.xdach.xru137.dt                        0
+xtrip.xdach.s138                      0.271235
+xtrip.xdach.xru138.dt                        0
+xtrip.xdach.s139                      0.273186
+xtrip.xdach.xru139.dt                        0
+xtrip.xdach.s140                      0.275138
+xtrip.xdach.xru140.dt                        0
+xtrip.xdach.s141                      0.277089
+xtrip.xdach.xru141.dt                        0
+xtrip.xdach.s142                       0.27904
+xtrip.xdach.xru142.dt                        0
+xtrip.xdach.s143                      0.280992
+xtrip.xdach.xru143.dt                        0
+xtrip.xdach.s144                      0.282943
+xtrip.xdach.xru144.dt                        0
+xtrip.xdach.s145                      0.284894
+xtrip.xdach.xru145.dt                        0
+xtrip.xdach.s146                      0.286846
+xtrip.xdach.xru146.dt                        0
+xtrip.xdach.s147                      0.288797
+xtrip.xdach.xru147.dt                        0
+xtrip.xdach.s148                      0.290748
+xtrip.xdach.xru148.dt                        0
+xtrip.xdach.s149                        0.2927
+xtrip.xdach.xru149.dt                        0
+xtrip.xdach.s150                      0.294651
+xtrip.xdach.xru150.dt                        0
+xtrip.xdach.s151                      0.296602
+xtrip.xdach.xru151.dt                        0
+xtrip.xdach.s152                      0.298554
+xtrip.xdach.xru152.dt                        0
+xtrip.xdach.s153                      0.300505
+xtrip.xdach.xru153.dt                        0
+xtrip.xdach.s154                      0.302456
+xtrip.xdach.xru154.dt                        0
+xtrip.xdach.s155                      0.304408
+xtrip.xdach.xru155.dt                        0
+xtrip.xdach.s156                      0.306359
+xtrip.xdach.xru156.dt                        0
+xtrip.xdach.s157                       0.30831
+xtrip.xdach.xru157.dt                        0
+xtrip.xdach.s158                      0.310262
+xtrip.xdach.xru158.dt                        0
+xtrip.xdach.s159                      0.312213
+xtrip.xdach.xru159.dt                        0
+xtrip.xdach.s160                      0.314165
+xtrip.xdach.xru160.dt                        0
+xtrip.xdach.s161                      0.316116
+xtrip.xdach.xru161.dt                        0
+xtrip.xdach.s162                      0.318067
+xtrip.xdach.xru162.dt                        0
+xtrip.xdach.s163                      0.320019
+xtrip.xdach.xru163.dt                        0
+xtrip.xdach.s164                       0.32197
+xtrip.xdach.xru164.dt                        0
+xtrip.xdach.s165                      0.323921
+xtrip.xdach.xru165.dt                        0
+xtrip.xdach.s166                      0.325873
+xtrip.xdach.xru166.dt                        0
+xtrip.xdach.s167                      0.327824
+xtrip.xdach.xru167.dt                        0
+xtrip.xdach.s168                      0.329775
+xtrip.xdach.xru168.dt                        0
+xtrip.xdach.s169                      0.331727
+xtrip.xdach.xru169.dt                        0
+xtrip.xdach.s170                      0.333678
+xtrip.xdach.xru170.dt                        0
+xtrip.xdach.s171                      0.335629
+xtrip.xdach.xru171.dt                        0
+xtrip.xdach.s172                      0.337581
+xtrip.xdach.xru172.dt                        0
+xtrip.xdach.s173                      0.339532
+xtrip.xdach.xru173.dt                        0
+xtrip.xdach.s174                      0.341483
+xtrip.xdach.xru174.dt                        0
+xtrip.xdach.s175                      0.343435
+xtrip.xdach.xru175.dt                        0
+xtrip.xdach.s176                      0.345386
+xtrip.xdach.xru176.dt                        0
+xtrip.xdach.s177                      0.347337
+xtrip.xdach.xru177.dt                        0
+xtrip.xdach.s178                      0.349289
+xtrip.xdach.xru178.dt                        0
+xtrip.xdach.s179                       0.35124
+xtrip.xdach.xru179.dt                        0
+xtrip.xdach.s180                      0.353191
+xtrip.xdach.xru180.dt                        0
+xtrip.xdach.s181                      0.355143
+xtrip.xdach.xru181.dt                        0
+xtrip.xdach.s182                      0.357094
+xtrip.xdach.xru182.dt                        0
+xtrip.xdach.s183                      0.359045
+xtrip.xdach.xru183.dt                        0
+xtrip.xdach.s184                      0.360997
+xtrip.xdach.xru184.dt                        0
+xtrip.xdach.s185                      0.362948
+xtrip.xdach.xru185.dt                        0
+xtrip.xdach.s186                      0.364899
+xtrip.xdach.xru186.dt                        0
+xtrip.xdach.s187                      0.366851
+xtrip.xdach.xru187.dt                        0
+xtrip.xdach.s188                      0.368802
+xtrip.xdach.xru188.dt                        0
+xtrip.xdach.s189                      0.370753
+xtrip.xdach.xru189.dt                        0
+xtrip.xdach.s190                      0.372705
+xtrip.xdach.xru190.dt                        0
+xtrip.xdach.s191                      0.374656
+xtrip.xdach.xru191.dt                        0
+xtrip.xdach.s192                      0.376607
+xtrip.xdach.xru192.dt                        0
+xtrip.xdach.s193                      0.378559
+xtrip.xdach.xru193.dt                        0
+xtrip.xdach.s194                       0.38051
+xtrip.xdach.xru194.dt                        0
+xtrip.xdach.s195                      0.382461
+xtrip.xdach.xru195.dt                        0
+xtrip.xdach.s196                      0.384413
+xtrip.xdach.xru196.dt                        0
+xtrip.xdach.s197                      0.386364
+xtrip.xdach.xru197.dt                        0
+xtrip.xdach.s198                      0.388315
+xtrip.xdach.xru198.dt                        0
+xtrip.xdach.s199                      0.390267
+xtrip.xdach.xru199.dt                        0
+xtrip.xdach.s200                      0.392218
+xtrip.xdach.xru200.dt                        0
+xtrip.xdach.s201                      0.394169
+xtrip.xdach.xru201.dt                        0
+xtrip.xdach.s202                      0.396121
+xtrip.xdach.xru202.dt                        0
+xtrip.xdach.s203                      0.398072
+xtrip.xdach.xru203.dt                        0
+xtrip.xdach.s204                      0.400023
+xtrip.xdach.xru204.dt                        0
+xtrip.xdach.s205                      0.401975
+xtrip.xdach.xru205.dt                        0
+xtrip.xdach.s206                      0.403926
+xtrip.xdach.xru206.dt                        0
+xtrip.xdach.s207                      0.405878
+xtrip.xdach.xru207.dt                        0
+xtrip.xdach.s208                      0.407829
+xtrip.xdach.xru208.dt                        0
+xtrip.xdach.s209                       0.40978
+xtrip.xdach.xru209.dt                        0
+xtrip.xdach.s210                      0.411732
+xtrip.xdach.xru210.dt                        0
+xtrip.xdach.s211                      0.413683
+xtrip.xdach.xru211.dt                        0
+xtrip.xdach.s212                      0.415634
+xtrip.xdach.xru212.dt                        0
+xtrip.xdach.s213                      0.417586
+xtrip.xdach.xru213.dt                        0
+xtrip.xdach.s214                      0.419537
+xtrip.xdach.xru214.dt                        0
+xtrip.xdach.s215                      0.421488
+xtrip.xdach.xru215.dt                        0
+xtrip.xdach.s216                       0.42344
+xtrip.xdach.xru216.dt                        0
+xtrip.xdach.s217                      0.425391
+xtrip.xdach.xru217.dt                        0
+xtrip.xdach.s218                      0.427342
+xtrip.xdach.xru218.dt                        0
+xtrip.xdach.s219                      0.429294
+xtrip.xdach.xru219.dt                        0
+xtrip.xdach.s220                      0.431245
+xtrip.xdach.xru220.dt                        0
+xtrip.xdach.s221                      0.433196
+xtrip.xdach.xru221.dt                        0
+xtrip.xdach.s222                      0.435148
+xtrip.xdach.xru222.dt                        0
+xtrip.xdach.s223                      0.437099
+xtrip.xdach.xru223.dt                        0
+xtrip.xdach.s224                       0.43905
+xtrip.xdach.xru224.dt                        0
+xtrip.xdach.s225                      0.441002
+xtrip.xdach.xru225.dt                        0
+xtrip.xdach.s226                      0.442953
+xtrip.xdach.xru226.dt                        0
+xtrip.xdach.s227                      0.444904
+xtrip.xdach.xru227.dt                        0
+xtrip.xdach.s228                      0.446856
+xtrip.xdach.xru228.dt                        0
+xtrip.xdach.s229                      0.448807
+xtrip.xdach.xru229.dt                        0
+xtrip.xdach.s230                      0.450758
+xtrip.xdach.xru230.dt                        0
+xtrip.xdach.s231                       0.45271
+xtrip.xdach.xru231.dt                        0
+xtrip.xdach.s232                      0.454661
+xtrip.xdach.xru232.dt                        0
+xtrip.xdach.s233                      0.456612
+xtrip.xdach.xru233.dt                        0
+xtrip.xdach.s234                      0.458564
+xtrip.xdach.xru234.dt                        0
+xtrip.xdach.s235                      0.460515
+xtrip.xdach.xru235.dt                        0
+xtrip.xdach.s236                      0.462467
+xtrip.xdach.xru236.dt                        0
+xtrip.xdach.s237                      0.464418
+xtrip.xdach.xru237.dt                        0
+xtrip.xdach.s238                      0.466369
+xtrip.xdach.xru238.dt                        0
+xtrip.xdach.s239                      0.468321
+xtrip.xdach.xru239.dt                        0
+xtrip.xdach.s240                      0.470272
+xtrip.xdach.xru240.dt                        0
+xtrip.xdach.s241                      0.472223
+xtrip.xdach.xru241.dt                        0
+xtrip.xdach.s242                      0.474175
+xtrip.xdach.xru242.dt                        0
+xtrip.xdach.s243                      0.476126
+xtrip.xdach.xru243.dt                        0
+xtrip.xdach.s244                      0.478077
+xtrip.xdach.xru244.dt                        0
+xtrip.xdach.s245                      0.480029
+xtrip.xdach.xru245.dt                        0
+xtrip.xdach.s246                       0.48198
+xtrip.xdach.xru246.dt                        0
+xtrip.xdach.s247                      0.483931
+xtrip.xdach.xru247.dt                        0
+xtrip.xdach.s248                      0.485883
+xtrip.xdach.xru248.dt                        0
+xtrip.xdach.s249                      0.487834
+xtrip.xdach.xru249.dt                        0
+xtrip.xdach.s250                      0.489785
+xtrip.xdach.xru250.dt                        0
+xtrip.xdach.s251                      0.491737
+xtrip.xdach.xru251.dt                        0
+xtrip.xdach.s252                      0.493688
+xtrip.xdach.xru252.dt                        0
+xtrip.xdach.s253                      0.495639
+xtrip.xdach.xru253.dt                        0
+xtrip.xdach.t0                        0.497591
+xtrip.xdach.xru254.dt                        0
+xtrip.xdach.t1                        0.499542
+xtrip.xdach.xru255.dt                        0
+xtrip.xdach.t2                        0.501493
+xtrip.xdach.xru256.dt                        0
+xtrip.xdach.t3                        0.503445
+xtrip.xdach.xru257.dt                        0
+xtrip.xdach.t4                        0.505396
+xtrip.xdach.xru258.dt                        0
+xtrip.xdach.t5                        0.507348
+xtrip.xdach.xru259.dt                        0
+xtrip.xdach.t6                        0.509299
+xtrip.xdach.xru260.dt                        0
+xtrip.xdach.t7                         0.51125
+xtrip.xdach.xru261.dt                        0
+xtrip.xdach.t8                        0.513202
+xtrip.xdach.xru262.dt                        0
+xtrip.xdach.t9                        0.515153
+xtrip.xdach.xru263.dt                        0
+xtrip.xdach.t10                       0.517104
+xtrip.xdach.xru264.dt                        0
+xtrip.xdach.t11                       0.519056
+xtrip.xdach.xru265.dt                        0
+xtrip.xdach.t12                       0.521007
+xtrip.xdach.xru266.dt                        0
+xtrip.xdach.t13                       0.522958
+xtrip.xdach.xru267.dt                        0
+xtrip.xdach.t14                        0.52491
+xtrip.xdach.xru268.dt                        0
+xtrip.xdach.t15                       0.526861
+xtrip.xdach.xru269.dt                        0
+xtrip.xdach.t16                       0.528813
+xtrip.xdach.xru270.dt                        0
+xtrip.xdach.t17                       0.530764
+xtrip.xdach.xru271.dt                        0
+xtrip.xdach.t18                       0.532715
+xtrip.xdach.xru272.dt                        0
+xtrip.xdach.t19                       0.534667
+xtrip.xdach.xru273.dt                        0
+xtrip.xdach.t20                       0.536618
+xtrip.xdach.xru274.dt                        0
+xtrip.xdach.t21                       0.538569
+xtrip.xdach.xru275.dt                        0
+xtrip.xdach.t22                       0.540521
+xtrip.xdach.xru276.dt                        0
+xtrip.xdach.t23                       0.542472
+xtrip.xdach.xru277.dt                        0
+xtrip.xdach.t24                       0.544423
+xtrip.xdach.xru278.dt                        0
+xtrip.xdach.t25                       0.546375
+xtrip.xdach.xru279.dt                        0
+xtrip.xdach.t26                       0.548326
+xtrip.xdach.xru280.dt                        0
+xtrip.xdach.t27                       0.550278
+xtrip.xdach.xru281.dt                        0
+xtrip.xdach.t28                       0.552229
+xtrip.xdach.xru282.dt                        0
+xtrip.xdach.t29                        0.55418
+xtrip.xdach.xru283.dt                        0
+xtrip.xdach.t30                       0.556132
+xtrip.xdach.xru284.dt                        0
+xtrip.xdach.t31                       0.558083
+xtrip.xdach.xru285.dt                        0
+xtrip.xdach.t32                       0.560034
+xtrip.xdach.xru286.dt                        0
+xtrip.xdach.t33                       0.561986
+xtrip.xdach.xru287.dt                        0
+xtrip.xdach.t34                       0.563937
+xtrip.xdach.xru288.dt                        0
+xtrip.xdach.t35                       0.565888
+xtrip.xdach.xru289.dt                        0
+xtrip.xdach.t36                        0.56784
+xtrip.xdach.xru290.dt                        0
+xtrip.xdach.t37                       0.569791
+xtrip.xdach.xru291.dt                        0
+xtrip.xdach.t38                       0.571743
+xtrip.xdach.xru292.dt                        0
+xtrip.xdach.t39                       0.573694
+xtrip.xdach.xru293.dt                        0
+xtrip.xdach.t40                       0.575645
+xtrip.xdach.xru294.dt                        0
+xtrip.xdach.t41                       0.577597
+xtrip.xdach.xru295.dt                        0
+xtrip.xdach.t42                       0.579548
+xtrip.xdach.xru296.dt                        0
+xtrip.xdach.t43                       0.581499
+xtrip.xdach.xru297.dt                        0
+xtrip.xdach.t44                       0.583451
+xtrip.xdach.xru298.dt                        0
+xtrip.xdach.t45                       0.585402
+xtrip.xdach.xru299.dt                        0
+xtrip.xdach.t46                       0.587354
+xtrip.xdach.xru300.dt                        0
+xtrip.xdach.t47                       0.589305
+xtrip.xdach.xru301.dt                        0
+xtrip.xdach.t48                       0.591256
+xtrip.xdach.xru302.dt                        0
+xtrip.xdach.t49                       0.593208
+xtrip.xdach.xru303.dt                        0
+xtrip.xdach.t50                       0.595159
+xtrip.xdach.xru304.dt                        0
+xtrip.xdach.t51                        0.59711
+xtrip.xdach.xru305.dt                        0
+xtrip.xdach.t52                       0.599062
+xtrip.xdach.xru306.dt                        0
+xtrip.xdach.t53                       0.601013
+xtrip.xdach.xru307.dt                        0
+xtrip.xdach.t54                       0.602965
+xtrip.xdach.xru308.dt                        0
+xtrip.xdach.t55                       0.604916
+xtrip.xdach.xru309.dt                        0
+xtrip.xdach.t56                       0.606867
+xtrip.xdach.xru310.dt                        0
+xtrip.xdach.t57                       0.608819
+xtrip.xdach.xru311.dt                        0
+xtrip.xdach.t58                        0.61077
+xtrip.xdach.xru312.dt                        0
+xtrip.xdach.t59                       0.612721
+xtrip.xdach.xru313.dt                        0
+xtrip.xdach.t60                       0.614673
+xtrip.xdach.xru314.dt                        0
+xtrip.xdach.t61                       0.616624
+xtrip.xdach.xru315.dt                        0
+xtrip.xdach.t62                       0.618576
+xtrip.xdach.xru316.dt                        0
+xtrip.xdach.t63                       0.620527
+xtrip.xdach.xru317.dt                        0
+xtrip.xdach.t64                       0.622478
+xtrip.xdach.xru318.dt                        0
+xtrip.xdach.t65                        0.62443
+xtrip.xdach.xru319.dt                        0
+xtrip.xdach.t66                       0.626381
+xtrip.xdach.xru320.dt                        0
+xtrip.xdach.t67                       0.628332
+xtrip.xdach.xru321.dt                        0
+xtrip.xdach.t68                       0.630284
+xtrip.xdach.xru322.dt                        0
+xtrip.xdach.t69                       0.632235
+xtrip.xdach.xru323.dt                        0
+xtrip.xdach.t70                       0.634187
+xtrip.xdach.xru324.dt                        0
+xtrip.xdach.t71                       0.636138
+xtrip.xdach.xru325.dt                        0
+xtrip.xdach.t72                       0.638089
+xtrip.xdach.xru326.dt                        0
+xtrip.xdach.t73                       0.640041
+xtrip.xdach.xru327.dt                        0
+xtrip.xdach.t74                       0.641992
+xtrip.xdach.xru328.dt                        0
+xtrip.xdach.t75                       0.643944
+xtrip.xdach.xru329.dt                        0
+xtrip.xdach.t76                       0.645895
+xtrip.xdach.xru330.dt                        0
+xtrip.xdach.t77                       0.647846
+xtrip.xdach.xru331.dt                        0
+xtrip.xdach.t78                       0.649798
+xtrip.xdach.xru332.dt                        0
+xtrip.xdach.t79                       0.651749
+xtrip.xdach.xru333.dt                        0
+xtrip.xdach.t80                       0.653701
+xtrip.xdach.xru334.dt                        0
+xtrip.xdach.t81                       0.655652
+xtrip.xdach.xru335.dt                        0
+xtrip.xdach.t82                       0.657603
+xtrip.xdach.xru336.dt                        0
+xtrip.xdach.t83                       0.659555
+xtrip.xdach.xru337.dt                        0
+xtrip.xdach.t84                       0.661506
+xtrip.xdach.xru338.dt                        0
+xtrip.xdach.t85                       0.663457
+xtrip.xdach.xru339.dt                        0
+xtrip.xdach.t86                       0.665409
+xtrip.xdach.xru340.dt                        0
+xtrip.xdach.t87                        0.66736
+xtrip.xdach.xru341.dt                        0
+xtrip.xdach.t88                       0.669312
+xtrip.xdach.xru342.dt                        0
+xtrip.xdach.t89                       0.671263
+xtrip.xdach.xru343.dt                        0
+xtrip.xdach.t90                       0.673214
+xtrip.xdach.xru344.dt                        0
+xtrip.xdach.t91                       0.675166
+xtrip.xdach.xru345.dt                        0
+xtrip.xdach.t92                       0.677117
+xtrip.xdach.xru346.dt                        0
+xtrip.xdach.t93                       0.679069
+xtrip.xdach.xru347.dt                        0
+xtrip.xdach.t94                        0.68102
+xtrip.xdach.xru348.dt                        0
+xtrip.xdach.t95                       0.682971
+xtrip.xdach.xru349.dt                        0
+xtrip.xdach.t96                       0.684923
+xtrip.xdach.xru350.dt                        0
+xtrip.xdach.t97                       0.686874
+xtrip.xdach.xru351.dt                        0
+xtrip.xdach.t98                       0.688826
+xtrip.xdach.xru352.dt                        0
+xtrip.xdach.t99                       0.690777
+xtrip.xdach.xru353.dt                        0
+xtrip.xdach.t100                      0.692728
+xtrip.xdach.xru354.dt                        0
+xtrip.xdach.t101                       0.69468
+xtrip.xdach.xru355.dt                        0
+xtrip.xdach.t102                      0.696631
+xtrip.xdach.xru356.dt                        0
+xtrip.xdach.t103                      0.698583
+xtrip.xdach.xru357.dt                        0
+xtrip.xdach.t104                      0.700534
+xtrip.xdach.xru358.dt                        0
+xtrip.xdach.t105                      0.702485
+xtrip.xdach.xru359.dt                        0
+xtrip.xdach.t106                      0.704437
+xtrip.xdach.xru360.dt                        0
+xtrip.xdach.t107                      0.706388
+xtrip.xdach.xru361.dt                        0
+xtrip.xdach.t108                       0.70834
+xtrip.xdach.xru362.dt                        0
+xtrip.xdach.t109                      0.710291
+xtrip.xdach.xru363.dt                        0
+xtrip.xdach.t110                      0.712243
+xtrip.xdach.xru364.dt                        0
+xtrip.xdach.t111                      0.714194
+xtrip.xdach.xru365.dt                        0
+xtrip.xdach.t112                      0.716145
+xtrip.xdach.xru366.dt                        0
+xtrip.xdach.t113                      0.718097
+xtrip.xdach.xru367.dt                        0
+xtrip.xdach.t114                      0.720048
+xtrip.xdach.xru368.dt                        0
+xtrip.xdach.t115                         0.722
+xtrip.xdach.xru369.dt                        0
+xtrip.xdach.t116                      0.723951
+xtrip.xdach.xru370.dt                        0
+xtrip.xdach.t117                      0.725902
+xtrip.xdach.xru371.dt                        0
+xtrip.xdach.t118                      0.727854
+xtrip.xdach.xru372.dt                        0
+xtrip.xdach.t119                      0.729805
+xtrip.xdach.xru373.dt                        0
+xtrip.xdach.t120                      0.731757
+xtrip.xdach.xru374.dt                        0
+xtrip.xdach.t121                      0.733708
+xtrip.xdach.xru375.dt                        0
+xtrip.xdach.t122                      0.735659
+xtrip.xdach.xru376.dt                        0
+xtrip.xdach.t123                      0.737611
+xtrip.xdach.xru377.dt                        0
+xtrip.xdach.t124                      0.739562
+xtrip.xdach.xru378.dt                        0
+xtrip.xdach.t125                      0.741514
+xtrip.xdach.xru379.dt                        0
+xtrip.xdach.t126                      0.743465
+xtrip.xdach.xru380.dt                        0
+xtrip.xdach.t127                      0.745417
+xtrip.xdach.xru381.dt                        0
+xtrip.xdach.t128                      0.747368
+xtrip.xdach.xru382.dt                        0
+xtrip.xdach.t129                      0.749319
+xtrip.xdach.xru383.dt                        0
+xtrip.xdach.t130                      0.751271
+xtrip.xdach.xru384.dt                        0
+xtrip.xdach.t131                      0.753222
+xtrip.xdach.xru385.dt                        0
+xtrip.xdach.t132                      0.755174
+xtrip.xdach.xru386.dt                        0
+xtrip.xdach.t133                      0.757125
+xtrip.xdach.xru387.dt                        0
+xtrip.xdach.t134                      0.759076
+xtrip.xdach.xru388.dt                        0
+xtrip.xdach.t135                      0.761028
+xtrip.xdach.xru389.dt                        0
+xtrip.xdach.t136                      0.762979
+xtrip.xdach.xru390.dt                        0
+xtrip.xdach.t137                      0.764931
+xtrip.xdach.xru391.dt                        0
+xtrip.xdach.t138                      0.766882
+xtrip.xdach.xru392.dt                        0
+xtrip.xdach.t139                      0.768834
+xtrip.xdach.xru393.dt                        0
+xtrip.xdach.t140                      0.770785
+xtrip.xdach.xru394.dt                        0
+xtrip.xdach.t141                      0.772736
+xtrip.xdach.xru395.dt                        0
+xtrip.xdach.t142                      0.774688
+xtrip.xdach.xru396.dt                        0
+xtrip.xdach.t143                      0.776639
+xtrip.xdach.xru397.dt                        0
+xtrip.xdach.t144                      0.778591
+xtrip.xdach.xru398.dt                        0
+xtrip.xdach.t145                      0.780542
+xtrip.xdach.xru399.dt                        0
+xtrip.xdach.t146                      0.782494
+xtrip.xdach.xru400.dt                        0
+xtrip.xdach.t147                      0.784445
+xtrip.xdach.xru401.dt                        0
+xtrip.xdach.t148                      0.786396
+xtrip.xdach.xru402.dt                        0
+xtrip.xdach.t149                      0.788348
+xtrip.xdach.xru403.dt                        0
+xtrip.xdach.t150                      0.790299
+xtrip.xdach.xru404.dt                        0
+xtrip.xdach.t151                      0.792251
+xtrip.xdach.xru405.dt                        0
+xtrip.xdach.t152                      0.794202
+xtrip.xdach.xru406.dt                        0
+xtrip.xdach.t153                      0.796154
+xtrip.xdach.xru407.dt                        0
+xtrip.xdach.t154                      0.798105
+xtrip.xdach.xru408.dt                        0
+xtrip.xdach.t155                      0.800056
+xtrip.xdach.xru409.dt                        0
+xtrip.xdach.t156                      0.802008
+xtrip.xdach.xru410.dt                        0
+xtrip.xdach.t157                      0.803959
+xtrip.xdach.xru411.dt                        0
+xtrip.xdach.t158                      0.805911
+xtrip.xdach.xru412.dt                        0
+xtrip.xdach.t159                      0.807862
+xtrip.xdach.xru413.dt                        0
+xtrip.xdach.t160                      0.809814
+xtrip.xdach.xru414.dt                        0
+xtrip.xdach.t161                      0.811765
+xtrip.xdach.xru415.dt                        0
+xtrip.xdach.t162                      0.813717
+xtrip.xdach.xru416.dt                        0
+xtrip.xdach.t163                      0.815668
+xtrip.xdach.xru417.dt                        0
+xtrip.xdach.t164                      0.817619
+xtrip.xdach.xru418.dt                        0
+xtrip.xdach.t165                      0.819571
+xtrip.xdach.xru419.dt                        0
+xtrip.xdach.t166                      0.821522
+xtrip.xdach.xru420.dt                        0
+xtrip.xdach.t167                      0.823474
+xtrip.xdach.xru421.dt                        0
+xtrip.xdach.t168                      0.825425
+xtrip.xdach.xru422.dt                        0
+xtrip.xdach.t169                      0.827377
+xtrip.xdach.xru423.dt                        0
+xtrip.xdach.t170                      0.829328
+xtrip.xdach.xru424.dt                        0
+xtrip.xdach.t171                      0.831279
+xtrip.xdach.xru425.dt                        0
+xtrip.xdach.t172                      0.833231
+xtrip.xdach.xru426.dt                        0
+xtrip.xdach.t173                      0.835182
+xtrip.xdach.xru427.dt                        0
+xtrip.xdach.t174                      0.837134
+xtrip.xdach.xru428.dt                        0
+xtrip.xdach.t175                      0.839085
+xtrip.xdach.xru429.dt                        0
+xtrip.xdach.t176                      0.841037
+xtrip.xdach.xru430.dt                        0
+xtrip.xdach.t177                      0.842988
+xtrip.xdach.xru431.dt                        0
+xtrip.xdach.t178                       0.84494
+xtrip.xdach.xru432.dt                        0
+xtrip.xdach.t179                      0.846891
+xtrip.xdach.xru433.dt                        0
+xtrip.xdach.t180                      0.848843
+xtrip.xdach.xru434.dt                        0
+xtrip.xdach.t181                      0.850794
+xtrip.xdach.xru435.dt                        0
+xtrip.xdach.t182                      0.852745
+xtrip.xdach.xru436.dt                        0
+xtrip.xdach.t183                      0.854697
+xtrip.xdach.xru437.dt                        0
+xtrip.xdach.t184                      0.856648
+xtrip.xdach.xru438.dt                        0
+xtrip.xdach.t185                        0.8586
+xtrip.xdach.xru439.dt                        0
+xtrip.xdach.t186                      0.860551
+xtrip.xdach.xru440.dt                        0
+xtrip.xdach.t187                      0.862503
+xtrip.xdach.xru441.dt                        0
+xtrip.xdach.t188                      0.864454
+xtrip.xdach.xru442.dt                        0
+xtrip.xdach.t189                      0.866406
+xtrip.xdach.xru443.dt                        0
+xtrip.xdach.t190                      0.868357
+xtrip.xdach.xru444.dt                        0
+xtrip.xdach.t191                      0.870309
+xtrip.xdach.xru445.dt                        0
+xtrip.xdach.t192                       0.87226
+xtrip.xdach.xru446.dt                        0
+xtrip.xdach.t193                      0.874211
+xtrip.xdach.xru447.dt                        0
+xtrip.xdach.t194                      0.876163
+xtrip.xdach.xru448.dt                        0
+xtrip.xdach.t195                      0.878114
+xtrip.xdach.xru449.dt                        0
+xtrip.xdach.t196                      0.880066
+xtrip.xdach.xru450.dt                        0
+xtrip.xdach.t197                      0.882017
+xtrip.xdach.xru451.dt                        0
+xtrip.xdach.t198                      0.883969
+xtrip.xdach.xru452.dt                        0
+xtrip.xdach.t199                       0.88592
+xtrip.xdach.xru453.dt                        0
+xtrip.xdach.t200                      0.887872
+xtrip.xdach.xru454.dt                        0
+xtrip.xdach.t201                      0.889823
+xtrip.xdach.xru455.dt                        0
+xtrip.xdach.t202                      0.891775
+xtrip.xdach.xru456.dt                        0
+xtrip.xdach.t203                      0.893726
+xtrip.xdach.xru457.dt                        0
+xtrip.xdach.t204                      0.895678
+xtrip.xdach.xru458.dt                        0
+xtrip.xdach.t205                      0.897629
+xtrip.xdach.xru459.dt                        0
+xtrip.xdach.t206                       0.89958
+xtrip.xdach.xru460.dt                        0
+xtrip.xdach.t207                      0.901532
+xtrip.xdach.xru461.dt                        0
+xtrip.xdach.t208                      0.903483
+xtrip.xdach.xru462.dt                        0
+xtrip.xdach.t209                      0.905435
+xtrip.xdach.xru463.dt                        0
+xtrip.xdach.t210                      0.907386
+xtrip.xdach.xru464.dt                        0
+xtrip.xdach.t211                      0.909338
+xtrip.xdach.xru465.dt                        0
+xtrip.xdach.t212                      0.911289
+xtrip.xdach.xru466.dt                        0
+xtrip.xdach.t213                      0.913241
+xtrip.xdach.xru467.dt                        0
+xtrip.xdach.t214                      0.915192
+xtrip.xdach.xru468.dt                        0
+xtrip.xdach.t215                      0.917144
+xtrip.xdach.xru469.dt                        0
+xtrip.xdach.t216                      0.919095
+xtrip.xdach.xru470.dt                        0
+xtrip.xdach.t217                      0.921047
+xtrip.xdach.xru471.dt                        0
+xtrip.xdach.t218                      0.922998
+xtrip.xdach.xru472.dt                        0
+xtrip.xdach.t219                       0.92495
+xtrip.xdach.xru473.dt                        0
+xtrip.xdach.t220                      0.926901
+xtrip.xdach.xru474.dt                        0
+xtrip.xdach.t221                      0.928853
+xtrip.xdach.xru475.dt                        0
+xtrip.xdach.t222                      0.930804
+xtrip.xdach.xru476.dt                        0
+xtrip.xdach.t223                      0.932756
+xtrip.xdach.xru477.dt                        0
+xtrip.xdach.t224                      0.934707
+xtrip.xdach.xru478.dt                        0
+xtrip.xdach.t225                      0.936659
+xtrip.xdach.xru479.dt                        0
+xtrip.xdach.t226                       0.93861
+xtrip.xdach.xru480.dt                        0
+xtrip.xdach.t227                      0.940562
+xtrip.xdach.xru481.dt                        0
+xtrip.xdach.t228                      0.942513
+xtrip.xdach.xru482.dt                        0
+xtrip.xdach.t229                      0.944464
+xtrip.xdach.xru483.dt                        0
+xtrip.xdach.t230                      0.946416
+xtrip.xdach.xru484.dt                        0
+xtrip.xdach.t231                      0.948367
+xtrip.xdach.xru485.dt                        0
+xtrip.xdach.t232                      0.950319
+xtrip.xdach.xru486.dt                        0
+xtrip.xdach.t233                       0.95227
+xtrip.xdach.xru487.dt                        0
+xtrip.xdach.t234                      0.954222
+xtrip.xdach.xru488.dt                        0
+xtrip.xdach.t235                      0.956173
+xtrip.xdach.xru489.dt                        0
+xtrip.xdach.t236                      0.958125
+xtrip.xdach.xru490.dt                        0
+xtrip.xdach.t237                      0.960076
+xtrip.xdach.xru491.dt                        0
+xtrip.xdach.t238                      0.962028
+xtrip.xdach.xru492.dt                        0
+xtrip.xdach.t239                      0.963979
+xtrip.xdach.xru493.dt                        0
+xtrip.xdach.t240                      0.965931
+xtrip.xdach.xru494.dt                        0
+xtrip.xdach.t241                      0.967882
+xtrip.xdach.xru495.dt                        0
+xtrip.xdach.t242                      0.969834
+xtrip.xdach.xru496.dt                        0
+xtrip.xdach.t243                      0.971785
+xtrip.xdach.xru497.dt                        0
+xtrip.xdach.t244                      0.973737
+xtrip.xdach.xru498.dt                        0
+xtrip.xdach.t245                      0.975688
+xtrip.xdach.xru499.dt                        0
+xtrip.xdach.t246                       0.97764
+xtrip.xdach.xru500.dt                        0
+xtrip.xdach.t247                      0.979591
+xtrip.xdach.xru501.dt                        0
+xtrip.xdach.t248                      0.981543
+xtrip.xdach.xru502.dt                        0
+xtrip.xdach.t249                      0.983494
+xtrip.xdach.xru503.dt                        0
+xtrip.xdach.t250                      0.985446
+xtrip.xdach.xru504.dt                        0
+xtrip.xdach.t251                      0.987397
+xtrip.xdach.xru505.dt                        0
+xtrip.xdach.t252                      0.989349
+xtrip.xdach.xru506.dt                        0
+xtrip.xdach.t253                        0.9913
+xtrip.xdach.xru507.dt                        0
+xtrip.xdach.t254                      0.993252
+xtrip.xdach.xru508.dt                        0
+xtrip.xdach.t255                      0.995203
+xtrip.xdach.xru509.dt                        0
+xtrip.xdach.s510                      0.997155
+xtrip.xdach.xru510.dt                        0
+xtrip.xdach.s511                      0.999106
+xtrip.xdach.xru511.dt                        0
+xtrip.xdach.s512                       1.00106
+xtrip.xdach.xru512.dt                        0
+xtrip.xdach.s513                       1.00301
+xtrip.xdach.xru513.dt                        0
+xtrip.xdach.s514                       1.00496
+xtrip.xdach.xru514.dt                        0
+xtrip.xdach.s515                       1.00691
+xtrip.xdach.xru515.dt                        0
+xtrip.xdach.s516                       1.00886
+xtrip.xdach.xru516.dt                        0
+xtrip.xdach.s517                       1.01082
+xtrip.xdach.xru517.dt                        0
+xtrip.xdach.s518                       1.01277
+xtrip.xdach.xru518.dt                        0
+xtrip.xdach.s519                       1.01472
+xtrip.xdach.xru519.dt                        0
+xtrip.xdach.s520                       1.01667
+xtrip.xdach.xru520.dt                        0
+xtrip.xdach.s521                       1.01862
+xtrip.xdach.xru521.dt                        0
+xtrip.xdach.s522                       1.02057
+xtrip.xdach.xru522.dt                        0
+xtrip.xdach.s523                       1.02252
+xtrip.xdach.xru523.dt                        0
+xtrip.xdach.s524                       1.02448
+xtrip.xdach.xru524.dt                        0
+xtrip.xdach.s525                       1.02643
+xtrip.xdach.xru525.dt                        0
+xtrip.xdach.s526                       1.02838
+xtrip.xdach.xru526.dt                        0
+xtrip.xdach.s527                       1.03033
+xtrip.xdach.xru527.dt                        0
+xtrip.xdach.s528                       1.03228
+xtrip.xdach.xru528.dt                        0
+xtrip.xdach.xru529.dt                        0
+xtrip.xdach.xlu0.ab                    1.19986
+hard0                                        0
+xtrip.xdach.xlu0.nb                    3.29929
+xtrip.xdach.xlu0.n                 1.29204e-07
+xtrip.xdach.dh0                    1.75724e-07
+xtrip.xdach.dhn0                       3.29929
+xtrip.xdach.xlu1.ab                    1.19986
+hard1                                        0
+xtrip.xdach.xlu1.nb                    3.29929
+xtrip.xdach.xlu1.n                 1.29204e-07
+xtrip.xdach.dh1                    1.75724e-07
+xtrip.xdach.dhn1                       3.29929
+xtrip.xdach.xlu2.ab                    1.19986
+hard2                                        0
+xtrip.xdach.xlu2.nb                    3.29929
+xtrip.xdach.xlu2.n                 1.29204e-07
+xtrip.xdach.dh2                    1.75724e-07
+xtrip.xdach.dhn2                       3.29929
+xtrip.xdach.xlu3.ab                    1.19986
+hard3                                        0
+xtrip.xdach.xlu3.nb                    3.29929
+xtrip.xdach.xlu3.n                 1.29204e-07
+xtrip.xdach.dh3                    1.75724e-07
+xtrip.xdach.dhn3                       3.29929
+xtrip.xdach.xlu4.ab                    1.19986
+hard4                                        0
+xtrip.xdach.xlu4.nb                    3.29929
+xtrip.xdach.xlu4.n                 1.29204e-07
+xtrip.xdach.dh4                    1.75724e-07
+xtrip.xdach.dhn4                       3.29929
+xtrip.xdach.xlu5.ab                    1.19986
+hard5                                        0
+xtrip.xdach.xlu5.nb                    3.29929
+xtrip.xdach.xlu5.n                 1.29204e-07
+xtrip.xdach.dh5                    1.75724e-07
+xtrip.xdach.dhn5                       3.29929
+xtrip.xdach.xlu6.ab                    1.19986
+hard6                                        0
+xtrip.xdach.xlu6.nb                    3.29929
+xtrip.xdach.xlu6.n                 1.29204e-07
+xtrip.xdach.dh6                    1.75724e-07
+xtrip.xdach.dhn6                       3.29929
+xtrip.xdach.xlu7.ab                    1.19986
+hard7                                        0
+xtrip.xdach.xlu7.nb                    3.29929
+xtrip.xdach.xlu7.n                 1.29204e-07
+xtrip.xdach.dh7                    1.75724e-07
+xtrip.xdach.dhn7                       3.29929
+xtrip.xdach.m0_0                      0.497591
+xtrip.xdach.m0_1                      0.501493
+xtrip.xdach.m0_2                      0.505396
+xtrip.xdach.m0_3                      0.509299
+xtrip.xdach.m0_4                      0.513202
+xtrip.xdach.m0_5                      0.517104
+xtrip.xdach.m0_6                      0.521007
+xtrip.xdach.m0_7                       0.52491
+xtrip.xdach.m0_8                      0.528812
+xtrip.xdach.m0_9                      0.532715
+xtrip.xdach.m0_10                     0.536618
+xtrip.xdach.m0_11                     0.540521
+xtrip.xdach.m0_12                     0.544423
+xtrip.xdach.m0_13                     0.548326
+xtrip.xdach.m0_14                     0.552229
+xtrip.xdach.m0_15                     0.556132
+xtrip.xdach.m0_16                     0.560034
+xtrip.xdach.m0_17                     0.563937
+xtrip.xdach.m0_18                      0.56784
+xtrip.xdach.m0_19                     0.571743
+xtrip.xdach.m0_20                     0.575645
+xtrip.xdach.m0_21                     0.579548
+xtrip.xdach.m0_22                     0.583451
+xtrip.xdach.m0_23                     0.587354
+xtrip.xdach.m0_24                     0.591256
+xtrip.xdach.m0_25                     0.595159
+xtrip.xdach.m0_26                     0.599062
+xtrip.xdach.m0_27                     0.602965
+xtrip.xdach.m0_28                     0.606867
+xtrip.xdach.m0_29                      0.61077
+xtrip.xdach.m0_30                     0.614673
+xtrip.xdach.m0_31                     0.618576
+xtrip.xdach.m0_32                     0.622478
+xtrip.xdach.m0_33                     0.626381
+xtrip.xdach.m0_34                     0.630284
+xtrip.xdach.m0_35                     0.634187
+xtrip.xdach.m0_36                     0.638089
+xtrip.xdach.m0_37                     0.641992
+xtrip.xdach.m0_38                     0.645895
+xtrip.xdach.m0_39                     0.649798
+xtrip.xdach.m0_40                     0.653701
+xtrip.xdach.m0_41                     0.657603
+xtrip.xdach.m0_42                     0.661506
+xtrip.xdach.m0_43                     0.665409
+xtrip.xdach.m0_44                     0.669312
+xtrip.xdach.m0_45                     0.673214
+xtrip.xdach.m0_46                     0.677117
+xtrip.xdach.m0_47                      0.68102
+xtrip.xdach.m0_48                     0.684923
+xtrip.xdach.m0_49                     0.688826
+xtrip.xdach.m0_50                     0.692728
+xtrip.xdach.m0_51                     0.696631
+xtrip.xdach.m0_52                     0.700534
+xtrip.xdach.m0_53                     0.704437
+xtrip.xdach.m0_54                      0.70834
+xtrip.xdach.m0_55                     0.712243
+xtrip.xdach.m0_56                     0.716145
+xtrip.xdach.m0_57                     0.720048
+xtrip.xdach.m0_58                     0.723951
+xtrip.xdach.m0_59                     0.727854
+xtrip.xdach.m0_60                     0.731757
+xtrip.xdach.m0_61                     0.735659
+xtrip.xdach.m0_62                     0.739562
+xtrip.xdach.m0_63                     0.743465
+xtrip.xdach.m0_64                     0.747368
+xtrip.xdach.m0_65                     0.751271
+xtrip.xdach.m0_66                     0.755174
+xtrip.xdach.m0_67                     0.759076
+xtrip.xdach.m0_68                     0.762979
+xtrip.xdach.m0_69                     0.766882
+xtrip.xdach.m0_70                     0.770785
+xtrip.xdach.m0_71                     0.774688
+xtrip.xdach.m0_72                     0.778591
+xtrip.xdach.m0_73                     0.782494
+xtrip.xdach.m0_74                     0.786396
+xtrip.xdach.m0_75                     0.790299
+xtrip.xdach.m0_76                     0.794202
+xtrip.xdach.m0_77                     0.798105
+xtrip.xdach.m0_78                     0.802008
+xtrip.xdach.m0_79                     0.805911
+xtrip.xdach.m0_80                     0.809814
+xtrip.xdach.m0_81                     0.813717
+xtrip.xdach.m0_82                     0.817619
+xtrip.xdach.m0_83                     0.821522
+xtrip.xdach.m0_84                     0.825425
+xtrip.xdach.m0_85                     0.829328
+xtrip.xdach.m0_86                     0.833231
+xtrip.xdach.m0_87                     0.837134
+xtrip.xdach.m0_88                     0.841037
+xtrip.xdach.m0_89                      0.84494
+xtrip.xdach.m0_90                     0.848843
+xtrip.xdach.m0_91                     0.852745
+xtrip.xdach.m0_92                     0.856648
+xtrip.xdach.m0_93                     0.860551
+xtrip.xdach.m0_94                     0.864454
+xtrip.xdach.m0_95                     0.868357
+xtrip.xdach.m0_96                      0.87226
+xtrip.xdach.m0_97                     0.876163
+xtrip.xdach.m0_98                     0.880066
+xtrip.xdach.m0_99                     0.883969
+xtrip.xdach.m0_100                    0.887872
+xtrip.xdach.m0_101                    0.891775
+xtrip.xdach.m0_102                    0.895678
+xtrip.xdach.m0_103                     0.89958
+xtrip.xdach.m0_104                    0.903483
+xtrip.xdach.m0_105                    0.907386
+xtrip.xdach.m0_106                    0.911289
+xtrip.xdach.m0_107                    0.915192
+xtrip.xdach.m0_108                    0.919095
+xtrip.xdach.m0_109                    0.922998
+xtrip.xdach.m0_110                    0.926901
+xtrip.xdach.m0_111                    0.930804
+xtrip.xdach.m0_112                    0.934707
+xtrip.xdach.m0_113                     0.93861
+xtrip.xdach.m0_114                    0.942513
+xtrip.xdach.m0_115                    0.946416
+xtrip.xdach.m0_116                    0.950319
+xtrip.xdach.m0_117                    0.954222
+xtrip.xdach.m0_118                    0.958125
+xtrip.xdach.m0_119                    0.962028
+xtrip.xdach.m0_120                    0.965931
+xtrip.xdach.m0_121                    0.969834
+xtrip.xdach.m0_122                    0.973737
+xtrip.xdach.m0_123                     0.97764
+xtrip.xdach.m0_124                    0.981543
+xtrip.xdach.m0_125                    0.985446
+xtrip.xdach.m0_126                    0.989349
+xtrip.xdach.m0_127                    0.993252
+xtrip.xdach.m1_0                      0.497591
+xtrip.xdach.m1_1                      0.505396
+xtrip.xdach.m1_2                      0.513202
+xtrip.xdach.m1_3                      0.521007
+xtrip.xdach.m1_4                      0.528812
+xtrip.xdach.m1_5                      0.536618
+xtrip.xdach.m1_6                      0.544423
+xtrip.xdach.m1_7                      0.552229
+xtrip.xdach.m1_8                      0.560034
+xtrip.xdach.m1_9                       0.56784
+xtrip.xdach.m1_10                     0.575645
+xtrip.xdach.m1_11                     0.583451
+xtrip.xdach.m1_12                     0.591256
+xtrip.xdach.m1_13                     0.599062
+xtrip.xdach.m1_14                     0.606867
+xtrip.xdach.m1_15                     0.614673
+xtrip.xdach.m1_16                     0.622478
+xtrip.xdach.m1_17                     0.630284
+xtrip.xdach.m1_18                     0.638089
+xtrip.xdach.m1_19                     0.645895
+xtrip.xdach.m1_20                     0.653701
+xtrip.xdach.m1_21                     0.661506
+xtrip.xdach.m1_22                     0.669312
+xtrip.xdach.m1_23                     0.677117
+xtrip.xdach.m1_24                     0.684923
+xtrip.xdach.m1_25                     0.692728
+xtrip.xdach.m1_26                     0.700534
+xtrip.xdach.m1_27                      0.70834
+xtrip.xdach.m1_28                     0.716145
+xtrip.xdach.m1_29                     0.723951
+xtrip.xdach.m1_30                     0.731757
+xtrip.xdach.m1_31                     0.739562
+xtrip.xdach.m1_32                     0.747368
+xtrip.xdach.m1_33                     0.755174
+xtrip.xdach.m1_34                     0.762979
+xtrip.xdach.m1_35                     0.770785
+xtrip.xdach.m1_36                     0.778591
+xtrip.xdach.m1_37                     0.786396
+xtrip.xdach.m1_38                     0.794202
+xtrip.xdach.m1_39                     0.802008
+xtrip.xdach.m1_40                     0.809814
+xtrip.xdach.m1_41                     0.817619
+xtrip.xdach.m1_42                     0.825425
+xtrip.xdach.m1_43                     0.833231
+xtrip.xdach.m1_44                     0.841037
+xtrip.xdach.m1_45                     0.848843
+xtrip.xdach.m1_46                     0.856648
+xtrip.xdach.m1_47                     0.864454
+xtrip.xdach.m1_48                      0.87226
+xtrip.xdach.m1_49                     0.880066
+xtrip.xdach.m1_50                     0.887872
+xtrip.xdach.m1_51                     0.895678
+xtrip.xdach.m1_52                     0.903483
+xtrip.xdach.m1_53                     0.911289
+xtrip.xdach.m1_54                     0.919095
+xtrip.xdach.m1_55                     0.926901
+xtrip.xdach.m1_56                     0.934707
+xtrip.xdach.m1_57                     0.942513
+xtrip.xdach.m1_58                     0.950319
+xtrip.xdach.m1_59                     0.958125
+xtrip.xdach.m1_60                     0.965931
+xtrip.xdach.m1_61                     0.973737
+xtrip.xdach.m1_62                     0.981543
+xtrip.xdach.m1_63                     0.989349
+xtrip.xdach.m2_0                      0.497591
+xtrip.xdach.m2_1                      0.513202
+xtrip.xdach.m2_2                      0.528812
+xtrip.xdach.m2_3                      0.544423
+xtrip.xdach.m2_4                      0.560034
+xtrip.xdach.m2_5                      0.575645
+xtrip.xdach.m2_6                      0.591256
+xtrip.xdach.m2_7                      0.606867
+xtrip.xdach.m2_8                      0.622478
+xtrip.xdach.m2_9                      0.638089
+xtrip.xdach.m2_10                       0.6537
+xtrip.xdach.m2_11                     0.669312
+xtrip.xdach.m2_12                     0.684923
+xtrip.xdach.m2_13                     0.700534
+xtrip.xdach.m2_14                     0.716145
+xtrip.xdach.m2_15                     0.731757
+xtrip.xdach.m2_16                     0.747368
+xtrip.xdach.m2_17                     0.762979
+xtrip.xdach.m2_18                     0.778591
+xtrip.xdach.m2_19                     0.794202
+xtrip.xdach.m2_20                     0.809814
+xtrip.xdach.m2_21                     0.825425
+xtrip.xdach.m2_22                     0.841037
+xtrip.xdach.m2_23                     0.856648
+xtrip.xdach.m2_24                      0.87226
+xtrip.xdach.m2_25                     0.887872
+xtrip.xdach.m2_26                     0.903483
+xtrip.xdach.m2_27                     0.919095
+xtrip.xdach.m2_28                     0.934707
+xtrip.xdach.m2_29                     0.950319
+xtrip.xdach.m2_30                     0.965931
+xtrip.xdach.m2_31                     0.981543
+xtrip.xdach.m3_0                      0.497591
+xtrip.xdach.m3_1                      0.528812
+xtrip.xdach.m3_2                      0.560034
+xtrip.xdach.m3_3                      0.591256
+xtrip.xdach.m3_4                      0.622478
+xtrip.xdach.m3_5                        0.6537
+xtrip.xdach.m3_6                      0.684923
+xtrip.xdach.m3_7                      0.716145
+xtrip.xdach.m3_8                      0.747368
+xtrip.xdach.m3_9                      0.778591
+xtrip.xdach.m3_10                     0.809814
+xtrip.xdach.m3_11                     0.841037
+xtrip.xdach.m3_12                      0.87226
+xtrip.xdach.m3_13                     0.903483
+xtrip.xdach.m3_14                     0.934707
+xtrip.xdach.m3_15                     0.965931
+xtrip.xdach.m4_0                      0.497591
+xtrip.xdach.m4_1                      0.560034
+xtrip.xdach.m4_2                      0.622478
+xtrip.xdach.m4_3                      0.684923
+xtrip.xdach.m4_4                      0.747368
+xtrip.xdach.m4_5                      0.809814
+xtrip.xdach.m4_6                       0.87226
+xtrip.xdach.m4_7                      0.934707
+xtrip.xdach.m5_0                       0.49759
+xtrip.xdach.m5_1                      0.622478
+xtrip.xdach.m5_2                      0.747368
+xtrip.xdach.m5_3                       0.87226
+xtrip.xdach.m6_0                       0.49759
+xtrip.xdach.m6_1                      0.747368
+xtrip.vth_hard                         0.49759
+xtrip.xchs.1                          0.497591
+xtrip.xchh.1                           0.49759
+xtrip.cmp_clk_n                        1.19985
+cmp_clk                                      0
+xtrip.xcs.tail                        0.533809
+xtrip.xcs.xp                           1.19984
+xtrip.xcs.xq                           1.19984
+xtrip.xcs.xn                           1.19986
+xtrip.xcs.yn                           1.19986
+xtrip.xcs.xnb                       5.4288e-07
+xtrip.xcs.ynb                       5.4288e-07
+xtrip.xcs.na                           1.17052
+xtrip.cmp_soft_n                      0.617142
+cmp_soft                              0.617142
+xtrip.xcs.nb                           1.17052
+xtrip.xch.tail                      0.00578844
+xtrip.xch.xp                         0.0391283
+xtrip.xch.xq                          0.039027
+xtrip.xch.xn                          0.588915
+xtrip.xch.yn                          0.588989
+xtrip.xch.xnb                         0.026057
+xtrip.xch.ynb                        0.0260298
+xtrip.xch.na                           1.19985
+xtrip.cmp_hard_n                       1.19985
+cmp_hard                              5.22e-06
+xtrip.xch.nb                           1.19985
+vdd_osc                                      0
+osc_i                                        0
+osc_clk                                      0
+vdda_gate                              3.29929
+vdd_gate                               1.19986
+xgate.fast_n                           1.19986
+fast_en                                      0
+xgate.xna.m                          0.0597166
+xgate.fast                         4.23192e-06
+xgate.xu0.ab                           1.19986
+xgate.xu0.nb                           3.29929
+xgate.xu0.n                        1.29204e-07
+xgate.fast_h                       1.75724e-07
+xgate.xu1.ab                           1.19986
+trip_d                                       0
+xgate.xu1.nb                           3.29929
+xgate.xu1.n                        1.29204e-07
+xgate.trip_h                       1.75724e-07
+xgate.xu2.ab                           1.19986
+clr_d                                        0
+xgate.xu2.nb                           3.29929
+xgate.xu2.n                        1.29204e-07
+xgate.clr_h                        1.75724e-07
+xgate.xu3.ab                           1.19986
+xgate.xu3.nb                           3.29929
+xgate.xu3.n                        1.29204e-07
+xgate.en_h                         1.75724e-07
+xgate.xn1.m                            3.29929
+xgate.set_n                            3.29929
+xgate.set                           1.7572e-07
+xgate.en_hn                            3.29929
+xgate.xn2.m                           0.924904
+xgate.rst_n                        3.82734e-07
+xgate.rst                              3.29929
+xgate.xl1.m                            3.27034
+xgate.q                            9.52702e-08
+xgate.qb                               3.29929
+xgate.xl2.m                            3.29929
+xgate.xg.m                            0.924904
+xgate.gate_h                       3.82734e-07
+xgate.gate_hn                          3.29929
+xgate.xd1.yb                           1.19986
+xgate.xd2.yb                       2.61737e-06
+xgate.xd3.yb                           1.19986
+tripped                            2.61737e-06
+trim3                                        0
+trim2                                        0
+trim1                                        0
+trim0                                        0
+dig_trip                                     0
+dig_gate_en                                  0
+cause1                                       0
+cause0                                       0
+sdo                                          0
+sp15                                         0
+sp14                                         0
+sp13                                         0
+sp12                                         0
+sp11                                         0
+sp10                                         0
+sp9                                          0
+sp8                                          0
+sp7                                          0
+sp6                                          0
+sp5                                          0
+sp4                                          0
+sp3                                          0
+sp2                                          0
+sp1                                          0
+sp0                                          0
+inrush_active                                0
+soft_armed                                   0
+bosc_clk#branch                              0
+bosc#branch                                  0
+bfault_drv#branch                     -6.6e-12
+bgate_drv#branch                  -3.73779e-22
+bsdi_core#branch                             0
+bsclk_core#branch                            0
+ben_core#branch                    5.41892e-11
+vm_gated#branch                    2.05091e-08
+vm_gatea#branch                    3.22855e-09
+vosc_i#branch                                0
+vm_tripd#branch                    0.000286492
+vm_tripa#branch                    8.57748e-09
+vm_sense#branch                     0.00138539
+vm_bgr#branch                      2.90095e-05
+vr4#branch                                   0
+vsdi#branch                                  0
+vsclk#branch                                 0
+ven#branch                                   0
+vim#branch                         2.06115e-09
+vprof#branch                            -1e-12
+v12#branch                        -0.000286513
+vmi#branch                         2.17967e-08
+vma#branch                          0.00141441
+v33#branch                         -0.00141443
+vsub#branch                        1.99022e-09
+adac#branch_1_0                    5.04907e-10
+adac#branch_1_1                    2.59933e-11
+adac#branch_1_2                    2.59933e-11
+adac#branch_1_3                    2.59933e-11
+adac#branch_1_4                    2.59933e-11
+adac#branch_1_5                    2.59933e-11
+adac#branch_1_6                    2.59933e-11
+adac#branch_1_7                    2.59933e-11
+adac#branch_1_8                    2.59933e-11
+adac#branch_1_9                    2.59933e-11
+adac#branch_1_10                   2.59933e-11
+adac#branch_1_11                   2.59933e-11
+adac#branch_1_12                   2.59933e-11
+adac#branch_1_13                   2.59933e-11
+adac#branch_1_14                   2.59933e-11
+adac#branch_1_15                   2.59933e-11
+adac#branch_1_16                   2.59933e-11
+adac#branch_1_17                   5.41892e-11
+adac#branch_1_18                   5.41892e-11
+adac#branch_1_19                   5.17503e-11
+adac#branch_1_20                             0
+adac#branch_1_21                             0
+adac#branch_1_22                             0
+adac#branch_1_23                             0
+adac#branch_1_24                             0
+adac#branch_1_25                             0
+adac#branch_1_26                             0
+adac#branch_1_27                             0
+adac#branch_1_28                             0
+adac#branch_1_29                             0
+adac#branch_1_30                             0
+adac#branch_1_31                             0
+adac#branch_1_32                             0
+adac#branch_1_33                             0
+adac#branch_1_34                             0
+adac#branch_1_35                             0
+adac#branch_1_36                             0
+adac#branch_1_37                             0
+adac#branch_1_38                             0
+adac#branch_1_39                             0
+adac#branch_1_40                             0
+adac#branch_1_41                             0
+adac#branch_1_42                             0
+adac#branch_1_43                             0
+adac#branch_1_44                             0
+adac#branch_1_45                             0
+adac#branch_1_46                             0
+adac#branch_1_47                             0
+
+ Reference value :  0.00000e+00 Reference value :  1.00000e-09 Reference value :  1.00010e-09 Reference value :  1.00130e-09 Reference value :  1.00538e-09 Reference value :  1.00547e-09 Reference value :  1.00569e-09 Reference value :  1.00845e-09 Reference value :  1.05736e-09 Reference value :  1.10531e-09 Reference value :  1.10682e-09 Reference value :  1.13974e-09 Reference value :  1.15843e-09 Reference value :  1.17392e-09 Reference value :  1.19860e-09 Reference value :  1.21804e-09 Reference value :  1.22989e-09 Reference value :  1.24112e-09 Reference value :  1.25328e-09 Reference value :  1.26616e-09 Reference value :  1.27893e-09 Reference value :  1.29795e-09 Reference value :  1.30238e-09 Reference value :  1.30734e-09 Reference value :  1.35014e-09 Reference value :  1.43064e-09 Reference value :  1.46574e-09 Reference value :  1.49310e-09 Reference value :  1.51550e-09 Reference value :  1.53485e-09 Reference value :  1.56786e-09 Reference value :  1.57969e-09 Reference value :  1.59057e-09 Reference value :  1.61240e-09 Reference value :  1.62748e-09 Reference value :  1.65414e-09 Reference value :  1.69977e-09 Reference value :  1.73722e-09 Reference value :  1.76547e-09 Reference value :  1.77597e-09 Reference value :  1.79322e-09 Reference value :  1.81215e-09 Reference value :  1.84035e-09 Reference value :  1.86852e-09 Reference value :  1.88104e-09 Reference value :  1.89061e-09 Reference value :  1.89906e-09 Reference value :  1.91377e-09 Reference value :  1.92183e-09 Reference value :  1.93845e-09 Reference value :  1.94776e-09 Reference value :  1.95356e-09 Reference value :  1.95682e-09 Reference value :  1.96131e-09 Reference value :  1.97206e-09 Reference value :  1.97893e-09 Reference value :  1.98307e-09 Reference value :  1.98608e-09 Reference value :  1.98902e-09 Reference value :  1.99766e-09 Reference value :  2.01067e-09 Reference value :  2.02477e-09 Reference value :  2.03119e-09 Reference value :  2.03589e-09 Reference value :  2.04150e-09 Reference value :  2.05220e-09 Reference value :  2.07397e-09 Reference value :  2.09434e-09 Reference value :  2.11345e-09 Reference value :  2.12291e-09 Reference value :  2.13031e-09 Reference value :  2.13843e-09 Reference value :  2.14414e-09 Reference value :  2.15917e-09 Reference value :  2.19279e-09 Reference value :  2.22439e-09 Reference value :  2.26359e-09 Reference value :  2.27772e-09 Reference value :  2.28911e-09 Reference value :  2.30049e-09 Reference value :  2.31209e-09 Reference value :  2.31903e-09 Reference value :  2.33270e-09 Reference value :  2.35012e-09 Reference value :  2.39379e-09 Reference value :  2.46207e-09 Reference value :  2.54308e-09 Reference value :  2.61429e-09 Reference value :  2.64574e-09 Reference value :  2.66975e-09 Reference value :  2.69092e-09 Reference value :  2.71636e-09 Reference value :  2.76956e-09 Reference value :  2.88114e-09 Reference value :  3.01242e-09 Reference value :  3.24545e-09 Reference value :  3.31780e-09 Reference value :  3.40354e-09 Reference value :  3.48469e-09 Reference value :  3.55410e-09 Reference value :  3.72811e-09 Reference value :  3.92454e-09 Reference value :  4.28816e-09 Reference value :  4.56854e-09 Reference value :  4.70273e-09 Reference value :  4.85343e-09 Reference value :  4.98368e-09 Reference value :  5.06888e-09 Reference value :  5.32883e-09 Reference value :  5.69475e-09 Reference value :  6.21858e-09 Reference value :  7.18535e-09 Reference value :  8.63301e-09 Reference value :  1.07726e-08 Reference value :  1.35780e-08 Reference value :  1.68102e-08 Reference value :  2.04622e-08 Reference value :  2.45238e-08 Reference value :  2.92324e-08 Reference value :  3.37316e-08 Reference value :  4.04548e-08 Reference value :  4.81923e-08 Reference value :  5.76842e-08 Reference value :  7.83921e-08 Reference value :  1.00300e-07 Reference value :  1.03170e-07 Reference value :  1.14808e-07 Reference value :  1.17533e-07 Reference value :  1.18941e-07 Reference value :  1.19928e-07 Reference value :  1.20690e-07 Reference value :  1.21641e-07 Reference value :  1.22536e-07 Reference value :  1.23506e-07 Reference value :  1.24391e-07 Reference value :  1.25312e-07 Reference value :  1.26753e-07 Reference value :  1.27741e-07 Reference value :  1.29855e-07 Reference value :  1.34203e-07 Reference value :  1.50409e-07 Reference value :  1.50588e-07 Reference value :  1.51408e-07 Reference value :  1.51408e-07 Reference value :  1.51408e-07 Reference value :  1.51409e-07 Reference value :  1.51409e-07 Reference value :  1.51429e-07 Reference value :  1.56651e-07 Reference value :  1.91651e-07 Reference value :  2.00818e-07 Reference value :  2.00824e-07 Reference value :  2.00918e-07 Reference value :  2.01817e-07 Reference value :  2.01848e-07 Reference value :  2.14681e-07 Reference value :  2.51226e-07 Reference value :  2.51397e-07 Reference value :  2.52225e-07 Reference value :  2.52225e-07 Reference value :  2.52246e-07 Reference value :  2.62468e-07 Reference value :  3.01634e-07 Reference value :  3.01646e-07 Reference value :  3.02326e-07 Reference value :  3.02642e-07 Reference value :  3.04600e-07 Reference value :  3.48770e-07 Reference value :  3.52085e-07 Reference value :  3.53042e-07
+No. of Data Rows : 758
+doAnalyses: TRAN:  Timestep too small; time = 3.53042e-07, timestep = 6.25e-21: trouble with node "vm_gatea#branch"
+
+
+tran simulation(s) aborted
+
+Error: measure  vref_q  find(AT) : out of interval
+ meas tran vref_q find v(vref) at=23.3219u failed!
+
+
+Error: measure  isense_q  find(AT) : out of interval
+ meas tran isense_q find v(isense) at=23.3219u failed!
+
+
+Error: measure  icmp_q  find(AT) : out of interval
+ meas tran icmp_q find v(xtrip.icmp) at=23.3219u failed!
+
+
+Error: measure  vths_q  find(AT) : out of interval
+ meas tran vths_q find v(xtrip.vth_soft) at=23.3219u failed!
+
+
+Error: measure  vthh_q  find(AT) : out of interval
+ meas tran vthh_q find v(xtrip.vth_hard) at=23.3219u failed!
+
+
+Error: measure  iload_q  find(AT) : out of interval
+ meas tran iload_q find i(vim) at=23.3219u failed!
+
+
+Error: measure  gate_q  find(AT) : out of interval
+ meas tran gate_q find v(gate) at=23.3219u failed!
+
+
+Error: measure  fastq  find(AT) : out of interval
+ meas tran fastq find v(fast_en) at=23.3219u failed!
+
+
+Error: measure  t_inrush_off  when(WHEN) : out of interval
+ meas tran t_inrush_off when v(inrush_active)=0.6 fall=1 from=3u failed!
+
+
+Error: measure  inrush_q  find(AT) : out of interval
+ meas tran inrush_q find v(inrush_active) at=23.3219u failed!
+
+
+Error: measure  softarmed_end  find(AT) : out of interval
+ meas tran softarmed_end find v(soft_armed) at=36u failed!
+
+
+Error: measure  code_soft  find(AT) : out of interval
+ meas tran code_soft find cs_v at=23.3219u failed!
+
+
+Error: measure  code_hard  find(AT) : out of interval
+ meas tran code_hard find ch_v at=23.3219u failed!
+
+Warning from checkvalid: vector t_inrush_off is not available or has zero length.
+Error: RHS "t_inrush_off*1e6" invalid
+Error: &vref_q: no such variable.
+Error: &isense_q: no such variable.
+Error: &icmp_q: no such variable.
+Error: &vths_q: no such variable.
+Error: &vthh_q: no such variable.
+Error: &iload_q: no such variable.
+Error: &gate_q: no such variable.
+Error: &code_soft: no such variable.
+Error: &code_hard: no such variable.
+Error: &fastq: no such variable.
+Error: &inrush_q: no such variable.
+Error: &t_inrush_off_us: no such variable.
+Error: &softarmed_end: no such variable.
+QUIET vref=  isense=  icmp=  vth_soft=  vth_hard=  iload_A=  gate=  code_soft=  code_hard=  fast_en=  inrush_active=  t_inrush_off_us=  soft_armed_end=
+
+Error: measure  tosc1  when(WHEN) : out of interval
+ meas tran tosc1 when v(osc_clk)=0.6 rise=1 from=22.3219u failed!
+
+
+Error: measure  tosc2  when(WHEN) : out of interval
+ meas tran tosc2 when v(osc_clk)=0.6 rise=21 from=22.3219u failed!
+
+Warning from checkvalid: vector tosc2 is not available or has zero length.
+Error: RHS "20e-6/(tosc2 - tosc1)" invalid
+
+Error: measure  tcc1  when(WHEN) : out of interval
+ meas tran tcc1 when v(cmp_clk)=0.6 rise=1 from=22.3219u failed!
+
+
+Error: measure  tcc2  when(WHEN) : out of interval
+ meas tran tcc2 when v(cmp_clk)=0.6 rise=11 from=22.3219u failed!
+
+Warning from checkvalid: vector tcc2 is not available or has zero length.
+Error: RHS "10e-6/(tcc2 - tcc1)" invalid
+Error: &fosc_mhz: no such variable.
+Error: &fcmp_mhz: no such variable.
+CLOCK f_osc_MHz=  f_cmp_MHz=  (RTL clock: ideal source at the block-simulated frequency)
+ia_vdda             =  0.00000e+00 from=  2.43219e-05 to=  3.53042e-07
+ia_iovdd            =  0.00000e+00 from=  2.43219e-05 to=  3.53042e-07
+ia_vdd              =  0.00000e+00 from=  2.43219e-05 to=  3.53042e-07
+ia_bgr              =  0.00000e+00 from=  2.43219e-05 to=  3.53042e-07
+ia_sense            =  0.00000e+00 from=  2.43219e-05 to=  3.53042e-07
+ia_tripa            =  0.00000e+00 from=  2.43219e-05 to=  3.53042e-07
+ia_tripd            =  0.00000e+00 from=  2.43219e-05 to=  3.53042e-07
+Warning from checkvalid: vector i(vm_osc) is not available or has zero length.
+Error: RHS "i(vm_osc)" invalid
+
+Error: measure  ia_osc  avg(TRIG) : no such vector as 'i_osc'
+ meas tran ia_osc avg i_osc from=24.3219u to=30u failed!
+
+Warning from checkvalid: vector ia_osc is not available or has zero length.
+Error: RHS "ia_osc*1e6" invalid
+ia_gatea            =  0.00000e+00 from=  2.43219e-05 to=  3.53042e-07
+ia_gated            =  0.00000e+00 from=  2.43219e-05 to=  3.53042e-07
+Error: &ua_osc: no such variable.
+SUPPLY_uA window=24.3219-30us VDDA= 0  IOVDD= 0  VDD= 0  | bgr= 0  sense= 0  trip_3v3= 0  trip_1v2= 0  osc=  gate_3v3= 0  gate_1v2= 0
+tripped_max         =  0.00000e+00 at=  0.00000e+00
+tripped_pre         =  0.00000e+00 at=  0.00000e+00
+
+Error: measure  t_tripped  when(WHEN) : out of interval
+ meas tran t_tripped when v(tripped)=0.6 rise=1 from=30u failed!
+
+
+Error: measure  t_trip_d  when(WHEN) : out of interval
+ meas tran t_trip_d when v(trip_d)=0.6 rise=1 from=30u failed!
+
+
+Error: measure  t_gate1v  when(WHEN) : out of interval
+ meas tran t_gate1v when v(gate)=1.0 fall=1 from=30u failed!
+
+
+Error: measure  t_gate03  when(WHEN) : out of interval
+ meas tran t_gate03 when v(gate)=0.33 fall=1 from=30u failed!
+
+gate_min            =  0.00000e+00 at=  0.00000e+00
+
+Error: measure  gate_end  find(AT) : out of interval
+ meas tran gate_end find v(gate) at=36u failed!
+
+ipk                 =  0.00000e+00 at=  0.00000e+00
+
+Error: measure  i_end  find(AT) : out of interval
+ meas tran i_end find i(vim) at=36u failed!
+
+isense_pk           =  0.00000e+00 at=  0.00000e+00
+
+Error: measure  cause1e  find(AT) : out of interval
+ meas tran cause1e find v(cause1) at=36u failed!
+
+
+Error: measure  cause0e  find(AT) : out of interval
+ meas tran cause0e find v(cause0) at=36u failed!
+
+
+Error: measure  fault_end  find(AT) : out of interval
+ meas tran fault_end find v(fault_n) at=36u failed!
+
+
+Error: measure  soft_peak  find(AT) : out of interval
+ meas tran soft_peak find sp_v at=36u failed!
+
+Warning from checkvalid: vector cause1e is not available or has zero length.
+Error: RHS "2*(cause1e gt 0.6) + (cause0e gt 0.6)" invalid
+Warning from checkvalid: vector t_gate1v is not available or has zero length.
+Error: RHS "(t_gate1v - tstep_s)*1e6" invalid
+Warning from checkvalid: vector t_gate03 is not available or has zero length.
+Error: RHS "(t_gate03 - tstep_s)*1e6" invalid
+Warning from checkvalid: vector t_tripped is not available or has zero length.
+Error: RHS "(t_tripped - tstep_s)*1e6" invalid
+Warning from checkvalid: vector t_trip_d is not available or has zero length.
+Error: RHS "(t_trip_d - tstep_s)*1e6" invalid
+Error: &dt_tripped_us: no such variable.
+Error: &dt_trip_d_us: no such variable.
+Error: &dt_gate1v_us: no such variable.
+Error: &dt_gate03_us: no such variable.
+Error: &gate_end: no such variable.
+Error: &i_end: no such variable.
+Error: &cause: no such variable.
+Error: &fault_end: no such variable.
+Error: &soft_peak: no such variable.
+TRIP tripped_max= 0  tripped_before_event= 0  t_tripped_us=  t_trip_d_us=  t_gate_1V_us=  t_gate_0.33V_us=  gate_min= 0  gate_end=  ipk_A= 0  i_end_A=  isense_pk= 0  cause=  fault_n_end=  soft_peak=
+
+Error: measure  q_step  find(AT) : out of interval
+ meas tran q_step find qi at=30u failed!
+
+
+Error: measure  q_end  find(AT) : out of interval
+ meas tran q_end find qi at=36u failed!
+
+Warning from checkvalid: vector q_end is not available or has zero length.
+Error: RHS "q_end - q_step" invalid
+Error: &q_passed: no such variable.
+CHARGE after_event_As=
+Error: incomplete or empty netlist
+       or no ".plot", ".print", or ".fourier" lines in batch mode;
+no simulations run!
+
+# run status failed
+# ngspice exit 1, wall time 98 s

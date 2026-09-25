@@ -1,0 +1,39 @@
+* G1_BGR SYSTEM CHECK vref(T): hbt_wcs mos_ss res_wcs dio_ss, stock pad, pin open
+.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerHBT.lib hbt_wcs
+.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerMOShv.lib mos_ss
+.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerRES.lib res_wcs
+.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerMOSlv.lib mos_ss
+.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerCAP.lib cap_typ
+.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerDIO.lib dio_ss
+.include ../../../qualification/candidates/bgr_loop24_qref4_r253p465_hv06/bgr_loop24_qref4_r253p465_hv06.spice
+.include /foss/pdks/ihp-sg13g2/libs.ref/sg13g2_io/spice/sg13g2_io.spi
+.option gmin=1e-15 abstol=1e-14 reltol=1e-5 vntol=1e-7
+.global sub!
+Vsub sub! 0 dc 0
+Vdd vdd 0 dc 3.3
+Vdd12 vdd12 0 dc 1.2
+Vr4 r4 0 dc 0
+Xbgr vdd 0 r4 vref iptat pbias pcasc vbe dvbe g1_bgr
+Vload iptat 0 dc 1.0
+Rint vref nint 100k
+Cint nint 0 2p
+Rroute vref padres 613.3425
+XP pad padres vdd12 0 vdd 0 sg13g2_IOPadAnalog
+.control
+option numdgt=12
+option temp=-40
+op
+echo VREFTEMP -40
+print v(vref) v(pad) i(vload)
+option temp=27
+op
+echo VREFTEMP 27
+print v(vref) v(pad) i(vload)
+option temp=125
+op
+echo VREFTEMP 125
+print v(vref) v(pad) i(vload)
+echo SYS_END
+quit 0
+.endc
+.end

@@ -1,0 +1,322 @@
+# G1_TOP run gA_pex_c1414_beh_ss_125C_ovr-bgrsch_padsnodcn_clockfix_functional_gA_ss_125C_r3_c1414m  2026-09-24T19:35:35Z UTC
+# (g-A) power-up: IOVDD/VDDA ramp 1-3 us, VDD 5-7 us, EN low until 12 us; GATE loaded by 5 nF + 10 Ohm only
+# deck build/g1_top/gA_pex_c1414_beh_ss_125C_ovr-bgrsch_padsnodcn_clockfix_functional_gA_ss_125C_r3_c1414m.cir
+# supplies VDD 1.2 V, VDDA = IOVDD 3.3 V
+# blockset c1414 view-override bgr=sch
+# OVERRIDE bgr: sch view instead of --netlist pex (--view-override)
+# NOTE bgr: BGR586 source carries 329 historical Sep-19 kpex capacitors, not an extraction of the BGR586 layout
+# NOTE sense: R100 own-native partial-field C (unbound VSUBS excluded; physical field acceptance not established)
+# WARNING deviation --pads nodcn: every PDK pad instance of this deck (XP*: SENSE_P/N, VREF, and EN/SCLK/SDI/GATE/FAULT_N where pad models are used) is replaced by a deck-local copy g1nd_<cell> of the sg13g2_io.spi hierarchy with every dantenna instance removed (DCNDiode junctions, SecondaryProtection D1, Clamp_N*/LevelDown gate antenna diodes); level shifters, drivers, clamps, dpantenna diodes and ptap resistors are kept; PDK file unchanged. Reason: the PDK darea diode model switches formula at -3nVt (current step 1e-16->4e-11 A at 78 mV/27 C, 1e-12->4e-10 A at 104 mV/125 C), which stalls the transient; removed leakage < 1 nA per pad at 125 C.
+# netlist sha256 e91617f5fcf6f5a0dc721a2ba53b507a05cc226d6dbf0bebaa858a1e7d876765 blocks/g1_gate/sim/postlayout/g1_gate_pex.spice
+# IO models sha256 1d53ab7df431b717ef5aff43e1117c0224681d5cc84886da37a319280ee958d6 /foss/pdks/ihp-sg13g2/libs.ref/sg13g2_io/spice/sg13g2_io.spi
+# PDK commit 84374023ee8b4b126bebbba67fcbada0a9c0ff0b
+# ngspice-46 : Circuit level simulation program
+# Icarus Verilog version 14.0 (devel) (s20260301-328-geda9fdcd-dirty)
+# iverilog -g2005 -Wall -Wno-timescale -o /work/build/g1_top/cosim_b53cef7e0b68cba27c47c5c7.vvp.tmp1 /work/designs/g1-guardian/blocks/g1_top/sim/rtl/g1_dig_cosim.v /work/designs/g1-guardian/blocks/g1_ctrl/rtl/g1_sync2.v /work/designs/g1-guardian/blocks/g1_ctrl/rtl/g1_serial.v /work/designs/g1-guardian/blocks/g1_ctrl/rtl/g1_trip_timer.v /work/designs/g1-guardian/blocks/g1_ctrl/rtl/g1_regfile.v /work/designs/g1-guardian/blocks/g1_ctrl/rtl/g1_digital_top.v /work/designs/g1-guardian/blocks/g1_ctrl/rtl/g1_digital.v /work/designs/g1-guardian/blocks/g1_seu/rtl/g1_tmr_reg.v /work/designs/g1-guardian/blocks/g1_seu/rtl/g1_seu_chain.v /work/designs/g1-guardian/blocks/g1_seu/rtl/g1_seu.v
+# compiled RTL build/g1_top/cosim_b53cef7e0b68cba27c47c5c7.vvp (tag gA_pex_c1414_beh_ss_125C_ovr-bgrsch_padsnodcn_clockfix_functional_gA_ss_125C_r3_c1414m) sha256 9c6a25eab4c4486f0973cf4411db47ea77a3b4f26d6bd95f7d90a3c8d92169f4
+# rtl sha256 63dfb950393fe60c3da1d057f6a5dd86142c8bb670ba0a63b87248675037ccd5 designs/g1-guardian/blocks/g1_top/sim/rtl/g1_dig_cosim.v
+# rtl sha256 c14906d7d9256a771cd8fdc0ab14ba291131e151d24bf06b951b6bc693ad8ef2 designs/g1-guardian/blocks/g1_ctrl/rtl/g1_sync2.v
+# rtl sha256 df4341e1878caef2f7bf27abb273a7a5af3e41b96658ffa02eedb2af97c48a5d designs/g1-guardian/blocks/g1_ctrl/rtl/g1_serial.v
+# rtl sha256 094527d2ccbdfad792d4c2e4d1a602c50051ed1e1c8d1789e4946a44e37af850 designs/g1-guardian/blocks/g1_ctrl/rtl/g1_trip_timer.v
+# rtl sha256 16e48edd1b7ac39d4c3ccd7b76b0ff75ba9d71095e188c7c808d7fb587c10d50 designs/g1-guardian/blocks/g1_ctrl/rtl/g1_regfile.v
+# rtl sha256 42430b79ddf649d832993aca1cf3c8a548afc97383c59a793cf70b972c8256ac designs/g1-guardian/blocks/g1_ctrl/rtl/g1_digital_top.v
+# rtl sha256 36757122c43271dfd439bf1623be6d5413adf3bbb97cbad40d5cccf5892f5c3d designs/g1-guardian/blocks/g1_ctrl/rtl/g1_digital.v
+# rtl sha256 f53f82d97b91d4e815e662e72b40968949c7d74ce135f777dba7789201167ac5 designs/g1-guardian/blocks/g1_seu/rtl/g1_tmr_reg.v
+# rtl sha256 6e10bbc02a8ff29116067f2067f648b959f17b542cb2360c50e7802010048573 designs/g1-guardian/blocks/g1_seu/rtl/g1_seu_chain.v
+# rtl sha256 7c1831c99b5875a2dd48387db70fd5b1a0888a520fe8676bc4e071820b7fa736 designs/g1-guardian/blocks/g1_seu/rtl/g1_seu.v
+
+Note: No compatibility mode selected!
+
+
+Circuit: * g1_top breaker path, chip level: (g-a) power-up: iovdd/vdda ramp 1-3 us, vdd 5-7 us, en low until 12 us; gate loaded by 5 nf + 10 ohm only
+
+Reducing trtol to 1 for xspice 'A' devices
+Doing analysis at TEMP = 125.000000 and TNOM = 27.000000
+
+Using SPARSE 1.3 as Direct Linear Solver
+
+Initial Transient Solution
+--------------------------
+
+Node                                   Voltage
+----                                   -------
+sub!                                         0
+rail33                                       0
+vdda_s                                       0
+iovdd_s                                      0
+vdda                                         0
+iovdd                              0.000364077
+vdd_s                                        0
+vdd                                          0
+iprof                                        1
+ldi                                7.33794e-11
+gfet                               0.000340562
+shp                                7.33794e-11
+shn                                2.11101e-11
+sense_p                            9.36177e-11
+sense_n                            4.13484e-11
+gate                               0.000340562
+fault_n                            0.000340317
+xpsp.xi0.net2                      0.000364077
+xpsp.xi0.xr0.dt                              0
+sense_p_res                        9.48165e-11
+xpsp.xi3.xr0.dt                              0
+xpsp.xi4.net2                                0
+xpsp.xi4.xr0.dt                              0
+xpsn.xi0.net2                      0.000364077
+xpsn.xi0.xr0.dt                              0
+sense_n_res                        4.25471e-11
+xpsn.xi3.xr0.dt                              0
+xpsn.xi4.net2                                0
+xpsn.xi4.xr0.dt                              0
+vref_pad                              0.567409
+xpvref.xi0.net2                    0.000364077
+xpvref.xi0.xr0.dt                            0
+vref                                      1.04
+xpvref.xi3.xr0.dt                            0
+xpvref.xi4.net2                              0
+xpvref.xi4.xr0.dt                            0
+xpen.xi0.net4                       0.00033418
+xpen.xi0.net7                      0.000333989
+xpen.xi0.net1                      1.19872e-12
+xpen.xi0.net2                                0
+en_core                                      0
+en_pad                                       0
+xpen.xi0.xi0.xr0.dt                          0
+xpsclk.xi0.net4                     0.00033418
+xpsclk.xi0.net7                    0.000333989
+xpsclk.xi0.net1                    1.19872e-12
+xpsclk.xi0.net2                              0
+sclk_core                                    0
+sclk_pad                                     0
+xpsclk.xi0.xi0.xr0.dt                        0
+xpsdi.xi0.net4                      0.00033418
+xpsdi.xi0.net7                     0.000333989
+xpsdi.xi0.net1                     1.19872e-12
+xpsdi.xi0.net2                               0
+sdi_core                                     0
+sdi_pad                                      0
+xpsdi.xi0.xi0.xr0.dt                         0
+xpg.xi2.xi1.net2                             0
+gate_core                                    0
+xpg.net1                           0.000313853
+xpg.xi2.xi1.net4                   0.000164619
+xpg.xi2.xi1.net3                    0.00016575
+xpg.xi2.xi0.net2                             0
+xpg.net2                           0.000314771
+xpg.xi2.xi0.net4                   0.000164619
+xpg.xi2.xi0.net3                    0.00016575
+xpf.xi2.xi1.net2                             0
+fault_core                                   0
+xpf.net1                           0.000313844
+xpf.xi2.xi1.net4                   0.000164619
+xpf.xi2.xi1.net3                    0.00016575
+xpf.xi2.xi0.net2                             0
+xpf.net2                           0.000314771
+xpf.xi2.xi0.net4                   0.000164619
+xpf.xi2.xi0.net3                    0.00016575
+osc_en_g                                     0
+osc_en                                       0
+vdda_bgr                                     0
+isense_b                                0.9992
+isense                                  0.9992
+vdda_sense                                   0
+icmp_b                                  0.4996
+icmp                                    0.4996
+vth_soft                              0.500377
+cs                                  9.6266e-09
+vth_hard                              0.500377
+ch                                  9.6266e-09
+soft0                                        0
+soft1                                        0
+soft2                                        0
+soft3                                        0
+soft4                                        0
+soft5                                        0
+soft6                                        0
+soft7                                        0
+hard0                                        0
+hard1                                        0
+hard2                                        0
+hard3                                        0
+hard4                                        0
+hard5                                        0
+hard6                                        0
+hard7                                        0
+cmps_a                                0.377864
+cmph_a                                0.377864
+zero_a                                       0
+cmp_soft                                     0
+cmp_hard                                     0
+vdda_trip                                    0
+vdd_trip                                     0
+osc_i                                        0
+osc_clk                                      0
+vdd_osc                                      0
+vdda_gate                                    0
+vdd_gate                                     0
+xgate.n_11                                   0
+xgate.n_13                                   0
+tripped                                      0
+xgate.n_12                                   0
+xgate.n_6                                    0
+xgate.n_4                                    0
+xgate.n_10                                   0
+xgate.n_9                                    0
+clr_d                                        0
+xgate.n_8                                    0
+trip_d                                       0
+xgate.n_7                                    0
+xgate.n_i233                                 0
+fast_en                                      0
+xgate.n_36                                   0
+xgate.n_37                                   0
+xgate.n_35                                   0
+xgate.n_34                                   0
+xgate.n_i234                                 0
+xgate.n_19                                   0
+xgate.n_29                                   0
+xgate.n_22                                   0
+xgate.n_i235                                 0
+xgate.n_31                                   0
+xgate.n_32                                   0
+xgate.n_25                                   0
+xgate.n_i236                                 0
+xgate.n_30                                   0
+xgate.n_i237                                 0
+xgate.n_i238                                 0
+xgate.n_33                                   0
+xgate.n_18                                   0
+xgate.n_21                                   0
+xgate.n_24                                   0
+xgate.n_28                                   0
+xgate.n_27                                   0
+xgate.n_17                                   0
+xgate.n_26                                   0
+xgate.n_23                                   0
+xgate.n_20                                   0
+cmp_clk                                      0
+trim3                                        0
+trim2                                        0
+trim1                                        0
+trim0                                        0
+dig_trip                                     0
+dig_gate_en                                  0
+cause1                                       0
+cause0                                       0
+sdo                                          0
+sp15                                         0
+sp14                                         0
+sp13                                         0
+sp12                                         0
+sp11                                         0
+sp10                                         0
+sp9                                          0
+sp8                                          0
+sp7                                          0
+sp6                                          0
+sp5                                          0
+sp4                                          0
+sp3                                          0
+sp2                                          0
+sp1                                          0
+sp0                                          0
+inrush_active                                0
+soft_armed                                   0
+bosc_clk#branch                              0
+bcmph#branch                      -3.77864e-13
+bcmps#branch                      -3.77864e-13
+bch#branch                         -9.6266e-21
+bcs#branch                         -9.6266e-21
+bvthh#branch                      -5.00377e-13
+bvths#branch                      -5.00377e-13
+bic#branch                          -9.992e-13
+bis#branch                         -1.9984e-12
+bosc#branch                                  0
+vm_gated#branch                              0
+vm_gatea#branch                              0
+vm_osc#branch                                0
+vosc_i#branch                                0
+vm_tripd#branch                              0
+vm_tripa#branch                              0
+vzero#branch                                 0
+vm_sense#branch                              0
+vm_bgr#branch                                0
+vvref#branch                      -0.000728154
+vsdi#branch                        1.58713e-14
+vsclk#branch                       1.58713e-14
+ven#branch                         1.58713e-14
+vim#branch                         2.07053e-09
+vprof#branch                            -1e-12
+v12#branch                                   0
+vmi#branch                        -0.000728153
+vma#branch                                   0
+v33#branch                         0.000728153
+vsub#branch                        1.72659e-12
+adac#branch_1_0                              0
+adac#branch_1_1                              0
+adac#branch_1_2                              0
+adac#branch_1_3                              0
+adac#branch_1_4                              0
+adac#branch_1_5                              0
+adac#branch_1_6                              0
+adac#branch_1_7                              0
+adac#branch_1_8                              0
+adac#branch_1_9                              0
+adac#branch_1_10                             0
+adac#branch_1_11                             0
+adac#branch_1_12                             0
+adac#branch_1_13                             0
+adac#branch_1_14                             0
+adac#branch_1_15                             0
+adac#branch_1_16                             0
+adac#branch_1_17                             0
+adac#branch_1_18                             0
+adac#branch_1_19                             0
+adac#branch_1_20                             0
+adac#branch_1_21                             0
+adac#branch_1_22                             0
+adac#branch_1_23                             0
+adac#branch_1_24                             0
+adac#branch_1_25                             0
+adac#branch_1_26                             0
+adac#branch_1_27                             0
+adac#branch_1_28                             0
+adac#branch_1_29                             0
+adac#branch_1_30                             0
+adac#branch_1_31                             0
+adac#branch_1_32                             0
+adac#branch_1_33                             0
+adac#branch_1_34                             0
+adac#branch_1_35                             0
+adac#branch_1_36                             0
+adac#branch_1_37                             0
+adac#branch_1_38                             0
+adac#branch_1_39                             0
+adac#branch_1_40                             0
+adac#branch_1_41                             0
+adac#branch_1_42                             0
+adac#branch_1_43                             0
+adac#branch_1_44                             0
+adac#branch_1_45                             0
+adac#branch_1_46                             0
+adac#branch_1_47                             0
+acmpd#branch_1_0                             0
+acmpd#branch_1_1                             0
+
+ Reference value :  0.00000e+00 Reference value :  3.66427e-07 Reference value :  7.49850e-07 Reference value :  1.10741e-06 Reference value :  1.42569e-06 Reference value :  1.63813e-06 Reference value :  2.00820e-06 Reference value :  2.37946e-06 Reference value :  2.70628e-06 Reference value :  3.03316e-06 Reference value :  3.43942e-06 Reference value :  3.80977e-06 Reference value :  4.18004e-06 Reference value :  4.50785e-06 Reference value :  4.87008e-06 Reference value :  5.18885e-06 Reference value :  5.55801e-06 Reference value :  5.88553e-06 Reference value :  6.24804e-06 Reference value :  6.35793e-06 Reference value :  6.76021e-06 Reference value :  7.09542e-06 Reference value :  7.51890e-06 Reference value :  7.96100e-06 Reference value :  8.41934e-06 Reference value :  8.84443e-06 Reference value :  9.31983e-06 Reference value :  9.74473e-06 Reference value :  1.01730e-05 Reference value :  1.06452e-05 Reference value :  1.10696e-05 Reference value :  1.15453e-05 Reference value :  1.19699e-05 Reference value :  1.20281e-05 Reference value :  1.23769e-05 Reference value :  1.27198e-05 Reference value :  1.31356e-05 Reference value :  1.35073e-05 Reference value :  1.38927e-05 Reference value :  1.43017e-05 Reference value :  1.46747e-05 Reference value :  1.50841e-05 Reference value :  1.54667e-05 Reference value :  1.58384e-05
+No. of Data Rows : 4463
+gmax_ramps          =  3.29996e+00 at=  6.28332e-06
+gc_max              =  5.96524e-02 at=  1.40847e-06
+g_end               =  3.29998e+00
+t_g1r               =  2.48497e-06
+t_g1f               =  6.84910e-06
+ipk_ramps           =  1.00000e+00 at=  6.28332e-06
+q_ramps             =  4.01402e-06
+tripped_ramps       =  3.81575e-02 at=  1.42674e-06
+en_core_max         =  8.40662e-02 at=  3.00000e-06
+POWERUP GATE_max_EN_low= 3.29996  gate_core_max= 0.0596524  en_core_max= 0.0840662  GATE_above_1V_from_us= 2.48497E-06  to_us= 6.8491E-06  duration_us= 4.36414  load_peak_A= 1  charge_As= 4.01402E-06  tripped_max= 0.0381575  GATE_after_EN= 3.29998
+Note: Simulation executed from .control section 
+
+# run status completed
+# ngspice exit 0, wall time 12 s

@@ -1,0 +1,447 @@
+# G1_TOP run osc_sch_beh_tt_27C_clockfix_functional_dbg0924_b8_osc_beh  2026-09-24T10:24:32Z UTC
+# (osc) transistor-level G1_OSC clocking the digital macro on the chip VDD, with G1_BGR and G1_SENSE (no G1_TRIP, no G1_GATE, no pad models); cmp_soft tied high so SOFT_PEAK counts once INRUSH = 0 is written
+# deck build/g1_top/osc_sch_beh_tt_27C_clockfix_functional_dbg0924_b8_osc_beh.cir
+# blockset legacy
+# netlist sha256 846a55e037c5ab6e63a7490e941dc957292fe93de9d1f88bd25ab9ba5610d97c blocks/g1_gate/sim/netlist/g1_gate.spice
+# IO models sha256 1d53ab7df431b717ef5aff43e1117c0224681d5cc84886da37a319280ee958d6 /foss/pdks/ihp-sg13g2/libs.ref/sg13g2_io/spice/sg13g2_io.spi
+# PDK commit 84374023ee8b4b126bebbba67fcbada0a9c0ff0b
+# ngspice-46 : Circuit level simulation program
+# Icarus Verilog version 14.0 (devel) (s20260301-328-geda9fdcd-dirty)
+# iverilog -g2005 -Wall -Wno-timescale -o /work/build/g1_top/g1_dig_cosim.vvp /work/designs/g1-guardian/blocks/g1_top/sim/rtl/g1_dig_cosim.v /work/designs/g1-guardian/blocks/g1_ctrl/rtl/g1_sync2.v /work/designs/g1-guardian/blocks/g1_ctrl/rtl/g1_serial.v /work/designs/g1-guardian/blocks/g1_ctrl/rtl/g1_trip_timer.v /work/designs/g1-guardian/blocks/g1_ctrl/rtl/g1_regfile.v /work/designs/g1-guardian/blocks/g1_ctrl/rtl/g1_digital_top.v /work/designs/g1-guardian/blocks/g1_ctrl/rtl/g1_digital.v /work/designs/g1-guardian/blocks/g1_seu/rtl/g1_tmr_reg.v /work/designs/g1-guardian/blocks/g1_seu/rtl/g1_seu_chain.v /work/designs/g1-guardian/blocks/g1_seu/rtl/g1_seu.v
+# rtl sha256 63dfb950393fe60c3da1d057f6a5dd86142c8bb670ba0a63b87248675037ccd5 designs/g1-guardian/blocks/g1_top/sim/rtl/g1_dig_cosim.v
+# rtl sha256 c14906d7d9256a771cd8fdc0ab14ba291131e151d24bf06b951b6bc693ad8ef2 designs/g1-guardian/blocks/g1_ctrl/rtl/g1_sync2.v
+# rtl sha256 df4341e1878caef2f7bf27abb273a7a5af3e41b96658ffa02eedb2af97c48a5d designs/g1-guardian/blocks/g1_ctrl/rtl/g1_serial.v
+# rtl sha256 094527d2ccbdfad792d4c2e4d1a602c50051ed1e1c8d1789e4946a44e37af850 designs/g1-guardian/blocks/g1_ctrl/rtl/g1_trip_timer.v
+# rtl sha256 16e48edd1b7ac39d4c3ccd7b76b0ff75ba9d71095e188c7c808d7fb587c10d50 designs/g1-guardian/blocks/g1_ctrl/rtl/g1_regfile.v
+# rtl sha256 42430b79ddf649d832993aca1cf3c8a548afc97383c59a793cf70b972c8256ac designs/g1-guardian/blocks/g1_ctrl/rtl/g1_digital_top.v
+# rtl sha256 36757122c43271dfd439bf1623be6d5413adf3bbb97cbad40d5cccf5892f5c3d designs/g1-guardian/blocks/g1_ctrl/rtl/g1_digital.v
+# rtl sha256 f53f82d97b91d4e815e662e72b40968949c7d74ce135f777dba7789201167ac5 designs/g1-guardian/blocks/g1_seu/rtl/g1_tmr_reg.v
+# rtl sha256 6e10bbc02a8ff29116067f2067f648b959f17b542cb2360c50e7802010048573 designs/g1-guardian/blocks/g1_seu/rtl/g1_seu_chain.v
+# rtl sha256 7c1831c99b5875a2dd48387db70fd5b1a0888a520fe8676bc4e071820b7fa736 designs/g1-guardian/blocks/g1_seu/rtl/g1_seu.v
+
+Note: No compatibility mode selected!
+
+
+Circuit: * g1_top breaker path, chip level: (osc) transistor-level g1_osc clocking the digital macro on the chip vdd, with g1_bgr and g1_sense (no g1_trip, no g1_gate, no pad models); cmp_soft tied high so soft_peak counts once inrush = 0 is written
+
+Warning : voltage source vsclk has non-increasing PWL time points.
+Warning : voltage source vsclk has non-increasing PWL time points.
+Warning : voltage source vsclk has non-increasing PWL time points.
+Warning : voltage source vsclk has non-increasing PWL time points.
+Warning : voltage source vsclk has non-increasing PWL time points.
+Warning : voltage source vsclk has non-increasing PWL time points.
+Warning : voltage source vsclk has non-increasing PWL time points.
+Warning : voltage source vsclk has non-increasing PWL time points.
+Warning : voltage source vsclk has non-increasing PWL time points.
+Warning : voltage source vsclk has non-increasing PWL time points.
+Warning : voltage source vsclk has non-increasing PWL time points.
+Warning : voltage source vsclk has non-increasing PWL time points.
+Warning : voltage source vsclk has non-increasing PWL time points.
+Warning : voltage source vsclk has non-increasing PWL time points.
+Warning : voltage source vsclk has non-increasing PWL time points.
+Warning : voltage source vsclk has non-increasing PWL time points.
+Reducing trtol to 1 for xspice 'A' devices
+Doing analysis at TEMP = 27.000000 and TNOM = 27.000000
+
+Using SPARSE 1.3 as Direct Linear Solver
+Note: Starting dynamic gmin stepping
+Note: Dynamic gmin stepping completed
+
+Initial Transient Solution
+--------------------------
+
+Node                                   Voltage
+----                                   -------
+sub!                                         0
+rail33                                     3.3
+vdda_s                                     3.3
+iovdd_s                                    3.3
+vdda                                       3.3
+iovdd                                      3.3
+vdd_s                                      1.2
+vdd                                    1.19995
+iprof                                        1
+ldi                                7.21404e-11
+gfet                               1.24579e-10
+shp                                7.21404e-11
+shn                                2.06115e-11
+sense_p                            7.21404e-11
+sense_n                            2.06115e-11
+gate                               1.24579e-10
+fault_n                                    3.3
+vref                                    1.0399
+en_core                                      0
+en_pad                                       0
+sclk_core                                    0
+sclk_pad                                     0
+sdi_core                                     0
+sdi_pad                                      0
+gate_core                                    0
+tripped                                      0
+osc_en_g                                     0
+osc_en                                       0
+vdda_bgr                                   3.3
+isense_b                                0.9992
+isense                                  0.9992
+vdda_sense                                 3.3
+icmp_b                                  0.4996
+icmp                                    0.4996
+vth_soft                              0.500329
+cs                                  9.6266e-09
+vth_hard                              0.500329
+ch                                  9.6266e-09
+soft0                                        0
+soft1                                        0
+soft2                                        0
+soft3                                        0
+soft4                                        0
+soft5                                        0
+soft6                                        0
+soft7                                        0
+hard0                                        0
+hard1                                        0
+hard2                                        0
+hard3                                        0
+hard4                                        0
+hard5                                        0
+hard6                                        0
+hard7                                        0
+cmps_a                                0.390429
+cmph_a                                0.390429
+zero_a                                       0
+cmp_soft                                     0
+cmp_hard                                     0
+vdda_trip                                  3.3
+vdd_trip                               1.19995
+vdd_osc                                1.19995
+xosc.va                             0.00626885
+xosc.xra.dt                                  0
+xosc.vb                             0.00626885
+xosc.xrb.dt                                  0
+xosc.xca.xcf.1                      0.00626885
+xosc.xca.xct0.1                     0.00626885
+xosc.xca.b0                                  0
+trim0                                        0
+xosc.xca.xct1.1                     0.00626885
+xosc.xca.b1                                  0
+trim1                                        0
+xosc.xca.xct2.1                     0.00626885
+xosc.xca.b2                                  0
+trim2                                        0
+xosc.xca.xct3.1                     0.00626885
+xosc.xca.b3                                  0
+trim3                                        0
+xosc.xcb.xcf.1                      0.00626885
+xosc.xcb.xct0.1                     0.00626885
+xosc.xcb.b0                                  0
+xosc.xcb.xct1.1                     0.00626885
+xosc.xcb.b1                                  0
+xosc.xcb.xct2.1                     0.00626885
+xosc.xcb.b2                                  0
+xosc.xcb.xct3.1                     0.00626885
+xosc.xcb.b3                                  0
+xosc.rsta                              1.19995
+xosc.rstb                              1.19995
+xosc.vth                              0.599971
+xosc.xrt1.dt                                 0
+xosc.xrt2.dt                                 0
+xosc.xcth.1                           0.599971
+xosc.vbn                              0.462224
+xosc.xrbias.dt                               0
+xosc.xcmpa.tail                    1.07956e-05
+xosc.xcmpa.d1                          1.04258
+xosc.xcmpa.o1                      1.18634e-05
+xosc.xcmpa.o2                          1.19995
+xosc.ca                            1.53601e-07
+xosc.xcmpb.tail                    1.07956e-05
+xosc.xcmpb.d1                          1.04258
+xosc.xcmpb.o1                      1.18634e-05
+xosc.xcmpb.o2                          1.19995
+xosc.cb                            1.28796e-07
+xosc.en_n                              1.19995
+xosc.xnq.p0                            1.19995
+xosc.xnq.p1                            1.15575
+xosc.q                             8.13944e-08
+xosc.qb                                1.19995
+xosc.xnqb.p0                           1.19995
+xosc.xrstb.n0                          1.02825
+xosc.qn_b                              1.19995
+osc_clk                            7.90554e-08
+vdda_gate                                  3.3
+vdd_gate                               1.19995
+cmp_clk                                      0
+trip_d                                       0
+clr_d                                        0
+fast_en                                      0
+dig_trip                                     0
+dig_gate_en                                  0
+cause1                                       0
+cause0                                       0
+sdo                                          0
+sp15                                         0
+sp14                                         0
+sp13                                         0
+sp12                                         0
+sp11                                         0
+sp10                                         0
+sp9                                          0
+sp8                                          0
+sp7                                          0
+sp6                                          0
+sp5                                          0
+sp4                                          0
+sp3                                          0
+sp2                                          0
+sp1                                          0
+sp0                                          0
+inrush_active                                0
+soft_armed                                   0
+bcmph#branch                      -3.90429e-13
+bcmps#branch                      -3.90429e-13
+bch#branch                         -9.6266e-21
+bcs#branch                         -9.6266e-21
+bvthh#branch                      -5.00329e-13
+bvths#branch                      -5.00329e-13
+bic#branch                          -9.992e-13
+bis#branch                         -1.9984e-12
+bosc#branch                        3.26588e-11
+bgate#branch                      -2.49161e-22
+bsdi_core#branch                             0
+bsclk_core#branch                            0
+ben_core#branch                              0
+vm_gated#branch                    2.40016e-12
+vm_gatea#branch                    6.60005e-12
+vm_osc#branch                      0.000106652
+vm_tripd#branch                    2.39989e-12
+vm_tripa#branch                        6.6e-12
+vzero#branch                                 0
+vm_sense#branch                        6.6e-12
+vm_bgr#branch                          6.6e-12
+vvref#branch                       -1.0399e-12
+vsdi#branch                                  0
+vsclk#branch                                 0
+ven#branch                                   0
+vtr#branch                                   0
+vgc#branch                                   0
+vfault#branch                         -3.3e-12
+vim#branch                         2.06115e-09
+vprof#branch                            -1e-12
+v12#branch                        -0.000106652
+vmi#branch                         6.60094e-12
+vma#branch                         3.30029e-11
+v33#branch                        -4.29039e-11
+vsub#branch                                  0
+adac#branch_1_0                              0
+adac#branch_1_1                              0
+adac#branch_1_2                              0
+adac#branch_1_3                              0
+adac#branch_1_4                              0
+adac#branch_1_5                              0
+adac#branch_1_6                              0
+adac#branch_1_7                              0
+adac#branch_1_8                              0
+adac#branch_1_9                              0
+adac#branch_1_10                             0
+adac#branch_1_11                             0
+adac#branch_1_12                             0
+adac#branch_1_13                             0
+adac#branch_1_14                             0
+adac#branch_1_15                             0
+adac#branch_1_16                             0
+adac#branch_1_17                             0
+adac#branch_1_18                             0
+adac#branch_1_19                             0
+adac#branch_1_20                             0
+adac#branch_1_21                             0
+adac#branch_1_22                             0
+adac#branch_1_23                             0
+adac#branch_1_24                             0
+adac#branch_1_25                             0
+adac#branch_1_26                             0
+adac#branch_1_27                             0
+adac#branch_1_28                             0
+adac#branch_1_29                             0
+adac#branch_1_30                             0
+adac#branch_1_31                             0
+adac#branch_1_32                             0
+adac#branch_1_33                             0
+adac#branch_1_34                             0
+adac#branch_1_35                             0
+adac#branch_1_36                             0
+adac#branch_1_37                             0
+adac#branch_1_38                             0
+adac#branch_1_39                             0
+adac#branch_1_40                             0
+adac#branch_1_41                             0
+adac#branch_1_42                             0
+adac#branch_1_43                             0
+adac#branch_1_44                             0
+adac#branch_1_45                             0
+adac#branch_1_46                             0
+adac#branch_1_47                             0
+acmpd#branch_1_0                             0
+acmpd#branch_1_1                             0
+
+ Reference value :  0.00000e+00 Reference value :  3.06392e-07 Reference value :  5.73333e-07 Reference value :  8.06804e-07 Reference value :  1.05874e-06 Reference value :  1.30725e-06 Reference value :  1.54919e-06 Reference value :  1.80766e-06 Reference value :  2.05460e-06 Reference value :  2.30811e-06 Reference value :  2.55505e-06 Reference value :  2.80852e-06 Reference value :  3.00265e-06 Reference value :  3.22015e-06 Reference value :  3.42809e-06 Reference value :  3.64164e-06 Reference value :  3.83243e-06 Reference value :  4.06912e-06 Reference value :  4.30258e-06 Reference value :  4.54049e-06 Reference value :  4.77395e-06 Reference value :  5.01186e-06 Reference value :  5.24532e-06 Reference value :  5.48323e-06
+No. of Data Rows : 2062
+doAnalyses: TRAN:  Timestep too small; time = 5.67078e-06, timestep = 6.25e-21: trouble with dparea-instance d.xosc.xdant.d1
+
+
+tran simulation(s) aborted
+
+Error: measure  vref_q  find(AT) : out of interval
+ meas tran vref_q find v(vref) at=24u failed!
+
+
+Error: measure  isense_q  find(AT) : out of interval
+ meas tran isense_q find v(isense) at=24u failed!
+
+
+Error: measure  icmp_q  find(AT) : out of interval
+ meas tran icmp_q find v(icmp) at=24u failed!
+
+
+Error: measure  vths_q  find(AT) : out of interval
+ meas tran vths_q find v(vth_soft) at=24u failed!
+
+
+Error: measure  vthh_q  find(AT) : out of interval
+ meas tran vthh_q find v(vth_hard) at=24u failed!
+
+
+Error: measure  iload_q  find(AT) : out of interval
+ meas tran iload_q find i(vim) at=24u failed!
+
+
+Error: measure  gate_q  find(AT) : out of interval
+ meas tran gate_q find v(gate) at=24u failed!
+
+
+Error: measure  fastq  find(AT) : out of interval
+ meas tran fastq find v(fast_en) at=24u failed!
+
+
+Error: measure  t_inrush_off  when(WHEN) : out of interval
+ meas tran t_inrush_off when v(inrush_active)=0.6 fall=1 from=3u failed!
+
+
+Error: measure  inrush_q  find(AT) : out of interval
+ meas tran inrush_q find v(inrush_active) at=24u failed!
+
+
+Error: measure  softarmed_end  find(AT) : out of interval
+ meas tran softarmed_end find v(soft_armed) at=36u failed!
+
+
+Error: measure  code_soft  find(AT) : out of interval
+ meas tran code_soft find cs_v at=24u failed!
+
+
+Error: measure  code_hard  find(AT) : out of interval
+ meas tran code_hard find ch_v at=24u failed!
+
+Warning from checkvalid: vector t_inrush_off is not available or has zero length.
+Error: RHS "t_inrush_off*1e6" invalid
+Error: &vref_q: no such variable.
+Error: &isense_q: no such variable.
+Error: &icmp_q: no such variable.
+Error: &vths_q: no such variable.
+Error: &vthh_q: no such variable.
+Error: &iload_q: no such variable.
+Error: &gate_q: no such variable.
+Error: &code_soft: no such variable.
+Error: &code_hard: no such variable.
+Error: &fastq: no such variable.
+Error: &inrush_q: no such variable.
+Error: &t_inrush_off_us: no such variable.
+Error: &softarmed_end: no such variable.
+QUIET vref=  isense=  icmp=  vth_soft=  vth_hard=  iload_A=  gate=  code_soft=  code_hard=  fast_en=  inrush_active=  t_inrush_off_us=  soft_armed_end=
+
+Error: measure  tosc1  when(WHEN) : out of interval
+ meas tran tosc1 when v(osc_clk)=0.6 rise=1 from=23u failed!
+
+
+Error: measure  tosc2  when(WHEN) : out of interval
+ meas tran tosc2 when v(osc_clk)=0.6 rise=21 from=23u failed!
+
+Warning from checkvalid: vector tosc2 is not available or has zero length.
+Error: RHS "20e-6/(tosc2 - tosc1)" invalid
+
+Error: measure  tcc1  when(WHEN) : out of interval
+ meas tran tcc1 when v(cmp_clk)=0.6 rise=1 from=23u failed!
+
+
+Error: measure  tcc2  when(WHEN) : out of interval
+ meas tran tcc2 when v(cmp_clk)=0.6 rise=11 from=23u failed!
+
+Warning from checkvalid: vector tcc2 is not available or has zero length.
+Error: RHS "10e-6/(tcc2 - tcc1)" invalid
+Error: &fosc_mhz: no such variable.
+Error: &fcmp_mhz: no such variable.
+CLOCK f_osc_MHz=  f_cmp_MHz=  (RTL clock: transistor-level G1_OSC)
+ia_vdda             =  0.00000e+00 from=  2.40000e-05 to=  5.67078e-06
+ia_iovdd            =  0.00000e+00 from=  2.40000e-05 to=  5.67078e-06
+ia_vdd              =  0.00000e+00 from=  2.40000e-05 to=  5.67078e-06
+ia_bgr              =  0.00000e+00 from=  2.40000e-05 to=  5.67078e-06
+ia_sense            =  0.00000e+00 from=  2.40000e-05 to=  5.67078e-06
+ia_tripa            =  0.00000e+00 from=  2.40000e-05 to=  5.67078e-06
+ia_tripd            =  0.00000e+00 from=  2.40000e-05 to=  5.67078e-06
+ia_osc              =  0.00000e+00 from=  2.40000e-05 to=  5.67078e-06
+ia_gatea            =  0.00000e+00 from=  2.40000e-05 to=  5.67078e-06
+ia_gated            =  0.00000e+00 from=  2.40000e-05 to=  5.67078e-06
+SUPPLY_uA window=24-36us VDDA= 0  IOVDD= 0  VDD= 0  | bgr= 0  sense= 0  trip_3v3= 0  trip_1v2= 0  osc= 0  gate_3v3= 0  gate_1v2= 0
+tripped_max         =  0.00000e+00 at=  0.00000e+00
+tripped_pre         =  0.00000e+00 at=  0.00000e+00
+gate_min            =  0.00000e+00 at=  0.00000e+00
+
+Error: measure  gate_end  find(AT) : out of interval
+ meas tran gate_end find v(gate) at=36u failed!
+
+ipk                 =  0.00000e+00 at=  0.00000e+00
+
+Error: measure  i_end  find(AT) : out of interval
+ meas tran i_end find i(vim) at=36u failed!
+
+isense_pk           =  0.00000e+00 at=  0.00000e+00
+
+Error: measure  cause1e  find(AT) : out of interval
+ meas tran cause1e find v(cause1) at=36u failed!
+
+
+Error: measure  cause0e  find(AT) : out of interval
+ meas tran cause0e find v(cause0) at=36u failed!
+
+
+Error: measure  fault_end  find(AT) : out of interval
+ meas tran fault_end find v(fault_n) at=36u failed!
+
+
+Error: measure  soft_peak  find(AT) : out of interval
+ meas tran soft_peak find sp_v at=36u failed!
+
+Warning from checkvalid: vector cause1e is not available or has zero length.
+Error: RHS "2*(cause1e gt 0.6) + (cause0e gt 0.6)" invalid
+Error: &gate_end: no such variable.
+Error: &i_end: no such variable.
+Error: &cause: no such variable.
+Error: &fault_end: no such variable.
+Error: &soft_peak: no such variable.
+NO_TRIP_EXPECTED tripped_max= 0  gate_min= 0  gate_end=  ipk_A= 0  i_end_A=  cause=  fault_n_end=  soft_peak=
+
+Error: measure  q_step  find(AT) : out of interval
+ meas tran q_step find qi at=30u failed!
+
+
+Error: measure  q_end  find(AT) : out of interval
+ meas tran q_end find qi at=36u failed!
+
+Warning from checkvalid: vector q_end is not available or has zero length.
+Error: RHS "q_end - q_step" invalid
+Error: &q_passed: no such variable.
+CHARGE after_event_As=
+Error: incomplete or empty netlist
+       or no ".plot", ".print", or ".fourier" lines in batch mode;
+no simulations run!
+
+# run status failed
+# ngspice exit 1, wall time 7 s

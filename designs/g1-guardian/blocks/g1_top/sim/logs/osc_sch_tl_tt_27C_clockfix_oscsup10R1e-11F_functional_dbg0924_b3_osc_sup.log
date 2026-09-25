@@ -1,0 +1,936 @@
+# G1_TOP run osc_sch_tl_tt_27C_clockfix_oscsup10R1e-11F_functional_dbg0924_b3_osc_sup  2026-09-24T10:20:47Z UTC
+# (osc) transistor-level G1_OSC clocking the digital macro on the chip VDD, with G1_BGR and G1_SENSE (no G1_TRIP, no G1_GATE, no pad models); cmp_soft tied high so SOFT_PEAK counts once INRUSH = 0 is written
+# deck build/g1_top/osc_sch_tl_tt_27C_clockfix_oscsup10R1e-11F_functional_dbg0924_b3_osc_sup.cir
+# blockset legacy
+# netlist sha256 fa92550727c36fc47419001799cf399f58f18ecf5414a47323a706fc8edc9701 blocks/g1_bgr/xschem/g1_bgr.spice
+# netlist sha256 8880157bd2a88c92a248c4865fc79b9242954d1920ce6e3834b776cae6eee57f blocks/g1_sense/sim/netlist/g1_sense.spice
+# netlist sha256 6f2653197660568ecfc4744ac491cb69af8e15d3259e4cef72fc8989069ad829 blocks/g1_trip/sim/netlist/g1_trip.spice
+# netlist sha256 43a1620509c44f2fdab41ce239a4a0f5c6aae6680157651ebfe4528a63cefd65 blocks/g1_osc/sim/netlist/g1_osc.spice
+# netlist sha256 846a55e037c5ab6e63a7490e941dc957292fe93de9d1f88bd25ab9ba5610d97c blocks/g1_gate/sim/netlist/g1_gate.spice
+# IO models sha256 1d53ab7df431b717ef5aff43e1117c0224681d5cc84886da37a319280ee958d6 /foss/pdks/ihp-sg13g2/libs.ref/sg13g2_io/spice/sg13g2_io.spi
+# PDK commit 84374023ee8b4b126bebbba67fcbada0a9c0ff0b
+# ngspice-46 : Circuit level simulation program
+# Icarus Verilog version 14.0 (devel) (s20260301-328-geda9fdcd-dirty)
+# iverilog -g2005 -Wall -Wno-timescale -o /work/build/g1_top/g1_dig_cosim.vvp /work/designs/g1-guardian/blocks/g1_top/sim/rtl/g1_dig_cosim.v /work/designs/g1-guardian/blocks/g1_ctrl/rtl/g1_sync2.v /work/designs/g1-guardian/blocks/g1_ctrl/rtl/g1_serial.v /work/designs/g1-guardian/blocks/g1_ctrl/rtl/g1_trip_timer.v /work/designs/g1-guardian/blocks/g1_ctrl/rtl/g1_regfile.v /work/designs/g1-guardian/blocks/g1_ctrl/rtl/g1_digital_top.v /work/designs/g1-guardian/blocks/g1_ctrl/rtl/g1_digital.v /work/designs/g1-guardian/blocks/g1_seu/rtl/g1_tmr_reg.v /work/designs/g1-guardian/blocks/g1_seu/rtl/g1_seu_chain.v /work/designs/g1-guardian/blocks/g1_seu/rtl/g1_seu.v
+# rtl sha256 63dfb950393fe60c3da1d057f6a5dd86142c8bb670ba0a63b87248675037ccd5 designs/g1-guardian/blocks/g1_top/sim/rtl/g1_dig_cosim.v
+# rtl sha256 c14906d7d9256a771cd8fdc0ab14ba291131e151d24bf06b951b6bc693ad8ef2 designs/g1-guardian/blocks/g1_ctrl/rtl/g1_sync2.v
+# rtl sha256 df4341e1878caef2f7bf27abb273a7a5af3e41b96658ffa02eedb2af97c48a5d designs/g1-guardian/blocks/g1_ctrl/rtl/g1_serial.v
+# rtl sha256 094527d2ccbdfad792d4c2e4d1a602c50051ed1e1c8d1789e4946a44e37af850 designs/g1-guardian/blocks/g1_ctrl/rtl/g1_trip_timer.v
+# rtl sha256 16e48edd1b7ac39d4c3ccd7b76b0ff75ba9d71095e188c7c808d7fb587c10d50 designs/g1-guardian/blocks/g1_ctrl/rtl/g1_regfile.v
+# rtl sha256 42430b79ddf649d832993aca1cf3c8a548afc97383c59a793cf70b972c8256ac designs/g1-guardian/blocks/g1_ctrl/rtl/g1_digital_top.v
+# rtl sha256 36757122c43271dfd439bf1623be6d5413adf3bbb97cbad40d5cccf5892f5c3d designs/g1-guardian/blocks/g1_ctrl/rtl/g1_digital.v
+# rtl sha256 f53f82d97b91d4e815e662e72b40968949c7d74ce135f777dba7789201167ac5 designs/g1-guardian/blocks/g1_seu/rtl/g1_tmr_reg.v
+# rtl sha256 6e10bbc02a8ff29116067f2067f648b959f17b542cb2360c50e7802010048573 designs/g1-guardian/blocks/g1_seu/rtl/g1_seu_chain.v
+# rtl sha256 7c1831c99b5875a2dd48387db70fd5b1a0888a520fe8676bc4e071820b7fa736 designs/g1-guardian/blocks/g1_seu/rtl/g1_seu.v
+
+Note: No compatibility mode selected!
+
+
+Circuit: * g1_top breaker path, chip level: (osc) transistor-level g1_osc clocking the digital macro on the chip vdd, with g1_bgr and g1_sense (no g1_trip, no g1_gate, no pad models); cmp_soft tied high so soft_peak counts once inrush = 0 is written
+
+Warning : voltage source vsclk has non-increasing PWL time points.
+Warning : voltage source vsclk has non-increasing PWL time points.
+Warning : voltage source vsclk has non-increasing PWL time points.
+Warning : voltage source vsclk has non-increasing PWL time points.
+Warning : voltage source vsclk has non-increasing PWL time points.
+Warning : voltage source vsclk has non-increasing PWL time points.
+Warning : voltage source vsclk has non-increasing PWL time points.
+Warning : voltage source vsclk has non-increasing PWL time points.
+Warning : voltage source vsclk has non-increasing PWL time points.
+Warning : voltage source vsclk has non-increasing PWL time points.
+Warning : voltage source vsclk has non-increasing PWL time points.
+Warning : voltage source vsclk has non-increasing PWL time points.
+Warning : voltage source vsclk has non-increasing PWL time points.
+Warning : voltage source vsclk has non-increasing PWL time points.
+Warning : voltage source vsclk has non-increasing PWL time points.
+Warning : voltage source vsclk has non-increasing PWL time points.
+Reducing trtol to 1 for xspice 'A' devices
+Doing analysis at TEMP = 27.000000 and TNOM = 27.000000
+
+Using SPARSE 1.3 as Direct Linear Solver
+
+
+The temperature limiting function received NaN.
+Please check your power dissipation and improve your heat sink Rth!
+    This message will be shown only once.
+
+Note: Starting dynamic gmin stepping
+OSDI(debug) n.xsense.xref.xrz.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xbuf.xrz.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xbuf.xrz.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xota.xrz.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xota.xrz.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xrd250.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xrd250.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xrd249.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xrd249.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xrd248.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xrd248.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xrd247.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xrd247.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xrd246.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xrd246.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xrd245.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xrd245.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xrd244.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xrd244.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xrd243.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xrd243.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xrd242.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xrd242.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xrd241.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xrd241.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xrd240.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xrd240.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xrd239.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xrd239.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xrd238.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xrd238.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xrd237.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xrd237.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xrd236.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xrd236.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xrd235.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xrd235.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xrd234.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xrd234.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xrd233.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xrd233.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xrd232.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xrd232.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xrd231.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xrd231.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xrd230.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xrd230.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xrd229.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xrd229.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xrd228.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xrd228.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xrd227.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xrd227.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xrd226.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xrd226.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xrd225.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xrd225.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xrd224.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xrd224.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xrd223.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xrd223.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xrd222.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xrd222.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xrd221.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xrd221.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xrd220.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xrd220.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xrd219.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xrd219.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xrd218.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xrd218.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xrd217.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xrd217.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xrd216.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xrd216.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xrd215.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xrd215.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xrd214.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xrd214.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xrd213.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xrd213.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xrd212.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xrd212.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xrd211.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xrd211.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xrd210.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xrd210.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xrd29.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xrd29.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xrd28.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xrd28.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xrd27.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xrd27.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xrd26.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xrd26.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xrd25.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xrd25.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xrd24.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xrd24.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xrd23.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xrd23.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xrd22.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xrd22.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xrd21.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xrd21.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xrd20.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xrd20.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xrd11.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xrd11.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xrd10.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xrd10.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xr2p19.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xr2p19.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xr2p18.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xr2p18.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xr2p17.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xr2p17.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xr2p16.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xr2p16.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xr2p15.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xr2p15.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xr2p14.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xr2p14.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xr2p13.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xr2p13.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xr2p12.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xr2p12.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xr2p11.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xr2p11.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xr2p10.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xr2p10.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xr2p9.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xr2p9.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xr2p8.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xr2p8.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xr2p7.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xr2p7.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xr2p6.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xr2p6.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xr2p5.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xr2p5.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xr2p4.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xr2p4.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xr2p3.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xr2p3.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xr2p2.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xr2p2.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xr2p1.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xr2p1.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xr2p0.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xr2p0.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xr1p0.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xr1p0.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xr2n19.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xr2n19.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xr2n18.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xr2n18.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xr2n17.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xr2n17.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xr2n16.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xr2n16.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xr2n15.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xr2n15.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xr2n14.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xr2n14.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xr2n13.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xr2n13.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xr2n12.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xr2n12.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xr2n11.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xr2n11.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xr2n10.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xr2n10.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xr2n9.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xr2n9.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xr2n8.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xr2n8.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xr2n7.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xr2n7.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xr2n6.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xr2n6.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xr2n5.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xr2n5.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xr2n4.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xr2n4.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xr2n3.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xr2n3.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xr2n2.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xr2n2.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xr2n1.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xr2n1.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xr2n0.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xr2n0.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xr1n0.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xr1n0.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xrdet.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xrdet.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr2.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr2.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr1.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr1.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xrx.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xrx.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xrb.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xrb.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xrb.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+Note: Dynamic gmin stepping completed
+
+Initial Transient Solution
+--------------------------
+
+Node                                   Voltage
+----                                   -------
+sub!                                         0
+rail33                                     3.3
+vdda_s                                     3.3
+iovdd_s                                    3.3
+vdda                                    3.2995
+iovdd                                      3.3
+vdd_s                                      1.2
+vdd                                    1.19995
+iprof                                        1
+ldi                                2.15151e-07
+gfet                               1.24579e-10
+shp                                2.15151e-07
+shn                                9.55803e-08
+sense_p                            4.99591e-06
+sense_n                            4.87079e-06
+gate                               1.24579e-10
+fault_n                                    3.3
+vref                                   1.03787
+en_core                                      0
+en_pad                                       0
+sclk_core                                    0
+sclk_pad                                     0
+sdi_core                                     0
+sdi_pad                                      0
+gate_core                                    0
+tripped                                      0
+osc_en_g                                     0
+osc_en                                       0
+r4                                           0
+vdda_bgr                                3.2995
+xbgr.d1                                2.76718
+pbias                                  2.30101
+xbgr.n1                               0.721651
+pcasc                                  1.76965
+xbgr.d2                                2.76827
+xbgr.xrb.dt                                  0
+xbgr.vb2                               1.61023
+vbe                                   0.702962
+xbgr.c2                               0.776605
+xbgr.d5                                2.76756
+xbgr.vd1                               1.40601
+xbgr.xrx.dt                                  0
+xbgr.vd2                              0.703003
+xbgr.xqd1.s1                       5.63123e-10
+xbgr.xqd1.t                          0.0329921
+xbgr.xqd2.s1                       2.81922e-10
+xbgr.xqd2.t                          0.0329921
+xbgr.xq1.s1                        2.81906e-10
+xbgr.xq1.t                           0.0329399
+xbgr.b1b                           2.40439e-09
+xbgr.xq1b.s1                       2.81988e-10
+xbgr.xq1b.t                        5.80152e-11
+dvbe                                 0.0550725
+xbgr.xq2a.s1                       3.11435e-10
+xbgr.xq2a.t                         0.00423845
+xbgr.xq2b.s1                       3.11435e-10
+xbgr.xq2b.t                         0.00423845
+xbgr.xq2c.s1                       3.11435e-10
+xbgr.xq2c.t                         0.00423845
+xbgr.xq2d.s1                       3.11435e-10
+xbgr.xq2d.t                         0.00423845
+xbgr.xq2e.s1                       3.11435e-10
+xbgr.xq2e.t                         0.00423845
+xbgr.xq2f.s1                       3.11435e-10
+xbgr.xq2f.t                         0.00423845
+xbgr.xq2g.s1                       3.11435e-10
+xbgr.xq2g.t                         0.00423845
+xbgr.xq2h.s1                       3.11435e-10
+xbgr.xq2h.t                         0.00423845
+xbgr.xr1.dt                                  0
+xbgr.d3                                2.76729
+xbgr.vbe3                             0.703003
+xbgr.xr2.dt                                  0
+xbgr.xq3.s1                        2.81922e-10
+xbgr.xq3.t                           0.0329923
+xbgr.d4                                2.76719
+iptat                                 0.756243
+xbgr.det                               3.25523
+xbgr.xrdet.dt                                0
+xbgr.kick                          6.53787e-09
+xbgr.r4n                                3.2995
+vdda_sense                              3.2995
+xsense.vn                            0.0475017
+xsense.xr1n0.dt                              0
+xsense.r2n_0                         0.0949985
+xsense.xr2n0.dt                              0
+xsense.r2n_1                          0.142495
+xsense.xr2n1.dt                              0
+xsense.r2n_2                          0.189992
+xsense.xr2n2.dt                              0
+xsense.r2n_3                          0.237489
+xsense.xr2n3.dt                              0
+xsense.r2n_4                          0.284986
+xsense.xr2n4.dt                              0
+xsense.r2n_5                          0.332483
+xsense.xr2n5.dt                              0
+xsense.r2n_6                           0.37998
+xsense.xr2n6.dt                              0
+xsense.r2n_7                          0.427477
+xsense.xr2n7.dt                              0
+xsense.r2n_8                          0.474973
+xsense.xr2n8.dt                              0
+xsense.r2n_9                           0.52247
+xsense.xr2n9.dt                              0
+xsense.r2n_10                         0.569967
+xsense.xr2n10.dt                             0
+xsense.r2n_11                         0.617464
+xsense.xr2n11.dt                             0
+xsense.r2n_12                         0.664961
+xsense.xr2n12.dt                             0
+xsense.r2n_13                         0.712458
+xsense.xr2n13.dt                             0
+xsense.r2n_14                         0.759956
+xsense.xr2n14.dt                             0
+xsense.r2n_15                         0.807453
+xsense.xr2n15.dt                             0
+xsense.r2n_16                          0.85495
+xsense.xr2n16.dt                             0
+xsense.r2n_17                         0.902447
+xsense.xr2n17.dt                             0
+xsense.r2n_18                         0.949944
+xsense.xr2n18.dt                             0
+isense                                0.997441
+xsense.xr2n19.dt                             0
+xsense.vp                            0.0475569
+xsense.xr1p0.dt                              0
+xsense.r2p_0                         0.0951089
+xsense.xr2p0.dt                              0
+xsense.r2p_1                          0.142661
+xsense.xr2p1.dt                              0
+xsense.r2p_2                          0.190213
+xsense.xr2p2.dt                              0
+xsense.r2p_3                          0.237765
+xsense.xr2p3.dt                              0
+xsense.r2p_4                          0.285317
+xsense.xr2p4.dt                              0
+xsense.r2p_5                          0.332869
+xsense.xr2p5.dt                              0
+xsense.r2p_6                          0.380421
+xsense.xr2p6.dt                              0
+xsense.r2p_7                          0.427973
+xsense.xr2p7.dt                              0
+xsense.r2p_8                          0.475525
+xsense.xr2p8.dt                              0
+xsense.r2p_9                          0.523077
+xsense.xr2p9.dt                              0
+xsense.r2p_10                         0.570629
+xsense.xr2p10.dt                             0
+xsense.r2p_11                         0.618181
+xsense.xr2p11.dt                             0
+xsense.r2p_12                         0.665733
+xsense.xr2p12.dt                             0
+xsense.r2p_13                         0.713286
+xsense.xr2p13.dt                             0
+xsense.r2p_14                         0.760838
+xsense.xr2p14.dt                             0
+xsense.r2p_15                          0.80839
+xsense.xr2p15.dt                             0
+xsense.r2p_16                         0.855942
+xsense.xr2p16.dt                             0
+xsense.r2p_17                         0.903495
+xsense.xr2p17.dt                             0
+xsense.r2p_18                         0.951047
+xsense.xr2p18.dt                             0
+vped                                  0.998599
+xsense.xr2p19.dt                             0
+vref_buf                               1.03782
+xsense.rd1_0                           1.01823
+xsense.xrd10.dt                              0
+xsense.vped_ref                       0.998653
+xsense.xrd11.dt                              0
+xsense.rd2_0                          0.979071
+xsense.xrd20.dt                              0
+xsense.rd2_1                          0.959489
+xsense.xrd21.dt                              0
+xsense.rd2_2                          0.939907
+xsense.xrd22.dt                              0
+xsense.rd2_3                          0.920325
+xsense.xrd23.dt                              0
+xsense.rd2_4                          0.900743
+xsense.xrd24.dt                              0
+xsense.rd2_5                          0.881162
+xsense.xrd25.dt                              0
+xsense.rd2_6                           0.86158
+xsense.xrd26.dt                              0
+xsense.rd2_7                          0.841998
+xsense.xrd27.dt                              0
+xsense.rd2_8                          0.822416
+xsense.xrd28.dt                              0
+xsense.rd2_9                          0.802835
+xsense.xrd29.dt                              0
+xsense.rd2_10                         0.783253
+xsense.xrd210.dt                             0
+xsense.rd2_11                         0.763671
+xsense.xrd211.dt                             0
+xsense.rd2_12                          0.74409
+xsense.xrd212.dt                             0
+xsense.rd2_13                         0.724508
+xsense.xrd213.dt                             0
+xsense.rd2_14                         0.704927
+xsense.xrd214.dt                             0
+xsense.rd2_15                         0.685345
+xsense.xrd215.dt                             0
+xsense.rd2_16                         0.665764
+xsense.xrd216.dt                             0
+xsense.rd2_17                         0.646182
+xsense.xrd217.dt                             0
+xsense.rd2_18                           0.6266
+xsense.xrd218.dt                             0
+xsense.rd2_19                         0.607019
+xsense.xrd219.dt                             0
+xsense.rd2_20                         0.587438
+xsense.xrd220.dt                             0
+xsense.rd2_21                         0.567856
+xsense.xrd221.dt                             0
+xsense.rd2_22                         0.548275
+xsense.xrd222.dt                             0
+xsense.rd2_23                         0.528693
+xsense.xrd223.dt                             0
+xsense.rd2_24                         0.509112
+xsense.xrd224.dt                             0
+xsense.rd2_25                         0.489531
+xsense.xrd225.dt                             0
+xsense.rd2_26                         0.469949
+xsense.xrd226.dt                             0
+xsense.rd2_27                         0.450368
+xsense.xrd227.dt                             0
+xsense.rd2_28                         0.430787
+xsense.xrd228.dt                             0
+xsense.rd2_29                         0.411205
+xsense.xrd229.dt                             0
+xsense.rd2_30                         0.391624
+xsense.xrd230.dt                             0
+xsense.rd2_31                         0.372043
+xsense.xrd231.dt                             0
+xsense.rd2_32                         0.352461
+xsense.xrd232.dt                             0
+xsense.rd2_33                          0.33288
+xsense.xrd233.dt                             0
+xsense.rd2_34                         0.313299
+xsense.xrd234.dt                             0
+xsense.rd2_35                         0.293718
+xsense.xrd235.dt                             0
+xsense.rd2_36                         0.274136
+xsense.xrd236.dt                             0
+xsense.rd2_37                         0.254555
+xsense.xrd237.dt                             0
+xsense.rd2_38                         0.234974
+xsense.xrd238.dt                             0
+xsense.rd2_39                         0.215393
+xsense.xrd239.dt                             0
+xsense.rd2_40                         0.195812
+xsense.xrd240.dt                             0
+xsense.rd2_41                          0.17623
+xsense.xrd241.dt                             0
+xsense.rd2_42                         0.156649
+xsense.xrd242.dt                             0
+xsense.rd2_43                         0.137068
+xsense.xrd243.dt                             0
+xsense.rd2_44                         0.117487
+xsense.xrd244.dt                             0
+xsense.rd2_45                        0.0979058
+xsense.xrd245.dt                             0
+xsense.rd2_46                        0.0783246
+xsense.xrd246.dt                             0
+xsense.rd2_47                        0.0587434
+xsense.xrd247.dt                             0
+xsense.rd2_48                        0.0391623
+xsense.xrd248.dt                             0
+xsense.rd2_49                        0.0195811
+xsense.xrd249.dt                             0
+xsense.xrd250.dt                             0
+xsense.xota.vbp                        2.45658
+xsense.xota.vbnc                      0.962533
+xsense.xota.vbpc                       2.18224
+xsense.xota.tail                       1.59641
+xsense.xota.fn                        0.195521
+xsense.xota.fp                         0.19527
+xsense.xota.mir                        2.51405
+xsense.xota.out1                       2.47152
+xsense.xota.pc1                        3.07191
+xsense.xota.pc2                        3.07185
+xsense.xota.cz                         2.47152
+xsense.xota.xrz.dt                           0
+xsense.xota.xcc.1                      2.47152
+xsense.xbuf.vbp                        2.45658
+xsense.xbuf.vbnc                      0.962533
+xsense.xbuf.vbpc                       2.18224
+xsense.xbuf.tail                       2.30616
+xsense.xbuf.fn                        0.195046
+xsense.xbuf.fp                        0.194798
+xsense.xbuf.mir                        2.51329
+xsense.xbuf.out1                        2.4715
+xsense.xbuf.pc1                        3.07242
+xsense.xbuf.pc2                        3.07236
+xsense.xbuf.cz                          2.4715
+xsense.xbuf.xrz.dt                           0
+xsense.xbuf.xcc.1                       2.4715
+xsense.xref.vbp                        2.45658
+xsense.xref.vbnc                      0.962533
+xsense.xref.vbpc                       2.18224
+xsense.xref.tail                       2.33492
+xsense.xref.fn                        0.195022
+xsense.xref.fp                        0.194788
+xsense.xref.mir                        2.51325
+xsense.xref.out1                       2.47373
+xsense.xref.pc1                        3.07245
+xsense.xref.pc2                        3.07239
+xsense.xref.cz                         2.47373
+xsense.xref.xrz.dt                           0
+xsense.xref.xcc.1                      2.47373
+vdda_trip                               3.2995
+vdd_trip                               1.19995
+cmp_soft                                   1.2
+cmp_hard                                     0
+icmp                                  0.498721
+vth_soft                              0.800527
+vth_hard                              0.998696
+vdd_osc_m                              1.19995
+vdd_osc                                1.19888
+xosc.va                             0.00627088
+xosc.xra.dt                                  0
+xosc.vb                             0.00627088
+xosc.xrb.dt                                  0
+xosc.xca.xcf.1                      0.00627088
+xosc.xca.xct0.1                     0.00627088
+xosc.xca.b0                                  0
+trim0                                        0
+xosc.xca.xct1.1                     0.00627088
+xosc.xca.b1                                  0
+trim1                                        0
+xosc.xca.xct2.1                     0.00627088
+xosc.xca.b2                                  0
+trim2                                        0
+xosc.xca.xct3.1                     0.00627088
+xosc.xca.b3                                  0
+trim3                                        0
+xosc.xcb.xcf.1                      0.00627088
+xosc.xcb.xct0.1                     0.00627088
+xosc.xcb.b0                                  0
+xosc.xcb.xct1.1                     0.00627088
+xosc.xcb.b1                                  0
+xosc.xcb.xct2.1                     0.00627088
+xosc.xcb.b2                                  0
+xosc.xcb.xct3.1                     0.00627088
+xosc.xcb.b3                                  0
+xosc.rsta                              1.19888
+xosc.rstb                              1.19888
+xosc.vth                              0.599439
+xosc.xrt1.dt                                 0
+xosc.xrt2.dt                                 0
+xosc.xcth.1                           0.599439
+xosc.vbn                              0.462097
+xosc.xrbias.dt                               0
+xosc.xcmpa.tail                    1.07975e-05
+xosc.xcmpa.d1                          1.04154
+xosc.xcmpa.o1                      1.18668e-05
+xosc.xcmpa.o2                          1.19888
+xosc.ca                            1.53456e-07
+xosc.xcmpb.tail                    1.07975e-05
+xosc.xcmpb.d1                          1.04154
+xosc.xcmpb.o1                      1.18668e-05
+xosc.xcmpb.o2                          1.19888
+xosc.cb                            1.28693e-07
+xosc.en_n                              1.19888
+xosc.xnq.p0                            1.19888
+xosc.xnq.p1                            1.15469
+xosc.q                             8.12858e-08
+xosc.qb                                1.19888
+xosc.xnqb.p0                           1.19888
+xosc.xrstb.n0                          1.02731
+xosc.qn_b                              1.19888
+osc_clk                             7.9039e-08
+vdda_gate                               3.2995
+vdd_gate                               1.19995
+cmp_clk                                      0
+soft7                                        0
+soft6                                        0
+soft5                                        0
+soft4                                        0
+soft3                                        0
+soft2                                        0
+soft1                                        0
+soft0                                        0
+hard7                                        0
+hard6                                        0
+hard5                                        0
+hard4                                        0
+hard3                                        0
+hard2                                        0
+hard1                                        0
+hard0                                        0
+trip_d                                       0
+clr_d                                        0
+fast_en                                      0
+dig_trip                                     0
+dig_gate_en                                  0
+cause1                                       0
+cause0                                       0
+sdo                                          0
+sp15                                         0
+sp14                                         0
+sp13                                         0
+sp12                                         0
+sp11                                         0
+sp10                                         0
+sp9                                          0
+sp8                                          0
+sp7                                          0
+sp6                                          0
+sp5                                          0
+sp4                                          0
+sp3                                          0
+sp2                                          0
+sp1                                          0
+sp0                                          0
+inrush_active                                0
+soft_armed                                   0
+bicmp#branch                      -4.98721e-13
+bosc#branch                        3.25553e-11
+bgate#branch                      -2.49161e-22
+bsdi_core#branch                             0
+bsclk_core#branch                            0
+ben_core#branch                              0
+vm_gated#branch                     2.4003e-12
+vm_gatea#branch                    6.59988e-12
+vm_osc#branch                      0.000106549
+vvthh#branch                      -9.98696e-13
+vvths#branch                      -8.00527e-13
+vch_tie#branch                               0
+vcs_tie#branch                        -1.2e-12
+vm_tripd#branch                    2.39989e-12
+vm_tripa#branch                    6.59901e-12
+vm_sense#branch                    0.000969523
+vm_bgr#branch                      2.20386e-05
+vr4#branch                                   0
+vsdi#branch                                  0
+vsclk#branch                                 0
+ven#branch                                   0
+vtr#branch                                   0
+vgc#branch                                   0
+vfault#branch                         -3.3e-12
+vim#branch                         2.06115e-09
+vprof#branch                            -1e-12
+v12#branch                        -0.000106549
+vmi#branch                         6.60094e-12
+vma#branch                         0.000991561
+v33#branch                        -0.000991561
+vsub#branch                                  0
+adac#branch_1_0                              0
+adac#branch_1_1                              0
+adac#branch_1_2                              0
+adac#branch_1_3                              0
+adac#branch_1_4                              0
+adac#branch_1_5                              0
+adac#branch_1_6                              0
+adac#branch_1_7                              0
+adac#branch_1_8                              0
+adac#branch_1_9                              0
+adac#branch_1_10                             0
+adac#branch_1_11                             0
+adac#branch_1_12                             0
+adac#branch_1_13                             0
+adac#branch_1_14                             0
+adac#branch_1_15                             0
+adac#branch_1_16                             0
+adac#branch_1_17                             0
+adac#branch_1_18                             0
+adac#branch_1_19                             0
+adac#branch_1_20                             0
+adac#branch_1_21                             0
+adac#branch_1_22                             0
+adac#branch_1_23                             0
+adac#branch_1_24                             0
+adac#branch_1_25                             0
+adac#branch_1_26                             0
+adac#branch_1_27                             0
+adac#branch_1_28                             0
+adac#branch_1_29                             0
+adac#branch_1_30                             0
+adac#branch_1_31                             0
+adac#branch_1_32                             0
+adac#branch_1_33                             0
+adac#branch_1_34                             0
+adac#branch_1_35                             0
+adac#branch_1_36                             0
+adac#branch_1_37                             0
+adac#branch_1_38                             0
+adac#branch_1_39                             0
+adac#branch_1_40                             0
+adac#branch_1_41                             0
+adac#branch_1_42                             0
+adac#branch_1_43                             0
+adac#branch_1_44                             0
+adac#branch_1_45                             0
+adac#branch_1_46                             0
+adac#branch_1_47                             0
+
+ Reference value :  0.00000e+00 Reference value :  1.30595e-07 Reference value :  2.20888e-07 Reference value :  2.73045e-07 Reference value :  3.17681e-07 Reference value :  3.19810e-07 Reference value :  3.79999e-07 Reference value :  4.66347e-07 Reference value :  5.17250e-07 Reference value :  6.08922e-07 Reference value :  6.60692e-07 Reference value :  7.07158e-07 Reference value :  7.08687e-07 Reference value :  7.55958e-07 Reference value :  8.03768e-07OSDI(debug) n.xosc.xrt2.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xosc.xrt1.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+
+No. of Data Rows : 579
+doAnalyses: TRAN:  Timestep too small; time = 9.0098e-07, timestep = 6.25e-21: trouble with dparea-instance d.xosc.xdant.d1
+
+
+tran simulation(s) aborted
+Error: no such vector xbgr.pbias
+  in term: v(xbgr.pbias)
+
+
+Error: measure  vref_q  find(AT) : out of interval
+ meas tran vref_q find v(vref) at=24u failed!
+
+
+Error: measure  isense_q  find(AT) : out of interval
+ meas tran isense_q find v(isense) at=24u failed!
+
+
+Error: measure  icmp_q  find(AT) : out of interval
+ meas tran icmp_q find v(icmp) at=24u failed!
+
+
+Error: measure  vths_q  find(AT) : out of interval
+ meas tran vths_q find v(vth_soft) at=24u failed!
+
+
+Error: measure  vthh_q  find(AT) : out of interval
+ meas tran vthh_q find v(vth_hard) at=24u failed!
+
+
+Error: measure  iload_q  find(AT) : out of interval
+ meas tran iload_q find i(vim) at=24u failed!
+
+
+Error: measure  gate_q  find(AT) : out of interval
+ meas tran gate_q find v(gate) at=24u failed!
+
+
+Error: measure  fastq  find(AT) : out of interval
+ meas tran fastq find v(fast_en) at=24u failed!
+
+
+Error: measure  t_inrush_off  when(WHEN) : out of interval
+ meas tran t_inrush_off when v(inrush_active)=0.6 fall=1 from=3u failed!
+
+
+Error: measure  inrush_q  find(AT) : out of interval
+ meas tran inrush_q find v(inrush_active) at=24u failed!
+
+
+Error: measure  softarmed_end  find(AT) : out of interval
+ meas tran softarmed_end find v(soft_armed) at=36u failed!
+
+
+Error: measure  code_soft  find(AT) : out of interval
+ meas tran code_soft find cs_v at=24u failed!
+
+
+Error: measure  code_hard  find(AT) : out of interval
+ meas tran code_hard find ch_v at=24u failed!
+
+Warning from checkvalid: vector t_inrush_off is not available or has zero length.
+Error: RHS "t_inrush_off*1e6" invalid
+Error: &vref_q: no such variable.
+Error: &isense_q: no such variable.
+Error: &icmp_q: no such variable.
+Error: &vths_q: no such variable.
+Error: &vthh_q: no such variable.
+Error: &iload_q: no such variable.
+Error: &gate_q: no such variable.
+Error: &code_soft: no such variable.
+Error: &code_hard: no such variable.
+Error: &fastq: no such variable.
+Error: &inrush_q: no such variable.
+Error: &t_inrush_off_us: no such variable.
+Error: &softarmed_end: no such variable.
+QUIET vref=  isense=  icmp=  vth_soft=  vth_hard=  iload_A=  gate=  code_soft=  code_hard=  fast_en=  inrush_active=  t_inrush_off_us=  soft_armed_end=
+
+Error: measure  tosc1  when(WHEN) : out of interval
+ meas tran tosc1 when v(osc_clk)=0.6 rise=1 from=23u failed!
+
+
+Error: measure  tosc2  when(WHEN) : out of interval
+ meas tran tosc2 when v(osc_clk)=0.6 rise=21 from=23u failed!
+
+Warning from checkvalid: vector tosc2 is not available or has zero length.
+Error: RHS "20e-6/(tosc2 - tosc1)" invalid
+
+Error: measure  tcc1  when(WHEN) : out of interval
+ meas tran tcc1 when v(cmp_clk)=0.6 rise=1 from=23u failed!
+
+
+Error: measure  tcc2  when(WHEN) : out of interval
+ meas tran tcc2 when v(cmp_clk)=0.6 rise=11 from=23u failed!
+
+Warning from checkvalid: vector tcc2 is not available or has zero length.
+Error: RHS "10e-6/(tcc2 - tcc1)" invalid
+Error: &fosc_mhz: no such variable.
+Error: &fcmp_mhz: no such variable.
+CLOCK f_osc_MHz=  f_cmp_MHz=  (RTL clock: transistor-level G1_OSC)
+ia_vdda             =  0.00000e+00 from=  2.40000e-05 to=  9.00980e-07
+ia_iovdd            =  0.00000e+00 from=  2.40000e-05 to=  9.00980e-07
+ia_vdd              =  0.00000e+00 from=  2.40000e-05 to=  9.00980e-07
+ia_bgr              =  0.00000e+00 from=  2.40000e-05 to=  9.00980e-07
+ia_sense            =  0.00000e+00 from=  2.40000e-05 to=  9.00980e-07
+ia_tripa            =  0.00000e+00 from=  2.40000e-05 to=  9.00980e-07
+ia_tripd            =  0.00000e+00 from=  2.40000e-05 to=  9.00980e-07
+ia_osc              =  0.00000e+00 from=  2.40000e-05 to=  9.00980e-07
+ia_gatea            =  0.00000e+00 from=  2.40000e-05 to=  9.00980e-07
+ia_gated            =  0.00000e+00 from=  2.40000e-05 to=  9.00980e-07
+SUPPLY_uA window=24-36us VDDA= 0  IOVDD= 0  VDD= 0  | bgr= 0  sense= 0  trip_3v3= 0  trip_1v2= 0  osc= 0  gate_3v3= 0  gate_1v2= 0
+tripped_max         =  0.00000e+00 at=  0.00000e+00
+tripped_pre         =  0.00000e+00 at=  0.00000e+00
+gate_min            =  0.00000e+00 at=  0.00000e+00
+
+Error: measure  gate_end  find(AT) : out of interval
+ meas tran gate_end find v(gate) at=36u failed!
+
+ipk                 =  0.00000e+00 at=  0.00000e+00
+
+Error: measure  i_end  find(AT) : out of interval
+ meas tran i_end find i(vim) at=36u failed!
+
+isense_pk           =  0.00000e+00 at=  0.00000e+00
+
+Error: measure  cause1e  find(AT) : out of interval
+ meas tran cause1e find v(cause1) at=36u failed!
+
+
+Error: measure  cause0e  find(AT) : out of interval
+ meas tran cause0e find v(cause0) at=36u failed!
+
+
+Error: measure  fault_end  find(AT) : out of interval
+ meas tran fault_end find v(fault_n) at=36u failed!
+
+
+Error: measure  soft_peak  find(AT) : out of interval
+ meas tran soft_peak find sp_v at=36u failed!
+
+Warning from checkvalid: vector cause1e is not available or has zero length.
+Error: RHS "2*(cause1e gt 0.6) + (cause0e gt 0.6)" invalid
+Error: &gate_end: no such variable.
+Error: &i_end: no such variable.
+Error: &cause: no such variable.
+Error: &fault_end: no such variable.
+Error: &soft_peak: no such variable.
+NO_TRIP_EXPECTED tripped_max= 0  gate_min= 0  gate_end=  ipk_A= 0  i_end_A=  cause=  fault_n_end=  soft_peak=
+
+Error: measure  q_step  find(AT) : out of interval
+ meas tran q_step find qi at=30u failed!
+
+
+Error: measure  q_end  find(AT) : out of interval
+ meas tran q_end find qi at=36u failed!
+
+Warning from checkvalid: vector q_end is not available or has zero length.
+Error: RHS "q_end - q_step" invalid
+Error: &q_passed: no such variable.
+CHARGE after_event_As=
+Error: incomplete or empty netlist
+       or no ".plot", ".print", or ".fourier" lines in batch mode;
+no simulations run!
+
+# run status failed
+# ngspice exit 1, wall time 8 s

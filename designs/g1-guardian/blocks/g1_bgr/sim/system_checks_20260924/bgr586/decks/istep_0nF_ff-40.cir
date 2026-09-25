@@ -1,0 +1,39 @@
+* G1_BGR SYSTEM CHECK istep: post-layout BGR + VREF pad, board C=0nF, ff-40 (hbt_bcs mos_ff res_bcs dio_ff) T=-40 C
+.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerHBT.lib hbt_bcs
+.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerMOShv.lib mos_ff
+.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerRES.lib res_bcs
+.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerMOSlv.lib mos_ff
+.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerCAP.lib cap_typ
+.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerDIO.lib dio_ff
+.include ../../../qualification/candidates/bgr_loop24_qref4_r253p465_hv06/bgr_loop24_qref4_r253p465_hv06.spice
+.include /foss/pdks/ihp-sg13g2/libs.ref/sg13g2_io/spice/sg13g2_io.spi
+.option gmin=1e-15 abstol=1e-14 reltol=1e-5 vntol=1e-7
+.temp -40
+.global sub!
+Vsub sub! 0 dc 0
+Vdd vdd 0 dc 3.3
+Vdd12 vdd12 0 dc 1.2
+Vr4 r4 0 dc 0
+Xbgr vdd 0 r4 vref iptat pbias pcasc vbe dvbe g1_bgr
+* PTAT output leg sinks into a 1.0 V node (as ../tb_g1_bgr.spice.tmpl)
+Vload iptat 0 dc 1.0
+* representative internal load: 100 kohm in series with 2 pF
+Rint vref nint 100k
+Cint nint 0 2p
+* VREF route to the pad ring (whole-tree series estimate) and stock analog pad
+Rroute vref padres 613.3425
+XP pad padres vdd12 0 vdd 0 sg13g2_IOPadAnalog
+* 10 nA current step into the pin
+Iinj 0 pad pwl(0 0 50u 0 51.0u 10n)
+.control
+set wr_singlescale
+set wr_vecnames
+option numdgt=12
+op
+print v(vref) v(padres) v(pad) i(vload) i(vdd)
+tran 1n 150u 0 5n
+wrdata ${BULK}/blockchecks-20260924/bgr586/istep_0nF_ff-40.dat v(vref) v(pad) v(vdd)
+echo SYS_END
+quit 0
+.endc
+.end

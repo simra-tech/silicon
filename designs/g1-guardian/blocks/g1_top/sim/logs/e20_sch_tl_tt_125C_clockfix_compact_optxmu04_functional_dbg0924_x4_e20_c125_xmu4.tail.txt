@@ -1,0 +1,50 @@
+# tail extract of e20_sch_tl_tt_125C_clockfix_compact_optxmu04_functional_dbg0924_x4_e20_c125_xmu4.log
+# full log retained locally (not in git): 476971 bytes, sha256 ab52c1e81c08f16660422b764c753a2474eda81a85cb8fdb97888833c823bd97, 5774 lines
+# manifest: designs/g1-guardian/review/local-retention-20260925.json
+# lines longer than 1000 bytes are shortened (first/last 300 bytes kept)
+# ---- measurement lines (QUIET/TRIP/REARM/POWERUP/T2F/CLOCK/SUPPLY_uA), 4 found ----
+QUIET vref= 1.03434  isense= 1.49318  icmp= 0.746247  vth_soft= 0.804114  vth_hard= 0.987601  iload_A= 1  gate= 3.3  code_soft= 153  code_hard= 254  fast_en= 0  inrush_active= 0  t_inrush_off_us= 7.56231  soft_armed_end=
+CLOCK f_osc_MHz= 9.91898  f_cmp_MHz= 4.95947  (RTL clock: ideal source at the block-simulated frequency)
+SUPPLY_uA window=10.3084-16us VDDA= 1427.05  IOVDD= 0.0217117  VDD= 2.87648  | bgr= 29.0095  sense= 1398.03  trip_3v3= 0.00899248  trip_1v2= 2.78432  osc= 2.4E-06  gate_3v3= 0.00312151  gate_1v2= 0.0237807
+TRIP tripped_max= 1.20001  tripped_before_event= 3.09299E-06  t_tripped_us= 1.04066  t_trip_d_us= 1.03915  t_gate_1V_us=  t_gate_0.33V_us=  gate_min= 1.30114  gate_end=  ipk_A= 4  i_end_A=  isense_pk= 2.99323  cause=  fault_n_end=  soft_peak=
+# ---- last 40 lines ----
+Error: measure  cause0e  find(AT) : out of interval
+ meas tran cause0e find v(cause0) at=22u failed!
+
+
+Error: measure  fault_end  find(AT) : out of interval
+ meas tran fault_end find v(fault_n) at=22u failed!
+
+
+Error: measure  soft_peak  find(AT) : out of interval
+ meas tran soft_peak find sp_v at=22u failed!
+
+Warning from checkvalid: vector cause1e is not available or has zero length.
+Error: RHS "2*(cause1e gt 0.6) + (cause0e gt 0.6)" invalid
+Warning from checkvalid: vector t_gate1v is not available or has zero length.
+Error: RHS "(t_gate1v - tstep_s)*1e6" invalid
+Warning from checkvalid: vector t_gate03 is not available or has zero length.
+Error: RHS "(t_gate03 - tstep_s)*1e6" invalid
+Error: &dt_gate1v_us: no such variable.
+Error: &dt_gate03_us: no such variable.
+Error: &gate_end: no such variable.
+Error: &i_end: no such variable.
+Error: &cause: no such variable.
+Error: &fault_end: no such variable.
+Error: &soft_peak: no such variable.
+TRIP tripped_max= 1.20001  tripped_before_event= 3.09299E-06  t_tripped_us= 1.04066  t_trip_d_us= 1.03915  t_gate_1V_us=  t_gate_0.33V_us=  gate_min= 1.30114  gate_end=  ipk_A= 4  i_end_A=  isense_pk= 2.99323  cause=  fault_n_end=  soft_peak=
+q_step              =  1.27479e-05
+
+Error: measure  q_end  find(AT) : out of interval
+ meas tran q_end find qi at=22u failed!
+
+Warning from checkvalid: vector q_end is not available or has zero length.
+Error: RHS "q_end - q_step" invalid
+Error: &q_passed: no such variable.
+CHARGE after_event_As=
+Error: incomplete or empty netlist
+       or no ".plot", ".print", or ".fourier" lines in batch mode;
+no simulations run!
+
+# run status failed
+# ngspice exit 1, wall time 918 s

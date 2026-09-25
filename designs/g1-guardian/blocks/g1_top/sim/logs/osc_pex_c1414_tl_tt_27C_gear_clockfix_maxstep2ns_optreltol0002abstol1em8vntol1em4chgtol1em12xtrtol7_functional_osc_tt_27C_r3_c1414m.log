@@ -1,0 +1,2122 @@
+# G1_TOP run osc_pex_c1414_tl_tt_27C_gear_clockfix_maxstep2ns_optreltol0002abstol1em8vntol1em4chgtol1em12xtrtol7_functional_osc_tt_27C_r3_c1414m  2026-09-24T19:35:43Z UTC
+# (osc) transistor-level G1_OSC clocking the digital macro on the chip VDD, with G1_BGR and G1_SENSE (no G1_TRIP, no G1_GATE, no pad models); cmp_soft tied high so SOFT_PEAK counts once INRUSH = 0 is written
+# deck build/g1_top/osc_pex_c1414_tl_tt_27C_gear_clockfix_maxstep2ns_optreltol0002abstol1em8vntol1em4chgtol1em12xtrtol7_functional_osc_tt_27C_r3_c1414m.cir
+# supplies VDD 1.2 V, VDDA = IOVDD 3.3 V
+# blockset c1414
+# NOTE bgr: BGR586 kpex 2.5D CC extraction of bank.gds (chip BGR layout), 978 capacitors
+# NOTE sense: R100 own-native partial-field C (unbound VSUBS excluded; physical field acceptance not established)
+# netlist sha256 01227a3d8d8210d10d2d1ee6933842351140b8825fe29282f0327936a3064ad5 blocks/g1_bgr/sim/postlayout/g1_bgr586_pex.spice
+# netlist sha256 ffb14762659eaf02b6a62e9edea3caa0e143cbc7881378b329d6ab9945a6554b blocks/g1_sense/sim/postlayout/g1_sense_r100_partialc.spice
+# netlist sha256 ba86b7b2a530abae365d539297909e033b24a54597f9cc75d8dff273c30d401c blocks/g1_trip/sim/postlayout/g1_trip_nf4_pex.spice
+# netlist sha256 8efd7a09faf173da8604a219f73fd3ea5ec2508618d8361a050770c099d8b1c5 blocks/g1_osc/sim/qualification/fulltree_r095_load_20260924/common/osc.spice
+# netlist sha256 e91617f5fcf6f5a0dc721a2ba53b507a05cc226d6dbf0bebaa858a1e7d876765 blocks/g1_gate/sim/postlayout/g1_gate_pex.spice
+# IO models sha256 1d53ab7df431b717ef5aff43e1117c0224681d5cc84886da37a319280ee958d6 /foss/pdks/ihp-sg13g2/libs.ref/sg13g2_io/spice/sg13g2_io.spi
+# PDK commit 84374023ee8b4b126bebbba67fcbada0a9c0ff0b
+# ngspice-46 : Circuit level simulation program
+# Icarus Verilog version 14.0 (devel) (s20260301-328-geda9fdcd-dirty)
+# iverilog -g2005 -Wall -Wno-timescale -o /work/build/g1_top/cosim_a10b95e5d6f465e6e1682563.vvp.tmp1 /work/designs/g1-guardian/blocks/g1_top/sim/rtl/g1_dig_cosim.v /work/designs/g1-guardian/blocks/g1_ctrl/rtl/g1_sync2.v /work/designs/g1-guardian/blocks/g1_ctrl/rtl/g1_serial.v /work/designs/g1-guardian/blocks/g1_ctrl/rtl/g1_trip_timer.v /work/designs/g1-guardian/blocks/g1_ctrl/rtl/g1_regfile.v /work/designs/g1-guardian/blocks/g1_ctrl/rtl/g1_digital_top.v /work/designs/g1-guardian/blocks/g1_ctrl/rtl/g1_digital.v /work/designs/g1-guardian/blocks/g1_seu/rtl/g1_tmr_reg.v /work/designs/g1-guardian/blocks/g1_seu/rtl/g1_seu_chain.v /work/designs/g1-guardian/blocks/g1_seu/rtl/g1_seu.v
+# compiled RTL build/g1_top/cosim_a10b95e5d6f465e6e1682563.vvp (tag osc_pex_c1414_tl_tt_27C_gear_clockfix_maxstep2ns_optreltol0002abstol1em8vntol1em4chgtol1em12xtrtol7_functional_osc_tt_27C_r3_c1414m) sha256 312b05a44e9d429dc041ded01ecb58d1fc54309382f93e62ed02a5788e587928
+# rtl sha256 63dfb950393fe60c3da1d057f6a5dd86142c8bb670ba0a63b87248675037ccd5 designs/g1-guardian/blocks/g1_top/sim/rtl/g1_dig_cosim.v
+# rtl sha256 c14906d7d9256a771cd8fdc0ab14ba291131e151d24bf06b951b6bc693ad8ef2 designs/g1-guardian/blocks/g1_ctrl/rtl/g1_sync2.v
+# rtl sha256 df4341e1878caef2f7bf27abb273a7a5af3e41b96658ffa02eedb2af97c48a5d designs/g1-guardian/blocks/g1_ctrl/rtl/g1_serial.v
+# rtl sha256 094527d2ccbdfad792d4c2e4d1a602c50051ed1e1c8d1789e4946a44e37af850 designs/g1-guardian/blocks/g1_ctrl/rtl/g1_trip_timer.v
+# rtl sha256 16e48edd1b7ac39d4c3ccd7b76b0ff75ba9d71095e188c7c808d7fb587c10d50 designs/g1-guardian/blocks/g1_ctrl/rtl/g1_regfile.v
+# rtl sha256 42430b79ddf649d832993aca1cf3c8a548afc97383c59a793cf70b972c8256ac designs/g1-guardian/blocks/g1_ctrl/rtl/g1_digital_top.v
+# rtl sha256 36757122c43271dfd439bf1623be6d5413adf3bbb97cbad40d5cccf5892f5c3d designs/g1-guardian/blocks/g1_ctrl/rtl/g1_digital.v
+# rtl sha256 f53f82d97b91d4e815e662e72b40968949c7d74ce135f777dba7789201167ac5 designs/g1-guardian/blocks/g1_seu/rtl/g1_tmr_reg.v
+# rtl sha256 6e10bbc02a8ff29116067f2067f648b959f17b542cb2360c50e7802010048573 designs/g1-guardian/blocks/g1_seu/rtl/g1_seu_chain.v
+# rtl sha256 7c1831c99b5875a2dd48387db70fd5b1a0888a520fe8676bc4e071820b7fa736 designs/g1-guardian/blocks/g1_seu/rtl/g1_seu.v
+
+Note: No compatibility mode selected!
+
+
+Circuit: * g1_top breaker path, chip level: (osc) transistor-level g1_osc clocking the digital macro on the chip vdd, with g1_bgr and g1_sense (no g1_trip, no g1_gate, no pad models); cmp_soft tied high so soft_peak counts once inrush = 0 is written
+
+Override trtol to 7 for xspice 'A' devices
+Doing analysis at TEMP = 27.000000 and TNOM = 27.000000
+
+Using SPARSE 1.3 as Direct Linear Solver
+
+
+The temperature limiting function received NaN.
+Please check your power dissipation and improve your heat sink Rth!
+    This message will be shown only once.
+
+Note: Starting dynamic gmin stepping
+OSDI(debug) n.xbgr.xr2.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr2.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr1.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr1.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xref.xrz.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xref.xrz.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xbuf.xrz.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xbuf.xrz.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xota.xrz.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xota.xrz.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xrd250.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xrd250.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xrd249.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xrd249.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xrd248.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xrd248.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xrd247.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xrd247.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xrd246.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xrd246.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xrd245.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xrd245.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xrd244.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xrd244.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xrd243.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xrd243.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xrd242.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xrd242.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xrd241.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xrd241.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xrd240.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xrd240.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xrd239.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xrd239.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xrd238.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xrd238.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xrd237.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xrd237.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xrd236.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xrd236.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xrd235.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xrd235.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xrd234.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xrd234.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xrd233.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xrd233.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xrd232.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xrd232.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xrd231.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xrd231.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xrd230.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xrd230.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xrd229.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xrd229.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xrd228.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xrd228.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xrd227.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xrd227.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xrd226.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xrd226.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xrd225.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xrd225.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xrd224.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xrd224.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xrd223.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xrd223.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xrd222.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xrd222.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xrd221.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xrd221.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xrd220.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xrd220.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xrd219.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xrd219.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xrd218.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xrd218.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xrd217.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xrd217.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xrd216.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xrd216.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xrd215.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xrd215.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xrd214.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xrd214.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xrd213.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xrd213.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xrd212.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xrd212.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xrd211.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xrd211.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xrd210.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xrd210.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xrd29.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xrd29.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xrd28.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xrd28.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xrd27.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xrd27.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xrd26.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xrd26.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xrd25.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xrd25.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xrd24.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xrd24.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xrd23.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xrd23.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xrd22.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xrd22.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xrd21.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xrd21.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xrd20.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xrd20.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xrd11.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xrd11.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xrd10.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xrd10.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xr2p19.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xr2p19.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xr2p18.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xr2p18.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xr2p17.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xr2p17.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xr2p16.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xr2p16.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xr2p15.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xr2p15.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xr2p14.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xr2p14.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xr2p13.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xr2p13.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xr2p12.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xr2p12.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xr2p11.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xr2p11.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xr2p10.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xr2p10.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xr2p9.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xr2p9.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xr2p8.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xr2p8.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xr2p7.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xr2p7.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xr2p6.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xr2p6.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xr2p5.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xr2p5.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xr2p4.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xr2p4.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xr2p3.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xr2p3.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xr2p2.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xr2p2.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xr2p1.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xr2p1.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xr2p0.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xr2p0.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xr1p0.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xr1p0.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xr2n19.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xr2n19.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xr2n18.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xr2n18.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xr2n17.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xr2n17.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xr2n16.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xr2n16.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xr2n15.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xr2n15.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xr2n14.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xr2n14.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xr2n13.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xr2n13.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xr2n12.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xr2n12.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xr2n11.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xr2n11.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xr2n10.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xr2n10.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xr2n9.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xr2n9.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xr2n8.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xr2n8.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xr2n7.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xr2n7.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xr2n6.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xr2n6.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xr2n5.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xr2n5.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xr2n4.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xr2n4.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xr2n3.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xr2n3.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xr2n2.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xr2n2.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xr2n1.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xr2n1.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xr2n0.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xr2n0.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xr1n0.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xr1n0.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr398.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr397.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr394.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr389.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr389.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr385.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr385.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr384.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr384.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr383.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr383.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr382.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr382.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr380.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr380.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr379.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr379.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr378.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr378.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr377.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr377.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr375.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr375.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr374.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr373.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr372.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr372.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr371.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr371.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr367.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr367.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr365.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr364.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr364.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr363.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr359.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr358.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr357.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr356.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr355.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr354.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr353.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr352.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr345.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr343.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr341.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr339.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr339.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr338.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr336.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr336.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr335.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr334.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr333.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr331.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr329.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr325.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr325.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr323.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr323.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr321.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr321.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr319.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr319.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr318.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr318.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr315.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr313.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr308.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr307.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr306.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr304.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr303.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr302.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr302.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr298.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr298.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr297.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr295.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr293.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr293.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr290.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr290.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr288.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr288.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr287.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr287.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr283.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr283.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr273.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr259.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr259.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr252.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr250.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr250.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr249.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr249.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr237.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr237.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr236.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr236.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr235.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr235.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr234.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr234.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr233.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr233.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr228.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr220.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr220.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr194.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr194.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr188.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr187.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr181.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr180.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr180.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr179.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr179.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr178.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr178.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr176.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr174.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr173.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr172.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr171.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr170.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr170.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr169.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr168.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr167.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr166.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr165.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr165.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr164.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr164.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr163.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr163.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr162.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr162.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr161.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr161.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr160.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr160.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr153.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr152.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr151.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr150.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr149.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr147.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr145.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr125.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr122.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr121.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr120.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr119.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr115.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr112.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr109.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr106.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr103.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr101.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr98.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr76.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr72.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr68.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr65.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr64.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr63.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr63.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr62.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr62.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr61.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr61.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr60.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr60.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr59.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr59.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr58.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr58.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr57.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr57.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr56.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr56.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr55.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr55.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr54.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr54.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr53.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr53.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr52.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr52.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr51.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr51.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr50.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr50.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr49.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr49.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr48.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr48.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr47.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr47.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr46.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr46.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr45.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr45.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr44.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr44.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr43.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr43.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr42.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr42.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr41.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr41.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr40.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr40.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr39.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr39.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr38.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr38.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr37.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr37.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr36.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr36.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr35.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr35.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr34.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr34.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr33.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr33.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr32.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr32.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr31.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr31.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr30.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr30.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr29.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr29.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr28.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr28.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr27.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr27.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr26.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr26.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr25.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr25.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr24.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr24.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr23.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr23.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr22.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr22.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr21.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr21.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr20.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr20.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr19.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr19.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr18.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr18.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr17.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr17.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr16.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr16.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr15.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr15.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr14.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr14.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr13.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr13.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr12.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr12.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr11.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr11.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr10.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr10.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr9.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr9.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr8.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr8.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr7.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr7.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr6.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr6.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr5.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr5.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr4.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr4.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr3.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr3.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+Note: Dynamic gmin stepping completed
+
+Initial Transient Solution
+--------------------------
+
+Node                                   Voltage
+----                                   -------
+sub!                                         0
+rail33                                     3.3
+vdda_s                                     3.3
+iovdd_s                                    3.3
+vdda                                   3.29932
+iovdd                                      3.3
+vdd_s                                      1.2
+vdd                                    1.19994
+iprof                                        1
+ldi                                2.16901e-07
+gfet                               1.24579e-10
+shp                                2.16901e-07
+shn                                9.64554e-08
+sense_p                            5.03267e-06
+sense_n                            4.92416e-06
+gate                               1.24579e-10
+fault_n                                    3.3
+vref                                   1.04547
+en_core                                      0
+en_pad                                       0
+sclk_core                                    0
+sclk_pad                                     0
+sdi_core                                     0
+sdi_pad                                      0
+gate_core                                    0
+tripped                                      0
+osc_en_g                                     0
+osc_en                                       0
+r4                                           0
+vdda_bgr                               3.29932
+xbgr.n_i43                            0.988392
+xbgr.xr1.dt                                  0
+xbgr.n_i42                            0.760081
+xbgr.n_17                             0.703003
+xbgr.xr2.dt                                  0
+xbgr.xr3.dt                                  0
+xbgr.n_i39                            0.817159
+xbgr.xr4.dt                                  0
+xbgr.n_i29                            0.874236
+xbgr.xr5.dt                                  0
+xbgr.xr6.dt                                  0
+xbgr.xr7.dt                                  0
+xbgr.xr8.dt                                  0
+xbgr.n_i36                            0.931314
+xbgr.xr9.dt                                  0
+xbgr.xr10.dt                                 0
+xbgr.xr11.dt                                 0
+xbgr.xr12.dt                                 0
+xbgr.xr13.dt                                 0
+xbgr.xr14.dt                                 0
+xbgr.xr15.dt                                 0
+xbgr.xr16.dt                                 0
+xbgr.xr17.dt                                 0
+xbgr.xr18.dt                                 0
+xbgr.xr19.dt                                 0
+xbgr.xr20.dt                                 0
+xbgr.xr21.dt                                 0
+xbgr.xr22.dt                                 0
+xbgr.xr23.dt                                 0
+xbgr.xr24.dt                                 0
+xbgr.n_i31                             0.21702
+xbgr.xr25.dt                                 0
+xbgr.n_i17                             0.43404
+xbgr.n_i33                             0.65106
+xbgr.xr26.dt                                 0
+xbgr.n_i16                            0.868081
+xbgr.xr27.dt                                 0
+xbgr.n_i19                             2.60428
+xbgr.n_i32                             2.82131
+xbgr.xr28.dt                                 0
+xbgr.n_i15                             3.03834
+xbgr.xr29.dt                                 0
+xbgr.n_i28                              1.0851
+xbgr.xr30.dt                                 0
+xbgr.n_10                              3.25537
+xbgr.xr31.dt                                 0
+xbgr.xr32.dt                                 0
+xbgr.n_i25                             2.38725
+xbgr.xr33.dt                                 0
+xbgr.n_i22                             1.30212
+xbgr.n_i27                             1.51915
+xbgr.xr34.dt                                 0
+xbgr.xr35.dt                                 0
+xbgr.n_i20                             2.17022
+xbgr.xr36.dt                                 0
+xbgr.n_i21                             1.73617
+xbgr.n_i26                              1.9532
+xbgr.xr37.dt                                 0
+xbgr.xr38.dt                                 0
+xbgr.xr39.dt                                 0
+dvbe                                 0.0550729
+xbgr.xr40.dt                                 0
+xbgr.xr41.dt                                 0
+xbgr.xr42.dt                                 0
+xbgr.xr43.dt                                 0
+xbgr.xr44.dt                                 0
+xbgr.xr45.dt                                 0
+xbgr.xr46.dt                                 0
+xbgr.xr47.dt                                 0
+xbgr.xr48.dt                                 0
+xbgr.xr49.dt                                 0
+xbgr.xr50.dt                                 0
+xbgr.xr51.dt                                 0
+xbgr.xr52.dt                                 0
+xbgr.xr53.dt                                 0
+xbgr.xr54.dt                                 0
+xbgr.xr55.dt                                 0
+xbgr.xr56.dt                                 0
+xbgr.xr57.dt                                 0
+xbgr.xr58.dt                                 0
+xbgr.xr59.dt                                 0
+xbgr.xr60.dt                                 0
+xbgr.xr61.dt                                 0
+xbgr.xr62.dt                                 0
+xbgr.xr63.dt                                 0
+xbgr.n_i13                             1.55983
+xbgr.n_16                               1.6111
+xbgr.xr64.dt                                 0
+xbgr.xr65.dt                                 0
+xbgr.n_i24                             1.50855
+xbgr.xr66.dt                                 0
+xbgr.n_i14                             1.45728
+xbgr.n_18                              1.40601
+xbgr.xr67.dt                                 0
+xbgr.xr68.dt                                 0
+xbgr.xr69.dt                                 0
+xbgr.xr70.dt                                 0
+xbgr.xr71.dt                                 0
+xbgr.xr72.dt                                 0
+xbgr.xr73.dt                                 0
+xbgr.xr74.dt                                 0
+xbgr.xr75.dt                                 0
+xbgr.xr76.dt                                 0
+xbgr.xr77.dt                                 0
+xbgr.xr78.dt                                 0
+xbgr.xr79.dt                                 0
+xbgr.xr80.dt                                 0
+xbgr.xr81.dt                                 0
+xbgr.xr82.dt                                 0
+xbgr.xr83.dt                                 0
+xbgr.xr84.dt                                 0
+xbgr.xr85.dt                                 0
+xbgr.xr86.dt                                 0
+xbgr.xr87.dt                                 0
+xbgr.xr88.dt                                 0
+xbgr.xr89.dt                                 0
+xbgr.xr90.dt                                 0
+xbgr.xr91.dt                                 0
+xbgr.xr92.dt                                 0
+xbgr.xr93.dt                                 0
+xbgr.xr94.dt                                 0
+xbgr.xr95.dt                                 0
+xbgr.xr96.dt                                 0
+xbgr.xr97.dt                                 0
+xbgr.xr98.dt                                 0
+xbgr.xr99.dt                                 0
+xbgr.xr100.dt                                0
+xbgr.xr101.dt                                0
+xbgr.xr102.dt                                0
+xbgr.xr103.dt                                0
+xbgr.xr104.dt                                0
+xbgr.xr105.dt                                0
+xbgr.xr106.dt                                0
+xbgr.xr107.dt                                0
+xbgr.xr108.dt                                0
+xbgr.xr109.dt                                0
+xbgr.xr110.dt                                0
+xbgr.xr111.dt                                0
+xbgr.xr112.dt                                0
+xbgr.xr113.dt                                0
+xbgr.xr114.dt                                0
+xbgr.xr115.dt                                0
+xbgr.xr116.dt                                0
+xbgr.xr117.dt                                0
+xbgr.xr118.dt                                0
+xbgr.xr119.dt                                0
+xbgr.xr120.dt                                0
+xbgr.xr121.dt                                0
+xbgr.xr122.dt                                0
+xbgr.xr123.dt                                0
+xbgr.xr124.dt                                0
+xbgr.xr125.dt                                0
+xbgr.xr126.dt                                0
+xbgr.xr127.dt                                0
+xbgr.xr128.dt                                0
+xbgr.xr129.dt                                0
+xbgr.xr130.dt                                0
+xbgr.xr131.dt                                0
+xbgr.xr132.dt                                0
+xbgr.xr133.dt                                0
+xbgr.xr134.dt                                0
+xbgr.xr135.dt                                0
+xbgr.xr136.dt                                0
+xbgr.xr137.dt                                0
+xbgr.xr138.dt                                0
+xbgr.xr139.dt                                0
+xbgr.xr140.dt                                0
+xbgr.xr141.dt                                0
+xbgr.xr142.dt                                0
+xbgr.xr143.dt                                0
+xbgr.xr144.dt                                0
+xbgr.xr145.dt                                0
+xbgr.xr146.dt                                0
+xbgr.xr147.dt                                0
+xbgr.xr148.dt                                0
+xbgr.xr149.dt                                0
+xbgr.xr150.dt                                0
+xbgr.xr151.dt                                0
+xbgr.xr152.dt                                0
+xbgr.xr153.dt                                0
+xbgr.xr154.dt                                0
+xbgr.xr155.dt                                0
+xbgr.xr156.dt                                0
+xbgr.xr157.dt                                0
+xbgr.xr158.dt                                0
+xbgr.xr159.dt                                0
+xbgr.n_i40                             2.24894
+pbias                                  2.30233
+xbgr.xr160.dt                                0
+xbgr.n_i34                             2.19554
+xbgr.xr161.dt                                0
+xbgr.xr162.dt                                0
+xbgr.xr163.dt                                0
+xbgr.xr164.dt                                0
+xbgr.xr165.dt                                0
+xbgr.n_i41                             2.14214
+xbgr.xr166.dt                                0
+xbgr.xr167.dt                                0
+xbgr.xr168.dt                                0
+xbgr.xr169.dt                                0
+xbgr.xr170.dt                                0
+xbgr.xr171.dt                                0
+xbgr.xr172.dt                                0
+xbgr.xr173.dt                                0
+xbgr.xr174.dt                                0
+xbgr.n_i35                             2.08875
+xbgr.xr175.dt                                0
+xbgr.xr176.dt                                0
+xbgr.xr177.dt                                0
+xbgr.xr178.dt                                0
+xbgr.xr179.dt                                0
+xbgr.xr180.dt                                0
+xbgr.xr181.dt                                0
+xbgr.xr182.dt                                0
+xbgr.xr183.dt                                0
+xbgr.xr184.dt                                0
+xbgr.n_i18                             1.92856
+xbgr.n_i37                             1.98195
+xbgr.xr185.dt                                0
+xbgr.xr186.dt                                0
+xbgr.xr187.dt                                0
+xbgr.xr188.dt                                0
+xbgr.n_i30                             2.03535
+xbgr.xr189.dt                                0
+xbgr.xr190.dt                                0
+xbgr.xr191.dt                                0
+xbgr.xr192.dt                                0
+xbgr.xr193.dt                                0
+xbgr.xr194.dt                                0
+xbgr.xr195.dt                                0
+xbgr.xr196.dt                                0
+xbgr.xr197.dt                                0
+xbgr.xr198.dt                                0
+xbgr.xr199.dt                                0
+xbgr.xr200.dt                                0
+xbgr.xr201.dt                                0
+xbgr.xr202.dt                                0
+xbgr.xr203.dt                                0
+xbgr.xr204.dt                                0
+xbgr.xr205.dt                                0
+xbgr.xr206.dt                                0
+xbgr.xr207.dt                                0
+xbgr.xr208.dt                                0
+xbgr.n_i23                             1.82176
+xbgr.n_i38                             1.87516
+xbgr.xr209.dt                                0
+xbgr.xr210.dt                                0
+xbgr.xr211.dt                                0
+xbgr.xr212.dt                                0
+xbgr.xr213.dt                                0
+xbgr.xr214.dt                                0
+xbgr.xr215.dt                                0
+xbgr.xr216.dt                                0
+xbgr.xr217.dt                                0
+xbgr.xr218.dt                                0
+xbgr.xr219.dt                                0
+xbgr.xr220.dt                                0
+xbgr.xr221.dt                                0
+xbgr.xr222.dt                                0
+xbgr.xr223.dt                                0
+xbgr.xr224.dt                                0
+xbgr.xr225.dt                                0
+xbgr.xr226.dt                                0
+xbgr.xr227.dt                                0
+xbgr.xr228.dt                                0
+xbgr.xr229.dt                                0
+xbgr.xr230.dt                                0
+xbgr.xr231.dt                                0
+xbgr.xr232.dt                                0
+xbgr.xr233.dt                                0
+xbgr.xr234.dt                                0
+xbgr.xr235.dt                                0
+xbgr.xr236.dt                                0
+xbgr.xr237.dt                                0
+xbgr.xr238.dt                                0
+xbgr.xr239.dt                                0
+xbgr.xr240.dt                                0
+xbgr.xr241.dt                                0
+xbgr.xr242.dt                                0
+xbgr.xr243.dt                                0
+xbgr.xr244.dt                                0
+xbgr.xr245.dt                                0
+xbgr.xr246.dt                                0
+xbgr.xr247.dt                                0
+xbgr.xr248.dt                                0
+xbgr.xr249.dt                                0
+xbgr.xr250.dt                                0
+xbgr.xr251.dt                                0
+xbgr.xr252.dt                                0
+xbgr.xr253.dt                                0
+xbgr.xr254.dt                                0
+xbgr.xr255.dt                                0
+xbgr.xr256.dt                                0
+xbgr.xr257.dt                                0
+xbgr.xr258.dt                                0
+xbgr.xr259.dt                                0
+xbgr.xr260.dt                                0
+xbgr.xr261.dt                                0
+xbgr.xr262.dt                                0
+xbgr.xr263.dt                                0
+xbgr.xr264.dt                                0
+xbgr.xr265.dt                                0
+xbgr.xr266.dt                                0
+xbgr.xr267.dt                                0
+xbgr.xr268.dt                                0
+xbgr.xr269.dt                                0
+xbgr.xr270.dt                                0
+xbgr.xr271.dt                                0
+xbgr.xr272.dt                                0
+xbgr.xr273.dt                                0
+xbgr.xr274.dt                                0
+xbgr.xr275.dt                                0
+xbgr.xr276.dt                                0
+xbgr.xr277.dt                                0
+xbgr.xr278.dt                                0
+xbgr.xr279.dt                                0
+xbgr.xr280.dt                                0
+xbgr.xr281.dt                                0
+xbgr.xr282.dt                                0
+xbgr.xr283.dt                                0
+xbgr.xr284.dt                                0
+xbgr.xr285.dt                                0
+xbgr.xr286.dt                                0
+xbgr.xr287.dt                                0
+xbgr.xr288.dt                                0
+xbgr.xr289.dt                                0
+xbgr.xr290.dt                                0
+xbgr.xr291.dt                                0
+xbgr.xr292.dt                                0
+xbgr.xr293.dt                                0
+xbgr.xr294.dt                                0
+xbgr.xr295.dt                                0
+xbgr.xr296.dt                                0
+xbgr.xr297.dt                                0
+xbgr.xr298.dt                                0
+xbgr.xr299.dt                                0
+xbgr.xr300.dt                                0
+xbgr.xr301.dt                                0
+xbgr.xr302.dt                                0
+pcasc                                  1.76837
+xbgr.xr303.dt                                0
+xbgr.xr304.dt                                0
+xbgr.xr305.dt                                0
+xbgr.xr306.dt                                0
+xbgr.xr307.dt                                0
+xbgr.xr308.dt                                0
+xbgr.xr309.dt                                0
+xbgr.xr310.dt                                0
+xbgr.xr311.dt                                0
+xbgr.xr312.dt                                0
+xbgr.xr313.dt                                0
+xbgr.xr314.dt                                0
+xbgr.xr315.dt                                0
+xbgr.xr316.dt                                0
+xbgr.xr317.dt                                0
+xbgr.xr318.dt                                0
+xbgr.xr319.dt                                0
+xbgr.xr320.dt                                0
+xbgr.xr321.dt                                0
+xbgr.xr322.dt                                0
+xbgr.xr323.dt                                0
+xbgr.xr324.dt                                0
+xbgr.xr325.dt                                0
+xbgr.xr326.dt                                0
+xbgr.xr327.dt                                0
+xbgr.xr328.dt                                0
+xbgr.xr329.dt                                0
+xbgr.xr330.dt                                0
+xbgr.xr331.dt                                0
+xbgr.xr332.dt                                0
+xbgr.xr333.dt                                0
+xbgr.xr334.dt                                0
+xbgr.xr335.dt                                0
+xbgr.xr336.dt                                0
+xbgr.xr337.dt                                0
+xbgr.xr338.dt                                0
+xbgr.xr339.dt                                0
+xbgr.xr340.dt                                0
+xbgr.xr341.dt                                0
+xbgr.xr342.dt                                0
+xbgr.xr343.dt                                0
+xbgr.xr344.dt                                0
+xbgr.xr345.dt                                0
+xbgr.xr346.dt                                0
+xbgr.xr347.dt                                0
+xbgr.xr348.dt                                0
+xbgr.xr349.dt                                0
+xbgr.xr350.dt                                0
+xbgr.xr351.dt                                0
+xbgr.xr352.dt                                0
+xbgr.xr353.dt                                0
+xbgr.xr354.dt                                0
+xbgr.xr355.dt                                0
+xbgr.xr356.dt                                0
+xbgr.xr357.dt                                0
+xbgr.xr358.dt                                0
+xbgr.xr359.dt                                0
+xbgr.xr360.dt                                0
+xbgr.xr361.dt                                0
+xbgr.xr362.dt                                0
+xbgr.xr363.dt                                0
+xbgr.xr364.dt                                0
+xbgr.xr365.dt                                0
+xbgr.xr366.dt                                0
+xbgr.xr367.dt                                0
+xbgr.xr368.dt                                0
+xbgr.xr369.dt                                0
+xbgr.xr370.dt                                0
+xbgr.xr371.dt                                0
+xbgr.xr372.dt                                0
+xbgr.xr373.dt                                0
+xbgr.xr374.dt                                0
+xbgr.xr375.dt                                0
+xbgr.xr376.dt                                0
+xbgr.xr377.dt                                0
+xbgr.xr378.dt                                0
+xbgr.xr379.dt                                0
+xbgr.xr380.dt                                0
+xbgr.xr381.dt                                0
+xbgr.xr382.dt                                0
+xbgr.xr383.dt                                0
+xbgr.xr384.dt                                0
+xbgr.xr385.dt                                0
+xbgr.xr386.dt                                0
+xbgr.xr387.dt                                0
+xbgr.xr388.dt                                0
+xbgr.xr389.dt                                0
+xbgr.xr390.dt                                0
+xbgr.xr391.dt                                0
+xbgr.xr392.dt                                0
+xbgr.xr393.dt                                0
+xbgr.xr394.dt                                0
+xbgr.xr395.dt                                0
+xbgr.xr396.dt                                0
+xbgr.xr397.dt                                0
+xbgr.xr398.dt                                0
+xbgr.xr399.dt                                0
+xbgr.n_i11                             3.29932
+vbe                                   0.702963
+xbgr.n_20                           6.7961e-08
+iptat                                 0.756244
+xbgr.n_i6                              2.76591
+xbgr.n_i10                         7.87021e-09
+xbgr.n_i7                             0.721262
+xbgr.n_i4                               2.7659
+xbgr.n_i5                              2.76601
+xbgr.n_21                              0.77803
+xbgr.n_i8                              2.76628
+xbgr.n_i9                              2.76699
+xbgr.n_i12                            0.703003
+xbgr.xq736.s1                      2.81922e-10
+xbgr.xq736.t                         0.0329925
+xbgr.xq737.s1                      2.81922e-10
+xbgr.xq737.t                         0.0329925
+xbgr.xq738.s1                      2.81922e-10
+xbgr.xq738.t                         0.0329925
+xbgr.xq739.s1                      2.81922e-10
+xbgr.xq739.t                         0.0329925
+xbgr.xq740.s1                      2.81922e-10
+xbgr.xq740.t                         0.0329925
+xbgr.xq741.s1                      2.81922e-10
+xbgr.xq741.t                         0.0329925
+xbgr.xq742.s1                      2.81922e-10
+xbgr.xq742.t                         0.0329925
+xbgr.xq743.s1                      2.81922e-10
+xbgr.xq743.t                         0.0329925
+xbgr.xq744.s1                      2.81922e-10
+xbgr.xq744.t                         0.0329925
+xbgr.xq745.s1                      2.81922e-10
+xbgr.xq745.t                         0.0329925
+xbgr.xq746.s1                      2.81922e-10
+xbgr.xq746.t                         0.0329925
+xbgr.xq747.s1                      2.81922e-10
+xbgr.xq747.t                         0.0329925
+xbgr.xq748.s1                      2.81922e-10
+xbgr.xq748.t                         0.0329925
+xbgr.xq749.s1                      2.81922e-10
+xbgr.xq749.t                         0.0329925
+xbgr.xq750.s1                      2.81922e-10
+xbgr.xq750.t                         0.0329925
+xbgr.xq751.s1                      2.81922e-10
+xbgr.xq751.t                         0.0329925
+xbgr.xq752.s1                      2.81922e-10
+xbgr.xq752.t                         0.0329925
+xbgr.xq753.s1                      2.81922e-10
+xbgr.xq753.t                         0.0329925
+xbgr.xq754.s1                      2.81922e-10
+xbgr.xq754.t                         0.0329925
+xbgr.xq755.s1                      2.81922e-10
+xbgr.xq755.t                         0.0329925
+xbgr.xq756.s1                      2.81922e-10
+xbgr.xq756.t                         0.0329925
+xbgr.xq757.s1                      2.81922e-10
+xbgr.xq757.t                         0.0329925
+xbgr.xq758.s1                      2.81922e-10
+xbgr.xq758.t                         0.0329925
+xbgr.xq759.s1                      2.81922e-10
+xbgr.xq759.t                         0.0329925
+xbgr.xq760.s1                      2.81906e-10
+xbgr.xq760.t                         0.0329404
+xbgr.xq761.s1                      2.81906e-10
+xbgr.xq761.t                         0.0329404
+xbgr.xq762.s1                      2.81906e-10
+xbgr.xq762.t                         0.0329404
+xbgr.xq763.s1                      2.81906e-10
+xbgr.xq763.t                         0.0329404
+xbgr.xq764.s1                      2.81906e-10
+xbgr.xq764.t                         0.0329404
+xbgr.xq765.s1                      2.81906e-10
+xbgr.xq765.t                         0.0329404
+xbgr.xq766.s1                      2.81906e-10
+xbgr.xq766.t                         0.0329404
+xbgr.xq767.s1                      2.81906e-10
+xbgr.xq767.t                         0.0329404
+xbgr.xq768.s1                      2.81906e-10
+xbgr.xq768.t                         0.0329404
+xbgr.xq769.s1                      2.81906e-10
+xbgr.xq769.t                         0.0329404
+xbgr.xq770.s1                      2.81906e-10
+xbgr.xq770.t                         0.0329404
+xbgr.xq771.s1                      2.81906e-10
+xbgr.xq771.t                         0.0329404
+xbgr.xq772.s1                      2.81906e-10
+xbgr.xq772.t                         0.0329404
+xbgr.xq773.s1                      2.81906e-10
+xbgr.xq773.t                         0.0329404
+xbgr.xq774.s1                      2.81906e-10
+xbgr.xq774.t                         0.0329404
+xbgr.xq775.s1                      2.81906e-10
+xbgr.xq775.t                         0.0329404
+xbgr.xq776.s1                      2.81906e-10
+xbgr.xq776.t                         0.0329404
+xbgr.xq777.s1                      2.81906e-10
+xbgr.xq777.t                         0.0329404
+xbgr.xq778.s1                      2.81906e-10
+xbgr.xq778.t                         0.0329404
+xbgr.xq779.s1                      2.81906e-10
+xbgr.xq779.t                         0.0329404
+xbgr.xq780.s1                      2.81906e-10
+xbgr.xq780.t                         0.0329404
+xbgr.xq781.s1                      2.81906e-10
+xbgr.xq781.t                         0.0329404
+xbgr.xq782.s1                      2.81906e-10
+xbgr.xq782.t                         0.0329404
+xbgr.xq783.s1                      2.81906e-10
+xbgr.xq783.t                         0.0329404
+xbgr.xq784.s1                      2.81988e-10
+xbgr.xq784.t                       5.80152e-11
+xbgr.xq785.s1                      2.81988e-10
+xbgr.xq785.t                       5.80152e-11
+xbgr.xq786.s1                      2.81988e-10
+xbgr.xq786.t                       5.80152e-11
+xbgr.xq787.s1                      2.81988e-10
+xbgr.xq787.t                       5.80152e-11
+xbgr.xq788.s1                      2.81988e-10
+xbgr.xq788.t                       5.80152e-11
+xbgr.xq789.s1                      2.81988e-10
+xbgr.xq789.t                       5.80152e-11
+xbgr.xq790.s1                      2.81988e-10
+xbgr.xq790.t                       5.80152e-11
+xbgr.xq791.s1                      2.81988e-10
+xbgr.xq791.t                       5.80152e-11
+xbgr.xq792.s1                      2.81988e-10
+xbgr.xq792.t                       5.80152e-11
+xbgr.xq793.s1                      2.81988e-10
+xbgr.xq793.t                       5.80152e-11
+xbgr.xq794.s1                      2.81988e-10
+xbgr.xq794.t                       5.80152e-11
+xbgr.xq795.s1                      2.81988e-10
+xbgr.xq795.t                       5.80152e-11
+xbgr.xq796.s1                      2.81988e-10
+xbgr.xq796.t                       5.80152e-11
+xbgr.xq797.s1                      2.81988e-10
+xbgr.xq797.t                       5.80152e-11
+xbgr.xq798.s1                      2.81988e-10
+xbgr.xq798.t                       5.80152e-11
+xbgr.xq799.s1                      2.81988e-10
+xbgr.xq799.t                       5.80152e-11
+xbgr.xq800.s1                      2.81988e-10
+xbgr.xq800.t                       5.80152e-11
+xbgr.xq801.s1                      2.81988e-10
+xbgr.xq801.t                       5.80152e-11
+xbgr.xq802.s1                      2.81988e-10
+xbgr.xq802.t                       5.80152e-11
+xbgr.xq803.s1                      2.81988e-10
+xbgr.xq803.t                       5.80152e-11
+xbgr.xq804.s1                      2.81988e-10
+xbgr.xq804.t                       5.80152e-11
+xbgr.xq805.s1                      2.81988e-10
+xbgr.xq805.t                       5.80152e-11
+xbgr.xq806.s1                      2.81988e-10
+xbgr.xq806.t                       5.80152e-11
+xbgr.xq807.s1                      2.81988e-10
+xbgr.xq807.t                       5.80152e-11
+xbgr.xq808.s1                      3.12005e-10
+xbgr.xq808.t                        0.00424684
+xbgr.xq809.s1                      3.12005e-10
+xbgr.xq809.t                        0.00424684
+xbgr.xq810.s1                      3.12005e-10
+xbgr.xq810.t                        0.00424684
+xbgr.xq811.s1                      3.12005e-10
+xbgr.xq811.t                        0.00424684
+xbgr.xq812.s1                      3.12005e-10
+xbgr.xq812.t                        0.00424684
+xbgr.xq813.s1                      3.12005e-10
+xbgr.xq813.t                        0.00424684
+xbgr.xq814.s1                      3.12005e-10
+xbgr.xq814.t                        0.00424684
+xbgr.xq815.s1                      3.12005e-10
+xbgr.xq815.t                        0.00424684
+xbgr.xq816.s1                      3.12005e-10
+xbgr.xq816.t                        0.00424684
+xbgr.xq817.s1                      3.12005e-10
+xbgr.xq817.t                        0.00424684
+xbgr.xq818.s1                      3.12005e-10
+xbgr.xq818.t                        0.00424684
+xbgr.xq819.s1                      3.12005e-10
+xbgr.xq819.t                        0.00424684
+xbgr.xq820.s1                      3.12005e-10
+xbgr.xq820.t                        0.00424684
+xbgr.xq821.s1                      3.12005e-10
+xbgr.xq821.t                        0.00424684
+xbgr.xq822.s1                      3.12005e-10
+xbgr.xq822.t                        0.00424684
+xbgr.xq823.s1                      3.12005e-10
+xbgr.xq823.t                        0.00424684
+xbgr.xq824.s1                      3.12005e-10
+xbgr.xq824.t                        0.00424684
+xbgr.xq825.s1                      3.12005e-10
+xbgr.xq825.t                        0.00424684
+xbgr.xq826.s1                      3.12005e-10
+xbgr.xq826.t                        0.00424684
+xbgr.xq827.s1                      3.12005e-10
+xbgr.xq827.t                        0.00424684
+xbgr.xq828.s1                      3.12005e-10
+xbgr.xq828.t                        0.00424684
+xbgr.xq829.s1                      3.12005e-10
+xbgr.xq829.t                        0.00424684
+xbgr.xq830.s1                      3.12005e-10
+xbgr.xq830.t                        0.00424684
+xbgr.xq831.s1                      3.12005e-10
+xbgr.xq831.t                        0.00424684
+xbgr.xq832.s1                      3.12005e-10
+xbgr.xq832.t                        0.00424684
+xbgr.xq833.s1                      3.12005e-10
+xbgr.xq833.t                        0.00424684
+xbgr.xq834.s1                      3.12005e-10
+xbgr.xq834.t                        0.00424684
+xbgr.xq835.s1                      3.12005e-10
+xbgr.xq835.t                        0.00424684
+xbgr.xq836.s1                      3.12005e-10
+xbgr.xq836.t                        0.00424684
+xbgr.xq837.s1                      3.12005e-10
+xbgr.xq837.t                        0.00424684
+xbgr.xq838.s1                      3.12005e-10
+xbgr.xq838.t                        0.00424684
+xbgr.xq839.s1                      3.12005e-10
+xbgr.xq839.t                        0.00424684
+xbgr.xq840.s1                      3.12005e-10
+xbgr.xq840.t                        0.00424684
+xbgr.xq841.s1                      3.12005e-10
+xbgr.xq841.t                        0.00424684
+xbgr.xq842.s1                      3.12005e-10
+xbgr.xq842.t                        0.00424684
+xbgr.xq843.s1                      3.12005e-10
+xbgr.xq843.t                        0.00424684
+xbgr.xq844.s1                      3.12005e-10
+xbgr.xq844.t                        0.00424684
+xbgr.xq845.s1                      3.12005e-10
+xbgr.xq845.t                        0.00424684
+xbgr.xq846.s1                      3.12005e-10
+xbgr.xq846.t                        0.00424684
+xbgr.xq847.s1                      3.12005e-10
+xbgr.xq847.t                        0.00424684
+xbgr.xq848.s1                      3.12005e-10
+xbgr.xq848.t                        0.00424684
+xbgr.xq849.s1                      3.12005e-10
+xbgr.xq849.t                        0.00424684
+xbgr.xq850.s1                      3.12005e-10
+xbgr.xq850.t                        0.00424684
+xbgr.xq851.s1                      3.12005e-10
+xbgr.xq851.t                        0.00424684
+xbgr.xq852.s1                      3.12005e-10
+xbgr.xq852.t                        0.00424684
+xbgr.xq853.s1                      3.12005e-10
+xbgr.xq853.t                        0.00424684
+xbgr.xq854.s1                      3.12005e-10
+xbgr.xq854.t                        0.00424684
+xbgr.xq855.s1                      3.12005e-10
+xbgr.xq855.t                        0.00424684
+xbgr.xq856.s1                      3.12005e-10
+xbgr.xq856.t                        0.00424684
+xbgr.xq857.s1                      3.12005e-10
+xbgr.xq857.t                        0.00424684
+xbgr.xq858.s1                      3.12005e-10
+xbgr.xq858.t                        0.00424684
+xbgr.xq859.s1                      3.12005e-10
+xbgr.xq859.t                        0.00424684
+xbgr.xq860.s1                      3.12005e-10
+xbgr.xq860.t                        0.00424684
+xbgr.xq861.s1                      3.12005e-10
+xbgr.xq861.t                        0.00424684
+xbgr.xq862.s1                      3.12005e-10
+xbgr.xq862.t                        0.00424684
+xbgr.xq863.s1                      3.12005e-10
+xbgr.xq863.t                        0.00424684
+xbgr.xq864.s1                      3.12005e-10
+xbgr.xq864.t                        0.00424684
+xbgr.xq865.s1                      3.12005e-10
+xbgr.xq865.t                        0.00424684
+xbgr.xq866.s1                      3.12005e-10
+xbgr.xq866.t                        0.00424684
+xbgr.xq867.s1                      3.12005e-10
+xbgr.xq867.t                        0.00424684
+xbgr.xq868.s1                      3.12005e-10
+xbgr.xq868.t                        0.00424684
+xbgr.xq869.s1                      3.12005e-10
+xbgr.xq869.t                        0.00424684
+xbgr.xq870.s1                      3.12005e-10
+xbgr.xq870.t                        0.00424684
+xbgr.xq871.s1                      3.12005e-10
+xbgr.xq871.t                        0.00424684
+xbgr.xq872.s1                      3.12005e-10
+xbgr.xq872.t                        0.00424684
+xbgr.xq873.s1                      3.12005e-10
+xbgr.xq873.t                        0.00424684
+xbgr.xq874.s1                      3.12005e-10
+xbgr.xq874.t                        0.00424684
+xbgr.xq875.s1                      3.12005e-10
+xbgr.xq875.t                        0.00424684
+xbgr.xq876.s1                      3.12005e-10
+xbgr.xq876.t                        0.00424684
+xbgr.xq877.s1                      3.12005e-10
+xbgr.xq877.t                        0.00424684
+xbgr.xq878.s1                      3.12005e-10
+xbgr.xq878.t                        0.00424684
+xbgr.xq879.s1                      3.12005e-10
+xbgr.xq879.t                        0.00424684
+xbgr.xq880.s1                      3.12005e-10
+xbgr.xq880.t                        0.00424684
+xbgr.xq881.s1                      3.12005e-10
+xbgr.xq881.t                        0.00424684
+xbgr.xq882.s1                      3.12005e-10
+xbgr.xq882.t                        0.00424684
+xbgr.xq883.s1                      3.12005e-10
+xbgr.xq883.t                        0.00424684
+xbgr.xq884.s1                      3.12005e-10
+xbgr.xq884.t                        0.00424684
+xbgr.xq885.s1                      3.12005e-10
+xbgr.xq885.t                        0.00424684
+xbgr.xq886.s1                      3.12005e-10
+xbgr.xq886.t                        0.00424684
+xbgr.xq887.s1                      3.12005e-10
+xbgr.xq887.t                        0.00424684
+xbgr.xq888.s1                      3.12005e-10
+xbgr.xq888.t                        0.00424684
+xbgr.xq889.s1                      3.12005e-10
+xbgr.xq889.t                        0.00424684
+xbgr.xq890.s1                      3.12005e-10
+xbgr.xq890.t                        0.00424684
+xbgr.xq891.s1                      3.12005e-10
+xbgr.xq891.t                        0.00424684
+xbgr.xq892.s1                      3.12005e-10
+xbgr.xq892.t                        0.00424684
+xbgr.xq893.s1                      3.12005e-10
+xbgr.xq893.t                        0.00424684
+xbgr.xq894.s1                      3.12005e-10
+xbgr.xq894.t                        0.00424684
+xbgr.xq895.s1                      3.12005e-10
+xbgr.xq895.t                        0.00424684
+xbgr.xq896.s1                      3.12005e-10
+xbgr.xq896.t                        0.00424684
+xbgr.xq897.s1                      3.12005e-10
+xbgr.xq897.t                        0.00424684
+xbgr.xq898.s1                      3.12005e-10
+xbgr.xq898.t                        0.00424684
+xbgr.xq899.s1                      3.12005e-10
+xbgr.xq899.t                        0.00424684
+xbgr.xq900.s1                      3.12005e-10
+xbgr.xq900.t                        0.00424684
+xbgr.xq901.s1                      3.12005e-10
+xbgr.xq901.t                        0.00424684
+xbgr.xq902.s1                      3.12005e-10
+xbgr.xq902.t                        0.00424684
+xbgr.xq903.s1                      3.12005e-10
+xbgr.xq903.t                        0.00424684
+xbgr.xq904.s1                      3.12005e-10
+xbgr.xq904.t                        0.00424684
+xbgr.xq905.s1                      3.12005e-10
+xbgr.xq905.t                        0.00424684
+xbgr.xq906.s1                      3.12005e-10
+xbgr.xq906.t                        0.00424684
+xbgr.xq907.s1                      3.12005e-10
+xbgr.xq907.t                        0.00424684
+xbgr.xq908.s1                      3.12005e-10
+xbgr.xq908.t                        0.00424684
+xbgr.xq909.s1                      3.12005e-10
+xbgr.xq909.t                        0.00424684
+xbgr.xq910.s1                      3.12005e-10
+xbgr.xq910.t                        0.00424684
+xbgr.xq911.s1                      3.12005e-10
+xbgr.xq911.t                        0.00424684
+xbgr.xq912.s1                      3.12005e-10
+xbgr.xq912.t                        0.00424684
+xbgr.xq913.s1                      3.12005e-10
+xbgr.xq913.t                        0.00424684
+xbgr.xq914.s1                      3.12005e-10
+xbgr.xq914.t                        0.00424684
+xbgr.xq915.s1                      3.12005e-10
+xbgr.xq915.t                        0.00424684
+xbgr.xq916.s1                      3.12005e-10
+xbgr.xq916.t                        0.00424684
+xbgr.xq917.s1                      3.12005e-10
+xbgr.xq917.t                        0.00424684
+xbgr.xq918.s1                      3.12005e-10
+xbgr.xq918.t                        0.00424684
+xbgr.xq919.s1                      3.12005e-10
+xbgr.xq919.t                        0.00424684
+xbgr.xq920.s1                      3.12005e-10
+xbgr.xq920.t                        0.00424684
+xbgr.xq921.s1                      3.12005e-10
+xbgr.xq921.t                        0.00424684
+xbgr.xq922.s1                      3.12005e-10
+xbgr.xq922.t                        0.00424684
+xbgr.xq923.s1                      3.12005e-10
+xbgr.xq923.t                        0.00424684
+xbgr.xq924.s1                      3.12005e-10
+xbgr.xq924.t                        0.00424684
+xbgr.xq925.s1                      3.12005e-10
+xbgr.xq925.t                        0.00424684
+xbgr.xq926.s1                      3.12005e-10
+xbgr.xq926.t                        0.00424684
+xbgr.xq927.s1                      3.12005e-10
+xbgr.xq927.t                        0.00424684
+xbgr.xq928.s1                      3.12005e-10
+xbgr.xq928.t                        0.00424684
+xbgr.xq929.s1                      3.12005e-10
+xbgr.xq929.t                        0.00424684
+xbgr.xq930.s1                      3.12005e-10
+xbgr.xq930.t                        0.00424684
+xbgr.xq931.s1                      3.12005e-10
+xbgr.xq931.t                        0.00424684
+xbgr.xq932.s1                      3.12005e-10
+xbgr.xq932.t                        0.00424684
+xbgr.xq933.s1                      3.12005e-10
+xbgr.xq933.t                        0.00424684
+xbgr.xq934.s1                      3.12005e-10
+xbgr.xq934.t                        0.00424684
+xbgr.xq935.s1                      3.12005e-10
+xbgr.xq935.t                        0.00424684
+xbgr.xq936.s1                      3.12005e-10
+xbgr.xq936.t                        0.00424684
+xbgr.xq937.s1                      3.12005e-10
+xbgr.xq937.t                        0.00424684
+xbgr.xq938.s1                      3.12005e-10
+xbgr.xq938.t                        0.00424684
+xbgr.xq939.s1                      3.12005e-10
+xbgr.xq939.t                        0.00424684
+xbgr.xq940.s1                      3.12005e-10
+xbgr.xq940.t                        0.00424684
+xbgr.xq941.s1                      3.12005e-10
+xbgr.xq941.t                        0.00424684
+xbgr.xq942.s1                      3.12005e-10
+xbgr.xq942.t                        0.00424684
+xbgr.xq943.s1                      3.12005e-10
+xbgr.xq943.t                        0.00424684
+xbgr.xq944.s1                      3.12005e-10
+xbgr.xq944.t                        0.00424684
+xbgr.xq945.s1                      3.12005e-10
+xbgr.xq945.t                        0.00424684
+xbgr.xq946.s1                      3.12005e-10
+xbgr.xq946.t                        0.00424684
+xbgr.xq947.s1                      3.12005e-10
+xbgr.xq947.t                        0.00424684
+xbgr.xq948.s1                      3.12005e-10
+xbgr.xq948.t                        0.00424684
+xbgr.xq949.s1                      3.12005e-10
+xbgr.xq949.t                        0.00424684
+xbgr.xq950.s1                      3.12005e-10
+xbgr.xq950.t                        0.00424684
+xbgr.xq951.s1                      3.12005e-10
+xbgr.xq951.t                        0.00424684
+xbgr.xq952.s1                      3.12005e-10
+xbgr.xq952.t                        0.00424684
+xbgr.xq953.s1                      3.12005e-10
+xbgr.xq953.t                        0.00424684
+xbgr.xq954.s1                      3.12005e-10
+xbgr.xq954.t                        0.00424684
+xbgr.xq955.s1                      3.12005e-10
+xbgr.xq955.t                        0.00424684
+xbgr.xq956.s1                      3.12005e-10
+xbgr.xq956.t                        0.00424684
+xbgr.xq957.s1                      3.12005e-10
+xbgr.xq957.t                        0.00424684
+xbgr.xq958.s1                      3.12005e-10
+xbgr.xq958.t                        0.00424684
+xbgr.xq959.s1                      3.12005e-10
+xbgr.xq959.t                        0.00424684
+xbgr.xq960.s1                      3.12005e-10
+xbgr.xq960.t                        0.00424684
+xbgr.xq961.s1                      3.12005e-10
+xbgr.xq961.t                        0.00424684
+xbgr.xq962.s1                      3.12005e-10
+xbgr.xq962.t                        0.00424684
+xbgr.xq963.s1                      3.12005e-10
+xbgr.xq963.t                        0.00424684
+xbgr.xq964.s1                      3.12005e-10
+xbgr.xq964.t                        0.00424684
+xbgr.xq965.s1                      3.12005e-10
+xbgr.xq965.t                        0.00424684
+xbgr.xq966.s1                      3.12005e-10
+xbgr.xq966.t                        0.00424684
+xbgr.xq967.s1                      3.12005e-10
+xbgr.xq967.t                        0.00424684
+xbgr.xq968.s1                      3.12005e-10
+xbgr.xq968.t                        0.00424684
+xbgr.xq969.s1                      3.12005e-10
+xbgr.xq969.t                        0.00424684
+xbgr.xq970.s1                      3.12005e-10
+xbgr.xq970.t                        0.00424684
+xbgr.xq971.s1                      3.12005e-10
+xbgr.xq971.t                        0.00424684
+xbgr.xq972.s1                      3.12005e-10
+xbgr.xq972.t                        0.00424684
+xbgr.xq973.s1                      3.12005e-10
+xbgr.xq973.t                        0.00424684
+xbgr.xq974.s1                      3.12005e-10
+xbgr.xq974.t                        0.00424684
+xbgr.xq975.s1                      3.12005e-10
+xbgr.xq975.t                        0.00424684
+xbgr.xq976.s1                      3.12005e-10
+xbgr.xq976.t                        0.00424684
+xbgr.xq977.s1                      3.12005e-10
+xbgr.xq977.t                        0.00424684
+xbgr.xq978.s1                      3.12005e-10
+xbgr.xq978.t                        0.00424684
+xbgr.xq979.s1                      3.12005e-10
+xbgr.xq979.t                        0.00424684
+xbgr.xq980.s1                      3.12005e-10
+xbgr.xq980.t                        0.00424684
+xbgr.xq981.s1                      3.12005e-10
+xbgr.xq981.t                        0.00424684
+xbgr.xq982.s1                      3.12005e-10
+xbgr.xq982.t                        0.00424684
+xbgr.xq983.s1                      3.12005e-10
+xbgr.xq983.t                        0.00424684
+xbgr.xq984.s1                      3.12005e-10
+xbgr.xq984.t                        0.00424684
+xbgr.xq985.s1                      3.12005e-10
+xbgr.xq985.t                        0.00424684
+xbgr.xq986.s1                      3.12005e-10
+xbgr.xq986.t                        0.00424684
+xbgr.xq987.s1                      3.12005e-10
+xbgr.xq987.t                        0.00424684
+xbgr.xq988.s1                      3.12005e-10
+xbgr.xq988.t                        0.00424684
+xbgr.xq989.s1                      3.12005e-10
+xbgr.xq989.t                        0.00424684
+xbgr.xq990.s1                      3.12005e-10
+xbgr.xq990.t                        0.00424684
+xbgr.xq991.s1                      3.12005e-10
+xbgr.xq991.t                        0.00424684
+xbgr.xq992.s1                      3.12005e-10
+xbgr.xq992.t                        0.00424684
+xbgr.xq993.s1                      3.12005e-10
+xbgr.xq993.t                        0.00424684
+xbgr.xq994.s1                      3.12005e-10
+xbgr.xq994.t                        0.00424684
+xbgr.xq995.s1                      3.12005e-10
+xbgr.xq995.t                        0.00424684
+xbgr.xq996.s1                      3.12005e-10
+xbgr.xq996.t                        0.00424684
+xbgr.xq997.s1                      3.12005e-10
+xbgr.xq997.t                        0.00424684
+xbgr.xq998.s1                      3.12005e-10
+xbgr.xq998.t                        0.00424684
+xbgr.xq999.s1                      3.12005e-10
+xbgr.xq999.t                        0.00424684
+xbgr.xq1000.s1                     5.63123e-10
+xbgr.xq1000.t                        0.0329926
+xbgr.xq1001.s1                     5.63123e-10
+xbgr.xq1001.t                        0.0329926
+xbgr.xq1002.s1                     5.63123e-10
+xbgr.xq1002.t                        0.0329926
+xbgr.xq1003.s1                     5.63123e-10
+xbgr.xq1003.t                        0.0329926
+xbgr.xq1004.s1                     5.63123e-10
+xbgr.xq1004.t                        0.0329926
+xbgr.xq1005.s1                     5.63123e-10
+xbgr.xq1005.t                        0.0329926
+xbgr.xq1006.s1                     5.63123e-10
+xbgr.xq1006.t                        0.0329926
+xbgr.xq1007.s1                     5.63123e-10
+xbgr.xq1007.t                        0.0329926
+xbgr.xq1008.s1                     5.63123e-10
+xbgr.xq1008.t                        0.0329926
+xbgr.xq1009.s1                     5.63123e-10
+xbgr.xq1009.t                        0.0329926
+xbgr.xq1010.s1                     5.63123e-10
+xbgr.xq1010.t                        0.0329926
+xbgr.xq1011.s1                     5.63123e-10
+xbgr.xq1011.t                        0.0329926
+xbgr.xq1012.s1                     5.63123e-10
+xbgr.xq1012.t                        0.0329926
+xbgr.xq1013.s1                     5.63123e-10
+xbgr.xq1013.t                        0.0329926
+xbgr.xq1014.s1                     5.63123e-10
+xbgr.xq1014.t                        0.0329926
+xbgr.xq1015.s1                     5.63123e-10
+xbgr.xq1015.t                        0.0329926
+xbgr.xq1016.s1                     5.63123e-10
+xbgr.xq1016.t                        0.0329926
+xbgr.xq1017.s1                     5.63123e-10
+xbgr.xq1017.t                        0.0329926
+xbgr.xq1018.s1                     5.63123e-10
+xbgr.xq1018.t                        0.0329926
+xbgr.xq1019.s1                     5.63123e-10
+xbgr.xq1019.t                        0.0329926
+xbgr.xq1020.s1                     5.63123e-10
+xbgr.xq1020.t                        0.0329926
+xbgr.xq1021.s1                     5.63123e-10
+xbgr.xq1021.t                        0.0329926
+xbgr.xq1022.s1                     5.63123e-10
+xbgr.xq1022.t                        0.0329926
+xbgr.xq1023.s1                     5.63123e-10
+xbgr.xq1023.t                        0.0329926
+xbgr.xq1024.s1                     2.81922e-10
+xbgr.xq1024.t                        0.0329927
+xbgr.xq1025.s1                     2.81922e-10
+xbgr.xq1025.t                        0.0329927
+xbgr.xq1026.s1                     2.81922e-10
+xbgr.xq1026.t                        0.0329927
+xbgr.xq1027.s1                     2.81922e-10
+xbgr.xq1027.t                        0.0329927
+xbgr.xq1028.s1                               0
+xbgr.xq1028.t                                0
+xbgr.xq1029.s1                               0
+xbgr.xq1029.t                                0
+xbgr.xq1030.s1                               0
+xbgr.xq1030.t                                0
+xbgr.xq1031.s1                               0
+xbgr.xq1031.t                                0
+xbgr.xq1032.s1                               0
+xbgr.xq1032.t                                0
+xbgr.xq1033.s1                               0
+xbgr.xq1033.t                                0
+xbgr.xq1034.s1                               0
+xbgr.xq1034.t                                0
+xbgr.xq1035.s1                               0
+xbgr.xq1035.t                                0
+xbgr.xq1036.s1                               0
+xbgr.xq1036.t                                0
+vdda_sense                             3.29932
+xsense.vn                            0.0480238
+xsense.xr1n0.dt                              0
+xsense.r2n_0                         0.0960427
+xsense.xr2n0.dt                              0
+xsense.r2n_1                          0.144062
+xsense.xr2n1.dt                              0
+xsense.r2n_2                           0.19208
+xsense.xr2n2.dt                              0
+xsense.r2n_3                          0.240099
+xsense.xr2n3.dt                              0
+xsense.r2n_4                          0.288118
+xsense.xr2n4.dt                              0
+xsense.r2n_5                          0.336137
+xsense.xr2n5.dt                              0
+xsense.r2n_6                          0.384156
+xsense.xr2n6.dt                              0
+xsense.r2n_7                          0.432175
+xsense.xr2n7.dt                              0
+xsense.r2n_8                          0.480194
+xsense.xr2n8.dt                              0
+xsense.r2n_9                          0.528213
+xsense.xr2n9.dt                              0
+xsense.r2n_10                         0.576232
+xsense.xr2n10.dt                             0
+xsense.r2n_11                         0.624251
+xsense.xr2n11.dt                             0
+xsense.r2n_12                         0.672271
+xsense.xr2n12.dt                             0
+xsense.r2n_13                          0.72029
+xsense.xr2n13.dt                             0
+xsense.r2n_14                         0.768309
+xsense.xr2n14.dt                             0
+xsense.r2n_15                         0.816328
+xsense.xr2n15.dt                             0
+xsense.r2n_16                         0.864347
+xsense.xr2n16.dt                             0
+xsense.r2n_17                         0.912367
+xsense.xr2n17.dt                             0
+xsense.r2n_18                         0.960386
+xsense.xr2n18.dt                             0
+isense                                 1.00841
+xsense.xr2n19.dt                             0
+xsense.vp                            0.0479053
+xsense.xr1p0.dt                              0
+xsense.r2p_0                         0.0958055
+xsense.xr2p0.dt                              0
+xsense.r2p_1                          0.143706
+xsense.xr2p1.dt                              0
+xsense.r2p_2                          0.191606
+xsense.xr2p2.dt                              0
+xsense.r2p_3                          0.239506
+xsense.xr2p3.dt                              0
+xsense.r2p_4                          0.287407
+xsense.xr2p4.dt                              0
+xsense.r2p_5                          0.335307
+xsense.xr2p5.dt                              0
+xsense.r2p_6                          0.383207
+xsense.xr2p6.dt                              0
+xsense.r2p_7                          0.431108
+xsense.xr2p7.dt                              0
+xsense.r2p_8                          0.479008
+xsense.xr2p8.dt                              0
+xsense.r2p_9                          0.526908
+xsense.xr2p9.dt                              0
+xsense.r2p_10                         0.574809
+xsense.xr2p10.dt                             0
+xsense.r2p_11                         0.622709
+xsense.xr2p11.dt                             0
+xsense.r2p_12                          0.67061
+xsense.xr2p12.dt                             0
+xsense.r2p_13                          0.71851
+xsense.xr2p13.dt                             0
+xsense.r2p_14                         0.766411
+xsense.xr2p14.dt                             0
+xsense.r2p_15                         0.814311
+xsense.xr2p15.dt                             0
+xsense.r2p_16                         0.862212
+xsense.xr2p16.dt                             0
+xsense.r2p_17                         0.910113
+xsense.xr2p17.dt                             0
+xsense.r2p_18                         0.958013
+xsense.xr2p18.dt                             0
+vped                                   1.00591
+xsense.xr2p19.dt                             0
+vref_buf                               1.04542
+xsense.rd1_0                           1.02569
+xsense.xrd10.dt                              0
+xsense.vped_ref                        1.00597
+xsense.xrd11.dt                              0
+xsense.rd2_0                          0.986242
+xsense.xrd20.dt                              0
+xsense.rd2_1                          0.966517
+xsense.xrd21.dt                              0
+xsense.rd2_2                          0.946792
+xsense.xrd22.dt                              0
+xsense.rd2_3                          0.927066
+xsense.xrd23.dt                              0
+xsense.rd2_4                          0.907341
+xsense.xrd24.dt                              0
+xsense.rd2_5                          0.887616
+xsense.xrd25.dt                              0
+xsense.rd2_6                          0.867891
+xsense.xrd26.dt                              0
+xsense.rd2_7                          0.848165
+xsense.xrd27.dt                              0
+xsense.rd2_8                           0.82844
+xsense.xrd28.dt                              0
+xsense.rd2_9                          0.808715
+xsense.xrd29.dt                              0
+xsense.rd2_10                          0.78899
+xsense.xrd210.dt                             0
+xsense.rd2_11                         0.769265
+xsense.xrd211.dt                             0
+xsense.rd2_12                          0.74954
+xsense.xrd212.dt                             0
+xsense.rd2_13                         0.729815
+xsense.xrd213.dt                             0
+xsense.rd2_14                          0.71009
+xsense.xrd214.dt                             0
+xsense.rd2_15                         0.690365
+xsense.xrd215.dt                             0
+xsense.rd2_16                          0.67064
+xsense.xrd216.dt                             0
+xsense.rd2_17                         0.650915
+xsense.xrd217.dt                             0
+xsense.rd2_18                          0.63119
+xsense.xrd218.dt                             0
+xsense.rd2_19                         0.611465
+xsense.xrd219.dt                             0
+xsense.rd2_20                          0.59174
+xsense.xrd220.dt                             0
+xsense.rd2_21                         0.572015
+xsense.xrd221.dt                             0
+xsense.rd2_22                         0.552291
+xsense.xrd222.dt                             0
+xsense.rd2_23                         0.532566
+xsense.xrd223.dt                             0
+xsense.rd2_24                         0.512841
+xsense.xrd224.dt                             0
+xsense.rd2_25                         0.493116
+xsense.xrd225.dt                             0
+xsense.rd2_26                         0.473391
+xsense.xrd226.dt                             0
+xsense.rd2_27                         0.453667
+xsense.xrd227.dt                             0
+xsense.rd2_28                         0.433942
+xsense.xrd228.dt                             0
+xsense.rd2_29                         0.414217
+xsense.xrd229.dt                             0
+xsense.rd2_30                         0.394492
+xsense.xrd230.dt                             0
+xsense.rd2_31                         0.374768
+xsense.xrd231.dt                             0
+xsense.rd2_32                         0.355043
+xsense.xrd232.dt                             0
+xsense.rd2_33                         0.335318
+xsense.xrd233.dt                             0
+xsense.rd2_34                         0.315594
+xsense.xrd234.dt                             0
+xsense.rd2_35                         0.295869
+xsense.xrd235.dt                             0
+xsense.rd2_36                         0.276144
+xsense.xrd236.dt                             0
+xsense.rd2_37                          0.25642
+xsense.xrd237.dt                             0
+xsense.rd2_38                         0.236695
+xsense.xrd238.dt                             0
+xsense.rd2_39                          0.21697
+xsense.xrd239.dt                             0
+xsense.rd2_40                         0.197246
+xsense.xrd240.dt                             0
+xsense.rd2_41                         0.177521
+xsense.xrd241.dt                             0
+xsense.rd2_42                         0.157797
+xsense.xrd242.dt                             0
+xsense.rd2_43                         0.138072
+xsense.xrd243.dt                             0
+xsense.rd2_44                         0.118347
+xsense.xrd244.dt                             0
+xsense.rd2_45                        0.0986229
+xsense.xrd245.dt                             0
+xsense.rd2_46                        0.0788983
+xsense.xrd246.dt                             0
+xsense.rd2_47                        0.0591737
+xsense.xrd247.dt                             0
+xsense.rd2_48                        0.0394491
+xsense.xrd248.dt                             0
+xsense.rd2_49                        0.0197246
+xsense.xrd249.dt                             0
+xsense.xrd250.dt                             0
+xsense.__pex_xota_vbp                   2.4564
+xsense.__pex_xota_vbnc                0.962532
+xsense.__pex_xota_vbpc                 2.18206
+xsense.__pex_xota_tail                 1.48153
+xsense.__pex_xota_fn                  0.152207
+xsense.__pex_xota_fp                  0.152542
+xsense.__pex_xota_mir                  2.41597
+xsense.__pex_xota_out1                 2.47116
+xsense.__pex_xota_pc1                  3.13688
+xsense.__pex_xota_pc2                   3.1369
+xsense.__pex_xota_cz                   2.47116
+xsense.xota.xrz.dt                           0
+xsense.xota.xcc.1                      2.47116
+xsense.__pex_xbuf_vbp                   2.4564
+xsense.__pex_xbuf_vbnc                0.962532
+xsense.__pex_xbuf_vbpc                 2.18206
+xsense.__pex_xbuf_tail                 2.31148
+xsense.__pex_xbuf_fn                  0.195038
+xsense.__pex_xbuf_fp                   0.19479
+xsense.__pex_xbuf_mir                  2.51309
+xsense.__pex_xbuf_out1                  2.4712
+xsense.__pex_xbuf_pc1                  3.07225
+xsense.__pex_xbuf_pc2                  3.07219
+xsense.__pex_xbuf_cz                    2.4712
+xsense.xbuf.xrz.dt                           0
+xsense.xbuf.xcc.1                       2.4712
+xsense.__pex_xref_vbp                   2.4564
+xsense.__pex_xref_vbnc                0.962532
+xsense.__pex_xref_vbpc                 2.18206
+xsense.__pex_xref_tail                 2.34044
+xsense.__pex_xref_fn                  0.195015
+xsense.__pex_xref_fp                   0.19478
+xsense.__pex_xref_mir                  2.51306
+xsense.__pex_xref_out1                 2.47344
+xsense.__pex_xref_pc1                  3.07227
+xsense.__pex_xref_pc2                  3.07222
+xsense.__pex_xref_cz                   2.47344
+xsense.xref.xrz.dt                           0
+xsense.xref.xcc.1                      2.47344
+vdda_trip                              3.29932
+vdd_trip                               1.19994
+cmp_soft                                   1.2
+cmp_hard                                     0
+icmp                                  0.504203
+vth_soft                              0.800604
+vth_hard                              0.998792
+vdd_osc                                1.19994
+xosc.vb                             0.00658166
+xosc.n24                               1.19994
+xosc.va                             0.00658166
+xosc.n22                               1.19994
+xosc.bb3                                     0
+trim3                                        0
+xosc.n27                               1.19994
+xosc.n45                               1.02827
+osc_clk                            7.90554e-08
+xosc.n46                               1.19994
+xosc.n14                               1.19994
+xosc.n30                            1.1984e-05
+xosc.n31                           1.09067e-05
+xosc.vbn                              0.462046
+xosc.n26                           8.13944e-08
+xosc.n33                           1.28796e-07
+xosc.vth                               0.59997
+xosc.n28                           1.09067e-05
+xosc.n17                               1.19994
+xosc.n32                            1.1984e-05
+xosc.n15                           1.53601e-07
+xosc.b1                                      0
+trim1                                        0
+xosc.n29                               1.04227
+xosc.n44                               1.19994
+xosc.bb0                                     0
+trim0                                        0
+xosc.b0                                      0
+xosc.bb1                                     0
+xosc.b3                                      0
+xosc.n16                               1.04227
+xosc.b2                                      0
+trim2                                        0
+xosc.bb2                                     0
+xosc.n50                               1.15573
+xosc.n48                               1.19994
+xosc.n49                               1.19994
+xosc.n3                               0.603263
+xosc.xr53.dt                                 0
+xosc.n4                               0.603263
+xosc.xr54.dt                                 0
+xosc.xr55.dt                                 0
+xosc.xr56.dt                                 0
+xosc.n5                                1.09995
+xosc.xr57.dt                                 0
+xosc.n52                              0.999953
+xosc.xr58.dt                                 0
+xosc.n6                               0.899957
+xosc.xr59.dt                                 0
+xosc.n53                              0.799961
+xosc.xr60.dt                                 0
+xosc.n7                               0.699965
+xosc.xr61.dt                                 0
+xosc.xr62.dt                                 0
+xosc.n8                               0.499975
+xosc.xr63.dt                                 0
+xosc.n54                               0.39998
+xosc.xr64.dt                                 0
+xosc.n9                               0.299985
+xosc.xr65.dt                                 0
+xosc.n55                               0.19999
+xosc.xr66.dt                                 0
+xosc.n10                             0.0999949
+xosc.xr67.dt                                 0
+xosc.xr68.dt                                 0
+xosc.n11                              0.830995
+xosc.xr69.dt                                 0
+xosc.xr70.dt                                 0
+xosc.xcf_a.1                        0.00658166
+xosc.xct0_a.1                       0.00658166
+xosc.xct1_a.1                       0.00658166
+xosc.xct2_a.1                       0.00658166
+xosc.xct3_a.1                       0.00658166
+xosc.xcf_b.1                        0.00658166
+xosc.xct0_b.1                       0.00658166
+xosc.xct1_b.1                       0.00658166
+xosc.xct2_b.1                       0.00658166
+xosc.xct3_b.1                       0.00658166
+xosc.xcth.1                            0.59997
+vdda_gate                              3.29932
+vdd_gate                               1.19994
+cmp_clk                                      0
+soft7                                        0
+soft6                                        0
+soft5                                        0
+soft4                                        0
+soft3                                        0
+soft2                                        0
+soft1                                        0
+soft0                                        0
+hard7                                        0
+hard6                                        0
+hard5                                        0
+hard4                                        0
+hard3                                        0
+hard2                                        0
+hard1                                        0
+hard0                                        0
+trip_d                                       0
+clr_d                                        0
+fast_en                                      0
+dig_trip                                     0
+dig_gate_en                                  0
+cause1                                       0
+cause0                                       0
+sdo                                          0
+sp15                                         0
+sp14                                         0
+sp13                                         0
+sp12                                         0
+sp11                                         0
+sp10                                         0
+sp9                                          0
+sp8                                          0
+sp7                                          0
+sp6                                          0
+sp5                                          0
+sp4                                          0
+sp3                                          0
+sp2                                          0
+sp1                                          0
+sp0                                          0
+inrush_active                                0
+soft_armed                                   0
+bicmp#branch                      -5.04203e-13
+bosc#branch                        3.26586e-11
+bgate#branch                      -2.49161e-22
+bsdi_core#branch                             0
+bsclk_core#branch                            0
+ben_core#branch                              0
+vm_gated#branch                    2.39984e-12
+vm_gatea#branch                    6.60007e-12
+vm_osc#branch                      0.000110528
+vvthh#branch                      -9.98792e-13
+vvths#branch                      -8.00604e-13
+vch_tie#branch                               0
+vcs_tie#branch                        -1.2e-12
+vm_tripd#branch                    2.39989e-12
+vm_tripa#branch                    6.59864e-12
+vm_sense#branch                     0.00103731
+vm_bgr#branch                      0.000319704
+vr4#branch                                   0
+vsdi#branch                                  0
+vsclk#branch                                 0
+ven#branch                                   0
+vtr#branch                                   0
+vgc#branch                                   0
+vfault#branch                         -3.3e-12
+vim#branch                         2.06115e-09
+vprof#branch                            -1e-12
+v12#branch                        -0.000110528
+vmi#branch                         6.60094e-12
+vma#branch                          0.00135701
+v33#branch                         -0.00135701
+vsub#branch                                  0
+adac#branch_1_0                              0
+adac#branch_1_1                              0
+adac#branch_1_2                              0
+adac#branch_1_3                              0
+adac#branch_1_4                              0
+adac#branch_1_5                              0
+adac#branch_1_6                              0
+adac#branch_1_7                              0
+adac#branch_1_8                              0
+adac#branch_1_9                              0
+adac#branch_1_10                             0
+adac#branch_1_11                             0
+adac#branch_1_12                             0
+adac#branch_1_13                             0
+adac#branch_1_14                             0
+adac#branch_1_15                             0
+adac#branch_1_16                             0
+adac#branch_1_17                             0
+adac#branch_1_18                             0
+adac#branch_1_19                             0
+adac#branch_1_20                             0
+adac#branch_1_21                             0
+adac#branch_1_22                             0
+adac#branch_1_23                             0
+adac#branch_1_24                             0
+adac#branch_1_25                             0
+adac#branch_1_26                             0
+adac#branch_1_27                             0
+adac#branch_1_28                             0
+adac#branch_1_29                             0
+adac#branch_1_30                             0
+adac#branch_1_31                             0
+adac#branch_1_32                             0
+adac#branch_1_33                             0
+adac#branch_1_34                             0
+adac#branch_1_35                             0
+adac#branch_1_36                             0
+adac#branch_1_37                             0
+adac#branch_1_38                             0
+adac#branch_1_39                             0
+adac#branch_1_40                             0
+adac#branch_1_41                             0
+adac#branch_1_42                             0
+adac#branch_1_43                             0
+adac#branch_1_44                             0
+adac#branch_1_45                             0
+adac#branch_1_46                             0
+adac#branch_1_47                             0
+
+ Reference value :  0.00000e+00 Reference value :  1.34800e-08 Reference value :  5.34800e-08 Reference value :  9.14800e-08 Reference value :  1.21480e-07 Reference value :  1.41480e-07 Reference value :  1.67480e-07 Reference value :  1.78979e-07 Reference value :  1.94575e-07 Reference value :  2.22575e-07 Reference value :  2.31150e-07 Reference value :  2.55653e-07 Reference value :  2.81149e-07 Reference value :  2.96753e-07 Reference value :  3.20753e-07 Reference value :  3.32249e-07 Reference value :  3.49829e-07 Reference value :  3.75829e-07 Reference value :  3.84411e-07 Reference value :  4.02930e-07 Reference value :  4.26930e-07 Reference value :  4.35505e-07 Reference value :  4.58006e-07 Reference value :  4.82006e-07 Reference value :  4.87798e-07 Reference value :  5.09106e-07 Reference value :  5.33106e-07 Reference value :  5.37681e-07 Reference value :  5.60183e-07 Reference value :  5.86183e-07 Reference value :  5.91550e-07 Reference value :  6.15283e-07 Reference value :  6.38779e-07 Reference value :  6.56359e-07 Reference value :  6.80359e-07 Reference value :  6.89855e-07 Reference value :  7.05460e-07 Reference value :  7.31460e-07 Reference value :  7.40955e-07 Reference value :  7.58536e-07 Reference value :  7.82536e-07 Reference value :  7.92032e-07 Reference value :  8.07636e-07 Reference value :  8.31636e-07 Reference value :  8.43132e-07 Reference value :  8.62713e-07 Reference value :  8.88713e-07 Reference value :  8.95294e-07 Reference value :  9.17813e-07 Reference value :  9.43813e-07 Reference value :  9.49161e-07 Reference value :  9.76889e-07 Reference value :  9.96385e-07 Reference value :  1.01399e-06 Reference value :  1.04199e-06 Reference value :  1.04977e-06 Reference value :  1.07507e-06 Reference value :  1.09856e-06 Reference value :  1.11617e-06 Reference value :  1.13617e-06 Reference value :  1.14966e-06 Reference value :  1.16324e-06 Reference value :  1.18524e-06 Reference value :  1.20074e-06 Reference value :  1.22034e-06 Reference value :  1.24634e-06 Reference value :  1.25412e-06 Reference value :  1.28142e-06 Reference value :  1.30292e-06 Reference value :  1.32252e-06 Reference value :  1.35052e-06 Reference value :  1.35787e-06 Reference value :  1.38760e-06 Reference value :  1.40509e-06 Reference value :  1.42470e-06 Reference value :  1.45270e-06 Reference value :  1.46004e-06 Reference value :  1.48777e-06 Reference value :  1.50727e-06 Reference value :  1.52687e-06 Reference value :  1.55487e-06 Reference value :  1.56222e-06 Reference value :  1.59195e-06 Reference value :  1.60945e-06 Reference value :  1.62905e-06 Reference value :  1.65705e-06 Reference value :  1.66440e-06 Reference value :  1.69413e-06 Reference value :  1.71162e-06 Reference value :  1.73123e-06 Reference value :  1.75923e-06 Reference value :  1.76657e-06 Reference value :  1.79630e-06 Reference value :  1.81380e-06 Reference value :  1.83340e-06 Reference value :  1.86140e-06 Reference value :  1.86875e-06 Reference value :  1.89848e-06 Reference value :  1.91597e-06 Reference value :  1.93558e-06 Reference value :  1.96358e-06 Reference value :  1.97093e-06 Reference value :  2.00066e-06 Reference value :  2.01815e-06 Reference value :  2.03776e-06 Reference value :  2.06576e-06 Reference value :  2.07310e-06 Reference value :  2.10283e-06 Reference value :  2.12033e-06 Reference value :  2.13993e-06 Reference value :  2.16793e-06 Reference value :  2.17528e-06 Reference value :  2.20501e-06 Reference value :  2.22250e-06 Reference value :  2.24411e-06 Reference value :  2.27211e-06 Reference value :  2.28119e-06 Reference value :  2.31119e-06 Reference value :  2.32468e-06 Reference value :  2.34629e-06 Reference value :  2.37429e-06 Reference value :  2.38136e-06 Reference value :  2.41136e-06 Reference value :  2.42686e-06 Reference value :  2.44846e-06 Reference value :  2.47646e-06 Reference value :  2.48354e-06 Reference value :  2.51354e-06 Reference value :  2.52903e-06 Reference value :  2.54864e-06 Reference value :  2.57664e-06 Reference value :  2.58399e-06 Reference value :  2.61372e-06 Reference value :  2.63121e-06 Reference value :  2.65082e-06 Reference value :  2.67882e-06 Reference value :  2.68616e-06 Reference value :  2.71589e-06 Reference value :  2.73339e-06 Reference value :  2.75299e-06 Reference value :  2.78099e-06 Reference value :  2.78834e-06 Reference value :  2.81807e-06 Reference value :  2.83556e-06 Reference value :  2.85517e-06 Reference value :  2.88317e-06 Reference value :  2.89052e-06 Reference value :  2.92025e-06 Reference value :  2.93774e-06 Reference value :  2.95735e-06 Reference value :  2.98535e-06 Reference value :  2.99269e-06 Reference value :  3.00112e-06 Reference value :  3.01713e-06 Reference value :  3.04063e-06 Reference value :  3.06022e-06 Reference value :  3.08822e-06 Reference value :  3.09557e-06 Reference value :  3.12529e-06 Reference value :  3.14279e-06 Reference value :  3.16240e-06 Reference value :  3.19040e-06 Reference value :  3.19774e-06 Reference value :  3.22747e-06 Reference value :  3.24497e-06 Reference value :  3.25107e-06 Reference value :  3.28107e-06 Reference value :  3.29656e-06 Reference value :  3.31612e-06 Reference value :  3.34612e-06 Reference value :  3.34813e-06 Reference value :  3.36772e-06 Reference value :  3.39572e-06 Reference value :  3.40149e-06 Reference value :  3.42878e-06 Reference value :  3.45027e-06 Reference value :  3.45637e-06 Reference value :  3.48437e-06 Reference value :  3.50187e-06 Reference value :  3.52143e-06 Reference value :  3.55143e-06 Reference value :  3.55344e-06 Reference value :  3.57103e-06 Reference value :  3.59903e-06 Reference value :  3.60560e-06 Reference value :  3.63008e-06 Reference value :  3.65558e-06 Reference value :  3.65968e-06 Reference value :  3.68968e-06 Reference value :  3.70718e-06 Reference value :  3.72874e-06 Reference value :  3.75823e-06 Reference value :  3.76433e-06 Reference value :  3.79433e-06 Reference value :  3.80983e-06 Reference value :  3.82939e-06 Reference value :  3.85739e-06 Reference value :  3.86140e-06 Reference value :  3.87899e-06 Reference value :  3.90699e-06 Reference value :  3.91476e-06 Reference value :  3.94204e-06 Reference value :  3.96354e-06 Reference value :  3.96964e-06 Reference value :  3.99964e-06 Reference value :  4.01514e-06 Reference value :  4.03470e-06 Reference value :  4.06470e-06 Reference value :  4.06670e-06 Reference value :  4.08429e-06 Reference value :  4.11229e-06 Reference value :  4.12007e-06 Reference value :  4.14735e-06 Reference value :  4.16885e-06 Reference value :  4.17495e-06 Reference value :  4.20495e-06 Reference value :  4.22044e-06 Reference value :  4.24000e-06 Reference value :  4.27000e-06 Reference value :  4.27201e-06 Reference value :  4.28960e-06 Reference value :  4.31760e-06 Reference value :  4.32417e-06 Reference value :  4.35066e-06 Reference value :  4.37415e-06 Reference value :  4.38025e-06 Reference value :  4.40825e-06 Reference value :  4.42575e-06 Reference value :  4.44331e-06 Reference value :  4.47331e-06 Reference value :  4.47731e-06 Reference value :  4.49690e-06 Reference value :  4.52690e-06 Reference value :  4.53596e-06 Reference value :  4.56596e-06 Reference value :  4.57979e-06 Reference value :  4.59556e-06 Reference value :  4.62556e-06 Reference value :  4.63333e-06 Reference value :  4.66062e-06 Reference value :  4.68211e-06 Reference value :  4.68821e-06 Reference value :  4.71821e-06 Reference value :  4.73371e-06 Reference value :  4.75327e-06 Reference value :  4.78327e-06 Reference value :  4.78527e-06 Reference value :  4.80486e-06 Reference value :  4.83286e-06 Reference value :  4.84020e-06 Reference value :  4.86992e-06 Reference value :  4.88742e-06 Reference value :  4.89352e-06 Reference value :  4.92352e-06 Reference value :  4.93901e-06 Reference value :  4.95858e-06 Reference value :  4.98858e-06 Reference value :  4.99058e-06 Reference value :  5.00817e-06 Reference value :  5.03817e-06 Reference value :  5.04551e-06 Reference value :  5.07523e-06 Reference value :  5.09272e-06 Reference value :  5.09882e-06 Reference value :  5.12882e-06 Reference value :  5.14432e-06 Reference value :  5.16388e-06 Reference value :  5.19388e-06 Reference value :  5.19589e-06 Reference value :  5.21548e-06 Reference value :  5.24348e-06 Reference value :  5.25081e-06 Reference value :  5.28054e-06 Reference value :  5.29803e-06 Reference value :  5.30413e-06 Reference value :  5.33413e-06 Reference value :  5.34963e-06 Reference value :  5.36919e-06 Reference value :  5.39919e-06 Reference value :  5.40144e-06 Reference value :  5.42278e-06 Reference value :  5.45078e-06 Reference value :  5.45784e-06 Reference value :  5.48784e-06 Reference value :  5.50334e-06 Reference value :  5.50944e-06 Reference value :  5.53944e-06 Reference value :  5.55493e-06 Reference value :  5.57449e-06 Reference value :  5.60449e-06 Reference value :  5.60650e-06 Reference value :  5.62609e-06 Reference value :  5.65409e-06 Reference value :  5.66142e-06 Reference value :  5.69115e-06 Reference value :  5.70864e-06 Reference value :  5.71474e-06 Reference value :  5.74474e-06 Reference value :  5.76024e-06 Reference value :  5.77980e-06 Reference value :  5.80980e-06 Reference value :  5.81181e-06 Reference value :  5.83140e-06 Reference value :  5.85940e-06 Reference value :  5.86673e-06 Reference value :  5.89645e-06 Reference value :  5.91395e-06 Reference value :  5.92005e-06 Reference value :  5.95005e-06 Reference value :  5.96555e-06 Reference value :  5.98511e-06 Reference value :  6.01511e-06 Reference value :  6.01711e-06 Reference value :  6.03670e-06 Reference value :  6.06470e-06 Reference value :  6.07204e-06 Reference value :  6.10176e-06 Reference value :  6.11926e-06 Reference value :  6.12536e-06 Reference value :  6.15536e-06 Reference value :  6.17085e-06 Reference value :  6.19041e-06 Reference value :  6.22041e-06 Reference value :  6.22242e-06 Reference value :  6.24201e-06 Reference value :  6.27001e-06 Reference value :  6.27734e-06 Reference value :  6.30707e-06 Reference value :  6.32456e-06 Reference value :  6.33066e-06 Reference value :  6.36066e-06 Reference value :  6.37616e-06 Reference value :  6.39572e-06 Reference value :  6.42572e-06 Reference value :  6.42773e-06 Reference value :  6.44732e-06 Reference value :  6.47532e-06 Reference value :  6.48265e-06 Reference value :  6.51237e-06 Reference value :  6.52987e-06 Reference value :  6.53597e-06 Reference value :  6.56597e-06 Reference value :  6.58146e-06 Reference value :  6.60103e-06 Reference value :  6.62903e-06 Reference value :  6.63303e-06 Reference value :  6.65262e-06 Reference value :  6.68062e-06 Reference value :  6.68639e-06 Reference value :  6.71368e-06 Reference value :  6.73518e-06 Reference value :  6.74127e-06 Reference value :  6.76927e-06 Reference value :  6.78677e-06 Reference value :  6.80433e-06 Reference value :  6.83233e-06 Reference value :  6.83816e-06 Reference value :  6.85393e-06 Reference value :  6.88193e-06 Reference value :  6.89050e-06 Reference value :  6.91099e-06 Reference value :  6.94048e-06 Reference value :  6.94658e-06 Reference value :  6.97658e-06 Reference value :  6.99208e-06 Reference value :  7.01164e-06 Reference value :  7.04164e-06 Reference value :  7.04364e-06 Reference value :  7.06323e-06 Reference value :  7.09123e-06 Reference value :  7.09857e-06 Reference value :  7.12829e-06 Reference value :  7.14579e-06 Reference value :  7.15189e-06 Reference value :  7.18189e-06 Reference value :  7.19738e-06 Reference value :  7.21695e-06 Reference value :  7.24695e-06 Reference value :  7.24895e-06 Reference value :  7.26854e-06 Reference value :  7.29654e-06 Reference value :  7.30388e-06 Reference value :  7.33360e-06 Reference value :  7.35109e-06 Reference value :  7.35719e-06 Reference value :  7.38719e-06 Reference value :  7.40269e-06 Reference value :  7.42225e-06 Reference value :  7.45225e-06 Reference value :  7.45426e-06 Reference value :  7.47385e-06 Reference value :  7.50185e-06 Reference value :  7.50918e-06 Reference value :  7.53891e-06 Reference value :  7.55640e-06 Reference value :  7.56250e-06 Reference value :  7.59250e-06 Reference value :  7.60800e-06 Reference value :  7.62756e-06 Reference value :  7.65756e-06 Reference value :  7.65956e-06 Reference value :  7.67915e-06 Reference value :  7.70715e-06 Reference value :  7.71449e-06 Reference value :  7.74421e-06 Reference value :  7.76171e-06 Reference value :  7.76781e-06 Reference value :  7.79781e-06 Reference value :  7.81330e-06 Reference value :  7.83286e-06 Reference value :  7.86286e-06 Reference value :  7.86487e-06 Reference value :  7.88446e-06 Reference value :  7.91246e-06 Reference value :  7.91979e-06 Reference value :  7.94952e-06 Reference value :  7.96701e-06 Reference value :  7.97311e-06 Reference value :  8.00311e-06 Reference value :  8.01861e-06 Reference value :  8.03817e-06 Reference value :  8.06817e-06 Reference value :  8.07018e-06 Reference value :  8.08977e-06 Reference value :  8.11777e-06 Reference value :  8.12510e-06 Reference value :  8.15482e-06 Reference value :  8.17232e-06 Reference value :  8.17842e-06 Reference value :  8.20842e-06 Reference value :  8.22392e-06 Reference value :  8.24348e-06 Reference value :  8.27348e-06 Reference value :  8.27548e-06 Reference value :  8.29507e-06 Reference value :  8.32307e-06 Reference value :  8.33041e-06 Reference value :  8.36013e-06 Reference value :  8.37763e-06 Reference value :  8.38373e-06 Reference value :  8.41373e-06 Reference value :  8.42922e-06 Reference value :  8.44878e-06 Reference value :  8.47878e-06 Reference value :  8.48079e-06 Reference value :  8.50038e-06 Reference value :  8.52638e-06 Reference value :  8.53415e-06 Reference value :  8.56144e-06 Reference value :  8.58293e-06 Reference value :  8.58903e-06 Reference value :  8.61903e-06 Reference value :  8.63453e-06 Reference value :  8.65409e-06 Reference value :  8.68409e-06 Reference value :  8.68610e-06 Reference value :  8.70569e-06 Reference value :  8.73369e-06 Reference value :  8.74102e-06 Reference value :  8.77074e-06 Reference value :  8.78824e-06 Reference value :  8.79434e-06 Reference value :  8.82434e-06 Reference value :  8.83983e-06 Reference value :  8.85940e-06 Reference value :  8.88940e-06 Reference value :  8.89140e-06 Reference value :  8.90899e-06 Reference value :  8.93699e-06 Reference value :  8.94476e-06 Reference value :  8.97405e-06 Reference value :  8.99355e-06 Reference value :  8.99964e-06 Reference value :  9.02964e-06 Reference value :  9.04514e-06 Reference value :  9.06470e-06 Reference value :  9.09470e-06 Reference value :  9.09671e-06 Reference value :  9.11630e-06 Reference value :  9.14430e-06 Reference value :  9.15163e-06 Reference value :  9.18136e-06 Reference value :  9.19885e-06 Reference value :  9.20495e-06 Reference value :  9.23495e-06 Reference value :  9.25045e-06 Reference value :  9.27001e-06 Reference value :  9.30001e-06 Reference value :  9.30201e-06 Reference value :  9.32160e-06 Reference value :  9.34960e-06 Reference value :  9.35694e-06 Reference value :  9.38666e-06 Reference value :  9.40416e-06 Reference value :  9.41026e-06 Reference value :  9.44026e-06 Reference value :  9.45575e-06 Reference value :  9.47532e-06 Reference value :  9.50532e-06 Reference value :  9.50757e-06 Reference value :  9.52891e-06 Reference value :  9.55691e-06 Reference value :  9.56397e-06 Reference value :  9.59397e-06 Reference value :  9.60946e-06 Reference value :  9.61556e-06 Reference value :  9.64556e-06 Reference value :  9.66106e-06 Reference value :  9.68062e-06 Reference value :  9.71062e-06 Reference value :  9.71263e-06 Reference value :  9.73222e-06 Reference value :  9.76022e-06 Reference value :  9.76755e-06 Reference value :  9.79727e-06 Reference value :  9.81477e-06 Reference value :  9.82087e-06 Reference value :  9.85087e-06 Reference value :  9.86637e-06 Reference value :  9.88593e-06 Reference value :  9.91593e-06 Reference value :  9.91793e-06 Reference value :  9.93752e-06 Reference value :  9.96552e-06 Reference value :  9.97286e-06 Reference value :  1.00026e-05 Reference value :  1.00201e-05 Reference value :  1.00262e-05 Reference value :  1.00562e-05 Reference value :  1.00717e-05 Reference value :  1.00912e-05 Reference value :  1.01192e-05 Reference value :  1.01232e-05 Reference value :  1.01428e-05 Reference value :  1.01708e-05 Reference value :  1.01782e-05 Reference value :  1.02079e-05 Reference value :  1.02254e-05 Reference value :  1.02315e-05 Reference value :  1.02615e-05 Reference value :  1.02770e-05 Reference value :  1.02965e-05 Reference value :  1.03265e-05 Reference value :  1.03285e-05 Reference value :  1.03481e-05 Reference value :  1.03761e-05 Reference value :  1.03835e-05 Reference value :  1.04132e-05 Reference value :  1.04307e-05 Reference value :  1.04368e-05 Reference value :  1.04668e-05 Reference value :  1.04823e-05 Reference value :  1.05018e-05 Reference value :  1.05298e-05 Reference value :  1.05339e-05 Reference value :  1.05534e-05 Reference value :  1.05814e-05 Reference value :  1.05888e-05 Reference value :  1.06165e-05 Reference value :  1.06360e-05 Reference value :  1.06421e-05 Reference value :  1.06721e-05 Reference value :  1.06876e-05 Reference value :  1.07072e-05 Reference value :  1.07372e-05 Reference value :  1.07392e-05 Reference value :  1.07587e-05 Reference value :  1.07867e-05 Reference value :  1.07925e-05 Reference value :  1.08198e-05 Reference value :  1.08413e-05 Reference value :  1.08474e-05 Reference value :  1.08774e-05 Reference value :  1.08929e-05 Reference value :  1.09125e-05 Reference value :  1.09425e-05 Reference value :  1.09445e-05 Reference value :  1.09621e-05 Reference value :  1.09901e-05 Reference value :  1.09978e-05 Reference value :  1.10251e-05 Reference value :  1.10466e-05 Reference value :  1.10527e-05 Reference value :  1.10827e-05 Reference value :  1.10982e-05 Reference value :  1.11178e-05 Reference value :  1.11478e-05 Reference value :  1.11498e-05 Reference value :  1.11694e-05 Reference value :  1.11974e-05 Reference value :  1.12047e-05 Reference value :  1.12344e-05 Reference value :  1.12519e-05 Reference value :  1.12580e-05 Reference value :  1.12880e-05 Reference value :  1.13035e-05 Reference value :  1.13231e-05 Reference value :  1.13531e-05 Reference value :  1.13551e-05 Reference value :  1.13747e-05 Reference value :  1.14027e-05 Reference value :  1.14100e-05 Reference value :  1.14397e-05 Reference value :  1.14572e-05 Reference value :  1.14633e-05 Reference value :  1.14933e-05 Reference value :  1.15088e-05 Reference value :  1.15284e-05 Reference value :  1.15584e-05 Reference value :  1.15604e-05 Reference value :  1.15800e-05 Reference value :  1.16080e-05 Reference value :  1.16153e-05 Reference value :  1.16450e-05 Reference value :  1.16625e-05 Reference value :  1.16686e-05 Reference value :  1.16986e-05 Reference value :  1.17141e-05 Reference value :  1.17337e-05 Reference value :  1.17637e-05 Reference value :  1.17657e-05 Reference value :  1.17853e-05 Reference value :  1.18133e-05 Reference value :  1.18206e-05 Reference value :  1.18503e-05 Reference value :  1.18678e-05 Reference value :  1.18739e-05 Reference value :  1.19039e-05 Reference value :  1.19194e-05 Reference value :  1.19390e-05 Reference value :  1.19690e-05 Reference value :  1.19710e-05 Reference value :  1.19906e-05 Reference value :  1.20186e-05 Reference value :  1.20259e-05 Reference value :  1.20556e-05 Reference value :  1.20731e-05 Reference value :  1.20792e-05 Reference value :  1.21092e-05 Reference value :  1.21247e-05 Reference value :  1.21423e-05 Reference value :  1.21723e-05 Reference value :  1.21763e-05 Reference value :  1.21959e-05 Reference value :  1.22239e-05 Reference value :  1.22312e-05 Reference value :  1.22610e-05 Reference value :  1.22784e-05 Reference value :  1.22845e-05 Reference value :  1.23145e-05 Reference value :  1.23300e-05 Reference value :  1.23496e-05 Reference value :  1.23776e-05 Reference value :  1.23816e-05 Reference value :  1.24012e-05 Reference value :  1.24292e-05 Reference value :  1.24365e-05 Reference value :  1.24663e-05 Reference value :  1.24838e-05 Reference value :  1.24899e-05 Reference value :  1.25199e-05 Reference value :  1.25353e-05 Reference value :  1.25549e-05 Reference value :  1.25849e-05 Reference value :  1.25869e-05 Reference value :  1.26065e-05 Reference value :  1.26345e-05 Reference value :  1.26418e-05 Reference value :  1.26716e-05 Reference value :  1.26891e-05 Reference value :  1.26952e-05 Reference value :  1.27252e-05 Reference value :  1.27407e-05 Reference value :  1.27602e-05 Reference value :  1.27902e-05 Reference value :  1.27922e-05 Reference value :  1.28118e-05 Reference value :  1.28398e-05 Reference value :  1.28471e-05 Reference value :  1.28769e-05 Reference value :  1.28944e-05 Reference value :  1.29005e-05 Reference value :  1.29305e-05 Reference value :  1.29460e-05 Reference value :  1.29655e-05 Reference value :  1.29955e-05 Reference value :  1.29975e-05 Reference value :  1.30151e-05 Reference value :  1.30451e-05 Reference value :  1.30525e-05 Reference value :  1.30822e-05 Reference value :  1.30997e-05 Reference value :  1.31058e-05 Reference value :  1.31358e-05 Reference value :  1.31513e-05 Reference value :  1.31708e-05 Reference value :  1.32008e-05 Reference value :  1.32028e-05 Reference value :  1.32204e-05 Reference value :  1.32484e-05 Reference value :  1.32562e-05 Reference value :  1.32835e-05 Reference value :  1.33050e-05 Reference value :  1.33111e-05 Reference value :  1.33411e-05 Reference value :  1.33566e-05 Reference value :  1.33761e-05 Reference value :  1.34061e-05 Reference value :  1.34081e-05 Reference value :  1.34257e-05 Reference value :  1.34537e-05 Reference value :  1.34615e-05 Reference value :  1.34888e-05 Reference value :  1.35103e-05 Reference value :  1.35164e-05 Reference value :  1.35464e-05 Reference value :  1.35619e-05 Reference value :  1.35814e-05 Reference value :  1.36114e-05 Reference value :  1.36134e-05 Reference value :  1.36310e-05 Reference value :  1.36590e-05 Reference value :  1.36668e-05 Reference value :  1.36941e-05 Reference value :  1.37156e-05 Reference value :  1.37181e-05 Reference value :  1.37477e-05 Reference value :  1.37672e-05 Reference value :  1.37867e-05 Reference value :  1.38167e-05 Reference value :  1.38188e-05 Reference value :  1.38383e-05 Reference value :  1.38663e-05 Reference value :  1.38721e-05 Reference value :  1.38994e-05 Reference value :  1.39209e-05 Reference value :  1.39270e-05 Reference value :  1.39570e-05 Reference value :  1.39725e-05 Reference value :  1.39921e-05 Reference value :  1.40221e-05 Reference value :  1.40241e-05 Reference value :  1.40417e-05 Reference value :  1.40697e-05 Reference value :  1.40774e-05 Reference value :  1.41047e-05 Reference value :  1.41262e-05 Reference value :  1.41323e-05 Reference value :  1.41623e-05 Reference value :  1.41778e-05 Reference value :  1.41974e-05 Reference value :  1.42274e-05 Reference value :  1.42294e-05 Reference value :  1.42470e-05 Reference value :  1.42750e-05 Reference value :  1.42827e-05 Reference value :  1.43100e-05 Reference value :  1.43315e-05 Reference value :  1.43376e-05 Reference value :  1.43676e-05 Reference value :  1.43831e-05 Reference value :  1.44027e-05 Reference value :  1.44327e-05 Reference value :  1.44347e-05 Reference value :  1.44543e-05 Reference value :  1.44823e-05 Reference value :  1.44896e-05 Reference value :  1.45193e-05 Reference value :  1.45368e-05 Reference value :  1.45429e-05 Reference value :  1.45729e-05 Reference value :  1.45884e-05 Reference value :  1.46080e-05 Reference value :  1.46380e-05 Reference value :  1.46400e-05 Reference value :  1.46596e-05 Reference value :  1.46876e-05 Reference value :  1.46949e-05 Reference value :  1.47246e-05 Reference value :  1.47421e-05 Reference value :  1.47482e-05 Reference value :  1.47782e-05 Reference value :  1.47937e-05 Reference value :  1.48133e-05 Reference value :  1.48433e-05 Reference value :  1.48453e-05 Reference value :  1.48649e-05 Reference value :  1.48929e-05 Reference value :  1.48986e-05 Reference value :  1.49279e-05 Reference value :  1.49474e-05 Reference value :  1.49535e-05 Reference value :  1.49835e-05 Reference value :  1.49990e-05 Reference value :  1.50186e-05 Reference value :  1.50486e-05 Reference value :  1.50506e-05 Reference value :  1.50702e-05 Reference value :  1.50982e-05 Reference value :  1.51055e-05 Reference value :  1.51352e-05 Reference value :  1.51527e-05 Reference value :  1.51588e-05 Reference value :  1.51888e-05 Reference value :  1.52043e-05 Reference value :  1.52239e-05 Reference value :  1.52539e-05 Reference value :  1.52559e-05 Reference value :  1.52755e-05 Reference value :  1.53035e-05 Reference value :  1.53108e-05 Reference value :  1.53405e-05 Reference value :  1.53580e-05 Reference value :  1.53641e-05 Reference value :  1.53941e-05 Reference value :  1.54096e-05 Reference value :  1.54292e-05 Reference value :  1.54592e-05 Reference value :  1.54612e-05 Reference value :  1.54808e-05 Reference value :  1.55088e-05 Reference value :  1.55161e-05 Reference value :  1.55459e-05 Reference value :  1.55633e-05 Reference value :  1.55694e-05 Reference value :  1.55994e-05 Reference value :  1.56149e-05 Reference value :  1.56345e-05 Reference value :  1.56645e-05 Reference value :  1.56665e-05 Reference value :  1.56861e-05 Reference value :  1.57141e-05 Reference value :  1.57214e-05 Reference value :  1.57512e-05 Reference value :  1.57687e-05 Reference value :  1.57748e-05 Reference value :  1.58048e-05 Reference value :  1.58203e-05 Reference value :  1.58398e-05 Reference value :  1.58698e-05 Reference value :  1.58718e-05 Reference value :  1.58894e-05 Reference value :  1.59174e-05 Reference value :  1.59252e-05 Reference value :  1.59525e-05 Reference value :  1.59740e-05 Reference value :  1.59801e-05 Reference value :  1.60101e-05 Reference value :  1.60256e-05 Reference value :  1.60451e-05 Reference value :  1.60751e-05 Reference value :  1.60771e-05 Reference value :  1.60967e-05 Reference value :  1.61247e-05 Reference value :  1.61320e-05 Reference value :  1.61618e-05 Reference value :  1.61793e-05 Reference value :  1.61854e-05 Reference value :  1.62154e-05 Reference value :  1.62309e-05 Reference value :  1.62504e-05 Reference value :  1.62804e-05 Reference value :  1.62824e-05 Reference value :  1.63020e-05 Reference value :  1.63300e-05 Reference value :  1.63374e-05 Reference value :  1.63671e-05 Reference value :  1.63846e-05 Reference value :  1.63907e-05 Reference value :  1.64207e-05 Reference value :  1.64362e-05 Reference value :  1.64557e-05 Reference value :  1.64857e-05 Reference value :  1.64877e-05 Reference value :  1.65073e-05 Reference value :  1.65353e-05 Reference value :  1.65427e-05 Reference value :  1.65724e-05 Reference value :  1.65899e-05 Reference value :  1.65960e-05 Reference value :  1.66260e-05 Reference value :  1.66415e-05 Reference value :  1.66610e-05 Reference value :  1.66910e-05 Reference value :  1.66930e-05 Reference value :  1.67126e-05 Reference value :  1.67406e-05 Reference value :  1.67480e-05 Reference value :  1.67777e-05 Reference value :  1.67952e-05 Reference value :  1.68013e-05 Reference value :  1.68313e-05 Reference value :  1.68468e-05 Reference value :  1.68663e-05 Reference value :  1.68963e-05 Reference value :  1.68983e-05 Reference value :  1.69179e-05 Reference value :  1.69459e-05 Reference value :  1.69533e-05 Reference value :  1.69830e-05 Reference value :  1.70005e-05 Reference value :  1.70066e-05 Reference value :  1.70366e-05 Reference value :  1.70521e-05 Reference value :  1.70717e-05 Reference value :  1.71017e-05 Reference value :  1.71037e-05 Reference value :  1.71232e-05 Reference value :  1.71512e-05 Reference value :  1.71586e-05 Reference value :  1.71883e-05 Reference value :  1.72058e-05 Reference value :  1.72119e-05 Reference value :  1.72419e-05 Reference value :  1.72574e-05 Reference value :  1.72770e-05 Reference value :  1.73070e-05 Reference value :  1.73090e-05 Reference value :  1.73266e-05 Reference value :  1.73546e-05 Reference value :  1.73623e-05 Reference value :  1.73916e-05 Reference value :  1.74111e-05 Reference value :  1.74172e-05 Reference value :  1.74472e-05 Reference value :  1.74627e-05 Reference value :  1.74823e-05 Reference value :  1.75123e-05 Reference value :  1.75143e-05 Reference value :  1.75319e-05 Reference value :  1.75599e-05 Reference value :  1.75676e-05 Reference value :  1.75949e-05 Reference value :  1.76164e-05 Reference value :  1.76225e-05 Reference value :  1.76525e-05 Reference value :  1.76680e-05 Reference value :  1.76876e-05 Reference value :  1.77176e-05 Reference value :  1.77196e-05 Reference value :  1.77372e-05 Reference value :  1.77652e-05 Reference value :  1.77729e-05 Reference value :  1.78022e-05 Reference value :  1.78217e-05 Reference value :  1.78278e-05 Reference value :  1.78578e-05 Reference value :  1.78733e-05 Reference value :  1.78929e-05 Reference value :  1.79209e-05 Reference value :  1.79249e-05 Reference value :  1.79445e-05 Reference value :  1.79725e-05 Reference value :  1.79798e-05 Reference value :  1.80050e-05 Reference value :  1.80285e-05 Reference value :  1.80346e-05 Reference value :  1.80646e-05 Reference value :  1.80801e-05 Reference value :  1.80997e-05 Reference value :  1.81253e-05 Reference value :  1.81310e-05 Reference value :  1.81394e-05 Reference value :  1.81694e-05 Reference value :  1.81829e-05 Reference value :  1.82025e-05 Reference value :  1.82325e-05 Reference value :  1.82345e-05 Reference value :  1.82503e-05 Reference value :  1.82569e-05 Reference value :  1.82844e-05 Reference value :  1.83060e-05 Reference value :  1.83355e-05 Reference value :  1.83416e-05 Reference value :  1.83716e-05 Reference value :  1.83777e-05 Reference value :  1.83854e-05 Reference value :  1.84070e-05 Reference value :  1.84350e-05 Reference value :  1.84370e-05 Reference value :  1.84566e-05 Reference value :  1.84846e-05 Reference value :  1.84920e-05 Reference value :  1.85020e-05 Reference value :  1.85249e-05 Reference value :  1.85404e-05 Reference value :  1.85466e-05 Reference value :  1.85766e-05 Reference value :  1.85920e-05 Reference value :  1.86116e-05 Reference value :  1.86262e-05 Reference value :  1.86434e-05 Reference value :  1.86495e-05 Reference value :  1.86795e-05 Reference value :  1.86950e-05 Reference value :  1.87146e-05 Reference value :  1.87446e-05 Reference value :  1.87466e-05 Reference value :  1.87511e-05 Reference value :  1.87689e-05 Reference value :  1.87964e-05 Reference value :  1.88180e-05 Reference value :  1.88460e-05 Reference value :  1.88480e-05 Reference value :  1.88656e-05 Reference value :  1.88768e-05 Reference value :  1.88974e-05 Reference value :  1.89190e-05 Reference value :  1.89470e-05 Reference value :  1.89493e-05 Reference value :  1.89706e-05 Reference value :  1.89983e-05 Reference value :  1.90010e-05 Reference value :  1.90129e-05 Reference value :  1.90429e-05 Reference value :  1.90508e-05 Reference value :  1.90645e-05 Reference value :  1.90945e-05 Reference value :  1.91031e-05 Reference value :  1.91253e-05 Reference value :  1.91319e-05 Reference value :  1.91539e-05 Reference value :  1.91549e-05 Reference value :  1.91613e-05 Reference value :  1.91675e-05 Reference value :  1.91975e-05 Reference value :  1.92130e-05 Reference value :  1.92325e-05 Reference value :  1.92511e-05 Reference value :  1.92644e-05 Reference value :  1.92705e-05 Reference value :  1.93005e-05 Reference value :  1.93160e-05 Reference value :  1.93356e-05 Reference value :  1.93636e-05 Reference value :  1.93676e-05 Reference value :  1.93760e-05 Reference value :  1.93879e-05 Reference value :  1.94159e-05 Reference value :  1.94230e-05 Reference value :  1.94530e-05 Reference value :  1.94685e-05 Reference value :  1.94746e-05 Reference value :  1.95003e-05 Reference value :  1.95089e-05 Reference value :  1.95184e-05 Reference value :  1.95400e-05 Reference value :  1.95695e-05 Reference value :  1.95756e-05 Reference value :  1.96056e-05 Reference value :  1.96211e-05 Reference value :  1.96263e-05 Reference value :  1.96479e-05 Reference value :  1.96734e-05 Reference value :  1.96796e-05 Reference value :  1.97096e-05 Reference value :  1.97250e-05 Reference value :  1.97446e-05 Reference value :  1.97521e-05 Reference value :  1.97764e-05 Reference value :  1.97825e-05 Reference value :  1.98125e-05 Reference value :  1.98280e-05 Reference value :  1.98476e-05 Reference value :  1.98751e-05 Reference value :  1.98784e-05 Reference value :  1.98811e-05 Reference value :  1.98972e-05 Reference value :  1.99252e-05 Reference value :  1.99350e-05 Reference value :  1.99623e-05 Reference value :  1.99838e-05 Reference value :  1.99899e-05 Reference value :  2.00015e-05 Reference value :  2.00229e-05 Reference value :  2.00355e-05 Reference value :  2.00620e-05 Reference value :  2.00855e-05 Reference value :  2.00916e-05 Reference value :  2.01216e-05 Reference value :  2.01273e-05 Reference value :  2.01354e-05 Reference value :  2.01570e-05 Reference value :  2.01850e-05 Reference value :  2.01870e-05 Reference value :  2.02066e-05 Reference value :  2.02346e-05 Reference value :  2.02420e-05 Reference value :  2.02520e-05 Reference value :  2.02769e-05 Reference value :  2.02904e-05 Reference value :  2.02966e-05 Reference value :  2.03266e-05 Reference value :  2.03420e-05 Reference value :  2.03596e-05 Reference value :  2.03761e-05 Reference value :  2.03934e-05 Reference value :  2.03995e-05 Reference value :  2.04295e-05 Reference value :  2.04450e-05 Reference value :  2.04646e-05 Reference value :  2.04926e-05 Reference value :  2.04966e-05 Reference value :  2.05012e-05 Reference value :  2.05209e-05 Reference value :  2.05464e-05 Reference value :  2.05680e-05 Reference value :  2.05975e-05 Reference value :  2.06036e-05 Reference value :  2.06260e-05 Reference value :  2.06379e-05 Reference value :  2.06474e-05 Reference value :  2.06690e-05 Reference value :  2.06970e-05 Reference value :  2.06990e-05 Reference value :  2.07186e-05 Reference value :  2.07466e-05 Reference value :  2.07509e-05 Reference value :  2.07609e-05 Reference value :  2.07909e-05 Reference value :  2.08008e-05 Reference value :  2.08165e-05 Reference value :  2.08445e-05 Reference value :  2.08531e-05 Reference value :  2.08753e-05 Reference value :  2.08819e-05 Reference value :  2.09034e-05 Reference value :  2.09095e-05 Reference value :  2.09395e-05 Reference value :  2.09550e-05 Reference value :  2.09746e-05 Reference value :  2.10003e-05 Reference value :  2.10060e-05 Reference value :  2.10144e-05 Reference value :  2.10444e-05 Reference value :  2.10590e-05 Reference value :  2.10855e-05 Reference value :  2.11090e-05 Reference value :  2.11151e-05 Reference value :  2.11270e-05 Reference value :  2.11499e-05 Reference value :  2.11605e-05 Reference value :  2.11890e-05 Reference value :  2.12105e-05 Reference value :  2.12166e-05 Reference value :  2.12466e-05 Reference value :  2.12527e-05 Reference value :  2.12604e-05 Reference value :  2.12820e-05 Reference value :  2.13100e-05 Reference value :  2.13120e-05 Reference value :  2.13316e-05 Reference value :  2.13596e-05 Reference value :  2.13654e-05 Reference value :  2.13765e-05 Reference value :  2.13979e-05 Reference value :  2.14154e-05 Reference value :  2.14216e-05 Reference value :  2.14516e-05 Reference value :  2.14670e-05 Reference value :  2.14866e-05 Reference value :  2.15012e-05 Reference value :  2.15184e-05 Reference value :  2.15245e-05 Reference value :  2.15545e-05 Reference value :  2.15700e-05 Reference value :  2.15896e-05 Reference value :  2.16196e-05 Reference value :  2.16216e-05 Reference value :  2.16262e-05 Reference value :  2.16459e-05 Reference value :  2.16714e-05 Reference value :  2.16930e-05 Reference value :  2.17210e-05 Reference value :  2.17230e-05 Reference value :  2.17426e-05 Reference value :  2.17520e-05 Reference value :  2.17724e-05 Reference value :  2.17940e-05 Reference value :  2.18235e-05 Reference value :  2.18296e-05 Reference value :  2.18596e-05 Reference value :  2.18746e-05 Reference value :  2.18771e-05 Reference value :  2.19039e-05 Reference value :  2.19254e-05 Reference value :  2.19315e-05 Reference value :  2.19615e-05 Reference value :  2.19770e-05 Reference value :  2.19966e-05 Reference value :  2.20023e-05 Reference value :  2.20269e-05 Reference value :  2.20284e-05 Reference value :  2.20345e-05 Reference value :  2.20645e-05 Reference value :  2.20800e-05 Reference value :  2.20996e-05 Reference value :  2.21296e-05 Reference value :  2.21316e-05 Reference value :  2.21492e-05 Reference value :  2.21772e-05 Reference value :  2.21850e-05 Reference value :  2.22122e-05 Reference value :  2.22337e-05 Reference value :  2.22398e-05 Reference value :  2.22698e-05 Reference value :  2.22853e-05 Reference value :  2.23049e-05 Reference value :  2.23349e-05 Reference value :  2.23369e-05 Reference value :  2.23565e-05 Reference value :  2.23845e-05 Reference value :  2.23918e-05 Reference value :  2.24216e-05 Reference value :  2.24390e-05 Reference value :  2.24451e-05 Reference value :  2.24751e-05 Reference value :  2.24906e-05 Reference value :  2.25102e-05 Reference value :  2.25402e-05 Reference value :  2.25422e-05 Reference value :  2.25618e-05 Reference value :  2.25898e-05 Reference value :  2.25971e-05 Reference value :  2.26269e-05 Reference value :  2.26444e-05 Reference value :  2.26505e-05 Reference value :  2.26805e-05 Reference value :  2.26960e-05 Reference value :  2.27155e-05 Reference value :  2.27455e-05 Reference value :  2.27475e-05 Reference value :  2.27671e-05 Reference value :  2.27951e-05 Reference value :  2.28024e-05 Reference value :  2.28322e-05 Reference value :  2.28497e-05 Reference value :  2.28558e-05 Reference value :  2.28858e-05 Reference value :  2.29013e-05 Reference value :  2.29208e-05 Reference value :  2.29488e-05 Reference value :  2.29528e-05 Reference value :  2.29724e-05 Reference value :  2.30004e-05 Reference value :  2.30077e-05 Reference value :  2.30375e-05 Reference value :  2.30550e-05 Reference value :  2.30611e-05 Reference value :  2.30911e-05 Reference value :  2.31066e-05 Reference value :  2.31261e-05 Reference value :  2.31561e-05 Reference value :  2.31581e-05 Reference value :  2.31777e-05 Reference value :  2.32057e-05 Reference value :  2.32131e-05 Reference value :  2.32428e-05 Reference value :  2.32603e-05 Reference value :  2.32664e-05 Reference value :  2.32944e-05 Reference value :  2.33119e-05 Reference value :  2.33294e-05 Reference value :  2.33594e-05 Reference value :  2.33634e-05 Reference value :  2.33810e-05 Reference value :  2.34090e-05 Reference value :  2.34168e-05 Reference value :  2.34461e-05 Reference value :  2.34656e-05 Reference value :  2.34717e-05 Reference value :  2.35017e-05 Reference value :  2.35172e-05 Reference value :  2.35367e-05 Reference value :  2.35647e-05 Reference value :  2.35686e-05 Reference value :  2.35743e-05 Reference value :  2.35983e-05 Reference value :  2.36183e-05 Reference value :  2.36221e-05 Reference value :  2.36434e-05 Reference value :  2.36694e-05 Reference value :  2.36714e-05 Reference value :  2.36910e-05 Reference value :  2.37190e-05 Reference value :  2.37263e-05 Reference value :  2.37560e-05 Reference value :  2.37735e-05 Reference value :  2.37796e-05 Reference value :  2.38096e-05 Reference value :  2.38251e-05 Reference value :  2.38447e-05 Reference value :  2.38747e-05 Reference value :  2.38767e-05 Reference value :  2.38963e-05 Reference value :  2.39243e-05 Reference value :  2.39316e-05 Reference value :  2.39614e-05 Reference value :  2.39788e-05 Reference value :  2.39849e-05 Reference value :  2.40149e-05 Reference value :  2.40304e-05 Reference value :  2.40500e-05 Reference value :  2.40800e-05 Reference value :  2.40820e-05 Reference value :  2.41016e-05 Reference value :  2.41296e-05 Reference value :  2.41369e-05 Reference value :  2.41667e-05 Reference value :  2.41842e-05 Reference value :  2.41903e-05 Reference value :  2.42203e-05 Reference value :  2.42357e-05 Reference value :  2.42553e-05 Reference value :  2.42853e-05 Reference value :  2.42873e-05 Reference value :  2.43069e-05 Reference value :  2.43349e-05 Reference value :  2.43422e-05 Reference value :  2.43720e-05 Reference value :  2.43895e-05 Reference value :  2.43956e-05 Reference value :  2.44256e-05 Reference value :  2.44411e-05 Reference value :  2.44606e-05 Reference value :  2.44906e-05 Reference value :  2.44926e-05 Reference value :  2.45082e-05 Reference value :  2.45382e-05 Reference value :  2.45460e-05 Reference value :  2.45733e-05 Reference value :  2.45948e-05 Reference value :  2.46009e-05 Reference value :  2.46309e-05 Reference value :  2.46464e-05 Reference value :  2.46659e-05 Reference value :  2.46959e-05 Reference value :  2.46979e-05 Reference value :  2.47175e-05 Reference value :  2.47455e-05 Reference value :  2.47529e-05 Reference value :  2.47826e-05 Reference value :  2.48001e-05 Reference value :  2.48062e-05 Reference value :  2.48362e-05 Reference value :  2.48517e-05 Reference value :  2.48712e-05 Reference value :  2.49012e-05 Reference value :  2.49032e-05 Reference value :  2.49228e-05 Reference value :  2.49508e-05 Reference value :  2.49582e-05 Reference value :  2.49879e-05 Reference value :  2.50054e-05 Reference value :  2.50115e-05 Reference value :  2.50395e-05 Reference value :  2.50570e-05 Reference value :  2.50765e-05 Reference value :  2.51065e-05 Reference value :  2.51085e-05 Reference value :  2.51281e-05 Reference value :  2.51561e-05 Reference value :  2.51635e-05 Reference value :  2.51932e-05 Reference value :  2.52107e-05 Reference value :  2.52168e-05 Reference value :  2.52468e-05 Reference value :  2.52623e-05 Reference value :  2.52818e-05 Reference value :  2.53118e-05 Reference value :  2.53138e-05 Reference value :  2.53334e-05 Reference value :  2.53614e-05 Reference value :  2.53688e-05 Reference value :  2.53985e-05 Reference value :  2.54160e-05 Reference value :  2.54221e-05 Reference value :  2.54521e-05 Reference value :  2.54676e-05 Reference value :  2.54871e-05 Reference value :  2.55171e-05 Reference value :  2.55192e-05 Reference value :  2.55367e-05 Reference value :  2.55647e-05 Reference value :  2.55725e-05 Reference value :  2.55998e-05 Reference value :  2.56213e-05 Reference value :  2.56274e-05 Reference value :  2.56574e-05 Reference value :  2.56729e-05 Reference value :  2.56925e-05 Reference value :  2.57225e-05 Reference value :  2.57245e-05 Reference value :  2.57441e-05 Reference value :  2.57721e-05 Reference value :  2.57794e-05 Reference value :  2.58091e-05 Reference value :  2.58266e-05 Reference value :  2.58327e-05 Reference value :  2.58627e-05 Reference value :  2.58782e-05 Reference value :  2.58978e-05 Reference value :  2.59278e-05 Reference value :  2.59298e-05 Reference value :  2.59474e-05 Reference value :  2.59774e-05 Reference value :  2.59847e-05 Reference value :  2.60144e-05 Reference value :  2.60319e-05 Reference value :  2.60380e-05 Reference value :  2.60680e-05 Reference value :  2.60835e-05 Reference value :  2.61031e-05 Reference value :  2.61331e-05 Reference value :  2.61351e-05 Reference value :  2.61547e-05 Reference value :  2.61827e-05 Reference value :  2.61900e-05 Reference value :  2.62197e-05 Reference value :  2.62372e-05 Reference value :  2.62433e-05 Reference value :  2.62733e-05 Reference value :  2.62888e-05 Reference value :  2.63084e-05 Reference value :  2.63384e-05 Reference value :  2.63404e-05 Reference value :  2.63600e-05 Reference value :  2.63880e-05 Reference value :  2.63953e-05 Reference value :  2.64250e-05 Reference value :  2.64425e-05 Reference value :  2.64486e-05 Reference value :  2.64786e-05 Reference value :  2.64941e-05 Reference value :  2.65137e-05 Reference value :  2.65437e-05 Reference value :  2.65457e-05 Reference value :  2.65653e-05 Reference value :  2.65933e-05 Reference value :  2.66006e-05 Reference value :  2.66303e-05 Reference value :  2.66478e-05 Reference value :  2.66539e-05 Reference value :  2.66839e-05 Reference value :  2.66994e-05 Reference value :  2.67190e-05 Reference value :  2.67490e-05 Reference value :  2.67510e-05 Reference value :  2.67706e-05 Reference value :  2.67986e-05 Reference value :  2.68059e-05 Reference value :  2.68356e-05 Reference value :  2.68531e-05 Reference value :  2.68592e-05 Reference value :  2.68892e-05 Reference value :  2.69047e-05 Reference value :  2.69243e-05 Reference value :  2.69543e-05 Reference value :  2.69563e-05 Reference value :  2.69739e-05 Reference value :  2.70019e-05 Reference value :  2.70097e-05 Reference value :  2.70369e-05 Reference value :  2.70584e-05 Reference value :  2.70645e-05 Reference value :  2.70945e-05 Reference value :  2.71100e-05 Reference value :  2.71296e-05 Reference value :  2.71596e-05 Reference value :  2.71616e-05 Reference value :  2.71812e-05 Reference value :  2.72092e-05 Reference value :  2.72165e-05 Reference value :  2.72463e-05 Reference value :  2.72637e-05 Reference value :  2.72698e-05 Reference value :  2.72998e-05 Reference value :  2.73153e-05 Reference value :  2.73349e-05 Reference value :  2.73649e-05 Reference value :  2.73669e-05 Reference value :  2.73865e-05 Reference value :  2.74145e-05 Reference value :  2.74218e-05 Reference value :  2.74516e-05 Reference value :  2.74691e-05 Reference value :  2.74752e-05 Reference value :  2.75052e-05 Reference value :  2.75207e-05 Reference value :  2.75402e-05 Reference value :  2.75702e-05 Reference value :  2.75722e-05 Reference value :  2.75918e-05 Reference value :  2.76198e-05 Reference value :  2.76271e-05 Reference value :  2.76569e-05 Reference value :  2.76744e-05 Reference value :  2.76805e-05 Reference value :  2.77105e-05 Reference value :  2.77260e-05 Reference value :  2.77455e-05 Reference value :  2.77755e-05 Reference value :  2.77775e-05 Reference value :  2.77971e-05 Reference value :  2.78251e-05 Reference value :  2.78324e-05 Reference value :  2.78622e-05 Reference value :  2.78797e-05 Reference value :  2.78858e-05 Reference value :  2.79158e-05 Reference value :  2.79313e-05 Reference value :  2.79468e-05 Reference value :  2.79768e-05 Reference value :  2.79827e-05 Reference value :  2.79984e-05 Reference value :  2.80264e-05 Reference value :  2.80350e-05 Reference value :  2.80615e-05 Reference value :  2.80850e-05 Reference value :  2.80911e-05 Reference value :  2.81211e-05 Reference value :  2.81366e-05 Reference value :  2.81561e-05 Reference value :  2.81861e-05 Reference value :  2.81881e-05 Reference value :  2.82077e-05 Reference value :  2.82357e-05 Reference value :  2.82431e-05 Reference value :  2.82728e-05 Reference value :  2.82903e-05 Reference value :  2.82964e-05 Reference value :  2.83264e-05 Reference value :  2.83419e-05 Reference value :  2.83614e-05 Reference value :  2.83914e-05 Reference value :  2.83934e-05 Reference value :  2.84130e-05 Reference value :  2.84410e-05 Reference value :  2.84484e-05 Reference value :  2.84781e-05 Reference value :  2.84956e-05 Reference value :  2.85017e-05 Reference value :  2.85317e-05 Reference value :  2.85472e-05 Reference value :  2.85667e-05 Reference value :  2.85947e-05 Reference value :  2.85987e-05 Reference value :  2.86183e-05 Reference value :  2.86463e-05 Reference value :  2.86537e-05 Reference value :  2.86834e-05 Reference value :  2.87009e-05 Reference value :  2.87070e-05 Reference value :  2.87370e-05 Reference value :  2.87525e-05 Reference value :  2.87721e-05 Reference value :  2.88021e-05 Reference value :  2.88041e-05 Reference value :  2.88236e-05 Reference value :  2.88516e-05 Reference value :  2.88590e-05 Reference value :  2.88887e-05 Reference value :  2.89062e-05 Reference value :  2.89123e-05 Reference value :  2.89423e-05 Reference value :  2.89578e-05 Reference value :  2.89774e-05 Reference value :  2.90074e-05 Reference value :  2.90094e-05 Reference value :  2.90270e-05 Reference value :  2.90550e-05 Reference value :  2.90627e-05 Reference value :  2.90920e-05 Reference value :  2.91115e-05 Reference value :  2.91176e-05 Reference value :  2.91476e-05 Reference value :  2.91631e-05 Reference value :  2.91827e-05 Reference value :  2.92127e-05 Reference value :  2.92147e-05 Reference value :  2.92343e-05 Reference value :  2.92623e-05 Reference value :  2.92696e-05 Reference value :  2.92993e-05 Reference value :  2.93168e-05 Reference value :  2.93229e-05 Reference value :  2.93529e-05 Reference value :  2.93684e-05 Reference value :  2.93880e-05 Reference value :  2.94180e-05 Reference value :  2.94200e-05 Reference value :  2.94396e-05 Reference value :  2.94676e-05 Reference value :  2.94749e-05 Reference value :  2.95046e-05 Reference value :  2.95221e-05 Reference value :  2.95282e-05 Reference value :  2.95582e-05 Reference value :  2.95737e-05 Reference value :  2.95913e-05 Reference value :  2.96213e-05 Reference value :  2.96253e-05 Reference value :  2.96429e-05 Reference value :  2.96709e-05 Reference value :  2.96786e-05 Reference value :  2.97059e-05 Reference value :  2.97274e-05 Reference value :  2.97335e-05 Reference value :  2.97635e-05 Reference value :  2.97790e-05 Reference value :  2.97986e-05 Reference value :  2.98286e-05 Reference value :  2.98306e-05 Reference value :  2.98502e-05 Reference value :  2.98782e-05 Reference value :  2.98855e-05 Reference value :  2.99152e-05 Reference value :  2.99327e-05 Reference value :  2.99388e-05 Reference value :  2.99688e-05 Reference value :  2.99843e-05 Reference value :  3.00002e-05 Reference value :  3.00230e-05 Reference value :  3.00365e-05 Reference value :  3.00426e-05 Reference value :  3.00726e-05 Reference value :  3.00881e-05 Reference value :  3.01077e-05 Reference value :  3.01377e-05 Reference value :  3.01397e-05 Reference value :  3.01593e-05 Reference value :  3.01893e-05 Reference value :  3.01963e-05 Reference value :  3.02263e-05 Reference value :  3.02418e-05 Reference value :  3.02479e-05 Reference value :  3.02779e-05 Reference value :  3.02934e-05 Reference value :  3.03130e-05 Reference value :  3.03410e-05 Reference value :  3.03450e-05 Reference value :  3.03646e-05 Reference value :  3.03926e-05 Reference value :  3.03983e-05 Reference value :  3.04256e-05 Reference value :  3.04471e-05 Reference value :  3.04532e-05 Reference value :  3.04832e-05 Reference value :  3.04987e-05 Reference value :  3.05183e-05 Reference value :  3.05463e-05 Reference value :  3.05503e-05 Reference value :  3.05679e-05 Reference value :  3.05979e-05 Reference value :  3.06052e-05 Reference value :  3.06349e-05 Reference value :  3.06524e-05 Reference value :  3.06585e-05 Reference value :  3.06885e-05 Reference value :  3.07040e-05 Reference value :  3.07216e-05 Reference value :  3.07516e-05 Reference value :  3.07556e-05 Reference value :  3.07752e-05 Reference value :  3.08032e-05 Reference value :  3.08105e-05 Reference value :  3.08402e-05 Reference value :  3.08577e-05 Reference value :  3.08638e-05 Reference value :  3.08938e-05 Reference value :  3.09093e-05 Reference value :  3.09289e-05 Reference value :  3.09589e-05 Reference value :  3.09609e-05 Reference value :  3.09805e-05 Reference value :  3.10085e-05 Reference value :  3.10158e-05 Reference value :  3.10455e-05 Reference value :  3.10630e-05 Reference value :  3.10691e-05 Reference value :  3.10991e-05 Reference value :  3.11146e-05 Reference value :  3.11322e-05 Reference value :  3.11602e-05 Reference value :  3.11660e-05 Reference value :  3.11798e-05 Reference value :  3.12078e-05 Reference value :  3.12184e-05 Reference value :  3.12429e-05 Reference value :  3.12684e-05 Reference value :  3.12724e-05 Reference value :  3.13004e-05 Reference value :  3.13199e-05 Reference value :  3.13375e-05 Reference value :  3.13655e-05 Reference value :  3.13713e-05 Reference value :  3.13851e-05 Reference value :  3.14131e-05 Reference value :  3.14237e-05 Reference value :  3.14462e-05 Reference value :  3.14702e-05 Reference value :  3.14740e-05 Reference value :  3.14838e-05 Reference value :  3.15098e-05 Reference value :  3.15253e-05 Reference value :  3.15428e-05 Reference value :  3.15708e-05 Reference value :  3.15766e-05 Reference value :  3.15904e-05 Reference value :  3.16204e-05 Reference value :  3.16290e-05 Reference value :  3.16555e-05 Reference value :  3.16790e-05 Reference value :  3.16851e-05 Reference value :  3.17151e-05 Reference value :  3.17306e-05 Reference value :  3.17501e-05 Reference value :  3.17801e-05 Reference value :  3.17821e-05 Reference value :  3.18017e-05 Reference value :  3.18297e-05 Reference value :  3.18371e-05 Reference value :  3.18668e-05 Reference value :  3.18843e-05 Reference value :  3.18904e-05 Reference value :  3.19204e-05 Reference value :  3.19359e-05 Reference value :  3.19554e-05 Reference value :  3.19854e-05 Reference value :  3.19874e-05 Reference value :  3.20050e-05 Reference value :  3.20330e-05 Reference value :  3.20408e-05 Reference value :  3.20701e-05 Reference value :  3.20896e-05 Reference value :  3.20957e-05 Reference value :  3.21257e-05 Reference value :  3.21412e-05 Reference value :  3.21607e-05 Reference value :  3.21907e-05 Reference value :  3.21927e-05 Reference value :  3.22123e-05 Reference value :  3.22403e-05 Reference value :  3.22461e-05 Reference value :  3.22734e-05 Reference value :  3.22949e-05 Reference value :  3.23010e-05 Reference value :  3.23310e-05 Reference value :  3.23465e-05 Reference value :  3.23660e-05 Reference value :  3.23960e-05 Reference value :  3.23980e-05 Reference value :  3.24176e-05 Reference value :  3.24456e-05 Reference value :  3.24530e-05 Reference value :  3.24827e-05 Reference value :  3.25002e-05 Reference value :  3.25063e-05 Reference value :  3.25363e-05 Reference value :  3.25518e-05 Reference value :  3.25713e-05 Reference value :  3.26013e-05 Reference value :  3.26034e-05 Reference value :  3.26229e-05 Reference value :  3.26509e-05 Reference value :  3.26583e-05 Reference value :  3.26880e-05 Reference value :  3.27055e-05 Reference value :  3.27116e-05 Reference value :  3.27416e-05 Reference value :  3.27571e-05 Reference value :  3.27767e-05 Reference value :  3.28067e-05 Reference value :  3.28087e-05 Reference value :  3.28282e-05 Reference value :  3.28562e-05 Reference value :  3.28636e-05 Reference value :  3.28933e-05 Reference value :  3.29108e-05 Reference value :  3.29169e-05 Reference value :  3.29469e-05 Reference value :  3.29624e-05 Reference value :  3.29820e-05 Reference value :  3.30120e-05 Reference value :  3.30140e-05 Reference value :  3.30336e-05 Reference value :  3.30616e-05 Reference value :  3.30689e-05 Reference value :  3.30986e-05 Reference value :  3.31161e-05 Reference value :  3.31222e-05 Reference value :  3.31522e-05 Reference value :  3.31677e-05 Reference value :  3.31873e-05 Reference value :  3.32173e-05 Reference value :  3.32195e-05 Reference value :  3.32409e-05 Reference value :  3.32689e-05 Reference value :  3.32759e-05 Reference value :  3.33059e-05 Reference value :  3.33214e-05 Reference value :  3.33275e-05 Reference value :  3.33575e-05 Reference value :  3.33730e-05 Reference value :  3.33926e-05 Reference value :  3.34226e-05 Reference value :  3.34246e-05 Reference value :  3.34442e-05 Reference value :  3.34722e-05 Reference value :  3.34795e-05 Reference value :  3.35092e-05 Reference value :  3.35267e-05 Reference value :  3.35328e-05 Reference value :  3.35628e-05 Reference value :  3.35783e-05 Reference value :  3.35979e-05 Reference value :  3.36259e-05 Reference value :  3.36299e-05 Reference value :  3.36475e-05 Reference value :  3.36755e-05 Reference value :  3.36820e-05 Reference value :  3.37065e-05 Reference value :  3.37320e-05 Reference value :  3.37346e-05 Reference value :  3.37601e-05 Reference value :  3.37821e-05 Reference value :  3.37875e-05 Reference value :  3.38132e-05 Reference value :  3.38347e-05 Reference value :  3.38372e-05 Reference value :  3.38628e-05 Reference value :  3.38848e-05 Reference value :  3.38901e-05 Reference value :  3.39158e-05 Reference value :  3.39373e-05 Reference value :  3.39399e-05 Reference value :  3.39674e-05 Reference value :  3.39889e-05 Reference value :  3.40065e-05 Reference value :  3.40345e-05 Reference value :  3.40403e-05 Reference value :  3.40521e-05 Reference value :  3.40801e-05 Reference value :  3.40927e-05 Reference value :  3.41171e-05 Reference value :  3.41426e-05 Reference value :  3.41467e-05 Reference value :  3.41747e-05 Reference value :  3.41942e-05 Reference value :  3.42118e-05 Reference value :  3.42398e-05 Reference value :  3.42456e-05 Reference value :  3.42594e-05 Reference value :  3.42874e-05 Reference value :  3.42980e-05 Reference value :  3.43245e-05 Reference value :  3.43479e-05 Reference value :  3.43540e-05 Reference value :  3.43840e-05 Reference value :  3.43995e-05 Reference value :  3.44191e-05 Reference value :  3.44471e-05 Reference value :  3.44511e-05 Reference value :  3.44707e-05 Reference value :  3.44987e-05 Reference value :  3.45060e-05 Reference value :  3.45358e-05 Reference value :  3.45533e-05 Reference value :  3.45594e-05 Reference value :  3.45894e-05 Reference value :  3.46048e-05 Reference value :  3.46224e-05 Reference value :  3.46524e-05 Reference value :  3.46564e-05 Reference value :  3.46760e-05 Reference value :  3.47040e-05 Reference value :  3.47113e-05 Reference value :  3.47411e-05 Reference value :  3.47586e-05 Reference value :  3.47647e-05 Reference value :  3.47947e-05 Reference value :  3.48102e-05 Reference value :  3.48297e-05 Reference value :  3.48597e-05 Reference value :  3.48617e-05 Reference value :  3.48813e-05 Reference value :  3.49093e-05 Reference value :  3.49166e-05 Reference value :  3.49464e-05 Reference value :  3.49639e-05 Reference value :  3.49700e-05 Reference value :  3.50000e-05 Reference value :  3.50155e-05 Reference value :  3.50350e-05 Reference value :  3.50650e-05 Reference value :  3.50670e-05 Reference value :  3.50866e-05 Reference value :  3.51146e-05 Reference value :  3.51204e-05 Reference value :  3.51477e-05 Reference value :  3.51692e-05 Reference value :  3.51753e-05 Reference value :  3.52053e-05 Reference value :  3.52208e-05 Reference value :  3.52403e-05 Reference value :  3.52683e-05 Reference value :  3.52722e-05 Reference value :  3.52779e-05 Reference value :  3.52999e-05 Reference value :  3.53199e-05 Reference value :  3.53257e-05 Reference value :  3.53530e-05 Reference value :  3.53745e-05 Reference value :  3.53806e-05 Reference value :  3.54106e-05 Reference value :  3.54261e-05 Reference value :  3.54456e-05 Reference value :  3.54756e-05 Reference value :  3.54776e-05 Reference value :  3.54972e-05 Reference value :  3.55252e-05 Reference value :  3.55326e-05 Reference value :  3.55623e-05 Reference value :  3.55798e-05 Reference value :  3.55859e-05 Reference value :  3.56159e-05 Reference value :  3.56314e-05 Reference value :  3.56509e-05 Reference value :  3.56809e-05 Reference value :  3.56829e-05 Reference value :  3.57025e-05 Reference value :  3.57305e-05 Reference value :  3.57379e-05 Reference value :  3.57676e-05 Reference value :  3.57851e-05 Reference value :  3.57912e-05 Reference value :  3.58212e-05 Reference value :  3.58367e-05 Reference value :  3.58562e-05 Reference value :  3.58862e-05 Reference value :  3.58883e-05 Reference value :  3.59078e-05 Reference value :  3.59358e-05 Reference value :  3.59432e-05 Reference value :  3.59729e-05 Reference value :  3.59904e-05 Reference value :  3.59965e-05
+No. of Data Rows : 21827
+vref_q              =  1.04547e+00 from=  2.80000e-05 to=  3.00000e-05
+isense_q            =  1.50800e+00 from=  2.80000e-05 to=  3.00000e-05
+icmp_q              =  7.54002e-01 from=  2.80000e-05 to=  3.00000e-05
+vths_q              =  8.00604e-01 from=  2.80000e-05 to=  3.00000e-05
+vthh_q              =  9.98792e-01 from=  2.80000e-05 to=  3.00000e-05
+vref_i              =  1.04547e+00
+isense_i            =  1.50800e+00
+icmp_i              =  7.54002e-01
+vths_i              =  8.00604e-01
+vthh_i              =  9.98792e-01
+iload_q             =  1.00000e+00
+gate_q              =  3.30000e+00
+fastq               =  0.00000e+00
+t_inrush_off        =  2.22349e-05
+inrush_q            =  0.00000e+00
+softarmed_end       =  1.20000e+00
+code_soft           =  1.53000e+02
+code_hard           =  2.54000e+02
+QUIET window_us=28-30 vref= 1.04547  isense= 1.508  icmp= 0.754002  vth_soft= 0.800604  vth_hard= 0.998792  vref_inst= 1.04547  isense_inst= 1.508  icmp_inst= 0.754002  vth_soft_inst= 0.800604  vth_hard_inst= 0.998792  iload_A= 1  gate= 3.3  code_soft= 153  code_hard= 254  fast_en= 0  inrush_active= 0  t_inrush_off_us= 22.2349  soft_armed_end= 1.2
+tosc1               =  2.30545e-05
+tosc2               =  2.51075e-05
+tcc1                =  2.30561e-05
+tcc2                =  2.51092e-05
+CLOCK f_osc_MHz= 9.74156  f_cmp_MHz= 4.87078  (RTL clock: transistor-level G1_OSC)
+ia_vdda             =  1.36463e-03 from=  2.40000e-05 to=  3.60000e-05
+ia_iovdd            =  6.60012e-12 from=  2.40000e-05 to=  3.60000e-05
+ia_vdd              =  1.12710e-04 from=  2.40000e-05 to=  3.60000e-05
+ia_bgr              =  3.19704e-04 from=  2.40000e-05 to=  3.60000e-05
+ia_sense            =  1.04493e-03 from=  2.40000e-05 to=  3.60000e-05
+ia_tripa            =  6.59864e-12 from=  2.40000e-05 to=  3.60000e-05
+ia_tripd            =  2.39989e-12 from=  2.40000e-05 to=  3.60000e-05
+ia_osc              =  1.12812e-04 from=  2.40000e-05 to=  3.60000e-05
+ia_gatea            =  6.59972e-12 from=  2.40000e-05 to=  3.60000e-05
+ia_gated            =  2.40026e-12 from=  2.40000e-05 to=  3.60000e-05
+SUPPLY_uA window=24-36us VDDA= 1364.63  IOVDD= 6.60012E-06  VDD= 112.71  | bgr= 319.704  sense= 1044.93  trip_3v3= 6.59863E-06  trip_1v2= 2.39989E-06  osc= 112.812  gate_3v3= 6.59972E-06  gate_1v2= 2.40026E-06
+tripped_max         =  0.00000e+00 at=  3.60000e-05
+tripped_pre         =  0.00000e+00 at=  2.99989e-05
+gate_min            =  3.30000e+00 at=  3.60000e-05
+gate_end            =  3.30000e+00
+ipk                 =  1.00000e+00 at=  3.60000e-05
+i_end               =  1.00000e+00
+isense_pk           =  1.50800e+00 at=  3.12349e-05
+cause1e             =  0.00000e+00
+cause0e             =  0.00000e+00
+fault_end           =  3.30000e+00
+soft_peak           =  0.00000e+00
+NO_TRIP_EXPECTED tripped_max= 0  gate_min= 3.3  gate_end= 3.3  ipk_A= 1  i_end_A= 1  cause= 0  fault_n_end= 3.3  soft_peak= 0
+q_step              =  2.69686e-05
+q_end               =  3.29686e-05
+CHARGE after_event_As= 6E-06
+Note: Simulation executed from .control section 
+
+# run status completed
+# ngspice exit 0, wall time 536 s
