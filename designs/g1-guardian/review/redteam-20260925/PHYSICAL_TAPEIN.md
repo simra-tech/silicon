@@ -20,6 +20,14 @@ Every script was run as
 `G1_CPUSET=36-37 G1_CPUS=2 G1_CONTAINER_ENGINE=podman G1_WORKDIR=. G1_RESULTS_ROOT=${BULK}/redteam-20260925-physical flow/run.sh klayout -b [-n sg13g2] -r <script>`.
 The GDS header parse used host `python3` on the raw records.
 
+
+> **Disposition 2026-09-25 (after this review).** Findings 1 (labels), 4 (bond map) and 6 (stock-named modified cell)
+> are resolved in revision r2 (`layout/g1_chip_top_1414_r2.gds`, SHA256 9049e87b…): labels corrected, three modified
+> stock-named cells renamed, per-layer XOR against r1 empty, full sign-off re-run at 0 markers (see
+> `blocks/g1_padring/reports/signoff-1414r2-20260925/README.md`). Finding 2 is resolved by the owner's choice of the
+> standard convention (`padframe/BONDPLAN_20260925.md`, spec §3 lead column). Finding 5 (density margins) was accepted
+> as is by the owner. Finding 3 (IHP rejection test) and the area confirmation remain with the owner.
+
 ## Ranked findings
 
 Severity key: **blocker** means IHP will or is likely to reject the file, or the silicon
