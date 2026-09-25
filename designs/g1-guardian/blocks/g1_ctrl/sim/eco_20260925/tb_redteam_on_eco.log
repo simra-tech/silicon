@@ -1,0 +1,67 @@
+# tb_redteam_on_eco (ECO RTL rtl_eco_20260925)
+# 2026-09-25T13:32:24Z  Icarus Verilog version 14.0 (devel) (s20260301-328-geda9fdcd-dirty)
+# PDK commit 84374023ee8b4b126bebbba67fcbada0a9c0ff0b
+# tb sha256: b7a727559797b510
+# rtl sha256: c14906d7d9256a77  designs/g1-guardian/blocks/g1_ctrl/rtl_eco_20260925/g1_sync2.v
+# rtl sha256: df4341e1878caef2  designs/g1-guardian/blocks/g1_ctrl/rtl_eco_20260925/g1_serial.v
+# rtl sha256: 5cab0bc384cef5a7  designs/g1-guardian/blocks/g1_ctrl/rtl_eco_20260925/g1_trip_timer.v
+# rtl sha256: 605d738514124e87  designs/g1-guardian/blocks/g1_ctrl/rtl_eco_20260925/g1_regfile.v
+# rtl sha256: c52918f7e2242096  designs/g1-guardian/blocks/g1_ctrl/rtl_eco_20260925/g1_digital_top.v
+# rtl sha256: 36757122c43271df  designs/g1-guardian/blocks/g1_ctrl/rtl_eco_20260925/g1_digital.v
+# rtl sha256: f53f82d97b91d4e8  designs/g1-guardian/blocks/g1_seu/rtl_eco_20260925/g1_tmr_reg.v
+# rtl sha256: 6e10bbc02a8ff291  designs/g1-guardian/blocks/g1_seu/rtl_eco_20260925/g1_seu_chain.v
+# rtl sha256: 7c1831c99b5875a2  designs/g1-guardian/blocks/g1_seu/rtl_eco_20260925/g1_seu.v
+# iverilog -g2005 -Wall -Wno-timescale -o tb_redteam_on_eco.vvp <rtl> designs/g1-guardian/blocks/g1_ctrl/sim/redteam_20260925/tb_redteam.v
+---- R1 reset: EN is the only reset; outputs defined before the first osc_clk edge
+  OBSERVE 0 us EN high at power-up: osc_en = 1
+  OBSERVE 0 us EN high at power-up: dac_hard = xxxxxxxx
+  OBSERVE 0 us EN high at power-up: trip_d, clr_d, fast_en = xxx
+  OBSERVE 0 us EN high at power-up: osc_clk edges seen (0 = oscillator never enabled) = 1
+  ok   0 us osc_en defined 1 before any clock = 0x1
+  FAIL 0 us osc_trim 8: got 0xx expected 0x8
+  FAIL 0 us dac_soft 0x99: got 0xxx expected 0x99
+  FAIL 0 us dac_hard 0xFE: got 0xxx expected 0xfe
+  FAIL 0 us trip_d 0: got 0xX expected 0x0
+  FAIL 0 us clr_d 0: got 0xX expected 0x0
+  FAIL 0 us fast_en 0: got 0xX expected 0x0
+  FAIL 0 us cmp_clk 0: got 0xX expected 0x0
+  FAIL 0 us trip_set_sel 0: got 0xX expected 0x0
+  FAIL 0 us t2f_en,t2f_mode,bgr_r4 = 1,0,0: got 0xX expected 0x4
+  ok   0 us sdo 0 = 0x0
+  ok   0 us gate_en 0 while EN low = 0x0
+  ok   21 us CHIP_ID after EN release = 0x47
+FAIL R1 reset: EN is the only reset; outputs defined before the first osc_clk edge  (FAIL = hazard reproduced)
+---- R2 INRUSH write after the mask expired must not re-open the mask (hard path)
+  ok   122 us STATUS.INRUSH_ACTIVE = 0 after 512 cycles = 0x0
+  ok   134 us STATUS.INRUSH_ACTIVE after live INRUSH write (spec: only after reset/re-enable) = 0x0
+  MEASURED hard-trip latency after live INRUSH write: 10 osc_clk cycles (spec 9..12)
+  ok   135 us hard trip within 20 cycles = 0x1
+PASS R2 INRUSH write after the mask expired must not re-open the mask (hard path)
+---- R3 serial framing: one SCLK glitch or one mid-frame stall redirects writes silently
+  FAIL 182 us DAC_SOFT as the host wrote it: got 0x99 expected 0x50
+  FAIL 189 us MODE as the host wrote it: got 0x23 expected 0x7
+  ok   196 us SOFT_TIME_H untouched by the host = 0x0
+  OBSERVE 196 us resulting soft window SOFT_TIME = {H,0x27} (units 25.6 us) = 100111
+  FAIL 265 us DAC_HARD as the host wrote it: got 0xfe expected 0xb
+  FAIL 272 us MODE untouched by the host (0x03): got 0x2 expected 0x3
+FAIL R3 serial framing: one SCLK glitch or one mid-frame stall redirects writes silently  (FAIL = hazard reproduced)
+---- R4 OSC_EN = 0 (write or upset): FAST_EN path and serial status under a stopped clock
+  ok   303 us CHIP_ID = 0x47
+  ok   310 us STATUS before = 0x80
+  OBSERVE 316 us osc_en = 1
+  OBSERVE 316 us cmp_clk frozen at = 1
+  ok   326 us G1_GATE latch set within 10 us (FAST_EN=1) = 0x1
+  ok   326 us GATE pad off within 10 us = 0x0
+  ok   333 us CHIP_ID read under stopped clock = 0x47
+  OBSERVE 340 us STATUS read under stopped clock (stale if = STATUS before) = 10000101
+  OBSERVE 347 us osc_en after serial restart attempt (map 4.6 documents 0) = 1
+  ok   347 us EN low restores osc_en asynchronously = 0x1
+  ok   368 us CHIP_ID after EN cycle = 0x47
+PASS R4 OSC_EN = 0 (write or upset): FAST_EN path and serial status under a stopped clock
+---- R5 SOFT_TIME update in the documented byte order (_H then _L) under load
+  ok   618 us no soft trip: accumulator (~2100) far below old and new window = 0x0
+  OBSERVE 618 us trip_cause = 0
+PASS R5 SOFT_TIME update in the documented byte order (_H then _L) under load
+SUMMARY tests_pass=3 tests_fail=2 checks=29 errors=13
+RED-TEAM RUN COMPLETE (FAIL lines are reproduced hazards, see DIGITAL.md)
+/work/designs/g1-guardian/blocks/g1_ctrl/sim/redteam_20260925/tb_redteam.v:224: $finish called at 623651000 (1ps)

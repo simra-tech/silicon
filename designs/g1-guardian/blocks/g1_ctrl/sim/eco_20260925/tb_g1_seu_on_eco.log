@@ -1,0 +1,23 @@
+# tb_g1_seu_on_eco (ECO RTL rtl_eco_20260925)
+# 2026-09-25T13:33:07Z  Icarus Verilog version 14.0 (devel) (s20260301-328-geda9fdcd-dirty)
+# PDK commit 84374023ee8b4b126bebbba67fcbada0a9c0ff0b
+# tb sha256: 2d2b972c6a0d2071
+# rtl sha256: f53f82d97b91d4e8  designs/g1-guardian/blocks/g1_seu/rtl_eco_20260925/g1_tmr_reg.v
+# rtl sha256: 6e10bbc02a8ff291  designs/g1-guardian/blocks/g1_seu/rtl_eco_20260925/g1_seu_chain.v
+# rtl sha256: 7c1831c99b5875a2  designs/g1-guardian/blocks/g1_seu/rtl_eco_20260925/g1_seu.v
+# iverilog -g2005 -Wall -Wno-timescale -o tb_g1_seu_on_eco.vvp <rtl> designs/g1-guardian/blocks/g1_seu/sim/tb_g1_seu.v
+VCD info: dumpfile tb_g1_seu.vcd opened for output.
+PASS S01 fill then active, no false counts
+PASS S02 single flip in plain register counts once, run 1
+PASS S03 single flip in one TMR copy: corrected, counted once, no output error
+PASS S04 flip in two copies of the same stage: uncorrectable
+PASS S05 burst of 5 adjacent plain flips: count 5, run 5
+PASS S06 register-driven injection pulses
+PASS S07 pattern change restarts fill; all-ones and all-zeros
+PASS S08 constant pattern holds static data: flops do not toggle, upsets counted
+PASS S09 300 output-stage flips count 300; run_max saturates at 255
+PASS S10 8-bit uncorrectable counter saturates at 255
+PASS S11 scrub disabled: registers keep shifting, nothing counts; re-enable refills
+SUMMARY tests_pass=11 tests_fail=0 checks=43 errors=0
+ALL TESTS PASSED
+/work/designs/g1-guardian/blocks/g1_seu/sim/tb_g1_seu.v:165: $finish called at 2126951000 (1ps)
