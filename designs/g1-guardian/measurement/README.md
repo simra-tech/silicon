@@ -54,7 +54,7 @@ corrected on 2026-09-25 from the electrical red-team review
 | B3 | `EN` delay: `EN` low ≥ 2 ms after both rails are stable with 10 nF on `VREF` | Drive `EN` from the host or a low-impedance CMOS/Schmitt buffer after a rail power-good, with a fast, clean edge; never from a slow RC timer (the input has no hysteresis and chatters through its threshold). Do not tie `EN` high | BGR586 output resistance 22.3 kΩ (tt/27 °C); 1 % settling 1.20–1.32 ms over three corners with 10 nF (`../blocks/g1_bgr/sim/system_checks_20260924/RESULTS.md`) |
 | B4 | `VREF` pin capacitance trade-off | Choose the capacitor before the run and record it. Scale the B3 delay with it | 0 nF: 1 % in about 7–8 µs, 1.3–1.7 % overshoot during the ramp, and the pin sees probe loading directly. 10 nF: 1.2–1.3 ms. 100 nF: 11.8–13.2 ms. Stock-pad startup at ss/125 °C did not converge in simulation (numerical; the pad-less stand-in settles) |
 | B5 | `VDDA` (pin 7) tied to the `IOVDD` rail | One 3.3 V source with separate current-sense links for `VDDA` and `IOVDD` (≤ 0.5 Ω each, decoupled on the chip side), or the sense on the common 3.3 V source; no separate `VDDA` supply; decouple `VDDA` at pin 7 | Analog-pad ESD diodes reference `IOVDD` (`PLAN.md` D14); a larger `IOVDD` link lets `VDDA` exceed `IOVDD` during 30 mA `GATE` / 16 mA `TEMP_OUT` edges |
-| B6 | Pull-downs on `EN`, `SCLK`, `SDI`; `EN` routed away from `FAULT_N`/`GATE` | For example 100 kΩ at the package on each | The input pads have no pull and no hysteresis; noise on floating `SCLK`/`SDI` can complete write frames (e.g. stop the clock or disable both paths); floating `EN` gives a random enable. `EN` is an unfiltered asynchronous reset: a few-ns low glitch clears a latched trip, resets all registers and re-opens the 1 ms inrush mask |
+| B6 | Pull-downs on `EN`, `SCLK`, `SDI`; `EN` routed away from `FAULT_N`/`GATE` | For example 100 kΩ at the package on each | The input pads have no pull and no hysteresis; noise on floating `SCLK`/`SDI` can complete write frames (e.g. disable both paths; on the r2 fallback also stop the clock); floating `EN` gives a random enable. Chip of record r3 (map 1.2): the digital reset needs 8 consecutive EN-low samples, so a short glitch does not reset the registers, but the analog `en_core` path still turns `GATE` off and clears the G1_GATE latch; each EN reset re-opens the about 0.11 ms inrush mask. r2 fallback (map 1.1): `EN` is an unfiltered asynchronous reset; a few-ns low glitch clears a latched trip, resets all registers and re-opens the 1 ms inrush mask |
 | B7 | `VDD` supervisor; grounds | A `VDD` undervoltage supervisor asserts the load-bus inhibit. Tie `VSS`, `IOVSS` and the paddle together at the package | A `VDD` brownout with `IOVDD` present reproduces the IO-first unsafe state. `VSS` and `IOVSS` are joined on the die only through substrate resistors |
 | B8 | Device-pin limits | `G_SHARED` ≤ 1.32 V except in a declared stress experiment (thin-oxide gate, no secondary protection; handle die pad 19 = QFN24 lead 24 as ESD-sensitive; lead numbers per spec §3 and `padframe/BONDPLAN_20260925.md`); every device pin ≥ −0.3 V while powered; shunt voltage at the sense pins ≤ 100 mV; never leave `SENSE_P` open while powered | spec §4 absolute maximum; `ELECTRICAL_SYSTEM.md` S1, S5 |
 
@@ -128,6 +128,10 @@ single-fault tolerance or overload survival from ordinary breaker tests.
 
 ## Host rules for register access and EN (2026-09-25)
 
+The chip of record **r3** implements register map **1.2** (`VERSION` reads 0x12;
+`../blocks/g1_ctrl/ECO_20260925.md`, `PLAN.md` D16). Read `VERSION` first. Rules
+marked "(r2 fallback, map 1.1)" apply only to a part that reads 0x11.
+
 From the digital red-team review
 ([DIGITAL.md](../review/redteam-20260925/DIGITAL.md); hazards reproduced in RTL and
 functional gate-level simulation of the on-chip netlist, simulated only). The bench
@@ -139,28 +143,37 @@ host software follows these rules on every run:
   not used for these registers. Keep every SCLK-low phase inside a frame below
   64 oscillator cycles (< 5.3 µs); a longer stall or one SCLK glitch re-frames the
   stream and can redirect a write to another register (hazard S1).
-- **Change SOFT_TIME only with MODE.SOFT_EN cleared**, then restore SOFT_EN after
-  both bytes are written and read back. Neither byte order is safe while the soft
-  path is live: the intermediate value can be 0x0000, "trip on the first sample" (S2).
-- **Increase INRUSH only with the external inhibit asserted**, then wait for
-  STATUS.INRUSH_ACTIVE = 0 before releasing the inhibit. Raising INRUSH while armed
-  re-opens the inrush mask; the hard path is blind for up to (255 − old) × 512
-  cycles, about 13 ms (M2).
+- **SOFT_TIME.** r3 (map 1.2): write `_H` then `_L`; both bytes take effect together
+  on the `_L` write. (r2 fallback, map 1.1) Change SOFT_TIME only with MODE.SOFT_EN
+  cleared, then restore SOFT_EN after both bytes are written and read back; neither
+  byte order is safe while the soft path is live: the intermediate value can be
+  0x0000, "trip on the first sample" (S2).
+- **INRUSH.** r3 (map 1.2): the inrush window cannot be re-opened by a write after
+  it has ended; a larger blanked start is written after EN rise under the inhibit.
+  (r2 fallback, map 1.1) Increase INRUSH only with the external inhibit asserted,
+  then wait for STATUS.INRUSH_ACTIVE = 0 before releasing it; raising INRUSH while
+  armed re-opens the mask, hard path blind for up to (255 − old) × 512 cycles,
+  about 13 ms (M2).
 - **Clock watchdog.** Alternate reads of CHIP_ID and OSC_CNT_L. If CHIP_ID stops
   reading 0x47 or OSC_CNT_L stops changing, drop EN and assert the external
   inhibit. A stopped oscillator removes all protection, FAST_EN included (both
-  comparators are clocked), and serial reads then return stale data (M1).
+  comparators are clocked). On r3 no register write or upset can stop the clock
+  (`osc_en` tied 1), so the watchdog covers an analog oscillator failure; on the r2
+  fallback a write or upset of `OSC_CTRL[4]` can also stop it, and serial reads then
+  return stale data (M1).
 - **Kelvin-integrity check** before arming and after every EN cycle: with load
   current flowing and DAC_SOFT at a low code, STATUS2.CMP_SOFT must read 1. An
   open SENSE_N makes ISENSE ≈ 0.05–0.29 V and the breaker blind with no indication;
   an open SENSE_P trips permanently ([ELECTRICAL_SYSTEM.md](../review/redteam-20260925/ELECTRICAL_SYSTEM.md) M3).
-- **Unexpected-reset check.** An EN glitch resets every register silently; check
+- **Unexpected-reset check.** An EN low of 8 or more samples (r3) or any EN glitch (r2 fallback) resets every register silently; check
   periodically that a written configuration (or TRIP_CNT) has not returned to its
   default, and periodically rewrite the configuration (registers are not TMR).
 - **EN low at power-up.** EN is the only reset (no on-chip POR, no pull-down on the
-  EN pad); the board must hold it low. Every EN rise restores the register defaults
-  (FAST_EN = 0) and reopens the ≈ 1 ms inrush window, so a fault present at EN rise
-  or at a retry conducts for about 1 ms, limited only by the FET and bus. This is
+  EN pad); the board must hold it low. On r3 the core is reset within 11 `osc_clk`
+  edges of oscillator start with EN low. Every EN rise restores the register defaults
+  (FAST_EN = 0) and reopens the inrush window: about 0.11 ms on r3 (`INRUSH` 0x02),
+  about 1 ms on the r2 fallback (0x14), so a fault present at EN rise or at a retry
+  conducts for that time, limited only by the FET and bus. This is
   **accepted design behaviour covered by the external inhibit, pending owner
   confirmation** (M3). Keep the inhibit asserted across every EN rise.
 

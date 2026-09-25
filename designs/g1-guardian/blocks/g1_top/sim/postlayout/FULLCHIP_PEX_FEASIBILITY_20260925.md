@@ -20,7 +20,7 @@ container). Input `blocks/g1_padring/layout/g1_chip_top_1414.gds` `629d303a…`.
 CPUs 28-33 for the extraction and 34 for the progress probe (`taskset`,
 `flow/launch_pinned.sh`).
 
-Revision r2 (`g1_chip_top_1414_r2.gds` `9049e87b…`, now the file of record)
+Revision r2 (`g1_chip_top_1414_r2.gds` `9049e87b…`, the file of record when written; now the fallback of r3 `7d07a784…`)
 changes only metadata: two text labels and three cell names. Its sign-off
 report states that the geometry is identical on every layer
 (`../../../g1_padring/reports/signoff-1414r2-20260925/README.md`). The
@@ -155,7 +155,7 @@ single transient would take another day or more. What fits:
 | Full-chip kpex CC, fill-free | not run to completion (see §2a) |
 | Full-chip kpex CC, with fill | not run (extrapolated only, as instructed) |
 | Any ngspice run on a full-chip netlist | not run (no netlist exists) |
-| Chip deck with the interconnect lumps | not run |
+| Chip deck with the interconnect lumps | run since (`c1414icx`, `../campaigns/RESULTS_20260925.md` §9) |
 
 ## Commands
 

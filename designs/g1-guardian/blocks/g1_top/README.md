@@ -1,12 +1,15 @@
 # G1_TOP — chip-level simulation of the breaker path
 
-> **Current state (2026-09-25).** The chip-of-record results are in the section
+> **Current state (2026-09-26).** The chip of record is r3
+> (`../g1_padring/layout/g1_chip_top_1414_r3.gds`, `7d07a784…`, digital = ECO RTL, register
+> map 1.2). Unless a row names the ECO RTL (`--rtl-dir eco_20260925`, runs `eco_*`), the
+> chip-level runs below use the pre-ECO RTL `../g1_ctrl/rtl` (map 1.1, the digital of r1/r2) with
+> the analog block netlists, which are unchanged in r3. The chip-of-record analog results are in the section
 > "2026-09-24 chip-of-record deck (`--blockset c1414`)" below and in
 > [sim/campaigns/RESULTS_20260925.md](sim/campaigns/RESULTS_20260925.md). The State
 > paragraph that follows, the "What it is" section and the clock description there
 > (9.919 MHz schematic, 8.994 MHz post-layout) describe the **legacy** 2026-09-19 deck
-> on the superseded Sep-19 block netlists; they are kept as history. Layout of the
-> chip of record exists (`../g1_padring/layout/g1_chip_top_1414.gds`, `629d303a…`).
+> on the superseded Sep-19 block netlists; they are kept as history.
 
 Legacy state (2026-09-19): **chip-level mixed-signal simulation of the breaker path built and run (2026-09-19), schematic
 netlists of the analog blocks**: external shunt and load → `SENSE_P`/`SENSE_N` analog pads (PDK
@@ -40,16 +43,19 @@ instead of the estimated `Cw_*` wire elements. Simulated, tt/27 °C:
 
 | Case (run tag `c1414icx`) | Deck | Result (extracted interconnect) | Estimate-based reference | Status | Log |
 | --- | --- | --- | --- | --- | --- |
-| `c_mid` compact, 1.8× hard fault | `--interconnect extracted`, `bgr=sch`, `inpads nodcn`, ideal clock | `trip_d` 1.058 µs, `GATE` < 1 V 1.345 µs | 1.049 / 1.334 µs (+about 10 ns) | passed | `c_mid_pex_c1414_tl_tt_27C_icx_ovr-bgrsch_nodcn_clockfix_compact_functional_c1414icx.log` |
+| `c_mid` compact, 1.8× hard fault | `--interconnect extracted`, `bgr=sch`, `inpads nodcn`, ideal clock | `trip_d` 1.05778 µs, `GATE` < 1 V 1.34544 µs | like-for-like compact `c1414fullc` 1.05788 / 1.34544 µs: < 0.1 ns (the earlier "+about 10 ns" compared the default-timeline run 1.049 / 1.334 µs) | passed | `c_mid_pex_c1414_tl_tt_27C_icx_ovr-bgrsch_nodcn_clockfix_compact_functional_c1414icx.log` |
 | `q`, nominal 1 A | same | no trip; `VDDA` 1421.1 µA | 1421.1 µA (unchanged) | passed | `q_pex_c1414_tl_tt_27C_icx_ovr-bgrsch_nodcn_clockfix_functional_c1414icx.log` |
-| `c_mid` 1.25×, SENSE_P/N route resistances 171/106 Ω | same, `srr` | `trip_d` 1.270 µs, `GATE` < 1 V 1.557 µs; `ISENSE` +0.68 mV (about 34 µV input-referred, route mismatch) | +about 10 ns | passed | `c_mid_pex_c1414_tl_tt_27C_fm1p25_icx_srr_ovr-bgrsch_nodcn_clockfix_compact_functional_c1414icx.log` |
-| `osc`, transistor-level oscillator clocking the RTL | same, gear | f_osc 9.875 MHz with the extracted clock load | 9.742 MHz (estimate-based, 2 ns step) | passed | `osc_pex_c1414_tl_tt_27C_icx_gear_…_c1414icx.log` |
-| `q` with `--t2f tl`, gear | `c1414icx2` (and reference `c1414icx2ref`) | — | — | in progress | `q_pex_c1414_tl_tt_27C_icx_ovr-bgrsch_t2ftl_nodcn_gear_clockfix_functional_c1414icx2.log` |
+| `c_mid` 1.25×, SENSE_P/N route resistances 171/106 Ω | same, `srr` | `trip_d` 1.270 µs, `GATE` < 1 V 1.557 µs; `ISENSE` +0.68 mV (about 34 µV input-referred, route mismatch) | like-for-like reference not run (the earlier "+about 10 ns" compared different timelines) | passed | `c_mid_pex_c1414_tl_tt_27C_fm1p25_icx_srr_ovr-bgrsch_nodcn_clockfix_compact_functional_c1414icx.log` |
+| `osc`, transistor-level oscillator clocking the RTL | `--interconnect extracted`, BGR586 extraction (not `bgr=sch`), gear, 2 ns maximum step, relaxed tolerances | f_osc 9.875 MHz with the extracted clock load | 9.742 MHz (estimate-based, 2 ns step) | passed | `osc_pex_c1414_tl_tt_27C_icx_gear_…_c1414icx.log` |
+| `q` with `--t2f tl`, gear | `c1414icx2` (and reference `c1414icx2ref`) | **failed**: timestep too small at 40.8 µs (`xbgr.xq56`), before the end-of-run measurements | reference without extracted interconnect: completed, no trip, QUIET `VREF` 1.04499 V | failed (numerical); reference passed | `q_pex_c1414_tl_tt_27C_icx_ovr-bgrsch_t2ftl_nodcn_gear_clockfix_functional_c1414icx2.log` |
 
 `VREF` on the on-chip node carries clock ripple: 46.2 mV p-p with the ideal clock,
 33.1 mV p-p with the real oscillator; the mean is unchanged (1.0454–1.0455 V) and the
 averaged QUIET values are within 0.05 mV of the estimate-based runs. The `VREF` pad with
-10 nF does not see this ripple. The 1.25× case trips below the programmed 39.2 mV code
+10 nF does not see this ripple. The extracted interconnect is C only (SENSE route R only in the `srr` run) and is an
+extraction of r1 geometry (`629d303a`); it applies to r3 because r3 differs from r1/r2 only
+inside the digital macro and in fill (r2 → r3 XOR). All runs use the pre-ECO RTL (map 1.1).
+The 1.25× case trips below the programmed 39.2 mV code
 value because of the documented hard-comparator kick offset (effective threshold
 30–31 mV, §4), not because of the wiring. All values simulated, tt/27 °C.
 
@@ -76,12 +82,15 @@ through the real `IOPadIn` outputs.
   pad output floats to 0.84–0.92 V (> 0.6 V 2.34–5.70 µs at tt), `por_n` releases at 2.0 µs, and
   the RTL and G1_GATE trip latches set spuriously until `IOVDD` passes 1.1 V (5.67 µs); `GATE`
   never rises. The inhibit rule (spec §6 P2) stands.
-- `q` full length on the CDL deck: running, not yet reported.
+- `q` full length (44 µs, T2F on) on the CDL deck (`cdlpwr`): completed, no trip, `VDDA` 1462 µA.
+- The CDL deck is the r1 CDL (`af5a4dbd`, projected-LVS-matched; canonical LVS fails on the IO cells)
+  with the pre-ECO RTL (map 1.1); r3's digital adds about one clock (1.166 vs 1.049 µs on the
+  hand-wired deck). r3 on the CDL deck: not run.
 
 ## 2026-09-24 chip-of-record deck (`--blockset c1414`)
 
 `run_top.py --blockset c1414` builds the same deck with the analog block
-netlists of the chip of record `g1_chip_top_1414.gds` (`629d303a…`). It uses the
+netlists of `g1_chip_top_1414.gds` (r1, `629d303a…`; the analog blocks are unchanged in r2 and r3). It uses the
 block-to-netlist map of `../g1_padring/reports/signoff-1414-20260924/README.md`.
 `--blockset legacy` (default) keeps the Sep-19 paths below. Every c1414 netlist is
 bound by SHA-256 in `BLOCKSET_SHA256`; a changed file is refused. Subckt name
@@ -133,7 +142,7 @@ Deck record: the generated deck of every c1414 run is committed under
 `sim/decks/<tag>.cir` and is the authoritative record of that run's netlist.
 2026-09-25 check: 279 of the 281 c1414 run JSONs in `sim/logs/` have a tracked
 deck whose SHA-256 equals the JSON `deck_sha256` (279/279 match); the other two
-(`*_cdlref1`) are not yet committed. Each run JSON also logs the runner version
+(`*_cdlref1`) were committed later (by `7219e7e5`). Each run JSON also logs the runner version
 as `runner_sha256`. The c1414 runs used ten runner versions (`bc15450b`,
 `38fdf715`, `ac9c1c45`, `f9e56cae`, `d6bd5574`, `9147f75b`, `dcc31f41`,
 `25f47d21`, `8d87feef`, `4438037a`); only `bc15450b` is a committed
@@ -254,7 +263,7 @@ capacitance netlists of the laid-out macros):
 | G1_TRIP | `../g1_trip/sim/netlist/g1_trip.spice` | `../g1_trip/sim/postlayout/g1_trip_pex.spice` |
 | G1_OSC (case `osc`) | `../g1_osc/sim/netlist/g1_osc.spice` (revision 5) | `../g1_osc/sim/postlayout/g1_osc_pex.spice` |
 | G1_GATE | `../g1_gate/sim/netlist/g1_gate.spice` | `../g1_gate/sim/postlayout/g1_gate_pex.spice` |
-| digital | `../g1_ctrl/rtl/*.v`, `../g1_seu/rtl/*.v` (register map 1.1 RTL, the source of the hardened macro run7) | — (RTL, not the gate-level netlist) |
+| digital | `../g1_ctrl/rtl/*.v`, `../g1_seu/rtl/*.v` (register map 1.1 RTL, the source of run7 and of the r1/r2 macro; r3 uses `../g1_ctrl/rtl_eco_20260925` via `--rtl-dir eco_20260925`) | — (RTL, not the gate-level netlist) |
 | pads | `$PDK_ROOT/$PDK/libs.ref/sg13g2_io/spice/sg13g2_io.spi` | — |
 
 Model lines (all decks): `cornerMOSlv.lib`/`cornerMOShv.lib` `mos_tt`, `cornerRES.lib` `res_typ`,
@@ -442,7 +451,7 @@ level, the `TRIP_SET` pad path (not built), `SDO` and `TEMP_OUT` pads.
 - The transistor-level oscillator clocking the RTL inside the full chain (note 4); its frequency
   and current in the chip supply context come from case `osc`.
 - Process corners and supply ±10 % at chip level: run on the c1414 set with the ideal clock, the
-  fitted `GATE` driver (about 7 % optimistic on `GATE` < 1 V), estimate-based interconnect (extracted runs differ by ≤ 10 ns) and the `nodcn`/`bgr=sch` deviations ([sim/campaigns/RESULTS_20260925.md](sim/campaigns/RESULTS_20260925.md)); mismatch not run.
+  fitted `GATE` driver (about 7 % optimistic on `GATE` < 1 V), estimate-based interconnect (extracted runs differ by < 0.1 ns like-for-like) and the `nodcn`/`bgr=sch` deviations ([sim/campaigns/RESULTS_20260925.md](sim/campaigns/RESULTS_20260925.md)); mismatch not run.
 - The default 1 ms `SOFT_TIME` window at transistor level (behavioural front end only, note 9).
 - Comparator decisions at small overdrive at chip level beyond the single tt/27 °C hard-threshold
   sweep at code 200. That sweep puts the effective hard threshold at 30.00–31.25 mV, 8.0–9.25 mV below the

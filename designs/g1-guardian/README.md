@@ -61,7 +61,7 @@ Bond plan (owner decision 2026-09-25, pad to the QFN24 lead directly opposite):
 [`padframe/BONDPLAN_20260925.md`](padframe/BONDPLAN_20260925.md). The bond map
 [`bondmap_20260926_r4.csv`](padframe/bondmap_20260926_r4.csv) is bound to r3.
 Draft submission checklist: [`review/TAPEIN_PACKAGE_20260924.md`](review/TAPEIN_PACKAGE_20260924.md).
-r3 (84.1 MB) is not yet committed. The SHA-256 is the identity of each file.
+r3 (84.1 MB) is committed (`7219e7e5`). The SHA-256 is the identity of each file.
 It supersedes the 1350 µm LibreLane assembly
 ([`g1_chip_top.gds`](blocks/g1_padring/layout/g1_chip_top.gds),
 [`g1_chip_top.cdl`](blocks/g1_padring/netlist/g1_chip_top.cdl),
@@ -96,27 +96,35 @@ Checks on that exact file:
 The digital macro on the chip:
 - gate netlist `4b83f181…`, powered netlist `476885d7…`, nominal SPEF `0b626c7f…`;
 - STA with the merged chip SDC **passed** at macro level and inside the routed signal netlist
-  (3 corners, nominal RC; macro setup/hold slow 28.45/0.337 ns, in chip 25.70/0.337 ns);
+  (3 corners, nominal RC; macro setup/hold slow 28.45/0.337 ns, in chip 25.70/0.337 ns):
+  0 setup/hold violations; in the chip context 12 analog-pad max-slew flags per corner
+  (placeholder library values) and 98 unannotated drivers, dispositioned;
 - max slew, max cap and max fanout inside the macro **passed**; clock-buffer fanout ≤ 8;
-- gate-level simulation of `4b83f181` **passed**: 21 tests, 260 checks, zero-delay and
-  SDF-annotated typ. Icarus ignores the SDF timing checks; fast/slow were **not run**
-  ([gls_eco_r3v2](blocks/g1_ctrl/sim/gls_eco_r3v2/)).
+- gate-level simulation of `4b83f181`: 21/21 functional tests (260 checks) **passed**,
+  zero-delay and SDF-annotated typ; the red-team bench R3 **fails** (serial framing, out of
+  the ECO scope); Icarus executes no timing checks and drops part of the SDF delay model
+  (68 unsupported `ifnone` paths) ([gls_eco_r3v2](blocks/g1_ctrl/sim/gls_eco_r3v2/));
+- not run: SDF GLS fast/slow, formal equivalence of the ECO RTL against `4b83f181`,
+  chip-level co-simulation with the macro's gate netlist + SPEF.
 - Timing of the final GDS: **not run**.
 
-Chip-level runs with the ECO RTL (extracted chip, RTL co-simulation, tt/27 °C,
+Chip-level runs with the ECO RTL (hand-wired chip deck (`run_top.py --blockset c1414`): block extractions with the BGR586 schematic view (`bgr=sch`), SENSE pads without `dantenna` (`inpads nodcn`), fitted `GATE` driver (about 7 % optimistic), ideal clock; not a full-chip extraction; RTL co-simulation, tt/27 °C,
 [`ECO_20260925`](blocks/g1_ctrl/ECO_20260925.md)):
 - `eco_c_mid_m03`: hard trip, `tripped` **1.166 µs**, `GATE` < 1 V **1.451 µs**;
 - `eco_hard_pulse_m03`: 200 ns 45 mV pulse, no trip (simulated).
 
-The results below this point were obtained with the pre-ECO digital, r2 content:
-Full-chip simulation driven by the LVS-matched canonical CDL itself (all blocks
+The results below this point were obtained with the pre-ECO digital (map 1.1 RTL) on r1/r2 content:
+Full-chip simulation driven by the projected-LVS-matched canonical CDL of r1 (`g1_chip_top_1414.cdl` `af5a4dbd`; canonical LVS fails on the IO cells) with the pre-ECO RTL (map 1.1) (all blocks
 extracted, real IO pads, RTL co-simulation, ideal clock; [FULLCHIP_CDL](blocks/g1_top/sim/FULLCHIP_CDL_20260925.md)):
 `c_mid` compact at tt/27 °C **passed**, trip decision 1.058 µs, `GATE` < 1 V
 **1.437 µs** after the fault with the real `sg13g2_IOPadOut30mA` (simulated). The
 hand-wired decks below use a fitted 47 Ω `GATE` driver that is about 7 % (about 90 ns)
-optimistic on `GATE` < 1 V; add about +90 ns to their values. `q` full length and
-power-up on the CDL deck: running, not yet reported.
-With the extracted top-level interconnect (`c1414icx`) the chip-level trip times move by ≤ 10 ns and the on-chip `VREF` node carries 33–46 mV p-p clock ripple with its mean and the sampled thresholds unchanged (simulated; T2F-on run in progress).
+optimistic on `GATE` < 1 V; add about +90 ns to their values. The r3 digital adds about
+one clock to the decision (1.166 vs 1.049 µs on the hand-wired deck), so the r3 value on the
+CDL deck is expected later than 1.437 µs (not run). The CDL deck uses `pads nodcn` (all
+`dantenna` removed) and has no top-level wiring C. `q` full length (44 µs, T2F on) on the
+CDL deck: no trip; core-first power-up: see below.
+With the extracted top-level interconnect (`c1414icx`, C only; extraction of r1 geometry, valid for r3 because r3 differs only inside the macro and in fill) the like-for-like chip-level trip time changes by < 0.1 ns (the earlier "≤ 10 ns" compared different timelines) and the on-chip `VREF` node carries 33–46 mV p-p clock ripple with its mean and the sampled thresholds unchanged (simulated; the T2F-on extracted run failed numerically at 40.8 µs, its reference completed).
 Chip-level simulation on the chip's own block netlists
 ([`g1_top --blockset c1414`](blocks/g1_top/README.md)) passed these tt/27 °C
 cases: nominal hard fault (BGR586 and TRIP NF4 extractions, run `c1414fullc`), 1 ms soft window and short pulse (the last two with the
@@ -143,7 +151,7 @@ submission.**
 | `G1_T2F` | Temperature-to-frequency sensor: PTAT current from the bandgap core into a `cmim` relaxation oscillator with a V<sub>REF</sub> threshold, PTAT and reference modes (`blocks/g1_t2f/layout/`: revision 2 with collector cascodes, 92 × 103 µm, DRC, antenna and LVS clean, PEX done; every HBT within the 1.6 V V<sub>CE</sub> limit). With the chip's BGR586 (simulated, T2F C-PEX + BGR586 schematic-level netlist, typical process): 1.5074 MHz at 25 °C, 4.909 kHz/°C, two-point held-out residual −1.26 °C at −40 °C; 300-sample run: 237 completed and passed ±2 °C, 63 incomplete (numerical watchdog), 0 failed; worst residual over the 237: −1.62 °C at −40 °C, −0.50 °C at 125 °C (derived from the audit file's frequency intervals) ([T2F README](blocks/g1_t2f/README.md)). On the chip netlists: 1.518 MHz at 27 °C, 1.997 MHz at 125 °C, within 0.03 % of the BGR586 block-level values; −40 °C not run to completion. T2F load on `VREF` on the chip netlists: −0.47 mV (tt/27 °C). Start-up and EN-low bias checks ran with the superseded Sep-19 bandgap; with BGR586 not run. Accuracy after calibration with BGR586 over supply, ss/ff and 85 °C: not run. Historical, superseded Sep-19 bandgap: residual −0.85 to +0.17 °C (schematic), −2.5 °C/V (schematic), −3.26 °C/V (post-layout) | `npn13G2`, thick-oxide MOS, `rppd`, `cmim`, LV CMOS output | 3.3 V core, 1.2 V output | 0.009 mm² |
 | `G1_DOSE` | Thin-oxide / thick-oxide NMOS canary pair with shared gate, drains pinned out; the drawn enclosed-layout NMOS is excluded from the chip of record | `sg13_lv_nmos`, `sg13_hv_nmos`, drawn ELT | 1.2 / 3.3 V | < 0.001 mm² |
 | `G1_SEU` | Plain and triple-modular-redundant shift registers, scrubbed and counted; depth parameterised, 256 + 3 × 128 bits in the assembled digital macro | LV CMOS standard cells | 1.2 V | inside the digital macro |
-| `G1_CTRL` | Register file, serial interface, trip timers, scrub state machine; hardened together with `G1_SEU` as one digital macro (`blocks/g1_ctrl/layout/`, run 7: DRC, LVS, antenna, XOR and timing clean; TMR copies placed ≥ 27 µm apart; gate-level simulation passes) | LV CMOS standard cells | 1.2 V | 0.13 mm² (macro, 360 × 360 µm, 46 pins) |
+| `G1_CTRL` | Register file, serial interface, trip timers, scrub state machine; hardened together with `G1_SEU` as one digital macro On r3: the ECO macro (register map 1.2, gate netlist `4b83f181`, re-hardened pin-compatible from run7's floorplan; macro DRC/LVS/antenna/XOR clean, TMR stages ≥ 27.4 µm apart, GLS 21/21; `blocks/g1_padring/reports/signoff-1414r3-20260926/README.md`). run7 (`blocks/g1_ctrl/layout/`) is the historical macro | LV CMOS standard cells | 1.2 V | 0.13 mm² (macro, 360 × 360 µm, 46 pins) |
 | `G1_OSC` | Relaxation oscillator clocking the timers and scrubber, 4-bit trim. **Chip variant R0.95** (`RRA`/`RRB` `rppd` l = 111.15 µm, was 117 µm). Isolated macro CPEX run. Simulated with full clock-tree load: 9.436 MHz at nominal trim 8 ([full-tree load](blocks/g1_osc/sim/qualification/fulltree_r095_load_20260924/README.md)); slow/hot (ss, 1.08 V, 125 °C) code 0 reaches 10.447 MHz on the new CPEX (`fulltree_r095_load_20260924/results/slowhot_code0.json`; 10.445 MHz on the pre-CPEX candidate netlist; old block 9.975 MHz) ([qualification](blocks/g1_osc/sim/qualification/README.md)). The 9.436 MHz load includes an estimated 459.8 Ω / 60.4 fF root route. Isolated filled-macro density-only check **failed** (8 markers; chip density passed) and kpex internal LVS **failed** ([r095 physical](blocks/g1_osc/reports/r095_physical_20260924/README.md)). Full PVT and mismatch not run to completion | MOS, `rppd`, `cmim` | 1.2 V | 0.023 mm² (Sep-19 layout) |
 | `G1_DUT` | One bare `npn13G2` with E, B, C on pins (`blocks/g1_dut/`: DRC and LVS clean) | `npn13G2` | — | < 0.001 mm² |
 | `G1_PADRING` | 24 `sg13g2_io` cells, 24 bondpads, 4 corners, fillers, sealring | `sg13g2_io`, PDK PCells | 3.3 V / 1.2 V | about 1.4 mm² |
@@ -194,7 +202,7 @@ latencies are retained for diagnosis but are not accepted sign-off evidence.
 | Package survives −196 °C to +175 °C for characterisation soaks | not verified; package and fixture qualification required |
 | Low-side shunt sensing with common mode within −0.1 V to +0.3 V of ground | design choice |
 | `VDDA` (pin 7) tied to the `IOVDD` 3.3 V board rail | required (board): the analog pad's ESD diodes reference `IOVDD`; `VDDA` above `IOVDD` by a diode drop would forward-bias them (`PLAN.md` D14) |
-| Trip response target under 10 µs from overcurrent to gate low | **full-chip CDL-driven deck** (all blocks extracted, real output pad, `cdlv1`), tt/27 °C, compact 28 µs in-range hard fault: `GATE` < 1 V **1.437 µs** after the fault (simulated; [FULLCHIP_CDL](blocks/g1_top/sim/FULLCHIP_CDL_20260925.md)). Hand-wired chip netlists (`--blockset c1414`, fitted `GATE` driver, about 7 % optimistic) with the BGR586 and TRIP NF4 extractions (run `c1414fullc`), tt/27 °C, compact 28 µs in-range hard fault: `GATE` < 1 V 1.34544 µs after the fault (simulated; ideal clock, fitted behavioural output pad). The schematic-BGR/TRIP run `c1414v1` gives the same 1.345 µs. Corners (tt/ss/ff), −40/27/85/125 °C and VDD/VDDA ±10 %: 1.306–1.361 µs in every completed cell, with the ideal clock at 9.436 MHz, fitted behavioural `GATE`/`FAULT_N` output pads (optimistic by about 7 %, about +90 ns with the real pad) and the `nodcn`/`bgr=sch` deck deviations (`bgr=sch` is the BGR586 source with 329 Sep-19 capacitors); with the transistor-level oscillator the clock spans 7.61–12.43 MHz over corners at trim 8, so the timer windows scale accordingly (trip path with that clock not run); all 72 cells completed, 0 failed ([RESULTS_20260925](blocks/g1_top/sim/campaigns/RESULTS_20260925.md)) |
+| Trip response target under 10 µs from overcurrent to gate low | **full-chip CDL-driven deck** of the r1 CDL with the pre-ECO RTL (map 1.1) (all blocks extracted, real output pad, `pads nodcn`, no top-level wiring C, `cdlv1`), tt/27 °C, compact 28 µs in-range hard fault: `GATE` < 1 V **1.437 µs** after the fault (simulated; [FULLCHIP_CDL](blocks/g1_top/sim/FULLCHIP_CDL_20260925.md)); r3's digital adds about one clock (hand-wired deck: 1.166 vs 1.049 µs; `eco_c_mid_m03` `GATE` < 1 V 1.451 µs). Hand-wired chip netlists (`--blockset c1414`, fitted `GATE` driver, about 7 % optimistic) with the BGR586 and TRIP NF4 extractions (run `c1414fullc`), tt/27 °C, compact 28 µs in-range hard fault: `GATE` < 1 V 1.34544 µs after the fault (simulated; ideal clock, fitted behavioural output pad). The schematic-BGR/TRIP run `c1414v1` gives the same 1.345 µs. Corners (tt/ss/ff), −40/27/85/125 °C and VDD/VDDA ±10 %: 1.306–1.361 µs in every completed cell, with the ideal clock at 9.436 MHz, fitted behavioural `GATE`/`FAULT_N` output pads (optimistic by about 7 %, about +90 ns with the real pad) and the `nodcn`/`bgr=sch` deck deviations (`bgr=sch` is the BGR586 source with 329 Sep-19 capacitors); with the transistor-level oscillator the clock spans 7.61–12.43 MHz over corners at trim 8, so the timer windows scale accordingly (trip path with that clock not run); all 72 cells completed, 0 failed ([RESULTS_20260925](blocks/g1_top/sim/campaigns/RESULTS_20260925.md)) |
 | Board powers `VDD` before or with `IOVDD` | required. Every `sg13g2_io` output pad, the tri-state variants included, takes its driver gate signals from core-powered level-up cells. With only `IOVDD` present, `GATE` can float high: simulated 3.288 V ([power screen](blocks/g1_gate/sim/POWER_SCREEN_20260921.md)). Core-first on the chip netlists: `GATE` ≤ 0.073 V while EN is low (simulated, `g1_top` case gB: behavioural front end, PDK output-pad models, **ideal `EN` copy**). Full-chip CDL deck with the real `EN`/`SCLK`/`SDI` pads and `por_n` tie-high (`cdlpwr`, simulated): core-first passed at tt/27, ss/125 °C and (gB_pd) ff/−40 °C, `GATE` ≤ 0.27 mV while EN low; gB ff/−40 °C failed numerically; stock-diode pads not run to completion. The `EN` pad output floats to 0.84–0.92 V without `IOVDD`, so the RTL and G1_GATE latches set spuriously until `IOVDD` passes 1.1 V; `GATE` never rose ([FULLCHIP_CDL](blocks/g1_top/sim/FULLCHIP_CDL_20260925.md)). The independent inhibit stays required for every order ([ELECTRICAL_SYSTEM.md](review/redteam-20260925/ELECTRICAL_SYSTEM.md) M1) |
 | Independent load-bus inhibit during every power-up (a `GATE` pull-down is optional) | required (board, corrected 2026-09-25; spec §6 P2). Core-first with 10 kΩ: `GATE` ≤ 0.009 V while EN is low (simulated, case gB_pd). IO-first on the chip netlists (`pads nodcn`), with or without 10 kΩ: `GATE` 3.28–3.30 V for 4.2–4.4 µs until `VDD` is up, at tt/27, ss/125 and ff/−40 °C (simulated, [RESULTS_20260925](blocks/g1_top/sim/campaigns/RESULTS_20260925.md) §5). The pull-down does not replace P1. With IO first, only the independent load-bus inhibit keeps the FET off |
 | `EN` held low ≥ 2 ms after both rails are stable when 10 nF sits on the `VREF` pin | required (board/firmware). BGR586 output resistance 22.3 kΩ (tt/27 °C) gives τ ≈ 0.24 ms with 10 nF. Simulated 1 % settling 1.26 ms (tt/27 °C), 1.20 ms (ff/−40 °C), 1.32 ms at ss/125 °C with the pad-less stand-in ([BGR system check](blocks/g1_bgr/sim/system_checks_20260924/RESULTS.md)). Scale the delay with the capacitor: 100 nF needs about 11.8–13.2 ms (simulated, 11.84–11.96 ms at ff/−40 °C) |

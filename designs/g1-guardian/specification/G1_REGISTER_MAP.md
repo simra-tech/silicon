@@ -4,15 +4,16 @@ Owner block: `G1_CTRL` (`blocks/g1_ctrl`). Version 1.2, 2026-09-25 (change
 log in section 7). This document is the contract between the host software,
 the digital core (`g1_digital_top`) and the analog blocks it drives.
 
-**Which silicon implements which version.** Version 1.2 is implemented by the
-RTL-only ECO in `blocks/g1_ctrl/rtl_eco_20260925` and `blocks/g1_seu/rtl_eco_20260925`
-(`blocks/g1_ctrl/ECO_20260925.md`; testbench `blocks/g1_ctrl/sim/eco_20260925/tb_g1_digital_eco.v`).
-It applies to the chip once that RTL has been re-hardened into the `g1_digital`
-macro (pin-compatible) and the chip re-verified; until then the chip of record
-(`g1_digital.nl.v` `6181b988`, RTL `blocks/g1_ctrl/rtl`, `blocks/g1_seu/rtl`,
-testbench `blocks/g1_ctrl/sim/tb_g1_digital.v`) implements **version 1.1**.
-Every 1.2 difference is marked "(1.2)" below and listed in section 7; the 1.1
-behaviour is stated next to it. `VERSION` (0x01) tells the host which one it has.
+**Which silicon implements which version.** The chip of record **r3**
+(`blocks/g1_padring/layout/g1_chip_top_1414_r3.gds`, `7d07a784…`, `PLAN.md` D16) implements
+**version 1.2**: RTL `blocks/g1_ctrl/rtl_eco_20260925` and `blocks/g1_seu/rtl_eco_20260925`
+(`blocks/g1_ctrl/ECO_20260925.md`), re-hardened pin-compatible into the `g1_digital` macro
+(gate netlist `4b83f181`; testbench `blocks/g1_ctrl/sim/eco_20260925/tb_g1_digital_eco.v`);
+`VERSION` reads 0x12. The documented fallback **r2** (`9049e87b…`) and the earlier r1
+(`629d303a…`) carry `g1_digital.nl.v` `6181b988` (RTL `blocks/g1_ctrl/rtl`, `blocks/g1_seu/rtl`)
+and implement **version 1.1** (`VERSION` 0x11). Every 1.2 difference is marked "(1.2)" below and
+listed in section 7; the 1.1 (r2 fallback) behaviour is stated next to it. `VERSION` (0x01)
+tells the host which one it has.
 The analog side of the same contract is `blocks/g1_trip/INTERFACE.md` (breaker
 path) and `blocks/g1_t2f/INTERFACE.md` (sensor control bits).
 
@@ -241,7 +242,7 @@ the first sample; for 0x00FF → 0x0100, `_L` first does the same)
 | Addr | Name | Access | Reset | Description |
 | --- | --- | --- | --- | --- |
 | 0x00 | `CHIP_ID` | RO | 0x47 | 'G' |
-| 0x01 | `VERSION` | RO | 0x12 | register map version, `major.minor` in two nibbles: 0x12 = 1.2 (ECO RTL); the chip of record reads 0x11 |
+| 0x01 | `VERSION` | RO | 0x12 | register map version, `major.minor` in two nibbles: 0x12 = 1.2: the chip of record r3 reads 0x12; the r2 fallback (map 1.1) reads 0x11 |
 
 ### 4.2 Trip thresholds and timing
 
@@ -416,4 +417,4 @@ suspended, so no event is lost while the host is reading.
 | --- | --- | --- |
 | 1.0 | 2026-09-18 | first release, built into `g1_digital` run4 |
 | 1.1 | 2026-09-19 | Aligned with `blocks/g1_trip/INTERFACE.md` and `blocks/g1_t2f/INTERFACE.md`. New ports `cmp_clk`, `trip_d`, `clr_d`, `fast_en`, `tripped`, `osc_en`, `osc_trim[3:0]`, `t2f_en`, `t2f_mode`, `bgr_r4` (section 2). New registers 0x27 `SENSE_OFS`, 0x28 `OSC_CTRL`, 0x29 `TEMP_CTRL`, 0x2A `DAC_SOFT_EFF`, 0x2B `DAC_HARD_EFF`; `MODE` bit 5 `FAST_EN`; `STATUS2` bit 3 `TRIPPED_A`; `VERSION` reads 0x11. Existing addresses unchanged. Reset codes `DAC_SOFT` 0x60 → 0x99 and `DAC_HARD` 0x80 → 0xFE, following the shunt scaling (25 mV = nominal current) of the sense path. `HARD_N` counts comparator decisions (200 ns) instead of `osc_clk` samples (100 ns): the reset value 4 now means 0.8 µs. The hard comparator is sampled once per `cmp_clk` period; the soft accumulator is unchanged (still `osc_clk` cycles). Trip cause 2 ("hard") now also covers analog fast-path trips. |
-| 1.2 | 2026-09-25 | RTL-only ECO, pin-compatible (`blocks/g1_ctrl/ECO_20260925.md`; `DIGITAL.md` M1, M2, M3, S2, S5). `osc_en` constant 1, `OSC_CTRL` bit 4 reads 1 and ignores writes. Inrush window cannot be re-opened by an `INRUSH` write after it ended. `SOFT_TIME_H` staged, both bytes take effect on the `SOFT_TIME_L` write. Core reset after 8 consecutive `EN`-low `osc_clk` samples (immediate while `EN` was never high since power-up); release 5 cycles after `EN` rise. Reset value `INRUSH` 0x14 → 0x02; `MODE` stays 0x03 (`FAST_EN` = 1 as default evaluated and rejected, section 3). `VERSION` reads 0x12. `fast_en` port held 0 in reset and for 3 cycles after release (the unstrobed hard comparator reads 1 in reset: chip co-simulation `eco_c_mid` tripped at `EN` rise without it). Addresses and ports unchanged. Applies to the chip after the macro is re-hardened. |
+| 1.2 | 2026-09-25 | RTL-only ECO, pin-compatible (`blocks/g1_ctrl/ECO_20260925.md`; `DIGITAL.md` M1, M2, M3, S2, S5). `osc_en` constant 1, `OSC_CTRL` bit 4 reads 1 and ignores writes. Inrush window cannot be re-opened by an `INRUSH` write after it ended. `SOFT_TIME_H` staged, both bytes take effect on the `SOFT_TIME_L` write. Core reset after 8 consecutive `EN`-low `osc_clk` samples (immediate while `EN` was never high since power-up); release 5 cycles after `EN` rise. Reset value `INRUSH` 0x14 → 0x02; `MODE` stays 0x03 (`FAST_EN` = 1 as default evaluated and rejected, section 3). `VERSION` reads 0x12. `fast_en` port held 0 in reset and for 3 cycles after release (the unstrobed hard comparator reads 1 in reset: chip co-simulation `eco_c_mid` tripped at `EN` rise without it). Addresses and ports unchanged. Re-hardened into the macro (`4b83f181`) of the chip of record r3 (`7d07a784…`, 2026-09-25); r2 keeps 1.1. |

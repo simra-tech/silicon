@@ -14,11 +14,14 @@ GDS is retained outside the tree (`review/local-retention-20260925.json`), and i
    restore global GatPoly density.
 
 Owner decision 2026-09-25: adopt the RTL ECO through pin-compatible re-hardening (`PLAN.md` D16).
-The RTL was confirmed at chip level before promotion:
+The RTL was confirmed at chip level before promotion, on the hand-wired chip deck
+(`run_top.py --blockset c1414`: block extractions with the BGR586 schematic view, SENSE pads
+without `dantenna`, fitted `GATE` driver about 7 % optimistic, ideal clock, ECO RTL as a
+behavioural digital; not a full-chip extraction):
 - `eco_c_mid_m03`: `tripped` 1.166 µs, `GATE` < 1 V at 1.451 µs;
 - `eco_hard_pulse_m03`: no trip.
 
-Both are recorded in `ECO_20260925.md` and `blocks/g1_top/sim/results_top.txt`.
+Both are recorded in `ECO_20260925.md`. Their decks, JSON summaries and tail extracts are committed under `blocks/g1_top/sim/` (commit d53aeedb); raw logs over 300 kB are retained by hash in `review/local-retention-20260925.json`.
 
 No top-level routing, pad, opening, label, block or other fill changed (XOR below). This is
 physical verification only. Full-chip PEX, IR/EM and timing sign-off of the assembled chip are
@@ -99,7 +102,7 @@ The steps are [`../../../g1_ctrl/flow/eco/RUNBOOK.md`](../../../g1_ctrl/flow/eco
    | netgen LVS | clean |
    | Stream-out XOR | 0 |
    | TMR separation | all 199 stages ≥ 27.4 µm (criterion 20 µm) |
-   | Merged-SDC STA inside the chip netlist (`reports/sta_merged_sdc_20260924/run_sta.sh`, unchanged) | setup 27.25/27.99/25.70 ns, hold 0.195/0.114/0.337 ns, 0 violations |
+   | Merged-SDC STA inside the chip netlist (`reports/sta_merged_sdc_20260924/run_sta.sh`, unchanged) | setup 27.25/27.99/25.70 ns, hold 0.195/0.114/0.337 ns: 0 setup/hold violations; 12 analog-pad max-slew flags per corner (placeholder library values) and 98 unannotated drivers, dispositioned (`$R/sta/main/`) |
    | Registers | 1170 `osc_clk`, 52 `sclk` |
 
    Wall time: first pass 54 s, main flow 1237 s on 8 CPUs.
@@ -147,7 +150,7 @@ Every check ran detached through `flow/launch_pinned.sh` with a 5400 s bound and
 `g1_chip_top`, all at the same time on disjoint CPU sets. The options are the same as r2's
 (r2 README "Commands"; `run_candidate.sh` stage `signoff`).
 
-| Check | CPUs | Result | Markers | Wall | Report (bulk `$R/signoff/`) |
+| Check | CPUs | Result | Markers | Wall | Report (copy here; original in `$R/signoff/`) |
 |---|---|---|---|---|---|
 | Main DRC | 64-67 | **passed** | 0 | 416 s | `drc_main/…_main.lyrdb` `3da5e270…` |
 | Maximal DRC | 68-71 | **passed** | 0 | 887 s | `drc_maximal/…_sg13g2_maximal.lyrdb` `f54b65a5…` |
@@ -160,6 +163,61 @@ Every check ran detached through `flow/launch_pinned.sh` with a 5400 s bound and
 The five DRC lyrdb hashes equal r2's (an empty report carries only the rule catalogue). Every
 run exited with code 0. The checks ran on the bulk file `$R/chip/g1_chip_top_1414_r3_candidate.gds`, which is byte-identical to `layout/g1_chip_top_1414_r3.gds` (same SHA-256 `7d07a784…`). The GDS SHA was checked again after all runs and was unchanged.
 
+## Evidence copies in this folder
+
+The summary logs, reports, `run.log` and return codes of every chip check were copied from `$R/signoff/`.
+As in r2, only `${BULK}` and `${REPO}` were substituted in the copies. [`manifest.json`](manifest.json) lists, per
+file, the original and copy SHA-256. All copies are < 300 kB.
+
+The LVS databases and extracted netlists are bulk only, with their hashes in `review/local-retention-20260925.json`:
+
+| File | Bytes | SHA-256 |
+|---|---|---|
+| `lvs_projected/…lvsdb` | 189 314 512 | `0f79a4b4…` |
+| `lvs_projected/…_extracted.cir` | 10 904 326 | `91a9a77f…` |
+| `lvs_canonical/…lvsdb` | 133 615 872 | `1e1d14a0…` |
+| `lvs_canonical/…_extracted.cir` | 872 087 | `d2a436f0…` |
+
+The macro flow summary, the TMR separation, the view hashes and the 6 STA summaries are in [`macro/`](macro/).
+
+| File | Bytes (original) | Original SHA-256 | Paths normalised |
+|---|---|---|---|
+| [`drc_main/drc_run_2026_09_25_19_41_07.log`](drc_main/drc_run_2026_09_25_19_41_07.log) | 882 | `732670ae…` | yes |
+| [`drc_main/g1_chip_top_1414_r3_candidate_g1_chip_top_main.log`](drc_main/g1_chip_top_1414_r3_candidate_g1_chip_top_main.log) | 80 241 | `7d918609…` | yes |
+| [`drc_main/g1_chip_top_1414_r3_candidate_g1_chip_top_main.lyrdb`](drc_main/g1_chip_top_1414_r3_candidate_g1_chip_top_main.lyrdb) | 113 758 | `3da5e270…` | no |
+| [`drc_main/run.log`](drc_main/run.log) | 81 727 | `9a952371…` | yes |
+| [`drc_main/run.log.rc`](drc_main/run.log.rc) | 2 | `9a271f2a…` | no |
+| [`drc_maximal/g1_chip_top_1414_r3_candidate_g1_chip_top_sg13g2_maximal.log`](drc_maximal/g1_chip_top_1414_r3_candidate_g1_chip_top_sg13g2_maximal.log) | 1 045 | `a493fcbc…` | yes |
+| [`drc_maximal/g1_chip_top_1414_r3_candidate_g1_chip_top_sg13g2_maximal.lyrdb`](drc_maximal/g1_chip_top_1414_r3_candidate_g1_chip_top_sg13g2_maximal.lyrdb) | 46 871 | `f54b65a5…` | no |
+| [`drc_maximal/run.log`](drc_maximal/run.log) | 9 827 | `bbfd1750…` | yes |
+| [`drc_maximal/run.log.rc`](drc_maximal/run.log.rc) | 2 | `9a271f2a…` | no |
+| [`density/drc_run_2026_09_25_19_41_11.log`](density/drc_run_2026_09_25_19_41_11.log) | 951 | `6a85b2f8…` | yes |
+| [`density/g1_chip_top_1414_r3_candidate_g1_chip_top_density.log`](density/g1_chip_top_1414_r3_candidate_g1_chip_top_density.log) | 12 064 | `f3ec557a…` | yes |
+| [`density/g1_chip_top_1414_r3_candidate_g1_chip_top_density.lyrdb`](density/g1_chip_top_1414_r3_candidate_g1_chip_top_density.lyrdb) | 1 889 | `89149c55…` | no |
+| [`density/run.log`](density/run.log) | 13 619 | `8caaebb1…` | yes |
+| [`density/run.log.rc`](density/run.log.rc) | 2 | `9a271f2a…` | no |
+| [`antenna/drc_run_2026_09_25_19_41_11.log`](antenna/drc_run_2026_09_25_19_41_11.log) | 952 | `fc11d476…` | yes |
+| [`antenna/g1_chip_top_1414_r3_candidate_g1_chip_top_antenna.log`](antenna/g1_chip_top_1414_r3_candidate_g1_chip_top_antenna.log) | 9 334 | `bc30192a…` | yes |
+| [`antenna/g1_chip_top_1414_r3_candidate_g1_chip_top_antenna.lyrdb`](antenna/g1_chip_top_1414_r3_candidate_g1_chip_top_antenna.lyrdb) | 7 361 | `71533d82…` | no |
+| [`antenna/run.log`](antenna/run.log) | 10 890 | `095ca7b5…` | yes |
+| [`antenna/run.log.rc`](antenna/run.log.rc) | 2 | `9a271f2a…` | no |
+| [`precheck/drc_run_2026_09_25_19_41_09.log`](precheck/drc_run_2026_09_25_19_41_09.log) | 1 137 | `0ad841b0…` | yes |
+| [`precheck/g1_chip_top_1414_r3_candidate_g1_chip_top_density.log`](precheck/g1_chip_top_1414_r3_candidate_g1_chip_top_density.log) | 11 530 | `b44a3078…` | yes |
+| [`precheck/g1_chip_top_1414_r3_candidate_g1_chip_top_full.lyrdb`](precheck/g1_chip_top_1414_r3_candidate_g1_chip_top_full.lyrdb) | 93 590 | `92416e92…` | no |
+| [`precheck/g1_chip_top_1414_r3_candidate_g1_chip_top_main.log`](precheck/g1_chip_top_1414_r3_candidate_g1_chip_top_main.log) | 72 143 | `eeac3d59…` | yes |
+| [`precheck/run.log`](precheck/run.log) | 85 347 | `54dc31b8…` | yes |
+| [`precheck/run.log.rc`](precheck/run.log.rc) | 2 | `9a271f2a…` | no |
+| [`lvs_projected/g1_chip_top_1414_r3_candidate.log`](lvs_projected/g1_chip_top_1414_r3_candidate.log) | 36 463 | `6fe814fe…` | yes |
+| [`lvs_projected/lvs_run_2026_09_25_19_41_10.log`](lvs_projected/lvs_run_2026_09_25_19_41_10.log) | 1 955 | `05511807…` | yes |
+| [`lvs_projected/run.log`](lvs_projected/run.log) | 39 022 | `9049ecde…` | yes |
+| [`lvs_projected/run.log.rc`](lvs_projected/run.log.rc) | 2 | `9a271f2a…` | no |
+| [`lvs_canonical/g1_chip_top_1414_r3_candidate.log`](lvs_canonical/g1_chip_top_1414_r3_candidate.log) | 36 417 | `a2b8463f…` | yes |
+| [`lvs_canonical/lvs_run_2026_09_25_19_41_11.log`](lvs_canonical/lvs_run_2026_09_25_19_41_11.log) | 2 118 | `5d4027d8…` | yes |
+| [`lvs_canonical/run.log`](lvs_canonical/run.log) | 39 139 | `57b2b367…` | yes |
+| [`lvs_canonical/run.log.rc`](lvs_canonical/run.log.rc) | 2 | `9a271f2a…` | no |
+| [`input_gds.sha256`](input_gds.sha256) | 155 | `26d447f6…` | yes |
+| [`input_gds.sha256.after`](input_gds.sha256.after) | 155 | `26d447f6…` | yes |
+
 ## Block-to-netlist map
 
 All blocks except the digital are **unchanged from r2** (and r1: [`signoff-1414-20260924` block map](../signoff-1414-20260924/README.md#block-to-netlist-map-what-is-physically-in-629d303a)).
@@ -167,7 +225,7 @@ The XOR r2 → r3 above shows no change outside the macro outline except 5/22. T
 
 | Block (chip cell) | Variant physically present | Layout identity | Netlist in canonical CDL = | Simulation | Post-layout extraction bound to this layout |
 |---|---|---|---|---|---|
-| Digital (`__rz_port_text_000_retained_g1_digital`, R0 at 367, 364 µm) | RTL ECO, register map 1.2, re-hardened pin-compatible (LibreLane, run `$R/runs/main`) | `$R/final/gds/g1_digital.gds` `67d049bf…`, copied into the cell by `swap_macro.py` (content equal apart from the 7 removed unconnected-pin labels and 27 label-stripped dummy-load clones) | `g1_digital` from powered netlist `476885d7…` (`verilog_to_subckt`, `assign osc_en` resolved) | Gate netlist `4b83f1812af385d22302123970443cf63d8889d622794671d31a8e05c9cd9347`, GLS **passed**: 21 tests / 260 checks, functional (unit delay) and SDF typ `f2a807f0…` (`blocks/g1_ctrl/sim/gls_eco_r3v2/`). Red-team bench on the netlist: 4 pass, 1 FAIL = reproduced documented hazards (`tb_redteam_eco_gls_r3cand2.log`) | SPEF nominal `0b626c7f…`. STA with the merged chip SDC (`reports/sta_merged_sdc_20260924/run_sta.sh`), typ/fast/slow: macro setup 28.82/29.04/28.45 ns, hold 0.195/0.114/0.337 ns; inside the chip netlist setup 27.25/27.99/25.70 ns, same hold; 0 violations (`$R/sta/main/`) |
+| Digital (`__rz_port_text_000_retained_g1_digital`, R0 at 367, 364 µm) | RTL ECO, register map 1.2, re-hardened pin-compatible (LibreLane, run `$R/runs/main`) | `$R/final/gds/g1_digital.gds` `67d049bf…`, copied into the cell by `swap_macro.py` (content equal apart from the 7 removed unconnected-pin labels and 27 label-stripped dummy-load clones) | `g1_digital` from powered netlist `476885d7…` (`verilog_to_subckt`, `assign osc_en` resolved) | Gate netlist `4b83f1812af385d22302123970443cf63d8889d622794671d31a8e05c9cd9347`, GLS **passed**: 21 tests / 260 checks, functional (unit delay) and SDF typ `f2a807f0…` (`blocks/g1_ctrl/sim/gls_eco_r3v2/`). 21/21 functional. Red-team bench on the netlist: 4 pass, R3 **fails** (serial framing, out of the ECO scope) (`tb_redteam_eco_gls_r3cand2.log`). Icarus executes no timing checks and drops part of the SDF delay model (68 unsupported `ifnone` paths) | SPEF nominal `0b626c7f…`. STA with the merged chip SDC (`reports/sta_merged_sdc_20260924/run_sta.sh`), typ/fast/slow: macro setup 28.82/29.04/28.45 ns, hold 0.195/0.114/0.337 ns; inside the chip netlist setup 27.25/27.99/25.70 ns, same hold; 0 violations (`$R/sta/main/`) |
 
 ## Bond map
 
@@ -205,6 +263,10 @@ pattern.
 - Full-chip (assembled) PEX, full-chip transient/electrical simulation of the r3 GDS itself, IR drop/EM, full-chip STA with extracted parasitics.
   - The chip-level ECO runs (`eco_c_mid_m03`, `eco_hard_pulse_m03`) use the extracted chip with the ECO RTL as a
     behavioural digital, not this extracted macro.
+- Formal equivalence of the ECO RTL against the gate netlist `4b83f181`: not run.
+- SDF GLS at fast and slow corners (SDFs exist in bulk): not run.
+- Chip-level co-simulation with the hardened macro's gate netlist + SPEF: not run.
+- Chip-level power-up (gB/gA), the 72-cell matrix and the CDL-driven deck with the frozen ECO RTL: not run.
 - Canonical unprojected LVS passing: run, **failed** (PDK IO-cell reference semantics, as r1/r2).
 - Block-map XOR re-run for the unchanged blocks: not run. The r2 → r3 XOR shows no change outside the macro except 5/22.
 - IHP intake/rejection test; written IHP die-area confirmation: open (as r2).

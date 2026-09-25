@@ -6,7 +6,7 @@ This is the routing *between* the block macros of `g1_chip_top_1414.gds`
 57 routed top-level signal nets, plus a pi-RC variant with the series wire R.
 It can be added next to the block PEX netlists in the chip deck. All values
 are **extracted or estimated from layout**. None is measured, and none has been
-simulated in the chip deck (**not run**, see "Not run").
+simulated in the chip deck (**not run** when written, see "Not run"). (Update 2026-09-26: the chip deck with these lumps ran as `c1414icx`, see `../campaigns/RESULTS_20260925.md` §9; the file of record is now r3 `g1_chip_top_1414_r3.gds` `7d07a784…`, which differs from r1/r2 only inside the digital macro and in fill, so this r1-geometry extraction applies to r3.)
 
 ## Built against
 
@@ -22,7 +22,7 @@ simulated in the chip deck (**not run**, see "Not run").
 | ngspice | 46 (syntax check of the subcircuits only) | `ngspice -v` |
 | CPUs | 34-35 (`taskset`) | `flow/launch_pinned.sh` |
 
-Revision r2 (`g1_chip_top_1414_r2.gds` `9049e87b…`, now the file of record)
+Revision r2 (`g1_chip_top_1414_r2.gds` `9049e87b…`, the file of record when written; now the r3 fallback)
 changes only metadata: two text labels and three cell names. Its sign-off
 report states that the geometry is identical on every layer
 (`../../../g1_padring/reports/signoff-1414r2-20260925/README.md`). The
@@ -263,7 +263,7 @@ CDL port → deck node (from `run_top.py` as read on 2026-09-25): `isense`→`is
 
 | Item | Status |
 |---|---|
-| Chip deck simulation with these lumps (any case) | not run |
+| Chip deck simulation with these lumps (any case) | run since: `c1414icx` (RESULTS §9) |
 | Effect of the VREF–osc_clk and ISENSE couplings, and of the SENSE_P/N R mismatch | not run |
 | Field-solver (FasterCap) cross-check of any net | not run |
 | With-fill extraction of the routes | not run |
