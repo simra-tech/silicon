@@ -1,0 +1,72 @@
+# tb_g1_digital_on_eco (ECO RTL rtl_eco_20260925)
+# 2026-09-25T13:32:44Z  Icarus Verilog version 14.0 (devel) (s20260301-328-geda9fdcd-dirty)
+# PDK commit 84374023ee8b4b126bebbba67fcbada0a9c0ff0b
+# tb sha256: fd4c44a3f6d982d4
+# rtl sha256: c14906d7d9256a77  designs/g1-guardian/blocks/g1_ctrl/rtl_eco_20260925/g1_sync2.v
+# rtl sha256: df4341e1878caef2  designs/g1-guardian/blocks/g1_ctrl/rtl_eco_20260925/g1_serial.v
+# rtl sha256: 5cab0bc384cef5a7  designs/g1-guardian/blocks/g1_ctrl/rtl_eco_20260925/g1_trip_timer.v
+# rtl sha256: 605d738514124e87  designs/g1-guardian/blocks/g1_ctrl/rtl_eco_20260925/g1_regfile.v
+# rtl sha256: c52918f7e2242096  designs/g1-guardian/blocks/g1_ctrl/rtl_eco_20260925/g1_digital_top.v
+# rtl sha256: 36757122c43271df  designs/g1-guardian/blocks/g1_ctrl/rtl_eco_20260925/g1_digital.v
+# rtl sha256: f53f82d97b91d4e8  designs/g1-guardian/blocks/g1_seu/rtl_eco_20260925/g1_tmr_reg.v
+# rtl sha256: 6e10bbc02a8ff291  designs/g1-guardian/blocks/g1_seu/rtl_eco_20260925/g1_seu_chain.v
+# rtl sha256: 7c1831c99b5875a2  designs/g1-guardian/blocks/g1_seu/rtl_eco_20260925/g1_seu.v
+# iverilog -g2005 -Wall -Wno-timescale -o tb_g1_digital_on_eco.vvp <rtl> designs/g1-guardian/blocks/g1_ctrl/sim/tb_g1_digital.v
+VCD info: dumpfile tb_g1_digital.vcd opened for output.
+  FAIL 27600000 VERSION: got 0x12 expected 0x11
+  FAIL 75200000 INRUSH: got 0x2 expected 0x14
+  FAIL 95600000 MODE: got 0x23 expected 0x3
+  FAIL 109200000 STATUS (EN=1, INRUSH_ACTIVE=1): got 0x80 expected 0x88
+  FAIL 252000000 fast_en port: got 0x1 expected 0x0
+FAIL T01 reset values of every register
+  FAIL 301951000 SOFT_TIME_H: got 0x0 expected 0x12
+  FAIL 420351000 OSC_CTRL masks to 5 bits: got 0x15 expected 0x5
+  FAIL 420351000 osc_en port follows OSC_CTRL[4]: got 0x1 expected 0x0
+FAIL T02 write/read-back of every RW register
+PASS T03 serial at f_SCLK = f_OSC (10 MHz) and idle-timeout resync
+  FAIL 598251000 ARD back to reset after EN cycle: got 0x11 expected 0xfe
+FAIL T04 EN low resets configuration; STATUS.EN
+  FAIL 611851000 INRUSH_ACTIVE set: got 0x80 expected 0x88
+  FAIL 1650651000 hard trip after inrush: got 0x0 expected 0x1
+  FAIL hard trip latency 20 cycles
+  FAIL 1650651000 cause hard: got 0x0 expected 0x2
+  FAIL 1650651000 fault_n low: got 0x1 expected 0x0
+  FAIL 1650651000 gate_en low: got 0x1 expected 0x0
+  FAIL 1650651000 trip_d set: got 0x0 expected 0x1
+  FAIL 1650651000 G1_GATE latch set by trip_d: got 0x0 expected 0x1
+  FAIL 1657451000 STATUS tripped, cause hard: got 0x80 expected 0x85
+  FAIL 1664251000 STATUS2: TRIPPED_A, gate off: got 0x4 expected 0x8
+  FAIL 1677851000 TRIP_CNT = 1: got 0x0 expected 0x1
+  FAIL 1777851000 latched: still tripped: got 0x0 expected 0x1
+FAIL T05 inrush mask after EN, then hard trip
+  FAIL 1838151000 TRIP_CNT = 2: got 0x1 expected 0x2
+FAIL T06 hard path: N-1 consecutive decisions do not trip, N do; gap resets
+  FAIL 2024651000 continuous > 512: trip: got 0x0 expected 0x1
+  FAIL 2024651000 cause soft: got 0x0 expected 0x1
+  FAIL soft trip latency 700 cycles
+  FAIL 2120351000 intermittent accumulates to trip: got 0x0 expected 0x1
+  FAIL intermittent latency 400 cycles
+  FAIL 2221251000 slow decay trips sooner: got 0x0 expected 0x1
+  FAIL slow-decay latency 400 cycles
+  FAIL 2250951000 TRIP_CNT = 5: got 0x1 expected 0x5
+FAIL T07 soft path: short pulse no trip, long trips, decay, peak, hysteresis
+PASS T08 force trip, path enables
+PASS T09 retrigger mode: hold, re-enable, inrush restart, give-up
+  FAIL 6878051000 SEU_STATUS active: got 0x0 expected 0x1
+  FAIL 6999851000 SEU_PLAIN = 1: got 0x0 expected 0x1
+  FAIL 7027051000 SEU_RUN = 1: got 0x0 expected 0x1
+  FAIL 7075851000 SEU_CORR = 1: got 0x0 expected 0x1
+  FAIL 7096251000 SEU_PLAIN still 1: got 0x0 expected 0x1
+FAIL T10 SEU self-test injection through registers
+PASS T11 SEU constant pattern (static data): upsets by hierarchical flip
+  FAIL OSC_CNT delta 2
+FAIL T12 OSC_CNT L/H consistency and OSC_DIV
+PASS T13 sense offset: signed add to both DAC codes, saturation, hysteresis stacking
+  FAIL 28018251000 trip_d low in reset: got 0x1 expected 0x0
+  FAIL 28038051000 MODE back to reset: got 0x20 expected 0x3
+FAIL T14 G1_GATE fast path: analog trip adopted, clr_d clears it, no re-trip
+  clr_d pulses 14, minimum width 200.000000 ns (>= 100 ns required)
+PASS T15 clr_d pulse width and trip_d hold
+SUMMARY tests_pass=6 tests_fail=9 checks=204 errors=38
+SOME TESTS FAILED
+/work/designs/g1-guardian/blocks/g1_ctrl/sim/tb_g1_digital.v:600: $finish called at 28038051000 (1ps)

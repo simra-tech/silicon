@@ -1,0 +1,15 @@
+# tb_fault_contract_on_eco (ECO RTL rtl_eco_20260925)
+# 2026-09-25T13:36:06Z  Icarus Verilog version 14.0 (devel) (s20260301-328-geda9fdcd-dirty)
+# tb sha256: 65cbded68466c5c7
+# iverilog -g2012 -Wall -Wno-timescale -o tb_fault_contract_on_eco.vvp <rtl> designs/g1-guardian/blocks/g1_ctrl/sim/tb_fault_contract.v
+/work/designs/g1-guardian/blocks/g1_ctrl/sim/tb_fault_contract.v:35: warning: bit select osc_ctrl[4] is out of range.
+CLASS persistent threshold corruption:8/8 hard-DAC bit upsets persist until rewrite/reset
+FAIL            OSC_EN upset disables
+FAIL            OSC_EN upset persists
+CLASS OSC_EN upset persists; physical stopped-clock recovery requires EN/POR or external action
+CLASS dangerous:clock absent,FAST disabled,hard comparator high => digital path remains armed without trip for2us
+CLASS384/384 single-copy monitor upsets masked and corrected
+CLASS two-copy same-stage upset escapes majority correction and is counted as uncorrectable
+SUMMARY checks=796 errors=2; vulnerabilities above are expected characterizations
+SOME TESTS FAILED
+/work/designs/g1-guardian/blocks/g1_ctrl/sim/tb_fault_contract.v:76: $finish called at 151652000 (1ps)
