@@ -28,6 +28,25 @@ sha256sum designs/g1-guardian/blocks/g1_ctrl/rtl_eco_20260925/*.v \
           designs/g1-guardian/blocks/g1_ctrl/flow/g1_digital.sdc > $R/inputs_sha256.txt
 ```
 
+Lessons from the r3-candidate run (2026-09-25):
+- Snapshot the RTL into `$R/rtl_snapshot/` and pass it to `make_config.py` as a path
+  relative to `flow/eco`, e.g. `../../../../../../..$R/rtl_snapshot/g1_ctrl`. LibreLane
+  rejects `dir::` with an absolute path.
+- `swap_macro.py` now strips floating output labels of `sg13g2_buf_4` dummy loads by default,
+  in addition to `inv_2/4/8`. Acceptance: projected LVS must show exactly 22/22 pins, not
+  just "match".
+- Maximal DRC with KLayout can SIGSEGV at start. Re-run it and keep the failed attempt.
+
+- 2026-09-26: `swap_macro.py` took any inverter or buffer with an unconnected Y **or** X as
+  floating, and aborted on the buffer `wire100` (X connected). It now checks the master's own
+  output pin (Y for `inv`, X for `buf`). The v1 candidate and the r2 control select the
+  same instances as before the fix (18 and 29, all `clkload*`), so their results stand.
+
+**One-command form:** `run_candidate.sh` runs steps 0-6 in stages, each stopping on its
+first failed acceptance check:
+`BULK=$BULK $E/run_candidate.sh $R [macro|chip|signoff|post]` (default `all`).
+The README and the HANDOFF are then written by hand from `$R`.
+
 ## 1. Macro
 
 ```

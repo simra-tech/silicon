@@ -6,7 +6,7 @@
 // ECO 2026-09-25 (blocks/g1_ctrl/ECO_20260925.md): osc_en is a constant 1 and
 // OSC_CTRL bit 4 writes are ignored (change 1); SOFT_TIME_H writes go to a
 // shadow that is committed together with the SOFT_TIME_L write (change 3);
-// reset values INRUSH = 0x02 and MODE = 0x23, i.e. FAST_EN = 1 (change 5);
+// reset value INRUSH = 0x02 (change 5; MODE stays 0x03, FAST_EN = 0);
 // VERSION = 0x12.
 // SPDX-License-Identifier: Apache-2.0
 
@@ -148,7 +148,7 @@ module g1_regfile (
             inrush        <= 8'h02;   // 1024 cycles, ~0.1 ms (was 0x14)
             hold_time     <= 8'h0C;
             retry_max     <= 8'h03;
-            mode          <= 6'h23;   // SOFT_EN, HARD_EN, FAST_EN (was 0x03)
+            mode          <= 6'h03;   // SOFT_EN, HARD_EN; FAST_EN = 0 (host-selectable)
             seu_ctrl      <= 3'h1;
             osc_div       <= 3'h0;
             sense_ofs     <= 8'h00;

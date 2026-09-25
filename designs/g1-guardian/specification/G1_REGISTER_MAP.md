@@ -147,7 +147,7 @@ through one `g1_ls_up` cell each (`blocks/g1_ctrl/ls/`).
 | `trip_set_sel` | out | 1 | `G1_TRIP` | 1 = hard comparator reference from the `TRIP_SET` pad instead of `dac_hard`. Not connected on the chip of record: `g1_trip` has no such input, so the bit has no effect |
 | `trip_d` | out | 1 | `G1_GATE` | level = digital trip latch; 1 sets the 3.3 V trip latch |
 | `clr_d` | out | 1 | `G1_GATE` | 2-cycle pulse (200 ns nominal, ≥ 160 ns at +20 % clock) on every `CLEAR` command and every retrigger re-enable; clears the 3.3 V latch, reset-dominant |
-| `fast_en` | out | 1 | `G1_GATE` | 1 = analog fast path `cmp_hard` → latch, bypassing `HARD_N` and the inrush mask (`MODE.FAST_EN`, reset 1 in 1.2, 0 in 1.1) |
+| `fast_en` | out | 1 | `G1_GATE` | 1 = analog fast path `cmp_hard` → latch, bypassing `HARD_N` and the inrush mask (`MODE.FAST_EN`, reset 0). (1.2) The port is `MODE.FAST_EN` AND "core out of reset for ≥ 3 `osc_clk` edges": held 0 in reset and until one edge after the first real hard-comparator decision, because the unstrobed comparator output in reset is not a decision |
 | `tripped` | in | 1 | `G1_GATE` | 3.3 V latch state, level-shifted inside G1_GATE; synchronised here, read as `STATUS2.TRIPPED_A`; a set the core did not command is adopted as a trip with cause "hard" (section 5) |
 | `trip`, `gate_en`, `fault_n`, `trip_cause[1:0]` | out | 1, 1, 1, 2 | test / monitor | digital latch state, `en & ~trip`, `~trip`, cause (0 none, 1 soft, 2 hard, 3 forced). The `GATE` and `FAULT_N` pads are driven by G1_GATE, not by these |
 | `t2f_en` | out | 1 | `g1_ls_up` → `g1_t2f.en` | `TEMP_CTRL.T2F_EN` (reset 1) |
@@ -172,9 +172,19 @@ edges** (10 cycles after the `EN` fall, about 1 µs; simulated). A shorter `EN`
 low pulse (< 8 samples) does not reset the core: the configuration and a
 latched trip are kept. Exception for the first reset after power-up: while
 `EN` has never been sampled high since power-up the reset follows `EN`
-directly (no clock edge needed); with `por_n` tied high that flop powers up in
-an unknown state, so in the worst case the first reset also takes 10 cycles
-(the oscillator always runs in 1.2). Release: `EN` high, then 5 `osc_clk`
+directly (no clock edge needed). **Power-up contract (1.2):** that flop
+(`en_seen`) has no reset (`por_n` is tied high), so with `EN` low at power-up
+the core reset is asserted either at once or, in the worst power-up state,
+within **11 `osc_clk` edges of oscillator start** (2 synchroniser + 8 samples +
+1; about 1.2 µs at 9.4 MHz, 1.45 µs at 7.6 MHz; the oscillator always runs in
+1.2). Until then every digital output (DAC codes, `trip_d`, `clr_d`,
+`fast_en`, `t2f_*`, `bgr_r4`) is undefined. This cannot turn the gate on:
+G1_GATE computes `gate_core = en_core & !tripped` with a reset-dominant latch
+(`reset = !en_core | clr_d`), so `en_core` = 0 from the `EN` pad forces
+`gate_core` = 0 whatever the digital outputs are (`blocks/g1_gate/README.md`);
+the external inhibit covers power-up (`G1_TOP_LEVEL_SPECIFICATION.md` §6 P2, P6).
+Simulated: RTL, `en_seen` deposited 0 / 1 / left X (E6 in
+`blocks/g1_ctrl/sim/eco_20260925/tb_g1_digital_eco.v`, R1 in `tb_redteam_eco.v`). Release: `EN` high, then 5 `osc_clk`
 cycles (2 before). The 128-cycle wait before the first frame (1.2) is
 unchanged. An `EN` low of 8 to about 11 cycles resets the configuration but
 may leave a latched trip latched (the G1_GATE latch is set again by the
@@ -196,7 +206,7 @@ noise on floating `SCLK`/`SDI` can complete write frames, e.g. to `OSC_CTRL` or
 | --- | --- |
 | hard threshold | code 0xFE (49.8 mV shunt nominal code value, 2.0 × nominal; the **effective** hard threshold is 40–56 LSB, about 8–11 mV, below the code in simulation, i.e. about 39–42 mV at 0xFE: `G1_TOP_LEVEL_SPECIFICATION.md` §4/§6), 4 consecutive comparator decisions (0.8 µs) |
 | soft threshold | code 0x99 (30.0 mV shunt, 1.2 × nominal), trip-off window ~1 ms, symmetric up/down |
-| analog fast path | (1.2) **on** (`FAST_EN` = 1: a hard overload trips through G1_GATE also during the inrush mask); (1.1) off. Oscillator on, trim mid code; sensor on, PTAT mode |
+| analog fast path | off (`FAST_EN` = 0), host-selectable; when enabled it also acts during the inrush mask. (1.2) `FAST_EN` = 1 as the reset default was evaluated and rejected (2026-09-25): chip co-simulation `eco_c_mid_r3` trips through the fast path 0.21 µs after the fault (`GATE` < 1 V 0.50 µs, against 1.05/1.33 µs on the digital path), but the fast path acts on a single comparator strobe, so 200 ns pulses that the 4-decision hard path rejects would trip, and the `FAST_EN` = 0 verification matrix would no longer apply. Once written to 1, the port is enabled no earlier than 3 cycles after reset release. Oscillator on, trim mid code; sensor on, PTAT mode |
 | inrush mask after `EN` | (1.2) 1024 cycles, ~0.1 ms (0.109 ms at 9.4 MHz); (1.1) ~1 ms |
 | mode | latched: a trip holds until `EN` is cycled |
 | SEU scrubber | running, alternating pattern |
@@ -251,7 +261,7 @@ the first sample; for 0x00FF → 0x0100, `_L` first does the same)
 
 | Addr | Name | Access | Reset | Description |
 | --- | --- | --- | --- | --- |
-| 0x0B | `MODE` | RW | 0x23 (1.2); 0x03 (1.1) | bit 0 `SOFT_EN`, bit 1 `HARD_EN`: enable each trip path. Bit 2 `RETRIG`: 0 = latched (trip holds until `CLEAR` or `EN` cycle), 1 = retrigger after `HOLD_TIME`, up to `RETRY_MAX` times. Bit 3 `TRIP_SET_SEL`: hard comparator reference from the `TRIP_SET` pad; **no effect on the chip of record** (the bit drives no load and the `TRIP_SET` pad net has no core load; canonical CDL, `DIGITAL.md` N2). Bit 4 `FORCE_TRIP`: level; while 1 the breaker is tripped with cause "forced" (a `CLEAR` while it is set re-trips at once). Bit 5 `FAST_EN` (v1.1; reset 1 in 1.2): enable the G1_GATE analog fast path, `cmp_hard` sets the 3.3 V latch directly with no filter and no inrush mask; the core adopts the trip (cause "hard"). Bits 7:6 reserved. |
+| 0x0B | `MODE` | RW | 0x03 | bit 0 `SOFT_EN`, bit 1 `HARD_EN`: enable each trip path. Bit 2 `RETRIG`: 0 = latched (trip holds until `CLEAR` or `EN` cycle), 1 = retrigger after `HOLD_TIME`, up to `RETRY_MAX` times. Bit 3 `TRIP_SET_SEL`: hard comparator reference from the `TRIP_SET` pad; **no effect on the chip of record** (the bit drives no load and the `TRIP_SET` pad net has no core load; canonical CDL, `DIGITAL.md` N2). Bit 4 `FORCE_TRIP`: level; while 1 the breaker is tripped with cause "forced" (a `CLEAR` while it is set re-trips at once). Bit 5 `FAST_EN` (v1.1; reset 0): enable the G1_GATE analog fast path, `cmp_hard` sets the 3.3 V latch directly with no filter and no inrush mask; the core adopts the trip (cause "hard"). Bits 7:6 reserved. |
 | 0x0C | `CTRL` | WO | — | self-clearing command bits. Bit 0 `CLEAR`: clear the trip latch, cause, retry count and hold timer; the inrush mask does **not** restart. Bit 1 `CLR_TRIP_CNT`: zero `TRIP_CNT`. Bit 2 `CLR_PEAK`: zero `SOFT_PEAK`. Bit 3 `CLR_OSC_CNT`: zero `OSC_CNT`. Others ignored. |
 | 0x0D | `STATUS` | RO | 0x80 | bit 0 `TRIPPED`. Bits 2:1 `CAUSE`: 0 none, 1 soft, 2 hard, 3 forced (latched at the trip, cleared with the latch). Bit 3 `INRUSH_ACTIVE`. Bit 4 `HOLDING`: in retrigger hold. Bit 5 `GAVE_UP`: retries exhausted, now latched. Bit 6 `SOFT_ARMED`: soft counter above zero. Bit 7 `EN`: always reads 1 (the register is unreadable while `EN` is low). |
 | 0x0E | `STATUS2` | RO | — | bit 0 `CMP_SOFT`, bit 1 `CMP_HARD`: synchronised comparator inputs. Bit 2 `GATE_EN`. Bit 3 `TRIPPED_A` (v1.1): synchronised state of the G1_GATE 3.3 V trip latch. Bits 7:4 `RETRY_CNT`: re-enables performed in the current retrigger sequence (saturates at 15 for display). |
@@ -406,4 +416,4 @@ suspended, so no event is lost while the host is reading.
 | --- | --- | --- |
 | 1.0 | 2026-09-18 | first release, built into `g1_digital` run4 |
 | 1.1 | 2026-09-19 | Aligned with `blocks/g1_trip/INTERFACE.md` and `blocks/g1_t2f/INTERFACE.md`. New ports `cmp_clk`, `trip_d`, `clr_d`, `fast_en`, `tripped`, `osc_en`, `osc_trim[3:0]`, `t2f_en`, `t2f_mode`, `bgr_r4` (section 2). New registers 0x27 `SENSE_OFS`, 0x28 `OSC_CTRL`, 0x29 `TEMP_CTRL`, 0x2A `DAC_SOFT_EFF`, 0x2B `DAC_HARD_EFF`; `MODE` bit 5 `FAST_EN`; `STATUS2` bit 3 `TRIPPED_A`; `VERSION` reads 0x11. Existing addresses unchanged. Reset codes `DAC_SOFT` 0x60 → 0x99 and `DAC_HARD` 0x80 → 0xFE, following the shunt scaling (25 mV = nominal current) of the sense path. `HARD_N` counts comparator decisions (200 ns) instead of `osc_clk` samples (100 ns): the reset value 4 now means 0.8 µs. The hard comparator is sampled once per `cmp_clk` period; the soft accumulator is unchanged (still `osc_clk` cycles). Trip cause 2 ("hard") now also covers analog fast-path trips. |
-| 1.2 | 2026-09-25 | RTL-only ECO, pin-compatible (`blocks/g1_ctrl/ECO_20260925.md`; `DIGITAL.md` M1, M2, M3, S2, S5). `osc_en` constant 1, `OSC_CTRL` bit 4 reads 1 and ignores writes. Inrush window cannot be re-opened by an `INRUSH` write after it ended. `SOFT_TIME_H` staged, both bytes take effect on the `SOFT_TIME_L` write. Core reset after 8 consecutive `EN`-low `osc_clk` samples (immediate while `EN` was never high since power-up); release 5 cycles after `EN` rise. Reset values `INRUSH` 0x14 → 0x02, `MODE` 0x03 → 0x23 (`FAST_EN` = 1). `VERSION` reads 0x12. Addresses and ports unchanged. Applies to the chip after the macro is re-hardened. |
+| 1.2 | 2026-09-25 | RTL-only ECO, pin-compatible (`blocks/g1_ctrl/ECO_20260925.md`; `DIGITAL.md` M1, M2, M3, S2, S5). `osc_en` constant 1, `OSC_CTRL` bit 4 reads 1 and ignores writes. Inrush window cannot be re-opened by an `INRUSH` write after it ended. `SOFT_TIME_H` staged, both bytes take effect on the `SOFT_TIME_L` write. Core reset after 8 consecutive `EN`-low `osc_clk` samples (immediate while `EN` was never high since power-up); release 5 cycles after `EN` rise. Reset value `INRUSH` 0x14 → 0x02; `MODE` stays 0x03 (`FAST_EN` = 1 as default evaluated and rejected, section 3). `VERSION` reads 0x12. `fast_en` port held 0 in reset and for 3 cycles after release (the unstrobed hard comparator reads 1 in reset: chip co-simulation `eco_c_mid` tripped at `EN` rise without it). Addresses and ports unchanged. Applies to the chip after the macro is re-hardened. |
