@@ -6,6 +6,12 @@ LibreLane as the `g1_digital` macro. Macro of record: run7** (`layout/`,
 copies physically separated, gate-level simulation of its netlist passed. No
 silicon.
 
+**Pending RTL-only ECO (2026-09-25, register map 1.2), not on the chip of
+record:** `rtl_eco_20260925/` and `../g1_seu/rtl_eco_20260925/` fix red-team
+findings M1, M2, M3, S2 and S5 with the same module names and ports; RTL
+simulated (`sim/eco_20260925/`), not yet re-hardened. Everything else in this
+README describes `rtl/` and the macro of record. See `ECO_20260925.md`.
+
 `G1_CTRL` is the digital core of G1: three-wire serial interface, register
 file, trip timer, and the top level that also instantiates `G1_SEU`. The
 hardened macro is `g1_digital` (a one-to-one wrapper of `g1_digital_top`).
@@ -128,6 +134,11 @@ ran on each placed-and-routed netlist:
 | run5 | `1543a722…` | 13 tests, 193 checks, all passed | `sim/tb_g1_digital_gls_run5.log` |
 | run6 | `197e5ee3…` | 13 tests, 193 checks, all passed | `sim/tb_g1_digital_gls_run6.log` |
 | **run7 (macro of record)** | `fce14375…` (`layout/g1_digital.nl.v`) | **13 tests, 193 checks, all passed** | `sim/tb_g1_digital_gls_run7.log` |
+| **chip netlist** (the `g1_digital` cell inside `g1_chip_top_1414.gds`: run7 placement, CTS redone, rerouted) | `6181b988…` | **13 tests, 193 checks, 0 errors** (functional models, unit delay) | `sim/tb_g1_digital_gls_chip6181b988.log` |
+| chip netlist, typ SDF annotated (Icarus ignores the SDF timing checks, so not a setup/hold qualification) | `6181b988…` | 13 tests, 193 checks, 0 errors; fast/slow SDF: not run | `sim/tb_g1_digital_gls_chip6181b988_sdf_typ.log` |
+
+Commands and inputs for the chip-netlist runs: `reports/sta_merged_sdc_20260924/README.md`,
+section "Chip digital netlist (6181b988)".
 
 ## Synthesised
 
@@ -336,12 +347,26 @@ and the chip template applies the PDK default 0.25 ns clock uncertainty to
 hold where the macro was hardened with 0.05 ns — a difference of exactly
 0.200 ns in every corner, nothing else differs. The chip SDC also defined no
 `osc_clk`, leaving 1148 of the macro's 1200 flops unconstrained at chip level.
-The fix is `layout/g1_digital_top.sdc` (source it from the chip SDC): with it
+The fix is `layout/g1_digital_top.sdc` (historical: the constraints were merged inline into
+`../g1_padring/flow/g1_chip_top.sdc` on 2026-09-24, `reports/sta_merged_sdc_20260924/`): with it
 the same STA gives hold +0.106 / +0.185 / +0.326 ns on SCLK and
 +0.125 / +0.205 / +0.348 ns on osc_clk, 0 violations, setup ≥ 26.4 ns, in
 all three corners. The liberty views in `layout/lib/` are characterised
 (`write_timing_model`, three corners) and remain available for a black-box
 timing of the macro (`STA_MACRO_PRIORITIZE_NL: false`), which was not run.
+
+STA on the chip's own digital netlist (`6181b988…` with its SPEF `e6c89575…`, merged chip SDC,
+nominal RC, OpenSTA 3.1.0; `reports/sta_merged_sdc_20260924/README.md` "Chip digital netlist
+(6181b988)"), simulated/static analysis:
+
+| Check (chip netlist 6181b988) | Status |
+| --- | --- |
+| Setup / hold, merged SDC, fast / typ / slow | passed: worst setup 28.011 / 27.282 / 25.756 ns, worst hold +0.104 / +0.183 / +0.323 ns, 0 violations; 52 SCLK + 1148 osc_clk registers clocked |
+| Template SDC only (control) | failed, as expected: hold −0.131 ns (fast), 50 endpoints |
+| Max fanout / max cap | passed (0 / 0); the redone CTS removed the run7 view's 78 fanout flags |
+| Max slew | failed: 12 per corner on analog-pad pins (placeholder liberty tables; dispositioned, not waived) |
+| Full parasitic annotation | failed: 105 unannotated drivers (60 CTS dummy loads, 17 ports, 28 pad pins; dispositioned, not waived) |
+| Min/max RC corners; timing of the final filled GDS | not run |
 
 ## Checks
 
@@ -372,8 +397,10 @@ figures are in the comparison table above.
 | Level shifters 1.2 V → 3.3 V (`t2f_en`, `t2f_mode`, `bgr_r4`): schematic, corners, layout, DRC, LVS | passed (3 instances of `g1_ls_up`; `ls/README.md`); PEX not run |
 | Pin list for the ring / integration owner | done: `layout/PINS.md` (46 pins of the run7 macro) |
 | `prBoundary` (189/4) in the GDS of record | passed: one macro-level rectangle 0–360 × 0–360 µm (`g1_digital.gds`; checked with KLayout) |
-| Chip-level STA of the macro inside the padring dry run (netlist + SPEF, chip SDC) | **failed with the ring template SDC alone: hold −0.094 ns fast / −0.015 ns typ, 48 / 5 endpoints, osc_clk domain unconstrained; passed with `layout/g1_digital_top.sdc` appended: 0 violations in all corners, both domains constrained** (`reports/top_sta_dryrun1350/summary.txt`); the ring owner has to adopt the snippet in `flow/g1_chip_top.sdc` |
-| Integration into the chip-level floorplan | done by the ring owner in the D14 dry run (`../g1_padring/reports/dryrun-1350/`): run7 macro at (367, 372), three `g1_ls_up` at (546/566/586, 860), routing 0 DRC, KLayout DRC 0 markers, PDN connected; open items there are the chip SDC above, density fill and the analog-pad antenna artefacts, none of them in this block |
+| Chip-level STA of the macro inside the padring dry run (netlist + SPEF, chip SDC) | **failed with the ring template SDC alone: hold −0.094 ns fast / −0.015 ns typ, 48 / 5 endpoints, osc_clk domain unconstrained; passed with `layout/g1_digital_top.sdc` appended: 0 violations in all corners, both domains constrained** (`reports/top_sta_dryrun1350/summary.txt`). Historical: the snippet was merged inline into `../g1_padring/flow/g1_chip_top.sdc` on 2026-09-24; chip-context STA with the merged SDC passed on run7 and on the chip netlist 6181b988 (`reports/sta_merged_sdc_20260924/README.md`) |
+| Gate-level simulation of the chip netlist 6181b988, 13 tests / 193 checks | passed: functional (unit delay) and typ-SDF annotated (timing checks not executed by Icarus); fast/slow SDF not run (`sim/tb_g1_digital_gls_chip6181b988*.log`) |
+| STA of the chip netlist 6181b988, merged SDC, 3 corners | passed setup/hold, 0 violations; max slew and full annotation failed (dispositioned, see "Chip-level timing") |
+| Integration into the chip-level floorplan | done by the ring owner in the D14 dry run (`../g1_padring/reports/dryrun-1350/`): run7 macro at (367, 372), three `g1_ls_up` at (546/566/586, 860), routing 0 DRC, KLayout DRC 0 markers, PDN connected; open items there were the chip SDC above (merged 2026-09-24), density fill and the analog-pad antenna artefacts, none of them in this block |
 
 ## Unverified
 
@@ -388,5 +415,5 @@ is functional only (no SDF back-annotation); the 20 µm separation criterion
 for the TMR copies is a design margin, not a measured upset cross-section (the
 SEU monitor has not been irradiated); the macro pins were not placed against
 the chip floorplan (the D14 dry run routed to them as they are); the
-chip-level STA with `g1_digital_top.sdc` was run on the dry-run database by
-hand, not yet by the padring flow itself; anything on silicon.
+chip-level STA with the merged SDC was run by hand with OpenSTA
+(`reports/sta_merged_sdc_20260924/`), not by the padring flow itself; anything on silicon.

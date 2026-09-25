@@ -18,7 +18,7 @@ isolated IO-powered buffer candidate (`sim/candidates/io_buffer/`) is **not** on
 | Block DRC/LVS of `g1_gate.gds` | passed on 2026-09-19 (78 devices). The unfilled DRC/LVS logs (`*_2026_09_19_07_34_33`, 09:34 local) predate the last write of `g1_gate.gds` (14:38); the block checks were **not re-run** on `ddf2c44a` | "Checks" below |
 | Chip-level DRC, density and antenna on `629d303a…` | passed (0 markers) | `../g1_padring/reports/signoff-1414-20260924/README.md` |
 | Chip netlists, hard faults (72/72 matrix cells) | `GATE` < 1 V 1.31–1.36 µs after the fault (simulated). In these trip decks `GATE`/`FAULT_N` are **fitted behavioural output-pad drivers**, not the PDK pad model | `../g1_top/sim/campaigns/RESULTS_20260925.md` §1 |
-| Chip netlists, core-first power-up (PDK pad models, `pads nodcn`) | passed: `GATE` ≤ 0.0029 V (ss/125 °C), 0.0135 V (ff/−40 °C); stock pads tt/27 °C 0.0725 V, with 10 kΩ 0.0090 V (simulated) | same §5 |
+| Chip netlists, core-first power-up, EN low (ideal `EN` copy) | passed (simulated). With the `pads nodcn` pad models (ss/125 °C, ff/−40 °C, with or without 10 kΩ): `GATE` < 14 mV (≤ 0.0029 V ss/125 °C, ≤ 0.0135 V ff/−40 °C). With the stock PDK pad models (tt/27 °C): **72.5 mV without pull-down**, 9.0 mV with 10 kΩ, so "< 14 mV" does not hold with stock pads. tt/27 °C with `pads nodcn`: not run | same §5 (runs `gB`/`gB_pd`, `c1414n1` for stock pads) |
 | Chip netlists, IO-first power-up, with or without 10 kΩ | **failed, as expected**: `GATE` 3.28–3.30 V for 4.2–4.4 µs until `VDD` is up (simulated). This is the IO-cell property that board rule P1 (core before or with IO) and the P2 load-bus inhibit exclude | same §5 |
 | IO-first with stock pads at tt/27 °C | **not run to completion** (timeout) | same §5 |
 

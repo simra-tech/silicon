@@ -4,6 +4,18 @@ All numbers are **simulated** (ngspice 46, pinned image
 `sha256:ddeb69576f2808676d1c5d474ecf04f6d1d6f8abdcff6b72b39790ded924bab2`, IHP SG13G2 PDK
 `84374023ee8b4b126bebbba67fcbada0a9c0ff0b`). No model card, netlist or layout changed.
 
+**Bandgap in this bench (note added 2026-09-25): the superseded Sep-19 bandgap, not BGR586.**
+`g1_bgr/sim/postlayout/g1_bgr_pex.spice` is the C-PEX of the Sep-19 bandgap. The EN-low bias
+result, the start-up times and frequencies, and the −1.8 mV VREF shift below describe that
+bench, not the chip of record. These checks with BGR586: **not run**. For the chip:
+
+- T2F effect on VREF on the chip netlists (`q`, tt/27 °C, BGR586 `bgr=sch`, 10 nF on the `VREF`
+  pin, T2F on vs off): **−0.47 mV** (1.04546 → 1.04499 V), simulated
+  (`../../../../review/redteam-20260925/ELECTRICAL_SYSTEM.md` N1).
+- On-chip `TEMP_OUT` with BGR586: 1.51768 MHz at 27 °C and 1.99692 MHz at 125 °C (simulated,
+  `../../../g1_top/sim/campaigns/RESULTS_20260925.md` §7), 0.03 % above the BGR586 block-level line
+  (1.5074 MHz at 25 °C, 4.909 kHz/°C; `../qualification/t2f586-nominal-calibration-20260922.json`).
+
 ## Fixture
 
 `t2f_sys.py` writes `decks/`. The decks follow `../tb_g1_t2f.spice.tmpl`: the same `.lib` sections, the
@@ -59,7 +71,7 @@ harmless.
 vce_max 1.6. The QB2 condition is the same one it passes through every half-period in normal
 oscillation.
 
-The QA base currents are a real DC load on VREF through the mode switch: 2 × 10.6 nA at tt27, 2 × 35.8 nA
+The QA base currents (Sep-19 bandgap bench) are a real DC load on VREF through the mode switch: 2 × 10.6 nA at tt27, 2 × 35.8 nA
 at ss125 and 2 × 2.75 nA at ff-40. At tt27 this lowers VREF from 1.03929 V (BGR alone, same PEX) to
 1.03745 V, i.e. −1.8 mV ≈ 21 nA × 88 kΩ. While running, vth averages a further 0.5–1.5 mV lower.
 
@@ -95,14 +107,16 @@ It is **not a circuit issue**: no node floats, and no base is open.
 | ff-40 | 0.311 µs | 1.3722 MHz (+1.0 %) | 1.359073 MHz | 1.04 / 1.04 µs | 1.359073 MHz |
 
 There are no fout edges while EN = 0, and the 100 µs hold leaves no memory. The tt27 frequency is
-1.527 MHz with both blocks extracted. That is −1.0 % against the README post-layout 1.5418 MHz, which used
-a schematic BGR, and −4.6 % against the schematic 1.6003 MHz.
+1.527 MHz with both blocks extracted (Sep-19 bandgap). That is −1.0 % against the README post-layout
+1.5418 MHz, which used a schematic Sep-19 BGR, and −4.6 % against the schematic 1.6003 MHz; all three
+are Sep-19-bandgap values, not chip frequencies (for those see the note at the top).
 
 ## Status
 
 | Check | Status |
 |---|---|
-| HBT bias at EN = 0, 3 corners, within model voltage range, no floating node | passed |
+| HBT bias at EN = 0, 3 corners, within model voltage range, no floating node (Sep-19 bandgap) | passed |
 | NaN/gmin message attributed | passed: an off-device VBIC self-heating initialisation artefact, not a circuit issue |
-| Clean start after 100 µs EN = 0, 3 corners | passed: settles to 1 % within 1.04 µs (no acceptance limit was specified) |
+| Clean start after 100 µs EN = 0, 3 corners (Sep-19 bandgap) | passed: settles to 1 % within 1.04 µs (no acceptance limit was specified) |
 | REF mode, supply ramps with EN = 0, 3.0/3.6 V, mismatch, SENSE in the same deck | not run |
+| EN-low bias and start-up with BGR586 | not run |
