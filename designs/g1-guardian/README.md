@@ -29,16 +29,24 @@ The 3.3 V thick-oxide MOSFETs, SiGe HBTs, MIM capacitors and poly resistors are
 part of the base open PDK. The legacy `D_ELT` pin connects to a standard HV
 NMOS in the assembled netlist, not an enclosed-layout transistor.
 
-Chip of record (owner decision 2026-09-24):
-[`g1_chip_top_1414.gds`](blocks/g1_padring/layout/g1_chip_top_1414.gds), top cell
-`g1_chip_top`, 1414 × 1414 µm, SHA-256 `629d303abf594ec90593f1d28a8d9ad19673ea6662780ba428a6d9c5685986ba`;
-canonical netlist [`g1_chip_top_1414.cdl`](blocks/g1_padring/netlist/g1_chip_top_1414.cdl)
-(`af5a4dbd…`); comparison-only
-[projected reference](blocks/g1_padring/netlist/g1_chip_top_1414_projected_ref.cdl) (`e1d06919…`).
-Sign-off and block-to-netlist map:
-[`signoff-1414-20260924`](blocks/g1_padring/reports/signoff-1414-20260924/README.md).
+Chip of record (owner decision 2026-09-24; metadata-only revision r2, 2026-09-25):
+[`g1_chip_top_1414_r2.gds`](blocks/g1_padring/layout/g1_chip_top_1414_r2.gds), top cell
+`g1_chip_top`, 1414 × 1414 µm, SHA-256 `9049e87b0303893573ed82f56a5d41f926c4db126e8d972062553c7d19996d2c`;
+canonical netlist [`g1_chip_top_1414_r2.cdl`](blocks/g1_padring/netlist/g1_chip_top_1414_r2.cdl)
+(`41d47877…`); comparison-only
+[projected reference](blocks/g1_padring/netlist/g1_chip_top_1414_projected_ref.cdl) (`e1d06919…`, unchanged).
+Sign-off: [`signoff-1414r2-20260925`](blocks/g1_padring/reports/signoff-1414r2-20260925/README.md)
+(main, maximal, precheck, density and antenna DRC 0 markers; projected LVS passed; canonical LVS failed as before).
+Block-to-netlist map: [`signoff-1414-20260924`](blocks/g1_padring/reports/signoff-1414-20260924/README.md) (unchanged by r2).
+r2 corrects the seal-ring registration texts and renames three modified stock-named cells;
+its geometry is XOR-identical to r1
+[`g1_chip_top_1414.gds`](blocks/g1_padring/layout/g1_chip_top_1414.gds)
+(`629d303abf594ec90593f1d28a8d9ad19673ea6662780ba428a6d9c5685986ba`, **superseded**, kept).
+Bond plan (owner decision 2026-09-25, pad to the QFN24 lead directly opposite):
+[`padframe/BONDPLAN_20260925.md`](padframe/BONDPLAN_20260925.md), bond map
+[`bondmap_20260925_r3.csv`](padframe/bondmap_20260925_r3.csv).
 Draft submission checklist: [`review/TAPEIN_PACKAGE_20260924.md`](review/TAPEIN_PACKAGE_20260924.md).
-The GDS (84.5 MB) is committed (tracked since `10ee4868`); its SHA-256 is its identity.
+r1 (84.5 MB) is tracked since `10ee4868`; r2 is not yet committed. The SHA-256 is the identity of each file.
 It supersedes the 1350 µm LibreLane assembly
 ([`g1_chip_top.gds`](blocks/g1_padring/layout/g1_chip_top.gds),
 [`g1_chip_top.cdl`](blocks/g1_padring/netlist/g1_chip_top.cdl),
@@ -182,8 +190,9 @@ latencies are retained for diagnosis but are not accepted sign-off evidence.
   1.08 V trap re-run `c1414oscv3` is **not run to completion** (timeout at its
   14 000 s wall bound at 17.82 µs of 36 µs, no numerical failure) ([RESULTS_20260925](blocks/g1_top/sim/campaigns/RESULTS_20260925.md) §6).
   The trip path with the transistor-level oscillator in the loop: **not run**.
-- Seal-ring and IO-ring foundry precheck, bond-map rebinding to `629d303a…`, the
-  stale seal-ring registration text, and IHP's intake checks: **not run** / open
+- IHP's intake checks (MPW Rejection Test) and IHP's written confirmation of the
+  1.999396 mm² die area: **not run** / open. The stock precheck mode passed on r2, the bond map is
+  bound to r2 and the registration text is corrected in r2
   ([tape-in checklist](review/TAPEIN_PACKAGE_20260924.md)).
 - Package/bond-wire parasitics and physical measurements: **not run**.
 - Bonding-service acceptance and final submission review: **not run**.

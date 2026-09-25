@@ -18,18 +18,20 @@ in `tapeoutbench-eda` sha256:ddeb6957… (`flow/run.sh`). The PDK layer-properti
 
 | Item | Value | Status |
 | --- | --- | --- |
-| File | `blocks/g1_padring/layout/g1_chip_top_1414.gds`, 84 500 250 bytes, sha256 `629d303abf594ec90593f1d28a8d9ad19673ea6662780ba428a6d9c5685986ba` | confirmed (sha256sum). Created from the source `candidate.gds` sha256 `60730627…` (kept as `layout/g1_chip_top_1414_src.gds`) by renaming the top cell only (`flow/signoff/1414/rename_top.py`). Geometric identity to the source: confirmed (`reports/signoff-1414-20260924/rename_verify/verify_rename.json`, section 6) |
+| File | `blocks/g1_padring/layout/g1_chip_top_1414_r2.gds`, 84 500 300 bytes, sha256 `9049e87b0303893573ed82f56a5d41f926c4db126e8d972062553c7d19996d2c` (**r2, file of record since 2026-09-25**) | confirmed (sha256sum). Written from r1 by `flow/signoff/1414r2/make_r2.py` (no timestamps; two writes byte-identical). Metadata-only: the two seal-ring registration texts on 63/0 corrected (section 3) and three modified stock-named cells renamed (`sg13g2_LevelDown` → `g1_LevelDown_polyres`, `nmos` → `g1_gate_nmos`, `pmos` → `g1_gate_pmos`). Geometric identity to r1: confirmed (per-layer XOR empty on all 73 layers, hierarchy and instance tree identical modulo the renames; `reports/signoff-1414r2-20260925/r2_identity/`) |
+| Superseded file (r1) | `blocks/g1_padring/layout/g1_chip_top_1414.gds`, 84 500 250 bytes, sha256 `629d303abf594ec90593f1d28a8d9ad19673ea6662780ba428a6d9c5685986ba` | kept unchanged. Created from the source `candidate.gds` sha256 `60730627…` (kept as `layout/g1_chip_top_1414_src.gds`) by renaming the top cell only (`flow/signoff/1414/rename_top.py`; `reports/signoff-1414-20260924/rename_verify/verify_rename.json`) |
 | Top cell | `g1_chip_top`, the only top cell | confirmed (KLayout) |
 | Database unit | 0.001 µm (1 nm) | confirmed (KLayout `Layout.dbu`). The DBU IHP requires: assumed 1 nm |
-| Die / bounding box | (0, 0) to (1414, 1414) µm, i.e. 1414 × 1414 µm = 2.00 mm² | confirmed (top bbox). Whether the die size is taken from the bbox or the EdgeSeal outline, and the allowed size and area on the shuttle: assumed |
+| Die / bounding box | (0, 0) to (1414, 1414) µm, i.e. 1414 × 1414 µm = 1.999396 mm² (EdgeSeal boundary 39/4 is the same box) | confirmed (top bbox). Whether the die size is taken from the bbox or the EdgeSeal outline, and the allowed size and area on the shuttle: assumed |
 | Cells | 306 | confirmed |
-| Filename, compression, one top cell per submission, GDS version | `g1_chip_top_1414.gds`, uncompressed | assumed |
+| Filename, compression, one top cell per submission, GDS version | `g1_chip_top_1414_r2.gds`, uncompressed, GDS version 600 | assumed |
 | Size limit of the file | 84.5 MB | assumed acceptable |
-| The file is in Git | yes: tracked since commit `10ee4868` (corrected 2026-09-25; the earlier text said untracked). The sha256 above is the identity of the file. | confirmed. How the file is delivered to IHP: open |
+| The file is in Git | r1: tracked since commit `10ee4868`. r2: not yet committed (2026-09-25). The sha256 above is the identity of the file. | r1 confirmed; r2 open. How the file is delivered to IHP: open |
 
 ## 2. Layer usage (from the GDS)
 
-Script `review/tapein/gds_inventory.py`. Output `review/tapein/gds_inventory_g1_chip_top_1414.json`
+Script `review/tapein/gds_inventory.py`. Output `review/tapein/gds_inventory_g1_chip_top_1414.json` (r1) and
+`review/tapein/gds_inventory_g1_chip_top_1414_r2.json` (r2: identical in every layer count, text count and cell list apart from the renames and the sha256)
 (flat counts = direct shapes × flat placements of each cell). Command, repository root:
 
 ```
@@ -103,7 +105,7 @@ Flags for review:
 | Present | yes, drawn flat in the top cell (no separate seal-ring cell): EdgeSeal 39/0 one shape, box 32.2–1381.8 µm; 39/4 boundary; Passiv ring 25–1389 µm; ring shapes on Activ, pSD, Cont, Metal1–5, Via1–4, TopVia1/2, TopMetal1/2 in the top cell | confirmed (KLayout) |
 | Rules | Seal.l (nothing outside the seal ring), Seal.m (one seal ring per chip), Seal.n (unbroken Passiv ring), Pad.d 7.5 µm / Pad.dR 25 µm pad-to-EdgeSeal | confirmed as documented rules (`main_rules.md`, `extra_rules.md`). The result on this file is in section 6 |
 | IHP adds its own seal ring, or expects the designer's | the designer's is included | assumed |
-| Seal-ring registration text | The top cell carries the seal-ring PCell registration text on TEXT 63/0, "Device registration size: x=1050.0 um", plus "PDK version: Unknown". The text is stale: it comes from the 1000 µm PCell that `sealring_g1.py` stretches to 1414 µm (`review/audits/prepare_sealring_1414.py`; `blocks/g1_padring/reports/signoff-1414-20260924/README.md`, "Heat/TEXT labels"). TEXT 63/0 is listed as not used for mask generation (layout rules §3.1). The GDS is **not edited** here | **open**: decide whether to correct or remove the label (a GDS change would need a new file SHA and a full sign-off rerun), or tell IHP that the registration text does not state the die size. Ask whether IHP reads this text at intake |
+| Seal-ring registration text | r2 (top cell, TEXT 63/0, same positions (5, 5) and (5, 1404) µm, size 5 µm): "Device registration size: x=1414.0 um ; y=1414.0 um\nCalculated area: 1.999396 sq mm" and "PDK version: IHP-Open-PDK 84374023ee8b4b126bebbba67fcbada0a9c0ff0b". r1 carried the stale 1050 µm / "PDK version: Unknown" text of the 1000 µm PCell that `sealring_g1.py` stretches (`review/audits/prepare_sealring_1414.py`). TEXT 63/0 is listed as not used for mask generation (layout rules §3.1) | **corrected in r2** (new SHA, full sign-off rerun: `reports/signoff-1414r2-20260925/`). Whether IHP reads this text at intake, and IHP's written confirmation of the 1.999396 mm² allocation: open |
 
 ## 4. Bond pads
 
@@ -118,35 +120,51 @@ Flags for review:
 
 | Item | Value | Status |
 | --- | --- | --- |
-| Bond map | `padframe/bondmap_candidate_20260923_r2.csv`: 24 rows (pad number, pin, side, opening centre, 65.8 µm size, die 1414 µm) | confirmed. All 24 opening centres and sizes match the 24 Passiv openings of `g1_chip_top_1414.gds` to 0.01 µm (KLayout check, 2026-09-24) |
-| Hash binding | the CSV's `candidate_gds_sha256` column is `3e363438…`, an **older** file, and the status is `candidate_not_tapeout` | **open: rebind** the CSV to `629d303a…` (or the final file after any later change) and write a new revision. Do not edit r2. |
-| Pin order | S: 1 VDD, 2 VSS, 3 IOVDD, 4 IOVSS, 5 VSS, 6 IOVSS; E: 7 VDDA, 8 SENSE_P, 9 SENSE_N, 10 GATE, 11 FAULT_N, 12 EN; N: 13 TRIP_SET, 14 SCLK, 15 SDI, 16 SDO, 17 TEMP_OUT, 18 VREF; W: 19 G_SHARED, 20 D_STD, 21 D_ELT, 22 HBT_E, 23 HBT_B, 24 HBT_C | confirmed from the CSV. The mapping of pad numbers to QFN24 lead numbers and the orientation mark: open |
+| Bond map | `padframe/bondmap_20260925_r3.csv` (sha256 `ead5f109…`): the 24 rows of `bondmap_candidate_20260923_r2.csv` (pad number, pin, side, opening centre, 65.8 µm size, die 1414 µm) plus `qfn24_lead` and `lead_side` | confirmed: each row coincides with exactly one Passiv opening of r2 (centre to 1 nm, size, TopMetal2 enclosure ≥ 2.1 µm, inside dfpad) and the 22 TopMetal2 labels equal the row nets (`reports/signoff-1414r2-20260925/bondmap/verify_bondmap_r3.json`) |
+| Hash binding | `candidate_gds_sha256` = `9049e87b…` (r2), status `chip_of_record` | **confirmed** (resolved 2026-09-25; the r2 CSV `3e363438…` / `candidate_not_tapeout` is superseded and unchanged) |
+| Pin order (die pads) | S: 1 VDD, 2 VSS, 3 IOVDD, 4 IOVSS, 5 VSS, 6 IOVSS; E: 7 VDDA, 8 SENSE_P, 9 SENSE_N, 10 GATE, 11 FAULT_N, 12 EN; N: 13 TRIP_SET, 14 SCLK, 15 SDI, 16 SDO, 17 TEMP_OUT, 18 VREF; W: 19 G_SHARED, 20 D_STD, 21 D_ELT, 22 HBT_E, 23 HBT_B, 24 HBT_C | confirmed from the CSV and the GDS labels |
+| Pad → QFN24 lead | owner decision 2026-09-25: each pad to the lead directly opposite, no crossings; leads counter-clockwise, pin 1 top-left of the top view; die rotated 90° clockwise so pads 1–6 face leads 1–6. Pads 1–12 → leads 1–12; pads 13–18 → leads 18–13; pads 19–24 → leads 24–19. Spec §3 carries both numbers | **decided**; plan and drawing `padframe/BONDPLAN_20260925.md`, `bondplan_20260925.svg`. Acceptance by the bonding house: open |
 | Package | QFN24, 4 × 4 mm, 0.5 mm pitch; 10 packaged parts, no bare die | specified (`specification/G1_TOP_LEVEL_SPECIFICATION.md`). Availability on the IHP run: assumed |
 | Die thickness | 200 µm | specified. The IHP backgrinding option: assumed |
-| Cavity or paddle size for a 1.414 mm die, paddle connection (VSS or floating) | — | open, assumed paddle = VSS |
+| Cavity or paddle size for a 1.414 mm die, paddle connection (VSS or floating) | paddle = `VSS` (owner decision 2026-09-25, `BONDPLAN_20260925.md`) | paddle potential decided; cavity/paddle size: open |
 
-## 6. Sign-off checks on `g1_chip_top_1414.gds`
+## 6. Sign-off checks on `g1_chip_top_1414_r2.gds`
 
-Results from [`blocks/g1_padring/reports/signoff-1414-20260924/README.md`](../blocks/g1_padring/reports/signoff-1414-20260924/README.md),
-all run on this exact file (`629d303a…`, top `g1_chip_top`) with the stock PDK decks at `84374023`, KLayout 0.30.9.
+Results from [`blocks/g1_padring/reports/signoff-1414r2-20260925/README.md`](../blocks/g1_padring/reports/signoff-1414r2-20260925/README.md),
+all run on this exact file (`9049e87b…`, top `g1_chip_top`) with the stock PDK decks at `84374023`, KLayout 0.30.9,
+with the same options as the r1 sign-off ([`signoff-1414-20260924`](../blocks/g1_padring/reports/signoff-1414-20260924/README.md), `629d303a…`, superseded).
 The file SHA-256 was rechecked after all runs and was unchanged.
 
 | Check | Deck / tool | Status | Evidence |
 | --- | --- | --- | --- |
-| Top-cell rename is geometry-identical to the source | `flow/signoff/1414/verify_rename.py` | passed: 306 cells, same DBU/bbox, per-cell shapes and instances identical, deep XOR empty on all 73 layers | `rename_verify/verify_rename.json` |
-| KLayout DRC main (hard rules) | `run_drc.py --run_mode=deep --no_density --disable_extra_rules` | passed, 0 markers (253 s) | `drc_main/` |
-| KLayout DRC maximal | `sg13g2_maximal.drc` via `flow/signoff/1414/run_maximal.py` | passed, 0 markers (559 s) | `drc_maximal/` |
-| KLayout DRC precheck | `run_drc.py --precheck_drc` | not run | — |
-| Density | `run_drc.py --density_only` | passed, 0 markers (31 s) | `density/` |
-| Antenna | `run_drc.py --antenna_only --antenna` | passed, 0 markers (116 s); the R14 `sg13g2_IOPadIn` flag did not appear on this file | `antenna/` |
+| r1 top-cell rename is geometry-identical to the source | `flow/signoff/1414/verify_rename.py` | passed: 306 cells, same DBU/bbox, per-cell shapes and instances identical, deep XOR empty on all 73 layers | `signoff-1414-20260924/rename_verify/verify_rename.json` |
+| r2 is metadata-only vs r1 | `flow/signoff/1414r2/verify_r2.py`, `gds_record_diff.py` | passed: 306/306 cells, per-layer XOR empty on all 73 layers, instance tree identical (60 118 instances) modulo 3 renames; on 63/0 only the two registration strings differ; raw GDS records differ only in those 2 STRINGs and the 3 renamed STRNAME/SNAME | `r2_identity/` |
+| No modified cell carries a stock PDK name | `flow/signoff/1414r2/stock_compare.py` (per-layer XOR + texts vs every `libs.ref/*/gds`) | passed on r2: 51 exact stock-named cells, 0 differ (r1: 3 differed, now renamed) | `stock_compare/` |
+| KLayout DRC main (hard rules) | `run_drc.py --run_mode=deep --no_density --disable_extra_rules` | passed, 0 markers (351 s) | `drc_main/` |
+| KLayout DRC maximal | `sg13g2_maximal.drc` via `flow/signoff/1414/run_maximal.py` | passed, 0 markers (763 s) | `drc_maximal/` |
+| KLayout DRC precheck | `run_drc.py --precheck_drc --disable_extra_rules` (density included) | passed, 0 markers (275 s); PreCheck, OFFGRID, ANGLE, PIN, FORBIDDEN and RECOMMENDED enabled. New in r2 (on r1 it was run only by the physical review, 0 markers) | `precheck/` |
+| Density | `run_drc.py --density_only` | passed, 0 markers (40 s) | `density/` |
+| Antenna | `run_drc.py --antenna_only --antenna` | passed, 0 markers (154 s); the R14 `sg13g2_IOPadIn` flag did not appear on this file | `antenna/` |
 | Seal.* and Pad.* rules | inside the main/maximal DRC | passed: every `Seal.*` and `Pad.*` rule reports 0 errors | `drc_maximal/run.log` |
-| LVS, full chip, canonical unprojected reference | PDK KLayout LVS, `--top_lvl_pins --spice_comments` | failed; cause: substrate/tap/diode netlist semantics of the IO-cell reference in the PDK, reproduced with stock cells and with IHP's latest `dev` deck and library; the design-local IO copies match IHP's `dev` library on every layer (PR #1223); upstream issues #1218/#1130. "Netlists don't match"; 14 stock-named IO/level-shifter sub-cells NoMatch, top skipped (R13) | `lvs_canonical/pair_counts.json`; [`review/upstream/evidence/`](upstream/evidence/README.md) |
+| LVS, full chip, canonical unprojected reference (`netlist/g1_chip_top_1414_r2.cdl`) | PDK KLayout LVS, `--top_lvl_pins --spice_comments` | failed (every per-circuit count identical to r1 modulo the `LevelDown` rename); cause: substrate/tap/diode netlist semantics of the IO-cell reference in the PDK, reproduced with stock cells and with IHP's latest `dev` deck and library; the design-local IO copies match IHP's `dev` library on every layer (PR #1223); upstream issues #1218/#1130. "Netlists don't match"; 14 stock-named IO/level-shifter sub-cells NoMatch, top skipped (R13) | `lvs_canonical/pair_counts.json`; [`review/upstream/evidence/`](upstream/evidence/README.md) |
 | LVS, full chip, projected reference | same options, comparison-only reference (3 all-VDD pad dummy PMOS removed) | passed: 61 684/61 684 devices, 31 173 nets, 22/22 pins, 0 warnings | `lvs_projected/pair_counts.json` |
-| Block-to-netlist map | per-layer XOR of each chip block cell vs. its named block GDS | passed (XOR empty) for SENSE, TRIP comparators and remainder, OSC, BGR, T2F, GATE, digital, level shifters, DOSE, DUT. IO ring: the PolyRes cells `g1_io_*_polyres_r1` are identical to IHP `dev` cells (2026-09-25); rest of the ring not XOR-checked | `blockmap/`; `upstream/evidence/xor/` |
+| Block-to-netlist map | per-layer XOR of each chip block cell vs. its named block GDS (run on r1; carried to r2 by the identity above, not re-run) | passed (XOR empty) for SENSE, TRIP comparators and remainder, OSC, BGR, T2F, GATE, digital, level shifters, DOSE, DUT. IO ring: the PolyRes cells `g1_io_*_polyres_r1` are identical to IHP `dev` cells (2026-09-25); rest of the ring not XOR-checked | `blockmap/`; `upstream/evidence/xor/` |
 | Off-grid, angle | inside the DRC | passed (part of main/maximal, 0 markers) | `drc_main/`, `drc_maximal/` |
 | Digital timing (macro + routed signal netlist) | OpenSTA 3.1.0 | passed setup/hold, 3 corners; failed annotation / slew / fanout items dispositioned | `blocks/g1_ctrl/reports/sta_merged_sdc_20260924/README.md` |
 | Full-chip PEX and timing of the final GDS | — | not run | |
-| IHP's own intake checks | IHP | not run | |
+| IHP's own intake checks (MPW Rejection Test) | IHP | not run | |
+
+### Physical red-team findings addressed by r2
+
+From [`redteam-20260925/PHYSICAL_TAPEIN.md`](redteam-20260925/PHYSICAL_TAPEIN.md):
+
+| Finding | Resolution | Status |
+| --- | --- | --- |
+| 1. Die area vs registration; stale registration text | Text corrected in r2 (section 3) | text **resolved**; IHP written confirmation of the 1.999396 mm² allocation still **open** |
+| 4. Bond map bound to an older GDS | `bondmap_20260925_r3.csv` bound to `9049e87b…`, geometrically re-verified | **resolved** |
+| 6. Modified cell with a stock library name | `sg13g2_LevelDown` → `g1_LevelDown_polyres`; the wider check (including `sg13g2_pr.gds`) also found `nmos`/`pmos` PCell variants and renamed them; 0 differing stock-named cells remain | **resolved** |
+| 2. North/west pad order vs package | owner decision 2026-09-25: pad to the lead directly opposite, spec §3 renumbered (section 5) | **resolved** (bonding-house acceptance open) |
+| 3. IHP's own tape-in check | stock precheck mode passed on r2; IHP's MPW Rejection Test not run | **open** |
 
 ## 7. Board constraints (to go with the parts)
 
@@ -179,15 +197,15 @@ The file SHA-256 was rechecked after all runs and was unchanged.
    chip. Pad 21 `D_ELT` is a legacy name for the HV NMOS drain of the default dose pair.
    Tell IHP so that no ELT-specific handling is expected.
 5. Texts on HeatTrans 51/0 and HeatRes 52/0, labels on `.text`/`.pin` layers, and prBoundary 189/4: keep or strip? (assumed keep)
-6. Die size 1414 µm vs the registered area, QFN24 cavity fit, 200 µm thinning, and paddle potential. (assumed)
+6. Die size 1414 µm (1.999396 mm², now also stated in the r2 registration text) vs the registered area, QFN24 cavity fit and 200 µm thinning. (assumed) Paddle potential: `VSS` (owner decision 2026-09-25).
 7. Submission deadline: "end of September 2026" in repository notes vs the owner's recollection of 21 October. **Unreconciled**, confirm with IHP.
 
 ## 9. Before submission
 
-- [ ] Final GDS identity frozen. If it changes, re-run `gds_inventory.py` and the bond-map match, and update every sha256 here.
-- [x] Section 6 filled from `signoff-1414-20260924/`, with passed / failed / not run as reported.
-- [ ] Bond map rebound to the final sha256 as a new CSV revision.
+- [ ] Final GDS identity frozen. Current: r2 `9049e87b…` (2026-09-25); `gds_inventory.py` and the bond-map match re-run on it. If it changes again, re-run both and update every sha256 here.
+- [x] Section 6 filled from `signoff-1414r2-20260925/` (r2), with passed / failed / not run as reported.
+- [x] Bond map rebound to the r2 sha256 as a new CSV revision (`bondmap_20260925_r3.csv`), with QFN24 lead numbers.
 - [ ] Canonical LVS: failed; cause: substrate/tap/diode netlist semantics of the IO-cell reference in the PDK, reproduced with stock cells and with IHP's latest `dev` deck and library; the design-local IO copies match IHP's `dev` library on every layer (PR #1223); upstream issues #1218/#1130. IHP's acceptance of the projected-reference result (§8 question 1): open.
-- [ ] Stale seal-ring registration text (section 3) resolved: corrected in a new GDS with a full sign-off rerun, or disclosed to IHP.
+- [x] Stale seal-ring registration text (section 3) resolved: corrected in r2 with a full sign-off rerun.
 - [ ] IHP's official instructions added, and every "assumed" item resolved.
 - [ ] A human signs and submits. Agents do not push or submit.
