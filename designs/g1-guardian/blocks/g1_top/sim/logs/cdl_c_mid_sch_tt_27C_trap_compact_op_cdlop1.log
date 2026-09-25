@@ -1,0 +1,98 @@
+# G1 CDL-driven full-chip run cdl_c_mid_sch_tt_27C_trap_compact_op_cdlop1  2026-09-25T12:26:08Z UTC
+# in-range hard trip: code 200 (~39.25mV), 1.8A/45mV fault in 20ns; HARD_N=4
+# deck build/g1_top/cdl_c_mid_sch_tt_27C_trap_compact_op_cdlop1.cir
+# CDL sha256 af5a4dbd0b17013b11d32f31221353a22b2676ea884e3487db3f14d9c5443a36 blocks/g1_padring/netlist/g1_chip_top_1414.cdl
+# translation {'subckts': 60, 'devices': {'removed dantenna': 8, 'D dpantenna': 7, 'M sg13_lv_nmos': 40, 'M sg13_lv_pmos': 41, 'ptap1 R from sg13g2_io.spi': 42, 'R ptap1': 42, 'R rhigh': 15, 'R rppd': 1060, 'M sg13_hv_pmos': 312, 'M sg13_hv_nmos': 861, 'Q npn13G2': 308, 'X': 76, 'C cap_cmim': 7}, 'merged': 4833, 'meters': ['vm_bgr', 'vm_gatea', 'vm_gated', 'vm_ls', 'vm_lsd', 'vm_osc', 'vm_sense', 'vm_t2f', 'vm_t2fd', 'vm_tripa', 'vm_tripd'], 'swaps': {}, 'replaced': ['g1_digital', 'g1_osc']}
+# IO models sha256 1d53ab7df431b717ef5aff43e1117c0224681d5cc84886da37a319280ee958d6 /foss/pdks/ihp-sg13g2/libs.ref/sg13g2_io/spice/sg13g2_io.spi (ptap1 values only)
+# PDK commit 84374023ee8b4b126bebbba67fcbada0a9c0ff0b
+# ngspice-46 : Circuit level simulation program
+# Icarus Verilog version 14.0 (devel) (s20260301-328-geda9fdcd-dirty)
+# iverilog -g2005 -Wall -Wno-timescale -o /work/build/g1_top/cosim_b71e75cf54b75881960720e4.vvp.tmp1 /work/designs/g1-guardian/blocks/g1_top/sim/rtl/g1_dig_cosim_cdl.v /work/designs/g1-guardian/blocks/g1_ctrl/rtl/g1_sync2.v /work/designs/g1-guardian/blocks/g1_ctrl/rtl/g1_serial.v /work/designs/g1-guardian/blocks/g1_ctrl/rtl/g1_trip_timer.v /work/designs/g1-guardian/blocks/g1_ctrl/rtl/g1_regfile.v /work/designs/g1-guardian/blocks/g1_ctrl/rtl/g1_digital_top.v /work/designs/g1-guardian/blocks/g1_ctrl/rtl/g1_digital.v /work/designs/g1-guardian/blocks/g1_seu/rtl/g1_tmr_reg.v /work/designs/g1-guardian/blocks/g1_seu/rtl/g1_seu_chain.v /work/designs/g1-guardian/blocks/g1_seu/rtl/g1_seu.v
+# compiled RTL build/g1_top/cosim_b71e75cf54b75881960720e4.vvp (tag cdl_c_mid_sch_tt_27C_trap_compact_op_cdlop1) sha256 da4f0d57b18d823f145bfc96cb356a7e7d16c0092c98da5e498bc9062235d81c
+# rtl sha256 79cf9cd44b68400b5d991c240daf2934d0b9c4a378a2fee4d514719aeeaa1bb8 designs/g1-guardian/blocks/g1_top/sim/rtl/g1_dig_cosim_cdl.v
+# rtl sha256 c14906d7d9256a771cd8fdc0ab14ba291131e151d24bf06b951b6bc693ad8ef2 designs/g1-guardian/blocks/g1_ctrl/rtl/g1_sync2.v
+# rtl sha256 df4341e1878caef2f7bf27abb273a7a5af3e41b96658ffa02eedb2af97c48a5d designs/g1-guardian/blocks/g1_ctrl/rtl/g1_serial.v
+# rtl sha256 094527d2ccbdfad792d4c2e4d1a602c50051ed1e1c8d1789e4946a44e37af850 designs/g1-guardian/blocks/g1_ctrl/rtl/g1_trip_timer.v
+# rtl sha256 16e48edd1b7ac39d4c3ccd7b76b0ff75ba9d71095e188c7c808d7fb587c10d50 designs/g1-guardian/blocks/g1_ctrl/rtl/g1_regfile.v
+# rtl sha256 42430b79ddf649d832993aca1cf3c8a548afc97383c59a793cf70b972c8256ac designs/g1-guardian/blocks/g1_ctrl/rtl/g1_digital_top.v
+# rtl sha256 36757122c43271dfd439bf1623be6d5413adf3bbb97cbad40d5cccf5892f5c3d designs/g1-guardian/blocks/g1_ctrl/rtl/g1_digital.v
+# rtl sha256 f53f82d97b91d4e815e662e72b40968949c7d74ce135f777dba7789201167ac5 designs/g1-guardian/blocks/g1_seu/rtl/g1_tmr_reg.v
+# rtl sha256 6e10bbc02a8ff29116067f2067f648b959f17b542cb2360c50e7802010048573 designs/g1-guardian/blocks/g1_seu/rtl/g1_seu_chain.v
+# rtl sha256 7c1831c99b5875a2dd48387db70fd5b1a0888a520fe8676bc4e071820b7fa736 designs/g1-guardian/blocks/g1_seu/rtl/g1_seu.v
+
+Note: No compatibility mode selected!
+
+
+Circuit: * g1_top breaker path, chip level: in-range hard trip: code 200 (~39.25mv), 1.8a/45mv fault in 20ns; hard_n=4
+
+Reducing trtol to 1 for xspice 'A' devices
+Doing analysis at TEMP = 27.000000 and TNOM = 27.000000
+
+Using SPARSE 1.3 as Direct Linear Solver
+
+
+The temperature limiting function received NaN.
+Please check your power dissipation and improve your heat sink Rth!
+    This message will be shown only once.
+
+Note: Starting dynamic gmin stepping
+Note: Dynamic gmin stepping completed
+ Reference value :  0.00000e+00
+No. of Data Rows : 1
+v(xchip.i_core_vref) = 1.044994522260790e+00
+v(xchip.i_core_isense) = 1.008810460991399e+00
+v(gate) = 1.928976815109960e-09
+v(vdd) = 1.199853825859263e+00
+v(vdda) = 3.299321000836424e+00
+v(xchip.i_core_osc_clk) = 0.000000000000000e+00
+v(xchip.i_core_cmp_clk) = 0.000000000000000e+00
+DIAGNOSTIC_OP_RETURNED
+Total elapsed time (seconds) = 33.160 
+Total DRAM available = 773205.535 MB.
+DRAM currently available = 17896.473 MB.
+Maximum ngspice program size =  810.973 MB.
+Current ngspice program size =  215.598 MB.
+
+Shared ngspice pages =   14.285 MB.
+Text (code) pages =    6.562 MB.
+Stack = 0 bytes.
+Library pages =  272.930 MB.
+
+Number of lines in the deck = 349091
+Netlist loading time = 0.238137
+Subckt and Param expansion time = 3.94317
+Netlist parsing time = 2.29201
+
+Nominal temperature = 27
+Operating temperature = 27
+Total iterations = 1668
+Transient iterations = 0
+Circuit Equations = 29053
+Circuit original non-zeroes = 155531
+Circuit fill-in non-zeroes = 40210
+Circuit total non-zeroes = 0
+Transient timepoints = 0
+Accepted timepoints = 0
+Rejected timepoints = 0
+Total analysis time (seconds) = 28.9145
+Matrix load time = 21.3281
+Matrix synchronize time = 0
+Matrix reorder time = 0.861813
+Matrix factor time = 4.9635
+Matrix solve time = 1.38258
+Transient analysis time = 0
+Transient load time = 0
+Transient sync time = 0
+Transient factor time = 0
+Transient solve time = 0
+Transient trunc time = 0
+Transient iterations for the last time point = 1668
+AC analysis time = 0
+AC load time = 0
+AC sync time = 0
+AC factor time = 0
+AC solve time = 0
+Note: Simulation executed from .control section 
+
+# run status completed
+# ngspice exit 0, wall time 33 s
