@@ -177,3 +177,36 @@ Macro: pass 1 1 min, seeds 1 min, pass 2 ~20 min (4 CPUs), STA 6 min, pins and s
 Chip DRC suite in parallel ~15 min. Compute: about **45 min wall**. The GatPoly fix, the
 regeneration of the CDL and projected references, chip LVS, and GLS on the new netlist add
 about **3-4 h** of engineering. Total: about half a day.
+
+## Addendum (2026-09-25, later): chip-level steps rehearsed on the trial swap
+
+All of this ran on `swap_eco_m5.gds`. It is a rehearsal, not a record. Commands are in
+`flow/eco/RUNBOOK.md`.
+
+**GatPoly fill** (`flow/eco/add_gatpoly_fill.py`):
+- The chip is saturated under `add_native_poly_fill.py`'s exclusions: only 63 µm² of legal
+  sites.
+- Dropping the NWell/pSD exclusions gave 700 µm², but main DRC then failed GFil.d/GFil.e (72
+  markers). The deck requires those exclusions.
+- With the stock GFil.d/e set at 1.1 µm, 0.3 µm to Activ fill (no rule) and 0.7 µm minimum
+  width, 182 sites were legal and 100 were taken (700 µm²).
+- Global GatPoly went from 14.998 % to 15.034 %. Density, main, maximal and precheck DRC were
+  all 0.
+- `chip_xor.py` against r2: outside the macro only 5/22 changed (+100 polygons, 700 µm²).
+  Inside the macro outline, only the macro's own layers changed.
+
+**Decaps inside the macro instead: infeasible.** The ECO macro's filler gaps are all 1-3
+sites (633 / 530 / 288 runs), and a `decap_4` needs 4 sites.
+
+**CDL references** (`flow/eco/regen_chip_cdl.py`, `flatten_reference.rb`):
+- Control passed. Regenerated from the chip pnl `4fd0b616`, the `g1_digital` block is
+  byte-identical to r2's. The flat projected reference matches
+  `g1_chip_top_1414_projected_ref.cdl` (76 059 devices, 31 906 nets, 22 pins).
+- Projected LVS with the ECO netlist first failed: 1 device and 3 nets. The ECO netlist has
+  `assign osc_en = net390;` (tie-high), and `verilog_to_subckt` ignores assigns. After
+  resolving it, projected LVS **passed**: 62 836 devices, 31 742 nets, 22 pins.
+- Canonical LVS reproduced r2's pattern exactly: the same 14 IO sub-circuits NoMatch with
+  identical counts, and top Skipped. Two more circuits Match (`sg13g2_antennanp`,
+  `sg13g2_mux4_1`).
+- The label rule held. The ECO macro's clock dummy loads are `buf_8`/`inv_1`, so no label
+  clones were needed. Removing the 7 unconnected-pin labels was enough for strict-port LVS.

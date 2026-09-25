@@ -55,7 +55,27 @@ def main():
     assert m and text.count('.SUBCKT g1_digital ') == 1
     old = m.group(0)
     pins = subckt_pins(text)
-    top, new, counts, nc = v2s(a.pnl, pins, {})
+    # `assign <port> = <net>;` (e.g. the ECO's tie-high osc_en: assign osc_en = net390;) is
+    # not read by verilog_to_subckt; resolve it by renaming <net> to <port> (token-exact)
+    # in a derived copy of the netlist. Any other assign form is refused.
+    vtext = open(a.pnl).read()
+    assigns = re.findall(r'^\s*assign\s+(.*?);\s*$', vtext, re.M)
+    aliases = {}
+    for asg in assigns:
+        mm = re.fullmatch(r'([A-Za-z_]\w*)\s*=\s*([A-Za-z_]\w*)', asg.strip())
+        assert mm, 'unsupported assign: ' + asg
+        lhs, rhs = mm.groups()
+        assert re.search(r'\boutput\s+%s\s*;' % lhs, vtext), 'assign to a non-port: ' + asg
+        assert rhs not in aliases.values() and lhs not in aliases
+        aliases[rhs] = lhs
+    pnl_used = a.pnl
+    if aliases:
+        body = re.sub(r'^\s*assign\s+.*?;\s*\n', '', vtext, flags=re.M)
+        body = re.sub(r'^\s*wire\s+(%s)\s*;\s*\n' % '|'.join(map(re.escape, aliases)), '', body, flags=re.M)
+        body = re.sub(r'\b(%s)\b' % '|'.join(map(re.escape, aliases)), lambda m: aliases[m.group(1)], body)
+        pnl_used = a.out + '.assign_resolved.pnl.v'
+        open(pnl_used, 'w').write(body)
+    top, new, counts, nc = v2s(pnl_used, pins, {})
     assert top == 'g1_digital'
     # top-level bus spelling restoration (as in digital-cleanflat-lvs-20260923-r1):
     # verilog_to_subckt writes dac_soft[7] as dac_soft_7_; the chip CDL uses dac_soft[7]
@@ -80,7 +100,7 @@ def main():
     open(a.projection_out, 'w').write(proj)
     users = len(re.findall(r'/ G1_VSS_DERIVATIVE__sg13g2_LevelDown\s*$', out, re.M))
     rep = dict(canonical_in=a.canonical, canonical_in_sha256=sha(text), pnl=a.pnl,
-               pnl_sha256=sha(open(a.pnl, 'rb').read()), canonical_out=a.out, canonical_out_sha256=sha(out),
+               pnl_sha256=sha(open(a.pnl, 'rb').read()), assigns_resolved=aliases, pnl_used=pnl_used, canonical_out=a.out, canonical_out_sha256=sha(out),
                old_g1_digital_sha256=sha(old), new_g1_digital_sha256=sha(new),
                g1_digital_identical=(old == new), instances=sum(counts.values()), unconnected_pins=nc,
                projection_out=a.projection_out, projection_sha256=sha(proj),
