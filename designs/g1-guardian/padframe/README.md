@@ -1,30 +1,32 @@
 # G1 pad ring and package
 
 > **Status 2026-09-25.** The chip of record is
-> [`g1_chip_top_1414.gds`](../blocks/g1_padring/layout/g1_chip_top_1414.gds)
-> (1414 × 1414 µm, SHA-256 `629d303abf594ec90593f1d28a8d9ad19673ea6662780ba428a6d9c5685986ba`,
-> owner decision 2026-09-24, `PLAN.md` D15). Its physical sign-off is
-> [`signoff-1414-20260924`](../blocks/g1_padring/reports/signoff-1414-20260924/README.md).
+> [`g1_chip_top_1414_r2.gds`](../blocks/g1_padring/layout/g1_chip_top_1414_r2.gds)
+> (1414 × 1414 µm, SHA-256 `9049e87b0303893573ed82f56a5d41f926c4db126e8d972062553c7d19996d2c`).
+> r2 corrects metadata only (the seal-ring registration texts and three cell names) of r1
+> `g1_chip_top_1414.gds` (`629d303abf594ec90593f1d28a8d9ad19673ea6662780ba428a6d9c5685986ba`,
+> owner decision 2026-09-24, `PLAN.md` D15), which is **superseded** and kept unchanged.
+> Sign-off of r2: [`signoff-1414r2-20260925`](../blocks/g1_padring/reports/signoff-1414r2-20260925/README.md);
+> of r1: [`signoff-1414-20260924`](../blocks/g1_padring/reports/signoff-1414-20260924/README.md).
 > The 1350 µm LibreLane frame and the earlier 1200 µm and 1130 µm frames below are
 > **superseded** and kept as history only. Their geometry and check results do not
 > describe the chip of record.
 
-## Bonding map (1414 µm die): candidate, not bound to the chip of record
+## Bonding map (1414 µm die): bound to the chip of record
 
-Two candidate bonding maps exist. Both give the **24 physical
-passivation-opening centres** in µm from the lower-left corner of the
-1414 × 1414 µm die, with the same pin assignments and coordinates:
-
-| File | SHA-256 of the CSV | `candidate_gds_sha256` column | Use |
+| File | SHA-256 of the CSV | GDS hash column | Status |
 | --- | --- | --- | --- |
-| [`bondmap_candidate_20260923.csv`](bondmap_candidate_20260923.csv) | `73ed1fc8…` | `ab02b653…` | first candidate, superseded by `_r2` |
-| [`bondmap_candidate_20260923_r2.csv`](bondmap_candidate_20260923_r2.csv) | `201612db…` | `3e363438…` | the map the tape-in package uses ([`TAPEIN_PACKAGE_20260924.md`](../review/TAPEIN_PACKAGE_20260924.md), bond map rows) |
+| [`bondmap_20260925_r3.csv`](bondmap_20260925_r3.csv) | `ead5f109…` | `9049e87b…` (r2, chip of record) | **current**: `chip_of_record`, with columns `qfn24_lead` and `lead_side` |
+| [`bondmap_candidate_20260923_r2.csv`](bondmap_candidate_20260923_r2.csv) | `201612db…` | `3e363438…` (older candidate) | superseded by r3 |
+| [`bondmap_candidate_20260923.csv`](bondmap_candidate_20260923.csv) | `73ed1fc8…` | `ab02b653…` | superseded |
 
-**Neither map is bound to the chip GDS `629d303a…`.** Both carry the hash of an
-earlier candidate GDS and the status `candidate_not_tapeout`. The tape-in package
-records the r2 opening centres and sizes as matching the 24 Passiv openings of
-`g1_chip_top_1414.gds` to 0.01 µm (KLayout check, 2026-09-24). Rebinding the CSV
-to `629d303a…` in a new revision is **open** (tape-in package, open items).
+r3 keeps the r2 rows (columns 1–9 identical: the 24 physical passivation-opening centres in µm
+from the lower-left die corner, 65.8 µm openings, pin assignments), sets the GDS hash column
+(still named `candidate_gds_sha256` so that existing validators read it) to the r2 SHA and the
+status to `chip_of_record`, and adds the QFN24 lead. It was checked geometrically against
+the r2 file: each row coincides with exactly one Passiv opening (centre to 1 nm, size, TopMetal2
+enclosure ≥ 2.1 µm, inside dfpad), and the 22 TopMetal2 labels sit at their opening centres
+with the row's net name ([`verify_bondmap_r3.json`](../blocks/g1_padring/reports/signoff-1414r2-20260925/bondmap/verify_bondmap_r3.json)).
 
 The logical pin assignments and 112 µm pitch are unchanged from the 1350 µm frame.
 Each bondpad moved exactly 5 µm outward: south and west centres are at 101 µm,
@@ -79,14 +81,60 @@ pads per side on the die. Die thickness 200 µm. Die attach conductive and the
 exposed paddle bonded to a board pad so the substrate return is a defined node
 rather than a floating one.
 
-Bonding diagram: intended as pad *n* on side *s* to the lead opposite it, no
-crossings. The north and west pad order in the CSV is not one continuous rotation
-of the south/east order, so "directly opposite" is not yet a defined mapping: a
-pad-to-lead table is **needed** and does not exist yet. Pad numbering follows the pin map in the specification. D14
-changed the **function** of pad 7 (east side, first from the bottom) from a
-second core `VDD` to `VDDA`; its position and cell size are unchanged, so the
-bonding diagram is unchanged and the board must tie the `VDDA` lead to the
-3.3 V rail together with `IOVDD`.
+Bonding diagram: [`BONDPLAN_20260925.md`](BONDPLAN_20260925.md) and
+[`bondplan_20260925.svg`](bondplan_20260925.svg), generated from the r2 GDS by
+[`bondplan_20260925.py`](bondplan_20260925.py). D14 changed the **function** of pad 7 (east
+side, first from the bottom) from a second core `VDD` to `VDDA`; its position and cell size
+are unchanged, and the board must tie the `VDDA` lead to the 3.3 V rail together with `IOVDD`.
+
+### Pad-to-lead table (QFN24)
+
+**Convention.** Top view of the package, leads numbered **counter-clockwise**, lead 1 at the
+top of the left side next to the **top-left corner (pin-1 mark)**: left side 1–6 top to bottom,
+bottom 7–12 left to right, right side 13–18 bottom to top, top 19–24 right to left. The die is
+centred and rotated 90° clockwise from the GDS view, so its GDS south edge (pads 1–6) faces leads
+1–6. "Directly opposite" means the same rank along the facing side, counted counter-clockwise.
+
+Going counter-clockwise around the die, the south pads (1→6, left to right) and east pads (7→12, bottom to top)
+follow the lead direction. The north pads (13→18, left to right) and west pads (19→24, bottom to top) run
+**clockwise**, so they land on the opposite leads in **reversed order**.
+
+| Die pad | Net | GDS side | x (µm) | y (µm) | Lead directly opposite | Lead if pad *n* → lead *n* |
+| ---: | --- | --- | ---: | ---: | ---: | ---: |
+| 1 | `VDD` | south | 395 | 101 | 1 | 1 |
+| 2 | `VSS` | south | 507 | 101 | 2 | 2 |
+| 3 | `IOVDD` | south | 619 | 101 | 3 | 3 |
+| 4 | `IOVSS` | south | 731 | 101 | 4 | 4 |
+| 5 | `VSS` | south | 843 | 101 | 5 | 5 |
+| 6 | `IOVSS` | south | 955 | 101 | 6 | 6 |
+| 7 | `VDDA` | east | 1313 | 395 | 7 | 7 |
+| 8 | `SENSE_P` | east | 1313 | 507 | 8 | 8 |
+| 9 | `SENSE_N` | east | 1313 | 619 | 9 | 9 |
+| 10 | `GATE` | east | 1313 | 731 | 10 | 10 |
+| 11 | `FAULT_N` | east | 1313 | 843 | 11 | 11 |
+| 12 | `EN` | east | 1313 | 955 | 12 | 12 |
+| 13 | `TRIP_SET` | north | 395 | 1313 | 18 | 13 |
+| 14 | `SCLK` | north | 507 | 1313 | 17 | 14 |
+| 15 | `SDI` | north | 619 | 1313 | 16 | 15 |
+| 16 | `SDO` | north | 731 | 1313 | 15 | 16 |
+| 17 | `TEMP_OUT` | north | 843 | 1313 | 14 | 17 |
+| 18 | `VREF` | north | 955 | 1313 | 13 | 18 |
+| 19 | `G_SHARED` | west | 101 | 395 | 24 | 19 |
+| 20 | `D_STD` | west | 101 | 507 | 23 | 20 |
+| 21 | `D_ELT` | west | 101 | 619 | 22 | 21 |
+| 22 | `HBT_E` | west | 101 | 731 | 21 | 22 |
+| 23 | `HBT_B` | west | 101 | 843 | 20 | 23 |
+| 24 | `HBT_C` | west | 101 | 955 | 19 | 24 |
+
+Two options were considered:
+
+- **A.** Bond each pad to the lead directly opposite (no crossings; 0 crossings by the
+  generator's segment test) and renumber the package pins of pads 13–24 in spec §3.
+- **B.** Bond pad *n* to lead *n*: 30 wire crossings (every pair of wires on the north and
+  west edges crosses, 15 per edge), with long diagonal wires.
+
+**Owner decision 2026-09-25: option A.** Spec §3 now carries both numbers ("Die pad" and
+"QFN24 lead"); die-pad numbers everywhere else are unchanged. The exposed paddle is `VSS`.
 
 ## Pin map
 
@@ -97,19 +145,26 @@ three canary-transistor pins and three HBT pins.
 
 ## Checks
 
-### Chip of record, `g1_chip_top_1414.gds` (`629d303a…`)
+### Chip of record, `g1_chip_top_1414_r2.gds` (`9049e87b…`)
 
-Evidence: [`signoff-1414-20260924`](../blocks/g1_padring/reports/signoff-1414-20260924/README.md).
+Evidence: [`signoff-1414r2-20260925`](../blocks/g1_padring/reports/signoff-1414r2-20260925/README.md).
+r2 is geometrically identical to r1 on every layer (per-layer XOR empty; only two TEXT 63/0
+strings and three cell names differ).
 
 | Check | Status |
 | --- | --- |
 | KLayout main DRC, maximal DRC | passed, 0 markers |
+| Precheck mode (`--precheck_drc --disable_extra_rules`, with density) | passed, 0 markers |
 | Density | passed, 0 markers |
 | Antenna | passed, 0 markers |
 | Projected-reference LVS | passed, 61 684 / 61 684 devices |
-| Canonical (unprojected) LVS | **failed**; cause: substrate/tap/diode netlist semantics of the IO-cell reference in the PDK, reproduced with stock cells and with IHP's latest `dev` deck and library; the design-local IO copies match IHP's `dev` library on every layer (PR #1223); upstream issues #1218/#1130 ([evidence](../review/upstream/evidence/README.md)) |
+| Canonical (unprojected) LVS | **failed**, identical to r1 (14 IO sub-cells NoMatch); cause: substrate/tap/diode netlist semantics of the IO-cell reference in the PDK, reproduced with stock cells and with IHP's latest `dev` deck and library; the design-local IO copies match IHP's `dev` library on every layer (PR #1223); upstream issues #1218/#1130 ([evidence](../review/upstream/evidence/README.md)) |
+| Bond map r3 against the r2 GDS | passed (24/24 openings, 22/22 labels) |
 | Full-chip PEX | not run |
 | Bonding diagram accepted by packaging service | not run |
+
+r1 `g1_chip_top_1414.gds` (`629d303a…`, superseded) had the same results except that precheck was
+not part of its sign-off; the physical review ran it on r1 with 0 markers.
 
 ### Historical: superseded 1350 µm assembly (not the chip)
 

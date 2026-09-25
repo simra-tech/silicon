@@ -41,36 +41,48 @@ Design principles:
 
 ## 3. Pin map (24)
 
-| # | Pin | IO cell | Domain | Function |
-| ---: | --- | --- | --- | --- |
-| 1 | `VDD` | `sg13g2_IOPadVdd` | 1.2 V | core supply |
-| 2 | `VSS` | `sg13g2_IOPadVss` | 0 V | core ground, substrate |
-| 3 | `IOVDD` | `sg13g2_IOPadIOVdd` | 3.3 V | IO and analog supply |
-| 4 | `IOVSS` | `sg13g2_IOPadIOVss` | 0 V | IO ground |
-| 5 | `VSS` | `sg13g2_IOPadVss` | 0 V | second ground pad |
-| 6 | `IOVSS` | `sg13g2_IOPadIOVss` | 0 V | second IO ground pad |
-| 7 | `VDDA` | `sg13g2_IOPadAnalog` (bare terminal) | 3.3 V | analog supply for the 3.3 V core blocks (bandgap, sensor, sense amplifier, comparator DACs, gate latch; G1_OSC uses 1.2 V VDD); tied to the same 3.3 V rail as `IOVDD` on the board (`PLAN.md` D14) |
-| 8 | `SENSE_P` | `sg13g2_IOPadAnalog` | analog | shunt Kelvin, positive |
-| 9 | `SENSE_N` | `sg13g2_IOPadAnalog` | analog | shunt Kelvin, negative |
-| 10 | `GATE` | `sg13g2_IOPadOut30mA` | 3.3 V | external N-FET gate |
-| 11 | `FAULT_N` | `sg13g2_IOPadOut4mA` | 3.3 V | low while tripped |
-| 12 | `EN` | `sg13g2_IOPadIn` | 3.3 V | enable / reset of trip latch |
-| 13 | `TRIP_SET` | `sg13g2_IOPadAnalog` | analog | external hard-threshold override, optional. **Not connected on the chip of record:** the pad's core net `i_core_trip_set` has no core load and `g1_trip` has no `trip_set_sel` input, so `MODE.TRIP_SET_SEL` has no effect (canonical CDL; `../review/redteam-20260925/DIGITAL.md` N2) |
-| 14 | `SCLK` | `sg13g2_IOPadIn` | 3.3 V | serial clock |
-| 15 | `SDI` | `sg13g2_IOPadIn` | 3.3 V | serial data in |
-| 16 | `SDO` | `sg13g2_IOPadOut4mA` | 3.3 V | serial data out |
-| 17 | `TEMP_OUT` | `sg13g2_IOPadOut16mA` | 3.3 V | temperature as frequency |
-| 18 | `VREF` | `sg13g2_IOPadAnalog` | analog | bandgap output, for test |
-| 19 | `G_SHARED` | `sg13g2_IOPadAnalog` | analog | canary pair gate |
-| 20 | `D_STD` | `sg13g2_IOPadAnalog` | analog | standard NMOS drain |
-| 21 | `D_ELT` | `sg13g2_IOPadAnalog` | analog | HV NMOS drain in the assembled chip; legacy pin name |
-| 22 | `HBT_E` | `sg13g2_IOPadAnalog` | analog | test HBT emitter |
-| 23 | `HBT_B` | `sg13g2_IOPadAnalog` | analog | test HBT base |
-| 24 | `HBT_C` | `sg13g2_IOPadAnalog` | analog | test HBT collector |
+| Die pad | QFN24 lead | Pin | IO cell | Domain | Function |
+| ---: | ---: | --- | --- | --- | --- |
+| 1 | 1 | `VDD` | `sg13g2_IOPadVdd` | 1.2 V | core supply |
+| 2 | 2 | `VSS` | `sg13g2_IOPadVss` | 0 V | core ground, substrate |
+| 3 | 3 | `IOVDD` | `sg13g2_IOPadIOVdd` | 3.3 V | IO and analog supply |
+| 4 | 4 | `IOVSS` | `sg13g2_IOPadIOVss` | 0 V | IO ground |
+| 5 | 5 | `VSS` | `sg13g2_IOPadVss` | 0 V | second ground pad |
+| 6 | 6 | `IOVSS` | `sg13g2_IOPadIOVss` | 0 V | second IO ground pad |
+| 7 | 7 | `VDDA` | `sg13g2_IOPadAnalog` (bare terminal) | 3.3 V | analog supply for the 3.3 V core blocks (bandgap, sensor, sense amplifier, comparator DACs, gate latch; G1_OSC uses 1.2 V VDD); tied to the same 3.3 V rail as `IOVDD` on the board (`PLAN.md` D14) |
+| 8 | 8 | `SENSE_P` | `sg13g2_IOPadAnalog` | analog | shunt Kelvin, positive |
+| 9 | 9 | `SENSE_N` | `sg13g2_IOPadAnalog` | analog | shunt Kelvin, negative |
+| 10 | 10 | `GATE` | `sg13g2_IOPadOut30mA` | 3.3 V | external N-FET gate |
+| 11 | 11 | `FAULT_N` | `sg13g2_IOPadOut4mA` | 3.3 V | low while tripped |
+| 12 | 12 | `EN` | `sg13g2_IOPadIn` | 3.3 V | enable / reset of trip latch |
+| 13 | 18 | `TRIP_SET` | `sg13g2_IOPadAnalog` | analog | external hard-threshold override, optional. **Not connected on the chip of record:** the pad's core net `i_core_trip_set` has no core load and `g1_trip` has no `trip_set_sel` input, so `MODE.TRIP_SET_SEL` has no effect (canonical CDL; `../review/redteam-20260925/DIGITAL.md` N2) |
+| 14 | 17 | `SCLK` | `sg13g2_IOPadIn` | 3.3 V | serial clock |
+| 15 | 16 | `SDI` | `sg13g2_IOPadIn` | 3.3 V | serial data in |
+| 16 | 15 | `SDO` | `sg13g2_IOPadOut4mA` | 3.3 V | serial data out |
+| 17 | 14 | `TEMP_OUT` | `sg13g2_IOPadOut16mA` | 3.3 V | temperature as frequency |
+| 18 | 13 | `VREF` | `sg13g2_IOPadAnalog` | analog | bandgap output, for test |
+| 19 | 24 | `G_SHARED` | `sg13g2_IOPadAnalog` | analog | canary pair gate |
+| 20 | 23 | `D_STD` | `sg13g2_IOPadAnalog` | analog | standard NMOS drain |
+| 21 | 22 | `D_ELT` | `sg13g2_IOPadAnalog` | analog | HV NMOS drain in the assembled chip; legacy pin name |
+| 22 | 21 | `HBT_E` | `sg13g2_IOPadAnalog` | analog | test HBT emitter |
+| 23 | 20 | `HBT_B` | `sg13g2_IOPadAnalog` | analog | test HBT base |
+| 24 | 19 | `HBT_C` | `sg13g2_IOPadAnalog` | analog | test HBT collector |
 
-Side assignment: pins 1 to 6 south, 7 to 12 east, 13 to 18 north, 19 to 24
+Side assignment (die pads, GDS view): pads 1 to 6 south, 7 to 12 east, 13 to 18 north, 19 to 24
 west, so that the analog device pins sit together on one side away from the
 switching outputs, and the supplies are split between two sides.
+
+**Note 2026-09-25 (owner decision): die pad and package lead numbers.** "Die pad" is the
+pad number in the GDS, the bond map and all block documents; it is unchanged. "QFN24 lead"
+is the package pin. Each die pad is bonded to the lead directly opposite it, with no crossing
+wires, under the standard counter-clockwise lead numbering with pin 1 at the top-left of the
+top view; the die sits rotated 90° clockwise from the GDS view, so the GDS south edge faces
+leads 1–6. Die pads 1–12 land on leads 1–12. Die pads 13–18 and 19–24 run clockwise on the die, so they land on
+leads 18–13 and 24–19 (reversed within their sides). Earlier revisions of this table had one number
+column, which cannot be both the die pad and the package pin for pads 13–24. Board
+schematics and pinouts use the QFN24 lead column. Plan, table and drawing:
+[`../padframe/BONDPLAN_20260925.md`](../padframe/BONDPLAN_20260925.md); bond map
+`../padframe/bondmap_20260925_r3.csv` (column `qfn24_lead`).
 
 The 3.3 V analog blocks are supplied from `VDDA`, not from the ring's `IOVDD`: the `sg13g2_io` cells give no DRC-legal way to tap their `iovdd` rail into the core (the rail sits behind `vdd`/`vss` on every metal level), so `VDDA` enters through the bare terminal of an analog pad and is strapped to the macros inside the core. Analog ground shares the core `VSS` grid. `VDDA` must not exceed `IOVDD` by more than a diode drop, which the shared board rail guarantees.
 
