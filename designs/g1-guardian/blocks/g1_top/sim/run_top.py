@@ -224,10 +224,21 @@ CORNERS = {
     'ss': dict(mos='mos_ss', res='res_wcs', cap='cap_wcs', hbt='hbt_wcs'),
     'ff': dict(mos='mos_ff', res='res_bcs', cap='cap_bcs', hbt='hbt_bcs'),
 }
-RTL_FILES = [os.path.join(HERE, 'rtl/g1_dig_cosim.v')] + [
-    os.path.join(BLOCKS, 'g1_ctrl/rtl', f) for f in
-    ('g1_sync2.v', 'g1_serial.v', 'g1_trip_timer.v', 'g1_regfile.v', 'g1_digital_top.v', 'g1_digital.v')] + [
-    os.path.join(BLOCKS, 'g1_seu/rtl', f) for f in ('g1_tmr_reg.v', 'g1_seu_chain.v', 'g1_seu.v')]
+# --rtl-dir: which copy of the digital macro RTL the co-simulation compiles. 'rtl' is the chip of record
+# (default); 'eco_20260925' is the pin-compatible RTL-only ECO (blocks/g1_ctrl/ECO_20260925.md).
+RTL_DIRS = {'rtl': ('g1_ctrl/rtl', 'g1_seu/rtl'),
+            'eco_20260925': ('g1_ctrl/rtl_eco_20260925', 'g1_seu/rtl_eco_20260925')}
+
+
+def make_rtl_files(rtl_dir='rtl'):
+    ctrl, seu = RTL_DIRS[rtl_dir]
+    return [os.path.join(HERE, 'rtl/g1_dig_cosim.v')] + [
+        os.path.join(BLOCKS, ctrl, f) for f in
+        ('g1_sync2.v', 'g1_serial.v', 'g1_trip_timer.v', 'g1_regfile.v', 'g1_digital_top.v', 'g1_digital.v')] + [
+        os.path.join(BLOCKS, seu, f) for f in ('g1_tmr_reg.v', 'g1_seu_chain.v', 'g1_seu.v')]
+
+
+RTL_FILES = make_rtl_files('rtl')
 
 # ---------------------------------------------------------------- common timeline (us) and constants
 INOM = 1.0          # nominal load current, A (25 mV across the 25 mOhm shunt = DAC code 128)
@@ -588,7 +599,7 @@ def nodcn_io_lib():
 
 
 def build_deck(case, name, netlist, front, temp, corner, tag, tstop_override=None, osc='ideal', inpads='ideal', outpads='beh', method='gear',
-               osc_rx='bridge', osc_supply_r=None, osc_decap=None, blockset='legacy', t2f='off'):
+               osc_rx='bridge', osc_supply_r=None, osc_decap=None, blockset='legacy', t2f='off', interconnect='estimate', sense_route_r=False):
     c = dict(case)
     event_us=c.get('event_us',T_STEP)
     tstop = tstop_override if tstop_override else c['tstop']
@@ -1052,6 +1063,12 @@ def build_deck(case, name, netlist, front, temp, corner, tag, tstop_override=Non
     A('wrdata %s %s' % (os.path.join(BUILD, 'waves_%s.txt' % tag), waves))
     A('.endc')
     A('.end')
+    if interconnect == 'extracted':
+        if front != 'tl':
+            raise SystemExit('--interconnect extracted needs the transistor-level front end')
+        apply_interconnect(L, None if powerup else quiet, sense_route_r)
+    elif sense_route_r:
+        raise SystemExit('--sense-route-r needs --interconnect extracted')
     if VDD_V != 1.2:
         # digital-signal measurement thresholds (osc_clk, cmp_clk, DAC/cause bits, latches, T2F out) at VDD/2
         k = L.index('.control')
@@ -1120,6 +1137,84 @@ def validate_prefix(out, wave_path, requested_end_s):
 
 def rtl_files(t2f='off'):
     return ([RTL_WRAPPER_T2F] + RTL_FILES[1:]) if t2f == 'tl' else RTL_FILES
+
+
+# --interconnect extracted: top-level routing between the macros (kpex 2.5D CC, fill removed), C-only subckt
+# g1_top_interconnect of sim/postlayout/top_interconnect_20260925.spice (README_top_interconnect_20260925.md).
+# It replaces the deck's Cw_* wiring estimates on the nets it covers (no double count).
+TOP_INTERCONNECT = os.path.join(HERE, 'postlayout', 'top_interconnect_20260925.spice')
+TOP_INTERCONNECT_SHA256 = 'ddc88cc765e99a0e982c9b6bc24817bfe336ae686930b2c12a85d514fb2adcc2'
+ICX_REMOVED = ('Cw_isense', 'Cw_soft', 'Cw_hard', 'Cw_en', 'Cw_sclk', 'Cw_sdi', 'Cw_tripped', 'Cw_clk')
+# CDL port -> (deck node, fallback when the node is not in this deck); fallbacks are static levels at reset
+ICX_MAP = dict(
+    [('isense', ('isense', None)), ('vref', ('vref', None)), ('vref_buf', ('vref_buf', None)), ('iptat', ('iptat', None)),
+     ('pbias', ('pbias', None)), ('pcasc', ('pcasc', None)), ('cmp_soft', ('cmp_soft', None)), ('cmp_hard', ('cmp_hard', None)),
+     ('cmp_clk', ('cmp_clk', None)), ('osc_clk', ('osc_clk', None)), ('osc_en', ('osc_en', 'vdd')),
+     ('trip_d', ('trip_d', '0')), ('clr_d', ('clr_d', '0')), ('fast_en', ('fast_en', '0')), ('tripped', ('tripped', '0')),
+     ('en_i', ('en_core', None)), ('sclk_i', ('sclk_core', None)), ('sdi_i', ('sdi_core', None)), ('sdo_o', ('sdo', '0')),
+     ('gate_o', ('gate_core', '0')), ('fault_n_o', ('fault_core', '0')),
+     ('t2f_en_12', ('t2f_en12', 'vdd')), ('t2f_en_33', ('t2f_en33', 'vdda')), ('t2f_mode_12', ('t2f_mode12', '0')),
+     ('t2f_mode_33', ('t2f_mode33', '0')), ('temp_out_o', ('temp_out', '0')),
+     ('sense_p', ('sense_p', None)), ('sense_n', ('sense_n', None)), ('bgr_r4_33', ('r4', '0')), ('bgr_r4_12', (None, '0')),
+     ('net', (None, 'vdd'))] +
+    [('dac_soft_%d_' % k, ('soft%d' % k, None)) for k in range(8)] + [('dac_hard_%d_' % k, ('hard%d' % k, None)) for k in range(8)] +
+    [('osc_trim_%d_' % k, ('trim%d' % k, None)) for k in range(4)] +
+    [(p, (None, '0')) for p in ('d_elt', 'd_std', 'g_shared', 'hbt_b', 'hbt_c', 'hbt_e')] + [('sub', ('0', None))])
+SENSE_ROUTE_R = {'sense_p': 171.0, 'sense_n': 106.0}   # README: series R of the SENSE_P / SENSE_N pad routes (upper bound)
+
+
+def apply_interconnect(L, quiet, sense_route_r):
+    """Edit the deck lines in place for --interconnect extracted (and --sense-route-r)."""
+    if sha256(TOP_INTERCONNECT) != TOP_INTERCONNECT_SHA256:
+        raise SystemExit('%s does not match its bound SHA256 %s' % (TOP_INTERCONNECT, TOP_INTERCONNECT_SHA256))
+    ports = subckt_ports(TOP_INTERCONNECT, 'g1_top_interconnect').split()
+    if set(ports) != set(ICX_MAP):
+        raise SystemExit('g1_top_interconnect ports differ from ICX_MAP: %s' % sorted(set(ports) ^ set(ICX_MAP)))
+    removed = [l for l in L if l.split()[:1] and l.split()[0] in ICX_REMOVED]
+    L[:] = [l for l in L if not (l.split()[:1] and l.split()[0] in ICX_REMOVED)]
+    k = L.index('.control')
+    nodes = set()
+    for l in L[:k]:
+        f = l.split()
+        if f and f[0][0] in 'aA':
+            nodes.update(x.strip('[]').lower() for x in f[1:])
+        elif f and f[0][0] in 'BbEeGg':
+            nodes.update(x.lower() for x in f[1:3])
+        elif f and f[0][0].isalpha():
+            nodes.update(x.lower() for x in f[1:] if '=' not in x)
+    conn, notes = [], []
+    for p in ports:
+        node, fb = ICX_MAP[p]
+        if sense_route_r and p in SENSE_ROUTE_R:
+            conn.append(p + '_i')     # created below by the XSENSE rename
+            continue
+        if node is None or (node != '0' and node not in nodes):
+            notes.append('%s->%s' % (p, fb))
+            node = fb
+        conn.append(node)
+    hdr = ['* ---- top-level interconnect (--interconnect extracted): %s sha256 %s' % (os.path.relpath(TOP_INTERCONNECT, ROOT), TOP_INTERCONNECT_SHA256),
+           '* C-only subckt g1_top_interconnect, sub = 0; removed wiring estimates: ' + (' | '.join(removed) or 'none'),
+           '* ports without a deck node tied to their static reset level: ' + (', '.join(notes) or 'none')]
+    inst = hdr + ['XICX ' + ' '.join(conn) + ' g1_top_interconnect']
+    if sense_route_r:
+        xs = [i for i, l in enumerate(L) if l.startswith('XSENSE sense_p sense_n ')]
+        if len(xs) != 1:
+            raise SystemExit('--sense-route-r: XSENSE sense_p sense_n instance not found')
+        L[xs[0]] = L[xs[0]].replace('XSENSE sense_p sense_n ', 'XSENSE sense_p_i sense_n_i ', 1)
+        inst += ['* --sense-route-r: series R of the unequal SENSE pad routes (README: SENSE_P 171 Ohm, SENSE_N 106 Ohm);',
+                 '* the route C of g1_top_interconnect sits on the block side (sense_p_i / sense_n_i)',
+                 'Rroute_p sense_p sense_p_i %g' % SENSE_ROUTE_R['sense_p'], 'Rroute_n sense_n sense_n_i %g' % SENSE_ROUTE_R['sense_n']]
+    last_inc = max(i for i, l in enumerate(L[:k]) if l.startswith('.include'))
+    L.insert(last_inc + 1, '.include %s' % TOP_INTERCONNECT)
+    k = L.index('.control')
+    s = next(i for i, l in enumerate(L) if l.startswith('.save '))
+    L[s:s] = inst
+    if quiet:
+        w = next(i for i, l in enumerate(L) if i > L.index('.control') and l.startswith('wrdata '))
+        L[w:w] = ['* VREF ripple over the quiet window (VREF-osc_clk coupling of the extracted routing)',
+                  'meas tran vref_rmax max v(vref) from=%gu to=%gu' % quiet, 'meas tran vref_rmin min v(vref) from=%gu to=%gu' % quiet,
+                  'meas tran vref_ravg avg v(vref) from=%gu to=%gu' % quiet, 'let vref_pp_mv = (vref_rmax - vref_rmin)*1e3',
+                  'echo "VREF_RIPPLE window=%g-%gus pp_mV=" $&vref_pp_mv " mean=" $&vref_ravg " max=" $&vref_rmax " min=" $&vref_rmin' % quiet]
 
 
 def rtl_vvp_path(tag):
@@ -1208,6 +1303,10 @@ def main():
                     help='G1_T2F behind two g1_ls_up at transistor level (baseline PEX, chip CDL wiring, fout into 1 pF; TEMP_OUT pad not modelled)')
     ap.add_argument('--view-override', default=None, metavar='BLOCK=VIEW[,...]',
                     help='per-block view after --netlist/--blockset resolution, e.g. bgr=sch,trip=pex (blocks bgr sense trip osc gate)')
+    ap.add_argument('--interconnect', default='estimate', choices=('estimate', 'extracted'),
+                    help='top-level wiring: Cw_* estimates (default) or the extracted g1_top_interconnect C (postlayout/top_interconnect_20260925.spice)')
+    ap.add_argument('--sense-route-r', action='store_true',
+                    help='with --interconnect extracted: series 171/106 Ohm on the SENSE_P/SENSE_N pad routes')
     ap.add_argument('--fault-mult', type=float, default=None, metavar='X',
                     help="fault-event load level as X x nominal 1 A (replaces the case's single fault level, timing unchanged)")
     ap.add_argument('--vdd', type=float, default=1.2, help='VDD (V), default 1.2')
@@ -1236,6 +1335,9 @@ def main():
     ap.add_argument('--maxstep-ns', type=float, default=None, help='explicit transient maximum step in ns for numerical qualification')
     ap.add_argument('--timeline',choices=('baseline','compact'),default='baseline',help='compact c_mid only: serial4us,fault16us,stop28us; SEU fill not qualified')
     ap.add_argument('--checkpoint-us',type=float,nargs='+',default=[],help='save partial observations then resume within the same running simulator; not restart checkpoints')
+    ap.add_argument('--rtl-dir', default='rtl', choices=tuple(RTL_DIRS),
+                    help='digital macro RTL copy for the co-simulation: rtl (chip of record, default) or eco_20260925 '
+                         '(blocks/g1_ctrl/ECO_20260925.md); a non-default choice adds _rtl<name> to the run tag')
     ap.add_argument('--dry', action='store_true')
     ap.add_argument('--tedge', type=float, default=None, help='edge time of EN/SCLK/SDI (s), default 2 ns')
     ap.add_argument('--event-shift-ns', type=float, default=0,
@@ -1269,7 +1371,8 @@ def main():
     except ValueError as exc:
         ap.error(str(exc))
     run_id = a.run_id or time.strftime('%Y%m%dT%H%M%SZ', time.gmtime()) + '_' + uuid.uuid4().hex[:8]
-    global TEDGE, T_SER, T_STEP, CASES
+    global TEDGE, T_SER, T_STEP, CASES, RTL_FILES
+    RTL_FILES = make_rtl_files(a.rtl_dir)
     global PADS_NODCN
     PADS_NODCN = (a.pads == 'nodcn')
     if a.timeline == 'compact':
@@ -1313,8 +1416,10 @@ def main():
             case['tmax'] = a.maxstep_ns * 1e-9
         front = a.front or case.get('front', 'tl')
         osc = a.osc or case.get('osc', 'ideal')
-        tag = '%s_%s%s_%s_%s_%gC' % (name, a.netlist, '' if a.blockset == 'legacy' else '_' + a.blockset, front, a.corner, a.temp) + supply_tag + (('_fm' + vtag(a.fault_mult)) if a.fault_mult is not None else '') + ('_ovr-' + '-'.join(k + v for k, v in sorted(VIEW_OVERRIDE.items())) if VIEW_OVERRIDE else '') + ('_t2ftl' if a.t2f == 'tl' else '') + ('_osctl' if osc == 'tl' and name != 'osc' else '') + ('_inpads' if a.inpads == 'model' else '') + ('_nodcn' if a.inpads == 'nodcn' else '') + ('_padsnodcn' if a.pads == 'nodcn' else '') + ('_outpads' if a.outpads == 'model' and front == 'tl' else '') + ('_%s' % a.method if a.method else '')
+        tag = '%s_%s%s_%s_%s_%gC' % (name, a.netlist, '' if a.blockset == 'legacy' else '_' + a.blockset, front, a.corner, a.temp) + supply_tag + (('_fm' + vtag(a.fault_mult)) if a.fault_mult is not None else '') + ('_icx' if a.interconnect == 'extracted' else '') + ('_srr' if a.sense_route_r else '') + ('_ovr-' + '-'.join(k + v for k, v in sorted(VIEW_OVERRIDE.items())) if VIEW_OVERRIDE else '') + ('_t2ftl' if a.t2f == 'tl' else '') + ('_osctl' if osc == 'tl' and name != 'osc' else '') + ('_inpads' if a.inpads == 'model' else '') + ('_nodcn' if a.inpads == 'nodcn' else '') + ('_padsnodcn' if a.pads == 'nodcn' else '') + ('_outpads' if a.outpads == 'model' and front == 'tl' else '') + ('_%s' % a.method if a.method else '')
         tag += '_clockfix'
+        if a.rtl_dir != 'rtl':
+            tag += '_rtl' + a.rtl_dir.replace('_', '')
         if a.event_shift_ns:
             tag += '_phase%gns' % a.event_shift_ns
         if a.timeline != 'baseline':tag += '_compact'
@@ -1342,7 +1447,8 @@ def main():
         inpads = a.inpads if a.inpads != 'ideal' or not case.get('inpads') else case['inpads']
         method = a.method or ('trap' if front == 'tl' and not case.get('powerup') else 'gear')
         deck = build_deck(case, name, a.netlist, front, a.temp, a.corner, tag, a.tstop, osc, inpads, outpads, method,
-                          a.osc_rx, a.osc_supply_r, a.osc_decap, blockset=a.blockset, t2f=a.t2f)
+                          a.osc_rx, a.osc_supply_r, a.osc_decap, blockset=a.blockset, t2f=a.t2f,
+                          interconnect=a.interconnect, sense_route_r=a.sense_route_r)
         rel, bs_warnings, _ = resolve_netlists(a.blockset, a.netlist)
         if inpads == 'nodcn':
             bs_warnings = list(bs_warnings) + [NODCN_WARNING]
@@ -1381,6 +1487,9 @@ def main():
             log.write('# G1_TOP run %s  %s UTC\n# %s\n' % (tag, time.strftime('%Y-%m-%dT%H:%M:%SZ', time.gmtime()), case['desc']))
             log.write('# deck %s\n' % os.path.relpath(deck_path, ROOT))
             log.write('# supplies VDD %g V, VDDA = IOVDD %g V\n' % (VDD_V, VDDA_V))
+            if a.interconnect == 'extracted':
+                log.write('# interconnect extracted %s sha256 %s%s\n' % (os.path.relpath(TOP_INTERCONNECT, ROOT), sha256(TOP_INTERCONNECT),
+                                                                       ' + sense route R 171/106 Ohm' if a.sense_route_r else ''))
             if case.get('fault_mult'):
                 log.write('# fault-mult %g (case fault level %g x INOM)\n' % (case['fault_mult'][1], case['fault_mult'][0]))
             log.write('# blockset %s%s\n' % (a.blockset, (' view-override ' + a.view_override) if VIEW_OVERRIDE else ''))
@@ -1412,7 +1521,7 @@ def main():
             else:
                 inputs.update(os.path.join(BLOCKS, source) for source in rel.values())
             meta = dict(tag=tag, analysis=a.analysis, options=vars(a),
-                        effective=dict(fault_mult=a.fault_mult, vdd=VDD_V, vdda=VDDA_V, blockset=a.blockset, view_override=VIEW_OVERRIDE, netlists=rel, blockset_warnings=bs_warnings, front=front, osc=osc, inpads=inpads, outpads=outpads, method=method,
+                        effective=dict(interconnect=a.interconnect, sense_route_r=a.sense_route_r, fault_mult=a.fault_mult, vdd=VDD_V, vdda=VDDA_V, blockset=a.blockset, view_override=VIEW_OVERRIDE, netlists=rel, blockset_warnings=bs_warnings, front=front, osc=osc, inpads=inpads, outpads=outpads, method=method,
                                        threads=a.threads, solver=a.solver),
                         git_revision=subprocess.check_output(['git', '-c', 'safe.directory=' + ROOT,
                                                               'rev-parse', 'HEAD'], cwd=ROOT, text=True).strip(),

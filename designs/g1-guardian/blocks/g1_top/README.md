@@ -32,6 +32,27 @@ verifies a separate 0.6 V single-threshold clock receiver. Corrected runs use
 observations below require revalidation. The affected in-flight runs were
 stopped before restarting with the corrected receiver.
 
+## 2026-09-25 extracted top-level interconnect (`--interconnect extracted`)
+
+The top-level wiring between blocks is taken from the extraction
+`sim/postlayout/top_interconnect_20260925.spice` ([sim/postlayout/README_top_interconnect_20260925.md](sim/postlayout/README_top_interconnect_20260925.md))
+instead of the estimated `Cw_*` wire elements. Simulated, tt/27 °C:
+
+| Case (run tag `c1414icx`) | Deck | Result (extracted interconnect) | Estimate-based reference | Status | Log |
+| --- | --- | --- | --- | --- | --- |
+| `c_mid` compact, 1.8× hard fault | `--interconnect extracted`, `bgr=sch`, `inpads nodcn`, ideal clock | `trip_d` 1.058 µs, `GATE` < 1 V 1.345 µs | 1.049 / 1.334 µs (+about 10 ns) | passed | `c_mid_pex_c1414_tl_tt_27C_icx_ovr-bgrsch_nodcn_clockfix_compact_functional_c1414icx.log` |
+| `q`, nominal 1 A | same | no trip; `VDDA` 1421.1 µA | 1421.1 µA (unchanged) | passed | `q_pex_c1414_tl_tt_27C_icx_ovr-bgrsch_nodcn_clockfix_functional_c1414icx.log` |
+| `c_mid` 1.25×, SENSE_P/N route resistances 171/106 Ω | same, `srr` | `trip_d` 1.270 µs, `GATE` < 1 V 1.557 µs; `ISENSE` +0.68 mV (about 34 µV input-referred, route mismatch) | +about 10 ns | passed | `c_mid_pex_c1414_tl_tt_27C_fm1p25_icx_srr_ovr-bgrsch_nodcn_clockfix_compact_functional_c1414icx.log` |
+| `osc`, transistor-level oscillator clocking the RTL | same, gear | f_osc 9.875 MHz with the extracted clock load | 9.742 MHz (estimate-based, 2 ns step) | passed | `osc_pex_c1414_tl_tt_27C_icx_gear_…_c1414icx.log` |
+| `q` with `--t2f tl`, gear | `c1414icx2` (and reference `c1414icx2ref`) | — | — | in progress | `q_pex_c1414_tl_tt_27C_icx_ovr-bgrsch_t2ftl_nodcn_gear_clockfix_functional_c1414icx2.log` |
+
+`VREF` on the on-chip node carries clock ripple: 46.2 mV p-p with the ideal clock,
+33.1 mV p-p with the real oscillator; the mean is unchanged (1.0454–1.0455 V) and the
+averaged QUIET values are within 0.05 mV of the estimate-based runs. The `VREF` pad with
+10 nF does not see this ripple. The 1.25× case trips below the programmed 39.2 mV code
+value because of the documented hard-comparator kick offset (effective threshold
+30–31 mV, §4), not because of the wiring. All values simulated, tt/27 °C.
+
 ## 2026-09-25 full-chip deck from the chip CDL (`run_top_cdl.py`)
 
 Summary of [sim/FULLCHIP_CDL_20260925.md](sim/FULLCHIP_CDL_20260925.md) (simulated,
@@ -421,7 +442,7 @@ level, the `TRIP_SET` pad path (not built), `SDO` and `TEMP_OUT` pads.
 - The transistor-level oscillator clocking the RTL inside the full chain (note 4); its frequency
   and current in the chip supply context come from case `osc`.
 - Process corners and supply ±10 % at chip level: run on the c1414 set with the ideal clock, the
-  fitted `GATE` driver (about 7 % optimistic on `GATE` < 1 V) and the `nodcn`/`bgr=sch` deviations ([sim/campaigns/RESULTS_20260925.md](sim/campaigns/RESULTS_20260925.md)); mismatch not run.
+  fitted `GATE` driver (about 7 % optimistic on `GATE` < 1 V), estimate-based interconnect (extracted runs differ by ≤ 10 ns) and the `nodcn`/`bgr=sch` deviations ([sim/campaigns/RESULTS_20260925.md](sim/campaigns/RESULTS_20260925.md)); mismatch not run.
 - The default 1 ms `SOFT_TIME` window at transistor level (behavioural front end only, note 9).
 - Comparator decisions at small overdrive at chip level beyond the single tt/27 °C hard-threshold
   sweep at code 200. That sweep puts the effective hard threshold at 30.00–31.25 mV, 8.0–9.25 mV below the
