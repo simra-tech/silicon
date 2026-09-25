@@ -1,0 +1,150 @@
+{
+  "tag": "c_mid_pex_c1414_tl_tt_27C_ovr-bgrsch_nodcn_clockfix_rtleco20260925_compact_functional_eco_c_mid_r3",
+  "analysis": "functional",
+  "options": {
+    "cases": [
+      "c_mid"
+    ],
+    "netlist": "pex",
+    "t2f": "off",
+    "view_override": "bgr=sch",
+    "interconnect": "estimate",
+    "sense_route_r": false,
+    "fault_mult": null,
+    "vdd": 1.2,
+    "vdda": 3.3,
+    "blockset": "c1414",
+    "front": null,
+    "osc": null,
+    "temp": 27,
+    "corner": "tt",
+    "analysis": "functional",
+    "timeout": 21000.0,
+    "threads": null,
+    "solver": "sparse",
+    "image_id": null,
+    "run_id": "eco_c_mid_r3",
+    "tstop": null,
+    "pads": "pdk",
+    "inpads": "nodcn",
+    "outpads": null,
+    "method": null,
+    "accuracy": "baseline",
+    "maxstep_ns": null,
+    "timeline": "compact",
+    "checkpoint_us": [],
+    "rtl_dir": "eco_20260925",
+    "dry": false,
+    "tedge": null,
+    "event_shift_ns": 0,
+    "list": false,
+    "extra_options": null,
+    "osc_rx": "bridge",
+    "osc_supply_r": null,
+    "osc_decap": null,
+    "save_extra": [],
+    "decimate": 0
+  },
+  "effective": {
+    "interconnect": "estimate",
+    "sense_route_r": false,
+    "fault_mult": null,
+    "vdd": 1.2,
+    "vdda": 3.3,
+    "blockset": "c1414",
+    "view_override": {
+      "bgr": "sch"
+    },
+    "netlists": {
+      "bgr": "g1_bgr/layout/coordinated_full_closure/evidence/pex-preparation-20260922-r1/controls/r1/baseline_586.spice",
+      "sense": "g1_sense/sim/postlayout/g1_sense_r100_partialc.spice",
+      "trip": "g1_trip/sim/postlayout/g1_trip_nf4_pex.spice",
+      "osc": "g1_osc/sim/qualification/fulltree_r095_load_20260924/common/osc.spice",
+      "gate": "g1_gate/sim/postlayout/g1_gate_pex.spice"
+    },
+    "blockset_warnings": [
+      "OVERRIDE bgr: sch view instead of --netlist pex (--view-override)",
+      "NOTE bgr: BGR586 source carries 329 historical Sep-19 kpex capacitors, not an extraction of the BGR586 layout",
+      "NOTE sense: R100 own-native partial-field C (unbound VSUBS excluded; physical field acceptance not established)",
+      "WARNING deviation --inpads nodcn: SENSE_P/SENSE_N use g1_IOPadAnalog_nodcn, a deck-local copy of the PDK sg13g2_IOPadAnalog without its dantenna-based parts (sg13g2_DCNDiode and the SecondaryProtection dantenna D1); clamps, DCPDiode, SecondaryProtection 587 Ohm + dpantenna, ptap resistors and padres kept; VREF pad and PDK file unchanged. Reason: the PDK darea diode model switches formula at -3nVt (measured current step 1e-16->4e-11 A at 78 mV/27 C, 2e-14->2e-10 A at 93 mV/85 C, 1e-12->4e-10 A at 104 mV/125 C), which stalls the transient; removed leakage < 1 nA per pad at 125 C behind the 1 Ohm Kelvin trace (README, Numerical notes)."
+    ],
+    "front": "tl",
+    "osc": "ideal",
+    "inpads": "nodcn",
+    "outpads": "beh",
+    "method": "trap",
+    "threads": null,
+    "solver": "sparse"
+  },
+  "git_revision": "1ccd6c46ede128dd95710a9ed40d760c7be5fc94",
+  "ngspice_version": "ngspice-46 : Circuit level simulation program",
+  "iverilog_version": "Icarus Verilog version 14.0 (devel) (s20260301-328-geda9fdcd-dirty)",
+  "image_id": null,
+  "pdk_commit": "84374023ee8b4b126bebbba67fcbada0a9c0ff0b",
+  "spiceinit_sha256": "17082317f06c5ee7659308304f4dba91146a4b208ad28714292a6db5e69c335f",
+  "runner_sha256": "3377410c1cd2666579a39832f2602f58a4b08ae763633f450fb7bd18077aa48e",
+  "helper_sha256": "a78744ac63045581b85bd99aba9c53985e938814cdf6ca59d4fd682051918df3",
+  "deck_sha256": "d8bf55b7ac833e1c8159667c44ce1830f9bdfdf027848f6db9938d1343d2f176",
+  "input_sha256": {
+    "designs/g1-guardian/blocks/g1_bgr/layout/coordinated_full_closure/evidence/pex-preparation-20260922-r1/controls/r1/baseline_586.spice": "586ffb58b6af31c77a2e7cbcb83b173ffa4713ec62401da30901c5a7e606283b",
+    "designs/g1-guardian/blocks/g1_ctrl/rtl_eco_20260925/g1_digital.v": "36757122c43271dfd439bf1623be6d5413adf3bbb97cbad40d5cccf5892f5c3d",
+    "designs/g1-guardian/blocks/g1_ctrl/rtl_eco_20260925/g1_digital_top.v": "5c872e3bf6ba28ed09df8074f29908b7f58899c0dfe669de7fb35249952b4258",
+    "designs/g1-guardian/blocks/g1_ctrl/rtl_eco_20260925/g1_regfile.v": "605d738514124e87068e368ba0113e347303f4fc9e26ff54c7be348841640f52",
+    "designs/g1-guardian/blocks/g1_ctrl/rtl_eco_20260925/g1_serial.v": "df4341e1878caef2f7bf27abb273a7a5af3e41b96658ffa02eedb2af97c48a5d",
+    "designs/g1-guardian/blocks/g1_ctrl/rtl_eco_20260925/g1_sync2.v": "c14906d7d9256a771cd8fdc0ab14ba291131e151d24bf06b951b6bc693ad8ef2",
+    "designs/g1-guardian/blocks/g1_ctrl/rtl_eco_20260925/g1_trip_timer.v": "5cab0bc384cef5a7b08d6c693da90e5347d0de10816830ba9b16c6d6be428c9f",
+    "designs/g1-guardian/blocks/g1_gate/sim/postlayout/g1_gate_pex.spice": "e91617f5fcf6f5a0dc721a2ba53b507a05cc226d6dbf0bebaa858a1e7d876765",
+    "designs/g1-guardian/blocks/g1_osc/sim/qualification/fulltree_r095_load_20260924/common/osc.spice": "8efd7a09faf173da8604a219f73fd3ea5ec2508618d8361a050770c099d8b1c5",
+    "designs/g1-guardian/blocks/g1_sense/sim/postlayout/g1_sense_r100_partialc.spice": "ffb14762659eaf02b6a62e9edea3caa0e143cbc7881378b329d6ab9945a6554b",
+    "designs/g1-guardian/blocks/g1_seu/rtl_eco_20260925/g1_seu.v": "7c1831c99b5875a2dd48387db70fd5b1a0888a520fe8676bc4e071820b7fa736",
+    "designs/g1-guardian/blocks/g1_seu/rtl_eco_20260925/g1_seu_chain.v": "6e10bbc02a8ff29116067f2067f648b959f17b542cb2360c50e7802010048573",
+    "designs/g1-guardian/blocks/g1_seu/rtl_eco_20260925/g1_tmr_reg.v": "f53f82d97b91d4e815e662e72b40968949c7d74ce135f777dba7789201167ac5",
+    "designs/g1-guardian/blocks/g1_top/sim/rtl/g1_dig_cosim.v": "63dfb950393fe60c3da1d057f6a5dd86142c8bb670ba0a63b87248675037ccd5",
+    "designs/g1-guardian/blocks/g1_trip/sim/postlayout/g1_trip_nf4_pex.spice": "ba86b7b2a530abae365d539297909e033b24a54597f9cc75d8dff273c30d401c"
+  },
+  "io_sha256": "1d53ab7df431b717ef5aff43e1117c0224681d5cc84886da37a319280ee958d6",
+  "command": [
+    "stdbuf",
+    "-o0",
+    "-e0",
+    "ngspice",
+    "-b",
+    "/work/build/g1_top/c_mid_pex_c1414_tl_tt_27C_ovr-bgrsch_nodcn_clockfix_rtleco20260925_compact_functional_eco_c_mid_r3.cir"
+  ],
+  "started_utc": "2026-09-25T16:56:44.717176+00:00",
+  "status": "completed",
+  "timeout_s": 21000.0,
+  "runtime_arch": "x86_64",
+  "stdio_unbuffered": true,
+  "pid": 24,
+  "wall_s": 6974.086202006787,
+  "sampled_utc": "2026-09-25T18:52:58.765350+00:00",
+  "log_bytes": 1318392,
+  "resources": {
+    "VmHWM": "221964 kB",
+    "VmRSS": "221964 kB",
+    "Threads": "9"
+  },
+  "cpu_ticks": [
+    "682742",
+    "4859"
+  ],
+  "last_reported_sim_time_s": 2.8e-05,
+  "returncode": 0,
+  "finished_utc": "2026-09-25T18:52:58.803905+00:00",
+  "functional_acceptance": "not assessed",
+  "diagnostic_acceptance": "not applicable",
+  "observation_checkpoints": [],
+  "full_waveforms": {
+    "analog": {
+      "path": "designs/g1-guardian/blocks/g1_top/sim/results/waves/c_mid_pex_c1414_tl_tt_27C_ovr-bgrsch_nodcn_clockfix_rtleco20260925_compact_functional_eco_c_mid_r3_analog_full.txt.gz",
+      "sha256": "1a6c603a89c619865a46e1b9bd52df9b5e6377d9108f91e7a28e80d7fa7cbcc2",
+      "gzip_sha256": "71c601d05ddb65b06b928b9d83ab6f1dc61e7860f506c378a4cf18cc8a3adfc7"
+    },
+    "state": {
+      "path": "designs/g1-guardian/blocks/g1_top/sim/results/waves/c_mid_pex_c1414_tl_tt_27C_ovr-bgrsch_nodcn_clockfix_rtleco20260925_compact_functional_eco_c_mid_r3_state_full.txt.gz",
+      "sha256": "750ddb03478691e18f2290a5b984676a480030df24efdf0f6f3c5f773c7336ab",
+      "gzip_sha256": "e89cea59a3ec43b40e7c1afce26aa4ba20dc18ce7e008939ca0815e98fe22bb2"
+    }
+  }
+}
