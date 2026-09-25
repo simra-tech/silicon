@@ -1,6 +1,34 @@
 # G1_BGR — bandgap reference and PTAT current source
 
-State: **schematic simulated (2026-09-18); laid out, DRC/LVS/antenna clean, PEX run, post-layout
+## Variant on the chip of record (2026-09-25)
+
+The bandgap placed in the chip of record (`g1_chip_top_1414.gds`, `629d303a…`) is
+**`bgr_loop24_qref4_r253p465_hv06` ("BGR586")**: 336 HV MOS, 301 `npn13G2`, 399 resistors
+(384 `rppd` + 15 `rhigh`). It is **not** the Sep-19 macro described in the rest of this README.
+
+| Item | Path (block-relative) | Identity |
+| --- | --- | --- |
+| Schematic-level netlist | `sim/qualification/candidates/bgr_loop24_qref4_r253p465_hv06/bgr_loop24_qref4_r253p465_hv06.spice` | sha256 `586ffb58…` |
+| Layout (top cell `g1_bgr`) and LVS reference | `layout/coordinated_supply_followup_20260923/evidence/supply-20260923-r1/candidate/bank.gds`, `bank.cdl` | `e3ecfc62…`, `7f8e6e8c…` |
+| Capacitance extraction (kpex 0.3.12, 2.5D CC) | `sim/postlayout/g1_bgr586_pex.spice`, record `sim/postlayout/README_bgr586_pex.md` | `01227a3d…` |
+
+| Check (BGR586) | Status | Evidence |
+| --- | --- | --- |
+| Block LVS `bank.gds` vs `bank.cdl` (KLayout 0.30.9) | passed | `reports/lvs_bgr586_20260924/` |
+| kpex CC extraction; extracted device list vs 586 | run; passed (1036 = 1036) | `sim/postlayout/README_bgr586_pex.md` |
+| DC operating point and V<sub>REF</sub>(T), PEX vs schematic | passed: identical (V<sub>REF</sub> 1.04546 V at 27 °C, I<sub>PTAT</sub> 4.134 µA, supply 319.69 µA, TC 8.53 ppm/°C, simulated) | same |
+| AC / PSRR / noise / start-up on the PEX netlist | **not run** (the DC comparison is the only PEX-vs-schematic check) | same |
+| Wiring resistance (kpex RC) | **not run** | same |
+| Mismatch screen, 300 draws (schematic 586) | 299 completed, all ≤ 50 ppm/°C, max 46.878 ppm/°C; 1 numerical watchdog failure (simulated) | `sim/qualification/BGR586_SCREEN300_20260922.md` |
+| VREF pad system check (stock pad, 3 corners) | output resistance 19.3 / 22.3 / 25.8 kΩ (ff−40 / tt27 / ss125); 10 nF 1 % settling 1.20 / 1.26 / 1.32 ms (ss125 with the pad-less stand-in); stock-pad start-up tt27 0 nF and ss125 all **failed to converge** (simulated) | `sim/system_checks_20260924/RESULTS.md` "Chip BGR (586)" |
+| Chip-level (`g1_top --blockset c1414`) | BGR586 current 319.7 µA at tt/27 °C, 218.7 µA (ss/−40 °C) to 484.0 µA (ff/125 °C); the matrix uses the schematic view (`bgr=sch`), the `c1414fullc` run used the extraction (simulated) | `../g1_top/sim/campaigns/RESULTS_20260925.md` |
+| Block area on the chip | not recorded here | — |
+
+Everything below this section (1.038 V, 22.0 µA, 84 × 124 µm, 32-device LVS, 54/100 mismatch,
+the Sep-19 `g1_bgr_pex.spice`) describes the **Sep-19 bandgap, which is not on the chip**. It is
+kept as history and as the baseline the 586 variant was derived from.
+
+Historical state of the Sep-19 macro (not on the chip): **schematic simulated (2026-09-18); laid out, DRC/LVS/antenna clean, PEX run, post-layout
 simulated (2026-09-19)**. Macro `g1_bgr`, 84 × 124 µm, LEF and GDS in `layout/`; post-layout
 V<sub>REF</sub> = 1.039 V from the extracted netlist, 1.037 V with the estimated wiring resistance
 (schematic 1.038 V), see "Post-layout".

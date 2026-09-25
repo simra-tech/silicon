@@ -9,8 +9,8 @@ breaker behavior while clearly exposing the gaps to an autonomous product.
 | --- | --- | --- |
 | Load | Current-limited, nominal 5 V resistive bench load; no intentional inductive energy | Assumed; real FET, supply dynamics and fixture parasitic energy must be established |
 | Shunt | Four-wire 25 mΩ, 1 A nominal / 25 mV | Assumed nominal; measured tolerance/TC and lead resistance required |
-| Thresholds | Calibrated soft 30 mV / hard 40 mV targets | Targets, not fixed DAC codes; reachable codes, residual error and temperature behavior must pass independently |
-| Demonstration fault | 1.8 A / 45 mV sustained step, with event-phase checks | Assumed in-range stimulus; above 1.1× the 40 mV hard target |
+| Thresholds | Calibrated soft 30 mV / hard 40 mV targets | Targets, not fixed DAC codes; reachable codes, residual error and temperature behavior must pass independently. **Corrected 2026-09-25:** the effective hard threshold is 40–56 LSB below the code (simulated), so a 40 mV hard target (code ≈ 204) needs code ≈ 244–260, beyond 255 at the upper end; the usable hard range is about 25–40 mV (`G1_TOP_LEVEL_SPECIFICATION.md` §4, §6). Use a hard target ≤ about 39 mV (code ≤ 199, so that a search ≥ 56 codes above the target stays ≤ 255) |
+| Demonstration fault | 1.8 A / 45 mV sustained step, with event-phase checks | Assumed in-range stimulus; above 1.1× the hard target |
 | Positive stimulus ceiling | 2 A / 50 mV including transient overshoot at the actual sense pins | Fixture requirement; supply compliance alone does not prove transient enforcement |
 | Reverse current and negative shunt faults | Excluded from the initial powered demonstration; separate low-energy characterization | Not qualified; no reverse-current blocking claim |
 | Wiring | Verified intact Kelvin pair, known return path, supervised operation | Open/short fault tolerance not claimed; both fault polarities and reconnection still require characterization |

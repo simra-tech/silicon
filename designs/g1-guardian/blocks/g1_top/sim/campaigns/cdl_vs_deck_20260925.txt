@@ -1,0 +1,361 @@
+# CDL-vs-deck connectivity audit, 2026-09-25
+# command (repository root, host Python 3.6.8, no container): python3 designs/g1-guardian/blocks/g1_top/sim/check_cdl_vs_deck.py --deck <deck>
+# repository HEAD 270f24b2; check_cdl_vs_deck.py sha256 0a785db37d438a8a396caa53273316bcd06d36d4475f4402861faed896e2c7fd
+# CDL g1_chip_top_1414.cdl sha256 af5a4dbd0b17013b11d32f31221353a22b2676ea884e3487db3f14d9c5443a36
+# decks: c1414v1 (BGR586 and TRIP schematic fallback, the script default) and c1414fullc (BGR586 and TRIP NF4 extractions)
+# result: both exit 0, 0 unexplained differences. Device fingerprint: c1414v1 identical for bgr/sense/trip/gate;
+#   c1414fullc g1_trip differs (rppd 1070 vs 1080, sg13_lv_nmos 43 vs 57); the extraction lists folded/segmented devices separately (g1_trip/sim/postlayout/README.md: the NF4 pair extracts as 4+4 fingers); not investigated further. The script does not fail on fingerprints.
+### deck c_mid_pex_c1414_tl_tt_27C_clockfix_compact_functional_c1414v1.cir sha256 8031ecf10eb862c77c3b836d45bea370f8d1b54d2021d47252cd0aa74124c10d
+# CDL  designs/g1-guardian/blocks/g1_padring/netlist/g1_chip_top_1414.cdl
+# deck designs/g1-guardian/blocks/g1_top/sim/decks/c_mid_pex_c1414_tl_tt_27C_clockfix_compact_functional_c1414v1.cir
+block.pin                                | CDL net              | deck net    | status / explanation
+bgr.vdd                                  | VDDA                 | vdda        | same, loads differ -- CDL-only: ls_en.vdda, ls_mode.vdda, ls_r4.vdda, t2f.vdd, pad07_vdda.pad
+bgr.vss                                  | VSS                  | 0           | differs -- deck ties IOVSS and VSS to node 0 (single board ground) [CDL net -> deck ['0']; deck net <- CDL ['iovss', 'vss']; deck-only pins: pad08_sense_p.iovss, pad09_sense_n.iovss, pad18_vref.iovss]
+bgr.r4                                   | i_core_bgr_r4_33     | r4          | same, loads differ -- CDL-only: ls_r4.out (CDL: RTL bgr_r4 through g1_ls_up; deck: Vr4 0 V = RTL reset value (TEMP_CTRL.BGR_R4 = 0))
+bgr.vref                                 | i_core_vref          | vref        | same, loads differ -- CDL-only: t2f.vref (CDL: vref also loads G1_T2F (mode switch MMX1); T2F not in deck)
+bgr.iptat                                | i_core_iptat         | iptat       | same
+bgr.pbias                                | i_core_pbias         | pbias       | same, loads differ -- CDL-only: t2f.pbias (CDL: bias to G1_T2F; T2F not in deck (BGR mirror output unloaded))
+bgr.pcasc                                | i_core_pcasc         | pcasc       | same, loads differ -- CDL-only: t2f.pcasc (CDL: bias to G1_T2F; T2F not in deck (BGR mirror output unloaded))
+bgr.vbe                                  | i_core_unused_vbe    | vbe         | same
+bgr.dvbe                                 | i_core_dvbe          | dvbe        | same
+digital.bgr_r4                           | i_core_bgr_r4_12     | -           | not in deck -- wrapper-internal wire (unconnected); CDL to g1_ls_up -> bgr.r4; deck: wrapper-internal, bgr.r4 tied 0 V
+digital.clk_div_out                      | i_core_clk_div_out   | -           | not in deck -- wrapper-internal wire (unconnected); open in CDL; wrapper-internal in deck
+digital.clr_d                            | i_core_clr_d         | clr_d       | same -- via dac_bridge dac
+digital.cmp_clk                          | i_core_cmp_clk       | cmp_clk     | same -- via dac_bridge dac
+digital.cmp_hard                         | i_core_cmp_hard      | cmp_hard    | same -- via adc_bridge adc
+digital.cmp_soft                         | i_core_cmp_soft      | cmp_soft    | same -- via adc_bridge adc
+digital.en                               | en_i                 | -           | not in deck -- digital stimulus (d_source dsrc) -> d_en; RTL en from d_source with the pad-PWL edge times (README numerical note 7); CDL: EN pad p2c en_i, shared with g1_gate en_core
+digital.fast_en                          | i_core_fast_en       | fast_en     | same -- via dac_bridge dac
+digital.fault_n                          | i_core_fault_n_dig   | -           | not in deck -- wrapper-internal wire (unconnected); open in CDL (FAULT_N pad is driven by g1_gate fault_core); wrapper-internal
+digital.gate_en                          | i_core_gate_en       | dig_gate_en | same -- via dac_bridge dac
+digital.osc_clk                          | i_core_osc_clk       | osc_clk     | same, loads differ -- CDL-only: osc.osc_clk (CDL driven by g1_osc; deck by the ideal Bosc_clk (README numerical note 4))
+digital.osc_en                           | i_core_osc_en        | osc_en      | same, loads differ -- CDL-only: osc.en (CDL to g1_osc.en; deck: only gates the ideal clock (Bosc))
+digital.por_n                            | net                  | -           | not in deck -- tied 1'b1 in wrapper; CDL tiehi; wrapper ties por_n = 1'b1 (same function)
+digital.sclk                             | i_core_sclk_i        | -           | not in deck -- digital stimulus (d_source dsrc) -> d_sclk; RTL sclk from d_source (README numerical note 7)
+digital.sdi                              | i_core_sdi_i         | -           | not in deck -- digital stimulus (d_source dsrc) -> d_sdi; RTL sdi from d_source (README numerical note 7)
+digital.sdo                              | i_core_sdo_o         | sdo         | same, loads differ -- CDL-only: pad16_sdo.c2p (SDO pad not in deck; RTL sdo on a monitor dac only)
+digital.t2f_en                           | i_core_t2f_en_12     | -           | not in deck -- wrapper-internal wire (unconnected); CDL to g1_ls_up -> t2f.en; T2F not in deck
+digital.t2f_mode                         | i_core_t2f_mode_12   | -           | not in deck -- wrapper-internal wire (unconnected); CDL to g1_ls_up -> t2f.mode; T2F not in deck
+digital.trip                             | i_core_trip          | dig_trip    | same -- via dac_bridge dac
+digital.trip_d                           | i_core_trip_d        | trip_d      | same -- via dac_bridge dac
+digital.trip_set_sel                     | i_core_trip_set_sel  | -           | not in deck -- wrapper-internal wire (unconnected); open in CDL (TRIP_SET path not built); wrapper-internal
+digital.tripped                          | i_core_tripped       | tripped     | same -- via adc_bridge adc
+digital.VDD                              | VDD                  | -           | not in deck -- not a g1_dig_cosim/g1_digital connection; RTL co-simulation has no supply pin (digital supply current not simulated, README)
+digital.VSS                              | VSS                  | -           | not in deck -- not a g1_dig_cosim/g1_digital connection; RTL co-simulation has no supply pin
+digital.dac_hard[7]                      | i_core_dac_hard_7_   | hard7       | same -- via dac_bridge dac
+digital.dac_hard[6]                      | i_core_dac_hard_6_   | hard6       | same -- via dac_bridge dac
+digital.dac_hard[5]                      | i_core_dac_hard_5_   | hard5       | same -- via dac_bridge dac
+digital.dac_hard[4]                      | i_core_dac_hard_4_   | hard4       | same -- via dac_bridge dac
+digital.dac_hard[3]                      | i_core_dac_hard_3_   | hard3       | same -- via dac_bridge dac
+digital.dac_hard[2]                      | i_core_dac_hard_2_   | hard2       | same -- via dac_bridge dac
+digital.dac_hard[1]                      | i_core_dac_hard_1_   | hard1       | same -- via dac_bridge dac
+digital.dac_hard[0]                      | i_core_dac_hard_0_   | hard0       | same -- via dac_bridge dac
+digital.dac_soft[7]                      | i_core_dac_soft_7_   | soft7       | same -- via dac_bridge dac
+digital.dac_soft[6]                      | i_core_dac_soft_6_   | soft6       | same -- via dac_bridge dac
+digital.dac_soft[5]                      | i_core_dac_soft_5_   | soft5       | same -- via dac_bridge dac
+digital.dac_soft[4]                      | i_core_dac_soft_4_   | soft4       | same -- via dac_bridge dac
+digital.dac_soft[3]                      | i_core_dac_soft_3_   | soft3       | same -- via dac_bridge dac
+digital.dac_soft[2]                      | i_core_dac_soft_2_   | soft2       | same -- via dac_bridge dac
+digital.dac_soft[1]                      | i_core_dac_soft_1_   | soft1       | same -- via dac_bridge dac
+digital.dac_soft[0]                      | i_core_dac_soft_0_   | soft0       | same -- via dac_bridge dac
+digital.osc_trim[3]                      | i_core_osc_trim_3_   | trim3       | same, loads differ -- CDL-only: osc.trim[3] (CDL to g1_osc.trim; osc not in deck (trim bits on monitor dac only))
+digital.osc_trim[2]                      | i_core_osc_trim_2_   | trim2       | same, loads differ -- CDL-only: osc.trim[2] (CDL to g1_osc.trim; osc not in deck (trim bits on monitor dac only))
+digital.osc_trim[1]                      | i_core_osc_trim_1_   | trim1       | same, loads differ -- CDL-only: osc.trim[1] (CDL to g1_osc.trim; osc not in deck (trim bits on monitor dac only))
+digital.osc_trim[0]                      | i_core_osc_trim_0_   | trim0       | same, loads differ -- CDL-only: osc.trim[0] (CDL to g1_osc.trim; osc not in deck (trim bits on monitor dac only))
+digital.trip_cause[1]                    | i_core_trip_cause_1_ | cause1      | same -- via dac_bridge dac
+digital.trip_cause[0]                    | i_core_trip_cause_0_ | cause0      | same -- via dac_bridge dac
+digital_1.*                              | L_HI=net VDD=VDD VSS=VSS | - | not in deck -- tiehi for por_n; wrapper ties por_n = 1
+dose.*                                   | D_ELT=D_ELT D_STD=D_STD G_SHARED=G_SHARED vss=VSS | - | not in deck -- dose macro, standalone pads, not on the breaker path
+dut.*                                    | HBT_C=HBT_C HBT_B=HBT_B HBT_E=HBT_E vss=VSS | - | not in deck -- HBT test device, standalone pads, not on the breaker path
+gate.trip_d                              | i_core_trip_d        | trip_d      | same
+gate.clr_d                               | i_core_clr_d         | clr_d       | same
+gate.fast_en                             | i_core_fast_en       | fast_en     | same
+gate.hard_cmp                            | i_core_cmp_hard      | cmp_hard    | same
+gate.en_core                             | en_i                 | en_core     | differs -- CDL: EN pad p2c (en_i) also feeds g1_digital.en; deck: Ben_core copy (digital en from d_source) [CDL-only pins on common instances: digital.en]
+gate.gate_core                           | gate_o               | gate_core   | same, loads differ -- CDL-only: pad10_gate.c2p (CDL: IOPadOut30mA c2p; deck: fitted Bgate_drv (README numerical note 3))
+gate.fault_core                          | fault_n_o            | fault_core  | same, loads differ -- CDL-only: pad11_fault_n.c2p (CDL: IOPadOut4mA c2p; deck: fitted Bfault_drv (README numerical note 3))
+gate.tripped                             | i_core_tripped       | tripped     | same
+gate.vdd                                 | VDD                  | vdd         | same, loads differ -- CDL-only: digital.VDD, digital_1.VDD, ls_en.vdd, ls_mode.vdd, ls_r4.vdd, osc.VDD +22 more (CDL VDD also supplies g1_osc and the digital macro (not transistor-level in the deck))
+gate.vdda                                | VDDA                 | vdda        | same, loads differ -- CDL-only: ls_en.vdda, ls_mode.vdda, ls_r4.vdda, t2f.vdd, pad07_vdda.pad
+gate.vss                                 | VSS                  | 0           | differs -- deck ties IOVSS and VSS to node 0 (single board ground) [CDL net -> deck ['0']; deck net <- CDL ['iovss', 'vss']; deck-only pins: pad08_sense_p.iovss, pad09_sense_n.iovss, pad18_vref.iovss]
+ls_en.*                                  | in=i_core_t2f_en_12 out=i_core_t2f_en_33 vdd=VDD vdda=VDDA vss=VSS | - | not in deck -- T2F level shifter; T2F not in deck
+ls_mode.*                                | in=i_core_t2f_mode_12 out=i_core_t2f_mode_33 vdd=VDD vdda=VDDA vss=VSS | - | not in deck -- T2F level shifter; T2F not in deck
+ls_r4.*                                  | in=i_core_bgr_r4_12 out=i_core_bgr_r4_33 vdd=VDD vdda=VDDA vss=VSS | - | not in deck -- BGR r4 shifter; deck ties bgr.r4 to 0 V (RTL reset BGR_R4 = 0)
+osc.*                                    | en=i_core_osc_en trim[0]=i_core_osc_trim_0_ trim[1]=i_core_osc_trim_1_ trim[2]=i_core_osc_trim_2_ trim[3]=i_core_osc_trim_3_ osc_clk=i_core_osc_clk VDD=VDD VSS=VSS | - | not in deck -- ideal clock Bosc_clk at the block frequency (README numerical note 4)
+sense.sense_p                            | SENSE_P              | sense_p     | same
+sense.sense_n                            | SENSE_N              | sense_n     | same
+sense.vref                               | i_core_vref          | vref        | same, loads differ -- CDL-only: t2f.vref (CDL: vref also loads G1_T2F; T2F not in deck)
+sense.iptat                              | i_core_iptat         | iptat       | same
+sense.isense                             | i_core_isense        | isense      | same
+sense.vped                               | i_core_unused_vped   | vped        | same
+sense.vref_buf                           | i_core_vref_buf      | vref_buf    | same
+sense.vdd                                | VDDA                 | vdda        | same, loads differ -- CDL-only: ls_en.vdda, ls_mode.vdda, ls_r4.vdda, t2f.vdd, pad07_vdda.pad
+sense.vss                                | VSS                  | 0           | differs -- deck ties IOVSS and VSS to node 0 (single board ground) [CDL net -> deck ['0']; deck net <- CDL ['iovss', 'vss']; deck-only pins: pad08_sense_p.iovss, pad09_sense_n.iovss, pad18_vref.iovss]
+t2f.*                                    | vdd=VDDA vdd12=VDD vss=VSS pbias=i_core_pbias pcasc=i_core_pcasc vref=i_core_vref en=i_core_t2f_en_33 mode=i_core_t2f_mode_33 fout=i_core_temp_out_o | - | not in deck -- G1_T2F not in the breaker-path deck (README scope: TEMP_OUT not simulated)
+trip.ISENSE                              | i_core_isense        | isense      | same
+trip.VREF                                | i_core_vref_buf      | vref_buf    | same
+trip.clk                                 | i_core_cmp_clk       | cmp_clk     | same -- deck pin cmp_clk (positional)
+trip.dac_soft[0]                         | i_core_dac_soft_0_   | soft0       | same -- deck pin soft0 (positional)
+trip.dac_soft[1]                         | i_core_dac_soft_1_   | soft1       | same -- deck pin soft1 (positional)
+trip.dac_soft[2]                         | i_core_dac_soft_2_   | soft2       | same -- deck pin soft2 (positional)
+trip.dac_soft[3]                         | i_core_dac_soft_3_   | soft3       | same -- deck pin soft3 (positional)
+trip.dac_soft[4]                         | i_core_dac_soft_4_   | soft4       | same -- deck pin soft4 (positional)
+trip.dac_soft[5]                         | i_core_dac_soft_5_   | soft5       | same -- deck pin soft5 (positional)
+trip.dac_soft[6]                         | i_core_dac_soft_6_   | soft6       | same -- deck pin soft6 (positional)
+trip.dac_soft[7]                         | i_core_dac_soft_7_   | soft7       | same -- deck pin soft7 (positional)
+trip.dac_hard[0]                         | i_core_dac_hard_0_   | hard0       | same -- deck pin hard0 (positional)
+trip.dac_hard[1]                         | i_core_dac_hard_1_   | hard1       | same -- deck pin hard1 (positional)
+trip.dac_hard[2]                         | i_core_dac_hard_2_   | hard2       | same -- deck pin hard2 (positional)
+trip.dac_hard[3]                         | i_core_dac_hard_3_   | hard3       | same -- deck pin hard3 (positional)
+trip.dac_hard[4]                         | i_core_dac_hard_4_   | hard4       | same -- deck pin hard4 (positional)
+trip.dac_hard[5]                         | i_core_dac_hard_5_   | hard5       | same -- deck pin hard5 (positional)
+trip.dac_hard[6]                         | i_core_dac_hard_6_   | hard6       | same -- deck pin hard6 (positional)
+trip.dac_hard[7]                         | i_core_dac_hard_7_   | hard7       | same -- deck pin hard7 (positional)
+trip.cmp_soft                            | i_core_cmp_soft      | cmp_soft    | same
+trip.cmp_hard                            | i_core_cmp_hard      | cmp_hard    | same
+trip.VDD                                 | VDD                  | vdd         | same, loads differ -- CDL-only: digital.VDD, digital_1.VDD, ls_en.vdd, ls_mode.vdd, ls_r4.vdd, osc.VDD +22 more (CDL VDD also supplies g1_osc and the digital macro (not transistor-level in the deck))
+trip.IOVDD                               | VDDA                 | vdda        | same, loads differ -- CDL-only: ls_en.vdda, ls_mode.vdda, ls_r4.vdda, t2f.vdd, pad07_vdda.pad
+trip.VSS                                 | VSS                  | 0           | differs -- deck ties IOVSS and VSS to node 0 (single board ground) [CDL net -> deck ['0']; deck net <- CDL ['iovss', 'vss']; deck-only pins: pad08_sense_p.iovss, pad09_sense_n.iovss, pad18_vref.iovss]
+pad01_vdd.*                              | vdd=VDD vss=VSS iovdd=IOVDD iovss=IOVSS G1_EXPLICIT_SUBSTRATE_VSS=VSS | - | not in deck -- supply pad not modelled; deck supplies are ideal sources through 0.5 Ohm + 1 nF (README board)
+pad02_vss.*                              | vdd=VDD vss=VSS iovdd=IOVDD iovss=IOVSS G1_EXPLICIT_SUBSTRATE_VSS=VSS | - | not in deck -- supply pad not modelled; deck supplies are ideal sources through 0.5 Ohm + 1 nF (README board)
+pad03_iovdd.*                            | vdd=VDD vss=VSS iovdd=IOVDD iovss=IOVSS G1_EXPLICIT_SUBSTRATE_VSS=VSS | - | not in deck -- supply pad not modelled; deck supplies are ideal sources through 0.5 Ohm + 1 nF (README board)
+pad04_iovss.*                            | vdd=VDD vss=VSS iovdd=IOVDD iovss=IOVSS G1_EXPLICIT_SUBSTRATE_VSS=VSS | - | not in deck -- supply pad not modelled; deck supplies are ideal sources through 0.5 Ohm + 1 nF (README board)
+pad05_vss.*                              | vdd=VDD vss=VSS iovdd=IOVDD iovss=IOVSS G1_EXPLICIT_SUBSTRATE_VSS=VSS | - | not in deck -- supply pad not modelled; deck supplies are ideal sources through 0.5 Ohm + 1 nF (README board)
+pad06_iovss.*                            | vdd=VDD vss=VSS iovdd=IOVDD iovss=IOVSS G1_EXPLICIT_SUBSTRATE_VSS=VSS | - | not in deck -- supply pad not modelled; deck supplies are ideal sources through 0.5 Ohm + 1 nF (README board)
+pad07_vdda.*                             | pad=VDDA padres=_nc1 vdd=VDD vss=VSS iovdd=IOVDD iovss=IOVSS G1_EXPLICIT_SUBSTRATE_VSS=VSS | - | not in deck -- supply pad not modelled; deck supplies are ideal sources through 0.5 Ohm + 1 nF (README board)
+pad08_sense_p.pad                        | SENSE_P              | sense_p     | same
+pad08_sense_p.padres                     | _nc2                 | sense_p_res | same
+pad08_sense_p.vdd                        | VDD                  | vdd         | same, loads differ -- CDL-only: digital.VDD, digital_1.VDD, ls_en.vdd, ls_mode.vdd, ls_r4.vdd, osc.VDD +22 more (CDL VDD also supplies g1_osc and the digital macro (not transistor-level in the deck))
+pad08_sense_p.vss                        | VSS                  | 0           | differs -- deck ties IOVSS and VSS to node 0 (single board ground) [CDL net -> deck ['0']; deck net <- CDL ['iovss', 'vss']; deck-only pins: pad08_sense_p.iovss, pad09_sense_n.iovss, pad18_vref.iovss]
+pad08_sense_p.iovdd                      | IOVDD                | iovdd       | same, loads differ -- CDL-only: pad01_vdd.iovdd, pad02_vss.iovdd, pad03_iovdd.iovdd, pad04_iovss.iovdd, pad05_vss.iovdd, pad06_iovss.iovdd +15 more (deck: IOVDD and VDDA from one 3.3 V board rail through separate 0.5 Ohm (README board))
+pad08_sense_p.iovss                      | IOVSS                | 0           | differs -- deck ties IOVSS and VSS to node 0 (single board ground) [CDL net -> deck ['0']; deck net <- CDL ['iovss', 'vss']; deck-only pins: bgr.vss, gate.vss, sense.vss, trip.VSS +3 more]
+pad08_sense_p.G1_EXPLICIT_SUBSTRATE_VSS  | VSS                  | -           | not in deck -- derivative substrate pin; deck substrate = global sub! = 0; deck ties IOVSS and VSS to node 0 (single board ground)
+pad09_sense_n.pad                        | SENSE_N              | sense_n     | same
+pad09_sense_n.padres                     | _nc3                 | sense_n_res | same
+pad09_sense_n.vdd                        | VDD                  | vdd         | same, loads differ -- CDL-only: digital.VDD, digital_1.VDD, ls_en.vdd, ls_mode.vdd, ls_r4.vdd, osc.VDD +22 more (CDL VDD also supplies g1_osc and the digital macro (not transistor-level in the deck))
+pad09_sense_n.vss                        | VSS                  | 0           | differs -- deck ties IOVSS and VSS to node 0 (single board ground) [CDL net -> deck ['0']; deck net <- CDL ['iovss', 'vss']; deck-only pins: pad08_sense_p.iovss, pad09_sense_n.iovss, pad18_vref.iovss]
+pad09_sense_n.iovdd                      | IOVDD                | iovdd       | same, loads differ -- CDL-only: pad01_vdd.iovdd, pad02_vss.iovdd, pad03_iovdd.iovdd, pad04_iovss.iovdd, pad05_vss.iovdd, pad06_iovss.iovdd +15 more (deck: IOVDD and VDDA from one 3.3 V board rail through separate 0.5 Ohm (README board))
+pad09_sense_n.iovss                      | IOVSS                | 0           | differs -- deck ties IOVSS and VSS to node 0 (single board ground) [CDL net -> deck ['0']; deck net <- CDL ['iovss', 'vss']; deck-only pins: bgr.vss, gate.vss, sense.vss, trip.VSS +3 more]
+pad09_sense_n.G1_EXPLICIT_SUBSTRATE_VSS  | VSS                  | -           | not in deck -- derivative substrate pin; deck substrate = global sub! = 0; deck ties IOVSS and VSS to node 0 (single board ground)
+pad10_gate.*                             | pad=GATE c2p=gate_o vdd=VDD vss=VSS iovdd=IOVDD iovss=IOVSS G1_EXPLICIT_SUBSTRATE_VSS=VSS | - | not in deck -- GATE pad = fitted 47 Ohm driver (README numerical note 3)
+pad11_fault_n.*                          | pad=FAULT_N c2p=fault_n_o vdd=VDD vss=VSS iovdd=IOVDD iovss=IOVSS G1_EXPLICIT_SUBSTRATE_VSS=VSS | - | not in deck -- FAULT_N pad = fitted 500 Ohm driver (README numerical note 3)
+pad12_en.*                               | pad=EN p2c=en_i vdd=VDD vss=VSS iovdd=IOVDD iovss=IOVSS G1_EXPLICIT_SUBSTRATE_VSS=VSS | - | not in deck -- EN pad = ideal 3.3->1.2 V copy + d_source (README numerical notes 3, 7)
+pad13_trip_set.*                         | pad=TRIP_SET padres=i_core_trip_set vdd=VDD vss=VSS iovdd=IOVDD iovss=IOVSS G1_EXPLICIT_SUBSTRATE_VSS=VSS | - | not in deck -- TRIP_SET pad path not built (README scope)
+pad14_sclk.*                             | pad=SCLK p2c=i_core_sclk_i vdd=VDD vss=VSS iovdd=IOVDD iovss=IOVSS G1_EXPLICIT_SUBSTRATE_VSS=VSS | - | not in deck -- SCLK pad = ideal copy + d_source (README numerical notes 3, 7)
+pad15_sdi.*                              | pad=SDI p2c=i_core_sdi_i vdd=VDD vss=VSS iovdd=IOVDD iovss=IOVSS G1_EXPLICIT_SUBSTRATE_VSS=VSS | - | not in deck -- SDI pad = ideal copy + d_source (README numerical notes 3, 7)
+pad16_sdo.*                              | pad=SDO c2p=i_core_sdo_o vdd=VDD vss=VSS iovdd=IOVDD iovss=IOVSS G1_EXPLICIT_SUBSTRATE_VSS=VSS | - | not in deck -- SDO pad not simulated (README: sdo not padded)
+pad17_temp_out.*                         | pad=TEMP_OUT c2p=i_core_temp_out_o vdd=VDD vss=VSS iovdd=IOVDD iovss=IOVSS G1_EXPLICIT_SUBSTRATE_VSS=VSS | - | not in deck -- TEMP_OUT pad not simulated (README scope)
+pad18_vref.pad                           | VREF                 | vref_pad    | same
+pad18_vref.padres                        | i_core_vref          | vref        | same, loads differ -- CDL-only: t2f.vref (CDL: vref also loads G1_T2F; T2F not in deck)
+pad18_vref.vdd                           | VDD                  | vdd         | same, loads differ -- CDL-only: digital.VDD, digital_1.VDD, ls_en.vdd, ls_mode.vdd, ls_r4.vdd, osc.VDD +22 more (CDL VDD also supplies g1_osc and the digital macro (not transistor-level in the deck))
+pad18_vref.vss                           | VSS                  | 0           | differs -- deck ties IOVSS and VSS to node 0 (single board ground) [CDL net -> deck ['0']; deck net <- CDL ['iovss', 'vss']; deck-only pins: pad08_sense_p.iovss, pad09_sense_n.iovss, pad18_vref.iovss]
+pad18_vref.iovdd                         | IOVDD                | iovdd       | same, loads differ -- CDL-only: pad01_vdd.iovdd, pad02_vss.iovdd, pad03_iovdd.iovdd, pad04_iovss.iovdd, pad05_vss.iovdd, pad06_iovss.iovdd +15 more (deck: IOVDD and VDDA from one 3.3 V board rail through separate 0.5 Ohm (README board))
+pad18_vref.iovss                         | IOVSS                | 0           | differs -- deck ties IOVSS and VSS to node 0 (single board ground) [CDL net -> deck ['0']; deck net <- CDL ['iovss', 'vss']; deck-only pins: bgr.vss, gate.vss, sense.vss, trip.VSS +3 more]
+pad18_vref.G1_EXPLICIT_SUBSTRATE_VSS     | VSS                  | -           | not in deck -- derivative substrate pin; deck substrate = global sub! = 0; deck ties IOVSS and VSS to node 0 (single board ground)
+pad19_g_shared.*                         | pad=G_SHARED padres=_nc4 vdd=VDD vss=VSS iovdd=IOVDD iovss=IOVSS G1_EXPLICIT_SUBSTRATE_VSS=VSS | - | not in deck -- dose / HBT test-structure pad, not on the breaker path
+pad20_d_std.*                            | pad=D_STD padres=_nc5 vdd=VDD vss=VSS iovdd=IOVDD iovss=IOVSS G1_EXPLICIT_SUBSTRATE_VSS=VSS | - | not in deck -- dose / HBT test-structure pad, not on the breaker path
+pad21_d_elt.*                            | pad=D_ELT padres=_nc6 vdd=VDD vss=VSS iovdd=IOVDD iovss=IOVSS G1_EXPLICIT_SUBSTRATE_VSS=VSS | - | not in deck -- dose / HBT test-structure pad, not on the breaker path
+pad22_hbt_e.*                            | pad=HBT_E padres=_nc7 vdd=VDD vss=VSS iovdd=IOVDD iovss=IOVSS G1_EXPLICIT_SUBSTRATE_VSS=VSS | - | not in deck -- dose / HBT test-structure pad, not on the breaker path
+pad23_hbt_b.*                            | pad=HBT_B padres=_nc8 vdd=VDD vss=VSS iovdd=IOVDD iovss=IOVSS G1_EXPLICIT_SUBSTRATE_VSS=VSS | - | not in deck -- dose / HBT test-structure pad, not on the breaker path
+pad24_hbt_c.*                            | pad=HBT_C padres=_nc9 vdd=VDD vss=VSS iovdd=IOVDD iovss=IOVSS G1_EXPLICIT_SUBSTRATE_VSS=VSS | - | not in deck -- dose / HBT test-structure pad, not on the breaker path
+# summary: differs 11, not in deck 193, same 67, same, loads differ 27; unexplained: 0
+# deck-only elements on nets shared with the CDL (sources, bridges, board parts):
+#   0            Ben_core, Bfault_drv, Bgate_drv, Bgate_i, Bload, Bosc, Bosc_clk, Bsclk_core, Bsdi_core, Cda, Cdd, Cdi, Cfault, Cgate, Cvref_ext, Rgnd, Rosc_dummy, V12, V33, Ven, Vosc_i, Vprof, Vr4, Vsclk, Vsdi, Vsub
+#   cmp_hard     bridge adc
+#   cmp_soft     bridge adc
+#   en_core      Ben_core
+#   iovdd        Bgate_i, Cdi, Rsi
+#   osc_clk      Bosc_clk, bridge adc_clock
+#   r4           Vr4
+#   sense_n      Rkn
+#   sense_p      Rkp
+#   tripped      bridge adc
+#   vdd          Cdd, Rsd, Vm_gated, Vm_tripd
+#   vdda         Cda, Rsa, Vm_bgr, Vm_gatea, Vm_sense, Vm_tripa
+#   vref_pad     Cvref_ext
+# g1_digital: CDL ports 44 (bits), wrapper named connections 26; ports missing in wrapper: none; extra: none
+# d_cosim: wrapper inputs osc_clk en sclk sdi cmp_soft cmp_hard tripped
+#          deck adig inputs d_osc_clk d_en d_sclk d_sdi d_cmp_soft d_cmp_hard d_tripped
+# device fingerprint (flattened, x m; parasitic R/C counted apart), CDL vs deck netlist:
+#   g1_bgr    CDL  1036 devices, deck  1036 devices (+329 parasitic) identical model counts
+#   g1_sense  CDL   159 devices, deck   159 devices (+844 parasitic) identical model counts
+#   g1_trip   CDL  2305 devices, deck  2305 devices (+0 parasitic) identical model counts
+#   g1_gate   CDL    78 devices, deck    78 devices (+554 parasitic) identical model counts
+### exit status 0
+### deck c_mid_pex_c1414_tl_tt_27C_clockfix_compact_functional_c1414fullc.cir sha256 e8dd237bd8a41d5265a590d8e70badc0674727e28a9086b5b09effe831e3b4e8
+# CDL  designs/g1-guardian/blocks/g1_padring/netlist/g1_chip_top_1414.cdl
+# deck designs/g1-guardian/blocks/g1_top/sim/decks/c_mid_pex_c1414_tl_tt_27C_clockfix_compact_functional_c1414fullc.cir
+block.pin                                | CDL net              | deck net    | status / explanation
+bgr.vdd                                  | VDDA                 | vdda        | same, loads differ -- CDL-only: ls_en.vdda, ls_mode.vdda, ls_r4.vdda, t2f.vdd, pad07_vdda.pad
+bgr.vss                                  | VSS                  | 0           | differs -- deck ties IOVSS and VSS to node 0 (single board ground) [CDL net -> deck ['0']; deck net <- CDL ['iovss', 'vss']; deck-only pins: pad08_sense_p.iovss, pad09_sense_n.iovss, pad18_vref.iovss]
+bgr.r4                                   | i_core_bgr_r4_33     | r4          | same, loads differ -- CDL-only: ls_r4.out (CDL: RTL bgr_r4 through g1_ls_up; deck: Vr4 0 V = RTL reset value (TEMP_CTRL.BGR_R4 = 0))
+bgr.vref                                 | i_core_vref          | vref        | same, loads differ -- CDL-only: t2f.vref (CDL: vref also loads G1_T2F (mode switch MMX1); T2F not in deck)
+bgr.iptat                                | i_core_iptat         | iptat       | same
+bgr.pbias                                | i_core_pbias         | pbias       | same, loads differ -- CDL-only: t2f.pbias (CDL: bias to G1_T2F; T2F not in deck (BGR mirror output unloaded))
+bgr.pcasc                                | i_core_pcasc         | pcasc       | same, loads differ -- CDL-only: t2f.pcasc (CDL: bias to G1_T2F; T2F not in deck (BGR mirror output unloaded))
+bgr.vbe                                  | i_core_unused_vbe    | vbe         | same
+bgr.dvbe                                 | i_core_dvbe          | dvbe        | same
+digital.bgr_r4                           | i_core_bgr_r4_12     | -           | not in deck -- wrapper-internal wire (unconnected); CDL to g1_ls_up -> bgr.r4; deck: wrapper-internal, bgr.r4 tied 0 V
+digital.clk_div_out                      | i_core_clk_div_out   | -           | not in deck -- wrapper-internal wire (unconnected); open in CDL; wrapper-internal in deck
+digital.clr_d                            | i_core_clr_d         | clr_d       | same -- via dac_bridge dac
+digital.cmp_clk                          | i_core_cmp_clk       | cmp_clk     | same -- via dac_bridge dac
+digital.cmp_hard                         | i_core_cmp_hard      | cmp_hard    | same -- via adc_bridge adc
+digital.cmp_soft                         | i_core_cmp_soft      | cmp_soft    | same -- via adc_bridge adc
+digital.en                               | en_i                 | -           | not in deck -- digital stimulus (d_source dsrc) -> d_en; RTL en from d_source with the pad-PWL edge times (README numerical note 7); CDL: EN pad p2c en_i, shared with g1_gate en_core
+digital.fast_en                          | i_core_fast_en       | fast_en     | same -- via dac_bridge dac
+digital.fault_n                          | i_core_fault_n_dig   | -           | not in deck -- wrapper-internal wire (unconnected); open in CDL (FAULT_N pad is driven by g1_gate fault_core); wrapper-internal
+digital.gate_en                          | i_core_gate_en       | dig_gate_en | same -- via dac_bridge dac
+digital.osc_clk                          | i_core_osc_clk       | osc_clk     | same, loads differ -- CDL-only: osc.osc_clk (CDL driven by g1_osc; deck by the ideal Bosc_clk (README numerical note 4))
+digital.osc_en                           | i_core_osc_en        | osc_en      | same, loads differ -- CDL-only: osc.en (CDL to g1_osc.en; deck: only gates the ideal clock (Bosc))
+digital.por_n                            | net                  | -           | not in deck -- tied 1'b1 in wrapper; CDL tiehi; wrapper ties por_n = 1'b1 (same function)
+digital.sclk                             | i_core_sclk_i        | -           | not in deck -- digital stimulus (d_source dsrc) -> d_sclk; RTL sclk from d_source (README numerical note 7)
+digital.sdi                              | i_core_sdi_i         | -           | not in deck -- digital stimulus (d_source dsrc) -> d_sdi; RTL sdi from d_source (README numerical note 7)
+digital.sdo                              | i_core_sdo_o         | sdo         | same, loads differ -- CDL-only: pad16_sdo.c2p (SDO pad not in deck; RTL sdo on a monitor dac only)
+digital.t2f_en                           | i_core_t2f_en_12     | -           | not in deck -- wrapper-internal wire (unconnected); CDL to g1_ls_up -> t2f.en; T2F not in deck
+digital.t2f_mode                         | i_core_t2f_mode_12   | -           | not in deck -- wrapper-internal wire (unconnected); CDL to g1_ls_up -> t2f.mode; T2F not in deck
+digital.trip                             | i_core_trip          | dig_trip    | same -- via dac_bridge dac
+digital.trip_d                           | i_core_trip_d        | trip_d      | same -- via dac_bridge dac
+digital.trip_set_sel                     | i_core_trip_set_sel  | -           | not in deck -- wrapper-internal wire (unconnected); open in CDL (TRIP_SET path not built); wrapper-internal
+digital.tripped                          | i_core_tripped       | tripped     | same -- via adc_bridge adc
+digital.VDD                              | VDD                  | -           | not in deck -- not a g1_dig_cosim/g1_digital connection; RTL co-simulation has no supply pin (digital supply current not simulated, README)
+digital.VSS                              | VSS                  | -           | not in deck -- not a g1_dig_cosim/g1_digital connection; RTL co-simulation has no supply pin
+digital.dac_hard[7]                      | i_core_dac_hard_7_   | hard7       | same -- via dac_bridge dac
+digital.dac_hard[6]                      | i_core_dac_hard_6_   | hard6       | same -- via dac_bridge dac
+digital.dac_hard[5]                      | i_core_dac_hard_5_   | hard5       | same -- via dac_bridge dac
+digital.dac_hard[4]                      | i_core_dac_hard_4_   | hard4       | same -- via dac_bridge dac
+digital.dac_hard[3]                      | i_core_dac_hard_3_   | hard3       | same -- via dac_bridge dac
+digital.dac_hard[2]                      | i_core_dac_hard_2_   | hard2       | same -- via dac_bridge dac
+digital.dac_hard[1]                      | i_core_dac_hard_1_   | hard1       | same -- via dac_bridge dac
+digital.dac_hard[0]                      | i_core_dac_hard_0_   | hard0       | same -- via dac_bridge dac
+digital.dac_soft[7]                      | i_core_dac_soft_7_   | soft7       | same -- via dac_bridge dac
+digital.dac_soft[6]                      | i_core_dac_soft_6_   | soft6       | same -- via dac_bridge dac
+digital.dac_soft[5]                      | i_core_dac_soft_5_   | soft5       | same -- via dac_bridge dac
+digital.dac_soft[4]                      | i_core_dac_soft_4_   | soft4       | same -- via dac_bridge dac
+digital.dac_soft[3]                      | i_core_dac_soft_3_   | soft3       | same -- via dac_bridge dac
+digital.dac_soft[2]                      | i_core_dac_soft_2_   | soft2       | same -- via dac_bridge dac
+digital.dac_soft[1]                      | i_core_dac_soft_1_   | soft1       | same -- via dac_bridge dac
+digital.dac_soft[0]                      | i_core_dac_soft_0_   | soft0       | same -- via dac_bridge dac
+digital.osc_trim[3]                      | i_core_osc_trim_3_   | trim3       | same, loads differ -- CDL-only: osc.trim[3] (CDL to g1_osc.trim; osc not in deck (trim bits on monitor dac only))
+digital.osc_trim[2]                      | i_core_osc_trim_2_   | trim2       | same, loads differ -- CDL-only: osc.trim[2] (CDL to g1_osc.trim; osc not in deck (trim bits on monitor dac only))
+digital.osc_trim[1]                      | i_core_osc_trim_1_   | trim1       | same, loads differ -- CDL-only: osc.trim[1] (CDL to g1_osc.trim; osc not in deck (trim bits on monitor dac only))
+digital.osc_trim[0]                      | i_core_osc_trim_0_   | trim0       | same, loads differ -- CDL-only: osc.trim[0] (CDL to g1_osc.trim; osc not in deck (trim bits on monitor dac only))
+digital.trip_cause[1]                    | i_core_trip_cause_1_ | cause1      | same -- via dac_bridge dac
+digital.trip_cause[0]                    | i_core_trip_cause_0_ | cause0      | same -- via dac_bridge dac
+digital_1.*                              | L_HI=net VDD=VDD VSS=VSS | - | not in deck -- tiehi for por_n; wrapper ties por_n = 1
+dose.*                                   | D_ELT=D_ELT D_STD=D_STD G_SHARED=G_SHARED vss=VSS | - | not in deck -- dose macro, standalone pads, not on the breaker path
+dut.*                                    | HBT_C=HBT_C HBT_B=HBT_B HBT_E=HBT_E vss=VSS | - | not in deck -- HBT test device, standalone pads, not on the breaker path
+gate.trip_d                              | i_core_trip_d        | trip_d      | same
+gate.clr_d                               | i_core_clr_d         | clr_d       | same
+gate.fast_en                             | i_core_fast_en       | fast_en     | same
+gate.hard_cmp                            | i_core_cmp_hard      | cmp_hard    | same
+gate.en_core                             | en_i                 | en_core     | differs -- CDL: EN pad p2c (en_i) also feeds g1_digital.en; deck: Ben_core copy (digital en from d_source) [CDL-only pins on common instances: digital.en]
+gate.gate_core                           | gate_o               | gate_core   | same, loads differ -- CDL-only: pad10_gate.c2p (CDL: IOPadOut30mA c2p; deck: fitted Bgate_drv (README numerical note 3))
+gate.fault_core                          | fault_n_o            | fault_core  | same, loads differ -- CDL-only: pad11_fault_n.c2p (CDL: IOPadOut4mA c2p; deck: fitted Bfault_drv (README numerical note 3))
+gate.tripped                             | i_core_tripped       | tripped     | same
+gate.vdd                                 | VDD                  | vdd         | same, loads differ -- CDL-only: digital.VDD, digital_1.VDD, ls_en.vdd, ls_mode.vdd, ls_r4.vdd, osc.VDD +22 more (CDL VDD also supplies g1_osc and the digital macro (not transistor-level in the deck))
+gate.vdda                                | VDDA                 | vdda        | same, loads differ -- CDL-only: ls_en.vdda, ls_mode.vdda, ls_r4.vdda, t2f.vdd, pad07_vdda.pad
+gate.vss                                 | VSS                  | 0           | differs -- deck ties IOVSS and VSS to node 0 (single board ground) [CDL net -> deck ['0']; deck net <- CDL ['iovss', 'vss']; deck-only pins: pad08_sense_p.iovss, pad09_sense_n.iovss, pad18_vref.iovss]
+ls_en.*                                  | in=i_core_t2f_en_12 out=i_core_t2f_en_33 vdd=VDD vdda=VDDA vss=VSS | - | not in deck -- T2F level shifter; T2F not in deck
+ls_mode.*                                | in=i_core_t2f_mode_12 out=i_core_t2f_mode_33 vdd=VDD vdda=VDDA vss=VSS | - | not in deck -- T2F level shifter; T2F not in deck
+ls_r4.*                                  | in=i_core_bgr_r4_12 out=i_core_bgr_r4_33 vdd=VDD vdda=VDDA vss=VSS | - | not in deck -- BGR r4 shifter; deck ties bgr.r4 to 0 V (RTL reset BGR_R4 = 0)
+osc.*                                    | en=i_core_osc_en trim[0]=i_core_osc_trim_0_ trim[1]=i_core_osc_trim_1_ trim[2]=i_core_osc_trim_2_ trim[3]=i_core_osc_trim_3_ osc_clk=i_core_osc_clk VDD=VDD VSS=VSS | - | not in deck -- ideal clock Bosc_clk at the block frequency (README numerical note 4)
+sense.sense_p                            | SENSE_P              | sense_p     | same
+sense.sense_n                            | SENSE_N              | sense_n     | same
+sense.vref                               | i_core_vref          | vref        | same, loads differ -- CDL-only: t2f.vref (CDL: vref also loads G1_T2F; T2F not in deck)
+sense.iptat                              | i_core_iptat         | iptat       | same
+sense.isense                             | i_core_isense        | isense      | same
+sense.vped                               | i_core_unused_vped   | vped        | same
+sense.vref_buf                           | i_core_vref_buf      | vref_buf    | same
+sense.vdd                                | VDDA                 | vdda        | same, loads differ -- CDL-only: ls_en.vdda, ls_mode.vdda, ls_r4.vdda, t2f.vdd, pad07_vdda.pad
+sense.vss                                | VSS                  | 0           | differs -- deck ties IOVSS and VSS to node 0 (single board ground) [CDL net -> deck ['0']; deck net <- CDL ['iovss', 'vss']; deck-only pins: pad08_sense_p.iovss, pad09_sense_n.iovss, pad18_vref.iovss]
+t2f.*                                    | vdd=VDDA vdd12=VDD vss=VSS pbias=i_core_pbias pcasc=i_core_pcasc vref=i_core_vref en=i_core_t2f_en_33 mode=i_core_t2f_mode_33 fout=i_core_temp_out_o | - | not in deck -- G1_T2F not in the breaker-path deck (README scope: TEMP_OUT not simulated)
+trip.ISENSE                              | i_core_isense        | isense      | same
+trip.VREF                                | i_core_vref_buf      | vref_buf    | same
+trip.clk                                 | i_core_cmp_clk       | cmp_clk     | same -- deck pin cmp_clk (positional)
+trip.dac_soft[0]                         | i_core_dac_soft_0_   | soft0       | same -- deck pin soft0 (positional)
+trip.dac_soft[1]                         | i_core_dac_soft_1_   | soft1       | same -- deck pin soft1 (positional)
+trip.dac_soft[2]                         | i_core_dac_soft_2_   | soft2       | same -- deck pin soft2 (positional)
+trip.dac_soft[3]                         | i_core_dac_soft_3_   | soft3       | same -- deck pin soft3 (positional)
+trip.dac_soft[4]                         | i_core_dac_soft_4_   | soft4       | same -- deck pin soft4 (positional)
+trip.dac_soft[5]                         | i_core_dac_soft_5_   | soft5       | same -- deck pin soft5 (positional)
+trip.dac_soft[6]                         | i_core_dac_soft_6_   | soft6       | same -- deck pin soft6 (positional)
+trip.dac_soft[7]                         | i_core_dac_soft_7_   | soft7       | same -- deck pin soft7 (positional)
+trip.dac_hard[0]                         | i_core_dac_hard_0_   | hard0       | same -- deck pin hard0 (positional)
+trip.dac_hard[1]                         | i_core_dac_hard_1_   | hard1       | same -- deck pin hard1 (positional)
+trip.dac_hard[2]                         | i_core_dac_hard_2_   | hard2       | same -- deck pin hard2 (positional)
+trip.dac_hard[3]                         | i_core_dac_hard_3_   | hard3       | same -- deck pin hard3 (positional)
+trip.dac_hard[4]                         | i_core_dac_hard_4_   | hard4       | same -- deck pin hard4 (positional)
+trip.dac_hard[5]                         | i_core_dac_hard_5_   | hard5       | same -- deck pin hard5 (positional)
+trip.dac_hard[6]                         | i_core_dac_hard_6_   | hard6       | same -- deck pin hard6 (positional)
+trip.dac_hard[7]                         | i_core_dac_hard_7_   | hard7       | same -- deck pin hard7 (positional)
+trip.cmp_soft                            | i_core_cmp_soft      | cmp_soft    | same
+trip.cmp_hard                            | i_core_cmp_hard      | cmp_hard    | same
+trip.VDD                                 | VDD                  | vdd         | same, loads differ -- CDL-only: digital.VDD, digital_1.VDD, ls_en.vdd, ls_mode.vdd, ls_r4.vdd, osc.VDD +22 more (CDL VDD also supplies g1_osc and the digital macro (not transistor-level in the deck))
+trip.IOVDD                               | VDDA                 | vdda        | same, loads differ -- CDL-only: ls_en.vdda, ls_mode.vdda, ls_r4.vdda, t2f.vdd, pad07_vdda.pad
+trip.VSS                                 | VSS                  | 0           | differs -- deck ties IOVSS and VSS to node 0 (single board ground) [CDL net -> deck ['0']; deck net <- CDL ['iovss', 'vss']; deck-only pins: pad08_sense_p.iovss, pad09_sense_n.iovss, pad18_vref.iovss]
+pad01_vdd.*                              | vdd=VDD vss=VSS iovdd=IOVDD iovss=IOVSS G1_EXPLICIT_SUBSTRATE_VSS=VSS | - | not in deck -- supply pad not modelled; deck supplies are ideal sources through 0.5 Ohm + 1 nF (README board)
+pad02_vss.*                              | vdd=VDD vss=VSS iovdd=IOVDD iovss=IOVSS G1_EXPLICIT_SUBSTRATE_VSS=VSS | - | not in deck -- supply pad not modelled; deck supplies are ideal sources through 0.5 Ohm + 1 nF (README board)
+pad03_iovdd.*                            | vdd=VDD vss=VSS iovdd=IOVDD iovss=IOVSS G1_EXPLICIT_SUBSTRATE_VSS=VSS | - | not in deck -- supply pad not modelled; deck supplies are ideal sources through 0.5 Ohm + 1 nF (README board)
+pad04_iovss.*                            | vdd=VDD vss=VSS iovdd=IOVDD iovss=IOVSS G1_EXPLICIT_SUBSTRATE_VSS=VSS | - | not in deck -- supply pad not modelled; deck supplies are ideal sources through 0.5 Ohm + 1 nF (README board)
+pad05_vss.*                              | vdd=VDD vss=VSS iovdd=IOVDD iovss=IOVSS G1_EXPLICIT_SUBSTRATE_VSS=VSS | - | not in deck -- supply pad not modelled; deck supplies are ideal sources through 0.5 Ohm + 1 nF (README board)
+pad06_iovss.*                            | vdd=VDD vss=VSS iovdd=IOVDD iovss=IOVSS G1_EXPLICIT_SUBSTRATE_VSS=VSS | - | not in deck -- supply pad not modelled; deck supplies are ideal sources through 0.5 Ohm + 1 nF (README board)
+pad07_vdda.*                             | pad=VDDA padres=_nc1 vdd=VDD vss=VSS iovdd=IOVDD iovss=IOVSS G1_EXPLICIT_SUBSTRATE_VSS=VSS | - | not in deck -- supply pad not modelled; deck supplies are ideal sources through 0.5 Ohm + 1 nF (README board)
+pad08_sense_p.pad                        | SENSE_P              | sense_p     | same
+pad08_sense_p.padres                     | _nc2                 | sense_p_res | same
+pad08_sense_p.vdd                        | VDD                  | vdd         | same, loads differ -- CDL-only: digital.VDD, digital_1.VDD, ls_en.vdd, ls_mode.vdd, ls_r4.vdd, osc.VDD +22 more (CDL VDD also supplies g1_osc and the digital macro (not transistor-level in the deck))
+pad08_sense_p.vss                        | VSS                  | 0           | differs -- deck ties IOVSS and VSS to node 0 (single board ground) [CDL net -> deck ['0']; deck net <- CDL ['iovss', 'vss']; deck-only pins: pad08_sense_p.iovss, pad09_sense_n.iovss, pad18_vref.iovss]
+pad08_sense_p.iovdd                      | IOVDD                | iovdd       | same, loads differ -- CDL-only: pad01_vdd.iovdd, pad02_vss.iovdd, pad03_iovdd.iovdd, pad04_iovss.iovdd, pad05_vss.iovdd, pad06_iovss.iovdd +15 more (deck: IOVDD and VDDA from one 3.3 V board rail through separate 0.5 Ohm (README board))
+pad08_sense_p.iovss                      | IOVSS                | 0           | differs -- deck ties IOVSS and VSS to node 0 (single board ground) [CDL net -> deck ['0']; deck net <- CDL ['iovss', 'vss']; deck-only pins: bgr.vss, gate.vss, sense.vss, trip.VSS +3 more]
+pad08_sense_p.G1_EXPLICIT_SUBSTRATE_VSS  | VSS                  | -           | not in deck -- derivative substrate pin; deck substrate = global sub! = 0; deck ties IOVSS and VSS to node 0 (single board ground)
+pad09_sense_n.pad                        | SENSE_N              | sense_n     | same
+pad09_sense_n.padres                     | _nc3                 | sense_n_res | same
+pad09_sense_n.vdd                        | VDD                  | vdd         | same, loads differ -- CDL-only: digital.VDD, digital_1.VDD, ls_en.vdd, ls_mode.vdd, ls_r4.vdd, osc.VDD +22 more (CDL VDD also supplies g1_osc and the digital macro (not transistor-level in the deck))
+pad09_sense_n.vss                        | VSS                  | 0           | differs -- deck ties IOVSS and VSS to node 0 (single board ground) [CDL net -> deck ['0']; deck net <- CDL ['iovss', 'vss']; deck-only pins: pad08_sense_p.iovss, pad09_sense_n.iovss, pad18_vref.iovss]
+pad09_sense_n.iovdd                      | IOVDD                | iovdd       | same, loads differ -- CDL-only: pad01_vdd.iovdd, pad02_vss.iovdd, pad03_iovdd.iovdd, pad04_iovss.iovdd, pad05_vss.iovdd, pad06_iovss.iovdd +15 more (deck: IOVDD and VDDA from one 3.3 V board rail through separate 0.5 Ohm (README board))
+pad09_sense_n.iovss                      | IOVSS                | 0           | differs -- deck ties IOVSS and VSS to node 0 (single board ground) [CDL net -> deck ['0']; deck net <- CDL ['iovss', 'vss']; deck-only pins: bgr.vss, gate.vss, sense.vss, trip.VSS +3 more]
+pad09_sense_n.G1_EXPLICIT_SUBSTRATE_VSS  | VSS                  | -           | not in deck -- derivative substrate pin; deck substrate = global sub! = 0; deck ties IOVSS and VSS to node 0 (single board ground)
+pad10_gate.*                             | pad=GATE c2p=gate_o vdd=VDD vss=VSS iovdd=IOVDD iovss=IOVSS G1_EXPLICIT_SUBSTRATE_VSS=VSS | - | not in deck -- GATE pad = fitted 47 Ohm driver (README numerical note 3)
+pad11_fault_n.*                          | pad=FAULT_N c2p=fault_n_o vdd=VDD vss=VSS iovdd=IOVDD iovss=IOVSS G1_EXPLICIT_SUBSTRATE_VSS=VSS | - | not in deck -- FAULT_N pad = fitted 500 Ohm driver (README numerical note 3)
+pad12_en.*                               | pad=EN p2c=en_i vdd=VDD vss=VSS iovdd=IOVDD iovss=IOVSS G1_EXPLICIT_SUBSTRATE_VSS=VSS | - | not in deck -- EN pad = ideal 3.3->1.2 V copy + d_source (README numerical notes 3, 7)
+pad13_trip_set.*                         | pad=TRIP_SET padres=i_core_trip_set vdd=VDD vss=VSS iovdd=IOVDD iovss=IOVSS G1_EXPLICIT_SUBSTRATE_VSS=VSS | - | not in deck -- TRIP_SET pad path not built (README scope)
+pad14_sclk.*                             | pad=SCLK p2c=i_core_sclk_i vdd=VDD vss=VSS iovdd=IOVDD iovss=IOVSS G1_EXPLICIT_SUBSTRATE_VSS=VSS | - | not in deck -- SCLK pad = ideal copy + d_source (README numerical notes 3, 7)
+pad15_sdi.*                              | pad=SDI p2c=i_core_sdi_i vdd=VDD vss=VSS iovdd=IOVDD iovss=IOVSS G1_EXPLICIT_SUBSTRATE_VSS=VSS | - | not in deck -- SDI pad = ideal copy + d_source (README numerical notes 3, 7)
+pad16_sdo.*                              | pad=SDO c2p=i_core_sdo_o vdd=VDD vss=VSS iovdd=IOVDD iovss=IOVSS G1_EXPLICIT_SUBSTRATE_VSS=VSS | - | not in deck -- SDO pad not simulated (README: sdo not padded)
+pad17_temp_out.*                         | pad=TEMP_OUT c2p=i_core_temp_out_o vdd=VDD vss=VSS iovdd=IOVDD iovss=IOVSS G1_EXPLICIT_SUBSTRATE_VSS=VSS | - | not in deck -- TEMP_OUT pad not simulated (README scope)
+pad18_vref.pad                           | VREF                 | vref_pad    | same
+pad18_vref.padres                        | i_core_vref          | vref        | same, loads differ -- CDL-only: t2f.vref (CDL: vref also loads G1_T2F; T2F not in deck)
+pad18_vref.vdd                           | VDD                  | vdd         | same, loads differ -- CDL-only: digital.VDD, digital_1.VDD, ls_en.vdd, ls_mode.vdd, ls_r4.vdd, osc.VDD +22 more (CDL VDD also supplies g1_osc and the digital macro (not transistor-level in the deck))
+pad18_vref.vss                           | VSS                  | 0           | differs -- deck ties IOVSS and VSS to node 0 (single board ground) [CDL net -> deck ['0']; deck net <- CDL ['iovss', 'vss']; deck-only pins: pad08_sense_p.iovss, pad09_sense_n.iovss, pad18_vref.iovss]
+pad18_vref.iovdd                         | IOVDD                | iovdd       | same, loads differ -- CDL-only: pad01_vdd.iovdd, pad02_vss.iovdd, pad03_iovdd.iovdd, pad04_iovss.iovdd, pad05_vss.iovdd, pad06_iovss.iovdd +15 more (deck: IOVDD and VDDA from one 3.3 V board rail through separate 0.5 Ohm (README board))
+pad18_vref.iovss                         | IOVSS                | 0           | differs -- deck ties IOVSS and VSS to node 0 (single board ground) [CDL net -> deck ['0']; deck net <- CDL ['iovss', 'vss']; deck-only pins: bgr.vss, gate.vss, sense.vss, trip.VSS +3 more]
+pad18_vref.G1_EXPLICIT_SUBSTRATE_VSS     | VSS                  | -           | not in deck -- derivative substrate pin; deck substrate = global sub! = 0; deck ties IOVSS and VSS to node 0 (single board ground)
+pad19_g_shared.*                         | pad=G_SHARED padres=_nc4 vdd=VDD vss=VSS iovdd=IOVDD iovss=IOVSS G1_EXPLICIT_SUBSTRATE_VSS=VSS | - | not in deck -- dose / HBT test-structure pad, not on the breaker path
+pad20_d_std.*                            | pad=D_STD padres=_nc5 vdd=VDD vss=VSS iovdd=IOVDD iovss=IOVSS G1_EXPLICIT_SUBSTRATE_VSS=VSS | - | not in deck -- dose / HBT test-structure pad, not on the breaker path
+pad21_d_elt.*                            | pad=D_ELT padres=_nc6 vdd=VDD vss=VSS iovdd=IOVDD iovss=IOVSS G1_EXPLICIT_SUBSTRATE_VSS=VSS | - | not in deck -- dose / HBT test-structure pad, not on the breaker path
+pad22_hbt_e.*                            | pad=HBT_E padres=_nc7 vdd=VDD vss=VSS iovdd=IOVDD iovss=IOVSS G1_EXPLICIT_SUBSTRATE_VSS=VSS | - | not in deck -- dose / HBT test-structure pad, not on the breaker path
+pad23_hbt_b.*                            | pad=HBT_B padres=_nc8 vdd=VDD vss=VSS iovdd=IOVDD iovss=IOVSS G1_EXPLICIT_SUBSTRATE_VSS=VSS | - | not in deck -- dose / HBT test-structure pad, not on the breaker path
+pad24_hbt_c.*                            | pad=HBT_C padres=_nc9 vdd=VDD vss=VSS iovdd=IOVDD iovss=IOVSS G1_EXPLICIT_SUBSTRATE_VSS=VSS | - | not in deck -- dose / HBT test-structure pad, not on the breaker path
+# summary: differs 11, not in deck 193, same 67, same, loads differ 27; unexplained: 0
+# deck-only elements on nets shared with the CDL (sources, bridges, board parts):
+#   0            Ben_core, Bfault_drv, Bgate_drv, Bgate_i, Bload, Bosc, Bosc_clk, Bsclk_core, Bsdi_core, Cda, Cdd, Cdi, Cfault, Cgate, Cvref_ext, Rgnd, Rosc_dummy, V12, V33, Ven, Vosc_i, Vprof, Vr4, Vsclk, Vsdi, Vsub
+#   cmp_hard     bridge adc
+#   cmp_soft     bridge adc
+#   en_core      Ben_core
+#   iovdd        Bgate_i, Cdi, Rsi
+#   osc_clk      Bosc_clk, bridge adc_clock
+#   r4           Vr4
+#   sense_n      Rkn
+#   sense_p      Rkp
+#   tripped      bridge adc
+#   vdd          Cdd, Rosc_dummy, Rsd, Vm_gated, Vm_osc, Vm_tripd
+#   vdda         Cda, Rsa, Vm_bgr, Vm_gatea, Vm_sense, Vm_tripa
+#   vref_pad     Cvref_ext
+# g1_digital: CDL ports 44 (bits), wrapper named connections 26; ports missing in wrapper: none; extra: none
+# d_cosim: wrapper inputs osc_clk en sclk sdi cmp_soft cmp_hard tripped
+#          deck adig inputs d_osc_clk d_en d_sclk d_sdi d_cmp_soft d_cmp_hard d_tripped
+# device fingerprint (flattened, x m; parasitic R/C counted apart), CDL vs deck netlist:
+#   g1_bgr    CDL  1036 devices, deck  1036 devices (+978 parasitic) identical model counts
+#   g1_sense  CDL   159 devices, deck   159 devices (+844 parasitic) identical model counts
+#   g1_trip   CDL  2305 devices, deck  2329 devices (+18333 parasitic) DIFF [('rppd', (1070, 1080)), ('sg13_lv_nmos', (43, 57))]
+#   g1_gate   CDL    78 devices, deck    78 devices (+554 parasitic) identical model counts
+### exit status 0

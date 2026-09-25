@@ -1,5 +1,11 @@
 # Isolated OSC R0.95 physical candidate, 2026-09-24
 
+> **Update 2026-09-25.** R0.95 was adopted on the chip of record `g1_chip_top_1414.gds` (`629d303a…`,
+> owner decision 2026-09-24). The "not a production macro or chip adoption" sentence below was true
+> when written. The failed isolated density-only check and the failed kpex internal LVS below are
+> unchanged and stay **failed**; density, DRC and antenna of the whole chip passed with 0 markers
+> (`../../../g1_padring/reports/signoff-1414-20260924/README.md`).
+
 This is a simulated/design-check candidate, not a production macro or chip adoption. The four RA/RB PolyRes segments are 55.575 µm rather than 58.5 µm. The original generator, delivered macro and old-PEX simulation evidence remain unchanged. IHP SG13G2 public PDK commit `84374023ee8b4b126bebbba67fcbada0a9c0ff0b`, EDA image config digest `sha256:ddeb69576f2808676d1c5d474ecf04f6d1d6f8abdcff6b72b39790ded924bab2`, one assigned CPU; stock rule/model sources were not edited.
 
 | Check on isolated candidate | Status | Saved result |

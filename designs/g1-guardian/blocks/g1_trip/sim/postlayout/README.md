@@ -55,7 +55,8 @@ capacitors, 3 re-inserted `cap_cmim`. Simulated wiring capacitance: soft input-p
 | ss 1.08 V -40 C, 5 mV | -5.6 / 4.39 mV / 1.245 ns | -6.9 / 4.95 mV / 1.435 ns |
 | ss 1.08 V -40 C, 1 mV | -1.61 / 0.40 mV / 1.778 ns | -2.88 / 0.95 mV / 1.694 ns |
 
-Every first strobe decided low and every second strobe high. Systematic offset bracket (tt): between
+Every first strobe decided low and every second strobe high. Systematic offset bracket (tt), referred to
+the comparator input `icmp` (divide by about 10 for shunt voltage: 1 LSB = 1.962 mV at `icmp` = 0.196 mV shunt): between
 -3.9 mV and +0.77 mV (original -2.0 / +0.2 mV); the bracket is set by the kick residue, not resolved
 further. The strobe kick on `vth_soft` is larger: minimum 0.670 V vs 0.719 V (tt, -81 mV vs -33 mV from
 0.7515 V), still -11 mV at 70 ns (original -4 mV). Wiring resistance, mismatch and the DAC deck are not run.
@@ -91,7 +92,8 @@ LSB. The edge samples leave out part of the effect, and the decision counts show
   hard strobe edge coincides with the soft comparator's reset edge. Within 0.5 ns of that edge,
   icmp - vth_hard jumps by +40 mV (old) and +116 mV (NF4) while the hard comparator decides (waveforms
   in the tt runs). This problem already existed with the old macro, and the NF4 pair makes it worse.
-  The actual hard threshold was not bracketed; that is **not run**.
+  This 8-strobe run does not bracket the hard threshold; the strobe-train bench in "Effective trip
+  point" below does (hard path 40–56 LSB below code with NF4, simulated).
 
 Explicit capacitance on these nodes: `vth_soft`, `vth_hard` and `icmp` each have one 26 x 26 um `cap_cmim`
 hold capacitor (CHS, CHH, and CH in `g1_cond`, about 1 pF each). They are behind the DAC string and the

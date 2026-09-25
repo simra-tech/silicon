@@ -1,5 +1,10 @@
 # R100 compensation and partial-field verification
 
+> **Update 2026-09-25.** C45/R100 is the SENSE variant in the chip of record `g1_chip_top_1414.gds`
+> (`629d303a…`, owner decision 2026-09-24); the chip cell is XOR-identical to the native build
+> `450a4906` outside fill layers. The "not adopted" statements below describe the state on
+> 2026-09-23. The partial-field acceptance recorded here stays **failed/unresolved**; full PEX is **not run**.
+
 The C45/R100 candidate improves the tested conditional loop margins. It is
 not adopted and does not have complete physical PEX qualification. All
 numbers below are simulated or derived from saved simulation/layout data,

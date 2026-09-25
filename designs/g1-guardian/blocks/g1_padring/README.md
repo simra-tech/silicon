@@ -1,6 +1,22 @@
 # G1_PADRING
 
-State: **1350 × 1350 µm ring (`PLAN.md` D13) assembled through the LibreLane `Chip` flow;
+> **Superseded frame (status 2026-09-25).** The chip of record is the 1414 µm
+> native-lineage GDS [`layout/g1_chip_top_1414.gds`](layout/g1_chip_top_1414.gds)
+> (SHA-256 `629d303abf594ec90593f1d28a8d9ad19673ea6662780ba428a6d9c5685986ba`,
+> owner decision 2026-09-24, `PLAN.md` D15), signed off in
+> [`reports/signoff-1414-20260924/`](reports/signoff-1414-20260924/README.md).
+> On that file: main DRC, maximal DRC, density and antenna **passed** (0 markers);
+> projected-reference LVS **passed** (61 684 / 61 684 devices); canonical LVS
+> **failed**, cause: substrate/tap/diode netlist semantics of the IO-cell reference
+> in the PDK, reproduced with stock cells and with IHP's latest `dev` deck and
+> library; the design-local IO copies match IHP's `dev` library on every layer
+> (PR #1223); upstream issues #1218/#1130
+> ([evidence](../../review/upstream/evidence/README.md)); full-chip PEX **not run**.
+> Everything below this banner describes the **superseded** 1350 µm LibreLane frame
+> (`PLAN.md` D13) and the earlier 1200 µm and 1130 µm frames. It is kept as history;
+> "current" and "of record" below refer to the state before 2026-09-24.
+
+Historical state (before 2026-09-24): **1350 × 1350 µm ring (`PLAN.md` D13) assembled through the LibreLane `Chip` flow;
 KLayout DRC (hard rules) 0 markers and density 0 markers after fill; KLayout
 antenna, Magic DRC and LVS fail for the library/deck reasons given in
 "Checks". Assembly of record with all twelve macros and the VDDA supply (D14):
@@ -35,7 +51,8 @@ section 2). Tool versions are taken from the run logs, see "Tool versions".
 | `flow/config_dryrun.yaml`, `flow/pdn_cfg_g1.tcl`, `flow/analog_straps.tcl` (+ `_standalone.tcl` wrapper), `flow/macro_gds_assembly/`, `rtl/g1_core_dryrun.sv`, `rtl/bb/`, `../../../../flow/run_dryrun.sh` | chip assembly with all macros of record (floorplan, VDDA grid and feed, via stacks onto the macro supply bars with obstruction checks, macro GDS preparation), see `INTEGRATION.md` |
 | `flow/lvs/` | `assemble_chip_cdl.py` (chip CDL from the flow netlist + PDK + macro CDLs), `core_cdl.py` / `core_only_gds.py` / `run_core_lvs.sh` / `xref_summary.py` (core-only KLayout LVS and its per-circuit summary), `pdn_net_overlap.py` / `pdn_macro_overlap.py` / `supply_isolation.py` (geometric short checks of the supply nets: between nets, onto macro and IO-cell metal, metal-only connectivity of the chip pins), `pnl2cdl.py` (ring-only CDL) |
 | `flow/signoff/signoff.sh` | sign-off of an assembly run beyond the flow's steps (DRC with recommended rules, precheck DRC, density table, antenna marker list, the three supply short checks, core-only LVS) and evidence collection into `reports/<run tag>/` |
-| `netlist/` | `g1_chip_top.pnl.v`, `g1_chip_top.nl.v` (flow), `g1_chip_top.cdl` (assembled) |
+| `layout/g1_chip_top_1414.gds`, `netlist/g1_chip_top_1414.cdl`, `netlist/g1_chip_top_1414_projected_ref.cdl`, `reports/signoff-1414-20260924/` | **chip of record** (1414 µm, `629d303a…`), its canonical and comparison-only netlists and its sign-off; not produced by this block's LibreLane flow |
+| `netlist/` (1350 µm, superseded) | `g1_chip_top.pnl.v`, `g1_chip_top.nl.v` (flow), `g1_chip_top.cdl` (assembled) |
 | `ip/sg13g2_io_padbare/` | LEF/Verilog/liberty views of the PDK IO library with the analog pad's resistor-free core terminal exposed as `padbare` (derived from the PDK files by script; GDS/CDL stay stock), README there |
 | `INTEGRATION.md` | how macros are dropped into the ring, power for 1.2 V and 3.3 V macros, the `g1_digital` dry run |
 | `ip/bondpad_70x70_tm1/` | bondpad generated from the PDK `bondpad` PCell, LEF, README |
@@ -62,7 +79,7 @@ The run directories `flow/runs/<tag>/` are gitignored; the evidence listed under
 
 ## Ring geometry
 
-| Item | 1350 µm frame (current, `PLAN.md` D13) | 1200 µm frame | 1130 µm frame | Established by |
+| Item | 1350 µm frame (superseded, `PLAN.md` D13) | 1200 µm frame | 1130 µm frame | Established by |
 | --- | --- | --- | --- | --- |
 | Die (`DIE_AREA`) | 1350 × 1350 µm | 1200 × 1200 µm | 1130 × 1130 µm | config; `DIEAREA` in `padring.def` |
 | Seal ring | PDK `sealring` PCell geometry (`edgeBox` 25 µm, Passiv ring 25–29.2 µm, metal/via ring 32.2–36.4 µm inside the die edge, EdgeSeal boundary = die outline); 1000 µm PCell ring stretched by 300 µm | stretched by 150 µm | by 80 µm | `sg13g2_tech.json`, `sealring_code.py`, `klayout-sealring.log` |
@@ -167,13 +184,14 @@ seal ring come from the PDK PCells through the scripts in this directory.
 
 ## Checks
 
-Three frames were run through the same flow; the 1350 µm frame is the frame of
-record (`PLAN.md` D13), the 1200 and 1130 µm frames are kept as evidence. The
+Three frames were run through the same flow; the 1350 µm frame was the frame of
+record until 2026-09-24 (`PLAN.md` D13), and all three are now superseded by the
+1414 µm chip of record (`reports/signoff-1414-20260924/`) and kept as evidence. The
 KLayout decks are the sign-off decks (`AGENTS.md`); Magic DRC and LVS are
 reported with their failure causes (tool/library limitations documented under
 `reports/lvs_reference/` and `reports/antenna_reference/`).
 
-### 1350 × 1350 µm frame (`reports/run-1350/`, run tag `ring-1350`, 2026-09-19) — current
+### 1350 × 1350 µm frame (`reports/run-1350/`, run tag `ring-1350`, 2026-09-19) — superseded
 
 Run of record with the `padbare` IO views; final GDS
 `flow/runs/ring-1350/final/gds/g1_chip_top.gds`, about 50 MB (above the 20 MB
@@ -251,9 +269,14 @@ its numbers are identical except where stated.
 | Netgen | 1.5.323 | `reports/run-1200/netgen-lvs.log` |
 | Verilator | 5.050 | `flow/runs/ring-1200/01-verilator-lint/verilator-lint.log` |
 | PDK | IHP SG13G2 commit `84374023ee8b4b126bebbba67fcbada0a9c0ff0b` | `/foss/pdks/ihp-sg13g2/COMMIT` |
-| Container | `tapeoutbench-eda:latest` = digest `sha256:5fd78498…` (`PLAN.md` section 2) | `docker images` |
+| Container | `tapeoutbench-eda:latest` = digest `sha256:5fd78498…` (`PLAN.md` section 2) | `docker images`. Discrepancy: `5fd78498…` is the image recorded on 2026-09-21 (`review/audits/execution-environment-20260921.json`); `flow/run.sh` has pinned `ddeb6957…` since commit `0b67f4ee` (2026-09-22), and the top README lists `ddeb6957…` for the 1414 µm evidence. Which image ran the 2026-09-18/19 ring runs is not recorded in their logs; not re-established |
 
-## Open items
+## Open items (1350 µm frame, historical)
+
+These items were written for the superseded 1350 µm frame. For the chip of record
+see [`reports/signoff-1414-20260924/`](reports/signoff-1414-20260924/README.md) and
+[`../../review/TAPEIN_PACKAGE_20260924.md`](../../review/TAPEIN_PACKAGE_20260924.md).
+
 
 - KLayout antenna markers on the `vdd`-tied gate of the current `sg13g2_IOPadIn`
   revision: for the foundry (`reports/antenna_reference/README.md`); the

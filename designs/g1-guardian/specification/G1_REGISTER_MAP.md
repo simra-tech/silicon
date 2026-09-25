@@ -58,8 +58,17 @@ by an idle timeout: when `SCLK` has been low for 64 `osc_clk` cycles
 new frame. Rules for the host:
 
 - between frames, either continue immediately (back-to-back frames are legal,
-  the counter wraps at 16 or 24) or hold `SCLK` low for **at least 128
+  the counter wraps at 16 or 24; **not for safety-relevant writes**, see the
+  2026-09-25 note below) or hold `SCLK` low for **at least 128
   `osc_clk` cycles (nominally 12.8 µs, 16 µs with the −20 % oscillator)**;
+- **(2026-09-25) safety-relevant writes** (DAC codes, `MODE`, `INRUSH`,
+  `SOFT_TIME`, `HARD_N`, `OSC_CTRL`, `SENSE_OFS`): idle ≥ 128 `osc_clk` cycles
+  before each frame, keep every `SCLK`-low phase inside a frame below 64
+  `osc_clk` cycles (< 5.3 µs at +20 % oscillator), keep `SCLK` low when idle,
+  and read the register back after the write. One `SCLK` glitch or stall
+  re-frames a write onto another register, e.g. a `SOFT_TIME_H` or `MODE`
+  write the host did not send (simulated, RTL and chip netlist,
+  `../review/redteam-20260925/DIGITAL.md` S1);
 - never start a frame between 64 and ~80 `osc_clk` cycles of idle: the reset
   pulse is active there and the first edge could be lost;
 - after power-up or `EN` rising, wait the same 128 cycles before the first
@@ -127,7 +136,7 @@ through one `g1_ls_up` cell each (`blocks/g1_ctrl/ls/`).
 | `cmp_hard` | in | 1 | `G1_TRIP` hard comparator | same, updated on the falling edge |
 | `dac_soft[7:0]` | out | 8 | `G1_TRIP` soft DAC | **effective** code = `DAC_SOFT` − hysteresis + `SENSE_OFS`, saturated at 0/255; shunt threshold = code × 0.196 mV × (V<sub>REF</sub>/1.04 V), full scale 50 mV |
 | `dac_hard[7:0]` | out | 8 | `G1_TRIP` hard DAC | effective code = `DAC_HARD` + `SENSE_OFS`, saturated |
-| `trip_set_sel` | out | 1 | `G1_TRIP` | 1 = hard comparator reference from the `TRIP_SET` pad instead of `dac_hard` |
+| `trip_set_sel` | out | 1 | `G1_TRIP` | 1 = hard comparator reference from the `TRIP_SET` pad instead of `dac_hard`. Not connected on the chip of record: `g1_trip` has no such input, so the bit has no effect |
 | `trip_d` | out | 1 | `G1_GATE` | level = digital trip latch; 1 sets the 3.3 V trip latch |
 | `clr_d` | out | 1 | `G1_GATE` | 2-cycle pulse (200 ns nominal, ≥ 160 ns at +20 % clock) on every `CLEAR` command and every retrigger re-enable; clears the 3.3 V latch, reset-dominant |
 | `fast_en` | out | 1 | `G1_GATE` | 1 = analog fast path `cmp_hard` → latch, bypassing `HARD_N` and the inrush mask (`MODE.FAST_EN`, reset 0) |
@@ -150,11 +159,15 @@ There is no reset pin. The digital reset is asserted asynchronously when
 cycles after both are high. `EN` low therefore restores all registers to
 their reset values; a host that changes the configuration must rewrite it
 after each `EN` cycle. With no host at all the chip runs as a breaker on the
-reset values of section 4, which are chosen for that case:
+reset values of section 4, which are chosen for that case, **provided the board
+pulls `EN`, `SCLK` and `SDI` down** (the input pads have no pull and no hysteresis;
+noise on floating `SCLK`/`SDI` can complete write frames, e.g. to `OSC_CTRL` or
+`MODE`) and an independent load-bus inhibit covers power-up (`G1_TOP_LEVEL_SPECIFICATION.md`
+§6 P2, P8; `../review/redteam-20260925/ELECTRICAL_SYSTEM.md` M4):
 
 | Behaviour with no serial traffic | Reset value |
 | --- | --- |
-| hard threshold | code 0xFE (49.8 mV shunt, 2.0 × nominal), 4 consecutive comparator decisions (0.8 µs) |
+| hard threshold | code 0xFE (49.8 mV shunt nominal code value, 2.0 × nominal; the **effective** hard threshold is 40–56 LSB, about 8–11 mV, below the code in simulation, i.e. about 39–42 mV at 0xFE: `G1_TOP_LEVEL_SPECIFICATION.md` §4/§6), 4 consecutive comparator decisions (0.8 µs) |
 | soft threshold | code 0x99 (30.0 mV shunt, 1.2 × nominal), trip-off window ~1 ms, symmetric up/down |
 | analog fast path | off (`FAST_EN` = 0); oscillator on, trim mid code; sensor on, PTAT mode |
 | inrush mask after `EN` | ~1 ms |
@@ -171,8 +184,12 @@ Reserved bits read 0 and must be written 0.
 copies the `_H` byte into a holding register in the same `osc_clk` cycle, and
 the following `_H` read returns that copy, so the pair is consistent even if
 the counter increments between the two frames. Writing 16-bit configuration
-values (`SOFT_TIME`) takes effect byte by byte; write `_H` then `_L`, or write
-while the soft path is disabled.
+values (`SOFT_TIME`) takes effect byte by byte. **Clear `MODE.SOFT_EN` while
+writing `SOFT_TIME`** and set it again afterwards: no byte order is safe in both
+directions (for 0x0100 → 0x00FF, `_H` first passes through 0x0000, which trips on
+the first sample; for 0x00FF → 0x0100, `_L` first does the same)
+(`../review/redteam-20260925/DIGITAL.md` S2). The earlier "write `_H` then `_L`"
+rule is withdrawn.
 
 ### 4.1 Identification
 
@@ -186,12 +203,12 @@ while the soft path is disabled.
 | Addr | Name | Access | Reset | Description |
 | --- | --- | --- | --- | --- |
 | 0x02 | `DAC_SOFT` | RW | 0x99 | soft threshold DAC code, fraction of the shunt full scale (0.196 mV/LSB, 50 mV at 0xFF); 0x99 = 30.0 mV. The code driven to the DAC is `DAC_SOFT` − hysteresis + `SENSE_OFS` (0x2A) |
-| 0x03 | `DAC_HARD` | RW | 0xFE | hard threshold DAC code, same scale; 0xFE = 49.8 mV. Driven as `DAC_HARD` + `SENSE_OFS` (0x2B) |
+| 0x03 | `DAC_HARD` | RW | 0xFE | hard threshold DAC code, same scale; 0xFE = 49.8 mV code value (effective threshold 40–56 LSB lower in simulation; calibrate per `G1_TOP_LEVEL_SPECIFICATION.md` §6). Driven as `DAC_HARD` + `SENSE_OFS` (0x2B) |
 | 0x04 | `SOFT_TIME_L` | RW | 0x27 | soft trip-off window, low byte |
 | 0x05 | `SOFT_TIME_H` | RW | 0x00 | soft trip-off window, high byte. Window = `SOFT_TIME` × 256 `osc_clk` cycles: 25.6 µs per LSB, 0x0027 = 9984 cycles ≈ 1.0 ms, 0x030D ≈ 20 ms, maximum 0xFFFF ≈ 1.68 s. 0x0000 trips on the first sample above threshold. |
 | 0x06 | `SOFT_CFG` | RW | 0x00 | bits 1:0 `DECAY`: rate at which the soft counter counts down while `cmp_soft` is low: 0 = 1 per sample (symmetric), 1 = 1 per 4 samples, 2 = 1 per 16, 3 = 1 per 64. Bit 2 `HYST_EN`: while the soft counter is above zero, `dac_soft` is lowered by 1 LSB (bit 3 = 0) or 2 LSB (bit 3 `HYST_2` = 1), giving digital hysteresis on the soft comparator. Bits 7:4 reserved. |
 | 0x07 | `HARD_N` | RW | 0x04 | hard path: trip when `cmp_hard` has been high for `HARD_N` consecutive comparator decisions (one per `cmp_clk` period = 2 `osc_clk` = 200 ns; 1 to 255; 0 behaves as 1). Counter clears on any low decision. 0x04 = 0.8 µs, 0xFF = 51 µs. |
-| 0x08 | `INRUSH` | RW | 0x14 | inrush mask: after reset release (`EN` rising) and after every retrigger re-enable, both trip paths are masked for `INRUSH` × 512 cycles: 51.2 µs per LSB, 0x14 = 10240 cycles ≈ 1.0 ms, 0xC3 ≈ 10 ms. 0 = no mask. |
+| 0x08 | `INRUSH` | RW | 0x14 | inrush mask: after reset release (`EN` rising) and after every retrigger re-enable, both trip paths are masked for `INRUSH` × 512 cycles: 51.2 µs per LSB, 0x14 = 10240 cycles ≈ 1.0 ms, 0xC3 ≈ 10 ms. 0 = no mask. **Increase `INRUSH` only with the external inhibit asserted**, then wait for `STATUS.INRUSH_ACTIVE`=0 before releasing it: the inrush counter stops at the old limit, so a larger value re-opens the mask while armed (hard path blind for up to (255−old)×512 cycles, about 13 ms; `DIGITAL.md` M2). |
 | 0x09 | `HOLD_TIME` | RW | 0x0C | retrigger hold: time the gate stays off after a trip before re-enabling, `HOLD_TIME` × 8192 cycles: 0.82 ms per LSB, 0x0C ≈ 9.8 ms, 0xF4 ≈ 200 ms. 0 behaves as 1. Also the cool-down after which a successful re-enable resets the retry count. |
 | 0x0A | `RETRY_MAX` | RW | 0x03 | retrigger give-up count: number of automatic re-enables before the breaker falls back to latched behaviour. 0xFF = unlimited. |
 
@@ -199,7 +216,7 @@ while the soft path is disabled.
 
 | Addr | Name | Access | Reset | Description |
 | --- | --- | --- | --- | --- |
-| 0x0B | `MODE` | RW | 0x03 | bit 0 `SOFT_EN`, bit 1 `HARD_EN`: enable each trip path. Bit 2 `RETRIG`: 0 = latched (trip holds until `CLEAR` or `EN` cycle), 1 = retrigger after `HOLD_TIME`, up to `RETRY_MAX` times. Bit 3 `TRIP_SET_SEL`: hard comparator reference from the `TRIP_SET` pad. Bit 4 `FORCE_TRIP`: level; while 1 the breaker is tripped with cause "forced" (a `CLEAR` while it is set re-trips at once). Bit 5 `FAST_EN` (v1.1): enable the G1_GATE analog fast path, `cmp_hard` sets the 3.3 V latch directly with no filter and no inrush mask; the core adopts the trip (cause "hard"). Bits 7:6 reserved. |
+| 0x0B | `MODE` | RW | 0x03 | bit 0 `SOFT_EN`, bit 1 `HARD_EN`: enable each trip path. Bit 2 `RETRIG`: 0 = latched (trip holds until `CLEAR` or `EN` cycle), 1 = retrigger after `HOLD_TIME`, up to `RETRY_MAX` times. Bit 3 `TRIP_SET_SEL`: hard comparator reference from the `TRIP_SET` pad; **no effect on the chip of record** (the bit drives no load and the `TRIP_SET` pad net has no core load; canonical CDL, `DIGITAL.md` N2). Bit 4 `FORCE_TRIP`: level; while 1 the breaker is tripped with cause "forced" (a `CLEAR` while it is set re-trips at once). Bit 5 `FAST_EN` (v1.1): enable the G1_GATE analog fast path, `cmp_hard` sets the 3.3 V latch directly with no filter and no inrush mask; the core adopts the trip (cause "hard"). Bits 7:6 reserved. |
 | 0x0C | `CTRL` | WO | — | self-clearing command bits. Bit 0 `CLEAR`: clear the trip latch, cause, retry count and hold timer; the inrush mask does **not** restart. Bit 1 `CLR_TRIP_CNT`: zero `TRIP_CNT`. Bit 2 `CLR_PEAK`: zero `SOFT_PEAK`. Bit 3 `CLR_OSC_CNT`: zero `OSC_CNT`. Others ignored. |
 | 0x0D | `STATUS` | RO | 0x80 | bit 0 `TRIPPED`. Bits 2:1 `CAUSE`: 0 none, 1 soft, 2 hard, 3 forced (latched at the trip, cleared with the latch). Bit 3 `INRUSH_ACTIVE`. Bit 4 `HOLDING`: in retrigger hold. Bit 5 `GAVE_UP`: retries exhausted, now latched. Bit 6 `SOFT_ARMED`: soft counter above zero. Bit 7 `EN`: always reads 1 (the register is unreadable while `EN` is low). |
 | 0x0E | `STATUS2` | RO | — | bit 0 `CMP_SOFT`, bit 1 `CMP_HARD`: synchronised comparator inputs. Bit 2 `GATE_EN`. Bit 3 `TRIPPED_A` (v1.1): synchronised state of the G1_GATE 3.3 V trip latch. Bits 7:4 `RETRY_CNT`: re-enables performed in the current retrigger sequence (saturates at 15 for display). |
@@ -235,7 +252,7 @@ while the soft path is disabled.
 | Addr | Name | Access | Reset | Description |
 | --- | --- | --- | --- | --- |
 | 0x27 | `SENSE_OFS` | RW | 0x00 | sense-path offset trim, 8-bit two's complement (−128 to +127). Added to both DAC codes before they are driven, with saturation at 0 and 255; LSB = 0.196 mV shunt-referred, the register spans −25.1 to +24.9 mV, but the usable DAC range is smaller near either endpoint (historical revision-A SENSE MC σ≈4 mV). Applied after the digital hysteresis on the soft code. Available correction is limited by each nominal threshold: at reset hard code 254 only +1 is usable without clipping. With a bracketed interior known-current crossing, use crossing code minus ideal code (positive crossing shift requires positive correction); see the top-level acceptance contract. Analog calibration qualification is incomplete. |
-| 0x28 | `OSC_CTRL` | RW | 0x18 | bits 3:0 `OSC_TRIM`: G1_OSC capacitor trim, 8 = nominal, higher = slower (~2.7 %/LSB, `blocks/g1_osc/README.md`). Bit 4 `OSC_EN`: 1 = oscillator runs. **Writing 0 stops the clock of the core itself**: the register file, timers and scrubber halt and the serial interface can no longer complete a write; the only recovery is an `EN` cycle or power-on, which restores the reset value. Provided for test only. Bits 7:5 reserved. |
+| 0x28 | `OSC_CTRL` | RW | 0x18 | bits 3:0 `OSC_TRIM`: G1_OSC capacitor trim, 8 = nominal, higher = slower (~2.7 %/LSB, `blocks/g1_osc/README.md`). Bit 4 `OSC_EN`: 1 = oscillator runs. **Writing 0 stops the clock of the core itself**: the register file, timers and scrubber halt and the serial interface can no longer complete a write; the only recovery is an `EN` cycle or power-on, which restores the reset value. Provided for test only. **With the clock stopped, all protection is lost, the analog fast path included** (both comparators are strobed by `cmp_clk`), and serial reads return the value of the last read before the stop. Host watchdog: alternate `CHIP_ID` and `OSC_CNT_L` reads; if they stop changing, drop `EN` and assert the external inhibit (`DIGITAL.md` M1). Bits 7:5 reserved. |
 | 0x29 | `TEMP_CTRL` | RW | 0x01 | bit 0 `T2F_EN`: 1 = sensor oscillator runs, `TEMP_OUT` toggles. Bit 1 `T2F_MODE`: 0 = PTAT (f ∝ T), 1 = REF (f ≈ constant); the ratio of the two readings removes C, the threshold and the comparator delay. Bit 2 `BGR_R4`: 1 = bandgap HBT ratio test 1:4 (diagnostic; V<sub>REF</sub> and all thresholds fall by about 12 %, do not use while the breaker is armed). Bits 7:3 reserved. All three go to the 3.3 V domain through `g1_ls_up`. |
 | 0x2A | `DAC_SOFT_EFF` | RO | 0x99 | the code currently driven on `dac_soft[7:0]` (register − hysteresis + offset, saturated) |
 | 0x2B | `DAC_HARD_EFF` | RO | 0xFE | the code currently driven on `dac_hard[7:0]` |
@@ -292,7 +309,8 @@ not-yet-synchronised old latch state cannot re-trip. Adoption latency
 
 **Inrush mask.** For `INRUSH` × 512 cycles after reset release and after each
 retrigger re-enable, both counters are held at zero. `FORCE_TRIP` is not
-masked.
+masked. The mask also re-opens when `INRUSH` is raised while armed (the counter
+stops at the old limit); change `INRUSH` only under the external inhibit (0x08).
 
 **Latched mode** (`RETRIG` = 0): `trip` (and `trip_d`) stays 1, `gate_en` 0,
 `fault_n` 0 until `CTRL.CLEAR` or an `EN` cycle.

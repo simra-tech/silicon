@@ -25,7 +25,7 @@ in `tapeoutbench-eda` sha256:ddeb6957… (`flow/run.sh`). The PDK layer-properti
 | Cells | 306 | confirmed |
 | Filename, compression, one top cell per submission, GDS version | `g1_chip_top_1414.gds`, uncompressed | assumed |
 | Size limit of the file | 84.5 MB | assumed acceptable |
-| The file is in Git | no: 84.5 MB, and it is untracked at the time of writing. The sha256 above is the identity of the file. | open: owner decides how the file is delivered and archived |
+| The file is in Git | yes: tracked since commit `10ee4868` (corrected 2026-09-25; the earlier text said untracked). The sha256 above is the identity of the file. | confirmed. How the file is delivered to IHP: open |
 
 ## 2. Layer usage (from the GDS)
 
@@ -140,9 +140,9 @@ The file SHA-256 was rechecked after all runs and was unchanged.
 | Density | `run_drc.py --density_only` | passed, 0 markers (31 s) | `density/` |
 | Antenna | `run_drc.py --antenna_only --antenna` | passed, 0 markers (116 s); the R14 `sg13g2_IOPadIn` flag did not appear on this file | `antenna/` |
 | Seal.* and Pad.* rules | inside the main/maximal DRC | passed: every `Seal.*` and `Pad.*` rule reports 0 errors | `drc_maximal/run.log` |
-| LVS, full chip, canonical unprojected reference | PDK KLayout LVS, `--top_lvl_pins --spice_comments` | failed: "Netlists don't match"; 14 stock-named IO/level-shifter sub-cells NoMatch, top skipped (R13) | `lvs_canonical/pair_counts.json` |
+| LVS, full chip, canonical unprojected reference | PDK KLayout LVS, `--top_lvl_pins --spice_comments` | failed; cause: substrate/tap/diode netlist semantics of the IO-cell reference in the PDK, reproduced with stock cells and with IHP's latest `dev` deck and library; the design-local IO copies match IHP's `dev` library on every layer (PR #1223); upstream issues #1218/#1130. "Netlists don't match"; 14 stock-named IO/level-shifter sub-cells NoMatch, top skipped (R13) | `lvs_canonical/pair_counts.json`; [`review/upstream/evidence/`](upstream/evidence/README.md) |
 | LVS, full chip, projected reference | same options, comparison-only reference (3 all-VDD pad dummy PMOS removed) | passed: 61 684/61 684 devices, 31 173 nets, 22/22 pins, 0 warnings | `lvs_projected/pair_counts.json` |
-| Block-to-netlist map | per-layer XOR of each chip block cell vs. its named block GDS | passed (XOR empty) for SENSE, TRIP comparators and remainder, OSC, BGR, T2F, GATE, digital, level shifters, DOSE, DUT; IO ring not XOR-checked | `blockmap/` |
+| Block-to-netlist map | per-layer XOR of each chip block cell vs. its named block GDS | passed (XOR empty) for SENSE, TRIP comparators and remainder, OSC, BGR, T2F, GATE, digital, level shifters, DOSE, DUT. IO ring: the PolyRes cells `g1_io_*_polyres_r1` are identical to IHP `dev` cells (2026-09-25); rest of the ring not XOR-checked | `blockmap/`; `upstream/evidence/xor/` |
 | Off-grid, angle | inside the DRC | passed (part of main/maximal, 0 markers) | `drc_main/`, `drc_maximal/` |
 | Digital timing (macro + routed signal netlist) | OpenSTA 3.1.0 | passed setup/hold, 3 corners; failed annotation / slew / fanout items dispositioned | `blocks/g1_ctrl/reports/sta_merged_sdc_20260924/README.md` |
 | Full-chip PEX and timing of the final GDS | — | not run | |
@@ -152,24 +152,29 @@ The file SHA-256 was rechecked after all runs and was unchanged.
 
 | Constraint | Source | Status |
 | --- | --- | --- |
-| **VDD (1.2 V) must come up before or together with IOVDD (3.3 V).** With IOVDD first and EN low, the schematic simulation drove GATE to 3.30 V; with a 10 kΩ pull-down, still 3.29 V. | `review/G1_DESIGN_REVIEW.md` (GATE/power sequencing) | simulated, schematic only. Post-layout power-up not run |
-| **External pull-down or inhibit on GATE during power-up**. VDD-first with the pull-down kept GATE low; VDD-first without it did not converge. | same | simulated, schematic only |
+| **VDD (1.2 V) must come up before or together with IOVDD (3.3 V).** On the chip netlists, IO-first drove `GATE` to 3.28–3.30 V for 4.2–4.4 µs until `VDD` was up, with or without a 10 kΩ pull-down, at tt/27, ss/125 and ff/−40 °C (`--pads nodcn`). | `blocks/g1_top/sim/campaigns/RESULTS_20260925.md` §5; spec §6 P1 | simulated on the chip netlists (behavioural front end); IO-first with stock pads not run to completion |
+| **Independent load-bus inhibit during every power-up, whatever the order** (corrected 2026-09-25): with the `EN` pad model the `EN` input reads enabled and the `GATE` latch state is undefined until `IOVDD` > 1.1 V (`review/redteam-20260925/ELECTRICAL_SYSTEM.md` M1). Pull-downs on `EN`/`SCLK`/`SDI`, a clean fast `EN` edge, a `VDD` supervisor and a Kelvin-integrity check: spec §6 P8, P9. Core-first on the chip netlists (ideal `EN` copy): `GATE` ≤ 0.0725 V without pull-down (`gB_pex_c1414_beh_tt_27C_clockfix_functional_c1414n1.log`), ≤ 0.0090 V with 10 kΩ (`gB_pd`). With IO first only the independent load-bus inhibit holds the FET off. | `blocks/g1_top/README.md`; spec §6 P2 | simulated on the chip netlists. (The earlier "VDD-first without it did not converge" came from the schematic 1350 µm review, `G1_DESIGN_REVIEW.md`, and is superseded.) |
 | **VDDA (pin 7) tied to the IOVDD 3.3 V rail on the board.** VDDA must not exceed IOVDD by more than a diode drop. | `specification/G1_TOP_LEVEL_SPECIFICATION.md` (pin 7, D14) | specified |
-| EN low at power-up (EN is also the digital reset) | register map | specified |
+| EN low at power-up (EN is the only digital reset; no pad pull-down) | register map; spec §6 P6 | specified |
+| Every EN rise re-opens the ~1 ms inrush window with `FAST_EN`=0 and defaults restored | spec §6 P7 | accepted design behaviour covered by the external inhibit, pending owner confirmation |
+| Host rules H1–H5: clock watchdog (`CHIP_ID`/`OSC_CNT_L`), `INRUSH` changes only under the inhibit, read-back and ≥ 128-cycle idle for safety-relevant writes, `SOFT_TIME` only with `SOFT_EN` cleared, periodic configuration rewrite | spec §6; `review/redteam-20260925/DIGITAL.md` | specified (host contract) |
 | SCLK ≤ f_OSC; host drives SDI ≥ 2 ns after the falling SCLK edge | SDC / register map | specified (STA assumption) |
 
 ## 8. Open foundry questions
 
-1. **R13, IO-cell LVS:** the PDK KLayout LVS deck does not match the stock `sg13g2_io` cells
-   against the PDK's own CDL at this commit (the `rppd` of the secondary protection is not extracted; rails are joined only by
-   abutment), so a canonical full-chip LVS through the ring cannot pass. Which LVS result
-   does IHP accept? (`PLAN.md` R13, `blocks/g1_padring/reports/lvs_reference/`)
+1. **R13, IO-cell LVS:** canonical full-chip LVS failed; cause: substrate/tap/diode netlist semantics of the IO-cell reference in the PDK, reproduced with stock cells and with IHP's latest `dev` deck and library; the design-local IO copies match IHP's `dev` library on every layer (PR #1223); upstream issues #1218/#1130. The IO cells fail cell-level LVS
+   against the PDK's own CDL even with the `dev` deck and library, where the `rppd` is now extracted:
+   `sub!` is local in every IO subcircuit, and ptap and antenna-diode records do not pair; rails
+   are joined only by abutment. Which LVS result does IHP accept? (`PLAN.md` R13,
+   [`upstream/evidence/`](upstream/evidence/README.md), draft report `upstream/ihp-io-lvs-issue-draft.md`,
+   `blocks/g1_padring/reports/lvs_reference/`)
 2. **R14, antenna deck:** `Ant.e` flags every current-revision `sg13g2_IOPadIn` because the
    receiver gate is tied to the `vdd` rail; the previous cell revision is clean. Is this a
    deck/library artefact that IHP waives? (`blocks/g1_padring/reports/antenna_reference/`)
 3. **PolyRes markers on design-local IO cell copies:** `g1_io_rc_polyres_r1` and
-   `g1_io_secondary_polyres_r1` (and their aliases) are project copies that carry PolyRes 128/0. Is that acceptable to IHP, and is
-   it consistent with the stock cells, where only the Clamp cells carry 128/0? Should the stock cells be used unchanged?
+   `g1_io_secondary_polyres_r1` (and their aliases) are project copies that carry PolyRes 128/0. They are identical on every
+   layer to `sg13g2_RCClampResistor` / `sg13g2_SecondaryProtection` in IHP's `dev` library after PR #1223 (not yet on `main`).
+   Is that acceptable to IHP for a `84374023`-based submission?
 4. **ELT not included:** the enclosed-layout NMOS variant failed `Gat.f` and is not in the
    chip. Pad 21 `D_ELT` is a legacy name for the HV NMOS drain of the default dose pair.
    Tell IHP so that no ELT-specific handling is expected.
@@ -182,6 +187,7 @@ The file SHA-256 was rechecked after all runs and was unchanged.
 - [ ] Final GDS identity frozen. If it changes, re-run `gds_inventory.py` and the bond-map match, and update every sha256 here.
 - [x] Section 6 filled from `signoff-1414-20260924/`, with passed / failed / not run as reported.
 - [ ] Bond map rebound to the final sha256 as a new CSV revision.
+- [ ] Canonical LVS: failed; cause: substrate/tap/diode netlist semantics of the IO-cell reference in the PDK, reproduced with stock cells and with IHP's latest `dev` deck and library; the design-local IO copies match IHP's `dev` library on every layer (PR #1223); upstream issues #1218/#1130. IHP's acceptance of the projected-reference result (§8 question 1): open.
 - [ ] Stale seal-ring registration text (section 3) resolved: corrected in a new GDS with a full sign-off rerun, or disclosed to IHP.
 - [ ] IHP's official instructions added, and every "assumed" item resolved.
 - [ ] A human signs and submits. Agents do not push or submit.

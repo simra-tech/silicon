@@ -128,7 +128,10 @@ The rppd-only variant gives the same numbers. The primary-only variant gives the
 **Netlist.** `../qualification/candidates/bgr_loop24_qref4_r253p465_hv06/bgr_loop24_qref4_r253p465_hv06.spice`,
 SHA-256 `586ffb58b6af31c77a2e7cbcb83b173ffa4713ec62401da30901c5a7e606283b` (336 MOS, 301 HBT, 399 R).
 It carries the 329 model-level capacitors inherited from the older extraction. It is **not a native
-capacitance extraction of the placed layout**, which does not exist yet.
+capacitance extraction of the placed layout**. (Update 2026-09-25: that extraction now exists,
+`../postlayout/g1_bgr586_pex.spice`, sha256 `01227a3d…`, from `bank.gds` `e3ecfc62…`, kpex 0.3.12 2.5D CC;
+see `../postlayout/README_bgr586_pex.md`. It is DC-identical to 586. The checks in this section were
+run on the 586 schematic-level netlist and were **not repeated** on the extraction.)
 
 **Fixture.** The fixture, corners and tests are identical to the sections above: stock pad, 613 Ω route,
 100 kΩ + 2 pF series internal load, 1 Ω ESR. Every startup was also run with the pad-less stand-in
@@ -208,4 +211,5 @@ took 32–66 s per deck, and a 586 `.op` at three temperatures takes 20 s.
 | Startup with stock pad, tt27 0 nF and ss125 all | **failed to converge** (trap and gear); pad-less stand-in passed |
 | Pad component attribution on 586 | not run (carried over from Sep-19) |
 | Step recovery, 3 corners × 0/10/100 nF | passed: single pole, no ringing |
-| Native capacitance extraction of the placed 586 layout, loop-gain/pole-zero, real downstream loads | not run |
+| Native capacitance extraction of the placed 586 layout | run 2026-09-24 (`../postlayout/README_bgr586_pex.md`); DC/TC identical to 586 |
+| This section's start-up and step-recovery checks on the extraction; loop-gain/pole-zero; real downstream loads | not run |

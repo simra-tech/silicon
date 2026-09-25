@@ -1,7 +1,33 @@
 # G1_GATE — trip latch, level shifters and GATE/FAULT_N pad drive
 
-Current verification status (2026-09-22): **not release-qualified**. The original
-IO-first/missing-core unsafe-high failure remains open; a10kΩ pull-down does not
+## Variant on the chip of record (2026-09-25)
+
+The GATE core placed in the chip of record (`g1_chip_top_1414.gds`, `629d303a…`, cell `retained_g1_gate`)
+is the **baseline** macro described below, with the `sg13g2_IOPadOut30mA` output pads in the ring. The
+isolated IO-powered buffer candidate (`sim/candidates/io_buffer/`) is **not** on the chip.
+
+| Item | Path (block-relative) | Identity |
+| --- | --- | --- |
+| Layout (non-fill layers) | `layout/g1_gate.gds` (filled integration file `layout/g1_gate_filled.gds`) | `ddf2c44a…` (`ba9d1311…`) |
+| LVS reference | `layout/g1_gate.cdl` | `27548c03…` |
+| Schematic netlist | `sim/netlist/g1_gate.spice` | `846a55e0…` |
+| Capacitance extraction used by every chip-level deck | `sim/postlayout/g1_gate_pex.spice` (from `reports/pex/cc/g1_gate_k25d_pex_netlist.spice`, `e136c884…`) | binding of the GATE extraction to the chip layout is being established (see `sim/postlayout/README_chip_binding_20260925.md`) |
+
+| Check / number (baseline GATE) | Status | Evidence |
+| --- | --- | --- |
+| Block DRC/LVS of `g1_gate.gds` | passed on 2026-09-19 (78 devices). The unfilled DRC/LVS logs (`*_2026_09_19_07_34_33`, 09:34 local) predate the last write of `g1_gate.gds` (14:38); the block checks were **not re-run** on `ddf2c44a` | "Checks" below |
+| Chip-level DRC, density and antenna on `629d303a…` | passed (0 markers) | `../g1_padring/reports/signoff-1414-20260924/README.md` |
+| Chip netlists, hard faults (72/72 matrix cells) | `GATE` < 1 V 1.31–1.36 µs after the fault (simulated). In these trip decks `GATE`/`FAULT_N` are **fitted behavioural output-pad drivers**, not the PDK pad model | `../g1_top/sim/campaigns/RESULTS_20260925.md` §1 |
+| Chip netlists, core-first power-up (PDK pad models, `pads nodcn`) | passed: `GATE` ≤ 0.0029 V (ss/125 °C), 0.0135 V (ff/−40 °C); stock pads tt/27 °C 0.0725 V, with 10 kΩ 0.0090 V (simulated) | same §5 |
+| Chip netlists, IO-first power-up, with or without 10 kΩ | **failed, as expected**: `GATE` 3.28–3.30 V for 4.2–4.4 µs until `VDD` is up (simulated). This is the IO-cell property that board rule P1 (core before or with IO) and the P2 load-bus inhibit exclude | same §5 |
+| IO-first with stock pads at tt/27 °C | **not run to completion** (timeout) | same §5 |
+
+The IO-first result is no longer an open design question: it is a characterised property of the
+`sg13g2_io` output pads, handled by the board rules. The status paragraph and the sections below
+(2026-09-19 to 2026-09-22) are historical.
+
+Historical verification status (2026-09-22; superseded by the section above): **not release-qualified**. The original
+IO-first/missing-core unsafe-high failure was then open (now a board requirement, P1/P2); a10kΩ pull-down does not
 fix it. The isolated IO-powered buffer candidate is unadopted: nominal EN-low
 passes do not qualify arming, real-FET loading or protection. Its unchanged-pad
 numerical reduction still fails to complete, including the fresh bounded200pA
@@ -9,7 +35,7 @@ diagnostic. See [current diagnostics](sim/candidates/io_buffer/DIAGNOSTICS_20260
 Historical completed checks below retain their stated scope and do not waive
 these open gates or establish physical measurements.
 
-State: **schematic frozen, simulated at schematic level with the PDK IO-cell SPICE models
+State as of 2026-09-19: **schematic frozen, simulated at schematic level with the PDK IO-cell SPICE models
 (function, timing into 5 nF, power-up with supply ramps in both orders, corners); layout generated,
 DRC-clean (full rule set) and LVS-clean (2026-09-19); kpex 2.5D capacitance extraction and
 post-layout simulation done; macro fill added, DRC/LVS repeated clean on the filled GDS (see
@@ -233,14 +259,14 @@ the same corner pad-free passes the full state table (1.79 ns / 2.97 ns). The wh
 | --- | --- | --- |
 | Schematic simulation, nominal (state table, delays, pad discharge) | passed | `sim/results_gate.txt` |
 | Corners / temperature | passed at tt −40 °C and ff 3.6 V/1.32 V −40 °C with pads; ss 3.0 V/1.08 V 175 °C passed **without** the pad model only (pad model does not converge there) | `sim/results_gate.txt` |
-| Power-up with supply ramps (both orders, with/without external 10 kΩ pull-down) | 3 of 4 run; **GATE high while VDD absent** (IO-cell property, see finding); order B without pull-down not converged | `sim/results_gate_pwr.txt` |
+| Power-up with supply ramps (both orders, with/without external 10 kΩ pull-down), schematic | 3 of 4 run; **GATE high while VDD absent** (IO-cell property, see finding); order B without pull-down not converged at schematic level (it passed later on the chip netlists, see the section at the top) | `sim/results_gate_pwr.txt` |
 | DRC `g1_gate`, `run_drc.py --run_mode=deep --no_density`, full rule set incl. extra rules | **passed, 0 errors** | `reports/drc/drc_run_2026_09_19_07_34_33.log`, `reports/drc/g1_gate_g1_gate_main.log` |
 | LVS `g1_gate` vs `layout/g1_gate.cdl`, `run_lvs.py --run_mode=deep --no_series_res` | **passed** (78 devices) | `reports/lvs/lvs_run_2026_09_19_07_34_33.log`, `reports/lvs/g1_gate_extracted.cir` |
 | DRC `g1_gate_filled` (with fill), same options, full rule set | **passed, 0 errors** | `reports/drc_fill/drc_run_2026_09_19_12_39_20.log` |
 | LVS `g1_gate_filled` vs `layout/g1_gate.cdl` | **passed**; same 78 devices (element numbering differs only) | `reports/lvs_fill/lvs_run_2026_09_19_12_39_51.log`, `reports/lvs_fill/g1_gate_filled_extracted.cir` |
 | PEX, kpex 0.3.12 2.5D `--mode CC` | run (555 capacitors, 69 fF total); fill is excluded from PEX (kpex reads datatype 0 only, shown on G1_SENSE: identical capacitor values with and without fill) | `reports/pex/cc/kpex_plain.log`, `reports/pex/cc/g1_gate_k25d_pex_netlist.spice` |
 | Post-layout simulation (tb_gate on the kpex netlist): tt 27 °C, tt −40 °C, ff 3.6 V/1.32 V −40 °C (with pads and pad-free), ss 3.0 V/1.08 V 175 °C pad-free | run, see table | `sim/postlayout/results_postlayout.txt` |
-| Density, antenna | not run (chip level) | — |
+| Density, antenna | not run at block level; **passed** at chip level on `629d303a…` (0 markers) | `../g1_padring/reports/signoff-1414-20260924/README.md` |
 
 ## Unverified
 
@@ -250,8 +276,8 @@ the same corner pad-free passes the full state table (1.79 ns / 2.97 ns). The wh
 - Post-layout at ff/3.6 V/−40 °C with the pad model (stops at 3.4 µs, see above) and at ss/175 °C with
   the pad model (never converged, schematic either); the pad-free runs cover the block's own logic.
 - Wiring resistance (kpex RC mode unusable at this version; estimated negligible, see Post-layout).
-- Power-up simulation was not repeated on the post-layout netlist (the finding is an IO-cell property).
-- Density and antenna (chip level); the block uses nothing above Metal3.
+- Power-up on the post-layout netlist: run later, in the 2026-09-21 detailed-pad PEX power screen (below) and at chip level (section at the top); arbitrary power skew is not qualified.
+- Density and antenna: passed at chip level on `629d303a…`; the block uses nothing above Metal3.
 
 ## 2026-09-21 continuation evidence
 

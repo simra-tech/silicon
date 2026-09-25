@@ -1,6 +1,14 @@
 # G1_TOP — chip-level simulation of the breaker path
 
-State: **chip-level mixed-signal simulation of the breaker path built and run (2026-09-19), schematic
+> **Current state (2026-09-25).** The chip-of-record results are in the section
+> "2026-09-24 chip-of-record deck (`--blockset c1414`)" below and in
+> [sim/campaigns/RESULTS_20260925.md](sim/campaigns/RESULTS_20260925.md). The State
+> paragraph that follows, the "What it is" section and the clock description there
+> (9.919 MHz schematic, 8.994 MHz post-layout) describe the **legacy** 2026-09-19 deck
+> on the superseded Sep-19 block netlists; they are kept as history. Layout of the
+> chip of record exists (`../g1_padring/layout/g1_chip_top_1414.gds`, `629d303a…`).
+
+Legacy state (2026-09-19): **chip-level mixed-signal simulation of the breaker path built and run (2026-09-19), schematic
 netlists of the analog blocks**: external shunt and load → `SENSE_P`/`SENSE_N` analog pads (PDK
 `sg13g2_IOPadAnalog` models) → G1_BGR → G1_SENSE → G1_TRIP → G1_GATE at transistor level → external
 FET gate (5 nF + 10 Ω) → load switch, closed loop, with the real digital RTL (`g1_digital`,
@@ -40,7 +48,7 @@ Deck headers and logs name every netlist used and carry a `NOTE`/`WARNING`/`OVER
 | G1_SENSE (comp45 + R100) | `../g1_trip/sim/qualification/joint586-softinputpair4-nf4-roomcal-s73133-20260924-r1/sense.spice` `bb933fda` | `../g1_sense/sim/postlayout/g1_sense_r100_partialc.spice` `ffb14762` | partial-field C; OTA internals exposed as `__pex_*` ports; unbound VSUBS C excluded; field acceptance not established |
 | G1_TRIP (regenpair4 + NF4) | `…/joint586-softinputpair4-nf4-roomcal-s73133-20260924-r1/trip.spice` `f5f0a90a` | `../g1_trip/sim/postlayout/g1_trip_nf4_pex.spice` `ba86b7b2` | NF4 `sch` has no parasitics |
 | G1_OSC (R0.95) | none (falls back to `pex`, with a WARNING) | `../g1_osc/sim/qualification/fulltree_r095_load_20260924/common/osc.spice` `8efd7a09` (isolated macro CPEX) | the ideal clock runs at the loaded nominal trim-8 frequency 9.436194721 MHz |
-| G1_GATE | Sep-19 `g1_gate.spice` | Sep-19 `g1_gate_pex.spice` | baseline on the chip |
+| G1_GATE | Sep-19 `g1_gate.spice` | Sep-19 `g1_gate_pex.spice` | baseline on the chip; this extraction is bound to the chip GATE layout `ddf2c44a` by XOR, block LVS and re-extraction (`../g1_gate/sim/postlayout/README_chip_binding_20260925.md`) |
 | G1_T2F + 2 × `g1_ls_up` (`--t2f tl` only) | — | `../g1_t2f/sim/postlayout/g1_t2f_pex.spice` `441edabc`; `../g1_ctrl/ls/sim/netlist/g1_ls_up.spice` `5567c807` | wired as `g1_chip_top_1414.cdl`; `fout` into 1 pF, `TEMP_OUT` pad not modelled |
 
 New options (`python3 run_top.py --help`):
@@ -62,21 +70,41 @@ serial stimulus are removed.
 
 Connectivity audit: `sim/check_cdl_vs_deck.py` compares every pin of every
 block instance in `g1_chip_top_1414.cdl` with the generated deck (default: the
-compact `c_mid` c1414 deck). Rerun 2026-09-24: exit 0, **0 unexplained differences**.
-Every remaining difference is documented (single board ground for `VSS`/`IOVSS`,
-`EN` via the `d_source`). The device fingerprints of `g1_bgr`, `g1_sense`,
-`g1_trip` and `g1_gate` are identical to the CDL (1036/159/2305/78 devices).
+compact `c_mid` `c1414v1` deck). Rerun 2026-09-25 on the committed `c1414v1` and
+`c1414fullc` decks, output committed as
+[sim/campaigns/cdl_vs_deck_20260925.txt](sim/campaigns/cdl_vs_deck_20260925.txt):
+exit 0 on both, **0 unexplained differences**. Every remaining difference is
+documented (single board ground for `VSS`/`IOVSS`, `EN` via the `d_source`). Device
+fingerprints: `c1414v1` (BGR586/TRIP schematic) identical to the CDL for `g1_bgr`,
+`g1_sense`, `g1_trip`, `g1_gate` (1036/159/2305/78 devices); `c1414fullc` identical
+except `g1_trip` (extraction lists 1080 `rppd` vs 1070 and 57 vs 43 `sg13_lv_nmos`,
+split/folded devices: the NF4 soft pair is drawn as four fingers and the string
+resistors as series segments, which the extractor lists individually; the macro LVS
+pass on the same layout (`g1_trip/reports/pex/nf4/lvs_g1_trip.log`) shows the device
+sets are equivalent).
+
+Deck record: the generated deck of every c1414 run is committed under
+`sim/decks/<tag>.cir` and is the authoritative record of that run's netlist.
+2026-09-25 check: 279 of the 281 c1414 run JSONs in `sim/logs/` have a tracked
+deck whose SHA-256 equals the JSON `deck_sha256` (279/279 match); the other two
+(`*_cdlref1`) are not yet committed. Each run JSON also logs the runner version
+as `runner_sha256`. The c1414 runs used ten runner versions (`bc15450b`,
+`38fdf715`, `ac9c1c45`, `f9e56cae`, `d6bd5574`, `9147f75b`, `dcc31f41`,
+`25f47d21`, `8d87feef`, `4438037a`); only `bc15450b` is a committed
+`run_top.py`. A run is reproduced from its committed deck, not by regenerating it
+with the current runner.
 
 Results (simulated; tt, 27 °C unless the row says otherwise; logs in `sim/logs/`, summaries appended to `sim/results_top.txt`;
 the 2026-09-24/25 campaign tables are in [sim/campaigns/RESULTS_20260925.md](sim/campaigns/RESULTS_20260925.md)):
 
 | Case | Deck | Result | Status | Log |
 | --- | --- | --- | --- | --- |
-| c_mid compact (28 µs), 1.8 A/45 mV in-range hard fault, code 200 | `--netlist pex`, transistor-level front end | hard trip (cause 2); `GATE` < 1 V 1.345 µs, < 0.33 V 1.661 µs after the fault (legacy 1350 µm set: 1.410 µs) | passed | `c_mid_pex_c1414_tl_tt_27C_clockfix_compact_functional_c1414v1.log` |
+| c_mid compact (28 µs), 1.8 A/45 mV in-range hard fault, code 200 | `--netlist pex`, transistor-level front end, **BGR586 and TRIP NF4 extractions** (`c1414fullc`), ideal clock, fitted behavioural output pads | hard trip (cause 2); `GATE` < 1 V 1.34544 µs, < 0.33 V 1.66141 µs after the fault (legacy 1350 µm set: 1.410 µs) | passed | `c_mid_pex_c1414_tl_tt_27C_clockfix_compact_functional_c1414fullc.log` |
+| same, run tag `c1414v1` | `--netlist pex` requested, but **BGR586 and TRIP fell back to the schematic netlists** (JSON `blockset_warnings`: no pex netlist existed at launch); BGR `sch` carries 329 Sep-19 capacitors | hard trip (cause 2); `GATE` < 1 V 1.345 µs, < 0.33 V 1.661 µs | passed (schematic BGR/TRIP) | `c_mid_pex_c1414_tl_tt_27C_clockfix_compact_functional_c1414v1.log` |
 | b, 1.5× held, default `SOFT_TIME` (≈ 1 ms) | `--netlist pex --front beh` | soft trip (cause 1) at 1.059 ms; `GATE` < 1 V at 1059.37 µs | passed | `b_pex_c1414_beh_tt_27C_clockfix_functional_c1414n1.log` |
 | a, 1.5× for 100 µs then back | `--netlist pex --front beh` | no trip, `GATE` stays 3.3 V, `SOFT_PEAK` 3 | passed | `a_pex_c1414_beh_tt_27C_clockfix_functional_c1414n1.log` |
 | d, 100 µs bursts to 1.4× at 50 % duty | `--netlist pex --front beh` | no trip | passed | `d_pex_c1414_beh_tt_27C_clockfix_functional_c1414n1.log` |
-| gB, core first, EN low until 12 µs | `--netlist pex --front beh`, PDK pad models | `GATE` ≤ 0.0725 V while EN low; 3.3 V after EN | passed | `gB_pex_c1414_beh_tt_27C_clockfix_functional_c1414n1.log` |
+| gB, core first, EN low until 12 µs | `--netlist pex --front beh`, PDK pad models on `GATE`/`FAULT_N`, **ideal `EN` copy** (with the `EN` pad model the latch state is undefined until `IOVDD` > 1.1 V; inhibit required, `../../review/redteam-20260925/ELECTRICAL_SYSTEM.md` M1) | `GATE` ≤ 0.0725 V while EN low; 3.3 V after EN | passed | `gB_pex_c1414_beh_tt_27C_clockfix_functional_c1414n1.log` |
 | gB_pd, as gB with 10 kΩ `GATE` pull-down | same | `GATE` ≤ 0.0090 V while EN low | passed | `gB_pd_pex_c1414_beh_tt_27C_clockfix_functional_c1414n1.log` |
 | gA, gA_pd, IO first | same, `--pads nodcn`, `bgr=sch` (run tag `c1414pwr`; ss/125 °C and ff/−40 °C `_r3_c1414m`) | `GATE` 3.28–3.30 V for 4.2–4.4 µs while EN is low (from `IOVDD` up until `VDD` is up), with or without 10 kΩ pull-down; 1 A load flows. Stock pads (`c1414n1`): timeout | failed as a safety condition, expected: confirms P1; the pull-down alone does not hold `GATE` low. Details in [sim/campaigns/RESULTS_20260925.md](sim/campaigns/RESULTS_20260925.md) §5 | `gA*_pex_c1414_beh_*_padsnodcn_*` |
 | q prefix 4 µs | `--netlist pex` | completed | passed (prefix only) | `q_pex_c1414_tl_tt_27C_clockfix_t4_prefix_c1414v1.log` |
@@ -92,7 +120,7 @@ the 2026-09-24/25 campaign tables are in [sim/campaigns/RESULTS_20260925.md](sim
 | hard-threshold sweep at code 200 (39.25 mV), 1.10–1.70× nominal, tt/27 °C | run tags `c1414thr`, `c1414thr3` | no trip at ≤ 30.00 mV, hard trip at ≥ 31.25 mV: effective threshold 8.0–9.25 mV below the code | simulated characterization (calibration requirement, not a gate) | [sim/campaigns/RESULTS_20260925.md](sim/campaigns/RESULTS_20260925.md) §4 |
 | T2F on, q, tt at −40/27/125 °C, gear | night `q_t2f_*_r3`, `c1414t2fv2`, `c1414t2fv3` | 1.518 MHz at 27 °C, 1.997 MHz at 125 °C; no trip | 27/125 °C passed; −40 °C not run to completion: failed numerically three times (twice with `bgr=sch`, BGR HBT `xq56`; once with the BGR586 extraction at 11.80 µs, T2F HBT `xq42`) | [sim/campaigns/RESULTS_20260925.md](sim/campaigns/RESULTS_20260925.md) §7 |
 | `osc`: transistor-level G1_OSC clocking the RTL | legacy netlists, gear (`dbg0924_b30`, `b41`) | completes; 10.059 MHz (`sch`), 9.035 MHz (`pex`) measured in the deck | passed (legacy netlists only) | `osc_sch_tl_tt_27C_gear_…_b30_osc_gear_loose_xtrtol7_ms1.log`, `osc_pex_tl_tt_27C_gear_…_b41_osc_pex_loose_ms1.log` |
-| `osc` on the c1414 set (R0.95), transistor-level oscillator clocking the RTL | night `osc_*_r3`, `c1414osc2_*` | tt/27 °C 9.443–9.483 MHz at 0.5 ns step (ideal clock 9.436 MHz); 9.742 MHz at 2 ns; ss/125 °C 7.61 MHz, ff/−40 °C 12.43 MHz (2 ns step, uncorrected) | completed at tt, ss/125 and ff/−40 (nominal VDD); gear supply-corner osc failed (timestep too small, `xosc.xd52`); trap re-run `c1414oscv2` ff/−40 °C 1.32 V completed at 12.41 MHz; ss/125 °C 1.08 V trap re-run not run (launch refused by the evidence-overwrite guard, no log) | [sim/campaigns/RESULTS_20260925.md](sim/campaigns/RESULTS_20260925.md) §6 |
+| `osc` on the c1414 set (R0.95), transistor-level oscillator clocking the RTL | night `osc_*_r3`, `c1414osc2_*` | tt/27 °C 9.443–9.483 MHz at 0.5 ns step (ideal clock 9.436 MHz); 9.742 MHz at 2 ns; ss/125 °C 7.61 MHz, ff/−40 °C 12.43 MHz (2 ns step, uncorrected) | completed at tt, ss/125 and ff/−40 (nominal VDD); gear supply-corner osc failed (timestep too small, `xosc.xd52`); trap re-run `c1414oscv2` ff/−40 °C 1.32 V completed at 12.41 MHz; ss/125 °C 1.08 V trap re-run `c1414oscv3`: **not run to completion** (timeout at the 14 000 s wall bound, 17.82 µs of 36 µs, no numerical failure; no `CLOCK` line in the log; an earlier launch was refused by the evidence-overwrite guard) | [sim/campaigns/RESULTS_20260925.md](sim/campaigns/RESULTS_20260925.md) §6 |
 
 Quiet operating point with the chip netlists (compact c_mid deck): `VREF`
 1.04547 V, `ISENSE` 1.50732 V at 1 A. The c1414 set takes more supply current
@@ -136,7 +164,7 @@ chain:  g1_bgr (r4 = 0) -> VREF, IPTAT -> g1_sense -> ISENSE -> g1_trip (DAC cod
 digital: g1_dig_cosim.v (sim/rtl) wraps g1_digital; ports matched by position to an XSPICE d_cosim instance (Icarus shim ivlng);
         adc_bridge 0.6/0.6 V on osc_clk; 0.55/0.65 V on cmp_soft, cmp_hard, tripped; dac_bridge 0/1.2 V, 0.3 ns edges on every RTL output;
         EN, SCLK, SDI reach the RTL as an XSPICE d_source stimulus with the same edge times as the pad PWLs
-clock:  ideal 1.2 V square wave at the G1_OSC block-simulated frequency (9.919 MHz schematic, 8.994 MHz post-layout),
+clock:  (legacy deck) ideal 1.2 V square wave at the Sep-19 G1_OSC block-simulated frequency (9.919 MHz schematic, 8.994 MHz post-layout; c1414 decks: 9.436194721 MHz),
         enabled at 0.1 us by the RTL's osc_en; case osc runs the transistor-level g1_osc on the chip VDD with the RTL
 outputs: GATE pad = 47 Ohm driver to IOVDD/0 switched by gate_core (fitted to the g1_gate block results with the
         sg13g2_IOPadOut30mA model: 5 nF + 10 Ohm fall 90-10 % 606 ns, arming 677 ns); FAULT_N = 500 Ohm driver

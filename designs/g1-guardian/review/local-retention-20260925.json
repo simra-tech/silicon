@@ -3,7 +3,7 @@
  "scope": "Files produced for the 2026-09-25 freeze that are retained locally and not committed. Each was present in the working tree at inventory time and has a hash-verified copy under ${BULK} (the operator-supplied external artifact root), which is the authoritative retained copy; working-tree originals may have been removed during cleanup. Hashes are of the file bytes at inventory time. No circuit qualification is implied.",
  "original_head": "dc516d392b2ff1b233a36dc1bcb4dbc64dc0aced",
  "bulk_copy_note": "Every bulk_copy was re-hashed after copying and matched sha256.",
- "not_inventoried": "Nothing. The last chip-level run (b_s_tt_85C_r4_c1414m) finished before the final inventory and is included.",
+ "not_inventoried": "Corrected 2026-09-25. Not inventoried, local only (gitignored, no bulk copy recorded here): (1) the 249 c1414 run progress files blocks/g1_top/sim/logs/*c1414*.progress.jsonl (1 599 880 571 bytes), the source of runner_sha256 cited in RESULTS_20260925.md; (2) the 855 c1414 waveform files under blocks/g1_top/sim/results/waves/ (444 .gz, 411 .txt; 4 537 545 900 bytes), whose hashes the run JSONs record; (3) the generated build decks under build/g1_top/*.cir (531 files at the time of the correction). The committed copies under blocks/g1_top/sim/decks/ are the record of each run's netlist (279/279 c1414 run JSONs hash-match their deck_sha256). The last chip-level run (b_s_tt_85C_r4_c1414m) finished before the final inventory and its log is included.",
  "files": [
   {
    "path": "designs/g1-guardian/blocks/g1_padring/layout/g1_chip_top_1414_src.gds",
@@ -2961,12 +2961,13 @@
   },
   {
    "path": "designs/g1-guardian/blocks/g1_top/sim/logs/osc_pex_c1414_tl_ss_125C_vdd1p08_vdda3p3_trap_clockfix_maxstep1ns_optxtrtol7_rxschmitt_functional_c1414oscv3.log",
-   "size": 848042,
+   "size_bytes": 848042,
    "sha256": "4adc5cb251dae5ee6245584c6f5c06c83bec0a08e60fd9ff00346642b6feff43",
-   "bulk": "${BULK}/g1-freeze-retention-20260925/osc_pex_c1414_tl_ss_125C_vdd1p08_vdda3p3_trap_clockfix_maxstep1ns_optxtrtol7_rxschmitt_functional_c1414oscv3.log",
-   "note": "raw ngspice log > 300 kB; .tail.txt extract committed"
+   "bulk_copy": "${BULK}/g1-freeze-retention-20260925/osc_pex_c1414_tl_ss_125C_vdd1p08_vdda3p3_trap_clockfix_maxstep1ns_optxtrtol7_rxschmitt_functional_c1414oscv3.log",
+   "reason": "raw ngspice log > 300 kB; .tail.txt extract committed"
   }
  ],
- "file_count": 422,
- "total_bytes": 375904986
+ "file_count": 423,
+ "total_bytes": 376753028,
+ "correction_20260925": "file_count was 422 for 423 entries and total_bytes excluded the last entry, which used a different schema (size/bulk/note); normalised to size_bytes/bulk_copy/reason and recounted."
 }
