@@ -143,7 +143,7 @@ Power-up (`sim/results_gate_pwr.txt`, tt 27 °C, `EN` pad held low until 9 µs):
 | --- | --- | --- | --- | --- |
 | A: `IOVDD` up first (1–3 µs), `VDD` later (5–7 µs) | none | **3.30 V** | 0.04 V | 3.30 V |
 | A | 10 kΩ | **3.29 V** | 0.04 V | 3.29 V |
-| B: `VDD` up first, `IOVDD` later | none | 0.03 mV | 0.60 V (internal glitch, not on the pad) | run aborts at 0.8 µs (pad model, GATE floating without `IOVDD`) — **not converged** |
+| B: `VDD` up first, `IOVDD` later | none | 0.03 mV | 0.60 V (internal glitch, not on the pad) | run aborts at 9.05 µs, just after `EN` rises at 9 µs (pad model, GATE floating without `IOVDD`; last time point in `sim/results_gate_pwr.txt`) — **not converged** |
 | B | 10 kΩ | 0.03 mV | 0.60 V | 3.29 V |
 
 **Finding:** with `IOVDD` present and `VDD` absent the `sg13g2_IOPadOut30mA` output goes **high**
