@@ -1,5 +1,5 @@
 * G1_TOP breaker path, chip level: in-range hard trip: code 200 (~39.25mV), 1.8A/45mV fault in 20ns; HARD_N=4
-* CDL-driven full chip (run_top_cdl.py): blocks/${BULK}/digital-eco-r3cand-20260925/cdl/g1_chip_top_1414_r3.cdl sha256 21152b66b813f0937931b2e40fb4c0a140c6cdf78d7c66c1b91590223f7ad4c5, top g1_chip_top instantiated once
+* CDL-driven full chip (run_top_cdl.py): blocks//opt/sim/amirmabhout/digital-eco-r3cand-20260925/cdl/g1_chip_top_1414_r3.cdl sha256 21152b66b813f0937931b2e40fb4c0a140c6cdf78d7c66c1b91590223f7ad4c5, top g1_chip_top instantiated once
 * case c_mid | block netlists pex (extracted: g1_bgr, g1_gate, g1_sense, g1_t2f, g1_trip) | clock to the RTL ideal | corner tt | 27 degC | pads nodcn | method gear
 * g1_bgr <- blocks/g1_bgr/sim/postlayout/g1_bgr586_pex.spice (sha256 01227a3d8d8210d10d2d1ee6933842351140b8825fe29282f0327936a3064ad5)
 * g1_gate <- blocks/g1_gate/sim/postlayout/g1_gate_pex.spice (sha256 e91617f5fcf6f5a0dc721a2ba53b507a05cc226d6dbf0bebaa858a1e7d876765; not hash-bound in run_top.py)
@@ -49,12 +49,12 @@ Rg gate gfet 10
 Cgate gfet 0 5n
 Cfault fault_n 0 20p
 Ven en_pad 0 pwl(0 0 3.01431035636e-06 0 3.01521035636e-06 1.485 3.01541035636e-06 1.815 3.01631035636e-06 3.3)
-Vsclk sclk_pad 0 pwl(0 0 5.02783387529e-06 0 5.13380879734e-06 0 5.13470879734e-06 1.485 5.13490879734e-06 1.815 5.13580879734e-06 3.3 5.23978371939e-06 3.3 5.24068371939e-06 1.815 5.24088371939e-06 1.485 5.24178371939e-06 0 5.34575864144e-06 0 5.34665864144e-06 1.485 5.34685864144e-06 1.815 5.34775864144e-06 3.3 5.45173356349e-06 3.3 5.45263356349e-06 1.815 5.45283356349e-06 1.485 5.45373356349e-06 0 5.55770848554e-06 0 5.55860848554e-06 1.485 5.55880848554e-06 1.815 5.55970848554e-06 3.3 5.66368340759e-06 3.3 5.66458340759e-06 1.815 5.66478340759e-06 1.485 5.66568340759e-06 0 5.76965832964e-06 0 5.77055832964e-06 1.485 5.77075832964e-06 1.815 5.77165832964e-06 3.3 5.87563325169e-06 3.3 5.87653325169e-06 1.815 5.87673325169e-06 1.485 5.87763325169e-06 0 5.98160817374e-06 0 5.98250817374e-06 1.485 5.98270817374e-06 1.815 5.98360817374e-06 3.3 6.08758309579e-06 3.3 6.08848309579e-06 1.815 6.08868309579e-06 1.485 6.08958309579e-06 0 6.19355801783e-06 0 6.19445801783e-06 1.485 6.19465801783e-06 1.815 6.19555801783e-06 3.3 6.29953293988e-06 3.3 6.30043293988e-06 1.815 6.30063293988e-06 1.485 6.30153293988e-06 0 6.40550786193e-06 0 6.40640786193e-06 1.485 6.40660786193e-06 1.815 6.40750786193e-06 3.3 6.51148278398e-06 3.3 6.51238278398e-06 1.815 6.51258278398e-06 1.485 6.51348278398e-06 0 6.61745770603e-06 0 6.61835770603e-06 1.485 6.61855770603e-06 1.815 6.61945770603e-06 3.3 6.72343262808e-06 3.3 6.72433262808e-06 1.815 6.72453262808e-06 1.485 6.72543262808e-06 0 6.82940755013e-06 0 6.83030755013e-06 1.485 6.83050755013e-06 1.815 6.83140755013e-06 3.3 6.93538247218e-06 3.3 6.93628247218e-06 1.815 6.93648247218e-06 1.485 6.93738247218e-06 0 7.04135739423e-06 0 7.04225739423e-06 1.485 7.04245739423e-06 1.815 7.04335739423e-06 3.3 7.14733231628e-06 3.3 7.14823231628e-06 1.815 7.14843231628e-06 1.485 7.14933231628e-06 0 7.25330723833e-06 0 7.25420723833e-06 1.485 7.25440723833e-06 1.815 7.25530723833e-06 3.3 7.35928216038e-06 3.3 7.36018216038e-06 1.815 7.36038216038e-06 1.485 7.36128216038e-06 0 7.46525708243e-06 0 7.46615708243e-06 1.485 7.46635708243e-06 1.815 7.46725708243e-06 3.3 7.57123200448e-06 3.3 7.57213200448e-06 1.815 7.57233200448e-06 1.485 7.57323200448e-06 0 7.67720692653e-06 0 7.67810692653e-06 1.485 7.67830692653e-06 1.815 7.67920692653e-06 3.3 7.78318184857e-06 3.3 7.78408184857e-06 1.815 7.78428184857e-06 1.485 7.78518184857e-06 0 7.88915677062e-06 0 7.89005677062e-06 1.485 7.89025677062e-06 1.815 7.89115677062e-06 3.3 7.99513169267e-06 3.3 7.99603169267e-06 1.815 7.99623169267e-06 1.485 7.99713169267e-06 0 8.10110661472e-06 0 8.10200661472e-06 1.485 8.10220661472e-06 1.815 8.10310661472e-06 3.3 8.20708153677e-06 3.3 8.20798153677e-06 1.815 8.20818153677e-06 1.485 8.20908153677e-06 0 8.31305645882e-06 0 8.31395645882e-06 1.485 8.31415645882e-06 1.815 8.31505645882e-06 3.3 8.41903138087e-06 3.3 8.41993138087e-06 1.815 8.42013138087e-06 1.485 8.42103138087e-06 0 8.52500630292e-06 0 8.52590630292e-06 1.485 8.52610630292e-06 1.815 8.52700630292e-06 3.3 8.63098122497e-06 3.3 8.63188122497e-06 1.815 8.63208122497e-06 1.485 8.63298122497e-06 0 8.73695614702e-06 0 8.73785614702e-06 1.485 8.73805614702e-06 1.815 8.73895614702e-06 3.3 8.84293106907e-06 3.3 8.84383106907e-06 1.815 8.84403106907e-06 1.485 8.84493106907e-06 0 8.94890599112e-06 0 8.94980599112e-06 1.485 8.95000599112e-06 1.815 8.95090599112e-06 3.3 9.05488091317e-06 3.3 9.05578091317e-06 1.815 9.05598091317e-06 1.485 9.05688091317e-06 0 9.16085583522e-06 0 9.16175583522e-06 1.485 9.16195583522e-06 1.815 9.16285583522e-06 3.3 9.26683075726e-06 3.3 9.26773075726e-06 1.815 9.26793075726e-06 1.485 9.26883075726e-06 0 9.37280567931e-06 0 9.37370567931e-06 1.485 9.37390567931e-06 1.815 9.37480567931e-06 3.3 9.47878060136e-06 3.3 9.47968060136e-06 1.815 9.47988060136e-06 1.485 9.48078060136e-06 0 9.58475552341e-06 0 9.58565552341e-06 1.485 9.58585552341e-06 1.815 9.58675552341e-06 3.3 9.69073044546e-06 3.3 9.69163044546e-06 1.815 9.69183044546e-06 1.485 9.69273044546e-06 0 9.79670536751e-06 0 9.79760536751e-06 1.485 9.79780536751e-06 1.815 9.79870536751e-06 3.3 9.90268028956e-06 3.3 9.90358028956e-06 1.815 9.90378028956e-06 1.485 9.90468028956e-06 0 1.00086552116e-05 0 1.00095552116e-05 1.485 1.00097552116e-05 1.815 1.00106552116e-05 3.3 1.01146301337e-05 3.3 1.01155301337e-05 1.815 1.01157301337e-05 1.485 1.01166301337e-05 0 1.02206050557e-05 0 1.02215050557e-05 1.485 1.02217050557e-05 1.815 1.02226050557e-05 3.3 1.03265799778e-05 3.3 1.03274799778e-05 1.815 1.03276799778e-05 1.485 1.03285799778e-05 0 1.04325548998e-05 0 1.04334548998e-05 1.485 1.04336548998e-05 1.815 1.04345548998e-05 3.3 1.05385298219e-05 3.3 1.05394298219e-05 1.815 1.05396298219e-05 1.485 1.05405298219e-05 0 1.06445047439e-05 0 1.06454047439e-05 1.485 1.06456047439e-05 1.815 1.06465047439e-05 3.3 1.0750479666e-05 3.3 1.0751379666e-05 1.815 1.0751579666e-05 1.485 1.0752479666e-05 0 1.0856454588e-05 0 1.0857354588e-05 1.485 1.0857554588e-05 1.815 1.0858454588e-05 3.3 1.09624295101e-05 3.3 1.09633295101e-05 1.815 1.09635295101e-05 1.485 1.09644295101e-05 0 1.10684044321e-05 0 1.10693044321e-05 1.485 1.10695044321e-05 1.815 1.10704044321e-05 3.3 1.11743793542e-05 3.3 1.11752793542e-05 1.815 1.11754793542e-05 1.485 1.11763793542e-05 0 1.12803542762e-05 0 1.12812542762e-05 1.485 1.12814542762e-05 1.815 1.12823542762e-05 3.3 1.13863291983e-05 3.3 1.13872291983e-05 1.815 1.13874291983e-05 1.485 1.13883291983e-05 0 1.14923041203e-05 0 1.14932041203e-05 1.485 1.14934041203e-05 1.815 1.14943041203e-05 3.3 1.15982790423e-05 3.3 1.15991790423e-05 1.815 1.15993790423e-05 1.485 1.16002790423e-05 0 1.17042539644e-05 0 1.17051539644e-05 1.485 1.17053539644e-05 1.815 1.17062539644e-05 3.3 1.18102288864e-05 3.3 1.18111288864e-05 1.815 1.18113288864e-05 1.485 1.18122288864e-05 0)
-Vsdi sdi_pad 0 pwl(0 0 5.02783387529e-06 0 5.87563325169e-06 0 5.87653325169e-06 1.485 5.87673325169e-06 1.815 5.87763325169e-06 3.3 6.08758309579e-06 3.3 6.08848309579e-06 1.815 6.08868309579e-06 1.485 6.08958309579e-06 0 9.69073044546e-06 0 9.69163044546e-06 1.485 9.69183044546e-06 1.815 9.69273044546e-06 3.3 1.05385298219e-05 3.3 1.05394298219e-05 1.815 1.05396298219e-05 1.485 1.05405298219e-05 0 1.09624295101e-05 0 1.09633295101e-05 1.485 1.09635295101e-05 1.815 1.09644295101e-05 3.3 1.11743793542e-05 3.3 1.11752793542e-05 1.815 1.11754793542e-05 1.485 1.11763793542e-05 0)
+Vsclk sclk_pad 0 pwl(0 0 4.07405957685e-06 0 4.1800344989e-06 0 4.1809344989e-06 1.485 4.1811344989e-06 1.815 4.1820344989e-06 3.3 4.28600942095e-06 3.3 4.28690942095e-06 1.815 4.28710942095e-06 1.485 4.28800942095e-06 0 4.391984343e-06 0 4.392884343e-06 1.485 4.393084343e-06 1.815 4.393984343e-06 3.3 4.49795926505e-06 3.3 4.49885926505e-06 1.815 4.49905926505e-06 1.485 4.49995926505e-06 0 4.6039341871e-06 0 4.6048341871e-06 1.485 4.6050341871e-06 1.815 4.6059341871e-06 3.3 4.70990910914e-06 3.3 4.71080910914e-06 1.815 4.71100910914e-06 1.485 4.71190910914e-06 0 4.81588403119e-06 0 4.81678403119e-06 1.485 4.81698403119e-06 1.815 4.81788403119e-06 3.3 4.92185895324e-06 3.3 4.92275895324e-06 1.815 4.92295895324e-06 1.485 4.92385895324e-06 0 5.02783387529e-06 0 5.02873387529e-06 1.485 5.02893387529e-06 1.815 5.02983387529e-06 3.3 5.13380879734e-06 3.3 5.13470879734e-06 1.815 5.13490879734e-06 1.485 5.13580879734e-06 0 5.23978371939e-06 0 5.24068371939e-06 1.485 5.24088371939e-06 1.815 5.24178371939e-06 3.3 5.34575864144e-06 3.3 5.34665864144e-06 1.815 5.34685864144e-06 1.485 5.34775864144e-06 0 5.45173356349e-06 0 5.45263356349e-06 1.485 5.45283356349e-06 1.815 5.45373356349e-06 3.3 5.55770848554e-06 3.3 5.55860848554e-06 1.815 5.55880848554e-06 1.485 5.55970848554e-06 0 5.66368340759e-06 0 5.66458340759e-06 1.485 5.66478340759e-06 1.815 5.66568340759e-06 3.3 5.76965832964e-06 3.3 5.77055832964e-06 1.815 5.77075832964e-06 1.485 5.77165832964e-06 0 5.87563325169e-06 0 5.87653325169e-06 1.485 5.87673325169e-06 1.815 5.87763325169e-06 3.3 5.98160817374e-06 3.3 5.98250817374e-06 1.815 5.98270817374e-06 1.485 5.98360817374e-06 0 6.08758309579e-06 0 6.08848309579e-06 1.485 6.08868309579e-06 1.815 6.08958309579e-06 3.3 6.19355801783e-06 3.3 6.19445801783e-06 1.815 6.19465801783e-06 1.485 6.19555801783e-06 0 6.29953293988e-06 0 6.30043293988e-06 1.485 6.30063293988e-06 1.815 6.30153293988e-06 3.3 6.40550786193e-06 3.3 6.40640786193e-06 1.815 6.40660786193e-06 1.485 6.40750786193e-06 0 6.51148278398e-06 0 6.51238278398e-06 1.485 6.51258278398e-06 1.815 6.51348278398e-06 3.3 6.61745770603e-06 3.3 6.61835770603e-06 1.815 6.61855770603e-06 1.485 6.61945770603e-06 0 6.72343262808e-06 0 6.72433262808e-06 1.485 6.72453262808e-06 1.815 6.72543262808e-06 3.3 6.82940755013e-06 3.3 6.83030755013e-06 1.815 6.83050755013e-06 1.485 6.83140755013e-06 0 6.93538247218e-06 0 6.93628247218e-06 1.485 6.93648247218e-06 1.815 6.93738247218e-06 3.3 7.04135739423e-06 3.3 7.04225739423e-06 1.815 7.04245739423e-06 1.485 7.04335739423e-06 0 7.14733231628e-06 0 7.14823231628e-06 1.485 7.14843231628e-06 1.815 7.14933231628e-06 3.3 7.25330723833e-06 3.3 7.25420723833e-06 1.815 7.25440723833e-06 1.485 7.25530723833e-06 0 7.35928216038e-06 0 7.36018216038e-06 1.485 7.36038216038e-06 1.815 7.36128216038e-06 3.3 7.46525708243e-06 3.3 7.46615708243e-06 1.815 7.46635708243e-06 1.485 7.46725708243e-06 0 7.57123200448e-06 0 7.57213200448e-06 1.485 7.57233200448e-06 1.815 7.57323200448e-06 3.3 7.67720692653e-06 3.3 7.67810692653e-06 1.815 7.67830692653e-06 1.485 7.67920692653e-06 0 7.78318184857e-06 0 7.78408184857e-06 1.485 7.78428184857e-06 1.815 7.78518184857e-06 3.3 7.88915677062e-06 3.3 7.89005677062e-06 1.815 7.89025677062e-06 1.485 7.89115677062e-06 0 7.99513169267e-06 0 7.99603169267e-06 1.485 7.99623169267e-06 1.815 7.99713169267e-06 3.3 8.10110661472e-06 3.3 8.10200661472e-06 1.815 8.10220661472e-06 1.485 8.10310661472e-06 0 8.20708153677e-06 0 8.20798153677e-06 1.485 8.20818153677e-06 1.815 8.20908153677e-06 3.3 8.31305645882e-06 3.3 8.31395645882e-06 1.815 8.31415645882e-06 1.485 8.31505645882e-06 0 8.41903138087e-06 0 8.41993138087e-06 1.485 8.42013138087e-06 1.815 8.42103138087e-06 3.3 8.52500630292e-06 3.3 8.52590630292e-06 1.815 8.52610630292e-06 1.485 8.52700630292e-06 0 8.63098122497e-06 0 8.63188122497e-06 1.485 8.63208122497e-06 1.815 8.63298122497e-06 3.3 8.73695614702e-06 3.3 8.73785614702e-06 1.815 8.73805614702e-06 1.485 8.73895614702e-06 0 8.84293106907e-06 0 8.84383106907e-06 1.485 8.84403106907e-06 1.815 8.84493106907e-06 3.3 8.94890599112e-06 3.3 8.94980599112e-06 1.815 8.95000599112e-06 1.485 8.95090599112e-06 0 9.05488091317e-06 0 9.05578091317e-06 1.485 9.05598091317e-06 1.815 9.05688091317e-06 3.3 9.16085583522e-06 3.3 9.16175583522e-06 1.815 9.16195583522e-06 1.485 9.16285583522e-06 0 9.26683075726e-06 0 9.26773075726e-06 1.485 9.26793075726e-06 1.815 9.26883075726e-06 3.3 9.37280567931e-06 3.3 9.37370567931e-06 1.815 9.37390567931e-06 1.485 9.37480567931e-06 0 9.47878060136e-06 0 9.47968060136e-06 1.485 9.47988060136e-06 1.815 9.48078060136e-06 3.3 9.58475552341e-06 3.3 9.58565552341e-06 1.815 9.58585552341e-06 1.485 9.58675552341e-06 0 9.69073044546e-06 0 9.69163044546e-06 1.485 9.69183044546e-06 1.815 9.69273044546e-06 3.3 9.79670536751e-06 3.3 9.79760536751e-06 1.815 9.79780536751e-06 1.485 9.79870536751e-06 0 9.90268028956e-06 0 9.90358028956e-06 1.485 9.90378028956e-06 1.815 9.90468028956e-06 3.3 1.00086552116e-05 3.3 1.00095552116e-05 1.815 1.00097552116e-05 1.485 1.00106552116e-05 0 1.01146301337e-05 0 1.01155301337e-05 1.485 1.01157301337e-05 1.815 1.01166301337e-05 3.3 1.02206050557e-05 3.3 1.02215050557e-05 1.815 1.02217050557e-05 1.485 1.02226050557e-05 0 1.03265799778e-05 0 1.03274799778e-05 1.485 1.03276799778e-05 1.815 1.03285799778e-05 3.3 1.04325548998e-05 3.3 1.04334548998e-05 1.815 1.04336548998e-05 1.485 1.04345548998e-05 0 1.05385298219e-05 0 1.05394298219e-05 1.485 1.05396298219e-05 1.815 1.05405298219e-05 3.3 1.06445047439e-05 3.3 1.06454047439e-05 1.815 1.06456047439e-05 1.485 1.06465047439e-05 0 1.0750479666e-05 0 1.0751379666e-05 1.485 1.0751579666e-05 1.815 1.0752479666e-05 3.3 1.0856454588e-05 3.3 1.0857354588e-05 1.815 1.0857554588e-05 1.485 1.0858454588e-05 0)
+Vsdi sdi_pad 0 pwl(0 0 4.07405957685e-06 0 4.92185895324e-06 0 4.92275895324e-06 1.485 4.92295895324e-06 1.815 4.92385895324e-06 3.3 5.13380879734e-06 3.3 5.13470879734e-06 1.815 5.13490879734e-06 1.485 5.13580879734e-06 0 8.73695614702e-06 0 8.73785614702e-06 1.485 8.73805614702e-06 1.815 8.73895614702e-06 3.3 9.58475552341e-06 3.3 9.58565552341e-06 1.815 9.58585552341e-06 1.485 9.58675552341e-06 0 1.00086552116e-05 0 1.00095552116e-05 1.485 1.00097552116e-05 1.815 1.00106552116e-05 3.3 1.02206050557e-05 3.3 1.02215050557e-05 1.815 1.02217050557e-05 1.485 1.02226050557e-05 0)
 .model adc adc_bridge(in_low=0.55 in_high=0.65 rise_delay=1e-12 fall_delay=1e-12)
 .model adc_clock adc_bridge(in_low=0.6 in_high=0.6 rise_delay=1e-12 fall_delay=1e-12)
 .model dac dac_bridge(out_low=0 out_high=1.2 out_undef=0.6 t_rise=0.3n t_fall=0.3n)
-.model rtl d_cosim simulation="ivlng" sim_args=["/work/build/g1_top/cosim_258c7853a983b1dc9be49855.vvp"]
+.model rtl d_cosim simulation="ivlng" sim_args=["/work/build/g1_top/cosim_1189e833b6934c0d6d908d3b.vvp"]
 * ---- the chip: g1_chip_top_1414.cdl, 22 pins on the board fixture
 .subckt sg13g2_antennanp A VDD VSS
 * removed (--pads nodcn): DD1 VSS A dantenna m=1 w=780n l=780n a=608.4f p=3.12u
@@ -616,80 +616,80 @@ meas tran isense_q avg v(xchip.i_core_isense) from=14u to=16u
 meas tran icmp_q avg v(xchip.xi_core_u_trip.icmp) from=14u to=16u
 meas tran vths_q avg v(xchip.xi_core_u_trip.vth_soft) from=14u to=16u
 meas tran vthh_q avg v(xchip.xi_core_u_trip.vth_hard) from=14u to=16u
-meas tran vref_i find v(xchip.i_core_vref) at=13.8102u
-meas tran isense_i find v(xchip.i_core_isense) at=13.8102u
-meas tran icmp_i find v(xchip.xi_core_u_trip.icmp) at=13.8102u
-meas tran vths_i find v(xchip.xi_core_u_trip.vth_soft) at=13.8102u
-meas tran vthh_i find v(xchip.xi_core_u_trip.vth_hard) at=13.8102u
-meas tran iload_q find i(vim) at=13.8102u
-meas tran gate_q find v(gate) at=13.8102u
-meas tran fastq find v(xchip.i_core_fast_en) at=13.8102u
+meas tran vref_i find v(xchip.i_core_vref) at=12.8565u
+meas tran isense_i find v(xchip.i_core_isense) at=12.8565u
+meas tran icmp_i find v(xchip.xi_core_u_trip.icmp) at=12.8565u
+meas tran vths_i find v(xchip.xi_core_u_trip.vth_soft) at=12.8565u
+meas tran vthh_i find v(xchip.xi_core_u_trip.vth_hard) at=12.8565u
+meas tran iload_q find i(vim) at=12.8565u
+meas tran gate_q find v(gate) at=12.8565u
+meas tran fastq find v(xchip.i_core_fast_en) at=12.8565u
 meas tran t_inrush_off when v(xchip.xi_core_u_digital.inrush_active)=0.6 fall=1 from=3u
-meas tran inrush_q find v(xchip.xi_core_u_digital.inrush_active) at=13.8102u
+meas tran inrush_q find v(xchip.xi_core_u_digital.inrush_active) at=12.8565u
 meas tran softarmed_end find v(xchip.xi_core_u_digital.soft_armed) at=28u
 let cs_v = 1*(v(xchip.i_core_dac_soft_0_) gt 0.6) + 2*(v(xchip.i_core_dac_soft_1_) gt 0.6) + 4*(v(xchip.i_core_dac_soft_2_) gt 0.6) + 8*(v(xchip.i_core_dac_soft_3_) gt 0.6) + 16*(v(xchip.i_core_dac_soft_4_) gt 0.6) + 32*(v(xchip.i_core_dac_soft_5_) gt 0.6) + 64*(v(xchip.i_core_dac_soft_6_) gt 0.6) + 128*(v(xchip.i_core_dac_soft_7_) gt 0.6)
 let ch_v = 1*(v(xchip.i_core_dac_hard_0_) gt 0.6) + 2*(v(xchip.i_core_dac_hard_1_) gt 0.6) + 4*(v(xchip.i_core_dac_hard_2_) gt 0.6) + 8*(v(xchip.i_core_dac_hard_3_) gt 0.6) + 16*(v(xchip.i_core_dac_hard_4_) gt 0.6) + 32*(v(xchip.i_core_dac_hard_5_) gt 0.6) + 64*(v(xchip.i_core_dac_hard_6_) gt 0.6) + 128*(v(xchip.i_core_dac_hard_7_) gt 0.6)
-meas tran code_soft find cs_v at=13.8102u
-meas tran code_hard find ch_v at=13.8102u
+meas tran code_soft find cs_v at=12.8565u
+meas tran code_hard find ch_v at=12.8565u
 let t_inrush_off_us = t_inrush_off*1e6
 echo "QUIET window_us=14-16 vref=" $&vref_q " isense=" $&isense_q " icmp=" $&icmp_q " vth_soft=" $&vths_q " vth_hard=" $&vthh_q " vref_inst=" $&vref_i " isense_inst=" $&isense_i " icmp_inst=" $&icmp_i " vth_soft_inst=" $&vths_i " vth_hard_inst=" $&vthh_i " iload_A=" $&iload_q " gate=" $&gate_q " code_soft=" $&code_soft " code_hard=" $&code_hard " fast_en=" $&fastq " inrush_active=" $&inrush_q " t_inrush_off_us=" $&t_inrush_off_us " soft_armed_end=" $&softarmed_end
 * clocks: 20 oscillator periods and 10 strobe periods after the configuration
-meas tran tosc1 when v(xchip.i_core_osc_clk)=0.6 rise=1 from=12.8102u
-meas tran tosc2 when v(xchip.i_core_osc_clk)=0.6 rise=21 from=12.8102u
+meas tran tosc1 when v(xchip.i_core_osc_clk)=0.6 rise=1 from=11.8565u
+meas tran tosc2 when v(xchip.i_core_osc_clk)=0.6 rise=21 from=11.8565u
 let fosc_mhz = 20e-6/(tosc2 - tosc1)
-meas tran tcc1 when v(xchip.i_core_cmp_clk)=0.6 rise=1 from=12.8102u
-meas tran tcc2 when v(xchip.i_core_cmp_clk)=0.6 rise=11 from=12.8102u
+meas tran tcc1 when v(xchip.i_core_cmp_clk)=0.6 rise=1 from=11.8565u
+meas tran tcc2 when v(xchip.i_core_cmp_clk)=0.6 rise=11 from=11.8565u
 let fcmp_mhz = 10e-6/(tcc2 - tcc1)
 echo "CLOCK f_osc_MHz=" $&fosc_mhz " f_cmp_MHz=" $&fcmp_mhz " (RTL clock: ideal source at the block-simulated frequency)"
 * supply currents averaged over the quiet armed window
 let i_vdda = i(vma)
-meas tran ia_vdda avg i_vdda from=14.8102u to=16u
+meas tran ia_vdda avg i_vdda from=13.8565u to=16u
 let ua_vdda = ia_vdda*1e6
 let i_iovdd = i(vmi)
-meas tran ia_iovdd avg i_iovdd from=14.8102u to=16u
+meas tran ia_iovdd avg i_iovdd from=13.8565u to=16u
 let ua_iovdd = ia_iovdd*1e6
 let i_vdd = -i(v12)
-meas tran ia_vdd avg i_vdd from=14.8102u to=16u
+meas tran ia_vdd avg i_vdd from=13.8565u to=16u
 let ua_vdd = ia_vdd*1e6
 let i_bgr = i(v.xchip.vm_bgr)
-meas tran ia_bgr avg i_bgr from=14.8102u to=16u
+meas tran ia_bgr avg i_bgr from=13.8565u to=16u
 let ua_bgr = ia_bgr*1e6
 let i_sense = i(v.xchip.vm_sense)
-meas tran ia_sense avg i_sense from=14.8102u to=16u
+meas tran ia_sense avg i_sense from=13.8565u to=16u
 let ua_sense = ia_sense*1e6
 let i_tripa = i(v.xchip.vm_tripa)
-meas tran ia_tripa avg i_tripa from=14.8102u to=16u
+meas tran ia_tripa avg i_tripa from=13.8565u to=16u
 let ua_tripa = ia_tripa*1e6
 let i_tripd = i(v.xchip.vm_tripd)
-meas tran ia_tripd avg i_tripd from=14.8102u to=16u
+meas tran ia_tripd avg i_tripd from=13.8565u to=16u
 let ua_tripd = ia_tripd*1e6
 let i_osc = i(v.xchip.vm_osc)
-meas tran ia_osc avg i_osc from=14.8102u to=16u
+meas tran ia_osc avg i_osc from=13.8565u to=16u
 let ua_osc = ia_osc*1e6
 let i_gatea = i(v.xchip.vm_gatea)
-meas tran ia_gatea avg i_gatea from=14.8102u to=16u
+meas tran ia_gatea avg i_gatea from=13.8565u to=16u
 let ua_gatea = ia_gatea*1e6
 let i_gated = i(v.xchip.vm_gated)
-meas tran ia_gated avg i_gated from=14.8102u to=16u
+meas tran ia_gated avg i_gated from=13.8565u to=16u
 let ua_gated = ia_gated*1e6
-echo "SUPPLY_uA window=14.8102-16us VDDA=" $&ua_vdda " IOVDD=" $&ua_iovdd " VDD=" $&ua_vdd " | bgr=" $&ua_bgr " sense=" $&ua_sense " trip_3v3=" $&ua_tripa " trip_1v2=" $&ua_tripd " osc=" $&ua_osc " gate_3v3=" $&ua_gatea " gate_1v2=" $&ua_gated
+echo "SUPPLY_uA window=13.8565-16us VDDA=" $&ua_vdda " IOVDD=" $&ua_iovdd " VDD=" $&ua_vdd " | bgr=" $&ua_bgr " sense=" $&ua_sense " trip_3v3=" $&ua_tripa " trip_1v2=" $&ua_tripd " osc=" $&ua_osc " gate_3v3=" $&ua_gatea " gate_1v2=" $&ua_gated
 * G1_T2F: output frequency (rising 0.6 V crossings) and supply currents over the quiet window
-meas tran t2f_t1 when v(xchip.i_core_temp_out_o)=0.6 rise=1 from=14.8102u to=16u
-meas tran t2f_t2 when v(xchip.i_core_temp_out_o)=0.6 rise=3 from=14.8102u to=16u
+meas tran t2f_t1 when v(xchip.i_core_temp_out_o)=0.6 rise=1 from=13.8565u to=16u
+meas tran t2f_t2 when v(xchip.i_core_temp_out_o)=0.6 rise=3 from=13.8565u to=16u
 let t2f_mhz = 2e-6/(t2f_t2 - t2f_t1)
-meas tran ia_t2f avg i(v.xchip.vm_t2f) from=14.8102u to=16u
+meas tran ia_t2f avg i(v.xchip.vm_t2f) from=13.8565u to=16u
 let ua_t2f = ia_t2f*1e6
-meas tran ia_t2fd avg i(v.xchip.vm_t2fd) from=14.8102u to=16u
+meas tran ia_t2fd avg i(v.xchip.vm_t2fd) from=13.8565u to=16u
 let ua_t2fd = ia_t2fd*1e6
-meas tran ia_ls avg i(v.xchip.vm_ls) from=14.8102u to=16u
+meas tran ia_ls avg i(v.xchip.vm_ls) from=13.8565u to=16u
 let ua_ls = ia_ls*1e6
-meas tran ia_lsd avg i(v.xchip.vm_lsd) from=14.8102u to=16u
+meas tran ia_lsd avg i(v.xchip.vm_lsd) from=13.8565u to=16u
 let ua_lsd = ia_lsd*1e6
-echo "T2F window=14.8102-16us f_MHz=" $&t2f_mhz " periods=2 vdda_t2f_uA=" $&ua_t2f " vdd12_t2f_uA=" $&ua_t2fd " vdda_ls_uA=" $&ua_ls " vdd_ls_uA=" $&ua_lsd
+echo "T2F window=13.8565-16us f_MHz=" $&t2f_mhz " periods=2 vdda_t2f_uA=" $&ua_t2f " vdd12_t2f_uA=" $&ua_t2fd " vdda_ls_uA=" $&ua_ls " vdd_ls_uA=" $&ua_lsd
 * trip evaluation after the load event at T_STEP
 let tstep_s = 16u
-meas tran tripped_max max v(xchip.i_core_tripped) from=12.8102u to=28u
-meas tran tripped_pre max v(xchip.i_core_tripped) from=12.8102u to=16u
+meas tran tripped_max max v(xchip.i_core_tripped) from=11.8565u to=28u
+meas tran tripped_pre max v(xchip.i_core_tripped) from=11.8565u to=16u
 meas tran t_tripped when v(xchip.i_core_tripped)=0.6 rise=1 from=16u
 meas tran t_trip_d when v(xchip.i_core_trip_d)=0.6 rise=1 from=16u
 meas tran t_gate1v when v(gate)=1.0 fall=1 from=16u
@@ -715,8 +715,8 @@ meas tran q_step find qi at=16u
 meas tran q_end find qi at=28u
 let q_passed = q_end - q_step
 echo "CHARGE after_event_As=" $&q_passed
-wrdata /work/build/g1_top/state_cdl_c_mid_pex_tt_27C_gear_compact_cdl21152b66_rtleco20260925_ser5_functional_eco3_cdl_c_mid.txt v(xchip.en_i) v(xchip.xi_core_u_digital.inrush_active) v(xchip.i_core_trip) v(xchip.i_core_fast_en) v(xchip.i_core_trip_cause_1_) v(xchip.i_core_trip_cause_0_) v(xchip.i_core_dac_soft_0_) v(xchip.i_core_dac_soft_1_) v(xchip.i_core_dac_soft_2_) v(xchip.i_core_dac_soft_3_) v(xchip.i_core_dac_soft_4_) v(xchip.i_core_dac_soft_5_) v(xchip.i_core_dac_soft_6_) v(xchip.i_core_dac_soft_7_) v(xchip.i_core_dac_hard_0_) v(xchip.i_core_dac_hard_1_) v(xchip.i_core_dac_hard_2_) v(xchip.i_core_dac_hard_3_) v(xchip.i_core_dac_hard_4_) v(xchip.i_core_dac_hard_5_) v(xchip.i_core_dac_hard_6_) v(xchip.i_core_dac_hard_7_) v(xchip.xi_core_u_digital.soft_armed) v(xchip.xi_core_u_digital.sp0) v(xchip.xi_core_u_digital.sp1) v(xchip.xi_core_u_digital.sp2) v(xchip.xi_core_u_digital.sp3) v(xchip.xi_core_u_digital.sp4) v(xchip.xi_core_u_digital.sp5) v(xchip.xi_core_u_digital.sp6) v(xchip.xi_core_u_digital.sp7) v(xchip.xi_core_u_digital.sp8) v(xchip.xi_core_u_digital.sp9) v(xchip.xi_core_u_digital.sp10) v(xchip.xi_core_u_digital.sp11) v(xchip.xi_core_u_digital.sp12) v(xchip.xi_core_u_digital.sp13) v(xchip.xi_core_u_digital.sp14) v(xchip.xi_core_u_digital.sp15) v(sclk_pad) v(sdi_pad) v(xchip.i_core_sdo_o) v(xchip.i_core_clr_d)
+wrdata /work/build/g1_top/state_cdl_c_mid_pex_tt_27C_gear_compact_cdl21152b66_rtleco20260925_functional_eco4_cdl_c_mid_ser4.txt v(xchip.en_i) v(xchip.xi_core_u_digital.inrush_active) v(xchip.i_core_trip) v(xchip.i_core_fast_en) v(xchip.i_core_trip_cause_1_) v(xchip.i_core_trip_cause_0_) v(xchip.i_core_dac_soft_0_) v(xchip.i_core_dac_soft_1_) v(xchip.i_core_dac_soft_2_) v(xchip.i_core_dac_soft_3_) v(xchip.i_core_dac_soft_4_) v(xchip.i_core_dac_soft_5_) v(xchip.i_core_dac_soft_6_) v(xchip.i_core_dac_soft_7_) v(xchip.i_core_dac_hard_0_) v(xchip.i_core_dac_hard_1_) v(xchip.i_core_dac_hard_2_) v(xchip.i_core_dac_hard_3_) v(xchip.i_core_dac_hard_4_) v(xchip.i_core_dac_hard_5_) v(xchip.i_core_dac_hard_6_) v(xchip.i_core_dac_hard_7_) v(xchip.xi_core_u_digital.soft_armed) v(xchip.xi_core_u_digital.sp0) v(xchip.xi_core_u_digital.sp1) v(xchip.xi_core_u_digital.sp2) v(xchip.xi_core_u_digital.sp3) v(xchip.xi_core_u_digital.sp4) v(xchip.xi_core_u_digital.sp5) v(xchip.xi_core_u_digital.sp6) v(xchip.xi_core_u_digital.sp7) v(xchip.xi_core_u_digital.sp8) v(xchip.xi_core_u_digital.sp9) v(xchip.xi_core_u_digital.sp10) v(xchip.xi_core_u_digital.sp11) v(xchip.xi_core_u_digital.sp12) v(xchip.xi_core_u_digital.sp13) v(xchip.xi_core_u_digital.sp14) v(xchip.xi_core_u_digital.sp15) v(sclk_pad) v(sdi_pad) v(xchip.i_core_sdo_o) v(xchip.i_core_clr_d)
 linearize v(gate) v(gfet) v(xchip.i_core_tripped) v(xchip.i_core_isense) v(xchip.i_core_cmp_soft) v(xchip.i_core_cmp_hard) v(xchip.i_core_cmp_clk) v(xchip.i_core_trip_d) v(xchip.i_core_osc_clk) v(xchip.i_core_vref) v(xchip.en_i) v(shp) v(fault_n) v(vdda) v(vdd) v(iprof) v(xchip.xi_core_u_trip.icmp) v(xchip.xi_core_u_trip.vth_soft) v(xchip.xi_core_u_trip.vth_hard) v(xchip.i_core_trip) v(xchip.xi_core_u_digital.inrush_active) i(vim) i(vma) i(vmi) i(v12)
-wrdata /work/build/g1_top/waves_cdl_c_mid_pex_tt_27C_gear_compact_cdl21152b66_rtleco20260925_ser5_functional_eco3_cdl_c_mid.txt v(gate) v(gfet) v(xchip.i_core_tripped) v(xchip.i_core_isense) v(xchip.i_core_cmp_soft) v(xchip.i_core_cmp_hard) v(xchip.i_core_cmp_clk) v(xchip.i_core_trip_d) v(xchip.i_core_osc_clk) v(xchip.i_core_vref) v(xchip.en_i) v(shp) v(fault_n) v(vdda) v(vdd) v(iprof) v(xchip.xi_core_u_trip.icmp) v(xchip.xi_core_u_trip.vth_soft) v(xchip.xi_core_u_trip.vth_hard) v(xchip.i_core_trip) v(xchip.xi_core_u_digital.inrush_active) i(vim) i(vma) i(vmi) i(v12)
+wrdata /work/build/g1_top/waves_cdl_c_mid_pex_tt_27C_gear_compact_cdl21152b66_rtleco20260925_functional_eco4_cdl_c_mid_ser4.txt v(gate) v(gfet) v(xchip.i_core_tripped) v(xchip.i_core_isense) v(xchip.i_core_cmp_soft) v(xchip.i_core_cmp_hard) v(xchip.i_core_cmp_clk) v(xchip.i_core_trip_d) v(xchip.i_core_osc_clk) v(xchip.i_core_vref) v(xchip.en_i) v(shp) v(fault_n) v(vdda) v(vdd) v(iprof) v(xchip.xi_core_u_trip.icmp) v(xchip.xi_core_u_trip.vth_soft) v(xchip.xi_core_u_trip.vth_hard) v(xchip.i_core_trip) v(xchip.xi_core_u_digital.inrush_active) i(vim) i(vma) i(vmi) i(v12)
 .endc
 .end
