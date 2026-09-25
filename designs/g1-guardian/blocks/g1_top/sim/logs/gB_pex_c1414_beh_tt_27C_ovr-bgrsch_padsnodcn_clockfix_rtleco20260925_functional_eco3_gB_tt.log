@@ -1,0 +1,333 @@
+# G1_TOP run gB_pex_c1414_beh_tt_27C_ovr-bgrsch_padsnodcn_clockfix_rtleco20260925_functional_eco3_gB_tt  2026-09-25T17:11:58Z UTC
+# (g-B) power-up: VDD ramp 1-3 us, IOVDD/VDDA 5-7 us, EN low until 12 us; GATE loaded by 5 nF + 10 Ohm only
+# deck build/g1_top/gB_pex_c1414_beh_tt_27C_ovr-bgrsch_padsnodcn_clockfix_rtleco20260925_functional_eco3_gB_tt.cir
+# supplies VDD 1.2 V, VDDA = IOVDD 3.3 V
+# blockset c1414 view-override bgr=sch
+# OVERRIDE bgr: sch view instead of --netlist pex (--view-override)
+# NOTE bgr: BGR586 source carries 329 historical Sep-19 kpex capacitors, not an extraction of the BGR586 layout
+# NOTE sense: R100 own-native partial-field C (unbound VSUBS excluded; physical field acceptance not established)
+# WARNING deviation --pads nodcn: every PDK pad instance of this deck (XP*: SENSE_P/N, VREF, and EN/SCLK/SDI/GATE/FAULT_N where pad models are used) is replaced by a deck-local copy g1nd_<cell> of the sg13g2_io.spi hierarchy with every dantenna instance removed (DCNDiode junctions, SecondaryProtection D1, Clamp_N*/LevelDown gate antenna diodes); level shifters, drivers, clamps, dpantenna diodes and ptap resistors are kept; PDK file unchanged. Reason: the PDK darea diode model switches formula at -3nVt (current step 1e-16->4e-11 A at 78 mV/27 C, 1e-12->4e-10 A at 104 mV/125 C), which stalls the transient; removed leakage < 1 nA per pad at 125 C.
+# netlist sha256 e91617f5fcf6f5a0dc721a2ba53b507a05cc226d6dbf0bebaa858a1e7d876765 blocks/g1_gate/sim/postlayout/g1_gate_pex.spice
+# IO models sha256 1d53ab7df431b717ef5aff43e1117c0224681d5cc84886da37a319280ee958d6 /foss/pdks/ihp-sg13g2/libs.ref/sg13g2_io/spice/sg13g2_io.spi
+# PDK commit 84374023ee8b4b126bebbba67fcbada0a9c0ff0b
+# ngspice-46 : Circuit level simulation program
+# Icarus Verilog version 14.0 (devel) (s20260301-328-geda9fdcd-dirty)
+# iverilog -g2005 -Wall -Wno-timescale -o /work/build/g1_top/cosim_fb068391d8dfe7379465e774.vvp.tmp1 /work/designs/g1-guardian/blocks/g1_top/sim/rtl/g1_dig_cosim.v /work/designs/g1-guardian/blocks/g1_ctrl/rtl_eco_20260925/g1_sync2.v /work/designs/g1-guardian/blocks/g1_ctrl/rtl_eco_20260925/g1_serial.v /work/designs/g1-guardian/blocks/g1_ctrl/rtl_eco_20260925/g1_trip_timer.v /work/designs/g1-guardian/blocks/g1_ctrl/rtl_eco_20260925/g1_regfile.v /work/designs/g1-guardian/blocks/g1_ctrl/rtl_eco_20260925/g1_digital_top.v /work/designs/g1-guardian/blocks/g1_ctrl/rtl_eco_20260925/g1_digital.v /work/designs/g1-guardian/blocks/g1_seu/rtl_eco_20260925/g1_tmr_reg.v /work/designs/g1-guardian/blocks/g1_seu/rtl_eco_20260925/g1_seu_chain.v /work/designs/g1-guardian/blocks/g1_seu/rtl_eco_20260925/g1_seu.v
+# compiled RTL build/g1_top/cosim_fb068391d8dfe7379465e774.vvp (tag gB_pex_c1414_beh_tt_27C_ovr-bgrsch_padsnodcn_clockfix_rtleco20260925_functional_eco3_gB_tt) sha256 cfeccadcb7714d4fb9e3c84e62e785087dc407cf9706ad00030b12131a4885f7
+# rtl sha256 63dfb950393fe60c3da1d057f6a5dd86142c8bb670ba0a63b87248675037ccd5 designs/g1-guardian/blocks/g1_top/sim/rtl/g1_dig_cosim.v
+# rtl sha256 c14906d7d9256a771cd8fdc0ab14ba291131e151d24bf06b951b6bc693ad8ef2 designs/g1-guardian/blocks/g1_ctrl/rtl_eco_20260925/g1_sync2.v
+# rtl sha256 df4341e1878caef2f7bf27abb273a7a5af3e41b96658ffa02eedb2af97c48a5d designs/g1-guardian/blocks/g1_ctrl/rtl_eco_20260925/g1_serial.v
+# rtl sha256 5cab0bc384cef5a7b08d6c693da90e5347d0de10816830ba9b16c6d6be428c9f designs/g1-guardian/blocks/g1_ctrl/rtl_eco_20260925/g1_trip_timer.v
+# rtl sha256 605d738514124e87068e368ba0113e347303f4fc9e26ff54c7be348841640f52 designs/g1-guardian/blocks/g1_ctrl/rtl_eco_20260925/g1_regfile.v
+# rtl sha256 5c872e3bf6ba28ed09df8074f29908b7f58899c0dfe669de7fb35249952b4258 designs/g1-guardian/blocks/g1_ctrl/rtl_eco_20260925/g1_digital_top.v
+# rtl sha256 36757122c43271dfd439bf1623be6d5413adf3bbb97cbad40d5cccf5892f5c3d designs/g1-guardian/blocks/g1_ctrl/rtl_eco_20260925/g1_digital.v
+# rtl sha256 f53f82d97b91d4e815e662e72b40968949c7d74ce135f777dba7789201167ac5 designs/g1-guardian/blocks/g1_seu/rtl_eco_20260925/g1_tmr_reg.v
+# rtl sha256 6e10bbc02a8ff29116067f2067f648b959f17b542cb2360c50e7802010048573 designs/g1-guardian/blocks/g1_seu/rtl_eco_20260925/g1_seu_chain.v
+# rtl sha256 7c1831c99b5875a2dd48387db70fd5b1a0888a520fe8676bc4e071820b7fa736 designs/g1-guardian/blocks/g1_seu/rtl_eco_20260925/g1_seu.v
+
+Note: No compatibility mode selected!
+
+
+Circuit: * g1_top breaker path, chip level: (g-b) power-up: vdd ramp 1-3 us, iovdd/vdda 5-7 us, en low until 12 us; gate loaded by 5 nf + 10 ohm only
+
+Reducing trtol to 1 for xspice 'A' devices
+Doing analysis at TEMP = 27.000000 and TNOM = 27.000000
+
+Using SPARSE 1.3 as Direct Linear Solver
+
+Initial Transient Solution
+--------------------------
+
+Node                                   Voltage
+----                                   -------
+sub!                                         0
+rail33                                       0
+vdda_s                                       0
+iovdd_s                                      0
+vdda                                         0
+iovdd                              0.000378162
+vdd_s                                        0
+vdd                                          0
+iprof                                        1
+ldi                                7.24734e-11
+gfet                               0.000340949
+shp                                7.24734e-11
+shn                                2.07074e-11
+sense_p                              7.257e-11
+sense_n                             2.0804e-11
+gate                               0.000340949
+fault_n                            0.000292234
+xpsp.xi0.net2                      0.000378162
+xpsp.xi0.xr0.dt                              0
+sense_p_res                        7.32327e-11
+xpsp.xi3.xr0.dt                              0
+xpsp.xi4.net2                                0
+xpsp.xi4.xr0.dt                              0
+xpsn.xi0.net2                      0.000378162
+xpsn.xi0.xr0.dt                              0
+sense_n_res                        2.14667e-11
+xpsn.xi3.xr0.dt                              0
+xpsn.xi4.net2                                0
+xpsn.xi4.xr0.dt                              0
+vref_pad                              0.602209
+xpvref.xi0.net2                    0.000378162
+xpvref.xi0.xr0.dt                            0
+vref                                      1.04
+xpvref.xi3.xr0.dt                            0
+xpvref.xi4.net2                              0
+xpvref.xi4.xr0.dt                            0
+xpen.xi0.net4                      0.000253721
+xpen.xi0.net7                      0.000219547
+xpen.xi0.net1                      6.62703e-13
+xpen.xi0.net2                                0
+en_core                                      0
+en_pad                                       0
+xpen.xi0.xi0.xr0.dt                          0
+xpsclk.xi0.net4                     0.00025372
+xpsclk.xi0.net7                    0.000219547
+xpsclk.xi0.net1                    6.62703e-13
+xpsclk.xi0.net2                              0
+sclk_core                                    0
+sclk_pad                                     0
+xpsclk.xi0.xi0.xr0.dt                        0
+xpsdi.xi0.net4                      0.00025372
+xpsdi.xi0.net7                     0.000219547
+xpsdi.xi0.net1                     6.62703e-13
+xpsdi.xi0.net2                               0
+sdi_core                                     0
+sdi_pad                                      0
+xpsdi.xi0.xi0.xr0.dt                         0
+xpg.xi2.xi1.net2                             0
+gate_core                                    0
+xpg.net1                           0.000201511
+xpg.xi2.xi1.net4                   9.44484e-05
+xpg.xi2.xi1.net3                   0.000121483
+xpg.xi2.xi0.net2                             0
+xpg.net2                           0.000225061
+xpg.xi2.xi0.net4                   9.44482e-05
+xpg.xi2.xi0.net3                   0.000121483
+xpf.xi2.xi1.net2                             0
+fault_core                                   0
+xpf.net1                            0.00020151
+xpf.xi2.xi1.net4                   9.44484e-05
+xpf.xi2.xi1.net3                   0.000121483
+xpf.xi2.xi0.net2                             0
+xpf.net2                           0.000225061
+xpf.xi2.xi0.net4                   9.44481e-05
+xpf.xi2.xi0.net3                   0.000121483
+osc_en_g                                     0
+osc_en                                       0
+vdda_bgr                                     0
+isense_b                                0.9992
+isense                                  0.9992
+vdda_sense                                   0
+icmp_b                                  0.4996
+icmp                                    0.4996
+vth_soft                              0.500377
+cs                                  9.6266e-09
+vth_hard                              0.500377
+ch                                  9.6266e-09
+soft0                                        0
+soft1                                        0
+soft2                                        0
+soft3                                        0
+soft4                                        0
+soft5                                        0
+soft6                                        0
+soft7                                        0
+hard0                                        0
+hard1                                        0
+hard2                                        0
+hard3                                        0
+hard4                                        0
+hard5                                        0
+hard6                                        0
+hard7                                        0
+cmps_a                                0.377864
+cmph_a                                0.377864
+zero_a                                       0
+cmp_soft                                     0
+cmp_hard                                     0
+vdda_trip                                    0
+vdd_trip                                     0
+osc_i                                        0
+osc_clk                                      0
+vdd_osc                                      0
+vdda_gate                                    0
+vdd_gate                                     0
+xgate.n_11                                   0
+xgate.n_13                                   0
+tripped                                      0
+xgate.n_12                                   0
+xgate.n_6                                    0
+xgate.n_4                                    0
+xgate.n_10                                   0
+xgate.n_9                                    0
+clr_d                                        0
+xgate.n_8                                    0
+trip_d                                       0
+xgate.n_7                                    0
+xgate.n_i233                                 0
+fast_en                                      0
+xgate.n_36                                   0
+xgate.n_37                                   0
+xgate.n_35                                   0
+xgate.n_34                                   0
+xgate.n_i234                                 0
+xgate.n_19                                   0
+xgate.n_29                                   0
+xgate.n_22                                   0
+xgate.n_i235                                 0
+xgate.n_31                                   0
+xgate.n_32                                   0
+xgate.n_25                                   0
+xgate.n_i236                                 0
+xgate.n_30                                   0
+xgate.n_i237                                 0
+xgate.n_i238                                 0
+xgate.n_33                                   0
+xgate.n_18                                   0
+xgate.n_21                                   0
+xgate.n_24                                   0
+xgate.n_28                                   0
+xgate.n_27                                   0
+xgate.n_17                                   0
+xgate.n_26                                   0
+xgate.n_23                                   0
+xgate.n_20                                   0
+cmp_clk                                      0
+trim3                                        0
+trim2                                        0
+trim1                                        0
+trim0                                        0
+dig_trip                                     0
+dig_gate_en                                  0
+cause1                                       0
+cause0                                       0
+sdo                                          0
+sp15                                         0
+sp14                                         0
+sp13                                         0
+sp12                                         0
+sp11                                         0
+sp10                                         0
+sp9                                          0
+sp8                                          0
+sp7                                          0
+sp6                                          0
+sp5                                          0
+sp4                                          0
+sp3                                          0
+sp2                                          0
+sp1                                          0
+sp0                                          0
+inrush_active                                0
+soft_armed                                   0
+bosc_clk#branch                              0
+bcmph#branch                      -3.77864e-13
+bcmps#branch                      -3.77864e-13
+bch#branch                         -9.6266e-21
+bcs#branch                         -9.6266e-21
+bvthh#branch                      -5.00377e-13
+bvths#branch                      -5.00377e-13
+bic#branch                          -9.992e-13
+bis#branch                         -1.9984e-12
+bosc#branch                                  0
+vm_gated#branch                              0
+vm_gatea#branch                              0
+vm_osc#branch                                0
+vosc_i#branch                                0
+vm_tripd#branch                              0
+vm_tripa#branch                              0
+vzero#branch                                 0
+vm_sense#branch                              0
+vm_bgr#branch                                0
+vvref#branch                      -0.000756324
+vsdi#branch                        3.41039e-15
+vsclk#branch                       3.41039e-15
+ven#branch                         3.41039e-15
+vim#branch                         2.07054e-09
+vprof#branch                            -1e-12
+v12#branch                                   0
+vmi#branch                        -0.000756324
+vma#branch                                   0
+v33#branch                         0.000756324
+vsub#branch                        6.28016e-13
+adac#branch_1_0                              0
+adac#branch_1_1                              0
+adac#branch_1_2                              0
+adac#branch_1_3                              0
+adac#branch_1_4                              0
+adac#branch_1_5                              0
+adac#branch_1_6                              0
+adac#branch_1_7                              0
+adac#branch_1_8                              0
+adac#branch_1_9                              0
+adac#branch_1_10                             0
+adac#branch_1_11                             0
+adac#branch_1_12                             0
+adac#branch_1_13                             0
+adac#branch_1_14                             0
+adac#branch_1_15                             0
+adac#branch_1_16                             0
+adac#branch_1_17                             0
+adac#branch_1_18                             0
+adac#branch_1_19                             0
+adac#branch_1_20                             0
+adac#branch_1_21                             0
+adac#branch_1_22                             0
+adac#branch_1_23                             0
+adac#branch_1_24                             0
+adac#branch_1_25                             0
+adac#branch_1_26                             0
+adac#branch_1_27                             0
+adac#branch_1_28                             0
+adac#branch_1_29                             0
+adac#branch_1_30                             0
+adac#branch_1_31                             0
+adac#branch_1_32                             0
+adac#branch_1_33                             0
+adac#branch_1_34                             0
+adac#branch_1_35                             0
+adac#branch_1_36                             0
+adac#branch_1_37                             0
+adac#branch_1_38                             0
+adac#branch_1_39                             0
+adac#branch_1_40                             0
+adac#branch_1_41                             0
+adac#branch_1_42                             0
+adac#branch_1_43                             0
+adac#branch_1_44                             0
+adac#branch_1_45                             0
+adac#branch_1_46                             0
+adac#branch_1_47                             0
+acmpd#branch_1_0                             0
+acmpd#branch_1_1                             0
+
+ Reference value :  0.00000e+00 Reference value :  3.68107e-07 Reference value :  7.90887e-07 Reference value :  1.16180e-06 Reference value :  1.58565e-06 Reference value :  2.00765e-06 Reference value :  2.41523e-06 Reference value :  2.85656e-06 Reference value :  3.33234e-06 Reference value :  3.76603e-06 Reference value :  4.23313e-06 Reference value :  4.65792e-06 Reference value :  5.03773e-06 Reference value :  5.43552e-06 Reference value :  5.62386e-06 Reference value :  5.71767e-06 Reference value :  5.79560e-06 Reference value :  6.14058e-06 Reference value :  6.54826e-06 Reference value :  6.93856e-06 Reference value :  7.36078e-06 Reference value :  7.83683e-06 Reference value :  8.20858e-06 Reference value :  8.64984e-06 Reference value :  9.10818e-06 Reference value :  9.53285e-06 Reference value :  9.96108e-06 Reference value :  1.04327e-05 Reference value :  1.08575e-05 Reference value :  1.12835e-05 Reference value :  1.17572e-05 Reference value :  1.20242e-05 Reference value :  1.21821e-05 Reference value :  1.26054e-05 Reference value :  1.29646e-05 Reference value :  1.33475e-05 Reference value :  1.37188e-05 Reference value :  1.40905e-05 Reference value :  1.44785e-05 Reference value :  1.48722e-05 Reference value :  1.52554e-05 Reference value :  1.56260e-05 Reference value :  1.59963e-05
+No. of Data Rows : 4463
+gmax_ramps          =  7.62431e-02 at=  5.79523e-06
+gc_max              =  1.21414e+00 at=  5.65759e-06
+g_end               =  3.30000e+00
+
+Error: measure  t_g1r  when(WHEN) : out of interval
+ meas tran t_g1r when v(gate)=1.0 rise=1 from=0 to=11.9222u failed!
+
+
+Error: measure  t_g1f  when(WHEN) : out of interval
+ meas tran t_g1f when v(gate)=1.0 fall=1 from=0 to=11.9222u failed!
+
+Warning from checkvalid: vector t_g1f is not available or has zero length.
+Error: RHS "(t_g1f - t_g1r)*1e6" invalid
+ipk_ramps           =  4.15431e-09 at=  5.79808e-06
+q_ramps             =  2.53452e-14
+tripped_ramps       =  3.54139e-01 at=  5.22357e-06
+en_core_max         =  8.53015e-01 at=  5.00004e-06
+Error: &t_g1r: no such variable.
+Error: &t_g1f: no such variable.
+Error: &t_high_us: no such variable.
+POWERUP GATE_max_EN_low= 0.0762431  gate_core_max= 1.21414  en_core_max= 0.853015  GATE_above_1V_from_us=  to_us=  duration_us=  load_peak_A= 4.15431E-09  charge_As= 2.53453E-14  tripped_max= 0.354139  GATE_after_EN= 3.3
+Note: Simulation executed from .control section 
+
+# run status completed
+# ngspice exit 0, wall time 11 s
