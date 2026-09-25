@@ -1,0 +1,26 @@
+# tb_g1_digital, gate level, SDF-annotated (compact log; full log retained at ${BULK}/gls-chipdigital-20260925-r1/sdf_typ/sim.log sha256 189ac9f2fc087277)
+# netlist ${BULK}/digital-final-nlrename-20260923-r1/g1_digital.nl.v sha256 6181b988eeaa2895
+# sdf ${BULK}/digital-postroute-20260923-r1/flow/02-openroad-stapostpnr/nom_typ_1p20V_25C/g1_digital__nom_typ_1p20V_25C.sdf sha256 41758d7107ae554d
+# testbench = sim/tb_g1_digital.v + initial $sdf_annotate(<sdf>, dut) (sha256 b7dce119e840e55f)
+# iverilog -g2012 -gspecify -ginterconnect -Tmax -DGLS -Wno-timescale <sg13g2_udp.v> <sg13g2_stdcell.v> <netlist> <testbench>; vvp -n
+# warnings summarised: 1200 x 'SDF WARNING: TIMINGCHECK not supported.'; 108 x model 'Timing checks are not supported'; 68 x 'sorry: ifnone with an edge-sensitive path'
+Icarus Verilog version 14.0 (devel) (s20260301-328-geda9fdcd-dirty)
+SDF_ANNOTATION_RETURNED
+VCD info: dumpfile tb_g1_digital_gls.vcd opened for output.
+PASS T01 reset values of every register
+PASS T02 write/read-back of every RW register
+PASS T03 serial at f_SCLK = f_OSC (10 MHz) and idle-timeout resync
+PASS T04 EN low resets configuration; STATUS.EN
+PASS T05 inrush mask after EN, then hard trip
+PASS T06 hard path: N-1 consecutive decisions do not trip, N do; gap resets
+PASS T07 soft path: short pulse no trip, long trips, decay, peak, hysteresis
+PASS T08 force trip, path enables
+PASS T09 retrigger mode: hold, re-enable, inrush restart, give-up
+PASS T10 SEU self-test injection through registers
+PASS T13 sense offset: signed add to both DAC codes, saturation, hysteresis stacking
+PASS T14 G1_GATE fast path: analog trip adopted, clr_d clears it, no re-trip
+  clr_d pulses 14, minimum width 199.990000 ns (>= 100 ns required)
+PASS T15 clr_d pulse width and trip_d hold
+SUMMARY tests_pass=13 tests_fail=0 checks=193 errors=0
+ALL TESTS PASSED
+${BULK}/gls-chipdigital-20260925-r1/sdf_typ/testbench.v:601: $finish called at 8226051000 (1ps)

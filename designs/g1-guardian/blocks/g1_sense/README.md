@@ -1,6 +1,35 @@
 # G1_SENSE — low-side shunt difference amplifier (3.3 V)
 
-State: **schematic frozen (revision B), simulated at schematic level (nominal, corners,
+## Variant on the chip of record (2026-09-25)
+
+The amplifier placed in the chip of record (`g1_chip_top_1414.gds`, `629d303a…`) is **comp45 + R100**:
+revision B with the main-OTA compensation changed to a 45 × 23 µm MIM (comp45) and the zero resistor
+`RRZ` in `g1_ota_main_candidate` set to `rppd` w = 1 µm, l = 100 µm (R100). Adopted on the chip of record
+by the owner decision of 2026-09-24; records dated before that (e.g. `reports/RZ100_PARTIAL_FIELD_20260923.md`)
+call it "not adopted". The chip cell is 384.3 × 238.7 µm (≈ 0.092 mm²), not the 252 × 189 µm rev-B macro.
+
+| Item | Path (block-relative) | Identity |
+| --- | --- | --- |
+| Source (schematic-level) | `reports/rz100-partial-field-evidence-20260923-r1/sense-comp45-rz100-actual-source-20260923-r1/candidate.spice` (decoded repo copy); chip decks use `../g1_trip/sim/qualification/joint586-softinputpair4-nf4-roomcal-s73133-20260924-r1/sense.spice` | `bb933fda…` (source identity) |
+| Layout (native build) and LVS reference | `reports/rz100-partial-field-evidence-20260923-r1/sense-comp45-rz100-native-build-20260923-r1/g1_sense_physical.gds`, `…native-reference-20260923-r1/g1_sense_physical.cdl` | `450a4906…`, `696b43fd…` |
+| Partial-field capacitance netlist (used by `g1_top --blockset c1414`) | `sim/postlayout/g1_sense_r100_partialc.spice` | `ffb14762…` |
+
+| Check / number (comp45 + R100) | Status | Evidence |
+| --- | --- | --- |
+| Chip SENSE cell vs native build `450a4906` | XOR empty outside fill layers | `../g1_padring/reports/signoff-1414-20260924/blockmap/block_xor.json` |
+| Chip-level DRC, density and antenna on `629d303a…` | passed (0 markers) | `../g1_padring/reports/signoff-1414-20260924/README.md` |
+| Standalone mismatch, 100 samples (ideal VREF/PTAT, passive load) | passed 100/100: gain 19.905–20.050; residual ≤ 498 µV **after an ideal continuous room-temperature correction** (not the implemented digital trim) (simulated) | `reports/R100_MC_100_20260923.md` |
+| Loop margins, slow/low/cold | gain 19.998, −3 dB bandwidth 2.28 MHz, PM 82.1°, GM 16.6 dB; 1 % settling 306.5 ns (simulated, own-source) | `reports/RZ100_PARTIAL_FIELD_20260923.md` |
+| Partial-field extraction (844 C added, 134 VSUBS pairs omitted) | run; recorded field acceptance **failed/unresolved** | same; signoff block map |
+| Full PEX of the comp45 + R100 layout; post-layout MC | **not run** | — |
+| Supply current, chip netlists, tt/27 °C | SENSE 1101.4 µA (of 1421 µA `VDDA`) (simulated) | `../g1_top/sim/campaigns/RESULTS_20260925.md` §1 |
+| `SENSE_P`/`SENSE_N` stock pad models at ≥ 2.3× faults | deck deviation (`inpads nodcn`); stock-pad 3×/4× runs **not run to completion** | same |
+
+Everything below this section (revision B: 252 × 189 µm macro, 982/976 µA, the Sep-19 kpex
+extraction, the assembly-1350 antenna result) describes the **revision-B macro, which is not on the
+chip**. It is kept as history and as the base of comp45 + R100.
+
+Historical state of the revision-B macro (not on the chip): **schematic frozen (revision B), simulated at schematic level (nominal, corners,
 temperature, Monte Carlo); layout generated, DRC-clean (full rule set) and LVS-clean (2026-09-19);
 kpex 2.5D capacitance extraction and post-layout simulation done; macro fill added, DRC/LVS
 repeated clean on the filled GDS (see "Laid out" and "Post-layout" below).**
@@ -347,7 +376,8 @@ post-layout netlist (see Unverified).
 | PEX on the filled GDS | run; **fill is excluded from PEX**: kpex's technology maps conductors to datatype 0 only, the 942 capacitor values are identical to the unfilled run (md5 of the sorted values equal), so no post-layout rerun | `reports/pex/cc_fill/kpex_plain.log`, `reports/pex/cc_fill/capacitor_values_md5_filled_vs_unfilled.txt` |
 | PEX with the MIM layers present | **failed** (kpex 0.3.12 has no MIM model, engine aborts) | `reports/pex/kpex_with_mim_failed.log` |
 | Post-layout simulation (tb_sense on the kpex netlist), tt 27 °C, tt 175 °C, tt −40 °C, ss/wcs 175 °C, ff/bcs 27 °C | run, see table | `sim/postlayout/results_postlayout.txt`, `sim/postlayout/results/compare.md` |
-| Density / antenna at assembly | Density **passed** (0 failing windows); antenna remains **failed** (9 receiver-pad markers, not waived) | `../g1_padring/INTEGRATION.md`, assembly-1350 evidence |
+| Density / antenna at the superseded 1350 µm assembly | Density **passed** (0 failing windows); antenna **failed** (9 receiver-pad markers, not waived) on that assembly | `../g1_padring/INTEGRATION.md`, assembly-1350 evidence |
+| Density / antenna on the chip of record `629d303a…` | **passed** (0 markers each) | `../g1_padring/reports/signoff-1414-20260924/README.md` |
 
 ## Unverified
 
@@ -373,8 +403,8 @@ post-layout netlist (see Unverified).
   and the ±0.3 V common-mode points were not rerun.
 - The OTA layout is not the silicon-proven `TO_Nov2024` layout (that source has no GDS); every
   device is a PDK PCell but the arrangement is new and has no measurement behind it.
-- Assembly antenna findings remain unresolved; assembled density passed (see
-  `../g1_padring/INTEGRATION.md`). Latch-up ties follow LU.a/LU.b by the PDK deck only.
+- The antenna findings of the superseded 1350 µm assembly (`../g1_padring/INTEGRATION.md`) are
+  historical; antenna and density of the chip of record passed with 0 markers (signoff-1414-20260924). Latch-up ties follow LU.a/LU.b by the PDK deck only.
 - The macro is larger than the 200 × 150 µm target given at layout start (252 × 189 µm): the 95-unit
   resistor array (7.3 mm of 2 µm poly at 2.5 µm pitch) alone needs ≈ 135 × 165 µm, and the OTA cell
   is 98 × 51 µm; no attempt was made to fold the OTA rows or to narrow the unit resistor.

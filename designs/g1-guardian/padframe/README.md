@@ -1,32 +1,43 @@
 # G1 pad ring and package
 
-## Current 1414 µm candidate bonding map — not for tapeout
+> **Status 2026-09-25.** The chip of record is
+> [`g1_chip_top_1414.gds`](../blocks/g1_padring/layout/g1_chip_top_1414.gds)
+> (1414 × 1414 µm, SHA-256 `629d303abf594ec90593f1d28a8d9ad19673ea6662780ba428a6d9c5685986ba`,
+> owner decision 2026-09-24, `PLAN.md` D15). Its physical sign-off is
+> [`signoff-1414-20260924`](../blocks/g1_padring/reports/signoff-1414-20260924/README.md).
+> The 1350 µm LibreLane frame and the earlier 1200 µm and 1130 µm frames below are
+> **superseded** and kept as history only. Their geometry and check results do not
+> describe the chip of record.
 
-The [2026-09-23 candidate bonding map](bondmap_candidate_20260923.csv) gives
-the **24 physical passivation-opening centres**, in µm from the lower-left
-corner of the unchanged 1414 × 1414 µm die. The logical pin assignments and
-112 µm pitch are unchanged. Each bondpad moved exactly 5 µm outward: south
-and west centres are at 101 µm, north and east at 1313 µm. Openings remain
-65.8 × 65.8 µm; the original metal connection is retained with an additive
-swept-frame bridge.
+## Bonding map (1414 µm die): candidate, not bound to the chip of record
 
-This map is bound to candidate GDS SHA256
-`ab02b653c6b0e29e7693bed55e097081e6e41f67e24c59102494e6fbc1724541`.
-See the [geometry, connectivity and stock-check evidence](../review/audits/bondpad_outward_closure/RESULTS_20260923.md).
-Full stock main, maximal, antenna and density checks **passed with zero
-markers**, and all 10,222 internal terminal probes plus 24 external pad
-rectangles passed the source-aliased connectivity checks. The five supply
-domains remain distinct. This does **not** establish full-chip device-aware
-LVS, final physical PEX/electrical qualification, bonding-service acceptance,
-or tapeout readiness. New pad RC and package measurements are **not run**;
-earlier routed-wire RC remains tied to its original database.
+Two candidate bonding maps exist. Both give the **24 physical
+passivation-opening centres** in µm from the lower-left corner of the
+1414 × 1414 µm die, with the same pin assignments and coordinates:
 
-The original 1350 µm geometry and earlier bonding records below are retained
-as history, not as the coordinate source for this candidate. Earlier
-[four-micrometre pad-map experiments](../review/audits/p01-adoption-20260921-r3/padmap_delta.csv)
-also remain historical and must not be mixed with this map.
+| File | SHA-256 of the CSV | `candidate_gds_sha256` column | Use |
+| --- | --- | --- | --- |
+| [`bondmap_candidate_20260923.csv`](bondmap_candidate_20260923.csv) | `73ed1fc8…` | `ab02b653…` | first candidate, superseded by `_r2` |
+| [`bondmap_candidate_20260923_r2.csv`](bondmap_candidate_20260923_r2.csv) | `201612db…` | `3e363438…` | the map the tape-in package uses ([`TAPEIN_PACKAGE_20260924.md`](../review/TAPEIN_PACKAGE_20260924.md), bond map rows) |
 
-## Historical 1350 µm ring geometry
+**Neither map is bound to the chip GDS `629d303a…`.** Both carry the hash of an
+earlier candidate GDS and the status `candidate_not_tapeout`. The tape-in package
+records the r2 opening centres and sizes as matching the 24 Passiv openings of
+`g1_chip_top_1414.gds` to 0.01 µm (KLayout check, 2026-09-24). Rebinding the CSV
+to `629d303a…` in a new revision is **open** (tape-in package, open items).
+
+The logical pin assignments and 112 µm pitch are unchanged from the 1350 µm frame.
+Each bondpad moved exactly 5 µm outward: south and west centres are at 101 µm,
+north and east at 1313 µm. Openings remain 65.8 × 65.8 µm; the original metal
+connection is retained with an additive swept-frame bridge.
+See the [geometry, connectivity and stock-check evidence](../review/audits/bondpad_outward_closure/RESULTS_20260923.md)
+(run on candidate GDS `ab02b653…`, not on `629d303a…`).
+Bonding-service acceptance and pad RC/package measurements: **not run**.
+
+Earlier [four-micrometre pad-map experiments](../review/audits/p01-adoption-20260921-r3/padmap_delta.csv)
+are historical and must not be mixed with this map.
+
+## Historical 1350 µm ring geometry (superseded)
 
 Numbers from the LibreLane Chip run of `blocks/g1_padring/` (evidence there,
 run `ring-1350`; `PLAN.md` D13). The 1000 µm allocation was infeasible: six
@@ -68,8 +79,10 @@ pads per side on the die. Die thickness 200 µm. Die attach conductive and the
 exposed paddle bonded to a board pad so the substrate return is a defined node
 rather than a floating one.
 
-Bonding diagram: pad *n* on side *s* to the lead directly opposite, no
-crossings. Pad numbering follows the pin map in the specification. D14
+Bonding diagram: intended as pad *n* on side *s* to the lead opposite it, no
+crossings. The north and west pad order in the CSV is not one continuous rotation
+of the south/east order, so "directly opposite" is not yet a defined mapping: a
+pad-to-lead table is **needed** and does not exist yet. Pad numbering follows the pin map in the specification. D14
 changed the **function** of pad 7 (east side, first from the bottom) from a
 second core `VDD` to `VDDA`; its position and cell size are unchanged, so the
 bonding diagram is unchanged and the board must tie the `VDDA` lead to the
@@ -84,20 +97,36 @@ three canary-transistor pins and three HBT pins.
 
 ## Checks
 
-Evidence for the ring rows is in `blocks/g1_padring/reports/run-1350/`, for
-the assembled chip in `blocks/g1_padring/reports/assembly-1350/` (see the
-block README for the logs and the failure causes).
+### Chip of record, `g1_chip_top_1414.gds` (`629d303a…`)
+
+Evidence: [`signoff-1414-20260924`](../blocks/g1_padring/reports/signoff-1414-20260924/README.md).
 
 | Check | Status |
 | --- | --- |
+| KLayout main DRC, maximal DRC | passed, 0 markers |
+| Density | passed, 0 markers |
+| Antenna | passed, 0 markers |
+| Projected-reference LVS | passed, 61 684 / 61 684 devices |
+| Canonical (unprojected) LVS | **failed**; cause: substrate/tap/diode netlist semantics of the IO-cell reference in the PDK, reproduced with stock cells and with IHP's latest `dev` deck and library; the design-local IO copies match IHP's `dev` library on every layer (PR #1223); upstream issues #1218/#1130 ([evidence](../review/upstream/evidence/README.md)) |
+| Full-chip PEX | not run |
+| Bonding diagram accepted by packaging service | not run |
+
+### Historical: superseded 1350 µm assembly (not the chip)
+
+These results were recorded on the 1350 µm LibreLane assembly
+(`blocks/g1_padring/reports/run-1350/` for the ring, `…/assembly-1350/` for the
+assembled chip) and are kept as history. They were superseded by the 1414 µm
+chip of record above.
+
+| Check (1350 µm assembly) | Status at the time |
+| --- | --- |
 | Ring assembled (24 pads, corners, fillers, bondpads, core ring; 0 routing DRC, 0 disconnected pins, GDS XOR 0) | passed |
 | KLayout DRC on the ring, hard rules (`ihp-sg13g2.drc`, `no_recommended`, deep) | passed, 0 markers — ring alone and the full assembly (all 12 macros, VDDA strapped); precheck mode also 0 |
-| KLayout DRC with recommended rules | failed, 60 on the assembly, all `Pad.fR` (IO cells' 3 µm pad stub vs 7 µm recommended exit length — PDK-cell property) |
+| KLayout DRC with recommended rules | failed (1350 assembly), 60 on the assembly, all `Pad.fR` (IO cells' 3 µm pad stub vs 7 µm recommended exit length — PDK-cell property) |
 | Full-chip DRC incl. precheck rules | passed, 0 markers on the assembly with `precheck_drc=true` (hard rules; the precheck mode adds no marker — `blocks/g1_padring/reports/assembly-1350/drc_precheck/`) |
 | Magic DRC | failed, 566 markers inside PDK IO cells / at their abutments |
 | Density and fill | passed, 0 markers after fill (ring alone and the assembly: Activ 46 %, metals 39–51 %, TopMetal 44–48 %) |
-| KLayout antenna | failed, 9 markers on the ring alone and on the assembly — all the `sg13g2_IOPadIn` library artefact (rail-tied receiver gate, deck sums the supply rail) |
-| Supply nets isolated (VDD, VSS, VDDA, IOVDD, IOVSS and the 17 signals on separate conductors; no supply shape on another net's metal) | passed on the assembly of record — three geometric checks in `blocks/g1_padring/flow/lvs/`; the first assembly run had VDDA, VSS and VDD shorted by the supply straps and was caught only by the core-only LVS (`blocks/g1_padring/reports/assembly-1350-r1/`) |
-| Core-only KLayout LVS of the assembled chip (ring cells excluded, pad terminals as ports) | passed, 52 circuit pairs matched; IO ring excluded (see assembly evidence) |
+| KLayout antenna | failed (1350 assembly), 9 markers on the ring alone and on the assembly — all the `sg13g2_IOPadIn` library artefact (rail-tied receiver gate, deck sums the supply rail) |
+| Supply nets isolated (VDD, VSS, VDDA, IOVDD, IOVSS and the 17 signals on separate conductors; no supply shape on another net's metal) | passed on the 1350 assembly — three geometric checks in `blocks/g1_padring/flow/lvs/`; the first assembly run had VDDA, VSS and VDD shorted by the supply straps and was caught only by the core-only LVS (`blocks/g1_padring/reports/assembly-1350-r1/`) |
+| Core-only KLayout LVS of the assembled chip (ring cells excluded, pad terminals as ports) | passed (1350 assembly), 52 circuit pairs matched; IO ring excluded (see assembly evidence) |
 | LVS of the ring (netgen black-box; Magic transistor level; PDK KLayout deck) | failed for tool/library reasons: no extractor matches the PDK IO cells against the PDK IO CDL at this commit (`blocks/g1_padring/reports/lvs_reference/`); connectivity verified by OpenROAD (0 critical disconnected pins) and by KLayout metal continuity at the pad joints |
-| Bonding diagram accepted by packaging service | not run |

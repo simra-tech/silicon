@@ -11,8 +11,10 @@ array set io {fast fast_1p32V_3p6V_m40C typ typ_1p2V_3p3V_25C slow slow_1p08V_3p
 set sta_report_default_digits 4
 define_corners CURRENT
 read_liberty -corner CURRENT $pdk/libs.ref/sg13g2_stdcell/lib/sg13g2_stdcell_$sc($corner).lib
-set macro_nl   $R/blocks/g1_ctrl/layout/g1_digital.nl.v
-set macro_spef $R/blocks/g1_ctrl/layout/g1_digital.nom.spef
+# default: run7 views; MACRO_NL / MACRO_SPEF select another g1_digital database (e.g. the chip's 6181b988 / e6c89575)
+set macro_nl   [expr {[info exists ::env(MACRO_NL)]   && $::env(MACRO_NL)   ne "" ? $::env(MACRO_NL)   : "$R/blocks/g1_ctrl/layout/g1_digital.nl.v"}]
+set macro_spef [expr {[info exists ::env(MACRO_SPEF)] && $::env(MACRO_SPEF) ne "" ? $::env(MACRO_SPEF) : "$R/blocks/g1_ctrl/layout/g1_digital.nom.spef"}]
+puts "macro_nl $macro_nl\nmacro_spef $macro_spef"
 set ev $R/review/audits/final-routed-timing-evidence-20260923-r1/runs
 if { $case eq "macro" } {
     read_verilog $macro_nl

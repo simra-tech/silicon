@@ -132,8 +132,8 @@ on the shared input `icmp` at the hard strobe. Consequences:
 - Uncalibrated, the `c_mid` stimuli at 0.80T and 0.89T trip. These are inside
   the §6 no-trip region (≤ 0.9T) of the code value. Calibration of the hard
   path must therefore bracket the **effective** threshold, not the code. Expect
-  the calibrated code to land about 45–50 codes above the nominal code (effective
-  threshold about 8–11 mV below code).
+  the calibrated code to land 40–56 codes above the nominal code (block bench over
+  corners; 41–47 codes here at tt/27 °C), i.e. effective threshold about 8–11 mV below code.
 - The usable hard range is about 25–40 mV of shunt instead of 25–50 mV.
 - Just above the effective threshold (1.25×, 31.25 mV) the trip comes one
   strobe period (0.212 µs) later: `GATE` < 1 V at 1.546 µs.
@@ -186,9 +186,11 @@ oscillator point therefore has no completed run.
 
 {{t2f}}
 
-The G1_T2F block result is 1.59 MHz at 25 °C and 5.2 kHz/°C
-(`../../../g1_t2f/README.md`). On the chip netlists it is 1.518 MHz at 27 °C,
-about 5 % below the block value but inside the ±15 % pre-calibration spread.
+The historical G1_T2F block result, 1.59 MHz at 25 °C and 5.2 kHz/°C, used the
+superseded Sep-19 bandgap. With BGR586 the block gives 1.5074 MHz at 25 °C and
+4.9085 kHz/°C (`../../../g1_t2f/sim/qualification/t2f586-nominal-calibration-20260922.json`;
+`../../../g1_t2f/README.md`). On the chip netlists it is 1.518 MHz at 27 °C,
+consistent with the BGR586 block value.
 The slope from 27 to 125 °C is 4.9 kHz/°C. At −40 °C both attempts with
 `bgr=sch` stopped with "timestep too small" on the BGR HBT `xbgr.xq56`. A third
 attempt, `c1414t2fv3`, used the BGR586 extraction instead of `bgr=sch` and

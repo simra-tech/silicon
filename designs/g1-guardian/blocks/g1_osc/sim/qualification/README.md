@@ -1,5 +1,13 @@
 # Extracted OSC trim screen, 2026-09-21
 
+> **Update 2026-09-25.** R0.95 (four 55.575 µm segments) **is adopted**: it is the oscillator in the
+> chip of record `g1_chip_top_1414.gds` (`629d303a…`, owner decision 2026-09-24). Statements below
+> that call R0.95 "unadopted" or "not adopted" describe the state on their dates. The on-chip
+> variant and its evidence are summarised in `../../README.md` "Variant on the chip of record".
+> The 10.445340 MHz slow/hot code-0 value below is from the pre-CPEX R0.95 source `f08bf051` at
+> ss/wcs/wcs, 1.08 V, 125 °C; the R0.95 CPEX gives 10.447 MHz
+> (`fulltree_r095_load_20260924/results/slowhot_code0.json`). The −2 % candidate was not adopted.
+
 All results are **simulated** on the existing capacitance-only PEX, with a
 50 fF output stand-in. Circuit/layout/model cards were not modified.
 

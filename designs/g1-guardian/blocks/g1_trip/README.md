@@ -1,6 +1,43 @@
 # G1_TRIP — threshold comparators and 8-bit threshold DACs (1.2 V)
 
-State: **schematic frozen and simulated (nominal; comparator over temperature/corners; DAC over
+## Variant on the chip of record (2026-09-25)
+
+The TRIP macro placed in the chip of record (`g1_chip_top_1414.gds`, `629d303a…`) is **not** the
+macro with two identical 12/0.34 µm StrongARMs described below. It carries:
+
+- hard comparator **`g1_cmp_regenpair4`** (regenerative NMOS pair 6/0.26 µm);
+- soft comparator **NF4** input pair (W24/L0.68 µm, four folded 6 µm fingers; was W12/L0.34);
+- the moved `q` feed. DAC strings, switch trees, `g1_cond` and level shifters are unchanged.
+
+| Item | Path (block-relative) | Identity |
+| --- | --- | --- |
+| Schematic-level netlist used by the chip decks | `sim/qualification/joint586-softinputpair4-nf4-roomcal-s73133-20260924-r1/trip.spice` | `f5f0a90a…` |
+| Macro cut from the NF4 parent candidate `60730627` and its LVS reference | `reports/pex/nf4/cut_macro.py`, `reports/pex/nf4/g1_trip_nf4_lvs.cdl` | `fcc439a9…` |
+| Capacitance extraction (kpex 0.3.12, 2.5D CC) | `sim/postlayout/g1_trip_nf4_pex.spice`, record `sim/postlayout/README.md` | `ba86b7b2…` |
+| Soft-comparator physical record | `reports/soft-inputpair4-folded-physical-20260924-r1/README.md` | — |
+
+| Check / number (regenpair4 + NF4) | Status | Evidence |
+| --- | --- | --- |
+| Block LVS of the macro cut, `g1_trip` and `g1_dac8 --no_series_res` | passed | `reports/pex/nf4/lvs_g1_trip.log`, `lvs_g1_dac8_noseries.log` |
+| XOR of the cut against the TRIP cell of `629d303a` | **not run** | `../g1_padring/reports/signoff-1414-20260924/README.md` block map |
+| Chip-level DRC, density and antenna on `629d303a…` | passed (0 markers) | same |
+| Soft (NF4) comparator decision delay on the extraction, 1 mV overdrive | 0.859 ns tt/1.2 V/27 °C, 1.694 ns ss/1.08 V/−40 °C; all decisions right (simulated). ff: **not run** | `sim/postlayout/README.md` |
+| Soft comparator systematic offset bracket (tt), referred to `icmp` | −3.9…+0.77 mV (≈ −0.39…+0.08 mV of shunt) (simulated) | same |
+| Hard comparator (regenpair4) decision delay on the extraction | **not run** | — |
+| Effective trip point, strobe-train bench on the extraction | hard path trips 40–56 LSB (7.9–11.0 mV of shunt) below its code over tt/ss/ff at codes 200 and 254, spread 10–11 LSB; soft within 1 LSB (simulated) | same, `results_postlayout_nf4.txt` |
+| Chip netlists, hard code 200 (39.25 mV at VREF 1.04 V) | no trip at 30.00 mV, trip at 31.25 mV; hard faults take `GATE` < 1 V 1.31–1.36 µs after the fault in 72/72 matrix cells (simulated, ideal clock) | `../g1_top/sim/campaigns/RESULTS_20260925.md` §1, §4 |
+| 2× hold-capacitor candidate `layout/candidates/nf4_hold2x/` | halves the hard offset in simulation (−21 to −25 LSB at code 200); **not adopted**, not on the chip | same §4 |
+| DAC deck, wiring R, mismatch MC on the NF4 extraction | **not run** | `sim/postlayout/README.md` |
+
+Model warnings: every TRIP comparator log carries PDK `rppd` OSDI "voltage is greater than specified
+by vmax" warnings (for example 1574 lines in `sim/postlayout/logs/nf4pex_cmp_delay_mos_tt_1.2V_27C_5MHz.log`).
+They are not errors and are not converted into model-validity passes.
+
+Everything below this section (two identical 12/0.34 µm StrongARMs, 229 × 207 µm macro, 0.86/1.78 ns
+delays of the original extraction) describes the **Sep-19 macro, which is not on the chip**. It is kept
+as history and as the base of the chip variant.
+
+Historical state of the Sep-19 macro (not on the chip): **schematic frozen and simulated (nominal; comparator over temperature/corners; DAC over
 resistor corners and temperature; mismatch Monte Carlo on comparator offset and DAC linearity;
 kickback with the real G1_SENSE source); laid out as the macro `g1_trip` (229 × 207 µm), DRC clean
 with the full PDK rule set and LVS clean against the frozen netlist (2026-09-19); PEX with kpex

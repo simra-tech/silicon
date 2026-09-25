@@ -1,7 +1,19 @@
 # G1_PADRING — dropping macros into the ring
 
+> **Superseded (status 2026-09-25).** This document describes the LibreLane
+> integration of the **1350 µm** frame (and, in places, the earlier 1200 µm ring).
+> Both are superseded. The chip of record is the 1414 µm native-lineage GDS
+> [`layout/g1_chip_top_1414.gds`](layout/g1_chip_top_1414.gds) (SHA-256
+> `629d303abf594ec90593f1d28a8d9ad19673ea6662780ba428a6d9c5685986ba`, owner decision
+> 2026-09-24, `PLAN.md` D15), which was not assembled with this flow. Its floorplan,
+> block-to-netlist map and checks are in
+> [`reports/signoff-1414-20260924/`](reports/signoff-1414-20260924/README.md).
+> "Of record" and "current" below mean the 1350 µm assembly as of 2026-09-19/20.
+> Its core-only LVS (52 pairs), antenna (9 markers) and `Pad.fR` (60) results are
+> historical and do not describe the chip.
+
 How a hardened block (analog or digital) replaces part of `g1_core_placeholder`
-inside the 1200 × 1200 µm ring. Geometry and PDN facts are from
+inside the ring (historically the 1200 × 1200 µm ring, then the 1350 µm frame). Geometry and PDN facts are from
 `flow/config.yaml` and the run evidence in `README.md`.
 
 ## Core window and what is already there
@@ -94,7 +106,7 @@ three gates) is removed when a macro takes over its ports.
    density after fill, KLayout antenna, KLayout LVS with the CDL of the macro
    appended to the schematic netlist (`flow/lvs/pnl2cdl.py <pnl> <out> <cdl…>`).
 
-## Floorplan (1350 µm frame, all macros of record)
+## Floorplan (1350 µm frame, superseded)
 
 Core window [364, 986]² (622 × 622 µm). Pads on the 1350 µm frame start at
 355 + 112 n µm along each side (n = 0…5): east side, bottom to top, VDD (7),
@@ -210,7 +222,7 @@ also the table above): digital (367, 372), sense (733, 440), trip (737, 648),
 gate (850, 862), osc (366.5, 848), t2f (546, 883), bgr (645, 862), shifters
 (546/566/586, 860). Row cut: 163 → 58 rows (`openroad-cutrows.log`).
 
-#### Assembly of record (`flow/run_dryrun.sh`, run tag `assembly-1350`, `reports/assembly-1350/`)
+#### Assembly of record of the superseded 1350 µm frame (`flow/run_dryrun.sh`, run tag `assembly-1350`, `reports/assembly-1350/`)
 
 All macros of record placed (`g1_digital` run7, `g1_bgr` filled in place,
 `g1_sense`/`g1_gate` filled, `g1_t2f`, `g1_trip`, `g1_osc`, `g1_ls_up` × 3,
@@ -260,7 +272,7 @@ Two geometric checks now run in `flow/signoff/signoff.sh` on every assembly
 connectivity check of all chip pins (`supply_isolation.log`); the core-only
 LVS remains the arbiter.
 
-##### Run of record (r2)
+##### Run of record of the 1350 µm frame (r2, superseded)
 
 Run of 2026-09-19 16:45–17:13 (`flow/run_dryrun.sh`; this time the flow's
 Magic DRC and netgen LVS steps also ran, their results are recorded below as

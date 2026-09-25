@@ -1,10 +1,71 @@
 # G1_T2F — temperature-to-frequency converter
 
-State: **revision 2 (collector cascodes): schematic simulated, laid out, DRC/LVS/antenna clean, PEX run,
-post-layout simulated (2026-09-19)**. Macro `g1_t2f`, 92 × 102.6 µm, GDS/LEF/black box in `layout/`;
+State (2026-09-25): **revision 2 is the T2F on the chip of record; every block-level
+result below this section was simulated with the superseded Sep-19 bandgap, not with
+the chip's BGR586**. See "Variant on the chip of record and which bandgap each result used".
+
+Historical state line (2026-09-19, Sep-19 bandgap): revision 2 (collector cascodes): schematic simulated, laid out, DRC/LVS/antenna clean, PEX run,
+post-layout simulated. Macro `g1_t2f`, 92 × 102.6 µm, GDS/LEF/black box in `layout/`;
 schematic f(27 °C) = 1.6003 MHz PTAT, post-layout 1.5418 MHz (-3.7 % gain shift), two-point
-residual -0.85 .. +0.17 °C over −40 .. 150 °C, supply sensitivity -2.5 °C/V (revision 1: -9.3 °C/V),
+residual -0.85 .. +0.17 °C over −40 .. 150 °C (schematic), supply sensitivity -2.5 °C/V schematic,
+-3.26 °C/V post-layout (revision 1: -9.3 °C/V),
 every comparator HBT at V<sub>CE</sub> ≤ 1.10 V (revision 1: 3.08 V) at 3.6 V / 175 °C. See "Revision 2".
+
+## Variant on the chip of record and which bandgap each result used (2026-09-25)
+
+The T2F on `g1_chip_top_1414.gds` (`629d303a…`) is revision 2 (T2F C-PEX netlist
+`sim/postlayout/g1_t2f_pex.spice`, `441edabc…`). Its current and threshold come from
+the chip's bandgap, BGR586 (`bgr_loop24_qref4_r253p465_hv06`). The frequency and the
+calibrated accuracy depend on that bandgap, so the results are split three ways. All
+numbers are simulated; nothing is measured.
+
+**(a) Historical: superseded Sep-19 bandgap.** Every table in this README below this
+section, the schematic and post-layout f(T), residual and supply numbers (1.5898 MHz
+at 25 °C, 5.217 kHz/°C, residual −0.85 … +0.17 °C, −2.5 °C/V schematic, −3.26 °C/V
+post-layout), and the joint extracted MC campaigns in `sim/qualification/`
+(`run_joint.py:15` loads the Sep-19 `g1_bgr/sim/postlayout/g1_bgr_pex.spice`):
+`mc300_summary.json` completed 300/300 samples, 286 passed and 14 failed the frozen
+25/100 °C linear calibration ±2 °C endpoint criterion; 20 samples ran on image
+`5fd78498…` and 280 on image `ab853b72…` (the ngspice-47 runtime noted in "Built
+against"). These describe a bandgap that is not on the chip. They are retained as
+design history and are **not** evidence for the chip.
+
+**(b) Block level with BGR586 (typical process, nominal rails).** Source: BGR586
+schematic-level netlist (`586ffb58…`) with the T2F C-PEX netlist (`441edabc…`);
+ngspice 46, image `5fd78498…`.
+
+| Result | Value | Source |
+| --- | --- | --- |
+| Nominal f at 25 / 100 °C (calibration points) | 1.507431 / 1.875571 MHz | `sim/qualification/t2f586-nominal-calibration-20260922.json` |
+| Slope of the 25/100 °C line | 4.9085 kHz/°C | same |
+| Nominal held-out residual at −40 / 125 °C | −1.261 / −0.420 °C (criterion ±2 °C: passed) | same; `T2F586_SOURCE_QUALIFICATION_20260922.md` |
+| 300-sample mismatch campaign, seeds 74101–74400 | 300 attempted; **237 completed all four temperatures and passed** the frozen 25/100 °C linear calibration ±2 °C at −40/125 °C; **63 incomplete** (numerical watchdog, 600 s per leaf): failed leaves 14 at 25 °C, 42 at 100 °C, 24 at 125 °C, 0 at −40 °C. For the 63 the accuracy check is **not run to completion**, not passed. No completed sample failed ±2 °C | `sim/qualification/t2f586-300sample-audit-20260923.json` (first 100: `t2f586-first100-stage-disposition-20260923.json`, 85 passed / 15 incomplete / 0 failed) |
+| Worst residual over the 237 completed samples | not tabulated in a committed summary | — |
+| Supply sensitivity with BGR586 | **not run** | — |
+| Process corners (ss/ff), 85 °C, intermediate temperatures, temperature return with BGR586 | **not run** | `T2F586_SOURCE_QUALIFICATION_20260922.md` |
+| Actual pad load, BGR586 C-PEX (`g1_bgr586_pex.spice`) in the T2F loop | **not run** at block level | — |
+
+**(c) Chip level on the chip netlists** (`g1_top --blockset c1414`, case `q`,
+`--t2f tl`, BGR586 schematic view `bgr=sch`, `inpads nodcn`, gear; tt;
+[RESULTS_20260925](../g1_top/sim/campaigns/RESULTS_20260925.md) §7):
+
+| T | Status | f_out |
+| --- | --- | --- |
+| 27 °C | passed (oscillates, no trip) | 1.51768 MHz |
+| 125 °C | passed | 1.99692 MHz |
+| −40 °C | **not run to completion** (three attempts, "timestep too small") | — |
+| 85 °C, ss, ff | **not run** | — |
+
+The chip-level two-point slope from 27 and 125 °C is (1.99692 − 1.51768) MHz / 98 K
+≈ 4.89 kHz/°C (computed from the two runs above), consistent with (b).
+
+**What is established about accuracy with the chip's bandgap:** at typical process and
+nominal rails, a per-part 25/100 °C linear calibration predicts −40 and 125 °C within
+±2 °C for the nominal source (−1.26 / −0.42 °C) and for every one of the 237 mismatch
+samples that completed. **What is not established:** the 63 incomplete samples; any
+process corner, supply variation or supply sensitivity; 85 °C and intermediate
+temperatures; operation with the BGR586 extraction instead of its schematic view;
+the −40 °C point on the chip netlists; package stress; and anything measured.
 
 ## Revision 2 (2026-09-19) — why revision 1 is superseded
 
@@ -619,7 +680,7 @@ Reading:
 | Oscillates from `en` rising, both modes, nominal (27 °C) | passed: 1.6003 MHz PTAT, 1.5978 MHz REF, `fout` 0 .. 1.22 V | `sim/results/nom_summary.csv`, `sim/logs/nom_*.log` |
 | f(25 °C) within 1 .. 10 MHz | passed (f(25 °C) = 1.5898 MHz, PTAT mode) | `sim/results/ftemp_summary.csv` |
 | f(T) −40 .. 175 °C, 19 PTAT points, 9 REF points | passed (numbers above; every run oscillates) | `sim/results/ftemp_summary.csv`, `sim/logs/ftemp_*.log` |
-| Two-point (25/100 °C) fit residual ≤ ±2 °C over −40 .. 125 °C, PTAT mode | passed, and over −40 .. 175 °C: residual -0.85 .. +0.50 °C (the ratio readout reaches +4.9 °C at 175 °C) | `sim/results/tables.md` |
+| Two-point (25/100 °C) fit residual ≤ ±2 °C over −40 .. 125 °C, PTAT mode (schematic, historical Sep-19 bandgap) | passed, and over −40 .. 175 °C: residual -0.85 .. +0.50 °C (the ratio readout reaches +4.9 °C at 175 °C) | `sim/results/tables.md` |
 | Every comparator HBT inside `vce_max` = 1.6 V at 3.6 V / 175 °C and 3.0 V / −40 °C, both modes, whole run | **passed: max 1.10 V** (revision 1: 3.08 V, failed) | `sim/results/vce_summary.csv`, `sim/results/vce_rev1_summary.csv`, `sim/logs/vce_*.log` |
 | Supply sensitivity 3.0 .. 3.6 V, 27 °C | run, no pass criterion: **-2.52 °C/V** PTAT, -2.48 °C/V REF (revision 1: −9.3 / −12.9 °C/V) | `sim/results/supply_summary.csv`, `sim/logs/supply_*.log` |
 | Corner spread at 27 °C: 8 extreme process corners + nominal, cap corners; two extremes also at −40/175 °C | passed: 9 of 9 oscillate, f PTAT -12.2 .. +14.7 % of nominal (only the 8 hbt/mos/res extremes were run, not all 27) | `sim/results/corners_summary.csv`, `sim/logs/corners_*.log` |
@@ -634,12 +695,16 @@ Reading:
 | LEF loads in OpenROAD with the PDK tech LEF (macro, 9 pins, 11 obstruction rectangles) | passed | `reports/lef/lef_check.log`, `reports/lef/lef_check.tcl` |
 | PEX, kpex 2.5D `--mode CC --blackbox true`, on the filled GDS | run (MIM devices blackboxed, netlist assembled from the partial SPICE output and the CSV; flattened-GDS cross-check identical; identical to the unfilled GDS, i.e. fill excluded from PEX) | `reports/pex/cc/kpex_plain.log`, `reports/pex/cc/kpex_stdout.log`, `reports/pex/cc/g1_t2f_k25d_pex_netlist.csv`, `reports/pex/cc_flat_check/`, `reports/pex/cc_unfilled/` |
 | PEX, kpex 2.5D `--mode RC` | not run (unusable in kpex 0.3.12, see the bandgap README; wiring resistance estimated by hand) | |
-| Post-layout f(T) −40 .. 175 °C, both modes, and supply 3.0 .. 3.6 V | run: f PTAT -3.6 .. -3.9 %, f REF -3.3 .. -4.0 %, two-point residual within 0.13 °C of the schematic, supply -3.26 °C/V PTAT | `sim/postlayout/results/compare.md`, `sim/postlayout/results/ftemp_summary.csv`, `sim/postlayout/results/supply_summary.csv`, `sim/postlayout/logs/` |
+| Post-layout f(T) −40 .. 175 °C, both modes, and supply 3.0 .. 3.6 V (historical, Sep-19 bandgap) | run: f PTAT -3.6 .. -3.9 %, f REF -3.3 .. -4.0 %, two-point residual within 0.13 °C of the schematic, supply -3.26 °C/V PTAT | `sim/postlayout/results/compare.md`, `sim/postlayout/results/ftemp_summary.csv`, `sim/postlayout/results/supply_summary.csv`, `sim/postlayout/logs/` |
 | Post-layout corners, mismatch MC | not run | |
-| Joint extracted BGR/T2F eight-temperature PTAT sweep (2026-09-21) | passed at nominal rails/process; frozen 25/100 °C calibration maximum independent residual 0.903 °C; statistical/supply coverage not run | `sim/qualification/README.md`, `sim/qualification/nominal_calibration.csv` |
-| Joint extracted BGR/T2F mismatch endpoint smoke (2026-09-21) | **failed linear calibration in 1/20 samples**, worst −2.645 °C at −40 °C; 80/80 transients complete | `sim/qualification/mc20_summary.json`, `sim/qualification/README.md` |
-| Same 20 physical samples at four intermediate temperatures | passed 80/80 transients; frozen linear calibration maximum residual 1.610 °C; cold endpoint failure retained | `sim/qualification/mc20_intermediate_summary.json` |
-| Frozen nominal-curvature diagnostic | unadopted candidate; separate intermediate and nominal between-knot checks complete; larger MC campaign status recorded separately | `sim/qualification/curvature_candidate100.json`, `sim/qualification/interpolation_probe.json` |
+| Joint extracted BGR/T2F eight-temperature PTAT sweep (2026-09-21; historical, Sep-19 bandgap) | passed at nominal rails/process; frozen 25/100 °C calibration maximum independent residual 0.903 °C; statistical/supply coverage not run | `sim/qualification/README.md`, `sim/qualification/nominal_calibration.csv` |
+| Joint extracted BGR/T2F mismatch endpoint smoke (2026-09-21; historical, Sep-19 bandgap) | **failed linear calibration in 1/20 samples**, worst −2.645 °C at −40 °C; 80/80 transients complete | `sim/qualification/mc20_summary.json`, `sim/qualification/README.md` |
+| Same 20 physical samples at four intermediate temperatures (historical, Sep-19 bandgap) | passed 80/80 transients; frozen linear calibration maximum residual 1.610 °C; cold endpoint failure retained | `sim/qualification/mc20_intermediate_summary.json` |
+| Frozen nominal-curvature diagnostic | unadopted candidate; separate intermediate and nominal between-knot checks complete; larger MC campaign status recorded separately |
+| BGR586 nominal four-temperature calibration (2026-09-22) | passed: 1.5074 MHz at 25 °C, 4.9085 kHz/°C, held-out residual −1.26 / −0.42 °C | `sim/qualification/t2f586-nominal-calibration-20260922.json` |
+| BGR586 300-sample mismatch calibration (2026-09-23) | 237 passed (all four temperatures, ±2 °C); 63 not run to completion (numerical); 0 completed-and-failed | `sim/qualification/t2f586-300sample-audit-20260923.json` |
+| T2F with BGR586 at ss/ff, 85 °C, supply 3.0–3.6 V | **not run** | |
+| Chip-level T2F on the chip netlists | 27 °C passed 1.51768 MHz; 125 °C passed 1.99692 MHz; −40 °C **not run to completion** | `../g1_top/sim/campaigns/RESULTS_20260925.md` §7 | `sim/qualification/curvature_candidate100.json`, `sim/qualification/interpolation_probe.json` |
 
 ## Unverified
 
@@ -656,7 +721,7 @@ Reading:
   β-dependent, hence not PTAT; this is what the follower gate does *not* add to), charge injection
   of the steering switches, and the `cmim` temperature coefficient are all inside the simulated
   numbers but not separately bounded.
-- The remaining supply sensitivity (-2.5 °C/V schematic, -3.3 °C/V post-layout) is attributed to the
+- The remaining supply sensitivity (-2.5 °C/V schematic, -3.3 °C/V post-layout; both historical, Sep-19 bandgap; with BGR586 **not run**) is attributed to the
   comparator delay's dependence on the V<sub>DD</sub>-referenced load swing; not isolated by a
   dedicated run. A comparator output stage whose switching point sits |V<sub>GS</sub>| below
   V<sub>DD</sub> (a PMOS common-source stage with a current-sink load, sketched but never simulated

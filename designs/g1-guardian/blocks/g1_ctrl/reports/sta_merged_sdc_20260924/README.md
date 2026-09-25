@@ -6,8 +6,10 @@ All numbers are **simulated** (static timing analysis). No silicon.
 
 The physical chip of record is **not** the LibreLane `g1_chip_top` assembly: it is the
 native, hand-assembled 1414 × 1414 µm GDS (`../../../g1_padring/layout/g1_chip_top_1414.gds`)
-which keeps the **same run7 `g1_digital` macro unchanged**. So the timing closure
-we can claim is:
+**Correction (2026-09-25):** that GDS does **not** contain the run7 view of `g1_digital`. It contains
+the post-route database 6181b988, with CTS and routing redone on top of the run7 placement. The closure of record for the
+chip is the section "Chip digital netlist (6181b988)" at the end of this file. The run7 results below
+describe the run7 view only. For that view, the closure consists of:
 
 1. macro-level STA of the run7 netlist and nominal SPEF (the macro signoff, repeated here), and
 2. the macro expanded inside the routed chip-level signal netlist with its extracted
@@ -117,3 +119,61 @@ absent. `g1_digital_top.sdc` and `TOP_SDC.md` remain the block owner's reference
 
 The SDC names (`i_core.u_digital`, `pad14_sclk/p2c`, `clkbuf_0_osc_clk`) are those of the
 LibreLane-lineage netlist; the run7 macro inside the 1414 µm GDS has the same internal names.
+
+## Chip digital netlist (6181b988), 2026-09-25
+
+The `g1_digital` cell inside `g1_chip_top_1414.gds` is **not** the run7 macro view. It is the post-route
+database: placement from run7, then CTS redone (cluster 8, split root), resizing, global and detailed routing,
+fill and renaming. The identity chain is in `../../../g1_padring/reports/signoff-1414-20260924/README.md`,
+"Digital identity chain". The run7 results above therefore describe the run7 view only. This section
+repeats the same STA on the chip's own netlist, which is the **closure of record** for the chip.
+
+| Input | Path (`${BULK}` = external artefact root) | sha256 |
+| --- | --- | --- |
+| gate netlist | `${BULK}/digital-final-nlrename-20260923-r1/g1_digital.nl.v` (= `digital-postroute-20260923-r1/flow/final/nl/`) | `6181b988eeaa2895…` |
+| powered netlist (LVS; not used by STA) | `${BULK}/digital-final-pnlrename-20260923-r1/g1_digital.nl.v` | `4fd0b616…` |
+| SPEF, nominal | `${BULK}/digital-postroute-20260923-r1/flow/01-openroad-rcx/nom/g1_digital.nom.spef` | `e6c895752812e2f1…` |
+| SDF, typ (flow STA output) | `${BULK}/digital-postroute-20260923-r1/flow/02-openroad-stapostpnr/nom_typ_1p20V_25C/g1_digital__nom_typ_1p20V_25C.sdf` | `41758d71…` |
+
+STA command (same `sta.tcl` / `run_sta.sh`, now with optional `MACRO_NL`/`MACRO_SPEF`/`RUN_TAG`), repository root:
+
+```
+RUN_TAG=sta-chipdigital-20260925-r1 MACRO_NL=${BULK}/digital-final-nlrename-20260923-r1/g1_digital.nl.v \
+MACRO_SPEF=${BULK}/digital-postroute-20260923-r1/flow/01-openroad-rcx/nom/g1_digital.nom.spef \
+designs/g1-guardian/blocks/g1_ctrl/reports/sta_merged_sdc_20260924/run_sta.sh <macro|chip_merged|chip_template> <fast|typ|slow> <cpu> ${BULK}
+```
+
+The reports are in `runs_chip6181b988/`. The chip cases use the same routed top signal netlist and SPEF as above. Those were
+extracted around the run7 LEF, so the pin positions of the chip macro are assumed to be the same. That is **not re-verified** here.
+
+| Case | Corner | Worst setup (ns) | Worst hold (ns) | Setup / hold violations | Registers SCLK / osc_clk | Unconstrained | Unannotated (partial) | Max slew / cap / fanout flags |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| macro (`flow/g1_digital.sdc`) | fast | 29.060 | +0.104 | 0 / 0 | 52 / 1148 | 3 | 60 (0) | 0 / 0 / 0 |
+| macro | typ | 28.846 | +0.183 | 0 / 0 | 52 / 1148 | 3 | 60 (0) | 0 / 0 / 0 |
+| macro | slow | 28.487 | +0.323 | 0 / 0 | 52 / 1148 | 3 | 60 (0) | 0 / 0 / 0 |
+| chip_merged | fast | 28.011 | +0.104 | 0 / 0 | 52 / 1148 | 19 | 105 (0) | 12 / 0 / 0 |
+| chip_merged | typ | 27.282 | +0.183 | 0 / 0 | 52 / 1148 | 19 | 105 (0) | 12 / 0 / 0 |
+| chip_merged | slow | 25.756 | +0.323 | 0 / 0 | 52 / 1148 | 19 | 105 (0) | 12 / 0 / 0 |
+| chip_template (control) | fast | 28.261 | **−0.131** | 0 / **50** | 52 / not defined | 1163 | 105 (0) | 12 / 0 / 0 |
+
+- Per group, chip_merged hold (fast / typ / slow): SCLK +0.104 / +0.183 / +0.323, osc_clk +0.113 / +0.196 / +0.347, asynchronous +0.565 / +0.902 / +1.471.
+- The macro case matches this database's own flow STA (`02-openroad-stapostpnr/summary.rpt`: setup 29.06 / 28.85 / 28.49, hold 0.104 / 0.183 / 0.323).
+- **Max fanout is now clean.** The run7 view had 78 flags. The redone CTS removed them.
+- Unannotated: 60 are the CTS dummy-load outputs `clkload*/X`, all of them in the macro. In the chip there are 45 more: 17 ports and 28 pad pins, as above. There are no partially annotated drivers.
+- The 12 max-slew flags are the analog-pad placeholder liberty, as above. Unconstrained: the same 3 first synchroniser flops, plus 16 ports.
+
+**Gate-level simulation of 6181b988.** Command, repository root:
+`BULK=${BULK} flow/launch_pinned.sh 61 . 3600 <log> bash designs/g1-guardian/blocks/g1_ctrl/sim/run_gls.sh ${BULK}/digital-final-nlrename-20260923-r1/g1_digital.nl.v chip6181b988`.
+Icarus Verilog 14.0 (devel s20260301-328), PDK `sg13g2_stdcell.v` functional models (`-DFUNCTIONAL`, unit delay), the same
+`tb_g1_digital.v` test set as run5–run7 (T11/T12 skipped at gate level). The log is `../../sim/tb_g1_digital_gls_chip6181b988.log` (sha256 3ef47204…).
+
+| Check | Status |
+| --- | --- |
+| STA setup/hold, chip netlist 6181b988 + SPEF e6c89575, merged SDC, 3 corners, nominal RC | **passed** |
+| STA, template SDC only (control) | failed (hold −0.131 ns fast, 50 endpoints), as expected |
+| Max fanout / cap | passed (0 / 0) |
+| Max slew | failed: 12 per corner, analog-pad placeholder liberty (dispositioned, not waived) |
+| Full parasitic annotation | failed: 105 unannotated drivers (dispositioned, not waived) |
+| Functional GLS of 6181b988, **zero-delay (unit-delay functional models)** | **passed: 13 tests, 193 checks, 0 errors** |
+| SDF-annotated GLS of 6181b988 (typ SDF `41758d71`, Icarus `-gspecify -ginterconnect -Tmax`) | **passed functionally with typ delays: 13 tests, 193 checks, 0 errors** (`../../sim/tb_g1_digital_gls_chip6181b988_sdf_typ.log`). Icarus does not execute timing checks: all 1200 SDF TIMINGCHECK entries were ignored. So this is **not** a setup/hold qualification (STA covers that). Fast/slow SDF GLS: not run |
+| Min/max RC corners, timing of the final GDS | not run |

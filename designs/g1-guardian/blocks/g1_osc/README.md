@@ -1,12 +1,44 @@
 # G1_OSC
 
-State: **schematic frozen (revision 5, 2026-09-19: revision 4 plus an antenna diode on `vth`, no
+## Variant on the chip of record (2026-09-25)
+
+The oscillator placed in the chip of record (`g1_chip_top_1414.gds`, `629d303a…`) is **R0.95**:
+the macro below with the four `RRA`/`RRB` charging-resistor PolyRes segments shortened from 58.5 µm
+to 55.575 µm (each 1 µm × 117 µm resistor becomes 1 µm × 111.15 µm). Adopted on the chip of record by
+the owner decision of 2026-09-24. Outline and pins are those of the 166 × 137.6 µm macro.
+
+| Item | Path (block-relative) | Identity |
+| --- | --- | --- |
+| Schematic-level R0.95 source | `sim/qualification/runs/osc_r095_candidate_shard0_20260921_01/osc.spice` | `f08bf051…` |
+| Capacitance extraction of the isolated filled R0.95 macro (kpex 0.3.12, 2.5D CC; used by `g1_top --blockset c1414`) | `sim/qualification/fulltree_r095_load_20260924/common/osc.spice` | `8efd7a09…` |
+| Isolated-macro physical record | `reports/r095_physical_20260924/README.md` | — |
+| Chip OSC cell vs isolated R0.95 GDS (bare `411d52f7…`, filled `960a9e9a…`) | XOR empty outside fill layers; the 117 µm `layout/g1_osc.gds` differs on the resistor layers | `../g1_padring/reports/signoff-1414-20260924/blockmap/block_xor.json` |
+| R0.95 in the full chip | `reports/r095_fullchip_physical_20260924/README.md` | — |
+
+| Check / number (R0.95) | Status | Evidence |
+| --- | --- | --- |
+| Isolated bare and filled macro: main/maximal DRC, antenna, stock strict-port LVS | passed | `reports/r095_physical_20260924/README.md` |
+| Isolated filled macro, stock density-only | **failed** (8 markers: `AFil.g`, `M1.j`–`M5.j`, `TM1.c`, `TM2.c`; macro bbox used as the density-window origin) | same |
+| kpex internal LVS of the MIM-stripped PEX input | **failed** ("Netlists don't match"; the separate stock LVS passed) | same |
+| Chip-level DRC, density and antenna on `629d303a…` | passed (0 markers) | `../g1_padring/reports/signoff-1414-20260924/README.md` |
+| Frequency, nominal trim 8, tt / 1.2 V / 27 °C, with the 94-buffer clock-tree load | 9.436 MHz (simulated; includes an estimated 459.8 Ω / 60.4 fF OSC-to-root route, not extracted) | `sim/qualification/fulltree_r095_load_20260924/README.md` |
+| Slow/hot reach, code 0, ss/wcs/wcs, 1.08 V, 125 °C | 10.447 MHz on the CPEX with the full-tree load (`results/slowhot_code0.json`); 10.445 MHz on the pre-CPEX schematic source `f08bf051` with the actual receiver; baseline 117 µm macro 9.975 MHz (simulated) | same; `sim/qualification/README.md` |
+| Chip netlists, OSC clocking the RTL (no TRIP), trim 8 | tt/27 °C 9.443–9.483 MHz (0.5 ns step); ss/125 °C 7.61 MHz and ff/−40 °C 12.43 MHz (2 ns step, +3 % step bias not corrected); ff/−40 °C/1.32 V 12.41 MHz; ss/125 °C/1.08 V **not run to completion** (simulated) | `../g1_top/sim/campaigns/RESULTS_20260925.md` §6 |
+| Selected PVT trim screen on the R0.95 CPEX (5 tuples × 16 codes, 50 fF stand-in load) | passed: 80/80, every curve monotonic and brackets 10 MHz; ss/1.08 V/125 °C 5.834–10.448 MHz (simulated) | `reports/r095_newpex_pvt_20260924/README.md` |
+| Full Cartesian PVT and mismatch population on the R0.95 CPEX; loaded re-enable; jitter | **not run** | same; `sim/qualification/fulltree_r095_load_20260924/README.md` |
+
+Everything below this section describes the **117 µm macro (9.919 MHz schematic, 8.994 MHz post-layout
+at trim 8), which is not on the chip**. It is kept as history and as the base of R0.95.
+
+Historical state of the 117 µm macro (not on the chip): **schematic frozen (revision 5, 2026-09-19: revision 4 plus an antenna diode on `vth`, no
 change of any simulated number)**, simulated at schematic level (nominal, corners, temperature,
-supply, trim, start-up); every corner reaches 10 MHz inside the trim range. **Laid out as the macro
+supply, trim, start-up); every corner of that screen reaches 10 MHz inside the trim range, but the
+later extracted screen **fails** the 10 MHz bracket at ss/wcs/wcs, 1.08 V, 125 °C (9.9748 MHz at code 0,
+see "Additional extracted trim screen"). **Laid out as the macro
 `g1_osc` (166 × 137.6 µm), filled with the PDK filler, DRC clean with the full PDK rule set,
 antenna deck clean, LVS clean against the frozen netlist; PEX (kpex 2.5D, capacitances) and
 post-layout runs done: the layout parasitics lower the frequency by about 9 % at every code, the
-trim still reaches 10 MHz at every corner (see "Post-layout").**
+trim reaches 10 MHz at the corners of that run (see "Post-layout"); not at ss/1.08 V/125 °C (above).**
 
 ## What it is
 
