@@ -54,6 +54,10 @@ snapshot, LibreLane runs, final views, STA, swap, fill, CDL and sign-off reports
 `BULK=${BULK} designs/g1-guardian/blocks/g1_ctrl/flow/eco/run_candidate.sh $R` (stages
 `macro`, `chip`, `signoff`, `post`).
 
+Tracked build inputs: [`blocks/g1_ctrl/flow/eco/r3/`](../../../g1_ctrl/flow/eco/r3/README.md) holds the exact configs,
+seeds, pin template and RTL hash list. A rebuild from those tracked files on 2026-09-26 reproduced the chip
+GDS byte for byte (`7d07a784…`), and the macro netlists, DEF and LEF byte for byte.
+
 RTL (hashes in `$R/inputs_sha256.txt`, checked against the frozen list):
 
 | File | SHA-256 |

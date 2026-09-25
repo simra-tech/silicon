@@ -12,7 +12,7 @@ cfg=$1; tag=$2; shift 2
 here=designs/g1-guardian/blocks/g1_ctrl/flow/eco
 root="${ECO_ROOT:-$BULK/digital-eco-feasibility-20260925}"
 mkdir -p "$root/runs" "$root/logs"
-ln -sfn "$root/runs" "$here/runs"   # gitignored; points at the bulk root of this run
+ln -sfn "$root/runs" "$here/$(dirname "$cfg")/runs"   # gitignored; LibreLane writes runs/ next to the config
 G1_CONTAINER_ENGINE=podman G1_RESULTS_ROOT="$BULK" G1_WORKDIR=$here flow/run.sh \
   sh -c 'export PYTHONPATH="$0:$PYTHONPATH" _LLN_OVERRIDE_OPENROAD=/foss/tools/openroad-librelane/bin/openroad; exec librelane "$@"' \
   "/work/$here" "$cfg" --pdk ihp-sg13g2 --pdk-root /foss/pdks --manual-pdk --run-tag "$tag" "$@"
