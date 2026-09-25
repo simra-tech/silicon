@@ -166,7 +166,7 @@ therefore leaves reset while `EN` is still undefined.
 **Artifact.** `osc_en` "rises" at 1 ns because the dac_bridge `out_high` is a fixed 1.2 V,
 independent of `VDD`. RTL output levels before `VDD` is up are not physical.
 
-`q` full length (44 µs, CDL pex gear, `cdlpwr`, wall 25200 s): running at time of writing (9.9 µs reached after about 50 min).
+`q` full length (44 µs, CDL pex gear, `cdlpwr`, wall 25200 s): completed in 9762 s, no trip; QUIET (28–30 µs) vref 1.0450 V, isense 1.50687 V, icmp 0.7535 V, vth_soft 0.8044 V, vth_hard 1.0037 V; VDDA 1462.5 µA (BGR 319.7, SENSE 1101.4), IOVDD 103.8 µA, VDD 7.0 µA.
 
 ## Not established
 
