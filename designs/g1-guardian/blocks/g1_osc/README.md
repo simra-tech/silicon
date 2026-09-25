@@ -80,8 +80,8 @@ supply-referenced ring, so this block was drawn from scratch with PDK primitives
 
 | Path | Content |
 | --- | --- |
-| `schematic/gen_osc.py` | generator of all xschem schematics and symbols (device sizes are here) |
-| `schematic/xsch.py` | minimal xschem writer shared with the other analog blocks |
+| `schematic/gen_osc.py` | generator of all xschem schematics and symbols (device sizes are here). Since 2026-09-25 it draws the chip-of-record R0.95 timing resistors (RA/RB l=111.15u) by default; `G1_OSC_VARIANT=baseline` draws the 117 µm block whose netlist is `sim/netlist/g1_osc.spice` (the two differ only in XRA/XRB; `../../review/schematics-readability-20260925/README.md`) |
+| `../../../../flow/schematic/xsch_readable.py` | readable xschem sheet writer shared by the block generators (replaces the former `schematic/xsch.py`) |
 | `schematic/g1_osc.sch`, `g1_osc_cmp.sch`, `g1_osc_cbank.sch`, `g1_osc_inv/nor2/nor3/nand2.sch` (+ `.sym`) | schematics |
 | `schematic/netlist.sh` | xschem headless netlisting into `sim/netlist/` |
 | `sim/netlist/g1_osc.spice` | netlist as simulated (`.subckt g1_osc`) |
