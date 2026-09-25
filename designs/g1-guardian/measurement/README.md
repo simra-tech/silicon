@@ -37,6 +37,25 @@ fixture limit separately. Log the measured value, uncertainty, and
 pass/fail/not-run decision against the predeclared limit. Reserve and identify
 unpowered controls and separately designated stress samples before exposure.
 
+## Board and bench requirements (2026-09-24)
+
+These apply to the chip of record `g1_chip_top_1414.gds` (`629d303a…`). The
+numbers are **simulated**; none has been measured. Specification:
+`../specification/G1_TOP_LEVEL_SPECIFICATION.md` §6, P1–P5.
+
+| # | Requirement | Bench implementation | Basis (simulated) |
+| --- | --- | --- | --- |
+| B1 | Power sequencing: `VDD` (1.2 V) before or with `IOVDD` (3.3 V); `VDD` stays until `IOVDD` is down | Sequenced supplies, or a supervisor that holds the 3.3 V rail off until 1.2 V is valid. Capture both rails and `GATE` on every power cycle | With `IOVDD` alone the IO output pads have no core-driven gate signals; `GATE` reached 3.288 V (`../blocks/g1_gate/sim/POWER_SCREEN_20260921.md`). Core-first, chip netlists: `GATE` ≤ 0.073 V with EN low |
+| B2 | `GATE` pull-down or independent inhibit during power-up | A resistor from `GATE` to ground at the FET, plus the independent load-bus inhibit below. Record the value used | Core-first with 10 kΩ: `GATE` ≤ 0.009 V (≤ 0.014 V at ss/125 °C and ff/−40 °C, `pads nodcn`). IO-first on the chip netlists, with or without 10 kΩ: `GATE` 3.28–3.30 V for 4.2–4.4 µs until `VDD` is up, and 1 A load flows ([RESULTS_20260925](../blocks/g1_top/sim/campaigns/RESULTS_20260925.md) §5). A 10 kΩ pull-down does not hold `GATE` low with IO first. Keep the independent inhibit asserted through every power-up |
+| B3 | `EN` delay: `EN` low ≥ 2 ms after both rails are stable with 10 nF on `VREF` | Drive `EN` from a timer or the host after a rail power-good. Do not tie `EN` high | BGR586 output resistance 22.3 kΩ (tt/27 °C); 1 % settling 1.20–1.32 ms over three corners with 10 nF (`../blocks/g1_bgr/sim/system_checks_20260924/RESULTS.md`) |
+| B4 | `VREF` pin capacitance trade-off | Choose the capacitor before the run and record it. Scale the B3 delay with it | 0 nF: 1 % in about 7–8 µs, 1.3–1.7 % overshoot during the ramp, and the pin sees probe loading directly. 10 nF: 1.2–1.3 ms. 100 nF: 12.0–13.2 ms. Stock-pad startup at ss/125 °C did not converge in simulation (numerical; the pad-less stand-in settles) |
+| B5 | `VDDA` (pin 7) tied to the `IOVDD` rail | One 3.3 V source with separate current-sense links for `VDDA` and `IOVDD`; no separate `VDDA` supply | Analog-pad ESD diodes reference `IOVDD` (`PLAN.md` D14) |
+
+Record the actual ramp times, the `VDD`-to-`IOVDD` delay, the pull-down value,
+the `VREF` capacitor (value and ESR) and the `EN` delay in the run sheet. The
+BGR586 supply current (319.7 µA simulated, tt/27 °C) is a large part of the
+3.3 V quiescent current; compare the measured `VDDA` current against it.
+
 ## Before enabling a load
 
 1. Check unpowered continuity and pin isolation with bounded test current.
@@ -45,11 +64,13 @@ unpowered controls and separately designated stress samples before exposure.
    by an independent external device; document and verify that device's state.
    EN is not a configuration-preserving load-bus inhibit.
 2. Hold external EN low and keep the independent load-bus inhibit asserted.
-   Bring 1.2 V VDD up before the 3.3 V IO/analog rail; observe GATE throughout
+   Bring 1.2 V VDD up before or with the 3.3 V IO/analog rail (B1), with the GATE
+   pull-down fitted (B2); observe GATE throughout
    both ramps with the real FET attached but no energized load bus.
    IO-first is a known simulated unsafe condition.
    Simultaneous startup is not generally qualified by one passing ramp shape.
-3. Establish rail/reference settling and the required reset delay with EN low.
+3. Establish rail/reference settling and the required reset delay with EN low
+   (at least the B3/B4 delay for the fitted VREF capacitor).
    With the load bus still independently isolated, raise EN and allow synchronous
    reset release. EN high can permit GATE arming before custom configuration.
    Only now verify reset defaults, program/read back the required configuration
@@ -78,10 +99,11 @@ limit. Keep the supervised, current-limited, non-inductive
 separate from later real-use load qualification.
 
 Determine reference settling from the observed waveform and a declared error
-band before releasing EN. The selected simulated 10 nF VREF fixture needed
-about 7.35 ms at 27 °C and 7.84 ms at −40 °C to remain within 0.1% of its
-numerical DC value after a 1 ms supply ramp; its 125 °C startup did not complete.
-These are characterization results, not a guaranteed delay. The integrated
+band before releasing EN. With the chip's BGR586 and 10 nF on the pin, the
+simulated time to 0.1 % is 1.67–1.93 ms over three corners (B3/B4). The earlier
+7.35 ms (27 °C) and 7.84 ms (−40 °C) figures belong to the superseded Sep-19
+bandgap (output resistance 76–101 kΩ). These are characterization results, not a
+guaranteed delay. The integrated
 functional fixture starts from solved DC and does not establish cold power-up
 settling. See [VREF dynamic evidence](../review/audits/VREF_PAD_DYNAMIC_20260922.md).
 
@@ -105,7 +127,17 @@ single-fault tolerance or overload survival from ordinary breaker tests.
 2. Calculate signed correction with the documented register convention and
    saturated arithmetic. Verify reachable corrected soft/hard endpoints and
    their ordering. Hard default254 has only one positive correction code;
-   record clipping as a failure, not successful calibration. A common offset
+   record clipping as a failure, not successful calibration.
+   The hard comparator trips below its DAC code. In simulation the offset is
+   40–56 LSB (7.9–11.0 mV of shunt) on the TRIP NF4 block bench, with a
+   10–11 LSB corner spread. On the chip netlists the effective hard threshold
+   at code 200 (39.25 mV) is 30.00–31.25 mV (tt/27 °C, [RESULTS_20260925](../blocks/g1_top/sim/campaigns/RESULTS_20260925.md) §4).
+   Bracket the hard crossing starting about 60 codes above the target and
+   stepping down, not only around the target code. Expect the calibrated hard
+   code about 45–50 codes above the nominal one, and a usable hard range of
+   about 25–40 mV of shunt. Record the measured offset at each temperature.
+   The simulated corner spread exceeds what one room-temperature point absorbs.
+   The soft path is within 1 LSB in simulation. A common offset
    correction cannot cancel independent comparator errors and gain error.
 3. Freeze room-temperature calibration. At declared thresholds outside inrush,
    test no-trip at or below0.9× threshold and trip at or above1.1× threshold.

@@ -23,7 +23,7 @@ Design principles:
   experimental enclosed-layout device is absent from the assembled chip.
 - **Direct device access:** one HBT and the canary transistors are pinned out
   so the physics can be measured without the on-chip readout.
-- **Area:** 1.35 × 1.35 mm die including sealring and IO ring. The 1 × 1 mm allocation was withdrawn on 2026-09-18 because the IO cells need an external bondpad and sealring clearance (`PLAN.md` D10); 1.2 mm was withdrawn on 2026-09-19 when the laid-out macros exceeded its core window (D13).
+- **Area:** 1.414 × 1.414 mm die including sealring and IO ring (chip of record, owner decision 2026-09-24; it supersedes the 1.35 mm LibreLane assembly). The 1 × 1 mm allocation was withdrawn on 2026-09-18 because the IO cells need an external bondpad and sealring clearance (`PLAN.md` D10); 1.2 mm was withdrawn on 2026-09-19 when the laid-out macros exceeded its core window (D13).
 
 ## 2. Block breakdown
 
@@ -32,7 +32,7 @@ Design principles:
 | `G1_SENSE` | Low-side Kelvin shunt amplifier. Differential input 0 to 50 mV across an external shunt, gain 20, bandwidth ≥ 2 MHz, input-referred offset target < 0.5 mV after trim. Common-mode −0.1 to +0.3 V. Difference amplifier around a 3.3 V PMOS-input OTA with a V<sub>REF</sub>-derived output pedestal (`PLAN.md` D1). | thick-oxide PMOS input pair, thick-oxide MOS, `rppd` | in: `SENSE_P`, `SENSE_N`; out: internal `ISENSE` (pedestal + 20 × V<sub>shunt</sub>) |
 | `G1_TRIP` | Two clocked comparators on `ISENSE`: (a) hard threshold, trips after N consecutive samples above it (blanking); (b) soft threshold, trips when an up/down sample counter reaches the programmed trip-off window (`PLAN.md` D3). Thresholds are 8-bit codes of V<sub>REF</sub>-referenced resistor-string DACs; hysteresis and all windows programmable. | 1.2 V StrongARM comparators with SR latches, two 8-bit `rppd` string DACs, digital timers in `G1_CTRL` | in: `ISENSE`, `TRIP_SET`, registers; out: `cmp_soft`, `cmp_hard` to `G1_CTRL` |
 | `G1_GATE` | Drives an external low-side logic-level N-FET. On `TRIP`: gate low within the response target, then latched off or retriggered after a programmable hold. Enable input. | `sg13g2_IOPadOut30mA`, LV/HV level shift | out: `GATE`, `FAULT_N`; in: `EN` |
-| `G1_BGR` | First-order op-amp-less cascoded HBT bandgap in the 3.3 V domain, 1:8 emitter units. V<sub>REF</sub> nominal 1.04 V (simulated, untrimmed), TC 11 to 52 ppm/°C over −40 to 125 °C across corners; I<sub>PTAT</sub> 4.1 µA at 27 °C for the sensor and DACs; 1:4 ratio test mode. | `npn13G2`, thick-oxide MOS, `rppd`, `rhigh` | out: `VREF`, internal `IPTAT`, `VBE`, `dVBE` |
+| `G1_BGR` | Op-amp-less, self-biased cascoded HBT bandgap in the 3.3 V domain (chip variant `bgr_loop24_qref4_r253p465_hv06`, "BGR586": 336 HV MOS, 301 `npn13G2`, 399 resistors), in which the PTAT/bias loop is built from 24 parallel original units (feedback resistors scaled to R/24, XR17–22 at 53.465 µm to centre the nominal TC) and the V<sub>REF</sub> (Qref) branch from 4 units, to average HBT and resistor mismatch (`../blocks/g1_bgr/sim/qualification/BGR_REMEDY_REVIEW_20260922.md`). Simulated, tt/27 °C: V<sub>REF</sub> 1.04546 V, I<sub>PTAT</sub> 4.13 µA, nominal TC 8.53 ppm/°C over −40…125 °C, supply current 319.7 µA, output resistance 22.3 kΩ (`../blocks/g1_bgr/sim/postlayout/README_bgr586_pex.md`). | `npn13G2`, thick-oxide MOS, `rppd`, `rhigh` | out: `VREF`, internal `IPTAT`, `VBE`, `dVBE` |
 | `G1_T2F` | HBTs at a 1:8 current ratio; ΔV<sub>BE</sub> converted to a PTAT current that charges a `cmim` relaxation oscillator against a V<sub>REF</sub>-derived threshold, so frequency is linear in T (`PLAN.md` D2); register-selectable reference mode runs the same oscillator from V<sub>REF</sub>/R so the ratio cancels C and thresholds. About 1.6 MHz at 27 °C (simulated). | `npn13G2`, thick-oxide MOS, `rppd`, `cmim`, LV CMOS output | out: `TEMP_OUT`; mode bits from registers |
 | `G1_DOSE` | Two NMOS canaries with a shared gate and both drains pinned out: a thin-oxide `sg13_lv_nmos` beside a thick-oxide `sg13_hv_nmos`. `D_ELT` is a legacy pin name for the HV drain; experimental ELT geometry is excluded. No on-chip readout in run 1. | `sg13_lv_nmos`, `sg13_hv_nmos` | pins: `G_SHARED`, `D_STD`, `D_ELT` |
 | `G1_SEU` | Plain shift register and per-stage-voted TMR register (depth parameterised, 256 + 3 × 128 bits in the assembled macro), continuously shifted and scrubbed against a selectable pattern (checkerboard, all-0, all-1; constant patterns give the static-data case); TMR-protected counters for plain errors, TMR corrected events and TMR uncorrectable errors. | LV CMOS standard cells | registers |
@@ -85,50 +85,55 @@ device currents in the nanoampere-to-microampere range for that reason.
 | Process | IHP SG13G2 0.13 µm SiGe BiCMOS, open PDK | Specified | PDK |
 | HBT primitive | `npn13G2` | Specified | PDK model library |
 | Core supply | 1.2 V (1.08 to 1.32) on one `VDD` pad | Specified | PDK |
-| Analog supply | 3.3 V (3.0 to 3.6) on `VDDA`, about 1.5 mA (simulated sum of the 3.3 V blocks) | Specified | block READMEs; D14 |
+| Analog supply | 3.3 V (3.0 to 3.6) on `VDDA`, tied to the `IOVDD` rail on the board. Current of the chip-of-record 3.3 V blocks: BGR586 alone 319.7 µA (simulated, tt/27 °C); chip 3.3 V analog sum (BGR586 + SENSE + TRIP, armed, 1 A load) 1421 µA at tt/27 °C, 957 µA (ss/−40 °C) to 2188 µA (ff/125 °C), 1415/1427 µA at 3.0/3.6 V (simulated, `g1_top --blockset c1414`, BGR586 schematic view (its extraction is DC-identical), [RESULTS_20260925](../blocks/g1_top/sim/campaigns/RESULTS_20260925.md)). Digital and IO rail currents are not in this sum. The earlier 1.5 mA sum used the Sep-19 bandgap (22 µA) | Specified | block READMEs; D14; `../blocks/g1_bgr/sim/postlayout/README_bgr586_pex.md` |
 | IO / analog supply | 3.3 V (3.0 to 3.6) | Specified | `sg13g2_io` |
-| Die | 1350 × 1350 µm incl. sealring | Specified | macro area budget, `PLAN.md` D13; QFN24 accepts up to 2 × 2 mm |
+| Die | 1414 × 1414 µm incl. sealring (`g1_chip_top_1414.gds`, `629d303a…`) | Specified | owner decision 2026-09-24; `../blocks/g1_padring/reports/signoff-1414-20260924/README.md`; QFN24 accepts up to 2 × 2 mm |
 | Package | QFN24, 4 × 4 mm, 0.5 mm pitch, 200 µm die | Specified | packaging offer |
-| Shunt sense range | 0 to 50 mV differential, low-side; `ISENSE` = 1.0 V pedestal + 20 × V<sub>shunt</sub>, i.e. 1.0 to 2.0 V | Specified | `blocks/g1_sense/README.md` (simulated gain 19.98 to 19.99, bandwidth 3.6 to 4.8 MHz) |
-| Trip response | <10 µs from a persistent hard fault outside the guard band to `GATE` <1.0 V; only after arming and outside the inrush mask, for declared settings/clock/load | Specified target | `HARD_N` counts decisions every 2 oscillator cycles; default N=4. Nominal compact C-PEX/RTL anchor passed at simulated 1.40346 µs with ideal clock and fitted pad; broader coverage remains incomplete |
+| Shunt sense range | 0 to 50 mV differential, low-side; `ISENSE` = 1.0 V pedestal + 20 × V<sub>shunt</sub>, i.e. 1.0 to 2.0 V | Specified | chip variant comp45 + R100: simulated gain 19.905 to 20.050 over 100 mismatch samples (`../blocks/g1_sense/reports/R100_MC_100_20260923.md`); earlier revision 19.98 to 19.99, 3.6 to 4.8 MHz in `../blocks/g1_sense/README.md` |
+| Trip response | <10 µs from a persistent hard fault outside the guard band to `GATE` <1.0 V; only after arming and outside the inrush mask, for declared settings/clock/load | Specified target | `HARD_N` counts decisions every 2 oscillator cycles; default N=4. Chip netlists (`g1_top --blockset c1414`), compact 28 µs in-range fault, tt/27 °C: 1.345 µs (simulated, ideal clock at the R0.95 loaded frequency, fitted pad). tt/ss/ff × −40/27/85/125 °C and VDD/VDDA ±10 %, 1.8×/3×/4× faults: 1.306–1.361 µs in every completed cell. The clock stays ideal at 9.436 MHz and the SENSE pads have no `dantenna`. All 72 matrix cells completed (72/72, none failed) ([RESULTS_20260925](../blocks/g1_top/sim/campaigns/RESULTS_20260925.md)) |
 | I²t window | 50 µs to 10 ms, programmable | Assumed | design target |
-| Hard threshold | 8-bit DAC code, 0.5 to 1.0 of the sense full scale (about 25 to 50 mV of shunt drop), programmable; nominal load current is mapped to 20 to 25 mV of the 50 mV range | Specified | `blocks/g1_trip/INTERFACE.md`; the earlier "1.5× to 8× nominal" was unreachable |
+| Hard threshold | 8-bit DAC code, 0.5 to 1.0 of the sense full scale (about 25 to 50 mV of shunt drop), programmable; nominal load current is mapped to 20 to 25 mV of the 50 mV range | Specified (code range); effective threshold: simulated characterization result | `blocks/g1_trip/INTERFACE.md`; the earlier "1.5× to 8× nominal" was unreachable. **Effective hard threshold is below the code (simulated):** the TRIP NF4 block bench trips 40–56 LSB (7.9–11.0 mV of shunt) below the DAC code over tt/ss/ff at codes 200 and 254, corner spread 10–11 LSB; soft path within 1 LSB (`../blocks/g1_trip/sim/postlayout/README.md`, `results_postlayout_nf4.txt`). Chip netlists, code 200 (39.25 mV), tt/27 °C: no trip at 30.00 mV, trip at 31.25 mV ([RESULTS_20260925](../blocks/g1_top/sim/campaigns/RESULTS_20260925.md) §4). Cause: the soft comparator's reset kick lands on the shared input at the hard strobe. Consequence: hard calibration lands about 45–50 codes above nominal, and the usable hard range is about 25–40 mV of shunt. A parked 2× hold-capacitor candidate (`../blocks/g1_trip/layout/candidates/nf4_hold2x/`) halves the offset in simulation; not adopted, owner decision pending. Calibration requirement in §6; not a sign-off failure |
 | `TEMP_OUT` frequency | 1.59 MHz at 25 °C (simulated, PTAT mode), 5.2 kHz/°C; 1.2 to 2.4 MHz over −40 to 175 °C; ±15 % process spread before calibration | Specified (simulated) | `blocks/g1_t2f/README.md` |
-| Sensor accuracy | ±2 °C after fixed per-sample two-point calibration, −40 to 125 °C | Specified target | Joint extracted mismatch subsets contain failures under the original linear calibration; alternative mappings remain unadopted. Historical nominal residual and beyond-range results do not establish mismatch or package-stress accuracy |
+| Sensor accuracy | ±2 °C after fixed per-sample two-point calibration, −40 to 125 °C | Simulated characterization result (not a sign-off gate) | T2F baseline, typical process, 300/300 samples: linear two-point calibration 14/300 fail; frozen lookup calibration 0/300 fail (unadopted in firmware) (`../blocks/g1_t2f/sim/qualification/README.md`). Nominal and beyond-range results do not establish package-stress accuracy |
 | Characterisation range | 77 K to 175 °C | Assumed | package limits, not verified |
-| Sense-amp input offset | Residual <0.5 mV after calibration; revision-A simulated σ≈4 mV is historical, not revision-B qualification. Signed digital correction −128…127, ~0.196 mV/code; available range depends on threshold | Specified target | Code 254 permits only +1 step; see calibration contract. Joint calibrated rev-B MC not run to completion |
+| Sense-amp input offset | Residual <0.5 mV after calibration. Signed digital correction −128…127, ~0.196 mV/code; available range depends on threshold | Simulated characterization result (not a sign-off gate) | Chip variant R100, standalone: 100/100 samples ≤ 0.5 mV, worst 498 µV, ideal continuous correction (`../blocks/g1_sense/reports/R100_MC_100_20260923.md`). The rev-B 43/100 failures belong to the earlier block. Code 254 permits only +1 step; joint calibrated chip MC not run |
 | ELT NMOS | Experimental layout excluded from assembled chip | Not applicable to assembled chip | `blocks/g1_dose/README.md`; historical `Gat.f` failure retained |
 | Total power | <10 mW, sum of core, analog and IO rail input power, declared load/activity | Specified target | Full operating-state coverage not run |
-| BGR temperature coefficient | ≤50 ppm/°C over −40…125 °C | Specified target | Baseline qualified 100-sample screen has 54 failures; enlarged-array candidates also fail and remain unadopted |
+| BGR temperature coefficient | ≤50 ppm/°C over −40…125 °C | Simulated characterization result (not a sign-off gate) | Chip BGR586: 299 of 300 mismatch samples completed and all ≤ 50 ppm/°C, max 46.88 ppm/°C; 1 numerical watchdog failure, no TC assigned (`../blocks/g1_bgr/sim/qualification/BGR586_SCREEN300_20260922.md`). The 54/100 failures belong to the superseded Sep-19 bandgap |
 | SENSE gain / bandwidth | 20 ±0.1 / ≥2 MHz, common mode −0.1…+0.3 V | Specified target | Selected block results exist; complete corners and joint loaded PEX not run |
-| OSC trim reach | 10 MHz reachable by a code 0…15 at supported PVT | Specified target | Screen contains a slow/hot 9.9748 MHz maximum failure; actual-receiver loading and expanded mismatch coverage remain incomplete |
+| OSC trim reach | 10 MHz reachable by a code 0…15 at supported PVT | Simulated characterization result (not a sign-off gate) | Chip variant R0.95: slow/hot code 0 reaches 10.445 MHz with the actual receiver (old block 9.975 MHz); loaded nominal trim 8 9.436 MHz (`../blocks/g1_osc/sim/qualification/README.md`, `fulltree_r095_load_20260924/`). Expanded mismatch and rail perturbation not run to completion |
 
 ## 5. Verification gates
 
 Status is scoped to the recorded subset; a passed subset does not pass its
 unrun extensions. Evidence index: `../review/G1_DESIGN_REVIEW.md`, block
-READMEs, and `../blocks/g1_top/sim/DIAGNOSTICS_20260921.md`. These are baseline
-facts, not claims that the closure campaigns have completed.
+READMEs, `../blocks/g1_padring/reports/signoff-1414-20260924/README.md` (physical checks of the chip of
+record `g1_chip_top_1414.gds`, `629d303a…`) and `../blocks/g1_top/README.md` (chip-level simulation,
+`--blockset c1414`). These are baseline facts, not claims that the closure campaigns have completed.
+BGR TC, trimmed SENSE residual, OSC 10 MHz reach and T2F ±2 °C are simulated characterization
+results (§4), not sign-off gates.
 
 | Gate | Scope | Status / remaining coverage |
 | --- | --- | --- |
 | Schematic simulation | Recorded nominal block cases | passed subsets; complete corner/load matrix not run |
-| Corner / mismatch | Qualified block ensembles and joint calibration pilots | baseline SENSE residual failed 43/100 and BGR TC failed 54/100; joint pilots expose hard-code clipping; complete joint qualification remains incomplete |
+| Corner / mismatch | Chip-of-record block ensembles (standalone) | characterization, not a gate: SENSE R100 100/100 ≤ 0.5 mV (worst 498 µV); BGR586 299/300 completed ≤ 50 ppm/°C (max 46.88), 1 numerical failure; T2F 14/300 linear-calibration failures, 0/300 lookup; OSC R0.95 slow/hot code 0 10.445 MHz. The 43/100 SENSE and 54/100 BGR failures are historical blocks. Joint calibrated chip MC: not run |
 | Temperature | Model-supported −40…125 °C | joint extracted subsets completed with linear-calibration failures; numerical failures retained; 300-sample and adverse coverage incomplete |
 | Beyond-range temperature | 150/175 °C and 77 K | selected exploratory data only; qualification not applicable with nominal model extrapolation |
 | RTL / functional GLS | Recorded built 256 + 3×128 configuration | functional, expanded CDC and fault-injection subsets passed; missing-clock and unprotected-configuration hazards remain; timed GLS is unqualified because timing checks are unsupported |
 | Breaker co-simulation | Corrected-clock schematic cases | passed subsets; old clock-bridge timings invalid for acceptance |
-| Integrated PEX | OP, 1/4/10/24 µs prefixes and compact 28 µs configured fault | startup subsets and nominal compact hard-trip acceptance passed; historical interrupted runs retained; baseline-preamble equivalence and broader fault coverage incomplete |
+| Chip-level simulation, chip netlists | `g1_top --blockset c1414`: BGR586 C-PEX or schematic, SENSE R100 partial C, TRIP NF4 C-PEX, R0.95 clock frequency, real RTL | tt/27 °C passed: 28 µs hard fault (transistor-level front end) `GATE` < 1 V 1.345 µs after the fault; with the behavioural front end, the 1 ms soft window trips at 1.059 ms and a 100 µs 1.5× pulse does not trip; core-first power-up `GATE` ≤ 0.073 V with EN low; CDL-vs-deck connectivity audit 0 unexplained differences. Corner/temperature matrix (q, c_mid, c, e20, f_mid, b_s × tt/ss/ff × −40/27/85/125 °C): 72/72 cells completed and passed, none failed (the last 12 as `_r4` re-runs, including q ss/125 °C as `q_ss_125C_r4_c1414m`). T2F at −40 °C: not run to completion (numerical, three attempts). Transistor-level OSC at ss/125 °C, `VDD` 1.08 V: not run. Supply ±10 % (c_mid, q): 12/12 passed. Hard faults: `GATE` < 1 V 1.306–1.361 µs. Stock-pad corners (`c1414k1`): 10 passed, 2 not run to completion. Both BGR586 and TRIP extractions: compact c_mid passed, full length not run to completion. Deviations: ideal clock at the tt/27 °C frequency, `--inpads nodcn` (SENSE pads without `dantenna`), BGR586 schematic view. Chip-level PEX: not run. Effective hard threshold at code 200: 30.00–31.25 mV (characterization, §4) ([RESULTS_20260925](../blocks/g1_top/sim/campaigns/RESULTS_20260925.md)) |
 | Block DRC / LVS | Assembled macro versions | passed recorded checks; experimental ELT excluded |
 | Block PEX | Existing capacitance extraction and selected tests | passed subsets; full wire-R, fill coupling and statistical scaling not established |
-| Assembled hard DRC / precheck | 1350 µm final GDS | passed recorded checks |
-| Density | 1350 µm filled GDS | passed recorded checks |
-| Recommended pad rules | Final assembly | failed; unresolved |
-| Antenna | Final assembly | failed; unresolved |
-| Core-only LVS | 52 matched circuit pairs | passed; excludes full IO-ring verification |
-| IO-inclusive LVS | Final assembly | failed; unresolved |
-| Streamout comparison | Delivered final views and separate candidate | delivered differences unresolved; scoped namespaced prefill comparison passed, final filled-view closure incomplete |
-| Power-order safety | IO first, core absent, EN low and expanded fixtures | original unsafe-high case failed; 216-case expanded screen has 156 passes, 22 failures and 38 timeouts; no general sequencing qualification |
+| Assembled DRC / precheck | 1414 µm chip of record | main and maximal passed, 0 markers; `--precheck_drc`: not run. 1350 µm assembly: passed (superseded) |
+| Density | 1414 µm chip of record | passed, 0 markers |
+| Recommended pad rules | 1414 µm chip of record | passed inside the maximal run (`Pad.*R`, `Pad.d`: 0 errors, `drc_maximal/run.log`). 1350 µm assembly failed (superseded) |
+| Antenna | 1414 µm chip of record | passed, 0 markers. 1350 µm assembly failed (superseded) |
+| Projected-reference LVS | 1414 µm chip, full chip, strict ports | passed: 61 684/61 684 devices, 31 173 nets, 22 pins; comparison-only reference (3 all-VDD pad dummy PMOS removed). 1350 µm core-only LVS (52 pairs): passed (superseded) |
+| Canonical (unprojected) LVS | 1414 µm chip, full chip | failed: 14 stock IO/level-shifter sub-cells NoMatch, top skipped (PDK deck limitation, `PLAN.md` R13) |
+| Top-cell rename identity | `g1_chip_top_1414_src.gds` → `g1_chip_top_1414.gds` | passed: 306 cells, deep XOR empty on all 73 layers. Earlier 1350 µm streamout differences are superseded |
+| Power-order safety | Chip netlists: core-first, EN low, with and without 10 kΩ `GATE` pull-down; IO-first | core-first passed (`GATE` ≤ 0.073 V, 0.009 V with pull-down; ≤ 0.014 V at ss/125 °C and ff/−40 °C with `--pads nodcn`). IO-first on the chip netlists (`--pads nodcn`, tt/27, ss/125, ff/−40 °C) **failed** as a safety condition, as expected: `GATE` 3.28–3.30 V for 4.2–4.4 µs until `VDD` is up, with or without 10 kΩ ([RESULTS_20260925](../blocks/g1_top/sim/campaigns/RESULTS_20260925.md) §5); P1 excludes this order. IO-only drives `GATE` to 3.288 V (block power screen, simulated): board constraints in §6 |
+| Digital timing | run7 macro and routed chip signal netlist, merged chip SDC, 3 corners, nominal RC | setup/hold passed; annotation, max-slew and max-fanout items failed and dispositioned, not waived; timing of the final GDS not run |
+| Full-chip PEX | 1414 µm chip | not run |
 | Physical measurement / irradiation | No fabricated samples | not run |
 
 ## 6. Acceptance and calibration contract
@@ -155,6 +160,19 @@ must trip only after its configured accumulation window. Characterize smaller
 ±0.1/0.25/0.5/1 mV offsets separately without falsely labeling every decision
 inside this guard band a system failure.
 
+Hard-path calibration must bracket the **effective** hard threshold, not the
+DAC code. In simulation the hard comparator trips 7.9–11.0 mV of shunt (40–56
+LSB) below its code, with a 10–11 LSB corner spread (TRIP NF4 block bench). On
+the chip netlists at code 200 (39.25 mV) the trip point is 30.00–31.25 mV at tt/27 °C
+([RESULTS_20260925](../blocks/g1_top/sim/campaigns/RESULTS_20260925.md) §4). Uncalibrated, the `c_mid` sweep trips at 0.80T and 0.89T,
+inside the no-trip region above. Expect the calibrated hard code about 45–50
+codes above the nominal one, and a usable hard range of about 25–40 mV of shunt.
+The code search must extend at least 56 codes above the target. The corner
+spread is larger than 2 LSB, so one room-temperature calibration does not absorb
+it: verify the ±10 % guard band at each declared temperature. The soft path is
+within 1 LSB. The 2× hold-capacitor candidate that would halve the offset is not
+adopted (decision pending), so this contract applies to the chip of record.
+
 GATE-low means the first downward crossing of 1.0 V that remains below 1.0 V
 for the remainder of the observed tripped interval. Measure external drain
 current decay and let-through energy separately. The existing fixture is a
@@ -172,11 +190,19 @@ load-bus voltage. Shunt tolerance
 and temperature coefficient are idealized unless explicitly swept. No physical
 shunt tolerance allocation has yet been verified.
 
-Keep EN low until both rails are stable, the analog bias is settled, and the
-required reset delay has elapsed. Existing evidence supports a selected
-core-first startup only. IO-first is failed. Simultaneous ramps, missing rails,
-brownout and shutdown are unqualified until their detailed pad-model tests
-complete; “core before or with IO” is not a general safety guarantee.
+Power-up requirements (board constraints decided 2026-09-24):
+
+| # | Requirement | Reason | Evidence / status |
+| --- | --- | --- | --- |
+| P1 | `VDD` (1.2 V) comes up before or together with `IOVDD` (3.3 V); during shutdown `VDD` stays until `IOVDD` is down | Every `sg13g2_io` output pad, the tri-state variants included, takes its driver gate signals from core-powered level-up cells. With `IOVDD` alone the `GATE` pad can float high | IO-only: `GATE` 3.288 V (simulated, `../blocks/g1_gate/sim/POWER_SCREEN_20260921.md`). Core-first on the chip netlists: `GATE` ≤ 0.073 V with EN low (simulated, `g1_top` gB). IO-first on the chip netlists: `GATE` 3.28–3.30 V for 4.2–4.4 µs until `VDD` is up, at three corners (simulated, `--pads nodcn`, [RESULTS_20260925](../blocks/g1_top/sim/campaigns/RESULTS_20260925.md) §5) |
+| P2 | External `GATE` pull-down or independent load-bus inhibit during power-up | Holds the FET off while the rails ramp. With IO first, only the inhibit does: a 10 kΩ pull-down does not | Core-first with 10 kΩ: `GATE` ≤ 0.009 V (simulated, `g1_top` gB_pd). IO-first with 10 kΩ: `GATE` 3.28–3.30 V for 4.2–4.4 µs (simulated, `gA_pd`). A pull-down strong enough to hold `GATE` against the 30 mA pad drive was not qualified |
+| P3 | `VDDA` (pin 7) tied to the `IOVDD` rail | Analog-pad ESD diodes reference `IOVDD`; `VDDA` above `IOVDD` by a diode drop forward-biases them (D14) | specified |
+| P4 | `EN` held low ≥ 2 ms after both rails are stable when 10 nF is on the `VREF` pin | EN low resets the digital state and holds `GATE` off. BGR586 output resistance 19.3–25.8 kΩ over corners (22.3 kΩ at tt/27 °C), so 10 nF gives τ ≈ 0.2–0.27 ms | Simulated 1 % settling from ramp start with 10 nF: 1.26 ms (tt/27 °C), 1.20 ms (ff/−40 °C), 1.32 ms (ss/125 °C, pad-less stand-in; the stock pad did not converge) (`../blocks/g1_bgr/sim/system_checks_20260924/RESULTS.md`) |
+| P5 | Scale the P4 delay with the `VREF` pin capacitance | Settling scales with Rout·C. More capacitance filters probe and board noise on the test pin but lengthens the delay | 0 nF: about 7–8 µs, with a 1.3–1.7 % overshoot during the ramp; 100 nF: 12.0–13.2 ms to 1 % (simulated). Other values: not run |
+
+Simultaneous ramps, missing rails, brownout and shutdown are not qualified by
+these cases. “Core before or with IO” is a board requirement, not a general
+safety guarantee.
 
 For calibration, keep the load bus isolated by an independent external inhibit,
 then raise EN, allow synchronous reset release, and program/read back the

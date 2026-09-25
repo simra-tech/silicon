@@ -1,0 +1,29 @@
+read_liberty -ignore_miss_func /foss/pdks/ihp-sg13g2/libs.ref/sg13g2_stdcell/lib/sg13g2_stdcell_typ_1p20V_25C.lib
+read_verilog /work/designs/g1-guardian/blocks/g1_ctrl/flow/runs/run7/final/nl/g1_digital.nl.v
+hierarchy -check -top g1_digital
+proc
+flatten
+clk2fflogic
+opt_clean
+check -assert
+select -assert-none a:blackbox
+rename g1_digital gold
+design -stash gold
+read_liberty -ignore_miss_func /foss/pdks/ihp-sg13g2/libs.ref/sg13g2_stdcell/lib/sg13g2_stdcell_typ_1p20V_25C.lib
+read_verilog ${BULK}/digital-final-nlrename-20260923-r1/g1_digital.nl.v
+hierarchy -check -top g1_digital
+proc
+flatten
+clk2fflogic
+opt_clean
+check -assert
+select -assert-none a:blackbox
+rename g1_digital gate
+design -stash gate
+design -copy-from gold -as gold gold
+design -copy-from gate -as gate gate
+equiv_make gold gate equiv
+hierarchy -check -top equiv
+equiv_struct -icells -fwd
+equiv_simple -seq 3
+equiv_status -assert

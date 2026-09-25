@@ -1,0 +1,16 @@
+* G1_T2F SYSTEM CHECK diag: single npn13G2 (we=0.07u le=0.9u Nx=1, as the extracted XQ4x) op, qa_fwd bias, hbt_typ 27 C
+.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerHBT.lib hbt_typ
+.option gmin=1e-15 abstol=1e-13 reltol=1e-4 vntol=1e-6 method=gear
+.temp 27
+Vb b 0 1.0374
+Ve e 0 0.3171
+Vc c 0 1.1565
+XQ c b e 0 npn13G2 we=0.07u le=0.9u Nx=1 m=1
+.control
+option numdgt=10
+op
+print @q.xq.qnpn13g2[ic] @q.xq.qnpn13g2[ib] v(xq.t)
+echo SYS_END
+quit 0
+.endc
+.end

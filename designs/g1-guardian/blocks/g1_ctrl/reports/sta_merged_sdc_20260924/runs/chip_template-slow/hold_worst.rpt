@@ -1,0 +1,35 @@
+Startpoint: SDI (input port clocked by SCLK)
+Endpoint: i_core.u_digital/_6671_
+          (rising edge-triggered flip-flop clocked by SCLK)
+Path Group: SCLK
+Path Type: min
+
+Fanout       Cap      Slew     Delay      Time   Description
+-------------------------------------------------------------------------------------
+                              0.0000    0.0000   clock SCLK (rise edge)
+                              0.0000    0.0000   clock network delay (propagated)
+                              0.0000    0.0000 v input external delay
+     2    0.1887    0.0000    0.0000    0.0000 v SDI (inout)
+     2    0.1505    0.3283    0.3802    0.3802 v pad15_sdi/p2c (sg13g2_IOPadIn)
+     4    0.0385    0.2059    0.3636    0.7438 v i_core.u_digital/input5/X (sg13g2_buf_1)
+                    0.2059    0.0039    0.7477 v i_core.u_digital/_6671_/D (sg13g2_dfrbpq_1)
+                                        0.7477   data arrival time
+
+                              0.0000    0.0000   clock SCLK (rise edge)
+                              0.0000    0.0000   clock source latency
+     2    0.1436    0.4010    0.0000    0.0000 ^ pad14_sclk/p2c (sg13g2_IOPadIn)
+     1    0.0199    0.0445    0.2656    0.2656 ^ i_core.u_digital/clkbuf_regs_0_sclk/X (sg13g2_buf_16)
+     8    0.1582    0.0814    0.1391    0.4047 ^ i_core.u_digital/clkbuf_0_sclk_regs/X (sg13g2_buf_16)
+     8    0.0328    0.0361    0.1463    0.5509 ^ i_core.u_digital/clkbuf_3_0__f_sclk_regs/X (sg13g2_buf_16)
+                    0.0361    0.0016    0.5525 ^ i_core.u_digital/_6671_/CLK (sg13g2_dfrbpq_1)
+                              0.2500    0.8025   clock uncertainty
+                              0.0000    0.8025   clock reconvergence pessimism
+                             -0.1193    0.6832   library hold time
+                                        0.6832   data required time
+-------------------------------------------------------------------------------------
+                                        0.6832   data required time
+                                       -0.7477   data arrival time
+-------------------------------------------------------------------------------------
+                                        0.0646   slack (MET)
+
+

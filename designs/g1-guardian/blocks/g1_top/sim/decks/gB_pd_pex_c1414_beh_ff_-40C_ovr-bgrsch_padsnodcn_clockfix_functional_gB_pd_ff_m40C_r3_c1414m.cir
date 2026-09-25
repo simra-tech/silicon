@@ -1,0 +1,653 @@
+* G1_TOP breaker path, chip level: (g-B) power-up: VDD ramp 1-3 us, IOVDD/VDDA 5-7 us, EN low until 12 us; 10 kOhm external pull-down on GATE
+* case gB_pd | block netlists pex | front end beh | clock to the RTL ideal | corner ff (mos_ff res_bcs cap_bcs hbt_bcs) | -40 degC | run_top.py
+* blockset c1414 (run_top.py BLOCKSETS) view override bgr=sch; ideal-clock frequency 9.436194721 MHz
+* netlist bgr: blocks/g1_bgr/layout/coordinated_full_closure/evidence/pex-preparation-20260922-r1/controls/r1/baseline_586.spice
+* netlist sense: blocks/g1_sense/sim/postlayout/g1_sense_r100_partialc.spice
+* netlist trip: blocks/g1_trip/sim/postlayout/g1_trip_nf4_pex.spice
+* netlist osc: blocks/g1_osc/sim/qualification/fulltree_r095_load_20260924/common/osc.spice
+* netlist gate: blocks/g1_gate/sim/postlayout/g1_gate_pex.spice
+* OVERRIDE bgr: sch view instead of --netlist pex (--view-override)
+* NOTE bgr: BGR586 source carries 329 historical Sep-19 kpex capacitors, not an extraction of the BGR586 layout
+* NOTE sense: R100 own-native partial-field C (unbound VSUBS excluded; physical field acceptance not established)
+.param VDDA=3.3 VDD=1.2 IOVDD=3.3 RSH=25m RGND=10m INOM=1 CVREF=1e-08
+.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerMOSlv.lib mos_ff
+.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerMOShv.lib mos_ff
+.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerRES.lib res_bcs
+.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerCAP.lib cap_bcs
+.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerHBT.lib hbt_bcs
+.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerDIO.lib dio_tt
+.include /foss/pdks/ihp-sg13g2/libs.ref/sg13g2_io/spice/sg13g2_io.spi
+* WARNING deviation --pads nodcn: every PDK pad instance of this deck (XP*: SENSE_P/N, VREF, and EN/SCLK/SDI/GATE/FAULT_N where pad models are used) is replaced by a deck-local copy g1nd_<cell> of the sg13g2_io.spi hierarchy with every dantenna instance removed (DCNDiode junctions, SecondaryProtection D1, Clamp_N*/LevelDown gate antenna diodes); level shifters, drivers, clamps, dpantenna diodes and ptap resistors are kept; PDK file unchanged. Reason: the PDK darea diode model switches formula at -3nVt (current step 1e-16->4e-11 A at 78 mV/27 C, 1e-12->4e-10 A at 104 mV/125 C), which stalls the transient; removed leakage < 1 nA per pad at 125 C.
+* ---- deck-local copy of /foss/pdks/ihp-sg13g2/libs.ref/sg13g2_io/spice/sg13g2_io.spi for --pads nodcn: cells renamed g1nd_*, dantenna instances removed
+.subckt g1nd_sg13g2_DCNDiode anode cathode guard
+* removed (--pads nodcn): XD1 sub! cathode dantenna l=27.78u w=1.26u m=1
+* removed (--pads nodcn): XD0 sub! cathode dantenna l=27.78u w=1.26u m=1
+XR0 anode sub! ptap1 R=5.191
+.ends
+.subckt g1nd_sg13g2_DCPDiode anode cathode guard
+XD1 anode cathode dpantenna l=27.78u w=1.26u m=1
+XD0 anode cathode dpantenna l=27.78u w=1.26u m=1
+XR0 guard sub! ptap1 R=17.289
+.ends
+.subckt g1nd_sg13g2_IOPadIOVss vdd vss iovdd iovss
+XI3 iovss iovss iovdd g1nd_sg13g2_DCNDiode
+XI2 iovss iovdd iovss g1nd_sg13g2_DCPDiode
+XR1 vss sub! ptap1 R=22.472
+XR0 iovss sub! ptap1 R=169.45m
+.ends
+.subckt g1nd_sg13g2_Clamp_N43N43D4R gate iovss pad
+XN0[1] pad gate iovss sub! sg13_hv_nmos w=4.4u l=600.0n ng=1 ad=1.496e-12 as=1.496e-12 pd=9.48e-06 ps=9.48e-06 m=1
+XN0[2] pad gate iovss sub! sg13_hv_nmos w=4.4u l=600.0n ng=1 ad=1.496e-12 as=1.496e-12 pd=9.48e-06 ps=9.48e-06 m=1
+XN0[3] pad gate iovss sub! sg13_hv_nmos w=4.4u l=600.0n ng=1 ad=1.496e-12 as=1.496e-12 pd=9.48e-06 ps=9.48e-06 m=1
+XN0[4] pad gate iovss sub! sg13_hv_nmos w=4.4u l=600.0n ng=1 ad=1.496e-12 as=1.496e-12 pd=9.48e-06 ps=9.48e-06 m=1
+XN0[5] pad gate iovss sub! sg13_hv_nmos w=4.4u l=600.0n ng=1 ad=1.496e-12 as=1.496e-12 pd=9.48e-06 ps=9.48e-06 m=1
+XN0[6] pad gate iovss sub! sg13_hv_nmos w=4.4u l=600.0n ng=1 ad=1.496e-12 as=1.496e-12 pd=9.48e-06 ps=9.48e-06 m=1
+XN0[7] pad gate iovss sub! sg13_hv_nmos w=4.4u l=600.0n ng=1 ad=1.496e-12 as=1.496e-12 pd=9.48e-06 ps=9.48e-06 m=1
+XN0[8] pad gate iovss sub! sg13_hv_nmos w=4.4u l=600.0n ng=1 ad=1.496e-12 as=1.496e-12 pd=9.48e-06 ps=9.48e-06 m=1
+XN0[9] pad gate iovss sub! sg13_hv_nmos w=4.4u l=600.0n ng=1 ad=1.496e-12 as=1.496e-12 pd=9.48e-06 ps=9.48e-06 m=1
+XN0[10] pad gate iovss sub! sg13_hv_nmos w=4.4u l=600.0n ng=1 ad=1.496e-12 as=1.496e-12 pd=9.48e-06 ps=9.48e-06 m=1
+XN0[11] pad gate iovss sub! sg13_hv_nmos w=4.4u l=600.0n ng=1 ad=1.496e-12 as=1.496e-12 pd=9.48e-06 ps=9.48e-06 m=1
+XN0[12] pad gate iovss sub! sg13_hv_nmos w=4.4u l=600.0n ng=1 ad=1.496e-12 as=1.496e-12 pd=9.48e-06 ps=9.48e-06 m=1
+XN0[13] pad gate iovss sub! sg13_hv_nmos w=4.4u l=600.0n ng=1 ad=1.496e-12 as=1.496e-12 pd=9.48e-06 ps=9.48e-06 m=1
+XN0[14] pad gate iovss sub! sg13_hv_nmos w=4.4u l=600.0n ng=1 ad=1.496e-12 as=1.496e-12 pd=9.48e-06 ps=9.48e-06 m=1
+XN0[15] pad gate iovss sub! sg13_hv_nmos w=4.4u l=600.0n ng=1 ad=1.496e-12 as=1.496e-12 pd=9.48e-06 ps=9.48e-06 m=1
+XN0[16] pad gate iovss sub! sg13_hv_nmos w=4.4u l=600.0n ng=1 ad=1.496e-12 as=1.496e-12 pd=9.48e-06 ps=9.48e-06 m=1
+XN0[17] pad gate iovss sub! sg13_hv_nmos w=4.4u l=600.0n ng=1 ad=1.496e-12 as=1.496e-12 pd=9.48e-06 ps=9.48e-06 m=1
+XN0[18] pad gate iovss sub! sg13_hv_nmos w=4.4u l=600.0n ng=1 ad=1.496e-12 as=1.496e-12 pd=9.48e-06 ps=9.48e-06 m=1
+XN0[19] pad gate iovss sub! sg13_hv_nmos w=4.4u l=600.0n ng=1 ad=1.496e-12 as=1.496e-12 pd=9.48e-06 ps=9.48e-06 m=1
+XN0[20] pad gate iovss sub! sg13_hv_nmos w=4.4u l=600.0n ng=1 ad=1.496e-12 as=1.496e-12 pd=9.48e-06 ps=9.48e-06 m=1
+XN0[21] pad gate iovss sub! sg13_hv_nmos w=4.4u l=600.0n ng=1 ad=1.496e-12 as=1.496e-12 pd=9.48e-06 ps=9.48e-06 m=1
+XN0[22] pad gate iovss sub! sg13_hv_nmos w=4.4u l=600.0n ng=1 ad=1.496e-12 as=1.496e-12 pd=9.48e-06 ps=9.48e-06 m=1
+XN0[23] pad gate iovss sub! sg13_hv_nmos w=4.4u l=600.0n ng=1 ad=1.496e-12 as=1.496e-12 pd=9.48e-06 ps=9.48e-06 m=1
+XN0[24] pad gate iovss sub! sg13_hv_nmos w=4.4u l=600.0n ng=1 ad=1.496e-12 as=1.496e-12 pd=9.48e-06 ps=9.48e-06 m=1
+XN0[25] pad gate iovss sub! sg13_hv_nmos w=4.4u l=600.0n ng=1 ad=1.496e-12 as=1.496e-12 pd=9.48e-06 ps=9.48e-06 m=1
+XN0[26] pad gate iovss sub! sg13_hv_nmos w=4.4u l=600.0n ng=1 ad=1.496e-12 as=1.496e-12 pd=9.48e-06 ps=9.48e-06 m=1
+XN0[27] pad gate iovss sub! sg13_hv_nmos w=4.4u l=600.0n ng=1 ad=1.496e-12 as=1.496e-12 pd=9.48e-06 ps=9.48e-06 m=1
+XN0[28] pad gate iovss sub! sg13_hv_nmos w=4.4u l=600.0n ng=1 ad=1.496e-12 as=1.496e-12 pd=9.48e-06 ps=9.48e-06 m=1
+XN0[29] pad gate iovss sub! sg13_hv_nmos w=4.4u l=600.0n ng=1 ad=1.496e-12 as=1.496e-12 pd=9.48e-06 ps=9.48e-06 m=1
+XN0[30] pad gate iovss sub! sg13_hv_nmos w=4.4u l=600.0n ng=1 ad=1.496e-12 as=1.496e-12 pd=9.48e-06 ps=9.48e-06 m=1
+XN0[31] pad gate iovss sub! sg13_hv_nmos w=4.4u l=600.0n ng=1 ad=1.496e-12 as=1.496e-12 pd=9.48e-06 ps=9.48e-06 m=1
+XN0[32] pad gate iovss sub! sg13_hv_nmos w=4.4u l=600.0n ng=1 ad=1.496e-12 as=1.496e-12 pd=9.48e-06 ps=9.48e-06 m=1
+XN0[33] pad gate iovss sub! sg13_hv_nmos w=4.4u l=600.0n ng=1 ad=1.496e-12 as=1.496e-12 pd=9.48e-06 ps=9.48e-06 m=1
+XN0[34] pad gate iovss sub! sg13_hv_nmos w=4.4u l=600.0n ng=1 ad=1.496e-12 as=1.496e-12 pd=9.48e-06 ps=9.48e-06 m=1
+XN0[35] pad gate iovss sub! sg13_hv_nmos w=4.4u l=600.0n ng=1 ad=1.496e-12 as=1.496e-12 pd=9.48e-06 ps=9.48e-06 m=1
+XN0[36] pad gate iovss sub! sg13_hv_nmos w=4.4u l=600.0n ng=1 ad=1.496e-12 as=1.496e-12 pd=9.48e-06 ps=9.48e-06 m=1
+XN0[37] pad gate iovss sub! sg13_hv_nmos w=4.4u l=600.0n ng=1 ad=1.496e-12 as=1.496e-12 pd=9.48e-06 ps=9.48e-06 m=1
+XN0[38] pad gate iovss sub! sg13_hv_nmos w=4.4u l=600.0n ng=1 ad=1.496e-12 as=1.496e-12 pd=9.48e-06 ps=9.48e-06 m=1
+XN0[39] pad gate iovss sub! sg13_hv_nmos w=4.4u l=600.0n ng=1 ad=1.496e-12 as=1.496e-12 pd=9.48e-06 ps=9.48e-06 m=1
+XN0[40] pad gate iovss sub! sg13_hv_nmos w=4.4u l=600.0n ng=1 ad=1.496e-12 as=1.496e-12 pd=9.48e-06 ps=9.48e-06 m=1
+XN0[41] pad gate iovss sub! sg13_hv_nmos w=4.4u l=600.0n ng=1 ad=1.496e-12 as=1.496e-12 pd=9.48e-06 ps=9.48e-06 m=1
+XN0[42] pad gate iovss sub! sg13_hv_nmos w=4.4u l=600.0n ng=1 ad=1.496e-12 as=1.496e-12 pd=9.48e-06 ps=9.48e-06 m=1
+XN0[43] pad gate iovss sub! sg13_hv_nmos w=4.4u l=600.0n ng=1 ad=1.496e-12 as=1.496e-12 pd=9.48e-06 ps=9.48e-06 m=1
+XN0[44] pad gate iovss sub! sg13_hv_nmos w=4.4u l=600.0n ng=1 ad=1.496e-12 as=1.496e-12 pd=9.48e-06 ps=9.48e-06 m=1
+XN0[45] pad gate iovss sub! sg13_hv_nmos w=4.4u l=600.0n ng=1 ad=1.496e-12 as=1.496e-12 pd=9.48e-06 ps=9.48e-06 m=1
+XN0[46] pad gate iovss sub! sg13_hv_nmos w=4.4u l=600.0n ng=1 ad=1.496e-12 as=1.496e-12 pd=9.48e-06 ps=9.48e-06 m=1
+XN0[47] pad gate iovss sub! sg13_hv_nmos w=4.4u l=600.0n ng=1 ad=1.496e-12 as=1.496e-12 pd=9.48e-06 ps=9.48e-06 m=1
+XN0[48] pad gate iovss sub! sg13_hv_nmos w=4.4u l=600.0n ng=1 ad=1.496e-12 as=1.496e-12 pd=9.48e-06 ps=9.48e-06 m=1
+XN0[49] pad gate iovss sub! sg13_hv_nmos w=4.4u l=600.0n ng=1 ad=1.496e-12 as=1.496e-12 pd=9.48e-06 ps=9.48e-06 m=1
+XN0[50] pad gate iovss sub! sg13_hv_nmos w=4.4u l=600.0n ng=1 ad=1.496e-12 as=1.496e-12 pd=9.48e-06 ps=9.48e-06 m=1
+XN0[51] pad gate iovss sub! sg13_hv_nmos w=4.4u l=600.0n ng=1 ad=1.496e-12 as=1.496e-12 pd=9.48e-06 ps=9.48e-06 m=1
+XN0[52] pad gate iovss sub! sg13_hv_nmos w=4.4u l=600.0n ng=1 ad=1.496e-12 as=1.496e-12 pd=9.48e-06 ps=9.48e-06 m=1
+XN0[53] pad gate iovss sub! sg13_hv_nmos w=4.4u l=600.0n ng=1 ad=1.496e-12 as=1.496e-12 pd=9.48e-06 ps=9.48e-06 m=1
+XN0[54] pad gate iovss sub! sg13_hv_nmos w=4.4u l=600.0n ng=1 ad=1.496e-12 as=1.496e-12 pd=9.48e-06 ps=9.48e-06 m=1
+XN0[55] pad gate iovss sub! sg13_hv_nmos w=4.4u l=600.0n ng=1 ad=1.496e-12 as=1.496e-12 pd=9.48e-06 ps=9.48e-06 m=1
+XN0[56] pad gate iovss sub! sg13_hv_nmos w=4.4u l=600.0n ng=1 ad=1.496e-12 as=1.496e-12 pd=9.48e-06 ps=9.48e-06 m=1
+XN0[57] pad gate iovss sub! sg13_hv_nmos w=4.4u l=600.0n ng=1 ad=1.496e-12 as=1.496e-12 pd=9.48e-06 ps=9.48e-06 m=1
+XN0[58] pad gate iovss sub! sg13_hv_nmos w=4.4u l=600.0n ng=1 ad=1.496e-12 as=1.496e-12 pd=9.48e-06 ps=9.48e-06 m=1
+XN0[59] pad gate iovss sub! sg13_hv_nmos w=4.4u l=600.0n ng=1 ad=1.496e-12 as=1.496e-12 pd=9.48e-06 ps=9.48e-06 m=1
+XN0[60] pad gate iovss sub! sg13_hv_nmos w=4.4u l=600.0n ng=1 ad=1.496e-12 as=1.496e-12 pd=9.48e-06 ps=9.48e-06 m=1
+XN0[61] pad gate iovss sub! sg13_hv_nmos w=4.4u l=600.0n ng=1 ad=1.496e-12 as=1.496e-12 pd=9.48e-06 ps=9.48e-06 m=1
+XN0[62] pad gate iovss sub! sg13_hv_nmos w=4.4u l=600.0n ng=1 ad=1.496e-12 as=1.496e-12 pd=9.48e-06 ps=9.48e-06 m=1
+XN0[63] pad gate iovss sub! sg13_hv_nmos w=4.4u l=600.0n ng=1 ad=1.496e-12 as=1.496e-12 pd=9.48e-06 ps=9.48e-06 m=1
+XN0[64] pad gate iovss sub! sg13_hv_nmos w=4.4u l=600.0n ng=1 ad=1.496e-12 as=1.496e-12 pd=9.48e-06 ps=9.48e-06 m=1
+XN0[65] pad gate iovss sub! sg13_hv_nmos w=4.4u l=600.0n ng=1 ad=1.496e-12 as=1.496e-12 pd=9.48e-06 ps=9.48e-06 m=1
+XN0[66] pad gate iovss sub! sg13_hv_nmos w=4.4u l=600.0n ng=1 ad=1.496e-12 as=1.496e-12 pd=9.48e-06 ps=9.48e-06 m=1
+XN0[67] pad gate iovss sub! sg13_hv_nmos w=4.4u l=600.0n ng=1 ad=1.496e-12 as=1.496e-12 pd=9.48e-06 ps=9.48e-06 m=1
+XN0[68] pad gate iovss sub! sg13_hv_nmos w=4.4u l=600.0n ng=1 ad=1.496e-12 as=1.496e-12 pd=9.48e-06 ps=9.48e-06 m=1
+XN0[69] pad gate iovss sub! sg13_hv_nmos w=4.4u l=600.0n ng=1 ad=1.496e-12 as=1.496e-12 pd=9.48e-06 ps=9.48e-06 m=1
+XN0[70] pad gate iovss sub! sg13_hv_nmos w=4.4u l=600.0n ng=1 ad=1.496e-12 as=1.496e-12 pd=9.48e-06 ps=9.48e-06 m=1
+XN0[71] pad gate iovss sub! sg13_hv_nmos w=4.4u l=600.0n ng=1 ad=1.496e-12 as=1.496e-12 pd=9.48e-06 ps=9.48e-06 m=1
+XN0[72] pad gate iovss sub! sg13_hv_nmos w=4.4u l=600.0n ng=1 ad=1.496e-12 as=1.496e-12 pd=9.48e-06 ps=9.48e-06 m=1
+XN0[73] pad gate iovss sub! sg13_hv_nmos w=4.4u l=600.0n ng=1 ad=1.496e-12 as=1.496e-12 pd=9.48e-06 ps=9.48e-06 m=1
+XN0[74] pad gate iovss sub! sg13_hv_nmos w=4.4u l=600.0n ng=1 ad=1.496e-12 as=1.496e-12 pd=9.48e-06 ps=9.48e-06 m=1
+XN0[75] pad gate iovss sub! sg13_hv_nmos w=4.4u l=600.0n ng=1 ad=1.496e-12 as=1.496e-12 pd=9.48e-06 ps=9.48e-06 m=1
+XN0[76] pad gate iovss sub! sg13_hv_nmos w=4.4u l=600.0n ng=1 ad=1.496e-12 as=1.496e-12 pd=9.48e-06 ps=9.48e-06 m=1
+XN0[77] pad gate iovss sub! sg13_hv_nmos w=4.4u l=600.0n ng=1 ad=1.496e-12 as=1.496e-12 pd=9.48e-06 ps=9.48e-06 m=1
+XN0[78] pad gate iovss sub! sg13_hv_nmos w=4.4u l=600.0n ng=1 ad=1.496e-12 as=1.496e-12 pd=9.48e-06 ps=9.48e-06 m=1
+XN0[79] pad gate iovss sub! sg13_hv_nmos w=4.4u l=600.0n ng=1 ad=1.496e-12 as=1.496e-12 pd=9.48e-06 ps=9.48e-06 m=1
+XN0[80] pad gate iovss sub! sg13_hv_nmos w=4.4u l=600.0n ng=1 ad=1.496e-12 as=1.496e-12 pd=9.48e-06 ps=9.48e-06 m=1
+XN0[81] pad gate iovss sub! sg13_hv_nmos w=4.4u l=600.0n ng=1 ad=1.496e-12 as=1.496e-12 pd=9.48e-06 ps=9.48e-06 m=1
+XN0[82] pad gate iovss sub! sg13_hv_nmos w=4.4u l=600.0n ng=1 ad=1.496e-12 as=1.496e-12 pd=9.48e-06 ps=9.48e-06 m=1
+XN0[83] pad gate iovss sub! sg13_hv_nmos w=4.4u l=600.0n ng=1 ad=1.496e-12 as=1.496e-12 pd=9.48e-06 ps=9.48e-06 m=1
+XN0[84] pad gate iovss sub! sg13_hv_nmos w=4.4u l=600.0n ng=1 ad=1.496e-12 as=1.496e-12 pd=9.48e-06 ps=9.48e-06 m=1
+XN0[85] pad gate iovss sub! sg13_hv_nmos w=4.4u l=600.0n ng=1 ad=1.496e-12 as=1.496e-12 pd=9.48e-06 ps=9.48e-06 m=1
+XN0[86] pad gate iovss sub! sg13_hv_nmos w=4.4u l=600.0n ng=1 ad=1.496e-12 as=1.496e-12 pd=9.48e-06 ps=9.48e-06 m=1
+XN0[87] pad gate iovss sub! sg13_hv_nmos w=4.4u l=600.0n ng=1 ad=1.496e-12 as=1.496e-12 pd=9.48e-06 ps=9.48e-06 m=1
+XN0[88] pad gate iovss sub! sg13_hv_nmos w=4.4u l=600.0n ng=1 ad=1.496e-12 as=1.496e-12 pd=9.48e-06 ps=9.48e-06 m=1
+XN0[89] pad gate iovss sub! sg13_hv_nmos w=4.4u l=600.0n ng=1 ad=1.496e-12 as=1.496e-12 pd=9.48e-06 ps=9.48e-06 m=1
+XN0[90] pad gate iovss sub! sg13_hv_nmos w=4.4u l=600.0n ng=1 ad=1.496e-12 as=1.496e-12 pd=9.48e-06 ps=9.48e-06 m=1
+XN0[91] pad gate iovss sub! sg13_hv_nmos w=4.4u l=600.0n ng=1 ad=1.496e-12 as=1.496e-12 pd=9.48e-06 ps=9.48e-06 m=1
+XN0[92] pad gate iovss sub! sg13_hv_nmos w=4.4u l=600.0n ng=1 ad=1.496e-12 as=1.496e-12 pd=9.48e-06 ps=9.48e-06 m=1
+XN0[93] pad gate iovss sub! sg13_hv_nmos w=4.4u l=600.0n ng=1 ad=1.496e-12 as=1.496e-12 pd=9.48e-06 ps=9.48e-06 m=1
+XN0[94] pad gate iovss sub! sg13_hv_nmos w=4.4u l=600.0n ng=1 ad=1.496e-12 as=1.496e-12 pd=9.48e-06 ps=9.48e-06 m=1
+XN0[95] pad gate iovss sub! sg13_hv_nmos w=4.4u l=600.0n ng=1 ad=1.496e-12 as=1.496e-12 pd=9.48e-06 ps=9.48e-06 m=1
+XN0[96] pad gate iovss sub! sg13_hv_nmos w=4.4u l=600.0n ng=1 ad=1.496e-12 as=1.496e-12 pd=9.48e-06 ps=9.48e-06 m=1
+XN0[97] pad gate iovss sub! sg13_hv_nmos w=4.4u l=600.0n ng=1 ad=1.496e-12 as=1.496e-12 pd=9.48e-06 ps=9.48e-06 m=1
+XN0[98] pad gate iovss sub! sg13_hv_nmos w=4.4u l=600.0n ng=1 ad=1.496e-12 as=1.496e-12 pd=9.48e-06 ps=9.48e-06 m=1
+XN0[99] pad gate iovss sub! sg13_hv_nmos w=4.4u l=600.0n ng=1 ad=1.496e-12 as=1.496e-12 pd=9.48e-06 ps=9.48e-06 m=1
+XN0[100] pad gate iovss sub! sg13_hv_nmos w=4.4u l=600.0n ng=1 ad=1.496e-12 as=1.496e-12 pd=9.48e-06 ps=9.48e-06 m=1
+XN0[101] pad gate iovss sub! sg13_hv_nmos w=4.4u l=600.0n ng=1 ad=1.496e-12 as=1.496e-12 pd=9.48e-06 ps=9.48e-06 m=1
+XN0[102] pad gate iovss sub! sg13_hv_nmos w=4.4u l=600.0n ng=1 ad=1.496e-12 as=1.496e-12 pd=9.48e-06 ps=9.48e-06 m=1
+XN0[103] pad gate iovss sub! sg13_hv_nmos w=4.4u l=600.0n ng=1 ad=1.496e-12 as=1.496e-12 pd=9.48e-06 ps=9.48e-06 m=1
+XN0[104] pad gate iovss sub! sg13_hv_nmos w=4.4u l=600.0n ng=1 ad=1.496e-12 as=1.496e-12 pd=9.48e-06 ps=9.48e-06 m=1
+XN0[105] pad gate iovss sub! sg13_hv_nmos w=4.4u l=600.0n ng=1 ad=1.496e-12 as=1.496e-12 pd=9.48e-06 ps=9.48e-06 m=1
+XN0[106] pad gate iovss sub! sg13_hv_nmos w=4.4u l=600.0n ng=1 ad=1.496e-12 as=1.496e-12 pd=9.48e-06 ps=9.48e-06 m=1
+XN0[107] pad gate iovss sub! sg13_hv_nmos w=4.4u l=600.0n ng=1 ad=1.496e-12 as=1.496e-12 pd=9.48e-06 ps=9.48e-06 m=1
+XN0[108] pad gate iovss sub! sg13_hv_nmos w=4.4u l=600.0n ng=1 ad=1.496e-12 as=1.496e-12 pd=9.48e-06 ps=9.48e-06 m=1
+XN0[109] pad gate iovss sub! sg13_hv_nmos w=4.4u l=600.0n ng=1 ad=1.496e-12 as=1.496e-12 pd=9.48e-06 ps=9.48e-06 m=1
+XN0[110] pad gate iovss sub! sg13_hv_nmos w=4.4u l=600.0n ng=1 ad=1.496e-12 as=1.496e-12 pd=9.48e-06 ps=9.48e-06 m=1
+XN0[111] pad gate iovss sub! sg13_hv_nmos w=4.4u l=600.0n ng=1 ad=1.496e-12 as=1.496e-12 pd=9.48e-06 ps=9.48e-06 m=1
+XN0[112] pad gate iovss sub! sg13_hv_nmos w=4.4u l=600.0n ng=1 ad=1.496e-12 as=1.496e-12 pd=9.48e-06 ps=9.48e-06 m=1
+XN0[113] pad gate iovss sub! sg13_hv_nmos w=4.4u l=600.0n ng=1 ad=1.496e-12 as=1.496e-12 pd=9.48e-06 ps=9.48e-06 m=1
+XN0[114] pad gate iovss sub! sg13_hv_nmos w=4.4u l=600.0n ng=1 ad=1.496e-12 as=1.496e-12 pd=9.48e-06 ps=9.48e-06 m=1
+XN0[115] pad gate iovss sub! sg13_hv_nmos w=4.4u l=600.0n ng=1 ad=1.496e-12 as=1.496e-12 pd=9.48e-06 ps=9.48e-06 m=1
+XN0[116] pad gate iovss sub! sg13_hv_nmos w=4.4u l=600.0n ng=1 ad=1.496e-12 as=1.496e-12 pd=9.48e-06 ps=9.48e-06 m=1
+XN0[117] pad gate iovss sub! sg13_hv_nmos w=4.4u l=600.0n ng=1 ad=1.496e-12 as=1.496e-12 pd=9.48e-06 ps=9.48e-06 m=1
+XN0[118] pad gate iovss sub! sg13_hv_nmos w=4.4u l=600.0n ng=1 ad=1.496e-12 as=1.496e-12 pd=9.48e-06 ps=9.48e-06 m=1
+XN0[119] pad gate iovss sub! sg13_hv_nmos w=4.4u l=600.0n ng=1 ad=1.496e-12 as=1.496e-12 pd=9.48e-06 ps=9.48e-06 m=1
+XN0[120] pad gate iovss sub! sg13_hv_nmos w=4.4u l=600.0n ng=1 ad=1.496e-12 as=1.496e-12 pd=9.48e-06 ps=9.48e-06 m=1
+XN0[121] pad gate iovss sub! sg13_hv_nmos w=4.4u l=600.0n ng=1 ad=1.496e-12 as=1.496e-12 pd=9.48e-06 ps=9.48e-06 m=1
+XN0[122] pad gate iovss sub! sg13_hv_nmos w=4.4u l=600.0n ng=1 ad=1.496e-12 as=1.496e-12 pd=9.48e-06 ps=9.48e-06 m=1
+XN0[123] pad gate iovss sub! sg13_hv_nmos w=4.4u l=600.0n ng=1 ad=1.496e-12 as=1.496e-12 pd=9.48e-06 ps=9.48e-06 m=1
+XN0[124] pad gate iovss sub! sg13_hv_nmos w=4.4u l=600.0n ng=1 ad=1.496e-12 as=1.496e-12 pd=9.48e-06 ps=9.48e-06 m=1
+XN0[125] pad gate iovss sub! sg13_hv_nmos w=4.4u l=600.0n ng=1 ad=1.496e-12 as=1.496e-12 pd=9.48e-06 ps=9.48e-06 m=1
+XN0[126] pad gate iovss sub! sg13_hv_nmos w=4.4u l=600.0n ng=1 ad=1.496e-12 as=1.496e-12 pd=9.48e-06 ps=9.48e-06 m=1
+XN0[127] pad gate iovss sub! sg13_hv_nmos w=4.4u l=600.0n ng=1 ad=1.496e-12 as=1.496e-12 pd=9.48e-06 ps=9.48e-06 m=1
+XN0[128] pad gate iovss sub! sg13_hv_nmos w=4.4u l=600.0n ng=1 ad=1.496e-12 as=1.496e-12 pd=9.48e-06 ps=9.48e-06 m=1
+XN0[129] pad gate iovss sub! sg13_hv_nmos w=4.4u l=600.0n ng=1 ad=1.496e-12 as=1.496e-12 pd=9.48e-06 ps=9.48e-06 m=1
+XN0[130] pad gate iovss sub! sg13_hv_nmos w=4.4u l=600.0n ng=1 ad=1.496e-12 as=1.496e-12 pd=9.48e-06 ps=9.48e-06 m=1
+XN0[131] pad gate iovss sub! sg13_hv_nmos w=4.4u l=600.0n ng=1 ad=1.496e-12 as=1.496e-12 pd=9.48e-06 ps=9.48e-06 m=1
+XN0[132] pad gate iovss sub! sg13_hv_nmos w=4.4u l=600.0n ng=1 ad=1.496e-12 as=1.496e-12 pd=9.48e-06 ps=9.48e-06 m=1
+XN0[133] pad gate iovss sub! sg13_hv_nmos w=4.4u l=600.0n ng=1 ad=1.496e-12 as=1.496e-12 pd=9.48e-06 ps=9.48e-06 m=1
+XN0[134] pad gate iovss sub! sg13_hv_nmos w=4.4u l=600.0n ng=1 ad=1.496e-12 as=1.496e-12 pd=9.48e-06 ps=9.48e-06 m=1
+XN0[135] pad gate iovss sub! sg13_hv_nmos w=4.4u l=600.0n ng=1 ad=1.496e-12 as=1.496e-12 pd=9.48e-06 ps=9.48e-06 m=1
+XN0[136] pad gate iovss sub! sg13_hv_nmos w=4.4u l=600.0n ng=1 ad=1.496e-12 as=1.496e-12 pd=9.48e-06 ps=9.48e-06 m=1
+XN0[137] pad gate iovss sub! sg13_hv_nmos w=4.4u l=600.0n ng=1 ad=1.496e-12 as=1.496e-12 pd=9.48e-06 ps=9.48e-06 m=1
+XN0[138] pad gate iovss sub! sg13_hv_nmos w=4.4u l=600.0n ng=1 ad=1.496e-12 as=1.496e-12 pd=9.48e-06 ps=9.48e-06 m=1
+XN0[139] pad gate iovss sub! sg13_hv_nmos w=4.4u l=600.0n ng=1 ad=1.496e-12 as=1.496e-12 pd=9.48e-06 ps=9.48e-06 m=1
+XN0[140] pad gate iovss sub! sg13_hv_nmos w=4.4u l=600.0n ng=1 ad=1.496e-12 as=1.496e-12 pd=9.48e-06 ps=9.48e-06 m=1
+XN0[141] pad gate iovss sub! sg13_hv_nmos w=4.4u l=600.0n ng=1 ad=1.496e-12 as=1.496e-12 pd=9.48e-06 ps=9.48e-06 m=1
+XN0[142] pad gate iovss sub! sg13_hv_nmos w=4.4u l=600.0n ng=1 ad=1.496e-12 as=1.496e-12 pd=9.48e-06 ps=9.48e-06 m=1
+XN0[143] pad gate iovss sub! sg13_hv_nmos w=4.4u l=600.0n ng=1 ad=1.496e-12 as=1.496e-12 pd=9.48e-06 ps=9.48e-06 m=1
+XN0[144] pad gate iovss sub! sg13_hv_nmos w=4.4u l=600.0n ng=1 ad=1.496e-12 as=1.496e-12 pd=9.48e-06 ps=9.48e-06 m=1
+XN0[145] pad gate iovss sub! sg13_hv_nmos w=4.4u l=600.0n ng=1 ad=1.496e-12 as=1.496e-12 pd=9.48e-06 ps=9.48e-06 m=1
+XN0[146] pad gate iovss sub! sg13_hv_nmos w=4.4u l=600.0n ng=1 ad=1.496e-12 as=1.496e-12 pd=9.48e-06 ps=9.48e-06 m=1
+XN0[147] pad gate iovss sub! sg13_hv_nmos w=4.4u l=600.0n ng=1 ad=1.496e-12 as=1.496e-12 pd=9.48e-06 ps=9.48e-06 m=1
+XN0[148] pad gate iovss sub! sg13_hv_nmos w=4.4u l=600.0n ng=1 ad=1.496e-12 as=1.496e-12 pd=9.48e-06 ps=9.48e-06 m=1
+XN0[149] pad gate iovss sub! sg13_hv_nmos w=4.4u l=600.0n ng=1 ad=1.496e-12 as=1.496e-12 pd=9.48e-06 ps=9.48e-06 m=1
+XN0[150] pad gate iovss sub! sg13_hv_nmos w=4.4u l=600.0n ng=1 ad=1.496e-12 as=1.496e-12 pd=9.48e-06 ps=9.48e-06 m=1
+XN0[151] pad gate iovss sub! sg13_hv_nmos w=4.4u l=600.0n ng=1 ad=1.496e-12 as=1.496e-12 pd=9.48e-06 ps=9.48e-06 m=1
+XN0[152] pad gate iovss sub! sg13_hv_nmos w=4.4u l=600.0n ng=1 ad=1.496e-12 as=1.496e-12 pd=9.48e-06 ps=9.48e-06 m=1
+XN0[153] pad gate iovss sub! sg13_hv_nmos w=4.4u l=600.0n ng=1 ad=1.496e-12 as=1.496e-12 pd=9.48e-06 ps=9.48e-06 m=1
+XN0[154] pad gate iovss sub! sg13_hv_nmos w=4.4u l=600.0n ng=1 ad=1.496e-12 as=1.496e-12 pd=9.48e-06 ps=9.48e-06 m=1
+XN0[155] pad gate iovss sub! sg13_hv_nmos w=4.4u l=600.0n ng=1 ad=1.496e-12 as=1.496e-12 pd=9.48e-06 ps=9.48e-06 m=1
+XN0[156] pad gate iovss sub! sg13_hv_nmos w=4.4u l=600.0n ng=1 ad=1.496e-12 as=1.496e-12 pd=9.48e-06 ps=9.48e-06 m=1
+XN0[157] pad gate iovss sub! sg13_hv_nmos w=4.4u l=600.0n ng=1 ad=1.496e-12 as=1.496e-12 pd=9.48e-06 ps=9.48e-06 m=1
+XN0[158] pad gate iovss sub! sg13_hv_nmos w=4.4u l=600.0n ng=1 ad=1.496e-12 as=1.496e-12 pd=9.48e-06 ps=9.48e-06 m=1
+XN0[159] pad gate iovss sub! sg13_hv_nmos w=4.4u l=600.0n ng=1 ad=1.496e-12 as=1.496e-12 pd=9.48e-06 ps=9.48e-06 m=1
+XN0[160] pad gate iovss sub! sg13_hv_nmos w=4.4u l=600.0n ng=1 ad=1.496e-12 as=1.496e-12 pd=9.48e-06 ps=9.48e-06 m=1
+XN0[161] pad gate iovss sub! sg13_hv_nmos w=4.4u l=600.0n ng=1 ad=1.496e-12 as=1.496e-12 pd=9.48e-06 ps=9.48e-06 m=1
+XN0[162] pad gate iovss sub! sg13_hv_nmos w=4.4u l=600.0n ng=1 ad=1.496e-12 as=1.496e-12 pd=9.48e-06 ps=9.48e-06 m=1
+XN0[163] pad gate iovss sub! sg13_hv_nmos w=4.4u l=600.0n ng=1 ad=1.496e-12 as=1.496e-12 pd=9.48e-06 ps=9.48e-06 m=1
+XN0[164] pad gate iovss sub! sg13_hv_nmos w=4.4u l=600.0n ng=1 ad=1.496e-12 as=1.496e-12 pd=9.48e-06 ps=9.48e-06 m=1
+XN0[165] pad gate iovss sub! sg13_hv_nmos w=4.4u l=600.0n ng=1 ad=1.496e-12 as=1.496e-12 pd=9.48e-06 ps=9.48e-06 m=1
+XN0[166] pad gate iovss sub! sg13_hv_nmos w=4.4u l=600.0n ng=1 ad=1.496e-12 as=1.496e-12 pd=9.48e-06 ps=9.48e-06 m=1
+XN0[167] pad gate iovss sub! sg13_hv_nmos w=4.4u l=600.0n ng=1 ad=1.496e-12 as=1.496e-12 pd=9.48e-06 ps=9.48e-06 m=1
+XN0[168] pad gate iovss sub! sg13_hv_nmos w=4.4u l=600.0n ng=1 ad=1.496e-12 as=1.496e-12 pd=9.48e-06 ps=9.48e-06 m=1
+XN0[169] pad gate iovss sub! sg13_hv_nmos w=4.4u l=600.0n ng=1 ad=1.496e-12 as=1.496e-12 pd=9.48e-06 ps=9.48e-06 m=1
+XN0[170] pad gate iovss sub! sg13_hv_nmos w=4.4u l=600.0n ng=1 ad=1.496e-12 as=1.496e-12 pd=9.48e-06 ps=9.48e-06 m=1
+XN0[171] pad gate iovss sub! sg13_hv_nmos w=4.4u l=600.0n ng=1 ad=1.496e-12 as=1.496e-12 pd=9.48e-06 ps=9.48e-06 m=1
+XN0[172] pad gate iovss sub! sg13_hv_nmos w=4.4u l=600.0n ng=1 ad=1.496e-12 as=1.496e-12 pd=9.48e-06 ps=9.48e-06 m=1
+XR0 iovss sub! ptap1 R=9.999
+* removed (--pads nodcn): XD0 sub! gate dantenna l=480n w=480n m=1
+.ends
+.subckt g1nd_sg13g2_RCClampResistor pin1 pin2
+XR15 net15 net16 sub! rppd R=5.239K l=20u w=1u
+XR20 net20 net21 sub! rppd R=5.239K l=20u w=1u
+XR23 net23 net24 sub! rppd R=5.239K l=20u w=1u
+XR17 net17 net18 sub! rppd R=5.239K l=20u w=1u
+XR16 net16 net17 sub! rppd R=5.239K l=20u w=1u
+XR25 net25 pin2 sub! rppd R=5.239K l=20u w=1u
+XR22 net22 net23 sub! rppd R=5.239K l=20u w=1u
+XR19 net19 net20 sub! rppd R=5.239K l=20u w=1u
+XR24 net24 net25 sub! rppd R=5.239K l=20u w=1u
+XR21 net21 net22 sub! rppd R=5.239K l=20u w=1u
+XR18 net18 net19 sub! rppd R=5.239K l=20u w=1u
+XR5 net5 net6 sub! rppd R=5.239K l=20u w=1u
+XR8 net8 net9 sub! rppd R=5.239K l=20u w=1u
+XR11 net11 net12 sub! rppd R=5.239K l=20u w=1u
+XR14 net14 net15 sub! rppd R=5.239K l=20u w=1u
+XR2 net2 net3 sub! rppd R=5.239K l=20u w=1u
+XR1 net1 net2 sub! rppd R=5.239K l=20u w=1u
+XR13 net13 net14 sub! rppd R=5.239K l=20u w=1u
+XR10 net10 net11 sub! rppd R=5.239K l=20u w=1u
+XR7 net7 net8 sub! rppd R=5.239K l=20u w=1u
+XR4 net4 net5 sub! rppd R=5.239K l=20u w=1u
+XR12 net12 net13 sub! rppd R=5.239K l=20u w=1u
+XR9 net9 net10 sub! rppd R=5.239K l=20u w=1u
+XR6 net6 net7 sub! rppd R=5.239K l=20u w=1u
+XR3 net3 net4 sub! rppd R=5.239K l=20u w=1u
+XR0 pin1 net1 sub! rppd R=5.239K l=20u w=1u
+.ends
+.subckt g1nd_sg13g2_RCClampInverter out in iovss supply
+XN1 iovss in iovss sub! sg13_hv_nmos w=63.000u l=9.5u ng=7 ad=1.332e-11 as=1.332e-11 pd=7.496e-05 ps=7.496e-05 m=1
+XN3 out in iovss sub! sg13_hv_nmos w=54.000u l=500.0n ng=6 ad=1.026e-11 as=1.296e-11 pd=5.628e-05 ps=7.488e-05 m=1
+XN0 iovss in iovss sub! sg13_hv_nmos w=63.000u l=9.5u ng=7 ad=1.332e-11 as=1.332e-11 pd=7.496e-05 ps=7.496e-05 m=1
+XN2 out in iovss sub! sg13_hv_nmos w=54.000u l=500.0n ng=6 ad=1.026e-11 as=1.296e-11 pd=5.628e-05 ps=7.488e-05 m=1
+XR0 iovss sub! ptap1 R=9.59
+XP0 out in supply supply sg13_hv_pmos w=350.000u l=500.0n ng=50 ad=6.65e-11 as=6.86e-11 pd=0.000369 ps=0.0003836 m=1
+.ends
+.subckt g1nd_sg13g2_IOPadVdd vdd vss iovdd iovss
+XI1 net3 iovss vdd g1nd_sg13g2_Clamp_N43N43D4R
+XI4 vdd net1 g1nd_sg13g2_RCClampResistor
+XR1 iovss sub! ptap1 R=456.33m
+XR0 vss sub! ptap1 R=22.472
+XI3 net3 net1 iovss vdd g1nd_sg13g2_RCClampInverter
+.ends
+.subckt g1nd_sg13g2_IOPadIOVdd vdd vss iovdd iovss
+XI1 net4 iovss iovdd g1nd_sg13g2_Clamp_N43N43D4R
+XI3 iovdd net1 g1nd_sg13g2_RCClampResistor
+XI2 net4 net1 iovss iovdd g1nd_sg13g2_RCClampInverter
+XR1 iovss sub! ptap1 R=453.388m
+XR0 vss sub! ptap1 R=22.472
+.ends
+.subckt g1nd_sg13g2_IOPadVss vdd vss iovdd iovss
+XI1 iovss vss iovdd g1nd_sg13g2_DCNDiode
+XI2 vss iovdd iovss g1nd_sg13g2_DCPDiode
+XR1 iovss sub! ptap1 R=174.346m
+XR0 vss sub! ptap1 R=22.832
+.ends
+.subckt g1nd_sg13g2_Filler2000 vdd vss iovdd iovss
+XR1 vss sub! ptap1 R=101.912
+XR0 iovss sub! ptap1 R=1.224
+.ends
+.subckt g1nd_sg13g2_io_inv_x1 nq i vdd vss
+XN0 nq i vss sub! sg13_lv_nmos w=3.93u l=130.00n ng=1 ad=1.336e-12 as=1.336e-12 pd=8.54e-06 ps=8.54e-06 m=1
+XP0 nq i vdd vdd sg13_lv_pmos w=4.41u l=130.00n ng=1 ad=1.499e-12 as=1.499e-12 pd=9.5e-06 ps=9.5e-06 m=1
+XR0 vss sub! ptap1 R=258.978
+.ends
+.subckt g1nd_sg13g2_LevelUp o i iovdd vdd vss
+XN1 net2 i vss sub! sg13_lv_nmos w=2.75u l=130.00n ng=1 ad=9.35e-13 as=9.35e-13 pd=6.18e-06 ps=6.18e-06 m=1
+XP3 net2 i vdd vdd sg13_lv_pmos w=4.75u l=130.00n ng=1 ad=1.615e-12 as=1.615e-12 pd=1.018e-05 ps=1.018e-05 m=1
+XN0 o net4 vss sub! sg13_hv_nmos w=1.9u l=450.00n ng=1 ad=0.0 as=0.0 pd=0.0 ps=0.0 m=1
+XN3 net4 i vss sub! sg13_hv_nmos w=1.9u l=450.00n ng=1 ad=0.0 as=0.0 pd=0.0 ps=0.0 m=1
+XN2 net3 net2 vss sub! sg13_hv_nmos w=1.9u l=450.00n ng=1 ad=0.0 as=0.0 pd=0.0 ps=0.0 m=1
+XP0 o net4 iovdd iovdd sg13_hv_pmos w=3.9u l=450.00n ng=1 ad=1.326e-12 as=1.326e-12 pd=8.48e-06 ps=8.48e-06 m=1
+XP1 net3 net4 iovdd iovdd sg13_hv_pmos w=300.0n l=450.00n ng=1 ad=1.02e-13 as=1.02e-13 pd=1.28e-06 ps=1.28e-06 m=1
+XP2 net4 net3 iovdd iovdd sg13_hv_pmos w=300.0n l=450.00n ng=1 ad=0.0 as=0.0 pd=0.0 ps=0.0 m=1
+XR0 vss sub! ptap1 R=207.099
+.ends
+.subckt g1nd_sg13g2_io_nor2_x1 nq i0 i1 vdd vss
+XN0 nq i0 vss sub! sg13_lv_nmos w=3.93u l=130.00n ng=1 ad=1.336e-12 as=1.336e-12 pd=8.54e-06 ps=8.54e-06 m=1
+XN1 nq i1 vss sub! sg13_lv_nmos w=3.93u l=130.00n ng=1 ad=1.336e-12 as=1.336e-12 pd=8.54e-06 ps=8.54e-06 m=1
+XP0 net1 i0 vdd vdd sg13_lv_pmos w=4.41u l=130.00n ng=1 ad=1.499e-12 as=1.499e-12 pd=9.5e-06 ps=9.5e-06 m=1
+XP1 nq i1 net1 vdd sg13_lv_pmos w=4.41u l=130.00n ng=1 ad=1.499e-12 as=1.499e-12 pd=9.5e-06 ps=9.5e-06 m=1
+XR0 vss sub! ptap1 R=251.534
+.ends
+.subckt g1nd_sg13g2_io_tie vdd vss
+XR0 vss sub! ptap1 R=258.978
+.ends
+.subckt g1nd_sg13g2_io_nand2_x1 nq i0 i1 vdd vss
+XP1 nq i1 vdd vdd sg13_lv_pmos w=4.41u l=130.00n ng=1 ad=1.499e-12 as=1.499e-12 pd=9.5e-06 ps=9.5e-06 m=1
+XP0 nq i0 vdd vdd sg13_lv_pmos w=4.41u l=130.00n ng=1 ad=1.499e-12 as=1.499e-12 pd=9.5e-06 ps=9.5e-06 m=1
+XN1 net1 i0 vss sub! sg13_lv_nmos w=3.93u l=130.00n ng=1 ad=1.336e-12 as=1.336e-12 pd=8.54e-06 ps=8.54e-06 m=1
+XN0 nq i1 net1 sub! sg13_lv_nmos w=3.93u l=130.00n ng=1 ad=1.336e-12 as=1.336e-12 pd=8.54e-06 ps=8.54e-06 m=1
+XR0 vss sub! ptap1 R=251.534
+.ends
+.subckt g1nd_sg13g2_GateDecode ngate pgate core en iovdd vdd vss
+XI1 net3 en vdd vss g1nd_sg13g2_io_inv_x1
+XI4 ngate net4 iovdd vdd vss g1nd_sg13g2_LevelUp
+XI2 pgate net2 iovdd vdd vss g1nd_sg13g2_LevelUp
+XI3 net4 core net3 vdd vss g1nd_sg13g2_io_nor2_x1
+XI0 vdd vss g1nd_sg13g2_io_tie
+XI5 net2 core en vdd vss g1nd_sg13g2_io_nand2_x1
+.ends
+.subckt g1nd_sg13g2_Clamp_N2N2D gate iovss pad
+XR0 iovss sub! ptap1 R=11.438
+XN1 pad gate iovss sub! sg13_hv_nmos w=8.8u l=600.0n ng=2 ad=1.672e-12 as=2.992e-12 pd=9.56e-06 ps=1.896e-05 m=1
+* removed (--pads nodcn): XD0 sub! gate dantenna l=780.00n w=780.00n m=1
+.ends
+.subckt g1nd_sg13g2_Clamp_P2N2D gate iovdd iovss pad
+XD0 gate iovdd dpantenna l=480n w=480n m=1
+XP1 pad gate iovdd iovdd sg13_hv_pmos w=13.32u l=600.0n ng=2 ad=2.531e-12 as=4.529e-12 pd=1.408e-05 ps=2.8e-05 m=1
+XP0 pad gate iovdd iovdd sg13_hv_pmos w=13.32u l=600.0n ng=2 ad=2.531e-12 as=4.529e-12 pd=1.408e-05 ps=2.8e-05 m=1
+XR0 iovss sub! ptap1 R=9.826
+.ends
+.subckt g1nd_sg13g2_SecondaryProtection core minus pad plus
+XR0 pad core sub! rppd R=586.899 l=2u w=1u
+* removed (--pads nodcn): XD1 sub! core dantenna l=3.1u w=640n m=1
+XR1 minus sub! ptap1 R=46.556
+XD0 core plus dpantenna l=4.98u w=640n m=1
+.ends
+.subckt g1nd_sg13g2_LevelDown core pad iovdd iovss vdd vss
+XP0 vdd vdd vdd vdd sg13_hv_pmos w=4.65u l=450.00n ng=1 ad=1.581e-12 as=1.581e-12 pd=9.98e-06 ps=9.98e-06 m=1
+XP2 net4 net7 iovdd iovdd sg13_hv_pmos w=4.6u l=450.00n ng=2 ad=8.74e-13 as=1.564e-12 pd=5.36e-06 ps=1.056e-05 m=1
+XP3 net7 net1 iovdd iovdd sg13_hv_pmos w=4.6u l=450.00n ng=2 ad=8.74e-13 as=1.564e-12 pd=5.36e-06 ps=1.056e-05 m=1
+XN3 net4 net7 iovss sub! sg13_hv_nmos w=1.3u l=450.00n ng=1 ad=4.42e-13 as=4.42e-13 pd=3.28e-06 ps=3.28e-06 m=1
+XN4 net7 net1 iovss sub! sg13_hv_nmos w=1.3u l=450.00n ng=1 ad=4.42e-13 as=4.42e-13 pd=3.28e-06 ps=3.28e-06 m=1
+XN2 net2 net4 vss sub! sg13_hv_nmos w=2.65u l=450.00n ng=1 ad=9.01e-13 as=9.01e-13 pd=5.98e-06 ps=5.98e-06 m=1
+XN0 vdd net7 net2 sub! sg13_hv_nmos w=2.65u l=450.00n ng=1 ad=9.01e-13 as=9.01e-13 pd=5.98e-06 ps=5.98e-06 m=1
+XN1 core net2 vss sub! sg13_lv_nmos w=2.75u l=130.00n ng=1 ad=9.35e-13 as=9.35e-13 pd=6.18e-06 ps=6.18e-06 m=1
+XP1 core net2 vdd vdd sg13_lv_pmos w=4.75u l=130.00n ng=1 ad=1.615e-12 as=1.615e-12 pd=1.018e-05 ps=1.018e-05 m=1
+XR1 iovss sub! ptap1 R=199.584
+XR0 vss sub! ptap1 R=127.332
+XI0 net1 iovss pad iovdd g1nd_sg13g2_SecondaryProtection
+.ends
+.subckt g1nd_sg13g2_IOPadInOut4mA pad c2p p2c c2p_en vdd vss iovdd iovss
+XI1 pad iovdd iovss g1nd_sg13g2_DCPDiode
+XI2 net2 net1 c2p c2p_en iovdd vdd vss g1nd_sg13g2_GateDecode
+XI3 net2 iovss pad g1nd_sg13g2_Clamp_N2N2D
+XI0 net1 iovdd iovss pad g1nd_sg13g2_Clamp_P2N2D
+XI4 p2c pad iovdd iovss vdd vss g1nd_sg13g2_LevelDown
+XR0 vss sub! ptap1 R=26.933
+XR1 iovss sub! ptap1 R=214.134m
+XI5 iovss pad iovdd g1nd_sg13g2_DCNDiode
+.ends
+.subckt g1nd_sg13g2_Clamp_P15N15D gate iovdd iovss pad
+XD0 gate iovdd dpantenna l=780.00n w=780.00n m=1
+XR0 iovss sub! ptap1 R=9.826
+XP1 pad gate iovdd iovdd sg13_hv_pmos w=99.9u l=600.0n ng=15 ad=1.998e-11 as=1.998e-11 pd=0.0001126 ps=0.0001126 m=1
+XP0 pad gate iovdd iovdd sg13_hv_pmos w=99.9u l=600.0n ng=15 ad=1.998e-11 as=1.998e-11 pd=0.0001126 ps=0.0001126 m=1
+.ends
+.subckt g1nd_sg13g2_Clamp_N15N15D gate iovss pad
+XR0 iovss sub! ptap1 R=11.438
+XN0 pad gate iovss sub! sg13_hv_nmos w=66.000u l=600.0n ng=15 ad=1.32e-11 as=1.32e-11 pd=7.64e-05 ps=7.64e-05 m=1
+* removed (--pads nodcn): XD0 sub! gate dantenna l=780.00n w=780.00n m=1
+.ends
+.subckt g1nd_sg13g2_IOPadInOut30mA pad c2p p2c c2p_en vdd vss iovdd iovss
+XI4 p2c pad iovdd iovss vdd vss g1nd_sg13g2_LevelDown
+XI1 pad iovdd iovss g1nd_sg13g2_DCPDiode
+XI0 net1 iovdd iovss pad g1nd_sg13g2_Clamp_P15N15D
+XI5 iovss pad iovdd g1nd_sg13g2_DCNDiode
+XI3 net2 iovss pad g1nd_sg13g2_Clamp_N15N15D
+XR0 vss sub! ptap1 R=26.746
+XR1 iovss sub! ptap1 R=214.165m
+XI2 net2 net1 c2p c2p_en iovdd vdd vss g1nd_sg13g2_GateDecode
+.ends
+.subckt g1nd_sg13g2_LevelUpInv o i iovdd vdd vss
+XN1 net2 i vss sub! sg13_lv_nmos w=2.75u l=130.00n ng=1 ad=9.35e-13 as=9.35e-13 pd=6.18e-06 ps=6.18e-06 m=1
+XP3 net2 i vdd vdd sg13_lv_pmos w=4.75u l=130.00n ng=1 ad=1.615e-12 as=1.615e-12 pd=1.018e-05 ps=1.018e-05 m=1
+XN0 o net4 vss sub! sg13_hv_nmos w=1.9u l=450.00n ng=1 ad=0.0 as=0.0 pd=0.0 ps=0.0 m=1
+XN3 net4 net2 vss sub! sg13_hv_nmos w=1.9u l=450.00n ng=1 ad=0.0 as=0.0 pd=0.0 ps=0.0 m=1
+XN2 net3 i vss sub! sg13_hv_nmos w=1.9u l=450.00n ng=1 ad=0.0 as=0.0 pd=0.0 ps=0.0 m=1
+XP0 o net4 iovdd iovdd sg13_hv_pmos w=3.9u l=450.00n ng=1 ad=1.326e-12 as=1.326e-12 pd=8.48e-06 ps=8.48e-06 m=1
+XP1 net3 net4 iovdd iovdd sg13_hv_pmos w=300.0n l=450.00n ng=1 ad=1.02e-13 as=1.02e-13 pd=1.28e-06 ps=1.28e-06 m=1
+XP2 net4 net3 iovdd iovdd sg13_hv_pmos w=300.0n l=450.00n ng=1 ad=0.0 as=0.0 pd=0.0 ps=0.0 m=1
+XR0 vss sub! ptap1 R=190.268
+.ends
+.subckt g1nd_sg13g2_GateLevelUpInv ngate pgate iovdd core vdd vss
+XI1 pgate core iovdd vdd vss g1nd_sg13g2_LevelUpInv
+XI0 ngate core iovdd vdd vss g1nd_sg13g2_LevelUpInv
+.ends
+.subckt g1nd_sg13g2_IOPadOut4mA pad c2p vdd vss iovdd iovss
+XI2 net2 net1 iovdd c2p vdd vss g1nd_sg13g2_GateLevelUpInv
+XI0 net1 iovdd iovss pad g1nd_sg13g2_Clamp_P2N2D
+XI3 net2 iovss pad g1nd_sg13g2_Clamp_N2N2D
+XI4 iovss pad iovdd g1nd_sg13g2_DCNDiode
+XI1 pad iovdd iovss g1nd_sg13g2_DCPDiode
+XR1 iovss sub! ptap1 R=212.747m
+XR0 vss sub! ptap1 R=24.125
+.ends
+.subckt g1nd_sg13g2_IOPadOut30mA pad c2p vdd vss iovdd iovss
+XI2 net2 net1 iovdd c2p vdd vss g1nd_sg13g2_GateLevelUpInv
+XI1 net1 iovdd iovss pad g1nd_sg13g2_Clamp_P15N15D
+XI3 net2 iovss pad g1nd_sg13g2_Clamp_N15N15D
+XI4 iovss pad iovdd g1nd_sg13g2_DCNDiode
+XI0 pad iovdd iovss g1nd_sg13g2_DCPDiode
+XR0 vss sub! ptap1 R=24.125
+XR1 iovss sub! ptap1 R=214.165m
+.ends
+.subckt g1nd_sg13g2_IOPadIn pad p2c vdd vss iovdd iovss
+XI0 p2c pad iovdd iovss vdd vss g1nd_sg13g2_LevelDown
+XI2 iovss pad iovdd g1nd_sg13g2_DCNDiode
+XI1 pad iovdd iovss g1nd_sg13g2_DCPDiode
+XR0 vss sub! ptap1 R=24.69
+XR1 iovss sub! ptap1 R=173.674m
+.ends
+.subckt g1nd_sg13g2_Clamp_P8N8D gate iovdd iovss pad
+XR0 iovss sub! ptap1 R=9.826
+XP2 pad gate iovdd iovdd sg13_hv_pmos w=53.28u l=600.0n ng=8 ad=1.012e-11 as=1.212e-11 pd=5.632e-05 ps=7.024e-05 m=1
+XP0 pad gate iovdd iovdd sg13_hv_pmos w=53.28u l=600.0n ng=8 ad=1.012e-11 as=1.212e-11 pd=5.632e-05 ps=7.024e-05 m=1
+XD0 gate iovdd dpantenna l=480n w=480n m=1
+.ends
+.subckt g1nd_sg13g2_Clamp_N8N8D gate iovss pad
+XR0 iovss sub! ptap1 R=11.438
+XN0 pad gate iovss sub! sg13_hv_nmos w=35.2u l=600.0n ng=8 ad=6.688e-12 as=8.008e-12 pd=3.824e-05 ps=4.764e-05 m=1
+* removed (--pads nodcn): XD0 sub! gate dantenna l=780.00n w=780.00n m=1
+.ends
+.subckt g1nd_sg13g2_IOPadInOut16mA pad c2p p2c c2p_en vdd vss iovdd iovss
+XI1 pad iovdd iovss g1nd_sg13g2_DCPDiode
+XI2 net2 net1 c2p c2p_en iovdd vdd vss g1nd_sg13g2_GateDecode
+XI5 iovss pad iovdd g1nd_sg13g2_DCNDiode
+XI0 net1 iovdd iovss pad g1nd_sg13g2_Clamp_P8N8D
+XI4 p2c pad iovdd iovss vdd vss g1nd_sg13g2_LevelDown
+XI3 net2 iovss pad g1nd_sg13g2_Clamp_N8N8D
+XR0 vss sub! ptap1 R=26.933
+XR1 iovss sub! ptap1 R=207.756m
+.ends
+.subckt g1nd_sg13g2_IOPadOut16mA pad c2p vdd vss iovdd iovss
+XI2 net2 net1 iovdd c2p vdd vss g1nd_sg13g2_GateLevelUpInv
+XI0 net1 iovdd iovss pad g1nd_sg13g2_Clamp_P8N8D
+XI4 iovss pad iovdd g1nd_sg13g2_DCNDiode
+XI3 net2 iovss pad g1nd_sg13g2_Clamp_N8N8D
+XI1 pad iovdd iovss g1nd_sg13g2_DCPDiode
+XR0 vss sub! ptap1 R=23.888
+XR1 iovss sub! ptap1 R=208.667m
+.ends
+.subckt g1nd_sg13g2_IOPadTriOut4mA pad c2p c2p_en vdd vss iovdd iovss
+XI2 net2 net1 c2p c2p_en iovdd vdd vss g1nd_sg13g2_GateDecode
+XI4 iovss pad iovdd g1nd_sg13g2_DCNDiode
+XI3 net2 iovss pad g1nd_sg13g2_Clamp_N2N2D
+XI0 net1 iovdd iovss pad g1nd_sg13g2_Clamp_P2N2D
+XI1 pad iovdd iovss g1nd_sg13g2_DCPDiode
+XR0 vss sub! ptap1 R=24.567
+XR1 iovss sub! ptap1 R=208.667m
+.ends
+.subckt g1nd_sg13g2_IOPadTriOut16mA pad c2p c2p_en vdd vss iovdd iovss
+XI2 net2 net1 c2p c2p_en iovdd vdd vss g1nd_sg13g2_GateDecode
+XI0 net1 iovdd iovss pad g1nd_sg13g2_Clamp_P8N8D
+XI3 net2 iovss pad g1nd_sg13g2_Clamp_N8N8D
+XI4 iovss pad iovdd g1nd_sg13g2_DCNDiode
+XI1 pad iovdd iovss g1nd_sg13g2_DCPDiode
+XR0 vss sub! ptap1 R=24.897
+XR1 iovss sub! ptap1 R=208.211m
+.ends
+.subckt g1nd_sg13g2_IOPadTriOut30mA pad c2p c2p_en vdd vss iovdd iovss
+XI2 net2 net1 c2p c2p_en iovdd vdd vss g1nd_sg13g2_GateDecode
+XI4 iovss pad iovdd g1nd_sg13g2_DCNDiode
+XI3 net2 iovss pad g1nd_sg13g2_Clamp_N15N15D
+XI0 net1 iovdd iovss pad g1nd_sg13g2_Clamp_P15N15D
+XI1 pad iovdd iovss g1nd_sg13g2_DCPDiode
+XR0 vss sub! ptap1 R=24.649
+XR1 iovss sub! ptap1 R=208.667m
+.ends
+.subckt g1nd_sg13g2_Corner vdd vss iovdd iovss
+XR1 vss sub! ptap1 R=35.383
+XR0 iovss sub! ptap1 R=93.041m
+.ends
+.subckt g1nd_sg13g2_Filler4000 vdd vss iovdd iovss
+XR1 vss sub! ptap1 R=63.078
+XR0 iovss sub! ptap1 R=625.742m
+.ends
+.subckt g1nd_sg13g2_Filler1000 vdd vss iovdd iovss
+XR1 vss sub! ptap1 R=162.013
+XR0 iovss sub! ptap1 R=2.443
+.ends
+.subckt g1nd_sg13g2_Filler200 vdd vss iovdd iovss
+XR1 vss sub! ptap1 R=246.192
+XR0 iovss sub! ptap1 R=14.724
+.ends
+.subckt g1nd_sg13g2_Filler400 vdd vss iovdd iovss
+XR1 vss sub! ptap1 R=246.192
+XR0 iovss sub! ptap1 R=6.246
+.ends
+.subckt g1nd_sg13g2_Filler10000 vdd vss iovdd iovss
+XR1 vss sub! ptap1 R=32.364
+XR0 iovss sub! ptap1 R=253.731m
+.ends sg13g2_Filler10000
+.subckt g1nd_sg13g2_Clamp_P20N0D iovdd iovss pad
+XP1 pad net2 iovdd iovdd sg13_hv_pmos w=133.2u l=600.0n ng=20 ad=2.531e-11 as=2.731e-11 pd=0.0001408 ps=0.0001547 m=1
+XP0 pad net2 iovdd iovdd sg13_hv_pmos w=133.2u l=600.0n ng=20 ad=2.531e-11 as=2.731e-11 pd=0.0001408 ps=0.0001547 m=1
+XR0 net2 iovdd iovdd rppd R=6.768K l=12.9u w=500n
+XR1 iovss sub! ptap1 R=9.826
+.ends
+.subckt g1nd_sg13g2_Clamp_N20N0D iovss pad
+XN0 pad net2 iovss sub! sg13_hv_nmos w=88.000u l=600.0n ng=20 ad=1.672e-11 as=1.804e-11 pd=9.56e-05 ps=0.000105 m=1
+XR1 iovss sub! ptap1 R=11.438
+XR0 iovss net2 sub! rppd R=1.959K l=3.54u w=500n
+.ends
+.subckt g1nd_sg13g2_IOPadAnalog pad padres vdd vss iovdd iovss
+XI0 iovdd iovss pad g1nd_sg13g2_Clamp_P20N0D
+XI5 iovss pad iovdd g1nd_sg13g2_DCNDiode
+XI2 pad iovdd iovss g1nd_sg13g2_DCPDiode
+XI3 padres iovss pad iovdd g1nd_sg13g2_SecondaryProtection
+XI4 iovss pad g1nd_sg13g2_Clamp_N20N0D
+XR0 vss sub! ptap1 R=22.579
+XR1 iovss sub! ptap1 R=214.8m
+.ends
+.include /work/designs/g1-guardian/blocks/g1_gate/sim/postlayout/g1_gate_pex.spice
+.temp -40
+.global sub!
+Vsub sub! 0 dc 0
+* solver (README, "Numerical notes"): gear integration and loose absolute tolerances are what the PDK IO-pad
+* models need when XSPICE events fall on their switching edges (with abstol 1e-9 / vntol 1e-5 the diode
+* internal nodes stop converging: "timestep too small"); the DAC mux-tree nodes need rshunt; XSPICE forces
+* trtol = 1, which the comparator decisions need at this reltol; default gmin (1e-13 stalls the pads)
+.option method=gear itl4=100 reltol=0.002 abstol=1e-8 vntol=1e-4 chgtol=1e-12 rshunt=1e12
+* ---- supplies: one 3.3 V board rail feeds VDDA (pin 7) and IOVDD (pin 3), PLAN D14; 1.2 V VDD (pin 1)
+V33 rail33 0 pwl(0 0 5e-06 0 7e-06 3.3)
+Vma rail33 vdda_s dc 0
+Vmi rail33 iovdd_s dc 0
+Rsa vdda_s vdda 0.5
+Cda vdda 0 1n
+Rsi iovdd_s iovdd 0.5
+Cdi iovdd 0 1n
+V12 vdd_s 0 pwl(0 0 1e-06 0 3e-06 1.2)
+Rsd vdd_s vdd 0.5
+Cdd vdd 0 1n
+* ---- board: load current profile (1 V = 1 A) x switch on the FET gate node, shunt, Kelvin traces, FET gate
+Vprof iprof 0 pwl(0 1)
+Bload 0 ldi I = v(iprof) * (0.5 + 0.5*tanh((v(gfet) - 1.5)/0.15))
+Vim ldi shp dc 0
+Rsh shp shn {RSH}
+Rgnd shn 0 {RGND}
+Rkp shp sense_p 1
+Rkn shn sense_n 1
+Rg gate gfet 10
+Cgate gfet 0 5n
+Rpd gate 0 10000
+Cfault fault_n 0 20p
+* ---- pads (PDK sg13g2_io SPICE models): SENSE_P/N on the bare pad terminal, VREF on the padres terminal
+* (587 Ohm secondary protection, padframe/README.md); the VREF bond pad carries the board capacitor CVREF
+XPSP sense_p sense_p_res vdd 0 iovdd 0 g1nd_sg13g2_IOPadAnalog
+XPSN sense_n sense_n_res vdd 0 iovdd 0 g1nd_sg13g2_IOPadAnalog
+XPVREF vref_pad vref vdd 0 iovdd 0 g1nd_sg13g2_IOPadAnalog
+Cvref_ext vref_pad 0 {CVREF}
+XPEN en_pad en_core vdd 0 iovdd 0 g1nd_sg13g2_IOPadIn
+XPSCLK sclk_pad sclk_core vdd 0 iovdd 0 g1nd_sg13g2_IOPadIn
+XPSDI sdi_pad sdi_core vdd 0 iovdd 0 g1nd_sg13g2_IOPadIn
+XPG gate gate_core vdd 0 iovdd 0 g1nd_sg13g2_IOPadOut30mA
+XPF fault_n fault_core vdd 0 iovdd 0 g1nd_sg13g2_IOPadOut4mA
+Ven en_pad 0 pwl(0 0 1.20221787305e-05 0 1.20230787305e-05 1.485 1.20232787305e-05 1.815 1.20241787305e-05 3.3)
+Vsclk sclk_pad 0 pwl(0 0)
+Vsdi sdi_pad 0 pwl(0 0)
+Cw_en en_core 0 20f
+Cw_sclk sclk_core 0 20f
+Cw_sdi sdi_core 0 20f
+* the RTL reads EN / SCLK / SDI as a digital stimulus (XSPICE d_source) with the same edge times as the pad
+* PWLs (event at the middle of each edge); the pad models still drive en_core for G1_GATE (README, "Numerical notes")
+.model dsrc d_source(input_file="/work/build/g1_top/stim_gB_pd_pex_c1414_beh_ff_-40C_ovr-bgrsch_padsnodcn_clockfix_functional_gB_pd_ff_m40C_r3_c1414m.txt")
+adsrc [d_en d_sclk d_sdi] dsrc
+* ---- oscillator enable gate (testbench): RTL osc_en, released at 0.1 us
+Bosc osc_en_g 0 V = v(osc_en) * min(1, max(0, (time - 0.1u) / 50n))
+* ---- behavioural front end (README "Behavioural front end"): parameters from the pex block results
+* VREF and the bandgap: fixed 1.04 V (the VREF pad model stays connected)
+Vvref vref 0 dc 1.04
+Vm_bgr vdda vdda_bgr dc 0
+Rbgr_dummy vdda_bgr 0 1e12
+* G1_SENSE: ISENSE = VPED + GAIN x (SENSE_P - SENSE_N), single pole at the simulated -3 dB bandwidth
+Bis isense_b 0 V = 0.9992 + 19.99*(v(sense_p) - v(sense_n))
+Ris isense_b isense 1k
+Cis isense 0 3.79845e-11
+Vm_sense vdda vdda_sense dc 0
+Rsense_dummy vdda_sense 0 1e12
+* G1_TRIP: conditioning divider (25 kOhm source, 1 pF hold), DAC taps VREF x (255 + code)/530, ideal clocked comparators
+Bic icmp_b 0 V = v(isense)/2
+Ric icmp_b icmp 25k
+Cic icmp 0 1p
+Bvths vth_soft 0 V = 1.04*(255 + v(cs))/530
+Bvthh vth_hard 0 V = 1.04*(255 + v(ch))/530
+Bcs cs 0 V = 1*(0.5 + 0.5*tanh((v(soft0) - 0.6)/0.05)) + 2*(0.5 + 0.5*tanh((v(soft1) - 0.6)/0.05)) + 4*(0.5 + 0.5*tanh((v(soft2) - 0.6)/0.05)) + 8*(0.5 + 0.5*tanh((v(soft3) - 0.6)/0.05)) + 16*(0.5 + 0.5*tanh((v(soft4) - 0.6)/0.05)) + 32*(0.5 + 0.5*tanh((v(soft5) - 0.6)/0.05)) + 64*(0.5 + 0.5*tanh((v(soft6) - 0.6)/0.05)) + 128*(0.5 + 0.5*tanh((v(soft7) - 0.6)/0.05))
+Bch ch 0 V = 1*(0.5 + 0.5*tanh((v(hard0) - 0.6)/0.05)) + 2*(0.5 + 0.5*tanh((v(hard1) - 0.6)/0.05)) + 4*(0.5 + 0.5*tanh((v(hard2) - 0.6)/0.05)) + 8*(0.5 + 0.5*tanh((v(hard3) - 0.6)/0.05)) + 16*(0.5 + 0.5*tanh((v(hard4) - 0.6)/0.05)) + 32*(0.5 + 0.5*tanh((v(hard5) - 0.6)/0.05)) + 64*(0.5 + 0.5*tanh((v(hard6) - 0.6)/0.05)) + 128*(0.5 + 0.5*tanh((v(hard7) - 0.6)/0.05))
+* comparator decisions as smooth (2 mV wide) functions of the input difference, sampled by ideal flip-flops
+Bcmps cmps_a 0 V = 0.6 + 0.6*tanh((v(icmp) - v(vth_soft))/2m)
+Bcmph cmph_a 0 V = 0.6 + 0.6*tanh((v(icmp) - v(vth_hard))/2m)
+.model dffm d_dff(clk_delay=1n set_delay=1n reset_delay=1n ic=0 rise_delay=0.5n fall_delay=0.5n)
+.model dinv d_inverter(rise_delay=0.2n fall_delay=0.2n)
+Vzero zero_a 0 dc 0
+acmpa [cmps_a cmph_a zero_a] [d_cmps_a d_cmph_a d_zero] adc
+acinv d_cmp_clk d_cmp_clk_n dinv
+* d_dff ports: data clk set reset out nout (set/reset tied to a digital 0: a null port reads as unknown)
+acs d_cmps_a d_cmp_clk d_zero d_zero d_cmps_q null dffm
+ach d_cmph_a d_cmp_clk_n d_zero d_zero d_cmph_q null dffm
+acmpd [d_cmps_q d_cmph_q] [cmp_soft cmp_hard] dac
+Vm_tripa vdda vdda_trip dc 0
+Vm_tripd vdd vdd_trip dc 0
+Rtripa_dummy vdda_trip 0 1e12
+Rtripd_dummy vdd_trip 0 1e12
+* G1_OSC: ideal square wave at the block-simulated frequency, gated by the enable
+Vosc_i osc_i 0 pulse(0 1.2 1e-07 1n 1n 5.19875e-08 1.05975e-07)
+Bosc_clk osc_clk 0 V = v(osc_i) * (0.5 + 0.5*tanh((v(osc_en_g) - 0.6)/0.05))
+Vm_osc vdd vdd_osc dc 0
+Rosc_dummy vdd_osc 0 1e12
+Vm_gatea vdda vdda_gate dc 0
+Vm_gated vdd vdd_gate dc 0
+XGATE trip_d clr_d fast_en cmp_hard en_core gate_core fault_core tripped vdd_gate vdda_gate 0 g1_gate
+Cw_tripped tripped 0 20f
+* ---- digital macro: the real RTL through XSPICE d_cosim (Icarus Verilog shim ivlng)
+.model adc adc_bridge(in_low=0.55 in_high=0.65 rise_delay=1e-12 fall_delay=1e-12)
+.model adc_clock adc_bridge(in_low=0.6 in_high=0.6 rise_delay=1e-12 fall_delay=1e-12)
+.model dac dac_bridge(out_low=0 out_high=1.2 out_undef=0.6 t_rise=0.3n t_fall=0.3n)
+.model rtl d_cosim simulation="ivlng" sim_args=["/work/build/g1_top/cosim_204dd2ebf46721423045df14.vvp"]
+aclock [osc_clk] [d_osc_clk] adc_clock
+aadc [cmp_soft cmp_hard tripped] [d_cmp_soft d_cmp_hard d_tripped] adc
+adig [d_osc_clk d_en d_sclk d_sdi d_cmp_soft d_cmp_hard d_tripped] [d_cmp_clk d_s7 d_s6 d_s5 d_s4 d_s3 d_s2 d_s1 d_s0 d_h7 d_h6 d_h5 d_h4 d_h3 d_h2 d_h1 d_h0 d_trip_d d_clr_d d_fast_en d_osc_en d_t3 d_t2 d_t1 d_t0 d_trip d_gate_en d_cause1 d_cause0 d_sdo d_sp15 d_sp14 d_sp13 d_sp12 d_sp11 d_sp10 d_sp9 d_sp8 d_sp7 d_sp6 d_sp5 d_sp4 d_sp3 d_sp2 d_sp1 d_sp0 d_inrush d_softarmed] rtl
+adac [d_cmp_clk d_s7 d_s6 d_s5 d_s4 d_s3 d_s2 d_s1 d_s0 d_h7 d_h6 d_h5 d_h4 d_h3 d_h2 d_h1 d_h0 d_trip_d d_clr_d d_fast_en d_osc_en d_t3 d_t2 d_t1 d_t0 d_trip d_gate_en d_cause1 d_cause0 d_sdo d_sp15 d_sp14 d_sp13 d_sp12 d_sp11 d_sp10 d_sp9 d_sp8 d_sp7 d_sp6 d_sp5 d_sp4 d_sp3 d_sp2 d_sp1 d_sp0 d_inrush d_softarmed] [cmp_clk soft7 soft6 soft5 soft4 soft3 soft2 soft1 soft0 hard7 hard6 hard5 hard4 hard3 hard2 hard1 hard0 trip_d clr_d fast_en osc_en trim3 trim2 trim1 trim0 dig_trip dig_gate_en cause1 cause0 sdo sp15 sp14 sp13 sp12 sp11 sp10 sp9 sp8 sp7 sp6 sp5 sp4 sp3 sp2 sp1 sp0 inrush_active soft_armed] dac
+.save v(gate) v(gfet) v(tripped) v(isense) v(cmp_soft) v(cmp_hard) v(trip_d) v(clr_d) v(fast_en) v(osc_clk) v(cmp_clk)
++ v(vref) v(iptat) v(en_core) v(shp) v(shn) v(fault_n) v(gate_core) v(vdda) v(vdd) v(iovdd) v(iprof) v(osc_en_g)
++ v(icmp) v(vth_soft) v(vth_hard) v(dig_trip) v(cause1) v(cause0) v(sclk_pad) v(sdi_pad) v(sdo)
++ v(soft0) v(soft1) v(soft2) v(soft3) v(soft4) v(soft5) v(soft6) v(soft7) v(hard0) v(hard1) v(hard2) v(hard3) v(hard4) v(hard5) v(hard6) v(hard7)
++ v(sp0) v(sp1) v(sp2) v(sp3) v(sp4) v(sp5) v(sp6) v(sp7) v(sp8) v(sp9) v(sp10) v(sp11) v(sp12) v(sp13) v(sp14) v(sp15) v(inrush_active) v(soft_armed)
++ i(vim) i(vma) i(vmi) i(v12) i(vm_bgr) i(vm_sense) i(vm_tripa) i(vm_tripd) i(vm_osc) i(vm_gatea) i(vm_gated)
+.control
+set filetype=ascii
+set wr_singlescale
+set wr_vecnames
+tran 2e-08 16u 0 2e-08
+meas tran gmax_ramps max v(gate) from=0 to=11.9222u
+meas tran gc_max max v(gate_core) from=0 to=11.9222u
+meas tran g_end find v(gate) at=16u
+meas tran t_g1r when v(gate)=1.0 rise=1 from=0 to=11.9222u
+meas tran t_g1f when v(gate)=1.0 fall=1 from=0 to=11.9222u
+let t_high_us = (t_g1f - t_g1r)*1e6
+meas tran ipk_ramps max i(vim) from=0 to=11.9222u
+let qi = integ(i(vim))
+meas tran q_ramps find qi at=11.9222u
+meas tran tripped_ramps max v(tripped) from=0 to=11.9222u
+meas tran en_core_max max v(en_core) from=0 to=11.9222u
+echo "POWERUP GATE_max_EN_low=" $&gmax_ramps " gate_core_max=" $&gc_max " en_core_max=" $&en_core_max " GATE_above_1V_from_us=" $&t_g1r " to_us=" $&t_g1f " duration_us=" $&t_high_us " load_peak_A=" $&ipk_ramps " charge_As=" $&q_ramps " tripped_max=" $&tripped_ramps " GATE_after_EN=" $&g_end
+wrdata /work/build/g1_top/state_gB_pd_pex_c1414_beh_ff_-40C_ovr-bgrsch_padsnodcn_clockfix_functional_gB_pd_ff_m40C_r3_c1414m.txt v(en_core) v(inrush_active) v(dig_trip) v(fast_en) v(cause1) v(cause0) v(soft0) v(soft1) v(soft2) v(soft3) v(soft4) v(soft5) v(soft6) v(soft7) v(hard0) v(hard1) v(hard2) v(hard3) v(hard4) v(hard5) v(hard6) v(hard7) v(soft_armed) v(sp0) v(sp1) v(sp2) v(sp3) v(sp4) v(sp5) v(sp6) v(sp7) v(sp8) v(sp9) v(sp10) v(sp11) v(sp12) v(sp13) v(sp14) v(sp15) v(sclk_pad) v(sdi_pad) v(sdo) v(clr_d)
+linearize v(gate) v(gfet) v(tripped) v(isense) v(cmp_soft) v(cmp_hard) v(cmp_clk) v(trip_d) v(osc_clk) v(vref) v(en_core) v(shp) v(fault_n) v(vdda) v(vdd) v(iprof) v(icmp) v(vth_soft) v(vth_hard) v(dig_trip) v(inrush_active) i(vim) i(vma) i(vmi) i(v12)
+wrdata /work/build/g1_top/waves_gB_pd_pex_c1414_beh_ff_-40C_ovr-bgrsch_padsnodcn_clockfix_functional_gB_pd_ff_m40C_r3_c1414m.txt v(gate) v(gfet) v(tripped) v(isense) v(cmp_soft) v(cmp_hard) v(cmp_clk) v(trip_d) v(osc_clk) v(vref) v(en_core) v(shp) v(fault_n) v(vdda) v(vdd) v(iprof) v(icmp) v(vth_soft) v(vth_hard) v(dig_trip) v(inrush_active) i(vim) i(vma) i(vmi) i(v12)
+.endc
+.end

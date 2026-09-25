@@ -24,6 +24,101 @@ verifies a separate 0.6 V single-threshold clock receiver. Corrected runs use
 observations below require revalidation. The affected in-flight runs were
 stopped before restarting with the corrected receiver.
 
+## 2026-09-24 chip-of-record deck (`--blockset c1414`)
+
+`run_top.py --blockset c1414` builds the same deck with the analog block
+netlists of the chip of record `g1_chip_top_1414.gds` (`629d303a…`). It uses the
+block-to-netlist map of `../g1_padring/reports/signoff-1414-20260924/README.md`.
+`--blockset legacy` (default) keeps the Sep-19 paths below. Every c1414 netlist is
+bound by SHA-256 in `BLOCKSET_SHA256`; a changed file is refused. Subckt name
+and port order are checked against the deck instance, so no wrapper subckt is used.
+Deck headers and logs name every netlist used and carry a `NOTE`/`WARNING`/`OVERRIDE` line per substitution.
+
+| Block | `sch` view | `pex` view | Note |
+| --- | --- | --- | --- |
+| G1_BGR (BGR586) | `../g1_bgr/layout/coordinated_full_closure/evidence/pex-preparation-20260922-r1/controls/r1/baseline_586.spice` `586ffb58` | `../g1_bgr/sim/postlayout/g1_bgr586_pex.spice` `01227a3d` (kpex 2.5D CC of `bank.gds`, 978 C) | the `sch` file carries 329 historical Sep-19 capacitors, not an extraction of the BGR586 layout |
+| G1_SENSE (comp45 + R100) | `../g1_trip/sim/qualification/joint586-softinputpair4-nf4-roomcal-s73133-20260924-r1/sense.spice` `bb933fda` | `../g1_sense/sim/postlayout/g1_sense_r100_partialc.spice` `ffb14762` | partial-field C; OTA internals exposed as `__pex_*` ports; unbound VSUBS C excluded; field acceptance not established |
+| G1_TRIP (regenpair4 + NF4) | `…/joint586-softinputpair4-nf4-roomcal-s73133-20260924-r1/trip.spice` `f5f0a90a` | `../g1_trip/sim/postlayout/g1_trip_nf4_pex.spice` `ba86b7b2` | NF4 `sch` has no parasitics |
+| G1_OSC (R0.95) | none (falls back to `pex`, with a WARNING) | `../g1_osc/sim/qualification/fulltree_r095_load_20260924/common/osc.spice` `8efd7a09` (isolated macro CPEX) | the ideal clock runs at the loaded nominal trim-8 frequency 9.436194721 MHz |
+| G1_GATE | Sep-19 `g1_gate.spice` | Sep-19 `g1_gate_pex.spice` | baseline on the chip |
+| G1_T2F + 2 × `g1_ls_up` (`--t2f tl` only) | — | `../g1_t2f/sim/postlayout/g1_t2f_pex.spice` `441edabc`; `../g1_ctrl/ls/sim/netlist/g1_ls_up.spice` `5567c807` | wired as `g1_chip_top_1414.cdl`; `fout` into 1 pF, `TEMP_OUT` pad not modelled |
+
+New options (`python3 run_top.py --help`):
+
+| Option | Effect |
+| --- | --- |
+| `--blockset legacy\|c1414` | netlist set, above |
+| `--view-override BLOCK=VIEW[,…]` | per-block `sch`/`pex` after `--netlist`, e.g. `bgr=sch`; hash and port checks unchanged; tag suffix `_ovr-…` |
+| `--t2f off\|tl` | adds G1_T2F and its two level shifters, driven by the RTL `t2f_en`/`t2f_mode` through `rtl/g1_dig_cosim_t2f.v`; transistor-level front end, functional cases only |
+| `--inpads nodcn` | **documented deviation**: `SENSE_P`/`SENSE_N` use a deck-local copy of `sg13g2_IOPadAnalog` without its `dantenna` parts (`sg13g2_DCNDiode`, SecondaryProtection `D1`). Clamps, `DCPDiode`, 587 Ω + `dpantenna`, ptap resistors and `padres` are kept. The VREF pad and the PDK file are unchanged. See "Pad-diode finding" below |
+| `--osc-rx bridge\|schmitt` | diagnostic clock receiver between the transistor-level `osc_clk` and the `adc_bridge` (±50 mV hysteresis) |
+| `--extra-options "…"` | diagnostic `.option` line after the solver line; tag suffix `_opt…` |
+| `--osc-supply-r`, `--osc-decap`, `--save-extra` | diagnostic OSC supply elements and extra saved vectors |
+
+Also changed: `--timeline compact` accepts `c`, `c_fast`, `e20` and `osc` besides
+`c_mid`. The `QUIET` values are now 2 µs window averages before the event, with
+the single-instant samples kept as `*_inst`. Repeated identical PWL points in the
+serial stimulus are removed.
+
+Connectivity audit: `sim/check_cdl_vs_deck.py` compares every pin of every
+block instance in `g1_chip_top_1414.cdl` with the generated deck (default: the
+compact `c_mid` c1414 deck). Rerun 2026-09-24: exit 0, **0 unexplained differences**.
+Every remaining difference is documented (single board ground for `VSS`/`IOVSS`,
+`EN` via the `d_source`). The device fingerprints of `g1_bgr`, `g1_sense`,
+`g1_trip` and `g1_gate` are identical to the CDL (1036/159/2305/78 devices).
+
+Results (simulated; tt, 27 °C unless the row says otherwise; logs in `sim/logs/`, summaries appended to `sim/results_top.txt`;
+the 2026-09-24/25 campaign tables are in [sim/campaigns/RESULTS_20260925.md](sim/campaigns/RESULTS_20260925.md)):
+
+| Case | Deck | Result | Status | Log |
+| --- | --- | --- | --- | --- |
+| c_mid compact (28 µs), 1.8 A/45 mV in-range hard fault, code 200 | `--netlist pex`, transistor-level front end | hard trip (cause 2); `GATE` < 1 V 1.345 µs, < 0.33 V 1.661 µs after the fault (legacy 1350 µm set: 1.410 µs) | passed | `c_mid_pex_c1414_tl_tt_27C_clockfix_compact_functional_c1414v1.log` |
+| b, 1.5× held, default `SOFT_TIME` (≈ 1 ms) | `--netlist pex --front beh` | soft trip (cause 1) at 1.059 ms; `GATE` < 1 V at 1059.37 µs | passed | `b_pex_c1414_beh_tt_27C_clockfix_functional_c1414n1.log` |
+| a, 1.5× for 100 µs then back | `--netlist pex --front beh` | no trip, `GATE` stays 3.3 V, `SOFT_PEAK` 3 | passed | `a_pex_c1414_beh_tt_27C_clockfix_functional_c1414n1.log` |
+| d, 100 µs bursts to 1.4× at 50 % duty | `--netlist pex --front beh` | no trip | passed | `d_pex_c1414_beh_tt_27C_clockfix_functional_c1414n1.log` |
+| gB, core first, EN low until 12 µs | `--netlist pex --front beh`, PDK pad models | `GATE` ≤ 0.0725 V while EN low; 3.3 V after EN | passed | `gB_pex_c1414_beh_tt_27C_clockfix_functional_c1414n1.log` |
+| gB_pd, as gB with 10 kΩ `GATE` pull-down | same | `GATE` ≤ 0.0090 V while EN low | passed | `gB_pd_pex_c1414_beh_tt_27C_clockfix_functional_c1414n1.log` |
+| gA, gA_pd, IO first | same, `--pads nodcn`, `bgr=sch` (run tag `c1414pwr`; ss/125 °C and ff/−40 °C `_r3_c1414m`) | `GATE` 3.28–3.30 V for 4.2–4.4 µs while EN is low (from `IOVDD` up until `VDD` is up), with or without 10 kΩ pull-down; 1 A load flows. Stock pads (`c1414n1`): timeout | failed as a safety condition, expected: confirms P1; the pull-down alone does not hold `GATE` low. Details in [sim/campaigns/RESULTS_20260925.md](sim/campaigns/RESULTS_20260925.md) §5 | `gA*_pex_c1414_beh_*_padsnodcn_*` |
+| q prefix 4 µs | `--netlist pex` | completed | passed (prefix only) | `q_pex_c1414_tl_tt_27C_clockfix_t4_prefix_c1414v1.log` |
+| q prefix 6 µs with `--t2f tl`, gear | `--netlist pex --method gear` | completed to 6 µs | passed (prefix only) | `q_pex_c1414_tl_tt_27C_t2ftl_gear_clockfix_t6_prefix_c1414t2fgear.log` |
+| q prefix 6 µs with `--t2f tl`, trap | `--netlist pex` / `--netlist sch` | timestep too small at 0.62 µs (`xbgr.xq736`) / 1.61 µs (`xt2f.xq42`) | failed | `q_pex_c1414_tl_tt_27C_t2ftl_clockfix_t6_prefix_c1414t2f.log`, `q_sch_c1414_tl_tt_27C_t2ftl_clockfix_t6_prefix_c1414t2fsch.log` |
+| q, a_s, b_s, c, c_fast, c_mid, e20, f, f_mid, hard_pulse, full length | `--netlist pex`, run tag `c1414n1` | stopped (ngspice exit −15 at about 2935 s; the 8800 s timeout was not reached) | not run to completion | `*_pex_c1414_tl_tt_27C_clockfix_functional_c1414n1.log` |
+| q, c_mid full length, BGR586 **and** TRIP extractions | run tag `c1414full`; compact c_mid `c1414fullc` | compact c_mid: hard trip, `GATE` < 1 V 1.345 µs, < 0.33 V 1.661 µs (19 264 s). Full-length q and c_mid reached 33.2/33.3 µs in 25 000 s | compact passed; full length not run to completion | `*_c1414full.log`, `c_mid_*_compact_functional_c1414fullc.log` |
+| same cases with `--view-override bgr=sch`, stock SENSE pads | run tag `c1414n2` | q, a_s, hard_pulse: no trip; b_s: soft trip, `GATE` < 1 V 27.934 µs; c_mid: `GATE` < 1 V 1.334 µs; f_mid: trip and re-arm. c, c_fast, e20, f: stopped externally (exit −15) at 25–28 µs, before the event | q, a_s, b_s, c_mid, f_mid, hard_pulse passed; c, c_fast, e20, f not run to completion | `*_ovr-bgrsch_clockfix_functional_c1414n2.log` |
+| corner/temperature matrix (q, c_mid, f_mid at ss/ff × −40/85 °C), stock SENSE pads, `bgr=sch` | run tag `c1414k1` | c_mid `GATE` < 1 V 1.333–1.335 µs; q no trip; f_mid ss/85 and ff/85 trip and re-arm | 10 passed; f_mid ss/−40 and ff/−40 not run to completion (timeout at 48.9/46.4 µs) | `*_c1414k1.log` |
+| c and e20 at 27/85/125 °C (tt), c at ss/125 °C, c/c_mid at ff/−40 °C, `--inpads nodcn`, `bgr=sch`, default and compact timelines | run tag `c1414hot_*` | hard trip in every completed run; `GATE` < 1 V 1.333–1.334 µs (default), 1.345–1.346 µs (compact) | 13 passed; c tt/85, e20 tt/85, c ss/125 default timeline not run to completion (timeout; the compact runs of the same points passed) | `*_nodcn_*c1414hot*.log` |
+| supply ±10 % on the chip netlists (c_mid, q; VDD 1.08/1.32 V × VDDA=IOVDD 3.0/3.6 V at tt/27 °C, ss/125 °C low-low, ff/−40 °C high-high), `inpads nodcn`, `bgr=sch` | night campaign `_r3_c1414m` | c_mid `GATE` < 1 V 1.306–1.310 µs at 3.0 V, 1.358–1.361 µs at 3.6 V; q no trip | 12 passed | `*_vdd1p*_vdda3p*_r3_c1414m.log` |
+| night matrix: q, c_mid, c, e20, f_mid, b_s × tt/ss/ff × −40/27/85/125 °C, `inpads nodcn`, `bgr=sch` | night campaign (`sim/campaigns/night_20260924.json`) | hard cases `GATE` < 1 V 1.333–1.335 µs, b_s soft trip 27.93 µs, q no trip, f_mid re-arms | 72/72 cells completed and passed (the last 12 as `_r4`, including q ss/125 °C); no cell failed | [sim/campaigns/RESULTS_20260925.md](sim/campaigns/RESULTS_20260925.md) §1 |
+| hard-threshold sweep at code 200 (39.25 mV), 1.10–1.70× nominal, tt/27 °C | run tags `c1414thr`, `c1414thr3` | no trip at ≤ 30.00 mV, hard trip at ≥ 31.25 mV: effective threshold 8.0–9.25 mV below the code | simulated characterization (calibration requirement, not a gate) | [sim/campaigns/RESULTS_20260925.md](sim/campaigns/RESULTS_20260925.md) §4 |
+| T2F on, q, tt at −40/27/125 °C, gear | night `q_t2f_*_r3`, `c1414t2fv2`, `c1414t2fv3` | 1.518 MHz at 27 °C, 1.997 MHz at 125 °C; no trip | 27/125 °C passed; −40 °C not run to completion: failed numerically three times (twice with `bgr=sch`, BGR HBT `xq56`; once with the BGR586 extraction at 11.80 µs, T2F HBT `xq42`) | [sim/campaigns/RESULTS_20260925.md](sim/campaigns/RESULTS_20260925.md) §7 |
+| `osc`: transistor-level G1_OSC clocking the RTL | legacy netlists, gear (`dbg0924_b30`, `b41`) | completes; 10.059 MHz (`sch`), 9.035 MHz (`pex`) measured in the deck | passed (legacy netlists only) | `osc_sch_tl_tt_27C_gear_…_b30_osc_gear_loose_xtrtol7_ms1.log`, `osc_pex_tl_tt_27C_gear_…_b41_osc_pex_loose_ms1.log` |
+| `osc` on the c1414 set (R0.95), transistor-level oscillator clocking the RTL | night `osc_*_r3`, `c1414osc2_*` | tt/27 °C 9.443–9.483 MHz at 0.5 ns step (ideal clock 9.436 MHz); 9.742 MHz at 2 ns; ss/125 °C 7.61 MHz, ff/−40 °C 12.43 MHz (2 ns step, uncorrected) | completed at tt, ss/125 and ff/−40 (nominal VDD); gear supply-corner osc failed (timestep too small, `xosc.xd52`); trap re-run `c1414oscv2` ff/−40 °C 1.32 V completed at 12.41 MHz; ss/125 °C 1.08 V trap re-run not run (launch refused by the evidence-overwrite guard, no log) | [sim/campaigns/RESULTS_20260925.md](sim/campaigns/RESULTS_20260925.md) §6 |
+
+Quiet operating point with the chip netlists (compact c_mid deck): `VREF`
+1.04547 V, `ISENSE` 1.50732 V at 1 A. The c1414 set takes more supply current
+because BGR586 draws 319.7 µA (block PEX, tt/27 °C) against 22.04 µA for the Sep-19 bandgap.
+A chip-level `VDDA` current from a completed transistor-level `q` run on the
+c1414 set, case q, `bgr=sch`, `inpads nodcn`: 1421.1 µA at tt/27 °C (BGR 319.7 µA,
+SENSE 1101.4 µA), 957 µA at ss/−40 °C to 2188 µA at ff/125 °C, all simulated
+([sim/campaigns/RESULTS_20260925.md](sim/campaigns/RESULTS_20260925.md) §1). The BGR586 extraction gives the same 319.704 µA (`c1414fullc`).
+
+Full campaign record, including invalid and superseded runs: [sim/campaigns/RESULTS_20260925.md](sim/campaigns/RESULTS_20260925.md).
+
+### Pad-diode finding
+
+The PDK `dantenna`/`dpantenna` diodes (area diode model `darea`) switch formula
+at a reverse bias of −3·n·V<sub>t</sub>: about 78 mV at 27 °C and about 103 mV
+at 125 °C. The current is discontinuous there. The probe measured steps of
+1e-16 → 4e-11 A at 78 mV/27 °C, 2e-14 → 2e-10 A at 93 mV/85 °C and 1e-12 → 4e-10 A
+at 104 mV/125 °C. When a large fault drives the `SENSE_P`/`SENSE_N` pad diodes
+through that point, the transient stalls ("timestep too small"). This happens
+for faults ≥ 2.3× nominal. It is the same diode family that stalls the BGR/VREF pad
+startup in `../g1_bgr/sim/system_checks_20260924/RESULTS.md` and the output pads
+in "Numerical notes" 3. The deck deviation `--inpads nodcn` removes only the `dantenna`-based parts
+of the two SENSE pads. The leakage removed is < 1 nA per pad at 125 °C, behind the 1 Ω
+Kelvin trace. This is a simulator work-around, not a statement about silicon;
+the stock pad model is not verified by these runs.
+
 ## What it is
 
 `sim/run_top.py` generates and runs one ngspice deck per case (copies in `sim/decks/`, logs in
@@ -123,17 +218,20 @@ validate the original e case's 100 ns rise.
 
 ### Quiet operating point and supply currents (armed, nominal 1 A load, before the event)
 
-Case q reports simulated VREF 1.03785 V, ISENSE 1.4967 V and VDDA current
-1055.33 µA (BGR 22.04 µA, SENSE 1033.29 µA). RTL and ideal-clock supply
+Case q (legacy netlists, Sep-19 bandgap) reports simulated VREF 1.03785 V,
+ISENSE 1.4967 V and VDDA current 1055.33 µA (BGR 22.04 µA, SENSE 1033.29 µA).
+The chip-of-record bandgap BGR586 draws 319.7 µA (simulated, tt/27 °C,
+`../g1_bgr/sim/postlayout/README_bgr586_pex.md`), so the chip `VDDA` total is higher;
+see the c1414 section above. RTL and ideal-clock supply
 currents are not physical estimates. See the generated summary for all values.
 
 ### Clock case `osc` (transistor-level G1_OSC clocking the RTL on the chip VDD)
 
-**not run to completion**: no completed `osc` log exists. Block oscillator results do not establish this chip-context check.
+Legacy netlist suite: **not run to completion**. No completed `osc` log exists. Block oscillator results do not establish this chip-context check. On the c1414 set, see the `osc` row of the c1414 section.
 
 ### Power-up (case g)
 
-**not run**: no completed `gA`, `gB`, `gA_pd` or `gB_pd` log exists in this suite. The separate G1_GATE pad/power-up evidence remains block-level evidence.
+Legacy netlist suite: **not run**. No completed `gA`, `gB`, `gA_pd` or `gB_pd` log exists in this suite. The separate G1_GATE pad/power-up evidence remains block-level evidence. On the c1414 set, see the c1414 section.
 
 ### Temperature and post-layout
 
@@ -242,6 +340,20 @@ level, the `TRIP_SET` pad path (not built), `SDO` and `TEMP_OUT` pads.
 | Default-window behavioural a/b/d | not run to completion; started during recovery | `sim/logs/` |
 | Post-layout c | not run to completion; started during recovery | `sim/logs/` |
 | Post-layout q/e, osc, power-up suite, process corners | not run | no completed logs |
+| c1414: compact c_mid hard trip; beh a/b/d; core-first power-up gB/gB_pd | passed | c1414 section above |
+| c1414: CDL-vs-deck connectivity audit | passed (0 unexplained) | `sim/check_cdl_vs_deck.py` |
+| c1414: `--t2f tl` with trap | failed (timestep too small) | c1414 section above |
+| c1414: full-length tl cases (`c1414n1`) | not run to completion | c1414 section above |
+| c1414: corner/temperature matrix (72 cells, `nodcn`, `bgr=sch`, ideal clock) | passed 72/72 (last 12 as `_r4`, including `q_ss_125C_r4_c1414m`); failed 0 | [sim/campaigns/RESULTS_20260925.md](sim/campaigns/RESULTS_20260925.md) §1 |
+| c1414: supply ±10 % (c_mid, q) | passed (12/12) | [sim/campaigns/RESULTS_20260925.md](sim/campaigns/RESULTS_20260925.md) §2 |
+| c1414: `bgr=sch` nominal reruns (`c1414n2`) | passed q, a_s, b_s, c_mid, f_mid, hard_pulse; c, c_fast, e20, f not run to completion | [sim/campaigns/RESULTS_20260925.md](sim/campaigns/RESULTS_20260925.md) §3a |
+| c1414: stock-pad corners (`c1414k1`), hot `nodcn` cases (`c1414hot`) | passed 10 + 13; not run to completion 2 + 3 | [sim/campaigns/RESULTS_20260925.md](sim/campaigns/RESULTS_20260925.md) §3b, §3c |
+| c1414: both BGR586 and TRIP extractions | compact c_mid passed; full-length q/c_mid not run to completion | [sim/campaigns/RESULTS_20260925.md](sim/campaigns/RESULTS_20260925.md) §3d |
+| c1414: IO-first power-up gA/gA_pd (`pads nodcn`) | failed as a safety condition (`GATE` 3.28–3.30 V for 4.2–4.4 µs, also with 10 kΩ): expected, confirms P1 | [sim/campaigns/RESULTS_20260925.md](sim/campaigns/RESULTS_20260925.md) §5 |
+| c1414: core-first power-up gB/gB_pd at ss/125 °C, ff/−40 °C (`pads nodcn`) | passed (`GATE` ≤ 0.014 V) | [sim/campaigns/RESULTS_20260925.md](sim/campaigns/RESULTS_20260925.md) §5 |
+| c1414: effective hard threshold at code 200 | simulated characterization: 30.00–31.25 mV (8.0–9.25 mV below code); calibration requirement | [sim/campaigns/RESULTS_20260925.md](sim/campaigns/RESULTS_20260925.md) §4 |
+| c1414: `--t2f tl` with gear, full q | passed 27/125 °C; −40 °C not run to completion (timestep too small in all three attempts, including `c1414t2fv3` with the BGR586 extraction) | [sim/campaigns/RESULTS_20260925.md](sim/campaigns/RESULTS_20260925.md) §7 |
+| c1414: transistor-level OSC R0.95 clocking the RTL | completed tt/27 °C (step study), ss/125 °C, ff/−40 °C; gear supply corners failed (timestep too small); ff/−40 °C 1.32 V trap completed (12.41 MHz); ss/125 °C 1.08 V trap not run | [sim/campaigns/RESULTS_20260925.md](sim/campaigns/RESULTS_20260925.md) §6 |
 | Full-chip PEX and physical measurements | not run | no extracted chip or measured sample |
 | Layout DRC/LVS of this simulation-only block | not applicable | chip layout evidence is in G1_PADRING |
 
@@ -254,10 +366,14 @@ level, the `TRIP_SET` pad path (not built), `SDO` and `TEMP_OUT` pads.
   timing into 5 nF + 10 Ω only.
 - The transistor-level oscillator clocking the RTL inside the full chain (note 4); its frequency
   and current in the chip supply context come from case `osc`.
-- Process corners (`--corner ss|ff` exists, not run), mismatch, supply ±10 % at chip level.
+- Process corners and supply ±10 % at chip level: run on the c1414 set with the ideal clock and the
+  `nodcn`/`bgr=sch` deviations ([sim/campaigns/RESULTS_20260925.md](sim/campaigns/RESULTS_20260925.md)); mismatch not run.
 - The default 1 ms `SOFT_TIME` window at transistor level (behavioural front end only, note 9).
-- Comparator decisions at small overdrive at chip level (the trip cases use ≥ 1.4 × nominal; the
-  block MC gives the offset).
+- Comparator decisions at small overdrive at chip level beyond the single tt/27 °C hard-threshold
+  sweep at code 200. That sweep puts the effective hard threshold at 30.00–31.25 mV, 8.0–9.25 mV below the
+  code ([sim/campaigns/RESULTS_20260925.md](sim/campaigns/RESULTS_20260925.md) §4). The offset is the
+  soft comparator's reset kick at the hard strobe (`../g1_trip/sim/postlayout/README.md`). The soft path
+  and mismatch are not swept at chip level.
 - Digital core at gate level with timing (the RTL is co-simulated; the macro's gate-level regression is
   in `../g1_ctrl/sim`).
 - Power-up with the analog blocks' real behaviour under supply ramps (the power-up cases use the

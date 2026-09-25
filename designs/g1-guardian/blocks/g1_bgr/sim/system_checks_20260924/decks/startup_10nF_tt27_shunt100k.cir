@@ -1,0 +1,43 @@
+* G1_BGR SYSTEM CHECK startup: post-layout BGR + VREF pad, board C=10nF, tt27 (hbt_typ mos_tt res_typ dio_tt) T=27 C
+.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerHBT.lib hbt_typ
+.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerMOShv.lib mos_tt
+.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerRES.lib res_typ
+.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerMOSlv.lib mos_tt
+.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerCAP.lib cap_typ
+.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerDIO.lib dio_tt
+.include ../../postlayout/g1_bgr_pex.spice
+.include /foss/pdks/ihp-sg13g2/libs.ref/sg13g2_io/spice/sg13g2_io.spi
+.option gmin=1e-15 abstol=1e-14 reltol=1e-5 vntol=1e-7
+.temp 27
+.global sub!
+Vsub sub! 0 dc 0
+Vdd vdd 0 dc 3.3 pwl(0 0 10u 3.3)
+Vdd12 vdd12 0 dc 1.2 pwl(0 0 10u 1.2)
+Vr4 r4 0 dc 0
+Xbgr vdd 0 r4 vref iptat pbias pcasc vbe dvbe g1_bgr
+* PTAT output leg sinks into a 1.0 V node (as ../tb_g1_bgr.spice.tmpl)
+Vload iptat 0 dc 1.0
+* representative internal load: 100 kohm in series with 2 pF
+Rint vref nint 100k
+Cint nint 0 2p
+* variant: 100 kohm DC shunt to ground on vref
+Rshunt vref 0 100k
+* VREF route to the pad ring (whole-tree series estimate) and stock analog pad
+Rroute vref padres 613.3425
+XP pad padres vdd12 0 vdd 0 sg13g2_IOPadAnalog
+* board capacitor on the pin, 1 ohm ESR; Vinj = 10 mV / 1 us step in series (vstep test)
+Resr pad nesr 1
+Vinj nesr ncb 0
+Cboard ncb 0 10n
+.control
+set wr_singlescale
+set wr_vecnames
+option numdgt=12
+op
+print v(vref) v(padres) v(pad) i(vload) i(vdd)
+tran 100n 15m 0 500n uic
+wrdata ${BULK}/blockchecks-20260924/bgr/startup_10nF_tt27_shunt100k.dat v(vref) v(pad) v(vdd)
+echo SYS_END
+quit 0
+.endc
+.end

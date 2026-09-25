@@ -2,7 +2,10 @@
 # Post-layout runs of G1_TRIP on the kpex 2.5D CC netlist (g1_trip_pex.spice).
 # Usage (repo root): G1_WORKDIR=designs/g1-guardian/blocks/g1_trip/sim flow/run.sh bash postlayout/run_postlayout.sh [dac|cmp|all]
 # (tb_trip_cmp_sch.cir is the same comparator deck on the schematic netlist sim/netlist/g1_trip.spice, for the reference column)
+# Another extracted netlist with the same subckt/pins: PEXNET=postlayout/g1_trip_nf4_pex.spice PEXTAG=nf4pex
+# RESULTS=postlayout/results_postlayout_nf4.txt ... run_postlayout.sh cmppex  (cmppex: post-layout corners only)
 set -u
+PEXNET=${PEXNET:-postlayout/g1_trip_pex.spice}; PEXTAG=${PEXTAG:-pex}; RESULTS=${RESULTS:-postlayout/results_postlayout.txt}
 mkdir -p postlayout/logs ../../../../../build/g1_trip/postlayout
 B=../../../../../build/g1_trip/postlayout
 what=${1:-all}
@@ -36,16 +39,16 @@ PY
 cmp() { # MOS VDD TEMP FCLK(MHz) [sch]
   local T=$(python3 -c "print(1e-6/$4)"); local TH=$(python3 -c "print(0.5e-6/$4)")
   local T2=$(python3 -c "print(20e-9+1e-6/$4)"); local TE=$(python3 -c "print(20e-9+1.45e-6/$4)")
-  local deck=postlayout/tb_trip_cmp_pex.cir; local pfx=pex
+  local deck=postlayout/tb_trip_cmp_pex.cir; local pfx=$PEXTAG
   if [ "${5:-}" = sch ]; then deck=postlayout/tb_trip_cmp_sch.cir; pfx=sch; fi
   tag="${pfx}_cmp_delay_$1_$2V_$3C_$4MHz"
   sed -e "s/@@MOS@@/$1/" -e "s/@@VDD@@/$2/" -e "s/@@TEMP@@/$3/" -e "s/@@TPER@@/$T/g" -e "s/@@THALF@@/$TH/g" \
-      -e "s/@@T2@@/$T2/g" -e "s/@@TEND@@/$TE/g" $deck > $B/$tag.cir
+      -e "s/@@T2@@/$T2/g" -e "s/@@TEND@@/$TE/g" -e "s#postlayout/g1_trip_pex.spice#$PEXNET#" $deck > $B/$tag.cir
   ngspice -b $B/$tag.cir > postlayout/logs/$tag.log 2>&1
   echo "== $tag"; grep -E "^(VTH|DELAY|KICK)" postlayout/logs/$tag.log
 }
 {
-echo "# G1_TRIP post-layout results (kpex 2.5D CC), $(date -u +%Y-%m-%dT%H:%MZ), $(ngspice -v | grep -o 'ngspice-[0-9]*')"
+echo "# G1_TRIP post-layout results (kpex 2.5D CC, $PEXNET), $(date -u +%Y-%m-%dT%H:%MZ), $(ngspice -v | grep -o 'ngspice-[0-9]*')"
 if [ "$what" = cmp ] || [ "$what" = all ]; then
   # 5 MHz strobe (the specified comparator clock): the hard comparator's kick on icmp comes 100 ns
   # before the measured soft strobe; at 10 MHz it is only 50 ns before and the 1 mV overdrive is lost
@@ -55,7 +58,11 @@ if [ "$what" = cmp ] || [ "$what" = all ]; then
   cmp mos_ss 1.08 -40 5 sch
   cmp mos_ss 1.08 -40 5
 fi
+if [ "$what" = cmppex ]; then
+  cmp mos_tt 1.2 27 5
+  cmp mos_ss 1.08 -40 5
+fi
 if [ "$what" = dac ] || [ "$what" = all ]; then
   dac mos_tt res_typ 27
 fi
-} | tee -a postlayout/results_postlayout.txt
+} | tee -a $RESULTS

@@ -7,6 +7,7 @@ Run from the repository root inside the pinned container:
     G1_WORKDIR=designs/g1-guardian/blocks/g1_top/sim flow/run.sh python3 run_top.py --list
 
 Options: --netlist sch|pex   schematic or kpex post-layout block netlists (default sch)
+         --blockset legacy|c1414  Sep-19 block netlists (default) or those of the frozen 1414 um chip (BLOCKSETS)
          --front tl|beh      analog front end transistor-level (default) or behavioural (long runs, see README)
          --temp T            degC (default 27)      --corner tt|ss|ff (default tt)
          --osc ideal|tl      clock to the RTL: ideal source at the block frequency (default) or the transistor-level
@@ -64,6 +65,160 @@ NETLISTS = {
         'gate': 'g1_gate/sim/postlayout/g1_gate_pex.spice',
     },
 }
+# --blockset c1414: the analog blocks of the frozen 1414 um native-lineage chip
+# (soft-inputpair4-parent-20260924-r3 candidate.gds, SHA256 60730627...). Per block and view the entry names
+# the netlist; None means that view does not exist for this chip, so the other view is used and a WARNING is
+# written to the deck header and the log. Subckt names and pin orders equal the legacy ones (checked by
+# resolve_netlists), so no wrapper subckt is needed.
+#   bgr   BGR586 canonical source 586ffb58 (1,036 devices, as the chip CDL g1_bgr). The supply-routing
+#         context cells in the GDS add metal only. The file carries the 329 historical Sep-19 kpex
+#         capacitors. --netlist pex uses the kpex 2.5D CC extraction of the chip's BGR layout bank.gds
+#         (e3ecfc62; LVS-clean; g1_bgr586_pex.spice 01227a3d, 978 capacitors, 10.1 pF), added 2026-09-24 13:50.
+#   sense R100 (comp45 + RZ = 100 um): schematic candidate bb933fda; own-native partial-field C netlist
+#         ffb14762 (byte copy of the sense-comp45-rz100-actual-source-20260923-r1 output; OTA internal
+#         nodes exposed as __pex_<inst>_<node> ports; unbound VSUBS capacitors excluded).
+#   trip  NF4 soft input pair (W24/L0.68, ng=4) + regenpair4 hard comparator, schematic f5f0a90a; its
+#         extracted netlist is used from g1_trip/sim/postlayout/g1_trip_nf4_pex.spice once it exists.
+#   osc   R0.95 CPEX 8efd7a09 (no R0.95 schematic netlist exists). The ideal clock runs at its loaded
+#         nominal trim-8 frequency 9.436194721 MHz (g1_osc/sim/qualification/fulltree_r095_load_20260924).
+#   gate  retained Sep-19 netlists.
+BLOCKSETS = {
+    'legacy': {k: {'sch': NETLISTS['sch'][k], 'pex': NETLISTS['pex'][k]} for k in NETLISTS['sch']},
+    'c1414': {
+        'bgr': {'sch': 'g1_bgr/layout/coordinated_full_closure/evidence/pex-preparation-20260922-r1/controls/r1/baseline_586.spice',
+                'pex': 'g1_bgr/sim/postlayout/g1_bgr586_pex.spice'},
+        'sense': {'sch': 'g1_trip/sim/qualification/joint586-softinputpair4-nf4-roomcal-s73133-20260924-r1/sense.spice',
+                  'pex': 'g1_sense/sim/postlayout/g1_sense_r100_partialc.spice'},
+        'trip': {'sch': 'g1_trip/sim/qualification/joint586-softinputpair4-nf4-roomcal-s73133-20260924-r1/trip.spice',
+                 'pex': 'g1_trip/sim/postlayout/g1_trip_nf4_pex.spice'},
+        'osc': {'sch': None,
+                'pex': 'g1_osc/sim/qualification/fulltree_r095_load_20260924/common/osc.spice'},
+        'gate': {'sch': NETLISTS['sch']['gate'], 'pex': NETLISTS['pex']['gate']},
+    },
+}
+# bound SHA256 of the c1414 netlists: a changed file is refused rather than silently simulated
+BLOCKSET_SHA256 = {
+    'g1_bgr/layout/coordinated_full_closure/evidence/pex-preparation-20260922-r1/controls/r1/baseline_586.spice':
+        '586ffb58b6af31c77a2e7cbcb83b173ffa4713ec62401da30901c5a7e606283b',
+    'g1_trip/sim/qualification/joint586-softinputpair4-nf4-roomcal-s73133-20260924-r1/sense.spice':
+        'bb933fdabf3fd8a5117bf47f33cd40657caf78ef424e6a9bfddda0f11190d782',
+    'g1_sense/sim/postlayout/g1_sense_r100_partialc.spice':
+        'ffb14762659eaf02b6a62e9edea3caa0e143cbc7881378b329d6ab9945a6554b',
+    'g1_trip/sim/qualification/joint586-softinputpair4-nf4-roomcal-s73133-20260924-r1/trip.spice':
+        'f5f0a90aff361fd782f29112217cbd647d18af593a930ade2d59dfbab5847a92',
+    'g1_osc/sim/qualification/fulltree_r095_load_20260924/common/osc.spice':
+        '8efd7a09faf173da8604a219f73fd3ea5ec2508618d8361a050770c099d8b1c5',
+    'g1_bgr/sim/postlayout/g1_bgr586_pex.spice':
+        '01227a3d8d8210d10d2d1ee6933842351140b8825fe29282f0327936a3064ad5',
+    'g1_trip/sim/postlayout/g1_trip_nf4_pex.spice':
+        'ba86b7b2a530abae365d539297909e033b24a54597f9cc75d8dff273c30d401c',
+}
+# --t2f tl: G1_T2F at transistor level as the chip carries it (baseline revision, not rev1; block map of
+# g1_padring/reports/signoff-1414-20260924/README.md: sim form sim/postlayout/g1_t2f_pex.spice 441edabc) behind
+# two g1_ls_up level shifters (schematic netlist; the CDL's g1_ls_up source), wired as g1_chip_top_1414.cdl.
+T2F_NETLISTS = {'t2f': 'g1_t2f/sim/postlayout/g1_t2f_pex.spice', 'ls_up': 'g1_ctrl/ls/sim/netlist/g1_ls_up.spice'}
+BLOCKSET_SHA256.update({
+    'g1_t2f/sim/postlayout/g1_t2f_pex.spice': '441edabc0484c9de1e035d585369f37d460afe32370e73935044693bbfd0c78a',
+    'g1_ctrl/ls/sim/netlist/g1_ls_up.spice': '5567c8079e57ced973d3e47dad6a7afe1776987de3962f9be397c6a8d0549b56',
+})
+RTL_WRAPPER_T2F = os.path.join(HERE, 'rtl/g1_dig_cosim_t2f.v')
+# subckt name and port order the deck instantiates (legacy headers)
+BLOCK_PORTS = {
+    'bgr': ('g1_bgr', 'vdd vss r4 vref iptat pbias pcasc vbe dvbe'),
+    'sense': ('g1_sense', 'sense_p sense_n vref iptat isense vped vref_buf vdd vss'),
+    'trip': ('g1_trip', 'isense vref cmp_clk soft0 soft1 soft2 soft3 soft4 soft5 soft6 soft7 hard0 hard1 hard2 '
+                        'hard3 hard4 hard5 hard6 hard7 cmp_soft cmp_hard vdd vdda vss'),
+    'osc': ('g1_osc', 'en trim0 trim1 trim2 trim3 osc_clk vdd vss'),
+    'gate': ('g1_gate', 'trip_d clr_d fast_en hard_cmp en_core gate_core fault_core tripped vdd vdda vss'),
+    't2f': ('g1_t2f', 'vdd vdd12 vss pbias pcasc vref en mode fout'),
+    'ls_up': ('g1_ls_up', 'in out vdd vdda vss'),
+}
+
+
+def resolve_t2f():
+    """T2F and level-shifter netlist paths (relative to BLOCKS), hash- and port-checked."""
+    for k, rel in T2F_NETLISTS.items():
+        full = os.path.join(BLOCKS, rel)
+        if sha256(full) != BLOCKSET_SHA256[rel]:
+            raise SystemExit('netlist blocks/%s does not match its bound SHA256 %s' % (rel, BLOCKSET_SHA256[rel]))
+        name, ports = BLOCK_PORTS[k]
+        if subckt_ports(full, name) != ports:
+            raise SystemExit('blocks/%s: .subckt %s ports differ from the deck instance %r' % (rel, name, ports))
+    return dict(T2F_NETLISTS)
+
+
+def subckt_ports(path, name):
+    """Port list of '.subckt <name>' in a SPICE file (continuation lines joined, parameters dropped)."""
+    lines = open(path).read().splitlines()
+    for i, line in enumerate(lines):
+        f = line.split()
+        if len(f) > 1 and f[0].lower() == '.subckt' and f[1] == name:
+            ports = f[2:]
+            j = i + 1
+            while j < len(lines) and lines[j].startswith('+'):
+                ports += lines[j][1:].split()
+                j += 1
+            return ' '.join(x for x in ports if '=' not in x)
+    return None
+
+
+# --view-override block=view[,block=view...]: per-block view applied after --netlist/--blockset (set in main)
+VIEW_OVERRIDE = {}
+
+
+def parse_view_override(text):
+    """'bgr=sch,trip=pex' -> {'bgr': 'sch', 'trip': 'pex'}; blocks of BLOCKSETS, views sch|pex."""
+    out = {}
+    for item in filter(None, (x.strip() for x in (text or '').split(','))):
+        k, sep, v = item.partition('=')
+        if not sep or k not in BLOCKSETS['legacy'] or v not in ('sch', 'pex') or k in out:
+            raise ValueError('bad --view-override item %r (block=sch|pex, blocks %s)' % (item, ','.join(BLOCKSETS['legacy'])))
+        out[k] = v
+    return out
+
+
+def resolve_netlists(blockset, netlist):
+    """(netlist paths relative to BLOCKS, warnings, G1_SENSE internal-node naming) for a blockset and view.
+    VIEW_OVERRIDE replaces the view of individual blocks; the SHA256 and port checks apply unchanged."""
+    paths, warnings, style = {}, [], 'hier'
+    netlist0 = netlist
+    for k, views in BLOCKSETS[blockset].items():
+        netlist = VIEW_OVERRIDE.get(k, netlist0)
+        other = 'sch' if netlist == 'pex' else 'pex'
+        if k in VIEW_OVERRIDE and VIEW_OVERRIDE[k] != netlist0:
+            warnings.append('OVERRIDE %s: %s view instead of --netlist %s (--view-override)' % (k, netlist, netlist0))
+        rel = views[netlist]
+        if rel is None:
+            warnings.append('WARNING %s: no %s netlist exists for blockset %s; using the %s netlist' % (k, netlist, blockset, other))
+        elif not os.path.exists(os.path.join(BLOCKS, rel)):
+            if blockset == 'legacy':
+                raise SystemExit('missing netlist blocks/' + rel)
+            warnings.append('WARNING %s: %s netlist blocks/%s does not exist; using the %s netlist' % (k, netlist, rel, other))
+            rel = None
+        used = netlist if rel else other
+        rel = rel or views[other]
+        paths[k] = rel
+        full = os.path.join(BLOCKS, rel)
+        if rel in BLOCKSET_SHA256 and sha256(full) != BLOCKSET_SHA256[rel]:
+            raise SystemExit('netlist blocks/%s does not match its bound SHA256 %s' % (rel, BLOCKSET_SHA256[rel]))
+        name, ports = BLOCK_PORTS[k]
+        found = subckt_ports(full, name)
+        if found != ports:
+            raise SystemExit('blocks/%s: .subckt %s ports %r differ from the deck instance %r' % (rel, name, found, ports))
+        if k == 'sense':
+            style = 'hier' if used == 'sch' else ('flat' if blockset == 'legacy' else 'exposed')
+    if blockset == 'c1414':
+        if paths['bgr'].endswith('baseline_586.spice'):
+            warnings.append('NOTE bgr: BGR586 source carries 329 historical Sep-19 kpex capacitors, not an extraction of the BGR586 layout')
+        else:
+            warnings.append('NOTE bgr: BGR586 kpex 2.5D CC extraction of bank.gds (chip BGR layout), 978 capacitors')
+        if style == 'exposed':
+            warnings.append('NOTE sense: R100 own-native partial-field C (unbound VSUBS excluded; physical field acceptance not established)')
+        if paths['trip'].endswith('/trip.spice'):
+            warnings.append('NOTE trip: NF4 schematic netlist (no parasitics)')
+    return paths, warnings, style
+
+
 CORNERS = {
     'tt': dict(mos='mos_tt', res='res_typ', cap='cap_typ', hbt='hbt_typ'),
     'ss': dict(mos='mos_ss', res='res_wcs', cap='cap_wcs', hbt='hbt_wcs'),
@@ -89,6 +244,9 @@ BEH = {
     'sch': dict(vref=1.0399, vped=0.9992, gain=19.99, f3db=4.19e6, fosc=9.919e6),
     'pex': dict(vref=1.0400, vped=0.9992, gain=19.99, f3db=4.19e6, fosc=8.994e6),
 }
+# c1414: legacy front-end fit retained; clock = R0.95 CPEX, full clock-tree load, nominal, trim code 8 (reset)
+BEH['c1414_sch'] = dict(BEH['sch'], fosc=9.436194721e6)
+BEH['c1414_pex'] = dict(BEH['pex'], fosc=9.436194721e6)
 
 
 def frame_bits(addr, data):
@@ -103,6 +261,8 @@ def frame_bits(addr, data):
 # bridge changes state at an existing analog time point without passing through the unknown state
 # (README, "Numerical notes").
 BR_LO, BR_HI = 0.55, 0.65
+# --vdd / --vdda (main sets these; defaults leave every deck byte-identical). VDDA and IOVDD share the board rail.
+VDD_V, VDDA_V = 1.2, 3.3
 TEDGE = 2e-9        # edge time of the EN / SCLK / SDI board signals
 
 
@@ -112,7 +272,7 @@ def edge(t, v0, v1, vio, tedge=None):
     thresholds scaled to the pad level."""
     # corners 10 mV outside the bridge band, so that the bridge sees a defined 0 at one analog point and a
     # defined 1 at the next (no unknown state, which the RTL would count as a second clock edge)
-    lo, hi = (BR_LO - 0.01) * vio / 1.2, (BR_HI + 0.01) * vio / 1.2
+    lo, hi = (BR_LO - 0.01) * vio / VDD_V, (BR_HI + 0.01) * vio / VDD_V
     if v1 > v0:
         return [(t, 0.0), (t + 0.45 * tedge, lo), (t + 0.55 * tedge, hi), (t + tedge, vio)]
     return [(t, vio), (t + 0.45 * tedge, hi), (t + 0.55 * tedge, lo), (t + tedge, 0.0)]
@@ -138,7 +298,8 @@ def serial_pwl(frames, t0_us, fsclk, vio, tedge=None):
             t += T
     if sdi_lvl:
         sdi += edge(t, vio, 0.0, vio, tedge)
-    return sclk, sdi, t * 1e6   # end time (us)
+    dedup = lambda pts: [p for i, p in enumerate(pts) if i == 0 or p != pts[i - 1]]
+    return dedup(sclk), dedup(sdi), t * 1e6   # end time (us); exact repeated points removed
 
 
 def digital_events(pts, vio):
@@ -294,6 +455,20 @@ def shift_fault_phase(case, name, shift_ns, timeline='baseline'):
     return result
 
 
+def scale_fault(case, mult):
+    """--fault-mult: set the case's single fault level (every load point other than INOM) to mult x INOM;
+    point times unchanged. Refused if the profile has no or more than one fault level."""
+    if not math.isfinite(mult) or not 0 < mult <= 10:
+        raise ValueError('--fault-mult must be finite, within 0..10')
+    levels = sorted({v for t, v in case['load'] if v != INOM})
+    if len(levels) != 1:
+        raise ValueError('--fault-mult needs exactly one fault level in the load profile (found %r)' % levels)
+    result = dict(case)
+    result['load'] = [(t, mult * INOM if v != INOM else v) for t, v in case['load']]
+    result['fault_mult'] = (levels[0] / INOM, mult)
+    return result
+
+
 def sha256(path):
     h = hashlib.sha256()
     with open(path, 'rb') as f:
@@ -317,18 +492,103 @@ def validate_exports(deck):
     if missing:raise ValueError('exported vectors absent from .save: '+', '.join(sorted(missing)))
 
 
-def nodesets(netlist):
+def nodesets(style):
     """Operating-point help for the three G1_SENSE OTA loops (from blocks/g1_sense/sim/tb_sense.cir);
-    the post-layout netlist is flat, so its OTA-internal nodes are named xota_tail etc."""
-    sep = '.' if netlist == 'sch' else '_'
+    style 'hier': xsense.xota.tail; 'flat' (legacy kpex netlist): xsense.xota_tail; 'exposed' (c1414 R100
+    partial-C netlist, OTA internals brought out as ports): xsense.__pex_xota_tail."""
+    fmt = {'hier': 'xsense.%s.%s', 'flat': 'xsense.%s_%s', 'exposed': 'xsense.__pex_%s_%s'}[style]
     ns = ['v(vref_buf)=1.04', 'v(vped)=1.0008', 'v(isense)=1.5', 'v(xsense.vp)=0.047', 'v(xsense.vn)=0.047', 'v(iptat)=0.76']
     for o in ('xota', 'xbuf', 'xref'):
-        ns += ['v(xsense.%s%sout1)=2.51' % (o, sep), 'v(xsense.%s%smir)=2.51' % (o, sep),
-               'v(xsense.%s%stail)=1.6' % (o, sep), 'v(xsense.%s%sfn)=0.2' % (o, sep), 'v(xsense.%s%sfp)=0.2' % (o, sep)]
+        ns += ['v(%s)=2.51' % (fmt % (o, 'out1')), 'v(%s)=2.51' % (fmt % (o, 'mir')),
+               'v(%s)=1.6' % (fmt % (o, 'tail')), 'v(%s)=0.2' % (fmt % (o, 'fn')), 'v(%s)=0.2' % (fmt % (o, 'fp'))]
     return '.nodeset ' + ' '.join(ns)
 
 
-def build_deck(case, name, netlist, front, temp, corner, tag, tstop_override=None, osc='ideal', inpads='ideal', outpads='beh', method='gear'):
+def osc_tl(A, supply_r=None, decap=None, rx='bridge'):
+    """Transistor-level G1_OSC on the chip VDD. Diagnostic options (defaults leave the deck unchanged):
+    supply_r/decap: explicit series R and local decoupling on the OSC supply pin (testbench elements);
+    rx='schmitt': an analog receiver with +-50 mV hysteresis between osc_clk and the clock adc_bridge."""
+    if supply_r or decap:
+        A('* diagnostic testbench element: series R %s Ohm + local decap %s F on the OSC supply pin' % (supply_r or 0, decap or 0))
+        A('Vm_osc vdd vdd_osc_m dc 0')
+        A('Rosc_sup vdd_osc_m vdd_osc %g' % (supply_r or 1e-3))
+        if decap:
+            A('Cosc_sup vdd_osc 0 %g' % decap)
+    else:
+        A('Vm_osc vdd vdd_osc dc 0')
+    A('XOSC osc_en_g trim0 trim1 trim2 trim3 osc_clk vdd_osc 0 g1_osc')
+    A('Cw_clk osc_clk 0 100f')
+    if rx == 'schmitt':
+        A('* diagnostic clock receiver: behavioural comparator with +-50 mV hysteresis around 0.6 V, 10 ps output RC;')
+        A('* the adc_bridge sees only its fast full-swing output (not a circuit element of G1)')
+        A('Bosc_rx osc_rx_i 0 V = 0.6 + 0.6*tanh((v(osc_clk) - 0.6 + 0.1*(v(osc_rx) - 0.6)/1.2)/0.005)')
+        A('Rosc_rx osc_rx_i osc_rx 1k')
+        A('Cosc_rx osc_rx 0 10f')
+
+
+NODCN_WARNING = ('WARNING deviation --inpads nodcn: SENSE_P/SENSE_N use g1_IOPadAnalog_nodcn, a deck-local copy of the PDK '
+                 'sg13g2_IOPadAnalog without its dantenna-based parts (sg13g2_DCNDiode and the SecondaryProtection '
+                 'dantenna D1); clamps, DCPDiode, SecondaryProtection 587 Ohm + dpantenna, ptap resistors and padres kept; '
+                 'VREF pad and PDK file unchanged. Reason: the PDK darea diode model switches formula at -3nVt '
+                 '(measured current step 1e-16->4e-11 A at 78 mV/27 C, 2e-14->2e-10 A at 93 mV/85 C, 1e-12->4e-10 A '
+                 'at 104 mV/125 C), which stalls the transient; removed leakage < 1 nA per pad at 125 C behind the '
+                 '1 Ohm Kelvin trace (README, Numerical notes).')
+
+
+def pad_analog_nodcn():
+    """Deck-local copy of sg13g2_IOPadAnalog (PDK sg13g2_io.spi) without the dantenna-based parts."""
+    return ['* ---- deck-local pad copy for --inpads nodcn (PDK sg13g2_io.spi untouched)',
+            '.subckt g1_IOPadAnalog_nodcn pad padres vdd vss iovdd iovss',
+            'XI0 iovdd iovss pad sg13g2_Clamp_P20N0D',
+            '* XI5 iovss pad iovdd sg13g2_DCNDiode   (removed: dantenna x2)',
+            'XI2 pad iovdd iovss sg13g2_DCPDiode',
+            '* XI3 padres iovss pad iovdd sg13g2_SecondaryProtection   (replaced below without its dantenna D1)',
+            'XI3R pad padres sub! rppd R=586.899 l=2u w=1u',
+            'XI3P iovss sub! ptap1 R=46.556',
+            'XI3D padres iovdd dpantenna l=4.98u w=640n m=1',
+            'XI4 iovss pad sg13g2_Clamp_N20N0D',
+            'XR0 vss sub! ptap1 R=22.579',
+            'XR1 iovss sub! ptap1 R=214.8m',
+            '.ends']
+
+
+PADS_NODCN = False    # --pads nodcn (set in main)
+PADS_NODCN_WARNING = ('WARNING deviation --pads nodcn: every PDK pad instance of this deck (XP*: SENSE_P/N, VREF, and '
+                      'EN/SCLK/SDI/GATE/FAULT_N where pad models are used) is replaced by a deck-local copy g1nd_<cell> of '
+                      'the sg13g2_io.spi hierarchy with every dantenna instance removed (DCNDiode junctions, '
+                      'SecondaryProtection D1, Clamp_N*/LevelDown gate antenna diodes); level shifters, drivers, clamps, '
+                      'dpantenna diodes and ptap resistors are kept; PDK file unchanged. Reason: the PDK darea diode model '
+                      'switches formula at -3nVt (current step 1e-16->4e-11 A at 78 mV/27 C, 1e-12->4e-10 A at 104 mV/125 C), '
+                      'which stalls the transient; removed leakage < 1 nA per pad at 125 C.')
+
+
+def nodcn_io_lib():
+    """Deck-local copy of the PDK sg13g2_io.spi hierarchy, cells renamed g1nd_<cell>, all dantenna instances removed."""
+    lines = open(IOSPI).read().splitlines()
+    cells = {l.split()[1] for l in lines if l.lower().startswith('.subckt')}
+    out = ['* ---- deck-local copy of %s for --pads nodcn: cells renamed g1nd_*, dantenna instances removed' % IOSPI]
+    for l in lines:
+        t = l.split()
+        if not t or l.startswith('*'):
+            continue
+        if t[0].lower() == '.subckt':
+            out.append(' '.join(['.subckt', 'g1nd_' + t[1]] + t[2:]))
+        elif t[0][0] in 'Xx':
+            refs = [i for i, w in enumerate(t) if '=' not in w]
+            ref = refs[-1]
+            if t[ref] == 'dantenna':
+                out.append('* removed (--pads nodcn): ' + l)
+                continue
+            if t[ref] in cells:
+                t[ref] = 'g1nd_' + t[ref]
+            out.append(' '.join(t))
+        else:
+            out.append(l)
+    return out
+
+
+def build_deck(case, name, netlist, front, temp, corner, tag, tstop_override=None, osc='ideal', inpads='ideal', outpads='beh', method='gear',
+               osc_rx='bridge', osc_supply_r=None, osc_decap=None, blockset='legacy', t2f='off'):
     c = dict(case)
     event_us=c.get('event_us',T_STEP)
     tstop = tstop_override if tstop_override else c['tstop']
@@ -336,16 +596,17 @@ def build_deck(case, name, netlist, front, temp, corner, tag, tstop_override=Non
     powerup = c.get('powerup', False)
     en_tr = c.get('en', [(T_EN, 1)])
     K = CORNERS[corner]
-    nl = {k: os.path.join(BLOCKS, v) for k, v in NETLISTS[netlist].items()}
-    vio = 3.3
-    B = BEH[netlist]
+    rel, bs_warnings, sense_style = resolve_netlists(blockset, netlist)
+    nl = {k: os.path.join(BLOCKS, v) for k, v in rel.items()}
+    vio = VDDA_V
+    B = BEH[netlist if blockset == 'legacy' else '%s_%s' % (blockset, netlist)]
     # supplies: DC for functional cases (operating point start), PWL ramps for the power-up cases
     if powerup:
         r33, r12 = c['ramp33'], c['ramp12']
-        v33 = pwl([(0, 0), (r33[0] * 1e-6, 0), (r33[1] * 1e-6, 3.3)])
-        v12 = pwl([(0, 0), (r12[0] * 1e-6, 0), (r12[1] * 1e-6, 1.2)])
+        v33 = pwl([(0, 0), (r33[0] * 1e-6, 0), (r33[1] * 1e-6, VDDA_V)])
+        v12 = pwl([(0, 0), (r12[0] * 1e-6, 0), (r12[1] * 1e-6, VDD_V)])
     else:
-        v33, v12 = 'dc 3.3', 'dc 1.2'
+        v33, v12 = 'dc %g' % VDDA_V, 'dc %g' % VDD_V
     # the board signals EN / SCLK / SDI are placed mid-way between two rising edges of the (ideal) RTL clock
     # and SCLK runs at f_osc / 2, so that their edges never fall into the fine-step window that follows every
     # clock edge (README, "Numerical notes"); f_SCLK <= f_OSC as the register map requires
@@ -375,15 +636,33 @@ def build_deck(case, name, netlist, front, temp, corner, tag, tstop_override=Non
     write_stim(stim_path, en_pts, sclk_pts, sdi_pts, vio)
     t_cfg = t_ser_end + 1.0     # the register write lands a few osc_clk after the 16th edge
     quiet = c.get('quiet', (t_cfg + 2.0, event_us) if not powerup else None)
-    vvp = os.path.join(BUILD, 'g1_dig_cosim.vvp')
+    t2f_on = t2f == 'tl'
+    if t2f_on and (front != 'tl' or c.get('minimal') or powerup):
+        raise SystemExit('--t2f tl needs the transistor-level front end and a functional (non-power-up, non-osc) case')
+    vvp = rtl_vvp_path(tag)     # per-run compiled RTL (no race between concurrent launches)
     rpd = c.get('rpd')
 
     L = []
     A = L.append
     A('* G1_TOP breaker path, chip level: %s' % c['desc'])
+    if c.get('fault_mult') and c['fault_mult'][0] != c['fault_mult'][1]:   # equal level: deck unchanged
+        A('* --fault-mult %g: fault level %g x INOM replaced by %g x INOM (%g mV across RSH), timing unchanged' %
+          (c['fault_mult'][1], c['fault_mult'][0], c['fault_mult'][1], c['fault_mult'][1] * INOM * 25))
     A('* case %s | block netlists %s | front end %s | clock to the RTL %s | corner %s (%s %s %s %s) | %g degC | run_top.py' %
       (name, netlist, front, osc, corner, K['mos'], K['res'], K['cap'], K['hbt'], temp))
-    A('.param VDDA=3.3 VDD=1.2 IOVDD=3.3 RSH=25m RGND=10m INOM=%g CVREF=%g' % (INOM, CVREF))
+    if blockset != 'legacy' or VIEW_OVERRIDE:
+        A('* blockset %s (run_top.py BLOCKSETS)%s; ideal-clock frequency %.10g MHz' % (
+          blockset, (' view override ' + ','.join('%s=%s' % kv for kv in sorted(VIEW_OVERRIDE.items()))) if VIEW_OVERRIDE else '', B['fosc'] / 1e6))
+        for k in ('bgr', 'sense', 'trip', 'osc', 'gate'):
+            A('* netlist %s: blocks/%s' % (k, rel[k]))
+    for w in bs_warnings:
+        A('* ' + w)
+    if inpads == 'nodcn':
+        A('* ' + NODCN_WARNING)
+    if (VDD_V, VDDA_V) != (1.2, 3.3):
+        A('* supplies --vdd %g V --vdda %g V (VDDA = IOVDD rail); bridge thresholds VDD/2, dac_bridge high = VDD,' % (VDD_V, VDDA_V))
+        A('* EN/SCLK/SDI level copies pad x VDD/VDDA, GATE/FAULT_N drivers on IOVDD; measurement thresholds VDD/2')
+    A('.param VDDA=%g VDD=%g IOVDD=%g RSH=25m RGND=10m INOM=%g CVREF=%g' % (VDDA_V, VDD_V, VDDA_V, INOM, CVREF))
     A('.lib %s/cornerMOSlv.lib %s' % (MODELS, K['mos']))
     A('.lib %s/cornerMOShv.lib %s' % (MODELS, K['mos']))
     A('.lib %s/cornerRES.lib %s' % (MODELS, K['res']))
@@ -391,6 +670,9 @@ def build_deck(case, name, netlist, front, temp, corner, tag, tstop_override=Non
     A('.lib %s/cornerHBT.lib %s' % (MODELS, K['hbt']))
     A('.lib %s/cornerDIO.lib dio_tt' % MODELS)
     A('.include %s' % IOSPI)
+    if PADS_NODCN:
+        A('* ' + PADS_NODCN_WARNING)
+        L.extend(nodcn_io_lib())
     if front == 'tl':
         for k in ('bgr', 'sense', 'trip', 'osc', 'gate'):
             if (k == 'trip' and c.get('notrip')) or (k == 'osc' and osc != 'tl'):
@@ -398,6 +680,11 @@ def build_deck(case, name, netlist, front, temp, corner, tag, tstop_override=Non
             A('.include %s' % nl[k])
     else:
         A('.include %s' % nl['gate'])
+        if osc == 'tl':
+            A('.include %s' % nl['osc'])
+    if t2f_on:
+        for k, v in resolve_t2f().items():
+            A('.include %s' % os.path.join(BLOCKS, v))
     A('.temp %g' % temp)
     A('.global sub!')
     A('Vsub sub! 0 dc 0')
@@ -410,7 +697,7 @@ def build_deck(case, name, netlist, front, temp, corner, tag, tstop_override=Non
     tol_default = 'reltol=0.001 abstol=1e-10 vntol=1e-6 chgtol=1e-14' if front == 'tl' else 'reltol=0.002 abstol=1e-8 vntol=1e-4 chgtol=1e-12'
     A('.option method=%s itl4=100 %s rshunt=1e12' % (method, c.get('tol', tol_default)))
     if not powerup and front == 'tl':
-        A(nodesets(netlist))
+        A(nodesets(sense_style))
     A('* ---- supplies: one 3.3 V board rail feeds VDDA (pin 7) and IOVDD (pin 3), PLAN D14; 1.2 V VDD (pin 1)')
     A('V33 rail33 0 %s' % v33)
     A('Vma rail33 vdda_s dc 0')
@@ -439,8 +726,13 @@ def build_deck(case, name, netlist, front, temp, corner, tag, tstop_override=Non
     if not minimal:
         A('* ---- pads (PDK sg13g2_io SPICE models): SENSE_P/N on the bare pad terminal, VREF on the padres terminal')
         A('* (587 Ohm secondary protection, padframe/README.md); the VREF bond pad carries the board capacitor CVREF')
-        A('XPSP sense_p sense_p_res vdd 0 iovdd 0 sg13g2_IOPadAnalog')
-        A('XPSN sense_n sense_n_res vdd 0 iovdd 0 sg13g2_IOPadAnalog')
+        if inpads == 'nodcn':
+            L.extend(pad_analog_nodcn())
+            A('XPSP sense_p sense_p_res vdd 0 iovdd 0 g1_IOPadAnalog_nodcn')
+            A('XPSN sense_n sense_n_res vdd 0 iovdd 0 g1_IOPadAnalog_nodcn')
+        else:
+            A('XPSP sense_p sense_p_res vdd 0 iovdd 0 sg13g2_IOPadAnalog')
+            A('XPSN sense_n sense_n_res vdd 0 iovdd 0 sg13g2_IOPadAnalog')
         A('XPVREF vref_pad vref vdd 0 iovdd 0 sg13g2_IOPadAnalog')
         A('Cvref_ext vref_pad 0 {CVREF}')
         if inpads == 'model':
@@ -451,9 +743,9 @@ def build_deck(case, name, netlist, front, temp, corner, tag, tstop_override=Non
             A('* digital input pads (EN, SCLK, SDI) as ideal 3.3 V -> 1.2 V level copies: the sg13g2_IOPadIn SPICE')
             A('* models abort the event-driven solver at their input edges with the charge tolerance the comparators')
             A('* need (README, "Numerical notes"); the pads are functionally verified in blocks/g1_gate (EN pad)')
-            A('Ben_core en_core 0 V = v(en_pad)*1.2/3.3')
-            A('Bsclk_core sclk_core 0 V = v(sclk_pad)*1.2/3.3')
-            A('Bsdi_core sdi_core 0 V = v(sdi_pad)*1.2/3.3')
+            A('Ben_core en_core 0 V = v(en_pad)*%g/%g' % (VDD_V, VDDA_V))
+            A('Bsclk_core sclk_core 0 V = v(sclk_pad)*%g/%g' % (VDD_V, VDDA_V))
+            A('Bsdi_core sdi_core 0 V = v(sdi_pad)*%g/%g' % (VDD_V, VDDA_V))
         if outpads == 'model':
             A('XPG gate gate_core vdd 0 iovdd 0 sg13g2_IOPadOut30mA')
             A('XPF fault_n fault_core vdd 0 iovdd 0 sg13g2_IOPadOut4mA')
@@ -463,19 +755,19 @@ def build_deck(case, name, netlist, front, temp, corner, tag, tstop_override=Non
             A('* 20 pF, ~500 Ohm). Reason: README, "Numerical notes" (pad models and the StrongARM comparators need')
             A('* incompatible integration settings). The driver switches within 1 ns of gate_core / fault_core and')
             A('* draws its current from IOVDD.')
-            A('Bgate_drv gate_drv 0 V = v(iovdd)*(0.5 + 0.5*tanh((v(gate_core) - 0.6)/0.05))')
+            A('Bgate_drv gate_drv 0 V = v(iovdd)*(0.5 + 0.5*tanh((v(gate_core) - %g)/0.05))' % (VDD_V / 2))
             A('Rgate_drv gate_drv gate 47')
             A('Bgate_i iovdd 0 I = max(0, (v(gate_drv) - v(gate))/47)')
-            A('Bfault_drv fault_drv 0 V = v(iovdd)*(0.5 + 0.5*tanh((v(fault_core) - 0.6)/0.05))')
+            A('Bfault_drv fault_drv 0 V = v(iovdd)*(0.5 + 0.5*tanh((v(fault_core) - %g)/0.05))' % (VDD_V / 2))
             A('Rfault_drv fault_drv fault_n 500')
     else:
         A('* ---- minimal chip context (README, case osc): no pad models, no G1_GATE; the 3.3 V pad inputs are scaled to 1.2 V')
         A('Cvref_ext vref 0 1p')
-        A('Ben_core en_core 0 V = v(en_pad)*1.2/3.3')
-        A('Bsclk_core sclk_core 0 V = v(sclk_pad)*1.2/3.3')
-        A('Bsdi_core sdi_core 0 V = v(sdi_pad)*1.2/3.3')
-        A('Bgate gate 0 V = 3.3*(0.5 + 0.5*tanh((v(en_core) - 0.6)/0.05))')
-        A('Vfault fault_n 0 dc 3.3')
+        A('Ben_core en_core 0 V = v(en_pad)*%g/%g' % (VDD_V, VDDA_V))
+        A('Bsclk_core sclk_core 0 V = v(sclk_pad)*%g/%g' % (VDD_V, VDDA_V))
+        A('Bsdi_core sdi_core 0 V = v(sdi_pad)*%g/%g' % (VDD_V, VDDA_V))
+        A('Bgate gate 0 V = %g*(0.5 + 0.5*tanh((v(en_core) - %g)/0.05))' % (VDDA_V, VDD_V / 2))
+        A('Vfault fault_n 0 dc %g' % VDDA_V)
         A('Vgc gate_core 0 dc 0')
         A('Vtr tripped 0 dc 0')
     A('Ven en_pad 0 %s' % pwl(en_pts))
@@ -507,7 +799,7 @@ def build_deck(case, name, netlist, front, temp, corner, tag, tstop_override=Non
             icmp, vths, vthh = 'v(xtrip.icmp)', 'v(xtrip.vth_soft)', 'v(xtrip.vth_hard)'
         else:
             A('* this case has no G1_TRIP (README): comparator outputs tied low, its supply pins left open')
-            A('Vcs_tie cmp_soft 0 dc %g' % (1.2 if c.get('cmp_soft_high') else 0.0))
+            A('Vcs_tie cmp_soft 0 dc %g' % (VDD_V if c.get('cmp_soft_high') else 0.0))
             A('Vch_tie cmp_hard 0 dc 0')
             A('Rtripa_dummy vdda_trip 0 1e12')
             A('Rtripd_dummy vdd_trip 0 1e12')
@@ -517,17 +809,16 @@ def build_deck(case, name, netlist, front, temp, corner, tag, tstop_override=Non
             icmp, vths, vthh = 'v(icmp)', 'v(vth_soft)', 'v(vth_hard)'
         A('Cw_soft cmp_soft 0 20f')
         A('Cw_hard cmp_hard 0 20f')
-        A('Vm_osc vdd vdd_osc dc 0')
         if osc == 'tl':
-            A('XOSC osc_en_g trim0 trim1 trim2 trim3 osc_clk vdd_osc 0 g1_osc')
-            A('Cw_clk osc_clk 0 100f')
+            osc_tl(A, osc_supply_r, osc_decap, osc_rx)
         else:
             A('* the clock delivered to the digital macro is an ideal source at the block-simulated G1_OSC frequency;')
             A('* G1_OSC is not in this deck (README, "Numerical notes": with the transistor-level oscillator on the')
             A('* chip supply the event-driven solver aborts; case osc runs it in the chip context without G1_TRIP)')
+            A('Vm_osc vdd vdd_osc dc 0')
             A('Rosc_dummy vdd_osc 0 1e12')
-            A('Vosc_i osc_i 0 pulse(0 1.2 %g 1n 1n %g %g)' % (T_OSC * 1e-6, 0.5 / B['fosc'] - 1e-9, 1.0 / B['fosc']))
-            A('Bosc_clk osc_clk 0 V = v(osc_i) * (0.5 + 0.5*tanh((v(osc_en_g) - 0.6)/0.05))')
+            A('Vosc_i osc_i 0 pulse(0 %g %g 1n 1n %g %g)' % (VDD_V, T_OSC * 1e-6, 0.5 / B['fosc'] - 1e-9, 1.0 / B['fosc']))
+            A('Bosc_clk osc_clk 0 V = v(osc_i) * (0.5 + 0.5*tanh((v(osc_en_g) - %g)/0.05))' % (VDD_V / 2))
             A('Cw_clk osc_clk 0 100f')
 
     else:
@@ -548,11 +839,11 @@ def build_deck(case, name, netlist, front, temp, corner, tag, tstop_override=Non
         A('Cic icmp 0 1p')
         A('Bvths vth_soft 0 V = %g*(255 + v(cs))/530' % B['vref'])
         A('Bvthh vth_hard 0 V = %g*(255 + v(ch))/530' % B['vref'])
-        A('Bcs cs 0 V = ' + ' + '.join('%d*(0.5 + 0.5*tanh((v(soft%d) - 0.6)/0.05))' % (1 << i, i) for i in range(8)))
-        A('Bch ch 0 V = ' + ' + '.join('%d*(0.5 + 0.5*tanh((v(hard%d) - 0.6)/0.05))' % (1 << i, i) for i in range(8)))
+        A('Bcs cs 0 V = ' + ' + '.join('%d*(0.5 + 0.5*tanh((v(soft%d) - %g)/0.05))' % (1 << i, i, VDD_V / 2) for i in range(8)))
+        A('Bch ch 0 V = ' + ' + '.join('%d*(0.5 + 0.5*tanh((v(hard%d) - %g)/0.05))' % (1 << i, i, VDD_V / 2) for i in range(8)))
         A('* comparator decisions as smooth (2 mV wide) functions of the input difference, sampled by ideal flip-flops')
-        A('Bcmps cmps_a 0 V = 0.6 + 0.6*tanh((v(icmp) - v(vth_soft))/2m)')
-        A('Bcmph cmph_a 0 V = 0.6 + 0.6*tanh((v(icmp) - v(vth_hard))/2m)')
+        A('Bcmps cmps_a 0 V = %g + %g*tanh((v(icmp) - v(vth_soft))/2m)' % (VDD_V / 2, VDD_V / 2))
+        A('Bcmph cmph_a 0 V = %g + %g*tanh((v(icmp) - v(vth_hard))/2m)' % (VDD_V / 2, VDD_V / 2))
         A('.model dffm d_dff(clk_delay=1n set_delay=1n reset_delay=1n ic=0 rise_delay=0.5n fall_delay=0.5n)')
         A('.model dinv d_inverter(rise_delay=0.2n fall_delay=0.2n)')
         A('Vzero zero_a 0 dc 0')
@@ -566,12 +857,28 @@ def build_deck(case, name, netlist, front, temp, corner, tag, tstop_override=Non
         A('Vm_tripd vdd vdd_trip dc 0')
         A('Rtripa_dummy vdda_trip 0 1e12')
         A('Rtripd_dummy vdd_trip 0 1e12')
-        A('* G1_OSC: ideal square wave at the block-simulated frequency, gated by the enable')
-        A('Vosc_i osc_i 0 pulse(0 1.2 %g 1n 1n %g %g)' % (T_OSC * 1e-6, 0.5 / B['fosc'] - 1e-9, 1.0 / B['fosc']))
-        A('Bosc_clk osc_clk 0 V = v(osc_i) * (0.5 + 0.5*tanh((v(osc_en_g) - 0.6)/0.05))')
-        A('Vm_osc vdd vdd_osc dc 0')
-        A('Rosc_dummy vdd_osc 0 1e12')
+        if osc == 'tl':
+            A('* G1_OSC at transistor level on the chip VDD (diagnostic: --front beh --osc tl)')
+            osc_tl(A, osc_supply_r, osc_decap, osc_rx)
+        else:
+            A('* G1_OSC: ideal square wave at the block-simulated frequency, gated by the enable')
+            A('Vosc_i osc_i 0 pulse(0 %g %g 1n 1n %g %g)' % (VDD_V, T_OSC * 1e-6, 0.5 / B['fosc'] - 1e-9, 1.0 / B['fosc']))
+            A('Bosc_clk osc_clk 0 V = v(osc_i) * (0.5 + 0.5*tanh((v(osc_en_g) - %g)/0.05))' % (VDD_V / 2))
+            A('Vm_osc vdd vdd_osc dc 0')
+            A('Rosc_dummy vdd_osc 0 1e12')
         icmp, vths, vthh = 'v(icmp)', 'v(vth_soft)', 'v(vth_hard)'
+    if t2f_on:
+        A('* ---- G1_T2F at transistor level (--t2f tl), wired as g1_chip_top_1414.cdl: pbias/pcasc/vref from G1_BGR,')
+        A('* en/mode from the RTL t2f_en/t2f_mode (reset 1/0) through g1_ls_up, vdd12 = VDD; fout into 1 pF.')
+        A('* The TEMP_OUT pad (sg13g2_IOPadOut16mA) is out of scope: fout sees a 1 pF lumped load only.')
+        A('Vm_t2f vdda vdda_t2f dc 0')
+        A('Vm_t2fd vdd vdd_t2f dc 0')
+        A('Vm_ls vdda vdda_ls dc 0')
+        A('Vm_lsd vdd vdd_ls dc 0')
+        A('XLSEN t2f_en12 t2f_en33 vdd_ls vdda_ls 0 g1_ls_up')
+        A('XLSMODE t2f_mode12 t2f_mode33 vdd_ls vdda_ls 0 g1_ls_up')
+        A('XT2F vdda_t2f vdd_t2f 0 pbias pcasc vref t2f_en33 t2f_mode33 temp_out g1_t2f')
+        A('Ctemp_out temp_out 0 1p')
     A('Vm_gatea vdda vdda_gate dc 0')
     A('Vm_gated vdd vdd_gate dc 0')
     if not minimal:
@@ -585,25 +892,35 @@ def build_deck(case, name, netlist, front, temp, corner, tag, tstop_override=Non
     # A band on a clock produces 0 -> U -> 1. Icarus treats both changes as
     # posedges, so the divider can count twice. Use one receiver threshold
     # for the clock only; retain unknown-state handling on the data inputs.
-    A('.model adc_clock adc_bridge(in_low=0.6 in_high=0.6 rise_delay=1e-12 fall_delay=1e-12)')
-    A('.model dac dac_bridge(out_low=0 out_high=1.2 out_undef=0.6 t_rise=0.3n t_fall=0.3n)')
+    A('.model adc_clock adc_bridge(in_low=%g in_high=%g rise_delay=1e-12 fall_delay=1e-12)' % (VDD_V / 2, VDD_V / 2))
+    A('.model dac dac_bridge(out_low=0 out_high=%g out_undef=%g t_rise=0.3n t_fall=0.3n)' % (VDD_V, VDD_V / 2))
     A('.model rtl d_cosim simulation="ivlng" sim_args=["%s"]' % vvp)
-    A('aclock [osc_clk] [d_osc_clk] adc_clock')
+    if osc == 'tl' and osc_rx == 'schmitt':
+        A('aclock [osc_rx] [d_osc_clk] adc_clock')
+    else:
+        A('aclock [osc_clk] [d_osc_clk] adc_clock')
     A('aadc [cmp_soft cmp_hard tripped] [d_cmp_soft d_cmp_hard d_tripped] adc')
     outs = (['d_cmp_clk'] + ['d_s%d' % i for i in range(7, -1, -1)] + ['d_h%d' % i for i in range(7, -1, -1)] +
             ['d_trip_d', 'd_clr_d', 'd_fast_en', 'd_osc_en'] + ['d_t%d' % i for i in range(3, -1, -1)] +
-            ['d_trip', 'd_gate_en', 'd_cause1', 'd_cause0', 'd_sdo'] + ['d_sp%d' % i for i in range(15, -1, -1)] + ['d_inrush', 'd_softarmed'])
+            ['d_trip', 'd_gate_en', 'd_cause1', 'd_cause0', 'd_sdo'] + ['d_sp%d' % i for i in range(15, -1, -1)] + ['d_inrush', 'd_softarmed'] +
+            (['d_t2f_en', 'd_t2f_mode'] if t2f_on else []))
+    if t2f_on:
+        A('* d_cosim wrapper: rtl/g1_dig_cosim_t2f.v (g1_dig_cosim.v plus outputs t2f_en, t2f_mode)')
     A('adig [d_osc_clk d_en d_sclk d_sdi d_cmp_soft d_cmp_hard d_tripped] [%s] rtl' % ' '.join(outs))
     an = (['cmp_clk'] + ['soft%d' % i for i in range(7, -1, -1)] + ['hard%d' % i for i in range(7, -1, -1)] +
           ['trip_d', 'clr_d', 'fast_en', 'osc_en'] + ['trim%d' % i for i in range(3, -1, -1)] +
-          ['dig_trip', 'dig_gate_en', 'cause1', 'cause0', 'sdo'] + ['sp%d' % i for i in range(15, -1, -1)] + ['inrush_active', 'soft_armed'])
+          ['dig_trip', 'dig_gate_en', 'cause1', 'cause0', 'sdo'] + ['sp%d' % i for i in range(15, -1, -1)] + ['inrush_active', 'soft_armed'] +
+          (['t2f_en12', 't2f_mode12'] if t2f_on else []))
     A('adac [%s] [%s] dac' % (' '.join(outs), ' '.join(an)))
     A('.save v(gate) v(gfet) v(tripped) v(isense) v(cmp_soft) v(cmp_hard) v(trip_d) v(clr_d) v(fast_en) v(osc_clk) v(cmp_clk)')
     A('+ v(vref) v(iptat) v(en_core) v(shp) v(shn) v(fault_n) v(gate_core) v(vdda) v(vdd) v(iovdd) v(iprof) v(osc_en_g)')
     A('+ %s %s %s v(dig_trip) v(cause1) v(cause0) v(sclk_pad) v(sdi_pad) v(sdo)' % (icmp, vths, vthh))
     A('+ ' + ' '.join('v(soft%d)' % i for i in range(8)) + ' ' + ' '.join('v(hard%d)' % i for i in range(8)))
     A('+ ' + ' '.join('v(sp%d)' % i for i in range(16)) + ' v(inrush_active) v(soft_armed)')
-    A('+ i(vim) i(vma) i(vmi) i(v12) i(vm_bgr) i(vm_sense) i(vm_tripa) i(vm_tripd) i(vm_osc) i(vm_gatea) i(vm_gated)')
+    has_vm_osc = any(l.split()[:1] == ['Vm_osc'] for l in L)
+    A('+ i(vim) i(vma) i(vmi) i(v12) i(vm_bgr) i(vm_sense) i(vm_tripa) i(vm_tripd)%s i(vm_gatea) i(vm_gated)' % (' i(vm_osc)' if has_vm_osc else ''))
+    if t2f_on:
+        A('+ v(temp_out) v(t2f_en33) v(t2f_mode33) v(pbias) v(pcasc) i(vm_t2f) i(vm_t2fd) i(vm_ls) i(vm_lsd)')
     if front == 'tl':
         A('+ v(vref_buf) v(vped)')
     # ---- control
@@ -615,12 +932,19 @@ def build_deck(case, name, netlist, front, temp, corner, tag, tstop_override=Non
     bits = lambda prefix, n: ' + '.join('%d*(v(%s%d) gt 0.6)' % (1 << i, prefix, i) for i in range(n))
     if not powerup:
         tq = t_cfg + 1.0
-        A('* quiet operating values after the register write(s)')
-        A('meas tran vref_q find v(vref) at=%gu' % tq)
-        A('meas tran isense_q find v(isense) at=%gu' % tq)
-        A('meas tran icmp_q find %s at=%gu' % (icmp, tq))
-        A('meas tran vths_q find %s at=%gu' % (vths, tq))
-        A('meas tran vthh_q find %s at=%gu' % (vthh, tq))
+        A('* quiet operating values after the register write(s): window averages over the last 2 us before the load')
+        A('* event (comparator kickback averaged out); single-instant samples at t_cfg + 1 us kept as *_inst')
+        tw0, tw1 = event_us - 2.0, min(event_us, tstop)
+        A('meas tran vref_q avg v(vref) from=%gu to=%gu' % (tw0, tw1))
+        A('meas tran isense_q avg v(isense) from=%gu to=%gu' % (tw0, tw1))
+        A('meas tran icmp_q avg %s from=%gu to=%gu' % (icmp, tw0, tw1))
+        A('meas tran vths_q avg %s from=%gu to=%gu' % (vths, tw0, tw1))
+        A('meas tran vthh_q avg %s from=%gu to=%gu' % (vthh, tw0, tw1))
+        A('meas tran vref_i find v(vref) at=%gu' % tq)
+        A('meas tran isense_i find v(isense) at=%gu' % tq)
+        A('meas tran icmp_i find %s at=%gu' % (icmp, tq))
+        A('meas tran vths_i find %s at=%gu' % (vths, tq))
+        A('meas tran vthh_i find %s at=%gu' % (vthh, tq))
         A('meas tran iload_q find i(vim) at=%gu' % tq)
         A('meas tran gate_q find v(gate) at=%gu' % tq)
         A('meas tran fastq find v(fast_en) at=%gu' % tq)
@@ -632,7 +956,7 @@ def build_deck(case, name, netlist, front, temp, corner, tag, tstop_override=Non
         A('meas tran code_soft find cs_v at=%gu' % tq)
         A('meas tran code_hard find ch_v at=%gu' % tq)
         A('let t_inrush_off_us = t_inrush_off*1e6')
-        A('echo "QUIET vref=" $&vref_q " isense=" $&isense_q " icmp=" $&icmp_q " vth_soft=" $&vths_q " vth_hard=" $&vthh_q " iload_A=" $&iload_q " gate=" $&gate_q " code_soft=" $&code_soft " code_hard=" $&code_hard " fast_en=" $&fastq " inrush_active=" $&inrush_q " t_inrush_off_us=" $&t_inrush_off_us " soft_armed_end=" $&softarmed_end')
+        A('echo "QUIET window_us=%g-%g vref=" $&vref_q " isense=" $&isense_q " icmp=" $&icmp_q " vth_soft=" $&vths_q " vth_hard=" $&vthh_q " vref_inst=" $&vref_i " isense_inst=" $&isense_i " icmp_inst=" $&icmp_i " vth_soft_inst=" $&vths_i " vth_hard_inst=" $&vthh_i " iload_A=" $&iload_q " gate=" $&gate_q " code_soft=" $&code_soft " code_hard=" $&code_hard " fast_en=" $&fastq " inrush_active=" $&inrush_q " t_inrush_off_us=" $&t_inrush_off_us " soft_armed_end=" $&softarmed_end' % (tw0, tw1))
         A('* clocks: 20 oscillator periods and 10 strobe periods after the configuration')
         A('meas tran tosc1 when v(osc_clk)=0.6 rise=1 from=%gu' % t_cfg)
         A('meas tran tosc2 when v(osc_clk)=0.6 rise=21 from=%gu' % t_cfg)
@@ -644,11 +968,23 @@ def build_deck(case, name, netlist, front, temp, corner, tag, tstop_override=Non
         A('* supply currents averaged over the quiet armed window')
         for nm, src in (('vdda', 'vma'), ('iovdd', 'vmi'), ('vdd', 'v12'), ('bgr', 'vm_bgr'), ('sense', 'vm_sense'),
                         ('tripa', 'vm_tripa'), ('tripd', 'vm_tripd'), ('osc', 'vm_osc'), ('gatea', 'vm_gatea'), ('gated', 'vm_gated')):
+            if src == 'vm_osc' and not has_vm_osc:
+                continue
             sign = '-' if src == 'v12' else ''
             A('let i_%s = %si(%s)' % (nm, sign, src))
             A('meas tran ia_%s avg i_%s from=%gu to=%gu' % (nm, nm, quiet[0], quiet[1]))
             A('let ua_%s = ia_%s*1e6' % (nm, nm))
-        A('echo "SUPPLY_uA window=%g-%gus VDDA=" $&ua_vdda " IOVDD=" $&ua_iovdd " VDD=" $&ua_vdd " | bgr=" $&ua_bgr " sense=" $&ua_sense " trip_3v3=" $&ua_tripa " trip_1v2=" $&ua_tripd " osc=" $&ua_osc " gate_3v3=" $&ua_gatea " gate_1v2=" $&ua_gated' % (quiet[0], quiet[1]))
+        A('echo "SUPPLY_uA window=%g-%gus VDDA=" $&ua_vdda " IOVDD=" $&ua_iovdd " VDD=" $&ua_vdd " | bgr=" $&ua_bgr " sense=" $&ua_sense " trip_3v3=" $&ua_tripa " trip_1v2=" $&ua_tripd%s " gate_3v3=" $&ua_gatea " gate_1v2=" $&ua_gated' % (quiet[0], quiet[1], ' " osc=" $&ua_osc' if has_vm_osc else ''))
+        if t2f_on:
+            A('* G1_T2F: output frequency (rising 0.6 V crossings) and supply currents over the quiet window')
+            nr = max(2, int((quiet[1] - quiet[0]) * 1.0))   # rising edges counted: >= 1 MHz assumed (block: 1.54 MHz)
+            A('meas tran t2f_t1 when v(temp_out)=0.6 rise=1 from=%gu to=%gu' % (quiet[0], quiet[1]))
+            A('meas tran t2f_t2 when v(temp_out)=0.6 rise=%d from=%gu to=%gu' % (nr + 1, quiet[0], quiet[1]))
+            A('let t2f_mhz = %de-6/(t2f_t2 - t2f_t1)' % nr)
+            for nm, src in (('t2f', 'vm_t2f'), ('t2fd', 'vm_t2fd'), ('ls', 'vm_ls'), ('lsd', 'vm_lsd')):
+                A('meas tran ia_%s avg i(%s) from=%gu to=%gu' % (nm, src, quiet[0], quiet[1]))
+                A('let ua_%s = ia_%s*1e6' % (nm, nm))
+            A('echo "T2F window=%g-%gus f_MHz=" $&t2f_mhz " periods=%d vdda_t2f_uA=" $&ua_t2f " vdd12_t2f_uA=" $&ua_t2fd " vdda_ls_uA=" $&ua_ls " vdd_ls_uA=" $&ua_lsd' % (quiet[0], quiet[1], nr))
         A('* trip evaluation after the load event at T_STEP')
         A('let tstep_s = %gu' % event_us)
         A('meas tran tripped_max max v(tripped) from=%gu to=%gu' % (t_cfg, tstop))
@@ -686,7 +1022,7 @@ def build_deck(case, name, netlist, front, temp, corner, tag, tstop_override=Non
             t_off = [t for t, lv in en_tr if lv == 0][0]
             t_on = [t for t, lv in en_tr if lv == 1 and t > t_off][0]
             A('meas tran g_enlow find v(gate) at=%gu' % (t_on - 0.1))
-            A('meas tran t_g_rearm when v(gate)=2.97 rise=1 from=%gu' % t_on)
+            A('meas tran t_g_rearm when v(gate)=%g rise=1 from=%gu' % (0.9 * VDDA_V, t_on))
             A('meas tran i_rearm find i(vim) at=%gu' % tstop)
             A('meas tran tripped_rearm find v(tripped) at=%gu' % tstop)
             A('let dt_rearm_us = (t_g_rearm - %gu)*1e6' % t_on)
@@ -716,6 +1052,10 @@ def build_deck(case, name, netlist, front, temp, corner, tag, tstop_override=Non
     A('wrdata %s %s' % (os.path.join(BUILD, 'waves_%s.txt' % tag), waves))
     A('.endc')
     A('.end')
+    if VDD_V != 1.2:
+        # digital-signal measurement thresholds (osc_clk, cmp_clk, DAC/cause bits, latches, T2F out) at VDD/2
+        k = L.index('.control')
+        L[k:] = [re.sub(r'(\)=|\bgt )0\.6\b', lambda m: m.group(1) + '%g' % (VDD_V / 2), l) for l in L[k:]]
     return '\n'.join(L) + '\n'
 
 
@@ -736,6 +1076,9 @@ def diagnostic_deck(deck, analysis, tstop, tag):
         state_signals = 'v(en_core) v(inrush_active) v(dig_trip) v(fast_en) ' + \
                         ' '.join('v(%s%d)' % (p, i) for p in ('soft', 'hard') for i in range(8))
         lines += ['wrdata %s %s' % (os.path.join(BUILD, 'state_%s.txt' % tag), state_signals)]
+        if re.search(r'^XT2F ', before, re.M):
+            lines += ['wrdata %s v(temp_out) v(t2f_en33) v(t2f_mode33) i(vma) i(vm_t2f) i(vm_t2fd) i(vm_ls) i(vm_lsd) '
+                      'i(vm_bgr) i(vm_sense)' % os.path.join(BUILD, 't2f_%s.txt' % tag)]
     lines += ['rusage all', '.endc', '.end']
     return before + '\n'.join(lines) + '\n'
 
@@ -775,15 +1118,59 @@ def validate_prefix(out, wave_path, requested_end_s):
     return True, 'saved finite waveform reaches requested endpoint'
 
 
-def compile_rtl(log):
+def rtl_files(t2f='off'):
+    return ([RTL_WRAPPER_T2F] + RTL_FILES[1:]) if t2f == 'tl' else RTL_FILES
+
+
+def rtl_vvp_path(tag):
+    """Per-run compiled-RTL path. All lower case: ngspice lower-cases the d_cosim sim_args string, so a path
+    containing the tag's upper-case letters (27C, gA) cannot be opened ("Unable to open input file")."""
+    p = os.path.join(BUILD, 'cosim_%s.vvp' % hashlib.sha256(tag.encode()).hexdigest()[:24])
+    assert p == p.lower(), 'compiled-RTL path must be lower case for ngspice: ' + p
+    return p
+
+
+def verify_vvp(vvp):
+    """None if the compiled RTL is loadable-looking (non-empty file, vvp header, root module present), else why."""
+    try:
+        with open(vvp, 'rb') as f:
+            head = f.read(4096)
+        size = os.path.getsize(vvp)
+    except OSError as exc:
+        return 'unreadable: %s' % exc
+    if size < 1000 or not head.startswith(b'#!') or b'vvp' not in head.split(b'\n', 1)[0]:
+        return 'not a complete vvp file (size %d, header %r)' % (size, head[:60])
+    if b'g1_dig_cosim' not in open(vvp, 'rb').read():
+        return 'root module g1_dig_cosim* not found'
+    return None
+
+
+def compile_rtl(log, t2f='off', tag=None):
+    """Compile the RTL to build/g1_top/<tag>.vvp (per run; written under a temporary name and moved into place
+    atomically), so that concurrent launches never load a file another launch is rewriting."""
+    import fcntl
     os.makedirs(BUILD, exist_ok=True)
-    vvp = os.path.join(BUILD, 'g1_dig_cosim.vvp')
-    cmd = ['iverilog', '-g2005', '-Wall', '-Wno-timescale', '-o', vvp] + RTL_FILES
-    r = subprocess.run(cmd, capture_output=True, text=True)
-    log.write('# %s\n%s%s' % (' '.join(cmd), r.stdout, r.stderr))
-    if r.returncode != 0:
-        raise SystemExit('iverilog failed:\n' + r.stdout + r.stderr)
-    for f in RTL_FILES:
+    vvp = rtl_vvp_path(tag) if tag else os.path.join(BUILD, 'g1_dig_cosim_t2f.vvp' if t2f == 'tl' else 'g1_dig_cosim.vvp')
+    tmp = '%s.tmp%d' % (vvp, os.getpid())
+    files = rtl_files(t2f)
+    cmd = ['iverilog', '-g2005', '-Wall', '-Wno-timescale', '-o', tmp] + files
+    with open(os.path.join(BUILD, '.rtl_compile.lock'), 'a') as lock:   # serialise compiles across launches
+        fcntl.flock(lock, fcntl.LOCK_EX)
+        try:
+            r = subprocess.run(cmd, capture_output=True, text=True)
+            log.write('# %s\n%s%s' % (' '.join(cmd), r.stdout, r.stderr))
+            if r.returncode != 0:
+                log.write('# run status failed (rtl compile: iverilog exit %d)\n' % r.returncode)
+                raise SystemExit('iverilog failed (exit %d):\n%s%s' % (r.returncode, r.stdout, r.stderr))
+            why = verify_vvp(tmp)
+            if why:
+                log.write('# run status failed (rtl compile: %s)\n' % why)
+                raise SystemExit('compiled RTL %s rejected before ngspice: %s' % (tmp, why))
+            os.replace(tmp, vvp)
+        finally:
+            fcntl.flock(lock, fcntl.LOCK_UN)
+    log.write('# compiled RTL %s (tag %s) sha256 %s\n' % (os.path.relpath(vvp, ROOT), tag, sha256(vvp)))
+    for f in files:
         log.write('# rtl sha256 %s %s\n' % (sha256(f), os.path.relpath(f, ROOT)))
     return vvp
 
@@ -817,6 +1204,16 @@ def main():
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument('cases', nargs='*')
     ap.add_argument('--netlist', default='sch', choices=('sch', 'pex'))
+    ap.add_argument('--t2f', default='off', choices=('off', 'tl'),
+                    help='G1_T2F behind two g1_ls_up at transistor level (baseline PEX, chip CDL wiring, fout into 1 pF; TEMP_OUT pad not modelled)')
+    ap.add_argument('--view-override', default=None, metavar='BLOCK=VIEW[,...]',
+                    help='per-block view after --netlist/--blockset resolution, e.g. bgr=sch,trip=pex (blocks bgr sense trip osc gate)')
+    ap.add_argument('--fault-mult', type=float, default=None, metavar='X',
+                    help="fault-event load level as X x nominal 1 A (replaces the case's single fault level, timing unchanged)")
+    ap.add_argument('--vdd', type=float, default=1.2, help='VDD (V), default 1.2')
+    ap.add_argument('--vdda', type=float, default=3.3, help='VDDA = IOVDD board rail (V), default 3.3')
+    ap.add_argument('--blockset', default='legacy', choices=tuple(BLOCKSETS),
+                    help='analog block netlists: legacy (Sep-19 paths, default) or c1414 (frozen 1414 um chip: BGR586, SENSE R100, TRIP NF4, OSC R0.95)')
     ap.add_argument('--front', default=None, choices=('tl', 'beh'), help='override the case default')
     ap.add_argument('--osc', default=None, choices=('tl', 'ideal'), help='clock delivered to the RTL: ideal source at the block frequency (default) or the transistor-level oscillator (case osc)')
     ap.add_argument('--temp', type=float, default=27)
@@ -830,7 +1227,8 @@ def main():
     ap.add_argument('--image-id', default=None, help='EDA image content digest recorded by the launcher')
     ap.add_argument('--run-id', default=None, help='unique evidence suffix, auto generated if omitted')
     ap.add_argument('--tstop', type=float, default=None, help='override end time (us)')
-    ap.add_argument('--inpads', default='ideal', choices=('ideal', 'model'), help='EN/SCLK/SDI input pads: ideal level copies (default) or the PDK sg13g2_IOPadIn models')
+    ap.add_argument('--pads', default='pdk', choices=('pdk', 'nodcn'), help='nodcn: all PDK pad instances (XP*) use a deck-local dantenna-free copy of sg13g2_io.spi (documented deviation, PADS_NODCN_WARNING)')
+    ap.add_argument('--inpads', default='ideal', choices=('ideal', 'model', 'nodcn'), help='EN/SCLK/SDI input pads: ideal level copies (default) or the PDK sg13g2_IOPadIn models; nodcn: ideal EN/SCLK/SDI and SENSE_P/N analog pads without the dantenna diodes (documented deviation, NODCN_WARNING)')
     ap.add_argument('--outpads', default=None, choices=('beh', 'model'), help='GATE/FAULT_N pads: behavioural drivers fitted to the g1_gate results (default for the transistor-level front end) or the PDK models (default for the behavioural front end and the power-up cases)')
     ap.add_argument('--method', default=None, choices=('gear', 'trap'), help='integration method (default: trap for the transistor-level front end, gear otherwise)')
     ap.add_argument('--accuracy', choices=('baseline', 'tight'), default='baseline',
@@ -843,6 +1241,11 @@ def main():
     ap.add_argument('--event-shift-ns', type=float, default=0,
                     help='baseline c_mid/hard_pulse fault-only phase shift0..500ns')
     ap.add_argument('--list', action='store_true')
+    ap.add_argument('--extra-options', default=None, help='diagnostic: extra .option line placed after the solver line (e.g. "chgtol=1e-12")')
+    ap.add_argument('--osc-rx', choices=('bridge', 'schmitt'), default='bridge', help='diagnostic: clock receiver between the transistor-level osc_clk and the adc_bridge')
+    ap.add_argument('--osc-supply-r', type=float, default=None, help='diagnostic: series R (Ohm) on the OSC supply pin')
+    ap.add_argument('--osc-decap', type=float, default=None, help='diagnostic: local decap (F) on the OSC supply pin')
+    ap.add_argument('--save-extra', nargs='+', default=[], help='diagnostic: extra vectors saved and written right after tran (e.g. v(xtrip.xch.xn))')
     ap.add_argument('--decimate', type=int, default=0, help='keep every n-th linearised point in results/waves (0: auto, about 2000 rows)')
     a = ap.parse_args()
     if a.timeout <= 0 or (a.tstop is not None and a.tstop <= 0):
@@ -853,14 +1256,32 @@ def main():
         ap.error('--analysis prefix requires --tstop US')
     if a.run_id and not re.fullmatch(r'[A-Za-z0-9_-]+', a.run_id):
         ap.error('--run-id must contain only letters, digits, underscore or hyphen')
+    global VIEW_OVERRIDE, VDD_V, VDDA_V, BR_LO, BR_HI
+    if not (0.5 <= a.vdd <= 2.0 and 1.5 <= a.vdda <= 4.0):
+        ap.error('--vdd 0.5..2.0 V, --vdda 1.5..4.0 V')
+    VDD_V, VDDA_V = a.vdd, a.vdda
+    if VDD_V != 1.2:
+        BR_LO, BR_HI = VDD_V / 2 - 0.05, VDD_V / 2 + 0.05
+    vtag = lambda v: ('%g' % v if '.' in '%g' % v else '%g.0' % v).replace('.', 'p')
+    supply_tag = '' if (VDD_V, VDDA_V) == (1.2, 3.3) else '_vdd%s_vdda%s' % (vtag(VDD_V), vtag(VDDA_V))
+    try:
+        VIEW_OVERRIDE = parse_view_override(a.view_override)
+    except ValueError as exc:
+        ap.error(str(exc))
     run_id = a.run_id or time.strftime('%Y%m%dT%H%M%SZ', time.gmtime()) + '_' + uuid.uuid4().hex[:8]
     global TEDGE, T_SER, T_STEP, CASES
+    global PADS_NODCN
+    PADS_NODCN = (a.pads == 'nodcn')
     if a.timeline == 'compact':
-        if a.cases != ['c_mid'] or a.analysis != 'functional':
-            ap.error('compact timeline supports c_mid functional only')
+        if len(a.cases) != 1 or a.cases[0] not in ('c_mid', 'c', 'c_fast', 'e20', 'osc') or a.analysis != 'functional':
+            ap.error('compact timeline supports one of c_mid, c, c_fast, e20, osc (functional) only')
         T_SER,T_STEP=4.0,16.0
         CASES=make_cases()
         CASES['c_mid']['tstop']=28
+        for k in ('c', 'c_fast', 'e20'):
+            CASES[k]['tstop'] = 22
+        CASES['osc']['tstop'] = 16
+        CASES['osc']['quiet'] = (10, 16)
     if a.tedge:
         TEDGE = a.tedge
     if a.list:
@@ -879,6 +1300,11 @@ def main():
             case = shift_fault_phase(CASES[name], name, a.event_shift_ns, a.timeline)
         except ValueError as exc:
             ap.error(str(exc))
+        if a.fault_mult is not None:
+            try:
+                case = scale_fault(case, a.fault_mult)
+            except ValueError as exc:
+                ap.error(str(exc))
         if a.event_shift_ns and a.tstop is not None:
             ap.error('fault phase shift preserves the baseline endpoint')
         if a.accuracy == 'tight':
@@ -887,7 +1313,7 @@ def main():
             case['tmax'] = a.maxstep_ns * 1e-9
         front = a.front or case.get('front', 'tl')
         osc = a.osc or case.get('osc', 'ideal')
-        tag = '%s_%s_%s_%s_%gC' % (name, a.netlist, front, a.corner, a.temp) + ('_osctl' if osc == 'tl' and name != 'osc' else '') + ('_inpads' if a.inpads == 'model' else '') + ('_outpads' if a.outpads == 'model' and front == 'tl' else '') + ('_%s' % a.method if a.method else '')
+        tag = '%s_%s%s_%s_%s_%gC' % (name, a.netlist, '' if a.blockset == 'legacy' else '_' + a.blockset, front, a.corner, a.temp) + supply_tag + (('_fm' + vtag(a.fault_mult)) if a.fault_mult is not None else '') + ('_ovr-' + '-'.join(k + v for k, v in sorted(VIEW_OVERRIDE.items())) if VIEW_OVERRIDE else '') + ('_t2ftl' if a.t2f == 'tl' else '') + ('_osctl' if osc == 'tl' and name != 'osc' else '') + ('_inpads' if a.inpads == 'model' else '') + ('_nodcn' if a.inpads == 'nodcn' else '') + ('_padsnodcn' if a.pads == 'nodcn' else '') + ('_outpads' if a.outpads == 'model' and front == 'tl' else '') + ('_%s' % a.method if a.method else '')
         tag += '_clockfix'
         if a.event_shift_ns:
             tag += '_phase%gns' % a.event_shift_ns
@@ -902,6 +1328,12 @@ def main():
             tag += '_klu'
         if a.tstop:
             tag += '_t%g' % a.tstop
+        if a.extra_options:
+            tag += '_opt' + re.sub(r'[^A-Za-z0-9]+', '', a.extra_options.replace('-', 'm'))
+        if a.osc_rx != 'bridge':
+            tag += '_rx' + a.osc_rx
+        if a.osc_supply_r or a.osc_decap:
+            tag += '_oscsup%gR%gF' % (a.osc_supply_r or 0, a.osc_decap or 0)
         tag += '_' + a.analysis + '_' + run_id
         for directory, ext in ((BUILD, '.cir'), (os.path.join(HERE, 'logs'), '.log'), (os.path.join(HERE, 'logs'), '.json'), (os.path.join(HERE, 'decks'), '.cir')):
             if os.path.exists(os.path.join(directory, tag + ext)):
@@ -909,9 +1341,24 @@ def main():
         outpads = a.outpads or ('beh' if front == 'tl' and not case.get('powerup') else 'model')
         inpads = a.inpads if a.inpads != 'ideal' or not case.get('inpads') else case['inpads']
         method = a.method or ('trap' if front == 'tl' and not case.get('powerup') else 'gear')
-        deck = build_deck(case, name, a.netlist, front, a.temp, a.corner, tag, a.tstop, osc, inpads, outpads, method)
+        deck = build_deck(case, name, a.netlist, front, a.temp, a.corner, tag, a.tstop, osc, inpads, outpads, method,
+                          a.osc_rx, a.osc_supply_r, a.osc_decap, blockset=a.blockset, t2f=a.t2f)
+        rel, bs_warnings, _ = resolve_netlists(a.blockset, a.netlist)
+        if inpads == 'nodcn':
+            bs_warnings = list(bs_warnings) + [NODCN_WARNING]
+        if a.pads == 'nodcn':
+            bs_warnings = list(bs_warnings) + [PADS_NODCN_WARNING]
+            deck = re.sub(r'^(XP\w* .*) (sg13g2_IOPad\w+)$', r'\1 g1nd_\2', deck, flags=re.M)
+        for w in bs_warnings:
+            print(w)
         if a.analysis != 'functional':
             deck = diagnostic_deck(deck, a.analysis, a.tstop, tag)
+        if a.extra_options:
+            deck = re.sub(r'^(\.option method=.*)$', lambda m: m.group(1) + '\n.option ' + a.extra_options, deck, count=1, flags=re.M)
+        if a.save_extra:
+            ex = ' '.join(a.save_extra)
+            deck = re.sub(r'^(\.save .*(?:\n\+ .*)*)', lambda m: m.group(1) + '\n+ ' + ex, deck, count=1, flags=re.M)
+            deck = re.sub(r'^(tran .*)$', lambda m: m.group(1) + '\nwrdata %s %s' % (os.path.join(BUILD, 'diag_%s.txt' % tag), ex), deck, count=1, flags=re.M)
         if a.checkpoint_us:
             try:deck = checkpoint_deck(deck,a.checkpoint_us,a.tstop or case['tstop'],tag)
             except ValueError as exc:ap.error(str(exc))
@@ -933,7 +1380,13 @@ def main():
         with open(log_path, 'w') as log:
             log.write('# G1_TOP run %s  %s UTC\n# %s\n' % (tag, time.strftime('%Y-%m-%dT%H:%M:%SZ', time.gmtime()), case['desc']))
             log.write('# deck %s\n' % os.path.relpath(deck_path, ROOT))
-            for k, v in NETLISTS[a.netlist].items():
+            log.write('# supplies VDD %g V, VDDA = IOVDD %g V\n' % (VDD_V, VDDA_V))
+            if case.get('fault_mult'):
+                log.write('# fault-mult %g (case fault level %g x INOM)\n' % (case['fault_mult'][1], case['fault_mult'][0]))
+            log.write('# blockset %s%s\n' % (a.blockset, (' view-override ' + a.view_override) if VIEW_OVERRIDE else ''))
+            for w in bs_warnings:
+                log.write('# %s\n' % w)
+            for k, v in list(rel.items()) + (list(T2F_NETLISTS.items()) if a.t2f == 'tl' else []):
                 p = os.path.join(BLOCKS, v)
                 if front == 'tl' or k == 'gate':
                     log.write('# netlist sha256 %s blocks/%s\n' % (sha256(p), v))
@@ -944,14 +1397,22 @@ def main():
             log.write('# %s\n' % next((l.strip('* ') for l in v if 'ngspice-' in l), 'ngspice version line not found'))
             log.write('# %s\n' % subprocess.run(['iverilog', '-V'], capture_output=True, text=True).stdout.splitlines()[0])
             iv_version = subprocess.run(['iverilog', '-V'], capture_output=True, text=True).stdout.splitlines()[0]
-            compile_rtl(log)
+            vvp_run = compile_rtl(log, a.t2f, tag)
+            if vvp_run not in deck or verify_vvp(vvp_run):
+                log.write('# run status failed (rtl not loadable before ngspice)\n')
+                raise SystemExit('compiled RTL %s missing from deck sim_args or unloadable; ngspice not started' % vvp_run)
             log.flush()
-            inputs = set(RTL_FILES)
-            for source in NETLISTS[a.netlist].values():
-                directory = os.path.dirname(os.path.join(BLOCKS, source))
-                inputs.update(os.path.join(directory, f) for f in os.listdir(directory) if f.endswith('.spice'))
+            inputs = set(rtl_files(a.t2f))
+            if a.t2f == 'tl':
+                inputs.update(os.path.join(BLOCKS, v) for v in T2F_NETLISTS.values())
+            if a.blockset == 'legacy':
+                for source in rel.values():
+                    directory = os.path.dirname(os.path.join(BLOCKS, source))
+                    inputs.update(os.path.join(directory, f) for f in os.listdir(directory) if f.endswith('.spice'))
+            else:
+                inputs.update(os.path.join(BLOCKS, source) for source in rel.values())
             meta = dict(tag=tag, analysis=a.analysis, options=vars(a),
-                        effective=dict(front=front, osc=osc, inpads=inpads, outpads=outpads, method=method,
+                        effective=dict(fault_mult=a.fault_mult, vdd=VDD_V, vdda=VDDA_V, blockset=a.blockset, view_override=VIEW_OVERRIDE, netlists=rel, blockset_warnings=bs_warnings, front=front, osc=osc, inpads=inpads, outpads=outpads, method=method,
                                        threads=a.threads, solver=a.solver),
                         git_revision=subprocess.check_output(['git', '-c', 'safe.directory=' + ROOT,
                                                               'rev-parse', 'HEAD'], cwd=ROOT, text=True).strip(),
@@ -976,6 +1437,14 @@ def main():
         outcome['functional_acceptance'] = 'not assessed'
         outcome['diagnostic_acceptance'] = 'not applicable'
         failure = solver_failure(out)
+        cosim_bad = re.search(r'mismatched XSPICE/co-simulator[^\n]*', out)
+        if cosim_bad:
+            # the digital macro did not load: codes 0 / no trip would be meaningless, never count as completed
+            with open(log_path, 'a') as lg:
+                lg.write('# run status failed (cosim)\n')
+            outcome['status'] = 'failed'
+            outcome['cosim_failure'] = cosim_bad.group(0)
+            err.insert(0, 'COSIM FAILURE: ' + cosim_bad.group(0))
         if failure:
             outcome['solver_failure_diagnostic'] = failure.group(0)
         if a.analysis != 'functional':

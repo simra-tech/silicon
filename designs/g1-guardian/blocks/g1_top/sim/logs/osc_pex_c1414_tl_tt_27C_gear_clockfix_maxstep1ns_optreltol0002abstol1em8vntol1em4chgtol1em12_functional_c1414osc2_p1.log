@@ -1,0 +1,2233 @@
+# G1_TOP run osc_pex_c1414_tl_tt_27C_gear_clockfix_maxstep1ns_optreltol0002abstol1em8vntol1em4chgtol1em12_functional_c1414osc2_p1  2026-09-24T15:47:03Z UTC
+# (osc) transistor-level G1_OSC clocking the digital macro on the chip VDD, with G1_BGR and G1_SENSE (no G1_TRIP, no G1_GATE, no pad models); cmp_soft tied high so SOFT_PEAK counts once INRUSH = 0 is written
+# deck build/g1_top/osc_pex_c1414_tl_tt_27C_gear_clockfix_maxstep1ns_optreltol0002abstol1em8vntol1em4chgtol1em12_functional_c1414osc2_p1.cir
+# supplies VDD 1.2 V, VDDA = IOVDD 3.3 V
+# blockset c1414
+# NOTE bgr: BGR586 kpex 2.5D CC extraction of bank.gds (chip BGR layout), 978 capacitors
+# NOTE sense: R100 own-native partial-field C (unbound VSUBS excluded; physical field acceptance not established)
+# netlist sha256 01227a3d8d8210d10d2d1ee6933842351140b8825fe29282f0327936a3064ad5 blocks/g1_bgr/sim/postlayout/g1_bgr586_pex.spice
+# netlist sha256 ffb14762659eaf02b6a62e9edea3caa0e143cbc7881378b329d6ab9945a6554b blocks/g1_sense/sim/postlayout/g1_sense_r100_partialc.spice
+# netlist sha256 ba86b7b2a530abae365d539297909e033b24a54597f9cc75d8dff273c30d401c blocks/g1_trip/sim/postlayout/g1_trip_nf4_pex.spice
+# netlist sha256 8efd7a09faf173da8604a219f73fd3ea5ec2508618d8361a050770c099d8b1c5 blocks/g1_osc/sim/qualification/fulltree_r095_load_20260924/common/osc.spice
+# netlist sha256 e91617f5fcf6f5a0dc721a2ba53b507a05cc226d6dbf0bebaa858a1e7d876765 blocks/g1_gate/sim/postlayout/g1_gate_pex.spice
+# IO models sha256 1d53ab7df431b717ef5aff43e1117c0224681d5cc84886da37a319280ee958d6 /foss/pdks/ihp-sg13g2/libs.ref/sg13g2_io/spice/sg13g2_io.spi
+# PDK commit 84374023ee8b4b126bebbba67fcbada0a9c0ff0b
+# ngspice-46 : Circuit level simulation program
+# Icarus Verilog version 14.0 (devel) (s20260301-328-geda9fdcd-dirty)
+# iverilog -g2005 -Wall -Wno-timescale -o /work/build/g1_top/g1_dig_cosim.vvp /work/designs/g1-guardian/blocks/g1_top/sim/rtl/g1_dig_cosim.v /work/designs/g1-guardian/blocks/g1_ctrl/rtl/g1_sync2.v /work/designs/g1-guardian/blocks/g1_ctrl/rtl/g1_serial.v /work/designs/g1-guardian/blocks/g1_ctrl/rtl/g1_trip_timer.v /work/designs/g1-guardian/blocks/g1_ctrl/rtl/g1_regfile.v /work/designs/g1-guardian/blocks/g1_ctrl/rtl/g1_digital_top.v /work/designs/g1-guardian/blocks/g1_ctrl/rtl/g1_digital.v /work/designs/g1-guardian/blocks/g1_seu/rtl/g1_tmr_reg.v /work/designs/g1-guardian/blocks/g1_seu/rtl/g1_seu_chain.v /work/designs/g1-guardian/blocks/g1_seu/rtl/g1_seu.v
+# rtl sha256 63dfb950393fe60c3da1d057f6a5dd86142c8bb670ba0a63b87248675037ccd5 designs/g1-guardian/blocks/g1_top/sim/rtl/g1_dig_cosim.v
+# rtl sha256 c14906d7d9256a771cd8fdc0ab14ba291131e151d24bf06b951b6bc693ad8ef2 designs/g1-guardian/blocks/g1_ctrl/rtl/g1_sync2.v
+# rtl sha256 df4341e1878caef2f7bf27abb273a7a5af3e41b96658ffa02eedb2af97c48a5d designs/g1-guardian/blocks/g1_ctrl/rtl/g1_serial.v
+# rtl sha256 094527d2ccbdfad792d4c2e4d1a602c50051ed1e1c8d1789e4946a44e37af850 designs/g1-guardian/blocks/g1_ctrl/rtl/g1_trip_timer.v
+# rtl sha256 16e48edd1b7ac39d4c3ccd7b76b0ff75ba9d71095e188c7c808d7fb587c10d50 designs/g1-guardian/blocks/g1_ctrl/rtl/g1_regfile.v
+# rtl sha256 42430b79ddf649d832993aca1cf3c8a548afc97383c59a793cf70b972c8256ac designs/g1-guardian/blocks/g1_ctrl/rtl/g1_digital_top.v
+# rtl sha256 36757122c43271dfd439bf1623be6d5413adf3bbb97cbad40d5cccf5892f5c3d designs/g1-guardian/blocks/g1_ctrl/rtl/g1_digital.v
+# rtl sha256 f53f82d97b91d4e815e662e72b40968949c7d74ce135f777dba7789201167ac5 designs/g1-guardian/blocks/g1_seu/rtl/g1_tmr_reg.v
+# rtl sha256 6e10bbc02a8ff29116067f2067f648b959f17b542cb2360c50e7802010048573 designs/g1-guardian/blocks/g1_seu/rtl/g1_seu_chain.v
+# rtl sha256 7c1831c99b5875a2dd48387db70fd5b1a0888a520fe8676bc4e071820b7fa736 designs/g1-guardian/blocks/g1_seu/rtl/g1_seu.v
+
+Note: No compatibility mode selected!
+
+
+Circuit: * g1_top breaker path, chip level: (osc) transistor-level g1_osc clocking the digital macro on the chip vdd, with g1_bgr and g1_sense (no g1_trip, no g1_gate, no pad models); cmp_soft tied high so soft_peak counts once inrush = 0 is written
+
+Reducing trtol to 1 for xspice 'A' devices
+Doing analysis at TEMP = 27.000000 and TNOM = 27.000000
+
+Using SPARSE 1.3 as Direct Linear Solver
+
+
+The temperature limiting function received NaN.
+Please check your power dissipation and improve your heat sink Rth!
+    This message will be shown only once.
+
+Note: Starting dynamic gmin stepping
+OSDI(debug) n.xbgr.xr2.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr2.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr1.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr1.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xref.xrz.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xref.xrz.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xbuf.xrz.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xbuf.xrz.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xota.xrz.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xota.xrz.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xrd250.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xrd250.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xrd249.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xrd249.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xrd248.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xrd248.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xrd247.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xrd247.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xrd246.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xrd246.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xrd245.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xrd245.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xrd244.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xrd244.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xrd243.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xrd243.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xrd242.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xrd242.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xrd241.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xrd241.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xrd240.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xrd240.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xrd239.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xrd239.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xrd238.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xrd238.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xrd237.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xrd237.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xrd236.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xrd236.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xrd235.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xrd235.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xrd234.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xrd234.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xrd233.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xrd233.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xrd232.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xrd232.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xrd231.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xrd231.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xrd230.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xrd230.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xrd229.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xrd229.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xrd228.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xrd228.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xrd227.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xrd227.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xrd226.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xrd226.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xrd225.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xrd225.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xrd224.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xrd224.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xrd223.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xrd223.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xrd222.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xrd222.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xrd221.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xrd221.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xrd220.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xrd220.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xrd219.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xrd219.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xrd218.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xrd218.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xrd217.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xrd217.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xrd216.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xrd216.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xrd215.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xrd215.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xrd214.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xrd214.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xrd213.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xrd213.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xrd212.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xrd212.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xrd211.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xrd211.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xrd210.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xrd210.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xrd29.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xrd29.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xrd28.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xrd28.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xrd27.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xrd27.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xrd26.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xrd26.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xrd25.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xrd25.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xrd24.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xrd24.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xrd23.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xrd23.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xrd22.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xrd22.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xrd21.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xrd21.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xrd20.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xrd20.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xrd11.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xrd11.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xrd10.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xrd10.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xr2p19.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xr2p19.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xr2p18.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xr2p18.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xr2p17.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xr2p17.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xr2p16.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xr2p16.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xr2p15.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xr2p15.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xr2p14.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xr2p14.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xr2p13.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xr2p13.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xr2p12.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xr2p12.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xr2p11.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xr2p11.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xr2p10.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xr2p10.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xr2p9.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xr2p9.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xr2p8.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xr2p8.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xr2p7.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xr2p7.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xr2p6.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xr2p6.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xr2p5.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xr2p5.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xr2p4.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xr2p4.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xr2p3.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xr2p3.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xr2p2.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xr2p2.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xr2p1.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xr2p1.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xr2p0.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xr2p0.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xr1p0.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xr1p0.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xr2n19.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xr2n19.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xr2n18.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xr2n18.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xr2n17.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xr2n17.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xr2n16.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xr2n16.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xr2n15.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xr2n15.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xr2n14.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xr2n14.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xr2n13.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xr2n13.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xr2n12.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xr2n12.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xr2n11.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xr2n11.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xr2n10.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xr2n10.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xr2n9.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xr2n9.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xr2n8.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xr2n8.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xr2n7.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xr2n7.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xr2n6.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xr2n6.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xr2n5.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xr2n5.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xr2n4.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xr2n4.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xr2n3.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xr2n3.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xr2n2.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xr2n2.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xr2n1.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xr2n1.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xr2n0.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xr2n0.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xr1n0.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xsense.xr1n0.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr398.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr397.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr394.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr389.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr389.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr385.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr385.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr384.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr384.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr383.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr383.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr382.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr382.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr380.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr380.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr379.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr379.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr378.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr378.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr377.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr377.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr375.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr375.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr374.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr373.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr372.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr372.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr371.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr371.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr367.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr367.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr365.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr364.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr364.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr363.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr359.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr358.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr357.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr356.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr355.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr354.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr353.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr352.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr345.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr343.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr341.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr339.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr339.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr338.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr336.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr336.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr335.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr334.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr333.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr331.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr329.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr325.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr325.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr323.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr323.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr321.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr321.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr319.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr319.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr318.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr318.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr315.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr313.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr308.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr307.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr306.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr304.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr303.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr302.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr302.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr298.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr298.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr297.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr295.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr293.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr293.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr290.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr290.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr288.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr288.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr287.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr287.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr283.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr283.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr273.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr259.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr259.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr252.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr250.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr250.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr249.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr249.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr237.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr237.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr236.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr236.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr235.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr235.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr234.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr234.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr233.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr233.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr228.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr220.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr220.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr194.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr194.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr188.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr187.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr181.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr180.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr180.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr179.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr179.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr178.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr178.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr176.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr174.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr173.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr172.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr171.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr170.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr170.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr169.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr168.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr167.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr166.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr165.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr165.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr164.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr164.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr163.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr163.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr162.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr162.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr161.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr161.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr160.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr160.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr153.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr152.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr151.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr150.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr149.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr147.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr145.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr125.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr122.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr121.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr120.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr119.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr115.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr112.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr109.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr106.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr103.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr101.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr98.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr76.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr72.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr68.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr65.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr64.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr63.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr63.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr62.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr62.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr61.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr61.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr60.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr60.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr59.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr59.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr58.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr58.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr57.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr57.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr56.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr56.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr55.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr55.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr54.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr54.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr53.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr53.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr52.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr52.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr51.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr51.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr50.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr50.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr49.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr49.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr48.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr48.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr47.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr47.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr46.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr46.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr45.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr45.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr44.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr44.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr43.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr43.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr42.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr42.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr41.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr41.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr40.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr40.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr39.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr39.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr38.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr38.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr37.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr37.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr36.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr36.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr35.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr35.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr34.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr34.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr33.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr33.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr32.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr32.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr31.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr31.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr30.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr30.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr29.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr29.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr28.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr28.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr27.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr27.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr26.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr26.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr25.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr25.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr24.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr24.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr23.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr23.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr22.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr22.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr21.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr21.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr20.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr20.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr19.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr19.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr18.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr18.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr17.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr17.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr16.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr16.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr15.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr15.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr14.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr14.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr13.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr13.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr12.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr12.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr11.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr11.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr10.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr10.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr9.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr9.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr8.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr8.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr7.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr7.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr6.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr6.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr5.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr5.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr4.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr4.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr3.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr3.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+Note: Dynamic gmin stepping completed
+
+Initial Transient Solution
+--------------------------
+
+Node                                   Voltage
+----                                   -------
+sub!                                         0
+rail33                                     3.3
+vdda_s                                     3.3
+iovdd_s                                    3.3
+vdda                                   3.29932
+iovdd                                      3.3
+vdd_s                                      1.2
+vdd                                    1.19994
+iprof                                        1
+ldi                                2.16901e-07
+gfet                               1.24579e-10
+shp                                2.16901e-07
+shn                                9.64554e-08
+sense_p                            5.03267e-06
+sense_n                            4.92416e-06
+gate                               1.24579e-10
+fault_n                                    3.3
+vref                                   1.04547
+en_core                                      0
+en_pad                                       0
+sclk_core                                    0
+sclk_pad                                     0
+sdi_core                                     0
+sdi_pad                                      0
+gate_core                                    0
+tripped                                      0
+osc_en_g                                     0
+osc_en                                       0
+r4                                           0
+vdda_bgr                               3.29932
+xbgr.n_i43                            0.988392
+xbgr.xr1.dt                                  0
+xbgr.n_i42                            0.760081
+xbgr.n_17                             0.703003
+xbgr.xr2.dt                                  0
+xbgr.xr3.dt                                  0
+xbgr.n_i39                            0.817159
+xbgr.xr4.dt                                  0
+xbgr.n_i29                            0.874236
+xbgr.xr5.dt                                  0
+xbgr.xr6.dt                                  0
+xbgr.xr7.dt                                  0
+xbgr.xr8.dt                                  0
+xbgr.n_i36                            0.931314
+xbgr.xr9.dt                                  0
+xbgr.xr10.dt                                 0
+xbgr.xr11.dt                                 0
+xbgr.xr12.dt                                 0
+xbgr.xr13.dt                                 0
+xbgr.xr14.dt                                 0
+xbgr.xr15.dt                                 0
+xbgr.xr16.dt                                 0
+xbgr.xr17.dt                                 0
+xbgr.xr18.dt                                 0
+xbgr.xr19.dt                                 0
+xbgr.xr20.dt                                 0
+xbgr.xr21.dt                                 0
+xbgr.xr22.dt                                 0
+xbgr.xr23.dt                                 0
+xbgr.xr24.dt                                 0
+xbgr.n_i31                             0.21702
+xbgr.xr25.dt                                 0
+xbgr.n_i17                             0.43404
+xbgr.n_i33                             0.65106
+xbgr.xr26.dt                                 0
+xbgr.n_i16                            0.868081
+xbgr.xr27.dt                                 0
+xbgr.n_i19                             2.60428
+xbgr.n_i32                             2.82131
+xbgr.xr28.dt                                 0
+xbgr.n_i15                             3.03834
+xbgr.xr29.dt                                 0
+xbgr.n_i28                              1.0851
+xbgr.xr30.dt                                 0
+xbgr.n_10                              3.25537
+xbgr.xr31.dt                                 0
+xbgr.xr32.dt                                 0
+xbgr.n_i25                             2.38725
+xbgr.xr33.dt                                 0
+xbgr.n_i22                             1.30212
+xbgr.n_i27                             1.51915
+xbgr.xr34.dt                                 0
+xbgr.xr35.dt                                 0
+xbgr.n_i20                             2.17022
+xbgr.xr36.dt                                 0
+xbgr.n_i21                             1.73617
+xbgr.n_i26                              1.9532
+xbgr.xr37.dt                                 0
+xbgr.xr38.dt                                 0
+xbgr.xr39.dt                                 0
+dvbe                                 0.0550729
+xbgr.xr40.dt                                 0
+xbgr.xr41.dt                                 0
+xbgr.xr42.dt                                 0
+xbgr.xr43.dt                                 0
+xbgr.xr44.dt                                 0
+xbgr.xr45.dt                                 0
+xbgr.xr46.dt                                 0
+xbgr.xr47.dt                                 0
+xbgr.xr48.dt                                 0
+xbgr.xr49.dt                                 0
+xbgr.xr50.dt                                 0
+xbgr.xr51.dt                                 0
+xbgr.xr52.dt                                 0
+xbgr.xr53.dt                                 0
+xbgr.xr54.dt                                 0
+xbgr.xr55.dt                                 0
+xbgr.xr56.dt                                 0
+xbgr.xr57.dt                                 0
+xbgr.xr58.dt                                 0
+xbgr.xr59.dt                                 0
+xbgr.xr60.dt                                 0
+xbgr.xr61.dt                                 0
+xbgr.xr62.dt                                 0
+xbgr.xr63.dt                                 0
+xbgr.n_i13                             1.55983
+xbgr.n_16                               1.6111
+xbgr.xr64.dt                                 0
+xbgr.xr65.dt                                 0
+xbgr.n_i24                             1.50855
+xbgr.xr66.dt                                 0
+xbgr.n_i14                             1.45728
+xbgr.n_18                              1.40601
+xbgr.xr67.dt                                 0
+xbgr.xr68.dt                                 0
+xbgr.xr69.dt                                 0
+xbgr.xr70.dt                                 0
+xbgr.xr71.dt                                 0
+xbgr.xr72.dt                                 0
+xbgr.xr73.dt                                 0
+xbgr.xr74.dt                                 0
+xbgr.xr75.dt                                 0
+xbgr.xr76.dt                                 0
+xbgr.xr77.dt                                 0
+xbgr.xr78.dt                                 0
+xbgr.xr79.dt                                 0
+xbgr.xr80.dt                                 0
+xbgr.xr81.dt                                 0
+xbgr.xr82.dt                                 0
+xbgr.xr83.dt                                 0
+xbgr.xr84.dt                                 0
+xbgr.xr85.dt                                 0
+xbgr.xr86.dt                                 0
+xbgr.xr87.dt                                 0
+xbgr.xr88.dt                                 0
+xbgr.xr89.dt                                 0
+xbgr.xr90.dt                                 0
+xbgr.xr91.dt                                 0
+xbgr.xr92.dt                                 0
+xbgr.xr93.dt                                 0
+xbgr.xr94.dt                                 0
+xbgr.xr95.dt                                 0
+xbgr.xr96.dt                                 0
+xbgr.xr97.dt                                 0
+xbgr.xr98.dt                                 0
+xbgr.xr99.dt                                 0
+xbgr.xr100.dt                                0
+xbgr.xr101.dt                                0
+xbgr.xr102.dt                                0
+xbgr.xr103.dt                                0
+xbgr.xr104.dt                                0
+xbgr.xr105.dt                                0
+xbgr.xr106.dt                                0
+xbgr.xr107.dt                                0
+xbgr.xr108.dt                                0
+xbgr.xr109.dt                                0
+xbgr.xr110.dt                                0
+xbgr.xr111.dt                                0
+xbgr.xr112.dt                                0
+xbgr.xr113.dt                                0
+xbgr.xr114.dt                                0
+xbgr.xr115.dt                                0
+xbgr.xr116.dt                                0
+xbgr.xr117.dt                                0
+xbgr.xr118.dt                                0
+xbgr.xr119.dt                                0
+xbgr.xr120.dt                                0
+xbgr.xr121.dt                                0
+xbgr.xr122.dt                                0
+xbgr.xr123.dt                                0
+xbgr.xr124.dt                                0
+xbgr.xr125.dt                                0
+xbgr.xr126.dt                                0
+xbgr.xr127.dt                                0
+xbgr.xr128.dt                                0
+xbgr.xr129.dt                                0
+xbgr.xr130.dt                                0
+xbgr.xr131.dt                                0
+xbgr.xr132.dt                                0
+xbgr.xr133.dt                                0
+xbgr.xr134.dt                                0
+xbgr.xr135.dt                                0
+xbgr.xr136.dt                                0
+xbgr.xr137.dt                                0
+xbgr.xr138.dt                                0
+xbgr.xr139.dt                                0
+xbgr.xr140.dt                                0
+xbgr.xr141.dt                                0
+xbgr.xr142.dt                                0
+xbgr.xr143.dt                                0
+xbgr.xr144.dt                                0
+xbgr.xr145.dt                                0
+xbgr.xr146.dt                                0
+xbgr.xr147.dt                                0
+xbgr.xr148.dt                                0
+xbgr.xr149.dt                                0
+xbgr.xr150.dt                                0
+xbgr.xr151.dt                                0
+xbgr.xr152.dt                                0
+xbgr.xr153.dt                                0
+xbgr.xr154.dt                                0
+xbgr.xr155.dt                                0
+xbgr.xr156.dt                                0
+xbgr.xr157.dt                                0
+xbgr.xr158.dt                                0
+xbgr.xr159.dt                                0
+xbgr.n_i40                             2.24894
+pbias                                  2.30233
+xbgr.xr160.dt                                0
+xbgr.n_i34                             2.19554
+xbgr.xr161.dt                                0
+xbgr.xr162.dt                                0
+xbgr.xr163.dt                                0
+xbgr.xr164.dt                                0
+xbgr.xr165.dt                                0
+xbgr.n_i41                             2.14214
+xbgr.xr166.dt                                0
+xbgr.xr167.dt                                0
+xbgr.xr168.dt                                0
+xbgr.xr169.dt                                0
+xbgr.xr170.dt                                0
+xbgr.xr171.dt                                0
+xbgr.xr172.dt                                0
+xbgr.xr173.dt                                0
+xbgr.xr174.dt                                0
+xbgr.n_i35                             2.08875
+xbgr.xr175.dt                                0
+xbgr.xr176.dt                                0
+xbgr.xr177.dt                                0
+xbgr.xr178.dt                                0
+xbgr.xr179.dt                                0
+xbgr.xr180.dt                                0
+xbgr.xr181.dt                                0
+xbgr.xr182.dt                                0
+xbgr.xr183.dt                                0
+xbgr.xr184.dt                                0
+xbgr.n_i18                             1.92856
+xbgr.n_i37                             1.98195
+xbgr.xr185.dt                                0
+xbgr.xr186.dt                                0
+xbgr.xr187.dt                                0
+xbgr.xr188.dt                                0
+xbgr.n_i30                             2.03535
+xbgr.xr189.dt                                0
+xbgr.xr190.dt                                0
+xbgr.xr191.dt                                0
+xbgr.xr192.dt                                0
+xbgr.xr193.dt                                0
+xbgr.xr194.dt                                0
+xbgr.xr195.dt                                0
+xbgr.xr196.dt                                0
+xbgr.xr197.dt                                0
+xbgr.xr198.dt                                0
+xbgr.xr199.dt                                0
+xbgr.xr200.dt                                0
+xbgr.xr201.dt                                0
+xbgr.xr202.dt                                0
+xbgr.xr203.dt                                0
+xbgr.xr204.dt                                0
+xbgr.xr205.dt                                0
+xbgr.xr206.dt                                0
+xbgr.xr207.dt                                0
+xbgr.xr208.dt                                0
+xbgr.n_i23                             1.82176
+xbgr.n_i38                             1.87516
+xbgr.xr209.dt                                0
+xbgr.xr210.dt                                0
+xbgr.xr211.dt                                0
+xbgr.xr212.dt                                0
+xbgr.xr213.dt                                0
+xbgr.xr214.dt                                0
+xbgr.xr215.dt                                0
+xbgr.xr216.dt                                0
+xbgr.xr217.dt                                0
+xbgr.xr218.dt                                0
+xbgr.xr219.dt                                0
+xbgr.xr220.dt                                0
+xbgr.xr221.dt                                0
+xbgr.xr222.dt                                0
+xbgr.xr223.dt                                0
+xbgr.xr224.dt                                0
+xbgr.xr225.dt                                0
+xbgr.xr226.dt                                0
+xbgr.xr227.dt                                0
+xbgr.xr228.dt                                0
+xbgr.xr229.dt                                0
+xbgr.xr230.dt                                0
+xbgr.xr231.dt                                0
+xbgr.xr232.dt                                0
+xbgr.xr233.dt                                0
+xbgr.xr234.dt                                0
+xbgr.xr235.dt                                0
+xbgr.xr236.dt                                0
+xbgr.xr237.dt                                0
+xbgr.xr238.dt                                0
+xbgr.xr239.dt                                0
+xbgr.xr240.dt                                0
+xbgr.xr241.dt                                0
+xbgr.xr242.dt                                0
+xbgr.xr243.dt                                0
+xbgr.xr244.dt                                0
+xbgr.xr245.dt                                0
+xbgr.xr246.dt                                0
+xbgr.xr247.dt                                0
+xbgr.xr248.dt                                0
+xbgr.xr249.dt                                0
+xbgr.xr250.dt                                0
+xbgr.xr251.dt                                0
+xbgr.xr252.dt                                0
+xbgr.xr253.dt                                0
+xbgr.xr254.dt                                0
+xbgr.xr255.dt                                0
+xbgr.xr256.dt                                0
+xbgr.xr257.dt                                0
+xbgr.xr258.dt                                0
+xbgr.xr259.dt                                0
+xbgr.xr260.dt                                0
+xbgr.xr261.dt                                0
+xbgr.xr262.dt                                0
+xbgr.xr263.dt                                0
+xbgr.xr264.dt                                0
+xbgr.xr265.dt                                0
+xbgr.xr266.dt                                0
+xbgr.xr267.dt                                0
+xbgr.xr268.dt                                0
+xbgr.xr269.dt                                0
+xbgr.xr270.dt                                0
+xbgr.xr271.dt                                0
+xbgr.xr272.dt                                0
+xbgr.xr273.dt                                0
+xbgr.xr274.dt                                0
+xbgr.xr275.dt                                0
+xbgr.xr276.dt                                0
+xbgr.xr277.dt                                0
+xbgr.xr278.dt                                0
+xbgr.xr279.dt                                0
+xbgr.xr280.dt                                0
+xbgr.xr281.dt                                0
+xbgr.xr282.dt                                0
+xbgr.xr283.dt                                0
+xbgr.xr284.dt                                0
+xbgr.xr285.dt                                0
+xbgr.xr286.dt                                0
+xbgr.xr287.dt                                0
+xbgr.xr288.dt                                0
+xbgr.xr289.dt                                0
+xbgr.xr290.dt                                0
+xbgr.xr291.dt                                0
+xbgr.xr292.dt                                0
+xbgr.xr293.dt                                0
+xbgr.xr294.dt                                0
+xbgr.xr295.dt                                0
+xbgr.xr296.dt                                0
+xbgr.xr297.dt                                0
+xbgr.xr298.dt                                0
+xbgr.xr299.dt                                0
+xbgr.xr300.dt                                0
+xbgr.xr301.dt                                0
+xbgr.xr302.dt                                0
+pcasc                                  1.76837
+xbgr.xr303.dt                                0
+xbgr.xr304.dt                                0
+xbgr.xr305.dt                                0
+xbgr.xr306.dt                                0
+xbgr.xr307.dt                                0
+xbgr.xr308.dt                                0
+xbgr.xr309.dt                                0
+xbgr.xr310.dt                                0
+xbgr.xr311.dt                                0
+xbgr.xr312.dt                                0
+xbgr.xr313.dt                                0
+xbgr.xr314.dt                                0
+xbgr.xr315.dt                                0
+xbgr.xr316.dt                                0
+xbgr.xr317.dt                                0
+xbgr.xr318.dt                                0
+xbgr.xr319.dt                                0
+xbgr.xr320.dt                                0
+xbgr.xr321.dt                                0
+xbgr.xr322.dt                                0
+xbgr.xr323.dt                                0
+xbgr.xr324.dt                                0
+xbgr.xr325.dt                                0
+xbgr.xr326.dt                                0
+xbgr.xr327.dt                                0
+xbgr.xr328.dt                                0
+xbgr.xr329.dt                                0
+xbgr.xr330.dt                                0
+xbgr.xr331.dt                                0
+xbgr.xr332.dt                                0
+xbgr.xr333.dt                                0
+xbgr.xr334.dt                                0
+xbgr.xr335.dt                                0
+xbgr.xr336.dt                                0
+xbgr.xr337.dt                                0
+xbgr.xr338.dt                                0
+xbgr.xr339.dt                                0
+xbgr.xr340.dt                                0
+xbgr.xr341.dt                                0
+xbgr.xr342.dt                                0
+xbgr.xr343.dt                                0
+xbgr.xr344.dt                                0
+xbgr.xr345.dt                                0
+xbgr.xr346.dt                                0
+xbgr.xr347.dt                                0
+xbgr.xr348.dt                                0
+xbgr.xr349.dt                                0
+xbgr.xr350.dt                                0
+xbgr.xr351.dt                                0
+xbgr.xr352.dt                                0
+xbgr.xr353.dt                                0
+xbgr.xr354.dt                                0
+xbgr.xr355.dt                                0
+xbgr.xr356.dt                                0
+xbgr.xr357.dt                                0
+xbgr.xr358.dt                                0
+xbgr.xr359.dt                                0
+xbgr.xr360.dt                                0
+xbgr.xr361.dt                                0
+xbgr.xr362.dt                                0
+xbgr.xr363.dt                                0
+xbgr.xr364.dt                                0
+xbgr.xr365.dt                                0
+xbgr.xr366.dt                                0
+xbgr.xr367.dt                                0
+xbgr.xr368.dt                                0
+xbgr.xr369.dt                                0
+xbgr.xr370.dt                                0
+xbgr.xr371.dt                                0
+xbgr.xr372.dt                                0
+xbgr.xr373.dt                                0
+xbgr.xr374.dt                                0
+xbgr.xr375.dt                                0
+xbgr.xr376.dt                                0
+xbgr.xr377.dt                                0
+xbgr.xr378.dt                                0
+xbgr.xr379.dt                                0
+xbgr.xr380.dt                                0
+xbgr.xr381.dt                                0
+xbgr.xr382.dt                                0
+xbgr.xr383.dt                                0
+xbgr.xr384.dt                                0
+xbgr.xr385.dt                                0
+xbgr.xr386.dt                                0
+xbgr.xr387.dt                                0
+xbgr.xr388.dt                                0
+xbgr.xr389.dt                                0
+xbgr.xr390.dt                                0
+xbgr.xr391.dt                                0
+xbgr.xr392.dt                                0
+xbgr.xr393.dt                                0
+xbgr.xr394.dt                                0
+xbgr.xr395.dt                                0
+xbgr.xr396.dt                                0
+xbgr.xr397.dt                                0
+xbgr.xr398.dt                                0
+xbgr.xr399.dt                                0
+xbgr.n_i11                             3.29932
+vbe                                   0.702963
+xbgr.n_20                           6.7961e-08
+iptat                                 0.756244
+xbgr.n_i6                              2.76591
+xbgr.n_i10                         7.87021e-09
+xbgr.n_i7                             0.721262
+xbgr.n_i4                               2.7659
+xbgr.n_i5                              2.76601
+xbgr.n_21                              0.77803
+xbgr.n_i8                              2.76628
+xbgr.n_i9                              2.76699
+xbgr.n_i12                            0.703003
+xbgr.xq736.s1                      2.81922e-10
+xbgr.xq736.t                         0.0329925
+xbgr.xq737.s1                      2.81922e-10
+xbgr.xq737.t                         0.0329925
+xbgr.xq738.s1                      2.81922e-10
+xbgr.xq738.t                         0.0329925
+xbgr.xq739.s1                      2.81922e-10
+xbgr.xq739.t                         0.0329925
+xbgr.xq740.s1                      2.81922e-10
+xbgr.xq740.t                         0.0329925
+xbgr.xq741.s1                      2.81922e-10
+xbgr.xq741.t                         0.0329925
+xbgr.xq742.s1                      2.81922e-10
+xbgr.xq742.t                         0.0329925
+xbgr.xq743.s1                      2.81922e-10
+xbgr.xq743.t                         0.0329925
+xbgr.xq744.s1                      2.81922e-10
+xbgr.xq744.t                         0.0329925
+xbgr.xq745.s1                      2.81922e-10
+xbgr.xq745.t                         0.0329925
+xbgr.xq746.s1                      2.81922e-10
+xbgr.xq746.t                         0.0329925
+xbgr.xq747.s1                      2.81922e-10
+xbgr.xq747.t                         0.0329925
+xbgr.xq748.s1                      2.81922e-10
+xbgr.xq748.t                         0.0329925
+xbgr.xq749.s1                      2.81922e-10
+xbgr.xq749.t                         0.0329925
+xbgr.xq750.s1                      2.81922e-10
+xbgr.xq750.t                         0.0329925
+xbgr.xq751.s1                      2.81922e-10
+xbgr.xq751.t                         0.0329925
+xbgr.xq752.s1                      2.81922e-10
+xbgr.xq752.t                         0.0329925
+xbgr.xq753.s1                      2.81922e-10
+xbgr.xq753.t                         0.0329925
+xbgr.xq754.s1                      2.81922e-10
+xbgr.xq754.t                         0.0329925
+xbgr.xq755.s1                      2.81922e-10
+xbgr.xq755.t                         0.0329925
+xbgr.xq756.s1                      2.81922e-10
+xbgr.xq756.t                         0.0329925
+xbgr.xq757.s1                      2.81922e-10
+xbgr.xq757.t                         0.0329925
+xbgr.xq758.s1                      2.81922e-10
+xbgr.xq758.t                         0.0329925
+xbgr.xq759.s1                      2.81922e-10
+xbgr.xq759.t                         0.0329925
+xbgr.xq760.s1                      2.81906e-10
+xbgr.xq760.t                         0.0329404
+xbgr.xq761.s1                      2.81906e-10
+xbgr.xq761.t                         0.0329404
+xbgr.xq762.s1                      2.81906e-10
+xbgr.xq762.t                         0.0329404
+xbgr.xq763.s1                      2.81906e-10
+xbgr.xq763.t                         0.0329404
+xbgr.xq764.s1                      2.81906e-10
+xbgr.xq764.t                         0.0329404
+xbgr.xq765.s1                      2.81906e-10
+xbgr.xq765.t                         0.0329404
+xbgr.xq766.s1                      2.81906e-10
+xbgr.xq766.t                         0.0329404
+xbgr.xq767.s1                      2.81906e-10
+xbgr.xq767.t                         0.0329404
+xbgr.xq768.s1                      2.81906e-10
+xbgr.xq768.t                         0.0329404
+xbgr.xq769.s1                      2.81906e-10
+xbgr.xq769.t                         0.0329404
+xbgr.xq770.s1                      2.81906e-10
+xbgr.xq770.t                         0.0329404
+xbgr.xq771.s1                      2.81906e-10
+xbgr.xq771.t                         0.0329404
+xbgr.xq772.s1                      2.81906e-10
+xbgr.xq772.t                         0.0329404
+xbgr.xq773.s1                      2.81906e-10
+xbgr.xq773.t                         0.0329404
+xbgr.xq774.s1                      2.81906e-10
+xbgr.xq774.t                         0.0329404
+xbgr.xq775.s1                      2.81906e-10
+xbgr.xq775.t                         0.0329404
+xbgr.xq776.s1                      2.81906e-10
+xbgr.xq776.t                         0.0329404
+xbgr.xq777.s1                      2.81906e-10
+xbgr.xq777.t                         0.0329404
+xbgr.xq778.s1                      2.81906e-10
+xbgr.xq778.t                         0.0329404
+xbgr.xq779.s1                      2.81906e-10
+xbgr.xq779.t                         0.0329404
+xbgr.xq780.s1                      2.81906e-10
+xbgr.xq780.t                         0.0329404
+xbgr.xq781.s1                      2.81906e-10
+xbgr.xq781.t                         0.0329404
+xbgr.xq782.s1                      2.81906e-10
+xbgr.xq782.t                         0.0329404
+xbgr.xq783.s1                      2.81906e-10
+xbgr.xq783.t                         0.0329404
+xbgr.xq784.s1                      2.81988e-10
+xbgr.xq784.t                       5.80152e-11
+xbgr.xq785.s1                      2.81988e-10
+xbgr.xq785.t                       5.80152e-11
+xbgr.xq786.s1                      2.81988e-10
+xbgr.xq786.t                       5.80152e-11
+xbgr.xq787.s1                      2.81988e-10
+xbgr.xq787.t                       5.80152e-11
+xbgr.xq788.s1                      2.81988e-10
+xbgr.xq788.t                       5.80152e-11
+xbgr.xq789.s1                      2.81988e-10
+xbgr.xq789.t                       5.80152e-11
+xbgr.xq790.s1                      2.81988e-10
+xbgr.xq790.t                       5.80152e-11
+xbgr.xq791.s1                      2.81988e-10
+xbgr.xq791.t                       5.80152e-11
+xbgr.xq792.s1                      2.81988e-10
+xbgr.xq792.t                       5.80152e-11
+xbgr.xq793.s1                      2.81988e-10
+xbgr.xq793.t                       5.80152e-11
+xbgr.xq794.s1                      2.81988e-10
+xbgr.xq794.t                       5.80152e-11
+xbgr.xq795.s1                      2.81988e-10
+xbgr.xq795.t                       5.80152e-11
+xbgr.xq796.s1                      2.81988e-10
+xbgr.xq796.t                       5.80152e-11
+xbgr.xq797.s1                      2.81988e-10
+xbgr.xq797.t                       5.80152e-11
+xbgr.xq798.s1                      2.81988e-10
+xbgr.xq798.t                       5.80152e-11
+xbgr.xq799.s1                      2.81988e-10
+xbgr.xq799.t                       5.80152e-11
+xbgr.xq800.s1                      2.81988e-10
+xbgr.xq800.t                       5.80152e-11
+xbgr.xq801.s1                      2.81988e-10
+xbgr.xq801.t                       5.80152e-11
+xbgr.xq802.s1                      2.81988e-10
+xbgr.xq802.t                       5.80152e-11
+xbgr.xq803.s1                      2.81988e-10
+xbgr.xq803.t                       5.80152e-11
+xbgr.xq804.s1                      2.81988e-10
+xbgr.xq804.t                       5.80152e-11
+xbgr.xq805.s1                      2.81988e-10
+xbgr.xq805.t                       5.80152e-11
+xbgr.xq806.s1                      2.81988e-10
+xbgr.xq806.t                       5.80152e-11
+xbgr.xq807.s1                      2.81988e-10
+xbgr.xq807.t                       5.80152e-11
+xbgr.xq808.s1                      3.12005e-10
+xbgr.xq808.t                        0.00424684
+xbgr.xq809.s1                      3.12005e-10
+xbgr.xq809.t                        0.00424684
+xbgr.xq810.s1                      3.12005e-10
+xbgr.xq810.t                        0.00424684
+xbgr.xq811.s1                      3.12005e-10
+xbgr.xq811.t                        0.00424684
+xbgr.xq812.s1                      3.12005e-10
+xbgr.xq812.t                        0.00424684
+xbgr.xq813.s1                      3.12005e-10
+xbgr.xq813.t                        0.00424684
+xbgr.xq814.s1                      3.12005e-10
+xbgr.xq814.t                        0.00424684
+xbgr.xq815.s1                      3.12005e-10
+xbgr.xq815.t                        0.00424684
+xbgr.xq816.s1                      3.12005e-10
+xbgr.xq816.t                        0.00424684
+xbgr.xq817.s1                      3.12005e-10
+xbgr.xq817.t                        0.00424684
+xbgr.xq818.s1                      3.12005e-10
+xbgr.xq818.t                        0.00424684
+xbgr.xq819.s1                      3.12005e-10
+xbgr.xq819.t                        0.00424684
+xbgr.xq820.s1                      3.12005e-10
+xbgr.xq820.t                        0.00424684
+xbgr.xq821.s1                      3.12005e-10
+xbgr.xq821.t                        0.00424684
+xbgr.xq822.s1                      3.12005e-10
+xbgr.xq822.t                        0.00424684
+xbgr.xq823.s1                      3.12005e-10
+xbgr.xq823.t                        0.00424684
+xbgr.xq824.s1                      3.12005e-10
+xbgr.xq824.t                        0.00424684
+xbgr.xq825.s1                      3.12005e-10
+xbgr.xq825.t                        0.00424684
+xbgr.xq826.s1                      3.12005e-10
+xbgr.xq826.t                        0.00424684
+xbgr.xq827.s1                      3.12005e-10
+xbgr.xq827.t                        0.00424684
+xbgr.xq828.s1                      3.12005e-10
+xbgr.xq828.t                        0.00424684
+xbgr.xq829.s1                      3.12005e-10
+xbgr.xq829.t                        0.00424684
+xbgr.xq830.s1                      3.12005e-10
+xbgr.xq830.t                        0.00424684
+xbgr.xq831.s1                      3.12005e-10
+xbgr.xq831.t                        0.00424684
+xbgr.xq832.s1                      3.12005e-10
+xbgr.xq832.t                        0.00424684
+xbgr.xq833.s1                      3.12005e-10
+xbgr.xq833.t                        0.00424684
+xbgr.xq834.s1                      3.12005e-10
+xbgr.xq834.t                        0.00424684
+xbgr.xq835.s1                      3.12005e-10
+xbgr.xq835.t                        0.00424684
+xbgr.xq836.s1                      3.12005e-10
+xbgr.xq836.t                        0.00424684
+xbgr.xq837.s1                      3.12005e-10
+xbgr.xq837.t                        0.00424684
+xbgr.xq838.s1                      3.12005e-10
+xbgr.xq838.t                        0.00424684
+xbgr.xq839.s1                      3.12005e-10
+xbgr.xq839.t                        0.00424684
+xbgr.xq840.s1                      3.12005e-10
+xbgr.xq840.t                        0.00424684
+xbgr.xq841.s1                      3.12005e-10
+xbgr.xq841.t                        0.00424684
+xbgr.xq842.s1                      3.12005e-10
+xbgr.xq842.t                        0.00424684
+xbgr.xq843.s1                      3.12005e-10
+xbgr.xq843.t                        0.00424684
+xbgr.xq844.s1                      3.12005e-10
+xbgr.xq844.t                        0.00424684
+xbgr.xq845.s1                      3.12005e-10
+xbgr.xq845.t                        0.00424684
+xbgr.xq846.s1                      3.12005e-10
+xbgr.xq846.t                        0.00424684
+xbgr.xq847.s1                      3.12005e-10
+xbgr.xq847.t                        0.00424684
+xbgr.xq848.s1                      3.12005e-10
+xbgr.xq848.t                        0.00424684
+xbgr.xq849.s1                      3.12005e-10
+xbgr.xq849.t                        0.00424684
+xbgr.xq850.s1                      3.12005e-10
+xbgr.xq850.t                        0.00424684
+xbgr.xq851.s1                      3.12005e-10
+xbgr.xq851.t                        0.00424684
+xbgr.xq852.s1                      3.12005e-10
+xbgr.xq852.t                        0.00424684
+xbgr.xq853.s1                      3.12005e-10
+xbgr.xq853.t                        0.00424684
+xbgr.xq854.s1                      3.12005e-10
+xbgr.xq854.t                        0.00424684
+xbgr.xq855.s1                      3.12005e-10
+xbgr.xq855.t                        0.00424684
+xbgr.xq856.s1                      3.12005e-10
+xbgr.xq856.t                        0.00424684
+xbgr.xq857.s1                      3.12005e-10
+xbgr.xq857.t                        0.00424684
+xbgr.xq858.s1                      3.12005e-10
+xbgr.xq858.t                        0.00424684
+xbgr.xq859.s1                      3.12005e-10
+xbgr.xq859.t                        0.00424684
+xbgr.xq860.s1                      3.12005e-10
+xbgr.xq860.t                        0.00424684
+xbgr.xq861.s1                      3.12005e-10
+xbgr.xq861.t                        0.00424684
+xbgr.xq862.s1                      3.12005e-10
+xbgr.xq862.t                        0.00424684
+xbgr.xq863.s1                      3.12005e-10
+xbgr.xq863.t                        0.00424684
+xbgr.xq864.s1                      3.12005e-10
+xbgr.xq864.t                        0.00424684
+xbgr.xq865.s1                      3.12005e-10
+xbgr.xq865.t                        0.00424684
+xbgr.xq866.s1                      3.12005e-10
+xbgr.xq866.t                        0.00424684
+xbgr.xq867.s1                      3.12005e-10
+xbgr.xq867.t                        0.00424684
+xbgr.xq868.s1                      3.12005e-10
+xbgr.xq868.t                        0.00424684
+xbgr.xq869.s1                      3.12005e-10
+xbgr.xq869.t                        0.00424684
+xbgr.xq870.s1                      3.12005e-10
+xbgr.xq870.t                        0.00424684
+xbgr.xq871.s1                      3.12005e-10
+xbgr.xq871.t                        0.00424684
+xbgr.xq872.s1                      3.12005e-10
+xbgr.xq872.t                        0.00424684
+xbgr.xq873.s1                      3.12005e-10
+xbgr.xq873.t                        0.00424684
+xbgr.xq874.s1                      3.12005e-10
+xbgr.xq874.t                        0.00424684
+xbgr.xq875.s1                      3.12005e-10
+xbgr.xq875.t                        0.00424684
+xbgr.xq876.s1                      3.12005e-10
+xbgr.xq876.t                        0.00424684
+xbgr.xq877.s1                      3.12005e-10
+xbgr.xq877.t                        0.00424684
+xbgr.xq878.s1                      3.12005e-10
+xbgr.xq878.t                        0.00424684
+xbgr.xq879.s1                      3.12005e-10
+xbgr.xq879.t                        0.00424684
+xbgr.xq880.s1                      3.12005e-10
+xbgr.xq880.t                        0.00424684
+xbgr.xq881.s1                      3.12005e-10
+xbgr.xq881.t                        0.00424684
+xbgr.xq882.s1                      3.12005e-10
+xbgr.xq882.t                        0.00424684
+xbgr.xq883.s1                      3.12005e-10
+xbgr.xq883.t                        0.00424684
+xbgr.xq884.s1                      3.12005e-10
+xbgr.xq884.t                        0.00424684
+xbgr.xq885.s1                      3.12005e-10
+xbgr.xq885.t                        0.00424684
+xbgr.xq886.s1                      3.12005e-10
+xbgr.xq886.t                        0.00424684
+xbgr.xq887.s1                      3.12005e-10
+xbgr.xq887.t                        0.00424684
+xbgr.xq888.s1                      3.12005e-10
+xbgr.xq888.t                        0.00424684
+xbgr.xq889.s1                      3.12005e-10
+xbgr.xq889.t                        0.00424684
+xbgr.xq890.s1                      3.12005e-10
+xbgr.xq890.t                        0.00424684
+xbgr.xq891.s1                      3.12005e-10
+xbgr.xq891.t                        0.00424684
+xbgr.xq892.s1                      3.12005e-10
+xbgr.xq892.t                        0.00424684
+xbgr.xq893.s1                      3.12005e-10
+xbgr.xq893.t                        0.00424684
+xbgr.xq894.s1                      3.12005e-10
+xbgr.xq894.t                        0.00424684
+xbgr.xq895.s1                      3.12005e-10
+xbgr.xq895.t                        0.00424684
+xbgr.xq896.s1                      3.12005e-10
+xbgr.xq896.t                        0.00424684
+xbgr.xq897.s1                      3.12005e-10
+xbgr.xq897.t                        0.00424684
+xbgr.xq898.s1                      3.12005e-10
+xbgr.xq898.t                        0.00424684
+xbgr.xq899.s1                      3.12005e-10
+xbgr.xq899.t                        0.00424684
+xbgr.xq900.s1                      3.12005e-10
+xbgr.xq900.t                        0.00424684
+xbgr.xq901.s1                      3.12005e-10
+xbgr.xq901.t                        0.00424684
+xbgr.xq902.s1                      3.12005e-10
+xbgr.xq902.t                        0.00424684
+xbgr.xq903.s1                      3.12005e-10
+xbgr.xq903.t                        0.00424684
+xbgr.xq904.s1                      3.12005e-10
+xbgr.xq904.t                        0.00424684
+xbgr.xq905.s1                      3.12005e-10
+xbgr.xq905.t                        0.00424684
+xbgr.xq906.s1                      3.12005e-10
+xbgr.xq906.t                        0.00424684
+xbgr.xq907.s1                      3.12005e-10
+xbgr.xq907.t                        0.00424684
+xbgr.xq908.s1                      3.12005e-10
+xbgr.xq908.t                        0.00424684
+xbgr.xq909.s1                      3.12005e-10
+xbgr.xq909.t                        0.00424684
+xbgr.xq910.s1                      3.12005e-10
+xbgr.xq910.t                        0.00424684
+xbgr.xq911.s1                      3.12005e-10
+xbgr.xq911.t                        0.00424684
+xbgr.xq912.s1                      3.12005e-10
+xbgr.xq912.t                        0.00424684
+xbgr.xq913.s1                      3.12005e-10
+xbgr.xq913.t                        0.00424684
+xbgr.xq914.s1                      3.12005e-10
+xbgr.xq914.t                        0.00424684
+xbgr.xq915.s1                      3.12005e-10
+xbgr.xq915.t                        0.00424684
+xbgr.xq916.s1                      3.12005e-10
+xbgr.xq916.t                        0.00424684
+xbgr.xq917.s1                      3.12005e-10
+xbgr.xq917.t                        0.00424684
+xbgr.xq918.s1                      3.12005e-10
+xbgr.xq918.t                        0.00424684
+xbgr.xq919.s1                      3.12005e-10
+xbgr.xq919.t                        0.00424684
+xbgr.xq920.s1                      3.12005e-10
+xbgr.xq920.t                        0.00424684
+xbgr.xq921.s1                      3.12005e-10
+xbgr.xq921.t                        0.00424684
+xbgr.xq922.s1                      3.12005e-10
+xbgr.xq922.t                        0.00424684
+xbgr.xq923.s1                      3.12005e-10
+xbgr.xq923.t                        0.00424684
+xbgr.xq924.s1                      3.12005e-10
+xbgr.xq924.t                        0.00424684
+xbgr.xq925.s1                      3.12005e-10
+xbgr.xq925.t                        0.00424684
+xbgr.xq926.s1                      3.12005e-10
+xbgr.xq926.t                        0.00424684
+xbgr.xq927.s1                      3.12005e-10
+xbgr.xq927.t                        0.00424684
+xbgr.xq928.s1                      3.12005e-10
+xbgr.xq928.t                        0.00424684
+xbgr.xq929.s1                      3.12005e-10
+xbgr.xq929.t                        0.00424684
+xbgr.xq930.s1                      3.12005e-10
+xbgr.xq930.t                        0.00424684
+xbgr.xq931.s1                      3.12005e-10
+xbgr.xq931.t                        0.00424684
+xbgr.xq932.s1                      3.12005e-10
+xbgr.xq932.t                        0.00424684
+xbgr.xq933.s1                      3.12005e-10
+xbgr.xq933.t                        0.00424684
+xbgr.xq934.s1                      3.12005e-10
+xbgr.xq934.t                        0.00424684
+xbgr.xq935.s1                      3.12005e-10
+xbgr.xq935.t                        0.00424684
+xbgr.xq936.s1                      3.12005e-10
+xbgr.xq936.t                        0.00424684
+xbgr.xq937.s1                      3.12005e-10
+xbgr.xq937.t                        0.00424684
+xbgr.xq938.s1                      3.12005e-10
+xbgr.xq938.t                        0.00424684
+xbgr.xq939.s1                      3.12005e-10
+xbgr.xq939.t                        0.00424684
+xbgr.xq940.s1                      3.12005e-10
+xbgr.xq940.t                        0.00424684
+xbgr.xq941.s1                      3.12005e-10
+xbgr.xq941.t                        0.00424684
+xbgr.xq942.s1                      3.12005e-10
+xbgr.xq942.t                        0.00424684
+xbgr.xq943.s1                      3.12005e-10
+xbgr.xq943.t                        0.00424684
+xbgr.xq944.s1                      3.12005e-10
+xbgr.xq944.t                        0.00424684
+xbgr.xq945.s1                      3.12005e-10
+xbgr.xq945.t                        0.00424684
+xbgr.xq946.s1                      3.12005e-10
+xbgr.xq946.t                        0.00424684
+xbgr.xq947.s1                      3.12005e-10
+xbgr.xq947.t                        0.00424684
+xbgr.xq948.s1                      3.12005e-10
+xbgr.xq948.t                        0.00424684
+xbgr.xq949.s1                      3.12005e-10
+xbgr.xq949.t                        0.00424684
+xbgr.xq950.s1                      3.12005e-10
+xbgr.xq950.t                        0.00424684
+xbgr.xq951.s1                      3.12005e-10
+xbgr.xq951.t                        0.00424684
+xbgr.xq952.s1                      3.12005e-10
+xbgr.xq952.t                        0.00424684
+xbgr.xq953.s1                      3.12005e-10
+xbgr.xq953.t                        0.00424684
+xbgr.xq954.s1                      3.12005e-10
+xbgr.xq954.t                        0.00424684
+xbgr.xq955.s1                      3.12005e-10
+xbgr.xq955.t                        0.00424684
+xbgr.xq956.s1                      3.12005e-10
+xbgr.xq956.t                        0.00424684
+xbgr.xq957.s1                      3.12005e-10
+xbgr.xq957.t                        0.00424684
+xbgr.xq958.s1                      3.12005e-10
+xbgr.xq958.t                        0.00424684
+xbgr.xq959.s1                      3.12005e-10
+xbgr.xq959.t                        0.00424684
+xbgr.xq960.s1                      3.12005e-10
+xbgr.xq960.t                        0.00424684
+xbgr.xq961.s1                      3.12005e-10
+xbgr.xq961.t                        0.00424684
+xbgr.xq962.s1                      3.12005e-10
+xbgr.xq962.t                        0.00424684
+xbgr.xq963.s1                      3.12005e-10
+xbgr.xq963.t                        0.00424684
+xbgr.xq964.s1                      3.12005e-10
+xbgr.xq964.t                        0.00424684
+xbgr.xq965.s1                      3.12005e-10
+xbgr.xq965.t                        0.00424684
+xbgr.xq966.s1                      3.12005e-10
+xbgr.xq966.t                        0.00424684
+xbgr.xq967.s1                      3.12005e-10
+xbgr.xq967.t                        0.00424684
+xbgr.xq968.s1                      3.12005e-10
+xbgr.xq968.t                        0.00424684
+xbgr.xq969.s1                      3.12005e-10
+xbgr.xq969.t                        0.00424684
+xbgr.xq970.s1                      3.12005e-10
+xbgr.xq970.t                        0.00424684
+xbgr.xq971.s1                      3.12005e-10
+xbgr.xq971.t                        0.00424684
+xbgr.xq972.s1                      3.12005e-10
+xbgr.xq972.t                        0.00424684
+xbgr.xq973.s1                      3.12005e-10
+xbgr.xq973.t                        0.00424684
+xbgr.xq974.s1                      3.12005e-10
+xbgr.xq974.t                        0.00424684
+xbgr.xq975.s1                      3.12005e-10
+xbgr.xq975.t                        0.00424684
+xbgr.xq976.s1                      3.12005e-10
+xbgr.xq976.t                        0.00424684
+xbgr.xq977.s1                      3.12005e-10
+xbgr.xq977.t                        0.00424684
+xbgr.xq978.s1                      3.12005e-10
+xbgr.xq978.t                        0.00424684
+xbgr.xq979.s1                      3.12005e-10
+xbgr.xq979.t                        0.00424684
+xbgr.xq980.s1                      3.12005e-10
+xbgr.xq980.t                        0.00424684
+xbgr.xq981.s1                      3.12005e-10
+xbgr.xq981.t                        0.00424684
+xbgr.xq982.s1                      3.12005e-10
+xbgr.xq982.t                        0.00424684
+xbgr.xq983.s1                      3.12005e-10
+xbgr.xq983.t                        0.00424684
+xbgr.xq984.s1                      3.12005e-10
+xbgr.xq984.t                        0.00424684
+xbgr.xq985.s1                      3.12005e-10
+xbgr.xq985.t                        0.00424684
+xbgr.xq986.s1                      3.12005e-10
+xbgr.xq986.t                        0.00424684
+xbgr.xq987.s1                      3.12005e-10
+xbgr.xq987.t                        0.00424684
+xbgr.xq988.s1                      3.12005e-10
+xbgr.xq988.t                        0.00424684
+xbgr.xq989.s1                      3.12005e-10
+xbgr.xq989.t                        0.00424684
+xbgr.xq990.s1                      3.12005e-10
+xbgr.xq990.t                        0.00424684
+xbgr.xq991.s1                      3.12005e-10
+xbgr.xq991.t                        0.00424684
+xbgr.xq992.s1                      3.12005e-10
+xbgr.xq992.t                        0.00424684
+xbgr.xq993.s1                      3.12005e-10
+xbgr.xq993.t                        0.00424684
+xbgr.xq994.s1                      3.12005e-10
+xbgr.xq994.t                        0.00424684
+xbgr.xq995.s1                      3.12005e-10
+xbgr.xq995.t                        0.00424684
+xbgr.xq996.s1                      3.12005e-10
+xbgr.xq996.t                        0.00424684
+xbgr.xq997.s1                      3.12005e-10
+xbgr.xq997.t                        0.00424684
+xbgr.xq998.s1                      3.12005e-10
+xbgr.xq998.t                        0.00424684
+xbgr.xq999.s1                      3.12005e-10
+xbgr.xq999.t                        0.00424684
+xbgr.xq1000.s1                     5.63123e-10
+xbgr.xq1000.t                        0.0329926
+xbgr.xq1001.s1                     5.63123e-10
+xbgr.xq1001.t                        0.0329926
+xbgr.xq1002.s1                     5.63123e-10
+xbgr.xq1002.t                        0.0329926
+xbgr.xq1003.s1                     5.63123e-10
+xbgr.xq1003.t                        0.0329926
+xbgr.xq1004.s1                     5.63123e-10
+xbgr.xq1004.t                        0.0329926
+xbgr.xq1005.s1                     5.63123e-10
+xbgr.xq1005.t                        0.0329926
+xbgr.xq1006.s1                     5.63123e-10
+xbgr.xq1006.t                        0.0329926
+xbgr.xq1007.s1                     5.63123e-10
+xbgr.xq1007.t                        0.0329926
+xbgr.xq1008.s1                     5.63123e-10
+xbgr.xq1008.t                        0.0329926
+xbgr.xq1009.s1                     5.63123e-10
+xbgr.xq1009.t                        0.0329926
+xbgr.xq1010.s1                     5.63123e-10
+xbgr.xq1010.t                        0.0329926
+xbgr.xq1011.s1                     5.63123e-10
+xbgr.xq1011.t                        0.0329926
+xbgr.xq1012.s1                     5.63123e-10
+xbgr.xq1012.t                        0.0329926
+xbgr.xq1013.s1                     5.63123e-10
+xbgr.xq1013.t                        0.0329926
+xbgr.xq1014.s1                     5.63123e-10
+xbgr.xq1014.t                        0.0329926
+xbgr.xq1015.s1                     5.63123e-10
+xbgr.xq1015.t                        0.0329926
+xbgr.xq1016.s1                     5.63123e-10
+xbgr.xq1016.t                        0.0329926
+xbgr.xq1017.s1                     5.63123e-10
+xbgr.xq1017.t                        0.0329926
+xbgr.xq1018.s1                     5.63123e-10
+xbgr.xq1018.t                        0.0329926
+xbgr.xq1019.s1                     5.63123e-10
+xbgr.xq1019.t                        0.0329926
+xbgr.xq1020.s1                     5.63123e-10
+xbgr.xq1020.t                        0.0329926
+xbgr.xq1021.s1                     5.63123e-10
+xbgr.xq1021.t                        0.0329926
+xbgr.xq1022.s1                     5.63123e-10
+xbgr.xq1022.t                        0.0329926
+xbgr.xq1023.s1                     5.63123e-10
+xbgr.xq1023.t                        0.0329926
+xbgr.xq1024.s1                     2.81922e-10
+xbgr.xq1024.t                        0.0329927
+xbgr.xq1025.s1                     2.81922e-10
+xbgr.xq1025.t                        0.0329927
+xbgr.xq1026.s1                     2.81922e-10
+xbgr.xq1026.t                        0.0329927
+xbgr.xq1027.s1                     2.81922e-10
+xbgr.xq1027.t                        0.0329927
+xbgr.xq1028.s1                               0
+xbgr.xq1028.t                                0
+xbgr.xq1029.s1                               0
+xbgr.xq1029.t                                0
+xbgr.xq1030.s1                               0
+xbgr.xq1030.t                                0
+xbgr.xq1031.s1                               0
+xbgr.xq1031.t                                0
+xbgr.xq1032.s1                               0
+xbgr.xq1032.t                                0
+xbgr.xq1033.s1                               0
+xbgr.xq1033.t                                0
+xbgr.xq1034.s1                               0
+xbgr.xq1034.t                                0
+xbgr.xq1035.s1                               0
+xbgr.xq1035.t                                0
+xbgr.xq1036.s1                               0
+xbgr.xq1036.t                                0
+vdda_sense                             3.29932
+xsense.vn                            0.0480238
+xsense.xr1n0.dt                              0
+xsense.r2n_0                         0.0960427
+xsense.xr2n0.dt                              0
+xsense.r2n_1                          0.144062
+xsense.xr2n1.dt                              0
+xsense.r2n_2                           0.19208
+xsense.xr2n2.dt                              0
+xsense.r2n_3                          0.240099
+xsense.xr2n3.dt                              0
+xsense.r2n_4                          0.288118
+xsense.xr2n4.dt                              0
+xsense.r2n_5                          0.336137
+xsense.xr2n5.dt                              0
+xsense.r2n_6                          0.384156
+xsense.xr2n6.dt                              0
+xsense.r2n_7                          0.432175
+xsense.xr2n7.dt                              0
+xsense.r2n_8                          0.480194
+xsense.xr2n8.dt                              0
+xsense.r2n_9                          0.528213
+xsense.xr2n9.dt                              0
+xsense.r2n_10                         0.576232
+xsense.xr2n10.dt                             0
+xsense.r2n_11                         0.624251
+xsense.xr2n11.dt                             0
+xsense.r2n_12                         0.672271
+xsense.xr2n12.dt                             0
+xsense.r2n_13                          0.72029
+xsense.xr2n13.dt                             0
+xsense.r2n_14                         0.768309
+xsense.xr2n14.dt                             0
+xsense.r2n_15                         0.816328
+xsense.xr2n15.dt                             0
+xsense.r2n_16                         0.864347
+xsense.xr2n16.dt                             0
+xsense.r2n_17                         0.912367
+xsense.xr2n17.dt                             0
+xsense.r2n_18                         0.960386
+xsense.xr2n18.dt                             0
+isense                                 1.00841
+xsense.xr2n19.dt                             0
+xsense.vp                            0.0479053
+xsense.xr1p0.dt                              0
+xsense.r2p_0                         0.0958055
+xsense.xr2p0.dt                              0
+xsense.r2p_1                          0.143706
+xsense.xr2p1.dt                              0
+xsense.r2p_2                          0.191606
+xsense.xr2p2.dt                              0
+xsense.r2p_3                          0.239506
+xsense.xr2p3.dt                              0
+xsense.r2p_4                          0.287407
+xsense.xr2p4.dt                              0
+xsense.r2p_5                          0.335307
+xsense.xr2p5.dt                              0
+xsense.r2p_6                          0.383207
+xsense.xr2p6.dt                              0
+xsense.r2p_7                          0.431108
+xsense.xr2p7.dt                              0
+xsense.r2p_8                          0.479008
+xsense.xr2p8.dt                              0
+xsense.r2p_9                          0.526908
+xsense.xr2p9.dt                              0
+xsense.r2p_10                         0.574809
+xsense.xr2p10.dt                             0
+xsense.r2p_11                         0.622709
+xsense.xr2p11.dt                             0
+xsense.r2p_12                          0.67061
+xsense.xr2p12.dt                             0
+xsense.r2p_13                          0.71851
+xsense.xr2p13.dt                             0
+xsense.r2p_14                         0.766411
+xsense.xr2p14.dt                             0
+xsense.r2p_15                         0.814311
+xsense.xr2p15.dt                             0
+xsense.r2p_16                         0.862212
+xsense.xr2p16.dt                             0
+xsense.r2p_17                         0.910113
+xsense.xr2p17.dt                             0
+xsense.r2p_18                         0.958013
+xsense.xr2p18.dt                             0
+vped                                   1.00591
+xsense.xr2p19.dt                             0
+vref_buf                               1.04542
+xsense.rd1_0                           1.02569
+xsense.xrd10.dt                              0
+xsense.vped_ref                        1.00597
+xsense.xrd11.dt                              0
+xsense.rd2_0                          0.986242
+xsense.xrd20.dt                              0
+xsense.rd2_1                          0.966517
+xsense.xrd21.dt                              0
+xsense.rd2_2                          0.946792
+xsense.xrd22.dt                              0
+xsense.rd2_3                          0.927066
+xsense.xrd23.dt                              0
+xsense.rd2_4                          0.907341
+xsense.xrd24.dt                              0
+xsense.rd2_5                          0.887616
+xsense.xrd25.dt                              0
+xsense.rd2_6                          0.867891
+xsense.xrd26.dt                              0
+xsense.rd2_7                          0.848165
+xsense.xrd27.dt                              0
+xsense.rd2_8                           0.82844
+xsense.xrd28.dt                              0
+xsense.rd2_9                          0.808715
+xsense.xrd29.dt                              0
+xsense.rd2_10                          0.78899
+xsense.xrd210.dt                             0
+xsense.rd2_11                         0.769265
+xsense.xrd211.dt                             0
+xsense.rd2_12                          0.74954
+xsense.xrd212.dt                             0
+xsense.rd2_13                         0.729815
+xsense.xrd213.dt                             0
+xsense.rd2_14                          0.71009
+xsense.xrd214.dt                             0
+xsense.rd2_15                         0.690365
+xsense.xrd215.dt                             0
+xsense.rd2_16                          0.67064
+xsense.xrd216.dt                             0
+xsense.rd2_17                         0.650915
+xsense.xrd217.dt                             0
+xsense.rd2_18                          0.63119
+xsense.xrd218.dt                             0
+xsense.rd2_19                         0.611465
+xsense.xrd219.dt                             0
+xsense.rd2_20                          0.59174
+xsense.xrd220.dt                             0
+xsense.rd2_21                         0.572015
+xsense.xrd221.dt                             0
+xsense.rd2_22                         0.552291
+xsense.xrd222.dt                             0
+xsense.rd2_23                         0.532566
+xsense.xrd223.dt                             0
+xsense.rd2_24                         0.512841
+xsense.xrd224.dt                             0
+xsense.rd2_25                         0.493116
+xsense.xrd225.dt                             0
+xsense.rd2_26                         0.473391
+xsense.xrd226.dt                             0
+xsense.rd2_27                         0.453667
+xsense.xrd227.dt                             0
+xsense.rd2_28                         0.433942
+xsense.xrd228.dt                             0
+xsense.rd2_29                         0.414217
+xsense.xrd229.dt                             0
+xsense.rd2_30                         0.394492
+xsense.xrd230.dt                             0
+xsense.rd2_31                         0.374768
+xsense.xrd231.dt                             0
+xsense.rd2_32                         0.355043
+xsense.xrd232.dt                             0
+xsense.rd2_33                         0.335318
+xsense.xrd233.dt                             0
+xsense.rd2_34                         0.315594
+xsense.xrd234.dt                             0
+xsense.rd2_35                         0.295869
+xsense.xrd235.dt                             0
+xsense.rd2_36                         0.276144
+xsense.xrd236.dt                             0
+xsense.rd2_37                          0.25642
+xsense.xrd237.dt                             0
+xsense.rd2_38                         0.236695
+xsense.xrd238.dt                             0
+xsense.rd2_39                          0.21697
+xsense.xrd239.dt                             0
+xsense.rd2_40                         0.197246
+xsense.xrd240.dt                             0
+xsense.rd2_41                         0.177521
+xsense.xrd241.dt                             0
+xsense.rd2_42                         0.157797
+xsense.xrd242.dt                             0
+xsense.rd2_43                         0.138072
+xsense.xrd243.dt                             0
+xsense.rd2_44                         0.118347
+xsense.xrd244.dt                             0
+xsense.rd2_45                        0.0986229
+xsense.xrd245.dt                             0
+xsense.rd2_46                        0.0788983
+xsense.xrd246.dt                             0
+xsense.rd2_47                        0.0591737
+xsense.xrd247.dt                             0
+xsense.rd2_48                        0.0394491
+xsense.xrd248.dt                             0
+xsense.rd2_49                        0.0197246
+xsense.xrd249.dt                             0
+xsense.xrd250.dt                             0
+xsense.__pex_xota_vbp                   2.4564
+xsense.__pex_xota_vbnc                0.962532
+xsense.__pex_xota_vbpc                 2.18206
+xsense.__pex_xota_tail                 1.48153
+xsense.__pex_xota_fn                  0.152207
+xsense.__pex_xota_fp                  0.152542
+xsense.__pex_xota_mir                  2.41597
+xsense.__pex_xota_out1                 2.47116
+xsense.__pex_xota_pc1                  3.13688
+xsense.__pex_xota_pc2                   3.1369
+xsense.__pex_xota_cz                   2.47116
+xsense.xota.xrz.dt                           0
+xsense.xota.xcc.1                      2.47116
+xsense.__pex_xbuf_vbp                   2.4564
+xsense.__pex_xbuf_vbnc                0.962532
+xsense.__pex_xbuf_vbpc                 2.18206
+xsense.__pex_xbuf_tail                 2.31148
+xsense.__pex_xbuf_fn                  0.195038
+xsense.__pex_xbuf_fp                   0.19479
+xsense.__pex_xbuf_mir                  2.51309
+xsense.__pex_xbuf_out1                  2.4712
+xsense.__pex_xbuf_pc1                  3.07225
+xsense.__pex_xbuf_pc2                  3.07219
+xsense.__pex_xbuf_cz                    2.4712
+xsense.xbuf.xrz.dt                           0
+xsense.xbuf.xcc.1                       2.4712
+xsense.__pex_xref_vbp                   2.4564
+xsense.__pex_xref_vbnc                0.962532
+xsense.__pex_xref_vbpc                 2.18206
+xsense.__pex_xref_tail                 2.34044
+xsense.__pex_xref_fn                  0.195015
+xsense.__pex_xref_fp                   0.19478
+xsense.__pex_xref_mir                  2.51306
+xsense.__pex_xref_out1                 2.47344
+xsense.__pex_xref_pc1                  3.07227
+xsense.__pex_xref_pc2                  3.07222
+xsense.__pex_xref_cz                   2.47344
+xsense.xref.xrz.dt                           0
+xsense.xref.xcc.1                      2.47344
+vdda_trip                              3.29932
+vdd_trip                               1.19994
+cmp_soft                                   1.2
+cmp_hard                                     0
+icmp                                  0.504203
+vth_soft                              0.800604
+vth_hard                              0.998792
+vdd_osc                                1.19994
+xosc.vb                             0.00658166
+xosc.n24                               1.19994
+xosc.va                             0.00658166
+xosc.n22                               1.19994
+xosc.bb3                                     0
+trim3                                        0
+xosc.n27                               1.19994
+xosc.n45                               1.02827
+osc_clk                            7.90554e-08
+xosc.n46                               1.19994
+xosc.n14                               1.19994
+xosc.n30                            1.1984e-05
+xosc.n31                           1.09067e-05
+xosc.vbn                              0.462046
+xosc.n26                           8.13944e-08
+xosc.n33                           1.28796e-07
+xosc.vth                               0.59997
+xosc.n28                           1.09067e-05
+xosc.n17                               1.19994
+xosc.n32                            1.1984e-05
+xosc.n15                           1.53601e-07
+xosc.b1                                      0
+trim1                                        0
+xosc.n29                               1.04227
+xosc.n44                               1.19994
+xosc.bb0                                     0
+trim0                                        0
+xosc.b0                                      0
+xosc.bb1                                     0
+xosc.b3                                      0
+xosc.n16                               1.04227
+xosc.b2                                      0
+trim2                                        0
+xosc.bb2                                     0
+xosc.n50                               1.15573
+xosc.n48                               1.19994
+xosc.n49                               1.19994
+xosc.n3                               0.603263
+xosc.xr53.dt                                 0
+xosc.n4                               0.603263
+xosc.xr54.dt                                 0
+xosc.xr55.dt                                 0
+xosc.xr56.dt                                 0
+xosc.n5                                1.09995
+xosc.xr57.dt                                 0
+xosc.n52                              0.999953
+xosc.xr58.dt                                 0
+xosc.n6                               0.899957
+xosc.xr59.dt                                 0
+xosc.n53                              0.799961
+xosc.xr60.dt                                 0
+xosc.n7                               0.699965
+xosc.xr61.dt                                 0
+xosc.xr62.dt                                 0
+xosc.n8                               0.499975
+xosc.xr63.dt                                 0
+xosc.n54                               0.39998
+xosc.xr64.dt                                 0
+xosc.n9                               0.299985
+xosc.xr65.dt                                 0
+xosc.n55                               0.19999
+xosc.xr66.dt                                 0
+xosc.n10                             0.0999949
+xosc.xr67.dt                                 0
+xosc.xr68.dt                                 0
+xosc.n11                              0.830995
+xosc.xr69.dt                                 0
+xosc.xr70.dt                                 0
+xosc.xcf_a.1                        0.00658166
+xosc.xct0_a.1                       0.00658166
+xosc.xct1_a.1                       0.00658166
+xosc.xct2_a.1                       0.00658166
+xosc.xct3_a.1                       0.00658166
+xosc.xcf_b.1                        0.00658166
+xosc.xct0_b.1                       0.00658166
+xosc.xct1_b.1                       0.00658166
+xosc.xct2_b.1                       0.00658166
+xosc.xct3_b.1                       0.00658166
+xosc.xcth.1                            0.59997
+vdda_gate                              3.29932
+vdd_gate                               1.19994
+cmp_clk                                      0
+soft7                                        0
+soft6                                        0
+soft5                                        0
+soft4                                        0
+soft3                                        0
+soft2                                        0
+soft1                                        0
+soft0                                        0
+hard7                                        0
+hard6                                        0
+hard5                                        0
+hard4                                        0
+hard3                                        0
+hard2                                        0
+hard1                                        0
+hard0                                        0
+trip_d                                       0
+clr_d                                        0
+fast_en                                      0
+dig_trip                                     0
+dig_gate_en                                  0
+cause1                                       0
+cause0                                       0
+sdo                                          0
+sp15                                         0
+sp14                                         0
+sp13                                         0
+sp12                                         0
+sp11                                         0
+sp10                                         0
+sp9                                          0
+sp8                                          0
+sp7                                          0
+sp6                                          0
+sp5                                          0
+sp4                                          0
+sp3                                          0
+sp2                                          0
+sp1                                          0
+sp0                                          0
+inrush_active                                0
+soft_armed                                   0
+bicmp#branch                      -5.04203e-13
+bosc#branch                        3.26586e-11
+bgate#branch                      -2.49161e-22
+bsdi_core#branch                             0
+bsclk_core#branch                            0
+ben_core#branch                              0
+vm_gated#branch                    2.39984e-12
+vm_gatea#branch                    6.60007e-12
+vm_osc#branch                      0.000110528
+vvthh#branch                      -9.98792e-13
+vvths#branch                      -8.00604e-13
+vch_tie#branch                               0
+vcs_tie#branch                        -1.2e-12
+vm_tripd#branch                    2.39989e-12
+vm_tripa#branch                    6.59864e-12
+vm_sense#branch                     0.00103731
+vm_bgr#branch                      0.000319704
+vr4#branch                                   0
+vsdi#branch                                  0
+vsclk#branch                                 0
+ven#branch                                   0
+vtr#branch                                   0
+vgc#branch                                   0
+vfault#branch                         -3.3e-12
+vim#branch                         2.06115e-09
+vprof#branch                            -1e-12
+v12#branch                        -0.000110528
+vmi#branch                         6.60094e-12
+vma#branch                          0.00135701
+v33#branch                         -0.00135701
+vsub#branch                                  0
+adac#branch_1_0                              0
+adac#branch_1_1                              0
+adac#branch_1_2                              0
+adac#branch_1_3                              0
+adac#branch_1_4                              0
+adac#branch_1_5                              0
+adac#branch_1_6                              0
+adac#branch_1_7                              0
+adac#branch_1_8                              0
+adac#branch_1_9                              0
+adac#branch_1_10                             0
+adac#branch_1_11                             0
+adac#branch_1_12                             0
+adac#branch_1_13                             0
+adac#branch_1_14                             0
+adac#branch_1_15                             0
+adac#branch_1_16                             0
+adac#branch_1_17                             0
+adac#branch_1_18                             0
+adac#branch_1_19                             0
+adac#branch_1_20                             0
+adac#branch_1_21                             0
+adac#branch_1_22                             0
+adac#branch_1_23                             0
+adac#branch_1_24                             0
+adac#branch_1_25                             0
+adac#branch_1_26                             0
+adac#branch_1_27                             0
+adac#branch_1_28                             0
+adac#branch_1_29                             0
+adac#branch_1_30                             0
+adac#branch_1_31                             0
+adac#branch_1_32                             0
+adac#branch_1_33                             0
+adac#branch_1_34                             0
+adac#branch_1_35                             0
+adac#branch_1_36                             0
+adac#branch_1_37                             0
+adac#branch_1_38                             0
+adac#branch_1_39                             0
+adac#branch_1_40                             0
+adac#branch_1_41                             0
+adac#branch_1_42                             0
+adac#branch_1_43                             0
+adac#branch_1_44                             0
+adac#branch_1_45                             0
+adac#branch_1_46                             0
+adac#branch_1_47                             0
+
+ Reference value :  0.00000e+00 Reference value :  4.68549e-09 Reference value :  2.16855e-08 Reference value :  3.86855e-08 Reference value :  5.56855e-08 Reference value :  7.36855e-08 Reference value :  9.06855e-08 Reference value :  1.07685e-07 Reference value :  1.21685e-07 Reference value :  1.31685e-07 Reference value :  1.43685e-07 Reference value :  1.57685e-07 Reference value :  1.72685e-07 Reference value :  1.78030e-07 Reference value :  1.78961e-07 Reference value :  1.83469e-07 Reference value :  1.97469e-07 Reference value :  2.12469e-07 Reference value :  2.25469e-07 Reference value :  2.29594e-07 Reference value :  2.30954e-07 Reference value :  2.32880e-07 Reference value :  2.33865e-07 Reference value :  2.48534e-07 Reference value :  2.63534e-07 Reference value :  2.78534e-07 Reference value :  2.82659e-07 Reference value :  2.83886e-07 Reference value :  2.85163e-07 Reference value :  2.91721e-07 Reference value :  3.06721e-07 Reference value :  3.24721e-07 Reference value :  3.35721e-07 Reference value :  3.36329e-07 Reference value :  3.36992e-07 Reference value :  3.41429e-07 Reference value :  3.57429e-07 Reference value :  3.74429e-07 Reference value :  3.87429e-07 Reference value :  3.88554e-07 Reference value :  3.89725e-07 Reference value :  3.91344e-07 Reference value :  3.99628e-07 Reference value :  4.12628e-07 Reference value :  4.29628e-07 Reference value :  4.41628e-07 Reference value :  4.42472e-07 Reference value :  4.44735e-07 Reference value :  4.59161e-07 Reference value :  4.74161e-07 Reference value :  4.89161e-07 Reference value :  4.94286e-07 Reference value :  4.95083e-07 Reference value :  4.97047e-07 Reference value :  5.09806e-07 Reference value :  5.23806e-07 Reference value :  5.39806e-07 Reference value :  5.47149e-07 Reference value :  5.47931e-07 Reference value :  5.53472e-07 Reference value :  5.68472e-07 Reference value :  5.85472e-07 Reference value :  5.98472e-07 Reference value :  5.99597e-07 Reference value :  6.00464e-07 Reference value :  6.02181e-07 Reference value :  6.08374e-07 Reference value :  6.22374e-07 Reference value :  6.39374e-07 Reference value :  6.51374e-07 Reference value :  6.52975e-07 Reference value :  6.53928e-07 Reference value :  6.62048e-07 Reference value :  6.76048e-07 Reference value :  6.94048e-07 Reference value :  7.05048e-07 Reference value :  7.05173e-07 Reference value :  7.06145e-07 Reference value :  7.07919e-07 Reference value :  7.20353e-07 Reference value :  7.34353e-07 Reference value :  7.51353e-07 Reference value :  7.57478e-07 Reference value :  7.58827e-07 Reference value :  7.60767e-07 Reference value :  7.74475e-07 Reference value :  7.92475e-07 Reference value :  8.08475e-07 Reference value :  8.10600e-07 Reference value :  8.11972e-07 Reference value :  8.13959e-07 Reference value :  8.29781e-07 Reference value :  8.48781e-07 Reference value :  8.63781e-07 Reference value :  8.64688e-07 Reference value :  8.66216e-07 Reference value :  8.70763e-07 Reference value :  8.88763e-07 Reference value :  9.09763e-07 Reference value :  9.17468e-07 Reference value :  9.23996e-07 Reference value :  9.39996e-07 Reference value :  9.60996e-07 Reference value :  9.69337e-07 Reference value :  9.70268e-07 Reference value :  9.72878e-07 Reference value :  9.89714e-07 Reference value :  1.00671e-06 Reference value :  1.01871e-06 Reference value :  1.02184e-06 Reference value :  1.02263e-06 Reference value :  1.02419e-06 Reference value :  1.03244e-06 Reference value :  1.04444e-06 Reference value :  1.05844e-06 Reference value :  1.07044e-06 Reference value :  1.07478e-06 Reference value :  1.07552e-06 Reference value :  1.07725e-06 Reference value :  1.08917e-06 Reference value :  1.10017e-06 Reference value :  1.11617e-06 Reference value :  1.12717e-06 Reference value :  1.12730e-06 Reference value :  1.12816e-06 Reference value :  1.12976e-06 Reference value :  1.13800e-06 Reference value :  1.15000e-06 Reference value :  1.16500e-06 Reference value :  1.17700e-06 Reference value :  1.18034e-06 Reference value :  1.18081e-06 Reference value :  1.18274e-06 Reference value :  1.19452e-06 Reference value :  1.20652e-06 Reference value :  1.22252e-06 Reference value :  1.23252e-06 Reference value :  1.23264e-06 Reference value :  1.23351e-06 Reference value :  1.23523e-06 Reference value :  1.24142e-06 Reference value :  1.25642e-06 Reference value :  1.27542e-06 Reference value :  1.28576e-06 Reference value :  1.28654e-06 Reference value :  1.29409e-06 Reference value :  1.31009e-06 Reference value :  1.32909e-06 Reference value :  1.33822e-06 Reference value :  1.33919e-06 Reference value :  1.34146e-06 Reference value :  1.35640e-06 Reference value :  1.37340e-06 Reference value :  1.38940e-06 Reference value :  1.39053e-06 Reference value :  1.39188e-06 Reference value :  1.39429e-06 Reference value :  1.40954e-06 Reference value :  1.42654e-06 Reference value :  1.44154e-06
+No. of Data Rows : 1667
+doAnalyses: TRAN:  Timestep too small; time = 1.44354e-06, timestep = 1.25e-21: trouble with dparea-instance d.xosc.xd52.d1
+
+
+tran simulation(s) aborted
+vref_q              =  0.00000e+00 from=  2.80000e-05 to=  1.44354e-06
+isense_q            =  0.00000e+00 from=  2.80000e-05 to=  1.44354e-06
+icmp_q              =  0.00000e+00 from=  2.80000e-05 to=  1.44354e-06
+vths_q              =  0.00000e+00 from=  2.80000e-05 to=  1.44354e-06
+vthh_q              =  0.00000e+00 from=  2.80000e-05 to=  1.44354e-06
+
+Error: measure  vref_i  find(AT) : out of interval
+ meas tran vref_i find v(vref) at=24u failed!
+
+
+Error: measure  isense_i  find(AT) : out of interval
+ meas tran isense_i find v(isense) at=24u failed!
+
+
+Error: measure  icmp_i  find(AT) : out of interval
+ meas tran icmp_i find v(icmp) at=24u failed!
+
+
+Error: measure  vths_i  find(AT) : out of interval
+ meas tran vths_i find v(vth_soft) at=24u failed!
+
+
+Error: measure  vthh_i  find(AT) : out of interval
+ meas tran vthh_i find v(vth_hard) at=24u failed!
+
+
+Error: measure  iload_q  find(AT) : out of interval
+ meas tran iload_q find i(vim) at=24u failed!
+
+
+Error: measure  gate_q  find(AT) : out of interval
+ meas tran gate_q find v(gate) at=24u failed!
+
+
+Error: measure  fastq  find(AT) : out of interval
+ meas tran fastq find v(fast_en) at=24u failed!
+
+
+Error: measure  t_inrush_off  when(WHEN) : out of interval
+ meas tran t_inrush_off when v(inrush_active)=0.6 fall=1 from=3u failed!
+
+
+Error: measure  inrush_q  find(AT) : out of interval
+ meas tran inrush_q find v(inrush_active) at=24u failed!
+
+
+Error: measure  softarmed_end  find(AT) : out of interval
+ meas tran softarmed_end find v(soft_armed) at=36u failed!
+
+
+Error: measure  code_soft  find(AT) : out of interval
+ meas tran code_soft find cs_v at=24u failed!
+
+
+Error: measure  code_hard  find(AT) : out of interval
+ meas tran code_hard find ch_v at=24u failed!
+
+Warning from checkvalid: vector t_inrush_off is not available or has zero length.
+Error: RHS "t_inrush_off*1e6" invalid
+Error: &vref_i: no such variable.
+Error: &isense_i: no such variable.
+Error: &icmp_i: no such variable.
+Error: &vths_i: no such variable.
+Error: &vthh_i: no such variable.
+Error: &iload_q: no such variable.
+Error: &gate_q: no such variable.
+Error: &code_soft: no such variable.
+Error: &code_hard: no such variable.
+Error: &fastq: no such variable.
+Error: &inrush_q: no such variable.
+Error: &t_inrush_off_us: no such variable.
+Error: &softarmed_end: no such variable.
+QUIET window_us=28-30 vref= 0  isense= 0  icmp= 0  vth_soft= 0  vth_hard= 0  vref_inst=  isense_inst=  icmp_inst=  vth_soft_inst=  vth_hard_inst=  iload_A=  gate=  code_soft=  code_hard=  fast_en=  inrush_active=  t_inrush_off_us=  soft_armed_end=
+
+Error: measure  tosc1  when(WHEN) : out of interval
+ meas tran tosc1 when v(osc_clk)=0.6 rise=1 from=23u failed!
+
+
+Error: measure  tosc2  when(WHEN) : out of interval
+ meas tran tosc2 when v(osc_clk)=0.6 rise=21 from=23u failed!
+
+Warning from checkvalid: vector tosc2 is not available or has zero length.
+Error: RHS "20e-6/(tosc2 - tosc1)" invalid
+
+Error: measure  tcc1  when(WHEN) : out of interval
+ meas tran tcc1 when v(cmp_clk)=0.6 rise=1 from=23u failed!
+
+
+Error: measure  tcc2  when(WHEN) : out of interval
+ meas tran tcc2 when v(cmp_clk)=0.6 rise=11 from=23u failed!
+
+Warning from checkvalid: vector tcc2 is not available or has zero length.
+Error: RHS "10e-6/(tcc2 - tcc1)" invalid
+Error: &fosc_mhz: no such variable.
+Error: &fcmp_mhz: no such variable.
+CLOCK f_osc_MHz=  f_cmp_MHz=  (RTL clock: transistor-level G1_OSC)
+ia_vdda             =  0.00000e+00 from=  2.40000e-05 to=  1.44354e-06
+ia_iovdd            =  0.00000e+00 from=  2.40000e-05 to=  1.44354e-06
+ia_vdd              =  0.00000e+00 from=  2.40000e-05 to=  1.44354e-06
+ia_bgr              =  0.00000e+00 from=  2.40000e-05 to=  1.44354e-06
+ia_sense            =  0.00000e+00 from=  2.40000e-05 to=  1.44354e-06
+ia_tripa            =  0.00000e+00 from=  2.40000e-05 to=  1.44354e-06
+ia_tripd            =  0.00000e+00 from=  2.40000e-05 to=  1.44354e-06
+ia_osc              =  0.00000e+00 from=  2.40000e-05 to=  1.44354e-06
+ia_gatea            =  0.00000e+00 from=  2.40000e-05 to=  1.44354e-06
+ia_gated            =  0.00000e+00 from=  2.40000e-05 to=  1.44354e-06
+SUPPLY_uA window=24-36us VDDA= 0  IOVDD= 0  VDD= 0  | bgr= 0  sense= 0  trip_3v3= 0  trip_1v2= 0  osc= 0  gate_3v3= 0  gate_1v2= 0
+tripped_max         =  0.00000e+00 at=  0.00000e+00
+tripped_pre         =  0.00000e+00 at=  0.00000e+00
+gate_min            =  0.00000e+00 at=  0.00000e+00
+
+Error: measure  gate_end  find(AT) : out of interval
+ meas tran gate_end find v(gate) at=36u failed!
+
+ipk                 =  0.00000e+00 at=  0.00000e+00
+
+Error: measure  i_end  find(AT) : out of interval
+ meas tran i_end find i(vim) at=36u failed!
+
+isense_pk           =  0.00000e+00 at=  0.00000e+00
+
+Error: measure  cause1e  find(AT) : out of interval
+ meas tran cause1e find v(cause1) at=36u failed!
+
+
+Error: measure  cause0e  find(AT) : out of interval
+ meas tran cause0e find v(cause0) at=36u failed!
+
+
+Error: measure  fault_end  find(AT) : out of interval
+ meas tran fault_end find v(fault_n) at=36u failed!
+
+
+Error: measure  soft_peak  find(AT) : out of interval
+ meas tran soft_peak find sp_v at=36u failed!
+
+Warning from checkvalid: vector cause1e is not available or has zero length.
+Error: RHS "2*(cause1e gt 0.6) + (cause0e gt 0.6)" invalid
+Error: &gate_end: no such variable.
+Error: &i_end: no such variable.
+Error: &cause: no such variable.
+Error: &fault_end: no such variable.
+Error: &soft_peak: no such variable.
+NO_TRIP_EXPECTED tripped_max= 0  gate_min= 0  gate_end=  ipk_A= 0  i_end_A=  cause=  fault_n_end=  soft_peak=
+
+Error: measure  q_step  find(AT) : out of interval
+ meas tran q_step find qi at=30u failed!
+
+
+Error: measure  q_end  find(AT) : out of interval
+ meas tran q_end find qi at=36u failed!
+
+Warning from checkvalid: vector q_end is not available or has zero length.
+Error: RHS "q_end - q_step" invalid
+Error: &q_passed: no such variable.
+CHARGE after_event_As=
+Error: incomplete or empty netlist
+       or no ".plot", ".print", or ".fourier" lines in batch mode;
+no simulations run!
+
+# run status failed
+# ngspice exit 1, wall time 73 s

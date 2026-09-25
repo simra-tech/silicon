@@ -1,0 +1,31 @@
+* G1_T2F SYSTEM CHECK diag joint_en1: ff-40 (hbt_bcs mos_ff res_bcs cap_typ) T=-40 C PTAT, op only
+.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerHBT.lib hbt_bcs
+.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerMOShv.lib mos_ff
+.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerMOSlv.lib mos_ff
+.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerRES.lib res_bcs
+.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerCAP.lib cap_typ
+.include ../../../../g1_bgr/sim/postlayout/g1_bgr_pex.spice
+.include ../../postlayout/g1_t2f_pex.spice
+.option gmin=1e-15 abstol=1e-13 reltol=1e-4 vntol=1e-6 method=gear
+.temp -40
+.global sub!
+Vsub sub! 0 dc 0
+Vdd vdd 0 dc 3.3
+Vdd12 vdd12 0 dc 1.2
+Vr4 r4 0 dc 0
+Vmode mode 0 dc 0
+Ven en 0 dc 3.3
+Xbgr vdd 0 r4 vref iptat pbias pcasc vbe dvbe g1_bgr
+Vload iptat 0 dc 1.0
+Xt2f vdd vdd12 0 pbias pcasc vref en mode fout g1_t2f
+Cout fout 0 50f
+.control
+option numdgt=10
+op
+echo OP_BEGIN
+print v(xt2f.cap2) v(xt2f.tail2) v(xt2f.cb2) v(xt2f.vth) v(vref)
+echo OP_END
+echo SYS_END
+quit 0
+.endc
+.end

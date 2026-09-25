@@ -2,7 +2,7 @@
 
 A mixed-signal test chip intended to protect a compute load from single-event
 latch-up and characterize temperature, dose-sensitive leakage and upset events.
-Four functions on one 1.35 × 1.35 mm die, planned for QFN24 board measurements:
+Four functions on one 1.414 × 1.414 mm die, planned for QFN24 board measurements:
 
 1. a current-limiting **breaker**: shunt sense amplifier, trip comparator, I²t
    timer and gate drive for an external switch, with a trip profile that lets a
@@ -29,23 +29,48 @@ The 3.3 V thick-oxide MOSFETs, SiGe HBTs, MIM capacitors and poly resistors are
 part of the base open PDK. The legacy `D_ELT` pin connects to a standard HV
 NMOS in the assembled netlist, not an enclosed-layout transistor.
 
-Current snapshot: [assembled GDS](blocks/g1_padring/layout/g1_chip_top.gds),
-[netlist](blocks/g1_padring/netlist/g1_chip_top.cdl), and
-[design review PDF](review/G1_DESIGN_REVIEW.pdf). The PDF is a dated review
-snapshot; subsequent status updates are recorded below and in block evidence.
+Chip of record (owner decision 2026-09-24):
+[`g1_chip_top_1414.gds`](blocks/g1_padring/layout/g1_chip_top_1414.gds), top cell
+`g1_chip_top`, 1414 × 1414 µm, SHA-256 `629d303abf594ec90593f1d28a8d9ad19673ea6662780ba428a6d9c5685986ba`;
+canonical netlist [`g1_chip_top_1414.cdl`](blocks/g1_padring/netlist/g1_chip_top_1414.cdl)
+(`af5a4dbd…`); comparison-only
+[projected reference](blocks/g1_padring/netlist/g1_chip_top_1414_projected_ref.cdl) (`e1d06919…`).
+Sign-off and block-to-netlist map:
+[`signoff-1414-20260924`](blocks/g1_padring/reports/signoff-1414-20260924/README.md).
+Draft submission checklist: [`review/TAPEIN_PACKAGE_20260924.md`](review/TAPEIN_PACKAGE_20260924.md).
+The GDS (84.5 MB) is not in Git; its SHA-256 is its identity.
+It supersedes the 1350 µm LibreLane assembly
+([`g1_chip_top.gds`](blocks/g1_padring/layout/g1_chip_top.gds),
+[`g1_chip_top.cdl`](blocks/g1_padring/netlist/g1_chip_top.cdl),
+[`INTEGRATION.md`](blocks/g1_padring/INTEGRATION.md)). That evidence is retained but is not the chip.
+The [design review PDF](review/G1_DESIGN_REVIEW.pdf) is a dated snapshot that predates this decision.
 
-**State: the 1.35 × 1.35 mm chip is assembled. The assembly passes KLayout
-hard-rule DRC, precheck, density, supply-connectivity/isolation checks, timing,
-and core-only LVS (52 circuit pairs matched). Full-chip LVS through the IO ring
-and KLayout antenna remain failed; see the evidence and scope in
-[`blocks/g1_padring/INTEGRATION.md`](blocks/g1_padring/INTEGRATION.md).
-Original breaker runs used a faulty clock bridge and are not timing acceptance
-evidence. Corrected schematic cases completed; integrated block-PEX OP and
-1 µs/4 µs startup diagnostics passed. A 10 µs request timed out at a last
-reported 7.551 µs, before configuration and fault injection. Integrated PEX
-fault-event and power-up verification remain not run to completion. See
-[restart evidence](blocks/g1_top/sim/DIAGNOSTICS_20260921.md).
-125 °C historical attempts failed numerically; the simulation matrix is incomplete.
+**State (2026-09-24): the chip of record is the 1414 µm native-lineage GDS above.
+It contains SENSE comp45 + R100, TRIP with the regenpair4 hard and NF4 soft
+comparators, OSC R0.95, BGR586 (`bgr_loop24_qref4_r253p465_hv06`), T2F baseline
+revision 2, GATE baseline, the run7 digital logic with a re-done clock tree and
+routing (Boolean-equivalent to the GLS-passed run7 netlist), three `g1_ls_up` level
+shifters, the DOSE HV/LV pair and the DUT HBT. Bond pads are moved 5 µm outward.
+The IO ring uses design-local `sg13g2_io` copies that carry PolyRes 128/0 over their
+existing gate poly. On that exact file: main DRC, maximal DRC, density and antenna
+**passed** (0 markers); projected-reference LVS **passed** (61 684/61 684 devices);
+canonical unprojected LVS **failed** on 14 stock IO/level-shifter sub-cells (PDK deck
+limitation, `PLAN.md` R13); full-chip PEX **not run**. Digital STA with the merged
+chip SDC **passed** setup/hold at macro level and in the routed signal netlist
+(3 corners, nominal RC). Its annotation, slew and fanout items are dispositioned,
+not waived ([STA](blocks/g1_ctrl/reports/sta_merged_sdc_20260924/README.md)).
+Chip-level simulation on the chip's own block netlists
+([`g1_top --blockset c1414`](blocks/g1_top/README.md)) passed the tt/27 °C
+cases run so far: nominal hard fault, 1 ms soft window and short pulse (the last two with the
+behavioural front end), core-first power-up.
+Corner, temperature and supply matrices (simulated, ideal clock at 9.436 MHz,
+SENSE pads without `dantenna` diodes, BGR586 schematic view: [RESULTS_20260925](blocks/g1_top/sim/campaigns/RESULTS_20260925.md)): all 72
+case × corner × temperature cells completed and passed (72/72, none failed), the
+last twelve as `_r4` re-runs. Hard faults took
+`GATE` below 1 V 1.31–1.36 µs after the fault, including at the supply extremes.
+IO-first power-up drove `GATE` high for 4.2–4.4 µs even with 10 kΩ (expected; the
+P1 board rule). The effective hard threshold sits 8–9 mV of shunt below its DAC code
+(calibration requirement below).
 Nothing has been fabricated, taped out or measured. This is not a signed-off
 submission.**
 
@@ -53,32 +78,39 @@ submission.**
 
 | Block | Function | Devices | Domain | Est. area |
 | --- | --- | --- | --- | ---: |
-| `G1_SENSE` | Kelvin shunt sense amplifier, low-side, gain 20; difference amplifier around three PMOS-input OTAs (`blocks/g1_sense/layout/`: 252 × 189 µm, DRC and LVS clean, PEX done; post-layout gain 19.99, bandwidth 4.2 MHz) | thick-oxide PMOS input, thick-oxide MOS, `rppd`, `cmim` | 3.3 V | 0.048 mm² |
-| `G1_TRIP` | Two clocked comparators with V<sub>REF</sub>-referenced 8-bit resistor-string DACs, soft and hard thresholds (`blocks/g1_trip/layout/`: 229 × 207 µm, DRC and LVS clean including a one-to-one compare of all 530 string resistors, PEX done; post-layout delay ≤ 1.8 ns at 1 mV overdrive worst corner, DAC INL ≤ 0.002 LSB) | 1.2 V StrongARM comparators, `rppd` strings, thick-oxide switch trees | 1.2 V / 3.3 V | 0.047 mm² |
+| `G1_SENSE` | Kelvin shunt sense amplifier, low-side, gain 20; difference amplifier around three PMOS-input OTAs. **Chip variant comp45 + R100** (`RRZ` `rppd` 1 × 100 µm in `g1_ota_main_candidate`), layout XOR-identical to the RZ100 native build (signoff block map). Simulated, standalone, 100/100 mismatch samples: gain 19.905–20.050, calibrated residual ≤ 498 µV ([R100_MC_100](blocks/g1_sense/reports/R100_MC_100_20260923.md)). Post-layout: partial-field C only, field acceptance failed/unresolved | thick-oxide PMOS input, thick-oxide MOS, `rppd`, `cmim` | 3.3 V | 0.048 mm² (Sep-19 layout) |
+| `G1_TRIP` | Two clocked comparators with V<sub>REF</sub>-referenced 8-bit resistor-string DACs, soft and hard thresholds. **Chip variant: hard comparator regenpair4** (regenerative NMOS 6/0.26 µm) **+ soft comparator NF4** input pair (W24/L0.68, four folded fingers). Block LVS of the macro cut from the chip passed. NF4 kpex CC comparator, simulated: all decisions right, delay ≤ 1.694 ns at 1 mV overdrive (ss, 1.08 V, −40 °C), offset bracket −3.9…+0.77 mV (tt) ([postlayout](blocks/g1_trip/sim/postlayout/README.md)). DAC deck, wiring R and MC on the NF4 extraction not run | 1.2 V StrongARM comparators, `rppd` strings, thick-oxide switch trees | 1.2 V / 3.3 V | 0.047 mm² |
 | `G1_GATE` | Latch and driver core for the external low-side N-FET, latched or retriggering, fast path from the hard comparator (`blocks/g1_gate/layout/`: 131 × 51 µm, DRC and LVS clean, PEX done) plus the 30 mA output pad in the ring | thick-oxide MOS, `sg13g2_IOPadOut30mA` | 3.3 V | 0.007 mm² + pad |
-| `G1_BGR` | Bandgap reference and PTAT current (`blocks/g1_bgr/layout/`: 84 × 124 µm, DRC, antenna and LVS clean, PEX capacitances extracted; post-layout V<sub>REF</sub> within 0.15 % of schematic) | `npn13G2`, thick-oxide MOS, `rppd`, `rhigh` | 3.3 V | 0.010 mm² |
+| `G1_BGR` | Bandgap reference and PTAT current. **Chip variant `bgr_loop24_qref4_r253p465_hv06` ("BGR586")**: 336 HV MOS, 301 `npn13G2`, 399 resistors. Block LVS passed; kpex 2.5D CC extraction run, DC identical to the schematic ([bgr586 PEX](blocks/g1_bgr/sim/postlayout/README_bgr586_pex.md)). Simulated: V<sub>REF</sub> 1.04546 V at 27 °C, nominal TC 8.53 ppm/°C, supply current 319.7 µA, I<sub>PTAT</sub> 4.13 µA; mismatch 299 of 300 samples completed and all ≤ 50 ppm/°C, max 46.88; 1 numerical failure ([screen](blocks/g1_bgr/sim/qualification/BGR586_SCREEN300_20260922.md)); output resistance 19.3–25.8 kΩ, VREF pin 1 % settling 1.26 ms with 10 nF at tt/27 °C ([system check](blocks/g1_bgr/sim/system_checks_20260924/RESULTS.md)) | `npn13G2`, thick-oxide MOS, `rppd`, `rhigh` | 3.3 V | not recorded (Sep-19 layout 0.010 mm²) |
 | `G1_T2F` | Temperature-to-frequency sensor: PTAT current from the bandgap core into a `cmim` relaxation oscillator with a V<sub>REF</sub> threshold, PTAT and reference modes (`blocks/g1_t2f/layout/`: revision 2 with collector cascodes, 92 × 103 µm, DRC, antenna and LVS clean, PEX done; every HBT within the 1.6 V V<sub>CE</sub> limit; simulated two-point residual −0.85 to +0.17 °C over −40 to 150 °C, supply sensitivity −2.5 °C/V) | `npn13G2`, thick-oxide MOS, `rppd`, `cmim`, LV CMOS output | 3.3 V core, 1.2 V output | 0.009 mm² |
 | `G1_DOSE` | Thin-oxide / thick-oxide NMOS canary pair with shared gate, drains pinned out; drawn enclosed-layout NMOS as an approval-gated alternative | `sg13_lv_nmos`, `sg13_hv_nmos`, drawn ELT | 1.2 / 3.3 V | < 0.001 mm² |
 | `G1_SEU` | Plain and triple-modular-redundant shift registers, scrubbed and counted; depth parameterised, 256 + 3 × 128 bits in the assembled digital macro | LV CMOS standard cells | 1.2 V | inside the digital macro |
 | `G1_CTRL` | Register file, serial interface, trip timers, scrub state machine; hardened together with `G1_SEU` as one digital macro (`blocks/g1_ctrl/layout/`, run 7: DRC, LVS, antenna, XOR and timing clean; TMR copies placed ≥ 27 µm apart; gate-level simulation passes) | LV CMOS standard cells | 1.2 V | 0.13 mm² (macro, 360 × 360 µm, 46 pins) |
-| `G1_OSC` | Relaxation oscillator clocking the timers and scrubber, 4-bit trim (`blocks/g1_osc/layout/`: 166 × 138 µm, DRC and LVS clean, PEX done; 9 MHz at mid code post-layout, nominal trim brackets 10 MHz; full PVT coverage not run) | MOS, `rppd`, `cmim` | 1.2 V | 0.023 mm² |
+| `G1_OSC` | Relaxation oscillator clocking the timers and scrubber, 4-bit trim. **Chip variant R0.95** (`RRA`/`RRB` `rppd` l = 111.15 µm, was 117 µm). Isolated macro CPEX run. Simulated with full clock-tree load: 9.436 MHz at nominal trim 8 ([full-tree load](blocks/g1_osc/sim/qualification/fulltree_r095_load_20260924/README.md)); slow/hot code 0 reaches 10.445 MHz with the actual receiver (baseline 9.975 MHz) ([qualification](blocks/g1_osc/sim/qualification/README.md)). Full PVT and mismatch not run to completion | MOS, `rppd`, `cmim` | 1.2 V | 0.023 mm² (Sep-19 layout) |
 | `G1_DUT` | One bare `npn13G2` with E, B, C on pins (`blocks/g1_dut/`: DRC and LVS clean) | `npn13G2` | — | < 0.001 mm² |
 | `G1_PADRING` | 24 `sg13g2_io` cells, 24 bondpads, 4 corners, fillers, sealring | `sg13g2_io`, PDK PCells | 3.3 V / 1.2 V | about 1.4 mm² |
 
-The core window inside the ring is about 620 × 620 µm (0.38 mm²) on the 1.35 × 1.35 mm die; the digital macro (360 × 360 µm) and the sense amplifier (252 × 189 µm) are the largest tenants; see
-[`padframe/`](padframe/README.md) for the geometry. Full specification, pin map
+Area figures in the table are from the block layouts before the 1414 µm integration, except where the row says otherwise. The core-window figure of the superseded 1350 µm assembly (about 620 × 620 µm) does not describe the chip of record. See
+[`padframe/`](padframe/README.md) for the ring geometry. Full specification, pin map
 and parameter classification: [`specification/G1_TOP_LEVEL_SPECIFICATION.md`](specification/G1_TOP_LEVEL_SPECIFICATION.md).
 Schedule, freeze lines, decisions and pin fallbacks: [`PLAN.md`](PLAN.md).
 
 ## Built against
 
-| Thing | Version | How it will be established |
+| Thing | Version | How it was established |
 | --- | --- | --- |
-| PDK | IHP SG13G2, commit `84374023ee8b4b126bebbba67fcbada0a9c0ff0b` | `COMMIT` file at the PDK install root, recorded in the first simulation logs under `blocks/g1_dut/sim/logs/` |
-| ngspice | 46 | simulator banner in `blocks/g1_dut/sim/logs/` |
-| KLayout | 0.30.9 | DRC/LVS run logs under `blocks/*/reports/` |
+| PDK | IHP SG13G2, commit `84374023ee8b4b126bebbba67fcbada0a9c0ff0b` | `flow/run.sh` refuses to start unless `/foss/pdks/ihp-sg13g2/COMMIT` matches; `# PDK commit` line in every `g1_top` log |
+| Container image | `tapeoutbench-eda`, config `sha256:ddeb69576f2808676d1c5d474ecf04f6d1d6f8abdcff6b72b39790ded924bab2` | `flow/run.sh` image identity check |
+| ngspice | 46 | `ngspice-46` banner in `blocks/g1_top/sim/logs/*c1414*.log` and the BGR/T2F system-check logs |
+| KLayout | 0.30.9 | "Your Klayout version is: KLayout 0.30.9" in the 1414 sign-off `run_drc.py` logs |
+| kpex (klayout-pex) | 0.3.12 | `kpex --version` in `blocks/g1_bgr/reports/pex/cc_bgr586_20260924/kpex_console.log`; TRIP NF4 extraction record |
+| OpenSTA | 3.1.0 | `sta -version` in the container (`blocks/g1_ctrl/reports/sta_merged_sdc_20260924/`) |
+| Icarus Verilog | 14.0 (devel) | `iverilog -V` line in every `g1_top` log |
 | xschem | 3.4.8RC | `v {xschem version=...}` header of each `.sch` |
-| LibreLane | 3.1.0.dev2 | `blocks/g1_padring/reports/` flow log header |
+| LibreLane | 3.1.0.dev2 | digital macro run7 and the superseded 1350 µm assembly flow logs; not used to assemble the 1414 µm chip |
+
+The versions come from the logs and records named above. The container was
+not re-queried for this README.
 
 ## What was actually measured
 
@@ -101,20 +133,49 @@ latencies are retained for diagnosis but are not accepted sign-off evidence.
 | Wire-bonding of 70 × 70 µm external bondpads at 112 µm pitch into QFN24, with the die paddle bonded out as a substrate connection | **assumed; bonding-service confirmation pending** |
 | Package survives −196 °C to +175 °C for characterisation soaks | not verified; package and fixture qualification required |
 | Low-side shunt sensing with common mode within −0.1 V to +0.3 V of ground | design choice |
-| `VDDA` (pin 7) and `IOVDD` come from one 3.3 V board rail | required: the analog pad's ESD diodes reference `IOVDD`; `VDDA` above `IOVDD` by a diode drop would forward-bias them (`PLAN.md` D14) |
-| Trip response target under 10 µs from overcurrent to gate low | selected corrected schematic cases completed; integrated PEX fault-event verification not run to completion |
-| Board powers `VDD` before or with `IOVDD` | required: with only `IOVDD` present the 30 mA output pad drives `GATE` high (IO-cell property, simulated) |
+| `VDDA` (pin 7) tied to the `IOVDD` 3.3 V board rail | required (board): the analog pad's ESD diodes reference `IOVDD`; `VDDA` above `IOVDD` by a diode drop would forward-bias them (`PLAN.md` D14) |
+| Trip response target under 10 µs from overcurrent to gate low | chip netlists (`--blockset c1414`), tt/27 °C, compact 28 µs in-range hard fault: `GATE` < 1 V 1.345 µs after the fault (simulated). Corners (tt/ss/ff), −40/27/85/125 °C and VDD/VDDA ±10 %: 1.306–1.361 µs in every completed cell, with the ideal clock at 9.436 MHz and the `nodcn`/`bgr=sch` deck deviations; 12 cells still running, not run to completion ([RESULTS_20260925](blocks/g1_top/sim/campaigns/RESULTS_20260925.md)) |
+| Board powers `VDD` before or with `IOVDD` | required. Every `sg13g2_io` output pad, the tri-state variants included, takes its driver gate signals from core-powered level-up cells. With only `IOVDD` present, `GATE` can float high: simulated 3.288 V ([power screen](blocks/g1_gate/sim/POWER_SCREEN_20260921.md)). Core-first on the chip netlists: `GATE` ≤ 0.073 V while EN is low (simulated, `g1_top` case gB: behavioural front end, PDK pad models) |
+| External pull-down or inhibit on `GATE` during power-up | required (board). Core-first with 10 kΩ: `GATE` ≤ 0.009 V while EN is low (simulated, case gB_pd). IO-first on the chip netlists (`pads nodcn`), with or without 10 kΩ: `GATE` 3.28–3.30 V for 4.2–4.4 µs until `VDD` is up, at tt/27, ss/125 and ff/−40 °C (simulated, [RESULTS_20260925](blocks/g1_top/sim/campaigns/RESULTS_20260925.md) §5). The pull-down does not replace P1. With IO first, only the independent load-bus inhibit keeps the FET off |
+| `EN` held low ≥ 2 ms after both rails are stable when 10 nF sits on the `VREF` pin | required (board/firmware). BGR586 output resistance 22.3 kΩ (tt/27 °C) gives τ ≈ 0.24 ms with 10 nF. Simulated 1 % settling 1.26 ms (tt/27 °C), 1.20 ms (ff/−40 °C), 1.32 ms at ss/125 °C with the pad-less stand-in ([BGR system check](blocks/g1_bgr/sim/system_checks_20260924/RESULTS.md)). Scale the delay with the capacitor: 100 nF needs about 12.5–13.2 ms |
 
 ## What remains unverified
 
-- Full-chip LVS through the IO ring and KLayout antenna: **failed**, with
-  reference-cell evidence in the pad-ring reports; no waiver is claimed.
-- Chip-level 125 °C breaker transients: **failed** (solver timestep collapse).
-- Remaining chip-level simulation cases, process corners, mismatch and supply
-  extremes: **not run to completion** or **not run**, as listed in G1_TOP.
-- Full-chip PEX, package/bond-wire parasitics and physical measurements:
-  **not run**.
+- Canonical unprojected full-chip LVS: **failed** on 14 stock IO/level-shifter
+  sub-cells of the PDK deck (R13). Only the projected-reference comparison passed.
+  The IO ring was not XOR-checked against the stock cells.
+- Full-chip PEX, IR drop/EM and full-chip timing of the final GDS: **not run**.
+  Block extractions exist for BGR586 (C only), TRIP NF4, OSC R0.95 (isolated macro) and
+  SENSE R100 (partial field). None is an extraction of the assembled chip.
+- Chip-level 125 °C transients on the superseded legacy netlists: **failed** (solver
+  timestep collapse; retained in `blocks/g1_top/README.md`).
+- Chip-level corner, temperature and supply matrices on the chip netlists
+  (`g1_top --blockset c1414`): 72/72 matrix cells completed and passed, 0 failed;
+  12/12 supply cases passed. T2F at −40 °C is **not run to completion** (numerical,
+  three attempts)
+  ([RESULTS_20260925](blocks/g1_top/sim/campaigns/RESULTS_20260925.md)). Every cell uses an ideal clock at the tt/27 °C frequency, SENSE pads
+  without `dantenna` diodes and the BGR586 schematic view. Only one compact run
+  combined the BGR586 and TRIP extractions. Chip-level PEX is still **not run**.
+- Hard-comparator threshold: on the chip netlists the hard path trips at
+  30.00–31.25 mV for code 200 (39.25 mV). The TRIP NF4 block bench gives 40–56 LSB
+  (7.9–11.0 mV) below code over corners, with a 10–11 LSB spread; the soft path is
+  within 1 LSB. The cause is the soft comparator's reset kick on the shared input at
+  the hard strobe. Simulated characterization and calibration requirement (see the
+  specification §4 and §6). The 2× hold-capacitor candidate
+  (`blocks/g1_trip/layout/candidates/nf4_hold2x/`) halves it in simulation. It is not
+  adopted: decision pending.
+- The chip-level SENSE pads use a documented deck deviation (no `dantenna` diodes)
+  for faults ≥ 2.3×. The PDK pad diode model stalls the solver there. This deviation is not a verification of the pad.
+- Transistor-level oscillator (R0.95) clocking the RTL on the chip netlists, without
+  G1_TRIP (simulated): 9.443–9.483 MHz at tt/27 °C with a 0.5 ns step, against the 9.436 MHz
+  ideal clock of the trip decks. The corner values (ss/125 °C 7.61 MHz, ff/−40 °C 12.43 MHz)
+  carry a 2 ns-step bias. The gear supply-corner runs **failed** numerically. The
+  ff/−40 °C, `VDD` 1.32 V trap re-run completed at 12.41 MHz; the ss/125 °C, `VDD`
+  1.08 V trap re-run is **not run** (its launch was refused by the runner's
+  evidence-overwrite guard and produced no log) ([RESULTS_20260925](blocks/g1_top/sim/campaigns/RESULTS_20260925.md) §6).
+  The trip path with the transistor-level oscillator in the loop: **not run**.
+- Seal-ring and IO-ring foundry precheck, bond-map rebinding to `629d303a…`, the
+  stale seal-ring registration text, and IHP's intake checks: **not run** / open
+  ([tape-in checklist](review/TAPEIN_PACKAGE_20260924.md)).
+- Package/bond-wire parasitics and physical measurements: **not run**.
 - Bonding-service acceptance and final submission review: **not run**.
-
-The core-only LVS excludes IO cells, bondpads and ring rails. Geometric
-connectivity checks do not replace transistor-level verification of those cells.

@@ -1,0 +1,32 @@
+* G1_T2F SYSTEM CHECK diag joint_en0_nodeset: tt27 (hbt_typ mos_tt res_typ cap_typ) T=27 C PTAT, op only
+.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerHBT.lib hbt_typ
+.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerMOShv.lib mos_tt
+.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerMOSlv.lib mos_tt
+.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerRES.lib res_typ
+.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerCAP.lib cap_typ
+.include ../../../../g1_bgr/sim/postlayout/g1_bgr_pex.spice
+.include ../../postlayout/g1_t2f_pex.spice
+.option gmin=1e-15 abstol=1e-13 reltol=1e-4 vntol=1e-6 method=gear
+.temp 27
+.global sub!
+Vsub sub! 0 dc 0
+Vdd vdd 0 dc 3.3
+Vdd12 vdd12 0 dc 1.2
+Vr4 r4 0 dc 0
+Vmode mode 0 dc 0
+Ven en 0 dc 0
+Xbgr vdd 0 r4 vref iptat pbias pcasc vbe dvbe g1_bgr
+Vload iptat 0 dc 1.0
+Xt2f vdd vdd12 0 pbias pcasc vref en mode fout g1_t2f
+Cout fout 0 50f
+.nodeset v(pbias)=2.3030 v(pcasc)=1.7691 v(vref)=1.0375 v(xt2f.vth)=1.0374 v(xt2f.tail1)=0.3171 v(xt2f.tail2)=0.3171 v(xt2f.ca1)=1.1565 v(xt2f.ca2)=1.1565 v(xt2f.cb1)=1.3312 v(xt2f.cb2)=1.3312 v(xt2f.nbias)=0.7045 v(xt2f.vcg)=2.2168 v(xt2f.oa1)=2.2963 v(xt2f.oa2)=2.2963 v(xt2f.ob1)=3.2952 v(xt2f.ob2)=3.2952 v(xt2f.cap1)=0 v(xt2f.cap2)=0
+.control
+option numdgt=10
+op
+echo OP_BEGIN
+print v(xt2f.cap2) v(xt2f.tail2) v(xt2f.cb2) v(xt2f.vth) v(vref)
+echo OP_END
+echo SYS_END
+quit 0
+.endc
+.end

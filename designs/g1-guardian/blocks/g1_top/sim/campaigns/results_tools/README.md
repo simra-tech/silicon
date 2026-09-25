@@ -1,0 +1,2 @@
+Generators for `../RESULTS_20260925.md`: run `python3 assemble.py` from anywhere to rebuild it from `../../logs/` and `../night_20260924_run/summary.csv`; refresh that CSV first with `python3 launch_matrix.py night_20260924.json --summarize` in `..`.
+Prose lives in `template.md` (placeholders `{{…}}`); `gen.py` parses logs and applies the pass/invalid rules, `matrix.py`/`other.py`/`inval.py` emit the tables. Numbers in hand-written prose are not updated automatically: review them after the `_r4` jobs finish.

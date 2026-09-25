@@ -1,0 +1,50 @@
+# tail extract of c_mid_pex_c1414_tl_tt_27C_fm1p1_ovr-bgrsch_nodcn_clockfix_functional_c1414thr3.log
+# full log retained locally (not in git): 1557638 bytes, sha256 0939cfbc18bf759d6f2b2684b6f08b779437dfa1cdd99da54d83700876d81b08, 10742 lines
+# manifest: designs/g1-guardian/review/local-retention-20260925.json
+# lines longer than 1000 bytes are shortened (first/last 300 bytes kept)
+# ---- measurement lines (QUIET/TRIP/REARM/POWERUP/T2F/CLOCK/SUPPLY_uA), 4 found ----
+QUIET window_us=28-30 vref= 1.04546  isense= 1.50732  icmp= 0.753741  vth_soft= 0.804781  vth_hard= 0.89751  vref_inst= 1.04547  isense_inst= 1.50729  icmp_inst= 0.736972  vth_soft_inst= 0.789766  vth_hard_inst= 0.901387  iload_A= 1  gate= 3.3  code_soft= 153  code_hard= 200  fast_en= 0  inrush_active= 0  t_inrush_off_us= 21.7207  soft_armed_end= 0
+CLOCK f_osc_MHz= 9.43619  f_cmp_MHz= 4.71825  (RTL clock: ideal source at the block-simulated frequency)
+SUPPLY_uA window=27.8451-30us VDDA= 1421.11  IOVDD= 0.000350705  VDD= 3.87058  | bgr= 319.704  sense= 1101.4  trip_3v3= 0.00982078  trip_1v2= 3.87712  osc= 2.40009E-06  gate_3v3= 0.000563781  gate_1v2= 0.000702483
+TRIP tripped_max= 2.32175E-06  tripped_before_event= 2.29462E-06  t_tripped_us=  t_trip_d_us=  t_gate_1V_us=  t_gate_0.33V_us=  gate_min= 3.3  gate_end= 3.3  ipk_A= 1.1  i_end_A= 1.1  isense_pk= 1.56113  cause= 0  fault_n_end= 3.3  soft_peak= 0
+# ---- last 40 lines ----
+Error: measure  t_trip_d  when(WHEN) : out of interval
+ meas tran t_trip_d when v(trip_d)=0.6 rise=1 from=30u failed!
+
+
+Error: measure  t_gate1v  when(WHEN) : out of interval
+ meas tran t_gate1v when v(gate)=1.0 fall=1 from=30u failed!
+
+
+Error: measure  t_gate03  when(WHEN) : out of interval
+ meas tran t_gate03 when v(gate)=0.33 fall=1 from=30u failed!
+
+gate_min            =  3.30000e+00 at=  4.16441e-05
+gate_end            =  3.30000e+00
+ipk                 =  1.10000e+00 at=  4.19082e-05
+i_end               =  1.10000e+00
+isense_pk           =  1.56113e+00 at=  3.13703e-05
+cause1e             =  0.00000e+00
+cause0e             =  0.00000e+00
+fault_end           =  3.30000e+00
+soft_peak           =  0.00000e+00
+Warning from checkvalid: vector t_gate1v is not available or has zero length.
+Error: RHS "(t_gate1v - tstep_s)*1e6" invalid
+Warning from checkvalid: vector t_gate03 is not available or has zero length.
+Error: RHS "(t_gate03 - tstep_s)*1e6" invalid
+Warning from checkvalid: vector t_tripped is not available or has zero length.
+Error: RHS "(t_tripped - tstep_s)*1e6" invalid
+Warning from checkvalid: vector t_trip_d is not available or has zero length.
+Error: RHS "(t_trip_d - tstep_s)*1e6" invalid
+Error: &dt_tripped_us: no such variable.
+Error: &dt_trip_d_us: no such variable.
+Error: &dt_gate1v_us: no such variable.
+Error: &dt_gate03_us: no such variable.
+TRIP tripped_max= 2.32175E-06  tripped_before_event= 2.29462E-06  t_tripped_us=  t_trip_d_us=  t_gate_1V_us=  t_gate_0.33V_us=  gate_min= 3.3  gate_end= 3.3  ipk_A= 1.1  i_end_A= 1.1  isense_pk= 1.56113  cause= 0  fault_n_end= 3.3  soft_peak= 0
+q_step              =  2.68073e-05
+q_end               =  4.00063e-05
+CHARGE after_event_As= 1.3199E-05
+Note: Simulation executed from .control section 
+
+# run status completed
+# ngspice exit 0, wall time 9900 s

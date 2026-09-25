@@ -1,0 +1,42 @@
+* G1_T2F SYSTEM CHECK: post-layout BGR + post-layout T2F, EN=0 until 100u, tt27 (hbt_typ mos_tt res_typ cap_typ) T=27 C PTAT
+.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerHBT.lib hbt_typ
+.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerMOShv.lib mos_tt
+.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerMOSlv.lib mos_tt
+.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerRES.lib res_typ
+.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerCAP.lib cap_typ
+.include ../../../../g1_bgr/sim/postlayout/g1_bgr_pex.spice
+.include ../../postlayout/g1_t2f_pex.spice
+.option gmin=1e-15 abstol=1e-13 reltol=1e-4 vntol=1e-6 method=gear
+.temp 27
+.global sub!
+Vsub sub! 0 dc 0
+Vdd vdd 0 dc 3.3
+Vdd12 vdd12 0 dc 1.2
+Vr4 r4 0 dc 0
+Ven en 0 pwl(0 0 100u 0 100.01u 3.3)
+Vmode mode 0 dc 0
+Xbgr vdd 0 r4 vref iptat pbias pcasc vbe dvbe g1_bgr
+Vload iptat 0 dc 1.0
+Xt2f vdd vdd12 0 pbias pcasc vref en mode fout g1_t2f
+* TEMP_OUT pad stand-in: ~50 fF of core wiring plus the IO cell input
+Cout fout 0 50f
+.control
+set wr_singlescale
+set wr_vecnames
+option numdgt=10
+op
+echo OP_BEGIN
+print v(xt2f.ca1) v(xt2f.vth) v(xt2f.tail1) v(xt2f.xq42.t) @q.xt2f.xq42.qnpn13g2[ic] @q.xt2f.xq42.qnpn13g2[ib] @q.xt2f.xq42.qnpn13g2[ie]
+print v(xt2f.cb1) v(xt2f.cap1) v(xt2f.tail1) v(xt2f.xq45.t) @q.xt2f.xq45.qnpn13g2[ic] @q.xt2f.xq45.qnpn13g2[ib] @q.xt2f.xq45.qnpn13g2[ie]
+print v(xt2f.ca2) v(xt2f.vth) v(xt2f.tail2) v(xt2f.xq44.t) @q.xt2f.xq44.qnpn13g2[ic] @q.xt2f.xq44.qnpn13g2[ib] @q.xt2f.xq44.qnpn13g2[ie]
+print v(xt2f.cb2) v(xt2f.cap2) v(xt2f.tail2) v(xt2f.xq43.t) @q.xt2f.xq43.qnpn13g2[ic] @q.xt2f.xq43.qnpn13g2[ib] @q.xt2f.xq43.qnpn13g2[ie]
+print v(0) v(0) v(0) v(xt2f.xq40.t) @q.xt2f.xq40.qnpn13g2[ic] @q.xt2f.xq40.qnpn13g2[ib] @q.xt2f.xq40.qnpn13g2[ie]
+print v(0) v(0) v(0) v(xt2f.xq41.t) @q.xt2f.xq41.qnpn13g2[ic] @q.xt2f.xq41.qnpn13g2[ib] @q.xt2f.xq41.qnpn13g2[ie]
+print v(vref) v(pbias) v(pcasc) v(xt2f.nbias) v(xt2f.vcg) v(xt2f.oa1) v(xt2f.ob1) v(xt2f.oa2) v(xt2f.ob2) v(xt2f.isrc) v(xt2f.q) v(xt2f.qn) v(xt2f.d1g) v(xt2f.d2g) v(fout) i(vdd) i(vdd12)
+echo OP_END
+tran 5n 200.0u 0 10n
+wrdata ${BULK}/blockchecks-20260924/t2f/en100u_tt27.dat v(fout) v(en) v(xt2f.vth) v(xt2f.cap1) v(xt2f.cap2) v(xt2f.tail2) v(xt2f.cb2) v(xt2f.ca2) v(vref)
+echo SYS_END
+quit 0
+.endc
+.end

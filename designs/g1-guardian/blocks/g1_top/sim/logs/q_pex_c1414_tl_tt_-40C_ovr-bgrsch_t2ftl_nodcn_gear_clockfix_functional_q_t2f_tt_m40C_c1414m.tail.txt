@@ -1,0 +1,50 @@
+# tail extract of q_pex_c1414_tl_tt_-40C_ovr-bgrsch_t2ftl_nodcn_gear_clockfix_functional_q_t2f_tt_m40C_c1414m.log
+# full log retained locally (not in git): 360244 bytes, sha256 4695a67862da48be5892451f38d005c5382ff899b56af07f81d0a03fe2397aa2, 4521 lines
+# manifest: designs/g1-guardian/review/local-retention-20260925.json
+# lines longer than 1000 bytes are shortened (first/last 300 bytes kept)
+# ---- measurement lines (QUIET/TRIP/REARM/POWERUP/T2F/CLOCK/SUPPLY_uA), 4 found ----
+QUIET window_us=28-30 vref= 1.04384  isense= 1.50493  icmp= 0.752462  vth_soft= 0.502172  vth_hard= 0.502172  vref_inst= 1.04384  isense_inst= 1.50493  icmp_inst= 0.752462  vth_soft_inst= 0.502172  vth_hard_inst= 0.502172  iload_A= 1  gate= 3.3  code_soft= 0  code_hard= 0  fast_en= 0  inrush_active= 0  t_inrush_off_us=  soft_armed_end= 0
+CLOCK f_osc_MHz=  f_cmp_MHz=  (RTL clock: ideal source at the block-simulated frequency)
+SUPPLY_uA window=32-44us VDDA= 1110.82  IOVDD= 0.000251626  VDD= 0.00241119  | bgr= 248.265  sense= 836.662  trip_3v3= 0.00300762  trip_1v2= 0.00209175  osc= 2.4E-06  gate_3v3= 0.000551957  gate_1v2= 0.00020678
+T2F window=32-44us f_MHz=  periods=12 vdda_t2f_uA= 25.8914  vdd12_t2f_uA= 5.35069E-05  vdda_ls_uA= 0.000128904  vdd_ls_uA= 5.43591E-05
+# ---- last 40 lines ----
+ia_osc              =  2.40000e-12 from=  3.20000e-05 to=  4.40000e-05
+ia_gatea            =  5.51957e-10 from=  3.20000e-05 to=  4.40000e-05
+ia_gated            =  2.06780e-10 from=  3.20000e-05 to=  4.40000e-05
+SUPPLY_uA window=32-44us VDDA= 1110.82  IOVDD= 0.000251626  VDD= 0.00241119  | bgr= 248.265  sense= 836.662  trip_3v3= 0.00300762  trip_1v2= 0.00209175  osc= 2.4E-06  gate_3v3= 0.000551957  gate_1v2= 0.00020678
+
+Error: measure  t2f_t1  when(WHEN) : out of interval
+ meas tran t2f_t1 when v(temp_out)=0.6 rise=1 from=32u to=44u failed!
+
+
+Error: measure  t2f_t2  when(WHEN) : out of interval
+ meas tran t2f_t2 when v(temp_out)=0.6 rise=13 from=32u to=44u failed!
+
+Warning from checkvalid: vector t2f_t2 is not available or has zero length.
+Error: RHS "12e-6/(t2f_t2 - t2f_t1)" invalid
+ia_t2f              =  2.58914e-05 from=  3.20000e-05 to=  4.40000e-05
+ia_t2fd             =  5.35068e-11 from=  3.20000e-05 to=  4.40000e-05
+ia_ls               =  1.28904e-10 from=  3.20000e-05 to=  4.40000e-05
+ia_lsd              =  5.43591e-11 from=  3.20000e-05 to=  4.40000e-05
+Error: &t2f_mhz: no such variable.
+T2F window=32-44us f_MHz=  periods=12 vdda_t2f_uA= 25.8914  vdd12_t2f_uA= 5.35069E-05  vdda_ls_uA= 0.000128904  vdd_ls_uA= 5.43591E-05
+tripped_max         =  7.46210e-09 at=  3.63975e-05
+tripped_pre         =  7.46210e-09 at=  2.81305e-05
+gate_min            =  3.30000e+00 at=  3.00000e-05
+gate_end            =  3.30000e+00
+ipk                 =  1.00000e+00 at=  4.40000e-05
+i_end               =  1.00000e+00
+isense_pk           =  1.50493e+00 at=  3.00379e-05
+cause1e             =  0.00000e+00
+cause0e             =  0.00000e+00
+fault_end           =  3.30000e+00
+soft_peak           =  0.00000e+00
+NO_TRIP_EXPECTED tripped_max= 7.4621E-09  gate_min= 3.3  gate_end= 3.3  ipk_A= 1  i_end_A= 1  cause= 0  fault_n_end= 3.3  soft_peak= 0
+q_step              =  2.68076e-05
+q_end               =  4.08076e-05
+CHARGE after_event_As= 1.4E-05
+Note: Simulation executed from .control section 
+
+# run status completed
+# ngspice exit 0, wall time 1420 s
+# run status failed (cosim)
