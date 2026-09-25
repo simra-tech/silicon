@@ -79,6 +79,7 @@ extracted, real IO pads, RTL co-simulation, ideal clock; [FULLCHIP_CDL](blocks/g
 hand-wired decks below use a fitted 47 Ω `GATE` driver that is about 7 % (about 90 ns)
 optimistic on `GATE` < 1 V; add about +90 ns to their values. `q` full length and
 power-up on the CDL deck: running, not yet reported.
+With the extracted top-level interconnect (`c1414icx`) the chip-level trip times move by ≤ 10 ns and the on-chip `VREF` node carries 33–46 mV p-p clock ripple with its mean and the sampled thresholds unchanged (simulated; T2F-on run in progress).
 Chip-level simulation on the chip's own block netlists
 ([`g1_top --blockset c1414`](blocks/g1_top/README.md)) passed these tt/27 °C
 cases: nominal hard fault (BGR586 and TRIP NF4 extractions, run `c1414fullc`), 1 ms soft window and short pulse (the last two with the
