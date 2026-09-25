@@ -48,7 +48,14 @@ through the real `IOPadIn` outputs.
 - The CDL omits `ng` on 34 SENSE devices and on the NF4 input pair: a simulation-source
   limitation (LVS compares total width). SENSE current is −7.7 % in the CDL deck; timing unaffected.
 - T2F-on decks need gear (trap failed in every T2F-on deck).
-- `q` full length and power-up (gB, gB_pd) on the CDL deck: running, not yet reported.
+- Power-up, core first, real `EN`/`SCLK`/`SDI` pads, `por_n` from the CDL tie-high (`cdlpwr`,
+  `pads nodcn`): gB and gB_pd passed at tt/27 and ss/125 °C, gB_pd at ff/−40 °C (`GATE` ≤ 0.27 mV
+  while EN low, 3.28–3.30 V after EN); gB ff/−40 °C failed numerically at 7.42 µs (`xbgr.xq784`);
+  stock-diode pads stalled at 1.377 µs (not run to completion). Finding: without `IOVDD` the `EN`
+  pad output floats to 0.84–0.92 V (> 0.6 V 2.34–5.70 µs at tt), `por_n` releases at 2.0 µs, and
+  the RTL and G1_GATE trip latches set spuriously until `IOVDD` passes 1.1 V (5.67 µs); `GATE`
+  never rises. The inhibit rule (spec §6 P2) stands.
+- `q` full length on the CDL deck: running, not yet reported.
 
 ## 2026-09-24 chip-of-record deck (`--blockset c1414`)
 
