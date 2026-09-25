@@ -4,88 +4,125 @@ K {}
 V {}
 S {}
 E {}
-T {g1_trip: conditioning + 2 x DAC + 2 x StrongARM; soft strobed on cmp_clk rising, hard on its inverse} 0 -40 0 0 0.4 0.4 {}
-C {g1_cond.sym} 200 -600 0 0 {name=XCOND }
-C {devices/lab_pin.sym} 140 -620 0 0 {name=l1 lab=isense}
-C {devices/lab_pin.sym} 140 -600 0 0 {name=l2 lab=icmp}
-C {devices/lab_pin.sym} 140 -580 0 0 {name=l3 lab=vss}
-C {g1_dac8.sym} 500 -700 0 0 {name=XDACS }
-C {devices/lab_pin.sym} 440 -820 0 0 {name=l4 lab=vref}
-C {devices/lab_pin.sym} 440 -800 0 0 {name=l5 lab=soft0}
-C {devices/lab_pin.sym} 440 -780 0 0 {name=l6 lab=soft1}
-C {devices/lab_pin.sym} 440 -760 0 0 {name=l7 lab=soft2}
-C {devices/lab_pin.sym} 440 -740 0 0 {name=l8 lab=soft3}
-C {devices/lab_pin.sym} 440 -720 0 0 {name=l9 lab=soft4}
-C {devices/lab_pin.sym} 440 -700 0 0 {name=l10 lab=soft5}
-C {devices/lab_pin.sym} 440 -680 0 0 {name=l11 lab=soft6}
-C {devices/lab_pin.sym} 440 -660 0 0 {name=l12 lab=soft7}
-C {devices/lab_pin.sym} 440 -640 0 0 {name=l13 lab=vth_soft}
-C {devices/lab_pin.sym} 440 -620 0 0 {name=l14 lab=vdd}
-C {devices/lab_pin.sym} 440 -600 0 0 {name=l15 lab=vdda}
-C {devices/lab_pin.sym} 440 -580 0 0 {name=l16 lab=vss}
-C {g1_dac8.sym} 500 -400 0 0 {name=XDACH }
-C {devices/lab_pin.sym} 440 -520 0 0 {name=l17 lab=vref}
-C {devices/lab_pin.sym} 440 -500 0 0 {name=l18 lab=hard0}
-C {devices/lab_pin.sym} 440 -480 0 0 {name=l19 lab=hard1}
-C {devices/lab_pin.sym} 440 -460 0 0 {name=l20 lab=hard2}
-C {devices/lab_pin.sym} 440 -440 0 0 {name=l21 lab=hard3}
-C {devices/lab_pin.sym} 440 -420 0 0 {name=l22 lab=hard4}
-C {devices/lab_pin.sym} 440 -400 0 0 {name=l23 lab=hard5}
-C {devices/lab_pin.sym} 440 -380 0 0 {name=l24 lab=hard6}
-C {devices/lab_pin.sym} 440 -360 0 0 {name=l25 lab=hard7}
-C {devices/lab_pin.sym} 440 -340 0 0 {name=l26 lab=vth_hard}
-C {devices/lab_pin.sym} 440 -320 0 0 {name=l27 lab=vdd}
-C {devices/lab_pin.sym} 440 -300 0 0 {name=l28 lab=vdda}
-C {devices/lab_pin.sym} 440 -280 0 0 {name=l29 lab=vss}
-C {sg13g2_pr/cap_cmim.sym} 700 -700 0 0 {name=CHS model=cap_cmim w=26u l=26u m=1}
-C {devices/lab_pin.sym} 700 -730 0 0 {name=l30 lab=vth_soft}
-C {devices/lab_pin.sym} 700 -670 0 0 {name=l31 lab=vss}
-C {sg13g2_pr/cap_cmim.sym} 700 -400 0 0 {name=CHH model=cap_cmim w=26u l=26u m=1}
-C {devices/lab_pin.sym} 700 -430 0 0 {name=l32 lab=vth_hard}
-C {devices/lab_pin.sym} 700 -370 0 0 {name=l33 lab=vss}
-C {g1_inv.sym} 800 -200 0 0 {name=XCLKI }
-C {devices/lab_pin.sym} 740 -230 0 0 {name=l34 lab=cmp_clk}
-C {devices/lab_pin.sym} 740 -210 0 0 {name=l35 lab=cmp_clk_n}
-C {devices/lab_pin.sym} 740 -190 0 0 {name=l36 lab=vdd}
-C {devices/lab_pin.sym} 740 -170 0 0 {name=l37 lab=vss}
-C {g1_cmp.sym} 1000 -700 0 0 {name=XCS }
-C {devices/lab_pin.sym} 940 -760 0 0 {name=l38 lab=icmp}
-C {devices/lab_pin.sym} 940 -740 0 0 {name=l39 lab=vth_soft}
-C {devices/lab_pin.sym} 940 -720 0 0 {name=l40 lab=cmp_clk}
-C {devices/lab_pin.sym} 940 -700 0 0 {name=l41 lab=cmp_soft}
-C {devices/lab_pin.sym} 940 -680 0 0 {name=l42 lab=cmp_soft_n}
-C {devices/lab_pin.sym} 940 -660 0 0 {name=l43 lab=vdd}
-C {devices/lab_pin.sym} 940 -640 0 0 {name=l44 lab=vss}
-C {g1_cmp.sym} 1000 -400 0 0 {name=XCH }
-C {devices/lab_pin.sym} 940 -460 0 0 {name=l45 lab=icmp}
-C {devices/lab_pin.sym} 940 -440 0 0 {name=l46 lab=vth_hard}
-C {devices/lab_pin.sym} 940 -420 0 0 {name=l47 lab=cmp_clk_n}
-C {devices/lab_pin.sym} 940 -400 0 0 {name=l48 lab=cmp_hard}
-C {devices/lab_pin.sym} 940 -380 0 0 {name=l49 lab=cmp_hard_n}
-C {devices/lab_pin.sym} 940 -360 0 0 {name=l50 lab=vdd}
-C {devices/lab_pin.sym} 940 -340 0 0 {name=l51 lab=vss}
-C {devices/ipin.sym} 1300 -800 0 0 {name=pi0 lab=isense}
-C {devices/ipin.sym} 1300 -780 0 0 {name=pi1 lab=vref}
-C {devices/ipin.sym} 1300 -760 0 0 {name=pi2 lab=cmp_clk}
-C {devices/ipin.sym} 1300 -740 0 0 {name=pi3 lab=soft0}
-C {devices/ipin.sym} 1300 -720 0 0 {name=pi4 lab=soft1}
-C {devices/ipin.sym} 1300 -700 0 0 {name=pi5 lab=soft2}
-C {devices/ipin.sym} 1300 -680 0 0 {name=pi6 lab=soft3}
-C {devices/ipin.sym} 1300 -660 0 0 {name=pi7 lab=soft4}
-C {devices/ipin.sym} 1300 -640 0 0 {name=pi8 lab=soft5}
-C {devices/ipin.sym} 1300 -620 0 0 {name=pi9 lab=soft6}
-C {devices/ipin.sym} 1300 -600 0 0 {name=pi10 lab=soft7}
-C {devices/ipin.sym} 1300 -580 0 0 {name=pi11 lab=hard0}
-C {devices/ipin.sym} 1300 -560 0 0 {name=pi12 lab=hard1}
-C {devices/ipin.sym} 1300 -540 0 0 {name=pi13 lab=hard2}
-C {devices/ipin.sym} 1300 -520 0 0 {name=pi14 lab=hard3}
-C {devices/ipin.sym} 1300 -500 0 0 {name=pi15 lab=hard4}
-C {devices/ipin.sym} 1300 -480 0 0 {name=pi16 lab=hard5}
-C {devices/ipin.sym} 1300 -460 0 0 {name=pi17 lab=hard6}
-C {devices/ipin.sym} 1300 -440 0 0 {name=pi18 lab=hard7}
-C {devices/opin.sym} 1300 -420 0 0 {name=po0 lab=cmp_soft}
-C {devices/opin.sym} 1300 -400 0 0 {name=po1 lab=cmp_hard}
-C {devices/iopin.sym} 1300 -380 0 0 {name=pb0 lab=vdd}
-C {devices/iopin.sym} 1300 -360 0 0 {name=pb1 lab=vdda}
-C {devices/iopin.sym} 1300 -340 0 0 {name=pb2 lab=vss}
-T {vref = buffered VREF from G1_SENSE. cmp_x = 1 while ISENSE/2 > VREF*(255+code)/530, i.e. shunt voltage > code*0.1962 mV*(VREF/1.04)} 200 -900 0 0 0.3 0.3 {}
+B 4 100 -1500 2213 -1348 {fill=false}
+T {vref = buffered VREF from G1_SENSE (vref_buf). cmp_x = 1 while ISENSE/2 > VREF*(255+code)/530, i.e. shunt voltage > code x 0.1962 mV x (VREF/1.04 V).} 100 60 0 0 0.3 0.3 {}
+T {Soft comparator strobes on the rising edge of cmp_clk (osc_clk/2, about 4.7 MHz with the 9.44 MHz chip clock, simulated), hard on the falling edge.} 100 78 0 0 0.3 0.3 {}
+T {Chip (regenpair4 + NF4, simulated block bench): hard path trips 40-56 LSB below its code, soft within 1 LSB (sim/postlayout/README.md).} 100 96 0 0 0.3 0.3 {}
+T {g1_trip - shunt-current trip: ISENSE/2 against two 8-bit VREF string DACs, soft + hard StrongARM comparators} 112 -1490 0 0 0.55 0.55 {}
+T {G1 guardian, chip of record g1_chip_top_1414_r2.gds 9049e87b (r2 2026-09-25; geometry XOR-identical to r1 629d303a); block map: g1_padring/reports/signoff-1414-20260924} 112 -1451 0 0 0.3 0.3 {}
+T {On-chip variant: chip of record (regenpair4 + NF4): soft g1_cmp M1/M2 24u/0.68u ng=4, hard g1_cmp_regenpair4 M3/M4 6u/0.26u; rppd bodies on vss as in the chip deck; layout/g1_trip_lvs.cdl 60a9ad6e + regenpair4/NF4 cell CDLs} 112 -1427 0 0 0.3 0.3 {}
+T {Netlist-equivalent to sim/qualification/joint586-softinputpair4-nf4-roomcal-s73133-20260924-r1/trip.spice sha256 f5f0a90a (chip deck)} 112 -1403 0 0 0.3 0.3 {}
+T {Drawn 2026-09-25 by the block generator; device sizes (w, l, ng, m) are on each symbol. Proof: review/schematics-readability-20260925} 112 -1379 0 0 0.25 0.25 {}
+C {g1_cond.sym} 300 -650 0 0 {name=XCOND }
+C {g1_dac8.sym} 700 -1000 0 0 {name=XDACS }
+C {g1_dac8.sym} 700 -350 0 0 {name=XDACH }
+C {sg13g2_pr/cap_cmim.sym} 870 -920 0 0 {name=CHS model=cap_cmim w=26u l=26u m=1}
+C {sg13g2_pr/cap_cmim.sym} 870 -270 0 0 {name=CHH model=cap_cmim w=26u l=26u m=1}
+C {g1_inv.sym} 900 -120 0 0 {name=XCLKI }
+C {g1_cmp.sym} 1150 -980 0 0 {name=XCS }
+C {g1_cmp_regenpair4.sym} 1150 -330 0 0 {name=XCH }
+C {devices/ipin.sym} 100 -650 0 0 {name=p0 lab=isense}
+C {devices/ipin.sym} 100 -1200 0 0 {name=p1 lab=vref}
+C {devices/ipin.sym} 100 -120 0 0 {name=p2 lab=cmp_clk}
+C {devices/ipin.sym} 100 -1060 0 0 {name=p3 lab=soft0}
+C {devices/ipin.sym} 100 -1040 0 0 {name=p4 lab=soft1}
+C {devices/ipin.sym} 100 -1020 0 0 {name=p5 lab=soft2}
+C {devices/ipin.sym} 100 -1000 0 0 {name=p6 lab=soft3}
+C {devices/ipin.sym} 100 -980 0 0 {name=p7 lab=soft4}
+C {devices/ipin.sym} 100 -960 0 0 {name=p8 lab=soft5}
+C {devices/ipin.sym} 100 -940 0 0 {name=p9 lab=soft6}
+C {devices/ipin.sym} 100 -920 0 0 {name=p10 lab=soft7}
+C {devices/ipin.sym} 100 -410 0 0 {name=p11 lab=hard0}
+C {devices/ipin.sym} 100 -390 0 0 {name=p12 lab=hard1}
+C {devices/ipin.sym} 100 -370 0 0 {name=p13 lab=hard2}
+C {devices/ipin.sym} 100 -350 0 0 {name=p14 lab=hard3}
+C {devices/ipin.sym} 100 -330 0 0 {name=p15 lab=hard4}
+C {devices/ipin.sym} 100 -310 0 0 {name=p16 lab=hard5}
+C {devices/ipin.sym} 100 -290 0 0 {name=p17 lab=hard6}
+C {devices/ipin.sym} 100 -270 0 0 {name=p18 lab=hard7}
+C {devices/opin.sym} 1400 -990 0 0 {name=p19 lab=cmp_soft}
+C {devices/opin.sym} 1400 -340 0 0 {name=p20 lab=cmp_hard}
+C {devices/iopin.sym} 100 -60 0 0 {name=p21 lab=vdd}
+C {devices/iopin.sym} 100 -35 0 0 {name=p22 lab=vdda}
+C {devices/iopin.sym} 100 -10 0 0 {name=p23 lab=vss}
+C {devices/lab_pin.sym} 300 -580 0 1 {name=l1 lab=vss}
+C {devices/lab_pin.sym} 680 -1140 0 0 {name=l2 lab=vdd}
+C {devices/lab_pin.sym} 720 -1140 0 1 {name=l3 lab=vdda}
+C {devices/lab_pin.sym} 700 -860 0 1 {name=l4 lab=vss}
+C {devices/lab_pin.sym} 680 -490 0 0 {name=l5 lab=vdd}
+C {devices/lab_pin.sym} 720 -490 0 1 {name=l6 lab=vdda}
+C {devices/lab_pin.sym} 700 -210 0 1 {name=l7 lab=vss}
+C {devices/lab_pin.sym} 900 -190 0 1 {name=l8 lab=vdd}
+C {devices/lab_pin.sym} 900 -50 0 1 {name=l9 lab=vss}
+C {devices/lab_pin.sym} 1130 -910 0 0 {name=l10 lab=cmp_clk}
+C {devices/lab_pin.sym} 1150 -1050 0 1 {name=l11 lab=vdd}
+C {devices/lab_pin.sym} 1170 -910 0 1 {name=l12 lab=vss}
+C {devices/lab_pin.sym} 1130 -260 0 0 {name=l13 lab=cmp_clk_n}
+C {devices/lab_pin.sym} 1150 -400 0 1 {name=l14 lab=vdd}
+C {devices/lab_pin.sym} 1170 -260 0 1 {name=l15 lab=vss}
+C {devices/lab_pin.sym} 580 -1080 0 0 {name=l16 lab=vref}
+C {devices/lab_pin.sym} 580 -430 0 0 {name=l17 lab=vref}
+C {devices/lab_pin.sym} 870 -870 0 0 {name=l18 lab=vss}
+C {devices/lab_wire.sym} 940 -1000 0 0 {name=l19 lab=vth_soft}
+C {devices/lab_pin.sym} 870 -220 0 0 {name=l20 lab=vss}
+C {devices/lab_wire.sym} 940 -350 0 0 {name=l21 lab=vth_hard}
+C {devices/lab_wire.sym} 600 -650 0 0 {name=l22 lab=icmp}
+C {devices/lab_pin.sym} 1040 -320 0 0 {name=l23 lab=icmp}
+C {devices/lab_wire.sym} 1100 -120 0 0 {name=l24 lab=cmp_clk_n}
+C {devices/lab_pin.sym} 1260 -970 0 1 {name=l25 lab=cmp_soft_n}
+C {devices/lab_pin.sym} 1260 -320 0 1 {name=l26 lab=cmp_hard_n}
+N 300 -600 300 -580 {}
+N 680 -1120 680 -1140 {}
+N 720 -1120 720 -1140 {}
+N 700 -880 700 -860 {}
+N 680 -470 680 -490 {}
+N 720 -470 720 -490 {}
+N 700 -230 700 -210 {}
+N 900 -170 900 -190 {}
+N 900 -70 900 -50 {}
+N 1130 -930 1130 -910 {}
+N 1150 -1030 1150 -1050 {}
+N 1170 -930 1170 -910 {}
+N 1130 -280 1130 -260 {}
+N 1150 -380 1150 -400 {}
+N 1170 -280 1170 -260 {}
+N 100 -650 210 -650 {}
+N 620 -1080 580 -1080 {}
+N 620 -430 580 -430 {}
+N 100 -120 840 -120 {}
+N 100 -1060 620 -1060 {}
+N 100 -1040 620 -1040 {}
+N 100 -1020 620 -1020 {}
+N 100 -1000 620 -1000 {}
+N 100 -980 620 -980 {}
+N 100 -960 620 -960 {}
+N 100 -940 620 -940 {}
+N 100 -920 620 -920 {}
+N 100 -410 620 -410 {}
+N 100 -390 620 -390 {}
+N 100 -370 620 -370 {}
+N 100 -350 620 -350 {}
+N 100 -330 620 -330 {}
+N 100 -310 620 -310 {}
+N 100 -290 620 -290 {}
+N 100 -270 620 -270 {}
+N 780 -1000 950 -1000 {}
+N 950 -1000 950 -990 {}
+N 950 -990 1080 -990 {}
+N 870 -1000 870 -950 {}
+N 870 -890 870 -870 {}
+N 780 -350 950 -350 {}
+N 950 -350 950 -340 {}
+N 950 -340 1080 -340 {}
+N 870 -350 870 -300 {}
+N 870 -240 870 -220 {}
+N 390 -650 1000 -650 {}
+N 1000 -650 1000 -970 {}
+N 1000 -970 1080 -970 {}
+N 1080 -320 1040 -320 {}
+N 960 -120 1130 -120 {}
+N 1130 -120 1130 -280 {}
+N 1220 -990 1400 -990 {}
+N 1220 -970 1260 -970 {}
+N 1220 -340 1400 -340 {}
+N 1220 -320 1260 -320 {}
