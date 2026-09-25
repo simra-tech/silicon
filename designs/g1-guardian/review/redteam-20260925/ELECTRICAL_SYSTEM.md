@@ -49,6 +49,13 @@ directory and are not committed. Their essential lines are in §B.
 
 ### M1. Core-first power-up: the EN input reads "enabled" until IOVDD reaches about 1.1 V, and the GATE latch comes up in a random state
 
+**Disposition (2026-09-25): confirmed at chip level with real pads; safe outcome; inhibit rule stands.**
+Full-chip CDL deck (`blocks/g1_top/sim/FULLCHIP_CDL_20260925.md`, `cdlpwr`, `pads nodcn`, simulated):
+the `EN` pad output floats to 0.84–0.92 V without `IOVDD`, `por_n` releases at 2.0 µs, and the RTL
+and G1_GATE latches set spuriously until `IOVDD` passes 1.1 V; `GATE` stayed ≤ 0.27 mV in every
+completed run (tt/27, ss/125 °C; ff/−40 °C gB_pd). gB ff/−40 °C failed numerically; stock-diode
+pads not run to completion. Spec §6 P2 (inhibit for every power-up order) stands.
+
 The facts from the CDL:
 
 - `EN` enters through `Xpad12_en … sg13g2_IOPadIn` (CDL 17911). Its `LevelDown` (CDL 18292) takes the pad
