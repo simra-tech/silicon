@@ -22,7 +22,7 @@ in `tapeoutbench-eda` sha256:ddeb6957… (`flow/run.sh`). The PDK layer-properti
 | Superseded file (r1) | `blocks/g1_padring/layout/g1_chip_top_1414.gds`, 84 500 250 bytes, sha256 `629d303abf594ec90593f1d28a8d9ad19673ea6662780ba428a6d9c5685986ba` | kept unchanged. Created from the source `candidate.gds` sha256 `60730627…` (kept as `layout/g1_chip_top_1414_src.gds`) by renaming the top cell only (`flow/signoff/1414/rename_top.py`; `reports/signoff-1414-20260924/rename_verify/verify_rename.json`) |
 | Top cell | `g1_chip_top`, the only top cell | confirmed (KLayout) |
 | Database unit | 0.001 µm (1 nm) | confirmed (KLayout `Layout.dbu`). The DBU IHP requires: assumed 1 nm |
-| Die / bounding box | (0, 0) to (1414, 1414) µm, i.e. 1414 × 1414 µm = 1.999396 mm² (EdgeSeal boundary 39/4 is the same box) | confirmed (top bbox). Whether the die size is taken from the bbox or the EdgeSeal outline, and the allowed size and area on the shuttle: assumed |
+| Die / bounding box | (0, 0) to (1414, 1414) µm, i.e. 1414 × 1414 µm = 1.999396 mm² (EdgeSeal boundary 39/4 is the same box) | confirmed (top bbox). Shuttle allocation of 2 mm² confirmed by the owner on 2026-09-25. Whether the die size is taken from the bbox or the EdgeSeal outline, and the allowed size and area on the shuttle: assumed |
 | Cells | 306 | confirmed |
 | Filename, compression, one top cell per submission, GDS version | `g1_chip_top_1414_r2.gds`, uncompressed, GDS version 600 | assumed |
 | Size limit of the file | 84.5 MB | assumed acceptable |
@@ -197,7 +197,7 @@ From [`redteam-20260925/PHYSICAL_TAPEIN.md`](redteam-20260925/PHYSICAL_TAPEIN.md
    chip. Pad 21 `D_ELT` is a legacy name for the HV NMOS drain of the default dose pair.
    Tell IHP so that no ELT-specific handling is expected.
 5. Texts on HeatTrans 51/0 and HeatRes 52/0, labels on `.text`/`.pin` layers, and prBoundary 189/4: keep or strip? (assumed keep)
-6. Die size 1414 µm (1.999396 mm², now also stated in the r2 registration text) vs the registered area, QFN24 cavity fit and 200 µm thinning. (assumed) Paddle potential: `VSS` (owner decision 2026-09-25).
+6. Die size 1414 µm (1.999396 mm², now also stated in the r2 registration text): the 2 mm² shuttle allocation is **confirmed by the owner (2026-09-25)**; QFN24 cavity fit and 200 µm thinning remain assumed. Paddle potential: `VSS` (owner decision 2026-09-25).
 7. Submission deadline: "end of September 2026" in repository notes vs the owner's recollection of 21 October. **Unreconciled**, confirm with IHP.
 
 ## 9. Before submission
