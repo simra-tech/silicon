@@ -1,16 +1,14 @@
 # G1_CTRL
 
-State: **RTL complete and simulated (register map 1.1); hardened with
-LibreLane as the `g1_digital` macro. Macro of record: run7** (`layout/`,
-`reports/librelane_run7/`): every signoff check clean, the three SEU TMR
-copies physically separated, gate-level simulation of its netlist passed. No
-silicon.
+State (2026-09-26): **the chip of record r3 (`g1_chip_top_1414_r3.gds`, `7d07a784…`) carries
+the RTL-only ECO (register map 1.2)**: `rtl_eco_20260925/` and `../g1_seu/rtl_eco_20260925/`,
+re-hardened pin-compatible (gate netlist `4b83f181`; `ECO_20260925.md`,
+`../g1_padring/reports/signoff-1414r3-20260926/README.md`, `PLAN.md` D16). It fixes red-team
+findings M1, M2, M3, S2 and S5; S1 (serial framing) is not addressed.
 
-**Pending RTL-only ECO (2026-09-25, register map 1.2), not on the chip of
-record:** `rtl_eco_20260925/` and `../g1_seu/rtl_eco_20260925/` fix red-team
-findings M1, M2, M3, S2 and S5 with the same module names and ports; RTL
-simulated (`sim/eco_20260925/`), not yet re-hardened. Everything else in this
-README describes `rtl/` and the macro of record. See `ECO_20260925.md`.
+Historical below: the rest of this README describes `rtl/` (register map 1.1) and the run7 macro
+(`layout/`, `reports/librelane_run7/`), the source of the r1/r2 digital (`6181b988`, re-routed
+from run7). No silicon.
 
 `G1_CTRL` is the digital core of G1: three-wire serial interface, register
 file, trip timer, and the top level that also instantiates `G1_SEU`. The

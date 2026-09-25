@@ -3,7 +3,7 @@
 This runbook lists the commands in order, from the repository root. The dry run and its
 results are in [`../../ECO_FLOW_FEASIBILITY_20260925.md`](../../ECO_FLOW_FEASIBILITY_20260925.md).
 
-**Status (2026-09-25):** waiting for the corrected ECO RTL. The rehearsal run on the revoked
+**Status (2026-09-26):** done. The corrected ECO RTL was re-hardened and swapped into r3 (`g1_chip_top_1414_r3.gds`, `7d07a784…`, `PLAN.md` D16; `../../../g1_padring/reports/signoff-1414r3-20260926/README.md`). Historical (2026-09-25): waiting for the corrected ECO RTL. The rehearsal run on the revoked
 freeze is in `$BULK/digital-eco-20260925/` (`REHEARSAL_SUPERSEDED_RTL.txt`). Its netlist and
 DEF are byte-identical to the dry run `eco_m5`; nothing there is a candidate. The real run
 uses a new root.
