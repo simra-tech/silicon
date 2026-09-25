@@ -270,7 +270,7 @@ pattern.
 - Formal equivalence of the ECO RTL against the gate netlist `4b83f181`: not run.
 - SDF GLS at fast and slow corners (SDFs exist in bulk): not run.
 - Chip-level co-simulation with the hardened macro's gate netlist + SPEF: not run.
-- Chip-level power-up (gB/gA), the 72-cell matrix and the CDL-driven deck with the frozen ECO RTL: not run.
+- Chip-level power-up with the frozen ECO RTL: run since (gA/gB/gA_pd/gB_pd, `nodcn` pads; `eco4`, `blocks/g1_top/sim/campaigns/RESULTS_20260925.md` §10). The 72-cell matrix and the CDL-driven deck with the frozen ECO RTL: not run.
 - Canonical unprojected LVS passing: run, **failed** (PDK IO-cell reference semantics, as r1/r2).
 - Block-map XOR re-run for the unchanged blocks: not run. The r2 → r3 XOR shows no change outside the macro except 5/22.
 - IHP intake/rejection test; written IHP die-area confirmation: open (as r2).
