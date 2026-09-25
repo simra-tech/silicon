@@ -32,6 +32,24 @@ verifies a separate 0.6 V single-threshold clock receiver. Corrected runs use
 observations below require revalidation. The affected in-flight runs were
 stopped before restarting with the corrected receiver.
 
+## 2026-09-25 full-chip deck from the chip CDL (`run_top_cdl.py`)
+
+Summary of [sim/FULLCHIP_CDL_20260925.md](sim/FULLCHIP_CDL_20260925.md) (simulated,
+tt/27 °C, ideal clock). `sim/run_top_cdl.py` builds the deck from the canonical
+`g1_chip_top_1414.cdl` itself (hash-bound), with all blocks extracted (`--netlist pex`),
+the real IO pads from the CDL, and the RTL co-simulated; `EN`/`SCLK`/`SDI` reach the RTL
+through the real `IOPadIn` outputs.
+
+- `c_mid` compact, pex, gear (`cdlv1`): **passed**. `trip_d` 1.0578 µs (identical to the
+  hand-wired deck), `GATE` < 1 V **1.437 µs** vs 1.345 µs hand-wired, < 0.33 V 1.673 vs
+  1.661 µs. The fitted 47 Ω `GATE` driver of `run_top.py` is therefore about 7 % optimistic
+  on `GATE` < 1 V: the real `sg13g2_IOPadOut30mA` sinks about 27 mA into the 5 nF gate.
+- QUIET values and supply currents match the hand-wired deck with `--t2f tl` within 0.01 %.
+- The CDL omits `ng` on 34 SENSE devices and on the NF4 input pair: a simulation-source
+  limitation (LVS compares total width). SENSE current is −7.7 % in the CDL deck; timing unaffected.
+- T2F-on decks need gear (trap failed in every T2F-on deck).
+- `q` full length and power-up (gB, gB_pd) on the CDL deck: running, not yet reported.
+
 ## 2026-09-24 chip-of-record deck (`--blockset c1414`)
 
 `run_top.py --blockset c1414` builds the same deck with the analog block
@@ -99,7 +117,8 @@ the 2026-09-24/25 campaign tables are in [sim/campaigns/RESULTS_20260925.md](sim
 
 | Case | Deck | Result | Status | Log |
 | --- | --- | --- | --- | --- |
-| c_mid compact (28 µs), 1.8 A/45 mV in-range hard fault, code 200 | `--netlist pex`, transistor-level front end, **BGR586 and TRIP NF4 extractions** (`c1414fullc`), ideal clock, fitted behavioural output pads | hard trip (cause 2); `GATE` < 1 V 1.34544 µs, < 0.33 V 1.66141 µs after the fault (legacy 1350 µm set: 1.410 µs) | passed | `c_mid_pex_c1414_tl_tt_27C_clockfix_compact_functional_c1414fullc.log` |
+| c_mid compact, deck generated from the chip CDL | `run_top_cdl.py --netlist pex --method gear` (`cdlv1`): all blocks extracted, real IO pads | `trip_d` 1.0578 µs; `GATE` < 1 V **1.437 µs**, < 0.33 V 1.673 µs | passed | [sim/FULLCHIP_CDL_20260925.md](sim/FULLCHIP_CDL_20260925.md) |
+| c_mid compact (28 µs), 1.8 A/45 mV in-range hard fault, code 200 | `--netlist pex`, transistor-level front end, **BGR586 and TRIP NF4 extractions** (`c1414fullc`), ideal clock, fitted behavioural output pads (about 7 % optimistic on `GATE` < 1 V) | hard trip (cause 2); `GATE` < 1 V 1.34544 µs, < 0.33 V 1.66141 µs after the fault (legacy 1350 µm set: 1.410 µs) | passed | `c_mid_pex_c1414_tl_tt_27C_clockfix_compact_functional_c1414fullc.log` |
 | same, run tag `c1414v1` | `--netlist pex` requested, but **BGR586 and TRIP fell back to the schematic netlists** (JSON `blockset_warnings`: no pex netlist existed at launch); BGR `sch` carries 329 Sep-19 capacitors | hard trip (cause 2); `GATE` < 1 V 1.345 µs, < 0.33 V 1.661 µs | passed (schematic BGR/TRIP) | `c_mid_pex_c1414_tl_tt_27C_clockfix_compact_functional_c1414v1.log` |
 | b, 1.5× held, default `SOFT_TIME` (≈ 1 ms) | `--netlist pex --front beh` | soft trip (cause 1) at 1.059 ms; `GATE` < 1 V at 1059.37 µs | passed | `b_pex_c1414_beh_tt_27C_clockfix_functional_c1414n1.log` |
 | a, 1.5× for 100 µs then back | `--netlist pex --front beh` | no trip, `GATE` stays 3.3 V, `SOFT_PEAK` 3 | passed | `a_pex_c1414_beh_tt_27C_clockfix_functional_c1414n1.log` |
@@ -394,8 +413,8 @@ level, the `TRIP_SET` pad path (not built), `SDO` and `TEMP_OUT` pads.
   timing into 5 nF + 10 Ω only.
 - The transistor-level oscillator clocking the RTL inside the full chain (note 4); its frequency
   and current in the chip supply context come from case `osc`.
-- Process corners and supply ±10 % at chip level: run on the c1414 set with the ideal clock and the
-  `nodcn`/`bgr=sch` deviations ([sim/campaigns/RESULTS_20260925.md](sim/campaigns/RESULTS_20260925.md)); mismatch not run.
+- Process corners and supply ±10 % at chip level: run on the c1414 set with the ideal clock, the
+  fitted `GATE` driver (about 7 % optimistic on `GATE` < 1 V) and the `nodcn`/`bgr=sch` deviations ([sim/campaigns/RESULTS_20260925.md](sim/campaigns/RESULTS_20260925.md)); mismatch not run.
 - The default 1 ms `SOFT_TIME` window at transistor level (behavioural front end only, note 9).
 - Comparator decisions at small overdrive at chip level beyond the single tt/27 °C hard-threshold
   sweep at code 200. That sweep puts the effective hard threshold at 30.00–31.25 mV, 8.0–9.25 mV below the
