@@ -1,7 +1,8 @@
-# GLS handoff: g1_digital r3 candidate v2 (2026-09-26)
+# GLS handoff: g1_digital r3 (2026-09-26)
 
-**Status: CANDIDATE v2, not promoted.** The RTL is not frozen until the two chip runs pass.
-This file replaces the v1 handoff (history at the end).
+**Status: promoted 2026-09-26.** This netlist is the digital of the chip of record
+`g1_chip_top_1414_r3.gds` (`7d07a784…`); the RTL is frozen. GLS **passed**: 21 tests / 260 checks,
+zero-delay and SDF typ (`../../sim/gls_eco_r3v2/`). This file replaced the v1 handoff (history at the end).
 
 ## RTL
 

@@ -1,13 +1,19 @@
 # G1 pad ring and package
 
-> **Status 2026-09-25.** The chip of record is
-> [`g1_chip_top_1414_r2.gds`](../blocks/g1_padring/layout/g1_chip_top_1414_r2.gds)
-> (1414 × 1414 µm, SHA-256 `9049e87b0303893573ed82f56a5d41f926c4db126e8d972062553c7d19996d2c`).
-> r2 corrects metadata only (the seal-ring registration texts and three cell names) of r1
-> `g1_chip_top_1414.gds` (`629d303abf594ec90593f1d28a8d9ad19673ea6662780ba428a6d9c5685986ba`,
-> owner decision 2026-09-24, `PLAN.md` D15), which is **superseded** and kept unchanged.
-> Sign-off of r2: [`signoff-1414r2-20260925`](../blocks/g1_padring/reports/signoff-1414r2-20260925/README.md);
-> of r1: [`signoff-1414-20260924`](../blocks/g1_padring/reports/signoff-1414-20260924/README.md).
+> **Status 2026-09-26.** The chip of record is
+> [`g1_chip_top_1414_r3.gds`](../blocks/g1_padring/layout/g1_chip_top_1414_r3.gds)
+> (1414 × 1414 µm, SHA-256 `7d07a7841a531f51e08b0c90e76fe603889cd2ef29905e309e63f09742e688f2`).
+> r3 is r2 plus the re-hardened `g1_digital` macro (RTL ECO, register map 1.2) and 700 µm² of GatPoly fill.
+> The pad ring, the openings and the labels are unchanged
+> (sign-off: [`signoff-1414r3-20260926`](../blocks/g1_padring/reports/signoff-1414r3-20260926/README.md)).
+>
+> Superseded revisions:
+> - r2 (`9049e87b0303893573ed82f56a5d41f926c4db126e8d972062553c7d19996d2c`,
+>   [`signoff-1414r2-20260925`](../blocks/g1_padring/reports/signoff-1414r2-20260925/README.md)) is kept
+>   as the fallback. Its GDS is retained outside the tree (`review/local-retention-20260925.json`).
+> - r1 (`629d303abf594ec90593f1d28a8d9ad19673ea6662780ba428a6d9c5685986ba`,
+>   [`signoff-1414-20260924`](../blocks/g1_padring/reports/signoff-1414-20260924/README.md)).
+>
 > The 1350 µm LibreLane frame and the earlier 1200 µm and 1130 µm frames below are
 > **superseded** and kept as history only. Their geometry and check results do not
 > describe the chip of record.
@@ -16,7 +22,8 @@
 
 | File | SHA-256 of the CSV | GDS hash column | Status |
 | --- | --- | --- | --- |
-| [`bondmap_20260925_r3.csv`](bondmap_20260925_r3.csv) | `ead5f109…` | `9049e87b…` (r2, chip of record) | **current**: `chip_of_record`, with columns `qfn24_lead` and `lead_side` |
+| [`bondmap_20260926_r4.csv`](bondmap_20260926_r4.csv) | `99080d81…` | `7d07a784…` (r3, chip of record) | **current**: `chip_of_record`, with columns `qfn24_lead` and `lead_side`; identical to r3 apart from the hash column |
+| [`bondmap_20260925_r3.csv`](bondmap_20260925_r3.csv) | `ead5f109…` | `9049e87b…` (r2) | superseded by r4 (its status column still reads `chip_of_record`, as written for r2) |
 | [`bondmap_candidate_20260923_r2.csv`](bondmap_candidate_20260923_r2.csv) | `201612db…` | `3e363438…` (older candidate) | superseded by r3 |
 | [`bondmap_candidate_20260923.csv`](bondmap_candidate_20260923.csv) | `73ed1fc8…` | `ab02b653…` | superseded |
 
@@ -27,6 +34,10 @@ status to `chip_of_record`, and adds the QFN24 lead. It was checked geometricall
 the r2 file: each row coincides with exactly one Passiv opening (centre to 1 nm, size, TopMetal2
 enclosure ≥ 2.1 µm, inside dfpad), and the 22 TopMetal2 labels sit at their opening centres
 with the row's net name ([`verify_bondmap_r3.json`](../blocks/g1_padring/reports/signoff-1414r2-20260925/bondmap/verify_bondmap_r3.json)).
+r4 (2026-09-26) sets the hash column to the r3 SHA. Nothing else changes, because r3 did not change
+any pad, opening or label. It passed the same geometric check against r3
+([`verify_bondmap_r4.json`](../blocks/g1_padring/reports/signoff-1414r3-20260926/bondmap/verify_bondmap_r4.json):
+24 rows, 24 openings, 22 labels, `all_ok: true`).
 
 The logical pin assignments and 112 µm pitch are unchanged from the 1350 µm frame.
 Each bondpad moved exactly 5 µm outward: south and west centres are at 101 µm,

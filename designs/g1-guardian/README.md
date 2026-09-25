@@ -29,49 +29,86 @@ The 3.3 V thick-oxide MOSFETs, SiGe HBTs, MIM capacitors and poly resistors are
 part of the base open PDK. The legacy `D_ELT` pin connects to a standard HV
 NMOS in the assembled netlist, not an enclosed-layout transistor.
 
-Chip of record (owner decision 2026-09-24; metadata-only revision r2, 2026-09-25):
-[`g1_chip_top_1414_r2.gds`](blocks/g1_padring/layout/g1_chip_top_1414_r2.gds), top cell
-`g1_chip_top`, 1414 × 1414 µm, SHA-256 `9049e87b0303893573ed82f56a5d41f926c4db126e8d972062553c7d19996d2c`;
-canonical netlist [`g1_chip_top_1414_r2.cdl`](blocks/g1_padring/netlist/g1_chip_top_1414_r2.cdl)
-(`41d47877…`); comparison-only
-[projected reference](blocks/g1_padring/netlist/g1_chip_top_1414_projected_ref.cdl) (`e1d06919…`, unchanged).
-Sign-off: [`signoff-1414r2-20260925`](blocks/g1_padring/reports/signoff-1414r2-20260925/README.md)
-(main, maximal, precheck, density and antenna DRC 0 markers; projected LVS passed; canonical LVS failed as before).
-Block-to-netlist map: [`signoff-1414-20260924`](blocks/g1_padring/reports/signoff-1414-20260924/README.md) (unchanged by r2).
-r2 corrects the seal-ring registration texts and renames three modified stock-named cells;
-its geometry is XOR-identical to r1
-[`g1_chip_top_1414.gds`](blocks/g1_padring/layout/g1_chip_top_1414.gds)
-(`629d303abf594ec90593f1d28a8d9ad19673ea6662780ba428a6d9c5685986ba`, **superseded**, kept).
+Chip of record (owner decision 2026-09-24; revision r3, 2026-09-26):
+[`g1_chip_top_1414_r3.gds`](blocks/g1_padring/layout/g1_chip_top_1414_r3.gds), top cell
+`g1_chip_top`, 1414 × 1414 µm, SHA-256 `7d07a7841a531f51e08b0c90e76fe603889cd2ef29905e309e63f09742e688f2`.
+It is r2 plus two changes:
+- **the re-hardened `g1_digital` macro.** RTL ECO, register map 1.2
+  ([`ECO_20260925`](blocks/g1_ctrl/ECO_20260925.md); owner decision 2026-09-25, `PLAN.md` D16),
+  pin-compatible with r2's macro and swapped into the same cell with the top-level routing untouched;
+- **700 µm² of GatPoly fill**, which restores the global GatPoly density.
+
+Netlists:
+- canonical [`g1_chip_top_1414_r3.cdl`](blocks/g1_padring/netlist/g1_chip_top_1414_r3.cdl) (`5e47ae02…`);
+- comparison-only [projected reference](blocks/g1_padring/netlist/g1_chip_top_1414_r3_projected_ref.cdl) (`d0d36c84…`).
+
+Sign-off: [`signoff-1414r3-20260926`](blocks/g1_padring/reports/signoff-1414r3-20260926/README.md):
+- main, maximal, precheck, density and antenna DRC: 0 markers;
+- projected LVS passed (62 940 devices, 22/22 pins); canonical LVS failed as before;
+- XOR against r2: outside the macro only the added 5/22 fill differs.
+
+Block-to-netlist map: [`signoff-1414-20260924`](blocks/g1_padring/reports/signoff-1414-20260924/README.md);
+the digital row is replaced by the one in the r3 sign-off.
+
+Superseded revisions:
+- r2 `g1_chip_top_1414_r2.gds` ([sign-off](blocks/g1_padring/reports/signoff-1414r2-20260925/README.md);
+  `9049e87b0303893573ed82f56a5d41f926c4db126e8d972062553c7d19996d2c`) is the documented fallback.
+  Its GDS is retained outside the tree (`review/local-retention-20260925.json`) and its CDLs stay in
+  `blocks/g1_padring/netlist/`.
+- r1 (`629d303abf594ec90593f1d28a8d9ad19673ea6662780ba428a6d9c5685986ba`).
+
 Bond plan (owner decision 2026-09-25, pad to the QFN24 lead directly opposite):
-[`padframe/BONDPLAN_20260925.md`](padframe/BONDPLAN_20260925.md), bond map
-[`bondmap_20260925_r3.csv`](padframe/bondmap_20260925_r3.csv).
+[`padframe/BONDPLAN_20260925.md`](padframe/BONDPLAN_20260925.md). The bond map
+[`bondmap_20260926_r4.csv`](padframe/bondmap_20260926_r4.csv) is bound to r3.
 Draft submission checklist: [`review/TAPEIN_PACKAGE_20260924.md`](review/TAPEIN_PACKAGE_20260924.md).
-r1 (84.5 MB) is tracked since `10ee4868`; r2 is not yet committed. The SHA-256 is the identity of each file.
+r3 (84.1 MB) is not yet committed. The SHA-256 is the identity of each file.
 It supersedes the 1350 µm LibreLane assembly
 ([`g1_chip_top.gds`](blocks/g1_padring/layout/g1_chip_top.gds),
 [`g1_chip_top.cdl`](blocks/g1_padring/netlist/g1_chip_top.cdl),
 [`INTEGRATION.md`](blocks/g1_padring/INTEGRATION.md)). That evidence is retained but is not the chip.
 The [design review PDF](review/G1_DESIGN_REVIEW.pdf) is a dated snapshot that predates this decision.
 
-**State (2026-09-24): the chip of record is the 1414 µm native-lineage GDS above.
-It contains SENSE comp45 + R100, TRIP with the regenpair4 hard and NF4 soft
-comparators, OSC R0.95, BGR586 (`bgr_loop24_qref4_r253p465_hv06`), T2F baseline
-revision 2, GATE baseline, the run7 digital logic with a re-done clock tree and
-routing (Boolean-equivalent to the GLS-passed run7 netlist), three `g1_ls_up` level
-shifters, the DOSE HV/LV pair and the DUT HBT. Bond pads are moved 5 µm outward.
-The IO ring uses design-local `sg13g2_io` copies that carry PolyRes 128/0 over their
-existing gate poly. On that exact file: main DRC, maximal DRC, density and antenna
-**passed** (0 markers); projected-reference LVS **passed** (61 684/61 684 devices);
-canonical unprojected LVS **failed** on 14 IO/level-shifter sub-cells (cause: substrate/tap/diode
-netlist semantics of the IO-cell reference in the PDK, reproduced with stock cells and with IHP's
-latest `dev` deck and library; the design-local IO copies match IHP's `dev` library on every layer,
-PR #1223; upstream issues #1218/#1130; [evidence](review/upstream/evidence/README.md)); full-chip PEX **not run**. Digital STA with the merged
-chip SDC on the chip's own digital netlist (post-route `6181b988`, SPEF `e6c89575`, not the
-run7 view) **passed** setup/hold at macro level and in the routed signal netlist (3 corners,
-nominal RC). Max fanout and max cap **passed**. Annotation (105 drivers) and max slew (12 analog-pad flags per corner)
-**failed** and are dispositioned, not waived. Zero-delay functional GLS of `6181b988` **passed**
-(13 tests, 193 checks). SDF-annotated GLS (typ delays) **passed** functionally; Icarus ignores the SDF timing checks, and fast/slow were **not run**. Timing of the final GDS: **not run**
-([STA](blocks/g1_ctrl/reports/sta_merged_sdc_20260924/README.md)).
+**State (2026-09-26): the chip of record is the 1414 µm native-lineage GDS above (r3).**
+It contains:
+- SENSE comp45 + R100;
+- TRIP with the regenpair4 hard and NF4 soft comparators;
+- OSC R0.95;
+- BGR586 (`bgr_loop24_qref4_r253p465_hv06`);
+- T2F baseline revision 2;
+- GATE baseline;
+- **the ECO digital (register map 1.2)**, re-hardened pin-compatible;
+- three `g1_ls_up` level shifters;
+- the DOSE HV/LV pair and the DUT HBT.
+
+Bond pads are moved 5 µm outward. The IO ring uses design-local `sg13g2_io` copies that carry
+PolyRes 128/0 over their existing gate poly.
+
+Checks on that exact file:
+- **DRC:** main, maximal, precheck, density and antenna **passed** (0 markers).
+- **Projected-reference LVS: passed** (62 940/62 940 devices).
+- **Canonical unprojected LVS: failed** on the same 14 IO/level-shifter sub-cells as r1/r2. Cause:
+  substrate/tap/diode netlist semantics of the IO-cell reference in the PDK, reproduced with stock
+  cells and with IHP's latest `dev` deck and library. The design-local IO copies match IHP's `dev`
+  library on every layer (PR #1223; upstream issues #1218/#1130;
+  [evidence](review/upstream/evidence/README.md)).
+- **Full-chip PEX: not run.**
+
+The digital macro on the chip:
+- gate netlist `4b83f181…`, powered netlist `476885d7…`, nominal SPEF `0b626c7f…`;
+- STA with the merged chip SDC **passed** at macro level and inside the routed signal netlist
+  (3 corners, nominal RC; macro setup/hold slow 28.45/0.337 ns, in chip 25.70/0.337 ns);
+- max slew, max cap and max fanout inside the macro **passed**; clock-buffer fanout ≤ 8;
+- gate-level simulation of `4b83f181` **passed**: 21 tests, 260 checks, zero-delay and
+  SDF-annotated typ. Icarus ignores the SDF timing checks; fast/slow were **not run**
+  ([gls_eco_r3v2](blocks/g1_ctrl/sim/gls_eco_r3v2/)).
+- Timing of the final GDS: **not run**.
+
+Chip-level runs with the ECO RTL (extracted chip, RTL co-simulation, tt/27 °C,
+[`ECO_20260925`](blocks/g1_ctrl/ECO_20260925.md)):
+- `eco_c_mid_m03`: hard trip, `tripped` **1.166 µs**, `GATE` < 1 V **1.451 µs**;
+- `eco_hard_pulse_m03`: 200 ns 45 mV pulse, no trip (simulated).
+
+The results below this point were obtained with the pre-ECO digital, r2 content:
 Full-chip simulation driven by the LVS-matched canonical CDL itself (all blocks
 extracted, real IO pads, RTL co-simulation, ideal clock; [FULLCHIP_CDL](blocks/g1_top/sim/FULLCHIP_CDL_20260925.md)):
 `c_mid` compact at tt/27 °C **passed**, trip decision 1.058 µs, `GATE` < 1 V
@@ -129,7 +166,8 @@ Schedule, freeze lines, decisions and pin fallbacks: [`PLAN.md`](PLAN.md).
 | OpenSTA | 3.1.0 | `sta -version` in the container (`blocks/g1_ctrl/reports/sta_merged_sdc_20260924/`) |
 | Icarus Verilog | 14.0 (devel) | `iverilog -V` line in every `g1_top` log |
 | xschem | 3.4.8RC | `v {xschem version=...}` header of each `.sch` |
-| LibreLane | 3.1.0.dev2 | digital macro run7 and the superseded 1350 µm assembly flow logs; not used to assemble the 1414 µm chip |
+| LibreLane | 3.1.0.dev2 | digital macro run7, the r3 ECO macro (`blocks/g1_ctrl/flow/eco/`, run `digital-eco-r3cand2-20260926`) and the superseded 1350 µm assembly flow logs; not used to assemble the 1414 µm chip |
+| OpenROAD | 26Q1-1024-gdcf36133a (`openroad-librelane`) | SPEF header of run7 and of the r3 ECO macro; forced by `blocks/g1_ctrl/flow/eco/run_trial.sh` |
 
 The versions come from the logs and records named above. The container was
 not re-queried for this README.
@@ -199,8 +237,8 @@ latencies are retained for diagnosis but are not accepted sign-off evidence.
   14 000 s wall bound at 17.82 µs of 36 µs, no numerical failure) ([RESULTS_20260925](blocks/g1_top/sim/campaigns/RESULTS_20260925.md) §6).
   The trip path with the transistor-level oscillator in the loop: **not run**.
 - IHP's intake checks (MPW Rejection Test) and IHP's written confirmation of the
-  1.999396 mm² die area: **not run** / open. The stock precheck mode passed on r2, the bond map is
-  bound to r2 and the registration text is corrected in r2
+  1.999396 mm² die area: **not run** / open. The stock precheck mode passed on r3 (and r2), the bond map is
+  bound to r3 and the registration text is corrected since r2
   ([tape-in checklist](review/TAPEIN_PACKAGE_20260924.md)).
 - Package/bond-wire parasitics and physical measurements: **not run**.
 - Bonding-service acceptance and final submission review: **not run**.

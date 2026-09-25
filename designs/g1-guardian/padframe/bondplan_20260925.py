@@ -12,9 +12,11 @@ drawing only; the assembly house's package drawing governs.
 
 Run in the pinned container from the repository root:
   klayout -b -r designs/g1-guardian/padframe/bondplan_20260925.py -rd gds=<r2.gds> -rd src_csv=<r2 csv> \
-          -rd out_csv=<r3 csv> -rd out_svg=<svg> -rd out_json=<json>"""
+          -rd out_csv=<r3 csv> -rd out_svg=<svg> -rd out_json=<json> [-rd gds_sha=<expected sha256>]"""
 import pya, csv, json, hashlib, math
-GDS_SHA = '9049e87b0303893573ed82f56a5d41f926c4db126e8d972062553c7d19996d2c'
+# expected GDS sha256: r2 by default; -rd gds_sha=<sha> binds another chip of record (r3: 7d07a784…,
+# 2026-09-26; the r3 pads, openings and labels are geometrically unchanged from r2)
+GDS_SHA = globals().get('gds_sha') or '9049e87b0303893573ed82f56a5d41f926c4db126e8d972062553c7d19996d2c'
 BODY, PITCH, LEAD_W, LEAD_L, PADDLE = 4.0, 0.5, 0.25, 0.40, 2.60
 sha = hashlib.sha256(open(gds, 'rb').read()).hexdigest(); assert sha == GDS_SHA, sha
 ly = pya.Layout(); ly.read(gds); top, = ly.top_cells(); dbu = ly.dbu

@@ -29,14 +29,39 @@ Sign-off results are in `../reports/signoff-1414-20260924/README.md`.
 The legacy name `placed_core_NOT_CONNECTED_FULLCHIP` is only a name. The routed
 and filled lineage is recorded in the design history.
 
-## Revision r2: file of record (2026-09-25)
+## Revision r3: file of record (2026-09-26)
 
-`g1_chip_top_1414_r2.gds` is the **file of record** and supersedes `g1_chip_top_1414.gds` (r1).
-r1 is kept unchanged.
+`g1_chip_top_1414_r3.gds` is the **file of record** and supersedes r2.
 
 | File | SHA-256 | Status |
 |---|---|---|
-| `g1_chip_top_1414_r2.gds` | `9049e87b0303893573ed82f56a5d41f926c4db126e8d972062553c7d19996d2c` | **file of record**, top `g1_chip_top`, 306 cells, 84 500 300 bytes |
+| `g1_chip_top_1414_r3.gds` | `7d07a7841a531f51e08b0c90e76fe603889cd2ef29905e309e63f09742e688f2` | **file of record**, top `g1_chip_top`, 304 cells, 84 097 180 bytes, GDS timestamps zero |
+| `g1_chip_top_1414_r2.gds` (r2) | `9049e87b0303893573ed82f56a5d41f926c4db126e8d972062553c7d19996d2c` | superseded; the fallback. Moved out of the tree on 2026-09-26; retained at `${BULK}/g1-freeze-retention-20260925/g1_chip_top_1414_r2.gds` (`review/local-retention-20260925.json`) and in git history |
+| `g1_chip_top_1414.gds` (r1) | `629d303abf594ec90593f1d28a8d9ad19673ea6662780ba428a6d9c5685986ba` | superseded; retained outside the tree the same way |
+
+r3 = r2 + the re-hardened `g1_digital` macro (RTL ECO, register map 1.2, pin-compatible,
+`../../g1_ctrl/ECO_20260925.md`) swapped into the cell `__rz_port_text_000_retained_g1_digital`
++ 100 GatPoly fill rectangles (5/22, 700 µm²) in the top cell outside the macro outline. The instance and
+all top-level routing are unchanged. Outside the macro outline only 5/22 differs from r2.
+
+The macro swap was done by `../../g1_ctrl/flow/eco/swap_macro.py`, the fill by `add_gatpoly_fill.py` in the
+same directory, and the whole run by `run_candidate.sh` there. The file is a byte copy of the checked bulk
+file, which was written without GDS timestamps.
+
+Netlists:
+- canonical `../netlist/g1_chip_top_1414_r3.cdl`: the r2 CDL with the `g1_digital` block regenerated;
+- projected `../netlist/g1_chip_top_1414_r3_projected_ref.cdl`.
+
+Sign-off: `../reports/signoff-1414r3-20260926/README.md`.
+
+## Revision r2 (2026-09-25, superseded by r3)
+
+`g1_chip_top_1414_r2.gds` was the **file of record** from 2026-09-25 to 2026-09-26 and superseded
+`g1_chip_top_1414.gds` (r1). Both GDS files are now retained outside the tree (see above).
+
+| File | SHA-256 | Status |
+|---|---|---|
+| `g1_chip_top_1414_r2.gds` | `9049e87b0303893573ed82f56a5d41f926c4db126e8d972062553c7d19996d2c` | superseded by r3 (was the file of record 2026-09-25), top `g1_chip_top`, 306 cells, 84 500 300 bytes |
 | `g1_chip_top_1414.gds` (r1) | `629d303abf594ec90593f1d28a8d9ad19673ea6662780ba428a6d9c5685986ba` | superseded |
 
 r2 was written from r1 by `../flow/signoff/1414r2/make_r2.py`, without GDS timestamps; two writes
