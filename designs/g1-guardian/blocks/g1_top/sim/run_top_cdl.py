@@ -422,6 +422,27 @@ def rename(text, nmap):
     return re.sub(r'\b([vViI])\(([^(),]+)\)', v, text)
 
 
+def cal_case(kind, codes):
+    """Calibration rehearsal (map 1.2): 1 A steady, EN, INRUSH = 0, MODE = HARD only (kind hard) or SOFT only (kind
+    soft), SOFT_CFG = 0 (hysteresis off) and SENSE_OFS = 0 at their reset values (not written), then back-to-back serial writes of DAC_HARD (0x03) or
+    DAC_SOFT (0x02) with the given codes (a first write sets the swept DAC to 254 before INRUSH/MODE); each code is held for one frame (16 SCLK at f_osc/2, ~3.39 us).
+    Returns the case and the schedule [(code, t_write_end_us)] (write effective a few osc_clk after the end)."""
+    mode, addr = (0x02, 0x03) if kind == 'hard' else (0x01, 0x02)
+    frames = [(addr, 254), RT.INRUSH0, (0x0B, mode)] + [(addr, c) for c in codes]   # SOFT_CFG, SENSE_OFS: reset value 0
+    fosc = RT.BEH['c1414_sch']['fosc']
+    tper = 1.0 / fosc
+    grid = lambda t_us: (RT.T_OSC * 1e-6 + (round((t_us * 1e-6 - RT.T_OSC * 1e-6) / tper)) * tper + 0.5 * tper) * 1e6
+    t0 = grid(RT.T_SER)
+    tf = 16.0 / (0.5 * fosc) * 1e6
+    sched = [(c, t0 + (3 + i + 1) * tf) for i, c in enumerate(codes)]
+    tstop = math.ceil(sched[-1][1] + tf + 3.0)
+    case = dict(desc='calibration rehearsal (%s): 1 A steady, %s-only, DAC_%s stepped %s' % (
+                    kind, kind.upper(), kind.upper(), ','.join(str(c) for c in codes)),
+                load=[(0, RT.INOM)], tstop=tstop, frames=frames, event_us=RT.T_SER,
+                expect='hard trip' if kind == 'hard' else 'no trip')
+    return case, sched
+
+
 def build_cdl_deck(case, name, netlist, temp, corner, tag, tstop, osc, method, nodcn):
     """run_top.build_deck's stimulus/board/measurement lines around the CDL chip."""
     powerup = case.get('powerup', False)
@@ -591,6 +612,10 @@ def main():
                          'G1_T2F sits in its EN-low state; label: T2F disabled by register write, sensor accuracy not exercised')
     ap.add_argument('--fault-mult', type=float, default=None, metavar='X',
                     help="fault-event load level as X x nominal 1 A (run_top.scale_fault: single fault level, timing unchanged)")
+    ap.add_argument('--cal-kind', choices=('hard', 'soft'), default=None, help='case cal: which comparator')
+    ap.add_argument('--cal-codes', default=None, help='case cal: codes, comma list or start:stop:step (python range)')
+    ap.add_argument('--vdd', type=float, default=1.2, help='VDD (V), as run_top.py')
+    ap.add_argument('--vdda', type=float, default=3.3, help='VDDA = IOVDD board rail (V), as run_top.py')
     ap.add_argument('--dry', action='store_true')
     a = ap.parse_args()
     if a.analysis == 'prefix' and a.tstop is None:
@@ -616,6 +641,10 @@ def main():
         ap.error('--pex-blocks: blocks bgr sense trip gate t2f')
     if any(k not in ('bgr', 'sense', 'trip', 'gate', 't2f') for k in KEEP_CDL):
         ap.error('--keep-cdl: blocks bgr sense trip gate t2f')
+    if (a.vdd, a.vdda) != (1.2, 3.3):
+        RT.VDD_V, RT.VDDA_V = a.vdd, a.vdda
+        if a.vdd != 1.2:
+            RT.BR_LO, RT.BR_HI = a.vdd / 2 - 0.05, a.vdd / 2 + 0.05
     run_id = a.run_id or time.strftime('%Y%m%dT%H%M%SZ', time.gmtime()) + '_' + uuid.uuid4().hex[:8]
     if a.timeline == 'compact':
         if a.cases != ['c_mid'] and a.cases not in (['c'], ['c_fast'], ['e20']):
@@ -632,9 +661,17 @@ def main():
     env = dict(os.environ)
     env['LD_LIBRARY_PATH'] = '/foss/tools/iverilog/lib' + (':' + env['LD_LIBRARY_PATH'] if env.get('LD_LIBRARY_PATH') else '')
     for name in a.cases:
-        if name not in RT.CASES or name == 'osc':
+        sched = None
+        if name == 'cal':
+            if not a.cal_codes or a.cal_kind is None:
+                ap.error('case cal needs --cal-kind and --cal-codes')
+            codes = [int(x) for x in a.cal_codes.split(',')] if ',' in a.cal_codes else \
+                list(range(*[int(x) for x in a.cal_codes.split(':')]))
+            case, sched = cal_case(a.cal_kind, codes)
+        elif name not in RT.CASES or name == 'osc':
             raise SystemExit('unknown or unsupported case %s' % name)
-        case = dict(RT.CASES[name])
+        else:
+            case = dict(RT.CASES[name])
         if a.fault_mult is not None:
             try:
                 case = RT.scale_fault(case, a.fault_mult)
@@ -653,12 +690,25 @@ def main():
             case['tmax'] = a.maxstep_ns * 1e-9
         tag = 'cdl_%s_%s_%s_%gC_%s%s%s%s%s_%s_%s' % (
             name, a.netlist, a.corner, a.temp, method, '_osctl' if a.osc == 'tl' else '', '_padspdk' if a.pads == 'pdk' else '',
-            ('_keep-' + '-'.join(KEEP_CDL) if KEEP_CDL else '') + ('_pexblk-' + '-'.join(PEX_BLOCKS) if PEX_BLOCKS else '') + ('_selft0' if HBT_SELFT0 else '') + ('_por' if POR_PIN else '') + ('_compact' if a.timeline == 'compact' else '') + (('_cdl' + CDL_SHA256[:8]) if a.cdl else '') + (('_rtl' + a.rtl_dir.replace('_', '')) if a.rtl_dir != 'rtl' else '') + (('_ser%g' % a.ser_start_us).replace('.', 'p') if a.ser_start_us else '') + ('_icx' if INTERCONNECT else '') + ('_t2foff' if a.t2f_off_write else '') + (('_fm%g' % a.fault_mult).replace('.', 'p') if a.fault_mult is not None else ''), (('_t%g' % a.tstop) if a.tstop else '') + (('_maxstep%gns' % a.maxstep_ns) if a.maxstep_ns else '') +
+            ('_keep-' + '-'.join(KEEP_CDL) if KEEP_CDL else '') + ('_pexblk-' + '-'.join(PEX_BLOCKS) if PEX_BLOCKS else '') + ('_selft0' if HBT_SELFT0 else '') + ('_por' if POR_PIN else '') + ('_compact' if a.timeline == 'compact' else '') + (('_cdl' + CDL_SHA256[:8]) if a.cdl else '') + (('_rtl' + a.rtl_dir.replace('_', '')) if a.rtl_dir != 'rtl' else '') + (('_ser%g' % a.ser_start_us).replace('.', 'p') if a.ser_start_us else '') + ('_icx' if INTERCONNECT else '') + ('_t2foff' if a.t2f_off_write else '') + (('_fm%g' % a.fault_mult).replace('.', 'p') if a.fault_mult is not None else '') + (('_vdd%g_vdda%g' % (a.vdd, a.vdda)).replace('.', 'p') if (a.vdd, a.vdda) != (1.2, 3.3) else '') + (('_%s%s' % (a.cal_kind, re.sub(r'[^0-9]+', '-', a.cal_codes))) if name == 'cal' else ''), (('_t%g' % a.tstop) if a.tstop else '') + (('_maxstep%gns' % a.maxstep_ns) if a.maxstep_ns else '') +
             (('_opt' + re.sub(r'[^A-Za-z0-9]+', '', a.extra_options.replace('-', 'm'))) if a.extra_options else ''), a.analysis, run_id)
         for d, ext in ((BUILD, '.cir'), (os.path.join(HERE, 'logs'), '.log'), (os.path.join(HERE, 'logs'), '.json')):
             if os.path.exists(os.path.join(d, tag + ext)):
                 raise SystemExit('refusing to overwrite evidence: ' + tag)
         deck, swaps, rep = build_cdl_deck(case, name, a.netlist, a.temp, a.corner, tag, a.tstop, a.osc, method, a.pads == 'nodcn')
+        if sched:
+            ev = case['event_us']
+            cal = ['* CALSCHED code write_end_us: ' + ' '.join('%d@%.4f' % cs for cs in sched),
+                   'meas tran cal_cmph when v(xchip.i_core_cmp_hard)=0.6 rise=1 from=%gu' % ev,
+                   'meas tran cal_cmps when v(xchip.i_core_cmp_soft)=0.6 rise=1 from=%gu' % (sched[0][1] - 3.0),
+                   'meas tran cal_tripd when v(xchip.i_core_trip_d)=0.6 rise=1 from=%gu' % ev,
+                   'meas tran cal_sarm when v(xchip.xi_core_u_digital.soft_armed)=0.6 rise=1 from=%gu' % (sched[0][1] - 3.39),
+                   'meas tran cal_sarm0 find v(xchip.xi_core_u_digital.soft_armed) at=%gu' % (sched[0][1] - 3.39),
+                   'echo "CAL first_cmp_hard_s=" $&cal_cmph " first_cmp_soft_s=" $&cal_cmps " trip_d_s=" $&cal_tripd " soft_armed_s=" $&cal_sarm " soft_armed_at_sweep_start=" $&cal_sarm0']
+            # before the first wrdata: linearize (after it) switches to a plot with the wave vectors only
+            k = deck.index('\nwrdata ', deck.index('\n.control\n'))
+            deck = deck[:k] + '\n' + '\n'.join(cal) + deck[k:]
+            deck = '* CALSCHED code@write_end_us ' + ' '.join('%d@%.4f' % cs for cs in sched) + '\n' + deck
         nmap = node_map(a.osc, a.netlist)
         if a.analysis != 'functional':
             before, ctl = RT.diagnostic_deck(deck, a.analysis, a.tstop, tag).split('.control\n', 1)
@@ -708,7 +758,7 @@ def main():
                                   a.timeout, cwd=HERE, env=env, metadata=meta)
             log.write('\n# run status %s\n# ngspice exit %s, wall time %.0f s\n' % (outcome['status'], outcome['returncode'], outcome['wall_s']))
         out = open(log_path, errors='replace').read()
-        keep = [l for l in out.splitlines() if re.match(r'^(QUIET|CLOCK|SUPPLY_uA|T2F|TRIP|NO_TRIP_EXPECTED|CHARGE|REARM|POWERUP|PORTIMING|DIAGNOSTIC_\w+)\b', l)]
+        keep = [l for l in out.splitlines() if re.match(r'^(QUIET|CLOCK|SUPPLY_uA|T2F|TRIP|NO_TRIP_EXPECTED|CHARGE|REARM|POWERUP|PORTIMING|CAL|DIAGNOSTIC_\w+)\b', l)]
         err = [l.strip() for l in out.splitlines() if 'Timestep too small' in l or ('rror' in l and 'measure' not in l)]
         failure = solver_failure(out)
         if re.search(r'mismatched XSPICE/co-simulator', out):

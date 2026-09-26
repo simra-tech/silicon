@@ -1,0 +1,178 @@
+# extract of cdl_c_mid_pex_tt_27C_gear_compact_cdl5e47ae02_rtleco20260925_icx_fm1p2_maxstep1ns_functional_r3x.log (sha256 4112eaa021e490ebf211002dd7670143a6d9da323cd767f2badd1ef3c0f43961, 898726 bytes; full log retained in bulk, see review/local-retention-20260925.json)
+# G1 CDL-driven full-chip run cdl_c_mid_pex_tt_27C_gear_compact_cdl5e47ae02_rtleco20260925_icx_fm1p2_maxstep1ns_functional_r3x  2026-09-26T12:09:06Z UTC
+# in-range hard trip: code 200 (~39.25mV), 1.8A/45mV fault in 20ns; HARD_N=4
+# deck build/g1_top/cdl_c_mid_pex_tt_27C_gear_compact_cdl5e47ae02_rtleco20260925_icx_fm1p2_maxstep1ns_functional_r3x.cir
+# CDL sha256 5e47ae022ab73b4e060afaee22a1299bc62e1a895f4c9e15f865820505d52629 blocks//work/designs/g1-guardian/blocks/g1_padring/netlist/g1_chip_top_1414_r3.cdl
+# g1_bgr <- sha256 01227a3d8d8210d10d2d1ee6933842351140b8825fe29282f0327936a3064ad5 blocks/g1_bgr/sim/postlayout/g1_bgr586_pex.spice
+# g1_sense <- sha256 ffb14762659eaf02b6a62e9edea3caa0e143cbc7881378b329d6ab9945a6554b blocks/g1_sense/sim/postlayout/g1_sense_r100_partialc.spice
+# g1_trip <- sha256 ba86b7b2a530abae365d539297909e033b24a54597f9cc75d8dff273c30d401c blocks/g1_trip/sim/postlayout/g1_trip_nf4_pex.spice
+# g1_gate <- sha256 e91617f5fcf6f5a0dc721a2ba53b507a05cc226d6dbf0bebaa858a1e7d876765 blocks/g1_gate/sim/postlayout/g1_gate_pex.spice
+# g1_t2f <- sha256 441edabc0484c9de1e035d585369f37d460afe32370e73935044693bbfd0c78a blocks/g1_t2f/sim/postlayout/g1_t2f_pex.spice
+# translation {'subckts': 40, 'interconnect': 'ddc88cc7', 'devices': {'removed dantenna': 8, 'D dpantenna': 7, 'M sg13_lv_nmos': 8, 'M sg13_lv_pmos': 7, 'ptap1 R from sg13g2_io.spi': 42, 'R ptap1': 42, 'M sg13_hv_nmos': 191, 'Q npn13G2': 1, 'M sg13_hv_pmos': 18, 'R rppd': 29, 'X': 36}, 'merged': 4833, 'meters': ['vm_bgr', 'vm_gatea', 'vm_gated', 'vm_ls', 'vm_lsd', 'vm_osc', 'vm_sense', 'vm_t2f', 'vm_t2fd', 'vm_tripa', 'vm_tripd'], 'swaps': {'g1_bgr': 'g1_bgr/sim/postlayout/g1_bgr586_pex.spice', 'g1_sense': 'g1_sense/sim/postlayout/g1_sense_r100_partialc.spice', 'g1_trip': 'g1_trip/sim/postlayout/g1_trip_nf4_pex.spice', 'g1_gate': 'g1_gate/sim/postlayout/g1_gate_pex.spice', 'g1_t2f': 'g1_t2f/sim/postlayout/g1_t2f_pex.spice'}, 'replaced': ['g1_digital', 'g1_osc']}
+# IO models sha256 1d53ab7df431b717ef5aff43e1117c0224681d5cc84886da37a319280ee958d6 /foss/pdks/ihp-sg13g2/libs.ref/sg13g2_io/spice/sg13g2_io.spi (ptap1 values only)
+# PDK commit 84374023ee8b4b126bebbba67fcbada0a9c0ff0b
+# ngspice-46 : Circuit level simulation program
+# Icarus Verilog version 14.0 (devel) (s20260301-328-geda9fdcd-dirty)
+# iverilog -g2005 -Wall -Wno-timescale -o /work/build/g1_top/cosim_7d99dbeaf0cb50000c4d0ce1.vvp.tmp1 /work/designs/g1-guardian/blocks/g1_top/sim/rtl/g1_dig_cosim_cdl.v /work/designs/g1-guardian/blocks/g1_ctrl/rtl_eco_20260925/g1_sync2.v /work/designs/g1-guardian/blocks/g1_ctrl/rtl_eco_20260925/g1_serial.v /work/designs/g1-guardian/blocks/g1_ctrl/rtl_eco_20260925/g1_trip_timer.v /work/designs/g1-guardian/blocks/g1_ctrl/rtl_eco_20260925/g1_regfile.v /work/designs/g1-guardian/blocks/g1_ctrl/rtl_eco_20260925/g1_digital_top.v /work/designs/g1-guardian/blocks/g1_ctrl/rtl_eco_20260925/g1_digital.v /work/designs/g1-guardian/blocks/g1_seu/rtl_eco_20260925/g1_tmr_reg.v /work/designs/g1-guardian/blocks/g1_seu/rtl_eco_20260925/g1_seu_chain.v /work/designs/g1-guardian/blocks/g1_seu/rtl_eco_20260925/g1_seu.v
+# compiled RTL build/g1_top/cosim_7d99dbeaf0cb50000c4d0ce1.vvp (tag cdl_c_mid_pex_tt_27C_gear_compact_cdl5e47ae02_rtleco20260925_icx_fm1p2_maxstep1ns_functional_r3x) sha256 1032ff500020419cb9ef607fa90d1d6fa564df5099a74c3a726ad7850331a6c8
+# rtl sha256 79cf9cd44b68400b5d991c240daf2934d0b9c4a378a2fee4d514719aeeaa1bb8 designs/g1-guardian/blocks/g1_top/sim/rtl/g1_dig_cosim_cdl.v
+# rtl sha256 c14906d7d9256a771cd8fdc0ab14ba291131e151d24bf06b951b6bc693ad8ef2 designs/g1-guardian/blocks/g1_ctrl/rtl_eco_20260925/g1_sync2.v
+# rtl sha256 df4341e1878caef2f7bf27abb273a7a5af3e41b96658ffa02eedb2af97c48a5d designs/g1-guardian/blocks/g1_ctrl/rtl_eco_20260925/g1_serial.v
+# rtl sha256 5cab0bc384cef5a7b08d6c693da90e5347d0de10816830ba9b16c6d6be428c9f designs/g1-guardian/blocks/g1_ctrl/rtl_eco_20260925/g1_trip_timer.v
+# rtl sha256 33d549dafc4c097cc06cdbdb3237d3d4b1c5c9cd00eef5d9757474e07a1ab7f3 designs/g1-guardian/blocks/g1_ctrl/rtl_eco_20260925/g1_regfile.v
+# rtl sha256 4e3b8ff6cdc13f28670bb9c64b1f685782efc95a51e3644038989a220088fdd6 designs/g1-guardian/blocks/g1_ctrl/rtl_eco_20260925/g1_digital_top.v
+# rtl sha256 36757122c43271dfd439bf1623be6d5413adf3bbb97cbad40d5cccf5892f5c3d designs/g1-guardian/blocks/g1_ctrl/rtl_eco_20260925/g1_digital.v
+# rtl sha256 f53f82d97b91d4e815e662e72b40968949c7d74ce135f777dba7789201167ac5 designs/g1-guardian/blocks/g1_seu/rtl_eco_20260925/g1_tmr_reg.v
+# rtl sha256 6e10bbc02a8ff29116067f2067f648b959f17b542cb2360c50e7802010048573 designs/g1-guardian/blocks/g1_seu/rtl_eco_20260925/g1_seu_chain.v
+# rtl sha256 7c1831c99b5875a2dd48387db70fd5b1a0888a520fe8676bc4e071820b7fa736 designs/g1-guardian/blocks/g1_seu/rtl_eco_20260925/g1_seu.v
+# ... 
+ Reference value :  2.78684e-05
+ Reference value :  2.78688e-05
+ Reference value :  2.78717e-05
+ Reference value :  2.78747e-05
+ Reference value :  2.78787e-05
+ Reference value :  2.78827e-05
+ Reference value :  2.78877e-05
+ Reference value :  2.78927e-05
+ Reference value :  2.78977e-05
+ Reference value :  2.79027e-05
+ Reference value :  2.79077e-05
+ Reference value :  2.79127e-05
+ Reference value :  2.79176e-05
+ Reference value :  2.79185e-05
+ Reference value :  2.79189e-05
+ Reference value :  2.79194e-05
+ Reference value :  2.79198e-05
+ Reference value :  2.79220e-05
+ Reference value :  2.79260e-05
+ Reference value :  2.79310e-05
+ Reference value :  2.79360e-05
+ Reference value :  2.79410e-05
+ Reference value :  2.79460e-05
+ Reference value :  2.79510e-05
+ Reference value :  2.79560e-05
+ Reference value :  2.79610e-05
+ Reference value :  2.79660e-05
+ Reference value :  2.79707e-05
+ Reference value :  2.79715e-05
+ Reference value :  2.79720e-05
+ Reference value :  2.79724e-05
+ Reference value :  2.79726e-05
+ Reference value :  2.79730e-05
+ Reference value :  2.79730e-05
+ Reference value :  2.79731e-05
+ Reference value :  2.79731e-05
+ Reference value :  2.79732e-05
+ Reference value :  2.79732e-05
+ Reference value :  2.79732e-05
+ Reference value :  2.79732e-05
+ Reference value :  2.79733e-05
+ Reference value :  2.79733e-05
+ Reference value :  2.79734e-05
+ Reference value :  2.79735e-05
+ Reference value :  2.79736e-05
+ Reference value :  2.79736e-05
+ Reference value :  2.79737e-05
+ Reference value :  2.79737e-05
+ Reference value :  2.79737e-05
+ Reference value :  2.79737e-05
+ Reference value :  2.79738e-05
+ Reference value :  2.79739e-05
+ Reference value :  2.79740e-05
+ Reference value :  2.79746e-05
+ Reference value :  2.79772e-05
+ Reference value :  2.79812e-05
+ Reference value :  2.79842e-05
+ Reference value :  2.79882e-05
+ Reference value :  2.79932e-05
+ Reference value :  2.79982e-05
+No. of Data Rows : 65531
+vref_q              =  1.04501e+00 from=  1.40000e-05 to=  1.60000e-05
+isense_q            =  1.50691e+00 from=  1.40000e-05 to=  1.60000e-05
+icmp_q              =  7.53000e-01 from=  1.40000e-05 to=  1.60000e-05
+vths_q              =  8.04084e-01 from=  1.40000e-05 to=  1.60000e-05
+vthh_q              =  8.97145e-01 from=  1.40000e-05 to=  1.60000e-05
+vref_i              =  1.04501e+00
+isense_i            =  1.50670e+00
+icmp_i              =  7.69767e-01
+vths_i              =  8.18850e-01
+vthh_i              =  8.93258e-01
+iload_q             =  1.00000e+00
+gate_q              =  3.29997e+00
+fastq               =  0.00000e+00
+t_inrush_off        =  7.73206e-06
+inrush_q            =  0.00000e+00
+softarmed_end       =  1.20000e+00
+code_soft           =  1.53000e+02
+code_hard           =  2.00000e+02
+QUIET window_us=14-16 vref= 1.04501  isense= 1.50691  icmp= 0.753  vth_soft= 0.804084  vth_hard= 0.897145  vref_inst= 1.04501  isense_inst= 1.5067  icmp_inst= 0.769767  vth_soft_inst= 0.81885  vth_hard_inst= 0.893258  iload_A= 1  gate= 3.29997  code_soft= 153  code_hard= 200  fast_en= 0  inrush_active= 0  t_inrush_off_us= 7.73206  soft_armed_end= 1.2
+tosc1               =  1.18637e-05
+tosc2               =  1.39832e-05
+tcc1                =  1.18651e-05
+tcc2                =  1.39846e-05
+CLOCK f_osc_MHz= 9.43619  f_cmp_MHz= 4.71809  (RTL clock: ideal source at the block-simulated frequency)
+ia_vdda             =  1.46281e-03 from=  1.38565e-05 to=  1.60000e-05
+ia_iovdd            =  1.28109e-04 from=  1.38565e-05 to=  1.60000e-05
+ia_vdd              =  7.33440e-06 from=  1.38565e-05 to=  1.60000e-05
+ia_bgr              =  3.19706e-04 from=  1.38565e-05 to=  1.60000e-05
+ia_sense            =  1.10138e-03 from=  1.38565e-05 to=  1.60000e-05
+ia_tripa            =  1.60511e-10 from=  1.38565e-05 to=  1.60000e-05
+ia_tripd            =  3.96722e-06 from=  1.38565e-05 to=  1.60000e-05
+ia_osc              =  2.39744e-12 from=  1.38565e-05 to=  1.60000e-05
+ia_gatea            =  5.45438e-10 from=  1.38565e-05 to=  1.60000e-05
+ia_gated            =  3.82959e-09 from=  1.38565e-05 to=  1.60000e-05
+SUPPLY_uA window=13.8565-16us VDDA= 1462.81  IOVDD= 128.109  VDD= 7.3344  | bgr= 319.707  sense= 1101.38  trip_3v3= 0.000160511  trip_1v2= 3.96722  osc= 2.39744E-06  gate_3v3= 0.000545438  gate_1v2= 0.0038296
+t2f_t1              =  1.38731e-05
+t2f_t2              =  1.51920e-05
+ia_t2f              =  4.17256e-05 from=  1.38565e-05 to=  1.60000e-05
+ia_t2fd             =  3.02966e-07 from=  1.38565e-05 to=  1.60000e-05
+ia_ls               =  6.23404e-09 from=  1.38565e-05 to=  1.60000e-05
+ia_lsd              =  1.43613e-10 from=  1.38565e-05 to=  1.60000e-05
+T2F window=13.8565-16us f_MHz= 1.51638  periods=2 vdda_t2f_uA= 41.7256  vdd12_t2f_uA= 0.302966  vdda_ls_uA= 0.00623404  vdd_ls_uA= 0.000143613
+tripped_max         =  7.25561e-03 at=  2.79730e-05
+tripped_pre         =  7.25482e-03 at=  1.39845e-05
+
+Error: measure  t_tripped  when(WHEN) : out of interval
+ meas tran t_tripped when v(xchip.i_core_tripped)=0.6 rise=1 from=16u failed!
+
+
+Error: measure  t_trip_d  when(WHEN) : out of interval
+ meas tran t_trip_d when v(xchip.i_core_trip_d)=0.6 rise=1 from=16u failed!
+
+
+Error: measure  t_gate1v  when(WHEN) : out of interval
+ meas tran t_gate1v when v(gate)=1.0 fall=1 from=16u failed!
+
+
+Error: measure  t_gate03  when(WHEN) : out of interval
+ meas tran t_gate03 when v(gate)=0.33 fall=1 from=16u failed!
+
+gate_min            =  3.29838e+00 at=  2.44231e-05
+gate_end            =  3.29996e+00
+ipk                 =  1.20000e+00 at=  2.77154e-05
+i_end               =  1.20000e+00
+isense_pk           =  1.61137e+00 at=  1.85458e-05
+cause1e             =  0.00000e+00
+cause0e             =  0.00000e+00
+fault_end           =  3.30000e+00
+soft_peak           =  0.00000e+00
+Warning from checkvalid: vector t_gate1v is not available or has zero length.
+Error: RHS "(t_gate1v - tstep_s)*1e6" invalid
+Warning from checkvalid: vector t_gate03 is not available or has zero length.
+Error: RHS "(t_gate03 - tstep_s)*1e6" invalid
+Warning from checkvalid: vector t_tripped is not available or has zero length.
+Error: RHS "(t_tripped - tstep_s)*1e6" invalid
+Warning from checkvalid: vector t_trip_d is not available or has zero length.
+Error: RHS "(t_trip_d - tstep_s)*1e6" invalid
+Error: &dt_tripped_us: no such variable.
+Error: &dt_trip_d_us: no such variable.
+Error: &dt_gate1v_us: no such variable.
+Error: &dt_gate03_us: no such variable.
+TRIP tripped_max= 0.00725561  tripped_before_event= 0.00725482  t_tripped_us=  t_trip_d_us=  t_gate_1V_us=  t_gate_0.33V_us=  gate_min= 3.29838  gate_end= 3.29996  ipk_A= 1.2  i_end_A= 1.2  isense_pk= 1.61137  cause= 0  fault_n_end= 3.3  soft_peak= 0
+q_step              =  1.27111e-05
+q_end               =  2.71091e-05
+CHARGE after_event_As= 1.4398E-05
+Note: Simulation executed from .control section 
+
+# run status completed
+# ngspice exit 0, wall time 6806 s
