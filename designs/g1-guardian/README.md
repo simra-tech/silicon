@@ -121,11 +121,11 @@ Chip-level runs with the ECO RTL (hand-wired chip deck (`run_top.py --blockset c
 
 Full-chip layout-netlist campaign on the chip of record (`r3full`, interim, simulated;
 [RESULTS §11](blocks/g1_top/sim/campaigns/RESULTS_20260925.md); detailed record
-`blocks/g1_top/sim/FULLCHIP_CDL_R3_20260926.md`, pending): r3 CDL + ECO RTL + all block
+[`blocks/g1_top/sim/FULLCHIP_CDL_R3_20260926.md`](blocks/g1_top/sim/FULLCHIP_CDL_R3_20260926.md)): r3 CDL + ECO RTL + all block
 extractions + extracted top-level interconnect (C only) + real IO pads (`nodcn`) + ideal clock +
 T2F on. The hard fault takes `GATE` below 1 V **1.543 µs** after the fault at tt/27 °C, 1.726 µs at
 ss/125 °C (slower real-pad fall) and 1.433 µs at ff/−40 °C. `q`, `c`, `e20`, `f_mid`, `hard_pulse`
-and real-pad power-up passed; `b_s`, `osc` and near-threshold cases pending.
+`b_s` (soft trip, `GATE` < 1 V 28.131 µs) and real-pad power-up passed; `osc` and the near-threshold witnesses pending.
 
 The results below this point were obtained with the pre-ECO digital (map 1.1 RTL) on r1/r2 content:
 Full-chip simulation driven by the projected-LVS-matched canonical CDL of r1 (`g1_chip_top_1414.cdl` `af5a4dbd`; canonical LVS fails on the IO cells) with the pre-ECO RTL (map 1.1) (all blocks

@@ -1,0 +1,724 @@
+* G1_TOP breaker path, chip level: (b-tl) transistor level, SOFT_TIME = 0x0001 (256 osc_clk ~ 25.6 us): 1.5x held: soft trip after 256 samples
+* CDL-driven full chip (run_top_cdl.py): blocks//work/designs/g1-guardian/blocks/g1_padring/netlist/g1_chip_top_1414_r3.cdl sha256 5e47ae022ab73b4e060afaee22a1299bc62e1a895f4c9e15f865820505d52629, top g1_chip_top instantiated once
+* case b_s | block netlists pex (extracted: g1_bgr, g1_gate, g1_sense, g1_t2f, g1_trip) | clock to the RTL ideal | corner tt | 27 degC | pads pdk | method gear
+* g1_bgr <- blocks/g1_bgr/sim/postlayout/g1_bgr586_pex.spice (sha256 01227a3d8d8210d10d2d1ee6933842351140b8825fe29282f0327936a3064ad5)
+* g1_gate <- blocks/g1_gate/sim/postlayout/g1_gate_pex.spice (sha256 e91617f5fcf6f5a0dc721a2ba53b507a05cc226d6dbf0bebaa858a1e7d876765; not hash-bound in run_top.py)
+* g1_sense <- blocks/g1_sense/sim/postlayout/g1_sense_r100_partialc.spice (sha256 ffb14762659eaf02b6a62e9edea3caa0e143cbc7881378b329d6ab9945a6554b)
+* g1_t2f <- blocks/g1_t2f/sim/postlayout/g1_t2f_pex.spice (sha256 441edabc0484c9de1e035d585369f37d460afe32370e73935044693bbfd0c78a)
+* g1_trip <- blocks/g1_trip/sim/postlayout/g1_trip_nf4_pex.spice (sha256 ba86b7b2a530abae365d539297909e033b24a54597f9cc75d8dff273c30d401c)
+* translated: 40 subckts; devices D dantenna 8, D dpantenna 7, M sg13_hv_nmos 191, M sg13_hv_pmos 18, M sg13_lv_nmos 8, M sg13_lv_pmos 7, Q npn13G2 1, R ptap1 42, R rppd 29, X 36, ptap1 R from sg13g2_io.spi 42; replaced g1_digital, g1_osc; 4833 filler instances merged
+* not in this deck (differences to run_top.py): the Cw_* wire capacitors (the CDL has none); the d_source RTL stimulus (the RTL reads the EN/SCLK/SDI IOPadIn outputs); fitted GATE/FAULT_N drivers
+.param VDDA=3.3 VDD=1.2 IOVDD=3.3 RSH=25m RGND=10m INOM=1 CVREF=1e-08
+.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerMOSlv.lib mos_tt
+.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerMOShv.lib mos_tt
+.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerRES.lib res_typ
+.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerCAP.lib cap_typ
+.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerHBT.lib hbt_typ
+.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerDIO.lib dio_tt
+.temp 27
+.global sub!
+Vsub sub! 0 dc 0
+.option method=gear itl4=100 reltol=0.001 abstol=1e-10 vntol=1e-6 chgtol=1e-14 rshunt=1e12
+.nodeset v(xchip.i_core_vref_buf)=1.04 v(xchip.i_core_unused_vped)=1.0008 v(xchip.i_core_isense)=1.5 v(xchip.xi_core_u_sense.vp)=0.047 v(xchip.xi_core_u_sense.vn)=0.047 v(xchip.i_core_iptat)=0.76 v(xchip.xi_core_u_sense.__pex_xota_out1)=2.51 v(xchip.xi_core_u_sense.__pex_xota_mir)=2.51 v(xchip.xi_core_u_sense.__pex_xota_tail)=1.6 v(xchip.xi_core_u_sense.__pex_xota_fn)=0.2 v(xchip.xi_core_u_sense.__pex_xota_fp)=0.2 v(xchip.xi_core_u_sense.__pex_xbuf_out1)=2.51 v(xchip.xi_core_u_sense.__pex_xbuf_mir)=2.51 v(xchip.xi_core_u_sense.__pex_xbuf_tail)=1.6 v(xchip.xi_core_u_sense.__pex_xbuf_fn)=0.2 v(xchip.xi_core_u_sense.__pex_xbuf_fp)=0.2 v(xchip.xi_core_u_sense.__pex_xref_out1)=2.51 v(xchip.xi_core_u_sense.__pex_xref_mir)=2.51 v(xchip.xi_core_u_sense.__pex_xref_tail)=1.6 v(xchip.xi_core_u_sense.__pex_xref_fn)=0.2 v(xchip.xi_core_u_sense.__pex_xref_fp)=0.2
+.include /work/designs/g1-guardian/blocks/g1_bgr/sim/postlayout/g1_bgr586_pex.spice
+.include /work/designs/g1-guardian/blocks/g1_sense/sim/postlayout/g1_sense_r100_partialc.spice
+.include /work/designs/g1-guardian/blocks/g1_trip/sim/postlayout/g1_trip_nf4_pex.spice
+.include /work/designs/g1-guardian/blocks/g1_gate/sim/postlayout/g1_gate_pex.spice
+.include /work/designs/g1-guardian/blocks/g1_t2f/sim/postlayout/g1_t2f_pex.spice
+* ---- supplies: one 3.3 V board rail feeds VDDA (pin 7) and IOVDD (pin 3), PLAN D14; 1.2 V VDD (pin 1)
+V33 rail33 0 dc 3.3
+Vma rail33 vdda_s dc 0
+Vmi rail33 iovdd_s dc 0
+Rsa vdda_s vdda 0.5
+Cda vdda 0 1n
+Rsi iovdd_s iovdd 0.5
+Cdi iovdd 0 1n
+V12 vdd_s 0 dc 1.2
+Rsd vdd_s vdd 0.5
+Cdd vdd 0 1n
+* ---- board: load current profile (1 V = 1 A) x switch on the FET gate node, shunt, Kelvin traces, FET gate
+Vprof iprof 0 pwl(0 1 3e-05 1 3.01e-05 1.5)
+Bload 0 ldi I = v(iprof) * (0.5 + 0.5*tanh((v(gfet) - 1.5)/0.15))
+Vim ldi shp dc 0
+Rsh shp shn {RSH}
+Rgnd shn 0 {RGND}
+Rkp shp sense_p 1
+Rkn shn sense_n 1
+Rg gate gfet 10
+Cgate gfet 0 5n
+Cfault fault_n 0 20p
+Ven en_pad 0 pwl(0 0 3.01431035636e-06 0 3.01521035636e-06 1.485 3.01541035636e-06 1.815 3.01631035636e-06 3.3)
+Vsclk sclk_pad 0 pwl(0 0 1.80627492874e-05 0 1.81687242094e-05 0 1.81696242094e-05 1.485 1.81698242094e-05 1.815 1.81707242094e-05 3.3 1.82746991315e-05 3.3 1.82755991315e-05 1.815 1.82757991315e-05 1.485 1.82766991315e-05 0 1.83806740535e-05 0 1.83815740535e-05 1.485 1.83817740535e-05 1.815 1.83826740535e-05 3.3 1.84866489756e-05 3.3 1.84875489756e-05 1.815 1.84877489756e-05 1.485 1.84886489756e-05 0 1.85926238976e-05 0 1.85935238976e-05 1.485 1.85937238976e-05 1.815 1.85946238976e-05 3.3 1.86985988197e-05 3.3 1.86994988197e-05 1.815 1.86996988197e-05 1.485 1.87005988197e-05 0 1.88045737417e-05 0 1.88054737417e-05 1.485 1.88056737417e-05 1.815 1.88065737417e-05 3.3 1.89105486638e-05 3.3 1.89114486638e-05 1.815 1.89116486638e-05 1.485 1.89125486638e-05 0 1.90165235858e-05 0 1.90174235858e-05 1.485 1.90176235858e-05 1.815 1.90185235858e-05 3.3 1.91224985078e-05 3.3 1.91233985078e-05 1.815 1.91235985078e-05 1.485 1.91244985078e-05 0 1.92284734299e-05 0 1.92293734299e-05 1.485 1.92295734299e-05 1.815 1.92304734299e-05 3.3 1.93344483519e-05 3.3 1.93353483519e-05 1.815 1.93355483519e-05 1.485 1.93364483519e-05 0 1.9440423274e-05 0 1.9441323274e-05 1.485 1.9441523274e-05 1.815 1.9442423274e-05 3.3 1.9546398196e-05 3.3 1.9547298196e-05 1.815 1.9547498196e-05 1.485 1.9548398196e-05 0 1.96523731181e-05 0 1.96532731181e-05 1.485 1.96534731181e-05 1.815 1.96543731181e-05 3.3 1.97583480401e-05 3.3 1.97592480401e-05 1.815 1.97594480401e-05 1.485 1.97603480401e-05 0 1.98643229622e-05 0 1.98652229622e-05 1.485 1.98654229622e-05 1.815 1.98663229622e-05 3.3 1.99702978842e-05 3.3 1.99711978842e-05 1.815 1.99713978842e-05 1.485 1.99722978842e-05 0 2.00762728063e-05 0 2.00771728063e-05 1.485 2.00773728063e-05 1.815 2.00782728063e-05 3.3 2.01822477283e-05 3.3 2.01831477283e-05 1.815 2.01833477283e-05 1.485 2.01842477283e-05 0 2.02882226504e-05 0 2.02891226504e-05 1.485 2.02893226504e-05 1.815 2.02902226504e-05 3.3 2.03941975724e-05 3.3 2.03950975724e-05 1.815 2.03952975724e-05 1.485 2.03961975724e-05 0 2.05001724945e-05 0 2.05010724945e-05 1.485 2.05012724945e-05 1.815 2.05021724945e-05 3.3 2.06061474165e-05 3.3 2.06070474165e-05 1.815 2.06072474165e-05 1.485 2.06081474165e-05 0 2.07121223386e-05 0 2.07130223386e-05 1.485 2.07132223386e-05 1.815 2.07141223386e-05 3.3 2.08180972606e-05 3.3 2.08189972606e-05 1.815 2.08191972606e-05 1.485 2.08200972606e-05 0 2.09240721827e-05 0 2.09249721827e-05 1.485 2.09251721827e-05 1.815 2.09260721827e-05 3.3 2.10300471047e-05 3.3 2.10309471047e-05 1.815 2.10311471047e-05 1.485 2.10320471047e-05 0 2.11360220268e-05 0 2.11369220268e-05 1.485 2.11371220268e-05 1.815 2.11380220268e-05 3.3 2.12419969488e-05 3.3 2.12428969488e-05 1.815 2.12430969488e-05 1.485 2.12439969488e-05 0 2.13479718709e-05 0 2.13488718709e-05 1.485 2.13490718709e-05 1.815 2.13499718709e-05 3.3 2.14539467929e-05 3.3 2.14548467929e-05 1.815 2.14550467929e-05 1.485 2.14559467929e-05 0 2.1559921715e-05 0 2.1560821715e-05 1.485 2.1561021715e-05 1.815 2.1561921715e-05 3.3 2.1665896637e-05 3.3 2.1666796637e-05 1.815 2.1666996637e-05 1.485 2.1667896637e-05 0 2.17718715591e-05 0 2.17727715591e-05 1.485 2.17729715591e-05 1.815 2.17738715591e-05 3.3 2.18778464811e-05 3.3 2.18787464811e-05 1.815 2.18789464811e-05 1.485 2.18798464811e-05 0 2.19838214032e-05 0 2.19847214032e-05 1.485 2.19849214032e-05 1.815 2.19858214032e-05 3.3 2.20897963252e-05 3.3 2.20906963252e-05 1.815 2.20908963252e-05 1.485 2.20917963252e-05 0 2.21957712473e-05 0 2.21966712473e-05 1.485 2.21968712473e-05 1.815 2.21977712473e-05 3.3 2.23017461693e-05 3.3 2.23026461693e-05 1.815 2.23028461693e-05 1.485 2.23037461693e-05 0 2.24077210914e-05 0 2.24086210914e-05 1.485 2.24088210914e-05 1.815 2.24097210914e-05 3.3 2.25136960134e-05 3.3 2.25145960134e-05 1.815 2.25147960134e-05 1.485 2.25156960134e-05 0 2.26196709355e-05 0 2.26205709355e-05 1.485 2.26207709355e-05 1.815 2.26216709355e-05 3.3 2.27256458575e-05 3.3 2.27265458575e-05 1.815 2.27267458575e-05 1.485 2.27276458575e-05 0 2.28316207796e-05 0 2.28325207796e-05 1.485 2.28327207796e-05 1.815 2.28336207796e-05 3.3 2.29375957016e-05 3.3 2.29384957016e-05 1.815 2.29386957016e-05 1.485 2.29395957016e-05 0 2.30435706237e-05 0 2.30444706237e-05 1.485 2.30446706237e-05 1.815 2.30455706237e-05 3.3 2.31495455457e-05 3.3 2.31504455457e-05 1.815 2.31506455457e-05 1.485 2.31515455457e-05 0 2.32555204678e-05 0 2.32564204678e-05 1.485 2.32566204678e-05 1.815 2.32575204678e-05 3.3 2.33614953898e-05 3.3 2.33623953898e-05 1.815 2.33625953898e-05 1.485 2.33634953898e-05 0 2.34674703119e-05 0 2.34683703119e-05 1.485 2.34685703119e-05 1.815 2.34694703119e-05 3.3 2.35734452339e-05 3.3 2.35743452339e-05 1.815 2.35745452339e-05 1.485 2.35754452339e-05 0 2.3679420156e-05 0 2.3680320156e-05 1.485 2.3680520156e-05 1.815 2.3681420156e-05 3.3 2.3785395078e-05 3.3 2.3786295078e-05 1.815 2.3786495078e-05 1.485 2.3787395078e-05 0 2.38913700001e-05 0 2.38922700001e-05 1.485 2.38924700001e-05 1.815 2.38933700001e-05 3.3 2.39973449221e-05 3.3 2.39982449221e-05 1.815 2.39984449221e-05 1.485 2.39993449221e-05 0 2.41033198442e-05 0 2.41042198442e-05 1.485 2.41044198442e-05 1.815 2.41053198442e-05 3.3 2.42092947662e-05 3.3 2.42101947662e-05 1.815 2.42103947662e-05 1.485 2.42112947662e-05 0 2.43152696883e-05 0 2.43161696883e-05 1.485 2.43163696883e-05 1.815 2.43172696883e-05 3.3 2.44212446103e-05 3.3 2.44221446103e-05 1.815 2.44223446103e-05 1.485 2.44232446103e-05 0 2.45272195324e-05 0 2.45281195324e-05 1.485 2.45283195324e-05 1.815 2.45292195324e-05 3.3 2.46331944544e-05 3.3 2.46340944544e-05 1.815 2.46342944544e-05 1.485 2.46351944544e-05 0 2.47391693765e-05 0 2.47400693765e-05 1.485 2.47402693765e-05 1.815 2.47411693765e-05 3.3 2.48451442985e-05 3.3 2.48460442985e-05 1.815 2.48462442985e-05 1.485 2.48471442985e-05 0)
+Vsdi sdi_pad 0 pwl(0 0 1.80627492874e-05 0 1.89105486638e-05 0 1.89114486638e-05 1.485 1.89116486638e-05 1.815 1.89125486638e-05 3.3 1.91224985078e-05 3.3 1.91233985078e-05 1.815 1.91235985078e-05 1.485 1.91244985078e-05 0 2.25136960134e-05 0 2.25145960134e-05 1.485 2.25147960134e-05 1.815 2.25156960134e-05 3.3 2.27256458575e-05 3.3 2.27265458575e-05 1.815 2.27267458575e-05 1.485 2.27276458575e-05 0 2.46331944544e-05 0 2.46340944544e-05 1.485 2.46342944544e-05 1.815 2.46351944544e-05 3.3 2.48451442985e-05 3.3 2.48460442985e-05 1.815 2.48462442985e-05 1.485 2.48471442985e-05 0)
+.model adc adc_bridge(in_low=0.55 in_high=0.65 rise_delay=1e-12 fall_delay=1e-12)
+.model adc_clock adc_bridge(in_low=0.6 in_high=0.6 rise_delay=1e-12 fall_delay=1e-12)
+.model dac dac_bridge(out_low=0 out_high=1.2 out_undef=0.6 t_rise=0.3n t_fall=0.3n)
+.model rtl d_cosim simulation="ivlng" sim_args=["/work/build/g1_top/cosim_efe025b85864484319bf0836.vvp"]
+* ---- the chip: g1_chip_top_1414.cdl, 22 pins on the board fixture
+* extracted top-level interconnect (--interconnect extracted): g1_top/sim/postlayout/top_interconnect_20260925.spice sha256 ddc88cc765e99a0e982c9b6bc24817bfe336ae686930b2c12a85d514fb2adcc2, 57 nets, C only (no series R)
+.include /work/designs/g1-guardian/blocks/g1_top/sim/postlayout/top_interconnect_20260925.spice
+.subckt sg13g2_antennanp A VDD VSS
+XDD1 VSS A dantenna m=1 w=780n l=780n
+XDD0 A VDD dpantenna m=1 w=1.05u l=1.34u
+.ends sg13g2_antennanp
+.subckt sg13g2_decap_8 VDD VSS
+XMN0 VSS VDD VSS VSS sg13_lv_nmos m=1 w=840.00n l=1.000u ng=2
+XMP0 VDD VSS VDD VDD sg13_lv_pmos m=1 w=2.000u l=1.000u ng=2
+.ends sg13g2_decap_8
+.subckt sg13g2_fill_2 VDD VSS
+.ends sg13g2_fill_2
+.subckt sg13g2_fill_1 VDD VSS
+.ends sg13g2_fill_1
+.subckt sg13g2_decap_4 VDD VSS
+XMN0 VSS VDD VSS VSS sg13_lv_nmos m=1 w=420.00n l=1.000u ng=1
+XMP0 VDD VSS VDD VDD sg13_lv_pmos m=1 w=1.000u l=1.000u ng=1
+.ends sg13g2_decap_4
+.subckt bondpad_70x70_tm1 pad
+.ends bondpad_70x70_tm1
+.subckt G1_VSS_DERIVATIVE__sg13g2_Corner vdd vss iovdd iovss G1_EXPLICIT_SUBSTRATE_VSS
+XR_G1_TAP_SYNTAX_XR1 vss G1_EXPLICIT_SUBSTRATE_VSS ptap1 R=35.383
+XR_G1_TAP_SYNTAX_XR0 iovss G1_EXPLICIT_SUBSTRATE_VSS ptap1 R=93.041m
+.ends G1_VSS_DERIVATIVE__sg13g2_Corner
+.subckt G1_VSS_DERIVATIVE__sg13g2_Filler4000 vdd vss iovdd iovss G1_EXPLICIT_SUBSTRATE_VSS
+XR_G1_TAP_SYNTAX_XR1 vss G1_EXPLICIT_SUBSTRATE_VSS ptap1 R=63.078
+XR_G1_TAP_SYNTAX_XR0 iovss G1_EXPLICIT_SUBSTRATE_VSS ptap1 R=625.742m
+.ends G1_VSS_DERIVATIVE__sg13g2_Filler4000
+.subckt G1_VSS_DERIVATIVE__sg13g2_Filler2000 vdd vss iovdd iovss G1_EXPLICIT_SUBSTRATE_VSS
+XR_G1_TAP_SYNTAX_XR1 vss G1_EXPLICIT_SUBSTRATE_VSS ptap1 R=101.912
+XR_G1_TAP_SYNTAX_XR0 iovss G1_EXPLICIT_SUBSTRATE_VSS ptap1 R=1.224
+.ends G1_VSS_DERIVATIVE__sg13g2_Filler2000
+.subckt G1_VSS_DERIVATIVE__sg13g2_Filler400 vdd vss iovdd iovss G1_EXPLICIT_SUBSTRATE_VSS
+XR_G1_TAP_SYNTAX_XR1 vss G1_EXPLICIT_SUBSTRATE_VSS ptap1 R=246.192
+XR_G1_TAP_SYNTAX_XR0 iovss G1_EXPLICIT_SUBSTRATE_VSS ptap1 R=6.246
+.ends G1_VSS_DERIVATIVE__sg13g2_Filler400
+.subckt sg13g2_tiehi L_HI VDD VSS
+XMN1 net3 net2 VSS VSS sg13_lv_nmos m=1 w=795.00n l=130.00n ng=1
+XMN0 net1 net1 VSS VSS sg13_lv_nmos m=1 w=300n l=130.00n ng=1
+XMP1 L_HI net3 VDD VDD sg13_lv_pmos m=1 w=1.155u l=130.00n ng=1
+XMP0 net2 net1 VDD VDD sg13_lv_pmos m=1 w=660.0n l=130.00n ng=1
+.ends sg13g2_tiehi
+.subckt g1_dose_macro D_ELT D_STD G_SHARED vss
+XMHV D_ELT G_SHARED vss vss sg13_hv_nmos w=3.98u l=0.45u ng=1 m=1
+XMLV D_STD G_SHARED vss vss sg13_lv_nmos w=3.98u l=0.13u ng=1 m=1
+.ends g1_dose_macro
+.subckt g1_dut_macro HBT_C HBT_B HBT_E vss
+XQ1 HBT_C HBT_B HBT_E vss npn13G2 le=900e-9 we=70.0n Nx=1
+.ends g1_dut_macro
+.subckt g1_ls_up in out vdd vdda vss
+XMPI inb in vdd vdd sg13_lv_pmos w=2u l=0.13u ng=1 m=1
+XMNI inb in vss vss sg13_lv_nmos w=1u l=0.13u ng=1 m=1
+XMN1 nb in vss vss sg13_hv_nmos w=3.8u l=0.45u ng=1 m=1
+XMN2 n inb vss vss sg13_hv_nmos w=3.8u l=0.45u ng=1 m=1
+XMP1 nb n vdda vdda sg13_hv_pmos w=0.3u l=0.45u ng=1 m=1
+XMP2 n nb vdda vdda sg13_hv_pmos w=0.3u l=0.45u ng=1 m=1
+XMPO out nb vdda vdda sg13_hv_pmos w=3.9u l=0.45u ng=1 m=1
+XMNO out nb vss vss sg13_hv_nmos w=1.9u l=0.45u ng=1 m=1
+.ends g1_ls_up
+.subckt G1_VSS_DERIVATIVE__sg13g2_Clamp_N43N43D4R gate iovss pad G1_EXPLICIT_SUBSTRATE_VSS
+XMN0_1_ pad gate iovss G1_EXPLICIT_SUBSTRATE_VSS sg13_hv_nmos m=1 w=4.4u l=600.0n ng=1
+XMN0_2_ pad gate iovss G1_EXPLICIT_SUBSTRATE_VSS sg13_hv_nmos m=1 w=4.4u l=600.0n ng=1
+XMN0_3_ pad gate iovss G1_EXPLICIT_SUBSTRATE_VSS sg13_hv_nmos m=1 w=4.4u l=600.0n ng=1
+XMN0_4_ pad gate iovss G1_EXPLICIT_SUBSTRATE_VSS sg13_hv_nmos m=1 w=4.4u l=600.0n ng=1
+XMN0_5_ pad gate iovss G1_EXPLICIT_SUBSTRATE_VSS sg13_hv_nmos m=1 w=4.4u l=600.0n ng=1
+XMN0_6_ pad gate iovss G1_EXPLICIT_SUBSTRATE_VSS sg13_hv_nmos m=1 w=4.4u l=600.0n ng=1
+XMN0_7_ pad gate iovss G1_EXPLICIT_SUBSTRATE_VSS sg13_hv_nmos m=1 w=4.4u l=600.0n ng=1
+XMN0_8_ pad gate iovss G1_EXPLICIT_SUBSTRATE_VSS sg13_hv_nmos m=1 w=4.4u l=600.0n ng=1
+XMN0_9_ pad gate iovss G1_EXPLICIT_SUBSTRATE_VSS sg13_hv_nmos m=1 w=4.4u l=600.0n ng=1
+XMN0_10_ pad gate iovss G1_EXPLICIT_SUBSTRATE_VSS sg13_hv_nmos m=1 w=4.4u l=600.0n ng=1
+XMN0_11_ pad gate iovss G1_EXPLICIT_SUBSTRATE_VSS sg13_hv_nmos m=1 w=4.4u l=600.0n ng=1
+XMN0_12_ pad gate iovss G1_EXPLICIT_SUBSTRATE_VSS sg13_hv_nmos m=1 w=4.4u l=600.0n ng=1
+XMN0_13_ pad gate iovss G1_EXPLICIT_SUBSTRATE_VSS sg13_hv_nmos m=1 w=4.4u l=600.0n ng=1
+XMN0_14_ pad gate iovss G1_EXPLICIT_SUBSTRATE_VSS sg13_hv_nmos m=1 w=4.4u l=600.0n ng=1
+XMN0_15_ pad gate iovss G1_EXPLICIT_SUBSTRATE_VSS sg13_hv_nmos m=1 w=4.4u l=600.0n ng=1
+XMN0_16_ pad gate iovss G1_EXPLICIT_SUBSTRATE_VSS sg13_hv_nmos m=1 w=4.4u l=600.0n ng=1
+XMN0_17_ pad gate iovss G1_EXPLICIT_SUBSTRATE_VSS sg13_hv_nmos m=1 w=4.4u l=600.0n ng=1
+XMN0_18_ pad gate iovss G1_EXPLICIT_SUBSTRATE_VSS sg13_hv_nmos m=1 w=4.4u l=600.0n ng=1
+XMN0_19_ pad gate iovss G1_EXPLICIT_SUBSTRATE_VSS sg13_hv_nmos m=1 w=4.4u l=600.0n ng=1
+XMN0_20_ pad gate iovss G1_EXPLICIT_SUBSTRATE_VSS sg13_hv_nmos m=1 w=4.4u l=600.0n ng=1
+XMN0_21_ pad gate iovss G1_EXPLICIT_SUBSTRATE_VSS sg13_hv_nmos m=1 w=4.4u l=600.0n ng=1
+XMN0_22_ pad gate iovss G1_EXPLICIT_SUBSTRATE_VSS sg13_hv_nmos m=1 w=4.4u l=600.0n ng=1
+XMN0_23_ pad gate iovss G1_EXPLICIT_SUBSTRATE_VSS sg13_hv_nmos m=1 w=4.4u l=600.0n ng=1
+XMN0_24_ pad gate iovss G1_EXPLICIT_SUBSTRATE_VSS sg13_hv_nmos m=1 w=4.4u l=600.0n ng=1
+XMN0_25_ pad gate iovss G1_EXPLICIT_SUBSTRATE_VSS sg13_hv_nmos m=1 w=4.4u l=600.0n ng=1
+XMN0_26_ pad gate iovss G1_EXPLICIT_SUBSTRATE_VSS sg13_hv_nmos m=1 w=4.4u l=600.0n ng=1
+XMN0_27_ pad gate iovss G1_EXPLICIT_SUBSTRATE_VSS sg13_hv_nmos m=1 w=4.4u l=600.0n ng=1
+XMN0_28_ pad gate iovss G1_EXPLICIT_SUBSTRATE_VSS sg13_hv_nmos m=1 w=4.4u l=600.0n ng=1
+XMN0_29_ pad gate iovss G1_EXPLICIT_SUBSTRATE_VSS sg13_hv_nmos m=1 w=4.4u l=600.0n ng=1
+XMN0_30_ pad gate iovss G1_EXPLICIT_SUBSTRATE_VSS sg13_hv_nmos m=1 w=4.4u l=600.0n ng=1
+XMN0_31_ pad gate iovss G1_EXPLICIT_SUBSTRATE_VSS sg13_hv_nmos m=1 w=4.4u l=600.0n ng=1
+XMN0_32_ pad gate iovss G1_EXPLICIT_SUBSTRATE_VSS sg13_hv_nmos m=1 w=4.4u l=600.0n ng=1
+XMN0_33_ pad gate iovss G1_EXPLICIT_SUBSTRATE_VSS sg13_hv_nmos m=1 w=4.4u l=600.0n ng=1
+XMN0_34_ pad gate iovss G1_EXPLICIT_SUBSTRATE_VSS sg13_hv_nmos m=1 w=4.4u l=600.0n ng=1
+XMN0_35_ pad gate iovss G1_EXPLICIT_SUBSTRATE_VSS sg13_hv_nmos m=1 w=4.4u l=600.0n ng=1
+XMN0_36_ pad gate iovss G1_EXPLICIT_SUBSTRATE_VSS sg13_hv_nmos m=1 w=4.4u l=600.0n ng=1
+XMN0_37_ pad gate iovss G1_EXPLICIT_SUBSTRATE_VSS sg13_hv_nmos m=1 w=4.4u l=600.0n ng=1
+XMN0_38_ pad gate iovss G1_EXPLICIT_SUBSTRATE_VSS sg13_hv_nmos m=1 w=4.4u l=600.0n ng=1
+XMN0_39_ pad gate iovss G1_EXPLICIT_SUBSTRATE_VSS sg13_hv_nmos m=1 w=4.4u l=600.0n ng=1
+XMN0_40_ pad gate iovss G1_EXPLICIT_SUBSTRATE_VSS sg13_hv_nmos m=1 w=4.4u l=600.0n ng=1
+XMN0_41_ pad gate iovss G1_EXPLICIT_SUBSTRATE_VSS sg13_hv_nmos m=1 w=4.4u l=600.0n ng=1
+XMN0_42_ pad gate iovss G1_EXPLICIT_SUBSTRATE_VSS sg13_hv_nmos m=1 w=4.4u l=600.0n ng=1
+XMN0_43_ pad gate iovss G1_EXPLICIT_SUBSTRATE_VSS sg13_hv_nmos m=1 w=4.4u l=600.0n ng=1
+XMN0_44_ pad gate iovss G1_EXPLICIT_SUBSTRATE_VSS sg13_hv_nmos m=1 w=4.4u l=600.0n ng=1
+XMN0_45_ pad gate iovss G1_EXPLICIT_SUBSTRATE_VSS sg13_hv_nmos m=1 w=4.4u l=600.0n ng=1
+XMN0_46_ pad gate iovss G1_EXPLICIT_SUBSTRATE_VSS sg13_hv_nmos m=1 w=4.4u l=600.0n ng=1
+XMN0_47_ pad gate iovss G1_EXPLICIT_SUBSTRATE_VSS sg13_hv_nmos m=1 w=4.4u l=600.0n ng=1
+XMN0_48_ pad gate iovss G1_EXPLICIT_SUBSTRATE_VSS sg13_hv_nmos m=1 w=4.4u l=600.0n ng=1
+XMN0_49_ pad gate iovss G1_EXPLICIT_SUBSTRATE_VSS sg13_hv_nmos m=1 w=4.4u l=600.0n ng=1
+XMN0_50_ pad gate iovss G1_EXPLICIT_SUBSTRATE_VSS sg13_hv_nmos m=1 w=4.4u l=600.0n ng=1
+XMN0_51_ pad gate iovss G1_EXPLICIT_SUBSTRATE_VSS sg13_hv_nmos m=1 w=4.4u l=600.0n ng=1
+XMN0_52_ pad gate iovss G1_EXPLICIT_SUBSTRATE_VSS sg13_hv_nmos m=1 w=4.4u l=600.0n ng=1
+XMN0_53_ pad gate iovss G1_EXPLICIT_SUBSTRATE_VSS sg13_hv_nmos m=1 w=4.4u l=600.0n ng=1
+XMN0_54_ pad gate iovss G1_EXPLICIT_SUBSTRATE_VSS sg13_hv_nmos m=1 w=4.4u l=600.0n ng=1
+XMN0_55_ pad gate iovss G1_EXPLICIT_SUBSTRATE_VSS sg13_hv_nmos m=1 w=4.4u l=600.0n ng=1
+XMN0_56_ pad gate iovss G1_EXPLICIT_SUBSTRATE_VSS sg13_hv_nmos m=1 w=4.4u l=600.0n ng=1
+XMN0_57_ pad gate iovss G1_EXPLICIT_SUBSTRATE_VSS sg13_hv_nmos m=1 w=4.4u l=600.0n ng=1
+XMN0_58_ pad gate iovss G1_EXPLICIT_SUBSTRATE_VSS sg13_hv_nmos m=1 w=4.4u l=600.0n ng=1
+XMN0_59_ pad gate iovss G1_EXPLICIT_SUBSTRATE_VSS sg13_hv_nmos m=1 w=4.4u l=600.0n ng=1
+XMN0_60_ pad gate iovss G1_EXPLICIT_SUBSTRATE_VSS sg13_hv_nmos m=1 w=4.4u l=600.0n ng=1
+XMN0_61_ pad gate iovss G1_EXPLICIT_SUBSTRATE_VSS sg13_hv_nmos m=1 w=4.4u l=600.0n ng=1
+XMN0_62_ pad gate iovss G1_EXPLICIT_SUBSTRATE_VSS sg13_hv_nmos m=1 w=4.4u l=600.0n ng=1
+XMN0_63_ pad gate iovss G1_EXPLICIT_SUBSTRATE_VSS sg13_hv_nmos m=1 w=4.4u l=600.0n ng=1
+XMN0_64_ pad gate iovss G1_EXPLICIT_SUBSTRATE_VSS sg13_hv_nmos m=1 w=4.4u l=600.0n ng=1
+XMN0_65_ pad gate iovss G1_EXPLICIT_SUBSTRATE_VSS sg13_hv_nmos m=1 w=4.4u l=600.0n ng=1
+XMN0_66_ pad gate iovss G1_EXPLICIT_SUBSTRATE_VSS sg13_hv_nmos m=1 w=4.4u l=600.0n ng=1
+XMN0_67_ pad gate iovss G1_EXPLICIT_SUBSTRATE_VSS sg13_hv_nmos m=1 w=4.4u l=600.0n ng=1
+XMN0_68_ pad gate iovss G1_EXPLICIT_SUBSTRATE_VSS sg13_hv_nmos m=1 w=4.4u l=600.0n ng=1
+XMN0_69_ pad gate iovss G1_EXPLICIT_SUBSTRATE_VSS sg13_hv_nmos m=1 w=4.4u l=600.0n ng=1
+XMN0_70_ pad gate iovss G1_EXPLICIT_SUBSTRATE_VSS sg13_hv_nmos m=1 w=4.4u l=600.0n ng=1
+XMN0_71_ pad gate iovss G1_EXPLICIT_SUBSTRATE_VSS sg13_hv_nmos m=1 w=4.4u l=600.0n ng=1
+XMN0_72_ pad gate iovss G1_EXPLICIT_SUBSTRATE_VSS sg13_hv_nmos m=1 w=4.4u l=600.0n ng=1
+XMN0_73_ pad gate iovss G1_EXPLICIT_SUBSTRATE_VSS sg13_hv_nmos m=1 w=4.4u l=600.0n ng=1
+XMN0_74_ pad gate iovss G1_EXPLICIT_SUBSTRATE_VSS sg13_hv_nmos m=1 w=4.4u l=600.0n ng=1
+XMN0_75_ pad gate iovss G1_EXPLICIT_SUBSTRATE_VSS sg13_hv_nmos m=1 w=4.4u l=600.0n ng=1
+XMN0_76_ pad gate iovss G1_EXPLICIT_SUBSTRATE_VSS sg13_hv_nmos m=1 w=4.4u l=600.0n ng=1
+XMN0_77_ pad gate iovss G1_EXPLICIT_SUBSTRATE_VSS sg13_hv_nmos m=1 w=4.4u l=600.0n ng=1
+XMN0_78_ pad gate iovss G1_EXPLICIT_SUBSTRATE_VSS sg13_hv_nmos m=1 w=4.4u l=600.0n ng=1
+XMN0_79_ pad gate iovss G1_EXPLICIT_SUBSTRATE_VSS sg13_hv_nmos m=1 w=4.4u l=600.0n ng=1
+XMN0_80_ pad gate iovss G1_EXPLICIT_SUBSTRATE_VSS sg13_hv_nmos m=1 w=4.4u l=600.0n ng=1
+XMN0_81_ pad gate iovss G1_EXPLICIT_SUBSTRATE_VSS sg13_hv_nmos m=1 w=4.4u l=600.0n ng=1
+XMN0_82_ pad gate iovss G1_EXPLICIT_SUBSTRATE_VSS sg13_hv_nmos m=1 w=4.4u l=600.0n ng=1
+XMN0_83_ pad gate iovss G1_EXPLICIT_SUBSTRATE_VSS sg13_hv_nmos m=1 w=4.4u l=600.0n ng=1
+XMN0_84_ pad gate iovss G1_EXPLICIT_SUBSTRATE_VSS sg13_hv_nmos m=1 w=4.4u l=600.0n ng=1
+XMN0_85_ pad gate iovss G1_EXPLICIT_SUBSTRATE_VSS sg13_hv_nmos m=1 w=4.4u l=600.0n ng=1
+XMN0_86_ pad gate iovss G1_EXPLICIT_SUBSTRATE_VSS sg13_hv_nmos m=1 w=4.4u l=600.0n ng=1
+XMN0_87_ pad gate iovss G1_EXPLICIT_SUBSTRATE_VSS sg13_hv_nmos m=1 w=4.4u l=600.0n ng=1
+XMN0_88_ pad gate iovss G1_EXPLICIT_SUBSTRATE_VSS sg13_hv_nmos m=1 w=4.4u l=600.0n ng=1
+XMN0_89_ pad gate iovss G1_EXPLICIT_SUBSTRATE_VSS sg13_hv_nmos m=1 w=4.4u l=600.0n ng=1
+XMN0_90_ pad gate iovss G1_EXPLICIT_SUBSTRATE_VSS sg13_hv_nmos m=1 w=4.4u l=600.0n ng=1
+XMN0_91_ pad gate iovss G1_EXPLICIT_SUBSTRATE_VSS sg13_hv_nmos m=1 w=4.4u l=600.0n ng=1
+XMN0_92_ pad gate iovss G1_EXPLICIT_SUBSTRATE_VSS sg13_hv_nmos m=1 w=4.4u l=600.0n ng=1
+XMN0_93_ pad gate iovss G1_EXPLICIT_SUBSTRATE_VSS sg13_hv_nmos m=1 w=4.4u l=600.0n ng=1
+XMN0_94_ pad gate iovss G1_EXPLICIT_SUBSTRATE_VSS sg13_hv_nmos m=1 w=4.4u l=600.0n ng=1
+XMN0_95_ pad gate iovss G1_EXPLICIT_SUBSTRATE_VSS sg13_hv_nmos m=1 w=4.4u l=600.0n ng=1
+XMN0_96_ pad gate iovss G1_EXPLICIT_SUBSTRATE_VSS sg13_hv_nmos m=1 w=4.4u l=600.0n ng=1
+XMN0_97_ pad gate iovss G1_EXPLICIT_SUBSTRATE_VSS sg13_hv_nmos m=1 w=4.4u l=600.0n ng=1
+XMN0_98_ pad gate iovss G1_EXPLICIT_SUBSTRATE_VSS sg13_hv_nmos m=1 w=4.4u l=600.0n ng=1
+XMN0_99_ pad gate iovss G1_EXPLICIT_SUBSTRATE_VSS sg13_hv_nmos m=1 w=4.4u l=600.0n ng=1
+XMN0_100_ pad gate iovss G1_EXPLICIT_SUBSTRATE_VSS sg13_hv_nmos m=1 w=4.4u l=600.0n ng=1
+XMN0_101_ pad gate iovss G1_EXPLICIT_SUBSTRATE_VSS sg13_hv_nmos m=1 w=4.4u l=600.0n ng=1
+XMN0_102_ pad gate iovss G1_EXPLICIT_SUBSTRATE_VSS sg13_hv_nmos m=1 w=4.4u l=600.0n ng=1
+XMN0_103_ pad gate iovss G1_EXPLICIT_SUBSTRATE_VSS sg13_hv_nmos m=1 w=4.4u l=600.0n ng=1
+XMN0_104_ pad gate iovss G1_EXPLICIT_SUBSTRATE_VSS sg13_hv_nmos m=1 w=4.4u l=600.0n ng=1
+XMN0_105_ pad gate iovss G1_EXPLICIT_SUBSTRATE_VSS sg13_hv_nmos m=1 w=4.4u l=600.0n ng=1
+XMN0_106_ pad gate iovss G1_EXPLICIT_SUBSTRATE_VSS sg13_hv_nmos m=1 w=4.4u l=600.0n ng=1
+XMN0_107_ pad gate iovss G1_EXPLICIT_SUBSTRATE_VSS sg13_hv_nmos m=1 w=4.4u l=600.0n ng=1
+XMN0_108_ pad gate iovss G1_EXPLICIT_SUBSTRATE_VSS sg13_hv_nmos m=1 w=4.4u l=600.0n ng=1
+XMN0_109_ pad gate iovss G1_EXPLICIT_SUBSTRATE_VSS sg13_hv_nmos m=1 w=4.4u l=600.0n ng=1
+XMN0_110_ pad gate iovss G1_EXPLICIT_SUBSTRATE_VSS sg13_hv_nmos m=1 w=4.4u l=600.0n ng=1
+XMN0_111_ pad gate iovss G1_EXPLICIT_SUBSTRATE_VSS sg13_hv_nmos m=1 w=4.4u l=600.0n ng=1
+XMN0_112_ pad gate iovss G1_EXPLICIT_SUBSTRATE_VSS sg13_hv_nmos m=1 w=4.4u l=600.0n ng=1
+XMN0_113_ pad gate iovss G1_EXPLICIT_SUBSTRATE_VSS sg13_hv_nmos m=1 w=4.4u l=600.0n ng=1
+XMN0_114_ pad gate iovss G1_EXPLICIT_SUBSTRATE_VSS sg13_hv_nmos m=1 w=4.4u l=600.0n ng=1
+XMN0_115_ pad gate iovss G1_EXPLICIT_SUBSTRATE_VSS sg13_hv_nmos m=1 w=4.4u l=600.0n ng=1
+XMN0_116_ pad gate iovss G1_EXPLICIT_SUBSTRATE_VSS sg13_hv_nmos m=1 w=4.4u l=600.0n ng=1
+XMN0_117_ pad gate iovss G1_EXPLICIT_SUBSTRATE_VSS sg13_hv_nmos m=1 w=4.4u l=600.0n ng=1
+XMN0_118_ pad gate iovss G1_EXPLICIT_SUBSTRATE_VSS sg13_hv_nmos m=1 w=4.4u l=600.0n ng=1
+XMN0_119_ pad gate iovss G1_EXPLICIT_SUBSTRATE_VSS sg13_hv_nmos m=1 w=4.4u l=600.0n ng=1
+XMN0_120_ pad gate iovss G1_EXPLICIT_SUBSTRATE_VSS sg13_hv_nmos m=1 w=4.4u l=600.0n ng=1
+XMN0_121_ pad gate iovss G1_EXPLICIT_SUBSTRATE_VSS sg13_hv_nmos m=1 w=4.4u l=600.0n ng=1
+XMN0_122_ pad gate iovss G1_EXPLICIT_SUBSTRATE_VSS sg13_hv_nmos m=1 w=4.4u l=600.0n ng=1
+XMN0_123_ pad gate iovss G1_EXPLICIT_SUBSTRATE_VSS sg13_hv_nmos m=1 w=4.4u l=600.0n ng=1
+XMN0_124_ pad gate iovss G1_EXPLICIT_SUBSTRATE_VSS sg13_hv_nmos m=1 w=4.4u l=600.0n ng=1
+XMN0_125_ pad gate iovss G1_EXPLICIT_SUBSTRATE_VSS sg13_hv_nmos m=1 w=4.4u l=600.0n ng=1
+XMN0_126_ pad gate iovss G1_EXPLICIT_SUBSTRATE_VSS sg13_hv_nmos m=1 w=4.4u l=600.0n ng=1
+XMN0_127_ pad gate iovss G1_EXPLICIT_SUBSTRATE_VSS sg13_hv_nmos m=1 w=4.4u l=600.0n ng=1
+XMN0_128_ pad gate iovss G1_EXPLICIT_SUBSTRATE_VSS sg13_hv_nmos m=1 w=4.4u l=600.0n ng=1
+XMN0_129_ pad gate iovss G1_EXPLICIT_SUBSTRATE_VSS sg13_hv_nmos m=1 w=4.4u l=600.0n ng=1
+XMN0_130_ pad gate iovss G1_EXPLICIT_SUBSTRATE_VSS sg13_hv_nmos m=1 w=4.4u l=600.0n ng=1
+XMN0_131_ pad gate iovss G1_EXPLICIT_SUBSTRATE_VSS sg13_hv_nmos m=1 w=4.4u l=600.0n ng=1
+XMN0_132_ pad gate iovss G1_EXPLICIT_SUBSTRATE_VSS sg13_hv_nmos m=1 w=4.4u l=600.0n ng=1
+XMN0_133_ pad gate iovss G1_EXPLICIT_SUBSTRATE_VSS sg13_hv_nmos m=1 w=4.4u l=600.0n ng=1
+XMN0_134_ pad gate iovss G1_EXPLICIT_SUBSTRATE_VSS sg13_hv_nmos m=1 w=4.4u l=600.0n ng=1
+XMN0_135_ pad gate iovss G1_EXPLICIT_SUBSTRATE_VSS sg13_hv_nmos m=1 w=4.4u l=600.0n ng=1
+XMN0_136_ pad gate iovss G1_EXPLICIT_SUBSTRATE_VSS sg13_hv_nmos m=1 w=4.4u l=600.0n ng=1
+XMN0_137_ pad gate iovss G1_EXPLICIT_SUBSTRATE_VSS sg13_hv_nmos m=1 w=4.4u l=600.0n ng=1
+XMN0_138_ pad gate iovss G1_EXPLICIT_SUBSTRATE_VSS sg13_hv_nmos m=1 w=4.4u l=600.0n ng=1
+XMN0_139_ pad gate iovss G1_EXPLICIT_SUBSTRATE_VSS sg13_hv_nmos m=1 w=4.4u l=600.0n ng=1
+XMN0_140_ pad gate iovss G1_EXPLICIT_SUBSTRATE_VSS sg13_hv_nmos m=1 w=4.4u l=600.0n ng=1
+XMN0_141_ pad gate iovss G1_EXPLICIT_SUBSTRATE_VSS sg13_hv_nmos m=1 w=4.4u l=600.0n ng=1
+XMN0_142_ pad gate iovss G1_EXPLICIT_SUBSTRATE_VSS sg13_hv_nmos m=1 w=4.4u l=600.0n ng=1
+XMN0_143_ pad gate iovss G1_EXPLICIT_SUBSTRATE_VSS sg13_hv_nmos m=1 w=4.4u l=600.0n ng=1
+XMN0_144_ pad gate iovss G1_EXPLICIT_SUBSTRATE_VSS sg13_hv_nmos m=1 w=4.4u l=600.0n ng=1
+XMN0_145_ pad gate iovss G1_EXPLICIT_SUBSTRATE_VSS sg13_hv_nmos m=1 w=4.4u l=600.0n ng=1
+XMN0_146_ pad gate iovss G1_EXPLICIT_SUBSTRATE_VSS sg13_hv_nmos m=1 w=4.4u l=600.0n ng=1
+XMN0_147_ pad gate iovss G1_EXPLICIT_SUBSTRATE_VSS sg13_hv_nmos m=1 w=4.4u l=600.0n ng=1
+XMN0_148_ pad gate iovss G1_EXPLICIT_SUBSTRATE_VSS sg13_hv_nmos m=1 w=4.4u l=600.0n ng=1
+XMN0_149_ pad gate iovss G1_EXPLICIT_SUBSTRATE_VSS sg13_hv_nmos m=1 w=4.4u l=600.0n ng=1
+XMN0_150_ pad gate iovss G1_EXPLICIT_SUBSTRATE_VSS sg13_hv_nmos m=1 w=4.4u l=600.0n ng=1
+XMN0_151_ pad gate iovss G1_EXPLICIT_SUBSTRATE_VSS sg13_hv_nmos m=1 w=4.4u l=600.0n ng=1
+XMN0_152_ pad gate iovss G1_EXPLICIT_SUBSTRATE_VSS sg13_hv_nmos m=1 w=4.4u l=600.0n ng=1
+XMN0_153_ pad gate iovss G1_EXPLICIT_SUBSTRATE_VSS sg13_hv_nmos m=1 w=4.4u l=600.0n ng=1
+XMN0_154_ pad gate iovss G1_EXPLICIT_SUBSTRATE_VSS sg13_hv_nmos m=1 w=4.4u l=600.0n ng=1
+XMN0_155_ pad gate iovss G1_EXPLICIT_SUBSTRATE_VSS sg13_hv_nmos m=1 w=4.4u l=600.0n ng=1
+XMN0_156_ pad gate iovss G1_EXPLICIT_SUBSTRATE_VSS sg13_hv_nmos m=1 w=4.4u l=600.0n ng=1
+XMN0_157_ pad gate iovss G1_EXPLICIT_SUBSTRATE_VSS sg13_hv_nmos m=1 w=4.4u l=600.0n ng=1
+XMN0_158_ pad gate iovss G1_EXPLICIT_SUBSTRATE_VSS sg13_hv_nmos m=1 w=4.4u l=600.0n ng=1
+XMN0_159_ pad gate iovss G1_EXPLICIT_SUBSTRATE_VSS sg13_hv_nmos m=1 w=4.4u l=600.0n ng=1
+XMN0_160_ pad gate iovss G1_EXPLICIT_SUBSTRATE_VSS sg13_hv_nmos m=1 w=4.4u l=600.0n ng=1
+XMN0_161_ pad gate iovss G1_EXPLICIT_SUBSTRATE_VSS sg13_hv_nmos m=1 w=4.4u l=600.0n ng=1
+XMN0_162_ pad gate iovss G1_EXPLICIT_SUBSTRATE_VSS sg13_hv_nmos m=1 w=4.4u l=600.0n ng=1
+XMN0_163_ pad gate iovss G1_EXPLICIT_SUBSTRATE_VSS sg13_hv_nmos m=1 w=4.4u l=600.0n ng=1
+XMN0_164_ pad gate iovss G1_EXPLICIT_SUBSTRATE_VSS sg13_hv_nmos m=1 w=4.4u l=600.0n ng=1
+XMN0_165_ pad gate iovss G1_EXPLICIT_SUBSTRATE_VSS sg13_hv_nmos m=1 w=4.4u l=600.0n ng=1
+XMN0_166_ pad gate iovss G1_EXPLICIT_SUBSTRATE_VSS sg13_hv_nmos m=1 w=4.4u l=600.0n ng=1
+XMN0_167_ pad gate iovss G1_EXPLICIT_SUBSTRATE_VSS sg13_hv_nmos m=1 w=4.4u l=600.0n ng=1
+XMN0_168_ pad gate iovss G1_EXPLICIT_SUBSTRATE_VSS sg13_hv_nmos m=1 w=4.4u l=600.0n ng=1
+XMN0_169_ pad gate iovss G1_EXPLICIT_SUBSTRATE_VSS sg13_hv_nmos m=1 w=4.4u l=600.0n ng=1
+XMN0_170_ pad gate iovss G1_EXPLICIT_SUBSTRATE_VSS sg13_hv_nmos m=1 w=4.4u l=600.0n ng=1
+XMN0_171_ pad gate iovss G1_EXPLICIT_SUBSTRATE_VSS sg13_hv_nmos m=1 w=4.4u l=600.0n ng=1
+XMN0_172_ pad gate iovss G1_EXPLICIT_SUBSTRATE_VSS sg13_hv_nmos m=1 w=4.4u l=600.0n ng=1
+XR_G1_TAP_SYNTAX_XR0 iovss G1_EXPLICIT_SUBSTRATE_VSS ptap1 R=9.999
+XDD0 G1_EXPLICIT_SUBSTRATE_VSS gate dantenna m=1 w=480n l=480n
+.ends G1_VSS_DERIVATIVE__sg13g2_Clamp_N43N43D4R
+.subckt G1_VSS_DERIVATIVE__sg13g2_RCClampResistor pin1 pin2 G1_EXPLICIT_SUBSTRATE_VSS
+XRR15 net15 net16 G1_EXPLICIT_SUBSTRATE_VSS rppd l=20u w=1u b=0 m=1
+XRR20 net20 net21 G1_EXPLICIT_SUBSTRATE_VSS rppd l=20u w=1u b=0 m=1
+XRR23 net23 net24 G1_EXPLICIT_SUBSTRATE_VSS rppd l=20u w=1u b=0 m=1
+XRR17 net17 net18 G1_EXPLICIT_SUBSTRATE_VSS rppd l=20u w=1u b=0 m=1
+XRR16 net16 net17 G1_EXPLICIT_SUBSTRATE_VSS rppd l=20u w=1u b=0 m=1
+XRR25 net25 pin2 G1_EXPLICIT_SUBSTRATE_VSS rppd l=20u w=1u b=0 m=1
+XRR22 net22 net23 G1_EXPLICIT_SUBSTRATE_VSS rppd l=20u w=1u b=0 m=1
+XRR19 net19 net20 G1_EXPLICIT_SUBSTRATE_VSS rppd l=20u w=1u b=0 m=1
+XRR24 net24 net25 G1_EXPLICIT_SUBSTRATE_VSS rppd l=20u w=1u b=0 m=1
+XRR21 net21 net22 G1_EXPLICIT_SUBSTRATE_VSS rppd l=20u w=1u b=0 m=1
+XRR18 net18 net19 G1_EXPLICIT_SUBSTRATE_VSS rppd l=20u w=1u b=0 m=1
+XRR5 net5 net6 G1_EXPLICIT_SUBSTRATE_VSS rppd l=20u w=1u b=0 m=1
+XRR8 net8 net9 G1_EXPLICIT_SUBSTRATE_VSS rppd l=20u w=1u b=0 m=1
+XRR11 net11 net12 G1_EXPLICIT_SUBSTRATE_VSS rppd l=20u w=1u b=0 m=1
+XRR14 net14 net15 G1_EXPLICIT_SUBSTRATE_VSS rppd l=20u w=1u b=0 m=1
+XRR2 net2 net3 G1_EXPLICIT_SUBSTRATE_VSS rppd l=20u w=1u b=0 m=1
+XRR1 net1 net2 G1_EXPLICIT_SUBSTRATE_VSS rppd l=20u w=1u b=0 m=1
+XRR13 net13 net14 G1_EXPLICIT_SUBSTRATE_VSS rppd l=20u w=1u b=0 m=1
+XRR10 net10 net11 G1_EXPLICIT_SUBSTRATE_VSS rppd l=20u w=1u b=0 m=1
+XRR7 net7 net8 G1_EXPLICIT_SUBSTRATE_VSS rppd l=20u w=1u b=0 m=1
+XRR4 net4 net5 G1_EXPLICIT_SUBSTRATE_VSS rppd l=20u w=1u b=0 m=1
+XRR12 net12 net13 G1_EXPLICIT_SUBSTRATE_VSS rppd l=20u w=1u b=0 m=1
+XRR9 net9 net10 G1_EXPLICIT_SUBSTRATE_VSS rppd l=20u w=1u b=0 m=1
+XRR6 net6 net7 G1_EXPLICIT_SUBSTRATE_VSS rppd l=20u w=1u b=0 m=1
+XRR3 net3 net4 G1_EXPLICIT_SUBSTRATE_VSS rppd l=20u w=1u b=0 m=1
+XRR0 pin1 net1 G1_EXPLICIT_SUBSTRATE_VSS rppd l=20u w=1u b=0 m=1
+.ends G1_VSS_DERIVATIVE__sg13g2_RCClampResistor
+.subckt G1_VSS_DERIVATIVE__sg13g2_RCClampInverter out in iovss supply G1_EXPLICIT_SUBSTRATE_VSS
+XMN1 iovss in iovss G1_EXPLICIT_SUBSTRATE_VSS sg13_hv_nmos m=1 w=63.000u l=9.5u ng=7
+XMN3 out in iovss G1_EXPLICIT_SUBSTRATE_VSS sg13_hv_nmos m=1 w=54.000u l=500.0n ng=6
+XMN0 iovss in iovss G1_EXPLICIT_SUBSTRATE_VSS sg13_hv_nmos m=1 w=63.000u l=9.5u ng=7
+XMN2 out in iovss G1_EXPLICIT_SUBSTRATE_VSS sg13_hv_nmos m=1 w=54.000u l=500.0n ng=6
+XR_G1_TAP_SYNTAX_XR0 iovss G1_EXPLICIT_SUBSTRATE_VSS ptap1 R=9.59
+XMP0 out in supply supply sg13_hv_pmos m=1 w=350.000u l=500.0n ng=50
+.ends G1_VSS_DERIVATIVE__sg13g2_RCClampInverter
+.subckt G1_VSS_DERIVATIVE__sg13g2_IOPadVdd vdd vss iovdd iovss G1_EXPLICIT_SUBSTRATE_VSS
+XI1 net3 iovss vdd G1_EXPLICIT_SUBSTRATE_VSS G1_VSS_DERIVATIVE__sg13g2_Clamp_N43N43D4R
+XI4 vdd net1 G1_EXPLICIT_SUBSTRATE_VSS G1_VSS_DERIVATIVE__sg13g2_RCClampResistor
+XR_G1_TAP_SYNTAX_XR1 iovss G1_EXPLICIT_SUBSTRATE_VSS ptap1 R=456.33m
+XR_G1_TAP_SYNTAX_XR0 vss G1_EXPLICIT_SUBSTRATE_VSS ptap1 R=22.472
+XI3 net3 net1 iovss vdd G1_EXPLICIT_SUBSTRATE_VSS G1_VSS_DERIVATIVE__sg13g2_RCClampInverter
+.ends G1_VSS_DERIVATIVE__sg13g2_IOPadVdd
+.subckt G1_VSS_DERIVATIVE__sg13g2_DCNDiode anode cathode guard G1_EXPLICIT_SUBSTRATE_VSS
+XDD1 G1_EXPLICIT_SUBSTRATE_VSS cathode dantenna m=1 w=1.26u l=27.78u
+XDD0 G1_EXPLICIT_SUBSTRATE_VSS cathode dantenna m=1 w=1.26u l=27.78u
+XR_G1_TAP_SYNTAX_XR0 anode G1_EXPLICIT_SUBSTRATE_VSS ptap1 R=5.191
+.ends G1_VSS_DERIVATIVE__sg13g2_DCNDiode
+.subckt G1_VSS_DERIVATIVE__sg13g2_DCPDiode anode cathode guard G1_EXPLICIT_SUBSTRATE_VSS
+XDD1 anode cathode dpantenna m=1 w=1.26u l=27.78u
+XDD0 anode cathode dpantenna m=1 w=1.26u l=27.78u
+XR_G1_TAP_SYNTAX_XR0 guard G1_EXPLICIT_SUBSTRATE_VSS ptap1 R=17.289
+.ends G1_VSS_DERIVATIVE__sg13g2_DCPDiode
+.subckt G1_VSS_DERIVATIVE__sg13g2_IOPadVss vdd vss iovdd iovss G1_EXPLICIT_SUBSTRATE_VSS
+XI1 iovss vss iovdd G1_EXPLICIT_SUBSTRATE_VSS G1_VSS_DERIVATIVE__sg13g2_DCNDiode
+XI2 vss iovdd iovss G1_EXPLICIT_SUBSTRATE_VSS G1_VSS_DERIVATIVE__sg13g2_DCPDiode
+XR_G1_TAP_SYNTAX_XR1 iovss G1_EXPLICIT_SUBSTRATE_VSS ptap1 R=174.346m
+XR_G1_TAP_SYNTAX_XR0 vss G1_EXPLICIT_SUBSTRATE_VSS ptap1 R=22.832
+.ends G1_VSS_DERIVATIVE__sg13g2_IOPadVss
+.subckt G1_VSS_DERIVATIVE__sg13g2_IOPadIOVdd vdd vss iovdd iovss G1_EXPLICIT_SUBSTRATE_VSS
+XI1 net4 iovss iovdd G1_EXPLICIT_SUBSTRATE_VSS G1_VSS_DERIVATIVE__sg13g2_Clamp_N43N43D4R
+XI3 iovdd net1 G1_EXPLICIT_SUBSTRATE_VSS G1_VSS_DERIVATIVE__sg13g2_RCClampResistor
+XI2 net4 net1 iovss iovdd G1_EXPLICIT_SUBSTRATE_VSS G1_VSS_DERIVATIVE__sg13g2_RCClampInverter
+XR_G1_TAP_SYNTAX_XR0 vss G1_EXPLICIT_SUBSTRATE_VSS ptap1 R=22.472
+XR_G1_TAP_SYNTAX_XR1 iovss G1_EXPLICIT_SUBSTRATE_VSS ptap1 R=453.388m
+.ends G1_VSS_DERIVATIVE__sg13g2_IOPadIOVdd
+.subckt G1_VSS_DERIVATIVE__sg13g2_IOPadIOVss vdd vss iovdd iovss G1_EXPLICIT_SUBSTRATE_VSS
+XI3 iovss iovss iovdd G1_EXPLICIT_SUBSTRATE_VSS G1_VSS_DERIVATIVE__sg13g2_DCNDiode
+XI2 iovss iovdd iovss G1_EXPLICIT_SUBSTRATE_VSS G1_VSS_DERIVATIVE__sg13g2_DCPDiode
+XR_G1_TAP_SYNTAX_XR1 vss G1_EXPLICIT_SUBSTRATE_VSS ptap1 R=22.472
+XR_G1_TAP_SYNTAX_XR0 iovss G1_EXPLICIT_SUBSTRATE_VSS ptap1 R=169.45m
+.ends G1_VSS_DERIVATIVE__sg13g2_IOPadIOVss
+.subckt G1_VSS_DERIVATIVE__sg13g2_Clamp_P20N0D iovdd iovss pad G1_EXPLICIT_SUBSTRATE_VSS
+XMP1 pad net2 iovdd iovdd sg13_hv_pmos m=1 w=133.2u l=600.0n ng=20
+XMP0 pad net2 iovdd iovdd sg13_hv_pmos m=1 w=133.2u l=600.0n ng=20
+XRR0 net2 iovdd iovdd rppd l=12.9u w=500n b=0 m=1
+XR_G1_TAP_SYNTAX_XR1 iovss G1_EXPLICIT_SUBSTRATE_VSS ptap1 R=9.826
+.ends G1_VSS_DERIVATIVE__sg13g2_Clamp_P20N0D
+.subckt G1_VSS_DERIVATIVE__sg13g2_SecondaryProtection core minus pad plus G1_EXPLICIT_SUBSTRATE_VSS
+XRR0 pad core G1_EXPLICIT_SUBSTRATE_VSS rppd m=1 l=2u w=1u b=0
+XDD1 G1_EXPLICIT_SUBSTRATE_VSS core dantenna m=1 w=640n l=3.1u
+XR_G1_TAP_SYNTAX_XR1 minus G1_EXPLICIT_SUBSTRATE_VSS ptap1 R=46.556
+XDD0 core plus dpantenna m=1 w=640n l=4.98u
+.ends G1_VSS_DERIVATIVE__sg13g2_SecondaryProtection
+.subckt G1_VSS_DERIVATIVE__sg13g2_Clamp_N20N0D iovss pad G1_EXPLICIT_SUBSTRATE_VSS
+XMN0 pad net2 iovss G1_EXPLICIT_SUBSTRATE_VSS sg13_hv_nmos m=1 w=88.000u l=600.0n ng=20
+XR_G1_TAP_SYNTAX_XR1 iovss G1_EXPLICIT_SUBSTRATE_VSS ptap1 R=11.438
+XRR0 iovss net2 G1_EXPLICIT_SUBSTRATE_VSS rppd l=3.54u w=500n b=0 m=1
+.ends G1_VSS_DERIVATIVE__sg13g2_Clamp_N20N0D
+.subckt G1_VSS_DERIVATIVE__sg13g2_IOPadAnalog pad padres vdd vss iovdd iovss G1_EXPLICIT_SUBSTRATE_VSS
+XI0 iovdd iovss pad G1_EXPLICIT_SUBSTRATE_VSS G1_VSS_DERIVATIVE__sg13g2_Clamp_P20N0D
+XI5 iovss pad iovdd G1_EXPLICIT_SUBSTRATE_VSS G1_VSS_DERIVATIVE__sg13g2_DCNDiode
+XI2 pad iovdd iovss G1_EXPLICIT_SUBSTRATE_VSS G1_VSS_DERIVATIVE__sg13g2_DCPDiode
+XI3 padres iovss pad iovdd G1_EXPLICIT_SUBSTRATE_VSS G1_VSS_DERIVATIVE__sg13g2_SecondaryProtection
+XI4 iovss pad G1_EXPLICIT_SUBSTRATE_VSS G1_VSS_DERIVATIVE__sg13g2_Clamp_N20N0D
+XR_G1_TAP_SYNTAX_XR0 vss G1_EXPLICIT_SUBSTRATE_VSS ptap1 R=22.579
+XR_G1_TAP_SYNTAX_XR1 iovss G1_EXPLICIT_SUBSTRATE_VSS ptap1 R=214.8m
+.ends G1_VSS_DERIVATIVE__sg13g2_IOPadAnalog
+.subckt G1_VSS_DERIVATIVE__sg13g2_LevelUpInv o i iovdd vdd vss G1_EXPLICIT_SUBSTRATE_VSS
+XMN1 net2 i vss G1_EXPLICIT_SUBSTRATE_VSS sg13_lv_nmos m=1 w=2.75u l=130.00n ng=1
+XMP3 net2 i vdd vdd sg13_lv_pmos m=1 w=4.75u l=130.00n ng=1
+XMN0 o net4 vss G1_EXPLICIT_SUBSTRATE_VSS sg13_hv_nmos m=1 w=1.9u l=450.00n ng=1
+XMN3 net4 net2 vss G1_EXPLICIT_SUBSTRATE_VSS sg13_hv_nmos m=1 w=1.9u l=450.00n ng=1
+XMN2 net3 i vss G1_EXPLICIT_SUBSTRATE_VSS sg13_hv_nmos m=1 w=1.9u l=450.00n ng=1
+XMP0 o net4 iovdd iovdd sg13_hv_pmos m=1 w=3.9u l=450.00n ng=1
+XMP1 net3 net4 iovdd iovdd sg13_hv_pmos m=1 w=300.0n l=450.00n ng=1
+XMP2 net4 net3 iovdd iovdd sg13_hv_pmos m=1 w=300.0n l=450.00n ng=1
+XR_G1_TAP_SYNTAX_XR0 vss G1_EXPLICIT_SUBSTRATE_VSS ptap1 R=190.268
+.ends G1_VSS_DERIVATIVE__sg13g2_LevelUpInv
+.subckt G1_VSS_DERIVATIVE__sg13g2_GateLevelUpInv ngate pgate iovdd core vdd vss G1_EXPLICIT_SUBSTRATE_VSS
+XI1 pgate core iovdd vdd vss G1_EXPLICIT_SUBSTRATE_VSS G1_VSS_DERIVATIVE__sg13g2_LevelUpInv
+XI0 ngate core iovdd vdd vss G1_EXPLICIT_SUBSTRATE_VSS G1_VSS_DERIVATIVE__sg13g2_LevelUpInv
+.ends G1_VSS_DERIVATIVE__sg13g2_GateLevelUpInv
+.subckt G1_VSS_DERIVATIVE__sg13g2_Clamp_P15N15D gate iovdd iovss pad G1_EXPLICIT_SUBSTRATE_VSS
+XDD0 gate iovdd dpantenna m=1 w=780.00n l=780.00n
+XR_G1_TAP_SYNTAX_XR0 iovss G1_EXPLICIT_SUBSTRATE_VSS ptap1 R=9.826
+XMP1 pad gate iovdd iovdd sg13_hv_pmos m=1 w=99.9u l=600.0n ng=15
+XMP0 pad gate iovdd iovdd sg13_hv_pmos m=1 w=99.9u l=600.0n ng=15
+.ends G1_VSS_DERIVATIVE__sg13g2_Clamp_P15N15D
+.subckt G1_VSS_DERIVATIVE__sg13g2_Clamp_N15N15D gate iovss pad G1_EXPLICIT_SUBSTRATE_VSS
+XR_G1_TAP_SYNTAX_XR0 iovss G1_EXPLICIT_SUBSTRATE_VSS ptap1 R=11.438
+XMN0 pad gate iovss G1_EXPLICIT_SUBSTRATE_VSS sg13_hv_nmos m=1 w=66.000u l=600.0n ng=15
+XDD0 G1_EXPLICIT_SUBSTRATE_VSS gate dantenna m=1 w=780.00n l=780.00n
+.ends G1_VSS_DERIVATIVE__sg13g2_Clamp_N15N15D
+.subckt G1_VSS_DERIVATIVE__sg13g2_IOPadOut30mA pad c2p vdd vss iovdd iovss G1_EXPLICIT_SUBSTRATE_VSS
+XI2 net2 net1 iovdd c2p vdd vss G1_EXPLICIT_SUBSTRATE_VSS G1_VSS_DERIVATIVE__sg13g2_GateLevelUpInv
+XI1 net1 iovdd iovss pad G1_EXPLICIT_SUBSTRATE_VSS G1_VSS_DERIVATIVE__sg13g2_Clamp_P15N15D
+XI3 net2 iovss pad G1_EXPLICIT_SUBSTRATE_VSS G1_VSS_DERIVATIVE__sg13g2_Clamp_N15N15D
+XI4 iovss pad iovdd G1_EXPLICIT_SUBSTRATE_VSS G1_VSS_DERIVATIVE__sg13g2_DCNDiode
+XI0 pad iovdd iovss G1_EXPLICIT_SUBSTRATE_VSS G1_VSS_DERIVATIVE__sg13g2_DCPDiode
+XR_G1_TAP_SYNTAX_XR0 vss G1_EXPLICIT_SUBSTRATE_VSS ptap1 R=24.125
+XR_G1_TAP_SYNTAX_XR1 iovss G1_EXPLICIT_SUBSTRATE_VSS ptap1 R=214.165m
+.ends G1_VSS_DERIVATIVE__sg13g2_IOPadOut30mA
+.subckt G1_VSS_DERIVATIVE__sg13g2_Clamp_P2N2D gate iovdd iovss pad G1_EXPLICIT_SUBSTRATE_VSS
+XDD0 gate iovdd dpantenna m=1 w=480n l=480n
+XMP1 pad gate iovdd iovdd sg13_hv_pmos m=1 w=13.32u l=600.0n ng=2
+XMP0 pad gate iovdd iovdd sg13_hv_pmos m=1 w=13.32u l=600.0n ng=2
+XR_G1_TAP_SYNTAX_XR0 iovss G1_EXPLICIT_SUBSTRATE_VSS ptap1 R=9.826
+.ends G1_VSS_DERIVATIVE__sg13g2_Clamp_P2N2D
+.subckt G1_VSS_DERIVATIVE__sg13g2_Clamp_N2N2D gate iovss pad G1_EXPLICIT_SUBSTRATE_VSS
+XR_G1_TAP_SYNTAX_XR0 iovss G1_EXPLICIT_SUBSTRATE_VSS ptap1 R=11.438
+XMN1 pad gate iovss G1_EXPLICIT_SUBSTRATE_VSS sg13_hv_nmos m=1 w=8.8u l=600.0n ng=2
+XDD0 G1_EXPLICIT_SUBSTRATE_VSS gate dantenna m=1 w=780.00n l=780.00n
+.ends G1_VSS_DERIVATIVE__sg13g2_Clamp_N2N2D
+.subckt G1_VSS_DERIVATIVE__sg13g2_IOPadOut4mA pad c2p vdd vss iovdd iovss G1_EXPLICIT_SUBSTRATE_VSS
+XI2 net2 net1 iovdd c2p vdd vss G1_EXPLICIT_SUBSTRATE_VSS G1_VSS_DERIVATIVE__sg13g2_GateLevelUpInv
+XI0 net1 iovdd iovss pad G1_EXPLICIT_SUBSTRATE_VSS G1_VSS_DERIVATIVE__sg13g2_Clamp_P2N2D
+XI3 net2 iovss pad G1_EXPLICIT_SUBSTRATE_VSS G1_VSS_DERIVATIVE__sg13g2_Clamp_N2N2D
+XI4 iovss pad iovdd G1_EXPLICIT_SUBSTRATE_VSS G1_VSS_DERIVATIVE__sg13g2_DCNDiode
+XI1 pad iovdd iovss G1_EXPLICIT_SUBSTRATE_VSS G1_VSS_DERIVATIVE__sg13g2_DCPDiode
+XR_G1_TAP_SYNTAX_XR1 iovss G1_EXPLICIT_SUBSTRATE_VSS ptap1 R=212.747m
+XR_G1_TAP_SYNTAX_XR0 vss G1_EXPLICIT_SUBSTRATE_VSS ptap1 R=24.125
+.ends G1_VSS_DERIVATIVE__sg13g2_IOPadOut4mA
+.subckt G1_VSS_DERIVATIVE__sg13g2_LevelDown core pad iovdd iovss vdd vss G1_EXPLICIT_SUBSTRATE_VSS
+XMP0 vdd vdd vdd vdd sg13_hv_pmos m=1 w=4.65u l=450.00n ng=1
+XMP2 net4 net7 iovdd iovdd sg13_hv_pmos m=1 w=4.6u l=450.00n ng=2
+XMP3 net7 net1 iovdd iovdd sg13_hv_pmos m=1 w=4.6u l=450.00n ng=2
+XMN3 net4 net7 iovss G1_EXPLICIT_SUBSTRATE_VSS sg13_hv_nmos m=1 w=1.3u l=450.00n ng=1
+XMN4 net7 net1 iovss G1_EXPLICIT_SUBSTRATE_VSS sg13_hv_nmos m=1 w=1.3u l=450.00n ng=1
+XMN2 net2 net4 vss G1_EXPLICIT_SUBSTRATE_VSS sg13_hv_nmos m=1 w=2.65u l=450.00n ng=1
+XMN0 vdd net7 net2 G1_EXPLICIT_SUBSTRATE_VSS sg13_hv_nmos m=1 w=2.65u l=450.00n ng=1
+XMN1 core net2 vss G1_EXPLICIT_SUBSTRATE_VSS sg13_lv_nmos m=1 w=2.75u l=130.00n ng=1
+XMP1 core net2 vdd vdd sg13_lv_pmos m=1 w=4.75u l=130.00n ng=1
+XR_G1_TAP_SYNTAX_XR1 iovss G1_EXPLICIT_SUBSTRATE_VSS ptap1 R=199.584
+XR_G1_TAP_SYNTAX_XR0 vss G1_EXPLICIT_SUBSTRATE_VSS ptap1 R=127.332
+XI0 net1 iovss pad iovdd G1_EXPLICIT_SUBSTRATE_VSS G1_VSS_DERIVATIVE__sg13g2_SecondaryProtection
+.ends G1_VSS_DERIVATIVE__sg13g2_LevelDown
+.subckt G1_VSS_DERIVATIVE__sg13g2_IOPadIn pad p2c vdd vss iovdd iovss G1_EXPLICIT_SUBSTRATE_VSS
+XI0 p2c pad iovdd iovss vdd vss G1_EXPLICIT_SUBSTRATE_VSS G1_VSS_DERIVATIVE__sg13g2_LevelDown
+XI2 iovss pad iovdd G1_EXPLICIT_SUBSTRATE_VSS G1_VSS_DERIVATIVE__sg13g2_DCNDiode
+XI1 pad iovdd iovss G1_EXPLICIT_SUBSTRATE_VSS G1_VSS_DERIVATIVE__sg13g2_DCPDiode
+XR_G1_TAP_SYNTAX_XR0 vss G1_EXPLICIT_SUBSTRATE_VSS ptap1 R=24.69
+XR_G1_TAP_SYNTAX_XR1 iovss G1_EXPLICIT_SUBSTRATE_VSS ptap1 R=173.674m
+.ends G1_VSS_DERIVATIVE__sg13g2_IOPadIn
+.subckt G1_VSS_DERIVATIVE__sg13g2_Clamp_P8N8D gate iovdd iovss pad G1_EXPLICIT_SUBSTRATE_VSS
+XR_G1_TAP_SYNTAX_XR0 iovss G1_EXPLICIT_SUBSTRATE_VSS ptap1 R=9.826
+XMP2 pad gate iovdd iovdd sg13_hv_pmos m=1 w=53.28u l=600.0n ng=8
+XMP0 pad gate iovdd iovdd sg13_hv_pmos m=1 w=53.28u l=600.0n ng=8
+XDD0 gate iovdd dpantenna m=1 w=480n l=480n
+.ends G1_VSS_DERIVATIVE__sg13g2_Clamp_P8N8D
+.subckt G1_VSS_DERIVATIVE__sg13g2_Clamp_N8N8D gate iovss pad G1_EXPLICIT_SUBSTRATE_VSS
+XR_G1_TAP_SYNTAX_XR0 iovss G1_EXPLICIT_SUBSTRATE_VSS ptap1 R=11.438
+XMN0 pad gate iovss G1_EXPLICIT_SUBSTRATE_VSS sg13_hv_nmos m=1 w=35.2u l=600.0n ng=8
+XDD0 G1_EXPLICIT_SUBSTRATE_VSS gate dantenna m=1 w=780.00n l=780.00n
+.ends G1_VSS_DERIVATIVE__sg13g2_Clamp_N8N8D
+.subckt G1_VSS_DERIVATIVE__sg13g2_IOPadOut16mA pad c2p vdd vss iovdd iovss G1_EXPLICIT_SUBSTRATE_VSS
+XI2 net2 net1 iovdd c2p vdd vss G1_EXPLICIT_SUBSTRATE_VSS G1_VSS_DERIVATIVE__sg13g2_GateLevelUpInv
+XI0 net1 iovdd iovss pad G1_EXPLICIT_SUBSTRATE_VSS G1_VSS_DERIVATIVE__sg13g2_Clamp_P8N8D
+XI4 iovss pad iovdd G1_EXPLICIT_SUBSTRATE_VSS G1_VSS_DERIVATIVE__sg13g2_DCNDiode
+XI3 net2 iovss pad G1_EXPLICIT_SUBSTRATE_VSS G1_VSS_DERIVATIVE__sg13g2_Clamp_N8N8D
+XI1 pad iovdd iovss G1_EXPLICIT_SUBSTRATE_VSS G1_VSS_DERIVATIVE__sg13g2_DCPDiode
+XR_G1_TAP_SYNTAX_XR0 vss G1_EXPLICIT_SUBSTRATE_VSS ptap1 R=23.888
+XR_G1_TAP_SYNTAX_XR1 iovss G1_EXPLICIT_SUBSTRATE_VSS ptap1 R=208.667m
+.ends G1_VSS_DERIVATIVE__sg13g2_IOPadOut16mA
+* g1_digital replaced by the real RTL (XSPICE d_cosim, rtl/g1_dig_cosim_cdl.v); CDL port list kept; por_n: the wrapper ties
+* por_n = 1 (the CDL drives it from sg13g2_tiehi); en/sclk/sdi/osc_clk through the single-threshold receiver
+.subckt g1_digital bgr_r4 clk_div_out clr_d cmp_clk cmp_hard cmp_soft en fast_en fault_n gate_en osc_clk osc_en por_n sclk sdi sdo t2f_en t2f_mode trip trip_d trip_set_sel tripped VDD VSS dac_hard_7_ dac_hard_6_ dac_hard_5_ dac_hard_4_ dac_hard_3_ dac_hard_2_ dac_hard_1_ dac_hard_0_ dac_soft_7_ dac_soft_6_ dac_soft_5_ dac_soft_4_ dac_soft_3_ dac_soft_2_ dac_soft_1_ dac_soft_0_ osc_trim_3_ osc_trim_2_ osc_trim_1_ osc_trim_0_ trip_cause_1_ trip_cause_0_
+aclock [osc_clk] [d_osc_clk] adc_clock
+ain [en sclk sdi] [d_en d_sclk d_sdi] adc_clock
+aadc [cmp_soft cmp_hard tripped] [d_cmp_soft d_cmp_hard d_tripped] adc
+adig [d_osc_clk d_en d_sclk d_sdi d_cmp_soft d_cmp_hard d_tripped] [d_cmp_clk d_s7 d_s6 d_s5 d_s4 d_s3 d_s2 d_s1 d_s0 d_h7 d_h6 d_h5 d_h4 d_h3 d_h2 d_h1 d_h0 d_trip_d d_clr_d d_fast_en d_osc_en d_t3 d_t2 d_t1 d_t0 d_trip d_gate_en d_cause1 d_cause0 d_sdo d_sp15 d_sp14 d_sp13 d_sp12 d_sp11 d_sp10 d_sp9 d_sp8 d_sp7 d_sp6 d_sp5 d_sp4 d_sp3 d_sp2 d_sp1 d_sp0 d_inrush d_softarmed d_t2f_en d_t2f_mode d_bgr_r4 d_fault_n d_trip_set_sel d_clk_div_out] rtl
+adac [d_cmp_clk d_s7 d_s6 d_s5 d_s4 d_s3 d_s2 d_s1 d_s0 d_h7 d_h6 d_h5 d_h4 d_h3 d_h2 d_h1 d_h0 d_trip_d d_clr_d d_fast_en d_osc_en d_t3 d_t2 d_t1 d_t0 d_trip d_gate_en d_cause1 d_cause0 d_sdo d_sp15 d_sp14 d_sp13 d_sp12 d_sp11 d_sp10 d_sp9 d_sp8 d_sp7 d_sp6 d_sp5 d_sp4 d_sp3 d_sp2 d_sp1 d_sp0 d_inrush d_softarmed d_t2f_en d_t2f_mode d_bgr_r4 d_fault_n d_trip_set_sel d_clk_div_out] [cmp_clk dac_soft_7_ dac_soft_6_ dac_soft_5_ dac_soft_4_ dac_soft_3_ dac_soft_2_ dac_soft_1_ dac_soft_0_ dac_hard_7_ dac_hard_6_ dac_hard_5_ dac_hard_4_ dac_hard_3_ dac_hard_2_ dac_hard_1_ dac_hard_0_ trip_d clr_d fast_en osc_en osc_trim_3_ osc_trim_2_ osc_trim_1_ osc_trim_0_ trip gate_en trip_cause_1_ trip_cause_0_ sdo sp15 sp14 sp13 sp12 sp11 sp10 sp9 sp8 sp7 sp6 sp5 sp4 sp3 sp2 sp1 sp0 inrush_active soft_armed t2f_en t2f_mode bgr_r4 fault_n trip_set_sel clk_div_out] dac
+.ends
+* g1_osc replaced (--osc ideal): ideal 9.436194721 MHz clock of run_top.py, gated by en; no supply current
+.subckt g1_osc en trim_0_ trim_1_ trim_2_ trim_3_ osc_clk VDD VSS
+Vosc_i osc_i VSS pulse(0 1.2 1e-07 1n 1n 5.19875e-08 1.05975e-07)
+Ben_g en_g VSS V = v(en, VSS) * min(1, max(0, (time - 0.1u) / 50n))
+Bosc_clk osc_clk VSS V = v(osc_i, VSS) * (0.5 + 0.5*tanh((v(en_g, VSS) - 0.6)/0.05))
+Rosc_vdd VDD VSS 1e12
+.ends
+* g1_chip_top: deck-local copy of the CDL top; 4867 filler/decap/antenna instances merged into 34 (m=count);
+* supply-pin ammeters vm_bgr on VDDA, vm_gatea on VDDA, vm_gated on VDD, vm_ls on VDDA, vm_lsd on VDD, vm_osc on VDD, vm_sense on VDDA, vm_t2f on VDDA, vm_t2fd on VDD, vm_tripa on VDDA, vm_tripd on VDD
+.subckt g1_chip_top D_ELT D_STD EN FAULT_N GATE G_SHARED HBT_B HBT_C HBT_E SCLK SDI SDO SENSE_N SENSE_P TEMP_OUT TRIP_SET VDDA VREF VDD VSS IOVDD IOVSS
+Xi_core_u_bgr VDDA__vm_bgr VSS i_core_bgr_r4_33 i_core_vref i_core_iptat i_core_pbias i_core_pcasc i_core_unused_vbe i_core_dvbe g1_bgr
+Xi_core_u_digital i_core_bgr_r4_12 i_core_clk_div_out i_core_clr_d i_core_cmp_clk i_core_cmp_hard i_core_cmp_soft en_i i_core_fast_en i_core_fault_n_dig i_core_gate_en i_core_osc_clk i_core_osc_en net i_core_sclk_i i_core_sdi_i i_core_sdo_o i_core_t2f_en_12 i_core_t2f_mode_12 i_core_trip i_core_trip_d i_core_trip_set_sel i_core_tripped VDD VSS i_core_dac_hard_7_ i_core_dac_hard_6_ i_core_dac_hard_5_ i_core_dac_hard_4_ i_core_dac_hard_3_ i_core_dac_hard_2_ i_core_dac_hard_1_ i_core_dac_hard_0_ i_core_dac_soft_7_ i_core_dac_soft_6_ i_core_dac_soft_5_ i_core_dac_soft_4_ i_core_dac_soft_3_ i_core_dac_soft_2_ i_core_dac_soft_1_ i_core_dac_soft_0_ i_core_osc_trim_3_ i_core_osc_trim_2_ i_core_osc_trim_1_ i_core_osc_trim_0_ i_core_trip_cause_1_ i_core_trip_cause_0_ g1_digital
+Xi_core_u_digital_1 net VDD VSS sg13g2_tiehi
+Xi_core_u_dose D_ELT D_STD G_SHARED VSS g1_dose_macro
+Xi_core_u_dut HBT_C HBT_B HBT_E VSS g1_dut_macro
+Xi_core_u_gate i_core_trip_d i_core_clr_d i_core_fast_en i_core_cmp_hard en_i gate_o fault_n_o i_core_tripped VDD__vm_gated VDDA__vm_gatea VSS g1_gate
+Xi_core_u_ls_en i_core_t2f_en_12 i_core_t2f_en_33 VDD__vm_lsd VDDA__vm_ls VSS g1_ls_up
+Xi_core_u_ls_mode i_core_t2f_mode_12 i_core_t2f_mode_33 VDD__vm_lsd VDDA__vm_ls VSS g1_ls_up
+Xi_core_u_ls_r4 i_core_bgr_r4_12 i_core_bgr_r4_33 VDD VDDA VSS g1_ls_up
+Xi_core_u_osc i_core_osc_en i_core_osc_trim_0_ i_core_osc_trim_1_ i_core_osc_trim_2_ i_core_osc_trim_3_ i_core_osc_clk VDD__vm_osc VSS g1_osc
+Xi_core_u_sense SENSE_P SENSE_N i_core_vref i_core_iptat i_core_isense i_core_unused_vped i_core_vref_buf VDDA__vm_sense VSS g1_sense
+Xi_core_u_t2f VDDA__vm_t2f VDD__vm_t2fd VSS i_core_pbias i_core_pcasc i_core_vref i_core_t2f_en_33 i_core_t2f_mode_33 i_core_temp_out_o g1_t2f
+Xi_core_u_trip i_core_isense i_core_vref_buf i_core_cmp_clk i_core_dac_soft_0_ i_core_dac_soft_1_ i_core_dac_soft_2_ i_core_dac_soft_3_ i_core_dac_soft_4_ i_core_dac_soft_5_ i_core_dac_soft_6_ i_core_dac_soft_7_ i_core_dac_hard_0_ i_core_dac_hard_1_ i_core_dac_hard_2_ i_core_dac_hard_3_ i_core_dac_hard_4_ i_core_dac_hard_5_ i_core_dac_hard_6_ i_core_dac_hard_7_ i_core_cmp_soft i_core_cmp_hard VDD__vm_tripd VDDA__vm_tripa VSS g1_trip
+Xpad01_vdd VDD VSS IOVDD IOVSS VSS G1_VSS_DERIVATIVE__sg13g2_IOPadVdd
+Xpad02_vss VDD VSS IOVDD IOVSS VSS G1_VSS_DERIVATIVE__sg13g2_IOPadVss
+Xpad03_iovdd VDD VSS IOVDD IOVSS VSS G1_VSS_DERIVATIVE__sg13g2_IOPadIOVdd
+Xpad04_iovss VDD VSS IOVDD IOVSS VSS G1_VSS_DERIVATIVE__sg13g2_IOPadIOVss
+Xpad05_vss VDD VSS IOVDD IOVSS VSS G1_VSS_DERIVATIVE__sg13g2_IOPadVss
+Xpad06_iovss VDD VSS IOVDD IOVSS VSS G1_VSS_DERIVATIVE__sg13g2_IOPadIOVss
+Xpad07_vdda VDDA _nc1 VDD VSS IOVDD IOVSS VSS G1_VSS_DERIVATIVE__sg13g2_IOPadAnalog
+Xpad08_sense_p SENSE_P _nc2 VDD VSS IOVDD IOVSS VSS G1_VSS_DERIVATIVE__sg13g2_IOPadAnalog
+Xpad09_sense_n SENSE_N _nc3 VDD VSS IOVDD IOVSS VSS G1_VSS_DERIVATIVE__sg13g2_IOPadAnalog
+Xpad10_gate GATE gate_o VDD VSS IOVDD IOVSS VSS G1_VSS_DERIVATIVE__sg13g2_IOPadOut30mA
+Xpad11_fault_n FAULT_N fault_n_o VDD VSS IOVDD IOVSS VSS G1_VSS_DERIVATIVE__sg13g2_IOPadOut4mA
+Xpad12_en EN en_i VDD VSS IOVDD IOVSS VSS G1_VSS_DERIVATIVE__sg13g2_IOPadIn
+Xpad13_trip_set TRIP_SET i_core_trip_set VDD VSS IOVDD IOVSS VSS G1_VSS_DERIVATIVE__sg13g2_IOPadAnalog
+Xpad14_sclk SCLK i_core_sclk_i VDD VSS IOVDD IOVSS VSS G1_VSS_DERIVATIVE__sg13g2_IOPadIn
+Xpad15_sdi SDI i_core_sdi_i VDD VSS IOVDD IOVSS VSS G1_VSS_DERIVATIVE__sg13g2_IOPadIn
+Xpad16_sdo SDO i_core_sdo_o VDD VSS IOVDD IOVSS VSS G1_VSS_DERIVATIVE__sg13g2_IOPadOut4mA
+Xpad17_temp_out TEMP_OUT i_core_temp_out_o VDD VSS IOVDD IOVSS VSS G1_VSS_DERIVATIVE__sg13g2_IOPadOut16mA
+Xpad18_vref VREF i_core_vref VDD VSS IOVDD IOVSS VSS G1_VSS_DERIVATIVE__sg13g2_IOPadAnalog
+Xpad19_g_shared G_SHARED _nc4 VDD VSS IOVDD IOVSS VSS G1_VSS_DERIVATIVE__sg13g2_IOPadAnalog
+Xpad20_d_std D_STD _nc5 VDD VSS IOVDD IOVSS VSS G1_VSS_DERIVATIVE__sg13g2_IOPadAnalog
+Xpad21_d_elt D_ELT _nc6 VDD VSS IOVDD IOVSS VSS G1_VSS_DERIVATIVE__sg13g2_IOPadAnalog
+Xpad22_hbt_e HBT_E _nc7 VDD VSS IOVDD IOVSS VSS G1_VSS_DERIVATIVE__sg13g2_IOPadAnalog
+Xpad23_hbt_b HBT_B _nc8 VDD VSS IOVDD IOVSS VSS G1_VSS_DERIVATIVE__sg13g2_IOPadAnalog
+Xpad24_hbt_c HBT_C _nc9 VDD VSS IOVDD IOVSS VSS G1_VSS_DERIVATIVE__sg13g2_IOPadAnalog
+XANTENNA_1 en_i VDD VSS sg13g2_antennanp
+XANTENNA_2 i_core_cmp_soft VDD VSS sg13g2_antennanp m=2
+XANTENNA_4 i_core_sdi_i VDD VSS sg13g2_antennanp
+XANTENNA_5 i_core_tripped VDD VSS sg13g2_antennanp m=2
+XFILLER_0_1006 VDD VSS sg13g2_decap_8 m=4645
+XFILLER_0_1293 VDD VSS sg13g2_fill_2 m=38
+XFILLER_17_2 VDD VSS sg13g2_fill_1 m=21
+XFILLER_17_740 VDD VSS sg13g2_decap_4 m=17
+XIO_BOND_pad01_vdd VDD bondpad_70x70_tm1
+XIO_BOND_pad02_vss VSS bondpad_70x70_tm1 m=2
+XIO_BOND_pad03_iovdd IOVDD bondpad_70x70_tm1
+XIO_BOND_pad04_iovss IOVSS bondpad_70x70_tm1 m=2
+XIO_BOND_pad07_vdda VDDA bondpad_70x70_tm1
+XIO_BOND_pad08_sense_p SENSE_P bondpad_70x70_tm1
+XIO_BOND_pad09_sense_n SENSE_N bondpad_70x70_tm1
+XIO_BOND_pad10_gate GATE bondpad_70x70_tm1
+XIO_BOND_pad11_fault_n FAULT_N bondpad_70x70_tm1
+XIO_BOND_pad12_en EN bondpad_70x70_tm1
+XIO_BOND_pad13_trip_set TRIP_SET bondpad_70x70_tm1
+XIO_BOND_pad14_sclk SCLK bondpad_70x70_tm1
+XIO_BOND_pad15_sdi SDI bondpad_70x70_tm1
+XIO_BOND_pad16_sdo SDO bondpad_70x70_tm1
+XIO_BOND_pad17_temp_out TEMP_OUT bondpad_70x70_tm1
+XIO_BOND_pad18_vref VREF bondpad_70x70_tm1
+XIO_BOND_pad19_g_shared G_SHARED bondpad_70x70_tm1
+XIO_BOND_pad20_d_std D_STD bondpad_70x70_tm1
+XIO_BOND_pad21_d_elt D_ELT bondpad_70x70_tm1
+XIO_BOND_pad22_hbt_e HBT_E bondpad_70x70_tm1
+XIO_BOND_pad23_hbt_b HBT_B bondpad_70x70_tm1
+XIO_BOND_pad24_hbt_c HBT_C bondpad_70x70_tm1
+XIO_CORNER_NORTH_EAST_INST VDD VSS IOVDD IOVSS VSS G1_VSS_DERIVATIVE__sg13g2_Corner m=4
+XIO_FILL_IO_EAST_0_0 VDD VSS IOVDD IOVSS VSS G1_VSS_DERIVATIVE__sg13g2_Filler4000 m=40
+XIO_FILL_IO_EAST_0_20 VDD VSS IOVDD IOVSS VSS G1_VSS_DERIVATIVE__sg13g2_Filler2000 m=28
+XIO_FILL_IO_EAST_0_30 VDD VSS IOVDD IOVSS VSS G1_VSS_DERIVATIVE__sg13g2_Filler400 m=44
+Vm_bgr VDDA VDDA__vm_bgr dc 0
+Vm_gatea VDDA VDDA__vm_gatea dc 0
+Vm_gated VDD VDD__vm_gated dc 0
+Vm_ls VDDA VDDA__vm_ls dc 0
+Vm_lsd VDD VDD__vm_lsd dc 0
+Vm_osc VDD VDD__vm_osc dc 0
+Vm_sense VDDA VDDA__vm_sense dc 0
+Vm_t2f VDDA VDDA__vm_t2f dc 0
+Vm_t2fd VDD VDD__vm_t2fd dc 0
+Vm_tripa VDDA VDDA__vm_tripa dc 0
+Vm_tripd VDD VDD__vm_tripd dc 0
+Xtop_interconnect D_ELT D_STD G_SHARED HBT_B HBT_C HBT_E SENSE_N SENSE_P en_i fault_n_o gate_o i_core_bgr_r4_12 i_core_bgr_r4_33 i_core_clr_d i_core_cmp_clk i_core_cmp_hard i_core_cmp_soft i_core_dac_hard_0_ i_core_dac_hard_1_ i_core_dac_hard_2_ i_core_dac_hard_3_ i_core_dac_hard_4_ i_core_dac_hard_5_ i_core_dac_hard_6_ i_core_dac_hard_7_ i_core_dac_soft_0_ i_core_dac_soft_1_ i_core_dac_soft_2_ i_core_dac_soft_3_ i_core_dac_soft_4_ i_core_dac_soft_5_ i_core_dac_soft_6_ i_core_dac_soft_7_ i_core_fast_en i_core_iptat i_core_isense i_core_osc_clk i_core_osc_en i_core_osc_trim_0_ i_core_osc_trim_1_ i_core_osc_trim_2_ i_core_osc_trim_3_ i_core_pbias i_core_pcasc i_core_sclk_i i_core_sdi_i i_core_sdo_o i_core_t2f_en_12 i_core_t2f_en_33 i_core_t2f_mode_12 i_core_t2f_mode_33 i_core_temp_out_o i_core_trip_d i_core_tripped i_core_vref i_core_vref_buf net VSS g1_top_interconnect
+.ends g1_chip_top
+Xchip d_elt d_std en_pad fault_n gate g_shared hbt_b hbt_c hbt_e sclk_pad sdi_pad sdo_pad sense_n sense_p temp_out_pad trip_set vdda vref_pad vdd 0 iovdd 0 g1_chip_top
+Cvref_ext vref_pad 0 {CVREF}
+Csdo sdo_pad 0 20p
+Ctemp_out temp_out_pad 0 20p
+Rpd_d_elt d_elt 0 1meg
+Rpd_d_std d_std 0 1meg
+Rpd_g_shared g_shared 0 1meg
+Rpd_hbt_b hbt_b 0 1meg
+Rpd_hbt_c hbt_c 0 1meg
+Rpd_hbt_e hbt_e 0 1meg
+Rpd_trip_set trip_set 0 1meg
+.save v(gate) v(gfet) v(xchip.i_core_tripped) v(xchip.i_core_isense) v(xchip.i_core_cmp_soft) v(xchip.i_core_cmp_hard) v(xchip.i_core_trip_d) v(xchip.i_core_clr_d) v(xchip.i_core_fast_en) v(xchip.i_core_osc_clk) v(xchip.i_core_cmp_clk)
++ v(xchip.i_core_vref) v(xchip.i_core_iptat) v(xchip.en_i) v(shp) v(shn) v(fault_n) v(xchip.gate_o) v(vdda) v(vdd) v(iovdd) v(iprof) v(xchip.xi_core_u_osc.en_g)
++ v(xchip.xi_core_u_trip.icmp) v(xchip.xi_core_u_trip.vth_soft) v(xchip.xi_core_u_trip.vth_hard) v(xchip.i_core_trip) v(xchip.i_core_trip_cause_1_) v(xchip.i_core_trip_cause_0_) v(sclk_pad) v(sdi_pad) v(xchip.i_core_sdo_o)
++ v(xchip.i_core_dac_soft_0_) v(xchip.i_core_dac_soft_1_) v(xchip.i_core_dac_soft_2_) v(xchip.i_core_dac_soft_3_) v(xchip.i_core_dac_soft_4_) v(xchip.i_core_dac_soft_5_) v(xchip.i_core_dac_soft_6_) v(xchip.i_core_dac_soft_7_) v(xchip.i_core_dac_hard_0_) v(xchip.i_core_dac_hard_1_) v(xchip.i_core_dac_hard_2_) v(xchip.i_core_dac_hard_3_) v(xchip.i_core_dac_hard_4_) v(xchip.i_core_dac_hard_5_) v(xchip.i_core_dac_hard_6_) v(xchip.i_core_dac_hard_7_)
++ v(xchip.xi_core_u_digital.sp0) v(xchip.xi_core_u_digital.sp1) v(xchip.xi_core_u_digital.sp2) v(xchip.xi_core_u_digital.sp3) v(xchip.xi_core_u_digital.sp4) v(xchip.xi_core_u_digital.sp5) v(xchip.xi_core_u_digital.sp6) v(xchip.xi_core_u_digital.sp7) v(xchip.xi_core_u_digital.sp8) v(xchip.xi_core_u_digital.sp9) v(xchip.xi_core_u_digital.sp10) v(xchip.xi_core_u_digital.sp11) v(xchip.xi_core_u_digital.sp12) v(xchip.xi_core_u_digital.sp13) v(xchip.xi_core_u_digital.sp14) v(xchip.xi_core_u_digital.sp15) v(xchip.xi_core_u_digital.inrush_active) v(xchip.xi_core_u_digital.soft_armed)
++ i(vim) i(vma) i(vmi) i(v12) i(v.xchip.vm_bgr) i(v.xchip.vm_sense) i(v.xchip.vm_tripa) i(v.xchip.vm_tripd) i(v.xchip.vm_osc) i(v.xchip.vm_gatea) i(v.xchip.vm_gated)
++ v(xchip.i_core_temp_out_o) v(xchip.i_core_t2f_en_33) v(xchip.i_core_t2f_mode_33) v(xchip.i_core_pbias) v(xchip.i_core_pcasc) i(v.xchip.vm_t2f) i(v.xchip.vm_t2fd) i(v.xchip.vm_ls) i(v.xchip.vm_lsd)
++ v(xchip.i_core_vref_buf) v(xchip.i_core_unused_vped)
+.control
+set filetype=ascii
+set wr_singlescale
+set wr_vecnames
+tran 2e-08 64u 0 1e-09
+* quiet operating values after the register write(s): window averages over the last 2 us before the load
+* event (comparator kickback averaged out); single-instant samples at t_cfg + 1 us kept as *_inst
+meas tran vref_q avg v(xchip.i_core_vref) from=28u to=30u
+meas tran isense_q avg v(xchip.i_core_isense) from=28u to=30u
+meas tran icmp_q avg v(xchip.xi_core_u_trip.icmp) from=28u to=30u
+meas tran vths_q avg v(xchip.xi_core_u_trip.vth_soft) from=28u to=30u
+meas tran vthh_q avg v(xchip.xi_core_u_trip.vth_hard) from=28u to=30u
+meas tran vref_i find v(xchip.i_core_vref) at=26.8451u
+meas tran isense_i find v(xchip.i_core_isense) at=26.8451u
+meas tran icmp_i find v(xchip.xi_core_u_trip.icmp) at=26.8451u
+meas tran vths_i find v(xchip.xi_core_u_trip.vth_soft) at=26.8451u
+meas tran vthh_i find v(xchip.xi_core_u_trip.vth_hard) at=26.8451u
+meas tran iload_q find i(vim) at=26.8451u
+meas tran gate_q find v(gate) at=26.8451u
+meas tran fastq find v(xchip.i_core_fast_en) at=26.8451u
+meas tran t_inrush_off when v(xchip.xi_core_u_digital.inrush_active)=0.6 fall=1 from=3u
+meas tran inrush_q find v(xchip.xi_core_u_digital.inrush_active) at=26.8451u
+meas tran softarmed_end find v(xchip.xi_core_u_digital.soft_armed) at=64u
+let cs_v = 1*(v(xchip.i_core_dac_soft_0_) gt 0.6) + 2*(v(xchip.i_core_dac_soft_1_) gt 0.6) + 4*(v(xchip.i_core_dac_soft_2_) gt 0.6) + 8*(v(xchip.i_core_dac_soft_3_) gt 0.6) + 16*(v(xchip.i_core_dac_soft_4_) gt 0.6) + 32*(v(xchip.i_core_dac_soft_5_) gt 0.6) + 64*(v(xchip.i_core_dac_soft_6_) gt 0.6) + 128*(v(xchip.i_core_dac_soft_7_) gt 0.6)
+let ch_v = 1*(v(xchip.i_core_dac_hard_0_) gt 0.6) + 2*(v(xchip.i_core_dac_hard_1_) gt 0.6) + 4*(v(xchip.i_core_dac_hard_2_) gt 0.6) + 8*(v(xchip.i_core_dac_hard_3_) gt 0.6) + 16*(v(xchip.i_core_dac_hard_4_) gt 0.6) + 32*(v(xchip.i_core_dac_hard_5_) gt 0.6) + 64*(v(xchip.i_core_dac_hard_6_) gt 0.6) + 128*(v(xchip.i_core_dac_hard_7_) gt 0.6)
+meas tran code_soft find cs_v at=26.8451u
+meas tran code_hard find ch_v at=26.8451u
+let t_inrush_off_us = t_inrush_off*1e6
+echo "QUIET window_us=28-30 vref=" $&vref_q " isense=" $&isense_q " icmp=" $&icmp_q " vth_soft=" $&vths_q " vth_hard=" $&vthh_q " vref_inst=" $&vref_i " isense_inst=" $&isense_i " icmp_inst=" $&icmp_i " vth_soft_inst=" $&vths_i " vth_hard_inst=" $&vthh_i " iload_A=" $&iload_q " gate=" $&gate_q " code_soft=" $&code_soft " code_hard=" $&code_hard " fast_en=" $&fastq " inrush_active=" $&inrush_q " t_inrush_off_us=" $&t_inrush_off_us " soft_armed_end=" $&softarmed_end
+* clocks: 20 oscillator periods and 10 strobe periods after the configuration
+meas tran tosc1 when v(xchip.i_core_osc_clk)=0.6 rise=1 from=25.8451u
+meas tran tosc2 when v(xchip.i_core_osc_clk)=0.6 rise=21 from=25.8451u
+let fosc_mhz = 20e-6/(tosc2 - tosc1)
+meas tran tcc1 when v(xchip.i_core_cmp_clk)=0.6 rise=1 from=25.8451u
+meas tran tcc2 when v(xchip.i_core_cmp_clk)=0.6 rise=11 from=25.8451u
+let fcmp_mhz = 10e-6/(tcc2 - tcc1)
+echo "CLOCK f_osc_MHz=" $&fosc_mhz " f_cmp_MHz=" $&fcmp_mhz " (RTL clock: ideal source at the block-simulated frequency)"
+* supply currents averaged over the quiet armed window
+let i_vdda = i(vma)
+meas tran ia_vdda avg i_vdda from=27.8451u to=30u
+let ua_vdda = ia_vdda*1e6
+let i_iovdd = i(vmi)
+meas tran ia_iovdd avg i_iovdd from=27.8451u to=30u
+let ua_iovdd = ia_iovdd*1e6
+let i_vdd = -i(v12)
+meas tran ia_vdd avg i_vdd from=27.8451u to=30u
+let ua_vdd = ia_vdd*1e6
+let i_bgr = i(v.xchip.vm_bgr)
+meas tran ia_bgr avg i_bgr from=27.8451u to=30u
+let ua_bgr = ia_bgr*1e6
+let i_sense = i(v.xchip.vm_sense)
+meas tran ia_sense avg i_sense from=27.8451u to=30u
+let ua_sense = ia_sense*1e6
+let i_tripa = i(v.xchip.vm_tripa)
+meas tran ia_tripa avg i_tripa from=27.8451u to=30u
+let ua_tripa = ia_tripa*1e6
+let i_tripd = i(v.xchip.vm_tripd)
+meas tran ia_tripd avg i_tripd from=27.8451u to=30u
+let ua_tripd = ia_tripd*1e6
+let i_osc = i(v.xchip.vm_osc)
+meas tran ia_osc avg i_osc from=27.8451u to=30u
+let ua_osc = ia_osc*1e6
+let i_gatea = i(v.xchip.vm_gatea)
+meas tran ia_gatea avg i_gatea from=27.8451u to=30u
+let ua_gatea = ia_gatea*1e6
+let i_gated = i(v.xchip.vm_gated)
+meas tran ia_gated avg i_gated from=27.8451u to=30u
+let ua_gated = ia_gated*1e6
+echo "SUPPLY_uA window=27.8451-30us VDDA=" $&ua_vdda " IOVDD=" $&ua_iovdd " VDD=" $&ua_vdd " | bgr=" $&ua_bgr " sense=" $&ua_sense " trip_3v3=" $&ua_tripa " trip_1v2=" $&ua_tripd " osc=" $&ua_osc " gate_3v3=" $&ua_gatea " gate_1v2=" $&ua_gated
+* G1_T2F: output frequency (rising 0.6 V crossings) and supply currents over the quiet window
+meas tran t2f_t1 when v(xchip.i_core_temp_out_o)=0.6 rise=1 from=27.8451u to=30u
+meas tran t2f_t2 when v(xchip.i_core_temp_out_o)=0.6 rise=3 from=27.8451u to=30u
+let t2f_mhz = 2e-6/(t2f_t2 - t2f_t1)
+meas tran ia_t2f avg i(v.xchip.vm_t2f) from=27.8451u to=30u
+let ua_t2f = ia_t2f*1e6
+meas tran ia_t2fd avg i(v.xchip.vm_t2fd) from=27.8451u to=30u
+let ua_t2fd = ia_t2fd*1e6
+meas tran ia_ls avg i(v.xchip.vm_ls) from=27.8451u to=30u
+let ua_ls = ia_ls*1e6
+meas tran ia_lsd avg i(v.xchip.vm_lsd) from=27.8451u to=30u
+let ua_lsd = ia_lsd*1e6
+echo "T2F window=27.8451-30us f_MHz=" $&t2f_mhz " periods=2 vdda_t2f_uA=" $&ua_t2f " vdd12_t2f_uA=" $&ua_t2fd " vdda_ls_uA=" $&ua_ls " vdd_ls_uA=" $&ua_lsd
+* trip evaluation after the load event at T_STEP
+let tstep_s = 30u
+meas tran tripped_max max v(xchip.i_core_tripped) from=25.8451u to=64u
+meas tran tripped_pre max v(xchip.i_core_tripped) from=25.8451u to=30u
+meas tran t_tripped when v(xchip.i_core_tripped)=0.6 rise=1 from=30u
+meas tran t_trip_d when v(xchip.i_core_trip_d)=0.6 rise=1 from=30u
+meas tran t_gate1v when v(gate)=1.0 fall=1 from=30u
+meas tran t_gate03 when v(gate)=0.33 fall=1 from=30u
+meas tran gate_min min v(gate) from=30u to=64u
+meas tran gate_end find v(gate) at=64u
+meas tran ipk max i(vim) from=30u to=64u
+meas tran i_end find i(vim) at=64u
+meas tran isense_pk max v(xchip.i_core_isense) from=30u to=64u
+meas tran cause1e find v(xchip.i_core_trip_cause_1_) at=64u
+meas tran cause0e find v(xchip.i_core_trip_cause_0_) at=64u
+meas tran fault_end find v(fault_n) at=64u
+let sp_v = 1*(v(xchip.xi_core_u_digital.sp0) gt 0.6) + 2*(v(xchip.xi_core_u_digital.sp1) gt 0.6) + 4*(v(xchip.xi_core_u_digital.sp2) gt 0.6) + 8*(v(xchip.xi_core_u_digital.sp3) gt 0.6) + 16*(v(xchip.xi_core_u_digital.sp4) gt 0.6) + 32*(v(xchip.xi_core_u_digital.sp5) gt 0.6) + 64*(v(xchip.xi_core_u_digital.sp6) gt 0.6) + 128*(v(xchip.xi_core_u_digital.sp7) gt 0.6) + 256*(v(xchip.xi_core_u_digital.sp8) gt 0.6) + 512*(v(xchip.xi_core_u_digital.sp9) gt 0.6) + 1024*(v(xchip.xi_core_u_digital.sp10) gt 0.6) + 2048*(v(xchip.xi_core_u_digital.sp11) gt 0.6) + 4096*(v(xchip.xi_core_u_digital.sp12) gt 0.6) + 8192*(v(xchip.xi_core_u_digital.sp13) gt 0.6) + 16384*(v(xchip.xi_core_u_digital.sp14) gt 0.6) + 32768*(v(xchip.xi_core_u_digital.sp15) gt 0.6)
+meas tran soft_peak find sp_v at=64u
+let cause = 2*(cause1e gt 0.6) + (cause0e gt 0.6)
+let dt_gate1v_us = (t_gate1v - tstep_s)*1e6
+let dt_gate03_us = (t_gate03 - tstep_s)*1e6
+let dt_tripped_us = (t_tripped - tstep_s)*1e6
+let dt_trip_d_us = (t_trip_d - tstep_s)*1e6
+echo "TRIP tripped_max=" $&tripped_max " tripped_before_event=" $&tripped_pre " t_tripped_us=" $&dt_tripped_us " t_trip_d_us=" $&dt_trip_d_us " t_gate_1V_us=" $&dt_gate1v_us " t_gate_0.33V_us=" $&dt_gate03_us " gate_min=" $&gate_min " gate_end=" $&gate_end " ipk_A=" $&ipk " i_end_A=" $&i_end " isense_pk=" $&isense_pk " cause=" $&cause " fault_n_end=" $&fault_end " soft_peak=" $&soft_peak
+let qi = integ(i(vim))
+meas tran q_step find qi at=30u
+meas tran q_end find qi at=64u
+let q_passed = q_end - q_step
+echo "CHARGE after_event_As=" $&q_passed
+wrdata /work/build/g1_top/state_cdl_b_s_pex_tt_27C_gear_padspdk_cdl5e47ae02_rtleco20260925_icx_maxstep1ns_functional_r3full.txt v(xchip.en_i) v(xchip.xi_core_u_digital.inrush_active) v(xchip.i_core_trip) v(xchip.i_core_fast_en) v(xchip.i_core_trip_cause_1_) v(xchip.i_core_trip_cause_0_) v(xchip.i_core_dac_soft_0_) v(xchip.i_core_dac_soft_1_) v(xchip.i_core_dac_soft_2_) v(xchip.i_core_dac_soft_3_) v(xchip.i_core_dac_soft_4_) v(xchip.i_core_dac_soft_5_) v(xchip.i_core_dac_soft_6_) v(xchip.i_core_dac_soft_7_) v(xchip.i_core_dac_hard_0_) v(xchip.i_core_dac_hard_1_) v(xchip.i_core_dac_hard_2_) v(xchip.i_core_dac_hard_3_) v(xchip.i_core_dac_hard_4_) v(xchip.i_core_dac_hard_5_) v(xchip.i_core_dac_hard_6_) v(xchip.i_core_dac_hard_7_) v(xchip.xi_core_u_digital.soft_armed) v(xchip.xi_core_u_digital.sp0) v(xchip.xi_core_u_digital.sp1) v(xchip.xi_core_u_digital.sp2) v(xchip.xi_core_u_digital.sp3) v(xchip.xi_core_u_digital.sp4) v(xchip.xi_core_u_digital.sp5) v(xchip.xi_core_u_digital.sp6) v(xchip.xi_core_u_digital.sp7) v(xchip.xi_core_u_digital.sp8) v(xchip.xi_core_u_digital.sp9) v(xchip.xi_core_u_digital.sp10) v(xchip.xi_core_u_digital.sp11) v(xchip.xi_core_u_digital.sp12) v(xchip.xi_core_u_digital.sp13) v(xchip.xi_core_u_digital.sp14) v(xchip.xi_core_u_digital.sp15) v(sclk_pad) v(sdi_pad) v(xchip.i_core_sdo_o) v(xchip.i_core_clr_d)
+linearize v(gate) v(gfet) v(xchip.i_core_tripped) v(xchip.i_core_isense) v(xchip.i_core_cmp_soft) v(xchip.i_core_cmp_hard) v(xchip.i_core_cmp_clk) v(xchip.i_core_trip_d) v(xchip.i_core_osc_clk) v(xchip.i_core_vref) v(xchip.en_i) v(shp) v(fault_n) v(vdda) v(vdd) v(iprof) v(xchip.xi_core_u_trip.icmp) v(xchip.xi_core_u_trip.vth_soft) v(xchip.xi_core_u_trip.vth_hard) v(xchip.i_core_trip) v(xchip.xi_core_u_digital.inrush_active) i(vim) i(vma) i(vmi) i(v12)
+wrdata /work/build/g1_top/waves_cdl_b_s_pex_tt_27C_gear_padspdk_cdl5e47ae02_rtleco20260925_icx_maxstep1ns_functional_r3full.txt v(gate) v(gfet) v(xchip.i_core_tripped) v(xchip.i_core_isense) v(xchip.i_core_cmp_soft) v(xchip.i_core_cmp_hard) v(xchip.i_core_cmp_clk) v(xchip.i_core_trip_d) v(xchip.i_core_osc_clk) v(xchip.i_core_vref) v(xchip.en_i) v(shp) v(fault_n) v(vdda) v(vdd) v(iprof) v(xchip.xi_core_u_trip.icmp) v(xchip.xi_core_u_trip.vth_soft) v(xchip.xi_core_u_trip.vth_hard) v(xchip.i_core_trip) v(xchip.xi_core_u_digital.inrush_active) i(vim) i(vma) i(vmi) i(v12)
+.endc
+.end
