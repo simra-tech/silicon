@@ -1,0 +1,153 @@
+# extract of c_mid_pex_c1414_tl_tt_27C_icxpi_ovr-bgrsch_nodcn_clockfix_rtleco20260925_compact_t19_functional_c1414icx_pi3.log (sha256 aeb42c8b4705d9fc6734ec8ed702be8b9c8cbecc86be9c690e06c63f9aff3652, 1157489 bytes; full log retained in bulk, see review/local-retention-20260925.json)
+# G1_TOP run c_mid_pex_c1414_tl_tt_27C_icxpi_ovr-bgrsch_nodcn_clockfix_rtleco20260925_compact_t19_functional_c1414icx_pi3  2026-09-26T20:13:55Z UTC
+# in-range hard trip: code 200 (~39.25mV), 1.8A/45mV fault in 20ns; HARD_N=4
+# deck build/g1_top/c_mid_pex_c1414_tl_tt_27C_icxpi_ovr-bgrsch_nodcn_clockfix_rtleco20260925_compact_t19_functional_c1414icx_pi3.cir
+# supplies VDD 1.2 V, VDDA = IOVDD 3.3 V
+# interconnect extracted-pi designs/g1-guardian/blocks/g1_top/sim/postlayout/top_interconnect_20260925.spice sha256 ddc88cc765e99a0e982c9b6bc24817bfe336ae686930b2c12a85d514fb2adcc2
+# blockset c1414 view-override bgr=sch
+# OVERRIDE bgr: sch view instead of --netlist pex (--view-override)
+# NOTE bgr: BGR586 source carries 329 historical Sep-19 kpex capacitors, not an extraction of the BGR586 layout
+# NOTE sense: R100 own-native partial-field C (unbound VSUBS excluded; physical field acceptance not established)
+# WARNING deviation --inpads nodcn: SENSE_P/SENSE_N use g1_IOPadAnalog_nodcn, a deck-local copy of the PDK sg13g2_IOPadAnalog without its dantenna-based parts (sg13g2_DCNDiode and the SecondaryProtection dantenna D1); clamps, DCPDiode, SecondaryProtection 587 Ohm + dpantenna, ptap resistors and padres kept; VREF pad and PDK file unchanged. Reason: the PDK darea diode model switches formula at -3nVt (measured current step 1e-16->4e-11 A at 78 mV/27 C, 2e-14->2e-10 A at 93 mV/85 C, 1e-12->4e-10 A at 104 mV/125 C), which stalls the transient; removed leakage < 1 nA per pad at 125 C behind the 1 Ohm Kelvin trace (README, Numerical notes).
+# netlist sha256 586ffb58b6af31c77a2e7cbcb83b173ffa4713ec62401da30901c5a7e606283b blocks/g1_bgr/layout/coordinated_full_closure/evidence/pex-preparation-20260922-r1/controls/r1/baseline_586.spice
+# netlist sha256 ffb14762659eaf02b6a62e9edea3caa0e143cbc7881378b329d6ab9945a6554b blocks/g1_sense/sim/postlayout/g1_sense_r100_partialc.spice
+# netlist sha256 ba86b7b2a530abae365d539297909e033b24a54597f9cc75d8dff273c30d401c blocks/g1_trip/sim/postlayout/g1_trip_nf4_pex.spice
+# netlist sha256 8efd7a09faf173da8604a219f73fd3ea5ec2508618d8361a050770c099d8b1c5 blocks/g1_osc/sim/qualification/fulltree_r095_load_20260924/common/osc.spice
+# netlist sha256 e91617f5fcf6f5a0dc721a2ba53b507a05cc226d6dbf0bebaa858a1e7d876765 blocks/g1_gate/sim/postlayout/g1_gate_pex.spice
+# IO models sha256 1d53ab7df431b717ef5aff43e1117c0224681d5cc84886da37a319280ee958d6 /foss/pdks/ihp-sg13g2/libs.ref/sg13g2_io/spice/sg13g2_io.spi
+# PDK commit 84374023ee8b4b126bebbba67fcbada0a9c0ff0b
+# ngspice-46 : Circuit level simulation program
+# Icarus Verilog version 14.0 (devel) (s20260301-328-geda9fdcd-dirty)
+# iverilog -g2005 -Wall -Wno-timescale -o /work/build/g1_top/cosim_5195c5fbfb38e3b9199dfbf4.vvp.tmp1 /work/designs/g1-guardian/blocks/g1_top/sim/rtl/g1_dig_cosim.v /work/designs/g1-guardian/blocks/g1_ctrl/rtl_eco_20260925/g1_sync2.v /work/designs/g1-guardian/blocks/g1_ctrl/rtl_eco_20260925/g1_serial.v /work/designs/g1-guardian/blocks/g1_ctrl/rtl_eco_20260925/g1_trip_timer.v /work/designs/g1-guardian/blocks/g1_ctrl/rtl_eco_20260925/g1_regfile.v /work/designs/g1-guardian/blocks/g1_ctrl/rtl_eco_20260925/g1_digital_top.v /work/designs/g1-guardian/blocks/g1_ctrl/rtl_eco_20260925/g1_digital.v /work/designs/g1-guardian/blocks/g1_seu/rtl_eco_20260925/g1_tmr_reg.v /work/designs/g1-guardian/blocks/g1_seu/rtl_eco_20260925/g1_seu_chain.v /work/designs/g1-guardian/blocks/g1_seu/rtl_eco_20260925/g1_seu.v
+# compiled RTL build/g1_top/cosim_5195c5fbfb38e3b9199dfbf4.vvp (tag c_mid_pex_c1414_tl_tt_27C_icxpi_ovr-bgrsch_nodcn_clockfix_rtleco20260925_compact_t19_functional_c1414icx_pi3) sha256 ac120245507a511f6d759a746469b6561aabdb0744b9ce09d64dd2528d4ee426
+# rtl sha256 63dfb950393fe60c3da1d057f6a5dd86142c8bb670ba0a63b87248675037ccd5 designs/g1-guardian/blocks/g1_top/sim/rtl/g1_dig_cosim.v
+# rtl sha256 c14906d7d9256a771cd8fdc0ab14ba291131e151d24bf06b951b6bc693ad8ef2 designs/g1-guardian/blocks/g1_ctrl/rtl_eco_20260925/g1_sync2.v
+# rtl sha256 df4341e1878caef2f7bf27abb273a7a5af3e41b96658ffa02eedb2af97c48a5d designs/g1-guardian/blocks/g1_ctrl/rtl_eco_20260925/g1_serial.v
+# rtl sha256 5cab0bc384cef5a7b08d6c693da90e5347d0de10816830ba9b16c6d6be428c9f designs/g1-guardian/blocks/g1_ctrl/rtl_eco_20260925/g1_trip_timer.v
+# rtl sha256 33d549dafc4c097cc06cdbdb3237d3d4b1c5c9cd00eef5d9757474e07a1ab7f3 designs/g1-guardian/blocks/g1_ctrl/rtl_eco_20260925/g1_regfile.v
+# rtl sha256 4e3b8ff6cdc13f28670bb9c64b1f685782efc95a51e3644038989a220088fdd6 designs/g1-guardian/blocks/g1_ctrl/rtl_eco_20260925/g1_digital_top.v
+# rtl sha256 36757122c43271dfd439bf1623be6d5413adf3bbb97cbad40d5cccf5892f5c3d designs/g1-guardian/blocks/g1_ctrl/rtl_eco_20260925/g1_digital.v
+# rtl sha256 f53f82d97b91d4e815e662e72b40968949c7d74ce135f777dba7789201167ac5 designs/g1-guardian/blocks/g1_seu/rtl_eco_20260925/g1_tmr_reg.v
+# rtl sha256 6e10bbc02a8ff29116067f2067f648b959f17b542cb2360c50e7802010048573 designs/g1-guardian/blocks/g1_seu/rtl_eco_20260925/g1_seu_chain.v
+# rtl sha256 7c1831c99b5875a2dd48387db70fd5b1a0888a520fe8676bc4e071820b7fa736 designs/g1-guardian/blocks/g1_seu/rtl_eco_20260925/g1_seu.v
+# ...
+OSDI(debug) n.xbgr.xr16_u18.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr16_u17.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr16_u17.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr16_u16.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr16_u16.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr16_u15.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr16_u15.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr16_u14.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr16_u14.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr16_u13.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr16_u13.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr16_u12.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr16_u12.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr16_u11.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr16_u11.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr16_u10.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr16_u10.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr16_u9.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr16_u9.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr16_u8.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr16_u8.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr16_u7.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr16_u7.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr16_u6.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr16_u6.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr16_u5.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr16_u5.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr16_u4.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr16_u4.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr16_u3.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr16_u3.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr16_u2.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr16_u2.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr86.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr86.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr85.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr85.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr84.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr84.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr83.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr83.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr82.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr82.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr81.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr81.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr80.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr80.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr79.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr79.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr78.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr78.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr77.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr77.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr26.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr26.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr25.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr25.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr24.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr24.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr23.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr23.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr22.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr22.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr21.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr21.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr20.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr20.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr19.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr19.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr18.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr18.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr17.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr17.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr16.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr16.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr15.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr15.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr14.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr14.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr13.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr13.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr12.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr12.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr11.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr11.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr10.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr10.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr9.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr9.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr8.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr8.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr7.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr7.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr6.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr6.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr5.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr5.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr4.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr4.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr3.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr3.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr2.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr2.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr1.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xbgr.xr1.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xpvref.xi3.xr0.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xpvref.xi3.xr0.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xpvref.xi0.xr0.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xpvref.xi0.xr0.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xpsn.xi3r.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xpsn.xi3r.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xpsn.xi0.xr0.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xpsn.xi0.xr0.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xpsp.xi3r.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xpsp.xi3r.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+OSDI(debug) n.xpsp.xi0.xr0.nr1: WARNING: V(i1,c) voltage is greater than specified by vmax
+OSDI(debug) n.xpsp.xi0.xr0.nr1: WARNING: V(i2,c) voltage is greater than specified by vmax
+
+# run status timeout
+# ngspice exit -15, wall time 301 s
