@@ -47,7 +47,7 @@ and the ideal 9.436194721 MHz RTL clock unless a row says otherwise.
    - Trap failed in every T2F-on deck (0.28–1.9 µs).
    - Gear passed with the BGR586 extraction (pex, 5 ns maximum step) and with the CDL schematic BGR at a 1 ns maximum step, or at 5 ns with reltol 5e-4.
    - It failed with a 5 ns step at 13.9 µs, and with 2 ns, gmin 1e-11, abstol 1e-12, `selft=0`, itl4 500 and the BGR PEX in sch mode at 0.3–7.3 µs.
-   - Treat any CDL-driven run as fragile. Use gear with the pex BGR or a ≤ 1 ns step.
+   - Treat any CDL-driven run as fragile. Use gear with a ≤ 1 ns step; gear with the pex BGR passed for `cdlv1` but failed at 2.83 µs in `cdlv3`, so it is not a reliable recipe.
 
 ## Method (`sim/run_top_cdl.py`, `sim/rtl/g1_dig_cosim_cdl.v`; `run_top.py` unchanged)
 
@@ -98,7 +98,7 @@ and the ideal 9.436194721 MHz RTL clock unless a row says otherwise.
 | hand-wired sch + `--t2f tl`, gear (`cdlref1`) | 1.0578 | 1.344 | 1.660 | 1.04499 | 1.50689 | 0.75379 | 0.80476/0.89696 | 1462.3 (319.7/1101.4/—) | 0.0004 | 2333 | trip passed; failed at 22.69 µs (`xbgr.xq60`), not run to completion |
 | CDL sch, other numerics (`cdlv1/v2/v3/v4/v5`) | — | — | — | — | — | — | — | — | — | — | failed: trap 0.28 µs; gear 5 ns 13.9 µs; see finding 4. Three v5 variants stopped by me to free CPUs: not run to completion |
 | CDL sch, gear 5 ns, reltol 5e-4 (`cdlv2`) | 1.0578 | 1.436 | 1.672 | 1.04500 | 1.50806 | 0.75445 | 0.80483/0.89696 | — | — | 5428 | passed |
-| CDL sch, gear 1 ns + itl4 500 (`cdlv5`) | — | — | — | — | — | — | — | — | — | — | still running at time of writing |
+| CDL sch, gear 1 ns + itl4 500 (`cdlv5`) | 1.0578 | 1.436 | 1.672 | 1.04500 | 1.50806 | — | — | 1376.7 | 97.8 | 5171 | passed |
 
 ### q, 6 µs prefix (`--analysis prefix --tstop 6`)
 
@@ -166,7 +166,7 @@ therefore leaves reset while `EN` is still undefined.
 **Artifact.** `osc_en` "rises" at 1 ns because the dac_bridge `out_high` is a fixed 1.2 V,
 independent of `VDD`. RTL output levels before `VDD` is up are not physical.
 
-`q` full length (44 µs, CDL pex gear, `cdlpwr`, wall 25200 s): completed in 9762 s, no trip; QUIET (28–30 µs) vref 1.0450 V, isense 1.50687 V, icmp 0.7535 V, vth_soft 0.8044 V, vth_hard 1.0037 V; VDDA 1462.5 µA (BGR 319.7, SENSE 1101.4), IOVDD 103.8 µA, VDD 7.0 µA.
+`q` full length (44 µs, CDL pex gear, `cdlpwr`, wall bound 24 800 s per JSON `timeout_s`): completed in 9762 s, no trip; QUIET (28–30 µs) vref 1.0450 V, isense 1.50687 V, icmp 0.7535 V, vth_soft 0.8044 V, vth_hard 1.0037 V; VDDA 1462.5 µA (BGR 319.7, SENSE 1101.4), IOVDD 103.8 µA, VDD 7.0 µA.
 
 ## Not established
 

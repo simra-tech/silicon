@@ -53,9 +53,10 @@ Supply currents are averaged over the armed window.
 | gB_pd, as gB with 10 kΩ on GATE | same | completed, 2360 s | GATE max while EN low 31 µV; after EN 3.288 V | — | — | — | **pass** | `gB_pd_…_por_…_icx` |
 | gA, IO first: IOVDD/VDDA 1–3 µs, VDD 5–7 µs (GATE high while EN low, expected) | 2 ns, `--por-pin` | completed, 2928 s | **GATE 3.300 V from 2.38 to 6.72 µs (4.34 µs)** while EN is low; the 1 A load flows (4.06 µAs); GATE 3.300 V after EN | — | — | — | expected condition, recorded (P1 excludes this order) | `gA_…_por_…_icx_maxstep2ns` |
 | gA | 20 ns, reltol 5e-4 (`r3full2`) | completed, 2302 s | identical: 2.38–6.72 µs, 3.300 V | — | — | — | same | `gA_…_por_…_icx_optreltol5em4_…r3full2` |
-| osc: q with the transistor-level R0.95 CPEX clocking the RTL | OSC_PENDING | | | | | | | |
-| near threshold, c_mid compact, `--fault-mult 1.15` (28.8 mV vs 39.25 mV code 200; expected: no trip) | FM_PENDING | | | | | | | |
-| near threshold, c_mid compact, `--fault-mult 1.25` (31.3 mV; expected: trip) | FM_PENDING | | | | | | | |
+| osc: q, 44 µs, the transistor-level R0.95 CPEX clocking the RTL (frames decode, no trip) | `--osc tl`, 1 ns, standard tolerances, T2F on | completed, 22 993 s | **f_osc 9.4416 MHz, f_cmp 4.7207 MHz** (ideal clock 9.4362 MHz, +0.06 %); frames decoded (INRUSH cleared at 22.21 µs; DAC codes 153/254); no trip, tripped max 7.3 mV, GATE min 3.298 V; **VREF 32.3 mV p-p** (rms 2.4 mV, 32–44 µs) | 0 | 1.04500 / 1.50693 / 0.75412 / 0.80524 / 1.00329 | 1462.5 / 104.0; VDD 122.1 (OSC 114.9) | **pass** | `q_pex_tt_27C_gear_osctl_…_icx_maxstep1ns` |
+| osc, T2F off | `--osc tl`, 1 ns, ser4, T2F off | completed, 19 614 s | f_osc 9.4417 MHz, f_cmp 4.7207 MHz; INRUSH and TEMP_CTRL frames decoded (INRUSH cleared at 8.22 µs, no T2F edges after the write); no trip; VREF 32.3 mV p-p | 0 | 1.04500 / 1.50692 / 0.75412 / 0.80524 / 1.00328 | 1454.5 / 0.004; VDD 121.8 | pass | `q_…_osctl_…_ser4_icx_t2foff_maxstep1ns` |
+| near threshold, c_mid compact, `--fault-mult 1.15`: 1.15 A = 28.75 mV against 39.25 mV at code 200 (expected: no trip; kick characterization gives an effective threshold of 30–31 mV) | 1 ns, T2F on (`r3full2`, nice 0) | completed, 8591 s | **no trip**; tripped max 7.3 mV, GATE min 3.298 V, 1.15 A at the end | 0 | 1.04501 / 1.50691 / 0.75300 / 0.80408 / 0.89715 | — | **consistent with the documented hard-comparator kick offset** | `c_mid_…_compact_…_icx_fm1p15_maxstep1ns_…r3full2` |
+| near threshold, c_mid compact, `--fault-mult 1.25`: 31.25 mV (expected: trip) | 1 ns, T2F on (`r3full2`, nice 0) | completed, 8645 s | **hard trip** 1.1638 / 1.1666 / 1.5431 / 1.7792; ISENSE peak 1.637 V. The decision is on the same strobe as at 1.8× (not slower) | 2 | same | — | **consistent with the documented hard-comparator kick offset** (trips at 31.25 mV, 8 mV below the code) | `c_mid_…_compact_…_icx_fm1p25_maxstep1ns_…r3full2` |
 
 **Power-up detail (gB, `por_n` from the CDL tie-high, frozen ECO RTL).**
 - `por_n` crosses 0.6 V at 2.001 µs, with VDD. IOVDD reaches 1.1 V at 5.667 µs.
@@ -70,6 +71,7 @@ Supply currents are averaged over the armed window.
    - Size: **42.3 mV p-p**, rms 2.5 mV, 26 of 601 samples outside ±2 mV (q, 32–44 µs).
    - Sampling is the 20 ns `linearize` grid, so the true peaks can be higher.
    - Without the interconnect the same case gives 1.3 mV p-p (`cdlpwr`). The ripple is the same with T2F off (42.3 mV).
+   - With the transistor-level oscillator (osc case) the ripple is 32.3 mV p-p (rms 2.4 mV).
    - The source is the extracted 38.3 fF `osc_clk`–VREF coupling (46 fC per 1.2 V edge; interconnect README).
    - The mean VREF is unchanged (1.04496 V vs 1.04500 V). No trip decision in this set changed at 1.15–4× nominal.
    - Near-threshold behaviour is covered only by the two `fault-mult` rows.
@@ -93,7 +95,7 @@ Supply currents are averaged over the armed window.
 | Re-arm | f_mid: EN low clears both latches; GATE 90 % 0.678 µs after EN; 1 A restored | pass |
 | No false trip at EN / power-up | gB, gB_pd: GATE ≤ 31 µV with EN low; no trip before the event or at EN rise in any functional case (tripped before the event ≤ 11 mV) | pass; latches toggle while IOVDD is absent (finding above; P2 inhibit) |
 | IO-first order | gA: GATE 3.30 V for 4.34 µs | expected; excluded by P1 |
-| Near threshold | FM_VERDICT | |
+| Near threshold (characterization, not a gate) | code 200 = 39.25 mV: 28.75 mV no trip, 31.25 mV trip at 1.164 µs. The effective hard threshold lies at 28.75–31.25 mV on this deck | consistent with the documented hard-comparator kick offset (30.00–31.25 mV, spec §4) |
 
 ## Not run to completion / not run
 
@@ -106,7 +108,7 @@ Supply currents are averaged over the armed window.
 | T2F-off variants at 5 ns (tt) | **not run to completion**: stopped or failed at 0.7–2.4 µs (the T2F is on until the register write) |
 | c_mid ff −40 °C at 5 ns (T2F on and T2F off) | **failed** at 7.385 µs (BGR `xq760`); the 1 ns rows completed |
 | gA at 20 ns (T2F on) | **failed** at 1.87 µs (T2F `xq42`); 2 ns completed |
-| OSC_NOTRUN | |
+| osc with the loose settings (reltol 2e-3, abstol 1e-8, vntol 1e-4, chgtol 1e-12, xtrtol 7) at 2 / 1 / 0.5 ns | **failed** at 0.96 µs (T2F `xq42`), 2.69 µs and 23.7 µs (BGR `xq736`); the standard-tolerance 1 ns run completed |
 | Series wire R of the interconnect (pi variant), bondpad C, fill C | not run |
 | Corners other than c_mid ss/125 and ff/−40; supply ±10 %; the 72-cell matrix on this deck | not run |
 | T2F accuracy on this deck | not run (T2F on in the primary rows, not evaluated) |
