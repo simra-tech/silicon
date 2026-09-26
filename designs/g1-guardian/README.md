@@ -112,10 +112,10 @@ Chip-level runs with the ECO RTL (hand-wired chip deck (`run_top.py --blockset c
 [`ECO_20260925`](blocks/g1_ctrl/ECO_20260925.md)):
 - `eco_c_mid_m03`: hard trip, `tripped` **1.166 µs**, `GATE` < 1 V **1.451 µs**;
 - `eco_hard_pulse_m03`: 200 ns 45 mV pulse, no trip (simulated).
-- `eco4` regression (same deck, 2026-09-26; RESULTS §10): 13 of 15 runs done and passed as
+- `eco4` regression (same deck, 2026-09-26; RESULTS §10): all runs except the CDL run done and passed as
   expected: `c_mid` `GATE` < 1 V 1.439–1.441 µs at tt/27, ss/125, ff/−40 °C; `c`, `e20` 1.440 µs;
   `q` and `hard_pulse` no trip; `f_mid` re-arms; core-first power-up `GATE` ≤ 0.076 V (0.009 V
-  with 10 kΩ) while EN low; IO-first 3.3 V for 4.3 µs (IO-pad property, P1). `b_s` running; the
+  with 10 kΩ) while EN low; IO-first 3.3 V for 4.3 µs (IO-pad property, P1). `b_s` soft trip, `GATE` < 1 V 28.040 µs after the event (baseline 27.65 µs); the
   CDL run on this deck is invalid (truncated log) and superseded by the r3 CDL campaign `r3full`.
   The +106 ns against pre-ECO is one `osc_clk` period of sampling phase, not a circuit change.
 
