@@ -1,0 +1,30 @@
+* BGR local stability diagnostic (Tian two-injection), tian_old_pcasc_ff-40_voltage
+.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerHBT.lib hbt_bcs
+.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerMOShv.lib mos_ff
+.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerRES.lib res_bcs
+.include probe_old_pcasc.spice
+.option gmin=1e-15 abstol=1e-14 reltol=1e-5 vntol=1e-7
+.temp -40
+.global sub!
+Vsub sub! 0 0
+Vdd vdd 0 3.3
+Vr4 r4 0 0
+Xbgr vdd 0 r4 vref iptat pbias pcasc vbe dvbe g1_bgr
+Vload iptat 0 1
+Cload vref 0 1p
+.param pv=1 pi=0
+.control
+set num_threads=1
+set numdgt=15
+set wr_singlescale
+set wr_vecnames
+op
+print v(vref) v(pbias) v(pcasc)
+ac dec 100 1 1g
+let ifout=-i(v.xbgr.vprobe)
+let ve=v(xbgr.gate_probe)
+wrdata ${BULK}/bgr586_ac_20260926/tian_old_pcasc_ff-40_voltage.dat real(ifout) imag(ifout) real(ve) imag(ve)
+echo RUN_END
+quit
+.endc
+.end

@@ -1,0 +1,38 @@
+* BGR standalone AC noise/PSRR, psrrnoise_pex_tt27
+.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerHBT.lib hbt_typ
+.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerMOShv.lib mos_tt
+.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerRES.lib res_typ
+.include ../../g1_bgr586_pex.spice
+.option gmin=1e-15 abstol=1e-14 reltol=1e-5 vntol=1e-7
+.temp 27
+.global sub!
+Vsub sub! 0 0
+Vdd vdd 0 dc 3.3 ac 1
+Vr4 r4 0 0
+Xbgr vdd 0 r4 vref iptat pbias pcasc vbe dvbe g1_bgr
+Vload iptat 0 1
+Cload vref 0 1p
+.control
+set num_threads=1
+set numdgt=15
+set wr_singlescale
+set wr_vecnames
+op
+print v(vref) i(vload) i(vdd)
+ac dec 50 .1 100Meg
+let rejection = -db(v(vref))
+wrdata ${BULK}/bgr586_ac_20260926/psrrnoise_pex_tt27_psrr.dat rejection
+noise v(vref) Vdd dec 50 1 10Meg
+setplot noise1
+wrdata ${BULK}/bgr586_ac_20260926/psrrnoise_pex_tt27_noise.dat onoise_spectrum
+setplot noise2
+echo NOISE_1HZ_10MHZ
+print onoise_total
+noise v(vref) Vdd dec 50 10 10Meg
+setplot noise4
+echo NOISE_10HZ_10MHZ
+print onoise_total
+echo RUN_END
+quit
+.endc
+.end
