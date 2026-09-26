@@ -85,7 +85,7 @@ through the real `IOPadIn` outputs.
 - `q` full length (44 µs, T2F on) on the CDL deck (`cdlpwr`): completed, no trip, `VDDA` 1462 µA.
 - The CDL deck is the r1 CDL (`af5a4dbd`, projected-LVS-matched; canonical LVS fails on the IO cells)
   with the pre-ECO RTL (map 1.1); r3's digital adds about one clock (1.166 vs 1.049 µs on the
-  hand-wired deck). r3 on the CDL deck: not run.
+  hand-wired deck). r3 on the CDL deck: `r3full`, `GATE` < 1 V 1.543 µs (`sim/campaigns/RESULTS_20260925.md` §11).
 
 ## 2026-09-24 chip-of-record deck (`--blockset c1414`)
 
