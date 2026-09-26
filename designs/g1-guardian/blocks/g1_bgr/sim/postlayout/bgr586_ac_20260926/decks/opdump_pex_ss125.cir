@@ -1,0 +1,24 @@
+* op dump, unmodified PEX, ss125 3.3 V (nodeset source for the PCASC Tian retry)
+.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerHBT.lib hbt_wcs
+.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerMOShv.lib mos_ss
+.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerRES.lib res_wcs
+.include ../../g1_bgr586_pex.spice
+.option gmin=1e-15 abstol=1e-14 reltol=1e-5 vntol=1e-7
+.temp 125
+.global sub!
+Vsub sub! 0 0
+Vdd vdd 0 3.3
+Vr4 r4 0 0
+Xbgr vdd 0 r4 vref iptat pbias pcasc vbe dvbe g1_bgr
+Vload iptat 0 1
+Cload vref 0 1p
+.control
+set num_threads=1
+set numdgt=15
+op
+echo OPDUMP_BEGIN
+print all
+echo RUN_END
+quit
+.endc
+.end
