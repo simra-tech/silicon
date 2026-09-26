@@ -131,7 +131,7 @@ results (§4), not sign-off gates.
 | Gate | Scope | Status / remaining coverage |
 | --- | --- | --- |
 | Schematic simulation | Recorded nominal block cases | passed subsets; complete corner/load matrix not run |
-| Corner / mismatch | Chip-of-record block ensembles (standalone) | characterization, not a gate: SENSE R100 100/100 ≤ 0.5 mV (worst 498 µV); BGR586 299/300 completed ≤ 50 ppm/°C (max 46.88), 1 numerical failure; T2F with BGR586 237/300 completed and passed ±2 °C, 63 incomplete (historical Sep-19 bandgap: 14/300 linear-calibration failures, 0/300 lookup); OSC R0.95 slow/hot code 0 10.447 MHz (CPEX). The 43/100 SENSE and 54/100 BGR failures are historical blocks. Joint calibrated chip MC: not run |
+| Corner / mismatch | Chip-of-record block ensembles (standalone) | characterization, not a gate: SENSE R100 100/100 ≤ 0.5 mV (worst 498 µV); BGR586 299/300 completed ≤ 50 ppm/°C (max 46.88), 1 numerical failure; T2F with BGR586 237/300 completed and passed ±2 °C, 63 incomplete (historical Sep-19 bandgap: 14/300 linear-calibration failures, 0/300 lookup); OSC R0.95 slow/hot code 0 10.447 MHz (CPEX). The 43/100 SENSE and 54/100 BGR failures are historical blocks. Joint calibrated chip MC (BGR586 + SENSE R100 + TRIP NF4, 24 seeds, simulated; `../blocks/g1_trip/sim/qualification/joint_r3_mc_20260926/RESULTS.md`): 16 passed, 4 failed electrically, 4 not run to completion (numerical); room calibration at 25 °C/25 mV brackets 22/24; hard offset before calibration +7.95 mV (sd 1.06 mV), soft +0.02 mV; all 262 completed guard probes correct; ±0.5 mV residual holds at 25 and −40 °C, but at 125 °C four seeds trip the hard path at 24.5 mV (room-calibrated hard threshold drifts > 0.5 mV hot: temperature-dependent correction H6, §6) |
 | Temperature | Model-supported −40…125 °C | joint extracted subsets completed with linear-calibration failures; numerical failures retained; 300-sample and adverse coverage incomplete |
 | Beyond-range temperature | 150/175 °C and 77 K | selected exploratory data only; qualification not applicable with nominal model extrapolation |
 | RTL / functional GLS | ECO RTL (register map 1.2, `../blocks/g1_ctrl/ECO_20260925.md`), built 256 + 3×128 configuration | RTL: ECO test set passed (`../blocks/g1_ctrl/sim/eco_20260925/`). GLS of the chip's digital netlist `4b83f181` (r3): 21 tests / 260 checks passed, zero-delay and SDF typ (`../blocks/g1_ctrl/sim/gls_eco_r3v2/`); red-team bench on the netlist: R3 **fails** (serial framing, out of the ECO scope). Icarus executes no timing checks and drops part of the SDF delay model (68 unsupported `ifnone` paths), so timed GLS is unqualified; fast/slow SDF GLS: not run; formal equivalence of the ECO RTL against `4b83f181`: not run. The pre-ECO results (run7 / `6181b988`) are history |
@@ -222,6 +222,7 @@ Host rules (required for the bench contract; `../review/redteam-20260925/DIGITAL
 | H3 | Follow every safety-relevant register write by a read-back, and idle ≥ 128 oscillator cycles of SCLK before each frame; keep SCLK low when idle and every SCLK-low phase inside a frame < 64 oscillator cycles | no chip select, parity or acknowledge: one SCLK glitch or stall re-frames a write onto another register (S1) |
 | H4 | **r2 fallback (map 1.1) only; not needed on r3** (atomic `SOFT_TIME`). Change `SOFT_TIME` only with `MODE.SOFT_EN` cleared | no byte order is safe in both directions; the `_H`-then-`_L` order can pass through 0x0000 (trip on first sample) (S2) |
 | H5 | Periodically read back and rewrite the configuration registers | they are not TMR-protected; an upset persists until rewrite or EN (S7) |
+| H6 | Hard code = calibrated code + k(T): read the on-chip T2F temperature and apply the temperature-dependent hard-code correction k(T) from the per-part calibration table (bench calibration vs temperature). Until that table exists, k(T) comes from the simulated margin table below (effective hard threshold vs corner) | the hard-comparator kick offset depends on temperature (ff/−40 °C 10.4–11.6 mV vs 8.0–9.3 mV at tt/27 °C and ss/125 °C on the r3 full-chip deck; joint calibrated MC: room-calibrated hard threshold drifts by more than 0.5 mV at 125 °C in 4 of 20 seeds), so a single room calibration does not hold the ±10 % guard band at every temperature |
 
 For closure screening, adopt ±10% total calibrated shunt-threshold error as an
 **engineering acceptance assumption**, as suggested by the existing trip
@@ -245,6 +246,35 @@ spread is larger than 2 LSB, so one room-temperature calibration does not absorb
 it: verify the ±10 % guard band at each declared temperature. The soft path is
 within 1 LSB. The 2× hold-capacitor candidate that would halve the offset is not
 adopted (decision pending), so this contract applies to the chip of record.
+
+**Temperature dependence of the hard offset (chip of record r3, simulated).** On the r3
+full-chip layout-netlist deck (all block extractions, extracted top-level interconnect,
+ECO RTL; [`FULLCHIP_CDL_R3_CORNERS_20260927.md`](../blocks/g1_top/sim/FULLCHIP_CDL_R3_CORNERS_20260927.md))
+the effective hard threshold at code 200 (T = 39.1–39.3 mV) is:
+
+| Corner | No trip at | Trips at | Offset below the code (mV of shunt / LSB) |
+| --- | --- | --- | --- |
+| tt/27 °C | 30.0 mV | 31.25 mV | 8.0–9.3 / 40–47 (calibration rehearsal at 25 mV: 8.5–8.9 / 43–45) |
+| ss/125 °C | 30.0 mV | 31.25 mV (decision delayed to 1.80 µs) | 8.1–9.3 / 41–47 |
+| ff/−40 °C | 27.5 mV | 28.75 mV | **10.4–11.6 / 53–59** |
+
+Against the no-trip region as written above (≤ 0.9T), the uncalibrated part **fails**: at
+ff/−40 °C a 0.73T stimulus trips (tt and ss/125 °C: 0.80T trips, 0.76T does not). Cause: the
+comparator kick offset, growing at the fast/cold corner; not wiring, not the ECO. The joint
+calibrated mismatch screen (`../blocks/g1_trip/sim/qualification/joint_r3_mc_20260926/RESULTS.md`,
+24 seeds, simulated) shows the same temperature dependence across mismatch: room calibration
+brackets 22/24 seeds (hard offset before calibration +7.95 mV, sd 1.06 mV; soft +0.02 mV); all
+262 completed guard probes decide correctly; the ±0.5 mV residual holds at 25 and −40 °C, but at
+125 °C four seeds trip the hard path at 24.5 mV (16 passed, 4 failed electrically, 4 not run to
+completion). Disposition (chip frozen, no layout change):
+(a) per-part hard-threshold calibration on the bench stays mandatory (bracket the effective
+threshold with the DAC sweep);
+(b) the host applies a temperature-dependent hard-code correction from the on-chip T2F reading
+(H6);
+(c) the guaranteed no-trip band is **below the calibrated effective threshold minus the
+corner-dependent margin** of the table above (up to 2.3 mV / 12 LSB between tt and ff/−40 °C),
+until silicon characterisation replaces the simulated table. The ±0.5 mV hard accuracy statement
+holds at the calibration temperature only, until the bench calibration-vs-temperature table exists.
 
 GATE-low means the first downward crossing of 1.0 V that remains below 1.0 V
 for the remainder of the observed tripped interval. Measure external drain

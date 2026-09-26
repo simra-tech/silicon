@@ -131,14 +131,22 @@ this, and `compute_calibration()` follows. Repeat each 3×.
 
 | Action | Expected (simulated) | Accept | Record |
 | --- | --- | --- | --- |
-| Soft crossing | Cideal = 25/0.19623 = 127.4 at V<sub>REF</sub> 1.04 V (126.7 with the measured 1.0455 V). NF4 soft comparator within 0–1 LSB of its code [TRIP], so the highest code reading high is about 127 plus the sense-amplifier offset / 0.196 mV | bracketed to 1 code, monotonic, repeats within ±1 code (*proposed*) | full sweep (code, fraction high), both directions |
+| Soft crossing | Cideal = 25/0.19623 = 127.4 at V<sub>REF</sub> 1.04 V (126.7 with the measured 1.0455 V). NF4 soft comparator within 0–1 LSB of its code [TRIP], so the highest code reading high is about 127 plus the sense-amplifier offset / 0.196 mV. Full-chip rehearsal at tt (1 A, r3 deck): 130 silent, 128 fires [R3X] | bracketed to 1 code, monotonic, repeats within ±1 code (*proposed*) | full sweep (code, fraction high), both directions |
 | `SENSE_OFS` = round(Ccross − Cideal) | the part's sense offset in LSB (standalone R100 MC: ≤ 0.5 mV residual after an ideal correction; joint chip MC not run) | −128…127, and no target in S10 clips (spec §6: clipping = calibration failure) | value |
-| Hard crossing | the effective hard threshold is about 45 LSB **below** the code (40–56 over tt/ss/ff on the block bench, 41–47 on the chip netlists at tt/27 °C [TRIP], [SPEC §4]). So the highest high code is about Cideal + 45 = **172**, range 167–183 | bracketed, monotonic, repeats within ±1 code (*proposed*); outside 167–183: flag | full sweep, both directions |
+| Hard crossing | the effective hard threshold is about 45 LSB **below** the code (40–56 over tt/ss/ff on the block bench, 41–47 on the chip netlists at tt/27 °C [TRIP], [SPEC §4]). So the highest high code is about Cideal + 45 = **172**, range 167–183. Full-chip rehearsal at tt: 172 silent, 170 fires, 41–43 codes above the soft crossing [R3X] | bracketed, monotonic, repeats within ±1 code (*proposed*); outside 167–183: flag | full sweep, both directions |
 | `hard_extra` = hard correction − `SENSE_OFS` | about +45 (applied via `DAC_HARD`, because one `SENSE_OFS` cannot correct both comparators) | the target code + extra + `SENSE_OFS` ≤ 255 | value |
 | Uncalibrated witness: `DAC_HARD` 200, soft path off, step 28.75 mV and 31.25 mV | no trip at 28.75 mV; hard trip at 31.25 mV (1.25× nominal, inside the uncalibrated no-trip region: documented kick offset, calibration requirement) [R3] | record | trip/no-trip |
 
-Freeze the room-temperature calibration per sample. Record the offset again at each temperature,
-but do not recalibrate for acceptance (spec §6).
+| Hard crossing vs temperature (−40 / 25 / 125 °C, inhibit asserted, same sweep) | the hard offset is temperature-dependent: simulated effective threshold at code 200 is 8.0–9.3 mV below the code at tt/27 °C and ss/125 °C and **10.4–11.6 mV** at ff/−40 °C (r3 full-chip deck, [R3X]); joint MC: room calibration drifts > 0.5 mV of shunt at 125 °C in 4 of 20 seeds [JMC] | bracketed at each temperature | table code(T), the input to k(T) (H6) |
+
+Freeze the room-temperature calibration per sample, then build the per-part hard-code correction
+table k(T) from the three temperatures above. The host applies **hard code = calibrated code + k(T)**
+from the on-chip T2F reading (spec §6 H6); the soft path needs no temperature correction in
+simulation. Acceptance at each temperature (S10) uses the k(T)-corrected code; the ±0.5 mV hard
+accuracy statement holds at the calibration temperature only until this table exists (spec §6).
+
+[R3X] `../../blocks/g1_top/sim/FULLCHIP_CDL_R3_CORNERS_20260927.md` (simulated).
+[JMC] `../../blocks/g1_trip/sim/qualification/joint_r3_mc_20260926/RESULTS.md` (simulated).
 
 ## S10. Threshold verification with frozen calibration
 

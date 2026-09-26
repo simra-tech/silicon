@@ -1,0 +1,178 @@
+# extract of cdl_gB_pd_pex_ss_125C_gear_por_cdl5e47ae02_rtleco20260925_icx_functional_r3x.log (sha256 50e16ebcf7145765827abb181c734120db629deb29951e57c5dc879dc8806837, 432816 bytes; full log retained in bulk, see review/local-retention-20260925.json)
+# G1 CDL-driven full-chip run cdl_gB_pd_pex_ss_125C_gear_por_cdl5e47ae02_rtleco20260925_icx_functional_r3x  2026-09-26T07:05:57Z UTC
+# (g-B) power-up: VDD ramp 1-3 us, IOVDD/VDDA 5-7 us, EN low until 12 us; 10 kOhm external pull-down on GATE
+# deck build/g1_top/cdl_gB_pd_pex_ss_125C_gear_por_cdl5e47ae02_rtleco20260925_icx_functional_r3x.cir
+# CDL sha256 5e47ae022ab73b4e060afaee22a1299bc62e1a895f4c9e15f865820505d52629 blocks//work/designs/g1-guardian/blocks/g1_padring/netlist/g1_chip_top_1414_r3.cdl
+# g1_bgr <- sha256 01227a3d8d8210d10d2d1ee6933842351140b8825fe29282f0327936a3064ad5 blocks/g1_bgr/sim/postlayout/g1_bgr586_pex.spice
+# g1_sense <- sha256 ffb14762659eaf02b6a62e9edea3caa0e143cbc7881378b329d6ab9945a6554b blocks/g1_sense/sim/postlayout/g1_sense_r100_partialc.spice
+# g1_trip <- sha256 ba86b7b2a530abae365d539297909e033b24a54597f9cc75d8dff273c30d401c blocks/g1_trip/sim/postlayout/g1_trip_nf4_pex.spice
+# g1_gate <- sha256 e91617f5fcf6f5a0dc721a2ba53b507a05cc226d6dbf0bebaa858a1e7d876765 blocks/g1_gate/sim/postlayout/g1_gate_pex.spice
+# g1_t2f <- sha256 441edabc0484c9de1e035d585369f37d460afe32370e73935044693bbfd0c78a blocks/g1_t2f/sim/postlayout/g1_t2f_pex.spice
+# translation {'subckts': 40, 'interconnect': 'ddc88cc7', 'devices': {'removed dantenna': 8, 'D dpantenna': 7, 'M sg13_lv_nmos': 8, 'M sg13_lv_pmos': 7, 'ptap1 R from sg13g2_io.spi': 42, 'R ptap1': 42, 'M sg13_hv_nmos': 191, 'Q npn13G2': 1, 'M sg13_hv_pmos': 18, 'R rppd': 29, 'X': 36}, 'merged': 4833, 'meters': ['vm_bgr', 'vm_gatea', 'vm_gated', 'vm_ls', 'vm_lsd', 'vm_osc', 'vm_sense', 'vm_t2f', 'vm_t2fd', 'vm_tripa', 'vm_tripd'], 'swaps': {'g1_bgr': 'g1_bgr/sim/postlayout/g1_bgr586_pex.spice', 'g1_sense': 'g1_sense/sim/postlayout/g1_sense_r100_partialc.spice', 'g1_trip': 'g1_trip/sim/postlayout/g1_trip_nf4_pex.spice', 'g1_gate': 'g1_gate/sim/postlayout/g1_gate_pex.spice', 'g1_t2f': 'g1_t2f/sim/postlayout/g1_t2f_pex.spice'}, 'replaced': ['g1_digital', 'g1_osc']}
+# IO models sha256 1d53ab7df431b717ef5aff43e1117c0224681d5cc84886da37a319280ee958d6 /foss/pdks/ihp-sg13g2/libs.ref/sg13g2_io/spice/sg13g2_io.spi (ptap1 values only)
+# PDK commit 84374023ee8b4b126bebbba67fcbada0a9c0ff0b
+# ngspice-46 : Circuit level simulation program
+# Icarus Verilog version 14.0 (devel) (s20260301-328-geda9fdcd-dirty)
+# iverilog -g2005 -Wall -Wno-timescale -o /work/build/g1_top/cosim_9b36840f45677b250c323504.vvp.tmp1 /work/designs/g1-guardian/blocks/g1_top/sim/rtl/g1_dig_cosim_cdl_por.v /work/designs/g1-guardian/blocks/g1_ctrl/rtl_eco_20260925/g1_sync2.v /work/designs/g1-guardian/blocks/g1_ctrl/rtl_eco_20260925/g1_serial.v /work/designs/g1-guardian/blocks/g1_ctrl/rtl_eco_20260925/g1_trip_timer.v /work/designs/g1-guardian/blocks/g1_ctrl/rtl_eco_20260925/g1_regfile.v /work/designs/g1-guardian/blocks/g1_ctrl/rtl_eco_20260925/g1_digital_top.v /work/designs/g1-guardian/blocks/g1_ctrl/rtl_eco_20260925/g1_digital.v /work/designs/g1-guardian/blocks/g1_seu/rtl_eco_20260925/g1_tmr_reg.v /work/designs/g1-guardian/blocks/g1_seu/rtl_eco_20260925/g1_seu_chain.v /work/designs/g1-guardian/blocks/g1_seu/rtl_eco_20260925/g1_seu.v
+# compiled RTL build/g1_top/cosim_9b36840f45677b250c323504.vvp (tag cdl_gB_pd_pex_ss_125C_gear_por_cdl5e47ae02_rtleco20260925_icx_functional_r3x) sha256 13cf2d0968b71df9e0527a6297b91e0bf37882ef6fac20b6941bf91f8dc411ac
+# rtl sha256 07113cd7a5584bb21908a08be43a2a0fad52ecafa571066935fda37a2c80b1b3 designs/g1-guardian/blocks/g1_top/sim/rtl/g1_dig_cosim_cdl_por.v
+# rtl sha256 c14906d7d9256a771cd8fdc0ab14ba291131e151d24bf06b951b6bc693ad8ef2 designs/g1-guardian/blocks/g1_ctrl/rtl_eco_20260925/g1_sync2.v
+# rtl sha256 df4341e1878caef2f7bf27abb273a7a5af3e41b96658ffa02eedb2af97c48a5d designs/g1-guardian/blocks/g1_ctrl/rtl_eco_20260925/g1_serial.v
+# rtl sha256 5cab0bc384cef5a7b08d6c693da90e5347d0de10816830ba9b16c6d6be428c9f designs/g1-guardian/blocks/g1_ctrl/rtl_eco_20260925/g1_trip_timer.v
+# rtl sha256 33d549dafc4c097cc06cdbdb3237d3d4b1c5c9cd00eef5d9757474e07a1ab7f3 designs/g1-guardian/blocks/g1_ctrl/rtl_eco_20260925/g1_regfile.v
+# rtl sha256 4e3b8ff6cdc13f28670bb9c64b1f685782efc95a51e3644038989a220088fdd6 designs/g1-guardian/blocks/g1_ctrl/rtl_eco_20260925/g1_digital_top.v
+# rtl sha256 36757122c43271dfd439bf1623be6d5413adf3bbb97cbad40d5cccf5892f5c3d designs/g1-guardian/blocks/g1_ctrl/rtl_eco_20260925/g1_digital.v
+# rtl sha256 f53f82d97b91d4e815e662e72b40968949c7d74ce135f777dba7789201167ac5 designs/g1-guardian/blocks/g1_seu/rtl_eco_20260925/g1_tmr_reg.v
+# rtl sha256 6e10bbc02a8ff29116067f2067f648b959f17b542cb2360c50e7802010048573 designs/g1-guardian/blocks/g1_seu/rtl_eco_20260925/g1_seu_chain.v
+# rtl sha256 7c1831c99b5875a2dd48387db70fd5b1a0888a520fe8676bc4e071820b7fa736 designs/g1-guardian/blocks/g1_seu/rtl_eco_20260925/g1_seu.v
+# ... 
+ Reference value :  1.57869e-05
+ Reference value :  1.57869e-05
+ Reference value :  1.57870e-05
+ Reference value :  1.57871e-05
+ Reference value :  1.57873e-05
+ Reference value :  1.57879e-05
+ Reference value :  1.57885e-05
+ Reference value :  1.57886e-05
+ Reference value :  1.57890e-05
+ Reference value :  1.57892e-05
+ Reference value :  1.57893e-05
+ Reference value :  1.57896e-05
+ Reference value :  1.57899e-05
+ Reference value :  1.57905e-05
+ Reference value :  1.57911e-05
+ Reference value :  1.57925e-05
+ Reference value :  1.57955e-05
+ Reference value :  1.58087e-05
+ Reference value :  1.58314e-05
+ Reference value :  1.58373e-05
+ Reference value :  1.58377e-05
+ Reference value :  1.58381e-05
+ Reference value :  1.58383e-05
+ Reference value :  1.58383e-05
+ Reference value :  1.58388e-05
+ Reference value :  1.58406e-05
+ Reference value :  1.58458e-05
+ Reference value :  1.58653e-05
+ Reference value :  1.58903e-05
+ Reference value :  1.58907e-05
+ Reference value :  1.58911e-05
+ Reference value :  1.58913e-05
+ Reference value :  1.58913e-05
+ Reference value :  1.58918e-05
+ Reference value :  1.58919e-05
+ Reference value :  1.58919e-05
+ Reference value :  1.58920e-05
+ Reference value :  1.58920e-05
+ Reference value :  1.58921e-05
+ Reference value :  1.58921e-05
+ Reference value :  1.58921e-05
+ Reference value :  1.58922e-05
+ Reference value :  1.58922e-05
+ Reference value :  1.58922e-05
+ Reference value :  1.58922e-05
+ Reference value :  1.58922e-05
+ Reference value :  1.58922e-05
+ Reference value :  1.58922e-05
+ Reference value :  1.58922e-05
+ Reference value :  1.58922e-05
+ Reference value :  1.58922e-05
+ Reference value :  1.58923e-05
+ Reference value :  1.58923e-05
+ Reference value :  1.58924e-05
+ Reference value :  1.58925e-05
+ Reference value :  1.58925e-05
+ Reference value :  1.58927e-05
+ Reference value :  1.58931e-05
+ Reference value :  1.58937e-05
+ Reference value :  1.58946e-05
+ Reference value :  1.58949e-05
+ Reference value :  1.58954e-05
+ Reference value :  1.58959e-05
+ Reference value :  1.58964e-05
+ Reference value :  1.58965e-05
+ Reference value :  1.58969e-05
+ Reference value :  1.58973e-05
+ Reference value :  1.58982e-05
+ Reference value :  1.58999e-05
+ Reference value :  1.59022e-05
+ Reference value :  1.59061e-05
+ Reference value :  1.59222e-05
+ Reference value :  1.59433e-05
+ Reference value :  1.59434e-05
+ Reference value :  1.59440e-05
+ Reference value :  1.59443e-05
+ Reference value :  1.59443e-05
+ Reference value :  1.59448e-05
+ Reference value :  1.59466e-05
+ Reference value :  1.59517e-05
+ Reference value :  1.59713e-05
+ Reference value :  1.59963e-05
+ Reference value :  1.59966e-05
+ Reference value :  1.59971e-05
+ Reference value :  1.59973e-05
+ Reference value :  1.59973e-05
+ Reference value :  1.59978e-05
+ Reference value :  1.59979e-05
+ Reference value :  1.59979e-05
+ Reference value :  1.59979e-05
+ Reference value :  1.59980e-05
+ Reference value :  1.59980e-05
+ Reference value :  1.59981e-05
+ Reference value :  1.59981e-05
+ Reference value :  1.59981e-05
+ Reference value :  1.59982e-05
+ Reference value :  1.59982e-05
+ Reference value :  1.59982e-05
+ Reference value :  1.59983e-05
+ Reference value :  1.59983e-05
+ Reference value :  1.59984e-05
+ Reference value :  1.59985e-05
+ Reference value :  1.59986e-05
+ Reference value :  1.59986e-05
+ Reference value :  1.59986e-05
+ Reference value :  1.59987e-05
+ Reference value :  1.59987e-05
+ Reference value :  1.59987e-05
+ Reference value :  1.59987e-05
+ Reference value :  1.59987e-05
+ Reference value :  1.59988e-05
+ Reference value :  1.59989e-05
+ Reference value :  1.59991e-05
+ Reference value :  1.59996e-05
+ Reference value :  1.60000e-05
+No. of Data Rows : 13610
+gmax_ramps          =  3.59556e-05 at=  5.82417e-06
+gc_max              =  5.16891e-01 at=  1.30232e-09
+g_end               =  3.28254e+00
+
+Error: measure  t_g1r  when(WHEN) : out of interval
+ meas tran t_g1r when v(gate)=1.0 rise=1 from=0 to=11.9222u failed!
+
+
+Error: measure  t_g1f  when(WHEN) : out of interval
+ meas tran t_g1f when v(gate)=1.0 fall=1 from=0 to=11.9222u failed!
+
+Warning from checkvalid: vector t_g1f is not available or has zero length.
+Error: RHS "(t_g1f - t_g1r)*1e6" invalid
+ipk_ramps           =  2.06213e-09 at=  5.86105e-06
+q_ramps             =  2.45749e-14
+tripped_ramps       =  1.22964e+00 at=  5.61266e-06
+en_core_max         =  9.35492e-01 at=  4.97672e-06
+Error: &t_g1r: no such variable.
+Error: &t_g1f: no such variable.
+Error: &t_high_us: no such variable.
+POWERUP GATE_max_EN_low= 3.59556E-05  gate_core_max= 0.516891  en_core_max= 0.935492  GATE_above_1V_from_us=  to_us=  duration_us=  load_peak_A= 2.06213E-09  charge_As= 2.45749E-14  tripped_max= 1.22964  GATE_after_EN= 3.28254
+t_vdd06             =  2.00058e-06
+t_iovdd11           =  5.66719e-06
+t_por06             =  2.00154e-06
+t_oscen             =  1.15000e-09
+tripped_end         =  -7.92300e-05
+gate_core_end       =  1.20002e+00
+en_i_max_enlow      =  9.35492e-01 at=  4.97672e-06
+dig_trip_max        =  1.20000e+00 at=  6.67199e-06
+PORTIMING vdd_0p6_s= 2.00058E-06  iovdd_1p1_s= 5.66719E-06  por_n_0p6_s= 2.00154E-06  osc_en_rise_s= 1.15E-09  tripped_end= -7.923E-05  gate_core_end= 1.20002  en_i_max_EN_low= 0.935492  dig_trip_max_EN_low= 1.2
+Note: Simulation executed from .control section 
+
+# run status completed
+# ngspice exit 0, wall time 2269 s
