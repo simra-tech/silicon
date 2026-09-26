@@ -1,0 +1,28 @@
+# Sequential equivalence, name-independent: miter of the frozen ECO RTL and the r3 candidate v2
+# netlist, both clocks (osc_clk, sclk, negedge sclk) modelled with clk2fflogic, written as AIGER
+# and proven with ABC (dprove: signal correspondence + induction).
+read_verilog -DSYNTHESIS /work/designs/g1-guardian/blocks/g1_ctrl/rtl_eco_20260925/g1_sync2.v /work/designs/g1-guardian/blocks/g1_ctrl/rtl_eco_20260925/g1_serial.v /work/designs/g1-guardian/blocks/g1_ctrl/rtl_eco_20260925/g1_trip_timer.v /work/designs/g1-guardian/blocks/g1_ctrl/rtl_eco_20260925/g1_regfile.v /work/designs/g1-guardian/blocks/g1_seu/rtl_eco_20260925/g1_tmr_reg.v /work/designs/g1-guardian/blocks/g1_seu/rtl_eco_20260925/g1_seu_chain.v /work/designs/g1-guardian/blocks/g1_seu/rtl_eco_20260925/g1_seu.v /work/designs/g1-guardian/blocks/g1_ctrl/rtl_eco_20260925/g1_digital_top.v /work/designs/g1-guardian/blocks/g1_ctrl/rtl_eco_20260925/g1_digital.v
+hierarchy -check -top g1_digital
+proc; flatten; opt_clean
+rename g1_digital gold
+design -stash gold
+read_liberty -ignore_miss_func /foss/pdks/ihp-sg13g2/libs.ref/sg13g2_stdcell/lib/sg13g2_stdcell_typ_1p20V_25C.lib
+read_verilog /work/build/g1_gls_eco/in_r3cand2/g1_digital.nl.v
+hierarchy -check -top g1_digital
+flatten; opt_clean
+rename g1_digital gate
+design -stash gate
+design -copy-from gold -as gold gold
+design -copy-from gate -as gate gate
+read_verilog miter_top.v
+hierarchy -check -top miter_top
+proc; flatten; opt_clean
+clk2fflogic
+opt -fast; opt_clean
+techmap; opt -fast; aigmap; opt_clean
+setundef -undriven -zero
+setundef -zero
+opt_clean
+select -list i:*
+stat
+write_aiger -zinit -ywmap miter.ywmap.json miter.aig
