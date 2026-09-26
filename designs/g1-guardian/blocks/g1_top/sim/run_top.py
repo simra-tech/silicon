@@ -441,6 +441,8 @@ def make_cases():
                 load=[(0, INOM)], tstop=16, frames=[], en=[(12.0, 1)], ramp33=ramp33, ramp12=ramp12,
                 rpd=(10e3 if rpd == '10k' else None), expect='GATE high while VDD is absent (IO-cell property, R8)',
                 powerup=True, tstep=20e-9, front='beh', inpads='model', tmax=20e-9)
+    C['gS'] = dict(C['gB'], desc='(g-S) power-up: VDD and IOVDD/VDDA ramp together 1-3 us (ramp time as gB), EN low until 12 us; GATE loaded by 5 nF + 10 Ohm only',
+                   ramp33=(1.0, 3.0), ramp12=(1.0, 3.0), expect='GATE low while EN is low')
     return C
 
 
@@ -1063,10 +1065,10 @@ def build_deck(case, name, netlist, front, temp, corner, tag, tstop_override=Non
     A('wrdata %s %s' % (os.path.join(BUILD, 'waves_%s.txt' % tag), waves))
     A('.endc')
     A('.end')
-    if interconnect == 'extracted':
+    if interconnect in ('extracted', 'extracted-pi'):
         if front != 'tl':
             raise SystemExit('--interconnect extracted needs the transistor-level front end')
-        apply_interconnect(L, None if powerup else quiet, sense_route_r)
+        apply_interconnect(L, None if powerup else quiet, sense_route_r, pi=(interconnect == 'extracted-pi'))
     elif sense_route_r:
         raise SystemExit('--sense-route-r needs --interconnect extracted')
     if VDD_V != 1.2:
@@ -1163,8 +1165,26 @@ ICX_MAP = dict(
 SENSE_ROUTE_R = {'sense_p': 171.0, 'sense_n': 106.0}   # README: series R of the SENSE_P / SENSE_N pad routes (upper bound)
 
 
-def apply_interconnect(L, quiet, sense_route_r):
-    """Edit the deck lines in place for --interconnect extracted (and --sense-route-r)."""
+# --interconnect extracted-pi: g1_top_interconnect_pi (<port> = driver side, <port>_far = receiver side, series R
+# between them). The deck net is split: the listed receiver instances are moved onto <node>_far; the driver and
+# every other element (board parts, meters, measurements) stay on <node>. Receivers not in the deck are skipped;
+# a net with no receiver in the deck, or tied to a fallback level, gets both pi ends on the same node.
+ICX_RECEIVERS = dict(
+    [('isense', ('XTRIP',)), ('vref', ('XSENSE', 'XT2F', 'XPVREF')), ('vref_buf', ('XTRIP',)), ('iptat', ('XSENSE',)),
+     ('pbias', ('XT2F',)), ('pcasc', ('XT2F',)), ('cmp_soft', ('aadc',)), ('cmp_hard', ('aadc', 'XGATE')),
+     ('cmp_clk', ('XTRIP',)), ('osc_clk', ('aclock', 'Bosc_rx')), ('osc_en', ('Bosc',)), ('trip_d', ('XGATE',)),
+     ('clr_d', ('XGATE',)), ('fast_en', ('XGATE',)), ('tripped', ('aadc',)), ('en_core', ('XGATE',)),
+     ('gate_core', ('Bgate_drv', 'XPG')), ('fault_core', ('Bfault_drv', 'XPF')), ('sense_p', ('XSENSE',)),
+     ('sense_n', ('XSENSE',)), ('r4', ('XBGR',)), ('t2f_en12', ('XLSEN',)), ('t2f_mode12', ('XLSMODE',)),
+     ('t2f_en33', ('XT2F',)), ('t2f_mode33', ('XT2F',))] +
+    [('soft%d' % k, ('XTRIP',)) for k in range(8)] + [('hard%d' % k, ('XTRIP',)) for k in range(8)] +
+    [('trim%d' % k, ('XOSC',)) for k in range(4)])
+
+
+def apply_interconnect(L, quiet, sense_route_r, pi=False):
+    """Edit the deck lines in place for --interconnect extracted / extracted-pi (and --sense-route-r)."""
+    if pi and sense_route_r:
+        raise SystemExit('--sense-route-r applies to the C-only interconnect; the pi variant already has the route R')
     if sha256(TOP_INTERCONNECT) != TOP_INTERCONNECT_SHA256:
         raise SystemExit('%s does not match its bound SHA256 %s' % (TOP_INTERCONNECT, TOP_INTERCONNECT_SHA256))
     ports = subckt_ports(TOP_INTERCONNECT, 'g1_top_interconnect').split()
@@ -1192,10 +1212,28 @@ def apply_interconnect(L, quiet, sense_route_r):
             notes.append('%s->%s' % (p, fb))
             node = fb
         conn.append(node)
-    hdr = ['* ---- top-level interconnect (--interconnect extracted): %s sha256 %s' % (os.path.relpath(TOP_INTERCONNECT, ROOT), TOP_INTERCONNECT_SHA256),
-           '* C-only subckt g1_top_interconnect, sub = 0; removed wiring estimates: ' + (' | '.join(removed) or 'none'),
+    hdr = ['* ---- top-level interconnect (--interconnect %s): %s sha256 %s' % ('extracted-pi' if pi else 'extracted', os.path.relpath(TOP_INTERCONNECT, ROOT), TOP_INTERCONNECT_SHA256),
+           '* %s, sub = 0; removed wiring estimates: ' % ('pi-RC subckt g1_top_interconnect_pi' if pi else 'C-only subckt g1_top_interconnect') + (' | '.join(removed) or 'none'),
            '* ports without a deck node tied to their static reset level: ' + (', '.join(notes) or 'none')]
-    inst = hdr + ['XICX ' + ' '.join(conn) + ' g1_top_interconnect']
+    if not pi:
+        inst = hdr + ['XICX ' + ' '.join(conn) + ' g1_top_interconnect']
+    else:
+        k = L.index('.control')
+        split, far = [], {}
+        for p, node in zip(ports, conn):
+            recv = [i for i, l in enumerate(L[:k]) if l.split()[:1] and l.split()[0] in ICX_RECEIVERS.get(node, ())]
+            if node in ICX_RECEIVERS and recv and ICX_MAP[p][0] == node:
+                for i in recv:
+                    f = L[i].split(' ', 1)
+                    L[i] = f[0] + ' ' + re.sub(r'\b%s\b' % re.escape(node), node + '_far', f[1])
+                far[p] = node + '_far'
+                split.append('%s(%s)' % (node, ','.join(L[i].split()[0] for i in recv)))
+            else:
+                far[p] = node
+        pports = subckt_ports(TOP_INTERCONNECT, 'g1_top_interconnect_pi').split()
+        pconn = [far[x[:-4]] if x.endswith('_far') and x[:-4] in far else dict(zip(ports, conn))[x] for x in pports]
+        inst = hdr + ['* split nets: node = driver side (measurements), node_far = receivers: ' + ' '.join(split),
+                      'XICX ' + ' '.join(pconn) + ' g1_top_interconnect_pi']
     if sense_route_r:
         xs = [i for i, l in enumerate(L) if l.startswith('XSENSE sense_p sense_n ')]
         if len(xs) != 1:
@@ -1303,7 +1341,7 @@ def main():
                     help='G1_T2F behind two g1_ls_up at transistor level (baseline PEX, chip CDL wiring, fout into 1 pF; TEMP_OUT pad not modelled)')
     ap.add_argument('--view-override', default=None, metavar='BLOCK=VIEW[,...]',
                     help='per-block view after --netlist/--blockset resolution, e.g. bgr=sch,trip=pex (blocks bgr sense trip osc gate)')
-    ap.add_argument('--interconnect', default='estimate', choices=('estimate', 'extracted'),
+    ap.add_argument('--interconnect', default='estimate', choices=('estimate', 'extracted', 'extracted-pi'),
                     help='top-level wiring: Cw_* estimates (default) or the extracted g1_top_interconnect C (postlayout/top_interconnect_20260925.spice)')
     ap.add_argument('--sense-route-r', action='store_true',
                     help='with --interconnect extracted: series 171/106 Ohm on the SENSE_P/SENSE_N pad routes')
@@ -1416,7 +1454,7 @@ def main():
             case['tmax'] = a.maxstep_ns * 1e-9
         front = a.front or case.get('front', 'tl')
         osc = a.osc or case.get('osc', 'ideal')
-        tag = '%s_%s%s_%s_%s_%gC' % (name, a.netlist, '' if a.blockset == 'legacy' else '_' + a.blockset, front, a.corner, a.temp) + supply_tag + (('_fm' + vtag(a.fault_mult)) if a.fault_mult is not None else '') + ('_icx' if a.interconnect == 'extracted' else '') + ('_srr' if a.sense_route_r else '') + ('_ovr-' + '-'.join(k + v for k, v in sorted(VIEW_OVERRIDE.items())) if VIEW_OVERRIDE else '') + ('_t2ftl' if a.t2f == 'tl' else '') + ('_osctl' if osc == 'tl' and name != 'osc' else '') + ('_inpads' if a.inpads == 'model' else '') + ('_nodcn' if a.inpads == 'nodcn' else '') + ('_padsnodcn' if a.pads == 'nodcn' else '') + ('_outpads' if a.outpads == 'model' and front == 'tl' else '') + ('_%s' % a.method if a.method else '')
+        tag = '%s_%s%s_%s_%s_%gC' % (name, a.netlist, '' if a.blockset == 'legacy' else '_' + a.blockset, front, a.corner, a.temp) + supply_tag + (('_fm' + vtag(a.fault_mult)) if a.fault_mult is not None else '') + {'extracted': '_icx', 'extracted-pi': '_icxpi'}.get(a.interconnect, '') + ('_srr' if a.sense_route_r else '') + ('_ovr-' + '-'.join(k + v for k, v in sorted(VIEW_OVERRIDE.items())) if VIEW_OVERRIDE else '') + ('_t2ftl' if a.t2f == 'tl' else '') + ('_osctl' if osc == 'tl' and name != 'osc' else '') + ('_inpads' if a.inpads == 'model' else '') + ('_nodcn' if a.inpads == 'nodcn' else '') + ('_padsnodcn' if a.pads == 'nodcn' else '') + ('_outpads' if a.outpads == 'model' and front == 'tl' else '') + ('_%s' % a.method if a.method else '')
         tag += '_clockfix'
         if a.rtl_dir != 'rtl':
             tag += '_rtl' + a.rtl_dir.replace('_', '')
@@ -1487,8 +1525,8 @@ def main():
             log.write('# G1_TOP run %s  %s UTC\n# %s\n' % (tag, time.strftime('%Y-%m-%dT%H:%M:%SZ', time.gmtime()), case['desc']))
             log.write('# deck %s\n' % os.path.relpath(deck_path, ROOT))
             log.write('# supplies VDD %g V, VDDA = IOVDD %g V\n' % (VDD_V, VDDA_V))
-            if a.interconnect == 'extracted':
-                log.write('# interconnect extracted %s sha256 %s%s\n' % (os.path.relpath(TOP_INTERCONNECT, ROOT), sha256(TOP_INTERCONNECT),
+            if a.interconnect != 'estimate':
+                log.write('# interconnect ' + a.interconnect + ' %s sha256 %s%s\n' % (os.path.relpath(TOP_INTERCONNECT, ROOT), sha256(TOP_INTERCONNECT),
                                                                        ' + sense route R 171/106 Ohm' if a.sense_route_r else ''))
             if case.get('fault_mult'):
                 log.write('# fault-mult %g (case fault level %g x INOM)\n' % (case['fault_mult'][1], case['fault_mult'][0]))
