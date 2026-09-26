@@ -261,6 +261,9 @@ def cosim_digital(ports, vvp_note):
 
 
 HBT_SELFT0 = False   # --hbt-selft0 (set in main)
+INTERCONNECT = False  # --interconnect extracted (set in main)
+INTERCONNECT_FILE = os.path.join(HERE, 'postlayout/top_interconnect_20260925.spice')
+INTERCONNECT_SHA256 = 'ddc88cc765e99a0e982c9b6bc24817bfe336ae686930b2c12a85d514fb2adcc2'
 POR_PIN = False      # --por-pin (set in main)
 PEX_BLOCKS = ()   # --pex-blocks: blocks that use the extracted netlist under --netlist sch (set in main)
 KEEP_CDL = ()     # --keep-cdl: blocks that keep the CDL schematic subckt under --netlist pex (set in main)
@@ -316,6 +319,7 @@ def chip_netlist(netlist, osc, nodcn, fosc):
         L += ideal_osc([san(p) for p in subs['g1_osc'][0]], fosc)
     # deck-local copy of g1_chip_top: ammeters on block supply pins, identical filler instances merged
     body, meters, groups, merged = [], {}, collections.OrderedDict(), 0
+    report_ic = {}
     for l in subs[TOP][1]:
         t = l.split()
         if t[0][0] not in 'Xx':
@@ -335,6 +339,30 @@ def chip_netlist(netlist, osc, nodcn, fosc):
         body.append(' '.join([san(names[0])] + [san(n) for n in nets] + [cell] + (['m=%d' % len(names)] if len(names) > 1 else [])))
     for vm, rail in sorted(meters.items()):
         body.append('%s %s %s__%s dc 0' % (vm.capitalize(), rail, rail, vm))
+    if INTERCONNECT:
+        # extracted top-level routing (postlayout/README_top_interconnect_20260925.md): C-only subckt, each port on the
+        # CDL top net of the same name (i_core_ prefix, pad nets upper case), sub on VSS
+        ports = RT.subckt_ports(INTERCONNECT_FILE, 'g1_top_interconnect').split()
+        topnets = set()
+        for l in subs[TOP][1]:
+            topnets.update(inst_cell(l.split())[0])
+        topnets.update(subs[TOP][0])
+        conn = []
+        for p in ports:
+            if p == 'sub':
+                conn.append('VSS')
+                continue
+            if p in ('d_elt', 'd_std', 'g_shared', 'hbt_b', 'hbt_c', 'hbt_e', 'sense_n', 'sense_p'):
+                net = p.upper()                      # chip pins (pad side of the core route)
+            elif p in topnets:
+                net = p                              # en_i, gate_o, fault_n_o, net
+            else:
+                net = 'i_core_' + p
+            if net not in topnets:
+                raise SystemExit('interconnect port %s: CDL top net %s not found' % (p, net))
+            conn.append(san(net))
+        body.append('Xtop_interconnect %s g1_top_interconnect' % ' '.join(conn))
+        report_ic.update(ports=len(ports) - 1)
     L.append('* g1_chip_top: deck-local copy of the CDL top; %d filler/decap/antenna instances merged into %d (m=count);'
              % (sum(len(v) for v in groups.values()), len(groups)))
     L.append('* supply-pin ammeters %s' % ', '.join('%s on %s' % kv for kv in sorted(meters.items())))
@@ -348,7 +376,11 @@ def chip_netlist(netlist, osc, nodcn, fosc):
             t = l.split()
             if t and t[0].lower() == '.subckt' and t[1] in defined:
                 raise SystemExit('name clash: %s from blocks/%s is also emitted from the CDL' % (t[1], rel))
-    report = dict(subckts=len(order) - 1, devices=dict(tr.count), merged=merged, meters=sorted(meters), swaps=swaps,
+    if INTERCONNECT:
+        L.insert(0, '.include %s' % INTERCONNECT_FILE)
+        L.insert(0, '* extracted top-level interconnect (--interconnect extracted): %s sha256 %s, %d nets, C only (no series R)'
+                 % (os.path.relpath(INTERCONNECT_FILE, BLOCKS), RT.sha256(INTERCONNECT_FILE), report_ic['ports']))
+    report = dict(subckts=len(order) - 1, interconnect=(RT.sha256(INTERCONNECT_FILE)[:8] if INTERCONNECT else None), devices=dict(tr.count), merged=merged, meters=sorted(meters), swaps=swaps,
                   replaced=sorted(replaced))
     return L, swaps, report
 
@@ -466,6 +498,8 @@ def build_cdl_deck(case, name, netlist, temp, corner, tag, tstop, osc, method, n
 def check_instances(deck, swaps):
     """Every X instance of the deck resolves to a subckt (deck, included pex files or PDK device) with its port count."""
     text = deck + ''.join(open(os.path.join(BLOCKS, rel)).read() for rel in swaps.values())
+    if INTERCONNECT:
+        text += open(INTERCONNECT_FILE).read()
     defs, cur, bad = dict(PDK_DEVICES), None, []
     lines = []
     for raw in text.splitlines():
@@ -544,13 +578,35 @@ def main():
                          'translated CDL (not on included extracted netlists)')
     ap.add_argument('--por-pin', action='store_true',
                     help='RTL por_n driven by the CDL tiehi net (wrapper rtl/g1_dig_cosim_cdl_por.v) instead of tied to 1')
+    ap.add_argument('--cdl', default=None, metavar='PATH',
+                    help='alternative chip CDL (e.g. a regenerated canonical r3); requires --cdl-sha256, which is checked')
+    ap.add_argument('--cdl-sha256', default=None, help='expected SHA256 of --cdl')
+    ap.add_argument('--ser-start-us', type=float, default=None,
+                    help='compact timeline: first serial frame at this time instead of 4.0 us (EN rises at 3.0 us)')
+    ap.add_argument('--rtl-dir', default='rtl', choices=tuple(RT.RTL_DIRS), help='digital RTL copy (run_top.RTL_DIRS)')
+    ap.add_argument('--interconnect', default='none', choices=('none', 'extracted'),
+                    help='extracted: add the kpex top-level routing C (postlayout/top_interconnect_20260925.spice, hash-bound)')
+    ap.add_argument('--t2f-off-write', action='store_true',
+                    help='stimulus: serial write TEMP_CTRL (0x29, ECO register map 1.2) = 0 right after the first frame, so '
+                         'G1_T2F sits in its EN-low state; label: T2F disabled by register write, sensor accuracy not exercised')
+    ap.add_argument('--fault-mult', type=float, default=None, metavar='X',
+                    help="fault-event load level as X x nominal 1 A (run_top.scale_fault: single fault level, timing unchanged)")
     ap.add_argument('--dry', action='store_true')
     a = ap.parse_args()
     if a.analysis == 'prefix' and a.tstop is None:
         ap.error('--analysis prefix requires --tstop US')
     global KEEP_CDL, PEX_BLOCKS, HBT_SELFT0
     HBT_SELFT0 = a.hbt_selft0
-    global POR_PIN, WRAPPER
+    global POR_PIN, WRAPPER, CDL_REL, CDL_SHA256
+    if (a.cdl is None) != (a.cdl_sha256 is None):
+        ap.error('--cdl and --cdl-sha256 go together')
+    if a.cdl:
+        CDL_REL, CDL_SHA256 = os.path.abspath(a.cdl), a.cdl_sha256
+    RT.RTL_FILES = RT.make_rtl_files(a.rtl_dir)
+    global INTERCONNECT
+    INTERCONNECT = a.interconnect == 'extracted'
+    if INTERCONNECT and RT.sha256(INTERCONNECT_FILE) != INTERCONNECT_SHA256:
+        raise SystemExit('interconnect file does not match its bound SHA256')
     POR_PIN = a.por_pin
     if POR_PIN:
         WRAPPER = os.path.join(HERE, 'rtl/g1_dig_cosim_cdl_por.v')
@@ -564,11 +620,13 @@ def main():
     if a.timeline == 'compact':
         if a.cases != ['c_mid'] and a.cases not in (['c'], ['c_fast'], ['e20']):
             ap.error('compact timeline: one of c_mid, c, c_fast, e20')
-        RT.T_SER, RT.T_STEP = 4.0, 16.0
+        RT.T_SER, RT.T_STEP = (a.ser_start_us or 4.0), 16.0
         RT.CASES = RT.make_cases()
         RT.CASES['c_mid']['tstop'] = 28
         for k in ('c', 'c_fast', 'e20'):
             RT.CASES[k]['tstop'] = 22
+    if a.ser_start_us and a.timeline == 'baseline':
+        RT.T_SER = a.ser_start_us     # first serial frame (eco4_cdl_c_mid_ser4 timing), event time unchanged
     RT.RTL_WRAPPER_T2F = WRAPPER      # rtl_files('tl') -> the CDL wrapper first, then the unchanged RTL
     os.makedirs(BUILD, exist_ok=True)
     env = dict(os.environ)
@@ -577,12 +635,25 @@ def main():
         if name not in RT.CASES or name == 'osc':
             raise SystemExit('unknown or unsupported case %s' % name)
         case = dict(RT.CASES[name])
+        if a.fault_mult is not None:
+            try:
+                case = RT.scale_fault(case, a.fault_mult)
+            except ValueError as exc:
+                ap.error(str(exc))
+        if a.t2f_off_write:
+            if a.rtl_dir != 'eco_20260925' or not case['frames']:
+                ap.error('--t2f-off-write needs --rtl-dir eco_20260925 (TEMP_CTRL = 0x29) and a case with serial frames')
+            case['frames'] = [case['frames'][0], (0x29, 0x00)] + list(case['frames'][1:])
+            case['desc'] += '; T2F disabled by register write TEMP_CTRL=0 (stimulus), sensor accuracy not exercised'
+            if 'quiet' not in case and not a.ser_start_us:     # the extra frame ends ~1 us before the event: supply window = last 1 us before it
+                ev = case.get('event_us', RT.T_STEP)
+                case['quiet'] = (ev - 1.0, ev)
         method = a.method or ('gear' if case.get('powerup') else 'trap')
         if a.maxstep_ns:
             case['tmax'] = a.maxstep_ns * 1e-9
         tag = 'cdl_%s_%s_%s_%gC_%s%s%s%s%s_%s_%s' % (
             name, a.netlist, a.corner, a.temp, method, '_osctl' if a.osc == 'tl' else '', '_padspdk' if a.pads == 'pdk' else '',
-            ('_keep-' + '-'.join(KEEP_CDL) if KEEP_CDL else '') + ('_pexblk-' + '-'.join(PEX_BLOCKS) if PEX_BLOCKS else '') + ('_selft0' if HBT_SELFT0 else '') + ('_por' if POR_PIN else '') + ('_compact' if a.timeline == 'compact' else ''), (('_t%g' % a.tstop) if a.tstop else '') + (('_maxstep%gns' % a.maxstep_ns) if a.maxstep_ns else '') +
+            ('_keep-' + '-'.join(KEEP_CDL) if KEEP_CDL else '') + ('_pexblk-' + '-'.join(PEX_BLOCKS) if PEX_BLOCKS else '') + ('_selft0' if HBT_SELFT0 else '') + ('_por' if POR_PIN else '') + ('_compact' if a.timeline == 'compact' else '') + (('_cdl' + CDL_SHA256[:8]) if a.cdl else '') + (('_rtl' + a.rtl_dir.replace('_', '')) if a.rtl_dir != 'rtl' else '') + (('_ser%g' % a.ser_start_us).replace('.', 'p') if a.ser_start_us else '') + ('_icx' if INTERCONNECT else '') + ('_t2foff' if a.t2f_off_write else '') + (('_fm%g' % a.fault_mult).replace('.', 'p') if a.fault_mult is not None else ''), (('_t%g' % a.tstop) if a.tstop else '') + (('_maxstep%gns' % a.maxstep_ns) if a.maxstep_ns else '') +
             (('_opt' + re.sub(r'[^A-Za-z0-9]+', '', a.extra_options.replace('-', 'm'))) if a.extra_options else ''), a.analysis, run_id)
         for d, ext in ((BUILD, '.cir'), (os.path.join(HERE, 'logs'), '.log'), (os.path.join(HERE, 'logs'), '.json')):
             if os.path.exists(os.path.join(d, tag + ext)):
