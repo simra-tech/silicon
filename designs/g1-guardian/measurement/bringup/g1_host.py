@@ -863,6 +863,45 @@ class G1(object):
         self.config_snapshot = {k: v for k, v in rv.items()}
         return bad
 
+    # Pattern masks for the S3 write/read-back test: the bits write() accepts.
+    PATTERN_FORCE = {"MODE": (0x37, 0x00),          # never TRIP_SET_SEL (bit 3)
+                     "TEMP_CTRL": (0x03, 0x00),     # never BGR_R4 (bit 2)
+                     "OSC_CTRL": (0x1F, OSC_EN_BIT)}  # OSC_EN always 1
+
+    def pattern_test(self, patterns=(0x00, 0xFF, 0x55, 0xAA), passes=9):
+        """S3 write/read-back pattern test on every RW register, under the inhibit.
+
+        Each pattern is masked to the bits the host accepts: MODE & 0x37,
+        TEMP_CTRL & 0x03, OSC_CTRL | 0x10, the other registers to their
+        defined bits; SOFT_TIME goes through write_soft_time (H then L).
+        Mismatches are counted, not raised. Ends with safe_defaults().
+        Returns {"frames", "mismatches": [(reg, wrote, read)], "safe_defaults"}.
+        """
+        self._require_inhibit("pattern test")
+        self._need_version()
+        regs = [n for n, v in sorted(REGS.items(), key=lambda kv: kv[1][0])
+                if v[1] == "RW" and n not in ("SOFT_TIME_L", "SOFT_TIME_H")]
+        frames = 0
+        bad = []
+        for _ in range(int(passes)):
+            for p in patterns:
+                for name in regs:
+                    and_m, or_m = self.PATTERN_FORCE.get(name, (0xFF, 0x00))
+                    v = ((p & and_m) | or_m) & REGS[name][3]
+                    self.write(name, v, verify=False)
+                    got = self.read(name)
+                    frames += 2
+                    exp = self._expected_readback(name, v)
+                    if got != exp:
+                        bad.append((name, exp, got))
+                st = ((p << 8) | p) & 0xFFFF
+                try:
+                    self.write_soft_time(st)
+                except G1VerifyError as e:
+                    bad.append(("SOFT_TIME", st, str(e)))
+                frames += 4
+        return {"frames": frames, "mismatches": bad, "safe_defaults": self.safe_defaults()}
+
     # -- safety-relevant multi-byte writes -----------------------------------
     def write_soft_time(self, value):
         """SOFT_TIME (window = value x 256 osc_clk). r3: H then L, atomic on L.
@@ -911,8 +950,10 @@ class G1(object):
     def measure_fosc(self, interval_s=0.05):
         """f_OSC from two OSC_CNT reads a known host time apart (map 4.5).
 
-        interval_s must stay below the 16-bit wrap (1.68 s at 10 MHz, 1.35 s at
-        12.4 MHz). Host timing error dominates on real hardware: use >= 50 ms.
+        interval_s must stay below the 16-bit wrap x 2**OSC_DIV (1.68 s at 10 MHz,
+        1.35 s at 12.4 MHz with OSC_DIV 0). Host timestamp error dominates on real
+        hardware (about 1-2 % at 50 ms with 0.5-1 ms USB latency, computed): for
+        the S4 screen use interval_s=1.0 at OSC_DIV 0, or OSC_DIV 3 and 5 s.
         """
         div = self.read("OSC_DIV") & 7
         t0 = self.t.now()

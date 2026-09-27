@@ -1,8 +1,8 @@
 # G1 bring-up board checklist (chip of record r3, register map 1.2)
 
 What the bring-up PCB and bench must provide, derived from
-[`G1_TOP_LEVEL_SPECIFICATION.md`](../../specification/G1_TOP_LEVEL_SPECIFICATION.md) §3, §4, §6 (P1–P9),
-the bench plan [`../README.md`](../README.md) (B1–B8), the bond plan
+[`G1_TOP_LEVEL_SPECIFICATION.md`](../../specification/G1_TOP_LEVEL_SPECIFICATION.md) §3, §4, §6 (P1–P10),
+the bench plan [`../README.md`](../README.md) (B1–B10), the bond plan
 [`../../padframe/BONDPLAN_20260925.md`](../../padframe/BONDPLAN_20260925.md), the register map
 [`G1_REGISTER_MAP.md`](../../specification/G1_REGISTER_MAP.md) and the block records cited inline.
 
@@ -65,15 +65,24 @@ leads **18–13** and die pads 19–24 on leads **24–19**, reversed within eac
   `VDDA` supply. `VDDA` must never exceed `IOVDD` by a diode drop, because the analog-pad ESD diodes
   reference `IOVDD`.
 - [ ] Fast 3.3 V ramp, target < 100 µs (P2).
-- [ ] **`VDD` undervoltage supervisor that asserts the load-bus inhibit** (P8/B7). A `VDD` brownout with
-  `IOVDD` present reproduces the IO-first unsafe state.
+- [ ] **`VDD` undervoltage supervisor that asserts the load-bus inhibit and drives `EN` low** (P8/B7).
+  After `VDD` returns, the host holds `EN` low ≥ 2 µs, rewrites and reads back the configuration (H5),
+  then releases the inhibit. A `VDD` brownout with `IOVDD` present reproduces the IO-first unsafe state:
+  with `EN` high `GATE` stays at 3.30 V through the dip (simulated). `por_n` is tied high, so the core is
+  not reset after a `VDD` dip with `EN` high; configuration, `clr_pulse` and `tripped` can come back
+  random, and a random `clr_d` clears a held analog trip (RTL reasoning, red team F3).
 - [ ] **Current-limited bench supplies.** *Proposed* initial limits: 1.2 V at 20 mA and 3.3 V at 20 mA.
   Expected quiescent VDDA is about 1.46 mA and IOVDD 0.1 mA with `TEMP_OUT` toggling (simulated).
   `GATE` edges draw 3.5–6.2 mA peaks from `IOVDD` (simulated), and local decoupling supplies these.
-  The `VDD` current of the digital macro was **not simulated**, so record it before tightening the limit.
+  The `VDD` current is about 0.85–1.2 mA (oscillator 115 µA simulated + digital macro 0.73–1.21 mA
+  *computed* by vectorless STA, red team BR-6); record it before tightening the limit.
 - [ ] Decoupling at leads 1, 3 and 7 (*proposed*: 100 nF X7R at the lead + 1 µF nearby, placed on the chip
   side of each sense link).
 - [ ] Rails, `GATE` and `EN` brought to test points so every power cycle can be captured (B1).
+- [ ] *Optional (proposed):* a removable 0 Ω link in the `VDDA` branch after its sense link, for
+  supervised isolation of a `VDDA` short (red team BR-10). Serial access with `VDDA` open is possible in
+  principle (oscillator, digital macro and IO run from `VDD`/`IOVDD`) but **not simulated**; the `GATE`
+  state in that mode is unknown, so keep the inhibit asserted. `VDDA` below `IOVDD` is permitted (P3).
 
 ## 3. Load path, inhibit and FET (P2, P7, B2, feasibility envelope)
 
@@ -101,6 +110,11 @@ leads **18–13** and die pads 19–24 on leads **24–19**, reversed within eac
   the sense pins* ([feasibility envelope](../../specification/FEASIBILITY_DEMO_ENVELOPE_20260922.md)).
   Inductive or autonomous loads: **not run**, out of scope.
 - [ ] Clamp and return path for the load drawn explicitly on the schematic.
+- [ ] **FET hold-off against drain dV/dt** (P10/B9): a gate–source capacitor ≥ 10× C<sub>rss</sub> at the
+  FET, a short gate loop, or a load-bus dV/dt ≤ 0.1 V/ns. With the CSD16340Q3 model, a 5 nH + 10 Ω gate
+  loop and a 0 → 12 V drain edge of 1.2 V/ns or faster, V<sub>GS</sub> peaked at 1.08–1.25 V against
+  V<sub>th</sub> 0.861 V (simulated, red team F4); the 10× C<sub>rss</sub> capacitor was not simulated.
+  Verify with the drain-step hold-off test (bench plan, "Before enabling a load", step 6).
 
 ## 4. Shunt and sense pins (P9, B8, spec §4)
 
@@ -120,8 +134,11 @@ leads **18–13** and die pads 19–24 on leads **24–19**, reversed within eac
   Before arming and after every EN cycle, run `G1.kelvin_check()` with load current flowing
   (`STATUS2.CMP_SOFT` = 1 at `DAC_SOFT` 5). *Optional (proposed):* a removable 0 Ω link in `SENSE_N`
   for a deliberate, supervised open-lead characterization. That behaviour is unqualified.
-- [ ] Calibration input: a traceable low-noise source (25.00 mV nominal) connectable at the Kelvin
-  pins with the load bus inhibited, plus a 6½-digit DMM across `SENSE_P`–`SENSE_N`.
+- [ ] Calibration input (B10): the shunt is fixed, so 25.00 mV at the Kelvin pins is a **known current
+  through the shunt** (about 1 A at 25 mV, 1.4 A at 35 mV) from a source separate from the inhibited load
+  bus, read with a 6½-digit DMM across `SENSE_P`–`SENSE_N`. Alternative: a make-before-break relay that
+  swaps the Kelvin pair to a mV source, switched only with `EN` low. A mV source across the Kelvin pins
+  with the shunt in circuit cannot be applied as such (red team BR-4).
 
 ## 5. `VREF` pin (lead 13) capacitor (P4, P5, B3, B4)
 

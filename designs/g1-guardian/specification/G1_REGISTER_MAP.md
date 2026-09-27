@@ -24,7 +24,10 @@ actual frequency through `OSC_CNT` (section 4.5) and correct its settings.
 
 ## 1. Three-wire serial interface
 
-Pins: `SCLK` (14, in), `SDI` (15, in), `SDO` (16, out). There is no chip
+Pins: `SCLK` (die pad 14 / QFN24 lead 17, in), `SDI` (die pad 15 / lead 16, in),
+`SDO` (die pad 16 / lead 15, out). Board schematics use the lead number: QFN24 lead 14
+is `TEMP_OUT`, a 16 mA push-pull output (`../padframe/bondmap_20260926_r4.csv`;
+corrected 2026-09-27, red team BR-8). There is no chip
 select. The protocol is SPI mode 0 (CPOL = 0, CPHA = 0): `SCLK` idles low,
 `SDI` is sampled on the rising edge, `SDO` changes on the falling edge and is
 stable at the next rising edge. Bytes are sent MSB first.

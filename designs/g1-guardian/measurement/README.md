@@ -41,11 +41,15 @@ unpowered controls and separately designated stress samples before exposure.
 
 ## Board and bench requirements (2026-09-24)
 
-These apply to the chip of record `g1_chip_top_1414.gds` (`629d303a…`). The
-numbers are **simulated**; none has been measured. Specification:
-`../specification/G1_TOP_LEVEL_SPECIFICATION.md` §6, P1–P9. Rows B2, B3, B6–B8 were
+These apply to the chip of record r3, `g1_chip_top_1414_r3.gds` (`7d07a784…`); the
+earlier text named r1 `g1_chip_top_1414.gds` (`629d303a…`), corrected 2026-09-27 (red team
+BR-8). The numbers are **simulated**; none has been measured. Specification:
+`../specification/G1_TOP_LEVEL_SPECIFICATION.md` §6, P1–P10. Rows B2, B3, B6–B8 were
 corrected on 2026-09-25 from the electrical red-team review
-([ELECTRICAL_SYSTEM.md](../review/redteam-20260925/ELECTRICAL_SYSTEM.md)).
+([ELECTRICAL_SYSTEM.md](../review/redteam-20260925/ELECTRICAL_SYSTEM.md)); B7 was extended
+and B9, B10 added on 2026-09-27 from the red-team reviews
+[`trip_path/FINDINGS.md`](../review/redteam-20260927/trip_path/FINDINGS.md) (F3, F4) and
+[`bringup/FINDINGS.md`](../review/redteam-20260927/bringup/FINDINGS.md) (BR-4).
 
 | # | Requirement | Bench implementation | Basis (simulated) |
 | --- | --- | --- | --- |
@@ -55,9 +59,10 @@ corrected on 2026-09-25 from the electrical red-team review
 | B4 | `VREF` pin capacitance trade-off | Choose the capacitor before the run and record it. Scale the B3 delay with it | 0 nF: 1 % in about 7–8 µs, 1.3–1.7 % overshoot during the ramp, and the pin sees probe loading directly. 10 nF: 1.2–1.3 ms. 100 nF: 11.8–13.2 ms. Stock-pad startup at ss/125 °C did not converge in simulation (numerical; the pad-less stand-in settles) |
 | B5 | `VDDA` (pin 7) tied to the `IOVDD` rail | One 3.3 V source with separate current-sense links for `VDDA` and `IOVDD` (≤ 0.5 Ω each, decoupled on the chip side), or the sense on the common 3.3 V source; no separate `VDDA` supply; decouple `VDDA` at pin 7 | Analog-pad ESD diodes reference `IOVDD` (`PLAN.md` D14); a larger `IOVDD` link lets `VDDA` exceed `IOVDD` during 30 mA `GATE` / 16 mA `TEMP_OUT` edges |
 | B6 | Pull-downs on `EN`, `SCLK`, `SDI`; `EN` routed away from `FAULT_N`/`GATE` | For example 100 kΩ at the package on each | The input pads have no pull and no hysteresis; noise on floating `SCLK`/`SDI` can complete write frames (e.g. disable both paths; on the r2 fallback also stop the clock); floating `EN` gives a random enable. Chip of record r3 (map 1.2): the digital reset needs 8 consecutive EN-low samples, so a short glitch does not reset the registers, but the analog `en_core` path still turns `GATE` off and clears the G1_GATE latch; each EN reset re-opens the about 0.11 ms inrush mask. r2 fallback (map 1.1): `EN` is an unfiltered asynchronous reset; a few-ns low glitch clears a latched trip, resets all registers and re-opens the 1 ms inrush mask |
-| B7 | `VDD` supervisor; grounds | A `VDD` undervoltage supervisor asserts the load-bus inhibit. Tie `VSS`, `IOVSS` and the paddle together at the package | A `VDD` brownout with `IOVDD` present reproduces the IO-first unsafe state. `VSS` and `IOVSS` are joined on the die only through substrate resistors |
+| B7 | `VDD` supervisor; grounds | A `VDD` undervoltage supervisor asserts the load-bus inhibit **and drives `EN` low**. After `VDD` returns: hold `EN` low ≥ 2 µs, rewrite and read back the configuration (H5), then release the inhibit. Tie `VSS`, `IOVSS` and the paddle together at the package | A `VDD` brownout with `IOVDD` present reproduces the IO-first unsafe state: with `EN` high `GATE` stays at 3.30 V through the whole `VDD` collapse (simulated, tt/ss/ff) while nothing protects the FET. `por_n` is tied high, so the core is not reset after a `VDD` dip with `EN` high: configuration, `clr_pulse` and `tripped` can return random, and a random `clr_d` clears a held analog trip (RTL reasoning; recovery with the digital in the loop not run; red team F3). `VSS` and `IOVSS` are joined on the die only through substrate resistors |
 | B8 | Device-pin limits | `G_SHARED` ≤ 1.32 V except in a declared stress experiment (thin-oxide gate, no secondary protection; handle die pad 19 = QFN24 lead 24 as ESD-sensitive; lead numbers per spec §3 and `padframe/BONDPLAN_20260925.md`); every device pin ≥ −0.3 V while powered; shunt voltage at the sense pins ≤ 100 mV; never leave `SENSE_P` open while powered | spec §4 absolute maximum; `ELECTRICAL_SYSTEM.md` S1, S5 |
-
+| B9 | FET hold-off against drain dV/dt (P10) | A gate–source capacitor ≥ 10× C<sub>rss</sub> at the FET, a short gate loop, or a load-bus dV/dt ≤ 0.1 V/ns; record which. Verify with the drain-step hold-off test ("Before enabling a load", step 6) | CSD16340Q3 model, 5 nH + 10 Ω gate loop, drain 0 → 12 V with the FET held off: V<sub>GS</sub> peak 0.365–0.446 V for a 100 ns edge, **1.08–1.15 V** for 10 ns (1.2 V/ns) and **1.13–1.25 V** for 2 ns, against V<sub>th</sub> 0.861 V (`nodcn` pads; red team F4). The 10× C<sub>rss</sub> capacitor was not simulated |
+| B10 | Calibration input on a fixed shunt | The 25 mΩ shunt stays in circuit, so the calibration voltage is a known current through the shunt (about 1 A at 25 mV, 1.4 A at 35 mV) from a source separate from the inhibited load bus, read with a 6½-digit DMM on the Kelvin pins; or a make-before-break relay that swaps the Kelvin pair to a mV source, switched only with `EN` low. Never open `SENSE_P` while powered (B8, P9) | A voltage source across the Kelvin pins looks into the fixed shunt (red team BR-4) |
 Record the actual ramp times, the `VDD`-to-`IOVDD` delay, the pull-down value,
 the `VREF` capacitor (value and ESR) and the `EN` delay in the run sheet. The
 BGR586 supply current (319.7 µA simulated, tt/27 °C) is a large part of the
@@ -67,7 +72,11 @@ BGR586 supply current (319.7 µA simulated, tt/27 °C) is a large part of the
 
 1. Check unpowered continuity and pin isolation with bounded test current.
    Confirm pin map, paddle/ground connectivity, both Kelvin sense leads and
-   separate supply currents. Keep the load bus physically isolated or inhibited
+   separate supply currents. A supply-lead check that only screens for shorts
+   cannot see an open supply bond: force the forward direction with ≥ 1 V
+   compliance, flag a reading at compliance as open, and tie the rails to ground
+   through a switch rather than a disabled supply output (bring-up S1, red team BR-9).
+   Keep the load bus physically isolated or inhibited
    by an independent external device; document and verify that device's state.
    EN is not a configuration-preserving load-bus inhibit.
 2. Hold external EN low and keep the independent load-bus inhibit asserted
@@ -93,6 +102,17 @@ BGR586 supply current (319.7 µA simulated, tt/27 °C) is a large part of the
 5. During shutdown isolate the load bus, lower EN, and keep the core rail present
    until the IO rail is down. Test each permitted ramp, brownout and missing-rail
    response before a load-energy test. Capture actual rail/GATE/FET VGS waveforms.
+   For a `VDD` brownout, verify the B7 response: the supervisor asserts the inhibit and
+   drives EN low; after `VDD` returns, EN stays low ≥ 2 µs and the configuration is
+   rewritten and read back before the inhibit is released.
+6. Drain-step hold-off (B9, P10), before any energized fault test: with `GATE` held off
+   (EN low, then again tripped), step the drain from 0 V to the declared bus voltage at
+   the fastest edge the fixture can produce, and at the declared bus dV/dt. Capture FET
+   V<sub>GS</sub> at the FET, `GATE` at the pin and drain current. Simulated reference
+   (CSD16340Q3 model, 5 nH + 10 Ω gate loop, 0 → 12 V, no gate–source capacitor):
+   V<sub>GS</sub> 0.365–0.446 V at 100 ns, 1.08–1.15 V at 10 ns, 1.13–1.25 V at 2 ns,
+   V<sub>th</sub> 0.861 V. Accept (*proposed*): V<sub>GS</sub> peak below the fitted FET's
+   V<sub>th</sub> with margin at every edge tested. **Not run.**
 
 Qualify the independent protection fixture without relying on G1 before any
 energized load test: inject a bounded external fault while the DUT is isolated,
@@ -180,7 +200,8 @@ host software follows these rules on every run:
 ## Calibration and breaker tests
 
 1. Apply a traceable interior shunt voltage, initially 25 mV (1 A at nominal
-   25 mΩ). Use zero SENSE_OFS and zero hysteresis to bracket each comparator's
+   25 mΩ), as a known current through the shunt read at the Kelvin pins, or through
+   the B10 relay (B10). Use zero SENSE_OFS and zero hysteresis to bracket each comparator's
    crossing with threshold codes. Include both approach directions and repeated
    decisions. A shorted-shunt point alone need not bracket both offset signs.
 2. Calculate signed correction with the documented register convention and
@@ -194,8 +215,17 @@ host software follows these rules on every run:
    Bracket the hard crossing starting about 60 codes above the target and
    stepping down, not only around the target code. Expect the calibrated hard
    code 40–56 codes above the nominal one (simulated block bench over corners), and a usable hard range of
-   about 25–40 mV of shunt. Record the measured offset at each temperature.
+   about 25–40 mV of shunt (about 25–38 mV effective, red team BR-2). Record the measured offset at each temperature.
    The simulated corner spread exceeds what one room-temperature point absorbs.
+   Bracket the hard path in its operating state (spec §6 H6): `DAC_SOFT` set so that
+   the soft comparator decides high (a code below the soft crossing), at the `OSC_TRIM`
+   used in operation, with T2F in its operating state, and at the operating hard target
+   (or at 25 mV and at the target, interpolating the offset against the code). In
+   simulation the offset is 40–45 LSB with the soft comparator high against 46–51 LSB with
+   it low, moves about 3 LSB over the oscillator span, and grows 0.10 LSB per code (red team
+   F2, BR-1). Repeat at every declared temperature. There is **no simulated k(T)
+   fallback**: until the per-part bench table exists, hard accuracy is declared only at the
+   calibration temperature. Use hard targets ≤ 33 mV for the temperature matrix.
    The soft path is within 1 LSB in simulation. A common offset
    correction cannot cancel independent comparator errors and gain error.
 3. Freeze room-temperature calibration. At declared thresholds outside inrush,

@@ -33,15 +33,15 @@ Main sources used for the expected values:
 
 ## S1. Unpowered continuity and leakage, per pin (pad level)
 
-Put all supplies at 0 V and connect them to ground through the supply outputs (disabled but
-connected). Use an SMU on one lead at a time with every other lead grounded. Force the currents
+Put all supplies at 0 V and tie each rail to ground through a switch. A disabled but connected
+bench output may float instead of sitting at 0 V (red team BR-9). Use an SMU on one lead at a time with every other lead grounded. Force the currents
 listed below with ±1.0 V compliance. For `G_SHARED` (lead 24) use ±10 µA with ±0.8 V compliance.
 
 | Action | Expected | Screen | Record |
 | --- | --- | --- | --- |
 | Signal and analog leads (8–24): force −100 µA (diode to `IOVSS`/`VSS`) and +100 µA (diode to the grounded `IOVDD`) | diode-like forward drop both ways (ESD diodes of every `sg13g2_io` pad). Typical silicon junction about 0.5–0.8 V. **Not simulated** for these pads | forward drop within ±100 mV of the lot median; \|V\| at compliance = open bond; \|V\| < 0.1 V = short | V at ±100 µA per lead, per sample |
 | Same leads at +0.2 V and −0.2 V (below diode turn-on): leakage | nA range or less (the pad diodes set the floor for S12) | flag anything above 100 nA (*proposed*) | I per lead, settling time |
-| Supply leads 1 (`VDD`), 3 (`IOVDD`), 7 (`VDDA`) vs ground: force +10 µA and −10 µA with ±0.5 V compliance | power-clamp/diode behaviour; not simulated | no short (\|V\| > 0.1 V) | V, I |
+| Supply leads 1 (`VDD`), 3 (`IOVDD`), 7 (`VDDA`) vs ground: force +10 µA and −10 µA, with ≥ 1 V compliance in the forward (−10 µA) direction | power-clamp/diode behaviour; not simulated | no short (\|V\| > 0.1 V); a reading at compliance is flagged **open**. At ±0.5 V compliance an open bond and a diode near 0.5 V read the same, so this check alone cannot see an open supply bond; the S2 supply currents confirm it (BR-9) | V, I |
 | Ground leads 2, 4, 5, 6 vs paddle, 4-wire | low-ohmic after board tie (B7) | < 1 Ω (*proposed*) | R |
 | Adjacent-lead check between `SENSE_P`/`SENSE_N` (8/9) and `GATE`/`FAULT_N`/`EN` (10–12) | isolation through the pad diodes only | no short | V |
 
@@ -55,11 +55,34 @@ de-energized. Capture `VDD`, `IOVDD`, `EN` and `GATE` on a scope.
 | Action | Expected (simulated) | Accept | Record |
 | --- | --- | --- | --- |
 | Ramp `VDD` 1.2 V, then `IOVDD`/`VDDA` 3.3 V (< 100 µs ramp) | `GATE` ≤ 31 µV while `EN` low [R3 gB, gB_pd], ≤ 72.5 mV with stock pad models [RES §5]. The G1_GATE `tripped` latch may toggle while `IOVDD` < 1.1 V (spurious-latch window, invisible at `GATE`) [R3] | `GATE` < 0.5 V throughout (*proposed*, below FET threshold) | both ramps, `VDD`→`IOVDD` delay, `GATE` max |
-| Supply currents with `EN` low, rails stable | not simulated as a separate state | none; record only | I(`VDD`), I(`VDDA`), I(`IOVDD`) |
+| Supply currents with `EN` low, rails stable | I(`VDD`) ≈ **0.85 mA**: oscillator 115 µA [R3] + digital macro 0.73 mA (*computed*, vectorless STA with the clock running and static data, [PWR]); ≲ 0.12 mA if the oscillator is dead. I(`VDDA`), I(`IOVDD`): as S6 | none; record only (triage: S2b) | I(`VDD`), I(`VDDA`), I(`IOVDD`) |
 | Wait the `VREF` settling delay with `EN` low | 10 nF: 1 % in 1.20–1.32 ms [BGR]; use ≥ 2 ms (P4) | — | delay used |
 
 IO-first order is a known unsafe condition (`GATE` 3.300 V for 4.34 µs, [R3] gA). It is **not**
 performed on first parts.
+
+[PWR] `review/redteam-20260927/bringup/digital_power/` (OpenSTA 3.1.0 `report_power`, r3 macro
+netlist `4b83f181` + SPEF `0b626c7f`, typ 1.20 V 25 °C, 9.436 MHz; vectorless: switching activity
+set globally, not from a waveform).
+
+## S2b. Dead-part triage without the serial interface
+
+Run when S3 fails (no `CHIP_ID`) or any S2 current is out of family. Every observation here needs no
+serial access. Inhibit asserted.
+
+| Observation | Healthy (simulated/computed) | Points to |
+| --- | --- | --- |
+| `VREF` pin | 1.045 V (BGR586, tt) [BGR] | BGR / `VDDA` |
+| I(`VDDA`) | 1.28–1.73 mA over corners [R3], [RES] | analog bias |
+| `TEMP_OUT` with `EN` low | 1.52 MHz at 27 °C. It runs even with a dead oscillator (RTL: `TEMP_CTRL` reset 0x01, asynchronous reset) | T2F, `g1_ls_up`, 16 mA pad, `IOVDD` |
+| I(`VDD`) with `EN` low | ≈ **0.85 mA** (osc 115 µA [R3] + macro 0.73 mA static, *computed* [PWR]) | oscillator and clock tree alive. A dead oscillator leaves **≲ 0.12 mA** (oscillator bias + 1.7 µA leakage) |
+| I(`VDD`), `EN` high minus `EN` low | + about 0.1–0.4 mA (checkerboard scrubber; *computed* 0.83–1.21 mA total at 0.1–0.5 activity [PWR]) | reset released, scrubber running |
+| `GATE` with `EN` high, no shunt voltage | 3.3 V | `EN` pad, G1_GATE, 30 mA pad |
+| Serial write `TEMP_CTRL` = 0 → `TEMP_OUT` stops; `MODE.FORCE_TRIP` → `GATE`/`FAULT_N` low | — | write path works even if `SDO`/reads fail |
+| 45 mV at the Kelvin pins with reset defaults (hard 0xFE, effective about 39–42 mV) | `GATE` < 1 V within about 1.5 µs [R3] | whole breaker path without the host |
+
+Source: `review/redteam-20260927/bringup/FINDINGS.md` BR-6. The `VDD` currents are a vectorless
+estimate; `VDD` current with real switching activity is not run.
 
 ## S3. Identify (map 1.2)
 
@@ -68,15 +91,15 @@ performed on first parts.
 
 | Action | Expected | Accept | Record |
 | --- | --- | --- | --- |
-| Read `CHIP_ID` (0x00) and `VERSION` (0x01) | 0x47, **0x12** (r3). 0x11 means an r2/r1 die with map 1.1 | exact. 0x11: stop and record the die as r2, then rerun with the map-1.1 host rules. Anything else: check wiring and idle timing | both bytes, 10 repeats |
+| Read `CHIP_ID` (0x00) and `VERSION` (0x01) | 0x47, **0x12** (r3). 0x11 means an r2/r1 die with map 1.1 | exact. 0x11: stop and record the die as r2, then rerun with the map-1.1 host rules. Anything else: check wiring and idle timing, then S2b | both bytes, 10 repeats |
 | Dump all readable registers | reset table of [MAP] §4 (`DAC_SOFT` 0x99, `DAC_HARD` 0xFE, `SOFT_TIME` 0x0027, `HARD_N` 0x04, `INRUSH` 0x02, `MODE` 0x03, `OSC_CTRL` 0x18, `TEMP_CTRL` 0x01, `SEU_CTRL` 0x01, `STATUS` 0x80 after the inrush window, `DAC_*_EFF` 0x99/0xFE) | exact match | full dump |
-| Write/read-back pattern test on every RW register (0x00, 0xFF, 0x55, 0xAA masked to the defined bits; `SOFT_TIME` via H then L). Then `safe_defaults()` | reserved bits read 0, `OSC_CTRL` bit 4 reads 1; no mismatches | 0 mismatches over ≥ 1000 frames | mismatch count, SCLK frequency |
+| Write/read-back pattern test on every RW register, `G1.pattern_test()`: 0x00, 0xFF, 0x55, 0xAA masked to the bits the host accepts (`MODE` & 0x37, `TEMP_CTRL` & 0x03, `OSC_CTRL` \| 0x10, the other registers to their defined bits; `SOFT_TIME` via H then L), 9 passes (1080 frames). Then `safe_defaults()` (done by `pattern_test`) | reserved bits read 0, `OSC_CTRL` bit 4 reads 1; no mismatches | 0 mismatches over ≥ 1000 frames | mismatch count, SCLK frequency |
 
 ## S4. Oscillator alive and trimmed
 
 | Action | Expected (simulated) | Screen | Record |
 | --- | --- | --- | --- |
-| Read `OSC_CNT` twice about 50 ms apart (`measure_fosc`) | increments every 256 osc cycles (25.6 µs at 10 MHz); f<sub>OSC</sub> 9.436 MHz at trim 8, tt/27 °C (loaded; transistor-level run 9.4416 MHz [R3] osc); corner span 7.61–12.43 MHz [RES §6] | 7.0–13.0 MHz | f, host interval |
+| Read `OSC_CNT` twice a long interval apart: `measure_fosc(interval_s=1.0)` at `OSC_DIV` = 0 (under the 1.35 s wrap at 12.43 MHz), or `OSC_DIV` = 3 and 5 s (wrap 10.8 s). The 50 ms default gives about 1–2 % error from adapter timestamp latency (*computed*, assumed 0.5–1 ms per USB transaction; BR-5), comparable to the trim step and screen | increments every 256 osc cycles (25.6 µs at 10 MHz); f<sub>OSC</sub> 9.436 MHz at trim 8, tt/27 °C (loaded; transistor-level run 9.4416 MHz [R3] osc); corner span 7.61–12.43 MHz [RES §6] | 7.0–13.0 MHz | f, host interval |
 | Trim sweep 0..15 (`trim_osc(10e6)`) | monotonic, higher code = slower, about 2.7 %/LSB; 10 MHz reachable at every simulated PVT (slow/hot code 0 10.447 MHz) | monotonic; one code within ±1.5 % of 10 MHz | f per code, chosen code |
 | `watchdog(duration_s=10)` | CHIP_ID constant; OSC_CNT advancing | no failure | f estimate |
 
@@ -98,7 +121,7 @@ V<sub>REF</sub>/5300). Record V<sub>REF</sub> for use in `G1(vref_V=...)`.
 | I(`VDDA`), T2F on (reset default) | 1462.5 µA [R3] q, tt/27 °C (includes SENSE/TRIP biased at 1 A load); hand-wired netlists 1421 µA; ss/125 °C 1727.9 µA, ff/−40 °C 1279.4 µA; BGR586 alone 319.7 µA | 1.0–2.2 mA | I, T |
 | I(`VDDA`), `TEMP_CTRL` = 0 | 1454.5 µA (8 µA lower) [R3] | ΔI 0–30 µA | I |
 | I(`IOVDD`) | 96–128 µA with `TEMP_OUT` toggling into 20 pF, about 0 (0.002 µA) with T2F off and static outputs [R3] | T2F off: < 10 µA | I with and without the counter connected |
-| I(`VDD`) | oscillator 114.9 µA, 122 µA total on `VDD` in the transistor-level osc run [R3]. **The digital macro's current was not simulated** (RTL co-simulation) | none; record | I with `SEU_CTRL` pattern checkerboard (every SEU flop toggles) and all-zeros |
+| I(`VDD`) | oscillator 114.9 µA, 122 µA total on `VDD` in the transistor-level osc run [R3] (RTL co-simulation, no macro current). Digital macro 0.73 mA with static data, 0.83–1.21 mA at 0.1–0.5 activity (*computed*, vectorless STA [PWR]); total about **0.85–1.2 mA** | none; record | I with `SEU_CTRL` pattern checkerboard (every SEU flop toggles) and all-zeros |
 | Total power | spec target < 10 mW (declared state) | < 10 mW | sum of V × I |
 
 ## S7. `TEMP_OUT` frequency (lead 14)
@@ -122,12 +145,26 @@ triggering near 1.65 V, with ≤ 20 pF load.
 
 ## S9. Calibration of the soft and hard thresholds (inhibit asserted)
 
-This follows the calibration contract (spec §6). The load bus is inhibited. A traceable source
-applies **25.00 mV** at the Kelvin pins (verify with the DMM across `SENSE_P`–`SENSE_N`).
+This follows the calibration contract (spec §6, H6). The load bus is inhibited. **25.00 mV** is
+applied at the Kelvin pins as a known current through the fixed shunt (about 1 A, from a source
+separate from the inhibited load bus) or through a make-before-break relay switched with `EN` low
+(bench plan B10); verify with the DMM across `SENSE_P`–`SENSE_N`. Never open `SENSE_P` while
+powered. Run S4 first and keep the operating `OSC_TRIM`, and keep T2F in its operating state
+(`TEMP_CTRL`), during the hard sweep.
 `SENSE_OFS` = 0, hysteresis off, trip paths disabled during the sweep. The sweep runs downward from
 255 in 4-code steps and then 1-code steps, with 200 µs settling and 16 `STATUS2` reads per code. It
-confirms two codes below and repeats upward. `calibrate_soft(25.0)` and `calibrate_hard(25.0)` do
+confirms two codes below and repeats upward. `calibrate_soft(25.0)` and `calibrate_hard(...)` do
 this, and `compute_calibration()` follows. Repeat each 3×.
+
+The hard path is bracketed in its operating state (spec §6 H6; red team F2, BR-1):
+- with `DAC_SOFT` below the soft crossing, so the soft comparator decides high as it does at the
+  hard threshold in operation: `calibrate_hard(vin_mV, other_code=round(vin_mV / LSB) − 10)`. The library
+  default keeps `DAC_SOFT` at its current value (reset 153 = 30 mV, soft decides low at 25 mV), which
+  biases the calibrated code up to about 6 LSB (1.2 mV) high (simulated);
+- at the operating hard target (`vin_mV` = target), because the offset grows 0.10 LSB per code: a
+  single 25 mV point sets a 35 mV target 1.08 mV low, a 39 mV target 1.37 mV low (simulated model
+  runs). Two-point interpolation (25 mV and the target) is the alternative; `g1_host` does not
+  implement it, and `hard_extra` from one `calibrate_hard` is valid for its `vin_mV` only.
 
 | Action | Expected (simulated) | Accept | Record |
 | --- | --- | --- | --- |
@@ -137,36 +174,41 @@ this, and `compute_calibration()` follows. Repeat each 3×.
 | `hard_extra` = hard correction − `SENSE_OFS` | about +45 (applied via `DAC_HARD`, because one `SENSE_OFS` cannot correct both comparators) | the target code + extra + `SENSE_OFS` ≤ 255 | value |
 | Uncalibrated witness: `DAC_HARD` 200, soft path off, step 28.75 mV and 31.25 mV | no trip at 28.75 mV; hard trip at 31.25 mV (1.25× nominal, inside the uncalibrated no-trip region: documented kick offset, calibration requirement) [R3] | record | trip/no-trip |
 
-| Hard crossing vs temperature (−40 / 25 / 125 °C, inhibit asserted, same sweep) | the hard offset is temperature-dependent: simulated effective threshold at code 200 is 8.0–9.3 mV below the code at tt/27 °C and ss/125 °C and **10.4–11.6 mV** at ff/−40 °C (r3 full-chip deck, [R3X]); joint MC: room calibration drifts > 0.5 mV of shunt at 125 °C in 4 of 20 seeds [JMC] | bracketed at each temperature | table code(T), the input to k(T) (H6) |
+| Hard crossing vs temperature (−40 / 25 / 125 °C, inhibit asserted, same sweep) | the hard offset is temperature-dependent: simulated effective threshold at code 200 is 8.0–9.3 mV below the code at tt/27 °C and ss/125 °C and **10.4–11.6 mV** at ff/−40 °C (r3 full-chip deck, [R3X]); joint MC: room calibration drifts > 0.5 mV of shunt at 125 °C in 4 of 20 seeds [JMC] | bracketed at each temperature, in the operating state above; reach check: code 255 reads low at the highest planned hard target | table code(T), the input to k(T) (H6) |
 
 Freeze the room-temperature calibration per sample, then build the per-part hard-code correction
 table k(T) from the three temperatures above. The host applies **hard code = calibrated code + k(T)**
 from the on-chip T2F reading (spec §6 H6); the soft path needs no temperature correction in
 simulation. Acceptance at each temperature (S10) uses the k(T)-corrected code; the ±0.5 mV hard
 accuracy statement holds at the calibration temperature only until this table exists (spec §6).
+There is no simulated k(T) fallback: until the per-part table exists, k(T) = 0 and hard accuracy is
+declared at the calibration temperature only (red team F2, BR-3).
 
 [R3X] `../../blocks/g1_top/sim/FULLCHIP_CDL_R3_CORNERS_20260927.md` (simulated).
 [JMC] `../../blocks/g1_trip/sim/qualification/joint_r3_mc_20260926/RESULTS.md` (simulated).
 
 ## S10. Threshold verification with frozen calibration
 
-Use `arm(hard_mV=35, soft_mV=30, soft_time_ms=1)`. The hard target must be ≤ 39 mV so that the
-search range stays ≤ 255; the usable hard range is about 25–40 mV. Test each path with the other
+Use `arm(hard_mV=33, soft_mV=28, soft_time_ms=1)`, with the hard path calibrated at 33 mV (S9). For
+the temperature matrix the hard target is ≤ 33 mV: the effective reach at code 255 is about 40.1 mV
+(tt, simulated), about 38.4 mV for the worst of 22 mismatch seeds at room temperature and about
+34.6 mV for a 3σ part with the chip-deck ff/−40 °C shift (*computed*, red team BR-2); above the reach
+`codes_for` refuses the target and the point stalls. Test each path with the other
 disabled, outside the inrush window, with the inhibit released onto the resistive load or with the
 source at the Kelvin pins.
 
 | Action | Expected | Accept (spec §6) | Record |
 | --- | --- | --- | --- |
 | `kelvin_check()` with 1 A flowing (P9) | `CMP_SOFT` = 1 at `DAC_SOFT` 5 | pass, otherwise stop (possible open `SENSE_N`) | fraction |
-| Soft: hold 0.9T (27 mV) for ≥ 3 windows; hold 1.1T (33 mV) | no trip; trip after the configured window (cause soft) | no trip ≤ 0.9T; trip ≥ 1.1T after the window | outcome, time to trip, `SOFT_PEAK` |
-| Hard: 0.9T (31.5 mV) and 1.1T (38.5 mV) persistent | no trip; hard trip | same | outcome, time |
+| Soft: hold 0.9T (25.2 mV) for ≥ 3 windows; hold 1.1T (30.8 mV) | no trip; trip after the configured window (cause soft) | no trip ≤ 0.9T; trip ≥ 1.1T after the window | outcome, time to trip, `SOFT_PEAK` |
+| Hard: 0.9T (29.7 mV) and 1.1T (36.3 mV) persistent | no trip; hard trip | same | outcome, time |
 | Band between 0.9T and 1.1T | characterization only | none | crossing |
 
 ## S11. Breaker demonstration, low-energy source (feasibility envelope)
 
 Conditions: 5 V resistive current-limited load, 25 mΩ shunt, 1 A nominal. `FAST_EN` = 0, hysteresis
-off, codes static while energized. The hard target is calibrated at 35–39 mV and the soft target at
-30 mV. The fault is a **1.8 A / 45 mV** step (≥ 1.1 × 39 mV), with ≤ 50 mV at the pins including
+off, codes static while energized. The hard target is 35 mV, calibrated at 35 mV (S9), and the soft target
+30 mV. A 39 mV hard target is not reachable on the tail of the population (BR-2). The fault is a **1.8 A / 45 mV** step (≥ 1.1 × 39 mV), with ≤ 50 mV at the pins including
 overshoot. Capture shunt differential, `GATE`, FET V<sub>GS</sub>/V<sub>DS</sub>, load current,
 `FAULT_N` and `EN` with declared probe skew.
 
@@ -205,5 +247,5 @@ settling.
 | Step | Status |
 | --- | --- |
 | S0–S13 | not run (no silicon, no board) |
-| `g1_host.py` against `DummyTransport` | passed: 29/29 unit tests (`python3 -m unittest -v test_g1_host`, Python 3.6.8). This tests host logic only, not hardware |
+| `g1_host.py` against `DummyTransport` | passed: 30/30 unit tests (`python3 -m unittest -v test_g1_host`, Python 3.6.8, 2026-09-27, including `pattern_test`). This tests host logic only, not hardware |
 | `g1_host.py` hardware transports (FTDI, spidev) | not run (stubs) |

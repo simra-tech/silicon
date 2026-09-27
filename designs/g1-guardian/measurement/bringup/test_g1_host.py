@@ -122,6 +122,20 @@ class SafetyWrites(unittest.TestCase):
         g.write("MODE", 0x07)
         self.assertEqual(g.safe_defaults(), {})
 
+    def test_pattern_test(self):
+        # BR-7: the S3 pattern test runs through g1_host without refusals
+        t, g, _ = make()
+        g.identify()
+        res = g.pattern_test()
+        self.assertEqual(res["mismatches"], [])
+        self.assertGreaterEqual(res["frames"], 1000)
+        self.assertEqual(res["safe_defaults"], {})
+        self.assertEqual(g.read("DAC_HARD"), 0xFE)
+        self.assertEqual(t.violations, [])
+        g.set_inhibit(False)
+        with self.assertRaises(h.G1SafetyError):
+            g.pattern_test(passes=1)
+
     def test_en_cycle_needs_inhibit(self):
         t, g, _ = make()
         g.set_inhibit(False)
