@@ -1,0 +1,35 @@
+# GLS netlist 4b83f1812af385d2, -DFUNCTIONAL -DUNIT_DELAY=#1
+tb_rt27.v:128: vvp.tgt sorry: procedural continuous assignments are not yet fully supported. The RHS of this assignment will only be evaluated once, at the time the assignment statement is executed.
+tb_rt27.v:115: vvp.tgt sorry: procedural continuous assignments are not yet fully supported. The RHS of this assignment will only be evaluated once, at the time the assignment statement is executed.
+  ok   23 us VERSION 0x12 = 0x12
+---- U1 latched trip, host's last write was CTRL.CLEAR; one upset of wr_tog_d
+  ok   154 us hard trip latched = 0x1
+  ok   177 us CLEAR cleared the trip = 0x0
+  ok   180 us second fault latched (trip) = 0x1
+  ok   180 us second fault latched (G1_GATE latch) = 0x1
+  (upset: wr_tog_d inverted for one osc_clk cycle at 180251 ns)
+  FAIL 181 us latched trip survives a single upset (map: holds until CLEAR or EN): got 0x0 expected 0x1
+  FAIL 181 us G1_GATE latch still set (GATE off): got 0x0 expected 0x1
+  OBSERVE 203 us STATUS after upset = 10000000
+FAIL U1 latched trip, host's last write was CTRL.CLEAR; one upset of wr_tog_d  (FAIL = hazard reproduced)
+---- U2 same, but the host follows CLEAR with a no-op write CTRL = 0x00 (host mitigation)
+  ok   250 us fault latched = 0x1
+  (upset: wr_tog_d inverted for one osc_clk cycle at 250651 ns)
+  ok   251 us latched trip survives the upset = 0x1
+  ok   251 us G1_GATE latch still set = 0x1
+PASS U2 same, but the host follows CLEAR with a no-op write CTRL = 0x00 (host mitigation)
+---- U3 SEU counters: host's last write was SEU_CMD.CLR_CNT (start of a run); one upset of wr_tog_d
+  ok   347 us SEU_PLAIN_L = 1 after one upset in the chain = 0x1
+  (upset: wr_tog_d inverted for one osc_clk cycle at 348051 ns)
+  FAIL 372 us SEU_PLAIN_L kept (counts are the measurement): got 0x0 expected 0x1
+FAIL U3 SEU counters: host's last write was SEU_CMD.CLR_CNT (start of a run); one upset of wr_tog_d  (FAIL = hazard reproduced)
+---- U4 one upset of the reset synchroniser flop rs0 while armed with host settings
+  ok   437 us DAC_HARD 200 before = 0xc8
+  ok   437 us fast_en 1 before = 0x1
+  (upset: rs0 0 for one osc_clk cycle at 437551 ns)
+  FAIL 438 us DAC_HARD kept after one rs0 upset: got 0xfe expected 0xc8
+  FAIL 438 us fast_en kept after one rs0 upset: got 0x0 expected 0x1
+  OBSERVE 460 us STATUS after rs0 upset (bit 3 = INRUSH_ACTIVE) = 10001000
+FAIL U4 one upset of the reset synchroniser flop rs0 while armed with host settings  (FAIL = hazard reproduced)
+RT27 DONE: 1 tests passed, 3 failed (FAIL = hazard reproduced), 16 checks, 5 failed checks
+tb_rt27.v:208: $finish called at 460351000 (1ps)

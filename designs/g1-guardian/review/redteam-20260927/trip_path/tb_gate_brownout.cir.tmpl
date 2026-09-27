@@ -1,0 +1,47 @@
+* Red-team 2026-09-27 trip_path: G1_GATE (schematic netlist, as blocks/g1_gate/sim/tb_gate_pwr.cir) with the real
+* sg13g2_IOPadIn (EN) and sg13g2_IOPadOut30mA (GATE), supply brown-out while running.
+* Case @@CASE@@: BV = VDD droops 1.2 -> 0 V (5-25 us) and recovers (30-35 us) with IOVDD=VDDA 3.3 V;
+*               BA = IOVDD=VDDA droops 3.3 -> 0 V and recovers, VDD 1.2 V.
+* trip_d = @@TRIPD@@ (the digital latch output is a VDD-domain level: "vdd" = tripped, "0" = armed).
+* EN pad driven by a 3.3 V host rail through 1 kOhm: low until 3 us (clears the latch once IOVDD is up), then high.
+.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerMOSlv.lib @@MOS@@
+.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerMOShv.lib @@MOS@@
+.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerRES.lib res_typ
+.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerCAP.lib cap_typ
+.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerDIO.lib dio_tt
+.include /foss/pdks/ihp-sg13g2/libs.ref/sg13g2_io/spice/sg13g2_io.spi
+.include /work/designs/g1-guardian/blocks/g1_gate/sim/netlist/g1_gate.spice
+.temp @@TEMP@@
+.global sub!
+Vsub sub! 0 dc 0
+.option method=gear reltol=0.005 itl4=100 abstol=1e-9 vntol=1e-5 chgtol=1e-13
+Rsa vdda_s vdda 0.5
+Cda vdda 0 1n
+Rsd vdd_s vdd 0.5
+Cdd vdd 0 1n
+Vdda vdda_s 0 pwl(@@PWLA@@)
+Vdd vdd_s 0 pwl(@@PWLD@@)
+Vhost en_src 0 pwl(0 0 3u 0 3.1u 3.3 40u 3.3)
+Ren en_src en_pad 1k
+Btd trip_d 0 v = @@TRIPD@@ * v(vdd)
+Vc clr_d 0 dc 0
+Vf fast_en 0 dc 0
+Vh hard_cmp 0 dc 0
+XPE en_pad en_core vdd 0 vdda 0 sg13g2_IOPadIn
+XG trip_d clr_d fast_en hard_cmp en_core gate_core fault_core tripped vdd vdda 0 g1_gate
+XPG gate gate_core vdd 0 vdda 0 sg13g2_IOPadOut30mA
+Rg gate gfet 10
+Cgate gfet 0 5n
+.control
+set filetype=ascii
+tran 5n 40u
+meas tran g_pre find v(gate) at=4.9u
+meas tran g_max_droop max v(gate) from=5u to=30u
+meas tran g_max_rec max v(gate) from=30u to=40u
+meas tran g_end find v(gate) at=39.9u
+meas tran gc_max max v(gate_core) from=5u to=40u
+meas tran tr_min min v(tripped) from=5u to=40u
+echo "BROWNOUT @@CASE@@ trip_d=@@TRIPD@@ @@MOS@@ @@TEMP@@C: GATE before=" $&g_pre " max droop=" $&g_max_droop " max recovery=" $&g_max_rec " end=" $&g_end " gate_core max=" $&gc_max
+wrdata @@OUT@@ v(vdd) v(vdda) v(gate) v(gate_core) v(en_core) v(tripped) v(xg.q)
+.endc
+.end
