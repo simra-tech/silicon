@@ -188,7 +188,7 @@ die is a reference, sensor and device chip.
 | R5 | No level-shifter cell exists | own HV-MOS cells, simulated across corners on day 4 |
 | R6 | Models not characterised at 77 K or above 125 °C | such runs labelled *model extrapolated*; bench decides |
 | R7 | Analog pad ESD leakage sets the floor on device-pin currents | simulated with the IO SPICE model; measurement plan keeps device currents ≥ nA |
-| R8 | `GATE` high at power-up when `IOVDD` is present without `VDD` (PDK output pad property, simulated day 1) | board constraint: `VDD` before or with `IOVDD`; `EN` gates the driver once both rails are up; written into the specification and the measurement plan |
+| R8 | `GATE` high at power-up when `IOVDD` is present without `VDD` (PDK output pad property, simulated day 1) | board constraint: `VDD` in regulation before `IOVDD` starts to rise, never together (corrected 2026-09-27, spec §6 P1); `EN` gates the driver once both rails are up; written into the specification and the measurement plan |
 | R9 | Foundry precheck differs from the open deck; drawn non-PCell NMOS and bonding geometry acceptance | assumed accepted; confirmation pending outside this repo |
 | R10 | Two abutted IO power pads violate contact spacing | 1 µm filler between them, as in the template |
 | R12 | Core window (about 0.22 mm²) is tight for the digital macro plus analog macros | digital macro closed at 360 × 360 µm with 256/128 SEU bits; depth re-decided at floorplan (D12) |

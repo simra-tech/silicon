@@ -1,7 +1,7 @@
 # G1 bring-up board checklist (chip of record r3, register map 1.2)
 
 What the bring-up PCB and bench must provide, derived from
-[`G1_TOP_LEVEL_SPECIFICATION.md`](../../specification/G1_TOP_LEVEL_SPECIFICATION.md) §3, §4, §6 (P1–P10),
+[`G1_TOP_LEVEL_SPECIFICATION.md`](../../specification/G1_TOP_LEVEL_SPECIFICATION.md) §3, §4, §6 (P1–P11),
 the bench plan [`../README.md`](../README.md) (B1–B10), the bond plan
 [`../../padframe/BONDPLAN_20260925.md`](../../padframe/BONDPLAN_20260925.md), the register map
 [`G1_REGISTER_MAP.md`](../../specification/G1_REGISTER_MAP.md) and the block records cited inline.
@@ -52,25 +52,38 @@ leads **18–13** and die pads 19–24 on leads **24–19**, reversed within eac
   tied to the paddle ground at the package (B7). On the die `VSS` and `IOVSS` meet only through
   substrate resistance, so the board provides the connection.
 
-## 2. Supplies and sequencing (P1, P2, P3, B1, B2, B5, B7)
+## 2. Supplies and sequencing (P1, P2, P3, P11, B1, B2, B5, B7, B11)
 
-- [ ] **`VDD` (1.2 V) comes up before or together with `IOVDD`/`VDDA` (3.3 V).** At shutdown `VDD`
-  stays until 3.3 V is down. Implement with sequenced bench supplies, or a supervisor that holds the
+- [ ] **`VDD` (1.2 V) in regulation (≥ 1.08 V, power-good) before `IOVDD`/`VDDA` (3.3 V) start to rise.**
+  At shutdown 3.3 V is below 0.5 V before `VDD` falls below 1.08 V. Rising together is not allowed: a
+  dual-output supply with a common soft-start, or a 1.2 V LDO fed from the 3.3 V rail, violates this by
+  construction. Implement with sequenced bench supplies, or a supervisor that holds the
   3.3 V rail off until 1.2 V is valid. *Why:* the `sg13g2_io` output pads take their gate drive from
   core-powered level-up cells. With 3.3 V alone `GATE` reached 3.288 V (simulated). IO-first on the r3
   chip netlists gave `GATE` 3.300 V for 4.34 µs with EN low, and the 1 A load conducted (case `gA`,
-  simulated).
+  simulated). A 10 ms proportional ramp with EN low gave `GATE` 1.83 V at tt/27 °C (above 1 V for
+  2.5 ms) and 2.37 V at ss/−40 °C (above 1 V for 4.2 ms); the passing 1–3 µs simultaneous ramps (`gS`)
+  do not cover this. Core first with a 10 ms 3.3 V ramp still gave up to 1.14 V at ss/−40 °C (simulated,
+  [`power_io/FINDINGS.md`](../../review/redteam-20260927/power_io/FINDINGS.md) F1, F6), so the inhibit below is required in any case.
 - [ ] **`VDDA` (lead 7) on the same 3.3 V source as `IOVDD`** (lead 3), with separate current-sense links
   (≤ 0.5 Ω each, decoupled on the chip side) or sensing on the common source. There is no separate
   `VDDA` supply. `VDDA` must never exceed `IOVDD` by a diode drop, because the analog-pad ESD diodes
   reference `IOVDD`.
+- [ ] **Independent load-bus inhibit built as default-off hardware** (asserted with no host and no
+  supply), not a procedural step (P2/B2).
 - [ ] Fast 3.3 V ramp, target < 100 µs (P2).
-- [ ] **`VDD` undervoltage supervisor that asserts the load-bus inhibit and drives `EN` low** (P8/B7).
+- [ ] **`VDD` undervoltage supervisor (threshold ≥ 1.08 V) that asserts the load-bus inhibit and drives `EN` low** (P8/B7).
   After `VDD` returns, the host holds `EN` low ≥ 2 µs, rewrites and reads back the configuration (H5),
-  then releases the inhibit. A `VDD` brownout with `IOVDD` present reproduces the IO-first unsafe state:
-  with `EN` high `GATE` stays at 3.30 V through the dip (simulated). `por_n` is tied high, so the core is
+  then releases the inhibit. In a `VDD` brownout with `IOVDD` present the output pads hold their last
+  state: an armed breaker keeps `GATE` at 3.30 V through the dip (simulated, [`power_io/FINDINGS.md`](../../review/redteam-20260927/power_io/FINDINGS.md) F3). `por_n` is tied high, so the core is
   not reset after a `VDD` dip with `EN` high; configuration, `clr_pulse` and `tripped` can come back
   random, and a random `clr_d` clears a held analog trip (RTL reasoning, red team F3).
+- [ ] **3.3 V undervoltage supervisor, threshold ≥ 2.9 V, that asserts the load-bus inhibit and drives `EN`
+  low** (P11/B11). The host re-enables only after the rail has returned and P4 is met, then rewrites and
+  reads back the configuration (H5). *Why:* `GATE` = `IOVDD` in a sag while `ISENSE` saturates, so the
+  breaker is blind at `VDDA` ≤ 1.80 V at a 1.8× fault (about 2.0 V at the default hard code 254), and a
+  3 µs dropout while armed reconnects the load by itself with `VREF` low for about 75 µs, tripping the
+  nominal load spuriously (simulated, [`power_io/FINDINGS.md`](../../review/redteam-20260927/power_io/FINDINGS.md) F2, F4).
 - [ ] **Current-limited bench supplies.** *Proposed* initial limits: 1.2 V at 20 mA and 3.3 V at 20 mA.
   Expected quiescent VDDA is about 1.46 mA and IOVDD 0.1 mA with `TEMP_OUT` toggling (simulated).
   `GATE` edges draw 3.5–6.2 mA peaks from `IOVDD` (simulated), and local decoupling supplies these.

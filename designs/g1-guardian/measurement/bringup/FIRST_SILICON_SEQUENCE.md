@@ -54,7 +54,7 @@ de-energized. Capture `VDD`, `IOVDD`, `EN` and `GATE` on a scope.
 
 | Action | Expected (simulated) | Accept | Record |
 | --- | --- | --- | --- |
-| Ramp `VDD` 1.2 V, then `IOVDD`/`VDDA` 3.3 V (< 100 µs ramp) | `GATE` ≤ 31 µV while `EN` low [R3 gB, gB_pd], ≤ 72.5 mV with stock pad models [RES §5]. The G1_GATE `tripped` latch may toggle while `IOVDD` < 1.1 V (spurious-latch window, invisible at `GATE`) [R3] | `GATE` < 0.5 V throughout (*proposed*, below FET threshold) | both ramps, `VDD`→`IOVDD` delay, `GATE` max |
+| Ramp `VDD` 1.2 V into regulation (≥ 1.08 V), only then start `IOVDD`/`VDDA` 3.3 V (< 100 µs ramp); never together (P1) | `GATE` ≤ 31 µV while `EN` low [R3 gB, gB_pd], ≤ 72.5 mV with stock pad models [RES §5]; with a slow (10 ms) 3.3 V ramp up to 0.70 V at tt/27 °C and 1.14 V at ss/−40 °C (reduced pad deck, `review/redteam-20260927/power_io/FINDINGS.md` F6). The G1_GATE `tripped` latch may toggle while `IOVDD` < 1.1 V (spurious-latch window, invisible at `GATE`) [R3] | `GATE` < 0.5 V throughout (*proposed*, below FET threshold) | both ramps, `VDD`→`IOVDD` delay, `GATE` max |
 | Supply currents with `EN` low, rails stable | I(`VDD`) ≈ **0.85 mA**: oscillator 115 µA [R3] + digital macro 0.73 mA (*computed*, vectorless STA with the clock running and static data, [PWR]); ≲ 0.12 mA if the oscillator is dead. I(`VDDA`), I(`IOVDD`): as S6 | none; record only (triage: S2b) | I(`VDD`), I(`VDDA`), I(`IOVDD`) |
 | Wait the `VREF` settling delay with `EN` low | 10 nF: 1 % in 1.20–1.32 ms [BGR]; use ≥ 2 ms (P4) | — | delay used |
 

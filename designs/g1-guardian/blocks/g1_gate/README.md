@@ -150,8 +150,9 @@ Power-up (`sim/results_gate_pwr.txt`, tt 27 °C, `EN` pad held low until 9 µs):
 although its core input is low — the pad's own core-powered level shifter (`sg13g2_LevelUp`, a
 cross-coupled PMOS latch) has no defined state without `VDD`, and the 30 mA driver overrides a 10 kΩ
 pull-down. This block cannot fix that; it is a property of the IO cell. The board must bring `VDD`
-(1.2 V) up before or together with `IOVDD` (3.3 V), or the external FET may be on until the core rail
-arrives. Once `VDD` is up (order B) `GATE` stays low until `EN` is released, as required. This is the
+(1.2 V) into regulation before `IOVDD` (3.3 V) starts to rise, or the external FET may be on until the core rail
+arrives; rising together is not allowed (spec §6 P1, corrected 2026-09-27 by
+`../../review/redteam-20260927/power_io/FINDINGS.md` F1). Once `VDD` is up (order B) `GATE` stays low until `EN` is released, as required. This is the
 evidence for plan risk R8 and is repeated in `../g1_trip/INTERFACE.md`.
 
 
