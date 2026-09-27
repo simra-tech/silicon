@@ -267,8 +267,8 @@ pattern.
 - Full-chip (assembled) PEX, full-chip transient/electrical simulation of the r3 GDS itself, IR drop/EM, full-chip STA with extracted parasitics.
   - The chip-level ECO runs (`eco_c_mid_m03`, `eco_hard_pulse_m03`) use the extracted chip with the ECO RTL as a
     behavioural digital, not this extracted macro.
-- Formal equivalence of the ECO RTL against the gate netlist `4b83f181`: not run.
-- SDF GLS at fast and slow corners (SDFs exist in bulk): not run.
+- Formal equivalence of the ECO RTL against the gate netlist `4b83f181`: run since, **passed** (`blocks/g1_ctrl/sim/gls_eco_r3v2/equiv/dprove.log`, "Networks are equivalent"; negative control not equivalent).
+- SDF GLS at fast and slow corners: run since, **passed** (21/21 tests, 260 checks each; `blocks/g1_ctrl/sim/gls_eco_r3v2/sdf_corners/`).
 - Chip-level co-simulation with the hardened macro's gate netlist + SPEF: not run.
 - Chip-level power-up with the frozen ECO RTL: run since (gA/gB/gA_pd/gB_pd, `nodcn` pads; `eco4`, `blocks/g1_top/sim/campaigns/RESULTS_20260925.md` §10). The 72-cell matrix and the CDL-driven deck with the frozen ECO RTL: not run.
 - Canonical unprojected LVS passing: run, **failed** (PDK IO-cell reference semantics, as r1/r2).

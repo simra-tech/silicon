@@ -17,6 +17,8 @@ The deck is the r3full deck of [`FULLCHIP_CDL_R3_20260926.md`](FULLCHIP_CDL_R3_2
 
 Run ids `r3x` and `r3x2`, one CPU each via `flow/launch_pinned.sh`, wall 25 200 s, all at nice 0. No log contains "mismatched XSPICE". Logs are in `sim/logs/cdl_*_r3x*.log`.
 
+Runner provenance: 26 of the 30 completed runs (and the 2 failed ones) record `runner_sha256` `5d054dfd…`, a working-tree version of `run_top_cdl.py` that was never committed; the committed versions hash to `76e88396` (HEAD), `c54a0beb` and `e2d75a88`. The record of each run is therefore its deck: all 36 r3x/r3x2 decks are committed in `sim/decks/` and match the `deck_sha256` of their JSON (checked 2026-09-27).
+
 New `run_top_cdl.py` options:
 - `--vdd` / `--vdda` set run_top `VDD_V`/`VDDA_V` and the bridge band, so rails, EN/SCLK/SDI PWLs, adc/dac bridges and measurement thresholds all scale. The CDL deck uses the real pads, so there is no EN copy or fitted GATE fixture to scale.
 - Case `cal` with `--cal-kind hard|soft` and `--cal-codes`, described below.
@@ -122,6 +124,7 @@ The code-200 nominal is VREF·(455/530), referred to the shunt: 39.25 mV (tt), 3
 | calibration rehearsal at ss/ff (the k(T) table from simulation beyond the three near-threshold corners) | not run |
 | stock pads (with `dantenna`) at these corners | not run (all stock-pad runs failed or stalled on this deck, see the r3full record) |
 | series R of the interconnect, bondpad and fill C | not run |
+| gS (simultaneous `VDD` and `IOVDD`/`VDDA` ramp 1–3 µs, EN low until 12 µs) with the real `EN` pad, ss 125 °C, run `r3x3` | **in progress** (launched 2026-09-27 12:22 UTC, CPU 44, 14 400 s wall bound; the hand-wired `gS` of RESULTS §5 used an ideal `EN` copy at tt/27 °C) |
 
 ## Commands (repository root, `BULK` set; `W=designs/g1-guardian/blocks/g1_top/sim`)
 
@@ -131,6 +134,8 @@ C="--cdl /work/designs/g1-guardian/blocks/g1_padring/netlist/g1_chip_top_1414_r3
    --netlist pex --method gear --interconnect extracted --timeout 24800 --run-id r3x"
 flow/launch_pinned.sh <cpu> $W 25200 <log> python3 run_top_cdl.py gB --por-pin --corner ss --temp 125 $C
 flow/launch_pinned.sh <cpu> $W 25200 <log> python3 run_top_cdl.py gB --por-pin --corner ff --temp -40 --maxstep-ns 2 $C
+# r3x3 (2026-09-27): C as above with --run-id r3x3
+flow/launch_pinned.sh 44 $W 14400 ${BULK}/g1-r3x3/gS_ss_125C_r3x3.launch.log python3 run_top_cdl.py gS --por-pin --corner ss --temp 125 $C
 flow/launch_pinned.sh <cpu> $W 25200 <log> python3 run_top_cdl.py {f_mid|b_s|hard_pulse} --corner {ss --temp 125|ff --temp -40} --maxstep-ns 1 $C
 flow/launch_pinned.sh <cpu> $W 25200 <log> python3 run_top_cdl.py {q|c_mid --timeline compact} --vdd 1.08 --vdda 3.0 --maxstep-ns 1 $C
 flow/launch_pinned.sh <cpu> $W 25200 <log> python3 run_top_cdl.py c_mid --timeline compact --fault-mult 1.15 --corner ff --temp -40 --maxstep-ns 1 $C

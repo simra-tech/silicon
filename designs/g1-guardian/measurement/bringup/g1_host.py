@@ -39,7 +39,10 @@ Safety conventions enforced by ``G1``:
     clock on a map-1.1 part and removes all protection;
   * ``TEMP_CTRL.BGR_R4`` is never set (it lowers VREF and every threshold by
     about 12 %);
-  * EN cycles and calibration require the external inhibit asserted.
+  * EN cycles and calibration require the external inhibit asserted;
+  * every ``CTRL`` or ``SEU_CMD`` write is followed by a no-op ``CTRL`` = 0x00
+    write, so that a write replayed by a single upset in the serial write
+    hand-over is harmless (spec host rule H7).
 """
 
 from __future__ import print_function
@@ -756,9 +759,15 @@ class G1(object):
         if name in ("SOFT_TIME_L", "SOFT_TIME_H"):
             raise G1Error("use write_soft_time() for SOFT_TIME")
         self._raw_write(a, value)
+        if name in ("CTRL", "SEU_CMD"):
+            self._noop_ctrl()
         if verify and acc == "RW":
             self._verify(name, value)
         return value
+
+    def _noop_ctrl(self):
+        """H7: CTRL = 0x00 after a CTRL/SEU_CMD write makes a replayed write a no-op."""
+        self._raw_write(ADDR["CTRL"], 0x00)
 
     def _raw_write(self, a, value):
         self.t.idle(self.idle_s)
@@ -983,8 +992,10 @@ class G1(object):
         before = self.seu_readout()
         self.t.idle(self.idle_s)
         self._raw_write(ADDR["SEU_CMD"], SEU_INJ_PLAIN)
+        self._noop_ctrl()
         self.t.sleep(100e-6)     # > 256-stage propagation (27 us at 9.4 MHz)
         self._raw_write(ADDR["SEU_CMD"], SEU_INJ_TMR)
+        self._noop_ctrl()
         self.t.sleep(100e-6)
         after = self.seu_readout()
         ok = (after["plain"] - before["plain"] == 1 and after["corr"] - before["corr"] == 1
@@ -994,6 +1005,7 @@ class G1(object):
     def command(self, bits):
         """CTRL self-clearing command (CLEAR, CLR_TRIP_CNT, CLR_PEAK, CLR_OSC_CNT)."""
         self._raw_write(ADDR["CTRL"], bits & 0x0F)
+        self._noop_ctrl()
 
     # -- calibration ------------------------------------------------------------
     def _cmp_fraction(self, bit, n_reads):

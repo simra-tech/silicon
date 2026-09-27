@@ -293,6 +293,8 @@ the first sample; for 0x00FF → 0x0100, `_L` first does the same)
 | 0x25 | `OSC_CNT_H` | RO | 0x00 | |
 | 0x26 | `OSC_DIV` | RW | 0x00 | bits 2:0: prescaler exponent added to 8 for `OSC_CNT` and used for `clk_div_out` = `osc_clk / 2^(9+OSC_DIV)`. Bits 7:3 reserved. |
 
+On the chip of record `clk_div_out` is unconnected (the macro pin has no load in the r3 CDL). In the 1.2 RTL `clk_div_out = osc_pre[OSC_DIV + 8]` indexes bit 15 of the 15-bit `osc_pre` when `OSC_DIV` = 7 (X in RTL, undefined in synthesis); `OSC_CNT` is correct at every `OSC_DIV`. A future revision that routes the pin out must widen `osc_pre` to 16 bits.
+
 ### 4.6 Analog trim and control (added in 1.1)
 
 | Addr | Name | Access | Reset | Description |
