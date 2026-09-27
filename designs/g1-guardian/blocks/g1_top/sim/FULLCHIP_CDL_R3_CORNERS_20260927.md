@@ -124,7 +124,7 @@ The code-200 nominal is VREF·(455/530), referred to the shunt: 39.25 mV (tt), 3
 | calibration rehearsal at ss/ff (the k(T) table from simulation beyond the three near-threshold corners) | not run |
 | stock pads (with `dantenna`) at these corners | not run (all stock-pad runs failed or stalled on this deck, see the r3full record) |
 | series R of the interconnect, bondpad and fill C | not run |
-| gS (simultaneous `VDD` and `IOVDD`/`VDDA` ramp 1–3 µs, EN low until 12 µs) with the real `EN` pad, ss 125 °C, run `r3x3` | **in progress** (launched 2026-09-27 12:22 UTC, CPU 44, 14 400 s wall bound; the hand-wired `gS` of RESULTS §5 used an ideal `EN` copy at tt/27 °C) |
+| gS (simultaneous `VDD` and `IOVDD`/`VDDA` ramp 1–3 µs, EN low until 12 µs) with the real `EN` pad, ss 125 °C, run `r3x3` | **passed** (simulated): `GATE` peaks at 0.521 V while EN is low (`gate_core` 0.517 V, `en_i` ≤ 61 mV), never above 1 V, no trip (`tripped_max` 0); same behaviour as the hand-wired `gS` of RESULTS §5 (0.545 V, ideal `EN` copy, tt/27 °C), covered by P2. Wall 1460 s on one CPU; `logs/…_r3x3.json` and `.tail.txt` in tree, full log in the retention manifest |
 
 ## Commands (repository root, `BULK` set; `W=designs/g1-guardian/blocks/g1_top/sim`)
 
