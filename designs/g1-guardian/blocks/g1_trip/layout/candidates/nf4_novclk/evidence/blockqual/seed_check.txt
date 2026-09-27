@@ -1,0 +1,9 @@
+# Mismatch seed control (2026-09-27). Deck: ${BULK}/r4-20260927/blockqual/seedtest/op_<seed>.cir = mos_ss_mismatch (LV+HV),
+# .include ${BULK}/r4-20260927/blockqual/mm/seed<seed>.spice, op, print of per-instance delvto / l.
+# Run: G1_CPUSET=45 G1_WORKDIR=designs/g1-guardian/blocks/g1_trip/sim flow/run.sh ngspice -b <deck>, seeds 1001, 1002, 1001 (repeat).
+seed 1001: x1.xm1145 (gen. delay NMOS 0.3/2.5) delvto=-4.94555e-03  x1.xm1247 (gen. PMOS 0.6/2.5) delvto=-3.32973e-04  x1.xm1145 l=2.498777e-06  x1.xm17 (HV NMOS) delvto=9.471340e-03
+seed 1002: x1.xm1145 delvto=-8.68965e-05  x1.xm1247 delvto=7.807389e-04  x1.xm1145 l=2.497856e-06  x1.xm17 delvto=-1.67109e-03
+seed 1001 (repeat): identical to the first seed-1001 run in every printed digit
+=> '.option seed=N' in the included wrapper fixes the agauss draws; different seeds give different draws; LV and HV devices both vary.
+Nominal control: win_pex.py on the mm netlist (seed 1001 wrapper) with the plain mos_ss library gives exactly the nominal-extraction result
+(w_fall 10.31 ns, w_rise 8.413 ns, all fields equal), so the mm_ok flags change nothing without the mismatch libraries.

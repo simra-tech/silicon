@@ -57,7 +57,8 @@ All jobs ran in the container, pinned with `G1_CPUSET` inside 16–31 / 48–63 
 | 4 | Canonical LVS vs `g1_chip_top_1414_r4.cdl` | failed, as for r2/r3: the 51 circuit pairs have exactly r3's status and counts (35 Match, 14 NoMatch IO/level-shifter, 2 Skipped) | `evidence/chip/lvs_canonical/pair_counts.json` |
 | 4 | XOR r3 → r4 (`chip_xor.py`, box 771,736,1000,943) | inside the TRIP box: the macro's layers only. Outside: only 5/22 (+58 polygons, 406.0 µm², the GatPoly fill), 0 text differences. Before the GatPoly fill (`…_prefill.gds`): nothing outside the box | `evidence/chip/chip_xor.json`, `chip_xor_prefill.json` |
 | 4 | TRIP cell cut from r4 vs the candidate macro | XOR 0 on every layer, texts equal | this README |
-| — | Comparator delay deck (`run_postlayout.sh cmppex`), settle deck, DAC deck, MC, RC extraction | **not run** | — |
+| 5 | Comparator delay, settle and DAC decks; window mismatch MC; kick screen under mismatch (27 Sep) | delay deck **failed** at tt 1 mV (strobe 1 decided high, soft path ~1 LSB early); ss 1 mV passed (1.996 ns); settle and DAC equal to r3; window MC 30+30 seeds passed (min 8.30 ns at ss/−40 °C, max 10.03 ns at ff/125 °C); kick ±10 LSB screen passed on 19 seeds; brackets not run | `BLOCK_QUALIFICATION_20260927.md` |
+| — | RC extraction | **not run** | — |
 | — | Chip-level transient re-runs (`c_mid`, near-threshold, `cal`, `hard_pulse`, `q`) | **not run** (done by someone else) | — |
 
 1 LSB = 1.962 mV at `icmp` = 0.196 mV of shunt. "hard −1" means the effective threshold lies between
@@ -192,8 +193,7 @@ chip were regenerated after the last edit and are byte-identical.
 
 ## Not run
 
-- Comparator delay deck, settle deck and DAC deck on the new extraction.
-- Mismatch MC of the generator delay.
+- Comparator delay, settle and DAC decks and the window MC: run 27 Sep, see `BLOCK_QUALIFICATION_20260927.md` (its own "Not run" list applies).
 - RC extraction, IR/EM and full-chip PEX.
 - Chip-level transients.
 - Bond map re-verification for r4: pads and openings are unchanged (XOR), but it was not run.
