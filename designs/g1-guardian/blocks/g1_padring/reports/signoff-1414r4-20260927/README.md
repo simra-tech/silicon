@@ -16,8 +16,8 @@ chip-level physical evidence of the r4 build so that an adoption decision can re
 3. **The digital macro** `__rz_port_text_000_retained_g1_digital` is **byte-identical to r3** (see
    "Digital macro identity"). The macro flow, STA, GLS and equivalence results of r3 therefore carry over.
 
-This is physical verification only. Full-chip PEX, IR/EM, timing sign-off of the assembled chip and the
-bond-map re-verification are **not run** (see "Not run"). Full-chip transients on r4 are run separately
+This is physical verification only. Full-chip PEX, IR/EM and timing sign-off of the assembled chip are
+**not run** (see "Not run"). Full-chip transients on r4 are run separately
 under `blocks/g1_top/sim/` and are not part of this folder.
 
 ## Built against
@@ -29,7 +29,7 @@ under `blocks/g1_top/sim/` and are not part of this folder.
 | KLayout | 0.30.9 | `klayout -v`; DRC/LVS logs (Ruby 3.2.3 in `drc_maximal/…_maximal.log`) |
 | Rule decks | stock `run_drc.py`, `run_lvs.py` and decks of the PDK above, unmodified | invoked from `/foss/pdks/ihp-sg13g2/libs.tech/klayout/tech/` (`drc_maximal/run.log` option dump) |
 | Digital macro flow | not re-run; r3's (LibreLane 3.1.0.dev2, OpenROAD 26Q1-1024-gdcf36133a, OpenSTA 3.1.0) | r3 README "Built against" |
-| CPUs | r4 build and sign-off: 22-31, 50-55 (per-check split not recorded in the logs); report XOR checks: 45-47 | candidate README "Chip r4" step 4; `G1_CPUSET` of this assembly |
+| CPUs | r4 build and sign-off: 22-31, 50-55 (per-check split not recorded in the logs); report XOR checks, bond map, inventory, stock-name check and dev-deck DRC: 45-47 | candidate README "Chip r4" step 4; `G1_CPUSET` of this assembly |
 
 ## Files
 
@@ -54,8 +54,8 @@ under `blocks/g1_top/sim/` and are not part of this folder.
 | TRIP cell in r4 vs candidate macro (`cell_xor.py`, run for this report) | **passed**: 48 layers compared, XOR 0 polygons on every layer, all texts equal (80 827 polygons, 2 404 texts flattened), bbox (0,0;229,207) both, 12 sub-cells each. The sub-cell name sets differ (names not compared further); content is equal by the flattened XOR | [`trip_identity/trip_cand_vs_r4chip_xor.json`](trip_identity/trip_cand_vs_r4chip_xor.json) |
 | Projected reference (`flatten_reference.rb` on `comparison_only_r4.cdl`) | **passed**: 77 035 devices, 22 pins, roundtrip Match (77 035 devices, 32 557 nets, 22 pins) | [`r4_identity/g1_chip_top_1414_r4_projected_ref.cdl.json`](r4_identity/g1_chip_top_1414_r4_projected_ref.cdl.json), [`flatten.log`](r4_identity/flatten.log) |
 | CDL method control (same command on r3's `comparison_only.cdl`) | **passed**: reproduces r3's projected reference `d0d36c84…` exactly (77 017 devices, roundtrip Match) | [`r4_identity/r3_projected_ref_control.cdl.json`](r4_identity/r3_projected_ref_control.cdl.json), [`flatten_control.log`](r4_identity/flatten_control.log) |
-| GDS inventory (`review/tapein/gds_inventory.py`) | **not run** on r4. The XOR above bounds the change to the TRIP box and 5/22 | — |
-| Stock-name check (`stock_compare.py`) | **not run** on r4 | — |
+| GDS inventory (`review/tapein/gds_inventory.py`, same `-rd lyp=` PDK `sg13g2.lyp` as r3; 20.6 s) | **passed**. 73 layers, all in the PDK `sg13g2.lyp`, none outside it; top `g1_chip_top`, bbox 1414 × 1414 µm, 304 cells (r3: 304). Compared with r3's inventory (`review/tapein/gds_inventory_g1_chip_top_1414_r3.json`): every field except the file name, hash, and the flat counts of 24 layers is equal (seal ring, Passiv openings, bondpad and IO cells, PolyRes, text-purpose layers). The 24 layers are exactly the ones in the XOR r3 → r4 list; texts differ only on 51/0 (2569 → 2587) | [`gds_inventory/gds_inventory_g1_chip_top_1414_r4.json`](gds_inventory/gds_inventory_g1_chip_top_1414_r4.json), `.log`, `.log.rc` |
+| Stock-name check (`flow/signoff/1414r2/stock_compare.py`; 34.1 s) | **passed**. 52 cells whose exact name is a PDK cell, **0 differ**; `$N` variants 61/43 and `retained_*` 19, renamed-vs-stock 1: every count and list equal to r3's (`stock_compare_r3.json`) | [`stock_compare/stock_compare_r4.json`](stock_compare/stock_compare_r4.json), `.log`, `.log.rc` |
 | Swap method control | **not applicable**: r4 is not made by `swap_macro.py` but by the `NovclkPatch` of `gen_trip_layout.py` | candidate README "Layout" |
 
 ## Digital macro identity
@@ -129,8 +129,10 @@ GFil.g margin: 300 828.38 − 0.15 × 1 999 396.0 = **918.98 µm²** (r3: 300 52
 
 The summary logs, reports, `run.log` and return codes of every chip check were copied from `$R/signoff/`;
 the identity JSONs and logs from `$R/chip/` and `$R/cdl/`; the report XOR outputs from
-`$R/signoff_report_xor/`. Only `${BULK}` and `${REPO}` (host path or the container mount `/work`) were
-substituted, and `.lyrdb` files are unmodified. [`manifest.json`](manifest.json) lists every copy with its
+`$R/signoff_report_xor/`; bond map, inventory and stock-name outputs from `$R/signoff_report_extra/`; the
+dev-deck runs from `${BULK}/devdeck-drc-r4-20260927/`. Only `${BULK}` and `${REPO}` (host path or the container mount `/work`) were
+substituted. `.lyrdb` files are unmodified, except the dev-deck ones under `devdeck_check/`, whose generator
+line names the dev deck path (normalized, as in r3). [`manifest.json`](manifest.json) lists every copy with its
 original path, original SHA-256 and bytes, and copy SHA-256. All copies are < 300 kB (largest: the main
 lyrdb, 113 758 bytes). `*.pid` files were not copied.
 
@@ -174,15 +176,51 @@ change outside the TRIP box except 5/22). The TRIP row is replaced:
 
 ## Bond map
 
-**Not run** for r4. The r3 bond map `padframe/bondmap_20260926_r4.csv` is bound to r3's hash `7d07a784…`.
-Pads, openings and labels are unchanged by the XOR r3 → r4 (no change outside the TRIP box except 5/22 fill,
-0 text differences), but `verify_bondmap.py` was not run on r4 and no r4-bound bond map was written.
+The tracked bond map [`padframe/bondmap_20260926_r4.csv`](../../../../padframe/bondmap_20260926_r4.csv)
+(`99080d81…`) is bound to r3's hash `7d07a784…` and is unchanged. For this check a bulk copy
+[`bondmap/bondmap_r4chip_hashonly.csv`](bondmap/bondmap_r4chip_hashonly.csv) (`a8c2ba5d…`) was made with only the
+hash column set to `225d0b53…` (`sed` on the 24 rows; every other byte equal), as r3's bond map was made from
+r2's. `verify_bondmap.py` (`flow/signoff/1414r2/`, as in `run_candidate.sh` stage `post`), CPUs 45-47,
+commands in [`bondmap/run_quick.sh`](bondmap/run_quick.sh):
+
+| Run | Result | Output |
+|---|---|---|
+| r4 GDS vs the r4-hash copy | **passed** (`all_ok: true`): 24 openings, 0 unmatched, 24 rows each on one opening with size, TopMetal2 enclosure ≥ 2.1 µm, dfpad, die size and hash OK; 22 labels (134/25) at the row centres. The 24 per-pad records equal r3's `verify_bondmap_r4.json` exactly | [`bondmap/verify_bondmap_r4_hashonly.json`](bondmap/verify_bondmap_r4_hashonly.json) |
+| r4 GDS vs the tracked (r3-bound) CSV, control | **failed** as expected: only `hash_ok` (and so `ok`, `all_ok`) is false; every geometric and label field passes | [`bondmap/verify_bondmap_r3csv_on_r4.json`](bondmap/verify_bondmap_r3csv_on_r4.json) |
+
+No r4-bound bond map was written to `padframe/`; that belongs to an adoption decision.
+
+## Second opinion: IHP dev-branch DRC deck on r4 (`devdeck_check/`)
+
+Same method as r3's [`devdeck_check`](../signoff-1414r3-20260926/devdeck_check/README.md): the dev deck tree
+`${BULK}/devdeck-drc-r3-20260926/devpdk/` (IHP-Open-PDK `origin/dev` `4fd47c5e362914a100eabb2a651b0e3ab8981c25`,
+with `versions.txt`), dev `run_drc.py` in the pinned container (KLayout 0.30.9), the options of
+`run_candidate.sh signoff`, maximal through `run_maximal_dev.py` (the bulk copy with the real deck path; the tracked
+copy has `${BULK}` in its path and stopped at start-up, attempt kept in
+`${BULK}/devdeck-drc-r4-20260927/attempt1_maximal_wrapper_path_placeholder/`). Input `g1_chip_top_1414_r4.gds`
+`225d0b53…` ([`devdeck_check/input_gds.sha256`](devdeck_check/input_gds.sha256), unchanged after the runs:
+[`input_gds.sha256.after`](devdeck_check/input_gds.sha256.after)). All five ran at the same time on CPUs 45-47,
+shared with other jobs, hence the longer run times.
+
+| Check | Dev deck: rules / markers | Run time (log) | Pinned deck (above): rules / markers | Difference |
+|---|---|---|---|---|
+| Main (`--no_density --disable_extra_rules`) | 561 / **0** | 853.79 s | 561 / 0 | none |
+| Maximal (`sg13g2_maximal`) | 272 / **0** | 1749.41 s | 272 / 0 | none |
+| Density | 7 / **0** | 113.89 s | 7 / 0 | none |
+| Antenna | 31 / **0** | 428.71 s | 31 / 0 | none |
+| Precheck (`--precheck_drc --disable_extra_rules`) | 455 / **0** | 724.04 s | 455 / 0 | none |
+
+- **passed**: every rule reports 0 markers; all five runs exited 0 (`devdeck_check/*/run.log.rc`).
+- The five dev-deck lyrdb files are byte-identical to r3's dev-deck lyrdb files (bulk originals and tracked
+  copies alike), i.e. the same empty reports with the same rule catalogue.
+- Not run with the dev PDK: LVS on r4.
 
 ## Not run
 
-- GDS inventory and stock-name check on r4: not run (XOR r3 → r4 bounds the change).
-- Bond-map verification against the r4 hash: not run.
-- Second-opinion DRC with the IHP dev-branch deck (r3 `devdeck_check/`): not run on r4.
+- GDS inventory, stock-name check, bond-map verification and dev-deck DRC: run 2026-09-27 after the first
+  version of this report, all **passed** (above).
+- An r4-bound bond map in `padframe/`: not written (adoption decision).
+- LVS with the dev PDK: not run.
 - Digital macro flow, STA, GLS, formal equivalence: not re-run; the macro is byte-identical to r3 and r3's results apply.
 - Merged-SDC chip STA on the r4 chip netlist: not run.
 - Full-chip (assembled) PEX, IR drop/EM, full-chip STA with extracted parasitics: not run.
