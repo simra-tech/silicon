@@ -1,0 +1,32 @@
+* Red-team 2026-09-27 (trip_path): copy of blocks/g1_trip/sim/postlayout/tb_trip_kick_train.cir with the
+* strobe period as a parameter (PER) and cmp_clk_n / soft/hard DAC nodes written out. Everything else unchanged.
+.param VDD=@@VDD@@ VREF=1.04 PER=@@PER@@n
+.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerMOSlv.lib @@MOS@@
+.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerMOShv.lib @@MOS@@
+.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerRES.lib @@RES@@
+.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerCAP.lib cap_typ
+.temp @@TEMP@@
+.option rshunt=1e12 gmin=1e-13
+.include @@NET@@
+Vdd vdd 0 dc {VDD}
+Vdda vdda 0 dc @@VDDA@@
+Vref vref 0 dc {VREF}
+Visense isense 0 pwl(0 1.5 1 1.5)
+Vclk cmp_clk 0 pulse(0 {VDD} 20n 0.2n 0.2n {PER/2-0.2n} {PER})
+@@BITS@@
+X1 isense vref cmp_clk s0 s1 s2 s3 s4 s5 s6 s7 h0 h1 h2 h3 h4 h5 h6 h7 cmp_soft cmp_hard vdd vdda 0 g1_trip
+Cq cmp_soft 0 10f
+Cqh cmp_hard 0 10f
+.control
+set filetype=ascii
+op
+let vs0 = v(x1.vth_@@COND@@)
+let vis = 2*(vs0 - (@@UD@@)*1.04/530)
+set svis = $&vis
+alter @Visense[pwl] = [ 0 $svis 1 $svis ]
+op
+echo "DC vth_soft=" $&v(x1.vth_soft) " vth_hard=" $&v(x1.vth_hard) " icmp=" $&v(x1.icmp) " isense=" $svis
+tran 0.1n @@TSTOP@@
+wrdata @@OUT@@ v(x1.vth_soft) v(x1.vth_hard) v(x1.icmp) v(cmp_clk) v(cmp_soft) v(cmp_hard) v(x1.cmp_clk_n)
+.endc
+.end

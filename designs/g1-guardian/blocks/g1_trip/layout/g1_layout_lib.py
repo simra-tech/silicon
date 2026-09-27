@@ -672,7 +672,7 @@ class RowLayout:
             cand = x
             while True:
                 okS = (d['S'] == self.vdd) or clear(cand + 0.15, d['S'])
-                okD = clear(cand + 0.66, d['D'])
+                okD = clear(cand + 0.53 + d['l'], d['D'])
                 if okS and okD:
                     if clear(cand + act_w + 0.30, d['G']):
                         side = 'right'
@@ -685,7 +685,7 @@ class RowLayout:
             pside.append(side)
             if d['S'] != self.vdd:
                 pstubs.append((cand + 0.15, d['S']))
-            pstubs.append((cand + 0.66, d['D']))
+            pstubs.append((cand + 0.53 + d['l'], d['D']))
             pstubs.append(((cand + act_w + 0.30) if side == 'right' else (cand - 0.30), d['G']))
             x = cand + act_w + 0.72
         self.x_p_end = x

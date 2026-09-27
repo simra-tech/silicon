@@ -17,7 +17,7 @@ the top-level decap/antenna/filler cells come from the CDL. Substitutions, each 
   * --osc ideal (default): g1_osc is replaced by a subckt of the same ports holding the ideal clock of run_top.py
     (9.436194721 MHz, gated by the RTL osc_en, released at 0.1 us). --osc tl keeps the transistor-level oscillator.
   * --netlist pex: the block subckts g1_bgr, g1_sense, g1_trip, g1_gate, g1_t2f (and g1_osc with --osc tl) come
-    from the extracted netlists of run_top.BLOCKSETS['c1414'] / T2F_NETLISTS (hash-bound; ports checked against
+    from the extracted netlists of run_top.BLOCKSETS[--blockset, default 'c1414'] / T2F_NETLISTS (hash-bound; ports checked against
     the CDL's port list positionally through a name normalisation). Default --netlist sch: the CDL's own blocks.
   * --pads nodcn (default): every dantenna instance of the translated chip (IO cells and sg13g2_antennanp) is
     removed (run_top.py PADS_NODCN_WARNING reason). --pads pdk keeps them.
@@ -266,6 +266,7 @@ INTERCONNECT_FILE = os.path.join(HERE, 'postlayout/top_interconnect_20260925.spi
 INTERCONNECT_SHA256 = 'ddc88cc765e99a0e982c9b6bc24817bfe336ae686930b2c12a85d514fb2adcc2'
 POR_PIN = False      # --por-pin (set in main)
 PEX_BLOCKS = ()   # --pex-blocks: blocks that use the extracted netlist under --netlist sch (set in main)
+BLOCKSET = 'c1414'  # --blockset: run_top.BLOCKSETS entry of the --netlist pex swaps (set in main)
 KEEP_CDL = ()     # --keep-cdl: blocks that keep the CDL schematic subckt under --netlist pex (set in main)
 
 
@@ -277,7 +278,7 @@ def pex_swaps(netlist, osc):
             continue
         if (k == 'osc' and osc != 'tl') or k in KEEP_CDL:
             continue
-        rel = RT.T2F_NETLISTS['t2f'] if k == 't2f' else RT.BLOCKSETS['c1414'][k]['pex']
+        rel = RT.T2F_NETLISTS['t2f'] if k == 't2f' else RT.BLOCKSETS[BLOCKSET][k]['pex']
         full = os.path.join(BLOCKS, rel)
         if rel in RT.BLOCKSET_SHA256 and RT.sha256(full) != RT.BLOCKSET_SHA256[rel]:
             raise SystemExit('netlist blocks/%s does not match its bound SHA256' % rel)
@@ -579,6 +580,8 @@ def main():
     ap.add_argument('--netlist', default='sch', choices=('sch', 'pex'))
     ap.add_argument('--osc', default='ideal', choices=('ideal', 'tl'))
     ap.add_argument('--pads', default='nodcn', choices=('nodcn', 'pdk'))
+    ap.add_argument('--blockset', default='c1414', choices=('c1414', 'c1414r4'),
+                    help='run_top.BLOCKSETS entry of the extracted block netlists (c1414r4: TRIP nf4_novclk extraction, r4 chip)')
     ap.add_argument('--method', default=None, choices=('gear', 'trap'), help='default trap (gear for power-up cases)')
     ap.add_argument('--temp', type=float, default=27)
     ap.add_argument('--corner', default='tt', choices=tuple(RT.CORNERS))
@@ -620,7 +623,8 @@ def main():
     a = ap.parse_args()
     if a.analysis == 'prefix' and a.tstop is None:
         ap.error('--analysis prefix requires --tstop US')
-    global KEEP_CDL, PEX_BLOCKS, HBT_SELFT0
+    global KEEP_CDL, PEX_BLOCKS, HBT_SELFT0, BLOCKSET
+    BLOCKSET = a.blockset
     HBT_SELFT0 = a.hbt_selft0
     global POR_PIN, WRAPPER, CDL_REL, CDL_SHA256
     if (a.cdl is None) != (a.cdl_sha256 is None):

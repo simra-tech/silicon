@@ -1,0 +1,23 @@
+* g1_novclk (r4 candidate nf4_novclk), written by layout/novclk.py cdl
+.subckt g1_novclk clk cks ckh vdd vss
+MIN1 cks norb vss vss sg13_lv_nmos w=1u l=0.13u m=1
+MIN2 cks norb vss vss sg13_lv_nmos w=1u l=0.13u m=1
+MON1 norb clk vss vss sg13_lv_nmos w=0.5u l=0.13u m=1
+MON2 norb dly vss vss sg13_lv_nmos w=0.5u l=0.13u m=1
+MDN1 dl1 clk vss vss sg13_lv_nmos w=0.3u l=2.5u m=1
+MDN2 dl2 dl1 vss vss sg13_lv_nmos w=0.3u l=2.5u m=1
+MDN3 dl3 dl2 vss vss sg13_lv_nmos w=0.3u l=2.5u m=1
+MSN dly dl3 vss vss sg13_lv_nmos w=0.5u l=0.13u m=1
+MAN2 nand1 dly vss vss sg13_lv_nmos w=1u l=0.13u m=1
+MAN1 ckh clk nand1 vss sg13_lv_nmos w=1u l=0.13u m=1
+MIP1 cks norb vdd vdd sg13_lv_pmos w=2u l=0.13u m=1
+MIP2 cks norb vdd vdd sg13_lv_pmos w=2u l=0.13u m=1
+MOP1 nor1 clk vdd vdd sg13_lv_pmos w=2u l=0.13u m=1
+MOP2 norb dly nor1 vdd sg13_lv_pmos w=2u l=0.13u m=1
+MDP1 dl1 clk vdd vdd sg13_lv_pmos w=0.6u l=2.5u m=1
+MDP2 dl2 dl1 vdd vdd sg13_lv_pmos w=0.6u l=2.5u m=1
+MDP3 dl3 dl2 vdd vdd sg13_lv_pmos w=0.6u l=2.5u m=1
+MSP dly dl3 vdd vdd sg13_lv_pmos w=1u l=0.13u m=1
+MAP1 ckh clk vdd vdd sg13_lv_pmos w=1.5u l=0.13u m=1
+MAP2 ckh dly vdd vdd sg13_lv_pmos w=1.5u l=0.13u m=1
+.ends

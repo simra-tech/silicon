@@ -1,0 +1,21 @@
+* g1_novclk variant a3L1p5: 3 long-L stages (n 0.3/1.5, p 0.6/1.5) + sharpener; NOR p 2 n 0.5; INV p 4 n 2; NAND p 1.5 n 1
+.subckt g1_novclk clk cks ckh vdd vss
+XMDP1 dl1 clk vdd vdd sg13_lv_pmos w=0.6u l=1.5u ng=1 m=1
+XMDN1 dl1 clk vss vss sg13_lv_nmos w=0.3u l=1.5u ng=1 m=1
+XMDP2 dl2 dl1 vdd vdd sg13_lv_pmos w=0.6u l=1.5u ng=1 m=1
+XMDN2 dl2 dl1 vss vss sg13_lv_nmos w=0.3u l=1.5u ng=1 m=1
+XMDP3 dl3 dl2 vdd vdd sg13_lv_pmos w=0.6u l=1.5u ng=1 m=1
+XMDN3 dl3 dl2 vss vss sg13_lv_nmos w=0.3u l=1.5u ng=1 m=1
+XMSP dly dl3 vdd vdd sg13_lv_pmos w=1u l=0.13u ng=1 m=1
+XMSN dly dl3 vss vss sg13_lv_nmos w=0.5u l=0.13u ng=1 m=1
+XMOP1 nor1 clk vdd vdd sg13_lv_pmos w=2u l=0.13u ng=1 m=1
+XMOP2 norb dly nor1 vdd sg13_lv_pmos w=2u l=0.13u ng=1 m=1
+XMON1 norb clk vss vss sg13_lv_nmos w=0.5u l=0.13u ng=1 m=1
+XMON2 norb dly vss vss sg13_lv_nmos w=0.5u l=0.13u ng=1 m=1
+XMIP cks norb vdd vdd sg13_lv_pmos w=4u l=0.13u ng=1 m=1
+XMIN cks norb vss vss sg13_lv_nmos w=2u l=0.13u ng=1 m=1
+XMAP1 ckh clk vdd vdd sg13_lv_pmos w=1.5u l=0.13u ng=1 m=1
+XMAP2 ckh dly vdd vdd sg13_lv_pmos w=1.5u l=0.13u ng=1 m=1
+XMAN1 ckh clk nand1 vss sg13_lv_nmos w=1u l=0.13u ng=1 m=1
+XMAN2 nand1 dly vss vss sg13_lv_nmos w=1u l=0.13u ng=1 m=1
+.ends g1_novclk

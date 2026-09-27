@@ -2,6 +2,9 @@
 """G1_TRIP layout generator (KLayout 0.30.9 + SG13G2 PCells, run inside the pinned container):
 
   python3 gen_trip_layout.py [dac|cmp|cond|top]    -> writes g1_trip.gds (or a single cell) here
+  klayout -b -r gen_trip_layout.py -rd what=novclk -rd src=<gds> -rd out=<gds> [-rd cell=<name>]
+      r4 candidate (candidates/nf4_novclk, class NovclkPatch): replaces the clock inverter XCLKI of the TRIP
+      macro as placed in the chip of record by the non-overlap clock generator of novclk.py; `top` is unchanged
 
 Cells (names equal the schematic subcircuits so that the hierarchical LVS compares cell by cell):
   g1_dac8   530-unit rppd string (4 x 1.2 um units, pitch 1.76 um with shared heads) as a
@@ -1045,6 +1048,219 @@ def dac_core_cdl(path):
     open(path, 'w').write('\n'.join(lines) + '\n')
 
 
+
+# ------------------------------------------------------------------ r4 candidate: non-overlap clock generator ---
+class NovclkPatch:
+    """r4 candidate nf4_novclk (UNADOPTED until signed off): replace the clock inverter XCLKI of the TRIP macro AS
+    PLACED IN THE CHIP OF RECORD (the NF4/regenpair4 macro; cell `g1_trip` of the macro cut, or
+    `__rz_port_text_033_retained_g1_trip` in the chip GDS) by the non-overlapping clock generator of `novclk.py`.
+    Only shapes of the macro top cell and its fill-cell instances change; sub-cells, outline, pins, LEF and every
+    other net are untouched. The same patch is applied to the macro cut and to the chip so that the chip's TRIP cell
+    equals the candidate macro.
+
+    1. remove XCLKI: every top-cell shape inside the inverter box (devices, contacts, Metal1, Via1, NWell, markers),
+       its Metal2 input riser, output L and the VDD/VSS risers with their Via1s (the VDD Via2 at the VDD bar stays);
+    2. cut the Metal3 clock polygon (cmp_clk: soft comparator clk pin -> y 192 -> x 176.12) at x 170.8, so that its
+       west part becomes the soft clock cks; trim the Metal3 cmp_clk_n polygon (y 188 -> hard comparator clk pin) to
+       start at the generator's ckh port;
+    3. draw the generator as a RowLayout (NMOS row over a p+ tap / Metal1 VSS rail, Metal2 channel, PMOS row under an
+       n+ tap / Metal1 VDD rail) at x >= 161, y >= 182.6 between the two comparators, below the Metal3 q lines;
+       ports: cks -> Metal3 up to the y 192 line; clk -> Metal3 to (172, 191) -> (172, 192), the existing Via2 of the
+       clk pin's Metal2 riser; ckh -> Metal3 to y 188; VDD: Metal2 riser at x 176.4 to the existing Via2 at the
+       VDD bar; VSS: Via1 + Metal2 riser east of the block to the macro's p+ ring (Metal1, y 206.15);
+    4. remove every macro fill-cell instance (regular arrays are expanded) whose fill shape comes within 1.5 um of
+       the generator box or of a new wire on the same layer, and mark the generator box as no-fill (Activ,
+       GatPoly, Metal1-3, datatype 23)."""
+    OLD_BOX = (174.0, 184.4, 178.8, 188.95)       # XCLKI devices, contacts, Metal1, Via1, NWell
+    OLD_M2 = [(174.58, 186.1, 174.82, 192.15), (178.35, 184.5, 178.65, 206.3), (176.28, 188.6, 176.52, 206.15)]
+    OLD_OTHER = [('M1', (178.35, 206.0, 178.65, 206.3)), ('Via1', (178.405, 206.055, 178.595, 206.245)),
+                 ('Via2', (174.605, 191.905, 174.795, 192.095))]
+    M3_CLK = (141.58, 181.18, 176.12, 192.12)    # bbox of the soft clk polygon (cmp_clk, pin riser Via2 at 172, 192)
+    M3_CKN = (177.85, 181.18, 208.12, 188.12)    # bbox of the cmp_clk_n polygon
+    X_CUT = 170.8
+    OX, OY = 162.0, 184.6                        # NMOS row Activ lower-left
+    VDD_X, CLK_X, CLK_Y = 176.4, 172.0, 191.0
+    RING_Y = 206.15
+
+    def __init__(self, ly, cell):
+        import novclk
+        self.ly, self.cell, self.nv = ly, cell, novclk
+        self.D = Draw(ly, cell)
+        self.log = []
+        self.cells0 = set(c.cell_index() for c in ly.each_cell())
+
+    def _li(self, key):
+        return self.D.L[key]
+
+    def _take(self, key, box, exact=True):
+        """delete the top-cell shape(s) on `key` with bbox == box (exact) or inside box; returns the count"""
+        li, n = self._li(key), 0
+        b = pya.DBox(*box)
+        for s in list(self.cell.shapes(li).each()):
+            sb = s.dbbox()
+            hit = (abs(sb.left - b.left) < 1e-4 and abs(sb.bottom - b.bottom) < 1e-4 and abs(sb.right - b.right) < 1e-4
+                   and abs(sb.top - b.top) < 1e-4) if exact else sb.inside(b)
+            if hit:
+                self.cell.shapes(li).erase(s)
+                n += 1
+        return n
+
+    def remove_old(self):
+        ly, c = self.ly, self.cell
+        skip = {(189, 4)} | {(l, d) for (l, d) in [(ly.get_info(i).layer, ly.get_info(i).datatype) for i in ly.layer_indexes()] if d in (22, 23)}
+        n_in, per = 0, {}
+        box = pya.DBox(*self.OLD_BOX)
+        for li in ly.layer_indexes():
+            inf = ly.get_info(li)
+            if (inf.layer, inf.datatype) in skip:
+                continue
+            for s in list(c.shapes(li).each()):
+                if s.dbbox().inside(box):
+                    c.shapes(li).erase(s)
+                    n_in += 1
+                    per[str(inf)] = per.get(str(inf), 0) + 1
+        self.log.append('XCLKI box: %d shapes removed %s' % (n_in, sorted(per.items())))
+        assert n_in == 59, n_in
+        for b in self.OLD_M2:
+            assert self._take('M2', b) == 1, ('M2', b)
+        for key, b in self.OLD_OTHER:
+            assert self._take(key, b) == 1, (key, b)
+        # Metal3: cut the clk polygon, trim the cmp_clk_n polygon later (needs the ckh port x)
+        for key, bb in (('clk', self.M3_CLK), ('ckn', self.M3_CKN)):
+            li = self._li('M3')
+            hits = [s for s in c.shapes(li).each() if (lambda b: abs(b.left - bb[0]) < 1e-4 and abs(b.bottom - bb[1]) < 1e-4
+                    and abs(b.right - bb[2]) < 1e-4 and abs(b.top - bb[3]) < 1e-4)(s.dbbox())]
+            assert len(hits) == 1, (key, len(hits))
+            setattr(self, 'poly_' + key, pya.Region(hits[0].polygon))
+            c.shapes(li).erase(hits[0])
+
+    def draw(self):
+        D, nv = self.D, self.nv
+        assert self.cell.shapes(self._li('TEXT')).size() == 0, 'TEXT (63/0) shapes in the macro top cell'
+        devs = [dict(name=n, kind=k, w=w, l=l, D=d, G=g, S=s) for n, k, w, l, d, g, s in nv.DEVICES]
+        row = RowLayout(D, self.OX, self.OY, devs, ports=('cks', 'clk', 'ckh'))
+        row.build()
+        self.row = row
+        xr1, vss_y, xr2, top = row.extent
+        vdd_y = row.VDD_Y
+        pc, pk, ph = row.port_pos['cks'], row.port_pos['clk'], row.port_pos['ckh']
+        self.log.append('RowLayout extent (%.2f, %.2f)-(%.2f, %.2f); VSS_Y %.2f VDD_Y %.2f; ports cks %s clk %s ckh %s'
+                        % (xr1, vss_y, xr2, top, row.VSS_Y, vdd_y, pc, pk, ph))
+        assert xr1 >= 160.3 and top <= 194.0 and vss_y >= 182.3, row.extent
+        assert pc[0] < self.X_CUT - 0.5 and pc[0] < pk[0] < ph[0] and pk[0] > self.CLK_X + 0.5, (pc, pk, ph)
+        # p+ substrate tie under the VSS rail (the rail itself is RowLayout's Metal1)
+        D.tap_bar(xr1 + 0.5, row.VSS_Y - 0.15, xr2 - 0.5, row.VSS_Y + 0.15, kind='p', m1w=0.30)
+        # cks: Metal3 from the port pad up to the soft clk line (y 192), which is cut at X_CUT
+        cut = pya.Region(pya.DBox(self.X_CUT, 0, 229, 207).to_itype(0.001))
+        west = self.poly_clk - cut
+        assert west.count() == 1
+        self.cell.shapes(self._li('M3')).insert(west)
+        D.vwire('M3', pc[0], pc[1], 192.0)
+        # clk: Metal3 port -> (x, CLK_Y) -> (CLK_X, CLK_Y) -> up to the existing clk Via2 at (CLK_X, 192)
+        D.vwire('M3', pk[0], pk[1], self.CLK_Y)
+        D.hwire('M3', self.CLK_X, pk[0], self.CLK_Y)
+        D.vwire('M3', self.CLK_X, self.CLK_Y, 192.0)
+        D.box('M3', self.CLK_X - 0.15, 192.0 - 0.12, self.CLK_X + 0.15, 192.0 + 0.12)
+        # ckh: trimmed cmp_clk_n polygon from the ckh port x eastwards, port joined on Metal3
+        keep = pya.Region(pya.DBox(ph[0] - 0.12, 0, 229, 207).to_itype(0.001))
+        east = self.poly_ckn & keep
+        assert east.count() == 1
+        self.cell.shapes(self._li('M3')).insert(east)
+        D.vwire('M3', ph[0], ph[1], 188.0)
+        # VDD: Metal2 riser from the VDD rail (Metal1) to the kept Via2 at the VDD bar
+        assert xr1 < self.VDD_X < xr2
+        D.vpad('Via1', self.VDD_X, vdd_y, hi='v')
+        D.box('M2', self.VDD_X - 0.12, vdd_y - 0.15, self.VDD_X + 0.12, 206.15)
+        # VSS: rail extended east, Via1, Metal2 riser to the p+ ring's Metal1 (y 206.15), Via1 there
+        xs = max(xr2, ph[0]) + 0.9
+        assert xs <= 192.6, xs
+        D.hwire('M1', xr2 - 0.5, xs, row.VSS_Y, w=0.30)
+        D.vpad('Via1', xs, row.VSS_Y, hi='v')
+        D.vwire('M2', xs, row.VSS_Y, self.RING_Y)
+        D.via('Via1', xs, self.RING_Y)
+        self.new_box = (xr1 - 0.3, vss_y - 0.3, xs + 0.5, top + 0.3)
+        D.nofill(*self.new_box, margin=0.0, layers=('Activ_nf', 'GatPoly_nf', 'M1_nf', 'M2_nf', 'M3_nf'))
+        self.wires = {'M2': [(self.VDD_X - 0.12, vdd_y, self.VDD_X + 0.12, 206.15), (xs - 0.12, row.VSS_Y, xs + 0.12, 206.3)],
+                      'M3': [(pc[0] - 0.15, pc[1], pc[0] + 0.15, 192.12), (self.CLK_X - 0.15, self.CLK_Y - 0.12, pk[0] + 0.15, 192.15),
+                             (ph[0] - 0.15, min(ph[1], 188.0) - 0.12, ph[0] + 0.15, max(ph[1], 188.0) + 0.12)],
+                      'M1': [(xs - 0.15, self.RING_Y - 0.15, xs + 0.15, self.RING_Y + 0.15)]}
+        D.clean_pcell_markers()
+        for cc in list(self.ly.each_cell()):
+            if cc.cell_index() not in self.cells0 and cc.is_proxy() and cc.parent_cells() == 0:
+                self.ly.delete_cell(cc.cell_index())
+        assert set(c.cell_index() for c in self.ly.each_cell()) == self.cells0, 'cell set changed'
+
+    def clear_fill(self, margin=1.5):
+        """remove fill-cell instances (regular arrays expanded first) whose fill shape is within `margin` of the
+        generator box (every fill layer) or of a new wire (same metal layer)"""
+        ly, c = self.ly, self.cell
+        fl = {'1/22': None, '5/22': None, '8/22': 'M1', '10/22': 'M2', '30/22': 'M3'}
+        keep_out = {}
+        g = pya.DBox(*self.new_box).enlarged(margin, margin)
+        for key in ('1/22', '5/22', '8/22', '10/22', '30/22'):
+            boxes = [g]
+            m = fl[key]
+            if m:
+                boxes += [pya.DBox(*b).enlarged(margin, margin) for b in self.wires.get(m, [])]
+            keep_out[key] = boxes
+        removed, expanded = 0, 0
+        for inst in list(c.each_inst()):
+            fc = ly.cell(inst.cell_index)
+            if 'FILL_CELL' not in fc.name:
+                continue
+            key = [str(ly.get_info(li)) for li in ly.layer_indexes() if fc.shapes(li).size()]
+            assert len(key) == 1 and key[0] in keep_out, (fc.name, key)
+            boxes = keep_out[key[0]]
+            if not any(inst.dbbox().overlaps(b) for b in boxes):
+                continue
+            if inst.is_regular_array():
+                inst.explode()
+                expanded += 1
+        for inst in list(c.each_inst()):
+            fc = ly.cell(inst.cell_index)
+            if 'FILL_CELL' not in fc.name:
+                continue
+            key = [str(ly.get_info(li)) for li in ly.layer_indexes() if fc.shapes(li).size()][0]
+            if any(inst.dbbox().overlaps(b) for b in keep_out[key]):
+                inst.delete()
+                removed += 1
+        self.log.append('fill: %d arrays expanded, %d fill instances removed' % (expanded, removed))
+
+    def clear_parent_fill(self, parent, trans, margin=1.5):
+        """chip only: the chip-level filler put fill shapes (datatype 22, top cell) over the macro where the macro
+        had none; remove those within `margin` of the generator box (Activ, GatPoly, Metal1-3 fill) or of a new wire
+        (same metal). Shapes are addressed in the macro frame through `trans` (macro -> parent)."""
+        ly = self.ly
+        keys = {(1, 22): None, (5, 22): None, (8, 22): 'M1', (10, 22): 'M2', (30, 22): 'M3'}
+        removed = {}
+        for (l, d), m in keys.items():
+            li = ly.find_layer(l, d)
+            if li is None:
+                continue
+            boxes = [pya.DBox(*self.new_box).enlarged(margin, margin)]
+            if m:
+                boxes += [pya.DBox(*b).enlarged(margin, margin) for b in self.wires.get(m, [])]
+            boxes = [b.transformed(trans) for b in boxes]
+            mac = self.cell.dbbox().transformed(trans)
+            for sh in list(parent.shapes(li).each()):
+                # only fill lying entirely over the macro: the chip outside the TRIP outline stays unchanged
+                if sh.dbbox().inside(mac) and any(sh.dbbox().overlaps(b) for b in boxes):
+                    parent.shapes(li).erase(sh)
+                    removed['%d/%d' % (l, d)] = removed.get('%d/%d' % (l, d), 0) + 1
+        self.log.append('parent (chip-level) fill shapes removed: %s' % sorted(removed.items()))
+
+    def apply(self, parent=None):
+        self.remove_old()
+        self.draw()
+        self.clear_fill()
+        if parent is not None:
+            insts = [i for i in parent.each_inst() if i.cell_index == self.cell.cell_index()]
+            assert len(insts) == 1 and not insts[0].is_regular_array(), len(insts)
+            assert all(p == parent.cell_index() for p in self.cell.each_parent_cell())
+            self.clear_parent_fill(parent, insts[0].dcplx_trans)
+        return self.log
+
+
 if __name__ == '__main__':
     # klayout -b -r gen_trip_layout.py -rd what=<dac_core|dac|cmp|cond|top> -rd out=<gds path>
     what = globals().get('what', 'top')
@@ -1072,6 +1288,22 @@ if __name__ == '__main__':
         cell = b.build()
         write_gds(ly, out or 'g1_cond.gds')
         print('wrote', out, cell.dbbox())
+    elif what == 'novclk':
+        # r4 candidate: klayout -b -r gen_trip_layout.py -rd what=novclk -rd src=<gds> -rd out=<gds> [-rd cell=<name>]
+        # src = the TRIP macro cut from the chip of record (top g1_trip) or the chip GDS itself
+        # (cell __rz_port_text_033_retained_g1_trip); only that cell's shapes and fill instances change.
+        ly.read(src)
+        cname = globals().get('cell', 'g1_trip')
+        c = ly.cell(cname)
+        assert c is not None, cname
+        # in the chip, the chip-level fill of the top cell over the macro is cleared too
+        log = NovclkPatch(ly, c).apply(parent=None if cname == 'g1_trip' else ly.top_cell())
+        for l in log:
+            print(l)
+        opt = pya.SaveLayoutOptions()
+        opt.gds2_write_timestamps = False
+        ly.write(out, opt)
+        print('wrote', out)
     elif what == 'top':
         b = TopBuilder(ly)
         cell = b.build()

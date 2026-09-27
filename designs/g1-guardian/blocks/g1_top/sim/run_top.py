@@ -7,7 +7,7 @@ Run from the repository root inside the pinned container:
     G1_WORKDIR=designs/g1-guardian/blocks/g1_top/sim flow/run.sh python3 run_top.py --list
 
 Options: --netlist sch|pex   schematic or kpex post-layout block netlists (default sch)
-         --blockset legacy|c1414  Sep-19 block netlists (default) or those of the frozen 1414 um chip (BLOCKSETS)
+         --blockset legacy|c1414|c1414r4  Sep-19 block netlists (default) or those of the frozen 1414 um chip (BLOCKSETS)
          --front tl|beh      analog front end transistor-level (default) or behavioural (long runs, see README)
          --temp T            degC (default 27)      --corner tt|ss|ff (default tt)
          --osc ideal|tl      clock to the RTL: ideal source at the block frequency (default) or the transistor-level
@@ -96,6 +96,11 @@ BLOCKSETS = {
         'gate': {'sch': NETLISTS['sch']['gate'], 'pex': NETLISTS['pex']['gate']},
     },
 }
+# --blockset c1414r4: the r4 candidate chip (g1_chip_top_1414_r4.gds 225d0b53...): c1414 with the TRIP macro
+# replaced by the nf4_novclk candidate (non-overlapping comparator clock, g1_trip/layout/candidates/nf4_novclk).
+# Identical to c1414 except the trip pex entry: kpex 2.5D CC extraction of the candidate macro.
+BLOCKSETS['c1414r4'] = {k: dict(v) for k, v in BLOCKSETS['c1414'].items()}
+BLOCKSETS['c1414r4']['trip']['pex'] = 'g1_trip/sim/postlayout/g1_trip_nf4_novclk_pex.spice'
 # bound SHA256 of the c1414 netlists: a changed file is refused rather than silently simulated
 BLOCKSET_SHA256 = {
     'g1_bgr/layout/coordinated_full_closure/evidence/pex-preparation-20260922-r1/controls/r1/baseline_586.spice':
@@ -112,6 +117,8 @@ BLOCKSET_SHA256 = {
         '01227a3d8d8210d10d2d1ee6933842351140b8825fe29282f0327936a3064ad5',
     'g1_trip/sim/postlayout/g1_trip_nf4_pex.spice':
         'ba86b7b2a530abae365d539297909e033b24a54597f9cc75d8dff273c30d401c',
+    'g1_trip/sim/postlayout/g1_trip_nf4_novclk_pex.spice':
+        '6f518e0758a87b334ab5ae98a8ad43d79dd03ab4ba52c241f742280b6d2f770b',
 }
 # --t2f tl: G1_T2F at transistor level as the chip carries it (baseline revision, not rev1; block map of
 # g1_padring/reports/signoff-1414-20260924/README.md: sim form sim/postlayout/g1_t2f_pex.spice 441edabc) behind
@@ -207,7 +214,7 @@ def resolve_netlists(blockset, netlist):
             raise SystemExit('blocks/%s: .subckt %s ports %r differ from the deck instance %r' % (rel, name, found, ports))
         if k == 'sense':
             style = 'hier' if used == 'sch' else ('flat' if blockset == 'legacy' else 'exposed')
-    if blockset == 'c1414':
+    if blockset in ('c1414', 'c1414r4'):
         if paths['bgr'].endswith('baseline_586.spice'):
             warnings.append('NOTE bgr: BGR586 source carries 329 historical Sep-19 kpex capacitors, not an extraction of the BGR586 layout')
         else:
@@ -258,6 +265,7 @@ BEH = {
 # c1414: legacy front-end fit retained; clock = R0.95 CPEX, full clock-tree load, nominal, trim code 8 (reset)
 BEH['c1414_sch'] = dict(BEH['sch'], fosc=9.436194721e6)
 BEH['c1414_pex'] = dict(BEH['pex'], fosc=9.436194721e6)
+BEH['c1414r4_sch'], BEH['c1414r4_pex'] = BEH['c1414_sch'], BEH['c1414_pex']
 
 
 def frame_bits(addr, data):
@@ -1350,7 +1358,7 @@ def main():
     ap.add_argument('--vdd', type=float, default=1.2, help='VDD (V), default 1.2')
     ap.add_argument('--vdda', type=float, default=3.3, help='VDDA = IOVDD board rail (V), default 3.3')
     ap.add_argument('--blockset', default='legacy', choices=tuple(BLOCKSETS),
-                    help='analog block netlists: legacy (Sep-19 paths, default) or c1414 (frozen 1414 um chip: BGR586, SENSE R100, TRIP NF4, OSC R0.95)')
+                    help='analog block netlists: legacy (Sep-19 paths, default), c1414 (frozen 1414 um chip: BGR586, SENSE R100, TRIP NF4, OSC R0.95) or c1414r4 (c1414 with the TRIP nf4_novclk extraction)')
     ap.add_argument('--front', default=None, choices=('tl', 'beh'), help='override the case default')
     ap.add_argument('--osc', default=None, choices=('tl', 'ideal'), help='clock delivered to the RTL: ideal source at the block frequency (default) or the transistor-level oscillator (case osc)')
     ap.add_argument('--temp', type=float, default=27)
