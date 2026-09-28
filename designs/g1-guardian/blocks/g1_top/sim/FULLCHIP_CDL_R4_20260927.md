@@ -5,7 +5,7 @@ Every number here is **simulated**. The runs used:
 - IHP SG13G2 open PDK `84374023ee8b4b126bebbba67fcbada0a9c0ff0b`;
 - image `tapeoutbench-eda:latest` (`sha256:ddeb6957…`).
 
-**Status of this record: interim (2026-09-28 05:30 CEST).** Four reruns are still running and are marked **running** below. The record is updated when the last one ends.
+**Status of this record: final (2026-09-28 08:20 CEST).** Every requested case has a completed run. The failed and timed-out attempts are listed with their reasons.
 
 ## What r4 is, and what the deck is
 
@@ -101,13 +101,13 @@ The stimulus and detection are as in the r3x record. Each code is held 3.39 µs.
 | hard, coarse 150→94 step 8 | coarse 206→142 step 8: 174 silent, 166 fires | **134 silent, 126 fires**: first `cmp_hard` 28.29 µs, 0.48 µs after the code-126 write; trip_d 29.24 µs. The solver then stopped at 44.83 µs of 48 µs (BGR `xq736` timestep too small). The CAL and TRIP measures were emitted. | not run to completion after the crossing (numbers usable) | `cal_pex_tt_27C_gear_…_ser4_icx_hard150-86-8_maxstep1ns_functional_r4a` |
 | hard, 2-code 134→118 | 2-code 172→156: 172 silent, **170 fires** | reached 41.06 µs of 52 µs at the 24 800 s bound; no measures | not run to completion (timeout) | `cal_pex_tt_27C_gear_…_ser4_icx_hard134-116-2_maxstep1ns_functional_r4a` |
 | hard, 2-code 132→124 | — | reached 36.77 µs of 38 µs at the 24 800 s bound; no measures | not run to completion (timeout) | `cal_pex_tt_27C_gear_…_ser4_icx_hard132-122-2_maxstep1ns_functional_r4a` |
-| hard, 2-code 130→126 (36 000 s bound) | — | **running** (22.8 µs of 31 µs at 05:15; ETA about 06:40) | running | `cal_pex_tt_27C_gear_…_ser4_icx_hard130-124-2_maxstep1ns_functional_r4b` |
+| hard, 2-code 130→126 (36 000 s bound) | 2-code 172→156: 172 silent, **170 fires** | 130 and 128 silent, **126 fires**: first `cmp_hard` 24.90 µs, 0.48 µs after the code-126 write; trip_d 25.85 µs (cause 2) | passed | `cal_pex_tt_27C_gear_…_ser4_icx_hard130-124-2_maxstep1ns_functional_r4b` |
 | soft, 2-code 130→126 (36 000 s bound) | 130 silent, **128 fires** (0.59 µs after the write) | 130 silent, **128 fires**: first `cmp_soft` 21.62 µs, 0.59 µs after the code-128 write; soft_armed 21.93 µs; no hard decision, no trip | passed | `cal_pex_tt_27C_gear_…_ser4_icx_soft130-124-2_maxstep1ns_functional_r4b` |
 | soft, 2-code 134→118 and 132→124 | — | reached 41.11 / 36.25 µs at the 24 800 s bound; no measures | not run to completion (timeout) | `cal_pex_tt_27C_gear_…_ser4_icx_soft134-116-2_maxstep1ns_functional_r4a`, `cal_pex_tt_27C_gear_…_ser4_icx_soft132-122-2_maxstep1ns_functional_r4a` |
 
-- **Hard crossing (interim).** The first firing code is 126 and the last silent code is 134 (coarse). The r4 hard comparator's first firing code therefore lies between 126 and 133 at tt, against 170 on r3 (171 ± 1; ideal 127.1). The 2-code result is pending.
+- **Hard crossing.** Code 128 is silent and 126 fires (2-code window; coarse: 134 silent, 126 fires). The r4 hard crossing is therefore 127 ± 1, against the ideal 127.1: −1.1 to +0.9 codes = **within 1 LSB (0.2 mV)**. On r3 it was 171 ± 1 (+43 to +45 codes, 8.5–8.9 mV).
 - **Soft crossing.** It is unchanged against r3 (129 ± 1).
-- **hard_extra.** On r3, the hard crossing sat 41–43 codes above the soft crossing (the `hard_extra` of bring-up step S9). On r4 the gap is at most 5 codes (interim).
+- **hard_extra.** On r3, the hard crossing sat 41–43 codes above the soft crossing (the `hard_extra` of bring-up step S9). On r4 the hard comparator fires 2 codes (0.4 mV) below the soft one (126 vs 128 first firing), so `hard_extra` goes from about +42 to about −2 codes.
 
 ### d. tt functional cases
 
@@ -115,9 +115,9 @@ The stimulus and detection are as in the r3x record. Each code is held 3.39 µs.
 |---|---|---|---|---|
 | q, 44 µs, 1 A (no trip) | no trip; tripped max 7.6 mV, GATE min 3.298 V; VDDA 1462.5 µA, IOVDD 104.0 µA | no trip; tripped max 7.6 mV, GATE min 3.298 V, 1 A at the end; VDDA 1462.5 µA, IOVDD 104.1 µA | passed | `q_pex_tt_27C_gear_…_icx_maxstep1ns_functional_r4a` |
 | e20, 4× in 20 ns (hard trip) | 1.1526 / 1.1553 / 1.5318 / 1.7679 | 1.1524 / 1.1552 / **1.5317** / 1.7677, cause 2 | passed | `e20_pex_tt_27C_gear_…_icx_maxstep1ns_functional_r4a` |
-| hard_pulse, 45 mV for 200 ns (no trip) | no trip; tripped max 49 mV, GATE min 3.298 V | first attempt: failed (numerical) at 23.32 µs (BGR `xq736`), before the pulse. reltol 5e-4: reached 33.70 µs of 44 µs at the 24 800 s bound, no measures. reltol 5e-4 with the 36 000 s bound (r4b): **running** (ETA about 09:00) | running | `hard_pulse_pex_tt_27C_gear_…_icx_maxstep1ns_functional_r4a`, `hard_pulse_pex_tt_27C_gear_…_optreltol5em4_functional_r4a`, `hard_pulse_pex_tt_27C_gear_…_optreltol5em4_functional_r4b` |
-| f_mid, trip then EN re-arm | 1.1526 / 1.1553 / 1.5318 / 1.7679; re-arm 0.678 µs | first attempt: failed (numerical) at 23.32 µs (BGR `xq736`), before the event. reltol 5e-4: reached 34.87 µs of 50 µs at the bound, no measures. reltol 5e-4 with the 36 000 s bound (r4b): **running** (32.7 µs at 04:41; ETA about 07:45, bound at 08:47) | running | `f_mid_pex_tt_27C_gear_…_icx_maxstep1ns_functional_r4a`, `f_mid_pex_tt_27C_gear_…_optreltol5em4_functional_r4a`, `f_mid_pex_tt_27C_gear_…_optreltol5em4_functional_r4b` |
-| b_s, 1.5× held, SOFT_TIME_L = 1 (soft trip) | 27.752 / 27.755 / 28.131 / 28.367, cause 1 | reached 48.65 µs of 64 µs at the 24 800 s bound, before the soft decision (expected about 57.75 µs); no measures. Rerun with the 36 000 s bound (r4b): **running**, 31.2 µs at 04:41, expected to reach about 46 µs at its bound (08:53), which is again before the soft decision | running (expected: not run to completion) | `b_s_pex_tt_27C_gear_…_functional_r4a`, `b_s_pex_tt_27C_gear_…_functional_r4b` |
+| hard_pulse, 45 mV for 200 ns (no trip) | no trip; tripped max 49 mV, GATE min 3.298 V | reltol 5e-4 with the 36 000 s bound (r4b, 26 090 s): no trip; tripped max 49 mV, GATE min 3.298 V, 1 A at the end. The first attempt failed (numerical) at 23.32 µs (BGR `xq736`), before the pulse; reltol 5e-4 (r4a) reached 33.70 µs of 44 µs at the 24 800 s bound, with no measures | passed | `hard_pulse_pex_tt_27C_gear_…_icx_maxstep1ns_functional_r4a`, `hard_pulse_pex_tt_27C_gear_…_optreltol5em4_functional_r4a`, `hard_pulse_pex_tt_27C_gear_…_optreltol5em4_functional_r4b` |
+| f_mid, trip then EN re-arm | 1.1526 / 1.1553 / 1.5318 / 1.7679; re-arm 0.678 µs | reltol 5e-4 with the 36 000 s bound (r4b, 28 285 s): 1.1525 / 1.1552 / **1.5317** / 1.7678, cause 2; re-arm: GATE 2.7 nV while EN low, GATE 90 % **0.678 µs** after EN high, 3.300 V and 1 A at the end, tripped 49 nV. The first attempt failed (numerical) at 23.32 µs (BGR `xq736`), before the event; reltol 5e-4 (r4a) reached 34.87 µs of 50 µs at the 24 800 s bound, with no measures | passed | `f_mid_pex_tt_27C_gear_…_icx_maxstep1ns_functional_r4a`, `f_mid_pex_tt_27C_gear_…_optreltol5em4_functional_r4a`, `f_mid_pex_tt_27C_gear_…_optreltol5em4_functional_r4b` |
+| b_s, 1.5× held, SOFT_TIME_L = 1 (soft trip) | 27.752 / 27.755 / 28.131 / 28.367, cause 1 | with the 36 000 s bound (r4b, 34 255 s): **soft trip** 27.752 / 27.755 / **28.131** / 28.368, cause 1 (soft_peak 1). The first attempt (r4a) reached 48.65 µs of 64 µs at the 24 800 s bound, before the soft decision, with no measures | passed | `b_s_pex_tt_27C_gear_…_functional_r4a`, `b_s_pex_tt_27C_gear_…_functional_r4b` |
 
 ### e. Transistor-level oscillator clocking the RTL (`--osc tl`, c_mid compact, tt)
 
@@ -141,8 +141,14 @@ The stimulus and detection are as in the r3x record. Each code is held 3.39 µs.
 1. **The early hard trip is gone on the full-chip layout netlist.** On r3 the hard comparator decided 40–59 LSB below the code. On r4, at all three corners, it does not trip at 0.97T and trips at 1.03T of the code-200 nominal.
    - Every r3x bracket point that tripped on r3 (31.25 mV at tt and ss 125 °C, 28.75 mV at ff −40 °C) now gives no trip.
    - The soft crossing is unchanged (129 ± 1).
-   - This closes the §6 near-threshold failure of the r3x record at the ±6 LSB resolution of this set. The 2-code hard calibration window is pending.
-2. **Trip timing is unchanged.** c_mid, e20 and the real-oscillator trip agree with r3 within 0.3 ns in every column, at all three corners, as do the QUIET voltages and supply currents. Only the near-threshold 1.03T point at ss 125 °C is slower (decision 1.376 µs), as expected so close to the threshold.
+   - The tt calibration rehearsal puts the hard crossing at code 127 ± 1, against the ideal 127.1 (r3: 171 ± 1).
+   - This closes the §6 near-threshold failure of the r3x record: within 1 LSB at tt (calibration), and within ±6 LSB at ss 125 °C and ff −40 °C (the ±3 % brackets).
+2. **Trip timing and the rest of the trip path are unchanged.**
+   - c_mid, e20, f_mid and the real-oscillator trip agree with r3 within 0.3 ns in every column, at all three corners, as do the QUIET voltages and supply currents.
+   - The f_mid re-arm is 0.678 µs, as on r3.
+   - The b_s soft trip (cause 1) is at 27.752 µs, as on r3.
+   - hard_pulse does not trip (tripped max 49 mV, as on r3).
+   - Only the near-threshold 1.03T point at ss 125 °C is slower (decision 1.376 µs), as expected so close to the threshold.
 3. **Power-up is unchanged**: gB/gB_pd ss and ff, and gS ss, match r3x to within 0.2 µV / 1 mV.
 4. **Numerics.** Fourteen `r4a` attempts **failed (numerical)** with "timestep too small" on a BGR VBIC instance (`xq760` or `xq736`):
    - c_mid ss at 1 ns (6.789 µs) and 2 ns (10.50 µs);
@@ -160,7 +166,7 @@ The stimulus and detection are as in the r3x record. Each code is held 3.39 µs.
    Every rerun that completed agrees with the other variants within 0.2 ns.
 5. **Timeouts.** The overnight machine load (load average about 245) slowed each run by about 1.5× against r3x. The 24 800 s bound therefore stopped:
    - b_s at 48.65 µs;
-   - the three 2-code cal windows at 36.3–41.1 µs;
+   - the four 2-code cal windows at 36.3–41.1 µs;
    - the reltol reruns of f_mid (34.87 µs) and hard_pulse (33.70 µs).
 
    None produced measures. Short windows (130→126) and the 36 000 s reruns cover them.
@@ -169,10 +175,10 @@ The stimulus and detection are as in the r3x record. Each code is held 3.39 µs.
 
 | Item | Status |
 |---|---|
-| b_s tt (soft trip) | not run to completion (r4a timeout at 48.65 µs); r4b **running**, expected to stop at its bound before the soft decision |
-| f_mid tt | r4a: failed (numerical, 23.32 µs); r4a reltol: not run to completion (timeout at 34.87 µs); r4b **running** |
-| hard_pulse tt | r4a: failed (numerical, 23.32 µs); r4a reltol: not run to completion (timeout at 33.70 µs); r4b **running** |
-| cal hard 2-code | 134→118 and 132→124: not run to completion (timeout); 130→126 (r4b) **running** |
+| b_s tt (soft trip) | r4a: not run to completion (timeout at 48.65 µs); r4b with the 36 000 s bound: passed |
+| f_mid tt | r4a: failed (numerical, 23.32 µs); r4a reltol: not run to completion (timeout at 34.87 µs); r4b reltol 5e-4 with the 36 000 s bound: passed |
+| hard_pulse tt | r4a: failed (numerical, 23.32 µs); r4a reltol: not run to completion (timeout at 33.70 µs); r4b reltol 5e-4 with the 36 000 s bound: passed |
+| cal hard 2-code | 134→118 and 132→124: not run to completion (timeout); 130→126 (r4b) passed |
 | cal soft 134→118, 132→124 | not run to completion (timeout); superseded by 130→126 (passed) |
 | cal hard coarse 150→94 | not run to completion (numerical at 44.83 µs, after the crossing; measures emitted) |
 | cal at ss/ff; near threshold at the supply extremes; real oscillator at ss/ff; stock pads; series wire R, bondpad and fill C | not run (as r3x) |
@@ -181,10 +187,12 @@ The stimulus and detection are as in the r3x record. Each code is held 3.39 µs.
 
 ## Wall time and CPU
 
-The first launch was at 17:51 CEST on 2026-09-27; 55 run JSONs exist so far. The summed wall time is 200.4 CPU-hours, one CPU each. Per-run wall times are in the JSONs (`wall_s`):
+The first launch was at 17:51 CEST on 2026-09-27 and the last run ended at 08:18 CEST on 2026-09-28, 14.5 h of elapsed time. 55 runs were made (29 in the first launch, 26 reruns), for 208.8 CPU-hours summed wall time, one CPU each. Per-run wall times are in the JSONs (`wall_s`):
 - c_mid compact: 11 600–12 500 s (1 ns); about 10 000 s (5 ns at ss); 16 000–21 000 s (reltol 5e-4 under the night load);
 - osc tl: 21 739 s;
 - q: 21 523 s;
+- f_mid / hard_pulse / b_s (r4b, 36 000 s bound): 28 285 / 26 090 / 34 255 s;
+- calibration 130→126 (r4b): 18 892 s (hard) / 15 257 s (soft);
 - e20: 16 048 s;
 - power-up: 1840–3227 s.
 

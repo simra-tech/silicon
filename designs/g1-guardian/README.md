@@ -138,7 +138,7 @@ Full-chip layout-netlist campaigns on the chip of record r4 (`r4a`/`r4b` phase 1
 simulated; [`FULLCHIP_CDL_R4_20260927.md`](blocks/g1_top/sim/FULLCHIP_CDL_R4_20260927.md),
 [`FULLCHIP_CDL_R4_PHASE2_20260927.md`](blocks/g1_top/sim/FULLCHIP_CDL_R4_PHASE2_20260927.md)). The deck is the r3x deck
 below with two substitutions: the r4 CDL `e060c0c5` and the `nf4_novclk` TRIP extraction `6f518e07`. Interim
-record: the rows marked running were **running at the time of writing**.
+record: every row is final (last run completed 28 Sep 08:18 CEST).
 
 | Case | r3 (`r3full` / `r3x`) | r4 | Status (r4) |
 | --- | --- | --- | --- |
@@ -147,14 +147,14 @@ record: the rows marked running were **running at the time of writing**.
 | Hard brackets at 1.08/3.0 V, 1.32/3.6 V, tt −40 °C, tt 125 °C, code 254 (tt, ff −40 °C) | supplies: `c_mid` 1.547 / 1.543 µs; brackets not run | 0.97T no trip, 1.03T trips in every condition | passed |
 | `FAST_EN` = 1 brackets, three corners | not run | 0.97T no trip; 1.03T `GATE` < 1 V 0.591 / 0.987 / 0.481 µs (tt / ss / ff) | passed |
 | Soft code 153 brackets, three corners | not run | 0.97T silent, 1.03T soft trip (single-sample rows; 256-sample window at ss 125 °C) | passed |
-| Calibration rehearsal at tt, 25 mV (ideal code 127.1) | hard 172 silent / 170 fires (171 ± 1); soft 130 / 128 | hard coarse 134 silent / 126 fires; 2-code window 130→126 running at the time of writing; soft 130 / 128 | hard interim, soft passed |
+| Calibration rehearsal at tt, 25 mV (ideal code 127.1) | hard 172 silent / 170 fires (171 ± 1); soft 130 / 128 | hard coarse 134 silent / 126 fires; 2-code window 130 and 128 silent, 126 fires: crossing 127 ± 1 against the ideal 127.1 (r3: 171 ± 1); soft 130 / 128 | hard interim, soft passed |
 | `q` 44 µs, `e20`, transistor-level oscillator at tt | no trip; 1.5318 µs; 1.5004 µs | no trip; 1.5317 µs; 1.5004 µs | passed |
 | Transistor-level oscillator at ss 125 °C / ff −40 °C | not run | 7.491 MHz, `GATE` < 1 V 2.1337 µs / 12.050 MHz, 1.1722 µs | passed |
 | Power-up gB / gB_pd ss and ff, gS ss | ≤ 36 µV while EN low; gS 0.521 V peak | ≤ 36.2 µV; gS 0.520 V peak | passed |
 | `DAC_HARD` rewrite while armed (200 → 180/190 → 200) | not run | no trip on the rewrite | passed |
 | `f_mid` ss / ff (re-arm) | passed, 0.958 / 0.514 µs | `f_mid_c` passed, 0.958 / 0.515 µs | passed |
-| `f_mid` tt, `hard_pulse` tt, `hard_pulse` ss 125 °C and ff −40 °C | passed | running at the time of writing | running |
-| `b_s` tt (1.5×, 256 samples) | soft trip, `GATE` < 1 V 28.131 µs | running at the time of writing (expected to stop at its wall bound before the soft decision); ss 125 °C 1.03× window: soft trip 27.763 µs | running |
+| `f_mid` tt, `hard_pulse` tt, `hard_pulse` ss 125 °C and ff −40 °C | passed | passed (r4b, reltol 5e-4, 36 000 s bound): `f_mid` `GATE` < 1 V 1.5317 µs, re-arm 0.678 µs (r3 1.5318 / 0.678); `hard_pulse` tt no trip, `tripped` max 49 mV (r3 49 mV); `hard_pulse` ss/125 and ff/−40 no trip, latch max 54.8 / 48.7 mV (phase 2) | running |
+| `b_s` tt (1.5×, 256 samples) | soft trip, `GATE` < 1 V 28.131 µs | passed (r4b, 36 000 s bound, 34 255 s): soft trip 27.752 / 28.131 µs (`GATE` < 1 V), cause 1, identical to r3 (27.752 / 28.131 µs); ss 125 °C 1.03× window: soft trip 27.763 µs | running |
 
 Not run on r4 (beyond the r3 list below): hard threshold finer than ±3 % at ss/ff on this deck, calibration
 rehearsal at ss/ff, full-chip mismatch (block-level: window MC and the joint MC below), mismatch of the r4 TRIP

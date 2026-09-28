@@ -30,7 +30,7 @@ Only runs whose log says `# run status completed` are drawn. The `--exclude` pat
 
 `index.json` lists, for every figure: the tag, case, corner and temperature, the record row and status, and the
 waveform and log paths with their SHA-256. It also lists the tags matched by the globs and skipped because their
-log status is `failed`, `timeout` or still running (25 tags).
+log status is `failed` or `timeout` (21 tags).
 
 ## What each figure shows
 
@@ -49,6 +49,7 @@ quotes the tt nominal ("~39.25 mV") at every corner. The corner nominals are 39.
 
 | PNG | Case | Corner | Record status | PNG sha256 (16) | Waveform sha256 (16) | Log sha256 (16) |
 |---|---|---|---|---|---|---|
+| `cdl_b_s_pex_tt_27C_gear_cdle060c0c5_rtleco20260925_icx_maxstep1ns_functional_r4b.png` | b_s | tt 27 °C | passed | `373894ffbb7fef7c` | `ae19414a4b7107aa` | `cc3d0d336d16a3a5` |
 | `cdl_c_mid_pex_ff_-40C_gear_compact_cdle060c0c5_rtleco20260925_icx_fm1p15_maxstep1ns_functional_r4a.png` | c_mid fault x1.15 | ff -40 °C | passed | `9569d845d50e750d` | `b1f0acc300ba2a54` | `0591add9b69c89e9` |
 | `cdl_c_mid_pex_ff_-40C_gear_compact_cdle060c0c5_rtleco20260925_icx_fm1p1_maxstep1ns_functional_r4a.png` | c_mid fault x1.1 | ff -40 °C | passed | `7e1ec324a4dd6f3f` | `621b0c3cf81e5017` | `bcf420d5a7ef56ad` |
 | `cdl_c_mid_pex_ff_-40C_gear_compact_cdle060c0c5_rtleco20260925_icx_fm1p5186_maxstep1ns_functional_r4a.png` | c_mid fault x1.5186 | ff -40 °C | passed | `de4ff112bd22fe6b` | `e3f0e052c90ce432` | `a017295af0b74535` |
@@ -65,19 +66,23 @@ quotes the tt nominal ("~39.25 mV") at every corner. The corner nominals are 39.
 | `cdl_c_mid_pex_tt_27C_gear_compact_cdle060c0c5_rtleco20260925_icx_fm1p6171_maxstep1ns_functional_r4a.png` | c_mid fault x1.6171 | tt 27 °C | passed | `013d015a956ca4d6` | `735438dd64fdfe8f` | `e3e9ac1da0c06d54` |
 | `cdl_c_mid_pex_tt_27C_gear_compact_cdle060c0c5_rtleco20260925_icx_t19_maxstep1ns_functional_r4b.png` | c_mid | tt 27 °C | passed | `e50d365edcfd8a5a` | `d7493008e8f3ebec` | `0363676d7844efeb` |
 | `cdl_c_mid_pex_tt_27C_gear_osctl_compact_cdle060c0c5_rtleco20260925_icx_maxstep1ns_functional_r4a.png` | c_mid (osc tl) | tt 27 °C | passed | `f9545e1f2fb456ca` | `4305df0185b74691` | `4e7d5903030be01e` |
+| `cdl_cal_pex_tt_27C_gear_cdle060c0c5_rtleco20260925_ser4_icx_hard130-124-2_maxstep1ns_functional_r4b.png` | cal | tt 27 °C | passed | `4ccdc18556c6c91c` | `009a71ae6363e38c` | `90498775df53b088` |
 | `cdl_cal_pex_tt_27C_gear_cdle060c0c5_rtleco20260925_ser4_icx_soft130-124-2_maxstep1ns_functional_r4b.png` | cal | tt 27 °C | passed | `ba33c75f96d79091` | `3c6688f369430ef4` | `c72f8ed978feb097` |
 | `cdl_e20_pex_tt_27C_gear_cdle060c0c5_rtleco20260925_icx_maxstep1ns_functional_r4a.png` | e20 | tt 27 °C | passed | `26d623fd213ba3f5` | `7fc2743de69a795e` | `e9509213c5c07316` |
+| `cdl_f_mid_pex_tt_27C_gear_cdle060c0c5_rtleco20260925_icx_maxstep1ns_optreltol5em4_functional_r4b.png` | f_mid | tt 27 °C | passed | `9992525ebbea1bf1` | `cc19c1e5ddd143bd` | `7fc7d24d829a8f8d` |
 | `cdl_gB_pd_pex_ff_-40C_gear_por_cdle060c0c5_rtleco20260925_icx_maxstep2ns_functional_r4a.png` | gB_pd | ff -40 °C | passed | `cf66981ca29f3bb1` | `0f4513275a96a4f3` | `113a27e57360ffa9` |
 | `cdl_gB_pd_pex_ss_125C_gear_por_cdle060c0c5_rtleco20260925_icx_functional_r4a.png` | gB_pd | ss 125 °C | passed | `2c145937863a2471` | `f01a3cc87a5a4db8` | `52bcce566b364f34` |
 | `cdl_gB_pex_ff_-40C_gear_por_cdle060c0c5_rtleco20260925_icx_maxstep2ns_functional_r4a.png` | gB | ff -40 °C | passed | `913e591365cb576f` | `7be2f1bc1a49fa49` | `99b8bee898ec7060` |
 | `cdl_gB_pex_ss_125C_gear_por_cdle060c0c5_rtleco20260925_icx_functional_r4a.png` | gB | ss 125 °C | passed | `1493c7b1c7cdd3b7` | `cbf0bac1ed3165c0` | `2812200d9986cdb9` |
 | `cdl_gS_pex_ss_125C_gear_por_cdle060c0c5_rtleco20260925_icx_functional_r4a.png` | gS | ss 125 °C | passed | `67980a374edbbeed` | `8c74061cf98cbc05` | `5955b40949ae3cf9` |
+| `cdl_hard_pulse_pex_tt_27C_gear_cdle060c0c5_rtleco20260925_icx_maxstep1ns_optreltol5em4_functional_r4b.png` | hard_pulse | tt 27 °C | passed | `5585daec3155599e` | `79bddb129e50d8c0` | `4204b18b06cf7bc1` |
 | `cdl_q_pex_tt_27C_gear_cdle060c0c5_rtleco20260925_icx_maxstep1ns_functional_r4a.png` | q | tt 27 °C | passed | `fdd49e63bb8a52e1` | `c74dd48f62f030a0` | `ac49d652a1bfcf6e` |
 
 ## Not drawn
 
 | Item | Status |
 |---|---|
-| b_s tt, f_mid tt, hard_pulse tt, hard 2-code calibration | **not run to completion or still running** (see the record); no figure yet |
-| Failed attempts (ss 1 ns / 2 ns, tt 28 µs first attempts, coarse hard cal after its crossing) | **failed (numerical)**; no figure. The coarse hard cal and the tt c_mid first attempt emitted their measures, which are in the record. |
+| Failed attempts: ss 1 ns / 2 ns, tt 28 µs first attempts, f_mid / hard_pulse first attempts, coarse hard cal after its crossing | **failed (numerical)**; no figure. The coarse hard cal and the tt c_mid first attempt emitted their measures, which are in the record. |
+| Timed-out attempts: b_s, f_mid and hard_pulse reltol at the 24 800 s bound; the four longer 2-code cal windows | **not run to completion**; no waveform was written. Each case is drawn from its completed rerun (r4b). |
 | 1 ns `reltol 5e-4` twins at ss 125 °C, c_mid tt `reltol 5e-4`, 1.25× tt `--tstop 19` | completed, **not drawn** (excluded as duplicates) |
+| IOVDD as a separate trace | **not applicable**: it is not saved; it comes from the same rail source as VDDA |
