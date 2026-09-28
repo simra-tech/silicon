@@ -72,7 +72,7 @@ Bond plan (owner decision 2026-09-25, pad to the QFN24 lead directly opposite):
 column set to r4 passed the bond-map verification on r4 (r4 sign-off, "Bond map"); an r4-bound bond map in
 `padframe/` is **not written** (open).
 Draft submission checklist: [`review/TAPEIN_PACKAGE_20260924.md`](review/TAPEIN_PACKAGE_20260924.md).
-IHP Open-Silicon-MPW submission package (prepared 2026-09-28, not yet submitted): [`release/IHP__SoC1816/`](release/IHP__SoC1816/), checklist [`release/SUBMISSION_PREP_20260928.md`](release/SUBMISSION_PREP_20260928.md).
+IHP Open-Silicon-MPW submission (filed 2026-09-28 as https://github.com/simra-tech/IHP__SoC1816, request https://github.com/IHP-GmbH/Open-Silicon-MPW/issues/68, IHP review pending): [`release/IHP__SoC1816/`](release/IHP__SoC1816/), checklist [`release/SUBMISSION_PREP_20260928.md`](release/SUBMISSION_PREP_20260928.md).
 r4 (84.2 MB) is committed (`9b4e1b6ea`). The SHA-256 is the identity of each file.
 It supersedes the 1350 µm LibreLane assembly
 ([`g1_chip_top.gds`](blocks/g1_padring/layout/g1_chip_top.gds),

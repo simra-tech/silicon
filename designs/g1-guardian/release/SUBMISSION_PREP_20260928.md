@@ -1,6 +1,11 @@
-# G1 guardian: IHP Open-Silicon-MPW submission package (prepared, not submitted)
+# G1 guardian: IHP Open-Silicon-MPW submission package (submitted 2026-09-28)
 
-Prepared 2026-09-28. Nothing was pushed, forked or filed. No solver was run. KLayout was used
+Prepared and submitted 2026-09-28. **Status:** repository https://github.com/simra-tech/IHP__SoC1816
+(main, one commit) holds the package below with `trl` 5 and the TRL sheet filled; the request issue is
+https://github.com/IHP-GmbH/Open-Silicon-MPW/issues/68 (`Request for submission Oct-2026 IHP__SoC1816`,
+opened 2026-09-28, awaiting IHP's review). The seal ring was verified present in the release GDS
+(EdgeSeal 39/0 and the metal ring at 32.2 um inset from the die edge, flattened into the top cell;
+KLayout `bbox_per_layer`). Before submission no solver was run. KLayout was used
 only to re-save and inspect the GDS. `${REPO}` is a checkout of https://github.com/simra-tech/silicon
 (at `fb355d9f2`, the commit before the one that adds this file), the package is `IHP__SoC1816/` next to this file (`${PREP}` below is the
 directory the package was prepared in).
@@ -89,12 +94,12 @@ The IHP instructions were read from https://github.com/IHP-GmbH/Open-Silicon-MPW
 
 | Requirement | Source | How satisfied | Status |
 | --- | --- | --- | --- |
-| Category, subcategory, abbreviation | MPW/IP-Categories.md | Mixed-Signal, SystemOnChip, `SoC` | passed (owner to confirm the category) |
+| Category, subcategory, abbreviation | MPW/IP-Categories.md | Mixed-Signal, SystemOnChip, `SoC` | passed (category confirmed by the owner 2026-09-28) |
 | Name `IHP__<abbrev><4digits>` from the generator | MPW/IP-development-steps.md step 3 | `gen_structure.py IHP SoC` (Python 3.11) gave `IHP__SoC1816`. The ID 1816 appears in none of `Catalog.md`, `.gitmodules`, the MPW issues or a GitHub repository search | passed |
 | Repository follows the generated structure | MPW/IP-development-steps.md, MPW/gen_structure.py | the package is the generator output, populated. Empty generated directories are kept here; git will not keep them | passed |
 | Top cell = generated name in every view | MPW/IP-development-steps.md step 4 | GDS top renamed `g1_chip_top` → `SoC1816`; CDL top `.SUBCKT` renamed; `info.json` `name`/`top_cell_name` = `SoC1816`. The copied sign-off reports keep the old name because they describe the source file | passed |
-| `doc/info.json` complete and correct | MPW/IP-development-steps.md checklist | filled; `trl` left as a TODO string. `process` set to `SG13G2`: the generator default is `SG13CMOS`, but the chip uses `npn13G2` HBTs. `sealring_x/y` = 1.414, with the unit assumed to be mm as in the RFID4410 example | TODO (`trl`; IHP to confirm `process` and the seal-ring unit) |
-| TRL document in `doc/` | MPW/IP-development-steps.md step 4 | template present, with a TODO note for the owner | TODO |
+| `doc/info.json` complete and correct | MPW/IP-development-steps.md checklist | filled; `trl` left as a TODO string. `process` set to `SG13G2`: the generator default is `SG13CMOS`, but the chip uses `npn13G2` HBTs. `sealring_x/y` = 1.414, with the unit assumed to be mm as in the RFID4410 example | filled: `trl` 5; `process` and the seal-ring unit asked in issues/68 |
+| TRL document in `doc/` | MPW/IP-development-steps.md step 4 | filled 2026-09-28 (self-assessed TRL 5, 31 of 41 items met, each with its evidence path) | passed |
 | `doc/Datasheet.md`, `doc/Specification.md` | MPW/gen_structure.py | datasheet summary written; specification copied from the design repository | passed |
 | `release/v.1.0.0/` holds the final GDS and netlist; the `info.json` paths resolve | MPW/IP-development-steps.md | `gds/SoC1816.gds`, `netlist/SoC1816.cdl`, `doc/` and `ReleaseNote.md`; both `info.json` paths exist | passed |
 | One GDS under `release/` | issues/62 | one file | passed |
@@ -106,8 +111,8 @@ The IHP instructions were read from https://github.com/IHP-GmbH/Open-Silicon-MPW
 | DRC clean, including the precheck rules | MPW/IP-development-steps.md | r4 sign-off on the source GDS: main, maximal, precheck, density and antenna give 0 markers with the stock deck `84374023` and with IHP dev deck `4fd47c5e`. Copied to `SoC1816-main/verification/drc/` | passed on the source GDS; not run on `SoC1816.gds` itself |
 | LVS clean against the final netlist | MPW/IP-development-steps.md | canonical CDL **failed**: 14 IO and level-shifter sub-cells, caused by the PDK IO reference semantics (IHP-Open-PDK #1218/#1130). The projected reference passed: 62 956 devices, 22/22 pins | **failed** (canonical) |
 | IHP CI DRC/LVS on the repository | MPW/IP-development-steps.md, "Automated verification flow" | needs the published repository. LVS is expected to fail as above, because `release.netlist` is referenced | not run |
-| Die size and package | MPW/Packaging.md | 1414 × 1414 µm with its own padring, QFN24. IHP documents only QFN64 on an 18 mm² padframe | TODO (confirm with IHP) |
-| Submission request issue and deadline | MPW/Submission-process.md | text drafted in section 5. The repository states neither the run name nor the deadline | TODO |
+| Die size and package | MPW/Packaging.md | 1414 × 1414 µm with its own padring, QFN24. IHP documents only QFN64 on an 18 mm² padframe | asked in issues/68 (QFN24 or QFN64 only) |
+| Submission request issue and deadline | MPW/Submission-process.md | filed as issues/68 for the `Oct-2026` run (the run the other open requests target) | done |
 | Dependencies under `dependencies/` | MPW/IP-development-steps.md | none; only the PDK `sg13g2_io` cells are used | not applicable |
 | Measurements | MPW/gen_structure.py | `measurements/v.1.0.0/README.md` says not run | not applicable (nothing fabricated) |
 
@@ -333,6 +338,12 @@ fc9d285d18fea478f7c36fb00d9152447472808c59eccef5054db3ef7ca2e71b  verify/control
 ```
 
 ## 5. Remaining human steps
+
+**Done 2026-09-28 (owner instruction to finish the submission):** step 1 (`trl` 5, category `SoC`, ID 1816
+kept), step 3 (repository created and pushed, GDS as a plain 84 MB file, GitHub raw download verified
+sha256 `eb3e51a8…`), step 5 (issues/68 opened; the run is `Oct-2026`; the questions of step 2 are in the
+issue text). Still open: step 4 (IHP's own DRC on the submitted file) and step 6 (record IHP's answer).
+The original list follows unchanged.
 
 1. **Decide and fill the TODOs:** `info.json` `trl` (an integer, self-assessed with
    `doc/TRL-Mixed-Signal-IP.md`), and confirm the category (`SoC`) and the ID 1816. Choosing a
