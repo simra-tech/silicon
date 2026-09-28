@@ -122,7 +122,10 @@ The digital macro on the chip (byte-identical in r3 and r4; the results below we
   against `4b83f181` **passed** (ABC `dprove` "Networks are equivalent"; negative control not
   equivalent; [equiv](blocks/g1_ctrl/sim/gls_eco_r3v2/equiv/));
 - not run: chip-level co-simulation with the macro's gate netlist + SPEF.
-- Timing of the final GDS: **not run**.
+- Timing of the final GDS (r4; macro gate netlist + SPEF, top-level routes extracted from the r4 GDS, stock `sg13g2_io`
+  liberty, SDC of record, 3 corners, nominal RC): **passed**, setup 27.874 / 27.053 / 25.381 ns (fast / typ / slow, SDO path),
+  hold +0.114 / +0.195 / +0.337 ns, 0 violations; simulated osc_clk root edge 1.56 ns at slow, above the macro's 1.5 ns design
+  limit, no slack effect; RC corners and SI not run ([sta_final_gds_20260928](blocks/g1_ctrl/reports/sta_final_gds_20260928/README.md)).
 
 Chip-level runs with the ECO RTL (hand-wired chip deck (`run_top.py --blockset c1414`): block extractions with the BGR586 schematic view (`bgr=sch`), SENSE pads without `dantenna` (`inpads nodcn`), fitted `GATE` driver (about 7 % optimistic), ideal clock; not a full-chip extraction; RTL co-simulation, tt/27 °C,
 [`ECO_20260925`](blocks/g1_ctrl/ECO_20260925.md)):
@@ -272,7 +275,8 @@ latencies are retained for diagnosis but are not accepted sign-off evidence.
 - Canonical unprojected full-chip LVS: **failed; cause: substrate/tap/diode netlist semantics of the IO-cell reference in the PDK, reproduced with stock cells and with IHP's latest `dev` deck and library; the design-local IO copies match IHP's `dev` library on every layer (PR #1223); upstream issues #1218/#1130 ([evidence](review/upstream/evidence/README.md))**. Only the projected-reference
   comparison passed. The design-local PolyRes IO cells were XOR-checked against IHP's
   `dev` cells (identical); the rest of the IO ring was not XOR-checked against stock cells.
-- Full-chip PEX, IR drop/EM and full-chip timing of the final GDS: **not run**.
+- Full-chip PEX and IR drop/EM: **not run**. Timing of the final GDS: passed (see "Status" and
+  [sta_final_gds_20260928](blocks/g1_ctrl/reports/sta_final_gds_20260928/README.md)).
   Block extractions exist for BGR586 (C only), TRIP NF4, OSC R0.95 (isolated macro) and
   SENSE R100 (partial field). None is an extraction of the assembled chip.
 - Chip-level 125 °C transients on the superseded legacy netlists: **failed** (solver

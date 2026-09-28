@@ -1,0 +1,34 @@
+* osc_clk output stage + top route + macro root buffer, slow_route
+.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerMOSlv.lib mos_ss
+.include /foss/pdks/ihp-sg13g2/libs.ref/sg13g2_stdcell/spice/sg13g2_stdcell.spice
+.temp 125
+.option klu
+.subckt g1_osc_inv a y vdd vss
+XMP y a vdd vdd sg13_lv_pmos w=1u l=0.13u m=1
+XMN y a vss vss sg13_lv_nmos w=0.5u l=0.13u m=1
+.ends
+VDD vdd 0 1.08
+VQ q 0 PULSE(0 1.08 10n 0.2n 0.2n 49.8n 100n)
+XB1 q qn_b vdd 0 g1_osc_inv
+XB2 qn_b osc vdd 0 g1_osc_inv
+C1 osc 0 72.517f
+R1 osc mid 414.681
+C2 mid 0 72.517f
+C3 mid 0 17.8087f
+R2 mid far 300.885
+C4 far 0 17.8087f
+XBUF x far vdd 0 sg13g2_buf_16
+CL x 0 38f
+.tran 1p 130n
+.control
+run
+meas tran dq_r trig v(q) val=0.54 rise=1 targ v(far) val=0.54 rise=1
+meas tran dq_f trig v(q) val=0.54 fall=1 targ v(far) val=0.54 fall=1
+meas tran dn_r trig v(qn_b) val=0.54 fall=1 targ v(far) val=0.54 rise=1
+meas tran dn_f trig v(qn_b) val=0.54 rise=1 targ v(far) val=0.54 fall=1
+meas tran tr trig v(far) val=0.216 rise=1 targ v(far) val=0.864 rise=1
+meas tran tf trig v(far) val=0.864 fall=1 targ v(far) val=0.216 fall=1
+meas tran tr_osc trig v(osc) val=0.216 rise=1 targ v(osc) val=0.864 rise=1
+meas tran tf_osc trig v(osc) val=0.864 fall=1 targ v(osc) val=0.216 fall=1
+.endc
+.end

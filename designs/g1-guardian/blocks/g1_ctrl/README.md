@@ -364,7 +364,8 @@ nominal RC, OpenSTA 3.1.0; `reports/sta_merged_sdc_20260924/README.md` "Chip dig
 | Max fanout / max cap | passed (0 / 0); the redone CTS removed the run7 view's 78 fanout flags |
 | Max slew | failed: 12 per corner on analog-pad pins (placeholder liberty tables; dispositioned, not waived) |
 | Full parasitic annotation | failed: 105 unannotated drivers (60 CTS dummy loads, 17 ports, 28 pad pins; dispositioned, not waived) |
-| Min/max RC corners; timing of the final filled GDS | not run |
+| Timing of the final GDS r4 (ECO macro + SPEF, extracted r4 top-level routes, stock io liberty, SDC of record, 3 corners) | passed: setup 25.381 ns slow (SDO), hold +0.114 ns fast, 0 violations (`reports/sta_final_gds_20260928/README.md`) |
+| Min/max RC corners | not run |
 
 ## Checks
 
