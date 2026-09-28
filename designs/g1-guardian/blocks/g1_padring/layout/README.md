@@ -29,14 +29,37 @@ Sign-off results are in `../reports/signoff-1414-20260924/README.md`.
 The legacy name `placed_core_NOT_CONNECTED_FULLCHIP` is only a name. The routed
 and filled lineage is recorded in the design history.
 
-## Revision r3: file of record (2026-09-26)
+## Revision r4: file of record (2026-09-28)
 
-`g1_chip_top_1414_r3.gds` is the **file of record** and supersedes r2.
+`g1_chip_top_1414_r4.gds` is the **file of record** and supersedes r3 (decision 2026-09-28,
+`../../../PLAN.md` D17, `../../../review/R4_ADOPTION_20260928.md`).
 
 | File | SHA-256 | Status |
 |---|---|---|
-| `g1_chip_top_1414_r3.gds` | `7d07a7841a531f51e08b0c90e76fe603889cd2ef29905e309e63f09742e688f2` | **file of record**, top `g1_chip_top`, 304 cells, 84 097 180 bytes, GDS timestamps zero |
-| `g1_chip_top_1414_r2.gds` (r2) | `9049e87b0303893573ed82f56a5d41f926c4db126e8d972062553c7d19996d2c` | superseded; the fallback. Moved out of the tree on 2026-09-26; retained at `${BULK}/g1-freeze-retention-20260925/g1_chip_top_1414_r2.gds` (`review/local-retention-20260925.json`) and in git history |
+| `g1_chip_top_1414_r4.gds` | `225d0b535321ed312594bb13d97b7271014f487162564a56c874572de715173a` | **file of record**, top `g1_chip_top`, 304 cells, 84 156 088 bytes, committed `9b4e1b6ea` |
+| `g1_chip_top_1414_r3.gds` (r3) | `7d07a7841a531f51e08b0c90e76fe603889cd2ef29905e309e63f09742e688f2` | superseded; **the fallback**, stays in the tree |
+
+r4 = r3 + the TRIP macro `nf4_novclk` (in the cell `__rz_port_text_033_retained_g1_trip`, the inverter `XCLKI`
+replaced by the non-overlap generator `g1_novclk`; `../../g1_trip/layout/candidates/nf4_novclk/README.md`) + 58
+GatPoly fill rectangles (5/22, 406.0 µm²) in the top cell outside every macro box. The patch is
+`gen_trip_layout.py what=novclk` applied to r3, the fill `../../g1_ctrl/flow/eco/add_gatpoly_fill.py`. Outside
+the TRIP box only 5/22 differs from r3; the digital macro is byte-identical.
+
+Netlists:
+- canonical `../netlist/g1_chip_top_1414_r4.cdl` (`e060c0c5…`): the r3 CDL with the `g1_trip` source block edited
+  (`make_chip_cdl.py`);
+- projected reference `g1_chip_top_1414_r4_projected_ref.cdl` (`27a27cd6…`, 17 MB, retained outside the tree).
+
+Sign-off: `../reports/signoff-1414r4-20260927/README.md`.
+
+## Revision r3 (2026-09-26, superseded by r4; the fallback)
+
+`g1_chip_top_1414_r3.gds` was the **file of record** from 2026-09-26 to 2026-09-28 and superseded r2.
+
+| File | SHA-256 | Status |
+|---|---|---|
+| `g1_chip_top_1414_r3.gds` | `7d07a7841a531f51e08b0c90e76fe603889cd2ef29905e309e63f09742e688f2` | superseded by r4 (was the file of record 2026-09-26 to 2026-09-28); the fallback, top `g1_chip_top`, 304 cells, 84 097 180 bytes, GDS timestamps zero |
+| `g1_chip_top_1414_r2.gds` (r2) | `9049e87b0303893573ed82f56a5d41f926c4db126e8d972062553c7d19996d2c` | superseded; the fallback until 2026-09-28. Moved out of the tree on 2026-09-26; retained at `${BULK}/g1-freeze-retention-20260925/g1_chip_top_1414_r2.gds` (`review/local-retention-20260925.json`) and in git history |
 | `g1_chip_top_1414.gds` (r1) | `629d303abf594ec90593f1d28a8d9ad19673ea6662780ba428a6d9c5685986ba` | superseded; retained outside the tree the same way |
 
 r3 = r2 + the re-hardened `g1_digital` macro (RTL ECO, register map 1.2, pin-compatible,

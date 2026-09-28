@@ -1,4 +1,4 @@
-# G1 first-silicon bring-up sequence (chip of record r3, register map 1.2)
+# G1 first-silicon bring-up sequence (chip of record r4, register map 1.2)
 
 This is the ordered procedure for the first packaged parts. It implements the bench plan
 [`../README.md`](../README.md) on the board of [`BOARD_CHECKLIST.md`](BOARD_CHECKLIST.md), using
@@ -15,7 +15,18 @@ Before every step, record the sample ID, run ID, board revision, instruments (mo
 calibration date, range, input impedance), rail voltages, ambient/case temperature, `VREF` capacitor
 and host software revision (`g1_host.__version__` plus git hash). Keep the raw data.
 
+The chip of record is r4 (`g1_chip_top_1414_r4.gds`, `225d0b53…`, since 2026-09-28; `../../review/R4_ADOPTION_20260928.md`).
+It differs from r3 only in the TRIP comparator clock (`nf4_novclk`) and GatPoly fill; the digital macro is
+byte-identical. On the r4 full-chip deck the trip times equal the r3 values quoted as [R3] within 0.3 ns, the
+QUIET voltages and supply currents within 0.2 mV and 0.1 µA, and the power-up values within 0.2 µV / 1 mV [R4],
+so the [R3] numbers stand for r4.
+What changes is the hard threshold: on r4 it sits at its code (S9, S10 and the S2b 45 mV row). A procedure
+written for r3 still applies to the r3 fallback with the r3 numbers.
+
 Main sources used for the expected values:
+- **[R4]** `blocks/g1_top/sim/FULLCHIP_CDL_R4_20260927.md` and **[R4P]** `blocks/g1_top/sim/FULLCHIP_CDL_R4_PHASE2_20260927.md`
+  (r4 full-chip layout-netlist deck = the r3x deck with the r4 CDL and the `nf4_novclk` TRIP extraction;
+  interim records, some runs running at the time of writing)
 - **[R3]** `blocks/g1_top/sim/FULLCHIP_CDL_R3_20260926.md` (r3 full-chip layout-netlist deck, `nodcn`
   pads, ideal 9.436 MHz clock, tt/27 °C unless stated)
 - **[RES]** `blocks/g1_top/sim/campaigns/RESULTS_20260925.md`
@@ -79,7 +90,7 @@ serial access. Inhibit asserted.
 | I(`VDD`), `EN` high minus `EN` low | + about 0.1–0.4 mA (checkerboard scrubber; *computed* 0.83–1.21 mA total at 0.1–0.5 activity [PWR]) | reset released, scrubber running |
 | `GATE` with `EN` high, no shunt voltage | 3.3 V | `EN` pad, G1_GATE, 30 mA pad |
 | Serial write `TEMP_CTRL` = 0 → `TEMP_OUT` stops; `MODE.FORCE_TRIP` → `GATE`/`FAULT_N` low | — | write path works even if `SDO`/reads fail |
-| 45 mV at the Kelvin pins with reset defaults (hard 0xFE, effective about 39–42 mV) | `GATE` < 1 V within about 1.5 µs [R3] | whole breaker path without the host |
+| 45 mV at the Kelvin pins with reset defaults (hard 0xFE, soft 0x99, `SOFT_TIME` 0x27) | **r4:** hard 0xFE is effective at about 49.9 mV (±3 %; 0.97× = 48.35 mV does not trip [R4P] D), so 45 mV gives **no hard trip**; the soft path (0x99, 30 mV) trips after the default window, about 1.0 ms [MAP]. At 51.3 mV (1.03 × the code-254 nominal) the hard path takes `GATE` < 1 V at 1.755 µs [R4P] D. r3 fallback: hard effective about 39–42 mV, `GATE` < 1 V within about 1.5 µs [R3] | whole breaker path without the host |
 
 Source: `review/redteam-20260927/bringup/FINDINGS.md` BR-6. The `VDD` currents are a vectorless
 estimate; `VDD` current with real switching activity is not run.
@@ -91,7 +102,7 @@ estimate; `VDD` current with real switching activity is not run.
 
 | Action | Expected | Accept | Record |
 | --- | --- | --- | --- |
-| Read `CHIP_ID` (0x00) and `VERSION` (0x01) | 0x47, **0x12** (r3). 0x11 means an r2/r1 die with map 1.1 | exact. 0x11: stop and record the die as r2, then rerun with the map-1.1 host rules. Anything else: check wiring and idle timing, then S2b | both bytes, 10 repeats |
+| Read `CHIP_ID` (0x00) and `VERSION` (0x01) | 0x47, **0x12** (r4; r3 reads the same, its digital macro is byte-identical, so `VERSION` does not tell r4 from r3: the S9 hard crossing does, about 127 on r4 and about 171 on r3). 0x11 means an r2/r1 die with map 1.1 | exact. 0x11: stop and record the die as r2, then rerun with the map-1.1 host rules. Anything else: check wiring and idle timing, then S2b | both bytes, 10 repeats |
 | Dump all readable registers | reset table of [MAP] §4 (`DAC_SOFT` 0x99, `DAC_HARD` 0xFE, `SOFT_TIME` 0x0027, `HARD_N` 0x04, `INRUSH` 0x02, `MODE` 0x03, `OSC_CTRL` 0x18, `TEMP_CTRL` 0x01, `SEU_CTRL` 0x01, `STATUS` 0x80 after the inrush window, `DAC_*_EFF` 0x99/0xFE) | exact match | full dump |
 | Write/read-back pattern test on every RW register, `G1.pattern_test()`: 0x00, 0xFF, 0x55, 0xAA masked to the bits the host accepts (`MODE` & 0x37, `TEMP_CTRL` & 0x03, `OSC_CTRL` \| 0x10, the other registers to their defined bits; `SOFT_TIME` via H then L), 9 passes (1080 frames). Then `safe_defaults()` (done by `pattern_test`) | reserved bits read 0, `OSC_CTRL` bit 4 reads 1; no mismatches | 0 mismatches over ≥ 1000 frames | mismatch count, SCLK frequency |
 
@@ -168,13 +179,13 @@ The hard path is bracketed in its operating state (spec §6 H6; red team F2, BR-
 
 | Action | Expected (simulated) | Accept | Record |
 | --- | --- | --- | --- |
-| Soft crossing | Cideal = 25/0.19623 = 127.4 at V<sub>REF</sub> 1.04 V (126.7 with the measured 1.0455 V). NF4 soft comparator within 0–1 LSB of its code [TRIP], so the highest code reading high is about 127 plus the sense-amplifier offset / 0.196 mV. Full-chip rehearsal at tt (1 A, r3 deck): 130 silent, 128 fires [R3X] | bracketed to 1 code, monotonic, repeats within ±1 code (*proposed*) | full sweep (code, fraction high), both directions |
+| Soft crossing | Cideal = 25/0.19623 = 127.4 at V<sub>REF</sub> 1.04 V (126.7 with the measured 1.0455 V). NF4 soft comparator within 0–1 LSB of its code [TRIP], so the highest code reading high is about 127 plus the sense-amplifier offset / 0.196 mV. Full-chip rehearsal at tt (1 A): 130 silent, 128 fires on r4 [R4] and on r3 [R3X]; joint r4 MC over mismatch: soft residual codes 116–136 (23 seeds) [JMC4] | bracketed to 1 code, monotonic, repeats within ±1 code (*proposed*) | full sweep (code, fraction high), both directions |
 | `SENSE_OFS` = round(Ccross − Cideal) | the part's sense offset in LSB (standalone R100 MC: ≤ 0.5 mV residual after an ideal correction; joint chip MC not run) | −128…127, and no target in S10 clips (spec §6: clipping = calibration failure) | value |
-| Hard crossing | the effective hard threshold is about 45 LSB **below** the code (40–56 over tt/ss/ff on the block bench, 41–47 on the chip netlists at tt/27 °C [TRIP], [SPEC §4]). So the highest high code is about Cideal + 45 = **172**, range 167–183. Full-chip rehearsal at tt: 172 silent, 170 fires, 41–43 codes above the soft crossing [R3X] | bracketed, monotonic, repeats within ±1 code (*proposed*); outside 167–183: flag | full sweep, both directions |
-| `hard_extra` = hard correction − `SENSE_OFS` | about +45 (applied via `DAC_HARD`, because one `SENSE_OFS` cannot correct both comparators) | the target code + extra + `SENSE_OFS` ≤ 255 | value |
-| Uncalibrated witness: `DAC_HARD` 200, soft path off, step 28.75 mV and 31.25 mV | no trip at 28.75 mV; hard trip at 31.25 mV (1.25× nominal, inside the uncalibrated no-trip region: documented kick offset, calibration requirement) [R3] | record | trip/no-trip |
+| Hard crossing | **r4:** the effective hard threshold sits at the code (0 to 1 LSB above it on the block bench [NOV]; within ±3 % at every corner on the chip deck [R4], [R4P]). So the highest high code is about Cideal plus the sense and comparator offset: full-chip rehearsal at tt: coarse sweep 134 silent, 126 fires (first firing code 126–133; the 2-code window 130→126 was running at the time of writing) [R4]; joint r4 MC: hard residual codes 117–135 (23 seeds, signed correction −11…+7 LSB) [JMC4]. Expected about **127–134**, range about 115–140. r3 fallback: about Cideal + 45 = 172, range 167–183; rehearsal 172 silent, 170 fires [R3X] | bracketed, monotonic, repeats within ±1 code (*proposed*); r4: outside 115–140 flag (*proposed*); r3: outside 167–183 flag | full sweep, both directions |
+| `hard_extra` = hard correction − `SENSE_OFS` | **r4:** about 0 (−5…+5 LSB over the 23 calibrated seeds of the joint r4 MC, *computed* from its per-seed table [JMC4]; rehearsal gap ≤ 5 codes [R4]); still applied via `DAC_HARD`, because one `SENSE_OFS` cannot correct both comparators. r3 fallback: about +45 | the target code + extra + `SENSE_OFS` ≤ 255 | value |
+| Uncalibrated witness: `DAC_HARD` 200, soft path off, step 28.75 mV and 31.25 mV (r4: add 38.07 mV and 40.43 mV) | **r4:** no trip at 28.75, 31.25 and 38.07 mV (0.97T); hard trip at 40.43 mV (1.03T) [R4] b. r3 fallback: no trip at 28.75 mV; hard trip at 31.25 mV (1.25× nominal, inside the uncalibrated no-trip region: documented kick offset) [R3] | record | trip/no-trip |
 
-| Hard crossing vs temperature (−40 / 25 / 125 °C, inhibit asserted, same sweep) | the hard offset is temperature-dependent: simulated effective threshold at code 200 is 8.0–9.3 mV below the code at tt/27 °C and ss/125 °C and **10.4–11.6 mV** at ff/−40 °C (r3 full-chip deck, [R3X]); joint MC: room calibration drifts > 0.5 mV of shunt at 125 °C in 4 of 20 seeds [JMC] | bracketed at each temperature, in the operating state above; reach check: code 255 reads low at the highest planned hard target | table code(T), the input to k(T) (H6) |
+| Hard crossing vs temperature (−40 / 25 / 125 °C, inhibit asserted, same sweep) | **r4:** the hard threshold stays within ±3 % of the code at tt −40/27/125 °C, ss/125 °C and ff/−40 °C [R4P] C, [R4] b; joint r4 MC: the room calibration holds ±0.5 mV at 125 °C in 23/23 calibrated seeds [JMC4]; finer than ±3 % over temperature on the chip deck: not run, so k(T) is expected to be a small fine correction. r3 fallback: the hard offset is temperature-dependent: simulated effective threshold at code 200 is 8.0–9.3 mV below the code at tt/27 °C and ss/125 °C and **10.4–11.6 mV** at ff/−40 °C (r3 full-chip deck, [R3X]); joint MC: room calibration drifts > 0.5 mV of shunt at 125 °C in 4 of 20 seeds [JMC] | bracketed at each temperature, in the operating state above; reach check: code 255 reads low at the highest planned hard target | table code(T), the input to k(T) (H6) |
 
 Freeze the room-temperature calibration per sample, then build the per-part hard-code correction
 table k(T) from the three temperatures above. The host applies **hard code = calibrated code + k(T)**
@@ -185,6 +196,8 @@ There is no simulated k(T) fallback: until the per-part table exists, k(T) = 0 a
 declared at the calibration temperature only (red team F2, BR-3).
 
 [R3X] `../../blocks/g1_top/sim/FULLCHIP_CDL_R3_CORNERS_20260927.md` (simulated).
+[NOV] `../../blocks/g1_trip/layout/candidates/nf4_novclk/README.md` gate 3 (simulated).
+[JMC4] `../../blocks/g1_trip/sim/qualification/joint_r4_mc_20260928/RESULTS.md`, `RESULTS_TABLE.md` (simulated).
 [JMC] `../../blocks/g1_trip/sim/qualification/joint_r3_mc_20260926/RESULTS.md` (simulated).
 
 ## S10. Threshold verification with frozen calibration
@@ -192,7 +205,9 @@ declared at the calibration temperature only (red team F2, BR-3).
 Use `arm(hard_mV=33, soft_mV=28, soft_time_ms=1)`, with the hard path calibrated at 33 mV (S9). For
 the temperature matrix the hard target is ≤ 33 mV: the effective reach at code 255 is about 40.1 mV
 (tt, simulated), about 38.4 mV for the worst of 22 mismatch seeds at room temperature and about
-34.6 mV for a 3σ part with the chip-deck ff/−40 °C shift (*computed*, red team BR-2); above the reach
+34.6 mV for a 3σ part with the chip-deck ff/−40 °C shift (*computed*, red team BR-2). These reach figures are
+r3's; on r4 the code-254 brackets (49.85 mV at tt) hold [R4P] D, so the reach no longer limits the target, and
+the 33 mV target is kept only so that r3 and r4 data stay comparable; above the reach
 `codes_for` refuses the target and the point stalls. Test each path with the other
 disabled, outside the inrush window, with the inhibit released onto the resistive load or with the
 source at the Kelvin pins.
@@ -208,7 +223,7 @@ source at the Kelvin pins.
 
 Conditions: 5 V resistive current-limited load, 25 mΩ shunt, 1 A nominal. `FAST_EN` = 0, hysteresis
 off, codes static while energized. The hard target is 35 mV, calibrated at 35 mV (S9), and the soft target
-30 mV. A 39 mV hard target is not reachable on the tail of the population (BR-2). The fault is a **1.8 A / 45 mV** step (≥ 1.1 × 39 mV), with ≤ 50 mV at the pins including
+30 mV. On r3 a 39 mV hard target is not reachable on the tail of the population (BR-2); on r4 it is (see S10). The fault is a **1.8 A / 45 mV** step (≥ 1.1 × 39 mV), with ≤ 50 mV at the pins including
 overshoot. Capture shunt differential, `GATE`, FET V<sub>GS</sub>/V<sub>DS</sub>, load current,
 `FAULT_N` and `EN` with declared probe skew.
 

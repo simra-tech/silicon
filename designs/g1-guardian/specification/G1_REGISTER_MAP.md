@@ -245,7 +245,7 @@ the first sample; for 0x00FF → 0x0100, `_L` first does the same)
 | Addr | Name | Access | Reset | Description |
 | --- | --- | --- | --- | --- |
 | 0x00 | `CHIP_ID` | RO | 0x47 | 'G' |
-| 0x01 | `VERSION` | RO | 0x12 | register map version, `major.minor` in two nibbles: 0x12 = 1.2: the chip of record r3 reads 0x12; the r2 fallback (map 1.1) reads 0x11 |
+| 0x01 | `VERSION` | RO | 0x12 | register map version, `major.minor` in two nibbles: 0x12 = 1.2: the chip of record r4 and the r3 fallback read 0x12 (same digital macro); the r2 fallback (map 1.1) reads 0x11 |
 
 ### 4.2 Trip thresholds and timing
 

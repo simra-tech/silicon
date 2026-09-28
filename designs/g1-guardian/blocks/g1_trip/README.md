@@ -1,8 +1,37 @@
 # G1_TRIP — threshold comparators and 8-bit threshold DACs (1.2 V)
 
-## Variant on the chip of record (2026-09-25)
+## Variant on the chip of record r4 (2026-09-28)
 
-The TRIP macro placed in the chip of record (`g1_chip_top_1414.gds`, `629d303a…`) is **not** the
+The chip of record is r4, `g1_chip_top_1414_r4.gds` (`225d0b53…`, `../../review/R4_ADOPTION_20260928.md`). Its TRIP
+macro is **`nf4_novclk`**: the r1–r3 macro described in the next section with the comparator-clock inverter
+`XCLKI` replaced by the 20-device non-overlap generator `g1_novclk` (red-team F1,
+`../../review/redteam-20260927/trip_path/FINDINGS.md`). Each comparator evaluates on an undelayed `cmp_clk` edge and
+resets only after the other has decided. Cell name, placement, outline, pins and sub-cells are unchanged. All
+numbers are simulated or physical-verification results.
+
+| Item | Path (block-relative) | Identity |
+| --- | --- | --- |
+| Candidate record (design, gates 1–4, hashes) | `layout/candidates/nf4_novclk/README.md` | — |
+| Macro LVS reference | `layout/candidates/nf4_novclk/g1_trip_nf4_novclk_lvs.cdl` | `8943a5a8…` |
+| Capacitance extraction (kpex 0.3.12, 2.5D CC), used by the r4 chip decks (`--blockset c1414r4`) | `sim/postlayout/g1_trip_nf4_novclk_pex.spice` | `6f518e07…` |
+
+| Check (r4 TRIP, `nf4_novclk`) | Status | Evidence |
+| --- | --- | --- |
+| Candidate adopted | **adopted** in r4 (2026-09-28; `PLAN.md` D17) | `../../review/R4_ADOPTION_20260928.md` |
+| Macro DRC (main + maximal), antenna, LVS; negative control vs the r3 CDL | passed (0 items; netlists match); negative control failed as expected | candidate README gate 2 |
+| TRIP cell in the r4 chip vs the candidate macro | passed, XOR 0 on 48 layers, texts equal | `../g1_padring/reports/signoff-1414r4-20260927/README.md` |
+| Brackets on the extraction (11), hard codes 200/254, tt, ss/−40 °C, ff/125 °C, VDD 1.08/1.32 V | passed: hard 0 to 1 LSB above the code (r3: 46–48 LSB below), soft 1–2 LSB below | candidate README gate 3 |
+| Non-overlap window on the extraction; window mismatch MC 30 + 30 seeds | passed: min 8.30 ns at ss/−40 °C (limit > 2.5 ns), max 10.03 ns at ff/125 °C (cap 20 ns) | `layout/candidates/nf4_novclk/BLOCK_QUALIFICATION_20260927.md` |
+| Settle and DAC decks | passed, equal to r3 | same |
+| Comparator delay deck, 1 mV | ss/−40 °C passed (1.996 ns); tt **failed** on the deck's own criterion (soft path decides about 1 LSB early, inside the ≤ 2 LSB acceptance) | same |
+| Kick screen under mismatch (±10 LSB, tt) | passed on 19 seeds; brackets under mismatch **not run** | same |
+| Joint calibrated mismatch screen (BGR586 + SENSE R100 + r4 schematic TRIP, 24 seeds paired with r3) | 23 passed (r3 16), 0 failed electrically (r3 4), 1 not run to completion (numerical); hard offset before calibration −0.07 mV (sd 0.92 mV; r3 +7.95 mV); residual correct at 125 °C in 23/23 calibrated seeds (simulated) | `sim/qualification/joint_r4_mc_20260928/RESULTS.md` |
+| Effective hard threshold on the r4 full-chip layout-netlist deck | within ±3 % of the code at tt/ss/ff, −40/27/125 °C, supply extremes, codes 200 and 254, `FAST_EN` = 1; calibration rehearsal at 25 mV: hard 134 silent / 126 fires (2-code window running at the time of writing), soft 130 / 128 (simulated) | `../g1_top/sim/FULLCHIP_CDL_R4_20260927.md`, `FULLCHIP_CDL_R4_PHASE2_20260927.md` |
+| RC extraction, mismatch of the extraction, comparator-delay flip at corners other than tt | **not run** | — |
+
+## Variant on the chips r1–r3 (2026-09-25; r3 is the fallback)
+
+The TRIP macro placed in r1 (`g1_chip_top_1414.gds`, `629d303a…`) and unchanged in r2 and r3 is **not** the
 macro with two identical 12/0.34 µm StrongARMs described below. It carries:
 
 - hard comparator **`g1_cmp_regenpair4`** (regenerative NMOS pair 6/0.26 µm);
@@ -26,7 +55,7 @@ macro with two identical 12/0.34 µm StrongARMs described below. It carries:
 | Hard comparator (regenpair4) decision delay on the extraction | **not run** | — |
 | Effective trip point, strobe-train bench on the extraction | hard path trips 40–56 LSB (7.9–11.0 mV of shunt) below its code over tt/ss/ff at codes 200 and 254, spread 10–11 LSB; soft within 1 LSB (simulated) | same, `results_postlayout_nf4.txt` |
 | Chip netlists, hard code 200 (39.25 mV at VREF 1.04 V) | no trip at 30.00 mV, trip at 31.25 mV; hard faults take `GATE` < 1 V 1.31–1.36 µs after the fault in 72/72 matrix cells (simulated, ideal clock) | `../g1_top/sim/campaigns/RESULTS_20260925.md` §1, §4 |
-| 2× hold-capacitor candidate `layout/candidates/nf4_hold2x/` | halves the hard offset in simulation (−21 to −25 LSB at code 200); **not adopted**, not on the chip | same §4 |
+| 2× hold-capacitor candidate `layout/candidates/nf4_hold2x/` | halves the hard offset in simulation (−21 to −25 LSB at code 200); **not adopted**, not on the chip; superseded by `nf4_novclk` (r4) | same §4 |
 | DAC deck, wiring R, mismatch MC on the NF4 extraction | **not run** | `sim/postlayout/README.md` |
 | Joint calibrated mismatch screen (BGR586 + SENSE R100 + TRIP NF4, 24 seeds, room calibration at 25 °C / 25 mV) | 16 passed, 4 failed electrically, 4 not run to completion (numerical); calibration brackets 22/24; hard offset before calibration +7.95 mV (sd 1.06 mV), soft +0.02 mV; all 262 completed guard probes correct; ±0.5 mV residual holds at 25 and −40 °C, **fails at 125 °C in 4 seeds** (hard trips at 24.5 mV: room-calibrated hard threshold drifts > 0.5 mV hot) (simulated) | `sim/qualification/joint_r3_mc_20260926/RESULTS.md` |
 | Effective hard threshold vs corner, r3 full-chip layout-netlist deck, code 200 | offset below the code 8.0–9.3 mV (tt/27 °C, ss/125 °C), **10.4–11.6 mV (ff/−40 °C)**; uncalibrated no-trip region (≤ 0.9T) **failed** at every corner (calibration requirement, planned host compensation k(T), spec §6 H6); calibration rehearsal at 25 mV: hard crossing code 171 ± 1 = ideal + 43…45 (simulated) | `../g1_top/sim/FULLCHIP_CDL_R3_CORNERS_20260927.md` |

@@ -1,5 +1,15 @@
 # G1_PADRING
 
+> **Chip of record (2026-09-28): r4** [`layout/g1_chip_top_1414_r4.gds`](layout/g1_chip_top_1414_r4.gds)
+> (SHA-256 `225d0b535321ed312594bb13d97b7271014f487162564a56c874572de715173a`, `PLAN.md` D17), canonical netlist
+> [`netlist/g1_chip_top_1414_r4.cdl`](netlist/g1_chip_top_1414_r4.cdl) (`e060c0c5…`), sign-off
+> [`reports/signoff-1414r4-20260927/`](reports/signoff-1414r4-20260927/README.md): main, maximal, precheck, density
+> and antenna DRC **passed** (0 markers); projected-reference LVS **passed** (62 956 / 62 956 devices); canonical
+> LVS **failed** as for r1–r3 (IO-cell reference semantics, R13). Fallback: r3
+> [`layout/g1_chip_top_1414_r3.gds`](layout/g1_chip_top_1414_r3.gds) (`7d07a784…`,
+> [`reports/signoff-1414r3-20260926/`](reports/signoff-1414r3-20260926/README.md)). Revision history:
+> [`layout/README.md`](layout/README.md). The r1 note below is kept as written on 2026-09-25.
+
 > **Superseded frame (status 2026-09-25).** The chip of record is the 1414 µm
 > native-lineage GDS [`layout/g1_chip_top_1414.gds`](layout/g1_chip_top_1414.gds)
 > (SHA-256 `629d303abf594ec90593f1d28a8d9ad19673ea6662780ba428a6d9c5685986ba`,
@@ -51,7 +61,9 @@ section 2). Tool versions are taken from the run logs, see "Tool versions".
 | `flow/config_dryrun.yaml`, `flow/pdn_cfg_g1.tcl`, `flow/analog_straps.tcl` (+ `_standalone.tcl` wrapper), `flow/macro_gds_assembly/`, `rtl/g1_core_dryrun.sv`, `rtl/bb/`, `../../../../flow/run_dryrun.sh` | chip assembly with all macros of record (floorplan, VDDA grid and feed, via stacks onto the macro supply bars with obstruction checks, macro GDS preparation), see `INTEGRATION.md` |
 | `flow/lvs/` | `assemble_chip_cdl.py` (chip CDL from the flow netlist + PDK + macro CDLs), `core_cdl.py` / `core_only_gds.py` / `run_core_lvs.sh` / `xref_summary.py` (core-only KLayout LVS and its per-circuit summary), `pdn_net_overlap.py` / `pdn_macro_overlap.py` / `supply_isolation.py` (geometric short checks of the supply nets: between nets, onto macro and IO-cell metal, metal-only connectivity of the chip pins), `pnl2cdl.py` (ring-only CDL) |
 | `flow/signoff/signoff.sh` | sign-off of an assembly run beyond the flow's steps (DRC with recommended rules, precheck DRC, density table, antenna marker list, the three supply short checks, core-only LVS) and evidence collection into `reports/<run tag>/` |
-| `layout/g1_chip_top_1414.gds`, `netlist/g1_chip_top_1414.cdl`, `netlist/g1_chip_top_1414_projected_ref.cdl`, `reports/signoff-1414-20260924/` | **chip of record** (1414 µm, `629d303a…`), its canonical and comparison-only netlists and its sign-off; not produced by this block's LibreLane flow |
+| `layout/g1_chip_top_1414_r4.gds`, `netlist/g1_chip_top_1414_r4.cdl`, `reports/signoff-1414r4-20260927/` | **chip of record** r4 (1414 µm, `225d0b53…`, since 2026-09-28), its canonical netlist and its sign-off; not produced by this block's LibreLane flow |
+| `layout/g1_chip_top_1414_r3.gds`, `netlist/g1_chip_top_1414_r3*.cdl`, `reports/signoff-1414r3-20260926/` | r3 (`7d07a784…`), the fallback |
+| `layout/g1_chip_top_1414.gds`, `netlist/g1_chip_top_1414.cdl`, `netlist/g1_chip_top_1414_projected_ref.cdl`, `reports/signoff-1414-20260924/` | r1 (1414 µm, `629d303a…`, chip of record 2026-09-24/25; GDS retained outside the tree), its canonical and comparison-only netlists and its sign-off |
 | `netlist/` (1350 µm, superseded) | `g1_chip_top.pnl.v`, `g1_chip_top.nl.v` (flow), `g1_chip_top.cdl` (assembled) |
 | `ip/sg13g2_io_padbare/` | LEF/Verilog/liberty views of the PDK IO library with the analog pad's resistor-free core terminal exposed as `padbare` (derived from the PDK files by script; GDS/CDL stay stock), README there |
 | `INTEGRATION.md` | how macros are dropped into the ring, power for 1.2 V and 3.3 V macros, the `g1_digital` dry run |

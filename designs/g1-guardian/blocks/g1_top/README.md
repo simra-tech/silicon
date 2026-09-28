@@ -1,7 +1,9 @@
 # G1_TOP — chip-level simulation of the breaker path
 
-> **Current state (2026-09-26).** The chip of record is r3
-> (`../g1_padring/layout/g1_chip_top_1414_r3.gds`, `7d07a784…`, digital = ECO RTL, register
+> **Current state (2026-09-28).** The chip of record is r4
+> (`../g1_padring/layout/g1_chip_top_1414_r4.gds`, `225d0b53…`: r3 with the TRIP macro `nf4_novclk`; full-chip
+> campaigns `sim/FULLCHIP_CDL_R4_20260927.md`, `sim/FULLCHIP_CDL_R4_PHASE2_20260927.md`, `--blockset c1414r4`);
+> r3 (`../g1_padring/layout/g1_chip_top_1414_r3.gds`, `7d07a784…`) is the fallback. Both carry the ECO digital (register
 > map 1.2). Unless a row names the ECO RTL (`--rtl-dir eco_20260925`, runs `eco_*`), the
 > chip-level runs below use the pre-ECO RTL `../g1_ctrl/rtl` (map 1.1, the digital of r1/r2) with
 > the analog block netlists, which are unchanged in r3. The chip-of-record analog results are in the section

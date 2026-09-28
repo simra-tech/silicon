@@ -1,4 +1,8 @@
-# nf4_novclk: non-overlapping comparator clock for the TRIP macro. CANDIDATE r4, NOT ADOPTED
+# nf4_novclk: non-overlapping comparator clock for the TRIP macro. CANDIDATE r4, ADOPTED 2026-09-28
+
+> **Adopted 2026-09-28:** r4 (`g1_chip_top_1414_r4.gds`, `225d0b53…`) is the chip of record and r3 the fallback
+> (`../../../../../review/R4_ADOPTION_20260928.md`, `PLAN.md` D17). The text below is the candidate record as written
+> on 27 Sep and is otherwise unchanged.
 
 **This is a candidate.** The chip of record stays r3 (`g1_chip_top_1414_r3.gds`, `7d07a784…`), and r3 was not
 changed. The r4 files below are new files. The owner decides whether to adopt them.

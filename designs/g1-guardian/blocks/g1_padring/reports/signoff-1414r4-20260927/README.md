@@ -1,5 +1,9 @@
 # G1 1414 µm chip, revision r4 candidate: TRIP macro `nf4_novclk` (non-overlapping comparator clock) and GatPoly fill, physical sign-off (2026-09-27)
 
+> **Adopted 2026-09-28:** r4 is the chip of record and r3 the fallback
+> ([`review/R4_ADOPTION_20260928.md`](../../../../review/R4_ADOPTION_20260928.md), `PLAN.md` D17). The report below is
+> unchanged from 27 Sep.
+
 `g1_chip_top_1414_r4.gds` is a **candidate**. It is not adopted: the file of record stays
 `g1_chip_top_1414_r3.gds` (`7d07a7841a531f51e08b0c90e76fe603889cd2ef29905e309e63f09742e688f2`), with its
 sign-off in [`signoff-1414r3-20260926`](../signoff-1414r3-20260926/README.md). This folder gathers the

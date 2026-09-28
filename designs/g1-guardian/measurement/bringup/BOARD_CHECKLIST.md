@@ -1,4 +1,4 @@
-# G1 bring-up board checklist (chip of record r3, register map 1.2)
+# G1 bring-up board checklist (chip of record r4, register map 1.2; the same board for the r3 fallback)
 
 What the bring-up PCB and bench must provide, derived from
 [`G1_TOP_LEVEL_SPECIFICATION.md`](../../specification/G1_TOP_LEVEL_SPECIFICATION.md) §3, §4, §6 (P1–P11),

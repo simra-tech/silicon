@@ -1,5 +1,8 @@
 # nf4_novclk (r4 candidate TRIP macro): block qualification, 27 Sep 2026
 
+> **Adopted 2026-09-28** in r4, the chip of record (`../../../../../review/R4_ADOPTION_20260928.md`). The statements
+> below that the candidate is not adopted describe 27 Sep.
+
 This covers the block-level items that `README.md` in this directory left **not run**:
 - the post-layout comparator delay, settle and DAC decks on the new extraction;
 - a mismatch Monte Carlo of the non-overlap window.

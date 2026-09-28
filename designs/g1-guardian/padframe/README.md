@@ -22,7 +22,8 @@
 
 | File | SHA-256 of the CSV | GDS hash column | Status |
 | --- | --- | --- | --- |
-| [`bondmap_20260926_r4.csv`](bondmap_20260926_r4.csv) | `99080d81…` | `7d07a784…` (r3, chip of record) | **current**: `chip_of_record`, with columns `qfn24_lead` and `lead_side`; identical to r3 apart from the hash column |
+| [`bondmap_20260928_gdsr4.csv`](bondmap_20260928_gdsr4.csv) | `a8c2ba5d…` | `225d0b53…` (r4, chip of record) | **current**: identical to `bondmap_20260926_r4.csv` except the `gds_sha256` column, which binds the r4 GDS; verified against the r4 GDS in `blocks/g1_padring/reports/signoff-1414r4-20260927/bondmap/` (passed) |
+| [`bondmap_20260926_r4.csv`](bondmap_20260926_r4.csv) | `99080d81…` | `7d07a784…` (r3, chip of record) | superseded (r3 hash): `chip_of_record`, with columns `qfn24_lead` and `lead_side`; identical to r3 apart from the hash column |
 | [`bondmap_20260925_r3.csv`](bondmap_20260925_r3.csv) | `ead5f109…` | `9049e87b…` (r2) | superseded by r4 (its status column still reads `chip_of_record`, as written for r2) |
 | [`bondmap_candidate_20260923_r2.csv`](bondmap_candidate_20260923_r2.csv) | `201612db…` | `3e363438…` (older candidate) | superseded by r3 |
 | [`bondmap_candidate_20260923.csv`](bondmap_candidate_20260923.csv) | `73ed1fc8…` | `ab02b653…` | superseded |
@@ -158,7 +159,7 @@ three canary-transistor pins and three HBT pins.
 
 ### r2 `g1_chip_top_1414_r2.gds` (`9049e87b…`): chip of record until 2026-09-25, now the documented fallback
 
-The chip of record is r3 (`g1_chip_top_1414_r3.gds`, `7d07a784…`): r2 plus the re-hardened digital macro and 700 µm² of GatPoly fill; checks in [`signoff-1414r3-20260926`](../blocks/g1_padring/reports/signoff-1414r3-20260926/README.md) (all DRC 0 markers, projected LVS passed, canonical LVS failed as r2). Bond map `bondmap_20260926_r4.csv` is bound to r3.
+The chip of record is r4 (`g1_chip_top_1414_r4.gds`, `225d0b53…`, since 2026-09-28): r3 plus the TRIP macro `nf4_novclk` and 406 µm² of GatPoly fill; pads, openings and ring unchanged (XOR); checks in [`signoff-1414r4-20260927`](../blocks/g1_padring/reports/signoff-1414r4-20260927/README.md) (all DRC 0 markers, projected LVS passed, canonical LVS failed as r3). r3 (`g1_chip_top_1414_r3.gds`, `7d07a784…`: r2 plus the re-hardened digital macro and 700 µm² of GatPoly fill; [`signoff-1414r3-20260926`](../blocks/g1_padring/reports/signoff-1414r3-20260926/README.md)) is the fallback. Bond map `bondmap_20260926_r4.csv` is bound to r3; a copy with only the hash set to r4 passed `verify_bondmap.py` on r4; an r4-bound bond map here is not written (open).
 
 Evidence: [`signoff-1414r2-20260925`](../blocks/g1_padring/reports/signoff-1414r2-20260925/README.md).
 r2 is geometrically identical to r1 on every layer (per-layer XOR empty; only two TEXT 63/0

@@ -41,7 +41,9 @@ unpowered controls and separately designated stress samples before exposure.
 
 ## Board and bench requirements (2026-09-24)
 
-These apply to the chip of record r3, `g1_chip_top_1414_r3.gds` (`7d07a784…`); the
+These apply to the chip of record r4, `g1_chip_top_1414_r4.gds` (`225d0b53…`, since 2026-09-28,
+`../review/R4_ADOPTION_20260928.md`), and to the r3 fallback `g1_chip_top_1414_r3.gds` (`7d07a784…`): r4 differs
+from r3 only in the TRIP comparator clock and GatPoly fill, so the board rules are the same. The
 earlier text named r1 `g1_chip_top_1414.gds` (`629d303a…`), corrected 2026-09-27 (red team
 BR-8). The numbers are **simulated**; none has been measured. Specification:
 `../specification/G1_TOP_LEVEL_SPECIFICATION.md` §6, P1–P11. Rows B2, B3, B6–B8 were
@@ -150,7 +152,7 @@ single-fault tolerance or overload survival from ordinary breaker tests.
 
 ## Host rules for register access and EN (2026-09-25)
 
-The chip of record **r3** implements register map **1.2** (`VERSION` reads 0x12;
+The chip of record **r4** (and the r3 fallback, with the byte-identical digital macro) implements register map **1.2** (`VERSION` reads 0x12 on both;
 `../blocks/g1_ctrl/ECO_20260925.md`, `PLAN.md` D16). Read `VERSION` first. Rules
 marked "(r2 fallback, map 1.1)" apply only to a part that reads 0x11.
 
@@ -210,7 +212,15 @@ host software follows these rules on every run:
    saturated arithmetic. Verify reachable corrected soft/hard endpoints and
    their ordering. Hard default 254 has only one positive correction code;
    record clipping as a failure, not successful calibration.
-   The hard comparator trips below its DAC code. In simulation the offset is
+   **Chip of record r4:** the hard comparator trips at its DAC code: within ±3 % of the code at every
+   corner, temperature and supply tried on the r4 full-chip deck, and a calibration rehearsal at tt, 25 mV
+   (ideal code 127.1) gives hard 134 silent / 126 fires (2-code window running at the time of writing), soft
+   130 silent / 128 fires (simulated; `../blocks/g1_top/sim/FULLCHIP_CDL_R4_20260927.md`,
+   `FULLCHIP_CDL_R4_PHASE2_20260927.md`). Over mismatch the hard correction is −11…+7 LSB
+   (`../blocks/g1_trip/sim/qualification/joint_r4_mc_20260928/RESULTS.md`). Expect the calibrated hard code
+   about 127–134 at 25 mV and bracket from about 15 codes above the target. The operating-state bracketing
+   and the per-part k(T) rule below stay, with k(T) expected to be a small fine correction.
+   **r3 fallback:** the hard comparator trips below its DAC code. In simulation the offset is
    40–56 LSB (7.9–11.0 mV of shunt) on the TRIP NF4 block bench, with a
    10–11 LSB corner spread. On the chip netlists the effective hard threshold
    at code 200 (39.25 mV) is 30.00–31.25 mV (tt/27 °C, [RESULTS_20260925](../blocks/g1_top/sim/campaigns/RESULTS_20260925.md) §4).

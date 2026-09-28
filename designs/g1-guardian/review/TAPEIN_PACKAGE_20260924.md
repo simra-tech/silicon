@@ -1,4 +1,4 @@
-# G1 tape-in package, IHP SG13G2 open PDK: draft checklist (2026-09-24, updated 2026-09-26 for r3)
+# G1 tape-in package, IHP SG13G2 open PDK: draft checklist (2026-09-24, updated 2026-09-26 for r3 and 2026-09-28 for r4)
 
 This is a **draft**. It does not approve tape-out. The owner will add IHP's official
 submission instructions later. Each item is marked with one of:
@@ -18,22 +18,33 @@ in `tapeoutbench-eda` sha256:ddeb6957… (`flow/run.sh`). The PDK layer-properti
 
 | Item | Value | Status |
 | --- | --- | --- |
-| File | `blocks/g1_padring/layout/g1_chip_top_1414_r3.gds`, 84 097 180 bytes, sha256 `7d07a7841a531f51e08b0c90e76fe603889cd2ef29905e309e63f09742e688f2` (**r3, file of record since 2026-09-26**) | confirmed (sha256sum; BGNLIB timestamps zero). r3 = r2 + the re-hardened `g1_digital` macro (RTL ECO, register map 1.2, pin-compatible, swapped into the same cell) + 100 GatPoly fill rectangles (700 µm²). Outside the macro outline only 5/22 differs from r2 (`reports/signoff-1414r3-20260926/r3_identity/chip_xor.json`). Owner decision 2026-09-25 (`PLAN.md` D16) |
-| Fallback (r2, superseded 2026-09-26) | `g1_chip_top_1414_r2.gds`, 84 500 300 bytes, sha256 `9049e87b0303893573ed82f56a5d41f926c4db126e8d972062553c7d19996d2c` (was the file of record since 2026-09-25) | retained outside the tree since 2026-09-26 (`${BULK}/g1-freeze-retention-20260925/g1_chip_top_1414_r2.gds`, `review/local-retention-20260925.json`); its CDLs stay in `blocks/g1_padring/netlist/`. Written from r1 by `flow/signoff/1414r2/make_r2.py` (no timestamps; two writes byte-identical). Metadata-only: the two seal-ring registration texts on 63/0 corrected (section 3) and three modified stock-named cells renamed (`sg13g2_LevelDown` → `g1_LevelDown_polyres`, `nmos` → `g1_gate_nmos`, `pmos` → `g1_gate_pmos`). Geometric identity to r1: confirmed (per-layer XOR empty on all 73 layers, hierarchy and instance tree identical modulo the renames; `reports/signoff-1414r2-20260925/r2_identity/`) |
+| File | `blocks/g1_padring/layout/g1_chip_top_1414_r4.gds`, 84 156 088 bytes, sha256 `225d0b535321ed312594bb13d97b7271014f487162564a56c874572de715173a` (**r4, file of record since 2026-09-28**) | confirmed (sha256sum). r4 = r3 + the TRIP macro `nf4_novclk` (the comparator-clock inverter `XCLKI` replaced by the non-overlap generator `g1_novclk`; red-team F1) + 58 GatPoly fill rectangles (406 µm²). Outside the TRIP box only 5/22 differs from r3; the digital macro is byte-identical (`reports/signoff-1414r4-20260927/r4_identity/chip_xor.json`, `digital_identity/`). Decision 2026-09-28 (`PLAN.md` D17, `review/R4_ADOPTION_20260928.md`) |
+| Fallback (r3, superseded 2026-09-28) | `g1_chip_top_1414_r3.gds`, 84 097 180 bytes, sha256 `7d07a7841a531f51e08b0c90e76fe603889cd2ef29905e309e63f09742e688f2` (was the file of record since 2026-09-26) | stays in the tree (committed `30f5192a`) with its CDLs, sign-off `reports/signoff-1414r3-20260926/` and bond map. r3 = r2 + the re-hardened `g1_digital` macro (RTL ECO, register map 1.2, pin-compatible, swapped into the same cell) + 100 GatPoly fill rectangles (700 µm²). Outside the macro outline only 5/22 differs from r2 (`reports/signoff-1414r3-20260926/r3_identity/chip_xor.json`). Owner decision 2026-09-25 (`PLAN.md` D16). Needs the r3 calibration contract (spec §6) if resubmitted |
+| Earlier fallback (r2, superseded 2026-09-26) | `g1_chip_top_1414_r2.gds`, 84 500 300 bytes, sha256 `9049e87b0303893573ed82f56a5d41f926c4db126e8d972062553c7d19996d2c` (was the file of record since 2026-09-25) | retained outside the tree since 2026-09-26 (`${BULK}/g1-freeze-retention-20260925/g1_chip_top_1414_r2.gds`, `review/local-retention-20260925.json`); its CDLs stay in `blocks/g1_padring/netlist/`. Written from r1 by `flow/signoff/1414r2/make_r2.py` (no timestamps; two writes byte-identical). Metadata-only: the two seal-ring registration texts on 63/0 corrected (section 3) and three modified stock-named cells renamed (`sg13g2_LevelDown` → `g1_LevelDown_polyres`, `nmos` → `g1_gate_nmos`, `pmos` → `g1_gate_pmos`). Geometric identity to r1: confirmed (per-layer XOR empty on all 73 layers, hierarchy and instance tree identical modulo the renames; `reports/signoff-1414r2-20260925/r2_identity/`) |
 | Superseded file (r1) | `g1_chip_top_1414.gds`, 84 500 250 bytes, sha256 `629d303abf594ec90593f1d28a8d9ad19673ea6662780ba428a6d9c5685986ba` | retained outside the tree (`review/local-retention-20260925.json`), in git history since `e3318893`. Created from the source `candidate.gds` sha256 `60730627…` (kept as `layout/g1_chip_top_1414_src.gds`) by renaming the top cell only (`flow/signoff/1414/rename_top.py`; `reports/signoff-1414-20260924/rename_verify/verify_rename.json`) |
 | Top cell | `g1_chip_top`, the only top cell | confirmed (KLayout) |
 | Database unit | 0.001 µm (1 nm) | confirmed (KLayout `Layout.dbu`). The DBU IHP requires: assumed 1 nm |
 | Die / bounding box | (0, 0) to (1414, 1414) µm, i.e. 1414 × 1414 µm = 1.999396 mm² (EdgeSeal boundary 39/4 is the same box) | confirmed (top bbox). Shuttle allocation of 2 mm² confirmed by the owner on 2026-09-25. Whether the die size is taken from the bbox or the EdgeSeal outline, and the allowed size and area on the shuttle: assumed |
-| Cells | 304 (r2: 306) | confirmed |
-| Filename, compression, one top cell per submission, GDS version | `g1_chip_top_1414_r3.gds`, uncompressed, GDS version 600 | assumed |
-| Size limit of the file | 84.1 MB | assumed acceptable |
-| The file is in Git | r1: tracked from `e3318893`; r2: committed; both GDS moved out of the tree to the retention manifest. r3: committed at `30f5192a`. The sha256 above is the identity of the file. | r1/r2/r3 confirmed. How the file is delivered to IHP: open |
+| Cells | 304 (r3: 304, r2: 306) | confirmed |
+| Filename, compression, one top cell per submission, GDS version | `g1_chip_top_1414_r4.gds`, uncompressed, GDS version 600 | assumed |
+| Size limit of the file | 84.2 MB | assumed acceptable |
+| The file is in Git | r1: tracked from `e3318893`; r2: committed; both GDS moved out of the tree to the retention manifest. r3: committed at `30f5192a`. r4: committed at `9b4e1b6ea`. The sha256 above is the identity of the file. | r1/r2/r3/r4 confirmed. How the file is delivered to IHP: open |
+
+Lineage:
+
+| Revision | File | sha256 | Change | Status |
+| --- | --- | --- | --- | --- |
+| r1 | `g1_chip_top_1414.gds` | `629d303a…` | 1414 µm native-lineage chip (top cell renamed) | superseded 2026-09-25; retained outside the tree |
+| r2 | `g1_chip_top_1414_r2.gds` | `9049e87b…` | r1 + registration text corrected, three stock-named cells renamed (metadata only) | superseded 2026-09-26; retained outside the tree |
+| r3 | `g1_chip_top_1414_r3.gds` | `7d07a784…` | r2 + re-hardened digital macro (ECO, map 1.2) + 700 µm² GatPoly fill | superseded 2026-09-28; **fallback**, in the tree |
+| r4 | `g1_chip_top_1414_r4.gds` | `225d0b53…` | r3 + TRIP `nf4_novclk` (non-overlapping comparator clock) + 406 µm² GatPoly fill | **file of record** since 2026-09-28 |
 
 ## 2. Layer usage (from the GDS)
 
 Script `review/tapein/gds_inventory.py`. Output `review/tapein/gds_inventory_g1_chip_top_1414.json` (r1) and
 `review/tapein/gds_inventory_g1_chip_top_1414_r2.json` (r2: identical in every layer count, text count and cell list apart from the renames and the sha256) and
-`review/tapein/gds_inventory_g1_chip_top_1414_r3.json` (**r3, file of record**; the table below gives r1/r2 counts, r3 differences follow it)
+`review/tapein/gds_inventory_g1_chip_top_1414_r3.json` (r3, the fallback; the table below gives r1/r2 counts, r3 differences follow it) and
+`blocks/g1_padring/reports/signoff-1414r4-20260927/gds_inventory/gds_inventory_g1_chip_top_1414_r4.json` (**r4, file of record**: every field equal to r3 except the file name, hash and the flat counts of the 24 layers of the r3 → r4 XOR; 73 layers, all in `sg13g2.lyp`; 304 cells; texts differ only on 51/0, 2 569 → 2 587)
 (flat counts = direct shapes × flat placements of each cell). Command, repository root:
 
 ```
@@ -80,7 +91,7 @@ outside the PDK map was found (confirmed).
 | 160/0 | NoMetFiller | 14 | 0 |
 | 189/4 | prBoundary.boundary | 13 290 | 0 |
 
-**r3 (file of record) against the table above** (`gds_inventory_g1_chip_top_1414_r3.json`). The same 73 layers are
+**r3 (the fallback) against the table above** (`gds_inventory_g1_chip_top_1414_r3.json`). The same 73 layers are
 present, all in the `sg13g2.lyp`. The flat counts change on 22 layers, all from the new macro content, plus 100 GatPoly
 fill rectangles:
 
@@ -137,15 +148,40 @@ Flags for review:
 
 | Item | Value | Status |
 | --- | --- | --- |
-| Bond map | `padframe/bondmap_20260926_r4.csv` (sha256 `99080d81…`): the 24 rows of `bondmap_candidate_20260923_r2.csv` (pad number, pin, side, opening centre, 65.8 µm size, die 1414 µm) plus `qfn24_lead` and `lead_side`; identical to `bondmap_20260925_r3.csv` (`ead5f109…`, r2-bound, superseded) apart from the hash column | confirmed: each row coincides with exactly one Passiv opening of r3 (centre to 1 nm, size, TopMetal2 enclosure ≥ 2.1 µm, inside dfpad) and the 22 TopMetal2 labels equal the row nets (`reports/signoff-1414r3-20260926/bondmap/verify_bondmap_r4.json`) |
-| Hash binding | `candidate_gds_sha256` = `7d07a784…` (r3), status `chip_of_record` | **confirmed** (2026-09-26; r3 CSV bound to r2 and the older CSVs are superseded and unchanged) |
+| Bond map | `padframe/bondmap_20260926_r4.csv` (sha256 `99080d81…`, bound to r3; for r4 see the next row): the 24 rows of `bondmap_candidate_20260923_r2.csv` (pad number, pin, side, opening centre, 65.8 µm size, die 1414 µm) plus `qfn24_lead` and `lead_side`; identical to `bondmap_20260925_r3.csv` (`ead5f109…`, r2-bound, superseded) apart from the hash column | confirmed: each row coincides with exactly one Passiv opening of r3 (centre to 1 nm, size, TopMetal2 enclosure ≥ 2.1 µm, inside dfpad) and the 22 TopMetal2 labels equal the row nets (`reports/signoff-1414r3-20260926/bondmap/verify_bondmap_r4.json`) |
+| Hash binding | tracked CSV: `candidate_gds_sha256` = `7d07a784…` (r3). For r4 a copy with only the hash column set to `225d0b53…` passed `verify_bondmap.py` on r4 (24 openings, 0 unmatched, the 24 per-pad records equal r3's; control with the r3-bound CSV fails only on the hash) (`../blocks/g1_padring/reports/signoff-1414r4-20260927/bondmap/verify_bondmap_r4_hashonly.json`) | r3 binding confirmed (2026-09-26). **r4-bound bond map in `padframe/`: not written (open)**; the pads and openings are unchanged (XOR) |
 | Pin order (die pads) | S: 1 VDD, 2 VSS, 3 IOVDD, 4 IOVSS, 5 VSS, 6 IOVSS; E: 7 VDDA, 8 SENSE_P, 9 SENSE_N, 10 GATE, 11 FAULT_N, 12 EN; N: 13 TRIP_SET, 14 SCLK, 15 SDI, 16 SDO, 17 TEMP_OUT, 18 VREF; W: 19 G_SHARED, 20 D_STD, 21 D_ELT, 22 HBT_E, 23 HBT_B, 24 HBT_C | confirmed from the CSV and the GDS labels |
 | Pad → QFN24 lead | owner decision 2026-09-25: each pad to the lead directly opposite, no crossings; leads counter-clockwise, pin 1 top-left of the top view; die rotated 90° clockwise so pads 1–6 face leads 1–6. Pads 1–12 → leads 1–12; pads 13–18 → leads 18–13; pads 19–24 → leads 24–19. Spec §3 carries both numbers | **decided**; plan and drawing `padframe/BONDPLAN_20260925.md`, `bondplan_20260925.svg`. Acceptance by the bonding house: open |
 | Package | QFN24, 4 × 4 mm, 0.5 mm pitch; 10 packaged parts, no bare die | specified (`specification/G1_TOP_LEVEL_SPECIFICATION.md`). Availability on the IHP run: assumed |
 | Die thickness | 200 µm | specified. The IHP backgrinding option: assumed |
 | Cavity or paddle size for a 1.414 mm die, paddle connection (VSS or floating) | paddle = `VSS` (owner decision 2026-09-25, `BONDPLAN_20260925.md`) | paddle potential decided; cavity/paddle size: open |
 
-## 6. Sign-off checks on `g1_chip_top_1414_r3.gds`
+## 6. Sign-off checks on `g1_chip_top_1414_r4.gds`
+
+Results from [`blocks/g1_padring/reports/signoff-1414r4-20260927/README.md`](../blocks/g1_padring/reports/signoff-1414r4-20260927/README.md), on the file of
+record `225d0b53…` with the stock PDK decks at `84374023`, KLayout 0.30.9 and the same commands and options as
+the r3 sign-off. The input hash was recorded before the runs and re-hashed unchanged at report assembly (no
+hash was recorded right after the runs).
+
+| Check | Deck / tool | Status | Evidence |
+| --- | --- | --- | --- |
+| r4 differs from r3 only by the TRIP macro patch and the GatPoly fill | `chip_xor.py` (per-layer XOR, outside / inside the TRIP box 771,736,1000,943 µm); method control r3 vs r3 | passed: outside the box only 5/22 changed (+58 polygons, 406.0 µm²), 0 text differences; before the fill nothing outside the box; control: no layer changed | [`r4_identity/`](../blocks/g1_padring/reports/signoff-1414r4-20260927/r4_identity/) |
+| TRIP cell in r4 equals the qualified candidate macro | `cell_xor.py` | passed: XOR 0 on 48 layers, texts equal | [`trip_identity/`](../blocks/g1_padring/reports/signoff-1414r4-20260927/trip_identity/) |
+| Digital macro identical to r3 | `cell_xor.py`, `cell_cut.py` | passed: XOR 0 on 31 layers; cut cells byte-identical (`183a3496…`) | [`digital_identity/`](../blocks/g1_padring/reports/signoff-1414r4-20260927/digital_identity/) |
+| TRIP macro block checks (DRC deep main + maximal, antenna, LVS vs `g1_trip_nf4_novclk_lvs.cdl`) | PDK decks | passed, 0 items; netlists match; negative control vs the r3 CDL fails as expected | `blocks/g1_trip/layout/candidates/nf4_novclk/README.md` gate 2 |
+| KLayout DRC main / maximal / precheck / density / antenna | stock `run_drc.py` / `run_maximal.py`, options as r3 | passed, 0 markers each (266 / 666 / 241 / 31 / 129 s) | [`drc_main/`, `drc_maximal/`, `precheck/`, `density/`, `antenna/`](../blocks/g1_padring/reports/signoff-1414r4-20260927/README.md) |
+| Density, GFil.g | density run | passed; global GatPoly 300 828.38 µm² = 15.05 %, margin **918.98 µm²** (r3: 618.07 µm²) | [`density/`](../blocks/g1_padring/reports/signoff-1414r4-20260927/density/), [`r4_identity/fill.json`](../blocks/g1_padring/reports/signoff-1414r4-20260927/r4_identity/fill.json) |
+| Second opinion: IHP dev-branch DRC deck (`4fd47c5e`) | main, maximal, density, antenna, precheck | passed, 0 markers each; lyrdb byte-identical to r3's dev-deck reports | [`devdeck_check/`](../blocks/g1_padring/reports/signoff-1414r4-20260927/devdeck_check/) |
+| LVS, full chip, projected reference (`g1_chip_top_1414_r4_projected_ref.cdl` `27a27cd6…`, bulk only) | PDK KLayout LVS, strict ports | passed: 62 956/62 956 devices, 31 824 nets, 22/22 pins; CDL method control reproduces r3's reference exactly | [`lvs_projected/`](../blocks/g1_padring/reports/signoff-1414r4-20260927/lvs_projected/) |
+| LVS, full chip, canonical unprojected reference (`netlist/g1_chip_top_1414_r4.cdl` `e060c0c5…`) | PDK KLayout LVS | failed, as r2/r3: 35 Match, 14 NoMatch (IO/level-shifter), 2 Skipped; `pair_counts.json` byte-identical to r3's. Cause as r1/r2/r3 (PDK IO-cell reference semantics; upstream issues #1218/#1130) | [`lvs_canonical/`](../blocks/g1_padring/reports/signoff-1414r4-20260927/lvs_canonical/) |
+| GDS inventory, stock-name check | `gds_inventory.py`, `stock_compare.py` | passed: 73 layers all in `sg13g2.lyp`; 52 stock-named cells, 0 differ (as r3) | [`gds_inventory/`](../blocks/g1_padring/reports/signoff-1414r4-20260927/gds_inventory/), [`stock_compare/`](../blocks/g1_padring/reports/signoff-1414r4-20260927/stock_compare/) |
+| Digital macro sign-off, STA, GLS, SDF GLS, formal equivalence | — | carried from r3 (macro byte-identical; rows below); merged-SDC STA on the r4 chip netlist: not run | r3 rows below |
+| Full-chip layout-netlist post-layout simulation (r4) | ngspice 46 + Icarus; r4 CDL `e060c0c5`, `nf4_novclk` TRIP extraction, otherwise the r3x deck | passed for every completed case: `c_mid` `GATE` < 1 V 1.5432 / 1.7263 / 1.4334 µs (tt / ss 125 °C / ff −40 °C); hard threshold within ±3 % of the code at all corners, temperatures and supplies tried (r3 tripped at 0.80T); `FAST_EN` = 1, soft code 153, code 254, DAC rewrite, transistor-level oscillator at ss/ff, power-up; calibration rehearsal hard 134 silent / 126 fires, soft 130 / 128. **Running at the time of writing:** `b_s`, `f_mid`, `hard_pulse` at tt, `hard_pulse` at ss/ff, the 2-code hard calibration window (simulated) | `blocks/g1_top/sim/FULLCHIP_CDL_R4_20260927.md`, `FULLCHIP_CDL_R4_PHASE2_20260927.md` |
+| Joint calibrated mismatch screen (24 seeds, r4 schematic TRIP) | ngspice 46 | 23/24 passed (r3 16/24), 0 electrical failures, 1 numerical; residual correct at 125 °C in 23/23 (simulated) | `blocks/g1_trip/sim/qualification/joint_r4_mc_20260928/RESULTS.md` |
+| Full-chip PEX, IR/EM and timing of the final GDS | — | not run | |
+| IHP's own intake checks (MPW Rejection Test) | IHP | not run | |
+
+### Sign-off checks on `g1_chip_top_1414_r3.gds` (the fallback)
 
 Results from [`blocks/g1_padring/reports/signoff-1414r3-20260926/README.md`](../blocks/g1_padring/reports/signoff-1414r3-20260926/README.md).
 All ran on this exact file (`7d07a784…`, top `g1_chip_top`; the checks ran on its byte-identical bulk copy) with the
@@ -184,7 +220,7 @@ From [`redteam-20260925/PHYSICAL_TAPEIN.md`](redteam-20260925/PHYSICAL_TAPEIN.md
 | 4. Bond map bound to an older GDS | `bondmap_20260925_r3.csv` bound to `9049e87b…`; since 2026-09-26 `bondmap_20260926_r4.csv` bound to r3 `7d07a784…`; both geometrically verified | **resolved** |
 | 6. Modified cell with a stock library name | `sg13g2_LevelDown` → `g1_LevelDown_polyres`; the wider check (including `sg13g2_pr.gds`) also found `nmos`/`pmos` PCell variants and renamed them; 0 differing stock-named cells remain | **resolved** |
 | 2. North/west pad order vs package | owner decision 2026-09-25: pad to the lead directly opposite, spec §3 renumbered (section 5) | **resolved** (bonding-house acceptance open) |
-| 3. IHP's own tape-in check | stock precheck mode passed on r2 and r3; IHP's MPW Rejection Test not run | **open** |
+| 3. IHP's own tape-in check | stock precheck mode passed on r2, r3 and r4; IHP's MPW Rejection Test not run | **open** |
 
 ## 7. Board constraints (to go with the parts)
 
@@ -197,11 +233,11 @@ From [`redteam-20260925/PHYSICAL_TAPEIN.md`](redteam-20260925/PHYSICAL_TAPEIN.md
 | **FET hold-off against drain dV/dt: gate–source capacitor ≥ 10× C<sub>rss</sub>, a short gate loop, or load-bus dV/dt ≤ 0.1 V/ns.** CSD16340Q3 model, 5 nH + 10 Ω gate loop, 0 → 12 V drain edge of 1.2 V/ns or faster: V<sub>GS</sub> 1.08–1.25 V against V<sub>th</sub> 0.861 V | spec §6 P10; bench plan B9 and drain-step hold-off test; `review/redteam-20260927/trip_path/FINDINGS.md` F4 | simulated (`nodcn` pads); the 10× C<sub>rss</sub> capacitor not simulated; bench test not run |
 | **VDDA (pin 7) tied to the IOVDD 3.3 V rail on the board.** VDDA must not exceed IOVDD by more than a diode drop. | `specification/G1_TOP_LEVEL_SPECIFICATION.md` (pin 7, D14) | specified |
 | EN low at power-up (EN is the only digital reset; no pad pull-down) | register map; spec §6 P6 | specified |
-| Every EN rise re-opens the inrush window with `FAST_EN`=0 and defaults restored: on r3 (map 1.2) about 0.11 ms (`INRUSH` 0x02); EN low must persist 8 samples (reset within 11 `osc_clk` edges); the clock cannot be stopped by a register; `SOFT_TIME` is atomic. On the r2 fallback (map 1.1): about 1 ms and an unfiltered EN reset | spec §6 P6, P7 | accepted design behaviour covered by the external inhibit, pending owner confirmation |
-| Host rules: H1 clock watchdog (`CHIP_ID`/`OSC_CNT_L`; on r3 for analog oscillator failure only), H3 read-back and ≥ 128-cycle idle for safety-relevant writes, H5 periodic configuration rewrite, H7 a no-op `CTRL` = 0x00 write after every `CTRL`/`SEU_CMD` write (a single upset in the write hand-over replays the last write), H8 a non-default canary register polled to detect a single-upset core reset, H6 hard-code correction k(T) from the per-part bench table only (no simulated fallback; until the table exists hard accuracy is declared only at the calibration temperature; hard path bracketed with the soft comparator deciding high, at the operating `OSC_TRIM`, T2F in its operating state and the operating target, at every declared temperature; red team 27 Sep F2, BR-1 to BR-3); H2 (`INRUSH` only under the inhibit) and H4 (`SOFT_TIME` only with `SOFT_EN` cleared) apply to the r2 fallback (map 1.1) only | spec §6; `review/redteam-20260925/DIGITAL.md` | specified (host contract) |
+| Every EN rise re-opens the inrush window with `FAST_EN`=0 and defaults restored: on r4 and r3 (map 1.2, same macro) about 0.11 ms (`INRUSH` 0x02); EN low must persist 8 samples (reset within 11 `osc_clk` edges); the clock cannot be stopped by a register; `SOFT_TIME` is atomic. On the r2 fallback (map 1.1): about 1 ms and an unfiltered EN reset | spec §6 P6, P7 | accepted design behaviour covered by the external inhibit, pending owner confirmation |
+| Host rules: H1 clock watchdog (`CHIP_ID`/`OSC_CNT_L`; on r3 for analog oscillator failure only), H3 read-back and ≥ 128-cycle idle for safety-relevant writes, H5 periodic configuration rewrite, H7 a no-op `CTRL` = 0x00 write after every `CTRL`/`SEU_CMD` write (a single upset in the write hand-over replays the last write), H8 a non-default canary register polled to detect a single-upset core reset, H6 hard-code correction k(T) from the per-part bench table only (on r4 a per-part fine correction: the hard threshold sits within ±3 % of the code at every corner tried) (no simulated fallback; until the table exists hard accuracy is declared only at the calibration temperature; hard path bracketed with the soft comparator deciding high, at the operating `OSC_TRIM`, T2F in its operating state and the operating target, at every declared temperature; red team 27 Sep F2, BR-1 to BR-3); H2 (`INRUSH` only under the inhibit) and H4 (`SOFT_TIME` only with `SOFT_EN` cleared) apply to the r2 fallback (map 1.1) only | spec §6; `review/redteam-20260925/DIGITAL.md` | specified (host contract) |
 | SCLK ≤ f_OSC; host drives SDI ≥ 2 ns after the falling SCLK edge | SDC / register map | specified (STA assumption) |
 
-Deferred to a later revision (not in r3; `review/redteam-20260927/power_io/FINDINGS.md` F1, F2):
+Deferred to a later revision (not in r3 or r4; `review/redteam-20260927/power_io/FINDINGS.md` F1, F2):
 
 - On-die 3.3 V undervoltage lockout (`VDDA` UVLO into the G1_GATE set input), replacing reliance on the P11 board supervisor.
 - A `VDDA`-domain `GATE` driver with a `VDD`-good interlock, removing the power-order dependence of the stock output pad (P1).
@@ -230,14 +266,15 @@ Deferred to a later revision (not in r3; `review/redteam-20260927/power_io/FINDI
 
 ## 9. Before submission
 
-- [ ] Final GDS identity frozen. Current: r3 `7d07a784…` (2026-09-26; r2 `9049e87b…` is the documented fallback); `gds_inventory.py` and the bond-map match re-run on it. If it changes again, re-run both and update every sha256 here.
-- [x] Section 6 filled from `signoff-1414r3-20260926/` (r3), with passed / failed / not run as reported.
+- [ ] Final GDS identity frozen. Current: r4 `225d0b53…` (2026-09-28; r3 `7d07a784…` is the documented fallback); `gds_inventory.py` and the bond-map match re-run on it (passed). If it changes again, re-run both and update every sha256 here.
+- [x] Section 6 filled from `signoff-1414r4-20260927/` (r4), with passed / failed / not run as reported; the r3 table is kept for the fallback.
 - [x] Bond map rebound to the r3 sha256 as a new CSV revision (`bondmap_20260926_r4.csv`), with QFN24 lead numbers.
+- [ ] Bond map bound to the r4 sha256 written to `padframe/` (a hash-only copy passed verification on r4): open.
 - [ ] Canonical LVS: failed; cause: substrate/tap/diode netlist semantics of the IO-cell reference in the PDK, reproduced with stock cells and with IHP's latest `dev` deck and library; the design-local IO copies match IHP's `dev` library on every layer (PR #1223); upstream issues #1218/#1130. IHP's acceptance of the projected-reference result (§8 question 1): open.
 - [x] Stale seal-ring registration text (section 3) resolved: corrected in r2 with a full sign-off rerun.
 - [ ] IHP's official instructions added, and every "assumed" item resolved.
-- [ ] IHP's MPW rejection test (or intake check) run on `7d07a784…`, pass/fail and date recorded in §6. GFil.g (critical, no waivers) passes by 0.031 points: global GatPoly 300 527.47 µm² of 1 999 396 µm² = 15.03 % (minimum 15 %), a margin of 618 µm²; a chip area 0.206 % larger in IHP's check would fail it. If it fails, only about 574 µm² more GatPoly fill fits under the current fill constraints (`r3_identity/fill.json`), so the fix would need relaxed exclusions and a full re-sign-off (GDS change). Red-team 2026-09-27 PH-1.
+- [ ] IHP's MPW rejection test (or intake check) run on `225d0b53…`, pass/fail and date recorded in §6. GFil.g (critical, no waivers) passes on r4 by 0.046 points: global GatPoly 300 828.38 µm² of 1 999 396 µm² = 15.05 % (minimum 15 %), a margin of 918.98 µm² (r3: 618 µm²); a chip area about 0.31 % larger in IHP's check would fail it (derived: 918.98 / 299 909.4). Red-team 2026-09-27 PH-1; r4 keeps the margin at least r3's as PH-1 asked.
 - [ ] Bonding-house acceptance of the bond plan, in writing, with the angle table: the bond-wire angle to the pad-edge normal is 9.3–45.2°, reaching 45.2° at the four pads nearest the package corners (pads 6, 12, 18, 24); wires 1.007–1.411 mm; minimum wire-to-wire distance 95.3 µm (2-D), nominal QFN24 4 × 4 mm drawing. A 45° cap would be met by a package drawing choice, not a die change. Red-team 2026-09-27 PH-2.
 - [ ] IHP submission note states that the GDS has no DigiBnd (16/0) around the standard-cell macro (layout rules §8.1 ask for it with IHP's digital libraries). DigiBnd only relaxes Cnt.c and NW.c1/d1/e1/f1; the stricter rules were applied and gave 0 markers (maximal and precheck), so the layer is not added (adding it would need a re-sign-off). Red-team 2026-09-27 PH-4.
-- [ ] Hard comparator early trip is a clock-edge race inside G1_TRIP (red team 27 Sep, F1); r4 candidate with a non-overlapping comparator clock in progress on branch redteam-20260927; if not adopted, r3 ships with per-part calibration (H6 as restated).
+- [x] Hard comparator early trip is a clock-edge race inside G1_TRIP (red team 27 Sep, F1): **closed by r4** (non-overlapping comparator clock `nf4_novclk`; hard threshold within ±3 % of the code on the full-chip deck at every corner tried; `review/R4_ADOPTION_20260928.md`). Per-part calibration and H6 stay as restated, with k(T) as a fine correction. The r3 fallback still needs the r3 contract.
 - [ ] A human signs and submits. Agents do not push or submit.
