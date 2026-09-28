@@ -262,10 +262,16 @@ Deferred to a later revision (not in r3 or r4; `review/redteam-20260927/power_io
    Tell IHP so that no ELT-specific handling is expected.
 5. Texts on HeatTrans 51/0 and HeatRes 52/0, labels on `.text`/`.pin` layers, and prBoundary 189/4: keep or strip? (assumed keep)
 6. Die size 1414 µm (1.999396 mm², now also stated in the r2 registration text): the 2 mm² shuttle allocation is **confirmed by the owner (2026-09-25)**; QFN24 cavity fit and 200 µm thinning remain assumed. Paddle potential: `VSS` (owner decision 2026-09-25).
-7. Submission deadline: "end of September 2026" in repository notes vs the owner's recollection of 21 October. **Unreconciled**, confirm with IHP.
+7. Submission run and deadline: the IHP Open-Silicon-MPW repository states no closing date; the open
+   submission requests there target the `Oct-2026` run. Confirm the run and its closing date with IHP.
 
 ## 9. Before submission
 
+- [ ] IHP Open-Silicon-MPW package: prepared as [`release/IHP__SoC1816/`](../release/IHP__SoC1816/)
+  (project `IHP__SoC1816`, top cell `SoC1816`, release GDS re-saved with IHP's KLayout options and
+  proven geometry-identical to r4; checklist in [`release/SUBMISSION_PREP_20260928.md`](../release/SUBMISSION_PREP_20260928.md)).
+  Not done: the `IHP__SoC1816` GitHub repository, the submission-request issue, the TRL value, and
+  IHP's confirmation of the category, the `sealring` unit and QFN24 on this run.
 - [ ] Final GDS identity frozen. Current: r4 `225d0b53…` (2026-09-28; r3 `7d07a784…` is the documented fallback); `gds_inventory.py` and the bond-map match re-run on it (passed). If it changes again, re-run both and update every sha256 here.
 - [x] Section 6 filled from `signoff-1414r4-20260927/` (r4), with passed / failed / not run as reported; the r3 table is kept for the fallback.
 - [x] Bond map rebound to the r3 sha256 as a new CSV revision (`bondmap_20260926_r4.csv`), with QFN24 lead numbers.
