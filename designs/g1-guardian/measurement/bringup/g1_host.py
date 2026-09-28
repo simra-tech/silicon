@@ -156,15 +156,33 @@ def lsb_mV(vref_V=VREF_NOMINAL_V):
     return vref_V * 1000.0 / 5300.0
 
 
-# Hard-comparator kick offset: the hard comparator trips 40-56 LSB below its
+# Hard-comparator kick offset, per chip revision (simulated).
+# r3 (g1_chip_top_1414_r3.gds): the hard comparator trips 40-56 LSB below its
 # code (TRIP NF4 block bench, tt/ss/ff at codes 200 and 254), about 41-47 LSB
-# on the chip netlists at tt/27 C. Expected hard crossing code for an input
-# Vin = Cideal + offset (the effective *threshold* is ~45 codes below the code,
-# so the crossing *code* is ~45 above the ideal code).
-HARD_KICK_NOMINAL_LSB = 45
-HARD_KICK_RANGE_LSB = (40, 56)
-SOFT_KICK_RANGE_LSB = (0, 1)   # NF4 soft path trips 0-1 LSB early (simulated)
-USABLE_HARD_RANGE_MV = (25.0, 40.0)
+# on the chip netlists at tt/27 C: the crossing *code* is ~45 above the ideal
+# code and only 25-40 mV of the hard range is usable.
+# r4 (g1_chip_top_1414_r4.gds, chip of record since 2026-09-28): the clock-edge
+# race is removed (TRIP macro nf4_novclk); the hard comparator trips within a
+# few LSB of its code (block brackets -1..0 LSB; full-chip calibration
+# rehearsal crossing 126-134 for ideal 127), so the crossing code is expected
+# within -3..+8 of the ideal code and the whole 25-50 mV range is usable.
+# VERSION reads 0x12 on both revisions: the revision is a host-side setting.
+KICK_BANDS = {
+    "r3": {"hard_nominal": 45, "hard_range": (40, 56), "soft_range": (0, 1),
+           "usable_hard_mV": (25.0, 40.0),
+           "note": "hard comparator trips ~40-56 LSB below its code (kick offset, "
+                   "simulated); crossing code expected ~Cideal+45"},
+    "r4": {"hard_nominal": 0, "hard_range": (-3, 8), "soft_range": (0, 1),
+           "usable_hard_mV": (25.0, 50.0),
+           "note": "hard comparator trips within a few LSB of its code (r4, "
+                   "non-overlapping comparator clock, simulated); crossing code "
+                   "expected ~Cideal (-3..+8)"},
+}
+CHIP_REV_DEFAULT = "r4"
+HARD_KICK_NOMINAL_LSB = KICK_BANDS["r3"]["hard_nominal"]   # r3 model default for DummyTransport
+HARD_KICK_RANGE_LSB = KICK_BANDS["r3"]["hard_range"]
+SOFT_KICK_RANGE_LSB = KICK_BANDS["r3"]["soft_range"]
+USABLE_HARD_RANGE_MV = KICK_BANDS["r3"]["usable_hard_mV"]
 
 # TEMP_OUT (simulated): BGR586 block level, typical, PTAT mode.
 T2F_F25_HZ = 1.5074e6
@@ -641,8 +659,12 @@ class G1(object):
     """
 
     def __init__(self, transport, inhibit=None, f_osc_min_hz=7.0e6,
-                 vref_V=None, log=None):
+                 vref_V=None, log=None, chip_rev=CHIP_REV_DEFAULT):
         self.t = transport
+        if chip_rev not in KICK_BANDS:
+            raise G1Error("unknown chip_rev %r (known: %s)" % (chip_rev, sorted(KICK_BANDS)))
+        self.chip_rev = chip_rev
+        self.band = KICK_BANDS[chip_rev]
         self._inhibit_cb = inhibit
         self.inhibit_asserted = None      # unknown until set/declared
         self.f_osc_min_hz = f_osc_min_hz
@@ -1124,14 +1146,13 @@ class G1(object):
         c_cross = c_high + 0.5            # bracketed: c_high high, c_high+1 low
         raw = c_cross - c_ideal
         if path == "hard":
-            exp_lo = math.floor(c_ideal) + HARD_KICK_RANGE_LSB[0]
-            exp_hi = math.floor(c_ideal) + HARD_KICK_RANGE_LSB[1]
-            exp_nom = math.floor(c_ideal) + HARD_KICK_NOMINAL_LSB
-            note = ("hard comparator trips ~40-56 LSB below its code (kick offset, simulated); "
-                    "crossing code expected ~Cideal+45")
+            exp_lo = math.floor(c_ideal) + self.band["hard_range"][0]
+            exp_hi = math.floor(c_ideal) + self.band["hard_range"][1]
+            exp_nom = math.floor(c_ideal) + self.band["hard_nominal"]
+            note = self.band["note"] + " [chip_rev %s]" % self.chip_rev
         else:
-            exp_lo = math.floor(c_ideal) + SOFT_KICK_RANGE_LSB[0]
-            exp_hi = math.floor(c_ideal) + SOFT_KICK_RANGE_LSB[1]
+            exp_lo = math.floor(c_ideal) + self.band["soft_range"][0]
+            exp_hi = math.floor(c_ideal) + self.band["soft_range"][1]
             exp_nom = math.floor(c_ideal)
             note = "soft comparator within 1 LSB of its code (simulated)"
         return {
@@ -1215,9 +1236,9 @@ class G1(object):
             if not 0 <= reg + ofs <= 255:
                 raise G1SafetyError("%s %d + SENSE_OFS %d clips (calibration failure for this "
                                     "target)" % (nm, reg, ofs))
-        if not USABLE_HARD_RANGE_MV[0] <= hard_mV <= USABLE_HARD_RANGE_MV[1]:
-            warnings.append("hard target %.2f mV outside the usable ~25-40 mV range "
-                            "(simulated kick offset)" % hard_mV)
+        if not self.band["usable_hard_mV"][0] <= hard_mV <= self.band["usable_hard_mV"][1]:
+            warnings.append("hard target %.2f mV outside the usable %.0f-%.0f mV range "
+                            "(simulated kick offset)" % (hard_mV, self.band["usable_hard_mV"][0], self.band["usable_hard_mV"][1]))
         if soft_mV >= hard_mV:
             warnings.append("soft threshold not below hard threshold")
         if allow_uncalibrated and (self.calibration is None):

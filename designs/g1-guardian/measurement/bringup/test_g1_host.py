@@ -13,7 +13,7 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import g1_host as h  # noqa: E402
 
 
-def make(version=h.VERSION_R3, **kw):
+def make(version=h.VERSION_R3, chip_rev="r3", **kw):
     t = h.DummyTransport(version=version, **kw)
     t.set_en(True)
     t.idle(100e-6)
@@ -21,7 +21,7 @@ def make(version=h.VERSION_R3, **kw):
 
     def inhibit(asserted):
         inhibit_log.append(asserted)
-    g = h.G1(t, inhibit=inhibit)
+    g = h.G1(t, inhibit=inhibit, chip_rev=chip_rev)
     g.set_inhibit(True)
     return t, g, inhibit_log
 
@@ -166,6 +166,22 @@ class Calibration(unittest.TestCase):
         self.assertTrue(r["within_expected_sim"])
         self.assertEqual(r["expected_c_high_sim"], 172)
         self.assertEqual(r["raw_correction"], 45)
+
+    def test_hard_r4_band(self):
+        # r4 part model: no kick offset; the r4 band expects the crossing at ~Cideal
+        t, g, _ = make(vref_V=1.04, hard_kick_lsb=0, chip_rev="r4")
+        t.vin_mV = 25.0
+        g.identify()
+        r = g.calibrate_hard(25.0)
+        self.assertEqual(r["c_high"], 127)
+        self.assertTrue(r["within_expected_sim"])
+        self.assertEqual(r["expected_c_high_sim"], 127)
+        self.assertEqual(r["raw_correction"], 0)
+        # an r3-like part checked with the r4 band is flagged
+        t3, g3, _ = make(vref_V=1.04, hard_kick_lsb=45, chip_rev="r4")
+        t3.vin_mV = 25.0
+        g3.identify()
+        self.assertFalse(g3.calibrate_hard(25.0)["within_expected_sim"])
 
     def test_full_cal_and_arm(self):
         t, g, _ = make(vref_V=1.04, sense_offset_mV=0.6, hard_kick_lsb=47)
