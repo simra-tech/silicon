@@ -19,7 +19,8 @@ Sign-off on the source GDS (`225d0b53...`, top `g1_chip_top`, PDK decks at `8437
 | LVS against the canonical netlist (`netlist/SoC1816.cdl` before rename) | **failed**: 14 IO / level-shifter sub-cells NoMatch; cause in the PDK IO-cell reference netlist semantics (IHP-Open-PDK issues #1218, #1130) |
 | DRC re-run on `SoC1816.gds` itself (stock decks: main, maximal, density, precheck, antenna) | **passed**, 0 markers in every run (`SoC1816-main/verification/drc_release_20260928/`, 2026-09-28) |
 | LVS re-run on `SoC1816.gds` itself | not run (the file differs from the signed-off GDS only in the top-cell name; geometry identity proven, see `doc/provenance/`) |
-| Full-chip PEX, IR/EM, timing of the final GDS | not run |
+| Timing of the final GDS (OpenSTA 3.1.0: ECO macro netlist + its SPEF, top-level routes of the r4 GDS extracted with kpex 2.5D as SPEF, stock `sg13g2_io` liberty, SDC of record; fast/typ/slow) | **passed** (simulated): setup slack 27.874 / 27.053 / 25.381 ns, hold slack +0.114 / +0.195 / +0.337 ns, no max-cap or max-fanout violations, 1222/1222 registers clocked; record in the source repository `designs/g1-guardian/blocks/g1_ctrl/reports/sta_final_gds_20260928/` (2026-09-28) |
+| Full-chip PEX, IR drop / EM | not run at the time of this release note; running in the source repository (post-submission campaign, results will be added here) |
 | IHP intake checks | not run |
 | Physical measurement | not run |
 
