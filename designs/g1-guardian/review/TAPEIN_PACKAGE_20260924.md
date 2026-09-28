@@ -271,8 +271,9 @@ Deferred to a later revision (not in r3 or r4; `review/redteam-20260927/power_io
   (project `IHP__SoC1816`, top cell `SoC1816`, TRL 5, release GDS re-saved with IHP's KLayout options and
   proven geometry-identical to r4; package copy in [`release/IHP__SoC1816/`](../release/IHP__SoC1816/),
   record in [`release/SUBMISSION_PREP_20260928.md`](../release/SUBMISSION_PREP_20260928.md)); request issue
-  https://github.com/IHP-GmbH/Open-Silicon-MPW/issues/68 for the `Oct-2026` run. Open: IHP's review result,
-  and its answers on QFN24, the `sealring` unit and `process`.
+  https://github.com/IHP-GmbH/Open-Silicon-MPW/issues/68 for the `Oct-2026` run. Owner confirmed 2026-09-28: the 2 mm² area is
+  registered with IHP and QFN24 is in the quotation; `sealring_x/y` corrected to um (1414.0) and `process` accepted
+  either way. Open: IHP's review result.
 - [ ] Final GDS identity frozen. Current: r4 `225d0b53…` (2026-09-28; r3 `7d07a784…` is the documented fallback); `gds_inventory.py` and the bond-map match re-run on it (passed). If it changes again, re-run both and update every sha256 here.
 - [x] Section 6 filled from `signoff-1414r4-20260927/` (r4), with passed / failed / not run as reported; the r3 table is kept for the fallback.
 - [x] Bond map rebound to the r3 sha256 as a new CSV revision (`bondmap_20260926_r4.csv`), with QFN24 lead numbers.
