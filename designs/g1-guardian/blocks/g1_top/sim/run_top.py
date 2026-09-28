@@ -386,6 +386,19 @@ def make_cases():
                       frames=[INRUSH0, (0x03, 200)], expect='hard trip')
     C['c_fast'] = dict(desc='(c-fast) as (c) with MODE.FAST_EN = 1 written over the serial interface (0x0B = 0x23): analog fast path cmp_hard -> G1_GATE latch',
                        load=step_profile(3.0, 20), tstop=36, frames=[INRUSH0, (0x0B, 0x23)], expect='hard trip')
+    # phase-2 r4 characterisation (2026-09-27): FAST_EN = 1 on the in-range fault, and a DAC_HARD rewrite while armed
+    C['c_mid_fast'] = dict(desc='as c_mid (code 200, 1.8A/45mV fault in 20ns) with MODE.FAST_EN = 1 written after DAC_HARD (0x0B = 0x23): analog fast path cmp_hard -> G1_GATE latch',
+                           load=step_profile(1.8, 20), tstop=42, frames=[INRUSH0, (0x03, 200), (0x0B, 0x23)], expect='hard trip',
+                           quiet=(T_STEP - 1.0, T_STEP))
+    for code in (180, 190):
+        C['dac_rw%d' % code] = dict(
+            desc='DAC_HARD rewritten while armed: code 200, fault held at 0.90x of the code-200 nominal (1.413 A) from the event, '
+                 'DAC_HARD = %d then 200 written over serial from event + 1 us, fault raised to 1.03x (1.6171 A) at event + 9.5 us: '
+                 'no trip on the code change, hard trip at 1.03x' % code,
+            load=[(0, INOM), (T_STEP * 1e-6, INOM), (T_STEP * 1e-6 + 20e-9, 1.413 * INOM),
+                  ((T_STEP + 9.5) * 1e-6, 1.413 * INOM), ((T_STEP + 9.5) * 1e-6 + 20e-9, 1.6171 * INOM)],
+            tstop=T_STEP + 13, frames=[INRUSH0, (0x03, 200)], late_frames=(T_STEP + 1.0, [(0x03, code), (0x03, 200)]),
+            expect='hard trip')
     C['e'] = dict(desc='(e) latch-up signature: step to 4x nominal with 100 ns rise: hard trip',
                   load=step_profile(4.0, 100), tstop=36, frames=[INRUSH0], expect='hard trip')
     C['e20'] = dict(desc='(e-20ns) latch-up signature with a 20 ns rise: step to 4x nominal in 20 ns: hard trip (the 100 ns-rise variant stalls the solver, README)',
@@ -397,6 +410,10 @@ def make_cases():
                      load=step_profile(1.8, 20, t_back_us=36), tstop=50,
                      frames=[INRUSH0, (0x03, 200)], en=[(T_EN, 1), (40.0, 0), (42.0, 1)],
                      expect='hard trip, then re-arm')
+    C['f_mid_c'] = dict(desc='f_mid on an event-relative timeline: in-range hard trip at 45 mV (code 200), load returns at event + 4 us, EN low event + 6 to + 8 us clears both latches and restores nominal load',
+                        load=step_profile(1.8, 20, t_back_us=T_STEP + 4), tstop=T_STEP + 11,
+                        frames=[INRUSH0, (0x03, 200)], en=[(T_EN, 1), (T_STEP + 6, 0), (T_STEP + 8, 1)],
+                        expect='hard trip, then re-arm')
     C['hard_pulse'] = dict(desc='in-range45mV pulse200ns shorter than four hard decisions; no trip with FAST_EN=0',
                           load=step_profile(1.8, 20, t_back_us=T_STEP+.2), tstop=44,
                           frames=[INRUSH0, (0x03, 200)], expect='no trip')
@@ -431,6 +448,8 @@ def make_cases():
                     load=step_profile(1.5, 100, t_back_us=T_STEP + 2.5), tstop=48, frames=[INRUSH0, SOFT_SHORT], expect='no trip')
     C['b_s'] = dict(desc='(b-tl) transistor level, SOFT_TIME = 0x0001 (256 osc_clk ~ 25.6 us): 1.5x held: soft trip after 256 samples',
                     load=step_profile(1.5, 100), tstop=64, frames=[INRUSH0, SOFT_SHORT], expect='soft trip ~26 us')
+    C['b_s0'] = dict(desc='(b-tl, SOFT_TIME = 0) transistor level, SOFT_TIME = 0x0000 written (0x04 = 0x00): the first soft sample above the soft threshold trips; 1.5x held: soft trip within a few samples',
+                     load=step_profile(1.5, 100), tstop=64, frames=[INRUSH0, (0x04, 0x00)], expect='soft trip, first sample')
     C['d_s'] = dict(desc='(d-tl) transistor level, SOFT_TIME = 0x0001: 1.4x bursts 2.5 us on / 2.5 us off (100 ns edges), 5 periods: no trip',
                     load=burst_profile(1.4, 2.5, 2.5, 5, 100), tstop=60, frames=[INRUSH0, SOFT_SHORT], expect='no trip')
     C['osc'] = dict(desc='(osc) transistor-level G1_OSC clocking the digital macro on the chip VDD, with G1_BGR and G1_SENSE (no G1_TRIP, no G1_GATE, no pad models); cmp_soft tied high so SOFT_PEAK counts once INRUSH = 0 is written',

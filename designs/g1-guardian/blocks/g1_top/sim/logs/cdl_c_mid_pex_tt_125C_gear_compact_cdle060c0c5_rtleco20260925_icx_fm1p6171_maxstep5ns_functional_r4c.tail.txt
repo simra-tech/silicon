@@ -1,0 +1,78 @@
+# extract of cdl_c_mid_pex_tt_125C_gear_compact_cdle060c0c5_rtleco20260925_icx_fm1p6171_maxstep5ns_functional_r4c.log (sha256 5786054f8dfd32cbc1c55cef637c617ebc056c74b47527f77679f1f526be54ba, 782015 bytes, 4803 lines; full log retained at ${BULK}/g1-freeze-retention-20260925/g1_top_logs_r4c/)
+# manifest: designs/g1-guardian/review/local-retention-20260925.json (addition_20260928_r4c)
+# lines longer than 1000 bytes are shortened (first/last 300 bytes kept)
+# ---- log header ----
+# G1 CDL-driven full-chip run cdl_c_mid_pex_tt_125C_gear_compact_cdle060c0c5_rtleco20260925_icx_fm1p6171_maxstep5ns_functional_r4c  2026-09-27T21:23:48Z UTC
+# in-range hard trip: code 200 (~39.25mV), 1.8A/45mV fault in 20ns; HARD_N=4
+# deck build/g1_top/cdl_c_mid_pex_tt_125C_gear_compact_cdle060c0c5_rtleco20260925_icx_fm1p6171_maxstep5ns_functional_r4c.cir
+# CDL sha256 e060c0c59a168e5b69b0c47dc31cbfe4f4444d2ec8af62960c339c1230a2c99f blocks//work/designs/g1-guardian/blocks/g1_padring/netlist/g1_chip_top_1414_r4.cdl
+# g1_bgr <- sha256 01227a3d8d8210d10d2d1ee6933842351140b8825fe29282f0327936a3064ad5 blocks/g1_bgr/sim/postlayout/g1_bgr586_pex.spice
+# g1_sense <- sha256 ffb14762659eaf02b6a62e9edea3caa0e143cbc7881378b329d6ab9945a6554b blocks/g1_sense/sim/postlayout/g1_sense_r100_partialc.spice
+# g1_trip <- sha256 6f518e0758a87b334ab5ae98a8ad43d79dd03ab4ba52c241f742280b6d2f770b blocks/g1_trip/sim/postlayout/g1_trip_nf4_novclk_pex.spice
+# g1_gate <- sha256 e91617f5fcf6f5a0dc721a2ba53b507a05cc226d6dbf0bebaa858a1e7d876765 blocks/g1_gate/sim/postlayout/g1_gate_pex.spice
+# g1_t2f <- sha256 441edabc0484c9de1e035d585369f37d460afe32370e73935044693bbfd0c78a blocks/g1_t2f/sim/postlayout/g1_t2f_pex.spice
+# translation {'subckts': 40, 'interconnect': 'ddc88cc7', 'devices': {'removed dantenna': 8, 'D dpantenna': 7, 'M sg13_lv_nmos': 8, 'M sg13_lv_pmos': 7, 'ptap1 R from sg13g2_io.spi': 42, 'R ptap1': 42, 'M sg13_hv_nmos': 191, 'Q npn13G2': 1, 'M sg13_hv_pmos': 18, 'R rppd': 29, 'X': 36}, 'merged': 4833, 'meters': ['vm_bgr', 'vm_gatea', 'vm_gated', 'vm_ls', 'vm_lsd', 'vm_osc', 'vm_sense', 'vm_t2f', 'vm_t2fd', 'vm_tripa', 'vm_tripd'], 'swaps': {'g1_bgr': 'g1_bgr/sim/postlayout/g1_bgr586_pex.spice', 'g1_sense': 'g1_sense/sim/postlayout/g1_sense_r100_partialc.spice', 'g1_trip': 'g1_trip/sim/postlayout/g1_trip_nf4_novclk_pex.spice', 'g1_gate': 'g1_gate/sim/postlayout/g1_gate_pex.spice', 'g1_t2f': 'g1_t2f/sim/postlayout/g1_t2f_pex.spice'}, 'replaced': ['g1_digital', 'g1_osc']}
+# IO models sha256 1d53ab7df431b717ef5aff43e1117c0224681d5cc84886da37a319280ee958d6 /foss/pdks/ihp-sg13g2/libs.ref/sg13g2_io/spice/sg13g2_io.spi (ptap1 values only)
+# PDK commit 84374023ee8b4b126bebbba67fcbada0a9c0ff0b
+# ngspice-46 : Circuit level simulation program
+# Icarus Verilog version 14.0 (devel) (s20260301-328-geda9fdcd-dirty)
+# iverilog -g2005 -Wall -Wno-timescale -o /work/build/g1_top/cosim_ff16ce62db3822af0a4b5806.vvp.tmp1 /work/designs/g1-guardian/blocks/g1_top/sim/rtl/g1_dig_cosim_cdl.v /work/designs/g1-guardian/blocks/g1_ctrl/rtl_eco_20260925/g1_sync2.v /work/designs/g1-guardian/blocks/g1_ctrl/rtl_eco_20260925/g1_serial.v /work/designs/g1-guardian/blocks/g1_ctrl/rtl_eco_20260925/g1_trip_timer.v /work/designs/g1-guardian/blocks/g1_ctrl/rtl_eco_20260925/g1_regfile.v /work/designs/g1-guardian/blocks/g1_ctrl/rtl_eco_20260925/g1_digital_top.v /work/designs/g1-guardian/blocks/g1_ctrl/rtl_eco_20260925/g1_digital.v /work/designs/g1-guardian/blocks/g1_seu/rtl_eco_20260925/g1_tmr_reg.v /work/designs/g1-guardian/blocks/g1_seu/rtl_eco_20260925/g1_seu_chain.v /work/designs/g1-guardian/blocks/g1_seu/rtl_eco_20260925/g1_seu.v
+# compiled RTL build/g1_top/cosim_ff16ce62db3822af0a4b5806.vvp (tag cdl_c_mid_pex_tt_125C_gear_compact_cdle060c0c5_rtleco20260925_icx_fm1p6171_maxstep5ns_functional_r4c) sha256 a444b5d0018d86fc8b9c9a99c15980d88469d8f89da7dd53a0796c40966bf9a6
+# rtl sha256 79cf9cd44b68400b5d991c240daf2934d0b9c4a378a2fee4d514719aeeaa1bb8 designs/g1-guardian/blocks/g1_top/sim/rtl/g1_dig_cosim_cdl.v
+# rtl sha256 c14906d7d9256a771cd8fdc0ab14ba291131e151d24bf06b951b6bc693ad8ef2 designs/g1-guardian/blocks/g1_ctrl/rtl_eco_20260925/g1_sync2.v
+# rtl sha256 df4341e1878caef2f7bf27abb273a7a5af3e41b96658ffa02eedb2af97c48a5d designs/g1-guardian/blocks/g1_ctrl/rtl_eco_20260925/g1_serial.v
+# rtl sha256 5cab0bc384cef5a7b08d6c693da90e5347d0de10816830ba9b16c6d6be428c9f designs/g1-guardian/blocks/g1_ctrl/rtl_eco_20260925/g1_trip_timer.v
+# rtl sha256 33d549dafc4c097cc06cdbdb3237d3d4b1c5c9cd00eef5d9757474e07a1ab7f3 designs/g1-guardian/blocks/g1_ctrl/rtl_eco_20260925/g1_regfile.v
+# rtl sha256 4e3b8ff6cdc13f28670bb9c64b1f685782efc95a51e3644038989a220088fdd6 designs/g1-guardian/blocks/g1_ctrl/rtl_eco_20260925/g1_digital_top.v
+# rtl sha256 36757122c43271dfd439bf1623be6d5413adf3bbb97cbad40d5cccf5892f5c3d designs/g1-guardian/blocks/g1_ctrl/rtl_eco_20260925/g1_digital.v
+# rtl sha256 f53f82d97b91d4e815e662e72b40968949c7d74ce135f777dba7789201167ac5 designs/g1-guardian/blocks/g1_seu/rtl_eco_20260925/g1_tmr_reg.v
+# rtl sha256 6e10bbc02a8ff29116067f2067f648b959f17b542cb2360c50e7802010048573 designs/g1-guardian/blocks/g1_seu/rtl_eco_20260925/g1_seu_chain.v
+# rtl sha256 7c1831c99b5875a2dd48387db70fd5b1a0888a520fe8676bc4e071820b7fa736 designs/g1-guardian/blocks/g1_seu/rtl_eco_20260925/g1_seu.v
+# ---- measurement lines, 6 found ----
+QUIET window_us=14-16 vref= 0  isense= 0  icmp= 0  vth_soft= 0  vth_hard= 0  vref_inst= 1.04312  isense_inst= 1.5069  icmp_inst= 0.784797  vth_soft_inst= 0.8328  vth_hard_inst= 0.890028  iload_A= 1  gate= 3.2999  code_soft= 153  code_hard= 200  fast_en= 0  inrush_active= 0  t_inrush_off_us= 7.73195  soft_armed_end=
+CLOCK f_osc_MHz= 9.43619  f_cmp_MHz= 4.71767  (RTL clock: ideal source at the block-simulated frequency)
+SUPPLY_uA window=13.8565-16us VDDA= 1959.2  IOVDD= 1.85153  VDD= 12.2618  | bgr= 422.067  sense= 1487.19  trip_3v3= 0.0945498  trip_1v2= 6.71741  osc= 2.40113E-06  gate_3v3= 0.00313325  gate_1v2= 0.0243125
+T2F window=13.8565-16us f_MHz=  periods=2 vdda_t2f_uA= 49.8584  vdd12_t2f_uA= 0.00504114  vdda_ls_uA= 0.000639897  vdd_ls_uA= 0.00655161
+TRIP tripped_max= 0.00954608  tripped_before_event= 0.00954608  t_tripped_us=  t_trip_d_us=  t_gate_1V_us=  t_gate_0.33V_us=  gate_min= 0  gate_end=  ipk_A= 0  i_end_A=  isense_pk= 0  cause=  fault_n_end=  soft_peak=
+CHARGE after_event_As=
+# ---- last 40 lines ----
+ meas tran soft_peak find sp_v at=28u failed!
+
+Warning from checkvalid: vector cause1e is not available or has zero length.
+Error: RHS "2*(cause1e gt 0.6) + (cause0e gt 0.6)" invalid
+Warning from checkvalid: vector t_gate1v is not available or has zero length.
+Error: RHS "(t_gate1v - tstep_s)*1e6" invalid
+Warning from checkvalid: vector t_gate03 is not available or has zero length.
+Error: RHS "(t_gate03 - tstep_s)*1e6" invalid
+Warning from checkvalid: vector t_tripped is not available or has zero length.
+Error: RHS "(t_tripped - tstep_s)*1e6" invalid
+Warning from checkvalid: vector t_trip_d is not available or has zero length.
+Error: RHS "(t_trip_d - tstep_s)*1e6" invalid
+Error: &dt_tripped_us: no such variable.
+Error: &dt_trip_d_us: no such variable.
+Error: &dt_gate1v_us: no such variable.
+Error: &dt_gate03_us: no such variable.
+Error: &gate_end: no such variable.
+Error: &i_end: no such variable.
+Error: &cause: no such variable.
+Error: &fault_end: no such variable.
+Error: &soft_peak: no such variable.
+TRIP tripped_max= 0.00954608  tripped_before_event= 0.00954608  t_tripped_us=  t_trip_d_us=  t_gate_1V_us=  t_gate_0.33V_us=  gate_min= 0  gate_end=  ipk_A= 0  i_end_A=  isense_pk= 0  cause=  fault_n_end=  soft_peak=
+
+Error: measure  q_step  find(AT) : out of interval
+ meas tran q_step find qi at=16u failed!
+
+
+Error: measure  q_end  find(AT) : out of interval
+ meas tran q_end find qi at=28u failed!
+
+Warning from checkvalid: vector q_end is not available or has zero length.
+Error: RHS "q_end - q_step" invalid
+Error: &q_passed: no such variable.
+CHARGE after_event_As=
+Error: incomplete or empty netlist
+       or no ".plot", ".print", or ".fourier" lines in batch mode;
+no simulations run!
+
+# run status failed
+# ngspice exit 1, wall time 6545 s

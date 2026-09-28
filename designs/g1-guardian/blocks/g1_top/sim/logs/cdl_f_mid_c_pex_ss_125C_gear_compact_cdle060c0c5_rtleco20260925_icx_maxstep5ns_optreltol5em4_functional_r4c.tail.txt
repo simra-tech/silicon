@@ -1,0 +1,72 @@
+# extract of cdl_f_mid_c_pex_ss_125C_gear_compact_cdle060c0c5_rtleco20260925_icx_maxstep5ns_optreltol5em4_functional_r4c.log (sha256 2188bba08cb351d23b0e8810dd145f0a58ff5792a26fd13b48e32e57a3a99ddc, 636422 bytes, 4662 lines; full log retained at ${BULK}/g1-freeze-retention-20260925/g1_top_logs_r4c/)
+# manifest: designs/g1-guardian/review/local-retention-20260925.json (addition_20260928_r4c)
+# lines longer than 1000 bytes are shortened (first/last 300 bytes kept)
+# ---- log header ----
+# G1 CDL-driven full-chip run cdl_f_mid_c_pex_ss_125C_gear_compact_cdle060c0c5_rtleco20260925_icx_maxstep5ns_optreltol5em4_functional_r4c  2026-09-27T22:00:38Z UTC
+# f_mid on an event-relative timeline: in-range hard trip at 45 mV (code 200), load returns at event + 4 us, EN low event + 6 to + 8 us clears both latches and restores nominal load
+# deck build/g1_top/cdl_f_mid_c_pex_ss_125C_gear_compact_cdle060c0c5_rtleco20260925_icx_maxstep5ns_optreltol5em4_functional_r4c.cir
+# CDL sha256 e060c0c59a168e5b69b0c47dc31cbfe4f4444d2ec8af62960c339c1230a2c99f blocks//work/designs/g1-guardian/blocks/g1_padring/netlist/g1_chip_top_1414_r4.cdl
+# g1_bgr <- sha256 01227a3d8d8210d10d2d1ee6933842351140b8825fe29282f0327936a3064ad5 blocks/g1_bgr/sim/postlayout/g1_bgr586_pex.spice
+# g1_sense <- sha256 ffb14762659eaf02b6a62e9edea3caa0e143cbc7881378b329d6ab9945a6554b blocks/g1_sense/sim/postlayout/g1_sense_r100_partialc.spice
+# g1_trip <- sha256 6f518e0758a87b334ab5ae98a8ad43d79dd03ab4ba52c241f742280b6d2f770b blocks/g1_trip/sim/postlayout/g1_trip_nf4_novclk_pex.spice
+# g1_gate <- sha256 e91617f5fcf6f5a0dc721a2ba53b507a05cc226d6dbf0bebaa858a1e7d876765 blocks/g1_gate/sim/postlayout/g1_gate_pex.spice
+# g1_t2f <- sha256 441edabc0484c9de1e035d585369f37d460afe32370e73935044693bbfd0c78a blocks/g1_t2f/sim/postlayout/g1_t2f_pex.spice
+# translation {'subckts': 40, 'interconnect': 'ddc88cc7', 'devices': {'removed dantenna': 8, 'D dpantenna': 7, 'M sg13_lv_nmos': 8, 'M sg13_lv_pmos': 7, 'ptap1 R from sg13g2_io.spi': 42, 'R ptap1': 42, 'M sg13_hv_nmos': 191, 'Q npn13G2': 1, 'M sg13_hv_pmos': 18, 'R rppd': 29, 'X': 36}, 'merged': 4833, 'meters': ['vm_bgr', 'vm_gatea', 'vm_gated', 'vm_ls', 'vm_lsd', 'vm_osc', 'vm_sense', 'vm_t2f', 'vm_t2fd', 'vm_tripa', 'vm_tripd'], 'swaps': {'g1_bgr': 'g1_bgr/sim/postlayout/g1_bgr586_pex.spice', 'g1_sense': 'g1_sense/sim/postlayout/g1_sense_r100_partialc.spice', 'g1_trip': 'g1_trip/sim/postlayout/g1_trip_nf4_novclk_pex.spice', 'g1_gate': 'g1_gate/sim/postlayout/g1_gate_pex.spice', 'g1_t2f': 'g1_t2f/sim/postlayout/g1_t2f_pex.spice'}, 'replaced': ['g1_digital', 'g1_osc']}
+# IO models sha256 1d53ab7df431b717ef5aff43e1117c0224681d5cc84886da37a319280ee958d6 /foss/pdks/ihp-sg13g2/libs.ref/sg13g2_io/spice/sg13g2_io.spi (ptap1 values only)
+# PDK commit 84374023ee8b4b126bebbba67fcbada0a9c0ff0b
+# ngspice-46 : Circuit level simulation program
+# Icarus Verilog version 14.0 (devel) (s20260301-328-geda9fdcd-dirty)
+# iverilog -g2005 -Wall -Wno-timescale -o /work/build/g1_top/cosim_620c955e77fefd5642f0e6d8.vvp.tmp1 /work/designs/g1-guardian/blocks/g1_top/sim/rtl/g1_dig_cosim_cdl.v /work/designs/g1-guardian/blocks/g1_ctrl/rtl_eco_20260925/g1_sync2.v /work/designs/g1-guardian/blocks/g1_ctrl/rtl_eco_20260925/g1_serial.v /work/designs/g1-guardian/blocks/g1_ctrl/rtl_eco_20260925/g1_trip_timer.v /work/designs/g1-guardian/blocks/g1_ctrl/rtl_eco_20260925/g1_regfile.v /work/designs/g1-guardian/blocks/g1_ctrl/rtl_eco_20260925/g1_digital_top.v /work/designs/g1-guardian/blocks/g1_ctrl/rtl_eco_20260925/g1_digital.v /work/designs/g1-guardian/blocks/g1_seu/rtl_eco_20260925/g1_tmr_reg.v /work/designs/g1-guardian/blocks/g1_seu/rtl_eco_20260925/g1_seu_chain.v /work/designs/g1-guardian/blocks/g1_seu/rtl_eco_20260925/g1_seu.v
+# compiled RTL build/g1_top/cosim_620c955e77fefd5642f0e6d8.vvp (tag cdl_f_mid_c_pex_ss_125C_gear_compact_cdle060c0c5_rtleco20260925_icx_maxstep5ns_optreltol5em4_functional_r4c) sha256 30b5c6f3bd03c8f6fe80a208c0667c419e5f5ab0864ddfa12f8c39b4efbdc29b
+# rtl sha256 79cf9cd44b68400b5d991c240daf2934d0b9c4a378a2fee4d514719aeeaa1bb8 designs/g1-guardian/blocks/g1_top/sim/rtl/g1_dig_cosim_cdl.v
+# rtl sha256 c14906d7d9256a771cd8fdc0ab14ba291131e151d24bf06b951b6bc693ad8ef2 designs/g1-guardian/blocks/g1_ctrl/rtl_eco_20260925/g1_sync2.v
+# rtl sha256 df4341e1878caef2f7bf27abb273a7a5af3e41b96658ffa02eedb2af97c48a5d designs/g1-guardian/blocks/g1_ctrl/rtl_eco_20260925/g1_serial.v
+# rtl sha256 5cab0bc384cef5a7b08d6c693da90e5347d0de10816830ba9b16c6d6be428c9f designs/g1-guardian/blocks/g1_ctrl/rtl_eco_20260925/g1_trip_timer.v
+# rtl sha256 33d549dafc4c097cc06cdbdb3237d3d4b1c5c9cd00eef5d9757474e07a1ab7f3 designs/g1-guardian/blocks/g1_ctrl/rtl_eco_20260925/g1_regfile.v
+# rtl sha256 4e3b8ff6cdc13f28670bb9c64b1f685782efc95a51e3644038989a220088fdd6 designs/g1-guardian/blocks/g1_ctrl/rtl_eco_20260925/g1_digital_top.v
+# rtl sha256 36757122c43271dfd439bf1623be6d5413adf3bbb97cbad40d5cccf5892f5c3d designs/g1-guardian/blocks/g1_ctrl/rtl_eco_20260925/g1_digital.v
+# rtl sha256 f53f82d97b91d4e815e662e72b40968949c7d74ce135f777dba7789201167ac5 designs/g1-guardian/blocks/g1_seu/rtl_eco_20260925/g1_tmr_reg.v
+# rtl sha256 6e10bbc02a8ff29116067f2067f648b959f17b542cb2360c50e7802010048573 designs/g1-guardian/blocks/g1_seu/rtl_eco_20260925/g1_seu_chain.v
+# rtl sha256 7c1831c99b5875a2dd48387db70fd5b1a0888a520fe8676bc4e071820b7fa736 designs/g1-guardian/blocks/g1_seu/rtl_eco_20260925/g1_seu.v
+# ---- measurement lines, 0 found ----
+# ---- last 40 lines ----
+a.xchip.xi_core_u_digital.adac#branch_1_18     1.63021e-11
+a.xchip.xi_core_u_digital.adac#branch_1_19     1.56589e-11
+a.xchip.xi_core_u_digital.adac#branch_1_20               0
+a.xchip.xi_core_u_digital.adac#branch_1_21               0
+a.xchip.xi_core_u_digital.adac#branch_1_22               0
+a.xchip.xi_core_u_digital.adac#branch_1_23               0
+a.xchip.xi_core_u_digital.adac#branch_1_24               0
+a.xchip.xi_core_u_digital.adac#branch_1_25               0
+a.xchip.xi_core_u_digital.adac#branch_1_26               0
+a.xchip.xi_core_u_digital.adac#branch_1_27               0
+a.xchip.xi_core_u_digital.adac#branch_1_28               0
+a.xchip.xi_core_u_digital.adac#branch_1_29     7.97642e-11
+a.xchip.xi_core_u_digital.adac#branch_1_30               0
+a.xchip.xi_core_u_digital.adac#branch_1_31               0
+a.xchip.xi_core_u_digital.adac#branch_1_32               0
+a.xchip.xi_core_u_digital.adac#branch_1_33               0
+a.xchip.xi_core_u_digital.adac#branch_1_34               0
+a.xchip.xi_core_u_digital.adac#branch_1_35               0
+a.xchip.xi_core_u_digital.adac#branch_1_36               0
+a.xchip.xi_core_u_digital.adac#branch_1_37               0
+a.xchip.xi_core_u_digital.adac#branch_1_38               0
+a.xchip.xi_core_u_digital.adac#branch_1_39               0
+a.xchip.xi_core_u_digital.adac#branch_1_40               0
+a.xchip.xi_core_u_digital.adac#branch_1_41               0
+a.xchip.xi_core_u_digital.adac#branch_1_42               0
+a.xchip.xi_core_u_digital.adac#branch_1_43               0
+a.xchip.xi_core_u_digital.adac#branch_1_44               0
+a.xchip.xi_core_u_digital.adac#branch_1_45               0
+a.xchip.xi_core_u_digital.adac#branch_1_46               0
+a.xchip.xi_core_u_digital.adac#branch_1_47               0
+a.xchip.xi_core_u_digital.adac#branch_1_48     1.63021e-11
+a.xchip.xi_core_u_digital.adac#branch_1_49     1.63021e-11
+a.xchip.xi_core_u_digital.adac#branch_1_50     1.63021e-11
+a.xchip.xi_core_u_digital.adac#branch_1_51               0
+a.xchip.xi_core_u_digital.adac#branch_1_52               0
+a.xchip.xi_core_u_digital.adac#branch_1_53               0
+
+ Reference value :  0.00000e+00 Reference value :  2.00000e-10 Reference value :  8.00000e-10 Reference value :  1.00028e-09 Reference value :  1.00196e-09 Reference value :  1.00869e-09 Reference value :  1.03560e-09 Reference value :  1.14322e-09 Reference value :  1.30953e-09 Reference v ...[412424 bytes omitted by tail extract]... 8.59274e-06 Reference value :  8.59277e-06 Reference value :  8.59286e-06 Reference value :  8.59289e-06 Reference value :  8.59292e-06 Reference value :  8.59295e-06 Reference value :  8.59297e-06 Reference value :  8.59300e-06 Reference value :  8.59305e-06 Reference value :  8.59306e-06
+# run status failed
+# ngspice exit -15, wall time 6613 s

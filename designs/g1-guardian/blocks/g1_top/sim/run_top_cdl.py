@@ -651,13 +651,17 @@ def main():
             RT.BR_LO, RT.BR_HI = a.vdd / 2 - 0.05, a.vdd / 2 + 0.05
     run_id = a.run_id or time.strftime('%Y%m%dT%H%M%SZ', time.gmtime()) + '_' + uuid.uuid4().hex[:8]
     if a.timeline == 'compact':
-        if a.cases != ['c_mid'] and a.cases not in (['c'], ['c_fast'], ['e20']):
-            ap.error('compact timeline: one of c_mid, c, c_fast, e20')
+        if a.cases != ['c_mid'] and a.cases not in (['c'], ['c_fast'], ['e20'], ['c_mid_fast'], ['dac_rw180'], ['dac_rw190'], ['b_s'], ['b_s0'], ['hard_pulse'], ['f_mid_c']):
+            ap.error('compact timeline: one of c_mid, c, c_fast, e20, c_mid_fast, dac_rw180, dac_rw190, b_s, b_s0, hard_pulse, f_mid_c')
         RT.T_SER, RT.T_STEP = (a.ser_start_us or 4.0), 16.0
         RT.CASES = RT.make_cases()
         RT.CASES['c_mid']['tstop'] = 28
         for k in ('c', 'c_fast', 'e20'):
             RT.CASES[k]['tstop'] = 22
+        RT.CASES['c_mid_fast']['tstop'] = 28
+        RT.CASES['b_s0']['tstop'] = 22
+        RT.CASES['hard_pulse']['tstop'] = 30     # event + 14 us, as the baseline 30 -> 44 us
+        RT.CASES['b_s']['tstop'] = 50     # soft window 256 osc_clk (27.1 us) + decision + GATE fall after the event at 16 us
     if a.ser_start_us and a.timeline == 'baseline':
         RT.T_SER = a.ser_start_us     # first serial frame (eco4_cdl_c_mid_ser4 timing), event time unchanged
     RT.RTL_WRAPPER_T2F = WRAPPER      # rtl_files('tl') -> the CDL wrapper first, then the unchanged RTL

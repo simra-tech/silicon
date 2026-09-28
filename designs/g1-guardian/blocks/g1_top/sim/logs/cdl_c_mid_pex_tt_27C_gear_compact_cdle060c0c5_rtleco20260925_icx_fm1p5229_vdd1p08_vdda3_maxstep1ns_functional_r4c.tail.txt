@@ -1,0 +1,78 @@
+# extract of cdl_c_mid_pex_tt_27C_gear_compact_cdle060c0c5_rtleco20260925_icx_fm1p5229_vdd1p08_vdda3_maxstep1ns_functional_r4c.log (sha256 934147517ea479b2cd922458ff2ba7070b96c3024dc0991648ea9adb0f1cd6cf, 1437612 bytes, 4750 lines; full log retained at ${BULK}/g1-freeze-retention-20260925/g1_top_logs_r4c/)
+# manifest: designs/g1-guardian/review/local-retention-20260925.json (addition_20260928_r4c)
+# lines longer than 1000 bytes are shortened (first/last 300 bytes kept)
+# ---- log header ----
+# G1 CDL-driven full-chip run cdl_c_mid_pex_tt_27C_gear_compact_cdle060c0c5_rtleco20260925_icx_fm1p5229_vdd1p08_vdda3_maxstep1ns_functional_r4c  2026-09-27T20:21:08Z UTC
+# in-range hard trip: code 200 (~39.25mV), 1.8A/45mV fault in 20ns; HARD_N=4
+# deck build/g1_top/cdl_c_mid_pex_tt_27C_gear_compact_cdle060c0c5_rtleco20260925_icx_fm1p5229_vdd1p08_vdda3_maxstep1ns_functional_r4c.cir
+# CDL sha256 e060c0c59a168e5b69b0c47dc31cbfe4f4444d2ec8af62960c339c1230a2c99f blocks//work/designs/g1-guardian/blocks/g1_padring/netlist/g1_chip_top_1414_r4.cdl
+# g1_bgr <- sha256 01227a3d8d8210d10d2d1ee6933842351140b8825fe29282f0327936a3064ad5 blocks/g1_bgr/sim/postlayout/g1_bgr586_pex.spice
+# g1_sense <- sha256 ffb14762659eaf02b6a62e9edea3caa0e143cbc7881378b329d6ab9945a6554b blocks/g1_sense/sim/postlayout/g1_sense_r100_partialc.spice
+# g1_trip <- sha256 6f518e0758a87b334ab5ae98a8ad43d79dd03ab4ba52c241f742280b6d2f770b blocks/g1_trip/sim/postlayout/g1_trip_nf4_novclk_pex.spice
+# g1_gate <- sha256 e91617f5fcf6f5a0dc721a2ba53b507a05cc226d6dbf0bebaa858a1e7d876765 blocks/g1_gate/sim/postlayout/g1_gate_pex.spice
+# g1_t2f <- sha256 441edabc0484c9de1e035d585369f37d460afe32370e73935044693bbfd0c78a blocks/g1_t2f/sim/postlayout/g1_t2f_pex.spice
+# translation {'subckts': 40, 'interconnect': 'ddc88cc7', 'devices': {'removed dantenna': 8, 'D dpantenna': 7, 'M sg13_lv_nmos': 8, 'M sg13_lv_pmos': 7, 'ptap1 R from sg13g2_io.spi': 42, 'R ptap1': 42, 'M sg13_hv_nmos': 191, 'Q npn13G2': 1, 'M sg13_hv_pmos': 18, 'R rppd': 29, 'X': 36}, 'merged': 4833, 'meters': ['vm_bgr', 'vm_gatea', 'vm_gated', 'vm_ls', 'vm_lsd', 'vm_osc', 'vm_sense', 'vm_t2f', 'vm_t2fd', 'vm_tripa', 'vm_tripd'], 'swaps': {'g1_bgr': 'g1_bgr/sim/postlayout/g1_bgr586_pex.spice', 'g1_sense': 'g1_sense/sim/postlayout/g1_sense_r100_partialc.spice', 'g1_trip': 'g1_trip/sim/postlayout/g1_trip_nf4_novclk_pex.spice', 'g1_gate': 'g1_gate/sim/postlayout/g1_gate_pex.spice', 'g1_t2f': 'g1_t2f/sim/postlayout/g1_t2f_pex.spice'}, 'replaced': ['g1_digital', 'g1_osc']}
+# IO models sha256 1d53ab7df431b717ef5aff43e1117c0224681d5cc84886da37a319280ee958d6 /foss/pdks/ihp-sg13g2/libs.ref/sg13g2_io/spice/sg13g2_io.spi (ptap1 values only)
+# PDK commit 84374023ee8b4b126bebbba67fcbada0a9c0ff0b
+# ngspice-46 : Circuit level simulation program
+# Icarus Verilog version 14.0 (devel) (s20260301-328-geda9fdcd-dirty)
+# iverilog -g2005 -Wall -Wno-timescale -o /work/build/g1_top/cosim_3e1f383bcbf0dd5c4673d3a2.vvp.tmp1 /work/designs/g1-guardian/blocks/g1_top/sim/rtl/g1_dig_cosim_cdl.v /work/designs/g1-guardian/blocks/g1_ctrl/rtl_eco_20260925/g1_sync2.v /work/designs/g1-guardian/blocks/g1_ctrl/rtl_eco_20260925/g1_serial.v /work/designs/g1-guardian/blocks/g1_ctrl/rtl_eco_20260925/g1_trip_timer.v /work/designs/g1-guardian/blocks/g1_ctrl/rtl_eco_20260925/g1_regfile.v /work/designs/g1-guardian/blocks/g1_ctrl/rtl_eco_20260925/g1_digital_top.v /work/designs/g1-guardian/blocks/g1_ctrl/rtl_eco_20260925/g1_digital.v /work/designs/g1-guardian/blocks/g1_seu/rtl_eco_20260925/g1_tmr_reg.v /work/designs/g1-guardian/blocks/g1_seu/rtl_eco_20260925/g1_seu_chain.v /work/designs/g1-guardian/blocks/g1_seu/rtl_eco_20260925/g1_seu.v
+# compiled RTL build/g1_top/cosim_3e1f383bcbf0dd5c4673d3a2.vvp (tag cdl_c_mid_pex_tt_27C_gear_compact_cdle060c0c5_rtleco20260925_icx_fm1p5229_vdd1p08_vdda3_maxstep1ns_functional_r4c) sha256 92b84508620da5e3317c5629f12ba1f2e57e42393c2ac851bdcf80d09f4aab5a
+# rtl sha256 79cf9cd44b68400b5d991c240daf2934d0b9c4a378a2fee4d514719aeeaa1bb8 designs/g1-guardian/blocks/g1_top/sim/rtl/g1_dig_cosim_cdl.v
+# rtl sha256 c14906d7d9256a771cd8fdc0ab14ba291131e151d24bf06b951b6bc693ad8ef2 designs/g1-guardian/blocks/g1_ctrl/rtl_eco_20260925/g1_sync2.v
+# rtl sha256 df4341e1878caef2f7bf27abb273a7a5af3e41b96658ffa02eedb2af97c48a5d designs/g1-guardian/blocks/g1_ctrl/rtl_eco_20260925/g1_serial.v
+# rtl sha256 5cab0bc384cef5a7b08d6c693da90e5347d0de10816830ba9b16c6d6be428c9f designs/g1-guardian/blocks/g1_ctrl/rtl_eco_20260925/g1_trip_timer.v
+# rtl sha256 33d549dafc4c097cc06cdbdb3237d3d4b1c5c9cd00eef5d9757474e07a1ab7f3 designs/g1-guardian/blocks/g1_ctrl/rtl_eco_20260925/g1_regfile.v
+# rtl sha256 4e3b8ff6cdc13f28670bb9c64b1f685782efc95a51e3644038989a220088fdd6 designs/g1-guardian/blocks/g1_ctrl/rtl_eco_20260925/g1_digital_top.v
+# rtl sha256 36757122c43271dfd439bf1623be6d5413adf3bbb97cbad40d5cccf5892f5c3d designs/g1-guardian/blocks/g1_ctrl/rtl_eco_20260925/g1_digital.v
+# rtl sha256 f53f82d97b91d4e815e662e72b40968949c7d74ce135f777dba7789201167ac5 designs/g1-guardian/blocks/g1_seu/rtl_eco_20260925/g1_tmr_reg.v
+# rtl sha256 6e10bbc02a8ff29116067f2067f648b959f17b542cb2360c50e7802010048573 designs/g1-guardian/blocks/g1_seu/rtl_eco_20260925/g1_seu_chain.v
+# rtl sha256 7c1831c99b5875a2dd48387db70fd5b1a0888a520fe8676bc4e071820b7fa736 designs/g1-guardian/blocks/g1_seu/rtl_eco_20260925/g1_seu.v
+# ---- measurement lines, 6 found ----
+QUIET window_us=14-16 vref= 1.04501  isense= 1.50705  icmp= 0.753082  vth_soft= 0.80403  vth_hard= 0.897247  vref_inst= 1.04494  isense_inst= 1.50757  icmp_inst= 0.78058  vth_soft_inst= 0.827506  vth_hard_inst= 0.892986  iload_A= 1  gate= 2.99997  code_soft= 153  code_hard= 200  fast_en= 0  inrush_active= 0  t_inrush_off_us= 7.73186  soft_armed_end= 1.08
+CLOCK f_osc_MHz= 9.43619  f_cmp_MHz= 4.7178  (RTL clock: ideal source at the block-simulated frequency)
+SUPPLY_uA window=13.8565-16us VDDA= 1455.26  IOVDD= 88.1985  VDD= 6.64729  | bgr= 319.578  sense= 1095.34  trip_3v3= 0.00385325  trip_1v2= 4.72043  osc= 2.15931E-06  gate_3v3= 0.000514334  gate_1v2= 0.00304745
+T2F window=13.8565-16us f_MHz= 1.52121  periods=2 vdda_t2f_uA= 40.3389  vdd12_t2f_uA= 0.219252  vdda_ls_uA= 0.000589491  vdd_ls_uA= 0.000121723
+TRIP tripped_max= 0.00733361  tripped_before_event= 0.00733361  t_tripped_us=  t_trip_d_us=  t_gate_1V_us=  t_gate_0.33V_us=  gate_min= 2.99872  gate_end= 2.99997  ipk_A= 1.5229  i_end_A= 1.5229  isense_pk= 1.77483  cause= 0  fault_n_end= 3  soft_peak= 0
+CHARGE after_event_As= 1.82696E-05
+# ---- last 40 lines ----
+Error: measure  t_trip_d  when(WHEN) : out of interval
+ meas tran t_trip_d when v(xchip.i_core_trip_d)=0.54 rise=1 from=16u failed!
+
+
+Error: measure  t_gate1v  when(WHEN) : out of interval
+ meas tran t_gate1v when v(gate)=1.0 fall=1 from=16u failed!
+
+
+Error: measure  t_gate03  when(WHEN) : out of interval
+ meas tran t_gate03 when v(gate)=0.33 fall=1 from=16u failed!
+
+gate_min            =  2.99872e+00 at=  2.69781e-05
+gate_end            =  2.99997e+00
+ipk                 =  1.52290e+00 at=  2.56610e-05
+i_end               =  1.52290e+00
+isense_pk           =  1.77483e+00 at=  2.70357e-05
+cause1e             =  0.00000e+00
+cause0e             =  0.00000e+00
+fault_end           =  3.00000e+00
+soft_peak           =  0.00000e+00
+Warning from checkvalid: vector t_gate1v is not available or has zero length.
+Error: RHS "(t_gate1v - tstep_s)*1e6" invalid
+Warning from checkvalid: vector t_gate03 is not available or has zero length.
+Error: RHS "(t_gate03 - tstep_s)*1e6" invalid
+Warning from checkvalid: vector t_tripped is not available or has zero length.
+Error: RHS "(t_tripped - tstep_s)*1e6" invalid
+Warning from checkvalid: vector t_trip_d is not available or has zero length.
+Error: RHS "(t_trip_d - tstep_s)*1e6" invalid
+Error: &dt_tripped_us: no such variable.
+Error: &dt_trip_d_us: no such variable.
+Error: &dt_gate1v_us: no such variable.
+Error: &dt_gate03_us: no such variable.
+TRIP tripped_max= 0.00733361  tripped_before_event= 0.00733361  t_tripped_us=  t_trip_d_us=  t_gate_1V_us=  t_gate_0.33V_us=  gate_min= 2.99872  gate_end= 2.99997  ipk_A= 1.5229  i_end_A= 1.5229  isense_pk= 1.77483  cause= 0  fault_n_end= 3  soft_peak= 0
+q_step              =  1.26491e-05
+q_end               =  3.09187e-05
+CHARGE after_event_As= 1.82696E-05
+Note: Simulation executed from .control section 
+
+# run status completed
+# ngspice exit 0, wall time 13377 s
