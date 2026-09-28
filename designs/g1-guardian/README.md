@@ -275,8 +275,8 @@ latencies are retained for diagnosis but are not accepted sign-off evidence.
 - Canonical unprojected full-chip LVS: **failed; cause: substrate/tap/diode netlist semantics of the IO-cell reference in the PDK, reproduced with stock cells and with IHP's latest `dev` deck and library; the design-local IO copies match IHP's `dev` library on every layer (PR #1223); upstream issues #1218/#1130 ([evidence](review/upstream/evidence/README.md))**. Only the projected-reference
   comparison passed. The design-local PolyRes IO cells were XOR-checked against IHP's
   `dev` cells (identical); the rest of the IO ring was not XOR-checked against stock cells.
-- Full-chip PEX and IR drop/EM: **not run**. Timing of the final GDS: passed (see "Status" and
-  [sta_final_gds_20260928](blocks/g1_ctrl/reports/sta_final_gds_20260928/README.md)).
+- Full-chip PEX: **not run** (running in the post-submission campaign). Timing of the final GDS: passed (see "Status" and
+  [sta_final_gds_20260928](blocks/g1_ctrl/reports/sta_final_gds_20260928/README.md)). IR drop / EM of the final GDS: **passed** (simulated, static): worst supply loss 31.4 mV at the digital macro (2.6 % of 1.2 V) and 40.4 mV at G1_SENSE (1.2 % of 3.3 V) in the trip-worst case with worst-case resistance; top-level supply routes at most 23.4 % of the IHP EM limit, `GATE` route 3.9 % at 40 mA, macro grid 9.0 %; two segments over 50 % only under deliberately pessimistic bounds (`SENSE_P/N` single vias at a 0.331 mA fault bound, an IO-cell Metal1 slice on `IOVSS` with 64 mA from four output pads at once); dynamic IR, package/bond-wire resistance and the analog macros' internal grids not run ([ir_em_20260928](blocks/g1_top/reports/ir_em_20260928/README.md)).
   Block extractions exist for BGR586 (C only), TRIP NF4, OSC R0.95 (isolated macro) and
   SENSE R100 (partial field). None is an extraction of the assembled chip.
 - Chip-level 125 °C transients on the superseded legacy netlists: **failed** (solver
