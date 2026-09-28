@@ -17,10 +17,10 @@ Inputs:
 - the waveforms `sim/results/waves/<tag>.txt` (gitignored; 20 ns `linearize` grid);
 - the logs `sim/logs/<tag>.log`, drawn before the logs moved to the retention store (record, "Retention and figures").
 
-Only runs whose log says `# run status completed` are drawn: 39 at the time of drawing. The runs that did not complete are listed in `index.json` under `skipped`, with their log status, and in the record's run table.
+Only runs whose log says `# run status completed` are drawn, 41 in all. 39 were drawn at 04:45 CEST. The two hard_pulse `--tstop 20` runs completed at 05:28; they were drawn afterwards with the same generator, `--glob` set to each tag, and merged into `index.json`. The runs that did not complete are listed in `index.json` under `skipped`, with their log status, and in the record's run table.
 
 ## Reading the status field
 
-`index.json` takes each figure's status from the record's run table. The four tt −40 °C and tt 125 °C figures show "not in record". The plotter's matcher only accepts ss/ff corner labels in a record row, so it cannot match a tt row at a temperature other than 27 °C. Their status in the record is **passed**; see group C.
+`index.json` takes each figure's status from the record's run table. The six tt −40 °C and tt 125 °C figures (two and four) show "not in record". The plotter's matcher only accepts ss/ff corner labels in a record row, so it cannot match a tt row at a temperature other than 27 °C. Their status in the record is **passed**; see group C.
 
 For the DAC-rewrite figures (`dac_rw180`, `dac_rw190`), the load event marked in the figure is the 0.90 × step at 16 µs. The step to 1.03 × is at 25.5 µs. In `dac_rw180`, the short `cmp_hard` pulse at 20.9–21.1 µs is the single hard decision at code 180 described in the record, finding 4.
