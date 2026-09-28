@@ -17,7 +17,8 @@ Sign-off on the source GDS (`225d0b53...`, top `g1_chip_top`, PDK decks at `8437
 | IHP dev-branch DRC deck (`4fd47c5e`), same five | passed, 0 markers each |
 | LVS against the projected reference (3 all-VDD pad dummy PMOS removed) | passed, 62 956 devices, 22/22 pins |
 | LVS against the canonical netlist (`netlist/SoC1816.cdl` before rename) | **failed**: 14 IO / level-shifter sub-cells NoMatch; cause in the PDK IO-cell reference netlist semantics (IHP-Open-PDK issues #1218, #1130) |
-| DRC / LVS re-run on `SoC1816.gds` itself | not run (geometry identity proven instead) |
+| DRC re-run on `SoC1816.gds` itself (stock decks: main, maximal, density, precheck, antenna) | **passed**, 0 markers in every run (`SoC1816-main/verification/drc_release_20260928/`, 2026-09-28) |
+| LVS re-run on `SoC1816.gds` itself | not run (the file differs from the signed-off GDS only in the top-cell name; geometry identity proven, see `doc/provenance/`) |
 | Full-chip PEX, IR/EM, timing of the final GDS | not run |
 | IHP intake checks | not run |
 | Physical measurement | not run |

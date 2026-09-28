@@ -342,7 +342,7 @@ fc9d285d18fea478f7c36fb00d9152447472808c59eccef5054db3ef7ca2e71b  verify/control
 **Done 2026-09-28 (owner instruction to finish the submission):** step 1 (`trl` 5, category `SoC`, ID 1816
 kept), step 3 (repository created and pushed, GDS as a plain 84 MB file, GitHub raw download verified
 sha256 `eb3e51a8…`), step 5 (issues/68 opened; the run is `Oct-2026`; the questions of step 2 are in the
-issue text). Still open: step 4 (IHP's own DRC on the submitted file) and step 6 (record IHP's answer).
+issue text). Step 4 done on our side 2026-09-28: the stock DRC decks (main, maximal, density, precheck, antenna) were re-run on `SoC1816.gds` itself, 0 markers each (`IHP__SoC1816/SoC1816-main/verification/drc_release_20260928/`). Still open: IHP's own DRC and step 6 (record IHP's answer).
 The original list follows unchanged.
 
 1. **Decide and fill the TODOs:** `info.json` `trl` (an integer, self-assessed with

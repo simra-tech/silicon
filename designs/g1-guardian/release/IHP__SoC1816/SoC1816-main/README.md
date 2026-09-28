@@ -11,3 +11,8 @@ under `designs/g1-guardian/`; they are not duplicated here.
   sub-cells, PDK IO reference semantics). Copied, not re-run.
 - Report file names and log lines refer to the source GDS name and top cell `g1_chip_top`;
   the release GDS differs only in the top-cell name (see `release/v.1.0.0/doc/provenance/`).
+- `verification/drc_release_20260928/`: KLayout DRC **re-run on the release file `SoC1816.gds` itself** (top cell
+  `SoC1816`, stock PDK `run_drc.py` decks at PDK `84374023`, KLayout 0.30.9, 2026-09-28):
+  - main + sg13g2_maximal + density (default run_drc.py, deep, --mp=4): **0 markers** over 840 categories, 664.35 s (`full/SoC1816_SoC1816_full.lyrdb`)
+  - precheck (--precheck_drc, deep, --mp=4): **0 markers** over 727 categories, 654.56 s (`precheck/SoC1816_SoC1816_full.lyrdb`)
+  - antenna (--antenna_only, deep, --mp=4): **0 markers** over 31 categories, 124.39 s (`antenna/SoC1816_SoC1816_antenna.lyrdb`)
