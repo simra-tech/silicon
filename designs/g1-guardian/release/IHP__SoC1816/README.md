@@ -14,6 +14,7 @@ on pins.
 - Source repository with schematics, layouts, simulations and all sign-off evidence:
   https://github.com/simra-tech/silicon, `designs/g1-guardian/`.
 - Nothing has been fabricated or measured. Every performance number is simulated.
+- `info.json` `sealring_x/y` are the die edge in um (1414.0), matching the 63/0 text label, as IHP's pre-check requires.
 - Self-assessed TRL 5 (`doc/TRL-Mixed-Signal-IP.md`): full layout, DRC clean (stock and IHP dev decks),
   projected-reference LVS clean, post-layout PVT simulations; the canonical unprojected LVS fails on
   the PDK IO-cell reference semantics and is documented, not hidden.
