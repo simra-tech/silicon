@@ -37,6 +37,15 @@ verifies a separate 0.6 V single-threshold clock receiver. Corrected runs use
 observations below require revalidation. The affected in-flight runs were
 stopped before restarting with the corrected receiver.
 
+## 2026-09-28 distributed R + C of every top-level net (`run_top_cdl.py --interconnect extracted-rc`)
+
+Full-chip PEX track T1 on r4 ([reports/fullchip_pex_20260928/README.md](reports/fullchip_pex_20260928/README.md)): the whole-chip kpex
+run did not finish in its 12 h bound (about 6 days extrapolated), so the top-level routing of every net, supplies
+included, was extracted with series R and C and joined to the block extractions
+(`sim/postlayout/top_interconnect_rc_r4_20260928b.spice` + map). Simulated against the C-only interconnect: `c_mid`
+1.8× `GATE` < 1 V changes by +0.02 to +0.21 ns at tt / ss 125 °C / ff −40 °C, 1.25× and `q` do not trip; the
+136 Ω `VREF_BUF` route into TRIP lowers both DAC thresholds by 4.3-5.2 mV (about 2 LSB shunt-referred, derived).
+
 ## 2026-09-25 extracted top-level interconnect (`--interconnect extracted`)
 
 The top-level wiring between blocks is taken from the extraction

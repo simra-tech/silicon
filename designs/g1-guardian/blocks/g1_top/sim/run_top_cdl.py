@@ -32,6 +32,7 @@ import argparse
 import collections
 import gzip
 import hashlib
+import json
 import math
 import os
 import re
@@ -264,6 +265,19 @@ HBT_SELFT0 = False   # --hbt-selft0 (set in main)
 INTERCONNECT = False  # --interconnect extracted (set in main)
 INTERCONNECT_FILE = os.path.join(HERE, 'postlayout/top_interconnect_20260925.spice')
 INTERCONNECT_SHA256 = 'ddc88cc765e99a0e982c9b6bc24817bfe336ae686930b2c12a85d514fb2adcc2'
+# --interconnect extracted-rc: distributed R + C of every top-level net of r4, supplies included
+# (reports/fullchip_pex_20260928/README.md; flow/pex/top_route_rnet.py + make_top_rc_spice.py): element lines
+# appended to the g1_chip_top body, block pins moved onto their own route nodes by the map's renames
+INTERCONNECT_RC = False  # set in main
+# two versions: 'extracted-rc' = revision b (isolated pin networks merged into their net node); 'extracted-rc-v1' =
+# the first version (same network, isolated pin networks tied to the net node by 1 mOhm; slow at ss/125 C)
+RCX_VERSIONS = {'extracted-rc': ('postlayout/top_interconnect_rc_r4_20260928b.spice', 'postlayout/top_interconnect_rc_r4_20260928b_map.json',
+                                 '911be8188512f036e955e67c38b7c64bf2dc999178a2cdfa2bb8c23d80940df9', '614382feb331bcad6ea1d3c8eaf9633797547fa5b60956b31f7f8b1d8168bdfb'),
+                'extracted-rc-v1': ('postlayout/top_interconnect_rc_r4_20260928.spice', 'postlayout/top_interconnect_rc_r4_20260928_map.json',
+                                    None, None)}
+RCX_FILE = os.path.join(HERE, 'postlayout/top_interconnect_rc_r4_20260928.spice')
+RCX_MAP = os.path.join(HERE, 'postlayout/top_interconnect_rc_r4_20260928_map.json')
+RCX_SHA256 = {RCX_FILE: '2e3eaf97824462daf4cbb481b6a380758475f6c04922380c34c61b5a461576cf', RCX_MAP: '02d33b5f3bbad088cda0fd29d92141f54cc3f5797dd58988e543051c4bdf1944'}
 POR_PIN = False      # --por-pin (set in main)
 PEX_BLOCKS = ()   # --pex-blocks: blocks that use the extracted netlist under --netlist sch (set in main)
 BLOCKSET = 'c1414'  # --blockset: run_top.BLOCKSETS entry of the --netlist pex swaps (set in main)
@@ -321,6 +335,9 @@ def chip_netlist(netlist, osc, nodcn, fosc):
     # deck-local copy of g1_chip_top: ammeters on block supply pins, identical filler instances merged
     body, meters, groups, merged = [], {}, collections.OrderedDict(), 0
     report_ic = {}
+    meter_src = {}
+    rcmap = json.load(open(RCX_MAP)) if INTERCONNECT_RC else None
+    rc_applied = set()
     for l in subs[TOP][1]:
         t = l.split()
         if t[0][0] not in 'Xx':
@@ -329,17 +346,35 @@ def chip_netlist(netlist, osc, nodcn, fosc):
         if FILLER_RE.search(cell) and not params:
             groups.setdefault((cell, tuple(nets)), []).append(t[0])
             continue
+        if INTERCONNECT_RC and t[0] in rcmap['renames']:
+            ren = rcmap['renames'][t[0]]
+            for pos, pn in enumerate(subs[cell][0]):
+                node = ren.get(pn.lower()) or ren.get(san(pn).lower())
+                if node is None:
+                    continue
+                if san(nets[pos]) != node.split('__')[0] and not node.startswith(san(nets[pos]) + '__'):
+                    raise SystemExit('extracted-rc: %s pin %s is on %s, map node %s' % (t[0], pn, nets[pos], node))
+                nets[pos] = node
+                rc_applied.add((t[0], pn.lower()))
         for pos, (vm, rail) in METERS.get(t[0], {}).items():
-            if nets[pos] != rail:
+            if nets[pos].split('__')[0] != rail:
                 raise SystemExit('%s pin %d is on %s, expected %s' % (t[0], pos, nets[pos], rail))
             meters[vm] = rail
+            meter_src.setdefault(vm, nets[pos])   # extracted-rc: the route node of the first instance on this meter
             nets[pos] = '%s__%s' % (rail, vm)
         body.append(' '.join([san(t[0])] + [san(n) for n in nets] + [cell] + params))
     for (cell, nets), names in groups.items():
         merged += len(names) - 1
         body.append(' '.join([san(names[0])] + [san(n) for n in nets] + [cell] + (['m=%d' % len(names)] if len(names) > 1 else [])))
     for vm, rail in sorted(meters.items()):
-        body.append('%s %s %s__%s dc 0' % (vm.capitalize(), rail, rail, vm))
+        body.append('%s %s %s__%s dc 0' % (vm.capitalize(), meter_src.get(vm, rail), rail, vm))
+    if INTERCONNECT_RC:
+        want = set((i, p) for i, m in rcmap['renames'].items() for p in m)
+        if want - rc_applied:
+            raise SystemExit('extracted-rc: map pins not found in the CDL top: %s' % sorted(want - rc_applied))
+        rcl = [l for l in open(RCX_FILE) if l.strip() and not l.startswith('*')]
+        body += [l.rstrip() for l in rcl]
+        report_ic.update(rc_elements=len(rcl), rc_pin_renames=len(rc_applied))
     if INTERCONNECT:
         # extracted top-level routing (postlayout/README_top_interconnect_20260925.md): C-only subckt, each port on the
         # CDL top net of the same name (i_core_ prefix, pad nets upper case), sub on VSS
@@ -377,11 +412,15 @@ def chip_netlist(netlist, osc, nodcn, fosc):
             t = l.split()
             if t and t[0].lower() == '.subckt' and t[1] in defined:
                 raise SystemExit('name clash: %s from blocks/%s is also emitted from the CDL' % (t[1], rel))
+    if INTERCONNECT_RC:
+        L.insert(0, '* extracted top-level interconnect (--interconnect extracted-rc): %s sha256 %s, map %s sha256 %s, %d R/C elements, '
+                 '%d block pins on their own route nodes' % (os.path.relpath(RCX_FILE, BLOCKS), RT.sha256(RCX_FILE), os.path.relpath(RCX_MAP, BLOCKS),
+                                                             RT.sha256(RCX_MAP), report_ic['rc_elements'], report_ic['rc_pin_renames']))
     if INTERCONNECT:
         L.insert(0, '.include %s' % INTERCONNECT_FILE)
         L.insert(0, '* extracted top-level interconnect (--interconnect extracted): %s sha256 %s, %d nets, C only (no series R)'
                  % (os.path.relpath(INTERCONNECT_FILE, BLOCKS), RT.sha256(INTERCONNECT_FILE), report_ic['ports']))
-    report = dict(subckts=len(order) - 1, interconnect=(RT.sha256(INTERCONNECT_FILE)[:8] if INTERCONNECT else None), devices=dict(tr.count), merged=merged, meters=sorted(meters), swaps=swaps,
+    report = dict(subckts=len(order) - 1, interconnect=(RT.sha256(INTERCONNECT_FILE)[:8] if INTERCONNECT else (('rc:' + RT.sha256(RCX_FILE)[:8]) if INTERCONNECT_RC else None)), devices=dict(tr.count), merged=merged, meters=sorted(meters), swaps=swaps,
                   replaced=sorted(replaced))
     return L, swaps, report
 
@@ -608,8 +647,11 @@ def main():
     ap.add_argument('--ser-start-us', type=float, default=None,
                     help='compact timeline: first serial frame at this time instead of 4.0 us (EN rises at 3.0 us)')
     ap.add_argument('--rtl-dir', default='rtl', choices=tuple(RT.RTL_DIRS), help='digital RTL copy (run_top.RTL_DIRS)')
-    ap.add_argument('--interconnect', default='none', choices=('none', 'extracted'),
-                    help='extracted: add the kpex top-level routing C (postlayout/top_interconnect_20260925.spice, hash-bound)')
+    ap.add_argument('--interconnect', default='none', choices=('none', 'extracted', 'extracted-rc', 'extracted-rc-v1'),
+                    help='extracted: add the kpex top-level routing C (postlayout/top_interconnect_20260925.spice, hash-bound); '
+                         'extracted-rc: distributed R + C of every top-level net of r4, supplies included '
+                         '(postlayout/top_interconnect_rc_r4_20260928b.spice + _map.json, hash-bound); extracted-rc-v1: its first version '
+                         '(top_interconnect_rc_r4_20260928.spice, runs t1rc at tt and ff)')
     ap.add_argument('--t2f-off-write', action='store_true',
                     help='stimulus: serial write TEMP_CTRL (0x29, ECO register map 1.2) = 0 right after the first frame, so '
                          'G1_T2F sits in its EN-low state; label: T2F disabled by register write, sensor accuracy not exercised')
@@ -619,6 +661,8 @@ def main():
     ap.add_argument('--cal-codes', default=None, help='case cal: codes, comma list or start:stop:step (python range)')
     ap.add_argument('--vdd', type=float, default=1.2, help='VDD (V), as run_top.py')
     ap.add_argument('--vdda', type=float, default=3.3, help='VDDA = IOVDD board rail (V), as run_top.py')
+    ap.add_argument('--node-ripple', action='store_true',
+                    help='add NODE_RIPPLE measures (VREF, VREF_BUF, ISENSE at the driver and at the receiving block pin, 2 us before the event)')
     ap.add_argument('--dry', action='store_true')
     a = ap.parse_args()
     if a.analysis == 'prefix' and a.tstop is None:
@@ -636,6 +680,15 @@ def main():
     INTERCONNECT = a.interconnect == 'extracted'
     if INTERCONNECT and RT.sha256(INTERCONNECT_FILE) != INTERCONNECT_SHA256:
         raise SystemExit('interconnect file does not match its bound SHA256')
+    global INTERCONNECT_RC
+    INTERCONNECT_RC = a.interconnect in RCX_VERSIONS
+    global RCX_FILE, RCX_MAP
+    if a.interconnect == 'extracted-rc':
+        f1, f2, h1, h2 = RCX_VERSIONS['extracted-rc']
+        RCX_FILE, RCX_MAP = os.path.join(HERE, f1), os.path.join(HERE, f2)
+        RCX_SHA256.clear(); RCX_SHA256.update({RCX_FILE: h1, RCX_MAP: h2})
+    if INTERCONNECT_RC and any(RT.sha256(k) != v for k, v in RCX_SHA256.items()):
+        raise SystemExit('extracted-rc interconnect files do not match their bound SHA256')
     POR_PIN = a.por_pin
     if POR_PIN:
         WRAPPER = os.path.join(HERE, 'rtl/g1_dig_cosim_cdl_por.v')
@@ -698,7 +751,7 @@ def main():
             case['tmax'] = a.maxstep_ns * 1e-9
         tag = 'cdl_%s_%s_%s_%gC_%s%s%s%s%s_%s_%s' % (
             name, a.netlist, a.corner, a.temp, method, '_osctl' if a.osc == 'tl' else '', '_padspdk' if a.pads == 'pdk' else '',
-            ('_keep-' + '-'.join(KEEP_CDL) if KEEP_CDL else '') + ('_pexblk-' + '-'.join(PEX_BLOCKS) if PEX_BLOCKS else '') + ('_selft0' if HBT_SELFT0 else '') + ('_por' if POR_PIN else '') + ('_compact' if a.timeline == 'compact' else '') + (('_cdl' + CDL_SHA256[:8]) if a.cdl else '') + (('_rtl' + a.rtl_dir.replace('_', '')) if a.rtl_dir != 'rtl' else '') + (('_ser%g' % a.ser_start_us).replace('.', 'p') if a.ser_start_us else '') + ('_icx' if INTERCONNECT else '') + ('_t2foff' if a.t2f_off_write else '') + (('_fm%g' % a.fault_mult).replace('.', 'p') if a.fault_mult is not None else '') + (('_vdd%g_vdda%g' % (a.vdd, a.vdda)).replace('.', 'p') if (a.vdd, a.vdda) != (1.2, 3.3) else '') + (('_%s%s' % (a.cal_kind, re.sub(r'[^0-9]+', '-', a.cal_codes))) if name == 'cal' else ''), (('_t%g' % a.tstop) if a.tstop else '') + (('_maxstep%gns' % a.maxstep_ns) if a.maxstep_ns else '') +
+            ('_keep-' + '-'.join(KEEP_CDL) if KEEP_CDL else '') + ('_pexblk-' + '-'.join(PEX_BLOCKS) if PEX_BLOCKS else '') + ('_selft0' if HBT_SELFT0 else '') + ('_por' if POR_PIN else '') + ('_compact' if a.timeline == 'compact' else '') + (('_cdl' + CDL_SHA256[:8]) if a.cdl else '') + (('_rtl' + a.rtl_dir.replace('_', '')) if a.rtl_dir != 'rtl' else '') + (('_ser%g' % a.ser_start_us).replace('.', 'p') if a.ser_start_us else '') + ('_icx' if INTERCONNECT else '') + (('_icxrcb' if a.interconnect == 'extracted-rc' else '_icxrc') if INTERCONNECT_RC else '') + ('_t2foff' if a.t2f_off_write else '') + (('_fm%g' % a.fault_mult).replace('.', 'p') if a.fault_mult is not None else '') + (('_vdd%g_vdda%g' % (a.vdd, a.vdda)).replace('.', 'p') if (a.vdd, a.vdda) != (1.2, 3.3) else '') + (('_%s%s' % (a.cal_kind, re.sub(r'[^0-9]+', '-', a.cal_codes))) if name == 'cal' else ''), (('_t%g' % a.tstop) if a.tstop else '') + ('_ripple' if a.node_ripple else '') + (('_maxstep%gns' % a.maxstep_ns) if a.maxstep_ns else '') +
             (('_opt' + re.sub(r'[^A-Za-z0-9]+', '', a.extra_options.replace('-', 'm'))) if a.extra_options else ''), a.analysis, run_id)
         for d, ext in ((BUILD, '.cir'), (os.path.join(HERE, 'logs'), '.log'), (os.path.join(HERE, 'logs'), '.json')):
             if os.path.exists(os.path.join(d, tag + ext)):
@@ -717,6 +770,22 @@ def main():
             k = deck.index('\nwrdata ', deck.index('\n.control\n'))
             deck = deck[:k] + '\n' + '\n'.join(cal) + deck[k:]
             deck = '* CALSCHED code@write_end_us ' + ' '.join('%d@%.4f' % cs for cs in sched) + '\n' + deck
+        if a.node_ripple:
+            ev = case.get('event_us', RT.T_STEP)
+            w0, w1 = ev - 2.0, ev
+            rc = lambda net, inst: 'xchip.%s__%s' % (net, inst) if INTERCONNECT_RC else 'xchip.%s' % net
+            probes = [('vref_bgr', 'xchip.i_core_vref'), ('vref_sense', rc('i_core_vref', 'xi_core_u_sense')),
+                      ('vrefbuf_sense', 'xchip.i_core_vref_buf'), ('vrefbuf_trip', rc('i_core_vref_buf', 'xi_core_u_trip')),
+                      ('isense_sense', 'xchip.i_core_isense'), ('isense_trip', rc('i_core_isense', 'xi_core_u_trip'))]
+            rip = ['* --node-ripple: VREF / VREF_BUF / ISENSE at the driver and at the receiving block pin, over %g-%g us' % (w0, w1)]
+            for k, node in probes:
+                rip += ['meas tran %s_max max v(%s) from=%gu to=%gu' % (k, node, w0, w1), 'meas tran %s_min min v(%s) from=%gu to=%gu' % (k, node, w0, w1),
+                        'meas tran %s_avg avg v(%s) from=%gu to=%gu' % (k, node, w0, w1)]
+            rip.append('echo "NODE_RIPPLE window_us=%g-%g ' % (w0, w1) + ' '.join('%s_avg= " $&%s_avg " %s_max= " $&%s_max " %s_min= " $&%s_min "' % ((k,) * 6) for k, _ in probes) + '"')
+            k = deck.index('\nwrdata ', deck.index('\n.control\n'))
+            deck = deck[:k] + '\n' + '\n'.join(rip) + deck[k:]
+            k = deck.index('\n.control\n')
+            deck = deck[:k] + '\n.save ' + ' '.join('v(%s)' % n for _, n in probes) + deck[k:]
         nmap = node_map(a.osc, a.netlist)
         if a.analysis != 'functional':
             before, ctl = RT.diagnostic_deck(deck, a.analysis, a.tstop, tag).split('.control\n', 1)
@@ -766,7 +835,7 @@ def main():
                                   a.timeout, cwd=HERE, env=env, metadata=meta)
             log.write('\n# run status %s\n# ngspice exit %s, wall time %.0f s\n' % (outcome['status'], outcome['returncode'], outcome['wall_s']))
         out = open(log_path, errors='replace').read()
-        keep = [l for l in out.splitlines() if re.match(r'^(QUIET|CLOCK|SUPPLY_uA|T2F|TRIP|NO_TRIP_EXPECTED|CHARGE|REARM|POWERUP|PORTIMING|CAL|DIAGNOSTIC_\w+)\b', l)]
+        keep = [l for l in out.splitlines() if re.match(r'^(QUIET|CLOCK|SUPPLY_uA|T2F|TRIP|NO_TRIP_EXPECTED|CHARGE|REARM|POWERUP|PORTIMING|CAL|NODE_RIPPLE|DIAGNOSTIC_\w+)\b', l)]
         err = [l.strip() for l in out.splitlines() if 'Timestep too small' in l or ('rror' in l and 'measure' not in l)]
         failure = solver_failure(out)
         if re.search(r'mismatched XSPICE/co-simulator', out):

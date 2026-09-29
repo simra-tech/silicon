@@ -1,0 +1,178 @@
+# extract of cdl_c_mid_pex_ff_-40C_gear_osctl_compact_cdle060c0c5_rtleco20260925_icxrcb_t19_maxstep1ns_functional_t1rc.log (sha256 010c7c1bc22c5b20c6cc2fb53a9247cb963e0f328669ddfbe3a8d0c8536687ac, 3228682 bytes; full log retained at ${BULK}/pex/logs_sim/)
+# G1 CDL-driven full-chip run cdl_c_mid_pex_ff_-40C_gear_osctl_compact_cdle060c0c5_rtleco20260925_icxrcb_t19_maxstep1ns_functional_t1rc  2026-09-28T17:05:35Z UTC
+# in-range hard trip: code 200 (~39.25mV), 1.8A/45mV fault in 20ns; HARD_N=4
+# deck build/g1_top/cdl_c_mid_pex_ff_-40C_gear_osctl_compact_cdle060c0c5_rtleco20260925_icxrcb_t19_maxstep1ns_functional_t1rc.cir
+# CDL sha256 e060c0c59a168e5b69b0c47dc31cbfe4f4444d2ec8af62960c339c1230a2c99f blocks//work/designs/g1-guardian/blocks/g1_padring/netlist/g1_chip_top_1414_r4.cdl
+# g1_bgr <- sha256 01227a3d8d8210d10d2d1ee6933842351140b8825fe29282f0327936a3064ad5 blocks/g1_bgr/sim/postlayout/g1_bgr586_pex.spice
+# g1_sense <- sha256 ffb14762659eaf02b6a62e9edea3caa0e143cbc7881378b329d6ab9945a6554b blocks/g1_sense/sim/postlayout/g1_sense_r100_partialc.spice
+# g1_trip <- sha256 6f518e0758a87b334ab5ae98a8ad43d79dd03ab4ba52c241f742280b6d2f770b blocks/g1_trip/sim/postlayout/g1_trip_nf4_novclk_pex.spice
+# g1_gate <- sha256 e91617f5fcf6f5a0dc721a2ba53b507a05cc226d6dbf0bebaa858a1e7d876765 blocks/g1_gate/sim/postlayout/g1_gate_pex.spice
+# g1_osc <- sha256 8efd7a09faf173da8604a219f73fd3ea5ec2508618d8361a050770c099d8b1c5 blocks/g1_osc/sim/qualification/fulltree_r095_load_20260924/common/osc.spice
+# g1_t2f <- sha256 441edabc0484c9de1e035d585369f37d460afe32370e73935044693bbfd0c78a blocks/g1_t2f/sim/postlayout/g1_t2f_pex.spice
+# translation {'subckts': 40, 'interconnect': 'rc:911be818', 'devices': {'removed dantenna': 8, 'D dpantenna': 7, 'M sg13_lv_nmos': 8, 'M sg13_lv_pmos': 7, 'ptap1 R from sg13g2_io.spi': 42, 'R ptap1': 42, 'M sg13_hv_nmos': 191, 'Q npn13G2': 1, 'M sg13_hv_pmos': 18, 'R rppd': 29, 'X': 36}, 'merged': 4833, 'meters': ['vm_bgr', 'vm_gatea', 'vm_gated', 'vm_ls', 'vm_lsd', 'vm_osc', 'vm_sense', 'vm_t2f', 'vm_t2fd', 'vm_tripa', 'vm_tripd'], 'swaps': {'g1_bgr': 'g1_bgr/sim/postlayout/g1_bgr586_pex.spice', 'g1_sense': 'g1_sense/sim/postlayout/g1_sense_r100_partialc.spice', 'g1_trip': 'g1_trip/sim/postlayout/g1_trip_nf4_novclk_pex.spice', 'g1_gate': 'g1_gate/sim/postlayout/g1_gate_pex.spice', 'g1_osc': 'g1_osc/sim/qualification/fulltree_r095_load_20260924/common/osc.spice', 'g1_t2f': 'g1_t2f/sim/postlayout/g1_t2f_pex.spice'}, 'replaced': ['g1_digital']}
+# IO models sha256 1d53ab7df431b717ef5aff43e1117c0224681d5cc84886da37a319280ee958d6 /foss/pdks/ihp-sg13g2/libs.ref/sg13g2_io/spice/sg13g2_io.spi (ptap1 values only)
+# PDK commit 84374023ee8b4b126bebbba67fcbada0a9c0ff0b
+# ngspice-46 : Circuit level simulation program
+# Icarus Verilog version 14.0 (devel) (s20260301-328-geda9fdcd-dirty)
+# iverilog -g2005 -Wall -Wno-timescale -o /work/build/g1_top/cosim_bd729ab984df66095a69107f.vvp.tmp1 /work/designs/g1-guardian/blocks/g1_top/sim/rtl/g1_dig_cosim_cdl.v /work/designs/g1-guardian/blocks/g1_ctrl/rtl_eco_20260925/g1_sync2.v /work/designs/g1-guardian/blocks/g1_ctrl/rtl_eco_20260925/g1_serial.v /work/designs/g1-guardian/blocks/g1_ctrl/rtl_eco_20260925/g1_trip_timer.v /work/designs/g1-guardian/blocks/g1_ctrl/rtl_eco_20260925/g1_regfile.v /work/designs/g1-guardian/blocks/g1_ctrl/rtl_eco_20260925/g1_digital_top.v /work/designs/g1-guardian/blocks/g1_ctrl/rtl_eco_20260925/g1_digital.v /work/designs/g1-guardian/blocks/g1_seu/rtl_eco_20260925/g1_tmr_reg.v /work/designs/g1-guardian/blocks/g1_seu/rtl_eco_20260925/g1_seu_chain.v /work/designs/g1-guardian/blocks/g1_seu/rtl_eco_20260925/g1_seu.v
+# compiled RTL build/g1_top/cosim_bd729ab984df66095a69107f.vvp (tag cdl_c_mid_pex_ff_-40C_gear_osctl_compact_cdle060c0c5_rtleco20260925_icxrcb_t19_maxstep1ns_functional_t1rc) sha256 d2bdd9ef0689b6b762cf0aa39cf9d3406f3c75b1e8e0701cbce7af489bd39654
+# rtl sha256 79cf9cd44b68400b5d991c240daf2934d0b9c4a378a2fee4d514719aeeaa1bb8 designs/g1-guardian/blocks/g1_top/sim/rtl/g1_dig_cosim_cdl.v
+# rtl sha256 c14906d7d9256a771cd8fdc0ab14ba291131e151d24bf06b951b6bc693ad8ef2 designs/g1-guardian/blocks/g1_ctrl/rtl_eco_20260925/g1_sync2.v
+# rtl sha256 df4341e1878caef2f7bf27abb273a7a5af3e41b96658ffa02eedb2af97c48a5d designs/g1-guardian/blocks/g1_ctrl/rtl_eco_20260925/g1_serial.v
+# rtl sha256 5cab0bc384cef5a7b08d6c693da90e5347d0de10816830ba9b16c6d6be428c9f designs/g1-guardian/blocks/g1_ctrl/rtl_eco_20260925/g1_trip_timer.v
+# rtl sha256 33d549dafc4c097cc06cdbdb3237d3d4b1c5c9cd00eef5d9757474e07a1ab7f3 designs/g1-guardian/blocks/g1_ctrl/rtl_eco_20260925/g1_regfile.v
+# rtl sha256 4e3b8ff6cdc13f28670bb9c64b1f685782efc95a51e3644038989a220088fdd6 designs/g1-guardian/blocks/g1_ctrl/rtl_eco_20260925/g1_digital_top.v
+# rtl sha256 36757122c43271dfd439bf1623be6d5413adf3bbb97cbad40d5cccf5892f5c3d designs/g1-guardian/blocks/g1_ctrl/rtl_eco_20260925/g1_digital.v
+# rtl sha256 f53f82d97b91d4e815e662e72b40968949c7d74ce135f777dba7789201167ac5 designs/g1-guardian/blocks/g1_seu/rtl_eco_20260925/g1_tmr_reg.v
+# rtl sha256 6e10bbc02a8ff29116067f2067f648b959f17b542cb2360c50e7802010048573 designs/g1-guardian/blocks/g1_seu/rtl_eco_20260925/g1_seu_chain.v
+# rtl sha256 7c1831c99b5875a2dd48387db70fd5b1a0888a520fe8676bc4e071820b7fa736 designs/g1-guardian/blocks/g1_seu/rtl_eco_20260925/g1_seu.v
+# ... result lines:
+doAnalyses: TRAN:  Timestep too small; time = 1.82416e-05, timestep = 1.25e-21: trouble with xchip.xi_core_u_bgr.xq736:npn13g2_nx_vbic-instance q.xchip.xi_core_u_bgr.xq736.qnpn13g2
+QUIET window_us=14-16 vref= 1.04209  isense= 1.50408  icmp= 0.751089  vth_soft= 0.797646  vth_hard= 0.889314  vref_inst= 1.04207  isense_inst= 1.50468  icmp_inst= 0.748597  vth_soft_inst= 0.794582  vth_hard_inst= 0.889727  iload_A= 1  gate= 3.29996  code_soft= 153  code_hard= 200  fast_en= 0  inrush_active= 0  t_inrush_off_us= 8.19122  soft_armed_end=
+CLOCK f_osc_MHz= 12.0458  f_cmp_MHz= 6.02308  (RTL clock: transistor-level G1_OSC)
+SUPPLY_uA window=15-16us VDDA= 1278.79  IOVDD= 136.258  VDD= 147.411  | bgr= 284.295  sense= 956.735  trip_3v3= 0.000749025  trip_1v2= 6.67812  osc= 134.187  gate_3v3= 0.000484776  gate_1v2= 0.00109164
+T2F window=15-16us f_MHz=  periods=2 vdda_t2f_uA= 37.7325  vdd12_t2f_uA= 0.302626  vdda_ls_uA= 0.0118813  vdd_ls_uA= 9.50038E-05
+TRIP tripped_max= 1.21786  tripped_before_event= 0.00772593  t_tripped_us= 0.90994  t_trip_d_us= 0.908  t_gate_1V_us= 1.17777  t_gate_0.33V_us= 1.35692  gate_min= 0.000977224  gate_end=  ipk_A= 1.8  i_end_A=  isense_pk= 1.90766  cause=  fault_n_end=  soft_peak=
+# run status failed
+# ngspice exit 1, wall time 21700 s
+# ... last 140 lines:
+ Reference value :  1.82366e-05
+ Reference value :  1.82366e-05
+ Reference value :  1.82366e-05
+ Reference value :  1.82367e-05
+ Reference value :  1.82367e-05
+ Reference value :  1.82367e-05
+ Reference value :  1.82367e-05
+ Reference value :  1.82367e-05
+ Reference value :  1.82368e-05
+ Reference value :  1.82368e-05
+ Reference value :  1.82368e-05
+ Reference value :  1.82368e-05
+ Reference value :  1.82369e-05
+ Reference value :  1.82369e-05
+ Reference value :  1.82370e-05
+ Reference value :  1.82372e-05
+ Reference value :  1.82373e-05
+ Reference value :  1.82375e-05
+ Reference value :  1.82380e-05
+ Reference value :  1.82387e-05
+ Reference value :  1.82389e-05
+ Reference value :  1.82395e-05
+ Reference value :  1.82403e-05
+ Reference value :  1.82408e-05
+ Reference value :  1.82411e-05
+ Reference value :  1.82413e-05
+ Reference value :  1.82416e-05
+No. of Data Rows : 70142
+doAnalyses: TRAN:  Timestep too small; time = 1.82416e-05, timestep = 1.25e-21: trouble with xchip.xi_core_u_bgr.xq736:npn13g2_nx_vbic-instance q.xchip.xi_core_u_bgr.xq736.qnpn13g2
+
+
+tran simulation(s) aborted
+vref_q              =  1.04209e+00 from=  1.40000e-05 to=  1.60000e-05
+isense_q            =  1.50408e+00 from=  1.40000e-05 to=  1.60000e-05
+icmp_q              =  7.51089e-01 from=  1.40000e-05 to=  1.60000e-05
+vths_q              =  7.97646e-01 from=  1.40000e-05 to=  1.60000e-05
+vthh_q              =  8.89314e-01 from=  1.40000e-05 to=  1.60000e-05
+vref_i              =  1.04207e+00
+isense_i            =  1.50468e+00
+icmp_i              =  7.48597e-01
+vths_i              =  7.94581e-01
+vthh_i              =  8.89727e-01
+iload_q             =  1.00000e+00
+gate_q              =  3.29996e+00
+fastq               =  0.00000e+00
+t_inrush_off        =  8.19122e-06
+inrush_q            =  0.00000e+00
+
+Error: measure  softarmed_end  find(AT) : out of interval
+ meas tran softarmed_end find v(xchip.xi_core_u_digital.soft_armed) at=19u failed!
+
+code_soft           =  1.53000e+02
+code_hard           =  2.00000e+02
+Error: &softarmed_end: no such variable.
+QUIET window_us=14-16 vref= 1.04209  isense= 1.50408  icmp= 0.751089  vth_soft= 0.797646  vth_hard= 0.889314  vref_inst= 1.04207  isense_inst= 1.50468  icmp_inst= 0.748597  vth_soft_inst= 0.794582  vth_hard_inst= 0.889727  iload_A= 1  gate= 3.29996  code_soft= 153  code_hard= 200  fast_en= 0  inrush_active= 0  t_inrush_off_us= 8.19122  soft_armed_end=
+tosc1               =  1.30050e-05
+tosc2               =  1.46653e-05
+tcc1                =  1.30893e-05
+tcc2                =  1.47496e-05
+CLOCK f_osc_MHz= 12.0458  f_cmp_MHz= 6.02308  (RTL clock: transistor-level G1_OSC)
+ia_vdda             =  1.27879e-03 from=  1.50000e-05 to=  1.60000e-05
+ia_iovdd            =  1.36258e-04 from=  1.50000e-05 to=  1.60000e-05
+ia_vdd              =  1.47411e-04 from=  1.50000e-05 to=  1.60000e-05
+ia_bgr              =  2.84295e-04 from=  1.50000e-05 to=  1.60000e-05
+ia_sense            =  9.56735e-04 from=  1.50000e-05 to=  1.60000e-05
+ia_tripa            =  7.49025e-10 from=  1.50000e-05 to=  1.60000e-05
+ia_tripd            =  6.67812e-06 from=  1.50000e-05 to=  1.60000e-05
+ia_osc              =  1.34187e-04 from=  1.50000e-05 to=  1.60000e-05
+ia_gatea            =  4.84776e-10 from=  1.50000e-05 to=  1.60000e-05
+ia_gated            =  1.09164e-09 from=  1.50000e-05 to=  1.60000e-05
+SUPPLY_uA window=15-16us VDDA= 1278.79  IOVDD= 136.258  VDD= 147.411  | bgr= 284.295  sense= 956.735  trip_3v3= 0.000749025  trip_1v2= 6.67812  osc= 134.187  gate_3v3= 0.000484776  gate_1v2= 0.00109164
+t2f_t1              =  1.51114e-05
+
+Error: measure  t2f_t2  when(WHEN) : out of interval
+ meas tran t2f_t2 when v(xchip.i_core_temp_out_o)=0.6 rise=3 from=15u to=16u failed!
+
+Warning from checkvalid: vector t2f_t2 is not available or has zero length.
+Error: RHS "2e-6/(t2f_t2 - t2f_t1)" invalid
+ia_t2f              =  3.77325e-05 from=  1.50000e-05 to=  1.60000e-05
+ia_t2fd             =  3.02627e-07 from=  1.50000e-05 to=  1.60000e-05
+ia_ls               =  1.18813e-08 from=  1.50000e-05 to=  1.60000e-05
+ia_lsd              =  9.50038e-11 from=  1.50000e-05 to=  1.60000e-05
+Error: &t2f_mhz: no such variable.
+T2F window=15-16us f_MHz=  periods=2 vdda_t2f_uA= 37.7325  vdd12_t2f_uA= 0.302626  vdda_ls_uA= 0.0118813  vdd_ls_uA= 9.50038E-05
+tripped_max         =  1.21786e+00 at=  1.70741e-05
+tripped_pre         =  7.72593e-03 at=  1.34212e-05
+t_tripped           =  1.69099e-05
+t_trip_d            =  1.69080e-05
+t_gate1v            =  1.71778e-05
+t_gate03            =  1.73569e-05
+gate_min            =  9.77224e-04 at=  1.82416e-05
+
+Error: measure  gate_end  find(AT) : out of interval
+ meas tran gate_end find v(gate) at=19u failed!
+
+ipk                 =  1.80000e+00 at=  1.64683e-05
+
+Error: measure  i_end  find(AT) : out of interval
+ meas tran i_end find i(vim) at=19u failed!
+
+isense_pk           =  1.90766e+00 at=  1.70029e-05
+
+Error: measure  cause1e  find(AT) : out of interval
+ meas tran cause1e find v(xchip.i_core_trip_cause_1_) at=19u failed!
+
+
+Error: measure  cause0e  find(AT) : out of interval
+ meas tran cause0e find v(xchip.i_core_trip_cause_0_) at=19u failed!
+
+
+Error: measure  fault_end  find(AT) : out of interval
+ meas tran fault_end find v(fault_n) at=19u failed!
+
+
+Error: measure  soft_peak  find(AT) : out of interval
+ meas tran soft_peak find sp_v at=19u failed!
+
+Warning from checkvalid: vector cause1e is not available or has zero length.
+Error: RHS "2*(cause1e gt 0.6) + (cause0e gt 0.6)" invalid
+Error: &gate_end: no such variable.
+Error: &i_end: no such variable.
+Error: &cause: no such variable.
+Error: &fault_end: no such variable.
+Error: &soft_peak: no such variable.
+TRIP tripped_max= 1.21786  tripped_before_event= 0.00772593  t_tripped_us= 0.90994  t_trip_d_us= 0.908  t_gate_1V_us= 1.17777  t_gate_0.33V_us= 1.35692  gate_min= 0.000977224  gate_end=  ipk_A= 1.8  i_end_A=  isense_pk= 1.90766  cause=  fault_n_end=  soft_peak=
+q_step              =  1.27898e-05
+
+Error: measure  q_end  find(AT) : out of interval
+ meas tran q_end find qi at=19u failed!
+
+Warning from checkvalid: vector q_end is not available or has zero length.
+Error: RHS "q_end - q_step" invalid
+Error: &q_passed: no such variable.
+CHARGE after_event_As=
+Error: incomplete or empty netlist
+       or no ".plot", ".print", or ".fourier" lines in batch mode;
+no simulations run!
+
+# run status failed
+# ngspice exit 1, wall time 21700 s

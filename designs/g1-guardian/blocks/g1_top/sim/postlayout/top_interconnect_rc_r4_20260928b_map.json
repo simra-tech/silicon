@@ -1,0 +1,2188 @@
+{
+ "spice": "top_interconnect_rc_r4_v2.spice",
+ "spice_sha256": "911be8188512f036e955e67c38b7c64bf2dc999178a2cdfa2bb8c23d80940df9",
+ "inputs": {
+  "rnet.json": "301534952b2a06854189a1ddf5eb460230127a2e6f99ac5da32f13356adbba58",
+  "g1_chip_top_k25d_pex_netlist.csv": "d8cc7ac616bcf0394a6ec6c89ce17d74892a49c8602acedc768c39b02e2f1ccf",
+  "prepare.json": "cf64aeab8a60c833a21786ce8cd10f0109f19dd023a4bacc6c85fe3070bdd764",
+  "route_rc.json": "c870abbe90565ea2a2d5f87acbbf2983b1564126f6eeb6bb7590dde74140689c"
+ },
+ "script_sha256": "df89b68e295f8d4400ecbc3d9752335a44ba0df287ad9d7df68d460f8c3aecb3",
+ "renames": {
+  "Xi_core_u_dose": {
+   "d_elt": "D_ELT__Xi_core_u_dose",
+   "d_std": "D_STD__Xi_core_u_dose",
+   "g_shared": "G_SHARED__Xi_core_u_dose",
+   "vss": "VSS__Xi_core_u_dose"
+  },
+  "Xi_core_u_dut": {
+   "hbt_b": "HBT_B__Xi_core_u_dut",
+   "hbt_c": "HBT_C__Xi_core_u_dut",
+   "hbt_e": "HBT_E__Xi_core_u_dut",
+   "vss": "VSS__Xi_core_u_dut"
+  },
+  "Xi_core_u_sense": {
+   "sense_n": "SENSE_N__Xi_core_u_sense",
+   "sense_p": "SENSE_P__Xi_core_u_sense",
+   "vdd": "VDDA__Xi_core_u_sense",
+   "vss": "VSS__Xi_core_u_sense",
+   "iptat": "i_core_iptat__Xi_core_u_sense",
+   "vref": "i_core_vref__Xi_core_u_sense"
+  },
+  "Xi_core_u_ls_en": {
+   "vdda": "VDDA__Xi_core_u_ls_en",
+   "vdd": "VDD__Xi_core_u_ls_en",
+   "vss": "VSS__Xi_core_u_ls_en",
+   "in": "i_core_t2f_en_12__Xi_core_u_ls_en"
+  },
+  "Xi_core_u_ls_r4": {
+   "vdda": "VDDA__Xi_core_u_ls_r4",
+   "vdd": "VDD__Xi_core_u_ls_r4",
+   "vss": "VSS__Xi_core_u_ls_r4",
+   "in": "i_core_bgr_r4_12__Xi_core_u_ls_r4",
+   "out": "i_core_bgr_r4_33__Xi_core_u_ls_r4"
+  },
+  "Xi_core_u_ls_mode": {
+   "vdda": "VDDA__Xi_core_u_ls_mode",
+   "vdd": "VDD__Xi_core_u_ls_mode",
+   "vss": "VSS__Xi_core_u_ls_mode",
+   "in": "i_core_t2f_mode_12__Xi_core_u_ls_mode"
+  },
+  "Xi_core_u_gate": {
+   "vdda": "VDDA__Xi_core_u_gate",
+   "vdd": "VDD__Xi_core_u_gate",
+   "vss": "VSS__Xi_core_u_gate",
+   "en_core": "en_i__Xi_core_u_gate",
+   "clr_d": "i_core_clr_d__Xi_core_u_gate",
+   "hard_cmp": "i_core_cmp_hard__Xi_core_u_gate",
+   "fast_en": "i_core_fast_en__Xi_core_u_gate",
+   "trip_d": "i_core_trip_d__Xi_core_u_gate",
+   "tripped": "i_core_tripped__Xi_core_u_gate"
+  },
+  "Xi_core_u_trip": {
+   "iovdd": "VDDA__Xi_core_u_trip",
+   "vdd": "VDD__Xi_core_u_trip",
+   "vss": "VSS__Xi_core_u_trip",
+   "clk": "i_core_cmp_clk__Xi_core_u_trip",
+   "cmp_hard": "i_core_cmp_hard__Xi_core_u_trip",
+   "cmp_soft": "i_core_cmp_soft__Xi_core_u_trip",
+   "dac_hard[0]": "i_core_dac_hard_0___Xi_core_u_trip",
+   "dac_hard[1]": "i_core_dac_hard_1___Xi_core_u_trip",
+   "dac_hard[2]": "i_core_dac_hard_2___Xi_core_u_trip",
+   "dac_hard[3]": "i_core_dac_hard_3___Xi_core_u_trip",
+   "dac_hard[4]": "i_core_dac_hard_4___Xi_core_u_trip",
+   "dac_hard[5]": "i_core_dac_hard_5___Xi_core_u_trip",
+   "dac_hard[6]": "i_core_dac_hard_6___Xi_core_u_trip",
+   "dac_hard[7]": "i_core_dac_hard_7___Xi_core_u_trip",
+   "dac_soft[0]": "i_core_dac_soft_0___Xi_core_u_trip",
+   "dac_soft[1]": "i_core_dac_soft_1___Xi_core_u_trip",
+   "dac_soft[2]": "i_core_dac_soft_2___Xi_core_u_trip",
+   "dac_soft[3]": "i_core_dac_soft_3___Xi_core_u_trip",
+   "dac_soft[4]": "i_core_dac_soft_4___Xi_core_u_trip",
+   "dac_soft[5]": "i_core_dac_soft_5___Xi_core_u_trip",
+   "dac_soft[6]": "i_core_dac_soft_6___Xi_core_u_trip",
+   "dac_soft[7]": "i_core_dac_soft_7___Xi_core_u_trip",
+   "isense": "i_core_isense__Xi_core_u_trip",
+   "vref": "i_core_vref_buf__Xi_core_u_trip"
+  },
+  "Xi_core_u_t2f": {
+   "vdd": "VDDA__Xi_core_u_t2f",
+   "vdd12": "VDD__Xi_core_u_t2f",
+   "vss": "VSS__Xi_core_u_t2f",
+   "pbias": "i_core_pbias__Xi_core_u_t2f",
+   "pcasc": "i_core_pcasc__Xi_core_u_t2f",
+   "en": "i_core_t2f_en_33__Xi_core_u_t2f",
+   "mode": "i_core_t2f_mode_33__Xi_core_u_t2f"
+  },
+  "Xi_core_u_digital_1": {
+   "vdd": "VDD__Xi_core_u_digital_1",
+   "vss": "VSS__Xi_core_u_digital_1",
+   "l_hi": "net__Xi_core_u_digital_1"
+  },
+  "Xi_core_u_osc": {
+   "vdd": "VDD__Xi_core_u_osc",
+   "vss": "VSS__Xi_core_u_osc",
+   "osc_clk": "i_core_osc_clk__Xi_core_u_osc",
+   "en": "i_core_osc_en__Xi_core_u_osc",
+   "trim[0]": "i_core_osc_trim_0___Xi_core_u_osc",
+   "trim[1]": "i_core_osc_trim_1___Xi_core_u_osc",
+   "trim[2]": "i_core_osc_trim_2___Xi_core_u_osc",
+   "trim[3]": "i_core_osc_trim_3___Xi_core_u_osc"
+  },
+  "Xi_core_u_digital": {
+   "vdd": "VDD__Xi_core_u_digital",
+   "vss": "VSS__Xi_core_u_digital"
+  },
+  "Xpad12_en": {
+   "p2c": "en_i__Xpad12_en"
+  },
+  "Xpad11_fault_n": {
+   "c2p": "fault_n_o__Xpad11_fault_n"
+  },
+  "Xpad10_gate": {
+   "c2p": "gate_o__Xpad10_gate"
+  },
+  "Xpad14_sclk": {
+   "p2c": "i_core_sclk_i__Xpad14_sclk"
+  },
+  "Xpad15_sdi": {
+   "p2c": "i_core_sdi_i__Xpad15_sdi"
+  },
+  "Xpad16_sdo": {
+   "c2p": "i_core_sdo_o__Xpad16_sdo"
+  },
+  "Xpad17_temp_out": {
+   "c2p": "i_core_temp_out_o__Xpad17_temp_out"
+  },
+  "Xpad18_vref": {
+   "padres": "i_core_vref__Xpad18_vref"
+  }
+ },
+ "tied_to_N": [
+  {
+   "net": "VDDA",
+   "nodes": [
+    "VDDA__Xi_core_u_bgr"
+   ]
+  },
+  {
+   "net": "VSS",
+   "nodes": [
+    "VSS__Xi_core_u_bgr"
+   ]
+  },
+  {
+   "net": "_nc1",
+   "nodes": [
+    "_nc1__Xpad07_vdda"
+   ]
+  },
+  {
+   "net": "_nc2",
+   "nodes": [
+    "_nc2__Xpad08_sense_p"
+   ]
+  },
+  {
+   "net": "_nc3",
+   "nodes": [
+    "_nc3__Xpad09_sense_n"
+   ]
+  },
+  {
+   "net": "_nc4",
+   "nodes": [
+    "_nc4__Xpad19_g_shared"
+   ]
+  },
+  {
+   "net": "_nc5",
+   "nodes": [
+    "_nc5__Xpad20_d_std"
+   ]
+  },
+  {
+   "net": "_nc6",
+   "nodes": [
+    "_nc6__Xpad21_d_elt"
+   ]
+  },
+  {
+   "net": "_nc7",
+   "nodes": [
+    "_nc7__Xpad22_hbt_e"
+   ]
+  },
+  {
+   "net": "_nc8",
+   "nodes": [
+    "_nc8__Xpad23_hbt_b"
+   ]
+  },
+  {
+   "net": "_nc9",
+   "nodes": [
+    "_nc9__Xpad24_hbt_c"
+   ]
+  },
+  {
+   "net": "i_core_dvbe",
+   "nodes": [
+    "i_core_dvbe__Xi_core_u_bgr"
+   ]
+  },
+  {
+   "net": "i_core_trip_set",
+   "nodes": [
+    "i_core_trip_set__Xpad13_trip_set"
+   ]
+  },
+  {
+   "net": "i_core_vref",
+   "nodes": [
+    "i_core_vref__Xi_core_u_t2f"
+   ]
+  }
+ ],
+ "capacitors_in_csv": 6228,
+ "csv_rows_skipped": {
+  "no_route_side": 4789,
+  "same_net": 42
+ },
+ "n_resistors": 334,
+ "n_capacitors": 4759,
+ "kron_reduction": {
+  "D_ELT": {
+   "nodes_before": 1,
+   "ports": 1
+  },
+  "D_ELT__frag1": {
+   "nodes_before": 1,
+   "ports": 1
+  },
+  "D_ELT__frag2": {
+   "nodes_before": 2,
+   "ports": 2
+  },
+  "D_ELT__frag3": {
+   "nodes_before": 1,
+   "ports": 1
+  },
+  "D_ELT__frag4": {
+   "nodes_before": 1,
+   "ports": 1
+  },
+  "D_ELT__frag5": {
+   "nodes_before": 1,
+   "ports": 1
+  },
+  "D_ELT__frag6": {
+   "nodes_before": 167,
+   "ports": 1
+  },
+  "D_STD": {
+   "nodes_before": 1,
+   "ports": 1
+  },
+  "D_STD__frag1": {
+   "nodes_before": 1,
+   "ports": 1
+  },
+  "D_STD__frag2": {
+   "nodes_before": 2,
+   "ports": 2
+  },
+  "D_STD__frag3": {
+   "nodes_before": 1,
+   "ports": 1
+  },
+  "D_STD__frag4": {
+   "nodes_before": 1,
+   "ports": 1
+  },
+  "D_STD__frag5": {
+   "nodes_before": 1,
+   "ports": 1
+  },
+  "D_STD__frag6": {
+   "nodes_before": 167,
+   "ports": 1
+  },
+  "EN": {
+   "nodes_before": 1,
+   "ports": 1
+  },
+  "EN__frag1": {
+   "nodes_before": 1,
+   "ports": 1
+  },
+  "EN__frag2": {
+   "nodes_before": 1,
+   "ports": 1
+  },
+  "EN__frag3": {
+   "nodes_before": 1,
+   "ports": 1
+  },
+  "EN__frag4": {
+   "nodes_before": 167,
+   "ports": 1
+  },
+  "FAULT_N": {
+   "nodes_before": 1,
+   "ports": 1
+  },
+  "FAULT_N__frag1": {
+   "nodes_before": 1,
+   "ports": 1
+  },
+  "FAULT_N__frag2": {
+   "nodes_before": 1,
+   "ports": 1
+  },
+  "FAULT_N__frag3": {
+   "nodes_before": 1,
+   "ports": 1
+  },
+  "FAULT_N__frag4": {
+   "nodes_before": 167,
+   "ports": 1
+  },
+  "GATE": {
+   "nodes_before": 1,
+   "ports": 1
+  },
+  "GATE__frag1": {
+   "nodes_before": 1,
+   "ports": 1
+  },
+  "GATE__frag2": {
+   "nodes_before": 1,
+   "ports": 1
+  },
+  "GATE__frag3": {
+   "nodes_before": 1,
+   "ports": 1
+  },
+  "GATE__frag4": {
+   "nodes_before": 167,
+   "ports": 1
+  },
+  "G_SHARED": {
+   "nodes_before": 1,
+   "ports": 1
+  },
+  "G_SHARED__frag1": {
+   "nodes_before": 1,
+   "ports": 1
+  },
+  "G_SHARED__frag2": {
+   "nodes_before": 2,
+   "ports": 2
+  },
+  "G_SHARED__frag3": {
+   "nodes_before": 1,
+   "ports": 1
+  },
+  "G_SHARED__frag4": {
+   "nodes_before": 1,
+   "ports": 1
+  },
+  "G_SHARED__frag5": {
+   "nodes_before": 1,
+   "ports": 1
+  },
+  "G_SHARED__frag6": {
+   "nodes_before": 167,
+   "ports": 1
+  },
+  "HBT_B": {
+   "nodes_before": 1,
+   "ports": 1
+  },
+  "HBT_B__frag1": {
+   "nodes_before": 1,
+   "ports": 1
+  },
+  "HBT_B__frag2": {
+   "nodes_before": 2,
+   "ports": 2
+  },
+  "HBT_B__frag3": {
+   "nodes_before": 1,
+   "ports": 1
+  },
+  "HBT_B__frag4": {
+   "nodes_before": 1,
+   "ports": 1
+  },
+  "HBT_B__frag5": {
+   "nodes_before": 1,
+   "ports": 1
+  },
+  "HBT_B__frag6": {
+   "nodes_before": 167,
+   "ports": 1
+  },
+  "HBT_C": {
+   "nodes_before": 1,
+   "ports": 1
+  },
+  "HBT_C__frag1": {
+   "nodes_before": 1,
+   "ports": 1
+  },
+  "HBT_C__frag2": {
+   "nodes_before": 2,
+   "ports": 2
+  },
+  "HBT_C__frag3": {
+   "nodes_before": 1,
+   "ports": 1
+  },
+  "HBT_C__frag4": {
+   "nodes_before": 1,
+   "ports": 1
+  },
+  "HBT_C__frag5": {
+   "nodes_before": 1,
+   "ports": 1
+  },
+  "HBT_C__frag6": {
+   "nodes_before": 167,
+   "ports": 1
+  },
+  "HBT_E": {
+   "nodes_before": 1,
+   "ports": 1
+  },
+  "HBT_E__frag1": {
+   "nodes_before": 1,
+   "ports": 1
+  },
+  "HBT_E__frag2": {
+   "nodes_before": 2,
+   "ports": 2
+  },
+  "HBT_E__frag3": {
+   "nodes_before": 1,
+   "ports": 1
+  },
+  "HBT_E__frag4": {
+   "nodes_before": 1,
+   "ports": 1
+  },
+  "HBT_E__frag5": {
+   "nodes_before": 1,
+   "ports": 1
+  },
+  "HBT_E__frag6": {
+   "nodes_before": 167,
+   "ports": 1
+  },
+  "IOVDD": {
+   "nodes_before": 1,
+   "ports": 1
+  },
+  "IOVDD__frag1": {
+   "nodes_before": 1,
+   "ports": 1
+  },
+  "IOVDD__frag10": {
+   "nodes_before": 1,
+   "ports": 1
+  },
+  "IOVDD__frag11": {
+   "nodes_before": 1,
+   "ports": 1
+  },
+  "IOVDD__frag12": {
+   "nodes_before": 1,
+   "ports": 1
+  },
+  "IOVDD__frag13": {
+   "nodes_before": 1,
+   "ports": 1
+  },
+  "IOVDD__frag14": {
+   "nodes_before": 1,
+   "ports": 1
+  },
+  "IOVDD__frag15": {
+   "nodes_before": 1,
+   "ports": 1
+  },
+  "IOVDD__frag16": {
+   "nodes_before": 1,
+   "ports": 1
+  },
+  "IOVDD__frag17": {
+   "nodes_before": 1,
+   "ports": 1
+  },
+  "IOVDD__frag18": {
+   "nodes_before": 1,
+   "ports": 1
+  },
+  "IOVDD__frag19": {
+   "nodes_before": 1,
+   "ports": 1
+  },
+  "IOVDD__frag2": {
+   "nodes_before": 1,
+   "ports": 1
+  },
+  "IOVDD__frag20": {
+   "nodes_before": 1,
+   "ports": 1
+  },
+  "IOVDD__frag21": {
+   "nodes_before": 1,
+   "ports": 1
+  },
+  "IOVDD__frag22": {
+   "nodes_before": 1,
+   "ports": 1
+  },
+  "IOVDD__frag23": {
+   "nodes_before": 1,
+   "ports": 1
+  },
+  "IOVDD__frag24": {
+   "nodes_before": 1,
+   "ports": 1
+  },
+  "IOVDD__frag25": {
+   "nodes_before": 1,
+   "ports": 1
+  },
+  "IOVDD__frag26": {
+   "nodes_before": 1,
+   "ports": 1
+  },
+  "IOVDD__frag27": {
+   "nodes_before": 1,
+   "ports": 1
+  },
+  "IOVDD__frag28": {
+   "nodes_before": 1,
+   "ports": 1
+  },
+  "IOVDD__frag29": {
+   "nodes_before": 1,
+   "ports": 1
+  },
+  "IOVDD__frag3": {
+   "nodes_before": 1,
+   "ports": 1
+  },
+  "IOVDD__frag30": {
+   "nodes_before": 1,
+   "ports": 1
+  },
+  "IOVDD__frag31": {
+   "nodes_before": 1,
+   "ports": 1
+  },
+  "IOVDD__frag32": {
+   "nodes_before": 1,
+   "ports": 1
+  },
+  "IOVDD__frag33": {
+   "nodes_before": 1,
+   "ports": 1
+  },
+  "IOVDD__frag34": {
+   "nodes_before": 1,
+   "ports": 1
+  },
+  "IOVDD__frag35": {
+   "nodes_before": 1,
+   "ports": 1
+  },
+  "IOVDD__frag36": {
+   "nodes_before": 1,
+   "ports": 1
+  },
+  "IOVDD__frag37": {
+   "nodes_before": 1,
+   "ports": 1
+  },
+  "IOVDD__frag38": {
+   "nodes_before": 1,
+   "ports": 1
+  },
+  "IOVDD__frag39": {
+   "nodes_before": 1,
+   "ports": 1
+  },
+  "IOVDD__frag4": {
+   "nodes_before": 1,
+   "ports": 1
+  },
+  "IOVDD__frag40": {
+   "nodes_before": 1,
+   "ports": 1
+  },
+  "IOVDD__frag41": {
+   "nodes_before": 1,
+   "ports": 1
+  },
+  "IOVDD__frag42": {
+   "nodes_before": 1,
+   "ports": 1
+  },
+  "IOVDD__frag43": {
+   "nodes_before": 1,
+   "ports": 1
+  },
+  "IOVDD__frag44": {
+   "nodes_before": 1,
+   "ports": 1
+  },
+  "IOVDD__frag45": {
+   "nodes_before": 1,
+   "ports": 1
+  },
+  "IOVDD__frag46": {
+   "nodes_before": 167,
+   "ports": 1
+  },
+  "IOVDD__frag5": {
+   "nodes_before": 1,
+   "ports": 1
+  },
+  "IOVDD__frag6": {
+   "nodes_before": 1,
+   "ports": 1
+  },
+  "IOVDD__frag7": {
+   "nodes_before": 1,
+   "ports": 1
+  },
+  "IOVDD__frag8": {
+   "nodes_before": 1,
+   "ports": 1
+  },
+  "IOVDD__frag9": {
+   "nodes_before": 1,
+   "ports": 1
+  },
+  "IOVSS": {
+   "nodes_before": 1,
+   "ports": 1
+  },
+  "IOVSS__frag1": {
+   "nodes_before": 1,
+   "ports": 1
+  },
+  "IOVSS__frag10": {
+   "nodes_before": 1,
+   "ports": 1
+  },
+  "IOVSS__frag11": {
+   "nodes_before": 1,
+   "ports": 1
+  },
+  "IOVSS__frag12": {
+   "nodes_before": 1,
+   "ports": 1
+  },
+  "IOVSS__frag13": {
+   "nodes_before": 1,
+   "ports": 1
+  },
+  "IOVSS__frag14": {
+   "nodes_before": 1,
+   "ports": 1
+  },
+  "IOVSS__frag15": {
+   "nodes_before": 1,
+   "ports": 1
+  },
+  "IOVSS__frag16": {
+   "nodes_before": 1,
+   "ports": 1
+  },
+  "IOVSS__frag17": {
+   "nodes_before": 1,
+   "ports": 1
+  },
+  "IOVSS__frag18": {
+   "nodes_before": 1,
+   "ports": 1
+  },
+  "IOVSS__frag19": {
+   "nodes_before": 1,
+   "ports": 1
+  },
+  "IOVSS__frag2": {
+   "nodes_before": 1,
+   "ports": 1
+  },
+  "IOVSS__frag20": {
+   "nodes_before": 1,
+   "ports": 1
+  },
+  "IOVSS__frag21": {
+   "nodes_before": 1,
+   "ports": 1
+  },
+  "IOVSS__frag22": {
+   "nodes_before": 1,
+   "ports": 1
+  },
+  "IOVSS__frag23": {
+   "nodes_before": 1,
+   "ports": 1
+  },
+  "IOVSS__frag24": {
+   "nodes_before": 1,
+   "ports": 1
+  },
+  "IOVSS__frag25": {
+   "nodes_before": 1,
+   "ports": 1
+  },
+  "IOVSS__frag26": {
+   "nodes_before": 1,
+   "ports": 1
+  },
+  "IOVSS__frag27": {
+   "nodes_before": 1,
+   "ports": 1
+  },
+  "IOVSS__frag28": {
+   "nodes_before": 1,
+   "ports": 1
+  },
+  "IOVSS__frag29": {
+   "nodes_before": 1,
+   "ports": 1
+  },
+  "IOVSS__frag3": {
+   "nodes_before": 1,
+   "ports": 1
+  },
+  "IOVSS__frag30": {
+   "nodes_before": 1,
+   "ports": 1
+  },
+  "IOVSS__frag31": {
+   "nodes_before": 1,
+   "ports": 1
+  },
+  "IOVSS__frag32": {
+   "nodes_before": 1,
+   "ports": 1
+  },
+  "IOVSS__frag33": {
+   "nodes_before": 1,
+   "ports": 1
+  },
+  "IOVSS__frag34": {
+   "nodes_before": 1,
+   "ports": 1
+  },
+  "IOVSS__frag35": {
+   "nodes_before": 1,
+   "ports": 1
+  },
+  "IOVSS__frag36": {
+   "nodes_before": 1,
+   "ports": 1
+  },
+  "IOVSS__frag37": {
+   "nodes_before": 1,
+   "ports": 1
+  },
+  "IOVSS__frag38": {
+   "nodes_before": 1,
+   "ports": 1
+  },
+  "IOVSS__frag39": {
+   "nodes_before": 1,
+   "ports": 1
+  },
+  "IOVSS__frag4": {
+   "nodes_before": 1,
+   "ports": 1
+  },
+  "IOVSS__frag40": {
+   "nodes_before": 1,
+   "ports": 1
+  },
+  "IOVSS__frag41": {
+   "nodes_before": 1,
+   "ports": 1
+  },
+  "IOVSS__frag42": {
+   "nodes_before": 1,
+   "ports": 1
+  },
+  "IOVSS__frag43": {
+   "nodes_before": 1,
+   "ports": 1
+  },
+  "IOVSS__frag44": {
+   "nodes_before": 1,
+   "ports": 1
+  },
+  "IOVSS__frag45": {
+   "nodes_before": 1,
+   "ports": 1
+  },
+  "IOVSS__frag46": {
+   "nodes_before": 1,
+   "ports": 1
+  },
+  "IOVSS__frag47": {
+   "nodes_before": 1,
+   "ports": 1
+  },
+  "IOVSS__frag48": {
+   "nodes_before": 1,
+   "ports": 1
+  },
+  "IOVSS__frag49": {
+   "nodes_before": 1,
+   "ports": 1
+  },
+  "IOVSS__frag5": {
+   "nodes_before": 1,
+   "ports": 1
+  },
+  "IOVSS__frag50": {
+   "nodes_before": 1,
+   "ports": 1
+  },
+  "IOVSS__frag51": {
+   "nodes_before": 1,
+   "ports": 1
+  },
+  "IOVSS__frag52": {
+   "nodes_before": 1,
+   "ports": 1
+  },
+  "IOVSS__frag53": {
+   "nodes_before": 1,
+   "ports": 1
+  },
+  "IOVSS__frag54": {
+   "nodes_before": 1,
+   "ports": 1
+  },
+  "IOVSS__frag55": {
+   "nodes_before": 1,
+   "ports": 1
+  },
+  "IOVSS__frag56": {
+   "nodes_before": 1,
+   "ports": 1
+  },
+  "IOVSS__frag57": {
+   "nodes_before": 1,
+   "ports": 1
+  },
+  "IOVSS__frag58": {
+   "nodes_before": 1,
+   "ports": 1
+  },
+  "IOVSS__frag59": {
+   "nodes_before": 1,
+   "ports": 1
+  },
+  "IOVSS__frag6": {
+   "nodes_before": 1,
+   "ports": 1
+  },
+  "IOVSS__frag60": {
+   "nodes_before": 1,
+   "ports": 1
+  },
+  "IOVSS__frag61": {
+   "nodes_before": 1,
+   "ports": 1
+  },
+  "IOVSS__frag62": {
+   "nodes_before": 1,
+   "ports": 1
+  },
+  "IOVSS__frag63": {
+   "nodes_before": 1,
+   "ports": 1
+  },
+  "IOVSS__frag64": {
+   "nodes_before": 1,
+   "ports": 1
+  },
+  "IOVSS__frag7": {
+   "nodes_before": 1,
+   "ports": 1
+  },
+  "IOVSS__frag8": {
+   "nodes_before": 1,
+   "ports": 1
+  },
+  "IOVSS__frag9": {
+   "nodes_before": 1,
+   "ports": 1
+  },
+  "SCLK": {
+   "nodes_before": 1,
+   "ports": 1
+  },
+  "SCLK__frag1": {
+   "nodes_before": 1,
+   "ports": 1
+  },
+  "SCLK__frag2": {
+   "nodes_before": 1,
+   "ports": 1
+  },
+  "SCLK__frag3": {
+   "nodes_before": 1,
+   "ports": 1
+  },
+  "SCLK__frag4": {
+   "nodes_before": 167,
+   "ports": 1
+  },
+  "SDI": {
+   "nodes_before": 1,
+   "ports": 1
+  },
+  "SDI__frag1": {
+   "nodes_before": 1,
+   "ports": 1
+  },
+  "SDI__frag2": {
+   "nodes_before": 1,
+   "ports": 1
+  },
+  "SDI__frag3": {
+   "nodes_before": 1,
+   "ports": 1
+  },
+  "SDI__frag4": {
+   "nodes_before": 167,
+   "ports": 1
+  },
+  "SDO": {
+   "nodes_before": 1,
+   "ports": 1
+  },
+  "SDO__frag1": {
+   "nodes_before": 1,
+   "ports": 1
+  },
+  "SDO__frag2": {
+   "nodes_before": 1,
+   "ports": 1
+  },
+  "SDO__frag3": {
+   "nodes_before": 1,
+   "ports": 1
+  },
+  "SDO__frag4": {
+   "nodes_before": 167,
+   "ports": 1
+  },
+  "SENSE_N": {
+   "nodes_before": 2,
+   "ports": 2
+  },
+  "SENSE_N__frag1": {
+   "nodes_before": 1,
+   "ports": 1
+  },
+  "SENSE_N__frag2": {
+   "nodes_before": 1,
+   "ports": 1
+  },
+  "SENSE_N__frag3": {
+   "nodes_before": 1,
+   "ports": 1
+  },
+  "SENSE_N__frag4": {
+   "nodes_before": 1,
+   "ports": 1
+  },
+  "SENSE_N__frag5": {
+   "nodes_before": 1,
+   "ports": 1
+  },
+  "SENSE_N__frag6": {
+   "nodes_before": 167,
+   "ports": 1
+  },
+  "SENSE_P": {
+   "nodes_before": 2,
+   "ports": 2
+  },
+  "SENSE_P__frag1": {
+   "nodes_before": 1,
+   "ports": 1
+  },
+  "SENSE_P__frag2": {
+   "nodes_before": 1,
+   "ports": 1
+  },
+  "SENSE_P__frag3": {
+   "nodes_before": 1,
+   "ports": 1
+  },
+  "SENSE_P__frag4": {
+   "nodes_before": 1,
+   "ports": 1
+  },
+  "SENSE_P__frag5": {
+   "nodes_before": 1,
+   "ports": 1
+  },
+  "SENSE_P__frag6": {
+   "nodes_before": 167,
+   "ports": 1
+  },
+  "TEMP_OUT": {
+   "nodes_before": 1,
+   "ports": 1
+  },
+  "TEMP_OUT__frag1": {
+   "nodes_before": 1,
+   "ports": 1
+  },
+  "TEMP_OUT__frag2": {
+   "nodes_before": 1,
+   "ports": 1
+  },
+  "TEMP_OUT__frag3": {
+   "nodes_before": 1,
+   "ports": 1
+  },
+  "TEMP_OUT__frag4": {
+   "nodes_before": 167,
+   "ports": 1
+  },
+  "TRIP_SET": {
+   "nodes_before": 1,
+   "ports": 1
+  },
+  "TRIP_SET__frag1": {
+   "nodes_before": 1,
+   "ports": 1
+  },
+  "TRIP_SET__frag2": {
+   "nodes_before": 1,
+   "ports": 1
+  },
+  "TRIP_SET__frag3": {
+   "nodes_before": 1,
+   "ports": 1
+  },
+  "TRIP_SET__frag4": {
+   "nodes_before": 1,
+   "ports": 1
+  },
+  "TRIP_SET__frag5": {
+   "nodes_before": 1,
+   "ports": 1
+  },
+  "TRIP_SET__frag6": {
+   "nodes_before": 167,
+   "ports": 1
+  },
+  "VDD": {
+   "nodes_before": 1,
+   "ports": 1
+  },
+  "VDDA": {
+   "nodes_before": 274,
+   "ports": 8
+  },
+  "VDDA__frag1": {
+   "nodes_before": 1,
+   "ports": 1
+  },
+  "VDDA__frag2": {
+   "nodes_before": 1,
+   "ports": 1
+  },
+  "VDDA__frag3": {
+   "nodes_before": 1,
+   "ports": 1
+  },
+  "VDDA__frag4": {
+   "nodes_before": 1,
+   "ports": 1
+  },
+  "VDDA__frag5": {
+   "nodes_before": 1,
+   "ports": 1
+  },
+  "VDDA__frag6": {
+   "nodes_before": 1,
+   "ports": 1
+  },
+  "VDDA__frag7": {
+   "nodes_before": 167,
+   "ports": 1
+  },
+  "VDD__frag1": {
+   "nodes_before": 1,
+   "ports": 1
+  },
+  "VDD__frag10": {
+   "nodes_before": 1,
+   "ports": 1
+  },
+  "VDD__frag11": {
+   "nodes_before": 1,
+   "ports": 1
+  },
+  "VDD__frag12": {
+   "nodes_before": 1528,
+   "ports": 16
+  },
+  "VDD__frag13": {
+   "nodes_before": 1,
+   "ports": 1
+  },
+  "VDD__frag14": {
+   "nodes_before": 1,
+   "ports": 1
+  },
+  "VDD__frag15": {
+   "nodes_before": 1,
+   "ports": 1
+  },
+  "VDD__frag16": {
+   "nodes_before": 1,
+   "ports": 1
+  },
+  "VDD__frag19": {
+   "nodes_before": 1,
+   "ports": 1
+  },
+  "VDD__frag2": {
+   "nodes_before": 1,
+   "ports": 1
+  },
+  "VDD__frag20": {
+   "nodes_before": 1,
+   "ports": 1
+  },
+  "VDD__frag21": {
+   "nodes_before": 1,
+   "ports": 1
+  },
+  "VDD__frag22": {
+   "nodes_before": 1,
+   "ports": 1
+  },
+  "VDD__frag23": {
+   "nodes_before": 167,
+   "ports": 1
+  },
+  "VDD__frag24": {
+   "nodes_before": 1,
+   "ports": 1
+  },
+  "VDD__frag3": {
+   "nodes_before": 1,
+   "ports": 1
+  },
+  "VDD__frag4": {
+   "nodes_before": 1,
+   "ports": 1
+  },
+  "VDD__frag5": {
+   "nodes_before": 1,
+   "ports": 1
+  },
+  "VDD__frag6": {
+   "nodes_before": 1,
+   "ports": 1
+  },
+  "VDD__frag7": {
+   "nodes_before": 1,
+   "ports": 1
+  },
+  "VDD__frag8": {
+   "nodes_before": 1,
+   "ports": 1
+  },
+  "VDD__frag9": {
+   "nodes_before": 1,
+   "ports": 1
+  },
+  "VREF": {
+   "nodes_before": 1,
+   "ports": 1
+  },
+  "VREF__frag1": {
+   "nodes_before": 1,
+   "ports": 1
+  },
+  "VREF__frag2": {
+   "nodes_before": 1,
+   "ports": 1
+  },
+  "VREF__frag3": {
+   "nodes_before": 1,
+   "ports": 1
+  },
+  "VREF__frag4": {
+   "nodes_before": 1,
+   "ports": 1
+  },
+  "VREF__frag5": {
+   "nodes_before": 1,
+   "ports": 1
+  },
+  "VREF__frag6": {
+   "nodes_before": 167,
+   "ports": 1
+  },
+  "VSS": {
+   "nodes_before": 1,
+   "ports": 1
+  },
+  "VSS__frag1": {
+   "nodes_before": 1,
+   "ports": 1
+  },
+  "VSS__frag10": {
+   "nodes_before": 1,
+   "ports": 1
+  },
+  "VSS__frag11": {
+   "nodes_before": 1,
+   "ports": 1
+  },
+  "VSS__frag12": {
+   "nodes_before": 1,
+   "ports": 1
+  },
+  "VSS__frag13": {
+   "nodes_before": 1,
+   "ports": 1
+  },
+  "VSS__frag14": {
+   "nodes_before": 1,
+   "ports": 1
+  },
+  "VSS__frag15": {
+   "nodes_before": 1813,
+   "ports": 19
+  },
+  "VSS__frag16": {
+   "nodes_before": 1,
+   "ports": 1
+  },
+  "VSS__frag17": {
+   "nodes_before": 1,
+   "ports": 1
+  },
+  "VSS__frag2": {
+   "nodes_before": 1,
+   "ports": 1
+  },
+  "VSS__frag3": {
+   "nodes_before": 1,
+   "ports": 1
+  },
+  "VSS__frag4": {
+   "nodes_before": 1,
+   "ports": 1
+  },
+  "VSS__frag5": {
+   "nodes_before": 1,
+   "ports": 1
+  },
+  "VSS__frag6": {
+   "nodes_before": 1,
+   "ports": 1
+  },
+  "VSS__frag7": {
+   "nodes_before": 1,
+   "ports": 1
+  },
+  "VSS__frag8": {
+   "nodes_before": 1,
+   "ports": 1
+  },
+  "VSS__frag9": {
+   "nodes_before": 1,
+   "ports": 1
+  },
+  "_nc1": {
+   "nodes_before": 1,
+   "ports": 1
+  },
+  "_nc1__frag1": {
+   "nodes_before": 1,
+   "ports": 1
+  },
+  "_nc2": {
+   "nodes_before": 1,
+   "ports": 1
+  },
+  "_nc2__frag1": {
+   "nodes_before": 1,
+   "ports": 1
+  },
+  "_nc3": {
+   "nodes_before": 1,
+   "ports": 1
+  },
+  "_nc3__frag1": {
+   "nodes_before": 1,
+   "ports": 1
+  },
+  "_nc4": {
+   "nodes_before": 1,
+   "ports": 1
+  },
+  "_nc4__frag1": {
+   "nodes_before": 1,
+   "ports": 1
+  },
+  "_nc5": {
+   "nodes_before": 1,
+   "ports": 1
+  },
+  "_nc5__frag1": {
+   "nodes_before": 1,
+   "ports": 1
+  },
+  "_nc6": {
+   "nodes_before": 1,
+   "ports": 1
+  },
+  "_nc6__frag1": {
+   "nodes_before": 1,
+   "ports": 1
+  },
+  "_nc7": {
+   "nodes_before": 1,
+   "ports": 1
+  },
+  "_nc7__frag1": {
+   "nodes_before": 1,
+   "ports": 1
+  },
+  "_nc8": {
+   "nodes_before": 1,
+   "ports": 1
+  },
+  "_nc8__frag1": {
+   "nodes_before": 1,
+   "ports": 1
+  },
+  "_nc9": {
+   "nodes_before": 1,
+   "ports": 1
+  },
+  "_nc9__frag1": {
+   "nodes_before": 1,
+   "ports": 1
+  },
+  "en_i": {
+   "nodes_before": 6,
+   "ports": 4
+  },
+  "en_i__frag1": {
+   "nodes_before": 1,
+   "ports": 1
+  },
+  "fault_n_o": {
+   "nodes_before": 2,
+   "ports": 2
+  },
+  "fault_n_o__frag1": {
+   "nodes_before": 1,
+   "ports": 1
+  },
+  "gate_o": {
+   "nodes_before": 2,
+   "ports": 2
+  },
+  "gate_o__frag1": {
+   "nodes_before": 1,
+   "ports": 1
+  },
+  "i_core_bgr_r4_12": {
+   "nodes_before": 2,
+   "ports": 2
+  },
+  "i_core_bgr_r4_33": {
+   "nodes_before": 2,
+   "ports": 2
+  },
+  "i_core_clr_d": {
+   "nodes_before": 2,
+   "ports": 2
+  },
+  "i_core_cmp_clk": {
+   "nodes_before": 2,
+   "ports": 2
+  },
+  "i_core_cmp_hard": {
+   "nodes_before": 4,
+   "ports": 3
+  },
+  "i_core_cmp_soft": {
+   "nodes_before": 6,
+   "ports": 4
+  },
+  "i_core_dac_hard_0_": {
+   "nodes_before": 2,
+   "ports": 2
+  },
+  "i_core_dac_hard_1_": {
+   "nodes_before": 2,
+   "ports": 2
+  },
+  "i_core_dac_hard_2_": {
+   "nodes_before": 2,
+   "ports": 2
+  },
+  "i_core_dac_hard_3_": {
+   "nodes_before": 2,
+   "ports": 2
+  },
+  "i_core_dac_hard_4_": {
+   "nodes_before": 2,
+   "ports": 2
+  },
+  "i_core_dac_hard_5_": {
+   "nodes_before": 2,
+   "ports": 2
+  },
+  "i_core_dac_hard_6_": {
+   "nodes_before": 2,
+   "ports": 2
+  },
+  "i_core_dac_hard_7_": {
+   "nodes_before": 2,
+   "ports": 2
+  },
+  "i_core_dac_soft_0_": {
+   "nodes_before": 2,
+   "ports": 2
+  },
+  "i_core_dac_soft_1_": {
+   "nodes_before": 2,
+   "ports": 2
+  },
+  "i_core_dac_soft_2_": {
+   "nodes_before": 2,
+   "ports": 2
+  },
+  "i_core_dac_soft_3_": {
+   "nodes_before": 2,
+   "ports": 2
+  },
+  "i_core_dac_soft_4_": {
+   "nodes_before": 2,
+   "ports": 2
+  },
+  "i_core_dac_soft_5_": {
+   "nodes_before": 2,
+   "ports": 2
+  },
+  "i_core_dac_soft_6_": {
+   "nodes_before": 2,
+   "ports": 2
+  },
+  "i_core_dac_soft_7_": {
+   "nodes_before": 2,
+   "ports": 2
+  },
+  "i_core_dvbe": {
+   "nodes_before": 1,
+   "ports": 1
+  },
+  "i_core_fast_en": {
+   "nodes_before": 2,
+   "ports": 2
+  },
+  "i_core_iptat": {
+   "nodes_before": 2,
+   "ports": 2
+  },
+  "i_core_isense": {
+   "nodes_before": 2,
+   "ports": 2
+  },
+  "i_core_osc_clk": {
+   "nodes_before": 2,
+   "ports": 2
+  },
+  "i_core_osc_en": {
+   "nodes_before": 2,
+   "ports": 2
+  },
+  "i_core_osc_trim_0_": {
+   "nodes_before": 2,
+   "ports": 2
+  },
+  "i_core_osc_trim_1_": {
+   "nodes_before": 2,
+   "ports": 2
+  },
+  "i_core_osc_trim_2_": {
+   "nodes_before": 2,
+   "ports": 2
+  },
+  "i_core_osc_trim_3_": {
+   "nodes_before": 2,
+   "ports": 2
+  },
+  "i_core_pbias": {
+   "nodes_before": 2,
+   "ports": 2
+  },
+  "i_core_pcasc": {
+   "nodes_before": 2,
+   "ports": 2
+  },
+  "i_core_sclk_i": {
+   "nodes_before": 2,
+   "ports": 2
+  },
+  "i_core_sclk_i__frag1": {
+   "nodes_before": 1,
+   "ports": 1
+  },
+  "i_core_sdi_i": {
+   "nodes_before": 4,
+   "ports": 3
+  },
+  "i_core_sdi_i__frag1": {
+   "nodes_before": 1,
+   "ports": 1
+  },
+  "i_core_sdo_o": {
+   "nodes_before": 1,
+   "ports": 1
+  },
+  "i_core_sdo_o__frag1": {
+   "nodes_before": 2,
+   "ports": 2
+  },
+  "i_core_t2f_en_12": {
+   "nodes_before": 2,
+   "ports": 2
+  },
+  "i_core_t2f_en_33": {
+   "nodes_before": 2,
+   "ports": 2
+  },
+  "i_core_t2f_mode_12": {
+   "nodes_before": 2,
+   "ports": 2
+  },
+  "i_core_t2f_mode_33": {
+   "nodes_before": 2,
+   "ports": 2
+  },
+  "i_core_temp_out_o": {
+   "nodes_before": 1,
+   "ports": 1
+  },
+  "i_core_temp_out_o__frag1": {
+   "nodes_before": 2,
+   "ports": 2
+  },
+  "i_core_trip_d": {
+   "nodes_before": 2,
+   "ports": 2
+  },
+  "i_core_trip_set": {
+   "nodes_before": 1,
+   "ports": 1
+  },
+  "i_core_trip_set__frag1": {
+   "nodes_before": 1,
+   "ports": 1
+  },
+  "i_core_tripped": {
+   "nodes_before": 4,
+   "ports": 3
+  },
+  "i_core_vref": {
+   "nodes_before": 4,
+   "ports": 3
+  },
+  "i_core_vref__frag2": {
+   "nodes_before": 1,
+   "ports": 1
+  },
+  "i_core_vref__frag3": {
+   "nodes_before": 1,
+   "ports": 1
+  },
+  "i_core_vref_buf": {
+   "nodes_before": 2,
+   "ports": 2
+  },
+  "net": {
+   "nodes_before": 2,
+   "ports": 2
+  }
+ },
+ "nets": {
+  "D_ELT": {
+   "R_count": 1,
+   "R_total_ohm": 374.9286,
+   "C_to_VSS_fF": 30.826,
+   "C_other_fF": 138.058
+  },
+  "D_STD": {
+   "R_count": 1,
+   "R_total_ohm": 321.1386,
+   "C_to_VSS_fF": 22.546,
+   "C_other_fF": 149.444
+  },
+  "G_SHARED": {
+   "R_count": 1,
+   "R_total_ohm": 272.6402,
+   "C_to_VSS_fF": 25.264,
+   "C_other_fF": 45.124
+  },
+  "HBT_B": {
+   "R_count": 1,
+   "R_total_ohm": 449.6554,
+   "C_to_VSS_fF": 61.339,
+   "C_other_fF": 109.606
+  },
+  "HBT_C": {
+   "R_count": 1,
+   "R_total_ohm": 497.9118,
+   "C_to_VSS_fF": 46.912,
+   "C_other_fF": 139.902
+  },
+  "HBT_E": {
+   "R_count": 1,
+   "R_total_ohm": 201.2844,
+   "C_to_VSS_fF": 38.799,
+   "C_other_fF": 47.4
+  },
+  "IOVDD": {
+   "R_count": 0,
+   "R_total_ohm": 0.0,
+   "C_to_VSS_fF": 48.202,
+   "C_other_fF": 3.502
+  },
+  "IOVSS": {
+   "R_count": 0,
+   "R_total_ohm": 0.0,
+   "C_to_VSS_fF": 0.0,
+   "C_other_fF": 7.004
+  },
+  "SENSE_N": {
+   "R_count": 1,
+   "R_total_ohm": 104.8797,
+   "C_to_VSS_fF": 16.918,
+   "C_other_fF": 3.631
+  },
+  "SENSE_P": {
+   "R_count": 1,
+   "R_total_ohm": 169.7189,
+   "C_to_VSS_fF": 29.088,
+   "C_other_fF": 2.476
+  },
+  "TRIP_SET": {
+   "R_count": 0,
+   "R_total_ohm": 0.0,
+   "C_to_VSS_fF": 0.122,
+   "C_other_fF": 5.105
+  },
+  "VDD": {
+   "R_count": 60,
+   "R_total_ohm": 21859.8266,
+   "C_to_VSS_fF": 3982.113,
+   "C_other_fF": 310.0
+  },
+  "VDDA": {
+   "R_count": 28,
+   "R_total_ohm": 103934.334,
+   "C_to_VSS_fF": 266.157,
+   "C_other_fF": 168.309
+  },
+  "VREF": {
+   "R_count": 0,
+   "R_total_ohm": 0.0,
+   "C_to_VSS_fF": 0.104,
+   "C_other_fF": 2.376
+  },
+  "VSS": {
+   "R_count": 171,
+   "R_total_ohm": 1023034.4556,
+   "C_to_VSS_fF": 0.0,
+   "C_other_fF": 0.0
+  },
+  "_nc1": {
+   "R_count": 0,
+   "R_total_ohm": 0.0,
+   "C_to_VSS_fF": 0.008,
+   "C_other_fF": 0.002
+  },
+  "_nc2": {
+   "R_count": 0,
+   "R_total_ohm": 0.0,
+   "C_to_VSS_fF": 0.007,
+   "C_other_fF": 0.005
+  },
+  "_nc3": {
+   "R_count": 0,
+   "R_total_ohm": 0.0,
+   "C_to_VSS_fF": 0.008,
+   "C_other_fF": 0.003
+  },
+  "_nc4": {
+   "R_count": 0,
+   "R_total_ohm": 0.0,
+   "C_to_VSS_fF": 0.006,
+   "C_other_fF": 0.005
+  },
+  "_nc5": {
+   "R_count": 0,
+   "R_total_ohm": 0.0,
+   "C_to_VSS_fF": 0.006,
+   "C_other_fF": 0.007
+  },
+  "_nc6": {
+   "R_count": 0,
+   "R_total_ohm": 0.0,
+   "C_to_VSS_fF": 0.006,
+   "C_other_fF": 0.005
+  },
+  "_nc7": {
+   "R_count": 0,
+   "R_total_ohm": 0.0,
+   "C_to_VSS_fF": 0.006,
+   "C_other_fF": 0.007
+  },
+  "_nc8": {
+   "R_count": 0,
+   "R_total_ohm": 0.0,
+   "C_to_VSS_fF": 0.007,
+   "C_other_fF": 0.007
+  },
+  "_nc9": {
+   "R_count": 0,
+   "R_total_ohm": 0.0,
+   "C_to_VSS_fF": 0.007,
+   "C_other_fF": 0.004
+  },
+  "en_i": {
+   "R_count": 6,
+   "R_total_ohm": 6560.5257,
+   "C_to_VSS_fF": 37.959,
+   "C_other_fF": 83.723
+  },
+  "fault_n_o": {
+   "R_count": 1,
+   "R_total_ohm": 286.8582,
+   "C_to_VSS_fF": 30.986,
+   "C_other_fF": 30.434
+  },
+  "gate_o": {
+   "R_count": 1,
+   "R_total_ohm": 214.6492,
+   "C_to_VSS_fF": 15.43,
+   "C_other_fF": 64.619
+  },
+  "i_core_bgr_r4_12": {
+   "R_count": 1,
+   "R_total_ohm": 80.748,
+   "C_to_VSS_fF": 4.336,
+   "C_other_fF": 17.361
+  },
+  "i_core_bgr_r4_33": {
+   "R_count": 1,
+   "R_total_ohm": 246.8163,
+   "C_to_VSS_fF": 19.28,
+   "C_other_fF": 50.14
+  },
+  "i_core_clr_d": {
+   "R_count": 1,
+   "R_total_ohm": 55.044,
+   "C_to_VSS_fF": 1.222,
+   "C_other_fF": 23.435
+  },
+  "i_core_cmp_clk": {
+   "R_count": 1,
+   "R_total_ohm": 280.0142,
+   "C_to_VSS_fF": 27.994,
+   "C_other_fF": 94.496
+  },
+  "i_core_cmp_hard": {
+   "R_count": 3,
+   "R_total_ohm": 1524.1853,
+   "C_to_VSS_fF": 22.244,
+   "C_other_fF": 158.41
+  },
+  "i_core_cmp_soft": {
+   "R_count": 6,
+   "R_total_ohm": 4951.0249,
+   "C_to_VSS_fF": 35.777,
+   "C_other_fF": 233.959
+  },
+  "i_core_dac_hard_0": {
+   "R_count": 0,
+   "R_total_ohm": 0.0,
+   "C_to_VSS_fF": 4.3394,
+   "C_other_fF": 88.7396
+  },
+  "i_core_dac_hard_0_": {
+   "R_count": 1,
+   "R_total_ohm": 209.7869,
+   "C_to_VSS_fF": 4.2446,
+   "C_other_fF": 47.2404
+  },
+  "i_core_dac_hard_1": {
+   "R_count": 0,
+   "R_total_ohm": 0.0,
+   "C_to_VSS_fF": 1.956,
+   "C_other_fF": 89.7625
+  },
+  "i_core_dac_hard_1_": {
+   "R_count": 1,
+   "R_total_ohm": 210.9058,
+   "C_to_VSS_fF": 1.919,
+   "C_other_fF": 47.9255
+  },
+  "i_core_dac_hard_2": {
+   "R_count": 0,
+   "R_total_ohm": 0.0,
+   "C_to_VSS_fF": 2.4568,
+   "C_other_fF": 65.6831
+  },
+  "i_core_dac_hard_2_": {
+   "R_count": 1,
+   "R_total_ohm": 246.9202,
+   "C_to_VSS_fF": 2.3732,
+   "C_other_fF": 65.8169
+  },
+  "i_core_dac_hard_3": {
+   "R_count": 0,
+   "R_total_ohm": 0.0,
+   "C_to_VSS_fF": 6.9486,
+   "C_other_fF": 32.5323
+  },
+  "i_core_dac_hard_3_": {
+   "R_count": 1,
+   "R_total_ohm": 232.5206,
+   "C_to_VSS_fF": 6.6834,
+   "C_other_fF": 48.6407
+  },
+  "i_core_dac_hard_4": {
+   "R_count": 0,
+   "R_total_ohm": 0.0,
+   "C_to_VSS_fF": 1.4956,
+   "C_other_fF": 52.3895
+  },
+  "i_core_dac_hard_4_": {
+   "R_count": 1,
+   "R_total_ohm": 221.1088,
+   "C_to_VSS_fF": 1.4614,
+   "C_other_fF": 52.6355
+  },
+  "i_core_dac_hard_5": {
+   "R_count": 0,
+   "R_total_ohm": 0.0,
+   "C_to_VSS_fF": 3.0417,
+   "C_other_fF": 40.549
+  },
+  "i_core_dac_hard_5_": {
+   "R_count": 1,
+   "R_total_ohm": 222.6387,
+   "C_to_VSS_fF": 2.9913,
+   "C_other_fF": 40.411
+  },
+  "i_core_dac_hard_6": {
+   "R_count": 0,
+   "R_total_ohm": 0.0,
+   "C_to_VSS_fF": 5.6428,
+   "C_other_fF": 22.499
+  },
+  "i_core_dac_hard_6_": {
+   "R_count": 1,
+   "R_total_ohm": 221.5582,
+   "C_to_VSS_fF": 5.5882,
+   "C_other_fF": 22.549
+  },
+  "i_core_dac_hard_7": {
+   "R_count": 0,
+   "R_total_ohm": 0.0,
+   "C_to_VSS_fF": 8.0111,
+   "C_other_fF": 18.7834
+  },
+  "i_core_dac_hard_7_": {
+   "R_count": 1,
+   "R_total_ohm": 209.1862,
+   "C_to_VSS_fF": 7.9289,
+   "C_other_fF": 22.6206
+  },
+  "i_core_dac_soft_0": {
+   "R_count": 0,
+   "R_total_ohm": 0.0,
+   "C_to_VSS_fF": 1.5235,
+   "C_other_fF": 33.0018
+  },
+  "i_core_dac_soft_0_": {
+   "R_count": 1,
+   "R_total_ohm": 107.5083,
+   "C_to_VSS_fF": 1.3785,
+   "C_other_fF": 32.8313
+  },
+  "i_core_dac_soft_1": {
+   "R_count": 0,
+   "R_total_ohm": 0.0,
+   "C_to_VSS_fF": 1.3414,
+   "C_other_fF": 30.2172
+  },
+  "i_core_dac_soft_1_": {
+   "R_count": 1,
+   "R_total_ohm": 127.6834,
+   "C_to_VSS_fF": 1.3146,
+   "C_other_fF": 28.6958
+  },
+  "i_core_dac_soft_2": {
+   "R_count": 0,
+   "R_total_ohm": 0.0,
+   "C_to_VSS_fF": 2.2189,
+   "C_other_fF": 22.8236
+  },
+  "i_core_dac_soft_2_": {
+   "R_count": 1,
+   "R_total_ohm": 129.3326,
+   "C_to_VSS_fF": 1.9461,
+   "C_other_fF": 21.7514
+  },
+  "i_core_dac_soft_3": {
+   "R_count": 0,
+   "R_total_ohm": 0.0,
+   "C_to_VSS_fF": 0.6825,
+   "C_other_fF": 39.453
+  },
+  "i_core_dac_soft_3_": {
+   "R_count": 1,
+   "R_total_ohm": 126.7332,
+   "C_to_VSS_fF": 0.4695,
+   "C_other_fF": 38.745
+  },
+  "i_core_dac_soft_4": {
+   "R_count": 0,
+   "R_total_ohm": 0.0,
+   "C_to_VSS_fF": 2.3937,
+   "C_other_fF": 20.2597
+  },
+  "i_core_dac_soft_4_": {
+   "R_count": 1,
+   "R_total_ohm": 102.0616,
+   "C_to_VSS_fF": 2.0393,
+   "C_other_fF": 19.7473
+  },
+  "i_core_dac_soft_5": {
+   "R_count": 0,
+   "R_total_ohm": 0.0,
+   "C_to_VSS_fF": 2.5054,
+   "C_other_fF": 22.1378
+  },
+  "i_core_dac_soft_5_": {
+   "R_count": 1,
+   "R_total_ohm": 103.3507,
+   "C_to_VSS_fF": 2.3246,
+   "C_other_fF": 21.5493
+  },
+  "i_core_dac_soft_6": {
+   "R_count": 0,
+   "R_total_ohm": 0.0,
+   "C_to_VSS_fF": 4.7185,
+   "C_other_fF": 7.2083
+  },
+  "i_core_dac_soft_6_": {
+   "R_count": 1,
+   "R_total_ohm": 59.9832,
+   "C_to_VSS_fF": 4.0635,
+   "C_other_fF": 6.0147
+  },
+  "i_core_dac_soft_7": {
+   "R_count": 0,
+   "R_total_ohm": 0.0,
+   "C_to_VSS_fF": 1.1559,
+   "C_other_fF": 32.7769
+  },
+  "i_core_dac_soft_7_": {
+   "R_count": 1,
+   "R_total_ohm": 104.3892,
+   "C_to_VSS_fF": 1.0531,
+   "C_other_fF": 29.3031
+  },
+  "i_core_dvbe": {
+   "R_count": 0,
+   "R_total_ohm": 0.0,
+   "C_to_VSS_fF": 0.0,
+   "C_other_fF": 0.027
+  },
+  "i_core_fast_en": {
+   "R_count": 1,
+   "R_total_ohm": 58.8774,
+   "C_to_VSS_fF": 1.805,
+   "C_other_fF": 10.181
+  },
+  "i_core_iptat": {
+   "R_count": 1,
+   "R_total_ohm": 156.5273,
+   "C_to_VSS_fF": 11.822,
+   "C_other_fF": 32.561
+  },
+  "i_core_isense": {
+   "R_count": 1,
+   "R_total_ohm": 139.5131,
+   "C_to_VSS_fF": 6.058,
+   "C_other_fF": 58.454
+  },
+  "i_core_osc_clk": {
+   "R_count": 1,
+   "R_total_ohm": 414.6805,
+   "C_to_VSS_fF": 20.987,
+   "C_other_fF": 124.047
+  },
+  "i_core_osc_en": {
+   "R_count": 1,
+   "R_total_ohm": 243.6687,
+   "C_to_VSS_fF": 11.334,
+   "C_other_fF": 85.554
+  },
+  "i_core_osc_trim_0": {
+   "R_count": 0,
+   "R_total_ohm": 0.0,
+   "C_to_VSS_fF": 5.9553,
+   "C_other_fF": 40.1524
+  },
+  "i_core_osc_trim_0_": {
+   "R_count": 1,
+   "R_total_ohm": 217.8957,
+   "C_to_VSS_fF": 5.9047,
+   "C_other_fF": 40.3436
+  },
+  "i_core_osc_trim_1": {
+   "R_count": 0,
+   "R_total_ohm": 0.0,
+   "C_to_VSS_fF": 2.3373,
+   "C_other_fF": 50.0343
+  },
+  "i_core_osc_trim_1_": {
+   "R_count": 1,
+   "R_total_ohm": 242.502,
+   "C_to_VSS_fF": 2.3167,
+   "C_other_fF": 61.7077
+  },
+  "i_core_osc_trim_2": {
+   "R_count": 0,
+   "R_total_ohm": 0.0,
+   "C_to_VSS_fF": 9.9408,
+   "C_other_fF": 10.8252
+  },
+  "i_core_osc_trim_2_": {
+   "R_count": 1,
+   "R_total_ohm": 221.2045,
+   "C_to_VSS_fF": 9.8262,
+   "C_other_fF": 11.7908
+  },
+  "i_core_osc_trim_3": {
+   "R_count": 0,
+   "R_total_ohm": 0.0,
+   "C_to_VSS_fF": 2.5922,
+   "C_other_fF": 55.4846
+  },
+  "i_core_osc_trim_3_": {
+   "R_count": 1,
+   "R_total_ohm": 246.11,
+   "C_to_VSS_fF": 2.5598,
+   "C_other_fF": 71.4464
+  },
+  "i_core_pbias": {
+   "R_count": 1,
+   "R_total_ohm": 231.7716,
+   "C_to_VSS_fF": 9.563,
+   "C_other_fF": 129.881
+  },
+  "i_core_pcasc": {
+   "R_count": 1,
+   "R_total_ohm": 230.8916,
+   "C_to_VSS_fF": 15.486,
+   "C_other_fF": 80.176
+  },
+  "i_core_sclk_i": {
+   "R_count": 1,
+   "R_total_ohm": 409.6554,
+   "C_to_VSS_fF": 44.529,
+   "C_other_fF": 113.443
+  },
+  "i_core_sdi_i": {
+   "R_count": 3,
+   "R_total_ohm": 718599.0305,
+   "C_to_VSS_fF": 88.878,
+   "C_other_fF": 76.554
+  },
+  "i_core_sdo_o": {
+   "R_count": 1,
+   "R_total_ohm": 69.3237,
+   "C_to_VSS_fF": 28.623,
+   "C_other_fF": 47.028
+  },
+  "i_core_t2f_en_12": {
+   "R_count": 1,
+   "R_total_ohm": 57.6023,
+   "C_to_VSS_fF": 4.091,
+   "C_other_fF": 25.002
+  },
+  "i_core_t2f_en_33": {
+   "R_count": 1,
+   "R_total_ohm": 451.2046,
+   "C_to_VSS_fF": 32.582,
+   "C_other_fF": 149.777
+  },
+  "i_core_t2f_mode_12": {
+   "R_count": 1,
+   "R_total_ohm": 92.4571,
+   "C_to_VSS_fF": 5.855,
+   "C_other_fF": 26.238
+  },
+  "i_core_t2f_mode_33": {
+   "R_count": 1,
+   "R_total_ohm": 386.1899,
+   "C_to_VSS_fF": 28.169,
+   "C_other_fF": 139.102
+  },
+  "i_core_temp_out_o": {
+   "R_count": 1,
+   "R_total_ohm": 126.0231,
+   "C_to_VSS_fF": 12.641,
+   "C_other_fF": 8.302
+  },
+  "i_core_trip_d": {
+   "R_count": 1,
+   "R_total_ohm": 55.695,
+   "C_to_VSS_fF": 1.45,
+   "C_other_fF": 24.744
+  },
+  "i_core_trip_set": {
+   "R_count": 0,
+   "R_total_ohm": 0.0,
+   "C_to_VSS_fF": 0.002,
+   "C_other_fF": 0.131
+  },
+  "i_core_tripped": {
+   "R_count": 3,
+   "R_total_ohm": 97141.8313,
+   "C_to_VSS_fF": 24.55,
+   "C_other_fF": 118.696
+  },
+  "i_core_vref": {
+   "R_count": 3,
+   "R_total_ohm": 9750.7007,
+   "C_to_VSS_fF": 31.706,
+   "C_other_fF": 139.242
+  },
+  "i_core_vref_buf": {
+   "R_count": 1,
+   "R_total_ohm": 136.4942,
+   "C_to_VSS_fF": 9.849,
+   "C_other_fF": 34.994
+  },
+  "net": {
+   "R_count": 1,
+   "R_total_ohm": 323.3629,
+   "C_to_VSS_fF": 38.006,
+   "C_other_fF": 74.036
+  }
+ }
+}
