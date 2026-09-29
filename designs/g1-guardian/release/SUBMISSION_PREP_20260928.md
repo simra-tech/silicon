@@ -342,7 +342,7 @@ fc9d285d18fea478f7c36fb00d9152447472808c59eccef5054db3ef7ca2e71b  verify/control
 **Done 2026-09-28 (owner instruction to finish the submission):** step 1 (`trl` 5, category `SoC`, ID 1816
 kept), step 3 (repository created and pushed, GDS as a plain 84 MB file, GitHub raw download verified
 sha256 `eb3e51a8…`), step 5 (issues/68 opened; the run is `Oct-2026`; the questions of step 2 are in the
-issue text). Step 4 done on our side 2026-09-28: the stock DRC decks (main, maximal, density, precheck, antenna) were re-run on `SoC1816.gds` itself, 0 markers each (`IHP__SoC1816/SoC1816-main/verification/drc_release_20260928/`). Still open: IHP's own DRC and step 6 (record IHP's answer).
+issue text). Step 4 done on our side 2026-09-28: the stock DRC decks (main, maximal, density, precheck, antenna) were re-run on `SoC1816.gds` itself, 0 markers each (`IHP__SoC1816/SoC1816-main/verification/drc_release_20260928/`). Step 6, IHP's answer: IHP intake result (issue 68, Krzysztof Herman, 2026-09-28 15:54 CEST): "The design is minimal DRC clean. Tape In Checks and DRC runs with no errors. This message does not imply submission is finished. I will keep you informed." Final submission confirmation from IHP is still pending. Note: the later release-note-only commits on the submission repository (DRC re-run on the release file, timing / IR-EM / PEX / simulation rows) do not touch the GDS, the netlist or info.json.
 The original list follows unchanged.
 
 1. **Decide and fill the TODOs:** `info.json` `trl` (an integer, self-assessed with

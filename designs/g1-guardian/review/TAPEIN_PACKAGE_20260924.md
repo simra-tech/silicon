@@ -181,7 +181,7 @@ hash was recorded right after the runs).
 | Timing of the final GDS (r4) | OpenSTA 3.1.0, ECO macro SPEF + extracted top-level routes, three corners | passed: setup slack 27.874 / 27.053 / 25.381 ns, hold +0.114 / +0.195 / +0.337 ns (simulated) | `blocks/g1_ctrl/reports/sta_final_gds_20260928/README.md` |
 | IR drop / EM of the final GDS (r4) | KLayout geometry + ngspice resistor mesh, OpenROAD PSM for the macro | passed: worst static drop 2.6 % (digital, 1.2 V) / 1.2 % (SENSE, 3.3 V); supply routes ≤ 23.4 % of the EM limit; dynamic IR and package resistance not run (simulated) | `blocks/g1_top/reports/ir_em_20260928/README.md` |
 | Full-chip PEX (r4) | kpex 0.3.12 2.5D + KLayout R extractor on the top-level routing view, joined to the block extractions; flat whole-chip kpex bounded at 12 h, not finished | passed (simulated): trip timing within 0.2 ns of the C-only deck at three corners; DAC thresholds 4.3-5.2 mV lower from the `VREF_BUF` route drop (about 2 LSB, covered by calibration) | `blocks/g1_top/reports/fullchip_pex_20260928/README.md` |
-| IHP's own intake checks (MPW Rejection Test) | IHP | not run | |
+| IHP's own intake checks (MPW Rejection Test) | IHP | **passed at intake** 2026-09-28: "minimal DRC clean; Tape In Checks and DRC runs with no errors" (final confirmation pending) | https://github.com/IHP-GmbH/Open-Silicon-MPW/issues/68 |
 
 ### Sign-off checks on `g1_chip_top_1414_r3.gds` (the fallback)
 
@@ -277,7 +277,7 @@ Deferred to a later revision (not in r3 or r4; `review/redteam-20260927/power_io
   record in [`release/SUBMISSION_PREP_20260928.md`](../release/SUBMISSION_PREP_20260928.md)); request issue
   https://github.com/IHP-GmbH/Open-Silicon-MPW/issues/68 for the `Oct-2026` run. Owner confirmed 2026-09-28: the 2 mm² area is
   registered with IHP and QFN24 is in the quotation; `sealring_x/y` corrected to um (1414.0) and `process` accepted
-  either way. Open: IHP's review result.
+  either way. IHP intake passed 2026-09-28 (issue 68: minimal DRC clean, Tape In Checks and DRC with no errors); final submission confirmation pending.
 - [ ] Final GDS identity frozen. Current: r4 `225d0b53…` (2026-09-28; r3 `7d07a784…` is the documented fallback); `gds_inventory.py` and the bond-map match re-run on it (passed). If it changes again, re-run both and update every sha256 here.
 - [x] Section 6 filled from `signoff-1414r4-20260927/` (r4), with passed / failed / not run as reported; the r3 table is kept for the fallback.
 - [x] Bond map rebound to the r3 sha256 as a new CSV revision (`bondmap_20260926_r4.csv`), with QFN24 lead numbers.
