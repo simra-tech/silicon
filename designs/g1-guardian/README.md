@@ -104,7 +104,7 @@ Checks on that exact file:
   cells and with IHP's latest `dev` deck and library. The design-local IO copies match IHP's `dev`
   library on every layer (PR #1223; upstream issues #1218/#1130;
   [evidence](review/upstream/evidence/README.md)).
-- **Full-chip PEX: not run.**
+- **Full-chip PEX: **hierarchical, passed**** (simulated; hierarchical top-level R+C of every net joined to the block extractions, trip timing within 0.2 ns of the C-only deck; see "Chip-level" below and [fullchip_pex_20260928](blocks/g1_top/reports/fullchip_pex_20260928/README.md)).
 
 The digital macro on the chip (byte-identical in r3 and r4; the results below were obtained on r3 and carry over):
 - gate netlist `4b83f181…`, powered netlist `476885d7…`, nominal SPEF `0b626c7f…`;
@@ -275,7 +275,7 @@ latencies are retained for diagnosis but are not accepted sign-off evidence.
 - Canonical unprojected full-chip LVS: **failed; cause: substrate/tap/diode netlist semantics of the IO-cell reference in the PDK, reproduced with stock cells and with IHP's latest `dev` deck and library; the design-local IO copies match IHP's `dev` library on every layer (PR #1223); upstream issues #1218/#1130 ([evidence](review/upstream/evidence/README.md))**. Only the projected-reference
   comparison passed. The design-local PolyRes IO cells were XOR-checked against IHP's
   `dev` cells (identical); the rest of the IO ring was not XOR-checked against stock cells.
-- Full-chip PEX: **not run** (running in the post-submission campaign). Timing of the final GDS: passed (see "Status" and
+- Full-chip PEX: **hierarchical, passed** (simulated). A flat whole-chip kpex 2.5D extraction does not finish (bounded 12 h attempt still in its first pass, about 6 days extrapolated), so the top-level routing of the r4 GDS was extracted with series R and C for every top-level net including the supplies (KLayout R extractor + kpex 2.5D C of the routing view) and joined to the block extractions; with it the trip timing changes by at most 0.2 ns (`c_mid` 1.8× `GATE` < 1 V 1.54318 / 1.72631 / 1.43361 µs at tt / ss 125 °C / ff −40 °C), 1.25× and `q` still do not trip. New finding: the TRIP block draws about 40 µA through the 136 Ω `VREF_BUF` route, lowering both DAC thresholds by 4.3-5.2 mV, about 2 LSB lower hard trip referred to the shunt (derived; absorbed by the per-part calibration). Not run: a fully flat device-level netlist, coupling between top-level wires and macro-internal metal, fill effects, threshold brackets with the new parasitics ([fullchip_pex_20260928](blocks/g1_top/reports/fullchip_pex_20260928/README.md)). Timing of the final GDS: passed (see "Status" and
   [sta_final_gds_20260928](blocks/g1_ctrl/reports/sta_final_gds_20260928/README.md)). IR drop / EM of the final GDS: **passed** (simulated, static): worst supply loss 31.4 mV at the digital macro (2.6 % of 1.2 V) and 40.4 mV at G1_SENSE (1.2 % of 3.3 V) in the trip-worst case with worst-case resistance; top-level supply routes at most 23.4 % of the IHP EM limit, `GATE` route 3.9 % at 40 mA, macro grid 9.0 %; two segments over 50 % only under deliberately pessimistic bounds (`SENSE_P/N` single vias at a 0.331 mA fault bound, an IO-cell Metal1 slice on `IOVSS` with 64 mA from four output pads at once); dynamic IR, package/bond-wire resistance and the analog macros' internal grids not run ([ir_em_20260928](blocks/g1_top/reports/ir_em_20260928/README.md)).
   Block extractions exist for BGR586 (C only), TRIP NF4, OSC R0.95 (isolated macro) and
   SENSE R100 (partial field). None is an extraction of the assembled chip.
