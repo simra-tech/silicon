@@ -1,5 +1,17 @@
 # G1 — radiation-aware node guardian (SiGe BiCMOS test chip)
 
+> **Post-tape-out record corrections (2026-10-06).** G1 was submitted on 2026-09-28; the submitted GDS
+> (`SoC1816.gds`) is unchanged. A record review after tape-out found nine statements in this repository that
+> were wrong. Commits `eeb192dd9`, `18be98f83` and `37f9dd953` correct them. They do not change the design:
+> - the chip SDC derate expression `expr 5 / 100` is integer division (0) in Tcl, so every earlier chip-level
+>   STA ran at derate 0 %; the final-GDS STA is re-run at 5 % (still 0 violations, simulated), record
+>   `blocks/g1_ctrl/reports/sta_final_gds_derate5_20261006/`;
+> - corrected numbers and wording for DEF provenance, the threshold shift, the IO frame minimum, register-map
+>   latency, the OSC density cause, the via count and the RC reference pin, each with a dated note next to
+>   the original text;
+> - board rule P10 now names the C_rss bias point and the hot-corner threshold.
+> Checks that were not re-run are written "not run".
+
 A mixed-signal test chip intended to protect a compute load from single-event
 latch-up and characterize temperature, dose-sensitive leakage and upset events.
 Four functions on one 1.414 × 1.414 mm die, planned for QFN24 board measurements:
