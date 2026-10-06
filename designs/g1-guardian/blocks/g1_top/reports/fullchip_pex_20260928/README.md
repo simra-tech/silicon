@@ -16,7 +16,7 @@ at most 0.2 ns (c_mid 1.8×, `GATE` < 1 V at tt / ss 125 °C / ff −40 °C: 1.5
 New finding: the top-level route R moves both DAC thresholds of G1_TRIP down by 4.3-5.2 mV
 (`vth_hard`) because the TRIP block draws about 40 µA from `VREF_BUF` through its 136 Ω route
 (5.2-6.1 mV drop), and ISENSE arrives 1.9-2.4 mV lower at the TRIP pin; net, the hard threshold
-moves about 0.43-0.47 mV (about 2 LSB) lower referred to the shunt (derived). The per-part bench calibration
+moves about 0.41-0.47 mV (2.1-2.4 LSB of 0.198 mV) lower referred to the shunt (derived; corrected 2026-10-06 from 0.43-0.47 mV, see 4.4). The per-part bench calibration
 absorbs this. The `VREF` mean is unchanged; its clock ripple is 43 mV p-p at the BGR and 48 mV at the SENSE pin (tt).
 With the transistor-level oscillator clocking the RTL the decision lands 5.6-8.9 ns later (ff −40 °C, tt), a
 clock-phase effect of a 0.03-0.05 % lower oscillator frequency; at ss 125 °C that case did not run to completion (numerical).
@@ -117,8 +117,8 @@ the black-box pin shapes as ports, kpex ihp-sg13g2 sheet and via tables converte
 reports "found 0 pins" (the view LVSDB has no circuit pins), so its 62 599 resistors have no port
 anchors and are **not used**.
 
-Per-net route R (effective, from the reference pin: the driving block, or the pad for chip-pin
-nets; all other pins open) and C (kpex, fF). The full list of 57 nets, with pins and couplings, is
+Per-net route R (effective, from the reference pin: the first DRIVER-list instance in sort order, or the pad for chip-pin
+nets; all other pins open; see the correction below the table of 3.3) and C (kpex, fF). The full list of 57 nets, with pins and couplings, is
 [top_rc_nets.json](top_rc_nets.json) (also at `${BULK}/pex/top_rc_nets.json` for T3);
 the networks per net are summarised in [rnet_summary.json](rnet_summary.json).
 
@@ -133,7 +133,7 @@ the networks per net are summarised in [rnet_summary.json](rnet_summary.json).
 | `SENSE_P` | 172 | Xpad08_sense_p 170 | 30.9 | 0.5 | 31.3 |
 | `SENSE_N` | 106 | Xpad09_sense_n 105 | 20.0 | 0.3 | 20.3 |
 | `i_core_cmp_soft` | 541 | trip 483; antenna cell@1021.440,891.000 491; antenna cell@1022.880,891.000 492 | 39.0 | 230.8 | 269.7 |
-| `i_core_cmp_hard` | 422 | gate 88; trip 380 | 24.3 | 156.4 | 180.7 |
+| `i_core_cmp_hard` | 422 | gate 88; trip 380 (from the digital macro pin, see correction) | 24.3 | 156.4 | 180.7 |
 | `i_core_cmp_clk` | 283 | trip 280 | 34.3 | 88.2 | 122.5 |
 | `i_core_osc_clk` | 417 | osc 415 | 21.9 | 123.1 | 145.0 |
 | `i_core_tripped` | 364 | gate 82; antenna cell@1027.200,891.000 351 | 28.0 | 115.3 | 143.2 |
@@ -154,6 +154,13 @@ the IO cells are not in the view):
 | `VSS` | 2.4 | 3.2 | 2.0 | 3.2 | 6.6 | 4.5 | 10.5 | 9.4 | 10.2 | 3.4 | 3.4 |
 
 The BGR supply pins are not on the top-level supply routes in this view (they are joined inside the BGR macro and its overlay), so no BGR row value is given; the BGR sees the ideal pad-ring node in the deck. IOVDD/IOVSS have no core-level routes (the ring only).
+
+**Correction (2026-10-06), reference pin of `i_core_cmp_hard`.** The per-net file takes the first DRIVER-list instance in sort order
+as the reference pin; for `i_core_cmp_hard` that is `Xi_core_u_digital`, not the real driver `Xi_core_u_trip`. The "gate 88; trip 380"
+values are therefore measured from the digital macro pin. Driver-referred values are trip to digital 379.704 ohm and trip to gate
+368.357 ohm (simulated, KLayout RNetExtractor, same extraction). Other frozen pairs of that check (vref bgr to sense 141.367 ohm,
+bgr to pad18 259.41 ohm; cmp_soft trip to digital 482.62 ohm) are consistent with the table above. Effect of the reference-pin choice
+on the annotated STA (`top_p2p.json`): **not run**.
 
 ### 3.4 Distributed RC netlist for the chip deck
 
@@ -254,8 +261,11 @@ reference both ends are one node.
    comparator input `icmp` moves by −0.2 to −0.4 mV only.
 4. **Net threshold effect (derived, not simulated as a bracket).** `vth_hard` − `icmp` shrinks by
    4.1-4.7 mV. With the chip's `icmp` slope of about 10.1 mV per shunt mV (tt: 0.1442 V between
-   25.0 mV and the 39.25 mV code-200 nominal), the hard trip point moves about 0.43-0.47 mV
-   (2.2-2.4 LSB of 0.198 mV) lower, shunt-referred. This is inside the ±6 LSB bracket resolution of
+   25.0 mV and the 39.25 mV code-200 nominal), the hard trip point moves about 0.41-0.47 mV
+   (2.1-2.4 LSB of 0.198 mV) lower, shunt-referred: 0.436 / 0.409 / 0.468 mV (2.2 / 2.1 / 2.4 LSB) at tt / ss125 / ff-40, from
+   `vth_hard` shifts of -4.73 / -4.30 / -5.15 mV and `icmp` shifts of -0.32 / -0.17 / -0.44 mV (margin shrink 4.41 / 4.13 / 4.71 mV,
+   simulated) over the 10.1 mV/mV slope. (Corrected 2026-10-06: the earlier text gave 0.43-0.47 mV; this record's own inputs for ss/125 C,
+   a 4.13 mV margin shrink at slope 10.1, give 0.41 mV, 2.1 LSB.) This is inside the ±6 LSB bracket resolution of
    the r4 campaign and inside what the per-part bench calibration (spec, host rule H6) absorbs; no
    bracket was re-run with the R+C deck.
 5. **`VREF` ripple.** The mean is unchanged (≤ 0.02 mV). The clock ripple is 43-46 mV p-p at the

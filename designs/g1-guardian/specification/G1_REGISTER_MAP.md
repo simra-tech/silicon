@@ -109,11 +109,14 @@ Handoffs:
   flips. The `osc_clk` domain synchronises it (2 flops + edge detect), reads
   the addressed register into `rd_hold[7:0]`, and if the address is the low
   byte of a 16-bit counter also copies the high byte into `hi_hold[7:0]`
-  (section 4, "L/H pairs"). Total latency ≤ 4 `osc_clk`. `rd_hold` is then
+  (section 4, "L/H pairs"). Total latency ≤ 5 `osc_clk` cycles including one metastability cycle (4 with an early
+  synchroniser). `rd_hold` is then
   untouched until the next read. The `SCLK` domain loads `rd_hold` at the
-  falling edge after the 16th rising edge, 7.5 `SCLK` periods after the
-  address was latched. With `f_SCLK` ≤ `f_OSC` there is a margin of at least
-  3.5 `osc_clk` cycles between the last change of `rd_hold` and its capture.
+  falling edge after the 16th rising edge, 8.5 `SCLK` periods after `rd_tog`
+  flipped at the 8th rising edge. With `f_SCLK` ≤ `f_OSC` there is a margin of at least
+  3.5 `osc_clk` cycles (8.5 - 5) between the last change of `rd_hold` and its capture.
+  (Corrected 2026-10-06: earlier text said latency ≤ 4 and 7.5 `SCLK` periods; the two errors cancel and the
+  margin is unchanged. RTL-level figures: `../review/redteam-20260927/digital/FINDINGS.md`.)
 - **Frame reset**: generated in `osc_clk` from the synchronised `SCLK` (idle
   counter), applied as an asynchronous clear to the `SCLK`-domain bit counter
   for 16 `osc_clk` cycles starting at idle count 64. It can only fire while

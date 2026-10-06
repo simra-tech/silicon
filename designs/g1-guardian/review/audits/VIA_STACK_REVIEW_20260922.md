@@ -6,7 +6,7 @@ The SENSE route candidate remains unpromoted and unchanged, SHA-256 `af9ac30034c
 
 The [raw inventory](route-via-inventory-20260922-r2.json) resolves all 1,878 selected DEF-assigned via records against actual candidate GDS instances and cuts. All sampled wire centerlines and three transverse samples per routed segment are covered. It replaces obsolete DEF SENSE routes with the exact candidate manifest. This is not exhaustive minimum-neck extraction.
 
-The [deduplicated analysis](route-via-inventory-analysis-20260922-r3.json) has 1,828 unique cut-bbox groups. It removes 174 repeated cut-group records, including coincident LS stacks and repeated grid definitions. Repeated instances at identical coordinates do not provide additional physical cuts or parallel capacity. Counts are conductor-pair/array groups, not a guarantee that every group has uniform current.
+The [deduplicated analysis](route-via-inventory-analysis-20260922-r3.json) has 1,828 unique cut-bbox groups. It removes 174 repeated cut-group records, including coincident LS stacks and repeated grid definitions. (Corrected 2026-10-06: a recount with two independent scripts finds 50 repeated site records; the 174 figure is a GDS instance-multiplicity count, that is coincident via-cell instances, not a count of repeated cut-group records. The 1,828 unique groups and the other inventory counts reproduce exactly.) Repeated instances at identical coordinates do not provide additional physical cuts or parallel capacity. Counts are conductor-pair/array groups, not a guarantee that every group has uniform current.
 
 | Scope | Actual transition inventory | Disposition |
 |---|---|---|

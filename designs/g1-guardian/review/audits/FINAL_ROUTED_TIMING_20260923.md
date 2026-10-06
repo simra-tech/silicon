@@ -108,3 +108,15 @@ top/macro SPEF totals was 0.000000467 pF in each corner. This is a descriptive
 cross-check, not a new numerical acceptance tolerance or physical RC accuracy
 claim. The full per-net differences and source hashes are retained in
 `final-routed-timing-evidence-20260923-r1`.
+
+## Correction (2026-10-06): DEF `348dba8b` is not the routing of the chip of record
+
+DEF `348dba8b` (`final-detailed-route-20260923-r1`, 23 Sep 04:56) is not the routing drawn in the chip of record (r4 GDS
+`225d0b53`): projecting every routed NETS centerline at its LEF width onto the r4 GDS metal leaves 10 843 um of its 25 581 um
+uncovered. The later `gshared-route-20260923-r4/detailed.def` (`0f06817d`; equal to the r2 and r3 routes; spacing repair of
+`digital-reroute-detail-20260923-r1`) is drawn completely (0 of 26 304 um uncovered; KLayout 0.30.9, pinned image; simulated /
+geometric check). Route-derived figures in this record (the route inventory, the route timing numbers and, where present, the
+175.68 um VREF / osc_clk overlap at 0.42 um separation) refer to the superseded route. On `0f06817d` the VREF / osc_clk Metal3 pair
+is 177.12 um at 0.42 um separation (x 762.24-936.00 at y 947.52 / 947.94, plus a 3.36 um run at y 718.20 / 718.62), still the worst
+pair; the rest of the ranking differs. A route-timing re-evaluation on `0f06817d`: **not run**. The final-GDS-level results (STA, PEX,
+IR on the r4 GDS) are extracted from the GDS and are not affected. The text above and the evidence directories are unchanged.

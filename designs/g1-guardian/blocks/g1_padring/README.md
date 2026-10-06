@@ -141,6 +141,7 @@ sealring region and the bondpad. In this PDK:
 Hence the IO row cannot start closer than 36.4 + 7.5 − 2.1 + 70 ≈ 112 µm (hard
 rules) or ≈ 129 µm (recommended) from the edge, and the smallest legal die is
 about 1073 µm (hard) or 1108 µm (recommended) with the 1 µm supply fillers.
+**Correction (2026-10-06):** Under the stock main and maximal decks the minimum frame is 1063.6 um (abutted pads, row inset 111.8 um = 36.4 + 7.5 - 2.1 + 70; binding rule `Pad.d`, maximal deck only; 2 x 111.8 + 2 x 180 + 6 x 80). 1068.6 um (1 um between supply pads) also passes main + maximal; inset 111.75 um fails `Pad.d` (simulated / DRC, KLayout 0.30.9, pinned PDK decks). The recorded about 1073 um adds the 1 um supply-filler spacing as a template convention (PLAN R10), which is not a stock-deck rule. The 1108 um "recommended" figure is not re-derived: not run.
 1130 µm keeps IHP's default 140 µm inset and the recommended pad-to-seal
 distance; it is the same frame as IHP's own 24-pad reference
 (`OCDCPro-padframe/24`: 1120 µm, pads abutted).

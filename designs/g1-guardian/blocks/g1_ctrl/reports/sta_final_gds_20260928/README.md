@@ -75,7 +75,7 @@ are bulk only, and their hashes are in the "Built against" table.
    oxide thickness ratio in the process spec (4.09 fF/µm²). The estimate is ±50 %, and the values
    are 5–34 fF per pin (`inputs/stub_pin_caps.json`). They are small next to the 12–270 fF routes.
 3. **Route annotation** (`make_top_spef.py` → `annotation/top_p2p.spef`, the record case). Each net
-   is a star. Its centre is the reference pin of the extraction, normally the macro pin. Every other
+   is a star. Its centre is the reference pin of the extraction, normally the macro pin (correction 2026-10-06: the per-net R file takes the first DRIVER-list instance in sort order as reference, so for `i_core_cmp_hard` it is the digital macro pin, not the driver `u_trip`; see `../../../g1_top/reports/fullchip_pex_20260928/README.md` section 3.3; effect on this STA: not run). Every other
    pin hangs on the centre through its pin-to-pin R. Half of the net C sits on the centre and the
    rest is spread over the other pins. C is kpex C_total (ground + coupling to other routed nets,
    **coupling grounded, Miller factor 1**) plus the IO pin-stack fragments. The pad-side port nets

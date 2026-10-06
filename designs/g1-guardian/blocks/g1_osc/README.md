@@ -18,7 +18,7 @@ the owner decision of 2026-09-24. Outline and pins are those of the 166 × 137.6
 | Check / number (R0.95) | Status | Evidence |
 | --- | --- | --- |
 | Isolated bare and filled macro: main/maximal DRC, antenna, stock strict-port LVS | passed | `reports/r095_physical_20260924/README.md` |
-| Isolated filled macro, stock density-only | **failed** (8 markers: `AFil.g`, `M1.j`–`M5.j`, `TM1.c`, `TM2.c`; macro bbox used as the density-window origin) | same |
+| Isolated filled macro, stock density-only | **failed** (8 markers: `AFil.g`, `M1.j`–`M5.j`, `TM1.c`, `TM2.c`; cause: global minimum-density rules over the layout extent, see the correction below) | same |
 | kpex internal LVS of the MIM-stripped PEX input | **failed** ("Netlists don't match"; the separate stock LVS passed) | same |
 | Chip-level DRC, density and antenna on `629d303a…` | passed (0 markers) | `../g1_padring/reports/signoff-1414-20260924/README.md` |
 | Frequency, nominal trim 8, tt / 1.2 V / 27 °C, with the 94-buffer clock-tree load | 9.436 MHz (simulated; includes an estimated 459.8 Ω / 60.4 fF OSC-to-root route, not extracted) | `sim/qualification/fulltree_r095_load_20260924/README.md` |
@@ -399,3 +399,5 @@ Mismatch, real load, slow startup/re-enable and jitter remain incomplete.
 - The antenna diode's leakage at 150–175 °C (model characterised −40 … 125 °C): the `dparea`
   model gives fA at 27 °C; a nA at 175 °C would move `vth` by 50 µV (50 kΩ divider), 0.01 % of the
   period.
+
+**Correction (2026-10-06), cause of the isolated-macro density failure.** The earlier wording ("macro bbox used as the density-window origin") was wrong. All eight markers are global density minima ("Min. global ... density" rules, `density.drc` L663-936) evaluated over the chip area, which for a layout without prBoundary / EdgeSeal is the layout extent (22836.62 um2 in the log); the window-origin line only anchors windowed rules, and no windowed rule fires. The isolated macro without chip context therefore fails the minimum-density rules by construction (the drawn macro without fill fails nine; TopMetal2 is 0 % because the macro filler runs `no_topmetal`). Chip-context density passes with 0 markers (recorded run `osc-r095-fullchip-density-20260924-r1`, re-checked; simulated / DRC, independent re-run with `run_drc.py --density_only`). Status unchanged: isolated failed, chip context passed, no waiver, no action.

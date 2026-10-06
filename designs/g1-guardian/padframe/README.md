@@ -57,7 +57,7 @@ Numbers from the LibreLane Chip run of `blocks/g1_padring/` (evidence there,
 run `ring-1350`; `PLAN.md` D13). The 1000 µm allocation was infeasible: six
 abutted 80 µm pads plus two corners need 840 µm per side, and the PDK IO cells
 have no bondpad of their own, so the external 70 µm bondpad plus sealring and
-pad-to-EdgeSeal clearance need 112–140 µm per side (die ≥ ~1073 µm). 1200 µm
+pad-to-EdgeSeal clearance need 112–140 µm per side (die ≥ ~1073 µm; corrected 2026-10-06: the minimum frame under the stock decks is 1063.6 µm, the 1073 µm figure adds the 1 µm supply-filler convention, see `blocks/g1_padring/README.md`). 1200 µm
 did not hold because the macros of record total 0.274 mm² against its
 0.223 mm² core window.
 
