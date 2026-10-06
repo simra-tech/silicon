@@ -32,13 +32,13 @@ flow explain why the macro's internals are re-judged at all:
    what times the instance. Hence "hold inside g1_digital".
 2. The chip template SDC (from the IIC-JKU AMS template) constrains **one**
    clock, `SCLK` at `pad14_sclk/p2c`, with the LibreLane/PDK defaults: 0.25 ns
-   uncertainty on setup and hold, 5 % derating, 20 % IO delays. The macro was
+   uncertainty on setup and hold, 5 % derating (requested; 0 % was applied in every run recorded here, see below), 20 % IO delays. The macro was
    hardened with 0.5 ns setup / 0.05 ns hold uncertainty (`flow/g1_digital.sdc`;
    run3, with 0.5 ns applied to hold on the 1024/256 SEU configuration, failed
    its hold repair with "max buffer count reached" on 2418 endpoints, and a
    same-edge hold check with a propagated clock has no jitter term to model, so
    0.05 ns was chosen and documented in `../README.md`). The template's 5 % derate has no visible effect on
-   this path: every cell delay in the two reports is identical to 3 fs.
+   this path: every cell delay in the two reports is identical to 3 fs. (Explained on 2026-10-06: the template computed the derate with integer division, `5 / 100 = 0`, so early and late derates were 1.0 and no derate was applied. The template is corrected to `/ 100.0`; see `../reports/sta_final_gds_derate5_20261006/README.md`.)
 
 A second finding from the same reports: **`osc_clk` has no clock at chip
 level**. `g1_osc` is a black box without a timing model, so nothing defines a

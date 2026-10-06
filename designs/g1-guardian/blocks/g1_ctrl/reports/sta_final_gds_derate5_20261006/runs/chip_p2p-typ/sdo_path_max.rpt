@@ -1,0 +1,43 @@
+Startpoint: i_core.u_digital/_6754_
+            (rising edge-triggered flip-flop clocked by SCLK')
+Endpoint: SDO (output port clocked by SCLK)
+Path Group: SCLK
+Path Type: max
+
+Fanout       Cap      Slew     Delay      Time   Description
+-------------------------------------------------------------------------------------
+                             50.0000   50.0000   clock SCLK' (rise edge)
+                              0.0000   50.0000   clock source latency
+     2    0.2141    0.2812    0.0000   50.0000 v pad14_sclk/p2c (sg13g2_IOPadIn)
+                                                 i_core_sclk_i (net)
+     1    0.0201    0.0296    0.2110   50.2110 v i_core.u_digital/clkbuf_regs_0_sclk/X (sg13g2_buf_16)
+                                                 i_core.u_digital/sclk_regs (net)
+     8    0.1684    0.0486    0.0975   50.3085 v i_core.u_digital/clkbuf_0_sclk_regs/X (sg13g2_buf_16)
+                                                 i_core.u_digital/clknet_0_sclk_regs (net)
+     7    0.0440    0.0249    0.0953   50.4039 v i_core.u_digital/clkbuf_3_7__f_sclk_regs/X (sg13g2_buf_16)
+                                                 i_core.u_digital/clknet_3_7__leaf_sclk_regs (net)
+     1    0.0082    0.0410    0.0514   50.4552 ^ i_core.u_digital/_2920__386/Y (sg13g2_inv_1)
+                                                 i_core.u_digital/net386 (net)
+                    0.0410    0.0006   50.4559 ^ i_core.u_digital/_6754_/CLK (sg13g2_dfrbpq_1)
+     1    0.0050    0.0315    0.1877   50.6435 ^ i_core.u_digital/_6754_/Q (sg13g2_dfrbpq_1)
+                                                 i_core.u_digital/net34 (net)
+     1    0.1257    0.5131    0.4164   51.0600 ^ i_core.u_digital/output34/X (sg13g2_buf_1)
+                                                 i_core_sdo_o (net)
+     1    0.1317    0.3704    1.5098   52.5698 ^ pad16_sdo/pad (sg13g2_IOPadOut4mA)
+                                                 SDO (net)
+                    0.2778    0.0000   52.5698 ^ SDO (inout)
+                                       52.5698   data arrival time
+
+                            100.0000  100.0000   clock SCLK (rise edge)
+                              0.0000  100.0000   clock network delay (propagated)
+                             -0.5000   99.5000   clock uncertainty
+                              0.0000   99.5000   clock reconvergence pessimism
+                            -20.0000   79.5000   output external delay
+                                       79.5000   data required time
+-------------------------------------------------------------------------------------
+                                       79.5000   data required time
+                                      -52.5698   data arrival time
+-------------------------------------------------------------------------------------
+                                       26.9302   slack (MET)
+
+

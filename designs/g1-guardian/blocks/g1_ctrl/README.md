@@ -347,7 +347,7 @@ hold where the macro was hardened with 0.05 ns — a difference of exactly
 `osc_clk`, leaving 1148 of the macro's 1200 flops unconstrained at chip level.
 The fix is `layout/g1_digital_top.sdc` (historical: the constraints were merged inline into
 `../g1_padring/flow/g1_chip_top.sdc` on 2026-09-24, `reports/sta_merged_sdc_20260924/`): with it
-the same STA gives hold +0.106 / +0.185 / +0.326 ns on SCLK and
+the same STA gives (at derate 0 %: the template's 5 % derate evaluated to 0 in this run, see `reports/sta_final_gds_derate5_20261006/README.md`) hold +0.106 / +0.185 / +0.326 ns on SCLK and
 +0.125 / +0.205 / +0.348 ns on osc_clk, 0 violations, setup ≥ 26.4 ns, in
 all three corners. The liberty views in `layout/lib/` are characterised
 (`write_timing_model`, three corners) and remain available for a black-box

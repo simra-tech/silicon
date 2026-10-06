@@ -1,5 +1,12 @@
 # Timing of the final GDS (r4), 2026-09-28
 
+> **Correction (2026-10-06): every slack below is at derate 0 %.** The SDC of record computed its 5 % derate with Tcl integer
+> division (`5 / 100 = 0`), so early and late derates were both 1.0 in all runs of this record, although the log says
+> "Setting timing derate to: 5%". The SDC is fixed (`/ 100.0`) and the chip runs were repeated with a working 0.05 derate in
+> [`../sta_final_gds_derate5_20261006/`](../sta_final_gds_derate5_20261006/README.md): worst setup 27.793 / 26.930 / 25.176 ns, worst
+> hold +0.098 / +0.176 / +0.308 ns (fast / typ / slow, `chip_p2p`), 0 violations. This record is kept unchanged as the derate-0 % run;
+> the `bb006e96…` SDC named below is the pre-fix file.
+
 Post-submission campaign, track T3. Every number here is **simulated**: static timing analysis
 (OpenSTA) plus one ngspice run for the oscillator output stage. Nothing was measured.
 

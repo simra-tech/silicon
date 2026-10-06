@@ -42,7 +42,7 @@ Libraries: PDK `sg13g2_stdcell_{fast_1p32V_m40C,typ_1p20V_25C,slow_1p08V_125C}.l
 chip cases add `ip/sg13g2_io_padbare/lib/sg13g2_io_{fast_1p32V_3p6V_m40C,typ_1p2V_3p3V_25C,slow_1p08V_3p0V_125C}.lib`.
 Only the nominal RC SPEF exists for the macro and the routed top, so every corner
 uses nominal parasitics. Chip env values (period 100 ns, IO delay 20 %,
-uncertainty 0.25 ns, transition 0.15 ns, derate 5 %, 6 pF load) are those of the
+uncertainty 0.25 ns, transition 0.15 ns, derate 5 % requested but **0 % applied**, see Correction below; 6 fF load, not 6 pF, see `../sta_final_gds_20260928/README.md` finding 4) are those of the
 assembly flow, as in `FINAL_ROUTED_TIMING_20260923.md`.
 
 ## Built against
@@ -177,3 +177,11 @@ Icarus Verilog 14.0 (devel s20260301-328), PDK `sg13g2_stdcell.v` functional mod
 | Functional GLS of 6181b988, **zero-delay (unit-delay functional models)** | **passed: 13 tests, 193 checks, 0 errors** |
 | SDF-annotated GLS of 6181b988 (typ SDF `41758d71`, Icarus `-gspecify -ginterconnect -Tmax`) | **passed functionally with typ delays: 13 tests, 193 checks, 0 errors** (`../../sim/tb_g1_digital_gls_chip6181b988_sdf_typ.log`). Icarus does not execute timing checks: all 1200 SDF TIMINGCHECK entries were ignored. So this is **not** a setup/hold qualification (STA covers that). Fast/slow SDF GLS: not run |
 | Min/max RC corners, timing of the final GDS | not run |
+
+## Correction (2026-10-06): derate was 0 %
+
+The SDC's `expr 1-[expr 5 / 100]` is integer division in Tcl, so the 5 % derate set in this record evaluated to 0 and both
+`set_timing_derate` calls were 1.0. All slacks in this record are therefore at derate 0 % (simulated). The SDC copy here and the
+SDC of record now divide by 100.0; the stored logs and the `SHA256SUMS` line for the SDC refer to the pre-fix file (commit
+`458c702cd`). A chip run with a working 5 % derate is in `../sta_final_gds_derate5_20261006/` (final GDS routes, not this
+record's netlist); a re-run of this record's own cases at 5 % is **not run**.

@@ -1,0 +1,159 @@
+Startpoint: i_core.u_digital/_6780_
+            (rising edge-triggered flip-flop clocked by osc_clk)
+Endpoint: i_core.u_digital/_6782_
+          (removal check against rising-edge clock osc_clk)
+Path Group: asynchronous
+Path Type: min
+
+Fanout       Cap      Slew     Delay      Time   Description
+-------------------------------------------------------------------------------------
+                              0.0000    0.0000   clock osc_clk (rise edge)
+                              0.7230    0.7230   clock source latency
+                    0.9400    0.0000    0.7230 ^ i_core.u_digital/clkbuf_0_osc_clk/A (sg13g2_buf_16)
+     2    0.0351    0.0583    0.2304    0.9534 ^ i_core.u_digital/clkbuf_0_osc_clk/X (sg13g2_buf_16)
+                                                 i_core.u_digital/clknet_0_osc_clk (net)
+     8    0.1749    0.0565    0.0987    1.0521 ^ i_core.u_digital/clkbuf_fanout_split0_osc_clk_cell/X (sg13g2_buf_16)
+                                                 i_core.u_digital/clkbuf_fanout_split0_osc_clk (net)
+     2    0.0357    0.0321    0.1075    1.1596 ^ i_core.u_digital/clkbuf_4_15_0_osc_clk/X (sg13g2_buf_8)
+                                                 i_core.u_digital/clknet_4_15_0_osc_clk (net)
+     5    0.0663    0.0296    0.0726    1.2321 ^ i_core.u_digital/clkbuf_5_31__f_osc_clk/X (sg13g2_buf_16)
+                                                 i_core.u_digital/clknet_5_31__leaf_osc_clk (net)
+     8    0.0297    0.0279    0.0746    1.3068 ^ i_core.u_digital/clkbuf_leaf_80_osc_clk/X (sg13g2_buf_8)
+                                                 i_core.u_digital/clknet_leaf_80_osc_clk (net)
+                    0.0279    0.0011    1.3078 ^ i_core.u_digital/_6780_/CLK (sg13g2_dfrbpq_1)
+     1    0.0071    0.0391    0.1696    1.4774 ^ i_core.u_digital/_6780_/Q (sg13g2_dfrbpq_1)
+                                                 i_core.u_digital/_0030_ (net)
+     1    0.0032    0.0201    0.0297    1.5071 v i_core.u_digital/_2921_/Y (sg13g2_inv_1)
+                                                 i_core.u_digital/_0593_ (net)
+     2    0.0139    0.1281    0.1118    1.6189 ^ i_core.u_digital/_3473_/Y (sg13g2_nor2_1)
+                                                 i_core.u_digital/u_core.arst_n (net)
+                    0.1281    0.0009    1.6198 ^ i_core.u_digital/_6782_/RESET_B (sg13g2_dfrbpq_1)
+                                        1.6198   data arrival time
+
+                              0.0000    0.0000   clock osc_clk (rise edge)
+                              0.7230    0.7230   clock source latency
+                    0.9400    0.0000    0.7230 ^ i_core.u_digital/clkbuf_0_osc_clk/A (sg13g2_buf_16)
+     2    0.0404    0.0593    0.2561    0.9791 ^ i_core.u_digital/clkbuf_0_osc_clk/X (sg13g2_buf_16)
+                                                 i_core.u_digital/clknet_0_osc_clk (net)
+     8    0.1852    0.0590    0.1112    1.0903 ^ i_core.u_digital/clkbuf_fanout_split0_osc_clk_cell/X (sg13g2_buf_16)
+                                                 i_core.u_digital/clkbuf_fanout_split0_osc_clk (net)
+     2    0.0410    0.0346    0.1240    1.2143 ^ i_core.u_digital/clkbuf_4_15_0_osc_clk/X (sg13g2_buf_8)
+                                                 i_core.u_digital/clknet_4_15_0_osc_clk (net)
+     5    0.0727    0.0311    0.0830    1.2973 ^ i_core.u_digital/clkbuf_5_31__f_osc_clk/X (sg13g2_buf_16)
+                                                 i_core.u_digital/clknet_5_31__leaf_osc_clk (net)
+     8    0.0332    0.0296    0.0854    1.3827 ^ i_core.u_digital/clkbuf_leaf_80_osc_clk/X (sg13g2_buf_8)
+                                                 i_core.u_digital/clknet_leaf_80_osc_clk (net)
+                    0.0296    0.0013    1.3841 ^ i_core.u_digital/_6782_/CLK (sg13g2_dfrbpq_1)
+                              0.0500    1.4341   clock uncertainty
+                             -0.0759    1.3581   clock reconvergence pessimism
+                             -0.1316    1.2265   library removal time
+                                        1.2265   data required time
+-------------------------------------------------------------------------------------
+                                        1.2265   data required time
+                                       -1.6198   data arrival time
+-------------------------------------------------------------------------------------
+                                        0.3933   slack (MET)
+
+
+Startpoint: i_core.u_digital/_6763_
+            (rising edge-triggered flip-flop clocked by SCLK)
+Endpoint: i_core.u_digital/_6764_
+          (rising edge-triggered flip-flop clocked by SCLK)
+Path Group: SCLK
+Path Type: min
+
+Fanout       Cap      Slew     Delay      Time   Description
+-------------------------------------------------------------------------------------
+                              0.0000    0.0000   clock SCLK (rise edge)
+                              0.0000    0.0000   clock source latency
+     2    0.2099    0.3622    0.0000    0.0000 ^ pad14_sclk/p2c (sg13g2_IOPadIn)
+                                                 i_core_sclk_i (net)
+     1    0.0180    0.0319    0.1954    0.1954 ^ i_core.u_digital/clkbuf_regs_0_sclk/X (sg13g2_buf_16)
+                                                 i_core.u_digital/sclk_regs (net)
+     8    0.1517    0.0509    0.0836    0.2790 ^ i_core.u_digital/clkbuf_0_sclk_regs/X (sg13g2_buf_16)
+                                                 i_core.u_digital/clknet_0_sclk_regs (net)
+     7    0.0308    0.0231    0.0863    0.3653 ^ i_core.u_digital/clkbuf_3_3__f_sclk_regs/X (sg13g2_buf_16)
+                                                 i_core.u_digital/clknet_3_3__leaf_sclk_regs (net)
+                    0.0232    0.0020    0.3673 ^ i_core.u_digital/_6763_/CLK (sg13g2_dfrbpq_1)
+     4    0.0169    0.0600    0.1849    0.5522 v i_core.u_digital/_6763_/Q (sg13g2_dfrbpq_1)
+                                                 i_core.u_digital/u_core.u_serial.shreg[3] (net)
+                    0.0600    0.0009    0.5531 v i_core.u_digital/_6764_/D (sg13g2_dfrbpq_1)
+                                        0.5531   data arrival time
+
+                              0.0000    0.0000   clock SCLK (rise edge)
+                              0.0000    0.0000   clock source latency
+     2    0.2153    0.3717    0.0000    0.0000 ^ pad14_sclk/p2c (sg13g2_IOPadIn)
+                                                 i_core_sclk_i (net)
+     1    0.0207    0.0329    0.2215    0.2215 ^ i_core.u_digital/clkbuf_regs_0_sclk/X (sg13g2_buf_16)
+                                                 i_core.u_digital/sclk_regs (net)
+     8    0.1731    0.0565    0.0963    0.3179 ^ i_core.u_digital/clkbuf_0_sclk_regs/X (sg13g2_buf_16)
+                                                 i_core.u_digital/clknet_0_sclk_regs (net)
+     8    0.0389    0.0250    0.0924    0.4102 ^ i_core.u_digital/clkbuf_3_4__f_sclk_regs/X (sg13g2_buf_16)
+                                                 i_core.u_digital/clknet_3_4__leaf_sclk_regs (net)
+                    0.0250    0.0019    0.4121 ^ i_core.u_digital/_6764_/CLK (sg13g2_dfrbpq_1)
+                              0.0500    0.4621   clock uncertainty
+                             -0.0389    0.4232   clock reconvergence pessimism
+                             -0.0460    0.3772   library hold time
+                                        0.3772   data required time
+-------------------------------------------------------------------------------------
+                                        0.3772   data required time
+                                       -0.5531   data arrival time
+-------------------------------------------------------------------------------------
+                                        0.1759   slack (MET)
+
+
+Startpoint: i_core.u_digital/_6759_
+            (rising edge-triggered flip-flop clocked by osc_clk)
+Endpoint: i_core.u_digital/_6756_
+          (rising edge-triggered flip-flop clocked by osc_clk)
+Path Group: osc_clk
+Path Type: min
+
+Fanout       Cap      Slew     Delay      Time   Description
+-------------------------------------------------------------------------------------
+                              0.0000    0.0000   clock osc_clk (rise edge)
+                              0.7230    0.7230   clock source latency
+                    0.9400    0.0000    0.7230 ^ i_core.u_digital/clkbuf_0_osc_clk/A (sg13g2_buf_16)
+     2    0.0351    0.0583    0.2304    0.9534 ^ i_core.u_digital/clkbuf_0_osc_clk/X (sg13g2_buf_16)
+                                                 i_core.u_digital/clknet_0_osc_clk (net)
+     8    0.1750    0.0579    0.1013    1.0547 ^ i_core.u_digital/clkbuf_fanout_split1_osc_clk_cell/X (sg13g2_buf_16)
+                                                 i_core.u_digital/clkbuf_fanout_split1_osc_clk (net)
+     2    0.0406    0.0341    0.0998    1.1545 ^ i_core.u_digital/clkbuf_4_7_0_osc_clk/X (sg13g2_buf_8)
+                                                 i_core.u_digital/clknet_4_7_0_osc_clk (net)
+     6    0.0859    0.0341    0.0754    1.2299 ^ i_core.u_digital/clkbuf_5_15__f_osc_clk/X (sg13g2_buf_16)
+                                                 i_core.u_digital/clknet_5_15__leaf_osc_clk (net)
+     5    0.0316    0.0289    0.0763    1.3062 ^ i_core.u_digital/clkbuf_leaf_58_osc_clk/X (sg13g2_buf_8)
+                                                 i_core.u_digital/clknet_leaf_58_osc_clk (net)
+                    0.0289    0.0008    1.3070 ^ i_core.u_digital/_6759_/CLK (sg13g2_dfrbpq_1)
+     1    0.0100    0.0394    0.1719    1.4789 v i_core.u_digital/_6759_/Q (sg13g2_dfrbpq_1)
+                                                 i_core.u_digital/u_core.u_serial.rd_tog_d (net)
+     1    0.0054    0.0338    0.0683    1.5472 v i_core.u_digital/_3469_/X (sg13g2_xor2_1)
+                                                 i_core.u_digital/_0006_ (net)
+                    0.0338    0.0003    1.5475 v i_core.u_digital/_6756_/D (sg13g2_dfrbpq_1)
+                                        1.5475   data arrival time
+
+                              0.0000    0.0000   clock osc_clk (rise edge)
+                              0.7230    0.7230   clock source latency
+                    0.9400    0.0000    0.7230 ^ i_core.u_digital/clkbuf_0_osc_clk/A (sg13g2_buf_16)
+     2    0.0404    0.0593    0.2561    0.9791 ^ i_core.u_digital/clkbuf_0_osc_clk/X (sg13g2_buf_16)
+                                                 i_core.u_digital/clknet_0_osc_clk (net)
+     8    0.1852    0.0590    0.1112    1.0903 ^ i_core.u_digital/clkbuf_fanout_split0_osc_clk_cell/X (sg13g2_buf_16)
+                                                 i_core.u_digital/clkbuf_fanout_split0_osc_clk (net)
+     2    0.0457    0.0366    0.1191    1.2094 ^ i_core.u_digital/clkbuf_4_13_0_osc_clk/X (sg13g2_buf_8)
+                                                 i_core.u_digital/clknet_4_13_0_osc_clk (net)
+     5    0.0734    0.0313    0.0837    1.2931 ^ i_core.u_digital/clkbuf_5_26__f_osc_clk/X (sg13g2_buf_16)
+                                                 i_core.u_digital/clknet_5_26__leaf_osc_clk (net)
+     5    0.0360    0.0307    0.0872    1.3802 ^ i_core.u_digital/clkbuf_leaf_72_osc_clk/X (sg13g2_buf_8)
+                                                 i_core.u_digital/clknet_leaf_72_osc_clk (net)
+                    0.0310    0.0020    1.3822 ^ i_core.u_digital/_6756_/CLK (sg13g2_dfrbpq_1)
+                              0.0500    1.4322   clock uncertainty
+                             -0.0256    1.4066   clock reconvergence pessimism
+                             -0.0365    1.3701   library hold time
+                                        1.3701   data required time
+-------------------------------------------------------------------------------------
+                                        1.3701   data required time
+                                       -1.5475   data arrival time
+-------------------------------------------------------------------------------------
+                                        0.1774   slack (MET)
+
+

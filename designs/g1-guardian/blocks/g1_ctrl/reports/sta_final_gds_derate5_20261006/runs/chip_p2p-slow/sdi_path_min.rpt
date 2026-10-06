@@ -1,0 +1,42 @@
+Startpoint: SDI (input port clocked by SCLK)
+Endpoint: i_core.u_digital/_6760_
+          (rising edge-triggered flip-flop clocked by SCLK)
+Path Group: SCLK
+Path Type: min
+
+Fanout       Cap      Slew     Delay      Time   Description
+-------------------------------------------------------------------------------------
+                              0.0000    0.0000   clock SCLK (rise edge)
+                              0.0000    0.0000   clock network delay (propagated)
+                              2.0000    2.0000 v input external delay
+     1    0.3144    0.0000    0.0000    2.0000 v SDI (inout)
+                                                 SDI (net)
+     2    0.1778    0.3862    0.3734    2.3734 v pad15_sdi/p2c (sg13g2_IOPadIn)
+                                                 i_core_sdi_i (net)
+     4    0.0408    0.2193    0.3685    2.7419 v i_core.u_digital/input5/X (sg13g2_buf_1)
+                                                 i_core.u_digital/net5 (net)
+                    0.2198    0.0076    2.7495 v i_core.u_digital/_6760_/D (sg13g2_dfrbpq_1)
+                                        2.7495   data arrival time
+
+                              0.0000    0.0000   clock SCLK (rise edge)
+                              0.0000    0.0000   clock source latency
+     2    0.2128    0.5647    0.0000    0.0000 ^ pad14_sclk/p2c (sg13g2_IOPadIn)
+                                                 i_core_sclk_i (net)
+     1    0.0194    0.0503    0.3162    0.3162 ^ i_core.u_digital/clkbuf_regs_0_sclk/X (sg13g2_buf_16)
+                                                 i_core.u_digital/sclk_regs (net)
+     8    0.1632    0.0832    0.1532    0.4694 ^ i_core.u_digital/clkbuf_0_sclk_regs/X (sg13g2_buf_16)
+                                                 i_core.u_digital/clknet_0_sclk_regs (net)
+     8    0.0409    0.0389    0.1552    0.6247 ^ i_core.u_digital/clkbuf_3_0__f_sclk_regs/X (sg13g2_buf_16)
+                                                 i_core.u_digital/clknet_3_0__leaf_sclk_regs (net)
+                    0.0389    0.0029    0.6276 ^ i_core.u_digital/_6760_/CLK (sg13g2_dfrbpq_1)
+                              0.0500    0.6776   clock uncertainty
+                              0.0000    0.6776   clock reconvergence pessimism
+                             -0.1241    0.5535   library hold time
+                                        0.5535   data required time
+-------------------------------------------------------------------------------------
+                                        0.5535   data required time
+                                       -2.7495   data arrival time
+-------------------------------------------------------------------------------------
+                                        2.1961   slack (MET)
+
+

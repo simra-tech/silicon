@@ -109,7 +109,7 @@ Checks on that exact file:
 The digital macro on the chip (byte-identical in r3 and r4; the results below were obtained on r3 and carry over):
 - gate netlist `4b83f181…`, powered netlist `476885d7…`, nominal SPEF `0b626c7f…`;
 - STA with the merged chip SDC **passed** at macro level and inside the routed signal netlist
-  (3 corners, nominal RC; setup slow 28.45 ns macro, 25.70 ns in chip; worst hold 0.114 ns at the fast corner, macro and in chip):
+  (3 corners, nominal RC; setup slow 28.45 ns macro, 25.70 ns in chip; worst hold 0.114 ns at the fast corner, macro and in chip; derate 0 %, see the correction at the final-GDS timing entry below):
   0 setup/hold violations; in the chip context 12 analog-pad max-slew flags per corner
   (placeholder library values) and 98 unannotated drivers, dispositioned;
 - max slew, max cap and max fanout inside the macro **passed**; clock-buffer fanout ≤ 8;
@@ -123,9 +123,9 @@ The digital macro on the chip (byte-identical in r3 and r4; the results below we
   equivalent; [equiv](blocks/g1_ctrl/sim/gls_eco_r3v2/equiv/));
 - not run: chip-level co-simulation with the macro's gate netlist + SPEF.
 - Timing of the final GDS (r4; macro gate netlist + SPEF, top-level routes extracted from the r4 GDS, stock `sg13g2_io`
-  liberty, SDC of record, 3 corners, nominal RC): **passed**, setup 27.874 / 27.053 / 25.381 ns (fast / typ / slow, SDO path),
-  hold +0.114 / +0.195 / +0.337 ns, 0 violations; simulated osc_clk root edge 1.56 ns at slow, above the macro's 1.5 ns design
-  limit, no slack effect; RC corners and SI not run ([sta_final_gds_20260928](blocks/g1_ctrl/reports/sta_final_gds_20260928/README.md)).
+  liberty, SDC of record, 3 corners, nominal RC): **passed**, re-run with 5 % derate on 2026-10-06 (simulated; the SDC's derate had evaluated to 0 % in the 2026-09-28 run): setup 27.793 / 26.930 / 25.176 ns (fast / typ / slow, SDO path),
+  hold +0.098 / +0.176 / +0.308 ns, 0 violations (derate 0 %, 2026-09-28: setup 27.874 / 27.053 / 25.381 ns, hold +0.114 / +0.195 / +0.337 ns); simulated osc_clk root edge 1.56 ns at slow, above the macro's 1.5 ns design
+  limit, no slack effect; RC corners and SI not run ([sta_final_gds_derate5_20261006](blocks/g1_ctrl/reports/sta_final_gds_derate5_20261006/README.md); derate 0 % record: [sta_final_gds_20260928](blocks/g1_ctrl/reports/sta_final_gds_20260928/README.md)).
 
 Chip-level runs with the ECO RTL (hand-wired chip deck (`run_top.py --blockset c1414`): block extractions with the BGR586 schematic view (`bgr=sch`), SENSE pads without `dantenna` (`inpads nodcn`), fitted `GATE` driver (about 7 % optimistic), ideal clock; not a full-chip extraction; RTL co-simulation, tt/27 °C,
 [`ECO_20260925`](blocks/g1_ctrl/ECO_20260925.md)):
