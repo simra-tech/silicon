@@ -124,9 +124,11 @@ leads **18–13** and die pads 19–24 on leads **24–19**, reversed within eac
   Inductive or autonomous loads: **not run**, out of scope.
 - [ ] Clamp and return path for the load drawn explicitly on the schematic.
 - [ ] **FET hold-off against drain dV/dt** (P10/B9): a gate–source capacitor ≥ 10× C<sub>rss</sub> at the
-  FET, a short gate loop, or a load-bus dV/dt ≤ 0.1 V/ns. With the CSD16340Q3 model, a 5 nH + 10 Ω gate
+  FET (C<sub>rss</sub> at 0 V bias, checked against the hot-corner threshold), a short gate loop, or a load-bus dV/dt ≤ 0.1 V/ns. With the CSD16340Q3 model, a 5 nH + 10 Ω gate
   loop and a 0 → 12 V drain edge of 1.2 V/ns or faster, V<sub>GS</sub> peaked at 1.08–1.25 V against
-  V<sub>th</sub> 0.861 V (simulated, red team F4); the 10× C<sub>rss</sub> capacitor was not simulated.
+  V<sub>th</sub> 0.861 V (simulated, red team F4); the 10× C<sub>rss</sub> capacitor was not simulated with the vendor model.
+  Correction 2026-10-06: V<sub>th</sub> is about 0.58 V at 125 °C (0.861 V is the 25 °C value); in a substitute-model simulation
+  10× C<sub>rss</sub> taken at 12 V bias does not hold the FET off at ss/125 °C, taken at 0 V (about 1.6–1.8 nF) it does; vendor-model re-run not run.
   Verify with the drain-step hold-off test (bench plan, "Before enabling a load", step 6).
 
 ## 4. Shunt and sense pins (P9, B8, spec §4)
