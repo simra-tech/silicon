@@ -1,9 +1,10 @@
 #!/usr/bin/env python3
 """Drawn-area estimate of r1_afe from schematic/r1_afe.spice (flattened instance count x device size).
 Overhead factors are assumptions, not layout: MOS gate area x 4 (diffusion, contacts, guard rings),
-rppd body area x 2 (head areas, spacing, dummies), MIM area x 1.3 (enclosure, spacing). Output JSON on stdout."""
+rppd body area x 2 (head areas, spacing, dummies), MIM area x 1.3 (enclosure, spacing). Output JSON on stdout.
+Usage: python3 area_estimate.py [netlist]   (default: ../schematic/r1_afe.spice)"""
 import json, os, re, sys
-SP = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'schematic', 'r1_afe.spice')
+SP = sys.argv[1] if len(sys.argv) > 1 else os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'schematic', 'r1_afe.spice')
 OVH = {'mos': 4.0, 'rppd': 2.0, 'mim': 1.3}
 
 def num(v, params):

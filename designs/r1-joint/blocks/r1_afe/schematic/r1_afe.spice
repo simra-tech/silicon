@@ -1,13 +1,20 @@
-* r1_afe -- R1 encoder analog front end, schematic-level SPICE source (revision B, 2026-10-20)
+* r1_afe -- R1 encoder analog front end, schematic-level SPICE source (revision C, 2026-10-20; revision B: r1_afe_revB.spice)
 * Two identical channels (sine, cosine). Each channel:
 *   stage 1  PGA  : inverting, fully differential, gain n1 = 1/2/4/8 (Rf1 = 1 unit, Rin1 = n1 parallel units)
-*   stage 2  LS   : inverting, gain 10/7 or 40/7, output common mode 0.6 V (level shift 1.0 V -> 0.6 V)
+*   stage 2  LS   : inverting, gain 8/7 or 32/7 (rev C, D11: 1.6 Vpp out), output common mode 0.6 V (level shift 1.0 V -> 0.6 V)
 *   anti-alias    : one real pole per stage, Cf1 || Rf1 and Cf2 || Rf2 (gain independent)
 * All devices 3.3 V thick oxide (sg13_hv_*), rppd resistors, MIM capacitors. Supply VDDA 3.0-3.6 V.
 * mm_ok=1 on every device: mismatch is active only when the *_mismatch library sections are loaded.
 * sizing parameters (revision B: rppd w = 1 um, OTA1 NMOS pair 80/2, OTA2 Cc 0.38 pF, Cf +8 %)
+* revision C (2026-10-20), from the loop-gain analysis (runs dev-stbsweep1..6, dev-ccsw*-01, r1afe-stb-20261020c2):
+*   OTA1: Miller Cc 22u square fixed + 20.4u square switched in by c3b for n1 < 8 (x1-x4, x16; total = 30u square)
+*         so that x8/x32 keep f_c >= 1 MHz at input CM 0.5 V; Rz 1.0k -> 3.4k (LRZ 13u); CM sense caps 6u -> 22u
+*         square (lead at the CMFB sense node); PMOS-pair tail 48u -> 72u (60 -> 90 uA; gm at low input CM)
+*   OTA2: CMFB pair 64u -> 32u, fixed sink 0.5u -> 20u and CMFB sink 20u -> 10u (lower CM loop gain), sense caps
+*         6u -> 14u square, Cc 16u -> 18u square, Rz 1.0k -> 1.6k (LRZ 6u)
+*   stage 2: Rin2 14k -> 17.5k (gain 8/7 and 32/7, D11)
 .param LRO=11.55u WCOD=44.7u WCOS=18.3u
-.param LU1=153.85u LS2=53.85u LRF2=76.9u WCF1=31.0u WCF2=43.6u
+.param LU1=153.85u LS2=67.31u LRF2=76.9u WCF1=31.0u WCF2=43.6u
 
 *------------------------------------------------------------------------------
 * Rail-to-rail-input fully differential two-stage OTA
@@ -16,7 +23,7 @@
 *   CMFB  : rppd sense (2 x 200k) -> PMOS pair vs vcm -> NMOS sinks of the folded cascode
 * ibias: 10 uA sunk into the block (diode-connected NMOS)
 *------------------------------------------------------------------------------
-.subckt r1_afe_ota inp inn outp outn vcm ibias vdd vss W2N=16u W2P=120u LRZ=3.85u WCC=23u WCP=16u LCP=1u WCT=32u WN3A=24u WN3B=16u LN3B=2u
+.subckt r1_afe_ota inp inn outp outn vcm ibias cen cenb vdd vss W2N=16u W2P=120u LRZ=3.85u WCC=23u WCP=16u LCP=1u WCT=32u WN3A=24u WN3B=16u LN3B=2u WCS=6u WPT=48u WCCB=1u
 * bias
 XMB0 ibias ibias vss vss sg13_hv_nmos w=4u l=1u ng=1 m=1 mm_ok=1
 XMB1 vbp ibias vss vss sg13_hv_nmos w=4u l=1u ng=1 m=1 mm_ok=1
@@ -27,7 +34,7 @@ XMB4 vbpc ibias vss vss sg13_hv_nmos w=4u l=1u ng=1 m=1 mm_ok=1
 XMB5 vbnc vbp vdd vdd sg13_hv_pmos w=8u l=1u ng=1 m=1 mm_ok=1
 XMB6 vbnc vbnc vss vss sg13_hv_nmos w=1u l=2u ng=1 m=1 mm_ok=1
 * PMOS input pair (60 uA tail)
-XMPT tp vbp vdd vdd sg13_hv_pmos w=48u l=1u ng=6 m=1 mm_ok=1
+XMPT tp vbp vdd vdd sg13_hv_pmos w={WPT} l=1u ng=6 m=1 mm_ok=1
 XMP1 fn inp tp vdd sg13_hv_pmos w=80u l=2u ng=16 m=1 mm_ok=1
 XMP2 fp inn tp vdd sg13_hv_pmos w=80u l=2u ng=16 m=1 mm_ok=1
 * NMOS input pair (60 uA tail)
@@ -52,13 +59,19 @@ XMP7 outp vbp vdd vdd sg13_hv_pmos w={W2P} l=1u ng=12 m=1 mm_ok=1
 XMP8 outn vbp vdd vdd sg13_hv_pmos w={W2P} l=1u ng=12 m=1 mm_ok=1
 XRZ1 o1n cz1 vss rppd w=1u l={LRZ} m=1 b=0 mm_ok=1
 XCC1 cz1 outp cap_cmim w={WCC} l={WCC} m=1 mm_ok=1
+* switched part of the Miller capacitance (rev C): connected for n1 < 8 (cen = c3b), open at x8 and x32
+XCC1B cb1 outp cap_cmim w={WCCB} l={WCCB} m=1 mm_ok=1
+XTC1 cz1 cb1 cen cenb vdd vss r1_afe_tg
 XRZ2 o1p cz2 vss rppd w=1u l={LRZ} m=1 b=0 mm_ok=1
 XCC2 cz2 outn cap_cmim w={WCC} l={WCC} m=1 mm_ok=1
+* switched part of the Miller capacitance (rev C): connected for n1 < 8 (cen = c3b), open at x8 and x32
+XCC2B cb2 outn cap_cmim w={WCCB} l={WCCB} m=1 mm_ok=1
+XTC2 cz2 cb2 cen cenb vdd vss r1_afe_tg
 * CMFB: NMOS sinks = fixed part (MN3A/MN4A, from ibias) + CMFB part (MN3/MN4, mirror of MC3)
 XRS1 outp vcms vss rppd w=1u l=770u m=1 b=0 mm_ok=1
 XRS2 outn vcms vss rppd w=1u l=770u m=1 b=0 mm_ok=1
-XCS1 outp vcms cap_cmim w=6u l=6u m=1 mm_ok=1
-XCS2 outn vcms cap_cmim w=6u l=6u m=1 mm_ok=1
+XCS1 outp vcms cap_cmim w={WCS} l={WCS} m=1 mm_ok=1
+XCS2 outn vcms cap_cmim w={WCS} l={WCS} m=1 mm_ok=1
 XMCT tc vbp vdd vdd sg13_hv_pmos w={WCT} l=1u ng=4 m=1 mm_ok=1
 XMC1 vcmfb vcms tc vdd sg13_hv_pmos w={WCP} l={LCP} ng=2 m=1 mm_ok=1
 XMC2 cmd vcm tc vdd sg13_hv_pmos w={WCP} l={LCP} ng=2 m=1 mm_ok=1
@@ -70,7 +83,7 @@ XMC4 cmd cmd vss vss sg13_hv_nmos w=4u l=1u ng=1 m=1 mm_ok=1
 * PMOS-input variant for stage 2 (input CM fixed near 1.2-1.5 V): no NMOS pair, cascode branch 20 uA,
 * NMOS sinks 50 uA. Lower noise than the rail-to-rail cell.
 *------------------------------------------------------------------------------
-.subckt r1_afe_ota2 inp inn outp outn vcm ibias vdd vss W2N=16u W2P=120u LRZ=3.85u WCC=23u WCP=16u LCP=1u WCT=32u WN3A=24u WN3B=16u LN3B=2u
+.subckt r1_afe_ota2 inp inn outp outn vcm ibias vdd vss W2N=16u W2P=120u LRZ=3.85u WCC=23u WCP=16u LCP=1u WCT=32u WN3A=24u WN3B=16u LN3B=2u WCS=6u
 * bias
 XMB0 ibias ibias vss vss sg13_hv_nmos w=4u l=1u ng=1 m=1 mm_ok=1
 XMB1 vbp ibias vss vss sg13_hv_nmos w=4u l=1u ng=1 m=1 mm_ok=1
@@ -107,8 +120,8 @@ XCC2 cz2 outn cap_cmim w={WCC} l={WCC} m=1 mm_ok=1
 * CMFB: NMOS sinks = fixed part (MN3A/MN4A, from ibias) + CMFB part (MN3/MN4, mirror of MC3)
 XRS1 outp vcms vss rppd w=1u l=770u m=1 b=0 mm_ok=1
 XRS2 outn vcms vss rppd w=1u l=770u m=1 b=0 mm_ok=1
-XCS1 outp vcms cap_cmim w=6u l=6u m=1 mm_ok=1
-XCS2 outn vcms cap_cmim w=6u l=6u m=1 mm_ok=1
+XCS1 outp vcms cap_cmim w={WCS} l={WCS} m=1 mm_ok=1
+XCS2 outn vcms cap_cmim w={WCS} l={WCS} m=1 mm_ok=1
 XMCT tc vbp vdd vdd sg13_hv_pmos w={WCT} l=1u ng=4 m=1 mm_ok=1
 XMC1 vcmfb vcms tc vdd sg13_hv_pmos w={WCP} l={LCP} ng=2 m=1 mm_ok=1
 XMC2 cmd vcm tc vdd sg13_hv_pmos w={WCP} l={LCP} ng=2 m=1 mm_ok=1
@@ -131,13 +144,13 @@ XP y a vdd vdd sg13_hv_pmos w=2u l=0.45u ng=1 m=1 mm_ok=1
 *------------------------------------------------------------------------------
 * resistor units (rppd, b = substrate)
 *   U1: 40 kOhm   w = 1 um, l = 40k / 260 = 153.85 um (nominal sheet 260 ohm/sq, end resistance ignored)
-*   S2: 14 kOhm string (stage-2 input), RF2 = 20 kOhm
+*   S2: 17.5 kOhm string (stage-2 input, rev C), RF2 = 20 kOhm
 *------------------------------------------------------------------------------
 .subckt r1_afe_u1 a b vss
 XR a b vss rppd w=1u l={LU1} m=1 b=0 mm_ok=1
 .ends
 .subckt r1_afe_s2 a b vss
-* stage-2 input string: 14 kOhm (7 x 2k units in layout)
+* stage-2 input string: 17.5 kOhm (7 x 2.5k units in layout)
 XR a b vss rppd w=1u l={LS2} m=1 b=0 mm_ok=1
 .ends
 
@@ -171,8 +184,8 @@ XCF x out cap_cmim w={WCF1} l={WCF1} m=1 mm_ok=1
 .ends
 
 *------------------------------------------------------------------------------
-* one side of stage 2: Rf2 = 20k + TG; Rin2 = 1 or 4 parallel strings of 14k (gain 10/7 or 40/7)
-*   c4: strings 2-4 (gain 40/7)
+* one side of stage 2: Rf2 = 20k + TG; Rin2 = 1 or 4 parallel strings of 17.5k (gain 8/7 or 32/7)
+*   c4: strings 2-4 (gain 32/7)
 *------------------------------------------------------------------------------
 .subckt r1_afe_s2side in x out c4 c4b vdd vss
 XS1 in b1 vss r1_afe_s2
@@ -202,11 +215,11 @@ XI4 c4 c4b vdd vss r1_afe_inv
 * stage 1 (inverting: inp -> m1n)
 XS1P inp x1p m1n c1 c1b c2 c2b c3 c3b vdd vss r1_afe_s1side
 XS1N inn x1n m1p c1 c1b c2 c2b c3 c3b vdd vss r1_afe_s1side
-XA1 x1p x1n m1p m1n vcm1 ib1 vdd vss r1_afe_ota W2N=8u W2P=48u WCC=18u WCP=32u LCP=1u WCT=48u WN3A=0.5u WN3B=16u LN3B=2u
+XA1 x1p x1n m1p m1n vcm1 ib1 c3b c3 vdd vss r1_afe_ota W2N=8u W2P=48u WCC=22u WCCB=20.4u LRZ=13u WCP=32u LCP=1u WCT=48u WN3A=0.5u WN3B=16u LN3B=2u WCS=22u WPT=72u
 * stage 2 (inverting again: m1n -> outp, so outp follows inp)
 XS2P m1n x2p op2 c4 c4b vdd vss r1_afe_s2side
 XS2N m1p x2n on2 c4 c4b vdd vss r1_afe_s2side
-XA2 x2p x2n on2 op2 vcm2 ib2 vdd vss r1_afe_ota2 W2N=40u W2P=80u WCC=16u WCP=64u LCP=1u WCT=32u WN3A=0.5u WN3B=20u
+XA2 x2p x2n on2 op2 vcm2 ib2 vdd vss r1_afe_ota2 W2N=40u W2P=80u WCC=18u LRZ=6u WCP=32u LCP=1u WCT=32u WN3A=20u WN3B=10u WCS=14u
 * output R-C: limits the OTA2 wideband noise, charge reservoir for the track-and-hold
 XRO1 op2 outp vss rppd w=1u l={LRO} m=1 b=0 mm_ok=1
 XRO2 on2 outn vss rppd w=1u l={LRO} m=1 b=0 mm_ok=1

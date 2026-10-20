@@ -1,0 +1,100 @@
+{
+ "run_id": "dev-fcsweep-01",
+ "campaign": "fcsweep",
+ "date_utc": "2026-10-20T16:21:34Z",
+ "command": "G1_CPUSET=106-108 G1_CPUS=3 G1_WORKDIR=designs/r1-joint/blocks/r1_afe/sim G1_RESULTS_ROOT=<bulk> flow/run.sh python3 run_afe.py fcsweep dev-fcsweep-01",
+ "tools": {
+  "ngspice": "ngspice-46 : Circuit level simulation program",
+  "image_id": "sha256:ddeb69576f2808676d1c5d474ecf04f6d1d6f8abdcff6b72b39790ded924bab2",
+  "pdk_commit": "84374023ee8b4b126bebbba67fcbada0a9c0ff0b"
+ },
+ "inputs": {
+  "sim/tb_afe_ac.cir": "9a5808e3927045e0a57713d0ac6c0e00626d575a9002f8a57f8183c7b823d251",
+  "sim/common_head.inc": "ae7e19db8bdacb4ed6ce7126dc07e6b7ed9ba069506c5eb46f7463bfa9bc71af",
+  "sim/gain_codes.inc": "a62c9d6daa3d544c36ac868c4e6a9266f32e581d093ac404c6c52bcc6e5276f6",
+  "schematic/r1_afe.spice": "8e6fc0d10268592597757ff0187cddd003e5f82034d29b30c6120fb62a1108f7",
+  "sim/run_afe.py": "81651d872129bf8d84fd37bb4cfddc59a4c5c8923dc97d220d7ac9a19883a0d4"
+ },
+ "netlist_edits": {
+  "fc_f1_ss_cm0.5": [
+   [
+    "XA1 x1p x1n m1p m1n vcm1 ib1 vdd vss r1_afe_ota W2N=8u W2P=48u WCC=30u LRZ=13u WCP=32u LCP=1u WCT=48u WN3A=0.5u WN3B=16u LN3B=2u WCS=22u",
+    "XA1 x1p x1n m1p m1n vcm1 ib1 vdd vss r1_afe_ota W2N=8u W2P=48u WCC=26u LRZ=12u WCP=32u LCP=1u WCT=48u WN3A=0.5u WN3B=16u LN3B=2u WCS=22u"
+   ]
+  ],
+  "fc_f1_ss_cm2.5": [
+   [
+    "XA1 x1p x1n m1p m1n vcm1 ib1 vdd vss r1_afe_ota W2N=8u W2P=48u WCC=30u LRZ=13u WCP=32u LCP=1u WCT=48u WN3A=0.5u WN3B=16u LN3B=2u WCS=22u",
+    "XA1 x1p x1n m1p m1n vcm1 ib1 vdd vss r1_afe_ota W2N=8u W2P=48u WCC=26u LRZ=12u WCP=32u LCP=1u WCT=48u WN3A=0.5u WN3B=16u LN3B=2u WCS=22u"
+   ]
+  ],
+  "fc_f1_tt_cm0.5": [
+   [
+    "XA1 x1p x1n m1p m1n vcm1 ib1 vdd vss r1_afe_ota W2N=8u W2P=48u WCC=30u LRZ=13u WCP=32u LCP=1u WCT=48u WN3A=0.5u WN3B=16u LN3B=2u WCS=22u",
+    "XA1 x1p x1n m1p m1n vcm1 ib1 vdd vss r1_afe_ota W2N=8u W2P=48u WCC=26u LRZ=12u WCP=32u LCP=1u WCT=48u WN3A=0.5u WN3B=16u LN3B=2u WCS=22u"
+   ]
+  ],
+  "fc_f2_ss_cm0.5": [
+   [
+    "XA1 x1p x1n m1p m1n vcm1 ib1 vdd vss r1_afe_ota W2N=8u W2P=48u WCC=30u LRZ=13u WCP=32u LCP=1u WCT=48u WN3A=0.5u WN3B=16u LN3B=2u WCS=22u",
+    "XA1 x1p x1n m1p m1n vcm1 ib1 vdd vss r1_afe_ota W2N=8u W2P=48u WCC=26u LRZ=12u WCP=32u LCP=1u WCT=48u WN3A=0.5u WN3B=16u LN3B=2u WCS=22u WPT=72u"
+   ]
+  ],
+  "fc_f2_ss_cm2.5": [
+   [
+    "XA1 x1p x1n m1p m1n vcm1 ib1 vdd vss r1_afe_ota W2N=8u W2P=48u WCC=30u LRZ=13u WCP=32u LCP=1u WCT=48u WN3A=0.5u WN3B=16u LN3B=2u WCS=22u",
+    "XA1 x1p x1n m1p m1n vcm1 ib1 vdd vss r1_afe_ota W2N=8u W2P=48u WCC=26u LRZ=12u WCP=32u LCP=1u WCT=48u WN3A=0.5u WN3B=16u LN3B=2u WCS=22u WPT=72u"
+   ]
+  ],
+  "fc_f2_tt_cm0.5": [
+   [
+    "XA1 x1p x1n m1p m1n vcm1 ib1 vdd vss r1_afe_ota W2N=8u W2P=48u WCC=30u LRZ=13u WCP=32u LCP=1u WCT=48u WN3A=0.5u WN3B=16u LN3B=2u WCS=22u",
+    "XA1 x1p x1n m1p m1n vcm1 ib1 vdd vss r1_afe_ota W2N=8u W2P=48u WCC=26u LRZ=12u WCP=32u LCP=1u WCT=48u WN3A=0.5u WN3B=16u LN3B=2u WCS=22u WPT=72u"
+   ]
+  ],
+  "fc_f3_ss_cm0.5": [
+   [
+    ".param LU1=153.85u LS2=67.31u LRF2=76.9u WCF1=31.0u WCF2=43.6u",
+    ".param LU1=153.85u LS2=67.31u LRF2=76.9u WCF1=29.0u WCF2=43.6u"
+   ]
+  ],
+  "fc_f3_ss_cm2.5": [
+   [
+    ".param LU1=153.85u LS2=67.31u LRF2=76.9u WCF1=31.0u WCF2=43.6u",
+    ".param LU1=153.85u LS2=67.31u LRF2=76.9u WCF1=29.0u WCF2=43.6u"
+   ]
+  ],
+  "fc_f3_tt_cm0.5": [
+   [
+    ".param LU1=153.85u LS2=67.31u LRF2=76.9u WCF1=31.0u WCF2=43.6u",
+    ".param LU1=153.85u LS2=67.31u LRF2=76.9u WCF1=29.0u WCF2=43.6u"
+   ]
+  ],
+  "fc_f4_ss_cm0.5": [
+   [
+    "XA1 x1p x1n m1p m1n vcm1 ib1 vdd vss r1_afe_ota W2N=8u W2P=48u WCC=30u LRZ=13u WCP=32u LCP=1u WCT=48u WN3A=0.5u WN3B=16u LN3B=2u WCS=22u",
+    "XA1 x1p x1n m1p m1n vcm1 ib1 vdd vss r1_afe_ota W2N=8u W2P=48u WCC=30u LRZ=13u WCP=32u LCP=1u WCT=48u WN3A=0.5u WN3B=16u LN3B=2u WCS=22u WPT=72u"
+   ]
+  ],
+  "fc_f4_ss_cm2.5": [
+   [
+    "XA1 x1p x1n m1p m1n vcm1 ib1 vdd vss r1_afe_ota W2N=8u W2P=48u WCC=30u LRZ=13u WCP=32u LCP=1u WCT=48u WN3A=0.5u WN3B=16u LN3B=2u WCS=22u",
+    "XA1 x1p x1n m1p m1n vcm1 ib1 vdd vss r1_afe_ota W2N=8u W2P=48u WCC=30u LRZ=13u WCP=32u LCP=1u WCT=48u WN3A=0.5u WN3B=16u LN3B=2u WCS=22u WPT=72u"
+   ]
+  ],
+  "fc_f4_tt_cm0.5": [
+   [
+    "XA1 x1p x1n m1p m1n vcm1 ib1 vdd vss r1_afe_ota W2N=8u W2P=48u WCC=30u LRZ=13u WCP=32u LCP=1u WCT=48u WN3A=0.5u WN3B=16u LN3B=2u WCS=22u",
+    "XA1 x1p x1n m1p m1n vcm1 ib1 vdd vss r1_afe_ota W2N=8u W2P=48u WCC=30u LRZ=13u WCP=32u LCP=1u WCT=48u WN3A=0.5u WN3B=16u LN3B=2u WCS=22u WPT=72u"
+   ]
+  ]
+ },
+ "raw": "$G1_RESULTS_ROOT/r1_afe/dev-fcsweep-01/",
+ "jobs": 15,
+ "failed_jobs": [],
+ "wall_seconds": 357.1,
+ "summary": "results/dev-fcsweep-01.json",
+ "question": "f_c of the first revision-C netlist (u3, OTA1 Cc 30u) and options: OTA1 Cc 26u/Rz 12u, PMOS tail 72u, Cf1 -13 %",
+ "result": "u3: f3 0.836 MHz (ss, CM 0.5 V, x32) < 1 MHz: at low input CM only the PMOS pair is active and the larger Cc halves the stage-1 loop bandwidth at n1 = 8. Best option 0.952 MHz; none reaches 1 MHz without switching.",
+ "disposition": "development; led to the switched Miller capacitor"
+}

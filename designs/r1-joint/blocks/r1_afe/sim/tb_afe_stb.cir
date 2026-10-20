@@ -1,0 +1,202 @@
+* tb_afe_stb -- r1_afe loop gain (Tian double injection, Wiedmann form; validated on a toy loop in run
+* r1afe-stbval-*) at six break points of the sine channel, every gain step:
+* loop index lp (@@LLIST@@ selects):
+*   1 dm1   stage-1 differential loop, break at the OTA1 outputs (output stage + Miller Cc | feedback network,
+*           CMFB sense, stage-2 input), antisymmetric injection
+*   2 cm1   stage-1 common-mode loop, same break, symmetric injection: contains the CMFB path AND the CM path
+*           through the rail-to-rail input pairs (positive near the PMOS-pair cut-off) -> the Nyquist-valid CM loop
+*   3 cmfb1 OTA1 CMFB path alone as seen at the CM sense node (vcms -> gate of MC1), other loops closed
+*           (informational; its DC sign is negative when the input-pair CM loop exceeds unity)
+*   4 dm2, 5 cm2, 6 cmfb2  the same for stage 2 (OTA2)
+*   7 dm1in, 8 cm1in  stage-1 loops broken at the OTA1 inputs (summing nodes -> gates), cross-check of 1 and 2
+* run_afe.py inserts the probes into a copy of the netlist (probe edits listed in run.json); probe sources
+* carry ac {vdp1} etc., all zero except the pair under test. T = -1/(1-1/(2*(i1*v2-v1*i2)+v1+i2)),
+* v = return-side node voltage, i = probe-source current, run 1 voltage injection, run 2 current injection.
+* For dm/cm the half-circuit quantities are (p - n)/2 and (p + n)/2.
+* Load per output: 100 ohm + @@CL@@ to ground (r1_adc CDAC in track) and 0.2 pF wiring.
+@@HEAD@@
+.param vdp1=0 vdn1=0 idp1=0 idn1=0 vdp2=0 vdn2=0 idp2=0 idn2=0 vc1=0 ic1=0 vc2=0 ic2=0
+.param vop1=0 von1=0 iop1=0 ion1=0 vop2=0 von2=0 iop2=0 ion2=0
+Vic ic 0 dc {VCMI}
+Esp sinp ic vd 0 0.5
+Esn sinn ic vd 0 -0.5
+Ecp cosp ic vd 0 0.5
+Ecn cosn ic vd 0 -0.5
+Vd vd 0 dc 0
+Rl1 souts_p l1 100
+Rl2 souts_n l2 100
+Rl3 soutc_p l3 100
+Rl4 soutc_n l4 100
+Cl1 l1 0 @@CL@@
+Cl2 l2 0 @@CL@@
+Cl3 l3 0 @@CL@@
+Cl4 l4 0 @@CL@@
+Cw1 souts_p 0 0.2p
+Cw2 souts_n 0 0.2p
+Cw3 soutc_p 0 0.2p
+Cw4 soutc_n 0 0.2p
+XDUT sinp sinn cosp cosn souts_p souts_n soutc_p soutc_n vcm2 ib_s1 ib_s2 ib_c1 ib_c2 c1 c2 c3 c4 vdd 0 r1_afe
+.control
+@@CODES@@
+let vh = @@VDDA@@
+* gain codes to run (@@KLIST@@); "reset" (needed by alterparam) discards alter, so the controls are re-applied
+foreach kk @@KLIST@@
+  let k = $kk
+  let a1 = ctab[4*k]*vh
+  let a2 = ctab[4*k+1]*vh
+  let a3 = ctab[4*k+2]*vh
+  let a4 = ctab[4*k+3]*vh
+  foreach lp @@LLIST@@
+    * ---- run 1: voltage injection
+    if $lp = 7
+      alterparam vdp1=1
+      alterparam vdn1=-1
+    end
+    if $lp = 8
+      alterparam vdp1=1
+      alterparam vdn1=1
+    end
+    if $lp = 1
+      alterparam vop1=1
+      alterparam von1=-1
+    end
+    if $lp = 2
+      alterparam vop1=1
+      alterparam von1=1
+    end
+    if $lp = 4
+      alterparam vop2=1
+      alterparam von2=-1
+    end
+    if $lp = 5
+      alterparam vop2=1
+      alterparam von2=1
+    end
+    if $lp = 3
+      alterparam vc1=1
+    end
+    if $lp = 6
+      alterparam vc2=1
+    end
+    reset
+    alter vc1 dc = $&a1
+    alter vc2 dc = $&a2
+    alter vc3 dc = $&a3
+    alter vc4 dc = $&a4
+    ac dec 20 10 1g
+    * ---- run 2: current injection
+    alterparam vdp1=0
+    alterparam vdn1=0
+    alterparam vdp2=0
+    alterparam vdn2=0
+    alterparam vc1=0
+    alterparam vc2=0
+    alterparam vop1=0
+    alterparam von1=0
+    alterparam vop2=0
+    alterparam von2=0
+    if $lp = 7
+      alterparam idp1=1
+      alterparam idn1=-1
+    end
+    if $lp = 8
+      alterparam idp1=1
+      alterparam idn1=1
+    end
+    if $lp = 1
+      alterparam iop1=1
+      alterparam ion1=-1
+    end
+    if $lp = 2
+      alterparam iop1=1
+      alterparam ion1=1
+    end
+    if $lp = 4
+      alterparam iop2=1
+      alterparam ion2=-1
+    end
+    if $lp = 5
+      alterparam iop2=1
+      alterparam ion2=1
+    end
+    if $lp = 3
+      alterparam ic1=1
+    end
+    if $lp = 6
+      alterparam ic2=1
+    end
+    reset
+    alter vc1 dc = $&a1
+    alter vc2 dc = $&a2
+    alter vc3 dc = $&a3
+    alter vc4 dc = $&a4
+    ac dec 20 10 1g
+    alterparam idp1=0
+    alterparam idn1=0
+    alterparam idp2=0
+    alterparam idn2=0
+    alterparam ic1=0
+    alterparam ic2=0
+    alterparam iop1=0
+    alterparam ion1=0
+    alterparam iop2=0
+    alterparam ion2=0
+    if $lp = 7
+      let v1 = (ac1.v(xdut.xsin.x1p)-ac1.v(xdut.xsin.x1n))/2
+      let i1 = (ac1.i(v.xdut.xsin.vpa1p)-ac1.i(v.xdut.xsin.vpa1n))/2
+      let v2 = (ac2.v(xdut.xsin.x1p)-ac2.v(xdut.xsin.x1n))/2
+      let i2 = (ac2.i(v.xdut.xsin.vpa1p)-ac2.i(v.xdut.xsin.vpa1n))/2
+    end
+    if $lp = 8
+      let v1 = (ac1.v(xdut.xsin.x1p)+ac1.v(xdut.xsin.x1n))/2
+      let i1 = (ac1.i(v.xdut.xsin.vpa1p)+ac1.i(v.xdut.xsin.vpa1n))/2
+      let v2 = (ac2.v(xdut.xsin.x1p)+ac2.v(xdut.xsin.x1n))/2
+      let i2 = (ac2.i(v.xdut.xsin.vpa1p)+ac2.i(v.xdut.xsin.vpa1n))/2
+    end
+    if $lp = 1
+      let v1 = (ac1.v(xdut.xsin.xa1.outpi)-ac1.v(xdut.xsin.xa1.outni))/2
+      let i1 = (ac1.i(v.xdut.xsin.xa1.vpop)-ac1.i(v.xdut.xsin.xa1.vpon))/2
+      let v2 = (ac2.v(xdut.xsin.xa1.outpi)-ac2.v(xdut.xsin.xa1.outni))/2
+      let i2 = (ac2.i(v.xdut.xsin.xa1.vpop)-ac2.i(v.xdut.xsin.xa1.vpon))/2
+    end
+    if $lp = 2
+      let v1 = (ac1.v(xdut.xsin.xa1.outpi)+ac1.v(xdut.xsin.xa1.outni))/2
+      let i1 = (ac1.i(v.xdut.xsin.xa1.vpop)+ac1.i(v.xdut.xsin.xa1.vpon))/2
+      let v2 = (ac2.v(xdut.xsin.xa1.outpi)+ac2.v(xdut.xsin.xa1.outni))/2
+      let i2 = (ac2.i(v.xdut.xsin.xa1.vpop)+ac2.i(v.xdut.xsin.xa1.vpon))/2
+    end
+    if $lp = 4
+      let v1 = (ac1.v(xdut.xsin.xa2.outpi)-ac1.v(xdut.xsin.xa2.outni))/2
+      let i1 = (ac1.i(v.xdut.xsin.xa2.vpop)-ac1.i(v.xdut.xsin.xa2.vpon))/2
+      let v2 = (ac2.v(xdut.xsin.xa2.outpi)-ac2.v(xdut.xsin.xa2.outni))/2
+      let i2 = (ac2.i(v.xdut.xsin.xa2.vpop)-ac2.i(v.xdut.xsin.xa2.vpon))/2
+    end
+    if $lp = 5
+      let v1 = (ac1.v(xdut.xsin.xa2.outpi)+ac1.v(xdut.xsin.xa2.outni))/2
+      let i1 = (ac1.i(v.xdut.xsin.xa2.vpop)+ac1.i(v.xdut.xsin.xa2.vpon))/2
+      let v2 = (ac2.v(xdut.xsin.xa2.outpi)+ac2.v(xdut.xsin.xa2.outni))/2
+      let i2 = (ac2.i(v.xdut.xsin.xa2.vpop)+ac2.i(v.xdut.xsin.xa2.vpon))/2
+    end
+    if $lp = 3
+      let v1 = ac1.v(xdut.xsin.xa1.vcms)
+      let i1 = ac1.i(v.xdut.xsin.xa1.vpc)
+      let v2 = ac2.v(xdut.xsin.xa1.vcms)
+      let i2 = ac2.i(v.xdut.xsin.xa1.vpc)
+    end
+    if $lp = 6
+      let v1 = ac1.v(xdut.xsin.xa2.vcms)
+      let i1 = ac1.i(v.xdut.xsin.xa2.vpc)
+      let v2 = ac2.v(xdut.xsin.xa2.vcms)
+      let i2 = ac2.i(v.xdut.xsin.xa2.vpc)
+    end
+    let tl = -1/(1-1/(2*(i1*v2-v1*i2)+v1+i2))
+    let tdb = db(tl)
+    let tph = 180/pi*cph(tl)
+    let fid = 10*k + $lp
+    wrdata @@RAW@@_t$&fid tdb tph
+    echo "STBFILE code=$&k loop=$lp"
+    destroy all
+  end
+end
+.endc
+.end

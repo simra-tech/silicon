@@ -4,7 +4,7 @@
 * (the full output step is re-acquired every cycle). Both channels sampled on the same edge.
 * DC input at +full scale for the gain step (output +1.0 V differential). Error = sampled differential value at
 * the end of track minus the unloaded DC output (operating point before switching), in volts and 12-bit LSB
-* (LSB = 2.4 V / 4096 = 0.586 mV differential).
+* (LSB = @@LSB@@ V differential; revision B used 2.4 V / 4096 = 0.586 mV, revision C 2.0 V / 4096 = 0.488 mV, D11).
 @@HEAD@@
 .options reltol=1e-5 abstol=1e-13 vntol=1e-8
 Vic ic 0 dc {VCMI}
@@ -66,14 +66,14 @@ let ec = hc - r0c
 foreach t 2.249u 2.749u 3.249u 3.749u 4.249u 4.749u 5.249u
   meas tran xs find es at=$t
   meas tran xc find ec at=$t
-  let ls = xs/0.000586
-  let lc = xc/0.000586
+  let ls = xs/@@LSB@@
+  let lc = xc/@@LSB@@
   echo "STROW code=$&k t=$t vout0=$&r0s err_s=$&xs err_c=$&xc lsb_s=$&ls lsb_c=$&lc"
 end
 * error vs track time in the last cycle (start of track at 5.0 us)
 foreach t 5.05u 5.1u 5.15u 5.2u
   meas tran xs find es at=$t
-  let ls = xs/0.000586
+  let ls = xs/@@LSB@@
   echo "STTROW code=$&k t=$t err_s=$&xs lsb_s=$&ls"
 end
 wrdata @@RAW@@_settle.txt hs hc es ec v(souts_p) v(souts_n)

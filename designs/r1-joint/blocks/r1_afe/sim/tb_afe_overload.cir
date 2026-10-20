@@ -1,0 +1,45 @@
+* tb_afe_overload -- input overload recovery (revision C). Gain step @@CODE@@, input CM 2.45 V, both channels.
+* Differential input: +FS/2 of the step (0.35 V / gain) until 5 us, +1.0 V (2 Vpp overload when combined with the
+* next phase) 5-15 us, -1.0 V 15-25 us, back to +FS/2 at 25 us (edges 10 ns); simulated to 45 us.
+* run_afe.py reports the recovery time after 25 us to within 1 LSB (0.488 mV differential) and 1 % of full scale
+* of the final value (mean over 40-45 us), and the stage-1 and output CM excursions. Load 100 ohm + 2.8 pF.
+@@HEAD@@
+.options reltol=1e-4 abstol=1e-12 vntol=1e-7
+Vic ic 0 dc @@VCMI@@
+Vd vd 0 dc 0 pwl(0 @@AMP@@ 5u @@AMP@@ 5.01u 1.0 15u 1.0 15.01u -1.0 25u -1.0 25.01u @@AMP@@)
+Esp sinp ic vd 0 0.5
+Esn sinn ic vd 0 -0.5
+Ecp cosp ic vd 0 0.5
+Ecn cosn ic vd 0 -0.5
+Rl1 souts_p l1 100
+Rl2 souts_n l2 100
+Rl3 soutc_p l3 100
+Rl4 soutc_n l4 100
+Cl1 l1 0 2.8p
+Cl2 l2 0 2.8p
+Cl3 l3 0 2.8p
+Cl4 l4 0 2.8p
+XDUT sinp sinn cosp cosn souts_p souts_n soutc_p soutc_n vcm2 ib_s1 ib_s2 ib_c1 ib_c2 c1 c2 c3 c4 vdd 0 r1_afe
+.control
+@@CODES@@
+let k = @@CODE@@
+let vh = @@VDDA@@
+let a1 = ctab[4*k]*vh
+let a2 = ctab[4*k+1]*vh
+let a3 = ctab[4*k+2]*vh
+let a4 = ctab[4*k+3]*vh
+alter vc1 dc = $&a1
+alter vc2 dc = $&a2
+alter vc3 dc = $&a3
+alter vc4 dc = $&a4
+tran 2n 45u 0 2n
+let vs = v(souts_p)-v(souts_n)
+let vc = v(soutc_p)-v(soutc_n)
+let o1cm = (v(xdut.xsin.m1p)+v(xdut.xsin.m1n))/2
+let ocm = (v(souts_p)+v(souts_n))/2
+let o1d = v(xdut.xsin.m1p)-v(xdut.xsin.m1n)
+linearize vs vc o1cm ocm o1d
+wrdata @@RAW@@_ovl.txt vs vc o1cm ocm o1d
+echo "OVLFILE code=$&k"
+.endc
+.end

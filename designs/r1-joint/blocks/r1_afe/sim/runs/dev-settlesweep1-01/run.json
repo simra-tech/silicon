@@ -1,0 +1,26 @@
+{
+ "run_id": "dev-settlesweep1-01",
+ "campaign": "settlesweep1",
+ "date_utc": "2026-10-20T15:22:52Z",
+ "command": "G1_CPUSET=106-108 G1_CPUS=3 G1_WORKDIR=designs/r1-joint/blocks/r1_afe/sim G1_RESULTS_ROOT=<bulk> flow/run.sh python3 run_afe.py settlesweep1 dev-settlesweep1-01",
+ "tools": {
+  "ngspice": "ngspice-46 : Circuit level simulation program",
+  "image_id": "sha256:ddeb69576f2808676d1c5d474ecf04f6d1d6f8abdcff6b72b39790ded924bab2",
+  "pdk_commit": "84374023ee8b4b126bebbba67fcbada0a9c0ff0b"
+ },
+ "inputs": {
+  "sim/tb_afe_settle_adc.cir": "3bbc68e33f27d156ed90af01d08102f3fe2fa4b3f2f34ca2412f338080d83182",
+  "sim/common_head.inc": "ae7e19db8bdacb4ed6ce7126dc07e6b7ed9ba069506c5eb46f7463bfa9bc71af",
+  "sim/gain_codes.inc": "a62c9d6daa3d544c36ac868c4e6a9266f32e581d093ac404c6c52bcc6e5276f6",
+  "schematic/r1_afe.spice": "3902870d6ec257260d277303e4882e1628177962ae183386d9b2afbe3ee978de",
+  "sim/run_afe.py": "7aebdb02ac33c42aedd8ad9d3e873490bd9c4cfffec8404e995ac3b0c7c1c53d"
+ },
+ "raw": "$G1_RESULTS_ROOT/r1_afe/dev-settlesweep1-01/",
+ "jobs": 12,
+ "failed_jobs": [],
+ "wall_seconds": 214.1,
+ "summary": "results/dev-settlesweep1-01.json",
+ "question": "Output network and OTA2 output stage vs settling into the r1_adc T/H (ss, +FS, x1/x32)",
+ "result": "End-of-track error = slow under-settling tail + kick overshoot; per-side reservoir or 2x OTA2 output current halve the x32 error to ~0.5 LSB; none reaches 0.25 LSB.",
+ "disposition": "development; output network unchanged in revision C"
+}

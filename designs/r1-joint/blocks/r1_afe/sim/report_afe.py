@@ -1,12 +1,14 @@
 #!/usr/bin/env python3
-"""Reduce the revision-A campaign results to the README numbers and fill question/result/disposition in each
+"""Reduce the revision-A/B/C campaign results to the README numbers and fill question/result/disposition in each
 runs/<run-id>/run.json. Usage (block sim/ dir, host python3): python3 report_afe.py <suffix>
 Raw spectra for the noise band integrals are read from $G1_RESULTS_ROOT (must be set)."""
 import json, math, os, sys
 
 G = ['x1', 'x2', 'x4', 'x8', 'x16', 'x32']
-LSB = 2.4 / 4096
+LSB = 2.4 / 4096      # revisions A and B (2.4 Vpp SAR full scale); revision C (suffix 20261020c, 20261020c2): 2.0 / 4096 (D11)
 ROOT = os.environ['G1_RESULTS_ROOT']
+
+REVC = lambda sfx: len(sfx) > 8 and sfx[8] == 'c'   # suffix yyyymmdd + revision letter (+ pass)
 
 def load(c, sfx):
     p = 'results/r1afe-%s-%s.json' % (c, sfx)
@@ -42,7 +44,10 @@ def fill(rid, question, result, disposition):
     json.dump(d, open(p, 'w'), indent=1)
 
 def main(sfx):
-    S = {}
+    global LSB
+    if REVC(sfx):
+        LSB = 2.0 / 4096
+    S = {'lsb_V': LSB}
     # ---------------- AC nominal
     ac = load('ac', sfx)
     if ac:
@@ -114,9 +119,9 @@ def main(sfx):
                                                     in100k=r['in100k'] * 1e9, in1m=r['in1m'] * 1e9, bands_out_uV=bands)
         x1 = max(t[c]['x1']['out_uV'] for c in t); x32 = max(t[c]['x32']['in_uV'] for c in t)
         S['noise'] = dict(table=t, x1_out_worst_uV=x1, x32_in_worst_uV=x32)
-        fill('r1afe-noise-' + sfx, 'Noise at every step, 1 Hz-100 MHz; required x1 (output <= 240 uV rms = 0.41 LSB) and x32 (input <= 35 uV rms)',
-             'x1 output worst %.0f uV rms (%.2f LSB); x32 input-referred worst %.1f uV rms' % (x1, x1 * 1e-6 / LSB, x32),
-             'passed' if x1 <= 240 and x32 <= 35 else 'failed')
+        fill('r1afe-noise-' + sfx, 'Noise at every step, 1 Hz-100 MHz; required x1 (output <= 0.41 LSB rms) and x32 (input <= 35 uV rms)',
+             'x1 output worst %.0f uV rms (%.2f LSB of %.3f mV); x32 input-referred worst %.1f uV rms' % (x1, x1 * 1e-6 / LSB, LSB * 1e3, x32),
+             'passed' if x1 * 1e-6 / LSB <= 0.41 and x32 <= 35 else 'failed')
     # ---------------- CM sweep
     cm = load('cm', sfx)
     if cm:
@@ -167,7 +172,7 @@ def main(sfx):
                                     ocm=r.get('ocm'), cm_pp_out=r.get('ocmpp'), cm_pp_stage1=r.get('o1cmpp'))
         worst = max(v['thd_sin_pct'] for v in t.values())
         S['tran'] = dict(table=t, thd_worst_pct=worst, thd_worst_db=20 * math.log10(worst / 100))
-        fill('r1afe-tran-' + sfx, '100 kHz full-scale sine (2.0 Vpp differential out) at x1 and x32, tt/ss/ff: THD, swing, CM stability',
+        fill('r1afe-tran-' + sfx, '100 kHz full-scale sine (%s Vpp differential out) at x1 and x32, tt/ss/ff: THD, swing, CM stability' % ('1.6' if REVC(sfx) else '2.0'),
              'THD worst %.3f %% (%.1f dB); outputs %.3f-%.3f V' % (worst, 20 * math.log10(worst / 100), min(v['out_min'] for v in t.values()), max(v['out_max'] for v in t.values())),
              'passed' if worst <= 0.1 else 'failed')
     # ---------------- settle
@@ -185,19 +190,116 @@ def main(sfx):
           lin = {}
           for c in ('tt', 'ss', 'ff'):
               for g in ('x1', 'x32'):
-                  a, b, h = (e.get('%s_%s_%s_%s' % (pre, c, g, s)) for s in ('p100', 'm100', 'p50'))
-                  if a and b and h:
-                      k = (a['err_mV'] - b['err_mV']) / (a['vout0'] - b['vout0'])          # gain-error part (mV per V)
-                      o = (a['err_mV'] + b['err_mV']) / 2 - k * (a['vout0'] + b['vout0']) / 2
-                      res = h['err_mV'] - (k * h['vout0'] + o)
+                  pts = [e[n] for n in e if n.startswith('%s_%s_%s_' % (pre, c, g))]
+                  if len(pts) >= 3:                       # least-squares line err = k * vout + o over all levels
+                      n = len(pts); sx = sum(q['vout0'] for q in pts); sy = sum(q['err_mV'] for q in pts)
+                      sxx = sum(q['vout0'] ** 2 for q in pts); sxy = sum(q['vout0'] * q['err_mV'] for q in pts)
+                      k = (n * sxy - sx * sy) / (n * sxx - sx ** 2); o = (sy - k * sx) / n
+                      res = max(abs(q['err_mV'] - (k * q['vout0'] + o)) for q in pts)
                       lin['%s_%s' % (c, g)] = dict(gain_err_pct=k / 10, offset_mV=o, nonlinear_residual_lsb=res * 1e-3 / LSB,
-                                                   err_fs_lsb=a['err_lsb'])
+                                                   err_fs_lsb=max(abs(q['err_lsb']) for q in pts), n_levels=n)
           S[camp] = dict(table=e, linear_fit=lin)
           wr = max(abs(v['nonlinear_residual_lsb']) for v in lin.values()) if lin else None
           we = max(abs(v['err_fs_lsb']) for v in lin.values()) if lin else None
+          lim = 0.25 if REVC(sfx) else 0.5
           fill('r1afe-%s-%s' % (camp, sfx), qtxt + ': sampled error at end of track, linearity of the error',
-               'error at +FS worst %.2f LSB; after removing a linear gain/offset fit, residual worst %.3f LSB' % (we, wr),
-               'passed (residual <= 0.5 LSB; the linear part is a gain error common to both channels)' if wr is not None and wr <= 0.5 else 'failed')
+               'error at full scale worst %.2f LSB; after removing a linear gain/offset fit, residual worst %.3f LSB (LSB %.3f mV)' % (we, wr, LSB * 1e3),
+               ('total error: %s against %.2f LSB; non-linear residual: %s against %.2f LSB (the linear part is a gain error common to both channels)' % (
+                   'passed' if we <= lim else 'failed', lim, 'passed' if wr <= lim else 'failed', lim)) if REVC(sfx) else
+               ('passed (residual <= 0.5 LSB; the linear part is a gain error common to both channels)' if wr is not None and wr <= 0.5 else 'failed'))
+    # ---------------- loop gain (revision C)
+    for camp in ('stb', 'stb_revb'):
+        st = load(camp, sfx)
+        if not st:
+            continue
+        t, worst = {}, {}
+        for j, r in rows(st, 'STBROW'):
+            key = j['name']
+            t.setdefault(key, {})['x%d_%s' % (2 ** int(r['code']), r['loop'])] = dict(
+                t_dc_db=r['t_dc_db'], f_unity_mhz=None if r['f_unity'] is None else round(r['f_unity'] / 1e6, 2),
+                pm_deg=r['pm_deg'], gm_db=r['gm_db'])
+            grp = ('revb02_' if 'revb02' in key else ('revb_' if 'revb' in key else '')) + r['loop']
+            pm = r['pm_deg'] if r['pm_deg'] is not None else 999.0
+            if grp not in worst or pm < worst[grp]['pm_deg']:
+                worst[grp] = dict(pm_deg=pm, gm_db=r['gm_db'], where='%s x%d' % (key, 2 ** int(r['code'])))
+            if r['gm_db'] is not None and (grp + '_gm' not in worst or r['gm_db'] < worst[grp + '_gm']['gm_db']):
+                worst[grp + '_gm'] = dict(gm_db=r['gm_db'], where='%s x%d' % (key, 2 ** int(r['code'])))
+        S[camp] = dict(table=t, worst=worst)
+        if camp == 'stb':
+            ok = all(worst[l]['pm_deg'] >= lim for l, lim in (('dm1', 55), ('dm2', 55), ('cm1', 60), ('cm2', 60)))
+            fill('r1afe-stb-' + sfx, 'Loop gain (Tian double injection) of the stage-1 and stage-2 differential and common-mode loops, '
+                 'broken at the OTA outputs (plus CMFB-node and OTA-input breaks as cross-checks); tt/ss/ff, input CM 0.5/1.65/2.5/2.8 V, '
+                 'every gain step, track load (100 ohm + 2.8 pF) and hold load',
+                 'worst PM: dm1 %.1f, cm1 %.1f, dm2 %.1f, cm2 %.1f deg; worst GM: dm1 %.1f, cm1 %.1f, dm2 %.1f, cm2 %.1f dB' % (
+                     worst['dm1']['pm_deg'], worst['cm1']['pm_deg'], worst['dm2']['pm_deg'], worst['cm2']['pm_deg'],
+                     worst['dm1_gm']['gm_db'], worst['cm1_gm']['gm_db'], worst['dm2_gm']['gm_db'], worst['cm2_gm']['gm_db']),
+                 'passed (PM >= 55 deg differential, >= 60 deg common mode)' if ok else 'failed')
+        else:
+            fill('r1afe-stb_revb-' + sfx, 'Method check: the same loop-gain analysis on the revision-B netlist and on the dev-revb-02 '
+                 'variant (OTA1 CMFB pair 8/2, sinks 32/4) that oscillated in transients; x1 and x32, input CM 2.45 V',
+                 'revision B worst cm1 PM %.1f deg (%s), dm1 PM %.1f deg; dev-revb-02 worst cm1 PM %.1f deg (%s)' % (
+                     worst['revb_cm1']['pm_deg'], worst['revb_cm1']['where'], worst['revb_dm1']['pm_deg'],
+                     worst['revb02_cm1']['pm_deg'], worst['revb02_cm1']['where']),
+                 'record: revision B below target (superseded); a negative CM phase margin predicts the observed oscillation')
+    # ---------------- CM step (revision C)
+    cs = load('cmstep', sfx)
+    if cs:
+        t = {}
+        for j in cs:
+            t[j['name']] = {r['event']: {k: v for k, v in r.items() if k not in ('tag', 'event')} for r in j['rows'] if r['tag'] == 'CMSROW'}
+        c_ok = [n for n in t if 'revb' not in n]
+        mx = max(max(v.get('o1cm_pp_last2us_mV', v.get('o1cm_pp_mV', 0)) for v in t[n].values()) for n in c_ok)
+        st1 = max(max(v.get('o1cm_settle_ns_5mV', 0) for k, v in t[n].items() if k.startswith('pin')) for n in c_ok)
+        b02 = max(max(v.get('o1cm_pp_last2us_mV', v.get('o1cm_pp_mV', 0)) for v in t[n].values()) for n in t if 'revb02' in n)
+        S['cmstep'] = dict(table=t, revc_max_cm_pp_mV=mx, revc_pin_step_settle_ns_max=st1, revb02_max_cm_pp_mV=b02)
+        fill('r1afe-cmstep-' + sfx, 'CM step test with a full-scale 100 kHz sine: input CM 2.45->0.6->2.45 V, vcm2 +50 mV, VDDA -0.2 V; '
+             'tt/ss/ff, x1 and x32; same test on revision B and on the dev-revb-02 variant (detection check)',
+             'revision C: stage-1 CM peak-to-peak in the last 2 us before each next event <= %.2f mV; pin-CM step settling (5 mV) <= %.0f ns; '
+             'dev-revb-02 variant: sustained %.0f mVpp stage-1 CM oscillation' % (mx, st1, b02),
+             'passed (no sustained oscillation: <= 1 mV pp; the test detects the known oscillating variant)' if mx <= 1 and b02 > 100 else 'failed')
+    # ---------------- overload (revision C)
+    ov = load('overload', sfx)
+    if ov:
+        t = {}
+        for j, r in rows(ov, 'OVLROW'):
+            t[j['name']] = {k: v for k, v in r.items() if k != 'tag'}
+        w = max(v['rec_ns_1lsb'] for n, v in t.items() if 'x32' in n)
+        S['overload'] = dict(table=t, x32_recovery_1lsb_ns_worst=w)
+        fill('r1afe-overload-' + sfx, 'Input overload: +-1.0 V differential (2 Vpp) for 10 us each polarity at x32 (and x1), recovery to 1 LSB '
+             'and 1 % of the final output after the input returns to +FS/2; tt/ss/ff',
+             'x32 recovery to 1 LSB worst %.0f ns; see table for 1 %% and x1' % w, 'recorded (no specification limit)')
+    # ---------------- source impedance (revision C)
+    rs = load('rsrc', sfx)
+    if rs:
+        t = {}
+        for j, r in rows(rs, 'ACROW'):
+            t.setdefault(j['corner'], {}).setdefault(G[int(r['code'])], {})['%g' % r['mc']] = dict(
+                gain=10 ** (r['gs0'] / 20), f3_mhz=r['fs3'] / 1e6)
+        out = {}
+        for c in t:
+            for g in t[c]:
+                g0 = t[c][g]['0.001']['gain']
+                out.setdefault(c, {})[g] = {rv: dict(gain_change_pct=round(100 * (v['gain'] / g0 - 1), 3), f3_mhz=round(v['f3_mhz'], 3))
+                                            for rv, v in t[c][g].items()}
+        wx32 = min(out[c]['x32']['1000']['gain_change_pct'] for c in out)
+        wx1 = min(out[c]['x1']['1000']['gain_change_pct'] for c in out)
+        S['rsrc'] = dict(table=out)
+        fill('r1afe-rsrc-' + sfx, 'Source impedance 0/100/300/1000 ohm in series with each input pin: gain and f3 at every step, tt/ss/ff',
+             'gain change at 1 kOhm: x1 %.2f %%, x32 %.2f %% (worst corner); equal in both channels for equal source impedance' % (wx1, wx32),
+             'recorded (no specification limit; the host gain calibration absorbs it if the head impedance is constant)')
+    # ---------------- temperature (revision C)
+    tp = load('temp', sfx)
+    if tp:
+        t = {}
+        for j, r in rows(tp, 'ACROW'):
+            t.setdefault(str(j['subs']['TEMP']), {})[G[int(r['code'])]] = dict(gain=10 ** (r['gs0'] / 20), f3_mhz=r['fs3'] / 1e6,
+                                                                            ph100k=r['ps100'])
+        f3m = min(v['f3_mhz'] for T in t for v in t[T].values())
+        gd = {g: 100 * (max(t[T][g]['gain'] for T in t) - min(t[T][g]['gain'] for T in t)) / t['27'][g]['gain'] for g in G}
+        S['temp'] = dict(table=t, f3_min_mhz=f3m, gain_spread_pct=gd)
+        fill('r1afe-temp-' + sfx, 'Temperature -40/27/125 C at tt (3.3 V): gain and f3 at every step',
+             'f3 min %.3f MHz; gain spread over temperature max %.2f %% (%s)' % (f3m, max(gd.values()), max(gd, key=gd.get)),
+             'passed (f3 >= 1 MHz)' if f3m >= 1.0 else 'failed')
     json.dump(S, open('results/summary-%s.json' % sfx, 'w'), indent=1)
     print(json.dumps({k: {kk: vv for kk, vv in v.items() if kk != 'table'} if isinstance(v, dict) else v for k, v in S.items()}, indent=1))
 

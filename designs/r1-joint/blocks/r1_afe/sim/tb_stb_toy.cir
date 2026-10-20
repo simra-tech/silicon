@@ -1,0 +1,62 @@
+* tb_stb_toy -- validation of the loop-gain formula used in tb_afe_stb.cir (Tian double injection, Wiedmann form).
+* Inverting amplifier: VCVS with two poles (1 kHz, 5 MHz), output resistance 2 kOhm, finite input impedance
+* (5 kOhm || 1 pF), so neither the voltage nor the current injection alone is exact. Reference: the return ratio of
+* the VCVS computed on a replica with its control input broken and driven by AC 1 (T_exact = -v(xr)).
+.param vinj=1 iinj=0
+Vin in 0 dc 0
+R1 in x 10k
+Rf o x 20k
+Vp x y dc 0 ac {vinj}
+Ip 0 x dc 0 ac {iinj}
+Rin y 0 5k
+Cin y 0 1p
+E1 a 0 y 0 -1
+Rp1 a b 1k
+Cp1 b 0 159n
+Eb c 0 b 0 1000
+Rp2 c d 1k
+Cp2 d 0 31.8p
+Ed e 0 d 0 1
+Ro e o 2k
+Cl o 0 2p
+Vt yr 0 dc 0 ac 1
+E1r ar 0 yr 0 -1
+Rp1r ar br 1k
+Cp1r br 0 159n
+Ebr cr 0 br 0 1000
+Rp2r cr dr 1k
+Cp2r dr 0 31.8p
+Edr er 0 dr 0 1
+Ror er or 2k
+Clr or 0 2p
+Rfr or xr 20k
+R1r xr 0 10k
+Rinr xr 0 5k
+Cinr xr 0 1p
+.control
+ac dec 20 10 1g
+alterparam vinj=0
+alterparam iinj=1
+reset
+ac dec 20 10 1g
+let v1 = ac1.v(x)
+let i1 = ac1.i(vp)
+let v2 = ac2.v(x)
+let i2 = ac2.i(vp)
+let tl = -1/(1-1/(2*(i1*v2-v1*i2)+v1+i2))
+let tex = -ac1.v(xr)
+let er = mag(tl-tex)/mag(tex)
+meas ac ermax max er
+let gt = db(tl)
+let gx = db(tex)
+let pt = 180+180/pi*cph(tl)
+let px = 180+180/pi*cph(tex)
+meas ac gdc find gt at=10
+meas ac fu when gx=0 fall=1
+meas ac ftu when gt=0 fall=1
+meas ac pmx find px at=fu
+meas ac pmt find pt at=ftu
+echo "TOYROW rel_err_max=$&ermax t_dc_db=$&gdc f_unity_exact=$&fu f_unity_tian=$&ftu pm_exact=$&pmx pm_tian=$&pmt"
+wrdata @@RAW@@_toy tl
+.endc
+.end

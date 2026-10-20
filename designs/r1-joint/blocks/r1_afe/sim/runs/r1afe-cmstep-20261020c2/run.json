@@ -1,0 +1,41 @@
+{
+ "run_id": "r1afe-cmstep-20261020c2",
+ "campaign": "cmstep",
+ "date_utc": "2026-10-20T17:37:32Z",
+ "command": "G1_CPUSET=106-108 G1_CPUS=3 G1_WORKDIR=designs/r1-joint/blocks/r1_afe/sim G1_RESULTS_ROOT=<bulk> flow/run.sh python3 run_afe.py cmstep r1afe-cmstep-20261020c2",
+ "tools": {
+  "ngspice": "ngspice-46 : Circuit level simulation program",
+  "image_id": "sha256:ddeb69576f2808676d1c5d474ecf04f6d1d6f8abdcff6b72b39790ded924bab2",
+  "pdk_commit": "84374023ee8b4b126bebbba67fcbada0a9c0ff0b"
+ },
+ "inputs": {
+  "sim/tb_afe_cmstep.cir": "896747b675dc379db9a4460ca98f7d7c72b6e15e0bee5f83edb2cf1ea2daac63",
+  "sim/common_head.inc": "ae7e19db8bdacb4ed6ce7126dc07e6b7ed9ba069506c5eb46f7463bfa9bc71af",
+  "sim/gain_codes.inc": "a62c9d6daa3d544c36ac868c4e6a9266f32e581d093ac404c6c52bcc6e5276f6",
+  "schematic/r1_afe.spice": "65c1c4d964f0aa4d6861bbdeaa1beb743aa6f1d7675c0fbb4c5616769d2dca80",
+  "sim/run_afe.py": "8e6aebb2d9a6938c21790cb453c753b60d633d3aff7402de8ed32606b6ede792",
+  "schematic/r1_afe_revB.spice": "d689a63abffaf18f3a5cbd74e8b0c8d678f8fd93bf846fcf0386b0c63c9be4ad"
+ },
+ "netlist_edits": {
+  "cmstep_revb02_tt_x32": [
+   [
+    "WCP=32u LCP=1u WCT=48u WN3A=0.5u WN3B=16u LN3B=2u",
+    "WCP=8u LCP=2u WCT=48u WN3A=0.5u WN3B=32u LN3B=4u"
+   ]
+  ],
+  "cmstep_revb02_ss_x32": [
+   [
+    "WCP=32u LCP=1u WCT=48u WN3A=0.5u WN3B=16u LN3B=2u",
+    "WCP=8u LCP=2u WCT=48u WN3A=0.5u WN3B=32u LN3B=4u"
+   ]
+  ]
+ },
+ "raw": "$G1_RESULTS_ROOT/r1_afe/r1afe-cmstep-20261020c2/",
+ "jobs": 10,
+ "failed_jobs": [],
+ "wall_seconds": 405.0,
+ "summary": "results/r1afe-cmstep-20261020c2.json",
+ "question": "CM step test with a full-scale 100 kHz sine: input CM 2.45->0.6->2.45 V, vcm2 +50 mV, VDDA -0.2 V; tt/ss/ff, x1 and x32; same test on revision B and on the dev-revb-02 variant (detection check)",
+ "result": "revision C: stage-1 CM peak-to-peak in the last 2 us before each next event <= 0.31 mV; pin-CM step settling (5 mV) <= 614 ns; dev-revb-02 variant: sustained 1490 mVpp stage-1 CM oscillation",
+ "disposition": "passed (no sustained oscillation: <= 1 mV pp; the test detects the known oscillating variant)"
+}

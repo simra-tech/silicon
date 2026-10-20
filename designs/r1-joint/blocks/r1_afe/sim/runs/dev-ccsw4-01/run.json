@@ -1,0 +1,1133 @@
+{
+ "run_id": "dev-ccsw4-01",
+ "campaign": "ccsw4",
+ "date_utc": "2026-10-20T17:01:56Z",
+ "command": "G1_CPUSET=106-108 G1_CPUS=3 G1_WORKDIR=designs/r1-joint/blocks/r1_afe/sim G1_RESULTS_ROOT=<bulk> flow/run.sh python3 run_afe.py ccsw4 dev-ccsw4-01",
+ "tools": {
+  "ngspice": "ngspice-46 : Circuit level simulation program",
+  "image_id": "sha256:ddeb69576f2808676d1c5d474ecf04f6d1d6f8abdcff6b72b39790ded924bab2",
+  "pdk_commit": "84374023ee8b4b126bebbba67fcbada0a9c0ff0b"
+ },
+ "inputs": {
+  "sim/tb_afe_ac.cir": "9a5808e3927045e0a57713d0ac6c0e00626d575a9002f8a57f8183c7b823d251",
+  "sim/tb_afe_stb.cir": "9454a022bebab0e49bac0433dbbbd18cb02788006be58c0f9dbcac36536dabf0",
+  "sim/common_head.inc": "ae7e19db8bdacb4ed6ce7126dc07e6b7ed9ba069506c5eb46f7463bfa9bc71af",
+  "sim/gain_codes.inc": "a62c9d6daa3d544c36ac868c4e6a9266f32e581d093ac404c6c52bcc6e5276f6",
+  "schematic/r1_afe.spice": "6fa6f70dfacdb6a5aee9128a67cdd4bbc618ae4fb91b883849b2295c0b376067",
+  "sim/run_afe.py": "f7bd0241fb14edc7bbdac1a1f6502f3dd90cc29e2867cce50e7688b60c826f52"
+ },
+ "netlist_edits": {
+  "ccsw_z1_tt_cm0.5": [
+   [
+    "XA1 x1p x1n m1p m1n vcm1 ib1 c3b c3 vdd vss r1_afe_ota W2N=8u W2P=48u WCC=18u WCCB=24u LRZ=13u WCP=32u LCP=1u WCT=48u WN3A=0.5u WN3B=16u LN3B=2u WCS=22u",
+    "XA1 x1p x1n m1p m1n vcm1 ib1 c3b c3 vdd vss r1_afe_ota W2N=8u W2P=48u WCC=22u WCCB=20.4u LRZ=13u WCP=32u LCP=1u WCT=48u WN3A=0.5u WN3B=16u LN3B=2u WCS=22u WPT=72u"
+   ],
+   [
+    "XA2 x2p x2n on2 op2 vcm2 ib2 vdd vss r1_afe_ota2 W2N=40u W2P=80u WCC=18u LRZ=6u WCP=32u LCP=1u WCT=32u WN3A=28u WN3B=6u WCS=14u",
+    "XA2 x2p x2n on2 op2 vcm2 ib2 vdd vss r1_afe_ota2 W2N=40u W2P=80u WCC=18u LRZ=6u WCP=32u LCP=1u WCT=32u WN3A=20u WN3B=10u WCS=14u"
+   ],
+   [
+    "XA1 x1p x1n ",
+    "Vpa1p x1p y1p dc 0 ac {vdp1}\nVpa1n x1n y1n dc 0 ac {vdn1}\nIpa1p 0 x1p dc 0 ac {idp1}\nIpa1n 0 x1n dc 0 ac {idn1}\nXA1 y1p y1n "
+   ],
+   [
+    "XA2 x2p x2n ",
+    "Vpa2p x2p y2p dc 0 ac {vdp2}\nVpa2n x2n y2n dc 0 ac {vdn2}\nIpa2p 0 x2p dc 0 ac {idp2}\nIpa2n 0 x2n dc 0 ac {idn2}\nXA2 y2p y2n "
+   ],
+   [
+    "XMC1 vcmfb vcms tc",
+    "Vpc vcms vcmsy dc 0 ac {vc1}\nIpc 0 vcms dc 0 ac {ic1}\nXMC1 vcmfb vcmsy tc"
+   ],
+   [
+    "XMC1 vcmfb vcms tc",
+    "Vpc vcms vcmsy dc 0 ac {vc2}\nIpc 0 vcms dc 0 ac {ic2}\nXMC1 vcmfb vcmsy tc"
+   ],
+   [
+    "XMN7 outp ",
+    "Vpop outpi outp dc 0 ac {vop1}\nVpon outni outn dc 0 ac {von1}\nIpop 0 outpi dc 0 ac {iop1}\nIpon 0 outni dc 0 ac {ion1}\nXMN7 outpi "
+   ],
+   [
+    "XMN8 outn ",
+    "XMN8 outni "
+   ],
+   [
+    "XMP7 outp ",
+    "XMP7 outpi "
+   ],
+   [
+    "XMP8 outn ",
+    "XMP8 outni "
+   ],
+   [
+    "XCC1 cz1 outp ",
+    "XCC1 cz1 outpi "
+   ],
+   [
+    "XCC2 cz2 outn ",
+    "XCC2 cz2 outni "
+   ],
+   [
+    "XMN7 outp ",
+    "Vpop outpi outp dc 0 ac {vop2}\nVpon outni outn dc 0 ac {von2}\nIpop 0 outpi dc 0 ac {iop2}\nIpon 0 outni dc 0 ac {ion2}\nXMN7 outpi "
+   ],
+   [
+    "XMN8 outn ",
+    "XMN8 outni "
+   ],
+   [
+    "XMP7 outp ",
+    "XMP7 outpi "
+   ],
+   [
+    "XMP8 outn ",
+    "XMP8 outni "
+   ],
+   [
+    "XCC1 cz1 outp ",
+    "XCC1 cz1 outpi "
+   ],
+   [
+    "XCC2 cz2 outn ",
+    "XCC2 cz2 outni "
+   ],
+   [
+    "XCC1B cb1 outp ",
+    "XCC1B cb1 outpi "
+   ],
+   [
+    "XCC2B cb2 outn ",
+    "XCC2B cb2 outni "
+   ]
+  ],
+  "ccswac_z1_tt_cm0.5": [
+   [
+    "XA1 x1p x1n m1p m1n vcm1 ib1 c3b c3 vdd vss r1_afe_ota W2N=8u W2P=48u WCC=18u WCCB=24u LRZ=13u WCP=32u LCP=1u WCT=48u WN3A=0.5u WN3B=16u LN3B=2u WCS=22u",
+    "XA1 x1p x1n m1p m1n vcm1 ib1 c3b c3 vdd vss r1_afe_ota W2N=8u W2P=48u WCC=22u WCCB=20.4u LRZ=13u WCP=32u LCP=1u WCT=48u WN3A=0.5u WN3B=16u LN3B=2u WCS=22u WPT=72u"
+   ],
+   [
+    "XA2 x2p x2n on2 op2 vcm2 ib2 vdd vss r1_afe_ota2 W2N=40u W2P=80u WCC=18u LRZ=6u WCP=32u LCP=1u WCT=32u WN3A=28u WN3B=6u WCS=14u",
+    "XA2 x2p x2n on2 op2 vcm2 ib2 vdd vss r1_afe_ota2 W2N=40u W2P=80u WCC=18u LRZ=6u WCP=32u LCP=1u WCT=32u WN3A=20u WN3B=10u WCS=14u"
+   ]
+  ],
+  "ccsw_z1_tt_cm2.5": [
+   [
+    "XA1 x1p x1n m1p m1n vcm1 ib1 c3b c3 vdd vss r1_afe_ota W2N=8u W2P=48u WCC=18u WCCB=24u LRZ=13u WCP=32u LCP=1u WCT=48u WN3A=0.5u WN3B=16u LN3B=2u WCS=22u",
+    "XA1 x1p x1n m1p m1n vcm1 ib1 c3b c3 vdd vss r1_afe_ota W2N=8u W2P=48u WCC=22u WCCB=20.4u LRZ=13u WCP=32u LCP=1u WCT=48u WN3A=0.5u WN3B=16u LN3B=2u WCS=22u WPT=72u"
+   ],
+   [
+    "XA2 x2p x2n on2 op2 vcm2 ib2 vdd vss r1_afe_ota2 W2N=40u W2P=80u WCC=18u LRZ=6u WCP=32u LCP=1u WCT=32u WN3A=28u WN3B=6u WCS=14u",
+    "XA2 x2p x2n on2 op2 vcm2 ib2 vdd vss r1_afe_ota2 W2N=40u W2P=80u WCC=18u LRZ=6u WCP=32u LCP=1u WCT=32u WN3A=20u WN3B=10u WCS=14u"
+   ],
+   [
+    "XA1 x1p x1n ",
+    "Vpa1p x1p y1p dc 0 ac {vdp1}\nVpa1n x1n y1n dc 0 ac {vdn1}\nIpa1p 0 x1p dc 0 ac {idp1}\nIpa1n 0 x1n dc 0 ac {idn1}\nXA1 y1p y1n "
+   ],
+   [
+    "XA2 x2p x2n ",
+    "Vpa2p x2p y2p dc 0 ac {vdp2}\nVpa2n x2n y2n dc 0 ac {vdn2}\nIpa2p 0 x2p dc 0 ac {idp2}\nIpa2n 0 x2n dc 0 ac {idn2}\nXA2 y2p y2n "
+   ],
+   [
+    "XMC1 vcmfb vcms tc",
+    "Vpc vcms vcmsy dc 0 ac {vc1}\nIpc 0 vcms dc 0 ac {ic1}\nXMC1 vcmfb vcmsy tc"
+   ],
+   [
+    "XMC1 vcmfb vcms tc",
+    "Vpc vcms vcmsy dc 0 ac {vc2}\nIpc 0 vcms dc 0 ac {ic2}\nXMC1 vcmfb vcmsy tc"
+   ],
+   [
+    "XMN7 outp ",
+    "Vpop outpi outp dc 0 ac {vop1}\nVpon outni outn dc 0 ac {von1}\nIpop 0 outpi dc 0 ac {iop1}\nIpon 0 outni dc 0 ac {ion1}\nXMN7 outpi "
+   ],
+   [
+    "XMN8 outn ",
+    "XMN8 outni "
+   ],
+   [
+    "XMP7 outp ",
+    "XMP7 outpi "
+   ],
+   [
+    "XMP8 outn ",
+    "XMP8 outni "
+   ],
+   [
+    "XCC1 cz1 outp ",
+    "XCC1 cz1 outpi "
+   ],
+   [
+    "XCC2 cz2 outn ",
+    "XCC2 cz2 outni "
+   ],
+   [
+    "XMN7 outp ",
+    "Vpop outpi outp dc 0 ac {vop2}\nVpon outni outn dc 0 ac {von2}\nIpop 0 outpi dc 0 ac {iop2}\nIpon 0 outni dc 0 ac {ion2}\nXMN7 outpi "
+   ],
+   [
+    "XMN8 outn ",
+    "XMN8 outni "
+   ],
+   [
+    "XMP7 outp ",
+    "XMP7 outpi "
+   ],
+   [
+    "XMP8 outn ",
+    "XMP8 outni "
+   ],
+   [
+    "XCC1 cz1 outp ",
+    "XCC1 cz1 outpi "
+   ],
+   [
+    "XCC2 cz2 outn ",
+    "XCC2 cz2 outni "
+   ],
+   [
+    "XCC1B cb1 outp ",
+    "XCC1B cb1 outpi "
+   ],
+   [
+    "XCC2B cb2 outn ",
+    "XCC2B cb2 outni "
+   ]
+  ],
+  "ccswac_z1_tt_cm2.5": [
+   [
+    "XA1 x1p x1n m1p m1n vcm1 ib1 c3b c3 vdd vss r1_afe_ota W2N=8u W2P=48u WCC=18u WCCB=24u LRZ=13u WCP=32u LCP=1u WCT=48u WN3A=0.5u WN3B=16u LN3B=2u WCS=22u",
+    "XA1 x1p x1n m1p m1n vcm1 ib1 c3b c3 vdd vss r1_afe_ota W2N=8u W2P=48u WCC=22u WCCB=20.4u LRZ=13u WCP=32u LCP=1u WCT=48u WN3A=0.5u WN3B=16u LN3B=2u WCS=22u WPT=72u"
+   ],
+   [
+    "XA2 x2p x2n on2 op2 vcm2 ib2 vdd vss r1_afe_ota2 W2N=40u W2P=80u WCC=18u LRZ=6u WCP=32u LCP=1u WCT=32u WN3A=28u WN3B=6u WCS=14u",
+    "XA2 x2p x2n on2 op2 vcm2 ib2 vdd vss r1_afe_ota2 W2N=40u W2P=80u WCC=18u LRZ=6u WCP=32u LCP=1u WCT=32u WN3A=20u WN3B=10u WCS=14u"
+   ]
+  ],
+  "ccsw_z1_ss_cm0.5": [
+   [
+    "XA1 x1p x1n m1p m1n vcm1 ib1 c3b c3 vdd vss r1_afe_ota W2N=8u W2P=48u WCC=18u WCCB=24u LRZ=13u WCP=32u LCP=1u WCT=48u WN3A=0.5u WN3B=16u LN3B=2u WCS=22u",
+    "XA1 x1p x1n m1p m1n vcm1 ib1 c3b c3 vdd vss r1_afe_ota W2N=8u W2P=48u WCC=22u WCCB=20.4u LRZ=13u WCP=32u LCP=1u WCT=48u WN3A=0.5u WN3B=16u LN3B=2u WCS=22u WPT=72u"
+   ],
+   [
+    "XA2 x2p x2n on2 op2 vcm2 ib2 vdd vss r1_afe_ota2 W2N=40u W2P=80u WCC=18u LRZ=6u WCP=32u LCP=1u WCT=32u WN3A=28u WN3B=6u WCS=14u",
+    "XA2 x2p x2n on2 op2 vcm2 ib2 vdd vss r1_afe_ota2 W2N=40u W2P=80u WCC=18u LRZ=6u WCP=32u LCP=1u WCT=32u WN3A=20u WN3B=10u WCS=14u"
+   ],
+   [
+    "XA1 x1p x1n ",
+    "Vpa1p x1p y1p dc 0 ac {vdp1}\nVpa1n x1n y1n dc 0 ac {vdn1}\nIpa1p 0 x1p dc 0 ac {idp1}\nIpa1n 0 x1n dc 0 ac {idn1}\nXA1 y1p y1n "
+   ],
+   [
+    "XA2 x2p x2n ",
+    "Vpa2p x2p y2p dc 0 ac {vdp2}\nVpa2n x2n y2n dc 0 ac {vdn2}\nIpa2p 0 x2p dc 0 ac {idp2}\nIpa2n 0 x2n dc 0 ac {idn2}\nXA2 y2p y2n "
+   ],
+   [
+    "XMC1 vcmfb vcms tc",
+    "Vpc vcms vcmsy dc 0 ac {vc1}\nIpc 0 vcms dc 0 ac {ic1}\nXMC1 vcmfb vcmsy tc"
+   ],
+   [
+    "XMC1 vcmfb vcms tc",
+    "Vpc vcms vcmsy dc 0 ac {vc2}\nIpc 0 vcms dc 0 ac {ic2}\nXMC1 vcmfb vcmsy tc"
+   ],
+   [
+    "XMN7 outp ",
+    "Vpop outpi outp dc 0 ac {vop1}\nVpon outni outn dc 0 ac {von1}\nIpop 0 outpi dc 0 ac {iop1}\nIpon 0 outni dc 0 ac {ion1}\nXMN7 outpi "
+   ],
+   [
+    "XMN8 outn ",
+    "XMN8 outni "
+   ],
+   [
+    "XMP7 outp ",
+    "XMP7 outpi "
+   ],
+   [
+    "XMP8 outn ",
+    "XMP8 outni "
+   ],
+   [
+    "XCC1 cz1 outp ",
+    "XCC1 cz1 outpi "
+   ],
+   [
+    "XCC2 cz2 outn ",
+    "XCC2 cz2 outni "
+   ],
+   [
+    "XMN7 outp ",
+    "Vpop outpi outp dc 0 ac {vop2}\nVpon outni outn dc 0 ac {von2}\nIpop 0 outpi dc 0 ac {iop2}\nIpon 0 outni dc 0 ac {ion2}\nXMN7 outpi "
+   ],
+   [
+    "XMN8 outn ",
+    "XMN8 outni "
+   ],
+   [
+    "XMP7 outp ",
+    "XMP7 outpi "
+   ],
+   [
+    "XMP8 outn ",
+    "XMP8 outni "
+   ],
+   [
+    "XCC1 cz1 outp ",
+    "XCC1 cz1 outpi "
+   ],
+   [
+    "XCC2 cz2 outn ",
+    "XCC2 cz2 outni "
+   ],
+   [
+    "XCC1B cb1 outp ",
+    "XCC1B cb1 outpi "
+   ],
+   [
+    "XCC2B cb2 outn ",
+    "XCC2B cb2 outni "
+   ]
+  ],
+  "ccswac_z1_ss_cm0.5": [
+   [
+    "XA1 x1p x1n m1p m1n vcm1 ib1 c3b c3 vdd vss r1_afe_ota W2N=8u W2P=48u WCC=18u WCCB=24u LRZ=13u WCP=32u LCP=1u WCT=48u WN3A=0.5u WN3B=16u LN3B=2u WCS=22u",
+    "XA1 x1p x1n m1p m1n vcm1 ib1 c3b c3 vdd vss r1_afe_ota W2N=8u W2P=48u WCC=22u WCCB=20.4u LRZ=13u WCP=32u LCP=1u WCT=48u WN3A=0.5u WN3B=16u LN3B=2u WCS=22u WPT=72u"
+   ],
+   [
+    "XA2 x2p x2n on2 op2 vcm2 ib2 vdd vss r1_afe_ota2 W2N=40u W2P=80u WCC=18u LRZ=6u WCP=32u LCP=1u WCT=32u WN3A=28u WN3B=6u WCS=14u",
+    "XA2 x2p x2n on2 op2 vcm2 ib2 vdd vss r1_afe_ota2 W2N=40u W2P=80u WCC=18u LRZ=6u WCP=32u LCP=1u WCT=32u WN3A=20u WN3B=10u WCS=14u"
+   ]
+  ],
+  "ccsw_z1_ss_cm2.5": [
+   [
+    "XA1 x1p x1n m1p m1n vcm1 ib1 c3b c3 vdd vss r1_afe_ota W2N=8u W2P=48u WCC=18u WCCB=24u LRZ=13u WCP=32u LCP=1u WCT=48u WN3A=0.5u WN3B=16u LN3B=2u WCS=22u",
+    "XA1 x1p x1n m1p m1n vcm1 ib1 c3b c3 vdd vss r1_afe_ota W2N=8u W2P=48u WCC=22u WCCB=20.4u LRZ=13u WCP=32u LCP=1u WCT=48u WN3A=0.5u WN3B=16u LN3B=2u WCS=22u WPT=72u"
+   ],
+   [
+    "XA2 x2p x2n on2 op2 vcm2 ib2 vdd vss r1_afe_ota2 W2N=40u W2P=80u WCC=18u LRZ=6u WCP=32u LCP=1u WCT=32u WN3A=28u WN3B=6u WCS=14u",
+    "XA2 x2p x2n on2 op2 vcm2 ib2 vdd vss r1_afe_ota2 W2N=40u W2P=80u WCC=18u LRZ=6u WCP=32u LCP=1u WCT=32u WN3A=20u WN3B=10u WCS=14u"
+   ],
+   [
+    "XA1 x1p x1n ",
+    "Vpa1p x1p y1p dc 0 ac {vdp1}\nVpa1n x1n y1n dc 0 ac {vdn1}\nIpa1p 0 x1p dc 0 ac {idp1}\nIpa1n 0 x1n dc 0 ac {idn1}\nXA1 y1p y1n "
+   ],
+   [
+    "XA2 x2p x2n ",
+    "Vpa2p x2p y2p dc 0 ac {vdp2}\nVpa2n x2n y2n dc 0 ac {vdn2}\nIpa2p 0 x2p dc 0 ac {idp2}\nIpa2n 0 x2n dc 0 ac {idn2}\nXA2 y2p y2n "
+   ],
+   [
+    "XMC1 vcmfb vcms tc",
+    "Vpc vcms vcmsy dc 0 ac {vc1}\nIpc 0 vcms dc 0 ac {ic1}\nXMC1 vcmfb vcmsy tc"
+   ],
+   [
+    "XMC1 vcmfb vcms tc",
+    "Vpc vcms vcmsy dc 0 ac {vc2}\nIpc 0 vcms dc 0 ac {ic2}\nXMC1 vcmfb vcmsy tc"
+   ],
+   [
+    "XMN7 outp ",
+    "Vpop outpi outp dc 0 ac {vop1}\nVpon outni outn dc 0 ac {von1}\nIpop 0 outpi dc 0 ac {iop1}\nIpon 0 outni dc 0 ac {ion1}\nXMN7 outpi "
+   ],
+   [
+    "XMN8 outn ",
+    "XMN8 outni "
+   ],
+   [
+    "XMP7 outp ",
+    "XMP7 outpi "
+   ],
+   [
+    "XMP8 outn ",
+    "XMP8 outni "
+   ],
+   [
+    "XCC1 cz1 outp ",
+    "XCC1 cz1 outpi "
+   ],
+   [
+    "XCC2 cz2 outn ",
+    "XCC2 cz2 outni "
+   ],
+   [
+    "XMN7 outp ",
+    "Vpop outpi outp dc 0 ac {vop2}\nVpon outni outn dc 0 ac {von2}\nIpop 0 outpi dc 0 ac {iop2}\nIpon 0 outni dc 0 ac {ion2}\nXMN7 outpi "
+   ],
+   [
+    "XMN8 outn ",
+    "XMN8 outni "
+   ],
+   [
+    "XMP7 outp ",
+    "XMP7 outpi "
+   ],
+   [
+    "XMP8 outn ",
+    "XMP8 outni "
+   ],
+   [
+    "XCC1 cz1 outp ",
+    "XCC1 cz1 outpi "
+   ],
+   [
+    "XCC2 cz2 outn ",
+    "XCC2 cz2 outni "
+   ],
+   [
+    "XCC1B cb1 outp ",
+    "XCC1B cb1 outpi "
+   ],
+   [
+    "XCC2B cb2 outn ",
+    "XCC2B cb2 outni "
+   ]
+  ],
+  "ccswac_z1_ss_cm2.5": [
+   [
+    "XA1 x1p x1n m1p m1n vcm1 ib1 c3b c3 vdd vss r1_afe_ota W2N=8u W2P=48u WCC=18u WCCB=24u LRZ=13u WCP=32u LCP=1u WCT=48u WN3A=0.5u WN3B=16u LN3B=2u WCS=22u",
+    "XA1 x1p x1n m1p m1n vcm1 ib1 c3b c3 vdd vss r1_afe_ota W2N=8u W2P=48u WCC=22u WCCB=20.4u LRZ=13u WCP=32u LCP=1u WCT=48u WN3A=0.5u WN3B=16u LN3B=2u WCS=22u WPT=72u"
+   ],
+   [
+    "XA2 x2p x2n on2 op2 vcm2 ib2 vdd vss r1_afe_ota2 W2N=40u W2P=80u WCC=18u LRZ=6u WCP=32u LCP=1u WCT=32u WN3A=28u WN3B=6u WCS=14u",
+    "XA2 x2p x2n on2 op2 vcm2 ib2 vdd vss r1_afe_ota2 W2N=40u W2P=80u WCC=18u LRZ=6u WCP=32u LCP=1u WCT=32u WN3A=20u WN3B=10u WCS=14u"
+   ]
+  ],
+  "ccsw_z1_ff_cm0.5": [
+   [
+    "XA1 x1p x1n m1p m1n vcm1 ib1 c3b c3 vdd vss r1_afe_ota W2N=8u W2P=48u WCC=18u WCCB=24u LRZ=13u WCP=32u LCP=1u WCT=48u WN3A=0.5u WN3B=16u LN3B=2u WCS=22u",
+    "XA1 x1p x1n m1p m1n vcm1 ib1 c3b c3 vdd vss r1_afe_ota W2N=8u W2P=48u WCC=22u WCCB=20.4u LRZ=13u WCP=32u LCP=1u WCT=48u WN3A=0.5u WN3B=16u LN3B=2u WCS=22u WPT=72u"
+   ],
+   [
+    "XA2 x2p x2n on2 op2 vcm2 ib2 vdd vss r1_afe_ota2 W2N=40u W2P=80u WCC=18u LRZ=6u WCP=32u LCP=1u WCT=32u WN3A=28u WN3B=6u WCS=14u",
+    "XA2 x2p x2n on2 op2 vcm2 ib2 vdd vss r1_afe_ota2 W2N=40u W2P=80u WCC=18u LRZ=6u WCP=32u LCP=1u WCT=32u WN3A=20u WN3B=10u WCS=14u"
+   ],
+   [
+    "XA1 x1p x1n ",
+    "Vpa1p x1p y1p dc 0 ac {vdp1}\nVpa1n x1n y1n dc 0 ac {vdn1}\nIpa1p 0 x1p dc 0 ac {idp1}\nIpa1n 0 x1n dc 0 ac {idn1}\nXA1 y1p y1n "
+   ],
+   [
+    "XA2 x2p x2n ",
+    "Vpa2p x2p y2p dc 0 ac {vdp2}\nVpa2n x2n y2n dc 0 ac {vdn2}\nIpa2p 0 x2p dc 0 ac {idp2}\nIpa2n 0 x2n dc 0 ac {idn2}\nXA2 y2p y2n "
+   ],
+   [
+    "XMC1 vcmfb vcms tc",
+    "Vpc vcms vcmsy dc 0 ac {vc1}\nIpc 0 vcms dc 0 ac {ic1}\nXMC1 vcmfb vcmsy tc"
+   ],
+   [
+    "XMC1 vcmfb vcms tc",
+    "Vpc vcms vcmsy dc 0 ac {vc2}\nIpc 0 vcms dc 0 ac {ic2}\nXMC1 vcmfb vcmsy tc"
+   ],
+   [
+    "XMN7 outp ",
+    "Vpop outpi outp dc 0 ac {vop1}\nVpon outni outn dc 0 ac {von1}\nIpop 0 outpi dc 0 ac {iop1}\nIpon 0 outni dc 0 ac {ion1}\nXMN7 outpi "
+   ],
+   [
+    "XMN8 outn ",
+    "XMN8 outni "
+   ],
+   [
+    "XMP7 outp ",
+    "XMP7 outpi "
+   ],
+   [
+    "XMP8 outn ",
+    "XMP8 outni "
+   ],
+   [
+    "XCC1 cz1 outp ",
+    "XCC1 cz1 outpi "
+   ],
+   [
+    "XCC2 cz2 outn ",
+    "XCC2 cz2 outni "
+   ],
+   [
+    "XMN7 outp ",
+    "Vpop outpi outp dc 0 ac {vop2}\nVpon outni outn dc 0 ac {von2}\nIpop 0 outpi dc 0 ac {iop2}\nIpon 0 outni dc 0 ac {ion2}\nXMN7 outpi "
+   ],
+   [
+    "XMN8 outn ",
+    "XMN8 outni "
+   ],
+   [
+    "XMP7 outp ",
+    "XMP7 outpi "
+   ],
+   [
+    "XMP8 outn ",
+    "XMP8 outni "
+   ],
+   [
+    "XCC1 cz1 outp ",
+    "XCC1 cz1 outpi "
+   ],
+   [
+    "XCC2 cz2 outn ",
+    "XCC2 cz2 outni "
+   ],
+   [
+    "XCC1B cb1 outp ",
+    "XCC1B cb1 outpi "
+   ],
+   [
+    "XCC2B cb2 outn ",
+    "XCC2B cb2 outni "
+   ]
+  ],
+  "ccswac_z1_ff_cm0.5": [
+   [
+    "XA1 x1p x1n m1p m1n vcm1 ib1 c3b c3 vdd vss r1_afe_ota W2N=8u W2P=48u WCC=18u WCCB=24u LRZ=13u WCP=32u LCP=1u WCT=48u WN3A=0.5u WN3B=16u LN3B=2u WCS=22u",
+    "XA1 x1p x1n m1p m1n vcm1 ib1 c3b c3 vdd vss r1_afe_ota W2N=8u W2P=48u WCC=22u WCCB=20.4u LRZ=13u WCP=32u LCP=1u WCT=48u WN3A=0.5u WN3B=16u LN3B=2u WCS=22u WPT=72u"
+   ],
+   [
+    "XA2 x2p x2n on2 op2 vcm2 ib2 vdd vss r1_afe_ota2 W2N=40u W2P=80u WCC=18u LRZ=6u WCP=32u LCP=1u WCT=32u WN3A=28u WN3B=6u WCS=14u",
+    "XA2 x2p x2n on2 op2 vcm2 ib2 vdd vss r1_afe_ota2 W2N=40u W2P=80u WCC=18u LRZ=6u WCP=32u LCP=1u WCT=32u WN3A=20u WN3B=10u WCS=14u"
+   ]
+  ],
+  "ccsw_z1_ff_cm2.5": [
+   [
+    "XA1 x1p x1n m1p m1n vcm1 ib1 c3b c3 vdd vss r1_afe_ota W2N=8u W2P=48u WCC=18u WCCB=24u LRZ=13u WCP=32u LCP=1u WCT=48u WN3A=0.5u WN3B=16u LN3B=2u WCS=22u",
+    "XA1 x1p x1n m1p m1n vcm1 ib1 c3b c3 vdd vss r1_afe_ota W2N=8u W2P=48u WCC=22u WCCB=20.4u LRZ=13u WCP=32u LCP=1u WCT=48u WN3A=0.5u WN3B=16u LN3B=2u WCS=22u WPT=72u"
+   ],
+   [
+    "XA2 x2p x2n on2 op2 vcm2 ib2 vdd vss r1_afe_ota2 W2N=40u W2P=80u WCC=18u LRZ=6u WCP=32u LCP=1u WCT=32u WN3A=28u WN3B=6u WCS=14u",
+    "XA2 x2p x2n on2 op2 vcm2 ib2 vdd vss r1_afe_ota2 W2N=40u W2P=80u WCC=18u LRZ=6u WCP=32u LCP=1u WCT=32u WN3A=20u WN3B=10u WCS=14u"
+   ],
+   [
+    "XA1 x1p x1n ",
+    "Vpa1p x1p y1p dc 0 ac {vdp1}\nVpa1n x1n y1n dc 0 ac {vdn1}\nIpa1p 0 x1p dc 0 ac {idp1}\nIpa1n 0 x1n dc 0 ac {idn1}\nXA1 y1p y1n "
+   ],
+   [
+    "XA2 x2p x2n ",
+    "Vpa2p x2p y2p dc 0 ac {vdp2}\nVpa2n x2n y2n dc 0 ac {vdn2}\nIpa2p 0 x2p dc 0 ac {idp2}\nIpa2n 0 x2n dc 0 ac {idn2}\nXA2 y2p y2n "
+   ],
+   [
+    "XMC1 vcmfb vcms tc",
+    "Vpc vcms vcmsy dc 0 ac {vc1}\nIpc 0 vcms dc 0 ac {ic1}\nXMC1 vcmfb vcmsy tc"
+   ],
+   [
+    "XMC1 vcmfb vcms tc",
+    "Vpc vcms vcmsy dc 0 ac {vc2}\nIpc 0 vcms dc 0 ac {ic2}\nXMC1 vcmfb vcmsy tc"
+   ],
+   [
+    "XMN7 outp ",
+    "Vpop outpi outp dc 0 ac {vop1}\nVpon outni outn dc 0 ac {von1}\nIpop 0 outpi dc 0 ac {iop1}\nIpon 0 outni dc 0 ac {ion1}\nXMN7 outpi "
+   ],
+   [
+    "XMN8 outn ",
+    "XMN8 outni "
+   ],
+   [
+    "XMP7 outp ",
+    "XMP7 outpi "
+   ],
+   [
+    "XMP8 outn ",
+    "XMP8 outni "
+   ],
+   [
+    "XCC1 cz1 outp ",
+    "XCC1 cz1 outpi "
+   ],
+   [
+    "XCC2 cz2 outn ",
+    "XCC2 cz2 outni "
+   ],
+   [
+    "XMN7 outp ",
+    "Vpop outpi outp dc 0 ac {vop2}\nVpon outni outn dc 0 ac {von2}\nIpop 0 outpi dc 0 ac {iop2}\nIpon 0 outni dc 0 ac {ion2}\nXMN7 outpi "
+   ],
+   [
+    "XMN8 outn ",
+    "XMN8 outni "
+   ],
+   [
+    "XMP7 outp ",
+    "XMP7 outpi "
+   ],
+   [
+    "XMP8 outn ",
+    "XMP8 outni "
+   ],
+   [
+    "XCC1 cz1 outp ",
+    "XCC1 cz1 outpi "
+   ],
+   [
+    "XCC2 cz2 outn ",
+    "XCC2 cz2 outni "
+   ],
+   [
+    "XCC1B cb1 outp ",
+    "XCC1B cb1 outpi "
+   ],
+   [
+    "XCC2B cb2 outn ",
+    "XCC2B cb2 outni "
+   ]
+  ],
+  "ccswac_z1_ff_cm2.5": [
+   [
+    "XA1 x1p x1n m1p m1n vcm1 ib1 c3b c3 vdd vss r1_afe_ota W2N=8u W2P=48u WCC=18u WCCB=24u LRZ=13u WCP=32u LCP=1u WCT=48u WN3A=0.5u WN3B=16u LN3B=2u WCS=22u",
+    "XA1 x1p x1n m1p m1n vcm1 ib1 c3b c3 vdd vss r1_afe_ota W2N=8u W2P=48u WCC=22u WCCB=20.4u LRZ=13u WCP=32u LCP=1u WCT=48u WN3A=0.5u WN3B=16u LN3B=2u WCS=22u WPT=72u"
+   ],
+   [
+    "XA2 x2p x2n on2 op2 vcm2 ib2 vdd vss r1_afe_ota2 W2N=40u W2P=80u WCC=18u LRZ=6u WCP=32u LCP=1u WCT=32u WN3A=28u WN3B=6u WCS=14u",
+    "XA2 x2p x2n on2 op2 vcm2 ib2 vdd vss r1_afe_ota2 W2N=40u W2P=80u WCC=18u LRZ=6u WCP=32u LCP=1u WCT=32u WN3A=20u WN3B=10u WCS=14u"
+   ]
+  ],
+  "ccsw_z2_tt_cm0.5": [
+   [
+    "XA1 x1p x1n m1p m1n vcm1 ib1 c3b c3 vdd vss r1_afe_ota W2N=8u W2P=48u WCC=18u WCCB=24u LRZ=13u WCP=32u LCP=1u WCT=48u WN3A=0.5u WN3B=16u LN3B=2u WCS=22u",
+    "XA1 x1p x1n m1p m1n vcm1 ib1 c3b c3 vdd vss r1_afe_ota W2N=8u W2P=48u WCC=24u WCCB=18u LRZ=13u WCP=32u LCP=1u WCT=48u WN3A=0.5u WN3B=16u LN3B=2u WCS=22u WPT=72u"
+   ],
+   [
+    "XA2 x2p x2n on2 op2 vcm2 ib2 vdd vss r1_afe_ota2 W2N=40u W2P=80u WCC=18u LRZ=6u WCP=32u LCP=1u WCT=32u WN3A=28u WN3B=6u WCS=14u",
+    "XA2 x2p x2n on2 op2 vcm2 ib2 vdd vss r1_afe_ota2 W2N=40u W2P=80u WCC=18u LRZ=6u WCP=32u LCP=1u WCT=32u WN3A=20u WN3B=10u WCS=14u"
+   ],
+   [
+    "XA1 x1p x1n ",
+    "Vpa1p x1p y1p dc 0 ac {vdp1}\nVpa1n x1n y1n dc 0 ac {vdn1}\nIpa1p 0 x1p dc 0 ac {idp1}\nIpa1n 0 x1n dc 0 ac {idn1}\nXA1 y1p y1n "
+   ],
+   [
+    "XA2 x2p x2n ",
+    "Vpa2p x2p y2p dc 0 ac {vdp2}\nVpa2n x2n y2n dc 0 ac {vdn2}\nIpa2p 0 x2p dc 0 ac {idp2}\nIpa2n 0 x2n dc 0 ac {idn2}\nXA2 y2p y2n "
+   ],
+   [
+    "XMC1 vcmfb vcms tc",
+    "Vpc vcms vcmsy dc 0 ac {vc1}\nIpc 0 vcms dc 0 ac {ic1}\nXMC1 vcmfb vcmsy tc"
+   ],
+   [
+    "XMC1 vcmfb vcms tc",
+    "Vpc vcms vcmsy dc 0 ac {vc2}\nIpc 0 vcms dc 0 ac {ic2}\nXMC1 vcmfb vcmsy tc"
+   ],
+   [
+    "XMN7 outp ",
+    "Vpop outpi outp dc 0 ac {vop1}\nVpon outni outn dc 0 ac {von1}\nIpop 0 outpi dc 0 ac {iop1}\nIpon 0 outni dc 0 ac {ion1}\nXMN7 outpi "
+   ],
+   [
+    "XMN8 outn ",
+    "XMN8 outni "
+   ],
+   [
+    "XMP7 outp ",
+    "XMP7 outpi "
+   ],
+   [
+    "XMP8 outn ",
+    "XMP8 outni "
+   ],
+   [
+    "XCC1 cz1 outp ",
+    "XCC1 cz1 outpi "
+   ],
+   [
+    "XCC2 cz2 outn ",
+    "XCC2 cz2 outni "
+   ],
+   [
+    "XMN7 outp ",
+    "Vpop outpi outp dc 0 ac {vop2}\nVpon outni outn dc 0 ac {von2}\nIpop 0 outpi dc 0 ac {iop2}\nIpon 0 outni dc 0 ac {ion2}\nXMN7 outpi "
+   ],
+   [
+    "XMN8 outn ",
+    "XMN8 outni "
+   ],
+   [
+    "XMP7 outp ",
+    "XMP7 outpi "
+   ],
+   [
+    "XMP8 outn ",
+    "XMP8 outni "
+   ],
+   [
+    "XCC1 cz1 outp ",
+    "XCC1 cz1 outpi "
+   ],
+   [
+    "XCC2 cz2 outn ",
+    "XCC2 cz2 outni "
+   ],
+   [
+    "XCC1B cb1 outp ",
+    "XCC1B cb1 outpi "
+   ],
+   [
+    "XCC2B cb2 outn ",
+    "XCC2B cb2 outni "
+   ]
+  ],
+  "ccswac_z2_tt_cm0.5": [
+   [
+    "XA1 x1p x1n m1p m1n vcm1 ib1 c3b c3 vdd vss r1_afe_ota W2N=8u W2P=48u WCC=18u WCCB=24u LRZ=13u WCP=32u LCP=1u WCT=48u WN3A=0.5u WN3B=16u LN3B=2u WCS=22u",
+    "XA1 x1p x1n m1p m1n vcm1 ib1 c3b c3 vdd vss r1_afe_ota W2N=8u W2P=48u WCC=24u WCCB=18u LRZ=13u WCP=32u LCP=1u WCT=48u WN3A=0.5u WN3B=16u LN3B=2u WCS=22u WPT=72u"
+   ],
+   [
+    "XA2 x2p x2n on2 op2 vcm2 ib2 vdd vss r1_afe_ota2 W2N=40u W2P=80u WCC=18u LRZ=6u WCP=32u LCP=1u WCT=32u WN3A=28u WN3B=6u WCS=14u",
+    "XA2 x2p x2n on2 op2 vcm2 ib2 vdd vss r1_afe_ota2 W2N=40u W2P=80u WCC=18u LRZ=6u WCP=32u LCP=1u WCT=32u WN3A=20u WN3B=10u WCS=14u"
+   ]
+  ],
+  "ccsw_z2_tt_cm2.5": [
+   [
+    "XA1 x1p x1n m1p m1n vcm1 ib1 c3b c3 vdd vss r1_afe_ota W2N=8u W2P=48u WCC=18u WCCB=24u LRZ=13u WCP=32u LCP=1u WCT=48u WN3A=0.5u WN3B=16u LN3B=2u WCS=22u",
+    "XA1 x1p x1n m1p m1n vcm1 ib1 c3b c3 vdd vss r1_afe_ota W2N=8u W2P=48u WCC=24u WCCB=18u LRZ=13u WCP=32u LCP=1u WCT=48u WN3A=0.5u WN3B=16u LN3B=2u WCS=22u WPT=72u"
+   ],
+   [
+    "XA2 x2p x2n on2 op2 vcm2 ib2 vdd vss r1_afe_ota2 W2N=40u W2P=80u WCC=18u LRZ=6u WCP=32u LCP=1u WCT=32u WN3A=28u WN3B=6u WCS=14u",
+    "XA2 x2p x2n on2 op2 vcm2 ib2 vdd vss r1_afe_ota2 W2N=40u W2P=80u WCC=18u LRZ=6u WCP=32u LCP=1u WCT=32u WN3A=20u WN3B=10u WCS=14u"
+   ],
+   [
+    "XA1 x1p x1n ",
+    "Vpa1p x1p y1p dc 0 ac {vdp1}\nVpa1n x1n y1n dc 0 ac {vdn1}\nIpa1p 0 x1p dc 0 ac {idp1}\nIpa1n 0 x1n dc 0 ac {idn1}\nXA1 y1p y1n "
+   ],
+   [
+    "XA2 x2p x2n ",
+    "Vpa2p x2p y2p dc 0 ac {vdp2}\nVpa2n x2n y2n dc 0 ac {vdn2}\nIpa2p 0 x2p dc 0 ac {idp2}\nIpa2n 0 x2n dc 0 ac {idn2}\nXA2 y2p y2n "
+   ],
+   [
+    "XMC1 vcmfb vcms tc",
+    "Vpc vcms vcmsy dc 0 ac {vc1}\nIpc 0 vcms dc 0 ac {ic1}\nXMC1 vcmfb vcmsy tc"
+   ],
+   [
+    "XMC1 vcmfb vcms tc",
+    "Vpc vcms vcmsy dc 0 ac {vc2}\nIpc 0 vcms dc 0 ac {ic2}\nXMC1 vcmfb vcmsy tc"
+   ],
+   [
+    "XMN7 outp ",
+    "Vpop outpi outp dc 0 ac {vop1}\nVpon outni outn dc 0 ac {von1}\nIpop 0 outpi dc 0 ac {iop1}\nIpon 0 outni dc 0 ac {ion1}\nXMN7 outpi "
+   ],
+   [
+    "XMN8 outn ",
+    "XMN8 outni "
+   ],
+   [
+    "XMP7 outp ",
+    "XMP7 outpi "
+   ],
+   [
+    "XMP8 outn ",
+    "XMP8 outni "
+   ],
+   [
+    "XCC1 cz1 outp ",
+    "XCC1 cz1 outpi "
+   ],
+   [
+    "XCC2 cz2 outn ",
+    "XCC2 cz2 outni "
+   ],
+   [
+    "XMN7 outp ",
+    "Vpop outpi outp dc 0 ac {vop2}\nVpon outni outn dc 0 ac {von2}\nIpop 0 outpi dc 0 ac {iop2}\nIpon 0 outni dc 0 ac {ion2}\nXMN7 outpi "
+   ],
+   [
+    "XMN8 outn ",
+    "XMN8 outni "
+   ],
+   [
+    "XMP7 outp ",
+    "XMP7 outpi "
+   ],
+   [
+    "XMP8 outn ",
+    "XMP8 outni "
+   ],
+   [
+    "XCC1 cz1 outp ",
+    "XCC1 cz1 outpi "
+   ],
+   [
+    "XCC2 cz2 outn ",
+    "XCC2 cz2 outni "
+   ],
+   [
+    "XCC1B cb1 outp ",
+    "XCC1B cb1 outpi "
+   ],
+   [
+    "XCC2B cb2 outn ",
+    "XCC2B cb2 outni "
+   ]
+  ],
+  "ccswac_z2_tt_cm2.5": [
+   [
+    "XA1 x1p x1n m1p m1n vcm1 ib1 c3b c3 vdd vss r1_afe_ota W2N=8u W2P=48u WCC=18u WCCB=24u LRZ=13u WCP=32u LCP=1u WCT=48u WN3A=0.5u WN3B=16u LN3B=2u WCS=22u",
+    "XA1 x1p x1n m1p m1n vcm1 ib1 c3b c3 vdd vss r1_afe_ota W2N=8u W2P=48u WCC=24u WCCB=18u LRZ=13u WCP=32u LCP=1u WCT=48u WN3A=0.5u WN3B=16u LN3B=2u WCS=22u WPT=72u"
+   ],
+   [
+    "XA2 x2p x2n on2 op2 vcm2 ib2 vdd vss r1_afe_ota2 W2N=40u W2P=80u WCC=18u LRZ=6u WCP=32u LCP=1u WCT=32u WN3A=28u WN3B=6u WCS=14u",
+    "XA2 x2p x2n on2 op2 vcm2 ib2 vdd vss r1_afe_ota2 W2N=40u W2P=80u WCC=18u LRZ=6u WCP=32u LCP=1u WCT=32u WN3A=20u WN3B=10u WCS=14u"
+   ]
+  ],
+  "ccsw_z2_ss_cm0.5": [
+   [
+    "XA1 x1p x1n m1p m1n vcm1 ib1 c3b c3 vdd vss r1_afe_ota W2N=8u W2P=48u WCC=18u WCCB=24u LRZ=13u WCP=32u LCP=1u WCT=48u WN3A=0.5u WN3B=16u LN3B=2u WCS=22u",
+    "XA1 x1p x1n m1p m1n vcm1 ib1 c3b c3 vdd vss r1_afe_ota W2N=8u W2P=48u WCC=24u WCCB=18u LRZ=13u WCP=32u LCP=1u WCT=48u WN3A=0.5u WN3B=16u LN3B=2u WCS=22u WPT=72u"
+   ],
+   [
+    "XA2 x2p x2n on2 op2 vcm2 ib2 vdd vss r1_afe_ota2 W2N=40u W2P=80u WCC=18u LRZ=6u WCP=32u LCP=1u WCT=32u WN3A=28u WN3B=6u WCS=14u",
+    "XA2 x2p x2n on2 op2 vcm2 ib2 vdd vss r1_afe_ota2 W2N=40u W2P=80u WCC=18u LRZ=6u WCP=32u LCP=1u WCT=32u WN3A=20u WN3B=10u WCS=14u"
+   ],
+   [
+    "XA1 x1p x1n ",
+    "Vpa1p x1p y1p dc 0 ac {vdp1}\nVpa1n x1n y1n dc 0 ac {vdn1}\nIpa1p 0 x1p dc 0 ac {idp1}\nIpa1n 0 x1n dc 0 ac {idn1}\nXA1 y1p y1n "
+   ],
+   [
+    "XA2 x2p x2n ",
+    "Vpa2p x2p y2p dc 0 ac {vdp2}\nVpa2n x2n y2n dc 0 ac {vdn2}\nIpa2p 0 x2p dc 0 ac {idp2}\nIpa2n 0 x2n dc 0 ac {idn2}\nXA2 y2p y2n "
+   ],
+   [
+    "XMC1 vcmfb vcms tc",
+    "Vpc vcms vcmsy dc 0 ac {vc1}\nIpc 0 vcms dc 0 ac {ic1}\nXMC1 vcmfb vcmsy tc"
+   ],
+   [
+    "XMC1 vcmfb vcms tc",
+    "Vpc vcms vcmsy dc 0 ac {vc2}\nIpc 0 vcms dc 0 ac {ic2}\nXMC1 vcmfb vcmsy tc"
+   ],
+   [
+    "XMN7 outp ",
+    "Vpop outpi outp dc 0 ac {vop1}\nVpon outni outn dc 0 ac {von1}\nIpop 0 outpi dc 0 ac {iop1}\nIpon 0 outni dc 0 ac {ion1}\nXMN7 outpi "
+   ],
+   [
+    "XMN8 outn ",
+    "XMN8 outni "
+   ],
+   [
+    "XMP7 outp ",
+    "XMP7 outpi "
+   ],
+   [
+    "XMP8 outn ",
+    "XMP8 outni "
+   ],
+   [
+    "XCC1 cz1 outp ",
+    "XCC1 cz1 outpi "
+   ],
+   [
+    "XCC2 cz2 outn ",
+    "XCC2 cz2 outni "
+   ],
+   [
+    "XMN7 outp ",
+    "Vpop outpi outp dc 0 ac {vop2}\nVpon outni outn dc 0 ac {von2}\nIpop 0 outpi dc 0 ac {iop2}\nIpon 0 outni dc 0 ac {ion2}\nXMN7 outpi "
+   ],
+   [
+    "XMN8 outn ",
+    "XMN8 outni "
+   ],
+   [
+    "XMP7 outp ",
+    "XMP7 outpi "
+   ],
+   [
+    "XMP8 outn ",
+    "XMP8 outni "
+   ],
+   [
+    "XCC1 cz1 outp ",
+    "XCC1 cz1 outpi "
+   ],
+   [
+    "XCC2 cz2 outn ",
+    "XCC2 cz2 outni "
+   ],
+   [
+    "XCC1B cb1 outp ",
+    "XCC1B cb1 outpi "
+   ],
+   [
+    "XCC2B cb2 outn ",
+    "XCC2B cb2 outni "
+   ]
+  ],
+  "ccswac_z2_ss_cm0.5": [
+   [
+    "XA1 x1p x1n m1p m1n vcm1 ib1 c3b c3 vdd vss r1_afe_ota W2N=8u W2P=48u WCC=18u WCCB=24u LRZ=13u WCP=32u LCP=1u WCT=48u WN3A=0.5u WN3B=16u LN3B=2u WCS=22u",
+    "XA1 x1p x1n m1p m1n vcm1 ib1 c3b c3 vdd vss r1_afe_ota W2N=8u W2P=48u WCC=24u WCCB=18u LRZ=13u WCP=32u LCP=1u WCT=48u WN3A=0.5u WN3B=16u LN3B=2u WCS=22u WPT=72u"
+   ],
+   [
+    "XA2 x2p x2n on2 op2 vcm2 ib2 vdd vss r1_afe_ota2 W2N=40u W2P=80u WCC=18u LRZ=6u WCP=32u LCP=1u WCT=32u WN3A=28u WN3B=6u WCS=14u",
+    "XA2 x2p x2n on2 op2 vcm2 ib2 vdd vss r1_afe_ota2 W2N=40u W2P=80u WCC=18u LRZ=6u WCP=32u LCP=1u WCT=32u WN3A=20u WN3B=10u WCS=14u"
+   ]
+  ],
+  "ccsw_z2_ss_cm2.5": [
+   [
+    "XA1 x1p x1n m1p m1n vcm1 ib1 c3b c3 vdd vss r1_afe_ota W2N=8u W2P=48u WCC=18u WCCB=24u LRZ=13u WCP=32u LCP=1u WCT=48u WN3A=0.5u WN3B=16u LN3B=2u WCS=22u",
+    "XA1 x1p x1n m1p m1n vcm1 ib1 c3b c3 vdd vss r1_afe_ota W2N=8u W2P=48u WCC=24u WCCB=18u LRZ=13u WCP=32u LCP=1u WCT=48u WN3A=0.5u WN3B=16u LN3B=2u WCS=22u WPT=72u"
+   ],
+   [
+    "XA2 x2p x2n on2 op2 vcm2 ib2 vdd vss r1_afe_ota2 W2N=40u W2P=80u WCC=18u LRZ=6u WCP=32u LCP=1u WCT=32u WN3A=28u WN3B=6u WCS=14u",
+    "XA2 x2p x2n on2 op2 vcm2 ib2 vdd vss r1_afe_ota2 W2N=40u W2P=80u WCC=18u LRZ=6u WCP=32u LCP=1u WCT=32u WN3A=20u WN3B=10u WCS=14u"
+   ],
+   [
+    "XA1 x1p x1n ",
+    "Vpa1p x1p y1p dc 0 ac {vdp1}\nVpa1n x1n y1n dc 0 ac {vdn1}\nIpa1p 0 x1p dc 0 ac {idp1}\nIpa1n 0 x1n dc 0 ac {idn1}\nXA1 y1p y1n "
+   ],
+   [
+    "XA2 x2p x2n ",
+    "Vpa2p x2p y2p dc 0 ac {vdp2}\nVpa2n x2n y2n dc 0 ac {vdn2}\nIpa2p 0 x2p dc 0 ac {idp2}\nIpa2n 0 x2n dc 0 ac {idn2}\nXA2 y2p y2n "
+   ],
+   [
+    "XMC1 vcmfb vcms tc",
+    "Vpc vcms vcmsy dc 0 ac {vc1}\nIpc 0 vcms dc 0 ac {ic1}\nXMC1 vcmfb vcmsy tc"
+   ],
+   [
+    "XMC1 vcmfb vcms tc",
+    "Vpc vcms vcmsy dc 0 ac {vc2}\nIpc 0 vcms dc 0 ac {ic2}\nXMC1 vcmfb vcmsy tc"
+   ],
+   [
+    "XMN7 outp ",
+    "Vpop outpi outp dc 0 ac {vop1}\nVpon outni outn dc 0 ac {von1}\nIpop 0 outpi dc 0 ac {iop1}\nIpon 0 outni dc 0 ac {ion1}\nXMN7 outpi "
+   ],
+   [
+    "XMN8 outn ",
+    "XMN8 outni "
+   ],
+   [
+    "XMP7 outp ",
+    "XMP7 outpi "
+   ],
+   [
+    "XMP8 outn ",
+    "XMP8 outni "
+   ],
+   [
+    "XCC1 cz1 outp ",
+    "XCC1 cz1 outpi "
+   ],
+   [
+    "XCC2 cz2 outn ",
+    "XCC2 cz2 outni "
+   ],
+   [
+    "XMN7 outp ",
+    "Vpop outpi outp dc 0 ac {vop2}\nVpon outni outn dc 0 ac {von2}\nIpop 0 outpi dc 0 ac {iop2}\nIpon 0 outni dc 0 ac {ion2}\nXMN7 outpi "
+   ],
+   [
+    "XMN8 outn ",
+    "XMN8 outni "
+   ],
+   [
+    "XMP7 outp ",
+    "XMP7 outpi "
+   ],
+   [
+    "XMP8 outn ",
+    "XMP8 outni "
+   ],
+   [
+    "XCC1 cz1 outp ",
+    "XCC1 cz1 outpi "
+   ],
+   [
+    "XCC2 cz2 outn ",
+    "XCC2 cz2 outni "
+   ],
+   [
+    "XCC1B cb1 outp ",
+    "XCC1B cb1 outpi "
+   ],
+   [
+    "XCC2B cb2 outn ",
+    "XCC2B cb2 outni "
+   ]
+  ],
+  "ccswac_z2_ss_cm2.5": [
+   [
+    "XA1 x1p x1n m1p m1n vcm1 ib1 c3b c3 vdd vss r1_afe_ota W2N=8u W2P=48u WCC=18u WCCB=24u LRZ=13u WCP=32u LCP=1u WCT=48u WN3A=0.5u WN3B=16u LN3B=2u WCS=22u",
+    "XA1 x1p x1n m1p m1n vcm1 ib1 c3b c3 vdd vss r1_afe_ota W2N=8u W2P=48u WCC=24u WCCB=18u LRZ=13u WCP=32u LCP=1u WCT=48u WN3A=0.5u WN3B=16u LN3B=2u WCS=22u WPT=72u"
+   ],
+   [
+    "XA2 x2p x2n on2 op2 vcm2 ib2 vdd vss r1_afe_ota2 W2N=40u W2P=80u WCC=18u LRZ=6u WCP=32u LCP=1u WCT=32u WN3A=28u WN3B=6u WCS=14u",
+    "XA2 x2p x2n on2 op2 vcm2 ib2 vdd vss r1_afe_ota2 W2N=40u W2P=80u WCC=18u LRZ=6u WCP=32u LCP=1u WCT=32u WN3A=20u WN3B=10u WCS=14u"
+   ]
+  ],
+  "ccsw_z2_ff_cm0.5": [
+   [
+    "XA1 x1p x1n m1p m1n vcm1 ib1 c3b c3 vdd vss r1_afe_ota W2N=8u W2P=48u WCC=18u WCCB=24u LRZ=13u WCP=32u LCP=1u WCT=48u WN3A=0.5u WN3B=16u LN3B=2u WCS=22u",
+    "XA1 x1p x1n m1p m1n vcm1 ib1 c3b c3 vdd vss r1_afe_ota W2N=8u W2P=48u WCC=24u WCCB=18u LRZ=13u WCP=32u LCP=1u WCT=48u WN3A=0.5u WN3B=16u LN3B=2u WCS=22u WPT=72u"
+   ],
+   [
+    "XA2 x2p x2n on2 op2 vcm2 ib2 vdd vss r1_afe_ota2 W2N=40u W2P=80u WCC=18u LRZ=6u WCP=32u LCP=1u WCT=32u WN3A=28u WN3B=6u WCS=14u",
+    "XA2 x2p x2n on2 op2 vcm2 ib2 vdd vss r1_afe_ota2 W2N=40u W2P=80u WCC=18u LRZ=6u WCP=32u LCP=1u WCT=32u WN3A=20u WN3B=10u WCS=14u"
+   ],
+   [
+    "XA1 x1p x1n ",
+    "Vpa1p x1p y1p dc 0 ac {vdp1}\nVpa1n x1n y1n dc 0 ac {vdn1}\nIpa1p 0 x1p dc 0 ac {idp1}\nIpa1n 0 x1n dc 0 ac {idn1}\nXA1 y1p y1n "
+   ],
+   [
+    "XA2 x2p x2n ",
+    "Vpa2p x2p y2p dc 0 ac {vdp2}\nVpa2n x2n y2n dc 0 ac {vdn2}\nIpa2p 0 x2p dc 0 ac {idp2}\nIpa2n 0 x2n dc 0 ac {idn2}\nXA2 y2p y2n "
+   ],
+   [
+    "XMC1 vcmfb vcms tc",
+    "Vpc vcms vcmsy dc 0 ac {vc1}\nIpc 0 vcms dc 0 ac {ic1}\nXMC1 vcmfb vcmsy tc"
+   ],
+   [
+    "XMC1 vcmfb vcms tc",
+    "Vpc vcms vcmsy dc 0 ac {vc2}\nIpc 0 vcms dc 0 ac {ic2}\nXMC1 vcmfb vcmsy tc"
+   ],
+   [
+    "XMN7 outp ",
+    "Vpop outpi outp dc 0 ac {vop1}\nVpon outni outn dc 0 ac {von1}\nIpop 0 outpi dc 0 ac {iop1}\nIpon 0 outni dc 0 ac {ion1}\nXMN7 outpi "
+   ],
+   [
+    "XMN8 outn ",
+    "XMN8 outni "
+   ],
+   [
+    "XMP7 outp ",
+    "XMP7 outpi "
+   ],
+   [
+    "XMP8 outn ",
+    "XMP8 outni "
+   ],
+   [
+    "XCC1 cz1 outp ",
+    "XCC1 cz1 outpi "
+   ],
+   [
+    "XCC2 cz2 outn ",
+    "XCC2 cz2 outni "
+   ],
+   [
+    "XMN7 outp ",
+    "Vpop outpi outp dc 0 ac {vop2}\nVpon outni outn dc 0 ac {von2}\nIpop 0 outpi dc 0 ac {iop2}\nIpon 0 outni dc 0 ac {ion2}\nXMN7 outpi "
+   ],
+   [
+    "XMN8 outn ",
+    "XMN8 outni "
+   ],
+   [
+    "XMP7 outp ",
+    "XMP7 outpi "
+   ],
+   [
+    "XMP8 outn ",
+    "XMP8 outni "
+   ],
+   [
+    "XCC1 cz1 outp ",
+    "XCC1 cz1 outpi "
+   ],
+   [
+    "XCC2 cz2 outn ",
+    "XCC2 cz2 outni "
+   ],
+   [
+    "XCC1B cb1 outp ",
+    "XCC1B cb1 outpi "
+   ],
+   [
+    "XCC2B cb2 outn ",
+    "XCC2B cb2 outni "
+   ]
+  ],
+  "ccswac_z2_ff_cm0.5": [
+   [
+    "XA1 x1p x1n m1p m1n vcm1 ib1 c3b c3 vdd vss r1_afe_ota W2N=8u W2P=48u WCC=18u WCCB=24u LRZ=13u WCP=32u LCP=1u WCT=48u WN3A=0.5u WN3B=16u LN3B=2u WCS=22u",
+    "XA1 x1p x1n m1p m1n vcm1 ib1 c3b c3 vdd vss r1_afe_ota W2N=8u W2P=48u WCC=24u WCCB=18u LRZ=13u WCP=32u LCP=1u WCT=48u WN3A=0.5u WN3B=16u LN3B=2u WCS=22u WPT=72u"
+   ],
+   [
+    "XA2 x2p x2n on2 op2 vcm2 ib2 vdd vss r1_afe_ota2 W2N=40u W2P=80u WCC=18u LRZ=6u WCP=32u LCP=1u WCT=32u WN3A=28u WN3B=6u WCS=14u",
+    "XA2 x2p x2n on2 op2 vcm2 ib2 vdd vss r1_afe_ota2 W2N=40u W2P=80u WCC=18u LRZ=6u WCP=32u LCP=1u WCT=32u WN3A=20u WN3B=10u WCS=14u"
+   ]
+  ],
+  "ccsw_z2_ff_cm2.5": [
+   [
+    "XA1 x1p x1n m1p m1n vcm1 ib1 c3b c3 vdd vss r1_afe_ota W2N=8u W2P=48u WCC=18u WCCB=24u LRZ=13u WCP=32u LCP=1u WCT=48u WN3A=0.5u WN3B=16u LN3B=2u WCS=22u",
+    "XA1 x1p x1n m1p m1n vcm1 ib1 c3b c3 vdd vss r1_afe_ota W2N=8u W2P=48u WCC=24u WCCB=18u LRZ=13u WCP=32u LCP=1u WCT=48u WN3A=0.5u WN3B=16u LN3B=2u WCS=22u WPT=72u"
+   ],
+   [
+    "XA2 x2p x2n on2 op2 vcm2 ib2 vdd vss r1_afe_ota2 W2N=40u W2P=80u WCC=18u LRZ=6u WCP=32u LCP=1u WCT=32u WN3A=28u WN3B=6u WCS=14u",
+    "XA2 x2p x2n on2 op2 vcm2 ib2 vdd vss r1_afe_ota2 W2N=40u W2P=80u WCC=18u LRZ=6u WCP=32u LCP=1u WCT=32u WN3A=20u WN3B=10u WCS=14u"
+   ],
+   [
+    "XA1 x1p x1n ",
+    "Vpa1p x1p y1p dc 0 ac {vdp1}\nVpa1n x1n y1n dc 0 ac {vdn1}\nIpa1p 0 x1p dc 0 ac {idp1}\nIpa1n 0 x1n dc 0 ac {idn1}\nXA1 y1p y1n "
+   ],
+   [
+    "XA2 x2p x2n ",
+    "Vpa2p x2p y2p dc 0 ac {vdp2}\nVpa2n x2n y2n dc 0 ac {vdn2}\nIpa2p 0 x2p dc 0 ac {idp2}\nIpa2n 0 x2n dc 0 ac {idn2}\nXA2 y2p y2n "
+   ],
+   [
+    "XMC1 vcmfb vcms tc",
+    "Vpc vcms vcmsy dc 0 ac {vc1}\nIpc 0 vcms dc 0 ac {ic1}\nXMC1 vcmfb vcmsy tc"
+   ],
+   [
+    "XMC1 vcmfb vcms tc",
+    "Vpc vcms vcmsy dc 0 ac {vc2}\nIpc 0 vcms dc 0 ac {ic2}\nXMC1 vcmfb vcmsy tc"
+   ],
+   [
+    "XMN7 outp ",
+    "Vpop outpi outp dc 0 ac {vop1}\nVpon outni outn dc 0 ac {von1}\nIpop 0 outpi dc 0 ac {iop1}\nIpon 0 outni dc 0 ac {ion1}\nXMN7 outpi "
+   ],
+   [
+    "XMN8 outn ",
+    "XMN8 outni "
+   ],
+   [
+    "XMP7 outp ",
+    "XMP7 outpi "
+   ],
+   [
+    "XMP8 outn ",
+    "XMP8 outni "
+   ],
+   [
+    "XCC1 cz1 outp ",
+    "XCC1 cz1 outpi "
+   ],
+   [
+    "XCC2 cz2 outn ",
+    "XCC2 cz2 outni "
+   ],
+   [
+    "XMN7 outp ",
+    "Vpop outpi outp dc 0 ac {vop2}\nVpon outni outn dc 0 ac {von2}\nIpop 0 outpi dc 0 ac {iop2}\nIpon 0 outni dc 0 ac {ion2}\nXMN7 outpi "
+   ],
+   [
+    "XMN8 outn ",
+    "XMN8 outni "
+   ],
+   [
+    "XMP7 outp ",
+    "XMP7 outpi "
+   ],
+   [
+    "XMP8 outn ",
+    "XMP8 outni "
+   ],
+   [
+    "XCC1 cz1 outp ",
+    "XCC1 cz1 outpi "
+   ],
+   [
+    "XCC2 cz2 outn ",
+    "XCC2 cz2 outni "
+   ],
+   [
+    "XCC1B cb1 outp ",
+    "XCC1B cb1 outpi "
+   ],
+   [
+    "XCC2B cb2 outn ",
+    "XCC2B cb2 outni "
+   ]
+  ],
+  "ccswac_z2_ff_cm2.5": [
+   [
+    "XA1 x1p x1n m1p m1n vcm1 ib1 c3b c3 vdd vss r1_afe_ota W2N=8u W2P=48u WCC=18u WCCB=24u LRZ=13u WCP=32u LCP=1u WCT=48u WN3A=0.5u WN3B=16u LN3B=2u WCS=22u",
+    "XA1 x1p x1n m1p m1n vcm1 ib1 c3b c3 vdd vss r1_afe_ota W2N=8u W2P=48u WCC=24u WCCB=18u LRZ=13u WCP=32u LCP=1u WCT=48u WN3A=0.5u WN3B=16u LN3B=2u WCS=22u WPT=72u"
+   ],
+   [
+    "XA2 x2p x2n on2 op2 vcm2 ib2 vdd vss r1_afe_ota2 W2N=40u W2P=80u WCC=18u LRZ=6u WCP=32u LCP=1u WCT=32u WN3A=28u WN3B=6u WCS=14u",
+    "XA2 x2p x2n on2 op2 vcm2 ib2 vdd vss r1_afe_ota2 W2N=40u W2P=80u WCC=18u LRZ=6u WCP=32u LCP=1u WCT=32u WN3A=20u WN3B=10u WCS=14u"
+   ]
+  ]
+ },
+ "raw": "$G1_RESULTS_ROOT/r1_afe/dev-ccsw4-01/",
+ "jobs": 24,
+ "failed_jobs": [],
+ "wall_seconds": 347.2,
+ "summary": "results/dev-ccsw4-01.json",
+ "question": "Final candidates: fixed Miller 22u (z1) or 24u (z2), tail 72u, OTA2 sinks 20u fixed / 10u CMFB (output-CM accuracy)",
+ "result": "z1: f3 1.023 MHz, dm1 68.0, cm1 54.3, dm2 65.8, cm2 63.7 deg, output CM 0.577-0.648 V. z2: cm1 57.2 deg but f3 0.987 MHz. z1 adopted (f_c is a specification limit; cm1 below the 60 deg target is recorded as failed).",
+ "disposition": "development; z1 adopted as revision C"
+}

@@ -1,0 +1,26 @@
+{
+ "run_id": "dev-stbq-02",
+ "campaign": "stbq",
+ "date_utc": "2026-10-20T14:33:57Z",
+ "command": "G1_CPUSET=106-108 G1_CPUS=3 G1_WORKDIR=designs/r1-joint/blocks/r1_afe/sim G1_RESULTS_ROOT=<bulk> flow/run.sh python3 run_afe.py stbq dev-stbq-02",
+ "tools": {
+  "ngspice": "ngspice-46 : Circuit level simulation program",
+  "image_id": "sha256:ddeb69576f2808676d1c5d474ecf04f6d1d6f8abdcff6b72b39790ded924bab2",
+  "pdk_commit": "84374023ee8b4b126bebbba67fcbada0a9c0ff0b"
+ },
+ "inputs": {
+  "sim/tb_afe_stb.cir": "0aba53a430153019253d6ce7495d285fc4302e459f3de7dd710b6f55a1957428",
+  "sim/common_head.inc": "ae7e19db8bdacb4ed6ce7126dc07e6b7ed9ba069506c5eb46f7463bfa9bc71af",
+  "sim/gain_codes.inc": "a62c9d6daa3d544c36ac868c4e6a9266f32e581d093ac404c6c52bcc6e5276f6",
+  "schematic/r1_afe.spice": "fd8457ccd013ccf566fece06941d3945486694fce44463ebf05ccfe3d9e67f16",
+  "sim/run_afe.py": "2054f28415d32009c53f81c5855e4766c31f2a2e43973a34bc452cc14d997c19"
+ },
+ "raw": "$G1_RESULTS_ROOT/r1_afe/dev-stbq-02/",
+ "jobs": 1,
+ "failed_jobs": [],
+ "wall_seconds": 103.6,
+ "summary": "results/dev-stbq-02.json",
+ "question": "Loop-gain deck smoke test (tt, CM 2.5 V), input-node breaks",
+ "result": "Valid only for x1: \"reset\" (needed by alterparam) discarded the gain-code alters, so all six codes ran at x1. At x1: dm1 PM 16 deg, GM 2.7 dB; OTA1 CMFB-node break 37 deg; OTA2 CMFB-node break 32 deg; dm2 61 deg.",
+ "disposition": "development; deck fixed (controls re-applied after reset)"
+}

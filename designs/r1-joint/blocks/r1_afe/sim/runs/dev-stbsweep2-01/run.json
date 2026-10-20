@@ -1,0 +1,26 @@
+{
+ "run_id": "dev-stbsweep2-01",
+ "campaign": "stbsweep2",
+ "date_utc": "2026-10-20T14:48:13Z",
+ "command": "G1_CPUSET=106-108 G1_CPUS=3 G1_WORKDIR=designs/r1-joint/blocks/r1_afe/sim G1_RESULTS_ROOT=<bulk> flow/run.sh python3 run_afe.py stbsweep2 dev-stbsweep2-01",
+ "tools": {
+  "ngspice": "ngspice-46 : Circuit level simulation program",
+  "image_id": "sha256:ddeb69576f2808676d1c5d474ecf04f6d1d6f8abdcff6b72b39790ded924bab2",
+  "pdk_commit": "84374023ee8b4b126bebbba67fcbada0a9c0ff0b"
+ },
+ "inputs": {
+  "sim/tb_afe_stb.cir": "9454a022bebab0e49bac0433dbbbd18cb02788006be58c0f9dbcac36536dabf0",
+  "sim/common_head.inc": "ae7e19db8bdacb4ed6ce7126dc07e6b7ed9ba069506c5eb46f7463bfa9bc71af",
+  "sim/gain_codes.inc": "a62c9d6daa3d544c36ac868c4e6a9266f32e581d093ac404c6c52bcc6e5276f6",
+  "schematic/r1_afe.spice": "fd8457ccd013ccf566fece06941d3945486694fce44463ebf05ccfe3d9e67f16",
+  "sim/run_afe.py": "03616a9dcf17872bcd09af157bcccaf5e03719cd17ca15476764ee02fc6947ee"
+ },
+ "raw": "$G1_RESULTS_ROOT/r1_afe/dev-stbsweep2-01/",
+ "jobs": 9,
+ "failed_jobs": [],
+ "wall_seconds": 267.9,
+ "summary": "results/dev-stbsweep2-01.json",
+ "question": "Output-node breaks (dm1/cm1/dm2/cm2) on the first revision-C netlist, the dev-revb-02 OTA1 variant and OTA1 Cc 26u/Rz 8u",
+ "result": "dm1 at the output break equals dm1 at the input break (cross-check). Base cm1 PM 14 deg (tt x32), 17 deg (ss x32); cm2 30-32 deg. dev-revb-02 sizing: cm1 PM -14.6 deg (tt x32), -3.3 deg (ss x32), i.e. the analysis predicts the oscillation seen in transients.",
+ "disposition": "development, superseded"
+}

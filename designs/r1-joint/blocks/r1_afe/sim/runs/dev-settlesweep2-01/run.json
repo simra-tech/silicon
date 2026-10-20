@@ -1,0 +1,26 @@
+{
+ "run_id": "dev-settlesweep2-01",
+ "campaign": "settlesweep2",
+ "date_utc": "2026-10-20T15:26:23Z",
+ "command": "G1_CPUSET=106-108 G1_CPUS=3 G1_WORKDIR=designs/r1-joint/blocks/r1_afe/sim G1_RESULTS_ROOT=<bulk> flow/run.sh python3 run_afe.py settlesweep2 dev-settlesweep2-01",
+ "tools": {
+  "ngspice": "ngspice-46 : Circuit level simulation program",
+  "image_id": "sha256:ddeb69576f2808676d1c5d474ecf04f6d1d6f8abdcff6b72b39790ded924bab2",
+  "pdk_commit": "84374023ee8b4b126bebbba67fcbada0a9c0ff0b"
+ },
+ "inputs": {
+  "sim/tb_afe_settle_adc.cir": "3bbc68e33f27d156ed90af01d08102f3fe2fa4b3f2f34ca2412f338080d83182",
+  "sim/common_head.inc": "ae7e19db8bdacb4ed6ce7126dc07e6b7ed9ba069506c5eb46f7463bfa9bc71af",
+  "sim/gain_codes.inc": "a62c9d6daa3d544c36ac868c4e6a9266f32e581d093ac404c6c52bcc6e5276f6",
+  "schematic/r1_afe.spice": "3902870d6ec257260d277303e4882e1628177962ae183386d9b2afbe3ee978de",
+  "sim/run_afe.py": "5fe2ea188d3f737b3b9b0cb975c8a0820397fa62b4e537d89e7611fdec737f98"
+ },
+ "raw": "$G1_RESULTS_ROOT/r1_afe/dev-settlesweep2-01/",
+ "jobs": 8,
+ "failed_jobs": [],
+ "wall_seconds": 166.5,
+ "summary": "results/dev-settlesweep2-01.json",
+ "question": "Combinations of per-side reservoir and 2x/3x OTA2 output current (ss, +FS, x1/x32)",
+ "result": "Low values come from cancellation of the two error terms and change sign between x1 and x32 (e.g. q2: x1 -0.43, x32 +0.08 LSB). 3x output current (+0.8 mA) gives 0.09/0.36 LSB. Not adopted (power budget); see open issue.",
+ "disposition": "development; not adopted"
+}

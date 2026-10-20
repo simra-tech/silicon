@@ -1,0 +1,27 @@
+{
+ "run_id": "dev-checkc-01",
+ "campaign": "checkc",
+ "date_utc": "2026-10-20T15:17:42Z",
+ "command": "G1_CPUSET=106-108 G1_CPUS=3 G1_WORKDIR=designs/r1-joint/blocks/r1_afe/sim G1_RESULTS_ROOT=<bulk> flow/run.sh python3 run_afe.py checkc dev-checkc-01",
+ "tools": {
+  "ngspice": "ngspice-46 : Circuit level simulation program",
+  "image_id": "sha256:ddeb69576f2808676d1c5d474ecf04f6d1d6f8abdcff6b72b39790ded924bab2",
+  "pdk_commit": "84374023ee8b4b126bebbba67fcbada0a9c0ff0b"
+ },
+ "inputs": {
+  "sim/tb_afe_noise.cir": "c96b9665b88a532e4c7633dc66efa733b265e4c0f590a9cabdcf472f1bb1ea6a",
+  "sim/tb_afe_settle_adc.cir": "3bbc68e33f27d156ed90af01d08102f3fe2fa4b3f2f34ca2412f338080d83182",
+  "sim/common_head.inc": "ae7e19db8bdacb4ed6ce7126dc07e6b7ed9ba069506c5eb46f7463bfa9bc71af",
+  "sim/gain_codes.inc": "a62c9d6daa3d544c36ac868c4e6a9266f32e581d093ac404c6c52bcc6e5276f6",
+  "schematic/r1_afe.spice": "3902870d6ec257260d277303e4882e1628177962ae183386d9b2afbe3ee978de",
+  "sim/run_afe.py": "7979dfaa65e9120ddae74c6e223f6851f010f73cdaccf840a8e6a02e450f9d78"
+ },
+ "raw": "$G1_RESULTS_ROOT/r1_afe/dev-checkc-01/",
+ "jobs": 9,
+ "failed_jobs": [],
+ "wall_seconds": 163.3,
+ "summary": "results/dev-checkc-01.json",
+ "question": "Revision C (u3) quick check: noise tt/ss/ff and r1_adc-matched settling at x32 tt/ss",
+ "result": "x32 input noise 27.6/33.7/24.5 uV (tt/ss/ff); settling error at +FS 0.85 LSB (tt), 1.27 LSB (ss), non-linear residual <= 0.06 LSB.",
+ "disposition": "development; superseded by the r1afe-*-20261020c campaigns"
+}

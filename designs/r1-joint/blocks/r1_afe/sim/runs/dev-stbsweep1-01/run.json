@@ -1,0 +1,26 @@
+{
+ "run_id": "dev-stbsweep1-01",
+ "campaign": "stbsweep1",
+ "date_utc": "2026-10-20T14:41:08Z",
+ "command": "G1_CPUSET=106-108 G1_CPUS=3 G1_WORKDIR=designs/r1-joint/blocks/r1_afe/sim G1_RESULTS_ROOT=<bulk> flow/run.sh python3 run_afe.py stbsweep1 dev-stbsweep1-01",
+ "tools": {
+  "ngspice": "ngspice-46 : Circuit level simulation program",
+  "image_id": "sha256:ddeb69576f2808676d1c5d474ecf04f6d1d6f8abdcff6b72b39790ded924bab2",
+  "pdk_commit": "84374023ee8b4b126bebbba67fcbada0a9c0ff0b"
+ },
+ "inputs": {
+  "sim/tb_afe_stb.cir": "eaea75fc73cf07ce545d9af955180568a311b314a5009c898b6f28263478a337",
+  "sim/common_head.inc": "ae7e19db8bdacb4ed6ce7126dc07e6b7ed9ba069506c5eb46f7463bfa9bc71af",
+  "sim/gain_codes.inc": "a62c9d6daa3d544c36ac868c4e6a9266f32e581d093ac404c6c52bcc6e5276f6",
+  "schematic/r1_afe.spice": "fd8457ccd013ccf566fece06941d3945486694fce44463ebf05ccfe3d9e67f16",
+  "sim/run_afe.py": "06e763ee35dec7e11b5c42668372e7e126375832af16a0d4ab186e680eb2380d"
+ },
+ "raw": "$G1_RESULTS_ROOT/r1_afe/dev-stbsweep1-01/",
+ "jobs": 18,
+ "failed_jobs": [],
+ "wall_seconds": 347.7,
+ "summary": "results/dev-stbsweep1-01.json",
+ "question": "Compensation sweep 1 on the first revision-C netlist (revision B + stage-2 gain 8/7): OTA1 Cc, Rz, CMFB pair width; OTA2 CMFB pair width; x1/x32, tt/ss/ff, CM 2.5 V",
+ "result": "Base: dm1 PM 15-17 deg at x1 (all corners), 47-61 deg at x32. OTA1 Cc 26u + Rz 8u gives dm1 55-60 deg at x1. The CMFB-node return ratio has DC phase 180 deg at several points (input-pair CM path positive and above unity), so that break alone is not a valid Nyquist test; output breaks added in sweep 2.",
+ "disposition": "development, superseded"
+}

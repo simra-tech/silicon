@@ -1,0 +1,1018 @@
+{
+ "run_id": "r1afe-stb-20261020c",
+ "campaign": "stb",
+ "date_utc": "2026-10-20T16:01:50Z",
+ "command": "G1_CPUSET=106-108 G1_CPUS=3 G1_WORKDIR=designs/r1-joint/blocks/r1_afe/sim G1_RESULTS_ROOT=<bulk> flow/run.sh python3 run_afe.py stb r1afe-stb-20261020c",
+ "tools": {
+  "ngspice": "ngspice-46 : Circuit level simulation program",
+  "image_id": "sha256:ddeb69576f2808676d1c5d474ecf04f6d1d6f8abdcff6b72b39790ded924bab2",
+  "pdk_commit": "84374023ee8b4b126bebbba67fcbada0a9c0ff0b"
+ },
+ "inputs": {
+  "sim/tb_afe_stb.cir": "9454a022bebab0e49bac0433dbbbd18cb02788006be58c0f9dbcac36536dabf0",
+  "sim/common_head.inc": "ae7e19db8bdacb4ed6ce7126dc07e6b7ed9ba069506c5eb46f7463bfa9bc71af",
+  "sim/gain_codes.inc": "a62c9d6daa3d544c36ac868c4e6a9266f32e581d093ac404c6c52bcc6e5276f6",
+  "schematic/r1_afe.spice": "3902870d6ec257260d277303e4882e1628177962ae183386d9b2afbe3ee978de",
+  "sim/run_afe.py": "b5b76d9653962808dcd3cd63f2ae487686a10b5723403cc1c20aea660dfd4c2e"
+ },
+ "netlist_edits": {
+  "stb_tt_cm0.50": [
+   [
+    "XA1 x1p x1n ",
+    "Vpa1p x1p y1p dc 0 ac {vdp1}\nVpa1n x1n y1n dc 0 ac {vdn1}\nIpa1p 0 x1p dc 0 ac {idp1}\nIpa1n 0 x1n dc 0 ac {idn1}\nXA1 y1p y1n "
+   ],
+   [
+    "XA2 x2p x2n ",
+    "Vpa2p x2p y2p dc 0 ac {vdp2}\nVpa2n x2n y2n dc 0 ac {vdn2}\nIpa2p 0 x2p dc 0 ac {idp2}\nIpa2n 0 x2n dc 0 ac {idn2}\nXA2 y2p y2n "
+   ],
+   [
+    "XMC1 vcmfb vcms tc",
+    "Vpc vcms vcmsy dc 0 ac {vc1}\nIpc 0 vcms dc 0 ac {ic1}\nXMC1 vcmfb vcmsy tc"
+   ],
+   [
+    "XMC1 vcmfb vcms tc",
+    "Vpc vcms vcmsy dc 0 ac {vc2}\nIpc 0 vcms dc 0 ac {ic2}\nXMC1 vcmfb vcmsy tc"
+   ],
+   [
+    "XMN7 outp ",
+    "Vpop outpi outp dc 0 ac {vop1}\nVpon outni outn dc 0 ac {von1}\nIpop 0 outpi dc 0 ac {iop1}\nIpon 0 outni dc 0 ac {ion1}\nXMN7 outpi "
+   ],
+   [
+    "XMN8 outn ",
+    "XMN8 outni "
+   ],
+   [
+    "XMP7 outp ",
+    "XMP7 outpi "
+   ],
+   [
+    "XMP8 outn ",
+    "XMP8 outni "
+   ],
+   [
+    "XCC1 cz1 outp ",
+    "XCC1 cz1 outpi "
+   ],
+   [
+    "XCC2 cz2 outn ",
+    "XCC2 cz2 outni "
+   ],
+   [
+    "XMN7 outp ",
+    "Vpop outpi outp dc 0 ac {vop2}\nVpon outni outn dc 0 ac {von2}\nIpop 0 outpi dc 0 ac {iop2}\nIpon 0 outni dc 0 ac {ion2}\nXMN7 outpi "
+   ],
+   [
+    "XMN8 outn ",
+    "XMN8 outni "
+   ],
+   [
+    "XMP7 outp ",
+    "XMP7 outpi "
+   ],
+   [
+    "XMP8 outn ",
+    "XMP8 outni "
+   ],
+   [
+    "XCC1 cz1 outp ",
+    "XCC1 cz1 outpi "
+   ],
+   [
+    "XCC2 cz2 outn ",
+    "XCC2 cz2 outni "
+   ]
+  ],
+  "stb_tt_cm1.65": [
+   [
+    "XA1 x1p x1n ",
+    "Vpa1p x1p y1p dc 0 ac {vdp1}\nVpa1n x1n y1n dc 0 ac {vdn1}\nIpa1p 0 x1p dc 0 ac {idp1}\nIpa1n 0 x1n dc 0 ac {idn1}\nXA1 y1p y1n "
+   ],
+   [
+    "XA2 x2p x2n ",
+    "Vpa2p x2p y2p dc 0 ac {vdp2}\nVpa2n x2n y2n dc 0 ac {vdn2}\nIpa2p 0 x2p dc 0 ac {idp2}\nIpa2n 0 x2n dc 0 ac {idn2}\nXA2 y2p y2n "
+   ],
+   [
+    "XMC1 vcmfb vcms tc",
+    "Vpc vcms vcmsy dc 0 ac {vc1}\nIpc 0 vcms dc 0 ac {ic1}\nXMC1 vcmfb vcmsy tc"
+   ],
+   [
+    "XMC1 vcmfb vcms tc",
+    "Vpc vcms vcmsy dc 0 ac {vc2}\nIpc 0 vcms dc 0 ac {ic2}\nXMC1 vcmfb vcmsy tc"
+   ],
+   [
+    "XMN7 outp ",
+    "Vpop outpi outp dc 0 ac {vop1}\nVpon outni outn dc 0 ac {von1}\nIpop 0 outpi dc 0 ac {iop1}\nIpon 0 outni dc 0 ac {ion1}\nXMN7 outpi "
+   ],
+   [
+    "XMN8 outn ",
+    "XMN8 outni "
+   ],
+   [
+    "XMP7 outp ",
+    "XMP7 outpi "
+   ],
+   [
+    "XMP8 outn ",
+    "XMP8 outni "
+   ],
+   [
+    "XCC1 cz1 outp ",
+    "XCC1 cz1 outpi "
+   ],
+   [
+    "XCC2 cz2 outn ",
+    "XCC2 cz2 outni "
+   ],
+   [
+    "XMN7 outp ",
+    "Vpop outpi outp dc 0 ac {vop2}\nVpon outni outn dc 0 ac {von2}\nIpop 0 outpi dc 0 ac {iop2}\nIpon 0 outni dc 0 ac {ion2}\nXMN7 outpi "
+   ],
+   [
+    "XMN8 outn ",
+    "XMN8 outni "
+   ],
+   [
+    "XMP7 outp ",
+    "XMP7 outpi "
+   ],
+   [
+    "XMP8 outn ",
+    "XMP8 outni "
+   ],
+   [
+    "XCC1 cz1 outp ",
+    "XCC1 cz1 outpi "
+   ],
+   [
+    "XCC2 cz2 outn ",
+    "XCC2 cz2 outni "
+   ]
+  ],
+  "stb_tt_cm2.50": [
+   [
+    "XA1 x1p x1n ",
+    "Vpa1p x1p y1p dc 0 ac {vdp1}\nVpa1n x1n y1n dc 0 ac {vdn1}\nIpa1p 0 x1p dc 0 ac {idp1}\nIpa1n 0 x1n dc 0 ac {idn1}\nXA1 y1p y1n "
+   ],
+   [
+    "XA2 x2p x2n ",
+    "Vpa2p x2p y2p dc 0 ac {vdp2}\nVpa2n x2n y2n dc 0 ac {vdn2}\nIpa2p 0 x2p dc 0 ac {idp2}\nIpa2n 0 x2n dc 0 ac {idn2}\nXA2 y2p y2n "
+   ],
+   [
+    "XMC1 vcmfb vcms tc",
+    "Vpc vcms vcmsy dc 0 ac {vc1}\nIpc 0 vcms dc 0 ac {ic1}\nXMC1 vcmfb vcmsy tc"
+   ],
+   [
+    "XMC1 vcmfb vcms tc",
+    "Vpc vcms vcmsy dc 0 ac {vc2}\nIpc 0 vcms dc 0 ac {ic2}\nXMC1 vcmfb vcmsy tc"
+   ],
+   [
+    "XMN7 outp ",
+    "Vpop outpi outp dc 0 ac {vop1}\nVpon outni outn dc 0 ac {von1}\nIpop 0 outpi dc 0 ac {iop1}\nIpon 0 outni dc 0 ac {ion1}\nXMN7 outpi "
+   ],
+   [
+    "XMN8 outn ",
+    "XMN8 outni "
+   ],
+   [
+    "XMP7 outp ",
+    "XMP7 outpi "
+   ],
+   [
+    "XMP8 outn ",
+    "XMP8 outni "
+   ],
+   [
+    "XCC1 cz1 outp ",
+    "XCC1 cz1 outpi "
+   ],
+   [
+    "XCC2 cz2 outn ",
+    "XCC2 cz2 outni "
+   ],
+   [
+    "XMN7 outp ",
+    "Vpop outpi outp dc 0 ac {vop2}\nVpon outni outn dc 0 ac {von2}\nIpop 0 outpi dc 0 ac {iop2}\nIpon 0 outni dc 0 ac {ion2}\nXMN7 outpi "
+   ],
+   [
+    "XMN8 outn ",
+    "XMN8 outni "
+   ],
+   [
+    "XMP7 outp ",
+    "XMP7 outpi "
+   ],
+   [
+    "XMP8 outn ",
+    "XMP8 outni "
+   ],
+   [
+    "XCC1 cz1 outp ",
+    "XCC1 cz1 outpi "
+   ],
+   [
+    "XCC2 cz2 outn ",
+    "XCC2 cz2 outni "
+   ]
+  ],
+  "stb_tt_cm2.80": [
+   [
+    "XA1 x1p x1n ",
+    "Vpa1p x1p y1p dc 0 ac {vdp1}\nVpa1n x1n y1n dc 0 ac {vdn1}\nIpa1p 0 x1p dc 0 ac {idp1}\nIpa1n 0 x1n dc 0 ac {idn1}\nXA1 y1p y1n "
+   ],
+   [
+    "XA2 x2p x2n ",
+    "Vpa2p x2p y2p dc 0 ac {vdp2}\nVpa2n x2n y2n dc 0 ac {vdn2}\nIpa2p 0 x2p dc 0 ac {idp2}\nIpa2n 0 x2n dc 0 ac {idn2}\nXA2 y2p y2n "
+   ],
+   [
+    "XMC1 vcmfb vcms tc",
+    "Vpc vcms vcmsy dc 0 ac {vc1}\nIpc 0 vcms dc 0 ac {ic1}\nXMC1 vcmfb vcmsy tc"
+   ],
+   [
+    "XMC1 vcmfb vcms tc",
+    "Vpc vcms vcmsy dc 0 ac {vc2}\nIpc 0 vcms dc 0 ac {ic2}\nXMC1 vcmfb vcmsy tc"
+   ],
+   [
+    "XMN7 outp ",
+    "Vpop outpi outp dc 0 ac {vop1}\nVpon outni outn dc 0 ac {von1}\nIpop 0 outpi dc 0 ac {iop1}\nIpon 0 outni dc 0 ac {ion1}\nXMN7 outpi "
+   ],
+   [
+    "XMN8 outn ",
+    "XMN8 outni "
+   ],
+   [
+    "XMP7 outp ",
+    "XMP7 outpi "
+   ],
+   [
+    "XMP8 outn ",
+    "XMP8 outni "
+   ],
+   [
+    "XCC1 cz1 outp ",
+    "XCC1 cz1 outpi "
+   ],
+   [
+    "XCC2 cz2 outn ",
+    "XCC2 cz2 outni "
+   ],
+   [
+    "XMN7 outp ",
+    "Vpop outpi outp dc 0 ac {vop2}\nVpon outni outn dc 0 ac {von2}\nIpop 0 outpi dc 0 ac {iop2}\nIpon 0 outni dc 0 ac {ion2}\nXMN7 outpi "
+   ],
+   [
+    "XMN8 outn ",
+    "XMN8 outni "
+   ],
+   [
+    "XMP7 outp ",
+    "XMP7 outpi "
+   ],
+   [
+    "XMP8 outn ",
+    "XMP8 outni "
+   ],
+   [
+    "XCC1 cz1 outp ",
+    "XCC1 cz1 outpi "
+   ],
+   [
+    "XCC2 cz2 outn ",
+    "XCC2 cz2 outni "
+   ]
+  ],
+  "stb_ss_cm0.50": [
+   [
+    "XA1 x1p x1n ",
+    "Vpa1p x1p y1p dc 0 ac {vdp1}\nVpa1n x1n y1n dc 0 ac {vdn1}\nIpa1p 0 x1p dc 0 ac {idp1}\nIpa1n 0 x1n dc 0 ac {idn1}\nXA1 y1p y1n "
+   ],
+   [
+    "XA2 x2p x2n ",
+    "Vpa2p x2p y2p dc 0 ac {vdp2}\nVpa2n x2n y2n dc 0 ac {vdn2}\nIpa2p 0 x2p dc 0 ac {idp2}\nIpa2n 0 x2n dc 0 ac {idn2}\nXA2 y2p y2n "
+   ],
+   [
+    "XMC1 vcmfb vcms tc",
+    "Vpc vcms vcmsy dc 0 ac {vc1}\nIpc 0 vcms dc 0 ac {ic1}\nXMC1 vcmfb vcmsy tc"
+   ],
+   [
+    "XMC1 vcmfb vcms tc",
+    "Vpc vcms vcmsy dc 0 ac {vc2}\nIpc 0 vcms dc 0 ac {ic2}\nXMC1 vcmfb vcmsy tc"
+   ],
+   [
+    "XMN7 outp ",
+    "Vpop outpi outp dc 0 ac {vop1}\nVpon outni outn dc 0 ac {von1}\nIpop 0 outpi dc 0 ac {iop1}\nIpon 0 outni dc 0 ac {ion1}\nXMN7 outpi "
+   ],
+   [
+    "XMN8 outn ",
+    "XMN8 outni "
+   ],
+   [
+    "XMP7 outp ",
+    "XMP7 outpi "
+   ],
+   [
+    "XMP8 outn ",
+    "XMP8 outni "
+   ],
+   [
+    "XCC1 cz1 outp ",
+    "XCC1 cz1 outpi "
+   ],
+   [
+    "XCC2 cz2 outn ",
+    "XCC2 cz2 outni "
+   ],
+   [
+    "XMN7 outp ",
+    "Vpop outpi outp dc 0 ac {vop2}\nVpon outni outn dc 0 ac {von2}\nIpop 0 outpi dc 0 ac {iop2}\nIpon 0 outni dc 0 ac {ion2}\nXMN7 outpi "
+   ],
+   [
+    "XMN8 outn ",
+    "XMN8 outni "
+   ],
+   [
+    "XMP7 outp ",
+    "XMP7 outpi "
+   ],
+   [
+    "XMP8 outn ",
+    "XMP8 outni "
+   ],
+   [
+    "XCC1 cz1 outp ",
+    "XCC1 cz1 outpi "
+   ],
+   [
+    "XCC2 cz2 outn ",
+    "XCC2 cz2 outni "
+   ]
+  ],
+  "stb_ss_cm1.65": [
+   [
+    "XA1 x1p x1n ",
+    "Vpa1p x1p y1p dc 0 ac {vdp1}\nVpa1n x1n y1n dc 0 ac {vdn1}\nIpa1p 0 x1p dc 0 ac {idp1}\nIpa1n 0 x1n dc 0 ac {idn1}\nXA1 y1p y1n "
+   ],
+   [
+    "XA2 x2p x2n ",
+    "Vpa2p x2p y2p dc 0 ac {vdp2}\nVpa2n x2n y2n dc 0 ac {vdn2}\nIpa2p 0 x2p dc 0 ac {idp2}\nIpa2n 0 x2n dc 0 ac {idn2}\nXA2 y2p y2n "
+   ],
+   [
+    "XMC1 vcmfb vcms tc",
+    "Vpc vcms vcmsy dc 0 ac {vc1}\nIpc 0 vcms dc 0 ac {ic1}\nXMC1 vcmfb vcmsy tc"
+   ],
+   [
+    "XMC1 vcmfb vcms tc",
+    "Vpc vcms vcmsy dc 0 ac {vc2}\nIpc 0 vcms dc 0 ac {ic2}\nXMC1 vcmfb vcmsy tc"
+   ],
+   [
+    "XMN7 outp ",
+    "Vpop outpi outp dc 0 ac {vop1}\nVpon outni outn dc 0 ac {von1}\nIpop 0 outpi dc 0 ac {iop1}\nIpon 0 outni dc 0 ac {ion1}\nXMN7 outpi "
+   ],
+   [
+    "XMN8 outn ",
+    "XMN8 outni "
+   ],
+   [
+    "XMP7 outp ",
+    "XMP7 outpi "
+   ],
+   [
+    "XMP8 outn ",
+    "XMP8 outni "
+   ],
+   [
+    "XCC1 cz1 outp ",
+    "XCC1 cz1 outpi "
+   ],
+   [
+    "XCC2 cz2 outn ",
+    "XCC2 cz2 outni "
+   ],
+   [
+    "XMN7 outp ",
+    "Vpop outpi outp dc 0 ac {vop2}\nVpon outni outn dc 0 ac {von2}\nIpop 0 outpi dc 0 ac {iop2}\nIpon 0 outni dc 0 ac {ion2}\nXMN7 outpi "
+   ],
+   [
+    "XMN8 outn ",
+    "XMN8 outni "
+   ],
+   [
+    "XMP7 outp ",
+    "XMP7 outpi "
+   ],
+   [
+    "XMP8 outn ",
+    "XMP8 outni "
+   ],
+   [
+    "XCC1 cz1 outp ",
+    "XCC1 cz1 outpi "
+   ],
+   [
+    "XCC2 cz2 outn ",
+    "XCC2 cz2 outni "
+   ]
+  ],
+  "stb_ss_cm2.50": [
+   [
+    "XA1 x1p x1n ",
+    "Vpa1p x1p y1p dc 0 ac {vdp1}\nVpa1n x1n y1n dc 0 ac {vdn1}\nIpa1p 0 x1p dc 0 ac {idp1}\nIpa1n 0 x1n dc 0 ac {idn1}\nXA1 y1p y1n "
+   ],
+   [
+    "XA2 x2p x2n ",
+    "Vpa2p x2p y2p dc 0 ac {vdp2}\nVpa2n x2n y2n dc 0 ac {vdn2}\nIpa2p 0 x2p dc 0 ac {idp2}\nIpa2n 0 x2n dc 0 ac {idn2}\nXA2 y2p y2n "
+   ],
+   [
+    "XMC1 vcmfb vcms tc",
+    "Vpc vcms vcmsy dc 0 ac {vc1}\nIpc 0 vcms dc 0 ac {ic1}\nXMC1 vcmfb vcmsy tc"
+   ],
+   [
+    "XMC1 vcmfb vcms tc",
+    "Vpc vcms vcmsy dc 0 ac {vc2}\nIpc 0 vcms dc 0 ac {ic2}\nXMC1 vcmfb vcmsy tc"
+   ],
+   [
+    "XMN7 outp ",
+    "Vpop outpi outp dc 0 ac {vop1}\nVpon outni outn dc 0 ac {von1}\nIpop 0 outpi dc 0 ac {iop1}\nIpon 0 outni dc 0 ac {ion1}\nXMN7 outpi "
+   ],
+   [
+    "XMN8 outn ",
+    "XMN8 outni "
+   ],
+   [
+    "XMP7 outp ",
+    "XMP7 outpi "
+   ],
+   [
+    "XMP8 outn ",
+    "XMP8 outni "
+   ],
+   [
+    "XCC1 cz1 outp ",
+    "XCC1 cz1 outpi "
+   ],
+   [
+    "XCC2 cz2 outn ",
+    "XCC2 cz2 outni "
+   ],
+   [
+    "XMN7 outp ",
+    "Vpop outpi outp dc 0 ac {vop2}\nVpon outni outn dc 0 ac {von2}\nIpop 0 outpi dc 0 ac {iop2}\nIpon 0 outni dc 0 ac {ion2}\nXMN7 outpi "
+   ],
+   [
+    "XMN8 outn ",
+    "XMN8 outni "
+   ],
+   [
+    "XMP7 outp ",
+    "XMP7 outpi "
+   ],
+   [
+    "XMP8 outn ",
+    "XMP8 outni "
+   ],
+   [
+    "XCC1 cz1 outp ",
+    "XCC1 cz1 outpi "
+   ],
+   [
+    "XCC2 cz2 outn ",
+    "XCC2 cz2 outni "
+   ]
+  ],
+  "stb_ss_cm2.80": [
+   [
+    "XA1 x1p x1n ",
+    "Vpa1p x1p y1p dc 0 ac {vdp1}\nVpa1n x1n y1n dc 0 ac {vdn1}\nIpa1p 0 x1p dc 0 ac {idp1}\nIpa1n 0 x1n dc 0 ac {idn1}\nXA1 y1p y1n "
+   ],
+   [
+    "XA2 x2p x2n ",
+    "Vpa2p x2p y2p dc 0 ac {vdp2}\nVpa2n x2n y2n dc 0 ac {vdn2}\nIpa2p 0 x2p dc 0 ac {idp2}\nIpa2n 0 x2n dc 0 ac {idn2}\nXA2 y2p y2n "
+   ],
+   [
+    "XMC1 vcmfb vcms tc",
+    "Vpc vcms vcmsy dc 0 ac {vc1}\nIpc 0 vcms dc 0 ac {ic1}\nXMC1 vcmfb vcmsy tc"
+   ],
+   [
+    "XMC1 vcmfb vcms tc",
+    "Vpc vcms vcmsy dc 0 ac {vc2}\nIpc 0 vcms dc 0 ac {ic2}\nXMC1 vcmfb vcmsy tc"
+   ],
+   [
+    "XMN7 outp ",
+    "Vpop outpi outp dc 0 ac {vop1}\nVpon outni outn dc 0 ac {von1}\nIpop 0 outpi dc 0 ac {iop1}\nIpon 0 outni dc 0 ac {ion1}\nXMN7 outpi "
+   ],
+   [
+    "XMN8 outn ",
+    "XMN8 outni "
+   ],
+   [
+    "XMP7 outp ",
+    "XMP7 outpi "
+   ],
+   [
+    "XMP8 outn ",
+    "XMP8 outni "
+   ],
+   [
+    "XCC1 cz1 outp ",
+    "XCC1 cz1 outpi "
+   ],
+   [
+    "XCC2 cz2 outn ",
+    "XCC2 cz2 outni "
+   ],
+   [
+    "XMN7 outp ",
+    "Vpop outpi outp dc 0 ac {vop2}\nVpon outni outn dc 0 ac {von2}\nIpop 0 outpi dc 0 ac {iop2}\nIpon 0 outni dc 0 ac {ion2}\nXMN7 outpi "
+   ],
+   [
+    "XMN8 outn ",
+    "XMN8 outni "
+   ],
+   [
+    "XMP7 outp ",
+    "XMP7 outpi "
+   ],
+   [
+    "XMP8 outn ",
+    "XMP8 outni "
+   ],
+   [
+    "XCC1 cz1 outp ",
+    "XCC1 cz1 outpi "
+   ],
+   [
+    "XCC2 cz2 outn ",
+    "XCC2 cz2 outni "
+   ]
+  ],
+  "stb_ff_cm0.50": [
+   [
+    "XA1 x1p x1n ",
+    "Vpa1p x1p y1p dc 0 ac {vdp1}\nVpa1n x1n y1n dc 0 ac {vdn1}\nIpa1p 0 x1p dc 0 ac {idp1}\nIpa1n 0 x1n dc 0 ac {idn1}\nXA1 y1p y1n "
+   ],
+   [
+    "XA2 x2p x2n ",
+    "Vpa2p x2p y2p dc 0 ac {vdp2}\nVpa2n x2n y2n dc 0 ac {vdn2}\nIpa2p 0 x2p dc 0 ac {idp2}\nIpa2n 0 x2n dc 0 ac {idn2}\nXA2 y2p y2n "
+   ],
+   [
+    "XMC1 vcmfb vcms tc",
+    "Vpc vcms vcmsy dc 0 ac {vc1}\nIpc 0 vcms dc 0 ac {ic1}\nXMC1 vcmfb vcmsy tc"
+   ],
+   [
+    "XMC1 vcmfb vcms tc",
+    "Vpc vcms vcmsy dc 0 ac {vc2}\nIpc 0 vcms dc 0 ac {ic2}\nXMC1 vcmfb vcmsy tc"
+   ],
+   [
+    "XMN7 outp ",
+    "Vpop outpi outp dc 0 ac {vop1}\nVpon outni outn dc 0 ac {von1}\nIpop 0 outpi dc 0 ac {iop1}\nIpon 0 outni dc 0 ac {ion1}\nXMN7 outpi "
+   ],
+   [
+    "XMN8 outn ",
+    "XMN8 outni "
+   ],
+   [
+    "XMP7 outp ",
+    "XMP7 outpi "
+   ],
+   [
+    "XMP8 outn ",
+    "XMP8 outni "
+   ],
+   [
+    "XCC1 cz1 outp ",
+    "XCC1 cz1 outpi "
+   ],
+   [
+    "XCC2 cz2 outn ",
+    "XCC2 cz2 outni "
+   ],
+   [
+    "XMN7 outp ",
+    "Vpop outpi outp dc 0 ac {vop2}\nVpon outni outn dc 0 ac {von2}\nIpop 0 outpi dc 0 ac {iop2}\nIpon 0 outni dc 0 ac {ion2}\nXMN7 outpi "
+   ],
+   [
+    "XMN8 outn ",
+    "XMN8 outni "
+   ],
+   [
+    "XMP7 outp ",
+    "XMP7 outpi "
+   ],
+   [
+    "XMP8 outn ",
+    "XMP8 outni "
+   ],
+   [
+    "XCC1 cz1 outp ",
+    "XCC1 cz1 outpi "
+   ],
+   [
+    "XCC2 cz2 outn ",
+    "XCC2 cz2 outni "
+   ]
+  ],
+  "stb_ff_cm1.65": [
+   [
+    "XA1 x1p x1n ",
+    "Vpa1p x1p y1p dc 0 ac {vdp1}\nVpa1n x1n y1n dc 0 ac {vdn1}\nIpa1p 0 x1p dc 0 ac {idp1}\nIpa1n 0 x1n dc 0 ac {idn1}\nXA1 y1p y1n "
+   ],
+   [
+    "XA2 x2p x2n ",
+    "Vpa2p x2p y2p dc 0 ac {vdp2}\nVpa2n x2n y2n dc 0 ac {vdn2}\nIpa2p 0 x2p dc 0 ac {idp2}\nIpa2n 0 x2n dc 0 ac {idn2}\nXA2 y2p y2n "
+   ],
+   [
+    "XMC1 vcmfb vcms tc",
+    "Vpc vcms vcmsy dc 0 ac {vc1}\nIpc 0 vcms dc 0 ac {ic1}\nXMC1 vcmfb vcmsy tc"
+   ],
+   [
+    "XMC1 vcmfb vcms tc",
+    "Vpc vcms vcmsy dc 0 ac {vc2}\nIpc 0 vcms dc 0 ac {ic2}\nXMC1 vcmfb vcmsy tc"
+   ],
+   [
+    "XMN7 outp ",
+    "Vpop outpi outp dc 0 ac {vop1}\nVpon outni outn dc 0 ac {von1}\nIpop 0 outpi dc 0 ac {iop1}\nIpon 0 outni dc 0 ac {ion1}\nXMN7 outpi "
+   ],
+   [
+    "XMN8 outn ",
+    "XMN8 outni "
+   ],
+   [
+    "XMP7 outp ",
+    "XMP7 outpi "
+   ],
+   [
+    "XMP8 outn ",
+    "XMP8 outni "
+   ],
+   [
+    "XCC1 cz1 outp ",
+    "XCC1 cz1 outpi "
+   ],
+   [
+    "XCC2 cz2 outn ",
+    "XCC2 cz2 outni "
+   ],
+   [
+    "XMN7 outp ",
+    "Vpop outpi outp dc 0 ac {vop2}\nVpon outni outn dc 0 ac {von2}\nIpop 0 outpi dc 0 ac {iop2}\nIpon 0 outni dc 0 ac {ion2}\nXMN7 outpi "
+   ],
+   [
+    "XMN8 outn ",
+    "XMN8 outni "
+   ],
+   [
+    "XMP7 outp ",
+    "XMP7 outpi "
+   ],
+   [
+    "XMP8 outn ",
+    "XMP8 outni "
+   ],
+   [
+    "XCC1 cz1 outp ",
+    "XCC1 cz1 outpi "
+   ],
+   [
+    "XCC2 cz2 outn ",
+    "XCC2 cz2 outni "
+   ]
+  ],
+  "stb_ff_cm2.50": [
+   [
+    "XA1 x1p x1n ",
+    "Vpa1p x1p y1p dc 0 ac {vdp1}\nVpa1n x1n y1n dc 0 ac {vdn1}\nIpa1p 0 x1p dc 0 ac {idp1}\nIpa1n 0 x1n dc 0 ac {idn1}\nXA1 y1p y1n "
+   ],
+   [
+    "XA2 x2p x2n ",
+    "Vpa2p x2p y2p dc 0 ac {vdp2}\nVpa2n x2n y2n dc 0 ac {vdn2}\nIpa2p 0 x2p dc 0 ac {idp2}\nIpa2n 0 x2n dc 0 ac {idn2}\nXA2 y2p y2n "
+   ],
+   [
+    "XMC1 vcmfb vcms tc",
+    "Vpc vcms vcmsy dc 0 ac {vc1}\nIpc 0 vcms dc 0 ac {ic1}\nXMC1 vcmfb vcmsy tc"
+   ],
+   [
+    "XMC1 vcmfb vcms tc",
+    "Vpc vcms vcmsy dc 0 ac {vc2}\nIpc 0 vcms dc 0 ac {ic2}\nXMC1 vcmfb vcmsy tc"
+   ],
+   [
+    "XMN7 outp ",
+    "Vpop outpi outp dc 0 ac {vop1}\nVpon outni outn dc 0 ac {von1}\nIpop 0 outpi dc 0 ac {iop1}\nIpon 0 outni dc 0 ac {ion1}\nXMN7 outpi "
+   ],
+   [
+    "XMN8 outn ",
+    "XMN8 outni "
+   ],
+   [
+    "XMP7 outp ",
+    "XMP7 outpi "
+   ],
+   [
+    "XMP8 outn ",
+    "XMP8 outni "
+   ],
+   [
+    "XCC1 cz1 outp ",
+    "XCC1 cz1 outpi "
+   ],
+   [
+    "XCC2 cz2 outn ",
+    "XCC2 cz2 outni "
+   ],
+   [
+    "XMN7 outp ",
+    "Vpop outpi outp dc 0 ac {vop2}\nVpon outni outn dc 0 ac {von2}\nIpop 0 outpi dc 0 ac {iop2}\nIpon 0 outni dc 0 ac {ion2}\nXMN7 outpi "
+   ],
+   [
+    "XMN8 outn ",
+    "XMN8 outni "
+   ],
+   [
+    "XMP7 outp ",
+    "XMP7 outpi "
+   ],
+   [
+    "XMP8 outn ",
+    "XMP8 outni "
+   ],
+   [
+    "XCC1 cz1 outp ",
+    "XCC1 cz1 outpi "
+   ],
+   [
+    "XCC2 cz2 outn ",
+    "XCC2 cz2 outni "
+   ]
+  ],
+  "stb_ff_cm2.80": [
+   [
+    "XA1 x1p x1n ",
+    "Vpa1p x1p y1p dc 0 ac {vdp1}\nVpa1n x1n y1n dc 0 ac {vdn1}\nIpa1p 0 x1p dc 0 ac {idp1}\nIpa1n 0 x1n dc 0 ac {idn1}\nXA1 y1p y1n "
+   ],
+   [
+    "XA2 x2p x2n ",
+    "Vpa2p x2p y2p dc 0 ac {vdp2}\nVpa2n x2n y2n dc 0 ac {vdn2}\nIpa2p 0 x2p dc 0 ac {idp2}\nIpa2n 0 x2n dc 0 ac {idn2}\nXA2 y2p y2n "
+   ],
+   [
+    "XMC1 vcmfb vcms tc",
+    "Vpc vcms vcmsy dc 0 ac {vc1}\nIpc 0 vcms dc 0 ac {ic1}\nXMC1 vcmfb vcmsy tc"
+   ],
+   [
+    "XMC1 vcmfb vcms tc",
+    "Vpc vcms vcmsy dc 0 ac {vc2}\nIpc 0 vcms dc 0 ac {ic2}\nXMC1 vcmfb vcmsy tc"
+   ],
+   [
+    "XMN7 outp ",
+    "Vpop outpi outp dc 0 ac {vop1}\nVpon outni outn dc 0 ac {von1}\nIpop 0 outpi dc 0 ac {iop1}\nIpon 0 outni dc 0 ac {ion1}\nXMN7 outpi "
+   ],
+   [
+    "XMN8 outn ",
+    "XMN8 outni "
+   ],
+   [
+    "XMP7 outp ",
+    "XMP7 outpi "
+   ],
+   [
+    "XMP8 outn ",
+    "XMP8 outni "
+   ],
+   [
+    "XCC1 cz1 outp ",
+    "XCC1 cz1 outpi "
+   ],
+   [
+    "XCC2 cz2 outn ",
+    "XCC2 cz2 outni "
+   ],
+   [
+    "XMN7 outp ",
+    "Vpop outpi outp dc 0 ac {vop2}\nVpon outni outn dc 0 ac {von2}\nIpop 0 outpi dc 0 ac {iop2}\nIpon 0 outni dc 0 ac {ion2}\nXMN7 outpi "
+   ],
+   [
+    "XMN8 outn ",
+    "XMN8 outni "
+   ],
+   [
+    "XMP7 outp ",
+    "XMP7 outpi "
+   ],
+   [
+    "XMP8 outn ",
+    "XMP8 outni "
+   ],
+   [
+    "XCC1 cz1 outp ",
+    "XCC1 cz1 outpi "
+   ],
+   [
+    "XCC2 cz2 outn ",
+    "XCC2 cz2 outni "
+   ]
+  ],
+  "stb_tt_cm2.50_hold": [
+   [
+    "XA1 x1p x1n ",
+    "Vpa1p x1p y1p dc 0 ac {vdp1}\nVpa1n x1n y1n dc 0 ac {vdn1}\nIpa1p 0 x1p dc 0 ac {idp1}\nIpa1n 0 x1n dc 0 ac {idn1}\nXA1 y1p y1n "
+   ],
+   [
+    "XA2 x2p x2n ",
+    "Vpa2p x2p y2p dc 0 ac {vdp2}\nVpa2n x2n y2n dc 0 ac {vdn2}\nIpa2p 0 x2p dc 0 ac {idp2}\nIpa2n 0 x2n dc 0 ac {idn2}\nXA2 y2p y2n "
+   ],
+   [
+    "XMC1 vcmfb vcms tc",
+    "Vpc vcms vcmsy dc 0 ac {vc1}\nIpc 0 vcms dc 0 ac {ic1}\nXMC1 vcmfb vcmsy tc"
+   ],
+   [
+    "XMC1 vcmfb vcms tc",
+    "Vpc vcms vcmsy dc 0 ac {vc2}\nIpc 0 vcms dc 0 ac {ic2}\nXMC1 vcmfb vcmsy tc"
+   ],
+   [
+    "XMN7 outp ",
+    "Vpop outpi outp dc 0 ac {vop1}\nVpon outni outn dc 0 ac {von1}\nIpop 0 outpi dc 0 ac {iop1}\nIpon 0 outni dc 0 ac {ion1}\nXMN7 outpi "
+   ],
+   [
+    "XMN8 outn ",
+    "XMN8 outni "
+   ],
+   [
+    "XMP7 outp ",
+    "XMP7 outpi "
+   ],
+   [
+    "XMP8 outn ",
+    "XMP8 outni "
+   ],
+   [
+    "XCC1 cz1 outp ",
+    "XCC1 cz1 outpi "
+   ],
+   [
+    "XCC2 cz2 outn ",
+    "XCC2 cz2 outni "
+   ],
+   [
+    "XMN7 outp ",
+    "Vpop outpi outp dc 0 ac {vop2}\nVpon outni outn dc 0 ac {von2}\nIpop 0 outpi dc 0 ac {iop2}\nIpon 0 outni dc 0 ac {ion2}\nXMN7 outpi "
+   ],
+   [
+    "XMN8 outn ",
+    "XMN8 outni "
+   ],
+   [
+    "XMP7 outp ",
+    "XMP7 outpi "
+   ],
+   [
+    "XMP8 outn ",
+    "XMP8 outni "
+   ],
+   [
+    "XCC1 cz1 outp ",
+    "XCC1 cz1 outpi "
+   ],
+   [
+    "XCC2 cz2 outn ",
+    "XCC2 cz2 outni "
+   ]
+  ],
+  "stb_ss_cm2.50_hold": [
+   [
+    "XA1 x1p x1n ",
+    "Vpa1p x1p y1p dc 0 ac {vdp1}\nVpa1n x1n y1n dc 0 ac {vdn1}\nIpa1p 0 x1p dc 0 ac {idp1}\nIpa1n 0 x1n dc 0 ac {idn1}\nXA1 y1p y1n "
+   ],
+   [
+    "XA2 x2p x2n ",
+    "Vpa2p x2p y2p dc 0 ac {vdp2}\nVpa2n x2n y2n dc 0 ac {vdn2}\nIpa2p 0 x2p dc 0 ac {idp2}\nIpa2n 0 x2n dc 0 ac {idn2}\nXA2 y2p y2n "
+   ],
+   [
+    "XMC1 vcmfb vcms tc",
+    "Vpc vcms vcmsy dc 0 ac {vc1}\nIpc 0 vcms dc 0 ac {ic1}\nXMC1 vcmfb vcmsy tc"
+   ],
+   [
+    "XMC1 vcmfb vcms tc",
+    "Vpc vcms vcmsy dc 0 ac {vc2}\nIpc 0 vcms dc 0 ac {ic2}\nXMC1 vcmfb vcmsy tc"
+   ],
+   [
+    "XMN7 outp ",
+    "Vpop outpi outp dc 0 ac {vop1}\nVpon outni outn dc 0 ac {von1}\nIpop 0 outpi dc 0 ac {iop1}\nIpon 0 outni dc 0 ac {ion1}\nXMN7 outpi "
+   ],
+   [
+    "XMN8 outn ",
+    "XMN8 outni "
+   ],
+   [
+    "XMP7 outp ",
+    "XMP7 outpi "
+   ],
+   [
+    "XMP8 outn ",
+    "XMP8 outni "
+   ],
+   [
+    "XCC1 cz1 outp ",
+    "XCC1 cz1 outpi "
+   ],
+   [
+    "XCC2 cz2 outn ",
+    "XCC2 cz2 outni "
+   ],
+   [
+    "XMN7 outp ",
+    "Vpop outpi outp dc 0 ac {vop2}\nVpon outni outn dc 0 ac {von2}\nIpop 0 outpi dc 0 ac {iop2}\nIpon 0 outni dc 0 ac {ion2}\nXMN7 outpi "
+   ],
+   [
+    "XMN8 outn ",
+    "XMN8 outni "
+   ],
+   [
+    "XMP7 outp ",
+    "XMP7 outpi "
+   ],
+   [
+    "XMP8 outn ",
+    "XMP8 outni "
+   ],
+   [
+    "XCC1 cz1 outp ",
+    "XCC1 cz1 outpi "
+   ],
+   [
+    "XCC2 cz2 outn ",
+    "XCC2 cz2 outni "
+   ]
+  ],
+  "stb_ff_cm2.50_hold": [
+   [
+    "XA1 x1p x1n ",
+    "Vpa1p x1p y1p dc 0 ac {vdp1}\nVpa1n x1n y1n dc 0 ac {vdn1}\nIpa1p 0 x1p dc 0 ac {idp1}\nIpa1n 0 x1n dc 0 ac {idn1}\nXA1 y1p y1n "
+   ],
+   [
+    "XA2 x2p x2n ",
+    "Vpa2p x2p y2p dc 0 ac {vdp2}\nVpa2n x2n y2n dc 0 ac {vdn2}\nIpa2p 0 x2p dc 0 ac {idp2}\nIpa2n 0 x2n dc 0 ac {idn2}\nXA2 y2p y2n "
+   ],
+   [
+    "XMC1 vcmfb vcms tc",
+    "Vpc vcms vcmsy dc 0 ac {vc1}\nIpc 0 vcms dc 0 ac {ic1}\nXMC1 vcmfb vcmsy tc"
+   ],
+   [
+    "XMC1 vcmfb vcms tc",
+    "Vpc vcms vcmsy dc 0 ac {vc2}\nIpc 0 vcms dc 0 ac {ic2}\nXMC1 vcmfb vcmsy tc"
+   ],
+   [
+    "XMN7 outp ",
+    "Vpop outpi outp dc 0 ac {vop1}\nVpon outni outn dc 0 ac {von1}\nIpop 0 outpi dc 0 ac {iop1}\nIpon 0 outni dc 0 ac {ion1}\nXMN7 outpi "
+   ],
+   [
+    "XMN8 outn ",
+    "XMN8 outni "
+   ],
+   [
+    "XMP7 outp ",
+    "XMP7 outpi "
+   ],
+   [
+    "XMP8 outn ",
+    "XMP8 outni "
+   ],
+   [
+    "XCC1 cz1 outp ",
+    "XCC1 cz1 outpi "
+   ],
+   [
+    "XCC2 cz2 outn ",
+    "XCC2 cz2 outni "
+   ],
+   [
+    "XMN7 outp ",
+    "Vpop outpi outp dc 0 ac {vop2}\nVpon outni outn dc 0 ac {von2}\nIpop 0 outpi dc 0 ac {iop2}\nIpon 0 outni dc 0 ac {ion2}\nXMN7 outpi "
+   ],
+   [
+    "XMN8 outn ",
+    "XMN8 outni "
+   ],
+   [
+    "XMP7 outp ",
+    "XMP7 outpi "
+   ],
+   [
+    "XMP8 outn ",
+    "XMP8 outni "
+   ],
+   [
+    "XCC1 cz1 outp ",
+    "XCC1 cz1 outpi "
+   ],
+   [
+    "XCC2 cz2 outn ",
+    "XCC2 cz2 outni "
+   ]
+  ]
+ },
+ "raw": "$G1_RESULTS_ROOT/r1_afe/r1afe-stb-20261020c/",
+ "jobs": 15,
+ "failed_jobs": [],
+ "wall_seconds": 1497.3,
+ "summary": "results/r1afe-stb-20261020c.json",
+ "question": "Loop gain (Tian double injection) of the stage-1 and stage-2 differential and common-mode loops, broken at the OTA outputs (plus CMFB-node and OTA-input breaks as cross-checks); tt/ss/ff, input CM 0.5/1.65/2.5/2.8 V, every gain step, track load (100 ohm + 2.8 pF) and hold load",
+ "result": "worst PM: dm1 68.6, cm1 64.1, dm2 65.6, cm2 64.9 deg; worst GM: dm1 15.2, cm1 23.6, dm2 10.7, cm2 29.3 dB",
+ "disposition": "superseded (revision-C first pass, netlist u3 without the switched Miller capacitor; failed f_c 0.836 MHz in r1afe-ac-20261020c) by the 20261020c2 runs. Was: passed (PM >= 55 deg differential, >= 60 deg common mode)"
+}
