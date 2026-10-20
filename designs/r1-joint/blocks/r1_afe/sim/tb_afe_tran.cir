@@ -1,0 +1,56 @@
+* tb_afe_tran -- r1_afe large signal: 100 kHz sine at full input for the gain step (2.0 Vpp differential out),
+* THD (ngspice fourier, 9 harmonics, last period) and output swing, both channels (cosine = sine + 90 deg).
+* Substitutions: @@CODE@@ gain code 0..5, @@AMP@@ differential peak input (0.7 V / 2^code), @@VCMI@@ input CM.
+* Load: 2 pF per output to ground.
+@@HEAD@@
+.options reltol=1e-5 abstol=1e-13 vntol=1e-8
+Vic ic 0 dc {VCMI}
+Vds vds 0 dc 0 sin(0 @@AMP@@ 100k 0 0 0)
+Vdc vdc 0 dc 0 sin(0 @@AMP@@ 100k 0 0 90)
+Esp sinp ic vds 0 0.5
+Esn sinn ic vds 0 -0.5
+Ecp cosp ic vdc 0 0.5
+Ecn cosn ic vdc 0 -0.5
+Cl1 souts_p 0 2p
+Cl2 souts_n 0 2p
+Cl3 soutc_p 0 2p
+Cl4 soutc_n 0 2p
+XDUT sinp sinn cosp cosn souts_p souts_n soutc_p soutc_n vcm2 ib_s1 ib_s2 ib_c1 ib_c2 c1 c2 c3 c4 vdd 0 r1_afe
+.control
+@@CODES@@
+let k = @@CODE@@
+let vh = @@VDDA@@
+let a1 = ctab[4*k]*vh
+let a2 = ctab[4*k+1]*vh
+let a3 = ctab[4*k+2]*vh
+let a4 = ctab[4*k+3]*vh
+alter vc1 dc = $&a1
+alter vc2 dc = $&a2
+alter vc3 dc = $&a3
+alter vc4 dc = $&a4
+tran 2n 40u 0 2n
+let vs = v(souts_p)-v(souts_n)
+let vc = v(soutc_p)-v(soutc_n)
+meas tran smax max vs from=30u to=40u
+meas tran smin min vs from=30u to=40u
+meas tran cmax max vc from=30u to=40u
+meas tran cmin min vc from=30u to=40u
+meas tran sphi max v(souts_p) from=30u to=40u
+meas tran splo min v(souts_p) from=30u to=40u
+meas tran snhi max v(souts_n) from=30u to=40u
+meas tran snlo min v(souts_n) from=30u to=40u
+let ocmv = (v(souts_p)+v(souts_n))/2
+let o1cmv = (v(xdut.xsin.m1p)+v(xdut.xsin.m1n))/2
+meas tran ocm avg ocmv from=30u to=40u
+meas tran ocmpp pp ocmv from=30u to=40u
+meas tran o1cmpp pp o1cmv from=30u to=40u
+echo "TRROW code=$&k smax=$&smax smin=$&smin cmax=$&cmax cmin=$&cmin sphi=$&sphi splo=$&splo snhi=$&snhi snlo=$&snlo ocm=$&ocm ocmpp=$&ocmpp o1cmpp=$&o1cmpp"
+set fourgridsize=1000
+echo "FOURIER-SIN"
+fourier 100k vs
+echo "FOURIER-COS"
+fourier 100k vc
+linearize vs vc
+wrdata @@RAW@@_tran.txt vs vc
+.endc
+.end

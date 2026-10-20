@@ -1,0 +1,75 @@
+* tb_afe_psrr -- r1_afe rejection of VDDA ripple at 20 kHz and 1 MHz, codes x1 and x32, both channels.
+* PSRR (dB) = 20 log10( A_dm / A_vdda->diff ), A_dm = differential signal gain at the same frequency.
+* With a symmetric (no mismatch) netlist the differential supply gain is ~0; finite values need mismatch,
+* so the campaign runs the nominal corners and 2 x 10 mismatch samples at tt.
+* Also reported: VDDA -> output common mode (dB). Bias currents are ideal (no bias-path supply coupling).
+@@HEAD@@
+Vic ic 0 dc {VCMI}
+Esp sinp ic vd 0 0.5
+Esn sinn ic vd 0 -0.5
+Ecp cosp ic vd 0 0.5
+Ecn cosn ic vd 0 -0.5
+Vd vd 0 dc 0 ac 0
+Cl1 souts_p 0 2p
+Cl2 souts_n 0 2p
+Cl3 soutc_p 0 2p
+Cl4 soutc_n 0 2p
+XDUT sinp sinn cosp cosn souts_p souts_n soutc_p soutc_n vcm2 ib_s1 ib_s2 ib_c1 ib_c2 c1 c2 c3 c4 vdd 0 r1_afe
+.control
+set rndseed=@@SEED@@
+@@CODES@@
+let nmc = @@NMC@@
+let vh = @@VDDA@@
+let s = 0
+while s < nmc
+  if nmc > 1
+    reset
+  end
+  foreach k 0 5
+    let a1 = ctab[4*$k]*vh
+    let a2 = ctab[4*$k+1]*vh
+    let a3 = ctab[4*$k+2]*vh
+    let a4 = ctab[4*$k+3]*vh
+    alter vc1 dc = $&a1
+    alter vc2 dc = $&a2
+    alter vc3 dc = $&a3
+    alter vc4 dc = $&a4
+    alter vd ac = 1
+    alter vdd ac = 0
+    ac dec 10 10k 2meg
+    let as = mag(v(souts_p)-v(souts_n))
+    let acc = mag(v(soutc_p)-v(soutc_n))
+    meas ac as20 find as at=20k
+    meas ac as1m find as at=1meg
+    meas ac ac20 find acc at=20k
+    meas ac ac1m find acc at=1meg
+    setplot const
+    let as20 = ac1.as20
+    let as1m = ac1.as1m
+    let ac20 = ac1.ac20
+    let ac1m = ac1.ac1m
+    alter vd ac = 0
+    alter vdd ac = 1
+    ac dec 10 10k 2meg
+    let ps = mag(v(souts_p)-v(souts_n))
+    let pc = mag(v(soutc_p)-v(soutc_n))
+    let pcm = mag((v(souts_p)+v(souts_n))/2)
+    meas ac ps20a find ps at=20k
+    meas ac ps1ma find ps at=1meg
+    meas ac pc20a find pc at=20k
+    meas ac pc1ma find pc at=1meg
+    meas ac cm20a find pcm at=20k
+    meas ac cm1ma find pcm at=1meg
+    let ps20 = 20*log10(as20/ps20a)
+    let ps1m = 20*log10(as1m/ps1ma)
+    let pc20 = 20*log10(ac20/pc20a)
+    let pc1m = 20*log10(ac1m/pc1ma)
+    let cm20 = 20*log10(cm20a)
+    let cm1m = 20*log10(cm1ma)
+    echo "PSROW mc=$&s code=$k psrr_s_20k=$&ps20 psrr_s_1m=$&ps1m psrr_c_20k=$&pc20 psrr_c_1m=$&pc1m vdd2ocm_20k_db=$&cm20 vdd2ocm_1m_db=$&cm1m"
+    destroy all
+  end
+  let s = s + 1
+end
+.endc
+.end

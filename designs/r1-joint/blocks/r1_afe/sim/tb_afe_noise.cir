@@ -1,0 +1,50 @@
+* tb_afe_noise -- r1_afe noise, sine channel, every gain step (x1 and x32 are the required points).
+* Output noise integrated 1 Hz - 100 MHz (spectrum written to the raw directory for band integrals) (the track-and-hold aliases the whole band); input-referred =
+* output rms / mid-band gain (1 kHz). Densities referred to the input at 1 kHz, 10 kHz, 100 kHz.
+* Source impedance 0 (ideal E sources). 2 pF per output.
+@@HEAD@@
+Vic ic 0 dc {VCMI}
+Esp sinp ic vd 0 0.5
+Esn sinn ic vd 0 -0.5
+Ecp cosp ic vd 0 0.5
+Ecn cosn ic vd 0 -0.5
+Vd vd 0 dc 0 ac 1
+Cl1 souts_p 0 2p
+Cl2 souts_n 0 2p
+Cl3 soutc_p 0 2p
+Cl4 soutc_n 0 2p
+XDUT sinp sinn cosp cosn souts_p souts_n soutc_p soutc_n vcm2 ib_s1 ib_s2 ib_c1 ib_c2 c1 c2 c3 c4 vdd 0 r1_afe
+.control
+@@CODES@@
+let vh = @@VDDA@@
+let k = 0
+while k < 6
+  let a1 = ctab[4*k]*vh
+  let a2 = ctab[4*k+1]*vh
+  let a3 = ctab[4*k+2]*vh
+  let a4 = ctab[4*k+3]*vh
+  alter vc1 dc = $&a1
+  alter vc2 dc = $&a2
+  alter vc3 dc = $&a3
+  alter vc4 dc = $&a4
+  ac lin 1 1k 1k
+  let g = mag(v(souts_p)-v(souts_n))
+  setplot const
+  let gk = ac1.g
+  noise v(souts_p,souts_n) vd dec 20 1 100meg
+  setplot const
+  let ontv = noise2.onoise_total
+  let inr = ontv/gk
+  setplot noise1
+  let inn = onoise_spectrum/gk
+  let in1k = inn[60]
+  let in10k = inn[80]
+  let in100k = inn[100]
+  let in1m = inn[120]
+  echo "NZROW code=$&k gain=$&gk onoise_rms=$&ontv in_rms=$&inr in1k=$&in1k in10k=$&in10k in100k=$&in100k in1m=$&in1m"
+  wrdata @@RAW@@_spec_code$&k onoise_spectrum
+  destroy all
+  let k = k + 1
+end
+.endc
+.end

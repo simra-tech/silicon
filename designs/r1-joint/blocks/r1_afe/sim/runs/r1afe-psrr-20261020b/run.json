@@ -1,0 +1,26 @@
+{
+ "run_id": "r1afe-psrr-20261020b",
+ "campaign": "psrr",
+ "date_utc": "2026-10-20T11:49:30Z",
+ "command": "G1_CPUSET=106-108 G1_CPUS=3 G1_WORKDIR=designs/r1-joint/blocks/r1_afe/sim G1_RESULTS_ROOT=<bulk> flow/run.sh python3 run_afe.py psrr r1afe-psrr-20261020b",
+ "tools": {
+  "ngspice": "ngspice-46 : Circuit level simulation program",
+  "image_id": "sha256:ddeb69576f2808676d1c5d474ecf04f6d1d6f8abdcff6b72b39790ded924bab2",
+  "pdk_commit": "84374023ee8b4b126bebbba67fcbada0a9c0ff0b"
+ },
+ "inputs": {
+  "sim/tb_afe_psrr.cir": "4602970f7926feee8e3774203fce60d4bf1e167bb5c43bee2a9378bb3721073a",
+  "sim/common_head.inc": "ae7e19db8bdacb4ed6ce7126dc07e6b7ed9ba069506c5eb46f7463bfa9bc71af",
+  "sim/gain_codes.inc": "a62c9d6daa3d544c36ac868c4e6a9266f32e581d093ac404c6c52bcc6e5276f6",
+  "schematic/r1_afe.spice": "c54ab767058fac19a4e5850e8ddb4574a90f6970f44865738ba892a021c23391",
+  "sim/run_afe.py": "b8ff95f796b41d4f2b991121e247d50dc1914424a69c7443b3d27a159f6870fe"
+ },
+ "raw": "$G1_RESULTS_ROOT/r1_afe/r1afe-psrr-20261020b/",
+ "jobs": 5,
+ "failed_jobs": [],
+ "wall_seconds": 75.5,
+ "summary": "results/r1afe-psrr-20261020b.json",
+ "question": "Differential PSRR from VDDA at 20 kHz and 1 MHz (nominal corners and 20 mismatch samples at tt), x1 and x32",
+ "result": "mismatch worst PSRR 54.9 dB at 20 kHz, 54.9 dB at 1 MHz (input-referred, A_dm / A_vdda)",
+ "disposition": "passed against a derived limit set after the run (>= 40 dB: 10 mVpp ripple below the x32 input noise; no specification limit)"
+}

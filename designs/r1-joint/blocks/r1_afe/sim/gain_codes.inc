@@ -1,0 +1,26 @@
+* (template fragment) gain code k -> controls (c1 c2 c3 c4): x1 0000, x2 1000, x4 1100, x8 1110, x16 1101, x32 1111
+let ctab = vector(24)
+let ctab[0]=0
+let ctab[1]=0
+let ctab[2]=0
+let ctab[3]=0
+let ctab[4]=1
+let ctab[5]=0
+let ctab[6]=0
+let ctab[7]=0
+let ctab[8]=1
+let ctab[9]=1
+let ctab[10]=0
+let ctab[11]=0
+let ctab[12]=1
+let ctab[13]=1
+let ctab[14]=1
+let ctab[15]=0
+let ctab[16]=1
+let ctab[17]=1
+let ctab[18]=0
+let ctab[19]=1
+let ctab[20]=1
+let ctab[21]=1
+let ctab[22]=1
+let ctab[23]=1

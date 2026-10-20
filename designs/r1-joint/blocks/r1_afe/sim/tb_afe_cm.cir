@@ -1,0 +1,70 @@
+* tb_afe_cm -- r1_afe input common-mode sweep 0 to 3.3 V with the PDK analog pad (sg13g2_IOPadAnalog, stock model)
+* on all four input pins. AFE input connects to the pad terminal (not padres). Pad: iovdd = VDDA (D14 tie),
+* core vdd = 1.2 V. Per code (x1, x32): one DC sweep, sine channel at differential +D, cosine channel at -D
+* (D = 0.1 V / step gain); gain = (vs - vc)/2D, offset = (vs + vc)/2 (channels nominally identical).
+* Reported per CM point: small-signal DC gain, output CM, differential output offset, AFE pin current,
+* pad current (source current minus AFE current) = ESD-diode and clamp leakage.
+@@HEAD@@
+.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerDIO.lib @@DIO@@
+.include /foss/pdks/ihp-sg13g2/libs.ref/sg13g2_io/spice/sg13g2_io.spi
+Vcore vcore 0 dc 1.2
+Vic ic 0 dc 1.65
+Vd vd 0 dc 0
+Esp ssp ic vd 0 0.5
+Esn ssn ic vd 0 -0.5
+Ecp scp ic vd 0 -0.5
+Ecn scn ic vd 0 0.5
+Vmsp ssp sinp 0
+Vmsn ssn sinn 0
+Vmcp scp cosp 0
+Vmcn scn cosn 0
+XP1 sinp pr1 vcore 0 vdd 0 sg13g2_IOPadAnalog
+XP2 sinn pr2 vcore 0 vdd 0 sg13g2_IOPadAnalog
+XP3 cosp pr3 vcore 0 vdd 0 sg13g2_IOPadAnalog
+XP4 cosn pr4 vcore 0 vdd 0 sg13g2_IOPadAnalog
+Vasp sinp asp 0
+Vasn sinn asn 0
+Vacp cosp acp 0
+Vacn cosn acn 0
+Cl1 souts_p 0 2p
+Cl2 souts_n 0 2p
+Cl3 soutc_p 0 2p
+Cl4 soutc_n 0 2p
+XDUT asp asn acp acn souts_p souts_n soutc_p soutc_n vcm2 ib_s1 ib_s2 ib_c1 ib_c2 c1 c2 c3 c4 vdd 0 r1_afe
+.control
+@@CODES@@
+let vh = @@VDDA@@
+foreach k 0 5
+  let a1 = ctab[4*$k]*vh
+  let a2 = ctab[4*$k+1]*vh
+  let a3 = ctab[4*$k+2]*vh
+  let a4 = ctab[4*$k+3]*vh
+  alter vc1 dc = $&a1
+  alter vc2 dc = $&a2
+  alter vc3 dc = $&a3
+  alter vc4 dc = $&a4
+  let dd = 0.1/(2^$k)
+  alter vd dc = $&dd
+  dc vic 0 3.3 0.02
+  let vs = v(souts_p)-v(souts_n)
+  let vc = v(soutc_p)-v(soutc_n)
+  let gs = (vs - vc)/(2*dd)
+  let off = (vs + vc)/2
+  let ocm = (v(souts_p)+v(souts_n))/2
+  let iafe = i(vasp)
+  let ipad = i(vmsp)-i(vasp)
+  let ipadn = i(vmsn)-i(vasn)
+  wrdata @@RAW@@_code$k gs off ocm iafe ipad ipadn
+  foreach cm 0 0.3 0.5 1.0 1.65 2.5 2.8 2.9 3.0 3.1 3.3
+    meas dc g find gs at=$cm
+    meas dc o find off at=$cm
+    meas dc oc find ocm at=$cm
+    meas dc ia find iafe at=$cm
+    meas dc ip find ipad at=$cm
+    meas dc ipn find ipadn at=$cm
+    echo "CMROW code=$k cm=$cm gain=$&g offset=$&o ocm=$&oc iafe=$&ia ipad=$&ip ipadn=$&ipn"
+  end
+  destroy all
+end
+.endc
+.end

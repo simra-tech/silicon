@@ -1,0 +1,48 @@
+* smoke: op + AC, both channels, gain code via C1..C4
+.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerMOShv.lib mos_tt
+.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerRES.lib res_typ
+.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerCAP.lib cap_typ
+.include schematic/r1_afe.spice
+.temp 27
+.param VDDA=3.3 VCMI=2.5
+Vdd vdd 0 {VDDA}
+Vcm2 vcm2 0 0.6
+Ib1 vdd ib_s1 10u
+Ib2 vdd ib_s2 10u
+Ib3 vdd ib_c1 10u
+Ib4 vdd ib_c2 10u
+Vc1 c1 0 0
+Vc2 c2 0 0
+Vc3 c3 0 0
+Vc4 c4 0 0
+Vic ic 0 {VCMI}
+Vsp sinp ic dc 0 ac 0.5
+Vsn sinn ic dc 0 ac -0.5
+Vcp cosp ic dc 0 ac 0.5
+Vcn cosn ic dc 0 ac -0.5
+Cl1 souts_p 0 2p
+Cl2 souts_n 0 2p
+Cl3 soutc_p 0 2p
+Cl4 soutc_n 0 2p
+XDUT sinp sinn cosp cosn souts_p souts_n soutc_p soutc_n vcm2 ib_s1 ib_s2 ib_c1 ib_c2 c1 c2 c3 c4 vdd 0 r1_afe
+.control
+op
+print v(souts_p) v(souts_n) v(xdut.vcm1) v(xdut.xsin.m1p) v(xdut.xsin.m1n) v(xdut.xsin.x1p) v(xdut.xsin.x2p) i(vdd)
+print v(xdut.xsin.xa2.vcms) v(xdut.xsin.xa2.tc) v(xdut.xsin.xa2.cmd) v(xdut.xsin.xa2.vbp) v(xdut.xsin.xa2.o1p) v(xdut.xsin.xa2.cz1) v(xdut.xsin.xa1.vcms)
+print v(xdut.xsin.xa1.o1n) v(xdut.xsin.xa1.fn) v(xdut.xsin.xa1.gn) v(xdut.xsin.xa1.vcmfb) v(xdut.xsin.xa1.tp) v(xdut.xsin.xa1.tn)
+print v(xdut.xsin.xa2.o1n) v(xdut.xsin.xa2.fn) v(xdut.xsin.xa2.gn) v(xdut.xsin.xa2.vcmfb) v(xdut.xsin.xa2.tp) v(xdut.xsin.xa2.tn) v(xdut.xsin.xa1.vbpc) v(xdut.xsin.xa1.vbnc)
+ac dec 20 1k 100meg
+let g = mag(v(souts_p)-v(souts_n))
+let gdb = db(g)
+meas ac g0 find gdb at=1k
+let g1s = mag(v(xdut.xsin.m1p)-v(xdut.xsin.m1n))
+meas ac g1 find g1s at=1k
+let vi = mag(v(sinp)-v(sinn))
+meas ac vin find vi at=1k
+let ph = 180/pi*cph(v(souts_p)-v(souts_n))
+meas ac p100k find ph at=100k
+let gdbn = gdb - g0
+meas ac f3 when gdbn=-3
+meas ac pk max gdbn
+.endc
+.end

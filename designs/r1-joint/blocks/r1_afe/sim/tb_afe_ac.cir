@@ -1,0 +1,71 @@
+* tb_afe_ac -- r1_afe small-signal gain, -3 dB bandwidth, phase at every gain step, both channels.
+* Template: run_afe.py substitutes @@MOS@@ @@RES@@ @@CAP@@ @@TEMP@@ @@VDDA@@ @@VCMI@@ @@NMC@@ @@SEED@@.
+* Load: 2 pF per output to ground (track-and-hold sampling capacitor, track phase).
+* Both channels get the same differential input (1 V AC differential), input CM = VCMI.
+@@HEAD@@
+Vic ic 0 dc {VCMI}
+Esp sinp ic vd 0 0.5
+Esn sinn ic vd 0 -0.5
+Ecp cosp ic vd 0 0.5
+Ecn cosn ic vd 0 -0.5
+Vd vd 0 dc 0 ac 1
+Cl1 souts_p 0 2p
+Cl2 souts_n 0 2p
+Cl3 soutc_p 0 2p
+Cl4 soutc_n 0 2p
+XDUT sinp sinn cosp cosn souts_p souts_n soutc_p soutc_n vcm2 ib_s1 ib_s2 ib_c1 ib_c2 c1 c2 c3 c4 vdd 0 r1_afe
+.control
+set rndseed=@@SEED@@
+let nmc = @@NMC@@
+let vh = @@VDDA@@
+@@CODES@@
+let s = 0
+while s < nmc
+  if nmc > 1
+    reset
+  end
+  let k = 0
+  while k < 6
+    let a1 = ctab[4*k]*vh
+    let a2 = ctab[4*k+1]*vh
+    let a3 = ctab[4*k+2]*vh
+    let a4 = ctab[4*k+3]*vh
+    alter vc1 dc = $&a1
+    alter vc2 dc = $&a2
+    alter vc3 dc = $&a3
+    alter vc4 dc = $&a4
+    op
+    let ocs = (v(souts_p)+v(souts_n))/2
+    let occ = (v(soutc_p)+v(soutc_n))/2
+    let o1s = (v(xdut.xsin.m1p)+v(xdut.xsin.m1n))/2
+    let ids = -i(vdd)
+    echo "OPROW mc=$&s code=$&k ocms=$&ocs ocmc=$&occ o1cm=$&o1s idd=$&ids"
+    ac dec 40 100 30meg
+    let hs = v(souts_p)-v(souts_n)
+    let hc = v(soutc_p)-v(soutc_n)
+    let gs = db(hs)
+    let gc = db(hc)
+    let ps = 180/pi*cph(hs)
+    let pc = 180/pi*cph(hc)
+    meas ac gs0 find gs at=1k
+    meas ac gc0 find gc at=1k
+    let gsn = gs - gs0
+    let gcn = gc - gc0
+    meas ac fs3 when gsn=-3 fall=1
+    meas ac fc3 when gcn=-3 fall=1
+    meas ac pks max gsn
+    meas ac pkc max gcn
+    meas ac ps100 find ps at=100k
+    meas ac pc100 find pc at=100k
+    meas ac ps1m find ps at=1meg
+    meas ac pc1m find pc at=1meg
+    meas ac gs1m find gsn at=1meg
+    meas ac gc1m find gcn at=1meg
+    echo "ACROW mc=$&s code=$&k gs0=$&gs0 gc0=$&gc0 fs3=$&fs3 fc3=$&fc3 pks=$&pks pkc=$&pkc ps100=$&ps100 pc100=$&pc100 ps1m=$&ps1m pc1m=$&pc1m gs1m=$&gs1m gc1m=$&gc1m"
+    destroy all
+    let k = k + 1
+  end
+  let s = s + 1
+end
+.endc
+.end

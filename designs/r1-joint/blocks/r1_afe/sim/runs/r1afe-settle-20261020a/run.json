@@ -1,0 +1,26 @@
+{
+ "run_id": "r1afe-settle-20261020a",
+ "campaign": "settle",
+ "date_utc": "2026-10-20T11:28:48Z",
+ "command": "G1_CPUSET=106-108 G1_CPUS=3 G1_WORKDIR=designs/r1-joint/blocks/r1_afe/sim G1_RESULTS_ROOT=<bulk> flow/run.sh python3 run_afe.py settle r1afe-settle-20261020a",
+ "tools": {
+  "ngspice": "ngspice-46 : Circuit level simulation program",
+  "image_id": "sha256:ddeb69576f2808676d1c5d474ecf04f6d1d6f8abdcff6b72b39790ded924bab2",
+  "pdk_commit": "84374023ee8b4b126bebbba67fcbada0a9c0ff0b"
+ },
+ "inputs": {
+  "sim/tb_afe_settle.cir": "fc9f1488d1caea10b485aa62b625f326dffb9a08073fc99d462ea12cae2985f3",
+  "sim/common_head.inc": "ae7e19db8bdacb4ed6ce7126dc07e6b7ed9ba069506c5eb46f7463bfa9bc71af",
+  "sim/gain_codes.inc": "a62c9d6daa3d544c36ac868c4e6a9266f32e581d093ac404c6c52bcc6e5276f6",
+  "schematic/r1_afe.spice": "bafe4ae96f978cc6b4695f72d0ede6c54cc09288d5c833f88dc2a48be08682cf",
+  "sim/run_afe.py": "bc747646e779ba1f49d741ff076e457012201e2ec313f42d70533135f08b2ed7"
+ },
+ "raw": "$G1_RESULTS_ROOT/r1_afe/r1afe-settle-20261020a/",
+ "jobs": 18,
+ "failed_jobs": [],
+ "wall_seconds": 302.3,
+ "summary": "results/r1afe-settle-20261020a.json",
+ "question": "Track-and-hold model (2 pF per side, reset to 0.6 V, 250 ns track at 2 MSPS): sampled error at end of track, linearity of the error",
+ "result": "error at +FS worst 1.62 LSB; after removing a linear gain/offset fit, residual worst 0.100 LSB",
+ "disposition": "passed (residual <= 0.5 LSB; the linear part is a gain error common to both channels); revision A, superseded by revision B (runs r1afe-*-20261020b)"
+}

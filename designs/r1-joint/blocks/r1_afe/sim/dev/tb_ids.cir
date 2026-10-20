@@ -1,0 +1,55 @@
+* device currents in the stage-2 OTA at the operating point
+.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerMOShv.lib mos_tt
+.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerRES.lib res_typ
+.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerCAP.lib cap_typ
+.include schematic/r1_afe.spice
+Vdd vdd 0 3.3
+Vcm2 vcm2 0 0.6
+Ib1 vdd ib_s1 10u
+Ib2 vdd ib_s2 10u
+Ib3 vdd ib_c1 10u
+Ib4 vdd ib_c2 10u
+Vc1 c1 0 0
+Vc2 c2 0 0
+Vc3 c3 0 0
+Vc4 c4 0 0
+Vsp sinp 0 2.5
+Vsn sinn 0 2.5
+Vcp cosp 0 2.5
+Vcn cosn 0 2.5
+XDUT sinp sinn cosp cosn souts_p souts_n soutc_p soutc_n vcm2 ib_s1 ib_s2 ib_c1 ib_c2 c1 c2 c3 c4 vdd 0 r1_afe
+.control
+op
+show all > /dev/null
+print @n.xdut.xsin.xa1.xmn3.nsg13_hv_nmos[ids]
+print @n.xdut.xsin.xa1.xmn5.nsg13_hv_nmos[ids]
+print @n.xdut.xsin.xa1.xmn1.nsg13_hv_nmos[ids]
+print @n.xdut.xsin.xa1.xmnt.nsg13_hv_nmos[ids]
+print @n.xdut.xsin.xa1.xmn7.nsg13_hv_nmos[ids]
+print @n.xdut.xsin.xa1.xmc3.nsg13_hv_nmos[ids]
+print @n.xdut.xsin.xa1.xmc4.nsg13_hv_nmos[ids]
+print @n.xdut.xsin.xa1.xmb0.nsg13_hv_nmos[ids]
+print @n.xdut.xsin.xa1.xmp3.nsg13_hv_pmos[ids]
+print @n.xdut.xsin.xa1.xmp5.nsg13_hv_pmos[ids]
+print @n.xdut.xsin.xa1.xmp1.nsg13_hv_pmos[ids]
+print @n.xdut.xsin.xa1.xmpt.nsg13_hv_pmos[ids]
+print @n.xdut.xsin.xa1.xmp7.nsg13_hv_pmos[ids]
+print @n.xdut.xsin.xa1.xmct.nsg13_hv_pmos[ids]
+print @n.xdut.xsin.xa1.xmb2.nsg13_hv_pmos[ids]
+print @n.xdut.xsin.xa2.xmn3.nsg13_hv_nmos[ids]
+print @n.xdut.xsin.xa2.xmn5.nsg13_hv_nmos[ids]
+print @n.xdut.xsin.xa2.xmn1.nsg13_hv_nmos[ids]
+print @n.xdut.xsin.xa2.xmnt.nsg13_hv_nmos[ids]
+print @n.xdut.xsin.xa2.xmn7.nsg13_hv_nmos[ids]
+print @n.xdut.xsin.xa2.xmc3.nsg13_hv_nmos[ids]
+print @n.xdut.xsin.xa2.xmc4.nsg13_hv_nmos[ids]
+print @n.xdut.xsin.xa2.xmb0.nsg13_hv_nmos[ids]
+print @n.xdut.xsin.xa2.xmp3.nsg13_hv_pmos[ids]
+print @n.xdut.xsin.xa2.xmp5.nsg13_hv_pmos[ids]
+print @n.xdut.xsin.xa2.xmp1.nsg13_hv_pmos[ids]
+print @n.xdut.xsin.xa2.xmpt.nsg13_hv_pmos[ids]
+print @n.xdut.xsin.xa2.xmp7.nsg13_hv_pmos[ids]
+print @n.xdut.xsin.xa2.xmct.nsg13_hv_pmos[ids]
+print @n.xdut.xsin.xa2.xmb2.nsg13_hv_pmos[ids]
+.endc
+.end

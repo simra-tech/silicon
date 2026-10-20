@@ -1,0 +1,26 @@
+{
+ "run_id": "r1afe-cm-20261020a",
+ "campaign": "cm",
+ "date_utc": "2026-10-20T11:10:51Z",
+ "command": "G1_CPUSET=106-108 G1_CPUS=3 G1_WORKDIR=designs/r1-joint/blocks/r1_afe/sim G1_RESULTS_ROOT=<bulk> flow/run.sh python3 run_afe.py cm r1afe-cm-20261020a",
+ "tools": {
+  "ngspice": "ngspice-46 : Circuit level simulation program",
+  "image_id": "sha256:ddeb69576f2808676d1c5d474ecf04f6d1d6f8abdcff6b72b39790ded924bab2",
+  "pdk_commit": "84374023ee8b4b126bebbba67fcbada0a9c0ff0b"
+ },
+ "inputs": {
+  "sim/tb_afe_cm.cir": "d8100de64835aebb2d602ba53e27e0f6d05f3c103a94ce446d068fe6f72b8dd7",
+  "sim/common_head.inc": "ae7e19db8bdacb4ed6ce7126dc07e6b7ed9ba069506c5eb46f7463bfa9bc71af",
+  "sim/gain_codes.inc": "a62c9d6daa3d544c36ac868c4e6a9266f32e581d093ac404c6c52bcc6e5276f6",
+  "schematic/r1_afe.spice": "bafe4ae96f978cc6b4695f72d0ede6c54cc09288d5c833f88dc2a48be08682cf",
+  "sim/run_afe.py": "104f00ebda9b776417235ecf4d9bcca79b75dd096aa53891a851a14ac2f7c532"
+ },
+ "raw": "$G1_RESULTS_ROOT/r1_afe/r1afe-cm-20261020a/",
+ "jobs": 3,
+ "failed_jobs": [],
+ "wall_seconds": 6.6,
+ "summary": "results/r1afe-cm-20261020a.json",
+ "question": "Input CM 0-3.3 V with stock sg13g2_IOPadAnalog on all four pins: gain flatness inside 0.5-2.8 V; pad leakage up to 3.3 V",
+ "result": "gain variation inside 0.5-2.8 V max 1.64 %; pad current at 2.8/3.0 V worst 4.14/13.00 nA",
+ "disposition": "passed against limits set in this step (gain within 2 %, pad current < 1 uA at 2.8 V; no specification limit); revision A, superseded by revision B (runs r1afe-*-20261020b)"
+}

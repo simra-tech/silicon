@@ -1,0 +1,25 @@
+* check CMFB tracking of stage-2 vcm
+.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerMOShv.lib mos_tt
+.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerRES.lib res_typ
+.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerCAP.lib cap_typ
+.include schematic/r1_afe.spice
+Vdd vdd 0 3.3
+Vcm2 vcm2 0 0.6
+Ib1 vdd ib_s1 10u
+Ib2 vdd ib_s2 10u
+Ib3 vdd ib_c1 10u
+Ib4 vdd ib_c2 10u
+Vc1 c1 0 0
+Vc2 c2 0 0
+Vc3 c3 0 0
+Vc4 c4 0 0
+Vsp sinp 0 2.5
+Vsn sinn 0 2.5
+Vcp cosp 0 2.5
+Vcn cosn 0 2.5
+XDUT sinp sinn cosp cosn souts_p souts_n soutc_p soutc_n vcm2 ib_s1 ib_s2 ib_c1 ib_c2 c1 c2 c3 c4 vdd 0 r1_afe
+.control
+dc Vcm2 0.3 1.0 0.1
+print v(souts_p) v(xdut.xsin.xa2.vcmfb) v(xdut.xsin.xa2.cmd) v(xdut.xsin.xa2.o1n) v(xdut.xsin.xa2.fn) v(xdut.xsin.x2p)
+.endc
+.end
