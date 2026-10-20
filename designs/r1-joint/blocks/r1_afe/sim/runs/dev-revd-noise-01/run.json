@@ -1,0 +1,515 @@
+{
+ "run_id": "dev-revd-noise-01",
+ "campaign": "dev:noise:l2,l2+u20,l2+np2,l2+u20+np2",
+ "date_utc": "2026-10-20T18:48:23Z",
+ "command": "G1_CPUSET=106-108 G1_CPUS=3 G1_WORKDIR=designs/r1-joint/blocks/r1_afe/sim G1_RESULTS_ROOT=<bulk> flow/run.sh python3 run_afe.py dev:noise:l2,l2+u20,l2+np2,l2+u20+np2 dev-revd-noise-01",
+ "tools": {
+  "ngspice": "ngspice-46 : Circuit level simulation program",
+  "image_id": "sha256:ddeb69576f2808676d1c5d474ecf04f6d1d6f8abdcff6b72b39790ded924bab2",
+  "pdk_commit": "84374023ee8b4b126bebbba67fcbada0a9c0ff0b"
+ },
+ "inputs": {
+  "sim/tb_afe_noise.cir": "c96b9665b88a532e4c7633dc66efa733b265e4c0f590a9cabdcf472f1bb1ea6a",
+  "sim/common_head.inc": "ae7e19db8bdacb4ed6ce7126dc07e6b7ed9ba069506c5eb46f7463bfa9bc71af",
+  "sim/gain_codes.inc": "a62c9d6daa3d544c36ac868c4e6a9266f32e581d093ac404c6c52bcc6e5276f6",
+  "schematic/r1_afe.spice": "3d6de6b1489ed7f4a7bb85612589894bc416f6894479dc502d22fdd21d3dabd8",
+  "sim/run_afe.py": "0a2e91ff5a768cb08c2bd204a26de03ea08c5ad61cea4ee4672bda1c9c3031ad"
+ },
+ "netlist_edits": {
+  "l2_noise_ss": [
+   [
+    "r1_afe_ota2",
+    "XMB0 ibias ibias vss vss sg13_hv_nmos w=4u l=1u",
+    "XMB0 ibias ibias vss vss sg13_hv_nmos w=8u l=2u"
+   ],
+   [
+    "r1_afe_ota2",
+    "XMB1 vbp ibias vss vss sg13_hv_nmos w=4u l=1u",
+    "XMB1 vbp ibias vss vss sg13_hv_nmos w=8u l=2u"
+   ],
+   [
+    "r1_afe_ota2",
+    "XMB4 vbpc ibias vss vss sg13_hv_nmos w=4u l=1u",
+    "XMB4 vbpc ibias vss vss sg13_hv_nmos w=8u l=2u"
+   ],
+   [
+    "r1_afe_ota2",
+    "XMC3 vcmfb vcmfb vss vss sg13_hv_nmos w=4u l=1u",
+    "XMC3 vcmfb vcmfb vss vss sg13_hv_nmos w=8u l=2u"
+   ],
+   [
+    "r1_afe_ota2",
+    "XMC4 cmd cmd vss vss sg13_hv_nmos w=4u l=1u",
+    "XMC4 cmd cmd vss vss sg13_hv_nmos w=8u l=2u"
+   ]
+  ],
+  "l2_noise_tt": [
+   [
+    "r1_afe_ota2",
+    "XMB0 ibias ibias vss vss sg13_hv_nmos w=4u l=1u",
+    "XMB0 ibias ibias vss vss sg13_hv_nmos w=8u l=2u"
+   ],
+   [
+    "r1_afe_ota2",
+    "XMB1 vbp ibias vss vss sg13_hv_nmos w=4u l=1u",
+    "XMB1 vbp ibias vss vss sg13_hv_nmos w=8u l=2u"
+   ],
+   [
+    "r1_afe_ota2",
+    "XMB4 vbpc ibias vss vss sg13_hv_nmos w=4u l=1u",
+    "XMB4 vbpc ibias vss vss sg13_hv_nmos w=8u l=2u"
+   ],
+   [
+    "r1_afe_ota2",
+    "XMC3 vcmfb vcmfb vss vss sg13_hv_nmos w=4u l=1u",
+    "XMC3 vcmfb vcmfb vss vss sg13_hv_nmos w=8u l=2u"
+   ],
+   [
+    "r1_afe_ota2",
+    "XMC4 cmd cmd vss vss sg13_hv_nmos w=4u l=1u",
+    "XMC4 cmd cmd vss vss sg13_hv_nmos w=8u l=2u"
+   ]
+  ],
+  "l2+u20_noise_ss": [
+   [
+    "r1_afe_ota2",
+    "XMB0 ibias ibias vss vss sg13_hv_nmos w=4u l=1u",
+    "XMB0 ibias ibias vss vss sg13_hv_nmos w=8u l=2u"
+   ],
+   [
+    "r1_afe_ota2",
+    "XMB1 vbp ibias vss vss sg13_hv_nmos w=4u l=1u",
+    "XMB1 vbp ibias vss vss sg13_hv_nmos w=8u l=2u"
+   ],
+   [
+    "r1_afe_ota2",
+    "XMB4 vbpc ibias vss vss sg13_hv_nmos w=4u l=1u",
+    "XMB4 vbpc ibias vss vss sg13_hv_nmos w=8u l=2u"
+   ],
+   [
+    "r1_afe_ota2",
+    "XMC3 vcmfb vcmfb vss vss sg13_hv_nmos w=4u l=1u",
+    "XMC3 vcmfb vcmfb vss vss sg13_hv_nmos w=8u l=2u"
+   ],
+   [
+    "r1_afe_ota2",
+    "XMC4 cmd cmd vss vss sg13_hv_nmos w=4u l=1u",
+    "XMC4 cmd cmd vss vss sg13_hv_nmos w=8u l=2u"
+   ],
+   [
+    ".param LU1=153.85u",
+    ".param LU1=76.92u"
+   ],
+   [
+    "WCF1=31.0u",
+    "WCF1=43.84u"
+   ],
+   [
+    ".subckt r1_afe_tg a b en enb vdd vss",
+    ".subckt r1_afe_tg2 a b en enb vdd vss\nXN a en b vss sg13_hv_nmos w=20u l=0.45u ng=4 m=1 mm_ok=1\nXP a enb b vdd sg13_hv_pmos w=40u l=0.45u ng=8 m=1 mm_ok=1\n.ends\n.subckt r1_afe_tg a b en enb vdd vss"
+   ],
+   [
+    "r1_afe_s1side",
+    "XT1 a1 x vdd vss vdd vss r1_afe_tg",
+    "XT1 a1 x vdd vss vdd vss r1_afe_tg2"
+   ],
+   [
+    "r1_afe_s1side",
+    "XT2 a2 x c1 c1b vdd vss r1_afe_tg",
+    "XT2 a2 x c1 c1b vdd vss r1_afe_tg2"
+   ],
+   [
+    "r1_afe_s1side",
+    "XT3 a3 x c2 c2b vdd vss r1_afe_tg",
+    "XT3 a3 x c2 c2b vdd vss r1_afe_tg2"
+   ],
+   [
+    "r1_afe_s1side",
+    "XT4 a4 x c2 c2b vdd vss r1_afe_tg",
+    "XT4 a4 x c2 c2b vdd vss r1_afe_tg2"
+   ],
+   [
+    "r1_afe_s1side",
+    "XT5 a5 x c3 c3b vdd vss r1_afe_tg",
+    "XT5 a5 x c3 c3b vdd vss r1_afe_tg2"
+   ],
+   [
+    "r1_afe_s1side",
+    "XT6 a6 x c3 c3b vdd vss r1_afe_tg",
+    "XT6 a6 x c3 c3b vdd vss r1_afe_tg2"
+   ],
+   [
+    "r1_afe_s1side",
+    "XT7 a7 x c3 c3b vdd vss r1_afe_tg",
+    "XT7 a7 x c3 c3b vdd vss r1_afe_tg2"
+   ],
+   [
+    "r1_afe_s1side",
+    "XT8 a8 x c3 c3b vdd vss r1_afe_tg",
+    "XT8 a8 x c3 c3b vdd vss r1_afe_tg2"
+   ],
+   [
+    "r1_afe_s1side",
+    "XTF af out vdd vss vdd vss r1_afe_tg",
+    "XTF af out vdd vss vdd vss r1_afe_tg2"
+   ]
+  ],
+  "l2+u20_noise_tt": [
+   [
+    "r1_afe_ota2",
+    "XMB0 ibias ibias vss vss sg13_hv_nmos w=4u l=1u",
+    "XMB0 ibias ibias vss vss sg13_hv_nmos w=8u l=2u"
+   ],
+   [
+    "r1_afe_ota2",
+    "XMB1 vbp ibias vss vss sg13_hv_nmos w=4u l=1u",
+    "XMB1 vbp ibias vss vss sg13_hv_nmos w=8u l=2u"
+   ],
+   [
+    "r1_afe_ota2",
+    "XMB4 vbpc ibias vss vss sg13_hv_nmos w=4u l=1u",
+    "XMB4 vbpc ibias vss vss sg13_hv_nmos w=8u l=2u"
+   ],
+   [
+    "r1_afe_ota2",
+    "XMC3 vcmfb vcmfb vss vss sg13_hv_nmos w=4u l=1u",
+    "XMC3 vcmfb vcmfb vss vss sg13_hv_nmos w=8u l=2u"
+   ],
+   [
+    "r1_afe_ota2",
+    "XMC4 cmd cmd vss vss sg13_hv_nmos w=4u l=1u",
+    "XMC4 cmd cmd vss vss sg13_hv_nmos w=8u l=2u"
+   ],
+   [
+    ".param LU1=153.85u",
+    ".param LU1=76.92u"
+   ],
+   [
+    "WCF1=31.0u",
+    "WCF1=43.84u"
+   ],
+   [
+    ".subckt r1_afe_tg a b en enb vdd vss",
+    ".subckt r1_afe_tg2 a b en enb vdd vss\nXN a en b vss sg13_hv_nmos w=20u l=0.45u ng=4 m=1 mm_ok=1\nXP a enb b vdd sg13_hv_pmos w=40u l=0.45u ng=8 m=1 mm_ok=1\n.ends\n.subckt r1_afe_tg a b en enb vdd vss"
+   ],
+   [
+    "r1_afe_s1side",
+    "XT1 a1 x vdd vss vdd vss r1_afe_tg",
+    "XT1 a1 x vdd vss vdd vss r1_afe_tg2"
+   ],
+   [
+    "r1_afe_s1side",
+    "XT2 a2 x c1 c1b vdd vss r1_afe_tg",
+    "XT2 a2 x c1 c1b vdd vss r1_afe_tg2"
+   ],
+   [
+    "r1_afe_s1side",
+    "XT3 a3 x c2 c2b vdd vss r1_afe_tg",
+    "XT3 a3 x c2 c2b vdd vss r1_afe_tg2"
+   ],
+   [
+    "r1_afe_s1side",
+    "XT4 a4 x c2 c2b vdd vss r1_afe_tg",
+    "XT4 a4 x c2 c2b vdd vss r1_afe_tg2"
+   ],
+   [
+    "r1_afe_s1side",
+    "XT5 a5 x c3 c3b vdd vss r1_afe_tg",
+    "XT5 a5 x c3 c3b vdd vss r1_afe_tg2"
+   ],
+   [
+    "r1_afe_s1side",
+    "XT6 a6 x c3 c3b vdd vss r1_afe_tg",
+    "XT6 a6 x c3 c3b vdd vss r1_afe_tg2"
+   ],
+   [
+    "r1_afe_s1side",
+    "XT7 a7 x c3 c3b vdd vss r1_afe_tg",
+    "XT7 a7 x c3 c3b vdd vss r1_afe_tg2"
+   ],
+   [
+    "r1_afe_s1side",
+    "XT8 a8 x c3 c3b vdd vss r1_afe_tg",
+    "XT8 a8 x c3 c3b vdd vss r1_afe_tg2"
+   ],
+   [
+    "r1_afe_s1side",
+    "XTF af out vdd vss vdd vss r1_afe_tg",
+    "XTF af out vdd vss vdd vss r1_afe_tg2"
+   ]
+  ],
+  "l2+np2_noise_ss": [
+   [
+    "r1_afe_ota2",
+    "XMB0 ibias ibias vss vss sg13_hv_nmos w=4u l=1u",
+    "XMB0 ibias ibias vss vss sg13_hv_nmos w=8u l=2u"
+   ],
+   [
+    "r1_afe_ota2",
+    "XMB1 vbp ibias vss vss sg13_hv_nmos w=4u l=1u",
+    "XMB1 vbp ibias vss vss sg13_hv_nmos w=8u l=2u"
+   ],
+   [
+    "r1_afe_ota2",
+    "XMB4 vbpc ibias vss vss sg13_hv_nmos w=4u l=1u",
+    "XMB4 vbpc ibias vss vss sg13_hv_nmos w=8u l=2u"
+   ],
+   [
+    "r1_afe_ota2",
+    "XMC3 vcmfb vcmfb vss vss sg13_hv_nmos w=4u l=1u",
+    "XMC3 vcmfb vcmfb vss vss sg13_hv_nmos w=8u l=2u"
+   ],
+   [
+    "r1_afe_ota2",
+    "XMC4 cmd cmd vss vss sg13_hv_nmos w=4u l=1u",
+    "XMC4 cmd cmd vss vss sg13_hv_nmos w=8u l=2u"
+   ],
+   [
+    "r1_afe_ota",
+    "XMN1 gn inp tn vss sg13_hv_nmos w=80u l=2u ng=16",
+    "XMN1 gn inp tn vss sg13_hv_nmos w=160u l=2u ng=32"
+   ],
+   [
+    "r1_afe_ota",
+    "XMN2 gp inn tn vss sg13_hv_nmos w=80u l=2u ng=16",
+    "XMN2 gp inn tn vss sg13_hv_nmos w=160u l=2u ng=32"
+   ]
+  ],
+  "l2+np2_noise_tt": [
+   [
+    "r1_afe_ota2",
+    "XMB0 ibias ibias vss vss sg13_hv_nmos w=4u l=1u",
+    "XMB0 ibias ibias vss vss sg13_hv_nmos w=8u l=2u"
+   ],
+   [
+    "r1_afe_ota2",
+    "XMB1 vbp ibias vss vss sg13_hv_nmos w=4u l=1u",
+    "XMB1 vbp ibias vss vss sg13_hv_nmos w=8u l=2u"
+   ],
+   [
+    "r1_afe_ota2",
+    "XMB4 vbpc ibias vss vss sg13_hv_nmos w=4u l=1u",
+    "XMB4 vbpc ibias vss vss sg13_hv_nmos w=8u l=2u"
+   ],
+   [
+    "r1_afe_ota2",
+    "XMC3 vcmfb vcmfb vss vss sg13_hv_nmos w=4u l=1u",
+    "XMC3 vcmfb vcmfb vss vss sg13_hv_nmos w=8u l=2u"
+   ],
+   [
+    "r1_afe_ota2",
+    "XMC4 cmd cmd vss vss sg13_hv_nmos w=4u l=1u",
+    "XMC4 cmd cmd vss vss sg13_hv_nmos w=8u l=2u"
+   ],
+   [
+    "r1_afe_ota",
+    "XMN1 gn inp tn vss sg13_hv_nmos w=80u l=2u ng=16",
+    "XMN1 gn inp tn vss sg13_hv_nmos w=160u l=2u ng=32"
+   ],
+   [
+    "r1_afe_ota",
+    "XMN2 gp inn tn vss sg13_hv_nmos w=80u l=2u ng=16",
+    "XMN2 gp inn tn vss sg13_hv_nmos w=160u l=2u ng=32"
+   ]
+  ],
+  "l2+u20+np2_noise_ss": [
+   [
+    "r1_afe_ota2",
+    "XMB0 ibias ibias vss vss sg13_hv_nmos w=4u l=1u",
+    "XMB0 ibias ibias vss vss sg13_hv_nmos w=8u l=2u"
+   ],
+   [
+    "r1_afe_ota2",
+    "XMB1 vbp ibias vss vss sg13_hv_nmos w=4u l=1u",
+    "XMB1 vbp ibias vss vss sg13_hv_nmos w=8u l=2u"
+   ],
+   [
+    "r1_afe_ota2",
+    "XMB4 vbpc ibias vss vss sg13_hv_nmos w=4u l=1u",
+    "XMB4 vbpc ibias vss vss sg13_hv_nmos w=8u l=2u"
+   ],
+   [
+    "r1_afe_ota2",
+    "XMC3 vcmfb vcmfb vss vss sg13_hv_nmos w=4u l=1u",
+    "XMC3 vcmfb vcmfb vss vss sg13_hv_nmos w=8u l=2u"
+   ],
+   [
+    "r1_afe_ota2",
+    "XMC4 cmd cmd vss vss sg13_hv_nmos w=4u l=1u",
+    "XMC4 cmd cmd vss vss sg13_hv_nmos w=8u l=2u"
+   ],
+   [
+    ".param LU1=153.85u",
+    ".param LU1=76.92u"
+   ],
+   [
+    "WCF1=31.0u",
+    "WCF1=43.84u"
+   ],
+   [
+    ".subckt r1_afe_tg a b en enb vdd vss",
+    ".subckt r1_afe_tg2 a b en enb vdd vss\nXN a en b vss sg13_hv_nmos w=20u l=0.45u ng=4 m=1 mm_ok=1\nXP a enb b vdd sg13_hv_pmos w=40u l=0.45u ng=8 m=1 mm_ok=1\n.ends\n.subckt r1_afe_tg a b en enb vdd vss"
+   ],
+   [
+    "r1_afe_s1side",
+    "XT1 a1 x vdd vss vdd vss r1_afe_tg",
+    "XT1 a1 x vdd vss vdd vss r1_afe_tg2"
+   ],
+   [
+    "r1_afe_s1side",
+    "XT2 a2 x c1 c1b vdd vss r1_afe_tg",
+    "XT2 a2 x c1 c1b vdd vss r1_afe_tg2"
+   ],
+   [
+    "r1_afe_s1side",
+    "XT3 a3 x c2 c2b vdd vss r1_afe_tg",
+    "XT3 a3 x c2 c2b vdd vss r1_afe_tg2"
+   ],
+   [
+    "r1_afe_s1side",
+    "XT4 a4 x c2 c2b vdd vss r1_afe_tg",
+    "XT4 a4 x c2 c2b vdd vss r1_afe_tg2"
+   ],
+   [
+    "r1_afe_s1side",
+    "XT5 a5 x c3 c3b vdd vss r1_afe_tg",
+    "XT5 a5 x c3 c3b vdd vss r1_afe_tg2"
+   ],
+   [
+    "r1_afe_s1side",
+    "XT6 a6 x c3 c3b vdd vss r1_afe_tg",
+    "XT6 a6 x c3 c3b vdd vss r1_afe_tg2"
+   ],
+   [
+    "r1_afe_s1side",
+    "XT7 a7 x c3 c3b vdd vss r1_afe_tg",
+    "XT7 a7 x c3 c3b vdd vss r1_afe_tg2"
+   ],
+   [
+    "r1_afe_s1side",
+    "XT8 a8 x c3 c3b vdd vss r1_afe_tg",
+    "XT8 a8 x c3 c3b vdd vss r1_afe_tg2"
+   ],
+   [
+    "r1_afe_s1side",
+    "XTF af out vdd vss vdd vss r1_afe_tg",
+    "XTF af out vdd vss vdd vss r1_afe_tg2"
+   ],
+   [
+    "r1_afe_ota",
+    "XMN1 gn inp tn vss sg13_hv_nmos w=80u l=2u ng=16",
+    "XMN1 gn inp tn vss sg13_hv_nmos w=160u l=2u ng=32"
+   ],
+   [
+    "r1_afe_ota",
+    "XMN2 gp inn tn vss sg13_hv_nmos w=80u l=2u ng=16",
+    "XMN2 gp inn tn vss sg13_hv_nmos w=160u l=2u ng=32"
+   ]
+  ],
+  "l2+u20+np2_noise_tt": [
+   [
+    "r1_afe_ota2",
+    "XMB0 ibias ibias vss vss sg13_hv_nmos w=4u l=1u",
+    "XMB0 ibias ibias vss vss sg13_hv_nmos w=8u l=2u"
+   ],
+   [
+    "r1_afe_ota2",
+    "XMB1 vbp ibias vss vss sg13_hv_nmos w=4u l=1u",
+    "XMB1 vbp ibias vss vss sg13_hv_nmos w=8u l=2u"
+   ],
+   [
+    "r1_afe_ota2",
+    "XMB4 vbpc ibias vss vss sg13_hv_nmos w=4u l=1u",
+    "XMB4 vbpc ibias vss vss sg13_hv_nmos w=8u l=2u"
+   ],
+   [
+    "r1_afe_ota2",
+    "XMC3 vcmfb vcmfb vss vss sg13_hv_nmos w=4u l=1u",
+    "XMC3 vcmfb vcmfb vss vss sg13_hv_nmos w=8u l=2u"
+   ],
+   [
+    "r1_afe_ota2",
+    "XMC4 cmd cmd vss vss sg13_hv_nmos w=4u l=1u",
+    "XMC4 cmd cmd vss vss sg13_hv_nmos w=8u l=2u"
+   ],
+   [
+    ".param LU1=153.85u",
+    ".param LU1=76.92u"
+   ],
+   [
+    "WCF1=31.0u",
+    "WCF1=43.84u"
+   ],
+   [
+    ".subckt r1_afe_tg a b en enb vdd vss",
+    ".subckt r1_afe_tg2 a b en enb vdd vss\nXN a en b vss sg13_hv_nmos w=20u l=0.45u ng=4 m=1 mm_ok=1\nXP a enb b vdd sg13_hv_pmos w=40u l=0.45u ng=8 m=1 mm_ok=1\n.ends\n.subckt r1_afe_tg a b en enb vdd vss"
+   ],
+   [
+    "r1_afe_s1side",
+    "XT1 a1 x vdd vss vdd vss r1_afe_tg",
+    "XT1 a1 x vdd vss vdd vss r1_afe_tg2"
+   ],
+   [
+    "r1_afe_s1side",
+    "XT2 a2 x c1 c1b vdd vss r1_afe_tg",
+    "XT2 a2 x c1 c1b vdd vss r1_afe_tg2"
+   ],
+   [
+    "r1_afe_s1side",
+    "XT3 a3 x c2 c2b vdd vss r1_afe_tg",
+    "XT3 a3 x c2 c2b vdd vss r1_afe_tg2"
+   ],
+   [
+    "r1_afe_s1side",
+    "XT4 a4 x c2 c2b vdd vss r1_afe_tg",
+    "XT4 a4 x c2 c2b vdd vss r1_afe_tg2"
+   ],
+   [
+    "r1_afe_s1side",
+    "XT5 a5 x c3 c3b vdd vss r1_afe_tg",
+    "XT5 a5 x c3 c3b vdd vss r1_afe_tg2"
+   ],
+   [
+    "r1_afe_s1side",
+    "XT6 a6 x c3 c3b vdd vss r1_afe_tg",
+    "XT6 a6 x c3 c3b vdd vss r1_afe_tg2"
+   ],
+   [
+    "r1_afe_s1side",
+    "XT7 a7 x c3 c3b vdd vss r1_afe_tg",
+    "XT7 a7 x c3 c3b vdd vss r1_afe_tg2"
+   ],
+   [
+    "r1_afe_s1side",
+    "XT8 a8 x c3 c3b vdd vss r1_afe_tg",
+    "XT8 a8 x c3 c3b vdd vss r1_afe_tg2"
+   ],
+   [
+    "r1_afe_s1side",
+    "XTF af out vdd vss vdd vss r1_afe_tg",
+    "XTF af out vdd vss vdd vss r1_afe_tg2"
+   ],
+   [
+    "r1_afe_ota",
+    "XMN1 gn inp tn vss sg13_hv_nmos w=80u l=2u ng=16",
+    "XMN1 gn inp tn vss sg13_hv_nmos w=160u l=2u ng=32"
+   ],
+   [
+    "r1_afe_ota",
+    "XMN2 gp inn tn vss sg13_hv_nmos w=80u l=2u ng=16",
+    "XMN2 gp inn tn vss sg13_hv_nmos w=160u l=2u ng=32"
+   ]
+  ]
+ },
+ "netlist_sha256": "3d6de6b1489ed7f4a7bb85612589894bc416f6894479dc502d22fdd21d3dabd8",
+ "frozen_inputs": "$G1_RESULTS_ROOT/r1_afe/dev-revd-noise-01/frozen/",
+ "lsb_V": 0.000439453125,
+ "raw": "$G1_RESULTS_ROOT/r1_afe/dev-revd-noise-01/",
+ "jobs": 8,
+ "failed_jobs": [],
+ "wall_seconds": 60.3,
+ "summary": "results/dev-revd-noise-01.json",
+ "question": "Noise at ss/tt, x1/x32: l2; 20 kOhm stage-1 units (u20); OTA1 NMOS pair x2 (np2); both",
+ "result": "x32 input at ss: l2 34.97, u20 32.20, np2 31.40, u20+np2 28.18 uV rms; x1 output <= 0.384 LSB",
+ "disposition": "np2 adopted (area ~0.003 mm2); u20 rejected (halves the input impedance)"
+}

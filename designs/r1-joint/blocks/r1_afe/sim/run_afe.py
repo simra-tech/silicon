@@ -23,17 +23,27 @@ CORNERS = {  # name: (mos, res, cap, vdda, temp)
     'ff': ('mos_ff', 'res_bcs', 'cap_bcs', 3.6, -40),
 }
 
+# rev D cross corners (item 6; not in the default corner loops): mixed MOS corners sf/fs at nominal supply and
+# temperature, and supply/temperature cross terms of the process extremes
+XCORNERS = {
+    'sf': ('mos_sf', 'res_typ', 'cap_typ', 3.3, 27),
+    'fs': ('mos_fs', 'res_typ', 'cap_typ', 3.3, 27),
+    'ssx': ('mos_ss', 'res_wcs', 'cap_wcs', 3.6, -40),
+    'ffx': ('mos_ff', 'res_bcs', 'cap_bcs', 3.0, 125),
+}
+ALLC = dict(CORNERS, **XCORNERS)
+
 def mm(c):  # mismatch sections of a corner
-    mos, res, cap, v, t = CORNERS[c]
+    mos, res, cap, v, t = ALLC[c]
     return (mos + '_mismatch', res + '_mismatch', cap + '_mismatch', v, t)
 
 def sha(p):
     return hashlib.sha256(open(p, 'rb').read()).hexdigest()
 
 def job(name, tmpl, corner, mismatch=False, edits=(), src=None, **kw):
-    mos, res, cap, v, t = mm(corner) if mismatch else CORNERS[corner]
+    mos, res, cap, v, t = mm(corner) if mismatch else ALLC[corner]
     subs = dict(MOS=mos, RES=res, CAP=cap, VDDA=v, TEMP=t, VCMI=2.5, ACVDD=0, NMC=1, SEED=1, LSB=LSB, CL='2.8p', KLIST='0 1 2 3 4 5', LLIST='1 2 3 4 5 6 7 8',
-                DIO={'tt': 'dio_tt', 'ss': 'dio_ss', 'ff': 'dio_ff'}[corner])
+                DIO={'tt': 'dio_tt', 'ss': 'dio_ss', 'ff': 'dio_ff'}.get(corner[:2], 'dio_tt'))
     subs.update(kw)
     if tmpl == 'tb_afe_stb.cir':
         edits = tuple(edits) + STB_EDITS
@@ -44,8 +54,10 @@ def job(name, tmpl, corner, mismatch=False, edits=(), src=None, **kw):
 
 NETLIST_REVB = 'schematic/r1_afe_revB.spice'
 
-# revision C: ADC full scale +-1.0 V differential (D11), 12 bit
-LSB = 2.0 / 4096
+# revision D: ADC full scale +-0.9 V differential (D16), 12 bit (revision C used 2.0 / 4096, D11)
+LSB = 1.8 / 4096
+FS_OUT = 1.44   # differential peak-to-peak output at full input (D16)
+TPL_DIR = HERE  # templates are read from here; main() points it at the frozen copy of the campaign
 
 # loop-gain probes (tb_afe_stb.cir): (old, new) plain-text replacements, each applied once, in order
 STB_EDITS = (
@@ -60,7 +72,9 @@ STB_EDITS = (
                    'Ipop 0 outpi dc 0 ac {iop%s}\nIpon 0 outni dc 0 ac {ion%s}\nXMN7 outpi ' % (n, n, n, n)),
     ('XMN8 outn ', 'XMN8 outni '), ('XMP7 outp ', 'XMP7 outpi '), ('XMP8 outn ', 'XMP8 outni '),
     ('XCC1 cz1 outp ', 'XCC1 cz1 outpi '), ('XCC2 cz2 outn ', 'XCC2 cz2 outni '))) + (
-    ('XCC1B cb1 outp ', 'XCC1B cb1 outpi '), ('XCC2B cb2 outn ', 'XCC2B cb2 outni '))   # OTA1 switched Miller part
+    ('XCC1B cb1 outp ', 'XCC1B cb1 outpi '), ('XCC2B cb2 outn ', 'XCC2B cb2 outni '),   # OTA1 switched Miller part
+    ('?', 'XCD1B cd1 outp ', 'XCD1B cd1 outpi '), ('?', 'XCD2B cd2 outn ', 'XCD2B cd2 outni '),  # OTA2 switched Cc (rev D)
+    ('?', 'XCX1 cz1 outn ', 'XCX1 cz1 outni '), ('?', 'XCX2 cz2 outp ', 'XCX2 cz2 outpi '))      # OTA1 cross Miller (rev D)
 
 def inst_edit(inst, **kw):
     """Edit: change instance parameters of one instance line (first line starting with '<inst> ') of the netlist."""
@@ -118,9 +132,123 @@ SWEEPS = {
     },
 }
 
+def ie(inst, **kw):
+    return ('@inst', inst, ' '.join('%s=%s' % kv for kv in kw.items()))
+
+def devvar(vn):
+    """Revision-D development variants: name -> netlist edits (evaluated on the frozen netlist). Names joined by '+'."""
+    E = []
+    for v in vn.split('+'):
+        if v == 'base':
+            pass
+        # ---- OTA2 output-CM accuracy (open issue 3)
+        elif v == 'cp64':      # OTA2 CMFB pair 32u -> 64u (more gm, less systematic CM offset per current error)
+            E.append(ie('XA2', WCP='64u'))
+        elif v == 'l1':        # OTA2 mirrors at the reference length (l = 1 um, same W/L): top sources, fixed and CMFB sinks
+            E += [('r1_afe_ota2', 'XMP3 gn vbp vdd vdd sg13_hv_pmos w=32u l=2u', 'XMP3 gn vbp vdd vdd sg13_hv_pmos w=16u l=1u'),
+                  ('r1_afe_ota2', 'XMP4 gp vbp vdd vdd sg13_hv_pmos w=32u l=2u', 'XMP4 gp vbp vdd vdd sg13_hv_pmos w=16u l=1u')]
+            E.append(ie('XA2', WN3A='10u', WN3B='5u', LN3B='1u'))
+            E += [('r1_afe_ota2', 'XMN3A fn ibias vss vss sg13_hv_nmos w={WN3A} l=2u', 'XMN3A fn ibias vss vss sg13_hv_nmos w={WN3A} l=1u'),
+                  ('r1_afe_ota2', 'XMN4A fp ibias vss vss sg13_hv_nmos w={WN3A} l=2u', 'XMN4A fp ibias vss vss sg13_hv_nmos w={WN3A} l=1u')]
+        elif v == 'l2':        # the reverse: OTA2 bias references at l = 2 um (XMB0, XMB2 W doubled) so the mirrors match
+            E += [('r1_afe_ota2', 'XMB0 ibias ibias vss vss sg13_hv_nmos w=4u l=1u', 'XMB0 ibias ibias vss vss sg13_hv_nmos w=8u l=2u'),
+                  ('r1_afe_ota2', 'XMB1 vbp ibias vss vss sg13_hv_nmos w=4u l=1u', 'XMB1 vbp ibias vss vss sg13_hv_nmos w=8u l=2u'),
+                  ('r1_afe_ota2', 'XMB4 vbpc ibias vss vss sg13_hv_nmos w=4u l=1u', 'XMB4 vbpc ibias vss vss sg13_hv_nmos w=8u l=2u'),
+                  ('r1_afe_ota2', 'XMC3 vcmfb vcmfb vss vss sg13_hv_nmos w=4u l=1u', 'XMC3 vcmfb vcmfb vss vss sg13_hv_nmos w=8u l=2u'),
+                  ('r1_afe_ota2', 'XMC4 cmd cmd vss vss sg13_hv_nmos w=4u l=1u', 'XMC4 cmd cmd vss vss sg13_hv_nmos w=8u l=2u')]
+        # ---- OTA1 stage-1 CM loop (open issue 2): CM-only Miller capacitors cz -> vcms (DM sees a virtual ground at vcms)
+        elif v.startswith('cmm'):   # cmm<w>: square MIM of side <w> um per side
+            w = v[3:]
+            E.append(('r1_afe_ota', 'XCS1 outp vcms cap_cmim',
+                      'XCM1 cz1 vcms cap_cmim w=%su l=%su m=1 mm_ok=1\nXCM2 cz2 vcms cap_cmim w=%su l=%su m=1 mm_ok=1\nXCS1 outp vcms cap_cmim' % (w, w, w, w)))
+        elif v.startswith('cxs'):   # rev D netlist: resize the existing cross-coupled Miller caps (side um)
+            x = v[3:]
+            E += [('r1_afe_ota', 'XCX1 cz1 outn cap_cmim w=13u l=13u', 'XCX1 cz1 outn cap_cmim w=%su l=%su' % (x, x)),
+                  ('r1_afe_ota', 'XCX2 cz2 outp cap_cmim w=13u l=13u', 'XCX2 cz2 outp cap_cmim w=%su l=%su' % (x, x))]
+        elif v.startswith('cx'):    # cx<F>_<X>: OTA1 fixed Miller side F um, plus cross-coupled Miller caps (cz1 -> outn,
+            f, x = v[2:].split('_')  # cz2 -> outp) side X um: DM Miller = F^2 - X^2, CM Miller = F^2 + X^2 (rev D)
+            E.append(ie('XA1', WCC=f + 'u'))
+            E.append(('r1_afe_ota', 'XCS1 outp vcms cap_cmim',
+                      'XCX1 cz1 outn cap_cmim w=%su l=%su m=1 mm_ok=1\nXCX2 cz2 outp cap_cmim w=%su l=%su m=1 mm_ok=1\nXCS1 outp vcms cap_cmim' % (x, x, x, x)))
+        elif v.startswith('cs1_'):  # OTA1 CM sense caps
+            E.append(ie('XA1', WCS=v[4:] + 'u'))
+        elif v.startswith('ccb'):   # OTA1 switched Miller part side (um)
+            E.append(ie('XA1', WCCB=v[3:] + 'u'))
+        elif v.startswith('cc1_'):  # OTA1 fixed Miller part side (um)
+            E.append(ie('XA1', WCC=v[4:] + 'u'))
+        # ---- settling (open issue 4): OTA2 Cc split, fixed part <a> um + part <b> um switched off at x16/x32 (c4)
+        elif v.startswith('c2sw'):  # c2sw<a>_<b>
+            a, b = v[4:].split('_')
+            E += [('.subckt r1_afe_ota2 inp inn outp outn vcm ibias vdd vss', '.subckt r1_afe_ota2 inp inn outp outn vcm ibias cen cenb vdd vss'),
+                  ('r1_afe_ota2', 'XCC2 cz2 outn cap_cmim w={WCC} l={WCC} m=1 mm_ok=1',
+                   'XCC2 cz2 outn cap_cmim w={WCC} l={WCC} m=1 mm_ok=1\nXCD1B cd1 outp cap_cmim w=%su l=%su m=1 mm_ok=1\nXTD1 cz1 cd1 cen cenb vdd vss r1_afe_tg\n'
+                   'XCD2B cd2 outn cap_cmim w=%su l=%su m=1 mm_ok=1\nXTD2 cz2 cd2 cen cenb vdd vss r1_afe_tg' % (b, b, b, b)),
+                  ('XA2 x2p x2n on2 op2 vcm2 ib2 vdd vss r1_afe_ota2', 'XA2 x2p x2n on2 op2 vcm2 ib2 c4b c4 vdd vss r1_afe_ota2')]
+            E.append(ie('XA2', WCC=a + 'u'))
+        elif v.startswith('o2i'):   # OTA2 output stage current x<n>: W2P and W2N scaled
+            n = float(v[3:])
+            E.append(ie('XA2', W2P='%gu' % (80 * n), W2N='%gu' % (40 * n)))
+        elif v.startswith('ro'):    # output network: ro<LRO um>_<WCOD um>_<WCOS um>
+            a, b, c2 = v[2:].split('_')
+            E.append(('.param LRO=11.55u WCOD=44.7u WCOS=18.3u', '.param LRO=%su WCOD=%su WCOS=%su' % (a, b, c2)))
+        # ---- noise (open issue 5): 20 kOhm stage-1 units, Cf1 doubled, stage-1 TGs doubled
+        elif v == 'u20':
+            E.append(('.param LU1=153.85u', '.param LU1=76.92u'))
+            E.append(('WCF1=31.0u', 'WCF1=43.84u'))
+            E.append(('.subckt r1_afe_tg a b en enb vdd vss', '.subckt r1_afe_tg2 a b en enb vdd vss\nXN a en b vss sg13_hv_nmos w=20u l=0.45u ng=4 m=1 mm_ok=1\n'
+                      'XP a enb b vdd sg13_hv_pmos w=40u l=0.45u ng=8 m=1 mm_ok=1\n.ends\n.subckt r1_afe_tg a b en enb vdd vss'))
+            for i in range(1, 9):
+                en = 'vdd vss' if i == 1 else {2: 'c1 c1b', 3: 'c2 c2b', 4: 'c2 c2b'}.get(i, 'c3 c3b')
+                E.append(('r1_afe_s1side', 'XT%d a%d x %s vdd vss r1_afe_tg' % (i, i, en), 'XT%d a%d x %s vdd vss r1_afe_tg2' % (i, i, en)))
+            E.append(('r1_afe_s1side', 'XTF af out vdd vss vdd vss r1_afe_tg', 'XTF af out vdd vss vdd vss r1_afe_tg2'))
+        elif v == 'np2':            # OTA1 NMOS input pair W x2 (flicker)
+            E += [('r1_afe_ota', 'XMN1 gn inp tn vss sg13_hv_nmos w=80u l=2u ng=16', 'XMN1 gn inp tn vss sg13_hv_nmos w=160u l=2u ng=32'),
+                  ('r1_afe_ota', 'XMN2 gp inn tn vss sg13_hv_nmos w=80u l=2u ng=16', 'XMN2 gp inn tn vss sg13_hv_nmos w=160u l=2u ng=32')]
+        else:
+            raise SystemExit('unknown variant ' + v)
+    return tuple(E)
+
 def campaign(c):
     J = []
-    if c == 'ac':
+    if c.startswith('dev:'):        # rev D development sweep: dev:<kind>:<variant>,<variant>,...
+        _, kind, vl = c.split(':')
+        for vn in vl.split(','):
+            ed = devvar(vn)
+            if kind == 'ac':          # output CM, gain, f_c: tt/ss/ff, input CM 0.5 and 2.5 V
+                for k in CORNERS:
+                    for cm in (0.5, 2.5):
+                        J.append(job('%s_ac_%s_cm%.1f' % (vn, k, cm), 'tb_afe_ac.cir', k, edits=ed, VCMI=cm))
+            elif kind == 'stb':       # loops dm1 cm1 dm2 cm2 at x1 x8 x16 x32, tt/ss/ff, input CM 0.5/2.5/2.8 V
+                for k in CORNERS:
+                    for cm in (0.5, 2.5, 2.8):
+                        J.append(job('%s_stb_%s_cm%.1f' % (vn, k, cm), 'tb_afe_stb.cir', k, edits=ed, VCMI=cm,
+                                     KLIST='0 3 4 5', LLIST='1 2 4 5'))
+            elif kind == 'settle':    # ss and tt, x1 and x32, +FS, -FS, +FS/2
+                for k in ('ss', 'tt'):
+                    for code in (0, 5):
+                        for lv, tag in ((1, 'p100'), (-1, 'm100'), (0.5, 'p50')):
+                            J.append(job('%s_st_%s_x%d_%s' % (vn, k, 2 ** code, tag), 'tb_afe_settle_adc.cir', k, edits=ed,
+                                         CODE=code, AMP=round(lv * 0.7 / 2 ** code, 6), VCMI=2.45, CS='2.8p', VRST=0.0))
+            elif kind == 'stbffx':    # rev D: the failing cross corner ffx (ff, 3.0 V, 125 C) only, x1 x8 x32
+                for cm in (0.5, 2.5):
+                    J.append(job('%s_stb_ffx_cm%.1f' % (vn, cm), 'tb_afe_stb.cir', 'ffx', edits=ed, VCMI=cm, KLIST='0 3 5', LLIST='1 2 4 5'))
+                J.append(job('%s_ac_ss_cm0.5' % vn, 'tb_afe_ac.cir', 'ss', edits=ed, VCMI=0.5))
+            elif kind == 'settle3':   # tt/ss/ff, x1 and x32, +FS and -FS
+                for k in CORNERS:
+                    for code in (0, 5):
+                        for lv, tag in ((1, 'p100'), (-1, 'm100')):
+                            J.append(job('%s_st_%s_x%d_%s' % (vn, k, 2 ** code, tag), 'tb_afe_settle_adc.cir', k, edits=ed,
+                                         CODE=code, AMP=round(lv * 0.7 / 2 ** code, 6), VCMI=2.45, CS='2.8p', VRST=0.0))
+            elif kind == 'settleq':   # ss x32 +FS and -FS only
+                for lv, tag in ((1, 'p100'), (-1, 'm100')):
+                    J.append(job('%s_st_ss_x32_%s' % (vn, tag), 'tb_afe_settle_adc.cir', 'ss', edits=ed,
+                                 CODE=5, AMP=round(lv * 0.7 / 32, 6), VCMI=2.45, CS='2.8p', VRST=0.0))
+            elif kind == 'noise':
+                for k in ('ss', 'tt'):
+                    J.append(job('%s_noise_%s' % (vn, k), 'tb_afe_noise.cir', k, edits=ed))
+            else:
+                raise SystemExit('unknown dev kind ' + kind)
+    elif c == 'ac':
         for k in CORNERS:
             for cm in (0.5, 2.5, 2.8):
                 J.append(job('ac_%s_cm%.1f' % (k, cm), 'tb_afe_ac.cir', k, VCMI=cm))
@@ -255,6 +383,10 @@ def campaign(c):
                 for cm in ((2.5, 0.5) if c >= 'stbsweep5' else (2.5,)):
                     J.append(job('sw_%s_%s_cm%.1f' % (vn, k, cm), 'tb_afe_stb.cir', k, edits=ed, KLIST='0 5', VCMI=cm,
                                  LLIST='1 2 4 5'))
+    elif c == 'stbx':   # rev D item 6: loop gain at x1 and x32 at the nominal and cross corners, input CM 0.5 and 2.5 V
+        for k in ('tt', 'ss', 'ff', 'sf', 'fs', 'ssx', 'ffx'):
+            for cm in (0.5, 2.5):
+                J.append(job('stbx_%s_cm%.2f' % (k, cm), 'tb_afe_stb.cir', k, VCMI=cm, KLIST='0 5', LLIST='1 2 4 5'))
     elif c == 'stb_revb':   # revision B as recorded, and the dev-revb-02 variant that oscillated in transients
         for k in CORNERS:
             J.append(job('stbrevb_%s_cm2.45' % k, 'tb_afe_stb.cir', k, src=NETLIST_REVB, VCMI=2.45, KLIST='0 5'))
@@ -311,9 +443,9 @@ def campaign(c):
     return J
 
 def render(j):
-    head = open(os.path.join(HERE, 'common_head.inc')).read()
-    codes = open(os.path.join(HERE, 'gain_codes.inc')).read()
-    s = open(os.path.join(HERE, j['template'])).read().replace('@@HEAD@@', head).replace('@@CODES@@', codes)
+    head = open(os.path.join(TPL_DIR, 'common_head.inc')).read()
+    codes = open(os.path.join(TPL_DIR, 'gain_codes.inc')).read()
+    s = open(os.path.join(TPL_DIR, j['template'])).read().replace('@@HEAD@@', head).replace('@@CODES@@', codes)
     s = s.replace('../schematic/r1_afe.spice', j.get('netlist', NETLIST))
     for k, v in j['subs'].items():
         s = s.replace('@@%s@@' % k, str(v))
@@ -347,12 +479,41 @@ def parse(log):
         rows.append(d)
     return rows
 
+def apply_edit(src, e, name):
+    """(old, new): first occurrence in the file; (subckt, old, new): first occurrence inside that subckt (rev D);
+    ('?', old, new): optional, applied only if present (rev D loop-gain probes of optional devices)."""
+    if len(e) == 3 and e[0] == '@inst':    # ('@inst', instance, 'K=V K=V'): set parameters on the current instance line
+        lines = src.split('\n')
+        i = [n for n, l in enumerate(lines) if l.startswith(e[1] + ' ')][0]
+        t = lines[i].split()
+        for kv in e[2].split():
+            k = kv.split('=')[0]
+            for n, x in enumerate(t):
+                if x.startswith(k + '='):
+                    t[n] = kv; break
+            else:
+                t.append(kv)
+        lines[i] = ' '.join(t)
+        return '\n'.join(lines)
+    if len(e) == 3 and e[0] == '?':
+        return src.replace(e[1], e[2], 1) if e[1] in src else src
+    if len(e) == 3:
+        sub, old, new = e
+        a = src.index('.subckt %s ' % sub)
+        b = src.index('.ends', a)
+        body = src[a:b]
+        if old not in body:
+            raise SystemExit('netlist edit target not found in %s: %r (%s)' % (sub, old, name))
+        return src[:a] + body.replace(old, new, 1) + src[b:]
+    old, new = e
+    if old not in src:
+        raise SystemExit('netlist edit target not found: %r (%s)' % (old, name))
+    return src.replace(old, new, 1)
+
 def edited_netlist(j, out):
     src = open(os.path.join(BLOCK, j['src']) if j.get('src') else NETLIST).read()
-    for old, new in j['edits']:
-        if old not in src:
-            raise SystemExit('netlist edit target not found: %r (%s)' % (old, j['name']))
-        src = src.replace(old, new, 1)
+    for e in j['edits']:
+        src = apply_edit(src, e, j['name'])
     p = os.path.join(out, j['name'] + '_netlist.spice')
     open(p, 'w').write(src)
     return p
@@ -390,7 +551,11 @@ def stb_post(j, out):
                         gx = g[i - 1] + a * (g[i] - g[i - 1])
                         if gm is None or -gx < gm:
                             gm, f180 = -gx, f[i - 1] * (f[i] / f[i - 1]) ** a
-            rows.append(dict(tag='STBROW', code=code, loop=name, t_dc_db=round(g[0], 2), f_unity=fu,
+            # rev D: a phase that rises more than 30 deg above its DC value before the crossing means a right-half-plane
+            # pole in the broken-loop return ratio (Bode margins then invalid; seen with the CM-only Miller cap, dev-revd-cm1-01)
+            icr = max([i for i in range(len(f)) if fu is None or f[i] <= fu] or [0])
+            rhp = max(ph[:icr + 1]) - ph[0] > 30.0
+            rows.append(dict(tag='STBROW', code=code, loop=name, t_dc_db=round(g[0], 2), f_unity=fu, pm_valid=not rhp and (pm is None or pm <= 180),
                              pm_deg=None if pm is None else round(pm, 2), gm_db=None if gm is None else round(gm, 2),
                              f_180=f180, ph_min_deg=round(min(ph), 1)))
     return rows
@@ -420,6 +585,21 @@ def settle_time(t, y, t0, t1, final, tol):
 def window(t, y, a, b):
     return [yi for ti, yi in zip(t, y) if a <= ti < b]
 
+def overshoots(t, y, a, b, final, tol):
+    """Rev D: number of excursions of y - final beyond +-tol after the first crossing of the final value in [a, b)
+    (1 = one overshoot, no ringing; 0 = monotonic)."""
+    e = [yi - final for ti, yi in zip(t, y) if a <= ti < b]
+    segs, cur, sgn = [], 0.0, None
+    for x in e:
+        s_ = x >= 0
+        if sgn is None or s_ == sgn:
+            cur = max(cur, abs(x))
+        else:
+            segs.append(cur); cur = abs(x)
+        sgn = s_
+    segs.append(cur)
+    return sum(1 for m in segs[1:] if m > tol)
+
 def cmstep_post(j, out):
     p = os.path.join(out, j['name'] + '_cm.txt')
     if not os.path.exists(p):
@@ -443,7 +623,9 @@ def cmstep_post(j, out):
                          ocm_settle_ns_2mV=round(1e9 * settle_time(t, oc, a, b, f2, 2e-3), 1),
                          o1cm_pp_last2us_mV=round(1e3 * (max(e1) - min(e1)), 3),
                          ocm_pp_last2us_mV=round(1e3 * (max(e2) - min(e2)), 3),
-                         o1cm_cos_pp_last2us_mV=round(1e3 * (max(wc) - min(wc)), 3)))
+                         o1cm_cos_pp_last2us_mV=round(1e3 * (max(wc) - min(wc)), 3),
+                         o1cm_overshoots_5mV=overshoots(t, o1, a, b, f1, 5e-3), ocm_overshoots_2mV=overshoots(t, oc, a, b, f2, 2e-3),
+                         o1cm_settle_ns_2pct=round(1e9 * settle_time(t, o1, a, b, f1, max(1e-3, 0.02 * abs(f1 - window(t, o1, a - 0.5e-6, a)[-1]))), 1)))
     return rows
 
 def overload_post(j, out):
@@ -456,7 +638,7 @@ def overload_post(j, out):
     pre = sum(window(t, vs, 4e-6, 5e-6)) / len(window(t, vs, 4e-6, 5e-6))
     return [dict(tag='OVLROW', vout_before=round(pre, 6), vout_final=round(fin_s, 6), vout_final_cos=round(fin_c, 6),
                  rec_ns_1lsb=round(1e9 * settle_time(t, vs, 25e-6, 40e-6, fin_s, LSB), 1),
-                 rec_ns_1pct=round(1e9 * settle_time(t, vs, 25e-6, 40e-6, fin_s, 0.016), 1),
+                 rec_ns_1pct=round(1e9 * settle_time(t, vs, 25e-6, 40e-6, fin_s, 0.01 * FS_OUT), 1),
                  rec_ns_1lsb_cos=round(1e9 * settle_time(t, vc, 25e-6, 40e-6, fin_c, LSB), 1),
                  vout_ovl_max=round(max(window(t, vs, 5e-6, 25e-6)), 4), vout_ovl_min=round(min(window(t, vs, 5e-6, 25e-6)), 4),
                  o1cm_min=round(min(window(t, o1, 5e-6, 40e-6)), 4), o1cm_max=round(max(window(t, o1, 5e-6, 40e-6)), 4),
@@ -488,11 +670,27 @@ def run_one(j, out):
                 deck=os.path.relpath(deck, os.environ['G1_RESULTS_ROOT']),
                 log=os.path.relpath(log, os.environ['G1_RESULTS_ROOT']))
 
+def freeze(out):
+    """Copy the netlist of record, every template and this driver into <out>/frozen/ and use only those copies, so an
+    edit of the working tree during the campaign cannot change it (rule added in revision D)."""
+    global NETLIST, TPL_DIR
+    import shutil
+    frz = os.path.join(out, 'frozen')
+    os.makedirs(frz)
+    for f in os.listdir(HERE):
+        if f.endswith(('.cir', '.inc')):
+            shutil.copy2(os.path.join(HERE, f), frz)
+    shutil.copy2(__file__, os.path.join(frz, 'run_afe.py'))
+    shutil.copy2(NETLIST, os.path.join(frz, 'r1_afe.spice'))
+    NETLIST, TPL_DIR = os.path.join(frz, 'r1_afe.spice'), frz
+    return frz
+
 def main():
     camp, rid = sys.argv[1], sys.argv[2]
     root = os.environ['G1_RESULTS_ROOT']
     out = os.path.join(root, 'r1_afe', rid)
     os.makedirs(out, exist_ok=False)
+    frz = freeze(out)
     jobs = campaign(camp)
     ncpu = int(os.environ.get('OMP_NUM_THREADS', '3'))
     t0 = time.time()
@@ -509,10 +707,11 @@ def main():
                         'G1_RESULTS_ROOT=<bulk> flow/run.sh python3 run_afe.py %s %s' % (camp, rid),
                 tools=dict(ngspice=ver[0] if ver else 'unknown', image_id=IMAGE_ID,
                            pdk_commit=open(PDK_COMMIT_FILE).read().strip()),
-                inputs={**{'sim/' + t: sha(os.path.join(HERE, t)) for t in templates},
-                        'schematic/r1_afe.spice': sha(NETLIST), 'sim/run_afe.py': sha(__file__),
+                inputs={**{'sim/' + t: sha(os.path.join(frz, t)) for t in templates},
+                        'schematic/r1_afe.spice': sha(NETLIST), 'sim/run_afe.py': sha(os.path.join(frz, 'run_afe.py')),
                         **({NETLIST_REVB: sha(os.path.join(BLOCK, NETLIST_REVB))} if any(j.get('src') for j in jobs) else {})},
                 netlist_edits={j['name']: j['edits'] for j in jobs if j.get('edits')} or None,
+                netlist_sha256=sha(NETLIST), frozen_inputs='$G1_RESULTS_ROOT/r1_afe/%s/frozen/' % rid, lsb_V=LSB,
                 raw='$G1_RESULTS_ROOT/r1_afe/%s/' % rid, jobs=len(jobs),
                 failed_jobs=[r['name'] for r in res if r['rc'] != 0 or not r['rows']],
                 wall_seconds=round(time.time() - t0, 1), summary='results/%s.json' % rid,

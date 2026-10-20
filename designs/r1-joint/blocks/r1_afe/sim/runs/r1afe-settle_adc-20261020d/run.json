@@ -1,0 +1,30 @@
+{
+ "run_id": "r1afe-settle_adc-20261020d",
+ "campaign": "settle_adc",
+ "date_utc": "2026-10-20T20:12:29Z",
+ "command": "G1_CPUSET=106-108 G1_CPUS=3 G1_WORKDIR=designs/r1-joint/blocks/r1_afe/sim G1_RESULTS_ROOT=<bulk> flow/run.sh python3 run_afe.py settle_adc r1afe-settle_adc-20261020d",
+ "tools": {
+  "ngspice": "ngspice-46 : Circuit level simulation program",
+  "image_id": "sha256:ddeb69576f2808676d1c5d474ecf04f6d1d6f8abdcff6b72b39790ded924bab2",
+  "pdk_commit": "84374023ee8b4b126bebbba67fcbada0a9c0ff0b"
+ },
+ "inputs": {
+  "sim/tb_afe_settle_adc.cir": "3bbc68e33f27d156ed90af01d08102f3fe2fa4b3f2f34ca2412f338080d83182",
+  "sim/common_head.inc": "ae7e19db8bdacb4ed6ce7126dc07e6b7ed9ba069506c5eb46f7463bfa9bc71af",
+  "sim/gain_codes.inc": "a62c9d6daa3d544c36ac868c4e6a9266f32e581d093ac404c6c52bcc6e5276f6",
+  "schematic/r1_afe.spice": "f32486ce2c76e3a91e07e342bf0accf35a01d2b0100f05bd08dd0988b2c8146b",
+  "sim/run_afe.py": "8d03617db449533729a7c32aa1bc19010823c04a382bfbb391fbf969f3b82eec"
+ },
+ "netlist_edits": null,
+ "netlist_sha256": "f32486ce2c76e3a91e07e342bf0accf35a01d2b0100f05bd08dd0988b2c8146b",
+ "frozen_inputs": "$G1_RESULTS_ROOT/r1_afe/r1afe-settle_adc-20261020d/frozen/",
+ "lsb_V": 0.000439453125,
+ "raw": "$G1_RESULTS_ROOT/r1_afe/r1afe-settle_adc-20261020d/",
+ "jobs": 30,
+ "failed_jobs": [],
+ "wall_seconds": 688.1,
+ "summary": "results/r1afe-settle_adc-20261020d.json",
+ "question": "r1_adc-matched track-and-hold model (2.8 pF per side, top plate reset to 0 V, 250 ns track at 2 MSPS): sampled error at end of track, linearity of the error",
+ "result": "error at full scale worst 0.38 LSB; after removing a linear gain/offset fit, residual worst 0.005 LSB (LSB 0.439 mV)",
+ "disposition": "total error: failed against 0.25 LSB; non-linear residual: passed against 0.25 LSB (the linear part is a gain error common to both channels)"
+}

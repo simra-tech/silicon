@@ -1,0 +1,668 @@
+[
+ {
+  "name": "l2+cx25_13+c2sw12_13.5+o2i1.5+np2_noise_ss",
+  "corner": "ss",
+  "mismatch": false,
+  "subs": {
+   "MOS": "mos_ss",
+   "RES": "res_wcs",
+   "CAP": "cap_wcs",
+   "VDDA": 3.0,
+   "TEMP": 125,
+   "VCMI": 2.5,
+   "ACVDD": 0,
+   "NMC": 1,
+   "SEED": 1,
+   "LSB": 0.000439453125,
+   "CL": "2.8p",
+   "KLIST": "0 1 2 3 4 5",
+   "LLIST": "1 2 3 4 5 6 7 8",
+   "DIO": "dio_ss",
+   "RAW": "$G1_RESULTS_ROOT/r1_afe/dev-revd-comb-noise-01/l2+cx25_13+c2sw12_13.5+o2i1.5+np2_noise_ss"
+  },
+  "rc": 0,
+  "edits": [
+   [
+    "r1_afe_ota2",
+    "XMB0 ibias ibias vss vss sg13_hv_nmos w=4u l=1u",
+    "XMB0 ibias ibias vss vss sg13_hv_nmos w=8u l=2u"
+   ],
+   [
+    "r1_afe_ota2",
+    "XMB1 vbp ibias vss vss sg13_hv_nmos w=4u l=1u",
+    "XMB1 vbp ibias vss vss sg13_hv_nmos w=8u l=2u"
+   ],
+   [
+    "r1_afe_ota2",
+    "XMB4 vbpc ibias vss vss sg13_hv_nmos w=4u l=1u",
+    "XMB4 vbpc ibias vss vss sg13_hv_nmos w=8u l=2u"
+   ],
+   [
+    "r1_afe_ota2",
+    "XMC3 vcmfb vcmfb vss vss sg13_hv_nmos w=4u l=1u",
+    "XMC3 vcmfb vcmfb vss vss sg13_hv_nmos w=8u l=2u"
+   ],
+   [
+    "r1_afe_ota2",
+    "XMC4 cmd cmd vss vss sg13_hv_nmos w=4u l=1u",
+    "XMC4 cmd cmd vss vss sg13_hv_nmos w=8u l=2u"
+   ],
+   [
+    "@inst",
+    "XA1",
+    "WCC=25u"
+   ],
+   [
+    "r1_afe_ota",
+    "XCS1 outp vcms cap_cmim",
+    "XCX1 cz1 outn cap_cmim w=13u l=13u m=1 mm_ok=1\nXCX2 cz2 outp cap_cmim w=13u l=13u m=1 mm_ok=1\nXCS1 outp vcms cap_cmim"
+   ],
+   [
+    ".subckt r1_afe_ota2 inp inn outp outn vcm ibias vdd vss",
+    ".subckt r1_afe_ota2 inp inn outp outn vcm ibias cen cenb vdd vss"
+   ],
+   [
+    "r1_afe_ota2",
+    "XCC2 cz2 outn cap_cmim w={WCC} l={WCC} m=1 mm_ok=1",
+    "XCC2 cz2 outn cap_cmim w={WCC} l={WCC} m=1 mm_ok=1\nXCD1B cd1 outp cap_cmim w=13.5u l=13.5u m=1 mm_ok=1\nXTD1 cz1 cd1 cen cenb vdd vss r1_afe_tg\nXCD2B cd2 outn cap_cmim w=13.5u l=13.5u m=1 mm_ok=1\nXTD2 cz2 cd2 cen cenb vdd vss r1_afe_tg"
+   ],
+   [
+    "XA2 x2p x2n on2 op2 vcm2 ib2 vdd vss r1_afe_ota2",
+    "XA2 x2p x2n on2 op2 vcm2 ib2 c4b c4 vdd vss r1_afe_ota2"
+   ],
+   [
+    "@inst",
+    "XA2",
+    "WCC=12u"
+   ],
+   [
+    "@inst",
+    "XA2",
+    "W2P=120u W2N=60u"
+   ],
+   [
+    "r1_afe_ota",
+    "XMN1 gn inp tn vss sg13_hv_nmos w=80u l=2u ng=16",
+    "XMN1 gn inp tn vss sg13_hv_nmos w=160u l=2u ng=32"
+   ],
+   [
+    "r1_afe_ota",
+    "XMN2 gp inn tn vss sg13_hv_nmos w=80u l=2u ng=16",
+    "XMN2 gp inn tn vss sg13_hv_nmos w=160u l=2u ng=32"
+   ]
+  ],
+  "seconds": 24.2,
+  "rows": [
+   {
+    "tag": "NZROW",
+    "code": 0.0,
+    "gain": 1.01512,
+    "onoise_rms": 0.000167196,
+    "in_rms": 0.000164706,
+    "in1k": 5.62028e-07,
+    "in10k": 1.95325e-07,
+    "in100k": 1.08998e-07,
+    "in1m": 8.36626e-08
+   },
+   {
+    "tag": "NZROW",
+    "code": 1.0,
+    "gain": 2.02067,
+    "onoise_rms": 0.000181313,
+    "in_rms": 8.97295e-05,
+    "in1k": 3.08772e-07,
+    "in10k": 1.08229e-07,
+    "in100k": 6.16618e-08,
+    "in1m": 4.68665e-08
+   },
+   {
+    "tag": "NZROW",
+    "code": 2.0,
+    "gain": 4.03811,
+    "onoise_rms": 0.000212357,
+    "in_rms": 5.25881e-05,
+    "in1k": 1.91274e-07,
+    "in10k": 6.71122e-08,
+    "in100k": 3.8379e-08,
+    "in1m": 2.83153e-08
+   },
+   {
+    "tag": "NZROW",
+    "code": 3.0,
+    "gain": 8.07294,
+    "onoise_rms": 0.000287349,
+    "in_rms": 3.55941e-05,
+    "in1k": 1.46393e-07,
+    "in10k": 5.03363e-08,
+    "in100k": 2.75178e-08,
+    "in1m": 1.94293e-08
+   },
+   {
+    "tag": "NZROW",
+    "code": 4.0,
+    "gain": 16.1069,
+    "onoise_rms": 0.000683042,
+    "in_rms": 4.24068e-05,
+    "in1k": 1.63508e-07,
+    "in10k": 5.81761e-08,
+    "in100k": 3.43345e-08,
+    "in1m": 2.44571e-08
+   },
+   {
+    "tag": "NZROW",
+    "code": 5.0,
+    "gain": 32.1831,
+    "onoise_rms": 0.00101658,
+    "in_rms": 3.15874e-05,
+    "in1k": 1.37715e-07,
+    "in10k": 4.74715e-08,
+    "in100k": 2.61402e-08,
+    "in1m": 1.77433e-08
+   }
+  ],
+  "errors": [],
+  "deck": "r1_afe/dev-revd-comb-noise-01/l2+cx25_13+c2sw12_13.5+o2i1.5+np2_noise_ss.cir",
+  "log": "r1_afe/dev-revd-comb-noise-01/l2+cx25_13+c2sw12_13.5+o2i1.5+np2_noise_ss.log"
+ },
+ {
+  "name": "l2+cx25_13+c2sw12_13.5+o2i1.5+np2_noise_tt",
+  "corner": "tt",
+  "mismatch": false,
+  "subs": {
+   "MOS": "mos_tt",
+   "RES": "res_typ",
+   "CAP": "cap_typ",
+   "VDDA": 3.3,
+   "TEMP": 27,
+   "VCMI": 2.5,
+   "ACVDD": 0,
+   "NMC": 1,
+   "SEED": 1,
+   "LSB": 0.000439453125,
+   "CL": "2.8p",
+   "KLIST": "0 1 2 3 4 5",
+   "LLIST": "1 2 3 4 5 6 7 8",
+   "DIO": "dio_tt",
+   "RAW": "$G1_RESULTS_ROOT/r1_afe/dev-revd-comb-noise-01/l2+cx25_13+c2sw12_13.5+o2i1.5+np2_noise_tt"
+  },
+  "rc": 0,
+  "edits": [
+   [
+    "r1_afe_ota2",
+    "XMB0 ibias ibias vss vss sg13_hv_nmos w=4u l=1u",
+    "XMB0 ibias ibias vss vss sg13_hv_nmos w=8u l=2u"
+   ],
+   [
+    "r1_afe_ota2",
+    "XMB1 vbp ibias vss vss sg13_hv_nmos w=4u l=1u",
+    "XMB1 vbp ibias vss vss sg13_hv_nmos w=8u l=2u"
+   ],
+   [
+    "r1_afe_ota2",
+    "XMB4 vbpc ibias vss vss sg13_hv_nmos w=4u l=1u",
+    "XMB4 vbpc ibias vss vss sg13_hv_nmos w=8u l=2u"
+   ],
+   [
+    "r1_afe_ota2",
+    "XMC3 vcmfb vcmfb vss vss sg13_hv_nmos w=4u l=1u",
+    "XMC3 vcmfb vcmfb vss vss sg13_hv_nmos w=8u l=2u"
+   ],
+   [
+    "r1_afe_ota2",
+    "XMC4 cmd cmd vss vss sg13_hv_nmos w=4u l=1u",
+    "XMC4 cmd cmd vss vss sg13_hv_nmos w=8u l=2u"
+   ],
+   [
+    "@inst",
+    "XA1",
+    "WCC=25u"
+   ],
+   [
+    "r1_afe_ota",
+    "XCS1 outp vcms cap_cmim",
+    "XCX1 cz1 outn cap_cmim w=13u l=13u m=1 mm_ok=1\nXCX2 cz2 outp cap_cmim w=13u l=13u m=1 mm_ok=1\nXCS1 outp vcms cap_cmim"
+   ],
+   [
+    ".subckt r1_afe_ota2 inp inn outp outn vcm ibias vdd vss",
+    ".subckt r1_afe_ota2 inp inn outp outn vcm ibias cen cenb vdd vss"
+   ],
+   [
+    "r1_afe_ota2",
+    "XCC2 cz2 outn cap_cmim w={WCC} l={WCC} m=1 mm_ok=1",
+    "XCC2 cz2 outn cap_cmim w={WCC} l={WCC} m=1 mm_ok=1\nXCD1B cd1 outp cap_cmim w=13.5u l=13.5u m=1 mm_ok=1\nXTD1 cz1 cd1 cen cenb vdd vss r1_afe_tg\nXCD2B cd2 outn cap_cmim w=13.5u l=13.5u m=1 mm_ok=1\nXTD2 cz2 cd2 cen cenb vdd vss r1_afe_tg"
+   ],
+   [
+    "XA2 x2p x2n on2 op2 vcm2 ib2 vdd vss r1_afe_ota2",
+    "XA2 x2p x2n on2 op2 vcm2 ib2 c4b c4 vdd vss r1_afe_ota2"
+   ],
+   [
+    "@inst",
+    "XA2",
+    "WCC=12u"
+   ],
+   [
+    "@inst",
+    "XA2",
+    "W2P=120u W2N=60u"
+   ],
+   [
+    "r1_afe_ota",
+    "XMN1 gn inp tn vss sg13_hv_nmos w=80u l=2u ng=16",
+    "XMN1 gn inp tn vss sg13_hv_nmos w=160u l=2u ng=32"
+   ],
+   [
+    "r1_afe_ota",
+    "XMN2 gp inn tn vss sg13_hv_nmos w=80u l=2u ng=16",
+    "XMN2 gp inn tn vss sg13_hv_nmos w=160u l=2u ng=32"
+   ]
+  ],
+  "seconds": 20.3,
+  "rows": [
+   {
+    "tag": "NZROW",
+    "code": 0.0,
+    "gain": 1.02202,
+    "onoise_rms": 0.000147455,
+    "in_rms": 0.000144278,
+    "in1k": 4.5222e-07,
+    "in10k": 1.56694e-07,
+    "in100k": 8.67628e-08,
+    "in1m": 6.98855e-08
+   },
+   {
+    "tag": "NZROW",
+    "code": 1.0,
+    "gain": 2.03946,
+    "onoise_rms": 0.000160011,
+    "in_rms": 7.84573e-05,
+    "in1k": 2.48148e-07,
+    "in10k": 8.66332e-08,
+    "in100k": 4.89395e-08,
+    "in1m": 3.9293e-08
+   },
+   {
+    "tag": "NZROW",
+    "code": 2.0,
+    "gain": 4.06857,
+    "onoise_rms": 0.00018594,
+    "in_rms": 4.57017e-05,
+    "in1k": 1.52495e-07,
+    "in10k": 5.32437e-08,
+    "in100k": 3.0133e-08,
+    "in1m": 2.38027e-08
+   },
+   {
+    "tag": "NZROW",
+    "code": 3.0,
+    "gain": 8.12809,
+    "onoise_rms": 0.000243798,
+    "in_rms": 2.99946e-05,
+    "in1k": 1.11488e-07,
+    "in10k": 3.83525e-08,
+    "in100k": 2.09313e-08,
+    "in1m": 1.6069e-08
+   },
+   {
+    "tag": "NZROW",
+    "code": 4.0,
+    "gain": 16.2543,
+    "onoise_rms": 0.00060065,
+    "in_rms": 3.69534e-05,
+    "in1k": 1.29821e-07,
+    "in10k": 4.59618e-08,
+    "in100k": 2.68896e-08,
+    "in1m": 2.0959e-08
+   },
+   {
+    "tag": "NZROW",
+    "code": 5.0,
+    "gain": 32.4633,
+    "onoise_rms": 0.000861962,
+    "in_rms": 2.65519e-05,
+    "in1k": 1.04043e-07,
+    "in10k": 3.59143e-08,
+    "in100k": 1.97916e-08,
+    "in1m": 1.49272e-08
+   }
+  ],
+  "errors": [
+   "Warning: singular matrix:  check node n.xdut.xsin.xa2.xmc1.nsg13_hv_pmos#GP",
+   "Warning: singular matrix:  check node n.xdut.xsin.xa2.xmc1.nsg13_hv_pmos#GP"
+  ],
+  "deck": "r1_afe/dev-revd-comb-noise-01/l2+cx25_13+c2sw12_13.5+o2i1.5+np2_noise_tt.cir",
+  "log": "r1_afe/dev-revd-comb-noise-01/l2+cx25_13+c2sw12_13.5+o2i1.5+np2_noise_tt.log"
+ },
+ {
+  "name": "l2+cx26.3_14.4+c2sw12_13.5+o2i1.5+np2_noise_ss",
+  "corner": "ss",
+  "mismatch": false,
+  "subs": {
+   "MOS": "mos_ss",
+   "RES": "res_wcs",
+   "CAP": "cap_wcs",
+   "VDDA": 3.0,
+   "TEMP": 125,
+   "VCMI": 2.5,
+   "ACVDD": 0,
+   "NMC": 1,
+   "SEED": 1,
+   "LSB": 0.000439453125,
+   "CL": "2.8p",
+   "KLIST": "0 1 2 3 4 5",
+   "LLIST": "1 2 3 4 5 6 7 8",
+   "DIO": "dio_ss",
+   "RAW": "$G1_RESULTS_ROOT/r1_afe/dev-revd-comb-noise-01/l2+cx26.3_14.4+c2sw12_13.5+o2i1.5+np2_noise_ss"
+  },
+  "rc": 0,
+  "edits": [
+   [
+    "r1_afe_ota2",
+    "XMB0 ibias ibias vss vss sg13_hv_nmos w=4u l=1u",
+    "XMB0 ibias ibias vss vss sg13_hv_nmos w=8u l=2u"
+   ],
+   [
+    "r1_afe_ota2",
+    "XMB1 vbp ibias vss vss sg13_hv_nmos w=4u l=1u",
+    "XMB1 vbp ibias vss vss sg13_hv_nmos w=8u l=2u"
+   ],
+   [
+    "r1_afe_ota2",
+    "XMB4 vbpc ibias vss vss sg13_hv_nmos w=4u l=1u",
+    "XMB4 vbpc ibias vss vss sg13_hv_nmos w=8u l=2u"
+   ],
+   [
+    "r1_afe_ota2",
+    "XMC3 vcmfb vcmfb vss vss sg13_hv_nmos w=4u l=1u",
+    "XMC3 vcmfb vcmfb vss vss sg13_hv_nmos w=8u l=2u"
+   ],
+   [
+    "r1_afe_ota2",
+    "XMC4 cmd cmd vss vss sg13_hv_nmos w=4u l=1u",
+    "XMC4 cmd cmd vss vss sg13_hv_nmos w=8u l=2u"
+   ],
+   [
+    "@inst",
+    "XA1",
+    "WCC=26.3u"
+   ],
+   [
+    "r1_afe_ota",
+    "XCS1 outp vcms cap_cmim",
+    "XCX1 cz1 outn cap_cmim w=14.4u l=14.4u m=1 mm_ok=1\nXCX2 cz2 outp cap_cmim w=14.4u l=14.4u m=1 mm_ok=1\nXCS1 outp vcms cap_cmim"
+   ],
+   [
+    ".subckt r1_afe_ota2 inp inn outp outn vcm ibias vdd vss",
+    ".subckt r1_afe_ota2 inp inn outp outn vcm ibias cen cenb vdd vss"
+   ],
+   [
+    "r1_afe_ota2",
+    "XCC2 cz2 outn cap_cmim w={WCC} l={WCC} m=1 mm_ok=1",
+    "XCC2 cz2 outn cap_cmim w={WCC} l={WCC} m=1 mm_ok=1\nXCD1B cd1 outp cap_cmim w=13.5u l=13.5u m=1 mm_ok=1\nXTD1 cz1 cd1 cen cenb vdd vss r1_afe_tg\nXCD2B cd2 outn cap_cmim w=13.5u l=13.5u m=1 mm_ok=1\nXTD2 cz2 cd2 cen cenb vdd vss r1_afe_tg"
+   ],
+   [
+    "XA2 x2p x2n on2 op2 vcm2 ib2 vdd vss r1_afe_ota2",
+    "XA2 x2p x2n on2 op2 vcm2 ib2 c4b c4 vdd vss r1_afe_ota2"
+   ],
+   [
+    "@inst",
+    "XA2",
+    "WCC=12u"
+   ],
+   [
+    "@inst",
+    "XA2",
+    "W2P=120u W2N=60u"
+   ],
+   [
+    "r1_afe_ota",
+    "XMN1 gn inp tn vss sg13_hv_nmos w=80u l=2u ng=16",
+    "XMN1 gn inp tn vss sg13_hv_nmos w=160u l=2u ng=32"
+   ],
+   [
+    "r1_afe_ota",
+    "XMN2 gp inn tn vss sg13_hv_nmos w=80u l=2u ng=16",
+    "XMN2 gp inn tn vss sg13_hv_nmos w=160u l=2u ng=32"
+   ]
+  ],
+  "seconds": 26.0,
+  "rows": [
+   {
+    "tag": "NZROW",
+    "code": 0.0,
+    "gain": 1.01512,
+    "onoise_rms": 0.000167192,
+    "in_rms": 0.000164701,
+    "in1k": 5.62028e-07,
+    "in10k": 1.95325e-07,
+    "in100k": 1.08998e-07,
+    "in1m": 8.36623e-08
+   },
+   {
+    "tag": "NZROW",
+    "code": 1.0,
+    "gain": 2.02067,
+    "onoise_rms": 0.000181283,
+    "in_rms": 8.97145e-05,
+    "in1k": 3.08772e-07,
+    "in10k": 1.08229e-07,
+    "in100k": 6.16617e-08,
+    "in1m": 4.68581e-08
+   },
+   {
+    "tag": "NZROW",
+    "code": 2.0,
+    "gain": 4.03811,
+    "onoise_rms": 0.000212221,
+    "in_rms": 5.25546e-05,
+    "in1k": 1.91274e-07,
+    "in10k": 6.71122e-08,
+    "in100k": 3.83787e-08,
+    "in1m": 2.82923e-08
+   },
+   {
+    "tag": "NZROW",
+    "code": 3.0,
+    "gain": 8.07294,
+    "onoise_rms": 0.000286846,
+    "in_rms": 3.55318e-05,
+    "in1k": 1.46393e-07,
+    "in10k": 5.03363e-08,
+    "in100k": 2.7517e-08,
+    "in1m": 1.93834e-08
+   },
+   {
+    "tag": "NZROW",
+    "code": 4.0,
+    "gain": 16.1069,
+    "onoise_rms": 0.000681629,
+    "in_rms": 4.2319e-05,
+    "in1k": 1.63508e-07,
+    "in10k": 5.81761e-08,
+    "in100k": 3.43335e-08,
+    "in1m": 2.43975e-08
+   },
+   {
+    "tag": "NZROW",
+    "code": 5.0,
+    "gain": 32.1831,
+    "onoise_rms": 0.00101235,
+    "in_rms": 3.1456e-05,
+    "in1k": 1.37715e-07,
+    "in10k": 4.74714e-08,
+    "in100k": 2.61382e-08,
+    "in1m": 1.76392e-08
+   }
+  ],
+  "errors": [],
+  "deck": "r1_afe/dev-revd-comb-noise-01/l2+cx26.3_14.4+c2sw12_13.5+o2i1.5+np2_noise_ss.cir",
+  "log": "r1_afe/dev-revd-comb-noise-01/l2+cx26.3_14.4+c2sw12_13.5+o2i1.5+np2_noise_ss.log"
+ },
+ {
+  "name": "l2+cx26.3_14.4+c2sw12_13.5+o2i1.5+np2_noise_tt",
+  "corner": "tt",
+  "mismatch": false,
+  "subs": {
+   "MOS": "mos_tt",
+   "RES": "res_typ",
+   "CAP": "cap_typ",
+   "VDDA": 3.3,
+   "TEMP": 27,
+   "VCMI": 2.5,
+   "ACVDD": 0,
+   "NMC": 1,
+   "SEED": 1,
+   "LSB": 0.000439453125,
+   "CL": "2.8p",
+   "KLIST": "0 1 2 3 4 5",
+   "LLIST": "1 2 3 4 5 6 7 8",
+   "DIO": "dio_tt",
+   "RAW": "$G1_RESULTS_ROOT/r1_afe/dev-revd-comb-noise-01/l2+cx26.3_14.4+c2sw12_13.5+o2i1.5+np2_noise_tt"
+  },
+  "rc": 0,
+  "edits": [
+   [
+    "r1_afe_ota2",
+    "XMB0 ibias ibias vss vss sg13_hv_nmos w=4u l=1u",
+    "XMB0 ibias ibias vss vss sg13_hv_nmos w=8u l=2u"
+   ],
+   [
+    "r1_afe_ota2",
+    "XMB1 vbp ibias vss vss sg13_hv_nmos w=4u l=1u",
+    "XMB1 vbp ibias vss vss sg13_hv_nmos w=8u l=2u"
+   ],
+   [
+    "r1_afe_ota2",
+    "XMB4 vbpc ibias vss vss sg13_hv_nmos w=4u l=1u",
+    "XMB4 vbpc ibias vss vss sg13_hv_nmos w=8u l=2u"
+   ],
+   [
+    "r1_afe_ota2",
+    "XMC3 vcmfb vcmfb vss vss sg13_hv_nmos w=4u l=1u",
+    "XMC3 vcmfb vcmfb vss vss sg13_hv_nmos w=8u l=2u"
+   ],
+   [
+    "r1_afe_ota2",
+    "XMC4 cmd cmd vss vss sg13_hv_nmos w=4u l=1u",
+    "XMC4 cmd cmd vss vss sg13_hv_nmos w=8u l=2u"
+   ],
+   [
+    "@inst",
+    "XA1",
+    "WCC=26.3u"
+   ],
+   [
+    "r1_afe_ota",
+    "XCS1 outp vcms cap_cmim",
+    "XCX1 cz1 outn cap_cmim w=14.4u l=14.4u m=1 mm_ok=1\nXCX2 cz2 outp cap_cmim w=14.4u l=14.4u m=1 mm_ok=1\nXCS1 outp vcms cap_cmim"
+   ],
+   [
+    ".subckt r1_afe_ota2 inp inn outp outn vcm ibias vdd vss",
+    ".subckt r1_afe_ota2 inp inn outp outn vcm ibias cen cenb vdd vss"
+   ],
+   [
+    "r1_afe_ota2",
+    "XCC2 cz2 outn cap_cmim w={WCC} l={WCC} m=1 mm_ok=1",
+    "XCC2 cz2 outn cap_cmim w={WCC} l={WCC} m=1 mm_ok=1\nXCD1B cd1 outp cap_cmim w=13.5u l=13.5u m=1 mm_ok=1\nXTD1 cz1 cd1 cen cenb vdd vss r1_afe_tg\nXCD2B cd2 outn cap_cmim w=13.5u l=13.5u m=1 mm_ok=1\nXTD2 cz2 cd2 cen cenb vdd vss r1_afe_tg"
+   ],
+   [
+    "XA2 x2p x2n on2 op2 vcm2 ib2 vdd vss r1_afe_ota2",
+    "XA2 x2p x2n on2 op2 vcm2 ib2 c4b c4 vdd vss r1_afe_ota2"
+   ],
+   [
+    "@inst",
+    "XA2",
+    "WCC=12u"
+   ],
+   [
+    "@inst",
+    "XA2",
+    "W2P=120u W2N=60u"
+   ],
+   [
+    "r1_afe_ota",
+    "XMN1 gn inp tn vss sg13_hv_nmos w=80u l=2u ng=16",
+    "XMN1 gn inp tn vss sg13_hv_nmos w=160u l=2u ng=32"
+   ],
+   [
+    "r1_afe_ota",
+    "XMN2 gp inn tn vss sg13_hv_nmos w=80u l=2u ng=16",
+    "XMN2 gp inn tn vss sg13_hv_nmos w=160u l=2u ng=32"
+   ]
+  ],
+  "seconds": 17.9,
+  "rows": [
+   {
+    "tag": "NZROW",
+    "code": 0.0,
+    "gain": 1.02202,
+    "onoise_rms": 0.000147452,
+    "in_rms": 0.000144275,
+    "in1k": 4.5222e-07,
+    "in10k": 1.56694e-07,
+    "in100k": 8.67629e-08,
+    "in1m": 6.98859e-08
+   },
+   {
+    "tag": "NZROW",
+    "code": 1.0,
+    "gain": 2.03946,
+    "onoise_rms": 0.000159987,
+    "in_rms": 7.84457e-05,
+    "in1k": 2.48148e-07,
+    "in10k": 8.66332e-08,
+    "in100k": 4.89395e-08,
+    "in1m": 3.92892e-08
+   },
+   {
+    "tag": "NZROW",
+    "code": 2.0,
+    "gain": 4.06857,
+    "onoise_rms": 0.000185849,
+    "in_rms": 4.56791e-05,
+    "in1k": 1.52495e-07,
+    "in10k": 5.32437e-08,
+    "in100k": 3.01329e-08,
+    "in1m": 2.37932e-08
+   },
+   {
+    "tag": "NZROW",
+    "code": 3.0,
+    "gain": 8.12809,
+    "onoise_rms": 0.000243488,
+    "in_rms": 2.99564e-05,
+    "in1k": 1.11488e-07,
+    "in10k": 3.83525e-08,
+    "in100k": 2.09311e-08,
+    "in1m": 1.60517e-08
+   },
+   {
+    "tag": "NZROW",
+    "code": 4.0,
+    "gain": 16.2543,
+    "onoise_rms": 0.000599752,
+    "in_rms": 3.68981e-05,
+    "in1k": 1.29821e-07,
+    "in10k": 4.59618e-08,
+    "in100k": 2.68893e-08,
+    "in1m": 2.09366e-08
+   },
+   {
+    "tag": "NZROW",
+    "code": 5.0,
+    "gain": 32.4633,
+    "onoise_rms": 0.000859418,
+    "in_rms": 2.64735e-05,
+    "in1k": 1.04043e-07,
+    "in10k": 3.59143e-08,
+    "in100k": 1.97911e-08,
+    "in1m": 1.489e-08
+   }
+  ],
+  "errors": [
+   "Warning: singular matrix:  check node n.xdut.xsin.xa2.xmc1.nsg13_hv_pmos#GP",
+   "Warning: singular matrix:  check node n.xdut.xsin.xa2.xmc1.nsg13_hv_pmos#GP"
+  ],
+  "deck": "r1_afe/dev-revd-comb-noise-01/l2+cx26.3_14.4+c2sw12_13.5+o2i1.5+np2_noise_tt.cir",
+  "log": "r1_afe/dev-revd-comb-noise-01/l2+cx26.3_14.4+c2sw12_13.5+o2i1.5+np2_noise_tt.log"
+ }
+]

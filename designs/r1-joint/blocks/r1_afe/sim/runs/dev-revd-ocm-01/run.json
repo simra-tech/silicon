@@ -1,0 +1,589 @@
+{
+ "run_id": "dev-revd-ocm-01",
+ "campaign": "dev:ac:base,l1,l2,cp64,l1+cp64",
+ "date_utc": "2026-10-20T18:12:58Z",
+ "command": "G1_CPUSET=106-108 G1_CPUS=3 G1_WORKDIR=designs/r1-joint/blocks/r1_afe/sim G1_RESULTS_ROOT=<bulk> flow/run.sh python3 run_afe.py dev:ac:base,l1,l2,cp64,l1+cp64 dev-revd-ocm-01",
+ "tools": {
+  "ngspice": "ngspice-46 : Circuit level simulation program",
+  "image_id": "sha256:ddeb69576f2808676d1c5d474ecf04f6d1d6f8abdcff6b72b39790ded924bab2",
+  "pdk_commit": "84374023ee8b4b126bebbba67fcbada0a9c0ff0b"
+ },
+ "inputs": {
+  "sim/tb_afe_ac.cir": "9a5808e3927045e0a57713d0ac6c0e00626d575a9002f8a57f8183c7b823d251",
+  "sim/common_head.inc": "ae7e19db8bdacb4ed6ce7126dc07e6b7ed9ba069506c5eb46f7463bfa9bc71af",
+  "sim/gain_codes.inc": "a62c9d6daa3d544c36ac868c4e6a9266f32e581d093ac404c6c52bcc6e5276f6",
+  "schematic/r1_afe.spice": "3d6de6b1489ed7f4a7bb85612589894bc416f6894479dc502d22fdd21d3dabd8",
+  "sim/run_afe.py": "070741902210d65b599a3e009964970665319bf0ea87ee22038a6efa5493503e"
+ },
+ "netlist_edits": {
+  "l1_ac_tt_cm0.5": [
+   [
+    "r1_afe_ota2",
+    "XMP3 gn vbp vdd vdd sg13_hv_pmos w=32u l=2u",
+    "XMP3 gn vbp vdd vdd sg13_hv_pmos w=16u l=1u"
+   ],
+   [
+    "r1_afe_ota2",
+    "XMP4 gp vbp vdd vdd sg13_hv_pmos w=32u l=2u",
+    "XMP4 gp vbp vdd vdd sg13_hv_pmos w=16u l=1u"
+   ],
+   [
+    "@inst",
+    "XA2",
+    "WN3A=10u WN3B=5u LN3B=1u"
+   ],
+   [
+    "r1_afe_ota2",
+    "XMN3A fn ibias vss vss sg13_hv_nmos w={WN3A} l=2u",
+    "XMN3A fn ibias vss vss sg13_hv_nmos w={WN3A} l=1u"
+   ],
+   [
+    "r1_afe_ota2",
+    "XMN4A fp ibias vss vss sg13_hv_nmos w={WN3A} l=2u",
+    "XMN4A fp ibias vss vss sg13_hv_nmos w={WN3A} l=1u"
+   ]
+  ],
+  "l1_ac_tt_cm2.5": [
+   [
+    "r1_afe_ota2",
+    "XMP3 gn vbp vdd vdd sg13_hv_pmos w=32u l=2u",
+    "XMP3 gn vbp vdd vdd sg13_hv_pmos w=16u l=1u"
+   ],
+   [
+    "r1_afe_ota2",
+    "XMP4 gp vbp vdd vdd sg13_hv_pmos w=32u l=2u",
+    "XMP4 gp vbp vdd vdd sg13_hv_pmos w=16u l=1u"
+   ],
+   [
+    "@inst",
+    "XA2",
+    "WN3A=10u WN3B=5u LN3B=1u"
+   ],
+   [
+    "r1_afe_ota2",
+    "XMN3A fn ibias vss vss sg13_hv_nmos w={WN3A} l=2u",
+    "XMN3A fn ibias vss vss sg13_hv_nmos w={WN3A} l=1u"
+   ],
+   [
+    "r1_afe_ota2",
+    "XMN4A fp ibias vss vss sg13_hv_nmos w={WN3A} l=2u",
+    "XMN4A fp ibias vss vss sg13_hv_nmos w={WN3A} l=1u"
+   ]
+  ],
+  "l1_ac_ss_cm0.5": [
+   [
+    "r1_afe_ota2",
+    "XMP3 gn vbp vdd vdd sg13_hv_pmos w=32u l=2u",
+    "XMP3 gn vbp vdd vdd sg13_hv_pmos w=16u l=1u"
+   ],
+   [
+    "r1_afe_ota2",
+    "XMP4 gp vbp vdd vdd sg13_hv_pmos w=32u l=2u",
+    "XMP4 gp vbp vdd vdd sg13_hv_pmos w=16u l=1u"
+   ],
+   [
+    "@inst",
+    "XA2",
+    "WN3A=10u WN3B=5u LN3B=1u"
+   ],
+   [
+    "r1_afe_ota2",
+    "XMN3A fn ibias vss vss sg13_hv_nmos w={WN3A} l=2u",
+    "XMN3A fn ibias vss vss sg13_hv_nmos w={WN3A} l=1u"
+   ],
+   [
+    "r1_afe_ota2",
+    "XMN4A fp ibias vss vss sg13_hv_nmos w={WN3A} l=2u",
+    "XMN4A fp ibias vss vss sg13_hv_nmos w={WN3A} l=1u"
+   ]
+  ],
+  "l1_ac_ss_cm2.5": [
+   [
+    "r1_afe_ota2",
+    "XMP3 gn vbp vdd vdd sg13_hv_pmos w=32u l=2u",
+    "XMP3 gn vbp vdd vdd sg13_hv_pmos w=16u l=1u"
+   ],
+   [
+    "r1_afe_ota2",
+    "XMP4 gp vbp vdd vdd sg13_hv_pmos w=32u l=2u",
+    "XMP4 gp vbp vdd vdd sg13_hv_pmos w=16u l=1u"
+   ],
+   [
+    "@inst",
+    "XA2",
+    "WN3A=10u WN3B=5u LN3B=1u"
+   ],
+   [
+    "r1_afe_ota2",
+    "XMN3A fn ibias vss vss sg13_hv_nmos w={WN3A} l=2u",
+    "XMN3A fn ibias vss vss sg13_hv_nmos w={WN3A} l=1u"
+   ],
+   [
+    "r1_afe_ota2",
+    "XMN4A fp ibias vss vss sg13_hv_nmos w={WN3A} l=2u",
+    "XMN4A fp ibias vss vss sg13_hv_nmos w={WN3A} l=1u"
+   ]
+  ],
+  "l1_ac_ff_cm0.5": [
+   [
+    "r1_afe_ota2",
+    "XMP3 gn vbp vdd vdd sg13_hv_pmos w=32u l=2u",
+    "XMP3 gn vbp vdd vdd sg13_hv_pmos w=16u l=1u"
+   ],
+   [
+    "r1_afe_ota2",
+    "XMP4 gp vbp vdd vdd sg13_hv_pmos w=32u l=2u",
+    "XMP4 gp vbp vdd vdd sg13_hv_pmos w=16u l=1u"
+   ],
+   [
+    "@inst",
+    "XA2",
+    "WN3A=10u WN3B=5u LN3B=1u"
+   ],
+   [
+    "r1_afe_ota2",
+    "XMN3A fn ibias vss vss sg13_hv_nmos w={WN3A} l=2u",
+    "XMN3A fn ibias vss vss sg13_hv_nmos w={WN3A} l=1u"
+   ],
+   [
+    "r1_afe_ota2",
+    "XMN4A fp ibias vss vss sg13_hv_nmos w={WN3A} l=2u",
+    "XMN4A fp ibias vss vss sg13_hv_nmos w={WN3A} l=1u"
+   ]
+  ],
+  "l1_ac_ff_cm2.5": [
+   [
+    "r1_afe_ota2",
+    "XMP3 gn vbp vdd vdd sg13_hv_pmos w=32u l=2u",
+    "XMP3 gn vbp vdd vdd sg13_hv_pmos w=16u l=1u"
+   ],
+   [
+    "r1_afe_ota2",
+    "XMP4 gp vbp vdd vdd sg13_hv_pmos w=32u l=2u",
+    "XMP4 gp vbp vdd vdd sg13_hv_pmos w=16u l=1u"
+   ],
+   [
+    "@inst",
+    "XA2",
+    "WN3A=10u WN3B=5u LN3B=1u"
+   ],
+   [
+    "r1_afe_ota2",
+    "XMN3A fn ibias vss vss sg13_hv_nmos w={WN3A} l=2u",
+    "XMN3A fn ibias vss vss sg13_hv_nmos w={WN3A} l=1u"
+   ],
+   [
+    "r1_afe_ota2",
+    "XMN4A fp ibias vss vss sg13_hv_nmos w={WN3A} l=2u",
+    "XMN4A fp ibias vss vss sg13_hv_nmos w={WN3A} l=1u"
+   ]
+  ],
+  "l2_ac_tt_cm0.5": [
+   [
+    "r1_afe_ota2",
+    "XMB0 ibias ibias vss vss sg13_hv_nmos w=4u l=1u",
+    "XMB0 ibias ibias vss vss sg13_hv_nmos w=8u l=2u"
+   ],
+   [
+    "r1_afe_ota2",
+    "XMB1 vbp ibias vss vss sg13_hv_nmos w=4u l=1u",
+    "XMB1 vbp ibias vss vss sg13_hv_nmos w=8u l=2u"
+   ],
+   [
+    "r1_afe_ota2",
+    "XMB4 vbpc ibias vss vss sg13_hv_nmos w=4u l=1u",
+    "XMB4 vbpc ibias vss vss sg13_hv_nmos w=8u l=2u"
+   ],
+   [
+    "r1_afe_ota2",
+    "XMC3 vcmfb vcmfb vss vss sg13_hv_nmos w=4u l=1u",
+    "XMC3 vcmfb vcmfb vss vss sg13_hv_nmos w=8u l=2u"
+   ],
+   [
+    "r1_afe_ota2",
+    "XMC4 cmd cmd vss vss sg13_hv_nmos w=4u l=1u",
+    "XMC4 cmd cmd vss vss sg13_hv_nmos w=8u l=2u"
+   ]
+  ],
+  "l2_ac_tt_cm2.5": [
+   [
+    "r1_afe_ota2",
+    "XMB0 ibias ibias vss vss sg13_hv_nmos w=4u l=1u",
+    "XMB0 ibias ibias vss vss sg13_hv_nmos w=8u l=2u"
+   ],
+   [
+    "r1_afe_ota2",
+    "XMB1 vbp ibias vss vss sg13_hv_nmos w=4u l=1u",
+    "XMB1 vbp ibias vss vss sg13_hv_nmos w=8u l=2u"
+   ],
+   [
+    "r1_afe_ota2",
+    "XMB4 vbpc ibias vss vss sg13_hv_nmos w=4u l=1u",
+    "XMB4 vbpc ibias vss vss sg13_hv_nmos w=8u l=2u"
+   ],
+   [
+    "r1_afe_ota2",
+    "XMC3 vcmfb vcmfb vss vss sg13_hv_nmos w=4u l=1u",
+    "XMC3 vcmfb vcmfb vss vss sg13_hv_nmos w=8u l=2u"
+   ],
+   [
+    "r1_afe_ota2",
+    "XMC4 cmd cmd vss vss sg13_hv_nmos w=4u l=1u",
+    "XMC4 cmd cmd vss vss sg13_hv_nmos w=8u l=2u"
+   ]
+  ],
+  "l2_ac_ss_cm0.5": [
+   [
+    "r1_afe_ota2",
+    "XMB0 ibias ibias vss vss sg13_hv_nmos w=4u l=1u",
+    "XMB0 ibias ibias vss vss sg13_hv_nmos w=8u l=2u"
+   ],
+   [
+    "r1_afe_ota2",
+    "XMB1 vbp ibias vss vss sg13_hv_nmos w=4u l=1u",
+    "XMB1 vbp ibias vss vss sg13_hv_nmos w=8u l=2u"
+   ],
+   [
+    "r1_afe_ota2",
+    "XMB4 vbpc ibias vss vss sg13_hv_nmos w=4u l=1u",
+    "XMB4 vbpc ibias vss vss sg13_hv_nmos w=8u l=2u"
+   ],
+   [
+    "r1_afe_ota2",
+    "XMC3 vcmfb vcmfb vss vss sg13_hv_nmos w=4u l=1u",
+    "XMC3 vcmfb vcmfb vss vss sg13_hv_nmos w=8u l=2u"
+   ],
+   [
+    "r1_afe_ota2",
+    "XMC4 cmd cmd vss vss sg13_hv_nmos w=4u l=1u",
+    "XMC4 cmd cmd vss vss sg13_hv_nmos w=8u l=2u"
+   ]
+  ],
+  "l2_ac_ss_cm2.5": [
+   [
+    "r1_afe_ota2",
+    "XMB0 ibias ibias vss vss sg13_hv_nmos w=4u l=1u",
+    "XMB0 ibias ibias vss vss sg13_hv_nmos w=8u l=2u"
+   ],
+   [
+    "r1_afe_ota2",
+    "XMB1 vbp ibias vss vss sg13_hv_nmos w=4u l=1u",
+    "XMB1 vbp ibias vss vss sg13_hv_nmos w=8u l=2u"
+   ],
+   [
+    "r1_afe_ota2",
+    "XMB4 vbpc ibias vss vss sg13_hv_nmos w=4u l=1u",
+    "XMB4 vbpc ibias vss vss sg13_hv_nmos w=8u l=2u"
+   ],
+   [
+    "r1_afe_ota2",
+    "XMC3 vcmfb vcmfb vss vss sg13_hv_nmos w=4u l=1u",
+    "XMC3 vcmfb vcmfb vss vss sg13_hv_nmos w=8u l=2u"
+   ],
+   [
+    "r1_afe_ota2",
+    "XMC4 cmd cmd vss vss sg13_hv_nmos w=4u l=1u",
+    "XMC4 cmd cmd vss vss sg13_hv_nmos w=8u l=2u"
+   ]
+  ],
+  "l2_ac_ff_cm0.5": [
+   [
+    "r1_afe_ota2",
+    "XMB0 ibias ibias vss vss sg13_hv_nmos w=4u l=1u",
+    "XMB0 ibias ibias vss vss sg13_hv_nmos w=8u l=2u"
+   ],
+   [
+    "r1_afe_ota2",
+    "XMB1 vbp ibias vss vss sg13_hv_nmos w=4u l=1u",
+    "XMB1 vbp ibias vss vss sg13_hv_nmos w=8u l=2u"
+   ],
+   [
+    "r1_afe_ota2",
+    "XMB4 vbpc ibias vss vss sg13_hv_nmos w=4u l=1u",
+    "XMB4 vbpc ibias vss vss sg13_hv_nmos w=8u l=2u"
+   ],
+   [
+    "r1_afe_ota2",
+    "XMC3 vcmfb vcmfb vss vss sg13_hv_nmos w=4u l=1u",
+    "XMC3 vcmfb vcmfb vss vss sg13_hv_nmos w=8u l=2u"
+   ],
+   [
+    "r1_afe_ota2",
+    "XMC4 cmd cmd vss vss sg13_hv_nmos w=4u l=1u",
+    "XMC4 cmd cmd vss vss sg13_hv_nmos w=8u l=2u"
+   ]
+  ],
+  "l2_ac_ff_cm2.5": [
+   [
+    "r1_afe_ota2",
+    "XMB0 ibias ibias vss vss sg13_hv_nmos w=4u l=1u",
+    "XMB0 ibias ibias vss vss sg13_hv_nmos w=8u l=2u"
+   ],
+   [
+    "r1_afe_ota2",
+    "XMB1 vbp ibias vss vss sg13_hv_nmos w=4u l=1u",
+    "XMB1 vbp ibias vss vss sg13_hv_nmos w=8u l=2u"
+   ],
+   [
+    "r1_afe_ota2",
+    "XMB4 vbpc ibias vss vss sg13_hv_nmos w=4u l=1u",
+    "XMB4 vbpc ibias vss vss sg13_hv_nmos w=8u l=2u"
+   ],
+   [
+    "r1_afe_ota2",
+    "XMC3 vcmfb vcmfb vss vss sg13_hv_nmos w=4u l=1u",
+    "XMC3 vcmfb vcmfb vss vss sg13_hv_nmos w=8u l=2u"
+   ],
+   [
+    "r1_afe_ota2",
+    "XMC4 cmd cmd vss vss sg13_hv_nmos w=4u l=1u",
+    "XMC4 cmd cmd vss vss sg13_hv_nmos w=8u l=2u"
+   ]
+  ],
+  "cp64_ac_tt_cm0.5": [
+   [
+    "@inst",
+    "XA2",
+    "WCP=64u"
+   ]
+  ],
+  "cp64_ac_tt_cm2.5": [
+   [
+    "@inst",
+    "XA2",
+    "WCP=64u"
+   ]
+  ],
+  "cp64_ac_ss_cm0.5": [
+   [
+    "@inst",
+    "XA2",
+    "WCP=64u"
+   ]
+  ],
+  "cp64_ac_ss_cm2.5": [
+   [
+    "@inst",
+    "XA2",
+    "WCP=64u"
+   ]
+  ],
+  "cp64_ac_ff_cm0.5": [
+   [
+    "@inst",
+    "XA2",
+    "WCP=64u"
+   ]
+  ],
+  "cp64_ac_ff_cm2.5": [
+   [
+    "@inst",
+    "XA2",
+    "WCP=64u"
+   ]
+  ],
+  "l1+cp64_ac_tt_cm0.5": [
+   [
+    "r1_afe_ota2",
+    "XMP3 gn vbp vdd vdd sg13_hv_pmos w=32u l=2u",
+    "XMP3 gn vbp vdd vdd sg13_hv_pmos w=16u l=1u"
+   ],
+   [
+    "r1_afe_ota2",
+    "XMP4 gp vbp vdd vdd sg13_hv_pmos w=32u l=2u",
+    "XMP4 gp vbp vdd vdd sg13_hv_pmos w=16u l=1u"
+   ],
+   [
+    "@inst",
+    "XA2",
+    "WN3A=10u WN3B=5u LN3B=1u"
+   ],
+   [
+    "r1_afe_ota2",
+    "XMN3A fn ibias vss vss sg13_hv_nmos w={WN3A} l=2u",
+    "XMN3A fn ibias vss vss sg13_hv_nmos w={WN3A} l=1u"
+   ],
+   [
+    "r1_afe_ota2",
+    "XMN4A fp ibias vss vss sg13_hv_nmos w={WN3A} l=2u",
+    "XMN4A fp ibias vss vss sg13_hv_nmos w={WN3A} l=1u"
+   ],
+   [
+    "@inst",
+    "XA2",
+    "WCP=64u"
+   ]
+  ],
+  "l1+cp64_ac_tt_cm2.5": [
+   [
+    "r1_afe_ota2",
+    "XMP3 gn vbp vdd vdd sg13_hv_pmos w=32u l=2u",
+    "XMP3 gn vbp vdd vdd sg13_hv_pmos w=16u l=1u"
+   ],
+   [
+    "r1_afe_ota2",
+    "XMP4 gp vbp vdd vdd sg13_hv_pmos w=32u l=2u",
+    "XMP4 gp vbp vdd vdd sg13_hv_pmos w=16u l=1u"
+   ],
+   [
+    "@inst",
+    "XA2",
+    "WN3A=10u WN3B=5u LN3B=1u"
+   ],
+   [
+    "r1_afe_ota2",
+    "XMN3A fn ibias vss vss sg13_hv_nmos w={WN3A} l=2u",
+    "XMN3A fn ibias vss vss sg13_hv_nmos w={WN3A} l=1u"
+   ],
+   [
+    "r1_afe_ota2",
+    "XMN4A fp ibias vss vss sg13_hv_nmos w={WN3A} l=2u",
+    "XMN4A fp ibias vss vss sg13_hv_nmos w={WN3A} l=1u"
+   ],
+   [
+    "@inst",
+    "XA2",
+    "WCP=64u"
+   ]
+  ],
+  "l1+cp64_ac_ss_cm0.5": [
+   [
+    "r1_afe_ota2",
+    "XMP3 gn vbp vdd vdd sg13_hv_pmos w=32u l=2u",
+    "XMP3 gn vbp vdd vdd sg13_hv_pmos w=16u l=1u"
+   ],
+   [
+    "r1_afe_ota2",
+    "XMP4 gp vbp vdd vdd sg13_hv_pmos w=32u l=2u",
+    "XMP4 gp vbp vdd vdd sg13_hv_pmos w=16u l=1u"
+   ],
+   [
+    "@inst",
+    "XA2",
+    "WN3A=10u WN3B=5u LN3B=1u"
+   ],
+   [
+    "r1_afe_ota2",
+    "XMN3A fn ibias vss vss sg13_hv_nmos w={WN3A} l=2u",
+    "XMN3A fn ibias vss vss sg13_hv_nmos w={WN3A} l=1u"
+   ],
+   [
+    "r1_afe_ota2",
+    "XMN4A fp ibias vss vss sg13_hv_nmos w={WN3A} l=2u",
+    "XMN4A fp ibias vss vss sg13_hv_nmos w={WN3A} l=1u"
+   ],
+   [
+    "@inst",
+    "XA2",
+    "WCP=64u"
+   ]
+  ],
+  "l1+cp64_ac_ss_cm2.5": [
+   [
+    "r1_afe_ota2",
+    "XMP3 gn vbp vdd vdd sg13_hv_pmos w=32u l=2u",
+    "XMP3 gn vbp vdd vdd sg13_hv_pmos w=16u l=1u"
+   ],
+   [
+    "r1_afe_ota2",
+    "XMP4 gp vbp vdd vdd sg13_hv_pmos w=32u l=2u",
+    "XMP4 gp vbp vdd vdd sg13_hv_pmos w=16u l=1u"
+   ],
+   [
+    "@inst",
+    "XA2",
+    "WN3A=10u WN3B=5u LN3B=1u"
+   ],
+   [
+    "r1_afe_ota2",
+    "XMN3A fn ibias vss vss sg13_hv_nmos w={WN3A} l=2u",
+    "XMN3A fn ibias vss vss sg13_hv_nmos w={WN3A} l=1u"
+   ],
+   [
+    "r1_afe_ota2",
+    "XMN4A fp ibias vss vss sg13_hv_nmos w={WN3A} l=2u",
+    "XMN4A fp ibias vss vss sg13_hv_nmos w={WN3A} l=1u"
+   ],
+   [
+    "@inst",
+    "XA2",
+    "WCP=64u"
+   ]
+  ],
+  "l1+cp64_ac_ff_cm0.5": [
+   [
+    "r1_afe_ota2",
+    "XMP3 gn vbp vdd vdd sg13_hv_pmos w=32u l=2u",
+    "XMP3 gn vbp vdd vdd sg13_hv_pmos w=16u l=1u"
+   ],
+   [
+    "r1_afe_ota2",
+    "XMP4 gp vbp vdd vdd sg13_hv_pmos w=32u l=2u",
+    "XMP4 gp vbp vdd vdd sg13_hv_pmos w=16u l=1u"
+   ],
+   [
+    "@inst",
+    "XA2",
+    "WN3A=10u WN3B=5u LN3B=1u"
+   ],
+   [
+    "r1_afe_ota2",
+    "XMN3A fn ibias vss vss sg13_hv_nmos w={WN3A} l=2u",
+    "XMN3A fn ibias vss vss sg13_hv_nmos w={WN3A} l=1u"
+   ],
+   [
+    "r1_afe_ota2",
+    "XMN4A fp ibias vss vss sg13_hv_nmos w={WN3A} l=2u",
+    "XMN4A fp ibias vss vss sg13_hv_nmos w={WN3A} l=1u"
+   ],
+   [
+    "@inst",
+    "XA2",
+    "WCP=64u"
+   ]
+  ],
+  "l1+cp64_ac_ff_cm2.5": [
+   [
+    "r1_afe_ota2",
+    "XMP3 gn vbp vdd vdd sg13_hv_pmos w=32u l=2u",
+    "XMP3 gn vbp vdd vdd sg13_hv_pmos w=16u l=1u"
+   ],
+   [
+    "r1_afe_ota2",
+    "XMP4 gp vbp vdd vdd sg13_hv_pmos w=32u l=2u",
+    "XMP4 gp vbp vdd vdd sg13_hv_pmos w=16u l=1u"
+   ],
+   [
+    "@inst",
+    "XA2",
+    "WN3A=10u WN3B=5u LN3B=1u"
+   ],
+   [
+    "r1_afe_ota2",
+    "XMN3A fn ibias vss vss sg13_hv_nmos w={WN3A} l=2u",
+    "XMN3A fn ibias vss vss sg13_hv_nmos w={WN3A} l=1u"
+   ],
+   [
+    "r1_afe_ota2",
+    "XMN4A fp ibias vss vss sg13_hv_nmos w={WN3A} l=2u",
+    "XMN4A fp ibias vss vss sg13_hv_nmos w={WN3A} l=1u"
+   ],
+   [
+    "@inst",
+    "XA2",
+    "WCP=64u"
+   ]
+  ]
+ },
+ "netlist_sha256": "3d6de6b1489ed7f4a7bb85612589894bc416f6894479dc502d22fdd21d3dabd8",
+ "frozen_inputs": "$G1_RESULTS_ROOT/r1_afe/dev-revd-ocm-01/frozen/",
+ "lsb_V": 0.000439453125,
+ "raw": "$G1_RESULTS_ROOT/r1_afe/dev-revd-ocm-01/",
+ "jobs": 30,
+ "failed_jobs": [],
+ "wall_seconds": 254.0,
+ "summary": "results/dev-revd-ocm-01.json",
+ "question": "Output CM at tt/ss/ff (input CM 0.5/2.5 V, all steps) for the D16 netlist and OTA2 variants: CMFB pair 64u (cp64), mirrors at l = 1 um (l1), bias references at l = 2 um (l2), l1+cp64",
+ "result": "output CM: base 0.577-0.648 V, l1 0.591-0.652, cp64 0.583-0.637, l1+cp64 0.593-0.639, l2 0.594-0.597 V; f3 min base 1.036 MHz (D16 alone)",
+ "disposition": "l2 adopted (cause of the rev-C CM error: mirrors at l = 2 um from l = 1 um references); others rejected"
+}

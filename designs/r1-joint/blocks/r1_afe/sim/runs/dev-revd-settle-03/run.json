@@ -1,0 +1,239 @@
+{
+ "run_id": "dev-revd-settle-03",
+ "campaign": "dev:settleq:l2+c2sw10_15+o2i1.5,l2+c2sw12_13.5+o2i1.5+ro11.55_44.7_30",
+ "date_utc": "2026-10-20T19:01:00Z",
+ "command": "G1_CPUSET=106-108 G1_CPUS=3 G1_WORKDIR=designs/r1-joint/blocks/r1_afe/sim G1_RESULTS_ROOT=<bulk> flow/run.sh python3 run_afe.py dev:settleq:l2+c2sw10_15+o2i1.5,l2+c2sw12_13.5+o2i1.5+ro11.55_44.7_30 dev-revd-settle-03",
+ "tools": {
+  "ngspice": "ngspice-46 : Circuit level simulation program",
+  "image_id": "sha256:ddeb69576f2808676d1c5d474ecf04f6d1d6f8abdcff6b72b39790ded924bab2",
+  "pdk_commit": "84374023ee8b4b126bebbba67fcbada0a9c0ff0b"
+ },
+ "inputs": {
+  "sim/tb_afe_settle_adc.cir": "3bbc68e33f27d156ed90af01d08102f3fe2fa4b3f2f34ca2412f338080d83182",
+  "sim/common_head.inc": "ae7e19db8bdacb4ed6ce7126dc07e6b7ed9ba069506c5eb46f7463bfa9bc71af",
+  "sim/gain_codes.inc": "a62c9d6daa3d544c36ac868c4e6a9266f32e581d093ac404c6c52bcc6e5276f6",
+  "schematic/r1_afe.spice": "3d6de6b1489ed7f4a7bb85612589894bc416f6894479dc502d22fdd21d3dabd8",
+  "sim/run_afe.py": "0a2e91ff5a768cb08c2bd204a26de03ea08c5ad61cea4ee4672bda1c9c3031ad"
+ },
+ "netlist_edits": {
+  "l2+c2sw10_15+o2i1.5_st_ss_x32_p100": [
+   [
+    "r1_afe_ota2",
+    "XMB0 ibias ibias vss vss sg13_hv_nmos w=4u l=1u",
+    "XMB0 ibias ibias vss vss sg13_hv_nmos w=8u l=2u"
+   ],
+   [
+    "r1_afe_ota2",
+    "XMB1 vbp ibias vss vss sg13_hv_nmos w=4u l=1u",
+    "XMB1 vbp ibias vss vss sg13_hv_nmos w=8u l=2u"
+   ],
+   [
+    "r1_afe_ota2",
+    "XMB4 vbpc ibias vss vss sg13_hv_nmos w=4u l=1u",
+    "XMB4 vbpc ibias vss vss sg13_hv_nmos w=8u l=2u"
+   ],
+   [
+    "r1_afe_ota2",
+    "XMC3 vcmfb vcmfb vss vss sg13_hv_nmos w=4u l=1u",
+    "XMC3 vcmfb vcmfb vss vss sg13_hv_nmos w=8u l=2u"
+   ],
+   [
+    "r1_afe_ota2",
+    "XMC4 cmd cmd vss vss sg13_hv_nmos w=4u l=1u",
+    "XMC4 cmd cmd vss vss sg13_hv_nmos w=8u l=2u"
+   ],
+   [
+    ".subckt r1_afe_ota2 inp inn outp outn vcm ibias vdd vss",
+    ".subckt r1_afe_ota2 inp inn outp outn vcm ibias cen cenb vdd vss"
+   ],
+   [
+    "r1_afe_ota2",
+    "XCC2 cz2 outn cap_cmim w={WCC} l={WCC} m=1 mm_ok=1",
+    "XCC2 cz2 outn cap_cmim w={WCC} l={WCC} m=1 mm_ok=1\nXCD1B cd1 outp cap_cmim w=15u l=15u m=1 mm_ok=1\nXTD1 cz1 cd1 cen cenb vdd vss r1_afe_tg\nXCD2B cd2 outn cap_cmim w=15u l=15u m=1 mm_ok=1\nXTD2 cz2 cd2 cen cenb vdd vss r1_afe_tg"
+   ],
+   [
+    "XA2 x2p x2n on2 op2 vcm2 ib2 vdd vss r1_afe_ota2",
+    "XA2 x2p x2n on2 op2 vcm2 ib2 c4b c4 vdd vss r1_afe_ota2"
+   ],
+   [
+    "@inst",
+    "XA2",
+    "WCC=10u"
+   ],
+   [
+    "@inst",
+    "XA2",
+    "W2P=120u W2N=60u"
+   ]
+  ],
+  "l2+c2sw10_15+o2i1.5_st_ss_x32_m100": [
+   [
+    "r1_afe_ota2",
+    "XMB0 ibias ibias vss vss sg13_hv_nmos w=4u l=1u",
+    "XMB0 ibias ibias vss vss sg13_hv_nmos w=8u l=2u"
+   ],
+   [
+    "r1_afe_ota2",
+    "XMB1 vbp ibias vss vss sg13_hv_nmos w=4u l=1u",
+    "XMB1 vbp ibias vss vss sg13_hv_nmos w=8u l=2u"
+   ],
+   [
+    "r1_afe_ota2",
+    "XMB4 vbpc ibias vss vss sg13_hv_nmos w=4u l=1u",
+    "XMB4 vbpc ibias vss vss sg13_hv_nmos w=8u l=2u"
+   ],
+   [
+    "r1_afe_ota2",
+    "XMC3 vcmfb vcmfb vss vss sg13_hv_nmos w=4u l=1u",
+    "XMC3 vcmfb vcmfb vss vss sg13_hv_nmos w=8u l=2u"
+   ],
+   [
+    "r1_afe_ota2",
+    "XMC4 cmd cmd vss vss sg13_hv_nmos w=4u l=1u",
+    "XMC4 cmd cmd vss vss sg13_hv_nmos w=8u l=2u"
+   ],
+   [
+    ".subckt r1_afe_ota2 inp inn outp outn vcm ibias vdd vss",
+    ".subckt r1_afe_ota2 inp inn outp outn vcm ibias cen cenb vdd vss"
+   ],
+   [
+    "r1_afe_ota2",
+    "XCC2 cz2 outn cap_cmim w={WCC} l={WCC} m=1 mm_ok=1",
+    "XCC2 cz2 outn cap_cmim w={WCC} l={WCC} m=1 mm_ok=1\nXCD1B cd1 outp cap_cmim w=15u l=15u m=1 mm_ok=1\nXTD1 cz1 cd1 cen cenb vdd vss r1_afe_tg\nXCD2B cd2 outn cap_cmim w=15u l=15u m=1 mm_ok=1\nXTD2 cz2 cd2 cen cenb vdd vss r1_afe_tg"
+   ],
+   [
+    "XA2 x2p x2n on2 op2 vcm2 ib2 vdd vss r1_afe_ota2",
+    "XA2 x2p x2n on2 op2 vcm2 ib2 c4b c4 vdd vss r1_afe_ota2"
+   ],
+   [
+    "@inst",
+    "XA2",
+    "WCC=10u"
+   ],
+   [
+    "@inst",
+    "XA2",
+    "W2P=120u W2N=60u"
+   ]
+  ],
+  "l2+c2sw12_13.5+o2i1.5+ro11.55_44.7_30_st_ss_x32_p100": [
+   [
+    "r1_afe_ota2",
+    "XMB0 ibias ibias vss vss sg13_hv_nmos w=4u l=1u",
+    "XMB0 ibias ibias vss vss sg13_hv_nmos w=8u l=2u"
+   ],
+   [
+    "r1_afe_ota2",
+    "XMB1 vbp ibias vss vss sg13_hv_nmos w=4u l=1u",
+    "XMB1 vbp ibias vss vss sg13_hv_nmos w=8u l=2u"
+   ],
+   [
+    "r1_afe_ota2",
+    "XMB4 vbpc ibias vss vss sg13_hv_nmos w=4u l=1u",
+    "XMB4 vbpc ibias vss vss sg13_hv_nmos w=8u l=2u"
+   ],
+   [
+    "r1_afe_ota2",
+    "XMC3 vcmfb vcmfb vss vss sg13_hv_nmos w=4u l=1u",
+    "XMC3 vcmfb vcmfb vss vss sg13_hv_nmos w=8u l=2u"
+   ],
+   [
+    "r1_afe_ota2",
+    "XMC4 cmd cmd vss vss sg13_hv_nmos w=4u l=1u",
+    "XMC4 cmd cmd vss vss sg13_hv_nmos w=8u l=2u"
+   ],
+   [
+    ".subckt r1_afe_ota2 inp inn outp outn vcm ibias vdd vss",
+    ".subckt r1_afe_ota2 inp inn outp outn vcm ibias cen cenb vdd vss"
+   ],
+   [
+    "r1_afe_ota2",
+    "XCC2 cz2 outn cap_cmim w={WCC} l={WCC} m=1 mm_ok=1",
+    "XCC2 cz2 outn cap_cmim w={WCC} l={WCC} m=1 mm_ok=1\nXCD1B cd1 outp cap_cmim w=13.5u l=13.5u m=1 mm_ok=1\nXTD1 cz1 cd1 cen cenb vdd vss r1_afe_tg\nXCD2B cd2 outn cap_cmim w=13.5u l=13.5u m=1 mm_ok=1\nXTD2 cz2 cd2 cen cenb vdd vss r1_afe_tg"
+   ],
+   [
+    "XA2 x2p x2n on2 op2 vcm2 ib2 vdd vss r1_afe_ota2",
+    "XA2 x2p x2n on2 op2 vcm2 ib2 c4b c4 vdd vss r1_afe_ota2"
+   ],
+   [
+    "@inst",
+    "XA2",
+    "WCC=12u"
+   ],
+   [
+    "@inst",
+    "XA2",
+    "W2P=120u W2N=60u"
+   ],
+   [
+    ".param LRO=11.55u WCOD=44.7u WCOS=18.3u",
+    ".param LRO=11.55u WCOD=44.7u WCOS=30u"
+   ]
+  ],
+  "l2+c2sw12_13.5+o2i1.5+ro11.55_44.7_30_st_ss_x32_m100": [
+   [
+    "r1_afe_ota2",
+    "XMB0 ibias ibias vss vss sg13_hv_nmos w=4u l=1u",
+    "XMB0 ibias ibias vss vss sg13_hv_nmos w=8u l=2u"
+   ],
+   [
+    "r1_afe_ota2",
+    "XMB1 vbp ibias vss vss sg13_hv_nmos w=4u l=1u",
+    "XMB1 vbp ibias vss vss sg13_hv_nmos w=8u l=2u"
+   ],
+   [
+    "r1_afe_ota2",
+    "XMB4 vbpc ibias vss vss sg13_hv_nmos w=4u l=1u",
+    "XMB4 vbpc ibias vss vss sg13_hv_nmos w=8u l=2u"
+   ],
+   [
+    "r1_afe_ota2",
+    "XMC3 vcmfb vcmfb vss vss sg13_hv_nmos w=4u l=1u",
+    "XMC3 vcmfb vcmfb vss vss sg13_hv_nmos w=8u l=2u"
+   ],
+   [
+    "r1_afe_ota2",
+    "XMC4 cmd cmd vss vss sg13_hv_nmos w=4u l=1u",
+    "XMC4 cmd cmd vss vss sg13_hv_nmos w=8u l=2u"
+   ],
+   [
+    ".subckt r1_afe_ota2 inp inn outp outn vcm ibias vdd vss",
+    ".subckt r1_afe_ota2 inp inn outp outn vcm ibias cen cenb vdd vss"
+   ],
+   [
+    "r1_afe_ota2",
+    "XCC2 cz2 outn cap_cmim w={WCC} l={WCC} m=1 mm_ok=1",
+    "XCC2 cz2 outn cap_cmim w={WCC} l={WCC} m=1 mm_ok=1\nXCD1B cd1 outp cap_cmim w=13.5u l=13.5u m=1 mm_ok=1\nXTD1 cz1 cd1 cen cenb vdd vss r1_afe_tg\nXCD2B cd2 outn cap_cmim w=13.5u l=13.5u m=1 mm_ok=1\nXTD2 cz2 cd2 cen cenb vdd vss r1_afe_tg"
+   ],
+   [
+    "XA2 x2p x2n on2 op2 vcm2 ib2 vdd vss r1_afe_ota2",
+    "XA2 x2p x2n on2 op2 vcm2 ib2 c4b c4 vdd vss r1_afe_ota2"
+   ],
+   [
+    "@inst",
+    "XA2",
+    "WCC=12u"
+   ],
+   [
+    "@inst",
+    "XA2",
+    "W2P=120u W2N=60u"
+   ],
+   [
+    ".param LRO=11.55u WCOD=44.7u WCOS=18.3u",
+    ".param LRO=11.55u WCOD=44.7u WCOS=30u"
+   ]
+  ]
+ },
+ "netlist_sha256": "3d6de6b1489ed7f4a7bb85612589894bc416f6894479dc502d22fdd21d3dabd8",
+ "frozen_inputs": "$G1_RESULTS_ROOT/r1_afe/dev-revd-settle-03/frozen/",
+ "lsb_V": 0.000439453125,
+ "raw": "$G1_RESULTS_ROOT/r1_afe/dev-revd-settle-03/",
+ "jobs": 4,
+ "failed_jobs": [],
+ "wall_seconds": 100.0,
+ "summary": "results/dev-revd-settle-03.json",
+ "question": "Settling ss x32 +-FS: c2sw10_15+o2i1.5; c2sw12_13.5+o2i1.5 with WCOS 30u",
+ "result": "0.012 and 0.138 LSB",
+ "disposition": "superseded (c2sw rejected)"
+}

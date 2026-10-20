@@ -1,0 +1,6670 @@
+[
+ {
+  "name": "l2+cx25_13+c2sw12_13.5+o2i1.5+np2_stb_tt_cm0.5",
+  "corner": "tt",
+  "mismatch": false,
+  "subs": {
+   "MOS": "mos_tt",
+   "RES": "res_typ",
+   "CAP": "cap_typ",
+   "VDDA": 3.3,
+   "TEMP": 27,
+   "VCMI": 0.5,
+   "ACVDD": 0,
+   "NMC": 1,
+   "SEED": 1,
+   "LSB": 0.000439453125,
+   "CL": "2.8p",
+   "KLIST": "0 3 4 5",
+   "LLIST": "1 2 4 5",
+   "DIO": "dio_tt",
+   "RAW": "$G1_RESULTS_ROOT/r1_afe/dev-revd-comb-stb-01/l2+cx25_13+c2sw12_13.5+o2i1.5+np2_stb_tt_cm0.5"
+  },
+  "rc": 0,
+  "edits": [
+   [
+    "r1_afe_ota2",
+    "XMB0 ibias ibias vss vss sg13_hv_nmos w=4u l=1u",
+    "XMB0 ibias ibias vss vss sg13_hv_nmos w=8u l=2u"
+   ],
+   [
+    "r1_afe_ota2",
+    "XMB1 vbp ibias vss vss sg13_hv_nmos w=4u l=1u",
+    "XMB1 vbp ibias vss vss sg13_hv_nmos w=8u l=2u"
+   ],
+   [
+    "r1_afe_ota2",
+    "XMB4 vbpc ibias vss vss sg13_hv_nmos w=4u l=1u",
+    "XMB4 vbpc ibias vss vss sg13_hv_nmos w=8u l=2u"
+   ],
+   [
+    "r1_afe_ota2",
+    "XMC3 vcmfb vcmfb vss vss sg13_hv_nmos w=4u l=1u",
+    "XMC3 vcmfb vcmfb vss vss sg13_hv_nmos w=8u l=2u"
+   ],
+   [
+    "r1_afe_ota2",
+    "XMC4 cmd cmd vss vss sg13_hv_nmos w=4u l=1u",
+    "XMC4 cmd cmd vss vss sg13_hv_nmos w=8u l=2u"
+   ],
+   [
+    "@inst",
+    "XA1",
+    "WCC=25u"
+   ],
+   [
+    "r1_afe_ota",
+    "XCS1 outp vcms cap_cmim",
+    "XCX1 cz1 outn cap_cmim w=13u l=13u m=1 mm_ok=1\nXCX2 cz2 outp cap_cmim w=13u l=13u m=1 mm_ok=1\nXCS1 outp vcms cap_cmim"
+   ],
+   [
+    ".subckt r1_afe_ota2 inp inn outp outn vcm ibias vdd vss",
+    ".subckt r1_afe_ota2 inp inn outp outn vcm ibias cen cenb vdd vss"
+   ],
+   [
+    "r1_afe_ota2",
+    "XCC2 cz2 outn cap_cmim w={WCC} l={WCC} m=1 mm_ok=1",
+    "XCC2 cz2 outn cap_cmim w={WCC} l={WCC} m=1 mm_ok=1\nXCD1B cd1 outp cap_cmim w=13.5u l=13.5u m=1 mm_ok=1\nXTD1 cz1 cd1 cen cenb vdd vss r1_afe_tg\nXCD2B cd2 outn cap_cmim w=13.5u l=13.5u m=1 mm_ok=1\nXTD2 cz2 cd2 cen cenb vdd vss r1_afe_tg"
+   ],
+   [
+    "XA2 x2p x2n on2 op2 vcm2 ib2 vdd vss r1_afe_ota2",
+    "XA2 x2p x2n on2 op2 vcm2 ib2 c4b c4 vdd vss r1_afe_ota2"
+   ],
+   [
+    "@inst",
+    "XA2",
+    "WCC=12u"
+   ],
+   [
+    "@inst",
+    "XA2",
+    "W2P=120u W2N=60u"
+   ],
+   [
+    "r1_afe_ota",
+    "XMN1 gn inp tn vss sg13_hv_nmos w=80u l=2u ng=16",
+    "XMN1 gn inp tn vss sg13_hv_nmos w=160u l=2u ng=32"
+   ],
+   [
+    "r1_afe_ota",
+    "XMN2 gp inn tn vss sg13_hv_nmos w=80u l=2u ng=16",
+    "XMN2 gp inn tn vss sg13_hv_nmos w=160u l=2u ng=32"
+   ],
+   [
+    "XA1 x1p x1n ",
+    "Vpa1p x1p y1p dc 0 ac {vdp1}\nVpa1n x1n y1n dc 0 ac {vdn1}\nIpa1p 0 x1p dc 0 ac {idp1}\nIpa1n 0 x1n dc 0 ac {idn1}\nXA1 y1p y1n "
+   ],
+   [
+    "XA2 x2p x2n ",
+    "Vpa2p x2p y2p dc 0 ac {vdp2}\nVpa2n x2n y2n dc 0 ac {vdn2}\nIpa2p 0 x2p dc 0 ac {idp2}\nIpa2n 0 x2n dc 0 ac {idn2}\nXA2 y2p y2n "
+   ],
+   [
+    "XMC1 vcmfb vcms tc",
+    "Vpc vcms vcmsy dc 0 ac {vc1}\nIpc 0 vcms dc 0 ac {ic1}\nXMC1 vcmfb vcmsy tc"
+   ],
+   [
+    "XMC1 vcmfb vcms tc",
+    "Vpc vcms vcmsy dc 0 ac {vc2}\nIpc 0 vcms dc 0 ac {ic2}\nXMC1 vcmfb vcmsy tc"
+   ],
+   [
+    "XMN7 outp ",
+    "Vpop outpi outp dc 0 ac {vop1}\nVpon outni outn dc 0 ac {von1}\nIpop 0 outpi dc 0 ac {iop1}\nIpon 0 outni dc 0 ac {ion1}\nXMN7 outpi "
+   ],
+   [
+    "XMN8 outn ",
+    "XMN8 outni "
+   ],
+   [
+    "XMP7 outp ",
+    "XMP7 outpi "
+   ],
+   [
+    "XMP8 outn ",
+    "XMP8 outni "
+   ],
+   [
+    "XCC1 cz1 outp ",
+    "XCC1 cz1 outpi "
+   ],
+   [
+    "XCC2 cz2 outn ",
+    "XCC2 cz2 outni "
+   ],
+   [
+    "XMN7 outp ",
+    "Vpop outpi outp dc 0 ac {vop2}\nVpon outni outn dc 0 ac {von2}\nIpop 0 outpi dc 0 ac {iop2}\nIpon 0 outni dc 0 ac {ion2}\nXMN7 outpi "
+   ],
+   [
+    "XMN8 outn ",
+    "XMN8 outni "
+   ],
+   [
+    "XMP7 outp ",
+    "XMP7 outpi "
+   ],
+   [
+    "XMP8 outn ",
+    "XMP8 outni "
+   ],
+   [
+    "XCC1 cz1 outp ",
+    "XCC1 cz1 outpi "
+   ],
+   [
+    "XCC2 cz2 outn ",
+    "XCC2 cz2 outni "
+   ],
+   [
+    "XCC1B cb1 outp ",
+    "XCC1B cb1 outpi "
+   ],
+   [
+    "XCC2B cb2 outn ",
+    "XCC2B cb2 outni "
+   ],
+   [
+    "?",
+    "XCD1B cd1 outp ",
+    "XCD1B cd1 outpi "
+   ],
+   [
+    "?",
+    "XCD2B cd2 outn ",
+    "XCD2B cd2 outni "
+   ],
+   [
+    "?",
+    "XCX1 cz1 outn ",
+    "XCX1 cz1 outni "
+   ],
+   [
+    "?",
+    "XCX2 cz2 outp ",
+    "XCX2 cz2 outpi "
+   ]
+  ],
+  "seconds": 95.0,
+  "rows": [
+   {
+    "tag": "STBROW",
+    "code": 0,
+    "loop": "dm1",
+    "t_dc_db": 68.92,
+    "f_unity": 22917083.73843973,
+    "pm_deg": 66.92,
+    "gm_db": 22.17,
+    "f_180": 258046383.58849254,
+    "ph_min_deg": -287.2
+   },
+   {
+    "tag": "STBROW",
+    "code": 0,
+    "loop": "cm1",
+    "t_dc_db": 64.39,
+    "f_unity": 5593114.469506156,
+    "pm_deg": 79.42,
+    "gm_db": null,
+    "f_180": null,
+    "ph_min_deg": -119.1
+   },
+   {
+    "tag": "STBROW",
+    "code": 0,
+    "loop": "dm2",
+    "t_dc_db": 91.66,
+    "f_unity": 48299180.83419204,
+    "pm_deg": 72.71,
+    "gm_db": 10.99,
+    "f_180": 265827342.03064626,
+    "ph_min_deg": -306.6
+   },
+   {
+    "tag": "STBROW",
+    "code": 0,
+    "loop": "cm2",
+    "t_dc_db": 91.41,
+    "f_unity": 19576730.282129206,
+    "pm_deg": 65.62,
+    "gm_db": 24.57,
+    "f_180": 142065921.50525293,
+    "ph_min_deg": -458.7
+   },
+   {
+    "tag": "STBROW",
+    "code": 3,
+    "loop": "dm1",
+    "t_dc_db": 46.12,
+    "f_unity": 18110027.21807849,
+    "pm_deg": 87.27,
+    "gm_db": 24.86,
+    "f_180": 274300565.6863362,
+    "ph_min_deg": -277.3
+   },
+   {
+    "tag": "STBROW",
+    "code": 3,
+    "loop": "cm1",
+    "t_dc_db": 57.93,
+    "f_unity": 8262855.936389756,
+    "pm_deg": 72.76,
+    "gm_db": null,
+    "f_180": null,
+    "ph_min_deg": -125.7
+   },
+   {
+    "tag": "STBROW",
+    "code": 3,
+    "loop": "dm2",
+    "t_dc_db": 91.61,
+    "f_unity": 48135342.77796456,
+    "pm_deg": 72.64,
+    "gm_db": 11.03,
+    "f_180": 264310300.8340739,
+    "ph_min_deg": -306.9
+   },
+   {
+    "tag": "STBROW",
+    "code": 3,
+    "loop": "cm2",
+    "t_dc_db": 91.36,
+    "f_unity": 19549395.402783412,
+    "pm_deg": 65.57,
+    "gm_db": 24.56,
+    "f_180": 141784961.1458874,
+    "ph_min_deg": -459.0
+   },
+   {
+    "tag": "STBROW",
+    "code": 4,
+    "loop": "dm1",
+    "t_dc_db": 43.77,
+    "f_unity": 11115439.144348139,
+    "pm_deg": 101.4,
+    "gm_db": 25.54,
+    "f_180": 288580486.529087,
+    "ph_min_deg": -276.6
+   },
+   {
+    "tag": "STBROW",
+    "code": 4,
+    "loop": "cm1",
+    "t_dc_db": 56.49,
+    "f_unity": 5146244.2328671515,
+    "pm_deg": 70.67,
+    "gm_db": null,
+    "f_180": null,
+    "ph_min_deg": -116.8
+   },
+   {
+    "tag": "STBROW",
+    "code": 4,
+    "loop": "dm2",
+    "t_dc_db": 82.1,
+    "f_unity": 90846360.35660076,
+    "pm_deg": 46.44,
+    "gm_db": 6.23,
+    "f_180": 196905187.68841705,
+    "ph_min_deg": -316.0
+   },
+   {
+    "tag": "STBROW",
+    "code": 4,
+    "loop": "cm2",
+    "t_dc_db": 89.73,
+    "f_unity": 35123219.47572251,
+    "pm_deg": 50.23,
+    "gm_db": 14.62,
+    "f_180": 110316167.135026,
+    "ph_min_deg": -462.1
+   },
+   {
+    "tag": "STBROW",
+    "code": 5,
+    "loop": "dm1",
+    "t_dc_db": 37.34,
+    "f_unity": 13730208.529318785,
+    "pm_deg": 104.67,
+    "gm_db": 25.19,
+    "f_180": 280809537.6785372,
+    "ph_min_deg": -277.3
+   },
+   {
+    "tag": "STBROW",
+    "code": 5,
+    "loop": "cm1",
+    "t_dc_db": 55.82,
+    "f_unity": 7593389.351761193,
+    "pm_deg": 68.12,
+    "gm_db": null,
+    "f_180": null,
+    "ph_min_deg": -121.6
+   },
+   {
+    "tag": "STBROW",
+    "code": 5,
+    "loop": "dm2",
+    "t_dc_db": 82.13,
+    "f_unity": 90701407.22306919,
+    "pm_deg": 46.44,
+    "gm_db": 6.23,
+    "f_180": 196693193.7201437,
+    "ph_min_deg": -316.0
+   },
+   {
+    "tag": "STBROW",
+    "code": 5,
+    "loop": "cm2",
+    "t_dc_db": 89.72,
+    "f_unity": 35106187.442115806,
+    "pm_deg": 50.25,
+    "gm_db": 14.63,
+    "f_180": 110288227.62915435,
+    "ph_min_deg": -462.1
+   }
+  ],
+  "errors": [],
+  "deck": "r1_afe/dev-revd-comb-stb-01/l2+cx25_13+c2sw12_13.5+o2i1.5+np2_stb_tt_cm0.5.cir",
+  "log": "r1_afe/dev-revd-comb-stb-01/l2+cx25_13+c2sw12_13.5+o2i1.5+np2_stb_tt_cm0.5.log"
+ },
+ {
+  "name": "l2+cx25_13+c2sw12_13.5+o2i1.5+np2_stb_tt_cm2.5",
+  "corner": "tt",
+  "mismatch": false,
+  "subs": {
+   "MOS": "mos_tt",
+   "RES": "res_typ",
+   "CAP": "cap_typ",
+   "VDDA": 3.3,
+   "TEMP": 27,
+   "VCMI": 2.5,
+   "ACVDD": 0,
+   "NMC": 1,
+   "SEED": 1,
+   "LSB": 0.000439453125,
+   "CL": "2.8p",
+   "KLIST": "0 3 4 5",
+   "LLIST": "1 2 4 5",
+   "DIO": "dio_tt",
+   "RAW": "$G1_RESULTS_ROOT/r1_afe/dev-revd-comb-stb-01/l2+cx25_13+c2sw12_13.5+o2i1.5+np2_stb_tt_cm2.5"
+  },
+  "rc": 0,
+  "edits": [
+   [
+    "r1_afe_ota2",
+    "XMB0 ibias ibias vss vss sg13_hv_nmos w=4u l=1u",
+    "XMB0 ibias ibias vss vss sg13_hv_nmos w=8u l=2u"
+   ],
+   [
+    "r1_afe_ota2",
+    "XMB1 vbp ibias vss vss sg13_hv_nmos w=4u l=1u",
+    "XMB1 vbp ibias vss vss sg13_hv_nmos w=8u l=2u"
+   ],
+   [
+    "r1_afe_ota2",
+    "XMB4 vbpc ibias vss vss sg13_hv_nmos w=4u l=1u",
+    "XMB4 vbpc ibias vss vss sg13_hv_nmos w=8u l=2u"
+   ],
+   [
+    "r1_afe_ota2",
+    "XMC3 vcmfb vcmfb vss vss sg13_hv_nmos w=4u l=1u",
+    "XMC3 vcmfb vcmfb vss vss sg13_hv_nmos w=8u l=2u"
+   ],
+   [
+    "r1_afe_ota2",
+    "XMC4 cmd cmd vss vss sg13_hv_nmos w=4u l=1u",
+    "XMC4 cmd cmd vss vss sg13_hv_nmos w=8u l=2u"
+   ],
+   [
+    "@inst",
+    "XA1",
+    "WCC=25u"
+   ],
+   [
+    "r1_afe_ota",
+    "XCS1 outp vcms cap_cmim",
+    "XCX1 cz1 outn cap_cmim w=13u l=13u m=1 mm_ok=1\nXCX2 cz2 outp cap_cmim w=13u l=13u m=1 mm_ok=1\nXCS1 outp vcms cap_cmim"
+   ],
+   [
+    ".subckt r1_afe_ota2 inp inn outp outn vcm ibias vdd vss",
+    ".subckt r1_afe_ota2 inp inn outp outn vcm ibias cen cenb vdd vss"
+   ],
+   [
+    "r1_afe_ota2",
+    "XCC2 cz2 outn cap_cmim w={WCC} l={WCC} m=1 mm_ok=1",
+    "XCC2 cz2 outn cap_cmim w={WCC} l={WCC} m=1 mm_ok=1\nXCD1B cd1 outp cap_cmim w=13.5u l=13.5u m=1 mm_ok=1\nXTD1 cz1 cd1 cen cenb vdd vss r1_afe_tg\nXCD2B cd2 outn cap_cmim w=13.5u l=13.5u m=1 mm_ok=1\nXTD2 cz2 cd2 cen cenb vdd vss r1_afe_tg"
+   ],
+   [
+    "XA2 x2p x2n on2 op2 vcm2 ib2 vdd vss r1_afe_ota2",
+    "XA2 x2p x2n on2 op2 vcm2 ib2 c4b c4 vdd vss r1_afe_ota2"
+   ],
+   [
+    "@inst",
+    "XA2",
+    "WCC=12u"
+   ],
+   [
+    "@inst",
+    "XA2",
+    "W2P=120u W2N=60u"
+   ],
+   [
+    "r1_afe_ota",
+    "XMN1 gn inp tn vss sg13_hv_nmos w=80u l=2u ng=16",
+    "XMN1 gn inp tn vss sg13_hv_nmos w=160u l=2u ng=32"
+   ],
+   [
+    "r1_afe_ota",
+    "XMN2 gp inn tn vss sg13_hv_nmos w=80u l=2u ng=16",
+    "XMN2 gp inn tn vss sg13_hv_nmos w=160u l=2u ng=32"
+   ],
+   [
+    "XA1 x1p x1n ",
+    "Vpa1p x1p y1p dc 0 ac {vdp1}\nVpa1n x1n y1n dc 0 ac {vdn1}\nIpa1p 0 x1p dc 0 ac {idp1}\nIpa1n 0 x1n dc 0 ac {idn1}\nXA1 y1p y1n "
+   ],
+   [
+    "XA2 x2p x2n ",
+    "Vpa2p x2p y2p dc 0 ac {vdp2}\nVpa2n x2n y2n dc 0 ac {vdn2}\nIpa2p 0 x2p dc 0 ac {idp2}\nIpa2n 0 x2n dc 0 ac {idn2}\nXA2 y2p y2n "
+   ],
+   [
+    "XMC1 vcmfb vcms tc",
+    "Vpc vcms vcmsy dc 0 ac {vc1}\nIpc 0 vcms dc 0 ac {ic1}\nXMC1 vcmfb vcmsy tc"
+   ],
+   [
+    "XMC1 vcmfb vcms tc",
+    "Vpc vcms vcmsy dc 0 ac {vc2}\nIpc 0 vcms dc 0 ac {ic2}\nXMC1 vcmfb vcmsy tc"
+   ],
+   [
+    "XMN7 outp ",
+    "Vpop outpi outp dc 0 ac {vop1}\nVpon outni outn dc 0 ac {von1}\nIpop 0 outpi dc 0 ac {iop1}\nIpon 0 outni dc 0 ac {ion1}\nXMN7 outpi "
+   ],
+   [
+    "XMN8 outn ",
+    "XMN8 outni "
+   ],
+   [
+    "XMP7 outp ",
+    "XMP7 outpi "
+   ],
+   [
+    "XMP8 outn ",
+    "XMP8 outni "
+   ],
+   [
+    "XCC1 cz1 outp ",
+    "XCC1 cz1 outpi "
+   ],
+   [
+    "XCC2 cz2 outn ",
+    "XCC2 cz2 outni "
+   ],
+   [
+    "XMN7 outp ",
+    "Vpop outpi outp dc 0 ac {vop2}\nVpon outni outn dc 0 ac {von2}\nIpop 0 outpi dc 0 ac {iop2}\nIpon 0 outni dc 0 ac {ion2}\nXMN7 outpi "
+   ],
+   [
+    "XMN8 outn ",
+    "XMN8 outni "
+   ],
+   [
+    "XMP7 outp ",
+    "XMP7 outpi "
+   ],
+   [
+    "XMP8 outn ",
+    "XMP8 outni "
+   ],
+   [
+    "XCC1 cz1 outp ",
+    "XCC1 cz1 outpi "
+   ],
+   [
+    "XCC2 cz2 outn ",
+    "XCC2 cz2 outni "
+   ],
+   [
+    "XCC1B cb1 outp ",
+    "XCC1B cb1 outpi "
+   ],
+   [
+    "XCC2B cb2 outn ",
+    "XCC2B cb2 outni "
+   ],
+   [
+    "?",
+    "XCD1B cd1 outp ",
+    "XCD1B cd1 outpi "
+   ],
+   [
+    "?",
+    "XCD2B cd2 outn ",
+    "XCD2B cd2 outni "
+   ],
+   [
+    "?",
+    "XCX1 cz1 outn ",
+    "XCX1 cz1 outni "
+   ],
+   [
+    "?",
+    "XCX2 cz2 outp ",
+    "XCX2 cz2 outpi "
+   ]
+  ],
+  "seconds": 75.7,
+  "rows": [
+   {
+    "tag": "STBROW",
+    "code": 0,
+    "loop": "dm1",
+    "t_dc_db": 80.7,
+    "f_unity": 32092889.476195116,
+    "pm_deg": 68.1,
+    "gm_db": 18.36,
+    "f_180": 245042020.6081504,
+    "ph_min_deg": -296.0
+   },
+   {
+    "tag": "STBROW",
+    "code": 0,
+    "loop": "cm1",
+    "t_dc_db": 78.43,
+    "f_unity": 12258705.7391208,
+    "pm_deg": 86.59,
+    "gm_db": null,
+    "f_180": null,
+    "ph_min_deg": -167.1
+   },
+   {
+    "tag": "STBROW",
+    "code": 0,
+    "loop": "dm2",
+    "t_dc_db": 91.73,
+    "f_unity": 48499724.67484775,
+    "pm_deg": 72.8,
+    "gm_db": 10.95,
+    "f_180": 267344413.23203015,
+    "ph_min_deg": -306.3
+   },
+   {
+    "tag": "STBROW",
+    "code": 0,
+    "loop": "cm2",
+    "t_dc_db": 91.46,
+    "f_unity": 19589729.210627876,
+    "pm_deg": 65.71,
+    "gm_db": 24.57,
+    "f_180": 142330663.91824117,
+    "ph_min_deg": -458.3
+   },
+   {
+    "tag": "STBROW",
+    "code": 3,
+    "loop": "dm1",
+    "t_dc_db": 72.84,
+    "f_unity": 35295050.66387479,
+    "pm_deg": 66.25,
+    "gm_db": 17.72,
+    "f_180": 216853569.20741454,
+    "ph_min_deg": -301.3
+   },
+   {
+    "tag": "STBROW",
+    "code": 3,
+    "loop": "cm1",
+    "t_dc_db": 84.05,
+    "f_unity": 15434268.703827113,
+    "pm_deg": 67.79,
+    "gm_db": 24.01,
+    "f_180": 110453142.40718119,
+    "ph_min_deg": -467.4
+   },
+   {
+    "tag": "STBROW",
+    "code": 3,
+    "loop": "dm2",
+    "t_dc_db": 91.81,
+    "f_unity": 48672637.688576125,
+    "pm_deg": 72.9,
+    "gm_db": 10.91,
+    "f_180": 269186135.3354832,
+    "ph_min_deg": -306.0
+   },
+   {
+    "tag": "STBROW",
+    "code": 3,
+    "loop": "cm2",
+    "t_dc_db": 91.52,
+    "f_unity": 19619408.383018702,
+    "pm_deg": 65.79,
+    "gm_db": 24.57,
+    "f_180": 142637228.59999734,
+    "ph_min_deg": -457.9
+   },
+   {
+    "tag": "STBROW",
+    "code": 4,
+    "loop": "dm1",
+    "t_dc_db": 66.21,
+    "f_unity": 25070451.7512314,
+    "pm_deg": 87.21,
+    "gm_db": 19.09,
+    "f_180": 247358001.70250568,
+    "ph_min_deg": -296.8
+   },
+   {
+    "tag": "STBROW",
+    "code": 4,
+    "loop": "cm1",
+    "t_dc_db": 78.14,
+    "f_unity": 9508002.534711469,
+    "pm_deg": 74.57,
+    "gm_db": 33.97,
+    "f_180": 164497707.63635623,
+    "ph_min_deg": -463.5
+   },
+   {
+    "tag": "STBROW",
+    "code": 4,
+    "loop": "dm2",
+    "t_dc_db": 82.34,
+    "f_unity": 92485591.11563924,
+    "pm_deg": 46.28,
+    "gm_db": 6.19,
+    "f_180": 200329706.70877275,
+    "ph_min_deg": -314.8
+   },
+   {
+    "tag": "STBROW",
+    "code": 4,
+    "loop": "cm2",
+    "t_dc_db": 89.95,
+    "f_unity": 35268579.999994956,
+    "pm_deg": 50.58,
+    "gm_db": 14.64,
+    "f_180": 111109144.58976513,
+    "ph_min_deg": -461.0
+   },
+   {
+    "tag": "STBROW",
+    "code": 5,
+    "loop": "dm1",
+    "t_dc_db": 63.97,
+    "f_unity": 31241168.20015675,
+    "pm_deg": 77.18,
+    "gm_db": 18.35,
+    "f_180": 222038611.41898343,
+    "ph_min_deg": -301.4
+   },
+   {
+    "tag": "STBROW",
+    "code": 5,
+    "loop": "cm1",
+    "t_dc_db": 81.8,
+    "f_unity": 13659814.39599027,
+    "pm_deg": 64.12,
+    "gm_db": 25.99,
+    "f_180": 114341508.07905035,
+    "ph_min_deg": -467.9
+   },
+   {
+    "tag": "STBROW",
+    "code": 5,
+    "loop": "dm2",
+    "t_dc_db": 82.42,
+    "f_unity": 92719602.0164365,
+    "pm_deg": 46.31,
+    "gm_db": 6.19,
+    "f_180": 201317320.789142,
+    "ph_min_deg": -314.5
+   },
+   {
+    "tag": "STBROW",
+    "code": 5,
+    "loop": "cm2",
+    "t_dc_db": 90.02,
+    "f_unity": 35384628.1434036,
+    "pm_deg": 50.65,
+    "gm_db": 14.64,
+    "f_180": 111247636.07505608,
+    "ph_min_deg": -460.7
+   }
+  ],
+  "errors": [],
+  "deck": "r1_afe/dev-revd-comb-stb-01/l2+cx25_13+c2sw12_13.5+o2i1.5+np2_stb_tt_cm2.5.cir",
+  "log": "r1_afe/dev-revd-comb-stb-01/l2+cx25_13+c2sw12_13.5+o2i1.5+np2_stb_tt_cm2.5.log"
+ },
+ {
+  "name": "l2+cx25_13+c2sw12_13.5+o2i1.5+np2_stb_tt_cm2.8",
+  "corner": "tt",
+  "mismatch": false,
+  "subs": {
+   "MOS": "mos_tt",
+   "RES": "res_typ",
+   "CAP": "cap_typ",
+   "VDDA": 3.3,
+   "TEMP": 27,
+   "VCMI": 2.8,
+   "ACVDD": 0,
+   "NMC": 1,
+   "SEED": 1,
+   "LSB": 0.000439453125,
+   "CL": "2.8p",
+   "KLIST": "0 3 4 5",
+   "LLIST": "1 2 4 5",
+   "DIO": "dio_tt",
+   "RAW": "$G1_RESULTS_ROOT/r1_afe/dev-revd-comb-stb-01/l2+cx25_13+c2sw12_13.5+o2i1.5+np2_stb_tt_cm2.8"
+  },
+  "rc": 0,
+  "edits": [
+   [
+    "r1_afe_ota2",
+    "XMB0 ibias ibias vss vss sg13_hv_nmos w=4u l=1u",
+    "XMB0 ibias ibias vss vss sg13_hv_nmos w=8u l=2u"
+   ],
+   [
+    "r1_afe_ota2",
+    "XMB1 vbp ibias vss vss sg13_hv_nmos w=4u l=1u",
+    "XMB1 vbp ibias vss vss sg13_hv_nmos w=8u l=2u"
+   ],
+   [
+    "r1_afe_ota2",
+    "XMB4 vbpc ibias vss vss sg13_hv_nmos w=4u l=1u",
+    "XMB4 vbpc ibias vss vss sg13_hv_nmos w=8u l=2u"
+   ],
+   [
+    "r1_afe_ota2",
+    "XMC3 vcmfb vcmfb vss vss sg13_hv_nmos w=4u l=1u",
+    "XMC3 vcmfb vcmfb vss vss sg13_hv_nmos w=8u l=2u"
+   ],
+   [
+    "r1_afe_ota2",
+    "XMC4 cmd cmd vss vss sg13_hv_nmos w=4u l=1u",
+    "XMC4 cmd cmd vss vss sg13_hv_nmos w=8u l=2u"
+   ],
+   [
+    "@inst",
+    "XA1",
+    "WCC=25u"
+   ],
+   [
+    "r1_afe_ota",
+    "XCS1 outp vcms cap_cmim",
+    "XCX1 cz1 outn cap_cmim w=13u l=13u m=1 mm_ok=1\nXCX2 cz2 outp cap_cmim w=13u l=13u m=1 mm_ok=1\nXCS1 outp vcms cap_cmim"
+   ],
+   [
+    ".subckt r1_afe_ota2 inp inn outp outn vcm ibias vdd vss",
+    ".subckt r1_afe_ota2 inp inn outp outn vcm ibias cen cenb vdd vss"
+   ],
+   [
+    "r1_afe_ota2",
+    "XCC2 cz2 outn cap_cmim w={WCC} l={WCC} m=1 mm_ok=1",
+    "XCC2 cz2 outn cap_cmim w={WCC} l={WCC} m=1 mm_ok=1\nXCD1B cd1 outp cap_cmim w=13.5u l=13.5u m=1 mm_ok=1\nXTD1 cz1 cd1 cen cenb vdd vss r1_afe_tg\nXCD2B cd2 outn cap_cmim w=13.5u l=13.5u m=1 mm_ok=1\nXTD2 cz2 cd2 cen cenb vdd vss r1_afe_tg"
+   ],
+   [
+    "XA2 x2p x2n on2 op2 vcm2 ib2 vdd vss r1_afe_ota2",
+    "XA2 x2p x2n on2 op2 vcm2 ib2 c4b c4 vdd vss r1_afe_ota2"
+   ],
+   [
+    "@inst",
+    "XA2",
+    "WCC=12u"
+   ],
+   [
+    "@inst",
+    "XA2",
+    "W2P=120u W2N=60u"
+   ],
+   [
+    "r1_afe_ota",
+    "XMN1 gn inp tn vss sg13_hv_nmos w=80u l=2u ng=16",
+    "XMN1 gn inp tn vss sg13_hv_nmos w=160u l=2u ng=32"
+   ],
+   [
+    "r1_afe_ota",
+    "XMN2 gp inn tn vss sg13_hv_nmos w=80u l=2u ng=16",
+    "XMN2 gp inn tn vss sg13_hv_nmos w=160u l=2u ng=32"
+   ],
+   [
+    "XA1 x1p x1n ",
+    "Vpa1p x1p y1p dc 0 ac {vdp1}\nVpa1n x1n y1n dc 0 ac {vdn1}\nIpa1p 0 x1p dc 0 ac {idp1}\nIpa1n 0 x1n dc 0 ac {idn1}\nXA1 y1p y1n "
+   ],
+   [
+    "XA2 x2p x2n ",
+    "Vpa2p x2p y2p dc 0 ac {vdp2}\nVpa2n x2n y2n dc 0 ac {vdn2}\nIpa2p 0 x2p dc 0 ac {idp2}\nIpa2n 0 x2n dc 0 ac {idn2}\nXA2 y2p y2n "
+   ],
+   [
+    "XMC1 vcmfb vcms tc",
+    "Vpc vcms vcmsy dc 0 ac {vc1}\nIpc 0 vcms dc 0 ac {ic1}\nXMC1 vcmfb vcmsy tc"
+   ],
+   [
+    "XMC1 vcmfb vcms tc",
+    "Vpc vcms vcmsy dc 0 ac {vc2}\nIpc 0 vcms dc 0 ac {ic2}\nXMC1 vcmfb vcmsy tc"
+   ],
+   [
+    "XMN7 outp ",
+    "Vpop outpi outp dc 0 ac {vop1}\nVpon outni outn dc 0 ac {von1}\nIpop 0 outpi dc 0 ac {iop1}\nIpon 0 outni dc 0 ac {ion1}\nXMN7 outpi "
+   ],
+   [
+    "XMN8 outn ",
+    "XMN8 outni "
+   ],
+   [
+    "XMP7 outp ",
+    "XMP7 outpi "
+   ],
+   [
+    "XMP8 outn ",
+    "XMP8 outni "
+   ],
+   [
+    "XCC1 cz1 outp ",
+    "XCC1 cz1 outpi "
+   ],
+   [
+    "XCC2 cz2 outn ",
+    "XCC2 cz2 outni "
+   ],
+   [
+    "XMN7 outp ",
+    "Vpop outpi outp dc 0 ac {vop2}\nVpon outni outn dc 0 ac {von2}\nIpop 0 outpi dc 0 ac {iop2}\nIpon 0 outni dc 0 ac {ion2}\nXMN7 outpi "
+   ],
+   [
+    "XMN8 outn ",
+    "XMN8 outni "
+   ],
+   [
+    "XMP7 outp ",
+    "XMP7 outpi "
+   ],
+   [
+    "XMP8 outn ",
+    "XMP8 outni "
+   ],
+   [
+    "XCC1 cz1 outp ",
+    "XCC1 cz1 outpi "
+   ],
+   [
+    "XCC2 cz2 outn ",
+    "XCC2 cz2 outni "
+   ],
+   [
+    "XCC1B cb1 outp ",
+    "XCC1B cb1 outpi "
+   ],
+   [
+    "XCC2B cb2 outn ",
+    "XCC2B cb2 outni "
+   ],
+   [
+    "?",
+    "XCD1B cd1 outp ",
+    "XCD1B cd1 outpi "
+   ],
+   [
+    "?",
+    "XCD2B cd2 outn ",
+    "XCD2B cd2 outni "
+   ],
+   [
+    "?",
+    "XCX1 cz1 outn ",
+    "XCX1 cz1 outni "
+   ],
+   [
+    "?",
+    "XCX2 cz2 outp ",
+    "XCX2 cz2 outpi "
+   ]
+  ],
+  "seconds": 84.2,
+  "rows": [
+   {
+    "tag": "STBROW",
+    "code": 0,
+    "loop": "dm1",
+    "t_dc_db": 81.22,
+    "f_unity": 32758632.711237233,
+    "pm_deg": 68.7,
+    "gm_db": 18.06,
+    "f_180": 245121320.056582,
+    "ph_min_deg": -296.1
+   },
+   {
+    "tag": "STBROW",
+    "code": 0,
+    "loop": "cm1",
+    "t_dc_db": 78.88,
+    "f_unity": 12266401.865653386,
+    "pm_deg": 86.97,
+    "gm_db": null,
+    "f_180": null,
+    "ph_min_deg": -167.1
+   },
+   {
+    "tag": "STBROW",
+    "code": 0,
+    "loop": "dm2",
+    "t_dc_db": 91.73,
+    "f_unity": 48509217.2952554,
+    "pm_deg": 72.8,
+    "gm_db": 10.95,
+    "f_180": 267399580.71752605,
+    "ph_min_deg": -306.3
+   },
+   {
+    "tag": "STBROW",
+    "code": 0,
+    "loop": "cm2",
+    "t_dc_db": 91.46,
+    "f_unity": 19590057.259594586,
+    "pm_deg": 65.71,
+    "gm_db": 24.57,
+    "f_180": 142339659.11951953,
+    "ph_min_deg": -458.3
+   },
+   {
+    "tag": "STBROW",
+    "code": 3,
+    "loop": "dm1",
+    "t_dc_db": 77.58,
+    "f_unity": 29560002.39435147,
+    "pm_deg": 70.61,
+    "gm_db": 18.12,
+    "f_180": 190221073.24046245,
+    "ph_min_deg": -309.7
+   },
+   {
+    "tag": "STBROW",
+    "code": 3,
+    "loop": "cm1",
+    "t_dc_db": 90.56,
+    "f_unity": 15332152.105019983,
+    "pm_deg": 69.62,
+    "gm_db": 23.91,
+    "f_180": 101126552.23798403,
+    "ph_min_deg": -470.6
+   },
+   {
+    "tag": "STBROW",
+    "code": 3,
+    "loop": "dm2",
+    "t_dc_db": 91.89,
+    "f_unity": 48825360.06050083,
+    "pm_deg": 73.02,
+    "gm_db": 10.86,
+    "f_180": 271176253.68952405,
+    "ph_min_deg": -305.7
+   },
+   {
+    "tag": "STBROW",
+    "code": 3,
+    "loop": "cm2",
+    "t_dc_db": 91.58,
+    "f_unity": 19652139.540985655,
+    "pm_deg": 65.86,
+    "gm_db": 24.57,
+    "f_180": 142957203.38558123,
+    "ph_min_deg": -457.5
+   },
+   {
+    "tag": "STBROW",
+    "code": 4,
+    "loop": "dm1",
+    "t_dc_db": 71.77,
+    "f_unity": 21567774.663592577,
+    "pm_deg": 88.97,
+    "gm_db": 19.07,
+    "f_180": 224465082.10876277,
+    "ph_min_deg": -300.7
+   },
+   {
+    "tag": "STBROW",
+    "code": 4,
+    "loop": "cm1",
+    "t_dc_db": 84.97,
+    "f_unity": 8979958.567593064,
+    "pm_deg": 70.54,
+    "gm_db": 28.77,
+    "f_180": 110545953.6336939,
+    "ph_min_deg": -465.1
+   },
+   {
+    "tag": "STBROW",
+    "code": 4,
+    "loop": "dm2",
+    "t_dc_db": 82.49,
+    "f_unity": 93122171.17400178,
+    "pm_deg": 46.4,
+    "gm_db": 6.18,
+    "f_180": 202249293.96388105,
+    "ph_min_deg": -314.2
+   },
+   {
+    "tag": "STBROW",
+    "code": 4,
+    "loop": "cm2",
+    "t_dc_db": 90.08,
+    "f_unity": 35438668.9262198,
+    "pm_deg": 50.56,
+    "gm_db": 14.63,
+    "f_180": 111413928.20555976,
+    "ph_min_deg": -460.4
+   },
+   {
+    "tag": "STBROW",
+    "code": 5,
+    "loop": "dm1",
+    "t_dc_db": 68.56,
+    "f_unity": 25180077.40118835,
+    "pm_deg": 82.86,
+    "gm_db": 18.89,
+    "f_180": 194691743.77132836,
+    "ph_min_deg": -309.9
+   },
+   {
+    "tag": "STBROW",
+    "code": 5,
+    "loop": "cm1",
+    "t_dc_db": 88.18,
+    "f_unity": 13473206.952965818,
+    "pm_deg": 66.02,
+    "gm_db": 25.89,
+    "f_180": 103630168.50029153,
+    "ph_min_deg": -471.2
+   },
+   {
+    "tag": "STBROW",
+    "code": 5,
+    "loop": "dm2",
+    "t_dc_db": 82.57,
+    "f_unity": 93288844.93331264,
+    "pm_deg": 46.48,
+    "gm_db": 6.17,
+    "f_180": 203187947.02811688,
+    "ph_min_deg": -313.9
+   },
+   {
+    "tag": "STBROW",
+    "code": 5,
+    "loop": "cm2",
+    "t_dc_db": 90.13,
+    "f_unity": 35527057.5937937,
+    "pm_deg": 50.67,
+    "gm_db": 14.64,
+    "f_180": 111570143.93183503,
+    "ph_min_deg": -460.1
+   }
+  ],
+  "errors": [],
+  "deck": "r1_afe/dev-revd-comb-stb-01/l2+cx25_13+c2sw12_13.5+o2i1.5+np2_stb_tt_cm2.8.cir",
+  "log": "r1_afe/dev-revd-comb-stb-01/l2+cx25_13+c2sw12_13.5+o2i1.5+np2_stb_tt_cm2.8.log"
+ },
+ {
+  "name": "l2+cx25_13+c2sw12_13.5+o2i1.5+np2_stb_ss_cm0.5",
+  "corner": "ss",
+  "mismatch": false,
+  "subs": {
+   "MOS": "mos_ss",
+   "RES": "res_wcs",
+   "CAP": "cap_wcs",
+   "VDDA": 3.0,
+   "TEMP": 125,
+   "VCMI": 0.5,
+   "ACVDD": 0,
+   "NMC": 1,
+   "SEED": 1,
+   "LSB": 0.000439453125,
+   "CL": "2.8p",
+   "KLIST": "0 3 4 5",
+   "LLIST": "1 2 4 5",
+   "DIO": "dio_ss",
+   "RAW": "$G1_RESULTS_ROOT/r1_afe/dev-revd-comb-stb-01/l2+cx25_13+c2sw12_13.5+o2i1.5+np2_stb_ss_cm0.5"
+  },
+  "rc": 0,
+  "edits": [
+   [
+    "r1_afe_ota2",
+    "XMB0 ibias ibias vss vss sg13_hv_nmos w=4u l=1u",
+    "XMB0 ibias ibias vss vss sg13_hv_nmos w=8u l=2u"
+   ],
+   [
+    "r1_afe_ota2",
+    "XMB1 vbp ibias vss vss sg13_hv_nmos w=4u l=1u",
+    "XMB1 vbp ibias vss vss sg13_hv_nmos w=8u l=2u"
+   ],
+   [
+    "r1_afe_ota2",
+    "XMB4 vbpc ibias vss vss sg13_hv_nmos w=4u l=1u",
+    "XMB4 vbpc ibias vss vss sg13_hv_nmos w=8u l=2u"
+   ],
+   [
+    "r1_afe_ota2",
+    "XMC3 vcmfb vcmfb vss vss sg13_hv_nmos w=4u l=1u",
+    "XMC3 vcmfb vcmfb vss vss sg13_hv_nmos w=8u l=2u"
+   ],
+   [
+    "r1_afe_ota2",
+    "XMC4 cmd cmd vss vss sg13_hv_nmos w=4u l=1u",
+    "XMC4 cmd cmd vss vss sg13_hv_nmos w=8u l=2u"
+   ],
+   [
+    "@inst",
+    "XA1",
+    "WCC=25u"
+   ],
+   [
+    "r1_afe_ota",
+    "XCS1 outp vcms cap_cmim",
+    "XCX1 cz1 outn cap_cmim w=13u l=13u m=1 mm_ok=1\nXCX2 cz2 outp cap_cmim w=13u l=13u m=1 mm_ok=1\nXCS1 outp vcms cap_cmim"
+   ],
+   [
+    ".subckt r1_afe_ota2 inp inn outp outn vcm ibias vdd vss",
+    ".subckt r1_afe_ota2 inp inn outp outn vcm ibias cen cenb vdd vss"
+   ],
+   [
+    "r1_afe_ota2",
+    "XCC2 cz2 outn cap_cmim w={WCC} l={WCC} m=1 mm_ok=1",
+    "XCC2 cz2 outn cap_cmim w={WCC} l={WCC} m=1 mm_ok=1\nXCD1B cd1 outp cap_cmim w=13.5u l=13.5u m=1 mm_ok=1\nXTD1 cz1 cd1 cen cenb vdd vss r1_afe_tg\nXCD2B cd2 outn cap_cmim w=13.5u l=13.5u m=1 mm_ok=1\nXTD2 cz2 cd2 cen cenb vdd vss r1_afe_tg"
+   ],
+   [
+    "XA2 x2p x2n on2 op2 vcm2 ib2 vdd vss r1_afe_ota2",
+    "XA2 x2p x2n on2 op2 vcm2 ib2 c4b c4 vdd vss r1_afe_ota2"
+   ],
+   [
+    "@inst",
+    "XA2",
+    "WCC=12u"
+   ],
+   [
+    "@inst",
+    "XA2",
+    "W2P=120u W2N=60u"
+   ],
+   [
+    "r1_afe_ota",
+    "XMN1 gn inp tn vss sg13_hv_nmos w=80u l=2u ng=16",
+    "XMN1 gn inp tn vss sg13_hv_nmos w=160u l=2u ng=32"
+   ],
+   [
+    "r1_afe_ota",
+    "XMN2 gp inn tn vss sg13_hv_nmos w=80u l=2u ng=16",
+    "XMN2 gp inn tn vss sg13_hv_nmos w=160u l=2u ng=32"
+   ],
+   [
+    "XA1 x1p x1n ",
+    "Vpa1p x1p y1p dc 0 ac {vdp1}\nVpa1n x1n y1n dc 0 ac {vdn1}\nIpa1p 0 x1p dc 0 ac {idp1}\nIpa1n 0 x1n dc 0 ac {idn1}\nXA1 y1p y1n "
+   ],
+   [
+    "XA2 x2p x2n ",
+    "Vpa2p x2p y2p dc 0 ac {vdp2}\nVpa2n x2n y2n dc 0 ac {vdn2}\nIpa2p 0 x2p dc 0 ac {idp2}\nIpa2n 0 x2n dc 0 ac {idn2}\nXA2 y2p y2n "
+   ],
+   [
+    "XMC1 vcmfb vcms tc",
+    "Vpc vcms vcmsy dc 0 ac {vc1}\nIpc 0 vcms dc 0 ac {ic1}\nXMC1 vcmfb vcmsy tc"
+   ],
+   [
+    "XMC1 vcmfb vcms tc",
+    "Vpc vcms vcmsy dc 0 ac {vc2}\nIpc 0 vcms dc 0 ac {ic2}\nXMC1 vcmfb vcmsy tc"
+   ],
+   [
+    "XMN7 outp ",
+    "Vpop outpi outp dc 0 ac {vop1}\nVpon outni outn dc 0 ac {von1}\nIpop 0 outpi dc 0 ac {iop1}\nIpon 0 outni dc 0 ac {ion1}\nXMN7 outpi "
+   ],
+   [
+    "XMN8 outn ",
+    "XMN8 outni "
+   ],
+   [
+    "XMP7 outp ",
+    "XMP7 outpi "
+   ],
+   [
+    "XMP8 outn ",
+    "XMP8 outni "
+   ],
+   [
+    "XCC1 cz1 outp ",
+    "XCC1 cz1 outpi "
+   ],
+   [
+    "XCC2 cz2 outn ",
+    "XCC2 cz2 outni "
+   ],
+   [
+    "XMN7 outp ",
+    "Vpop outpi outp dc 0 ac {vop2}\nVpon outni outn dc 0 ac {von2}\nIpop 0 outpi dc 0 ac {iop2}\nIpon 0 outni dc 0 ac {ion2}\nXMN7 outpi "
+   ],
+   [
+    "XMN8 outn ",
+    "XMN8 outni "
+   ],
+   [
+    "XMP7 outp ",
+    "XMP7 outpi "
+   ],
+   [
+    "XMP8 outn ",
+    "XMP8 outni "
+   ],
+   [
+    "XCC1 cz1 outp ",
+    "XCC1 cz1 outpi "
+   ],
+   [
+    "XCC2 cz2 outn ",
+    "XCC2 cz2 outni "
+   ],
+   [
+    "XCC1B cb1 outp ",
+    "XCC1B cb1 outpi "
+   ],
+   [
+    "XCC2B cb2 outn ",
+    "XCC2B cb2 outni "
+   ],
+   [
+    "?",
+    "XCD1B cd1 outp ",
+    "XCD1B cd1 outpi "
+   ],
+   [
+    "?",
+    "XCD2B cd2 outn ",
+    "XCD2B cd2 outni "
+   ],
+   [
+    "?",
+    "XCX1 cz1 outn ",
+    "XCX1 cz1 outni "
+   ],
+   [
+    "?",
+    "XCX2 cz2 outp ",
+    "XCX2 cz2 outpi "
+   ]
+  ],
+  "seconds": 69.7,
+  "rows": [
+   {
+    "tag": "STBROW",
+    "code": 0,
+    "loop": "dm1",
+    "t_dc_db": 65.74,
+    "f_unity": 16506487.32761575,
+    "pm_deg": 65.49,
+    "gm_db": 25.15,
+    "f_180": 226900345.13658512,
+    "ph_min_deg": -298.1
+   },
+   {
+    "tag": "STBROW",
+    "code": 0,
+    "loop": "cm1",
+    "t_dc_db": 62.19,
+    "f_unity": 4463097.170355786,
+    "pm_deg": 78.02,
+    "gm_db": null,
+    "f_180": null,
+    "ph_min_deg": -133.6
+   },
+   {
+    "tag": "STBROW",
+    "code": 0,
+    "loop": "dm2",
+    "t_dc_db": 87.05,
+    "f_unity": 35825272.02155098,
+    "pm_deg": 75.01,
+    "gm_db": 12.41,
+    "f_180": 224621445.84857753,
+    "ph_min_deg": -321.7
+   },
+   {
+    "tag": "STBROW",
+    "code": 0,
+    "loop": "cm2",
+    "t_dc_db": 86.86,
+    "f_unity": 14937633.89212537,
+    "pm_deg": 66.36,
+    "gm_db": 25.58,
+    "f_180": 118932397.84223768,
+    "ph_min_deg": -473.6
+   },
+   {
+    "tag": "STBROW",
+    "code": 3,
+    "loop": "dm1",
+    "t_dc_db": 46.47,
+    "f_unity": 15393244.476455662,
+    "pm_deg": 82.79,
+    "gm_db": 26.02,
+    "f_180": 224203973.0988804,
+    "ph_min_deg": -296.5
+   },
+   {
+    "tag": "STBROW",
+    "code": 3,
+    "loop": "cm1",
+    "t_dc_db": 58.69,
+    "f_unity": 7434781.660748586,
+    "pm_deg": 66.68,
+    "gm_db": null,
+    "f_180": null,
+    "ph_min_deg": -149.4
+   },
+   {
+    "tag": "STBROW",
+    "code": 3,
+    "loop": "dm2",
+    "t_dc_db": 86.98,
+    "f_unity": 35768498.03338517,
+    "pm_deg": 74.96,
+    "gm_db": 12.44,
+    "f_180": 223850785.31413975,
+    "ph_min_deg": -321.9
+   },
+   {
+    "tag": "STBROW",
+    "code": 3,
+    "loop": "cm2",
+    "t_dc_db": 86.79,
+    "f_unity": 14926077.054445924,
+    "pm_deg": 66.34,
+    "gm_db": 25.58,
+    "f_180": 118783335.14066924,
+    "ph_min_deg": -473.8
+   },
+   {
+    "tag": "STBROW",
+    "code": 4,
+    "loop": "dm1",
+    "t_dc_db": 43.93,
+    "f_unity": 9483515.068232197,
+    "pm_deg": 98.92,
+    "gm_db": 27.23,
+    "f_180": 244051802.4527405,
+    "ph_min_deg": -292.7
+   },
+   {
+    "tag": "STBROW",
+    "code": 4,
+    "loop": "cm1",
+    "t_dc_db": 57.14,
+    "f_unity": 4564078.877313612,
+    "pm_deg": 66.88,
+    "gm_db": null,
+    "f_180": null,
+    "ph_min_deg": -129.3
+   },
+   {
+    "tag": "STBROW",
+    "code": 4,
+    "loop": "dm2",
+    "t_dc_db": 77.44,
+    "f_unity": 67058643.516478054,
+    "pm_deg": 52.0,
+    "gm_db": 7.54,
+    "f_180": 165522977.32922918,
+    "ph_min_deg": -328.9
+   },
+   {
+    "tag": "STBROW",
+    "code": 4,
+    "loop": "cm2",
+    "t_dc_db": 85.13,
+    "f_unity": 26914538.368144605,
+    "pm_deg": 51.96,
+    "gm_db": 15.51,
+    "f_180": 91821754.51698749,
+    "ph_min_deg": -474.4
+   },
+   {
+    "tag": "STBROW",
+    "code": 5,
+    "loop": "dm1",
+    "t_dc_db": 37.86,
+    "f_unity": 12137653.909466702,
+    "pm_deg": 100.45,
+    "gm_db": 26.22,
+    "f_180": 229550914.1809203,
+    "ph_min_deg": -296.6
+   },
+   {
+    "tag": "STBROW",
+    "code": 5,
+    "loop": "cm1",
+    "t_dc_db": 56.7,
+    "f_unity": 6742133.13838369,
+    "pm_deg": 62.26,
+    "gm_db": null,
+    "f_180": null,
+    "ph_min_deg": -144.1
+   },
+   {
+    "tag": "STBROW",
+    "code": 5,
+    "loop": "dm2",
+    "t_dc_db": 77.45,
+    "f_unity": 66982379.83797543,
+    "pm_deg": 51.97,
+    "gm_db": 7.55,
+    "f_180": 165387425.1801396,
+    "ph_min_deg": -329.0
+   },
+   {
+    "tag": "STBROW",
+    "code": 5,
+    "loop": "cm2",
+    "t_dc_db": 85.11,
+    "f_unity": 26909064.717861526,
+    "pm_deg": 51.98,
+    "gm_db": 15.52,
+    "f_180": 91820632.13454498,
+    "ph_min_deg": -474.4
+   }
+  ],
+  "errors": [
+   "Warning: singular matrix:  check node n.xdut.xcos.xa2.xmc1.nsg13_hv_pmos#GP",
+   "Warning: singular matrix:  check node n.xdut.xcos.xa2.xmc1.nsg13_hv_pmos#GP",
+   "Warning: singular matrix:  check node n.xdut.xcos.xa2.xmc1.nsg13_hv_pmos#GP",
+   "Warning: singular matrix:  check node n.xdut.xcos.xa2.xmc1.nsg13_hv_pmos#GP",
+   "Warning: singular matrix:  check node n.xdut.xcos.xa2.xmc1.nsg13_hv_pmos#GP",
+   "Warning: singular matrix:  check node n.xdut.xcos.xa2.xmc1.nsg13_hv_pmos#GP",
+   "Warning: singular matrix:  check node n.xdut.xcos.xa2.xmc1.nsg13_hv_pmos#GP",
+   "Warning: singular matrix:  check node n.xdut.xcos.xa2.xmc1.nsg13_hv_pmos#GP",
+   "Warning: singular matrix:  check node n.xdut.xcos.xa1.xmc1.nsg13_hv_pmos#GP",
+   "Warning: singular matrix:  check node n.xdut.xcos.xa1.xmc1.nsg13_hv_pmos#GP"
+  ],
+  "deck": "r1_afe/dev-revd-comb-stb-01/l2+cx25_13+c2sw12_13.5+o2i1.5+np2_stb_ss_cm0.5.cir",
+  "log": "r1_afe/dev-revd-comb-stb-01/l2+cx25_13+c2sw12_13.5+o2i1.5+np2_stb_ss_cm0.5.log"
+ },
+ {
+  "name": "l2+cx25_13+c2sw12_13.5+o2i1.5+np2_stb_ss_cm2.5",
+  "corner": "ss",
+  "mismatch": false,
+  "subs": {
+   "MOS": "mos_ss",
+   "RES": "res_wcs",
+   "CAP": "cap_wcs",
+   "VDDA": 3.0,
+   "TEMP": 125,
+   "VCMI": 2.5,
+   "ACVDD": 0,
+   "NMC": 1,
+   "SEED": 1,
+   "LSB": 0.000439453125,
+   "CL": "2.8p",
+   "KLIST": "0 3 4 5",
+   "LLIST": "1 2 4 5",
+   "DIO": "dio_ss",
+   "RAW": "$G1_RESULTS_ROOT/r1_afe/dev-revd-comb-stb-01/l2+cx25_13+c2sw12_13.5+o2i1.5+np2_stb_ss_cm2.5"
+  },
+  "rc": 0,
+  "edits": [
+   [
+    "r1_afe_ota2",
+    "XMB0 ibias ibias vss vss sg13_hv_nmos w=4u l=1u",
+    "XMB0 ibias ibias vss vss sg13_hv_nmos w=8u l=2u"
+   ],
+   [
+    "r1_afe_ota2",
+    "XMB1 vbp ibias vss vss sg13_hv_nmos w=4u l=1u",
+    "XMB1 vbp ibias vss vss sg13_hv_nmos w=8u l=2u"
+   ],
+   [
+    "r1_afe_ota2",
+    "XMB4 vbpc ibias vss vss sg13_hv_nmos w=4u l=1u",
+    "XMB4 vbpc ibias vss vss sg13_hv_nmos w=8u l=2u"
+   ],
+   [
+    "r1_afe_ota2",
+    "XMC3 vcmfb vcmfb vss vss sg13_hv_nmos w=4u l=1u",
+    "XMC3 vcmfb vcmfb vss vss sg13_hv_nmos w=8u l=2u"
+   ],
+   [
+    "r1_afe_ota2",
+    "XMC4 cmd cmd vss vss sg13_hv_nmos w=4u l=1u",
+    "XMC4 cmd cmd vss vss sg13_hv_nmos w=8u l=2u"
+   ],
+   [
+    "@inst",
+    "XA1",
+    "WCC=25u"
+   ],
+   [
+    "r1_afe_ota",
+    "XCS1 outp vcms cap_cmim",
+    "XCX1 cz1 outn cap_cmim w=13u l=13u m=1 mm_ok=1\nXCX2 cz2 outp cap_cmim w=13u l=13u m=1 mm_ok=1\nXCS1 outp vcms cap_cmim"
+   ],
+   [
+    ".subckt r1_afe_ota2 inp inn outp outn vcm ibias vdd vss",
+    ".subckt r1_afe_ota2 inp inn outp outn vcm ibias cen cenb vdd vss"
+   ],
+   [
+    "r1_afe_ota2",
+    "XCC2 cz2 outn cap_cmim w={WCC} l={WCC} m=1 mm_ok=1",
+    "XCC2 cz2 outn cap_cmim w={WCC} l={WCC} m=1 mm_ok=1\nXCD1B cd1 outp cap_cmim w=13.5u l=13.5u m=1 mm_ok=1\nXTD1 cz1 cd1 cen cenb vdd vss r1_afe_tg\nXCD2B cd2 outn cap_cmim w=13.5u l=13.5u m=1 mm_ok=1\nXTD2 cz2 cd2 cen cenb vdd vss r1_afe_tg"
+   ],
+   [
+    "XA2 x2p x2n on2 op2 vcm2 ib2 vdd vss r1_afe_ota2",
+    "XA2 x2p x2n on2 op2 vcm2 ib2 c4b c4 vdd vss r1_afe_ota2"
+   ],
+   [
+    "@inst",
+    "XA2",
+    "WCC=12u"
+   ],
+   [
+    "@inst",
+    "XA2",
+    "W2P=120u W2N=60u"
+   ],
+   [
+    "r1_afe_ota",
+    "XMN1 gn inp tn vss sg13_hv_nmos w=80u l=2u ng=16",
+    "XMN1 gn inp tn vss sg13_hv_nmos w=160u l=2u ng=32"
+   ],
+   [
+    "r1_afe_ota",
+    "XMN2 gp inn tn vss sg13_hv_nmos w=80u l=2u ng=16",
+    "XMN2 gp inn tn vss sg13_hv_nmos w=160u l=2u ng=32"
+   ],
+   [
+    "XA1 x1p x1n ",
+    "Vpa1p x1p y1p dc 0 ac {vdp1}\nVpa1n x1n y1n dc 0 ac {vdn1}\nIpa1p 0 x1p dc 0 ac {idp1}\nIpa1n 0 x1n dc 0 ac {idn1}\nXA1 y1p y1n "
+   ],
+   [
+    "XA2 x2p x2n ",
+    "Vpa2p x2p y2p dc 0 ac {vdp2}\nVpa2n x2n y2n dc 0 ac {vdn2}\nIpa2p 0 x2p dc 0 ac {idp2}\nIpa2n 0 x2n dc 0 ac {idn2}\nXA2 y2p y2n "
+   ],
+   [
+    "XMC1 vcmfb vcms tc",
+    "Vpc vcms vcmsy dc 0 ac {vc1}\nIpc 0 vcms dc 0 ac {ic1}\nXMC1 vcmfb vcmsy tc"
+   ],
+   [
+    "XMC1 vcmfb vcms tc",
+    "Vpc vcms vcmsy dc 0 ac {vc2}\nIpc 0 vcms dc 0 ac {ic2}\nXMC1 vcmfb vcmsy tc"
+   ],
+   [
+    "XMN7 outp ",
+    "Vpop outpi outp dc 0 ac {vop1}\nVpon outni outn dc 0 ac {von1}\nIpop 0 outpi dc 0 ac {iop1}\nIpon 0 outni dc 0 ac {ion1}\nXMN7 outpi "
+   ],
+   [
+    "XMN8 outn ",
+    "XMN8 outni "
+   ],
+   [
+    "XMP7 outp ",
+    "XMP7 outpi "
+   ],
+   [
+    "XMP8 outn ",
+    "XMP8 outni "
+   ],
+   [
+    "XCC1 cz1 outp ",
+    "XCC1 cz1 outpi "
+   ],
+   [
+    "XCC2 cz2 outn ",
+    "XCC2 cz2 outni "
+   ],
+   [
+    "XMN7 outp ",
+    "Vpop outpi outp dc 0 ac {vop2}\nVpon outni outn dc 0 ac {von2}\nIpop 0 outpi dc 0 ac {iop2}\nIpon 0 outni dc 0 ac {ion2}\nXMN7 outpi "
+   ],
+   [
+    "XMN8 outn ",
+    "XMN8 outni "
+   ],
+   [
+    "XMP7 outp ",
+    "XMP7 outpi "
+   ],
+   [
+    "XMP8 outn ",
+    "XMP8 outni "
+   ],
+   [
+    "XCC1 cz1 outp ",
+    "XCC1 cz1 outpi "
+   ],
+   [
+    "XCC2 cz2 outn ",
+    "XCC2 cz2 outni "
+   ],
+   [
+    "XCC1B cb1 outp ",
+    "XCC1B cb1 outpi "
+   ],
+   [
+    "XCC2B cb2 outn ",
+    "XCC2B cb2 outni "
+   ],
+   [
+    "?",
+    "XCD1B cd1 outp ",
+    "XCD1B cd1 outpi "
+   ],
+   [
+    "?",
+    "XCD2B cd2 outn ",
+    "XCD2B cd2 outni "
+   ],
+   [
+    "?",
+    "XCX1 cz1 outn ",
+    "XCX1 cz1 outni "
+   ],
+   [
+    "?",
+    "XCX2 cz2 outp ",
+    "XCX2 cz2 outpi "
+   ]
+  ],
+  "seconds": 82.5,
+  "rows": [
+   {
+    "tag": "STBROW",
+    "code": 0,
+    "loop": "dm1",
+    "t_dc_db": 79.21,
+    "f_unity": 22913128.897248916,
+    "pm_deg": 65.47,
+    "gm_db": 21.09,
+    "f_180": 208829293.79159912,
+    "ph_min_deg": -308.5
+   },
+   {
+    "tag": "STBROW",
+    "code": 0,
+    "loop": "cm1",
+    "t_dc_db": 77.23,
+    "f_unity": 8910231.517424649,
+    "pm_deg": 83.82,
+    "gm_db": null,
+    "f_180": null,
+    "ph_min_deg": -174.4
+   },
+   {
+    "tag": "STBROW",
+    "code": 0,
+    "loop": "dm2",
+    "t_dc_db": 87.21,
+    "f_unity": 35978343.673886254,
+    "pm_deg": 75.11,
+    "gm_db": 12.36,
+    "f_180": 226195997.83699366,
+    "ph_min_deg": -321.4
+   },
+   {
+    "tag": "STBROW",
+    "code": 0,
+    "loop": "cm2",
+    "t_dc_db": 87.0,
+    "f_unity": 14950912.863287259,
+    "pm_deg": 66.47,
+    "gm_db": 25.57,
+    "f_180": 119203266.2614769,
+    "ph_min_deg": -473.2
+   },
+   {
+    "tag": "STBROW",
+    "code": 3,
+    "loop": "dm1",
+    "t_dc_db": 74.7,
+    "f_unity": 21301064.656229127,
+    "pm_deg": 70.9,
+    "gm_db": 20.87,
+    "f_180": 163636190.53986108,
+    "ph_min_deg": -320.1
+   },
+   {
+    "tag": "STBROW",
+    "code": 3,
+    "loop": "cm1",
+    "t_dc_db": 87.74,
+    "f_unity": 11334808.478664285,
+    "pm_deg": 66.2,
+    "gm_db": 23.33,
+    "f_180": 71536623.84770659,
+    "ph_min_deg": -484.8
+   },
+   {
+    "tag": "STBROW",
+    "code": 3,
+    "loop": "dm2",
+    "t_dc_db": 87.5,
+    "f_unity": 36149430.67619649,
+    "pm_deg": 75.33,
+    "gm_db": 12.28,
+    "f_180": 229227946.15375677,
+    "ph_min_deg": -320.7
+   },
+   {
+    "tag": "STBROW",
+    "code": 3,
+    "loop": "cm2",
+    "t_dc_db": 87.26,
+    "f_unity": 14993637.09010477,
+    "pm_deg": 66.63,
+    "gm_db": 25.55,
+    "f_180": 119648221.88993229,
+    "ph_min_deg": -472.4
+   },
+   {
+    "tag": "STBROW",
+    "code": 4,
+    "loop": "dm1",
+    "t_dc_db": 69.19,
+    "f_unity": 14879280.436061159,
+    "pm_deg": 88.87,
+    "gm_db": 22.25,
+    "f_180": 190481503.89471647,
+    "ph_min_deg": -312.7
+   },
+   {
+    "tag": "STBROW",
+    "code": 4,
+    "loop": "cm1",
+    "t_dc_db": 82.92,
+    "f_unity": 6771276.129079071,
+    "pm_deg": 68.0,
+    "gm_db": 29.91,
+    "f_180": 85416386.03356382,
+    "ph_min_deg": -479.8
+   },
+   {
+    "tag": "STBROW",
+    "code": 4,
+    "loop": "dm2",
+    "t_dc_db": 78.16,
+    "f_unity": 68392660.0324935,
+    "pm_deg": 52.2,
+    "gm_db": 7.52,
+    "f_180": 169974621.34751558,
+    "ph_min_deg": -327.1
+   },
+   {
+    "tag": "STBROW",
+    "code": 4,
+    "loop": "cm2",
+    "t_dc_db": 85.8,
+    "f_unity": 27167850.5741598,
+    "pm_deg": 52.26,
+    "gm_db": 15.48,
+    "f_180": 92505264.09762211,
+    "ph_min_deg": -472.9
+   },
+   {
+    "tag": "STBROW",
+    "code": 5,
+    "loop": "dm1",
+    "t_dc_db": 65.53,
+    "f_unity": 18015671.062165406,
+    "pm_deg": 84.57,
+    "gm_db": 21.6,
+    "f_180": 167426280.71746063,
+    "ph_min_deg": -320.4
+   },
+   {
+    "tag": "STBROW",
+    "code": 5,
+    "loop": "cm1",
+    "t_dc_db": 85.23,
+    "f_unity": 9904092.07505944,
+    "pm_deg": 62.41,
+    "gm_db": 25.46,
+    "f_180": 73734748.41735913,
+    "ph_min_deg": -485.5
+   },
+   {
+    "tag": "STBROW",
+    "code": 5,
+    "loop": "dm2",
+    "t_dc_db": 78.27,
+    "f_unity": 68450233.0872982,
+    "pm_deg": 52.26,
+    "gm_db": 7.52,
+    "f_180": 170614428.08933896,
+    "ph_min_deg": -326.8
+   },
+   {
+    "tag": "STBROW",
+    "code": 5,
+    "loop": "cm2",
+    "t_dc_db": 85.9,
+    "f_unity": 27232865.17009546,
+    "pm_deg": 52.34,
+    "gm_db": 15.49,
+    "f_180": 92587569.15937276,
+    "ph_min_deg": -472.7
+   }
+  ],
+  "errors": [],
+  "deck": "r1_afe/dev-revd-comb-stb-01/l2+cx25_13+c2sw12_13.5+o2i1.5+np2_stb_ss_cm2.5.cir",
+  "log": "r1_afe/dev-revd-comb-stb-01/l2+cx25_13+c2sw12_13.5+o2i1.5+np2_stb_ss_cm2.5.log"
+ },
+ {
+  "name": "l2+cx25_13+c2sw12_13.5+o2i1.5+np2_stb_ss_cm2.8",
+  "corner": "ss",
+  "mismatch": false,
+  "subs": {
+   "MOS": "mos_ss",
+   "RES": "res_wcs",
+   "CAP": "cap_wcs",
+   "VDDA": 3.0,
+   "TEMP": 125,
+   "VCMI": 2.8,
+   "ACVDD": 0,
+   "NMC": 1,
+   "SEED": 1,
+   "LSB": 0.000439453125,
+   "CL": "2.8p",
+   "KLIST": "0 3 4 5",
+   "LLIST": "1 2 4 5",
+   "DIO": "dio_ss",
+   "RAW": "$G1_RESULTS_ROOT/r1_afe/dev-revd-comb-stb-01/l2+cx25_13+c2sw12_13.5+o2i1.5+np2_stb_ss_cm2.8"
+  },
+  "rc": 0,
+  "edits": [
+   [
+    "r1_afe_ota2",
+    "XMB0 ibias ibias vss vss sg13_hv_nmos w=4u l=1u",
+    "XMB0 ibias ibias vss vss sg13_hv_nmos w=8u l=2u"
+   ],
+   [
+    "r1_afe_ota2",
+    "XMB1 vbp ibias vss vss sg13_hv_nmos w=4u l=1u",
+    "XMB1 vbp ibias vss vss sg13_hv_nmos w=8u l=2u"
+   ],
+   [
+    "r1_afe_ota2",
+    "XMB4 vbpc ibias vss vss sg13_hv_nmos w=4u l=1u",
+    "XMB4 vbpc ibias vss vss sg13_hv_nmos w=8u l=2u"
+   ],
+   [
+    "r1_afe_ota2",
+    "XMC3 vcmfb vcmfb vss vss sg13_hv_nmos w=4u l=1u",
+    "XMC3 vcmfb vcmfb vss vss sg13_hv_nmos w=8u l=2u"
+   ],
+   [
+    "r1_afe_ota2",
+    "XMC4 cmd cmd vss vss sg13_hv_nmos w=4u l=1u",
+    "XMC4 cmd cmd vss vss sg13_hv_nmos w=8u l=2u"
+   ],
+   [
+    "@inst",
+    "XA1",
+    "WCC=25u"
+   ],
+   [
+    "r1_afe_ota",
+    "XCS1 outp vcms cap_cmim",
+    "XCX1 cz1 outn cap_cmim w=13u l=13u m=1 mm_ok=1\nXCX2 cz2 outp cap_cmim w=13u l=13u m=1 mm_ok=1\nXCS1 outp vcms cap_cmim"
+   ],
+   [
+    ".subckt r1_afe_ota2 inp inn outp outn vcm ibias vdd vss",
+    ".subckt r1_afe_ota2 inp inn outp outn vcm ibias cen cenb vdd vss"
+   ],
+   [
+    "r1_afe_ota2",
+    "XCC2 cz2 outn cap_cmim w={WCC} l={WCC} m=1 mm_ok=1",
+    "XCC2 cz2 outn cap_cmim w={WCC} l={WCC} m=1 mm_ok=1\nXCD1B cd1 outp cap_cmim w=13.5u l=13.5u m=1 mm_ok=1\nXTD1 cz1 cd1 cen cenb vdd vss r1_afe_tg\nXCD2B cd2 outn cap_cmim w=13.5u l=13.5u m=1 mm_ok=1\nXTD2 cz2 cd2 cen cenb vdd vss r1_afe_tg"
+   ],
+   [
+    "XA2 x2p x2n on2 op2 vcm2 ib2 vdd vss r1_afe_ota2",
+    "XA2 x2p x2n on2 op2 vcm2 ib2 c4b c4 vdd vss r1_afe_ota2"
+   ],
+   [
+    "@inst",
+    "XA2",
+    "WCC=12u"
+   ],
+   [
+    "@inst",
+    "XA2",
+    "W2P=120u W2N=60u"
+   ],
+   [
+    "r1_afe_ota",
+    "XMN1 gn inp tn vss sg13_hv_nmos w=80u l=2u ng=16",
+    "XMN1 gn inp tn vss sg13_hv_nmos w=160u l=2u ng=32"
+   ],
+   [
+    "r1_afe_ota",
+    "XMN2 gp inn tn vss sg13_hv_nmos w=80u l=2u ng=16",
+    "XMN2 gp inn tn vss sg13_hv_nmos w=160u l=2u ng=32"
+   ],
+   [
+    "XA1 x1p x1n ",
+    "Vpa1p x1p y1p dc 0 ac {vdp1}\nVpa1n x1n y1n dc 0 ac {vdn1}\nIpa1p 0 x1p dc 0 ac {idp1}\nIpa1n 0 x1n dc 0 ac {idn1}\nXA1 y1p y1n "
+   ],
+   [
+    "XA2 x2p x2n ",
+    "Vpa2p x2p y2p dc 0 ac {vdp2}\nVpa2n x2n y2n dc 0 ac {vdn2}\nIpa2p 0 x2p dc 0 ac {idp2}\nIpa2n 0 x2n dc 0 ac {idn2}\nXA2 y2p y2n "
+   ],
+   [
+    "XMC1 vcmfb vcms tc",
+    "Vpc vcms vcmsy dc 0 ac {vc1}\nIpc 0 vcms dc 0 ac {ic1}\nXMC1 vcmfb vcmsy tc"
+   ],
+   [
+    "XMC1 vcmfb vcms tc",
+    "Vpc vcms vcmsy dc 0 ac {vc2}\nIpc 0 vcms dc 0 ac {ic2}\nXMC1 vcmfb vcmsy tc"
+   ],
+   [
+    "XMN7 outp ",
+    "Vpop outpi outp dc 0 ac {vop1}\nVpon outni outn dc 0 ac {von1}\nIpop 0 outpi dc 0 ac {iop1}\nIpon 0 outni dc 0 ac {ion1}\nXMN7 outpi "
+   ],
+   [
+    "XMN8 outn ",
+    "XMN8 outni "
+   ],
+   [
+    "XMP7 outp ",
+    "XMP7 outpi "
+   ],
+   [
+    "XMP8 outn ",
+    "XMP8 outni "
+   ],
+   [
+    "XCC1 cz1 outp ",
+    "XCC1 cz1 outpi "
+   ],
+   [
+    "XCC2 cz2 outn ",
+    "XCC2 cz2 outni "
+   ],
+   [
+    "XMN7 outp ",
+    "Vpop outpi outp dc 0 ac {vop2}\nVpon outni outn dc 0 ac {von2}\nIpop 0 outpi dc 0 ac {iop2}\nIpon 0 outni dc 0 ac {ion2}\nXMN7 outpi "
+   ],
+   [
+    "XMN8 outn ",
+    "XMN8 outni "
+   ],
+   [
+    "XMP7 outp ",
+    "XMP7 outpi "
+   ],
+   [
+    "XMP8 outn ",
+    "XMP8 outni "
+   ],
+   [
+    "XCC1 cz1 outp ",
+    "XCC1 cz1 outpi "
+   ],
+   [
+    "XCC2 cz2 outn ",
+    "XCC2 cz2 outni "
+   ],
+   [
+    "XCC1B cb1 outp ",
+    "XCC1B cb1 outpi "
+   ],
+   [
+    "XCC2B cb2 outn ",
+    "XCC2B cb2 outni "
+   ],
+   [
+    "?",
+    "XCD1B cd1 outp ",
+    "XCD1B cd1 outpi "
+   ],
+   [
+    "?",
+    "XCD2B cd2 outn ",
+    "XCD2B cd2 outni "
+   ],
+   [
+    "?",
+    "XCX1 cz1 outn ",
+    "XCX1 cz1 outni "
+   ],
+   [
+    "?",
+    "XCX2 cz2 outp ",
+    "XCX2 cz2 outpi "
+   ]
+  ],
+  "seconds": 70.7,
+  "rows": [
+   {
+    "tag": "STBROW",
+    "code": 0,
+    "loop": "dm1",
+    "t_dc_db": 80.68,
+    "f_unity": 22885691.55692226,
+    "pm_deg": 65.98,
+    "gm_db": 20.83,
+    "f_180": 205860022.43690684,
+    "ph_min_deg": -309.0
+   },
+   {
+    "tag": "STBROW",
+    "code": 0,
+    "loop": "cm1",
+    "t_dc_db": 78.07,
+    "f_unity": 7690138.543967618,
+    "pm_deg": 82.67,
+    "gm_db": 36.25,
+    "f_180": 138879348.9490814,
+    "ph_min_deg": -480.4
+   },
+   {
+    "tag": "STBROW",
+    "code": 0,
+    "loop": "dm2",
+    "t_dc_db": 87.24,
+    "f_unity": 36003993.37079813,
+    "pm_deg": 75.14,
+    "gm_db": 12.35,
+    "f_180": 226574157.0354683,
+    "ph_min_deg": -321.3
+   },
+   {
+    "tag": "STBROW",
+    "code": 0,
+    "loop": "cm2",
+    "t_dc_db": 87.03,
+    "f_unity": 14957993.092237363,
+    "pm_deg": 66.48,
+    "gm_db": 25.57,
+    "f_180": 119262598.57593471,
+    "ph_min_deg": -473.1
+   },
+   {
+    "tag": "STBROW",
+    "code": 3,
+    "loop": "dm1",
+    "t_dc_db": 75.52,
+    "f_unity": 19845162.75458109,
+    "pm_deg": 75.0,
+    "gm_db": 21.84,
+    "f_180": 160725833.2427916,
+    "ph_min_deg": -333.3
+   },
+   {
+    "tag": "STBROW",
+    "code": 3,
+    "loop": "cm1",
+    "t_dc_db": 89.6,
+    "f_unity": 11881653.308937013,
+    "pm_deg": 70.51,
+    "gm_db": 25.17,
+    "f_180": 89355184.4384284,
+    "ph_min_deg": -490.4
+   },
+   {
+    "tag": "STBROW",
+    "code": 3,
+    "loop": "dm2",
+    "t_dc_db": 87.54,
+    "f_unity": 36172130.86012353,
+    "pm_deg": 75.38,
+    "gm_db": 12.26,
+    "f_180": 229681101.67548767,
+    "ph_min_deg": -320.6
+   },
+   {
+    "tag": "STBROW",
+    "code": 3,
+    "loop": "cm2",
+    "t_dc_db": 87.3,
+    "f_unity": 14997005.483685657,
+    "pm_deg": 66.64,
+    "gm_db": 25.55,
+    "f_180": 119711094.82614115,
+    "ph_min_deg": -472.3
+   },
+   {
+    "tag": "STBROW",
+    "code": 4,
+    "loop": "dm1",
+    "t_dc_db": 71.25,
+    "f_unity": 12477334.542717606,
+    "pm_deg": 93.2,
+    "gm_db": 23.18,
+    "f_180": 176841698.50482693,
+    "ph_min_deg": -322.2
+   },
+   {
+    "tag": "STBROW",
+    "code": 4,
+    "loop": "cm1",
+    "t_dc_db": 86.58,
+    "f_unity": 7090991.878904134,
+    "pm_deg": 72.75,
+    "gm_db": 31.29,
+    "f_180": 96442459.60504763,
+    "ph_min_deg": -481.8
+   },
+   {
+    "tag": "STBROW",
+    "code": 4,
+    "loop": "dm2",
+    "t_dc_db": 78.32,
+    "f_unity": 68580918.55359507,
+    "pm_deg": 52.32,
+    "gm_db": 7.51,
+    "f_180": 170912285.24936008,
+    "ph_min_deg": -326.7
+   },
+   {
+    "tag": "STBROW",
+    "code": 4,
+    "loop": "cm2",
+    "t_dc_db": 85.95,
+    "f_unity": 27218060.65174846,
+    "pm_deg": 52.32,
+    "gm_db": 15.47,
+    "f_180": 92603253.58052832,
+    "ph_min_deg": -472.6
+   },
+   {
+    "tag": "STBROW",
+    "code": 5,
+    "loop": "dm1",
+    "t_dc_db": 66.38,
+    "f_unity": 16443344.002940131,
+    "pm_deg": 89.17,
+    "gm_db": 22.59,
+    "f_180": 164266820.39021173,
+    "ph_min_deg": -333.6
+   },
+   {
+    "tag": "STBROW",
+    "code": 5,
+    "loop": "cm1",
+    "t_dc_db": 87.1,
+    "f_unity": 10281608.049598737,
+    "pm_deg": 66.94,
+    "gm_db": 27.52,
+    "f_180": 93655628.48690477,
+    "ph_min_deg": -491.1
+   },
+   {
+    "tag": "STBROW",
+    "code": 5,
+    "loop": "dm2",
+    "t_dc_db": 78.34,
+    "f_unity": 68544532.97694302,
+    "pm_deg": 52.32,
+    "gm_db": 7.52,
+    "f_180": 171021841.57206962,
+    "ph_min_deg": -326.6
+   },
+   {
+    "tag": "STBROW",
+    "code": 5,
+    "loop": "cm2",
+    "t_dc_db": 85.96,
+    "f_unity": 27230085.523331046,
+    "pm_deg": 52.44,
+    "gm_db": 15.48,
+    "f_180": 92636298.50949141,
+    "ph_min_deg": -472.6
+   }
+  ],
+  "errors": [
+   "Warning: singular matrix:  check node n.xdut.xcos.xa2.xmc1.nsg13_hv_pmos#GP",
+   "Warning: singular matrix:  check node n.xdut.xcos.xa2.xmc1.nsg13_hv_pmos#GP",
+   "Warning: singular matrix:  check node n.xdut.xcos.xa2.xmc1.nsg13_hv_pmos#GP",
+   "Warning: singular matrix:  check node n.xdut.xcos.xa2.xmc1.nsg13_hv_pmos#GP",
+   "Warning: singular matrix:  check node n.xdut.xcos.xa2.xmc1.nsg13_hv_pmos#GP",
+   "Warning: singular matrix:  check node n.xdut.xcos.xa2.xmc1.nsg13_hv_pmos#GP",
+   "Warning: singular matrix:  check node n.xdut.xcos.xa2.xmc1.nsg13_hv_pmos#GP",
+   "Warning: singular matrix:  check node n.xdut.xcos.xa2.xmc1.nsg13_hv_pmos#GP",
+   "Warning: singular matrix:  check node n.xdut.xsin.xa2.xmc1.nsg13_hv_pmos#GP",
+   "Warning: singular matrix:  check node n.xdut.xsin.xa2.xmc1.nsg13_hv_pmos#GP"
+  ],
+  "deck": "r1_afe/dev-revd-comb-stb-01/l2+cx25_13+c2sw12_13.5+o2i1.5+np2_stb_ss_cm2.8.cir",
+  "log": "r1_afe/dev-revd-comb-stb-01/l2+cx25_13+c2sw12_13.5+o2i1.5+np2_stb_ss_cm2.8.log"
+ },
+ {
+  "name": "l2+cx25_13+c2sw12_13.5+o2i1.5+np2_stb_ff_cm0.5",
+  "corner": "ff",
+  "mismatch": false,
+  "subs": {
+   "MOS": "mos_ff",
+   "RES": "res_bcs",
+   "CAP": "cap_bcs",
+   "VDDA": 3.6,
+   "TEMP": -40,
+   "VCMI": 0.5,
+   "ACVDD": 0,
+   "NMC": 1,
+   "SEED": 1,
+   "LSB": 0.000439453125,
+   "CL": "2.8p",
+   "KLIST": "0 3 4 5",
+   "LLIST": "1 2 4 5",
+   "DIO": "dio_ff",
+   "RAW": "$G1_RESULTS_ROOT/r1_afe/dev-revd-comb-stb-01/l2+cx25_13+c2sw12_13.5+o2i1.5+np2_stb_ff_cm0.5"
+  },
+  "rc": 0,
+  "edits": [
+   [
+    "r1_afe_ota2",
+    "XMB0 ibias ibias vss vss sg13_hv_nmos w=4u l=1u",
+    "XMB0 ibias ibias vss vss sg13_hv_nmos w=8u l=2u"
+   ],
+   [
+    "r1_afe_ota2",
+    "XMB1 vbp ibias vss vss sg13_hv_nmos w=4u l=1u",
+    "XMB1 vbp ibias vss vss sg13_hv_nmos w=8u l=2u"
+   ],
+   [
+    "r1_afe_ota2",
+    "XMB4 vbpc ibias vss vss sg13_hv_nmos w=4u l=1u",
+    "XMB4 vbpc ibias vss vss sg13_hv_nmos w=8u l=2u"
+   ],
+   [
+    "r1_afe_ota2",
+    "XMC3 vcmfb vcmfb vss vss sg13_hv_nmos w=4u l=1u",
+    "XMC3 vcmfb vcmfb vss vss sg13_hv_nmos w=8u l=2u"
+   ],
+   [
+    "r1_afe_ota2",
+    "XMC4 cmd cmd vss vss sg13_hv_nmos w=4u l=1u",
+    "XMC4 cmd cmd vss vss sg13_hv_nmos w=8u l=2u"
+   ],
+   [
+    "@inst",
+    "XA1",
+    "WCC=25u"
+   ],
+   [
+    "r1_afe_ota",
+    "XCS1 outp vcms cap_cmim",
+    "XCX1 cz1 outn cap_cmim w=13u l=13u m=1 mm_ok=1\nXCX2 cz2 outp cap_cmim w=13u l=13u m=1 mm_ok=1\nXCS1 outp vcms cap_cmim"
+   ],
+   [
+    ".subckt r1_afe_ota2 inp inn outp outn vcm ibias vdd vss",
+    ".subckt r1_afe_ota2 inp inn outp outn vcm ibias cen cenb vdd vss"
+   ],
+   [
+    "r1_afe_ota2",
+    "XCC2 cz2 outn cap_cmim w={WCC} l={WCC} m=1 mm_ok=1",
+    "XCC2 cz2 outn cap_cmim w={WCC} l={WCC} m=1 mm_ok=1\nXCD1B cd1 outp cap_cmim w=13.5u l=13.5u m=1 mm_ok=1\nXTD1 cz1 cd1 cen cenb vdd vss r1_afe_tg\nXCD2B cd2 outn cap_cmim w=13.5u l=13.5u m=1 mm_ok=1\nXTD2 cz2 cd2 cen cenb vdd vss r1_afe_tg"
+   ],
+   [
+    "XA2 x2p x2n on2 op2 vcm2 ib2 vdd vss r1_afe_ota2",
+    "XA2 x2p x2n on2 op2 vcm2 ib2 c4b c4 vdd vss r1_afe_ota2"
+   ],
+   [
+    "@inst",
+    "XA2",
+    "WCC=12u"
+   ],
+   [
+    "@inst",
+    "XA2",
+    "W2P=120u W2N=60u"
+   ],
+   [
+    "r1_afe_ota",
+    "XMN1 gn inp tn vss sg13_hv_nmos w=80u l=2u ng=16",
+    "XMN1 gn inp tn vss sg13_hv_nmos w=160u l=2u ng=32"
+   ],
+   [
+    "r1_afe_ota",
+    "XMN2 gp inn tn vss sg13_hv_nmos w=80u l=2u ng=16",
+    "XMN2 gp inn tn vss sg13_hv_nmos w=160u l=2u ng=32"
+   ],
+   [
+    "XA1 x1p x1n ",
+    "Vpa1p x1p y1p dc 0 ac {vdp1}\nVpa1n x1n y1n dc 0 ac {vdn1}\nIpa1p 0 x1p dc 0 ac {idp1}\nIpa1n 0 x1n dc 0 ac {idn1}\nXA1 y1p y1n "
+   ],
+   [
+    "XA2 x2p x2n ",
+    "Vpa2p x2p y2p dc 0 ac {vdp2}\nVpa2n x2n y2n dc 0 ac {vdn2}\nIpa2p 0 x2p dc 0 ac {idp2}\nIpa2n 0 x2n dc 0 ac {idn2}\nXA2 y2p y2n "
+   ],
+   [
+    "XMC1 vcmfb vcms tc",
+    "Vpc vcms vcmsy dc 0 ac {vc1}\nIpc 0 vcms dc 0 ac {ic1}\nXMC1 vcmfb vcmsy tc"
+   ],
+   [
+    "XMC1 vcmfb vcms tc",
+    "Vpc vcms vcmsy dc 0 ac {vc2}\nIpc 0 vcms dc 0 ac {ic2}\nXMC1 vcmfb vcmsy tc"
+   ],
+   [
+    "XMN7 outp ",
+    "Vpop outpi outp dc 0 ac {vop1}\nVpon outni outn dc 0 ac {von1}\nIpop 0 outpi dc 0 ac {iop1}\nIpon 0 outni dc 0 ac {ion1}\nXMN7 outpi "
+   ],
+   [
+    "XMN8 outn ",
+    "XMN8 outni "
+   ],
+   [
+    "XMP7 outp ",
+    "XMP7 outpi "
+   ],
+   [
+    "XMP8 outn ",
+    "XMP8 outni "
+   ],
+   [
+    "XCC1 cz1 outp ",
+    "XCC1 cz1 outpi "
+   ],
+   [
+    "XCC2 cz2 outn ",
+    "XCC2 cz2 outni "
+   ],
+   [
+    "XMN7 outp ",
+    "Vpop outpi outp dc 0 ac {vop2}\nVpon outni outn dc 0 ac {von2}\nIpop 0 outpi dc 0 ac {iop2}\nIpon 0 outni dc 0 ac {ion2}\nXMN7 outpi "
+   ],
+   [
+    "XMN8 outn ",
+    "XMN8 outni "
+   ],
+   [
+    "XMP7 outp ",
+    "XMP7 outpi "
+   ],
+   [
+    "XMP8 outn ",
+    "XMP8 outni "
+   ],
+   [
+    "XCC1 cz1 outp ",
+    "XCC1 cz1 outpi "
+   ],
+   [
+    "XCC2 cz2 outn ",
+    "XCC2 cz2 outni "
+   ],
+   [
+    "XCC1B cb1 outp ",
+    "XCC1B cb1 outpi "
+   ],
+   [
+    "XCC2B cb2 outn ",
+    "XCC2B cb2 outni "
+   ],
+   [
+    "?",
+    "XCD1B cd1 outp ",
+    "XCD1B cd1 outpi "
+   ],
+   [
+    "?",
+    "XCD2B cd2 outn ",
+    "XCD2B cd2 outni "
+   ],
+   [
+    "?",
+    "XCX1 cz1 outn ",
+    "XCX1 cz1 outni "
+   ],
+   [
+    "?",
+    "XCX2 cz2 outp ",
+    "XCX2 cz2 outpi "
+   ]
+  ],
+  "seconds": 115.8,
+  "rows": [
+   {
+    "tag": "STBROW",
+    "code": 0,
+    "loop": "dm1",
+    "t_dc_db": 72.63,
+    "f_unity": 31732363.71697593,
+    "pm_deg": 65.34,
+    "gm_db": 19.56,
+    "f_180": 274480959.71448904,
+    "ph_min_deg": -283.7
+   },
+   {
+    "tag": "STBROW",
+    "code": 0,
+    "loop": "cm1",
+    "t_dc_db": 68.4,
+    "f_unity": 9124861.00938516,
+    "pm_deg": 81.87,
+    "gm_db": null,
+    "f_180": null,
+    "ph_min_deg": -128.7
+   },
+   {
+    "tag": "STBROW",
+    "code": 0,
+    "loop": "dm2",
+    "t_dc_db": 91.77,
+    "f_unity": 61078718.91643099,
+    "pm_deg": 69.24,
+    "gm_db": 9.95,
+    "f_180": 288044808.2239245,
+    "ph_min_deg": -298.0
+   },
+   {
+    "tag": "STBROW",
+    "code": 0,
+    "loop": "cm2",
+    "t_dc_db": 91.55,
+    "f_unity": 24380968.51863053,
+    "pm_deg": 63.39,
+    "gm_db": 23.05,
+    "f_180": 153411224.09337482,
+    "ph_min_deg": -447.1
+   },
+   {
+    "tag": "STBROW",
+    "code": 3,
+    "loop": "dm1",
+    "t_dc_db": 45.84,
+    "f_unity": 22513276.904130146,
+    "pm_deg": 87.03,
+    "gm_db": 23.28,
+    "f_180": 302502984.82310003,
+    "ph_min_deg": -267.6
+   },
+   {
+    "tag": "STBROW",
+    "code": 3,
+    "loop": "cm1",
+    "t_dc_db": 55.73,
+    "f_unity": 8426791.04226466,
+    "pm_deg": 74.89,
+    "gm_db": null,
+    "f_180": null,
+    "ph_min_deg": -112.1
+   },
+   {
+    "tag": "STBROW",
+    "code": 3,
+    "loop": "dm2",
+    "t_dc_db": 91.69,
+    "f_unity": 60715287.15804936,
+    "pm_deg": 69.14,
+    "gm_db": 10.0,
+    "f_180": 285535395.23553556,
+    "ph_min_deg": -298.4
+   },
+   {
+    "tag": "STBROW",
+    "code": 3,
+    "loop": "cm2",
+    "t_dc_db": 91.48,
+    "f_unity": 24328685.200816795,
+    "pm_deg": 63.29,
+    "gm_db": 23.03,
+    "f_180": 152870357.81351092,
+    "ph_min_deg": -447.6
+   },
+   {
+    "tag": "STBROW",
+    "code": 4,
+    "loop": "dm1",
+    "t_dc_db": 44.03,
+    "f_unity": 14359121.179551132,
+    "pm_deg": 99.2,
+    "gm_db": 23.62,
+    "f_180": 309832171.92537546,
+    "ph_min_deg": -270.6
+   },
+   {
+    "tag": "STBROW",
+    "code": 4,
+    "loop": "cm1",
+    "t_dc_db": 54.81,
+    "f_unity": 5475060.48599729,
+    "pm_deg": 70.22,
+    "gm_db": null,
+    "f_180": null,
+    "ph_min_deg": -114.6
+   },
+   {
+    "tag": "STBROW",
+    "code": 4,
+    "loop": "dm2",
+    "t_dc_db": 82.25,
+    "f_unity": 114595537.16822846,
+    "pm_deg": 40.16,
+    "gm_db": 5.02,
+    "f_180": 216835670.60221672,
+    "ph_min_deg": -309.7
+   },
+   {
+    "tag": "STBROW",
+    "code": 4,
+    "loop": "cm2",
+    "t_dc_db": 89.91,
+    "f_unity": 43070357.46998753,
+    "pm_deg": 46.86,
+    "gm_db": 13.4,
+    "f_180": 121175893.1250982,
+    "ph_min_deg": -454.2
+   },
+   {
+    "tag": "STBROW",
+    "code": 5,
+    "loop": "dm1",
+    "t_dc_db": 36.86,
+    "f_unity": 16844342.99061899,
+    "pm_deg": 104.05,
+    "gm_db": 23.83,
+    "f_180": 309987380.24725527,
+    "ph_min_deg": -267.7
+   },
+   {
+    "tag": "STBROW",
+    "code": 5,
+    "loop": "cm1",
+    "t_dc_db": 53.45,
+    "f_unity": 7869027.91091628,
+    "pm_deg": 70.46,
+    "gm_db": null,
+    "f_180": null,
+    "ph_min_deg": -114.8
+   },
+   {
+    "tag": "STBROW",
+    "code": 5,
+    "loop": "dm2",
+    "t_dc_db": 82.27,
+    "f_unity": 114294529.30930643,
+    "pm_deg": 40.19,
+    "gm_db": 5.02,
+    "f_180": 216440814.3360425,
+    "ph_min_deg": -309.8
+   },
+   {
+    "tag": "STBROW",
+    "code": 5,
+    "loop": "cm2",
+    "t_dc_db": 89.89,
+    "f_unity": 43029166.6627535,
+    "pm_deg": 46.88,
+    "gm_db": 13.41,
+    "f_180": 121107871.13105349,
+    "ph_min_deg": -454.3
+   }
+  ],
+  "errors": [],
+  "deck": "r1_afe/dev-revd-comb-stb-01/l2+cx25_13+c2sw12_13.5+o2i1.5+np2_stb_ff_cm0.5.cir",
+  "log": "r1_afe/dev-revd-comb-stb-01/l2+cx25_13+c2sw12_13.5+o2i1.5+np2_stb_ff_cm0.5.log"
+ },
+ {
+  "name": "l2+cx25_13+c2sw12_13.5+o2i1.5+np2_stb_ff_cm2.5",
+  "corner": "ff",
+  "mismatch": false,
+  "subs": {
+   "MOS": "mos_ff",
+   "RES": "res_bcs",
+   "CAP": "cap_bcs",
+   "VDDA": 3.6,
+   "TEMP": -40,
+   "VCMI": 2.5,
+   "ACVDD": 0,
+   "NMC": 1,
+   "SEED": 1,
+   "LSB": 0.000439453125,
+   "CL": "2.8p",
+   "KLIST": "0 3 4 5",
+   "LLIST": "1 2 4 5",
+   "DIO": "dio_ff",
+   "RAW": "$G1_RESULTS_ROOT/r1_afe/dev-revd-comb-stb-01/l2+cx25_13+c2sw12_13.5+o2i1.5+np2_stb_ff_cm2.5"
+  },
+  "rc": 0,
+  "edits": [
+   [
+    "r1_afe_ota2",
+    "XMB0 ibias ibias vss vss sg13_hv_nmos w=4u l=1u",
+    "XMB0 ibias ibias vss vss sg13_hv_nmos w=8u l=2u"
+   ],
+   [
+    "r1_afe_ota2",
+    "XMB1 vbp ibias vss vss sg13_hv_nmos w=4u l=1u",
+    "XMB1 vbp ibias vss vss sg13_hv_nmos w=8u l=2u"
+   ],
+   [
+    "r1_afe_ota2",
+    "XMB4 vbpc ibias vss vss sg13_hv_nmos w=4u l=1u",
+    "XMB4 vbpc ibias vss vss sg13_hv_nmos w=8u l=2u"
+   ],
+   [
+    "r1_afe_ota2",
+    "XMC3 vcmfb vcmfb vss vss sg13_hv_nmos w=4u l=1u",
+    "XMC3 vcmfb vcmfb vss vss sg13_hv_nmos w=8u l=2u"
+   ],
+   [
+    "r1_afe_ota2",
+    "XMC4 cmd cmd vss vss sg13_hv_nmos w=4u l=1u",
+    "XMC4 cmd cmd vss vss sg13_hv_nmos w=8u l=2u"
+   ],
+   [
+    "@inst",
+    "XA1",
+    "WCC=25u"
+   ],
+   [
+    "r1_afe_ota",
+    "XCS1 outp vcms cap_cmim",
+    "XCX1 cz1 outn cap_cmim w=13u l=13u m=1 mm_ok=1\nXCX2 cz2 outp cap_cmim w=13u l=13u m=1 mm_ok=1\nXCS1 outp vcms cap_cmim"
+   ],
+   [
+    ".subckt r1_afe_ota2 inp inn outp outn vcm ibias vdd vss",
+    ".subckt r1_afe_ota2 inp inn outp outn vcm ibias cen cenb vdd vss"
+   ],
+   [
+    "r1_afe_ota2",
+    "XCC2 cz2 outn cap_cmim w={WCC} l={WCC} m=1 mm_ok=1",
+    "XCC2 cz2 outn cap_cmim w={WCC} l={WCC} m=1 mm_ok=1\nXCD1B cd1 outp cap_cmim w=13.5u l=13.5u m=1 mm_ok=1\nXTD1 cz1 cd1 cen cenb vdd vss r1_afe_tg\nXCD2B cd2 outn cap_cmim w=13.5u l=13.5u m=1 mm_ok=1\nXTD2 cz2 cd2 cen cenb vdd vss r1_afe_tg"
+   ],
+   [
+    "XA2 x2p x2n on2 op2 vcm2 ib2 vdd vss r1_afe_ota2",
+    "XA2 x2p x2n on2 op2 vcm2 ib2 c4b c4 vdd vss r1_afe_ota2"
+   ],
+   [
+    "@inst",
+    "XA2",
+    "WCC=12u"
+   ],
+   [
+    "@inst",
+    "XA2",
+    "W2P=120u W2N=60u"
+   ],
+   [
+    "r1_afe_ota",
+    "XMN1 gn inp tn vss sg13_hv_nmos w=80u l=2u ng=16",
+    "XMN1 gn inp tn vss sg13_hv_nmos w=160u l=2u ng=32"
+   ],
+   [
+    "r1_afe_ota",
+    "XMN2 gp inn tn vss sg13_hv_nmos w=80u l=2u ng=16",
+    "XMN2 gp inn tn vss sg13_hv_nmos w=160u l=2u ng=32"
+   ],
+   [
+    "XA1 x1p x1n ",
+    "Vpa1p x1p y1p dc 0 ac {vdp1}\nVpa1n x1n y1n dc 0 ac {vdn1}\nIpa1p 0 x1p dc 0 ac {idp1}\nIpa1n 0 x1n dc 0 ac {idn1}\nXA1 y1p y1n "
+   ],
+   [
+    "XA2 x2p x2n ",
+    "Vpa2p x2p y2p dc 0 ac {vdp2}\nVpa2n x2n y2n dc 0 ac {vdn2}\nIpa2p 0 x2p dc 0 ac {idp2}\nIpa2n 0 x2n dc 0 ac {idn2}\nXA2 y2p y2n "
+   ],
+   [
+    "XMC1 vcmfb vcms tc",
+    "Vpc vcms vcmsy dc 0 ac {vc1}\nIpc 0 vcms dc 0 ac {ic1}\nXMC1 vcmfb vcmsy tc"
+   ],
+   [
+    "XMC1 vcmfb vcms tc",
+    "Vpc vcms vcmsy dc 0 ac {vc2}\nIpc 0 vcms dc 0 ac {ic2}\nXMC1 vcmfb vcmsy tc"
+   ],
+   [
+    "XMN7 outp ",
+    "Vpop outpi outp dc 0 ac {vop1}\nVpon outni outn dc 0 ac {von1}\nIpop 0 outpi dc 0 ac {iop1}\nIpon 0 outni dc 0 ac {ion1}\nXMN7 outpi "
+   ],
+   [
+    "XMN8 outn ",
+    "XMN8 outni "
+   ],
+   [
+    "XMP7 outp ",
+    "XMP7 outpi "
+   ],
+   [
+    "XMP8 outn ",
+    "XMP8 outni "
+   ],
+   [
+    "XCC1 cz1 outp ",
+    "XCC1 cz1 outpi "
+   ],
+   [
+    "XCC2 cz2 outn ",
+    "XCC2 cz2 outni "
+   ],
+   [
+    "XMN7 outp ",
+    "Vpop outpi outp dc 0 ac {vop2}\nVpon outni outn dc 0 ac {von2}\nIpop 0 outpi dc 0 ac {iop2}\nIpon 0 outni dc 0 ac {ion2}\nXMN7 outpi "
+   ],
+   [
+    "XMN8 outn ",
+    "XMN8 outni "
+   ],
+   [
+    "XMP7 outp ",
+    "XMP7 outpi "
+   ],
+   [
+    "XMP8 outn ",
+    "XMP8 outni "
+   ],
+   [
+    "XCC1 cz1 outp ",
+    "XCC1 cz1 outpi "
+   ],
+   [
+    "XCC2 cz2 outn ",
+    "XCC2 cz2 outni "
+   ],
+   [
+    "XCC1B cb1 outp ",
+    "XCC1B cb1 outpi "
+   ],
+   [
+    "XCC2B cb2 outn ",
+    "XCC2B cb2 outni "
+   ],
+   [
+    "?",
+    "XCD1B cd1 outp ",
+    "XCD1B cd1 outpi "
+   ],
+   [
+    "?",
+    "XCD2B cd2 outn ",
+    "XCD2B cd2 outni "
+   ],
+   [
+    "?",
+    "XCX1 cz1 outn ",
+    "XCX1 cz1 outni "
+   ],
+   [
+    "?",
+    "XCX2 cz2 outp ",
+    "XCX2 cz2 outpi "
+   ]
+  ],
+  "seconds": 97.7,
+  "rows": [
+   {
+    "tag": "STBROW",
+    "code": 0,
+    "loop": "dm1",
+    "t_dc_db": 80.65,
+    "f_unity": 41197737.13737383,
+    "pm_deg": 69.09,
+    "gm_db": 16.33,
+    "f_180": 272535672.42849326,
+    "ph_min_deg": -287.9
+   },
+   {
+    "tag": "STBROW",
+    "code": 0,
+    "loop": "cm1",
+    "t_dc_db": 77.85,
+    "f_unity": 14990007.494803853,
+    "pm_deg": 87.23,
+    "gm_db": null,
+    "f_180": null,
+    "ph_min_deg": -160.3
+   },
+   {
+    "tag": "STBROW",
+    "code": 0,
+    "loop": "dm2",
+    "t_dc_db": 91.81,
+    "f_unity": 61266085.8848065,
+    "pm_deg": 69.29,
+    "gm_db": 9.93,
+    "f_180": 288975295.6147771,
+    "ph_min_deg": -297.8
+   },
+   {
+    "tag": "STBROW",
+    "code": 0,
+    "loop": "cm2",
+    "t_dc_db": 91.58,
+    "f_unity": 24386011.578470036,
+    "pm_deg": 63.44,
+    "gm_db": 23.05,
+    "f_180": 153607090.4294066,
+    "ph_min_deg": -446.9
+   },
+   {
+    "tag": "STBROW",
+    "code": 3,
+    "loop": "dm1",
+    "t_dc_db": 68.69,
+    "f_unity": 48863058.04916909,
+    "pm_deg": 64.36,
+    "gm_db": 15.91,
+    "f_180": 257206027.05116084,
+    "ph_min_deg": -290.6
+   },
+   {
+    "tag": "STBROW",
+    "code": 3,
+    "loop": "cm1",
+    "t_dc_db": 78.36,
+    "f_unity": 21737149.57922558,
+    "pm_deg": 77.82,
+    "gm_db": 30.59,
+    "f_180": 237069100.6390273,
+    "ph_min_deg": -188.3
+   },
+   {
+    "tag": "STBROW",
+    "code": 3,
+    "loop": "dm2",
+    "t_dc_db": 91.82,
+    "f_unity": 61315265.93511115,
+    "pm_deg": 69.29,
+    "gm_db": 9.92,
+    "f_180": 289206466.19081634,
+    "ph_min_deg": -297.8
+   },
+   {
+    "tag": "STBROW",
+    "code": 3,
+    "loop": "cm2",
+    "t_dc_db": 91.58,
+    "f_unity": 24383450.437925663,
+    "pm_deg": 63.45,
+    "gm_db": 23.06,
+    "f_180": 153657561.3517204,
+    "ph_min_deg": -446.8
+   },
+   {
+    "tag": "STBROW",
+    "code": 4,
+    "loop": "dm1",
+    "t_dc_db": 64.57,
+    "f_unity": 33315526.083915852,
+    "pm_deg": 86.91,
+    "gm_db": 17.11,
+    "f_180": 282372715.8123279,
+    "ph_min_deg": -288.1
+   },
+   {
+    "tag": "STBROW",
+    "code": 4,
+    "loop": "cm1",
+    "t_dc_db": 75.89,
+    "f_unity": 13400609.538923804,
+    "pm_deg": 81.72,
+    "gm_db": null,
+    "f_180": null,
+    "ph_min_deg": -168.3
+   },
+   {
+    "tag": "STBROW",
+    "code": 4,
+    "loop": "dm2",
+    "t_dc_db": 82.42,
+    "f_unity": 116654324.36381975,
+    "pm_deg": 39.8,
+    "gm_db": 4.98,
+    "f_180": 219726581.42866573,
+    "ph_min_deg": -308.7
+   },
+   {
+    "tag": "STBROW",
+    "code": 4,
+    "loop": "cm2",
+    "t_dc_db": 90.07,
+    "f_unity": 43127824.90308295,
+    "pm_deg": 47.29,
+    "gm_db": 13.44,
+    "f_180": 122064611.9242295,
+    "ph_min_deg": -453.3
+   },
+   {
+    "tag": "STBROW",
+    "code": 5,
+    "loop": "dm1",
+    "t_dc_db": 59.95,
+    "f_unity": 43805590.99229187,
+    "pm_deg": 74.3,
+    "gm_db": 16.52,
+    "f_180": 263601892.18767413,
+    "ph_min_deg": -290.6
+   },
+   {
+    "tag": "STBROW",
+    "code": 5,
+    "loop": "cm1",
+    "t_dc_db": 76.19,
+    "f_unity": 18995211.806840893,
+    "pm_deg": 74.49,
+    "gm_db": 34.08,
+    "f_180": 258692073.4854892,
+    "ph_min_deg": -183.1
+   },
+   {
+    "tag": "STBROW",
+    "code": 5,
+    "loop": "dm2",
+    "t_dc_db": 82.43,
+    "f_unity": 116559262.4084197,
+    "pm_deg": 39.78,
+    "gm_db": 4.98,
+    "f_180": 219826345.93393803,
+    "ph_min_deg": -308.7
+   },
+   {
+    "tag": "STBROW",
+    "code": 5,
+    "loop": "cm2",
+    "t_dc_db": 90.07,
+    "f_unity": 43125698.93124184,
+    "pm_deg": 47.4,
+    "gm_db": 13.44,
+    "f_180": 122024508.32529679,
+    "ph_min_deg": -453.3
+   }
+  ],
+  "errors": [
+   "Warning: singular matrix:  check node n.xdut.xcos.xa2.xmc1.nsg13_hv_pmos#GP",
+   "Warning: singular matrix:  check node n.xdut.xcos.xa2.xmc1.nsg13_hv_pmos#GP",
+   "Warning: singular matrix:  check node n.xdut.xcos.xa2.xmc1.nsg13_hv_pmos#GP",
+   "Warning: singular matrix:  check node n.xdut.xcos.xa2.xmc1.nsg13_hv_pmos#GP",
+   "Warning: singular matrix:  check node n.xdut.xcos.xa2.xmc1.nsg13_hv_pmos#GP",
+   "Warning: singular matrix:  check node n.xdut.xcos.xa2.xmc1.nsg13_hv_pmos#GP",
+   "Warning: singular matrix:  check node n.xdut.xcos.xa2.xmc1.nsg13_hv_pmos#GP",
+   "Warning: singular matrix:  check node n.xdut.xcos.xa2.xmc1.nsg13_hv_pmos#GP"
+  ],
+  "deck": "r1_afe/dev-revd-comb-stb-01/l2+cx25_13+c2sw12_13.5+o2i1.5+np2_stb_ff_cm2.5.cir",
+  "log": "r1_afe/dev-revd-comb-stb-01/l2+cx25_13+c2sw12_13.5+o2i1.5+np2_stb_ff_cm2.5.log"
+ },
+ {
+  "name": "l2+cx25_13+c2sw12_13.5+o2i1.5+np2_stb_ff_cm2.8",
+  "corner": "ff",
+  "mismatch": false,
+  "subs": {
+   "MOS": "mos_ff",
+   "RES": "res_bcs",
+   "CAP": "cap_bcs",
+   "VDDA": 3.6,
+   "TEMP": -40,
+   "VCMI": 2.8,
+   "ACVDD": 0,
+   "NMC": 1,
+   "SEED": 1,
+   "LSB": 0.000439453125,
+   "CL": "2.8p",
+   "KLIST": "0 3 4 5",
+   "LLIST": "1 2 4 5",
+   "DIO": "dio_ff",
+   "RAW": "$G1_RESULTS_ROOT/r1_afe/dev-revd-comb-stb-01/l2+cx25_13+c2sw12_13.5+o2i1.5+np2_stb_ff_cm2.8"
+  },
+  "rc": 0,
+  "edits": [
+   [
+    "r1_afe_ota2",
+    "XMB0 ibias ibias vss vss sg13_hv_nmos w=4u l=1u",
+    "XMB0 ibias ibias vss vss sg13_hv_nmos w=8u l=2u"
+   ],
+   [
+    "r1_afe_ota2",
+    "XMB1 vbp ibias vss vss sg13_hv_nmos w=4u l=1u",
+    "XMB1 vbp ibias vss vss sg13_hv_nmos w=8u l=2u"
+   ],
+   [
+    "r1_afe_ota2",
+    "XMB4 vbpc ibias vss vss sg13_hv_nmos w=4u l=1u",
+    "XMB4 vbpc ibias vss vss sg13_hv_nmos w=8u l=2u"
+   ],
+   [
+    "r1_afe_ota2",
+    "XMC3 vcmfb vcmfb vss vss sg13_hv_nmos w=4u l=1u",
+    "XMC3 vcmfb vcmfb vss vss sg13_hv_nmos w=8u l=2u"
+   ],
+   [
+    "r1_afe_ota2",
+    "XMC4 cmd cmd vss vss sg13_hv_nmos w=4u l=1u",
+    "XMC4 cmd cmd vss vss sg13_hv_nmos w=8u l=2u"
+   ],
+   [
+    "@inst",
+    "XA1",
+    "WCC=25u"
+   ],
+   [
+    "r1_afe_ota",
+    "XCS1 outp vcms cap_cmim",
+    "XCX1 cz1 outn cap_cmim w=13u l=13u m=1 mm_ok=1\nXCX2 cz2 outp cap_cmim w=13u l=13u m=1 mm_ok=1\nXCS1 outp vcms cap_cmim"
+   ],
+   [
+    ".subckt r1_afe_ota2 inp inn outp outn vcm ibias vdd vss",
+    ".subckt r1_afe_ota2 inp inn outp outn vcm ibias cen cenb vdd vss"
+   ],
+   [
+    "r1_afe_ota2",
+    "XCC2 cz2 outn cap_cmim w={WCC} l={WCC} m=1 mm_ok=1",
+    "XCC2 cz2 outn cap_cmim w={WCC} l={WCC} m=1 mm_ok=1\nXCD1B cd1 outp cap_cmim w=13.5u l=13.5u m=1 mm_ok=1\nXTD1 cz1 cd1 cen cenb vdd vss r1_afe_tg\nXCD2B cd2 outn cap_cmim w=13.5u l=13.5u m=1 mm_ok=1\nXTD2 cz2 cd2 cen cenb vdd vss r1_afe_tg"
+   ],
+   [
+    "XA2 x2p x2n on2 op2 vcm2 ib2 vdd vss r1_afe_ota2",
+    "XA2 x2p x2n on2 op2 vcm2 ib2 c4b c4 vdd vss r1_afe_ota2"
+   ],
+   [
+    "@inst",
+    "XA2",
+    "WCC=12u"
+   ],
+   [
+    "@inst",
+    "XA2",
+    "W2P=120u W2N=60u"
+   ],
+   [
+    "r1_afe_ota",
+    "XMN1 gn inp tn vss sg13_hv_nmos w=80u l=2u ng=16",
+    "XMN1 gn inp tn vss sg13_hv_nmos w=160u l=2u ng=32"
+   ],
+   [
+    "r1_afe_ota",
+    "XMN2 gp inn tn vss sg13_hv_nmos w=80u l=2u ng=16",
+    "XMN2 gp inn tn vss sg13_hv_nmos w=160u l=2u ng=32"
+   ],
+   [
+    "XA1 x1p x1n ",
+    "Vpa1p x1p y1p dc 0 ac {vdp1}\nVpa1n x1n y1n dc 0 ac {vdn1}\nIpa1p 0 x1p dc 0 ac {idp1}\nIpa1n 0 x1n dc 0 ac {idn1}\nXA1 y1p y1n "
+   ],
+   [
+    "XA2 x2p x2n ",
+    "Vpa2p x2p y2p dc 0 ac {vdp2}\nVpa2n x2n y2n dc 0 ac {vdn2}\nIpa2p 0 x2p dc 0 ac {idp2}\nIpa2n 0 x2n dc 0 ac {idn2}\nXA2 y2p y2n "
+   ],
+   [
+    "XMC1 vcmfb vcms tc",
+    "Vpc vcms vcmsy dc 0 ac {vc1}\nIpc 0 vcms dc 0 ac {ic1}\nXMC1 vcmfb vcmsy tc"
+   ],
+   [
+    "XMC1 vcmfb vcms tc",
+    "Vpc vcms vcmsy dc 0 ac {vc2}\nIpc 0 vcms dc 0 ac {ic2}\nXMC1 vcmfb vcmsy tc"
+   ],
+   [
+    "XMN7 outp ",
+    "Vpop outpi outp dc 0 ac {vop1}\nVpon outni outn dc 0 ac {von1}\nIpop 0 outpi dc 0 ac {iop1}\nIpon 0 outni dc 0 ac {ion1}\nXMN7 outpi "
+   ],
+   [
+    "XMN8 outn ",
+    "XMN8 outni "
+   ],
+   [
+    "XMP7 outp ",
+    "XMP7 outpi "
+   ],
+   [
+    "XMP8 outn ",
+    "XMP8 outni "
+   ],
+   [
+    "XCC1 cz1 outp ",
+    "XCC1 cz1 outpi "
+   ],
+   [
+    "XCC2 cz2 outn ",
+    "XCC2 cz2 outni "
+   ],
+   [
+    "XMN7 outp ",
+    "Vpop outpi outp dc 0 ac {vop2}\nVpon outni outn dc 0 ac {von2}\nIpop 0 outpi dc 0 ac {iop2}\nIpon 0 outni dc 0 ac {ion2}\nXMN7 outpi "
+   ],
+   [
+    "XMN8 outn ",
+    "XMN8 outni "
+   ],
+   [
+    "XMP7 outp ",
+    "XMP7 outpi "
+   ],
+   [
+    "XMP8 outn ",
+    "XMP8 outni "
+   ],
+   [
+    "XCC1 cz1 outp ",
+    "XCC1 cz1 outpi "
+   ],
+   [
+    "XCC2 cz2 outn ",
+    "XCC2 cz2 outni "
+   ],
+   [
+    "XCC1B cb1 outp ",
+    "XCC1B cb1 outpi "
+   ],
+   [
+    "XCC2B cb2 outn ",
+    "XCC2B cb2 outni "
+   ],
+   [
+    "?",
+    "XCD1B cd1 outp ",
+    "XCD1B cd1 outpi "
+   ],
+   [
+    "?",
+    "XCD2B cd2 outn ",
+    "XCD2B cd2 outni "
+   ],
+   [
+    "?",
+    "XCX1 cz1 outn ",
+    "XCX1 cz1 outni "
+   ],
+   [
+    "?",
+    "XCX2 cz2 outp ",
+    "XCX2 cz2 outpi "
+   ]
+  ],
+  "seconds": 98.4,
+  "rows": [
+   {
+    "tag": "STBROW",
+    "code": 0,
+    "loop": "dm1",
+    "t_dc_db": 81.17,
+    "f_unity": 42220787.637437426,
+    "pm_deg": 69.66,
+    "gm_db": 16.02,
+    "f_180": 273160359.099356,
+    "ph_min_deg": -287.9
+   },
+   {
+    "tag": "STBROW",
+    "code": 0,
+    "loop": "cm1",
+    "t_dc_db": 78.31,
+    "f_unity": 15118088.894967051,
+    "pm_deg": 87.68,
+    "gm_db": null,
+    "f_180": null,
+    "ph_min_deg": -159.9
+   },
+   {
+    "tag": "STBROW",
+    "code": 0,
+    "loop": "dm2",
+    "t_dc_db": 91.81,
+    "f_unity": 61277055.05293788,
+    "pm_deg": 69.29,
+    "gm_db": 9.93,
+    "f_180": 289016394.76113236,
+    "ph_min_deg": -297.8
+   },
+   {
+    "tag": "STBROW",
+    "code": 0,
+    "loop": "cm2",
+    "t_dc_db": 91.58,
+    "f_unity": 24386003.887736812,
+    "pm_deg": 63.44,
+    "gm_db": 23.05,
+    "f_180": 153615898.86087295,
+    "ph_min_deg": -446.8
+   },
+   {
+    "tag": "STBROW",
+    "code": 3,
+    "loop": "dm1",
+    "t_dc_db": 72.58,
+    "f_unity": 47940730.87059647,
+    "pm_deg": 64.9,
+    "gm_db": 15.46,
+    "f_180": 246639020.28840095,
+    "ph_min_deg": -292.0
+   },
+   {
+    "tag": "STBROW",
+    "code": 3,
+    "loop": "cm1",
+    "t_dc_db": 82.97,
+    "f_unity": 19473014.683735806,
+    "pm_deg": 69.96,
+    "gm_db": 24.2,
+    "f_180": 143353716.09551436,
+    "ph_min_deg": -454.1
+   },
+   {
+    "tag": "STBROW",
+    "code": 3,
+    "loop": "dm2",
+    "t_dc_db": 91.87,
+    "f_unity": 61488523.664922036,
+    "pm_deg": 69.36,
+    "gm_db": 9.89,
+    "f_180": 290589064.0967749,
+    "ph_min_deg": -297.5
+   },
+   {
+    "tag": "STBROW",
+    "code": 3,
+    "loop": "cm2",
+    "t_dc_db": 91.62,
+    "f_unity": 24415550.833516113,
+    "pm_deg": 63.5,
+    "gm_db": 23.06,
+    "f_180": 153943297.38348046,
+    "ph_min_deg": -446.5
+   },
+   {
+    "tag": "STBROW",
+    "code": 4,
+    "loop": "dm1",
+    "t_dc_db": 65.92,
+    "f_unity": 34042320.962242074,
+    "pm_deg": 87.36,
+    "gm_db": 16.71,
+    "f_180": 281226435.22173464,
+    "ph_min_deg": -288.4
+   },
+   {
+    "tag": "STBROW",
+    "code": 4,
+    "loop": "cm1",
+    "t_dc_db": 77.14,
+    "f_unity": 12705731.270980848,
+    "pm_deg": 79.5,
+    "gm_db": 44.69,
+    "f_180": 270427995.4318237,
+    "ph_min_deg": -182.4
+   },
+   {
+    "tag": "STBROW",
+    "code": 4,
+    "loop": "dm2",
+    "t_dc_db": 82.44,
+    "f_unity": 116864760.66146742,
+    "pm_deg": 39.77,
+    "gm_db": 4.97,
+    "f_180": 220019888.53641987,
+    "ph_min_deg": -308.6
+   },
+   {
+    "tag": "STBROW",
+    "code": 4,
+    "loop": "cm2",
+    "t_dc_db": 90.08,
+    "f_unity": 43152863.45077301,
+    "pm_deg": 47.27,
+    "gm_db": 13.44,
+    "f_180": 122120253.2020578,
+    "ph_min_deg": -453.2
+   },
+   {
+    "tag": "STBROW",
+    "code": 5,
+    "loop": "dm1",
+    "t_dc_db": 63.78,
+    "f_unity": 42621736.51984879,
+    "pm_deg": 74.99,
+    "gm_db": 16.14,
+    "f_180": 252946442.4020969,
+    "ph_min_deg": -292.0
+   },
+   {
+    "tag": "STBROW",
+    "code": 5,
+    "loop": "cm1",
+    "t_dc_db": 80.75,
+    "f_unity": 17409898.17374703,
+    "pm_deg": 66.34,
+    "gm_db": 26.06,
+    "f_180": 147580591.01144883,
+    "ph_min_deg": -454.5
+   },
+   {
+    "tag": "STBROW",
+    "code": 5,
+    "loop": "dm2",
+    "t_dc_db": 82.51,
+    "f_unity": 117200682.69723523,
+    "pm_deg": 39.78,
+    "gm_db": 4.97,
+    "f_180": 221136879.9837379,
+    "ph_min_deg": -308.3
+   },
+   {
+    "tag": "STBROW",
+    "code": 5,
+    "loop": "cm2",
+    "t_dc_db": 90.14,
+    "f_unity": 43299217.9626254,
+    "pm_deg": 47.33,
+    "gm_db": 13.43,
+    "f_180": 122208127.46520466,
+    "ph_min_deg": -452.9
+   }
+  ],
+  "errors": [],
+  "deck": "r1_afe/dev-revd-comb-stb-01/l2+cx25_13+c2sw12_13.5+o2i1.5+np2_stb_ff_cm2.8.cir",
+  "log": "r1_afe/dev-revd-comb-stb-01/l2+cx25_13+c2sw12_13.5+o2i1.5+np2_stb_ff_cm2.8.log"
+ },
+ {
+  "name": "l2+cx26.3_14.4+c2sw12_13.5+o2i1.5+np2_stb_tt_cm0.5",
+  "corner": "tt",
+  "mismatch": false,
+  "subs": {
+   "MOS": "mos_tt",
+   "RES": "res_typ",
+   "CAP": "cap_typ",
+   "VDDA": 3.3,
+   "TEMP": 27,
+   "VCMI": 0.5,
+   "ACVDD": 0,
+   "NMC": 1,
+   "SEED": 1,
+   "LSB": 0.000439453125,
+   "CL": "2.8p",
+   "KLIST": "0 3 4 5",
+   "LLIST": "1 2 4 5",
+   "DIO": "dio_tt",
+   "RAW": "$G1_RESULTS_ROOT/r1_afe/dev-revd-comb-stb-01/l2+cx26.3_14.4+c2sw12_13.5+o2i1.5+np2_stb_tt_cm0.5"
+  },
+  "rc": 0,
+  "edits": [
+   [
+    "r1_afe_ota2",
+    "XMB0 ibias ibias vss vss sg13_hv_nmos w=4u l=1u",
+    "XMB0 ibias ibias vss vss sg13_hv_nmos w=8u l=2u"
+   ],
+   [
+    "r1_afe_ota2",
+    "XMB1 vbp ibias vss vss sg13_hv_nmos w=4u l=1u",
+    "XMB1 vbp ibias vss vss sg13_hv_nmos w=8u l=2u"
+   ],
+   [
+    "r1_afe_ota2",
+    "XMB4 vbpc ibias vss vss sg13_hv_nmos w=4u l=1u",
+    "XMB4 vbpc ibias vss vss sg13_hv_nmos w=8u l=2u"
+   ],
+   [
+    "r1_afe_ota2",
+    "XMC3 vcmfb vcmfb vss vss sg13_hv_nmos w=4u l=1u",
+    "XMC3 vcmfb vcmfb vss vss sg13_hv_nmos w=8u l=2u"
+   ],
+   [
+    "r1_afe_ota2",
+    "XMC4 cmd cmd vss vss sg13_hv_nmos w=4u l=1u",
+    "XMC4 cmd cmd vss vss sg13_hv_nmos w=8u l=2u"
+   ],
+   [
+    "@inst",
+    "XA1",
+    "WCC=26.3u"
+   ],
+   [
+    "r1_afe_ota",
+    "XCS1 outp vcms cap_cmim",
+    "XCX1 cz1 outn cap_cmim w=14.4u l=14.4u m=1 mm_ok=1\nXCX2 cz2 outp cap_cmim w=14.4u l=14.4u m=1 mm_ok=1\nXCS1 outp vcms cap_cmim"
+   ],
+   [
+    ".subckt r1_afe_ota2 inp inn outp outn vcm ibias vdd vss",
+    ".subckt r1_afe_ota2 inp inn outp outn vcm ibias cen cenb vdd vss"
+   ],
+   [
+    "r1_afe_ota2",
+    "XCC2 cz2 outn cap_cmim w={WCC} l={WCC} m=1 mm_ok=1",
+    "XCC2 cz2 outn cap_cmim w={WCC} l={WCC} m=1 mm_ok=1\nXCD1B cd1 outp cap_cmim w=13.5u l=13.5u m=1 mm_ok=1\nXTD1 cz1 cd1 cen cenb vdd vss r1_afe_tg\nXCD2B cd2 outn cap_cmim w=13.5u l=13.5u m=1 mm_ok=1\nXTD2 cz2 cd2 cen cenb vdd vss r1_afe_tg"
+   ],
+   [
+    "XA2 x2p x2n on2 op2 vcm2 ib2 vdd vss r1_afe_ota2",
+    "XA2 x2p x2n on2 op2 vcm2 ib2 c4b c4 vdd vss r1_afe_ota2"
+   ],
+   [
+    "@inst",
+    "XA2",
+    "WCC=12u"
+   ],
+   [
+    "@inst",
+    "XA2",
+    "W2P=120u W2N=60u"
+   ],
+   [
+    "r1_afe_ota",
+    "XMN1 gn inp tn vss sg13_hv_nmos w=80u l=2u ng=16",
+    "XMN1 gn inp tn vss sg13_hv_nmos w=160u l=2u ng=32"
+   ],
+   [
+    "r1_afe_ota",
+    "XMN2 gp inn tn vss sg13_hv_nmos w=80u l=2u ng=16",
+    "XMN2 gp inn tn vss sg13_hv_nmos w=160u l=2u ng=32"
+   ],
+   [
+    "XA1 x1p x1n ",
+    "Vpa1p x1p y1p dc 0 ac {vdp1}\nVpa1n x1n y1n dc 0 ac {vdn1}\nIpa1p 0 x1p dc 0 ac {idp1}\nIpa1n 0 x1n dc 0 ac {idn1}\nXA1 y1p y1n "
+   ],
+   [
+    "XA2 x2p x2n ",
+    "Vpa2p x2p y2p dc 0 ac {vdp2}\nVpa2n x2n y2n dc 0 ac {vdn2}\nIpa2p 0 x2p dc 0 ac {idp2}\nIpa2n 0 x2n dc 0 ac {idn2}\nXA2 y2p y2n "
+   ],
+   [
+    "XMC1 vcmfb vcms tc",
+    "Vpc vcms vcmsy dc 0 ac {vc1}\nIpc 0 vcms dc 0 ac {ic1}\nXMC1 vcmfb vcmsy tc"
+   ],
+   [
+    "XMC1 vcmfb vcms tc",
+    "Vpc vcms vcmsy dc 0 ac {vc2}\nIpc 0 vcms dc 0 ac {ic2}\nXMC1 vcmfb vcmsy tc"
+   ],
+   [
+    "XMN7 outp ",
+    "Vpop outpi outp dc 0 ac {vop1}\nVpon outni outn dc 0 ac {von1}\nIpop 0 outpi dc 0 ac {iop1}\nIpon 0 outni dc 0 ac {ion1}\nXMN7 outpi "
+   ],
+   [
+    "XMN8 outn ",
+    "XMN8 outni "
+   ],
+   [
+    "XMP7 outp ",
+    "XMP7 outpi "
+   ],
+   [
+    "XMP8 outn ",
+    "XMP8 outni "
+   ],
+   [
+    "XCC1 cz1 outp ",
+    "XCC1 cz1 outpi "
+   ],
+   [
+    "XCC2 cz2 outn ",
+    "XCC2 cz2 outni "
+   ],
+   [
+    "XMN7 outp ",
+    "Vpop outpi outp dc 0 ac {vop2}\nVpon outni outn dc 0 ac {von2}\nIpop 0 outpi dc 0 ac {iop2}\nIpon 0 outni dc 0 ac {ion2}\nXMN7 outpi "
+   ],
+   [
+    "XMN8 outn ",
+    "XMN8 outni "
+   ],
+   [
+    "XMP7 outp ",
+    "XMP7 outpi "
+   ],
+   [
+    "XMP8 outn ",
+    "XMP8 outni "
+   ],
+   [
+    "XCC1 cz1 outp ",
+    "XCC1 cz1 outpi "
+   ],
+   [
+    "XCC2 cz2 outn ",
+    "XCC2 cz2 outni "
+   ],
+   [
+    "XCC1B cb1 outp ",
+    "XCC1B cb1 outpi "
+   ],
+   [
+    "XCC2B cb2 outn ",
+    "XCC2B cb2 outni "
+   ],
+   [
+    "?",
+    "XCD1B cd1 outp ",
+    "XCD1B cd1 outpi "
+   ],
+   [
+    "?",
+    "XCD2B cd2 outn ",
+    "XCD2B cd2 outni "
+   ],
+   [
+    "?",
+    "XCX1 cz1 outn ",
+    "XCX1 cz1 outni "
+   ],
+   [
+    "?",
+    "XCX2 cz2 outp ",
+    "XCX2 cz2 outpi "
+   ]
+  ],
+  "seconds": 90.3,
+  "rows": [
+   {
+    "tag": "STBROW",
+    "code": 0,
+    "loop": "dm1",
+    "t_dc_db": 68.92,
+    "f_unity": 21766573.420384955,
+    "pm_deg": 67.38,
+    "gm_db": 22.5,
+    "f_180": 260057564.71415952,
+    "ph_min_deg": -286.9
+   },
+   {
+    "tag": "STBROW",
+    "code": 0,
+    "loop": "cm1",
+    "t_dc_db": 64.39,
+    "f_unity": 5199066.455987052,
+    "pm_deg": 79.73,
+    "gm_db": null,
+    "f_180": null,
+    "ph_min_deg": -116.8
+   },
+   {
+    "tag": "STBROW",
+    "code": 0,
+    "loop": "dm2",
+    "t_dc_db": 91.66,
+    "f_unity": 48289818.90669729,
+    "pm_deg": 72.73,
+    "gm_db": 10.99,
+    "f_180": 265830270.98690116,
+    "ph_min_deg": -306.6
+   },
+   {
+    "tag": "STBROW",
+    "code": 0,
+    "loop": "cm2",
+    "t_dc_db": 91.41,
+    "f_unity": 19576573.860275,
+    "pm_deg": 65.62,
+    "gm_db": 24.57,
+    "f_180": 142065855.88438,
+    "ph_min_deg": -458.7
+   },
+   {
+    "tag": "STBROW",
+    "code": 3,
+    "loop": "dm1",
+    "t_dc_db": 46.12,
+    "f_unity": 16306616.871664492,
+    "pm_deg": 90.46,
+    "gm_db": 25.25,
+    "f_180": 279642617.16594046,
+    "ph_min_deg": -277.0
+   },
+   {
+    "tag": "STBROW",
+    "code": 3,
+    "loop": "cm1",
+    "t_dc_db": 57.93,
+    "f_unity": 7451211.743032168,
+    "pm_deg": 74.25,
+    "gm_db": null,
+    "f_180": null,
+    "ph_min_deg": -122.0
+   },
+   {
+    "tag": "STBROW",
+    "code": 3,
+    "loop": "dm2",
+    "t_dc_db": 91.61,
+    "f_unity": 48127875.769460104,
+    "pm_deg": 72.66,
+    "gm_db": 11.03,
+    "f_180": 264313080.08787185,
+    "ph_min_deg": -306.9
+   },
+   {
+    "tag": "STBROW",
+    "code": 3,
+    "loop": "cm2",
+    "t_dc_db": 91.36,
+    "f_unity": 19549076.942848135,
+    "pm_deg": 65.56,
+    "gm_db": 24.56,
+    "f_180": 141784882.71306622,
+    "ph_min_deg": -459.0
+   },
+   {
+    "tag": "STBROW",
+    "code": 4,
+    "loop": "dm1",
+    "t_dc_db": 43.77,
+    "f_unity": 10381898.576830141,
+    "pm_deg": 102.75,
+    "gm_db": 25.84,
+    "f_180": 290157738.6704479,
+    "ph_min_deg": -276.3
+   },
+   {
+    "tag": "STBROW",
+    "code": 4,
+    "loop": "cm1",
+    "t_dc_db": 56.49,
+    "f_unity": 4820827.914259335,
+    "pm_deg": 71.63,
+    "gm_db": null,
+    "f_180": null,
+    "ph_min_deg": -116.8
+   },
+   {
+    "tag": "STBROW",
+    "code": 4,
+    "loop": "dm2",
+    "t_dc_db": 82.1,
+    "f_unity": 90834576.98653458,
+    "pm_deg": 46.52,
+    "gm_db": 6.23,
+    "f_180": 196968743.27814493,
+    "ph_min_deg": -316.0
+   },
+   {
+    "tag": "STBROW",
+    "code": 4,
+    "loop": "cm2",
+    "t_dc_db": 89.73,
+    "f_unity": 35119170.928652324,
+    "pm_deg": 50.22,
+    "gm_db": 14.62,
+    "f_180": 110319293.18691783,
+    "ph_min_deg": -462.1
+   },
+   {
+    "tag": "STBROW",
+    "code": 5,
+    "loop": "dm1",
+    "t_dc_db": 37.34,
+    "f_unity": 11949063.404295314,
+    "pm_deg": 108.69,
+    "gm_db": 25.55,
+    "f_180": 285498352.5391827,
+    "ph_min_deg": -277.0
+   },
+   {
+    "tag": "STBROW",
+    "code": 5,
+    "loop": "cm1",
+    "t_dc_db": 55.82,
+    "f_unity": 6902967.1771036,
+    "pm_deg": 69.66,
+    "gm_db": null,
+    "f_180": null,
+    "ph_min_deg": -118.1
+   },
+   {
+    "tag": "STBROW",
+    "code": 5,
+    "loop": "dm2",
+    "t_dc_db": 82.13,
+    "f_unity": 90696354.21180204,
+    "pm_deg": 46.52,
+    "gm_db": 6.23,
+    "f_180": 196753827.6484476,
+    "ph_min_deg": -316.0
+   },
+   {
+    "tag": "STBROW",
+    "code": 5,
+    "loop": "cm2",
+    "t_dc_db": 89.72,
+    "f_unity": 35097674.88830601,
+    "pm_deg": 50.24,
+    "gm_db": 14.63,
+    "f_180": 110293573.05492191,
+    "ph_min_deg": -462.1
+   }
+  ],
+  "errors": [],
+  "deck": "r1_afe/dev-revd-comb-stb-01/l2+cx26.3_14.4+c2sw12_13.5+o2i1.5+np2_stb_tt_cm0.5.cir",
+  "log": "r1_afe/dev-revd-comb-stb-01/l2+cx26.3_14.4+c2sw12_13.5+o2i1.5+np2_stb_tt_cm0.5.log"
+ },
+ {
+  "name": "l2+cx26.3_14.4+c2sw12_13.5+o2i1.5+np2_stb_tt_cm2.5",
+  "corner": "tt",
+  "mismatch": false,
+  "subs": {
+   "MOS": "mos_tt",
+   "RES": "res_typ",
+   "CAP": "cap_typ",
+   "VDDA": 3.3,
+   "TEMP": 27,
+   "VCMI": 2.5,
+   "ACVDD": 0,
+   "NMC": 1,
+   "SEED": 1,
+   "LSB": 0.000439453125,
+   "CL": "2.8p",
+   "KLIST": "0 3 4 5",
+   "LLIST": "1 2 4 5",
+   "DIO": "dio_tt",
+   "RAW": "$G1_RESULTS_ROOT/r1_afe/dev-revd-comb-stb-01/l2+cx26.3_14.4+c2sw12_13.5+o2i1.5+np2_stb_tt_cm2.5"
+  },
+  "rc": 0,
+  "edits": [
+   [
+    "r1_afe_ota2",
+    "XMB0 ibias ibias vss vss sg13_hv_nmos w=4u l=1u",
+    "XMB0 ibias ibias vss vss sg13_hv_nmos w=8u l=2u"
+   ],
+   [
+    "r1_afe_ota2",
+    "XMB1 vbp ibias vss vss sg13_hv_nmos w=4u l=1u",
+    "XMB1 vbp ibias vss vss sg13_hv_nmos w=8u l=2u"
+   ],
+   [
+    "r1_afe_ota2",
+    "XMB4 vbpc ibias vss vss sg13_hv_nmos w=4u l=1u",
+    "XMB4 vbpc ibias vss vss sg13_hv_nmos w=8u l=2u"
+   ],
+   [
+    "r1_afe_ota2",
+    "XMC3 vcmfb vcmfb vss vss sg13_hv_nmos w=4u l=1u",
+    "XMC3 vcmfb vcmfb vss vss sg13_hv_nmos w=8u l=2u"
+   ],
+   [
+    "r1_afe_ota2",
+    "XMC4 cmd cmd vss vss sg13_hv_nmos w=4u l=1u",
+    "XMC4 cmd cmd vss vss sg13_hv_nmos w=8u l=2u"
+   ],
+   [
+    "@inst",
+    "XA1",
+    "WCC=26.3u"
+   ],
+   [
+    "r1_afe_ota",
+    "XCS1 outp vcms cap_cmim",
+    "XCX1 cz1 outn cap_cmim w=14.4u l=14.4u m=1 mm_ok=1\nXCX2 cz2 outp cap_cmim w=14.4u l=14.4u m=1 mm_ok=1\nXCS1 outp vcms cap_cmim"
+   ],
+   [
+    ".subckt r1_afe_ota2 inp inn outp outn vcm ibias vdd vss",
+    ".subckt r1_afe_ota2 inp inn outp outn vcm ibias cen cenb vdd vss"
+   ],
+   [
+    "r1_afe_ota2",
+    "XCC2 cz2 outn cap_cmim w={WCC} l={WCC} m=1 mm_ok=1",
+    "XCC2 cz2 outn cap_cmim w={WCC} l={WCC} m=1 mm_ok=1\nXCD1B cd1 outp cap_cmim w=13.5u l=13.5u m=1 mm_ok=1\nXTD1 cz1 cd1 cen cenb vdd vss r1_afe_tg\nXCD2B cd2 outn cap_cmim w=13.5u l=13.5u m=1 mm_ok=1\nXTD2 cz2 cd2 cen cenb vdd vss r1_afe_tg"
+   ],
+   [
+    "XA2 x2p x2n on2 op2 vcm2 ib2 vdd vss r1_afe_ota2",
+    "XA2 x2p x2n on2 op2 vcm2 ib2 c4b c4 vdd vss r1_afe_ota2"
+   ],
+   [
+    "@inst",
+    "XA2",
+    "WCC=12u"
+   ],
+   [
+    "@inst",
+    "XA2",
+    "W2P=120u W2N=60u"
+   ],
+   [
+    "r1_afe_ota",
+    "XMN1 gn inp tn vss sg13_hv_nmos w=80u l=2u ng=16",
+    "XMN1 gn inp tn vss sg13_hv_nmos w=160u l=2u ng=32"
+   ],
+   [
+    "r1_afe_ota",
+    "XMN2 gp inn tn vss sg13_hv_nmos w=80u l=2u ng=16",
+    "XMN2 gp inn tn vss sg13_hv_nmos w=160u l=2u ng=32"
+   ],
+   [
+    "XA1 x1p x1n ",
+    "Vpa1p x1p y1p dc 0 ac {vdp1}\nVpa1n x1n y1n dc 0 ac {vdn1}\nIpa1p 0 x1p dc 0 ac {idp1}\nIpa1n 0 x1n dc 0 ac {idn1}\nXA1 y1p y1n "
+   ],
+   [
+    "XA2 x2p x2n ",
+    "Vpa2p x2p y2p dc 0 ac {vdp2}\nVpa2n x2n y2n dc 0 ac {vdn2}\nIpa2p 0 x2p dc 0 ac {idp2}\nIpa2n 0 x2n dc 0 ac {idn2}\nXA2 y2p y2n "
+   ],
+   [
+    "XMC1 vcmfb vcms tc",
+    "Vpc vcms vcmsy dc 0 ac {vc1}\nIpc 0 vcms dc 0 ac {ic1}\nXMC1 vcmfb vcmsy tc"
+   ],
+   [
+    "XMC1 vcmfb vcms tc",
+    "Vpc vcms vcmsy dc 0 ac {vc2}\nIpc 0 vcms dc 0 ac {ic2}\nXMC1 vcmfb vcmsy tc"
+   ],
+   [
+    "XMN7 outp ",
+    "Vpop outpi outp dc 0 ac {vop1}\nVpon outni outn dc 0 ac {von1}\nIpop 0 outpi dc 0 ac {iop1}\nIpon 0 outni dc 0 ac {ion1}\nXMN7 outpi "
+   ],
+   [
+    "XMN8 outn ",
+    "XMN8 outni "
+   ],
+   [
+    "XMP7 outp ",
+    "XMP7 outpi "
+   ],
+   [
+    "XMP8 outn ",
+    "XMP8 outni "
+   ],
+   [
+    "XCC1 cz1 outp ",
+    "XCC1 cz1 outpi "
+   ],
+   [
+    "XCC2 cz2 outn ",
+    "XCC2 cz2 outni "
+   ],
+   [
+    "XMN7 outp ",
+    "Vpop outpi outp dc 0 ac {vop2}\nVpon outni outn dc 0 ac {von2}\nIpop 0 outpi dc 0 ac {iop2}\nIpon 0 outni dc 0 ac {ion2}\nXMN7 outpi "
+   ],
+   [
+    "XMN8 outn ",
+    "XMN8 outni "
+   ],
+   [
+    "XMP7 outp ",
+    "XMP7 outpi "
+   ],
+   [
+    "XMP8 outn ",
+    "XMP8 outni "
+   ],
+   [
+    "XCC1 cz1 outp ",
+    "XCC1 cz1 outpi "
+   ],
+   [
+    "XCC2 cz2 outn ",
+    "XCC2 cz2 outni "
+   ],
+   [
+    "XCC1B cb1 outp ",
+    "XCC1B cb1 outpi "
+   ],
+   [
+    "XCC2B cb2 outn ",
+    "XCC2B cb2 outni "
+   ],
+   [
+    "?",
+    "XCD1B cd1 outp ",
+    "XCD1B cd1 outpi "
+   ],
+   [
+    "?",
+    "XCD2B cd2 outn ",
+    "XCD2B cd2 outni "
+   ],
+   [
+    "?",
+    "XCX1 cz1 outn ",
+    "XCX1 cz1 outni "
+   ],
+   [
+    "?",
+    "XCX2 cz2 outp ",
+    "XCX2 cz2 outpi "
+   ]
+  ],
+  "seconds": 84.1,
+  "rows": [
+   {
+    "tag": "STBROW",
+    "code": 0,
+    "loop": "dm1",
+    "t_dc_db": 80.7,
+    "f_unity": 30589546.92948423,
+    "pm_deg": 68.74,
+    "gm_db": 18.74,
+    "f_180": 245959792.92161155,
+    "ph_min_deg": -295.8
+   },
+   {
+    "tag": "STBROW",
+    "code": 0,
+    "loop": "cm1",
+    "t_dc_db": 78.43,
+    "f_unity": 11324992.021036318,
+    "pm_deg": 87.6,
+    "gm_db": null,
+    "f_180": null,
+    "ph_min_deg": -166.1
+   },
+   {
+    "tag": "STBROW",
+    "code": 0,
+    "loop": "dm2",
+    "t_dc_db": 91.73,
+    "f_unity": 48485583.014828004,
+    "pm_deg": 72.81,
+    "gm_db": 10.95,
+    "f_180": 267347500.00965104,
+    "ph_min_deg": -306.3
+   },
+   {
+    "tag": "STBROW",
+    "code": 0,
+    "loop": "cm2",
+    "t_dc_db": 91.46,
+    "f_unity": 19590356.169364735,
+    "pm_deg": 65.7,
+    "gm_db": 24.57,
+    "f_180": 142330511.33579955,
+    "ph_min_deg": -458.3
+   },
+   {
+    "tag": "STBROW",
+    "code": 3,
+    "loop": "dm1",
+    "t_dc_db": 72.84,
+    "f_unity": 32677231.572664354,
+    "pm_deg": 69.33,
+    "gm_db": 18.2,
+    "f_180": 220564203.7269624,
+    "ph_min_deg": -301.1
+   },
+   {
+    "tag": "STBROW",
+    "code": 3,
+    "loop": "cm1",
+    "t_dc_db": 84.05,
+    "f_unity": 13968638.785782078,
+    "pm_deg": 70.11,
+    "gm_db": 25.09,
+    "f_180": 114634936.05581313,
+    "ph_min_deg": -467.1
+   },
+   {
+    "tag": "STBROW",
+    "code": 3,
+    "loop": "dm2",
+    "t_dc_db": 91.81,
+    "f_unity": 48653029.83303771,
+    "pm_deg": 72.91,
+    "gm_db": 10.91,
+    "f_180": 269188745.53333217,
+    "ph_min_deg": -306.0
+   },
+   {
+    "tag": "STBROW",
+    "code": 3,
+    "loop": "cm2",
+    "t_dc_db": 91.52,
+    "f_unity": 19620976.863918968,
+    "pm_deg": 65.78,
+    "gm_db": 24.57,
+    "f_180": 142637109.44889894,
+    "ph_min_deg": -457.9
+   },
+   {
+    "tag": "STBROW",
+    "code": 4,
+    "loop": "dm1",
+    "t_dc_db": 66.21,
+    "f_unity": 23880055.52319252,
+    "pm_deg": 88.33,
+    "gm_db": 19.44,
+    "f_180": 247760440.73665217,
+    "ph_min_deg": -296.6
+   },
+   {
+    "tag": "STBROW",
+    "code": 4,
+    "loop": "cm1",
+    "t_dc_db": 78.14,
+    "f_unity": 8909887.008689504,
+    "pm_deg": 75.44,
+    "gm_db": 34.5,
+    "f_180": 166565555.84951815,
+    "ph_min_deg": -463.5
+   },
+   {
+    "tag": "STBROW",
+    "code": 4,
+    "loop": "dm2",
+    "t_dc_db": 82.34,
+    "f_unity": 92434906.3860329,
+    "pm_deg": 46.38,
+    "gm_db": 6.2,
+    "f_180": 200394483.59163967,
+    "ph_min_deg": -314.8
+   },
+   {
+    "tag": "STBROW",
+    "code": 4,
+    "loop": "cm2",
+    "t_dc_db": 89.95,
+    "f_unity": 35264169.04450428,
+    "pm_deg": 50.56,
+    "gm_db": 14.64,
+    "f_180": 111115103.21748613,
+    "ph_min_deg": -461.0
+   },
+   {
+    "tag": "STBROW",
+    "code": 5,
+    "loop": "dm1",
+    "t_dc_db": 63.97,
+    "f_unity": 28751618.613236673,
+    "pm_deg": 80.57,
+    "gm_db": 18.8,
+    "f_180": 225435068.52258924,
+    "ph_min_deg": -301.2
+   },
+   {
+    "tag": "STBROW",
+    "code": 5,
+    "loop": "cm1",
+    "t_dc_db": 81.8,
+    "f_unity": 12460033.15475529,
+    "pm_deg": 65.96,
+    "gm_db": 27.06,
+    "f_180": 118440034.13571173,
+    "ph_min_deg": -467.7
+   },
+   {
+    "tag": "STBROW",
+    "code": 5,
+    "loop": "dm2",
+    "t_dc_db": 82.42,
+    "f_unity": 92684991.10010011,
+    "pm_deg": 46.42,
+    "gm_db": 6.19,
+    "f_180": 201375645.17184776,
+    "ph_min_deg": -314.5
+   },
+   {
+    "tag": "STBROW",
+    "code": 5,
+    "loop": "cm2",
+    "t_dc_db": 90.02,
+    "f_unity": 35372536.5772374,
+    "pm_deg": 50.61,
+    "gm_db": 14.64,
+    "f_180": 111257855.8523134,
+    "ph_min_deg": -460.7
+   }
+  ],
+  "errors": [],
+  "deck": "r1_afe/dev-revd-comb-stb-01/l2+cx26.3_14.4+c2sw12_13.5+o2i1.5+np2_stb_tt_cm2.5.cir",
+  "log": "r1_afe/dev-revd-comb-stb-01/l2+cx26.3_14.4+c2sw12_13.5+o2i1.5+np2_stb_tt_cm2.5.log"
+ },
+ {
+  "name": "l2+cx26.3_14.4+c2sw12_13.5+o2i1.5+np2_stb_tt_cm2.8",
+  "corner": "tt",
+  "mismatch": false,
+  "subs": {
+   "MOS": "mos_tt",
+   "RES": "res_typ",
+   "CAP": "cap_typ",
+   "VDDA": 3.3,
+   "TEMP": 27,
+   "VCMI": 2.8,
+   "ACVDD": 0,
+   "NMC": 1,
+   "SEED": 1,
+   "LSB": 0.000439453125,
+   "CL": "2.8p",
+   "KLIST": "0 3 4 5",
+   "LLIST": "1 2 4 5",
+   "DIO": "dio_tt",
+   "RAW": "$G1_RESULTS_ROOT/r1_afe/dev-revd-comb-stb-01/l2+cx26.3_14.4+c2sw12_13.5+o2i1.5+np2_stb_tt_cm2.8"
+  },
+  "rc": 0,
+  "edits": [
+   [
+    "r1_afe_ota2",
+    "XMB0 ibias ibias vss vss sg13_hv_nmos w=4u l=1u",
+    "XMB0 ibias ibias vss vss sg13_hv_nmos w=8u l=2u"
+   ],
+   [
+    "r1_afe_ota2",
+    "XMB1 vbp ibias vss vss sg13_hv_nmos w=4u l=1u",
+    "XMB1 vbp ibias vss vss sg13_hv_nmos w=8u l=2u"
+   ],
+   [
+    "r1_afe_ota2",
+    "XMB4 vbpc ibias vss vss sg13_hv_nmos w=4u l=1u",
+    "XMB4 vbpc ibias vss vss sg13_hv_nmos w=8u l=2u"
+   ],
+   [
+    "r1_afe_ota2",
+    "XMC3 vcmfb vcmfb vss vss sg13_hv_nmos w=4u l=1u",
+    "XMC3 vcmfb vcmfb vss vss sg13_hv_nmos w=8u l=2u"
+   ],
+   [
+    "r1_afe_ota2",
+    "XMC4 cmd cmd vss vss sg13_hv_nmos w=4u l=1u",
+    "XMC4 cmd cmd vss vss sg13_hv_nmos w=8u l=2u"
+   ],
+   [
+    "@inst",
+    "XA1",
+    "WCC=26.3u"
+   ],
+   [
+    "r1_afe_ota",
+    "XCS1 outp vcms cap_cmim",
+    "XCX1 cz1 outn cap_cmim w=14.4u l=14.4u m=1 mm_ok=1\nXCX2 cz2 outp cap_cmim w=14.4u l=14.4u m=1 mm_ok=1\nXCS1 outp vcms cap_cmim"
+   ],
+   [
+    ".subckt r1_afe_ota2 inp inn outp outn vcm ibias vdd vss",
+    ".subckt r1_afe_ota2 inp inn outp outn vcm ibias cen cenb vdd vss"
+   ],
+   [
+    "r1_afe_ota2",
+    "XCC2 cz2 outn cap_cmim w={WCC} l={WCC} m=1 mm_ok=1",
+    "XCC2 cz2 outn cap_cmim w={WCC} l={WCC} m=1 mm_ok=1\nXCD1B cd1 outp cap_cmim w=13.5u l=13.5u m=1 mm_ok=1\nXTD1 cz1 cd1 cen cenb vdd vss r1_afe_tg\nXCD2B cd2 outn cap_cmim w=13.5u l=13.5u m=1 mm_ok=1\nXTD2 cz2 cd2 cen cenb vdd vss r1_afe_tg"
+   ],
+   [
+    "XA2 x2p x2n on2 op2 vcm2 ib2 vdd vss r1_afe_ota2",
+    "XA2 x2p x2n on2 op2 vcm2 ib2 c4b c4 vdd vss r1_afe_ota2"
+   ],
+   [
+    "@inst",
+    "XA2",
+    "WCC=12u"
+   ],
+   [
+    "@inst",
+    "XA2",
+    "W2P=120u W2N=60u"
+   ],
+   [
+    "r1_afe_ota",
+    "XMN1 gn inp tn vss sg13_hv_nmos w=80u l=2u ng=16",
+    "XMN1 gn inp tn vss sg13_hv_nmos w=160u l=2u ng=32"
+   ],
+   [
+    "r1_afe_ota",
+    "XMN2 gp inn tn vss sg13_hv_nmos w=80u l=2u ng=16",
+    "XMN2 gp inn tn vss sg13_hv_nmos w=160u l=2u ng=32"
+   ],
+   [
+    "XA1 x1p x1n ",
+    "Vpa1p x1p y1p dc 0 ac {vdp1}\nVpa1n x1n y1n dc 0 ac {vdn1}\nIpa1p 0 x1p dc 0 ac {idp1}\nIpa1n 0 x1n dc 0 ac {idn1}\nXA1 y1p y1n "
+   ],
+   [
+    "XA2 x2p x2n ",
+    "Vpa2p x2p y2p dc 0 ac {vdp2}\nVpa2n x2n y2n dc 0 ac {vdn2}\nIpa2p 0 x2p dc 0 ac {idp2}\nIpa2n 0 x2n dc 0 ac {idn2}\nXA2 y2p y2n "
+   ],
+   [
+    "XMC1 vcmfb vcms tc",
+    "Vpc vcms vcmsy dc 0 ac {vc1}\nIpc 0 vcms dc 0 ac {ic1}\nXMC1 vcmfb vcmsy tc"
+   ],
+   [
+    "XMC1 vcmfb vcms tc",
+    "Vpc vcms vcmsy dc 0 ac {vc2}\nIpc 0 vcms dc 0 ac {ic2}\nXMC1 vcmfb vcmsy tc"
+   ],
+   [
+    "XMN7 outp ",
+    "Vpop outpi outp dc 0 ac {vop1}\nVpon outni outn dc 0 ac {von1}\nIpop 0 outpi dc 0 ac {iop1}\nIpon 0 outni dc 0 ac {ion1}\nXMN7 outpi "
+   ],
+   [
+    "XMN8 outn ",
+    "XMN8 outni "
+   ],
+   [
+    "XMP7 outp ",
+    "XMP7 outpi "
+   ],
+   [
+    "XMP8 outn ",
+    "XMP8 outni "
+   ],
+   [
+    "XCC1 cz1 outp ",
+    "XCC1 cz1 outpi "
+   ],
+   [
+    "XCC2 cz2 outn ",
+    "XCC2 cz2 outni "
+   ],
+   [
+    "XMN7 outp ",
+    "Vpop outpi outp dc 0 ac {vop2}\nVpon outni outn dc 0 ac {von2}\nIpop 0 outpi dc 0 ac {iop2}\nIpon 0 outni dc 0 ac {ion2}\nXMN7 outpi "
+   ],
+   [
+    "XMN8 outn ",
+    "XMN8 outni "
+   ],
+   [
+    "XMP7 outp ",
+    "XMP7 outpi "
+   ],
+   [
+    "XMP8 outn ",
+    "XMP8 outni "
+   ],
+   [
+    "XCC1 cz1 outp ",
+    "XCC1 cz1 outpi "
+   ],
+   [
+    "XCC2 cz2 outn ",
+    "XCC2 cz2 outni "
+   ],
+   [
+    "XCC1B cb1 outp ",
+    "XCC1B cb1 outpi "
+   ],
+   [
+    "XCC2B cb2 outn ",
+    "XCC2B cb2 outni "
+   ],
+   [
+    "?",
+    "XCD1B cd1 outp ",
+    "XCD1B cd1 outpi "
+   ],
+   [
+    "?",
+    "XCD2B cd2 outn ",
+    "XCD2B cd2 outni "
+   ],
+   [
+    "?",
+    "XCX1 cz1 outn ",
+    "XCX1 cz1 outni "
+   ],
+   [
+    "?",
+    "XCX2 cz2 outp ",
+    "XCX2 cz2 outpi "
+   ]
+  ],
+  "seconds": 73.7,
+  "rows": [
+   {
+    "tag": "STBROW",
+    "code": 0,
+    "loop": "dm1",
+    "t_dc_db": 81.22,
+    "f_unity": 31239780.335108243,
+    "pm_deg": 69.33,
+    "gm_db": 18.44,
+    "f_180": 245906881.5418303,
+    "ph_min_deg": -295.9
+   },
+   {
+    "tag": "STBROW",
+    "code": 0,
+    "loop": "cm1",
+    "t_dc_db": 78.88,
+    "f_unity": 11331878.139714135,
+    "pm_deg": 87.98,
+    "gm_db": null,
+    "f_180": null,
+    "ph_min_deg": -166.1
+   },
+   {
+    "tag": "STBROW",
+    "code": 0,
+    "loop": "dm2",
+    "t_dc_db": 91.73,
+    "f_unity": 48495137.099172175,
+    "pm_deg": 72.81,
+    "gm_db": 10.95,
+    "f_180": 267402708.28951025,
+    "ph_min_deg": -306.3
+   },
+   {
+    "tag": "STBROW",
+    "code": 0,
+    "loop": "cm2",
+    "t_dc_db": 91.46,
+    "f_unity": 19590666.921065047,
+    "pm_deg": 65.7,
+    "gm_db": 24.57,
+    "f_180": 142339506.3151295,
+    "ph_min_deg": -458.3
+   },
+   {
+    "tag": "STBROW",
+    "code": 3,
+    "loop": "dm1",
+    "t_dc_db": 77.58,
+    "f_unity": 27240974.210365407,
+    "pm_deg": 73.71,
+    "gm_db": 18.62,
+    "f_180": 193787507.5816615,
+    "ph_min_deg": -309.5
+   },
+   {
+    "tag": "STBROW",
+    "code": 3,
+    "loop": "cm1",
+    "t_dc_db": 90.56,
+    "f_unity": 13808699.13645756,
+    "pm_deg": 72.18,
+    "gm_db": 25.08,
+    "f_180": 104719679.324294,
+    "ph_min_deg": -470.4
+   },
+   {
+    "tag": "STBROW",
+    "code": 3,
+    "loop": "dm2",
+    "t_dc_db": 91.89,
+    "f_unity": 48808929.2016237,
+    "pm_deg": 73.04,
+    "gm_db": 10.86,
+    "f_180": 271178780.7913465,
+    "ph_min_deg": -305.7
+   },
+   {
+    "tag": "STBROW",
+    "code": 3,
+    "loop": "cm2",
+    "t_dc_db": 91.58,
+    "f_unity": 19653669.427011333,
+    "pm_deg": 65.85,
+    "gm_db": 24.57,
+    "f_180": 142957109.5712127,
+    "ph_min_deg": -457.5
+   },
+   {
+    "tag": "STBROW",
+    "code": 4,
+    "loop": "dm1",
+    "t_dc_db": 71.77,
+    "f_unity": 20508388.506606434,
+    "pm_deg": 90.15,
+    "gm_db": 19.42,
+    "f_180": 224849986.6429633,
+    "ph_min_deg": -300.6
+   },
+   {
+    "tag": "STBROW",
+    "code": 4,
+    "loop": "cm1",
+    "t_dc_db": 84.97,
+    "f_unity": 8428881.041310526,
+    "pm_deg": 71.58,
+    "gm_db": 29.24,
+    "f_180": 112197021.66883005,
+    "ph_min_deg": -465.0
+   },
+   {
+    "tag": "STBROW",
+    "code": 4,
+    "loop": "dm2",
+    "t_dc_db": 82.49,
+    "f_unity": 93081385.79645045,
+    "pm_deg": 46.49,
+    "gm_db": 6.18,
+    "f_180": 202312197.32748753,
+    "ph_min_deg": -314.2
+   },
+   {
+    "tag": "STBROW",
+    "code": 4,
+    "loop": "cm2",
+    "t_dc_db": 90.08,
+    "f_unity": 35432466.78126987,
+    "pm_deg": 50.55,
+    "gm_db": 14.63,
+    "f_180": 111418976.28021894,
+    "ph_min_deg": -460.4
+   },
+   {
+    "tag": "STBROW",
+    "code": 5,
+    "loop": "dm1",
+    "t_dc_db": 68.56,
+    "f_unity": 22978939.23702317,
+    "pm_deg": 86.41,
+    "gm_db": 19.37,
+    "f_180": 198148860.82241336,
+    "ph_min_deg": -309.7
+   },
+   {
+    "tag": "STBROW",
+    "code": 5,
+    "loop": "cm1",
+    "t_dc_db": 88.18,
+    "f_unity": 12237516.494014526,
+    "pm_deg": 68.01,
+    "gm_db": 27.08,
+    "f_180": 107408869.98838514,
+    "ph_min_deg": -471.0
+   },
+   {
+    "tag": "STBROW",
+    "code": 5,
+    "loop": "dm2",
+    "t_dc_db": 82.57,
+    "f_unity": 93271394.8874353,
+    "pm_deg": 46.58,
+    "gm_db": 6.17,
+    "f_180": 203243284.27359778,
+    "ph_min_deg": -313.9
+   },
+   {
+    "tag": "STBROW",
+    "code": 5,
+    "loop": "cm2",
+    "t_dc_db": 90.13,
+    "f_unity": 35514034.54728144,
+    "pm_deg": 50.63,
+    "gm_db": 14.64,
+    "f_180": 111578560.5199474,
+    "ph_min_deg": -460.1
+   }
+  ],
+  "errors": [],
+  "deck": "r1_afe/dev-revd-comb-stb-01/l2+cx26.3_14.4+c2sw12_13.5+o2i1.5+np2_stb_tt_cm2.8.cir",
+  "log": "r1_afe/dev-revd-comb-stb-01/l2+cx26.3_14.4+c2sw12_13.5+o2i1.5+np2_stb_tt_cm2.8.log"
+ },
+ {
+  "name": "l2+cx26.3_14.4+c2sw12_13.5+o2i1.5+np2_stb_ss_cm0.5",
+  "corner": "ss",
+  "mismatch": false,
+  "subs": {
+   "MOS": "mos_ss",
+   "RES": "res_wcs",
+   "CAP": "cap_wcs",
+   "VDDA": 3.0,
+   "TEMP": 125,
+   "VCMI": 0.5,
+   "ACVDD": 0,
+   "NMC": 1,
+   "SEED": 1,
+   "LSB": 0.000439453125,
+   "CL": "2.8p",
+   "KLIST": "0 3 4 5",
+   "LLIST": "1 2 4 5",
+   "DIO": "dio_ss",
+   "RAW": "$G1_RESULTS_ROOT/r1_afe/dev-revd-comb-stb-01/l2+cx26.3_14.4+c2sw12_13.5+o2i1.5+np2_stb_ss_cm0.5"
+  },
+  "rc": 0,
+  "edits": [
+   [
+    "r1_afe_ota2",
+    "XMB0 ibias ibias vss vss sg13_hv_nmos w=4u l=1u",
+    "XMB0 ibias ibias vss vss sg13_hv_nmos w=8u l=2u"
+   ],
+   [
+    "r1_afe_ota2",
+    "XMB1 vbp ibias vss vss sg13_hv_nmos w=4u l=1u",
+    "XMB1 vbp ibias vss vss sg13_hv_nmos w=8u l=2u"
+   ],
+   [
+    "r1_afe_ota2",
+    "XMB4 vbpc ibias vss vss sg13_hv_nmos w=4u l=1u",
+    "XMB4 vbpc ibias vss vss sg13_hv_nmos w=8u l=2u"
+   ],
+   [
+    "r1_afe_ota2",
+    "XMC3 vcmfb vcmfb vss vss sg13_hv_nmos w=4u l=1u",
+    "XMC3 vcmfb vcmfb vss vss sg13_hv_nmos w=8u l=2u"
+   ],
+   [
+    "r1_afe_ota2",
+    "XMC4 cmd cmd vss vss sg13_hv_nmos w=4u l=1u",
+    "XMC4 cmd cmd vss vss sg13_hv_nmos w=8u l=2u"
+   ],
+   [
+    "@inst",
+    "XA1",
+    "WCC=26.3u"
+   ],
+   [
+    "r1_afe_ota",
+    "XCS1 outp vcms cap_cmim",
+    "XCX1 cz1 outn cap_cmim w=14.4u l=14.4u m=1 mm_ok=1\nXCX2 cz2 outp cap_cmim w=14.4u l=14.4u m=1 mm_ok=1\nXCS1 outp vcms cap_cmim"
+   ],
+   [
+    ".subckt r1_afe_ota2 inp inn outp outn vcm ibias vdd vss",
+    ".subckt r1_afe_ota2 inp inn outp outn vcm ibias cen cenb vdd vss"
+   ],
+   [
+    "r1_afe_ota2",
+    "XCC2 cz2 outn cap_cmim w={WCC} l={WCC} m=1 mm_ok=1",
+    "XCC2 cz2 outn cap_cmim w={WCC} l={WCC} m=1 mm_ok=1\nXCD1B cd1 outp cap_cmim w=13.5u l=13.5u m=1 mm_ok=1\nXTD1 cz1 cd1 cen cenb vdd vss r1_afe_tg\nXCD2B cd2 outn cap_cmim w=13.5u l=13.5u m=1 mm_ok=1\nXTD2 cz2 cd2 cen cenb vdd vss r1_afe_tg"
+   ],
+   [
+    "XA2 x2p x2n on2 op2 vcm2 ib2 vdd vss r1_afe_ota2",
+    "XA2 x2p x2n on2 op2 vcm2 ib2 c4b c4 vdd vss r1_afe_ota2"
+   ],
+   [
+    "@inst",
+    "XA2",
+    "WCC=12u"
+   ],
+   [
+    "@inst",
+    "XA2",
+    "W2P=120u W2N=60u"
+   ],
+   [
+    "r1_afe_ota",
+    "XMN1 gn inp tn vss sg13_hv_nmos w=80u l=2u ng=16",
+    "XMN1 gn inp tn vss sg13_hv_nmos w=160u l=2u ng=32"
+   ],
+   [
+    "r1_afe_ota",
+    "XMN2 gp inn tn vss sg13_hv_nmos w=80u l=2u ng=16",
+    "XMN2 gp inn tn vss sg13_hv_nmos w=160u l=2u ng=32"
+   ],
+   [
+    "XA1 x1p x1n ",
+    "Vpa1p x1p y1p dc 0 ac {vdp1}\nVpa1n x1n y1n dc 0 ac {vdn1}\nIpa1p 0 x1p dc 0 ac {idp1}\nIpa1n 0 x1n dc 0 ac {idn1}\nXA1 y1p y1n "
+   ],
+   [
+    "XA2 x2p x2n ",
+    "Vpa2p x2p y2p dc 0 ac {vdp2}\nVpa2n x2n y2n dc 0 ac {vdn2}\nIpa2p 0 x2p dc 0 ac {idp2}\nIpa2n 0 x2n dc 0 ac {idn2}\nXA2 y2p y2n "
+   ],
+   [
+    "XMC1 vcmfb vcms tc",
+    "Vpc vcms vcmsy dc 0 ac {vc1}\nIpc 0 vcms dc 0 ac {ic1}\nXMC1 vcmfb vcmsy tc"
+   ],
+   [
+    "XMC1 vcmfb vcms tc",
+    "Vpc vcms vcmsy dc 0 ac {vc2}\nIpc 0 vcms dc 0 ac {ic2}\nXMC1 vcmfb vcmsy tc"
+   ],
+   [
+    "XMN7 outp ",
+    "Vpop outpi outp dc 0 ac {vop1}\nVpon outni outn dc 0 ac {von1}\nIpop 0 outpi dc 0 ac {iop1}\nIpon 0 outni dc 0 ac {ion1}\nXMN7 outpi "
+   ],
+   [
+    "XMN8 outn ",
+    "XMN8 outni "
+   ],
+   [
+    "XMP7 outp ",
+    "XMP7 outpi "
+   ],
+   [
+    "XMP8 outn ",
+    "XMP8 outni "
+   ],
+   [
+    "XCC1 cz1 outp ",
+    "XCC1 cz1 outpi "
+   ],
+   [
+    "XCC2 cz2 outn ",
+    "XCC2 cz2 outni "
+   ],
+   [
+    "XMN7 outp ",
+    "Vpop outpi outp dc 0 ac {vop2}\nVpon outni outn dc 0 ac {von2}\nIpop 0 outpi dc 0 ac {iop2}\nIpon 0 outni dc 0 ac {ion2}\nXMN7 outpi "
+   ],
+   [
+    "XMN8 outn ",
+    "XMN8 outni "
+   ],
+   [
+    "XMP7 outp ",
+    "XMP7 outpi "
+   ],
+   [
+    "XMP8 outn ",
+    "XMP8 outni "
+   ],
+   [
+    "XCC1 cz1 outp ",
+    "XCC1 cz1 outpi "
+   ],
+   [
+    "XCC2 cz2 outn ",
+    "XCC2 cz2 outni "
+   ],
+   [
+    "XCC1B cb1 outp ",
+    "XCC1B cb1 outpi "
+   ],
+   [
+    "XCC2B cb2 outn ",
+    "XCC2B cb2 outni "
+   ],
+   [
+    "?",
+    "XCD1B cd1 outp ",
+    "XCD1B cd1 outpi "
+   ],
+   [
+    "?",
+    "XCD2B cd2 outn ",
+    "XCD2B cd2 outni "
+   ],
+   [
+    "?",
+    "XCX1 cz1 outn ",
+    "XCX1 cz1 outni "
+   ],
+   [
+    "?",
+    "XCX2 cz2 outp ",
+    "XCX2 cz2 outpi "
+   ]
+  ],
+  "seconds": 77.7,
+  "rows": [
+   {
+    "tag": "STBROW",
+    "code": 0,
+    "loop": "dm1",
+    "t_dc_db": 65.74,
+    "f_unity": 15638407.15681445,
+    "pm_deg": 65.91,
+    "gm_db": 25.45,
+    "f_180": 229504322.5532775,
+    "ph_min_deg": -297.8
+   },
+   {
+    "tag": "STBROW",
+    "code": 0,
+    "loop": "cm1",
+    "t_dc_db": 62.19,
+    "f_unity": 4150086.390268931,
+    "pm_deg": 78.35,
+    "gm_db": null,
+    "f_180": null,
+    "ph_min_deg": -131.3
+   },
+   {
+    "tag": "STBROW",
+    "code": 0,
+    "loop": "dm2",
+    "t_dc_db": 87.05,
+    "f_unity": 35817918.43959485,
+    "pm_deg": 75.03,
+    "gm_db": 12.41,
+    "f_180": 224623699.79623947,
+    "ph_min_deg": -321.7
+   },
+   {
+    "tag": "STBROW",
+    "code": 0,
+    "loop": "cm2",
+    "t_dc_db": 86.86,
+    "f_unity": 14937499.715523778,
+    "pm_deg": 66.36,
+    "gm_db": 25.58,
+    "f_180": 118932314.16871639,
+    "ph_min_deg": -473.6
+   },
+   {
+    "tag": "STBROW",
+    "code": 3,
+    "loop": "dm1",
+    "t_dc_db": 46.47,
+    "f_unity": 13872549.941427033,
+    "pm_deg": 86.1,
+    "gm_db": 26.38,
+    "f_180": 229208663.67359182,
+    "ph_min_deg": -296.1
+   },
+   {
+    "tag": "STBROW",
+    "code": 3,
+    "loop": "cm1",
+    "t_dc_db": 58.69,
+    "f_unity": 6734743.803746464,
+    "pm_deg": 68.47,
+    "gm_db": null,
+    "f_180": null,
+    "ph_min_deg": -145.9
+   },
+   {
+    "tag": "STBROW",
+    "code": 3,
+    "loop": "dm2",
+    "t_dc_db": 86.98,
+    "f_unity": 35760809.90797495,
+    "pm_deg": 74.98,
+    "gm_db": 12.44,
+    "f_180": 223853037.36660656,
+    "ph_min_deg": -321.9
+   },
+   {
+    "tag": "STBROW",
+    "code": 3,
+    "loop": "cm2",
+    "t_dc_db": 86.79,
+    "f_unity": 14925779.866324134,
+    "pm_deg": 66.33,
+    "gm_db": 25.58,
+    "f_180": 118783251.78160924,
+    "ph_min_deg": -473.8
+   },
+   {
+    "tag": "STBROW",
+    "code": 4,
+    "loop": "dm1",
+    "t_dc_db": 43.93,
+    "f_unity": 8855233.592832427,
+    "pm_deg": 100.37,
+    "gm_db": 27.5,
+    "f_180": 246351116.6621449,
+    "ph_min_deg": -292.4
+   },
+   {
+    "tag": "STBROW",
+    "code": 4,
+    "loop": "cm1",
+    "t_dc_db": 57.14,
+    "f_unity": 4285109.914197835,
+    "pm_deg": 67.9,
+    "gm_db": null,
+    "f_180": null,
+    "ph_min_deg": -129.3
+   },
+   {
+    "tag": "STBROW",
+    "code": 4,
+    "loop": "dm2",
+    "t_dc_db": 77.44,
+    "f_unity": 67045990.42267124,
+    "pm_deg": 52.1,
+    "gm_db": 7.54,
+    "f_180": 165573028.75461483,
+    "ph_min_deg": -328.9
+   },
+   {
+    "tag": "STBROW",
+    "code": 4,
+    "loop": "cm2",
+    "t_dc_db": 85.13,
+    "f_unity": 26910560.851004083,
+    "pm_deg": 51.95,
+    "gm_db": 15.51,
+    "f_180": 91824398.10248666,
+    "ph_min_deg": -474.4
+   },
+   {
+    "tag": "STBROW",
+    "code": 5,
+    "loop": "dm1",
+    "t_dc_db": 37.86,
+    "f_unity": 10639149.042054629,
+    "pm_deg": 104.59,
+    "gm_db": 26.56,
+    "f_180": 234140087.02850184,
+    "ph_min_deg": -296.2
+   },
+   {
+    "tag": "STBROW",
+    "code": 5,
+    "loop": "cm1",
+    "t_dc_db": 56.7,
+    "f_unity": 6157817.673112353,
+    "pm_deg": 63.95,
+    "gm_db": null,
+    "f_180": null,
+    "ph_min_deg": -140.7
+   },
+   {
+    "tag": "STBROW",
+    "code": 5,
+    "loop": "dm2",
+    "t_dc_db": 77.45,
+    "f_unity": 66972829.1068728,
+    "pm_deg": 52.07,
+    "gm_db": 7.55,
+    "f_180": 165435210.36183771,
+    "ph_min_deg": -329.0
+   },
+   {
+    "tag": "STBROW",
+    "code": 5,
+    "loop": "cm2",
+    "t_dc_db": 85.11,
+    "f_unity": 26900045.503866345,
+    "pm_deg": 51.97,
+    "gm_db": 15.52,
+    "f_180": 91824932.08115578,
+    "ph_min_deg": -474.4
+   }
+  ],
+  "errors": [
+   "Warning: singular matrix:  check node n.xdut.xcos.xa2.xmc1.nsg13_hv_pmos#GP",
+   "Warning: singular matrix:  check node n.xdut.xcos.xa2.xmc1.nsg13_hv_pmos#GP",
+   "Warning: singular matrix:  check node n.xdut.xcos.xa2.xmc1.nsg13_hv_pmos#GP",
+   "Warning: singular matrix:  check node n.xdut.xcos.xa2.xmc1.nsg13_hv_pmos#GP",
+   "Warning: singular matrix:  check node n.xdut.xcos.xa2.xmc1.nsg13_hv_pmos#GP",
+   "Warning: singular matrix:  check node n.xdut.xcos.xa2.xmc1.nsg13_hv_pmos#GP",
+   "Warning: singular matrix:  check node n.xdut.xcos.xa2.xmc1.nsg13_hv_pmos#GP",
+   "Warning: singular matrix:  check node n.xdut.xcos.xa2.xmc1.nsg13_hv_pmos#GP",
+   "Warning: singular matrix:  check node n.xdut.xcos.xa1.xmc1.nsg13_hv_pmos#GP",
+   "Warning: singular matrix:  check node n.xdut.xcos.xa1.xmc1.nsg13_hv_pmos#GP"
+  ],
+  "deck": "r1_afe/dev-revd-comb-stb-01/l2+cx26.3_14.4+c2sw12_13.5+o2i1.5+np2_stb_ss_cm0.5.cir",
+  "log": "r1_afe/dev-revd-comb-stb-01/l2+cx26.3_14.4+c2sw12_13.5+o2i1.5+np2_stb_ss_cm0.5.log"
+ },
+ {
+  "name": "l2+cx26.3_14.4+c2sw12_13.5+o2i1.5+np2_stb_ss_cm2.5",
+  "corner": "ss",
+  "mismatch": false,
+  "subs": {
+   "MOS": "mos_ss",
+   "RES": "res_wcs",
+   "CAP": "cap_wcs",
+   "VDDA": 3.0,
+   "TEMP": 125,
+   "VCMI": 2.5,
+   "ACVDD": 0,
+   "NMC": 1,
+   "SEED": 1,
+   "LSB": 0.000439453125,
+   "CL": "2.8p",
+   "KLIST": "0 3 4 5",
+   "LLIST": "1 2 4 5",
+   "DIO": "dio_ss",
+   "RAW": "$G1_RESULTS_ROOT/r1_afe/dev-revd-comb-stb-01/l2+cx26.3_14.4+c2sw12_13.5+o2i1.5+np2_stb_ss_cm2.5"
+  },
+  "rc": 0,
+  "edits": [
+   [
+    "r1_afe_ota2",
+    "XMB0 ibias ibias vss vss sg13_hv_nmos w=4u l=1u",
+    "XMB0 ibias ibias vss vss sg13_hv_nmos w=8u l=2u"
+   ],
+   [
+    "r1_afe_ota2",
+    "XMB1 vbp ibias vss vss sg13_hv_nmos w=4u l=1u",
+    "XMB1 vbp ibias vss vss sg13_hv_nmos w=8u l=2u"
+   ],
+   [
+    "r1_afe_ota2",
+    "XMB4 vbpc ibias vss vss sg13_hv_nmos w=4u l=1u",
+    "XMB4 vbpc ibias vss vss sg13_hv_nmos w=8u l=2u"
+   ],
+   [
+    "r1_afe_ota2",
+    "XMC3 vcmfb vcmfb vss vss sg13_hv_nmos w=4u l=1u",
+    "XMC3 vcmfb vcmfb vss vss sg13_hv_nmos w=8u l=2u"
+   ],
+   [
+    "r1_afe_ota2",
+    "XMC4 cmd cmd vss vss sg13_hv_nmos w=4u l=1u",
+    "XMC4 cmd cmd vss vss sg13_hv_nmos w=8u l=2u"
+   ],
+   [
+    "@inst",
+    "XA1",
+    "WCC=26.3u"
+   ],
+   [
+    "r1_afe_ota",
+    "XCS1 outp vcms cap_cmim",
+    "XCX1 cz1 outn cap_cmim w=14.4u l=14.4u m=1 mm_ok=1\nXCX2 cz2 outp cap_cmim w=14.4u l=14.4u m=1 mm_ok=1\nXCS1 outp vcms cap_cmim"
+   ],
+   [
+    ".subckt r1_afe_ota2 inp inn outp outn vcm ibias vdd vss",
+    ".subckt r1_afe_ota2 inp inn outp outn vcm ibias cen cenb vdd vss"
+   ],
+   [
+    "r1_afe_ota2",
+    "XCC2 cz2 outn cap_cmim w={WCC} l={WCC} m=1 mm_ok=1",
+    "XCC2 cz2 outn cap_cmim w={WCC} l={WCC} m=1 mm_ok=1\nXCD1B cd1 outp cap_cmim w=13.5u l=13.5u m=1 mm_ok=1\nXTD1 cz1 cd1 cen cenb vdd vss r1_afe_tg\nXCD2B cd2 outn cap_cmim w=13.5u l=13.5u m=1 mm_ok=1\nXTD2 cz2 cd2 cen cenb vdd vss r1_afe_tg"
+   ],
+   [
+    "XA2 x2p x2n on2 op2 vcm2 ib2 vdd vss r1_afe_ota2",
+    "XA2 x2p x2n on2 op2 vcm2 ib2 c4b c4 vdd vss r1_afe_ota2"
+   ],
+   [
+    "@inst",
+    "XA2",
+    "WCC=12u"
+   ],
+   [
+    "@inst",
+    "XA2",
+    "W2P=120u W2N=60u"
+   ],
+   [
+    "r1_afe_ota",
+    "XMN1 gn inp tn vss sg13_hv_nmos w=80u l=2u ng=16",
+    "XMN1 gn inp tn vss sg13_hv_nmos w=160u l=2u ng=32"
+   ],
+   [
+    "r1_afe_ota",
+    "XMN2 gp inn tn vss sg13_hv_nmos w=80u l=2u ng=16",
+    "XMN2 gp inn tn vss sg13_hv_nmos w=160u l=2u ng=32"
+   ],
+   [
+    "XA1 x1p x1n ",
+    "Vpa1p x1p y1p dc 0 ac {vdp1}\nVpa1n x1n y1n dc 0 ac {vdn1}\nIpa1p 0 x1p dc 0 ac {idp1}\nIpa1n 0 x1n dc 0 ac {idn1}\nXA1 y1p y1n "
+   ],
+   [
+    "XA2 x2p x2n ",
+    "Vpa2p x2p y2p dc 0 ac {vdp2}\nVpa2n x2n y2n dc 0 ac {vdn2}\nIpa2p 0 x2p dc 0 ac {idp2}\nIpa2n 0 x2n dc 0 ac {idn2}\nXA2 y2p y2n "
+   ],
+   [
+    "XMC1 vcmfb vcms tc",
+    "Vpc vcms vcmsy dc 0 ac {vc1}\nIpc 0 vcms dc 0 ac {ic1}\nXMC1 vcmfb vcmsy tc"
+   ],
+   [
+    "XMC1 vcmfb vcms tc",
+    "Vpc vcms vcmsy dc 0 ac {vc2}\nIpc 0 vcms dc 0 ac {ic2}\nXMC1 vcmfb vcmsy tc"
+   ],
+   [
+    "XMN7 outp ",
+    "Vpop outpi outp dc 0 ac {vop1}\nVpon outni outn dc 0 ac {von1}\nIpop 0 outpi dc 0 ac {iop1}\nIpon 0 outni dc 0 ac {ion1}\nXMN7 outpi "
+   ],
+   [
+    "XMN8 outn ",
+    "XMN8 outni "
+   ],
+   [
+    "XMP7 outp ",
+    "XMP7 outpi "
+   ],
+   [
+    "XMP8 outn ",
+    "XMP8 outni "
+   ],
+   [
+    "XCC1 cz1 outp ",
+    "XCC1 cz1 outpi "
+   ],
+   [
+    "XCC2 cz2 outn ",
+    "XCC2 cz2 outni "
+   ],
+   [
+    "XMN7 outp ",
+    "Vpop outpi outp dc 0 ac {vop2}\nVpon outni outn dc 0 ac {von2}\nIpop 0 outpi dc 0 ac {iop2}\nIpon 0 outni dc 0 ac {ion2}\nXMN7 outpi "
+   ],
+   [
+    "XMN8 outn ",
+    "XMN8 outni "
+   ],
+   [
+    "XMP7 outp ",
+    "XMP7 outpi "
+   ],
+   [
+    "XMP8 outn ",
+    "XMP8 outni "
+   ],
+   [
+    "XCC1 cz1 outp ",
+    "XCC1 cz1 outpi "
+   ],
+   [
+    "XCC2 cz2 outn ",
+    "XCC2 cz2 outni "
+   ],
+   [
+    "XCC1B cb1 outp ",
+    "XCC1B cb1 outpi "
+   ],
+   [
+    "XCC2B cb2 outn ",
+    "XCC2B cb2 outni "
+   ],
+   [
+    "?",
+    "XCD1B cd1 outp ",
+    "XCD1B cd1 outpi "
+   ],
+   [
+    "?",
+    "XCD2B cd2 outn ",
+    "XCD2B cd2 outni "
+   ],
+   [
+    "?",
+    "XCX1 cz1 outn ",
+    "XCX1 cz1 outni "
+   ],
+   [
+    "?",
+    "XCX2 cz2 outp ",
+    "XCX2 cz2 outpi "
+   ]
+  ],
+  "seconds": 73.7,
+  "rows": [
+   {
+    "tag": "STBROW",
+    "code": 0,
+    "loop": "dm1",
+    "t_dc_db": 79.21,
+    "f_unity": 21759716.53477959,
+    "pm_deg": 66.15,
+    "gm_db": 21.45,
+    "f_180": 210405996.58044523,
+    "ph_min_deg": -308.3
+   },
+   {
+    "tag": "STBROW",
+    "code": 0,
+    "loop": "cm1",
+    "t_dc_db": 77.23,
+    "f_unity": 8235571.612108665,
+    "pm_deg": 84.72,
+    "gm_db": null,
+    "f_180": null,
+    "ph_min_deg": -173.0
+   },
+   {
+    "tag": "STBROW",
+    "code": 0,
+    "loop": "dm2",
+    "t_dc_db": 87.21,
+    "f_unity": 35965642.34698767,
+    "pm_deg": 75.12,
+    "gm_db": 12.36,
+    "f_180": 226198299.15401748,
+    "ph_min_deg": -321.4
+   },
+   {
+    "tag": "STBROW",
+    "code": 0,
+    "loop": "cm2",
+    "t_dc_db": 87.0,
+    "f_unity": 14951483.807607757,
+    "pm_deg": 66.47,
+    "gm_db": 25.57,
+    "f_180": 119203079.54289043,
+    "ph_min_deg": -473.2
+   },
+   {
+    "tag": "STBROW",
+    "code": 3,
+    "loop": "dm1",
+    "t_dc_db": 74.7,
+    "f_unity": 19516327.610685833,
+    "pm_deg": 74.12,
+    "gm_db": 21.37,
+    "f_180": 167417822.38736778,
+    "ph_min_deg": -319.9
+   },
+   {
+    "tag": "STBROW",
+    "code": 3,
+    "loop": "cm1",
+    "t_dc_db": 87.74,
+    "f_unity": 10225918.968841076,
+    "pm_deg": 68.62,
+    "gm_db": 24.8,
+    "f_180": 74859319.07445548,
+    "ph_min_deg": -484.7
+   },
+   {
+    "tag": "STBROW",
+    "code": 3,
+    "loop": "dm2",
+    "t_dc_db": 87.5,
+    "f_unity": 36135936.65824786,
+    "pm_deg": 75.36,
+    "gm_db": 12.28,
+    "f_180": 229229879.3534173,
+    "ph_min_deg": -320.7
+   },
+   {
+    "tag": "STBROW",
+    "code": 3,
+    "loop": "cm2",
+    "t_dc_db": 87.26,
+    "f_unity": 14995039.271673612,
+    "pm_deg": 66.62,
+    "gm_db": 25.55,
+    "f_180": 119648161.78834592,
+    "ph_min_deg": -472.4
+   },
+   {
+    "tag": "STBROW",
+    "code": 4,
+    "loop": "dm1",
+    "t_dc_db": 69.19,
+    "f_unity": 14066928.427905831,
+    "pm_deg": 90.17,
+    "gm_db": 22.6,
+    "f_180": 191707492.39893588,
+    "ph_min_deg": -312.5
+   },
+   {
+    "tag": "STBROW",
+    "code": 4,
+    "loop": "cm1",
+    "t_dc_db": 82.92,
+    "f_unity": 6358473.313547405,
+    "pm_deg": 68.98,
+    "gm_db": 30.55,
+    "f_180": 87036907.57343388,
+    "ph_min_deg": -479.7
+   },
+   {
+    "tag": "STBROW",
+    "code": 4,
+    "loop": "dm2",
+    "t_dc_db": 78.16,
+    "f_unity": 68366914.74165757,
+    "pm_deg": 52.3,
+    "gm_db": 7.52,
+    "f_180": 170023974.49910644,
+    "ph_min_deg": -327.1
+   },
+   {
+    "tag": "STBROW",
+    "code": 4,
+    "loop": "cm2",
+    "t_dc_db": 85.8,
+    "f_unity": 27162071.362206712,
+    "pm_deg": 52.25,
+    "gm_db": 15.48,
+    "f_180": 92508933.94234045,
+    "ph_min_deg": -472.9
+   },
+   {
+    "tag": "STBROW",
+    "code": 5,
+    "loop": "dm1",
+    "t_dc_db": 65.53,
+    "f_unity": 16313932.057632666,
+    "pm_deg": 88.32,
+    "gm_db": 22.07,
+    "f_180": 171089455.77023742,
+    "ph_min_deg": -320.2
+   },
+   {
+    "tag": "STBROW",
+    "code": 5,
+    "loop": "cm1",
+    "t_dc_db": 85.23,
+    "f_unity": 9016933.642318802,
+    "pm_deg": 64.28,
+    "gm_db": 26.97,
+    "f_180": 77229927.59439136,
+    "ph_min_deg": -485.4
+   },
+   {
+    "tag": "STBROW",
+    "code": 5,
+    "loop": "dm2",
+    "t_dc_db": 78.27,
+    "f_unity": 68437009.59321246,
+    "pm_deg": 52.37,
+    "gm_db": 7.52,
+    "f_180": 170658839.96770823,
+    "ph_min_deg": -326.8
+   },
+   {
+    "tag": "STBROW",
+    "code": 5,
+    "loop": "cm2",
+    "t_dc_db": 85.9,
+    "f_unity": 27219314.130227745,
+    "pm_deg": 52.31,
+    "gm_db": 15.49,
+    "f_180": 92593212.50077203,
+    "ph_min_deg": -472.7
+   }
+  ],
+  "errors": [],
+  "deck": "r1_afe/dev-revd-comb-stb-01/l2+cx26.3_14.4+c2sw12_13.5+o2i1.5+np2_stb_ss_cm2.5.cir",
+  "log": "r1_afe/dev-revd-comb-stb-01/l2+cx26.3_14.4+c2sw12_13.5+o2i1.5+np2_stb_ss_cm2.5.log"
+ },
+ {
+  "name": "l2+cx26.3_14.4+c2sw12_13.5+o2i1.5+np2_stb_ss_cm2.8",
+  "corner": "ss",
+  "mismatch": false,
+  "subs": {
+   "MOS": "mos_ss",
+   "RES": "res_wcs",
+   "CAP": "cap_wcs",
+   "VDDA": 3.0,
+   "TEMP": 125,
+   "VCMI": 2.8,
+   "ACVDD": 0,
+   "NMC": 1,
+   "SEED": 1,
+   "LSB": 0.000439453125,
+   "CL": "2.8p",
+   "KLIST": "0 3 4 5",
+   "LLIST": "1 2 4 5",
+   "DIO": "dio_ss",
+   "RAW": "$G1_RESULTS_ROOT/r1_afe/dev-revd-comb-stb-01/l2+cx26.3_14.4+c2sw12_13.5+o2i1.5+np2_stb_ss_cm2.8"
+  },
+  "rc": 0,
+  "edits": [
+   [
+    "r1_afe_ota2",
+    "XMB0 ibias ibias vss vss sg13_hv_nmos w=4u l=1u",
+    "XMB0 ibias ibias vss vss sg13_hv_nmos w=8u l=2u"
+   ],
+   [
+    "r1_afe_ota2",
+    "XMB1 vbp ibias vss vss sg13_hv_nmos w=4u l=1u",
+    "XMB1 vbp ibias vss vss sg13_hv_nmos w=8u l=2u"
+   ],
+   [
+    "r1_afe_ota2",
+    "XMB4 vbpc ibias vss vss sg13_hv_nmos w=4u l=1u",
+    "XMB4 vbpc ibias vss vss sg13_hv_nmos w=8u l=2u"
+   ],
+   [
+    "r1_afe_ota2",
+    "XMC3 vcmfb vcmfb vss vss sg13_hv_nmos w=4u l=1u",
+    "XMC3 vcmfb vcmfb vss vss sg13_hv_nmos w=8u l=2u"
+   ],
+   [
+    "r1_afe_ota2",
+    "XMC4 cmd cmd vss vss sg13_hv_nmos w=4u l=1u",
+    "XMC4 cmd cmd vss vss sg13_hv_nmos w=8u l=2u"
+   ],
+   [
+    "@inst",
+    "XA1",
+    "WCC=26.3u"
+   ],
+   [
+    "r1_afe_ota",
+    "XCS1 outp vcms cap_cmim",
+    "XCX1 cz1 outn cap_cmim w=14.4u l=14.4u m=1 mm_ok=1\nXCX2 cz2 outp cap_cmim w=14.4u l=14.4u m=1 mm_ok=1\nXCS1 outp vcms cap_cmim"
+   ],
+   [
+    ".subckt r1_afe_ota2 inp inn outp outn vcm ibias vdd vss",
+    ".subckt r1_afe_ota2 inp inn outp outn vcm ibias cen cenb vdd vss"
+   ],
+   [
+    "r1_afe_ota2",
+    "XCC2 cz2 outn cap_cmim w={WCC} l={WCC} m=1 mm_ok=1",
+    "XCC2 cz2 outn cap_cmim w={WCC} l={WCC} m=1 mm_ok=1\nXCD1B cd1 outp cap_cmim w=13.5u l=13.5u m=1 mm_ok=1\nXTD1 cz1 cd1 cen cenb vdd vss r1_afe_tg\nXCD2B cd2 outn cap_cmim w=13.5u l=13.5u m=1 mm_ok=1\nXTD2 cz2 cd2 cen cenb vdd vss r1_afe_tg"
+   ],
+   [
+    "XA2 x2p x2n on2 op2 vcm2 ib2 vdd vss r1_afe_ota2",
+    "XA2 x2p x2n on2 op2 vcm2 ib2 c4b c4 vdd vss r1_afe_ota2"
+   ],
+   [
+    "@inst",
+    "XA2",
+    "WCC=12u"
+   ],
+   [
+    "@inst",
+    "XA2",
+    "W2P=120u W2N=60u"
+   ],
+   [
+    "r1_afe_ota",
+    "XMN1 gn inp tn vss sg13_hv_nmos w=80u l=2u ng=16",
+    "XMN1 gn inp tn vss sg13_hv_nmos w=160u l=2u ng=32"
+   ],
+   [
+    "r1_afe_ota",
+    "XMN2 gp inn tn vss sg13_hv_nmos w=80u l=2u ng=16",
+    "XMN2 gp inn tn vss sg13_hv_nmos w=160u l=2u ng=32"
+   ],
+   [
+    "XA1 x1p x1n ",
+    "Vpa1p x1p y1p dc 0 ac {vdp1}\nVpa1n x1n y1n dc 0 ac {vdn1}\nIpa1p 0 x1p dc 0 ac {idp1}\nIpa1n 0 x1n dc 0 ac {idn1}\nXA1 y1p y1n "
+   ],
+   [
+    "XA2 x2p x2n ",
+    "Vpa2p x2p y2p dc 0 ac {vdp2}\nVpa2n x2n y2n dc 0 ac {vdn2}\nIpa2p 0 x2p dc 0 ac {idp2}\nIpa2n 0 x2n dc 0 ac {idn2}\nXA2 y2p y2n "
+   ],
+   [
+    "XMC1 vcmfb vcms tc",
+    "Vpc vcms vcmsy dc 0 ac {vc1}\nIpc 0 vcms dc 0 ac {ic1}\nXMC1 vcmfb vcmsy tc"
+   ],
+   [
+    "XMC1 vcmfb vcms tc",
+    "Vpc vcms vcmsy dc 0 ac {vc2}\nIpc 0 vcms dc 0 ac {ic2}\nXMC1 vcmfb vcmsy tc"
+   ],
+   [
+    "XMN7 outp ",
+    "Vpop outpi outp dc 0 ac {vop1}\nVpon outni outn dc 0 ac {von1}\nIpop 0 outpi dc 0 ac {iop1}\nIpon 0 outni dc 0 ac {ion1}\nXMN7 outpi "
+   ],
+   [
+    "XMN8 outn ",
+    "XMN8 outni "
+   ],
+   [
+    "XMP7 outp ",
+    "XMP7 outpi "
+   ],
+   [
+    "XMP8 outn ",
+    "XMP8 outni "
+   ],
+   [
+    "XCC1 cz1 outp ",
+    "XCC1 cz1 outpi "
+   ],
+   [
+    "XCC2 cz2 outn ",
+    "XCC2 cz2 outni "
+   ],
+   [
+    "XMN7 outp ",
+    "Vpop outpi outp dc 0 ac {vop2}\nVpon outni outn dc 0 ac {von2}\nIpop 0 outpi dc 0 ac {iop2}\nIpon 0 outni dc 0 ac {ion2}\nXMN7 outpi "
+   ],
+   [
+    "XMN8 outn ",
+    "XMN8 outni "
+   ],
+   [
+    "XMP7 outp ",
+    "XMP7 outpi "
+   ],
+   [
+    "XMP8 outn ",
+    "XMP8 outni "
+   ],
+   [
+    "XCC1 cz1 outp ",
+    "XCC1 cz1 outpi "
+   ],
+   [
+    "XCC2 cz2 outn ",
+    "XCC2 cz2 outni "
+   ],
+   [
+    "XCC1B cb1 outp ",
+    "XCC1B cb1 outpi "
+   ],
+   [
+    "XCC2B cb2 outn ",
+    "XCC2B cb2 outni "
+   ],
+   [
+    "?",
+    "XCD1B cd1 outp ",
+    "XCD1B cd1 outpi "
+   ],
+   [
+    "?",
+    "XCD2B cd2 outn ",
+    "XCD2B cd2 outni "
+   ],
+   [
+    "?",
+    "XCX1 cz1 outn ",
+    "XCX1 cz1 outni "
+   ],
+   [
+    "?",
+    "XCX2 cz2 outp ",
+    "XCX2 cz2 outpi "
+   ]
+  ],
+  "seconds": 71.4,
+  "rows": [
+   {
+    "tag": "STBROW",
+    "code": 0,
+    "loop": "dm1",
+    "t_dc_db": 80.68,
+    "f_unity": 21740426.44001868,
+    "pm_deg": 66.64,
+    "gm_db": 21.2,
+    "f_180": 207326948.17278805,
+    "ph_min_deg": -308.8
+   },
+   {
+    "tag": "STBROW",
+    "code": 0,
+    "loop": "cm1",
+    "t_dc_db": 78.07,
+    "f_unity": 7114053.1792616425,
+    "pm_deg": 83.42,
+    "gm_db": 37.29,
+    "f_180": 142155796.55965152,
+    "ph_min_deg": -480.4
+   },
+   {
+    "tag": "STBROW",
+    "code": 0,
+    "loop": "dm2",
+    "t_dc_db": 87.24,
+    "f_unity": 35991340.55780822,
+    "pm_deg": 75.15,
+    "gm_db": 12.35,
+    "f_180": 226576463.2024443,
+    "ph_min_deg": -321.3
+   },
+   {
+    "tag": "STBROW",
+    "code": 0,
+    "loop": "cm2",
+    "t_dc_db": 87.03,
+    "f_unity": 14958360.441589987,
+    "pm_deg": 66.48,
+    "gm_db": 25.57,
+    "f_180": 119262452.70044087,
+    "ph_min_deg": -473.1
+   },
+   {
+    "tag": "STBROW",
+    "code": 3,
+    "loop": "dm1",
+    "t_dc_db": 75.52,
+    "f_unity": 18133098.348845106,
+    "pm_deg": 78.22,
+    "gm_db": 22.36,
+    "f_180": 164034059.05210114,
+    "ph_min_deg": -333.1
+   },
+   {
+    "tag": "STBROW",
+    "code": 3,
+    "loop": "cm1",
+    "t_dc_db": 89.6,
+    "f_unity": 10652289.732130302,
+    "pm_deg": 73.04,
+    "gm_db": 26.66,
+    "f_180": 94397704.94885042,
+    "ph_min_deg": -490.3
+   },
+   {
+    "tag": "STBROW",
+    "code": 3,
+    "loop": "dm2",
+    "t_dc_db": 87.54,
+    "f_unity": 36159876.778060354,
+    "pm_deg": 75.4,
+    "gm_db": 12.26,
+    "f_180": 229683061.63733065,
+    "ph_min_deg": -320.6
+   },
+   {
+    "tag": "STBROW",
+    "code": 3,
+    "loop": "cm2",
+    "t_dc_db": 87.3,
+    "f_unity": 14998507.247090988,
+    "pm_deg": 66.64,
+    "gm_db": 25.55,
+    "f_180": 119710964.02227153,
+    "ph_min_deg": -472.3
+   },
+   {
+    "tag": "STBROW",
+    "code": 4,
+    "loop": "dm1",
+    "t_dc_db": 71.25,
+    "f_unity": 11755449.103265153,
+    "pm_deg": 94.55,
+    "gm_db": 23.53,
+    "f_180": 177912625.00402257,
+    "ph_min_deg": -322.0
+   },
+   {
+    "tag": "STBROW",
+    "code": 4,
+    "loop": "cm1",
+    "t_dc_db": 86.58,
+    "f_unity": 6628715.070399116,
+    "pm_deg": 73.77,
+    "gm_db": 31.93,
+    "f_180": 98270630.65034768,
+    "ph_min_deg": -481.7
+   },
+   {
+    "tag": "STBROW",
+    "code": 4,
+    "loop": "dm2",
+    "t_dc_db": 78.32,
+    "f_unity": 68559004.55096138,
+    "pm_deg": 52.42,
+    "gm_db": 7.52,
+    "f_180": 170960990.15695113,
+    "ph_min_deg": -326.7
+   },
+   {
+    "tag": "STBROW",
+    "code": 4,
+    "loop": "cm2",
+    "t_dc_db": 85.95,
+    "f_unity": 27212601.836569194,
+    "pm_deg": 52.31,
+    "gm_db": 15.47,
+    "f_180": 92607061.56885979,
+    "ph_min_deg": -472.6
+   },
+   {
+    "tag": "STBROW",
+    "code": 5,
+    "loop": "dm1",
+    "t_dc_db": 66.38,
+    "f_unity": 14816566.523413654,
+    "pm_deg": 92.95,
+    "gm_db": 23.08,
+    "f_180": 167464912.6288694,
+    "ph_min_deg": -333.4
+   },
+   {
+    "tag": "STBROW",
+    "code": 5,
+    "loop": "cm1",
+    "t_dc_db": 87.1,
+    "f_unity": 9309426.504677828,
+    "pm_deg": 68.8,
+    "gm_db": 29.04,
+    "f_180": 99143693.02731615,
+    "ph_min_deg": -491.0
+   },
+   {
+    "tag": "STBROW",
+    "code": 5,
+    "loop": "dm2",
+    "t_dc_db": 78.34,
+    "f_unity": 68530187.7651022,
+    "pm_deg": 52.42,
+    "gm_db": 7.52,
+    "f_180": 171066427.78214237,
+    "ph_min_deg": -326.6
+   },
+   {
+    "tag": "STBROW",
+    "code": 5,
+    "loop": "cm2",
+    "t_dc_db": 85.96,
+    "f_unity": 27219623.94423753,
+    "pm_deg": 52.39,
+    "gm_db": 15.48,
+    "f_180": 92643305.67779517,
+    "ph_min_deg": -472.6
+   }
+  ],
+  "errors": [
+   "Warning: singular matrix:  check node n.xdut.xcos.xa2.xmc1.nsg13_hv_pmos#GP",
+   "Warning: singular matrix:  check node n.xdut.xcos.xa2.xmc1.nsg13_hv_pmos#GP",
+   "Warning: singular matrix:  check node n.xdut.xcos.xa2.xmc1.nsg13_hv_pmos#GP",
+   "Warning: singular matrix:  check node n.xdut.xcos.xa2.xmc1.nsg13_hv_pmos#GP",
+   "Warning: singular matrix:  check node n.xdut.xcos.xa2.xmc1.nsg13_hv_pmos#GP",
+   "Warning: singular matrix:  check node n.xdut.xcos.xa2.xmc1.nsg13_hv_pmos#GP",
+   "Warning: singular matrix:  check node n.xdut.xcos.xa2.xmc1.nsg13_hv_pmos#GP",
+   "Warning: singular matrix:  check node n.xdut.xcos.xa2.xmc1.nsg13_hv_pmos#GP",
+   "Warning: singular matrix:  check node n.xdut.xsin.xa2.xmc1.nsg13_hv_pmos#GP",
+   "Warning: singular matrix:  check node n.xdut.xsin.xa2.xmc1.nsg13_hv_pmos#GP"
+  ],
+  "deck": "r1_afe/dev-revd-comb-stb-01/l2+cx26.3_14.4+c2sw12_13.5+o2i1.5+np2_stb_ss_cm2.8.cir",
+  "log": "r1_afe/dev-revd-comb-stb-01/l2+cx26.3_14.4+c2sw12_13.5+o2i1.5+np2_stb_ss_cm2.8.log"
+ },
+ {
+  "name": "l2+cx26.3_14.4+c2sw12_13.5+o2i1.5+np2_stb_ff_cm0.5",
+  "corner": "ff",
+  "mismatch": false,
+  "subs": {
+   "MOS": "mos_ff",
+   "RES": "res_bcs",
+   "CAP": "cap_bcs",
+   "VDDA": 3.6,
+   "TEMP": -40,
+   "VCMI": 0.5,
+   "ACVDD": 0,
+   "NMC": 1,
+   "SEED": 1,
+   "LSB": 0.000439453125,
+   "CL": "2.8p",
+   "KLIST": "0 3 4 5",
+   "LLIST": "1 2 4 5",
+   "DIO": "dio_ff",
+   "RAW": "$G1_RESULTS_ROOT/r1_afe/dev-revd-comb-stb-01/l2+cx26.3_14.4+c2sw12_13.5+o2i1.5+np2_stb_ff_cm0.5"
+  },
+  "rc": 0,
+  "edits": [
+   [
+    "r1_afe_ota2",
+    "XMB0 ibias ibias vss vss sg13_hv_nmos w=4u l=1u",
+    "XMB0 ibias ibias vss vss sg13_hv_nmos w=8u l=2u"
+   ],
+   [
+    "r1_afe_ota2",
+    "XMB1 vbp ibias vss vss sg13_hv_nmos w=4u l=1u",
+    "XMB1 vbp ibias vss vss sg13_hv_nmos w=8u l=2u"
+   ],
+   [
+    "r1_afe_ota2",
+    "XMB4 vbpc ibias vss vss sg13_hv_nmos w=4u l=1u",
+    "XMB4 vbpc ibias vss vss sg13_hv_nmos w=8u l=2u"
+   ],
+   [
+    "r1_afe_ota2",
+    "XMC3 vcmfb vcmfb vss vss sg13_hv_nmos w=4u l=1u",
+    "XMC3 vcmfb vcmfb vss vss sg13_hv_nmos w=8u l=2u"
+   ],
+   [
+    "r1_afe_ota2",
+    "XMC4 cmd cmd vss vss sg13_hv_nmos w=4u l=1u",
+    "XMC4 cmd cmd vss vss sg13_hv_nmos w=8u l=2u"
+   ],
+   [
+    "@inst",
+    "XA1",
+    "WCC=26.3u"
+   ],
+   [
+    "r1_afe_ota",
+    "XCS1 outp vcms cap_cmim",
+    "XCX1 cz1 outn cap_cmim w=14.4u l=14.4u m=1 mm_ok=1\nXCX2 cz2 outp cap_cmim w=14.4u l=14.4u m=1 mm_ok=1\nXCS1 outp vcms cap_cmim"
+   ],
+   [
+    ".subckt r1_afe_ota2 inp inn outp outn vcm ibias vdd vss",
+    ".subckt r1_afe_ota2 inp inn outp outn vcm ibias cen cenb vdd vss"
+   ],
+   [
+    "r1_afe_ota2",
+    "XCC2 cz2 outn cap_cmim w={WCC} l={WCC} m=1 mm_ok=1",
+    "XCC2 cz2 outn cap_cmim w={WCC} l={WCC} m=1 mm_ok=1\nXCD1B cd1 outp cap_cmim w=13.5u l=13.5u m=1 mm_ok=1\nXTD1 cz1 cd1 cen cenb vdd vss r1_afe_tg\nXCD2B cd2 outn cap_cmim w=13.5u l=13.5u m=1 mm_ok=1\nXTD2 cz2 cd2 cen cenb vdd vss r1_afe_tg"
+   ],
+   [
+    "XA2 x2p x2n on2 op2 vcm2 ib2 vdd vss r1_afe_ota2",
+    "XA2 x2p x2n on2 op2 vcm2 ib2 c4b c4 vdd vss r1_afe_ota2"
+   ],
+   [
+    "@inst",
+    "XA2",
+    "WCC=12u"
+   ],
+   [
+    "@inst",
+    "XA2",
+    "W2P=120u W2N=60u"
+   ],
+   [
+    "r1_afe_ota",
+    "XMN1 gn inp tn vss sg13_hv_nmos w=80u l=2u ng=16",
+    "XMN1 gn inp tn vss sg13_hv_nmos w=160u l=2u ng=32"
+   ],
+   [
+    "r1_afe_ota",
+    "XMN2 gp inn tn vss sg13_hv_nmos w=80u l=2u ng=16",
+    "XMN2 gp inn tn vss sg13_hv_nmos w=160u l=2u ng=32"
+   ],
+   [
+    "XA1 x1p x1n ",
+    "Vpa1p x1p y1p dc 0 ac {vdp1}\nVpa1n x1n y1n dc 0 ac {vdn1}\nIpa1p 0 x1p dc 0 ac {idp1}\nIpa1n 0 x1n dc 0 ac {idn1}\nXA1 y1p y1n "
+   ],
+   [
+    "XA2 x2p x2n ",
+    "Vpa2p x2p y2p dc 0 ac {vdp2}\nVpa2n x2n y2n dc 0 ac {vdn2}\nIpa2p 0 x2p dc 0 ac {idp2}\nIpa2n 0 x2n dc 0 ac {idn2}\nXA2 y2p y2n "
+   ],
+   [
+    "XMC1 vcmfb vcms tc",
+    "Vpc vcms vcmsy dc 0 ac {vc1}\nIpc 0 vcms dc 0 ac {ic1}\nXMC1 vcmfb vcmsy tc"
+   ],
+   [
+    "XMC1 vcmfb vcms tc",
+    "Vpc vcms vcmsy dc 0 ac {vc2}\nIpc 0 vcms dc 0 ac {ic2}\nXMC1 vcmfb vcmsy tc"
+   ],
+   [
+    "XMN7 outp ",
+    "Vpop outpi outp dc 0 ac {vop1}\nVpon outni outn dc 0 ac {von1}\nIpop 0 outpi dc 0 ac {iop1}\nIpon 0 outni dc 0 ac {ion1}\nXMN7 outpi "
+   ],
+   [
+    "XMN8 outn ",
+    "XMN8 outni "
+   ],
+   [
+    "XMP7 outp ",
+    "XMP7 outpi "
+   ],
+   [
+    "XMP8 outn ",
+    "XMP8 outni "
+   ],
+   [
+    "XCC1 cz1 outp ",
+    "XCC1 cz1 outpi "
+   ],
+   [
+    "XCC2 cz2 outn ",
+    "XCC2 cz2 outni "
+   ],
+   [
+    "XMN7 outp ",
+    "Vpop outpi outp dc 0 ac {vop2}\nVpon outni outn dc 0 ac {von2}\nIpop 0 outpi dc 0 ac {iop2}\nIpon 0 outni dc 0 ac {ion2}\nXMN7 outpi "
+   ],
+   [
+    "XMN8 outn ",
+    "XMN8 outni "
+   ],
+   [
+    "XMP7 outp ",
+    "XMP7 outpi "
+   ],
+   [
+    "XMP8 outn ",
+    "XMP8 outni "
+   ],
+   [
+    "XCC1 cz1 outp ",
+    "XCC1 cz1 outpi "
+   ],
+   [
+    "XCC2 cz2 outn ",
+    "XCC2 cz2 outni "
+   ],
+   [
+    "XCC1B cb1 outp ",
+    "XCC1B cb1 outpi "
+   ],
+   [
+    "XCC2B cb2 outn ",
+    "XCC2B cb2 outni "
+   ],
+   [
+    "?",
+    "XCD1B cd1 outp ",
+    "XCD1B cd1 outpi "
+   ],
+   [
+    "?",
+    "XCD2B cd2 outn ",
+    "XCD2B cd2 outni "
+   ],
+   [
+    "?",
+    "XCX1 cz1 outn ",
+    "XCX1 cz1 outni "
+   ],
+   [
+    "?",
+    "XCX2 cz2 outp ",
+    "XCX2 cz2 outpi "
+   ]
+  ],
+  "seconds": 98.0,
+  "rows": [
+   {
+    "tag": "STBROW",
+    "code": 0,
+    "loop": "dm1",
+    "t_dc_db": 72.63,
+    "f_unity": 30189470.64089339,
+    "pm_deg": 65.93,
+    "gm_db": 19.91,
+    "f_180": 276427761.1111118,
+    "ph_min_deg": -283.5
+   },
+   {
+    "tag": "STBROW",
+    "code": 0,
+    "loop": "cm1",
+    "t_dc_db": 68.4,
+    "f_unity": 8454917.692411061,
+    "pm_deg": 82.4,
+    "gm_db": null,
+    "f_180": null,
+    "ph_min_deg": -126.5
+   },
+   {
+    "tag": "STBROW",
+    "code": 0,
+    "loop": "dm2",
+    "t_dc_db": 91.77,
+    "f_unity": 61065086.25409648,
+    "pm_deg": 69.26,
+    "gm_db": 9.95,
+    "f_180": 288048677.81682974,
+    "ph_min_deg": -298.0
+   },
+   {
+    "tag": "STBROW",
+    "code": 0,
+    "loop": "cm2",
+    "t_dc_db": 91.55,
+    "f_unity": 24381004.294512175,
+    "pm_deg": 63.39,
+    "gm_db": 23.05,
+    "f_180": 153411256.2002378,
+    "ph_min_deg": -447.1
+   },
+   {
+    "tag": "STBROW",
+    "code": 3,
+    "loop": "dm1",
+    "t_dc_db": 45.84,
+    "f_unity": 20328467.317876674,
+    "pm_deg": 90.16,
+    "gm_db": 23.69,
+    "f_180": 308572729.5053125,
+    "ph_min_deg": -267.3
+   },
+   {
+    "tag": "STBROW",
+    "code": 3,
+    "loop": "cm1",
+    "t_dc_db": 55.73,
+    "f_unity": 7584579.339925275,
+    "pm_deg": 76.21,
+    "gm_db": null,
+    "f_180": null,
+    "ph_min_deg": -109.5
+   },
+   {
+    "tag": "STBROW",
+    "code": 3,
+    "loop": "dm2",
+    "t_dc_db": 91.69,
+    "f_unity": 60705851.896714374,
+    "pm_deg": 69.16,
+    "gm_db": 10.0,
+    "f_180": 285539088.1119923,
+    "ph_min_deg": -298.4
+   },
+   {
+    "tag": "STBROW",
+    "code": 3,
+    "loop": "cm2",
+    "t_dc_db": 91.48,
+    "f_unity": 24328186.53368698,
+    "pm_deg": 63.29,
+    "gm_db": 23.03,
+    "f_180": 152870390.71530232,
+    "ph_min_deg": -447.6
+   },
+   {
+    "tag": "STBROW",
+    "code": 4,
+    "loop": "dm1",
+    "t_dc_db": 44.03,
+    "f_unity": 13467240.93560121,
+    "pm_deg": 100.47,
+    "gm_db": 23.94,
+    "f_180": 311315536.3560024,
+    "ph_min_deg": -270.4
+   },
+   {
+    "tag": "STBROW",
+    "code": 4,
+    "loop": "cm1",
+    "t_dc_db": 54.81,
+    "f_unity": 5126201.806583815,
+    "pm_deg": 71.22,
+    "gm_db": null,
+    "f_180": null,
+    "ph_min_deg": -113.9
+   },
+   {
+    "tag": "STBROW",
+    "code": 4,
+    "loop": "dm2",
+    "t_dc_db": 82.25,
+    "f_unity": 114581886.94452491,
+    "pm_deg": 40.24,
+    "gm_db": 5.02,
+    "f_180": 216916925.91190824,
+    "ph_min_deg": -309.7
+   },
+   {
+    "tag": "STBROW",
+    "code": 4,
+    "loop": "cm2",
+    "t_dc_db": 89.91,
+    "f_unity": 43066312.03318474,
+    "pm_deg": 46.85,
+    "gm_db": 13.4,
+    "f_180": 121179072.90114862,
+    "ph_min_deg": -454.2
+   },
+   {
+    "tag": "STBROW",
+    "code": 5,
+    "loop": "dm1",
+    "t_dc_db": 36.86,
+    "f_unity": 14710159.916858274,
+    "pm_deg": 107.96,
+    "gm_db": 24.21,
+    "f_180": 315651916.61152977,
+    "ph_min_deg": -267.4
+   },
+   {
+    "tag": "STBROW",
+    "code": 5,
+    "loop": "cm1",
+    "t_dc_db": 53.45,
+    "f_unity": 7129060.672265588,
+    "pm_deg": 71.98,
+    "gm_db": null,
+    "f_180": null,
+    "ph_min_deg": -113.6
+   },
+   {
+    "tag": "STBROW",
+    "code": 5,
+    "loop": "dm2",
+    "t_dc_db": 82.27,
+    "f_unity": 114291427.06135735,
+    "pm_deg": 40.26,
+    "gm_db": 5.02,
+    "f_180": 216518944.32531306,
+    "ph_min_deg": -309.8
+   },
+   {
+    "tag": "STBROW",
+    "code": 5,
+    "loop": "cm2",
+    "t_dc_db": 89.89,
+    "f_unity": 43020998.308797404,
+    "pm_deg": 46.88,
+    "gm_db": 13.41,
+    "f_180": 121113392.64670908,
+    "ph_min_deg": -454.3
+   }
+  ],
+  "errors": [],
+  "deck": "r1_afe/dev-revd-comb-stb-01/l2+cx26.3_14.4+c2sw12_13.5+o2i1.5+np2_stb_ff_cm0.5.cir",
+  "log": "r1_afe/dev-revd-comb-stb-01/l2+cx26.3_14.4+c2sw12_13.5+o2i1.5+np2_stb_ff_cm0.5.log"
+ },
+ {
+  "name": "l2+cx26.3_14.4+c2sw12_13.5+o2i1.5+np2_stb_ff_cm2.5",
+  "corner": "ff",
+  "mismatch": false,
+  "subs": {
+   "MOS": "mos_ff",
+   "RES": "res_bcs",
+   "CAP": "cap_bcs",
+   "VDDA": 3.6,
+   "TEMP": -40,
+   "VCMI": 2.5,
+   "ACVDD": 0,
+   "NMC": 1,
+   "SEED": 1,
+   "LSB": 0.000439453125,
+   "CL": "2.8p",
+   "KLIST": "0 3 4 5",
+   "LLIST": "1 2 4 5",
+   "DIO": "dio_ff",
+   "RAW": "$G1_RESULTS_ROOT/r1_afe/dev-revd-comb-stb-01/l2+cx26.3_14.4+c2sw12_13.5+o2i1.5+np2_stb_ff_cm2.5"
+  },
+  "rc": 0,
+  "edits": [
+   [
+    "r1_afe_ota2",
+    "XMB0 ibias ibias vss vss sg13_hv_nmos w=4u l=1u",
+    "XMB0 ibias ibias vss vss sg13_hv_nmos w=8u l=2u"
+   ],
+   [
+    "r1_afe_ota2",
+    "XMB1 vbp ibias vss vss sg13_hv_nmos w=4u l=1u",
+    "XMB1 vbp ibias vss vss sg13_hv_nmos w=8u l=2u"
+   ],
+   [
+    "r1_afe_ota2",
+    "XMB4 vbpc ibias vss vss sg13_hv_nmos w=4u l=1u",
+    "XMB4 vbpc ibias vss vss sg13_hv_nmos w=8u l=2u"
+   ],
+   [
+    "r1_afe_ota2",
+    "XMC3 vcmfb vcmfb vss vss sg13_hv_nmos w=4u l=1u",
+    "XMC3 vcmfb vcmfb vss vss sg13_hv_nmos w=8u l=2u"
+   ],
+   [
+    "r1_afe_ota2",
+    "XMC4 cmd cmd vss vss sg13_hv_nmos w=4u l=1u",
+    "XMC4 cmd cmd vss vss sg13_hv_nmos w=8u l=2u"
+   ],
+   [
+    "@inst",
+    "XA1",
+    "WCC=26.3u"
+   ],
+   [
+    "r1_afe_ota",
+    "XCS1 outp vcms cap_cmim",
+    "XCX1 cz1 outn cap_cmim w=14.4u l=14.4u m=1 mm_ok=1\nXCX2 cz2 outp cap_cmim w=14.4u l=14.4u m=1 mm_ok=1\nXCS1 outp vcms cap_cmim"
+   ],
+   [
+    ".subckt r1_afe_ota2 inp inn outp outn vcm ibias vdd vss",
+    ".subckt r1_afe_ota2 inp inn outp outn vcm ibias cen cenb vdd vss"
+   ],
+   [
+    "r1_afe_ota2",
+    "XCC2 cz2 outn cap_cmim w={WCC} l={WCC} m=1 mm_ok=1",
+    "XCC2 cz2 outn cap_cmim w={WCC} l={WCC} m=1 mm_ok=1\nXCD1B cd1 outp cap_cmim w=13.5u l=13.5u m=1 mm_ok=1\nXTD1 cz1 cd1 cen cenb vdd vss r1_afe_tg\nXCD2B cd2 outn cap_cmim w=13.5u l=13.5u m=1 mm_ok=1\nXTD2 cz2 cd2 cen cenb vdd vss r1_afe_tg"
+   ],
+   [
+    "XA2 x2p x2n on2 op2 vcm2 ib2 vdd vss r1_afe_ota2",
+    "XA2 x2p x2n on2 op2 vcm2 ib2 c4b c4 vdd vss r1_afe_ota2"
+   ],
+   [
+    "@inst",
+    "XA2",
+    "WCC=12u"
+   ],
+   [
+    "@inst",
+    "XA2",
+    "W2P=120u W2N=60u"
+   ],
+   [
+    "r1_afe_ota",
+    "XMN1 gn inp tn vss sg13_hv_nmos w=80u l=2u ng=16",
+    "XMN1 gn inp tn vss sg13_hv_nmos w=160u l=2u ng=32"
+   ],
+   [
+    "r1_afe_ota",
+    "XMN2 gp inn tn vss sg13_hv_nmos w=80u l=2u ng=16",
+    "XMN2 gp inn tn vss sg13_hv_nmos w=160u l=2u ng=32"
+   ],
+   [
+    "XA1 x1p x1n ",
+    "Vpa1p x1p y1p dc 0 ac {vdp1}\nVpa1n x1n y1n dc 0 ac {vdn1}\nIpa1p 0 x1p dc 0 ac {idp1}\nIpa1n 0 x1n dc 0 ac {idn1}\nXA1 y1p y1n "
+   ],
+   [
+    "XA2 x2p x2n ",
+    "Vpa2p x2p y2p dc 0 ac {vdp2}\nVpa2n x2n y2n dc 0 ac {vdn2}\nIpa2p 0 x2p dc 0 ac {idp2}\nIpa2n 0 x2n dc 0 ac {idn2}\nXA2 y2p y2n "
+   ],
+   [
+    "XMC1 vcmfb vcms tc",
+    "Vpc vcms vcmsy dc 0 ac {vc1}\nIpc 0 vcms dc 0 ac {ic1}\nXMC1 vcmfb vcmsy tc"
+   ],
+   [
+    "XMC1 vcmfb vcms tc",
+    "Vpc vcms vcmsy dc 0 ac {vc2}\nIpc 0 vcms dc 0 ac {ic2}\nXMC1 vcmfb vcmsy tc"
+   ],
+   [
+    "XMN7 outp ",
+    "Vpop outpi outp dc 0 ac {vop1}\nVpon outni outn dc 0 ac {von1}\nIpop 0 outpi dc 0 ac {iop1}\nIpon 0 outni dc 0 ac {ion1}\nXMN7 outpi "
+   ],
+   [
+    "XMN8 outn ",
+    "XMN8 outni "
+   ],
+   [
+    "XMP7 outp ",
+    "XMP7 outpi "
+   ],
+   [
+    "XMP8 outn ",
+    "XMP8 outni "
+   ],
+   [
+    "XCC1 cz1 outp ",
+    "XCC1 cz1 outpi "
+   ],
+   [
+    "XCC2 cz2 outn ",
+    "XCC2 cz2 outni "
+   ],
+   [
+    "XMN7 outp ",
+    "Vpop outpi outp dc 0 ac {vop2}\nVpon outni outn dc 0 ac {von2}\nIpop 0 outpi dc 0 ac {iop2}\nIpon 0 outni dc 0 ac {ion2}\nXMN7 outpi "
+   ],
+   [
+    "XMN8 outn ",
+    "XMN8 outni "
+   ],
+   [
+    "XMP7 outp ",
+    "XMP7 outpi "
+   ],
+   [
+    "XMP8 outn ",
+    "XMP8 outni "
+   ],
+   [
+    "XCC1 cz1 outp ",
+    "XCC1 cz1 outpi "
+   ],
+   [
+    "XCC2 cz2 outn ",
+    "XCC2 cz2 outni "
+   ],
+   [
+    "XCC1B cb1 outp ",
+    "XCC1B cb1 outpi "
+   ],
+   [
+    "XCC2B cb2 outn ",
+    "XCC2B cb2 outni "
+   ],
+   [
+    "?",
+    "XCD1B cd1 outp ",
+    "XCD1B cd1 outpi "
+   ],
+   [
+    "?",
+    "XCD2B cd2 outn ",
+    "XCD2B cd2 outni "
+   ],
+   [
+    "?",
+    "XCX1 cz1 outn ",
+    "XCX1 cz1 outni "
+   ],
+   [
+    "?",
+    "XCX2 cz2 outp ",
+    "XCX2 cz2 outpi "
+   ]
+  ],
+  "seconds": 92.3,
+  "rows": [
+   {
+    "tag": "STBROW",
+    "code": 0,
+    "loop": "dm1",
+    "t_dc_db": 80.65,
+    "f_unity": 39376993.633900546,
+    "pm_deg": 69.71,
+    "gm_db": 16.7,
+    "f_180": 272994109.85366195,
+    "ph_min_deg": -287.8
+   },
+   {
+    "tag": "STBROW",
+    "code": 0,
+    "loop": "cm1",
+    "t_dc_db": 77.85,
+    "f_unity": 13849830.01127384,
+    "pm_deg": 88.27,
+    "gm_db": null,
+    "f_180": null,
+    "ph_min_deg": -159.2
+   },
+   {
+    "tag": "STBROW",
+    "code": 0,
+    "loop": "dm2",
+    "t_dc_db": 91.81,
+    "f_unity": 61248997.47547159,
+    "pm_deg": 69.3,
+    "gm_db": 9.93,
+    "f_180": 288979624.2728942,
+    "ph_min_deg": -297.8
+   },
+   {
+    "tag": "STBROW",
+    "code": 0,
+    "loop": "cm2",
+    "t_dc_db": 91.58,
+    "f_unity": 24386674.365963165,
+    "pm_deg": 63.44,
+    "gm_db": 23.05,
+    "f_180": 153607153.28340477,
+    "ph_min_deg": -446.9
+   },
+   {
+    "tag": "STBROW",
+    "code": 3,
+    "loop": "dm1",
+    "t_dc_db": 68.69,
+    "f_unity": 45487857.76879117,
+    "pm_deg": 67.3,
+    "gm_db": 16.38,
+    "f_180": 260917839.4380502,
+    "ph_min_deg": -290.5
+   },
+   {
+    "tag": "STBROW",
+    "code": 3,
+    "loop": "cm1",
+    "t_dc_db": 78.36,
+    "f_unity": 19447004.621832088,
+    "pm_deg": 80.22,
+    "gm_db": 32.02,
+    "f_180": 249068720.19784346,
+    "ph_min_deg": -186.1
+   },
+   {
+    "tag": "STBROW",
+    "code": 3,
+    "loop": "dm2",
+    "t_dc_db": 91.82,
+    "f_unity": 61290298.301886596,
+    "pm_deg": 69.3,
+    "gm_db": 9.92,
+    "f_180": 289210155.54608554,
+    "ph_min_deg": -297.8
+   },
+   {
+    "tag": "STBROW",
+    "code": 3,
+    "loop": "cm2",
+    "t_dc_db": 91.58,
+    "f_unity": 24385262.76548571,
+    "pm_deg": 63.45,
+    "gm_db": 23.06,
+    "f_180": 153657634.66966403,
+    "ph_min_deg": -446.8
+   },
+   {
+    "tag": "STBROW",
+    "code": 4,
+    "loop": "dm1",
+    "t_dc_db": 64.57,
+    "f_unity": 31853534.97176134,
+    "pm_deg": 87.97,
+    "gm_db": 17.46,
+    "f_180": 282249257.076592,
+    "ph_min_deg": -288.1
+   },
+   {
+    "tag": "STBROW",
+    "code": 4,
+    "loop": "cm1",
+    "t_dc_db": 75.89,
+    "f_unity": 12490272.620915744,
+    "pm_deg": 82.66,
+    "gm_db": null,
+    "f_180": null,
+    "ph_min_deg": -167.3
+   },
+   {
+    "tag": "STBROW",
+    "code": 4,
+    "loop": "dm2",
+    "t_dc_db": 82.42,
+    "f_unity": 116576838.80665271,
+    "pm_deg": 39.9,
+    "gm_db": 4.98,
+    "f_180": 219819888.30409533,
+    "ph_min_deg": -308.7
+   },
+   {
+    "tag": "STBROW",
+    "code": 4,
+    "loop": "cm2",
+    "t_dc_db": 90.07,
+    "f_unity": 43125868.17022328,
+    "pm_deg": 47.27,
+    "gm_db": 13.44,
+    "f_180": 122070869.04800487,
+    "ph_min_deg": -453.3
+   },
+   {
+    "tag": "STBROW",
+    "code": 5,
+    "loop": "dm1",
+    "t_dc_db": 59.95,
+    "f_unity": 40583265.14338808,
+    "pm_deg": 77.51,
+    "gm_db": 16.96,
+    "f_180": 267026285.02261522,
+    "ph_min_deg": -290.5
+   },
+   {
+    "tag": "STBROW",
+    "code": 5,
+    "loop": "cm1",
+    "t_dc_db": 76.19,
+    "f_unity": 17148706.865209147,
+    "pm_deg": 76.26,
+    "gm_db": 36.35,
+    "f_180": 275825453.96407086,
+    "ph_min_deg": -180.8
+   },
+   {
+    "tag": "STBROW",
+    "code": 5,
+    "loop": "dm2",
+    "t_dc_db": 82.43,
+    "f_unity": 116494746.36162008,
+    "pm_deg": 39.89,
+    "gm_db": 4.98,
+    "f_180": 219912410.5538299,
+    "ph_min_deg": -308.7
+   },
+   {
+    "tag": "STBROW",
+    "code": 5,
+    "loop": "cm2",
+    "t_dc_db": 90.07,
+    "f_unity": 43126136.191635326,
+    "pm_deg": 47.35,
+    "gm_db": 13.44,
+    "f_180": 122038023.85617211,
+    "ph_min_deg": -453.3
+   }
+  ],
+  "errors": [
+   "Warning: singular matrix:  check node n.xdut.xcos.xa2.xmc1.nsg13_hv_pmos#GP",
+   "Warning: singular matrix:  check node n.xdut.xcos.xa2.xmc1.nsg13_hv_pmos#GP",
+   "Warning: singular matrix:  check node n.xdut.xcos.xa2.xmc1.nsg13_hv_pmos#GP",
+   "Warning: singular matrix:  check node n.xdut.xcos.xa2.xmc1.nsg13_hv_pmos#GP",
+   "Warning: singular matrix:  check node n.xdut.xcos.xa2.xmc1.nsg13_hv_pmos#GP",
+   "Warning: singular matrix:  check node n.xdut.xcos.xa2.xmc1.nsg13_hv_pmos#GP",
+   "Warning: singular matrix:  check node n.xdut.xcos.xa2.xmc1.nsg13_hv_pmos#GP",
+   "Warning: singular matrix:  check node n.xdut.xcos.xa2.xmc1.nsg13_hv_pmos#GP"
+  ],
+  "deck": "r1_afe/dev-revd-comb-stb-01/l2+cx26.3_14.4+c2sw12_13.5+o2i1.5+np2_stb_ff_cm2.5.cir",
+  "log": "r1_afe/dev-revd-comb-stb-01/l2+cx26.3_14.4+c2sw12_13.5+o2i1.5+np2_stb_ff_cm2.5.log"
+ },
+ {
+  "name": "l2+cx26.3_14.4+c2sw12_13.5+o2i1.5+np2_stb_ff_cm2.8",
+  "corner": "ff",
+  "mismatch": false,
+  "subs": {
+   "MOS": "mos_ff",
+   "RES": "res_bcs",
+   "CAP": "cap_bcs",
+   "VDDA": 3.6,
+   "TEMP": -40,
+   "VCMI": 2.8,
+   "ACVDD": 0,
+   "NMC": 1,
+   "SEED": 1,
+   "LSB": 0.000439453125,
+   "CL": "2.8p",
+   "KLIST": "0 3 4 5",
+   "LLIST": "1 2 4 5",
+   "DIO": "dio_ff",
+   "RAW": "$G1_RESULTS_ROOT/r1_afe/dev-revd-comb-stb-01/l2+cx26.3_14.4+c2sw12_13.5+o2i1.5+np2_stb_ff_cm2.8"
+  },
+  "rc": 0,
+  "edits": [
+   [
+    "r1_afe_ota2",
+    "XMB0 ibias ibias vss vss sg13_hv_nmos w=4u l=1u",
+    "XMB0 ibias ibias vss vss sg13_hv_nmos w=8u l=2u"
+   ],
+   [
+    "r1_afe_ota2",
+    "XMB1 vbp ibias vss vss sg13_hv_nmos w=4u l=1u",
+    "XMB1 vbp ibias vss vss sg13_hv_nmos w=8u l=2u"
+   ],
+   [
+    "r1_afe_ota2",
+    "XMB4 vbpc ibias vss vss sg13_hv_nmos w=4u l=1u",
+    "XMB4 vbpc ibias vss vss sg13_hv_nmos w=8u l=2u"
+   ],
+   [
+    "r1_afe_ota2",
+    "XMC3 vcmfb vcmfb vss vss sg13_hv_nmos w=4u l=1u",
+    "XMC3 vcmfb vcmfb vss vss sg13_hv_nmos w=8u l=2u"
+   ],
+   [
+    "r1_afe_ota2",
+    "XMC4 cmd cmd vss vss sg13_hv_nmos w=4u l=1u",
+    "XMC4 cmd cmd vss vss sg13_hv_nmos w=8u l=2u"
+   ],
+   [
+    "@inst",
+    "XA1",
+    "WCC=26.3u"
+   ],
+   [
+    "r1_afe_ota",
+    "XCS1 outp vcms cap_cmim",
+    "XCX1 cz1 outn cap_cmim w=14.4u l=14.4u m=1 mm_ok=1\nXCX2 cz2 outp cap_cmim w=14.4u l=14.4u m=1 mm_ok=1\nXCS1 outp vcms cap_cmim"
+   ],
+   [
+    ".subckt r1_afe_ota2 inp inn outp outn vcm ibias vdd vss",
+    ".subckt r1_afe_ota2 inp inn outp outn vcm ibias cen cenb vdd vss"
+   ],
+   [
+    "r1_afe_ota2",
+    "XCC2 cz2 outn cap_cmim w={WCC} l={WCC} m=1 mm_ok=1",
+    "XCC2 cz2 outn cap_cmim w={WCC} l={WCC} m=1 mm_ok=1\nXCD1B cd1 outp cap_cmim w=13.5u l=13.5u m=1 mm_ok=1\nXTD1 cz1 cd1 cen cenb vdd vss r1_afe_tg\nXCD2B cd2 outn cap_cmim w=13.5u l=13.5u m=1 mm_ok=1\nXTD2 cz2 cd2 cen cenb vdd vss r1_afe_tg"
+   ],
+   [
+    "XA2 x2p x2n on2 op2 vcm2 ib2 vdd vss r1_afe_ota2",
+    "XA2 x2p x2n on2 op2 vcm2 ib2 c4b c4 vdd vss r1_afe_ota2"
+   ],
+   [
+    "@inst",
+    "XA2",
+    "WCC=12u"
+   ],
+   [
+    "@inst",
+    "XA2",
+    "W2P=120u W2N=60u"
+   ],
+   [
+    "r1_afe_ota",
+    "XMN1 gn inp tn vss sg13_hv_nmos w=80u l=2u ng=16",
+    "XMN1 gn inp tn vss sg13_hv_nmos w=160u l=2u ng=32"
+   ],
+   [
+    "r1_afe_ota",
+    "XMN2 gp inn tn vss sg13_hv_nmos w=80u l=2u ng=16",
+    "XMN2 gp inn tn vss sg13_hv_nmos w=160u l=2u ng=32"
+   ],
+   [
+    "XA1 x1p x1n ",
+    "Vpa1p x1p y1p dc 0 ac {vdp1}\nVpa1n x1n y1n dc 0 ac {vdn1}\nIpa1p 0 x1p dc 0 ac {idp1}\nIpa1n 0 x1n dc 0 ac {idn1}\nXA1 y1p y1n "
+   ],
+   [
+    "XA2 x2p x2n ",
+    "Vpa2p x2p y2p dc 0 ac {vdp2}\nVpa2n x2n y2n dc 0 ac {vdn2}\nIpa2p 0 x2p dc 0 ac {idp2}\nIpa2n 0 x2n dc 0 ac {idn2}\nXA2 y2p y2n "
+   ],
+   [
+    "XMC1 vcmfb vcms tc",
+    "Vpc vcms vcmsy dc 0 ac {vc1}\nIpc 0 vcms dc 0 ac {ic1}\nXMC1 vcmfb vcmsy tc"
+   ],
+   [
+    "XMC1 vcmfb vcms tc",
+    "Vpc vcms vcmsy dc 0 ac {vc2}\nIpc 0 vcms dc 0 ac {ic2}\nXMC1 vcmfb vcmsy tc"
+   ],
+   [
+    "XMN7 outp ",
+    "Vpop outpi outp dc 0 ac {vop1}\nVpon outni outn dc 0 ac {von1}\nIpop 0 outpi dc 0 ac {iop1}\nIpon 0 outni dc 0 ac {ion1}\nXMN7 outpi "
+   ],
+   [
+    "XMN8 outn ",
+    "XMN8 outni "
+   ],
+   [
+    "XMP7 outp ",
+    "XMP7 outpi "
+   ],
+   [
+    "XMP8 outn ",
+    "XMP8 outni "
+   ],
+   [
+    "XCC1 cz1 outp ",
+    "XCC1 cz1 outpi "
+   ],
+   [
+    "XCC2 cz2 outn ",
+    "XCC2 cz2 outni "
+   ],
+   [
+    "XMN7 outp ",
+    "Vpop outpi outp dc 0 ac {vop2}\nVpon outni outn dc 0 ac {von2}\nIpop 0 outpi dc 0 ac {iop2}\nIpon 0 outni dc 0 ac {ion2}\nXMN7 outpi "
+   ],
+   [
+    "XMN8 outn ",
+    "XMN8 outni "
+   ],
+   [
+    "XMP7 outp ",
+    "XMP7 outpi "
+   ],
+   [
+    "XMP8 outn ",
+    "XMP8 outni "
+   ],
+   [
+    "XCC1 cz1 outp ",
+    "XCC1 cz1 outpi "
+   ],
+   [
+    "XCC2 cz2 outn ",
+    "XCC2 cz2 outni "
+   ],
+   [
+    "XCC1B cb1 outp ",
+    "XCC1B cb1 outpi "
+   ],
+   [
+    "XCC2B cb2 outn ",
+    "XCC2B cb2 outni "
+   ],
+   [
+    "?",
+    "XCD1B cd1 outp ",
+    "XCD1B cd1 outpi "
+   ],
+   [
+    "?",
+    "XCD2B cd2 outn ",
+    "XCD2B cd2 outni "
+   ],
+   [
+    "?",
+    "XCX1 cz1 outn ",
+    "XCX1 cz1 outni "
+   ],
+   [
+    "?",
+    "XCX2 cz2 outp ",
+    "XCX2 cz2 outpi "
+   ]
+  ],
+  "seconds": 103.6,
+  "rows": [
+   {
+    "tag": "STBROW",
+    "code": 0,
+    "loop": "dm1",
+    "t_dc_db": 81.17,
+    "f_unity": 40378694.40627346,
+    "pm_deg": 70.27,
+    "gm_db": 16.39,
+    "f_180": 273463297.05662394,
+    "ph_min_deg": -287.8
+   },
+   {
+    "tag": "STBROW",
+    "code": 0,
+    "loop": "cm1",
+    "t_dc_db": 78.31,
+    "f_unity": 13966906.343729652,
+    "pm_deg": 88.71,
+    "gm_db": null,
+    "f_180": null,
+    "ph_min_deg": -158.8
+   },
+   {
+    "tag": "STBROW",
+    "code": 0,
+    "loop": "dm2",
+    "t_dc_db": 91.81,
+    "f_unity": 61260222.14634994,
+    "pm_deg": 69.3,
+    "gm_db": 9.93,
+    "f_180": 289020800.10551757,
+    "ph_min_deg": -297.8
+   },
+   {
+    "tag": "STBROW",
+    "code": 0,
+    "loop": "cm2",
+    "t_dc_db": 91.58,
+    "f_unity": 24386657.687982704,
+    "pm_deg": 63.44,
+    "gm_db": 23.05,
+    "f_180": 153615964.52731505,
+    "ph_min_deg": -446.8
+   },
+   {
+    "tag": "STBROW",
+    "code": 3,
+    "loop": "dm1",
+    "t_dc_db": 72.58,
+    "f_unity": 44608999.65548356,
+    "pm_deg": 67.87,
+    "gm_db": 15.94,
+    "f_180": 250363526.89616928,
+    "ph_min_deg": -291.9
+   },
+   {
+    "tag": "STBROW",
+    "code": 3,
+    "loop": "cm1",
+    "t_dc_db": 82.97,
+    "f_unity": 17605945.659518257,
+    "pm_deg": 72.29,
+    "gm_db": 25.17,
+    "f_180": 147973035.99064353,
+    "ph_min_deg": -453.8
+   },
+   {
+    "tag": "STBROW",
+    "code": 3,
+    "loop": "dm2",
+    "t_dc_db": 91.87,
+    "f_unity": 61463678.9895574,
+    "pm_deg": 69.37,
+    "gm_db": 9.89,
+    "f_180": 290592743.4477509,
+    "ph_min_deg": -297.5
+   },
+   {
+    "tag": "STBROW",
+    "code": 3,
+    "loop": "cm2",
+    "t_dc_db": 91.62,
+    "f_unity": 24417271.30567792,
+    "pm_deg": 63.5,
+    "gm_db": 23.06,
+    "f_180": 153943314.14917323,
+    "ph_min_deg": -446.5
+   },
+   {
+    "tag": "STBROW",
+    "code": 4,
+    "loop": "dm1",
+    "t_dc_db": 65.92,
+    "f_unity": 32578616.25987169,
+    "pm_deg": 88.39,
+    "gm_db": 17.06,
+    "f_180": 280917162.63401973,
+    "ph_min_deg": -288.3
+   },
+   {
+    "tag": "STBROW",
+    "code": 4,
+    "loop": "cm1",
+    "t_dc_db": 77.14,
+    "f_unity": 11869925.033601547,
+    "pm_deg": 80.43,
+    "gm_db": 47.13,
+    "f_180": 278626581.44514513,
+    "ph_min_deg": -180.6
+   },
+   {
+    "tag": "STBROW",
+    "code": 4,
+    "loop": "dm2",
+    "t_dc_db": 82.44,
+    "f_unity": 116780567.28373346,
+    "pm_deg": 39.87,
+    "gm_db": 4.98,
+    "f_180": 220115114.8873357,
+    "ph_min_deg": -308.6
+   },
+   {
+    "tag": "STBROW",
+    "code": 4,
+    "loop": "cm2",
+    "t_dc_db": 90.08,
+    "f_unity": 43149955.632629655,
+    "pm_deg": 47.26,
+    "gm_db": 13.44,
+    "f_180": 122126623.18606105,
+    "ph_min_deg": -453.2
+   },
+   {
+    "tag": "STBROW",
+    "code": 5,
+    "loop": "dm1",
+    "t_dc_db": 63.78,
+    "f_unity": 39454900.48649102,
+    "pm_deg": 78.25,
+    "gm_db": 16.58,
+    "f_180": 256226244.0821627,
+    "ph_min_deg": -291.9
+   },
+   {
+    "tag": "STBROW",
+    "code": 5,
+    "loop": "cm1",
+    "t_dc_db": 80.75,
+    "f_unity": 15861864.613498019,
+    "pm_deg": 68.25,
+    "gm_db": 27.03,
+    "f_180": 152459419.1982186,
+    "ph_min_deg": -454.2
+   },
+   {
+    "tag": "STBROW",
+    "code": 5,
+    "loop": "dm2",
+    "t_dc_db": 82.51,
+    "f_unity": 117139379.68358997,
+    "pm_deg": 39.89,
+    "gm_db": 4.97,
+    "f_180": 221222603.89889267,
+    "ph_min_deg": -308.3
+   },
+   {
+    "tag": "STBROW",
+    "code": 5,
+    "loop": "cm2",
+    "t_dc_db": 90.14,
+    "f_unity": 43289484.8056923,
+    "pm_deg": 47.29,
+    "gm_db": 13.44,
+    "f_180": 122221874.5029767,
+    "ph_min_deg": -452.9
+   }
+  ],
+  "errors": [],
+  "deck": "r1_afe/dev-revd-comb-stb-01/l2+cx26.3_14.4+c2sw12_13.5+o2i1.5+np2_stb_ff_cm2.8.cir",
+  "log": "r1_afe/dev-revd-comb-stb-01/l2+cx26.3_14.4+c2sw12_13.5+o2i1.5+np2_stb_ff_cm2.8.log"
+ }
+]

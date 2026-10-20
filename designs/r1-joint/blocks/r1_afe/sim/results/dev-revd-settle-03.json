@@ -1,0 +1,734 @@
+[
+ {
+  "name": "l2+c2sw10_15+o2i1.5_st_ss_x32_p100",
+  "corner": "ss",
+  "mismatch": false,
+  "subs": {
+   "MOS": "mos_ss",
+   "RES": "res_wcs",
+   "CAP": "cap_wcs",
+   "VDDA": 3.0,
+   "TEMP": 125,
+   "VCMI": 2.45,
+   "ACVDD": 0,
+   "NMC": 1,
+   "SEED": 1,
+   "LSB": 0.000439453125,
+   "CL": "2.8p",
+   "KLIST": "0 1 2 3 4 5",
+   "LLIST": "1 2 3 4 5 6 7 8",
+   "DIO": "dio_ss",
+   "CODE": 5,
+   "AMP": 0.021875,
+   "CS": "2.8p",
+   "VRST": 0.0,
+   "RAW": "$G1_RESULTS_ROOT/r1_afe/dev-revd-settle-03/l2+c2sw10_15+o2i1.5_st_ss_x32_p100"
+  },
+  "rc": 0,
+  "edits": [
+   [
+    "r1_afe_ota2",
+    "XMB0 ibias ibias vss vss sg13_hv_nmos w=4u l=1u",
+    "XMB0 ibias ibias vss vss sg13_hv_nmos w=8u l=2u"
+   ],
+   [
+    "r1_afe_ota2",
+    "XMB1 vbp ibias vss vss sg13_hv_nmos w=4u l=1u",
+    "XMB1 vbp ibias vss vss sg13_hv_nmos w=8u l=2u"
+   ],
+   [
+    "r1_afe_ota2",
+    "XMB4 vbpc ibias vss vss sg13_hv_nmos w=4u l=1u",
+    "XMB4 vbpc ibias vss vss sg13_hv_nmos w=8u l=2u"
+   ],
+   [
+    "r1_afe_ota2",
+    "XMC3 vcmfb vcmfb vss vss sg13_hv_nmos w=4u l=1u",
+    "XMC3 vcmfb vcmfb vss vss sg13_hv_nmos w=8u l=2u"
+   ],
+   [
+    "r1_afe_ota2",
+    "XMC4 cmd cmd vss vss sg13_hv_nmos w=4u l=1u",
+    "XMC4 cmd cmd vss vss sg13_hv_nmos w=8u l=2u"
+   ],
+   [
+    ".subckt r1_afe_ota2 inp inn outp outn vcm ibias vdd vss",
+    ".subckt r1_afe_ota2 inp inn outp outn vcm ibias cen cenb vdd vss"
+   ],
+   [
+    "r1_afe_ota2",
+    "XCC2 cz2 outn cap_cmim w={WCC} l={WCC} m=1 mm_ok=1",
+    "XCC2 cz2 outn cap_cmim w={WCC} l={WCC} m=1 mm_ok=1\nXCD1B cd1 outp cap_cmim w=15u l=15u m=1 mm_ok=1\nXTD1 cz1 cd1 cen cenb vdd vss r1_afe_tg\nXCD2B cd2 outn cap_cmim w=15u l=15u m=1 mm_ok=1\nXTD2 cz2 cd2 cen cenb vdd vss r1_afe_tg"
+   ],
+   [
+    "XA2 x2p x2n on2 op2 vcm2 ib2 vdd vss r1_afe_ota2",
+    "XA2 x2p x2n on2 op2 vcm2 ib2 c4b c4 vdd vss r1_afe_ota2"
+   ],
+   [
+    "@inst",
+    "XA2",
+    "WCC=10u"
+   ],
+   [
+    "@inst",
+    "XA2",
+    "W2P=120u W2N=60u"
+   ]
+  ],
+  "seconds": 64.7,
+  "rows": [
+   {
+    "tag": "STROW",
+    "code": 5.0,
+    "t": "2.249u",
+    "vout0": 0.704615,
+    "err_s": 5.3562e-06,
+    "err_c": 5.35236e-06,
+    "lsb_s": 0.0121883,
+    "lsb_c": 0.0121796
+   },
+   {
+    "tag": "STROW",
+    "code": 5.0,
+    "t": "2.749u",
+    "vout0": 0.704615,
+    "err_s": 5.35609e-06,
+    "err_c": 5.35209e-06,
+    "lsb_s": 0.0121881,
+    "lsb_c": 0.012179
+   },
+   {
+    "tag": "STROW",
+    "code": 5.0,
+    "t": "3.249u",
+    "vout0": 0.704615,
+    "err_s": 5.35624e-06,
+    "err_c": 5.35203e-06,
+    "lsb_s": 0.0121884,
+    "lsb_c": 0.0121788
+   },
+   {
+    "tag": "STROW",
+    "code": 5.0,
+    "t": "3.749u",
+    "vout0": 0.704615,
+    "err_s": 5.35636e-06,
+    "err_c": 5.35209e-06,
+    "lsb_s": 0.0121887,
+    "lsb_c": 0.012179
+   },
+   {
+    "tag": "STROW",
+    "code": 5.0,
+    "t": "4.249u",
+    "vout0": 0.704615,
+    "err_s": 5.35615e-06,
+    "err_c": 5.35214e-06,
+    "lsb_s": 0.0121882,
+    "lsb_c": 0.0121791
+   },
+   {
+    "tag": "STROW",
+    "code": 5.0,
+    "t": "4.749u",
+    "vout0": 0.704615,
+    "err_s": 5.3559e-06,
+    "err_c": 5.35202e-06,
+    "lsb_s": 0.0121877,
+    "lsb_c": 0.0121788
+   },
+   {
+    "tag": "STROW",
+    "code": 5.0,
+    "t": "5.249u",
+    "vout0": 0.704615,
+    "err_s": 5.35599e-06,
+    "err_c": 5.352e-06,
+    "lsb_s": 0.0121878,
+    "lsb_c": 0.0121788
+   },
+   {
+    "tag": "STTROW",
+    "code": 5.0,
+    "t": "5.05u",
+    "err_s": -0.0486904,
+    "lsb_s": -110.798
+   },
+   {
+    "tag": "STTROW",
+    "code": 5.0,
+    "t": "5.1u",
+    "err_s": -0.0115318,
+    "lsb_s": -26.2413
+   },
+   {
+    "tag": "STTROW",
+    "code": 5.0,
+    "t": "5.15u",
+    "err_s": -0.00251052,
+    "lsb_s": -5.71282
+   },
+   {
+    "tag": "STTROW",
+    "code": 5.0,
+    "t": "5.2u",
+    "err_s": -0.000420916,
+    "lsb_s": -0.957818
+   }
+  ],
+  "errors": [],
+  "deck": "r1_afe/dev-revd-settle-03/l2+c2sw10_15+o2i1.5_st_ss_x32_p100.cir",
+  "log": "r1_afe/dev-revd-settle-03/l2+c2sw10_15+o2i1.5_st_ss_x32_p100.log"
+ },
+ {
+  "name": "l2+c2sw10_15+o2i1.5_st_ss_x32_m100",
+  "corner": "ss",
+  "mismatch": false,
+  "subs": {
+   "MOS": "mos_ss",
+   "RES": "res_wcs",
+   "CAP": "cap_wcs",
+   "VDDA": 3.0,
+   "TEMP": 125,
+   "VCMI": 2.45,
+   "ACVDD": 0,
+   "NMC": 1,
+   "SEED": 1,
+   "LSB": 0.000439453125,
+   "CL": "2.8p",
+   "KLIST": "0 1 2 3 4 5",
+   "LLIST": "1 2 3 4 5 6 7 8",
+   "DIO": "dio_ss",
+   "CODE": 5,
+   "AMP": -0.021875,
+   "CS": "2.8p",
+   "VRST": 0.0,
+   "RAW": "$G1_RESULTS_ROOT/r1_afe/dev-revd-settle-03/l2+c2sw10_15+o2i1.5_st_ss_x32_m100"
+  },
+  "rc": 0,
+  "edits": [
+   [
+    "r1_afe_ota2",
+    "XMB0 ibias ibias vss vss sg13_hv_nmos w=4u l=1u",
+    "XMB0 ibias ibias vss vss sg13_hv_nmos w=8u l=2u"
+   ],
+   [
+    "r1_afe_ota2",
+    "XMB1 vbp ibias vss vss sg13_hv_nmos w=4u l=1u",
+    "XMB1 vbp ibias vss vss sg13_hv_nmos w=8u l=2u"
+   ],
+   [
+    "r1_afe_ota2",
+    "XMB4 vbpc ibias vss vss sg13_hv_nmos w=4u l=1u",
+    "XMB4 vbpc ibias vss vss sg13_hv_nmos w=8u l=2u"
+   ],
+   [
+    "r1_afe_ota2",
+    "XMC3 vcmfb vcmfb vss vss sg13_hv_nmos w=4u l=1u",
+    "XMC3 vcmfb vcmfb vss vss sg13_hv_nmos w=8u l=2u"
+   ],
+   [
+    "r1_afe_ota2",
+    "XMC4 cmd cmd vss vss sg13_hv_nmos w=4u l=1u",
+    "XMC4 cmd cmd vss vss sg13_hv_nmos w=8u l=2u"
+   ],
+   [
+    ".subckt r1_afe_ota2 inp inn outp outn vcm ibias vdd vss",
+    ".subckt r1_afe_ota2 inp inn outp outn vcm ibias cen cenb vdd vss"
+   ],
+   [
+    "r1_afe_ota2",
+    "XCC2 cz2 outn cap_cmim w={WCC} l={WCC} m=1 mm_ok=1",
+    "XCC2 cz2 outn cap_cmim w={WCC} l={WCC} m=1 mm_ok=1\nXCD1B cd1 outp cap_cmim w=15u l=15u m=1 mm_ok=1\nXTD1 cz1 cd1 cen cenb vdd vss r1_afe_tg\nXCD2B cd2 outn cap_cmim w=15u l=15u m=1 mm_ok=1\nXTD2 cz2 cd2 cen cenb vdd vss r1_afe_tg"
+   ],
+   [
+    "XA2 x2p x2n on2 op2 vcm2 ib2 vdd vss r1_afe_ota2",
+    "XA2 x2p x2n on2 op2 vcm2 ib2 c4b c4 vdd vss r1_afe_ota2"
+   ],
+   [
+    "@inst",
+    "XA2",
+    "WCC=10u"
+   ],
+   [
+    "@inst",
+    "XA2",
+    "W2P=120u W2N=60u"
+   ]
+  ],
+  "seconds": 64.7,
+  "rows": [
+   {
+    "tag": "STROW",
+    "code": 5.0,
+    "t": "2.249u",
+    "vout0": -0.704615,
+    "err_s": -5.34831e-06,
+    "err_c": -5.36212e-06,
+    "lsb_s": -0.0121704,
+    "lsb_c": -0.0122018
+   },
+   {
+    "tag": "STROW",
+    "code": 5.0,
+    "t": "2.749u",
+    "vout0": -0.704615,
+    "err_s": -5.34811e-06,
+    "err_c": -5.36195e-06,
+    "lsb_s": -0.0121699,
+    "lsb_c": -0.0122014
+   },
+   {
+    "tag": "STROW",
+    "code": 5.0,
+    "t": "3.249u",
+    "vout0": -0.704615,
+    "err_s": -5.34799e-06,
+    "err_c": -5.36202e-06,
+    "lsb_s": -0.0121696,
+    "lsb_c": -0.0122016
+   },
+   {
+    "tag": "STROW",
+    "code": 5.0,
+    "t": "3.749u",
+    "vout0": -0.704615,
+    "err_s": -5.34807e-06,
+    "err_c": -5.36227e-06,
+    "lsb_s": -0.0121698,
+    "lsb_c": -0.0122022
+   },
+   {
+    "tag": "STROW",
+    "code": 5.0,
+    "t": "4.249u",
+    "vout0": -0.704615,
+    "err_s": -5.34818e-06,
+    "err_c": -5.36201e-06,
+    "lsb_s": -0.0121701,
+    "lsb_c": -0.0122015
+   },
+   {
+    "tag": "STROW",
+    "code": 5.0,
+    "t": "4.749u",
+    "vout0": -0.704615,
+    "err_s": -5.34797e-06,
+    "err_c": -5.3619e-06,
+    "lsb_s": -0.0121696,
+    "lsb_c": -0.0122013
+   },
+   {
+    "tag": "STROW",
+    "code": 5.0,
+    "t": "5.249u",
+    "vout0": -0.704615,
+    "err_s": -5.34812e-06,
+    "err_c": -5.36192e-06,
+    "lsb_s": -0.01217,
+    "lsb_c": -0.0122014
+   },
+   {
+    "tag": "STTROW",
+    "code": 5.0,
+    "t": "5.05u",
+    "err_s": 0.0486904,
+    "lsb_s": 110.798
+   },
+   {
+    "tag": "STTROW",
+    "code": 5.0,
+    "t": "5.1u",
+    "err_s": 0.0115318,
+    "lsb_s": 26.2413
+   },
+   {
+    "tag": "STTROW",
+    "code": 5.0,
+    "t": "5.15u",
+    "err_s": 0.00251053,
+    "lsb_s": 5.71284
+   },
+   {
+    "tag": "STTROW",
+    "code": 5.0,
+    "t": "5.2u",
+    "err_s": 0.000420924,
+    "lsb_s": 0.957836
+   }
+  ],
+  "errors": [],
+  "deck": "r1_afe/dev-revd-settle-03/l2+c2sw10_15+o2i1.5_st_ss_x32_m100.cir",
+  "log": "r1_afe/dev-revd-settle-03/l2+c2sw10_15+o2i1.5_st_ss_x32_m100.log"
+ },
+ {
+  "name": "l2+c2sw12_13.5+o2i1.5+ro11.55_44.7_30_st_ss_x32_p100",
+  "corner": "ss",
+  "mismatch": false,
+  "subs": {
+   "MOS": "mos_ss",
+   "RES": "res_wcs",
+   "CAP": "cap_wcs",
+   "VDDA": 3.0,
+   "TEMP": 125,
+   "VCMI": 2.45,
+   "ACVDD": 0,
+   "NMC": 1,
+   "SEED": 1,
+   "LSB": 0.000439453125,
+   "CL": "2.8p",
+   "KLIST": "0 1 2 3 4 5",
+   "LLIST": "1 2 3 4 5 6 7 8",
+   "DIO": "dio_ss",
+   "CODE": 5,
+   "AMP": 0.021875,
+   "CS": "2.8p",
+   "VRST": 0.0,
+   "RAW": "$G1_RESULTS_ROOT/r1_afe/dev-revd-settle-03/l2+c2sw12_13.5+o2i1.5+ro11.55_44.7_30_st_ss_x32_p100"
+  },
+  "rc": 0,
+  "edits": [
+   [
+    "r1_afe_ota2",
+    "XMB0 ibias ibias vss vss sg13_hv_nmos w=4u l=1u",
+    "XMB0 ibias ibias vss vss sg13_hv_nmos w=8u l=2u"
+   ],
+   [
+    "r1_afe_ota2",
+    "XMB1 vbp ibias vss vss sg13_hv_nmos w=4u l=1u",
+    "XMB1 vbp ibias vss vss sg13_hv_nmos w=8u l=2u"
+   ],
+   [
+    "r1_afe_ota2",
+    "XMB4 vbpc ibias vss vss sg13_hv_nmos w=4u l=1u",
+    "XMB4 vbpc ibias vss vss sg13_hv_nmos w=8u l=2u"
+   ],
+   [
+    "r1_afe_ota2",
+    "XMC3 vcmfb vcmfb vss vss sg13_hv_nmos w=4u l=1u",
+    "XMC3 vcmfb vcmfb vss vss sg13_hv_nmos w=8u l=2u"
+   ],
+   [
+    "r1_afe_ota2",
+    "XMC4 cmd cmd vss vss sg13_hv_nmos w=4u l=1u",
+    "XMC4 cmd cmd vss vss sg13_hv_nmos w=8u l=2u"
+   ],
+   [
+    ".subckt r1_afe_ota2 inp inn outp outn vcm ibias vdd vss",
+    ".subckt r1_afe_ota2 inp inn outp outn vcm ibias cen cenb vdd vss"
+   ],
+   [
+    "r1_afe_ota2",
+    "XCC2 cz2 outn cap_cmim w={WCC} l={WCC} m=1 mm_ok=1",
+    "XCC2 cz2 outn cap_cmim w={WCC} l={WCC} m=1 mm_ok=1\nXCD1B cd1 outp cap_cmim w=13.5u l=13.5u m=1 mm_ok=1\nXTD1 cz1 cd1 cen cenb vdd vss r1_afe_tg\nXCD2B cd2 outn cap_cmim w=13.5u l=13.5u m=1 mm_ok=1\nXTD2 cz2 cd2 cen cenb vdd vss r1_afe_tg"
+   ],
+   [
+    "XA2 x2p x2n on2 op2 vcm2 ib2 vdd vss r1_afe_ota2",
+    "XA2 x2p x2n on2 op2 vcm2 ib2 c4b c4 vdd vss r1_afe_ota2"
+   ],
+   [
+    "@inst",
+    "XA2",
+    "WCC=12u"
+   ],
+   [
+    "@inst",
+    "XA2",
+    "W2P=120u W2N=60u"
+   ],
+   [
+    ".param LRO=11.55u WCOD=44.7u WCOS=18.3u",
+    ".param LRO=11.55u WCOD=44.7u WCOS=30u"
+   ]
+  ],
+  "seconds": 55.7,
+  "rows": [
+   {
+    "tag": "STROW",
+    "code": 5.0,
+    "t": "2.249u",
+    "vout0": 0.704615,
+    "err_s": -6.07039e-05,
+    "err_c": -6.07074e-05,
+    "lsb_s": -0.138135,
+    "lsb_c": -0.138143
+   },
+   {
+    "tag": "STROW",
+    "code": 5.0,
+    "t": "2.749u",
+    "vout0": 0.704615,
+    "err_s": -6.07038e-05,
+    "err_c": -6.07075e-05,
+    "lsb_s": -0.138135,
+    "lsb_c": -0.138143
+   },
+   {
+    "tag": "STROW",
+    "code": 5.0,
+    "t": "3.249u",
+    "vout0": 0.704615,
+    "err_s": -6.07035e-05,
+    "err_c": -6.07078e-05,
+    "lsb_s": -0.138134,
+    "lsb_c": -0.138144
+   },
+   {
+    "tag": "STROW",
+    "code": 5.0,
+    "t": "3.749u",
+    "vout0": 0.704615,
+    "err_s": -6.07036e-05,
+    "err_c": -6.07077e-05,
+    "lsb_s": -0.138134,
+    "lsb_c": -0.138144
+   },
+   {
+    "tag": "STROW",
+    "code": 5.0,
+    "t": "4.249u",
+    "vout0": 0.704615,
+    "err_s": -6.07035e-05,
+    "err_c": -6.07076e-05,
+    "lsb_s": -0.138134,
+    "lsb_c": -0.138144
+   },
+   {
+    "tag": "STROW",
+    "code": 5.0,
+    "t": "4.749u",
+    "vout0": 0.704615,
+    "err_s": -6.07037e-05,
+    "err_c": -6.07078e-05,
+    "lsb_s": -0.138135,
+    "lsb_c": -0.138144
+   },
+   {
+    "tag": "STROW",
+    "code": 5.0,
+    "t": "5.249u",
+    "vout0": 0.704615,
+    "err_s": -6.07037e-05,
+    "err_c": -6.07076e-05,
+    "lsb_s": -0.138135,
+    "lsb_c": -0.138143
+   },
+   {
+    "tag": "STTROW",
+    "code": 5.0,
+    "t": "5.05u",
+    "err_s": -0.050308,
+    "lsb_s": -114.479
+   },
+   {
+    "tag": "STTROW",
+    "code": 5.0,
+    "t": "5.1u",
+    "err_s": -0.0134598,
+    "lsb_s": -30.6286
+   },
+   {
+    "tag": "STTROW",
+    "code": 5.0,
+    "t": "5.15u",
+    "err_s": -0.00335635,
+    "lsb_s": -7.63755
+   },
+   {
+    "tag": "STTROW",
+    "code": 5.0,
+    "t": "5.2u",
+    "err_s": -0.00069555,
+    "lsb_s": -1.58276
+   }
+  ],
+  "errors": [],
+  "deck": "r1_afe/dev-revd-settle-03/l2+c2sw12_13.5+o2i1.5+ro11.55_44.7_30_st_ss_x32_p100.cir",
+  "log": "r1_afe/dev-revd-settle-03/l2+c2sw12_13.5+o2i1.5+ro11.55_44.7_30_st_ss_x32_p100.log"
+ },
+ {
+  "name": "l2+c2sw12_13.5+o2i1.5+ro11.55_44.7_30_st_ss_x32_m100",
+  "corner": "ss",
+  "mismatch": false,
+  "subs": {
+   "MOS": "mos_ss",
+   "RES": "res_wcs",
+   "CAP": "cap_wcs",
+   "VDDA": 3.0,
+   "TEMP": 125,
+   "VCMI": 2.45,
+   "ACVDD": 0,
+   "NMC": 1,
+   "SEED": 1,
+   "LSB": 0.000439453125,
+   "CL": "2.8p",
+   "KLIST": "0 1 2 3 4 5",
+   "LLIST": "1 2 3 4 5 6 7 8",
+   "DIO": "dio_ss",
+   "CODE": 5,
+   "AMP": -0.021875,
+   "CS": "2.8p",
+   "VRST": 0.0,
+   "RAW": "$G1_RESULTS_ROOT/r1_afe/dev-revd-settle-03/l2+c2sw12_13.5+o2i1.5+ro11.55_44.7_30_st_ss_x32_m100"
+  },
+  "rc": 0,
+  "edits": [
+   [
+    "r1_afe_ota2",
+    "XMB0 ibias ibias vss vss sg13_hv_nmos w=4u l=1u",
+    "XMB0 ibias ibias vss vss sg13_hv_nmos w=8u l=2u"
+   ],
+   [
+    "r1_afe_ota2",
+    "XMB1 vbp ibias vss vss sg13_hv_nmos w=4u l=1u",
+    "XMB1 vbp ibias vss vss sg13_hv_nmos w=8u l=2u"
+   ],
+   [
+    "r1_afe_ota2",
+    "XMB4 vbpc ibias vss vss sg13_hv_nmos w=4u l=1u",
+    "XMB4 vbpc ibias vss vss sg13_hv_nmos w=8u l=2u"
+   ],
+   [
+    "r1_afe_ota2",
+    "XMC3 vcmfb vcmfb vss vss sg13_hv_nmos w=4u l=1u",
+    "XMC3 vcmfb vcmfb vss vss sg13_hv_nmos w=8u l=2u"
+   ],
+   [
+    "r1_afe_ota2",
+    "XMC4 cmd cmd vss vss sg13_hv_nmos w=4u l=1u",
+    "XMC4 cmd cmd vss vss sg13_hv_nmos w=8u l=2u"
+   ],
+   [
+    ".subckt r1_afe_ota2 inp inn outp outn vcm ibias vdd vss",
+    ".subckt r1_afe_ota2 inp inn outp outn vcm ibias cen cenb vdd vss"
+   ],
+   [
+    "r1_afe_ota2",
+    "XCC2 cz2 outn cap_cmim w={WCC} l={WCC} m=1 mm_ok=1",
+    "XCC2 cz2 outn cap_cmim w={WCC} l={WCC} m=1 mm_ok=1\nXCD1B cd1 outp cap_cmim w=13.5u l=13.5u m=1 mm_ok=1\nXTD1 cz1 cd1 cen cenb vdd vss r1_afe_tg\nXCD2B cd2 outn cap_cmim w=13.5u l=13.5u m=1 mm_ok=1\nXTD2 cz2 cd2 cen cenb vdd vss r1_afe_tg"
+   ],
+   [
+    "XA2 x2p x2n on2 op2 vcm2 ib2 vdd vss r1_afe_ota2",
+    "XA2 x2p x2n on2 op2 vcm2 ib2 c4b c4 vdd vss r1_afe_ota2"
+   ],
+   [
+    "@inst",
+    "XA2",
+    "WCC=12u"
+   ],
+   [
+    "@inst",
+    "XA2",
+    "W2P=120u W2N=60u"
+   ],
+   [
+    ".param LRO=11.55u WCOD=44.7u WCOS=18.3u",
+    ".param LRO=11.55u WCOD=44.7u WCOS=30u"
+   ]
+  ],
+  "seconds": 44.2,
+  "rows": [
+   {
+    "tag": "STROW",
+    "code": 5.0,
+    "t": "2.249u",
+    "vout0": -0.704615,
+    "err_s": 6.07118e-05,
+    "err_c": 6.06978e-05,
+    "lsb_s": 0.138153,
+    "lsb_c": 0.138121
+   },
+   {
+    "tag": "STROW",
+    "code": 5.0,
+    "t": "2.749u",
+    "vout0": -0.704615,
+    "err_s": 6.07117e-05,
+    "err_c": 6.06978e-05,
+    "lsb_s": 0.138153,
+    "lsb_c": 0.138121
+   },
+   {
+    "tag": "STROW",
+    "code": 5.0,
+    "t": "3.249u",
+    "vout0": -0.704615,
+    "err_s": 6.07117e-05,
+    "err_c": 6.06979e-05,
+    "lsb_s": 0.138153,
+    "lsb_c": 0.138121
+   },
+   {
+    "tag": "STROW",
+    "code": 5.0,
+    "t": "3.749u",
+    "vout0": -0.704615,
+    "err_s": 6.07118e-05,
+    "err_c": 6.06977e-05,
+    "lsb_s": 0.138153,
+    "lsb_c": 0.138121
+   },
+   {
+    "tag": "STROW",
+    "code": 5.0,
+    "t": "4.249u",
+    "vout0": -0.704615,
+    "err_s": 6.07119e-05,
+    "err_c": 6.0698e-05,
+    "lsb_s": 0.138153,
+    "lsb_c": 0.138122
+   },
+   {
+    "tag": "STROW",
+    "code": 5.0,
+    "t": "4.749u",
+    "vout0": -0.704615,
+    "err_s": 6.07119e-05,
+    "err_c": 6.06978e-05,
+    "lsb_s": 0.138153,
+    "lsb_c": 0.138121
+   },
+   {
+    "tag": "STROW",
+    "code": 5.0,
+    "t": "5.249u",
+    "vout0": -0.704615,
+    "err_s": 6.07117e-05,
+    "err_c": 6.06977e-05,
+    "lsb_s": 0.138153,
+    "lsb_c": 0.138121
+   },
+   {
+    "tag": "STTROW",
+    "code": 5.0,
+    "t": "5.05u",
+    "err_s": 0.050308,
+    "lsb_s": 114.479
+   },
+   {
+    "tag": "STTROW",
+    "code": 5.0,
+    "t": "5.1u",
+    "err_s": 0.0134598,
+    "lsb_s": 30.6286
+   },
+   {
+    "tag": "STTROW",
+    "code": 5.0,
+    "t": "5.15u",
+    "err_s": 0.00335635,
+    "lsb_s": 7.63757
+   },
+   {
+    "tag": "STTROW",
+    "code": 5.0,
+    "t": "5.2u",
+    "err_s": 0.000695558,
+    "lsb_s": 1.58278
+   }
+  ],
+  "errors": [],
+  "deck": "r1_afe/dev-revd-settle-03/l2+c2sw12_13.5+o2i1.5+ro11.55_44.7_30_st_ss_x32_m100.cir",
+  "log": "r1_afe/dev-revd-settle-03/l2+c2sw12_13.5+o2i1.5+ro11.55_44.7_30_st_ss_x32_m100.log"
+ }
+]

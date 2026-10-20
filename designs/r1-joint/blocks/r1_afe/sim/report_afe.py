@@ -8,7 +8,8 @@ G = ['x1', 'x2', 'x4', 'x8', 'x16', 'x32']
 LSB = 2.4 / 4096      # revisions A and B (2.4 Vpp SAR full scale); revision C (suffix 20261020c, 20261020c2): 2.0 / 4096 (D11)
 ROOT = os.environ['G1_RESULTS_ROOT']
 
-REVC = lambda sfx: len(sfx) > 8 and sfx[8] == 'c'   # suffix yyyymmdd + revision letter (+ pass)
+REVC = lambda sfx: len(sfx) > 8 and sfx[8] in 'cd'   # suffix yyyymmdd + revision letter (+ pass); C and D share the rev-C reductions
+REVD = lambda sfx: len(sfx) > 8 and sfx[8] == 'd'
 
 def load(c, sfx):
     p = 'results/r1afe-%s-%s.json' % (c, sfx)
@@ -47,6 +48,8 @@ def main(sfx):
     global LSB
     if REVC(sfx):
         LSB = 2.0 / 4096
+    if REVD(sfx):
+        LSB = 1.8 / 4096     # D16: ADC full scale +-0.9 V
     S = {'lsb_V': LSB}
     # ---------------- AC nominal
     ac = load('ac', sfx)
@@ -121,7 +124,10 @@ def main(sfx):
         S['noise'] = dict(table=t, x1_out_worst_uV=x1, x32_in_worst_uV=x32)
         fill('r1afe-noise-' + sfx, 'Noise at every step, 1 Hz-100 MHz; required x1 (output <= 0.41 LSB rms) and x32 (input <= 35 uV rms)',
              'x1 output worst %.0f uV rms (%.2f LSB of %.3f mV); x32 input-referred worst %.1f uV rms' % (x1, x1 * 1e-6 / LSB, LSB * 1e3, x32),
-             'passed' if x1 * 1e-6 / LSB <= 0.41 and x32 <= 35 else 'failed')
+             ('x1: %s; x32 <= 35 uV: %s; x32 with >= 5 %% margin (<= 33.25 uV, rev D item 5): %s' % (
+                 'passed' if x1 * 1e-6 / LSB <= 0.41 else 'failed', 'passed' if x32 <= 35 else 'failed',
+                 'passed' if x32 <= 33.25 else 'failed')) if REVD(sfx) else
+             ('passed' if x1 * 1e-6 / LSB <= 0.41 and x32 <= 35 else 'failed'))
     # ---------------- CM sweep
     cm = load('cm', sfx)
     if cm:
@@ -172,7 +178,7 @@ def main(sfx):
                                     ocm=r.get('ocm'), cm_pp_out=r.get('ocmpp'), cm_pp_stage1=r.get('o1cmpp'))
         worst = max(v['thd_sin_pct'] for v in t.values())
         S['tran'] = dict(table=t, thd_worst_pct=worst, thd_worst_db=20 * math.log10(worst / 100))
-        fill('r1afe-tran-' + sfx, '100 kHz full-scale sine (%s Vpp differential out) at x1 and x32, tt/ss/ff: THD, swing, CM stability' % ('1.6' if REVC(sfx) else '2.0'),
+        fill('r1afe-tran-' + sfx, '100 kHz full-scale sine (%s Vpp differential out) at x1 and x32, tt/ss/ff: THD, swing, CM stability' % ('1.44' if REVD(sfx) else ('1.6' if REVC(sfx) else '2.0')),
              'THD worst %.3f %% (%.1f dB); outputs %.3f-%.3f V' % (worst, 20 * math.log10(worst / 100), min(v['out_min'] for v in t.values()), max(v['out_max'] for v in t.values())),
              'passed' if worst <= 0.1 else 'failed')
     # ---------------- settle
@@ -220,6 +226,8 @@ def main(sfx):
                 pm_deg=r['pm_deg'], gm_db=r['gm_db'])
             grp = ('revb02_' if 'revb02' in key else ('revb_' if 'revb' in key else '')) + r['loop']
             pm = r['pm_deg'] if r['pm_deg'] is not None else 999.0
+            if r.get('pm_valid') is False:
+                pm = -999.0          # rev D: invalid Bode margin (right-half-plane pole) counts as a failure
             if grp not in worst or pm < worst[grp]['pm_deg']:
                 worst[grp] = dict(pm_deg=pm, gm_db=r['gm_db'], where='%s x%d' % (key, 2 ** int(r['code'])))
             if r['gm_db'] is not None and (grp + '_gm' not in worst or r['gm_db'] < worst[grp + '_gm']['gm_db']):
@@ -241,6 +249,27 @@ def main(sfx):
                      worst['revb_cm1']['pm_deg'], worst['revb_cm1']['where'], worst['revb_dm1']['pm_deg'],
                      worst['revb02_cm1']['pm_deg'], worst['revb02_cm1']['where']),
                  'record: revision B below target (superseded); a negative CM phase margin predicts the observed oscillation')
+    # ---------------- cross corners (revision D, item 6)
+    sx = load('stbx', sfx)
+    if sx:
+        t, worst = {}, {}
+        for j, r in rows(sx, 'STBROW'):
+            k = j['corner']
+            key = '%s_x%d' % (r['loop'], 2 ** int(r['code']))
+            pm = r['pm_deg'] if r['pm_deg'] is not None else 999.0
+            if r.get('pm_valid') is False:
+                pm = -999.0          # invalid Bode margin (right-half-plane pole) counts as a failure
+            t.setdefault(j['name'], {})[key] = dict(pm_valid=r.get('pm_valid'), pm_deg=r['pm_deg'], gm_db=r['gm_db'], f_unity_mhz=None if r['f_unity'] is None else round(r['f_unity'] / 1e6, 2))
+            w = worst.setdefault(k, {})
+            if r['loop'] not in w or pm < w[r['loop']]['pm_deg']:
+                w[r['loop']] = dict(pm_deg=pm, gm_db=r['gm_db'], where='%s %s' % (j['name'], key))
+        ok = all(worst[k][l]['pm_deg'] >= lim for k in worst for l, lim in (('dm1', 55), ('dm2', 55), ('cm1', 60), ('cm2', 60)))
+        S['stbx'] = dict(table=t, worst=worst)
+        fill('r1afe-stbx-' + sfx, 'Loop gain (Tian, output breaks dm1 cm1 dm2 cm2) at x1 and x32, input CM 0.5 and 2.5 V, at tt, ss (3.0 V, 125 C), '
+             'ff (3.6 V, -40 C), the mixed MOS corners sf and fs (3.3 V, 27 C) and the cross terms ssx (ss, 3.6 V, -40 C) and ffx (ff, 3.0 V, 125 C)',
+             '; '.join('%s: dm1 %.1f cm1 %.1f dm2 %.1f cm2 %.1f' % (k, worst[k]['dm1']['pm_deg'], worst[k]['cm1']['pm_deg'], worst[k]['dm2']['pm_deg'],
+                                                                  worst[k]['cm2']['pm_deg']) for k in worst) + ' (worst PM, deg)',
+             'passed (PM >= 55 deg differential, >= 60 deg common mode at every corner)' if ok else 'failed')
     # ---------------- CM step (revision C)
     cs = load('cmstep', sfx)
     if cs:
@@ -252,9 +281,14 @@ def main(sfx):
         st1 = max(max(v.get('o1cm_settle_ns_5mV', 0) for k, v in t[n].items() if k.startswith('pin')) for n in c_ok)
         b02 = max(max(v.get('o1cm_pp_last2us_mV', v.get('o1cm_pp_mV', 0)) for v in t[n].values()) for n in t if 'revb02' in n)
         S['cmstep'] = dict(table=t, revc_max_cm_pp_mV=mx, revc_pin_step_settle_ns_max=st1, revb02_max_cm_pp_mV=b02)
+        if REVD(sfx):
+            ov1 = max(max(v.get('o1cm_overshoots_5mV', 0) for v in t[n].values()) for n in c_ok)
+            ov2 = max(max(v.get('ocm_overshoots_2mV', 0) for v in t[n].values()) for n in c_ok)
+            s2 = {n: {k: v.get('o1cm_settle_ns_2pct') for k, v in t[n].items() if 'o1cm_settle_ns_2pct' in v} for n in c_ok}
+            S['cmstep'].update(revd_o1cm_overshoots_max=ov1, revd_ocm_overshoots_max=ov2, revd_o1cm_settle_ns_2pct=s2)
         fill('r1afe-cmstep-' + sfx, 'CM step test with a full-scale 100 kHz sine: input CM 2.45->0.6->2.45 V, vcm2 +50 mV, VDDA -0.2 V; '
              'tt/ss/ff, x1 and x32; same test on revision B and on the dev-revb-02 variant (detection check)',
-             'revision C: stage-1 CM peak-to-peak in the last 2 us before each next event <= %.2f mV; pin-CM step settling (5 mV) <= %.0f ns; '
+             ('revision D' if REVD(sfx) else 'revision C') + ': stage-1 CM peak-to-peak in the last 2 us before each next event <= %.2f mV; pin-CM step settling (5 mV) <= %.0f ns; '
              'dev-revb-02 variant: sustained %.0f mVpp stage-1 CM oscillation' % (mx, st1, b02),
              'passed (no sustained oscillation: <= 1 mV pp; the test detects the known oscillating variant)' if mx <= 1 and b02 > 100 else 'failed')
     # ---------------- overload (revision C)
