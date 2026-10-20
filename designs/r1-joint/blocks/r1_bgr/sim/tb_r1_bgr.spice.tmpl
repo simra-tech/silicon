@@ -1,0 +1,15 @@
+* r1_bgr testbench @@KIND@@: hbt=@@HBT@@ mos=@@MOS@@ res=@@RES@@ vdd=@@VDD@@ V
+.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerHBT.lib @@HBT@@
+.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerMOShv.lib @@MOS@@
+.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerRES.lib @@RES@@
+.include @@NETLIST@@
+.option gmin=1e-15 abstol=1e-14 reltol=1e-5 vntol=1e-7
+.global sub!
+Vsub sub! 0 dc 0
+Vdd vdd 0 dc @@VDD@@ @@VDDAC@@
+Xbgr vdd 0 vref iptat pbias pcasc vbe dvbe r1_bgr
+* PTAT output leg sinks into a 1.0 V node (DAC string / T2F stand-in, as on G1)
+Vload iptat 0 dc 1.0
+Cload vref 0 1p
+@@CONTROL@@
+.end

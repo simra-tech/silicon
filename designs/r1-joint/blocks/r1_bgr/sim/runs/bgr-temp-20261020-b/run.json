@@ -1,0 +1,19 @@
+{
+ "tools": {
+  "ngspice": "ngspice-46 (container)",
+  "python": "3.12.3 (container)",
+  "image": "tapeoutbench-eda:latest sha256:ddeb69576f2808676d1c5d474ecf04f6d1d6f8abdcff6b72b39790ded924bab2"
+ },
+ "pdk_commit": "84374023ee8b4b126bebbba67fcbada0a9c0ff0b",
+ "cpuset": "116,117 (BGR_JOBS=2)",
+ "generator": "../schematic/gen_r1_bgr.py",
+ "testbench": "tb_r1_bgr.spice.tmpl",
+ "raw": "<G1_RESULTS_ROOT>/r1_bgr/<run-id>/",
+ "run_id": "bgr-temp-20261020-b",
+ "command": "G1_CPUSET=116,117 G1_CPUS=2 G1_WORKDIR=designs/r1-joint/blocks/r1_bgr/sim G1_RESULTS_ROOT=<G1_RESULTS_ROOT> flow/run.sh python3 run_bgr.py temp bgr-temp-20261020-b",
+ "question": "VREF(T) -40..125 C at 27 process corners x VDDA 3.0/3.3/3.6 V; TC <= 30 ppm/C?",
+ "result": "nominal 1.0449 V, 8.4 ppm/C; 72/81 corner runs <= 30 ppm/C, worst 35.1 (hbt_wcs/res_bcs); supply current <= 79.6 uA",
+ "disposition": "nominal passed; corner criterion failed 9/81",
+ "summary": "results/bgr-temp-20261020-b.json",
+ "date": "2026-10-20"
+}

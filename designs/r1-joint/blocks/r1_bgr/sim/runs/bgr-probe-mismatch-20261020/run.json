@@ -1,0 +1,11 @@
+{
+ "run_id": "bgr-probe-mismatch-20261020",
+ "date": "2026-10-20",
+ "command": "G1_CPUSET=116 G1_CPUS=1 G1_WORKDIR=designs/r1-joint/blocks/r1_bgr/sim flow/run.sh ngspice -b probe/mos_sigma2.cir",
+ "tools": {"ngspice": "ngspice-46 (container)", "image": "tapeoutbench-eda:latest sha256:ddeb69576f2808676d1c5d474ecf04f6d1d6f8abdcff6b72b39790ded924bab2"},
+ "pdk_commit": "84374023ee8b4b126bebbba67fcbada0a9c0ff0b",
+ "inputs": ["probe/mos_sigma.cir (Vgs search)", "probe/mos_sigma2.cir (40 independent instances each)"],
+ "question": "Per-instance mismatch of the unit devices: sg13_hv_pmos 10/4 um at 4.1 uA, 10/10 um, rppd 1 x 51.5 um (mos_tt_mismatch, res_typ_mismatch, 27 C)?",
+ "result": "sigma(I)/I: pmos 10/4 0.41 %, pmos 10/10 0.14 %; rppd 1 x 51.5 um 0.31 % (40 samples each). The npn13G2 model draws one area factor per instance with sigma 10 % independent of Nx (sg13g2_hbt_mod_mismatch.lib, qarea = agauss(1, 0.1, 1)).",
+ "disposition": "used for sizing: HBT averaging by instance count dominates; the 10/4 mirror unit is kept (T2F compatibility)"
+}

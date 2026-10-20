@@ -1,0 +1,397 @@
+* probe: hv pmos current mismatch at fixed Vgs (one draw per instance), unit sizes
+.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerMOShv.lib mos_tt_mismatch
+.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerRES.lib res_typ_mismatch
+.param vg=1.2
+Vdd vdd 0 3.3
+Vg vdd g {vg}
+Vd d 0 2.7
+.subckt cell g d vdd w=10u l=4u
+XM d g vdd vdd sg13_hv_pmos w={w} l={l} ng=1 m=1 mm_ok=1
+.ends
+.subckt rcell a b
+XR a b sub! rppd w=1u l=51.5u m=1 b=0 mm_ok=1
+.ends
+.global sub!
+Vsub sub! 0 0
+* 40 independent pmos 10/4 and 40 pmos 10/10, 40 R1 resistors
+Va0 d da0 0
+Xa0 g da0 vdd cell w=10u l=4u
+Vb0 d db0 0
+Xb0 g db0 vdd cell w=10u l=10u
+Vr0 rr0 0 0
+Xr0 vdd rr0 rcell
+Va1 d da1 0
+Xa1 g da1 vdd cell w=10u l=4u
+Vb1 d db1 0
+Xb1 g db1 vdd cell w=10u l=10u
+Vr1 rr1 0 0
+Xr1 vdd rr1 rcell
+Va2 d da2 0
+Xa2 g da2 vdd cell w=10u l=4u
+Vb2 d db2 0
+Xb2 g db2 vdd cell w=10u l=10u
+Vr2 rr2 0 0
+Xr2 vdd rr2 rcell
+Va3 d da3 0
+Xa3 g da3 vdd cell w=10u l=4u
+Vb3 d db3 0
+Xb3 g db3 vdd cell w=10u l=10u
+Vr3 rr3 0 0
+Xr3 vdd rr3 rcell
+Va4 d da4 0
+Xa4 g da4 vdd cell w=10u l=4u
+Vb4 d db4 0
+Xb4 g db4 vdd cell w=10u l=10u
+Vr4 rr4 0 0
+Xr4 vdd rr4 rcell
+Va5 d da5 0
+Xa5 g da5 vdd cell w=10u l=4u
+Vb5 d db5 0
+Xb5 g db5 vdd cell w=10u l=10u
+Vr5 rr5 0 0
+Xr5 vdd rr5 rcell
+Va6 d da6 0
+Xa6 g da6 vdd cell w=10u l=4u
+Vb6 d db6 0
+Xb6 g db6 vdd cell w=10u l=10u
+Vr6 rr6 0 0
+Xr6 vdd rr6 rcell
+Va7 d da7 0
+Xa7 g da7 vdd cell w=10u l=4u
+Vb7 d db7 0
+Xb7 g db7 vdd cell w=10u l=10u
+Vr7 rr7 0 0
+Xr7 vdd rr7 rcell
+Va8 d da8 0
+Xa8 g da8 vdd cell w=10u l=4u
+Vb8 d db8 0
+Xb8 g db8 vdd cell w=10u l=10u
+Vr8 rr8 0 0
+Xr8 vdd rr8 rcell
+Va9 d da9 0
+Xa9 g da9 vdd cell w=10u l=4u
+Vb9 d db9 0
+Xb9 g db9 vdd cell w=10u l=10u
+Vr9 rr9 0 0
+Xr9 vdd rr9 rcell
+Va10 d da10 0
+Xa10 g da10 vdd cell w=10u l=4u
+Vb10 d db10 0
+Xb10 g db10 vdd cell w=10u l=10u
+Vr10 rr10 0 0
+Xr10 vdd rr10 rcell
+Va11 d da11 0
+Xa11 g da11 vdd cell w=10u l=4u
+Vb11 d db11 0
+Xb11 g db11 vdd cell w=10u l=10u
+Vr11 rr11 0 0
+Xr11 vdd rr11 rcell
+Va12 d da12 0
+Xa12 g da12 vdd cell w=10u l=4u
+Vb12 d db12 0
+Xb12 g db12 vdd cell w=10u l=10u
+Vr12 rr12 0 0
+Xr12 vdd rr12 rcell
+Va13 d da13 0
+Xa13 g da13 vdd cell w=10u l=4u
+Vb13 d db13 0
+Xb13 g db13 vdd cell w=10u l=10u
+Vr13 rr13 0 0
+Xr13 vdd rr13 rcell
+Va14 d da14 0
+Xa14 g da14 vdd cell w=10u l=4u
+Vb14 d db14 0
+Xb14 g db14 vdd cell w=10u l=10u
+Vr14 rr14 0 0
+Xr14 vdd rr14 rcell
+Va15 d da15 0
+Xa15 g da15 vdd cell w=10u l=4u
+Vb15 d db15 0
+Xb15 g db15 vdd cell w=10u l=10u
+Vr15 rr15 0 0
+Xr15 vdd rr15 rcell
+Va16 d da16 0
+Xa16 g da16 vdd cell w=10u l=4u
+Vb16 d db16 0
+Xb16 g db16 vdd cell w=10u l=10u
+Vr16 rr16 0 0
+Xr16 vdd rr16 rcell
+Va17 d da17 0
+Xa17 g da17 vdd cell w=10u l=4u
+Vb17 d db17 0
+Xb17 g db17 vdd cell w=10u l=10u
+Vr17 rr17 0 0
+Xr17 vdd rr17 rcell
+Va18 d da18 0
+Xa18 g da18 vdd cell w=10u l=4u
+Vb18 d db18 0
+Xb18 g db18 vdd cell w=10u l=10u
+Vr18 rr18 0 0
+Xr18 vdd rr18 rcell
+Va19 d da19 0
+Xa19 g da19 vdd cell w=10u l=4u
+Vb19 d db19 0
+Xb19 g db19 vdd cell w=10u l=10u
+Vr19 rr19 0 0
+Xr19 vdd rr19 rcell
+Va20 d da20 0
+Xa20 g da20 vdd cell w=10u l=4u
+Vb20 d db20 0
+Xb20 g db20 vdd cell w=10u l=10u
+Vr20 rr20 0 0
+Xr20 vdd rr20 rcell
+Va21 d da21 0
+Xa21 g da21 vdd cell w=10u l=4u
+Vb21 d db21 0
+Xb21 g db21 vdd cell w=10u l=10u
+Vr21 rr21 0 0
+Xr21 vdd rr21 rcell
+Va22 d da22 0
+Xa22 g da22 vdd cell w=10u l=4u
+Vb22 d db22 0
+Xb22 g db22 vdd cell w=10u l=10u
+Vr22 rr22 0 0
+Xr22 vdd rr22 rcell
+Va23 d da23 0
+Xa23 g da23 vdd cell w=10u l=4u
+Vb23 d db23 0
+Xb23 g db23 vdd cell w=10u l=10u
+Vr23 rr23 0 0
+Xr23 vdd rr23 rcell
+Va24 d da24 0
+Xa24 g da24 vdd cell w=10u l=4u
+Vb24 d db24 0
+Xb24 g db24 vdd cell w=10u l=10u
+Vr24 rr24 0 0
+Xr24 vdd rr24 rcell
+Va25 d da25 0
+Xa25 g da25 vdd cell w=10u l=4u
+Vb25 d db25 0
+Xb25 g db25 vdd cell w=10u l=10u
+Vr25 rr25 0 0
+Xr25 vdd rr25 rcell
+Va26 d da26 0
+Xa26 g da26 vdd cell w=10u l=4u
+Vb26 d db26 0
+Xb26 g db26 vdd cell w=10u l=10u
+Vr26 rr26 0 0
+Xr26 vdd rr26 rcell
+Va27 d da27 0
+Xa27 g da27 vdd cell w=10u l=4u
+Vb27 d db27 0
+Xb27 g db27 vdd cell w=10u l=10u
+Vr27 rr27 0 0
+Xr27 vdd rr27 rcell
+Va28 d da28 0
+Xa28 g da28 vdd cell w=10u l=4u
+Vb28 d db28 0
+Xb28 g db28 vdd cell w=10u l=10u
+Vr28 rr28 0 0
+Xr28 vdd rr28 rcell
+Va29 d da29 0
+Xa29 g da29 vdd cell w=10u l=4u
+Vb29 d db29 0
+Xb29 g db29 vdd cell w=10u l=10u
+Vr29 rr29 0 0
+Xr29 vdd rr29 rcell
+Va30 d da30 0
+Xa30 g da30 vdd cell w=10u l=4u
+Vb30 d db30 0
+Xb30 g db30 vdd cell w=10u l=10u
+Vr30 rr30 0 0
+Xr30 vdd rr30 rcell
+Va31 d da31 0
+Xa31 g da31 vdd cell w=10u l=4u
+Vb31 d db31 0
+Xb31 g db31 vdd cell w=10u l=10u
+Vr31 rr31 0 0
+Xr31 vdd rr31 rcell
+Va32 d da32 0
+Xa32 g da32 vdd cell w=10u l=4u
+Vb32 d db32 0
+Xb32 g db32 vdd cell w=10u l=10u
+Vr32 rr32 0 0
+Xr32 vdd rr32 rcell
+Va33 d da33 0
+Xa33 g da33 vdd cell w=10u l=4u
+Vb33 d db33 0
+Xb33 g db33 vdd cell w=10u l=10u
+Vr33 rr33 0 0
+Xr33 vdd rr33 rcell
+Va34 d da34 0
+Xa34 g da34 vdd cell w=10u l=4u
+Vb34 d db34 0
+Xb34 g db34 vdd cell w=10u l=10u
+Vr34 rr34 0 0
+Xr34 vdd rr34 rcell
+Va35 d da35 0
+Xa35 g da35 vdd cell w=10u l=4u
+Vb35 d db35 0
+Xb35 g db35 vdd cell w=10u l=10u
+Vr35 rr35 0 0
+Xr35 vdd rr35 rcell
+Va36 d da36 0
+Xa36 g da36 vdd cell w=10u l=4u
+Vb36 d db36 0
+Xb36 g db36 vdd cell w=10u l=10u
+Vr36 rr36 0 0
+Xr36 vdd rr36 rcell
+Va37 d da37 0
+Xa37 g da37 vdd cell w=10u l=4u
+Vb37 d db37 0
+Xb37 g db37 vdd cell w=10u l=10u
+Vr37 rr37 0 0
+Xr37 vdd rr37 rcell
+Va38 d da38 0
+Xa38 g da38 vdd cell w=10u l=4u
+Vb38 d db38 0
+Xb38 g db38 vdd cell w=10u l=10u
+Vr38 rr38 0 0
+Xr38 vdd rr38 rcell
+Va39 d da39 0
+Xa39 g da39 vdd cell w=10u l=4u
+Vb39 d db39 0
+Xb39 g db39 vdd cell w=10u l=10u
+Vr39 rr39 0 0
+Xr39 vdd rr39 rcell
+.control
+option seed=7
+alterparam vg=0.9978
+reset
+op
+let a=vector(40)
+let r=vector(40)
+let a[0]=-i(va0)
+let r[0]=i(vr0)
+let a[1]=-i(va1)
+let r[1]=i(vr1)
+let a[2]=-i(va2)
+let r[2]=i(vr2)
+let a[3]=-i(va3)
+let r[3]=i(vr3)
+let a[4]=-i(va4)
+let r[4]=i(vr4)
+let a[5]=-i(va5)
+let r[5]=i(vr5)
+let a[6]=-i(va6)
+let r[6]=i(vr6)
+let a[7]=-i(va7)
+let r[7]=i(vr7)
+let a[8]=-i(va8)
+let r[8]=i(vr8)
+let a[9]=-i(va9)
+let r[9]=i(vr9)
+let a[10]=-i(va10)
+let r[10]=i(vr10)
+let a[11]=-i(va11)
+let r[11]=i(vr11)
+let a[12]=-i(va12)
+let r[12]=i(vr12)
+let a[13]=-i(va13)
+let r[13]=i(vr13)
+let a[14]=-i(va14)
+let r[14]=i(vr14)
+let a[15]=-i(va15)
+let r[15]=i(vr15)
+let a[16]=-i(va16)
+let r[16]=i(vr16)
+let a[17]=-i(va17)
+let r[17]=i(vr17)
+let a[18]=-i(va18)
+let r[18]=i(vr18)
+let a[19]=-i(va19)
+let r[19]=i(vr19)
+let a[20]=-i(va20)
+let r[20]=i(vr20)
+let a[21]=-i(va21)
+let r[21]=i(vr21)
+let a[22]=-i(va22)
+let r[22]=i(vr22)
+let a[23]=-i(va23)
+let r[23]=i(vr23)
+let a[24]=-i(va24)
+let r[24]=i(vr24)
+let a[25]=-i(va25)
+let r[25]=i(vr25)
+let a[26]=-i(va26)
+let r[26]=i(vr26)
+let a[27]=-i(va27)
+let r[27]=i(vr27)
+let a[28]=-i(va28)
+let r[28]=i(vr28)
+let a[29]=-i(va29)
+let r[29]=i(vr29)
+let a[30]=-i(va30)
+let r[30]=i(vr30)
+let a[31]=-i(va31)
+let r[31]=i(vr31)
+let a[32]=-i(va32)
+let r[32]=i(vr32)
+let a[33]=-i(va33)
+let r[33]=i(vr33)
+let a[34]=-i(va34)
+let r[34]=i(vr34)
+let a[35]=-i(va35)
+let r[35]=i(vr35)
+let a[36]=-i(va36)
+let r[36]=i(vr36)
+let a[37]=-i(va37)
+let r[37]=i(vr37)
+let a[38]=-i(va38)
+let r[38]=i(vr38)
+let a[39]=-i(va39)
+let r[39]=i(vr39)
+let ma=mean(a)
+let sa=sqrt(mean((a-ma)^2))/ma
+let mr=mean(r)
+let sr=sqrt(mean((r-mr)^2))/mr
+print ma sa mr sr
+alterparam vg=1.2126
+reset
+op
+let b=vector(40)
+let b[0]=-i(vb0)
+let b[1]=-i(vb1)
+let b[2]=-i(vb2)
+let b[3]=-i(vb3)
+let b[4]=-i(vb4)
+let b[5]=-i(vb5)
+let b[6]=-i(vb6)
+let b[7]=-i(vb7)
+let b[8]=-i(vb8)
+let b[9]=-i(vb9)
+let b[10]=-i(vb10)
+let b[11]=-i(vb11)
+let b[12]=-i(vb12)
+let b[13]=-i(vb13)
+let b[14]=-i(vb14)
+let b[15]=-i(vb15)
+let b[16]=-i(vb16)
+let b[17]=-i(vb17)
+let b[18]=-i(vb18)
+let b[19]=-i(vb19)
+let b[20]=-i(vb20)
+let b[21]=-i(vb21)
+let b[22]=-i(vb22)
+let b[23]=-i(vb23)
+let b[24]=-i(vb24)
+let b[25]=-i(vb25)
+let b[26]=-i(vb26)
+let b[27]=-i(vb27)
+let b[28]=-i(vb28)
+let b[29]=-i(vb29)
+let b[30]=-i(vb30)
+let b[31]=-i(vb31)
+let b[32]=-i(vb32)
+let b[33]=-i(vb33)
+let b[34]=-i(vb34)
+let b[35]=-i(vb35)
+let b[36]=-i(vb36)
+let b[37]=-i(vb37)
+let b[38]=-i(vb38)
+let b[39]=-i(vb39)
+let mb=mean(b)
+let sb=sqrt(mean((b-mb)^2))/mb
+print mb sb
+.endc
+.end
