@@ -1,0 +1,22 @@
+{
+ "command": "G1_CPUSET=119 G1_CPUS=1 G1_RESULTS_ROOT=<G1_RESULTS_ROOT> python3 designs/r1-joint/blocks/r1_ls/sim/run_ls.py ls-20261020b",
+ "disposition": "kept; all numbers simulated at schematic level. Run ls-20261020a (first 9 runs, same decks, no stress point) is superseded by this run; its numbers are identical.",
+ "inputs": {
+  "decks_and_logs": "<G1_RESULTS_ROOT>/r1_ls/ls-20261020b/<cell>_<corner>.cir and .log (9 corner runs + 3 stress runs)",
+  "models": "cornerMOSlv.lib and cornerMOShv.lib, mos_tt / mos_ss / mos_ff; no pad models in this block",
+  "netlists_sha256": {
+   "g1_ls_up_copy.spice": "5567c8079e57ced973d3e47dad6a7afe1776987de3962f9be397c6a8d0549b56",
+   "g1_lvldn_copy.spice": "d253d0a60a34cfa169db3b9204f0914ec821d804dbccfd16ee493c2c61696af6",
+   "g1_lvlup_copy.spice": "71af3cd83a2cdd921a23d8a056e7c32290961842cb0247d88d3811da68eaab12"
+  }
+ },
+ "question": "Delay (rise, fall), duty distortion at 30 MHz, rise-fall skew, edge times and static and peak supply current of g1_ls_up, g1_lvlup and g1_lvldn at three corners and one stress point, with 20 fF plus one inverter as load.",
+ "result": "12 of 12 ngspice runs completed, no solver errors. Summary: sim/results/ls-20261020b.json; tables: sim/results/ls-20261020b_tables.md",
+ "run_id": "ls-20261020b",
+ "tools": {
+  "host_python": "3.6",
+  "image_id": "sha256:ddeb69576f2808676d1c5d474ecf04f6d1d6f8abdcff6b72b39790ded924bab2",
+  "ngspice": "ngspice-46 (container tapeoutbench-eda:latest)",
+  "pdk_commit": "84374023ee8b4b126bebbba67fcbada0a9c0ff0b"
+ }
+}

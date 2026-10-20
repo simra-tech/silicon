@@ -1,0 +1,38 @@
+* r1_gate: three PWM gate paths for sg13g2_IOPadOut30mA c2p inputs.
+* Cells g1_lv_inv, g1_lv_nand2, g1_lvlup, g1_hv_nor2, g1_hv_inv, g1_lvldn come unchanged from
+* g1_cells_copy.spice (copy of designs/g1-guardian/blocks/g1_gate/sim/netlist/g1_gate.spice, sha256 in README).
+* All 1.2 V ports are on vdd, the 3.3 V domain is vdda (tie to IOVDD), ground is vss.
+.include ../schematic/g1_cells_copy.spice
+
+* Variant H: AND in the 3.3 V domain (G1 style, without the SR latch).
+*   gate_h = en_h & pwm_h = NOR(!en_h, !pwm_h) ; then g1_lvldn back to 1.2 V for the pad c2p input.
+*   4 x g1_lvlup (3 pwm + 1 shared gate_en), 4 x g1_hv_inv + 3 x g1_hv_nor2 + 3 x g1_hv_inv, 3 x g1_lvldn.
+.subckt r1_gate_hv pwm_a pwm_b pwm_c gate_en gc_a gc_b gc_c vdd vdda vss
+XUE gate_en en_h vdd vdda vss g1_lvlup
+XIE en_h en_hn vdda vss g1_hv_inv
+XUA pwm_a pa_h vdd vdda vss g1_lvlup
+XIA pa_h pa_hn vdda vss g1_hv_inv
+XNA en_hn pa_hn ga_h vdda vss g1_hv_nor2
+XGA ga_h ga_hn vdda vss g1_hv_inv
+XDA ga_h ga_hn gc_a vdd vss g1_lvldn
+XUB pwm_b pb_h vdd vdda vss g1_lvlup
+XIB pb_h pb_hn vdda vss g1_hv_inv
+XNB en_hn pb_hn gb_h vdda vss g1_hv_nor2
+XGB gb_h gb_hn vdda vss g1_hv_inv
+XDB gb_h gb_hn gc_b vdd vss g1_lvldn
+XUC pwm_c pc_h vdd vdda vss g1_lvlup
+XIC pc_h pc_hn vdda vss g1_hv_inv
+XNC en_hn pc_hn gc_h vdda vss g1_hv_nor2
+XGC gc_h gc_hn vdda vss g1_hv_inv
+XDC gc_h gc_hn gc_c vdd vss g1_lvldn
+.ends
+
+* Variant L: AND in the 1.2 V core, straight into the pad (the pad has its own core-to-IO shifter).
+.subckt r1_gate_lv pwm_a pwm_b pwm_c gate_en gc_a gc_b gc_c vdd vdda vss
+XNA pwm_a gate_en na vdd vss g1_lv_nand2
+XIA na gc_a vdd vss g1_lv_inv
+XNB pwm_b gate_en nb vdd vss g1_lv_nand2
+XIB nb gc_b vdd vss g1_lv_inv
+XNC pwm_c gate_en nc vdd vss g1_lv_nand2
+XIC nc gc_c vdd vss g1_lv_inv
+.ends

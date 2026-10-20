@@ -11,6 +11,9 @@
 - Reuse G1 blocks under `designs/g1-guardian/blocks/` as sources where the README says so; copy, do not edit G1.
 - Do not commit; the coordinator commits from explicit file lists. Do not write outside your block directory except
   to append a dated row to `../PLAN.md` §5 when you reach a milestone.
+- Never delete outside your block directory. `rm -rf` only on an absolute path inside your block's `sim/runs/` or the
+  results root; print the path first. (Added 2026-10-20 after an agent deleted the G1 working copy with a wrong
+  relative path; tracked files were restored from git, untracked local caches were lost.)
 - Public repository: block design facts only. No market, pricing, customer or partner material.
 
 | Track | Block(s) | CPU set | Model |
