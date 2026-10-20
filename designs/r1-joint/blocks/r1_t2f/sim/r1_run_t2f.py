@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """R1_T2F runner: re-runs the G1 T2F revision 2 decks under R1 supplies, one CPU, sequential.
 Host Python 3.6.  From the repository root:
-  export G1_CPUSET=118 G1_CPUS=1 G1_RESULTS_ROOT=/opt/sim/amirmabhout/r1-traces/sims
+  export G1_CPUSET=118 G1_CPUS=1 G1_RESULTS_ROOT=<bulk results root>
   python3 designs/r1-joint/blocks/r1_t2f/sim/r1_run_t2f.py <suite>      (suites: ftemp supply corners tight)
 Decks go to decks/, ngspice logs to <G1_RESULTS_ROOT>/r1_t2f/<run-id>/, parsed .meas values to results/<suite>.json.
 Deck settings are those of the G1 runner (gmin=1e-15 abstol=1e-13 reltol=1e-4 vntol=1e-6 method=gear, tran 5n,
