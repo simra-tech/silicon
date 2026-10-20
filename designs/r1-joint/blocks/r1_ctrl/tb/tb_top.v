@@ -1,9 +1,12 @@
-// Chip-level testbench for r1_ctrl_top (testbenches b..f of the r1_ctrl README).
-//   +test=biss | ssi | spi | gate | safe     test group
+// Chip-level testbench for r1_ctrl_top (testbenches b..f and cal of the r1_ctrl
+// README, revision 0.2).
+//   +test=biss | ssi | spi | gate | safe | cal     test group
 //   +clk_ns=<real>                            clk period (RC corners: 23.81, 33.33, 47.62)
 // Models: encoder head (ideal sin/cos, amplitude ENC_AMP, electrical frequency
-// enc_f), ADC (12-tick conversion, 4:1 mux, track-and-hold on adc_hold),
-// BiSS-C / SSI master on MA/SLO, SPI host (mode 0 native, mode 1 AS5047P frames).
+// enc_f), ADC (12-tick conversion, 4:1 mux, track-and-hold on adc_hold, 13 raw
+// decisions with an ideal binary CDAC: raw[11:0] = code, raw[12] = 0),
+// behavioural window comparators with offset and 200 ns delay (test cal),
+// BiSS-C / SSI master on MA/SLO, SPI host (mode 0, 24-bit frames).
 // Every check prints PASS/FAIL; the last line is "ALL TESTS PASSED" or
 // "TESTS FAILED: <n>".
 // SPDX-License-Identifier: Apache-2.0
@@ -19,19 +22,24 @@ module tb_top;
 
     // ---------------- pads ----------------
     reg  cs_n = 1, ma = 1, sdi = 0, en_pad = 1, t2f_clk = 0;
-    reg  [3:0] cmp = 4'd0;
-    wire slo_sdo, fault_n, gate_a, gate_b, gate_c, adc_hold, adc_start, adc_done_w;
+    reg  [3:0] cmp = 4'd0;             // forced comparator flags
+    reg  [3:0] cmp_mdl = 4'd0;         // behavioural comparators (test cal)
+    wire slo_sdo, fault_n, gate_a, gate_b, gate_c, adc_hold, is_smp, adc_start, az_win;
     wire [1:0] adc_mux;
     wire [4:0] osc_trim;
     wire [15:0] ana_ctrl;
-    reg  adc_done = 0;
-    reg  [11:0] adc_data = 0;
+    wire [5:0] thr_oc_a, thr_neg_a, thr_oc_b, thr_neg_b, cal_oc_a, cal_neg_a, cal_oc_b, cal_neg_b;
+    reg  adc_valid = 0;
+    reg  [12:0] adc_raw = 0;
 
     r1_ctrl_top dut (
         .clk(clk), .por_n(por_n), .cs_n(cs_n), .ma_sclk(ma), .sdi(sdi), .slo_sdo(slo_sdo),
         .en_pad(en_pad), .fault_n(fault_n), .gate_a(gate_a), .gate_b(gate_b), .gate_c(gate_c),
-        .adc_hold(adc_hold), .adc_start(adc_start), .adc_mux(adc_mux), .adc_done(adc_done),
-        .adc_data(adc_data), .cmp(cmp), .t2f_clk(t2f_clk), .osc_trim(osc_trim), .ana_ctrl(ana_ctrl));
+        .adc_hold(adc_hold), .is_smp(is_smp), .adc_start(adc_start), .adc_mux(adc_mux),
+        .adc_valid(adc_valid), .adc_raw(adc_raw), .cmp(cmp | cmp_mdl),
+        .thr_oc_a(thr_oc_a), .thr_neg_a(thr_neg_a), .thr_oc_b(thr_oc_b), .thr_neg_b(thr_neg_b),
+        .cal_oc_a(cal_oc_a), .cal_neg_a(cal_neg_a), .cal_oc_b(cal_oc_b), .cal_neg_b(cal_neg_b),
+        .az_win(az_win), .t2f_clk(t2f_clk), .osc_trim(osc_trim), .ana_ctrl(ana_ctrl));
 
     // ---------------- bookkeeping ----------------
     integer errors = 0, checks = 0;
@@ -67,28 +75,50 @@ module tb_top;
     always @(posedge adc_hold) held_ang = angle_now(0);
     always @(posedge clk) begin
         hold_d <= adc_hold;
-        adc_done <= 1'b0;
+        adc_valid <= 1'b0;
         if (adc_start) begin
             conv_cnt <= CONV; conv_mux <= adc_mux;
         end else if (conv_cnt > 0) begin
             conv_cnt <= conv_cnt - 1;
             if (conv_cnt == 1) begin
-                adc_done <= 1'b1;
+                adc_valid <= 1'b1;
                 case (conv_mux)
-                    2'd0: adc_data <= code(enc_amp * $sin(6.283185307179586 * held_ang) - 0.5);
-                    2'd1: adc_data <= code(enc_amp * $cos(6.283185307179586 * held_ang) - 0.5);
-                    2'd2: adc_data <= ia_code;
-                    default: adc_data <= ib_code;
+                    2'd0: adc_raw <= {1'b0, code(enc_amp * $sin(6.283185307179586 * held_ang) - 0.5)};
+                    2'd1: adc_raw <= {1'b0, code(enc_amp * $cos(6.283185307179586 * held_ang) - 0.5)};
+                    2'd2: adc_raw <= {1'b0, ia_code};
+                    default: adc_raw <= {1'b0, ib_code};
                 endcase
             end
         end
     end
 
+    // ---------------- behavioural comparators (test cal) ----------------
+    // Trip level of comparator i in units of one calibration step:
+    //   trip = (CAL_i - 32) + OFS_i + 8 * (THR_i - 32)
+    // flag = vin > trip, 200 ns after the clk edge. vin = 0 inside az_win (the
+    // auto-zero input) and cmp_vin outside it.
+    reg  cmp_mdl_en = 0;
+    real cmp_vin = 100.0;
+    real cofs [0:3];
+    function cmp_trip;
+        input [5:0] cal, thr; input real ofs; input real v;
+        begin cmp_trip = v > ($itor(cal) - 32.0 + ofs + 8.0 * ($itor(thr) - 32.0)); end
+    endfunction
+    always @(posedge clk) begin : cmpm
+        real v;
+        v = az_win ? 0.0 : cmp_vin;
+        if (cmp_mdl_en) begin
+            cmp_mdl[0] <= #200 cmp_trip(cal_oc_a,  thr_oc_a,  cofs[0], v);
+            cmp_mdl[1] <= #200 cmp_trip(cal_neg_a, thr_neg_a, cofs[1], v);
+            cmp_mdl[2] <= #200 cmp_trip(cal_oc_b,  thr_oc_b,  cofs[2], v);
+            cmp_mdl[3] <= #200 cmp_trip(cal_neg_b, thr_neg_b, cofs[3], v);
+        end else cmp_mdl <= #200 4'd0;
+    end
+
     // ---------------- SPI host ----------------
     real sck_half = 50.0;              // 10 MHz SCLK
-    reg  as_frames = 0;                // 1: mode 1, 16-bit frames
     reg  [23:0] spi_mi;
-    task spi_x;                        // one frame; nbits 24 (native) or 16 (AS)
+    task spi_x;                        // one frame of nbits (24 = well-formed)
         input [23:0] mo;
         input integer nbits;
         integer i;
@@ -97,14 +127,9 @@ module tb_top;
             cs_n = 1'b0; #(sck_half);
             spi_mi = 24'd0;
             for (i = nbits - 1; i >= 0; i = i - 1) begin
-                if (!as_frames) begin
-                    sdi = mo[i]; #(sck_half);
-                    ma = 1'b1; spi_mi[i] = slo_sdo; #(sck_half);
-                    ma = 1'b0;
-                end else begin
-                    ma = 1'b1; sdi = mo[i]; #(sck_half);
-                    ma = 1'b0; spi_mi[i] = slo_sdo; #(sck_half);
-                end
+                sdi = mo[i]; #(sck_half);
+                ma = 1'b1; spi_mi[i] = slo_sdo; #(sck_half);
+                ma = 1'b0;
             end
             #(sck_half); cs_n = 1'b1;
             #(10 * clk_ns + 50);       // CS_N high time
@@ -253,6 +278,46 @@ module tb_top;
         end
     endtask
 
+    // ---------------- BiSS control channel (D2 pp. 13-17) ----------------
+    // Frame k carries CDM_k (sent at the end of frame k) and CDS_k; the slave
+    // answers CDM_k in CDS_{k+1} (D2 p. 14). Command: S CTS=1 ID[2:0] ADR[6:0]
+    // CRC4 R W, then the start bit S at frame s_at (D2: may be delayed), then 0.
+    // seq_at > 0: a second S at that frame (sequential read, D2 Fig. 30).
+    reg [79:0] cc_cds;
+    function [3:0] crc4;               // x^4 + x + 1, start 0, MSB first, not inverted
+        input [10:0] d; input integer n;
+        integer i; reg [3:0] c;
+        begin c = 4'd0; for (i = n - 1; i >= 0; i = i - 1) c = {c[2:0], 1'b0} ^ ((c[3] ^ d[i]) ? 4'h3 : 4'h0); crc4 = c; end
+    endfunction
+    task cc_cmd;
+        input [6:0] adr; input rd; input wr; input bad_crc; input integer s_at; input integer seq_at; input integer nfr;
+        integer k; reg [3:0] c4; reg cdm;
+        begin
+            for (k = 0; k < 14; k = k + 1) biss_frame(250.0, 250.0, 20, 1'b0, 0);   // 14 x CDM = 0: reset
+            c4 = bad_crc ? 4'hF : crc4({1'b1, 3'b000, adr}, 11);                       // CTS = 1 (register access, D2 p. 14), ID 0
+            cc_cds = 80'd0;
+            for (k = 0; k < nfr; k = k + 1) begin
+                if (k <= 1) cdm = 1'b1;                                                   // S, CTS = 1
+                else if (k <= 4) cdm = 1'b0;
+                else if (k <= 11) cdm = adr[11 - k];
+                else if (k <= 15) cdm = ~c4[15 - k];
+                else if (k == 16) cdm = rd;
+                else if (k == 17) cdm = wr;
+                else cdm = (k == s_at) || (k == seq_at);
+                biss_frame(250.0, 250.0, 20, cdm, 0);
+                cc_cds[k] = b_cds;
+            end
+        end
+    endtask
+    function [7:0] cc_byte;            // 8 CDS bits from frame k, MSB first
+        input integer k; integer i;
+        begin for (i = 0; i < 8; i = i + 1) cc_byte[7 - i] = cc_cds[k + i]; end
+    endfunction
+    function [3:0] cc_nib;
+        input integer k; integer i;
+        begin for (i = 0; i < 4; i = i + 1) cc_nib[3 - i] = cc_cds[k + i]; end
+    endfunction
+
     // =====================================================================
     reg [1023:0] test;
     integer i, k, nb, f_i;
@@ -360,58 +425,79 @@ module tb_top;
             check(err_deg < 0.25, "biss: latched position within 0.25 deg el (2 ticks) of the head angle at LAT (10 kHz el)");
             enc_f = 1000.0;
 
-            // ---- item 8: control channel ----
+            // ---- half-tick LAT timing (BUS_CFG.LAT_HALF): latch error spread at 100 kHz el ----
+            begin : lh
+                real mn, mx, e, spr0, spr1;
+                for (k = 0; k < 2; k = k + 1) begin
+                    enc_f = 100000.0;
+                    spi_wr(7'h05, k ? 16'h4032 : 16'h0032); bus_idle; #(200000);
+                    mn = 1e9; mx = -1e9;
+                    for (i = 0; i < 40; i = i + 1) begin
+                        #(i * 3.917 + 0.7);                  // spread the LAT edge over the tick
+                        biss_frame(250.0, 250.0, 36, 1'b0, 0);
+                        tl = enc_ph0 + enc_f * b_lat_t * 1e-9; tl = tl - $floor(tl);
+                        e = (b_data[19:2] / 262144.0 - tl) * 360.0;
+                        if (e > 180.0) e = e - 360.0;
+                        if (e < -180.0) e = e + 360.0;
+                        if (e < mn) mn = e;
+                        if (e > mx) mx = e;
+                        #(20000);
+                    end
+                    if (k) spr1 = mx - mn; else spr0 = mx - mn;
+                    $display("INFO biss LAT_HALF=%0d at 100 kHz el: latch error %0.3f .. %0.3f deg el, spread %0.3f deg (1 tick = %0.3f deg)",
+                             k, mn, mx, mx - mn, 360.0 * 100000.0 * clk_ns * 1e-9);
+                end
+                check(spr1 < 0.75 * spr0, "biss: LAT_HALF reduces the latch error spread at 100 kHz el (< 0.75 x without)");
+                enc_f = 1000.0; #(200000);
+            end
+
+            // ---- item 8: control channel (D2 pp. 13-17) ----
             spi_wr(7'h05, 16'h0212); bus_idle;
             begin : cc
-                reg [31:0] seq;
-                reg [7:0]  byte_rx;
-                reg [3:0]  c4;
-                reg [6:0]  adr;
-                integer a_i, bi;
-                reg [17:0] cmdw;
-                reg [3:0]  crcw;
-                for (a_i = 0; a_i < 4; a_i = a_i + 1) begin
-                    case (a_i) 0: adr = 7'h42; 1: adr = 7'h43; 2: adr = 7'h78; default: adr = 7'h7F; endcase
-                    // 14 x CDM = 0 (reset), then S CTS ID ADR CRC R W S
-                    for (bi = 0; bi < 14; bi = bi + 1) biss_frame(250.0, 250.0, 20, 1'b0, 0);
-                    c4 = 4'd0;
-                    for (bi = 9; bi >= 0; bi = bi - 1) c4 = {c4[2:0], 1'b0} ^ ((c4[3] ^ ((bi > 6) ? 1'b0 : adr[bi])) ? 4'h3 : 4'h0);
-                    cmdw = {1'b1, 3'b000, adr, ~c4, 1'b1, 1'b0, 1'b1};
-                    biss_frame(250.0, 250.0, 20, 1'b1, 0);                   // S
-                    for (bi = 17; bi >= 0; bi = bi - 1) biss_frame(250.0, 250.0, 20, cmdw[bi], 0);
-                    // response on CDS: S, D7..D0, CRC4 inverted
-                    seq = 32'd0;
-                    for (bi = 0; bi < 14; bi = bi + 1) begin
-                        biss_frame(250.0, 250.0, 20, 1'b0, 0);
-                        seq[31 - bi] = b_cds;
-                    end
-                    byte_rx = seq[30:23];
-                    c4 = 4'd0;
-                    for (bi = 7; bi >= 0; bi = bi - 1) c4 = {c4[2:0], 1'b0} ^ ((c4[3] ^ byte_rx[bi]) ? 4'h3 : 4'h0);
-                    $display("INFO biss control read 0x%02h -> 0x%02h (S=%0d, CRC4 wire %01h)", adr, byte_rx, seq[31], seq[22:19]);
-                    case (a_i)
-                        0: check(seq[31] && byte_rx == 8'h00 && seq[22:19] == ~c4, "biss item8: read 0x42 (Profile ID high) with S and CRC-4");
-                        1: check(seq[31] && byte_rx == 8'h01 && seq[22:19] == ~c4, "biss item8: read 0x43 (Profile ID low) non-zero");
-                        2: check(seq[31] && byte_rx == 8'h52 && seq[22:19] == ~c4, "biss item8: read 0x78 (DEV_ID byte 0)");
-                        default: check(seq[31] && byte_rx == 8'h00 && seq[22:19] == ~c4, "biss item8: read 0x7F (MFR_ID low, reset value)");
-                    endcase
-                end
-                // CRC-4 error: no response, error counter increments
+                reg [7:0] d;
                 spi_rd(7'h32); v16 = rd_val; bus_idle;
-                for (bi = 0; bi < 14; bi = bi + 1) biss_frame(250.0, 250.0, 20, 1'b0, 0);
-                adr = 7'h42;
-                cmdw = {1'b1, 3'b000, adr, 4'b0000, 1'b1, 1'b0, 1'b1};       // wrong CRC
-                biss_frame(250.0, 250.0, 20, 1'b1, 0);
-                for (bi = 17; bi >= 0; bi = bi - 1) biss_frame(250.0, 250.0, 20, cmdw[bi], 0);
-                seq = 32'd0;
-                for (bi = 0; bi < 4; bi = bi + 1) begin biss_frame(250.0, 250.0, 20, 1'b0, 0); seq[31 - bi] = b_cds; end
+                // read 0x42 (BP_ID high byte), S without delay
+                cc_cmd(7'h42, 1'b1, 1'b0, 1'b0, 18, 0, 34);
+                d = cc_byte(20);
+                $display("INFO biss cc read 0x42: CDS[1..32] %b", cc_cds[32:1]);
+                check(cc_cds[1] == 1'b1 && cc_cds[16:2] == 15'd0, "biss item8: IDL0 = 1 after the start bit, then 0 (D2 p. 14-15)");
+                check(cc_cds[17] == 1'b1 && cc_cds[18] == 1'b0, "biss item8: slave repeats R = 1, W = 0 (address accepted, D2 p. 16)");
+                check(cc_cds[19] == 1'b1 && d == 8'h00 && cc_nib(28) == ~crc4({3'd0, d}, 8),
+                      "biss item8: S repeated, D = 0x00 (BP_ID high), CRC-4 inverted over the data");
+                check(cc_cds[32] == 1'b0, "biss item8: stop bit P = 0 (next address 0x43 accepted)");
+                // sequential read 0x42, 0x43 (second S at frame 32)
+                cc_cmd(7'h42, 1'b1, 1'b0, 1'b0, 18, 32, 48);
+                d = cc_byte(34);
+                check(cc_cds[33] == 1'b1 && d == 8'h01 && cc_nib(42) == ~crc4({3'd0, d}, 8) && cc_cds[46] == 1'b0,
+                      "biss item8: sequential read gives 0x43 = 0x01 (BP_ID non-zero), CRC-4, P = 0");
+                // delayed start bit (S at frame 21)
+                cc_cmd(7'h78, 1'b1, 1'b0, 1'b0, 21, 0, 37);
+                d = cc_byte(23);
+                check(cc_cds[21:19] == 3'd0 && cc_cds[22] == 1'b1 && d == 8'h52 && cc_nib(31) == ~crc4({3'd0, d}, 8),
+                      "biss item8: delayed S, read 0x78 (DEV_ID byte 0 = 0x52)");
+                // last address: P = 1
+                cc_cmd(7'h7F, 1'b1, 1'b0, 1'b0, 18, 0, 34);
+                d = cc_byte(20);
+                check(cc_cds[19] && d == 8'h00 && cc_nib(28) == ~crc4({3'd0, d}, 8) && cc_cds[32] == 1'b1,
+                      "biss item8: read 0x7F (MFR_ID low, reset value), P = 1 (no next address)");
+                // refused read of 0x40 (BSEL, one bank): W inverted, no S
+                cc_cmd(7'h40, 1'b1, 1'b0, 1'b0, 18, 0, 34);
+                check(cc_cds[17] == 1'b1 && cc_cds[18] == 1'b1 && cc_cds[33:19] == 15'd0,
+                      "biss item8: refused read (0x40) -> W repeated inverted, no data (D2 p. 16)");
+                // write (not supported): W inverted
+                cc_cmd(7'h44, 1'b0, 1'b1, 1'b0, 18, 0, 34);
+                check(cc_cds[17] == 1'b0 && cc_cds[18] == 1'b0 && cc_cds[33:19] == 15'd0,
+                      "biss item8: write access refused -> W repeated inverted, no data");
+                // CRC-4 error: no response
+                cc_cmd(7'h42, 1'b1, 1'b0, 1'b1, 18, 0, 34);
+                check(cc_cds[33:17] == 17'd0, "biss item8: header CRC-4 error -> no response");
                 spi_rd(7'h32); bus_idle;
-                check(seq[31:28] == 4'd0 && rd_val[15:8] == v16[15:8] + 8'd1, "biss item8: CRC-4 error -> no response, error counter +1");
+                $display("INFO biss cc error counter %0d -> %0d", v16[11:8], rd_val[11:8]);
+                check(rd_val[11:8] == v16[11:8] + 4'd3, "biss item8: refused read, refused write and CRC error counted (DIAG_BISS[11:8] + 3)");
                 // 14 x CDM = 0 aborts a started command
-                biss_frame(250.0, 250.0, 20, 1'b1, 0);
-                for (bi = 17; bi >= 12; bi = bi - 1) biss_frame(250.0, 250.0, 20, cmdw[bi], 0);
-                for (bi = 0; bi < 14; bi = bi + 1) biss_frame(250.0, 250.0, 20, 1'b0, 0);
-                check(dut.u_biss.cst == 2'd0, "biss item8: 14 x CDM = 0 returns the control channel to idle");
+                cc_cmd(7'h42, 1'b1, 1'b0, 1'b0, 18, 0, 8);
+                for (i = 0; i < 14; i = i + 1) biss_frame(250.0, 250.0, 20, 1'b0, 0);
+                check(dut.u_biss.cst == 3'd0, "biss item8: 14 x CDM = 0 returns the control channel to idle");
             end
         end
 
@@ -450,7 +536,18 @@ module tb_top;
         // =================================================================
         if (test == "spi") begin
             spi_rd(7'h00);
-            check(rd_val == 16'h5210, "spi: ID reads 0x5210");
+            check(rd_val == 16'h5202, "spi: ID reads 0x5202 (revision 0.2)");
+            spi_rd(7'h08);
+            check(rd_val == 16'd22 && osc_trim == 5'd22, "spi: OSC_TRIM reset value 22 (D13), on the oscillator port");
+            spi_rd(7'h05);
+            check(rd_val == 16'h40B2, "spi: BUS_CFG reset 0x40B2 (LAT_HALF on, BiSS, MT on, ST 18)");
+            spi_wr(7'h05, 16'h4112); spi_rd(7'h05);
+            check(rd_val == 16'h4012, "spi: BUS_CFG bit 8 reserved (reads 0; AS5047P mode removed)");
+            spi_wr(7'h05, 16'h40B2);
+            spi_rd(7'h56);
+            check(rd_val == 16'd256, "spi: ADC_W6 reset 4 * 64 = 256 (binary weight, 1/4 LSB units)");
+            spi_rd(7'h5C);
+            check(rd_val == 16'd256, "spi: ADC_W12 (redundant decision) reset 256");
             // walking pattern on writable registers
             nb = 0;
             for (i = 0; i < 16; i = i + 1) begin
@@ -482,6 +579,16 @@ module tb_top;
             check(rd_val >= exp_ns - 2 && rd_val <= exp_ns + 2 && dut.status[10], "spi: OSC_COUNT over 16 SCLK periods (1 MHz) within +-2 ticks, OSC_DONE");
             spi_rd(7'h09);
             check(rd_val >= exp_ns - 2 && rd_val <= exp_ns + 2, "spi: OSC_COUNT held after later SPI traffic");
+            // clock-fault window: OSC_WIN = {HI, LO} in units of 16 ticks
+            k = $rtoi(exp_ns / 16.0);
+            spi_wr(7'h0A, {k[7:0] + 8'd2, k[7:0] - 8'd2}); spi_rd(7'h01);
+            check(rd_val[5] == 1'b0, "spi: OSC_COUNT inside OSC_WIN -> STATUS.CLK_FAULT = 0");
+            spi_wr(7'h0A, {k[7:0] - 8'd4, k[7:0] - 8'd8}); spi_rd(7'h01);
+            check(rd_val[5] == 1'b1, "spi: OSC_COUNT above OSC_WIN.HI -> STATUS.CLK_FAULT = 1");
+            spi_wr(7'h0A, {k[7:0] + 8'd8, k[7:0] + 8'd4}); spi_rd(7'h01);
+            check(rd_val[5] == 1'b1, "spi: OSC_COUNT below OSC_WIN.LO -> STATUS.CLK_FAULT = 1");
+            spi_wr(7'h0A, 16'h0000); spi_rd(7'h01);
+            check(rd_val[5] == 1'b0, "spi: OSC_WIN = 0 disables the clock-fault check");
             // mode switch: BiSS frame, SPI, BiSS
             spi_wr(7'h05, 16'h1212); spi_wr(7'h06, 16'h2345); bus_idle;
             biss_frame(500.0, 500.0, 20, 1'b0, 0);
@@ -494,70 +601,67 @@ module tb_top;
             check(b_crc_wire == 6'h3A && b_data[19:2] == 18'h0, "spi/biss: BiSS frame after SPI sees the new TEST_POS");
             // MA traffic while CS_N high does not disturb SPI state; SPI after BiSS
             spi_rd(7'h00);
-            check(rd_val == 16'h5210, "spi/biss: SPI read correct after BiSS traffic on the shared pad");
-            // AS5047P-compatible frames (mode 1, 16 bit, parity)
-            spi_wr(7'h05, 16'h0112); as_frames = 1;          // AS_MODE, real position
-            enc_f = 0.0; enc_ph0 = 0.2; #(300000);
-            spi_x(24'h00FFFF, 16);                            // read ANGLECOM 0x3FFF (PARC 1)
-            spi_x(24'h00C000, 16);                            // NOP read, returns ANGLECOM
-            v16 = spi_mi[15:0];
-            $display("INFO AS5047P ANGLECOM frame 0x%04h, angle %0d of 16384 (expected %0.1f)", v16, v16[13:0], 0.2 * 16384);
-            check((^v16) == 1'b0 && v16[14] == 1'b0, "spi AS: response parity even, EF = 0");
-            check(v16[13:0] >= 3270 && v16[13:0] <= 3284, "spi AS: ANGLECOM = head angle (0.2 turn) within 0.3 deg");
-            spi_x(24'h007FFF, 16);                            // read 0x3FFF with a wrong parity bit
-            spi_x(24'h004001, 16);                            // read ERRFL (PARC 0); response: EF = 1
-            check(spi_mi[14] == 1'b1, "spi AS: EF = 1 in the response after the parity error");
-            spi_x(24'h00C000, 16);                            // NOP; response: ERRFL
-            check(spi_mi[14] == 1'b0 && spi_mi[2] == 1'b1, "spi AS: ERRFL.PARERR read back, EF cleared");
-            spi_x({1'b0, 7'h05, 16'h0012}, 24);               // 24-bit native write in AS mode: leave AS mode
-            as_frames = 0;
-            spi_rd(7'h05);
-            check(rd_val == 16'h0012, "spi AS: native 24-bit frame returns to native mode");
+            check(rd_val == 16'h5202, "spi/biss: SPI read correct after BiSS traffic on the shared pad");
         end
 
         // =================================================================
         if (test == "gate") begin
             begin : gt
-                integer t0, t_on_a, t_off_a, t_on_b, t_off_b, t_on_c, t_off_c, tk, t_sa, t_sb, n_late;
+                integer t_on_a, t_off_a, t_on_b, t_off_b, t_on_c, t_off_c, tk, t_sa, t_sb, t_is, n_late;
+                integer t_az_on, t_az_off, n_sa;
                 integer per, da, db, dc, pa, pb, pc, dt;
-                reg ga_d, gb_d, gc_d;
+                reg ga_d, gb_d, gc_d, az_d, is_d;
                 per = 1500; da = 600; db = 300; dc = 900; pa = 0; pb = 500; pc = 1000; dt = 15;
                 spi_wr(7'h20, per); spi_wr(7'h21, da); spi_wr(7'h22, db); spi_wr(7'h23, dc);
                 spi_wr(7'h24, pa); spi_wr(7'h25, pb); spi_wr(7'h26, pc); spi_wr(7'h27, dt);
+                spi_wr(7'h38, 16'd1200); spi_wr(7'h39, 16'h2028);   // AZ_START 1200, AZ_LEN 40
                 spi_wr(7'h04, 16'h0002);                    // GATE_EN
                 #(3 * per * clk_ns);
                 // measure one period in ticks relative to the counter wrap
                 @(posedge dut.u_gate.pwm_wrap);
-                t0 = 0; tk = 0; t_on_a = -1; t_off_a = -1; t_on_b = -1; t_off_b = -1; t_on_c = -1; t_off_c = -1;
-                t_sa = -1; t_sb = -1;
-                ga_d = gate_a; gb_d = gate_b; gc_d = gate_c;
+                tk = 0; t_on_a = -1; t_off_a = -1; t_on_b = -1; t_off_b = -1; t_on_c = -1; t_off_c = -1;
+                t_sa = -1; t_sb = -1; t_is = -1; t_az_on = -1; t_az_off = -1; n_sa = 0;
+                ga_d = gate_a; gb_d = gate_b; gc_d = gate_c; az_d = az_win; is_d = is_smp;
                 while (tk < per) begin
                     @(posedge clk); #1; tk = tk + 1;
                     if (gate_a && !ga_d) t_on_a = tk;  if (!gate_a && ga_d) t_off_a = tk;
                     if (gate_b && !gb_d) t_on_b = tk;  if (!gate_b && gb_d) t_off_b = tk;
                     if (gate_c && !gc_d) t_on_c = tk;  if (!gate_c && gc_d) t_off_c = tk;
-                    if (adc_start && adc_mux == 2'd2) t_sa = tk;
+                    if (az_win && !az_d) t_az_on = tk; if (!az_win && az_d) t_az_off = tk;
+                    if (is_smp && !is_d) t_is = tk;
+                    if (adc_start && adc_mux == 2'd2) begin t_sa = tk; n_sa = n_sa + 1; end
                     if (adc_start && adc_mux == 2'd3) t_sb = tk;
-                    ga_d = gate_a; gb_d = gate_b; gc_d = gate_c;
+                    ga_d = gate_a; gb_d = gate_b; gc_d = gate_c; az_d = az_win; is_d = is_smp;
                 end
-                $display("INFO gate A on %0d off %0d (width %0d), B on %0d off %0d (width %0d), C on %0d off %0d (width %0d); strobes A %0d B %0d",
+                $display("INFO gate A on %0d off %0d (width %0d), B on %0d off %0d (width %0d), C on %0d off %0d (width %0d); ISA start %0d ISB start %0d is_smp %0d; az_win %0d..%0d",
                          t_on_a, t_off_a, (t_off_a - t_on_a + per) % per, t_on_b, t_off_b, t_off_b - t_on_b,
-                         t_on_c, t_off_c, (t_off_c - t_on_c + per) % per, t_sa, t_sb);
+                         t_on_c, t_off_c, (t_off_c - t_on_c + per) % per, t_sa, t_sb, t_is, t_az_on, t_az_off);
                 check((t_off_a - t_on_a + per) % per == da - 2 * dt, "gate: A on-time = DUTY - 2 DEAD");
                 check(t_off_b - t_on_b == db - 2 * dt, "gate: B on-time = DUTY - 2 DEAD");
                 check((t_off_c - t_on_c + per) % per == dc - 2 * dt, "gate: C on-time = DUTY - 2 DEAD (window wraps the period)");
                 check(t_on_b - (pb + dt) == t_on_a - (pa + dt) || t_on_a == -1, "gate: B rising edge at PHASE_B + DEAD (same offset as A)");
-                check(((t_on_b + t_off_b) / 2) - t_sb >= -1 && ((t_on_b + t_off_b) / 2) - t_sb <= 1,
-                      "gate: current strobe B at the centre of the B on-time (+-1 tick)");
                 check(t_sa >= 0 && ((t_sa - t_on_a + per) % per) - (da - 2 * dt) / 2 >= -1 &&
-                      ((t_sa - t_on_a + per) % per) - (da - 2 * dt) / 2 <= 1, "gate: current strobe A at the centre of the A on-time (+-1 tick)");
+                      ((t_sa - t_on_a + per) % per) - (da - 2 * dt) / 2 <= 1, "gate: current strobe at the centre of the A on-time (+-1 tick)");
+                check(n_sa == 1 && t_is == t_sa && t_sb > t_sa && t_sb - t_sa <= CONV + 3,
+                      "gate: one current pair per period: is_smp rises with the ISA start, ISB follows the ISA conversion");
+                check(t_az_off - t_az_on == 40 && t_az_on - t_on_a == 1200 - (pa + dt),
+                      "gate: az_win is AZ_LEN = 40 ticks wide and starts at counter value AZ_START");
                 // strobes are never late (guard keeps the ADC free) over 20 periods
                 spi_rd(7'h35); n_late = rd_val;
                 #(20 * per * clk_ns);
                 spi_rd(7'h35);
                 check(rd_val == n_late, "gate: no late current conversion over 20 PWM periods (guard)");
                 spi_rd(7'h33);
-                check(rd_val[15:8] == 8'd0, "gate: no position pair overrun with current conversions interleaved");
+                check(rd_val[11:8] == 4'd0, "gate: no position pair overrun with current conversions interleaved");
+                // comparator blanking: az_win and 16 ticks after it
+                @(posedge az_win); #(5 * clk_ns); @(negedge clk); cmp[0] = 1'b1; #(4 * clk_ns); cmp[0] = 1'b0;
+                @(negedge az_win); #(8 * clk_ns); @(negedge clk); cmp[0] = 1'b1; #(4 * clk_ns); cmp[0] = 1'b0;
+                #(20 * clk_ns);
+                check(fault_n == 1'b1, "gate: comparator flags inside az_win and 8 ticks after it are blanked");
+                #(100 * clk_ns); @(negedge clk); cmp[0] = 1'b1; #(4 * clk_ns); cmp[0] = 1'b0; #(10 * clk_ns);
+                check(fault_n == 1'b0, "gate: the same flag 100 ticks after az_win latches OC_A");
+                spi_wr(7'h04, 16'h0003); #(20 * clk_ns);
+                check(fault_n == 1'b1, "gate: CLR releases the blanking-test fault");
                 // shadow update: change duty mid-period, takes effect at wrap
                 spi_wr(7'h21, 16'd200);
                 @(posedge dut.u_gate.pwm_wrap); @(posedge dut.u_gate.pwm_wrap);
@@ -568,14 +672,14 @@ module tb_top;
                     ga_d = gate_a;
                 end
                 check((t_off_a - t_on_a + per) % per == 200 - 2 * dt, "gate: new DUTY_A applied at the period wrap");
-                // dead time larger than half the duty: channel stays off, no strobe
-                spi_wr(7'h22, 16'd20);
+                // DUTY_A <= 2 DEAD: channel A stays off, no current strobe
+                spi_wr(7'h21, 16'd20);
                 @(posedge dut.u_gate.pwm_wrap); @(posedge dut.u_gate.pwm_wrap);
                 tk = 0; nb = 0;
-                while (tk < per) begin @(posedge clk); #1; tk = tk + 1; if (gate_b) nb = nb + 1; if (adc_start && adc_mux == 2'd3) nb = nb + 1000; end
-                check(nb == 0, "gate: DUTY <= 2 DEAD keeps the channel off and suppresses its strobe");
+                while (tk < per) begin @(posedge clk); #1; tk = tk + 1; if (gate_a) nb = nb + 1; if (adc_start && adc_mux == 2'd2) nb = nb + 1000; end
+                check(nb == 0, "gate: DUTY_A <= 2 DEAD keeps channel A off and suppresses the current strobe");
+                spi_wr(7'h21, 16'd600);
                 // EN low forces the outputs low immediately
-                spi_wr(7'h22, 16'd300);
                 #(3 * per * clk_ns);
                 wait (gate_c == 1'b1); #5;
                 en_pad = 1'b0; #1;
@@ -585,6 +689,66 @@ module tb_top;
                 en_pad = 1'b1; #(10 * clk_ns);
                 spi_wr(7'h04, 16'h0003); #(per * 2 * clk_ns);
                 check(fault_n == 1'b1, "gate: CLR after EN high releases the fault");
+                // ADC weight correction in the path: ADC_W11 + 100 LSB moves I_A by +100
+                ia_code = 12'd2848; #(3 * per * clk_ns);
+                spi_rd(7'h29); v16 = rd_val;
+                spi_wr(7'h5B, 16'd8592); #(3 * per * clk_ns);
+                spi_rd(7'h29);
+                $display("INFO gate I_A %0d with binary weights, %0d with ADC_W11 = 8592", v16, rd_val);
+                check(v16 == 16'd2848 && rd_val == 16'd2948, "gate: I_A = corrected code (ADC_W11 = 4 * 2048 + 400 adds 100 LSB)");
+                spi_wr(7'h5B, 16'd8192); ia_code = 12'd2048;
+            end
+        end
+
+        // =================================================================
+        // comparator offset calibration (r1_cmpcal): behavioural comparators with
+        // offsets +7.3, -12.6, +33, -40 calibration steps (OC_A, NEG_A, OC_B, NEG_B).
+        // Expected codes (largest code with trip < 0): 24, 44, 0 (exhausted), 63 (exhausted).
+        if (test == "cal") begin
+            begin : ct
+                integer tk, n_gate, n_win, n_fault;
+                reg az_d;
+                cofs[0] = 7.3; cofs[1] = -12.6; cofs[2] = 33.0; cofs[3] = -40.0;
+                spi_wr(7'h20, 16'd300); spi_wr(7'h21, 16'd150);
+                spi_wr(7'h38, 16'd200); spi_wr(7'h39, 16'h2028);    // AZ_START 200, AZ_LEN 40, THR_ZERO 32
+                cmp_vin = 100.0; cmp_mdl_en = 1'b1;
+                spi_wr(7'h04, 16'h0002); #(4 * 300 * clk_ns);
+                check(fault_n == 1'b1 && thr_oc_a == 6'd63, "cal: comparators idle at CMP_THR = 63 (reset), no fault");
+                spi_wr(7'h04, 16'h000A);                             // GATE_EN + CMP_CAL
+                #(4 * clk_ns);
+                check(dut.status[11] == 1'b1 && thr_oc_a == 6'd32 && thr_neg_b == 6'd32,
+                      "cal: STATUS.CAL_BUSY = 1, every threshold carries THR_ZERO during the search");
+                tk = 0; n_gate = 0; n_win = 0; n_fault = 0; az_d = az_win;
+                while (dut.status[11] && tk < 20 * 300) begin
+                    @(posedge clk); #1; tk = tk + 1;
+                    if (gate_a | gate_b | gate_c) n_gate = n_gate + 1;
+                    if (!fault_n) n_fault = n_fault + 1;
+                    if (az_d && !az_win) n_win = n_win + 1;
+                    az_d = az_win;
+                end
+                $display("INFO cal search: %0d ticks, %0d az windows, CAL codes %0d %0d %0d %0d exh %b",
+                         tk, n_win, cal_oc_a, cal_neg_a, cal_oc_b, cal_neg_b, dut.cal_exh);
+                check(n_win == 7, "cal: search uses 7 auto-zero windows (6 decisions + range check)");
+                check(n_gate == 0, "cal: gates held off during the search (GATE_EN set)");
+                check(n_fault == 0, "cal: comparator flags outside az_win during the search do not latch a fault");
+                check(cal_oc_a == 6'd24 && cal_neg_a == 6'd44, "cal: OC_A = 24 (+7.3 offset), NEG_A = 44 (-12.6 offset)");
+                check(cal_oc_b == 6'd0 && cal_neg_b == 6'd63, "cal: OC_B = 0, NEG_B = 63 (offsets outside the range)");
+                spi_rd(7'h3A); v16 = rd_val; spi_rd(7'h3B);
+                $display("INFO cal CMP_CAL_A 0x%04h CMP_CAL_B 0x%04h", v16, rd_val);
+                check(v16 == 16'h2C18 && rd_val == 16'h7F40, "cal: CMP_CAL_A/B = codes, EXH set only for OC_B and NEG_B");
+                spi_rd(7'h01);
+                check(rd_val[11] == 1'b0 && rd_val[12] == 1'b1 && rd_val[13] == 1'b1, "cal: STATUS CAL_BUSY 0, CAL_DONE 1, CAL_EXH 1");
+                #(4 * 300 * clk_ns);
+                check(fault_n == 1'b1 && (gate_a === 1'b1 || gate_a === 1'b0) && thr_oc_a == 6'd63,
+                      "cal: after the search the thresholds return to CMP_THR, no fault");
+                tk = 0; n_gate = 0;
+                while (tk < 300) begin @(posedge clk); tk = tk + 1; if (gate_a) n_gate = n_gate + 1; end
+                check(n_gate > 0, "cal: gates run again after the search");
+                // host write of the codes (bench use)
+                spi_wr(7'h3A, 16'h0510); spi_rd(7'h3A);
+                check(rd_val[13:8] == 6'd5 && rd_val[5:0] == 6'd16 && cal_neg_a == 6'd5 && cal_oc_a == 6'd16,
+                      "cal: CMP_CAL_A host write reaches the calibration ports");
+                cmp_mdl_en = 1'b0;
             end
         end
 

@@ -1,0 +1,16 @@
+# tb_top test=ssi clk_ns=47.619
+PASS init: FAULT_N high after CAL_CRC load and CLR
+INFO ssi gray=0 data 0x0000099a expected 0x0000099a monoflop 28.76 us
+PASS ssi: binary word = SPI POS/TURNS (MT16 + ST13)
+PASS ssi: monoflop = TIMEOUT_TICKS + sync
+INFO ssi gray=1 data 0x00000d57 expected 0x00000d57 monoflop 28.73 us
+PASS ssi: Gray word = SPI POS/TURNS (MT16 + ST13)
+PASS ssi: monoflop = TIMEOUT_TICKS + sync
+PASS ssi: Gray word at 100 kHz / 1 MHz / 2 MHz clock
+PASS ssi: Gray word at 100 kHz / 1 MHz / 2 MHz clock
+PASS ssi: Gray word at 100 kHz / 1 MHz / 2 MHz clock
+INFO ssi clk 47.619 ns: OSC_COUNT 336 -> TIMEOUT_TICKS 420, monoflop 20.16 us (600 ticks untrimmed = 28.57 us)
+PASS ssi: after the host trim from OSC_COUNT the monoflop is 20 us +-5 %
+# 9 checks, 0 failed
+ALL TESTS PASSED
+tb/tb_top.v:868: $finish called at 1565494040 (1ps)

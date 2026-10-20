@@ -1,23 +1,25 @@
-# r1_ctrl — R1 digital macro (RTL draft 0.1)
+# r1_ctrl — R1 digital macro (RTL draft 0.2)
 
-State (2026-10-20): the first RTL exists. It is simulated at RTL level and synthesized for a gate
-count. It is not hardened (no LibreLane, no STA, no gate-level simulation). Track T5, CPU set
-112–115.
+State (2026-10-20): RTL revision 0.2. It is simulated at RTL level, synthesized with Yosys, and
+it went through one LibreLane hardening trial. It is not signed off: no gate-level simulation,
+no formal equivalence, no CDC check. Track T5, CPU set 112–115.
 
 `r1_ctrl` is the digital core of R1. It holds these parts:
 
 - `r1_pos`: sin/cos correction, CORDIC, tracking loop, turn counter.
 - `r1_bus`: BiSS-C, SSI and SPI on the shared pads, and `OSC_COUNT`.
-- `r1_gate` logic: PWM, dead time, current-sample strobes and the ADC scheduler.
-- `r1_safe` digital part: fault latch, I²t, T2F counter and watchdog.
+- `r1_gate` logic: PWM, dead time, current-sample strobe, auto-zero window, ADC scheduler and
+  ADC weight correction (`r1_adcw`).
+- `r1_safe` digital part: fault latch, I²t, T2F counter, watchdog, and the comparator offset
+  calibration (`r1_cmpcal`).
 - The register file.
 
 The contract with the host and the analog blocks is [`R1_REGISTER_MAP.md`](R1_REGISTER_MAP.md),
-draft 0.1. All RTL is clean-room Verilog-2005 under Apache-2.0, written from the specification and
-studies S1, S2, S3 and S5. No third-party RTL is used. Patterns copied from G1 `g1_ctrl` (not
-shared): the two-flop synchroniser, the async-assert/sync-release reset, the SCLK-domain shift
-logic with a hand-off to the core clock, the `run_sim.sh` style and the `ALL TESTS PASSED`
-convention.
+draft 0.2 (change log in its section 7). All RTL is clean-room Verilog-2005 under Apache-2.0,
+written from the specification and studies S1, S2, S3 and S5. No third-party RTL is used.
+Patterns copied from G1 `g1_ctrl` (not shared): the two-flop synchroniser, the
+async-assert/sync-release reset, the SCLK-domain shift logic with a hand-off to the core clock,
+the `run_sim.sh` style and the `ALL TESTS PASSED` convention.
 
 ## Built against
 
@@ -28,27 +30,33 @@ convention.
 | Icarus Verilog | 14.0 (devel) s20260301-328-geda9fdcd | `iverilog -V` in the run (`versions.txt`) |
 | Yosys | 0.67 (git 2d1509d1b) | `yosys -V` in the run |
 | Python / numpy | 3.12.3 / 2.5.1 (container) | recorded in the run |
-| Verilator (lint only) | 5.050 | `verilator --version`; lint is not part of the recorded run |
-| Standard cells | `sg13g2_stdcell_typ_1p20V_25C.lib` from the pinned PDK | `flow/synth.tcl` |
-| ngspice, KLayout, xschem, LibreLane, CACE | not used in this step | — |
+| LibreLane | 3.1.0.dev2 (Classic flow) | `resolved.json` of the trial run |
+| Standard cells | `sg13g2_stdcell` typical 1.2 V 25 °C (synthesis); LibreLane default corners (trial) | `flow/synth.tcl`, `flow/librelane/config.yaml` |
+| BiSS C Rev D2 | PDF text read with pypdf 3.9.1 (host, user install) for the conformance pass | not part of a run |
+| ngspice, KLayout, xschem, CACE | not used in this step | — |
 
 ## Files
 
 | Path | Content |
 | --- | --- |
-| `rtl/r1_ctrl_top.v` | macro top: reset, instances, pad mux `SLO`/`SDO`, `OSC_COUNT`, `STATUS`, gate enable |
-| `rtl/r1_pos.v`, `rtl/r1_sinlut.v` | position path (one shared 20 × 17 multiplier; 27 ticks per pair) |
-| `rtl/r1_biss.v`, `rtl/r1_idrom.v` | BiSS-C / SSI slave (MA domain + clk domain), control channel, ID bytes |
-| `rtl/r1_spi.v` | SPI (native mode 0, 24 bit; AS5047P-compatible mode 1, 16 bit) |
-| `rtl/r1_gate.v` | PWM, dead time, strobes, ADC scheduler, gate AND with `EN` |
-| `rtl/r1_safe.v` | fault sources and latch, I²t, T2F counter, watchdog |
+| `rtl/r1_ctrl_top.v` | macro top: reset, instances, pad mux `SLO`/`SDO`, `OSC_COUNT`, clock-fault window, `STATUS`, comparator blanking, gate enable |
+| `rtl/r1_lib.v` | latch register cells: clock gate `r1_cgate`, latch word `r1_creg`, addressed word `r1_cword` |
+| `rtl/r1_pos.v`, `rtl/r1_sinlut.v` | position path (one shared 18 × 17 multiplier; 28 ticks per pair) |
+| `rtl/r1_biss.v`, `rtl/r1_idrom.v` | BiSS-C / SSI slave, half-tick LAT, D2 control channel, ID bytes |
+| `rtl/r1_spi.v` | SPI (mode 0, 24 bit) |
+| `rtl/r1_gate.v`, `rtl/r1_adcw.v` | PWM, dead time, current strobe, `az_win`, ADC scheduler; ADC weight correction |
+| `rtl/r1_safe.v`, `rtl/r1_cmpcal.v` | fault sources and latch, I²t, T2F counter, watchdog; comparator offset calibration |
 | `rtl/r1_regs.v` | register file, read multiplexer, calibration CRC-8 checker |
 | `rtl/r1_sync2.v` | two-flop synchroniser |
 | `tb/tb_pos.v`, `tb/pos_ref.py` | testbench (a): RTL against a floating-point reference, host calibration fits |
-| `tb/tb_top.v` | testbenches (b)–(f) on the macro top: BiSS/SSI master, SPI host, encoder + ADC model, checks |
-| `sim/run_all.sh`, `sim/summarize.py` | full run, summary, `run.json` |
+| `tb/tb_adcw.v`, `tb/adcw_ref.py` | ADC weight correction: integer model, mismatched-CDAC example, DNL/INL |
+| `tb/tb_top.v` | testbenches (b)–(f) and `cal` on the macro top: BiSS/SSI master, SPI host, encoder + ADC model, behavioural comparators |
+| `sim/run_all.sh`, `sim/summarize.py` | full run, summary, per-block area, `run.json` |
 | `sim/results/<run-id>/` | summary, `run.json`, test logs, synthesis statistics, input hashes |
-| `flow/synth.tcl` | Yosys gate-count synthesis |
+| `flow/synth.tcl` | Yosys synthesis for the cell area (Booth, PDK latch map, 42 MHz delay target) |
+| `flow/r1_ctrl.sdc` | timing constraints: `clk` 42 MHz, `MA` 10 MHz, asynchronous groups, I/O delays |
+| `flow/librelane/config.yaml`, `run_trial.sh` | LibreLane hardening trial (bulk run outside the repository) |
+| `reports/` | small extracts of the hardening trial (area, utilisation, timing) |
 
 To run, from the repository root:
 
@@ -57,10 +65,130 @@ G1_CPUSET=112-115 G1_CPUS=4 G1_WORKDIR=designs/r1-joint/blocks/r1_ctrl \
 G1_RESULTS_ROOT=/opt/sim/<user>/r1-traces/sims flow/run.sh sh sim/run_all.sh <run-id>
 ```
 
-The run takes about 12 minutes on 4 CPUs. Bulk outputs (stimulus, per-pair traces, netlist) go to
+The run takes about 25 minutes on 4 CPUs. Bulk outputs go to
 `$G1_RESULTS_ROOT/r1_ctrl/<run-id>/`. No VCD is written.
 
-## Status (run of record `r1ctrl_20261020_r3`)
+## Revision 0.2 status (run of record `r1ctrl_20261020_v02b`)
+
+All numbers are simulated or synthesized; nothing is measured. Evidence paths are under
+`sim/results/r1ctrl_20261020_v02b/` unless stated otherwise.
+
+| # | Check (brief item) | Status | Evidence |
+| --- | --- | --- | --- |
+| 1 | Area: cell area ≤ 0.18 mm² (synthesis) | **failed by 0.1 %**: 180 173 µm² (0.1: 220 968) | `summary.md`, `stat_flat.txt` |
+| 1 | Area: ≤ 0.28 mm² placed | trial die 0.281 mm² at 70 % start utilisation; 82.6 % after CTS and repair (see row 7) | `reports/ll_trial_t1.md` |
+| 1 | Shared multiplier in `r1_pos` | passed: one 18 × 17 multiplier also forms the loop gains; RTL vs float ≤ 0.023° el (0.1: 0.021°) | `pos_*_result.json` |
+| 1 | 16 writable registers where possible | **not met**: 52 writable words (about 700 latch bits). Widths are trimmed and the words are latches instead of flops; the count is set by the functions in the register map | `rtl/r1_regs.v` |
+| 1 | PWM counters 16 bit (458 Hz minimum PWM at 30 MHz) | passed: 16 bit; further `r1_gate` trims from `rel()` with one subtraction and latch shadows | `rtl/r1_gate.v` |
+| 1 | Duplicated state removed | passed: raw-code copies, `OSC_COUNT` second register, SPI copies, AS5047P mode removed | RTL diff |
+| 2 | ADC weight correction (D12): RTL bit-exact to the integer model | passed (0 mismatches in 2 × 65 536 conversions) | `adcw_result.json` |
+| 2 | Mismatched-CDAC example: error visible with binary weights | passed: DNL 3.06 LSB, 10 missing codes | `adcw_result.json` |
+| 2 | Calibrated weights: no missing codes, \|DNL\| < 1, \|INL\| ≤ 1 | passed: DNL 0.69, INL 0.63 LSB, 0 missing | `adcw_result.json` |
+| 3 | Comparator calibration: SAR of 4 × 6-bit codes in `az_win`, store, read back, exhaustion flag, gates off, no fault | passed (13 checks; offsets +7.3 / −12.6 / +33 / −40 → 24 / 44 / 0 EXH / 63 EXH) | `top_cal_33.333.log` |
+| 4 | `OSC_TRIM` reset 22 | passed | `top_spi_33.333.log` |
+| 4 | Clock-fault window on `OSC_COUNT` (inside, above, below, disabled) | passed | `top_spi_33.333.log` |
+| 4 | STA constraint at 42 MHz | written: `flow/r1_ctrl.sdc`; used by the trial | row 7 |
+| 5 | BiSS D2 conformance of the 0.1 interpretation items | passed for 9 of 10 items, 1 open (BP_ID code); table in register map §3.4 | `top_biss_*.log` (48 checks each, 3 clock corners) |
+| 6 | Sub-tick LAT interpolation < 300 cells | passed: 161 cells (1 696 µm²); latch error spread at 100 kHz el 1.18° → 0.61° (30 MHz), 1.59° → 0.78° (21 MHz), 0.79° → 0.40° (42 MHz) | `top_biss_*.log`; cost from a Yosys run of `r1_biss` with and without the logic (dev run) |
+| 7 | LibreLane hardening trial, sg13g2, 70 %, 42 MHz | **not run (time limit)**: stopped at 2 h in detailed routing (17 DRC violations left). Partial: die 0.281 mm², 82.6 % after CTS; mid-PnR setup WNS −3.33 ns (typ), all 17 violators on the `u_sa` latch path, now removed; sign-off STA, DRC, LVS not run | `reports/ll_trial_t1.md` |
+| — | Position V3 cases (9), BiSS/SSI/SPI/gate/safety testbenches | passed: 260 chip-level checks, 9 position cases | `summary.md` |
+| — | Interop against independent BiSS masters | not run (bench item) | — |
+| — | Gate-level simulation, formal equivalence, CDC check | not run | — |
+| — | Co-simulation with `r1_adc`, `r1_osc`, analog `r1_safe` | not run | — |
+
+#### Run history (revision 0.2)
+
+| Run | Result | Disposition |
+| --- | --- | --- |
+| dev runs (`dev_v02/*`) | — | development, not evidence. They found: the latched position lagged by one pair period (30 ticks), because the ADC weight correction delays `smp_valid` past the next `smp_sh`; fixed with `sc_pend` in `r1_gate`. Testbench errors: CTS = 0 in the control-channel model (D2: CTS = 1 for registers), a too-strict DNL criterion (see results). |
+| `r1ctrl_20261020_v02a` | all checks passed | superseded: the hardening trial then showed the `u_sa` latch path (row 7) |
+| `r1ctrl_20261020_v02b` | all checks passed | run of record. Differs from v02a by the `u_sa` removal in `r1_gate.v` and comment lines in `r1_pos.v` |
+
+
+## Revision 0.2 results
+
+### Area per block (Yosys, typical library, hierarchical run, children included)
+
+| Block | 0.2 (µm²) | 0.1 (µm², module only) | Main change |
+| --- | --- | --- | --- |
+| `r1_pos` (with `r1_sinlut`) | 61 578 | 80 872 | shared multiplier for loop gains, 18-bit CORDIC, no duplicated registers |
+| `r1_regs` (with latch words) | 36 433 | 42 799 | latch words; 13 ADC weights and 6 comparator words added |
+| `r1_gate` (with `r1_adcw` 6 120) | 32 278 | 37 886 | latch shadows, one `rel()` subtraction, single strobe; weight correction added |
+| `r1_safe` | 23 103 | 23 021 | 14-bit T2F, shared I²t path; blanking added |
+| `r1_biss` (with ID ROMs) | 16 508 | 21 785 | no variable shifters, one frame word; D2 control channel and LAT_HALF added |
+| `r1_spi` | 6 128 | 11 494 | AS5047P mode removed |
+| `r1_cmpcal` | 3 569 | — | new |
+| top glue | 4 076 | 4 808 | single `OSC_COUNT` register |
+| hierarchical total / flat | 183 951 / **180 173** | — / 220 968 | flat run optimises across blocks |
+
+Sequential cells (flat): 940 flops, 812 `dlhrq_1` and 52 `dllrq_1` latches (26 % of the area).
+Further trims, not done: fewer writable words (merge rarely used settings), 12-bit PWM words.
+
+### ADC weight correction
+
+The 0.5 LSB DNL limit first planned for calibrated weights cannot be met by any weight
+resolution in this example (model-only sweep: exact weights 1.0 LSB with 11 missing codes,
+1/4 LSB 0.69, 1/16 LSB 1.0 with 1 missing code). The limit is the analog decision levels of a
+12-bit SAR with mismatched capacitors, not the weight format. The criterion is therefore the
+usual one: no missing codes, |DNL| < 1, |INL| ≤ 1. The result depends on the mismatch sample;
+see open issue 2.
+
+### Bus and timing
+
+- Control channel per D2 (register map §3.3): IDL0, R/W echo, `S` echo also when delayed, data
+  CRC-4, stop bit `P`, sequential read 0x42 → 0x43, refused read of 0x40 and refused write with
+  W inverted, CRC error, 14 × CDM = 0. Error counter + 3 for the three refused or bad commands.
+- LAT_HALF: the spread halves at every clock corner (status row 6). The 10 kHz el latch error is
+  0.05–0.13° el (0.1: ≤ 0.12°).
+- Sin/cos pair period with the testbench ADC model: about 35 ticks (0.1: 30), because the next
+  pair waits for the corrected COS code (`sc_pend`).
+
+### Hardening trial `r1ctrl_ll_20261020_t1`
+
+Not run to completion: the 2 h limit stopped it in detailed routing. Partial numbers and the
+disposition are in [`reports/ll_trial_t1.md`](reports/ll_trial_t1.md). Main findings:
+
+- Die 0.281 mm² at 70.5 % start utilisation; 82.6 % after CTS and timing repair.
+- Setup at 42 MHz (typical corner, after global routing): WNS −3.33 ns. All 17 violators end in
+  the 17-bit `u_sa` shadow latch of `r1_gate`: a latch-to-latch path with half a period. v02b
+  computes the strobe from the shadowed words instead (same function, full-cycle path). No
+  flop-to-flop path violates. Hold met (+0.19 ns).
+- The trial used the RTL before the `sc_pend` and `u_sa` changes.
+
+
+## Revision 0.2 open issues
+
+1. **Area.** Cell area is 0.1 % above 0.18 mm². In the trial, CTS added 413 clock buffers
+   (15 000 µm²) and timing repair about 15 000 µm². The 52 gated clocks of the latch words are
+   probably a large part of the clock tree (not separated). Fewer writable words reduce both.
+2. **ADC weights.** Only one mismatch sample was run. A Monte Carlo over CDAC samples (with
+   `r1_adc` revision 2 data, T2) is needed to state a DNL yield. The position of the redundant
+   decision (after 64 LSB) and `raw[12]` must be confirmed with T2.
+3. **BP_ID code.** Placeholder 0x0001; D2 requires a code ≠ 0 that is assigned outside D2.
+   `MFR_ID` is 0x0000 (not assigned, specification open item 5).
+4. **Comparator code meaning.** The calibration assumes that flag = 1 means "raise the code"
+   (`POL` = 0) and that `THR_ZERO` is the 0 A threshold. Both must be confirmed with T4
+   (analog `r1_safe`). The 6-bit range was exhausted in the example for ±33–40 steps.
+5. **Latch-based register file and STA.** Configuration latches are timed as level-sensitive
+   paths. The trial found one half-period latch-to-latch path (`u_sa`, fixed in v02b). The other
+   latch paths and the clock-gate checks must be reviewed in the next trial.
+6. **`CAL_CRC` coverage.** It does not cover the comparator words or the ADC weights.
+7. **Interface contract rows.** `blocks/INTERFACES.md` needs rows for `is_smp` (one current pair
+   at the channel A centre), `az_win` placement (host sets `AZ_START`/`AZ_LEN`), `adc_raw[12:0]`
+   with `adc_valid`, and the `thr_*`/`cal_*` ports. Not edited (outside this block).
+8. **Pair rate.** About 35 ticks per sin/cos pair with the assumed ADC timing. At 21 MHz this is
+   0.6 M pairs/s; the count-safe speed is about 150 kHz el (estimated by scaling the 0.1 number;
+   S1: 250 kHz at 1 M pairs/s).
+9. Open from 0.1 and unchanged: self-calibration accuracy (0.1 issue 4), `ANA_CTRL` bit
+   assignment (issue 7), EN glitch filter and pad delay (issue 9), shared-pad rule (issue 10).
+
+
+## Revision 0.1 record
+
+This section is the record of revision 0.1 (RTL of commit 31ecd945e). Revision 0.2
+replaces its numbers; it is kept unchanged below.
+
+### 0.1 status (run of record `r1ctrl_20261020_r3`)
 
 | Check | Gate | Status | Evidence |
 | --- | --- | --- | --- |
@@ -79,7 +207,7 @@ The run takes about 12 minutes on 4 CPUs. Bulk outputs (stimulus, per-pair trace
 | CDC formal / structural check | V6 | not run | — |
 | Gate-level or analog co-simulation with `r1_adc`, `r1_osc`, `r1_safe` (analog) | V7 | not run | — |
 
-### Run history
+#### 0.1 run history
 
 | Run | Result | Disposition |
 | --- | --- | --- |
@@ -98,9 +226,9 @@ They found these bugs, all fixed before r1:
 
 They also found three testbench errors (ADC hold instant, BUS_CFG test value, I²t history).
 
-## Results (simulated, run r3)
+### 0.1 results (simulated, run r3)
 
-### V3 position (`tb_pos`, 2000 pairs per case, 1 M pairs/s at 30 MHz)
+#### V3 position (`tb_pos`, 2000 pairs per case, 1 M pairs/s at 30 MHz)
 
 The head model is the S1 tolerance set: offset 6.5 %, gain ratio 1.25, phase 10°, h3 1 % (vector
 form e^{iφ} + h e^{−i(3φ+ψ)}), amplitude 1400 LSB.
@@ -127,7 +255,7 @@ form e^{iφ} + h e^{−i(3φ+ψ)}), amplitude 1400 LSB.
 - Lock from reset takes 40–96 pairs (40–96 µs) to stay within 0.5° el.
 - With `EXTRAP` = 30, the output equals the angle 30 ticks ahead (same error as `EXTRAP` = 0).
 
-### Bus
+#### Bus
 
 - CRC-6 wire values 0x3A / 0x02 / 0x0D for 0x00000 / 0x3FFFF / 0x12345 (S2 vectors) are
   reproduced on SLO.
@@ -143,7 +271,7 @@ form e^{iφ} + h e^{−i(3φ+ψ)}), amplitude 1400 LSB.
   is the S5 finding; the host trim corrects it.
 - AS5047P-compatible ANGLECOM at 0.2 turn reads 3277 / 16384.
 
-### Gate and safety
+#### Gate and safety
 
 - On-times are DUTY − 2·DEAD exactly: 570 / 270 / 870 ticks, including a window that wraps the
   period. The strobes are at the window centre within ±1 tick. No current conversion started late
@@ -156,7 +284,7 @@ form e^{iφ} + h e^{−i(3φ+ψ)}), amplitude 1400 LSB.
 - Watchdog fires 4091 ticks after the last SPI frame (period 4096).
 - T2F count is 273 for 273.1 expected.
 
-## Gate count (Yosys, run r3, typical library)
+### 0.1 gate count (Yosys, run r3, typical library)
 
 | Item | Value |
 | --- | --- |
@@ -180,7 +308,7 @@ Even with all of these, the macro is about 0.28 mm². The floorplan owner must c
 (the D9 1.5 mm die), or functional cuts (for example the AS5047P mode, the SSI mode, or the
 on-chip I²t). This is a floorplan decision.
 
-## Open issues
+### 0.1 open issues (see the 0.2 list for the current state)
 
 1. **Area: 1.88 × the digital budget (estimated macro).** See the section above. A decision is
    needed before hardening.

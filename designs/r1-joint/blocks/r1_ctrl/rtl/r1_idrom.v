@@ -1,6 +1,11 @@
-// R1_CTRL: read-only BiSS identification bytes, addresses 0x40..0x7F
-// (BiSS C Rev D2 fixed register area; no EDS). Byte order: high byte at the
-// lower address [verify against the D2 register table]. Unlisted addresses read 0.
+// R1_CTRL: read-only BiSS identification bytes in the fixed address area
+// 0x40..0x7F (BiSS C Rev D2, "BiSS MEMORY MAP", Table 2; no EDS, one bank).
+// Multi-byte parameters are big-endian, the highest-value byte at the lowest
+// address (D2 p. 22). ok = 1 for the addresses this slave accepts for a read:
+//   0x41 EDS_BANK = 0x00 (no EDS, D2 Table 5), 0x42..0x43 BP_ID, 0x44..0x47
+//   DEV_SN (0 = no serial number, D2 Table 7), 0x78..0x7D DEV_ID, 0x7E..0x7F
+//   MFR_ID. Refused: 0x00..0x3F (no register bank), 0x40 BSEL (one bank only:
+//   "read and write access to BSEL are refused", D2 Table 4), 0x48..0x77.
 // SPDX-License-Identifier: Apache-2.0
 
 module r1_idrom #(
@@ -10,8 +15,10 @@ module r1_idrom #(
     parameter [15:0] MFR_ID     = 16'h0000
 ) (
     input  wire [6:0] addr,
-    output reg  [7:0] data
+    output reg  [7:0] data,
+    output wire       ok
 );
+    assign ok = (addr >= 7'h41 && addr <= 7'h47) || (addr >= 7'h78);
     always @(*) begin
         case (addr)
             7'h42: data = PROFILE_ID[15:8];  7'h43: data = PROFILE_ID[7:0];

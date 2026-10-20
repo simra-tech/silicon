@@ -16,7 +16,7 @@ module tb_pos;
     reg [23:0] stim [0:4095];
     wire [17:0] pos_out, meas_angle;
     wire [15:0] turns, velocity;
-    wire [11:0] amplitude, raw_sin, raw_cos;
+    wire [11:0] amplitude;
     wire meas_stb, amp_low, amp_high, overspeed, track_err, overrun, pos_valid;
 
     r1_pos dut (
@@ -27,7 +27,7 @@ module tb_pos;
         .dir(1'b0), .kp_sh(regs[6][3:0]), .ki_sh(regs[7][4:0]), .extrap(regs[8][7:0]),
         .amp_lo(8'd16), .amp_hi(8'd200), .ovs_lim(16'h7FFF),
         .pos_out(pos_out), .turns(turns), .velocity(velocity), .amplitude(amplitude),
-        .raw_sin(raw_sin), .raw_cos(raw_cos), .meas_angle(meas_angle), .meas_stb(meas_stb),
+        .meas_angle(meas_angle), .meas_stb(meas_stb),
         .amp_low(amp_low), .amp_high(amp_high), .overspeed(overspeed), .track_err(track_err),
         .overrun(overrun), .pos_valid(pos_valid));
 

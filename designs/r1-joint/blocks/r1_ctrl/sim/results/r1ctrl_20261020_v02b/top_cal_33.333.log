@@ -1,0 +1,19 @@
+# tb_top test=cal clk_ns=33.333
+PASS init: FAULT_N high after CAL_CRC load and CLR
+PASS cal: comparators idle at CMP_THR = 63 (reset), no fault
+PASS cal: STATUS.CAL_BUSY = 1, every threshold carries THR_ZERO during the search
+INFO cal search: 1891 ticks, 7 az windows, CAL codes 24 44 0 63 exh 1100
+PASS cal: search uses 7 auto-zero windows (6 decisions + range check)
+PASS cal: gates held off during the search (GATE_EN set)
+PASS cal: comparator flags outside az_win during the search do not latch a fault
+PASS cal: OC_A = 24 (+7.3 offset), NEG_A = 44 (-12.6 offset)
+PASS cal: OC_B = 0, NEG_B = 63 (offsets outside the range)
+INFO cal CMP_CAL_A 0x2c18 CMP_CAL_B 0x7f40
+PASS cal: CMP_CAL_A/B = codes, EXH set only for OC_B and NEG_B
+PASS cal: STATUS CAL_BUSY 0, CAL_DONE 1, CAL_EXH 1
+PASS cal: after the search the thresholds return to CMP_THR, no fault
+PASS cal: gates run again after the search
+PASS cal: CMP_CAL_A host write reaches the calibration ports
+# 13 checks, 0 failed
+ALL TESTS PASSED
+tb/tb_top.v:868: $finish called at 312922719 (1ps)

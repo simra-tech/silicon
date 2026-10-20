@@ -1,0 +1,60 @@
+# LibreLane Classic flow, first hardening trial of the r1_ctrl macro (revision 0.2).
+# Structure follows designs/g1-guardian/blocks/g1_ctrl/flow/config.yaml.
+# Run with flow/librelane/run_trial.sh, which copies this file and the SDC to
+# the bulk results root and links the RTL there, so run directories never land
+# in the repository.
+meta:
+  version: 2
+  flow: Classic
+  substituting_steps:
+    # as in G1: magic reports overlaps between abutted cells that are not real
+    Checker.IllegalOverlap: null
+
+DESIGN_NAME: r1_ctrl_top
+VERILOG_FILES:
+  - dir::../rtl/r1_sync2.v
+  - dir::../rtl/r1_lib.v
+  - dir::../rtl/r1_sinlut.v
+  - dir::../rtl/r1_pos.v
+  - dir::../rtl/r1_adcw.v
+  - dir::../rtl/r1_gate.v
+  - dir::../rtl/r1_safe.v
+  - dir::../rtl/r1_cmpcal.v
+  - dir::../rtl/r1_idrom.v
+  - dir::../rtl/r1_biss.v
+  - dir::../rtl/r1_spi.v
+  - dir::../rtl/r1_regs.v
+  - dir::../rtl/r1_ctrl_top.v
+VERILOG_DEFINES:
+  - SYNTHESIS
+# the configuration register file is latch-based by design (r1_lib.v)
+LINTER_ERROR_ON_LATCH: false
+
+STD_CELL_LIBRARY: sg13g2_stdcell
+
+CLOCK_PORT: clk
+CLOCK_PERIOD: 23.81
+PNR_SDC_FILE: dir::r1_ctrl.sdc
+SIGNOFF_SDC_FILE: dir::r1_ctrl.sdc
+FALLBACK_SDC: dir::r1_ctrl.sdc
+
+# Booth multiplier recoding (as in flow/synth.tcl)
+SYNTH_STRATEGY: AREA 0
+SYNTH_MUL_BOOTH: true
+
+# Utilisation about 70 % (brief), square core
+FP_SIZING: relative
+FP_CORE_UTIL: 70
+FP_ASPECT_RATIO: 1
+PL_TARGET_DENSITY_PCT: 78
+GRT_ALLOW_CONGESTION: true
+
+PDN_CORE_RING: false
+VDD_NETS: [VDD]
+GND_NETS: [VSS]
+
+RUN_HEURISTIC_DIODE_INSERTION: false
+RUN_ANTENNA_REPAIR: true
+DESIGN_REPAIR_MAX_SLEW_PCT: 30
+DESIGN_REPAIR_MAX_CAP_PCT: 30
+RUN_POST_GRT_DESIGN_REPAIR: true
