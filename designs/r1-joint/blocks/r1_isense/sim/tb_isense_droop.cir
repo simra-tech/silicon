@@ -1,0 +1,44 @@
+* r1_isense hold droop: auto-zero 0..2.05 us (azh falls at 2.0 us), then hold for one PWM period (50 us) at zero shunt
+* current. Drift of the output at zero current (pedestal point) from 4 us to 52 us, input-referred (/14), and of the
+* hold-cap voltages h1, h2 (junction and subthreshold leakage of the hold switches at temperature).
+* gmin = 1e-15 (not 1e-12 as in the other decks): ngspice adds gmin across every junction, and 1 pS x 1 V into the
+* 1 pF hold cap is 1 uV/us, which would mask the real leakage. Ideal sources (marked) as in the other decks.
+.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerMOSlv.lib @@MOS@@
+.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerMOShv.lib @@MOS@@
+.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerRES.lib @@RES@@
+.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerCAP.lib @@CAP@@
+.temp @@TEMP@@
+.include /work/designs/r1-joint/blocks/r1_isense/schematic/r1_isense.spice
+.option gmin=1e-15 method=gear reltol=1e-4 abstol=1e-13 vntol=1e-7
+Vdda vdda 0 dc @@VDDA@@
+Vdd vdd 0 dc @@VDD@@
+* IDEAL REFERENCE SOURCES (this step only)
+Vref vref 0 dc 1.05
+Vcm vcm 0 dc 0.6
+Ibias vdda ibias dc {5u*(@@TEMP@@+273.15)/300.15}
+Vaz az 0 pwl(0 @@VDD@@ 2.05u @@VDD@@ 2.051u 0)
+Vazh azh 0 pwl(0 @@VDD@@ 2.0u @@VDD@@ 2.001u 0)
+Vcmi isn 0 dc 0
+Vin isp isn dc 0
+XDUT isp isn outp outn vref vcm ibias az azh vdda vdd 0 r1_isense_ch
+CLP outp 0 2p
+CLN outn 0 2p
+.control
+set wr_singlescale
+set wr_vecnames
+tran 2n 52.05u 0 10n
+let vod = v(outp) - v(outn)
+let hd = v(xdut.h1) - v(xdut.h2)
+meas tran v4 avg vod from=3.9u to=4u
+meas tran v52 avg vod from=51.9u to=52u
+meas tran h4 find hd at=4u
+meas tran h52 find hd at=52u
+meas tran h1a find v(xdut.h1) at=4u
+meas tran h1b find v(xdut.h1) at=52u
+let drift_uv = (v52 - v4)/14*1e6
+let hdrift_uv = (h52 - h4)*1e6
+let h1drift_uv = (h1b - h1a)*1e6
+echo "DROOP corner=@@CORNER@@ temp=@@TEMP@@ drift_in_uV=" $&drift_uv " hold_diff_drift_uV=" $&hdrift_uv " h1_drift_uV=" $&h1drift_uv " vod4_V=" $&v4
+wrdata @@OUT@@_droop.txt v(outp) v(outn) v(xdut.h1) v(xdut.h2) v(xdut.x1a) v(xdut.x1b)
+.endc
+.end

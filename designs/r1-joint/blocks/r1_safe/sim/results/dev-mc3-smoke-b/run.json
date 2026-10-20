@@ -1,0 +1,122 @@
+{
+ "block": "r1_safe",
+ "command": "python3 sim/run_deck.py --block r1_safe --deck tb_safe_mc3.cir --run-id dev-mc3-smoke-b --corners tt_mm_s1 --set N=2 --analyze analyze_mc3.py --question smoke: 2 samples of the reduced-fixture tb_safe_mc3 with CAL3 output",
+ "container_image": "tapeoutbench-eda:latest sha256:ddeb6957... (checked by flow/run.sh)",
+ "corners": {
+  "tt_mm_s1": {
+   "cap": "cap_typ_mismatch",
+   "mos": "mos_tt_mismatch",
+   "res": "res_typ_mismatch",
+   "temp_C": 27,
+   "vdd": 1.2,
+   "vdda": 3.3
+  }
+ },
+ "cpuset": "109",
+ "date_utc": "2026-10-20T14:54:43.863383Z",
+ "deck": "sim/tb_safe_mc3.cir",
+ "deck_sha256": "72e144e860d412b2f2e9ed2a7cef859403586f67c0889acf3f0835b792c646ff",
+ "disposition": "passed: 2 samples; OC within 0.25 LSB 2, worst 0.156 LSB, sigma 0.030 LSB; NEG within 0.25 LSB 2, worst 0.025 LSB, sigma 0.004 LSB; delay OC 112-113 ns, NEG 212-214 ns",
+ "jobs": {
+  "tt_mm_s1": {
+   "log": "r1_safe/dev-mc3-smoke-b/tb_safe_mc3_tt_mm_s1.log",
+   "rc": 0,
+   "wall_s": 122.1
+  }
+ },
+ "netlist": "schematic/r1_safe.spice",
+ "netlist_sha256": "812f886dce2b759af121230bd2e9100aeac59041effdf9a3341647c29299cbde",
+ "overrides": {
+  "N": "2"
+ },
+ "pdk_commit": "84374023ee8b4b126bebbba67fcbada0a9c0ff0b (checked by flow/run.sh)",
+ "question": "smoke: 2 samples of the reduced-fixture tb_safe_mc3 with CAL3 output",
+ "raw_results": "$G1_RESULTS_ROOT/r1_safe/dev-mc3-smoke-b/",
+ "result": {
+  "ng": {
+   "centre_err_LSB": {
+    "max": 0.024648960000000004,
+    "mean": 0.021090510000000003,
+    "min": 0.017532060000000002,
+    "n": 2,
+    "sigma": 0.003558450000000001
+   },
+   "centre_err_uV_shunt": {
+    "max": 58.688,
+    "mean": 50.215500000000006,
+    "min": 41.743,
+    "n": 2,
+    "sigma": 8.4725
+   },
+   "delay_10pct_ns": {
+    "max": 214.23,
+    "mean": 212.94,
+    "min": 211.65,
+    "n": 2,
+    "sigma": 1.289999999999992
+   },
+   "hyst_uV_shunt": {
+    "max": 1241.8,
+    "mean": 1238.415,
+    "min": 1235.03,
+    "n": 2,
+    "sigma": 3.384999999999991
+   },
+   "k_cal": {
+    "max": 32.0,
+    "mean": 32.0,
+    "min": 32.0,
+    "n": 2,
+    "sigma": 0.0
+   },
+   "missing": 0,
+   "search_failed": [],
+   "within_0p25LSB": 2,
+   "within_0p5LSB": 2
+  },
+  "oc": {
+   "centre_err_LSB": {
+    "max": 0.15551592000000003,
+    "mean": 0.12596787,
+    "min": 0.09641982,
+    "n": 2,
+    "sigma": 0.029548050000000013
+   },
+   "centre_err_uV_shunt": {
+    "max": 370.276,
+    "mean": 299.9235,
+    "min": 229.571,
+    "n": 2,
+    "sigma": 70.3525
+   },
+   "delay_10pct_ns": {
+    "max": 112.92,
+    "mean": 112.64,
+    "min": 112.36,
+    "n": 2,
+    "sigma": 0.28000000000000114
+   },
+   "hyst_uV_shunt": {
+    "max": 1252.35,
+    "mean": 1234.295,
+    "min": 1216.24,
+    "n": 2,
+    "sigma": 18.05499999999995
+   },
+   "k_cal": {
+    "max": 33.0,
+    "mean": 31.0,
+    "min": 29.0,
+    "n": 2,
+    "sigma": 2.0
+   },
+   "missing": 0,
+   "search_failed": [],
+   "within_0p25LSB": 2,
+   "within_0p5LSB": 2
+  }
+ },
+ "run_id": "dev-mc3-smoke-b",
+ "tool": "ngspice-46 (container banner from flow/run.sh ngspice -v; batch logs carry no banner)",
+ "wall_s": 122.2
+}

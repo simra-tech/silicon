@@ -1,0 +1,13 @@
+{
+ "run_id": "dev-mc3-smoke-fullmux",
+ "block": "r1_safe",
+ "date_utc": "2026-10-20T14:45:00Z",
+ "command": "python3 sim/run_deck.py --block r1_safe --deck tb_safe_mc3.cir --run-id dev-mc3-smoke --corners tt_mm_s1 --set N=1 (first version of tb_safe_mc3.cir: full 256:1 muxes and level shifters, 41-code search window, 250 ns dwell)",
+ "netlist": "schematic/r1_safe.spice",
+ "netlist_sha256": "812f886dce2b (prefix)",
+ "cpuset": "109",
+ "raw_results": "$G1_RESULTS_ROOT/r1_safe/dev-mc3-smoke-fullmux/ (renamed from dev-mc3-smoke)",
+ "question": "smoke: runtime and search logic of the full-path MC with the full mux netlist",
+ "result": {"simulated_time_reached_us": 2.8, "rate_s_per_simulated_us": 55},
+ "disposition": "abandoned (stopped by hand after about 4 min): 55 s per simulated us gives about 40 min per sample, about 7 h for 30 samples on 3 CPUs. Replaced by the reduced fixture (ideal tap switches) in the current tb_safe_mc3.cir."
+}

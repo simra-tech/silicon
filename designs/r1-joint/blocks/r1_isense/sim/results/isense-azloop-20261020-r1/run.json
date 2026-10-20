@@ -1,0 +1,181 @@
+{
+ "analyzer": "sim/analyze_azloop.py (run after the deck)",
+ "block": "r1_isense",
+ "command": "python3 sim/run_deck.py --block r1_isense --deck tb_isense_azloop.cir --run-id isense-azloop-20261020-r1 --corners tt,ss,ff,ss_cold,ff_hot --jobs 2 --question Return ratio of the auto-zero loop (differential and common mode) during AZ hold, loop broken at the aux-pair gates: unity-gain frequency and phase margin at 5 corners",
+ "container_image": "tapeoutbench-eda:latest sha256:ddeb6957... (checked by flow/run.sh)",
+ "corners": {
+  "ff": {
+   "cap": "cap_bcs",
+   "mos": "mos_ff",
+   "res": "res_bcs",
+   "temp_C": -40,
+   "vdd": 1.32,
+   "vdda": 3.6
+  },
+  "ff_hot": {
+   "cap": "cap_bcs",
+   "mos": "mos_ff",
+   "res": "res_bcs",
+   "temp_C": 125,
+   "vdd": 1.32,
+   "vdda": 3.6
+  },
+  "ss": {
+   "cap": "cap_wcs",
+   "mos": "mos_ss",
+   "res": "res_wcs",
+   "temp_C": 125,
+   "vdd": 1.08,
+   "vdda": 3.0
+  },
+  "ss_cold": {
+   "cap": "cap_wcs",
+   "mos": "mos_ss",
+   "res": "res_wcs",
+   "temp_C": -40,
+   "vdd": 1.08,
+   "vdda": 3.0
+  },
+  "tt": {
+   "cap": "cap_typ",
+   "mos": "mos_tt",
+   "res": "res_typ",
+   "temp_C": 27,
+   "vdd": 1.2,
+   "vdda": 3.3
+  }
+ },
+ "cpuset": "110-111",
+ "date_utc": "2026-10-20T14:46:37.542744Z",
+ "deck": "sim/tb_isense_azloop.cir",
+ "deck_sha256": "0fde9a646ed6bddbf1930f031d784fd6657643df9ad4cc9cacf2e06d5f28ec78",
+ "disposition": "passed: differential AZ loop worst phase margin 92.8 deg, unity gain 0.74-1.14 MHz, DC loop gain >= 47.9 dB over 5 corners; common mode: loop gain <= -47.0 dB (no loop)",
+ "jobs": {
+  "ff": {
+   "log": "r1_isense/isense-azloop-20261020-r1/tb_isense_azloop_ff.log",
+   "rc": 0,
+   "wall_s": 12.0
+  },
+  "ff_hot": {
+   "log": "r1_isense/isense-azloop-20261020-r1/tb_isense_azloop_ff_hot.log",
+   "rc": 0,
+   "wall_s": 12.0
+  },
+  "ss": {
+   "log": "r1_isense/isense-azloop-20261020-r1/tb_isense_azloop_ss.log",
+   "rc": 0,
+   "wall_s": 12.0
+  },
+  "ss_cold": {
+   "log": "r1_isense/isense-azloop-20261020-r1/tb_isense_azloop_ss_cold.log",
+   "rc": 0,
+   "wall_s": 12.0
+  },
+  "tt": {
+   "log": "r1_isense/isense-azloop-20261020-r1/tb_isense_azloop_tt.log",
+   "rc": 0,
+   "wall_s": 14.0
+  }
+ },
+ "netlist": "schematic/r1_isense.spice",
+ "netlist_sha256": "5db34e0a8f7c54abbc4d4b547462129dd862404f205e2c3472fb4095b93faf8b",
+ "overrides": {},
+ "pdk_commit": "84374023ee8b4b126bebbba67fcbada0a9c0ff0b (checked by flow/run.sh)",
+ "question": "Return ratio of the auto-zero loop (differential and common mode) during AZ hold, loop broken at the aux-pair gates: unity-gain frequency and phase margin at 5 corners",
+ "raw_results": "$G1_RESULTS_ROOT/r1_isense/isense-azloop-20261020-r1/",
+ "result": {
+  "ff": {
+   "cm": {
+    "dc_gain_dB": -94.3301565,
+    "f_unity_Hz": null,
+    "max_gain_dB": -47.0378643,
+    "note": "loop gain below 0 dB at all frequencies (no loop to destabilise)",
+    "phase_at_dc_deg": 0.115711233,
+    "phase_margin_deg": null
+   },
+   "dm": {
+    "dc_gain_dB": 55.5125363,
+    "f_unity_Hz": 894243.3314490337,
+    "gain_margin_dB": 29.6382091,
+    "max_gain_dB": 55.5125363,
+    "phase_at_dc_deg": -0.365783861,
+    "phase_margin_deg": 96.5174128756525
+   }
+  },
+  "ff_hot": {
+   "cm": {
+    "dc_gain_dB": -84.8954428,
+    "f_unity_Hz": null,
+    "max_gain_dB": -48.3743248,
+    "note": "loop gain below 0 dB at all frequencies (no loop to destabilise)",
+    "phase_at_dc_deg": 0.070677741,
+    "phase_margin_deg": null
+   },
+   "dm": {
+    "dc_gain_dB": 47.901568,
+    "f_unity_Hz": 1136876.5380870919,
+    "gain_margin_dB": 30.281621,
+    "max_gain_dB": 47.901568,
+    "phase_at_dc_deg": -0.116377092,
+    "phase_margin_deg": 94.11512899069241
+   }
+  },
+  "ss": {
+   "cm": {
+    "dc_gain_dB": -72.0172213,
+    "f_unity_Hz": null,
+    "max_gain_dB": -51.9137303,
+    "note": "loop gain below 0 dB at all frequencies (no loop to destabilise)",
+    "phase_at_dc_deg": 0.0247129731,
+    "phase_margin_deg": null
+   },
+   "dm": {
+    "dc_gain_dB": 54.5608746,
+    "f_unity_Hz": 962042.4818263437,
+    "gain_margin_dB": 33.4131539,
+    "max_gain_dB": 54.5608746,
+    "phase_at_dc_deg": -0.297591904,
+    "phase_margin_deg": 92.78154517467044
+   }
+  },
+  "ss_cold": {
+   "cm": {
+    "dc_gain_dB": -87.153938,
+    "f_unity_Hz": null,
+    "max_gain_dB": -51.4830789,
+    "note": "loop gain below 0 dB at all frequencies (no loop to destabilise)",
+    "phase_at_dc_deg": 0.0723617293,
+    "phase_margin_deg": null
+   },
+   "dm": {
+    "dc_gain_dB": 56.8749542,
+    "f_unity_Hz": 741378.2383460111,
+    "gain_margin_dB": 32.098469,
+    "max_gain_dB": 56.8749542,
+    "phase_at_dc_deg": -0.516758496,
+    "phase_margin_deg": 95.36203037844301
+   }
+  },
+  "tt": {
+   "cm": {
+    "dc_gain_dB": -87.8011965,
+    "f_unity_Hz": null,
+    "max_gain_dB": -50.1777519,
+    "note": "loop gain below 0 dB at all frequencies (no loop to destabilise)",
+    "phase_at_dc_deg": 0.0803088675,
+    "phase_margin_deg": null
+   },
+   "dm": {
+    "dc_gain_dB": 56.4470338,
+    "f_unity_Hz": 871541.8249412087,
+    "gain_margin_dB": 31.3294615,
+    "max_gain_dB": 56.4470338,
+    "phase_at_dc_deg": -0.41547853,
+    "phase_margin_deg": 95.26547516798654
+   }
+  }
+ },
+ "run_id": "isense-azloop-20261020-r1",
+ "tool": "ngspice-46 (container banner from flow/run.sh ngspice -v; batch logs carry no banner)",
+ "wall_s": 36.1
+}

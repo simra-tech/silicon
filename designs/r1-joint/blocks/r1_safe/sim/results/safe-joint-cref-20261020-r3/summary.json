@@ -1,0 +1,72 @@
+{
+ "result": {
+  "tt": {
+   "simultaneous_oc_a": {
+    "centre_err_uV_shunt": -75.13483846441349,
+    "centre_err_LSB": -0.031556632155053665,
+    "hyst_uV_shunt": 1225.8860971223057
+   },
+   "simultaneous_neg_a": {
+    "centre_err_uV_shunt": -62.467928959197835,
+    "centre_err_LSB": -0.026236530162863095,
+    "hyst_uV_shunt": 1214.862748004239
+   },
+   "simultaneous_oc_b": {
+    "centre_err_uV_shunt": -75.13483863820503,
+    "centre_err_LSB": -0.03155663222804611,
+    "hyst_uV_shunt": 1225.886097047213
+   },
+   "simultaneous_neg_b": {
+    "centre_err_uV_shunt": -62.4679291660879,
+    "centre_err_LSB": -0.02623653024975692,
+    "hyst_uV_shunt": 1214.8627479990764
+   },
+   "staggered_oc_a": {
+    "centre_err_uV_shunt": -74.17261259137776,
+    "centre_err_LSB": -0.03115249728837866,
+    "hyst_uV_shunt": 1210.2372024716813
+   },
+   "staggered_neg_a": {
+    "centre_err_uV_shunt": -61.40689874349625,
+    "centre_err_LSB": -0.02579089747226843,
+    "hyst_uV_shunt": 1198.6693146440464
+   },
+   "staggered_oc_b": {
+    "centre_err_uV_shunt": -76.99809930558632,
+    "centre_err_LSB": -0.032339201708346255,
+    "hyst_uV_shunt": 1207.9653896046593
+   },
+   "staggered_neg_b": {
+    "centre_err_uV_shunt": -63.76950511292889,
+    "centre_err_LSB": -0.02678319214743014,
+    "hyst_uV_shunt": 1196.5147837545153
+   },
+   "max_sim_minus_stag_uV_shunt": 1.8632606673812973,
+   "max_sim_minus_stag_LSB": 0.0007825694803001449,
+   "delays_from_shunt_step": {
+    "oc_trip_a_ns": 120.47370560051138,
+    "neg_release_a_ns": 99.64141584734959,
+    "oc_release_a_ns": 24.762205496098062,
+    "neg_trip_a_ns": 24.629706504647533,
+    "oc_trip_b_ns": 120.47370536602894,
+    "neg_release_b_ns": 99.64141566882893,
+    "oc_release_b_ns": 24.76220551197146,
+    "neg_trip_b_ns": 24.629706525443886
+   },
+   "cross_channel_transitions_us": {
+    "oc_b": [],
+    "neg_b": []
+   },
+   "cross_channel_glitches": 0,
+   "tap_t176_max_dev_step_mV": 4.362426110742668,
+   "tap_t76_max_dev_step_mV": 15.219090987818651,
+   "tap_t176_max_dev_mV": 5.369751000000034,
+   "tap_t76_max_dev_mV": 13.99250099999999,
+   "max_abs_centre_err_LSB": 0.032339201708346255,
+   "n_points": 8,
+   "idda_uA_total": 764.6803472333332
+  }
+ },
+ "criteria": "all 8 crossings present (2 segments x 2 channels x OC/NEG); no transition of channel b outputs while channel a steps (cross-channel kickback, if the segment exists); uncalibrated threshold centre (shunt-referred) within +-0.5 LSB (1.19 mV shunt) of VREF*(1/26+(2c-63)/882); simultaneous minus staggered centre <= 0.1 LSB; trip delay (from the shunt step, through r1_isense) < 300 ns at 10 % overdrive",
+ "disposition": "tt: passed (max centre 0.032 LSB, sim-stag 0.0008 LSB, cross-channel glitches 0, worst trip delay 120 ns)"
+}

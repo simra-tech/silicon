@@ -1,0 +1,321 @@
+{
+ "block": "r1_safe",
+ "command": "python3 sim/run_deck.py --block r1_safe --deck tb_safe_dcmc3.cir --run-id safe-dccorner-20261020-r3 --corners tt,ss,ff,ss_cold,ff_hot --jobs 2 --set N=1 --set NET=schematic/r1_safe.spice --analyze analyze_dcmc3.py --question Revision 3 comparator, nominal devices (no mismatch), 5 corners: systematic threshold-centre error and hysteresis vs cell threshold (13 points), input of the calibration model per corner",
+ "container_image": "tapeoutbench-eda:latest sha256:ddeb6957... (checked by flow/run.sh)",
+ "corners": {
+  "ff": {
+   "cap": "cap_bcs",
+   "mos": "mos_ff",
+   "res": "res_bcs",
+   "temp_C": -40,
+   "vdd": 1.32,
+   "vdda": 3.6
+  },
+  "ff_hot": {
+   "cap": "cap_bcs",
+   "mos": "mos_ff",
+   "res": "res_bcs",
+   "temp_C": 125,
+   "vdd": 1.32,
+   "vdda": 3.6
+  },
+  "ss": {
+   "cap": "cap_wcs",
+   "mos": "mos_ss",
+   "res": "res_wcs",
+   "temp_C": 125,
+   "vdd": 1.08,
+   "vdda": 3.0
+  },
+  "ss_cold": {
+   "cap": "cap_wcs",
+   "mos": "mos_ss",
+   "res": "res_wcs",
+   "temp_C": -40,
+   "vdd": 1.08,
+   "vdda": 3.0
+  },
+  "tt": {
+   "cap": "cap_typ",
+   "mos": "mos_tt",
+   "res": "res_typ",
+   "temp_C": 27,
+   "vdd": 1.2,
+   "vdda": 3.3
+  }
+ },
+ "cpuset": "110-111",
+ "date_utc": "2026-10-20T14:52:14.552523Z",
+ "deck": "sim/tb_safe_dcmc3.cir",
+ "deck_sha256": "064fa013027148cfa686dae208f03e8729a23a3f462f42fae84b3168196eb8b7",
+ "disposition": "raw (uncalibrated): sigma 1.6 mV, max |centre error| 7.5 mV (0.23 LSB), 5 samples, 0 missing points; repeat check max 0.000 mV",
+ "jobs": {
+  "ff": {
+   "log": "r1_safe/safe-dccorner-20261020-r3/tb_safe_dcmc3_ff.log",
+   "rc": 0,
+   "wall_s": 30.0
+  },
+  "ff_hot": {
+   "log": "r1_safe/safe-dccorner-20261020-r3/tb_safe_dcmc3_ff_hot.log",
+   "rc": 0,
+   "wall_s": 18.0
+  },
+  "ss": {
+   "log": "r1_safe/safe-dccorner-20261020-r3/tb_safe_dcmc3_ss.log",
+   "rc": 0,
+   "wall_s": 26.0
+  },
+  "ss_cold": {
+   "log": "r1_safe/safe-dccorner-20261020-r3/tb_safe_dcmc3_ss_cold.log",
+   "rc": 0,
+   "wall_s": 30.0
+  },
+  "tt": {
+   "log": "r1_safe/safe-dccorner-20261020-r3/tb_safe_dcmc3_tt.log",
+   "rc": 0,
+   "wall_s": 26.0
+  }
+ },
+ "netlist": "schematic/r1_safe.spice",
+ "netlist_sha256": "812f886dce2b759af121230bd2e9100aeac59041effdf9a3341647c29299cbde",
+ "overrides": {
+  "N": "1",
+  "NET": "schematic/r1_safe.spice"
+ },
+ "pdk_commit": "84374023ee8b4b126bebbba67fcbada0a9c0ff0b (checked by flow/run.sh)",
+ "question": "Revision 3 comparator, nominal devices (no mismatch), 5 corners: systematic threshold-centre error and hysteresis vs cell threshold (13 points), input of the calibration model per corner",
+ "raw_results": "$G1_RESULTS_ROOT/r1_safe/safe-dccorner-20261020-r3/",
+ "result": {
+  "missing_points": 0,
+  "per_threshold": {
+   "+0.0167": {
+    "centre_err_mV": {
+     "max": 2.749999999999999,
+     "mean": 0.6999999999999993,
+     "min": 0.0,
+     "n": 5,
+     "sigma": 1.0416333327999827
+    },
+    "hyst_mV": {
+     "max": 11.999999999999998,
+     "mean": 8.700000000000001,
+     "min": 6.500000000000001,
+     "n": 5,
+     "sigma": 1.913112646970898
+    },
+    "max_abs_centre_LSB": 0.08249999999999996
+   },
+   "+0.2500": {
+    "centre_err_mV": {
+     "max": 3.500000000000003,
+     "mean": 0.9499999999999842,
+     "min": 0.0,
+     "n": 5,
+     "sigma": 1.298075498574725
+    },
+    "hyst_mV": {
+     "max": 11.499999999999982,
+     "mean": 8.399999999999979,
+     "min": 6.499999999999978,
+     "n": 5,
+     "sigma": 1.7720045146669365
+    },
+    "max_abs_centre_LSB": 0.10500000000000008
+   },
+   "+0.4654": {
+    "centre_err_mV": {
+     "max": 4.5000000000000036,
+     "mean": 1.2000000000000233,
+     "min": 5.551115123125783e-14,
+     "n": 5,
+     "sigma": 1.6688319268278522
+    },
+    "hyst_mV": {
+     "max": 11.499999999999954,
+     "mean": 8.499999999999996,
+     "min": 6.500000000000005,
+     "n": 5,
+     "sigma": 1.7029386365926218
+    },
+    "max_abs_centre_LSB": 0.1350000000000001
+   },
+   "+0.5654": {
+    "centre_err_mV": {
+     "max": 4.999999999999893,
+     "mean": 1.2999999999999678,
+     "min": 0.0,
+     "n": 5,
+     "sigma": 1.8668154702594109
+    },
+    "hyst_mV": {
+     "max": 11.499999999999954,
+     "mean": 8.499999999999973,
+     "min": 6.49999999999995,
+     "n": 5,
+     "sigma": 1.7029386365926413
+    },
+    "max_abs_centre_LSB": 0.1499999999999968
+   },
+   "+0.6654": {
+    "centre_err_mV": {
+     "max": 5.499999999999949,
+     "mean": 1.399999999999979,
+     "min": 0.0,
+     "n": 5,
+     "sigma": 2.065187642806322
+    },
+    "hyst_mV": {
+     "max": 11.499999999999954,
+     "mean": 8.499999999999973,
+     "min": 6.49999999999995,
+     "n": 5,
+     "sigma": 1.7029386365926413
+    },
+    "max_abs_centre_LSB": 0.16499999999999848
+   },
+   "+0.7500": {
+    "centre_err_mV": {
+     "max": 6.000000000000005,
+     "mean": 1.5499999999999847,
+     "min": 0.0,
+     "n": 5,
+     "sigma": 2.2383029285599494
+    },
+    "hyst_mV": {
+     "max": 11.500000000000066,
+     "mean": 8.600000000000009,
+     "min": 6.49999999999995,
+     "n": 5,
+     "sigma": 1.6852299546353127
+    },
+    "max_abs_centre_LSB": 0.18000000000000016
+   },
+   "+0.9167": {
+    "centre_err_mV": {
+     "max": 7.501499999999939,
+     "mean": 1.8015000000000114,
+     "min": 0.0014999999999876223,
+     "n": 5,
+     "sigma": 2.8565713714171053
+    },
+    "hyst_mV": {
+     "max": 11.496999999999979,
+     "mean": 8.697,
+     "min": 6.496999999999975,
+     "n": 5,
+     "sigma": 1.720465053408524
+    },
+    "max_abs_centre_LSB": 0.22504499999999814
+   },
+   "-0.2500": {
+    "centre_err_mV": {
+     "max": 2.0000000000000018,
+     "mean": 0.550000000000006,
+     "min": 0.0,
+     "n": 5,
+     "sigma": 0.7483314773547867
+    },
+    "hyst_mV": {
+     "max": 11.499999999999982,
+     "mean": 8.59999999999998,
+     "min": 6.499999999999978,
+     "n": 5,
+     "sigma": 1.7435595774162709
+    },
+    "max_abs_centre_LSB": 0.060000000000000046
+   },
+   "-0.4654": {
+    "centre_err_mV": {
+     "max": 1.5000000000000013,
+     "mean": 0.39999999999997815,
+     "min": -0.250000000000028,
+     "n": 5,
+     "sigma": 0.6041522986797438
+    },
+    "hyst_mV": {
+     "max": 11.50000000000001,
+     "mean": 8.500000000000007,
+     "min": 6.500000000000005,
+     "n": 5,
+     "sigma": 1.816590212458497
+    },
+    "max_abs_centre_LSB": 0.04500000000000004
+   },
+   "-0.5654": {
+    "centre_err_mV": {
+     "max": 1.2499999999999734,
+     "mean": 0.35000000000000586,
+     "min": -0.24999999999997247,
+     "n": 5,
+     "sigma": 0.5147815070493278
+    },
+    "hyst_mV": {
+     "max": 11.9999999999999,
+     "mean": 8.59999999999992,
+     "min": 6.49999999999995,
+     "n": 5,
+     "sigma": 1.9849433241279162
+    },
+    "max_abs_centre_LSB": 0.0374999999999992
+   },
+   "-0.6654": {
+    "centre_err_mV": {
+     "max": 1.0000000000000009,
+     "mean": 0.29999999999996696,
+     "min": -0.500000000000056,
+     "n": 5,
+     "sigma": 0.5338539126015692
+    },
+    "hyst_mV": {
+     "max": 11.500000000000066,
+     "mean": 8.499999999999996,
+     "min": 6.49999999999995,
+     "n": 5,
+     "sigma": 1.7029386365926806
+    },
+    "max_abs_centre_LSB": 0.030000000000000023
+   },
+   "-0.7500": {
+    "centre_err_mV": {
+     "max": 1.2499999999999734,
+     "mean": 0.40000000000000036,
+     "min": -0.49999999999994493,
+     "n": 5,
+     "sigma": 0.6442049363362353
+    },
+    "hyst_mV": {
+     "max": 12.00000000000001,
+     "mean": 8.699999999999996,
+     "min": 6.49999999999995,
+     "n": 5,
+     "sigma": 1.9131126469709252
+    },
+    "max_abs_centre_LSB": 0.0374999999999992
+   },
+   "-0.9167": {
+    "centre_err_mV": {
+     "max": 1.9985000000000142,
+     "mean": 0.6484999999999852,
+     "min": -0.5015000000000436,
+     "n": 5,
+     "sigma": 0.9433981132056671
+    },
+    "hyst_mV": {
+     "max": 11.49700000000009,
+     "mean": 8.59700000000001,
+     "min": 6.496999999999975,
+     "n": 5,
+     "sigma": 1.7435595774163042
+    },
+    "max_abs_centre_LSB": 0.05995500000000042
+   }
+  },
+  "raw_centre_max_abs_mV": 7.501499999999939,
+  "raw_centre_sigma_mV": 1.5781981870954773,
+  "repeat_check_max_mV": 0.0,
+  "samples": 5
+ },
+ "run_id": "safe-dccorner-20261020-r3",
+ "tool": "ngspice-46 (container banner from flow/run.sh ngspice -v; batch logs carry no banner)",
+ "wall_s": 74.1
+}

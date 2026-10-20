@@ -1,0 +1,148 @@
+{
+ "block": "r1_safe",
+ "command": "python3 sim/run_deck.py --block r1_safe --deck tb_safe_mc3.cir --run-id safe-mc-20261020-r3 --corners tt_mm_s1,tt_mm_s2,tt_mm_s3 --set N=10 --analyze analyze_mc3.py --question Full-path transient mismatch MC r1_isense -> r1_safe rev 3, 30 samples, tt: in-sample calibration search, then OC thr 54 / NEG thr 9 threshold-centre error (shunt-referred), hysteresis, delay at 10 % overdrive with the codes applied",
+ "container_image": "tapeoutbench-eda:latest sha256:ddeb6957... (checked by flow/run.sh)",
+ "corners": {
+  "tt_mm_s1": {
+   "cap": "cap_typ_mismatch",
+   "mos": "mos_tt_mismatch",
+   "res": "res_typ_mismatch",
+   "temp_C": 27,
+   "vdd": 1.2,
+   "vdda": 3.3
+  },
+  "tt_mm_s2": {
+   "cap": "cap_typ_mismatch",
+   "mos": "mos_tt_mismatch",
+   "res": "res_typ_mismatch",
+   "temp_C": 27,
+   "vdd": 1.2,
+   "vdda": 3.3
+  },
+  "tt_mm_s3": {
+   "cap": "cap_typ_mismatch",
+   "mos": "mos_tt_mismatch",
+   "res": "res_typ_mismatch",
+   "temp_C": 27,
+   "vdd": 1.2,
+   "vdda": 3.3
+  }
+ },
+ "cpuset": "109-111",
+ "date_utc": "2026-10-20T15:08:11.346358Z",
+ "deck": "sim/tb_safe_mc3.cir",
+ "deck_sha256": "72e144e860d412b2f2e9ed2a7cef859403586f67c0889acf3f0835b792c646ff",
+ "disposition": "passed: 30 samples; OC within 0.25 LSB 30, worst 0.208 LSB, sigma 0.090 LSB; NEG within 0.25 LSB 30, worst 0.069 LSB, sigma 0.028 LSB; delay OC 109-121 ns, NEG 202-236 ns",
+ "jobs": {
+  "tt_mm_s1": {
+   "log": "r1_safe/safe-mc-20261020-r3/tb_safe_mc3_tt_mm_s1.log",
+   "rc": 0,
+   "wall_s": 744.8
+  },
+  "tt_mm_s2": {
+   "log": "r1_safe/safe-mc-20261020-r3/tb_safe_mc3_tt_mm_s2.log",
+   "rc": 0,
+   "wall_s": 778.8
+  },
+  "tt_mm_s3": {
+   "log": "r1_safe/safe-mc-20261020-r3/tb_safe_mc3_tt_mm_s3.log",
+   "rc": 0,
+   "wall_s": 772.8
+  }
+ },
+ "netlist": "schematic/r1_safe.spice",
+ "netlist_sha256": "812f886dce2b759af121230bd2e9100aeac59041effdf9a3341647c29299cbde",
+ "overrides": {
+  "N": "10"
+ },
+ "pdk_commit": "84374023ee8b4b126bebbba67fcbada0a9c0ff0b (checked by flow/run.sh)",
+ "question": "Full-path transient mismatch MC r1_isense -> r1_safe rev 3, 30 samples, tt: in-sample calibration search, then OC thr 54 / NEG thr 9 threshold-centre error (shunt-referred), hysteresis, delay at 10 % overdrive with the codes applied",
+ "raw_results": "$G1_RESULTS_ROOT/r1_safe/safe-mc-20261020-r3/",
+ "result": {
+  "ng": {
+   "centre_err_LSB": {
+    "max": 0.06932856000000001,
+    "mean": 0.029306340000000004,
+    "min": -0.043842540000000006,
+    "n": 30,
+    "sigma": 0.027685204528802024
+   },
+   "centre_err_uV_shunt": {
+    "max": 165.068,
+    "mean": 69.777,
+    "min": -104.387,
+    "n": 30,
+    "sigma": 65.91715364000481
+   },
+   "delay_10pct_ns": {
+    "max": 235.7,
+    "mean": 213.47633333333334,
+    "min": 202.47,
+    "n": 30,
+    "sigma": 8.354205122106004
+   },
+   "hyst_uV_shunt": {
+    "max": 1321.11,
+    "mean": 1228.5073333333332,
+    "min": 1179.29,
+    "n": 30,
+    "sigma": 30.638382238986143
+   },
+   "k_cal": {
+    "max": 35.0,
+    "mean": 31.733333333333334,
+    "min": 28.0,
+    "n": 30,
+    "sigma": 1.9136933459209766
+   },
+   "missing": 0,
+   "search_failed": [],
+   "within_0p25LSB": 30,
+   "within_0p5LSB": 30
+  },
+  "oc": {
+   "centre_err_LSB": {
+    "max": 0.20795922000000003,
+    "mean": 0.028055370000000003,
+    "min": -0.19327098,
+    "n": 30,
+    "sigma": 0.0902659773604125
+   },
+   "centre_err_uV_shunt": {
+    "max": 495.141,
+    "mean": 66.7985,
+    "min": -460.169,
+    "n": 30,
+    "sigma": 214.91899371526782
+   },
+   "delay_10pct_ns": {
+    "max": 121.15,
+    "mean": 113.85766666666667,
+    "min": 108.76,
+    "n": 30,
+    "sigma": 2.8712235293608814
+   },
+   "hyst_uV_shunt": {
+    "max": 1312.84,
+    "mean": 1229.7783333333334,
+    "min": 1180.65,
+    "n": 30,
+    "sigma": 27.71406827868394
+   },
+   "k_cal": {
+    "max": 36.0,
+    "mean": 31.766666666666666,
+    "min": 28.0,
+    "n": 30,
+    "sigma": 1.8381754238616317
+   },
+   "missing": 0,
+   "search_failed": [],
+   "within_0p25LSB": 30,
+   "within_0p5LSB": 30
+  }
+ },
+ "run_id": "safe-mc-20261020-r3",
+ "tool": "ngspice-46 (container banner from flow/run.sh ngspice -v; batch logs carry no banner)",
+ "wall_s": 778.9
+}

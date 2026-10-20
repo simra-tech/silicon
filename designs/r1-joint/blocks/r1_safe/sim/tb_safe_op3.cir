@@ -1,0 +1,94 @@
+* r1_safe revision 3 supply currents: operating point of r1_safe_an (four comparators, string, muxes, level shifters)
+* with OC codes 44 and NEG codes 44 (cell 19), k = 32, inputs at the zero-current output (Vod = -0.565 V, CM 0.57 V).
+* IDEAL SOURCES (this step only): VREF 1.05 V, IBIAS 5 uA PTAT per comparator (included in IDDA).
+.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerMOSlv.lib @@MOS@@
+.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerMOShv.lib @@MOS@@
+.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerRES.lib @@RES@@
+.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerCAP.lib @@CAP@@
+.temp @@TEMP@@
+.include /work/designs/r1-joint/blocks/r1_safe/schematic/r1_safe.spice
+.option gmin=1e-12
+Vdda vdda 0 dc @@VDDA@@
+Vdd vdd 0 dc @@VDD@@
+Vref vref 0 dc 1.05
+Va1 outa_p 0 dc 0.2873
+Va2 outa_n 0 dc 0.8527
+Vb1 outb_p 0 dc 0.2873
+Vb2 outb_n 0 dc 0.8527
+Voap0 oa_p0 0 dc 0
+Voap1 oa_p1 0 dc 0
+Voap2 oa_p2 0 dc 0
+Voap3 oa_p3 0 dc 0
+Voap4 oa_p4 0 dc @@VDD@@
+Voap5 oa_p5 0 dc @@VDD@@
+Voap6 oa_p6 0 dc 0
+Voap7 oa_p7 0 dc @@VDD@@
+Voan0 oa_n0 0 dc 0
+Voan1 oa_n1 0 dc 0
+Voan2 oa_n2 0 dc @@VDD@@
+Voan3 oa_n3 0 dc @@VDD@@
+Voan4 oa_n4 0 dc 0
+Voan5 oa_n5 0 dc 0
+Voan6 oa_n6 0 dc @@VDD@@
+Voan7 oa_n7 0 dc 0
+Vnap0 na_p0 0 dc 0
+Vnap1 na_p1 0 dc 0
+Vnap2 na_p2 0 dc @@VDD@@
+Vnap3 na_p3 0 dc @@VDD@@
+Vnap4 na_p4 0 dc 0
+Vnap5 na_p5 0 dc 0
+Vnap6 na_p6 0 dc @@VDD@@
+Vnap7 na_p7 0 dc 0
+Vnan0 na_n0 0 dc 0
+Vnan1 na_n1 0 dc 0
+Vnan2 na_n2 0 dc 0
+Vnan3 na_n3 0 dc 0
+Vnan4 na_n4 0 dc @@VDD@@
+Vnan5 na_n5 0 dc @@VDD@@
+Vnan6 na_n6 0 dc 0
+Vnan7 na_n7 0 dc @@VDD@@
+Vobp0 ob_p0 0 dc 0
+Vobp1 ob_p1 0 dc 0
+Vobp2 ob_p2 0 dc 0
+Vobp3 ob_p3 0 dc 0
+Vobp4 ob_p4 0 dc @@VDD@@
+Vobp5 ob_p5 0 dc @@VDD@@
+Vobp6 ob_p6 0 dc 0
+Vobp7 ob_p7 0 dc @@VDD@@
+Vobn0 ob_n0 0 dc 0
+Vobn1 ob_n1 0 dc 0
+Vobn2 ob_n2 0 dc @@VDD@@
+Vobn3 ob_n3 0 dc @@VDD@@
+Vobn4 ob_n4 0 dc 0
+Vobn5 ob_n5 0 dc 0
+Vobn6 ob_n6 0 dc @@VDD@@
+Vobn7 ob_n7 0 dc 0
+Vnbp0 nb_p0 0 dc 0
+Vnbp1 nb_p1 0 dc 0
+Vnbp2 nb_p2 0 dc @@VDD@@
+Vnbp3 nb_p3 0 dc @@VDD@@
+Vnbp4 nb_p4 0 dc 0
+Vnbp5 nb_p5 0 dc 0
+Vnbp6 nb_p6 0 dc @@VDD@@
+Vnbp7 nb_p7 0 dc 0
+Vnbn0 nb_n0 0 dc 0
+Vnbn1 nb_n1 0 dc 0
+Vnbn2 nb_n2 0 dc 0
+Vnbn3 nb_n3 0 dc 0
+Vnbn4 nb_n4 0 dc @@VDD@@
+Vnbn5 nb_n5 0 dc @@VDD@@
+Vnbn6 nb_n6 0 dc 0
+Vnbn7 nb_n7 0 dc @@VDD@@
+Ioa vdda ibias_oa dc {5u*(@@TEMP@@+273.15)/300.15}
+Ina vdda ibias_na dc {5u*(@@TEMP@@+273.15)/300.15}
+Iob vdda ibias_ob dc {5u*(@@TEMP@@+273.15)/300.15}
+Inb vdda ibias_nb dc {5u*(@@TEMP@@+273.15)/300.15}
+XDUT outa_p outa_n outb_p outb_n vref oa_p0 oa_p1 oa_p2 oa_p3 oa_p4 oa_p5 oa_p6 oa_p7 oa_n0 oa_n1 oa_n2 oa_n3 oa_n4 oa_n5 oa_n6 oa_n7 na_p0 na_p1 na_p2 na_p3 na_p4 na_p5 na_p6 na_p7 na_n0 na_n1 na_n2 na_n3 na_n4 na_n5 na_n6 na_n7 ob_p0 ob_p1 ob_p2 ob_p3 ob_p4 ob_p5 ob_p6 ob_p7 ob_n0 ob_n1 ob_n2 ob_n3 ob_n4 ob_n5 ob_n6 ob_n7 nb_p0 nb_p1 nb_p2 nb_p3 nb_p4 nb_p5 nb_p6 nb_p7 nb_n0 nb_n1 nb_n2 nb_n3 nb_n4 nb_n5 nb_n6 nb_n7 oc_a neg_a oc_b neg_b ibias_oa ibias_na ibias_ob ibias_nb vdda vdd 0 r1_safe_an
+.control
+op
+let idda = -i(vdda)*1e6 + 4*5*(@@TEMP@@+273.15)/300.15
+let idd = -i(vdd)*1e6
+let iref = -i(vref)*1e6
+echo "OP3 corner=@@CORNER@@ idda_uA=" $&idda " idd_uA=" $&idd " iref_uA=" $&iref " oc_a=" $&v(oc_a) " neg_a=" $&v(neg_a)
+.endc
+.end

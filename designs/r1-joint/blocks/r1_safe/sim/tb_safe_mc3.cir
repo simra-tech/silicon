@@ -1,0 +1,778 @@
+* Generate tb_safe_mc3.cir: full-path transient mismatch MC, r1_isense channel -> r1_safe revision 3 (shared 252-unit
+* string, OC and NEG comparators r1_safe_cmp), mm_ok=1 on every device, with the calibration search of r1_ctrl run
+* inside each sample and the found codes applied.
+* REDUCED FIXTURE (deliberate): the 256:1 muxes and code level shifters are replaced by ideal tap switches (S elements,
+* Ron 2 kOhm) on the taps the search and the operating codes can select. The muxes carry no DC current into the
+* comparator gates, so they add no mismatch; their dynamics are in tb_safe_cmp3 and tb_safe_joint3 (full netlist).
+* The full-mux version ran at about 55 s per simulated us (development run dev-mc3-smoke, stopped).
+* Per sample (one `reset` = one draw; both transients use the same draw):
+*   tran 1 (calibration): 0-2.05 us r1_isense AZ; Vsh = 0 (zero current) throughout. OC cell code c0 = 14, NEG cell
+*     code c0 = 49 (thr_neg 14). From 2.5 us the calibration code k steps every DW ns: ascending over K0..K1 (output of
+*     each comparator starts tripped; first code whose dwell ends with the output low = k_rel), then descending K1..K0
+*     (first code whose dwell ends with the output high = k_trip). Both comparators search at the same time.
+*     k_cal = 32 + round((k_rel + k_trip)/2 - k_ideal), k_ideal = 36.31 (OC) / 27.69 (NEG) (ratio constants).
+*   tran 2 (operation, codes applied): AZ again; OC at thr THR_OC, NEG at thr THR_NEG (cell 63 - THR_NEG), both with
+*     their k_cal. Slow shunt ramps +-3 mV around each threshold (centre = mean of trip and release points, shunt
+*     referred) and 10 % overdrive steps from zero current (delays).
+* IDEAL SOURCES (this step only): VREF 1.05 V, VCM 0.6 V, IBIAS 5 uA PTAT, AZ phases. Load 2 pF per sense output.
+.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerMOSlv.lib @@MOS@@
+.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerMOShv.lib @@MOS@@
+.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerRES.lib @@RES@@
+.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerCAP.lib @@CAP@@
+.temp @@TEMP@@
+.include /work/designs/r1-joint/blocks/r1_isense/schematic/r1_isense.spice
+.include /work/designs/r1-joint/blocks/r1_safe/schematic/r1_safe.spice
+.option gmin=1e-12 method=gear reltol=1e-4 abstol=1e-12 vntol=1e-7
+Vdda vdda 0 dc @@VDDA@@
+Vdd vdd 0 dc @@VDD@@
+Vref vref 0 dc 1.05
+Vcm vcm 0 dc 0.6
+Ibi vdda ibi dc {5u*(@@TEMP@@+273.15)/300.15}
+Io vdda ibias_o dc {5u*(@@TEMP@@+273.15)/300.15}
+In vdda ibias_n dc {5u*(@@TEMP@@+273.15)/300.15}
+Cbo ibias_o 0 100f
+Cbn ibias_n 0 100f
+Vaz az 0 pwl(0 @@VDD@@ 2.05u @@VDD@@ 2.051u 0)
+Vazh azh 0 pwl(0 @@VDD@@ 2.0u @@VDD@@ 2.001u 0)
+Visn isn 0 dc 0
+Vsh isp isn dc 0
+XIS isp isn outp outn vref vcm ibi az azh vdda vdd 0 r1_isense_ch
+CLP outp 0 2p
+CLN outn 0 2p
+XSTR vref t0 t1 t2 t3 t4 t5 t6 t7 t8 t9 t10 t11 t12 t13 t14 t15 t16 t17 t18 t19 t20 t21 t22 t23 t24 t25 t26 t27 t28 t29 t30 t31 t32 t33 t34 t35 t36 t37 t38 t39 t40 t41 t42 t43 t44 t45 t46 t47 t48 t49 t50 t51 t52 t53 t54 t55 t56 t57 t58 t59 t60 t61 t62 t63 t64 t65 t66 t67 t68 t69 t70 t71 t72 t73 t74 t75 t76 t77 t78 t79 t80 t81 t82 t83 t84 t85 t86 t87 t88 t89 t90 t91 t92 t93 t94 t95 t96 t97 t98 t99 t100 t101 t102 t103 t104 t105 t106 t107 t108 t109 t110 t111 t112 t113 t114 t115 t116 t117 t118 t119 t120 t121 t122 t123 t124 t125 t126 t127 t128 t129 t130 t131 t132 t133 t134 t135 t136 t137 t138 t139 t140 t141 t142 t143 t144 t145 t146 t147 t148 t149 t150 t151 t152 t153 t154 t155 t156 t157 t158 t159 t160 t161 t162 t163 t164 t165 t166 t167 t168 t169 t170 t171 t172 t173 t174 t175 t176 t177 t178 t179 t180 t181 t182 t183 t184 t185 t186 t187 t188 t189 t190 t191 t192 t193 t194 t195 t196 t197 t198 t199 t200 t201 t202 t203 t204 t205 t206 t207 t208 t209 t210 t211 t212 t213 t214 t215 t216 t217 t218 t219 t220 t221 t222 t223 t224 t225 t226 t227 t228 t229 t230 t231 t232 t233 t234 t235 t236 t237 t238 t239 t240 t241 t242 t243 t244 t245 t246 t247 t248 t249 t250 t251 t252 0 r1_safe_string
+.model swi sw vt=0.5 vh=0.1 ron=2k roff=1e13
+Vcocp53 cocp53 0 pwl(0 0)
+Socp53 refp_oc t53 cocp53 0 swi
+Vcocp54 cocp54 0 pwl(0 1 2.7e-06 1 2.701e-06 0 9.101e-06 0 9.102e-06 1)
+Socp54 refp_oc t54 cocp54 0 swi
+Vcocp55 cocp55 0 pwl(0 0 2.701e-06 0 2.702e-06 1 3.1e-06 1 3.101e-06 0 8.701e-06 0 8.702e-06 1 9.1e-06 1 9.101e-06 0)
+Socp55 refp_oc t55 cocp55 0 swi
+Vcocp56 cocp56 0 pwl(0 0 3.101e-06 0 3.102e-06 1 3.5e-06 1 3.501e-06 0 8.301e-06 0 8.302e-06 1 8.7e-06 1 8.701e-06 0)
+Socp56 refp_oc t56 cocp56 0 swi
+Vcocp57 cocp57 0 pwl(0 0 3.501e-06 0 3.502e-06 1 3.9e-06 1 3.901e-06 0 7.901e-06 0 7.902e-06 1 8.3e-06 1 8.301e-06 0)
+Socp57 refp_oc t57 cocp57 0 swi
+Vcocp58 cocp58 0 pwl(0 0 3.901e-06 0 3.902e-06 1 4.3e-06 1 4.301e-06 0 7.501e-06 0 7.502e-06 1 7.9e-06 1 7.901e-06 0)
+Socp58 refp_oc t58 cocp58 0 swi
+Vcocp59 cocp59 0 pwl(0 0 4.301e-06 0 4.302e-06 1 4.7e-06 1 4.701e-06 0 7.101e-06 0 7.102e-06 1 7.5e-06 1 7.501e-06 0)
+Socp59 refp_oc t59 cocp59 0 swi
+Vcocp60 cocp60 0 pwl(0 0 4.701e-06 0 4.702e-06 1 5.1e-06 1 5.101e-06 0 6.701e-06 0 6.702e-06 1 7.1e-06 1 7.101e-06 0)
+Socp60 refp_oc t60 cocp60 0 swi
+Vcocp61 cocp61 0 pwl(0 0 5.101e-06 0 5.102e-06 1 5.5e-06 1 5.501e-06 0 6.301e-06 0 6.302e-06 1 6.7e-06 1 6.701e-06 0)
+Socp61 refp_oc t61 cocp61 0 swi
+Vcocp62 cocp62 0 pwl(0 0 5.501e-06 0 5.502e-06 1 6.3e-06 1 6.301e-06 0)
+Socp62 refp_oc t62 cocp62 0 swi
+Vcocp63 cocp63 0 pwl(0 0)
+Socp63 refp_oc t63 cocp63 0 swi
+Vcocp213 cocp213 0 pwl(0 0)
+Socp213 refp_oc t213 cocp213 0 swi
+Vcocp214 cocp214 0 pwl(0 0)
+Socp214 refp_oc t214 cocp214 0 swi
+Vcocp215 cocp215 0 pwl(0 0)
+Socp215 refp_oc t215 cocp215 0 swi
+Vcocp216 cocp216 0 pwl(0 0)
+Socp216 refp_oc t216 cocp216 0 swi
+Vcocp217 cocp217 0 pwl(0 0)
+Socp217 refp_oc t217 cocp217 0 swi
+Vcocp218 cocp218 0 pwl(0 0)
+Socp218 refp_oc t218 cocp218 0 swi
+Vcocp219 cocp219 0 pwl(0 0)
+Socp219 refp_oc t219 cocp219 0 swi
+Vcocp220 cocp220 0 pwl(0 0)
+Socp220 refp_oc t220 cocp220 0 swi
+Vcocp221 cocp221 0 pwl(0 0)
+Socp221 refp_oc t221 cocp221 0 swi
+Vcocp222 cocp222 0 pwl(0 0)
+Socp222 refp_oc t222 cocp222 0 swi
+Vcocp223 cocp223 0 pwl(0 0)
+Socp223 refp_oc t223 cocp223 0 swi
+Vcocn29 cocn29 0 pwl(0 0)
+Socn29 refn_oc t29 cocn29 0 swi
+Vcocn30 cocn30 0 pwl(0 0)
+Socn30 refn_oc t30 cocn30 0 swi
+Vcocn31 cocn31 0 pwl(0 0)
+Socn31 refn_oc t31 cocn31 0 swi
+Vcocn32 cocn32 0 pwl(0 0)
+Socn32 refn_oc t32 cocn32 0 swi
+Vcocn33 cocn33 0 pwl(0 0)
+Socn33 refn_oc t33 cocn33 0 swi
+Vcocn34 cocn34 0 pwl(0 0)
+Socn34 refn_oc t34 cocn34 0 swi
+Vcocn35 cocn35 0 pwl(0 0)
+Socn35 refn_oc t35 cocn35 0 swi
+Vcocn36 cocn36 0 pwl(0 0)
+Socn36 refn_oc t36 cocn36 0 swi
+Vcocn37 cocn37 0 pwl(0 0)
+Socn37 refn_oc t37 cocn37 0 swi
+Vcocn38 cocn38 0 pwl(0 0)
+Socn38 refn_oc t38 cocn38 0 swi
+Vcocn39 cocn39 0 pwl(0 0)
+Socn39 refn_oc t39 cocn39 0 swi
+Vcocn189 cocn189 0 pwl(0 0)
+Socn189 refn_oc t189 cocn189 0 swi
+Vcocn190 cocn190 0 pwl(0 0 5.701e-06 0 5.702e-06 1 6.1e-06 1 6.101e-06 0)
+Socn190 refn_oc t190 cocn190 0 swi
+Vcocn191 cocn191 0 pwl(0 0 5.301e-06 0 5.302e-06 1 5.7e-06 1 5.701e-06 0 6.101e-06 0 6.102e-06 1 6.5e-06 1 6.501e-06 0)
+Socn191 refn_oc t191 cocn191 0 swi
+Vcocn192 cocn192 0 pwl(0 0 4.901e-06 0 4.902e-06 1 5.3e-06 1 5.301e-06 0 6.501e-06 0 6.502e-06 1 6.9e-06 1 6.901e-06 0)
+Socn192 refn_oc t192 cocn192 0 swi
+Vcocn193 cocn193 0 pwl(0 0 4.501e-06 0 4.502e-06 1 4.9e-06 1 4.901e-06 0 6.901e-06 0 6.902e-06 1 7.3e-06 1 7.301e-06 0)
+Socn193 refn_oc t193 cocn193 0 swi
+Vcocn194 cocn194 0 pwl(0 0 4.101e-06 0 4.102e-06 1 4.5e-06 1 4.501e-06 0 7.301e-06 0 7.302e-06 1 7.7e-06 1 7.701e-06 0)
+Socn194 refn_oc t194 cocn194 0 swi
+Vcocn195 cocn195 0 pwl(0 0 3.701e-06 0 3.702e-06 1 4.1e-06 1 4.101e-06 0 7.701e-06 0 7.702e-06 1 8.1e-06 1 8.101e-06 0)
+Socn195 refn_oc t195 cocn195 0 swi
+Vcocn196 cocn196 0 pwl(0 0 3.301e-06 0 3.302e-06 1 3.7e-06 1 3.701e-06 0 8.101e-06 0 8.102e-06 1 8.5e-06 1 8.501e-06 0)
+Socn196 refn_oc t196 cocn196 0 swi
+Vcocn197 cocn197 0 pwl(0 0 2.901e-06 0 2.902e-06 1 3.3e-06 1 3.301e-06 0 8.501e-06 0 8.502e-06 1 8.9e-06 1 8.901e-06 0)
+Socn197 refn_oc t197 cocn197 0 swi
+Vcocn198 cocn198 0 pwl(0 1 2.9e-06 1 2.901e-06 0 8.901e-06 0 8.902e-06 1)
+Socn198 refn_oc t198 cocn198 0 swi
+Vcocn199 cocn199 0 pwl(0 0)
+Socn199 refn_oc t199 cocn199 0 swi
+Vcngp189 cngp189 0 pwl(0 0)
+Sngp189 refp_ng t189 cngp189 0 swi
+Vcngp190 cngp190 0 pwl(0 1 2.7e-06 1 2.701e-06 0 9.101e-06 0 9.102e-06 1)
+Sngp190 refp_ng t190 cngp190 0 swi
+Vcngp191 cngp191 0 pwl(0 0 2.701e-06 0 2.702e-06 1 3.1e-06 1 3.101e-06 0 8.701e-06 0 8.702e-06 1 9.1e-06 1 9.101e-06 0)
+Sngp191 refp_ng t191 cngp191 0 swi
+Vcngp192 cngp192 0 pwl(0 0 3.101e-06 0 3.102e-06 1 3.5e-06 1 3.501e-06 0 8.301e-06 0 8.302e-06 1 8.7e-06 1 8.701e-06 0)
+Sngp192 refp_ng t192 cngp192 0 swi
+Vcngp193 cngp193 0 pwl(0 0 3.501e-06 0 3.502e-06 1 3.9e-06 1 3.901e-06 0 7.901e-06 0 7.902e-06 1 8.3e-06 1 8.301e-06 0)
+Sngp193 refp_ng t193 cngp193 0 swi
+Vcngp194 cngp194 0 pwl(0 0 3.901e-06 0 3.902e-06 1 4.3e-06 1 4.301e-06 0 7.501e-06 0 7.502e-06 1 7.9e-06 1 7.901e-06 0)
+Sngp194 refp_ng t194 cngp194 0 swi
+Vcngp195 cngp195 0 pwl(0 0 4.301e-06 0 4.302e-06 1 4.7e-06 1 4.701e-06 0 7.101e-06 0 7.102e-06 1 7.5e-06 1 7.501e-06 0)
+Sngp195 refp_ng t195 cngp195 0 swi
+Vcngp196 cngp196 0 pwl(0 0 4.701e-06 0 4.702e-06 1 5.1e-06 1 5.101e-06 0 6.701e-06 0 6.702e-06 1 7.1e-06 1 7.101e-06 0)
+Sngp196 refp_ng t196 cngp196 0 swi
+Vcngp197 cngp197 0 pwl(0 0 5.101e-06 0 5.102e-06 1 5.5e-06 1 5.501e-06 0 6.301e-06 0 6.302e-06 1 6.7e-06 1 6.701e-06 0)
+Sngp197 refp_ng t197 cngp197 0 swi
+Vcngp198 cngp198 0 pwl(0 0 5.501e-06 0 5.502e-06 1 6.3e-06 1 6.301e-06 0)
+Sngp198 refp_ng t198 cngp198 0 swi
+Vcngp199 cngp199 0 pwl(0 0)
+Sngp199 refp_ng t199 cngp199 0 swi
+Vcngp209 cngp209 0 pwl(0 0)
+Sngp209 refp_ng t209 cngp209 0 swi
+Vcngp210 cngp210 0 pwl(0 0)
+Sngp210 refp_ng t210 cngp210 0 swi
+Vcngp211 cngp211 0 pwl(0 0)
+Sngp211 refp_ng t211 cngp211 0 swi
+Vcngp212 cngp212 0 pwl(0 0)
+Sngp212 refp_ng t212 cngp212 0 swi
+Vcngp213 cngp213 0 pwl(0 0)
+Sngp213 refp_ng t213 cngp213 0 swi
+Vcngp214 cngp214 0 pwl(0 0)
+Sngp214 refp_ng t214 cngp214 0 swi
+Vcngp215 cngp215 0 pwl(0 0)
+Sngp215 refp_ng t215 cngp215 0 swi
+Vcngp216 cngp216 0 pwl(0 0)
+Sngp216 refp_ng t216 cngp216 0 swi
+Vcngp217 cngp217 0 pwl(0 0)
+Sngp217 refp_ng t217 cngp217 0 swi
+Vcngp218 cngp218 0 pwl(0 0)
+Sngp218 refp_ng t218 cngp218 0 swi
+Vcngp219 cngp219 0 pwl(0 0)
+Sngp219 refp_ng t219 cngp219 0 swi
+Vcngn33 cngn33 0 pwl(0 0)
+Sngn33 refn_ng t33 cngn33 0 swi
+Vcngn34 cngn34 0 pwl(0 0)
+Sngn34 refn_ng t34 cngn34 0 swi
+Vcngn35 cngn35 0 pwl(0 0)
+Sngn35 refn_ng t35 cngn35 0 swi
+Vcngn36 cngn36 0 pwl(0 0)
+Sngn36 refn_ng t36 cngn36 0 swi
+Vcngn37 cngn37 0 pwl(0 0)
+Sngn37 refn_ng t37 cngn37 0 swi
+Vcngn38 cngn38 0 pwl(0 0)
+Sngn38 refn_ng t38 cngn38 0 swi
+Vcngn39 cngn39 0 pwl(0 0)
+Sngn39 refn_ng t39 cngn39 0 swi
+Vcngn40 cngn40 0 pwl(0 0)
+Sngn40 refn_ng t40 cngn40 0 swi
+Vcngn41 cngn41 0 pwl(0 0)
+Sngn41 refn_ng t41 cngn41 0 swi
+Vcngn42 cngn42 0 pwl(0 0)
+Sngn42 refn_ng t42 cngn42 0 swi
+Vcngn43 cngn43 0 pwl(0 0)
+Sngn43 refn_ng t43 cngn43 0 swi
+Vcngn53 cngn53 0 pwl(0 0)
+Sngn53 refn_ng t53 cngn53 0 swi
+Vcngn54 cngn54 0 pwl(0 0 5.701e-06 0 5.702e-06 1 6.1e-06 1 6.101e-06 0)
+Sngn54 refn_ng t54 cngn54 0 swi
+Vcngn55 cngn55 0 pwl(0 0 5.301e-06 0 5.302e-06 1 5.7e-06 1 5.701e-06 0 6.101e-06 0 6.102e-06 1 6.5e-06 1 6.501e-06 0)
+Sngn55 refn_ng t55 cngn55 0 swi
+Vcngn56 cngn56 0 pwl(0 0 4.901e-06 0 4.902e-06 1 5.3e-06 1 5.301e-06 0 6.501e-06 0 6.502e-06 1 6.9e-06 1 6.901e-06 0)
+Sngn56 refn_ng t56 cngn56 0 swi
+Vcngn57 cngn57 0 pwl(0 0 4.501e-06 0 4.502e-06 1 4.9e-06 1 4.901e-06 0 6.901e-06 0 6.902e-06 1 7.3e-06 1 7.301e-06 0)
+Sngn57 refn_ng t57 cngn57 0 swi
+Vcngn58 cngn58 0 pwl(0 0 4.101e-06 0 4.102e-06 1 4.5e-06 1 4.501e-06 0 7.301e-06 0 7.302e-06 1 7.7e-06 1 7.701e-06 0)
+Sngn58 refn_ng t58 cngn58 0 swi
+Vcngn59 cngn59 0 pwl(0 0 3.701e-06 0 3.702e-06 1 4.1e-06 1 4.101e-06 0 7.701e-06 0 7.702e-06 1 8.1e-06 1 8.101e-06 0)
+Sngn59 refn_ng t59 cngn59 0 swi
+Vcngn60 cngn60 0 pwl(0 0 3.301e-06 0 3.302e-06 1 3.7e-06 1 3.701e-06 0 8.101e-06 0 8.102e-06 1 8.5e-06 1 8.501e-06 0)
+Sngn60 refn_ng t60 cngn60 0 swi
+Vcngn61 cngn61 0 pwl(0 0 2.901e-06 0 2.902e-06 1 3.3e-06 1 3.301e-06 0 8.501e-06 0 8.502e-06 1 8.9e-06 1 8.901e-06 0)
+Sngn61 refn_ng t61 cngn61 0 swi
+Vcngn62 cngn62 0 pwl(0 1 2.9e-06 1 2.901e-06 0 8.901e-06 0 8.902e-06 1)
+Sngn62 refn_ng t62 cngn62 0 swi
+Vcngn63 cngn63 0 pwl(0 0)
+Sngn63 refn_ng t63 cngn63 0 swi
+Cr1 refp_oc 0 50f
+Cr2 refn_oc 0 50f
+Cr3 refp_ng 0 50f
+Cr4 refn_ng 0 50f
+* comparators (r1_safe_cmp of the netlist of record); NEG: inputs swapped
+XOC outp outn refp_oc refn_oc oc ibias_o vdda vdd 0 r1_safe_cmp
+XNG outn outp refp_ng refn_ng ng ibias_n vdda vdd 0 r1_safe_cmp
+CL1 oc 0 10f
+CL2 ng 0 10f
+.control
+set wr_singlescale
+set wr_vecnames
+setseed @@SEED@@
+let half = @@VDD@@/2
+let i = 0
+while i < @@N@@
+  reset
+  alter vsh dc = 0
+  tran 1n 9.5e-06 0 2n
+  let oc_krel = -1
+  let oc_ktrip = -1
+  let j = 0
+  while j < 34
+    let ts = 2.5e-06 + (j + 1)*2e-07 - 2n
+    meas tran vv find v(oc) at=$&ts
+    if j < 17
+      if (oc_krel < 0) & (vv < half)
+        let oc_krel = 28 + j
+      end
+    else
+      if (oc_ktrip < 0) & (vv > half)
+        let oc_ktrip = 44 - (j - 17)
+      end
+    end
+    let j = j + 1
+  end
+  let oc_kc = 32 + floor((oc_krel + oc_ktrip)/2 - 36.307692 + 0.5)
+  if oc_kc > 63
+    let oc_kc = 63
+  end
+  if oc_kc < 0
+    let oc_kc = 0
+  end
+  let dd = oc_kc - 32
+  let np = 216 + (0 - floor((0 - dd)/2))
+  let nn = 36 - floor(dd/2)
+  if np > 252
+    let np = 252
+  end
+  if np < 0
+    let np = 0
+  end
+  if nn > 252
+    let nn = 252
+  end
+  if nn < 0
+    let nn = 0
+  end
+  let cv = 1 - abs(np - 53)
+  if cv < 0
+    let cv = 0
+  end
+  alter vcocp53 pwl = [ 0 $&cv 1 $&cv ]
+  let cv = 1 - abs(np - 54)
+  if cv < 0
+    let cv = 0
+  end
+  alter vcocp54 pwl = [ 0 $&cv 1 $&cv ]
+  let cv = 1 - abs(np - 55)
+  if cv < 0
+    let cv = 0
+  end
+  alter vcocp55 pwl = [ 0 $&cv 1 $&cv ]
+  let cv = 1 - abs(np - 56)
+  if cv < 0
+    let cv = 0
+  end
+  alter vcocp56 pwl = [ 0 $&cv 1 $&cv ]
+  let cv = 1 - abs(np - 57)
+  if cv < 0
+    let cv = 0
+  end
+  alter vcocp57 pwl = [ 0 $&cv 1 $&cv ]
+  let cv = 1 - abs(np - 58)
+  if cv < 0
+    let cv = 0
+  end
+  alter vcocp58 pwl = [ 0 $&cv 1 $&cv ]
+  let cv = 1 - abs(np - 59)
+  if cv < 0
+    let cv = 0
+  end
+  alter vcocp59 pwl = [ 0 $&cv 1 $&cv ]
+  let cv = 1 - abs(np - 60)
+  if cv < 0
+    let cv = 0
+  end
+  alter vcocp60 pwl = [ 0 $&cv 1 $&cv ]
+  let cv = 1 - abs(np - 61)
+  if cv < 0
+    let cv = 0
+  end
+  alter vcocp61 pwl = [ 0 $&cv 1 $&cv ]
+  let cv = 1 - abs(np - 62)
+  if cv < 0
+    let cv = 0
+  end
+  alter vcocp62 pwl = [ 0 $&cv 1 $&cv ]
+  let cv = 1 - abs(np - 63)
+  if cv < 0
+    let cv = 0
+  end
+  alter vcocp63 pwl = [ 0 $&cv 1 $&cv ]
+  let cv = 1 - abs(np - 213)
+  if cv < 0
+    let cv = 0
+  end
+  alter vcocp213 pwl = [ 0 $&cv 1 $&cv ]
+  let cv = 1 - abs(np - 214)
+  if cv < 0
+    let cv = 0
+  end
+  alter vcocp214 pwl = [ 0 $&cv 1 $&cv ]
+  let cv = 1 - abs(np - 215)
+  if cv < 0
+    let cv = 0
+  end
+  alter vcocp215 pwl = [ 0 $&cv 1 $&cv ]
+  let cv = 1 - abs(np - 216)
+  if cv < 0
+    let cv = 0
+  end
+  alter vcocp216 pwl = [ 0 $&cv 1 $&cv ]
+  let cv = 1 - abs(np - 217)
+  if cv < 0
+    let cv = 0
+  end
+  alter vcocp217 pwl = [ 0 $&cv 1 $&cv ]
+  let cv = 1 - abs(np - 218)
+  if cv < 0
+    let cv = 0
+  end
+  alter vcocp218 pwl = [ 0 $&cv 1 $&cv ]
+  let cv = 1 - abs(np - 219)
+  if cv < 0
+    let cv = 0
+  end
+  alter vcocp219 pwl = [ 0 $&cv 1 $&cv ]
+  let cv = 1 - abs(np - 220)
+  if cv < 0
+    let cv = 0
+  end
+  alter vcocp220 pwl = [ 0 $&cv 1 $&cv ]
+  let cv = 1 - abs(np - 221)
+  if cv < 0
+    let cv = 0
+  end
+  alter vcocp221 pwl = [ 0 $&cv 1 $&cv ]
+  let cv = 1 - abs(np - 222)
+  if cv < 0
+    let cv = 0
+  end
+  alter vcocp222 pwl = [ 0 $&cv 1 $&cv ]
+  let cv = 1 - abs(np - 223)
+  if cv < 0
+    let cv = 0
+  end
+  alter vcocp223 pwl = [ 0 $&cv 1 $&cv ]
+  let cv = 1 - abs(nn - 29)
+  if cv < 0
+    let cv = 0
+  end
+  alter vcocn29 pwl = [ 0 $&cv 1 $&cv ]
+  let cv = 1 - abs(nn - 30)
+  if cv < 0
+    let cv = 0
+  end
+  alter vcocn30 pwl = [ 0 $&cv 1 $&cv ]
+  let cv = 1 - abs(nn - 31)
+  if cv < 0
+    let cv = 0
+  end
+  alter vcocn31 pwl = [ 0 $&cv 1 $&cv ]
+  let cv = 1 - abs(nn - 32)
+  if cv < 0
+    let cv = 0
+  end
+  alter vcocn32 pwl = [ 0 $&cv 1 $&cv ]
+  let cv = 1 - abs(nn - 33)
+  if cv < 0
+    let cv = 0
+  end
+  alter vcocn33 pwl = [ 0 $&cv 1 $&cv ]
+  let cv = 1 - abs(nn - 34)
+  if cv < 0
+    let cv = 0
+  end
+  alter vcocn34 pwl = [ 0 $&cv 1 $&cv ]
+  let cv = 1 - abs(nn - 35)
+  if cv < 0
+    let cv = 0
+  end
+  alter vcocn35 pwl = [ 0 $&cv 1 $&cv ]
+  let cv = 1 - abs(nn - 36)
+  if cv < 0
+    let cv = 0
+  end
+  alter vcocn36 pwl = [ 0 $&cv 1 $&cv ]
+  let cv = 1 - abs(nn - 37)
+  if cv < 0
+    let cv = 0
+  end
+  alter vcocn37 pwl = [ 0 $&cv 1 $&cv ]
+  let cv = 1 - abs(nn - 38)
+  if cv < 0
+    let cv = 0
+  end
+  alter vcocn38 pwl = [ 0 $&cv 1 $&cv ]
+  let cv = 1 - abs(nn - 39)
+  if cv < 0
+    let cv = 0
+  end
+  alter vcocn39 pwl = [ 0 $&cv 1 $&cv ]
+  let cv = 1 - abs(nn - 189)
+  if cv < 0
+    let cv = 0
+  end
+  alter vcocn189 pwl = [ 0 $&cv 1 $&cv ]
+  let cv = 1 - abs(nn - 190)
+  if cv < 0
+    let cv = 0
+  end
+  alter vcocn190 pwl = [ 0 $&cv 1 $&cv ]
+  let cv = 1 - abs(nn - 191)
+  if cv < 0
+    let cv = 0
+  end
+  alter vcocn191 pwl = [ 0 $&cv 1 $&cv ]
+  let cv = 1 - abs(nn - 192)
+  if cv < 0
+    let cv = 0
+  end
+  alter vcocn192 pwl = [ 0 $&cv 1 $&cv ]
+  let cv = 1 - abs(nn - 193)
+  if cv < 0
+    let cv = 0
+  end
+  alter vcocn193 pwl = [ 0 $&cv 1 $&cv ]
+  let cv = 1 - abs(nn - 194)
+  if cv < 0
+    let cv = 0
+  end
+  alter vcocn194 pwl = [ 0 $&cv 1 $&cv ]
+  let cv = 1 - abs(nn - 195)
+  if cv < 0
+    let cv = 0
+  end
+  alter vcocn195 pwl = [ 0 $&cv 1 $&cv ]
+  let cv = 1 - abs(nn - 196)
+  if cv < 0
+    let cv = 0
+  end
+  alter vcocn196 pwl = [ 0 $&cv 1 $&cv ]
+  let cv = 1 - abs(nn - 197)
+  if cv < 0
+    let cv = 0
+  end
+  alter vcocn197 pwl = [ 0 $&cv 1 $&cv ]
+  let cv = 1 - abs(nn - 198)
+  if cv < 0
+    let cv = 0
+  end
+  alter vcocn198 pwl = [ 0 $&cv 1 $&cv ]
+  let cv = 1 - abs(nn - 199)
+  if cv < 0
+    let cv = 0
+  end
+  alter vcocn199 pwl = [ 0 $&cv 1 $&cv ]
+  let ng_krel = -1
+  let ng_ktrip = -1
+  let j = 0
+  while j < 34
+    let ts = 2.5e-06 + (j + 1)*2e-07 - 2n
+    meas tran vv find v(ng) at=$&ts
+    if j < 17
+      if (ng_krel < 0) & (vv < half)
+        let ng_krel = 20 + j
+      end
+    else
+      if (ng_ktrip < 0) & (vv > half)
+        let ng_ktrip = 36 - (j - 17)
+      end
+    end
+    let j = j + 1
+  end
+  let ng_kc = 32 + floor((ng_krel + ng_ktrip)/2 - 27.692308 + 0.5)
+  if ng_kc > 63
+    let ng_kc = 63
+  end
+  if ng_kc < 0
+    let ng_kc = 0
+  end
+  let dd = ng_kc - 32
+  let np = 216 + (0 - floor((0 - dd)/2))
+  let nn = 36 - floor(dd/2)
+  if np > 252
+    let np = 252
+  end
+  if np < 0
+    let np = 0
+  end
+  if nn > 252
+    let nn = 252
+  end
+  if nn < 0
+    let nn = 0
+  end
+  let cv = 1 - abs(np - 189)
+  if cv < 0
+    let cv = 0
+  end
+  alter vcngp189 pwl = [ 0 $&cv 1 $&cv ]
+  let cv = 1 - abs(np - 190)
+  if cv < 0
+    let cv = 0
+  end
+  alter vcngp190 pwl = [ 0 $&cv 1 $&cv ]
+  let cv = 1 - abs(np - 191)
+  if cv < 0
+    let cv = 0
+  end
+  alter vcngp191 pwl = [ 0 $&cv 1 $&cv ]
+  let cv = 1 - abs(np - 192)
+  if cv < 0
+    let cv = 0
+  end
+  alter vcngp192 pwl = [ 0 $&cv 1 $&cv ]
+  let cv = 1 - abs(np - 193)
+  if cv < 0
+    let cv = 0
+  end
+  alter vcngp193 pwl = [ 0 $&cv 1 $&cv ]
+  let cv = 1 - abs(np - 194)
+  if cv < 0
+    let cv = 0
+  end
+  alter vcngp194 pwl = [ 0 $&cv 1 $&cv ]
+  let cv = 1 - abs(np - 195)
+  if cv < 0
+    let cv = 0
+  end
+  alter vcngp195 pwl = [ 0 $&cv 1 $&cv ]
+  let cv = 1 - abs(np - 196)
+  if cv < 0
+    let cv = 0
+  end
+  alter vcngp196 pwl = [ 0 $&cv 1 $&cv ]
+  let cv = 1 - abs(np - 197)
+  if cv < 0
+    let cv = 0
+  end
+  alter vcngp197 pwl = [ 0 $&cv 1 $&cv ]
+  let cv = 1 - abs(np - 198)
+  if cv < 0
+    let cv = 0
+  end
+  alter vcngp198 pwl = [ 0 $&cv 1 $&cv ]
+  let cv = 1 - abs(np - 199)
+  if cv < 0
+    let cv = 0
+  end
+  alter vcngp199 pwl = [ 0 $&cv 1 $&cv ]
+  let cv = 1 - abs(np - 209)
+  if cv < 0
+    let cv = 0
+  end
+  alter vcngp209 pwl = [ 0 $&cv 1 $&cv ]
+  let cv = 1 - abs(np - 210)
+  if cv < 0
+    let cv = 0
+  end
+  alter vcngp210 pwl = [ 0 $&cv 1 $&cv ]
+  let cv = 1 - abs(np - 211)
+  if cv < 0
+    let cv = 0
+  end
+  alter vcngp211 pwl = [ 0 $&cv 1 $&cv ]
+  let cv = 1 - abs(np - 212)
+  if cv < 0
+    let cv = 0
+  end
+  alter vcngp212 pwl = [ 0 $&cv 1 $&cv ]
+  let cv = 1 - abs(np - 213)
+  if cv < 0
+    let cv = 0
+  end
+  alter vcngp213 pwl = [ 0 $&cv 1 $&cv ]
+  let cv = 1 - abs(np - 214)
+  if cv < 0
+    let cv = 0
+  end
+  alter vcngp214 pwl = [ 0 $&cv 1 $&cv ]
+  let cv = 1 - abs(np - 215)
+  if cv < 0
+    let cv = 0
+  end
+  alter vcngp215 pwl = [ 0 $&cv 1 $&cv ]
+  let cv = 1 - abs(np - 216)
+  if cv < 0
+    let cv = 0
+  end
+  alter vcngp216 pwl = [ 0 $&cv 1 $&cv ]
+  let cv = 1 - abs(np - 217)
+  if cv < 0
+    let cv = 0
+  end
+  alter vcngp217 pwl = [ 0 $&cv 1 $&cv ]
+  let cv = 1 - abs(np - 218)
+  if cv < 0
+    let cv = 0
+  end
+  alter vcngp218 pwl = [ 0 $&cv 1 $&cv ]
+  let cv = 1 - abs(np - 219)
+  if cv < 0
+    let cv = 0
+  end
+  alter vcngp219 pwl = [ 0 $&cv 1 $&cv ]
+  let cv = 1 - abs(nn - 33)
+  if cv < 0
+    let cv = 0
+  end
+  alter vcngn33 pwl = [ 0 $&cv 1 $&cv ]
+  let cv = 1 - abs(nn - 34)
+  if cv < 0
+    let cv = 0
+  end
+  alter vcngn34 pwl = [ 0 $&cv 1 $&cv ]
+  let cv = 1 - abs(nn - 35)
+  if cv < 0
+    let cv = 0
+  end
+  alter vcngn35 pwl = [ 0 $&cv 1 $&cv ]
+  let cv = 1 - abs(nn - 36)
+  if cv < 0
+    let cv = 0
+  end
+  alter vcngn36 pwl = [ 0 $&cv 1 $&cv ]
+  let cv = 1 - abs(nn - 37)
+  if cv < 0
+    let cv = 0
+  end
+  alter vcngn37 pwl = [ 0 $&cv 1 $&cv ]
+  let cv = 1 - abs(nn - 38)
+  if cv < 0
+    let cv = 0
+  end
+  alter vcngn38 pwl = [ 0 $&cv 1 $&cv ]
+  let cv = 1 - abs(nn - 39)
+  if cv < 0
+    let cv = 0
+  end
+  alter vcngn39 pwl = [ 0 $&cv 1 $&cv ]
+  let cv = 1 - abs(nn - 40)
+  if cv < 0
+    let cv = 0
+  end
+  alter vcngn40 pwl = [ 0 $&cv 1 $&cv ]
+  let cv = 1 - abs(nn - 41)
+  if cv < 0
+    let cv = 0
+  end
+  alter vcngn41 pwl = [ 0 $&cv 1 $&cv ]
+  let cv = 1 - abs(nn - 42)
+  if cv < 0
+    let cv = 0
+  end
+  alter vcngn42 pwl = [ 0 $&cv 1 $&cv ]
+  let cv = 1 - abs(nn - 43)
+  if cv < 0
+    let cv = 0
+  end
+  alter vcngn43 pwl = [ 0 $&cv 1 $&cv ]
+  let cv = 1 - abs(nn - 53)
+  if cv < 0
+    let cv = 0
+  end
+  alter vcngn53 pwl = [ 0 $&cv 1 $&cv ]
+  let cv = 1 - abs(nn - 54)
+  if cv < 0
+    let cv = 0
+  end
+  alter vcngn54 pwl = [ 0 $&cv 1 $&cv ]
+  let cv = 1 - abs(nn - 55)
+  if cv < 0
+    let cv = 0
+  end
+  alter vcngn55 pwl = [ 0 $&cv 1 $&cv ]
+  let cv = 1 - abs(nn - 56)
+  if cv < 0
+    let cv = 0
+  end
+  alter vcngn56 pwl = [ 0 $&cv 1 $&cv ]
+  let cv = 1 - abs(nn - 57)
+  if cv < 0
+    let cv = 0
+  end
+  alter vcngn57 pwl = [ 0 $&cv 1 $&cv ]
+  let cv = 1 - abs(nn - 58)
+  if cv < 0
+    let cv = 0
+  end
+  alter vcngn58 pwl = [ 0 $&cv 1 $&cv ]
+  let cv = 1 - abs(nn - 59)
+  if cv < 0
+    let cv = 0
+  end
+  alter vcngn59 pwl = [ 0 $&cv 1 $&cv ]
+  let cv = 1 - abs(nn - 60)
+  if cv < 0
+    let cv = 0
+  end
+  alter vcngn60 pwl = [ 0 $&cv 1 $&cv ]
+  let cv = 1 - abs(nn - 61)
+  if cv < 0
+    let cv = 0
+  end
+  alter vcngn61 pwl = [ 0 $&cv 1 $&cv ]
+  let cv = 1 - abs(nn - 62)
+  if cv < 0
+    let cv = 0
+  end
+  alter vcngn62 pwl = [ 0 $&cv 1 $&cv ]
+  let cv = 1 - abs(nn - 63)
+  if cv < 0
+    let cv = 0
+  end
+  alter vcngn63 pwl = [ 0 $&cv 1 $&cv ]
+  echo "CAL3" $&i "seed=@@SEED@@ oc_krel=" $&oc_krel " oc_ktrip=" $&oc_ktrip " oc_kc=" $&oc_kc " ng_krel=" $&ng_krel " ng_ktrip=" $&ng_ktrip " ng_kc=" $&ng_kc
+  alter vsh pwl = [ 0 0 2.3e-06 0 2.4e-06 0.091956 2.6e-06 0.091956 5.6e-06 0.095956 8.6e-06 0.091956 8.8e-06 -0.0111868 9e-06 -0.0111868 1.2e-05 -0.0151868 1.5e-05 -0.0111868 1.52e-05 0 1.55e-05 0 1.5501e-05 0.103352 1.7e-05 0.103352 1.7001e-05 0 1.8e-05 0 1.8001e-05 -0.0145055 1.95e-05 -0.0145055 1.9501e-05 0 2e-05 0 ]
+  tran 1n 20u 0 2n
+  meas tran oc_t find v(isp) when v(oc)=half rise=1 from=2.6u to=5.6u
+  meas tran oc_r find v(isp) when v(oc)=half fall=1 from=5.6u to=8.6u
+  meas tran ng_t find v(isp) when v(ng)=half rise=1 from=9u to=12u
+  meas tran ng_r find v(isp) when v(ng)=half fall=1 from=12u to=15u
+  meas tran oc_d when v(oc)=half rise=1 from=15.501u to=17u
+  meas tran ng_d when v(ng)=half rise=1 from=18.001u to=19.5u
+  let oc_err = ((oc_t + oc_r)/2 - 0.093956044)*1e6
+  let ng_err = ((ng_t + ng_r)/2 - -0.013186813)*1e6
+  let oc_h = (oc_t - oc_r)*1e6
+  let ng_h = (ng_r - ng_t)*1e6
+  let oc_dl = (oc_d - 15.501u)*1e9
+  let ng_dl = (ng_d - 18.001u)*1e9
+  echo "MC3" $&i "seed=@@SEED@@ oc_err_uV=" $&oc_err " ng_err_uV=" $&ng_err " oc_hyst_uV=" $&oc_h " ng_hyst_uV=" $&ng_h " oc_dly_ns=" $&oc_dl " ng_dly_ns=" $&ng_dl
+  set idx = $&i
+  wrdata @@OUT@@_op_$idx v(isp) v(outp) v(outn) v(oc) v(ng)
+  let i = i + 1
+end
+.endc
+.end

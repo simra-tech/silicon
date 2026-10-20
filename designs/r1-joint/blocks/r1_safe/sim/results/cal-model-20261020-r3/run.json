@@ -1,0 +1,153 @@
+{
+ "run_id": "cal-model-20261020-r3",
+ "block": "r1_safe",
+ "date_utc": "2026-10-20T14:45:41.190154Z",
+ "command": "python3 sim/cal_model.py sim/results/cal-model-20261020-r3 safe-dcmc-20261020-r3rppd safe-dcmc-20261020-r3",
+ "tool": "python3 3.6.8, numpy 1.19.5 (host)",
+ "inputs_summary_sha256": {
+  "safe-dcmc-20261020-r3rppd": "6efdbb7dd13b1b68bc248fb459333047e72205afb7e31d051573684ca5916ad5",
+  "safe-dcmc-20261020-r3": "bc8a063933c4dc1817c79c680452b40464d11049855dbbdb9d311717c4eea350"
+ },
+ "script_sha256": "ad2ced8b575737c669124c89b8439bb8b988f7ae84e9372a2f1090526920f18c",
+ "question": "Does a 6-bit calibration code (step VREF/252 = LSB/8, range -4..+3.9 LSB) found by the zero-current search bring every comparator threshold within 0.25 LSB?",
+ "result": [
+  {
+   "run": "safe-dcmc-20261020-r3rppd",
+   "samples": 51,
+   "OC": {
+    "in_range": 51,
+    "outside_range": [],
+    "pass_role_range_0p25": 51,
+    "pass_all_codes_0p25": 51,
+    "worst_resid_role_LSB": 0.11458223583552529,
+    "worst_resid_all_LSB": 0.11458223583552529,
+    "resid_sigma_all_LSB": 0.043958678032052036,
+    "cal_shift_LSB_min_max": [
+     -0.375,
+     0.375
+    ],
+    "cal_range_LSB": [
+     -4.0,
+     3.8749999999999996
+    ],
+    "raw_max_abs_LSB": 0.4425449849100316,
+    "worst_samples_role": [
+     [
+      0.11458223583552529,
+      "3_012"
+     ],
+     [
+      0.10745725008549645,
+      "1_001"
+     ],
+     [
+      0.10254499999999833,
+      "2_013"
+     ]
+    ]
+   },
+   "NEG": {
+    "in_range": 51,
+    "outside_range": [],
+    "pass_role_range_0p25": 51,
+    "pass_all_codes_0p25": 51,
+    "worst_resid_role_LSB": 0.0925438749122498,
+    "worst_resid_all_LSB": 0.12476861046277876,
+    "resid_sigma_all_LSB": 0.044078720762860006,
+    "cal_shift_LSB_min_max": [
+     -0.375,
+     0.5
+    ],
+    "cal_range_LSB": [
+     -4.0,
+     3.8749999999999996
+    ],
+    "raw_max_abs_LSB": 0.4425449849100316,
+    "worst_samples_role": [
+     [
+      0.0925438749122498,
+      "3_003"
+     ],
+     [
+      0.08004500000000081,
+      "1_004"
+     ],
+     [
+      0.07735636028728066,
+      "2_016"
+     ]
+    ]
+   }
+  },
+  {
+   "run": "safe-dcmc-20261020-r3",
+   "samples": 51,
+   "OC": {
+    "in_range": 51,
+    "outside_range": [],
+    "pass_role_range_0p25": 24,
+    "pass_all_codes_0p25": 24,
+    "worst_resid_role_LSB": 0.912544999999999,
+    "worst_resid_all_LSB": 0.912544999999999,
+    "resid_sigma_all_LSB": 0.21501092237334035,
+    "cal_shift_LSB_min_max": [
+     -1.875,
+     1.875
+    ],
+    "cal_range_LSB": [
+     -4.0,
+     3.8749999999999996
+    ],
+    "raw_max_abs_LSB": 2.1525449249101483,
+    "worst_samples_role": [
+     [
+      0.912544999999999,
+      "2_016"
+     ],
+     [
+      0.8100450000000003,
+      "3_000"
+     ],
+     [
+      0.6975449999999994,
+      "2_013"
+     ]
+    ]
+   },
+   "NEG": {
+    "in_range": 51,
+    "outside_range": [],
+    "pass_role_range_0p25": 50,
+    "pass_all_codes_0p25": 25,
+    "worst_resid_role_LSB": 0.2762902974194059,
+    "worst_resid_all_LSB": 0.922606184787631,
+    "resid_sigma_all_LSB": 0.2154685256262836,
+    "cal_shift_LSB_min_max": [
+     -2.0,
+     1.75
+    ],
+    "cal_range_LSB": [
+     -4.0,
+     3.8749999999999996
+    ],
+    "raw_max_abs_LSB": 2.1525449249101483,
+    "worst_samples_role": [
+     [
+      0.2762902974194059,
+      "2_016"
+     ],
+     [
+      0.20308549382901386,
+      "2_015"
+     ],
+     [
+      0.1975450000000012,
+      "2_013"
+     ]
+    ]
+   }
+  }
+ ],
+ "disposition": "passed (safe-dcmc-20261020-r3rppd): OC 51/51 and NEG 51/51 samples within 0.25 LSB over their role ranges; all codes 4..59: OC 51, NEG 51; outside cal range: 0 / 0; cal shift used ['-0.38', '0.38'] / ['-0.38', '0.50'] LSB of +-4",
+ "raw_results": "none (model on the DC MC summaries)"
+}

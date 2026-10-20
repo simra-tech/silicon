@@ -1,0 +1,88 @@
+{
+ "block": "r1_safe",
+ "command": "python3 sim/run_deck.py --block r1_safe --deck tb_safe_op3.cir --run-id safe-op-20261020-r3 --corners tt,ss,ff --analyze analyze_op3.py --question Revision 3 static supply currents of r1_safe_an (four comparators, string, muxes, level shifters), tt/ss/ff",
+ "container_image": "tapeoutbench-eda:latest sha256:ddeb6957... (checked by flow/run.sh)",
+ "corners": {
+  "ff": {
+   "cap": "cap_bcs",
+   "mos": "mos_ff",
+   "res": "res_bcs",
+   "temp_C": -40,
+   "vdd": 1.32,
+   "vdda": 3.6
+  },
+  "ss": {
+   "cap": "cap_wcs",
+   "mos": "mos_ss",
+   "res": "res_wcs",
+   "temp_C": 125,
+   "vdd": 1.08,
+   "vdda": 3.0
+  },
+  "tt": {
+   "cap": "cap_typ",
+   "mos": "mos_tt",
+   "res": "res_typ",
+   "temp_C": 27,
+   "vdd": 1.2,
+   "vdda": 3.3
+  }
+ },
+ "cpuset": "109-111",
+ "date_utc": "2026-10-20T15:06:57.448149Z",
+ "deck": "sim/tb_safe_op3.cir",
+ "deck_sha256": "68f5e7c61fbb4c32c0a14a5b2b60d3071bfdb8ebed09e43da1d65205c366f59b",
+ "disposition": "report: IDDA 361/368/418 uA, IDD 0.00/0.01/0.00 uA, VREF load 4.58/3.58/4.05 uA",
+ "jobs": {
+  "ff": {
+   "log": "r1_safe/safe-op-20261020-r3/tb_safe_op3_ff.log",
+   "rc": 0,
+   "wall_s": 672.7
+  },
+  "ss": {
+   "log": "r1_safe/safe-op-20261020-r3/tb_safe_op3_ss.log",
+   "rc": 0,
+   "wall_s": 128.1
+  },
+  "tt": {
+   "log": "r1_safe/safe-op-20261020-r3/tb_safe_op3_tt.log",
+   "rc": 0,
+   "wall_s": 128.1
+  }
+ },
+ "netlist": "schematic/r1_safe.spice",
+ "netlist_sha256": "812f886dce2b759af121230bd2e9100aeac59041effdf9a3341647c29299cbde",
+ "overrides": {},
+ "pdk_commit": "84374023ee8b4b126bebbba67fcbada0a9c0ff0b (checked by flow/run.sh)",
+ "question": "Revision 3 static supply currents of r1_safe_an (four comparators, string, muxes, level shifters), tt/ss/ff",
+ "raw_results": "$G1_RESULTS_ROOT/r1_safe/safe-op-20261020-r3/",
+ "result": {
+  "ff": {
+   "idd_uA": 0.00281005,
+   "idda_deck_value_uA": 376.054,
+   "idda_uA": 360.51843444944194,
+   "iref_uA": 4.57596,
+   "neg_a": 1.32,
+   "oc_a": 5.76133e-08
+  },
+  "ss": {
+   "idd_uA": 0.0133307,
+   "idda_deck_value_uA": 394.092,
+   "idda_uA": 367.5619317008162,
+   "iref_uA": 3.5776,
+   "neg_a": 1.08,
+   "oc_a": 9.03985e-07
+  },
+  "tt": {
+   "idd_uA": 0.00241108,
+   "idda_deck_value_uA": 438.354,
+   "idda_uA": 418.354,
+   "iref_uA": 4.04809,
+   "neg_a": 1.2,
+   "oc_a": 7.90563e-08
+  }
+ },
+ "run_id": "safe-op-20261020-r3",
+ "tool": "ngspice-46 (container banner from flow/run.sh ngspice -v; batch logs carry no banner)",
+ "wall_s": 672.8
+}

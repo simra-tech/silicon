@@ -1,6 +1,6 @@
 # r1_isense — two low-side shunt sense channels (3.3 V / 1.2 V, auto-zero)
 
-State (2026-10-20): **schematic level, simulated.** No layout, no extraction. All numbers below are
+State (2026-10-20, follow-ups added the same day): **schematic level, simulated.** No layout, no extraction. All numbers below are
 **simulated** (ngspice-46, pinned PDK), at schematic level, with ideal reference sources (marked in each
 deck). Nothing is measured.
 
@@ -59,10 +59,12 @@ At G = 14 with a 40 mV pedestal, the 120 mV range maps to 1.68 Vpp (0.5 bit of A
 | Negative excursion: −20 mV linear; −200 mV and +200 mV for 300 ns, recovery to ±0.5 % | **passed** (report): in range linear; recovery 132–184 ns | `isense-step-20261020-r1` |
 | Output nodes ≤ VDD in all runs, including overload | **passed**: max 1.310 V at VDD 1.32 V (ff_hot) | `isense-step-20261020-r1` |
 | Noise (continuous time, AZ held), 5 corners | run (report): 25–37 nV/√Hz white, 1/f corner ≈ 70 kHz, 53–80 µV rms in 10 kHz–5 MHz | `isense-noise-20261020-r1` |
-| Mismatch MC at ss/ff, MC of the CM-to-differential error after AZ | **not run** | — |
-| AZ hold droop (junction leakage at 125–150 °C over a PWM period) | **not run** | — |
+| Residual offset after AZ ≤ 100 µV, mismatch MC at ss 125 °C (30 samples, seed 4) and ff −40 °C (30 samples, seed 5) | **passed**: ss 30/30, σ 15.6 µV, worst 42.7 µV (raw σ 3.14 mV); ff 30/30, σ 23.3 µV, worst 48.2 µV (raw σ 2.46 mV) | `sim/results/isense-mc-ssff-20261020-r1/` |
+| MC of the CM-to-differential error after AZ | **not run** | — |
+| AZ hold droop over one 50 µs PWM period at zero current (gmin 1e-15), tt / ss 125 °C / ff_hot 125 °C, and ss / ff at 150 °C | **passed** (limit 50 µV input-referred): output drift ≤ 0.004 µV input-referred; hold-node droop ≤ 1.75 µV (125 °C), ≤ 11.4 µV (150 °C), common to both caps; mismatch bound (one cap droops, the other not, /12 aux gm ratio) ≤ 0.15 µV (125 °C), ≤ 0.95 µV (150 °C) | `sim/results/isense-droop-20261020-r1/`, `sim/results/isense-droop-150C-20261020-r1/` |
 | AZ with noise folding (sampled noise) | **not run** (estimate: hold-cap kT/C 64 µV per node → ≈ 7 µV input-referred) | — |
-| Loop-gain (return-ratio) margins of the differential and CM loops | **not run** (closed-loop peaking 0 dB and 0 % step overshoot are the only stability evidence) | — |
+| Auto-zero loop gain (return ratio during AZ hold, loop broken at the aux-pair gates), 5 corners | **passed** (limit 45°): differential phase margin 92.8–96.5°, unity gain 0.74–1.14 MHz, DC loop gain 47.9–56.9 dB, gain margin 29.6–33.4 dB; common mode: loop gain ≤ −47 dB at all frequencies (the aux pair rejects CM; no CM AZ loop) | `sim/results/isense-azloop-20261020-r1/` |
+| Loop-gain (return-ratio) margins of the main differential loop and the CMFB loop in normal mode | **not run** (closed-loop peaking 0 dB and 0 % step overshoot are the only stability evidence) | — |
 | Supply rejection (report) | run: VDDA→Vod −72…−85 dB, VDD→Vod ≤ −83 dB at 1 MHz (nominal, no mismatch) | `isense-noise-20261020-r1` |
 | Real VREF/VCM/IBIAS sources, level-shifter timing, pads (`dantenna`) | **not run** (ideal sources; pad diodes left out at block level per the ngspice pad-diode note) | — |
 | Layout, DRC, LVS, PEX | **not run** | — |
@@ -86,6 +88,13 @@ At G = 14 with a 40 mV pedestal, the 120 mV range maps to 1.68 Vpp (0.5 bit of A
 
 Mismatch MC (50 samples, tt): raw offset before AZ σ 2.57 mV (−5.66…+8.51 mV); residual after AZ mean −0.4 µV,
 σ 16.2 µV, range −34.0…+35.5 µV; pedestal 40.32 mV σ 0.10 mV; gain 14.012 σ 0.028.
+At ss 125 °C (30 samples): raw σ 3.14 mV (worst 7.56 mV), residual σ 15.6 µV (worst 42.7 µV), pedestal σ 0.11 mV,
+gain σ 0.032. At ff −40 °C (30 samples): raw σ 2.46 mV (worst 4.96 mV), residual σ 23.3 µV (worst 48.2 µV),
+pedestal σ 0.10 mV, gain σ 0.030.
+
+Auto-zero loop (return ratio during AZ hold): differential DC loop gain 56.4 dB (tt), 54.6 (ss), 55.5 (ff), 56.9
+(ss_cold), 47.9 (ff_hot); unity gain 0.87 / 0.96 / 0.89 / 0.74 / 1.14 MHz; phase margin 95.3 / 92.8 / 96.5 / 95.4 / 94.1°.
+The closed AZ loop time constant is about 1/(2π · 0.74 MHz) ≈ 0.22 µs, so the 2.0 µs `azh` phase is ≥ 9 time constants.
 
 The pedestal error (−43…−78 µV systematic, 0.10 mV σ under mismatch) is not an offset of the amplifier: AZ
 removes everything except the pedestal itself, and the ADC reads the pedestal at zero current. A host or r1_ctrl
@@ -115,14 +124,19 @@ With an analog layout factor of 3–4, the estimate is 0.025–0.033 mm² per ch
 2. **Output common mode** is 0.56–0.59 V, not 0.60 V (CMFB pair offset). This costs 10–40 mV of bottom headroom.
 3. **AZ dependency on the gate timing.** AZ is valid only while the shunt current is zero. r1_gate/r1_ctrl must give
    an AZ window inside the high-side on-time, outside dead time, and r1_safe must blank the comparators over AZ +
-   ≈ 100–200 ns. At duty cycles with no such window (low-side on ≈ 100 %), the hold caps must keep the correction
-   (droop: not run).
+   ≈ 100–200 ns. At duty cycles with no such window (low-side on ≈ 100 %), the hold caps must keep the correction.
+   Droop (simulated, model leakage only): worst-case mismatch bound ≤ 0.95 µV input-referred per 50 µs at 150 °C,
+   so about 100 periods (5 ms) without AZ stay within a 100 µV budget at 150 °C (estimate from the bound).
+   r1_safe revision 3 also uses the zero-current window after AZ for its calibration search (r1_safe README).
 4. **Kelvin common-mode change between AZ and sampling** converts through RF/RIN mismatch (estimate: σ ≈ 3.7 µV per mV
    of CM change). Board rule proposal: tie chip VSS close to the shunt ground side.
 5. **Ideal sources.** VREF must be buffered (pedestal arms are 104 kΩ). VCM must sink/source the RF-arm current during
    AZ. IBIAS is assumed PTAT.
 6. CMFB stability: a CMFB share of 8/3 of the folding current oscillated at 46 MHz (development run `dev-step-11`);
-   the share of 2/3 is stable in all corners with zero CM ripple. A CM loop-gain margin run is still open.
+   the share of 2/3 is stable in all corners with zero CM ripple. A CM loop-gain margin run is still open (the AZ
+   loop margins are now run, see the status table).
+7. **r1_safe drive.** The sense outputs drive the four r1_safe comparator gates directly (thick PMOS, no DC load).
+   The joint deck `r1_safe/sim/tb_safe_joint3.cir` checks thresholds and delay through the real sense output.
 
 ## Built against
 
@@ -137,10 +151,13 @@ With an analog layout factor of 3–4, the estimate is 0.025–0.033 mm² per ch
 
 - `schematic/r1_isense.spice.tmpl` + `schematic/gen_isense.py` → `schematic/r1_isense.spice` (generated; sha256
   prefix `5db34e0a8f7c` for all evidence runs). `schematic/area.py` gives the device area.
-- Decks: `sim/tb_isense_step.cir`, `sim/tb_isense_dc.cir`, `sim/tb_isense_mc.cir`, `sim/tb_isense_noise.cir`;
+- Decks: `sim/tb_isense_step.cir`, `sim/tb_isense_dc.cir`, `sim/tb_isense_mc.cir`, `sim/tb_isense_noise.cir`,
+  `sim/tb_isense_droop.cir`, `sim/tb_isense_azloop.cir` (from `sim/gen_tb_isense_azloop.py`: a deck-local copy of
+  `r1_isense_ch` with the AZ loop broken at the aux-pair gates);
   analyzers `sim/analyze_*.py`; runner `sim/run_deck.py` (corner substitution, `flow/run.sh`, `run.json`).
 - Campaign: `sh designs/r1-joint/blocks/r1_isense/sim/campaign_20261020.sh` from the repository root
-  (CPU set 109–111). Raw waveforms: `$G1_RESULTS_ROOT/r1_isense/<run-id>/`.
+  (CPU set 109–111); follow-ups (ss/ff MC, AZ loop gain, droop): `sim/campaign_20261020_fu.sh`. A `TEMP` override
+  (150 °C droop run) is recorded in `run.json` under `overrides`. Raw waveforms: `<G1_RESULTS_ROOT>/r1_isense/<run-id>/`.
 - `sim/results/<run-id>/run.json` and `summary.json` per run. Runs named `dev-*` are development runs on earlier
   netlist states (their `run.json` holds the netlist hash). They are kept as a record, not as evidence; `dev-mc-01`
   to `dev-mc-03` (OTA-only AZ, failed) and `dev-step-06`/`dev-step-11` (CM loop unstable) are the failed designs.

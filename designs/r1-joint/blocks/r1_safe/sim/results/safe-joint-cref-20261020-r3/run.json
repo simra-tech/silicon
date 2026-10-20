@@ -1,0 +1,105 @@
+{
+ "block": "r1_safe",
+ "command": "python3 sim/run_deck.py --block r1_safe --deck tb_safe_joint3_cref.cir --run-id safe-joint-cref-20261020-r3 --corners tt --analyze analyze_joint3.py --question Same as safe-joint-20261020-r3b at tt with 1 pF cap_cmim on each comparator reference node (CREF option): does decoupling remove the cross-channel kickback?",
+ "container_image": "tapeoutbench-eda:latest sha256:ddeb6957... (checked by flow/run.sh)",
+ "corners": {
+  "tt": {
+   "cap": "cap_typ",
+   "mos": "mos_tt",
+   "res": "res_typ",
+   "temp_C": 27,
+   "vdd": 1.2,
+   "vdda": 3.3
+  }
+ },
+ "cpuset": "111",
+ "date_utc": "2026-10-20T15:22:52.482888Z",
+ "deck": "sim/tb_safe_joint3_cref.cir",
+ "deck_sha256": "797d5b4071b3912ac4797d49cb9615977df0654748658730d9f5053233378b30",
+ "disposition": "tt: passed (max centre 0.032 LSB, sim-stag 0.0008 LSB, cross-channel glitches 0, worst trip delay 120 ns)",
+ "jobs": {
+  "tt": {
+   "log": "r1_safe/safe-joint-cref-20261020-r3/tb_safe_joint3_cref_tt.log",
+   "rc": 0,
+   "wall_s": 232.2
+  }
+ },
+ "netlist": "schematic/r1_safe.spice",
+ "netlist_sha256": "812f886dce2b759af121230bd2e9100aeac59041effdf9a3341647c29299cbde",
+ "note": "re-analysed after the run with a wider exclusion window (33.9-34.7 us) for channel b's own expected transition; first analysis counted the expected NEG_b release at 34.42 us (ss_cold) as a glitch. Path fixture: conducting mux path with real switches.",
+ "overrides": {},
+ "pdk_commit": "84374023ee8b4b126bebbba67fcbada0a9c0ff0b (checked by flow/run.sh)",
+ "question": "Same as safe-joint-20261020-r3b at tt with 1 pF cap_cmim on each comparator reference node (CREF option): does decoupling remove the cross-channel kickback?",
+ "raw_results": "$G1_RESULTS_ROOT/r1_safe/safe-joint-cref-20261020-r3/",
+ "result": {
+  "tt": {
+   "cross_channel_glitches": 0,
+   "cross_channel_transitions_us": {
+    "neg_b": [],
+    "oc_b": []
+   },
+   "delays_from_shunt_step": {
+    "neg_release_a_ns": 99.64141584734959,
+    "neg_release_b_ns": 99.64141566882893,
+    "neg_trip_a_ns": 24.629706504647533,
+    "neg_trip_b_ns": 24.629706525443886,
+    "oc_release_a_ns": 24.762205496098062,
+    "oc_release_b_ns": 24.76220551197146,
+    "oc_trip_a_ns": 120.47370560051138,
+    "oc_trip_b_ns": 120.47370536602894
+   },
+   "idda_uA_total": 764.6803472333332,
+   "max_abs_centre_err_LSB": 0.032339201708346255,
+   "max_sim_minus_stag_LSB": 0.0007825694803001449,
+   "max_sim_minus_stag_uV_shunt": 1.8632606673812973,
+   "n_points": 8,
+   "simultaneous_neg_a": {
+    "centre_err_LSB": -0.026236530162863095,
+    "centre_err_uV_shunt": -62.467928959197835,
+    "hyst_uV_shunt": 1214.862748004239
+   },
+   "simultaneous_neg_b": {
+    "centre_err_LSB": -0.02623653024975692,
+    "centre_err_uV_shunt": -62.4679291660879,
+    "hyst_uV_shunt": 1214.8627479990764
+   },
+   "simultaneous_oc_a": {
+    "centre_err_LSB": -0.031556632155053665,
+    "centre_err_uV_shunt": -75.13483846441349,
+    "hyst_uV_shunt": 1225.8860971223057
+   },
+   "simultaneous_oc_b": {
+    "centre_err_LSB": -0.03155663222804611,
+    "centre_err_uV_shunt": -75.13483863820503,
+    "hyst_uV_shunt": 1225.886097047213
+   },
+   "staggered_neg_a": {
+    "centre_err_LSB": -0.02579089747226843,
+    "centre_err_uV_shunt": -61.40689874349625,
+    "hyst_uV_shunt": 1198.6693146440464
+   },
+   "staggered_neg_b": {
+    "centre_err_LSB": -0.02678319214743014,
+    "centre_err_uV_shunt": -63.76950511292889,
+    "hyst_uV_shunt": 1196.5147837545153
+   },
+   "staggered_oc_a": {
+    "centre_err_LSB": -0.03115249728837866,
+    "centre_err_uV_shunt": -74.17261259137776,
+    "hyst_uV_shunt": 1210.2372024716813
+   },
+   "staggered_oc_b": {
+    "centre_err_LSB": -0.032339201708346255,
+    "centre_err_uV_shunt": -76.99809930558632,
+    "hyst_uV_shunt": 1207.9653896046593
+   },
+   "tap_t176_max_dev_mV": 5.369751000000034,
+   "tap_t176_max_dev_step_mV": 4.362426110742668,
+   "tap_t76_max_dev_mV": 13.99250099999999,
+   "tap_t76_max_dev_step_mV": 15.219090987818651
+  }
+ },
+ "run_id": "safe-joint-cref-20261020-r3",
+ "tool": "ngspice-46 (container banner from flow/run.sh ngspice -v; batch logs carry no banner)",
+ "wall_s": 232.6
+}

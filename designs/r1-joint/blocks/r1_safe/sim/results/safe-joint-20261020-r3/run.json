@@ -1,0 +1,242 @@
+{
+ "block": "r1_safe",
+ "command": "python3 sim/run_deck.py --block r1_safe --deck tb_safe_joint3.cir --run-id safe-joint-20261020-r3 --corners tt,ss_cold,ff_hot --analyze analyze_joint3.py --question Joint r1_isense -> r1_safe rev 3 (full netlist, nominal): shunt-referred threshold centre at code 44 (k = 32), simultaneous vs staggered switching of all four comparators, delay through r1_isense at 10 % overdrive; tt, ss_cold, ff_hot",
+ "container_image": "tapeoutbench-eda:latest sha256:ddeb6957... (checked by flow/run.sh)",
+ "corners": {
+  "ff_hot": {
+   "cap": "cap_bcs",
+   "mos": "mos_ff",
+   "res": "res_bcs",
+   "temp_C": 125,
+   "vdd": 1.32,
+   "vdda": 3.6
+  },
+  "ss_cold": {
+   "cap": "cap_wcs",
+   "mos": "mos_ss",
+   "res": "res_wcs",
+   "temp_C": -40,
+   "vdd": 1.08,
+   "vdda": 3.0
+  },
+  "tt": {
+   "cap": "cap_typ",
+   "mos": "mos_tt",
+   "res": "res_typ",
+   "temp_C": 27,
+   "vdd": 1.2,
+   "vdda": 3.3
+  }
+ },
+ "cpuset": "109-111",
+ "date_utc": "2026-10-20T15:17:38.790596Z",
+ "deck": "sim/tb_safe_joint3.cir",
+ "deck_sha256": "df226dee2af099f544d2d7395be305e75ede460165467c4995936caaddaaf1f6",
+ "disposition": "ff_hot: passed (max centre 0.052 LSB, sim-stag 0.0063 LSB, cross-channel glitches not in deck, worst trip delay 130 ns); ss_cold: passed (max centre 0.032 LSB, sim-stag 0.0010 LSB, cross-channel glitches not in deck, worst trip delay 156 ns); tt: passed (max centre 0.032 LSB, sim-stag 0.0009 LSB, cross-channel glitches not in deck, worst trip delay 139 ns)",
+ "jobs": {
+  "ff_hot": {
+   "log": "r1_safe/safe-joint-20261020-r3/tb_safe_joint3_ff_hot.log",
+   "rc": 0,
+   "wall_s": 264.3
+  },
+  "ss_cold": {
+   "log": "r1_safe/safe-joint-20261020-r3/tb_safe_joint3_ss_cold.log",
+   "rc": 0,
+   "wall_s": 266.3
+  },
+  "tt": {
+   "log": "r1_safe/safe-joint-20261020-r3/tb_safe_joint3_tt.log",
+   "rc": 0,
+   "wall_s": 264.3
+  }
+ },
+ "netlist": "schematic/r1_safe.spice",
+ "netlist_sha256": "812f886dce2b759af121230bd2e9100aeac59041effdf9a3341647c29299cbde",
+ "note": "deck version without the cross-channel segment (31 us); the filled decks are kept in the raw directory; deck_config.json holds its generator parameters. Re-analysed after the analyzer fix (8 crossings, not 16): R1_DECK=tb_safe_joint3 python3 sim/analyze_joint3.py <raw> sim/results/safe-joint-20261020-r3 (the first analysis wrote 'failed' only for the wrong count). Path fixture: conducting mux path with real switches.",
+ "overrides": {},
+ "pdk_commit": "84374023ee8b4b126bebbba67fcbada0a9c0ff0b (checked by flow/run.sh)",
+ "question": "Joint r1_isense -> r1_safe rev 3 (full netlist, nominal): shunt-referred threshold centre at code 44 (k = 32), simultaneous vs staggered switching of all four comparators, delay through r1_isense at 10 % overdrive; tt, ss_cold, ff_hot",
+ "raw_results": "$G1_RESULTS_ROOT/r1_safe/safe-joint-20261020-r3/",
+ "result": {
+  "ff_hot": {
+   "delays_from_shunt_step": {
+    "neg_release_a_ns": 104.23117472754159,
+    "neg_release_b_ns": 104.23117467776993,
+    "neg_trip_a_ns": 23.697828965435914,
+    "neg_trip_b_ns": 23.697828972835595,
+    "oc_release_a_ns": 23.979417498092097,
+    "oc_release_b_ns": 23.979417504990334,
+    "oc_trip_a_ns": 130.41171198031134,
+    "oc_trip_b_ns": 130.41171190734113
+   },
+   "idda_uA_total": 1010.7747904333326,
+   "max_abs_centre_err_LSB": 0.052325731247310776,
+   "max_sim_minus_stag_LSB": 0.006302271054604013,
+   "max_sim_minus_stag_uV_shunt": 15.005407272866698,
+   "n_points": 8,
+   "simultaneous_neg_a": {
+    "centre_err_LSB": -0.052325731247310776,
+    "centre_err_uV_shunt": -124.58507439835897,
+    "hyst_uV_shunt": 1214.4911460519324
+   },
+   "simultaneous_neg_b": {
+    "centre_err_LSB": -0.05232573122983059,
+    "centre_err_uV_shunt": -124.58507435673948,
+    "hyst_uV_shunt": 1214.4911461022257
+   },
+   "simultaneous_oc_a": {
+    "centre_err_LSB": -0.009518351786950709,
+    "centre_err_uV_shunt": -22.662742349882635,
+    "hyst_uV_shunt": 1274.101895488225
+   },
+   "simultaneous_oc_b": {
+    "centre_err_LSB": -0.009518351735518517,
+    "centre_err_uV_shunt": -22.662742227425035,
+    "hyst_uV_shunt": 1274.1018954802314
+   },
+   "staggered_neg_a": {
+    "centre_err_LSB": -0.05077869922829826,
+    "centre_err_uV_shunt": -120.90166482928156,
+    "hyst_uV_shunt": 1196.8736152418585
+   },
+   "staggered_neg_b": {
+    "centre_err_LSB": -0.052018471320878786,
+    "centre_err_uV_shunt": -123.85350314494947,
+    "hyst_uV_shunt": 1191.4641143403599
+   },
+   "staggered_oc_a": {
+    "centre_err_LSB": -0.01497809262866301,
+    "centre_err_uV_shunt": -35.6621253063405,
+    "hyst_uV_shunt": 1230.8640476988014
+   },
+   "staggered_oc_b": {
+    "centre_err_LSB": -0.01582062279012253,
+    "centre_err_uV_shunt": -37.66814950029173,
+    "hyst_uV_shunt": 1226.0311500546657
+   },
+   "tap_t176_max_dev_mV": 15.638417000000015,
+   "tap_t76_max_dev_mV": 29.212157000000015
+  },
+  "ss_cold": {
+   "delays_from_shunt_step": {
+    "neg_release_a_ns": 125.27440440284231,
+    "neg_release_b_ns": 125.27440429780683,
+    "neg_trip_a_ns": 27.816784022383562,
+    "neg_trip_b_ns": 27.816784037193084,
+    "oc_release_a_ns": 27.669524679707255,
+    "oc_release_b_ns": 27.669524689515896,
+    "oc_trip_a_ns": 156.37450869026088,
+    "oc_trip_b_ns": 156.37450849286154
+   },
+   "idda_uA_total": 581.8548473766664,
+   "max_abs_centre_err_LSB": 0.03195980033479817,
+   "max_sim_minus_stag_LSB": 0.0009651492876480709,
+   "max_sim_minus_stag_uV_shunt": 2.2979744944001688,
+   "n_points": 8,
+   "simultaneous_neg_a": {
+    "centre_err_LSB": -0.008064251039203996,
+    "centre_err_uV_shunt": -19.200597712390465,
+    "hyst_uV_shunt": 1263.191595846702
+   },
+   "simultaneous_neg_b": {
+    "centre_err_LSB": -0.008064257404584718,
+    "centre_err_uV_shunt": -19.200612868058855,
+    "hyst_uV_shunt": 1263.191595250887
+   },
+   "simultaneous_oc_a": {
+    "centre_err_LSB": -0.03160315208938669,
+    "centre_err_uV_shunt": -75.24560021282545,
+    "hyst_uV_shunt": 1274.8226342705477
+   },
+   "simultaneous_oc_b": {
+    "centre_err_LSB": -0.031603157954906425,
+    "centre_err_uV_shunt": -75.24561417834863,
+    "hyst_uV_shunt": 1274.8226324045959
+   },
+   "staggered_neg_a": {
+    "centre_err_LSB": -0.007099101751555926,
+    "centre_err_uV_shunt": -16.902623217990296,
+    "hyst_uV_shunt": 1243.846183854355
+   },
+   "staggered_neg_b": {
+    "centre_err_LSB": -0.008332778401740626,
+    "centre_err_uV_shunt": -19.83994857557292,
+    "hyst_uV_shunt": 1238.320753122385
+   },
+   "staggered_oc_a": {
+    "centre_err_LSB": -0.03064222630554864,
+    "centre_err_uV_shunt": -72.95768167987771,
+    "hyst_uV_shunt": 1255.1659334980313
+   },
+   "staggered_oc_b": {
+    "centre_err_LSB": -0.03195980033479817,
+    "centre_err_uV_shunt": -76.09476270190041,
+    "hyst_uV_shunt": 1249.7000508185085
+   },
+   "tap_t176_max_dev_mV": 16.870732,
+   "tap_t76_max_dev_mV": 31.66065000000001
+  },
+  "tt": {
+   "delays_from_shunt_step": {
+    "neg_release_a_ns": 109.85518239050405,
+    "neg_release_b_ns": 109.85518224704377,
+    "neg_trip_a_ns": 24.826239750820335,
+    "neg_trip_b_ns": 24.82623977070528,
+    "oc_release_a_ns": 24.922442588816917,
+    "oc_release_b_ns": 24.922442604104166,
+    "oc_trip_a_ns": 139.21183988251912,
+    "oc_trip_b_ns": 139.21183965419968
+   },
+   "idda_uA_total": 764.8316555966661,
+   "max_abs_centre_err_LSB": 0.03224151029098732,
+   "max_sim_minus_stag_LSB": 0.0009261694668943895,
+   "max_sim_minus_stag_uV_shunt": 2.205165397367594,
+   "n_points": 8,
+   "simultaneous_neg_a": {
+    "centre_err_LSB": -0.026528763724965602,
+    "centre_err_uV_shunt": -63.16372315468,
+    "hyst_uV_shunt": 1221.2861159979077
+   },
+   "simultaneous_neg_b": {
+    "centre_err_LSB": -0.026528764594166147,
+    "centre_err_uV_shunt": -63.1637252242051,
+    "hyst_uV_shunt": 1221.2861159834888
+   },
+   "simultaneous_oc_a": {
+    "centre_err_LSB": -0.031792033058735125,
+    "centre_err_uV_shunt": -75.69531680651221,
+    "hyst_uV_shunt": 1233.0010581620836
+   },
+   "simultaneous_oc_b": {
+    "centre_err_LSB": -0.03179203382157991,
+    "centre_err_uV_shunt": -75.69531862280931,
+    "hyst_uV_shunt": 1233.0010584089973
+   },
+   "staggered_neg_a": {
+    "centre_err_LSB": -0.025602594258071213,
+    "centre_err_uV_shunt": -60.958557757312406,
+    "hyst_uV_shunt": 1203.9816804886443
+   },
+   "staggered_neg_b": {
+    "centre_err_LSB": -0.026740496885211965,
+    "centre_err_uV_shunt": -63.667849726695145,
+    "hyst_uV_shunt": 1198.2257469533713
+   },
+   "staggered_oc_a": {
+    "centre_err_LSB": -0.030996429938704998,
+    "centre_err_uV_shunt": -73.80102366358332,
+    "hyst_uV_shunt": 1216.3203619200008
+   },
+   "staggered_oc_b": {
+    "centre_err_LSB": -0.03224151029098732,
+    "centre_err_uV_shunt": -76.76550069282695,
+    "hyst_uV_shunt": 1210.4232639730678
+   },
+   "tap_t176_max_dev_mV": 17.281655000000008,
+   "tap_t76_max_dev_mV": 31.60344199999998
+  }
+ },
+ "run_id": "safe-joint-20261020-r3",
+ "tool": "ngspice-46 (container banner from flow/run.sh ngspice -v; batch logs carry no banner)",
+ "wall_s": 266.9
+}

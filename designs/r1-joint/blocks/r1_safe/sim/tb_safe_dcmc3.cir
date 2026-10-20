@@ -1,0 +1,49 @@
+* r1_safe comparator mismatch Monte Carlo, DC, revision 3 (r1_safe_cmp alone, mm_ok=1 on every device).
+* ONE mismatch draw per sample: `reset` once per sample, then all thresholds of that sample with `alter` + `dc`
+* (the revision-2 deck tb_safe_dcmc.cir called `reset` per threshold, so its 3 thresholds per "sample" were
+* independent draws; its sigma is valid, its per-sample correlation is not). The first threshold is repeated at the
+* end of each sample as a check that the draw did not change inside the sample.
+* Cell-frame thresholds (V, Vod): +-0.9167 (codes 59/4), +-0.75, +-0.6654, +-0.5654 (zero shunt current: calibration
+* point of OC at -0.5654, of NEG at +0.5654), +-0.4654, +-0.25, +0.0167. Forward and reverse DC sweeps of Vod over
+* Vth +-150 mV, 0.5 mV steps: trip (up) and release (dn) points.
+* REFP/REFN are ideal sources (string and mux carry no DC current into the gates; string ratio error is in tb_safe_mc3).
+* IDEAL SOURCES (this step only): input common mode 0.57 V, tap common mode 0.525 V, IBIAS 5 uA PTAT.
+.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerMOSlv.lib @@MOS@@
+.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerMOShv.lib @@MOS@@
+.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerRES.lib @@RES@@
+.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerCAP.lib @@CAP@@
+.temp @@TEMP@@
+.include /work/designs/r1-joint/blocks/r1_safe/@@NET@@
+.option gmin=1e-12
+Vdda vdda 0 dc @@VDDA@@
+Vdd vdd 0 dc @@VDD@@
+Vcms vcms 0 dc 0.570
+Vcmr vcmr 0 dc 0.525
+Ib vdda ib dc {5u*(@@TEMP@@+273.15)/300.15}
+Vod vod 0 dc 0
+Vth vth 0 dc 0
+Eap inp vcms vod 0 0.5
+Ean inn vcms vod 0 -0.5
+Erp refp vcmr vth 0 0.5
+Ern refn vcmr vth 0 -0.5
+X1 inp inn refp refn out ib vdda vdd 0 r1_safe_cmp
+.control
+setseed @@SEED@@
+let half = @@VDD@@/2
+let k = 0
+while k < @@N@@
+  reset
+  foreach th 0.016667 -0.916667 -0.75 -0.665385 -0.565385 -0.465385 -0.25 0.25 0.465385 0.565385 0.665385 0.75 0.916667 0.016667
+    alter vth dc = $th
+    let lo = $th - 0.15
+    let hi = $th + 0.15
+    dc vod $&lo $&hi 0.5m
+    meas dc up find v(vod) when v(out)=half rise=1
+    dc vod $&hi $&lo -0.5m
+    meas dc dn find v(vod) when v(out)=half fall=1
+    echo "DCMC seed=@@SEED@@ k=" $&k " th=" $th
+  end
+  let k = k + 1
+end
+.endc
+.end

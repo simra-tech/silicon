@@ -1,0 +1,84 @@
+{
+ "run_id": "cal-model-corner-20261020-r3",
+ "block": "r1_safe",
+ "date_utc": "2026-10-20T14:55:12.605406Z",
+ "command": "python3 sim/cal_model.py sim/results/cal-model-corner-20261020-r3 safe-dccorner-20261020-r3",
+ "tool": "python3 3.6.8, numpy 1.19.5 (host)",
+ "inputs_summary_sha256": {
+  "safe-dccorner-20261020-r3": "dde402f404e6155fc6b6f5f7beaf84816c6ebc191dfbab507079d74884f0101a"
+ },
+ "script_sha256": "743b0283a8b9604210885a81393d05b3ce346c41c97bca184cbf2de236e31e3c",
+ "question": "Does a 6-bit calibration code (step VREF/252 = LSB/8, range -4..+3.9 LSB) found by the zero-current search bring every comparator threshold within 0.25 LSB?",
+ "result": [
+  {
+   "run": "safe-dccorner-20261020-r3",
+   "samples": 5,
+   "OC": {
+    "in_range": 5,
+    "outside_range": [],
+    "pass_role_range_0p25": 5,
+    "pass_all_codes_0p25": 5,
+    "worst_resid_role_LSB": 0.22504490991017922,
+    "worst_resid_all_LSB": 0.22504490991017922,
+    "resid_sigma_all_LSB": 0.05007855125764687,
+    "cal_shift_LSB_min_max": [
+     0.0,
+     0.0
+    ],
+    "cal_range_LSB": [
+     -4.0,
+     3.8749999999999996
+    ],
+    "raw_max_abs_LSB": 0.22504490991017922,
+    "worst_samples_role": [
+     [
+      0.22504490991017922,
+      "ss:1_000"
+     ],
+     [
+      0.022500000000000853,
+      "ff_hot:1_000"
+     ],
+     [
+      0.015044999909999968,
+      "tt:1_000"
+     ]
+    ]
+   },
+   "NEG": {
+    "in_range": 5,
+    "outside_range": [],
+    "pass_role_range_0p25": 5,
+    "pass_all_codes_0p25": 5,
+    "worst_resid_role_LSB": 0.09891878716242752,
+    "worst_resid_all_LSB": 0.09891878716242752,
+    "resid_sigma_all_LSB": 0.032501338568205015,
+    "cal_shift_LSB_min_max": [
+     -0.125,
+     0.0
+    ],
+    "cal_range_LSB": [
+     -4.0,
+     3.8749999999999996
+    ],
+    "raw_max_abs_LSB": 0.22504490991017922,
+    "worst_samples_role": [
+     [
+      0.09891878716242752,
+      "ss:1_000"
+     ],
+     [
+      0.022500000000000853,
+      "ff_hot:1_000"
+     ],
+     [
+      0.015044999909999968,
+      "tt:1_000"
+     ]
+    ]
+   }
+  }
+ ],
+ "disposition": "passed (safe-dccorner-20261020-r3): OC 5/5 and NEG 5/5 samples within 0.25 LSB over their role ranges; all codes 4..59: OC 5, NEG 5; outside cal range: 0 / 0; cal shift used ['0.00', '0.00'] / ['-0.12', '0.00'] LSB of +-4",
+ "raw_results": "none (model on the DC MC summaries)"
+}

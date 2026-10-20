@@ -1,0 +1,300 @@
+{
+ "block": "r1_safe",
+ "command": "python3 sim/run_deck.py --block r1_safe --deck tb_safe_dcmc3.cir --run-id safe-dcmc-20261020-r3 --corners tt_mm_s1,tt_mm_s2,tt_mm_s3 --set N=17 --set NET=schematic/r1_safe.spice --analyze analyze_dcmc3.py --question Revision 3 comparator (mirror w40 l10, rhigh degeneration): DC mismatch MC, 51 samples, tt 27 C, 13 cell thresholds per draw: raw centre error vs threshold (input of cal_model.py)",
+ "container_image": "tapeoutbench-eda:latest sha256:ddeb6957... (checked by flow/run.sh)",
+ "corners": {
+  "tt_mm_s1": {
+   "cap": "cap_typ_mismatch",
+   "mos": "mos_tt_mismatch",
+   "res": "res_typ_mismatch",
+   "temp_C": 27,
+   "vdd": 1.2,
+   "vdda": 3.3
+  },
+  "tt_mm_s2": {
+   "cap": "cap_typ_mismatch",
+   "mos": "mos_tt_mismatch",
+   "res": "res_typ_mismatch",
+   "temp_C": 27,
+   "vdd": 1.2,
+   "vdda": 3.3
+  },
+  "tt_mm_s3": {
+   "cap": "cap_typ_mismatch",
+   "mos": "mos_tt_mismatch",
+   "res": "res_typ_mismatch",
+   "temp_C": 27,
+   "vdd": 1.2,
+   "vdda": 3.3
+  }
+ },
+ "cpuset": "109-111",
+ "date_utc": "2026-10-20T14:38:34.592713Z",
+ "deck": "sim/tb_safe_dcmc3.cir",
+ "deck_sha256": "064fa013027148cfa686dae208f03e8729a23a3f462f42fae84b3168196eb8b7",
+ "disposition": "raw (uncalibrated): sigma 28.6 mV, max |centre error| 71.8 mV (2.15 LSB), 51 samples, 2 missing points; repeat check max 0.000 mV",
+ "jobs": {
+  "tt_mm_s1": {
+   "log": "r1_safe/safe-dcmc-20261020-r3/tb_safe_dcmc3_tt_mm_s1.log",
+   "rc": 0,
+   "wall_s": 330.3
+  },
+  "tt_mm_s2": {
+   "log": "r1_safe/safe-dcmc-20261020-r3/tb_safe_dcmc3_tt_mm_s2.log",
+   "rc": 0,
+   "wall_s": 340.3
+  },
+  "tt_mm_s3": {
+   "log": "r1_safe/safe-dcmc-20261020-r3/tb_safe_dcmc3_tt_mm_s3.log",
+   "rc": 0,
+   "wall_s": 330.3
+  }
+ },
+ "netlist": "schematic/variants/r1_safe_v_rhigh.spice",
+ "netlist_note": "run with NET=schematic/r1_safe.spice while that file held the rhigh-degeneration state; identical content is kept as schematic/variants/r1_safe_v_rhigh.spice",
+ "netlist_recorded_by_runner": {
+  "path": "schematic/r1_safe.spice",
+  "sha256": "8d33a287c2430d86b423a435ba71f3274cd4be0d7f49f3e1a7b2fa2800bf06b1"
+ },
+ "netlist_sha256": "8d33a287c2430d86b423a435ba71f3274cd4be0d7f49f3e1a7b2fa2800bf06b1",
+ "overrides": {
+  "N": "17",
+  "NET": "schematic/r1_safe.spice"
+ },
+ "pdk_commit": "84374023ee8b4b126bebbba67fcbada0a9c0ff0b (checked by flow/run.sh)",
+ "question": "Revision 3 comparator (mirror w40 l10, rhigh degeneration): DC mismatch MC, 51 samples, tt 27 C, 13 cell thresholds per draw: raw centre error vs threshold (input of cal_model.py)",
+ "raw_results": "$G1_RESULTS_ROOT/r1_safe/safe-dcmc-20261020-r3/",
+ "result": {
+  "missing_points": 2,
+  "per_threshold": {
+   "+0.0167": {
+    "centre_err_mV": {
+     "max": 64.74999999999999,
+     "mean": 6.882352941176469,
+     "min": -60.0,
+     "n": 51,
+     "sigma": 28.108174834074223
+    },
+    "hyst_mV": {
+     "max": 10.499999999999998,
+     "mean": 8.950980392156863,
+     "min": 7.999999999999993,
+     "n": 51,
+     "sigma": 0.49759127609605963
+    },
+    "max_abs_centre_LSB": 1.9424999999999994
+   },
+   "+0.2500": {
+    "centre_err_mV": {
+     "max": 66.5,
+     "mean": 7.338235294117643,
+     "min": -59.75,
+     "n": 51,
+     "sigma": 28.245675685404105
+    },
+    "hyst_mV": {
+     "max": 10.000000000000009,
+     "mean": 8.980392156862743,
+     "min": 8.000000000000007,
+     "n": 51,
+     "sigma": 0.45331874594889715
+    },
+    "max_abs_centre_LSB": 1.9949999999999999
+   },
+   "+0.4654": {
+    "centre_err_mV": {
+     "max": 68.0,
+     "mean": 7.774509803921573,
+     "min": -59.24999999999997,
+     "n": 51,
+     "sigma": 28.53271492231574
+    },
+    "hyst_mV": {
+     "max": 10.500000000000009,
+     "mean": 8.931372549019606,
+     "min": 8.000000000000007,
+     "n": 51,
+     "sigma": 0.4952678800123536
+    },
+    "max_abs_centre_LSB": 2.04
+   },
+   "+0.5654": {
+    "centre_err_mV": {
+     "max": 68.99999999999994,
+     "mean": 7.950980392156825,
+     "min": -59.25000000000003,
+     "n": 51,
+     "sigma": 28.683918925439468
+    },
+    "hyst_mV": {
+     "max": 10.500000000000064,
+     "mean": 8.950980392156865,
+     "min": 8.000000000000007,
+     "n": 51,
+     "sigma": 0.4975912760960606
+    },
+    "max_abs_centre_LSB": 2.069999999999998
+   },
+   "+0.6654": {
+    "centre_err_mV": {
+     "max": 69.74999999999997,
+     "mean": 8.122549019607838,
+     "min": -59.00000000000005,
+     "n": 51,
+     "sigma": 28.8760184672698
+    },
+    "hyst_mV": {
+     "max": 10.000000000000009,
+     "mean": 9.000000000000004,
+     "min": 7.999999999999896,
+     "n": 51,
+     "sigma": 0.47485807993381285
+    },
+    "max_abs_centre_LSB": 2.092499999999999
+   },
+   "+0.7500": {
+    "centre_err_mV": {
+     "max": 70.5,
+     "mean": 8.323529411764694,
+     "min": -58.99999999999994,
+     "n": 51,
+     "sigma": 29.08356343457686
+    },
+    "hyst_mV": {
+     "max": 10.000000000000009,
+     "mean": 9.009803921568635,
+     "min": 7.499999999999951,
+     "n": 51,
+     "sigma": 0.4695658829344441
+    },
+    "max_abs_centre_LSB": 2.1149999999999998
+   },
+   "+0.9167": {
+    "centre_err_mV": {
+     "max": 71.75149999999996,
+     "mean": 8.609343137254895,
+     "min": -58.74849999999998,
+     "n": 51,
+     "sigma": 29.475324296888857
+    },
+    "hyst_mV": {
+     "max": 10.496999999999979,
+     "mean": 9.065627450980395,
+     "min": 7.996999999999921,
+     "n": 51,
+     "sigma": 0.5241202511617135
+    },
+    "max_abs_centre_LSB": 2.1525449999999986
+   },
+   "-0.2500": {
+    "centre_err_mV": {
+     "max": 62.75,
+     "mean": 6.416666666666669,
+     "min": -60.5,
+     "n": 51,
+     "sigma": 28.109932419940016
+    },
+    "hyst_mV": {
+     "max": 10.000000000000009,
+     "mean": 8.999999999999998,
+     "min": 7.99999999999998,
+     "n": 51,
+     "sigma": 0.48507125007266755
+    },
+    "max_abs_centre_LSB": 1.8824999999999998
+   },
+   "-0.4654": {
+    "centre_err_mV": {
+     "max": 61.24999999999997,
+     "mean": 5.99509803921568,
+     "min": -61.0,
+     "n": 51,
+     "sigma": 28.23759011634356
+    },
+    "hyst_mV": {
+     "max": 10.000000000000009,
+     "mean": 8.960784313725487,
+     "min": 7.999999999999952,
+     "n": 51,
+     "sigma": 0.5224671605676185
+    },
+    "max_abs_centre_LSB": 1.837499999999999
+   },
+   "-0.5654": {
+    "centre_err_mV": {
+     "max": 60.5,
+     "mean": 5.808823529411789,
+     "min": -61.25000000000003,
+     "n": 51,
+     "sigma": 28.36455552940365
+    },
+    "hyst_mV": {
+     "max": 10.000000000000009,
+     "mean": 8.941176470588237,
+     "min": 8.000000000000007,
+     "n": 51,
+     "sigma": 0.4712005819881601
+    },
+    "max_abs_centre_LSB": 1.8375000000000008
+   },
+   "-0.6654": {
+    "centre_err_mV": {
+     "max": 59.99999999999994,
+     "mean": 5.632352941176477,
+     "min": -61.5,
+     "n": 51,
+     "sigma": 28.478507244162643
+    },
+    "hyst_mV": {
+     "max": 10.500000000000064,
+     "mean": 9.000000000000005,
+     "min": 8.000000000000007,
+     "n": 51,
+     "sigma": 0.4850712500726731
+    },
+    "max_abs_centre_LSB": 1.845
+   },
+   "-0.7500": {
+    "centre_err_mV": {
+     "max": 59.5,
+     "mean": 5.480392156862736,
+     "min": -61.5,
+     "n": 51,
+     "sigma": 28.58093269247355
+    },
+    "hyst_mV": {
+     "max": 10.500000000000064,
+     "mean": 9.00980392156863,
+     "min": 7.999999999999896,
+     "n": 51,
+     "sigma": 0.5096153497398808
+    },
+    "max_abs_centre_LSB": 1.845
+   },
+   "-0.9167": {
+    "centre_err_mV": {
+     "max": 58.248500000000035,
+     "mean": 5.559724489795935,
+     "min": -62.00149999999993,
+     "n": 49,
+     "sigma": 29.375972871959394
+    },
+    "hyst_mV": {
+     "max": 10.497000000000089,
+     "mean": 9.027612244897963,
+     "min": 7.996999999999921,
+     "n": 49,
+     "sigma": 0.5091826510153018
+    },
+    "max_abs_centre_LSB": 1.8600449999999977
+   }
+  },
+  "raw_centre_max_abs_mV": 71.75149999999996,
+  "raw_centre_sigma_mV": 28.649880014668003,
+  "repeat_check_max_mV": 0.0,
+  "samples": 51
+ },
+ "run_id": "safe-dcmc-20261020-r3",
+ "tool": "ngspice-46 (container banner from flow/run.sh ngspice -v; batch logs carry no banner)",
+ "wall_s": 340.5
+}

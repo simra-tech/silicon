@@ -1,0 +1,82 @@
+{
+ "block": "r1_isense",
+ "command": "python3 sim/run_deck.py --block r1_isense --deck tb_isense_droop.cir --run-id isense-droop-20261020-r1 --corners tt,ss,ff_hot --jobs 2 --analyze analyze_droop.py --question Hold droop: drift of the zero-current output over one 50 us PWM period after AZ (input-referred), gmin 1e-15",
+ "container_image": "tapeoutbench-eda:latest sha256:ddeb6957... (checked by flow/run.sh)",
+ "corners": {
+  "ff_hot": {
+   "cap": "cap_bcs",
+   "mos": "mos_ff",
+   "res": "res_bcs",
+   "temp_C": 125,
+   "vdd": 1.32,
+   "vdda": 3.6
+  },
+  "ss": {
+   "cap": "cap_wcs",
+   "mos": "mos_ss",
+   "res": "res_wcs",
+   "temp_C": 125,
+   "vdd": 1.08,
+   "vdda": 3.0
+  },
+  "tt": {
+   "cap": "cap_typ",
+   "mos": "mos_tt",
+   "res": "res_typ",
+   "temp_C": 27,
+   "vdd": 1.2,
+   "vdda": 3.3
+  }
+ },
+ "cpuset": "110-111",
+ "date_utc": "2026-10-20T14:47:09.672355Z",
+ "deck": "sim/tb_isense_droop.cir",
+ "deck_sha256": "e2e47aef7074203a647f1286bcefffcf9912794c9a55d91024b4ef231ed7dd27",
+ "disposition": "passed: worst |drift| 0.004 uV, worst hold-node droop 1.75 uV, mismatch bound 0.146 uV input-referred, 3 corners",
+ "jobs": {
+  "ff_hot": {
+   "log": "r1_isense/isense-droop-20261020-r1/tb_isense_droop_ff_hot.log",
+   "rc": 0,
+   "wall_s": 14.0
+  },
+  "ss": {
+   "log": "r1_isense/isense-droop-20261020-r1/tb_isense_droop_ss.log",
+   "rc": 0,
+   "wall_s": 18.0
+  },
+  "tt": {
+   "log": "r1_isense/isense-droop-20261020-r1/tb_isense_droop_tt.log",
+   "rc": 0,
+   "wall_s": 18.0
+  }
+ },
+ "netlist": "schematic/r1_isense.spice",
+ "netlist_sha256": "5db34e0a8f7c54abbc4d4b547462129dd862404f205e2c3472fb4095b93faf8b",
+ "overrides": {},
+ "pdk_commit": "84374023ee8b4b126bebbba67fcbada0a9c0ff0b (checked by flow/run.sh)",
+ "question": "Hold droop: drift of the zero-current output over one 50 us PWM period after AZ (input-referred), gmin 1e-15",
+ "raw_results": "$G1_RESULTS_ROOT/r1_isense/isense-droop-20261020-r1/",
+ "result": {
+  "ff_hot_125C": {
+   "drift_in_uV": 7.142856940843347e-05,
+   "h1_drift_uV": -1.751200000010833,
+   "h2_drift_uV": -1.751300000352174,
+   "mismatch_bound_in_uV": 0.1459416666960145
+  },
+  "ss_125C": {
+   "drift_in_uV": -0.00021428570029513594,
+   "h1_drift_uV": -1.4200000000297308,
+   "h2_drift_uV": -1.4110000003952905,
+   "mismatch_bound_in_uV": 0.1183333333358109
+  },
+  "tt_27C": {
+   "drift_in_uV": -0.0038571428590777096,
+   "h1_drift_uV": -0.015999999880556004,
+   "h2_drift_uV": 0.014000000270186774,
+   "mismatch_bound_in_uV": 0.001333333323379667
+  }
+ },
+ "run_id": "isense-droop-20261020-r1",
+ "tool": "ngspice-46 (container banner from flow/run.sh ngspice -v; batch logs carry no banner)",
+ "wall_s": 32.1
+}

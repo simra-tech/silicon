@@ -104,12 +104,13 @@ def main():
                 banner = line.strip(); break
         if banner:
             break
-    netlist = os.path.join(REPO, "designs/r1-joint/blocks", a.block, "schematic", a.block + ".spice")
+    netlist = os.path.join(REPO, "designs/r1-joint/blocks", a.block, extra["NET"]) if "NET" in extra else \
+        os.path.join(REPO, "designs/r1-joint/blocks", a.block, "schematic", a.block + ".spice")
     run = {
         "run_id": a.run_id, "block": a.block, "date_utc": datetime.datetime.utcnow().isoformat() + "Z",
         "command": "python3 sim/run_deck.py " + " ".join(sys.argv[1:]),
         "deck": "sim/" + a.deck, "deck_sha256": sha(os.path.join(simdir, a.deck)),
-        "netlist": "schematic/%s.spice" % a.block,
+        "netlist": extra.get("NET", "schematic/%s.spice" % a.block),
         "netlist_sha256": sha(netlist) if os.path.exists(netlist) else None,
         "corners": {c: dict(zip(("mos", "res", "cap", "temp_C", "vdda", "vdd"), CORNERS[c])) for c, _ in jobs},
         "overrides": extra, "tool": banner or "ngspice-46 (container banner from flow/run.sh ngspice -v; batch logs carry no banner)",

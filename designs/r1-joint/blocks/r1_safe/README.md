@@ -1,56 +1,188 @@
-# r1_safe (analog part) — window comparators with 6-bit threshold DACs
+# r1_safe (analog part) — window comparators with calibrated 6-bit threshold DACs
 
-State (2026-10-20): **schematic level, simulated.** No layout, no extraction. All numbers below are
-**simulated** (ngspice-46, pinned PDK), at schematic level, with ideal reference sources (marked in each
-deck). Nothing is measured. The digital part of r1_safe (blanking, latching, fault logic) is in r1_ctrl and is
-not part of this directory.
+State (2026-10-20): **revision 3, schematic level, simulated.** No layout, no extraction. All numbers below are
+**simulated** (ngspice-46, pinned PDK) at schematic level with ideal reference sources (marked in each deck).
+Nothing is measured. The digital part of r1_safe (blanking, latching, fault logic, calibration search, code summing)
+is in r1_ctrl and is not part of this directory. Revision 2 is superseded and kept below as the record.
 
 ## What it is
 
 Per sense channel (a, b) there are two continuous-time comparators on the r1_isense differential output
 (OUTP − OUTN = Vod):
 
-- **OC** (overcurrent, high side of the window): output high when Vod > Vth(code_hi).
-- **NEG** (negative current or phase short, low side of the window): output high when Vod < Vth(code_lo).
+- **OC** (overcurrent, high side of the window): output high when Vod > Vth(thr_oc).
+- **NEG** (negative current or phase short, low side of the window): output high when Vod < Vth(thr_neg).
 
 ```
-Vth_od(code) = (2*code - 63)/63 * VREF                    (VREF = 1.05 V: -1.05 V .. +1.05 V, 33.3 mV per code)
-Vsh_th(code) = VREF * (1/26 + (2*code - 63)/882)          (shunt-referred through r1_isense G = 14, pedestal VREF/26)
-             = -34.6 mV (code 0) .. +115.4 mV (code 63), 2.381 mV per code
+Vth_od(code) = (2*code - 63)/63 * VREF                    (VREF = 1.05 V: 33.3 mV per code = 1 LSB)
+Vsh_th(code) = VREF * (1/26 + (2*code - 63)/882)          (shunt-referred through r1_isense G = 14: 2.381 mV per code)
 ```
 
-- **Threshold DAC.** One 63-unit `rppd` string (unit 4 kΩ, w 2 µm, l 30.8 µm, 252 kΩ total, 4.2 µA from VREF) is
-  shared by all four comparators. Each comparator has two 64:1 thick-NMOS tree multiplexers on the same code
-  bits: REFP = T(code), REFN = T(63 − code). The threshold is a difference of two taps, so it depends on VREF and
-  resistor ratios only. The same VREF sets the r1_isense pedestal, so VREF error moves the pedestal and the
-  thresholds together.
-- **Comparator** (`r1_safe_cmp`): differential-difference input stage with two thick-oxide PMOS pairs
-  (w 20 µm, l 2 µm, ng 4), one pair on (INP, INN) and one pair on (REFN, REFP), into one NMOS mirror load
-  (w 16 µm, l 4 µm). Each pair has a 40 µA tail and a source-degeneration resistor per side (`rhigh` w 1 µm,
-  l 30 µm, about 40 kΩ). The degeneration keeps both pairs linear over the full ±1.05 V threshold range (revision 1
-  had no degeneration and failed, see below). Then a gain stage (NMOS w 2 µm, l 2 µm, same current density as the
-  mirror), an inverter on 3.3 V and a down-shift to 1.2 V logic (thick-input inverter on VDD, then a thin-oxide
-  inverter). Hysteresis: a small current (three series thick PMOS w 0.5 µm, l 8 µm on the bias line)
-  is steered by the output to one side of the mirror.
-- **NEG** uses the same cell with INP/INN swapped and the code bits inverted (thin-oxide inverters), so
-  REFP = T(63 − code_lo), REFN = T(code_lo).
-- **Inputs are thick-oxide PMOS gates** (rated 3.3 V). No divider is in the signal path. The r1_isense outputs are
-  ≤ VDD by construction, so the input is safe also in overload.
-- **Continuous time, no clock.** There is no clock-edge race as in the G1 TRIP comparator (finding F1).
-- Code bits are 1.2 V logic from the r1_ctrl registers, level-shifted to 3.3 V in the block (`r1_safe_ls`).
+Revision 3 adds the INTERFACES.md calibration path: a 6-bit calibration code per comparator, summed into its
+threshold DAC.
+
+- **String.** One shared `rppd` string, 252 units of 1 kΩ (w 2 µm, l 7.7 µm; same 252 kΩ, 4.2 µA, 3881 µm² as
+  revision 2), fine taps Tn = n/252 · VREF. Every 4th tap is a revision-2 coarse tap.
+- **DAC per comparator.** Two 256:1 thick-NMOS tree multiplexers (8 levels, 510 switches each): REFP = T(nP),
+  REFN = T(nN). With cell code c (OC: c = thr_oc; NEG: c = 63 − thr_neg) and calibration code k (0..63, d = k − 32):
+
+  ```
+  nP = 4c + ceil(d/2),   nN = 4(63 - c) - floor(d/2)      (both clipped to 0..252; summing logic in 1.2 V digital)
+  Vth_cell = REFP - REFN = (2c - 63)/63 * VREF + d * VREF/252
+  ```
+
+  The calibration step is VREF/252 = 4.17 mV Vod = **LSB/8**, range −32..+31 steps = **−4.0..+3.9 LSB**. The step is a
+  resistor ratio, so the digital knows the ideal toggle code at the calibration point exactly. Splitting d over
+  both taps keeps the range symmetric except near |Vth| = VREF (codes ≤ 3 or ≥ 60, outside the r1_isense range).
+- **Calibration (r1_ctrl, modelled in `sim/cal_model.py`, simulated in-sample in `tb_safe_mc3`).** At zero shunt
+  current the sense output is Vcal = −14·VREF/26 = −0.5654 V (OC cell frame; +0.5654 V in the NEG cell frame).
+  ctrl sets cell code c0 = 14 (NEG: 49), steps k upward until the output falls (k_rel), then downward until it
+  rises (k_trip), and stores k_cal = 32 + round((k_rel + k_trip)/2 − k_ideal), k_ideal = 36.31 (OC) / 27.69 (NEG).
+  The two-sided search removes the hysteresis. Because the reference point is the real zero-current output, the
+  r1_isense pedestal error and residual offset cancel in the shunt-referred threshold.
+- **Comparator** (`r1_safe_cmp`): as revision 2 (differential-difference input stage, two thick PMOS pairs w 20 / l 2,
+  ng 4, 40 µA tails, hysteresis by output-steered current, 3.3 V gain stage, down-shift to 1.2 V), with two
+  changes: source degeneration **`rppd` w 2 µm, l 308 µm** (≈ 40 kΩ, was `rhigh` w 1, l 30) and NMOS mirror
+  **w 40 µm, l 10 µm** (was w 16, l 4).
+- Inputs are thick-oxide PMOS gates, no divider, continuous time, no clock (no clock-edge race as in G1 TRIP F1).
+- Code bits (nP, nN: 8 + 8 per comparator) are 1.2 V logic, level-shifted to 3.3 V in the block (`r1_safe_ls`).
 
 Interface assumptions:
 
 | Item | Assumption in this step |
 | --- | --- |
 | Input | r1_isense OUTP/OUTN, 0.15–1.02 V each, common mode ≈ 0.57 V |
-| VREF | 1.05 V, **buffered** (ideal source here); load 4.2 µA (string) |
-| IBIAS | 5 µA PTAT per comparator, four inputs `ibias_oa`, `ibias_na`, `ibias_ob`, `ibias_nb` (ideal sources here) |
-| Code bits | 6 + 6 bits per channel, 1.2 V logic, static during operation (a code change is a mux transient) |
+| VREF | 1.05 V, **buffered** (ideal source here); load 4.0–4.6 µA (string) |
+| IBIAS | 5 µA PTAT per comparator, four inputs (ideal sources here) |
+| Codes | thr_oc, thr_neg (6 bit) and cal (6 bit) per comparator from r1_ctrl; the summing logic (two 8-bit adders per comparator, equations above) is digital and is **not** in this netlist; the analog ports are nP[7:0], nN[7:0] |
+| Calibration window | zero shunt current, r1_isense in normal (not AZ) mode, ≥ 100 ns settled after AZ; one code step per ≥ 200 ns |
 | Outputs | `oc_a`, `neg_a`, `oc_b`, `neg_b`, 1.2 V logic, high = threshold crossed, not latched |
-| Blanking | done in r1_ctrl: comparator outputs are invalid during r1_isense AZ and ≈ 200 ns after it |
+| Blanking | in r1_ctrl: outputs invalid during r1_isense AZ and ≈ 200 ns after it, and during code changes |
 
-## Status
+## Status (revision 3)
+
+Netlist of record: `schematic/r1_safe.spice` revision 3, sha256 prefix `812f886dce2b` (generated by
+`schematic/gen_safe.py`). Threshold LSB = 33.3 mV Vod (2.381 mV shunt). Calibration criterion (task): residual
+threshold (hysteresis-centre) error ≤ 0.25 LSB after calibration in ≥ 50/51 samples.
+
+| Check | Status | Evidence |
+| --- | --- | --- |
+| Calibration model on the 51-sample DC mismatch MC (one draw per sample, 13 thresholds), netlist of record | **passed**: OC 51/51 and NEG 51/51 within 0.25 LSB at every evaluated code (4, 9, 24, 32, 39, 54, 59); worst residual 0.115 LSB (OC), 0.125 LSB (NEG, all codes), σ 0.044 LSB; no sample outside the calibration range | `sim/results/cal-model-20261020-r3/`, `sim/results/safe-dcmc-20261020-r3rppd/` |
+| Calibration range needed vs provided | **passed**: used −0.38..+0.50 LSB of −4.0..+3.9 LSB (raw worst 0.44 LSB; revision-2 worst 2.4 LSB is also inside the range) | same |
+| Raw mismatch (no calibration), DC, 51 samples | run (report): centre σ 6.2 mV (0.19 LSB), worst 14.8 mV (0.44 LSB); offset part σ 6.2 mV, gain part σ 0.96 mV/V | `sim/results/safe-dcmc-20261020-r3rppd/` |
+| Same with `rhigh` degeneration (revision-3 mirror; first state of revision 3) | **failed**: raw σ 28.6 mV, worst 2.15 LSB; after calibration OC 24/51 within 0.25 LSB (worst 0.91 LSB): the gain part (σ 8.2 mV/V) is not removed by a one-point calibration | `sim/results/safe-dcmc-20261020-r3/` (netlist `schematic/variants/r1_safe_v_rhigh.spice`) |
+| Full-path transient mismatch MC, r1_isense → r1_safe, 30 samples, tt, in-sample calibration search, codes applied (OC thr 54 = 94.0 mV, NEG thr 9 = −13.2 mV shunt) | **passed**: OC 30/30 within 0.25 LSB, worst 0.208 LSB, σ 0.090 LSB; NEG 30/30, worst 0.069 LSB, σ 0.028 LSB; search toggles found in 30/30; k_cal 28–36 | `sim/results/safe-mc-20261020-r3/` (reduced fixture, see below) |
+| Delay at 10 % overdrive in the MC (from the shunt step, through r1_isense, codes applied) | **passed**: OC trip 109–121 ns, NEG trip 202–236 ns (< 300 ns) | same |
+| Systematic threshold error vs threshold, nominal, 5 corners (comparator alone, DC) | **passed**: raw centre error ≤ 7.5 mV (0.23 LSB, ss 125 °C at +0.92 V); after the modelled calibration ≤ 0.225 LSB (ss), ≤ 0.045 LSB (other corners) | `sim/results/safe-dccorner-20261020-r3/`, `sim/results/cal-model-corner-20261020-r3/` |
+| Joint path r1_isense (both channels, real outputs) → r1_safe (path fixture, see below), shunt-referred threshold centre at code 44 (70.1 mV), k = 32, tt / ss_cold / ff_hot | **passed** (±0.5 LSB uncalibrated): max \|error\| 0.032 / 0.032 / 0.052 LSB (76 / 76 / 125 µV shunt), 8/8 crossings per corner | `sim/results/safe-joint-20261020-r3b/` (first run without the cross-channel segment: `safe-joint-20261020-r3`, same numbers) |
+| Simultaneous switching: all four comparators switch at the same crossing on the shared string, vs the same ramps staggered by 2.5 µs | **passed** (≤ 0.1 LSB): simultaneous − staggered ≤ 0.0010 / 0.0010 / 0.0063 LSB; tap disturbance at the switching events ≤ 12 mV for ≈ 100 ns (tt); no solver abort (revision-2 issue 3 closed for the path fixture) | same |
+| Cross-channel kickback: channel b held 1 mV shunt (0.42 LSB) below, then above its threshold while channel a steps 0 → threshold + 10 % and back | **passed** (no transition of `oc_b`/`neg_b`), 3 corners; but the step kicks the shared taps by up to 71 mV (T76) / 38 mV (T176) for ≈ 200 ns. With 1 pF `cap_cmim` per reference node (`CREF` option, tt): 15 / 4.4 mV, no transition, OC delay 120 ns | same; `sim/results/safe-joint-cref-20261020-r3/` |
+| Delay from the shunt step through r1_isense, 10 % overdrive (code 44), tt / ss_cold / ff_hot | **passed** (< 300 ns): OC trip 139 / 156 / 130 ns, NEG release 110 / 125 / 104 ns; back to zero current: OC release and NEG trip 24–28 ns | `sim/results/safe-joint-20261020-r3b/` |
+| Static supply current, tt / ss / ff | run (report): IDDA 418 / 368 / 361 µA (four comparators incl. 4 × 5 µA bias), IDD < 0.02 µA, VREF load 4.0 / 3.6 / 4.6 µA | `sim/results/safe-op-20261020-r3/` |
+| Hysteresis | run (report): 6.5–12.0 mV Vod nominal over 5 corners (0.2–0.36 LSB) | `sim/results/safe-dccorner-20261020-r3/` |
+| Threshold vs code transient deck at 5 corners with the full netlist (`tb_safe_cmp3.cir`, generated) | **not run**: CPU budget (the full 256:1 muxes run at about 55 s per simulated µs); replaced by the DC corner deck (threshold vs code) and the joint deck (delay, path fixture) | — |
+| Joint path with the full 256:1 mux netlist | **not run** (`dev-joint3-fullmux` stopped at 0.6 µs: about 8 min per simulated µs); the path fixture is used | — |
+| Mismatch MC at ss / ff (comparator or full path) | **not run** | — |
+| Calibration search with the full 256:1 mux netlist and code-change transients | **not run** at sample level (`dev-mc3-smoke-fullmux` stopped, too slow); the MC uses ideal tap switches | — |
+| Real VREF buffer, real bias, digital summing logic and calibration FSM (gate level) | **not run** (ideal sources; summing and search modelled) | — |
+| Layout, DRC, LVS, PEX | **not run** | — |
+
+**Reduced fixture of `tb_safe_mc3` (deliberate).** The MC replaces the 256:1 muxes and level shifters by ideal tap
+switches (S elements, 2 kΩ, 50 fF per reference node) on the taps the search and the operating codes can select.
+The muxes carry no DC current into the comparator gates, so they add no mismatch. Their dynamics are in the joint
+deck (full netlist). The full-mux version ran at about 55 s per simulated µs (`dev-mc3-smoke-fullmux`, stopped).
+The mean centre error in the MC (+67 µV OC, +70 µV NEG, shunt) agrees with the ramp lag of the measurement
+(ramp 1.33 mV/µs × (trip delay − release delay)/2 ≈ 67 µV). It is not corrected.
+
+## Numbers (revision 3, simulated, schematic level)
+
+| Quantity | tt 27 °C | ss 125 °C | ff −40 °C | ss −40 °C | ff 125 °C |
+| --- | --- | --- | --- | --- | --- |
+| Supplies VDDA / VDD (V) | 3.3 / 1.2 | 3.0 / 1.08 | 3.6 / 1.32 | 3.0 / 1.08 | 3.6 / 1.32 |
+| Raw threshold-centre error over ±0.92 V, nominal (mV Vod) | 0.2…0.5 | 1.0…7.5 | 0.0 | −0.5…0.5 | 0.5…1.5 |
+| Residual after the modelled calibration, nominal (LSB) | 0.015 | 0.225 | 0.000 | 0.015 | 0.045 |
+| Hysteresis, nominal (mV Vod) | 8.0–8.5 | 11.5–12.0 | 6.5 | 7.0–7.5 | 9.0–9.5 |
+| IDDA, four comparators incl. 4 × 5 µA bias (µA) | 418 | 368 | 361 | not run | not run |
+| VREF load, string (µA) | 4.0 | 3.6 | 4.6 | not run | not run |
+| Joint path, centre error at code 44, uncalibrated (LSB) | 0.032 | not run | not run | 0.032 | 0.052 |
+| Joint path, OC trip delay from the shunt step, 10 % overdrive (ns) | 139 | not run | not run | 156 | 130 |
+| Joint path, peak string-tap kick from a full step on the other channel (mV) | 71 | not run | not run | 62 | 69 |
+| MC (30 samples, tt, calibrated): centre error worst OC / NEG (LSB) | 0.208 / 0.069 | not run | not run | not run | not run |
+| MC delay at 10 % overdrive OC / NEG (ns) | 109–121 / 202–236 | not run | not run | not run | not run |
+
+DC resolution of the corner and mismatch decks: 0.5 mV sweep step (0.25 mV on the centre).
+
+Mismatch (tt, 51 draws, netlist of record): raw centre σ 6.2 mV, worst 14.8 mV; after calibration σ 0.044 LSB,
+worst 0.125 LSB. Full path (30 samples, isense + string + comparators, codes applied): OC σ 0.090 LSB, worst
+0.208 LSB; NEG σ 0.028 LSB, worst 0.069 LSB. The OC spread is larger because thr 54 is 1.3 V Vod from the
+calibration point (gain mismatch of the two input pairs and of r1_isense acts over that distance).
+
+## Mismatch trade (revision 3)
+
+DC MC, 51 draws each, same seeds, revision-3 mirror (w 40, l 10) in both:
+
+| Degeneration | Raw σ (mV) | Raw worst (LSB) | Gain part σ (mV/V) | Within 0.25 LSB after calibration (OC / NEG) | Cal range used (LSB) | Device area, block (µm²) |
+| --- | --- | --- | --- | --- | --- | --- |
+| `rhigh` w 1, l 30 (revision 2 resistor) | 28.6 | 2.15 | 8.2 | 24/51 / 50/51 | −2.0…+1.9 | 10 306 |
+| **`rppd` w 2, l 308 (netlist of record)** | **6.2** | **0.44** | **0.96** | **51/51 / 51/51** | −0.38…+0.50 | **19 682** |
+
+Calibration alone (with `rhigh`) leaves 27 OC samples outside 0.25 LSB, so the resistors were re-sized as planned.
+The cost is +9 376 µm² of `rppd` (16 × 616 µm² − 480 µm²), less than the +15 000 µm² quoted in revision 2, because
+`rppd` matches about 7 × better than `rhigh` per area (S4: 15 nm vs 48 nm matching coefficient). The mirror
+change (w 16, l 4 → w 40, l 10, same W/L, 6.25 × area, +2 688 µm²) brings the mirror term from about 18 mV to
+≤ 7 mV σ (estimate from the revision-2 split; with `rppd` the total raw σ is 6.2 mV, so the mirror term is ≤ 6.2 mV).
+With `rppd`, the raw error (0.44 LSB worst) is already inside ±0.5 LSB without calibration; calibration gives the
+0.25 LSB margin and removes the corner offset.
+
+## Area (device area, from `schematic/area.py`)
+
+| Item | Revision 2 (µm²) | Revision 3 (µm²) |
+| --- | --- | --- |
+| Threshold string (`rppd`) | 3 881 (63 units) | 3 881 (252 units) |
+| Four comparators (MOS + degeneration) | 2 352 | 14 416 (MOS 1 140 + `rppd` 2 464 each) |
+| Muxes (8) and code level shifters | 404 (64:1, 24 LS) | 1 385 (256:1, 64 LS) |
+| **Total** | **6 637** | **19 682 (0.020 mm²)** |
+
+Layout estimate: the degeneration resistors and string pack well (factor ≈ 1.5–2); the eight 256:1 trees have
+4 080 switches, about 6 µm² each with routing (assumption, not drawn), ≈ 0.025 mm². Block estimate ≈ 0.05–0.06 mm²
+(revision 2: 0.02–0.027 mm²). This is an estimate, not a layout.
+
+## Open issues (revision 3)
+
+1. **Summing logic and search in r1_ctrl.** The two 8-bit adders per comparator (equations above) and the
+   two-sided search are digital. They are modelled (`sim/cal_model.py`) and simulated as stimulus (`tb_safe_mc3`),
+   not implemented. T5 must decide whether the adders sit in r1_ctrl (then the analog port is nP/nN, 64 bits)
+   or in a small r1_safe digital wrapper (then the port is thr + cal as in INTERFACES.md).
+2. **Calibration time vs zero-current window.** A two-sided search over ±8 codes with 200 ns per step takes
+   6.8 µs; a full 64-code search takes 26 µs. The r1_isense AZ window is ≥ 2.05 µs per PWM period. Proposal:
+   full search at power-up with the bridge off, then tracking (one compare per zero-current window, ±1 step).
+   INTERFACES.md says the search runs "during `az_win`"; during the AZ itself the sense output is not valid, so the
+   search must use the zero-current time **after** AZ (contract clarification needed; not edited here).
+3. **ss 125 °C systematic gain error.** After calibration 0.225 LSB at +0.92 V (code 59) in the nominal ss corner.
+   With mismatch (σ 0.044 LSB) a sample at ss can exceed 0.25 LSB near the top codes. Mismatch MC at ss: not run.
+   Likely cause: the two input pairs run at different common modes (inputs 0.57 V, taps 0.525 V). Options: tap
+   common mode equal to the sense common mode, or a calibration at a second code.
+4. **Mux area and code-change transients.** 4 080 thick switches. The code-change behaviour of the full trees
+   during the search is not simulated at sample level.
+5. **Blanking** during r1_isense AZ, ≈ 200 ns after it, and after each code change (r1_ctrl).
+6. **Ideal sources.** VREF must be buffered and shared with the r1_isense pedestal arms (the calibration removes
+   a common VREF error at the zero-current point, not a VREF error between the two blocks' references).
+7. **Current.** About 0.42 mA from VDDA for four comparators (unchanged tails).
+
+8. **String-tap kickback.** A fast full-scale step on one sense output kicks the shared string taps by up to 71 mV
+   for ≈ 200 ns (path fixture). No false transition of the other channel at 0.42 LSB margin, 3 corners. Closer to
+   the threshold, a short false flag or a short delay is possible; r1_ctrl should filter flags shorter than ≈ 300 ns
+   or the layout should add 1 pF MIM per reference node (`CREF=26` in `gen_safe.py`, +5 400 µm², reduces the kick
+   to 15 mV, simulated at tt only). Not adopted in the netlist of record yet.
+9. **Path fixture.** The joint deck uses the conducting mux path (8 real switches plus one off switch per level)
+   instead of the full 256:1 trees, with static codes and no code level shifters. The full netlist ran at about
+   8 min per simulated µs (`dev-joint3-fullmux`, stopped).
+
+## Revision 2 (superseded)
+
+### Revision 2 status (superseded, kept as the record)
+
+Netlist: `schematic/r1_safe_r2.spice` (sha256 prefix `63ac3d0b7961` without the added SUPERSEDED header line). Correction found in revision 3: `tb_safe_dcmc.cir` calls `reset` for every threshold, so its "51 samples x 3 thresholds" are 153 independent mismatch draws. The σ (32.1 mV) is valid; any per-sample correlation across thresholds is not.
 
 Netlist of record: `schematic/r1_safe.spice`, revision 2, sha256 prefix `63ac3d0b7961`. Threshold LSB = 33.3 mV Vod
 (2.381 mV shunt). Criterion for threshold accuracy: the threshold (centre of the hysteresis band) within ±0.5 LSB
@@ -73,7 +205,7 @@ Netlist of record: `schematic/r1_safe.spice`, revision 2, sha256 prefix `63ac3d0
 | Corners ss_cold / ff_hot for the full deck | **not run** (DC development runs only, `dev-dc-03`) | — |
 | Layout, DRC, LVS, PEX | **not run** | — |
 
-## Numbers (simulated, schematic level)
+### Revision 2 numbers (simulated, schematic level)
 
 | Quantity | tt 27 °C | ss 125 °C | ff −40 °C |
 | --- | --- | --- | --- |
@@ -91,7 +223,7 @@ The ss threshold error is systematic and grows with |Vth| (+4.9 mV at code 4 OC 
 NEG delay at ss is long because the effective overdrive is 21.8 mV minus half the hysteresis minus the ss offset
 (about 9 mV); overdrive in the deck is measured from the ideal threshold.
 
-## Mismatch: what dominates
+### Revision 2 mismatch: what dominates
 
 The degenerated pairs give the full ±1.05 V range, but every DC drop mismatch in the pair is now an offset:
 the offset is about σ(mismatch) × (tail current × degeneration resistance), and that product is set by the range.
@@ -108,37 +240,6 @@ So `rhigh` mismatch gives about 27 mV σ and the mirror about 18 mV σ; the inpu
 alone cannot reach the ±0.5 LSB target (a σ below about 4 mV needs about 50 × the resistor area and 25 × the mirror
 area).
 
-## Area (device area, from `schematic/area.py`)
-
-| Item | µm² |
-| --- | --- |
-| Threshold string (63 `rppd` units) | 3881 |
-| Four comparators (MOS 468 + `rhigh` 120 each) | 2352 |
-| Eight 64:1 multiplexers, 24 level shifters, 12 inverters | 404 |
-| **Total** | **6637 (0.0066 mm²)** |
-
-With an analog layout factor of 3–4: about 0.02–0.027 mm² for the block (four comparators, both channels).
-
-## Open issues
-
-1. **Comparator offset under mismatch (failed, σ ≈ 1 LSB).** Options, in order of recommendation:
-   (a) zero-current calibration by r1_ctrl: during the r1_isense AZ window (shunt current zero, Vod at the pedestal
-   point), step the code of each comparator and find the toggle code; store the offset in LSB and correct the
-   programmed code. No added analog area; residual ±0.5 LSB quantization plus gain error.
-   (b) auto-zero of the comparator in the same AZ window (offset stored on capacitors, as in r1_isense).
-   (c) `rppd` degeneration with larger area and a larger mirror (area estimate about +15 000 µm²).
-   A decision is needed from r1_ctrl/system (calibration time, register for the offset).
-2. **ss systematic error** of up to +10.3 mV (0.31 LSB) at the range ends. With mismatch it adds to issue 1.
-3. **Simultaneous switching** of comparators that share string taps aborted the transient solver at
-   development level (step size). It is not proved that this is only a solver issue. Reference decoupling
-   capacitors (`CREF` in `gen_safe.py`) are prepared but not used.
-4. **Blanking.** The outputs are not valid during r1_isense AZ and for about 200 ns after it. r1_ctrl must blank.
-5. **Ideal sources.** VREF must be buffered and shared with the r1_isense pedestal arms; IBIAS (5 µA PTAT per
-   comparator) comes from r1_bgr.
-6. **Current.** About 0.4 mA from VDDA for four comparators (40 µA tail each). Revision 1 used 10 µA tails;
-   the degeneration needs the higher current for speed (20 µA tails with a long mirror gave 400–820 ns NEG delay,
-   `dev-dly-A`).
-
 ## Built against
 
 | Item | Version | How established |
@@ -146,17 +247,24 @@ With an analog layout factor of 3–4: about 0.02–0.027 mm² for the block (fo
 | PDK | IHP-Open-PDK `84374023ee8b4b126bebbba67fcbada0a9c0ff0b` | checked by `flow/run.sh` before every run |
 | ngspice | ngspice-46 (OSDI PSP 103, `r3_cmc`) | `flow/run.sh ngspice -v` banner, 2026-10-20; `sim/.spiceinit` loads the OSDI models |
 | Container | `tapeoutbench-eda:latest`, id `sha256:ddeb6957…` | checked by `flow/run.sh` |
+| Python (calibration model, host) | python3 with numpy (versions in `sim/results/cal-model-*/run.json`) | recorded by `cal_model.py` |
 | xschem / KLayout / LibreLane / CACE | not used in this step | — |
 
 ## Files and reproduction
 
-- `schematic/gen_safe.py` → `schematic/r1_safe.spice` (generated; sizes in the first line). `schematic/area.py`
-  gives the device area (`python3 area.py r1_safe.spice r1_safe_an`).
-- Decks: `sim/tb_safe_cmp.cir` (generated by `sim/gen_tb_safe_cmp.py`, parameters in `sim/tb_safe_cmp.json`),
-  `sim/tb_safe_dcmc.cir`, `sim/tb_safe_mc.cir` (transient MC, not run on revision 2). Analyzers `sim/analyze_*.py`;
-  runner `sim/run_deck.py`.
-- Campaign: `sh designs/r1-joint/blocks/r1_safe/sim/campaign_20261020.sh` from the repository root (CPU set
-  109–111). Raw waveforms: `$G1_RESULTS_ROOT/r1_safe/<run-id>/`.
-- `sim/results/<run-id>/run.json` and `summary.json` per run. Runs named `dev-*` are development runs on other
-  netlist states (the netlist hash is in `run.json`); they are a record, not evidence. A first transient MC
-  (`safe-mc-20261020-r1`, revision 1, code 32 only) was stopped before it completed when revision 1 failed.
+- `schematic/gen_safe.py` → `schematic/r1_safe.spice` (revision 3, generated; sizes in the first line);
+  `schematic/variants/` holds the variant netlists of the trade runs (`r1_safe_v_rhigh.spice`,
+  `r1_safe_v_rppd.spice` = netlist of record); `schematic/r1_safe_r2.spice` is the superseded revision 2.
+  `python3 schematic/area.py schematic/r1_safe.spice r1_safe_an` gives the device area.
+- Revision-3 decks: `sim/tb_safe_dcmc3.cir` (DC MC and nominal corners, one draw per sample), `sim/tb_safe_mc3.cir`
+  (from `sim/gen_tb_safe_mc3.py`, full-path MC with in-sample calibration), `sim/tb_safe_joint3.cir`
+  and `sim/tb_safe_joint3_cref.cir` (from `sim/gen_tb_safe_joint3.py`, path fixture; `R1_CREF`, `R1_OUT`), `sim/tb_safe_op3.cir`, `sim/tb_safe_cmp3.cir` (from `sim/gen_tb_safe_cmp3.py`,
+  not run). Analyzers `sim/analyze_dcmc3.py`, `analyze_mc3.py`, `analyze_joint3.py`, `analyze_op3.py`,
+  `analyze_cmp3.py`; calibration model `sim/cal_model.py`.
+- Campaign: `sh designs/r1-joint/blocks/r1_safe/sim/campaign_20261020_r3.sh [dcmc|cal|corner|mc|joint]` from the
+  repository root (CPU set 109–111; step `joint2` adds the cross-channel and CREF runs). The revision-2 campaign is `sim/campaign_20261020.sh`. The supply-current run
+  `safe-op-20261020-r3` was started by hand (command in its `run.json`).
+- Raw waveforms: `<G1_RESULTS_ROOT>/r1_safe/<run-id>/`. `sim/results/<run-id>/run.json` and `summary.json` per
+  run. Runs named `dev-*` are development runs (`dev-dcmc3-smoke`, `dev-mc3-smoke-fullmux` stopped,
+  `dev-mc3-smoke-a` lost the calibration variables, `dev-mc3-smoke-b` 2-sample check, `dev-joint3-fullmux` stopped);
+  they are a record, not evidence.
