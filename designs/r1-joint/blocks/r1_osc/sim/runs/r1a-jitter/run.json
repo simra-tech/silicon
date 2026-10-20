@@ -1,0 +1,28 @@
+{
+ "run_id": "r1a-jitter",
+ "suite": "jitter",
+ "command": "G1_CPUSET=100-102 G1_CPUS=3 G1_WORKDIR=designs/r1-joint/blocks/r1_osc flow/run.sh python3 sim/run_osc30.py jitter r1a-jitter --jobs 2 --code 22 --tstop 12u --en 12.2e-9 --question 'rev r1: transient-noise period and 30-cycle jitter at code 22 (30 MHz), tt/1.2/27; white comparator input noise 12.2 nV/rtHz and 4kT/R on RA/RB; ref case = zero noise (numerical floor)'",
+ "start_utc": "2026-10-20T11:23:16.465237Z",
+ "end_utc": "2026-10-20T11:23:17.997633Z",
+ "wall_s": 1.5,
+ "tools": {
+  "ngspice": "ngspice-46",
+  "container_image": "tapeoutbench-eda:latest sha256:ddeb69576f2808676d1c5d474ecf04f6d1d6f8abdcff6b72b39790ded924bab2"
+ },
+ "pdk_commit": "84374023ee8b4b126bebbba67fcbada0a9c0ff0b",
+ "inputs": {
+  "netlist": "schematic/r1_osc.spice",
+  "netlist_sha256": "d9d84501f5a18d5621ef9b6243d41172209fd738fe359d6067557669525cd949",
+  "decks": {
+   "tb_osc30_jitter.cir": "ee30110f432853706d00593d2195eb1ab9cdea0bec2fd7ee98fb60229e709143"
+  },
+  "runner_sha256": "4e5fea4dff7861f91baf4be0a9782494235912640b7a93ea9b57e75a36cd9ff9"
+ },
+ "raw_results": "G1_RESULTS_ROOT/r1_osc/r1a-jitter/ (expanded decks, logs, raw)",
+ "n_points": 2,
+ "n_rc_nonzero": 2,
+ "question": "rev r1: transient-noise period and 30-cycle jitter at code 22 (30 MHz), tt/1.2/27; white comparator input noise 12.2 nV/rtHz and 4kT/R on RA/RB; ref case = zero noise (numerical floor)",
+ "result": "both cases aborted at t = 25 ns: 'Timestep too small ... trouble with node v.x1.xcmpa.vni#branch' (trnoise sample time 200 ps)",
+ "disposition": "failed run (numerics of the noise source setting); rerun as r1b-jitter with NT = 50 ps, which ran in smoke01",
+ "probe": null
+}

@@ -1,0 +1,31 @@
+{
+ "run_id": "smoke01",
+ "suite": "smoke",
+ "command": "G1_CPUSET=100-102 G1_CPUS=3 G1_WORKDIR=designs/r1-joint/blocks/r1_osc flow/run.sh python3 sim/run_osc30.py smoke smoke01 --jobs 3 --tstop 3u --en 12.2e-9 --question 'deck smoke test (psrr step, startup, mc seeds 1/2/1-repeat, jitter 3 us)'",
+ "start_utc": "2026-10-20T10:31:30.324961Z",
+ "end_utc": "2026-10-20T10:51:58.745172Z",
+ "wall_s": 1228.4,
+ "tools": {
+  "ngspice": "ngspice-46",
+  "container_image": "tapeoutbench-eda:latest sha256:ddeb69576f2808676d1c5d474ecf04f6d1d6f8abdcff6b72b39790ded924bab2"
+ },
+ "pdk_commit": "84374023ee8b4b126bebbba67fcbada0a9c0ff0b",
+ "inputs": {
+  "netlist": "schematic/r1_osc.spice",
+  "netlist_sha256": "d9d84501f5a18d5621ef9b6243d41172209fd738fe359d6067557669525cd949",
+  "decks": {
+   "tb_osc30_jitter.cir": "ee30110f432853706d00593d2195eb1ab9cdea0bec2fd7ee98fb60229e709143",
+   "tb_osc30_mc.cir": "c3570475d2afdc8b6de513c6856b8cfd455a38acbca92e9d3c12923cd6a91089",
+   "tb_osc30_psrr.cir": "29d936a0fcefb29e5f3b9d47390f47aa8e4a204a80ec9998a9d99dc6529443c8",
+   "tb_osc30_startup.cir": "d666f33f31047848f9d9ea01091a53f2ab2f8f38c69bf8d158e47c577aec46a1"
+  },
+  "runner_sha256": "0f002b965fac2bb0093f05f5ddd9462ed5fdc673f8ca0a1a084c445661dba951"
+ },
+ "raw_results": "G1_RESULTS_ROOT/r1_osc/smoke01/ (expanded decks, logs, raw)",
+ "n_points": 6,
+ "n_rc_nonzero": 0,
+ "question": "deck smoke test (psrr step, startup, mc seeds 1/2/1-repeat, jitter 3 us)",
+ "result": "all decks ran; MC seed 1 twice gave different samples (32.28 / 32.73 MHz): set rndseed in .spiceinit does not fix the sample",
+ "disposition": "deck check; MC deck changed to .option seed",
+ "probe": null
+}

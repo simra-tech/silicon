@@ -1,0 +1,28 @@
+{
+ "run_id": "tune03-probe",
+ "suite": "probe",
+ "command": "G1_CPUSET=100-102 G1_CPUS=3 G1_WORKDIR=designs/r1-joint/blocks/r1_osc flow/run.sh python3 sim/run_osc30.py probe tune03-probe --probe 'tt:1.2:27:0 tt:1.2:27:16 ss:1.08:125:0 ss:1.08:125:16 ff:1.32:-40:16 ff:1.32:-40:31' --question 'M_TAIL=3: corner ratios vs tune02 (M_TAIL=2)'",
+ "start_utc": "2026-10-20T10:20:04.315126Z",
+ "end_utc": "2026-10-20T10:21:15.761593Z",
+ "wall_s": 71.4,
+ "tools": {
+  "ngspice": "ngspice-46",
+  "container_image": "tapeoutbench-eda:latest sha256:ddeb69576f2808676d1c5d474ecf04f6d1d6f8abdcff6b72b39790ded924bab2"
+ },
+ "pdk_commit": "84374023ee8b4b126bebbba67fcbada0a9c0ff0b",
+ "inputs": {
+  "netlist": "schematic/r1_osc.spice",
+  "netlist_sha256": "48f22f3dc808bfe99529e3c49847d8911759638d5d915f1f41e4681dea64d15e",
+  "decks": {
+   "tb_osc30.cir": "b6c4e521f05460d5d9e18e5516f0ca8cfe2b5d8c471d688d856ce6f24feeb63c"
+  },
+  "runner_sha256": "f2b17ea0917e3ff958a5b128b7ce7f5add5b78a3cd0b1ebd3d74d6a9a475e70e"
+ },
+ "raw_results": "G1_RESULTS_ROOT/r1_osc/tune03-probe/ (expanded decks, logs, raw)",
+ "n_points": 6,
+ "n_rc_nonzero": 0,
+ "question": "M_TAIL=3: corner ratios vs tune02 (M_TAIL=2)",
+ "result": "tail x3 gives no faster loop (tloop 1.17 vs 1.12 ns at code 0) and the same ss factor 0.769; IDD +8 uA",
+ "disposition": "tuning step; tail kept at x2",
+ "probe": "tt:1.2:27:0 tt:1.2:27:16 ss:1.08:125:0 ss:1.08:125:16 ff:1.32:-40:16 ff:1.32:-40:31"
+}

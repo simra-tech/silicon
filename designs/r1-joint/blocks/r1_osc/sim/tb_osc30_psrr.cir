@@ -1,0 +1,30 @@
+* R1_OSC supply sensitivity: CASE = step (10 mV step at 1.0 us), rip20k / rip1M (10 mV peak sine ripple)
+* osc_clk and vdd are written to @@RAW@@.txt (results root); run_osc30.py extracts every period and
+* regresses frequency on the supply (delta-f/f per mV).
+.param VDD=@@VDD@@
+.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerMOSlv.lib @@MOS@@
+.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerRES.lib @@RES@@
+.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerCAP.lib @@CAP@@
+.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerDIO.lib dio_tt
+.temp @@TEMP@@
+.option rshunt=1e12
+.include @@NETLIST@@
+* supply sources (one is selected by the runner through @@CASE@@ substitution below)
+Vdd vdd 0 @@VSRC@@
+Ven en 0 pulse(0 1.2 20n 0.2n 0.2n 1 2)
+Vt0 trim0 0 dc {1.2*@@B0@@}
+Vt1 trim1 0 dc {1.2*@@B1@@}
+Vt2 trim2 0 dc {1.2*@@B2@@}
+Vt3 trim3 0 dc {1.2*@@B3@@}
+Vt4 trim4 0 dc {1.2*@@B4@@}
+X1 en trim0 trim1 trim2 trim3 trim4 osc_clk vdd 0 r1_osc
+Cload osc_clk 0 50f
+.control
+set num_threads=1
+set wr_singlescale
+set wr_vecnames
+tran 20p @@TSTOP@@
+wrdata @@RAW@@.txt v(osc_clk) v(vdd)
+echo "PSRR done=1"
+.endc
+.end

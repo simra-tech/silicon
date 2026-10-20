@@ -1,0 +1,28 @@
+{
+ "run_id": "r1a-cmpnoise",
+ "suite": "cmpnoise",
+ "command": "G1_CPUSET=100-102 G1_CPUS=3 G1_WORKDIR=designs/r1-joint/blocks/r1_osc flow/run.sh python3 sim/run_osc30.py cmpnoise r1a-cmpnoise --jobs 1 --question 'rev r1: comparator input-referred noise at the trip point (tt/1.2/27)'",
+ "start_utc": "2026-10-20T10:28:02.575250Z",
+ "end_utc": "2026-10-20T10:28:06.320523Z",
+ "wall_s": 3.7,
+ "tools": {
+  "ngspice": "ngspice-46",
+  "container_image": "tapeoutbench-eda:latest sha256:ddeb69576f2808676d1c5d474ecf04f6d1d6f8abdcff6b72b39790ded924bab2"
+ },
+ "pdk_commit": "84374023ee8b4b126bebbba67fcbada0a9c0ff0b",
+ "inputs": {
+  "netlist": "schematic/r1_osc.spice",
+  "netlist_sha256": "d9d84501f5a18d5621ef9b6243d41172209fd738fe359d6067557669525cd949",
+  "decks": {
+   "tb_osc30_cmpnoise.cir": "83a9e30a3413cab6ea3ee1a2a9649630f90a30290f041f79dbfb781aadce8a33"
+  },
+  "runner_sha256": "00923a44138e33022e60beb9a511e6981b29796f00106d72349ebda63f87b0f3"
+ },
+ "raw_results": "G1_RESULTS_ROOT/r1_osc/r1a-cmpnoise/ (expanded decks, logs, raw)",
+ "n_points": 1,
+ "n_rc_nonzero": 0,
+ "question": "rev r1: comparator input-referred noise at the trip point (tt/1.2/27)",
+ "result": "deck error: echo of measured variables across plots failed; only integrated noise printed",
+ "disposition": "failed run (deck), superseded by r1b-cmpnoise",
+ "probe": null
+}

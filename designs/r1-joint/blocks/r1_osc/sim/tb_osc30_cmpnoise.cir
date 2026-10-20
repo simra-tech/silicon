@@ -1,0 +1,56 @@
+* R1_OSC comparator noise: one r1_osc_cmp biased at its trip point (inp = inn = VDD/2, the threshold), bias from
+* the r1_osc reference (rppd + diode).  .ac gives the gain to the first-stage output o1; .noise gives the
+* input-referred noise density (input source Vinp) and its integral.
+.param VDD=@@VDD@@
+.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerMOSlv.lib @@MOS@@
+.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerRES.lib @@RES@@
+.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerCAP.lib @@CAP@@
+.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerDIO.lib dio_tt
+.temp @@TEMP@@
+.option rshunt=1e12
+.include @@NETLIST@@
+Vdd vdd 0 dc {VDD}
+XRBIAS vdd vbn sub! rppd w=1u l=@@LRBIAS@@ m=1 b=0
+XMBD vbn vbn 0 0 sg13_lv_nmos w=2u l=0.5u ng=1 m=1
+Vinn inn 0 dc {VDD/2}
+* inp: trip point found by a dc sweep first, then .ac/.noise at that offset
+Vinp inp 0 dc {VDD/2} ac 1
+XC inp inn vbn out vdd 0 r1_osc_cmp
+.control
+set num_threads=1
+dc Vinp 0.55 0.65 0.05m
+* trip point of the first stage: o1 equal to its balanced value d1 (5-T pair)
+meas dc vtrip when v(xc.o1)=v(xc.d1)
+let vos_mv = (vtrip-0.5*@@VDD@@)*1e3
+set s_vos = "$&vos_mv"
+alter @vinp[dc] = $&vtrip
+op
+print v(xc.o1) v(xc.d1) v(xc.tail)
+ac dec 50 1k 10G
+let g = vdb(xc.o1)
+meas ac gdc find g at=1k
+let g3 = gdc-3
+meas ac f3db when g=g3 fall=1
+meas ac fu when g=0 fall=1
+set s_gdc = "$&gdc"
+set s_f3 = "$&f3db"
+set s_fu = "$&fu"
+noise v(xc.o1) Vinp dec 50 1k 10G
+* dec 50 from 1 kHz: index 150 = 1 MHz, 200 = 10 MHz, 300 = 1 GHz
+setplot noise1
+let en1m_nv = inoise_spectrum[150]*1e9
+let en10m_nv = inoise_spectrum[200]*1e9
+let en100m_nv = inoise_spectrum[250]*1e9
+echo "NOISE en_1MHz_nV= $&en1m_nv en_10MHz_nV= $&en10m_nv en_100MHz_nV= $&en100m_nv"
+setplot noise2
+let vin_uv = inoise_total*1e6
+let vout_uv = onoise_total*1e6
+echo "NOISE vos_mV= $s_vos gdc_dB= $s_gdc f3db_Hz= $s_f3 fu_Hz= $s_fu"
+echo "NOISE vin_rms_1k_10G_uV= $&vin_uv vout_rms_1k_10G_uV= $&vout_uv"
+noise v(xc.o1) Vinp dec 50 1k 1G
+setplot noise4
+let vin1g_uv = inoise_total*1e6
+let vout1g_uv = onoise_total*1e6
+echo "NOISE vin_rms_1k_1G_uV= $&vin1g_uv vout_rms_1k_1G_uV= $&vout1g_uv"
+.endc
+.end

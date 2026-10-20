@@ -1,0 +1,28 @@
+{
+ "run_id": "r1b-cmpnoise",
+ "suite": "cmpnoise",
+ "command": "G1_CPUSET=100-102 G1_CPUS=3 G1_WORKDIR=designs/r1-joint/blocks/r1_osc flow/run.sh python3 sim/run_osc30.py cmpnoise r1b-cmpnoise --jobs 1 --question 'rev r1: comparator input-referred noise at the trip point (tt/1.2/27); rerun of r1a-cmpnoise with fixed echo scoping'",
+ "start_utc": "2026-10-20T10:28:37.937550Z",
+ "end_utc": "2026-10-20T10:28:44.418161Z",
+ "wall_s": 6.5,
+ "tools": {
+  "ngspice": "ngspice-46",
+  "container_image": "tapeoutbench-eda:latest sha256:ddeb69576f2808676d1c5d474ecf04f6d1d6f8abdcff6b72b39790ded924bab2"
+ },
+ "pdk_commit": "84374023ee8b4b126bebbba67fcbada0a9c0ff0b",
+ "inputs": {
+  "netlist": "schematic/r1_osc.spice",
+  "netlist_sha256": "d9d84501f5a18d5621ef9b6243d41172209fd738fe359d6067557669525cd949",
+  "decks": {
+   "tb_osc30_cmpnoise.cir": "6a8e860afaf10219442dd336a50ce1dda458ccbf5237430c54062192c899c6a6"
+  },
+  "runner_sha256": "00923a44138e33022e60beb9a511e6981b29796f00106d72349ebda63f87b0f3"
+ },
+ "raw_results": "G1_RESULTS_ROOT/r1_osc/r1b-cmpnoise/ (expanded decks, logs, raw)",
+ "n_points": 1,
+ "n_rc_nonzero": 0,
+ "question": "rev r1: comparator input-referred noise at the trip point (tt/1.2/27); rerun of r1a-cmpnoise with fixed echo scoping",
+ "result": "gain to o1 22.7 dB, f3db 0.44 GHz; input-referred 33.1 / 15.3 / 12.2 nV/rtHz at 1 / 10 / 100 MHz; output noise 1 kHz-1 GHz 3.96 mV rms = 0.29 mV rms referred through the dc gain (simulated)",
+ "disposition": "passed (ran); white density 12.2 nV/rtHz used in the jitter deck",
+ "probe": null
+}

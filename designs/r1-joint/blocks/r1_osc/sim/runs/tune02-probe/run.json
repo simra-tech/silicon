@@ -1,0 +1,28 @@
+{
+ "run_id": "tune02-probe",
+ "suite": "probe",
+ "command": "G1_CPUSET=100-102 G1_CPUS=3 G1_WORKDIR=designs/r1-joint/blocks/r1_osc flow/run.sh python3 sim/run_osc30.py probe tune02-probe --probe 'tt:1.2:27:0 tt:1.2:27:1 tt:1.2:27:31 ss:1.08:125:0 ss:1.08:125:16 ff:1.32:-40:16 ff:1.32:-40:31 tt:1.2:27:15' --question 'r1 sizes: trim range and corner ratios'",
+ "start_utc": "2026-10-20T10:16:29.310922Z",
+ "end_utc": "2026-10-20T10:17:53.161566Z",
+ "wall_s": 83.9,
+ "tools": {
+  "ngspice": "ngspice-46",
+  "container_image": "tapeoutbench-eda:latest sha256:ddeb69576f2808676d1c5d474ecf04f6d1d6f8abdcff6b72b39790ded924bab2"
+ },
+ "pdk_commit": "84374023ee8b4b126bebbba67fcbada0a9c0ff0b",
+ "inputs": {
+  "netlist": "schematic/r1_osc.spice",
+  "netlist_sha256": "483ce17ab711b37e57e007aa1b0ffd7593f902e08b631496d27b054fe3ef9df8",
+  "decks": {
+   "tb_osc30.cir": "4d3eedbd6cd8df1f5a9fd81c7d589f7e8365aaabd227d3e41b1499f213f0349e"
+  },
+  "runner_sha256": "c1e04b72ba4fcb781850f94bebbad2b23ac2b5323fdf950538631c28c22c70e5"
+ },
+ "raw_results": "G1_RESULTS_ROOT/r1_osc/tune02-probe/ (expanded decks, logs, raw)",
+ "n_points": 8,
+ "n_rc_nonzero": 0,
+ "question": "r1 sizes: trim range and corner ratios",
+ "result": "tt code 0 47.46 / code 31 28.02 MHz; step code 0->1 2.2 %; ss/1.08/125 code 0 36.58 MHz; ss code 16 failed to measure (transient too short for 30 edges, deck changed to edges 8-24 and 1.4 us)",
+ "disposition": "tuning step; showed the ss factor ~0.771 at code 0 and that 30 MHz at code 16 with >= 32 MHz slow reach and <= 2 % step cannot all hold",
+ "probe": "tt:1.2:27:0 tt:1.2:27:1 tt:1.2:27:31 ss:1.08:125:0 ss:1.08:125:16 ff:1.32:-40:16 ff:1.32:-40:31 tt:1.2:27:15"
+}

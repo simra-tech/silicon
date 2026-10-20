@@ -1,0 +1,28 @@
+{
+ "run_id": "r1a-startup",
+ "suite": "startup",
+ "command": "G1_CPUSET=100-102 G1_CPUS=3 G1_WORKDIR=designs/r1-joint/blocks/r1_osc flow/run.sh python3 sim/run_osc30.py startup r1a-startup --jobs 3 --question 'rev r1: supply ramp with en low then en toggles; en tied high during ramp; tt/27, ss/1.08/125, ff/1.32/-40, code 16'",
+ "start_utc": "2026-10-20T11:19:25.680940Z",
+ "end_utc": "2026-10-20T11:23:07.049315Z",
+ "wall_s": 221.4,
+ "tools": {
+  "ngspice": "ngspice-46",
+  "container_image": "tapeoutbench-eda:latest sha256:ddeb69576f2808676d1c5d474ecf04f6d1d6f8abdcff6b72b39790ded924bab2"
+ },
+ "pdk_commit": "84374023ee8b4b126bebbba67fcbada0a9c0ff0b",
+ "inputs": {
+  "netlist": "schematic/r1_osc.spice",
+  "netlist_sha256": "d9d84501f5a18d5621ef9b6243d41172209fd738fe359d6067557669525cd949",
+  "decks": {
+   "tb_osc30_startup.cir": "d666f33f31047848f9d9ea01091a53f2ab2f8f38c69bf8d158e47c577aec46a1"
+  },
+  "runner_sha256": "4e5fea4dff7861f91baf4be0a9782494235912640b7a93ea9b57e75a36cd9ff9"
+ },
+ "raw_results": "G1_RESULTS_ROOT/r1_osc/r1a-startup/ (expanded decks, logs, raw)",
+ "n_points": 3,
+ "n_rc_nonzero": 0,
+ "question": "rev r1: supply ramp with en low then en toggles; en tied high during ramp; tt/27, ss/1.08/125, ff/1.32/-40, code 16",
+ "result": "tt/1.2/27, ss/1.08/125, ff/1.32/-40 (code 16): first osc_clk rising edge 15.6 / 20.2 / 12.1 ns after en rises (same after the second enable); frequency after enable 32.594 / 25.237 / 42.284 MHz, equal to the steady-state corner values; osc_clk max 34-45 mV during the supply ramp with en low and < 1 uV while en is low; en tied to vdd: first edge 0.486-0.508 us into the 1 us ramp (simulated)",
+ "disposition": "passed: starts at all three corners, stays low while disabled, restarts after re-enable with the first edge after one half period",
+ "probe": null
+}

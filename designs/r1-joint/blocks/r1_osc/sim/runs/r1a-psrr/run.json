@@ -1,0 +1,28 @@
+{
+ "run_id": "r1a-psrr",
+ "suite": "psrr",
+ "command": "G1_CPUSET=100-102 G1_CPUS=3 G1_WORKDIR=designs/r1-joint/blocks/r1_osc flow/run.sh python3 sim/run_osc30.py psrr r1a-psrr --jobs 3 --question 'rev r1: delta-f/f per mV for a 10 mV supply step and 10 mV-peak 20 kHz / 1 MHz ripple, tt/27, code 16'",
+ "start_utc": "2026-10-20T11:14:07.114732Z",
+ "end_utc": "2026-10-20T11:19:06.975343Z",
+ "wall_s": 299.9,
+ "tools": {
+  "ngspice": "ngspice-46",
+  "container_image": "tapeoutbench-eda:latest sha256:ddeb69576f2808676d1c5d474ecf04f6d1d6f8abdcff6b72b39790ded924bab2"
+ },
+ "pdk_commit": "84374023ee8b4b126bebbba67fcbada0a9c0ff0b",
+ "inputs": {
+  "netlist": "schematic/r1_osc.spice",
+  "netlist_sha256": "d9d84501f5a18d5621ef9b6243d41172209fd738fe359d6067557669525cd949",
+  "decks": {
+   "tb_osc30_psrr.cir": "29d936a0fcefb29e5f3b9d47390f47aa8e4a204a80ec9998a9d99dc6529443c8"
+  },
+  "runner_sha256": "4e5fea4dff7861f91baf4be0a9782494235912640b7a93ea9b57e75a36cd9ff9"
+ },
+ "raw_results": "G1_RESULTS_ROOT/r1_osc/r1a-psrr/ (expanded decks, logs, raw)",
+ "n_points": 3,
+ "n_rc_nonzero": 0,
+ "question": "rev r1: delta-f/f per mV for a 10 mV supply step and 10 mV-peak 20 kHz / 1 MHz ripple, tt/27, code 16",
+ "result": "10 mV step: +117 ppm/mV (32.594 -> 32.632 MHz); 20 kHz 10 mV-peak ripple: +110 ppm/mV (regression over a quarter ripple period), FM amplitude 118 ppm/mV; 1 MHz 10 mV-peak ripple: FM amplitude 373 ppm/mV, phase +54 deg, f 32.47-32.72 MHz (simulated, tt/1.2/27, code 16)",
+ "disposition": "ran; dc sensitivity 0.012 %/mV (0.12 % for 10 mV) is inside the S5 estimate (0.17 % for 10 mV); at 1 MHz the FM is 3.2x the dc value, cause not analysed (open issue)",
+ "probe": null
+}

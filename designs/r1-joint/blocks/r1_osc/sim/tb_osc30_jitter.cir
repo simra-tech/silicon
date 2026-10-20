@@ -1,0 +1,33 @@
+* R1_OSC transient-noise jitter: deck-local copy of r1_osc.spice (written by run_osc30.py to the results root) with
+*  - a trnoise voltage source in series with the + input of each comparator (input-referred white density from
+*    tb_osc30_cmpnoise.cir, @@EN@@ V/rtHz)
+*  - a trnoise current source across each timing resistor RA/RB (4kT/R, @@IN@@ A/rtHz)
+* Noise sample time NT = @@NT@@ s (white to 1/(2 NT)); maximum time step = NT.  CASE ref replaces the noise
+* sources by 0 V / 0 A sources (numerical floor; zero-amplitude trnoise aborts).
+* osc_clk is written to @@RAW@@.txt; run_osc30.py extracts period jitter and 30-cycle jitter.
+.param VDD=@@VDD@@
+.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerMOSlv.lib @@MOS@@
+.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerRES.lib @@RES@@
+.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerCAP.lib @@CAP@@
+.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerDIO.lib dio_tt
+.temp @@TEMP@@
+.option rshunt=1e12
+.include @@NETLIST@@
+Vdd vdd 0 dc {VDD}
+Ven en 0 pulse(0 {VDD} 20n 0.2n 0.2n 1 2)
+Vt0 trim0 0 dc {VDD*@@B0@@}
+Vt1 trim1 0 dc {VDD*@@B1@@}
+Vt2 trim2 0 dc {VDD*@@B2@@}
+Vt3 trim3 0 dc {VDD*@@B3@@}
+Vt4 trim4 0 dc {VDD*@@B4@@}
+X1 en trim0 trim1 trim2 trim3 trim4 osc_clk vdd 0 r1_osc
+Cload osc_clk 0 50f
+.control
+set num_threads=1
+set wr_singlescale
+set wr_vecnames
+tran 20p @@TSTOP@@ 0 @@TMAX@@
+wrdata @@RAW@@.txt v(osc_clk)
+echo "JIT done=1"
+.endc
+.end

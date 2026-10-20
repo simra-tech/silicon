@@ -1,0 +1,50 @@
+* R1_OSC start-up and enable: vdd ramps 0 -> VDD in 1 us with en = 0; en rises at 1.5 us, falls at 3.0 us,
+* rises again at 3.5 us; stop 4.5 us.  Measures: first osc_clk edge after each en rise, osc_clk low while
+* en = 0 (also during the ramp), frequency after each enable.  A second check ties en to vdd during the
+* ramp (G1 test): first edge time.
+.param VDD=@@VDD@@
+.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerMOSlv.lib @@MOS@@
+.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerRES.lib @@RES@@
+.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerCAP.lib @@CAP@@
+.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerDIO.lib dio_tt
+.temp @@TEMP@@
+.option rshunt=1e12
+.include @@NETLIST@@
+Vdd vdd 0 pwl(0 0 1u {VDD} 10u {VDD})
+Ven en 0 pwl(0 0 1.5u 0 1.5002u {VDD} 3u {VDD} 3.0002u 0 3.5u 0 3.5002u {VDD} 10u {VDD})
+Vt0 trim0 0 dc {VDD*@@B0@@}
+Vt1 trim1 0 dc {VDD*@@B1@@}
+Vt2 trim2 0 dc {VDD*@@B2@@}
+Vt3 trim3 0 dc {VDD*@@B3@@}
+Vt4 trim4 0 dc {VDD*@@B4@@}
+X1 en trim0 trim1 trim2 trim3 trim4 osc_clk vdd 0 r1_osc
+Cload osc_clk 0 50f
+* second instance: en tied to vdd during the ramp
+X2 vdd trim0 trim1 trim2 trim3 trim4 osc_clk2 vdd 0 r1_osc
+Cload2 osc_clk2 0 50f
+.control
+set num_threads=1
+tran 20p 4.5u
+let vh = 0.5*@@VDD@@
+meas tran maxoff1 max v(osc_clk) from=0 to=1.5u
+meas tran t_en1 when v(osc_clk)=vh rise=1 td=1.5u
+meas tran a1 when v(osc_clk)=vh rise=11 td=1.5u
+meas tran a2 when v(osc_clk)=vh rise=21 td=1.5u
+meas tran maxoff2 max v(osc_clk) from=3.05u to=3.5u
+meas tran t_en2 when v(osc_clk)=vh rise=1 td=3.5u
+meas tran b1 when v(osc_clk)=vh rise=11 td=3.5u
+meas tran b2 when v(osc_clk)=vh rise=21 td=3.5u
+meas tran t_tied when v(osc_clk2)=vh rise=1
+meas tran c1 when v(osc_clk2)=vh rise=31
+meas tran c2 when v(osc_clk2)=vh rise=41
+meas tran tvdd when v(vdd)=0.9*@@VDD@@ rise=1
+let d_en1 = (t_en1-1.5e-6)*1e9
+let d_en2 = (t_en2-3.5e-6)*1e9
+let f_en1 = 10e-6/(a2-a1)
+let f_en2 = 10e-6/(b2-b1)
+let f_tied = 10e-6/(c2-c1)
+let t_tied_us = t_tied*1e6
+let tvdd_us = tvdd*1e6
+echo "STARTUP d_en1_ns= $&d_en1 d_en2_ns= $&d_en2 f_en1_MHz= $&f_en1 f_en2_MHz= $&f_en2 maxoff_ramp_V= $&maxoff1 maxoff_dis_V= $&maxoff2 t_tied_first_us= $&t_tied_us tvdd90_us= $&tvdd_us f_tied_MHz= $&f_tied"
+.endc
+.end

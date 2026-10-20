@@ -1,0 +1,45 @@
+* R1_OSC testbench: frequency, duty, supply current and loop delay at one PVT point and one trim code
+* @@ fields are substituted by run_osc30.py (expanded decks go to the results root, not the tree).
+.param VDD=@@VDD@@
+.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerMOSlv.lib @@MOS@@
+.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerRES.lib @@RES@@
+.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerCAP.lib @@CAP@@
+.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerDIO.lib dio_tt
+.temp @@TEMP@@
+* rshunt: 1 TOhm from every node to ground (G1 revision 5: the rppd body node sub! floats)
+.option rshunt=1e12
+.include @@NETLIST@@
+Vdd vdd 0 dc {VDD}
+Ven en 0 pulse(0 {VDD} 20n 0.2n 0.2n 100 200)
+Vt0 trim0 0 dc {VDD*@@B0@@}
+Vt1 trim1 0 dc {VDD*@@B1@@}
+Vt2 trim2 0 dc {VDD*@@B2@@}
+Vt3 trim3 0 dc {VDD*@@B3@@}
+Vt4 trim4 0 dc {VDD*@@B4@@}
+X1 en trim0 trim1 trim2 trim3 trim4 osc_clk vdd 0 r1_osc
+Cload osc_clk 0 50f
+.control
+set num_threads=1
+tran 20p 1.4u
+let vh = 0.5*@@VDD@@
+meas tran t1 when v(osc_clk)=vh rise=8
+meas tran t2 when v(osc_clk)=vh rise=24
+meas tran th1 when v(osc_clk)=vh fall=8
+let per = (t2-t1)/16
+let fmhz = 1e-6/per
+let duty = (th1-t1)/per*100
+let idd = -i(vdd)
+meas tran iavg avg idd from=t1 to=t2
+let iua = iavg*1e6
+* loop delay: va crosses vth (rising) -> rstb falls (bank B released); comparator alone: -> ca rises
+let dva = v(x1.va)-v(x1.vth)
+meas tran tx when dva=0 rise=12
+meas tran tca when v(x1.ca)=vh rise=1 td=tx
+meas tran trb when v(x1.rstb)=vh fall=1 td=tx
+let tcmp = (tca-tx)*1e9
+let tloop = (trb-tx)*1e9
+meas tran vamax max v(x1.va) from=t1 to=t2
+meas tran vthavg avg v(x1.vth) from=t1 to=t2
+echo "OSC f_MHz= $&fmhz duty_pct= $&duty idd_uA= $&iua tcmp_ns= $&tcmp tloop_ns= $&tloop va_peak= $&vamax vth= $&vthavg"
+.endc
+.end

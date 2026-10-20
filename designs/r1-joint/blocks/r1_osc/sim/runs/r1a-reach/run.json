@@ -1,0 +1,28 @@
+{
+ "run_id": "r1a-reach",
+ "suite": "reach",
+ "command": "G1_CPUSET=100-102 G1_CPUS=3 G1_WORKDIR=designs/r1-joint/blocks/r1_osc flow/run.sh python3 sim/run_osc30.py reach r1a-reach --question 'rev r1: 32 codes at ss/1.08/125, ff/1.32/-40, ss/1.08/-40, ff/1.32/125: reach >= 32 MHz slow corner, monotonic, step <= 2 %'",
+ "start_utc": "2026-10-20T10:47:29.286382Z",
+ "end_utc": "2026-10-20T11:04:18.220239Z",
+ "wall_s": 1008.9,
+ "tools": {
+  "ngspice": "ngspice-46",
+  "container_image": "tapeoutbench-eda:latest sha256:ddeb69576f2808676d1c5d474ecf04f6d1d6f8abdcff6b72b39790ded924bab2"
+ },
+ "pdk_commit": "84374023ee8b4b126bebbba67fcbada0a9c0ff0b",
+ "inputs": {
+  "netlist": "schematic/r1_osc.spice",
+  "netlist_sha256": "d9d84501f5a18d5621ef9b6243d41172209fd738fe359d6067557669525cd949",
+  "decks": {
+   "tb_osc30.cir": "b6c4e521f05460d5d9e18e5516f0ca8cfe2b5d8c471d688d856ce6f24feeb63c"
+  },
+  "runner_sha256": "0f002b965fac2bb0093f05f5ddd9462ed5fdc673f8ca0a1a084c445661dba951"
+ },
+ "raw_results": "G1_RESULTS_ROOT/r1_osc/r1a-reach/ (expanded decks, logs, raw)",
+ "n_points": 64,
+ "n_rc_nonzero": 0,
+ "question": "rev r1: 32 codes at ss/1.08/125 and ff/1.32/-40 (ss/1.08/-40 and ff/1.32/125 were dropped before the run to save time): reach >= 32 MHz at the slow corner, monotonic, step <= 2 %",
+ "result": "ss/1.08/125: 32.61 (code 0) .. 20.84 MHz (code 31), monotonic, step 1.15-1.78 %; ff/1.32/-40: 54.88 .. 34.81 MHz, monotonic, step 1.17-1.81 % (simulated)",
+ "disposition": "passed: reach 32.61 >= 32 MHz (margin 1.9 %), monotonic, step <= 2 %; ff cannot be trimmed below 34.8 MHz (information)",
+ "probe": null
+}
