@@ -1,0 +1,42 @@
+{
+  "run_id": "r2-dbg-probe1024-t02",
+  "block": "r1_adc",
+  "question": "debug: c1024 window frames 11/12 (codes 1010/1008, non-monotonic) with tolerance set r2-dbg-probe1024-t02",
+  "command": "G1_CPUSET=105 G1_CPUS=1 G1_WORKDIR=designs/r1-joint/blocks/r1_adc G1_RESULTS_ROOT=<bulk> flow/run.sh ngspice -b <G1_RESULTS_ROOT>/r1_adc/r2-dbg-probe1024-t02/deck.cir (= sim/runs/r2-dbg-probe1024-t02/deck.cir with the bulk path filled in)",
+  "deck": "sim/runs/r2-dbg-probe1024-t02/deck.cir",
+  "deck_template": "sim/r2/dbg_tb_adc2_probe.cir",
+  "deck_sha256": "569131b6065fa3716fd61749b00594db4b0d674e1dda7c1d83edab39b8182c2f",
+  "library_sha256_at_start": {
+    "r1_adc_r2.spice": "f58495121f4bb51897f35cfbcdf64e63f0c06551e51472d93d6b0b60c549b2f1"
+  },
+  "substitutions": {
+    "RAW": "<bulk>/r1_adc/r2-dbg-probe1024-t02",
+    "CORNER": "mos_tt",
+    "TEMP": "27",
+    "VDD": "1.2",
+    "VREF": "1.0",
+    "VA": "-0.4660310",
+    "VB": "-0.4658040",
+    "VSTART": "0",
+    "VSTEP": "0",
+    "TSTOP": "4.7u",
+    "CORE": "r1_adc2_core_fast_a",
+    "TIMING": "r1_adc_timing_r2.inc",
+    "TMAX": "0.2n",
+    "OPTS": "reltol=1e-4 vntol=1e-6 abstol=1e-12 method=trap klu rshunt=1e12"
+  },
+  "tool": "ngspice (banner not found in log)",
+  "container_image": "sha256:ddeb69576f2808676d1c5d474ecf04f6d1d6f8abdcff6b72b39790ded924bab2",
+  "pdk_commit": "84374023ee8b4b126bebbba67fcbada0a9c0ff0b",
+  "raw_results": "r1_adc/r2-dbg-probe1024-t02 (under G1_RESULTS_ROOT)",
+  "started_utc": "2026-10-20T15:50:42.104498Z",
+  "wall_s": 88.3,
+  "returncode": 0,
+  "status": "completed",
+  "errors": [
+    "Error: measure  iref  avg(TRIG) : no such vector as 'i(vref)'",
+    "Error: measure  idd  avg(TRIG) : no such vector as 'i(vdd)'"
+  ],
+  "result": "",
+  "disposition": "debug evidence: reltol 1e-4 / tmax 0.2 ns: correct decisions, codes 1008/1009 (monotonic), same as reltol 1e-5; adopted for the final runs"
+}

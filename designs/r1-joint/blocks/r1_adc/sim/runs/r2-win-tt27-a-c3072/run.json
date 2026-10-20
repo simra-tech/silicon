@@ -1,0 +1,37 @@
+{
+  "run_id": "r2-win-tt27-a-c3072",
+  "block": "r1_adc",
+  "question": "revision-2 static window around code 3072 (mos_tt, 27 C, VDD 1.2): DNL, missing codes, 2 frames per LSB (reltol 1e-4, tmax 0.2 ns)",
+  "command": "G1_CPUSET=104 G1_CPUS=1 G1_WORKDIR=designs/r1-joint/blocks/r1_adc G1_RESULTS_ROOT=<bulk> flow/run.sh ngspice -b <G1_RESULTS_ROOT>/r1_adc/r2-win-tt27-a-c3072/deck.cir (= sim/runs/r2-win-tt27-a-c3072/deck.cir with the bulk path filled in)",
+  "deck": "sim/runs/r2-win-tt27-a-c3072/deck.cir",
+  "deck_template": "sim/r2/tb_adc2_static.cir",
+  "deck_sha256": "104162a82c32c711d21ec62a0f6e4b607b7f10b5939eee39a701df84dacda255",
+  "library_sha256_at_start": {
+    "r1_adc_r2.spice": "f58495121f4bb51897f35cfbcdf64e63f0c06551e51472d93d6b0b60c549b2f1"
+  },
+  "substitutions": {
+    "RAW": "<bulk>/r1_adc/r2-win-tt27-a-c3072",
+    "CORNER": "mos_tt",
+    "TEMP": "27",
+    "VDD": "1.2",
+    "VREF": "1.0",
+    "VSTART": "0.4557776",
+    "VSTEP": "2.243000e-04",
+    "TSTOP": "32.700u",
+    "CORE": "r1_adc2_core_fast_a",
+    "TIMING": "r1_adc_timing_r2.inc",
+    "TMAX": "0.2n",
+    "OPTS": "reltol=1e-4 vntol=1e-6 abstol=1e-12 method=trap klu rshunt=1e12"
+  },
+  "tool": "ngspice (banner not found in log)",
+  "container_image": "sha256:ddeb69576f2808676d1c5d474ecf04f6d1d6f8abdcff6b72b39790ded924bab2",
+  "pdk_commit": "84374023ee8b4b126bebbba67fcbada0a9c0ff0b",
+  "raw_results": "r1_adc/r2-win-tt27-a-c3072 (under G1_RESULTS_ROOT)",
+  "started_utc": "2026-10-20T16:01:46.290831Z",
+  "wall_s": 251.9,
+  "returncode": 0,
+  "status": "completed",
+  "errors": [],
+  "result": "design weights: codes 3064..3080, DNL -0.48..0.55 LSB (0.5 LSB resolution), missing codes 0, non-monotonic steps 0; sim/results/r2/win_tt27-a-c3072_designW.json and win_tt27-a-c3072.json (ramp-calibrated weights)",
+  "disposition": "valid: goal 6 windows"
+}

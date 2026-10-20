@@ -1,0 +1,36 @@
+* dbg_tb_adc2_probe.cir -- debug: held inputs, frames A B A B, probes on top plates, LSB nodes, comparator outputs.
+* Frame f sampled at T0 + f*1us (T0 = 0.6 us), vd = 0 + f*0 (ramp continuous in time).
+* Raw 13-bit words: v(rawa) (analog image 0..8191) written to <bulk>/codes.raw; decoded by post_static2.py.
+* Substitutions: mos_tt 27 1.2 1.0 0 0 4.7u r1_adc2_core_fast_a r1_adc_timing_r2.inc reltol=1e-5 vntol=1e-6 abstol=1e-12 method=trap klu rshunt=1e12 5n <G1_RESULTS_ROOT>/r1_adc/r2-dbg-probe1024-r5
+.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerMOSlv.lib mos_tt
+.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerCAP.lib cap_typ
+.include schematic/r1_adc_r2.spice
+.include sim/r2/r1_adc_timing_r2.inc
+.temp 27
+.option reltol=1e-5 vntol=1e-6 abstol=1e-12 method=trap klu rshunt=1e12
+
+Vdd vdd 0 1.2
+* reference: IDEAL source in this deck (r1_refbuf is evaluated in tb_refbuf_*.cir)
+Vref vref 0 1.0
+Vcur_p isap 0 0.6
+Vcur_n isan 0 0.6
+Vta1 trka1 0 0
+Vtb1 trkb1 0 0
+Vsp sinp 0 PWL(0 {0.6+-0.4660310/2} 1.55u {0.6+-0.4660310/2} 1.56u {0.6+-0.4658040/2} 2.55u {0.6+-0.4658040/2} 2.56u {0.6+-0.4660310/2} 3.55u {0.6+-0.4660310/2} 3.56u {0.6+-0.4658040/2})
+Vsn sinn 0 PWL(0 {0.6--0.4660310/2} 1.55u {0.6--0.4660310/2} 1.56u {0.6--0.4658040/2} 2.55u {0.6--0.4658040/2} 2.56u {0.6--0.4660310/2} 3.55u {0.6--0.4660310/2} 3.56u {0.6--0.4658040/2})
+Vcp cosp 0 0.6
+Vcn cosn 0 0.6
+
+XADC sinp sinn cosp cosn isap isan isap isan trka0 trka1 trkb0 trkb1 mclk wina winb lata latb
++ stb0 stb1 stb2 stb3 stb4 stb5 stb6 stb7 stb8 stb9 stb10 stb11 stb12 stb13 stb14 stb15 stb16 stb17 stb18 stb19 stb20 stb21 stb22 stb23 stb24 stb25
++ rawa rawb topap topan topbp topbn vdd vref 0 r1_adc2_core_fast_a
+
+.control
+set num_threads=1
+save v(rawa) v(xadc.xtha.lsb_p) v(xadc.xtha.lsb_n) v(topap) v(topan) v(xadc.oap) v(xadc.oan) v(xadc.clka) v(stb5) v(stb4) v(stb6)
+tran 1n 4.7u 0 5n
+meas tran iref avg i(vref) from=1.6u to=4.7u
+meas tran idd avg i(vdd) from=1.6u to=4.7u
+write <G1_RESULTS_ROOT>/r1_adc/r2-dbg-probe1024-r5/probe.raw all
+.endc
+.end

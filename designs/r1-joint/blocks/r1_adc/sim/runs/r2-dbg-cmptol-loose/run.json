@@ -1,0 +1,28 @@
+{
+  "run_id": "r2-dbg-cmptol-loose",
+  "block": "r1_adc",
+  "question": "debug: comparator decision vs simulator tolerance",
+  "command": "G1_CPUSET=104 G1_CPUS=1 G1_WORKDIR=designs/r1-joint/blocks/r1_adc G1_RESULTS_ROOT=<bulk> flow/run.sh ngspice -b <G1_RESULTS_ROOT>/r1_adc/r2-dbg-cmptol-loose/deck.cir (= sim/runs/r2-dbg-cmptol-loose/deck.cir with the bulk path filled in)",
+  "deck": "sim/runs/r2-dbg-cmptol-loose/deck.cir",
+  "deck_template": "sim/r2/dbg_tb_cmp2_tol.cir",
+  "deck_sha256": "e9f67eb001622e0c8a50a3acd311fd3b3a56b7979dfa316fa379f8ddcf961543",
+  "library_sha256_at_start": {
+    "r1_adc_r2.spice": "f58495121f4bb51897f35cfbcdf64e63f0c06551e51472d93d6b0b60c549b2f1"
+  },
+  "substitutions": {
+    "RAW": "<bulk>/r1_adc/r2-dbg-cmptol-loose",
+    "TMAX": "5n",
+    "OPTS": "reltol=1e-3 vntol=1e-6 abstol=1e-12 method=trap klu rshunt=1e12"
+  },
+  "tool": "ngspice (banner not found in log)",
+  "container_image": "sha256:ddeb69576f2808676d1c5d474ecf04f6d1d6f8abdcff6b72b39790ded924bab2",
+  "pdk_commit": "84374023ee8b4b126bebbba67fcbada0a9c0ff0b",
+  "raw_results": "r1_adc/r2-dbg-cmptol-loose (under G1_RESULTS_ROOT)",
+  "started_utc": "2026-10-20T15:30:16.742047Z",
+  "wall_s": 14.5,
+  "returncode": 0,
+  "status": "completed",
+  "errors": [],
+  "result": "",
+  "disposition": "debug evidence: stand-alone r1_cmp2 decides P for -1..-6 mV with reltol 1e-3 / tmax 5 ns (wrong); correct with reltol 1e-4 (r2-dbg-cmptol-tight, -c2) or tmax 50 ps (-c1)"
+}

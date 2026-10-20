@@ -1,0 +1,37 @@
+* tb_adc2_static.cir -- R1 ADC revision 2 static linearity: slow differential ramp on SIN (slice A).
+* Frame f sampled at T0 + f*1us (T0 = 0.6 us), vd = -0.003632 + f*2.2700e-04 (ramp continuous in time).
+* Raw 13-bit words: v(rawa) (analog image 0..8191) written to <bulk>/codes.raw; decoded by post_static2.py.
+* Substitutions: mos_tt 27 1.08 1.0 -0.003632 2.2700e-04 32.700u r1_adc2_core_fast_a r1_adc_timing_r2_vdd108.inc reltol=1e-3 vntol=1e-6 abstol=1e-12 method=trap klu rshunt=1e12 5n <G1_RESULTS_ROOT>/r1_adc/r2-win-vdd108-c2048
+.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerMOSlv.lib mos_tt
+.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerCAP.lib cap_typ
+.include schematic/r1_adc_r2.spice
+.include sim/r2/r1_adc_timing_r2_vdd108.inc
+.temp 27
+.option reltol=1e-3 vntol=1e-6 abstol=1e-12 method=trap klu rshunt=1e12
+
+Vdd vdd 0 1.08
+* reference: IDEAL source in this deck (r1_refbuf is evaluated in tb_refbuf_*.cir)
+Vref vref 0 1.0
+Vcur_p isap 0 0.6
+Vcur_n isan 0 0.6
+Vta1 trka1 0 0
+Vtb1 trkb1 0 0
+Bdp vd 0 v=-0.003632 + (time-0.6u)*2.2700e-04/1u
+Bsp sinp 0 v=0.6+v(vd)/2
+Bsn sinn 0 v=0.6-v(vd)/2
+Bcp cosp 0 v=0.6+v(vd)/2
+Bcn cosn 0 v=0.6-v(vd)/2
+
+XADC sinp sinn cosp cosn isap isan isap isan trka0 trka1 trkb0 trkb1 mclk wina winb lata latb
++ stb0 stb1 stb2 stb3 stb4 stb5 stb6 stb7 stb8 stb9 stb10 stb11 stb12 stb13 stb14 stb15 stb16 stb17 stb18 stb19 stb20 stb21 stb22 stb23 stb24 stb25
++ rawa rawb topap topan topbp topbn vdd vref 0 r1_adc2_core_fast_a
+
+.control
+set num_threads=1
+save v(rawa) v(rawb) i(vref) i(vdd)
+tran 1n 32.700u 0 5n
+meas tran iref avg i(vref) from=1.6u to=32.700u
+meas tran idd avg i(vdd) from=1.6u to=32.700u
+write <G1_RESULTS_ROOT>/r1_adc/r2-win-vdd108-c2048/codes.raw v(rawa) v(rawb)
+.endc
+.end

@@ -1,0 +1,39 @@
+* tb_adc2_dyn.cir -- R1 ADC revision 2 dynamic test: sine on SIN (slice A), cosine on COS (slice B).
+* Frame f sampled at T0 + f*1us (T0 = 0.6 us); coherent fin = M/N MHz; amplitude 0.88 V differential peak.
+* Raw 13-bit words: v(rawa) (analog image 0..8191) written to <bulk>/codes.raw; decoded by post_static2.py.
+* Substitutions: mos_tt 27 1.2 1.0 123.0000000 1.000000e+00 133.700u r1_adc2_core_fast_a r1_adc_timing_r2.inc reltol=1e-4 vntol=1e-6 abstol=1e-12 method=trap klu rshunt=1e12 0.25n <G1_RESULTS_ROOT>/r1_adc/r2-dyn-tt-a-n256-r1
+.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerMOSlv.lib mos_tt
+.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerCAP.lib cap_typ
+.include schematic/r1_adc_r2.spice
+.include sim/r2/r1_adc_timing_r2.inc
+.temp 27
+.option reltol=1e-4 vntol=1e-6 abstol=1e-12 method=trap klu rshunt=1e12
+
+Vdd vdd 0 1.2
+* reference: IDEAL source in this deck (r1_refbuf is evaluated in tb_refbuf_*.cir)
+Vref vref 0 1.0
+Vcur_p isap 0 0.6
+Vcur_n isan 0 0.6
+Vta1 trka1 0 0
+Vtb1 trkb1 0 0
+.param pi2=6.283185307179586
+Bds vd 0 v=0.88*sin(pi2*97656.25*(time-0.6u+1.230000000e-04)+0.3)
+Bdc vdc 0 v=0.88*cos(pi2*97656.25*(time-0.6u+1.230000000e-04)+0.3)
+Bsp sinp 0 v=0.6+v(vd)/2
+Bsn sinn 0 v=0.6-v(vd)/2
+Bcp cosp 0 v=0.6+v(vdc)/2
+Bcn cosn 0 v=0.6-v(vdc)/2
+
+XADC sinp sinn cosp cosn isap isan isap isan trka0 trka1 trkb0 trkb1 mclk wina winb lata latb
++ stb0 stb1 stb2 stb3 stb4 stb5 stb6 stb7 stb8 stb9 stb10 stb11 stb12 stb13 stb14 stb15 stb16 stb17 stb18 stb19 stb20 stb21 stb22 stb23 stb24 stb25
++ rawa rawb topap topan topbp topbn vdd vref 0 r1_adc2_core_fast_a
+
+.control
+set num_threads=1
+save v(rawa) v(rawb) i(vref) i(vdd)
+tran 1n 133.700u 0 0.25n
+meas tran iref avg i(vref) from=1.6u to=133.700u
+meas tran idd avg i(vdd) from=1.6u to=133.700u
+write <G1_RESULTS_ROOT>/r1_adc/r2-dyn-tt-a-n256-r1/codes.raw v(rawa) v(rawb)
+.endc
+.end

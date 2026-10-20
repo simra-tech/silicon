@@ -1,0 +1,31 @@
+{
+  "run_id": "r2-isa-tt-v",
+  "block": "r1_adc",
+  "question": "goal 5: encoder and current frames on the full core; ISA/ISB +-0.85 V at 0.57 V CM; codes and mux timing (reltol 1e-4)",
+  "command": "G1_CPUSET=103 G1_CPUS=1 G1_WORKDIR=designs/r1-joint/blocks/r1_adc G1_RESULTS_ROOT=<bulk> flow/run.sh ngspice -b <G1_RESULTS_ROOT>/r1_adc/r2-isa-tt-v/deck.cir (= sim/runs/r2-isa-tt-v/deck.cir with the bulk path filled in)",
+  "deck": "sim/runs/r2-isa-tt-v/deck.cir",
+  "deck_template": "sim/r2/tb_adc2_isa.cir",
+  "deck_sha256": "81a8424c01a79da5fed59ebd7e4879fe6f4231f0e6fa9006f19a242fdc927fb1",
+  "library_sha256_at_start": {
+    "r1_adc_r2.spice": "f58495121f4bb51897f35cfbcdf64e63f0c06551e51472d93d6b0b60c549b2f1"
+  },
+  "substitutions": {
+    "RAW": "<bulk>/r1_adc/r2-isa-tt-v",
+    "CORNER": "mos_tt",
+    "TEMP": "27",
+    "VDD": "1.2",
+    "TMAX": "5n",
+    "OPTS": "reltol=1e-4 vntol=1e-6 abstol=1e-12 method=trap klu rshunt=1e12"
+  },
+  "tool": "ngspice (banner not found in log)",
+  "container_image": "sha256:ddeb69576f2808676d1c5d474ecf04f6d1d6f8abdcff6b72b39790ded924bab2",
+  "pdk_commit": "84374023ee8b4b126bebbba67fcbada0a9c0ff0b",
+  "raw_results": "r1_adc/r2-isa-tt-v (under G1_RESULTS_ROOT)",
+  "started_utc": "2026-10-20T15:42:50.200220Z",
+  "wall_s": 166.8,
+  "returncode": 0,
+  "status": "completed",
+  "errors": [],
+  "result": "",
+  "disposition": "superseded: reltol 1e-4 with tmax 5 ns (or 4 ns) still gives wrong comparator decisions for residues up to about 0.3 to 0.5 mV (runs r2-dbg-probe1024-c2 / -t02 / -r5); codes are accurate to about +-2 LSB only. Replaced by runs with tmax 0.2 ns (suffix -a)."
+}

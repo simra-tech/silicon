@@ -1,0 +1,43 @@
+* tb_adc2_isa.cir -- R1 ADC revision 2: mux sequence with the current channels (goal 5), full core
+* (complete bootstrapped switches on both inputs of each slice, transistor bottom-plate drivers r1_drv).
+* Frames (sampling edges 0.6, 1.6, 2.6, 3.6 us): 0 encoder pair (SIN +0.4 V on A, COS -0.4 V on B),
+* 1 current pair (ISA +0.85 V on A, ISB -0.85 V on B, CM 0.57 V), 2 encoder pair (SIN -0.4, COS +0.4),
+* 3 current pair (ISA -0.85, ISB +0.85). The track signal of the selected input is high in the slice's track
+* window (A: 13 T + 1 ns .. 30 T, B: 26 T + 1 ns .. 30 T); its falling edge is the sampling instant
+* (is_smp_a / is_smp_b for the current inputs). Break-before-make is by construction (windows never overlap).
+* isense output modelled as ideal sources (its output impedance is not modelled).
+.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerMOSlv.lib mos_tt
+.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerCAP.lib cap_typ
+.include schematic/r1_adc_r2.spice
+.include sim/r2/r1_adc_timing_r2_mux.inc
+.temp 27
+.option reltol=1e-4 vntol=1e-6 abstol=1e-12 method=trap klu rshunt=1e12
+Vdd vdd 0 1.2
+* reference: IDEAL source in this deck
+Vref vref 0 1.0
+Vtrka0 trka0 0 PWL(0.000000e+00 0 3.433333e-08 0 3.438333e-08 1.2 5.999500e-07 1.2 6.000000e-07 0 2.034333e-06 0 2.034383e-06 1.2 2.599950e-06 1.2 2.600000e-06 0 5.000000e-06 0)
+Vtrka1 trka1 0 PWL(0.000000e+00 0 1.034333e-06 0 1.034383e-06 1.2 1.599950e-06 1.2 1.600000e-06 0 3.034333e-06 0 3.034383e-06 1.2 3.599950e-06 1.2 3.600000e-06 0 5.000000e-06 0)
+Vtrkb0 trkb0 0 PWL(0.000000e+00 0 4.676667e-07 0 4.677167e-07 1.2 5.999500e-07 1.2 6.000000e-07 0 2.467667e-06 0 2.467717e-06 1.2 2.599950e-06 1.2 2.600000e-06 0 5.000000e-06 0)
+Vtrkb1 trkb1 0 PWL(0.000000e+00 0 1.467667e-06 0 1.467717e-06 1.2 1.599950e-06 1.2 1.600000e-06 0 3.467667e-06 0 3.467717e-06 1.2 3.599950e-06 1.2 3.600000e-06 0 5.000000e-06 0)
+Vsin vsin 0 PWL(0 0.4  1.70e-6 0.4  1.71e-6 -0.4  5e-6 -0.4)
+Visa visa 0 PWL(0 0.85  2.70e-6 0.85  2.71e-6 -0.85  5e-6 -0.85)
+Bsp sinp 0 v=0.6+v(vsin)/2
+Bsn sinn 0 v=0.6-v(vsin)/2
+Bcp cosp 0 v=0.6-v(vsin)/2
+Bcn cosn 0 v=0.6+v(vsin)/2
+Bap isap 0 v=0.57+v(visa)/2
+Ban isan 0 v=0.57-v(visa)/2
+Bbp isbp 0 v=0.57-v(visa)/2
+Bbn isbn 0 v=0.57+v(visa)/2
+XADC sinp sinn cosp cosn isap isan isbp isbn trka0 trka1 trkb0 trkb1 mclk wina winb lata latb
++ stb0 stb1 stb2 stb3 stb4 stb5 stb6 stb7 stb8 stb9 stb10 stb11 stb12 stb13 stb14 stb15 stb16 stb17 stb18 stb19 stb20 stb21 stb22 stb23 stb24 stb25
++ rawa rawb topap topan topbp topbn vdd vref 0 r1_adc2_core
+.control
+set num_threads=1
+save v(rawa) v(rawb) v(topap) v(topan) v(topbp) v(topbn) v(trka0) v(trka1) v(trkb0) v(trkb1) v(lata) v(latb) i(vref) i(vdd)
+tran 1n 4.7u 0 5n
+meas tran iref avg i(vref) from=1.6u to=4.6u
+meas tran idd avg i(vdd) from=1.6u to=4.6u
+write <G1_RESULTS_ROOT>/r1_adc/r2-isa-tt-v/codes.raw
+.endc
+.end

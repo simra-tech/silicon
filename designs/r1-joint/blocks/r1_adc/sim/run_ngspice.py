@@ -62,7 +62,7 @@ def main():
     exec_deck = os.path.join(raw_dir, "deck.cir")
     with open(exec_deck, "w") as f:
         f.write(src)
-    lib_names = [n for n in ("r1_adc.spice", "r1_adc_mm.spice") if ("schematic/" + n) in src]
+    lib_names = [n for n in ("r1_adc.spice", "r1_adc_mm.spice", "r1_adc_r2.spice", "r1_adc_r2_mm.spice") if ("schematic/" + n) in src]
     lib_hash = {n: sha256(os.path.join(BLOCK, "schematic", n)) for n in lib_names}
     log_path = os.path.join(run_dir, "ngspice.log")
     env = dict(os.environ)

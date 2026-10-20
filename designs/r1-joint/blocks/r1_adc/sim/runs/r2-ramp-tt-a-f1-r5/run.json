@@ -1,0 +1,37 @@
+{
+  "run_id": "r2-ramp-tt-a-f1-r5",
+  "block": "r1_adc",
+  "question": "revision-2 static ramp tt, lower half, 7 LSB per frame: INL, saturation, ramp-calibrated weights (reltol 1e-4, tmax 0.2 ns) (resume 5 after a numerical abort)",
+  "command": "G1_CPUSET=104 G1_CPUS=1 G1_WORKDIR=designs/r1-joint/blocks/r1_adc G1_RESULTS_ROOT=<bulk> flow/run.sh ngspice -b <G1_RESULTS_ROOT>/r1_adc/r2-ramp-tt-a-f1-r5/deck.cir (= sim/runs/r2-ramp-tt-a-f1-r5/deck.cir with the bulk path filled in)",
+  "deck": "sim/runs/r2-ramp-tt-a-f1-r5/deck.cir",
+  "deck_template": "sim/r2/tb_adc2_static.cir",
+  "deck_sha256": "64354d6e7e1003fdc682fe1e5b2de45df8e90357288a99999ae6d79c0102f1bf",
+  "library_sha256_at_start": {
+    "r1_adc_r2.spice": "f58495121f4bb51897f35cfbcdf64e63f0c06551e51472d93d6b0b60c549b2f1"
+  },
+  "substitutions": {
+    "RAW": "<bulk>/r1_adc/r2-ramp-tt-a-f1-r5",
+    "CORNER": "mos_tt",
+    "TEMP": "27",
+    "VDD": "1.2",
+    "VREF": "1.0",
+    "VSTART": "-0.1064740",
+    "VSTEP": "3.178000e-03",
+    "TSTOP": "34.700u",
+    "CORE": "r1_adc2_core_fast_a",
+    "TIMING": "r1_adc_timing_r2.inc",
+    "TMAX": "0.25n",
+    "OPTS": "reltol=1e-4 vntol=1e-6 abstol=1e-12 method=trap klu rshunt=1e12"
+  },
+  "tool": "ngspice (banner not found in log)",
+  "container_image": "sha256:ddeb69576f2808676d1c5d474ecf04f6d1d6f8abdcff6b72b39790ded924bab2",
+  "pdk_commit": "84374023ee8b4b126bebbba67fcbada0a9c0ff0b",
+  "raw_results": "r1_adc/r2-ramp-tt-a-f1-r5 (under G1_RESULTS_ROOT)",
+  "started_utc": "2026-10-20T16:49:51.257773Z",
+  "wall_s": 332.5,
+  "returncode": 0,
+  "status": "completed",
+  "errors": [],
+  "result": "segment of the 600-point tt ramp; combined: FS +-0.919 V, LSB 448.6 uV, best-fit residual -1.11..+1.27 LSB, monotonic; sim/results/r2/ramp_tt.json",
+  "disposition": "valid: goal 6 static ramp (segment; restarts after numerical aborts by run_static2.py)"
+}

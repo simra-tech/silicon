@@ -1,0 +1,38 @@
+{
+  "run_id": "r2-ref-adc-tt-ideal-a",
+  "block": "r1_adc",
+  "question": "ADC conversions with an ideal VREF at the buffer DC level 1.003997 V (reference for r2-ref-adc-tt-buf-a)",
+  "command": "G1_CPUSET=103 G1_CPUS=1 G1_WORKDIR=designs/r1-joint/blocks/r1_adc G1_RESULTS_ROOT=<bulk> flow/run.sh ngspice -b <G1_RESULTS_ROOT>/r1_adc/r2-ref-adc-tt-ideal-a/deck.cir (= sim/runs/r2-ref-adc-tt-ideal-a/deck.cir with the bulk path filled in)",
+  "deck": "sim/runs/r2-ref-adc-tt-ideal-a/deck.cir",
+  "deck_template": "sim/r2/tb_adc2_ref.cir",
+  "deck_sha256": "b48d63d0c0c38b619ba39634f77c24f1a750b9b88edf0f6804c0a684f6672346",
+  "library_sha256_at_start": {
+    "r1_adc_r2.spice": "f58495121f4bb51897f35cfbcdf64e63f0c06551e51472d93d6b0b60c549b2f1"
+  },
+  "substitutions": {
+    "RAW": "<bulk>/r1_adc/r2-ref-adc-tt-ideal-a",
+    "CORNER": "mos_tt",
+    "TEMP": "27",
+    "VDD": "1.2",
+    "TSTOP": "8.7u",
+    "TMAX": "0.2n",
+    "VSTART": "0",
+    "VSTEP": "0",
+    "CORE": "r1_adc2_core_fast",
+    "TIMING": "r1_adc_timing_r2.inc",
+    "OPTS": "reltol=1e-4 vntol=1e-6 abstol=1e-12 method=trap klu rshunt=1e12",
+    "REFLINES": "Vref vref 0 1.003997",
+    "REFMODE": "ideal"
+  },
+  "tool": "ngspice (banner not found in log)",
+  "container_image": "sha256:ddeb69576f2808676d1c5d474ecf04f6d1d6f8abdcff6b72b39790ded924bab2",
+  "pdk_commit": "84374023ee8b4b126bebbba67fcbada0a9c0ff0b",
+  "raw_results": "r1_adc/r2-ref-adc-tt-ideal-a (under G1_RESULTS_ROOT)",
+  "started_utc": "2026-10-20T15:57:48.778387Z",
+  "wall_s": 224.7,
+  "returncode": 0,
+  "status": "completed",
+  "errors": [],
+  "result": "reference run for r2-ref-adc-tt-buf-a (ideal VREF 1.003997 V)",
+  "disposition": "valid"
+}

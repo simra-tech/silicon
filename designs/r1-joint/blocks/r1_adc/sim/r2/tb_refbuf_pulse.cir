@@ -1,0 +1,25 @@
+* tb_refbuf_pulse.cir -- r1_refbuf alone: DC level, bias currents, and settling under a worst-case CDAC charge
+* train: per 33.3 ns bit cycle a charge Q_k = 0.42 pC * 2^-k (k = 0..12) drawn as a 2 ns rectangular pulse at the
+* bottom-plate switching instant (cycle start + 17 ns), plus the track-reset charge 1.0 pC at cycle 13 (slice A
+* reset while slice B converts) and at cycle 26 (slice B reset); slice B repeats the bit train in cycles 13-25.
+* Charge values: revision-1 measurement (up to 0.42 pC per bit cycle, 2.1-2.5 pC per frame) scaled to VREF 1.0 V
+* is about 0.35 pC; 0.42 pC is kept as the D14 requirement. Settling read at the next decision instants.
+.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerMOSlv.lib @CORNER@
+.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerMOShv.lib @CORNER@
+.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerCAP.lib cap_typ
+.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerRES.lib res_typ
+.include schematic/r1_adc_r2.spice
+.temp @TEMP@
+.option reltol=1e-4 vntol=1e-7 abstol=1e-12 method=gear
+Vdda vdda 0 @VDDA@
+Vbg vbg 0 1.045
+XREF vbg vref vdda 0 r1_refbuf msf=@MSF@ mib=@MIB@ ndec=@NDEC@ ncg=@NCG@
+@LOAD@
+.control
+set num_threads=1
+op
+print v(vref) v(xref.ng) i(vdda)
+tran 20p 5.6u 0 0.2n
+write @RAW@/refbuf.raw v(vref) v(xref.ng) i(vdda)
+.endc
+.end

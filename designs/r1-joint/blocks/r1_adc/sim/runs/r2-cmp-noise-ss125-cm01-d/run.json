@@ -1,0 +1,32 @@
+{
+  "run_id": "r2-cmp-noise-ss125-cm01-d",
+  "block": "r1_adc",
+  "question": "comparator round 2: noise PSD, ss/125/1.08, CM 0.1 V",
+  "command": "G1_CPUSET=105 G1_CPUS=1 G1_WORKDIR=designs/r1-joint/blocks/r1_adc G1_RESULTS_ROOT=<bulk> flow/run.sh ngspice -b <G1_RESULTS_ROOT>/r1_adc/r2-cmp-noise-ss125-cm01-d/deck.cir (= sim/runs/r2-cmp-noise-ss125-cm01-d/deck.cir with the bulk path filled in)",
+  "deck": "sim/runs/r2-cmp-noise-ss125-cm01-d/deck.cir",
+  "deck_template": "sim/r2/tb_cmp2_noise.cir",
+  "deck_sha256": "137c5b9639198db63c1c9a7aa5a3900ecf4ba6ad3123f4ab65f50225bba0c200",
+  "library_sha256_at_start": {
+    "r1_adc_r2.spice": "cdb3ebd8952402098429abf55fbab53cbe1280410399b5e828d38aee25c26515"
+  },
+  "substitutions": {
+    "RAW": "<bulk>/r1_adc/r2-cmp-noise-ss125-cm01-d",
+    "CORNER": "mos_ss",
+    "TEMP": "125",
+    "VDD": "1.08",
+    "VCM": "0.1",
+    "VX": "0.3",
+    "IB": "14u"
+  },
+  "tool": "ngspice (banner not found in log)",
+  "container_image": "sha256:ddeb69576f2808676d1c5d474ecf04f6d1d6f8abdcff6b72b39790ded924bab2",
+  "pdk_commit": "84374023ee8b4b126bebbba67fcbada0a9c0ff0b",
+  "raw_results": "r1_adc/r2-cmp-noise-ss125-cm01-d (under G1_RESULTS_ROOT)",
+  "started_utc": "2026-10-20T15:06:34.777031Z",
+  "wall_s": 28.6,
+  "returncode": 0,
+  "status": "completed",
+  "errors": [],
+  "result": "B16 input noise 81.7 uV rms at CM 0.1 V, ss/125 C/1.08 V (method A, T_int 5.38 ns); sim/results/r2/cmp2_noise_ss125_cm01_b16.json",
+  "disposition": "valid: goal 4 noise, ss/125 fails 60 uV"
+}

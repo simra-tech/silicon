@@ -1,0 +1,40 @@
+{
+  "run_id": "r2-dyn-tt-a-n256-r2",
+  "block": "r1_adc",
+  "question": "revision-2 dynamic test slice A, tt, fin 97.66 kHz (M 25, N 256), 0.88 V differential amplitude: SNDR, ENOB, SFDR (reltol 1e-4, tmax 0.2 ns) (resume 2 after a numerical abort)",
+  "command": "G1_CPUSET=105 G1_CPUS=1 G1_WORKDIR=designs/r1-joint/blocks/r1_adc G1_RESULTS_ROOT=<bulk> flow/run.sh ngspice -b <G1_RESULTS_ROOT>/r1_adc/r2-dyn-tt-a-n256-r2/deck.cir (= sim/runs/r2-dyn-tt-a-n256-r2/deck.cir with the bulk path filled in)",
+  "deck": "sim/runs/r2-dyn-tt-a-n256-r2/deck.cir",
+  "deck_template": "sim/r2/tb_adc2_dyn.cir",
+  "deck_sha256": "ccebb1f242d8a8c353f114e5a8008a7149d68e4ba9df30a5ea912e7d37a042c7",
+  "library_sha256_at_start": {
+    "r1_adc_r2.spice": "f58495121f4bb51897f35cfbcdf64e63f0c06551e51472d93d6b0b60c549b2f1"
+  },
+  "substitutions": {
+    "RAW": "<bulk>/r1_adc/r2-dyn-tt-a-n256-r2",
+    "AMP": "0.88",
+    "FIN": "97656.25",
+    "TOFF": "2.460000000e-04",
+    "CORNER": "mos_tt",
+    "TEMP": "27",
+    "VDD": "1.2",
+    "VREF": "1.0",
+    "VSTART": "246.0000000",
+    "VSTEP": "1.000000e+00",
+    "TSTOP": "10.700u",
+    "CORE": "r1_adc2_core_fast_a",
+    "TIMING": "r1_adc_timing_r2.inc",
+    "TMAX": "0.2n",
+    "OPTS": "reltol=1e-4 vntol=1e-6 abstol=1e-12 method=trap klu rshunt=1e12"
+  },
+  "tool": "ngspice (banner not found in log)",
+  "container_image": "sha256:ddeb69576f2808676d1c5d474ecf04f6d1d6f8abdcff6b72b39790ded924bab2",
+  "pdk_commit": "84374023ee8b4b126bebbba67fcbada0a9c0ff0b",
+  "raw_results": "r1_adc/r2-dyn-tt-a-n256-r2 (under G1_RESULTS_ROOT)",
+  "started_utc": "2026-10-20T16:24:04.169831Z",
+  "wall_s": 89.4,
+  "returncode": 0,
+  "status": "completed",
+  "errors": [],
+  "result": "segment of the N 256 sine run; slice A SNDR 70.54 dB, SFDR 78.22 dB, ENOB 11.43 (ramp-calibrated weights); sim/results/r2/dyn_tt_a_n256.json",
+  "disposition": "valid: goal 6 dynamic"
+}

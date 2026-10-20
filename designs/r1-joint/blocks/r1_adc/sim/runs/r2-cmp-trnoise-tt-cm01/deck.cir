@@ -1,0 +1,45 @@
+* tb_cmp2_trnoise.cir -- r1_cmp2 transient noise check (method B)
+.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerMOSlv.lib mos_tt
+.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerCAP.lib cap_typ
+.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerMOShv.lib mos_tt
+.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerRES.lib res_typ
+.include schematic/r1_adc_r2.spice
+.temp 27
+.option reltol=1e-4 vntol=1e-7 abstol=1e-13 method=gear
+Vdd vdd 0 1.2
+Vclk clk 0 PULSE(0 1.2 2n 50p 50p 16.6167n 33.3333n)
+Vclkb clkb 0 PULSE(1.2 0 2n 50p 50p 16.6167n 33.3333n)
+XB vbp vdd 0 r1_cmp2_bias ib=14u
+.param na={sqrt(3.624e-17/(2*20e-12))}
+Vcm cm 0 0.1
+Vn0 inp0 np0 TRNOISE({na} 20p 0 0)
+Vp0 np0 cm -4.5e-05
+Vm0 inn0 cm 4.5e-05
+X0 inp0 inn0 clk clkb op0 on0 vbp vdd 0 r1_cmp2
+Vn1 inp1 np1 TRNOISE({na} 20p 0 0)
+Vp1 np1 cm -2.25e-05
+Vm1 inn1 cm 2.25e-05
+X1 inp1 inn1 clk clkb op1 on1 vbp vdd 0 r1_cmp2
+Vn2 inp2 np2 TRNOISE({na} 20p 0 0)
+Vp2 np2 cm 0
+Vm2 inn2 cm -0
+X2 inp2 inn2 clk clkb op2 on2 vbp vdd 0 r1_cmp2
+Vn3 inp3 np3 TRNOISE({na} 20p 0 0)
+Vp3 np3 cm 2.25e-05
+Vm3 inn3 cm -2.25e-05
+X3 inp3 inn3 clk clkb op3 on3 vbp vdd 0 r1_cmp2
+Vn4 inp4 np4 TRNOISE({na} 20p 0 0)
+Vp4 np4 cm 4.5e-05
+Vm4 inn4 cm -4.5e-05
+X4 inp4 inn4 clk clkb op4 on4 vbp vdd 0 r1_cmp2
+Vn5 inp5 np5 TRNOISE({na} 20p 0 0)
+Vp5 np5 cm 6.75e-05
+Vm5 inn5 cm -6.75e-05
+X5 inp5 inn5 clk clkb op5 on5 vbp vdd 0 r1_cmp2
+.control
+set num_threads=1
+save v(op0) v(op1) v(op2) v(op3) v(op4) v(op5)
+tran 0.1n 10.002u 0 20p
+write <G1_RESULTS_ROOT>/r1_adc/r2-cmp-trnoise-tt-cm01/trnoise.raw
+.endc
+.end

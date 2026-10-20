@@ -1,0 +1,42 @@
+{
+  "run_id": "r2-dbg-probe-c2048",
+  "block": "r1_adc",
+  "question": "debug: why do adjacent inputs near mid-scale give codes 30 LSB apart",
+  "command": "G1_CPUSET=104 G1_CPUS=1 G1_WORKDIR=designs/r1-joint/blocks/r1_adc G1_RESULTS_ROOT=<bulk> flow/run.sh ngspice -b <G1_RESULTS_ROOT>/r1_adc/r2-dbg-probe-c2048/deck.cir (= sim/runs/r2-dbg-probe-c2048/deck.cir with the bulk path filled in)",
+  "deck": "sim/runs/r2-dbg-probe-c2048/deck.cir",
+  "deck_template": "sim/r2/dbg_tb_adc2_probe.cir",
+  "deck_sha256": "7f52e808b3bfc9ac8a0182d1ab1e0e6dd1b643431b29715ff07a3e61b87939f8",
+  "library_sha256_at_start": {
+    "r1_adc_r2.spice": "f58495121f4bb51897f35cfbcdf64e63f0c06551e51472d93d6b0b60c549b2f1"
+  },
+  "substitutions": {
+    "RAW": "<bulk>/r1_adc/r2-dbg-probe-c2048",
+    "CORNER": "mos_tt",
+    "TEMP": "27",
+    "VDD": "1.2",
+    "VREF": "1.0",
+    "VA": "-0.005448",
+    "VB": "-0.0053345",
+    "VSTART": "0",
+    "VSTEP": "0",
+    "TSTOP": "4.7u",
+    "CORE": "r1_adc2_core_fast_a",
+    "TIMING": "r1_adc_timing_r2.inc",
+    "TMAX": "5n",
+    "OPTS": "reltol=1e-3 vntol=1e-6 abstol=1e-12 method=trap klu rshunt=1e12"
+  },
+  "tool": "ngspice (banner not found in log)",
+  "container_image": "sha256:ddeb69576f2808676d1c5d474ecf04f6d1d6f8abdcff6b72b39790ded924bab2",
+  "pdk_commit": "84374023ee8b4b126bebbba67fcbada0a9c0ff0b",
+  "raw_results": "r1_adc/r2-dbg-probe-c2048 (under G1_RESULTS_ROOT)",
+  "started_utc": "2026-10-20T15:25:55.416948Z",
+  "wall_s": 45.7,
+  "returncode": 0,
+  "status": "completed",
+  "errors": [
+    "Error: measure  iref  avg(TRIG) : no such vector as 'i(vref)'",
+    "Error: measure  idd  avg(TRIG) : no such vector as 'i(vdd)'"
+  ],
+  "result": "",
+  "disposition": "debug evidence: with reltol 1e-3 / tmax 5 ns the comparator in the ADC decides wrongly for residues of 3 to 6 mV; repeated identical inputs give different codes"
+}

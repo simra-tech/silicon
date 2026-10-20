@@ -1,0 +1,39 @@
+{
+  "run_id": "r2-ramp-tt-coarse-v-r1",
+  "block": "r1_adc",
+  "question": "revision-2 coarse static ramp tt (28 LSB per frame), reltol 1e-4: full scale, saturation, ramp-calibrated weights of the top decisions (resume 1 after a numerical abort)",
+  "command": "G1_CPUSET=105 G1_CPUS=1 G1_WORKDIR=designs/r1-joint/blocks/r1_adc G1_RESULTS_ROOT=<bulk> flow/run.sh ngspice -b <G1_RESULTS_ROOT>/r1_adc/r2-ramp-tt-coarse-v-r1/deck.cir (= sim/runs/r2-ramp-tt-coarse-v-r1/deck.cir with the bulk path filled in)",
+  "deck": "sim/runs/r2-ramp-tt-coarse-v-r1/deck.cir",
+  "deck_template": "sim/r2/tb_adc2_static.cir",
+  "deck_sha256": "26b0eb10702bcb1026ba959584afd7c7fa9047d06c63a1c0321842eae049dbc9",
+  "library_sha256_at_start": {
+    "r1_adc_r2.spice": "f58495121f4bb51897f35cfbcdf64e63f0c06551e51472d93d6b0b60c549b2f1"
+  },
+  "substitutions": {
+    "RAW": "<bulk>/r1_adc/r2-ramp-tt-coarse-v-r1",
+    "CORNER": "mos_tt",
+    "TEMP": "27",
+    "VDD": "1.2",
+    "VREF": "1.0",
+    "VSTART": "0.4786000",
+    "VSTEP": "1.280000e-02",
+    "TSTOP": "38.700u",
+    "CORE": "r1_adc2_core_fast_a",
+    "TIMING": "r1_adc_timing_r2.inc",
+    "TMAX": "4n",
+    "OPTS": "reltol=1e-4 vntol=1e-6 abstol=1e-12 method=trap klu rshunt=1e12"
+  },
+  "tool": "ngspice (banner not found in log)",
+  "container_image": "sha256:ddeb69576f2808676d1c5d474ecf04f6d1d6f8abdcff6b72b39790ded924bab2",
+  "pdk_commit": "84374023ee8b4b126bebbba67fcbada0a9c0ff0b",
+  "raw_results": "r1_adc/r2-ramp-tt-coarse-v-r1 (under G1_RESULTS_ROOT)",
+  "started_utc": "2026-10-20T15:45:11.235496Z",
+  "wall_s": 34.1,
+  "returncode": 1,
+  "status": "failed",
+  "errors": [
+    "Error: incomplete or empty netlist"
+  ],
+  "result": "numerical abort at 5.906e-06 s; frames 0..4 of this segment kept",
+  "disposition": "partial (resumed in r2-ramp-tt-coarse-v-r2); superseded: reltol 1e-4 with tmax 5 ns (or 4 ns) still gives wrong comparator decisions for residues up to about 0.3 to 0.5 mV (runs r2-dbg-probe1024-c2 / -t02 / -r5); codes are accurate to about +-2 LSB only. Replaced by runs with tmax 0.2 ns (suffix -a)."
+}

@@ -1,0 +1,33 @@
+{
+  "run_id": "r2-cmp-offset-mc30-cm06-b16",
+  "block": "r1_adc",
+  "question": "r1_cmp2 (B16) offset over 30 MOS-mismatch samples, input CM 0.6 V (ramp -5..+5 mV, 25 uV per decision)",
+  "command": "G1_CPUSET=103 G1_CPUS=1 G1_WORKDIR=designs/r1-joint/blocks/r1_adc G1_RESULTS_ROOT=<bulk> flow/run.sh ngspice -b <G1_RESULTS_ROOT>/r1_adc/r2-cmp-offset-mc30-cm06-b16/deck.cir (= sim/runs/r2-cmp-offset-mc30-cm06-b16/deck.cir with the bulk path filled in)",
+  "deck": "sim/runs/r2-cmp-offset-mc30-cm06-b16/deck.cir",
+  "deck_template": "sim/r2/tb_cmp2_offset_mc.cir",
+  "deck_sha256": "f0b3cbf3baaf07347fc6ed10a296ae0a397e68f257ba0e7d495983854207123c",
+  "library_sha256_at_start": {
+    "r1_adc_r2_mm.spice": "e39838523028a7457983e9f85ecf2230a6b378d1f6d4dd76632bf9f8aab63197"
+  },
+  "substitutions": {
+    "RAW": "<bulk>/r1_adc/r2-cmp-offset-mc30-cm06-b16",
+    "CORNER": "mos_tt_mismatch",
+    "TEMP": "27",
+    "VDD": "1.2",
+    "VCM": "0.6",
+    "VR": "5e-3",
+    "NC": "400",
+    "TSTOP": "13.402u"
+  },
+  "tool": "ngspice (banner not found in log)",
+  "container_image": "sha256:ddeb69576f2808676d1c5d474ecf04f6d1d6f8abdcff6b72b39790ded924bab2",
+  "pdk_commit": "84374023ee8b4b126bebbba67fcbada0a9c0ff0b",
+  "raw_results": "r1_adc/r2-cmp-offset-mc30-cm06-b16 (under G1_RESULTS_ROOT)",
+  "started_utc": "2026-10-20T15:10:24.557348Z",
+  "wall_s": 984.2,
+  "returncode": 0,
+  "status": "completed",
+  "errors": [],
+  "result": "offset over 30 mismatch copies at CM 0.6 V: censored-MLE sigma 3.53 mV, mean -0.50 mV (4 copies outside +-5 mV); sim/results/r2/cmp2_offset_mc30_cm06_b16.json",
+  "disposition": "valid: goal 4 offset"
+}

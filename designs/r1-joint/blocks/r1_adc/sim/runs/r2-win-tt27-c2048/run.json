@@ -1,0 +1,39 @@
+{
+  "run_id": "r2-win-tt27-c2048",
+  "block": "r1_adc",
+  "question": "revision-2 static window around code 2048 (mos_tt, 27 C, VDD 1.2): DNL, 4 frames per LSB",
+  "command": "G1_CPUSET=104 G1_CPUS=1 G1_WORKDIR=designs/r1-joint/blocks/r1_adc G1_RESULTS_ROOT=<bulk> flow/run.sh ngspice -b <G1_RESULTS_ROOT>/r1_adc/r2-win-tt27-c2048/deck.cir (= sim/runs/r2-win-tt27-c2048/deck.cir with the bulk path filled in)",
+  "deck": "sim/runs/r2-win-tt27-c2048/deck.cir",
+  "deck_template": "sim/r2/tb_adc2_static.cir",
+  "deck_sha256": "ae3647d7f7a9fd6138ff8e84d5be28a3f1d150699c2fbe452aec0344a9722c7b",
+  "library_sha256_at_start": {
+    "r1_adc_r2.spice": "cffb63d076ba200d410dc103aafb36b9b9b3cebd9cba43b2c26e1242972c26a2"
+  },
+  "substitutions": {
+    "RAW": "<bulk>/r1_adc/r2-win-tt27-c2048",
+    "CORNER": "mos_tt",
+    "TEMP": "27",
+    "VDD": "1.2",
+    "VREF": "1.0",
+    "VSTART": "-0.005448",
+    "VSTEP": "1.1350e-04",
+    "TSTOP": "96.700u",
+    "CORE": "r1_adc2_core_fast_a",
+    "TIMING": "r1_adc_timing_r2.inc",
+    "TMAX": "5n",
+    "OPTS": "reltol=1e-3 vntol=1e-6 abstol=1e-12 method=trap klu rshunt=1e12"
+  },
+  "tool": "ngspice (banner not found in log)",
+  "container_image": "sha256:ddeb69576f2808676d1c5d474ecf04f6d1d6f8abdcff6b72b39790ded924bab2",
+  "pdk_commit": "84374023ee8b4b126bebbba67fcbada0a9c0ff0b",
+  "raw_results": "r1_adc/r2-win-tt27-c2048 (under G1_RESULTS_ROOT)",
+  "started_utc": "2026-10-20T15:08:51.308483Z",
+  "wall_s": 171.0,
+  "returncode": 1,
+  "status": "failed",
+  "errors": [
+    "Error: incomplete or empty netlist"
+  ],
+  "result": "numerical abort at 46.97 us; frames 0..45 kept; codes with design weights jump by about 30 LSB near mid-scale (design weights do not include the circuit parasitics and kickback)",
+  "disposition": "partial; evaluated with ramp-calibrated weights; invalid: reltol=1e-3 with tmax 5 ns gives wrong comparator decisions for inputs up to about 6 mV (found 2026-10-20, runs r2-dbg-probe-c2048, r2-dbg-cmptol-loose/-c2); codes from this run are not used. Replaced by runs with reltol=1e-4 (suffix v)."
+}

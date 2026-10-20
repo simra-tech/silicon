@@ -1,0 +1,53 @@
+* tb_cmp2_offset_mc.cir -- r1_cmp2 offset, 30 mismatch copies
+.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerMOSlv.lib mos_tt_mismatch
+.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerCAP.lib cap_typ
+.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerMOShv.lib mos_tt
+.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerRES.lib res_typ
+.include schematic/r1_adc_r2_mm.spice
+.temp 27
+.option reltol=1e-4 vntol=1e-7 abstol=1e-13 method=gear
+Vdd vdd 0 1.2
+Vclk clk 0 PULSE(0 1.2 2n 50p 50p 16.6167n 33.3333n)
+Vclkb clkb 0 PULSE(1.2 0 2n 50p 50p 16.6167n 33.3333n)
+.param mmos=1
+XB vbp vdd 0 r1_cmp2_bias ib=14u
+Bvd vd 0 v=-6e-3 + 2*6e-3*time/(600*33.3333n)
+Bp inp 0 v=0.6 + v(vd)/2
+Bn inn 0 v=0.6 - v(vd)/2
+X0 inp inn clk clkb op0 on0 vbp vdd 0 r1_cmp2
+X1 inp inn clk clkb op1 on1 vbp vdd 0 r1_cmp2
+X2 inp inn clk clkb op2 on2 vbp vdd 0 r1_cmp2
+X3 inp inn clk clkb op3 on3 vbp vdd 0 r1_cmp2
+X4 inp inn clk clkb op4 on4 vbp vdd 0 r1_cmp2
+X5 inp inn clk clkb op5 on5 vbp vdd 0 r1_cmp2
+X6 inp inn clk clkb op6 on6 vbp vdd 0 r1_cmp2
+X7 inp inn clk clkb op7 on7 vbp vdd 0 r1_cmp2
+X8 inp inn clk clkb op8 on8 vbp vdd 0 r1_cmp2
+X9 inp inn clk clkb op9 on9 vbp vdd 0 r1_cmp2
+X10 inp inn clk clkb op10 on10 vbp vdd 0 r1_cmp2
+X11 inp inn clk clkb op11 on11 vbp vdd 0 r1_cmp2
+X12 inp inn clk clkb op12 on12 vbp vdd 0 r1_cmp2
+X13 inp inn clk clkb op13 on13 vbp vdd 0 r1_cmp2
+X14 inp inn clk clkb op14 on14 vbp vdd 0 r1_cmp2
+X15 inp inn clk clkb op15 on15 vbp vdd 0 r1_cmp2
+X16 inp inn clk clkb op16 on16 vbp vdd 0 r1_cmp2
+X17 inp inn clk clkb op17 on17 vbp vdd 0 r1_cmp2
+X18 inp inn clk clkb op18 on18 vbp vdd 0 r1_cmp2
+X19 inp inn clk clkb op19 on19 vbp vdd 0 r1_cmp2
+X20 inp inn clk clkb op20 on20 vbp vdd 0 r1_cmp2
+X21 inp inn clk clkb op21 on21 vbp vdd 0 r1_cmp2
+X22 inp inn clk clkb op22 on22 vbp vdd 0 r1_cmp2
+X23 inp inn clk clkb op23 on23 vbp vdd 0 r1_cmp2
+X24 inp inn clk clkb op24 on24 vbp vdd 0 r1_cmp2
+X25 inp inn clk clkb op25 on25 vbp vdd 0 r1_cmp2
+X26 inp inn clk clkb op26 on26 vbp vdd 0 r1_cmp2
+X27 inp inn clk clkb op27 on27 vbp vdd 0 r1_cmp2
+X28 inp inn clk clkb op28 on28 vbp vdd 0 r1_cmp2
+X29 inp inn clk clkb op29 on29 vbp vdd 0 r1_cmp2
+.control
+set num_threads=1
+save v(op0) v(op1) v(op2) v(op3) v(op4) v(op5) v(op6) v(op7) v(op8) v(op9) v(op10) v(op11) v(op12) v(op13) v(op14) v(op15) v(op16) v(op17) v(op18) v(op19) v(op20) v(op21) v(op22) v(op23) v(op24) v(op25) v(op26) v(op27) v(op28) v(op29) v(vd)
+tran 0.1n 20.002u 0 0.5n
+write <G1_RESULTS_ROOT>/r1_adc/r2-cmp-offset-mc30-cm06/offset.raw
+.endc
+.end

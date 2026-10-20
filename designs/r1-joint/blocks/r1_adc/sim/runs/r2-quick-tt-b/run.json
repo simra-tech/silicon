@@ -1,0 +1,39 @@
+{
+  "run_id": "r2-quick-tt-b",
+  "block": "r1_adc",
+  "question": "revision-2 smoke test: 8 held inputs, both slices, 13 raw bits (campaign options)",
+  "command": "G1_CPUSET=105 G1_CPUS=1 G1_WORKDIR=designs/r1-joint/blocks/r1_adc G1_RESULTS_ROOT=<bulk> flow/run.sh ngspice -b <G1_RESULTS_ROOT>/r1_adc/r2-quick-tt-b/deck.cir (= sim/runs/r2-quick-tt-b/deck.cir with the bulk path filled in)",
+  "deck": "sim/runs/r2-quick-tt-b/deck.cir",
+  "deck_template": "sim/r2/tb_adc2_quick.cir",
+  "deck_sha256": "3d3b9f1f7499c7ce9d2389d7d9e5a583e08c3583aa6e65aff57a6240a427da6f",
+  "library_sha256_at_start": {
+    "r1_adc_r2.spice": "5ea35aef8c53d156276a984a3bd4492c5faf5992cff46685a1e403d53a41d2c0"
+  },
+  "substitutions": {
+    "RAW": "<bulk>/r1_adc/r2-quick-tt-b",
+    "CORNER": "mos_tt",
+    "TEMP": "27",
+    "VDD": "1.2",
+    "VREF": "1.0",
+    "TSTOP": "8.7u",
+    "CORE": "r1_adc2_core_fast",
+    "TIMING": "r1_adc_timing_r2.inc",
+    "TMAX": "5n",
+    "OPTS": "reltol=1e-3 vntol=1e-6 abstol=1e-12 method=trap klu",
+    "VSTART": "0",
+    "VSTEP": "0"
+  },
+  "tool": "ngspice (banner not found in log)",
+  "container_image": "sha256:ddeb69576f2808676d1c5d474ecf04f6d1d6f8abdcff6b72b39790ded924bab2",
+  "pdk_commit": "84374023ee8b4b126bebbba67fcbada0a9c0ff0b",
+  "raw_results": "r1_adc/r2-quick-tt-b (under G1_RESULTS_ROOT)",
+  "started_utc": "2026-10-20T14:53:57.655071Z",
+  "wall_s": 11.5,
+  "returncode": 1,
+  "status": "failed",
+  "errors": [
+    "Error: incomplete or empty netlist"
+  ],
+  "result": "abort at 0.6 us on topbp",
+  "disposition": "failed (numerical); fixed by .option rshunt=1e12 (r2-quick-tt-c); invalid: reltol=1e-3 with tmax 5 ns gives wrong comparator decisions for inputs up to about 6 mV (found 2026-10-20, runs r2-dbg-probe-c2048, r2-dbg-cmptol-loose/-c2); codes from this run are not used. Replaced by runs with reltol=1e-4 (suffix v)."
+}

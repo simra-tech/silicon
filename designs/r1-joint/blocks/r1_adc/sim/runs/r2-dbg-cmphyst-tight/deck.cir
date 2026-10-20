@@ -1,0 +1,28 @@
+* dbg_tb_cmp2_hyst.cir -- debug: r1_cmp2 (B16) with an input that changes sign every cycle (+-0.1, 0.3, 0.5, 1 mV), CM 0.15 V; memory/hysteresis check (reltol=1e-4 vntol=1e-7 abstol=1e-13 method=gear)
+.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerMOSlv.lib mos_tt
+.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerCAP.lib cap_typ
+.include schematic/r1_adc_r2.spice
+.option reltol=1e-4 vntol=1e-7 abstol=1e-13 method=gear
+Vdd vdd 0 1.2
+Vclk clk 0 PULSE(0 1.2 2n 80p 80p 16.6167n 33.3333n)
+Vclkb clkb 0 PULSE(1.2 0 2n 80p 80p 16.6167n 33.3333n)
+XB vbp vdd 0 r1_cmp2_bias
+Vp0 ip0 0 PULSE(0.15005 0.14995 20n 0.2n 0.2n 3.31333e-08 6.66666e-08)
+Vn0 in0 0 PULSE(0.14995 0.15005 20n 0.2n 0.2n 3.31333e-08 6.66666e-08)
+X0 ip0 in0 clk clkb op0 on0 vbp vdd 0 r1_cmp2
+Vp1 ip1 0 PULSE(0.15015 0.14985 20n 0.2n 0.2n 3.31333e-08 6.66666e-08)
+Vn1 in1 0 PULSE(0.14985 0.15015 20n 0.2n 0.2n 3.31333e-08 6.66666e-08)
+X1 ip1 in1 clk clkb op1 on1 vbp vdd 0 r1_cmp2
+Vp2 ip2 0 PULSE(0.15025 0.14975 20n 0.2n 0.2n 3.31333e-08 6.66666e-08)
+Vn2 in2 0 PULSE(0.14975 0.15025 20n 0.2n 0.2n 3.31333e-08 6.66666e-08)
+X2 ip2 in2 clk clkb op2 on2 vbp vdd 0 r1_cmp2
+Vp3 ip3 0 PULSE(0.1505 0.1495 20n 0.2n 0.2n 3.31333e-08 6.66666e-08)
+Vn3 in3 0 PULSE(0.1495 0.1505 20n 0.2n 0.2n 3.31333e-08 6.66666e-08)
+X3 ip3 in3 clk clkb op3 on3 vbp vdd 0 r1_cmp2
+.control
+set num_threads=1
+save v(op0) v(op1) v(op2) v(op3)
+tran 10p 200n 0 20p
+write <G1_RESULTS_ROOT>/r1_adc/r2-dbg-cmphyst-tight/cmp.raw
+.endc
+.end

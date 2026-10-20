@@ -1,0 +1,34 @@
+* dbg_tb_cmp2_tol.cir -- debug: r1_cmp2 (B16) decisions for +-1/3/6 mV at CM 0.15 V; tolerance check (reltol=1e-4 vntol=1e-6 abstol=1e-12 method=trap klu rshunt=1e12)
+.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerMOSlv.lib mos_tt
+.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerCAP.lib cap_typ
+.include schematic/r1_adc_r2.spice
+.option reltol=1e-4 vntol=1e-6 abstol=1e-12 method=trap klu rshunt=1e12
+Vdd vdd 0 1.2
+Vclk clk 0 PULSE(0 1.2 2n 80p 80p 16.6167n 33.3333n)
+Vclkb clkb 0 PULSE(1.2 0 2n 80p 80p 16.6167n 33.3333n)
+XB vbp vdd 0 r1_cmp2_bias
+Vp0 ip0 0 0.1505
+Vn0 in0 0 0.1495
+X0 ip0 in0 clk clkb op0 on0 vbp vdd 0 r1_cmp2
+Vp1 ip1 0 0.1495
+Vn1 in1 0 0.1505
+X1 ip1 in1 clk clkb op1 on1 vbp vdd 0 r1_cmp2
+Vp2 ip2 0 0.1515
+Vn2 in2 0 0.1485
+X2 ip2 in2 clk clkb op2 on2 vbp vdd 0 r1_cmp2
+Vp3 ip3 0 0.1485
+Vn3 in3 0 0.1515
+X3 ip3 in3 clk clkb op3 on3 vbp vdd 0 r1_cmp2
+Vp4 ip4 0 0.153
+Vn4 in4 0 0.147
+X4 ip4 in4 clk clkb op4 on4 vbp vdd 0 r1_cmp2
+Vp5 ip5 0 0.147
+Vn5 in5 0 0.153
+X5 ip5 in5 clk clkb op5 on5 vbp vdd 0 r1_cmp2
+.control
+set num_threads=1
+save v(op0) v(on0) v(op1) v(on1) v(op2) v(on2) v(op3) v(on3) v(op4) v(on4) v(op5) v(on5)
+tran 10p 100n 0 5n
+write <G1_RESULTS_ROOT>/r1_adc/r2-dbg-cmptol-c2/cmp.raw
+.endc
+.end

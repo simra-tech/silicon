@@ -1,0 +1,31 @@
+{
+  "run_id": "r2-isa-tt-a",
+  "block": "r1_adc",
+  "question": "goal 5: encoder and current frames on the full core; ISA/ISB +-0.85 V at 0.57 V CM; codes and mux timing (reltol 1e-4, tmax 0.2 ns)",
+  "command": "G1_CPUSET=103 G1_CPUS=1 G1_WORKDIR=designs/r1-joint/blocks/r1_adc G1_RESULTS_ROOT=<bulk> flow/run.sh ngspice -b <G1_RESULTS_ROOT>/r1_adc/r2-isa-tt-a/deck.cir (= sim/runs/r2-isa-tt-a/deck.cir with the bulk path filled in)",
+  "deck": "sim/runs/r2-isa-tt-a/deck.cir",
+  "deck_template": "sim/r2/tb_adc2_isa.cir",
+  "deck_sha256": "75908562fe7eb967b5cd76a628bbb8e77404527afa77f5545558585033d892fe",
+  "library_sha256_at_start": {
+    "r1_adc_r2.spice": "f58495121f4bb51897f35cfbcdf64e63f0c06551e51472d93d6b0b60c549b2f1"
+  },
+  "substitutions": {
+    "RAW": "<bulk>/r1_adc/r2-isa-tt-a",
+    "CORNER": "mos_tt",
+    "TEMP": "27",
+    "VDD": "1.2",
+    "TMAX": "0.2n",
+    "OPTS": "reltol=1e-4 vntol=1e-6 abstol=1e-12 method=trap klu rshunt=1e12"
+  },
+  "tool": "ngspice (banner not found in log)",
+  "container_image": "sha256:ddeb69576f2808676d1c5d474ecf04f6d1d6f8abdcff6b72b39790ded924bab2",
+  "pdk_commit": "84374023ee8b4b126bebbba67fcbada0a9c0ff0b",
+  "raw_results": "r1_adc/r2-isa-tt-a (under G1_RESULTS_ROOT)",
+  "started_utc": "2026-10-20T16:01:33.650398Z",
+  "wall_s": 302.5,
+  "returncode": 0,
+  "status": "completed",
+  "errors": [],
+  "result": "full core, frames enc/cur/enc/cur: SIN +0.4 -> 2938, COS -0.4 -> 1156; ISA +0.85 (CM 0.57) -> 3941, ISB -0.85 -> 155; symmetric on the next pair; sim/results/r2/isa_tt.json",
+  "disposition": "valid: goal 5 codes; mux timing differs from INTERFACES.md (README issue R2-6)"
+}

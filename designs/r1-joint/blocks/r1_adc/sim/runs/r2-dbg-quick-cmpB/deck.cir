@@ -1,0 +1,38 @@
+* tb_adc2_quick.cir -- R1 ADC revision 2 smoke test: held inputs per frame on SIN (A) and -vd on COS (B).
+* Frame f sampled at T0 + f*1us (T0 = 0.6 us), vd = 0 + f*0 (ramp continuous in time).
+* Raw 13-bit words: v(rawa) (analog image 0..8191) written to <bulk>/codes.raw; decoded by post_static2.py.
+* Substitutions: mos_tt 27 1.2 1.0 0 0 8.7u r1_adc2_core_fast r1_adc_timing_r2.inc reltol=1e-3 vntol=1e-6 abstol=1e-12 method=trap klu rshunt=1e12 5n <G1_RESULTS_ROOT>/r1_adc/r2-dbg-quick-cmpB
+.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerMOSlv.lib mos_tt
+.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerCAP.lib cap_typ
+.include sim/r2/dbg_r1_adc_r2_cmpB.spice
+.include sim/r2/r1_adc_timing_r2.inc
+.temp 27
+.option reltol=1e-3 vntol=1e-6 abstol=1e-12 method=trap klu rshunt=1e12
+
+Vdd vdd 0 1.2
+* reference: IDEAL source in this deck (r1_refbuf is evaluated in tb_refbuf_*.cir)
+Vref vref 0 1.0
+Vcur_p isap 0 0.6
+Vcur_n isan 0 0.6
+Vta1 trka1 0 0
+Vtb1 trkb1 0 0
+* vd per frame f (sampled at 0.6u + f us): 0, +0.3, -0.3, +0.9, -0.9, +0.0003, -0.99, +0.99
+Bdp vd 0 v= pwl(time, 0,0, 0.75u,0, 0.76u,0.3, 1.75u,0.3, 1.76u,-0.3, 2.75u,-0.3, 2.76u,0.9, 3.75u,0.9, 3.76u,-0.9, 4.75u,-0.9, 4.76u,0.0003, 5.75u,0.0003, 5.76u,-0.99, 6.75u,-0.99, 6.76u,0.99, 9u,0.99)
+Bsp sinp 0 v=0.6+v(vd)/2
+Bsn sinn 0 v=0.6-v(vd)/2
+Bcp cosp 0 v=0.6-v(vd)/2
+Bcn cosn 0 v=0.6+v(vd)/2
+
+XADC sinp sinn cosp cosn isap isan isap isan trka0 trka1 trkb0 trkb1 mclk wina winb lata latb
++ stb0 stb1 stb2 stb3 stb4 stb5 stb6 stb7 stb8 stb9 stb10 stb11 stb12 stb13 stb14 stb15 stb16 stb17 stb18 stb19 stb20 stb21 stb22 stb23 stb24 stb25
++ rawa rawb topap topan topbp topbn vdd vref 0 r1_adc2_core_fast
+
+.control
+set num_threads=1
+save v(rawa) v(rawb) i(vref) i(vdd) v(topap) v(topan) v(topbp) v(topbn) v(xadc.oap) v(xadc.oan) v(mclk) v(trka0) v(trkb0)
+tran 1n 8.7u 0 5n
+meas tran iref avg i(vref) from=1.6u to=8.7u
+meas tran idd avg i(vdd) from=1.6u to=8.7u
+write <G1_RESULTS_ROOT>/r1_adc/r2-dbg-quick-cmpB/codes.raw
+.endc
+.end

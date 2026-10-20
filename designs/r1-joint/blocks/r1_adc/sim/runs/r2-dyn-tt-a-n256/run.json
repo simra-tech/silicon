@@ -1,0 +1,42 @@
+{
+  "run_id": "r2-dyn-tt-a-n256",
+  "block": "r1_adc",
+  "question": "revision-2 dynamic test slice A, tt, fin 97.66 kHz (M 25, N 256), 0.88 V differential amplitude: SNDR, ENOB, SFDR (reltol 1e-4, tmax 0.2 ns)",
+  "command": "G1_CPUSET=105 G1_CPUS=1 G1_WORKDIR=designs/r1-joint/blocks/r1_adc G1_RESULTS_ROOT=<bulk> flow/run.sh ngspice -b <G1_RESULTS_ROOT>/r1_adc/r2-dyn-tt-a-n256/deck.cir (= sim/runs/r2-dyn-tt-a-n256/deck.cir with the bulk path filled in)",
+  "deck": "sim/runs/r2-dyn-tt-a-n256/deck.cir",
+  "deck_template": "sim/r2/tb_adc2_dyn.cir",
+  "deck_sha256": "4e1796e1fb0b492b80fc290d19bf741005a4230e12c3feab81a574b02aebcd3b",
+  "library_sha256_at_start": {
+    "r1_adc_r2.spice": "f58495121f4bb51897f35cfbcdf64e63f0c06551e51472d93d6b0b60c549b2f1"
+  },
+  "substitutions": {
+    "RAW": "<bulk>/r1_adc/r2-dyn-tt-a-n256",
+    "AMP": "0.88",
+    "FIN": "97656.25",
+    "TOFF": "0.000000000e+00",
+    "CORNER": "mos_tt",
+    "TEMP": "27",
+    "VDD": "1.2",
+    "VREF": "1.0",
+    "VSTART": "0.0000000",
+    "VSTEP": "1.000000e+00",
+    "TSTOP": "256.700u",
+    "CORE": "r1_adc2_core_fast_a",
+    "TIMING": "r1_adc_timing_r2.inc",
+    "TMAX": "0.2n",
+    "OPTS": "reltol=1e-4 vntol=1e-6 abstol=1e-12 method=trap klu rshunt=1e12"
+  },
+  "tool": "ngspice (banner not found in log)",
+  "container_image": "sha256:ddeb69576f2808676d1c5d474ecf04f6d1d6f8abdcff6b72b39790ded924bab2",
+  "pdk_commit": "84374023ee8b4b126bebbba67fcbada0a9c0ff0b",
+  "raw_results": "r1_adc/r2-dyn-tt-a-n256 (under G1_RESULTS_ROOT)",
+  "started_utc": "2026-10-20T15:53:42.285590Z",
+  "wall_s": 889.9,
+  "returncode": 1,
+  "status": "failed",
+  "errors": [
+    "Error: incomplete or empty netlist"
+  ],
+  "result": "numerical abort at 0.0001236 s; frames 0..122 of this segment kept; segment of the N 256 sine run; slice A SNDR 70.54 dB, SFDR 78.22 dB, ENOB 11.43 (ramp-calibrated weights); sim/results/r2/dyn_tt_a_n256.json",
+  "disposition": "valid: goal 6 dynamic"
+}

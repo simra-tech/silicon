@@ -1,0 +1,34 @@
+{
+  "run_id": "r2-refbuf-pulse-tt-d",
+  "block": "r1_adc",
+  "question": "r1_refbuf (msf 16, mib 80, ndec 6, ncg 4): settling under the worst-case CDAC charge train",
+  "command": "G1_CPUSET=103 G1_CPUS=1 G1_WORKDIR=designs/r1-joint/blocks/r1_adc G1_RESULTS_ROOT=<bulk> flow/run.sh ngspice -b <G1_RESULTS_ROOT>/r1_adc/r2-refbuf-pulse-tt-d/deck.cir (= sim/runs/r2-refbuf-pulse-tt-d/deck.cir with the bulk path filled in)",
+  "deck": "sim/runs/r2-refbuf-pulse-tt-d/deck.cir",
+  "deck_template": "sim/r2/tb_refbuf_pulse.cir",
+  "deck_sha256": "830431fbf146b51a47e2ba296b9066f6a458ed5f571b6f0226b22170bfcf8bee",
+  "library_sha256_at_start": {
+    "r1_adc_r2.spice": "f58495121f4bb51897f35cfbcdf64e63f0c06551e51472d93d6b0b60c549b2f1"
+  },
+  "substitutions": {
+    "RAW": "<bulk>/r1_adc/r2-refbuf-pulse-tt-d",
+    "CORNER": "mos_tt",
+    "TEMP": "27",
+    "VDDA": "3.3",
+    "MSF": "16",
+    "MIB": "80",
+    "NDEC": "6",
+    "NCG": "4",
+    "LOAD": ".include sim/r2/refbuf_load.inc"
+  },
+  "tool": "ngspice (banner not found in log)",
+  "container_image": "sha256:ddeb69576f2808676d1c5d474ecf04f6d1d6f8abdcff6b72b39790ded924bab2",
+  "pdk_commit": "84374023ee8b4b126bebbba67fcbada0a9c0ff0b",
+  "raw_results": "r1_adc/r2-refbuf-pulse-tt-d (under G1_RESULTS_ROOT)",
+  "started_utc": "2026-10-20T15:12:59.367192Z",
+  "wall_s": 28.9,
+  "returncode": 0,
+  "status": "completed",
+  "errors": [],
+  "result": "",
+  "disposition": ""
+}

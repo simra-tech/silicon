@@ -1,0 +1,33 @@
+{
+  "run_id": "r2-cmp-offset-mc30-cm01-b16",
+  "block": "r1_adc",
+  "question": "r1_cmp2 (B16) offset over 30 MOS-mismatch samples, input CM 0.1 V: offset change with common mode (revision-1 open issue 4)",
+  "command": "G1_CPUSET=103 G1_CPUS=1 G1_WORKDIR=designs/r1-joint/blocks/r1_adc G1_RESULTS_ROOT=<bulk> flow/run.sh ngspice -b <G1_RESULTS_ROOT>/r1_adc/r2-cmp-offset-mc30-cm01-b16/deck.cir (= sim/runs/r2-cmp-offset-mc30-cm01-b16/deck.cir with the bulk path filled in)",
+  "deck": "sim/runs/r2-cmp-offset-mc30-cm01-b16/deck.cir",
+  "deck_template": "sim/r2/tb_cmp2_offset_mc.cir",
+  "deck_sha256": "c07b3572609859c442925c031d69209f351c637c2db7081ed6a4cfa48265050c",
+  "library_sha256_at_start": {
+    "r1_adc_r2_mm.spice": "d46d5fbd3d4fc158498500f36b7319925e7b96957a0581154d1fb42ed1994650"
+  },
+  "substitutions": {
+    "RAW": "<bulk>/r1_adc/r2-cmp-offset-mc30-cm01-b16",
+    "CORNER": "mos_tt_mismatch",
+    "TEMP": "27",
+    "VDD": "1.2",
+    "VCM": "0.1",
+    "VR": "5e-3",
+    "NC": "400",
+    "TSTOP": "13.402u"
+  },
+  "tool": "ngspice (banner not found in log)",
+  "container_image": "sha256:ddeb69576f2808676d1c5d474ecf04f6d1d6f8abdcff6b72b39790ded924bab2",
+  "pdk_commit": "84374023ee8b4b126bebbba67fcbada0a9c0ff0b",
+  "raw_results": "r1_adc/r2-cmp-offset-mc30-cm01-b16 (under G1_RESULTS_ROOT)",
+  "started_utc": "2026-10-20T15:26:48.840736Z",
+  "wall_s": 792.4,
+  "returncode": 0,
+  "status": "completed",
+  "errors": [],
+  "result": "offset at CM 0.1 V: censored-MLE sigma 3.24 mV; change CM 0.6 -> 0.1 V per copy: sigma 0.35 mV, max 0.70 mV; sim/results/r2/cmp2_offset_mc30_cm01_b16.json",
+  "disposition": "valid: goal 4 offset vs common mode"
+}

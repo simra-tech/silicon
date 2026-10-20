@@ -1,0 +1,39 @@
+{
+  "run_id": "r2-quick-tt-acc",
+  "block": "r1_adc",
+  "question": "revision-2 smoke test, both slices, held frames 0, +-0.3, +-0.9, 0.0003, +-0.99 V (reltol 1e-4, tmax 0.2 ns)",
+  "command": "G1_CPUSET=103 G1_CPUS=1 G1_WORKDIR=designs/r1-joint/blocks/r1_adc G1_RESULTS_ROOT=<bulk> flow/run.sh ngspice -b <G1_RESULTS_ROOT>/r1_adc/r2-quick-tt-acc/deck.cir (= sim/runs/r2-quick-tt-acc/deck.cir with the bulk path filled in)",
+  "deck": "sim/runs/r2-quick-tt-acc/deck.cir",
+  "deck_template": "sim/r2/tb_adc2_quick.cir",
+  "deck_sha256": "97d0b9724b3318c71b798c2ecca7d338403e9c1461c28ad7bde8d6d04a759833",
+  "library_sha256_at_start": {
+    "r1_adc_r2.spice": "f58495121f4bb51897f35cfbcdf64e63f0c06551e51472d93d6b0b60c549b2f1"
+  },
+  "substitutions": {
+    "RAW": "<bulk>/r1_adc/r2-quick-tt-acc",
+    "CORNER": "mos_tt",
+    "TEMP": "27",
+    "VDD": "1.2",
+    "VREF": "1.0",
+    "TSTOP": "8.7u",
+    "TMAX": "0.2n",
+    "VSTART": "0",
+    "VSTEP": "0",
+    "CORE": "r1_adc2_core_fast",
+    "TIMING": "r1_adc_timing_r2.inc",
+    "OPTS": "reltol=1e-4 vntol=1e-6 abstol=1e-12 method=trap klu rshunt=1e12"
+  },
+  "tool": "ngspice (banner not found in log)",
+  "container_image": "sha256:ddeb69576f2808676d1c5d474ecf04f6d1d6f8abdcff6b72b39790ded924bab2",
+  "pdk_commit": "84374023ee8b4b126bebbba67fcbada0a9c0ff0b",
+  "raw_results": "r1_adc/r2-quick-tt-acc (under G1_RESULTS_ROOT)",
+  "started_utc": "2026-10-20T16:01:44.521183Z",
+  "wall_s": 247.0,
+  "returncode": 1,
+  "status": "failed",
+  "errors": [
+    "Error: incomplete or empty netlist"
+  ],
+  "result": "numerical abort at 5.6 us; frames 0-4 kept: 0 -> 2047/2047, +-0.3 V -> 2716/1379 (sum 4095), +-0.9 V -> 4053/42; sim/results/r2/quick_tt.json",
+  "disposition": "partial: frames 5-7 (0.3 mV, +-0.99 V) not run; saturation is covered by the ramp"
+}
