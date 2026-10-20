@@ -1,0 +1,20 @@
+{
+ "tool": "ngspice-46 (container tapeoutbench-eda:latest, image sha256:ddeb69576f2808676d1c5d474ecf04f6d1d6f8abdcff6b72b39790ded924bab2)",
+ "pdk_commit": "84374023ee8b4b126bebbba67fcbada0a9c0ff0b",
+ "cpuset": "118 (G1_CPUS=1, num_threads=1)",
+ "inputs": [
+  "schematic/g1_t2f_rev2.spice sha256 8011b761...4391",
+  "sim/g1_bgr_sep19.spice sha256 fa925507...c9701",
+  "sim/tb_g1_t2f.spice.tmpl",
+  "sim/ctl_freq.txt",
+  "sim/decks/*.cir"
+ ],
+ "command": "export G1_CPUSET=118 G1_CPUS=1 G1_RESULTS_ROOT=<bulk root>; python3 designs/r1-joint/blocks/r1_t2f/sim/r1_run_t2f.py tight   (each deck: flow/run.sh ngspice -b <deck>.cir)",
+ "raw_logs": "<G1_RESULTS_ROOT>/r1_t2f/20261020-b",
+ "run_id": "20261020-b",
+ "suite": "tight",
+ "question": "Retry of the three aborted -40 C / 3.6 V corner decks with the G1 remedy (reltol 1e-5, 10 ns maximum step)",
+ "result_file": "results/tight_20261020-b.json",
+ "disposition": "passed: 3 of 3 decks complete; f(-40 C, 3.6 V) = 1.0936/1.2431/1.4234 MHz (ss/tt/ff). The deck files of run a with the same names are overwritten by these decks; they differ only in the options.",
+ "label": "simulated"
+}

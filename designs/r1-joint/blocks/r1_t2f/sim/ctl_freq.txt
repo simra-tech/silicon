@@ -1,0 +1,19 @@
+.control
+set filetype=ascii
+set wr_singlescale
+set wr_vecnames
+tran 5n @@TEND@@
+meas tran t_a when v(fout)=0.6 rise=@@NA@@
+meas tran t_b when v(fout)=0.6 rise=@@NB@@
+let freq = (@@NB@@-@@NA@@)/(t_b-t_a)
+print freq
+meas tran i33_avg avg i(vdd) from=t_a to=t_b
+meas tran i12_avg avg i(vdd12) from=t_a to=t_b
+meas tran vref_avg avg v(vref) from=t_a to=t_b
+meas tran vth_avg avg v(xt2f.vth) from=t_a to=t_b
+meas tran cap1_max max v(xt2f.cap1) from=t_a to=t_b
+meas tran fout_hi max v(fout) from=t_a to=t_b
+meas tran fout_lo min v(fout) from=t_a to=t_b
+meas tran t_half_a trig v(fout) val=0.6 rise=@@NA@@ targ v(fout) val=0.6 fall=@@NA@@
+@@WRDATA@@
+.endc
