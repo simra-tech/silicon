@@ -11,7 +11,8 @@ disagree with us. Everything is Apache 2.0.
 
 | Design | Target shuttle | State |
 | --- | --- | --- |
-| [G1 guardian](designs/g1-guardian/) | IHP SG13G2, registration 2026-09-21, QFN24 | in specification |
+| [G1 guardian](designs/g1-guardian/) | IHP SG13G2, registration 2026-09-21, QFN24 | submitted 2026-09-28 (see the design README) |
+| [R1 open joint front-end](designs/r1-joint/) | IHP SG13G2, QFN24, shuttle not yet registered | in specification |
 
 Nothing has been fabricated yet. When something has, this table will say so, and
 it will say plainly what passed, what did not, and what was never checked.

@@ -1,0 +1,118 @@
+# R1 Open Joint Front-End — Top-Level Specification (draft 0.1, 2026-10-20)
+
+Status: draft. No block has been simulated, laid out or checked. Every number below is labelled
+specified (a target), estimated (from a study, no run), assumed, or unknown. The studies behind the
+numbers are in [`studies/`](studies/). Decisions D1–D9 are in [`../PLAN.md`](../PLAN.md) §2a.
+
+## 1. Overview and intent
+
+R1 is a mixed-signal chip for one robot joint on the IHP SG13G2 0.13 µm SiGe BiCMOS open PDK. It
+reads a sine/cosine encoder head, computes a calibrated absolute angle within one electrical period
+and a turn count while powered, measures two phase currents on low-side shunts and the die
+temperature, runs a hardware safety channel that can cut the gate drive independently of the motor
+controller, passes three PWM signals through to external low-side FETs with dead time, and reports
+over BiSS-C, SSI or SPI. Die 1.414 × 1.414 mm (2 mm² budget, fallback 1.5 mm per D9), 24-pad
+`sg13g2_io` ring, QFN24.
+
+The design goal is a complete, open, verifiable joint front-end, not a product. Blocks are chosen so
+that the design exercises analog, mixed-signal, digital, system, sensor-interface and actuator-drive
+work in one chip.
+
+## 2. Block breakdown
+
+| Block | Function | Devices | Interfaces | Origin |
+| --- | --- | --- | --- | --- |
+| `r1_afe` | Differential sine and cosine inputs, resistive-input PGA ×1–×32 on 3.3 V devices, output at 0.6 V common mode in the 1.2 V domain, matched anti-alias filters (f_c ≥ 1 MHz, poles matched to 1 %) | thick-oxide MOS, `rppd`, MIM | in: SIN±, COS±; out: 2 differential signals to the track-and-holds | new |
+| `r1_adc` | Two track-and-holds sampled on one edge (skew < 0.5 ns) feeding one 12-bit SAR at ≥ 2 MSPS (ENOB ≥ 11.5), split 6+6 bridge MIM CDAC, bootstrapped switches, reference buffer; a multiplexer adds the two current channels between encoder conversions (D3). Alternate: two SARs at 1 MSPS if area allows | thin-oxide MOS, MIM | out: 12-bit codes, valid strobes | new; starts from IHP-AnalogAcademy module 3 |
+| `r1_pos` | Offset, gain-ratio, phase and 3rd-harmonic correction (Heydemann form), iterative CORDIC (16-bit angle, 18 iterations, ≥ 25 MHz), type-II tracking loop (velocity, filtering), latch at bus request with velocity extrapolation, turn counter, amplitude monitor | std cells | registers, position bus | new (digital) |
+| `r1_bus` | BiSS-C slave (Rev D2: ACK, START, CDS, data, nE/nW, CRC-6 0x43 inverted, static timeout, control channel with read-only IDs at 0x40–0x7F), SSI slave (Gray/binary, monoflop), SPI register access (mode 0, with an AS5047P-compatible 16-bit angle read frame as an option) | std cells, IO pads | MA/SCLK, SLO/SDO, SDI, CS | new (digital) |
+| `r1_isense` | Two compact low-side shunt sense amplifiers with auto-zero, ≤ 100 mV input, settling < 300 ns after the PWM edge (target) | thick-oxide MOS, `rppd` | in: ISA±, ISB±; out: to ADC mux and comparators | G1 `g1_sense` lineage, re-sized (D5) |
+| `r1_safe` | Two window comparators per channel (overcurrent, phase short), I²t winding model with a programmable thermal time constant, over-temperature from `r1_t2f`, amplitude-loss and overspeed from `r1_pos`, watchdog on the bus, `EN`/`STO_IN` input; any fault latches `FAULT_N` low and forces the three gate outputs low until cleared | thick-oxide MOS, std cells | FAULT_N, EN/STO_IN | G1 `g1_trip` lineage |
+| `r1_gate` | PWM counter and three low-side gate outputs generated from a host-written duty/phase word (D4), programmable dead time, centre-of-on-time sample strobes for the current channels; safety-gated | `sg13g2_IOPadOut30mA` | GATE_A/B/C | G1 `g1_gate` × 3 |
+| `r1_bgr` | Compact SiGe bandgap, V_REF ≈ 1.05 V, with a PTAT branch | `npn13G2`, thick-oxide MOS, `rppd` | internal | G1 lineage, re-sized (D5) |
+| `r1_t2f` | Temperature-to-frequency, counted on chip | `npn13G2` | internal count register | G1 `g1_t2f` |
+| `r1_osc` | RC relaxation oscillator, 30 MHz nominal, 5-bit capacitor trim; the BiSS timeout, SSI monoflop and watchdog count from it; `OSC_COUNT` over 16 MA periods lets the host trim it and detect a clock fault | thin-oxide MOS, MIM, `rppd` | internal; registers `OSC_TRIM`, `OSC_COUNT`, `TIMEOUT_TICKS` | G1 `g1_osc` lineage, re-tuned (S5) |
+| `r1_padring` | 24 `sg13g2_io` pads, 6 per side, corner and filler cells, bondpads | PDK IO library | — | G1 `g1_padring` |
+
+Not in R1 (parked, see `PLAN.md` cut list and D1–D8): second encoder track (nonius), ABZ output,
+PWM pattern generator, TEMP_OUT pin.
+
+## 3. Pin map (24)
+
+| Die pad | Pin | IO cell | Domain | Function |
+| --- | --- | --- | --- | --- |
+| 1 | `VDD` | `sg13g2_IOPadVdd` | 1.2 V | core supply |
+| 2 | `VSS` | `sg13g2_IOPadVss` | 0 V | core ground |
+| 3 | `IOVDD` | `sg13g2_IOPadIOVdd` | 3.3 V | IO supply |
+| 4 | `IOVSS` | `sg13g2_IOPadIOVss` | 0 V | IO ground |
+| 5 | `VSS` | `sg13g2_IOPadVss` | 0 V | second core ground |
+| 6 | `IOVSS` | `sg13g2_IOPadIOVss` | 0 V | second IO ground |
+| 7 | `VDDA` | `sg13g2_IOPadAnalog` bare terminal | 3.3 V | analog supply (G1 D14 rule: tied to the IOVDD rail on the board) |
+| 8 | `ISA_P` | `sg13g2_IOPadAnalog` | analog | shunt A Kelvin positive |
+| 9 | `ISA_N` | `sg13g2_IOPadAnalog` | analog | shunt A Kelvin negative |
+| 10 | `ISB_P` | `sg13g2_IOPadAnalog` | analog | shunt B Kelvin positive |
+| 11 | `ISB_N` | `sg13g2_IOPadAnalog` | analog | shunt B Kelvin negative |
+| 12 | `FAULT_N` | `sg13g2_IOPadOut4mA` | 3.3 V | low while a fault is latched |
+| 13 | `GATE_A` | `sg13g2_IOPadOut30mA` | 3.3 V | gate output A |
+| 14 | `GATE_B` | `sg13g2_IOPadOut30mA` | 3.3 V | gate output B |
+| 15 | `GATE_C` | `sg13g2_IOPadOut30mA` | 3.3 V | gate output C |
+| 16 | `CS_N` | `sg13g2_IOPadIn` | 3.3 V | SPI select; high = BiSS/SSI mode on pads 17–18 |
+| 17 | `MA` / `SCLK` | `sg13g2_IOPadIn` | 3.3 V | BiSS/SSI clock or SPI clock |
+| 18 | `SLO` / `SDO` | `sg13g2_IOPadOut4mA` (TriOut if bused) | 3.3 V | BiSS/SSI data out or SPI data out |
+| 19 | `SDI` | `sg13g2_IOPadIn` | 3.3 V | SPI data in |
+| 20 | `EN` / `STO_IN` | `sg13g2_IOPadIn` | 3.3 V | hardware enable; low forces the gates low and latches a fault |
+| 21 | `SIN_P` | `sg13g2_IOPadAnalog` | analog | encoder sine positive |
+| 22 | `SIN_N` | `sg13g2_IOPadAnalog` | analog | encoder sine negative |
+| 23 | `COS_P` | `sg13g2_IOPadAnalog` | analog | encoder cosine positive |
+| 24 | `COS_N` | `sg13g2_IOPadAnalog` | analog | encoder cosine negative |
+
+Side assignment: pads 1–6 south, 7–12 east, 13–18 north, 19–24 west. The encoder inputs sit on
+the west side, away from the gate outputs on the north side. Package lead numbering follows the
+G1 bond plan rule (pad to the lead directly opposite). Board: one RS-422 transceiver between pads
+17/18 and the BiSS/SSI cable; the master compensates the added line delay.
+
+## 4. Parameter classification
+
+| Parameter | Value | Class | Basis |
+| --- | --- | --- | --- |
+| Process | IHP SG13G2 open PDK, pinned commit to be set | specified | PDK |
+| Die | 1.414 mm (fallback 1.5 mm, D9) | specified | PLAN.md |
+| Supplies | VDD 1.2 V (1.08–1.32), IOVDD = VDDA 3.3 V (3.0–3.6) | specified | G1 |
+| Encoder input | 40 mVpp–1.4 Vpp differential, common mode 0.5–2.8 V | specified | S1 |
+| Encoder frequency | full accuracy ≤ 100 kHz, count-safe ≤ 250 kHz | specified | S1 |
+| Angle resolution | 16 bit per period from the tracking filter; 12-bit raw samples | specified | S1 |
+| Angle accuracy after host calibration | ≤ ±0.25° el electronic (RSS, estimated); ±0.64° el total target on a 32-pole ring | estimated | S1 |
+| ADC | 12 bit, ENOB ≥ 11.5, ≥ 2 MSPS (one SAR, two track-and-holds), sampling skew < 0.5 ns | specified | S1, D3 |
+| Position latency | latched at bus request; extrapolation with velocity; published fixed value | specified | S1, S2 |
+| BiSS-C | Rev D2, MA 80 kHz–10 MHz, t_busy = 2·T_MA, static timeout 20 µs nominal (14–26 µs over RC spread) | specified | S2 |
+| SSI | Gray or binary, monoflop 15–25 µs | specified | S2 |
+| Current sense input | ≤ 100 mV differential, settling < 300 ns | specified target | S3/joint study |
+| Overcurrent response | comparator to gates low < 1 µs (target) | specified target | G1 trip lineage (1.5 µs on G1 incl. 5 nF gate) |
+| Gate drive | 30 mA pads; dead time programmable 50 ns–2 µs | specified | PDK, assumed |
+| Oscillator | G1-lineage RC relaxation, 30 MHz nominal, 5-bit trim, host trim count against MA; untrimmed spread ≈ −30 / +40 %; allowed sample-to-latch jitter 1.39 ns rms (0.28 ns to stay under 12-bit quantisation), expected ≈ 0.1–0.2 ns; ≈ 250–400 µA | estimated | S5 |
+| Area | ≈ 0.45–0.50 mm² of macros, marginal on 1.414 mm | estimated | S3 |
+| Power | ≈ 17–21 mW; ≈ 4.5 mA on one VDDA pad (≈ 95 mV drop on the G1 path) | estimated | S3 |
+| MIM mismatch | 1 % (1σ) at 1 µm², ∝ 1/√area (PDK model; spec value blank); CDAC unit ≥ 22 fF (≈ 15 µm²) for DNL ≤ 0.5 LSB | specified from the PDK model | S4 |
+| Calibration storage | none on chip; host loads registers after reset, CRC-checked | specified | S1 |
+
+## 5. Verification gates
+
+| Gate | What must exist | Status |
+| --- | --- | --- |
+| V1 AFE | gain steps, CM range, noise, AA matching at corners; pad ESD diode leakage over CM | not run |
+| V2 ADC | INL/DNL and ENOB campaign (static ramp + sine), MC on the CDAC, skew between the two track-and-holds, reference buffer load | not run |
+| V3 position | RTL model against a floating-point reference over head tolerances (offset 6.5 %, gain 1.25, phase 10°, h3 1 %), before and after calibration; latency and extrapolation | not run |
+| V4 bus | protocol testbench per S2 list (CRC vectors, MA 80 kHz–10 MHz, t_busy, timeout corners, aborted frame, control channel, SSI); interop against ≥ 3 independent masters on the bench | not run |
+| V5 current and safety | settling after a PWM edge, comparator thresholds at corners and MC, I²t model, EN/STO path, fault latch, gates low | not run |
+| V6 digital | synthesis, LibreLane hardening, STA at 3 corners with derate, GLS with SDF, formal equivalence of any ECO | not run |
+| V7 chip | DRC (main, maximal, density, antenna), LVS, hierarchical PEX, full-chip co-simulation with an encoder-head model and a motor-phase model | not run |
+| V8 bench | encoder head on a motor, BiSS master, shunt fixture, thermal chamber | not run |
+
+## 6. Open items before block design starts
+
+1. ~~Oscillator~~ closed by S5: re-tuned G1 relaxation oscillator at 30 MHz with host trim; STA must close at the fastest untrimmed frequency (≈ 42 MHz) or a slow-side reset code is used.
+2. ~~MIM matching coefficient~~ closed by S4: model value 1 %·µm; unit capacitor ≥ 22 fF; MC with `mm_ok=1` in V2.
+3. ~~ADC reference~~ decided: 1.2 V domain SAR with an internal reference buffer and on-chip MIM decoupling (no pin is free); the buffer's area (≈ 0.02 mm²) and current (0.5–1 mA) are in the budget; V2 measures its settling under the CDAC load.
+4. ~~5 V heads~~ decided: supported only while the pin voltage stays within 0.5–2.8 V (board rule; a 2.5 V common-mode head with > 0.3 V peak is out of range and needs a board divider); V1 measures pad-diode leakage up to 3.0 V.
+5. BiSS Manufacturer ID not yet assigned; `MFR_ID` stays a changeable reset value.
+6. ~~Current-sample timing~~ decided: the gate block generates the three low-side edges from the host-written duty/phase word and its own PWM counter, so the chip knows the phase and samples each shunt at the centre of its low-side on-time; the controller's PWM frequency and the word update rate are registers.
