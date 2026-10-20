@@ -1,19 +1,24 @@
-// R1_CTRL: register file (R1_REGISTER_MAP.md revision 0.2), read multiplexer
+// R1_CTRL: register file (R1_REGISTER_MAP.md revision 0.3), read multiplexer
 // and the calibration CRC checker.
 // Revision 0.2: host-written configuration words are latch words (r1_cword,
 // see r1_lib.v); only registers with self-clearing bits (CTRL, OSC_CFG.MEAS)
 // and the RAW_COS snapshot are flip-flops. A write takes effect one tick later
 // than in revision 0.1 (the gated latch opens in the cycle after the write
 // pulse). Only the bits listed in the map are stored; other bits read 0.
-// Calibration CRC: CRC-8, polynomial 0x07, initial 0xFF, no reflection, no final
-// XOR, over registers 0x10..0x17 in address order, high byte first. A byte-serial
-// engine walks the 16 bytes continuously; CAL_VALID = (result == CAL_CRC) at the
-// end of a pass; any write to 0x10..0x18 clears CAL_VALID until the next
-// complete pass.
+// Calibration CRC (revision 0.3): CRC-8, polynomial 0x07, initial 0xFF, no
+// reflection, no final XOR, over the 43 covered words as they read back, high
+// byte first, in this order: 0x10..0x17 (position calibration), 0x36..0x3C
+// (comparator thresholds, AZ_START, AZ_CFG, CMP_CAL_A/B, CMP_CAL_IDEAL),
+// 0x50..0x5D (slice A ADC weights), 0x60..0x6D (slice B ADC weights, D18).
+// A byte-serial engine walks the 86 bytes continuously; CAL_VALID = (result ==
+// CAL_CRC) at the end of a pass. A write to a covered word or to CAL_CRC, and a
+// comparator calibration search (cal_busy), clear CAL_VALID until the next
+// complete pass (<= 2 x 86 ticks plus the SPI pauses).
+// Revision 0.2 covered 0x10..0x17 only.
 // SPDX-License-Identifier: Apache-2.0
 
 module r1_regs #(
-    parameter [15:0] CHIP_ID = 16'h5202
+    parameter [15:0] CHIP_ID = 16'h5203
 ) (
     input  wire        clk,
     input  wire        rst_n,
@@ -21,6 +26,7 @@ module r1_regs #(
     input  wire [6:0]  addr,
     input  wire [15:0] wdata,
     input  wire        rd,             // read strobe (side effects)
+    input  wire        rd_sel,         // SPI owns the read multiplexer (r1_spi)
     output reg  [15:0] rdata,
     // status inputs
     input  wire [15:0] status,
@@ -41,6 +47,7 @@ module r1_regs #(
     input  wire [7:0]  id_byte,        // BiSS ID ROM byte for addr 0x40..0x47, 0x78..0x7F
     input  wire [15:0] cmp_cal_a,      // CMP_CAL_A / _B read values (r1_cmpcal)
     input  wire [15:0] cmp_cal_b,
+    input  wire        cal_busy,       // comparator calibration search running (r1_cmpcal)
     // configuration outputs
     output wire [12:0] fault_mask,
     output reg         clr_pulse,
@@ -77,10 +84,13 @@ module r1_regs #(
     output wire [13:0] cmp_thr_a,      // [5:0] THR_OC_A, [13:8] THR_NEG_A
     output wire [13:0] cmp_thr_b,
     output wire [15:0] az_start,
-    output wire [13:0] az_cfg,         // [7:0] AZ_LEN, [13:8] THR_ZERO
+    output wire [15:0] az_cfg,         // [7:0] AZ_LEN, [13:8] THR_ZERO, [15:14] CAL_STEP
+    output wire [6:0]  ideal_oc,       // CMP_CAL_IDEAL [6:0]
+    output wire [6:0]  ideal_neg,      // CMP_CAL_IDEAL [14:8]
     output wire        cmp_cal_wr_a,   // host write of CMP_CAL_A / _B (data = wdata)
     output wire        cmp_cal_wr_b,
-    output wire [181:0] adc_w          // 13 x 14-bit ADC weights, w[i] at [14*i +: 14]
+    output wire [195:0] adc_wa,        // slice A: 14 x 14-bit ADC weights, w[i] at [14*i +: 14] (D18)
+    output wire [195:0] adc_wb         // slice B
 );
     // ---------------- latch configuration words ----------------
     r1_cword #(.W(13), .A(7'h03)) u_03 (clk, rst_n, wr, addr, wdata[12:0], fault_mask);
@@ -116,7 +126,7 @@ module r1_regs #(
     r1_cword #(.W(16), .A(7'h25)) u_25 (clk, rst_n, wr, addr, wdata, phase_b);
     r1_cword #(.W(16), .A(7'h26)) u_26 (clk, rst_n, wr, addr, wdata, phase_c);
     r1_cword #(.W(8),  .RV(8'd15), .A(7'h27)) u_27 (clk, rst_n, wr, addr, wdata[7:0], dead);
-    r1_cword #(.W(16), .RV(16'h201E), .A(7'h28)) u_28 (clk, rst_n, wr, addr, wdata, sched);
+    r1_cword #(.W(16), .RV(16'h1416), .A(7'h28)) u_28 (clk, rst_n, wr, addr, wdata, sched);
     r1_cword #(.W(14), .RV(14'h3FFF), .A(7'h2C)) u_2c (clk, rst_n, wr, addr, wdata[13:0], ot_lim);
     r1_cword #(.W(12), .A(7'h2D)) u_2d (clk, rst_n, wr, addr, wdata[11:0], i2t_cfg);
     r1_cword #(.W(16), .RV(16'hFFFF), .A(7'h2E)) u_2e (clk, rst_n, wr, addr, wdata, i2t_lim);
@@ -129,17 +139,26 @@ module r1_regs #(
     assign cmp_thr_a = {thr_a[11:6], 2'b00, thr_a[5:0]};
     assign cmp_thr_b = {thr_b[11:6], 2'b00, thr_b[5:0]};
     r1_cword #(.W(16), .A(7'h38)) u_38 (clk, rst_n, wr, addr, wdata, az_start);
-    r1_cword #(.W(14), .RV(14'h2000), .A(7'h39)) u_39 (clk, rst_n, wr, addr, wdata[13:0], az_cfg);
+    // AZ_CFG reset: THR_ZERO 14 (r1_safe contract), CAL_STEP 1 (32 ticks)
+    r1_cword #(.W(16), .RV(16'h4E00), .A(7'h39)) u_39 (clk, rst_n, wr, addr, wdata, az_cfg);
+    // CMP_CAL_IDEAL: 2 x k_ideal (half codes), reset 72 (OC, 36.31) and 55 (NEG, 27.69)
+    wire [13:0] ideal_w;
+    r1_cword #(.W(14), .RV({7'd55, 7'd72}), .A(7'h3C)) u_3c (clk, rst_n, wr, addr, {wdata[14:8], wdata[6:0]}, ideal_w);
+    assign ideal_oc = ideal_w[6:0];
+    assign ideal_neg = ideal_w[13:7];
     assign cmp_cal_wr_a = wr && (addr == 7'h3A);
     assign cmp_cal_wr_b = wr && (addr == 7'h3B);
 
-    // ADC weights (D12): 0x50 + i, 14 bit, units of 1/4 LSB; reset = binary
-    // (w[i] = 4 * 2^i for i = 0..11) and w[12] = 4 * 64 for the redundant decision
+    // ADC weights (D12, D18): slice A 0x50 + i, slice B 0x60 + i, i = 0..13
+    // (decision i, raw[13] first), 14 bit, units of 1/4 LSB. Reset = nominal
+    // r1_adc revision-3 weights x 4 (2032.4 .. 0.31 LSB; sum 16380 = 4095 LSB).
+    localparam [195:0] WNOM = {14'd8130, 14'd4065, 14'd2032, 14'd1016, 14'd508, 14'd315, 14'd158,
+                               14'd79,   14'd39,   14'd20,   14'd10,   14'd5,   14'd2,   14'd1};
     genvar gi;
     generate
-        for (gi = 0; gi < 13; gi = gi + 1) begin : g_w
-            localparam [13:0] WRV = (gi < 12) ? (14'd4 << gi) : 14'd256;
-            r1_cword #(.W(14), .RV(WRV), .A(7'h50 + gi)) u_w (clk, rst_n, wr, addr, wdata[13:0], adc_w[14*gi +: 14]);
+        for (gi = 0; gi < 14; gi = gi + 1) begin : g_w
+            r1_cword #(.W(14), .RV(WNOM[14*gi +: 14]), .A(7'h50 + gi)) u_wa (clk, rst_n, wr, addr, wdata[13:0], adc_wa[14*gi +: 14]);
+            r1_cword #(.W(14), .RV(WNOM[14*gi +: 14]), .A(7'h60 + gi)) u_wb (clk, rst_n, wr, addr, wdata[13:0], adc_wb[14*gi +: 14]);
         end
     endgenerate
 
@@ -162,22 +181,19 @@ module r1_regs #(
     end
 
     // ---------------- calibration CRC ----------------
-    reg [3:0] cbyte;
-    reg [7:0] crc;
-    reg       dirty;
-    reg [7:0] cb;
-    always @(*) begin
-        case (cbyte)
-            4'd0:  cb = {4'd0, ofs_sin[11:8]};  4'd1:  cb = ofs_sin[7:0];
-            4'd2:  cb = {4'd0, ofs_cos[11:8]};  4'd3:  cb = ofs_cos[7:0];
-            4'd4:  cb = gain[15:8];             4'd5:  cb = gain[7:0];
-            4'd6:  cb = ph_sin[15:8];           4'd7:  cb = ph_sin[7:0];
-            4'd8:  cb = ph_icos[15:8];          4'd9:  cb = ph_icos[7:0];
-            4'd10: cb = h3[15:8];               4'd11: cb = h3[7:0];
-            4'd12: cb = zero_ofs[15:8];         4'd13: cb = zero_ofs[7:0];
-            4'd14: cb = {6'd0, pos_cfg[9:8]};   default: cb = pos_cfg[7:0];
-        endcase
-    end
+    // revision 0.3: the CRC engine reads the covered words through the read
+    // multiplexer (maddr). The SPI owns it only in the two ticks in which it
+    // decodes a frame (rd_sel); the engine then holds its position and state.
+    reg  [5:0]  cw;                    // covered word 0..42
+    reg         chalf;                 // 0: high byte, 1: low byte
+    reg  [7:0]  crc;
+    reg         dirty;
+    wire [6:0]  caddr = (cw < 6'd8)  ? 7'h10 + {1'd0, cw} :
+                        (cw < 6'd15) ? 7'h36 + {1'd0, cw - 6'd8} :
+                        (cw < 6'd29) ? 7'h50 + {1'd0, cw - 6'd15} : 7'h60 + {1'd0, cw - 6'd29};
+    wire [6:0]  maddr = rd_sel ? addr : caddr;
+    wire [15:0] cv = rdata;
+    wire [7:0] cb = chalf ? cv[7:0] : cv[15:8];
     function [7:0] crc8_byte;
         input [7:0] c, d;
         integer i;
@@ -188,21 +204,30 @@ module r1_regs #(
             crc8_byte = r;
         end
     endfunction
-    wire [7:0] crc_n = crc8_byte((cbyte == 4'd0) ? 8'hFF : crc, cb);
+    wire       first = (cw == 6'd0) && !chalf;
+    wire       last  = (cw == 6'd42) && chalf;
+    wire [7:0] crc_n = crc8_byte(first ? 8'hFF : crc, cb);
+    wire       adv   = !rd_sel;
     // the latch word changes in the tick after the write pulse; a write marks the
     // pass dirty in both ticks so no pass mixes old and new values
-    reg  cal_wr_d;
-    wire cal_wr = wr && (addr >= 7'h10) && (addr <= 7'h18);
+    reg  cal_wr_d, cal_busy_d;
+    wire cal_wr = wr && (((addr >= 7'h10) && (addr <= 7'h18)) || ((addr >= 7'h36) && (addr <= 7'h3C)) ||
+                         ((addr >= 7'h50) && (addr <= 7'h5D)) || ((addr >= 7'h60) && (addr <= 7'h6D)));
     always @(posedge clk or negedge rst_n) begin
         if (!rst_n) begin
-            cbyte <= 4'd0; crc <= 8'hFF; dirty <= 1'b1; cal_valid <= 1'b0; cal_wr_d <= 1'b0;
+            cw <= 6'd0; chalf <= 1'b0; crc <= 8'hFF; dirty <= 1'b1; cal_valid <= 1'b0;
+            cal_wr_d <= 1'b0; cal_busy_d <= 1'b0;
         end else begin
-            crc      <= crc_n;
-            cbyte    <= cbyte + 4'd1;
-            cal_wr_d <= cal_wr;
-            if (cal_wr || cal_wr_d) begin
+            if (adv) begin
+                crc   <= crc_n;
+                chalf <= ~chalf;
+                if (chalf) cw <= last ? 6'd0 : cw + 6'd1;
+            end
+            cal_wr_d   <= cal_wr;
+            cal_busy_d <= cal_busy;
+            if (cal_wr || cal_wr_d || cal_busy || cal_busy_d) begin
                 dirty <= 1'b1; cal_valid <= 1'b0;
-            end else if (cbyte == 4'd15) begin
+            end else if (last && adv) begin
                 if (dirty) dirty <= 1'b0;                  // a full clean pass is needed
                 else cal_valid <= (crc_n == cal_crc);
             end
@@ -211,7 +236,7 @@ module r1_regs #(
 
     // ---------------- read multiplexer ----------------
     always @(*) begin
-        case (addr)
+        case (maddr)
             7'h00: rdata = CHIP_ID;
             7'h01: rdata = status;
             7'h02: rdata = {3'd0, fault_cause};
@@ -269,14 +294,17 @@ module r1_regs #(
             7'h36: rdata = {2'd0, cmp_thr_a};
             7'h37: rdata = {2'd0, cmp_thr_b};
             7'h38: rdata = az_start;
-            7'h39: rdata = {2'd0, az_cfg};
+            7'h39: rdata = az_cfg;
             7'h3A: rdata = cmp_cal_a;
             7'h3B: rdata = cmp_cal_b;
+            7'h3C: rdata = {1'b0, ideal_neg, 1'b0, ideal_oc};
             default: begin
-                if (addr[6:4] == 3'b101 && addr[3:0] <= 4'd12)
-                    rdata = {2'd0, adc_w[14*addr[3:0] +: 14]};
+                if (maddr[6:4] == 3'b101 && maddr[3:0] <= 4'd13)
+                    rdata = {2'd0, adc_wa[14*maddr[3:0] +: 14]};
+                else if (maddr[6:4] == 3'b110 && maddr[3:0] <= 4'd13)
+                    rdata = {2'd0, adc_wb[14*maddr[3:0] +: 14]};
                 else
-                    rdata = addr[6] ? {8'd0, id_byte} : 16'd0;
+                    rdata = maddr[6] ? {8'd0, id_byte} : 16'd0;
             end
         endcase
     end

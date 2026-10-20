@@ -33,6 +33,7 @@ module r1_spi (
     output wire [15:0] reg_wdata,
     input  wire [15:0] reg_rdata,      // combinational read of reg_addr
     output reg         reg_rd,         // pulse: a register was read (read side effects)
+    output wire        rd_sel,         // revision 0.3: reg_addr owns the read multiplexer (ph 1..2)
     input  wire [7:0]  status8,
     // events
     output reg         frame_ok,       // pulse: well-formed frame decoded
@@ -107,4 +108,5 @@ module r1_spi (
             endcase
         end
     end
+    assign rd_sel = (ph == 2'd1) || (ph == 2'd2);
 endmodule

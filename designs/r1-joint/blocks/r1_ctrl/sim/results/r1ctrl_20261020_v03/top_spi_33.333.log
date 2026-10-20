@@ -1,0 +1,32 @@
+# tb_top test=spi clk_ns=33.333
+PASS init: FAULT_N high after CAL_CRC load and CLR
+PASS spi: ID reads 0x5203 (revision 0.3)
+PASS spi: OSC_TRIM reset value 22 (D13), on the oscillator port
+PASS spi: BUS_CFG reset 0x40B2 (LAT_HALF on, BiSS, MT on, ST 18)
+PASS spi: BUS_CFG bit 8 reserved (reads 0; AS5047P mode removed)
+PASS spi: ADC_A_W13 reset 8130 (nominal r1_adc rev 3 weight x 4, D18)
+PASS spi: ADC_B_W8 reset 315 (nominal 78.8 LSB x 4, slice B, D18)
+PASS spi: ADC_B_W13 is a separate word (slice A unchanged)
+PASS spi: walking-one write/read on PWM registers
+PASS spi: ANA_CTRL write reaches the analog control port
+PASS spi: OSC_TRIM write reaches the oscillator port
+PASS spi: status byte in every frame
+PASS spi: write echo in the next frame
+PASS spi: BiSS MFR_ID mirror at 0x7E
+PASS spi: BiSS DEV_ID mirror at 0x79 ('1')
+PASS spi: short frame counted as SPI error
+INFO OSC_COUNT = 480, expected 480.0 (16 us of 33.333 ns ticks)
+PASS spi: OSC_COUNT over 16 SCLK periods (1 MHz) within +-2 ticks, OSC_DONE
+PASS spi: OSC_COUNT held after later SPI traffic
+PASS spi: OSC_COUNT inside OSC_WIN -> STATUS.CLK_FAULT = 0
+PASS spi: OSC_COUNT above OSC_WIN.HI -> STATUS.CLK_FAULT = 1
+PASS spi: OSC_COUNT below OSC_WIN.LO -> STATUS.CLK_FAULT = 1
+PASS spi: OSC_WIN = 0 disables the clock-fault check
+INFO spi/biss frame: busy 2 data 0x12345 nE nW 11 crc wire 0d calc~ 0d ack 1
+PASS spi/biss: BiSS frame before SPI access
+PASS spi/biss: SPI access between BiSS frames
+PASS spi/biss: BiSS frame after SPI sees the new TEST_POS
+PASS spi/biss: SPI read correct after BiSS traffic on the shared pad
+# 26 checks, 0 failed
+ALL TESTS PASSED
+tb/tb_top.v:1086: $finish called at 880234500 (1ps)

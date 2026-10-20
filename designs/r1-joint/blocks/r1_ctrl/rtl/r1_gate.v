@@ -1,9 +1,10 @@
-// R1_CTRL / r1_gate logic (revision 0.2): PWM counter, three low-side gate
+// R1_CTRL / r1_gate logic (revision 0.3): PWM counter, three low-side gate
 // channels with dead time, the current-pair sample strobe, the isense
-// auto-zero window, and the scheduler that shares the single SAR ADC
-// (INTERFACES.md: slice A = SIN or ISA, slice B = COS or ISB; {SIN, COS} pairs
-// on adc_hold, {ISA, ISB} pairs on is_smp; per conversion 13 raw decisions,
-// corrected by r1_adcw).
+// auto-zero window, and the frame generator of the two-slice SAR ADC
+// (INTERFACES.md "ADC -> ctrl", D18: slice A = SIN or ISA, slice B = COS or
+// ISB, both slices convert in parallel; {SIN, COS} on adc_hold, {ISA, ISB} on
+// is_smp; per conversion 14 raw decisions per slice, corrected by one r1_adcw
+// per slice with its own 14 weights).
 //
 // PWM: up-counter 0..PERIOD-1 (f_PWM = f_clk / PERIOD). Channel x is on while
 //   DEAD <= rel_x < DUTY_x - DEAD,  rel_x = (cnt - PHASE_x) mod PERIOD,
@@ -16,15 +17,20 @@
 // (PHASE_x = C - DUTY_x / 2) all windows share that centre.
 // Auto-zero window: az_win is high for AZ_LEN ticks from cnt == AZ_START
 // (AZ_LEN = 0: no window). The host places it where both low-side FETs are off.
-// Scheduler: a sin/cos pair (hold, convert SIN, convert COS) starts every
-// PAIR_TICKS unless the current strobe is due within GUARD ticks; the current
-// pair starts at the strobe tick (or as soon as the ADC is free; late starts
-// are counted). A conversion of channel n+1 starts at the adc_valid of channel n;
-// the corrected code arrives 8 ticks after adc_valid. A new sin/cos pair does
-// not start while the COS code of the previous pair is still in r1_adcw
-// (sc_pend): r1_pos keeps one NCO snapshot per pair (taken at smp_sh), so
-// smp_valid of pair n must come before smp_sh of pair n+1. The sin/cos pair
-// period is therefore max(PAIR_TICKS, 2 conversions + 9 ticks).
+// Frame generator (revision 0.3, D18): an encoder frame (adc_hold, adc_sel = 0,
+// one adc_start for both slices) starts every PAIR_TICKS (reset 22) unless the
+// current strobe is due within GUARD ticks. The current frame (is_smp,
+// adc_sel = 1) starts at the strobe tick (or as soon as both slices are free;
+// late starts are counted) and replaces one encoder frame; the frame grid
+// restarts at the current frame, so for a PWM period of N x PAIR_TICKS the
+// encoder gap is 2 x PAIR_TICKS once per period. The holds are released when
+// both slices have returned adc_valid. The corrected codes arrive 4 ticks after
+// adc_valid (r1_adcw). A new encoder frame does not start while the codes of the
+// previous encoder pair are still in r1_adcw (sc_pend): r1_pos keeps one NCO
+// snapshot per pair (taken at smp_sh), so smp_valid of pair n must not come after
+// smp_sh of pair n+1 (the same tick is allowed). The encoder frame is therefore
+// max(PAIR_TICKS, conversion + 5 ticks), with the conversion counted from the
+// adc_start pulse to the later adc_valid pulse: 22 ticks for <= 17 ticks.
 // Gate outputs: registered PWM AND gate_ok (registered) AND the EN/STO_IN pad
 // level (asynchronous, so EN low forces the gates low at once).
 // SPDX-License-Identifier: Apache-2.0
@@ -48,11 +54,14 @@ module r1_gate (
     // ADC
     output reg          adc_hold,       // sin/cos track-and-holds hold while high
     output reg          is_smp,         // isense track-and-holds hold while high
-    output reg          adc_start,      // pulse: start a conversion of adc_mux
-    output reg  [1:0]   adc_mux,        // 0 SIN, 1 COS, 2 ISA, 3 ISB
-    input  wire         adc_valid,      // pulse: adc_raw valid
-    input  wire [12:0]  adc_raw,
-    input  wire [181:0] adc_w,
+    output reg          adc_start,      // pulse: both slices start a conversion of adc_sel
+    output reg          adc_sel,        // 0 encoder {SIN, COS}, 1 current {ISA, ISB}
+    input  wire         adc_valid_a,    // pulse: adc_raw_a valid (slice A)
+    input  wire [13:0]  adc_raw_a,
+    input  wire         adc_valid_b,    // pulse: adc_raw_b valid (slice B)
+    input  wire [13:0]  adc_raw_b,
+    input  wire [195:0] adc_wa,         // slice A weights
+    input  wire [195:0] adc_wb,         // slice B weights
     // results
     output reg          smp_sh,         // pulse at the hold instant
     output reg          smp_valid,
@@ -140,58 +149,64 @@ module r1_gate (
     wire [15:0] ta = rel(sa, cnt, p_s);          // ticks until the strobe
     wire soon = va && (p_s != 16'd0) && ta <= {8'd0, guard};
 
-    // ---------------- ADC weight correction ----------------
-    wire        cv;
-    wire [11:0] code;
-    r1_adcw u_w (.clk(clk), .rst_n(rst_n), .valid(adc_valid), .raw(adc_raw), .w(adc_w),
-                 .code_valid(cv), .code(code));
+    // ---------------- ADC weight correction (one per slice) ----------------
+    wire        cva, cvb;
+    wire [11:0] codea, codeb;
+    r1_adcw u_wa (.clk(clk), .rst_n(rst_n), .valid(adc_valid_a), .raw(adc_raw_a), .w(adc_wa),
+                  .code_valid(cva), .code(codea));
+    r1_adcw u_wb (.clk(clk), .rst_n(rst_n), .valid(adc_valid_b), .raw(adc_raw_b), .w(adc_wb),
+                  .code_valid(cvb), .code(codeb));
 
-    // ---------------- ADC scheduler ----------------
-    localparam A_IDLE = 2'd0, A_FIRST = 2'd1, A_SECOND = 2'd2;
-    reg [1:0]  ast;
+    // ---------------- frame generator ----------------
+    reg        conv;                   // a frame is converting (holds closed)
+    reg        got_a, got_b;           // adc_valid seen per slice in this frame
     reg [7:0]  ptim;
     reg        req;
-    reg [1:0]  tag;                    // channel of the conversion in r1_adcw
-    reg [11:0] first_code;             // SIN or ISA code until its pair partner is done
-    reg        sc_pend;                // COS code of a sin/cos pair not yet out of r1_adcw
+    reg        tag_a;                  // frame type of the codes in r1_adcw (slice A sets the pair type)
+    reg [11:0] ca, cb;                 // first-arrived code until its partner is done
+    reg        pa_r, pb_r;
+    reg        sc_pend;                // encoder codes not yet out of r1_adcw
+    wire       nga = got_a | adc_valid_a, ngb = got_b | adc_valid_b;
+    wire       nra = pa_r | cva,  nrb = pb_r | cvb;
+    wire [11:0] nca = cva ? codea : ca, ncb = cvb ? codeb : cb;
+    wire       enc_done = nra && nrb && !tag_a;  // encoder pair leaves r1_adcw in this tick
 
     always @(posedge clk or negedge rst_n) begin
         if (!rst_n) begin
-            ast <= A_IDLE; ptim <= 8'd0; req <= 1'b0; tag <= 2'd0; first_code <= 12'h800; sc_pend <= 1'b0;
-            adc_hold <= 1'b0; is_smp <= 1'b0; adc_start <= 1'b0; adc_mux <= 2'd0;
+            conv <= 1'b0; got_a <= 1'b0; got_b <= 1'b0; ptim <= 8'd0; req <= 1'b0; tag_a <= 1'b0;
+            ca <= 12'h800; cb <= 12'h800; pa_r <= 1'b0; pb_r <= 1'b0; sc_pend <= 1'b0;
+            adc_hold <= 1'b0; is_smp <= 1'b0; adc_start <= 1'b0; adc_sel <= 1'b0;
             smp_sh <= 1'b0; smp_valid <= 1'b0; sin_code <= 12'h800; cos_code <= 12'h800;
             i_a <= 12'd0; i_b <= 12'd0; late_cnt <= 4'd0;
         end else begin
             adc_start <= 1'b0; smp_sh <= 1'b0; smp_valid <= 1'b0;
             if (ptim != 8'hFF) ptim <= ptim + 8'd1;
             if (stb) req <= 1'b1;
-            case (ast)
-                A_IDLE: begin
-                    if (req || stb) begin
-                        is_smp <= 1'b1; adc_mux <= 2'd2; adc_start <= 1'b1; req <= 1'b0; ast <= A_FIRST;
-                        if (!stb && late_cnt != 4'hF) late_cnt <= late_cnt + 4'd1;
-                    end else if (ptim + 8'd1 >= pair_ticks && !soon && pair_ticks != 8'd0 && !sc_pend) begin
-                        ptim <= 8'd0;
-                        adc_hold <= 1'b1; smp_sh <= 1'b1;
-                        adc_mux <= 2'd0; adc_start <= 1'b1; ast <= A_FIRST;
-                    end
+            if (adc_valid_a) tag_a <= adc_sel;
+            // corrected codes: the pair is complete when both slices have a code
+            if (nra && nrb) begin
+                pa_r <= 1'b0; pb_r <= 1'b0;
+                if (!tag_a) begin sin_code <= nca; cos_code <= ncb; smp_valid <= 1'b1; sc_pend <= 1'b0; end   // a start below overrides
+                else        begin i_a <= nca; i_b <= ncb; end
+            end else begin
+                pa_r <= nra; pb_r <= nrb; ca <= nca; cb <= ncb;
+            end
+            if (!conv) begin
+                if (req || stb) begin                              // current frame (D18: replaces an encoder frame)
+                    is_smp <= 1'b1; adc_sel <= 1'b1; adc_start <= 1'b1; req <= 1'b0; conv <= 1'b1;
+                    ptim <= 8'd0;
+                    if (!stb && late_cnt != 4'hF) late_cnt <= late_cnt + 4'd1;
+                end else if (ptim + 8'd1 >= pair_ticks && !soon && pair_ticks != 8'd0 && (!sc_pend || enc_done)) begin
+                    ptim <= 8'd0; sc_pend <= 1'b1;
+                    adc_hold <= 1'b1; smp_sh <= 1'b1;
+                    adc_sel <= 1'b0; adc_start <= 1'b1; conv <= 1'b1;
                 end
-                A_FIRST: if (adc_valid) begin
-                    tag <= adc_mux; adc_mux <= adc_mux + 2'd1; adc_start <= 1'b1; ast <= A_SECOND;
-                end
-                A_SECOND: if (adc_valid) begin
-                    tag <= adc_mux; adc_hold <= 1'b0; is_smp <= 1'b0; ast <= A_IDLE;
-                    if (adc_mux == 2'd1) sc_pend <= 1'b1;
-                end
-                default: ast <= A_IDLE;
-            endcase
-            // corrected codes
-            if (cv) case (tag)
-                2'd0: first_code <= code;
-                2'd1: begin sin_code <= first_code; cos_code <= code; smp_valid <= 1'b1; sc_pend <= 1'b0; end
-                2'd2: first_code <= code;
-                default: begin i_a <= first_code; i_b <= code; end
-            endcase
+                got_a <= 1'b0; got_b <= 1'b0;
+            end else if (nga && ngb) begin                         // both slices done: release the holds
+                adc_hold <= 1'b0; is_smp <= 1'b0; conv <= 1'b0; got_a <= 1'b0; got_b <= 1'b0;
+            end else begin
+                got_a <= nga; got_b <= ngb;
+            end
         end
     end
 endmodule

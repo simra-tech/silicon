@@ -1,8 +1,8 @@
-# R1 bus protocols and register map (draft 0.2, 2026-10-20)
+# R1 bus protocols and register map (draft 0.3, 2026-10-20)
 
 Owner block: `r1_ctrl` (`designs/r1-joint/blocks/r1_ctrl`). This document is the contract between
 the host, the digital macro (`rtl/r1_ctrl_top.v`) and the analog blocks it connects to. It is a
-draft: nothing here is on silicon. The RTL in `rtl/` implements this version (revision 0.2).
+draft: nothing here is on silicon. The RTL in `rtl/` implements this version (revision 0.3; change log in section 7).
 Revision 0.2 checked every BiSS interpretation item of 0.1 against the BiSS C Rev D2 document
 ("D2", page numbers of that PDF). Section 3.4 lists the result. One item stays **[verify]**: the
 BP_ID (profile) code. The protocol testbench uses our own master model, so the interop runs of
@@ -163,7 +163,7 @@ read 0. Reset values apply after `por_n`. `EN` does not reset the registers.
 
 | Addr | Name | Type | Reset | Bits |
 | --- | --- | --- | --- | --- |
-| 0x00 | `ID` | RO | 0x5202 | chip 'R', RTL revision 0.2 (0.1: 0x5210) |
+| 0x00 | `ID` | RO | 0x5203 | chip 'R', RTL revision 0.3 (0.2: 0x5202, 0.1: 0x5210) |
 | 0x01 | `STATUS` | RO | — | 0 AMP_LOW, 1 AMP_HIGH, 2 OVERSPEED, 3 TRACK_ERR, 4 CAL_VALID, 5 CLK_FAULT, 6 POS_VALID, 7 FAULT, 8 EN (synchronised), 9 GATE_ACTIVE, 10 OSC_DONE, 11 CAL_BUSY, 12 CAL_DONE, 13 CAL_EXH (any comparator) |
 | 0x02 | `FAULT` | RO | 0x1800 | latched causes: 0–3 comparator flags `cmp[3:0]`, 4 OTEMP, 5 AMP, 6 OVERSPEED, 7 WDT, 8 STO (EN low), 9 I2T_A, 10 I2T_B, 11 CAL (CRC mismatch), 12 POR |
 | 0x03 | `FAULT_MASK` | RW | 0x0000 | 1 = source does not latch; bits 8, 11, 12 cannot be masked |
@@ -172,10 +172,11 @@ read 0. Reset values apply after `por_n`. `EN` does not reset the registers.
 `CLR` clears each `FAULT` bit whose source is inactive at that moment. Bit 11 stays set while the
 calibration CRC does not match. After reset, the gates stay off until the host does these steps:
 
-1. Write the calibration registers.
-2. Write `CAL_CRC`.
-3. Write `CTRL.CLR`.
-4. Write `CTRL.GATE_EN`.
+1. Write the calibration registers (section 4.4), the comparator words and the ADC weights of both slices.
+2. Run the comparator calibration (section 4.10), if it is used.
+3. Write `CAL_CRC` (computed over the values that read back, section 4.4).
+4. Write `CTRL.CLR`.
+5. Write `CTRL.GATE_EN`.
 
 ### 4.2 Interface
 
@@ -208,7 +209,7 @@ To measure the oscillator, do these steps:
 the BiSS frame; it does not latch a `FAULT` bit. Example at 30 MHz with a 1 MHz reference:
 OSC_COUNT = 480, OSC_COUNT[11:4] = 30; `OSC_WIN` = 0x201C (LO 28, HI 32) accepts ±7 %.
 
-### 4.4 Calibration (covered by `CAL_CRC`)
+### 4.4 Calibration (position words; `CAL_CRC`)
 
 | Addr | Name | Type | Reset | Format |
 | --- | --- | --- | --- | --- |
@@ -220,14 +221,29 @@ OSC_COUNT = 480, OSC_COUNT[11:4] = 30; `OSC_WIN` = 0x201C (LO 28, HI 32) accepts
 | 0x15 | `H3` | RW | 0 | 7:0 H3_AMP (16-bit angle LSB), 15:8 H3_PH (1/256 turn) |
 | 0x16 | `ZERO_OFS` | RW | 0 | 16-bit angle LSB, subtracted after the direction |
 | 0x17 | `POS_CFG` | RW | 0x0164 | 0 DIR, 4:1 KP (loop gain 2^−KP), 9:5 KI (2^−KI per tick; values outside 8–23 are clamped to 8 or 23) |
-| 0x18 | `CAL_CRC` | RW | 0 | 7:0 CRC-8 of 0x10–0x17 |
+| 0x18 | `CAL_CRC` | RW | 0 | 7:0 CRC-8 of 0x10–0x17, 0x36–0x3C, 0x50–0x5D, 0x60–0x6D (revision 0.3) |
 
-`CAL_CRC` is CRC-8 with polynomial 0x07, initial value 0xFF, no reflection and no final XOR. It is
-computed over the 16 bytes of 0x10..0x17 in address order, high byte first, with the unused bits
-as 0 (the values that read back). The hardware checks it continuously. A write to 0x10..0x18
-clears `CAL_VALID` until the next complete check (≤ 32 ticks). S1 lists `PHASE` as 10 bit with
-a LUT. R1 uses two host-computed words (sin α, 1/cos α) instead, so no LUT is needed.
-`CAL_CRC` does not cover the comparator words (0x36–0x3B) or the ADC weights (0x50–0x5C).
+`CAL_CRC` is CRC-8 with polynomial 0x07, initial value 0xFF, no reflection and no final XOR.
+Revision 0.3 computes it over 43 words (86 bytes), high byte first, with the values that read
+back (unused bits as 0, `EXH` bits as read), in this order:
+
+1. 0x10..0x17 (position calibration, 8 words);
+2. 0x36..0x3C (`CMP_THR_A/B`, `AZ_START`, `AZ_CFG`, `CMP_CAL_A/B`, `CMP_CAL_IDEAL`, 7 words);
+3. 0x50..0x5D (`ADC_A_W0`–`ADC_A_W13`, 14 words);
+4. 0x60..0x6D (`ADC_B_W0`–`ADC_B_W13`, 14 words).
+
+The hardware checks it continuously, one byte per tick, through the register read multiplexer
+(the SPI takes the multiplexer for 2 ticks per frame; the check then pauses). A write to a covered word or to
+`CAL_CRC` clears `CAL_VALID` until the next complete check (≤ 172 ticks plus 2 ticks per SPI frame). A comparator
+calibration search (`CAL_BUSY`) also clears it, because the search writes `CMP_CAL_A/B`: after a
+search the host reads the codes, writes the new `CAL_CRC` and then `CTRL.CLR` (FAULT bit 11 is
+latched while `CAL_VALID` = 0). Reason for the extension (0.2 open issue 6): the comparator
+thresholds and calibration codes set the over-current trip points and the ADC weights set every
+current and position code, so an upset in these registers is as safety-relevant as one in the
+position words. Error detection: all single-bit and all odd-weight errors (0x07 has the factor
+x + 1); 2-bit errors are detected while their distance is < 127 bits; other patterns escape with
+probability 2^−8. S1 lists `PHASE` as 10 bit with a LUT. R1 uses two host-computed words (sin α,
+1/cos α) instead, so no LUT is needed.
 
 ### 4.5 Position (read only)
 
@@ -252,26 +268,35 @@ a LUT. R1 uses two host-computed words (sin α, 1/cos α) instead, so no LUT is 
 | 0x21–0x23 | `DUTY_A/B/C` | RW | 0 | ideal low-side on-time, ticks |
 | 0x24–0x26 | `PHASE_A/B/C` | RW | 0 | start of the ideal on-window, ticks (< PERIOD) |
 | 0x27 | `DEAD` | RW | 15 | [7:0] ticks removed at both ends of each on-window (15 = 500 ns) |
-| 0x28 | `SCHED` | RW | 0x201E | 7:0 PAIR_TICKS (sin/cos pair period), 15:8 GUARD |
-| 0x35 | `LATE` | RO | 0 | [3:0] current pairs that started after their strobe (saturating) |
+| 0x28 | `SCHED` | RW | 0x1416 | 7:0 PAIR_TICKS (encoder frame period, reset 22, D18), 15:8 GUARD (reset 20) |
+| 0x35 | `LATE` | RO | 0 | [3:0] current frames that started after their strobe (saturating) |
 | 0x38 | `AZ_START` | RW | 0 | counter value at which `az_win` starts |
-| 0x39 | `AZ_CFG` | RW | 0x2000 | 7:0 AZ_LEN (ticks; 0 = no window), 13:8 THR_ZERO (section 4.10) |
+| 0x39 | `AZ_CFG` | RW | 0x4E00 | 7:0 AZ_LEN (ticks; 0 = no window), 13:8 THR_ZERO (reset 14, section 4.10), 15:14 CAL_STEP (calibration step length 16 << CAL_STEP ticks, reset 1 = 32) |
 
 Channel x is on while DEAD ≤ (cnt − PHASE_x) mod PERIOD < DUTY_x − DEAD. The gate output is the
 registered PWM AND `GATE_ACTIVE` AND the `EN` pad. PERIOD, DUTY and PHASE take effect at the
 counter wrap. `GATE_ACTIVE` is 0 while a comparator calibration runs.
 
-Current sampling (0.2): one strobe per period at the centre of the channel A window
-(PHASE_A + DUTY_A/2), when DUTY_A ≥ 2·DEAD + 2. At the strobe `is_smp` goes high (both isense
-track-and-holds hold), and ISA then ISB are converted. Channel B is therefore sampled at the
-channel A centre. For a centred PWM pattern (PHASE_x = C − DUTY_x/2) all windows share that
-centre. (0.1: separate strobes at the A and B centres.)
+ADC frames (revision 0.3, PLAN.md D18): the ADC has two slices that convert in parallel. Each
+frame converts one pair: the encoder frame {SIN on slice A, COS on slice B} or the current frame
+{ISA on slice A, ISB on slice B}. One `adc_start` pulse starts both slices; `adc_sel` selects the
+pair.
 
-Sin/cos pairs: a pair does not start when a strobe is due within GUARD ticks; GUARD must cover
-two conversions. A pair also does not start before the corrected COS code of the previous pair
-is out of the weight correction (section 4.11). The pair period is therefore
-max(PAIR_TICKS, 2 conversions + about 9 ticks): about 35 ticks with the testbench ADC model
-(estimate from the testbench timing, not measured separately).
+Current frame: one strobe per period at the centre of the channel A window (PHASE_A + DUTY_A/2),
+when DUTY_A ≥ 2·DEAD + 2. At the strobe `is_smp` goes high (both isense track-and-holds hold) and
+the current frame starts. Channel B is therefore sampled at the channel A centre. For a centred
+PWM pattern (PHASE_x = C − DUTY_x/2) all windows share that centre. If a frame is still
+converting at the strobe, the current frame starts when both slices are free and `LATE` counts it.
+
+Encoder frames: a frame starts every PAIR_TICKS (reset 22 = 0.733 µs at 30 MHz). No frame starts
+when the strobe is due within GUARD ticks; GUARD must cover one conversion (reset 20). The frame
+grid restarts at the current frame, so the current frame takes the place of one encoder frame.
+For PERIOD = N × PAIR_TICKS the encoder gap is 2 × PAIR_TICKS once per period; otherwise it is at
+most 2 × PAIR_TICKS + GUARD. An encoder frame also does not start before both codes of the
+previous encoder frame are out of the weight correction (section 4.11). The frame is therefore
+max(PAIR_TICKS, conversion + 5 ticks), with the conversion counted from the `adc_start` pulse to
+the later `valid` of the two slices: 22 ticks for a conversion of ≤ 17 ticks. The holds
+(`adc_hold`, `is_smp`) are released when both slices have returned `valid`.
 
 Auto-zero window: `az_win` is high for AZ_LEN ticks from counter value AZ_START. The host puts
 it where both low-side FETs are off. The comparator flags are blanked during `az_win` and for
@@ -306,7 +331,8 @@ CMP_FILT + 1 ticks before it latches (0 = 1 tick, 4 ticks from the pin to `FAULT
 
 ### 4.9 BiSS identification (0x40–0x7F)
 
-A native SPI read of 0x40–0x7F returns the BiSS byte in [7:0].
+A native SPI read of 0x40–0x7F returns the BiSS byte in [7:0], except 0x50–0x5D and 0x60–0x6D,
+which are the ADC weights (section 4.11; the BiSS control channel does not access them).
 
 | BiSS addr | Content | Value in this RTL |
 | --- | --- | --- |
@@ -325,45 +351,77 @@ A native SPI read of 0x40–0x7F returns the BiSS byte in [7:0].
 | 0x37 | `CMP_THR_B` | RW | 0x3F3F | 5:0 THR_OC_B, 13:8 THR_NEG_B |
 | 0x3A | `CMP_CAL_A` | RW | 0x2020 | 5:0 CAL_OC_A, 6 EXH_OC_A (RO), 13:8 CAL_NEG_A, 14 EXH_NEG_A (RO) |
 | 0x3B | `CMP_CAL_B` | RW | 0x2020 | 5:0 CAL_OC_B, 6 EXH_OC_B (RO), 13:8 CAL_NEG_B, 14 EXH_NEG_B (RO) |
+| 0x3C | `CMP_CAL_IDEAL` | RW | 0x3748 | 6:0 IDEAL_OC, 14:8 IDEAL_NEG: 2 × k_ideal rounded down (half codes); reset 72 (k_ideal 36.31) and 55 (27.69), from `r1_safe` revision 3 |
 
-Comparator order of `cmp[3:0]` and `FAULT[3:0]`: 0 OC_A, 1 NEG_A, 2 OC_B, 3 NEG_B. The meaning of
-the 6-bit threshold and calibration codes (step size, polarity) is set by `r1_safe`; see open
-issue in the README.
+Comparator order of `cmp[3:0]` and `FAULT[3:0]`: 0 OC_A, 1 NEG_A, 2 OC_B, 3 NEG_B. Code meaning
+(`r1_safe` revision 3): cell code c = THR_OC (OC) or 63 − THR_NEG (NEG); calibration code k is
+summed into the threshold DAC with step VREF/252 = LSB/8 (k = 32: no shift); a flag = 1 means the
+input is above the cell threshold (`POL` = 0 for all four).
+
+Contract (`r1_safe` README, `sim/cal_model.py`): at zero current, with THR_ZERO = 14 on all four
+comparators, k_rel is the first code (ascending, output starting high) at which the output falls,
+k_trip the first code (descending, output starting low) at which it rises, and the stored code is
+
+  k_cal = 32 + round((k_rel + k_trip)/2 − k_ideal),  k_ideal = 36.31 (OC) / 27.69 (NEG).
+
+The two-sided search cancels the hysteresis. Revision 0.3 implements this as
+
+  CAL = 32 + floor((k_rel + k_trip − IDEAL) / 2),  IDEAL = `CMP_CAL_IDEAL` field = floor(2 k_ideal),
+
+which equals the contract formula for every k_rel + k_trip while k_ideal is not a multiple of
+1/2 (checked on 274 MC comparator samples, README revision 0.3). A 6-bit integer IDEAL
+(36 / 28) would differ by one code on 103 of the 274 samples, so the field is 7 bits in half codes.
 
 To calibrate the comparator offsets, do these steps:
 
-1. Set `PWM_PERIOD`, `AZ_START` and `AZ_CFG.AZ_LEN` so that `az_win` falls where the isense
-   inputs are at zero current. Set `AZ_CFG.THR_ZERO` to the threshold code for 0 A.
-2. Write `CTRL.CMP_CAL` = 1 (with `GATE_EN` as required).
-3. Wait until `STATUS.CAL_BUSY` = 0 (7 PWM periods).
-4. Read `CMP_CAL_A/B`. An `EXH` bit = 1 means the offset is outside the 6-bit range.
+1. Set `PWM_PERIOD`, `AZ_START` and `AZ_CFG.AZ_LEN`. Each period must leave at least
+   3 × (16 << CAL_STEP) + 4 ticks after the end of `az_win` (reset: 100 ticks).
+2. Keep `AZ_CFG.THR_ZERO` = 14 and `CMP_CAL_IDEAL` at its reset value unless `r1_safe` changes.
+3. Write `CTRL.CMP_CAL` = 1. The gates stay off during the search, so the shunt current is zero.
+4. Wait until `STATUS.CAL_BUSY` = 0 (14 PWM periods).
+5. Read `CMP_CAL_A/B`. An `EXH` bit = 1 means that the toggle points are outside the 6-bit range
+   or that the result saturates; the code is then not valid.
+6. Write the new `CAL_CRC` and `CTRL.CLR` (section 4.4).
 
 During the search (`CAL_BUSY`): all four threshold outputs carry THR_ZERO, the gates are off,
-and the comparator faults are blanked. The search is a successive approximation over the four
-comparators at the same time: start at 32, one decision per `az_win` (taken at the last tick of
-the window), 6 decisions, then one check window. A flag = 1 at the decision raises the code.
-Result: the largest code at which the flag is 1. `EXH` = 1 when the result is 63 and the flag is
-still 1, or 0 and the flag is still 0. The host can write the codes when no search runs; a
-search overwrites them.
+and the comparator faults are blanked (and for 16 ticks after the search). The four comparators
+are searched at the same time. Each decision uses the zero-current time after one `az_win`
+(STEP = 16 << CAL_STEP ticks): STEP ticks of settling, the preset code for STEP ticks, the probe
+code for STEP ticks, then the synchronised flag is sampled. If `az_win` starts again before the
+sample, the decision is repeated in the next period.
 
-### 4.11 ADC weight correction (PLAN.md D12)
+- Pass R (release side): preset code 0, so the output is high before each probe. A flag = 1 at
+  the probe means "not released". 6-bit successive approximation (start 32, flag = 1 keeps the
+  bit), then one check window. Result a = the largest code with flag 1; k_rel = a + 1.
+- Pass T (trip side): preset code 63, so the output is low before each probe. A flag = 1 means
+  "tripped". Same successive approximation and check; k_trip = b = the largest code with flag 1.
+- `EXH` = 1 if a pass ends at 63 with flag 1 or at 0 with flag 0, or if CAL saturates at 0 or 63.
+
+The host can write the codes when no search runs; a search overwrites them. During a search,
+`CMP_CAL_A/B` read the codes applied at that moment (preset or probe), not a result.
+
+### 4.11 ADC weight correction (PLAN.md D12, D18)
 
 | Addr | Name | Type | Reset | Format |
 | --- | --- | --- | --- | --- |
-| 0x50–0x5B | `ADC_W0`–`ADC_W11` | RW | 4 × 2^i | [13:0] weight of binary decision i, units of 1/4 LSB |
-| 0x5C | `ADC_W12` | RW | 256 | [13:0] weight of the redundant decision (nominal 64 LSB) |
+| 0x50–0x5D | `ADC_A_W0`–`ADC_A_W13` | RW | nominal × 4 | [13:0] weight of decision i of slice A (SIN, ISA), units of 1/4 LSB |
+| 0x60–0x6D | `ADC_B_W0`–`ADC_B_W13` | RW | nominal × 4 | [13:0] weight of decision i of slice B (COS, ISB), units of 1/4 LSB |
 
-code = min(4095, (Σ raw[i] · ADC_W[i] + 2) >> 2). The reset weights are binary, so an ADC with
-raw[12] = 0 gives the plain 12-bit code. All four channels use the same weights. Weight
-correction adds 8 ticks from `adc_valid` to the code. A weight write takes effect for the next
-conversion.
+Per slice: code = min(4095, (Σ raw[i] · W[i] + 2) >> 2), i = 0..13. raw[13] is the first (most
+significant) decision. The reset weights are the nominal `r1_adc` revision-3 weights × 4,
+rounded: W13…W0 = 8130, 4065, 2032, 1016, 508, 315, 158, 79, 39, 20, 10, 5, 2, 1 (sum 16380 =
+4095 LSB). The host loads the measured weights of each slice; then it writes `CAL_CRC` (the
+weights are covered, section 4.4). Weight correction adds 4 ticks from `valid` to the code (four
+decisions per tick). A weight write takes effect for the next conversion. The weight unit
+(1/4 LSB) and the bit order are this map's contract; `r1_adc` revision 4 confirms them.
 
 ### 4.12 Write timing of configuration registers
 
-All RW registers except `CTRL` and `OSC_CFG.MEAS` are latch words (revision 0.2, to save area).
-A write changes the register in the tick after the internal write pulse, 3–5 ticks after
-`CS_N` rises. The value is stable for the rest of the `CS_N` high time and after it. The PWM
-shadow registers are latch words too; they load at the counter wrap, as in 0.1.
+Revision 0.3: all RW registers are flip-flops with a write enable (`R1_CFG_FLOPS` in
+`rtl/r1_lib.v`). Revision 0.2 used latch words to save area; they failed sign-off STA at the
+slow corner (README revision 0.3). A write changes the register at the clock edge that ends the
+internal write pulse, 3–5 ticks after `CS_N` rises. The PWM shadow registers stay latch words
+(loaded at the counter wrap); they pass sign-off STA in the flip-flop configuration.
 
 ## 5. Position path (r1_pos) number formats
 
@@ -376,8 +434,9 @@ shadow registers are latch words too; they load at the counter wrap, as in 0.1.
 | Tracking loop | NCO θ (16.20 bit) += ω every tick; per pair e = θ_meas − θ(at hold); θ += e·2^−KP, ω += e·2^−KI |
 | Output | POS = (±(θ + ω·EXTRAP)) − ZERO_OFS, registered every tick |
 
-One pair is processed in 28 ticks (one shared 18 × 17 multiplier, also for the loop gains). A
-pair that arrives while the previous pair is still being processed is dropped and counted in
+One pair is processed in 19 ticks (revision 0.3: two CORDIC iterations per tick; one shared
+18 × 17 multiplier, also for the loop gains). A hold in the tick of the previous pair's
+`smp_valid` belongs to the next pair. A pair that arrives while the previous pair is still being processed is dropped and counted in
 `DIAG_SPI[11:8]`. RTL against the floating-point reference: ≤ 0.024° el (simulated, section 5 of
 the README).
 
@@ -389,8 +448,9 @@ the README).
 | `por_n` | in | power-on reset, active low (asynchronous assert, synchronous release) |
 | `adc_hold` | out | high: both sin/cos track-and-holds hold (rising edge = sampling instant) |
 | `is_smp` | out | high: both isense track-and-holds hold (rising edge = current sampling instant) |
-| `adc_start`, `adc_mux[1:0]` | out | one-tick pulse: convert channel 0 SIN T&H, 1 COS T&H, 2 ISA, 3 ISB (the mux is stable during the conversion) |
-| `adc_valid`, `adc_raw[12:0]` | in | one-tick pulse with the 13 raw decisions: [11:0] binary (11 = MSB), [12] redundant; synchronous to `clk` |
+| `adc_start`, `adc_sel` | out | one-tick pulse: both slices convert; `adc_sel` 0 = {SIN, COS}, 1 = {ISA, ISB} (stable during the conversion) |
+| `adc_valid_a`, `adc_raw_a[13:0]` | in | slice A: one-tick pulse with the 14 raw decisions ([13] first); synchronous to `clk` |
+| `adc_valid_b`, `adc_raw_b[13:0]` | in | slice B: the same |
 | `cmp[3:0]` | in | comparator flags (0 OC_A, 1 NEG_A, 2 OC_B, 3 NEG_B), asynchronous, synchronised inside |
 | `thr_oc_a`, `thr_neg_a`, `thr_oc_b`, `thr_neg_b` [5:0] | out | comparator threshold codes (THR_ZERO during a calibration) |
 | `cal_oc_a`, `cal_neg_a`, `cal_oc_b`, `cal_neg_b` [5:0] | out | comparator offset calibration codes |
@@ -401,12 +461,14 @@ the README).
 | `en_pad`, `cs_n`, `ma_sclk`, `sdi` | in | pads (level-shifted) |
 | `slo_sdo`, `fault_n`, `gate_a/b/c` | out | pads |
 
-The testbench ADC model delivers `adc_valid` 13 ticks after `adc_start` (assumed). With weight
-correction, the sin/cos pair period is then about 35 ticks (section 4.6).
+The testbench ADC model delivers `adc_valid_a` 17 ticks and `adc_valid_b` 16 ticks after the
+`adc_start` pulse (assumed; D18 binding conversion time ≤ 17 ticks). The encoder frame is then
+22 ticks (section 4.6).
 
 ## 7. Change log
 
 | Version | Date | Change |
 | --- | --- | --- |
 | 0.1 | 2026-10-20 | first draft with the first RTL |
+| 0.3 | 2026-10-20 | ID 0x5203. Configuration registers are flip-flops again (section 4.12). Comparator calibration per the `r1_safe` revision-3 contract: two-sided search (release pass with preset 0, trip pass with preset 63, 14 windows), decisions after `az_win`, result relative to the new `CMP_CAL_IDEAL` (0x3C, half codes, reset 72 / 55). `AZ_CFG` 16 bit: THR_ZERO reset 14 (was 32), CAL_STEP bits 15:14 (reset 32 ticks); reset 0x4E00. `CAL_CRC` covers 0x10–0x17, 0x36–0x3C, 0x50–0x5D and 0x60–0x6D (was 0x10–0x17); a search clears `CAL_VALID`. Comparator blanking extended 16 ticks after a search. Host bring-up order in section 4.1 updated. D18: two ADC slices with 14 decisions each (`adc_raw_a/b`, `adc_valid_a/b`, one `adc_start` with `adc_sel`; `adc_mux` and the 13-bit port removed); weights per slice `ADC_A_W0`–`W13` (0x50–0x5D) and `ADC_B_W0`–`W13` (0x60–0x6D), reset = nominal `r1_adc` revision-3 weights × 4 (was `ADC_W0`–`ADC_W12`, binary); encoder frame every 22 ticks, the current frame replaces one encoder frame at the strobe and restarts the frame grid; `SCHED` reset 0x1416 (was 0x201E); weight correction 4 ticks (was 8); `r1_pos` 19 ticks per pair (was 28). |
 | 0.2 | 2026-10-20 | ID 0x5202. AS5047P mode removed (`BUS_CFG` bit 8 reserved). `BUS_CFG.LAT_HALF` (bit 14, reset 1). Control channel per D2 (section 3.4): CTS in the header CRC, IDL0, R/W echo, W inverted on refusal, `S` echo, stop bit `P`, sequential read, BSEL refused, EDS_BANK readable. `CTRL.CMP_CAL`, `STATUS` bits 11–13, `CMP_THR_A/B`, `AZ_START`, `AZ_CFG`, `CMP_CAL_A/B`, `ADC_W0`–`ADC_W12`. One current strobe at the channel A centre; `is_smp`, `az_win` ports; 13-bit raw ADC port. `OSC_TRIM` reset 22. `TIMEOUT_TICKS` 12 bit, `TEMP`/`OT_LIM` 14 bit, diagnostic counters 4 bit saturating, KI clamped to 8–23. Configuration registers are latch words (section 4.12). |

@@ -1,0 +1,25 @@
+# tb_top test=gate clk_ns=33.333
+PASS init: FAULT_N high after CAL_CRC load and CLR
+INFO gate A on 16 off 586 (width 570), B on 516 off 786 (width 270), C on 1016 off 386 (width 870); ISA start 301 ISB start 315 is_smp 301; az_win 1201..1241
+PASS gate: A on-time = DUTY - 2 DEAD
+PASS gate: B on-time = DUTY - 2 DEAD
+PASS gate: C on-time = DUTY - 2 DEAD (window wraps the period)
+PASS gate: B rising edge at PHASE_B + DEAD (same offset as A)
+PASS gate: current strobe at the centre of the A on-time (+-1 tick)
+PASS gate: one current pair per period: is_smp rises with the ISA start, ISB follows the ISA conversion
+PASS gate: az_win is AZ_LEN = 40 ticks wide and starts at counter value AZ_START
+PASS gate: no late current conversion over 20 PWM periods (guard)
+PASS gate: no position pair overrun with current conversions interleaved
+PASS gate: comparator flags inside az_win and 8 ticks after it are blanked
+PASS gate: the same flag 100 ticks after az_win latches OC_A
+PASS gate: CLR releases the blanking-test fault
+PASS gate: new DUTY_A applied at the period wrap
+PASS gate: DUTY_A <= 2 DEAD keeps channel A off and suppresses the current strobe
+PASS gate: EN low forces GATE_C low within 1 ns (combinational)
+PASS gate: EN low latches a fault (FAULT_N low)
+PASS gate: CLR after EN high releases the fault
+INFO gate I_A 2848 with binary weights, 2948 with ADC_W11 = 8592
+PASS gate: I_A = corrected code (ADC_W11 = 4 * 2048 + 400 adds 100 LSB)
+# 19 checks, 0 failed
+ALL TESTS PASSED
+tb/tb_top.v:1044: $finish called at 2615325603 (1ps)

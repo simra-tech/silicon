@@ -1,11 +1,13 @@
 // Chip-level testbench for r1_ctrl_top (testbenches b..f and cal of the r1_ctrl
-// README, revision 0.2).
-//   +test=biss | ssi | spi | gate | safe | cal     test group
+// README, revision 0.3).
+//   +test=biss | ssi | spi | gate | safe | cal | calmc    test group
+//   +vec=<file> +out=<file>                   (calmc) comparator tables from tb/cmpcal_ref.py, RTL results
 //   +clk_ns=<real>                            clk period (RC corners: 23.81, 33.33, 47.62)
 // Models: encoder head (ideal sin/cos, amplitude ENC_AMP, electrical frequency
 // enc_f), ADC (12-tick conversion, 4:1 mux, track-and-hold on adc_hold, 13 raw
 // decisions with an ideal binary CDAC: raw[11:0] = code, raw[12] = 0),
-// behavioural window comparators with offset and 200 ns delay (test cal),
+// behavioural window comparators with offset, hysteresis and 200 ns delay
+// (tests cal, calmc; revision 0.3),
 // BiSS-C / SSI master on MA/SLO, SPI host (mode 0, 24-bit frames).
 // Every check prints PASS/FAIL; the last line is "ALL TESTS PASSED" or
 // "TESTS FAILED: <n>".
@@ -24,19 +26,19 @@ module tb_top;
     reg  cs_n = 1, ma = 1, sdi = 0, en_pad = 1, t2f_clk = 0;
     reg  [3:0] cmp = 4'd0;             // forced comparator flags
     reg  [3:0] cmp_mdl = 4'd0;         // behavioural comparators (test cal)
-    wire slo_sdo, fault_n, gate_a, gate_b, gate_c, adc_hold, is_smp, adc_start, az_win;
-    wire [1:0] adc_mux;
+    wire slo_sdo, fault_n, gate_a, gate_b, gate_c, adc_hold, is_smp, adc_start, adc_sel, az_win;
     wire [4:0] osc_trim;
     wire [15:0] ana_ctrl;
     wire [5:0] thr_oc_a, thr_neg_a, thr_oc_b, thr_neg_b, cal_oc_a, cal_neg_a, cal_oc_b, cal_neg_b;
-    reg  adc_valid = 0;
-    reg  [12:0] adc_raw = 0;
+    reg  adc_valid_a = 0, adc_valid_b = 0;
+    reg  [13:0] adc_raw_a = 0, adc_raw_b = 0;
 
     r1_ctrl_top dut (
         .clk(clk), .por_n(por_n), .cs_n(cs_n), .ma_sclk(ma), .sdi(sdi), .slo_sdo(slo_sdo),
         .en_pad(en_pad), .fault_n(fault_n), .gate_a(gate_a), .gate_b(gate_b), .gate_c(gate_c),
-        .adc_hold(adc_hold), .is_smp(is_smp), .adc_start(adc_start), .adc_mux(adc_mux),
-        .adc_valid(adc_valid), .adc_raw(adc_raw), .cmp(cmp | cmp_mdl),
+        .adc_hold(adc_hold), .is_smp(is_smp), .adc_start(adc_start), .adc_sel(adc_sel),
+        .adc_valid_a(adc_valid_a), .adc_raw_a(adc_raw_a), .adc_valid_b(adc_valid_b), .adc_raw_b(adc_raw_b),
+        .cmp(cmp | cmp_mdl),
         .thr_oc_a(thr_oc_a), .thr_neg_a(thr_neg_a), .thr_oc_b(thr_oc_b), .thr_neg_b(thr_neg_b),
         .cal_oc_a(cal_oc_a), .cal_neg_a(cal_neg_a), .cal_oc_b(cal_oc_b), .cal_neg_b(cal_neg_b),
         .az_win(az_win), .t2f_clk(t2f_clk), .osc_trim(osc_trim), .ana_ctrl(ana_ctrl));
@@ -56,11 +58,27 @@ module tb_top;
     // ---------------- encoder + ADC model ----------------
     real enc_f = 1000.0, enc_amp = 1400.0, enc_ph0 = 0.1;
     real held_ang;
-    reg  hold_d = 0;
-    integer conv_cnt = 0;
-    reg  [1:0] conv_mux = 0;
+    integer conv_a = 0, conv_b = 0;
+    reg  conv_sel = 0;
     reg  [11:0] ia_code = 12'd2048, ib_code = 12'd2048;
-    localparam CONV = 12;
+    // revision 0.3 (D18): two slices start together on adc_start; slice A returns
+    // adc_valid_a CONV ticks after the start pulse, slice B one tick earlier
+    // (both <= 17, the binding conversion time); 14 decisions from a greedy SAR
+    // with the nominal r1_adc revision-3 weights (1/4 LSB), i.e. the reset weights
+    localparam CONV = 17;
+    localparam [195:0] WNOM = {14'd8130, 14'd4065, 14'd2032, 14'd1016, 14'd508, 14'd315, 14'd158,
+                               14'd79,   14'd39,   14'd20,   14'd10,   14'd5,   14'd2,   14'd1};
+    function [13:0] sar14;
+        input [11:0] c;
+        integer acc, j;
+        reg [13:0] r;
+        begin
+            acc = 0; r = 0;
+            for (j = 13; j >= 0; j = j - 1)
+                if (acc + WNOM[14*j +: 14] <= 4 * c) begin acc = acc + WNOM[14*j +: 14]; r[j] = 1'b1; end
+            sar14 = r;
+        end
+    endfunction
     function real angle_now;           // turns
         input dummy;
         real a;
@@ -74,46 +92,104 @@ module tb_top;
     // the track-and-holds take the pair at the rising edge of adc_hold
     always @(posedge adc_hold) held_ang = angle_now(0);
     always @(posedge clk) begin
-        hold_d <= adc_hold;
-        adc_valid <= 1'b0;
+        adc_valid_a <= 1'b0; adc_valid_b <= 1'b0;
         if (adc_start) begin
-            conv_cnt <= CONV; conv_mux <= adc_mux;
-        end else if (conv_cnt > 0) begin
-            conv_cnt <= conv_cnt - 1;
-            if (conv_cnt == 1) begin
-                adc_valid <= 1'b1;
-                case (conv_mux)
-                    2'd0: adc_raw <= {1'b0, code(enc_amp * $sin(6.283185307179586 * held_ang) - 0.5)};
-                    2'd1: adc_raw <= {1'b0, code(enc_amp * $cos(6.283185307179586 * held_ang) - 0.5)};
-                    2'd2: adc_raw <= {1'b0, ia_code};
-                    default: adc_raw <= {1'b0, ib_code};
-                endcase
+            conv_a <= CONV - 1; conv_b <= CONV - 2; conv_sel <= adc_sel;   // valid CONV ticks after the start pulse
+        end else begin
+            if (conv_a > 0) conv_a <= conv_a - 1;
+            if (conv_b > 0) conv_b <= conv_b - 1;
+            if (conv_a == 1) begin
+                adc_valid_a <= 1'b1;
+                adc_raw_a <= conv_sel ? sar14(ia_code) : sar14(code(enc_amp * $sin(6.283185307179586 * held_ang) - 0.5));
+            end
+            if (conv_b == 1) begin
+                adc_valid_b <= 1'b1;
+                adc_raw_b <= conv_sel ? sar14(ib_code) : sar14(code(enc_amp * $cos(6.283185307179586 * held_ang) - 0.5));
             end
         end
     end
 
-    // ---------------- behavioural comparators (test cal) ----------------
-    // Trip level of comparator i in units of one calibration step:
-    //   trip = (CAL_i - 32) + OFS_i + 8 * (THR_i - 32)
-    // flag = vin > trip, 200 ns after the clk edge. vin = 0 inside az_win (the
-    // auto-zero input) and cmp_vin outside it.
-    reg  cmp_mdl_en = 0;
+    // ---------------- behavioural comparators (tests cal, calmc) ----------------
+    // Revision 0.3: r1_safe cell frame in units of one calibration step
+    // (VREF/252). Cell code c = THR (OC) or 63 - THR (NEG); threshold
+    //   T = 4 (2c - 63) + (CAL - 32);  input at zero current: Vcal = -/+ 14*252/26
+    //   (OC / NEG) = -/+ 135.69 steps. Trip point up = T + OFS + HY/2, release
+    //   point dn = T + OFS - HY/2: state = 1 if Vcal > up, 0 if Vcal < dn, else
+    //   held (hysteresis). Inside az_win the isense output is not valid: the
+    //   model drives the input to +1000 steps (all flags high).
+    // Test calmc: the trip/release offsets per calibration code come from a
+    //   table (tb/cmpcal_ref.py, r1_safe DC/transient MC data).
+    // flag = state, 200 ns after the clk edge.
+    reg  cmp_mdl_en = 0, cmp_tab = 0;
     real cmp_vin = 100.0;
     real cofs [0:3];
-    function cmp_trip;
-        input [5:0] cal, thr; input real ofs; input real v;
-        begin cmp_trip = v > ($itor(cal) - 32.0 + ofs + 8.0 * ($itor(thr) - 32.0)); end
+    real chy  [0:3];
+    real tabu [0:255];
+    real tabd [0:255];
+    reg  [3:0] cst = 4'd0;
+    localparam real VCAL = 135.6923077;
+    function real cthr;               // threshold in steps (cell frame)
+        input integer i; input [5:0] cal, thr;
+        integer c;
+        begin
+            c = (i == 1 || i == 3) ? 63 - thr : thr;
+            cthr = 4.0 * (2.0 * c - 63.0) + ($itor(cal) - 32.0);
+        end
     endfunction
+    function real cvin;
+        input integer i;
+        begin cvin = az_win ? 1000.0 : ((i == 1 || i == 3) ? VCAL : -VCAL) + cmp_vin; end
+    endfunction
+    task cupd;                         // one comparator evaluation
+        input integer i; input [5:0] cal, thr;
+        real t, v, u, d;
+        begin
+            if (cmp_tab) begin
+                u = tabu[64 * i + cal]; d = tabd[64 * i + cal];
+                if (az_win) begin u = -1.0; d = -1.0; end
+            end else begin
+                t = cthr(i, cal, thr); v = cvin(i);
+                u = t + cofs[i] + 0.5 * chy[i] - v; d = t + cofs[i] - 0.5 * chy[i] - v;
+            end
+            if (u < 0.0) cst[i] = 1'b1;
+            else if (d > 0.0) cst[i] = 1'b0;
+        end
+    endtask
     always @(posedge clk) begin : cmpm
-        real v;
-        v = az_win ? 0.0 : cmp_vin;
         if (cmp_mdl_en) begin
-            cmp_mdl[0] <= #200 cmp_trip(cal_oc_a,  thr_oc_a,  cofs[0], v);
-            cmp_mdl[1] <= #200 cmp_trip(cal_neg_a, thr_neg_a, cofs[1], v);
-            cmp_mdl[2] <= #200 cmp_trip(cal_oc_b,  thr_oc_b,  cofs[2], v);
-            cmp_mdl[3] <= #200 cmp_trip(cal_neg_b, thr_neg_b, cofs[3], v);
+            cupd(0, cal_oc_a, thr_oc_a); cupd(1, cal_neg_a, thr_neg_a);
+            cupd(2, cal_oc_b, thr_oc_b); cupd(3, cal_neg_b, thr_neg_b);
+            cmp_mdl <= #200 cst;
         end else cmp_mdl <= #200 4'd0;
     end
+    // expected code by the r1_safe cal_model.py formula (independent of the RTL):
+    // k_rel = first k ascending with dn > Vcal, k_trip = first k descending with
+    // up < Vcal, k_cal = 32 + floor((k_rel + k_trip)/2 - k_ideal + 0.5), EXH when
+    // a toggle is missing or k_cal is outside 0..63
+    reg  [5:0] exp_k;
+    reg        exp_x;
+    task cexp;
+        input integer i; input [5:0] thr; input real kid;
+        integer k, kr, kt, kc;
+        real t, v;
+        begin
+            kr = -1; kt = -1;
+            for (k = 0; k < 64; k = k + 1) begin
+                t = cthr(i, k, thr); v = ((i == 1 || i == 3) ? VCAL : -VCAL);
+                if (kr < 0 && t + cofs[i] - 0.5 * chy[i] > v) kr = k;
+            end
+            for (k = 63; k >= 0; k = k - 1) begin
+                t = cthr(i, k, thr); v = ((i == 1 || i == 3) ? VCAL : -VCAL);
+                if (kt < 0 && t + cofs[i] + 0.5 * chy[i] < v) kt = k;
+            end
+            if (kr < 0 || kt < 0) begin exp_k = 6'd0; exp_x = 1'b1; end
+            else begin
+                kc = 32 + $rtoi($floor((kr + kt) / 2.0 - kid + 0.5));
+                exp_x = (kc < 0) || (kc > 63);
+                exp_k = (kc < 0) ? 6'd0 : (kc > 63) ? 6'd63 : kc;
+            end
+        end
+    endtask
 
     // ---------------- SPI host ----------------
     real sck_half = 50.0;              // 10 MHz SCLK
@@ -166,15 +242,34 @@ module tb_top;
     endfunction
     reg [127:0] calb;
     integer ci;
-    task load_cal_crc;                 // read back 0x10..0x17, write CAL_CRC
+    // revision 0.3: CRC-8 over the 43 covered words in the order 0x10..0x17,
+    // 0x36..0x3C, 0x50..0x5D, 0x60..0x6D (values as read back, high byte first)
+    reg  [7:0] crc_r;
+    task crc_word;
+        input [15:0] w;
+        integer j;
         begin
+            crc_r = crc_r ^ w[15:8];
+            for (j = 0; j < 8; j = j + 1) crc_r = crc_r[7] ? ({crc_r[6:0], 1'b0} ^ 8'h07) : {crc_r[6:0], 1'b0};
+            crc_r = crc_r ^ w[7:0];
+            for (j = 0; j < 8; j = j + 1) crc_r = crc_r[7] ? ({crc_r[6:0], 1'b0} ^ 8'h07) : {crc_r[6:0], 1'b0};
+        end
+    endtask
+    task load_cal_crc;                 // read back the covered words, write CAL_CRC
+        begin
+            crc_r = 8'hFF;
             for (ci = 0; ci < 8; ci = ci + 1) begin
                 spi_rd(7'h10 + ci);
                 calb[(15 - 2 * ci) * 8 +: 8] = rd_val[15:8];
                 calb[(14 - 2 * ci) * 8 +: 8] = rd_val[7:0];
+                crc_word(rd_val);
             end
-            spi_wr(7'h18, {8'd0, crc8(calb)});
-            #(80 * clk_ns);
+            if (crc_r != crc8(calb)) $display("FAIL testbench CRC helpers disagree");
+            for (ci = 8'h36; ci <= 8'h3C; ci = ci + 1) begin spi_rd(ci); crc_word(rd_val); end
+            for (ci = 8'h50; ci <= 8'h5D; ci = ci + 1) begin spi_rd(ci); crc_word(rd_val); end
+            for (ci = 8'h60; ci <= 8'h6D; ci = ci + 1) begin spi_rd(ci); crc_word(rd_val); end
+            spi_wr(7'h18, {8'd0, crc_r});
+            #(360 * clk_ns);
         end
     endtask
 
@@ -536,7 +631,7 @@ module tb_top;
         // =================================================================
         if (test == "spi") begin
             spi_rd(7'h00);
-            check(rd_val == 16'h5202, "spi: ID reads 0x5202 (revision 0.2)");
+            check(rd_val == 16'h5203, "spi: ID reads 0x5203 (revision 0.3)");
             spi_rd(7'h08);
             check(rd_val == 16'd22 && osc_trim == 5'd22, "spi: OSC_TRIM reset value 22 (D13), on the oscillator port");
             spi_rd(7'h05);
@@ -544,10 +639,15 @@ module tb_top;
             spi_wr(7'h05, 16'h4112); spi_rd(7'h05);
             check(rd_val == 16'h4012, "spi: BUS_CFG bit 8 reserved (reads 0; AS5047P mode removed)");
             spi_wr(7'h05, 16'h40B2);
-            spi_rd(7'h56);
-            check(rd_val == 16'd256, "spi: ADC_W6 reset 4 * 64 = 256 (binary weight, 1/4 LSB units)");
-            spi_rd(7'h5C);
-            check(rd_val == 16'd256, "spi: ADC_W12 (redundant decision) reset 256");
+            spi_rd(7'h5D);
+            check(rd_val == 16'd8130, "spi: ADC_A_W13 reset 8130 (nominal r1_adc rev 3 weight x 4, D18)");
+            spi_rd(7'h68);
+            check(rd_val == 16'd315, "spi: ADC_B_W8 reset 315 (nominal 78.8 LSB x 4, slice B, D18)");
+            // 8131: a 1/4-LSB change, so the live encoder path is not disturbed
+            spi_wr(7'h6D, 16'd8131); spi_rd(7'h6D); v16 = rd_val; spi_rd(7'h5D);
+            check(v16 == 16'd8131 && rd_val == 16'd8130, "spi: ADC_B_W13 is a separate word (slice A unchanged)");
+            spi_wr(7'h6D, 16'd8130);
+            #(400 * clk_ns); spi_wr(7'h04, 16'h0001);   // weight writes clear CAL_VALID (CAL fault): clean pass, then CLR
             // walking pattern on writable registers
             nb = 0;
             for (i = 0; i < 16; i = i + 1) begin
@@ -601,26 +701,28 @@ module tb_top;
             check(b_crc_wire == 6'h3A && b_data[19:2] == 18'h0, "spi/biss: BiSS frame after SPI sees the new TEST_POS");
             // MA traffic while CS_N high does not disturb SPI state; SPI after BiSS
             spi_rd(7'h00);
-            check(rd_val == 16'h5202, "spi/biss: SPI read correct after BiSS traffic on the shared pad");
+            check(rd_val == 16'h5203, "spi/biss: SPI read correct after BiSS traffic on the shared pad");
         end
 
         // =================================================================
         if (test == "gate") begin
             begin : gt
                 integer t_on_a, t_off_a, t_on_b, t_off_b, t_on_c, t_off_c, tk, t_sa, t_sb, t_is, n_late;
-                integer t_az_on, t_az_off, n_sa;
+                integer t_az_on, t_az_off, n_sa, n_enc, t_enc, g_enc, g_max, n_g22, n_gx;
                 integer per, da, db, dc, pa, pb, pc, dt;
                 reg ga_d, gb_d, gc_d, az_d, is_d;
                 per = 1500; da = 600; db = 300; dc = 900; pa = 0; pb = 500; pc = 1000; dt = 15;
                 spi_wr(7'h20, per); spi_wr(7'h21, da); spi_wr(7'h22, db); spi_wr(7'h23, dc);
                 spi_wr(7'h24, pa); spi_wr(7'h25, pb); spi_wr(7'h26, pc); spi_wr(7'h27, dt);
                 spi_wr(7'h38, 16'd1200); spi_wr(7'h39, 16'h2028);   // AZ_START 1200, AZ_LEN 40
+                load_cal_crc; spi_wr(7'h04, 16'h0001);      // 0.3: AZ words are CRC-covered -> new CAL_CRC, CLR
                 spi_wr(7'h04, 16'h0002);                    // GATE_EN
                 #(3 * per * clk_ns);
                 // measure one period in ticks relative to the counter wrap
                 @(posedge dut.u_gate.pwm_wrap);
                 tk = 0; t_on_a = -1; t_off_a = -1; t_on_b = -1; t_off_b = -1; t_on_c = -1; t_off_c = -1;
                 t_sa = -1; t_sb = -1; t_is = -1; t_az_on = -1; t_az_off = -1; n_sa = 0;
+                n_enc = 0; t_enc = -1; g_max = 0; n_g22 = 0; n_gx = 0;
                 ga_d = gate_a; gb_d = gate_b; gc_d = gate_c; az_d = az_win; is_d = is_smp;
                 while (tk < per) begin
                     @(posedge clk); #1; tk = tk + 1;
@@ -629,21 +731,32 @@ module tb_top;
                     if (gate_c && !gc_d) t_on_c = tk;  if (!gate_c && gc_d) t_off_c = tk;
                     if (az_win && !az_d) t_az_on = tk; if (!az_win && az_d) t_az_off = tk;
                     if (is_smp && !is_d) t_is = tk;
-                    if (adc_start && adc_mux == 2'd2) begin t_sa = tk; n_sa = n_sa + 1; end
-                    if (adc_start && adc_mux == 2'd3) t_sb = tk;
+                    if (adc_start && adc_sel) begin t_sa = tk; n_sa = n_sa + 1; end
+                    if (adc_start && !adc_sel) begin
+                        n_enc = n_enc + 1;
+                        if (t_enc >= 0) begin
+                            g_enc = tk - t_enc; if (g_enc > g_max) g_max = g_enc;
+                            if (g_enc == 22) n_g22 = n_g22 + 1; else n_gx = n_gx + 1;
+                        end
+                        t_enc = tk;
+                    end
                     ga_d = gate_a; gb_d = gate_b; gc_d = gate_c; az_d = az_win; is_d = is_smp;
                 end
-                $display("INFO gate A on %0d off %0d (width %0d), B on %0d off %0d (width %0d), C on %0d off %0d (width %0d); ISA start %0d ISB start %0d is_smp %0d; az_win %0d..%0d",
+                $display("INFO gate A on %0d off %0d (width %0d), B on %0d off %0d (width %0d), C on %0d off %0d (width %0d); current frame start %0d is_smp %0d; az_win %0d..%0d",
                          t_on_a, t_off_a, (t_off_a - t_on_a + per) % per, t_on_b, t_off_b, t_off_b - t_on_b,
-                         t_on_c, t_off_c, (t_off_c - t_on_c + per) % per, t_sa, t_sb, t_is, t_az_on, t_az_off);
+                         t_on_c, t_off_c, (t_off_c - t_on_c + per) % per, t_sa, t_is, t_az_on, t_az_off);
+                $display("INFO gate encoder frames in one period %0d: %0d gaps of 22 ticks, %0d other, longest %0d ticks",
+                         n_enc, n_g22, n_gx, g_max);
                 check((t_off_a - t_on_a + per) % per == da - 2 * dt, "gate: A on-time = DUTY - 2 DEAD");
                 check(t_off_b - t_on_b == db - 2 * dt, "gate: B on-time = DUTY - 2 DEAD");
                 check((t_off_c - t_on_c + per) % per == dc - 2 * dt, "gate: C on-time = DUTY - 2 DEAD (window wraps the period)");
                 check(t_on_b - (pb + dt) == t_on_a - (pa + dt) || t_on_a == -1, "gate: B rising edge at PHASE_B + DEAD (same offset as A)");
                 check(t_sa >= 0 && ((t_sa - t_on_a + per) % per) - (da - 2 * dt) / 2 >= -1 &&
                       ((t_sa - t_on_a + per) % per) - (da - 2 * dt) / 2 <= 1, "gate: current strobe at the centre of the A on-time (+-1 tick)");
-                check(n_sa == 1 && t_is == t_sa && t_sb > t_sa && t_sb - t_sa <= CONV + 3,
-                      "gate: one current pair per period: is_smp rises with the ISA start, ISB follows the ISA conversion");
+                check(n_sa == 1 && t_is == t_sa,
+                      "gate: one current frame per period; is_smp rises with its start (both slices, adc_sel = 1)");
+                check(n_gx <= 1 && g_max <= 22 + 22 + 20 && g_max >= 44 && n_enc >= per / 22 - 2,
+                      "gate: D18 frames: encoder frames every 22 ticks, one gap of 44..64 ticks around the current frame");
                 check(t_az_off - t_az_on == 40 && t_az_on - t_on_a == 1200 - (pa + dt),
                       "gate: az_win is AZ_LEN = 40 ticks wide and starts at counter value AZ_START");
                 // strobes are never late (guard keeps the ADC free) over 20 periods
@@ -676,7 +789,7 @@ module tb_top;
                 spi_wr(7'h21, 16'd20);
                 @(posedge dut.u_gate.pwm_wrap); @(posedge dut.u_gate.pwm_wrap);
                 tk = 0; nb = 0;
-                while (tk < per) begin @(posedge clk); #1; tk = tk + 1; if (gate_a) nb = nb + 1; if (adc_start && adc_mux == 2'd2) nb = nb + 1000; end
+                while (tk < per) begin @(posedge clk); #1; tk = tk + 1; if (gate_a) nb = nb + 1; if (adc_start && adc_sel) nb = nb + 1000; end
                 check(nb == 0, "gate: DUTY_A <= 2 DEAD keeps channel A off and suppresses the current strobe");
                 spi_wr(7'h21, 16'd600);
                 // EN low forces the outputs low immediately
@@ -689,66 +802,171 @@ module tb_top;
                 en_pad = 1'b1; #(10 * clk_ns);
                 spi_wr(7'h04, 16'h0003); #(per * 2 * clk_ns);
                 check(fault_n == 1'b1, "gate: CLR after EN high releases the fault");
-                // ADC weight correction in the path: ADC_W11 + 100 LSB moves I_A by +100
-                ia_code = 12'd2848; #(3 * per * clk_ns);
-                spi_rd(7'h29); v16 = rd_val;
-                spi_wr(7'h5B, 16'd8592); #(3 * per * clk_ns);
-                spi_rd(7'h29);
-                $display("INFO gate I_A %0d with binary weights, %0d with ADC_W11 = 8592", v16, rd_val);
-                check(v16 == 16'd2848 && rd_val == 16'd2948, "gate: I_A = corrected code (ADC_W11 = 4 * 2048 + 400 adds 100 LSB)");
-                spi_wr(7'h5B, 16'd8192); ia_code = 12'd2048;
+                // ADC weight correction in the path, per slice (D18): ADC_A_W13 + 100 LSB
+                // moves I_A by +100 and leaves I_B; ADC_B_W13 + 100 LSB moves I_B only
+                ia_code = 12'd2848; ib_code = 12'd2848; #(3 * per * clk_ns);
+                spi_rd(7'h29); v16 = rd_val; spi_rd(7'h2A); gray16 = rd_val;
+                check(v16 == 16'd2848 && gray16 == 16'd2848, "gate: I_A, I_B = corrected codes with the reset (nominal) weights");
+                spi_wr(7'h5D, 16'd8530); #(3 * per * clk_ns);
+                spi_rd(7'h29); v16 = rd_val; spi_rd(7'h2A);
+                $display("INFO gate with ADC_A_W13 = 8530: I_A %0d I_B %0d", v16, rd_val);
+                check(v16 == 16'd2948 && rd_val == 16'd2848, "gate: ADC_A_W13 = 8130 + 400 adds 100 LSB to I_A only (slice A weights)");
+                spi_wr(7'h5D, 16'd8130); spi_wr(7'h6D, 16'd8530); #(3 * per * clk_ns);
+                spi_rd(7'h29); v16 = rd_val; spi_rd(7'h2A);
+                check(v16 == 16'd2848 && rd_val == 16'd2948, "gate: ADC_B_W13 = 8130 + 400 adds 100 LSB to I_B only (slice B weights)");
+                spi_wr(7'h6D, 16'd8130); ia_code = 12'd2048; ib_code = 12'd2048;
             end
         end
 
         // =================================================================
-        // comparator offset calibration (r1_cmpcal): behavioural comparators with
-        // offsets +7.3, -12.6, +33, -40 calibration steps (OC_A, NEG_A, OC_B, NEG_B).
-        // Expected codes (largest code with trip < 0): 24, 44, 0 (exhausted), 63 (exhausted).
+        // comparator offset calibration (r1_cmpcal revision 0.3): behavioural
+        // comparators with offset and hysteresis (in calibration steps). Expected
+        // codes come from the r1_safe cal_model.py formula (task cexp), not from
+        // the RTL algorithm. Where the formula has no in-range result, only
+        // EXH = 1 is required (the RTL code is then saturated toward the toggle).
         if (test == "cal") begin
             begin : ct
-                integer tk, n_gate, n_win, n_fault;
+                integer tk, n_gate, n_win, n_fault, rnd, j, seed, nexp;
                 reg az_d;
-                cofs[0] = 7.3; cofs[1] = -12.6; cofs[2] = 33.0; cofs[3] = -40.0;
+                reg [3:0] xexh;
+                seed = 20261020;
+                cofs[0] = 1.3; cofs[1] = -2.6; cofs[2] = 0.4; cofs[3] = -0.2;
+                chy[0] = 2.5;  chy[1] = 3.1;   chy[2] = 1.7; chy[3] = 2.9;
+                cmp_vin = 0.0;
                 spi_wr(7'h20, 16'd300); spi_wr(7'h21, 16'd150);
-                spi_wr(7'h38, 16'd200); spi_wr(7'h39, 16'h2028);    // AZ_START 200, AZ_LEN 40, THR_ZERO 32
-                cmp_vin = 100.0; cmp_mdl_en = 1'b1;
-                spi_wr(7'h04, 16'h0002); #(4 * 300 * clk_ns);
-                check(fault_n == 1'b1 && thr_oc_a == 6'd63, "cal: comparators idle at CMP_THR = 63 (reset), no fault");
-                spi_wr(7'h04, 16'h000A);                             // GATE_EN + CMP_CAL
-                #(4 * clk_ns);
-                check(dut.status[11] == 1'b1 && thr_oc_a == 6'd32 && thr_neg_b == 6'd32,
-                      "cal: STATUS.CAL_BUSY = 1, every threshold carries THR_ZERO during the search");
-                tk = 0; n_gate = 0; n_win = 0; n_fault = 0; az_d = az_win;
-                while (dut.status[11] && tk < 20 * 300) begin
-                    @(posedge clk); #1; tk = tk + 1;
-                    if (gate_a | gate_b | gate_c) n_gate = n_gate + 1;
-                    if (!fault_n) n_fault = n_fault + 1;
-                    if (az_d && !az_win) n_win = n_win + 1;
-                    az_d = az_win;
+                spi_wr(7'h38, 16'd200); spi_wr(7'h39, 16'h4E28);    // AZ_START 200, AZ_LEN 40, THR_ZERO 14, STEP 32
+                spi_rd(7'h3C);
+                check(rd_val == 16'h3748, "cal: CMP_CAL_IDEAL reset = 0x3748 (NEG 55, OC 72 half codes)");
+                spi_wr(7'h36, 16'h0528); spi_wr(7'h37, 16'h0528);   // OC 40, NEG 5: not tripped at zero current
+                cmp_mdl_en = 1'b1;
+                load_cal_crc; spi_wr(7'h04, 16'h0003); #(4 * 300 * clk_ns);
+                check(fault_n == 1'b1, "cal: comparators idle at CMP_THR (OC 40, NEG 5), no fault");
+                for (rnd = 0; rnd < 10; rnd = rnd + 1) begin
+                    if (rnd == 1) begin cofs[0] = 3.9; cofs[1] = -3.7; cofs[2] = 0.0; cofs[3] = 2.2;
+                                        chy[0] = 3.3; chy[1] = 0.6; chy[2] = 4.0; chy[3] = 1.0; end
+                    if (rnd == 2) begin cofs[0] = 24.0; cofs[1] = -40.0; cofs[2] = 45.0; cofs[3] = -24.0;   // range ends, outside
+                                        chy[0] = 2.0; chy[1] = 2.0; chy[2] = 2.0; chy[3] = 2.0; end
+                    if (rnd == 3) begin cofs[0] = -27.0; cofs[1] = 27.0; cofs[2] = 27.5; cofs[3] = -28.5;   // near the saturation
+                                        chy[0] = 2.0; chy[1] = 2.5; chy[2] = 3.0; chy[3] = 1.5; end
+                    if (rnd >= 4) for (j = 0; j < 4; j = j + 1) begin
+                        cofs[j] = ($random(seed) % 1000) / 50.0;         // +-20 steps
+                        chy[j] = 0.3 + (($random(seed) & 32'h7FFF) % 1000) / 250.0;   // 0.3 .. 4.3 steps
+                    end
+                    spi_wr(7'h04, 16'h000A);                             // GATE_EN + CMP_CAL
+                    #(4 * clk_ns);
+                    if (rnd == 0)
+                        check(dut.status[11] == 1'b1 && thr_oc_a == 6'd14 && thr_neg_b == 6'd14,
+                              "cal: STATUS.CAL_BUSY = 1, every threshold carries THR_ZERO = 14 during the search");
+                    tk = 0; n_gate = 0; n_win = 0; n_fault = 0; az_d = az_win;
+                    while (dut.status[11] && tk < 40 * 300) begin
+                        @(posedge clk); #1; tk = tk + 1;
+                        if (gate_a | gate_b | gate_c) n_gate = n_gate + 1;
+                        if (dut.u_safe.cause[3:0] != 4'd0) n_fault = n_fault + 1;
+                        if (az_d && !az_win) n_win = n_win + 1;
+                        az_d = az_win;
+                    end
+                    nexp = 0;
+                    cexp(0, 14, 36.3076923); if (exp_x ? dut.cal_exh[0] : (cal_oc_a == exp_k && !dut.cal_exh[0])) nexp = nexp + 1; xexh[0] = exp_x;
+                    $display("INFO cal round %0d OC_A  ofs %7.3f hy %5.3f: RTL %0d exh %0d, model %0d exh %0d", rnd, cofs[0], chy[0], cal_oc_a, dut.cal_exh[0], exp_k, exp_x);
+                    cexp(1, 14, 27.6923077); if (exp_x ? dut.cal_exh[1] : (cal_neg_a == exp_k && !dut.cal_exh[1])) nexp = nexp + 1; xexh[1] = exp_x;
+                    $display("INFO cal round %0d NEG_A ofs %7.3f hy %5.3f: RTL %0d exh %0d, model %0d exh %0d", rnd, cofs[1], chy[1], cal_neg_a, dut.cal_exh[1], exp_k, exp_x);
+                    cexp(2, 14, 36.3076923); if (exp_x ? dut.cal_exh[2] : (cal_oc_b == exp_k && !dut.cal_exh[2])) nexp = nexp + 1; xexh[2] = exp_x;
+                    $display("INFO cal round %0d OC_B  ofs %7.3f hy %5.3f: RTL %0d exh %0d, model %0d exh %0d", rnd, cofs[2], chy[2], cal_oc_b, dut.cal_exh[2], exp_k, exp_x);
+                    cexp(3, 14, 27.6923077); if (exp_x ? dut.cal_exh[3] : (cal_neg_b == exp_k && !dut.cal_exh[3])) nexp = nexp + 1; xexh[3] = exp_x;
+                    $display("INFO cal round %0d NEG_B ofs %7.3f hy %5.3f: RTL %0d exh %0d, model %0d exh %0d", rnd, cofs[3], chy[3], cal_neg_b, dut.cal_exh[3], exp_k, exp_x);
+                    $display("INFO cal round %0d: %0d ticks, %0d az windows", rnd, tk, n_win);
+                    check(nexp == 4, "cal: 4 codes equal the r1_safe cal_model formula; EXH where it has no in-range result (code then saturated)");
+                    if (rnd == 0) begin
+                        check(n_win == 14, "cal: search uses 14 auto-zero windows (2 x (6 decisions + range check))");
+                        check(n_gate == 0, "cal: gates held off during the search (GATE_EN set)");
+                        check(n_fault == 0, "cal: no comparator fault latches during the search (flags blanked)");
+                        spi_rd(7'h3A); v16 = rd_val; spi_rd(7'h3B);
+                        $display("INFO cal CMP_CAL_A 0x%04h CMP_CAL_B 0x%04h", v16, rd_val);
+                        check(v16 == {2'b00, cal_neg_a, 2'b00, cal_oc_a} && rd_val == {2'b00, cal_neg_b, 2'b00, cal_oc_b},
+                              "cal: CMP_CAL_A/B read the codes, EXH clear");
+                        spi_rd(7'h01);
+                        check(rd_val[11] == 1'b0 && rd_val[12] == 1'b1 && rd_val[13] == 1'b0 && rd_val[4] == 1'b0,
+                              "cal: STATUS CAL_BUSY 0, CAL_DONE 1, CAL_EXH 0; CAL_VALID 0 (codes are CRC-covered)");
+                        spi_rd(7'h02);
+                        check(rd_val[11] == 1'b1 && rd_val[3:0] == 4'd0 && thr_oc_a == 6'd40,
+                              "cal: after the search CAL fault set until CAL_CRC is rewritten; no comparator fault; thresholds back to CMP_THR");
+                        load_cal_crc; spi_wr(7'h04, 16'h0003); #(20 * clk_ns);
+                        check(fault_n == 1'b1, "cal: new CAL_CRC + CLR clears the fault");
+                        tk = 0; n_gate = 0;
+                        while (tk < 300) begin @(posedge clk); tk = tk + 1; if (gate_a) n_gate = n_gate + 1; end
+                        check(n_gate > 0, "cal: gates run again after the search");
+                    end
+                    if (rnd == 2) begin
+                        spi_rd(7'h3A); v16 = rd_val; spi_rd(7'h3B);
+                        check(v16[6] == xexh[0] && v16[14] == xexh[1] && rd_val[6] == xexh[2] && rd_val[14] == xexh[3] &&
+                              (xexh != 4'd0), "cal: EXH bits read in CMP_CAL_A/B for offsets outside the range");
+                        spi_rd(7'h01);
+                        check(rd_val[13] == 1'b1, "cal: STATUS.CAL_EXH = 1");
+                    end
                 end
-                $display("INFO cal search: %0d ticks, %0d az windows, CAL codes %0d %0d %0d %0d exh %b",
-                         tk, n_win, cal_oc_a, cal_neg_a, cal_oc_b, cal_neg_b, dut.cal_exh);
-                check(n_win == 7, "cal: search uses 7 auto-zero windows (6 decisions + range check)");
-                check(n_gate == 0, "cal: gates held off during the search (GATE_EN set)");
-                check(n_fault == 0, "cal: comparator flags outside az_win during the search do not latch a fault");
-                check(cal_oc_a == 6'd24 && cal_neg_a == 6'd44, "cal: OC_A = 24 (+7.3 offset), NEG_A = 44 (-12.6 offset)");
-                check(cal_oc_b == 6'd0 && cal_neg_b == 6'd63, "cal: OC_B = 0, NEG_B = 63 (offsets outside the range)");
-                spi_rd(7'h3A); v16 = rd_val; spi_rd(7'h3B);
-                $display("INFO cal CMP_CAL_A 0x%04h CMP_CAL_B 0x%04h", v16, rd_val);
-                check(v16 == 16'h2C18 && rd_val == 16'h7F40, "cal: CMP_CAL_A/B = codes, EXH set only for OC_B and NEG_B");
-                spi_rd(7'h01);
-                check(rd_val[11] == 1'b0 && rd_val[12] == 1'b1 && rd_val[13] == 1'b1, "cal: STATUS CAL_BUSY 0, CAL_DONE 1, CAL_EXH 1");
-                #(4 * 300 * clk_ns);
-                check(fault_n == 1'b1 && (gate_a === 1'b1 || gate_a === 1'b0) && thr_oc_a == 6'd63,
-                      "cal: after the search the thresholds return to CMP_THR, no fault");
-                tk = 0; n_gate = 0;
-                while (tk < 300) begin @(posedge clk); tk = tk + 1; if (gate_a) n_gate = n_gate + 1; end
-                check(n_gate > 0, "cal: gates run again after the search");
+                // CMP_CAL_IDEAL moves the result: OC ideal 72 -> 76 (two codes)
+                cofs[0] = 1.3; chy[0] = 2.5;
+                cexp(0, 14, 36.3076923); j = exp_k;
+                spi_wr(7'h3C, 16'h374C); spi_wr(7'h04, 16'h0008);
+                #(4 * clk_ns); while (dut.status[11]) @(posedge clk);
+                check(cal_oc_a == j - 2, "cal: CMP_CAL_IDEAL.OC + 4 half codes lowers the OC result by 2 codes");
+                spi_wr(7'h3C, 16'h3748);
                 // host write of the codes (bench use)
                 spi_wr(7'h3A, 16'h0510); spi_rd(7'h3A);
                 check(rd_val[13:8] == 6'd5 && rd_val[5:0] == 6'd16 && cal_neg_a == 6'd5 && cal_oc_a == 6'd16,
                       "cal: CMP_CAL_A host write reaches the calibration ports");
+                spi_rd(7'h01);
+                check(rd_val[4] == 1'b0, "cal: a CMP_CAL_A write clears CAL_VALID (CRC coverage 0x36..0x3C)");
+                load_cal_crc; spi_rd(7'h01);
+                check(rd_val[4] == 1'b1, "cal: CAL_VALID returns after the new CAL_CRC");
+                spi_wr(7'h55, 16'h0081); #(4 * clk_ns); spi_rd(7'h01);
+                check(rd_val[4] == 1'b0, "cal: a slice-A ADC weight write clears CAL_VALID (CRC coverage 0x50..0x5D)");
+                load_cal_crc; spi_rd(7'h01);
+                check(rd_val[4] == 1'b1, "cal: CAL_VALID returns after the new CAL_CRC (slice A weights covered)");
+                spi_wr(7'h6D, 16'h0081); #(4 * clk_ns); spi_rd(7'h01);
+                check(rd_val[4] == 1'b0, "cal: a slice-B ADC weight write clears CAL_VALID (CRC coverage 0x60..0x6D)");
+                load_cal_crc; spi_rd(7'h01);
+                check(rd_val[4] == 1'b1, "cal: CAL_VALID returns after the new CAL_CRC (weights covered)");
                 cmp_mdl_en = 1'b0;
+            end
+        end
+
+        // calmc: RTL search on the r1_safe MC comparator tables (tb/cmpcal_ref.py)
+        if (test == "calmc") begin
+            begin : cm
+                integer fv, fo, nv, g, j, kk, rc, role, kc, ex, ng;
+                reg [1023:0] vfile, ofile;
+                real x;
+                integer mk [0:3];
+                if (!$value$plusargs("vec=%s", vfile)) vfile = "cmpcal_vec.txt";
+                if (!$value$plusargs("out=%s", ofile)) ofile = "calmc_rtl.txt";
+                fv = $fopen(vfile, "r"); fo = $fopen(ofile, "w");
+                rc = $fscanf(fv, "%d", nv);
+                spi_wr(7'h20, 16'd300); spi_wr(7'h21, 16'd150);
+                spi_wr(7'h38, 16'd200); spi_wr(7'h39, 16'h4E28);
+                cmp_tab = 1'b1; cmp_mdl_en = 1'b1;
+                ng = 0;
+                for (g = 0; g < nv; g = g + 4) begin
+                    for (j = 0; j < 4; j = j + 1) begin
+                        if (g + j < nv) begin
+                            rc = $fscanf(fv, "%d %d %d", role, kc, ex);
+                            for (kk = 0; kk < 64; kk = kk + 1) begin rc = $fscanf(fv, "%f", x); tabu[64 * j + kk] = x; end
+                            for (kk = 0; kk < 64; kk = kk + 1) begin rc = $fscanf(fv, "%f", x); tabd[64 * j + kk] = x; end
+                            if (role != (j % 2)) $display("FAIL calmc vector %0d role %0d on comparator %0d", g + j, role, j);
+                        end else
+                            for (kk = 0; kk < 64; kk = kk + 1) begin tabu[64 * j + kk] = kk - 30.0; tabd[64 * j + kk] = kk - 34.0; end
+                    end
+                    spi_wr(7'h04, 16'h0008); #(4 * clk_ns);
+                    while (dut.status[11]) @(posedge clk);
+                    mk[0] = cal_oc_a; mk[1] = cal_neg_a; mk[2] = cal_oc_b; mk[3] = cal_neg_b;
+                    for (j = 0; j < 4; j = j + 1)
+                        if (g + j < nv) $fdisplay(fo, "R %0d %0d %0d", g + j, mk[j], dut.cal_exh[j]);
+                    ng = ng + 1;
+                end
+                $fclose(fo); $fclose(fv);
+                $display("INFO calmc: %0d vectors in %0d searches written to %0s", nv, ng, ofile);
+                check(nv > 0, "calmc: vectors read and RTL results written (compared by cmpcal_ref.py check)");
+                cmp_mdl_en = 1'b0; cmp_tab = 1'b0;
             end
         end
 

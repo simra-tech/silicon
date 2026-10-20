@@ -1,0 +1,85 @@
+# tb_top test=cal clk_ns=33.333
+PASS init: FAULT_N high after CAL_CRC load and CLR
+PASS cal: CMP_CAL_IDEAL reset = 0x3748 (NEG 55, OC 72 half codes)
+PASS cal: comparators idle at CMP_THR (OC 40, NEG 5), no fault
+PASS cal: STATUS.CAL_BUSY = 1, every threshold carries THR_ZERO = 14 during the search
+INFO cal round 0 OC_A  ofs   1.300 hy 2.500: RTL 31 exh 0, model 31 exh 0
+INFO cal round 0 NEG_A ofs  -2.600 hy 3.100: RTL 34 exh 0, model 34 exh 0
+INFO cal round 0 OC_B  ofs   0.400 hy 1.700: RTL 32 exh 0, model 32 exh 0
+INFO cal round 0 NEG_B ofs  -0.200 hy 2.900: RTL 32 exh 0, model 32 exh 0
+INFO cal round 0: 4179 ticks, 14 az windows
+PASS cal: 4 codes equal the r1_safe cal_model formula; EXH where it has no in-range result (code then saturated)
+PASS cal: search uses 14 auto-zero windows (2 x (6 decisions + range check))
+PASS cal: gates held off during the search (GATE_EN set)
+PASS cal: no comparator fault latches during the search (flags blanked)
+INFO cal CMP_CAL_A 0x221f CMP_CAL_B 0x2020
+PASS cal: CMP_CAL_A/B read the codes, EXH clear
+PASS cal: STATUS CAL_BUSY 0, CAL_DONE 1, CAL_EXH 0; CAL_VALID 0 (codes are CRC-covered)
+PASS cal: after the search CAL fault set until CAL_CRC is rewritten; no comparator fault; thresholds back to CMP_THR
+PASS cal: new CAL_CRC + CLR clears the fault
+PASS cal: gates run again after the search
+INFO cal round 1 OC_A  ofs   3.900 hy 3.300: RTL 28 exh 0, model 28 exh 0
+INFO cal round 1 NEG_A ofs  -3.700 hy 0.600: RTL 36 exh 0, model 36 exh 0
+INFO cal round 1 OC_B  ofs   0.000 hy 4.000: RTL 32 exh 0, model 32 exh 0
+INFO cal round 1 NEG_B ofs   2.200 hy 1.000: RTL 29 exh 0, model 29 exh 0
+INFO cal round 1: 4042 ticks, 14 az windows
+PASS cal: 4 codes equal the r1_safe cal_model formula; EXH where it has no in-range result (code then saturated)
+INFO cal round 2 OC_A  ofs  24.000 hy 2.000: RTL 8 exh 0, model 8 exh 0
+INFO cal round 2 NEG_A ofs -40.000 hy 2.000: RTL 63 exh 1, model 0 exh 1
+INFO cal round 2 OC_B  ofs  45.000 hy 2.000: RTL 0 exh 1, model 0 exh 1
+INFO cal round 2 NEG_B ofs -24.000 hy 2.000: RTL 56 exh 0, model 56 exh 0
+INFO cal round 2: 4108 ticks, 14 az windows
+PASS cal: 4 codes equal the r1_safe cal_model formula; EXH where it has no in-range result (code then saturated)
+PASS cal: EXH bits read in CMP_CAL_A/B for offsets outside the range
+PASS cal: STATUS.CAL_EXH = 1
+INFO cal round 3 OC_A  ofs -27.000 hy 2.000: RTL 59 exh 1, model 0 exh 1
+INFO cal round 3 NEG_A ofs  27.000 hy 2.500: RTL 5 exh 1, model 0 exh 1
+INFO cal round 3 OC_B  ofs  27.500 hy 3.000: RTL 5 exh 0, model 5 exh 0
+INFO cal round 3 NEG_B ofs -28.500 hy 1.500: RTL 60 exh 0, model 60 exh 0
+INFO cal round 3: 4180 ticks, 14 az windows
+PASS cal: 4 codes equal the r1_safe cal_model formula; EXH where it has no in-range result (code then saturated)
+INFO cal round 4 OC_A  ofs   4.600 hy 0.648: RTL 28 exh 0, model 28 exh 0
+INFO cal round 4 NEG_A ofs  19.840 hy 1.536: RTL 12 exh 0, model 12 exh 0
+INFO cal round 4 OC_B  ofs   9.640 hy 4.080: RTL 22 exh 0, model 22 exh 0
+INFO cal round 4 NEG_B ofs  -7.760 hy 2.736: RTL 40 exh 0, model 40 exh 0
+INFO cal round 4: 4108 ticks, 14 az windows
+PASS cal: 4 codes equal the r1_safe cal_model formula; EXH where it has no in-range result (code then saturated)
+INFO cal round 5 OC_A  ofs -12.840 hy 2.716: RTL 45 exh 0, model 45 exh 0
+INFO cal round 5 NEG_A ofs  -6.200 hy 3.760: RTL 38 exh 0, model 38 exh 0
+INFO cal round 5 OC_B  ofs  12.340 hy 1.008: RTL 20 exh 0, model 20 exh 0
+INFO cal round 5 NEG_B ofs -11.660 hy 1.956: RTL 44 exh 0, model 44 exh 0
+INFO cal round 5: 4108 ticks, 14 az windows
+PASS cal: 4 codes equal the r1_safe cal_model formula; EXH where it has no in-range result (code then saturated)
+INFO cal round 6 OC_A  ofs  16.100 hy 1.368: RTL 16 exh 0, model 16 exh 0
+INFO cal round 6 NEG_A ofs -16.180 hy 2.200: RTL 48 exh 0, model 48 exh 0
+INFO cal round 6 OC_B  ofs  14.540 hy 3.916: RTL 17 exh 0, model 17 exh 0
+INFO cal round 6 NEG_B ofs  13.820 hy 3.976: RTL 18 exh 0, model 18 exh 0
+INFO cal round 6: 4108 ticks, 14 az windows
+PASS cal: 4 codes equal the r1_safe cal_model formula; EXH where it has no in-range result (code then saturated)
+INFO cal round 7 OC_A  ofs  14.100 hy 3.360: RTL 18 exh 0, model 18 exh 0
+INFO cal round 7 NEG_A ofs   4.100 hy 2.652: RTL 28 exh 0, model 28 exh 0
+INFO cal round 7 OC_B  ofs -19.840 hy 1.780: RTL 52 exh 0, model 52 exh 0
+INFO cal round 7 NEG_B ofs -18.100 hy 3.948: RTL 50 exh 0, model 50 exh 0
+INFO cal round 7: 4108 ticks, 14 az windows
+PASS cal: 4 codes equal the r1_safe cal_model formula; EXH where it has no in-range result (code then saturated)
+INFO cal round 8 OC_A  ofs  -1.220 hy 2.012: RTL 33 exh 0, model 33 exh 0
+INFO cal round 8 NEG_A ofs  -5.500 hy 1.548: RTL 37 exh 0, model 37 exh 0
+INFO cal round 8 OC_B  ofs -15.900 hy 2.684: RTL 48 exh 0, model 48 exh 0
+INFO cal round 8 NEG_B ofs  -2.760 hy 1.908: RTL 35 exh 0, model 35 exh 0
+INFO cal round 8: 4108 ticks, 14 az windows
+PASS cal: 4 codes equal the r1_safe cal_model formula; EXH where it has no in-range result (code then saturated)
+INFO cal round 9 OC_A  ofs  -1.720 hy 0.672: RTL 34 exh 0, model 34 exh 0
+INFO cal round 9 NEG_A ofs  19.120 hy 4.188: RTL 13 exh 0, model 13 exh 0
+INFO cal round 9 OC_B  ofs -16.400 hy 3.288: RTL 49 exh 0, model 49 exh 0
+INFO cal round 9 NEG_B ofs   5.480 hy 1.548: RTL 26 exh 0, model 26 exh 0
+INFO cal round 9: 4108 ticks, 14 az windows
+PASS cal: 4 codes equal the r1_safe cal_model formula; EXH where it has no in-range result (code then saturated)
+PASS cal: CMP_CAL_IDEAL.OC + 4 half codes lowers the OC result by 2 codes
+PASS cal: CMP_CAL_A host write reaches the calibration ports
+PASS cal: a CMP_CAL_A write clears CAL_VALID (CRC coverage 0x36..0x3C)
+PASS cal: CAL_VALID returns after the new CAL_CRC
+PASS cal: an ADC weight write clears CAL_VALID (CRC coverage 0x50..0x5C)
+PASS cal: CAL_VALID returns after the new CAL_CRC (weights covered)
+# 30 checks, 0 failed
+ALL TESTS PASSED
+tb/tb_top.v:1044: $finish called at 2641161111 (1ps)

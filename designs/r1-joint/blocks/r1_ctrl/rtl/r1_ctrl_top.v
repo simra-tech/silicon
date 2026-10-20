@@ -8,10 +8,12 @@
 // Revision 0.2 ports: 13 raw ADC decisions with adc_valid (weights applied
 // here, D12); is_smp (isense pair track-and-hold); az_win (isense auto-zero
 // window); comparator threshold and calibration codes to r1_safe (analog).
+// Revision 0.3 ports (D18): two ADC slices with 14 raw decisions and a valid
+// each, one adc_start and adc_sel for both; 2 x 14 weights.
 // SPDX-License-Identifier: Apache-2.0
 
 module r1_ctrl_top #(
-    parameter [15:0] CHIP_ID    = 16'h5202,
+    parameter [15:0] CHIP_ID    = 16'h5203,
     parameter [15:0] PROFILE_ID = 16'h0001,
     parameter [47:0] DEV_ID     = 48'h52_31_4A_46_45_30,
     parameter [31:0] DEV_SN     = 32'h0000_0000,
@@ -30,10 +32,12 @@ module r1_ctrl_top #(
     // ADC (r1_adc)
     output wire        adc_hold,       // SIN/COS track-and-holds (trk_enc)
     output wire        is_smp,         // ISA/ISB track-and-holds (trk_cur; is_smp_a = is_smp_b)
-    output wire        adc_start,
-    output wire [1:0]  adc_mux,
-    input  wire        adc_valid,
-    input  wire [12:0] adc_raw,        // [11:0] binary decisions (MSB = 11), [12] redundant
+    output wire        adc_start,      // both slices (D18)
+    output wire        adc_sel,        // 0: slice A SIN, slice B COS; 1: slice A ISA, slice B ISB
+    input  wire        adc_valid_a,
+    input  wire [13:0] adc_raw_a,      // 14 decisions, [13] first (D18)
+    input  wire        adc_valid_b,
+    input  wire [13:0] adc_raw_b,
     // analog r1_safe comparators (0 OC_A, 1 NEG_A, 2 OC_B, 3 NEG_B), r1_isense, r1_t2f
     input  wire [3:0]  cmp,
     output wire [5:0]  thr_oc_a, thr_neg_a, thr_oc_b, thr_neg_b,
@@ -66,8 +70,10 @@ module r1_ctrl_top #(
                 i2t_lim, az_start;
     wire [11:0] timeout_ticks, i2t_cfg;
     wire [13:0] ot_lim;
-    wire [13:0] cmp_thr_a, cmp_thr_b, az_cfg;
-    wire [181:0] adc_w;
+    wire [13:0] cmp_thr_a, cmp_thr_b;
+    wire [15:0] az_cfg;
+    wire [6:0]  ideal_oc, ideal_neg;
+    wire [195:0] adc_wa, adc_wb;
     wire [7:0]  extrap, cal_crc, dead;
     wire [11:0] ofs_sin, ofs_cos, i_zero;
     wire [9:0]  pos_cfg;
@@ -110,10 +116,11 @@ module r1_ctrl_top #(
     wire [3:0]  cal_exh;
     // comparator blanking: auto-zero window plus 16 ticks of recovery
     // (r1_safe README open issue 4: about 200 ns), and the calibration search
+    // plus 16 ticks after it (revision 0.3: the codes change at the end)
     reg  [3:0]  blank_cnt;
     always @(posedge clk or negedge rst_n)
         if (!rst_n) blank_cnt <= 4'd0;
-        else if (az_win) blank_cnt <= 4'hF;
+        else if (az_win | cal_busy) blank_cnt <= 4'hF;
         else if (blank_cnt != 4'd0) blank_cnt <= blank_cnt - 4'd1;
     wire        cmp_blank = az_win | (blank_cnt != 4'd0) | cal_busy;
     r1_safe u_safe (
@@ -132,6 +139,7 @@ module r1_ctrl_top #(
     wire [15:0] cmp_cal_a, cmp_cal_b;
     r1_cmpcal u_cal (
         .clk(clk), .rst_n(rst_n), .start(cal_run), .az_win(az_win), .flag_s(cmp_s),
+        .step_sel(az_cfg[15:14]), .ideal_oc(ideal_oc), .ideal_neg(ideal_neg),
         .wr_a(cmp_cal_wr_a), .wr_b(cmp_cal_wr_b), .wdata(reg_wdata), .cal(cal_codes),
         .busy(cal_busy), .done(cal_done), .exh(cal_exh), .rd_a(cmp_cal_a), .rd_b(cmp_cal_b));
     assign {cal_neg_b, cal_oc_b, cal_neg_a, cal_oc_a} = cal_codes;
@@ -155,8 +163,9 @@ module r1_ctrl_top #(
         .pair_ticks(sched[7:0]), .guard(sched[15:8]), .az_start(az_start), .az_len(az_cfg[7:0]),
         .gate_ok(gate_ok), .en_pad(en_pad),
         .gate_a(gate_a), .gate_b(gate_b), .gate_c(gate_c), .pwm_wrap(pwm_wrap), .az_win(az_win),
-        .adc_hold(adc_hold), .is_smp(is_smp), .adc_start(adc_start), .adc_mux(adc_mux),
-        .adc_valid(adc_valid), .adc_raw(adc_raw), .adc_w(adc_w),
+        .adc_hold(adc_hold), .is_smp(is_smp), .adc_start(adc_start), .adc_sel(adc_sel),
+        .adc_valid_a(adc_valid_a), .adc_raw_a(adc_raw_a), .adc_valid_b(adc_valid_b), .adc_raw_b(adc_raw_b),
+        .adc_wa(adc_wa), .adc_wb(adc_wb),
         .smp_sh(smp_sh), .smp_valid(smp_valid), .sin_code(sin_code),
         .cos_code(cos_code), .i_a(i_a), .i_b(i_b), .late_cnt(late_cnt));
 
@@ -171,6 +180,7 @@ module r1_ctrl_top #(
     wire        slo, sdo;
     wire [7:0]  biss_frames;
     wire [3:0]  biss_cc_err, spi_err;
+    wire        spi_rd_sel;
     wire        lat_seen;
     r1_biss #(.PROFILE_ID(PROFILE_ID), .DEV_ID(DEV_ID), .DEV_SN(DEV_SN), .MFR_ID(MFR_ID)) u_biss (
         .clk(clk), .rst_n(rst_n), .ma(ma_sclk), .cs_n(cs_n), .slo(slo),
@@ -182,7 +192,7 @@ module r1_ctrl_top #(
         .frame_end(biss_frame_end), .lat_seen(lat_seen), .cc_err_cnt(biss_cc_err), .frame_cnt(biss_frames));
     r1_spi u_spi (
         .clk(clk), .rst_n(rst_n), .sclk(ma_sclk), .cs_n(cs_n), .sdi(sdi), .sdo(sdo),
-        .reg_wr(reg_wr), .reg_addr(reg_addr), .reg_wdata(reg_wdata), .reg_rdata(reg_rdata), .reg_rd(reg_rd),
+        .reg_wr(reg_wr), .reg_addr(reg_addr), .reg_wdata(reg_wdata), .reg_rdata(reg_rdata), .reg_rd(reg_rd), .rd_sel(spi_rd_sel),
         .status8(status[7:0]), .frame_ok(spi_frame_ok), .err_cnt(spi_err));
     assign slo_sdo = cs_n ? slo : sdo;
 
@@ -227,7 +237,7 @@ module r1_ctrl_top #(
         .raw_sin(sin_code), .raw_cos(cos_code), .meas_angle(meas_angle), .i_a(i_a), .i_b(i_b),
         .temp(temp), .e_a(e_a), .e_b(e_b), .biss_frames(biss_frames), .biss_cc_err(biss_cc_err),
         .spi_err(spi_err), .pos_ovr(pos_ovr_cnt), .late_cnt(late_cnt), .id_byte(id_byte),
-        .cmp_cal_a(cmp_cal_a), .cmp_cal_b(cmp_cal_b),
+        .cmp_cal_a(cmp_cal_a), .cmp_cal_b(cmp_cal_b), .cal_busy(cal_busy), .rd_sel(spi_rd_sel),
         .fault_mask(fault_mask), .clr_pulse(clr_pulse), .gate_en(gate_en), .wdt_en(wdt_en),
         .cal_run(cal_run),
         .st_len(st_len), .mt_en(mt_en), .ssi_mode(ssi_mode), .gray(gray), .as_mode(as_mode),
@@ -241,5 +251,6 @@ module r1_ctrl_top #(
         .phase_b(phase_b), .phase_c(phase_c), .dead(dead), .sched(sched), .ot_lim(ot_lim),
         .i2t_cfg(i2t_cfg), .i2t_lim(i2t_lim), .i_zero(i_zero), .t2f_win(t2f_win),
         .cmp_thr_a(cmp_thr_a), .cmp_thr_b(cmp_thr_b), .az_start(az_start), .az_cfg(az_cfg),
-        .cmp_cal_wr_a(cmp_cal_wr_a), .cmp_cal_wr_b(cmp_cal_wr_b), .adc_w(adc_w));
+        .ideal_oc(ideal_oc), .ideal_neg(ideal_neg),
+        .cmp_cal_wr_a(cmp_cal_wr_a), .cmp_cal_wr_b(cmp_cal_wr_b), .adc_wa(adc_wa), .adc_wb(adc_wb));
 endmodule

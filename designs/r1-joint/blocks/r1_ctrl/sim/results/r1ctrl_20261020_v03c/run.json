@@ -1,0 +1,791 @@
+{
+ "run_id": "r1ctrl_20261020_v03c",
+ "command": "flow/run.sh sh sim/run_all.sh r1ctrl_20261020_v03",
+ "container_image": "tapeoutbench-eda:latest (id pinned in flow/run.sh)",
+ "tools": {
+  "date_utc": "2026-10-20T20:34:16Z",
+  "iverilog": "Icarus Verilog version 14.0 (devel) (s20260301-328-geda9fdcd-dirty)",
+  "yosys": "Yosys 0.67 (git sha1 2d1509d1b, Release, GNU /usr/bin/c++ 13.3.0)",
+  "python": "3.12.3 numpy 2.5.1",
+  "pdk_commit": "84374023ee8b4b126bebbba67fcbada0a9c0ff0b",
+  "rtl_concat": "2520353d90bf0dbf6a4d195d7871be9010f5da2478ddb0439d45379fbd61a07a"
+ },
+ "pdk_commit": "84374023ee8b4b126bebbba67fcbada0a9c0ff0b",
+ "inputs": "inputs.sha256 (RTL, testbenches, scripts)",
+ "bulk_results": "$G1_RESULTS_ROOT/r1_ctrl/r1ctrl_20261020_v03c",
+ "question": "Does the r1_ctrl revision 0.3 RTL (two-sided comparator calibration per the r1_safe contract, CAL_CRC over comparator words and ADC weights, 36-tick ADC frame count safety at 208 kHz) pass the revision-0.2 regression plus the new checks, and what is its synthesized cell area?",
+ "result": {
+  "pos": {
+   "cal_neg": {
+    "case": "cal_neg",
+    "regs": {
+     "ofs_sin": -73,
+     "ofs_cos": -91,
+     "gain": 20570,
+     "ph_sin": 60010,
+     "ph_icos": 16622,
+     "h3_amp": 104,
+     "h3_ph": 143
+    },
+    "measured_vs_true_deg_el": {
+     "max_abs": 0.21527804337787226,
+     "rms": 0.16650771841477294,
+     "mean": -0.16555666886613013,
+     "max_abs_zeroed": 0.057516174316411844,
+     "rms_zeroed": 0.017771035018924717
+    },
+    "reference_vs_true_deg_el": {
+     "max_abs": 0.2118303987226772,
+     "rms": 0.16758913942163164,
+     "mean": -0.166691348363062,
+     "max_abs_zeroed": 0.05299378154920542,
+     "rms_zeroed": 0.01732379961173084
+    },
+    "rtl_vs_float_reference_deg_el": {
+     "max_abs": 0.021361428707053227,
+     "rms": 0.007111690526776801,
+     "mean": 0.0011346794969320096,
+     "max_abs_zeroed": 0.020226749210121218,
+     "rms_zeroed": 0.007020587196801206
+    },
+    "tracked_vs_true_deg_el_after_settle": {
+     "max_abs": 0.20099874650286473,
+     "rms": 0.16608083552257816,
+     "mean": -0.1655852333192646,
+     "max_abs_zeroed": 0.057717590332038604,
+     "rms_zeroed": 0.012820859350385422
+    },
+    "lock_pairs_to_0p5deg_from_reset": 43,
+    "velocity_lsb_per_tick": {
+     "true": -2.1845333333333334,
+     "mean": -2.1915416666666667,
+     "rel_err": 0.003208160400390625
+    }
+   },
+   "cal_noise": {
+    "case": "cal_noise",
+    "regs": {
+     "ofs_sin": 73,
+     "ofs_cos": 91,
+     "gain": 13050,
+     "ph_sin": 5528,
+     "ph_icos": 16622,
+     "h3_amp": 104,
+     "h3_ph": 170
+    },
+    "measured_vs_true_deg_el": {
+     "max_abs": 0.20737332380968335,
+     "rms": 0.1259595379048549,
+     "mean": 0.12327778853136553,
+     "max_abs_zeroed": 0.08647819519040463,
+     "rms_zeroed": 0.025853279173453036
+    },
+    "reference_vs_true_deg_el": {
+     "max_abs": 0.20374466207574607,
+     "rms": 0.12437624325672071,
+     "mean": 0.12196241639085702,
+     "max_abs_zeroed": 0.08178224568488905,
+     "rms_zeroed": 0.024384808278068826
+    },
+    "rtl_vs_float_reference_deg_el": {
+     "max_abs": 0.02217766739561643,
+     "rms": 0.006994875825739605,
+     "mean": 0.0013153721405082697,
+     "max_abs_zeroed": 0.020980461510707985,
+     "rms_zeroed": 0.006870086167544846
+    },
+    "tracked_vs_true_deg_el_after_settle": {
+     "max_abs": 0.1666169761534446,
+     "rms": 0.12383025510164097,
+     "mean": 0.12270645369249791,
+     "max_abs_zeroed": 0.05521911621090621,
+     "rms_zeroed": 0.016645068361179693
+    },
+    "lock_pairs_to_0p5deg_from_reset": 41,
+    "velocity_lsb_per_tick": {
+     "true": 2.1845333333333334,
+     "mean": 2.163,
+     "rel_err": -0.009857177734375111
+    }
+   },
+   "cal": {
+    "case": "cal",
+    "regs": {
+     "ofs_sin": 73,
+     "ofs_cos": 91,
+     "gain": 13049,
+     "ph_sin": 5524,
+     "ph_icos": 16622,
+     "h3_amp": 104,
+     "h3_ph": 170
+    },
+    "measured_vs_true_deg_el": {
+     "max_abs": 0.1732278159972073,
+     "rms": 0.1282007547216924,
+     "mean": 0.12713742293078018,
+     "max_abs_zeroed": 0.053841247558607655,
+     "rms_zeroed": 0.016477536276138863
+    },
+    "reference_vs_true_deg_el": {
+     "max_abs": 0.16159134187166124,
+     "rms": 0.12655467782861204,
+     "mean": 0.12579057727146994,
+     "max_abs_zeroed": 0.03597288812113708,
+     "rms_zeroed": 0.013885861515013727
+    },
+    "rtl_vs_float_reference_deg_el": {
+     "max_abs": 0.023336114880066632,
+     "rms": 0.006977057632379547,
+     "mean": 0.0013468456593092515,
+     "max_abs_zeroed": 0.02198926922075738,
+     "rms_zeroed": 0.006845826464025036
+    },
+    "tracked_vs_true_deg_el_after_settle": {
+     "max_abs": 0.161673128497223,
+     "rms": 0.12775770167867154,
+     "mean": 0.12703048933702904,
+     "max_abs_zeroed": 0.03464263916019397,
+     "rms_zeroed": 0.013611947583332389
+    },
+    "lock_pairs_to_0p5deg_from_reset": 41,
+    "velocity_lsb_per_tick": {
+     "true": 2.1845333333333334,
+     "mean": 2.1605833333333333,
+     "rel_err": -0.010963439941406361
+    }
+   },
+   "cal_self": {
+    "case": "cal_self",
+    "regs": {
+     "ofs_sin": 73,
+     "ofs_cos": 91,
+     "gain": 13165,
+     "ph_sin": 5854,
+     "ph_icos": 16652,
+     "h3_amp": 104,
+     "h3_ph": 171
+    },
+    "measured_vs_true_deg_el": {
+     "max_abs": 0.554594449627854,
+     "rms": 0.3096289827620256,
+     "mean": -0.12137743912976734,
+     "max_abs_zeroed": 0.4462825012207198,
+     "rms_zeroed": 0.2848466679400452
+    },
+    "reference_vs_true_deg_el": {
+     "max_abs": 0.5452911881049728,
+     "rms": 0.309144302423207,
+     "mean": -0.12237783608274527,
+     "max_abs_zeroed": 0.4420135647627713,
+     "rms_zeroed": 0.2838905862413123
+    },
+    "rtl_vs_float_reference_deg_el": {
+     "max_abs": 0.02211671382508703,
+     "rms": 0.007277697240614303,
+     "mean": 0.001000396952977312,
+     "max_abs_zeroed": 0.021116316872109717,
+     "rms_zeroed": 0.007208611729211025
+    },
+    "tracked_vs_true_deg_el_after_settle": {
+     "max_abs": 0.545549771893497,
+     "rms": 0.3144808953208592,
+     "mean": -0.1215132118348457,
+     "max_abs_zeroed": 0.43133697509765956,
+     "rms_zeroed": 0.2900564994468994
+    },
+    "lock_pairs_to_0p5deg_from_reset": 45,
+    "velocity_lsb_per_tick": {
+     "true": 2.1845333333333334,
+     "mean": 2.1689791666666665,
+     "rel_err": -0.0071201324462891735
+    }
+   },
+   "f36_100k": {
+    "case": "f36_100k",
+    "regs": {
+     "ofs_sin": 73,
+     "ofs_cos": 91,
+     "gain": 13049,
+     "ph_sin": 5524,
+     "ph_icos": 16622,
+     "h3_amp": 104,
+     "h3_ph": 170
+    },
+    "measured_vs_true_deg_el": {
+     "max_abs": 0.15481473007672772,
+     "rms": 0.1257679052356546,
+     "mean": 0.12465725936299164,
+     "max_abs_zeroed": 0.040374755867058396,
+     "rms_zeroed": 0.01667734017978958
+    },
+    "reference_vs_true_deg_el": {
+     "max_abs": 0.14957061350734005,
+     "rms": 0.12593143421298175,
+     "mean": 0.12516020743264555,
+     "max_abs_zeroed": 0.0331066575373406,
+     "rms_zeroed": 0.013915767975777909
+    },
+    "rtl_vs_float_reference_deg_el": {
+     "max_abs": 0.011125532598430484,
+     "rms": 0.0061897392215491615,
+     "mean": -0.0005029480696375803,
+     "max_abs_zeroed": 0.011628480668068064,
+     "rms_zeroed": 0.006169271826563638
+    },
+    "tracked_vs_true_deg_el_after_settle": {
+     "max_abs": 0.1351675132891513,
+     "rms": 0.1254689715511581,
+     "mean": 0.12535306014629516,
+     "max_abs_zeroed": 0.009906005867071563,
+     "rms_zeroed": 0.005391950858885598
+    },
+    "lock_pairs_to_0p5deg_from_reset": 82,
+    "velocity_lsb_per_tick": {
+     "true": 218.45333333333332,
+     "mean": 218.4375,
+     "rel_err": -7.247924804676398e-05
+    },
+    "count_safety": {
+     "pair_ticks": 36,
+     "frame_rate_hz": 833333.3333333334,
+     "f_end_hz": 100000.0,
+     "deg_el_per_frame_end": 43.2,
+     "lock_pair": 82,
+     "max_abs_step_error_deg_el_after_lock": 0.11085205078150268,
+     "max_abs_error_deg_el_after_lock": 0.4054138183676475,
+     "multiturn_drift_counts_max": 0.0057427978515605105,
+     "from_pair": 82,
+     "note": "one count = 90 deg el = 2^16 of the 18-bit position"
+    }
+   },
+   "f36_208k_n": {
+    "case": "f36_208k_n",
+    "regs": {
+     "ofs_sin": 73,
+     "ofs_cos": 91,
+     "gain": 13050,
+     "ph_sin": 5526,
+     "ph_icos": 16622,
+     "h3_amp": 104,
+     "h3_ph": 170
+    },
+    "measured_vs_true_deg_el": {
+     "max_abs": 0.22879373394644895,
+     "rms": 0.1277412369599087,
+     "mean": 0.12517072956435174,
+     "max_abs_zeroed": 0.1036230043820972,
+     "rms_zeroed": 0.025497295550223825
+    },
+    "reference_vs_true_deg_el": {
+     "max_abs": 0.22190737280051892,
+     "rms": 0.12622116777156506,
+     "mean": 0.12403100924545656,
+     "max_abs_zeroed": 0.09787636355506237,
+     "rms_zeroed": 0.023411363462452244
+    },
+    "rtl_vs_float_reference_deg_el": {
+     "max_abs": 0.023212955924998974,
+     "rms": 0.007156529075923693,
+     "mean": 0.0011397203189816468,
+     "max_abs_zeroed": 0.022073235606017327,
+     "rms_zeroed": 0.00706519256701766
+    },
+    "tracked_vs_true_deg_el_after_settle": {
+     "max_abs": 0.16733474957819894,
+     "rms": 0.12660188556125132,
+     "mean": 0.12572696149248502,
+     "max_abs_zeroed": 0.041607788085713915,
+     "rms_zeroed": 0.01485828326326312
+    },
+    "lock_pairs_to_0p5deg_from_reset": 1026,
+    "velocity_lsb_per_tick": {
+     "true": 454.38293333333337,
+     "mean": 454.3747916666667,
+     "rel_err": -1.791807321405159e-05
+    },
+    "count_safety": {
+     "pair_ticks": 36,
+     "frame_rate_hz": 833333.3333333334,
+     "f_end_hz": 208000.0,
+     "deg_el_per_frame_end": 89.856,
+     "lock_pair": 1026,
+     "max_abs_step_error_deg_el_after_lock": 0.31840795898737906,
+     "max_abs_error_deg_el_after_lock": 5.777647213209993,
+     "multiturn_drift_counts_max": 0.06415106917680902,
+     "from_pair": 200,
+     "note": "one count = 90 deg el = 2^16 of the 18-bit position"
+    }
+   },
+   "f36_208k": {
+    "case": "f36_208k",
+    "regs": {
+     "ofs_sin": 73,
+     "ofs_cos": 91,
+     "gain": 13049,
+     "ph_sin": 5524,
+     "ph_icos": 16622,
+     "h3_amp": 104,
+     "h3_ph": 170
+    },
+    "measured_vs_true_deg_el": {
+     "max_abs": 0.17742605818861854,
+     "rms": 0.1274896040521842,
+     "mean": 0.12631239216179507,
+     "max_abs_zeroed": 0.05111366602682346,
+     "rms_zeroed": 0.01728521702923041
+    },
+    "reference_vs_true_deg_el": {
+     "max_abs": 0.16586792831740874,
+     "rms": 0.12603194232314918,
+     "mean": 0.12524622070715222,
+     "max_abs_zeroed": 0.04062170761025652,
+     "rms_zeroed": 0.014051145302818282
+    },
+    "rtl_vs_float_reference_deg_el": {
+     "max_abs": 0.02178150826199438,
+     "rms": 0.007208681238564451,
+     "mean": 0.001066171454960435,
+     "max_abs_zeroed": 0.020715336807033944,
+     "rms_zeroed": 0.007129401351295819
+    },
+    "tracked_vs_true_deg_el_after_settle": {
+     "max_abs": 0.1524592613046212,
+     "rms": 0.1272366267066657,
+     "mean": 0.12665805280133316,
+     "max_abs_zeroed": 0.03277569579971765,
+     "rms_zeroed": 0.012120100505610193
+    },
+    "lock_pairs_to_0p5deg_from_reset": 1025,
+    "velocity_lsb_per_tick": {
+     "true": 454.38293333333337,
+     "mean": 454.375,
+     "rel_err": -1.7459575946565664e-05
+    },
+    "count_safety": {
+     "pair_ticks": 36,
+     "frame_rate_hz": 833333.3333333334,
+     "f_end_hz": 208000.0,
+     "deg_el_per_frame_end": 89.856,
+     "lock_pair": 1025,
+     "max_abs_step_error_deg_el_after_lock": 0.31840795898086527,
+     "max_abs_error_deg_el_after_lock": 5.774458431474568,
+     "multiturn_drift_counts_max": 0.06416889144239946,
+     "from_pair": 200,
+     "note": "one count = 90 deg el = 2^16 of the 18-bit position"
+    }
+   },
+   "fast_100k": {
+    "case": "fast_100k",
+    "regs": {
+     "ofs_sin": 73,
+     "ofs_cos": 91,
+     "gain": 13049,
+     "ph_sin": 5524,
+     "ph_icos": 16622,
+     "h3_amp": 104,
+     "h3_ph": 170
+    },
+    "measured_vs_true_deg_el": {
+     "max_abs": 0.12526150742223988,
+     "rms": 0.11378815635833936,
+     "mean": 0.1134512046739022,
+     "max_abs_zeroed": 0.01565551758508371,
+     "rms_zeroed": 0.00875035344830356
+    },
+    "reference_vs_true_deg_el": {
+     "max_abs": 0.1249624503523141,
+     "rms": 0.11597897837319283,
+     "mean": 0.11577934239873877,
+     "max_abs_zeroed": 0.015255840143608299,
+     "rms_zeroed": 0.006802006924808113
+    },
+    "rtl_vs_float_reference_deg_el": {
+     "max_abs": 0.008370945681770455,
+     "rms": 0.0042193342495066505,
+     "mean": -0.0023281377247468837,
+     "max_abs_zeroed": 0.006042807957023572,
+     "rms_zeroed": 0.003518885653679338
+    },
+    "tracked_vs_true_deg_el_after_settle": {
+     "max_abs": 0.11813870468767362,
+     "rms": 0.11392642951933792,
+     "mean": 0.11389798201887497,
+     "max_abs_zeroed": 0.004240722668798658,
+     "rms_zeroed": 0.002545787707705817
+    },
+    "lock_pairs_to_0p5deg_from_reset": 95,
+    "velocity_lsb_per_tick": {
+     "true": 218.45333333333332,
+     "mean": 218.4375,
+     "rel_err": -7.247924804676398e-05
+    }
+   },
+   "fast_k0": {
+    "case": "fast_k0",
+    "regs": {
+     "ofs_sin": 73,
+     "ofs_cos": 91,
+     "gain": 13049,
+     "ph_sin": 5524,
+     "ph_icos": 16622,
+     "h3_amp": 104,
+     "h3_ph": 170
+    },
+    "measured_vs_true_deg_el": {
+     "max_abs": 0.1627065757704227,
+     "rms": 0.12698533423975025,
+     "mean": 0.12603970564676767,
+     "max_abs_zeroed": 0.03666687012365502,
+     "rms_zeroed": 0.015468280850089649
+    },
+    "reference_vs_true_deg_el": {
+     "max_abs": 0.15189563786388277,
+     "rms": 0.12585052726097956,
+     "mean": 0.12547601717995432,
+     "max_abs_zeroed": 0.026419620683928446,
+     "rms_zeroed": 0.00970176914394293
+    },
+    "rtl_vs_float_reference_deg_el": {
+     "max_abs": 0.011332348160994873,
+     "rms": 0.007828846423110781,
+     "mean": 0.0005636884665847699,
+     "max_abs_zeroed": 0.011450266210568175,
+     "rms_zeroed": 0.0078085268539778855
+    },
+    "tracked_vs_true_deg_el_after_settle": {
+     "max_abs": 0.13428860701909032,
+     "rms": 0.12656441516061404,
+     "mean": 0.12649472273703843,
+     "max_abs_zeroed": 0.008136291507294002,
+     "rms_zeroed": 0.004199560051724013
+    },
+    "lock_pairs_to_0p5deg_from_reset": 67,
+    "velocity_lsb_per_tick": {
+     "true": 109.22666666666666,
+     "mean": 109.21875,
+     "rel_err": -7.247924804676398e-05
+    }
+   },
+   "fast_k30": {
+    "case": "fast_k30",
+    "regs": {
+     "ofs_sin": 73,
+     "ofs_cos": 91,
+     "gain": 13049,
+     "ph_sin": 5524,
+     "ph_icos": 16622,
+     "h3_amp": 104,
+     "h3_ph": 170
+    },
+    "measured_vs_true_deg_el": {
+     "max_abs": 0.1627065757704227,
+     "rms": 0.12698533423975025,
+     "mean": 0.12603970564676767,
+     "max_abs_zeroed": 0.03666687012365502,
+     "rms_zeroed": 0.015468280850089649
+    },
+    "reference_vs_true_deg_el": {
+     "max_abs": 0.15189563786388277,
+     "rms": 0.12585052726097956,
+     "mean": 0.12547601717995432,
+     "max_abs_zeroed": 0.026419620683928446,
+     "rms_zeroed": 0.00970176914394293
+    },
+    "rtl_vs_float_reference_deg_el": {
+     "max_abs": 0.011332348160994873,
+     "rms": 0.007828846423110781,
+     "mean": 0.0005636884665847699,
+     "max_abs_zeroed": 0.011450266210568175,
+     "rms_zeroed": 0.0078085268539778855
+    },
+    "tracked_vs_true_deg_el_after_settle": {
+     "max_abs": 0.13401394882012846,
+     "rms": 0.12588404947868362,
+     "mean": 0.1257961753735028,
+     "max_abs_zeroed": 0.009085693363584516,
+     "rms_zeroed": 0.004702783702297951
+    },
+    "lock_pairs_to_0p5deg_from_reset": 68,
+    "velocity_lsb_per_tick": {
+     "true": 109.22666666666666,
+     "mean": 109.21875,
+     "rel_err": -7.247924804676398e-05
+    }
+   },
+   "ideal": {
+    "case": "ideal",
+    "regs": {
+     "ofs_sin": 0,
+     "ofs_cos": 0,
+     "gain": 16384,
+     "ph_sin": 0,
+     "ph_icos": 16384,
+     "h3_amp": 0,
+     "h3_ph": 0
+    },
+    "measured_vs_true_deg_el": {
+     "max_abs": 0.028788785565317433,
+     "rms": 0.012152673498046922,
+     "mean": 0.0006875327940608641,
+     "max_abs_zeroed": 0.029476318359378296,
+     "rms_zeroed": 0.012133209460288029
+    },
+    "reference_vs_true_deg_el": {
+     "max_abs": 0.027921124980325077,
+     "rms": 0.012056908766541316,
+     "mean": 6.412393874903606e-05,
+     "max_abs_zeroed": 0.027985248919074113,
+     "rms_zeroed": 0.012056738245693987
+    },
+    "rtl_vs_float_reference_deg_el": {
+     "max_abs": 0.007055859452115193,
+     "rms": 0.0021264006595202683,
+     "mean": 0.000623408855312884,
+     "max_abs_zeroed": 0.006432450596802309,
+     "rms_zeroed": 0.0020329636405813337
+    },
+    "tracked_vs_true_deg_el_after_settle": {
+     "max_abs": 0.020246126544046665,
+     "rms": 0.005346845507337752,
+     "mean": 0.0012544273253103021,
+     "max_abs_zeroed": 0.018991699218736363,
+     "rms_zeroed": 0.005197611852077138
+    },
+    "lock_pairs_to_0p5deg_from_reset": 40,
+    "velocity_lsb_per_tick": {
+     "true": 2.1845333333333334,
+     "mean": 2.1585,
+     "rel_err": -0.0119171142578125
+    }
+   },
+   "uncal": {
+    "case": "uncal",
+    "regs": {
+     "ofs_sin": 0,
+     "ofs_cos": 0,
+     "gain": 16384,
+     "ph_sin": 0,
+     "ph_icos": 16384,
+     "h3_amp": 0,
+     "h3_ph": 0
+    },
+    "measured_vs_true_deg_el": {
+     "max_abs": 13.946413851153467,
+     "rms": 8.477271608385347,
+     "mean": 5.536967440020624,
+     "max_abs_zeroed": 12.447965698242179,
+     "rms_zeroed": 6.41919975468031
+    },
+    "reference_vs_true_deg_el": {
+     "max_abs": 13.943428968402023,
+     "rms": 8.476863623851887,
+     "mean": 5.536440599360823,
+     "max_abs_zeroed": 12.44640110006763,
+     "rms_zeroed": 6.419115389766139
+    },
+    "rtl_vs_float_reference_deg_el": {
+     "max_abs": 0.008807499669557264,
+     "rms": 0.002669722902419855,
+     "mean": 0.0005268406597994441,
+     "max_abs_zeroed": 0.008280659009757819,
+     "rms_zeroed": 0.0026172235851923656
+    },
+    "tracked_vs_true_deg_el_after_settle": {
+     "max_abs": 14.007852327715957,
+     "rms": 8.831312586850533,
+     "mean": 6.428736116778436,
+     "max_abs_zeroed": 13.457219238281276,
+     "rms_zeroed": 6.055033769310718
+    },
+    "lock_pairs_to_0p5deg_from_reset": 2000,
+    "velocity_lsb_per_tick": {
+     "true": 2.1845333333333334,
+     "mean": 2.1771666666666665,
+     "rel_err": -0.003372192382812611
+    }
+   }
+  },
+  "top": {
+   "top_biss_23.810.log": {
+    "checks": 48,
+    "failed": 0,
+    "passed": true
+   },
+   "top_biss_33.333.log": {
+    "checks": 48,
+    "failed": 0,
+    "passed": true
+   },
+   "top_biss_47.619.log": {
+    "checks": 48,
+    "failed": 0,
+    "passed": true
+   },
+   "top_cal_23.810.log": {
+    "checks": 30,
+    "failed": 0,
+    "passed": true
+   },
+   "top_cal_33.333.log": {
+    "checks": 30,
+    "failed": 0,
+    "passed": true
+   },
+   "top_gate_33.333.log": {
+    "checks": 19,
+    "failed": 0,
+    "passed": true
+   },
+   "top_safe_33.333.log": {
+    "checks": 32,
+    "failed": 0,
+    "passed": true
+   },
+   "top_spi_33.333.log": {
+    "checks": 25,
+    "failed": 0,
+    "passed": true
+   },
+   "top_ssi_23.810.log": {
+    "checks": 9,
+    "failed": 0,
+    "passed": true
+   },
+   "top_ssi_33.333.log": {
+    "checks": 9,
+    "failed": 0,
+    "passed": true
+   },
+   "top_ssi_47.619.log": {
+    "checks": 9,
+    "failed": 0,
+    "passed": true
+   }
+  },
+  "syn": {
+   "cell_area_um2": 213826.3596,
+   "seq_area_um2": 84309.7248,
+   "cells": 14176,
+   "flops": 1834,
+   "kGE_nand2": 29.46240625,
+   "ratio_cell_area_to_0p18mm2": 1.18792422,
+   "macro_est_um2_at_g1_ratio": 326806.6442303882,
+   "per_block_um2_incl_children": {
+    "r1_ctrl_top (glue)": 4118.3478,
+    "r1_biss": 16508.4696,
+    "r1_idrom": 179.6256,
+    "r1_regs": 64325.280600000006,
+    "r1_sync2": 97.9776,
+    "r1_cmpcal": 11605.6962,
+    "r1_gate": 32307.773400000002,
+    "r1_pos": 61574.1966,
+    "r1_safe": 22999.2588,
+    "r1_spi": 6131.727000000001
+   },
+   "hier_total_um2": 219848.3532
+  },
+  "adcw": {
+   "bin": {
+    "max_abs_dnl": 3.0625,
+    "max_abs_inl": 3.6630154146996574,
+    "missing_codes": 10,
+    "ramp_step_lsb": 0.0625,
+    "n": 65536,
+    "mismatches_vs_model": 0
+   },
+   "cal": {
+    "max_abs_dnl": 0.6875,
+    "max_abs_inl": 0.625,
+    "missing_codes": 0,
+    "ramp_step_lsb": 0.0625,
+    "n": 65536,
+    "mismatches_vs_model": 0
+   },
+   "ideal_quantiser": {
+    "max_abs_dnl": 0.0,
+    "max_abs_inl": 0.0,
+    "missing_codes": 0,
+    "ramp_step_lsb": 0.0625
+   },
+   "model_weight_resolution_sweep": {
+    "exact": {
+     "max_abs_dnl": 1.0,
+     "max_abs_inl": 0.5625,
+     "missing_codes": 11,
+     "ramp_step_lsb": 0.0625
+    },
+    "1/2_lsb": {
+     "max_abs_dnl": 0.9375,
+     "max_abs_inl": 0.8125,
+     "missing_codes": 0,
+     "ramp_step_lsb": 0.0625
+    },
+    "1/4_lsb": {
+     "max_abs_dnl": 0.6875,
+     "max_abs_inl": 0.625,
+     "missing_codes": 0,
+     "ramp_step_lsb": 0.0625
+    },
+    "1/8_lsb": {
+     "max_abs_dnl": 0.6875,
+     "max_abs_inl": 0.5625,
+     "missing_codes": 0,
+     "ramp_step_lsb": 0.0625
+    },
+    "1/16_lsb": {
+     "max_abs_dnl": 1.0,
+     "max_abs_inl": 0.5,
+     "missing_codes": 1,
+     "ramp_step_lsb": 0.0625
+    }
+   },
+   "checks": {
+    "rtl_bit_exact": true,
+    "mismatch_example_shows_error_with_binary_weights": true,
+    "calibrated_no_missing_dnl_lt_1_inl_le_1": true
+   },
+   "passed": true
+  },
+  "cmpcal": {
+   "model": "passed: implemented search (half-code CAL_IDEAL) vs r1_safe cal_model on 274 comparator samples: exact 274, within 1 code 274, EXH mismatches 0, initial-state dependence 0; brief wording (6-bit integer CAL_IDEAL): exact 171, within 1 274. cal_model stored k_cal reproduced on 214/214, transient in-sample k_cal reproduced on 60/60",
+   "rtl": "passed: RTL (tb_top +test=calmc) vs Python model of the search: 274/274 identical (code and EXH); RTL vs r1_safe cal_model within 1 code: 274/274",
+   "agreement": {
+    "half": {
+     "n": 274,
+     "exact": 274,
+     "within1": 274,
+     "worse": [],
+     "s0_s1_differ": 0,
+     "exh_mismatch": 0,
+     "krel_ktrip_mismatch": 0
+    },
+    "int6": {
+     "n": 274,
+     "exact": 171,
+     "within1": 274,
+     "worse": [],
+     "s0_s1_differ": 0,
+     "exh_mismatch": 0,
+     "krel_ktrip_mismatch": 0
+    }
+   },
+   "reference_checks": {
+    "stored_vs_recomputed_mismatch": 0,
+    "stored_compared": 214,
+    "transient_vs_recomputed_mismatch": 0,
+    "transient_compared": 60
+   },
+   "inputs_sha256": {
+    "cal-model-20261020-r3": "66bd0da552bad8d4566a9c1384792535585629e0a8f704459a415d289e021519",
+    "cal-model-corner-20261020-r3": "33b6c9da439517e4f0021ec9de061ae1be0c54c009ef9a0940caad83db71bc99",
+    "safe-dcmc-20261020-r3rppd": "6efdbb7dd13b1b68bc248fb459333047e72205afb7e31d051573684ca5916ad5",
+    "safe-dcmc-20261020-r3": "bc8a063933c4dc1817c79c680452b40464d11049855dbbdb9d311717c4eea350",
+    "safe-dccorner-20261020-r3": "dde402f404e6155fc6b6f5f7beaf84816c6ebc191dfbab507079d74884f0101a",
+    "safe-mc-20261020-r3": "7c7fc6fbf7b59e2dd6dced94cdb4bab8508a65808247cd8cc55ce95f34326fc2"
+   }
+  }
+ },
+ "disposition": "superseded by the run of record (same RTL, fewer position cases); simulation checks passed; cell area 0.214 mm2 = 1.19 x the 0.18 mm2 budget (before placement)",
+ "renamed": "ran as r1ctrl_20261020_v03 (2026-10-20 20:34Z, flip-flop register file); renamed to v03c at 21:00Z when the coordinator added item 7 (250 kHz, acceleration, PWM-gap cases). Same RTL as the run of record r1ctrl_20261020_v03; testbench cases added.",
+ "note_path_scrub": "top_calmc.log in the tree: the bulk results path was replaced by <G1_RESULTS_ROOT> after the run (public repository rule); sim/summarize.py now does this at copy time. No result changed."
+}

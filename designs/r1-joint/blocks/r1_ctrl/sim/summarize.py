@@ -29,6 +29,21 @@ for f in sorted(glob.glob(f"{out}/pos_*_result.json")):
     lines.append(f"| {r['case']} | {head} | {m['max_abs']:.3f} / {m['rms']:.3f} | {m['max_abs_zeroed']:.3f} | "
                  f"{im['max_abs']:.4f} | {tr.get('max_abs_zeroed', float('nan')):.3f} | {r.get('lock_pairs_to_0p5deg_from_reset')} | "
                  f"{r.get('velocity_lsb_per_tick', {}).get('rel_err', float('nan')):+.4f} |")
+cs_lines = []
+for case, r in sorted(res["pos"].items()):
+    c = r.get("count_safety")
+    if c:
+        cs_lines.append(f"| {case} | {c['pair_ticks']} | {c['f_end_hz']/1e3:g} | {c['deg_el_per_frame_end']:.1f} | {c['from_pair']} | "
+                        f"{c['max_abs_step_error_deg_el_after_lock']:.3f} | {c['multiturn_drift_counts_max']:.4f} | "
+                        f"{c['max_abs_error_deg_el_after_lock']:.3f} | {r['tracked_vs_true_deg_el_after_settle']['max_abs_zeroed']:.4f} | "
+                        f"{c.get('skip', 0)} / {c.get('max_frame_gap_ticks')} | {c.get('acc_hz_per_s') or '-'} | {c.get('frames_err_gt45deg_after_lock')} |")
+if cs_lines:
+    lines += ["", "## Count safety with the D18 22-tick encoder frame (revision 0.3)", "",
+              "Criterion: after acquisition, the per-frame step of the tracked output differs from the true step by less than "
+              "one count (90 deg el), and the multi-turn position (TURNS, POS) does not slip (offset at the end < 0.5 count). "
+              "'multi-turn drift' is the largest transient lag in counts; f22_250k_alim_gap (model limit) and f22_250k_a2x_gap (2 x the design acceleration) are information only.", "",
+              "| Case | ticks/frame | f end (kHz) | deg el per frame | from pair | max step error (deg el) | multi-turn drift (counts) | max tracking error incl. ramp (deg el) | after ramp/settle, mean removed (deg el) | skip / max gap (ticks) | acc (Hz/s) | frames with error > 45 deg |",
+              "| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |"] + cs_lines
 lines += ["", "## (b..f) chip-level testbench", "", "| Log | Checks | Failed | Verdict |", "| --- | --- | --- | --- |"]
 info = []
 for f in sorted(glob.glob(f"{out}/top_*.log")):
@@ -90,9 +105,9 @@ res["adcw"] = aw
 lines += ["", "## ADC weight correction (r1_adcw, tb_adcw + adcw_ref.py, mismatched-CDAC example)", "",
           "| Weights | max abs DNL (LSB) | max abs INL (LSB) | missing codes | RTL vs integer model mismatches |",
           "| --- | --- | --- | --- | --- |"]
-for k in ("bin", "cal"):
+for k in ("nom", "cal"):
     r = aw[k]
-    lines.append(f"| {'binary (reset)' if k == 'bin' else 'calibrated (1/4 LSB)'} | {r['max_abs_dnl']:.3f} | "
+    lines.append(f"| {'nominal r1_adc rev 3 (reset)' if k == 'nom' else 'calibrated (1/4 LSB)'} | {r['max_abs_dnl']:.3f} | "
                  f"{r['max_abs_inl']:.3f} | {r['missing_codes']} | {r['mismatches_vs_model']} |")
 lines += ["", "Model-only weight-resolution sweep (same raw decisions): " + "; ".join(
           f"{k}: DNL {v['max_abs_dnl']:.3f}, INL {v['max_abs_inl']:.3f}, missing {v['missing_codes']}"
@@ -104,11 +119,24 @@ for f in ("stat_flat.txt", "stat_hier.txt"):
     shutil.copy(f"{out}/syn/{f}", summ)
 for f in glob.glob(f"{out}/pos_*_check.log") + glob.glob(f"{out}/pos_*_result.json"):
     shutil.copy(f, summ)
+cm = json.load(open(f"{out}/cmpcal/cmpcal_model.json"))
+ck = json.load(open(f"{out}/cmpcal/calmc_check.json"))
+res["cmpcal"] = dict(model=cm["disposition"], rtl=ck["disposition"], agreement=cm["agreement"],
+                     reference_checks=cm["reference_checks"], inputs_sha256=cm["inputs_sha256"])
+lines += ["", "## Comparator calibration search (r1_cmpcal 0.3) vs r1_safe cal_model.py", "",
+          "- Model: " + cm["disposition"], "- RTL: " + ck["disposition"],
+          "- Inputs (r1_safe results, read-only): " + ", ".join(cm["inputs_sha256"].keys())]
+for f in ("cmpcal_model.json", "calmc_check.json"):
+    shutil.copy(f"{out}/cmpcal/{f}", summ)
+open(f"{summ}/top_calmc.log", "w").write(re.sub(r"/\S*/r1_ctrl/", "<G1_RESULTS_ROOT>/r1_ctrl/", open(f"{out}/cmpcal/top_calmc.log").read()))   # no machine paths in the tree
 shutil.copy(f"{out}/versions.txt", summ)
 shutil.copy(f"{out}/inputs.sha256", summ)
 open(f"{summ}/summary.md", "w").write("\n".join(lines) + "\n")
-top_ok = all(v["passed"] for v in res["top"].values()) and len(res["top"]) == 10
-pos_ok = all(v["rtl_vs_float_reference_deg_el"]["max_abs"] < 0.05 for v in res["pos"].values()) and len(res["pos"]) == 9
+top_ok = all(v["passed"] for v in res["top"].values()) and len(res["top"]) == 11
+pos_ok = all(v["rtl_vs_float_reference_deg_el"]["max_abs"] < 0.05 for v in res["pos"].values()) and len(res["pos"]) == 16
+cs_ok = all(v["count_safety"]["max_abs_step_error_deg_el_after_lock"] < 90.0 and abs(v["count_safety"]["multiturn_offset_end_counts"]) < 0.5
+            for k, v in res["pos"].items() if "count_safety" in v and k not in ("f22_250k_a2x_gap", "f22_250k_alim_gap"))   # information only
+cal_ok = cm["disposition"].startswith("passed") and ck["disposition"].startswith("passed")
 run = dict(
     run_id=rid,
     command="flow/run.sh sh sim/run_all.sh " + rid,
@@ -116,12 +144,11 @@ run = dict(
     tools=ver, pdk_commit=ver.get("pdk_commit"),
     inputs="inputs.sha256 (RTL, testbenches, scripts)",
     bulk_results="$G1_RESULTS_ROOT/r1_ctrl/" + rid,
-    question="Does the r1_ctrl revision 0.2 RTL (r1_pos, r1_bus, r1_gate logic, r1_safe FSM, comparator "
-             "calibration, ADC weight correction, registers) meet the V3 position, V4 protocol (S2 items 1-9, "
-             "BiSS D2 control channel) and V5 digital safety checks in simulation, and what is its synthesized "
-             "cell area against the 0.18 mm2 cell-area target?",
+    question="Does the r1_ctrl revision 0.3 RTL (two-sided comparator calibration per the r1_safe contract, "
+             "CAL_CRC over comparator words and ADC weights, 22-tick D18 encoder frame count safety at 208 and 250 kHz) pass the "
+             "revision-0.2 regression plus the new checks, and what is its synthesized cell area?",
     result=res,
-    disposition=("simulation checks passed" if (top_ok and pos_ok and aw["passed"]) else "simulation checks FAILED (see summary.md)")
+    disposition=("simulation checks passed" if (top_ok and pos_ok and aw["passed"] and cs_ok and cal_ok) else "simulation checks FAILED (see summary.md)")
                 + f"; cell area {area/1e6:.3f} mm2 = {area/180000:.2f} x the 0.18 mm2 budget (before placement)",
 )
 json.dump(run, open(f"{summ}/run.json", "w"), indent=1)

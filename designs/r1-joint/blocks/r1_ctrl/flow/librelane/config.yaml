@@ -1,8 +1,10 @@
-# LibreLane Classic flow, first hardening trial of the r1_ctrl macro (revision 0.2).
+# LibreLane Classic flow for the r1_ctrl macro (revision 0.3; first trial was revision 0.2).
 # Structure follows designs/g1-guardian/blocks/g1_ctrl/flow/config.yaml.
-# Run with flow/librelane/run_trial.sh, which copies this file and the SDC to
-# the bulk results root and links the RTL there, so run directories never land
-# in the repository.
+# Run with flow/librelane/run_harden.sh, which copies this file, the SDC and the
+# RTL to the bulk results root, so run directories never land in the repository.
+# Revision 0.3 changes: start utilisation 55 % (trial t1 at 70 % reached 82.6 %
+# after CTS and did not finish detailed routing in 2 h); router and STA threads
+# fixed to the 4 allocated CPUs (t1 left DRT_THREADS unset).
 meta:
   version: 2
   flow: Classic
@@ -27,6 +29,8 @@ VERILOG_FILES:
   - dir::../rtl/r1_ctrl_top.v
 VERILOG_DEFINES:
   - SYNTHESIS
+  # revision 0.3: flip-flop register file (rtl/r1_lib.v), design of record
+  - R1_CFG_FLOPS
 # the configuration register file is latch-based by design (r1_lib.v)
 LINTER_ERROR_ON_LATCH: false
 
@@ -42,11 +46,13 @@ FALLBACK_SDC: dir::r1_ctrl.sdc
 SYNTH_STRATEGY: AREA 0
 SYNTH_MUL_BOOTH: true
 
-# Utilisation about 70 % (brief), square core
+# Utilisation 55 % at the start, square core
 FP_SIZING: relative
-FP_CORE_UTIL: 70
+FP_CORE_UTIL: 55
 FP_ASPECT_RATIO: 1
-PL_TARGET_DENSITY_PCT: 78
+PL_TARGET_DENSITY_PCT: 65
+DRT_THREADS: 4
+STA_THREADS: 4
 GRT_ALLOW_CONGESTION: true
 
 PDN_CORE_RING: false

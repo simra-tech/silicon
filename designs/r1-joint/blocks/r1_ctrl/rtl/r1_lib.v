@@ -64,7 +64,19 @@ module r1_cword #(
     input  wire [W-1:0] d,
     output wire [W-1:0] q
 );
+`ifdef R1_CFG_FLOPS
+    // revision 0.3 design of record (every flow sets R1_CFG_FLOPS): flip-flops
+    // with write enable. The latch form below failed sign-off STA at the slow
+    // corner (LibreLane runs t2, t4); the flop form closes 42 MHz at all three
+    // corners (run t5). README revision 0.3.
+    reg [W-1:0] r;
+    always @(posedge clk or negedge rst_n)
+        if (!rst_n) r <= RV;
+        else if (wr && (addr == A)) r <= d;
+    assign q = r;
+`else
     wire gclk;
     r1_cgate u_cg (.clk(clk), .en(wr && (addr == A)), .gclk(gclk));
     r1_creg #(.W(W), .RV(RV)) u_r (.rst_n(rst_n), .gclk(gclk), .d(d), .q(q));
+`endif
 endmodule

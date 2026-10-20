@@ -35,6 +35,48 @@ CASES = {
     "fast_k0":     dict(ofs=0.065, gain=1.25, ph=10.0, h3=0.01, f=50e3, n=2000, cal=True,  noise=0.0, extrap=0),
     "fast_k30":    dict(ofs=0.065, gain=1.25, ph=10.0, h3=0.01, f=50e3, n=2000, cal=True,  noise=0.0, extrap=30),
     "fast_100k":   dict(ofs=0.065, gain=1.25, ph=10.0, h3=0.01, f=100e3, n=2000, cal=True, noise=0.0, extrap=0),
+    # revision 0.3: D17 ADC frame of 36 ticks (833 k pairs/s at 30 MHz). f0: start frequency of a linear
+    # ramp to f over the first `ramp` pairs (the loop acquires at f0, then must track the ramp).
+    "f36_100k":    dict(ofs=0.065, gain=1.25, ph=10.0, h3=0.01, f=100e3, n=2000, cal=True, noise=0.0, extrap=0, pair=36),
+    "f36_208k":    dict(ofs=0.065, gain=1.25, ph=10.0, h3=0.01, f=208e3, n=3000, cal=True, noise=0.0, extrap=0, pair=36,
+                        f0=20e3, ramp=1000),
+    "f36_208k_n":  dict(ofs=0.065, gain=1.25, ph=10.0, h3=0.01, f=208e3, n=3000, cal=True, noise=0.5, extrap=0, pair=36,
+                        f0=20e3, ramp=1000),
+    # item 7 (coordinator): 250 kHz, maximum acceleration, and one frame slot per PWM period taken by the
+    # current pair (skip = 42 slots of 36 ticks = 1512 ticks, 19.8 kHz PWM: a 72-tick (2.4 us) encoder gap).
+    # acc: ramp acceleration in Hz/s (electrical) starting at frame ramp_start. Loop limit (KP 2, KI 11, 36 ticks):
+    # steady error e = acc/f_clk^2 * 36 * 2^11 turn; e = 45 deg (snap threshold) at 1.526e9 Hz/s = 9.59e9 rad/s^2.
+    "f36_208k_gap": dict(ofs=0.065, gain=1.25, ph=10.0, h3=0.01, f=208e3, n=3000, cal=True, noise=0.0, extrap=0, pair=36,
+                         f0=20e3, ramp=1000, skip=42),
+    "f36_250k":    dict(ofs=0.065, gain=1.25, ph=10.0, h3=0.01, f=250e3, n=3000, cal=True, noise=0.0, extrap=0, pair=36,
+                        f0=20e3, ramp=1000),
+    "f36_250k_gap": dict(ofs=0.065, gain=1.25, ph=10.0, h3=0.01, f=250e3, n=3000, cal=True, noise=0.0, extrap=0, pair=36,
+                         f0=20e3, ramp=1000, skip=42),
+    "f36_250k_amax": dict(ofs=0.065, gain=1.25, ph=10.0, h3=0.01, f=250e3, n=2000, cal=True, noise=0.5, extrap=0, pair=36,
+                          f0=20e3, acc=1.5e9, ramp_start=300),
+    "f36_250k_amax_gap": dict(ofs=0.065, gain=1.25, ph=10.0, h3=0.01, f=250e3, n=2000, cal=True, noise=0.5, extrap=0,
+                              pair=36, f0=20e3, acc=1.5e9, ramp_start=300, skip=42),
+    "f36_250k_alim_gap": dict(ofs=0.065, gain=1.25, ph=10.0, h3=0.01, f=250e3, n=2000, cal=True, noise=0.5, extrap=0, pair=36,
+                          f0=20e3, acc=1.2e9, ramp_start=300, skip=42),
+    # D18 (coordinator, 2026-10-20): encoder pair every 22-tick frame; one frame per PWM period (every 68th slot,
+    # 1496 ticks = 20.05 kHz) carries the current pair -> one 44-tick encoder gap. Limit for 45 deg at T = 22:
+    # 0.125 * f_clk^2 / (22 * 2^11) = 2.50e9 Hz/s = 1.57e10 rad/s^2 (model; the RTL latency adds lag).
+    "f22_100k_gap": dict(ofs=0.065, gain=1.25, ph=10.0, h3=0.01, f=100e3, n=3000, cal=True, noise=0.0, extrap=0, pair=22,
+                         skip=68),
+    "f22_208k_gap": dict(ofs=0.065, gain=1.25, ph=10.0, h3=0.01, f=208e3, n=4000, cal=True, noise=0.0, extrap=0, pair=22,
+                         f0=20e3, ramp=1500, skip=68),
+    "f22_250k":     dict(ofs=0.065, gain=1.25, ph=10.0, h3=0.01, f=250e3, n=4000, cal=True, noise=0.0, extrap=0, pair=22,
+                         f0=20e3, ramp=1500),
+    "f22_250k_gap": dict(ofs=0.065, gain=1.25, ph=10.0, h3=0.01, f=250e3, n=4000, cal=True, noise=0.0, extrap=0, pair=22,
+                         f0=20e3, ramp=1500, skip=68),
+    "f22_250k_amax_gap": dict(ofs=0.065, gain=1.25, ph=10.0, h3=0.01, f=250e3, n=3000, cal=True, noise=0.5, extrap=0,
+                              pair=22, f0=20e3, acc=2.0e9, ramp_start=300, skip=68),
+    "f22_250k_alim_gap": dict(ofs=0.065, gain=1.25, ph=10.0, h3=0.01, f=250e3, n=3000, cal=True, noise=0.0, extrap=0,
+                              pair=22, f0=20e3, acc=2.5e9, ramp_start=300, skip=68),
+    "f22_250k_a2x_gap": dict(ofs=0.065, gain=1.25, ph=10.0, h3=0.01, f=250e3, n=3000, cal=True, noise=0.0, extrap=0,
+                             pair=22, f0=20e3, acc=4.0e9, ramp_start=300, skip=68, info=True),
+    "f36_250k_a2x": dict(ofs=0.065, gain=1.25, ph=10.0, h3=0.01, f=250e3, n=2000, cal=True, noise=0.0, extrap=0, pair=36,
+                         f0=20e3, acc=3.0e9, ramp_start=300, info=True),
 }
 AC = 1400.0
 H3_PSI = 0.7      # phase of the 3rd harmonic in the head model, rad (arbitrary, not 0)
@@ -155,14 +197,43 @@ def fit_ref(s, c, p_ref):
     return r
 
 
+def ramp_ticks(c):
+    """start tick and length (ticks) of the f0 -> f ramp"""
+    pt = c.get("pair", PAIR_TICKS)
+    ts = 100 + pt * c.get("ramp_start", 0)
+    tr = c["ramp"] * pt if "ramp" in c else (c["f"] - c["f0"]) / c["acc"] * TICK_HZ
+    return ts, tr
+
+
+def slots(c, k):
+    """frame slot of pair k (skip: every skip-th slot is taken by the current pair)"""
+    s = c.get("skip", 0)
+    k = np.asarray(k)
+    return k + k // (s - 1) if s > 1 else k
+
+
+def phase(c, p0, t):
+    """true electrical angle at tick t: constant f, or f0 until the ramp start, a linear ramp to f, then f"""
+    t = np.asarray(t, dtype=float)
+    w = 2 * math.pi * c["f"] / TICK_HZ
+    if "f0" not in c:
+        return p0 + w * t
+    w0 = 2 * math.pi * c["f0"] / TICK_HZ
+    ts, tr = ramp_ticks(c)
+    u = np.clip(t - ts, 0, None)
+    ur = np.minimum(u, tr)
+    return p0 + w0 * t + 0.5 * (w - w0) / tr * ur ** 2 + (w - w0) * (u - ur)
+
+
 def gen(case, out):
     c = CASES[case]
     rng = np.random.default_rng(SEED)
     k = np.arange(c["n"])
-    ticks = 100 + PAIR_TICKS * k                  # track-and-hold instants (TB schedule)
+    pt = c.get("pair", PAIR_TICKS)
+    ticks = 100 + pt * slots(c, k)                # track-and-hold instants (TB schedule)
     p0 = 0.3
     w = 2 * math.pi * c["f"] / TICK_HZ            # rad per tick
-    p = p0 + w * ticks
+    p = phase(c, p0, ticks)
     s, cc = head(p, c)
     sq, cq = quant(s, rng, c["noise"]), quant(cc, rng, c["noise"])
     if c["cal"]:
@@ -182,7 +253,7 @@ def gen(case, out):
         for a, b in zip(sq, cq):
             fh.write(f"{(a + 2048) & 0xFFF:03x}{(b + 2048) & 0xFFF:03x}\n")
     meta = dict(case=case, head=c, regs=r, kp=kp, ki=ki, p0=p0, w_rad_per_tick=w,
-                pair_ticks=PAIR_TICKS, first_tick=100, n=int(c["n"]), seed=SEED)
+                pair_ticks=pt, first_tick=100, n=int(c["n"]), seed=SEED)
     with open(f"{out}/pos_{case}_meta.json", "w") as fh:
         json.dump(meta, fh, indent=1)
     np.save(f"{out}/pos_{case}_codes.npy", np.vstack([sq, cq]))
@@ -194,12 +265,16 @@ def check(case, out):
     r = meta["regs"]
     n = meta["n"]
     k = np.arange(n)
-    ticks = meta["first_tick"] + meta["pair_ticks"] * k
-    ptrue = meta["p0"] + meta["w_rad_per_tick"] * ticks
+    c = meta["head"]
+    ticks = meta["first_tick"] + meta["pair_ticks"] * slots(c, k)
+    ptrue = phase(c, meta["p0"], ticks)
     rows = [l.split() for l in open(f"{out}/pos_{case}_out.txt") if l.strip() and not l.startswith("#")]
     meas = np.array([int(x[1]) for x in rows if x[0] == "M"])
     track = np.array([[int(x[1]), int(x[2]), int(x[3])] for x in rows if x[0] == "T"])
-    assert len(meas) == n, (len(meas), n)
+    if len(meas) != n:                               # pairs dropped by r1_pos (overrun): record and fail
+        res = dict(case=case, failed="r1_pos produced %d measurements for %d pairs (overrun)" % (len(meas), n))
+        json.dump(res, open(f"{out}/pos_{case}_result.json", "w"), indent=1)
+        print(json.dumps(res)); return
     th_rtl = meas / 2.0 ** 18 * 2 * math.pi
     th_ref, _ = correct_float(sq.astype(float), cq.astype(float), r)
     d2r = 180 / math.pi
@@ -222,9 +297,12 @@ def check(case, out):
         tt = track[:, 0]
         po = track[:, 1] / 2.0 ** 18 * 2 * math.pi
         # pos_out logged at tick T holds the NCO value of tick T-1 (one output register)
-        target = meta["p0"] + meta["w_rad_per_tick"] * (tt - 1 + meta["head"]["extrap"])
+        target = phase(c, meta["p0"], tt - 1 + meta["head"]["extrap"])
         et = wrap(po - target) * d2r
         settle = n // 4
+        if "f0" in c:                                # ramp cases: accuracy after the ramp end + 500 pairs
+            ts, tr = ramp_ticks(c)
+            settle = int(np.searchsorted(tt, ts + tr)) + 500
         res["tracked_vs_true_deg_el_after_settle"] = stats(et[settle:])
         bad = np.nonzero(np.abs(et - np.mean(et[settle:])) > 0.5)[0]
         res["lock_pairs_to_0p5deg_from_reset"] = int(bad[-1] + 1) if len(bad) else 0
@@ -232,6 +310,32 @@ def check(case, out):
         vtrue = meta["w_rad_per_tick"] / (2 * math.pi) * 65536.0
         res["velocity_lsb_per_tick"] = dict(true=vtrue, mean=float(np.mean(vel)),
                                             rel_err=float(np.mean(vel) / vtrue - 1))
+        if c.get("pair", PAIR_TICKS) != PAIR_TICKS:
+            # count safety (revision 0.3): per-frame step of the tracked output against the true step,
+            # and the multi-turn position (TURNS * 2^18 + POS) against the true unwrapped angle
+            rows4 = [l.split() for l in open(f"{out}/pos_{case}_out.txt") if l.startswith("T ")]
+            turns = np.array([int(x[4]) for x in rows4], dtype=np.int64)
+            pos = track[:, 1].astype(np.int64)
+            dstep = wrap(np.diff(po) - np.diff(target)) * d2r
+            lock = res["lock_pairs_to_0p5deg_from_reset"]
+            # ramp cases: count safety from pair 200 (acquisition at f0 done), i.e. over the whole ramp
+            lk = 200 if "f0" in c else max(lock, 1)
+            multi = (turns.astype(np.int64) << 18) + pos
+            truec = target / (2 * math.pi) * 2 ** 18
+            dm = (multi - truec)
+            dm0 = dm[lk:] - dm[lk]
+            res["count_safety"] = dict(
+                pair_ticks=int(meta["pair_ticks"]), frame_rate_hz=TICK_HZ / meta["pair_ticks"],
+                f_end_hz=c["f"], deg_el_per_frame_end=360.0 * c["f"] * meta["pair_ticks"] / TICK_HZ,
+                lock_pair=int(lock),
+                max_abs_step_error_deg_el_after_lock=float(np.max(np.abs(dstep[lk:]))),
+                max_abs_error_deg_el_after_lock=float(np.max(np.abs(et[lk:] - np.mean(et[settle:])))),
+                multiturn_drift_counts_max=float(np.max(np.abs(dm0)) / 2 ** 16),
+                multiturn_offset_end_counts=float(np.mean(dm0[-200:]) / 2 ** 16),
+                from_pair=int(lk), skip=int(c.get("skip", 0)), acc_hz_per_s=c.get("acc"),
+                max_frame_gap_ticks=int(np.max(np.diff(tt))),
+                frames_err_gt45deg_after_lock=int(np.sum(np.abs(et[lk:] - np.mean(et[settle:])) > 45.0)),
+                note="one count = 90 deg el = 2^16 of the 18-bit position")
     json.dump(res, open(f"{out}/pos_{case}_result.json", "w"), indent=1)
     print(json.dumps(res, indent=1))
 

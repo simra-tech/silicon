@@ -1,15 +1,16 @@
 // R1_CTRL / r1_pos: encoder position path.
 //   sin/cos pair (12-bit offset-binary codes) -> offset, gain-ratio and phase
-//   correction (Heydemann form) -> iterative CORDIC vectoring (18 iterations,
+//   correction (Heydemann form) -> iterative CORDIC vectoring (18 iterations, 2 per tick,
 //   18-bit x/y, 18-bit angle) -> 3rd-harmonic angle correction -> type-II
 //   tracking loop running as an NCO on every clk tick -> extrapolated
 //   position, turn counter, velocity, amplitude and flags.
 // One 18 x 17 signed multiplier is shared by all steps, including (revision
 // 0.2) the loop gains 2^-KP and 2^-KI, which revision 0.1 formed with two
-// 40-bit barrel shifters. A pair is processed in 28 clk cycles after
-// smp_valid; the sample scheduler (r1_gate) spaces pairs by PAIR_TICKS
-// (default 30) and starts a pair only after smp_valid of the previous pair
-// (one NCO snapshot). A pair that arrives while busy is dropped and flagged
+// 40-bit barrel shifters. Revision 0.3 (D18): two CORDIC iterations per tick,
+// a pair is processed in 19 clk cycles after smp_valid; the frame generator
+// (r1_gate) spaces pairs by PAIR_TICKS (default 22) and starts a pair not
+// before smp_valid of the previous pair (one NCO snapshot; smp_sh in the tick
+// of smp_valid belongs to the next pair). A pair that arrives while busy is dropped and flagged
 // (overrun).
 // Revision 0.2 trims: the correction intermediates (offset-corrected samples,
 // sine * gain, phase-corrected sine) are held in the CORDIC x/y registers; the
@@ -172,8 +173,17 @@ module r1_pos (
     wire signed [21:0] x4 = {{5{dc[12]}}, dc, 4'b0};
     wire signed [17:0] x5 = satin(x4);
     wire signed [17:0] y5 = satin(y4);
+    // Revision 0.3 (D18): two CORDIC iterations per tick (it, it+1), so a pair takes <= 22 ticks.
     wire signed [17:0] cx_sh = cx >>> it;
     wire signed [17:0] cy_sh = cy >>> it;
+    wire        cd1 = !cy[17];
+    wire signed [17:0] cx1 = cd1 ? cx + cy_sh : cx - cy_sh;
+    wire signed [17:0] cy1 = cd1 ? cy - cx_sh : cy + cx_sh;
+    wire [17:0] cz1 = cd1 ? cz + atan_rom(it) : cz - atan_rom(it);
+    wire [4:0]  it1 = it + 5'd1;
+    wire signed [17:0] cx1_sh = cx1 >>> it1;
+    wire signed [17:0] cy1_sh = cy1 >>> it1;
+    wire        cd2 = !cy1[17];
     wire [34:0] amp_full = prod >>> 19;                                   // ADC LSB
     wire signed [34:0] h3_corr = prod >>> 5;                              // 18-bit angle units
     wire [17:0] th_c = cz - h3_corr[17:0];
@@ -215,7 +225,7 @@ module r1_pos (
                 S_IDLE: if (smp_valid) begin
                     cx <= {{5{ds_n[12]}}, ds_n};
                     cy <= {{5{dc_n[12]}}, dc_n};
-                    snap_b <= smp_sh ? theta[35:18] : snap_a;
+                    snap_b <= snap_a;   // 0.3: a hold in the same tick belongs to the next pair (D18 frame)
                     if (!smp_sh) sh_pend <= 1'b0;
                     st <= S_M1;
                 end
@@ -237,13 +247,11 @@ module r1_pos (
                     st <= S_CI;
                 end
                 S_CI: begin
-                    if (!cy[17]) begin
-                        cx <= cx + cy_sh; cy <= cy - cx_sh; cz <= cz + atan_rom(it);
-                    end else begin
-                        cx <= cx - cy_sh; cy <= cy + cx_sh; cz <= cz - atan_rom(it);
-                    end
-                    it <= it + 5'd1;
-                    if (it == 5'd17) st <= S_P1;
+                    cx <= cd2 ? cx1 + cy1_sh : cx1 - cy1_sh;
+                    cy <= cd2 ? cy1 - cx1_sh : cy1 + cx1_sh;
+                    cz <= cd2 ? cz1 + atan_rom(it1) : cz1 - atan_rom(it1);
+                    it <= it + 5'd2;
+                    if (it == 5'd16) st <= S_P1;
                 end
                 S_P1: begin
                     amplitude <= (amp_full > 35'd4095) ? 12'hFFF : amp_full[11:0];
