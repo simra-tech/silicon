@@ -1,0 +1,45 @@
+{
+ "run_id": "r3-ref-tt-ideal1004-d",
+ "block": "r1_adc",
+ "question": "R2-4: ideal VREF at the buffer DC level 1.004 V (code-level reference for the buffer runs; the 1.0 V run mixes in a 0.4 % static gain)",
+ "command": "G1_CPUSET=103 G1_CPUS=1 G1_WORKDIR=designs/r1-joint/blocks/r1_adc G1_RESULTS_ROOT=<bulk> flow/run.sh ngspice -b <G1_RESULTS_ROOT>/r1_adc/r3-ref-tt-ideal1004-d/deck.cir (= sim/runs/r3-ref-tt-ideal1004-d/deck.cir with the bulk path filled in)",
+ "deck": "sim/runs/r3-ref-tt-ideal1004-d/deck.cir",
+ "deck_template": "sim/r3/tb_adc3_points.cir",
+ "deck_sha256": "71427315b892ceae28b7cae9dc24bdc558d81e518b9e148e0b8f78b1c1296e33",
+ "library_sha256_at_start": {
+  "r1_adc_r3.spice": "ceb84644f56ce6b427a3134e534263d9d30c95ebc9404042c55a0515fb82c85e"
+ },
+ "substitutions": {
+  "RAW": "<bulk>/r1_adc/r3-ref-tt-ideal1004-d",
+  "CORNER": "mos_tt",
+  "TEMP": "27",
+  "VDD": "1.2",
+  "CM": "0.6",
+  "CORE": "r1_adc3_core_fast",
+  "TIMING": "r1_adc_timing_r3.inc",
+  "OPTS": "reltol=1e-4 vntol=1e-6 abstol=1e-12 method=trap klu rshunt=1e12",
+  "TMAX": "0.2n",
+  "TSTOP": "6.3000u",
+  "PWLA": "0 0.0000000 6.500000e-07 0.0000000 6.600000e-07 0.8800000 1.250000e-06 0.8800000 1.260000e-06 -0.8800000 1.850000e-06 -0.8800000 1.860000e-06 0.4400000 2.450000e-06 0.4400000\n+ 2.460000e-06 -0.4400000 3.050000e-06 -0.4400000 3.060000e-06 0.0003000 3.650000e-06 0.0003000 3.660000e-06 0.8700000 4.250000e-06 0.8700000 4.260000e-06 -0.8700000 4.850000e-06 -0.8700000\n+ 4.860000e-06 0.8800000 5.450000e-06 0.8800000 5.460000e-06 -0.8800000",
+  "PWLB": "0 0.0000000 6.500000e-07 0.0000000 6.600000e-07 0.8800000 1.250000e-06 0.8800000 1.260000e-06 -0.8800000 1.850000e-06 -0.8800000 1.860000e-06 -0.4400000 2.450000e-06 -0.4400000\n+ 2.460000e-06 0.4400000 3.050000e-06 0.4400000 3.060000e-06 -0.0003000 3.650000e-06 -0.0003000 3.660000e-06 -0.8700000 4.250000e-06 -0.8700000 4.260000e-06 0.8700000 4.850000e-06 0.8700000\n+ 4.860000e-06 -0.8800000 5.450000e-06 -0.8800000 5.460000e-06 0.8800000",
+  "REFLINES": "Vref vref 0 1.004",
+  "SAVE": "v(rawa) v(rawb) v(vref) v(topap) v(topan) v(topbp) v(topbn) i(vdd) v(mclk) v(trka0) v(trka1)"
+ },
+ "tool": "ngspice (banner not found in log)",
+ "ngspice_version": "ngspice-46 : Circuit level simulation program (creation date Mon Jul 27 13:15:13 UTC 2026)",
+ "netlist_sha256": {
+  "r1_adc_r3.spice": "ceb84644f56ce6b427a3134e534263d9d30c95ebc9404042c55a0515fb82c85e"
+ },
+ "container_image": "sha256:ddeb69576f2808676d1c5d474ecf04f6d1d6f8abdcff6b72b39790ded924bab2",
+ "pdk_commit": "84374023ee8b4b126bebbba67fcbada0a9c0ff0b",
+ "raw_results": "r1_adc/r3-ref-tt-ideal1004-d (under G1_RESULTS_ROOT)",
+ "started_utc": "2026-10-20T19:35:02.129143Z",
+ "wall_s": 904.0,
+ "returncode": 0,
+ "status": "completed",
+ "errors": [],
+ "result": "",
+ "disposition": "valid: reference-settling comparison (final comparator c32c) -> results/r3/ref3_tt_*.json",
+ "points_file": "sim/r3/points/ref10.json",
+ "first_slot": 0
+}

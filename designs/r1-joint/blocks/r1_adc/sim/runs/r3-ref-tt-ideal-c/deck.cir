@@ -1,0 +1,43 @@
+* tb_adc3_points.cir -- R1 ADC revision 3: both slices in parallel, one held differential input per slot and slice.
+* Slot s (sampling edge 0.6 us + s * 0.6 us): slice A samples vda (SIN path), slice B samples vdb (COS path).
+* vda/vdb are PWL sources written by sim/r3/run_points3.py (value of slot s applied 550 ns before its edge).
+* Inputs are linear E sources around the common mode CM (revision 3, R2-7: no B sources on the input path).
+* Reference: REFLINES (ideal source, or r1_refbuf3 from an ideal 1.045 V bandgap node).
+* Substitutions: CORNER TEMP VDD CM CORE TIMING OPTS TMAX TSTOP PWLA PWLB REFLINES SAVE RAW
+.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerMOSlv.lib mos_tt
+.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerCAP.lib cap_typ
+.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerMOShv.lib mos_tt
+.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerRES.lib res_typ
+.include schematic/r1_adc_r3.spice
+.include sim/r3/r1_adc_timing_r3.inc
+.temp 27
+.option reltol=1e-4 vntol=1e-6 abstol=1e-12 method=trap klu rshunt=1e12
+
+Vdd vdd 0 1.2
+Vref vref 0 1.0
+Vcm vcm 0 0.6
+Vda vda 0 PWL(0 0.0000000 6.500000e-07 0.0000000 6.600000e-07 0.8800000 1.250000e-06 0.8800000 1.260000e-06 -0.8800000 1.850000e-06 -0.8800000 1.860000e-06 0.4400000 2.450000e-06 0.4400000
++ 2.460000e-06 -0.4400000 3.050000e-06 -0.4400000 3.060000e-06 0.0003000 3.650000e-06 0.0003000 3.660000e-06 0.8700000 4.250000e-06 0.8700000 4.260000e-06 -0.8700000 4.850000e-06 -0.8700000
++ 4.860000e-06 0.8800000 5.450000e-06 0.8800000 5.460000e-06 -0.8800000)
+Vdb vdb 0 PWL(0 0.0000000 6.500000e-07 0.0000000 6.600000e-07 0.8800000 1.250000e-06 0.8800000 1.260000e-06 -0.8800000 1.850000e-06 -0.8800000 1.860000e-06 -0.4400000 2.450000e-06 -0.4400000
++ 2.460000e-06 0.4400000 3.050000e-06 0.4400000 3.060000e-06 -0.0003000 3.650000e-06 -0.0003000 3.660000e-06 -0.8700000 4.250000e-06 -0.8700000 4.260000e-06 0.8700000 4.850000e-06 0.8700000
++ 4.860000e-06 -0.8800000 5.450000e-06 -0.8800000 5.460000e-06 0.8800000)
+Esp sinp vcm vda 0 0.5
+Esn sinn vcm vda 0 -0.5
+Ecp cosp vcm vdb 0 0.5
+Ecn cosn vcm vdb 0 -0.5
+Vip isap 0 0.6
+Vin isan 0 0.6
+
+XADC sinp sinn cosp cosn isap isan isap isan trka0 trka1 trkb0 trkb1 mclk wina winb lata latb
++ stb0 stb1 stb2 stb3 stb4 stb5 stb6 stb7 stb8 stb9 stb10 stb11 stb12 stb13
++ rawa rawb topap topan topbp topbn vdd vref 0 r1_adc3_core_fast
+
+.control
+set num_threads=1
+save v(rawa) v(rawb) v(vref) v(topap) v(topan) v(topbp) v(topbn) i(vdd) v(mclk) v(trka0) v(trka1)
+tran 1n 6.3000u 0 0.2n
+meas tran idd avg i(vdd) from=0.7u to=6.3000u
+write <G1_RESULTS_ROOT>/r1_adc/r3-ref-tt-ideal-c/codes.raw
+.endc
+.end

@@ -1,0 +1,45 @@
+{
+ "run_id": "r3-dyn-tt-n32",
+ "block": "r1_adc",
+ "question": "dynamic: sine on A, cosine on B, 0.85 V, fin 156250 Hz, 33 slots (N 32 used), tt, ideal VREF",
+ "command": "G1_CPUSET=105 G1_CPUS=1 G1_WORKDIR=designs/r1-joint/blocks/r1_adc G1_RESULTS_ROOT=<bulk> flow/run.sh ngspice -b <G1_RESULTS_ROOT>/r1_adc/r3-dyn-tt-n32/deck.cir (= sim/runs/r3-dyn-tt-n32/deck.cir with the bulk path filled in)",
+ "deck": "sim/runs/r3-dyn-tt-n32/deck.cir",
+ "deck_template": "sim/r3/tb_adc3_dyn.cir",
+ "deck_sha256": "fa506681bfe323a3d7803b1913f047e538978aea63b3a52fee87c614eea39428",
+ "library_sha256_at_start": {
+  "r1_adc_r3.spice": "ceb84644f56ce6b427a3134e534263d9d30c95ebc9404042c55a0515fb82c85e"
+ },
+ "substitutions": {
+  "RAW": "<bulk>/r1_adc/r3-dyn-tt-n32",
+  "CORNER": "mos_tt",
+  "TEMP": "27",
+  "VDD": "1.2",
+  "CM": "0.6",
+  "CORE": "r1_adc3_core_fast",
+  "TIMING": "r1_adc_timing_r3.inc",
+  "OPTS": "reltol=1e-4 vntol=1e-6 abstol=1e-12 method=trap klu rshunt=1e12 interp",
+  "TMAX": "0.2n",
+  "TSTOP": "20.7u",
+  "AMP": "0.85",
+  "FIN": "156250",
+  "REFLINES": "Vref vref 0 1.0",
+  "SAVE": "v(rawa) v(rawb)"
+ },
+ "tool": "ngspice (banner not found in log)",
+ "ngspice_version": "ngspice-46 : Circuit level simulation program (creation date Mon Jul 27 13:15:13 UTC 2026)",
+ "netlist_sha256": {
+  "r1_adc_r3.spice": "ceb84644f56ce6b427a3134e534263d9d30c95ebc9404042c55a0515fb82c85e"
+ },
+ "container_image": "sha256:ddeb69576f2808676d1c5d474ecf04f6d1d6f8abdcff6b72b39790ded924bab2",
+ "pdk_commit": "84374023ee8b4b126bebbba67fcbada0a9c0ff0b",
+ "raw_results": "r1_adc/r3-dyn-tt-n32 (under G1_RESULTS_ROOT)",
+ "started_utc": "2026-10-20T20:11:39.304247Z",
+ "wall_s": 788.9,
+ "returncode": 0,
+ "status": "completed",
+ "errors": [
+  "Error: measure  idd  avg(TRIG) : no such vector as 'i(vdd)'"
+ ],
+ "result": "",
+ "disposition": "valid: dynamic test, N 32 slots, design weights, no device noise -> results/r3/dyn3_tt_n32.json"
+}

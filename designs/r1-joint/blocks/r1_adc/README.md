@@ -1,10 +1,159 @@
-# R1_ADC — 12-bit SAR ADC with two simultaneous track-and-holds (schematic level, revisions 1 and 2)
+# R1_ADC — 12-bit SAR ADC with two simultaneous track-and-holds (schematic level, revisions 1, 2 and 3)
 
 State on 2026-10-20: **schematic written and simulated at schematic level only.** No layout, no PEX, nothing
 measured. Every number in this file is **simulated** with ngspice 46 and the PDK models named below, unless it is
 marked *estimated* or *derived*. The reference is an **ideal source** in revision 1 and in most revision-2 decks;
 revision 2 adds the buffer `r1_refbuf` and simulates it in two decks. The SAR logic and the timing generator are
 **behavioural** (XSPICE digital cells and ideal pulse sources).
+
+## Revision 3 (2026-10-20, schematic level)
+
+Revision 3 is a new netlist and new decks next to revisions 1 and 2, which are unchanged. All numbers in this
+section are **simulated** at schematic level with ngspice 46 unless they are marked *derived* (behavioural model
+fed with simulated data) or *estimated*. Nothing is laid out or measured. It implements D16 (full scale ±0.9 V,
+VREF unchanged) and D17 (14 decisions, two slices converting in parallel with their own comparator and register,
+36-tick frame at 30 MHz: {SIN, COS} slot then {ISA, ISB} slot, host-loaded weights `w[13:0]`).
+
+### What changed
+
+| Item | Revision 2 | Revision 3 |
+| --- | --- | --- |
+| Decisions | 13 (12 + 1 redundant) | 14 (12 + 2 redundant, D17). The LSB array gets a half unit C0 (`cap_cmim` 2.67 × 2.67 µm, ≈ 0.505 Cu). Raw step ≈ 0.31 LSB. Nominal weights (LSB): 2032.4 1016.3 507.9 253.9 127.0 78.8 39.4 19.7 9.85 4.93 2.46 1.23 0.62 0.31 |
+| Frame | one pair per 30-tick frame, slices one after the other | 36-tick frame = two 18-tick slots. Both slices sample on one edge and convert in parallel. Decisions at two per tick (16.67 ns): comparator evaluates 13.5 ns, strobe 13.0 ns after the start of evaluation, 3.2 ns reset. Conversion 7.0 ticks (latch at 233 ns), track window 327 ns (slice B 325.5 ns) in every slot |
+| Comparator | `r1_cmp2`, 16 µm × 4 µm integration capacitors, ideal 14 µA bias | `r1_cmp3`: 32 µm × 4 µm integration capacitors, reset NMOS 8 µm, bias `r1_cmp3_bias` = diode PMOS + `rppd` 1 × 160 µm to ground (I ∝ VDD − Vsg, so the integration time stays 9.4–10.2 ns over tt / ss-125 °C / ff-−40 °C) |
+| Reference buffer | `r1_refbuf` msf 16, mib 80, 44 pF | `r1_refbuf3` (same circuit, new defaults msf 32, mib 160, 44 pF; see the status table for the measured options) |
+| Input sources in the decks | B sources | linear E sources around a common-mode V source (R2-7) |
+| Timing edges | — | track start 2 ns rise, 6 ns after a clk30 edge, slice B 1.5 ns after slice A (an edge on the clock grid stopped ngspice, see "Failures and mistakes") |
+
+**Frame arithmetic (spec-ambiguity, recorded).** INTERFACES.md asks for conversion ≤ 17 ticks and a track window
+≥ 250 ns for both slices in a 36-tick frame. Each slice converts twice per frame, so 2 × (conversion + track) ≤ 36
+ticks and the track window forces conversion ≤ 10.5 ticks. With one decision per tick (14 ticks) this is
+impossible. Revision 3 takes two decisions per tick (both clk30 edges; strobes from `r1_ctrl` as before, plus a
+local ≈ 3 ns delay cell in the ADC for the evaluate/reset split, not designed). The binding number for `r1_ctrl`
+is therefore "conversion ≤ 10.5 ticks"; the revision-3 value is 7.0 ticks.
+
+### Files (revision 3)
+
+| Path | Content |
+| --- | --- |
+| `schematic/gen_r1_adc_r3.py` | Generator (imports the unchanged switch and driver cells of `gen_r1_adc_r2.py`). Writes the two libraries below. |
+| `schematic/r1_adc_r3.spice`, `schematic/r1_adc_r3_mm.spice` | `r1_cdac3_side(_mc)`, `r1_cmp3_s1`, `r1_cmp3`, `r1_cmp3_bias`, `r1_cmp3_ibias`, `r1_th3(_fast)`, `r1_sar3_logic`, `r1_adc3_core`, `r1_adc3_core_fast`, `r1_refbuf3` |
+| `sim/r3/gen_timing_r3.py`, `sim/r3/r1_adc_timing_r3*.inc` | Ideal D17 frame sources (VDD 1.2 / 1.08 / 1.32 V; `_mux` = SIN/COS in even slots, ISA/ISB in odd slots) |
+| `sim/r3/tb_adc3_points.cir`, `sim/r3/run_points3.py` | Both slices, one held input per slot and slice (static windows, reference runs); runner with abort/resume and `<id>_segments.json` |
+| `sim/r3/tb_adc3_dyn.cir`, `sim/r3/tb_adc3_isa.cir` | Sine/cosine dynamic deck; mux sequence with the full core |
+| `sim/r3/gen_cmp3_decks.py`, `tb_cmp3_tran*.cir`, `tb_cmp3_noise*.cir`, `gen_cmp3_hyst.py`, `tb_cmp3_hyst*.cir` | Comparator sweeps (sets a, b, c), noise (method A of revision 2) and the memory (hysteresis) test |
+| `sim/r3/gen_tb_cdac3_mc.py`, `tb_cdac3_mc.cir`, `post_cdac3_mc.py` | CDAC MIM-mismatch MC, 50 samples, AC-solved weights |
+| `sim/r3/cal3.py`, `sim/r3/study_cal3_model.py` | Weight calibration methods G (global ramp, revision 2) and W (windowed, revision 3); MC study |
+| `sim/r3/post_*.py`, `p3common.py`, `run_queue_r3.sh` | Post-processors and the run queue |
+| `sim/r3/points/*.json` | Input levels per slot: smoke, reference (`ref10`), code windows (`calwin`, `cornwin`), locate ramps (`locate`), toggle windows (`togwin`) |
+| `sim/results/r3/` | Result JSON (all < 1 MB). Raw files: `<G1_RESULTS_ROOT>/r1_adc/<run-id>/`; run records `sim/runs/r3-*/run.json` |
+
+### Built against (revision 3)
+
+| Item | Value | How established |
+| --- | --- | --- |
+| PDK | IHP SG13G2 open PDK commit `84374023ee8b4b126bebbba67fcbada0a9c0ff0b` | `flow/run.sh` commit check; `pdk_commit` in every `sim/runs/r3-*/run.json` |
+| Container image | `sha256:ddeb69576f2808676d1c5d474ecf04f6d1d6f8abdcff6b72b39790ded924bab2` | `container_image` in `run.json` |
+| ngspice | ngspice-46 (creation date 27 Jul 2026), KLU, XSPICE, PSP 103.6 OSDI | `flow/run.sh ngspice -v` on 2026-10-20; `ngspice_version` in every revision-3 `run.json` |
+| Netlist identity | sha256 of `r1_adc_r3.spice` at run start | `netlist_sha256` in `run.json` |
+| Models | `cornerMOSlv/hv.lib` `mos_tt` / `mos_ss` / `mos_ff`, `cornerCAP.lib` `cap_typ` / `cap_typ_mismatch`, `cornerRES.lib` `res_typ` | deck headers in `sim/runs/r3-*/deck.cir` |
+| Options (conversion decks) | `reltol=1e-4 vntol=1e-6 abstol=1e-12 method=trap klu rshunt=1e12`, tmax 0.2 ns (revision-2 finding), `interp` for code-only decks | `substitutions` in `run.json` |
+| xschem, KLayout, LibreLane, CACE | not used | — |
+
+### Status (revision 3)
+
+tt = `mos_tt`, `cap_typ`, 27 °C, VDD 1.2 V; ss = `mos_ss`, 125 °C, 1.08 V; ff = `mos_ff`, −40 °C, 1.32 V. Conversion
+decks use the fast core (ideal 400 Ω drivers, off-switch in1) unless the full core is named. Resistor corners
+(`res_bcs`/`res_wcs`) were not run for the comparator bias.
+
+| Item | Requirement | Result | Status | Evidence |
+| --- | --- | --- | --- | --- |
+| D16 full scale | ±0.9 V with VREF 1.0 V | LSB 446.4 µV, full scale ±0.914 V (tt, static windows); AC model 0.877 V with 100 fF top-plate parasitic | passed (tt) | `sim/results/r3/win_tt.json`, `sim/results/r3/cdac3_mc50_tt_cp100_globalfit.json` |
+| R2-4 reference settling | code error ≤ 0.25 LSB at ±0.88 V, `r1_refbuf3` in the loop, both slices | Best option buf64 (msf 64, mib 320, 6 decoupling cells, 44 pF): code difference to an ideal 1.004 V source ±1 LSB over 10 slots, residue error 0.38 LSB. buf32: ±3 LSB; buf16: ±4 LSB; buf32 with 18 cells (132 pF): ±3 LSB; buf64 with 12 cells (88 pF): ±1 LSB, 0.46 LSB. The dominant disturbance is the LSB-array switch at decision 5 (≈ 0.7 pC per side, both slices at the same time) | **failed** | `sim/results/r3/ref3_tt_buf{16,32,32n18,64,64n12}.json`; runs `r3-ref-tt-*-d` |
+| R2-3 comparator noise | ≤ 60 µV rms at ss / 125 °C | `r1_cmp3` (c32c): tt 57.5 µV, ff/−40 °C 45.3 µV, ss/125 °C 75.7 µV. Best variant of the sweep at ss: ≈ 64 µV (larger capacitors and input pair), which does not fit the 13 ns strobe | **failed** at ss; passed tt, ff | `sim/results/r3/cmp3_noise_cm01_all{,_b,_c}.json` |
+| R2-3 decision time inside the strobe (13.0 ns) | all corners | 30 mV then −0.2 mV, alternating, 6 decisions: CM 0.1 V: 9.44 / 10.17 / 9.52 ns (tt / ss / ff); CM 0.35 V: 9.74 / 10.81 / 9.70 ns; CM 0.6 V: 12.42 ns / not resolved / 10.46 ns. CM 0.6 V only occurs at decision 0, which has 30 LSB (13 mV) redundancy. The ss static window at code 2048 is monotonic without missing codes | passed at CM ≤ 0.35 V; **failed** at ss for CM 0.6 V (decision 0, covered by redundancy, not proven for all inputs) | `sim/results/r3/cmp3_hyst_{tt27,ss125,ffm40}_d.json`, `sim/results/r3/win_ss125.json` |
+| R2-3 decision memory | no wrong small decision after a large one | c32c: 6/6 correct at all corners and CM ≤ 0.35 V (the first choice r80b failed, see below) | passed | `sim/results/r3/cmp3_hyst_*_d.json` |
+| R2-11 calibration: widths of codes 1024 / 2048 / 3072 within 0.5 LSB | MC ≥ 30 | Method W on 50 MC weight sets (derived: circuit-MC weights + behavioural model, noise 67 µV, kT/C 101 µV, 1 LSB INL bow): max DNL median 0.31, worst 0.44 LSB, 50/50 ≤ 0.5 LSB; major codes ≤ 0.31 LSB; INL max median 1.28 LSB (bow stays); 50/50 without missing codes. Method G (revision 2) under the same bow: major DNL median 1.25, 0/50 pass | passed (derived) | `sim/results/r3/cal3_mc50_tt_cp100.json` |
+| R2-11 circuit-level demo | weights fitted on circuit data, tt | Toggles located (coarse 0.4 mV ramp): decision 0 at −4.20 mV, decision 1 at ±455.3 mV, same for both slices. Windows ±4 LSB, 4 points per LSB, around each toggle. Reduced fit (W0, W1, gain; lower weights kept at design values): W0 16259 (design 16259), W1 8129 (design 8131) in 1/8 LSB, both slices. Codes 2047/2048/3071 with fitted weights: |DNL| ≤ 0.25 LSB (resolution 0.25 LSB), monotonic, no missing codes in all windows, both slices. Nominal circuit only (no mismatch), so this checks the procedure, not the MC spread | passed (reduced: 3 windows, top-2 weights, no mismatch) | `sim/results/r3/cal3_circuit_tt.json`; runs `r3-loc-tt-c*`, `r3-tog-tt-c*`, `r3-cal-tt-c*` |
+| R2-7 input sources | E sources, tmax 0.2 ns, reltol kept | All revision-3 conversion decks use linear E sources around a CM source; options unchanged | passed | `sim/r3/tb_adc3_points.cir`, `tb_adc3_dyn.cir`, `tb_adc3_isa.cir` |
+| D17 track window | ≥ 250 ns, both slices | 325.1–325.2 ns slice A, 323.6–323.7 ns slice B, every slot (full core) | passed | `sim/results/r3/isa3_tt.json`; run `r3-isa-tt-a` |
+| D17 conversion time | ≤ 17 ticks (binding: ≤ 10.5 ticks, see frame arithmetic) | 7.0 ticks (latch 233 ns after the edge) | passed | `sim/results/r3/isa3_tt.json` |
+| D17 mux sequence | {SIN, COS} then {ISA, ISB}, correct codes | 5 slots, encoder ±0.4 / ±0.72 V and current ±0.85 V (CM 0.57 V): all codes within −2.1…+3.1 LSB of the ideal code from LSB 446.4 µV (gain and offset, removed by the bench calibration); iref 5.45 µA, IDD 449 µA | passed | `sim/results/r3/isa3_tt.json` |
+| Static windows, tt | monotonic, no missing codes, design weights | ±4 LSB at codes 1024 / 2048 / 3072, 4 points per LSB: major |DNL| ≤ 0.25 LSB, monotonic, no missing codes, both slices | passed | `sim/results/r3/win_tt.json`; runs `r3-cal-tt-c*` |
+| Static windows, ss/125 °C/1.08 V | same | ±4 LSB, 2 points per LSB: monotonic, no missing codes, |DNL| ≤ 0.5 LSB (resolution 0.5 LSB), both slices; windows shift by ≈ 4 LSB | passed | `sim/results/r3/win_ss125.json`; runs `r3-win-ss125-c*` |
+| Static windows, ff/−40 °C/1.32 V | same | same as ss | passed | `sim/results/r3/win_ffm40.json`; runs `r3-win-ffm40-c*` |
+| Full static ramp (all 4096 codes) | — | — | not run | — |
+| Dynamic, tt | one run | N 32, 3 cycles, fin 156.25 kHz, 0.85 V, design weights, no device noise: SNDR 70.90 dB, ENOB 11.49, SFDR 75.27 dB, THD −74.23 dB, codes 152…3943; slices A and B identical (same phase grid) | passed (one run, N 32) | `sim/results/r3/dyn3_tt_n32.json`; run `r3-dyn-tt-n32` |
+| Dynamic, ss and ff; N 1024 | — | — | not run | — |
+| Reference buffer at ss / ff | — | — | not run | — |
+| Resistor corners of the comparator bias | — | — | not run | — |
+| Mux sequence at ss / ff | — | — | not run | — |
+| Layout, DRC, LVS, PEX | — | — | not run | — |
+
+### Weight calibration: bench procedure for `r1_ctrl` (R2-11)
+
+Method W (`sim/r3/cal3.py`). Per slice, input from the bench DAC through the normal input path, ideal VREF not
+needed (the gain is set by ΣW = 4095):
+
+1. Coarse ramp over ±0.995 full scale, 1 conversion per LSB. Record the raw 14 bits. Find the input levels where
+   decisions 0…4 change, and 6 levels each where decisions 5…8 change (≈ 81 levels).
+2. Fine ramp of ±12 LSB around each level, 8 conversions per LSB (≈ 19 600 conversions per slice, ≈ 12 ms at
+   1.67 MS/s per slice).
+3. Least squares of the ramp position against [one offset per window, b0…b13]. The per-window offsets absorb
+   the slow INL bow of the sampling network.
+4. Scale the 14 weights to ΣW = 4095 LSB, quantise to 1/8 LSB (14 bit), load them in `w[13:0]`.
+5. Do steps 1–4 for slice A and slice B. Each slice needs its own 14 weights (2 × 14 registers): this is a
+   contract change for `r1_ctrl` and INTERFACES.md (open issue).
+
+Model result (derived, 50 MC samples): see the status table. Circuit demo (tt, reduced): toggles located with a coarse ramp (runs `r3-loc-tt-c*`), three fine windows on the decision 0 and 1 toggles (runs `r3-tog-tt-c*`), top-2 fit, evaluation on the code windows `r3-cal-tt-c*`. The fitted W0/W1 agree with the design weights within 2/8 LSB and the major codes stay within 0.25 LSB. The full 81-window procedure on the circuit is **not run**.
+
+### Area and power (revision 3)
+
+| Part | Area (mm², estimated) | Current |
+| --- | --- | --- |
+| CDAC, two slices × two sides, MIM | ≈ 0.0185 | — |
+| Comparators (2) and bias | ≈ 0.0025 | in the VDD current below |
+| Switches, bootstrapped switches, drivers, SAR registers | ≈ 0.012 | in the VDD current below (SAR logic behavioural, not counted) |
+| `r1_refbuf3`, buf64 option (6 × 70 × 70 µm decoupling, 50 × 50 µm gate capacitor, follower) | ≈ 0.037 | VDDA 1.65 mA at 3.3 V (simulated); buf32 option 0.84 mA |
+| **Total** | **≈ 0.070** | VDD 0.446–0.459 mA at 1.2 V (simulated, fast core, both slices, tt; full core 0.449 mA in the mux deck) + SAR logic (not simulated) |
+
+Areas are estimated from device sizes, without layout. Currents are simulated at tt only.
+
+### Open issues (revision 3)
+
+1. **R2-4 fails.** The best buffer option (buf64, 1.65 mA) gives ±1 LSB code error, not 0.25 LSB. A larger
+   buffer does not converge fast enough. A fix needs an architecture change: a separate reference for the LSB
+   array, a per-slice decoupling capacitor that is charged in track, or a time offset between the two slices
+   at decision 5.
+2. **R2-3 fails at ss/125 °C** (75.7 µV against 60 µV). A lower-noise comparator needs more time than the
+   13 ns strobe of the two-decisions-per-tick frame. Options: a pre-amplifier, or accept the noise with the
+   2 redundant decisions and a calibration that averages (record as a spec decision).
+3. Decision 0 at ss with CM 0.6 V does not resolve a −0.2 mV input inside the strobe. The 30 LSB redundancy
+   covers it if larger inputs resolve; this is not proven for all inputs.
+4. The local ≈ 3 ns delay cell for the evaluate/reset split is not designed.
+5. INTERFACES.md: conversion must be ≤ 10.5 ticks (not 17), two decisions per tick, and 2 × 14 weights (one set
+   per slice). `r1_ctrl` must agree.
+6. Resistor corners (`res_bcs`/`res_wcs`) of the `rppd` comparator bias are not run.
+7. R2-8 (logic supply noise on the comparator and the SAR logic) still applies; the SAR logic is behavioural.
+8. Not run: full static ramp, dynamic at N 1024 and at ss/ff, reference buffer and mux sequence at ss/ff,
+   layout, DRC, LVS, PEX.
+
+### Failures and mistakes (revision 3 session)
+
+| # | What happened | Class | Effect and fix |
+| --- | --- | --- | --- |
+| 1 | INTERFACES.md asks for ≤ 17-tick conversion and ≥ 250 ns track in a 36-tick frame with two conversions per slice. This needs ≤ 10.5 ticks, which one decision per tick cannot meet. | spec-ambiguity | Two decisions per tick chosen and recorded; contract change open. |
+| 2 | The track-start edge sat on a clk30 edge. ngspice stopped with "timestep too small" at 867.667 ns (node `topbp`). A slower rise and a slice-B offset did not help. | numerical | Runs `r3-smoke-tt-a…c`, `r3-smoke-tt-full-c`, `r3-ref-tt-ideal-a` aborted. Track start moved 6 ns off the clock grid. |
+| 3 | Multi-line `@REFLINES@`/PWL substitutions also replaced the tokens in deck comment lines and broke the netlist. | process-hygiene | Runs `r3-ref-tt-*-b*` invalid. Tokens removed from comments. |
+| 4 | The runner skipped a slot and resubmitted (`-r1`, `-r2`) on a netlist error instead of stopping. | tooling | Wasted CPU time; recorded, runner not changed. |
+| 5 | First comparator choice r80b (wide capacitors, 2 µm reset NMOS) had decision memory: wrong decisions on inputs up to 18 mV. The constant-input transient bench did not show it. | verification-gap | Runs `r3-smoke-tt-d`, `r3-smoke-tt-full-d`, `r3-ref-tt-*-c` superseded. Memory test added; c32c with 8 µm reset NMOS chosen. |
+| 6 | The first memory-test generator filtered out the clock sources; the second put 12 comparators on one bias node. | functional-bug | Runs `r3-cmp-hyst-*-a`, `-b` invalid; set d uses one bias per comparator. |
+| 7 | I assumed the comparator noise falls with the integration capacitance. It saturates at ≈ 64 µV at ss. | estimation | R2-3 fails; time spent on the sweep. |
+| 8 | Reference-error metric: first a wrong normalisation, then the ideal 1.0 V run mixed in the 0.4 % static VREF error of the buffer (7.9 LSB at full scale). | numerical | Ideal run repeated at 1.004 V. The residue metric is not reliable where decision paths differ; the code difference is the reported number. |
+| 9 | The behavioural calibration with windows only at decisions 0…4 gave a singular fit. | planning | K = 6 windows for decisions 5…8 and h = 12 added. |
+| 10 | The circuit calibration windows were centred on the codes, not on the decision toggles (which sit 9 LSB away). The top-2 fit gave nonsense (W0 = 3853). | planning | Result discarded; locate runs `r3-loc-tt-c*` and toggle windows `r3-tog-tt-c*` added. |
+| 11 | Corner windows used the tt LSB. At ss/ff the codes 1023/3072 sat at the window edges. | planning | Those codes are not evaluated at ss; recorded. |
+| 12 | Run-cost estimate from the smoke runs (≈ 3.5 min per slot) was too high by 4–10 ×. | estimation | Fewer corner and dynamic runs were planned than the CPUs allowed. |
 
 ## Revision 2 (2026-10-20, schematic level)
 

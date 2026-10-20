@@ -21,6 +21,8 @@ BLOCK = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 REPO = os.path.abspath(os.path.join(BLOCK, "..", "..", "..", ".."))
 REL_BLOCK = os.path.relpath(BLOCK, REPO)
 PDK_COMMIT = "84374023ee8b4b126bebbba67fcbada0a9c0ff0b"
+# established with `flow/run.sh ngspice -v` in the pinned container (2026-10-20, revision 3 session)
+NGSPICE_VERSION = "ngspice-46 : Circuit level simulation program (creation date Mon Jul 27 13:15:13 UTC 2026)"
 IMAGE_ID = "sha256:ddeb69576f2808676d1c5d474ecf04f6d1d6f8abdcff6b72b39790ded924bab2"
 
 
@@ -62,7 +64,8 @@ def main():
     exec_deck = os.path.join(raw_dir, "deck.cir")
     with open(exec_deck, "w") as f:
         f.write(src)
-    lib_names = [n for n in ("r1_adc.spice", "r1_adc_mm.spice", "r1_adc_r2.spice", "r1_adc_r2_mm.spice") if ("schematic/" + n) in src]
+    lib_names = [n for n in ("r1_adc.spice", "r1_adc_mm.spice", "r1_adc_r2.spice", "r1_adc_r2_mm.spice", "r1_adc_r3.spice",
+                             "r1_adc_r3_mm.spice") if ("schematic/" + n) in src]
     lib_hash = {n: sha256(os.path.join(BLOCK, "schematic", n)) for n in lib_names}
     log_path = os.path.join(run_dir, "ngspice.log")
     env = dict(os.environ)
@@ -105,6 +108,8 @@ def main():
         "library_sha256_at_start": lib_hash,
         "substitutions": {k: (v if k != "RAW" else "<bulk>/r1_adc/%s" % a.run_id) for k, v in subs.items()},
         "tool": banner[0] if banner else "ngspice (banner not found in log)",
+        "ngspice_version": NGSPICE_VERSION,
+        "netlist_sha256": lib_hash,
         "container_image": IMAGE_ID,
         "pdk_commit": PDK_COMMIT,
         "raw_results": "r1_adc/%s (under G1_RESULTS_ROOT)" % a.run_id,

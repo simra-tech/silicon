@@ -1,0 +1,36 @@
+{
+ "run_id": "r3-isa-tt-a",
+ "block": "r1_adc",
+ "question": "D17 frame with the input multiplexer: SIN/COS then ISA/ISB slots, full core, ideal VREF; codes, track windows, conversion length",
+ "command": "G1_CPUSET=103 G1_CPUS=1 G1_WORKDIR=designs/r1-joint/blocks/r1_adc G1_RESULTS_ROOT=<bulk> flow/run.sh ngspice -b <G1_RESULTS_ROOT>/r1_adc/r3-isa-tt-a/deck.cir (= sim/runs/r3-isa-tt-a/deck.cir with the bulk path filled in)",
+ "deck": "sim/runs/r3-isa-tt-a/deck.cir",
+ "deck_template": "sim/r3/tb_adc3_isa.cir",
+ "deck_sha256": "8bba44df6e15d39c2e9cdfb54239b6e7cc8f708d2750261f0d58b6a3ce5e5d4a",
+ "library_sha256_at_start": {
+  "r1_adc_r3.spice": "ceb84644f56ce6b427a3134e534263d9d30c95ebc9404042c55a0515fb82c85e"
+ },
+ "substitutions": {
+  "RAW": "<bulk>/r1_adc/r3-isa-tt-a",
+  "CORNER": "mos_tt",
+  "TEMP": "27",
+  "VDD": "1.2",
+  "TIMING": "r1_adc_timing_r3_mux.inc",
+  "TMAX": "0.2n",
+  "OPTS": "reltol=1e-4 vntol=1e-6 abstol=1e-12 method=trap klu rshunt=1e12"
+ },
+ "tool": "ngspice (banner not found in log)",
+ "ngspice_version": "ngspice-46 : Circuit level simulation program (creation date Mon Jul 27 13:15:13 UTC 2026)",
+ "netlist_sha256": {
+  "r1_adc_r3.spice": "ceb84644f56ce6b427a3134e534263d9d30c95ebc9404042c55a0515fb82c85e"
+ },
+ "container_image": "sha256:ddeb69576f2808676d1c5d474ecf04f6d1d6f8abdcff6b72b39790ded924bab2",
+ "pdk_commit": "84374023ee8b4b126bebbba67fcbada0a9c0ff0b",
+ "raw_results": "r1_adc/r3-isa-tt-a (under G1_RESULTS_ROOT)",
+ "started_utc": "2026-10-20T19:31:29.926968Z",
+ "wall_s": 3961.0,
+ "returncode": 0,
+ "status": "completed",
+ "errors": [],
+ "result": "",
+ "disposition": "valid: D17 mux-sequence deck with the full core -> results/r3/isa3_tt.json"
+}

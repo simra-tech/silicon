@@ -1,0 +1,35 @@
+{
+ "run_id": "r3-cmp-noise-ffm40-cm01-c",
+ "block": "r1_adc",
+ "question": "r3 comparator variants set c: first-stage input noise PSD at CM 0.1 V, ffm40",
+ "command": "G1_CPUSET=105 G1_CPUS=1 G1_WORKDIR=designs/r1-joint/blocks/r1_adc G1_RESULTS_ROOT=<bulk> flow/run.sh ngspice -b <G1_RESULTS_ROOT>/r1_adc/r3-cmp-noise-ffm40-cm01-c/deck.cir (= sim/runs/r3-cmp-noise-ffm40-cm01-c/deck.cir with the bulk path filled in)",
+ "deck": "sim/runs/r3-cmp-noise-ffm40-cm01-c/deck.cir",
+ "deck_template": "sim/r3/tb_cmp3_noise_c.cir",
+ "deck_sha256": "21f8e6a36449fc2bc3638c1d75d04ea2c8784d5b35d7875d840654870100bd35",
+ "library_sha256_at_start": {
+  "r1_adc_r3.spice": "fb932a4aa2d6afb5aa75dd44a5e48c1ec4753b270f148d48ad34f457a408849b"
+ },
+ "substitutions": {
+  "RAW": "<bulk>/r1_adc/r3-cmp-noise-ffm40-cm01-c",
+  "CORNER": "mos_ff",
+  "TEMP": "-40",
+  "VDD": "1.32",
+  "VCM": "0.1",
+  "VX": "0.3"
+ },
+ "tool": "ngspice (banner not found in log)",
+ "ngspice_version": "ngspice-46 : Circuit level simulation program (creation date Mon Jul 27 13:15:13 UTC 2026)",
+ "netlist_sha256": {
+  "r1_adc_r3.spice": "fb932a4aa2d6afb5aa75dd44a5e48c1ec4753b270f148d48ad34f457a408849b"
+ },
+ "container_image": "sha256:ddeb69576f2808676d1c5d474ecf04f6d1d6f8abdcff6b72b39790ded924bab2",
+ "pdk_commit": "84374023ee8b4b126bebbba67fcbada0a9c0ff0b",
+ "raw_results": "r1_adc/r3-cmp-noise-ffm40-cm01-c (under G1_RESULTS_ROOT)",
+ "started_utc": "2026-10-20T18:20:15.647293Z",
+ "wall_s": 7.2,
+ "returncode": 0,
+ "status": "completed",
+ "errors": [],
+ "result": "",
+ "disposition": "valid: comparator noise sweep (method A); final comparator c32c uses the r32c point of set a"
+}

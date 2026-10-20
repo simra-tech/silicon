@@ -1,0 +1,48 @@
+{
+  "run_id": "r3-ref-tt-buf32-b-r1",
+  "block": "r1_adc",
+  "question": "R2-4: 10 slots, both slices in parallel, r1_refbuf3 faster follower (msf 32, mib 160, 6 x 7.36 pF) (slots 1.. of r3-ref-tt-buf32-b; resume 1 after a numerical abort)",
+  "command": "G1_CPUSET=105 G1_CPUS=1 G1_WORKDIR=designs/r1-joint/blocks/r1_adc G1_RESULTS_ROOT=<bulk> flow/run.sh ngspice -b <G1_RESULTS_ROOT>/r1_adc/r3-ref-tt-buf32-b-r1/deck.cir (= sim/runs/r3-ref-tt-buf32-b-r1/deck.cir with the bulk path filled in)",
+  "deck": "sim/runs/r3-ref-tt-buf32-b-r1/deck.cir",
+  "deck_template": "sim/r3/tb_adc3_points.cir",
+  "deck_sha256": "71d3ae9a88128c759fb22384e786158ee9b4a111b69466c9d7911fc62d4f883a",
+  "library_sha256_at_start": {
+    "r1_adc_r3.spice": "e9c1b5759fb1a81431c2494fb6c98e16f8ffb0ea744704ea4dbae5222d1080fe"
+  },
+  "substitutions": {
+    "RAW": "<bulk>/r1_adc/r3-ref-tt-buf32-b-r1",
+    "CORNER": "mos_tt",
+    "TEMP": "27",
+    "VDD": "1.2",
+    "CM": "0.6",
+    "CORE": "r1_adc3_core_fast",
+    "TIMING": "r1_adc_timing_r3.inc",
+    "OPTS": "reltol=1e-4 vntol=1e-6 abstol=1e-12 method=trap klu rshunt=1e12",
+    "TMAX": "0.25n",
+    "TSTOP": "5.7000u",
+    "PWLA": "0 0.8800000 6.500000e-07 0.8800000 6.600000e-07 -0.8800000 1.250000e-06 -0.8800000 1.260000e-06 0.4400000 1.850000e-06 0.4400000 1.860000e-06 -0.4400000 2.450000e-06 -0.4400000\n+ 2.460000e-06 0.0003000 3.050000e-06 0.0003000 3.060000e-06 0.8700000 3.650000e-06 0.8700000 3.660000e-06 -0.8700000 4.250000e-06 -0.8700000 4.260000e-06 0.8800000 4.850000e-06 0.8800000\n+ 4.860000e-06 -0.8800000",
+    "PWLB": "0 0.8800000 6.500000e-07 0.8800000 6.600000e-07 -0.8800000 1.250000e-06 -0.8800000 1.260000e-06 -0.4400000 1.850000e-06 -0.4400000 1.860000e-06 0.4400000 2.450000e-06 0.4400000\n+ 2.460000e-06 -0.0003000 3.050000e-06 -0.0003000 3.060000e-06 -0.8700000 3.650000e-06 -0.8700000 3.660000e-06 0.8700000 4.250000e-06 0.8700000 4.260000e-06 -0.8800000 4.850000e-06 -0.8800000\n+ 4.860000e-06 0.8800000",
+    "REFLINES": "Vdda vdda 0 3.3\nVbg vbg 0 1.045\nXREF vbg vref vdda 0 r1_refbuf3 msf=32 mib=160 ndec=6 ncg=1",
+    "SAVE": "v(rawa) v(rawb) v(vref) v(topap) v(topan) v(topbp) v(topbn) i(vdd) v(mclk) v(trka0) v(trka1) v(vref) i(vdda)"
+  },
+  "tool": "ngspice (banner not found in log)",
+  "ngspice_version": "ngspice-46 : Circuit level simulation program (creation date Mon Jul 27 13:15:13 UTC 2026)",
+  "netlist_sha256": {
+    "r1_adc_r3.spice": "e9c1b5759fb1a81431c2494fb6c98e16f8ffb0ea744704ea4dbae5222d1080fe"
+  },
+  "container_image": "sha256:ddeb69576f2808676d1c5d474ecf04f6d1d6f8abdcff6b72b39790ded924bab2",
+  "pdk_commit": "84374023ee8b4b126bebbba67fcbada0a9c0ff0b",
+  "raw_results": "r1_adc/r3-ref-tt-buf32-b-r1 (under G1_RESULTS_ROOT)",
+  "started_utc": "2026-10-20T19:03:21.457739Z",
+  "wall_s": 19.3,
+  "returncode": 1,
+  "status": "failed",
+  "errors": [
+    "Error on line 13 or its substitute:",
+    "Error: incomplete or empty netlist"
+  ],
+  "result": "",
+  "disposition": "invalid (process-hygiene): the multi-line REFLINES/PWL substitution also landed in a deck comment line and broke the netlist (buffer runs) or put continuation lines after a comment (ideal run); stopped by hand; superseded by the -c runs",
+  "points_file": "sim/r3/points/ref10.json",
+  "first_slot": 1
+}

@@ -1,0 +1,43 @@
+* tb_adc3_isa.cir -- R1 ADC revision 3: D17 frame with the input multiplexer, full core (complete bootstrapped
+* switches on both inputs of each slice, transistor bottom-plate drivers r1_drv), both slices in parallel.
+* Timing r1_adc_timing_r3_mux*.inc: even slots sample SIN (A) / COS (B), odd slots ISA (A) / ISB (B).
+* Slots (sampling edges 0.6, 1.2, 1.8, 2.4, 3.0 us = two frames of 36 ticks + one slot):
+*   0 enc: SIN +0.40, COS -0.40   1 cur: ISA +0.85, ISB -0.85   2 enc: SIN -0.40, COS +0.40
+*   3 cur: ISA -0.85, ISB +0.85   4 enc: SIN +0.72, COS -0.72 (D16 80 % FS)
+* Inputs: linear E sources (R2-7); encoder CM 0.6 V, current CM 0.57 V (INTERFACES.md isense -> ADC).
+* Each input changes only while its path is not tracking. Reference: IDEAL source in this deck.
+.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerMOSlv.lib @CORNER@
+.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerCAP.lib cap_typ
+.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerRES.lib res_typ
+.include schematic/r1_adc_r3.spice
+.include sim/r3/@TIMING@
+.temp @TEMP@
+.option @OPTS@
+Vdd vdd 0 @VDD@
+Vref vref 0 1.0
+Vcme vcme 0 0.6
+Vcmi vcmi 0 0.57
+* encoder differential: +0.40 for slot 0, -0.40 for slot 2, +0.72 for slot 4 (changes at 1.0 us and 2.2 us)
+Vsin vsin 0 PWL(0 0.40 1.00u 0.40 1.01u -0.40 2.20u -0.40 2.21u 0.72 5u 0.72)
+* current differential: +0.85 for slot 1, -0.85 for slot 3 (change at 1.6 us)
+Visa visa 0 PWL(0 0.85 1.60u 0.85 1.61u -0.85 5u -0.85)
+Esp sinp vcme vsin 0 0.5
+Esn sinn vcme vsin 0 -0.5
+Ecp cosp vcme vsin 0 -0.5
+Ecn cosn vcme vsin 0 0.5
+Eap isap vcmi visa 0 0.5
+Ean isan vcmi visa 0 -0.5
+Ebp isbp vcmi visa 0 -0.5
+Ebn isbn vcmi visa 0 0.5
+XADC sinp sinn cosp cosn isap isan isbp isbn trka0 trka1 trkb0 trkb1 mclk wina winb lata latb
++ stb0 stb1 stb2 stb3 stb4 stb5 stb6 stb7 stb8 stb9 stb10 stb11 stb12 stb13
++ rawa rawb topap topan topbp topbn vdd vref 0 r1_adc3_core
+.control
+set num_threads=1
+save v(rawa) v(rawb) v(topap) v(topan) v(topbp) v(topbn) v(trka0) v(trka1) v(trkb0) v(trkb1) v(lata) v(latb) v(mclk) v(wina) i(vref) i(vdd)
+tran 1n 3.3u 0 @TMAX@
+meas tran iref avg i(vref) from=0.6u to=3.0u
+meas tran idd avg i(vdd) from=0.6u to=3.0u
+write @RAW@/codes.raw
+.endc
+.end

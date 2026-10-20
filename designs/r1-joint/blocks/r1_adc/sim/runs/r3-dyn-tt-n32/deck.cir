@@ -1,0 +1,39 @@
+* tb_adc3_dyn.cir -- R1 ADC revision 3 dynamic test: sine on SIN (slice A) and cosine on COS (slice B), both slices in parallel.
+* Slot s (sampling edge 0.6 us + s * 0.6 us): slice A samples vda (SIN path), slice B samples vdb (COS path).
+* vda = 0.85 sin(2 pi 156250 t), vdb = 0.85 cos(2 pi 156250 t) (continuous, coherent with the 600 ns slot rate).
+* Inputs are linear E sources around the common mode CM (revision 3, R2-7: no B sources on the input path).
+* Reference: REFLINES (ideal source, or r1_refbuf3 from an ideal 1.045 V bandgap node).
+* Substitutions: CORNER TEMP VDD CM CORE TIMING OPTS TMAX TSTOP AMP FIN REFLINES SAVE RAW
+.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerMOSlv.lib mos_tt
+.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerCAP.lib cap_typ
+.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerMOShv.lib mos_tt
+.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerRES.lib res_typ
+.include schematic/r1_adc_r3.spice
+.include sim/r3/r1_adc_timing_r3.inc
+.temp 27
+.option reltol=1e-4 vntol=1e-6 abstol=1e-12 method=trap klu rshunt=1e12 interp
+
+Vdd vdd 0 1.2
+Vref vref 0 1.0
+Vcm vcm 0 0.6
+Vda vda 0 SIN(0 0.85 156250 0 0 0)
+Vdb vdb 0 SIN(0 0.85 156250 0 0 90)
+Esp sinp vcm vda 0 0.5
+Esn sinn vcm vda 0 -0.5
+Ecp cosp vcm vdb 0 0.5
+Ecn cosn vcm vdb 0 -0.5
+Vip isap 0 0.6
+Vin isan 0 0.6
+
+XADC sinp sinn cosp cosn isap isan isap isan trka0 trka1 trkb0 trkb1 mclk wina winb lata latb
++ stb0 stb1 stb2 stb3 stb4 stb5 stb6 stb7 stb8 stb9 stb10 stb11 stb12 stb13
++ rawa rawb topap topan topbp topbn vdd vref 0 r1_adc3_core_fast
+
+.control
+set num_threads=1
+save v(rawa) v(rawb)
+tran 1n 20.7u 0 0.2n
+meas tran idd avg i(vdd) from=0.7u to=20.7u
+write <G1_RESULTS_ROOT>/r1_adc/r3-dyn-tt-n32/codes.raw
+.endc
+.end

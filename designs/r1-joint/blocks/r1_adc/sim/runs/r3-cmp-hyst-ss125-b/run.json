@@ -1,0 +1,34 @@
+{
+  "run_id": "r3-cmp-hyst-ss125-b",
+  "block": "r1_adc",
+  "question": "r3 comparator memory: +30 mV then -0.2 mV alternating, reset width wr 2/8/16/24 um, ss125",
+  "command": "G1_CPUSET=104 G1_CPUS=1 G1_WORKDIR=designs/r1-joint/blocks/r1_adc G1_RESULTS_ROOT=<bulk> flow/run.sh ngspice -b <G1_RESULTS_ROOT>/r1_adc/r3-cmp-hyst-ss125-b/deck.cir (= sim/runs/r3-cmp-hyst-ss125-b/deck.cir with the bulk path filled in)",
+  "deck": "sim/runs/r3-cmp-hyst-ss125-b/deck.cir",
+  "deck_template": "sim/r3/tb_cmp3_hyst.cir",
+  "deck_sha256": "e94db53c3f0ed2805d57136a6e5e293f0d0dcb5a4d2654c469c8da38d0a15ce7",
+  "library_sha256_at_start": {
+    "r1_adc_r3.spice": "e9c1b5759fb1a81431c2494fb6c98e16f8ffb0ea744704ea4dbae5222d1080fe"
+  },
+  "substitutions": {
+    "RAW": "<bulk>/r1_adc/r3-cmp-hyst-ss125-b",
+    "CORNER": "mos_ss",
+    "TEMP": "125",
+    "VDD": "1.08",
+    "ASM": "0.0002"
+  },
+  "tool": "ngspice (banner not found in log)",
+  "ngspice_version": "ngspice-46 : Circuit level simulation program (creation date Mon Jul 27 13:15:13 UTC 2026)",
+  "netlist_sha256": {
+    "r1_adc_r3.spice": "e9c1b5759fb1a81431c2494fb6c98e16f8ffb0ea744704ea4dbae5222d1080fe"
+  },
+  "container_image": "sha256:ddeb69576f2808676d1c5d474ecf04f6d1d6f8abdcff6b72b39790ded924bab2",
+  "pdk_commit": "84374023ee8b4b126bebbba67fcbada0a9c0ff0b",
+  "raw_results": "r1_adc/r3-cmp-hyst-ss125-b (under G1_RESULTS_ROOT)",
+  "started_utc": "2026-10-20T19:16:12.825887Z",
+  "wall_s": 43.5,
+  "returncode": 0,
+  "status": "completed",
+  "errors": [],
+  "result": "",
+  "disposition": "invalid (deck error: twelve comparators on one bias node, the ADC has two per bias; no decisions for wr >= 8 um); superseded by r3-cmp-hyst-ss125-c"
+}

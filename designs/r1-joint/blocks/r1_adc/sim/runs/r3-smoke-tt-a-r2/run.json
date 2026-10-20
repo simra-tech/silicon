@@ -1,0 +1,43 @@
+{
+  "run_id": "r3-smoke-tt-a-r2",
+  "block": "r1_adc",
+  "question": "smoke test of the revision-3 core (3 slots, ideal VREF) (slots 2.. of r3-smoke-tt-a; resume 2 after a numerical abort)",
+  "command": "G1_CPUSET=103 G1_CPUS=1 G1_WORKDIR=designs/r1-joint/blocks/r1_adc G1_RESULTS_ROOT=<bulk> flow/run.sh ngspice -b <G1_RESULTS_ROOT>/r1_adc/r3-smoke-tt-a-r2/deck.cir (= sim/runs/r3-smoke-tt-a-r2/deck.cir with the bulk path filled in)",
+  "deck": "sim/runs/r3-smoke-tt-a-r2/deck.cir",
+  "deck_template": "sim/r3/tb_adc3_points.cir",
+  "deck_sha256": "48faff7dfb114adebf7cc5123b810a7014f28cb110de15f81215cdfeb4b9cd18",
+  "library_sha256_at_start": {
+    "r1_adc_r3.spice": "e9c1b5759fb1a81431c2494fb6c98e16f8ffb0ea744704ea4dbae5222d1080fe"
+  },
+  "substitutions": {
+    "RAW": "<bulk>/r1_adc/r3-smoke-tt-a-r2",
+    "CORNER": "mos_tt",
+    "TEMP": "27",
+    "VDD": "1.2",
+    "CM": "0.6",
+    "CORE": "r1_adc3_core_fast",
+    "TIMING": "r1_adc_timing_r3.inc",
+    "OPTS": "reltol=1e-4 vntol=1e-6 abstol=1e-12 method=trap klu rshunt=1e12",
+    "TMAX": "0.2n",
+    "TSTOP": "0.9000u",
+    "PWLA": "0 -0.8800000",
+    "PWLB": "0 -0.8800000",
+    "REFLINES": "Vref vref 0 1.0",
+    "SAVE": "v(rawa) v(rawb) v(vref) v(topap) v(topan) v(topbp) v(topbn) i(vdd) v(mclk) v(trka0) v(trka1)"
+  },
+  "tool": "ngspice (banner not found in log)",
+  "ngspice_version": "ngspice-46 : Circuit level simulation program (creation date Mon Jul 27 13:15:13 UTC 2026)",
+  "netlist_sha256": {
+    "r1_adc_r3.spice": "e9c1b5759fb1a81431c2494fb6c98e16f8ffb0ea744704ea4dbae5222d1080fe"
+  },
+  "container_image": "sha256:ddeb69576f2808676d1c5d474ecf04f6d1d6f8abdcff6b72b39790ded924bab2",
+  "pdk_commit": "84374023ee8b4b126bebbba67fcbada0a9c0ff0b",
+  "raw_results": "r1_adc/r3-smoke-tt-a-r2 (under G1_RESULTS_ROOT)",
+  "started_utc": "2026-10-20T18:35:39.752095Z",
+  "wall_s": 101.7,
+  "returncode": 137,
+  "status": "failed",
+  "errors": [],
+  "result": "",
+  "disposition": "aborted: timestep too small at the track-start edge (50 ps trk rise); superseded by the 1 ns track-start edge (r3-smoke-tt-b and later); runner and ngspice stopped by hand"
+}

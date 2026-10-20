@@ -1,0 +1,47 @@
+{
+ "run_id": "r3-win-ss125-c2048",
+ "block": "r1_adc",
+ "question": "static window around code 2048 at mos_ss / 125 C / 1.08 V (ideal VREF)",
+ "command": "G1_CPUSET=104 G1_CPUS=1 G1_WORKDIR=designs/r1-joint/blocks/r1_adc G1_RESULTS_ROOT=<bulk> flow/run.sh ngspice -b <G1_RESULTS_ROOT>/r1_adc/r3-win-ss125-c2048/deck.cir (= sim/runs/r3-win-ss125-c2048/deck.cir with the bulk path filled in)",
+ "deck": "sim/runs/r3-win-ss125-c2048/deck.cir",
+ "deck_template": "sim/r3/tb_adc3_points.cir",
+ "deck_sha256": "7d89a964311e1dd93f2e570de53a320154fbfc5a0e090e10dd75f72c3c817d4f",
+ "library_sha256_at_start": {
+  "r1_adc_r3.spice": "ceb84644f56ce6b427a3134e534263d9d30c95ebc9404042c55a0515fb82c85e"
+ },
+ "substitutions": {
+  "RAW": "<bulk>/r1_adc/r3-win-ss125-c2048",
+  "CORNER": "mos_ss",
+  "TEMP": "125",
+  "VDD": "1.08",
+  "CM": "0.6",
+  "CORE": "r1_adc3_core_fast",
+  "TIMING": "r1_adc_timing_r3_vdd108.inc",
+  "OPTS": "reltol=1e-4 vntol=1e-6 abstol=1e-12 method=trap klu rshunt=1e12 interp",
+  "TMAX": "0.2n",
+  "TSTOP": "9.9000u",
+  "PWLA": "0 -0.0016748 6.500000e-07 -0.0016748 6.600000e-07 -0.0014514 1.250000e-06 -0.0014514 1.260000e-06 -0.0012282 1.850000e-06 -0.0012282 1.860000e-06 -0.0010049 2.450000e-06 -0.0010049\n+ 2.460000e-06 -0.0007815 3.050000e-06 -0.0007815 3.060000e-06 -0.0005583 3.650000e-06 -0.0005583 3.660000e-06 -0.0003349 4.250000e-06 -0.0003349 4.260000e-06 -0.0001117 4.850000e-06 -0.0001117\n+ 4.860000e-06 0.0001117 5.450000e-06 0.0001117 5.460000e-06 0.0003349 6.050000e-06 0.0003349 6.060000e-06 0.0005583 6.650000e-06 0.0005583 6.660000e-06 0.0007815 7.250000e-06 0.0007815\n+ 7.260000e-06 0.0010049 7.850000e-06 0.0010049 7.860000e-06 0.0012282 8.450000e-06 0.0012282 8.460000e-06 0.0014514 9.050000e-06 0.0014514 9.060000e-06 0.0016748",
+  "PWLB": "0 -0.0015631 6.500000e-07 -0.0015631 6.600000e-07 -0.0013398 1.250000e-06 -0.0013398 1.260000e-06 -0.0011165 1.850000e-06 -0.0011165 1.860000e-06 -0.0008932 2.450000e-06 -0.0008932\n+ 2.460000e-06 -0.0006699 3.050000e-06 -0.0006699 3.060000e-06 -0.0004466 3.650000e-06 -0.0004466 3.660000e-06 -0.0002233 4.250000e-06 -0.0002233 4.260000e-06 0.0000000 4.850000e-06 0.0000000\n+ 4.860000e-06 0.0002233 5.450000e-06 0.0002233 5.460000e-06 0.0004466 6.050000e-06 0.0004466 6.060000e-06 0.0006699 6.650000e-06 0.0006699 6.660000e-06 0.0008932 7.250000e-06 0.0008932\n+ 7.260000e-06 0.0011165 7.850000e-06 0.0011165 7.860000e-06 0.0013398 8.450000e-06 0.0013398 8.460000e-06 0.0015631 9.050000e-06 0.0015631 9.060000e-06 0.0017864",
+  "REFLINES": "Vref vref 0 1.0",
+  "SAVE": "v(rawa) v(rawb)"
+ },
+ "tool": "ngspice (banner not found in log)",
+ "ngspice_version": "ngspice-46 : Circuit level simulation program (creation date Mon Jul 27 13:15:13 UTC 2026)",
+ "netlist_sha256": {
+  "r1_adc_r3.spice": "ceb84644f56ce6b427a3134e534263d9d30c95ebc9404042c55a0515fb82c85e"
+ },
+ "container_image": "sha256:ddeb69576f2808676d1c5d474ecf04f6d1d6f8abdcff6b72b39790ded924bab2",
+ "pdk_commit": "84374023ee8b4b126bebbba67fcbada0a9c0ff0b",
+ "raw_results": "r1_adc/r3-win-ss125-c2048 (under G1_RESULTS_ROOT)",
+ "started_utc": "2026-10-20T19:45:34.245905Z",
+ "wall_s": 263.4,
+ "returncode": 0,
+ "status": "completed",
+ "errors": [
+  "Error: measure  idd  avg(TRIG) : no such vector as 'i(vdd)'"
+ ],
+ "result": "",
+ "disposition": "valid: corner static window (+-4 LSB, M 2, design weights) -> results/r3/win_*.json",
+ "points_file": "sim/r3/points/cornwin_c2048.json",
+ "first_slot": 0
+}
