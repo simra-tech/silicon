@@ -1,0 +1,88 @@
+{
+ "block": "r1_isense",
+ "command": "python3 sim/run_deck.py --block r1_isense --deck tb_isense_mc.cir --run-id isense-mc-20261020-r1 --corners tt_mm_s1,tt_mm_s2 --set N=25 --analyze analyze_mc.py --question Mismatch MC, 50 samples (2 seeds x 25), tt 27 C: raw offset, residual offset after AZ (target <= 100 uV), pedestal, gain",
+ "container_image": "tapeoutbench-eda:latest sha256:ddeb6957... (checked by flow/run.sh)",
+ "corners": {
+  "tt_mm_s1": {
+   "cap": "cap_typ_mismatch",
+   "mos": "mos_tt_mismatch",
+   "res": "res_typ_mismatch",
+   "temp_C": 27,
+   "vdd": 1.2,
+   "vdda": 3.3
+  },
+  "tt_mm_s2": {
+   "cap": "cap_typ_mismatch",
+   "mos": "mos_tt_mismatch",
+   "res": "res_typ_mismatch",
+   "temp_C": 27,
+   "vdd": 1.2,
+   "vdda": 3.3
+  }
+ },
+ "cpuset": "109-110",
+ "date_utc": "2026-10-20T11:07:33.450687Z",
+ "deck": "sim/tb_isense_mc.cir",
+ "deck_sha256": "ea29e0dfb5a51ade4bfaaa6853e8b4278f0fb9aed36a1930e79e8a6c5388aa09",
+ "disposition": "tt_mm: 50/50 samples within 100 uV",
+ "jobs": {
+  "tt_mm_s1": {
+   "log": "r1_isense/isense-mc-20261020-r1/tb_isense_mc_tt_mm_s1.log",
+   "rc": 0,
+   "wall_s": 172.2
+  },
+  "tt_mm_s2": {
+   "log": "r1_isense/isense-mc-20261020-r1/tb_isense_mc_tt_mm_s2.log",
+   "rc": 0,
+   "wall_s": 174.2
+  }
+ },
+ "netlist": "schematic/r1_isense.spice",
+ "netlist_sha256": "5db34e0a8f7c54abbc4d4b547462129dd862404f205e2c3472fb4095b93faf8b",
+ "overrides": {
+  "N": "25"
+ },
+ "pdk_commit": "84374023ee8b4b126bebbba67fcbada0a9c0ff0b (checked by flow/run.sh)",
+ "question": "Mismatch MC, 50 samples (2 seeds x 25), tt 27 C: raw offset, residual offset after AZ (target <= 100 uV), pedestal, gain",
+ "raw_results": "$G1_RESULTS_ROOT/r1_isense/isense-mc-20261020-r1/",
+ "result": {
+  "tt_mm": {
+   "gain": {
+    "max": 14.078,
+    "max_abs": 14.078,
+    "mean": 14.012264,
+    "min": 13.9382,
+    "n": 50,
+    "sigma": 0.028277996817313644
+   },
+   "ped_mV": {
+    "max": 40.5749,
+    "max_abs": 40.5749,
+    "mean": 40.321204,
+    "min": 40.0834,
+    "n": 50,
+    "sigma": 0.10233687695058905
+   },
+   "raw_uV": {
+    "max": 8511.55,
+    "max_abs": 8511.55,
+    "mean": -232.28959599999996,
+    "min": -5657.98,
+    "n": 50,
+    "sigma": 2565.4080054774486
+   },
+   "res_uV": {
+    "max": 35.4558,
+    "max_abs": 35.4558,
+    "mean": -0.44769447999999984,
+    "min": -34.0479,
+    "n": 50,
+    "sigma": 16.180570020623286
+   },
+   "res_within_100uV": 50
+  }
+ },
+ "run_id": "isense-mc-20261020-r1",
+ "tool": "ngspice-46 (container banner from 'flow/run.sh ngspice -v', 2026-10-20; batch logs carry no banner)",
+ "wall_s": 193.2
+}

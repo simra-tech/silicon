@@ -1,0 +1,48 @@
+{
+ "block": "r1_safe",
+ "command": "python3 sim/run_deck.py --block r1_safe --deck tb_safe_mc.cir --run-id dev-mc-r2a --corners tt_mm_s1 --set N=1 --analyze analyze_mc.py --question dev",
+ "container_image": "tapeoutbench-eda:latest sha256:ddeb6957... (checked by flow/run.sh)",
+ "corners": {
+  "tt_mm_s1": {
+   "cap": "cap_typ_mismatch",
+   "mos": "mos_tt_mismatch",
+   "res": "res_typ_mismatch",
+   "temp_C": 27,
+   "vdd": 1.2,
+   "vdda": 3.3
+  }
+ },
+ "cpuset": "109-111",
+ "date_utc": "2026-10-20T12:51:21.177218Z",
+ "deck": "sim/tb_safe_mc.cir",
+ "deck_sha256": "137bc1fc76a759d363e2621a6e988a1c1efc8233eb64e59c32ff346c07e648ee",
+ "disposition": "failed: max |error| = 0.000 LSB over 0 comparator points, 0 missing",
+ "jobs": {
+  "tt_mm_s1": {
+   "log": "r1_safe/dev-mc-r2a/tb_safe_mc_tt_mm_s1.log",
+   "rc": 0,
+   "wall_s": 50.1
+  }
+ },
+ "netlist": "schematic/r1_safe.spice",
+ "netlist_sha256": "e3044b536c1f1f12f34b083d952be9be4dc5553160a71de304507a6461a02bc7",
+ "overrides": {
+  "N": "1"
+ },
+ "pdk_commit": "84374023ee8b4b126bebbba67fcbada0a9c0ff0b (checked by flow/run.sh)",
+ "question": "dev",
+ "raw_results": "$G1_RESULTS_ROOT/r1_safe/dev-mc-r2a/",
+ "result": {
+  "comparator_points": 0,
+  "hyst_centre_offset_mV_vod": null,
+  "hyst_mV_vod": null,
+  "max_abs_LSB": null,
+  "missing": 0,
+  "samples": 0,
+  "trip_err_mV_vod": null,
+  "trip_err_uV_shunt": null
+ },
+ "run_id": "dev-mc-r2a",
+ "tool": "ngspice-46 (container banner from flow/run.sh ngspice -v; batch logs carry no banner)",
+ "wall_s": 50.1
+}

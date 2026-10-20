@@ -1,0 +1,75 @@
+{
+ "block": "r1_isense",
+ "command": "python3 sim/run_deck.py --block r1_isense --deck tb_isense_mc.cir --run-id dev-mc-01 --corners tt_mm_s1 --set N=3 --analyze analyze_mc.py --question dev",
+ "container_image": "tapeoutbench-eda:latest sha256:ddeb6957... (checked by flow/run.sh)",
+ "corners": {
+  "tt_mm_s1": {
+   "cap": "cap_typ_mismatch",
+   "mos": "mos_tt_mismatch",
+   "res": "res_typ_mismatch",
+   "temp_C": 27,
+   "vdd": 1.2,
+   "vdda": 3.3
+  }
+ },
+ "cpuset": "109-111",
+ "date_utc": "2026-10-20T10:41:43.438479Z",
+ "deck": "sim/tb_isense_mc.cir",
+ "deck_sha256": "870a27c975bec412634574c4654c7f1ed3a8202dfd9eacb01566cecac69fcb17",
+ "disposition": "tt_mm: 0/3 samples within 100 uV",
+ "jobs": {
+  "tt_mm_s1": {
+   "log": "r1_isense/dev-mc-01/tb_isense_mc_tt_mm_s1.log",
+   "rc": 0,
+   "wall_s": 26.0
+  }
+ },
+ "netlist": "schematic/r1_isense.spice",
+ "netlist_sha256": "d2f8093a50c4695fbae6ba21ec6be6bf5885f6a257bd0c02865ce339bd4a4108",
+ "overrides": {
+  "N": "3"
+ },
+ "pdk_commit": "84374023ee8b4b126bebbba67fcbada0a9c0ff0b (checked by flow/run.sh)",
+ "question": "dev",
+ "raw_results": "$G1_RESULTS_ROOT/r1_isense/dev-mc-01/",
+ "result": {
+  "tt_mm": {
+   "gain": {
+    "max": 14.0186,
+    "max_abs": 14.0186,
+    "mean": 14.003533333333333,
+    "min": 13.9838,
+    "n": 3,
+    "sigma": 0.01458522844829237
+   },
+   "ped_mV": {
+    "max": 40.7568,
+    "max_abs": 40.7568,
+    "mean": 40.2645,
+    "min": 39.9901,
+    "n": 3,
+    "sigma": 0.3488720204697802
+   },
+   "raw_uV": {
+    "max": 589.668,
+    "max_abs": 1104.82,
+    "mean": -388.0946666666666,
+    "min": -1104.82,
+    "n": 3,
+    "sigma": 715.9738182277027
+   },
+   "res_uV": {
+    "max": 219.774,
+    "max_abs": 237.311,
+    "mean": 50.714666666666666,
+    "min": -237.311,
+    "n": 3,
+    "sigma": 204.6890579331381
+   },
+   "res_within_100uV": 0
+  }
+ },
+ "run_id": "dev-mc-01",
+ "tool": "ngspice-46 (container banner from 'flow/run.sh ngspice -v', 2026-10-20; batch logs carry no banner)",
+ "wall_s": 26.1
+}

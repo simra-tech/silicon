@@ -1,0 +1,33 @@
+* r1_isense step deck: auto-zero, then PWM-edge steps; settling to 0.5 % of the step (analysed in python);
+* then overload recovery: -200 mV and +200 mV for 300 ns, back to +50 mV
+* Ideal sources (marked): VREF 1.05 V, VCM 0.6 V, IBIAS 5 uA, AZ phases. Load: 2 pF per output (ADC T/H assumption).
+.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerMOSlv.lib @@MOS@@
+.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerMOShv.lib @@MOS@@
+.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerRES.lib @@RES@@
+.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerCAP.lib @@CAP@@
+.temp @@TEMP@@
+.include /work/designs/r1-joint/blocks/r1_isense/schematic/r1_isense.spice
+.option gmin=1e-12 method=gear reltol=1e-4 abstol=1e-12 vntol=1e-7
+Vdda vdda 0 dc @@VDDA@@
+Vdd vdd 0 dc @@VDD@@
+* IDEAL REFERENCE SOURCES (this step only): VREF from r1_bgr (buffered), VCM from r1_adc
+Vref vref 0 dc 1.05
+Vcm vcm 0 dc 0.6
+* IDEAL PTAT bias (r1_bgr PTAT branch): 5 uA at 27 C
+Ibias vdda ibias dc {5u*(@@TEMP@@+273.15)/300.15}
+* auto-zero: az 0..2.05 us, azh 0..2.0 us (1.2 V logic)
+Vaz az 0 pwl(0 @@VDD@@ 2.05u @@VDD@@ 2.051u 0)
+Vazh azh 0 pwl(0 @@VDD@@ 2.0u @@VDD@@ 2.001u 0)
+* Kelvin input: common mode @@VCMIN@@ V on ISN; ISP - ISN steps (1 ns edges)
+Vcmi isn 0 dc @@VCMIN@@
+Vin isp isn pwl(0 0 4u 0 4.001u 0.1 7u 0.1 7.001u 0 9u 0 9.001u -0.02 10u -0.02 10.001u 0.1 13u 0.1 13.001u -0.02 16u -0.02 16.001u 0.05 18u 0.05 18.001u -0.2 18.3u -0.2 18.301u 0.05 20u 0.05 20.001u 0.2 20.3u 0.2 20.301u 0.05 23u 0.05)
+XDUT isp isn outp outn vref vcm ibias az azh vdda vdd 0 r1_isense_ch
+CLP outp 0 2p
+CLN outn 0 2p
+.control
+set wr_singlescale
+set wr_vecnames
+tran 0.5n 23u 0 0.5n
+wrdata @@OUT@@_step.txt v(outp) v(outn) v(isp) v(isn) i(vdda) i(vdd) v(xdut.x1a) v(xdut.x1b) v(xdut.h1) v(xdut.h2)
+.endc
+.end

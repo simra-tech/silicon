@@ -1,0 +1,97 @@
+{
+ "block": "r1_safe",
+ "command": "python3 sim/run_deck.py --block r1_safe --deck tb_dev_dcmcV2.cir --run-id dev-dcmc-V2 --corners tt_mm_s1 --set N=12 --analyze analyze_dcmc.py --question dev",
+ "container_image": "tapeoutbench-eda:latest sha256:ddeb6957... (checked by flow/run.sh)",
+ "corners": {
+  "tt_mm_s1": {
+   "cap": "cap_typ_mismatch",
+   "mos": "mos_tt_mismatch",
+   "res": "res_typ_mismatch",
+   "temp_C": 27,
+   "vdd": 1.2,
+   "vdda": 3.3
+  }
+ },
+ "cpuset": "109-111",
+ "date_utc": "2026-10-20T13:43:16.194601Z",
+ "deck": "sim/tb_dev_dcmcV2.cir",
+ "deck_sha256": "ce7d08f945a46f5d6dcb02575d12a2145d1d402287ebad2bff33aad236c745ab",
+ "disposition": "failed: max |centre error| 58.8 mV (1.76 LSB), sigma 26.6 mV, 36 points, 0 missing (no crossing within +-150 mV)",
+ "jobs": {
+  "tt_mm_s1": {
+   "log": "r1_safe/dev-dcmc-V2/tb_dev_dcmcV2_tt_mm_s1.log",
+   "rc": 0,
+   "wall_s": 58.1
+  }
+ },
+ "netlist": "schematic/r1_safe.spice",
+ "netlist_sha256": "63ac3d0b7961c150c6681b2ca8606083401c4b00754a57e3cab9ce31979071a8",
+ "overrides": {
+  "N": "12"
+ },
+ "pdk_commit": "84374023ee8b4b126bebbba67fcbada0a9c0ff0b (checked by flow/run.sh)",
+ "question": "dev",
+ "raw_results": "$G1_RESULTS_ROOT/r1_safe/dev-dcmc-V2/",
+ "result": {
+  "+0.0167": {
+   "centre_err_mV": {
+    "max": 58.75,
+    "mean": 14.208333333333332,
+    "min": -30.75,
+    "n": 12,
+    "sigma": 28.499969541894053
+   },
+   "hyst_mV": {
+    "max": 10.500000000000002,
+    "mean": 9.000000000000002,
+    "min": 7.9999999999999964,
+    "n": 12,
+    "sigma": 0.5773502691896268
+   },
+   "max_abs_centre_LSB": 1.7625,
+   "missing": 0,
+   "samples": 12
+  },
+  "+0.9167": {
+   "centre_err_mV": {
+    "max": 37.25149999999999,
+    "mean": 1.9598333333333275,
+    "min": -51.4985,
+    "n": 12,
+    "sigma": 24.064980030926428
+   },
+   "hyst_mV": {
+    "max": 9.996999999999922,
+    "mean": 9.163666666666689,
+    "min": 8.497000000000089,
+    "n": 12,
+    "sigma": 0.3726779962499446
+   },
+   "max_abs_centre_LSB": 1.5449549999999999,
+   "missing": 0,
+   "samples": 12
+  },
+  "-0.9167": {
+   "centre_err_mV": {
+    "max": 24.74849999999995,
+    "mean": -5.751500000000012,
+    "min": -43.75150000000006,
+    "n": 12,
+    "sigma": 23.1278151439632
+   },
+   "hyst_mV": {
+    "max": 9.496999999999979,
+    "mean": 9.080333333333348,
+    "min": 8.497000000000089,
+    "n": 12,
+    "sigma": 0.27638539919625604
+   },
+   "max_abs_centre_LSB": 1.3125450000000016,
+   "missing": 0,
+   "samples": 12
+  }
+ },
+ "run_id": "dev-dcmc-V2",
+ "tool": "ngspice-46 (container banner from flow/run.sh ngspice -v; batch logs carry no banner)",
+ "wall_s": 58.1
+}

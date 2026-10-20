@@ -1,0 +1,74 @@
+* r1_isense noise and small-signal deck (normal mode, AZ state held).
+* The hold-cap nodes h1/h2 are held by ideal DC sources at @@VH@@ V (a typical AZ value); their sampled kT/C
+* noise is a per-AZ-cycle offset and is computed by hand in README, not here. The AZ sampling (noise folding,
+* 1/f suppression) is not modelled: this is the continuous-time noise of the amplifier and its resistors.
+* Ideal sources (marked) as in the other decks. Load 2 pF per output. Input operating point +40 mV (mid-range).
+.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerMOSlv.lib @@MOS@@
+.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerMOShv.lib @@MOS@@
+.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerRES.lib @@RES@@
+.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerCAP.lib @@CAP@@
+.temp @@TEMP@@
+.include /work/designs/r1-joint/blocks/r1_isense/schematic/r1_isense.spice
+.option gmin=1e-12
+Vdda vdda 0 dc @@VDDA@@
+Vdd vdd 0 dc @@VDD@@
+Vref vref 0 dc 1.05
+Vcm vcm 0 dc 0.6
+Ibias vdda ibias dc {5u*(@@TEMP@@+273.15)/300.15}
+Vaz az 0 dc 0
+Vazh azh 0 dc 0
+Vh1 xdut.h1 0 dc @@VH@@
+Vh2 xdut.h2 0 dc @@VH@@
+Vcmi isn 0 dc 0 ac 0
+Vin isp isn dc 0.04 ac 1
+XDUT isp isn outp outn vref vcm ibias az azh vdda vdd 0 r1_isense_ch
+CLP outp 0 2p
+CLN outn 0 2p
+.control
+op
+echo "R: vod_at_40mV=" $&v(outp) $&v(outn)
+ac dec 40 1k 1g
+let vd = v(outp)-v(outn)
+let g = db(vd)
+meas ac g1k find g at=1k
+let g3 = g1k-3
+meas ac f3db when g=g3 fall=1
+meas ac gpk max g
+let pk = gpk - g1k
+echo "R: gain_1k_dB=" $&g1k " f3dB_Hz=" $&f3db " peaking_dB=" $&pk
+* input common-mode to differential output (CMRR), 1 V ac on the Kelvin common mode
+alter @Vin[acmag] = 0
+alter @Vcmi[acmag] = 1
+ac dec 20 1k 100meg
+let cm = db(v(outp)-v(outn))
+meas ac cm1k find cm at=1k
+meas ac cm1m find cm at=1meg
+echo "R: cm_to_diff_dB_1k=" $&cm1k " cm_to_diff_dB_1M=" $&cm1m
+* supply rejection, 1 V ac on VDDA then on VDD
+alter @Vcmi[acmag] = 0
+alter @Vdda[acmag] = 1
+ac dec 20 1k 100meg
+let ps = db(v(outp)-v(outn))
+meas ac psa1k find ps at=1k
+meas ac psa1m find ps at=1meg
+echo "R: vdda_to_diff_dB_1k=" $&psa1k " vdda_to_diff_dB_1M=" $&psa1m
+alter @Vdda[acmag] = 0
+alter @Vdd[acmag] = 1
+ac dec 20 1k 100meg
+let ps = db(v(outp)-v(outn))
+meas ac psd1k find ps at=1k
+meas ac psd1m find ps at=1meg
+echo "R: vdd_to_diff_dB_1k=" $&psd1k " vdd_to_diff_dB_1M=" $&psd1m
+alter @Vdd[acmag] = 0
+alter @Vin[acmag] = 1
+noise v(outp,outn) Vin dec 20 100 100meg
+* the spectral plot of this first noise run is plot noise4 (op1, ac1-ac4 come before it in this deck)
+set wr_singlescale
+set wr_vecnames
+wrdata @@OUT@@_noise.txt noise4.inoise_spectrum noise4.onoise_spectrum
+noise v(outp,outn) Vin dec 20 10k 5meg 1
+setplot
+print inoise_total onoise_total
+echo "R: inoise_total_10k_5M_V=" $&inoise_total " onoise_total_10k_5M_V=" $&onoise_total
+.endc
+.end

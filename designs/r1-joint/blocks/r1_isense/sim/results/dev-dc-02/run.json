@@ -1,0 +1,53 @@
+{
+ "block": "r1_isense",
+ "command": "python3 sim/run_deck.py --block r1_isense --deck tb_isense_dc.cir --run-id dev-dc-02 --corners tt --set VCMIN=0 --analyze analyze_dc.py --question dev",
+ "container_image": "tapeoutbench-eda:latest sha256:ddeb6957... (checked by flow/run.sh)",
+ "corners": {
+  "tt": {
+   "cap": "cap_typ",
+   "mos": "mos_tt",
+   "res": "res_typ",
+   "temp_C": 27,
+   "vdd": 1.2,
+   "vdda": 3.3
+  }
+ },
+ "cpuset": "109-111",
+ "date_utc": "2026-10-20T10:40:40.707160Z",
+ "deck": "sim/tb_isense_dc.cir",
+ "deck_sha256": "4019a39437006e1ba6d071caf116823dbc1cd0ac95a382a204978a41178f940d",
+ "disposition": "offset <= 100 uV: tt passed",
+ "jobs": {
+  "tt": {
+   "log": "r1_isense/dev-dc-02/tb_isense_dc_tt.log",
+   "rc": 0,
+   "wall_s": 18.0
+  }
+ },
+ "netlist": "schematic/r1_isense.spice",
+ "netlist_sha256": "d2f8093a50c4695fbae6ba21ec6be6bf5885f6a257bd0c02865ce339bd4a4108",
+ "overrides": {
+  "VCMIN": "0"
+ },
+ "pdk_commit": "84374023ee8b4b126bebbba67fcbada0a9c0ff0b (checked by flow/run.sh)",
+ "question": "dev",
+ "raw_results": "$G1_RESULTS_ROOT/r1_isense/dev-dc-02/",
+ "result": {
+  "tt": {
+   "gain": 13.9845,
+   "gain_error_pct": -0.1105,
+   "inl_max_pct_fs": 0.0119,
+   "offset_pedestal_off_uV": 0.0053,
+   "pedestal_error_uV": 1.1439,
+   "pedestal_mV": 40.3858,
+   "vcm_out_V": 0.5835,
+   "vod_range_V": [
+    -0.8442671559999999,
+    0.8335503390000001
+   ]
+  }
+ },
+ "run_id": "dev-dc-02",
+ "tool": "ngspice-46 (container banner from 'flow/run.sh ngspice -v', 2026-10-20; batch logs carry no banner)",
+ "wall_s": 18.1
+}

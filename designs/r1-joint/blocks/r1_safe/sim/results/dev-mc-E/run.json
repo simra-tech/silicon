@@ -1,0 +1,72 @@
+{
+ "block": "r1_safe",
+ "command": "python3 sim/run_deck.py --block r1_safe --deck tb_dev_mcE.cir --run-id dev-mc-E --corners tt_mm_s1 --set N=8 --analyze analyze_mc.py --question dev",
+ "container_image": "tapeoutbench-eda:latest sha256:ddeb6957... (checked by flow/run.sh)",
+ "corners": {
+  "tt_mm_s1": {
+   "cap": "cap_typ_mismatch",
+   "mos": "mos_tt_mismatch",
+   "res": "res_typ_mismatch",
+   "temp_C": 27,
+   "vdd": 1.2,
+   "vdda": 3.3
+  }
+ },
+ "cpuset": "109-111",
+ "date_utc": "2026-10-20T13:11:47.945472Z",
+ "deck": "sim/tb_dev_mcE.cir",
+ "deck_sha256": "b0202582023f741c4d0e468d36809171e11da011e6be78a7be54b9435ebb9ec0",
+ "disposition": "failed: max |error| = 1.428 LSB over 10 comparator points, 4 missing",
+ "jobs": {
+  "tt_mm_s1": {
+   "log": "r1_safe/dev-mc-E/tb_dev_mcE_tt_mm_s1.log",
+   "rc": 0,
+   "wall_s": 518.5
+  }
+ },
+ "netlist": "schematic/r1_safe.spice",
+ "netlist_sha256": "63ac3d0b7961c150c6681b2ca8606083401c4b00754a57e3cab9ce31979071a8",
+ "overrides": {
+  "N": "8"
+ },
+ "pdk_commit": "84374023ee8b4b126bebbba67fcbada0a9c0ff0b (checked by flow/run.sh)",
+ "question": "dev",
+ "raw_results": "$G1_RESULTS_ROOT/r1_safe/dev-mc-E/",
+ "result": {
+  "comparator_points": 10,
+  "hyst_centre_offset_mV_vod": {
+   "max": 37.257,
+   "mean": -4.2048125,
+   "min": -39.6342,
+   "n": 8,
+   "sigma": 25.95070793800419
+  },
+  "hyst_mV_vod": {
+   "max": 16.1458,
+   "mean": 12.92514,
+   "min": 1.2,
+   "n": 10,
+   "sigma": 5.864746711188813
+  },
+  "max_abs_LSB": 1.4275139999999997,
+  "missing": 4,
+  "samples": 7,
+  "trip_err_mV_vod": {
+   "max": 36.5962,
+   "mean": -1.141029999999999,
+   "min": -47.5838,
+   "n": 10,
+   "sigma": 24.258564418573908
+  },
+  "trip_err_uV_shunt": {
+   "max": 2614.014285714286,
+   "mean": -81.50214285714283,
+   "min": -3398.8428571428567,
+   "n": 10,
+   "sigma": 1732.7546013267074
+  }
+ },
+ "run_id": "dev-mc-E",
+ "tool": "ngspice-46 (container banner from flow/run.sh ngspice -v; batch logs carry no banner)",
+ "wall_s": 518.6
+}

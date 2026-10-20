@@ -1,0 +1,133 @@
+{
+ "block": "r1_safe",
+ "command": "python3 sim/run_deck.py --block r1_safe --deck tb_safe_cmp.cir --run-id safe-cmp-20261020-r1 --corners tt,ss,ff --analyze analyze_cmp.py --question Trip/release vs code (4,20,32,44,59) for OC and NEG, hysteresis, delay at 10 % overdrive and at 1 LSB, full four-comparator block, 3 corners",
+ "container_image": "tapeoutbench-eda:latest sha256:ddeb6957... (checked by flow/run.sh)",
+ "corners": {
+  "ff": {
+   "cap": "cap_bcs",
+   "mos": "mos_ff",
+   "res": "res_bcs",
+   "temp_C": -40,
+   "vdd": 1.32,
+   "vdda": 3.6
+  },
+  "ss": {
+   "cap": "cap_wcs",
+   "mos": "mos_ss",
+   "res": "res_wcs",
+   "temp_C": 125,
+   "vdd": 1.08,
+   "vdda": 3.0
+  },
+  "tt": {
+   "cap": "cap_typ",
+   "mos": "mos_tt",
+   "res": "res_typ",
+   "temp_C": 27,
+   "vdd": 1.2,
+   "vdda": 3.3
+  }
+ },
+ "cpuset": "109-111",
+ "date_utc": "2026-10-20T12:44:22.151639Z",
+ "deck": "sim/tb_safe_cmp.cir",
+ "deck_sha256": "74e74570269e862bf4df20c8864627eefcb803cac933fac655114fa5fe93d816",
+ "disposition": "ff: thr failed, delay failed; ss: thr failed, delay failed; tt: thr failed, delay failed",
+ "jobs": {
+  "ff": {
+   "log": "r1_safe/safe-cmp-20261020-r1/tb_safe_cmp_ff.log",
+   "rc": 0,
+   "wall_s": 1675.7
+  },
+  "ss": {
+   "log": "r1_safe/safe-cmp-20261020-r1/tb_safe_cmp_ss.log",
+   "rc": 0,
+   "wall_s": 1663.7
+  },
+  "tt": {
+   "log": "r1_safe/safe-cmp-20261020-r1/tb_safe_cmp_tt.log",
+   "rc": 0,
+   "wall_s": 1653.7
+  }
+ },
+ "netlist": "schematic/r1_safe.spice",
+ "netlist_sha256": "253c39a30b84c25c3bca25c2541ce979e258c6b1d834bcbb9c805683733db2da",
+ "overrides": {},
+ "pdk_commit": "84374023ee8b4b126bebbba67fcbada0a9c0ff0b (checked by flow/run.sh)",
+ "question": "Trip/release vs code (4,20,32,44,59) for OC and NEG, hysteresis, delay at 10 % overdrive and at 1 LSB, full four-comparator block, 3 corners",
+ "raw_results": "$G1_RESULTS_ROOT/r1_safe/safe-cmp-20261020-r1/",
+ "result": {
+  "ff": {
+   "delays": {
+    "neg_release_10pct_ns": null,
+    "neg_trip_10pct_ns": 2.893007199499285,
+    "neg_trip_1LSB_ns": null,
+    "oc_release_10pct_ns": 0.5384570281209559,
+    "oc_release_1LSB_ns": null,
+    "oc_trip_10pct_ns": 0.5212886208370018,
+    "oc_trip_1LSB_ns": null
+   },
+   "hyst_mV_vod_range": [
+    9.100217611140891,
+    9.100258909825248
+   ],
+   "idd_uA_total": 0.0020068451650000004,
+   "idda_uA_total": 131.77600600000005,
+   "max_abs_trip_err_LSB": 0.10810631759426761,
+   "max_abs_trip_err_mV_vod": 3.6035439198089207,
+   "max_abs_trip_err_uV_shunt": 257.39599427206576,
+   "n_expected": 10,
+   "n_points": 2,
+   "parked_comparators_quiet": false
+  },
+  "ss": {
+   "delays": {
+    "neg_release_10pct_ns": null,
+    "neg_trip_10pct_ns": null,
+    "neg_trip_1LSB_ns": null,
+    "oc_release_10pct_ns": 0.16519705899274956,
+    "oc_release_1LSB_ns": null,
+    "oc_trip_10pct_ns": 0.516277831667242,
+    "oc_trip_1LSB_ns": null
+   },
+   "hyst_mV_vod_range": [
+    14.20063516737872,
+    14.200647768914463
+   ],
+   "idd_uA_total": 0.010632929387999996,
+   "idda_uA_total": 199.300736,
+   "max_abs_trip_err_LSB": 0.14741756579783385,
+   "max_abs_trip_err_mV_vod": 4.913918859927795,
+   "max_abs_trip_err_uV_shunt": 350.99420428055686,
+   "n_expected": 10,
+   "n_points": 2,
+   "parked_comparators_quiet": false
+  },
+  "tt": {
+   "delays": {
+    "neg_release_10pct_ns": null,
+    "neg_trip_10pct_ns": 3.9293670250573416,
+    "neg_trip_1LSB_ns": null,
+    "oc_release_10pct_ns": 0.19836975861618203,
+    "oc_release_1LSB_ns": null,
+    "oc_trip_10pct_ns": 0.51922250455793,
+    "oc_trip_1LSB_ns": null
+   },
+   "hyst_mV_vod_range": [
+    11.031636084385147,
+    11.03371016041744
+   ],
+   "idd_uA_total": 0.0017244308628000004,
+   "idda_uA_total": 158.28550599999994,
+   "max_abs_trip_err_LSB": 0.12961153453967633,
+   "max_abs_trip_err_mV_vod": 4.320384484655878,
+   "max_abs_trip_err_uV_shunt": 308.59889176113415,
+   "n_expected": 10,
+   "n_points": 2,
+   "parked_comparators_quiet": false
+  }
+ },
+ "run_id": "safe-cmp-20261020-r1",
+ "tool": "ngspice-46 (container banner from flow/run.sh ngspice -v; batch logs carry no banner)",
+ "wall_s": 1676.8
+}

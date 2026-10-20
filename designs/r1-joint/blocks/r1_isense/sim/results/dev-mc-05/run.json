@@ -1,0 +1,88 @@
+{
+ "block": "r1_isense",
+ "command": "python3 sim/run_deck.py --block r1_isense --deck tb_isense_mc.cir --run-id dev-mc-05 --corners tt_mm_s1,tt_mm_s2 --set N=4 --analyze analyze_mc.py --question dev",
+ "container_image": "tapeoutbench-eda:latest sha256:ddeb6957... (checked by flow/run.sh)",
+ "corners": {
+  "tt_mm_s1": {
+   "cap": "cap_typ_mismatch",
+   "mos": "mos_tt_mismatch",
+   "res": "res_typ_mismatch",
+   "temp_C": 27,
+   "vdd": 1.2,
+   "vdda": 3.3
+  },
+  "tt_mm_s2": {
+   "cap": "cap_typ_mismatch",
+   "mos": "mos_tt_mismatch",
+   "res": "res_typ_mismatch",
+   "temp_C": 27,
+   "vdd": 1.2,
+   "vdda": 3.3
+  }
+ },
+ "cpuset": "109-110",
+ "date_utc": "2026-10-20T10:49:09.637992Z",
+ "deck": "sim/tb_isense_mc.cir",
+ "deck_sha256": "ea29e0dfb5a51ade4bfaaa6853e8b4278f0fb9aed36a1930e79e8a6c5388aa09",
+ "disposition": "tt_mm: 8/8 samples within 100 uV",
+ "jobs": {
+  "tt_mm_s1": {
+   "log": "r1_isense/dev-mc-05/tb_isense_mc_tt_mm_s1.log",
+   "rc": 0,
+   "wall_s": 38.0
+  },
+  "tt_mm_s2": {
+   "log": "r1_isense/dev-mc-05/tb_isense_mc_tt_mm_s2.log",
+   "rc": 0,
+   "wall_s": 38.0
+  }
+ },
+ "netlist": "schematic/r1_isense.spice",
+ "netlist_sha256": "50caf3cafdada7e4e5d8b8191ea8420298d839ff85ba8e57fa5792a5d5376146",
+ "overrides": {
+  "N": "4"
+ },
+ "pdk_commit": "84374023ee8b4b126bebbba67fcbada0a9c0ff0b (checked by flow/run.sh)",
+ "question": "dev",
+ "raw_results": "$G1_RESULTS_ROOT/r1_isense/dev-mc-05/",
+ "result": {
+  "tt_mm": {
+   "gain": {
+    "max": 14.0388,
+    "max_abs": 14.0388,
+    "mean": 14.0036625,
+    "min": 13.9558,
+    "n": 8,
+    "sigma": 0.025512052911320193
+   },
+   "ped_mV": {
+    "max": 40.4489,
+    "max_abs": 40.4489,
+    "mean": 40.3124125,
+    "min": 40.1279,
+    "n": 8,
+    "sigma": 0.10096922102180553
+   },
+   "raw_uV": {
+    "max": 4911.45,
+    "max_abs": 6539.52,
+    "mean": -1747.61275,
+    "min": -6539.52,
+    "n": 8,
+    "sigma": 3939.0727556079664
+   },
+   "res_uV": {
+    "max": 9.46854,
+    "max_abs": 21.8648,
+    "mean": -10.26818,
+    "min": -21.8648,
+    "n": 8,
+    "sigma": 8.898097509923117
+   },
+   "res_within_100uV": 8
+  }
+ },
+ "run_id": "dev-mc-05",
+ "tool": "ngspice-46 (container banner from 'flow/run.sh ngspice -v', 2026-10-20; batch logs carry no banner)",
+ "wall_s": 38.1
+}

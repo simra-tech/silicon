@@ -1,0 +1,81 @@
+{
+ "block": "r1_isense",
+ "command": "python3 sim/run_deck.py --block r1_isense --deck tb_isense_step.cir --run-id dev-step-06 --corners tt,ss,ff --set VCMIN=0 --analyze analyze_step.py --question dev",
+ "container_image": "tapeoutbench-eda:latest sha256:ddeb6957... (checked by flow/run.sh)",
+ "corners": {
+  "ff": {
+   "cap": "cap_bcs",
+   "mos": "mos_ff",
+   "res": "res_bcs",
+   "temp_C": -40,
+   "vdd": 1.32,
+   "vdda": 3.6
+  },
+  "ss": {
+   "cap": "cap_wcs",
+   "mos": "mos_ss",
+   "res": "res_wcs",
+   "temp_C": 125,
+   "vdd": 1.08,
+   "vdda": 3.0
+  },
+  "tt": {
+   "cap": "cap_typ",
+   "mos": "mos_tt",
+   "res": "res_typ",
+   "temp_C": 27,
+   "vdd": 1.2,
+   "vdda": 3.3
+  }
+ },
+ "cpuset": "109-111",
+ "date_utc": "2026-10-20T10:35:09.543106Z",
+ "deck": "sim/tb_isense_step.cir",
+ "deck_sha256": "e649954ff905757a649b2c0656e182122337a342a47f78ae499a84d6c0ec6b48",
+ "disposition": "settling limit 300 ns: ff failed, ss failed, tt failed",
+ "jobs": {
+  "ff": {
+   "log": "r1_isense/dev-step-06/tb_isense_step_ff.log",
+   "rc": 0,
+   "wall_s": 68.1
+  },
+  "ss": {
+   "log": "r1_isense/dev-step-06/tb_isense_step_ss.log",
+   "rc": 0,
+   "wall_s": 54.1
+  },
+  "tt": {
+   "log": "r1_isense/dev-step-06/tb_isense_step_tt.log",
+   "rc": 0,
+   "wall_s": 60.1
+  }
+ },
+ "netlist": "schematic/r1_isense.spice",
+ "netlist_sha256": "a86271f8a1f11cae0d2eb205d1ffc633abc237db90abb5e524ba6d5478946c9e",
+ "overrides": {
+  "VCMIN": "0"
+ },
+ "pdk_commit": "84374023ee8b4b126bebbba67fcbada0a9c0ff0b (checked by flow/run.sh)",
+ "question": "dev",
+ "raw_results": "$G1_RESULTS_ROOT/r1_isense/dev-step-06/",
+ "result": {
+  "ff": {
+   "gain": 13.2521,
+   "offset_uV": 6565.8,
+   "settle_worst_ns": 2994.8
+  },
+  "ss": {
+   "gain": 13.7084,
+   "offset_uV": 59.7,
+   "settle_worst_ns": 612.2
+  },
+  "tt": {
+   "gain": 15.0989,
+   "offset_uV": -9233.5,
+   "settle_worst_ns": 2993.9
+  }
+ },
+ "run_id": "dev-step-06",
+ "tool": "ngspice-46 (container banner from 'flow/run.sh ngspice -v', 2026-10-20; batch logs carry no banner)",
+ "wall_s": 68.6
+}

@@ -1,0 +1,72 @@
+{
+ "block": "r1_safe",
+ "command": "python3 sim/run_deck.py --block r1_safe --deck tb_safe_mc.cir --run-id dev-mc-red1 --corners tt_mm_s1 --set N=2 --analyze analyze_mc.py --question dev",
+ "container_image": "tapeoutbench-eda:latest sha256:ddeb6957... (checked by flow/run.sh)",
+ "corners": {
+  "tt_mm_s1": {
+   "cap": "cap_typ_mismatch",
+   "mos": "mos_tt_mismatch",
+   "res": "res_typ_mismatch",
+   "temp_C": 27,
+   "vdd": 1.2,
+   "vdda": 3.3
+  }
+ },
+ "cpuset": "109",
+ "date_utc": "2026-10-20T12:16:14.357263Z",
+ "deck": "sim/tb_safe_mc.cir",
+ "deck_sha256": "d262ee7353d229a68b16b4f7b01bf76c9385c0e553e375534b5e77d72adbaa25",
+ "disposition": "passed: max |error| = 0.387 LSB over 4 comparator points, 0 missing",
+ "jobs": {
+  "tt_mm_s1": {
+   "log": "r1_safe/dev-mc-red1/tb_safe_mc_tt_mm_s1.log",
+   "rc": 0,
+   "wall_s": 108.1
+  }
+ },
+ "netlist": "schematic/r1_safe.spice",
+ "netlist_sha256": "253c39a30b84c25c3bca25c2541ce979e258c6b1d834bcbb9c805683733db2da",
+ "overrides": {
+  "N": "2"
+ },
+ "pdk_commit": "84374023ee8b4b126bebbba67fcbada0a9c0ff0b (checked by flow/run.sh)",
+ "question": "dev",
+ "raw_results": "$G1_RESULTS_ROOT/r1_safe/dev-mc-red1/",
+ "result": {
+  "comparator_points": 4,
+  "hyst_centre_offset_mV_vod": {
+   "max": 7.08691,
+   "mean": 3.5896387499999998,
+   "min": 0.953105,
+   "n": 4,
+   "sigma": 2.260919271541929
+  },
+  "hyst_mV_vod": {
+   "max": 11.8256,
+   "mean": 11.714974999999999,
+   "min": 11.6329,
+   "n": 4,
+   "sigma": 0.07810532552265552
+  },
+  "max_abs_LSB": 0.38710199999999995,
+  "missing": 0,
+  "samples": 2,
+  "trip_err_mV_vod": {
+   "max": 12.9034,
+   "mean": 3.5967899999999995,
+   "min": -4.92229,
+   "n": 4,
+   "sigma": 7.307266515260682
+  },
+  "trip_err_uV_shunt": {
+   "max": 921.6714285714286,
+   "mean": 256.9135714285714,
+   "min": -351.59214285714285,
+   "n": 4,
+   "sigma": 521.9476082329058
+  }
+ },
+ "run_id": "dev-mc-red1",
+ "tool": "ngspice-46 (container banner from flow/run.sh ngspice -v; batch logs carry no banner)",
+ "wall_s": 108.2
+}

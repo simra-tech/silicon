@@ -1,0 +1,81 @@
+{
+ "block": "r1_isense",
+ "command": "python3 sim/run_deck.py --block r1_isense --deck tb_isense_step.cir --run-id dev-step-08 --corners tt,ss,ff --set VCMIN=0 --analyze analyze_step.py --question dev",
+ "container_image": "tapeoutbench-eda:latest sha256:ddeb6957... (checked by flow/run.sh)",
+ "corners": {
+  "ff": {
+   "cap": "cap_bcs",
+   "mos": "mos_ff",
+   "res": "res_bcs",
+   "temp_C": -40,
+   "vdd": 1.32,
+   "vdda": 3.6
+  },
+  "ss": {
+   "cap": "cap_wcs",
+   "mos": "mos_ss",
+   "res": "res_wcs",
+   "temp_C": 125,
+   "vdd": 1.08,
+   "vdda": 3.0
+  },
+  "tt": {
+   "cap": "cap_typ",
+   "mos": "mos_tt",
+   "res": "res_typ",
+   "temp_C": 27,
+   "vdd": 1.2,
+   "vdda": 3.3
+  }
+ },
+ "cpuset": "109-111",
+ "date_utc": "2026-10-20T10:37:35.542412Z",
+ "deck": "sim/tb_isense_step.cir",
+ "deck_sha256": "e649954ff905757a649b2c0656e182122337a342a47f78ae499a84d6c0ec6b48",
+ "disposition": "settling limit 300 ns: ff passed, ss failed, tt passed",
+ "jobs": {
+  "ff": {
+   "log": "r1_isense/dev-step-08/tb_isense_step_ff.log",
+   "rc": 0,
+   "wall_s": 52.1
+  },
+  "ss": {
+   "log": "r1_isense/dev-step-08/tb_isense_step_ss.log",
+   "rc": 0,
+   "wall_s": 54.1
+  },
+  "tt": {
+   "log": "r1_isense/dev-step-08/tb_isense_step_tt.log",
+   "rc": 0,
+   "wall_s": 54.1
+  }
+ },
+ "netlist": "schematic/r1_isense.spice",
+ "netlist_sha256": "2a7772ba1242c9caecd1197759c3c553e9062f7095e4618d8465c66a050d49bd",
+ "overrides": {
+  "VCMIN": "0"
+ },
+ "pdk_commit": "84374023ee8b4b126bebbba67fcbada0a9c0ff0b (checked by flow/run.sh)",
+ "question": "dev",
+ "raw_results": "$G1_RESULTS_ROOT/r1_isense/dev-step-08/",
+ "result": {
+  "ff": {
+   "gain": 13.9881,
+   "offset_uV": 30.3,
+   "settle_worst_ns": 110.8
+  },
+  "ss": {
+   "gain": 13.9579,
+   "offset_uV": 71.0,
+   "settle_worst_ns": 369.7
+  },
+  "tt": {
+   "gain": 13.9844,
+   "offset_uV": 35.6,
+   "settle_worst_ns": 161.2
+  }
+ },
+ "run_id": "dev-step-08",
+ "tool": "ngspice-46 (container banner from 'flow/run.sh ngspice -v', 2026-10-20; batch logs carry no banner)",
+ "wall_s": 54.6
+}

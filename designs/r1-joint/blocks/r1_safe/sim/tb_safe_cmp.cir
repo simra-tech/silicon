@@ -1,0 +1,248 @@
+* r1_safe comparator deck: threshold accuracy vs code (slow triangle on Vod around the ideal threshold), hysteresis,
+* and propagation delay at 10 % overdrive (overdrive = 10 % of the threshold's distance from the zero-current
+* output, in shunt terms). Inputs are ideal differential sense outputs: OUTx = 0.57 V +- Vod/2 (r1_isense CM).
+* Channel a: OC code c (its NEG parked at code 0); channel b: NEG code c (its OC parked at code 63), ramp delayed by 3 us,
+* so no two comparators switch at the same time (simultaneous switching on shared taps: see README open issues).
+* IDEAL REFERENCE SOURCES (this step only): VREF 1.05 V (r1_bgr, buffered), IBIAS 5 uA PTAT per comparator.
+.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerMOSlv.lib @@MOS@@
+.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerMOShv.lib @@MOS@@
+.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerRES.lib @@RES@@
+.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerCAP.lib @@CAP@@
+.temp @@TEMP@@
+.include /work/designs/r1-joint/blocks/r1_safe/schematic/r1_safe.spice
+.option gmin=1e-12 method=trap
+* trap with a 2 ns (thresholds) / 1 ns (delays) maximum step: gear with 10 ns steps aborted at comparator
+* transitions in the full four-comparator block (development runs dev-solver-v1..v9, dev-one-01)
+Vdda vdda 0 dc @@VDDA@@
+Vdd vdd 0 dc @@VDD@@
+Vref vref 0 dc 1.050
+Vcms vcms 0 dc 0.570
+Ioa vdda ibias_oa dc {5u*(@@TEMP@@+273.15)/300.15}
+Ina vdda ibias_na dc {5u*(@@TEMP@@+273.15)/300.15}
+Iob vdda ibias_ob dc {5u*(@@TEMP@@+273.15)/300.15}
+Inb vdda ibias_nb dc {5u*(@@TEMP@@+273.15)/300.15}
+* bias-line capacitance (routing to r1_bgr), 100 fF each
+Cba ibias_oa 0 100f
+Cbb ibias_na 0 100f
+Cbc ibias_ob 0 100f
+Cbd ibias_nb 0 100f
+Vvoda voda 0 dc 0
+Vvodb vodb 0 dc 0
+Eap outa_p vcms voda 0 0.5
+Ean outa_n vcms voda 0 -0.5
+Ebp outb_p vcms vodb 0 0.5
+Ebn outb_n vcms vodb 0 -0.5
+Vhia0 hia0 0 dc 0
+Vhia1 hia1 0 dc 0
+Vhia2 hia2 0 dc 0
+Vhia3 hia3 0 dc 0
+Vhia4 hia4 0 dc 0
+Vhia5 hia5 0 dc 0
+Vloa0 loa0 0 dc 0
+Vloa1 loa1 0 dc 0
+Vloa2 loa2 0 dc 0
+Vloa3 loa3 0 dc 0
+Vloa4 loa4 0 dc 0
+Vloa5 loa5 0 dc 0
+Vhib0 hib0 0 dc 0
+Vhib1 hib1 0 dc 0
+Vhib2 hib2 0 dc 0
+Vhib3 hib3 0 dc 0
+Vhib4 hib4 0 dc 0
+Vhib5 hib5 0 dc 0
+Vlob0 lob0 0 dc 0
+Vlob1 lob1 0 dc 0
+Vlob2 lob2 0 dc 0
+Vlob3 lob3 0 dc 0
+Vlob4 lob4 0 dc 0
+Vlob5 lob5 0 dc 0
+XDUT outa_p outa_n outb_p outb_n vref hia0 hia1 hia2 hia3 hia4 hia5 loa0 loa1 loa2 loa3 loa4 loa5 hib0 hib1 hib2 hib3 hib4 hib5 lob0 lob1 lob2 lob3 lob4 lob5 oc_a neg_a oc_b neg_b ibias_oa ibias_na ibias_ob ibias_nb vdda vdd 0 r1_safe_an
+CLa1 oc_a 0 10f
+CLa2 neg_a 0 10f
+CLb1 oc_b 0 10f
+CLb2 neg_b 0 10f
+.control
+set wr_singlescale
+set wr_vecnames
+alter Vhia0 dc = 0
+alter Vhia1 dc = 0
+alter Vhia2 dc = @@VDD@@
+alter Vhia3 dc = 0
+alter Vhia4 dc = 0
+alter Vhia5 dc = 0
+alter Vloa0 dc = 0
+alter Vloa1 dc = 0
+alter Vloa2 dc = 0
+alter Vloa3 dc = 0
+alter Vloa4 dc = 0
+alter Vloa5 dc = 0
+alter Vhib0 dc = @@VDD@@
+alter Vhib1 dc = @@VDD@@
+alter Vhib2 dc = @@VDD@@
+alter Vhib3 dc = @@VDD@@
+alter Vhib4 dc = @@VDD@@
+alter Vhib5 dc = @@VDD@@
+alter Vlob0 dc = 0
+alter Vlob1 dc = 0
+alter Vlob2 dc = @@VDD@@
+alter Vlob3 dc = 0
+alter Vlob4 dc = 0
+alter Vlob5 dc = 0
+alter Vvoda pwl = [ 0 -0.94167 6e-06 -0.89167 1.2e-05 -0.94167 1.5e-05 -0.94167 ]
+alter Vvodb pwl = [ 0 -0.94167 3e-06 -0.94167 9e-06 -0.89167 1.5e-05 -0.94167 ]
+tran 2n 1.5e-05 0 2n
+wrdata @@OUT@@_thr_c04.txt v(voda) v(vodb) v(oc_a) v(neg_a) v(oc_b) v(neg_b) i(vdda) i(vdd)
+alter Vhia0 dc = 0
+alter Vhia1 dc = 0
+alter Vhia2 dc = @@VDD@@
+alter Vhia3 dc = 0
+alter Vhia4 dc = @@VDD@@
+alter Vhia5 dc = 0
+alter Vloa0 dc = 0
+alter Vloa1 dc = 0
+alter Vloa2 dc = 0
+alter Vloa3 dc = 0
+alter Vloa4 dc = 0
+alter Vloa5 dc = 0
+alter Vhib0 dc = @@VDD@@
+alter Vhib1 dc = @@VDD@@
+alter Vhib2 dc = @@VDD@@
+alter Vhib3 dc = @@VDD@@
+alter Vhib4 dc = @@VDD@@
+alter Vhib5 dc = @@VDD@@
+alter Vlob0 dc = 0
+alter Vlob1 dc = 0
+alter Vlob2 dc = @@VDD@@
+alter Vlob3 dc = 0
+alter Vlob4 dc = @@VDD@@
+alter Vlob5 dc = 0
+alter Vvoda pwl = [ 0 -0.40833 6e-06 -0.35833 1.2e-05 -0.40833 1.5e-05 -0.40833 ]
+alter Vvodb pwl = [ 0 -0.40833 3e-06 -0.40833 9e-06 -0.35833 1.5e-05 -0.40833 ]
+tran 2n 1.5e-05 0 2n
+wrdata @@OUT@@_thr_c20.txt v(voda) v(vodb) v(oc_a) v(neg_a) v(oc_b) v(neg_b) i(vdda) i(vdd)
+alter Vhia0 dc = 0
+alter Vhia1 dc = 0
+alter Vhia2 dc = 0
+alter Vhia3 dc = 0
+alter Vhia4 dc = 0
+alter Vhia5 dc = @@VDD@@
+alter Vloa0 dc = 0
+alter Vloa1 dc = 0
+alter Vloa2 dc = 0
+alter Vloa3 dc = 0
+alter Vloa4 dc = 0
+alter Vloa5 dc = 0
+alter Vhib0 dc = @@VDD@@
+alter Vhib1 dc = @@VDD@@
+alter Vhib2 dc = @@VDD@@
+alter Vhib3 dc = @@VDD@@
+alter Vhib4 dc = @@VDD@@
+alter Vhib5 dc = @@VDD@@
+alter Vlob0 dc = 0
+alter Vlob1 dc = 0
+alter Vlob2 dc = 0
+alter Vlob3 dc = 0
+alter Vlob4 dc = 0
+alter Vlob5 dc = @@VDD@@
+alter Vvoda pwl = [ 0 -0.00833 6e-06 0.04167 1.2e-05 -0.00833 1.5e-05 -0.00833 ]
+alter Vvodb pwl = [ 0 -0.00833 3e-06 -0.00833 9e-06 0.04167 1.5e-05 -0.00833 ]
+tran 2n 1.5e-05 0 2n
+wrdata @@OUT@@_thr_c32.txt v(voda) v(vodb) v(oc_a) v(neg_a) v(oc_b) v(neg_b) i(vdda) i(vdd)
+alter Vhia0 dc = 0
+alter Vhia1 dc = 0
+alter Vhia2 dc = @@VDD@@
+alter Vhia3 dc = @@VDD@@
+alter Vhia4 dc = 0
+alter Vhia5 dc = @@VDD@@
+alter Vloa0 dc = 0
+alter Vloa1 dc = 0
+alter Vloa2 dc = 0
+alter Vloa3 dc = 0
+alter Vloa4 dc = 0
+alter Vloa5 dc = 0
+alter Vhib0 dc = @@VDD@@
+alter Vhib1 dc = @@VDD@@
+alter Vhib2 dc = @@VDD@@
+alter Vhib3 dc = @@VDD@@
+alter Vhib4 dc = @@VDD@@
+alter Vhib5 dc = @@VDD@@
+alter Vlob0 dc = 0
+alter Vlob1 dc = 0
+alter Vlob2 dc = @@VDD@@
+alter Vlob3 dc = @@VDD@@
+alter Vlob4 dc = 0
+alter Vlob5 dc = @@VDD@@
+alter Vvoda pwl = [ 0 0.39167 6e-06 0.44167 1.2e-05 0.39167 1.5e-05 0.39167 ]
+alter Vvodb pwl = [ 0 0.39167 3e-06 0.39167 9e-06 0.44167 1.5e-05 0.39167 ]
+tran 2n 1.5e-05 0 2n
+wrdata @@OUT@@_thr_c44.txt v(voda) v(vodb) v(oc_a) v(neg_a) v(oc_b) v(neg_b) i(vdda) i(vdd)
+alter Vhia0 dc = @@VDD@@
+alter Vhia1 dc = @@VDD@@
+alter Vhia2 dc = 0
+alter Vhia3 dc = @@VDD@@
+alter Vhia4 dc = @@VDD@@
+alter Vhia5 dc = @@VDD@@
+alter Vloa0 dc = 0
+alter Vloa1 dc = 0
+alter Vloa2 dc = 0
+alter Vloa3 dc = 0
+alter Vloa4 dc = 0
+alter Vloa5 dc = 0
+alter Vhib0 dc = @@VDD@@
+alter Vhib1 dc = @@VDD@@
+alter Vhib2 dc = @@VDD@@
+alter Vhib3 dc = @@VDD@@
+alter Vhib4 dc = @@VDD@@
+alter Vhib5 dc = @@VDD@@
+alter Vlob0 dc = @@VDD@@
+alter Vlob1 dc = @@VDD@@
+alter Vlob2 dc = 0
+alter Vlob3 dc = @@VDD@@
+alter Vlob4 dc = @@VDD@@
+alter Vlob5 dc = @@VDD@@
+alter Vvoda pwl = [ 0 0.89167 6e-06 0.94167 1.2e-05 0.89167 1.5e-05 0.89167 ]
+alter Vvodb pwl = [ 0 0.89167 3e-06 0.89167 9e-06 0.94167 1.5e-05 0.89167 ]
+tran 2n 1.5e-05 0 2n
+wrdata @@OUT@@_thr_c59.txt v(voda) v(vodb) v(oc_a) v(neg_a) v(oc_b) v(neg_b) i(vdda) i(vdd)
+alter Vhia0 dc = @@VDD@@
+alter Vhia1 dc = @@VDD@@
+alter Vhia2 dc = @@VDD@@
+alter Vhia3 dc = 0
+alter Vhia4 dc = @@VDD@@
+alter Vhia5 dc = @@VDD@@
+alter Vloa0 dc = @@VDD@@
+alter Vloa1 dc = @@VDD@@
+alter Vloa2 dc = @@VDD@@
+alter Vloa3 dc = 0
+alter Vloa4 dc = @@VDD@@
+alter Vloa5 dc = @@VDD@@
+alter Vhib0 dc = @@VDD@@
+alter Vhib1 dc = @@VDD@@
+alter Vhib2 dc = @@VDD@@
+alter Vhib3 dc = 0
+alter Vhib4 dc = @@VDD@@
+alter Vhib5 dc = @@VDD@@
+alter Vlob0 dc = @@VDD@@
+alter Vlob1 dc = @@VDD@@
+alter Vlob2 dc = @@VDD@@
+alter Vlob3 dc = 0
+alter Vlob4 dc = @@VDD@@
+alter Vlob5 dc = @@VDD@@
+alter Vloa0 dc = 0
+alter Vloa1 dc = 0
+alter Vloa2 dc = 0
+alter Vloa3 dc = @@VDD@@
+alter Vloa4 dc = 0
+alter Vloa5 dc = 0
+alter Vlob0 dc = 0
+alter Vlob1 dc = 0
+alter Vlob2 dc = 0
+alter Vlob3 dc = @@VDD@@
+alter Vlob4 dc = 0
+alter Vlob5 dc = 0
+alter Vvoda pwl = [ 0 -0.56538 2e-06 -0.56538 2.001e-06 0.91821 5e-06 0.91821 5.001e-06 -0.56538 8e-06 -0.56538 8.001e-06 -0.80513 1.1e-05 -0.80513 1.1001e-05 -0.56538 1.4e-05 -0.56538 ]
+alter Vvodb pwl = [ 0 0.75000 3e-06 0.75000 3.001e-06 0.81667 6e-06 0.81667 6.001e-06 0.75000 9e-06 0.75000 9.001e-06 -0.75000 1.2e-05 -0.75000 1.2001e-05 -0.81667 1.4e-05 -0.81667 ]
+tran 1n 14u 0 1n
+wrdata @@OUT@@_delay.txt v(voda) v(vodb) v(oc_a) v(neg_a) v(oc_b) v(neg_b) i(vdda) i(vdd)
+.endc
+.end

@@ -1,0 +1,187 @@
+{
+ "block": "r1_isense",
+ "command": "python3 sim/run_deck.py --block r1_isense --deck tb_isense_noise.cir --run-id isense-noise-20261020-r1 --corners tt,ss,ff,ss_cold,ff_hot --jobs 1 --set VH=0.93 --analyze analyze_noise.py --question Closed-loop bandwidth (>= 1 MHz), peaking, input noise density and 10 kHz-5 MHz total, CM and supply rejection at 5 corners",
+ "container_image": "tapeoutbench-eda:latest sha256:ddeb6957... (checked by flow/run.sh)",
+ "corners": {
+  "ff": {
+   "cap": "cap_bcs",
+   "mos": "mos_ff",
+   "res": "res_bcs",
+   "temp_C": -40,
+   "vdd": 1.32,
+   "vdda": 3.6
+  },
+  "ff_hot": {
+   "cap": "cap_bcs",
+   "mos": "mos_ff",
+   "res": "res_bcs",
+   "temp_C": 125,
+   "vdd": 1.32,
+   "vdda": 3.6
+  },
+  "ss": {
+   "cap": "cap_wcs",
+   "mos": "mos_ss",
+   "res": "res_wcs",
+   "temp_C": 125,
+   "vdd": 1.08,
+   "vdda": 3.0
+  },
+  "ss_cold": {
+   "cap": "cap_wcs",
+   "mos": "mos_ss",
+   "res": "res_wcs",
+   "temp_C": -40,
+   "vdd": 1.08,
+   "vdda": 3.0
+  },
+  "tt": {
+   "cap": "cap_typ",
+   "mos": "mos_tt",
+   "res": "res_typ",
+   "temp_C": 27,
+   "vdd": 1.2,
+   "vdda": 3.3
+  }
+ },
+ "cpuset": "111",
+ "date_utc": "2026-10-20T11:05:08.289802Z",
+ "deck": "sim/tb_isense_noise.cir",
+ "deck_sha256": "98a4b2426b9b67b4a0ec869670976536f9da0905048749665221ff59f22fb889",
+ "disposition": "bandwidth >= 1 MHz: ff passed, ff_hot passed, ss passed, ss_cold passed, tt passed",
+ "jobs": {
+  "ff": {
+   "log": "r1_isense/isense-noise-20261020-r1/tb_isense_noise_ff.log",
+   "rc": 0,
+   "wall_s": 10.0
+  },
+  "ff_hot": {
+   "log": "r1_isense/isense-noise-20261020-r1/tb_isense_noise_ff_hot.log",
+   "rc": 0,
+   "wall_s": 10.0
+  },
+  "ss": {
+   "log": "r1_isense/isense-noise-20261020-r1/tb_isense_noise_ss.log",
+   "rc": 0,
+   "wall_s": 10.0
+  },
+  "ss_cold": {
+   "log": "r1_isense/isense-noise-20261020-r1/tb_isense_noise_ss_cold.log",
+   "rc": 0,
+   "wall_s": 10.0
+  },
+  "tt": {
+   "log": "r1_isense/isense-noise-20261020-r1/tb_isense_noise_tt.log",
+   "rc": 0,
+   "wall_s": 8.0
+  }
+ },
+ "netlist": "schematic/r1_isense.spice",
+ "netlist_sha256": "5db34e0a8f7c54abbc4d4b547462129dd862404f205e2c3472fb4095b93faf8b",
+ "overrides": {
+  "VH": "0.93"
+ },
+ "pdk_commit": "84374023ee8b4b126bebbba67fcbada0a9c0ff0b (checked by flow/run.sh)",
+ "question": "Closed-loop bandwidth (>= 1 MHz), peaking, input noise density and 10 kHz-5 MHz total, CM and supply rejection at 5 corners",
+ "raw_results": "$G1_RESULTS_ROOT/r1_isense/isense-noise-20261020-r1/",
+ "result": {
+  "ff": {
+   "cm_to_diff_dB_1M": -81.1662,
+   "cm_to_diff_dB_1k": -81.1571,
+   "corner_Hz_sqrt2_of_1MHz": 63095.7344,
+   "f3dB_Hz": 15182600.0,
+   "gain_1k_dB": 22.9261,
+   "in_nV_rtHz_at_1000": 221.29519,
+   "in_nV_rtHz_at_10000": 69.653279,
+   "in_nV_rtHz_at_100000": 31.1800822,
+   "in_nV_rtHz_at_1e+06": 24.9368597,
+   "inoise_total_10k_5M_V": 5.33993e-05,
+   "onoise_total_10k_5M_V": 0.000738612,
+   "peaking_dB": 0.0,
+   "vdd_to_diff_dB_1M": -96.8394,
+   "vdd_to_diff_dB_1k": -126.679,
+   "vdda_to_diff_dB_1M": -84.7232,
+   "vdda_to_diff_dB_1k": -84.7189,
+   "vod_at_40mV": 0.5622
+  },
+  "ff_hot": {
+   "cm_to_diff_dB_1M": -73.9565,
+   "cm_to_diff_dB_1k": -73.9442,
+   "corner_Hz_sqrt2_of_1MHz": 70794.5784,
+   "f3dB_Hz": 12584100.0,
+   "gain_1k_dB": 22.9267,
+   "in_nV_rtHz_at_1000": 338.60853799999995,
+   "in_nV_rtHz_at_10000": 105.44581000000001,
+   "in_nV_rtHz_at_100000": 45.614250500000004,
+   "in_nV_rtHz_at_1e+06": 35.6326972,
+   "inoise_total_10k_5M_V": 7.64887e-05,
+   "onoise_total_10k_5M_V": 0.00105155,
+   "peaking_dB": 0.0,
+   "vdd_to_diff_dB_1M": -95.6823,
+   "vdd_to_diff_dB_1k": -117.99,
+   "vdda_to_diff_dB_1M": -75.8804,
+   "vdda_to_diff_dB_1k": -75.9051,
+   "vod_at_40mV": 0.58546
+  },
+  "ss": {
+   "cm_to_diff_dB_1M": -69.3706,
+   "cm_to_diff_dB_1k": -69.3403,
+   "corner_Hz_sqrt2_of_1MHz": 70794.5784,
+   "f3dB_Hz": 9103160.0,
+   "gain_1k_dB": 22.9313,
+   "in_nV_rtHz_at_1000": 358.85531000000003,
+   "in_nV_rtHz_at_10000": 111.750671,
+   "in_nV_rtHz_at_100000": 48.0481687,
+   "in_nV_rtHz_at_1e+06": 37.3233173,
+   "inoise_total_10k_5M_V": 8.02908e-05,
+   "onoise_total_10k_5M_V": 0.00108561,
+   "peaking_dB": 0.0,
+   "vdd_to_diff_dB_1M": -83.4368,
+   "vdd_to_diff_dB_1k": -115.684,
+   "vdda_to_diff_dB_1M": -71.6335,
+   "vdda_to_diff_dB_1k": -71.6255,
+   "vod_at_40mV": 0.579114
+  },
+  "ss_cold": {
+   "cm_to_diff_dB_1M": -76.38,
+   "cm_to_diff_dB_1k": -76.3552,
+   "corner_Hz_sqrt2_of_1MHz": 63095.7344,
+   "f3dB_Hz": 10438000.0,
+   "gain_1k_dB": 22.9271,
+   "in_nV_rtHz_at_1000": 237.35408500000003,
+   "in_nV_rtHz_at_10000": 74.7632229,
+   "in_nV_rtHz_at_100000": 33.3990757,
+   "in_nV_rtHz_at_1e+06": 26.655607800000002,
+   "inoise_total_10k_5M_V": 5.71772e-05,
+   "onoise_total_10k_5M_V": 0.000779067,
+   "peaking_dB": 0.0,
+   "vdd_to_diff_dB_1M": -87.8021,
+   "vdd_to_diff_dB_1k": -121.822,
+   "vdda_to_diff_dB_1M": -79.3046,
+   "vdda_to_diff_dB_1k": -79.2758,
+   "vod_at_40mV": 0.556222
+  },
+  "tt": {
+   "cm_to_diff_dB_1M": -75.545,
+   "cm_to_diff_dB_1k": -75.5303,
+   "corner_Hz_sqrt2_of_1MHz": 70794.5784,
+   "f3dB_Hz": 12045000.0,
+   "gain_1k_dB": 22.9281,
+   "in_nV_rtHz_at_1000": 278.132909,
+   "in_nV_rtHz_at_10000": 87.19681369999999,
+   "in_nV_rtHz_at_100000": 38.2128128,
+   "in_nV_rtHz_at_1e+06": 30.0778211,
+   "inoise_total_10k_5M_V": 6.45346e-05,
+   "onoise_total_10k_5M_V": 0.000885651,
+   "peaking_dB": 0.0,
+   "vdd_to_diff_dB_1M": -92.1504,
+   "vdd_to_diff_dB_1k": -124.352,
+   "vdda_to_diff_dB_1M": -78.3513,
+   "vdda_to_diff_dB_1k": -78.3503,
+   "vod_at_40mV": 0.567537
+  }
+ },
+ "run_id": "isense-noise-20261020-r1",
+ "tool": "ngspice-46 (container banner from 'flow/run.sh ngspice -v', 2026-10-20; batch logs carry no banner)",
+ "wall_s": 48.1
+}

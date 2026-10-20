@@ -1,0 +1,123 @@
+{
+ "block": "r1_safe",
+ "command": "python3 sim/run_deck.py --block r1_safe --deck tb_safe_dcmc.cir --run-id safe-dcmc-20261020-r2 --corners tt_mm_s1,tt_mm_s2,tt_mm_s3 --set N=17 --analyze analyze_dcmc.py --question DC mismatch MC of r1_safe_cmp (revision 2, degenerated pairs), 51 samples, tt 27 C, thresholds +16.7/+916.7/-916.7 mV Vod: threshold (hysteresis centre) error and hysteresis",
+ "container_image": "tapeoutbench-eda:latest sha256:ddeb6957... (checked by flow/run.sh)",
+ "corners": {
+  "tt_mm_s1": {
+   "cap": "cap_typ_mismatch",
+   "mos": "mos_tt_mismatch",
+   "res": "res_typ_mismatch",
+   "temp_C": 27,
+   "vdd": 1.2,
+   "vdda": 3.3
+  },
+  "tt_mm_s2": {
+   "cap": "cap_typ_mismatch",
+   "mos": "mos_tt_mismatch",
+   "res": "res_typ_mismatch",
+   "temp_C": 27,
+   "vdd": 1.2,
+   "vdda": 3.3
+  },
+  "tt_mm_s3": {
+   "cap": "cap_typ_mismatch",
+   "mos": "mos_tt_mismatch",
+   "res": "res_typ_mismatch",
+   "temp_C": 27,
+   "vdd": 1.2,
+   "vdda": 3.3
+  }
+ },
+ "cpuset": "109-111",
+ "date_utc": "2026-10-20T13:41:54.703433Z",
+ "deck": "sim/tb_safe_dcmc.cir",
+ "deck_sha256": "52d6514d50d673e6f6ec801cbc87d6d7f26a0b5fd5b31c2654b8873300fc1665",
+ "disposition": "failed: max |centre error| 79.5 mV (2.38 LSB), sigma 32.1 mV, 153 points, 0 missing (no crossing within +-150 mV)",
+ "jobs": {
+  "tt_mm_s1": {
+   "log": "r1_safe/safe-dcmc-20261020-r2/tb_safe_dcmc_tt_mm_s1.log",
+   "rc": 0,
+   "wall_s": 88.1
+  },
+  "tt_mm_s2": {
+   "log": "r1_safe/safe-dcmc-20261020-r2/tb_safe_dcmc_tt_mm_s2.log",
+   "rc": 0,
+   "wall_s": 90.1
+  },
+  "tt_mm_s3": {
+   "log": "r1_safe/safe-dcmc-20261020-r2/tb_safe_dcmc_tt_mm_s3.log",
+   "rc": 0,
+   "wall_s": 90.1
+  }
+ },
+ "netlist": "schematic/r1_safe.spice",
+ "netlist_sha256": "63ac3d0b7961c150c6681b2ca8606083401c4b00754a57e3cab9ce31979071a8",
+ "overrides": {
+  "N": "17"
+ },
+ "pdk_commit": "84374023ee8b4b126bebbba67fcbada0a9c0ff0b (checked by flow/run.sh)",
+ "question": "DC mismatch MC of r1_safe_cmp (revision 2, degenerated pairs), 51 samples, tt 27 C, thresholds +16.7/+916.7/-916.7 mV Vod: threshold (hysteresis centre) error and hysteresis",
+ "raw_results": "$G1_RESULTS_ROOT/r1_safe/safe-dcmc-20261020-r2/",
+ "result": {
+  "+0.0167": {
+   "centre_err_mV": {
+    "max": 79.5,
+    "mean": 4.524509803921568,
+    "min": -66.25,
+    "n": 51,
+    "sigma": 35.04392394056158
+   },
+   "hyst_mV": {
+    "max": 9.999999999999998,
+    "mean": 8.941176470588236,
+    "min": 7.999999999999993,
+    "n": 51,
+    "sigma": 0.4814913395219094
+   },
+   "max_abs_centre_LSB": 2.385,
+   "missing": 0,
+   "samples": 51
+  },
+  "+0.9167": {
+   "centre_err_mV": {
+    "max": 70.25150000000002,
+    "mean": 2.658362745098037,
+    "min": -62.99850000000007,
+    "n": 51,
+    "sigma": 30.303770909477635
+   },
+   "hyst_mV": {
+    "max": 9.997000000000034,
+    "mean": 9.04601960784313,
+    "min": 7.997000000000032,
+    "n": 51,
+    "sigma": 0.45648810693422703
+   },
+   "max_abs_centre_LSB": 2.1075450000000004,
+   "missing": 0,
+   "samples": 51
+  },
+  "-0.9167": {
+   "centre_err_mV": {
+    "max": 62.748499999999986,
+    "mean": 7.67987254901962,
+    "min": -46.2515,
+    "n": 51,
+    "sigma": 30.623307413465948
+   },
+   "hyst_mV": {
+    "max": 10.496999999999979,
+    "mean": 9.134254901960777,
+    "min": 7.996999999999921,
+    "n": 51,
+    "sigma": 0.4545891419360674
+   },
+   "max_abs_centre_LSB": 1.8824549999999995,
+   "missing": 0,
+   "samples": 51
+  }
+ },
+ "run_id": "safe-dcmc-20261020-r2",
+ "tool": "ngspice-46 (container banner from flow/run.sh ngspice -v; batch logs carry no banner)",
+ "wall_s": 90.1
+}

@@ -1,0 +1,120 @@
+{
+ "block": "r1_isense",
+ "command": "python3 sim/run_deck.py --block r1_isense --deck tb_isense_step.cir --run-id dev-step-12 --corners tt,ss,ff --set VCMIN=0 --analyze analyze_step.py --question dev",
+ "container_image": "tapeoutbench-eda:latest sha256:ddeb6957... (checked by flow/run.sh)",
+ "corners": {
+  "ff": {
+   "cap": "cap_bcs",
+   "mos": "mos_ff",
+   "res": "res_bcs",
+   "temp_C": -40,
+   "vdd": 1.32,
+   "vdda": 3.6
+  },
+  "ss": {
+   "cap": "cap_wcs",
+   "mos": "mos_ss",
+   "res": "res_wcs",
+   "temp_C": 125,
+   "vdd": 1.08,
+   "vdda": 3.0
+  },
+  "tt": {
+   "cap": "cap_typ",
+   "mos": "mos_tt",
+   "res": "res_typ",
+   "temp_C": 27,
+   "vdd": 1.2,
+   "vdda": 3.3
+  }
+ },
+ "cpuset": "109-111",
+ "date_utc": "2026-10-20T10:53:27.801493Z",
+ "deck": "sim/tb_isense_step.cir",
+ "deck_sha256": "05e9e44597f791969239534af8e4bc8b78746bd39cd710ff762009a0937b9654",
+ "disposition": "settling limit 300 ns: ff failed, ss failed, tt failed",
+ "jobs": {
+  "ff": {
+   "log": "r1_isense/dev-step-12/tb_isense_step_ff.log",
+   "rc": 0,
+   "wall_s": 84.1
+  },
+  "ss": {
+   "log": "r1_isense/dev-step-12/tb_isense_step_ss.log",
+   "rc": 0,
+   "wall_s": 78.1
+  },
+  "tt": {
+   "log": "r1_isense/dev-step-12/tb_isense_step_tt.log",
+   "rc": 0,
+   "wall_s": 84.1
+  }
+ },
+ "netlist": "schematic/r1_isense.spice",
+ "netlist_sha256": "290cb2d3c946c8791152d5f34eccc297b692166dcec7472e6a7c9e56129d4bed",
+ "overrides": {
+  "VCMIN": "0"
+ },
+ "pdk_commit": "84374023ee8b4b126bebbba67fcbada0a9c0ff0b (checked by flow/run.sh)",
+ "question": "dev",
+ "raw_results": "$G1_RESULTS_ROOT/r1_isense/dev-step-12/",
+ "result": {
+  "ff": {
+   "az_release_recovery_ns": 43.3,
+   "cm_ripple_pp_mV": 0.519,
+   "idd_uA": 349.0,
+   "idda_uA": 142.6,
+   "output_node_range_V": [
+    0.0123,
+    1.3084
+   ],
+   "overload_recovery_ns": {
+    "from_+200mV": 334.1,
+    "from_-200mV": 307.5
+   },
+   "overshoot_max_pct": 1.35,
+   "settle_100mV_edges_worst_ns": 412.3,
+   "settle_20mV_edge_ns": 753.2,
+   "vcm_out_V": 0.4435
+  },
+  "ss": {
+   "az_release_recovery_ns": 98.2,
+   "cm_ripple_pp_mV": 0.009,
+   "idd_uA": 516.6,
+   "idda_uA": 212.9,
+   "output_node_range_V": [
+    0.0434,
+    1.0742
+   ],
+   "overload_recovery_ns": {
+    "from_+200mV": 212.7,
+    "from_-200mV": 185.8
+   },
+   "overshoot_max_pct": 0.0,
+   "settle_100mV_edges_worst_ns": 378.9,
+   "settle_20mV_edge_ns": 635.7,
+   "vcm_out_V": 0.5125
+  },
+  "tt": {
+   "az_release_recovery_ns": 63.3,
+   "cm_ripple_pp_mV": 0.074,
+   "idd_uA": 416.3,
+   "idda_uA": 170.2,
+   "output_node_range_V": [
+    0.021,
+    1.1917
+   ],
+   "overload_recovery_ns": {
+    "from_+200mV": 220.6,
+    "from_-200mV": 185.3
+   },
+   "overshoot_max_pct": 0.0,
+   "settle_100mV_edges_worst_ns": 383.2,
+   "settle_20mV_edge_ns": 703.3,
+   "vcm_out_V": 0.4691
+  }
+ },
+ "run_id": "dev-step-12",
+ "tool": "ngspice-46 (container banner from 'flow/run.sh ngspice -v', 2026-10-20; batch logs carry no banner)",
+ "wall_s": 85.6
+}

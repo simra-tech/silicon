@@ -1,0 +1,52 @@
+* r1_isense mismatch Monte Carlo (mm_ok=1 on every device; MOS lv/hv, rppd/rhigh and cmim mismatch sections).
+* Per sample, one transient:
+*   0-1.5 us   normal mode before any AZ (hold caps at their DC value): raw offset, read at 1.4 us
+*   1.5-3.55 us auto-zero (azh falls at 3.5 us, az at 3.55 us)
+*   VREF = 0 (pedestal off), Vin = 0: residual offset after AZ, read at 5.9 us
+*   6 us: VREF -> 1.05 V: pedestal, read at 7.4 us;  7.5 us: Vin -> 60 mV: gain, read at 8.9 us
+* Offsets are input-referred (Vod / measured gain). Ideal sources (marked) as in the other decks.
+.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerMOSlv.lib @@MOS@@
+.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerMOShv.lib @@MOS@@
+.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerRES.lib @@RES@@
+.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerCAP.lib @@CAP@@
+.temp @@TEMP@@
+.include /work/designs/r1-joint/blocks/r1_isense/schematic/r1_isense.spice
+.option gmin=1e-12 method=gear reltol=1e-4 abstol=1e-12 vntol=1e-7
+Vdda vdda 0 dc @@VDDA@@
+Vdd vdd 0 dc @@VDD@@
+* IDEAL REFERENCE SOURCES (this step only)
+Vref vref 0 pwl(0 0 6u 0 6.001u 1.05)
+Vcm vcm 0 dc 0.6
+Ibias vdda ibias dc {5u*(@@TEMP@@+273.15)/300.15}
+Vaz az 0 pwl(0 0 1.5u 0 1.501u @@VDD@@ 3.55u @@VDD@@ 3.551u 0)
+Vazh azh 0 pwl(0 0 1.5u 0 1.501u @@VDD@@ 3.5u @@VDD@@ 3.501u 0)
+Vcmi isn 0 dc 0
+Vin isp isn pwl(0 0 7.5u 0 7.501u 0.06)
+XDUT isp isn outp outn vref vcm ibias az azh vdda vdd 0 r1_isense_ch
+CLP outp 0 2p
+CLN outn 0 2p
+.control
+setseed @@SEED@@
+set wr_singlescale
+set wr_vecnames
+let n = @@N@@
+let i = 0
+while i < n
+  reset
+  tran 2n 9u 0 2n
+  let vod = v(outp) - v(outn)
+  meas tran vraw find vod at=1.4u
+  meas tran vres find vod at=5.9u
+  meas tran vped find vod at=7.4u
+  meas tran v60 find vod at=8.9u
+  let g = (v60 - vped)/0.06
+  let raw_uv = vraw/g*1e6
+  let res_uv = vres/g*1e6
+  let ped_mv = -vped/g*1e3
+  set idx = $&i
+  wrdata @@OUT@@_mc_$idx v(outp) v(outn) v(xdut.h1) v(xdut.h2) v(xdut.x1a) v(xdut.x1b) v(xdut.sa) v(xdut.sb)
+  echo "MC" $&i "seed=@@SEED@@ raw_uV=" $&raw_uv " res_uV=" $&res_uv " ped_mV=" $&ped_mv " gain=" $&g
+  let i = i + 1
+end
+.endc
+.end

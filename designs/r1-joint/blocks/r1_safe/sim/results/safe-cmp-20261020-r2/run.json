@@ -1,0 +1,139 @@
+{
+ "block": "r1_safe",
+ "command": "python3 sim/run_deck.py --block r1_safe --deck tb_safe_cmp.cir --run-id safe-cmp-20261020-r2 --corners tt,ss,ff --analyze analyze_cmp.py --question Revision 2: trip/release vs code (4,20,32,44,59) for OC and NEG, hysteresis, delay at 10 % overdrive and at 1 LSB, full four-comparator block, 3 corners",
+ "container_image": "tapeoutbench-eda:latest sha256:ddeb6957... (checked by flow/run.sh)",
+ "corners": {
+  "ff": {
+   "cap": "cap_bcs",
+   "mos": "mos_ff",
+   "res": "res_bcs",
+   "temp_C": -40,
+   "vdd": 1.32,
+   "vdda": 3.6
+  },
+  "ss": {
+   "cap": "cap_wcs",
+   "mos": "mos_ss",
+   "res": "res_wcs",
+   "temp_C": 125,
+   "vdd": 1.08,
+   "vdda": 3.0
+  },
+  "tt": {
+   "cap": "cap_typ",
+   "mos": "mos_tt",
+   "res": "res_typ",
+   "temp_C": 27,
+   "vdd": 1.2,
+   "vdda": 3.3
+  }
+ },
+ "cpuset": "109-111",
+ "date_utc": "2026-10-20T14:18:53.835681Z",
+ "deck": "sim/tb_safe_cmp.cir",
+ "deck_sha256": "74e74570269e862bf4df20c8864627eefcb803cac933fac655114fa5fe93d816",
+ "disposition": "ff: thr passed, delay passed; ss: thr passed, delay passed; tt: thr passed, delay passed",
+ "jobs": {
+  "ff": {
+   "log": "r1_safe/safe-cmp-20261020-r2/tb_safe_cmp_ff.log",
+   "rc": 0,
+   "wall_s": 2068.1
+  },
+  "ss": {
+   "log": "r1_safe/safe-cmp-20261020-r2/tb_safe_cmp_ss.log",
+   "rc": 0,
+   "wall_s": 1767.8
+  },
+  "tt": {
+   "log": "r1_safe/safe-cmp-20261020-r2/tb_safe_cmp_tt.log",
+   "rc": 0,
+   "wall_s": 1789.8
+  }
+ },
+ "netlist": "schematic/r1_safe.spice",
+ "netlist_sha256": "63ac3d0b7961c150c6681b2ca8606083401c4b00754a57e3cab9ce31979071a8",
+ "overrides": {},
+ "pdk_commit": "84374023ee8b4b126bebbba67fcbada0a9c0ff0b (checked by flow/run.sh)",
+ "question": "Revision 2: trip/release vs code (4,20,32,44,59) for OC and NEG, hysteresis, delay at 10 % overdrive and at 1 LSB, full four-comparator block, 3 corners",
+ "raw_results": "$G1_RESULTS_ROOT/r1_safe/safe-cmp-20261020-r2/",
+ "result": {
+  "ff": {
+   "delays": {
+    "neg_release_10pct_ns": 12.05308800601937,
+    "neg_trip_10pct_ns": 71.08025775657143,
+    "neg_trip_1LSB_ns": 43.07998910841662,
+    "oc_release_10pct_ns": 7.021305561333593,
+    "oc_release_1LSB_ns": 51.05215594131916,
+    "oc_trip_10pct_ns": 26.080358634938605,
+    "oc_trip_1LSB_ns": 43.07995647310664
+   },
+   "hyst_mV_vod_range": [
+    8.883782881939394,
+    9.018119180854821
+   ],
+   "idd_uA_total": 0.0020582193682,
+   "idda_uA_total": 341.32196312,
+   "max_abs_centre_err_LSB": 0.004663791608952028,
+   "max_abs_centre_err_mV_vod": 0.15545972029840094,
+   "max_abs_trip_err_LSB": 0.13641158768165185,
+   "max_abs_trip_err_mV_vod": 4.547052922721728,
+   "max_abs_trip_err_uV_shunt": 324.78949448012344,
+   "n_expected": 10,
+   "n_points": 10,
+   "parked_comparators_quiet": true
+  },
+  "ss": {
+   "delays": {
+    "neg_release_10pct_ns": 10.99992277348075,
+    "neg_trip_10pct_ns": 178.1050609361342,
+    "neg_trip_1LSB_ns": 95.11413133543168,
+    "oc_release_10pct_ns": 7.108121910627786,
+    "oc_release_1LSB_ns": 40.745786590348246,
+    "oc_trip_10pct_ns": 39.057919054169986,
+    "oc_trip_1LSB_ns": 95.11410536731242
+   },
+   "hyst_mV_vod_range": [
+    14.083984191024857,
+    14.633599482725135
+   ],
+   "idd_uA_total": 0.011268098266000002,
+   "idda_uA_total": 358.04736400000024,
+   "max_abs_centre_err_LSB": 0.3082971945073898,
+   "max_abs_centre_err_mV_vod": 10.276573150246326,
+   "max_abs_trip_err_LSB": 0.5231164524659692,
+   "max_abs_trip_err_mV_vod": 17.437215082198975,
+   "max_abs_trip_err_uV_shunt": 1245.5153630142124,
+   "n_expected": 10,
+   "n_points": 10,
+   "parked_comparators_quiet": true
+  },
+  "tt": {
+   "delays": {
+    "neg_release_10pct_ns": 13.057037827087688,
+    "neg_trip_10pct_ns": 90.0960685201764,
+    "neg_trip_1LSB_ns": 54.09528742837547,
+    "oc_release_10pct_ns": 7.334021647241991,
+    "oc_release_1LSB_ns": 57.99963447909566,
+    "oc_trip_10pct_ns": 29.095160565658006,
+    "oc_trip_1LSB_ns": 54.09528651354219
+   },
+   "hyst_mV_vod_range": [
+    11.30048940595929,
+    11.454595781989042
+   ],
+   "idd_uA_total": 0.0017878578958000005,
+   "idda_uA_total": 398.43264900000014,
+   "max_abs_centre_err_LSB": 0.04737221753339682,
+   "max_abs_centre_err_mV_vod": 1.579073917779894,
+   "max_abs_trip_err_LSB": 0.21919115426323407,
+   "max_abs_trip_err_mV_vod": 7.30637180877447,
+   "max_abs_trip_err_uV_shunt": 521.8837006267478,
+   "n_expected": 10,
+   "n_points": 10,
+   "parked_comparators_quiet": true
+  }
+ },
+ "run_id": "safe-cmp-20261020-r2",
+ "tool": "ngspice-46 (container banner from flow/run.sh ngspice -v; batch logs carry no banner)",
+ "wall_s": 2068.9
+}

@@ -1,0 +1,57 @@
+{
+ "block": "r1_isense",
+ "command": "python3 sim/run_deck.py --block r1_isense --deck tb_isense_step.cir --run-id dev-step-10 --corners tt --set VCMIN=0 --analyze analyze_step.py --question dev",
+ "container_image": "tapeoutbench-eda:latest sha256:ddeb6957... (checked by flow/run.sh)",
+ "corners": {
+  "tt": {
+   "cap": "cap_typ",
+   "mos": "mos_tt",
+   "res": "res_typ",
+   "temp_C": 27,
+   "vdd": 1.2,
+   "vdda": 3.3
+  }
+ },
+ "cpuset": "111",
+ "date_utc": "2026-10-20T10:44:56.320219Z",
+ "deck": "sim/tb_isense_step.cir",
+ "deck_sha256": "05e9e44597f791969239534af8e4bc8b78746bd39cd710ff762009a0937b9654",
+ "disposition": "settling limit 300 ns: tt passed",
+ "jobs": {
+  "tt": {
+   "log": "r1_isense/dev-step-10/tb_isense_step_tt.log",
+   "rc": 0,
+   "wall_s": 60.1
+  }
+ },
+ "netlist": "schematic/r1_isense.spice",
+ "netlist_sha256": "2b8d018136f2a701512c85d85d0a81bae46ad9c5fd78706f5291a72a8c4c0475",
+ "overrides": {
+  "VCMIN": "0"
+ },
+ "pdk_commit": "84374023ee8b4b126bebbba67fcbada0a9c0ff0b (checked by flow/run.sh)",
+ "question": "dev",
+ "raw_results": "$G1_RESULTS_ROOT/r1_isense/dev-step-10/",
+ "result": {
+  "tt": {
+   "az_release_recovery_ns": 57.1,
+   "idd_uA": 405.5,
+   "idda_uA": 170.1,
+   "output_node_range_V": [
+    0.0209,
+    1.1933
+   ],
+   "overload_recovery_ns": {
+    "from_+200mV": 141.2,
+    "from_-200mV": 132.3
+   },
+   "overshoot_max_pct": 0.0,
+   "settle_100mV_edges_worst_ns": 99.3,
+   "settle_20mV_edge_ns": 114.7,
+   "vcm_out_V": 0.5835
+  }
+ },
+ "run_id": "dev-step-10",
+ "tool": "ngspice-46 (container banner from 'flow/run.sh ngspice -v', 2026-10-20; batch logs carry no banner)",
+ "wall_s": 60.4
+}

@@ -1,0 +1,37 @@
+* r1_isense DC transfer deck: gain, pedestal, offset, linearity over -20..+100 mV, measured after one auto-zero.
+* Quasi-static staircase (9 points, 1.5 us each, read 50 ns before each step ends) so that the AZ hold state is real.
+* Ideal sources (marked): VREF 1.05 V, VCM 0.6 V, PTAT IBIAS 5 uA at 27 C, AZ phases. Load 2 pF per output.
+* Second pass (VREF = 0, pedestal off): output at 0 mV = residual offset after AZ.
+* AZ requires zero shunt voltage: the input is 0 during AZ (0..2.05 us).
+.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerMOSlv.lib @@MOS@@
+.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerMOShv.lib @@MOS@@
+.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerRES.lib @@RES@@
+.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerCAP.lib @@CAP@@
+.temp @@TEMP@@
+.include /work/designs/r1-joint/blocks/r1_isense/schematic/r1_isense.spice
+.option gmin=1e-12 method=gear reltol=1e-4 abstol=1e-12 vntol=1e-7
+Vdda vdda 0 dc @@VDDA@@
+Vdd vdd 0 dc @@VDD@@
+* IDEAL REFERENCE SOURCES (this step only)
+Vref vref 0 dc 1.05
+Vcm vcm 0 dc 0.6
+* IDEAL PTAT bias (r1_bgr PTAT branch): 5 uA at 27 C
+Ibias vdda ibias dc {5u*(@@TEMP@@+273.15)/300.15}
+Vaz az 0 pwl(0 @@VDD@@ 2.05u @@VDD@@ 2.051u 0)
+Vazh azh 0 pwl(0 @@VDD@@ 2.0u @@VDD@@ 2.001u 0)
+Vcmi isn 0 dc @@VCMIN@@
+Vin isp isn pwl(0 0 2.5u 0 2.501u -0.02 3u -0.02 4.499u -0.02 4.5u -0.01 5.999u -0.01 6u 0 7.499u 0 7.5u 0.01 8.999u 0.01 9u 0.02 10.499u 0.02 10.5u 0.04 11.999u 0.04 12u 0.06 13.499u 0.06 13.5u 0.08 14.999u 0.08 15u 0.1 16.499u 0.1)
+XDUT isp isn outp outn vref vcm ibias az azh vdda vdd 0 r1_isense_ch
+CLP outp 0 2p
+CLN outn 0 2p
+.control
+set wr_singlescale
+set wr_vecnames
+tran 2n 16.5u 0 2n
+wrdata @@OUT@@_dc_ped.txt v(outp) v(outn) v(isp) v(isn)
+alter Vref dc = 0
+alter Vin pwl = [ 0 0 10u 0 ]
+tran 2n 4.5u 0 2n
+wrdata @@OUT@@_dc_nop.txt v(outp) v(outn) v(isp) v(isn)
+.endc
+.end

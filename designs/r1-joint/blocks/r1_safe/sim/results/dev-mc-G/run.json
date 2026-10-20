@@ -1,0 +1,73 @@
+{
+ "block": "r1_safe",
+ "command": "python3 sim/run_deck.py --block r1_safe --deck tb_dev_mcG.cir --run-id dev-mc-G --corners tt_mm_s1 --set N=8 --analyze analyze_mc.py --question dev",
+ "container_image": "tapeoutbench-eda:latest sha256:ddeb6957... (checked by flow/run.sh)",
+ "corners": {
+  "tt_mm_s1": {
+   "cap": "cap_typ_mismatch",
+   "mos": "mos_tt_mismatch",
+   "res": "res_typ_mismatch",
+   "temp_C": 27,
+   "vdd": 1.2,
+   "vdda": 3.3
+  }
+ },
+ "cpuset": "109-111",
+ "date_utc": "2026-10-20T13:21:14.533717Z",
+ "deck": "sim/tb_dev_mcG.cir",
+ "deck_sha256": "7b4764d0ca14b7c88c52ee44438cd7601a9fc7398be865accba10e1b77749b61",
+ "disposition": "failed: max |centre error| = 1.119 LSB, max |trip error| = 1.395 LSB over 16 comparator points, 0 missing",
+ "jobs": {
+  "tt_mm_s1": {
+   "log": "r1_safe/dev-mc-G/tb_dev_mcG_tt_mm_s1.log",
+   "rc": 0,
+   "wall_s": 1085.1
+  }
+ },
+ "netlist": "schematic/r1_safe.spice",
+ "netlist_sha256": "63ac3d0b7961c150c6681b2ca8606083401c4b00754a57e3cab9ce31979071a8",
+ "overrides": {
+  "N": "8"
+ },
+ "pdk_commit": "84374023ee8b4b126bebbba67fcbada0a9c0ff0b (checked by flow/run.sh)",
+ "question": "dev",
+ "raw_results": "$G1_RESULTS_ROOT/r1_safe/dev-mc-G/",
+ "result": {
+  "comparator_points": 16,
+  "hyst_centre_offset_mV_vod": {
+   "max": 37.2837,
+   "mean": 1.6898656250000001,
+   "min": -34.2956,
+   "n": 16,
+   "sigma": 18.98323007006545
+  },
+  "hyst_mV_vod": {
+   "max": 19.6209,
+   "mean": 19.03796875,
+   "min": 18.44,
+   "n": 16,
+   "sigma": 0.34834777292016306
+  },
+  "max_abs_centre_LSB": 1.118511,
+  "max_abs_trip_LSB": 1.395111,
+  "missing": 0,
+  "samples": 8,
+  "trip_err_mV_vod": {
+   "max": 46.5037,
+   "mean": 1.6761687500000004,
+   "min": -35.4038,
+   "n": 16,
+   "sigma": 21.014296939486186
+  },
+  "trip_err_uV_shunt": {
+   "max": 3321.692857142857,
+   "mean": 119.72633928571435,
+   "min": -2528.8428571428567,
+   "n": 16,
+   "sigma": 1501.0212099632988
+  }
+ },
+ "run_id": "dev-mc-G",
+ "tool": "ngspice-46 (container banner from flow/run.sh ngspice -v; batch logs carry no banner)",
+ "wall_s": 1085.2
+}
