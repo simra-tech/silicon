@@ -79,18 +79,20 @@ G1 bond plan rule (pad to the lead directly opposite). Board: one RS-422 transce
 | Die | 1.414 mm (fallback 1.5 mm, D9) | specified | PLAN.md |
 | Supplies | VDD 1.2 V (1.08–1.32), IOVDD = VDDA 3.3 V (3.0–3.6) | specified | G1 |
 | Encoder input | 40 mVpp–1.4 Vpp differential, common mode 0.5–2.8 V | specified | S1 |
+| AFE, revision B result | gain step error ≤ 1.87 %; f_c ≥ 1.057 MHz; pole matching ≤ 0.895 % (20-sample MC); THD ≤ −65.4 dB at 100 kHz; noise 0.35 LSB at ×1, 35.3 µV at ×32 (ss, limit 35 µV, marginal fail); PSRR ≥ 54.9 dB; settling into the ADC track-and-hold 0.506 LSB (marginal fail, re-run at the D11 swing); area ≈ 0.084 mm², 5.0–6.4 mW | simulated (schematic) | `../blocks/r1_afe/README.md` |
 | Encoder frequency | full accuracy ≤ 100 kHz, count-safe ≤ 250 kHz | specified | S1 |
 | Angle resolution | 16 bit per period from the tracking filter; 12-bit raw samples | specified | S1 |
 | Angle accuracy after host calibration | ≤ ±0.25° el electronic (RSS, estimated); ±0.64° el total target on a 32-pole ring | estimated | S1 |
-| ADC | 12 bit, ENOB ≥ 11.5, ≥ 2 MSPS (one SAR, two track-and-holds), sampling skew < 0.5 ns | specified | S1, D3 |
+| ADC | 12 bit, ENOB ≥ 11.5, 2 MSPS (one SAR, two top-plate CDAC track-and-holds, 4:1 mux), FS ±1.0 V differential from a 1.0 V reference (D11), digital per-bit weight correction with one redundant bit (D12), comparator noise ≤ 60 µV rms (D14) | specified | S1, D3, T2 |
+| ADC, revision 1 result | INL ≤ 0.49 LSB, DNL within ±0.25 LSB at tt (codes 0–2154); ENOB 11.76 without device noise, 11.35–11.55 derived with noise; skew σ 7.6 ps; CDAC mismatch MC failed (12/50 samples with missing codes) → D12; area ≈ 0.04 mm² | simulated | `../blocks/r1_adc/README.md` |
 | Position latency | latched at bus request; extrapolation with velocity; published fixed value | specified | S1, S2 |
 | BiSS-C | Rev D2, MA 80 kHz–10 MHz, t_busy = 2·T_MA, static timeout 20 µs nominal (14–26 µs over RC spread) | specified | S2 |
 | SSI | Gray or binary, monoflop 15–25 µs | specified | S2 |
 | Current sense input | ≤ 100 mV differential, settling < 300 ns | specified target | S3/joint study |
 | Overcurrent response | comparator to gates low < 1 µs (target) | specified target | G1 trip lineage (1.5 µs on G1 incl. 5 nF gate) |
 | Gate drive | 30 mA pads; dead time programmable 50 ns–2 µs | specified | PDK, assumed |
-| Oscillator | G1-lineage RC relaxation, 30 MHz nominal, 5-bit trim, host trim count against MA; untrimmed spread ≈ −30 / +40 %; allowed sample-to-latch jitter 1.39 ns rms (0.28 ns to stay under 12-bit quantisation), expected ≈ 0.1–0.2 ns; ≈ 250–400 µA | estimated | S5 |
-| Area | ≈ 0.45–0.50 mm² of macros, marginal on 1.414 mm | estimated | S3 |
+| Oscillator | G1-lineage RC relaxation, 30.03 MHz at trim code 22 (D13), 5-bit trim with steps 1.16–1.81 %, reach 32.61 MHz at ss/1.08 V/125 °C, untrimmed spread at code 22 23.3–38.9 MHz, loop delay ≤ 2.32 ns, duty 49.8–49.9 %, mismatch σ_f 0.70 %, supply 117 ppm/mV (373 ppm/mV at 1 MHz ripple), white-noise jitter 103 ps over 30 cycles against the 280 ps budget, 169–311 µA, ≈ 0.018 mm² | simulated (schematic) | `../blocks/r1_osc/README.md` |
+| Area | ring core window 692.6 × 689.1 µm = 0.477 mm² (T6, measured on the ring GDS); digital macro ≈ 0.34 mm² placed (T5, from 0.221 mm² cell area), AFE 0.084, ADC 0.04, OSC 0.018, plus isense/safe/BGR/T2F/gates pending: does not fit the 1.414 mm die as is (D10 open) | estimated from block results | T2, T3, T5, T6 |
 | Power | ≈ 17–21 mW; ≈ 4.5 mA on one VDDA pad (≈ 95 mV drop on the G1 path) | estimated | S3 |
 | MIM mismatch | 1 % (1σ) at 1 µm², ∝ 1/√area (PDK model; spec value blank); CDAC unit ≥ 22 fF (≈ 15 µm²) for DNL ≤ 0.5 LSB | specified from the PDK model | S4 |
 | Calibration storage | none on chip; host loads registers after reset, CRC-checked | specified | S1 |

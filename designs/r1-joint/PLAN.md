@@ -51,7 +51,16 @@ counts 26. Decisions taken to close:
 
 Lean total after D1–D8: ≈ 0.45–0.50 mm², marginal on the baseline die.
 
-**D10 (open, 2026-10-20).** T5 synthesis puts the digital macro at ≈ 0.34 mm² placed (30.4 kGE; `r1_pos` 36 %, registers 19 %, `r1_gate` 17 %, `r1_safe` 10 %, BiSS 10 %, SPI 5 %), against the 0.18 mm² estimate, which predates the on-chip PWM generator (open item 6). Choices: (a) trim the RTL (shared multiplier in `r1_pos`, fewer writable registers, narrower PWM counters) to ≈ 0.28 mm² and still take the 1.5 mm die (D9); (b) the 1.5 mm die with the RTL as is; (c) cut the PWM generator back to pass-through (cut 3) and the I²t model to the host. Decision after T1–T4 report their analog areas. Power ≈ 17–21 mW, about
+**D10 (open, 2026-10-20).** T5 synthesis puts the digital macro at ≈ 0.34 mm² placed (30.4 kGE; `r1_pos` 36 %, registers 19 %, `r1_gate` 17 %, `r1_safe` 10 %, BiSS 10 %, SPI 5 %), against the 0.18 mm² estimate, which predates the on-chip PWM generator (open item 6). Choices: (a) trim the RTL (shared multiplier in `r1_pos`, fewer writable registers, narrower PWM counters) to ≈ 0.28 mm² and still take the 1.5 mm die (D9); (b) the 1.5 mm die with the RTL as is; (c) cut the PWM generator back to pass-through (cut 3) and the I²t model to the host. Decision after T1–T4 report their analog areas.
+
+Decisions from the P2 block reports (2026-10-20, all numbers simulated at schematic level):
+
+| # | Decision | Source |
+| --- | --- | --- |
+| D11 | ADC full scale is ±1.0 V differential (2.0 Vpp) from a 1.0 V reference, because VREF = 1.2 V is impossible at VDD = 1.08 V. The AFE output target becomes 1.6 Vpp (80 % of FS): stage-2 gain 10/7 → 8/7. | T2, T3 |
+| D12 | CDAC mismatch is corrected in the digital domain: one redundant bit in the SAR sequence and host-loaded per-bit weights (12 × 14 bit registers) applied as output = Σ b_i·w_i in `r1_ctrl`; units stay 22 fF. Weights are found on the bench with a ramp. Larger units (200–350 fF) are the fallback. | T2 |
+| D13 | `OSC_TRIM` reset value 22 (30.0 MHz at tt). The digital macro closes STA at 42 MHz (fastest untrimmed at code 22 is 38.9 MHz); codes that would exceed 42 MHz at ff are flagged by `OSC_COUNT`, not prevented in hardware. | T1, T5 |
+| D14 | ADC comparator noise target ≤ 60 µV rms and an on-chip reference buffer able to settle 0.42 pC per 33 ns bit cycle are `r1_adc` revision-2 requirements; the AFE track-and-hold model (2.8 pF per side, 250 ns track, 0.6 V CM) is confirmed as the interface. | T2, T3 | Power ≈ 17–21 mW, about
 4.5 mA on the single `VDDA` pad (G1 path 11–21 Ω, ≈ 95 mV drop): a second analog supply pad is not
 available, so the analog current budget is a design constraint, not a result.
 
