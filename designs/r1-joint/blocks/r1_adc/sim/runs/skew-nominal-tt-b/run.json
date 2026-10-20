@@ -1,0 +1,27 @@
+{
+  "run_id": "skew-nominal-tt-b",
+  "block": "r1_adc",
+  "question": "T/H sampling skew A vs B and effective sampling instant vs level and slope sign (tt, 27 C, nominal)",
+  "command": "G1_CPUSET=103-105 G1_CPUS=1 G1_WORKDIR=designs/r1-joint/blocks/r1_adc G1_RESULTS_ROOT=<bulk> flow/run.sh ngspice -b sim/runs/skew-nominal-tt-b/deck.cir",
+  "deck": "sim/runs/skew-nominal-tt-b/deck.cir",
+  "deck_template": "sim/tb_th_skew_nominal.cir",
+  "deck_sha256": "3be76fcdc2cccd755ae9d927607b4f2a5a8398d0e45a2c94c3da44d48f503751",
+  "library_sha256_at_start": {
+    "r1_adc.spice": "0bb511aa20c632323322aa390117184211816bd7c31634dcf9e356744a50ba85"
+  },
+  "substitutions": {
+    "RAW": "<bulk>/r1_adc/skew-nominal-tt-b"
+  },
+  "tool": "ngspice (banner not found in log)",
+  "container_image": "sha256:ddeb69576f2808676d1c5d474ecf04f6d1d6f8abdcff6b72b39790ded924bab2",
+  "pdk_commit": "84374023ee8b4b126bebbba67fcbada0a9c0ff0b",
+  "raw_results": "r1_adc/skew-nominal-tt-b (under G1_RESULTS_ROOT)",
+  "started_utc": "2026-10-20T11:03:22.037505Z",
+  "wall_s": 618.5,
+  "returncode": 0,
+  "status": "completed",
+  "errors": [],
+  "result": "invalid: deck started in track mode, boost capacitors never charged in a hold phase (boost 0.74 V, N-side switch stuck); A-B skew <= 17 ps but t_eff -2.6...-10 ns is a test-bench artefact",
+  "disposition": "superseded by skew-nominal-tt-c (30 ns hold, 170 ns track before the edge); kept as record",
+  "deck_note": "tracked copy with the bulk results root written as <G1_RESULTS_ROOT>; the executed deck carried the absolute bulk path there"
+}

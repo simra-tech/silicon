@@ -1,0 +1,38 @@
+{
+  "run_id": "static-tt27-s1",
+  "block": "r1_adc",
+  "question": "static ramp segment 1 (mos_tt, 27 C, VDD 1.2): codes for INL/DNL, lower half plus margin past mid-scale",
+  "command": "G1_CPUSET=104 G1_CPUS=1 G1_WORKDIR=designs/r1-joint/blocks/r1_adc G1_RESULTS_ROOT=<bulk> flow/run.sh ngspice -b sim/runs/static-tt27-s1/deck.cir",
+  "deck": "sim/runs/static-tt27-s1/deck.cir",
+  "deck_template": "sim/tb_adc_static.cir",
+  "deck_sha256": "325e7aec8982469964feaa6d0bac6f7a7e8d41667d853d77315d7e2433b6f081",
+  "library": "schematic/r1_adc.spice",
+  "library_sha256": "b1cae159d6c53b05881b15737f815d610e57f36752fca1fa7ec42638e704b5cb",
+  "substitutions": {
+    "RAW": "<bulk>/r1_adc/static-tt27-s1",
+    "CORNER": "mos_tt",
+    "TEMP": "27",
+    "VDD": "1.2",
+    "VREF": "1.2",
+    "VSTART": "-0.773372",
+    "VSTEP": "142e-6",
+    "TSTOP": "2940.200u",
+    "CORE": "r1_adc_core_fast_a",
+    "TMAX": "5n",
+    "OPTS": "reltol=1e-3 vntol=1e-6 abstol=1e-12 method=trap klu"
+  },
+  "tool": "ngspice (banner not found in log)",
+  "container_image": "sha256:ddeb69576f2808676d1c5d474ecf04f6d1d6f8abdcff6b72b39790ded924bab2",
+  "pdk_commit": "84374023ee8b4b126bebbba67fcbada0a9c0ff0b",
+  "raw_results": "r1_adc/static-tt27-s1 (under G1_RESULTS_ROOT)",
+  "started_utc": "2026-10-20T10:36:31.759550Z",
+  "wall_s": 177.0,
+  "returncode": 1,
+  "status": "failed",
+  "errors": [
+    "Error: incomplete or empty netlist"
+  ],
+  "result": "aborted at 96.586 us: 'Timestep too small' (ideal sw-element bottom-plate drivers, hysteretic switching)",
+  "disposition": "superseded by static-tt27b-* (smooth conductance driver r1_drv_sw); kept as record",
+  "deck_note": "tracked copy with the bulk results root written as <G1_RESULTS_ROOT>; the executed deck carried the absolute bulk path there"
+}

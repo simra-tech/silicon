@@ -1,0 +1,48 @@
+{
+  "run_id": "win-ffm40-c2048r-p00",
+  "block": "r1_adc",
+  "question": "static window around code 2048 (mos_ff, -40 C, VDD 1.2): DNL at the MSB transition, 0.25 LSB steps (piece 0, frames 0..95 of win-ffm40-c2048r)",
+  "command": "G1_CPUSET=105 G1_CPUS=1 G1_WORKDIR=designs/r1-joint/blocks/r1_adc G1_RESULTS_ROOT=<bulk> flow/run.sh ngspice -b sim/runs/win-ffm40-c2048r-p00/deck.cir",
+  "deck": "sim/runs/win-ffm40-c2048r-p00/deck.cir",
+  "deck_template": "sim/tb_adc_static.cir",
+  "deck_sha256": "93bfa8ede7a347d628e3a92ea5d0ec9511aa80955894700bd1be48d688a1e7ae",
+  "library_sha256_at_start": {
+    "r1_adc.spice": "0bb511aa20c632323322aa390117184211816bd7c31634dcf9e356744a50ba85"
+  },
+  "substitutions": {
+    "RAW": "<bulk>/r1_adc/win-ffm40-c2048r-p00",
+    "CORNER": "mos_ff",
+    "TEMP": "-40",
+    "VDD": "1.2",
+    "VREF": "1.2",
+    "VSTART": "-0.0068160",
+    "VSTEP": "142e-6",
+    "CORE": "r1_adc_core_fast_a",
+    "TMAX": "5n",
+    "OPTS": "reltol=1e-3 vntol=1e-6 abstol=1e-12 method=trap klu",
+    "TSTOP": "96.200u"
+  },
+  "tool": "ngspice (banner not found in log)",
+  "container_image": "sha256:ddeb69576f2808676d1c5d474ecf04f6d1d6f8abdcff6b72b39790ded924bab2",
+  "pdk_commit": "84374023ee8b4b126bebbba67fcbada0a9c0ff0b",
+  "raw_results": "r1_adc/win-ffm40-c2048r-p00 (under G1_RESULTS_ROOT)",
+  "started_utc": "2026-10-20T13:19:06.204433Z",
+  "wall_s": 677.3,
+  "returncode": 1,
+  "status": "failed",
+  "errors": [
+    "Error: scale vector time, frequency or ?-sweep has no data.",
+    "Error: measure  iref  avg(TRIG) : out of interval",
+    "Error: scale vector time, frequency or ?-sweep has no data.",
+    "Error: measure  idd  avg(TRIG) : out of interval",
+    "Error: lengths too small to interpolate.",
+    "Error: can't interpolate codea",
+    "Error: lengths too small to interpolate.",
+    "Error: can't interpolate codeb",
+    "Error: no such vector codea",
+    "Error: incomplete or empty netlist"
+  ],
+  "result": "frames 0..-1 valid, aborted at 5.52358e-07 s (Timestep too small)",
+  "disposition": "piece of win-ffm40-c2048r; merged by run_resume.py",
+  "deck_note": "tracked copy with the bulk results root written as <G1_RESULTS_ROOT>; the executed deck carried the absolute bulk path there"
+}

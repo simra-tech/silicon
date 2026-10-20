@@ -1,0 +1,27 @@
+{
+  "run_id": "skew-nominal-tt-c",
+  "block": "r1_adc",
+  "question": "T/H sampling skew A vs B and effective sampling instant vs level and slope sign (tt, 27 C, nominal; hold 30 ns then track 170 ns)",
+  "command": "G1_CPUSET=103-105 G1_CPUS=1 G1_WORKDIR=designs/r1-joint/blocks/r1_adc G1_RESULTS_ROOT=<bulk> flow/run.sh ngspice -b sim/runs/skew-nominal-tt-c/deck.cir",
+  "deck": "sim/runs/skew-nominal-tt-c/deck.cir",
+  "deck_template": "sim/tb_th_skew_nominal.cir",
+  "deck_sha256": "d5da3b9841fd040774fec71693fe09a8e8adb122222644d8bec61ff9ea3b746c",
+  "library_sha256_at_start": {
+    "r1_adc.spice": "0bb511aa20c632323322aa390117184211816bd7c31634dcf9e356744a50ba85"
+  },
+  "substitutions": {
+    "RAW": "<bulk>/r1_adc/skew-nominal-tt-c"
+  },
+  "tool": "ngspice (banner not found in log)",
+  "container_image": "sha256:ddeb69576f2808676d1c5d474ecf04f6d1d6f8abdcff6b72b39790ded924bab2",
+  "pdk_commit": "84374023ee8b4b126bebbba67fcbada0a9c0ff0b",
+  "raw_results": "r1_adc/skew-nominal-tt-c (under G1_RESULTS_ROOT)",
+  "started_utc": "2026-10-20T11:14:41.729977Z",
+  "wall_s": 1521.0,
+  "returncode": 0,
+  "status": "completed",
+  "errors": [],
+  "result": "A-B skew 0.00 ps for equal inputs (10 cases); effective sampling instant -103 ... -380 ps relative to the 50 % trk edge, dependent on level and slope sign (277 ps spread over +/-0.7 V, 20 mV/ns); no droop resolved within 0.5 ns (simulated)",
+  "disposition": "passed for skew < 0.5 ns at nominal; the level-dependent aperture (277 ps) is the worst-case sin-cos skew when the two inputs differ",
+  "deck_note": "tracked copy with the bulk results root written as <G1_RESULTS_ROOT>; the executed deck carried the absolute bulk path there"
+}

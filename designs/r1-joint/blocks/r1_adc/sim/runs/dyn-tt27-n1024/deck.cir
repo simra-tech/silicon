@@ -1,0 +1,41 @@
+* tb_adc_dyn.cir -- R1 ADC dynamic test: sine on SIN (slice A), cosine on COS (slice B), full rate
+* 30 MHz clock, 1 us frame = 2 conversions (2 MSPS), each channel 1 MSPS. Coherent: fin = 103/1024 MHz.
+* Sample f taken at t0 + f*1us, t0 = 250 ns; amplitude 1.10 V differential peak.
+* Substitutions: mos_tt 27 1.2 1.2 1.10 100585.9375 1024.2u r1_adc_core_fast <G1_RESULTS_ROOT>/r1_adc/dyn-tt27-n1024 103 1024
+.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerMOSlv.lib mos_tt
+.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerCAP.lib cap_typ
+.include schematic/r1_adc.spice
+.include sim/r1_adc_timing.inc
+.temp 27
+.option reltol=1e-3 vntol=1e-6 abstol=1e-12 method=trap klu
+
+Vdd vdd 0 1.2
+* reference: IDEAL source in this step (reference buffer not designed yet)
+Vref vref 0 1.2
+Vcur_p isap 0 0.6
+Vcur_n isan 0 0.6
+.param pi2=6.283185307179586
+Bds vds 0 v=1.10*sin(pi2*100585.9375*(time-250n)+0.3)
+Bdc vdc 0 v=1.10*cos(pi2*100585.9375*(time-250n)+0.3)
+Bsp sinp 0 v=0.6+v(vds)/2
+Bsn sinn 0 v=0.6-v(vds)/2
+Bcp cosp 0 v=0.6+v(vdc)/2
+Bcn cosn 0 v=0.6-v(vdc)/2
+Vtc trk_cur 0 0
+
+XADC sinp sinn cosp cosn isap isan isap isan trk_enc trk_cur mclk wina winb trk_enc lat
++ stb0 stb1 stb2 stb3 stb4 stb5 stb6 stb7 stb8 stb9 stb10 stb11 stb12 stb13 stb14 stb15 stb16 stb17 stb18 stb19 stb20 stb21 stb22 stb23
++ codea codeb topap topan topbp topbn vdd vref 0 r1_adc_core_fast
+
+.control
+set num_threads=1
+save v(codea) v(codeb) i(vref) i(vdd)
+tran 1u 1024.2u 1.2u 5n
+meas tran iref avg i(vref) from=1.2u to=1024.2u
+meas tran idd avg i(vdd) from=1.2u to=1024.2u
+linearize v(codea) v(codeb)
+set wr_singlescale
+set wr_vecnames
+wrdata <G1_RESULTS_ROOT>/r1_adc/dyn-tt27-n1024/codes.txt v(codea) v(codeb)
+.endc
+.end

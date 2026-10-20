@@ -1,0 +1,36 @@
+* tb_adc_static.cir -- R1 ADC static linearity: slow differential ramp, histogram / code-transition INL, DNL
+* Both slices convert the same ramp (SIN path -> slice A, COS path -> slice B). Sample f is taken at
+* t0 + f*1us (t0 = 250 ns) where vd = -0.006816 + f*142e-6 V (ramp continuous in time).
+* Substitutions: mos_ff (mos_tt/ss/ff) -40 1.2 1.2 -0.006816 142e-6 3.2u r1_adc_core_fast_a <G1_RESULTS_ROOT>/r1_adc/tsteptest-ffm40-c2048
+.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerMOSlv.lib mos_ff
+.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerCAP.lib cap_typ
+.include schematic/r1_adc.spice
+.include sim/r1_adc_timing.inc
+.temp -40
+.option reltol=1e-3 vntol=1e-6 abstol=1e-12 method=trap klu
+
+Vdd vdd 0 1.2
+* reference: IDEAL source in this step (reference buffer not designed yet)
+Vref vref 0 1.2
+Vcur_p isap 0 0.6
+Vcur_n isan 0 0.6
+Bdp vd 0 v=-0.006816 + (time-250n)*142e-6/1u
+Bsp sinp 0 v=0.6+v(vd)/2
+Bsn sinn 0 v=0.6-v(vd)/2
+Bcp cosp 0 v=0.6+v(vd)/2
+Bcn cosn 0 v=0.6-v(vd)/2
+Vtc trk_cur 0 0
+
+XADC sinp sinn cosp cosn isap isan isap isan trk_enc trk_cur mclk wina winb trk_enc lat
++ stb0 stb1 stb2 stb3 stb4 stb5 stb6 stb7 stb8 stb9 stb10 stb11 stb12 stb13 stb14 stb15 stb16 stb17 stb18 stb19 stb20 stb21 stb22 stb23
++ codea codeb topap topan topbp topbn vdd vref 0 r1_adc_core_fast_a
+
+.control
+set num_threads=1
+save v(codea) v(codeb) i(vref) i(vdd)
+tran 1n 3.2u 1.2u 5n
+meas tran iref avg i(vref) from=1.2u to=3.2u
+meas tran idd avg i(vdd) from=1.2u to=3.2u
+write <G1_RESULTS_ROOT>/r1_adc/tsteptest-ffm40-c2048/codes.raw v(codea) v(codeb)
+.endc
+.end

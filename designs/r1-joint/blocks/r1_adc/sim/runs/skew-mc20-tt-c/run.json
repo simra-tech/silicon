@@ -1,0 +1,27 @@
+{
+  "run_id": "skew-mc20-tt-c",
+  "block": "r1_adc",
+  "question": "T/H sampling skew A vs B under MOS mismatch (mos_tt_mismatch, mm_ok=1, 20 copies; V0 0 and 0.7 V; hold then track)",
+  "command": "G1_CPUSET=103-105 G1_CPUS=1 G1_WORKDIR=designs/r1-joint/blocks/r1_adc G1_RESULTS_ROOT=<bulk> flow/run.sh ngspice -b sim/runs/skew-mc20-tt-c/deck.cir",
+  "deck": "sim/runs/skew-mc20-tt-c/deck.cir",
+  "deck_template": "sim/tb_th_skew_mc20.cir",
+  "deck_sha256": "0cabd6f0c2698948ce8da658788ee95de2292ebc2fcc4da353f402ee067455a1",
+  "library_sha256_at_start": {
+    "r1_adc_mm.spice": "f00453fd659c24e6fac4ecbce4267b47a23a727e61b3d9bcbfe3c36dd1c4baca"
+  },
+  "substitutions": {
+    "RAW": "<bulk>/r1_adc/skew-mc20-tt-c"
+  },
+  "tool": "ngspice (banner not found in log)",
+  "container_image": "sha256:ddeb69576f2808676d1c5d474ecf04f6d1d6f8abdcff6b72b39790ded924bab2",
+  "pdk_commit": "84374023ee8b4b126bebbba67fcbada0a9c0ff0b",
+  "raw_results": "r1_adc/skew-mc20-tt-c (under G1_RESULTS_ROOT)",
+  "started_utc": "2026-10-20T11:14:41.730109Z",
+  "wall_s": 2724.5,
+  "returncode": 0,
+  "status": "completed",
+  "errors": [],
+  "result": "A-B skew under MOS mismatch (20 copies, V0 0 and 0.7 V, +20 mV/ns): mean +0.65 ps, sd 7.6 ps, max |skew| 22.9 ps (simulated)",
+  "disposition": "passed: skew < 0.5 ns with margin (ideal common trk edge; clock-tree routing skew not included)",
+  "deck_note": "tracked copy with the bulk results root written as <G1_RESULTS_ROOT>; the executed deck carried the absolute bulk path there"
+}

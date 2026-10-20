@@ -1,0 +1,26 @@
+{
+  "run_id": "cdac-mc50-tt-ac-rerun",
+  "block": "r1_adc",
+  "question": "runner regression check after the path sanitising change; reproducibility of the MC draws",
+  "command": "G1_CPUSET=103 G1_CPUS=1 G1_WORKDIR=designs/r1-joint/blocks/r1_adc G1_RESULTS_ROOT=<bulk> flow/run.sh ngspice -b <G1_RESULTS_ROOT>/r1_adc/cdac-mc50-tt-ac-rerun/deck.cir (= sim/runs/cdac-mc50-tt-ac-rerun/deck.cir with the bulk path filled in)",
+  "deck": "sim/runs/cdac-mc50-tt-ac-rerun/deck.cir",
+  "deck_template": "sim/tb_cdac_mc.cir",
+  "deck_sha256": "f506e66bf558eb9cec45c074cbcdd4936d01b442a13cb1001e384e6a6bb0383f",
+  "library_sha256_at_start": {
+    "r1_adc.spice": "0bb511aa20c632323322aa390117184211816bd7c31634dcf9e356744a50ba85"
+  },
+  "substitutions": {
+    "RAW": "<bulk>/r1_adc/cdac-mc50-tt-ac-rerun"
+  },
+  "tool": "ngspice (banner not found in log)",
+  "container_image": "sha256:ddeb69576f2808676d1c5d474ecf04f6d1d6f8abdcff6b72b39790ded924bab2",
+  "pdk_commit": "84374023ee8b4b126bebbba67fcbada0a9c0ff0b",
+  "raw_results": "r1_adc/cdac-mc50-tt-ac-rerun (under G1_RESULTS_ROOT)",
+  "started_utc": "2026-10-20T13:57:20.545477Z",
+  "wall_s": 13.9,
+  "returncode": 0,
+  "status": "completed",
+  "errors": [],
+  "result": "w_b10.txt identical to cdac-mc50-tt-ac: the 50 draws are fixed by the ngspice default seed",
+  "disposition": "passed: runner change verified; MC reproducible. Another set of draws needs a different rndseed (not run)"
+}

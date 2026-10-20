@@ -1,0 +1,37 @@
+{
+  "run_id": "win-ffm40-c1536",
+  "block": "r1_adc",
+  "question": "static window around code 1536 (mos_ff, -40 C, VDD 1.2): DNL at a major transition, 0.25 LSB steps",
+  "command": "G1_CPUSET=105 G1_CPUS=1 G1_WORKDIR=designs/r1-joint/blocks/r1_adc G1_RESULTS_ROOT=<bulk> flow/run.sh ngspice -b sim/runs/win-ffm40-c1536/deck.cir",
+  "deck": "sim/runs/win-ffm40-c1536/deck.cir",
+  "deck_template": "sim/tb_adc_static.cir",
+  "deck_sha256": "646336be6c92e8239dec74a9172c345e5e174066d48620fd27a18f9c94e79f42",
+  "library_sha256_at_start": {
+    "r1_adc.spice": "0bb511aa20c632323322aa390117184211816bd7c31634dcf9e356744a50ba85"
+  },
+  "substitutions": {
+    "RAW": "<bulk>/r1_adc/win-ffm40-c1536",
+    "CORNER": "mos_ff",
+    "TEMP": "-40",
+    "VDD": "1.2",
+    "VREF": "1.2",
+    "VSTART": "-0.297632",
+    "VSTEP": "142e-6",
+    "TSTOP": "97.2u",
+    "CORE": "r1_adc_core_fast_a",
+    "TMAX": "5n",
+    "OPTS": "reltol=1e-3 vntol=1e-6 abstol=1e-12 method=trap klu"
+  },
+  "tool": "ngspice (banner not found in log)",
+  "container_image": "sha256:ddeb69576f2808676d1c5d474ecf04f6d1d6f8abdcff6b72b39790ded924bab2",
+  "pdk_commit": "84374023ee8b4b126bebbba67fcbada0a9c0ff0b",
+  "raw_results": "r1_adc/win-ffm40-c1536 (under G1_RESULTS_ROOT)",
+  "started_utc": "2026-10-20T12:58:43.762672Z",
+  "wall_s": 1349.5,
+  "returncode": 0,
+  "status": "completed",
+  "errors": [],
+  "result": "DNL 0.00 .. 0.00 LSB over codes 1524-1546 (0.25 LSB resolution), missing codes 0 (simulated)",
+  "disposition": "summary sim/results/static_windows_ffm40.json",
+  "deck_note": "tracked copy with the bulk results root written as <G1_RESULTS_ROOT>; the executed deck carried the absolute bulk path there"
+}

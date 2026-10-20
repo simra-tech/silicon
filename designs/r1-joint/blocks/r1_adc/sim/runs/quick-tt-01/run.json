@@ -1,0 +1,26 @@
+{
+  "run_id": "quick-tt-01",
+  "block": "r1_adc",
+  "question": "smoke test: codes for 8 held inputs",
+  "command": "G1_CPUSET=103 G1_CPUS=1 G1_WORKDIR=designs/r1-joint/blocks/r1_adc G1_RESULTS_ROOT=<bulk> flow/run.sh ngspice -b sim/runs/quick-tt-01/deck.cir",
+  "deck": "sim/runs/quick-tt-01/deck.cir",
+  "deck_template": "sim/tb_quick.cir",
+  "deck_sha256": "0a8dcfcaa80ecc7cca430a5f08ca2fa0f03befa0210e1015425be9e3bd70d889",
+  "library": "schematic/r1_adc.spice",
+  "library_sha256": "78b2ea35255d55036e925d25c932a7757ef9117921a48951b29514289e9320d9",
+  "substitutions": {
+    "RAW": "<bulk>/r1_adc/quick-tt-01"
+  },
+  "tool": "ngspice (banner not found in log)",
+  "container_image": "sha256:ddeb69576f2808676d1c5d474ecf04f6d1d6f8abdcff6b72b39790ded924bab2",
+  "pdk_commit": "84374023ee8b4b126bebbba67fcbada0a9c0ff0b",
+  "raw_results": "r1_adc/quick-tt-01 (under G1_RESULTS_ROOT)",
+  "started_utc": "2026-10-20T10:26:34.319362Z",
+  "wall_s": 151.7,
+  "returncode": 0,
+  "status": "completed",
+  "errors": [],
+  "result": "codes A/B for 0, +0.3, -0.3, +1.0, -1.0, +0.3 mV, -1.15, +1.15 V: 2047/2048, 2576/1519, 1519/2576, 3808/287, 287/3808, 2048/2047, 23/4072, 4072/23 (B gets the negated input); effective full scale +/-1.163 V differential; VREF charge per frame 2.1-2.4 pC (simulated)",
+  "disposition": "passed (functional): codes symmetric and linear; note this run used the earlier sw-element r1_drv_sw (replaced later by the smooth conductance driver, see acc-window-drvB)",
+  "deck_note": "tracked copy with the bulk results root written as <G1_RESULTS_ROOT>; the executed deck carried the absolute bulk path there"
+}

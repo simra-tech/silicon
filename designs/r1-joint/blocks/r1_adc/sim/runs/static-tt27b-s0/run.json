@@ -1,0 +1,38 @@
+{
+  "run_id": "static-tt27b-s0",
+  "block": "r1_adc",
+  "question": "static ramp segment 0 (mos_tt, 27 C, VDD 1.2): codes for INL/DNL, lower half plus margin past mid-scale",
+  "command": "G1_CPUSET=103 G1_CPUS=1 G1_WORKDIR=designs/r1-joint/blocks/r1_adc G1_RESULTS_ROOT=<bulk> flow/run.sh ngspice -b sim/runs/static-tt27b-s0/deck.cir",
+  "deck": "sim/runs/static-tt27b-s0/deck.cir",
+  "deck_template": "sim/tb_adc_static.cir",
+  "deck_sha256": "d5e1bfabff8c3c30045a6dffad17a8db5e481422234e2af24b75c0652d1195f5",
+  "library": "schematic/r1_adc.spice",
+  "library_sha256": "0bb511aa20c632323322aa390117184211816bd7c31634dcf9e356744a50ba85",
+  "substitutions": {
+    "RAW": "<bulk>/r1_adc/static-tt27b-s0",
+    "CORNER": "mos_tt",
+    "TEMP": "27",
+    "VDD": "1.2",
+    "VREF": "1.2",
+    "VSTART": "-1.190000",
+    "VSTEP": "142e-6",
+    "TSTOP": "2940.200u",
+    "CORE": "r1_adc_core_fast_a",
+    "TMAX": "5n",
+    "OPTS": "reltol=1e-3 vntol=1e-6 abstol=1e-12 method=trap klu"
+  },
+  "tool": "ngspice (banner not found in log)",
+  "container_image": "sha256:ddeb69576f2808676d1c5d474ecf04f6d1d6f8abdcff6b72b39790ded924bab2",
+  "pdk_commit": "84374023ee8b4b126bebbba67fcbada0a9c0ff0b",
+  "raw_results": "r1_adc/static-tt27b-s0 (under G1_RESULTS_ROOT)",
+  "started_utc": "2026-10-20T10:50:47.030915Z",
+  "wall_s": 7635.5,
+  "returncode": 1,
+  "status": "failed",
+  "errors": [
+    "Error: incomplete or empty netlist"
+  ],
+  "result": "aborted at 1.95565e-3 s ('Timestep too small', same simulation time as static-tt27b-s1 and static-tt27b-s2r-p00); codes of frames 0..1954 valid",
+  "disposition": "partial; continued by static-tt27b-s0r-* (run_resume.py), merged in post-processing",
+  "deck_note": "tracked copy with the bulk results root written as <G1_RESULTS_ROOT>; the executed deck carried the absolute bulk path there"
+}

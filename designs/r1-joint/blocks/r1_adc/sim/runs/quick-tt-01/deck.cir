@@ -1,0 +1,43 @@
+* tb_quick.cir -- R1 ADC functional smoke test: 8 frames, step inputs held per frame, tt 27 C
+* SIN path to slice A, COS path to slice B (B gets the negated differential input).
+.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerMOSlv.lib mos_tt
+.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerCAP.lib cap_typ
+.include schematic/r1_adc.spice
+.include sim/r1_adc_timing.inc
+.temp 27
+.option reltol=1e-4 vntol=1e-7 abstol=1e-13 method=trap
+
+Vdd vdd 0 1.2
+* reference: IDEAL source in this step (r1_adc reference buffer not designed yet)
+Vref vref 0 1.2
+Vcur_p isap 0 0.6
+Vcur_n isan 0 0.6
+* differential inputs per frame (held over the frame, change in the conversion window)
+* frame f sampled at t0 + f us; values: 0, +0.3, -0.3, +1.0, -1.0, +0.0003, -1.15, +1.15
+Bdp vd 0 v= pwl(time, 0,0, 0.30u,0, 0.31u,0.3, 1.30u,0.3, 1.31u,-0.3, 2.30u,-0.3, 2.31u,1.0, 3.30u,1.0, 3.31u,-1.0, 4.30u,-1.0, 4.31u,0.0003, 5.30u,0.0003, 5.31u,-1.15, 6.30u,-1.15, 6.31u,1.15, 9u,1.15)
+Bsp sinp 0 v=0.6+v(vd)/2
+Bsn sinn 0 v=0.6-v(vd)/2
+Bcp cosp 0 v=0.6-v(vd)/2
+Bcn cosn 0 v=0.6+v(vd)/2
+Vtc trk_cur 0 0
+
+XADC sinp sinn cosp cosn isap isan isap isan trk_enc trk_cur mclk wina winb trk_enc lat
++ stb0 stb1 stb2 stb3 stb4 stb5 stb6 stb7 stb8 stb9 stb10 stb11 stb12 stb13 stb14 stb15 stb16 stb17 stb18 stb19 stb20 stb21 stb22 stb23
++ codea codeb topap topan topbp topbn vdd vref 0 r1_adc_core_fast
+
+.control
+set num_threads=1
+save v(codea) v(codeb) v(topap) v(topan) v(topbp) v(topbn) v(vd) v(trk_enc) i(vref) i(vdd) v(xadc.xtha.top_p)
+tran 0.1n 9.2u 0 1n
+let k = 0
+dowhile k < 9
+  let tt = 0.25u + k*1u + 0.95u
+  meas tran ca find v(codea) at=$&tt
+  meas tran cb find v(codeb) at=$&tt
+  let k = k + 1
+end
+meas tran iref avg i(vref) from=1.25u to=9.25u
+meas tran idd avg i(vdd) from=1.25u to=9.25u
+write <G1_RESULTS_ROOT>/r1_adc/quick-tt-01/tb.raw
+.endc
+.end

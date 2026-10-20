@@ -1,0 +1,39 @@
+{
+  "run_id": "dyn-tt27-n1024",
+  "block": "r1_adc",
+  "question": "dynamic: SNDR/ENOB at fin 100.59 kHz, -0.5 dBFS, sine on SIN (slice A) and cosine on COS (slice B), 2 MSPS conversion rate",
+  "command": "G1_CPUSET=103-105 G1_CPUS=1 G1_WORKDIR=designs/r1-joint/blocks/r1_adc G1_RESULTS_ROOT=<bulk> flow/run.sh ngspice -b sim/runs/dyn-tt27-n1024/deck.cir",
+  "deck": "sim/runs/dyn-tt27-n1024/deck.cir",
+  "deck_template": "sim/tb_adc_dyn.cir",
+  "deck_sha256": "5ec8169da15675f3fb6a616352fc09d73256eab6115a6f52d46e6646a1f15fd9",
+  "library_sha256_at_start": {
+    "r1_adc.spice": "0bb511aa20c632323322aa390117184211816bd7c31634dcf9e356744a50ba85"
+  },
+  "substitutions": {
+    "RAW": "<bulk>/r1_adc/dyn-tt27-n1024",
+    "CORNER": "mos_tt",
+    "TEMP": "27",
+    "VDD": "1.2",
+    "VREF": "1.2",
+    "AMP": "1.10",
+    "FIN": "100585.9375",
+    "M": "103",
+    "N": "1024",
+    "TSTOP": "1024.2u",
+    "CORE": "r1_adc_core_fast",
+    "TMAX": "5n",
+    "OPTS": "reltol=1e-3 vntol=1e-6 abstol=1e-12 method=trap klu"
+  },
+  "tool": "ngspice (banner not found in log)",
+  "container_image": "sha256:ddeb69576f2808676d1c5d474ecf04f6d1d6f8abdcff6b72b39790ded924bab2",
+  "pdk_commit": "84374023ee8b4b126bebbba67fcbada0a9c0ff0b",
+  "raw_results": "r1_adc/dyn-tt27-n1024 (under G1_RESULTS_ROOT)",
+  "started_utc": "2026-10-20T11:05:33.159912Z",
+  "wall_s": 10109.0,
+  "returncode": 0,
+  "status": "completed",
+  "errors": [],
+  "result": "fin 100.586 kHz, -0.48 dBFS, 1024 points per channel at 1 MSPS (2 MSPS conversion): slice A (sine) SNDR 72.57 dB, SFDR 79.47 dB, THD -79.32 dB, ENOB 11.76; slice B (cosine) SNDR 72.32 dB, SFDR 78.31 dB, THD -78.26 dB, ENOB 11.72 (simulated, no device noise)",
+  "disposition": "passed against ENOB >= 11.5 without thermal noise; with kT/C and estimated comparator noise the margin is gone (sim/results/noise_budget_tt.json)",
+  "deck_note": "tracked copy with the bulk results root written as <G1_RESULTS_ROOT>; the executed deck carried the absolute bulk path there"
+}

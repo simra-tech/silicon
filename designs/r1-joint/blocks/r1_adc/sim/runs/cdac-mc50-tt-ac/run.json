@@ -1,0 +1,27 @@
+{
+  "run_id": "cdac-mc50-tt-ac",
+  "block": "r1_adc",
+  "question": "CDAC MIM mismatch MC (50 samples x 2 sides, cap_typ_mismatch, mm_ok=1): bit weights by AC solve -> DNL/INL",
+  "command": "G1_CPUSET=103-105 G1_CPUS=1 G1_WORKDIR=designs/r1-joint/blocks/r1_adc G1_RESULTS_ROOT=<bulk> flow/run.sh ngspice -b sim/runs/cdac-mc50-tt-ac/deck.cir",
+  "deck": "sim/runs/cdac-mc50-tt-ac/deck.cir",
+  "deck_template": "sim/tb_cdac_mc.cir",
+  "deck_sha256": "7e1527c05f5d7fc13b65a9a856ee30dc32820976329161ca13cffdd28e55abd4",
+  "library_sha256_at_start": {
+    "r1_adc.spice": "0bb511aa20c632323322aa390117184211816bd7c31634dcf9e356744a50ba85"
+  },
+  "substitutions": {
+    "RAW": "<bulk>/r1_adc/cdac-mc50-tt-ac"
+  },
+  "tool": "ngspice (banner not found in log)",
+  "container_image": "sha256:ddeb69576f2808676d1c5d474ecf04f6d1d6f8abdcff6b72b39790ded924bab2",
+  "pdk_commit": "84374023ee8b4b126bebbba67fcbada0a9c0ff0b",
+  "raw_results": "r1_adc/cdac-mc50-tt-ac (under G1_RESULTS_ROOT)",
+  "started_utc": "2026-10-20T11:04:11.396050Z",
+  "wall_s": 20.5,
+  "returncode": 0,
+  "status": "completed",
+  "errors": [],
+  "result": "DNL max |.| per sample: median 0.94 LSB, max 1.56; 5/50 samples <= 0.5 LSB; 12/50 with missing codes; DNL sd 0.66 LSB at codes 1024/3072, 0.59 at 2047/2048; INL max |.| median 1.03, max 2.30 LSB (simulated; summary sim/results/cdac_mc50_tt.json)",
+  "disposition": "failed against DNL <= 0.5 LSB: a 22 fF unit is not enough for a 6+6 bridge array (the MSB-array unit carries 64 LSB); needs MSB-weight calibration or redundancy, or larger MSB-array units",
+  "deck_note": "tracked copy with the bulk results root written as <G1_RESULTS_ROOT>; the executed deck carried the absolute bulk path there"
+}
