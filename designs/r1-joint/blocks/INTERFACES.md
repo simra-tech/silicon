@@ -15,3 +15,9 @@ Binding for revision-2 work. A change needs a dated row here and in both block R
 | t2f → ctrl | Frequency output counted by ctrl over a fixed window into `TEMP_COUNT`. |
 | ctrl → gate | `pwm_a/b/c` (dead time inserted in ctrl), `gate_en` (low on fault or EN/STO_IN low); gate pads `sg13g2_IOPadOut30mA` through the 1.2 → 3.3 V level shifters. |
 | pads | 3.3 V IO; MA/SCLK and SLO/SDO shared per specification §3. |
+
+## Open contract mismatches (2026-10-20, found at the round-2 review)
+
+| Interface | Mismatch | Resolution |
+| --- | --- | --- |
+| safe → ctrl, calibration search | `r1_safe` revision 3 (README and `sim/cal_model.py`) defines the result as k_cal = 32 + round((k_rel + k_trip)/2 − k_ideal) with k_ideal = 36.31 (OC) / 27.69 (NEG) at cell code 14 (NEG 49, i.e. `thr_neg` = 14), a two-sided search so the hysteresis cancels. `r1_ctrl` revision 0.2 (`rtl/r1_cmpcal.v`) does a one-sided successive approximation and stores the raw toggle code. Applied as is, the OC threshold shifts by about 4.3 steps (0.54 LSB) plus half the hysteresis, so the 0.25 LSB criterion fails. | ctrl revision 0.3: store cal = 32 + toggle − CAL_IDEAL (new register, 6 bits per comparator type, reset 36 / 28) and either run the search in both directions (14 windows, average) or subtract a host-written half-hysteresis constant. `r1_safe` to state the hysteresis in calibration steps at corners. `THR_ZERO` = 14 for all four comparators is consistent with both sides. |
