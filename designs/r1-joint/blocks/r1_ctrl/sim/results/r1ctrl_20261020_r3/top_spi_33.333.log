@@ -1,0 +1,28 @@
+# tb_top test=spi clk_ns=33.333
+PASS init: FAULT_N high after CAL_CRC load and CLR
+PASS spi: ID reads 0x5210
+PASS spi: walking-one write/read on PWM registers
+PASS spi: ANA_CTRL write reaches the analog control port
+PASS spi: OSC_TRIM write reaches the oscillator port
+PASS spi: status byte in every frame
+PASS spi: write echo in the next frame
+PASS spi: BiSS MFR_ID mirror at 0x7E
+PASS spi: BiSS DEV_ID mirror at 0x79 ('1')
+PASS spi: short frame counted as SPI error
+INFO OSC_COUNT = 480, expected 480.0 (16 us of 33.333 ns ticks)
+PASS spi: OSC_COUNT over 16 SCLK periods (1 MHz) within +-2 ticks, OSC_DONE
+PASS spi: OSC_COUNT held after later SPI traffic
+INFO spi/biss frame: busy 2 data 0x12345 nE nW 11 crc wire 0d calc~ 0d ack 1
+PASS spi/biss: BiSS frame before SPI access
+PASS spi/biss: SPI access between BiSS frames
+PASS spi/biss: BiSS frame after SPI sees the new TEST_POS
+PASS spi/biss: SPI read correct after BiSS traffic on the shared pad
+INFO AS5047P ANGLECOM frame 0x8ccd, angle 3277 of 16384 (expected 3276.8)
+PASS spi AS: response parity even, EF = 0
+PASS spi AS: ANGLECOM = head angle (0.2 turn) within 0.3 deg
+PASS spi AS: EF = 1 in the response after the parity error
+PASS spi AS: ERRFL.PARERR read back, EF cleared
+PASS spi AS: native 24-bit frame returns to native mode
+# 21 checks, 0 failed
+ALL TESTS PASSED
+tb/tb_top.v:704: $finish called at 883694700 (1ps)

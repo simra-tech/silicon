@@ -1,0 +1,19 @@
+# tb_top test=gate clk_ns=33.333
+PASS init: FAULT_N high after CAL_CRC load and CLR
+INFO gate A on 16 off 586 (width 570), B on 516 off 786 (width 270), C on 1016 off 386 (width 870); strobes A 301 B 651
+PASS gate: A on-time = DUTY - 2 DEAD
+PASS gate: B on-time = DUTY - 2 DEAD
+PASS gate: C on-time = DUTY - 2 DEAD (window wraps the period)
+PASS gate: B rising edge at PHASE_B + DEAD (same offset as A)
+PASS gate: current strobe B at the centre of the B on-time (+-1 tick)
+PASS gate: current strobe A at the centre of the A on-time (+-1 tick)
+PASS gate: no late current conversion over 20 PWM periods (guard)
+PASS gate: no position pair overrun with current conversions interleaved
+PASS gate: new DUTY_A applied at the period wrap
+PASS gate: DUTY <= 2 DEAD keeps the channel off and suppresses its strobe
+PASS gate: EN low forces GATE_C low within 1 ns (combinational)
+PASS gate: EN low latches a fault (FAULT_N low)
+PASS gate: CLR after EN high releases the fault
+# 14 checks, 0 failed
+ALL TESTS PASSED
+tb/tb_top.v:704: $finish called at 1925087837 (1ps)

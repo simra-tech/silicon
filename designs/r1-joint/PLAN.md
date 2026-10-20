@@ -49,7 +49,9 @@ counts 26. Decisions taken to close:
 | D8 | `TEMP_OUT` pin dropped (cut 5); temperature over the bus; the freed pad is `EN`/`STO_IN`, a hardware enable the first list lacked | safety input added |
 | D9 | Baseline die 1.414 mm (G1 ring reused). If block freeze areas exceed 0.45 mm², the fallback is a 1.5 mm die (interior ≈ 0.86 mm², area ≈ 2.25 mm², above the 2 mm² budget: owner decision at the floorplan gate) | — |
 
-Lean total after D1–D8: ≈ 0.45–0.50 mm², marginal on the baseline die. Power ≈ 17–21 mW, about
+Lean total after D1–D8: ≈ 0.45–0.50 mm², marginal on the baseline die.
+
+**D10 (open, 2026-10-20).** T5 synthesis puts the digital macro at ≈ 0.34 mm² placed (30.4 kGE; `r1_pos` 36 %, registers 19 %, `r1_gate` 17 %, `r1_safe` 10 %, BiSS 10 %, SPI 5 %), against the 0.18 mm² estimate, which predates the on-chip PWM generator (open item 6). Choices: (a) trim the RTL (shared multiplier in `r1_pos`, fewer writable registers, narrower PWM counters) to ≈ 0.28 mm² and still take the 1.5 mm die (D9); (b) the 1.5 mm die with the RTL as is; (c) cut the PWM generator back to pass-through (cut 3) and the I²t model to the host. Decision after T1–T4 report their analog areas. Power ≈ 17–21 mW, about
 4.5 mA on the single `VDDA` pad (G1 path 11–21 Ω, ≈ 95 mV drop): a second analog supply pad is not
 available, so the analog current budget is a design constraint, not a result.
 
@@ -83,6 +85,7 @@ design sessions). Rules, binding for every agent on R1:
 
 | Date | What happened |
 | --- | --- |
+| 2026-10-20 | T5 `r1_ctrl` RTL draft 0.1 (pos, bus, gate logic, safe FSM, registers) and `R1_REGISTER_MAP.md` 0.1. Run `r1ctrl_20261020_r3`: V3 RTL vs float reference ≤ 0.021° el, after bench calibration 0.051° el (0.17° el with constant); 217 chip-level protocol/gate/safety checks passed at 21/30/42 MHz. Yosys cell area 0.221 mm² = 1.23 × the 0.18 mm² budget, macro estimate 0.34 mm² (1.88 ×): floorplan decision needed. LibreLane/STA not run. `blocks/r1_ctrl/README.md` |
 | 2026-10-20 | S4 (PDK data) and S5 (oscillator) done; specification open items 1 and 2 closed; three technical open items remain (reference buffer vs pin, 5 V heads, current-sample timing). |
 | 2026-10-20 | Top-level specification draft 0.1 written (`specification/R1_TOP_LEVEL_SPECIFICATION.md`): blocks, 24-pin map, parameter classification, verification gates V1–V8, six open items. |
 | 2026-10-20 | S1 done: ADC and accuracy numbers into the specification; CORDIC clock ≥ 25 MHz means a new or multiplied oscillator (open). |

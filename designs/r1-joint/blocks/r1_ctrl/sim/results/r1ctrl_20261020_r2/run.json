@@ -1,0 +1,503 @@
+{
+ "run_id": "r1ctrl_20261020_r2",
+ "command": "flow/run.sh sh sim/run_all.sh r1ctrl_20261020_r2",
+ "container_image": "tapeoutbench-eda:latest (id pinned in flow/run.sh)",
+ "tools": {
+  "date_utc": "2026-10-20T10:53:10Z",
+  "iverilog": "Icarus Verilog version 14.0 (devel) (s20260301-328-geda9fdcd-dirty)",
+  "yosys": "Yosys 0.67 (git sha1 2d1509d1b, Release, GNU /usr/bin/c++ 13.3.0)",
+  "python": "3.12.3 numpy 2.5.1",
+  "pdk_commit": "84374023ee8b4b126bebbba67fcbada0a9c0ff0b"
+ },
+ "pdk_commit": "84374023ee8b4b126bebbba67fcbada0a9c0ff0b",
+ "inputs": "inputs.sha256 (RTL, testbenches, scripts)",
+ "bulk_results": "$G1_RESULTS_ROOT/r1_ctrl/r1ctrl_20261020_r2",
+ "question": "Does the r1_ctrl RTL (r1_pos, r1_bus, r1_gate logic, r1_safe FSM, registers) meet the V3 position, V4 protocol (S2 items 1-9) and V5 digital safety checks in simulation, and what is its synthesized cell area against the 0.18 mm2 budget?",
+ "result": {
+  "pos": {
+   "cal_neg": {
+    "case": "cal_neg",
+    "regs": {
+     "ofs_sin": -73,
+     "ofs_cos": -91,
+     "gain": 20570,
+     "ph_sin": 60010,
+     "ph_icos": 16622,
+     "h3_amp": 104,
+     "h3_ph": 143
+    },
+    "measured_vs_true_deg_el": {
+     "max_abs": 0.21527804337787226,
+     "rms": 0.16698507097900042,
+     "mean": -0.16606478654191204,
+     "max_abs_zeroed": 0.05527770996094823,
+     "rms_zeroed": 0.017507158554459775
+    },
+    "reference_vs_true_deg_el": {
+     "max_abs": 0.2118303987226772,
+     "rms": 0.16758913942163164,
+     "mean": -0.166691348363062,
+     "max_abs_zeroed": 0.05299378154920542,
+     "rms_zeroed": 0.01732379961173084
+    },
+    "rtl_vs_float_reference_deg_el": {
+     "max_abs": 0.018784678196722523,
+     "rms": 0.006832673892076927,
+     "mean": 0.0006265618211503675,
+     "max_abs_zeroed": 0.018158116375572155,
+     "rms_zeroed": 0.0068038851254078655
+    },
+    "tracked_vs_true_deg_el_after_settle": {
+     "max_abs": 0.20374532853411023,
+     "rms": 0.1670793066105997,
+     "mean": -0.16658224259660967,
+     "max_abs_zeroed": 0.05871459960938366,
+     "rms_zeroed": 0.012878320890669964
+    },
+    "lock_pairs_to_0p5deg_from_reset": 39,
+    "velocity_lsb_per_tick": {
+     "true": -2.1845333333333334,
+     "mean": -2.191895833333333,
+     "rel_err": 0.0033702850341794655
+    }
+   },
+   "cal_noise": {
+    "case": "cal_noise",
+    "regs": {
+     "ofs_sin": 73,
+     "ofs_cos": 91,
+     "gain": 13050,
+     "ph_sin": 5528,
+     "ph_icos": 16622,
+     "h3_amp": 104,
+     "h3_ph": 170
+    },
+    "measured_vs_true_deg_el": {
+     "max_abs": 0.20462674177843782,
+     "rms": 0.12560243132498197,
+     "mean": 0.12290699995714668,
+     "max_abs_zeroed": 0.08529441833494363,
+     "rms_zeroed": 0.025881269603339724
+    },
+    "reference_vs_true_deg_el": {
+     "max_abs": 0.20374466207574607,
+     "rms": 0.12437624325672071,
+     "mean": 0.12196241639085702,
+     "max_abs_zeroed": 0.08178224568488905,
+     "rms_zeroed": 0.024384808278068826
+    },
+    "rtl_vs_float_reference_deg_el": {
+     "max_abs": 0.01956944928996266,
+     "rms": 0.006706135826540494,
+     "mean": 0.0009445835662900612,
+     "max_abs_zeroed": 0.0186248657236726,
+     "rms_zeroed": 0.006639278545919332
+    },
+    "tracked_vs_true_deg_el_after_settle": {
+     "max_abs": 0.1666169761534446,
+     "rms": 0.12308978519029515,
+     "mean": 0.1218431114073413,
+     "max_abs_zeroed": 0.057102355957046005,
+     "rms_zeroed": 0.017474307447541953
+    },
+    "lock_pairs_to_0p5deg_from_reset": 36,
+    "velocity_lsb_per_tick": {
+     "true": 2.1845333333333334,
+     "mean": 2.163666666666667,
+     "rel_err": -0.009552001953125
+    }
+   },
+   "cal": {
+    "case": "cal",
+    "regs": {
+     "ofs_sin": 73,
+     "ofs_cos": 91,
+     "gain": 13049,
+     "ph_sin": 5524,
+     "ph_icos": 16622,
+     "h3_amp": 104,
+     "h3_ph": 170
+    },
+    "measured_vs_true_deg_el": {
+     "max_abs": 0.1704812339659618,
+     "rms": 0.12783354779728656,
+     "mean": 0.12676114119249884,
+     "max_abs_zeroed": 0.050718383789080806,
+     "rms_zeroed": 0.016523589985730315
+    },
+    "reference_vs_true_deg_el": {
+     "max_abs": 0.16159134187166124,
+     "rms": 0.12655467782861204,
+     "mean": 0.12579057727146994,
+     "max_abs_zeroed": 0.03597288812113708,
+     "rms_zeroed": 0.013885861515013727
+    },
+    "rtl_vs_float_reference_deg_el": {
+     "max_abs": 0.020589532848719335,
+     "rms": 0.006753028252733319,
+     "mean": 0.0009705639210297094,
+     "max_abs_zeroed": 0.019618968927689627,
+     "rms_zeroed": 0.006682918244106377
+    },
+    "tracked_vs_true_deg_el_after_settle": {
+     "max_abs": 0.16109085310656923,
+     "rms": 0.12691357136401002,
+     "mean": 0.1261369346495286,
+     "max_abs_zeroed": 0.03495391845704063,
+     "rms_zeroed": 0.014018855644745509
+    },
+    "lock_pairs_to_0p5deg_from_reset": 35,
+    "velocity_lsb_per_tick": {
+     "true": 2.1845333333333334,
+     "mean": 2.1605833333333333,
+     "rel_err": -0.010963439941406361
+    }
+   },
+   "cal_self": {
+    "case": "cal_self",
+    "regs": {
+     "ofs_sin": 73,
+     "ofs_cos": 91,
+     "gain": 13165,
+     "ph_sin": 5854,
+     "ph_icos": 16652,
+     "h3_amp": 104,
+     "h3_ph": 171
+    },
+    "measured_vs_true_deg_el": {
+     "max_abs": 0.554594449627854,
+     "rms": 0.30963674306226663,
+     "mean": -0.12166033707898644,
+     "max_abs_zeroed": 0.44107223510739696,
+     "rms_zeroed": 0.28473439384105936
+    },
+    "reference_vs_true_deg_el": {
+     "max_abs": 0.5452911881049728,
+     "rms": 0.309144302423207,
+     "mean": -0.12237783608274527,
+     "max_abs_zeroed": 0.4420135647627713,
+     "rms_zeroed": 0.2838905862413123
+    },
+    "rtl_vs_float_reference_deg_el": {
+     "max_abs": 0.019370131793841512,
+     "rms": 0.007098636391791834,
+     "mean": 0.000717499003757904,
+     "max_abs_zeroed": 0.01865263279008361,
+     "rms_zeroed": 0.007062282478241564
+    },
+    "tracked_vs_true_deg_el_after_settle": {
+     "max_abs": 0.545747525799701,
+     "rms": 0.31402282220988753,
+     "mean": -0.12229873429578303,
+     "max_abs_zeroed": 0.43074920654297416,
+     "rms_zeroed": 0.2892288928484014
+    },
+    "lock_pairs_to_0p5deg_from_reset": 39,
+    "velocity_lsb_per_tick": {
+     "true": 2.1845333333333334,
+     "mean": 2.1690416666666668,
+     "rel_err": -0.007091522216796875
+    }
+   },
+   "fast_100k": {
+    "case": "fast_100k",
+    "regs": {
+     "ofs_sin": 73,
+     "ofs_cos": 91,
+     "gain": 13049,
+     "ph_sin": 5524,
+     "ph_icos": 16622,
+     "h3_amp": 104,
+     "h3_ph": 170
+    },
+    "measured_vs_true_deg_el": {
+     "max_abs": 0.12800808945175518,
+     "rms": 0.11382129958964134,
+     "mean": 0.11345120467387107,
+     "max_abs_zeroed": 0.015655517585052584,
+     "rms_zeroed": 0.009171281171259515
+    },
+    "reference_vs_true_deg_el": {
+     "max_abs": 0.1249624503523141,
+     "rms": 0.11597897837319283,
+     "mean": 0.11577934239873877,
+     "max_abs_zeroed": 0.015255840143608299,
+     "rms_zeroed": 0.006802006924808113
+    },
+    "rtl_vs_float_reference_deg_el": {
+     "max_abs": 0.00889648503984108,
+     "rms": 0.004666066017245768,
+     "mean": -0.0023281377247341617,
+     "max_abs_zeroed": 0.0065683473151069175,
+     "rms_zeroed": 0.004043754049390916
+    },
+    "tracked_vs_true_deg_el_after_settle": {
+     "max_abs": 171.99477633439525,
+     "rms": 106.48746228573157,
+     "mean": -34.68654879532425,
+     "max_abs_zeroed": 137.32937622072026,
+     "rms_zeroed": 100.67980411544657
+    },
+    "lock_pairs_to_0p5deg_from_reset": 2000,
+    "velocity_lsb_per_tick": {
+     "true": 218.45333333333332,
+     "mean": -0.003125,
+     "rel_err": -1.000014305114746
+    }
+   },
+   "fast_k0": {
+    "case": "fast_k0",
+    "regs": {
+     "ofs_sin": 73,
+     "ofs_cos": 91,
+     "gain": 13049,
+     "ph_sin": 5524,
+     "ph_icos": 16622,
+     "h3_amp": 104,
+     "h3_ph": 170
+    },
+    "measured_vs_true_deg_el": {
+     "max_abs": 0.1627065757704227,
+     "rms": 0.12702483320225175,
+     "mean": 0.12603970564669653,
+     "max_abs_zeroed": 0.03666687012372616,
+     "rms_zeroed": 0.01578926377491932
+    },
+    "reference_vs_true_deg_el": {
+     "max_abs": 0.15189563786388277,
+     "rms": 0.12585052726097956,
+     "mean": 0.12547601717995432,
+     "max_abs_zeroed": 0.026419620683928446,
+     "rms_zeroed": 0.00970176914394293
+    },
+    "rtl_vs_float_reference_deg_el": {
+     "max_abs": 0.011332348160994873,
+     "rms": 0.007912584135677454,
+     "mean": 0.0005636884665885864,
+     "max_abs_zeroed": 0.011450266210571991,
+     "rms_zeroed": 0.007892480156250603
+    },
+    "tracked_vs_true_deg_el_after_settle": {
+     "max_abs": 57.69307345353553,
+     "rms": 34.296895674305475,
+     "mean": -23.671469449626446,
+     "max_abs_zeroed": 39.22644287110296,
+     "rms_zeroed": 24.818110060792204
+    },
+    "lock_pairs_to_0p5deg_from_reset": 2000,
+    "velocity_lsb_per_tick": {
+     "true": 109.22666666666666,
+     "mean": 1.6615833333333334,
+     "rel_err": -0.9847877502441407
+    }
+   },
+   "fast_k30": {
+    "case": "fast_k30",
+    "regs": {
+     "ofs_sin": 73,
+     "ofs_cos": 91,
+     "gain": 13049,
+     "ph_sin": 5524,
+     "ph_icos": 16622,
+     "h3_amp": 104,
+     "h3_ph": 170
+    },
+    "measured_vs_true_deg_el": {
+     "max_abs": 0.1627065757704227,
+     "rms": 0.12702483320225175,
+     "mean": 0.12603970564669653,
+     "max_abs_zeroed": 0.03666687012372616,
+     "rms_zeroed": 0.01578926377491932
+    },
+    "reference_vs_true_deg_el": {
+     "max_abs": 0.15189563786388277,
+     "rms": 0.12585052726097956,
+     "mean": 0.12547601717995432,
+     "max_abs_zeroed": 0.026419620683928446,
+     "rms_zeroed": 0.00970176914394293
+    },
+    "rtl_vs_float_reference_deg_el": {
+     "max_abs": 0.011332348160994873,
+     "rms": 0.007912584135677454,
+     "mean": 0.0005636884665885864,
+     "max_abs_zeroed": 0.011450266210571991,
+     "rms_zeroed": 0.007892480156250603
+    },
+    "tracked_vs_true_deg_el_after_settle": {
+     "max_abs": 74.77708834611296,
+     "rms": 48.175167395259145,
+     "mean": -41.39560824357186,
+     "max_abs_zeroed": 38.95058166504461,
+     "rms_zeroed": 24.642450602688967
+    },
+    "lock_pairs_to_0p5deg_from_reset": 2000,
+    "velocity_lsb_per_tick": {
+     "true": 109.22666666666666,
+     "mean": 1.6615833333333334,
+     "rel_err": -0.9847877502441407
+    }
+   },
+   "ideal": {
+    "case": "ideal",
+    "regs": {
+     "ofs_sin": 0,
+     "ofs_cos": 0,
+     "gain": 16384,
+     "ph_sin": 0,
+     "ph_icos": 16384,
+     "h3_amp": 0,
+     "h3_ph": 0
+    },
+    "measured_vs_true_deg_el": {
+     "max_abs": 0.026921109784082693,
+     "rms": 0.012080226162853447,
+     "mean": 0.00025906599718573644,
+     "max_abs_zeroed": 0.02718017578126843,
+     "rms_zeroed": 0.012077447948751057
+    },
+    "reference_vs_true_deg_el": {
+     "max_abs": 0.027921124980325077,
+     "rms": 0.012056908766541316,
+     "mean": 6.412393874903606e-05,
+     "max_abs_zeroed": 0.027985248919074113,
+     "rms_zeroed": 0.012056738245693987
+    },
+    "rtl_vs_float_reference_deg_el": {
+     "max_abs": 0.004600754844931193,
+     "rms": 0.0018392351880938238,
+     "mean": 0.0001949420584374128,
+     "max_abs_zeroed": 0.004697238329004141,
+     "rms_zeroed": 0.0018288749741233563
+    },
+    "tracked_vs_true_deg_el_after_settle": {
+     "max_abs": 0.019268343340984734,
+     "rms": 0.005740544264440921,
+     "mean": 0.0002290367003108388,
+     "max_abs_zeroed": 0.019039306640673895,
+     "rms_zeroed": 0.005735973382253119
+    },
+    "lock_pairs_to_0p5deg_from_reset": 35,
+    "velocity_lsb_per_tick": {
+     "true": 2.1845333333333334,
+     "mean": 2.159125,
+     "rel_err": -0.011631011962890736
+    }
+   },
+   "uncal": {
+    "case": "uncal",
+    "regs": {
+     "ofs_sin": 0,
+     "ofs_cos": 0,
+     "gain": 16384,
+     "ph_sin": 0,
+     "ph_icos": 16384,
+     "h3_amp": 0,
+     "h3_ph": 0
+    },
+    "measured_vs_true_deg_el": {
+     "max_abs": 13.946413851153467,
+     "rms": 8.477042127669028,
+     "mean": 5.5367175010557785,
+     "max_abs_zeroed": 12.444969177246088,
+     "rms_zeroed": 6.419112286584347
+    },
+    "reference_vs_true_deg_el": {
+     "max_abs": 13.943428968402023,
+     "rms": 8.476863623851887,
+     "mean": 5.536440599360823,
+     "max_abs_zeroed": 12.44640110006763,
+     "rms_zeroed": 6.419115389766139
+    },
+    "rtl_vs_float_reference_deg_el": {
+     "max_abs": 0.00555852815521854,
+     "rms": 0.0017956903768282949,
+     "mean": 0.00027690169495559315,
+     "max_abs_zeroed": 0.005281626460262947,
+     "rms_zeroed": 0.001774212326855065
+    },
+    "tracked_vs_true_deg_el_after_settle": {
+     "max_abs": 13.991372835528484,
+     "rms": 8.820441980609791,
+     "mean": 6.42721634138781,
+     "max_abs_zeroed": 13.430980224609389,
+     "rms_zeroed": 6.040785282916542
+    },
+    "lock_pairs_to_0p5deg_from_reset": 2000,
+    "velocity_lsb_per_tick": {
+     "true": 2.1845333333333334,
+     "mean": 2.177208333333333,
+     "rel_err": -0.003353118896484486
+    }
+   }
+  },
+  "top": {
+   "top_biss_23.810.log": {
+    "checks": 41,
+    "failed": 2,
+    "passed": false
+   },
+   "top_biss_33.333.log": {
+    "checks": 41,
+    "failed": 2,
+    "passed": false
+   },
+   "top_biss_47.619.log": {
+    "checks": 41,
+    "failed": 2,
+    "passed": false
+   },
+   "top_gate_33.333.log": {
+    "checks": 14,
+    "failed": 0,
+    "passed": true
+   },
+   "top_safe_33.333.log": {
+    "checks": 32,
+    "failed": 0,
+    "passed": true
+   },
+   "top_spi_33.333.log": {
+    "checks": 21,
+    "failed": 1,
+    "passed": false
+   },
+   "top_ssi_23.810.log": {
+    "checks": 9,
+    "failed": 0,
+    "passed": true
+   },
+   "top_ssi_33.333.log": {
+    "checks": 9,
+    "failed": 0,
+    "passed": true
+   },
+   "top_ssi_47.619.log": {
+    "checks": 9,
+    "failed": 0,
+    "passed": true
+   }
+  },
+  "syn": {
+   "cell_area_um2": 218277.234,
+   "seq_area_um2": 85093.5456,
+   "cells": 14880,
+   "flops": 1737,
+   "kGE_nand2": 30.075677083333332,
+   "ratio_cell_area_to_0p18mm2": 1.2126512999999999,
+   "macro_est_um2_at_g1_ratio": 333609.2448511722,
+   "per_module_um2": {
+    "r1_regs": 42798.9744,
+    "r1_ctrl_top": 4807.6686,
+    "r1_sinlut": 1235.4174,
+    "r1_sync2": 606.0096,
+    "r1_pos": 76697.901,
+    "r1_safe": 23021.1072,
+    "r1_gate": 37886.184,
+    "r1_biss": 21924.7182,
+    "r1_spi": 11473.7742,
+    "r1_idrom": 165.0726
+   }
+  }
+ },
+ "disposition": "simulation checks FAILED (see summary.md); cell area 0.218 mm2 = 1.21 x the 0.18 mm2 budget (before placement)"
+}

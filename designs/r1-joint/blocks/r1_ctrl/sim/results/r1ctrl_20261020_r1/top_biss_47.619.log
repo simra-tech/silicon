@@ -1,0 +1,61 @@
+# tb_top test=biss clk_ns=47.619
+PASS init: FAULT_N high after CAL_CRC load and CLR
+PASS biss item1: data 0x00000 nE nW = 1 1
+PASS biss item1: 0x00000 CRC on wire 0x3A
+PASS biss item1: 0x3FFFF CRC on wire 0x02
+PASS biss item1: 0x12345 CRC on wire 0x0D
+PASS biss: ACK 0 at edge 2, stop 0 after CRC
+INFO biss f_MA=80000 Hz duty_high=0.4 t_busy=2 T_MA timeout=28.76 us
+PASS biss item2: frame data and CRC at this MA frequency / duty
+PASS biss item3: t_busy = 2 T_MA (f_MA <= 1 MHz)
+INFO biss f_MA=80000 Hz duty_high=0.6 t_busy=2 T_MA timeout=28.74 us
+PASS biss item2: frame data and CRC at this MA frequency / duty
+PASS biss item3: t_busy = 2 T_MA (f_MA <= 1 MHz)
+INFO biss f_MA=250000 Hz duty_high=0.4 t_busy=2 T_MA timeout=28.74 us
+PASS biss item2: frame data and CRC at this MA frequency / duty
+PASS biss item3: t_busy = 2 T_MA (f_MA <= 1 MHz)
+INFO biss f_MA=250000 Hz duty_high=0.6 t_busy=2 T_MA timeout=28.73 us
+PASS biss item2: frame data and CRC at this MA frequency / duty
+PASS biss item3: t_busy = 2 T_MA (f_MA <= 1 MHz)
+INFO biss f_MA=1000000 Hz duty_high=0.4 t_busy=2 T_MA timeout=28.73 us
+PASS biss item2: frame data and CRC at this MA frequency / duty
+PASS biss item3: t_busy = 2 T_MA (f_MA <= 1 MHz)
+INFO biss f_MA=1000000 Hz duty_high=0.6 t_busy=2 T_MA timeout=28.73 us
+PASS biss item2: frame data and CRC at this MA frequency / duty
+PASS biss item3: t_busy = 2 T_MA (f_MA <= 1 MHz)
+INFO biss f_MA=5000000 Hz duty_high=0.4 t_busy=3 T_MA timeout=28.76 us
+PASS biss item2: frame data and CRC at this MA frequency / duty
+PASS biss item3: t_busy in 2..6 T_MA (f_MA > 1 MHz, handshake)
+INFO biss f_MA=5000000 Hz duty_high=0.6 t_busy=2 T_MA timeout=28.76 us
+PASS biss item2: frame data and CRC at this MA frequency / duty
+PASS biss item3: t_busy in 2..6 T_MA (f_MA > 1 MHz, handshake)
+INFO biss f_MA=10000000 Hz duty_high=0.4 t_busy=3 T_MA timeout=28.73 us
+PASS biss item2: frame data and CRC at this MA frequency / duty
+PASS biss item3: t_busy in 2..6 T_MA (f_MA > 1 MHz, handshake)
+INFO biss f_MA=10000000 Hz duty_high=0.6 t_busy=3 T_MA timeout=28.75 us
+PASS biss item2: frame data and CRC at this MA frequency / duty
+PASS biss item3: t_busy in 2..6 T_MA (f_MA > 1 MHz, handshake)
+INFO biss timeout measured 28.730 us, 600 ticks = 28.571 us
+PASS biss item4: timeout = TIMEOUT_TICKS + sync (< 6 ticks)
+PASS biss item4: timeout inside 12.5..40 us
+PASS biss item5: 5 back-to-back frames at 10 MHz, restart when SLO high
+PASS biss item6: frame after an aborted frame and 40 us is correct
+PASS biss item7: FORCE_NE gives nE = 0, CRC valid
+PASS biss item7: FORCE_NW gives nW = 0, CRC valid
+PASS biss item7: Null Value (data 0, nE 0) on signal loss
+INFO biss latch: max |position at LAT - head angle at LAT| = 151.471 deg el at 10 kHz el
+FAIL biss: 6 multi-turn frames with real position, nE nW 1 1, CRC valid  (t=3343719000)
+FAIL biss: latched position within 0.25 deg el (2 ticks) of the head angle at LAT (10 kHz el)  (t=3343719000)
+INFO biss control read 0x42 -> 0x00 (S=1, CRC4 wire f)
+PASS biss item8: read 0x42 (Profile ID high) with S and CRC-4
+INFO biss control read 0x43 -> 0x01 (S=1, CRC4 wire c)
+PASS biss item8: read 0x43 (Profile ID low) non-zero
+INFO biss control read 0x78 -> 0x52 (S=1, CRC4 wire b)
+PASS biss item8: read 0x78 (DEV_ID byte 0)
+INFO biss control read 0x7f -> 0x00 (S=1, CRC4 wire f)
+PASS biss item8: read 0x7F (MFR_ID low, reset value)
+PASS biss item8: CRC-4 error -> no response, error counter +1
+PASS biss item8: 14 x CDM = 0 returns the control channel to idle
+# 41 checks, 2 failed
+TESTS FAILED: 2
+tb/tb_top.v:703: $finish called at 14450274700 (1ps)
