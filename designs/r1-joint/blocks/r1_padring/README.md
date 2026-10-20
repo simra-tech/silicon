@@ -109,7 +109,7 @@ The pad-side pins `c2p`, `p2c` and `padres` of the cells have no connection. The
 | **Core window** | free inside the ring: **x = 361.8 to 1054.42 um, y = 362.16 to 1051.3 um**, 692.6 x 689.1 um = **0.477 mm²** | derived from the ring edges |
 | Ring to IO row | IO row inner edge 321 um; ring outer edge 324.8 um (west) | GDS |
 
-Macros of G1 sat inside x, y = 364 to 1050 um. The R1 specification budget is about 0.45 to 0.50 mm² of macros (section 4).
+Macros of G1 r4 sat from 331 um (analog macros under the core power ring; measured in S6, run `g1check`), the digital inside the conservative window. The R1 specification budget is about 0.45 to 0.50 mm² of macros (section 4).
 The window is therefore **marginal** for the R1 macro budget, as the specification says.
 The ring carries no net name in this GDS. I did not extract which ring conductor is `VDD` and which is `VSS`
 (a probe of the LVS database returned the substrate net on every layer; not pursued). The LEF lists the ring as obstructions.
