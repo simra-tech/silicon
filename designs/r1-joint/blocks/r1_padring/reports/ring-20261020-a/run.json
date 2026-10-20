@@ -1,0 +1,113 @@
+{
+ "pdk": "IHP-Open-PDK 84374023ee8b4b126bebbba67fcbada0a9c0ff0b (checked by flow/run.sh against /foss/pdks/ihp-sg13g2/COMMIT)",
+ "container_image": "tapeoutbench-eda:latest, sha256:ddeb69576f2808676d1c5d474ecf04f6d1d6f8abdcff6b72b39790ded924bab2 (checked by flow/run.sh)",
+ "tools": {
+  "klayout": "0.30.9 (DRC/LVS/antenna logs; Ruby 3.2.3)",
+  "pdk_decks": "stock run_drc.py, run_lvs.py, sg13g2_maximal.drc, antenna.drc, density, unmodified",
+  "librelane": "3.1.0.dev2 in the image, not used",
+  "ngspice": "not applicable"
+ },
+ "cpu_set": "116-119 (G1_CPUSET, G1_CPUS=4); controls and diagnostics 1 CPU inside the same set",
+ "results_root_dir": "r1_padring/ring-20261020-a/ (bulk results root; paths in tracked logs are written ${RESULTS_ROOT})",
+ "date": "2026-10-20",
+ "run_id": "ring-20261020-a",
+ "question": "Can the G1 r4 ring (design-local IO copies with PolyRes 128/0, bondpads 5 um outward, 1414 um die) be reproduced for the R1 24-pin map with an empty core, and does it pass the G1 ring checks?",
+ "inputs": {
+  "g1_ring_source": {
+   "file": "designs/g1-guardian/blocks/g1_padring/layout/g1_chip_top_1414_r4.gds",
+   "sha256": "225d0b535321ed312594bb13d97b7271014f487162564a56c874572de715173a"
+  },
+  "g1_canonical_cdl": {
+   "file": "designs/g1-guardian/blocks/g1_padring/netlist/g1_chip_top_1414_r4.cdl",
+   "sha256": "e060c0c59a168e5b69b0c47dc31cbfe4f4444d2ec8af62960c339c1230a2c99f"
+  },
+  "pin_map": "designs/r1-joint/specification/R1_TOP_LEVEL_SPECIFICATION.md section 3"
+ },
+ "steps": [
+  {
+   "step": "build",
+   "command": "flow/run.sh klayout -b -r flow/build_ring.py -rd src=<g1 r4 gds> -rd out=<r1_padring_nofill.gds> -rd report=<build_ring.json>",
+   "output": "r1_padring_nofill.gds sha256 6d8a34d04c9e5d03d6fbfcdb0a6d8d07d113a9abd289fc88f6fd353232ffc730",
+   "report": "build_ring.json",
+   "result": "24 IO cells re-assigned by slot, 4 corners, 112 IO fillers, 24 bondpads, bridge cell, seal ring and core power ring kept; macros, std cells, routing, VDDA grid, old fill removed",
+   "disposition": "done; first build also dropped the ring TopVia1 array (125/0) deliberately, see README"
+  },
+  {
+   "step": "fill",
+   "command": "flow/run.sh bash -c 'klayout -n sg13g2 -zz -r $PDK_ROOT/$PDK/libs.tech/klayout/tech/scripts/filler.py -rd output_file=... <nofill>'",
+   "log": "fill.log",
+   "result": "ActGatP, Metal (M1-M5), TopMetal fill written; 2 m 56 s real",
+   "disposition": "done"
+  },
+  {
+   "step": "rewrite",
+   "command": "flow/run.sh klayout -b -r flow/rewrite_gds.py",
+   "output": "r1_padring_a.gds sha256 3a477ab4534834cd8e551d6f3d1e3be5ed90a7851957fb505564c868a8eee0f0, 47233086 bytes, 63 cells, top r1_padring",
+   "disposition": "ring reference of this run; hash unchanged after all checks (input_gds.sha256.after)"
+  },
+  {
+   "step": "drc_main",
+   "command": "run_drc.py --run_mode=deep --no_density --disable_extra_rules --density_thr=4",
+   "result": "0 items, 561 rule categories, 146.67 s",
+   "disposition": "passed",
+   "evidence": "drc_main/"
+  },
+  {
+   "step": "drc_maximal",
+   "command": "flow/run_maximal.py (copy of the G1 wrapper around the stock sg13g2_maximal deck)",
+   "result": "0 items, 272 categories, 208.37 s",
+   "disposition": "passed",
+   "evidence": "drc_maximal/"
+  },
+  {
+   "step": "density",
+   "command": "run_drc.py --density_only --density_thr=4",
+   "result": "0 items, 7 categories; Activ 49.74 %, GatPoly 17.03 %, Metal1 52.22 %, Metal2 44.77 %, Metal3 53.19 %, Metal4 52.88 %, Metal5 53.18 %, TopMetal1 53.59 %, TopMetal2 51.16 %",
+   "disposition": "passed, with fill",
+   "evidence": "density/"
+  },
+  {
+   "step": "precheck",
+   "command": "run_drc.py --precheck_drc --disable_extra_rules --density_thr=4",
+   "result": "0 items, 455 categories, 98.22 s",
+   "disposition": "passed",
+   "evidence": "precheck/"
+  },
+  {
+   "step": "antenna",
+   "command": "run_drc.py --antenna_only --antenna --density_thr=4",
+   "result": "12 items: Ant.e_Metal5, Ant.e_TopMetal1, Ant.e_TopMetal2 at the 4 sg13g2_IOPadIn receiver gates (pads 16, 17, 19, 20); cumulative Metal1-Metal5 ratio 20727.6 against limit 20000 with a diode",
+   "disposition": "failed; cause empty core (no gate load on the vdd net); control control_antenna_g1r4_nodecap reproduces it on G1 r4",
+   "evidence": "antenna/, control_antenna_g1r4_nodecap/"
+  },
+  {
+   "step": "lvs_projected_g1_form",
+   "command": "run_lvs.py --run_mode deep --top_lvl_pins --spice_comments, netlist/r1_padring_projected_ref.cdl (cd12712b..., G1 projection, substrate = VSS)",
+   "result": "Netlists don't match; 210 of 261 devices and 59 of 119 nets match; mismatches only where the layout substrate net is separate from VSS (IO pads' sub!-labelled taps), 1003 s",
+   "disposition": "failed; empty-core cause (no core p-tap ties the substrate to VSS)",
+   "evidence": "lvs_projected/ (diagnosis.txt)"
+  },
+  {
+   "step": "lvs_projected_ringonly",
+   "command": "run_lvs.py --run_mode deep --top_lvl_pins --spice_comments, netlist/r1_padring_ringonly_projected_ref.cdl (32e94246..., substrate node separate from VSS)",
+   "result": "Congratulations! Netlists match: 261/261 devices, 119/119 nets, 22/22 named ports; 18 extra layout-only floating pad-side pins (9 padres, 4 p2c, 5 c2p) listed in lvs_projected_ringonly/pins.txt; 538.6 s",
+   "disposition": "passed, with the ring-only projection",
+   "evidence": "lvs_projected_ringonly/"
+  },
+  {
+   "step": "lvs_canonical",
+   "command": "run_lvs.py --run_mode deep --top_lvl_pins --spice_comments, netlist/r1_padring.cdl (8a28d3d7...)",
+   "result": "Netlists don't match: 14 circuit pairs, 12 NoMatch (the G1 r4 set of 14 NoMatch IO cells without Clamp_N8N8D and Clamp_P8N8D, which only the Out16mA pad uses), 2 Skipped (r1_padring and sg13g2_GateLevelUpInv, as in G1 r4), 0 Match (no standard cells or macros in this chip)",
+   "disposition": "failed, known PDK IO-cell reference semantics (G1 R13)",
+   "evidence": "lvs_canonical/"
+  },
+  {
+   "step": "bondplan",
+   "command": "flow/run.sh klayout -b -r designs/r1-joint/padframe/bondplan_r1.py ...; verify_bondmap.py",
+   "result": "0 wire crossings (30 for pad n to lead n); bond map verified: 24 openings, 24 rows, 22 labels, all_ok true",
+   "disposition": "passed",
+   "evidence": "../bondmap/verify_bondmap_r1.json, ../../../../padframe/"
+  }
+ ],
+ "disposition": "ring reference produced; DRC main, maximal, precheck, density passed; antenna failed (empty core); projected LVS failed in the G1 form and passed in the ring-only form; canonical LVS failed (known)"
+}

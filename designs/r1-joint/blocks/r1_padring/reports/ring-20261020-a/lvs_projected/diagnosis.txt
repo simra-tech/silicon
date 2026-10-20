@@ -1,0 +1,61 @@
+### lvs_diag
+circuit r1_padring R1_PADRING NoMatch
+  dev ('Match', 'dantenna', 'DANTENNA') 39 ('$5', '176PAD01_VDD.I1.D0')
+  dev ('Match', 'dpantenna', 'DPANTENNA') 37 ('$47', '438PAD04_IOVSS.I2.D1')
+  dev ('Match', 'ptap1', 'PTAP1') 1 ('$1', '1PAD01_VDD._G1_TAP_SYNTAX_XR1')
+  dev ('Match', 'rppd', 'RPPD') 33 ('$3', '188PAD01_VDD.I4.R5')
+  dev ('Match', 'sg13_hv_nmos', 'sg13_hv_nmos') 32 ('$4', 'PAD01_VDD.I1.N0<1>')
+  dev ('Match', 'sg13_hv_pmos', 'sg13_hv_pmos') 54 ('$8', 'PAD01_VDD.I3.P0')
+  dev ('Match', 'sg13_lv_pmos', 'sg13_lv_pmos') 14 ('$246', 'PAD12_FAULT_N.I2.I1.P3')
+  dev ('Mismatch', 'dantenna', 'DANTENNA') 1 ('$10', '211PAD02_VSS.I1.D1')
+  dev ('Mismatch', 'dpantenna', 'DPANTENNA') 1 ('$9', '214PAD02_VSS.I2.D1')
+  dev ('Mismatch', 'ptap1', 'PTAP1') 1 ('$2', '2PAD01_VDD._G1_TAP_SYNTAX_XR0')
+  dev ('Mismatch', 'sg13_hv_nmos', 'sg13_hv_nmos') 34 ('$243', 'PAD12_FAULT_N.I2.I1.N0')
+  dev ('Mismatch', 'sg13_lv_nmos', 'sg13_lv_nmos') 14 ('$242', 'PAD12_FAULT_N.I2.I1.N1')
+  nets {'Match': 59, 'Mismatch': 60}
+   net Mismatch $I355002 PAD12_FAULT_N.I2.I0.NET2 3 3
+  layout devices total 261 ref devices total 261
+  layout classes {'ptap1': 2, 'rppd': 33, 'sg13_hv_nmos': 66, 'dantenna': 40, 'sg13_hv_pmos': 54, 'dpantenna': 38, 'sg13_lv_nmos': 14, 'sg13_lv_pmos': 14}
+  ref classes {'PTAP1': 2, 'sg13_hv_nmos': 66, 'DANTENNA': 40, 'RPPD': 33, 'sg13_hv_pmos': 54, 'DPANTENNA': 38, 'sg13_lv_nmos': 14, 'sg13_lv_pmos': 14}
+### lvs_diag2
+PAD01_VDD mismatch 1 of 8
+PAD02_VSS mismatch 2 of 2
+PAD03_IOVDD mismatch 0 of 6
+PAD04_IOVSS mismatch 0 of 2
+PAD07_VDDA mismatch 0 of 9
+PAD08_ISA_P mismatch 0 of 9
+PAD09_ISA_N mismatch 0 of 9
+PAD10_ISB_P mismatch 0 of 9
+PAD11_ISB_N mismatch 0 of 9
+PAD12_FAULT_N mismatch 8 of 22
+PAD13_GATE_A mismatch 8 of 22
+PAD14_GATE_B mismatch 8 of 22
+PAD15_GATE_C mismatch 8 of 22
+PAD16_CS_N mismatch 2 of 13
+PAD17_MA_SCLK mismatch 2 of 13
+PAD18_SLO_SDO mismatch 8 of 22
+PAD19_SDI mismatch 2 of 13
+PAD20_EN_STO_IN mismatch 2 of 13
+PAD21_SIN_P mismatch 0 of 9
+PAD22_SIN_N mismatch 0 of 9
+PAD23_COS_P mismatch 0 of 9
+PAD24_COS_N mismatch 0 of 9
+unmatched nets (first 12)
+   Mismatch $I355002 | PAD12_FAULT_N.I2.I0.NET2
+   Mismatch $I355000 | PAD12_FAULT_N.I2.I0.NET3
+   Mismatch $I355001 | PAD12_FAULT_N.I2.I0.NET4
+   Mismatch $I355005 | PAD12_FAULT_N.I2.I1.NET2
+   Mismatch $I355003 | PAD12_FAULT_N.I2.I1.NET3
+   Mismatch $I355004 | PAD12_FAULT_N.I2.I1.NET4
+   Mismatch $I354877 | PAD12_FAULT_N.NET1
+   Mismatch $I354876 | PAD12_FAULT_N.NET2
+   Mismatch $I354990 | PAD13_GATE_A.I2.I0.NET2
+   Mismatch $I354988 | PAD13_GATE_A.I2.I0.NET3
+   Mismatch $I354989 | PAD13_GATE_A.I2.I0.NET4
+   Mismatch $I354993 | PAD13_GATE_A.I2.I1.NET2
+### lvs_diag3
+Mismatch | L: $10 A=$1 C=VSS | R: 211PAD02_VSS.I1.D1 A=VSS C=VSS
+Mismatch | L: $9 A=VSS C=IOVDD | R: 214PAD02_VSS.I2.D1 A=VSS C=IOVDD
+Mismatch | L: $2 TIE=VSS WELL=$1 | R: 2PAD01_VDD._G1_TAP_SYNTAX_XR0 TIE=VSS WELL=VSS
+Mismatch | L: $139 S=VSS G=$I354965 D=$I354967 B=$1 | R: PAD16_CS_N.I0.N2 S=PAD16_CS_N.I0.NET2 G=PAD16_CS_N.I0.NET4 D=VSS B=VSS
+Mismatch | L: $138 S=$13.p2c G=$I354967 D=VSS B=$1 | R: PAD16_CS_N.I0.N1 S=CS_N_P2C G=PAD16_CS_N.I0.NET2 D=VSS B=VSS

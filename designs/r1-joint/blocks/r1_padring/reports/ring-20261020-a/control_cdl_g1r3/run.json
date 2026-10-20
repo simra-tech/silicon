@@ -1,0 +1,19 @@
+{
+ "pdk": "IHP-Open-PDK 84374023ee8b4b126bebbba67fcbada0a9c0ff0b (checked by flow/run.sh against /foss/pdks/ihp-sg13g2/COMMIT)",
+ "container_image": "tapeoutbench-eda:latest, sha256:ddeb69576f2808676d1c5d474ecf04f6d1d6f8abdcff6b72b39790ded924bab2 (checked by flow/run.sh)",
+ "tools": {
+  "klayout": "0.30.9 (DRC/LVS/antenna logs; Ruby 3.2.3)",
+  "pdk_decks": "stock run_drc.py, run_lvs.py, sg13g2_maximal.drc, antenna.drc, density, unmodified",
+  "librelane": "3.1.0.dev2 in the image, not used",
+  "ngspice": "not applicable"
+ },
+ "cpu_set": "116-119 (G1_CPUSET, G1_CPUS=4); controls and diagnostics 1 CPU inside the same set",
+ "results_root_dir": "r1_padring/ring-20261020-a/ (bulk results root; paths in tracked logs are written ${RESULTS_ROOT})",
+ "date": "2026-10-20",
+ "run_id": "ring-20261020-a/control_cdl_g1r3",
+ "question": "Does the projection recipe of flow/make_cdl.py (drop the dummy MP0 of the LevelDown derivative, then flatten) reproduce the G1 r3 projected reference?",
+ "command": "text surgery as in make_cdl.py on netlist/g1_chip_top_1414_r3.cdl; flow/run.sh klayout -b -r flow/flatten_reference.rb -rd source=... -rd compare=netlist/g1_chip_top_1414_r3_projected_ref.cdl",
+ "result": "output sha256 d0d36c841a7a111d19fead1c973cec51fd4134251216c99f177ce01e7f71ccea equals the G1 r3 projected reference; compare_match true (77017 devices, 32549 nets, 22 pins)",
+ "disposition": "passed (method control)",
+ "evidence": "flatten.log"
+}

@@ -1,0 +1,23 @@
+{
+ "pdk": "IHP-Open-PDK 84374023ee8b4b126bebbba67fcbada0a9c0ff0b (checked by flow/run.sh against /foss/pdks/ihp-sg13g2/COMMIT)",
+ "container_image": "tapeoutbench-eda:latest, sha256:ddeb69576f2808676d1c5d474ecf04f6d1d6f8abdcff6b72b39790ded924bab2 (checked by flow/run.sh)",
+ "tools": {
+  "klayout": "0.30.9 (DRC/LVS/antenna logs; Ruby 3.2.3)",
+  "pdk_decks": "stock run_drc.py, run_lvs.py, sg13g2_maximal.drc, antenna.drc, density, unmodified",
+  "librelane": "3.1.0.dev2 in the image, not used",
+  "ngspice": "not applicable"
+ },
+ "cpu_set": "116-119 (G1_CPUSET, G1_CPUS=4); controls and diagnostics 1 CPU inside the same set",
+ "results_root_dir": "r1_padring/ring-20261020-a/ (bulk results root; paths in tracked logs are written ${RESULTS_ROOT})",
+ "date": "2026-10-20",
+ "run_id": "ring-20261020-a/control_antenna_g1r4_nodecap",
+ "question": "Is the antenna result on the R1 ring caused by the missing decap gate load on the vdd net?",
+ "command": "flow/run.sh klayout -b -r flow/strip_cells.py -rd i=<g1 r4 gds> -rd o=<g1r4_nodecap.gds> -rd pat=decap; run_drc.py --antenna_only --antenna --density_thr=4",
+ "input": {
+  "file": "g1r4_nodecap.gds",
+  "sha256": "4390d7c4ba09dabb6665528fd7c36589dcfd46884c9141ca723c2fd3d9e98918",
+  "note": "G1 r4 with its 4645 decap_8 and 17 decap_4 instances deleted; everything else unchanged; G1 r4 itself has 0 antenna items"
+ },
+ "result": "9 items: Ant.e_Metal5, Ant.e_TopMetal1, Ant.e_TopMetal2 at the 3 IOPadIn cells",
+ "disposition": "hypothesis supported: removing only the decap gate load reproduces the markers on G1 r4"
+}
