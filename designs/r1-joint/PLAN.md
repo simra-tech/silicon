@@ -53,6 +53,27 @@ Lean total after D1–D8: ≈ 0.45–0.50 mm², marginal on the baseline die.
 
 **D10 (open, 2026-10-20).** T5 synthesis puts the digital macro at ≈ 0.34 mm² placed (30.4 kGE; `r1_pos` 36 %, registers 19 %, `r1_gate` 17 %, `r1_safe` 10 %, BiSS 10 %, SPI 5 %), against the 0.18 mm² estimate, which predates the on-chip PWM generator (open item 6). Choices: (a) trim the RTL (shared multiplier in `r1_pos`, fewer writable registers, narrower PWM counters) to ≈ 0.28 mm² and still take the 1.5 mm die (D9); (b) the 1.5 mm die with the RTL as is; (c) cut the PWM generator back to pass-through (cut 3) and the I²t model to the host. Decision after T1–T4 report their analog areas.
 
+Area picture after all six P2 reports (2026-10-20; block areas estimated from device counts and the G1 packing ratio,
+digital from synthesis × the G1 macro-to-cell ratio):
+
+| Macro | mm² | Source |
+| --- | --- | --- |
+| Digital (`r1_ctrl`) | 0.34 (0.28 after the RTL trims listed in its README) | T5 |
+| AFE | 0.084 | T3 |
+| ADC + reference buffer | 0.04 + 0.02 | T2, S1 |
+| OSC | 0.018 | T1 |
+| isense × 2 | 0.06 | T4 |
+| safe (4 comparators + DACs) | 0.025 | T4 |
+| BGR (compact), T2F, 3 gates, level shifters | 0.055 | S3 |
+| Total | ≈ 0.64 (≈ 0.58 with the digital trims) | |
+| Usable at 77 % packing: 1.414 mm die (interior 0.596) | 0.46 | T6, S3 |
+| 1.5 mm die (interior ≈ 0.736) | 0.57 | estimated |
+| 1.6 mm die (interior ≈ 0.918) | 0.71 | estimated |
+
+**D10 (provisional, 2026-10-20): 1.6 mm die (2.56 mm²).** The lean design does not fit 1.414 mm even with every
+cut, and 1.5 mm is marginal only with the digital trims. 1.6 mm keeps every block and leaves ≈ 10 % margin. Owner
+confirmation needed (area cost above the 2 mm² budget). Ring and bond plan are re-run by T6 once confirmed.
+
 Decisions from the P2 block reports (2026-10-20, all numbers simulated at schematic level):
 
 | # | Decision | Source |
@@ -60,6 +81,7 @@ Decisions from the P2 block reports (2026-10-20, all numbers simulated at schema
 | D11 | ADC full scale is ±1.0 V differential (2.0 Vpp) from a 1.0 V reference, because VREF = 1.2 V is impossible at VDD = 1.08 V. The AFE output target becomes 1.6 Vpp (80 % of FS): stage-2 gain 10/7 → 8/7. | T2, T3 |
 | D12 | CDAC mismatch is corrected in the digital domain: one redundant bit in the SAR sequence and host-loaded per-bit weights (12 × 14 bit registers) applied as output = Σ b_i·w_i in `r1_ctrl`; units stay 22 fF. Weights are found on the bench with a ramp. Larger units (200–350 fF) are the fallback. | T2 |
 | D13 | `OSC_TRIM` reset value 22 (30.0 MHz at tt). The digital macro closes STA at 42 MHz (fastest untrimmed at code 22 is 38.9 MHz); codes that would exceed 42 MHz at ff are flagged by `OSC_COUNT`, not prevented in hardware. | T1, T5 |
+| D15 | Block interfaces are fixed in `blocks/INTERFACES.md` 0.1 (AFE↔ADC, isense↔ADC/safe, safe↔ctrl calibration, ADC↔ctrl weights, osc, bgr, t2f, gate). | all |
 | D14 | ADC comparator noise target ≤ 60 µV rms and an on-chip reference buffer able to settle 0.42 pC per 33 ns bit cycle are `r1_adc` revision-2 requirements; the AFE track-and-hold model (2.8 pF per side, 250 ns track, 0.6 V CM) is confirmed as the interface. | T2, T3 | Power ≈ 17–21 mW, about
 4.5 mA on the single `VDDA` pad (G1 path 11–21 Ω, ≈ 95 mV drop): a second analog supply pad is not
 available, so the analog current budget is a design constraint, not a result.
