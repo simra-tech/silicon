@@ -1,0 +1,35 @@
+* tb_adc4_dyn.cir -- R1 ADC revision 4 dynamic test (D18 frame): sine on SIN (slice A), cosine on COS (slice B).
+* vda = @AMP@ sin(2 pi @FIN@ t + @PH@ deg), vdb = cosine (phase + 90 deg); continuous, coherent with the frame rate
+* 1/(22 T). A chunk of a long record is simulated with the phase of its first frame (@PH@).
+* Inputs: linear E sources around CM (R2-7). Reference: REFLINES.
+.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerMOSlv.lib @CORNER@
+.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerCAP.lib cap_typ
+.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerMOShv.lib @CORNER@
+.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerRES.lib res_typ
+.include schematic/r1_adc_r4.spice
+.include sim/r4/@TIMING@
+.temp @TEMP@
+.option @OPTS@
+Vdd vdd 0 @VDD@
+@REFLINES@
+Vcm vcm 0 @CM@
+Vda vda 0 SIN(0 @AMP@ @FIN@ 0 0 @PH@)
+Vdb vdb 0 SIN(0 @AMP@ @FIN@ 0 0 @PHB@)
+Esp sinp vcm vda 0 0.5
+Esn sinn vcm vda 0 -0.5
+Ecp cosp vcm vdb 0 0.5
+Ecn cosn vcm vdb 0 -0.5
+Vip isap 0 0.6
+Vin isan 0 0.6
+XADC sinp sinn cosp cosn isap isan isap isan trka0 trka1 trkb0 trkb1 clk30 wina winb lata latb
++ stba0 stba1 stba2 stba3 stba4 stba5 stba6 stba7 stba8 stba9 stba10 stba11 stba12 stba13
++ stbb0 stbb1 stbb2 stbb3 stbb4 stbb5 stbb6 stbb7 stbb8 stbb9 stbb10 stbb11 stbb12 stbb13
++ rawa rawb topap topan topbp topbn vdd vref vrefl 0 @CORE@
+.control
+set num_threads=1
+save @SAVE@
+tran 1n @TSTOP@ 0 @TMAX@
+meas tran idd avg i(vdd) from=0.7u to=@TSTOP@
+write @RAW@/codes.raw
+.endc
+.end

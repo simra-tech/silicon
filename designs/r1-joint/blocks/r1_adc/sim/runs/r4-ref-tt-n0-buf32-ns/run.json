@@ -1,0 +1,55 @@
+{
+  "run_id": "r4-ref-tt-n0-buf32-ns",
+  "block": "r1_adc",
+  "question": "R2-4 rev 4: buf32 stagger 0, operating-point fix A (nodeset on vref)",
+  "command": "G1_CPUSET=104 G1_CPUS=1 G1_WORKDIR=designs/r1-joint/blocks/r1_adc G1_RESULTS_ROOT=<bulk> flow/run.sh ngspice -b <G1_RESULTS_ROOT>/r1_adc/r4-ref-tt-n0-buf32-ns/deck.cir (= sim/runs/r4-ref-tt-n0-buf32-ns/deck.cir with the bulk path filled in)",
+  "deck": "sim/runs/r4-ref-tt-n0-buf32-ns/deck.cir",
+  "deck_template": "sim/r4/tb_adc4_points.cir",
+  "deck_sha256": "57496b990794bc9e22528e257c13a3b2880821a7b96f1405578071f7a36e8d14",
+  "library_sha256_at_start": {
+    "r1_adc_r4.spice": "1ec4c988a32d9d86960b364b9daad05656b07c2693520165cf5afab722679a2c"
+  },
+  "substitutions": {
+    "RAW": "<bulk>/r1_adc/r4-ref-tt-n0-buf32-ns",
+    "CORNER": "mos_tt",
+    "TEMP": "27",
+    "VDD": "1.2",
+    "CM": "0.6",
+    "CAPLIB": "cap_typ",
+    "TIMING": "r1_adc_timing_r4_n0.inc",
+    "OPTS": "reltol=1e-4 vntol=1e-6 abstol=1e-12 method=trap klu rshunt=1e12",
+    "TMAX": "0.2n",
+    "TSTOP": "7.7267u",
+    "PWLA": "0 0.0000000 7.833333e-07 0.0000000 7.933333e-07 0.8800000 1.516667e-06 0.8800000 1.526667e-06 -0.8800000 2.250000e-06 -0.8800000 2.260000e-06 0.4400000 2.983333e-06 0.4400000\n+ 2.993333e-06 -0.4400000 3.716667e-06 -0.4400000 3.726667e-06 0.0003000 4.450000e-06 0.0003000 4.460000e-06 0.8700000 5.183333e-06 0.8700000 5.193333e-06 -0.8700000 5.916667e-06 -0.8700000\n+ 5.926667e-06 0.8800000 6.650000e-06 0.8800000 6.660000e-06 -0.8800000",
+    "PWLB": "0 0.0000000 7.833333e-07 0.0000000 7.933333e-07 0.8800000 1.516667e-06 0.8800000 1.526667e-06 -0.8800000 2.250000e-06 -0.8800000 2.260000e-06 -0.4400000 2.983333e-06 -0.4400000\n+ 2.993333e-06 0.4400000 3.716667e-06 0.4400000 3.726667e-06 -0.0003000 4.450000e-06 -0.0003000 4.460000e-06 -0.8700000 5.183333e-06 -0.8700000 5.193333e-06 0.8700000 5.916667e-06 0.8700000\n+ 5.926667e-06 -0.8800000 6.650000e-06 -0.8800000 6.660000e-06 0.8800000",
+    "REFLINES": "Vdda vdda 0 3.3\nVbg vbg 0 1.045\nXREF vbg vref vdda 0 r1_refbuf4 msf=32 mib=160 ndec=6 ncg=1\nVrl vrefl vref 0\n.nodeset v(vref)=1.004 v(vrefl)=1.004",
+    "INSTANCES": "XADC sinp sinn cosp cosn isap isan isap isan trka0 trka1 trkb0 trkb1 clk30 wina winb lata latb\n+ stba0 stba1 stba2 stba3 stba4 stba5 stba6 stba7 stba8 stba9 stba10 stba11 stba12 stba13\n+ stbb0 stbb1 stbb2 stbb3 stbb4 stbb5 stbb6 stbb7 stbb8 stbb9 stbb10 stbb11 stbb12 stbb13\n+ rawa rawb topap topan topbp topbn vdd vref vrefl 0 r1_adc4_core_fast",
+    "SAVE": "v(rawa) v(rawb) v(vref) v(vrefl) v(topap) v(topan) v(topbp) v(topbn) i(vdd) v(clk30) v(trka0) v(trkb0) i(vdda)"
+  },
+  "tool": "ngspice (banner not found in log)",
+  "ngspice_version": "ngspice-46 : Circuit level simulation program (creation date Mon Jul 27 13:15:13 UTC 2026)",
+  "netlist_sha256": {
+    "r1_adc_r4.spice": "1ec4c988a32d9d86960b364b9daad05656b07c2693520165cf5afab722679a2c"
+  },
+  "container_image": "sha256:ddeb69576f2808676d1c5d474ecf04f6d1d6f8abdcff6b72b39790ded924bab2",
+  "pdk_commit": "84374023ee8b4b126bebbba67fcbada0a9c0ff0b",
+  "raw_results": "r1_adc/r4-ref-tt-n0-buf32-ns (under G1_RESULTS_ROOT)",
+  "started_utc": "2026-10-20T21:20:55.282652Z",
+  "wall_s": 9.2,
+  "returncode": 1,
+  "status": "failed",
+  "errors": [
+    "Error: Transient op failed, timestep too small",
+    "Error: The operating point could not be simulated successfully.",
+    "Error: Finding the operating point for transient simulation failed",
+    "Error: scale vector time, frequency or ?-sweep has no data.",
+    "Error: measure  idd  avg(TRIG) : out of interval",
+    "Error during 'write': no writable vector found.",
+    "Error: incomplete or empty netlist"
+  ],
+  "result": "",
+  "disposition": "failed (failed, no timestep abort): runner stopped, not resubmitted",
+  "points_file": "sim/r4/points/ref10.json",
+  "first_slot": 0,
+  "n_stag": 0
+}

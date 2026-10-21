@@ -1,0 +1,178 @@
+{
+ "label": "simulated, tt unless stated, 10 frames (sim/r4/points/ref10.json, +-0.88 V both slices), post_ref4.py",
+ "metrics": {
+  "test_input_error_lsb": "residue-resolved conversion error of the 10 test inputs vs the ideal-VREF run",
+  "max_code_diff_lsb": "12-bit code difference with design weights (includes the static VREF gain)",
+  "worst_case_input_error_lsb": "comparator input error 25 ns into the tick, decisions 5..13, along the common decision path: bound on the conversion error over all inputs (decisions 5..13 have about 0.31 LSB redundancy)"
+ },
+ "options": [
+  {
+   "file": "sim/results/r4/ref4_tt_n0_buf32.json",
+   "option": "buf32, revision-3 error amplifier (tail 10 uA), stagger 0",
+   "gmin": "1e-10",
+   "runs": [
+    "r4-ref-tt-n0-buf32-g",
+    "r4-ref-tt-n0-ideal1004-g"
+   ],
+   "n_stag": 0,
+   "idda_mA": 0.848,
+   "test_input_error_lsb": 0.256,
+   "max_code_diff_lsb": 1,
+   "worst_case_input_error_lsb": 2.818
+  },
+  {
+   "file": "sim/results/r4/ref4_tt_n0_buf64.json",
+   "option": "buf64 (msf 64, mib 320), revision-3 error amplifier, stagger 0",
+   "gmin": "1e-10",
+   "runs": [
+    "r4-ref-tt-n0-buf64-g",
+    "r4-ref-tt-n0-ideal1004-g"
+   ],
+   "n_stag": 0,
+   "idda_mA": 1.671,
+   "test_input_error_lsb": 0.04,
+   "max_code_diff_lsb": 1,
+   "worst_case_input_error_lsb": 1.309
+  },
+  {
+   "file": "sim/results/r4/ref4_tt_n0_buf32cg4.json",
+   "option": "buf32, gate capacitor ncg 4, stagger 0",
+   "gmin": "1e-10",
+   "runs": [
+    "r4-ref-tt-n0-buf32cg4",
+    "r4-ref-tt-n0-ideal1004-g"
+   ],
+   "n_stag": 0,
+   "idda_mA": 0.848,
+   "test_input_error_lsb": 0.071,
+   "max_code_diff_lsb": 1,
+   "worst_case_input_error_lsb": 1.036
+  },
+  {
+   "file": "sim/results/r4/ref4_tt_n2_buf32.json",
+   "option": "buf32, stagger N = 2 ticks (option 1)",
+   "gmin": "1e-10",
+   "runs": [
+    "r4-ref-tt-n2-buf32",
+    "r4-ref-tt-n0-ideal1004-g"
+   ],
+   "n_stag": 2,
+   "idda_mA": 0.847,
+   "test_input_error_lsb": 2.261,
+   "max_code_diff_lsb": 2,
+   "worst_case_input_error_lsb": 4.211
+  },
+  {
+   "file": "sim/results/r4/ref4_tt_n0_buf32_ea8.json",
+   "option": "buf32, error-amplifier tail mt 1 / lt 8 um (~0.6 uA)",
+   "gmin": "1e-10",
+   "runs": [
+    "r4-ref-tt-n0-buf32-ea8",
+    "r4-ref-tt-n0-ideal1004-g"
+   ],
+   "n_stag": 0,
+   "idda_mA": 0.839,
+   "test_input_error_lsb": 0.143,
+   "max_code_diff_lsb": 3,
+   "worst_case_input_error_lsb": 0.447
+  },
+  {
+   "file": "sim/results/r4/ref4_tt_n0_buf32_ea8cg2.json",
+   "option": "buf32, tail mt 1 / lt 8 um, ncg 2",
+   "gmin": "1e-10",
+   "runs": [
+    "r4-ref-tt-n0-buf32-ea8cg2",
+    "r4-ref-tt-n0-ideal1004-g"
+   ],
+   "n_stag": 0,
+   "idda_mA": 0.84,
+   "test_input_error_lsb": 0.256,
+   "max_code_diff_lsb": 3,
+   "worst_case_input_error_lsb": 0.445
+  },
+  {
+   "file": "sim/results/r4/ref4_tt_n0_buf64_ea8.json",
+   "option": "buf64, tail mt 1 / lt 8 um",
+   "gmin": "1e-10",
+   "runs": [
+    "r4-ref-tt-n0-buf64-ea8",
+    "r4-ref-tt-n0-ideal1004-g"
+   ],
+   "n_stag": 0,
+   "idda_mA": 1.663,
+   "test_input_error_lsb": 0.105,
+   "max_code_diff_lsb": 3,
+   "worst_case_input_error_lsb": 0.423
+  },
+  {
+   "file": "sim/results/r4/ref4_tt_n0_bufsel.json",
+   "option": "CHOSEN (r1_refbuf4 defaults): buf32, tail mt 1 / lt 8 um, ncg 1; ideal run at the buffer level",
+   "gmin": "1e-9",
+   "runs": [
+    "r4-ref-tt-n0-bufsel-g9",
+    "r4-ref-tt-n0-ideal-vstar-g9"
+   ],
+   "n_stag": 0,
+   "idda_mA": 0.839,
+   "test_input_error_lsb": 0.333,
+   "max_code_diff_lsb": 2,
+   "worst_case_input_error_lsb": 0.792
+  },
+  {
+   "file": "sim/results/r4/ref4_tt_n0_bufh.json",
+   "option": "r1_refbuf4h (no input divider), bandgap model 190 kohm + 10 pF input filter; ideal run at the buffer level",
+   "gmin": "1e-9",
+   "runs": [
+    "r4-ref-tt-n0-bufh-g9-buf",
+    "r4-ref-tt-n0-bufh-g9-ideal"
+   ],
+   "n_stag": 0,
+   "idda_mA": 0.843,
+   "test_input_error_lsb": 0.173,
+   "max_code_diff_lsb": 1,
+   "worst_case_input_error_lsb": 0.742
+  },
+  {
+   "file": "sim/results/r4/ref4_ss125_n0_bufsel.json",
+   "option": "CHOSEN at ss / 125 C / 1.08 V",
+   "gmin": "1e-9",
+   "runs": [
+    "r4-refc-ss125-buf",
+    "r4-refc-ss125-ideal"
+   ],
+   "n_stag": 0,
+   "idda_mA": 0.831,
+   "test_input_error_lsb": 0.293,
+   "max_code_diff_lsb": 2,
+   "worst_case_input_error_lsb": 0.714
+  },
+  {
+   "file": "sim/results/r4/ref4_ffm40_n0_bufsel.json",
+   "option": "CHOSEN at ff / -40 C / 1.32 V",
+   "gmin": "1e-9",
+   "runs": [
+    "r4-refc-ffm40-buf",
+    "r4-refc-ffm40-ideal"
+   ],
+   "n_stag": 0,
+   "idda_mA": 0.851,
+   "test_input_error_lsb": 0.309,
+   "max_code_diff_lsb": 0,
+   "worst_case_input_error_lsb": 0.858
+  },
+  {
+   "file": "sim/results/r4/ref4_tt_n0_buf32_ea32cg2.json",
+   "option": "buf32, tail mt 1 / lt 32 um, ncg 2; ideal run at the chosen buffer level",
+   "gmin": "1e-9",
+   "runs": [
+    "r4-ref-tt-n0-buf32-ea32cg2-g9",
+    "r4-ref-tt-n0-ideal-vstar-g9"
+   ],
+   "n_stag": 0,
+   "idda_mA": 0.839,
+   "test_input_error_lsb": 0.533,
+   "max_code_diff_lsb": 2,
+   "worst_case_input_error_lsb": 0.276
+  }
+ ]
+}

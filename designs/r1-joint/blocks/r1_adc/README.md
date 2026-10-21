@@ -1,10 +1,159 @@
-# R1_ADC — 12-bit SAR ADC with two simultaneous track-and-holds (schematic level, revisions 1, 2 and 3)
+# R1_ADC — 12-bit SAR ADC with two simultaneous track-and-holds (schematic level, revisions 1 to 4)
 
-State on 2026-10-20: **schematic written and simulated at schematic level only.** No layout, no PEX, nothing
+State on 2026-10-21: **schematic written and simulated at schematic level only.** No layout, no PEX, nothing
 measured. Every number in this file is **simulated** with ngspice 46 and the PDK models named below, unless it is
 marked *estimated* or *derived*. The reference is an **ideal source** in revision 1 and in most revision-2 decks;
 revision 2 adds the buffer `r1_refbuf` and simulates it in two decks. The SAR logic and the timing generator are
 **behavioural** (XSPICE digital cells and ideal pulse sources).
+
+## Revision 4 (2026-10-21, schematic level)
+
+Revision 4 is a new netlist and new decks next to revisions 1–3, which are unchanged. All numbers in this section
+are **simulated** at schematic level with ngspice 46 unless they are marked *derived* or *estimated*. Nothing is
+laid out or measured. It implements D18: the encoder pair {SIN, COS} is converted every 22-tick frame at 30 MHz,
+one decision per tick (14 decisions), track ≥ 250 ns per slice; the current pair {ISA, ISB} replaces one encoder
+frame per PWM period. Both slices convert in parallel with their own comparator and register. The two decisions
+per tick of revision 3 and its undesigned 3 ns delay cell are removed. Kept from revision 3: CDAC (14 decisions),
+reference buffer circuit, E-source decks, weight method W, D16 full scale.
+
+### What changed
+
+| Item | Revision 3 | Revision 4 |
+| --- | --- | --- |
+| Decision rate | two per tick (16.67 ns), comparator strobe 13.0 ns after evaluation start, local 3 ns delay cell (not designed) | one per clk30 tick (33.3 ns). Strobe at the next rising clk30 edge − 0.6 ns |
+| Comparator clock | ideal `mclk` source from r1_ctrl | `r1_cmp4_clkgen` (new, transistor level): one-shot from the rising clk30 edge (5 inverters 0.5 µm long + NAND). Reset width 1.38 / 2.27 / 0.91 ns (tt / ss-125 °C / ff-−40 °C); the comparator evaluates for the rest of the tick: 31.35 / 30.46 / 31.82 ns to the strobe. r1_ctrl supplies clk30 and the strobes only |
+| Comparator | `r1_cmp3` (c32c): 32 µm × 4 µm integration capacitors, reset NMOS 8 µm, `rppd` 1 × 160 µm bias | `r1_cmp4` (v80): 80 µm × 4 µm, reset NMOS 20 µm, same bias. Chosen in a 6-variant sweep with the clkgen clock (`sim/results/r4/cmp4_a.json`) |
+| Frame | 36 ticks, two 18-tick slots, conversion 7.0 ticks, track 327 ns | 22 ticks: conversion 14 ticks (latch 14 T + 0.5 ns), track 8 T − 6 ns minus a 2 ns edge = 258.7 ns (simulated 257.8–259.5 ns, all corners); mux frames e/c per D18 |
+| SAR logic | one strobe set for both slices | `r1_sar4_logic`: one strobe set per slice (`stba*`, `stbb*`), so slice B can run N ticks after slice A (R2-4 option 1) |
+| LSB-array reference | VREF | port `vrefl` for the LSB-array drivers C7…C0 and the lsb-node reset (tied to VREF in all decks; R2-4 option 3 not run) |
+| Reference buffer | `r1_refbuf3` | `r1_refbuf4`: same circuit, error-amplifier tail as parameters (`mt` fingers of 2 µm / `lt`). Chosen option: msf 32, mib 160, 6 decoupling cells, ncg 1, **mt 1, lt 8 µm** (tail ≈ 0.6 µA instead of 10 µA). **Recommended fix** (open issue 8): `r1_refbuf4h` without the input divider, plus a 10 pF input filter |
+| MSB pre-switch (option, `schematic/r1_adc_r4p.spice`) | — | Both C12 bottom plates go to GND while decision 0 waits (top-plate CM about 0.1 V). Tested at ss and **rejected**: large inputs lose charge (status table). Not in the chosen design |
+| Input common mode | 0.6 V | 0.6 V in all decks except one test. **Recommended: 0.45 V** (decision 0 at ss resolves; contract change for the AFE and isense outputs, not applied) |
+| Simulator options | gmin default | gmin 1e-10 (R2-4 option runs, 64-input ss sweep) or 1e-9 (all runs from 23:45 CEST): the revision-4 operating point does not converge at the default 1e-12 (runs `r4-dbg-op-a…c`, `r4-dbg-opmc-a…c`) |
+
+### Files (revision 4)
+
+| Path | Content |
+| --- | --- |
+| `schematic/gen_r1_adc_r4.py`, `schematic/r1_adc_r4.spice`, `schematic/r1_adc_r4_mm.spice` | Generator and library: `r1_cmp4(_s1)`, `r1_cmp4_bias`, `r1_cmp4_clkgen`, `r1_th4`, `r1_th4_fast`, `r1_th4_fast_mc`, `r1_sar4_logic`, `r1_adc4_core`, `r1_adc4_core_fast`, `r1_adc4_core_fast_mc`, `r1_refbuf4`. Frozen for the campaign: sha256 in `sim/r4/FROZEN_NETLIST_SHA256.txt` |
+| `schematic/gen_r1_adc_r4p.py`, `schematic/r1_adc_r4p.spice` | MSB pre-switch option: `r1_sar4p_logic`, `r1_adc4p_core_fast`, `r1_adc4p_core` (include after `r1_adc_r4.spice`) |
+| `sim/r4/gen_timing_r4.py`, `sim/r4/r1_adc_timing_r4_*.inc` | Ideal D18 sources (clk30, windows, per-slice strobes, latches, track); `_n<N>` stagger N ticks; `_mux_n0` frames e c e e; `_cq` track falling 0.3 ns after the clock edge |
+| `sim/r4/tb_adc4_points.cir`, `sim/r4/tb_adc4p_points.cir`, `sim/r4/tb_adc4h_points.cir`, `sim/r4/run_points4.py` | Held-input deck (one input per frame and slice; `--mc K` for MIM-mismatch instances); runner (resumes only after a numerical abort inside a later frame; stops on any other failure) |
+| `sim/r4/tb_adc4_isa.cir`, `sim/r4/tb_adc4_dyn.cir` | D18 mux sequence with the full core and `r1_refbuf4`; dynamic deck (chunks of an N 256 record) |
+| `sim/r4/gen_cmp4_decks.py`, `tb_cmp4_mem.cir`, `tb_cmp4_noise.cir`, `post_cmp4.py` | Comparator sweep: decision time and memory with the clkgen clock, noise (method A) |
+| `sim/r4/post_ref4.py` | R2-4 metrics (see below) |
+| `sim/r4/post_sweep4.py`, `post_win4.py`, `post_isa4.py`, `post_dyn4.py`, `p4common.py`, `sum_ref4.py` | Post-processors; `sum_ref4.py` collects the R2-4 options into `ref4_options.json` |
+| `sim/r4/gen_points4.py`, `sim/r4/points/*.json` | Input sets: `ref10`, `ss_sweep64`, `ss_cm_test32`, `cornwin2/3`, `mcwin3`, `mcwin0` |
+| `sim/r4/run_cmp4.sh`, `run_ref4.sh`, `run_queue_r4.sh`, `run_queue_r4b.sh` | Campaign helpers (CPU 103–105) |
+| `schematic/gen_r1_refbuf4h.py`, `schematic/r1_refbuf4h.spice` | `r1_refbuf4h`: `r1_refbuf4` without the input divider (error-amplifier gate on vbg, vref = vbg); `r1_reffilt4`: input filter MIM w × w |
+| `sim/r4/tb_refbuf4_noise.cir`, `sim/r4/post_refnoise4.py` | Reference DC and noise at the CDAC with a Thevenin model of r1_bgr (source R, spectrum from the r1_bgr results) |
+| `sim/results/r4/` | Result JSON (all < 1 MB). Raw files: `<G1_RESULTS_ROOT>/r1_adc/<run-id>/`; run records `sim/runs/r4-*/run.json` |
+
+### Built against (revision 4)
+
+| Item | Value | How established |
+| --- | --- | --- |
+| PDK | IHP SG13G2 open PDK commit `84374023ee8b4b126bebbba67fcbada0a9c0ff0b` | `flow/run.sh` commit check; `pdk_commit` in every `sim/runs/r4-*/run.json` |
+| Container image | `sha256:ddeb69576f2808676d1c5d474ecf04f6d1d6f8abdcff6b72b39790ded924bab2` | `container_image` in `run.json` |
+| ngspice | ngspice-46 (creation date 27 Jul 2026), KLU, XSPICE, PSP 103.6 OSDI | `ngspice_version` in every `run.json` (established with `flow/run.sh ngspice -v` on 2026-10-20) |
+| Netlist identity | `r1_adc_r4.spice` sha256 `22e53bb9…cb9f4` for the campaign (comparator and R2-4 option runs before the freeze carry their own sha256); `r1_adc_r4p.spice` separately | `netlist_sha256` in `run.json`; `sim/r4/FROZEN_NETLIST_SHA256.txt` |
+| Models | `cornerMOSlv/hv.lib` `mos_tt` / `mos_ss` / `mos_ff`, `cornerCAP.lib` `cap_typ` / `cap_typ_mismatch`, `cornerRES.lib` `res_typ` | deck headers in `sim/runs/r4-*/deck.cir` |
+| Options | `reltol=1e-4 vntol=1e-6 abstol=1e-12 method=trap klu rshunt=1e12`, gmin 1e-10 or 1e-9 (see above), tmax 0.2 ns, `interp` for code-only decks | `substitutions` in `run.json` |
+| xschem, KLayout, LibreLane, CACE | not used | — |
+
+### Status (revision 4, simulated at schematic level)
+
+`<G1_RESULTS_ROOT>` is the results root of the campaign (raw files, not in git). Evidence paths are relative to this block directory.
+
+| Item | Check | Result | Status | Evidence |
+| --- | --- | --- | --- | --- |
+| 1 R2-4 | Reference settling ≤ 0.25 LSB at ±0.88 V, buffer, both slices, tt | Chosen buffer: worst-case comparator input error 0.79 LSB, test-input error 0.33 LSB, code difference 2 LSB (gain). Best value of all options: 0.28 LSB (tail lt 32 µm, ncg 2). No option meets 0.25 LSB | **failed** | `sim/results/r4/ref4_options.json`, `ref4_tt_*.json`; runs `r4-ref-tt-*` |
+| 1 R2-4 | Option 1: stagger (N = 2 ticks) | Worst-case error 4.21 LSB (worse than N = 0: 2.82 LSB with the same buffer) | **failed** | `sim/results/r4/ref4_tt_n2_buf32.json` |
+| 1 R2-4 | Recommended fix `r1_refbuf4h` (no input divider) with the bandgap model (190 kΩ) and the 10 pF input filter, tt, gmin 1e-9 | vref 1.0507 V; worst-case 0.742 LSB, test-input 0.173 LSB, code diff 1 LSB, IDDA 0.843 mA | **failed** (same as the chosen cell; DC fixed) | `sim/results/r4/ref4_tt_n0_bufh.json`; runs `r4-ref-tt-n0-bufh-g9-*` |
+| 1 R2-4 | Option 2: per-slice decoupling | — | not run | — |
+| 1 R2-4 | Option 3: separate LSB-array reference (`vrefl`) | — | not run (port exists, tied to VREF) | — |
+| 1 R2-4 | Chosen buffer at ss / 125 °C / 1.08 V and ff / −40 °C / 1.32 V (VDDA 3.3 V, gmin 1e-9) | ss: worst-case 0.714 LSB, test-input 0.293 LSB, code diff 2 LSB, IDDA 0.831 mA. ff: worst-case 0.858 LSB, test-input 0.309 LSB, code diff 0 LSB, IDDA 0.851 mA | **failed** (same as tt) | `sim/results/r4/ref4_ss125_n0_bufsel.json`, `ref4_ffm40_n0_bufsel.json`; runs `r4-refc-*` |
+| 1 | Reference noise at the CDAC, 10 Hz–10 MHz, target 110 µV rms (0.25 LSB, coordinator 2026-10-21). r1_bgr spectrum (run `bgr-noise-20261021-b`) through the buffer, plus the buffer's own noise | Chosen `r1_refbuf4`: its input divider (≈ 344 kΩ) loads the unbuffered bandgap: vbg 1.045 → 0.673 V, vref 0.652 V with a 190 kΩ source (0.800 V with 90 kΩ). With the high-impedance input `r1_refbuf4h` and input filter Cf 10 pF (MIM 82 × 82 µm): tt 88.2 µV, ss / 125 °C 109.2 µV (190 kΩ source); 117.3 µV at ss with a 90 kΩ source. No filter: 111.6 / 133.2 µV. Buffer self-noise 63.1 / 75.9 µV (error-amplifier 1/f and white) | `r1_refbuf4`: **failed** (DC). `r1_refbuf4h` + 10 pF: **passed** at tt; ss **marginal** (passed at 190 kΩ, failed at 90 kΩ) | `sim/results/r4/refnoise4.json`; runs `r4-refn-*` |
+| 2 R2-3 | Comparator noise ≤ 60 µV, ss / 125 °C, 33 ns tick | 55.9 µV (tt 44.9, ff 36.5 µV); method A, T_int = t_dec − 1 ns | **passed** | `sim/results/r4/cmp4_a.json` |
+| 2 | Decision time, small input after a 30 mV input, all corners | tt 26.4 / 18.8 / 18.0 ns, ss — / 22.3 / 20.5 ns, ff 20.3 / 18.0 / 17.5 ns at CM 0.60 / 0.35 / 0.10 V; time to the strobe 31.35 / 30.46 / 31.82 ns | passed at CM ≤ 0.35 V; **failed** at ss, CM 0.6 V (0/8) | `sim/results/r4/cmp4_a.json` |
+| 2 | Decision 0 at ss, CM 0.6 V, 64-input sweep | Decision 0 does not resolve for −40 mV ≲ Vin < 0; unresolved reads as 1. Inputs −19.1 mV (A) and −38.3 mV (B): error 27 and 70 LSB. The redundancy (≈ 30 LSB) does not cover it | **failed** | `sim/results/r4/sweep4_ss125.json`; run `r4-sweep-ss125` |
+| 2 | Fix test: input CM 0.45 V, ss, 32 inputs (17 near the toggle) | Decision 0 resolves at all 17 near-toggle inputs; errors ≤ 2.2 LSB against the fit, ≤ 2.6 LSB against the nominal line over ±0.88 V; monotonic | **passed** (needs a contract change, see open issues) | `sim/results/r4/sweep4_ss125_cm045.json`; run `r4-sweep-ss125-cm045` |
+| 2 | Fix test: MSB pre-switch (`r1_adc_r4p.spice`), CM 0.6 V, ss | Decision 0 resolves (near-toggle errors ≤ 4.3 LSB), but inputs beyond ±0.55 V lose charge: errors up to 108 LSB at ±0.88 V. Cause (not proven): the top plate goes below ground during decision 0 | **failed** (option rejected) | `sim/results/r4/sweep4_ss125_pre.json`; run `r4-sweep-ss125-pre` |
+| 3 | Full D18 frame, mux sequence e c e e, full core `r1_adc4_core`, `r1_refbuf4`, tt | Codes in the correct order and frame (SIN/COS, then ISA/ISB ±0.85 V, then SIN/COS). Track 258.0 / 259.5 ns (B / A) ≥ 250 ns. Latch 14.02 ticks after the sampling edge. Errors against the nominal line ≤ 10.2 LSB, proportional to Vin: VREF 1.0052–1.0056 V (gain, not removed) | **passed** (sequence, track, latch) | `sim/results/r4/isa4_tt.json`; run `r4-isa-tt-cq2` |
+| 3 | Mux sequence at ss / 125 °C / 1.08 V and ff / −40 °C / 1.32 V (same deck) | Codes in the correct order and frame at both corners; track ≥ 257.8 ns; latch 14.02 ticks. Errors ≤ 10.6 LSB (ss) and ≤ 8.5 LSB (ff) against the nominal line (gain, VREF 1.0055–1.0060 V). IDD 1.51 mA (ss) / 3.42 mA (ff), IDDA 0.83 / 0.84 mA | **passed** | `sim/results/r4/isa4_ss125.json`, `isa4_ffm40.json`; runs `r4-isa-ss125-cq2`, `r4-isa-ffm40-cq2` (`r4-isa-ss125-cq` stopped at its last time point, TSTOP 3.35 µs; rerun with 3.31 µs) |
+| 4 R2-11 | Weight calibration on the circuit, MIM mismatch, ≥ 10 MC slice samples, reduced windows (±3.5 to ±5 LSB, 4 points per LSB), DNL at the major transitions | 12 slice samples (3 seeds × 2 instances × 2 slices). Design weights: max \|DNL\| 1.0 LSB, 8/12 ≤ 0.5 LSB, 2 non-monotonic, 5 missing codes. After the fit: max \|DNL\| 0.25 LSB (the resolution) on 12/12, monotonic, no missing code. Limitation: each sample fits one weight (W1 at the decision-1 transitions for 8 samples, W0 at the decision-0 transition for 4), because the first window set held no decision-0 toggle (failure 16). The fit and the DNL use the same conversions | **passed** (with the limitation) | `sim/results/r4/mc4_summary.json`, `mc4_tt_s11.json`, `mc4_tt_s12b.json`, `mc4_tt_s13w0.json`; runs `r4-mc-tt-s11`, `r4-mc-tt-s12b`, `r4-mc-tt-s13w0` |
+| 5 | Static windows ss / 125 °C / 1.08 V (±6 LSB at codes 2048 and 3072, 2 points per LSB, ideal VREF) | Monotonic; max \|DNL\| 0.5 LSB (resolution 0.5 LSB). Slice A: code 3064 has no hit (width < 1 LSB; a DNL down to −1 is not excluded at this resolution) | **passed** (monotonic); missing-code check inconclusive | `sim/results/r4/win4_ss125.json`; run `r4-win-ss125` |
+| 5 | Static windows ff / −40 °C / 1.32 V (same windows) | Monotonic; no missing code; max \|DNL\| 0.5 LSB (resolution 0.5 LSB), both slices | **passed** | `sim/results/r4/win4_ffm40.json`; run `r4-win-ffm40` |
+| 5 | Dynamic, tt, N ≥ 256, fin 101.17 kHz (19/256 × frame rate; 100.6 kHz is not coherent), 0.85 V, `r1_refbuf4`, design weights, no device noise | Coherent FFT, 256 frames per slice: SNDR 63.05 / 63.03 dB (A / B), ENOB 10.18, SFDR 73.0 dB, THD −72.9 dB. Revision 3 (N 32) gave 70.9 dB. The loss matches the R2-4 reference-settling error (about 1 LSB rms); not separated further | **run** (no limit in the brief); below the 12-bit ideal (≈ 73 dB at this level) | `sim/results/r4/dyn4_tt_n256.json`; runs `r4-dyn-tt-c0…c2` |
+| 5 | Dynamic at ss and ff | — | not run (time budget) | — |
+| — | Full ramp, resistor corners, comparator offset MC with the clkgen, layout, PEX | — | not run | — |
+
+### R2-4 options (tt, 10 test inputs at up to ±0.88 V, both slices at the same time, stagger 0 unless stated)
+
+All values are simulated. "Worst-case" is the comparator input error 25 ns into each tick for decisions 5…13, taken along the common decision path. It bounds the conversion error over all inputs, because decisions 5…13 have only about 0.31 LSB of redundancy. The code difference includes the static VREF offset of the slow error amplifier (gain). Only rows with the same gmin can be compared (see open issue 3).
+
+| Option | gmin | IDDA (mA) | Test-input error (LSB) | Code diff (LSB) | Worst-case (LSB) |
+| --- | --- | --- | --- | --- | --- |
+| buf32 (msf 32, mib 160), revision-3 error amplifier (tail 10 µA) | 1e-10 | 0.848 | 0.256 | 1 | 2.82 |
+| buf64 (msf 64, mib 320), revision-3 error amplifier | 1e-10 | 1.671 | 0.040 | 1 | 1.31 |
+| buf32, ncg 4 (four gate capacitors) | 1e-10 | 0.848 | 0.071 | 1 | 1.04 |
+| buf32, stagger N = 2 (option 1) | 1e-10 | 0.847 | 2.26 | 2 | 4.21 |
+| buf32, error-amplifier tail mt 1 / lt 8 µm (≈ 0.6 µA) | 1e-10 | 0.839 | 0.143 | 3 | 0.447 |
+| buf32, tail lt 8 µm, ncg 2 | 1e-10 | 0.840 | 0.256 | 3 | 0.445 |
+| buf64, tail lt 8 µm | 1e-10 | 1.663 | 0.105 | 3 | 0.423 |
+| **chosen**: buf32, tail mt 1 / lt 8 µm, ncg 1, 6 decoupling cells (`r1_refbuf4` defaults) | 1e-9 | 0.839 | 0.333 | 2 | 0.79 |
+| buf32, tail lt 32 µm, ncg 2 | 1e-9 | 0.839 | 0.533 | 2 | 0.276 |
+
+Mechanism (from the waveforms): each CDAC switching event takes charge from VREF. The error amplifier integrates the dip onto the follower gate capacitor Cg. The gate then overshoots and decays with the loop time constant into the next decisions. The kick scales with gm_ea · Q / (gm_f · Cg). A slower error amplifier makes the kick smaller but gives a static offset. Stagger puts the switching of the other slice into the binary decisions of this slice, so it makes the error larger.
+
+Choice (recorded, recommended option of the brief): buf32 with the slow tail, 0.84 mA. It is the lowest current, and its worst-case error is the smallest at 0.84 mA in the gmin-1e-10 set. The lt-32 µm row is better at gmin 1e-9 (0.28 LSB) but was found after the netlist freeze; it is the first candidate for revision 5. Both miss 0.25 LSB.
+
+### Area and power (revision 4)
+
+| Part | Area (mm², estimated) | Current (simulated, tt) |
+| --- | --- | --- |
+| CDAC, both slices (unchanged from revision 3) | 0.0185 | — |
+| Comparators `r1_cmp4` × 2 + bias + clkgen | 0.003 | included in IDD |
+| Switches, drivers, SAR logic (behavioural; area from revision 3) | 0.012 | included in IDD |
+| Reference buffer `r1_refbuf4` (6 × 70 × 70 µm² Cd, 50 × 50 µm² Cg, devices) | 0.034 | IDDA 0.83–0.84 mA (3.3 V) |
+| Recommended input filter Cf 10 pF (`r1_reffilt4`, MIM 82 × 82 µm; not in the chosen netlist) | 0.0067 | — |
+| **Total** | **≈ 0.068** (0.075 with the filter) | IDD 2.29 mA at 1.2 V (full core, both slices, mux run `r4-isa-tt-cq2`); IDDA 0.83 mA |
+
+Comparator supply alone (3 comparators + bias, continuous clock, `cmp4_a.json`): tt 2.60 mA, ss 1.36 mA, ff 4.63 mA. The area numbers are estimates from device sizes; nothing is laid out.
+
+### Open issues (revision 4)
+
+1. R2-4 is not met. The chosen buffer gives a worst-case comparator input error of 0.79 LSB (tt, simulated). The cause is the error-amplifier kick: the amplifier integrates each CDAC charge dip onto the follower gate. Options not run: per-slice decoupling (two buffers or two Cd banks) and a separate LSB-array reference (`vrefl` port exists). A third option is a reference that does not need a fast loop: a larger Cd with a slow loop and a calibrated gain.
+2. The slow error amplifier (tail ≈ 0.6 µA) gives a static VREF offset of about +1.4 mV against the ideal operating point. This is a gain error (about 2–3 LSB at full scale). Gain calibration must remove it. Start-up and drift time of the slow loop are not simulated.
+3. The result depends on gmin. With the same buffer, gmin 1e-10 and 1e-9 give 0.45 and 0.79 LSB worst-case error. Only same-gmin pairs are compared. The cause (numerical or a high-impedance node) is not known.
+4. Decision 0 at ss / 125 °C / CM 0.6 V does not resolve for small negative inputs (errors up to 70 LSB). An input CM of 0.45 V fixes it (simulated, ss). This changes the AFE → ADC and isense → ADC contract (INTERFACES.md: output CM 0.6 V). The coordinator must decide. The MSB pre-switch is rejected. A comparator with a PMOS input pair is a third option (not designed).
+5. Stagger (R2-4 option 1) makes the error larger: the other slice switches during this slice's binary decisions. Stagger is not used (N = 0).
+6. The dynamic test uses fin = 19/256 × fs = 101.17 kHz, not 100.6 kHz (100.6 kHz is not coherent with N = 256).
+7. Contract to r1_ctrl: clk30 rising edge resets the comparator (one-shot inside the ADC); per-slice strobes 0.6 ns before the next edge; the track edge comes from a flip-flop (clock-to-q 0.3 ns in the decks; an edge on the clock grid stops ngspice). Conversion = 14 ticks ≤ 17 (INTERFACES.md).
+8. The chosen `r1_refbuf4` (and `r1_refbuf3` of revision 3) has a resistive input divider (≈ 344 kΩ, 3.0 µA from 1.045 V). The r1_bgr output is unbuffered (90–200 kΩ). Connected, vref falls to 0.65–0.80 V. All R2-4 decks used an ideal vbg source, so this was not seen. Recommended fix: `r1_refbuf4h` (no divider, vref = vbg ≈ 1.045–1.050 V, full scale +4.5 %, D16 to be confirmed) with the 10 pF input filter (≈ 0.0067 mm² MIM; pole 80 kHz with 190 kΩ, 160 kHz with 90 kΩ; settling time constant ≈ 2 µs at start-up). The R2-4 settling of `r1_refbuf4h` with the bandgap model is the same as the chosen cell (worst-case 0.742 LSB, status table).
+9. Reference noise at ss is marginal (109–117 µV against 110 µV). About 76 µV comes from the buffer itself (error-amplifier input pair, 1/f below about 100 kHz). Larger error-amplifier input devices are the next step (not simulated). Noise below the frame rate is common to all decisions of a conversion and to both slices; for the encoder angle (SIN/COS ratio, same VREF, same sampling edge) it cancels to first order (not simulated). The 110 µV target over 10 Hz–10 MHz is therefore a bound.
+10. Not designed or not simulated: layout, PEX, resistor corners (`res_typ` only), the full ramp, MC of the comparator offset with the clkgen.
+
+### Failures and mistakes (revision 4)
+
+| # | What happened | Class | Effect and fix |
+| --- | --- | --- | --- |
+| 1 | The comparator post-processor read the tick parity inverted (big and small inputs swapped); every variant showed 0/8 correct | functional-bug (post-processing) | Found from the waveforms; parity fixed in `post_cmp4.py`; sweep re-posted |
+| 2 | The first R2-4 metric read the residue inside the reference dip and took the bits from the step signs: 10–20 LSB "errors" with codes within 1 LSB | verification-gap | Late residue (ts + 14 T + 5 ns) and bits from the SAR register (`post_ref4.py`) |
+| 3 | The first mid-evaluation error scaled the whole differential voltage by the decision-1 step: 2.8 LSB artefact | numerical (post-processing) | Exact form V_b − (V_i − (v1 − 1) · S_k) |
+| 4 | The revision-4 operating point did not converge at the default gmin (5 runs). MC decks and one ideal run also failed at 1e-10 | numerical | gmin 1e-10, then 1e-9 for all later runs (debug runs `r4-dbg-op-*`, `r4-dbg-opmc-*`). The R2-4 result depends on gmin (open issue 3) |
+| 5 | The runner resubmitted a deterministic abort 7 times and skipped frames (`r4-ref-tt-n2-ideal1004-r1…r7`) | tooling | `run_points4.py` stops on an abort in the first frame of a segment; those runs are not used |
+| 6 | Full-core mux deck stopped at the sampling edge (edge on the clock grid), then at a PWL corner on the clock edge | numerical | `_cq` timing (track edge 0.3 ns after the clock edge, as a flip-flop does) and PWL corners off the grid (`r4-isa-tt-cq2`) |
+| 7 | `run_ngspice.py` returns 0 when ngspice fails; the queue recorded the failed mux run as rc 0 | tooling | `run_queue_r4b.sh` checks `status` in `run.json` |
+| 8 | Queue scripts were edited while queues ran; one running shell read the changed file and reported a syntax error after its last job | process-hygiene | No job was lost; edit copies, not running scripts |
+| 9 | Stagger (option 1) was expected to help and made the error larger | estimation | Recorded as a result; the mechanism is in "R2-4 options" |
+| 10 | The MSB pre-switch fixed decision 0 but broke large inputs (up to 108 LSB) | functional-bug (design option) | Option rejected; CM 0.45 V recommended instead |
+| 11 | Decision 0 at ss / CM 0.6 V was assumed to be covered by the redundancy (revision 3) | spec-ambiguity | The 64-input sweep shows that it is not (70 LSB); fix needs a CM contract change |
+| 12 | The plan (3 dynamic chunks, 10 MC samples, mux at ss/ff, all R2-4 options) did not fit 4 h on 3 CPUs | planning | Items recorded as not run; MC with fewer samples (see status) |
+| 13 | The CM 0.6 V comparator test at ss was cancelled to free a CPU | planning | Run `r4-sweep-ss125-cm060` labelled cancelled; the 64-input sweep answers the question |
+| 14 | `.meas` of i(vdd) fails in code-only decks (the vector is not saved); the log shows an error line but the run completes | tooling | Harmless; current is taken from the full-save runs |
+| 15 | The buffer input divider (from revision 2/3) loads the unbuffered bandgap; every R2-4 deck used an ideal vbg source, so the 35 % vref drop was found only by the coordinator's noise request | coordination | `r1_refbuf4h` defined and simulated for DC and noise (open issue 8); R2-4 transient with `r1_refbuf4h` run (`r4-ref-tt-n0-bufh-g9-*`) |
+| 16 | The MC window for the decision-0 toggle was placed at the revision-3 level (−4.20 mV). In revision 4 the toggle is above −2.6 mV, so the window held no toggle and the top-2 fit was singular (W0 = −75) | verification-gap | Window 0 still counts for DNL; W1-only fit for seeds 11/12; new window `mcwin0.json` around −1.0 mV for seed 13 (W0-only fit) |
 
 ## Revision 3 (2026-10-20, schematic level)
 

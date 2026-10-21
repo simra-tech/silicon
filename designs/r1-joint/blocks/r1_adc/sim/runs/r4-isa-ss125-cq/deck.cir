@@ -1,0 +1,45 @@
+* tb_adc4_isa.cir -- R1 ADC revision 4: D18 frame sequence with the input multiplexer, full core (complete
+* bootstrapped switches on both inputs of each slice, transistor bottom-plate drivers r1_drv, transistor clkgen),
+* both slices in parallel, slice B N ticks after slice A (timing r1_adc_timing_r4_mux_n<N>*.inc, frames e c e e:
+* encoder, stolen current frame, encoder, encoder; 22 ticks each).
+*   frame 0 enc: SIN +0.40, COS -0.40   frame 1 cur: ISA +0.85, ISB -0.85
+*   frame 2 enc: SIN -0.40, COS +0.40   frame 3 enc: SIN +0.72, COS -0.72 (D16 80 % FS)
+* Inputs: linear E sources (R2-7); encoder CM 0.6 V, current CM 0.57 V (INTERFACES.md isense -> ADC). Each input
+* changes only while its path is not tracking (1.012 us and 2.352 us, off the clk30 grid: a corner on a clock edge stopped run r4-isa-tt-cq). Reference: REFLINES (buffer of the R2-4 choice).
+.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerMOSlv.lib mos_ss
+.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerCAP.lib cap_typ
+.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerMOShv.lib mos_ss
+.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerRES.lib res_typ
+.include schematic/r1_adc_r4.spice
+.include sim/r4/r1_adc_timing_r4_mux_n0_cq_vdd108.inc
+.temp 125
+.option reltol=1e-4 vntol=1e-6 abstol=1e-12 gmin=1e-9 method=trap klu rshunt=1e12
+Vdd vdd 0 1.08
+Vdda vdda 0 3.3
+Vbg vbg 0 1.045
+XREF vbg vref vdda 0 r1_refbuf4
+Vrl vrefl vref 0
+Vcme vcme 0 0.6
+Vcmi vcmi 0 0.57
+Vsin vsin 0 PWL(0 0.40 1.012u 0.40 1.022u -0.40 2.352u -0.40 2.362u 0.72 6u 0.72)
+Visa visa 0 0.85
+Esp sinp vcme vsin 0 0.5
+Esn sinn vcme vsin 0 -0.5
+Ecp cosp vcme vsin 0 -0.5
+Ecn cosn vcme vsin 0 0.5
+Eap isap vcmi visa 0 0.5
+Ean isan vcmi visa 0 -0.5
+Ebp isbp vcmi visa 0 -0.5
+Ebn isbn vcmi visa 0 0.5
+XADC sinp sinn cosp cosn isap isan isbp isbn trka0 trka1 trkb0 trkb1 clk30 wina winb lata latb
++ stba0 stba1 stba2 stba3 stba4 stba5 stba6 stba7 stba8 stba9 stba10 stba11 stba12 stba13
++ stbb0 stbb1 stbb2 stbb3 stbb4 stbb5 stbb6 stbb7 stbb8 stbb9 stbb10 stbb11 stbb12 stbb13
++ rawa rawb topap topan topbp topbn vdd vref vrefl 0 r1_adc4_core
+.control
+set num_threads=1
+save v(rawa) v(rawb) v(topap) v(topan) v(topbp) v(topbn) v(trka0) v(trka1) v(trkb0) v(trkb1) v(lata) v(latb) v(xadc.mclk) v(clk30) v(vref) v(vrefl) i(vdd) i(vdda)
+tran 1n 3.35u 0 0.2n
+meas tran idd avg i(vdd) from=0.6u to=3.35u
+write <G1_RESULTS_ROOT>/r1_adc/r4-isa-ss125-cq/codes.raw
+.endc
+.end

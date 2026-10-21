@@ -1,0 +1,36 @@
+* tb_refbuf4_noise.cir -- R1 ADC revision 4: reference noise seen by the CDAC (coordinator request 2026-10-21).
+* r1_refbuf4 (chosen option, defaults) fed from a Thevenin model of the r1_bgr output: noiseless source resistance
+* Rs (190k) from the r1_bgr noise roll-off; the bandgap noise spectrum itself is applied in post_refnoise4.py.
+* BUFLINES: the buffer under test (r1_refbuf4 = chosen cell with its input divider, or r1_refbuf4h = high-impedance
+* input) and the input filter r1_reffilt4 (MIM w x w from vbg to ground) or none.
+* Analyses: op (DC input current and vbg error from the input divider), ac (transfer vbgi -> vref),
+* noise (buffer + divider + filter noise at vref, Rs noiseless). Load at vref: the buffer's own decoupling only.
+.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerMOSlv.lib mos_ss
+.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerCAP.lib cap_typ
+.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerMOShv.lib mos_ss
+.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerRES.lib res_typ
+.include schematic/r1_adc_r4.spice
+.include schematic/r1_refbuf4h.spice
+.temp 125
+.option gmin=1e-9 reltol=1e-4 abstol=1e-12 vntol=1e-6 sparse
+Vdda vdda 0 3.0
+Vbgi vbgi 0 DC 1.045 AC 1
+Rs vbgi vbg 190k noisy=0
+XREF vbg vref vdda 0 r1_refbuf4h
+.control
+set num_threads=1
+op
+print v(vbg) v(vref) i(vbgi) i(vdda)
+let ibg = -i(vbgi)
+echo "OPLINE vbg $&v(vbg) vref $&v(vref) ibg $&ibg idda $&i(vdda)" > <G1_RESULTS_ROOT>/r1_adc/r4-refn-ss-h-cf0/op.txt
+ac dec 20 10 10meg
+let hm = mag(v(vref))
+wrdata <G1_RESULTS_ROOT>/r1_adc/r4-refn-ss-h-cf0/ac.txt hm
+noise v(vref) Vbgi dec 20 10 10meg
+setplot noise1
+wrdata <G1_RESULTS_ROOT>/r1_adc/r4-refn-ss-h-cf0/noise.txt onoise_spectrum
+setplot noise2
+print onoise_total
+echo "NOISETOTAL $&onoise_total" > <G1_RESULTS_ROOT>/r1_adc/r4-refn-ss-h-cf0/noise_total.txt
+.endc
+.end

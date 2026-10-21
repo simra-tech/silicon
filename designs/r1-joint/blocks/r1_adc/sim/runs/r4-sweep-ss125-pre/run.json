@@ -1,0 +1,51 @@
+{
+  "run_id": "r4-sweep-ss125-pre",
+  "block": "r1_adc",
+  "question": "Item 2 fix test: MSB pre-switch (r1_adc4p_core_fast), CM 0.6 V, ss/125 C/1.08 V, same 32 inputs as r4-sweep-ss125-cm060",
+  "command": "G1_CPUSET=103 G1_CPUS=1 G1_WORKDIR=designs/r1-joint/blocks/r1_adc G1_RESULTS_ROOT=<bulk> flow/run.sh ngspice -b <G1_RESULTS_ROOT>/r1_adc/r4-sweep-ss125-pre/deck.cir (= sim/runs/r4-sweep-ss125-pre/deck.cir with the bulk path filled in)",
+  "deck": "sim/runs/r4-sweep-ss125-pre/deck.cir",
+  "deck_template": "sim/r4/tb_adc4p_points.cir",
+  "deck_sha256": "7ceac2db8b37270bea25b639b99ff6f1a6ce5805c1dfb8438ee3098f6ac4afa3",
+  "library_sha256_at_start": {
+    "r1_adc_r4.spice": "22e53bb914669f9a0ed3c8ed2762053a102631725c9248f9acba04b48cccb9f4",
+    "r1_adc_r4p.spice": "15d71dcff02106b2a2e8e02e3de3c80660bbc89c83a9fdd0313297edb2998b55"
+  },
+  "substitutions": {
+    "RAW": "<bulk>/r1_adc/r4-sweep-ss125-pre",
+    "CORNER": "mos_ss",
+    "TEMP": "125",
+    "VDD": "1.08",
+    "CM": "0.6",
+    "CAPLIB": "cap_typ",
+    "TIMING": "r1_adc_timing_r4_n0_vdd108.inc",
+    "OPTS": "reltol=1e-4 vntol=1e-6 abstol=1e-12 gmin=1e-9 method=trap klu rshunt=1e12 interp",
+    "TMAX": "0.2n",
+    "TSTOP": "23.8600u",
+    "PWLA": "0 -0.0640000 7.833333e-07 -0.0640000 7.933333e-07 -0.0600000 1.516667e-06 -0.0600000 1.526667e-06 -0.0560000 2.250000e-06 -0.0560000 2.260000e-06 -0.0520000 2.983333e-06 -0.0520000\n+ 2.993333e-06 -0.0480000 3.716667e-06 -0.0480000 3.726667e-06 -0.0440000 4.450000e-06 -0.0440000 4.460000e-06 -0.0400000 5.183333e-06 -0.0400000 5.193333e-06 -0.0360000 5.916667e-06 -0.0360000\n+ 5.926667e-06 -0.0320000 6.650000e-06 -0.0320000 6.660000e-06 -0.0280000 7.383333e-06 -0.0280000 7.393333e-06 -0.0240000 8.116667e-06 -0.0240000 8.126667e-06 -0.0200000 8.850000e-06 -0.0200000\n+ 8.860000e-06 -0.0160000 9.583333e-06 -0.0160000 9.593333e-06 -0.0120000 1.031667e-05 -0.0120000 1.032667e-05 -0.0080000 1.105000e-05 -0.0080000 1.106000e-05 -0.0040000 1.178333e-05 -0.0040000\n+ 1.179333e-05 0.0000000 1.251667e-05 0.0000000 1.252667e-05 -0.8800000 1.325000e-05 -0.8800000 1.326000e-05 -0.7542857 1.398333e-05 -0.7542857 1.399333e-05 -0.6285714 1.471667e-05 -0.6285714\n+ 1.472667e-05 -0.5028571 1.545000e-05 -0.5028571 1.546000e-05 -0.3771429 1.618333e-05 -0.3771429 1.619333e-05 -0.2514286 1.691667e-05 -0.2514286 1.692667e-05 -0.1257143 1.765000e-05 -0.1257143\n+ 1.766000e-05 0.0000000 1.838333e-05 0.0000000 1.839333e-05 0.1257143 1.911667e-05 0.1257143 1.912667e-05 0.2514286 1.985000e-05 0.2514286 1.986000e-05 0.3771429 2.058333e-05 0.3771429\n+ 2.059333e-05 0.5028571 2.131667e-05 0.5028571 2.132667e-05 0.6285714 2.205000e-05 0.6285714 2.206000e-05 0.7542857 2.278333e-05 0.7542857 2.279333e-05 0.8800000",
+    "PWLB": "0 -0.0660000 7.833333e-07 -0.0660000 7.933333e-07 -0.0620000 1.516667e-06 -0.0620000 1.526667e-06 -0.0580000 2.250000e-06 -0.0580000 2.260000e-06 -0.0540000 2.983333e-06 -0.0540000\n+ 2.993333e-06 -0.0500000 3.716667e-06 -0.0500000 3.726667e-06 -0.0460000 4.450000e-06 -0.0460000 4.460000e-06 -0.0420000 5.183333e-06 -0.0420000 5.193333e-06 -0.0380000 5.916667e-06 -0.0380000\n+ 5.926667e-06 -0.0340000 6.650000e-06 -0.0340000 6.660000e-06 -0.0300000 7.383333e-06 -0.0300000 7.393333e-06 -0.0260000 8.116667e-06 -0.0260000 8.126667e-06 -0.0220000 8.850000e-06 -0.0220000\n+ 8.860000e-06 -0.0180000 9.583333e-06 -0.0180000 9.593333e-06 -0.0140000 1.031667e-05 -0.0140000 1.032667e-05 -0.0100000 1.105000e-05 -0.0100000 1.106000e-05 -0.0060000 1.178333e-05 -0.0060000\n+ 1.179333e-05 -0.0020000 1.251667e-05 -0.0020000 1.252667e-05 -0.8500000 1.325000e-05 -0.8500000 1.326000e-05 -0.7242857 1.398333e-05 -0.7242857 1.399333e-05 -0.5985714 1.471667e-05 -0.5985714\n+ 1.472667e-05 -0.4728571 1.545000e-05 -0.4728571 1.546000e-05 -0.3471429 1.618333e-05 -0.3471429 1.619333e-05 -0.2214286 1.691667e-05 -0.2214286 1.692667e-05 -0.0957143 1.765000e-05 -0.0957143\n+ 1.766000e-05 0.0300000 1.838333e-05 0.0300000 1.839333e-05 0.1557143 1.911667e-05 0.1557143 1.912667e-05 0.2814286 1.985000e-05 0.2814286 1.986000e-05 0.4071429 2.058333e-05 0.4071429\n+ 2.059333e-05 0.5328571 2.131667e-05 0.5328571 2.132667e-05 0.6585714 2.205000e-05 0.6585714 2.206000e-05 0.7842857 2.278333e-05 0.7842857 2.279333e-05 0.8500000",
+    "REFLINES": "Vref vref 0 1.0\nVrl vrefl vref 0",
+    "INSTANCES": "XADC sinp sinn cosp cosn isap isan isap isan trka0 trka1 trkb0 trkb1 clk30 wina winb lata latb\n+ stba0 stba1 stba2 stba3 stba4 stba5 stba6 stba7 stba8 stba9 stba10 stba11 stba12 stba13\n+ stbb0 stbb1 stbb2 stbb3 stbb4 stbb5 stbb6 stbb7 stbb8 stbb9 stbb10 stbb11 stbb12 stbb13\n+ rawa rawb topap topan topbp topbn vdd vref vrefl 0 r1_adc4p_core_fast",
+    "SAVE": "v(rawa) v(rawb)"
+  },
+  "tool": "ngspice (banner not found in log)",
+  "ngspice_version": "ngspice-46 : Circuit level simulation program (creation date Mon Jul 27 13:15:13 UTC 2026)",
+  "netlist_sha256": {
+    "r1_adc_r4.spice": "22e53bb914669f9a0ed3c8ed2762053a102631725c9248f9acba04b48cccb9f4",
+    "r1_adc_r4p.spice": "15d71dcff02106b2a2e8e02e3de3c80660bbc89c83a9fdd0313297edb2998b55"
+  },
+  "container_image": "sha256:ddeb69576f2808676d1c5d474ecf04f6d1d6f8abdcff6b72b39790ded924bab2",
+  "pdk_commit": "84374023ee8b4b126bebbba67fcbada0a9c0ff0b",
+  "raw_results": "r1_adc/r4-sweep-ss125-pre (under G1_RESULTS_ROOT)",
+  "started_utc": "2026-10-20T22:13:16.367448Z",
+  "wall_s": 1583.6,
+  "returncode": 0,
+  "status": "completed",
+  "errors": [
+    "Error: measure  idd  avg(TRIG) : no such vector as 'i(vdd)'"
+  ],
+  "result": "MSB pre-switch: decision 0 resolves, but up to 108 LSB error at +-0.88 V; option rejected (sweep4_ss125_pre.json)",
+  "disposition": "item 2 fix candidate (post_sweep4.py)",
+  "points_file": "sim/r4/points/ss_cm_test32.json",
+  "first_slot": 0,
+  "n_stag": 0
+}

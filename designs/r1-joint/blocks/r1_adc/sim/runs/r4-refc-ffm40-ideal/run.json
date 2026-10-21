@@ -1,0 +1,47 @@
+{
+  "run_id": "r4-refc-ffm40-ideal",
+  "block": "r1_adc",
+  "question": "R2-4 at mos_ff/-40 C/1.32 V: ideal VREF at the buffer level 1.00595 V",
+  "command": "G1_CPUSET=103 G1_CPUS=1 G1_WORKDIR=designs/r1-joint/blocks/r1_adc G1_RESULTS_ROOT=<bulk> flow/run.sh ngspice -b <G1_RESULTS_ROOT>/r1_adc/r4-refc-ffm40-ideal/deck.cir (= sim/runs/r4-refc-ffm40-ideal/deck.cir with the bulk path filled in)",
+  "deck": "sim/runs/r4-refc-ffm40-ideal/deck.cir",
+  "deck_template": "sim/r4/tb_adc4_points.cir",
+  "deck_sha256": "ee773f8a00562f36c2fa992c64e1b5c5dd1c9f0eb39d5832055502342d4b7b2a",
+  "library_sha256_at_start": {
+    "r1_adc_r4.spice": "22e53bb914669f9a0ed3c8ed2762053a102631725c9248f9acba04b48cccb9f4"
+  },
+  "substitutions": {
+    "RAW": "<bulk>/r1_adc/r4-refc-ffm40-ideal",
+    "CORNER": "mos_ff",
+    "TEMP": "-40",
+    "VDD": "1.32",
+    "CM": "0.6",
+    "CAPLIB": "cap_typ",
+    "TIMING": "r1_adc_timing_r4_n0_vdd132.inc",
+    "OPTS": "reltol=1e-4 vntol=1e-6 abstol=1e-12 gmin=1e-9 method=trap klu rshunt=1e12",
+    "TMAX": "0.2n",
+    "TSTOP": "7.7267u",
+    "PWLA": "0 0.0000000 7.833333e-07 0.0000000 7.933333e-07 0.8800000 1.516667e-06 0.8800000 1.526667e-06 -0.8800000 2.250000e-06 -0.8800000 2.260000e-06 0.4400000 2.983333e-06 0.4400000\n+ 2.993333e-06 -0.4400000 3.716667e-06 -0.4400000 3.726667e-06 0.0003000 4.450000e-06 0.0003000 4.460000e-06 0.8700000 5.183333e-06 0.8700000 5.193333e-06 -0.8700000 5.916667e-06 -0.8700000\n+ 5.926667e-06 0.8800000 6.650000e-06 0.8800000 6.660000e-06 -0.8800000",
+    "PWLB": "0 0.0000000 7.833333e-07 0.0000000 7.933333e-07 0.8800000 1.516667e-06 0.8800000 1.526667e-06 -0.8800000 2.250000e-06 -0.8800000 2.260000e-06 -0.4400000 2.983333e-06 -0.4400000\n+ 2.993333e-06 0.4400000 3.716667e-06 0.4400000 3.726667e-06 -0.0003000 4.450000e-06 -0.0003000 4.460000e-06 -0.8700000 5.183333e-06 -0.8700000 5.193333e-06 0.8700000 5.916667e-06 0.8700000\n+ 5.926667e-06 -0.8800000 6.650000e-06 -0.8800000 6.660000e-06 0.8800000",
+    "REFLINES": "Vref vref 0 1.00595\nVrl vrefl vref 0",
+    "INSTANCES": "XADC sinp sinn cosp cosn isap isan isap isan trka0 trka1 trkb0 trkb1 clk30 wina winb lata latb\n+ stba0 stba1 stba2 stba3 stba4 stba5 stba6 stba7 stba8 stba9 stba10 stba11 stba12 stba13\n+ stbb0 stbb1 stbb2 stbb3 stbb4 stbb5 stbb6 stbb7 stbb8 stbb9 stbb10 stbb11 stbb12 stbb13\n+ rawa rawb topap topan topbp topbn vdd vref vrefl 0 r1_adc4_core_fast",
+    "SAVE": "v(rawa) v(rawb) v(vref) v(vrefl) v(topap) v(topan) v(topbp) v(topbn) i(vdd) v(clk30) v(trka0) v(trkb0)"
+  },
+  "tool": "ngspice (banner not found in log)",
+  "ngspice_version": "ngspice-46 : Circuit level simulation program (creation date Mon Jul 27 13:15:13 UTC 2026)",
+  "netlist_sha256": {
+    "r1_adc_r4.spice": "22e53bb914669f9a0ed3c8ed2762053a102631725c9248f9acba04b48cccb9f4"
+  },
+  "container_image": "sha256:ddeb69576f2808676d1c5d474ecf04f6d1d6f8abdcff6b72b39790ded924bab2",
+  "pdk_commit": "84374023ee8b4b126bebbba67fcbada0a9c0ff0b",
+  "raw_results": "r1_adc/r4-refc-ffm40-ideal (under G1_RESULTS_ROOT)",
+  "started_utc": "2026-10-20T23:14:33.072859Z",
+  "wall_s": 312.4,
+  "returncode": 0,
+  "status": "completed",
+  "errors": [],
+  "result": "",
+  "disposition": "R2-4 corner (post_ref4.py)",
+  "points_file": "sim/r4/points/ref10.json",
+  "first_slot": 0,
+  "n_stag": 0
+}

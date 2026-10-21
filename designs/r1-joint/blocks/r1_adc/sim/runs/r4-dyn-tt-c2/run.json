@@ -1,0 +1,47 @@
+{
+  "run_id": "r4-dyn-tt-c2",
+  "block": "r1_adc",
+  "question": "dynamic N 256 chunk 2 (local frames 1..86 = global 86c..86c+85), 0.85 V, fin 19/256 fs, tt, r1_refbuf4",
+  "command": "G1_CPUSET=103 G1_CPUS=1 G1_WORKDIR=designs/r1-joint/blocks/r1_adc G1_RESULTS_ROOT=<bulk> flow/run.sh ngspice -b <G1_RESULTS_ROOT>/r1_adc/r4-dyn-tt-c2/deck.cir (= sim/runs/r4-dyn-tt-c2/deck.cir with the bulk path filled in)",
+  "deck": "sim/runs/r4-dyn-tt-c2/deck.cir",
+  "deck_template": "sim/r4/tb_adc4_dyn.cir",
+  "deck_sha256": "c62da7d860b26c77b3858604e07cdb9326dc3a2e5cfd4464b54de1d8c691091f",
+  "library_sha256_at_start": {
+    "r1_adc_r4.spice": "22e53bb914669f9a0ed3c8ed2762053a102631725c9248f9acba04b48cccb9f4"
+  },
+  "substitutions": {
+    "RAW": "<bulk>/r1_adc/r4-dyn-tt-c2",
+    "CORNER": "mos_tt",
+    "TEMP": "27",
+    "VDD": "1.2",
+    "CM": "0.6",
+    "CORE": "r1_adc4_core_fast",
+    "TIMING": "r1_adc_timing_r4_n0.inc",
+    "OPTS": "reltol=1e-4 vntol=1e-6 abstol=1e-12 gmin=1e-9 method=trap klu rshunt=1e12 interp",
+    "TMAX": "0.2n",
+    "TSTOP": "64.20u",
+    "AMP": "0.85",
+    "FIN": "101207.386364",
+    "PH": "248.906250",
+    "PHB": "338.906250",
+    "REFLINES": "Vdda vdda 0 3.3\nVbg vbg 0 1.045\nXREF vbg vref vdda 0 r1_refbuf4\nVrl vrefl vref 0",
+    "SAVE": "v(rawa) v(rawb) v(vref)"
+  },
+  "tool": "ngspice (banner not found in log)",
+  "ngspice_version": "ngspice-46 : Circuit level simulation program (creation date Mon Jul 27 13:15:13 UTC 2026)",
+  "netlist_sha256": {
+    "r1_adc_r4.spice": "22e53bb914669f9a0ed3c8ed2762053a102631725c9248f9acba04b48cccb9f4"
+  },
+  "container_image": "sha256:ddeb69576f2808676d1c5d474ecf04f6d1d6f8abdcff6b72b39790ded924bab2",
+  "pdk_commit": "84374023ee8b4b126bebbba67fcbada0a9c0ff0b",
+  "raw_results": "r1_adc/r4-dyn-tt-c2 (under G1_RESULTS_ROOT)",
+  "started_utc": "2026-10-21T00:18:56.299307Z",
+  "wall_s": 2198.4,
+  "returncode": 0,
+  "status": "completed",
+  "errors": [
+    "Error: measure  idd  avg(TRIG) : no such vector as 'i(vdd)'"
+  ],
+  "result": "N 256 with c0..c2: SNDR 63.0 dB, SFDR 73.0 dB",
+  "disposition": "item 5 evidence (post_dyn4.py -> dyn4_tt_n256.json)"
+}

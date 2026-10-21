@@ -1,0 +1,35 @@
+{
+  "run_id": "r4-dbg-op-a",
+  "block": "r1_adc",
+  "question": "debug: operating point of the buf32 deck, variant a (* as run)",
+  "command": "G1_CPUSET=103 G1_CPUS=1 G1_WORKDIR=designs/r1-joint/blocks/r1_adc G1_RESULTS_ROOT=<bulk> flow/run.sh ngspice -b <G1_RESULTS_ROOT>/r1_adc/r4-dbg-op-a/deck.cir (= sim/runs/r4-dbg-op-a/deck.cir with the bulk path filled in)",
+  "deck": "sim/runs/r4-dbg-op-a/deck.cir",
+  "deck_template": "sim/r4/dbg_op4.cir",
+  "deck_sha256": "40b0fee7584107c9047d0754d02d0cd5778564f2e795330c43b0101831dc59d2",
+  "library_sha256_at_start": {
+    "r1_adc_r4.spice": "1ec4c988a32d9d86960b364b9daad05656b07c2693520165cf5afab722679a2c"
+  },
+  "substitutions": {
+    "RAW": "<bulk>/r1_adc/r4-dbg-op-a",
+    "VAR": "* as run"
+  },
+  "tool": "ngspice (banner not found in log)",
+  "ngspice_version": "ngspice-46 : Circuit level simulation program (creation date Mon Jul 27 13:15:13 UTC 2026)",
+  "netlist_sha256": {
+    "r1_adc_r4.spice": "1ec4c988a32d9d86960b364b9daad05656b07c2693520165cf5afab722679a2c"
+  },
+  "container_image": "sha256:ddeb69576f2808676d1c5d474ecf04f6d1d6f8abdcff6b72b39790ded924bab2",
+  "pdk_commit": "84374023ee8b4b126bebbba67fcbada0a9c0ff0b",
+  "raw_results": "r1_adc/r4-dbg-op-a (under G1_RESULTS_ROOT)",
+  "started_utc": "2026-10-20T21:21:55.672587Z",
+  "wall_s": 10.7,
+  "returncode": 1,
+  "status": "failed",
+  "errors": [
+    "Error: Transient op failed, timestep too small",
+    "Error: The operating point could not be simulated successfully.",
+    "Error: incomplete or empty netlist"
+  ],
+  "result": "op did not converge",
+  "disposition": "debug: operating point with default gmin (not evidence)"
+}
