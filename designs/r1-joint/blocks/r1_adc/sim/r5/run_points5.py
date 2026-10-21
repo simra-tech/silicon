@@ -47,12 +47,13 @@ ap.add_argument("--core", default="r1_adc5_core_fast")
 ap.add_argument("--ref", default="ideal")
 ap.add_argument("--refp", default="", help="instance parameters of the main buffer, k=v,k=v")
 ap.add_argument("--reflp", default="", help="opt3b: parameters of the LSB buffer; opt2: parameters of r1_refps5")
-ap.add_argument("--vref", default="1.045")
+ap.add_argument("--vref", default="1.045", help="ideal VREF in V, or op:<run id> = v(vrefa) of an op-only run (buffer DC value)")
+ap.add_argument("--ibias", default="5u", help="opt3: bias current into the r1_refbuf5 pin nb (r1_bias ib_adc_ref; 5.07 uA tt, 3.5-7.7 uA PVT)")
 ap.add_argument("--bgr", default="190k,82u")
 ap.add_argument("--noise", default="auto", help="tt | ss | none | auto (ss for mos_ss, else tt)")
 ap.add_argument("--gmin", default="default")
 ap.add_argument("--rshunt", default="", help="MC deck only (revision-4 setting 1e12): the unit-capacitor MC CDAC has no DC operating point without it")
-ap.add_argument("--save", default="codes")
+ap.add_argument("--save", default="codes", help="codes | full | nodes:<vec1>,<vec2>,... (codes plus named vectors)")
 ap.add_argument("--mc", type=int, default=0)
 ap.add_argument("--seed", type=int, default=1)
 ap.add_argument("--mcs", type=int, default=0, help="sampled MIM mismatch: K instances of the nominal fast core with per-capacitor scale "
@@ -93,6 +94,11 @@ def kv(s):
 
 
 ties = {"vrefa": "vref", "vrefb": "vref", "vrefla": "vref", "vreflb": "vref"}
+PIN = ".subckt r1_refbuf5 vbg vref vrefl nb vdda gnd" in open(os.path.join(BLOCK, "schematic", "r1_adc_r5.spice")).read()
+if a.vref.startswith("op:"):
+    # T2 2026-10-21: ideal base run at the buffer DC value of an op-only run (revision-4 rule, revision-5 failure 7)
+    opf = os.path.join(os.environ["G1_RESULTS_ROOT"], "r1_adc", a.vref[3:], "op.txt")
+    a.vref = "%.6f" % float([l.split("=")[1] for l in open(opf) if l.startswith("v(vrefa)")][0])
 if a.ref == "ideal":
     lines = ["Vref vref 0 %s" % a.vref]
 else:
@@ -115,7 +121,12 @@ else:
     if a.ref == "buf":
         lines.append("XREF vbg vref vdda 0 r1_refbuf5h %s" % kv(a.refp))
     elif a.ref == "opt3":
-        lines.append("XREF vbg vref vrefl vdda 0 r1_refbuf5 %s" % kv(a.refp))
+        if PIN:   # bias pin nb (netlist after 2026-10-21 T2): external current into the diode XMB0
+            lines += ["Ibref vdda nbr %s" % a.ibias, "XREF vbg vref vrefl nbr vdda 0 r1_refbuf5 %s" % kv(a.refp)]
+        else:
+            if a.ibias != "5u":
+                sys.exit("--ibias needs the r1_refbuf5 bias pin (regenerate schematic/r1_adc_r5.spice)")
+            lines.append("XREF vbg vref vrefl vdda 0 r1_refbuf5 %s" % kv(a.refp))
         ties.update(vrefla="vrefl", vreflb="vrefl")
     elif a.ref == "opt3b":
         lines.append("XREF vbg vref vdda 0 r1_refbuf5h %s" % kv(a.refp))
@@ -189,6 +200,8 @@ else:
     instances = ("XADC sinp sinn cosp cosn isap isan isap isan trka0 trka1 trkb0 trkb1 clk30 wina winb lata latb\n+ %s\n"
                  "+ rawa rawb topap topan topbp topbn vdd vrefa vrefb vrefla vreflb 0 %s" % (STB, a.core))
     save = ("v(rawa) v(rawb)" if a.save == "codes" else
+            # T2 2026-10-21: "nodes:n1,n2,..." saves rawa/rawb plus the named vectors (first-frame instrumentation)
+            "v(rawa) v(rawb) " + " ".join(a.save[6:].split(",")) if a.save.startswith("nodes:") else
             "v(rawa) v(rawb) v(vrefa) v(vrefb) v(vrefla) v(vreflb) v(topap) v(topan) v(topbp) v(topbn) i(vdd) v(clk30) "
             "v(trka0) v(trkb0)")
     caplib = "cap_typ"
@@ -227,7 +240,7 @@ else:
     d = json.load(open(rj))
     d.update({"points_file": os.path.relpath(os.path.abspath(a.points), BLOCK), "first_slot": 0, "n_stag": 0,
               "runner": "sim/r5/run_points5.py", "ref_model": a.ref, "ref_params": a.refp, "refl_params": a.reflp,
-              "bgr_model": a.bgr if a.ref != "ideal" else None, "pwl_shift_ns": PWL_SHIFT * 1e9, "gmin": a.gmin, "rshunt": a.rshunt or None, "mc": a.mc, "seed": a.seed, "mc_mode": "sampled (--mcs)" if MCS else ("pdk agauss" if a.mc else None), "mcs_scales": MCS})
+              "bgr_model": a.bgr if a.ref != "ideal" else None, "ref_ibias": a.ibias if a.ref == "opt3" else None, "refbuf5_bias_pin": PIN, "vref_ideal": a.vref if a.ref == "ideal" else None, "pwl_shift_ns": PWL_SHIFT * 1e9, "gmin": a.gmin, "rshunt": a.rshunt or None, "mc": a.mc, "seed": a.seed, "mc_mode": "sampled (--mcs)" if MCS else ("pdk agauss" if a.mc else None), "mcs_scales": MCS})
     if d["status"] != "completed":
         stopped = "%s %s: %s" % (a.id, d["status"], "; ".join((d.get("failure_lines") or d.get("errors") or [])[:3]))
     json.dump(d, open(rj, "w"), indent=2)

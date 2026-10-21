@@ -160,7 +160,13 @@ def refcells():
     body5h = t[i:]
     hdr5h = ("\n* r1_refbuf5h: revision-4 r1_refbuf4h (r1_refbuf4 without the input divider; error-amplifier gate on vbg,\n"
              "* vref = vbg). Accepted baseline (coordinator 2026-10-21). Same devices as r1_refbuf4 otherwise.\n")
-    b5 = body5h.replace(".subckt r1_refbuf5h vbg vref vdda gnd", ".subckt r1_refbuf5 vbg vref vrefl vdda gnd")
+    # bias pin (coordinator 2026-10-21, r1_bias track): the 5 uA source moves out of the cell. r1_bias sources a PTAT
+    # current (5.07 uA at tt, 3.5-7.7 uA over PVT) into the existing diode XMB0 on node nb, now a port. Pure port
+    # change: the device list is unchanged except that the internal Ibias is removed. r1_refbuf5h (baseline, rejected)
+    # keeps its internal source.
+    b5 = body5h.replace(".subckt r1_refbuf5h vbg vref vdda gnd", ".subckt r1_refbuf5 vbg vref vrefl nb vdda gnd")
+    assert "Ibias vdda nb 5u\n" in b5
+    b5 = b5.replace("Ibias vdda nb 5u\n", "* nb: bias input, current sourced into the diode XMB0 by r1_bias (ib_adc_ref)\n")
     b5 = b5.replace(".ends r1_refbuf5h",
                     "* option 3: LSB-array sub-reference, a second source follower on the same gate node ng (no second\n"
                     "* loop: vrefl = ng - Vgs at the same current density as the main follower, msfl/mibl = msf/mib)\n"
@@ -168,10 +174,11 @@ def refcells():
                     "XMIBL vrefl nb gnd gnd sg13_hv_nmos w=2u l=1u ng=1 m={mibl}\n"
                     "XCDL vrefl gnd cap_cmim w=70u l=70u m={ndecl}\n"
                     ".ends r1_refbuf5")
-    b5 = re.sub(r"(\.subckt r1_refbuf5 vbg vref vrefl vdda gnd [^\n]*)", r"\1 msfl=%d mibl=%d ndecl=%d" % (REFL["msfl"], REFL["mibl"], REFL["ndecl"]), b5)
+    b5 = re.sub(r"(\.subckt r1_refbuf5 vbg vref vrefl nb vdda gnd [^\n]*)", r"\1 msfl=%d mibl=%d ndecl=%d" % (REFL["msfl"], REFL["mibl"], REFL["ndecl"]), b5)
     hdr5 = ("\n* r1_refbuf5 (R2-4 option 3): r1_refbuf5h with a separate LSB-array reference vrefl from the same buffer.\n"
             "* The LSB array (C7..C0, lsb-node reset) draws its switching charge from vrefl and its own decoupling;\n"
-            "* the main follower and the error amplifier see only the MSB array (C12..C8).\n")
+            "* the main follower and the error amplifier see only the MSB array (C12..C8).\n"
+            "* Pin nb (T2 2026-10-21): bias current input (r1_bias ib_adc_ref, 5.07 uA at tt) into the diode XMB0.\n")
     ps = ("\n* r1_refps5 (R2-4 option 2): per-slice decoupling capacitor. PMOS switch from the buffer output vin to the slice\n"
           "* reference vout, closed while the slice tracks (trk0 OR trk1), open during its conversion; Cres = nres MIM\n"
           "* cells of 70 x 70 um (7.36 pF each) on vout. Gate = NOR(trk0, trk1) (1.2 V domain).\n"

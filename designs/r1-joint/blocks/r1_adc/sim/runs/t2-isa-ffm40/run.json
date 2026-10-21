@@ -1,0 +1,53 @@
+{
+  "run_id": "t2-isa-ffm40",
+  "block": "r1_adc",
+  "question": "T2 items 2 and 5: mux sequence e c e e, full core, option 3c reference with the r1_bgr model, ff/-40 C/1.32 V, start-up hold pulse 33 ns; codes, track, latch, IDD and IDDA",
+  "command": "G1_CPUSET=105 G1_CPUS=1 G1_WORKDIR=designs/r1-joint/blocks/r1_adc G1_RESULTS_ROOT=<bulk> flow/run.sh ngspice -b <G1_RESULTS_ROOT>/r1_adc/t2-isa-ffm40/deck.cir (= sim/runs/t2-isa-ffm40/deck.cir with the bulk path filled in)",
+  "deck": "sim/runs/t2-isa-ffm40/deck.cir",
+  "deck_template": "sim/r5/tb_adc5_isa.cir",
+  "deck_sha256": "601a655cf3c6775a132e8a4f64819aa8bc3f0d00458b71536176a357a9dc7849",
+  "library_sha256_at_start": {
+    "r1_adc_r5.spice": "a2c3c9a2eb05cd61b7cb0aa28ef020fdf0ec5038aae88816101f926cb34c99e8"
+  },
+  "substitutions": {
+    "RAW": "<bulk>/r1_adc/t2-isa-ffm40",
+    "CORNER": "mos_ff",
+    "TEMP": "-40",
+    "VDD": "1.32",
+    "CM": "0.6",
+    "TIMING": "r1_adc_timing_r5_mux_n0_cq_vdd132_pre33.inc",
+    "OPTS": "reltol=1e-4 vntol=1e-6 abstol=1e-12 method=trap klu seed=1",
+    "TSTOP": "3.31u",
+    "TMAX": "0.2n",
+    "REFLINES": "Vdda vdda 0 3.3\nVbgi vbgw 0 DC 1.045 TRNOISE(0.0004646 4.73e-08 0 0)\nVbgf vbgi vbgw DC 0 TRNOISE(0 4.73e-08 1.15 1.285e-05)\nRbg vbgi vbg 190k\nXCF vbg 0 r1_reffilt5 w=82u\nXREF vbg vref vrefl vdda 0 r1_refbuf5 ndec=4 ndecl=2\nVtvrefa vrefa vref 0\nVtvrefb vrefb vref 0\nVtvrefla vrefla vrefl 0\nVtvreflb vreflb vrefl 0",
+    "ISAVE": "",
+    "MEASA": "meas tran idda avg i(vdda) from=0.6u to=3.31u"
+  },
+  "tool": "ngspice (banner not found in log)",
+  "ngspice_version": "ngspice-46 : Circuit level simulation program (creation date Mon Jul 27 13:15:13 UTC 2026)",
+  "netlist_sha256": {
+    "r1_adc_r5.spice": "a2c3c9a2eb05cd61b7cb0aa28ef020fdf0ec5038aae88816101f926cb34c99e8"
+  },
+  "container_image": "sha256:ddeb69576f2808676d1c5d474ecf04f6d1d6f8abdcff6b72b39790ded924bab2",
+  "pdk_commit": "84374023ee8b4b126bebbba67fcbada0a9c0ff0b",
+  "raw_results": "r1_adc/t2-isa-ffm40 (under G1_RESULTS_ROOT)",
+  "started_utc": "2026-10-21T05:48:27.222610Z",
+  "wall_s": 245.1,
+  "returncode": 0,
+  "status": "failed",
+  "errors": [
+    "Error: measure  idda  avg(TRIG) : no such vector as 'i(vdda)'"
+  ],
+  "failure_lines": [],
+  "missing_outputs": [],
+  "frozen_netlist_check": {
+    "r1_adc_r5.spice": "frozen"
+  },
+  "result": "failed (tooling): i(vdda) not saved, IDDA meas failed; codes valid; rerun t2-isa-ffm40-b",
+  "disposition": "failed (failed)",
+  "runner": "sim/r5/run_deck5.py",
+  "ref_model": "opt3",
+  "ref_params": "ndec=4,ndecl=2",
+  "bgr_model": "190k,82u",
+  "noise": "auto"
+}

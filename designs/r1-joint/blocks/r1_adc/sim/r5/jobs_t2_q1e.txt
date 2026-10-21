@@ -1,0 +1,4 @@
+# T2 queue 1e (CPU 103, replan 2026-10-21): wait for the orphaned t2-dyn-ss125-c0, then dynamic ff chunk 0, static windows ff
+until [ -f sim/runs/t2-dyn-ss125-c0/run.json ]; do sleep 60; done
+python3 sim/r5/run_deck5.py --id t2-dyn-ffm40-c0 --cpu @CPU@ --deck sim/r5/tb_adc5_dyn.cir --tstop 94.9933u --interp --sub AMP=0.85 --sub FIN=101207.386364 --corner mos_ff --temp -40 --vdd 1.32 --sub PH=328.420455 --sub PHB=58.420455 --question "T2 item 2: dynamic test ff/-40 C/1.32 V, N 256 (chunk 0: global frames 0-127), fin 101.207 kHz, 0.85 V, ideal VREF 1.045 V" --disposition "corner: dynamic"
+python3 sim/r5/run_points5.py --id t2-win-ffm40 --cpu @CPU@ --points sim/r5/points/cornwin5.json --corner mos_ff --temp -40 --vdd 1.32 --question "T2 item 2: static windows ff/-40 C/1.32 V, +-6 LSB at 2047/2048 and 3071/3072, 2 per LSB, ideal VREF 1.045 V" --disposition "corner: static windows"

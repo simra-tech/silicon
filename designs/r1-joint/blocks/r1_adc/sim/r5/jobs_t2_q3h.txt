@@ -1,0 +1,4 @@
+# T2 queue 3h (CPU 105, 2026-10-21): rest of 3g without t2-ref-tt-ideal-ib5-f
+until [ -f sim/runs/t2-ref-tt-ideal-ib77-f/run.json ]; do sleep 30; done
+python3 sim/r5/run_points5.py --id t2-win-ss125 --cpu @CPU@ --points sim/r5/points/cornwin5.json --corner mos_ss --temp 125 --vdd 1.08 --question "T2 item 2: static windows ss/125 C/1.08 V, +-6 LSB at 2047/2048 and 3071/3072, 2 per LSB, ideal VREF 1.045 V" --disposition "corner: static windows"
+python3 sim/r5/run_points5.py --id t2-inl-tt-s1a --cpu @CPU@ --points sim/r5/points/inlramp5a.json --mcs 1 --seed 1 --question "T2 item 4: reduced-ramp INL (first half, 48 of 96 inputs over +-0.90 V) on MC sample seed 1 (slices A and B = 2 samples, same sampled MIM mismatch as r5-mcs1-tt-s1), tt, ideal VREF; codes with the fitted weights of mc5_summary.json" --disposition "INL (reduced ramp)"

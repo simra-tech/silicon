@@ -43,12 +43,15 @@ def frozen_check(lib_hash):
     fz = os.path.join(BLOCK, "sim", "r5", "FROZEN_NETLIST_SHA256.txt")
     if not os.path.exists(fz):
         return "no freeze file"
-    ref = {}
+    ref, prev = {}, {}
     for l in open(fz):
         p = l.split()
         if len(p) == 2:
             ref[os.path.basename(p[1])] = p[0]
-    out = {n: ("frozen" if ref.get(n) == h else ("differs from freeze" if n in ref else "not in freeze")) for n, h in lib_hash.items()}
+        elif len(p) == 4 and p[:2] == ["#", "previous:"]:      # T2 2026-10-21: earlier freeze kept as comment
+            prev[os.path.basename(p[3])] = p[2]
+    out = {n: ("frozen" if ref.get(n) == h else ("frozen (previous freeze)" if prev.get(n) == h else
+               ("differs from freeze" if n in ref else "not in freeze"))) for n, h in lib_hash.items()}
     return out
 
 

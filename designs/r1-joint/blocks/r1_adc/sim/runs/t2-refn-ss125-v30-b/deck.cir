@@ -1,0 +1,41 @@
+* tb_refbuf5_noise.cir -- R1 ADC revision 5 (T2 2026-10-21): reference noise of option 3c at the CDAC.
+* r1_refbuf5 (option 3c: ndec 4, ndecl 2, msfl 8, mibl 40) fed from the r1_bgr Thevenin model: noiseless source
+* resistance RS (190 kOhm, r1_bgr noise roll-off) and the input filter r1_reffilt5 (10 pF, MIM 82 x 82 um). The bandgap
+* noise spectrum is applied in sim/r5/post_refnoise5.py (|H|^2 S_bgr); this deck gives H and the buffer's own noise.
+* Outputs: vref (MSB array C12..C8) and vrefl (LSB array C7..C0 and the lsb-node reset). Load: the buffer's own
+* decoupling (the CDAC is a switched load; its sampling of the noise is not modelled, as in revision 4).
+* Method copied from sim/r4/tb_refbuf4_noise.cir. Substitutions: CORNER TEMP VDDA RS RAW
+.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerMOSlv.lib mos_ss
+.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerCAP.lib cap_typ
+.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerMOShv.lib mos_ss
+.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerRES.lib res_typ
+.include schematic/r1_adc_r5.spice
+.temp 125
+.option reltol=1e-4 abstol=1e-12 vntol=1e-6 sparse
+* sparse: ngspice 46 noise analysis does not run with KLU (runs t2-refn-*-v* failed, 2026-10-21)
+Vdda vdda 0 3.0
+Vbgi vbgi 0 DC 1.045 AC 1
+Rs vbgi vbg 190k noisy=0
+XCF vbg 0 r1_reffilt5 w=82u
+XREF vbg vref vrefl vdda 0 r1_refbuf5 ndec=4 ndecl=2
+.control
+set num_threads=1
+op
+let ibg = -i(vbgi)
+echo "OPLINE vbg $&v(vbg) vref $&v(vref) vrefl $&v(vrefl) ibg $&ibg idda $&i(vdda)" > <G1_RESULTS_ROOT>/r1_adc/t2-refn-ss125-v30-b/op.txt
+ac dec 20 10 10meg
+let hm = mag(v(vref))
+let hl = mag(v(vrefl))
+wrdata <G1_RESULTS_ROOT>/r1_adc/t2-refn-ss125-v30-b/ac.txt hm hl
+noise v(vref) Vbgi dec 20 10 10meg
+setplot noise1
+wrdata <G1_RESULTS_ROOT>/r1_adc/t2-refn-ss125-v30-b/noise_vref.txt onoise_spectrum
+setplot noise2
+echo "NOISETOTAL $&onoise_total" > <G1_RESULTS_ROOT>/r1_adc/t2-refn-ss125-v30-b/noise_total_vref.txt
+noise v(vrefl) Vbgi dec 20 10 10meg
+setplot noise3
+wrdata <G1_RESULTS_ROOT>/r1_adc/t2-refn-ss125-v30-b/noise_vrefl.txt onoise_spectrum
+setplot noise4
+echo "NOISETOTAL $&onoise_total" > <G1_RESULTS_ROOT>/r1_adc/t2-refn-ss125-v30-b/noise_total_vrefl.txt
+.endc
+.end

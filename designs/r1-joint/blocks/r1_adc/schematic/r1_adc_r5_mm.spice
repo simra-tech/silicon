@@ -718,8 +718,9 @@ XCD  vref gnd cap_cmim w=70u l=70u m={ndec}
 * r1_refbuf5 (R2-4 option 3): r1_refbuf5h with a separate LSB-array reference vrefl from the same buffer.
 * The LSB array (C7..C0, lsb-node reset) draws its switching charge from vrefl and its own decoupling;
 * the main follower and the error amplifier see only the MSB array (C12..C8).
-.subckt r1_refbuf5 vbg vref vrefl vdda gnd msf=32 mib=160 ndec=6 ncg=1 mt=1 lt=8u msfl=8 mibl=40 ndecl=1
-Ibias vdda nb 5u
+* Pin nb (T2 2026-10-21): bias current input (r1_bias ib_adc_ref, 5.07 uA at tt) into the diode XMB0.
+.subckt r1_refbuf5 vbg vref vrefl nb vdda gnd msf=32 mib=160 ndec=6 ncg=1 mt=1 lt=8u msfl=8 mibl=40 ndecl=1
+* nb: bias input, current sourced into the diode XMB0 by r1_bias (ib_adc_ref)
 XMB0 nb nb gnd gnd sg13_hv_nmos w=2u l=1u ng=1 m=1 mm_ok={mmos}
 XMT  ntl nb gnd gnd sg13_hv_nmos w=2u l={lt} ng=1 m={mt} mm_ok={mmos}
 XM1  na  vbg ntl gnd sg13_hv_nmos w=10u l=1u ng=2 m=1 mm_ok={mmos}

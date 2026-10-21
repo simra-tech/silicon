@@ -1,0 +1,3 @@
+# T2 queue 1b (CPU 103, 2026-10-21 rebalance): wait for the orphaned t2-dyn-ss125-c0 of queue 1, then dynamic ff chunk 0
+until [ -f sim/runs/t2-dyn-ss125-c0/run.json ]; do sleep 60; done
+python3 sim/r5/run_deck5.py --id t2-dyn-ffm40-c0 --cpu @CPU@ --deck sim/r5/tb_adc5_dyn.cir --tstop 94.9933u --interp --sub AMP=0.85 --sub FIN=101207.386364 --corner mos_ff --temp -40 --vdd 1.32 --sub PH=328.420455 --sub PHB=58.420455 --question "T2 item 2: dynamic test ff/-40 C/1.32 V, N 256 (chunk 0: global frames 0-127), fin 101.207 kHz, 0.85 V, ideal VREF 1.045 V" --disposition "corner: dynamic"

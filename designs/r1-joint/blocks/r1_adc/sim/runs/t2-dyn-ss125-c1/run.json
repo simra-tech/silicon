@@ -1,0 +1,53 @@
+{
+  "run_id": "t2-dyn-ss125-c1",
+  "block": "r1_adc",
+  "question": "T2 item 2: dynamic test ss/125 C/1.08 V, N 256 (chunk 1: global frames 128-255), fin 101.207 kHz, 0.85 V, ideal VREF 1.045 V",
+  "command": "G1_CPUSET=104 G1_CPUS=1 G1_WORKDIR=designs/r1-joint/blocks/r1_adc G1_RESULTS_ROOT=<bulk> flow/run.sh ngspice -b <G1_RESULTS_ROOT>/r1_adc/t2-dyn-ss125-c1/deck.cir (= sim/runs/t2-dyn-ss125-c1/deck.cir with the bulk path filled in)",
+  "deck": "sim/runs/t2-dyn-ss125-c1/deck.cir",
+  "deck_template": "sim/r5/tb_adc5_dyn.cir",
+  "deck_sha256": "f6613fc8ce98883e906538e5f83351c54d6e3ac685ef475b92b2fa912acd4387",
+  "library_sha256_at_start": {
+    "r1_adc_r5.spice": "a2c3c9a2eb05cd61b7cb0aa28ef020fdf0ec5038aae88816101f926cb34c99e8"
+  },
+  "substitutions": {
+    "RAW": "<bulk>/r1_adc/t2-dyn-ss125-c1",
+    "CORNER": "mos_ss",
+    "TEMP": "125",
+    "VDD": "1.08",
+    "CM": "0.6",
+    "TIMING": "r1_adc_timing_r5_n0_cq_vdd108.inc",
+    "OPTS": "reltol=1e-4 vntol=1e-6 abstol=1e-12 method=trap klu seed=1 interp",
+    "TSTOP": "94.9933u",
+    "TMAX": "0.2n",
+    "REFLINES": "Vref vref 0 1.045\nVtvrefa vrefa vref 0\nVtvrefb vrefb vref 0\nVtvrefla vrefla vref 0\nVtvreflb vreflb vref 0",
+    "AMP": "0.85",
+    "FIN": "101207.386364",
+    "PH": "148.420455",
+    "PHB": "238.420455"
+  },
+  "tool": "ngspice (banner not found in log)",
+  "ngspice_version": "ngspice-46 : Circuit level simulation program (creation date Mon Jul 27 13:15:13 UTC 2026)",
+  "netlist_sha256": {
+    "r1_adc_r5.spice": "a2c3c9a2eb05cd61b7cb0aa28ef020fdf0ec5038aae88816101f926cb34c99e8"
+  },
+  "container_image": "sha256:ddeb69576f2808676d1c5d474ecf04f6d1d6f8abdcff6b72b39790ded924bab2",
+  "pdk_commit": "84374023ee8b4b126bebbba67fcbada0a9c0ff0b",
+  "raw_results": "r1_adc/t2-dyn-ss125-c1 (under G1_RESULTS_ROOT)",
+  "started_utc": "2026-10-21T05:38:06.823652Z",
+  "wall_s": 7809.4,
+  "returncode": 0,
+  "status": "completed",
+  "errors": [],
+  "failure_lines": [],
+  "missing_outputs": [],
+  "frozen_netlist_check": {
+    "r1_adc_r5.spice": "frozen"
+  },
+  "result": "see r1_adc/README.md, Revision 5, T2 rows (2026-10-21)",
+  "disposition": "corner: dynamic",
+  "runner": "sim/r5/run_deck5.py",
+  "ref_model": "ideal",
+  "ref_params": "",
+  "bgr_model": null,
+  "noise": null
+}

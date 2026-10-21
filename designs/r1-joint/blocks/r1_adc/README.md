@@ -38,7 +38,34 @@ uses the bandgap output impedance (190 kΩ) and the r1_bgr noise spectrum as the
 | `sim/r5/post_sweep5.py` | Decision-0 64-input sweep |
 | `sim/r5/gen_points5.py`, `sim/r5/place_windows5.py`, `sim/r5/post_mc5.py`, `sim/r5/points/*.json` | MC weight calibration: locate inputs, window placement check, 14-weight fit, DNL, check of the fitted weights against the r1_ctrl register widths |
 | `sim/r5/jobs_*.txt` | Job files of the campaign (CPU 103–105) |
+| `sim/r5/gen_timing_pre5.py`, `sim/r5/r1_adc_timing_r5_*_pre*.inc` | T2: timing with one start-up hold pulse on `trk0` (first-conversion fix test) |
+| `sim/r5/tb_adc5_dyn.cir`, `sim/r5/tb_adc5_isa.cir`, `sim/r5/tb_refbuf5_noise.cir` | T2 decks: dynamic test (chunks), mux sequence with the full core and supply currents, reference noise |
+| `sim/r5/run_deck5.py`, `sim/r5/run_qt2.sh`, `sim/r5/jobs_t2_*.txt` | T2 runner for the non-points decks (same `run.json` and exit rules), queue, job files |
+| `sim/r5/gen_points_t2.py`, `sim/r5/points/{ff2,fixtt,cornwin5,inlramp5,inlramp5a,inlramp5b}.json` | T2 input sets (every set starts with an unused start-up frame) |
+| `sim/r5/post_t2.py`, `sim/r5/post_refnoise5.py` | T2 post-processing: first conversion, static windows, dynamic, mux and currents, INL; reference noise |
+| `sim/r5/refreeze_t2.py` | Regenerates the library with the `r1_refbuf5` bias pin, checks that nothing else changed, renews the freeze |
 | `sim/results/r5/` | Result JSON (all < 1 MB). Raw files: `<G1_RESULTS_ROOT>/r1_adc/<run-id>/`; run records `sim/runs/r5-*/run.json` |
+
+### Pins for the layout track (revision 5)
+
+Cells of record: `r1_adc5_core` (both slices, comparators, SAR, clkgen), `r1_refbuf5` (reference buffer, option 3c:
+`ndec=4 ndecl=2`) and `r1_reffilt5` (10 pF input filter). The SAR logic is behavioural; on chip, r1_ctrl and the SAR
+sequencer replace the timing ports.
+
+| Pin | Cell | Direction | Domain | Connects to / value |
+| --- | --- | --- | --- | --- |
+| `sinp sinn cosp cosn` | `r1_adc5_core` | in, analog | 1.2 V | r1_afe outputs (CM 0.6 V, ±0.72 V differential) |
+| `isap isan isbp isbn` | `r1_adc5_core` | in, analog | 1.2 V | r1_isense outputs (CM 0.60 V, ±0.85 V) |
+| `trka0 trka1 trkb0 trkb1`, `clk30`, `wina winb`, `lata latb`, `stba0…13 stbb0…13` | `r1_adc5_core` | in, digital | 1.2 V | r1_ctrl frame timing (D18); start-up hold phase on `trk*0` (open issue 1) |
+| `rawa rawb` | `r1_adc5_core` | out | 1.2 V | behavioural raw word; on chip 14 decision bits + `valid` per slice to r1_ctrl |
+| `topap topan topbp topbn` | `r1_adc5_core` | probe | — | CDAC top plates (simulation probes; no pad) |
+| `vrefa vrefb` | `r1_adc5_core` | in, reference | — | `r1_refbuf5` `vref` (MSB array) |
+| `vrefla vreflb` | `r1_adc5_core` | in, reference | — | `r1_refbuf5` `vrefl` (LSB array, lsb-node reset) |
+| `vdd`, `gnd` | `r1_adc5_core` | supply | 1.2 V | core supply |
+| `vbg` | `r1_refbuf5`, `r1_reffilt5` | in | — | r1_bgr `vref` (≈ 190 kΩ source) and the 10 pF filter |
+| `vref`, `vrefl` | `r1_refbuf5` | out | — | `vrefa vrefb` / `vrefla vreflb` of the core |
+| `nb` (**new**, T2 2026-10-21) | `r1_refbuf5` | in, bias current | VDDA | r1_bias `ib_adc_ref`: 5.07 µA at tt (3.5–7.7 µA PVT) sourced into the diode XMB0 (2 / 1 µm); pin voltage 0.82 V at tt (r1_bias README) |
+| `vdda`, `gnd` | `r1_refbuf5` | supply | 3.3 V | buffer supply |
 
 ### Built against (revision 5)
 
@@ -47,7 +74,7 @@ uses the bandgap output impedance (190 kΩ) and the r1_bgr noise spectrum as the
 | PDK | IHP SG13G2 open PDK commit `84374023ee8b4b126bebbba67fcbada0a9c0ff0b` | `flow/run.sh` commit check; `pdk_commit` in every `sim/runs/r5-*/run.json` |
 | Container image | `sha256:ddeb69576f2808676d1c5d474ecf04f6d1d6f8abdcff6b72b39790ded924bab2` | `container_image` in `run.json` |
 | ngspice | ngspice-46 (creation date 27 Jul 2026), KLU, XSPICE, PSP 103.6 OSDI | `ngspice_version` in every `run.json` |
-| Netlist identity | `r1_adc_r5.spice` sha256 `a2c3c9a2…c34c99e8`, `r1_adc_r5_mm.spice` `cfa754bf…1b454ba2` (the comparator sweep decks ran before the freeze and carry their own sha256) | `netlist_sha256` and `frozen_netlist_check` in `run.json`; `sim/r5/FROZEN_NETLIST_SHA256.txt` |
+| Netlist identity | `r1_adc_r5.spice` sha256 `340c0e6a…bb0988d6`, `r1_adc_r5_mm.spice` `3bc50331…0426ae0` since the `r1_refbuf5` bias pin (T2, 2026-10-21 10:04 CEST). Before: `a2c3c9a2…c34c99e8` / `cfa754bf…1b454ba2`; only the `r1_refbuf5` port differs (the comparator sweep decks ran before the first freeze and carry their own sha256) | `netlist_sha256` and `frozen_netlist_check` in `run.json`; `sim/r5/FROZEN_NETLIST_SHA256.txt` |
 | Models | `cornerMOSlv/hv.lib` `mos_tt` / `mos_ss` / `mos_ff`, `cornerCAP.lib` `cap_typ` / `cap_typ_mismatch`, `cornerRES.lib` `res_typ` | deck headers in `sim/runs/r5-*/deck.cir` |
 | Options | `reltol=1e-4 vntol=1e-6 abstol=1e-12 method=trap klu`, seed, tmax 0.2 ns, PDK-default gmin unless a run sets `gmin`, no rshunt | `substitutions` and `gmin` in `run.json` |
 | xschem, KLayout, LibreLane, CACE | not used | — |
@@ -61,26 +88,37 @@ uses the bandgap output impedance (190 kΩ) and the r1_bgr noise spectrum as the
 | 1 R2-4 | Reference settling ≤ 0.25 LSB comparator-input error, ±0.88 V, buffer in the loop, both slices, tt | Chosen option 3c: 0.209 LSB (cross-check 0.145 LSB). Baseline `r1_refbuf5h`: 0.620 LSB | **passed** (option 3c); baseline **failed** | `sim/results/r5/ref5_options.json`, `ref5_tt_*.json`; runs `r5-ref-tt-*` |
 | 1 R2-4 | Same at ss / 125 °C / 1.08 V | Option 3c: 0.163 LSB (cross-check 0.131). Baseline: 0.437 LSB | **passed** (option 3c) | `sim/results/r5/ref5_ss125_opt3c.json`, `ref5_ss125_buf.json`; runs `r5-ref-ss125-opt3c`, `r5-ref-ss125-buf-p` |
 | 1 R2-4 | Same at ff / −40 °C / 1.32 V | Option 3c: 0.186 LSB (cross-check 0.167). Baseline: 0.572 LSB | **passed** (option 3c) | `sim/results/r5/ref5_ffm40_opt3c.json`, `ref5_ffm40_buf.json`; runs `r5-ref-ffm40-*` |
+| 1 R2-4 (T2) | Same at ssx (ss / −40 °C / 1.32 V), base run at the buffer DC value 1.0488 V | Option 3c: 0.164 LSB (cross-check 0.115). With a base run at 1.0505 V the metric gave 0.858 LSB: the step-scaling artefact of failure 7 (buffer 1.7 mV below the base) | **passed** | `sim/results/r5/ref5_ssx_opt3c.json`, `ref5_ssx_opt3c_interp.json`; runs `t2-ref-ssx-*-f` |
+| 1 R2-4 (T2) | Same at ffx (ff / 125 °C / 1.08 V), base run at the buffer DC value 1.0526 V | Option 3c: 0.194 LSB (cross-check 0.189, extrapolated above 1.0505 V). Bandgap noise model: ss125 density at both cross corners (conservative) | **passed** | `sim/results/r5/ref5_ffx_opt3c.json`, `ref5_ffx_opt3c_interp.json`; runs `t2-ref-ffx-*-f` |
+| 1 R2-4 (T2) | Bias pin `nb` of `r1_refbuf5` (coordinator 2026-10-21, r1_bias `ib_adc_ref`, PTAT 5.07 µA at tt): regression at 5 µA from the pin, tt | 0.209 LSB (cross-check 0.145), identical to the internal-source run `r5-ref-tt-opt3c-cq` (0.209 LSB); vref 1.050271 V as before | **passed** (pure port change) | `sim/results/r5/ref5_tt_opt3c_ib5.json`; runs `t2-op-tt-opt3c-ib5`, `t2-ref-tt-opt3c-ib5` |
+| 1 R2-4 (T2) | Bias current 3.5 µA (low end of the r1_bias PVT range), tt, base run at the buffer DC value 1.05052 V | 0.179 LSB (cross-check 0.169); buffer IDDA 0.741 mA | **passed** | `sim/results/r5/ref5_tt_opt3c_ib35.json`; runs `t2-op-tt-opt3c-ib35`, `t2-ref-tt-opt3c-ib35`, `t2-ref-tt-ideal-ib35-f` |
+| 1 R2-4 (T2) | Bias current 7.7 µA (high end of the range), tt, base run at the buffer DC value 1.04993 V | 0.201 LSB (cross-check 0.115); buffer IDDA 1.593 mA | **passed** | `sim/results/r5/ref5_tt_opt3c_ib77.json`; runs `t2-op-tt-opt3c-ib77`, `t2-ref-tt-opt3c-ib77`, `t2-ref-tt-ideal-ib77-f` |
 | 1 R2-4 | Option 2: per-slice capacitor (2 + 2 cells), charged in track, isolated in conversion, tt | 88.98 LSB (droop during the MSB decisions). Variant with 6 cells (`r5-ref-tt-opt2b-cq`): run marked failed (singular-matrix warning); not used | **failed** (option rejected) | `sim/results/r5/ref5_tt_opt2a.json`; run `r5-ref-tt-opt2a-cq` |
 | 1 R2-4 | Option 3 variants, tt (3a ndec 6 + ndecl 1; 3b second buffer; 3d msfl 16; 3e tail lt 32 µm, ncg 2; 3 with ncg 8) | 0.206 / 0.219 / 0.207 / 0.112 / 0.189 LSB | passed (all) | `sim/results/r5/ref5_tt_opt3*.json` |
 | 1 | VREF static value after the slow error amplifier, option 3c (vbg 1.045 V) | vref 1.05035 / 1.05059 / 1.05074 V (tt / ss / ff): +5.4 to +5.7 mV, gain error ≈ 0.5 % (≈ 10 LSB at full scale). Error left after a gain fit: 0.143 / 0.144 / 0.171 LSB | gain calibration removes it (derived from the R2-4 runs) | `sim/results/r5/ref5_*_opt3c.json` (`max_abs_error_after_gain_fit_lsb`) |
 | gmin | Operating point at the PDK-default gmin and at gmin 1e-15 (full reference + ADC, tt) | vref 1.050271 V in both; largest node difference 1 µV (0.002 LSB) | **passed** (≤ 0.05 LSB) | `sim/results/r5/gmin_op5.json`; runs `r5-op-buf-gdef-c`, `r5-op-buf-g15-c` |
 | gmin | R2-4 baseline transient at the default gmin and at gmin 1e-15 (tt, input steps off the clock grid) | Same codes; largest difference 0.0024 LSB (worst-case 0.6195 / 0.6194 LSB) | **passed** | `sim/results/r5/gmin_tran5.json`; runs `r5-ref-tt-buf-p`, `r5-ref-tt-buf-g15-p` |
 | 2 | Decision 0 at CM 0.6 V, ss / 125 °C / 1.08 V, 64-input sweep, `r1_cmp5n` | Frames 1–63: largest error 1.02 LSB against the straight-line fit (redundancy 30.6 LSB); decision 0 resolves at all 16 inputs between −12 and +3 mV; monotonic. Frame 0 (first conversion after t = 0): error 113 LSB (A) / 99 LSB (B); a repeat run shows that only the first frame is wrong (start-up, open issue 1) | **passed** (63 of 64 frames); start-up frame **failed** | `sim/results/r5/sweep5_ss125.json`; runs `r5-sweep-ss125`, `r5-dbg-ss-slot0` |
+| 1 (T2) | First conversion after enable: root cause. Instrumented first frame at ss / 125 °C / 1.08 V, −0.90 V in frames 0 and 1: bootstrap capacitor, switch gate, top and bottom plates, lsb nodes, comparator clocks and outputs, SAR clocks | Bottom plates (1.045 V), lsb nodes, comparator reset, SAR flags and clocks are correct in frame 0. The bootstrap capacitor of the in0 switch holds 0.117 V at the end of the first track window (charged: 0.923 V). The N-side switch gate is 1.022 V with the input at 1.050 V, so the switch is off. `topan` is 0.991 V instead of 1.050 V. Frame 0 − frame 1: +123 LSB (A), +107 LSB (B) | cause found (see open issue 1) | `sim/results/r5/firstconv5.json`; run `t2-ff-ss-inst1` |
+| 1 (T2) | Fix test: one start-up hold pulse on `trk0` (10, 33 or 67 ns from 106 ns), then track until the first sampling edge (r1_ctrl sequence; netlist unchanged; timing `sim/r5/gen_timing_pre5.py`) | ss, −0.90 V: frame 0 − frame 1 = 0 LSB (A) and +1 LSB (B) for all three widths. tt, 0 V: ±1 LSB with and without the pulse (0 V lies on the 2047/2048 transition; both inputs of each switch are at 0.6 V, so an open switch does not show). Full core, mux sequence with a 33 ns pulse: frame 0 converts on the straight line at tt, ss and ff (rows below) | **passed** (with the r1_ctrl sequence) | `sim/results/r5/firstconv5.json`; runs `t2-ff-ss-pre10`, `-pre33`, `-pre67`, `t2-ff-tt-pre33`, `t2-ff-tt-nopre` |
 | 2 R2-3 | Comparator noise ≤ 60 µV at ss / 125 °C, `r1_cmp5n` (method A) | 57.0 µV (tt 43.5, ff 34.4 µV). Decisions 1–13 keep `r1_cmp4` (55.9 µV, revision 4) | **passed** | `sim/results/r5/cmp5n_c.json` (variant n16rl) |
 | 2 | Decision time inside the 33 ns tick, `r1_cmp5n`, CM 0.5 / 0.6 / 0.7 V, all corners | 8/8 correct at every corner and CM. Slowest 15.46 ns (ss, CM 0.5 V); 12.41 ns at ss, CM 0.6 V. Margin to the strobe ≥ 15.0 ns | **passed** | `sim/results/r5/cmp5n_c.json` |
 | 2 | Comparator variant set b (n8, n8s, n8c, n16) | Memory test 4/8 (large integration capacitors, weak reset) or noise above 60 µV (n8c) | failed (variants rejected) | `sim/results/r5/cmp5n_b.json` |
 | 3 R2-11 | MC window placement checked on the nominal circuit before the MC | Locate run: LSB ≈ 455 µV; decision-0 toggle −0.25…+0.25 mV inside window 2048; windows at the transitions 1023/1024, 2047/2048, 3071/3072 (outer ones extrapolated, ≈ ±466 mV) | **passed** | `sim/results/r5/mc_window_check.json`, `sim/r5/points/mccal5.json`; run `r5-locate-tt` |
 | 3 R2-11 | Weight calibration on the circuit: MIM-mismatch MC, 12 slice samples (6 seeds × 2 slices, sampled mismatch, open issue 2), all 14 weights fitted per sample (known-input least squares, 65 conversions: 14 spread + 3 windows of ±2 LSB at 4 points per LSB; frame 0 excluded) | Fit residual 0.11–0.15 LSB rms; all weights positive. Design weights: major-transition \|DNL\| median 0.75, max 1.0 LSB, 5/12 ≤ 0.5 LSB, 4 samples non-monotonic, 2 missing codes. Fitted weights: max \|DNL\| 0.25 LSB (the resolution) on 11/12 and 0.5 LSB on 1/12, all monotonic, no missing code. Cross-check MAP fit (one offset per window, PDK-mismatch prior): same result. The fit and the DNL use the same conversions | **passed** | `sim/results/r5/mc5_summary.json`; runs `r5-mcs1-tt-s1…s6` |
-| 3 | Full-ramp INL on 2 samples | — | not run (time budget) | — |
+| 3 (T2) | INL with fitted weights on 2 MC slice samples (seed 1, slices A and B, the sampled mismatch of `r5-mcs1-tt-s1`), tt, ideal VREF. **Reduced ramp**, not a full ramp: 96 inputs per slice over ±0.90 V (one per 40.6 LSB, sub-LSB random offsets) | Fitted weights: max |INL| 1.56 / 1.42 LSB (A / B, integer codes, includes ±0.5 LSB quantisation), 1.17 / 1.20 LSB on the unrounded weighted sum; cubic part (smooth INL) 1.10 / 0.96 LSB. Design weights: 1.96 / 1.83 LSB. Monotonic along the ramp: yes | **run**; code-level INL between the ramp points not resolved | `sim/results/r5/inl5_tt_s1.json`; runs `t2-inl-tt-s1a`, `t2-inl-tt-s1b` |
+| 3 | Full-ramp INL (≥ 4096 conversions per sample) | — | not run (≈ 60 CPU-h at 55 s per frame; see failure 27) | — |
 | 3 | Fitted weights against the r1_ctrl register widths (R1_REGISTER_MAP.md 0.4, section 4.11: WW(i) = 3…14 bit, 1/4 LSB, unsigned) | 12/12 samples × 14 weights fit; no saturation, no negative weight. Largest fraction of the register range used, register index 13 → 0: 0.497, 0.248, 0.249, 0.249, 0.249, 0.154, 0.155, 0.157, 0.169, 0.158, 0.159, 0.161, 0.200, 0.143 | **passed** | `sim/results/r5/mc5_summary.json` (`register_width_check`) |
 | 4 | Runner: non-zero exit on any failed job, no automatic resubmission, no silent frame skipping | Implemented (see "Runner fix"). Exercised: 35 runs of this campaign failed or were stopped (debug runs included). Each one stopped its job and returned 1. None was resubmitted; every rerun has a new run id | **passed** | `sim/r5/run_ngspice5.py`, `run_points5.py`, `run_q5.sh`; queue logs `<G1_RESULTS_ROOT>/r1_adc/r5-q-*.log` |
 | 5 | Buffer at ss / ff | R2-4 rows above (baseline and option 3c) | **passed** (option 3c) | see R2-4 rows |
-| 5 | Static windows at ss / ff with revision 5 | — | not run (CPU time used for the MC) | — |
-| 5 | Dynamic test at ss and ff (N 256, coherent frequency) | — | not run (CPU time used for the MC) | — |
-| 5 | Mux sequence at ss / ff with revision 5 | — | not run (revision 4 passed with the same timing; `r1_cmp5n` not in that run) | — |
-| — | Reference noise of option 3c (second follower group) | — | not run | — |
-| — | Full core (`r1_adc5_core`) supply current; layout; PEX; full ramp | — | not run | — |
+| 5 (T2) | Static windows ss / 125 °C / 1.08 V: ±6 LSB at 2047/2048 and 3071/3072, 1.95 conversions per LSB, ideal VREF 1.045 V, design weights | A: max |DNL| 0.54 LSB, monotonic, missing none; B: max |DNL| 0.54 LSB, monotonic, missing none | **passed** | `sim/results/r5/win5_ss125.json`; run `t2-win-ss125` |
+| 5 (T2) | Static windows ff / −40 °C / 1.32 V (same windows) | A: max |DNL| 0.54 LSB, monotonic, missing none; B: max |DNL| 0.54 LSB, monotonic, missing none | **passed** | `sim/results/r5/win5_ffm40.json`; run `t2-win-ffm40` |
+| 5 (T2) | Dynamic ss / 125 °C / 1.08 V: N 256 (two chunks of 128 frames, start-up frame of each chunk not used), fin 101.207 kHz (19/256 of the frame rate), 0.85 V, ideal VREF, design weights, no device noise | SNDR 70.20 / 70.45 dB (A / B), ENOB 11.37 / 11.41, SFDR 74.6 / 75.2 dB, THD -74.5 / -75.0 dB | **run** (no limit in the brief) | `sim/results/r5/dyn5_ss125_n256.json`; runs `t2-dyn-ss125-c0`, `-c1` |
+| 5 (T2) | Dynamic ff / −40 °C / 1.32 V (same test) | SNDR 66.71 / 66.65 dB (A / B), ENOB 10.79 / 10.78, SFDR 68.1 / 68.1 dB, THD -68.1 / -68.0 dB. Third harmonic 0.73 LSB amplitude (ss: 0.30–0.39 LSB); it sets the ff result (open issue 12). Chunk c0 is labelled failed: a singular-matrix warning at the operating point, resolved by gmin stepping; the transient is complete, and the two chunks agree within 0.2 dB (sine fit per chunk), so c0 is used | **run** (no limit in the brief) | `sim/results/r5/dyn5_ffm40_n256.json`; runs `t2-dyn-ffm40-c0` (labelled failed), `-c1` |
+| 5 (T2) | Mux sequence e c e e, full core `r1_adc5_core`, option 3c with the r1_bgr model, 33 ns start-up hold pulse, tt / ss / ff (`sim/r5/tb_adc5_isa.cir`) | Codes in the correct order and frame at all three corners (SIN/COS, ISA/ISB ±0.85 V at CM 0.60 V, SIN/COS); latch 14.02 ticks after the sampling edge. Errors against the nominal line (LSB 454.9 µV × VREF / 1.045 V): tt: max error 3.66 LSB, gain 0.9982, residual after a gain fit 0.45 LSB, track ≥ 257.8 ns; ss: max error 5.22 LSB, gain 0.9975, residual after a gain fit 0.39 LSB, track ≥ 257.7 ns; ff: max error 0.96 LSB, gain 0.9997, residual after a gain fit 0.65 LSB, track ≥ 257.8 ns | **passed** | `sim/results/r5/isa5_tt.json`, `isa5_ss125.json`, `isa5_ffm40.json`; runs `t2-isa-tt`, `t2-isa-ss125-b`, `t2-isa-ffm40-b` |
+| 3 (T2) | Reference noise of option 3c at the CDAC, 10 Hz–10 MHz, criterion 110 µV rms: r1_bgr spectrum (run `bgr-noise-20261021-b`) through H(f) of Rs 190 kΩ + 10 pF filter + buffer, plus the buffer's own noise (`sim/r5/tb_refbuf5_noise.cir`, `post_refnoise5.py`) | vref / vrefl: tt 87.6 / 88.6 µV, ss / 125 °C 108.5 / 109.7 µV (VDDA 3.3 V; 108.4 / 109.7 µV at 3.0 V). Source at 180 kΩ: tt 88.1 / 89.1 µV, ss 109.1 / 110.3 µV. Buffer self-noise 62.4 µV (tt), 74.9 µV (ss). Note (coordinator 2026-10-21): r1_t2f in mode 0 lowers the bandgap vref by 2.1 mV; this is a gain error (0.2 %) that the weight calibration absorbs; nothing run | **passed** at tt; ss **marginal**: passed at 190 kΩ; at 180 kΩ vrefl is 0.3 µV above 110 µV (vrefl reaches the comparator through the bridge, so the criterion is conservative for it) | `sim/results/r5/refnoise5.json`; runs `t2-refn-*-b`, `t2-refn-*-rs180` |
+| 5 (T2) | Full-core supply current (both slices, transistor drivers, bootstrapped switches, `r1_cmp4` × 2 + `r1_cmp5n` × 2 + both biases, clkgen; option 3c buffer with 5 µA), time average over the four mux frames | tt IDD 0.903 mA at 1.2 V, IDDA 1.034 mA at 3.3 V; ss / 125 °C IDD 0.595 mA at 1.08 V, IDDA 1.029 mA at 3.3 V; ff / −40 °C IDD 1.300 mA at 1.32 V, IDDA 1.043 mA at 3.3 V. The SAR logic is behavioural and draws no current here | **run** (no limit in the brief) | `sim/results/r5/isa5_*.json` (`idd_mA`, `idda_mA`; ngspice `meas` in the run logs agrees) |
+| — | Layout, PEX | — | not run | — |
 
 ### R2-4 options (tt, 10 test inputs at up to ±0.88 V, both slices at the same time, bandgap model, PDK-default gmin)
 
@@ -140,20 +178,30 @@ tt (+0.20 mA against the baseline). Option 3e (error-amplifier tail lt 32 µm, n
 | --- | --- | --- |
 | CDAC, both slices (unchanged from revision 3) | 0.0185 | — |
 | Comparators `r1_cmp4` × 2 + bias + clkgen (decisions 1–13, revision 4) | 0.003 | included in IDD |
-| Comparators `r1_cmp5n` × 2 + bias (decision 0, new) | 0.001 | continuous clock, 3 comparators + bias: 1.38 / 0.87 / 2.25 mA (tt / ss / ff); in the ADC it is clocked one tick per frame (full-core current not run) |
+| Comparators `r1_cmp5n` × 2 + bias (decision 0, new) | 0.001 | continuous clock, 3 comparators + bias: 1.38 / 0.87 / 2.25 mA (tt / ss / ff); in the ADC it is clocked one tick per frame (included in the full-core IDD) |
 | Switches, drivers, SAR logic (behavioural; area from revision 3) | 0.012 | included in IDD |
 | Reference option 3c `r1_refbuf5` (ndec 4 + ndecl 2 cells 70 × 70 µm, Cg 50 × 50 µm, two follower groups) + input filter `r1_reffilt5` 10 pF (82 × 82 µm) | 0.0410 | IDDA 1.046 / 1.037 / 1.061 mA at 3.3 V (tt / ss / ff) |
-| **Total** | **≈ 0.0755** | IDDA ≈ 1.05 mA; IDD at 1.2 V not simulated for revision 5 (revision 4: 2.29 mA) |
+| **Total** | **≈ 0.0755** | Full core (T2, mux runs, time average): IDD 0.903 / 0.595 / 1.300 mA at 1.2 / 1.08 / 1.32 V, IDDA 1.034 / 1.029 / 1.043 mA at 3.3 V (tt / ss / ff); ≈ 4.5 mW at tt. Revision 4 IDD corrected to 0.86 mA at tt (failure 30) |
 
 The baseline reference (`r1_refbuf5h` + filter) is 0.0407 mm² and 0.842 mA, so option 3c costs +0.0003 mm² and
 +0.20 mA. All areas are estimates from device sizes; nothing is laid out.
 
 ### Open issues (revision 5)
 
-1. Start-up frame. The first conversion after t = 0 is wrong in every deck (113 LSB at ss with −0.90 V; 13 LSB at tt
-   with 0 V). The same input in later frames converts correctly (run `r5-dbg-ss-slot0`). The cause is not isolated.
-   Candidates: the initial state of the SAR flags, the `fv0` gate of `r1_cmp5n` or the clkgen. Until the cause is
-   fixed, r1_ctrl must discard the first conversion after the ADC is enabled. All metrics skip frame 0.
+1. Start-up frame: **cause found (T2, 2026-10-21)**. The bootstrap capacitor (200 fF) of each in0 sampling switch
+   (`r1_bootsw`) charges only while its track signal is low. The ADC idles in track (revision-5 timing; r1_ctrl
+   `adc_hold` = 0 in reset). So after enable, after a reset or after a long idle, the first track window starts with
+   an uncharged capacitor (0.12 V in the DC state at ss / 125 °C, 0 V at power-up). The switch gate is then only about
+   0.1 V above the input. For inputs near VDD the switch is off, and the top plate stays at a leakage value (towards
+   the in1 port at 0.6 V). The error depends on the input: +123 / +107 LSB at −0.90 V at ss, none at 0 V. Revision 4
+   did not have the fault, because its track signal was low at t = 0 (failure 20).
+   Fix (simulated, recommended option, recorded): r1_ctrl drives one hold phase of ≥ 1 tick after reset or enable,
+   then ≥ 250 ns track before the first sampling edge. 10 ns is enough at ss. The ADC netlist does not change.
+   INTERFACES.md row "ADC → ctrl, first conversion" now states this sequence; the discard rule stays only until
+   r1_ctrl implements it (r1_ctrl 0.5). ADC-side alternative for revision 6, only if r1_ctrl cannot do it: an enable
+   input that holds the in0 bootstraps in their hold state while the ADC is disabled (new port; not designed).
+   Not simulated: how long the capacitor keeps its charge in a long idle in track (the DC state is the end point).
+   The in1 (current) switches idle in hold and are not affected. All metrics still skip frame 0.
 2. The PDK-agauss MC core (`r1_adc5_core_fast_mc`, one `cap_cmim` per unit capacitor) has no DC operating point. It
    fails at the default gmin, at gmin 1e-9, with rshunt 1e12, and also with `cap_typ` (no mismatch); the nominal core
    converges (runs `r5-dbg-opmc-*`). The MC therefore uses sampled mismatch (`run_points5.py --mcs`): the nominal core
@@ -166,12 +214,33 @@ The baseline reference (`r1_refbuf5h` + filter) is 0.0407 mm² and 0.842 mA, so 
    is not run.
 5. The slow error amplifier gives a static VREF offset of +5.4 to +5.7 mV (gain error ≈ 0.5 %). Gain calibration
    must remove it. Start-up and drift time of the slow loop are not simulated.
-6. Reference noise of option 3c is not simulated. Revision 4 (`r1_refbuf4h` + 10 pF) gave 88 µV (tt) and 109 µV (ss)
-   against 110 µV. The second follower group adds its own noise to the LSB array only (attenuated by the bridge).
-7. Not run: static windows and dynamic test at ss / ff, mux sequence at ss / ff with `r1_cmp5n`, full-core supply
-   current, layout, PEX, full ramp.
+6. Reference noise of option 3c (T2): tt 87.6 / 88.6 µV, ss 108.5 / 109.7 µV (vref / vrefl) against 110 µV. The ss
+   margin is ≤ 1.5 µV; with a 180 kΩ source vrefl is 110.3 µV. The sampling and aliasing of the noise by the ADC are not
+   modelled (as in revision 4). A larger input filter would add margin (estimate, not run).
+7. Not run: layout, PEX, a full ramp (T2 ran a reduced ramp), the dynamic test with the buffer and noise at ss / ff
+   (the T2 dynamic runs use an ideal VREF), static windows at the cross corners.
 8. The R2-4 cross-check (two-run interpolation) covers all slots for decisions 5–11, but only 1–5 of 9 slots for
    decisions 12–13. The primary metric covers all slots.
+
+9. Bias pin `nb` of `r1_refbuf5` (T2, coordinator 2026-10-21). The r1_bias output `ib_adc_ref` (PTAT, 5.07 µA at tt,
+   3.5–7.7 µA over PVT) sources into the diode XMB0. R2-4 at tt: 0.179 LSB at 3.5 µA, 0.209 LSB at 5 µA, 0.201 LSB at
+   7.7 µA. Buffer IDDA 0.74 / 1.05 / 1.59 mA. The combination of the current extremes with the process and temperature
+   corners was not run. r1_bias recommends a filter on `nb` (RC between the diode and the mirrors, or a MOS capacitor),
+   because `nb` is mirrored ×160 and ×40 into the followers. Revision 5 adds only the port (coordinator: pure port
+   change). The filter and the buffer's sensitivity to `nb` ripple are revision-6 items (not simulated).
+10. With the start-up hold pulse, slice B gives frame 0 − frame 1 = +1 LSB at ss (−0.88 V), for 10, 33 and 67 ns. A
+   conversion after an idle and a conversion after a conversion differ by 1 LSB. Within the redundancy; cause not
+   investigated.
+11. Gain against the nominal line (LSB 454.9 µV × VREF / 1.045 V): −0.25 % (ss), −0.18 % (tt), −0.03 % (ff) in the mux
+   runs. The gain calibration removes it.
+12. Third harmonic at ff / −40 °C / 1.32 V: HD3 amplitude 0.73 LSB at 0.85 V (THD −68.1 dB, SNDR 66.7 dB) against
+   0.30–0.39 LSB at ss (SNDR 70.2–70.5 dB). The reference is ideal in these runs, so the source is in the sampling or
+   the CDAC (candidates, not separated: switch on-resistance against the input at ff / −40 °C, junction capacitance on
+   the top plate). Not investigated (time budget). Revision-4 tt with the buffer: THD −72.9 dB.
+13. Reduced-ramp INL at tt with fitted weights (seed-1 samples): max 1.17 / 1.20 LSB on the unrounded weighted sum
+   (A / B), 1.56 / 1.42 LSB on integer codes. A cubic fit holds 1.10 / 0.96 LSB of it: a smooth bow that the linear
+   weight fit does not remove (revision 2: INL ±1.3 LSB). The source is probably the same as in issue 12 (sampling or
+   top-plate non-linearity); not separated. The 96-point ramp does not resolve code-level INL.
 
 ### Failures and mistakes (revision 5)
 
@@ -196,6 +265,19 @@ The baseline reference (`r1_refbuf5h` + filter) is 0.0407 mm² and 0.842 mA, so 
 | 17 | `r5-dbg-opmcs-2` is labelled failed: the op-only probe names do not exist in MC decks. The OP itself converged | tooling | Recorded; the OP log is the evidence |
 | 18 | The sampled MC with two instances in one deck advanced about 10 times slower than one instance (0.36 µs of 48.8 µs in 15 min). The first estimate (2.2 h per run) assumed linear scaling | estimation | Runs `r5-mcs-tt-s1…s3` stopped by PID after 25 min (labelled failed); six runs with one instance each (`r5-mcs1-tt-s1…s6`, 12 slice samples), speed checked first (`r5-dbg-mcspeed-*`) |
 | 19 | The first MC post-processing included frame 0 (the start-up frame of open issue 1) in the 14-weight fit: fit residual 2.6–5.1 LSB, negative weights, 38 missing codes | verification-gap | Frame 0 excluded in `post_mc5.py` (as in the other post-processors); fit residual 0.11–0.15 LSB |
+| 20 | The first-conversion candidates of open issue 1 (SAR flags, `fv0` gate, clkgen) were correct in frame 0. The cause was the in0 bootstrap capacitor: the revision-5 timing (track high from t = 0, for the DC operating point) removed the hold phase that charged it before the first sample in revision 4 | regression | Found by the instrumented run `t2-ff-ss-inst1`; fix = r1_ctrl start-up hold phase (open issue 1). A change of the idle state must be checked against every circuit that charges in that state |
+| 21 | Open issue 1 stated "13 LSB at tt with 0 V". T2 gives ±1 LSB at tt with 0 V (the fault cannot show when both inputs of the switch are at 0.6 V). The source of the 13 LSB figure was not found in the run records | verification-gap | Statement replaced by the T2 numbers |
+| 22 | The reference-noise deck used `klu`; ngspice 46 does not run a noise analysis with KLU. Runs `t2-refn-tt27-v33`, `-ss125-v30`, `-ss125-v33` failed | tooling | `sparse` in `tb_refbuf5_noise.cir`; reruns `-b` |
+| 23 | The mux deck did not save `i(vdda)`, so its IDDA `meas` failed. Runs `t2-isa-ss125`, `t2-isa-ffm40` are labelled failed (their codes are valid) | tooling | Reruns `-b` with `i(vdda)` saved |
+| 24 | The cross-corner R2-4 jobs used the default `--save codes`; the metric needs the top plates. Runs `t2-ref-ssx-opt3c`, `t2-ref-ffx-opt3c`, `t2-ref-ffx-ideal10505` completed but cannot be used; `t2-ref-ffx-ideal` was stopped by SIGKILL | planning | Job lines were not copied from the revision-5 job files. Reruns `-f` with `--save full` |
+| 25 | The cross-corner base runs were at 1.0505 V, but the buffer gives 1.0488 V (ssx) and 1.0526 V (ffx). The primary metric gave 0.858 LSB at ssx: the artefact of failure 7 again | regression | Base runs at the buffer DC value: 0.164 / 0.194 LSB. `run_points5.py --vref op:<run>` sets the base from an op-only run |
+| 26 | The sine-input dynamic chunks ran at 0.6–0.9 µs of simulated time per minute, slower than planned. The queues were stopped by PID and replaced several times (logs `t2-q*.log`) to rebalance, to fix job lines and to add the bias-pin work | estimation | No job was resubmitted. A running job continued; the next queue waited for its `run.json` |
+| 27 | The brief's INL fallback "4 conversions per LSB" needs ≥ 16 384 conversions per sample (≈ 250 CPU-h at 55 s per frame); one per LSB needs ≈ 60 CPU-h. The intended reading was not clear | spec-ambiguity | Reduced ramp: 96 inputs per slice (one per 40.6 LSB), recorded as reduced |
+| 28 | A `pgrep -f` pattern matched the agent's own shell. The `kill` ended that shell, not the queue | process-hygiene | No run affected; later PIDs taken from `ps` with an exact match |
+| 29 | The first mux post-processing used 466.5 µV (the point-placement scale in `mc_window_check.json`) as the LSB and showed a false +2.4 %% gain | functional-bug (post-processing) | LSB 454.9 µV from the transition spacing of the locate run |
+| 30 | Revision 4 reported IDD 2.29 / 1.51 / 3.42 mA (tt / ss / ff) from an unweighted mean over non-uniform time steps (`sim/r4/post_isa4.py`). The ngspice `meas avg` in the same logs gives 0.859 / 0.573 / 1.256 mA | numerical (post-processing) | `post_t2.py isa` uses a time-weighted average; it agrees with `meas` (0.903 mA in `t2-isa-tt`) |
+| 31 | The bias pin was added during the campaign. Runs before the change carry `r1_adc_r5.spice` `a2c3c9a2…`, runs after it `340c0e6a…`. Only the `r1_refbuf5` port line, its internal source and comments differ (`sim/r5/refreeze_t2.py` checks this) | coordination | The freeze file keeps the previous hashes; the frozen-netlist check reports "frozen (previous freeze)" for them |
+| 32 | Run `t2-dyn-ffm40-c0` is labelled failed: a singular-matrix warning at the operating point (node `xadc.xtha.xs0p.xm8`), resolved by dynamic gmin stepping; the transient ran to the end | numerical | Used, because chunk c1 (no warning) agrees within 0.2 dB; the label stays |
 
 ## Revision 4 (2026-10-21, schematic level)
 

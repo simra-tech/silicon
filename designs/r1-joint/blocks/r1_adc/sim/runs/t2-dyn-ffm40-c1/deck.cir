@@ -1,0 +1,39 @@
+* tb_adc5_dyn.cir -- R1 ADC revision 5 dynamic test (D18 frame, T2 2026-10-21): sine on SIN (slice A), cosine on COS
+* (slice B), continuous, coherent with the frame rate 1/(22 T). One chunk of an N-point record; the sine phase of the
+* chunk is set by PH (sim/r5/post_dyn5.py maps local frames to global frames). Local frame 0 is the start-up frame.
+* Inputs: linear E sources around CM (R2-7). Fast core r1_adc5_core_fast (as every revision-5 conversion deck).
+* Substitutions: CORNER TEMP VDD CM TIMING OPTS TSTOP TMAX AMP FIN PH PHB REFLINES SAVE RAW
+.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerMOSlv.lib mos_ff
+.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerCAP.lib cap_typ
+.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerMOShv.lib mos_ff
+.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerRES.lib res_typ
+.include schematic/r1_adc_r5.spice
+.include sim/r5/r1_adc_timing_r5_n0_cq_vdd132.inc
+.temp -40
+.option reltol=1e-4 vntol=1e-6 abstol=1e-12 method=trap klu seed=1 interp
+Vdd vdd 0 1.32
+Vref vref 0 1.045
+Vtvrefa vrefa vref 0
+Vtvrefb vrefb vref 0
+Vtvrefla vrefla vref 0
+Vtvreflb vreflb vref 0
+Vcm vcm 0 0.6
+Vda vda 0 SIN(0 0.85 101207.386364 0 0 148.420455)
+Vdb vdb 0 SIN(0 0.85 101207.386364 0 0 238.420455)
+Esp sinp vcm vda 0 0.5
+Esn sinn vcm vda 0 -0.5
+Ecp cosp vcm vdb 0 0.5
+Ecn cosn vcm vdb 0 -0.5
+Vip isap 0 0.6
+Vin isan 0 0.6
+XADC sinp sinn cosp cosn isap isan isap isan trka0 trka1 trkb0 trkb1 clk30 wina winb lata latb
++ stba0 stba1 stba2 stba3 stba4 stba5 stba6 stba7 stba8 stba9 stba10 stba11 stba12 stba13
++ stbb0 stbb1 stbb2 stbb3 stbb4 stbb5 stbb6 stbb7 stbb8 stbb9 stbb10 stbb11 stbb12 stbb13
++ rawa rawb topap topan topbp topbn vdd vrefa vrefb vrefla vreflb 0 r1_adc5_core_fast
+.control
+set num_threads=1
+save v(rawa) v(rawb)
+tran 1n 94.9933u 0 0.2n
+write <G1_RESULTS_ROOT>/r1_adc/t2-dyn-ffm40-c1/codes.raw
+.endc
+.end

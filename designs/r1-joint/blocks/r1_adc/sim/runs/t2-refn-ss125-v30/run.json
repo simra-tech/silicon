@@ -1,0 +1,57 @@
+{
+  "run_id": "t2-refn-ss125-v30",
+  "block": "r1_adc",
+  "question": "T2 item 3: reference noise of option 3c with the r1_bgr source (190 kOhm, spectrum in post) and the 10 pF input filter, ss/125 C/VDDA 3.0 V",
+  "command": "G1_CPUSET=105 G1_CPUS=1 G1_WORKDIR=designs/r1-joint/blocks/r1_adc G1_RESULTS_ROOT=<bulk> flow/run.sh ngspice -b <G1_RESULTS_ROOT>/r1_adc/t2-refn-ss125-v30/deck.cir (= sim/runs/t2-refn-ss125-v30/deck.cir with the bulk path filled in)",
+  "deck": "sim/runs/t2-refn-ss125-v30/deck.cir",
+  "deck_template": "sim/r5/tb_refbuf5_noise.cir",
+  "deck_sha256": "e409b744ad3ca346f25fd4aa0a24cb98c460d2949415f5db498fe3aaf163c907",
+  "library_sha256_at_start": {
+    "r1_adc_r5.spice": "a2c3c9a2eb05cd61b7cb0aa28ef020fdf0ec5038aae88816101f926cb34c99e8"
+  },
+  "substitutions": {
+    "RAW": "<bulk>/r1_adc/t2-refn-ss125-v30",
+    "CORNER": "mos_ss",
+    "TEMP": "125",
+    "VDDA": "3.0",
+    "RS": "190k"
+  },
+  "tool": "ngspice (banner not found in log)",
+  "ngspice_version": "ngspice-46 : Circuit level simulation program (creation date Mon Jul 27 13:15:13 UTC 2026)",
+  "netlist_sha256": {
+    "r1_adc_r5.spice": "a2c3c9a2eb05cd61b7cb0aa28ef020fdf0ec5038aae88816101f926cb34c99e8"
+  },
+  "container_image": "sha256:ddeb69576f2808676d1c5d474ecf04f6d1d6f8abdcff6b72b39790ded924bab2",
+  "pdk_commit": "84374023ee8b4b126bebbba67fcbada0a9c0ff0b",
+  "raw_results": "r1_adc/t2-refn-ss125-v30 (under G1_RESULTS_ROOT)",
+  "started_utc": "2026-10-21T05:39:04.397570Z",
+  "wall_s": 15.5,
+  "returncode": 1,
+  "status": "failed",
+  "errors": [
+    "Error: Noise simulation is not (yet) supported with 'option KLU'.",
+    "Error: no such plot named noise1",
+    "Error: no such vector onoise_spectrum",
+    "Error: no such plot named noise2",
+    "Error: &onoise_total: no such variable.",
+    "Error: Noise simulation is not (yet) supported with 'option KLU'.",
+    "Error: no such plot named noise3",
+    "Error: no such vector onoise_spectrum",
+    "Error: no such plot named noise4",
+    "Error: &onoise_total: no such variable.",
+    "Error: incomplete or empty netlist"
+  ],
+  "failure_lines": [
+    "noise simulation(s) aborted",
+    "noise simulation(s) aborted"
+  ],
+  "missing_outputs": [
+    "noise_vref.txt",
+    "noise_vrefl.txt"
+  ],
+  "frozen_netlist_check": {
+    "r1_adc_r5.spice": "frozen"
+  },
+  "result": "failed (tooling): noise analysis with klu; rerun -b",
+  "disposition": "failed (failed)"
+}
