@@ -25,3 +25,12 @@ Binding for revision-2 work. A change needs a dated row here and in both block R
 | ADC → ctrl, weights and frame | r1_adc revision 3 needs 14 weights per slice (28 registers); r1_ctrl revision 0.2 has one set of 13–14. The D17 36-tick frame was arithmetically impossible at one decision per tick (R3 frame-arithmetic note). | D18 schedule above; ctrl revision 0.3 implements the 22-tick encoder frame, the stolen current frame at the PWM centre strobe and 2 × 14 weights; r1_adc revision 4 returns to one decision per tick. |
 | AFE/isense → ADC, input common mode | The 0.6 V comparator-input common mode was never checked against the ADC comparator's resolvable range; r1_adc revision 4 found decision 0 unresolved at ss/125 °C/1.08 V. | Contract stays 0.6 V (AFE revision E and isense are in layout at 0.6 V); r1_adc revision 5 changes the comparator input stage or the sampling CM. |
 | ADC → ctrl, first conversion | r1_adc revision 5: the first conversion after the ADC is enabled is wrong (113 LSB at ss, cause not found). | ctrl discards the first conversion after ADC enable (and after any ADC reset) until the cause is fixed; r1_ctrl 0.5 item. |
+## Signal ownership gaps found at assembly (2026-10-21, r1_top try d)
+
+| Signal | Consumer | Owner assigned | Status |
+| --- | --- | --- | --- |
+| Comparator tap indices nP/nN (8 bits each, 4 comparators = 64 bits) computed from `thr` and `cal` codes per the r1_safe formula | r1_safe mux trees | `r1_ctrl` 0.5 (adders in the 1.2 V domain; r1_safe exposes tap-index inputs only; ctrl 0.3 provided thr + cal = 48 bits) | open |
+| `por_n` (power-on reset for the digital and the ADC sequencers) | r1_ctrl, r1_adc | new small analog cell `r1_por` in the bias block (RC + Schmitt on VDDA with a VDD-good gate), or the G1 cell if one exists; r1_ctrl 0.5 defines the reset polarity and the ADC-enable discard | open |
+| Bias currents for AFE, isense, ADC comparators and buffer, osc, safe comparators | all analog blocks | new block `r1_bias`: mirrors from r1_bgr `pbias`/`pcasc`/`iptat` with one output per consumer, laid out next to the bandgap | open |
+| `t2f en` and `mode` | r1_t2f | `r1_ctrl` 0.5 (ANA_CTRL bits) | open |
+| PGA gain decoder (ANA_CTRL `PGA_GAIN[2:0]` to the AFE switch vector, level-shifted to 3.3 V) | r1_afe | `r1_ctrl` 0.5 decodes; `r1_ls` cells shift; the AFE switch vector width per its netlist | open |
