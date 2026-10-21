@@ -1,0 +1,60 @@
+{
+ "block": "r1_isense",
+ "command": "python3 designs/r1-joint/blocks/r1_isense/sim/run_deck.py --block r1_isense --deck <G1_RESULTS_ROOT>/r1_isense/bisect-01/dc_net.cir --run-id dev-bisect-01-net --corners tt --set VCMIN=0 --analyze analyze_dc.py --netlist <G1_RESULTS_ROOT>/r1_isense/bisect-01/post_r_net.spice --question \"dev: R-only offset bisection, group net shorted\"",
+ "container_image": "tapeoutbench-eda:latest sha256:ddeb6957... (checked by flow/run.sh)",
+ "corners": {
+  "tt": {
+   "cap": "cap_typ",
+   "mos": "mos_tt",
+   "res": "res_typ",
+   "temp_C": 27,
+   "vdd": 1.2,
+   "vdda": 3.3
+  }
+ },
+ "cpuset": "109-111",
+ "date_utc": "2026-10-21T06:08:25.580858Z",
+ "deck": "<G1_RESULTS_ROOT>/r1_isense/bisect-01/dc_net.cir",
+ "deck_sha256": "ebf41a6db5562ea0bf4f31085ff8b3ca4ec2050c258e175dd972aea37520eb79",
+ "disposition": "offset <= 100 uV: tt failed",
+ "included_netlists": {},
+ "included_netlists_results_root": {
+  "<G1_RESULTS_ROOT>/r1_isense/bisect-01/post_r_net.spice": "0d8d8dee4b200ec86b5b0ae4a31ff11165d23d4e67042e6990ea14402b439a0a"
+ },
+ "jobs": {
+  "tt": {
+   "log": "r1_isense/dev-bisect-01-net/dc_net_tt.log",
+   "rc": 0,
+   "wall_s": 44.0
+  }
+ },
+ "netlist": "<G1_RESULTS_ROOT>/r1_isense/bisect-01/post_r_net.spice",
+ "netlist_sha256": "0d8d8dee4b200ec86b5b0ae4a31ff11165d23d4e67042e6990ea14402b439a0a",
+ "ngspice_version": "** ngspice-46 : Circuit level simulation program ** Copyright 2001-2025, The ngspice team. ** Please get your ngspice manual from https://ngspice.sourceforge.io/docs.html ** Please file your bug-reports at http://ngspice.sourceforge.net/bugrep.html",
+ "overrides": {
+  "VCMIN": "0"
+ },
+ "pdk_commit": "84374023ee8b4b126bebbba67fcbada0a9c0ff0b (checked by flow/run.sh)",
+ "prerun": {},
+ "question": "dev: R-only offset bisection, group net shorted",
+ "raw_results": "$G1_RESULTS_ROOT/r1_isense/dev-bisect-01-net/",
+ "result": {
+  "tt": {
+   "gain": 14.0228,
+   "gain_error_pct": 0.1628,
+   "inl_max_pct_fs": 0.0154,
+   "offset_pedestal_off_uV": -590.8498,
+   "pedestal_error_uV": 504.962,
+   "pedestal_mV": 40.8896,
+   "vcm_out_V": 0.5804,
+   "vod_range_V": [
+    -0.8535823229999999,
+    0.829088177
+   ]
+  }
+ },
+ "run_id": "dev-bisect-01-net",
+ "tool": "ngspice-46 (container banner from flow/run.sh ngspice -v; batch logs carry no banner)",
+ "wall_s": 50.5,
+ "workdir": "designs/r1-joint/blocks/r1_isense/sim"
+}

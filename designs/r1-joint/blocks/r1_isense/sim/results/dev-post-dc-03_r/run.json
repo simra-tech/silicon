@@ -1,0 +1,60 @@
+{
+ "block": "r1_isense",
+ "command": "python3 designs/r1-joint/blocks/r1_isense/sim/run_deck.py --block r1_isense --deck <G1_RESULTS_ROOT>/r1_isense/pex-dev-03/decks_r/tb_isense_dc.cir --run-id dev-post-dc-03_r --corners tt --set VCMIN=0 --analyze analyze_dc.py --netlist <G1_RESULTS_ROOT>/r1_isense/pex-dev-03/rc/r1_isense_post_r.spice --question \"dev: post-layout DC, guarded hold routes _r\"",
+ "container_image": "tapeoutbench-eda:latest sha256:ddeb6957... (checked by flow/run.sh)",
+ "corners": {
+  "tt": {
+   "cap": "cap_typ",
+   "mos": "mos_tt",
+   "res": "res_typ",
+   "temp_C": 27,
+   "vdd": 1.2,
+   "vdda": 3.3
+  }
+ },
+ "cpuset": "109-111",
+ "date_utc": "2026-10-21T05:35:28.077070Z",
+ "deck": "<G1_RESULTS_ROOT>/r1_isense/pex-dev-03/decks_r/tb_isense_dc.cir",
+ "deck_sha256": "0babb265a500106d086758d6f53363c9405fd27e5f320fcce44b04eca4b6458d",
+ "disposition": "offset <= 100 uV: tt failed",
+ "included_netlists": {},
+ "included_netlists_results_root": {
+  "<G1_RESULTS_ROOT>/r1_isense/pex-dev-03/rc/r1_isense_post_r.spice": "608ddbe67e0fe9671b98dac1afec6d2d2b9ccb3b8168a03c97e9ac40de3770c8"
+ },
+ "jobs": {
+  "tt": {
+   "log": "r1_isense/dev-post-dc-03_r/tb_isense_dc_tt.log",
+   "rc": 0,
+   "wall_s": 56.1
+  }
+ },
+ "netlist": "<G1_RESULTS_ROOT>/r1_isense/pex-dev-03/rc/r1_isense_post_r.spice",
+ "netlist_sha256": "608ddbe67e0fe9671b98dac1afec6d2d2b9ccb3b8168a03c97e9ac40de3770c8",
+ "ngspice_version": "** ngspice-46 : Circuit level simulation program ** Copyright 2001-2025, The ngspice team. ** Please get your ngspice manual from https://ngspice.sourceforge.io/docs.html ** Please file your bug-reports at http://ngspice.sourceforge.net/bugrep.html",
+ "overrides": {
+  "VCMIN": "0"
+ },
+ "pdk_commit": "84374023ee8b4b126bebbba67fcbada0a9c0ff0b (checked by flow/run.sh)",
+ "prerun": {},
+ "question": "dev: post-layout DC, guarded hold routes _r",
+ "raw_results": "$G1_RESULTS_ROOT/r1_isense/dev-post-dc-03_r/",
+ "result": {
+  "tt": {
+   "gain": 14.0476,
+   "gain_error_pct": 0.34,
+   "inl_max_pct_fs": 0.0164,
+   "offset_pedestal_off_uV": -598.762,
+   "pedestal_error_uV": 1210.8487,
+   "pedestal_mV": 41.5955,
+   "vcm_out_V": 0.5824,
+   "vod_range_V": [
+    -0.864991793,
+    0.8206475320000001
+   ]
+  }
+ },
+ "run_id": "dev-post-dc-03_r",
+ "tool": "ngspice-46 (container banner from flow/run.sh ngspice -v; batch logs carry no banner)",
+ "wall_s": 63.0,
+ "workdir": "designs/r1-joint/blocks/r1_isense/sim"
+}

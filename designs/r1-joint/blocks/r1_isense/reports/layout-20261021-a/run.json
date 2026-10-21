@@ -1,0 +1,63 @@
+{
+ "run_id": "layout-20261021-a",
+ "what": "all",
+ "date_utc": "2026-10-21T06:48:09Z",
+ "question": "r1_isense layout: PDK DRC main + maximal 0 markers (density waived at block level), antenna 0, LVS match against the netlist of record (unit split), pins at the boundary equal to the CDL ports?",
+ "command": "G1_CPUSET=109-111; G1_RESULTS_ROOT=<G1_RESULTS_ROOT>; G1_WORKDIR=designs/r1-joint/blocks/r1_isense/layout; flow/run.sh sh run_checks.sh layout-20261021-a all",
+ "cpuset": null,
+ "tools": {
+  "klayout": "KLayout 0.30.9",
+  "image_id": "sha256:ddeb69576f2808676d1c5d474ecf04f6d1d6f8abdcff6b72b39790ded924bab2",
+  "pdk_commit": "84374023ee8b4b126bebbba67fcbada0a9c0ff0b"
+ },
+ "inputs": {
+  "layout/r1_isense.gds": "054373fc72862c2a4567cda9e8c223ae0c2599604ad4f17f81115a7699e3f515",
+  "layout/r1_isense_lvs.cdl": "b7923cbdb6a5a1f8c7f196260a671812a4d1e7114d999a939c9e86ca20ae4af4",
+  "schematic/r1_isense.spice": "af013b95f5fd57e2f1cd0d1345a4c75471c2f216b063ede3a39bdea6412ba4ee",
+  "layout/r1_isense_layout.py": "bdf976a08eaf996fe58a64180e75a5705566ee14e92de0657c545336151795f0",
+  "layout/r1_isense_netlist.py": "007ada001f84b1bc132800f5910cb6611d281ee47ea20436038f0bdd25e71377",
+  "layout/maze_router.py": "39f045d823ab617943a4a2f62c218eeceacfa375c2033e8779d3117bc2983624"
+ },
+ "drc": {
+  "status": "passed",
+  "total": 0,
+  "per_rule": {},
+  "lyrdb": [
+   "<G1_RESULTS_ROOT>/r1_isense/layout-20261021-a/drc/r1_isense_r1_isense_full.lyrdb"
+  ]
+ },
+ "antenna": {
+  "status": "passed",
+  "total": 0,
+  "per_rule": {},
+  "lyrdb": [
+   "<G1_RESULTS_ROOT>/r1_isense/layout-20261021-a/antenna/r1_isense_r1_isense_antenna.lyrdb"
+  ]
+ },
+ "lvs": {
+  "status": "passed",
+  "summary": [
+   "CIRCUIT r1_isense R1_ISENSE Match",
+   "  nets layout/schematic 19 19  devices 0 0",
+   "  net non-matches 0",
+   "  device non-matches 0",
+   "CIRCUIT r1_isense_ch R1_ISENSE_CH Match",
+   "  nets layout/schematic 143 143  devices 177 177",
+   "  net non-matches 0",
+   "  device non-matches 0"
+  ]
+ },
+ "pins": {
+  "status": "passed",
+  "lines": [
+   "macro r1_isense: 158.400 x 296.800 um, area 47013.12 um2",
+   "PIN CHECK: pins equal CDL ports"
+  ]
+ },
+ "drc_log": [
+  "Number of DRC errors for maximum rule set: 0",
+  "21-Oct-2026 08:47:58 | INFO    | \u2705 --- KLayout DRC Check Passed: No DRC violations detected in the layout. --- \u2705"
+ ],
+ "raw": "<G1_RESULTS_ROOT>/r1_isense/layout-20261021-a/",
+ "disposition": "passed"
+}
