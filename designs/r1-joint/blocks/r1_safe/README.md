@@ -116,6 +116,7 @@ Closed by r1_ctrl 0.3 (2026-10-20); the open mismatch of INTERFACES.md between t
   (`r1_ctrl/README.md` revision 0.3). This agreement is the evidence for the contract; it is not a new analog run.
 - Error of the two-sided average (new, 2026-10-21): the hysteresis cancels; the quantisation leaves at most 0.71 step
   (0.089 LSB) at the measured hysteresis of 1.6–2.8 steps (table row above).
+- r1_ctrl 0.5 (2026-10-21): the macro outputs the tap indices `tap_p[31:0]` / `tap_n[31:0]` (nP, nN, comparator i at [8i +: 8], OC_A, NEG_A, OC_B, NEG_B) computed with the formula of "DAC per comparator" above, not the `thr` / `cal` codes; exhaustive check of 4096 (c, k) pairs per cell type against this formula, run `r1ctrl_20261021_v05` (`../r1_ctrl/README.md`).
 - Open on this side: comparator delay at small overdrive against the 32-tick probe time (not run); the gate-level search with the
   real comparator and code-change transients (not run).
 

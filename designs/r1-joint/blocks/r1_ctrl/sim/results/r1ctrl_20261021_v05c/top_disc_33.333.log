@@ -1,0 +1,22 @@
+# tb_top test=disc clk_ns=33.333
+PASS init: FAULT_N high after CAL_CRC load and CLR
+PASS disc: ADC_CFG DISCARD resets to 1
+INFO disc A: pre-charge hold 66.7 ns, track before the first sampling edge 666.7 ns
+PASS disc: after the reset release adc_hold is high for 2 ticks with no adc_start (bootstrap pre-charge)
+PASS disc: at least 250 ns of track between the pre-charge hold and the first sampling edge
+INFO disc A: starts 7 (dropped 1), pairs completed 6, delivered 5
+PASS disc: reset: six frames completed, the first one is the dropped frame
+PASS disc: reset: smp_valid pulses = completed pairs - 1 (the first conversion gives no smp_valid)
+PASS disc: reset: the garbage first conversion (all-ones decisions, code 4095) never reaches sin/cos or the current words
+PASS disc: ADC_ARM starts a pre-charge hold (adc_hold pulse of 2 ticks without adc_start)
+INFO disc B: starts enc 79 cur 8, dropped enc 13 cur 2, in flight at arm enc 0 cur 0, delivered enc 66 cur 6
+PASS disc: ADC_ARM: the 15 dropped frames contain current and encoder frames
+PASS disc: ADC_ARM: delivered encoder pairs = started - dropped + in flight at the arm
+PASS disc: ADC_ARM: delivered current pairs = started - dropped + in flight at the arm
+PASS disc: ADC_ARM: frames after the dropped ones are delivered (both types)
+PASS disc: ADC_ARM: the code of a dropped current frame never reaches i_a
+INFO disc C: starts enc 30 cur 0, dropped enc 0 cur 0, in flight at arm enc 1, delivered enc 31
+PASS disc: DISCARD = 0: no frame dropped, every encoder pair delivered
+# 14 checks, 0 failed
+ALL TESTS PASSED
+tb/tb_top.v:1358: $finish called at 566355029 (1ps)

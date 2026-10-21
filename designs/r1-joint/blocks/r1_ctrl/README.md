@@ -1,8 +1,9 @@
-# r1_ctrl — R1 digital macro (RTL revision 0.4)
+# r1_ctrl — R1 digital macro (RTL revision 0.5)
 
-State (2026-10-21): RTL revision 0.4 (area closure for the D10 die; function unchanged from 0.3). It is simulated at RTL level, synthesized with Yosys, and
-hardened with LibreLane (see the revision 0.4 and 0.3 status). It is not signed off: no gate-level
-simulation, no formal equivalence, no CDC check. Track T5, CPU set 112–115.
+State (2026-10-21): RTL revision 0.5 (closes the signal-ownership gaps of the r1_top assembly, see the revision 0.5 section; hardening deferred to 0.6). Revision 0.4 (area closure for the D10 die; function unchanged from 0.3) is the last hardened and signed-off RTL. It is simulated at RTL level, synthesized with Yosys, and
+hardened with LibreLane (see the revision 0.4 and 0.3 status). It is not signed off. The sign-off checks of 2026-10-21
+(`reports/signoff_v04.md`) give: true setup slack passed, gate-level simulation with SDF partly passed, formal
+equivalence inconclusive, CDC reviewed by hand only (no tool). Track T5, CPU set 112–115.
 
 `r1_ctrl` is the digital core of R1. It holds these parts:
 
@@ -15,11 +16,137 @@ simulation, no formal equivalence, no CDC check. Track T5, CPU set 112–115.
 - The register file.
 
 The contract with the host and the analog blocks is [`R1_REGISTER_MAP.md`](R1_REGISTER_MAP.md),
-draft 0.4 (change log in its section 7). All RTL is clean-room Verilog-2005 under Apache-2.0,
+draft 0.5 (change log in its section 7). All RTL is clean-room Verilog-2005 under Apache-2.0,
 written from the specification and studies S1, S2, S3 and S5. No third-party RTL is used.
 Patterns copied from G1 `g1_ctrl` (not shared): the two-flop synchroniser, the
 async-assert/sync-release reset, the SCLK-domain shift logic with a hand-off to the core clock,
 the `run_sim.sh` style and the `ALL TESTS PASSED` convention.
+
+## Revision 0.5 (2026-10-21, ownership gaps of the r1_top assembly, run of record `r1ctrl_20261021_v05c`)
+
+Goal: close the `r1_ctrl` items of "Signal ownership gaps found at assembly" in `../INTERFACES.md`, plus the CDC and test
+items from the 0.4 sign-off (`reports/signoff_v04.md`). RTL, testbench and Yosys only. LibreLane is **not** run: the
+hardening of 0.5 waits for the S7 floorplan (revision 0.6). All numbers are simulated or synthesized; nothing is measured.
+Evidence files are in `sim/results/r1ctrl_20261021_v05c/` unless a path starts with `<G1_RESULTS_ROOT>`.
+Register map: `R1_REGISTER_MAP.md` 0.5 (`ID` 0x5205, change log in its section 7).
+
+### What changed
+
+| # | Change | Where |
+| --- | --- | --- |
+| 1 | **Tap-index adders.** `r1_tapidx` computes nP, nN (8 bit) for the four comparators from the effective `thr` (THR_ZERO during a search) and `cal` with the `r1_safe` formula (nP = 4c + ceil(d/2), nN = 4(63 - c) - floor(d/2), c = thr_oc or 63 - thr_neg, d = k - 32, clip 0..252). Registered every tick, so the ports change one tick after a `CMP_THR` / `CMP_CAL` write or the end of a search, and nP / nN of one comparator change together. New ports `tap_p[31:0]`, `tap_n[31:0]` (comparator i at [8i +: 8]; Verilog-2005 has no 2-D ports, so "tap_p[3][7:0]" is a flat bus); `thr_*` and `cal_*` ports removed (the registers and their read-back stay). | `rtl/r1_tapidx.v`, `rtl/r1_ctrl_top.v` |
+| 2 | **First conversion.** (a) The binding rule from `../INTERFACES.md` (T2, 2026-10-21, bootstrap capacitor charges only in hold): after the reset release and after `ADC_ARM`, once no frame converts, `adc_hold` is high for 2 ticks (no `adc_start`, no `smp_sh`), then at least 11 ticks of track before the first frame. (b) The discard asked for in the task: `ADC_CFG.DISCARD` (0x3D, reset 1) frames after a reset or `ADC_ARM` are dropped when their code pair is complete; the dropped pair does not write `sin_code`/`cos_code`/`smp_valid` or `i_a`/`i_b`. Both layers are on at reset. | `rtl/r1_gate.v`, `rtl/r1_regs.v` |
+| 3 | **ANA_CTRL** (reset 0x0028): bits 2:0 `PGA_GAIN` decoded to `pga_c[3:0]` (the four AFE lines `c1..c4` of the netlist of record, x1..x32 = 0000, 1000, 1100, 1110, 1101, 1111, codes 6 and 7 act as 5, registered); bit 3 `T2F_EN` (reset 1) and bit 4 `T2F_MODE` (reset 0 = PTAT) to `t2f_en`, `t2f_mode`; bit 5 `BIAS_EN` (reset 1) to `bias_en`; bit 6 `ADC_ARM` (internal). No oscillator-enable bit (confirmed). `por_n`: active low (low = reset), asynchronous assert, synchronous release after 2 `clk` edges. The `ana_ctrl[15:0]` port is removed. | `rtl/r1_ctrl_top.v`, `R1_REGISTER_MAP.md` 4.8 |
+| 4 | **SDC.** `flow/check_sdc_ports.py` reads the port list from `rtl/r1_ctrl_top.v` and the `get_ports` patterns of `flow/r1_ctrl.sdc`; it fails on an unconstrained port bit and on a stale pattern. The 0.3 file fails it (31 unconstrained ADC bits, 5 stale patterns, reproduced on the git copy of 8b2a26cfe); the 0.5 file passes. `thr_*`, `cal_*` and `ana_ctrl[*]` patterns replaced by `tap_p[*]`, `tap_n[*]`, `pga_c[*]`, `t2f_en`, `t2f_mode`, `bias_en`. | `flow/check_sdc_ports.py`, `flow/r1_ctrl.sdc` |
+| 5 | **CDC (coordinator item 6).** Finding F (combinational `ma_rst_n` could glitch) fixed: the clk-domain terms are registered in `ma_rel`. The other five findings (A to E) get a documented handshake each; see the CDC table below. A testbench puts the SSI first falling edge at 16 phases of the clk period with the position changing at every tick (finding D). | `rtl/r1_biss.v`, `tb/tb_top.v` (`cdc`) |
+| 6 | **Gate test criterion (coordinator item 7).** `EN` low forces `GATE_C` low within 1 us (specification), not 1 ns. The zero-delay RTL value is printed as information. Max-fanout limit: see "Max-fanout" below. | `tb/tb_top.v` (`gate`) |
+| 7 | **Bug fix** (found by the new `disc` test, present since 0.3): the compare that starts an encoder frame was 8 bit, so after `SCHED.PAIR_TICKS` = 0 for more than 255 ticks (`ptim` saturates at 255, 255 + 1 wraps to 0) a restored non-zero `PAIR_TICKS` never started a frame again. Now 9 bit. | `rtl/r1_gate.v` |
+
+Decisions (recommended option, taken without asking):
+
+1. **"ADC enable" has no signal in the macro.** The events that re-arm the discard and the pre-charge are the reset release and a 0 to 1 edge of `ANA_CTRL.ADC_ARM` (bit 6, reset 0). The bit does not gate the ADC.
+2. **Discard counts frames, not conversions of one slice.** The slices convert in parallel, so one frame drops both slices; frames of both types count. `DISCARD` stays 1 at reset although the pre-charge removes the cause on the ADC side (T2 simulation, closed loop with the ctrl sequence not run); the host may write 0.
+3. **`T2F_EN` resets to 1** (the over-temperature path works from reset; `fout` is undefined for 1 us after `en`, shorter than the minimum T2F window of 2^8 ticks), `BIAS_EN` resets to 1 (as asked).
+4. **`pga_c` is registered** (glitch-free switch lines); it changes one tick after the register write.
+5. **No CRC coverage** for `ADC_CFG` and `ANA_CTRL` (not calibration data).
+6. **Pre-charge hold is 2 ticks** (T2 simulated 10, 33 and 67 ns pulses; 2 ticks = 47 ns at 42 MHz, 95 ns at 21 MHz) and the minimum track is 11 ticks (262 ns at 42 MHz, above the 250 ns requirement). At the default `PAIR_TICKS` 22 the track before the first frame is 20 ticks.
+7. **`thr` / `cal` stay register-visible** (`CMP_THR_*`, `CMP_CAL_*`); only the macro ports are replaced.
+
+### Status (revision 0.5)
+
+Chip-level counts: `biss` 3 x 48, `ssi` 3 x 9, `spi` 27 (26 + 1 new), `gate` 22, `safe` 32, `cal` 2 x 32 = **316 checks, 0 failed** (0.4: 315). New tests: `tap` 2 x 5, `ana` 9, `disc` 14, `cdc` 3 x 4.
+
+| # | Check | Status | Evidence |
+| --- | --- | --- | --- |
+| 1 | `r1_tapidx` against the `r1_safe` formula (Python, exact integers), all 64 c x 64 k = 4096 pairs per cell type (OC and NEG, 16 384 lane samples), including clipping (312 clipped samples per type) | **passed**: 0 mismatches | `tapidx_result.json`, `summary.md` |
+| 1 | Chip-level tap chain: reset taps, 40 threshold / calibration word sets through SPI (corners and random), write moves only its lanes, `por_n` restores; at 33.3 and 23.8 ns | **passed** (5 + 5 checks) | `top_tap_33.333.log`, `top_tap_23.810.log` |
+| 1 | Calibration search through the taps: behavioural comparators now take their threshold from `tap_p - tap_n`; 10 rounds, EXH cases, `CMP_CAL_IDEAL` step, host write | **passed** (`cal`, 2 x 32 checks); 274/274 calibration cases (model vs `r1_safe` `cal_model.py`, and RTL vs model) | `top_cal_*.log`, `calmc_check.json`, `cmpcal_model.json` |
+| 2 | Bootstrap pre-charge: hold 2 ticks without `adc_start` after the reset release, at least 250 ns track before the first sampling edge (667 ns at 33.3 ns); `ADC_ARM` starts it again | **passed** | `top_disc_33.333.log` |
+| 2 | Discard: reset (garbage first conversion, all-ones decisions, never reaches sin/cos or `i_a`/`i_b`; `smp_valid` = completed pairs - 1); `ADC_ARM` with `DISCARD` 15 and PWM running (2 current and 13 encoder frames dropped; delivered = started - dropped + in flight, per type; the code of a dropped current frame never reaches `i_a`); `DISCARD` 0 drops nothing | **passed** (14 checks) | `top_disc_33.333.log` |
+| 2 | `ADC_ARM` with the closed loop to the real `r1_adc` (the T2 sequence on the circuit) | not run (needs the ADC deck with the ctrl waveform) | - |
+| 3 | `ANA_CTRL` reset 0x0028, gain codes 0..7 to `pga_c`, the three enable bits independent, reserved bits stored, `ADC_CFG` reset 1 | **passed** (9 + 1 checks) | `top_ana_33.333.log`, `top_spi_33.333.log` |
+| 3 | `pga_c`, `t2f_en`, `t2f_mode`, `bias_en` with the real level shifters, AFE gain-switch transients | not run (blocks and shifters not integrated) | - |
+| 4 | SDC covers every top-level port: 29 ports, 127 bits, 0 unconstrained, 0 stale patterns | **passed** (the 0.3 file fails: 31 bits, 5 patterns) | `sdc_ports.json` |
+| 5 | Position V3: 16 cases (9 of 30 ticks, 7 of the 22-tick frame), RTL vs float reference | **passed** (max 0.023 deg el, limit 0.05) | `summary.md`, `pos_*_check.log` |
+| 5 | Gap cases, 22-tick frame with the 44-tick gap: 100 kHz, 208 kHz (step error 0.78 deg el), 250 kHz (0.96), and the 250 kHz amplitude / acceleration variants (information) | **passed** (no slip: end offset <= 0.052 count) | `pos_f22_*_check.log` |
+| 5 | ADC weight correction (bit-exact, calibrated DNL/INL), one-hot read-back (168 checks) | **passed** | `adcw_result.json`, `adcw_onehot.log` |
+| 5 | Chip-level `biss` (3 clocks), `ssi` (3), `spi`, `gate`, `safe`, `cal` (2 clocks) | **passed**: 316 checks | `top_*.log` |
+| 6 | CDC: finding F, `ma_rst_n` is released only at clk edges (registered), 35 releases seen, 3 clocks | **passed** | `top_cdc_*.log` |
+| 6 | CDC: finding D, SSI at 2 MHz (the documented limit) with the word changing at every tick, 16 clk phases: 16 of 16 words complete, both patterns occur | **passed** at 23.8, 33.3 and 47.6 ns | `top_cdc_*.log` |
+| 6 | CDC: SSI at 10 MHz (outside the limit), same test | information: 0 / 8 / 15 of 16 words mixed at 23.8 / 33.3 / 47.6 ns clk. The hazard is real; the 2 MHz limit is needed | `top_cdc_*.log` |
+| 6 | CDC tool (structural or formal); recovery / removal of the `ma`-domain reset release against MA edges; gate-level CDC behaviour | not run (no tool; STA treats `clk` and `ma` as asynchronous) | - |
+| 7 | `gate`: EN low forces `GATE_C` low within 1 us (specification) | **passed** (22 checks). STA: 1.47 ns at the slow corner (`reports/signoff_v04.md`) | `top_gate_33.333.log` |
+| 7 | Gate-level simulation with SDF, formal equivalence, STA of the 0.5 netlist | not run (no 0.5 netlist; equivalence of 0.4 was inconclusive, `reports/signoff_v04.md` section 4) | - |
+| - | Yosys synthesis (flat, typical, Booth, PDK latch map, 42 MHz target) and CHECK pass | **passed**: cell area 228 526 um^2, 0 problems | `stat_flat.txt`, `yosys_check.txt` |
+| - | LibreLane hardening, DRC, LVS, post-layout STA | not run (deferred to 0.6, after the S7 floorplan) | - |
+
+### Area delta (Yosys, flat, no hardening)
+
+| Quantity | 0.4 (`r1ctrl_20261021_v04`) | 0.5 (`r1ctrl_20261021_v05c`) | Delta |
+| --- | --- | --- | --- |
+| Cell area (um^2) | 219 649 | **228 526** | +8 877 (+4.0 %) |
+| Cells / flip-flops and latches | 14 777 / 1 985 | 15 390 / 2 072 | +613 / +87 |
+
+Per block (hierarchical run, children included): `r1_tapidx` +7 365 (64 output flip-flops 3 140, adders and clip 4 225; the first form with 11-bit signed adders
+was 7 706, the rewritten form is exact on the same 16 384 samples), `r1_gate` +642 (discard counters, pre-charge, 9-bit compare), `r1_regs` +504 (`ADC_CFG`, wider `ANA_CTRL` reset,
+read multiplexer), top glue +297 (`pga_c`, `ma_rel`, arm detect), `r1_pos` +179 (synthesis variation, RTL unchanged), `r1_biss` +7. The 218 000 um^2 synthesis target of 0.4 stays missed
+(by 10 526); the placed-area estimate with the 0.4 ratio of 1.089 is about 248 900 um^2 against the 240 000 of the 1.414 mm die (the D10 amendment to a 1.7 mm die moves the limit; hardening in 0.6 decides).
+
+### CDC table (coordinator item 6; sign-off numbering of `reports/signoff_v04.md` section 5)
+
+Domains: `clk` (r1_osc, 42 MHz at sign-off), `ma` (MA / SCLK pad, 10 MHz limit; SSI at most 2 MHz), pads and analog (asynchronous). "Handshake" means: the data is stable before the qualifying signal is valid, the qualifier crosses through a synchroniser, and the stated timing rule holds.
+
+| # | Crossing | From | To | Synchroniser / handshake | Depth | Status |
+| --- | --- | --- | --- | --- | --- | --- |
+| 1 | MA level | `ma` pad | `clk` | `u_sma` (`r1_sync2`) | 2 | synchronised (unchanged) |
+| 2 | `ma_tog` | `ma` | `clk` | `u_smt` | 2 | synchronised (unchanged) |
+| 3 | `lat_tog` | `ma` | `clk` | `u_slt`; also `n1` (falling `clk`), `n2`, `n3` for the half-tick timing | 2; 3 | synchronised (unchanged) |
+| 4 | `p16_tog` | `ma` | `clk` | `u_sp16` | 2 | synchronised (unchanged) |
+| 5 | `cs_n` | pad | `clk` | `u_scs` in `r1_biss` and in `r1_spi` | 2 each | synchronised (unchanged) |
+| 6 | `rdy_tog` | `clk` | `ma` | `rdy_n1` (falling MA) and `rdy_p2` (rising MA) | 2 | synchronised (unchanged) |
+| 7 | `por_n` | pad | `clk` | `rs0`, `rs1` (assert asynchronous, release synchronous) | 2 | synchronised (unchanged) |
+| 8 | `en_pad` | pad | `clk` | `u_sen` | 2 | synchronised (unchanged) |
+| 9 | `cmp[3:0]` | analog | `clk` | `u_scmp` (4 bits, one flag each) | 2 | synchronised (unchanged) |
+| 10 | `t2f_clk` | analog | `clk` | `u_st2f` | 2 | synchronised (unchanged) |
+| A | SPI `rx[23:0]`, `rcnt[5:0]` | `ma` (SCLK) | `clk` | handshake: the SCLK flops update only while CS_N is low; the qualifier is `cs_s` (CS_N through 2 flops); `clk` reads the bus at least 2 ticks after CS_N rises, and the last SCLK edge is the falling edge before CS_N rises (SPI mode 0) | qualifier 2 | **documented handshake**; rule: CS_N rises no earlier than the last SCLK falling edge |
+| B | SPI `tx_word[23:0]` | `clk` | `ma` (SDO mux) | handshake: written 3 to 5 ticks after CS_N rises (phase 2), read by SCLK only while CS_N is low | - | **documented handshake**; rule: CS_N high for at least 8 ticks (register map section 1) |
+| C | BiSS `fd[35:0]`, `cds_frame` | `clk` | `ma` | toggle handshake: written before `rdy_tog` changes, read after `rdy_p2` shows the change (existing) | 2 (toggle) | **documented handshake** (unchanged) |
+| C | BiSS configuration `nbits`, `off`, `st_n`, `ssi_mode`, `gray` | `clk` | `ma` | reset-protected: they change only by an SPI write, and while CS_N is low the `ma` domain is held in reset; the release comes after `armed` (MA quiet for `TIMEOUT_TICKS`) | - | **documented handshake**; rule: no change while a frame runs (not reachable by the host) |
+| D | SSI `fd` | `clk` | `ma` | freeze flag `frame_act` after the 2-flop MA level; `fd` stops about 3 ticks after the first MA falling edge, the first rising edge reads it | 2 + 1 | **documented limit and test**: MA at most 2 MHz (half period 250 ns against about 3 ticks); 16 phases at 2 MHz pass, 10 MHz mixes words |
+| E | release of `ma_rel` (reset of the `ma` flops) | `clk` | `ma` (asynchronous reset release) | the release is issued only after MA has been quiet for `TIMEOUT_TICKS` (`armed`), and `ma_rel` changes only at clk edges. Not checked by STA | - | **documented handshake**; residual: a master that starts a frame in the recovery window of the release can corrupt that frame; the state is cleared at the end of the next frame (timeout reset) |
+| F | `ma_rst_n` (was `rst_n & cs_n & armed & ~to_rst[1]`) | `clk` and CS_N pad | `ma` (asynchronous reset) | `armed & ~to_rst[1]` registered in `ma_rel` (async cleared by `rst_n`), then `ma_rel & cs_n`; CS_N can only release while `ma_rel` is 0 | - | **fixed in RTL** (test `cdc`) |
+
+### Max-fanout (coordinator item 7)
+
+The effective limit is **8** (liberty `default_max_fanout`), not the 16 of `set_max_fanout` in the SDC (`reports/signoff_v04.md` section 2). The six nets of the t7 run are four clock-tree
+nets (CTS configuration) and two data nets (`reg_wdata[11]` and the read-multiplexer decode net). Yosys has no per-net RTL attribute for a fanout limit; the only mechanism is the global
+ABC `buffer` step with a constraint file, which would change the whole mapping. It is **not** added: the two data nets are buffered by the OpenROAD repair step at hardening
+(one `buf_1` each, about 20 um^2, estimated), and the clock-tree nets are a CTS decision. Both are items of revision 0.6. Not run.
+
+### Open issues (revision 0.5)
+
+1. `r1_por` (source of `por_n`) and `r1_bias` (consumer of `bias_en`) are not designed; seven `r1_ls` shifters (`pga_c[3:0]`, `t2f_en`, `t2f_mode`, `bias_en`) belong to the integration.
+2. The ADC side of the pre-charge is T2's simulation with 10, 33 and 67 ns pulses; the closed loop with this RTL is not run. `DISCARD` stays 1 until it is.
+3. Area: 228 526 um^2 against 218 000 (synthesis) is 4.8 % high. 83 % of the growth is the 64 registered tap bits and their adders. A cheaper form needs either unregistered taps (glitch risk at the mux selects, rejected) or a shared serial adder with staging registers (about the same flip-flop count). Left to the floorplan decision.
+4. SSI is limited to 2 MHz by the freeze lag (finding D, documented, tested). A full-speed SSI needs a double-buffered word (about 36 flip-flops, 2 300 um^2) or an MA-domain capture; not done.
+5. Equivalence of RTL and netlist, gate-level simulation with SDF, STA and CDC tool for 0.5: not run (no 0.5 netlist).
+6. The `ma`-domain release (crossing E) has no recovery / removal check; the residual risk is documented above.
+7. Fanout of two data nets at hardening (see above).
+
+### Failures and mistakes (revision 0.5)
+
+| # | What happened | Class | Effect / fix |
+| --- | --- | --- | --- |
+| 1 | `INTERFACES.md` gained a binding pre-charge rule (T2) while the first regression ran. The run was stopped by PID and kept as `r1ctrl_20261021_v05x_abandoned`; the RTL was extended | coordination | About 10 min lost; the interface file is re-read before each run |
+| 2 | The stopped run had already created `sim/results/<id>/`; `run_all.sh` refuses an existing id, so the relaunch exited at once and 8 min passed before I looked | process-hygiene | Empty directory removed (`rmdir`), relaunch; a log tail check follows every launch |
+| 3 | The first complete run (`r1ctrl_20261021_v05`) put the Yosys CHECK pass after the library mapping, where every output is reported as undriven: 86 false problems | tooling | Check moved before `techmap`; v05 is superseded by `v05b`; v05 also has the first (larger) `r1_tapidx` form |
+| 4 | The 8-bit frame-start compare (`ptim + 1 >= PAIR_TICKS`) wraps at 255. A new test (`SCHED` restored after 255+ ticks of `PAIR_TICKS` = 0) exposed it; it is in 0.3 and 0.4 | functional-bug | Fixed (9 bit); `disc` test C covers it |
+| 5 | The tap-adder area was estimated at about 6 000 um^2 (64 flip-flops plus small adders); first synthesis gave 7 706 | estimation | Adders rewritten in the `4 s + e` form: 7 365, exact on all 16 384 samples |
+| 6 | First `tb_tapidx.v` wrote its log to a 32-character file-name register, so the long bulk path was truncated and the check script found no file | tooling | Register widened to 1 024 bit |
+| 7 | The first pre-charge pulse counter in `tb_top.v` sampled `adc_start` in the same time step as `adc_hold` (race) | verification-gap | Sampled 1 ps later |
+| 8 | A dev shell export of `G1_CPUSET` did not persist between tool calls; one launch failed with the cgroup message | tooling | One helper script sets the environment for every call |
+| 9 | "ADC enable" and "ADC reset" have no signal in the macro (spec text of the task and `INTERFACES.md`) | spec-ambiguity | `ADC_ARM` bit plus the reset release (decision 1) |
+| 10 | The 0.4 `gate` test limited EN to GATE_C to 1 ns; the specification says 1 us | verification-gap | Criterion changed to 1 us, RTL value printed |
 
 ## Revision 0.4 (2026-10-21, D10 area closure, run of record `r1ctrl_20261021_v04`, hardening `r1ctrl_ll_20261021_t7`)
 
@@ -104,13 +231,18 @@ flattening and after the final netlist: 0 logic-loop warnings and "Found and rep
 | 3 | chip-level checks `top_biss` 3 x 48, `top_ssi` 3 x 9, `top_spi` 26, `top_gate` 22, `top_safe` 32, `top_cal` 2 x 32 | **passed**: 315 checks, 0 failed (`spi` walking test now expects 13-bit PWM words) | `top_*.log`, `summary.md` |
 | 3 | comparator calibration, model against `r1_safe` and RTL on the same tables (274 cases) | **passed**: 274/274 identical | `calmc_check.json`, `top_calmc.log`, `cmpcal_model.json` |
 | 3 | 208 and 250 kHz gap cases (22-tick frame, 44-tick gap) | **passed**: step error 0.78 deg el (208), 0.96 (250), no slip; as in 0.3 | `summary.md` count-safety table |
-| 3 | Gate-level simulation, formal equivalence, CDC check | not run | - |
-| 3 | Gated-clock write timing in gate-level or post-layout simulation | not run (RTL simulation only; STA closed) | - |
+| 5 | True setup slack (OpenSTA on the t7 netlist, SDC and SPEF, three corners) | **passed**: the 0.000 of the sign-off report is latch time borrowing (120 latch D pins, at most 1.02 ns used of 11.47 ns at slow), not a clipped value. Worst setup slack to any other endpoint: typ +9.570, fast +10.235, slow **+1.776 ns** (`meas_angle[2]` to `u_pos.cx[15]`, CORDIC datapath). No path below +0.3 ns at slow | `reports/signoff_v04.md` §1, run `r1ctrl_20261021_t7sta` |
+| 5 | Hold slack with path | typ +0.0748, fast **+0.0209**, slow +0.1834 ns. Fast and typ: `u_pos.zero_ofs[5]` (gated config clock) to `pos_out[7]` (`clk_regs`), 0.18 ns clock skew; slow: `adc_valid_b` input to `u_gate.u_wb.acc[0]` | `reports/signoff_v04.md` §1 |
+| 5 | Max-fanout: net list and fix | 6 nets at each corner, **limit 8** (liberty `default_max_fanout`), not 16: 4 clock-tree root nets (`clknet_0_clk_regs`, `_ma_sclk`, `_u_gate.g_sh`, `_clk`), 2 data nets (`reg_wdata[11]` buffer, 14 loads; read-mux decode `_11472_`, 13 loads); the data nets pass without the antenna diodes that were added after buffering. Estimate: 1 extra `buf_1` each closes them; the clock nets need a CTS change or a waiver (not run) | `reports/signoff_v04.md` §2 |
+| 5 | Gate-level simulation of the chip-level testbench on the t7 netlist with SDF (Icarus), slow and typ | **partly passed**: slow SDF: ssi, spi, safe, cal passed (all 9 + 26 + 32 + 64 checks), `gate` 21 of 22 (**1 failed**: EN to GATE_C within 1 ns; STA delay 1.47 ns at slow, spec 1 µs), `biss` 23.810 ns: 47 passed, 0 failed, 1 skipped; typ SDF: ssi, spi, gate, safe, cal passed, `biss` 23.810 ns: **not completed** (stopped at the time limit): 42 passed, 0 failed so far, 0 skipped; SDF `biss` at 33.333 and 47.619 ns not run (time); zero-delay `biss` at 33.333 / 47.619 ns passed (47 + 1 skipped). SDF works with Icarus after `prep_sdf.py`; setup/hold are not checked by the simulator | `reports/signoff_v04.md` §3, runs `r1ctrl_gl_20261021_{b,f,g,h,i}` |
+| 5 | Gated-clock write timing in gate-level simulation with SDF | **passed** at slow and typ for the register writes of the `spi`, `gate`, `safe` and `cal` tests (every register write passes through the gated configuration clocks). The simulator does not evaluate setup/hold (`TIMINGCHECK` not supported); STA closes them | `reports/signoff_v04.md` §3 |
+| 5 | Formal equivalence, RTL against post-synthesis netlist (Yosys `equiv_*`, eqy) | **inconclusive, not passed**: 1835 signal pairs matched by name, `equiv_simple` proved 797 of 1882 compare points, 1085 unproven (about half of the 3730 flip-flops have no name partner; 5 state machines recoded); `equiv_induct` did not converge; four eqy runs gave no result | `reports/signoff_v04.md` §4, run `r1ctrl_equiv_20261021_b` |
+| 5 | CDC check | **no tool run**. RTL inspection: 10 crossings with a 2-flip-flop synchroniser; 6 crossings or reset paths without one (A to F): SPI `rx`/`rcnt` read, `tx_word`, BiSS `fd` and configuration bits, SSI `fd` publish window, reset release into the MA domain, combinational `ma_rst_n`. Four rely on host timing rules; D (SSI) needs half an MA period above about 3 clk ticks | `reports/signoff_v04.md` §5 |
 | 4 | LibreLane to completion in `DIE_AREA 0 0 520 664` at 42 MHz (run `r1ctrl_ll_20261021_t7`) | **passed**: exit 0, see the table below | `reports/ll_t7.md` |
 | 4 | Placed standard-cell area <= 240 000 um^2 | **passed**: 239 201 | `reports/ll_t7.md` |
 | 4 | Utilisation <= 75 % | **failed by 0.15 point** against the snapped core (75.15 %); passes against the S6 core of 320 400 um^2 (74.65 %). The area criterion (<= 240 000 um^2) is met | `reports/ll_t7.md` |
 | 4 | Setup at 3 corners, DRC (Magic, KLayout), LVS, antenna | **passed**: 0 violators at typ, fast, slow; Magic 0, KLayout 0, LVS 0, antenna 0 | `reports/ll_t7.md` |
-| 4 | Max-fanout violations (limit 16) | 6 in each corner, reported by OpenROAD; no slew or cap violation | `<G1_RESULTS_ROOT>/r1_ctrl/r1ctrl_ll_20261021_t7/` metrics |
+| 4 | Max-fanout violations | 6 in each corner, reported by OpenROAD; no slew or cap violation. The binding limit is 8 (liberty), see row 5 | `<G1_RESULTS_ROOT>/r1_ctrl/r1ctrl_ll_20261021_t7/` metrics |
 | 4 | Hold slack | passed, but thin at the fast corner: +0.021 ns (typ +0.075, slow +0.183) | `reports/ll_t7.md` |
 | - | Co-simulation with `r1_adc`, `r1_osc`, analog `r1_safe`; interop against BiSS masters | not run | - |
 
@@ -134,8 +266,9 @@ simulation run `v04`).
 | Magic DRC / KLayout DRC / LVS / antenna | 0 / 0 / 0 / 0 | 0 / 0 / 0 / 0 |
 | Wall time | 59 min | 72 min |
 
-Setup WNS 0.000 is the clipped value printed by the flow (as in t6). The actual worst setup slack is not
-extracted in this revision (not run).
+Setup WNS 0.000 is printed by the flow because the worst endpoints are latch D pins with time borrowing
+(slack 0 by construction), not because the value is clipped. The worst slack at the other endpoints is in
+`reports/signoff_v04.md` §1 (slow: +1.776 ns).
 
 Pin sides in t7 (from `final/def`, `flow/librelane/pins.cfg`): north (7): `gate_a/b/c`, `cs_n`, `ma_sclk`,
 `slo_sdo`, `por_n`. East (60): `fault_n`, `clk`, `az_win`, `osc_trim`, `cmp`, `thr_*`, `cal_*`. South (35):
@@ -176,9 +309,10 @@ clock tree (+8 500 um^2 for 67 nets) in the first trial (t7c); with small clock 
 1. Utilisation is 75.15 % of the snapped core (74.65 % of the S6 core). Area passes. A larger core (t8) did not route within the time limit; a rerun with a longer limit or a 1 to 2 % smaller RTL area closes it. Not run.
 2. The synthesis target of 218 000 um^2 was missed by 1 649 um^2; the margin to 240 000 um^2 placed is 799 um^2 (0.3 %). Any RTL growth in the ring-level integration needs a new trim (12-bit PWM words, about 1 000 um^2, is the next step).
 3. `r1_adc` revision 4 must confirm that its calibrated weights fit the narrowed word widths (decision 1) and the 1/4-LSB unit (open since 0.3).
-4. Hold slack at the fast corner is +0.021 ns. It passes, but the margin is small with 67 gated clocks; a gate-level simulation with SDF is not run.
-5. Setup WNS is clipped in the report; true slack not extracted.
-6. Six max-fanout violations (limit 16) remain at all corners; slew and capacitance are clean.
+4. Hold slack at the fast corner is +0.021 ns (path in `reports/signoff_v04.md` §1). It passes, but the margin is small with 67 gated clocks and no OCV derate. Gate-level simulation with SDF ran for the groups in §3 of the sign-off report; it does not check setup and hold.
+5. Closed: the setup WNS 0.000 is latch time borrowing; the true worst setup slack at slow is +1.776 ns.
+6. Six max-fanout violations remain at all corners against the library limit of 8 (not 16); slew and capacitance are clean. Two data nets close with one buffer each; four clock-tree root nets need a CTS change or a waiver (not run).
+6a. Formal equivalence is inconclusive and no CDC tool was run (`reports/signoff_v04.md` §4, §5). The CDC review found six unsynchronised crossings or reset paths (A to F), including an SSI publish window that holds only for half an MA period above about 3 clk ticks.
 7. The PWM minimum frequency is 3.66 kHz at 30 MHz (was 458 Hz); no specification line needs less, but the host must know (register map 4.6).
 8. `ANA_CTRL` bits 15:3 are reserved; the PGA decoder and level shifters belong to the integration (`r1_afe` open issue 6).
 9. Open from 0.3 and unchanged: BP_ID / MFR_ID placeholders, ADC-weight Monte Carlo, EN glitch filter, shared-pad rule.
@@ -198,6 +332,9 @@ clock tree (+8 500 um^2 for 67 nets) in the first trial (t7c); with small clock 
 | 9 | A comment-only edit of `rtl/r1_gate.v` after the run changes the RTL sha256 | process-hygiene | reverted at once, sha checked equal to the run of record |
 | 10 | The 218 000 um^2 synthesis target was missed (219 649) | planning | placed target met anyway; next trim named |
 | 11 | The core was snapped by the floorplanner, 318 286 instead of 320 400 um^2, which moves the utilisation from 74.65 to 75.15 % | numerical | reported both; run t8 tests a larger core |
+| 12 | The t7 report and this README called the setup WS 0.000 clipped and the true slack unknown | verification-gap | it is latch time borrowing; true slack extracted (`reports/signoff_v04.md` §1) |
+| 13 | This README gave the max-fanout limit as 16; the binding limit is the library default 8 | spec-ambiguity | corrected; at 16 the count would be 0 |
+| 14 | First gate-level runs did not apply the SDF (Icarus omits specify blocks by default; the log note said "annotated") | tooling | labelled zero-delay; SDF flow fixed with `sim/signoff/prep_sdf.py`; more in `reports/signoff_v04.md` |
 
 ## Revision 0.3 (2026-10-20, run of record `r1ctrl_20261020_v03`)
 
@@ -457,13 +594,16 @@ latches; they pass in t5.
 | `rtl/r1_safe.v`, `rtl/r1_cmpcal.v` | fault sources and latch, I²t, T2F counter, watchdog; comparator offset calibration |
 | `rtl/r1_regs.v` | register file, read multiplexer, calibration CRC-8 checker |
 | `rtl/r1_sync2.v` | two-flop synchroniser |
+| `rtl/r1_tapidx.v` | revision 0.5: tap-index adders for `r1_safe` (nP, nN, registered) |
 | `tb/tb_pos.v`, `tb/pos_ref.py` | testbench (a): RTL against a floating-point reference, host calibration fits, count safety (`+pair`, `+skip`, `+lat`) |
 | `tb/tb_adcw.v`, `tb/adcw_ref.py` | ADC weight correction: integer model, mismatched-CDAC example, DNL/INL |
 | `tb/tb_top.v` | testbenches (b)–(f), `cal` and `calmc` on the macro top: BiSS/SSI master, SPI host, encoder + two-slice ADC model (D18), behavioural comparators with hysteresis (0.3) |
+| `tb/tb_tapidx.v`, `tb/tapidx_ref.py` | revision 0.5: exhaustive check of `r1_tapidx` (4096 pairs per cell type) against the Python form of the `r1_safe` formula |
 | `tb/cmpcal_ref.py` | revision 0.3: Python model of the two-sided calibration search, compared with `r1_safe` `sim/cal_model.py` on its MC data; writes the comparator tables for `calmc` and checks the RTL results |
 | `sim/run_all.sh`, `sim/summarize.py` | full run, summary, per-block area, `run.json` |
 | `sim/results/<run-id>/` | summary, `run.json`, test logs, synthesis statistics, input hashes |
 | `flow/synth.tcl` | Yosys synthesis for the cell area (Booth, PDK latch map, 42 MHz delay target) |
+| `flow/check_sdc_ports.py` | revision 0.5: port list from the RTL against the SDC patterns (unconstrained bits, stale patterns) |
 | `flow/r1_ctrl.sdc` | timing constraints: `clk` 42 MHz, `MA` 10 MHz, asynchronous groups, I/O delays |
 | `flow/librelane/config.yaml`, `run_harden.sh`, `ll_report.py` | LibreLane hardening (0.3: RTL copied into the bulk run, `run.json`, optional register-file variant); `run_trial.sh` is the 0.2 trial script |
 | `reports/` | small extracts of the hardening runs (`ll_t2.md` … `ll_t6.md`: area, utilisation, timing, DRC, LVS) |

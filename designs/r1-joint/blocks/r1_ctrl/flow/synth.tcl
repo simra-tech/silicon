@@ -1,4 +1,4 @@
-# Yosys synthesis of r1_ctrl_top for the cell area (revision 0.4: R1_CFG_FLOPS + R1_CFG_GATED, flip-flop
+# Yosys synthesis of r1_ctrl_top for the cell area (revision 0.5 adds a CHECK pass log; revision 0.4: R1_CFG_FLOPS + R1_CFG_GATED, flip-flop
 # register file on per-word gated clocks; not a hardening run).
 # Library: sg13g2_stdcell typical 1.2 V 25 C from the pinned PDK.
 # Revision 0.2: Booth multiplier recoding; latches mapped with the PDK LibreLane
@@ -13,6 +13,9 @@ set out $::env(SYN_OUT)
 foreach f [lsort [glob rtl/*.v]] { read_verilog -defer -DR1_CFG_FLOPS -DR1_CFG_GATED $f }
 hierarchy -check -top r1_ctrl_top
 synth -top r1_ctrl_top -flatten -booth
+# CHECK pass on the generic netlist (after the mapping the library cells have no port directions and every
+# output is reported as undriven: the first 0.5 run put it there and got 86 false problems)
+tee -o $out/yosys_check.txt check
 techmap -map $lmap
 dfflibmap -liberty $lib
 abc -liberty $lib -D 23810

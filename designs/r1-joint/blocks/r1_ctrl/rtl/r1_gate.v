@@ -62,6 +62,8 @@ module r1_gate (
     input  wire [13:0]  adc_raw_b,
     input  wire [195:0] adc_wa,         // slice A weights
     input  wire [195:0] adc_wb,         // slice B weights
+    input  wire         adc_arm,        // pulse: ADC enabled or reset by the host (0.5)
+    input  wire [3:0]   adc_disc,       // frames to discard after reset / adc_arm (ADC_CFG, 0.5)
     // results
     output reg          smp_sh,         // pulse at the hold instant
     output reg          smp_valid,
@@ -170,9 +172,25 @@ module r1_gate (
     // ---------------- frame generator ----------------
     reg        conv;                   // a frame is converting (holds closed)
     reg        got_a, got_b;           // adc_valid seen per slice in this frame
-    reg [7:0]  ptim;
+    reg [7:0]  ptim;                   // revision 0.5: the start compare below is 9 bit (8 bit wrapped at ptim = 255,
+                                       // so a SCHED restored after > 255 ticks of PAIR_TICKS = 0 never started a frame)
     reg        req;
     reg        tag_a;                  // frame type of the codes in r1_adcw (slice A sets the pair type)
+    // revision 0.5: first-conversion discard. nstart counts the frames started since reset
+    // or adc_arm (saturating at 15). A frame whose number is below ADC_CFG.DISCARD is marked
+    // (cur_drop at its start, drop_a when slice A returns, like tag_a); when its pair of
+    // corrected codes is complete it is not written to sin/cos/i_a/i_b and gives no smp_valid.
+    // Frame timing, adc_hold / is_smp / smp_sh, sc_pend and late_cnt are unchanged.
+    reg [3:0]  nstart;
+    reg        cur_drop, drop_a;
+    // revision 0.5: bootstrap pre-charge (INTERFACES.md "ADC -> ctrl, first conversion", binding): after the reset
+    // release and after adc_arm, once no frame is converting, adc_hold is high for PRE_HOLD ticks (the sampling
+    // switch bootstrap capacitor charges only in hold), then low for at least PRE_TRACK ticks before the first
+    // frame may start (>= 250 ns at 42 MHz: 11 ticks = 262 ns). No adc_start, no smp_sh in this sequence.
+    localparam [4:0] PRE_HOLD = 5'd2, PRE_TRACK = 5'd11;
+    reg [4:0]  pre;                    // 0: idle; counts down from PRE_HOLD + PRE_TRACK
+    reg        pre_req;                // sequence requested (reset: 1)
+    wire       pre_idle = (pre == 5'd0) && !pre_req;
     reg [11:0] ca, cb;                 // first-arrived code until its partner is done
     reg        pa_r, pb_r;
     reg        sc_pend;                // encoder codes not yet out of r1_adcw
@@ -183,6 +201,7 @@ module r1_gate (
 
     always @(posedge clk or negedge rst_n) begin
         if (!rst_n) begin
+            nstart <= 4'd0; cur_drop <= 1'b0; drop_a <= 1'b0; pre <= 5'd0; pre_req <= 1'b1;
             conv <= 1'b0; got_a <= 1'b0; got_b <= 1'b0; ptim <= 8'd0; req <= 1'b0; tag_a <= 1'b0;
             ca <= 12'h800; cb <= 12'h800; pa_r <= 1'b0; pb_r <= 1'b0; sc_pend <= 1'b0;
             adc_hold <= 1'b0; is_smp <= 1'b0; adc_start <= 1'b0; adc_sel <= 1'b0;
@@ -192,30 +211,44 @@ module r1_gate (
             adc_start <= 1'b0; smp_sh <= 1'b0; smp_valid <= 1'b0;
             if (ptim != 8'hFF) ptim <= ptim + 8'd1;
             if (stb) req <= 1'b1;
-            if (adc_valid_a) tag_a <= adc_sel;
+            if (adc_valid_a) begin tag_a <= adc_sel; drop_a <= cur_drop; end
             // corrected codes: the pair is complete when both slices have a code
             if (nra && nrb) begin
                 pa_r <= 1'b0; pb_r <= 1'b0;
-                if (!tag_a) begin sin_code <= nca; cos_code <= ncb; smp_valid <= 1'b1; sc_pend <= 1'b0; end   // a start below overrides
-                else        begin i_a <= nca; i_b <= ncb; end
+                if (!tag_a) begin
+                    if (!drop_a) begin sin_code <= nca; cos_code <= ncb; smp_valid <= 1'b1; end
+                    sc_pend <= 1'b0;                                // a start below overrides
+                end else if (!drop_a) begin i_a <= nca; i_b <= ncb; end
             end else begin
                 pa_r <= nra; pb_r <= nrb; ca <= nca; cb <= ncb;
             end
             if (!conv) begin
-                if (req || stb) begin                              // current frame (D18: replaces an encoder frame)
+                if (!pre_idle) begin
+                    ;                                               // pre-charge sequence runs: no frame starts
+                end else if (req || stb) begin                              // current frame (D18: replaces an encoder frame)
                     is_smp <= 1'b1; adc_sel <= 1'b1; adc_start <= 1'b1; req <= 1'b0; conv <= 1'b1;
                     ptim <= 8'd0;
+                    cur_drop <= (nstart < adc_disc); if (nstart != 4'hF) nstart <= nstart + 4'd1;
                     if (!stb && late_cnt != 4'hF) late_cnt <= late_cnt + 4'd1;
-                end else if (ptim + 8'd1 >= pair_ticks && !soon && pair_ticks != 8'd0 && (!sc_pend || enc_done)) begin
+                end else if ({1'b0, ptim} + 9'd1 >= {1'b0, pair_ticks} && !soon && pair_ticks != 8'd0 && (!sc_pend || enc_done)) begin
                     ptim <= 8'd0; sc_pend <= 1'b1;
                     adc_hold <= 1'b1; smp_sh <= 1'b1;
                     adc_sel <= 1'b0; adc_start <= 1'b1; conv <= 1'b1;
+                    cur_drop <= (nstart < adc_disc); if (nstart != 4'hF) nstart <= nstart + 4'd1;
                 end
                 got_a <= 1'b0; got_b <= 1'b0;
             end else if (nga && ngb) begin                         // both slices done: release the holds
                 adc_hold <= 1'b0; is_smp <= 1'b0; conv <= 1'b0; got_a <= 1'b0; got_b <= 1'b0;
             end else begin
                 got_a <= nga; got_b <= ngb;
+            end
+            if (adc_arm) begin nstart <= 4'd0; pre_req <= 1'b1; end   // wins over a start in the same tick
+            // pre-charge sequence: starts when no frame is converting (conv = 0), holds adc_hold high PRE_HOLD ticks
+            if (pre != 5'd0) begin
+                pre <= pre - 5'd1;
+                if (pre == PRE_TRACK + 5'd1) adc_hold <= 1'b0;
+            end else if (pre_req && !conv) begin
+                pre <= PRE_HOLD + PRE_TRACK; pre_req <= adc_arm; adc_hold <= 1'b1; ptim <= 8'd0;
             end
         end
     end

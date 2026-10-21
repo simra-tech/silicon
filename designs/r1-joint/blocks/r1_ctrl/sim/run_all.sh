@@ -1,5 +1,6 @@
 #!/bin/sh
-# Full r1_ctrl verification run (revision 0.3): V3 position (tb_pos + pos_ref.py,
+# Full r1_ctrl verification run (revision 0.5; the list below is the 0.3 list plus: exhaustive r1_tapidx check,
+# chip-level tests tap / ana / disc, SDC port check, Yosys CHECK pass): V3 position (tb_pos + pos_ref.py,
 # 30-tick cases of 0.2 and 22-tick D18 frame cases), ADC weight correction
 # (tb_adcw + adcw_ref.py), comparator calibration search model against the
 # r1_safe MC data (cmpcal_ref.py) and the RTL on the same tables (tb_top calmc),
@@ -23,7 +24,7 @@ mkdir -p "$OUT" "$SUM"
   echo "python $(python3 -c 'import sys,numpy;print(sys.version.split()[0],"numpy",numpy.__version__)')"
   echo "pdk_commit $(cat /foss/pdks/ihp-sg13g2/COMMIT)"
 } > "$OUT/versions.txt"
-sha256sum rtl/*.v tb/*.v tb/*.py sim/*.sh sim/*.py flow/synth.tcl > "$OUT/inputs.sha256"
+sha256sum rtl/*.v tb/*.v tb/*.py sim/*.sh sim/*.py flow/synth.tcl flow/r1_ctrl.sdc flow/check_sdc_ports.py > "$OUT/inputs.sha256"
 echo "rtl_concat $(cat rtl/*.v | sha256sum | cut -d' ' -f1)" >> "$OUT/versions.txt"
 
 # (a) V3 position
@@ -62,6 +63,24 @@ for t in spi gate safe cal; do
   vvp -n "$OUT/tb_top.vvp" +test=$t +clk_ns=33.333 > "$OUT/top_${t}_33.333.log" 2>&1
 done
 vvp -n "$OUT/tb_top.vvp" +test=cal +clk_ns=23.810 > "$OUT/top_cal_23.810.log" 2>&1
+# revision 0.5: tap-index chain, ANA_CTRL decode, first-conversion discard
+for t in tap ana disc; do
+  vvp -n "$OUT/tb_top.vvp" +test=$t +clk_ns=33.333 > "$OUT/top_${t}_33.333.log" 2>&1
+done
+vvp -n "$OUT/tb_top.vvp" +test=tap +clk_ns=23.810 > "$OUT/top_tap_23.810.log" 2>&1
+# revision 0.5: clock-domain crossing tests (SSI at the asynchronous worst phase, registered ma-domain reset)
+for ck in 23.810 33.333 47.619; do
+  vvp -n "$OUT/tb_top.vvp" +test=cdc +clk_ns=$ck > "$OUT/top_cdc_${ck}.log" 2>&1
+done
+
+# revision 0.5: exhaustive r1_tapidx check (4096 pairs per cell type) against the Python form of the r1_safe formula
+mkdir -p "$OUT/tapidx"
+iverilog -g2005 -Wall -Wno-timescale -o "$OUT/tapidx/tb_tapidx.vvp" rtl/r1_tapidx.v tb/tb_tapidx.v > "$OUT/tapidx/compile.log" 2>&1
+vvp -n "$OUT/tapidx/tb_tapidx.vvp" +out="$OUT/tapidx/tapidx_rtl.txt" > "$OUT/tapidx/tb.log" 2>&1
+python3 tb/tapidx_ref.py check "$OUT/tapidx/tapidx_rtl.txt" "$OUT/tapidx/tapidx_result.json" > "$OUT/tapidx/check.log" 2>&1
+
+# revision 0.5: every top-level port constrained in the SDC
+python3 flow/check_sdc_ports.py rtl/r1_ctrl_top.v flow/r1_ctrl.sdc "$OUT/sdc_ports.json" > "$OUT/sdc_ports.log" 2>&1
 
 # comparator calibration: Python model of the RTL search vs r1_safe cal_model (MC data,
 # read-only from ../r1_safe/sim/results), then the RTL on the same comparator tables

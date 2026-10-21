@@ -132,10 +132,26 @@ open(f"{summ}/top_calmc.log", "w").write(re.sub(r"/\S*/r1_ctrl/", "<G1_RESULTS_R
 shutil.copy(f"{out}/versions.txt", summ)
 shutil.copy(f"{out}/inputs.sha256", summ)
 open(f"{summ}/summary.md", "w").write("\n".join(lines) + "\n")
-top_ok = all(v["passed"] for v in res["top"].values()) and len(res["top"]) == 11
+top_ok = all(v["passed"] for v in res["top"].values()) and len(res["top"]) == 18
 pos_ok = all(v["rtl_vs_float_reference_deg_el"]["max_abs"] < 0.05 for v in res["pos"].values()) and len(res["pos"]) == 16
 cs_ok = all(v["count_safety"]["max_abs_step_error_deg_el_after_lock"] < 90.0 and abs(v["count_safety"]["multiturn_offset_end_counts"]) < 0.5
             for k, v in res["pos"].items() if "count_safety" in v and k not in ("f22_250k_a2x_gap", "f22_250k_alim_gap"))   # information only
+tp = json.load(open(f"{out}/tapidx/tapidx_result.json"))
+sd = json.load(open(f"{out}/sdc_ports.json"))
+res["tapidx"] = tp
+res["sdc_ports"] = dict(ports=len(sd["ports"]), bits=sd["port_bits"], unconstrained=sd["unconstrained_bits"], stale=sd["stale_patterns"], disposition=sd["disposition"])
+chk = open(f"{out}/syn/yosys_check.txt").read()
+res["yosys_check"] = dict(problems=re.findall(r"Found and reported (\d+) problems", chk), warnings=len(re.findall(r"[Ww]arning", chk)))
+lines += ["", "## Revision 0.5", "",
+          f"- r1_tapidx exhaustive (tb_tapidx.v, tapidx_ref.py): {tp['samples']} lane samples, {tp['oc_pairs']} OC and {tp['neg_pairs']} NEG (c, k) pairs, "
+          f"{tp['mismatches']} mismatches, clipped samples {tp['clipped_samples_oc']} / {tp['clipped_samples_neg']}: {tp['disposition']}",
+          f"- SDC ports (flow/check_sdc_ports.py): {len(sd['ports'])} ports, {sd['port_bits']} bits, unconstrained {len(sd['unconstrained_bits'])}, "
+          f"stale patterns {len(sd['stale_patterns'])}: {sd['disposition']}",
+          f"- Yosys CHECK passes: 'Found and reported N problems' = {res['yosys_check']['problems']}, warning lines {res['yosys_check']['warnings']}"]
+shutil.copy(f"{out}/tapidx/tapidx_result.json", summ)
+shutil.copy(f"{out}/sdc_ports.json", summ)
+shutil.copy(f"{out}/syn/yosys_check.txt", summ)
+open(f"{summ}/summary.md", "w").write("\n".join(lines) + "\n")
 cal_ok = cm["disposition"].startswith("passed") and ck["disposition"].startswith("passed")
 run = dict(
     run_id=rid,
@@ -144,9 +160,9 @@ run = dict(
     tools=ver, pdk_commit=ver.get("pdk_commit"),
     inputs="inputs.sha256 (RTL, testbenches, scripts)",
     bulk_results="$G1_RESULTS_ROOT/r1_ctrl/" + rid,
-    question="Does the r1_ctrl revision 0.4 RTL (D10 area closure: 13-bit PWM words, relative PWM counters, flip-flop PERIOD shadow, gated-clock configuration words, narrowed ADC weight words; no function removed) pass the whole revision-0.3 regression, and what is its synthesized cell area?",
+    question="Does the r1_ctrl revision 0.5 RTL (tap-index adders with tap_p / tap_n ports, ANA_CTRL decode with pga_c / t2f_en / t2f_mode / bias_en, bootstrap pre-charge hold and first-conversion discard with ADC_CFG, PAIR_TICKS compare fix, registered ma-domain reset, EN-to-gate criterion 1 us, ID 0x5205) pass the whole revision-0.4 regression plus the new tests, and what is its synthesized cell area?",
     result=res,
-    disposition=("simulation checks passed" if (top_ok and pos_ok and aw["passed"] and cs_ok and cal_ok) else "simulation checks FAILED (see summary.md)")
+    disposition=("simulation checks passed" if (top_ok and pos_ok and aw["passed"] and cs_ok and cal_ok and tp["disposition"] == "passed" and sd["disposition"] == "passed") else "simulation checks FAILED (see summary.md)")
                 + f"; cell area {area/1e6:.3f} mm2 = {area/180000:.2f} x the 0.18 mm2 budget (before placement)",
 )
 json.dump(run, open(f"{summ}/run.json", "w"), indent=1)

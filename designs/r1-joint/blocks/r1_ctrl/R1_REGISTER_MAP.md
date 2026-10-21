@@ -1,8 +1,8 @@
-# R1 bus protocols and register map (draft 0.4, 2026-10-21)
+# R1 bus protocols and register map (draft 0.5, 2026-10-21)
 
 Owner block: `r1_ctrl` (`designs/r1-joint/blocks/r1_ctrl`). This document is the contract between
 the host, the digital macro (`rtl/r1_ctrl_top.v`) and the analog blocks it connects to. It is a
-draft: nothing here is on silicon. The RTL in `rtl/` implements this version (revision 0.4; change log in section 7).
+draft: nothing here is on silicon. The RTL in `rtl/` implements this version (revision 0.5; change log in section 7).
 Revision 0.2 checked every BiSS interpretation item of 0.1 against the BiSS C Rev D2 document
 ("D2", page numbers of that PDF). Section 3.4 lists the result. One item stays **[verify]**: the
 BP_ID (profile) code. The protocol testbench uses our own master model, so the interop runs of
@@ -108,7 +108,7 @@ limit on `f_SCLK` relative to `f_clk` inside a frame; the `CS_N` high time must 
 the MSB, and each following rising edge drives the next bit (`[MT 16] ST`, binary or Gray over the
 whole word). After the last bit, `SLO` is 0 until `MA` has been quiet for `TIMEOUT_TICKS`
 (monoflop), then 1. The SSI clock must be ≤ 2 MHz: the freeze needs about 3 ticks after the
-first falling edge, and the word is read at the first rising edge.
+first falling edge, and the word is read at the first rising edge. Revision 0.5 tests this with the word changing at every tick and the first falling edge at 16 phases of the `clk` period: 16 of 16 words are complete at 2 MHz; at 10 MHz words are mixed (README, revision 0.5, CDC table).
 
 ### 3.3 Control channel (register read of 0x40–0x7F, D2 pp. 13–17)
 
@@ -163,7 +163,7 @@ read 0. Reset values apply after `por_n`. `EN` does not reset the registers.
 
 | Addr | Name | Type | Reset | Bits |
 | --- | --- | --- | --- | --- |
-| 0x00 | `ID` | RO | 0x5204 | chip 'R', RTL revision 0.4 (0.3: 0x5203, 0.2: 0x5202, 0.1: 0x5210) |
+| 0x00 | `ID` | RO | 0x5205 | chip 'R', RTL revision 0.5 (0.4: 0x5204, 0.3: 0x5203, 0.2: 0x5202, 0.1: 0x5210) |
 | 0x01 | `STATUS` | RO | — | 0 AMP_LOW, 1 AMP_HIGH, 2 OVERSPEED, 3 TRACK_ERR, 4 CAL_VALID, 5 CLK_FAULT, 6 POS_VALID, 7 FAULT, 8 EN (synchronised), 9 GATE_ACTIVE, 10 OSC_DONE, 11 CAL_BUSY, 12 CAL_DONE, 13 CAL_EXH (any comparator) |
 | 0x02 | `FAULT` | RO | 0x1800 | latched causes: 0–3 comparator flags `cmp[3:0]`, 4 OTEMP, 5 AMP, 6 OVERSPEED, 7 WDT, 8 STO (EN low), 9 I2T_A, 10 I2T_B, 11 CAL (CRC mismatch), 12 POR |
 | 0x03 | `FAULT_MASK` | RW | 0x0000 | 1 = source does not latch; bits 8, 11, 12 cannot be masked |
@@ -327,21 +327,40 @@ CMP_FILT + 1 ticks before it latches (0 = 1 tick, 4 ticks from the pin to `FAULT
 
 | Addr | Name | Type | Reset | Format |
 | --- | --- | --- | --- | --- |
-| 0x0C | `ANA_CTRL` | RW | 0 | 16 bits to the analog blocks (`ana_ctrl[15:0]`). Bit assignment from 0.4, below |
+| 0x0C | `ANA_CTRL` | RW | 0x0028 | 16 bits; bits 6:0 are decoded in the macro (0.5), bits 15:7 are reserved. Reset 0x0028 (0.4: 0) |
 
-`ANA_CTRL` bit assignment (revision 0.4). The register already existed; only the meaning is new. The
-RTL is unchanged: `ana_ctrl[15:0]` is the register output.
+`ANA_CTRL` bit assignment (revision 0.5; `PGA_GAIN` was named in 0.4). The macro has no `ana_ctrl` port
+any more: the bits that reach analog blocks leave as the ports named in the last column.
 
-| Bits | Name | Reset | Meaning |
+| Bits | Name | Reset | Port | Meaning |
+| --- | --- | --- | --- | --- |
+| 2:0 | `PGA_GAIN` | 0 | `pga_c[3:0]` | Gain code of `r1_afe`, one code for both channels (SIN and COS), because `r1_afe` has one control vector `c1 c2 c3 c4`. 0 = x1, 1 = x2, 2 = x4, 3 = x8, 4 = x16, 5 = x32. Codes 6 and 7 act as 5. The decoder (below) is in the macro; it is registered, so `pga_c` changes one tick after the register. Gain steps are made by the host while the gates are off, because a step disturbs the encoder path for the settling time |
+| 3 | `T2F_EN` | 1 | `t2f_en` | `r1_t2f` `en`. Reset 1, so the temperature count runs after reset. `fout` is undefined for about 1 us after `en` rises (`r1_t2f` README); the T2F window is at least 2^8 ticks, so the first window after a rising edge is not usable and the host or the over-temperature threshold must allow for it |
+| 4 | `T2F_MODE` | 0 | `t2f_mode` | `r1_t2f` `mode`: 0 = PTAT mode (f proportional to absolute temperature), 1 = REF mode (temperature-independent frequency; the ratio of the two readings removes C and the comparator delay). Polarity as the G1 interface file (`T2F_MODE`) |
+| 5 | `BIAS_EN` | 1 | `bias_en` | Enable of the `r1_bias` mirrors (assumed: one enable for all bias outputs; the bias block is not designed yet, so the polarity is a contract the block must meet: 1 = bias on). Reset 1 |
+| 6 | `ADC_ARM` | 0 | none (internal) | Rising edge (0 to 1) re-arms the first-conversion discard (`ADC_CFG`, section 4.11). The host writes 1 and then 0 after it enables or resets the ADC. A reset of the macro (`por_n`) arms it too. Both events also start the bootstrap pre-charge hold of section 4.11. The macro does not gate the ADC with this bit |
+| 15:7 | reserved | 0 | none | Stored and read back. No analog block uses them. Write 0 |
+
+`PGA_GAIN` decoder, `pga_c[0]` = `c1` ... `pga_c[3]` = `c4` (table of `r1_afe` README, "PGA_GAIN code"; the AFE has four 3.3 V
+switch lines, `c3b` is derived inside the channel). Reset value of `pga_c` is 0000 (x1):
+
+| `PGA_GAIN` | Step | `c1 c2 c3 c4` | `pga_c[3:0]` |
 | --- | --- | --- | --- |
-| 2:0 | `PGA_GAIN` | 0 | Gain code of `r1_afe`, one code for both channels (SIN and COS), because `r1_afe` has one control vector `c1 c2 c3 c4`. 0 = x1, 1 = x2, 2 = x4, 3 = x8, 4 = x16, 5 = x32 (table in `r1_afe` README: `c1 c2 c3 c4` = 0000, 1000, 1100, 1110, 1101, 1111). Codes 6 and 7 are reserved; the decoder must treat them as 5. Gain steps are made by the host while the gates are off, because a step disturbs the encoder path for the settling time |
-| 15:3 | reserved | 0 | Stored and read back. No analog block uses them. Write 0 |
+| 0 | x1 | 0 0 0 0 | 0000 |
+| 1 | x2 | 1 0 0 0 | 0001 |
+| 2 | x4 | 1 1 0 0 | 0011 |
+| 3 | x8 | 1 1 1 0 | 0111 |
+| 4 | x16 | 1 1 0 1 | 1011 |
+| 5, 6, 7 | x32 | 1 1 1 1 | 1111 |
 
-The decoder from `PGA_GAIN` to `c1..c4` and the 1.2 V to 3.3 V level shifters are not in `r1_ctrl`
-(`r1_afe` open issue 6); the chip-level integration owns them. There is no oscillator enable bit:
-`r1_ctrl` runs on the `r1_osc` clock, so a register bit that stops that clock would stop the macro
-with no way to restart it. The top level ties `osc_en` high. `osc_trim` is `OSC_CFG` (0x08). No analog
-test enables exist in the block interfaces of 2026-10-21; they would use bits from 3 upward.
+The 1.2 V to 3.3 V level shifters (`r1_ls`) for `pga_c`, `t2f_en`, `t2f_mode` and `bias_en` are not in `r1_ctrl`; the
+chip-level integration places them. There is no oscillator enable bit (confirmed in 0.5): `r1_ctrl` runs on the
+`r1_osc` clock, so a register bit that stops that clock would stop the macro with no way to restart it. The top level ties
+`osc_en` high. `osc_trim` is `OSC_CFG` (0x08).
+
+**Reset polarity (`por_n`).** `por_n` is active low: asynchronous assert, synchronous release after two `clk` edges
+(`rst_n` of the macro). Low means reset. `r1_adc` shares it. After the release the first `DISCARD` ADC conversions are dropped (section 4.11). Source of `por_n`: the
+`r1_por` cell of the bias block (open, INTERFACES.md).
 
 
 ### 4.9 BiSS identification (0x40–0x7F)
@@ -372,6 +391,14 @@ Comparator order of `cmp[3:0]` and `FAULT[3:0]`: 0 OC_A, 1 NEG_A, 2 OC_B, 3 NEG_
 (`r1_safe` revision 3): cell code c = THR_OC (OC) or 63 − THR_NEG (NEG); calibration code k is
 summed into the threshold DAC with step VREF/252 = LSB/8 (k = 32: no shift); a flag = 1 means the
 input is above the cell threshold (`POL` = 0 for all four).
+
+**Tap indices to `r1_safe` (revision 0.5).** `thr` and `cal` no longer leave the macro. The macro computes the tap indices
+of the `r1_safe` string multiplexers and presents them as `tap_p[31:0]` and `tap_n[31:0]`; comparator i (0 OC_A, 1 NEG_A,
+2 OC_B, 3 NEG_B) uses `tap_p[8i+7:8i]` = nP and `tap_n[8i+7:8i]` = nN, with c = thr (OC) or 63 - thr (NEG), d = cal - 32:
+`nP = 4c + ceil(d/2)`, `nN = 4(63 - c) - floor(d/2)`, both clipped to 0..252. The thr in the formula is the effective
+threshold (THR_ZERO during a search). The ports are registered: they change one tick after `CMP_THR`, `CMP_CAL` or the end of a
+search, and nP and nN of a comparator always change in the same tick. Reset values: OC nP 252, nN 0; NEG nP 0, nN 252 (thr 63, cal 32).
+Not covered by `CAL_CRC` (they are derived).
 
 Contract (`r1_safe` README, `sim/cal_model.py`): at zero current, with THR_ZERO = 14 on all four
 comparators, k_rel is the first code (ascending, output starting high) at which the output falls,
@@ -421,6 +448,23 @@ The host can write the codes when no search runs; a search overwrites them. Duri
 | --- | --- | --- | --- | --- |
 | 0x50–0x5D | `ADC_A_W0`–`ADC_A_W13` | RW | nominal × 4 | [WW(i)-1:0] weight of decision i of slice A (SIN, ISA), units of 1/4 LSB; stored width WW(i) in the table below (0.4) |
 | 0x60–0x6D | `ADC_B_W0`–`ADC_B_W13` | RW | nominal × 4 | [WW(i)-1:0] weight of decision i of slice B (COS, ISB), units of 1/4 LSB; same widths (0.4) |
+
+ADC first-conversion discard (revision 0.5; `r1_adc` revision 5: the first conversion after the ADC is enabled is wrong, cause not found):
+
+| Addr | Name | Type | Reset | Bits |
+| --- | --- | --- | --- | --- |
+| 0x3D | `ADC_CFG` | RW | 1 | [3:0] `DISCARD`: number of frames to drop after a reset of the macro (`por_n`) or a rising edge of `ANA_CTRL.ADC_ARM`; 0 = none, maximum 15. Bits 15:4 read 0. Not covered by `CAL_CRC` |
+
+The frame generator counts the frames it starts after the arm event (reset or `ADC_ARM`). A frame whose number is below `DISCARD` is
+dropped when its pair of corrected codes is complete: `sin_code`/`cos_code` (and `smp_valid`) or `i_a`/`i_b` keep their old values,
+so the discarded conversion reaches neither the position path nor the current path. The rule applies to both frame types and
+both slices together (the slices convert in parallel). Frame timing, `adc_hold`, `is_smp`, `smp_sh` and `LATE` are unchanged.
+Bootstrap pre-charge (revision 0.5, binding from `INTERFACES.md` "ADC -> ctrl, first conversion"): after the reset release and after every
+`ADC_ARM` rising edge, once no frame is converting, `adc_hold` is high for 2 ticks (no `adc_start`, no `smp_sh`) and then low for at least 11 ticks
+(262 ns at 42 MHz) before the first frame may start. The first frame starts `PAIR_TICKS` ticks after the sequence starts (22: 20 ticks of track).
+Current strobes that fall in the sequence are delayed (counted in `LATE`). The discard above stays on as the second layer.
+A frame that started before the arm event is not dropped. The tracking loop sees one missing pair, as for any overrun. After
+the arm the first pair is therefore missing: a reset needs `DISCARD` + 1 frames (22 ticks each) before the first valid position.
 
 Stored width WW(i) (revision 0.4; was 14 bit for all): the bit length of the nominal weight plus 2,
 at most 14. Higher bits read 0 and ignore writes. This is 4 x the nominal value, so the 1/8-LSB
@@ -482,19 +526,20 @@ the README).
 | Port | Direction | Meaning |
 | --- | --- | --- |
 | `clk` | in | `r1_osc` output |
-| `por_n` | in | power-on reset, active low (asynchronous assert, synchronous release) |
+| `por_n` | in | power-on reset, active low (asynchronous assert, synchronous release after 2 `clk` edges); low = reset |
 | `adc_hold` | out | high: both sin/cos track-and-holds hold (rising edge = sampling instant) |
 | `is_smp` | out | high: both isense track-and-holds hold (rising edge = current sampling instant) |
 | `adc_start`, `adc_sel` | out | one-tick pulse: both slices convert; `adc_sel` 0 = {SIN, COS}, 1 = {ISA, ISB} (stable during the conversion) |
 | `adc_valid_a`, `adc_raw_a[13:0]` | in | slice A: one-tick pulse with the 14 raw decisions ([13] first); synchronous to `clk` |
 | `adc_valid_b`, `adc_raw_b[13:0]` | in | slice B: the same |
 | `cmp[3:0]` | in | comparator flags (0 OC_A, 1 NEG_A, 2 OC_B, 3 NEG_B), asynchronous, synchronised inside |
-| `thr_oc_a`, `thr_neg_a`, `thr_oc_b`, `thr_neg_b` [5:0] | out | comparator threshold codes (THR_ZERO during a calibration) |
-| `cal_oc_a`, `cal_neg_a`, `cal_oc_b`, `cal_neg_b` [5:0] | out | comparator offset calibration codes |
+| `tap_p[31:0]`, `tap_n[31:0]` | out | `r1_safe` tap indices nP, nN, 8 bit per comparator, comparator i at [8i +: 8] (section 4.10; replace `thr_*` and `cal_*` of 0.3/0.4) |
 | `az_win` | out | high: isense auto-zero window |
 | `t2f_clk` | in | T2F oscillator, asynchronous, ≤ f_clk/4 |
 | `osc_trim[4:0]` | out | to `r1_osc` |
-| `ana_ctrl[15:0]` | out | analog control word |
+| `pga_c[3:0]` | out | `r1_afe` gain vector `c1 c2 c3 c4` = `pga_c[0..3]` (section 4.8) |
+| `t2f_en`, `t2f_mode` | out | `r1_t2f` `en` and `mode` |
+| `bias_en` | out | `r1_bias` enable |
 | `en_pad`, `cs_n`, `ma_sclk`, `sdi` | in | pads (level-shifted) |
 | `slo_sdo`, `fault_n`, `gate_a/b/c` | out | pads |
 
@@ -507,6 +552,7 @@ The testbench ADC model delivers `adc_valid_a` 17 ticks and `adc_valid_b` 16 tic
 | Version | Date | Change |
 | --- | --- | --- |
 | 0.1 | 2026-10-20 | first draft with the first RTL |
+| 0.5 | 2026-10-21 | ID 0x5205. Ownership gaps of the r1_top assembly closed. Ports: `thr_*`, `cal_*` and `ana_ctrl` removed; added `tap_p[31:0]`, `tap_n[31:0]` (tap-index adders in `r1_tapidx`, section 4.10), `pga_c[3:0]`, `t2f_en`, `t2f_mode`, `bias_en`. `ANA_CTRL` (0x0C) reset 0x0028; bits 2:0 `PGA_GAIN` (decoder to the 4 AFE lines), 3 `T2F_EN` (reset 1), 4 `T2F_MODE`, 5 `BIAS_EN` (reset 1), 6 `ADC_ARM`. New register `ADC_CFG` (0x3D, `DISCARD` reset 1) and the first-conversion discard (section 4.11). Bootstrap pre-charge hold sequence after reset and `ADC_ARM` (section 4.11). `r1_biss`: the reset of the MA-domain flops is released through a registered `ma_rel` (CDC finding F), no function change. Bug fix in `r1_gate`: the encoder frame start compare was 8 bit and never fired after `PAIR_TICKS` had been 0 for more than 255 ticks; now 9 bit. No other register, bit meaning or reset value changed. |
 | 0.4 | 2026-10-21 | ID 0x5204. Width changes only, no register, bit meaning or reset value removed (D10 area closure, S6 cut C2): `PWM_PERIOD`, `DUTY_A/B/C`, `PHASE_A/B/C`, `AZ_START` are 13 bit (bits 15:13 read 0, ignore writes; f_PWM at least 3.66 kHz at 30 MHz); ADC weights are stored in WW(i) bits (3 to 14, section 4.11). The configuration words are flip-flops on per-word gated clocks (section 4.12, implementation only). Documentation only: `ANA_CTRL` bit assignment (`PGA_GAIN` in 2:0), one-hot weight readback of raw decisions (section 4.11). |
 | 0.3 | 2026-10-20 | ID 0x5203. Configuration registers are flip-flops again (section 4.12). Comparator calibration per the `r1_safe` revision-3 contract: two-sided search (release pass with preset 0, trip pass with preset 63, 14 windows), decisions after `az_win`, result relative to the new `CMP_CAL_IDEAL` (0x3C, half codes, reset 72 / 55). `AZ_CFG` 16 bit: THR_ZERO reset 14 (was 32), CAL_STEP bits 15:14 (reset 32 ticks); reset 0x4E00. `CAL_CRC` covers 0x10–0x17, 0x36–0x3C, 0x50–0x5D and 0x60–0x6D (was 0x10–0x17); a search clears `CAL_VALID`. Comparator blanking extended 16 ticks after a search. Host bring-up order in section 4.1 updated. D18: two ADC slices with 14 decisions each (`adc_raw_a/b`, `adc_valid_a/b`, one `adc_start` with `adc_sel`; `adc_mux` and the 13-bit port removed); weights per slice `ADC_A_W0`–`W13` (0x50–0x5D) and `ADC_B_W0`–`W13` (0x60–0x6D), reset = nominal `r1_adc` revision-3 weights × 4 (was `ADC_W0`–`ADC_W12`, binary); encoder frame every 22 ticks, the current frame replaces one encoder frame at the strobe and restarts the frame grid; `SCHED` reset 0x1416 (was 0x201E); weight correction 4 ticks (was 8); `r1_pos` 19 ticks per pair (was 28). |
 | 0.2 | 2026-10-20 | ID 0x5202. AS5047P mode removed (`BUS_CFG` bit 8 reserved). `BUS_CFG.LAT_HALF` (bit 14, reset 1). Control channel per D2 (section 3.4): CTS in the header CRC, IDL0, R/W echo, W inverted on refusal, `S` echo, stop bit `P`, sequential read, BSEL refused, EDS_BANK readable. `CTRL.CMP_CAL`, `STATUS` bits 11–13, `CMP_THR_A/B`, `AZ_START`, `AZ_CFG`, `CMP_CAL_A/B`, `ADC_W0`–`ADC_W12`. One current strobe at the channel A centre; `is_smp`, `az_win` ports; 13-bit raw ADC port. `OSC_TRIM` reset 22. `TIMEOUT_TICKS` 12 bit, `TEMP`/`OT_LIM` 14 bit, diagnostic counters 4 bit saturating, KI clamped to 8–23. Configuration registers are latch words (section 4.12). |

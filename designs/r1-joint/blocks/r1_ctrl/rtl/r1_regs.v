@@ -63,6 +63,7 @@ module r1_regs #(
     output wire [15:0] osc_win,
     output wire [15:0] wdt_period,
     output wire [15:0] ana_ctrl,
+    output wire [3:0]  adc_disc,       // ADC_CFG[3:0]: conversions to discard after ADC arm (0.5)
     output wire [7:0]  extrap,
     output wire [15:0] amp_lim,
     output wire [15:0] ovs_lim,
@@ -105,7 +106,8 @@ module r1_regs #(
     r1_cword #(.W(5),  .RV(5'd22),  .A(7'h08)) u_08 (clk, rst_n, wr, addr, wdata[4:0], osc_trim);
     r1_cword #(.W(16), .A(7'h0A)) u_0a (clk, rst_n, wr, addr, wdata, osc_win);
     r1_cword #(.W(16), .RV(16'hFFFF), .A(7'h0B)) u_0b (clk, rst_n, wr, addr, wdata, wdt_period);
-    r1_cword #(.W(16), .A(7'h0C)) u_0c (clk, rst_n, wr, addr, wdata, ana_ctrl);
+    // 0.5: ANA_CTRL reset 0x0028 = T2F_EN 1, BIAS_EN 1 (bit meaning: register map 4.8)
+    r1_cword #(.W(16), .RV(16'h0028), .A(7'h0C)) u_0c (clk, rst_n, wr, addr, wdata, ana_ctrl);
     r1_cword #(.W(8),  .A(7'h0D)) u_0d (clk, rst_n, wr, addr, wdata[7:0], extrap);
     r1_cword #(.W(16), .RV(16'h7C08), .A(7'h0E)) u_0e (clk, rst_n, wr, addr, wdata, amp_lim);
     r1_cword #(.W(16), .RV(16'h4000), .A(7'h0F)) u_0f (clk, rst_n, wr, addr, wdata, ovs_lim);
@@ -146,6 +148,8 @@ module r1_regs #(
     r1_cword #(.W(14), .RV({7'd55, 7'd72}), .A(7'h3C)) u_3c (clk, rst_n, wr, addr, {wdata[14:8], wdata[6:0]}, ideal_w);
     assign ideal_oc = ideal_w[6:0];
     assign ideal_neg = ideal_w[13:7];
+    // 0.5: ADC_CFG (0x3D), DISCARD in bits 3:0, reset 1; not covered by CAL_CRC
+    r1_cword #(.W(4), .RV(4'd1), .A(7'h3D)) u_3d (clk, rst_n, wr, addr, wdata[3:0], adc_disc);
     assign cmp_cal_wr_a = wr && (addr == 7'h3A);
     assign cmp_cal_wr_b = wr && (addr == 7'h3B);
 
@@ -329,6 +333,7 @@ module r1_regs #(
             7'h3A: rdata = cmp_cal_a;
             7'h3B: rdata = cmp_cal_b;
             7'h3C: rdata = {1'b0, ideal_neg, 1'b0, ideal_oc};
+            7'h3D: rdata = {12'd0, adc_disc};
             default: begin
                 if (wsel_any) rdata = {2'd0, w_or};
                 else          rdata = maddr[6] ? {8'd0, id_byte} : 16'd0;

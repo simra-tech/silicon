@@ -4,16 +4,18 @@
 // with the crossings described in r1_biss.v and r1_spi.v.
 // Reset: por_n asynchronous assert, synchronous release. EN/STO_IN does not
 // reset the core; it is a fault source and gates the outputs directly.
-// Interface: R1_REGISTER_MAP.md (revision 0.2) and blocks/INTERFACES.md 0.1.
+// Interface: R1_REGISTER_MAP.md (revision 0.5) and blocks/INTERFACES.md 0.1.
 // Revision 0.2 ports: 13 raw ADC decisions with adc_valid (weights applied
 // here, D12); is_smp (isense pair track-and-hold); az_win (isense auto-zero
 // window); comparator threshold and calibration codes to r1_safe (analog).
 // Revision 0.3 ports (D18): two ADC slices with 14 raw decisions and a valid
 // each, one adc_start and adc_sel for both; 2 x 14 weights.
+// Revision 0.5: tap_p / tap_n replace the thr / cal ports (r1_tapidx); ANA_CTRL bits decoded to
+// pga_c, t2f_en, t2f_mode, bias_en; first-conversion discard (ADC_CFG, r1_gate).
 // SPDX-License-Identifier: Apache-2.0
 
 module r1_ctrl_top #(
-    parameter [15:0] CHIP_ID    = 16'h5204,
+    parameter [15:0] CHIP_ID    = 16'h5205,
     parameter [15:0] PROFILE_ID = 16'h0001,
     parameter [47:0] DEV_ID     = 48'h52_31_4A_46_45_30,
     parameter [31:0] DEV_SN     = 32'h0000_0000,
@@ -40,13 +42,16 @@ module r1_ctrl_top #(
     input  wire [13:0] adc_raw_b,
     // analog r1_safe comparators (0 OC_A, 1 NEG_A, 2 OC_B, 3 NEG_B), r1_isense, r1_t2f
     input  wire [3:0]  cmp,
-    output wire [5:0]  thr_oc_a, thr_neg_a, thr_oc_b, thr_neg_b,
-    output wire [5:0]  cal_oc_a, cal_neg_a, cal_oc_b, cal_neg_b,
+    output wire [31:0] tap_p,          // comparator i: nP at [8i +: 8]  (0.5, replaces thr_* / cal_*)
+    output wire [31:0] tap_n,          // comparator i: nN at [8i +: 8]
     output wire        az_win,
     input  wire        t2f_clk,
-    // analog control
+    // analog control (ANA_CTRL, register map 4.8)
     output wire [4:0]  osc_trim,
-    output wire [15:0] ana_ctrl
+    output reg  [3:0]  pga_c,          // r1_afe gain vector c1..c4 = pga_c[0..3], 1.2 V domain
+    output wire        t2f_en,
+    output wire        t2f_mode,
+    output wire        bias_en
 );
     // ---------------- reset ----------------
     reg rs0, rs1;
@@ -65,6 +70,8 @@ module r1_ctrl_top #(
     wire        lat_half, cal_run;
     wire [4:0]  st_len;
     wire [17:0] test_pos;
+    wire [15:0] ana_ctrl;
+    wire [3:0]  adc_disc;
     wire [15:0] osc_win, wdt_period, amp_lim, ovs_lim, gain, ph_sin, ph_icos, h3,
                 zero_ofs, sched,
                 i2t_lim;
@@ -143,12 +150,39 @@ module r1_ctrl_top #(
         .step_sel(az_cfg[15:14]), .ideal_oc(ideal_oc), .ideal_neg(ideal_neg),
         .wr_a(cmp_cal_wr_a), .wr_b(cmp_cal_wr_b), .wdata(reg_wdata), .cal(cal_codes),
         .busy(cal_busy), .done(cal_done), .exh(cal_exh), .rd_a(cmp_cal_a), .rd_b(cmp_cal_b));
-    assign {cal_neg_b, cal_oc_b, cal_neg_a, cal_oc_a} = cal_codes;
+    wire [5:0] cal_oc_a = cal_codes[5:0],   cal_neg_a = cal_codes[11:6],
+               cal_oc_b = cal_codes[17:12], cal_neg_b = cal_codes[23:18];
     // during the search every threshold carries THR_ZERO
-    assign thr_oc_a  = cal_busy ? az_cfg[13:8] : cmp_thr_a[5:0];
-    assign thr_neg_a = cal_busy ? az_cfg[13:8] : cmp_thr_a[13:8];
-    assign thr_oc_b  = cal_busy ? az_cfg[13:8] : cmp_thr_b[5:0];
-    assign thr_neg_b = cal_busy ? az_cfg[13:8] : cmp_thr_b[13:8];
+    wire [5:0] thr_oc_a  = cal_busy ? az_cfg[13:8] : cmp_thr_a[5:0];
+    wire [5:0] thr_neg_a = cal_busy ? az_cfg[13:8] : cmp_thr_a[13:8];
+    wire [5:0] thr_oc_b  = cal_busy ? az_cfg[13:8] : cmp_thr_b[5:0];
+    wire [5:0] thr_neg_b = cal_busy ? az_cfg[13:8] : cmp_thr_b[13:8];
+    // revision 0.5: tap-index adders (r1_safe contract); thr and cal no longer leave the macro
+    r1_tapidx u_tap (.clk(clk), .rst_n(rst_n),
+        .thr({thr_neg_b, thr_oc_b, thr_neg_a, thr_oc_a}), .cal(cal_codes), .tap_p(tap_p), .tap_n(tap_n));
+
+    // ---------------- analog control (revision 0.5) ----------------
+    // ANA_CTRL: 2:0 PGA_GAIN, 3 T2F_EN, 4 T2F_MODE, 5 BIAS_EN, 6 ADC_ARM
+    assign t2f_en   = ana_ctrl[3];
+    assign t2f_mode = ana_ctrl[4];
+    assign bias_en  = ana_ctrl[5];
+    // gain code -> r1_afe c1..c4 (r1_afe README table; codes 6, 7 act as 5), registered
+    reg [3:0] pga_dec;
+    always @(*) begin
+        case (ana_ctrl[2:0])
+            3'd0:    pga_dec = 4'b0000;
+            3'd1:    pga_dec = 4'b0001;
+            3'd2:    pga_dec = 4'b0011;
+            3'd3:    pga_dec = 4'b0111;
+            3'd4:    pga_dec = 4'b1011;
+            default: pga_dec = 4'b1111;
+        endcase
+    end
+    reg arm_d;
+    always @(posedge clk or negedge rst_n)
+        if (!rst_n) begin pga_c <= 4'b0000; arm_d <= 1'b0; end
+        else        begin pga_c <= pga_dec; arm_d <= ana_ctrl[6]; end
+    wire adc_arm = ana_ctrl[6] & ~arm_d;
     assign fault_n = ~fault;
 
     reg gate_ok;
@@ -166,7 +200,7 @@ module r1_ctrl_top #(
         .gate_a(gate_a), .gate_b(gate_b), .gate_c(gate_c), .pwm_wrap(pwm_wrap), .az_win(az_win),
         .adc_hold(adc_hold), .is_smp(is_smp), .adc_start(adc_start), .adc_sel(adc_sel),
         .adc_valid_a(adc_valid_a), .adc_raw_a(adc_raw_a), .adc_valid_b(adc_valid_b), .adc_raw_b(adc_raw_b),
-        .adc_wa(adc_wa), .adc_wb(adc_wb),
+        .adc_wa(adc_wa), .adc_wb(adc_wb), .adc_arm(adc_arm), .adc_disc(adc_disc),
         .smp_sh(smp_sh), .smp_valid(smp_valid), .sin_code(sin_code),
         .cos_code(cos_code), .i_a(i_a), .i_b(i_b), .late_cnt(late_cnt));
 
@@ -245,7 +279,7 @@ module r1_ctrl_top #(
         .test_pos_en(test_pos_en), .force_ne(force_ne), .force_nw(force_nw), .lat_half(lat_half),
         .test_pos(test_pos),
         .timeout_ticks(timeout_ticks), .osc_trim(osc_trim), .osc_arm(osc_arm), .osc_win(osc_win), .wdt_period(wdt_period),
-        .ana_ctrl(ana_ctrl), .extrap(extrap), .amp_lim(amp_lim), .ovs_lim(ovs_lim),
+        .ana_ctrl(ana_ctrl), .adc_disc(adc_disc), .extrap(extrap), .amp_lim(amp_lim), .ovs_lim(ovs_lim),
         .ofs_sin(ofs_sin), .ofs_cos(ofs_cos), .gain(gain), .ph_sin(ph_sin), .ph_icos(ph_icos),
         .h3(h3), .zero_ofs(zero_ofs), .pos_cfg(pos_cfg), .cal_crc(cal_crc), .cal_valid(cal_valid),
         .period(period), .duty_a(duty_a), .duty_b(duty_b), .duty_c(duty_c), .phase_a(phase_a),

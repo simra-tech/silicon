@@ -1,0 +1,44 @@
+# tb_top test=safe clk_ns=33.333
+PASS init: FAULT_N high after CAL_CRC load and CLR
+PASS safe: gates running
+INFO safe cmp[0]: FAULT 0x0001, FAULT_N low after 4 ticks
+PASS safe: comparator flag latches its FAULT bit, FAULT_N low, gates low
+PASS safe: comparator to FAULT_N within 6 ticks (< 1 us)
+PASS safe: CLR releases the comparator fault
+INFO safe cmp[1]: FAULT 0x0002, FAULT_N low after 4 ticks
+PASS safe: comparator flag latches its FAULT bit, FAULT_N low, gates low
+PASS safe: comparator to FAULT_N within 6 ticks (< 1 us)
+PASS safe: CLR releases the comparator fault
+INFO safe cmp[2]: FAULT 0x0004, FAULT_N low after 4 ticks
+PASS safe: comparator flag latches its FAULT bit, FAULT_N low, gates low
+PASS safe: comparator to FAULT_N within 6 ticks (< 1 us)
+PASS safe: CLR releases the comparator fault
+INFO safe cmp[3]: FAULT 0x0008, FAULT_N low after 4 ticks
+PASS safe: comparator flag latches its FAULT bit, FAULT_N low, gates low
+PASS safe: comparator to FAULT_N within 6 ticks (< 1 us)
+PASS safe: CLR releases the comparator fault
+INFO safe TEMP count 273 (2 MHz over 4096 ticks, expected 273.1)
+PASS safe: T2F count >= OT_LIM latches OTEMP
+PASS safe: OTEMP clears after the count drops below OT_LIM
+PASS safe: amplitude low latches AMP
+PASS safe: AMP clears with the amplitude restored
+PASS safe: |VELOCITY| > OVS_LIM latches OVERSPEED
+PASS safe: OVERSPEED clears below the limit
+INFO safe watchdog fired 4091 ticks after the last SPI frame (period 4096 ticks)
+PASS safe: watchdog latches WDT after WDT x 1024 ticks without bus traffic
+PASS safe: WDT clears (watchdog disabled, kicked by the SPI frame)
+PASS safe: write to a calibration register -> CAL invalid fault
+PASS safe: CLR does not release the fault while CAL_CRC mismatches
+PASS safe: CLR releases the fault after the correct CAL_CRC is written
+PASS safe: CAL fault cannot be masked
+INFO safe FAULT before I2t 0x0000
+INFO safe I2t: trip after 30847 ticks = 102.8 PWM periods; integer model 103 updates; closed form 102.20 updates
+PASS safe: I2T_A latches (I2T_B stays clear)
+PASS safe: I2t trip time = integer-model update count (+-1 PWM period, sample alignment)
+PASS safe: I2t clears after the model cools below the limit
+PASS safe: EN low latches STO (mask ignored), gates low
+PASS safe: STO clears after EN returns high and CLR
+PASS safe: power-on reset latches POR and CAL (gates disabled until CAL_CRC and CLR)
+# 32 checks, 0 failed
+ALL TESTS PASSED
+tb/tb_top.v:1358: $finish called at 3334515793 (1ps)

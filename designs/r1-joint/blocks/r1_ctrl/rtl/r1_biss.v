@@ -110,8 +110,18 @@ module r1_biss #(
             end
         end
     end
-    // assert-only combination: cs_n low (SPI) or rst_n low or not armed or timeout pulse
-    wire ma_rst_n = rst_n & cs_n & armed & ~to_rst[1];
+    // Reset of the ma domain (revision 0.5, CDC finding F of the 0.4 sign-off): the clk-domain terms (armed, frame
+    // timeout pulse) are registered in ma_rel (asynchronously cleared by rst_n), so a change of `armed` and of
+    // `to_rst` in the same tick cannot produce a runt pulse on the reset net. The only other input is the CS_N pad:
+    // it asserts the reset when it falls. It releases it only when ma_rel is already 1, i.e. never while CS_N
+    // was low, because `armed` is cleared while CS_N is low (>= 24 SCLK cycles, longer than the 2 ticks of ma_rel).
+    // ma_rel changes only at clk edges: the release of the ma-domain reset is synchronous to clk (not to MA; see the CDC
+    // table, crossing E: the release is issued only after MA has been quiet for TIMEOUT_TICKS).
+    reg ma_rel;
+    always @(posedge clk or negedge rst_n)
+        if (!rst_n) ma_rel <= 1'b0;
+        else        ma_rel <= armed & ~to_rst[1];
+    wire ma_rst_n = ma_rel & cs_n;
 
     // =====================================================================
     // clk domain: half-tick LAT timing

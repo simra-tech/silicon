@@ -1,6 +1,6 @@
 // Chip-level testbench for r1_ctrl_top (testbenches b..f and cal of the r1_ctrl
 // README, revision 0.3).
-//   +test=biss | ssi | spi | gate | safe | cal | calmc    test group
+//   +test=biss | ssi | spi | gate | safe | cal | calmc | tap | ana | disc | cdc    test group
 //   +vec=<file> +out=<file>                   (calmc) comparator tables from tb/cmpcal_ref.py, RTL results
 //   +clk_ns=<real>                            clk period (RC corners: 23.81, 33.33, 47.62)
 // Models: encoder head (ideal sin/cos, amplitude ENC_AMP, electrical frequency
@@ -28,8 +28,14 @@ module tb_top;
     reg  [3:0] cmp_mdl = 4'd0;         // behavioural comparators (test cal)
     wire slo_sdo, fault_n, gate_a, gate_b, gate_c, adc_hold, is_smp, adc_start, adc_sel, az_win;
     wire [4:0] osc_trim;
-    wire [15:0] ana_ctrl;
-    wire [5:0] thr_oc_a, thr_neg_a, thr_oc_b, thr_neg_b, cal_oc_a, cal_neg_a, cal_oc_b, cal_neg_b;
+    // revision 0.5: thr / cal no longer leave the macro; the testbench probes them inside (they are the
+    // inputs of r1_tapidx) and the behavioural comparators below use the tap ports tap_p / tap_n
+    wire [15:0] ana_ctrl = dut.ana_ctrl;
+    wire [5:0] thr_oc_a = dut.thr_oc_a, thr_neg_a = dut.thr_neg_a, thr_oc_b = dut.thr_oc_b, thr_neg_b = dut.thr_neg_b;
+    wire [5:0] cal_oc_a = dut.cal_oc_a, cal_neg_a = dut.cal_neg_a, cal_oc_b = dut.cal_oc_b, cal_neg_b = dut.cal_neg_b;
+    wire [31:0] tap_p, tap_n;
+    wire [3:0] pga_c;
+    wire t2f_en, t2f_mode, bias_en;
     reg  adc_valid_a = 0, adc_valid_b = 0;
     reg  [13:0] adc_raw_a = 0, adc_raw_b = 0;
 
@@ -39,9 +45,9 @@ module tb_top;
         .adc_hold(adc_hold), .is_smp(is_smp), .adc_start(adc_start), .adc_sel(adc_sel),
         .adc_valid_a(adc_valid_a), .adc_raw_a(adc_raw_a), .adc_valid_b(adc_valid_b), .adc_raw_b(adc_raw_b),
         .cmp(cmp | cmp_mdl),
-        .thr_oc_a(thr_oc_a), .thr_neg_a(thr_neg_a), .thr_oc_b(thr_oc_b), .thr_neg_b(thr_neg_b),
-        .cal_oc_a(cal_oc_a), .cal_neg_a(cal_neg_a), .cal_oc_b(cal_oc_b), .cal_neg_b(cal_neg_b),
-        .az_win(az_win), .t2f_clk(t2f_clk), .osc_trim(osc_trim), .ana_ctrl(ana_ctrl));
+        .tap_p(tap_p), .tap_n(tap_n),
+        .az_win(az_win), .t2f_clk(t2f_clk), .osc_trim(osc_trim),
+        .pga_c(pga_c), .t2f_en(t2f_en), .t2f_mode(t2f_mode), .bias_en(bias_en));
 
     // ---------------- bookkeeping ----------------
     integer errors = 0, checks = 0;
@@ -61,6 +67,10 @@ module tb_top;
     integer conv_a = 0, conv_b = 0;
     reg  conv_sel = 0;
     reg  [11:0] ia_code = 12'd2048, ib_code = 12'd2048;
+    // revision 0.5 (test disc): ia_inc steps the ISA code by 1 at every current conversion, bad_n makes the next
+    // bad_n conversions return all-ones decisions (the start-up error of the r1_adc revision 5, first frame wrong)
+    reg  ia_inc = 1'b0, conv_bad = 1'b0;
+    integer bad_n = 0;
     // revision 0.3 (D18): two slices start together on adc_start; slice A returns
     // adc_valid_a CONV ticks after the start pulse, slice B one tick earlier
     // (both <= 17, the binding conversion time); 14 decisions from a greedy SAR
@@ -95,16 +105,18 @@ module tb_top;
         adc_valid_a <= 1'b0; adc_valid_b <= 1'b0;
         if (adc_start) begin
             conv_a <= CONV - 1; conv_b <= CONV - 2; conv_sel <= adc_sel;   // valid CONV ticks after the start pulse
+            conv_bad <= (bad_n > 0); if (bad_n > 0) bad_n <= bad_n - 1;
+            if (adc_sel && ia_inc) ia_code <= ia_code + 12'd1;
         end else begin
             if (conv_a > 0) conv_a <= conv_a - 1;
             if (conv_b > 0) conv_b <= conv_b - 1;
             if (conv_a == 1) begin
                 adc_valid_a <= 1'b1;
-                adc_raw_a <= conv_sel ? sar14(ia_code) : sar14(code(enc_amp * $sin(6.283185307179586 * held_ang) - 0.5));
+                adc_raw_a <= conv_bad ? 14'h3FFF : conv_sel ? sar14(ia_code) : sar14(code(enc_amp * $sin(6.283185307179586 * held_ang) - 0.5));
             end
             if (conv_b == 1) begin
                 adc_valid_b <= 1'b1;
-                adc_raw_b <= conv_sel ? sar14(ib_code) : sar14(code(enc_amp * $cos(6.283185307179586 * held_ang) - 0.5));
+                adc_raw_b <= conv_bad ? 14'h3FFF : conv_sel ? sar14(ib_code) : sar14(code(enc_amp * $cos(6.283185307179586 * held_ang) - 0.5));
             end
         end
     end
@@ -148,7 +160,8 @@ module tb_top;
                 u = tabu[64 * i + cal]; d = tabd[64 * i + cal];
                 if (az_win) begin u = -1.0; d = -1.0; end
             end else begin
-                t = cthr(i, cal, thr); v = cvin(i);
+                t = $itor(tap_p[8*i +: 8]) - $itor(tap_n[8*i +: 8]);   // 0.5: threshold from the tap indices (nP - nN)
+                v = cvin(i);
                 u = t + cofs[i] + 0.5 * chy[i] - v; d = t + cofs[i] - 0.5 * chy[i] - v;
             end
             if (u < 0.0) cst[i] = 1'b1;
@@ -190,6 +203,72 @@ module tb_top;
             end
         end
     endtask
+
+
+    // ---------------- revision 0.5: tap-index reference, discard monitor ----------------
+    // independent integer form of the r1_safe formula: {nN, nP} for comparator i (0 OC_A, 1 NEG_A, 2 OC_B, 3 NEG_B)
+    function [15:0] tapx;
+        input integer i; input integer thr, cal;
+        integer c, d, p, n;
+        begin
+            c = (i == 1 || i == 3) ? 63 - thr : thr;
+            d = cal - 32;
+            p = 4 * c + ((d >= 0) ? (d + 1) / 2 : -((-d) / 2));           // ceil(d/2)
+            n = 4 * (63 - c) - ((d >= 0) ? d / 2 : -((-d + 1) / 2));      // floor(d/2)
+            if (p < 0) p = 0; if (p > 252) p = 252;
+            if (n < 0) n = 0; if (n > 252) n = 252;
+            tapx = {n[7:0], p[7:0]};
+        end
+    endfunction
+    // frame monitor: started frames since an arm event (or since the reset release in test disc), by type
+    reg  mon_en = 1'b0, arm_p = 1'b0;
+    integer tb_disc = 1, nidx = 0, ast_e = 0, ast_c = 0, dr_e = 0, dr_c = 0, fl_e = 0, fl_c = 0, dv_e = 0, dv_c = 0, dn_all = 0;
+    integer npre = 0;
+    always @(posedge adc_hold) begin #1; if (mon_en && !adc_start) npre = npre + 1; end
+    reg  [11:0] dropcode = 12'hFFF;
+    reg  dropcode_ok = 1'b0, bad_seen = 1'b0, drop_seen = 1'b0;
+    reg  [11:0] drop_hist [0:15];
+    integer ndh = 0, dh;
+    always @(posedge clk) begin
+        if (dut.adc_arm) begin
+            nidx = 0; ast_e = 0; ast_c = 0; dr_e = 0; dr_c = 0; fl_e = 0; fl_c = 0; dv_e = 0; dv_c = 0; dn_all = 0;
+            ndh = 0; dropcode_ok = 1'b0; bad_seen = 1'b0; drop_seen = 1'b0;
+            if (dut.u_gate.conv) begin if (adc_sel) fl_c = 1; else fl_e = 1; end   // frame in flight at the arm tick
+            arm_p <= 1'b1; mon_en = 1'b1;
+        end else begin
+            arm_p <= 1'b0;
+            if (mon_en && adc_start) begin
+                if (arm_p) begin if (adc_sel) fl_c = fl_c + 1; else fl_e = fl_e + 1; end   // started in the arm tick: not counted by the RTL
+                else begin
+                    if (adc_sel) ast_c = ast_c + 1; else ast_e = ast_e + 1;
+                    if (nidx < tb_disc) begin
+                        if (adc_sel) begin dr_c = dr_c + 1; drop_hist[ndh] = ia_code + (ia_inc ? 12'd1 : 12'd0); ndh = ndh + 1; end
+                        else dr_e = dr_e + 1;
+                    end
+                    if (nidx < 15) nidx = nidx + 1;
+                end
+            end
+        end
+        if (mon_en && dut.smp_valid) dv_e = dv_e + 1;
+        if (mon_en && dut.u_gate.nra && dut.u_gate.nrb) dn_all = dn_all + 1;
+        if (mon_en && (dut.sin_code == 12'hFFF || dut.cos_code == 12'hFFF || dut.i_a == 12'hFFF || dut.i_b == 12'hFFF)) bad_seen = 1'b1;
+    end
+    always @(dut.i_a) if (mon_en) begin
+        dv_c = dv_c + 1;
+        for (dh = 0; dh < ndh; dh = dh + 1) if (dut.i_a == drop_hist[dh]) drop_seen = 1'b1;
+    end
+
+    // revision 0.5 (test cdc)
+    reg  [17:0] alt_pos = 18'h2AAAA;
+    always @(posedge clk) alt_pos <= ~alt_pos;               // the position input changes at every tick
+    reg  cdc_mon = 1'b0;
+    real t_clk_last = 0.0;
+    integer n_mr_rise = 0, n_mr_off = 0, n_mr_fall = 0;
+    always @(posedge clk) t_clk_last = $realtime;
+    always @(dut.u_biss.ma_rst_n) if (cdc_mon) begin
+        if (dut.u_biss.ma_rst_n) begin n_mr_rise = n_mr_rise + 1; if ($realtime - t_clk_last > 0.01) n_mr_off = n_mr_off + 1; end
+        else n_mr_fall = n_mr_fall + 1;
+    end
 
     // ---------------- SPI host ----------------
     real sck_half = 50.0;              // 10 MHz SCLK
@@ -631,7 +710,7 @@ module tb_top;
         // =================================================================
         if (test == "spi") begin
             spi_rd(7'h00);
-            check(rd_val == 16'h5204, "spi: ID reads 0x5204 (revision 0.4)");
+            check(rd_val == 16'h5205, "spi: ID reads 0x5205 (revision 0.5)");
             spi_rd(7'h08);
             check(rd_val == 16'd22 && osc_trim == 5'd22, "spi: OSC_TRIM reset value 22 (D13), on the oscillator port");
             spi_rd(7'h05);
@@ -659,7 +738,11 @@ module tb_top;
             check(nb == 16, "spi: walking-one write/read on PWM registers (13 bit, bits 15:13 read 0)");
             spi_wr(7'h20, 16'h0000);
             spi_wr(7'h0C, 16'hA5C3); spi_rd(7'h0C);
-            check(rd_val == 16'hA5C3 && ana_ctrl == 16'hA5C3, "spi: ANA_CTRL write reaches the analog control port");
+            check(rd_val == 16'hA5C3 && ana_ctrl == 16'hA5C3, "spi: ANA_CTRL write reads back and reaches the register output");
+            #(4 * clk_ns);
+            check(pga_c == 4'b0111 && !t2f_en && !t2f_mode && !bias_en,
+                  "spi: ANA_CTRL 0xA5C3 decodes to PGA code 3 (c1 c2 c3), T2F_EN 0, T2F_MODE 0, BIAS_EN 0");
+            spi_wr(7'h0C, 16'h0028);
             spi_wr(7'h08, 16'h0013); spi_rd(7'h08);
             check(rd_val == 16'h0013 && osc_trim == 5'h13, "spi: OSC_TRIM write reaches the oscillator port");
             spi_x({1'b0, 7'h0D, 16'h0007}, 24);
@@ -702,7 +785,7 @@ module tb_top;
             check(b_crc_wire == 6'h3A && b_data[19:2] == 18'h0, "spi/biss: BiSS frame after SPI sees the new TEST_POS");
             // MA traffic while CS_N high does not disturb SPI state; SPI after BiSS
             spi_rd(7'h00);
-            check(rd_val == 16'h5204, "spi/biss: SPI read correct after BiSS traffic on the shared pad");
+            check(rd_val == 16'h5205, "spi/biss: SPI read correct after BiSS traffic on the shared pad");
         end
 
         // =================================================================
@@ -711,7 +794,7 @@ module tb_top;
                 integer t_on_a, t_off_a, t_on_b, t_off_b, t_on_c, t_off_c, tk, t_sa, t_sb, t_is, n_late;
                 integer t_az_on, t_az_off, n_sa, n_enc, t_enc, g_enc, g_max, n_g22, n_gx;
                 integer per, da, db, dc, pa, pb, pc, dt;
-                reg ga_d, gb_d, gc_d, az_d, is_d;
+                reg ga_d, gb_d, gc_d, az_d, is_d, gc1;
                 per = 1500; da = 600; db = 300; dc = 900; pa = 0; pb = 500; pc = 1000; dt = 15;
                 spi_wr(7'h20, per); spi_wr(7'h21, da); spi_wr(7'h22, db); spi_wr(7'h23, dc);
                 spi_wr(7'h24, pa); spi_wr(7'h25, pb); spi_wr(7'h26, pc); spi_wr(7'h27, dt);
@@ -796,8 +879,11 @@ module tb_top;
                 // EN low forces the outputs low immediately
                 #(3 * per * clk_ns);
                 wait (gate_c == 1'b1); #5;
-                en_pad = 1'b0; #1;
-                check(gate_c == 1'b0, "gate: EN low forces GATE_C low within 1 ns (combinational)");
+                en_pad = 1'b0; #1; gc1 = gate_c; #999;
+                // 0.5: the criterion is the specification's 1 us (fault path). The zero-delay RTL path is combinational
+                // (gc1 below); STA gives 1.47 ns at the slow corner, so a 1 ns limit fails only under SDF.
+                check(gate_c == 1'b0, "gate: EN low forces GATE_C low within 1 us (specification; STA: 1.47 ns slow corner)");
+                $display("INFO gate: GATE_C = %0b 1 ns after EN low in the zero-delay RTL (combinational path)", gc1);
                 #(10 * clk_ns);
                 check(fault_n == 1'b0, "gate: EN low latches a fault (FAULT_N low)");
                 en_pad = 1'b1; #(10 * clk_ns);
@@ -929,6 +1015,191 @@ module tb_top;
                 load_cal_crc; spi_rd(7'h01);
                 check(rd_val[4] == 1'b1, "cal: CAL_VALID returns after the new CAL_CRC (weights covered)");
                 cmp_mdl_en = 1'b0;
+            end
+        end
+
+        // =================================================================
+        // Revision 0.5 tests
+        // tap: tap_p / tap_n against the integer form of the r1_safe formula (the exhaustive 2 x 4096 check is
+        //      tb_tapidx.v); here the chip-level chain: CMP_THR and CMP_CAL words -> adders -> ports
+        if (test == "tap") begin
+            begin : tp
+                integer n, j, seed, ok, o_a, n_a, o_b, n_b, ca_o, ca_n, cb_o, cb_n, lane_ok;
+                reg [15:0] e0, e1, e2, e3;
+                por_n = 0; #(10 * clk_ns); por_n = 1; #(4 * clk_ns);
+                check(tap_p == {8'd0, 8'd252, 8'd0, 8'd252} && tap_n == {8'd252, 8'd0, 8'd252, 8'd0},
+                      "tap: reset values = taps of THR 63 / CAL 32 (OC nP 252 nN 0, NEG nP 0 nN 252)");
+                #(30 * clk_ns);
+                seed = 5;
+                ok = 0;
+                for (n = 0; n < 40; n = n + 1) begin
+                    if (n == 0) begin o_a = 0;  n_a = 0;  o_b = 63; n_b = 63; ca_o = 0;  ca_n = 63; cb_o = 63; cb_n = 0; end
+                    else if (n == 1) begin o_a = 63; n_a = 63; o_b = 0; n_b = 0; ca_o = 63; ca_n = 0; cb_o = 0; cb_n = 63; end
+                    else if (n == 2) begin o_a = 14; n_a = 14; o_b = 14; n_b = 14; ca_o = 32; ca_n = 32; cb_o = 32; cb_n = 32; end
+                    else begin
+                        o_a = $random(seed) & 63; n_a = $random(seed) & 63; o_b = $random(seed) & 63; n_b = $random(seed) & 63;
+                        ca_o = $random(seed) & 63; ca_n = $random(seed) & 63; cb_o = $random(seed) & 63; cb_n = $random(seed) & 63;
+                    end
+                    spi_wr(7'h36, {2'b00, n_a[5:0], 2'b00, o_a[5:0]}); spi_wr(7'h37, {2'b00, n_b[5:0], 2'b00, o_b[5:0]});
+                    spi_wr(7'h3A, {2'b00, ca_n[5:0], 2'b00, ca_o[5:0]}); spi_wr(7'h3B, {2'b00, cb_n[5:0], 2'b00, cb_o[5:0]});
+                    #(4 * clk_ns);
+                    e0 = tapx(0, o_a, ca_o); e1 = tapx(1, n_a, ca_n); e2 = tapx(2, o_b, cb_o); e3 = tapx(3, n_b, cb_n);
+                    if (tap_p == {e3[7:0], e2[7:0], e1[7:0], e0[7:0]} && tap_n == {e3[15:8], e2[15:8], e1[15:8], e0[15:8]}) ok = ok + 1;
+                    else $display("FAIL tap case %0d: tap_p %h tap_n %h, expected %h %h", n, tap_p, tap_n,
+                                  {e3[7:0], e2[7:0], e1[7:0], e0[7:0]}, {e3[15:8], e2[15:8], e1[15:8], e0[15:8]});
+                end
+                check(ok == 40, "tap: 40 threshold/calibration word sets (corners and random) give the formula taps on all four lanes");
+                // a write changes only its own comparators, one tick after the register
+                spi_wr(7'h36, 16'h0505); #(4 * clk_ns);
+                e0 = tapx(0, 5, ca_o); e1 = tapx(1, 5, ca_n);
+                check(tap_p[7:0] == e0[7:0] && tap_n[7:0] == e0[15:8] && tap_p[15:8] == e1[7:0] && tap_n[15:8] == e1[15:8],
+                      "tap: CMP_THR_A write moves lanes 0 and 1 only");
+                // reset restores the reset taps
+                por_n = 0; #(10 * clk_ns); por_n = 1; #(4 * clk_ns);
+                check(tap_p == {8'd0, 8'd252, 8'd0, 8'd252} && tap_n == {8'd252, 8'd0, 8'd252, 8'd0}, "tap: por_n restores the reset taps");
+            end
+        end
+
+        // ana: ANA_CTRL decode and reset (register map 0.5, section 4.8) and ADC_CFG reset
+        if (test == "ana") begin
+            begin : an
+                integer g, ok;
+                reg [3:0] ex;
+                por_n = 0; #(10 * clk_ns); por_n = 1; #(4 * clk_ns);
+                check(ana_ctrl == 16'h0028 && pga_c == 4'b0000 && t2f_en && !t2f_mode && bias_en,
+                      "ana: reset 0x0028: PGA x1 (c1..c4 = 0000), T2F_EN 1, T2F_MODE 0 (PTAT), BIAS_EN 1");
+                #(700 * clk_ns); load_cal_crc; spi_wr(7'h04, 16'h0001);
+                spi_rd(7'h0C); check(rd_val == 16'h0028, "ana: ANA_CTRL reads 0x0028 after reset");
+                spi_rd(7'h3D); check(rd_val == 16'h0001, "ana: ADC_CFG reads 1 after reset (DISCARD 1)");
+                ok = 0;
+                for (g = 0; g < 8; g = g + 1) begin
+                    case (g) 0: ex = 4'b0000; 1: ex = 4'b0001; 2: ex = 4'b0011; 3: ex = 4'b0111; 4: ex = 4'b1011; default: ex = 4'b1111; endcase
+                    spi_wr(7'h0C, 16'h0028 | g); #(4 * clk_ns);
+                    if (pga_c == ex) ok = ok + 1; else $display("FAIL ana gain code %0d: pga_c %b expected %b", g, pga_c, ex);
+                end
+                check(ok == 8, "ana: gain codes 0..5 give c1..c4 = 0000 1000 1100 1110 1101 1111 (c1 first), codes 6 and 7 act as 5");
+                spi_wr(7'h0C, 16'h0010); #(4 * clk_ns);
+                check(!t2f_en && t2f_mode && !bias_en && pga_c == 4'b0000, "ana: bits 3, 4, 5 drive T2F_EN, T2F_MODE, BIAS_EN independently");
+                spi_wr(7'h0C, 16'h0008); #(4 * clk_ns);
+                check(t2f_en && !t2f_mode && !bias_en, "ana: T2F_EN alone");
+                spi_wr(7'h0C, 16'h0020); #(4 * clk_ns);
+                check(!t2f_en && !t2f_mode && bias_en, "ana: BIAS_EN alone");
+                spi_wr(7'h0C, 16'hFF80); spi_rd(7'h0C); #(4 * clk_ns);
+                check(rd_val == 16'hFF80 && pga_c == 4'b0000 && !t2f_en && !t2f_mode && !bias_en, "ana: reserved bits 15:7 store and read back, no output");
+                spi_wr(7'h0C, 16'h0028);
+            end
+        end
+
+        // disc: first-conversion discard (INTERFACES.md "ADC -> ctrl, first conversion")
+        if (test == "disc") begin
+            begin : dc
+                integer j, nfr, st1, st2, st3;
+                real th1, th2, th3;
+                // ---- A: after the power-on reset, the first frame (garbage from the ADC model) is dropped
+                spi_rd(7'h3D); check(rd_val == 16'h0001, "disc: ADC_CFG DISCARD resets to 1");
+                spi_wr(7'h20, 16'd0);                                        // no PWM: encoder frames only
+                while (conv_a != 0 || conv_b != 0) @(posedge clk);
+                #1; por_n = 0; #(10 * clk_ns);
+                mon_en = 1'b0; nidx = 0; ast_e = 0; ast_c = 0; dr_e = 0; dr_c = 0; dv_e = 0; dv_c = 0; dn_all = 0; ndh = 0;
+                bad_seen = 1'b0; drop_seen = 1'b0; tb_disc = 1; bad_n = 1; arm_p = 1'b0; mon_en = 1'b1;
+                por_n = 1;
+                // bootstrap pre-charge sequence (INTERFACES.md, first conversion): adc_hold high for 2 ticks without
+                // adc_start, then at least 250 ns of track before the first sampling edge
+                @(posedge adc_hold); th1 = $realtime; st1 = ast_e + ast_c;
+                @(negedge adc_hold); th2 = $realtime; st2 = ast_e + ast_c;
+                @(posedge adc_hold); th3 = $realtime; st3 = ast_e + ast_c;
+                $display("INFO disc A: pre-charge hold %0.1f ns, track before the first sampling edge %0.1f ns", th2 - th1, th3 - th2);
+                check(th2 - th1 > 1.9 * clk_ns && th2 - th1 < 2.1 * clk_ns && st1 == 0 && st2 == 0,
+                      "disc: after the reset release adc_hold is high for 2 ticks with no adc_start (bootstrap pre-charge)");
+                check(th3 - th2 >= 250.0, "disc: at least 250 ns of track between the pre-charge hold and the first sampling edge");
+                #(4 * clk_ns);
+                nfr = 0;
+                while (dn_all < 6 && nfr < 400) begin @(posedge clk); nfr = nfr + 1; end
+                #(2 * clk_ns);
+                $display("INFO disc A: starts %0d (dropped %0d), pairs completed %0d, delivered %0d", ast_e, dr_e, dn_all, dv_e);
+                check(dr_e == 1 && ast_e >= 6 && dn_all >= 6, "disc: reset: six frames completed, the first one is the dropped frame");
+                check(dv_e == dn_all - 1, "disc: reset: smp_valid pulses = completed pairs - 1 (the first conversion gives no smp_valid)");
+                check(!bad_seen, "disc: reset: the garbage first conversion (all-ones decisions, code 4095) never reaches sin/cos or the current words");
+                // ---- B: ADC_ARM re-arms the discard, 15 frames, PWM running so that current frames occur in the window
+                mon_en = 1'b0; bad_n = 0; ia_inc = 1'b1; npre = 0;
+                spi_wr(7'h20, 16'd300); spi_wr(7'h21, 16'd150);
+                #(700 * clk_ns);
+                spi_wr(7'h3D, 16'h000F);
+                tb_disc = 15;
+                spi_wr(7'h0C, 16'h0068);                                     // ADC_ARM 1 (+ T2F_EN, BIAS_EN)
+                #(4 * clk_ns);
+                spi_wr(7'h0C, 16'h0028);                                     // ADC_ARM back to 0
+                #(1800 * clk_ns);
+                check(npre >= 1, "disc: ADC_ARM starts a pre-charge hold (adc_hold pulse of 2 ticks without adc_start)");
+                spi_wr(7'h28, 16'h0000); spi_wr(7'h20, 16'd0);               // stop the encoder frames and the PWM
+                #(2000 * clk_ns);
+                $display("INFO disc B: starts enc %0d cur %0d, dropped enc %0d cur %0d, in flight at arm enc %0d cur %0d, delivered enc %0d cur %0d",
+                         ast_e, ast_c, dr_e, dr_c, fl_e, fl_c, dv_e, dv_c);
+                check(dr_c >= 1 && dr_e >= 1 && dr_e + dr_c == 15, "disc: ADC_ARM: the 15 dropped frames contain current and encoder frames");
+                check(dv_e == ast_e - dr_e + fl_e, "disc: ADC_ARM: delivered encoder pairs = started - dropped + in flight at the arm");
+                check(dv_c == ast_c - dr_c + fl_c, "disc: ADC_ARM: delivered current pairs = started - dropped + in flight at the arm");
+                check(ast_c > dr_c && ast_e > dr_e, "disc: ADC_ARM: frames after the dropped ones are delivered (both types)");
+                check(!drop_seen, "disc: ADC_ARM: the code of a dropped current frame never reaches i_a");
+                // ---- C: DISCARD = 0 drops nothing
+                spi_wr(7'h28, 16'h1416);
+                #(300 * clk_ns);
+                spi_wr(7'h3D, 16'h0000);
+                tb_disc = 0;
+                spi_wr(7'h0C, 16'h0068); #(4 * clk_ns); spi_wr(7'h0C, 16'h0028);
+                #(500 * clk_ns);
+                spi_wr(7'h28, 16'h0000);
+                #(100 * clk_ns);
+                $display("INFO disc C: starts enc %0d cur %0d, dropped enc %0d cur %0d, in flight at arm enc %0d, delivered enc %0d", ast_e, ast_c, dr_e, dr_c, fl_e, dv_e);
+                check(dr_e == 0 && dr_c == 0 && ast_e >= 10 && dv_e == ast_e + fl_e, "disc: DISCARD = 0: no frame dropped, every encoder pair delivered");
+                spi_wr(7'h3D, 16'h0001); spi_wr(7'h28, 16'h1416);
+            end
+        end
+
+        // cdc: revision 0.5 clock-domain crossing tests (README, CDC table; findings D and F of the 0.4 sign-off)
+        //   (a) SSI at the asynchronous worst phase: the published word changes at EVERY clk tick (two position
+        //       patterns that differ in all transmitted bits), the first MA falling edge is moved over 16 phases of
+        //       the clk period, at the documented limit of 2 MHz (the freeze needs about 3 ticks). Every received word
+        //       must be one complete pattern (no mix of the two). At 10 MHz (outside the limit) the same test is run for information.
+        //   (b) the reset of the ma domain changes to 1 only at clk edges (registered release, finding F).
+        if (test == "cdc") begin
+            begin : cd
+                integer ph, nb, n_ok, n_mix, n_p0, n_p1, rep;
+                reg [12:0] w0, w1;
+                real th;
+                spi_wr(7'h05, 16'h004D); bus_idle;               // SSI, MT off, ST 13 bit, binary
+                w0 = 13'b1010101010101; w1 = 13'b0101010101010;  // top 13 bits of the two patterns
+                alt_pos = 18'h2AAAA;
+                force dut.frame_pos = alt_pos;
+                cdc_mon = 1'b1;
+                n_ok = 0; n_mix = 0; n_p0 = 0; n_p1 = 0;
+                for (ph = 0; ph < 16; ph = ph + 1) begin
+                    #(ph * clk_ns / 16.0);
+                    ssi_frame(250.0, 250.0, 13);                 // 2 MHz
+                    if (s_data[12:0] == w0) n_p0 = n_p0 + 1;
+                    else if (s_data[12:0] == w1) n_p1 = n_p1 + 1;
+                    else begin n_mix = n_mix + 1; $display("INFO cdc: 2 MHz phase %0d mixed word %b", ph, s_data[12:0]); end
+                end
+                $display("INFO cdc: SSI 2 MHz, 16 clk phases, position changing every tick: pattern 0 %0d, pattern 1 %0d, mixed %0d", n_p0, n_p1, n_mix);
+                check(n_mix == 0 && n_p0 + n_p1 == 16, "cdc D: SSI at 2 MHz, 16 asynchronous phases, word changing every tick: 16 of 16 words complete (no mix)");
+                check(n_p0 > 0 && n_p1 > 0, "cdc D: both position patterns occur over the phases (the test samples the changing word)");
+                n_mix = 0; n_p0 = 0; n_p1 = 0;
+                for (ph = 0; ph < 16; ph = ph + 1) begin
+                    #(ph * clk_ns / 16.0);
+                    ssi_frame(50.0, 50.0, 13);                   // 10 MHz: outside the documented SSI limit
+                    if (s_data[12:0] == w0) n_p0 = n_p0 + 1;
+                    else if (s_data[12:0] == w1) n_p1 = n_p1 + 1;
+                    else n_mix = n_mix + 1;
+                end
+                $display("INFO cdc: SSI 10 MHz (outside the 2 MHz limit), 16 clk phases: pattern 0 %0d, pattern 1 %0d, mixed %0d (information, not a check)", n_p0, n_p1, n_mix);
+                release dut.frame_pos;
+                // BiSS frames, an SPI session and the timeout resets in between, for the ma-domain reset monitor
+                spi_wr(7'h05, 16'h40B2); bus_idle;
+                biss_frame(250.0, 250.0, 20, 1'b0, 0); biss_frame(250.0, 250.0, 20, 1'b0, 0);
+                spi_rd(7'h00); bus_idle;
+                biss_frame(250.0, 250.0, 20, 1'b0, 0);
+                cdc_mon = 1'b0;
+                $display("INFO cdc: ma_rst_n rising edges %0d (off a clk edge: %0d), falling edges %0d", n_mr_rise, n_mr_off, n_mr_fall);
+                check(n_mr_rise >= 5 && n_mr_off == 0, "cdc F: the reset of the ma domain is released only at clk edges (registered), at least 5 releases observed");
             end
         end
 
