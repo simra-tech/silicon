@@ -89,7 +89,7 @@ threshold (hysteresis-centre) error ≤ 0.25 LSB after calibration in ≥ 50/51 
 | Mismatch MC at ss / ff, full path (isense + comparators, transient) | **not run** (the DC comparator MC at ss / ff is run, see above) | — |
 | Calibration search with the full 256:1 mux netlist and code-change transients | **not run** at sample level (`dev-mc3-smoke-fullmux` stopped, too slow); the MC uses ideal tap switches | — |
 | Real VREF buffer, real bias, digital summing logic and calibration FSM (gate level) | **not run** (ideal sources; summing and search modelled) | — |
-| Layout, DRC, LVS, PEX | **not run** | — |
+| Layout, DRC, LVS, PEX | **run 2026-10-21**: DRC 0, antenna 0, LVS match with comparer limits (stock deck: tool crash), area 0.0718 mm² (target 0.06 failed), post-layout code-44 centre and delay passed; see "Layout" | `layout/results/` |
 
 **Reduced fixture of `tb_safe_mc3` (deliberate).** The MC replaces the 256:1 muxes and level shifters by ideal tap
 switches (S elements, 2 kΩ, 50 fF per reference node) on the taps the search and the operating codes can select.
@@ -273,7 +273,8 @@ area).
 | ngspice | ngspice-46 (OSDI PSP 103, `r3_cmc`) | `flow/run.sh ngspice -v` banner, 2026-10-20; `sim/.spiceinit` loads the OSDI models |
 | Container | `tapeoutbench-eda:latest`, id `sha256:ddeb6957…` | checked by `flow/run.sh` |
 | Python (calibration model, host) | python3 with numpy (versions in `sim/results/cal-model-*/run.json`) | recorded by `cal_model.py` |
-| xschem / KLayout / LibreLane / CACE | not used in this step | — |
+| xschem / LibreLane / CACE | not used | — |
+| KLayout / kpex | 0.30.9 / 0.3.12 (layout only, see "Layout") | `klayout -v`, `kpex --version` in the container |
 
 ## Files and reproduction
 
@@ -314,3 +315,126 @@ Raw files: `<G1_RESULTS_ROOT>/r1_safe/safe-hyst-20261021-r1/`.
 | 3 | The hysteresis is a DC-sweep value (0.5 mV resolution). The dynamic hysteresis during the 32-tick probe, with comparator delay at small overdrive, is not run. | verification-gap | table row above |
 | 4 | First draft of the error model in `analyze_hyst.py` mixed the phase of the centre with the `k_ideal` fraction and gave a meaningless bias. Rewritten with the exact target code before any number was used. | estimation | `sim/analyze_hyst.py` |
 | 5 | `analyze_dcmc3.py` keys MC samples by seed only, so the ss and ff draws sit in one summary (24 samples). `analyze_hyst.py` splits them by seed (4 = ss, 5 = ff). | tooling | `safe-hyst-20261021-r1/summary.json` |
+
+## Layout (2026-10-21, T4)
+
+Layout of the analog part `r1_safe_an` (netlist of record, revision 3, sha256 `812f886dce2b…`). Top cell `r1_safe`,
+GDS `layout/r1_safe.gds` (1.4 MB, sha256 `fbc31139…`; run `layout-gen-20261021-b`). Metal1–Metal4 only, all pins on
+Metal3 at the boundary. Thick-oxide devices with the HV well rules; p+ guard ring at the boundary (vss).
+
+### Files
+
+| File | What it is |
+| --- | --- |
+| `layout/r1_safe_layout.py` | top generator (KLayout): floorplan, routing, pins, LEF, meta JSON |
+| `layout/r1_safe_parts.py`, `layout/r1_safe_lib.py` | string, 256:1 mux and level-shifter cells; drawing helpers |
+| `layout/r1_safe_cmp_cell.py`, `layout/r1_safe_cmp_cell_meta.json` | comparator cell `r1s_cmp` (59.0 × 109.35 µm) and its pin/rail meta |
+| `layout/make_cdl.py` | flat LVS CDL from the netlist of record (format conversion; 1 mΩ resistors are shorts) |
+| `layout/r1_safe.gds`, `layout/r1_safe.lef`, `layout/r1_safe_lvs.cdl`, `layout/r1_safe_layout_meta.json` | outputs of run `layout-gen-20261021-b` |
+| `layout/run_checks.sh`, `layout/write_runjson.py` | generate + DRC + antenna + LVS (stock and diagnostic) + pin check + run.json |
+| `layout/check_pins.py`, `layout/drc_summary.py`, `layout/lvs_report.py`, `layout/flatten_gds.py` | pin check (copy of `r1_t2f`), marker count, LVS summary, flat copy for PEX tools |
+| `layout/kpex_wrap.py`, `layout/pex_cmp.py` | kpex 2.5D CC with one runtime patch; comparator RC netlist (method of `r1_bgr/layout/pex_build.py`) |
+| `layout/string_rnet.py`, `layout/string_tap_error.py` | string metal R networks (KLayout RNetExtractor) and tap-error solve |
+| `layout/post_joint.py` | pre- and post-layout runs of the joint deck (`sim/gen_tb_safe_joint3.py`) |
+| `layout/results/<run-id>/` | run.json and small summaries; raw files in `<G1_RESULTS_ROOT>/r1_safe/<run-id>/` |
+
+Reproduction (repository root, POSIX sh): `G1_CPUSET=116-117; export G1_CPUSET; G1_RESULTS_ROOT=<G1_RESULTS_ROOT>; export G1_RESULTS_ROOT`, then
+`sh designs/r1-joint/blocks/r1_safe/layout/run_checks.sh <tag>`. PEX and post-layout commands are in the run.json files.
+
+### Built against
+
+| Item | Version | How established |
+| --- | --- | --- |
+| PDK | IHP-Open-PDK `84374023ee8b4b126bebbba67fcbada0a9c0ff0b` | checked by `flow/run.sh` before every run |
+| KLayout | 0.30.9 | `klayout -v` in the container; DRC/LVS logs |
+| kpex | 0.3.12 (2.5D CC capacitance only) | `kpex --version` in the container |
+| ngspice | ngspice-46 (OSDI PSP 103 through `sim/.spiceinit`) | `ngspice -v` in the container |
+| Container | `tapeoutbench-eda:latest`, id `sha256:ddeb6957…` | checked by `flow/run.sh` |
+| xschem / LibreLane / CACE | not used | — |
+
+### Floorplan
+
+Bounding box **249.34 × 287.81 µm = 0.0718 mm²** (prBoundary = outline). From the bottom: Metal3 pin and bus channel
+(0–7 µm); four identical comparator copies at 59.0 µm pitch (7–116 µm); reference channel and the multiplexer vss bus;
+the band (string + eight muxes, about 128 µm); select channel; two rows of 32 level shifters (levels 0–3, 4–7).
+Metal4 supply trunks (vss, vdda, vdd) on both sides.
+
+- **String:** 252 `rppd` units (w 2 µm, l 7.7 µm) in a serpentine of 5 units per row, rows at 2.4 µm pitch;
+  dummy rows below and above, short poly dummies at both row ends. "Tap grid" is read as the regular Via-stack grid
+  from every head to its Metal3 tap track (256 tracks, 0.48 µm pitch; T253–T255 tied to T252 as in the netlist).
+- **Muxes:** eight 256:1 trees (one per comparator reference), each 510 thick NMOS (w 0.5, l 0.45) in one column
+  per level. The 16 select lines per mux run as buses in the select channel; the 64 level-shifter inputs are Metal3
+  pins on the top edge.
+- **Comparators:** one cell placed four times in the same orientation. Input pairs and reference pairs: 2-D common
+  centroid, rotated islands, dummies; the four degeneration resistors interdigitated (4 × 77 µm segments each) with
+  end dummies; tails and mirror common centroid.
+- **Pins (Metal3, 80):** `outa_p/n`, `outb_p/n` (bottom), `vref` (west), the four flags `oc_a neg_a oc_b neg_b` and
+  four `ibias_*` (bottom), 64 code bits (top), `vdda`, `vdd`, `vss` on both edges.
+
+### Status
+
+| Check | Status | Evidence |
+| --- | --- | --- |
+| DRC main + maximal, density off | **passed**: 0 markers | `layout/results/layout-drc-20261021-b/run.json` |
+| Density | **not applicable** at block level (waived; checked at chip level after fill) | — |
+| Antenna | **passed**: 0 markers | `layout/results/layout-ant-20261021-b/run.json` |
+| LVS, PDK deck with comparer search limits (`max_depth(8)`, `max_branch_complexity(100)` added after `align` in a run-time copy; no extraction or rule change) | **passed**: netlists match, 5084 devices (after the deck's series/parallel combination), 2751 nets, 80 pins on both sides; extracted: 4364 hv_nmos, 316 hv_pmos, 68 + 68 lv, 268 rppd | `layout/results/layout-lvsx-20261021-b/run.json` |
+| LVS, stock PDK deck | **failed (tool)**: KLayout 0.30.9 segfault (signal 11) in `NetlistCrossReference::sort_circuit` during compare in `layout-lvs-20261021-a` and `-b`; in `dev-layout-full-b` the compare finished with NoMatch, equal counts, only one-sided pairs in the eight mux trees (unresolved ambiguity, no short or open) | `layout/results/layout-lvs-20261021-b/run.json` |
+| Pin check (LEF pins = CDL ports, 80) | **passed** | `layout/results/layout-gen-20261021-b/pin_check.log` |
+| Area ≤ 0.06 mm² | **failed**: 0.0718 mm² (+20 %) | `layout/results/layout-gen-20261021-b/r1_safe_layout_meta.json` |
+| Comparator PEX (standalone `r1s_cmp`, device-level RC: RNetExtractor R + kpex 2.5D CC) | run: 73 device units, 147 R, 244 C, 352.7 fF total | `layout/results/pex-cmp-20261021-a/run.json` |
+| Post-layout centre at code 44 (70.1 mV shunt), tt / ss_cold, four comparators replaced by the extracted cell, path fixture | **passed** (within 0.05 LSB of 70.1 mV): −0.044 / −0.043 LSB worst of 8 crossings; shift from pre-layout −0.012 / −0.011 LSB | `layout/results/post-joint-20261021-b/` |
+| Post-layout OC trip delay, 10 % overdrive, tt (ss_cold) | **passed** (< 300 ns): 164 ns (185 ns), schematic 139 ns (156 ns) | same |
+| String tap error from extracted metal R (Metal1–4, vias; unit R 1001 Ω typ.) | run (report): max \|error\| 0.050 steps (LSB/8) = 0.006 LSB at T1; code-44 taps T176 / T76 −0.004 / +0.027 steps; spread between the eight mux inputs of one tap ≤ 0.021 steps | `layout/results/pex-string-20261021-a/` |
+| Post-layout at ff_hot; full-block PEX (mux, level-shifter and select wiring); string R inside the joint deck | **not run** | — |
+| Full-block LVS with the stock deck (pass) | **not run** to a pass: see the tooling row | — |
+
+### Pre-layout and post-layout (joint deck, path fixture, code 44, k = 32)
+
+Same deck for both columns (`post_joint.py`); r1_isense is the committed netlist (git HEAD copy in the run directory,
+the version of run `safe-joint-20261020-r3b`), so the pre-layout column reproduces the schematic numbers.
+
+| Quantity | Schematic (README, r3b) | Pre-layout (this run) | Post-layout | Post − pre |
+| --- | --- | --- | --- | --- |
+| Centre error OC_a, tt (LSB / µV shunt) | −0.032 / −76 | −0.032 / −75.7 | −0.044 / −103.9 | −0.012 |
+| Centre error OC_a, ss_cold (LSB) | −0.032 | −0.032 | −0.043 | −0.011 |
+| Worst \|centre error\| of 8 crossings, tt / ss_cold (LSB) | 0.032 / 0.032 | 0.032 / 0.032 | 0.044 / 0.043 | — |
+| OC trip delay, tt / ss_cold (ns) | 139 / 156 | 139.2 / 156.4 | 163.6 / 184.9 | +24 / +29 |
+| NEG release delay, tt / ss_cold (ns) | 110 / 125 | 109.9 / 125.3 | 133.4 / 152.4 | +24 / +27 |
+| Simultaneous − staggered, tt (LSB) | 0.0009 | 0.0010 | 0.0010 | 0 |
+| Cross-channel false transitions | 0 | 0 | 0 | 0 |
+
+The centre shift follows from the longer delay: the ramp lag (1.33 mV/µs shunt × delay difference) moves the
+measured centre; the margin to the 0.05 LSB criterion is 0.006 LSB.
+
+### Open issues (layout)
+
+1. **Area 0.0718 mm² > 0.06 mm².** The comparator row (40 %) and the mux band (44 %) dominate. Options (estimated,
+   not drawn): one column for mux levels 4–7 (about −8 000 µm²), one row of narrower level shifters (about
+   −4 000 µm²), a shorter comparator cell (the 4 × 308 µm degeneration resistors set the height).
+2. **Stock-deck LVS.** The pass uses comparer search limits in a copy of the deck. A KLayout or PDK issue is not
+   filed yet (crash location and the two layouts are in `<G1_RESULTS_ROOT>/r1_safe/layout-lvs-20261021-b/`).
+3. **Post-layout scope.** Only the comparator is extracted in the joint deck; the string metal R is a separate
+   solve; mux, level-shifter and select-line parasitics are not simulated (path fixture). ff_hot not run.
+4. **No `vssa` pin.** The netlist of record has one ground (`vss`); the brief listed `vssa` and `vss`.
+5. **Comparator dummies** are drawn but not in the LVS CDL: the PDK extraction drops devices with all terminals on
+   one net.
+6. Reference decoupling (`CREF`, open issue 8 above) is not drawn.
+
+### Failures and mistakes (layout)
+
+| # | What happened | Class | Evidence |
+| --- | --- | --- | --- |
+| 1 | String cell: 2.4 µm row pitch left pSD and ExtBlock slits (pSD.b, EXTB.b/c) and small Metal2 pads (M2.d). Fixed with one pSD and one ExtBlock box over the array and 0.50 × 0.30 pads. | planning | development runs `dev-*` |
+| 2 | First top-level DRC (no comparators): M1.b/M2.b/M3.b where ring-to-trunk stacks met rail stacks, M2.d 32, M3.d 40, V2.c1 128 (gate Via2 without endcap). | planning | `dev-layout-top-a` |
+| 3 | First LVS: string node 0 (track 0) had no Via3 to the vss trunk; 2680 vs 2679 nets. | functional-bug | `dev-layout-top-a` |
+| 4 | First full LVS: the `outX_p` pin stub landed on the `ibias` pin of the OC comparators (short `ibias_oa`–`outa_p`). Stub moved between `inp` and `inn`. | functional-bug | `dev-layout-full-a` |
+| 5 | Stock PDK LVS crashes (signal 11) or leaves the mux nets unresolved; the outcome changes between identical runs. Diagnosed with kpex's backtrace; diagnostic deck copy with comparer limits. | tooling | `layout-lvs-20261021-a/-b`, `dev-layout-full-b` |
+| 6 | Area target missed (+20 %). The schematic estimate (0.05–0.06 mm²) did not include the comparator cell height set by the degeneration resistors. | estimation | floorplan above |
+| 7 | kpex stopped on "multiple top cells" (device cells of the dropped dummies) and its internal LVS (no simplification) does not match split fingers; runtime patch in `kpex_wrap.py`, only the layout side is used. | tooling | `pex-cmp-20261021-a` |
+| 8 | `string_tap_error.py` first labelled the tap step (VREF/252) as one LSB; it is LSB/8. Corrected before any number was used. | numerical | `pex-string-20261021-a` |
+| 9 | `post_joint.py` failed twice at launch: Python 3.6 on the host (`text=`), and the missing `G1_WORKDIR` (no `.spiceinit`, PSP models not loaded). | process-hygiene | `post-joint-20261021-a` (failed) |
+| 10 | The first scripted run (tag a) used a generator with a test switch; rerun as tag b, geometry XOR 0 against tag a. The string PEX uses the tag-a GDS. | process-hygiene | `layout-gen-20261021-b` |
+| 11 | Comparator cell (sub-track): 159 then 9 DRC markers before clean (pSD/ExtBlock gaps, p+ bar contacts, Metal1 area); run.json of its runs 01–03 records the final generator hash. | planning / process-hygiene | `<G1_RESULTS_ROOT>/r1_safe/cmpcell-dev-01…04` |
+| 12 | The brief lists a `vssa` pin; the netlist has none. Recorded, no pin added. | spec-ambiguity | open issue 4 |
+| 13 | Flat copy for the string PEX: LVS circuit match, but the strict-port step fails (88 vs 80 pins) because the comparator-cell labels move to the top. Report only. | tooling | `pex-string-20261021-a/run.json` |
