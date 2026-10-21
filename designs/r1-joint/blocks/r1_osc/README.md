@@ -1,8 +1,8 @@
-# R1_OSC — 30 MHz RC relaxation oscillator (schematic level, revision r1)
+# R1_OSC — 30 MHz RC relaxation oscillator (revision r1: schematic and layout)
 
-State on 2026-10-20: **schematic sized and simulated (schematic level only)**. No layout, no PEX, nothing
-measured. Every number in this file is **simulated** with ngspice 46 and the PDK models named below, unless it is
-marked *estimated*.
+State on 2026-10-21: **schematic sized and simulated; layout DRC-clean and LVS-clean; post-layout simulation fails
+two targets** (reach at ss/1.08 V/125 °C and trim step ≤ 2 %; see "Layout"). Nothing is measured. Every number in
+this file is **simulated** with ngspice 46 and the PDK models named below, unless it is marked *estimated*.
 
 ## What it is
 
@@ -54,6 +54,13 @@ The reason is in "Open issues", item 1. The `r1_ctrl` register `OSC_TRIM` must r
 | `sim/run_osc30.py` | Runner (suites, deck expansion, parallel jobs, post-processing, `run.json`). |
 | `sim/summarize.py`, `sim/results/summary_r1.json` | Collected checks and numbers of revision r1. |
 | `sim/runs/<run-id>/` | Per run: `run.json`, `results.json`, `results.csv`, netlist snapshot. |
+| `layout/r1_osc_layout.py` | Layout generator (KLayout Python, PDK PCells). Writes `layout/r1_osc.gds`, `layout/r1_osc_lvs.cdl`, `layout/r1_osc_layout_meta.json`. |
+| `layout/r1_layout_lib.py` | Drawing library. Copy of the G1 `g1_osc` layout library (two header lines added). |
+| `layout/r1_osc.gds` | Layout of record (layout k), sha256 `0b98903c7e04bbdaec6cbef6e60f610d2f6a5b993ebc158a09294e2c2db0c059`. Written without GDS timestamps, so a re-run gives the same hash. |
+| `layout/r1_osc_lvs.cdl` | LVS reference: the netlist of record in CDL form. The 44 dummy MIM units are not in it (see "Layout"). |
+| `layout/run_checks.sh`, `layout/write_runjson.py` | Generator + PDK DRC + antenna + LVS, and the `run.json` writer. |
+| `layout/pex_input.py`, `layout/run_pex.sh`, `layout/pex_build.py` | Extraction (method of `r1_bgr`): kpex coupling C, KLayout `RNetExtractor` wiring R, MIM re-inserted. |
+| `layout/runs/<run-id>/` | `run.json` (and `DISPOSITION.txt` for failed runs) of every layout and PEX run. |
 
 Expanded decks, logs and raw waveforms are in the bulk results root under `r1_osc/<run-id>/` (`run.json` field
 `raw_results`). They are not in the tree.
@@ -81,7 +88,9 @@ Suites: `quick`, `trim32`, `corners27 [--code N]`, `reach`, `psrr`, `startup`, `
 | Container | `tapeoutbench-eda:latest`, image `sha256:ddeb69576f2808676d1c5d474ecf04f6d1d6f8abdcff6b72b39790ded924bab2` | image identity check in `flow/run.sh` |
 | ngspice | ngspice-46 | `ngspice -v` in the container, recorded in every `run.json` |
 | xschem | 3.4.8RC | `xschem --version`, `schematic/xschem_netlist/xschem_version.txt` |
-| KLayout, LibreLane, CACE | not used (no layout in this step) | — |
+| KLayout | 0.30.9 (layout generator, PDK DRC/antenna/LVS decks, `RNetExtractor` for wiring R) | `klayout -v` in the container, recorded in `layout/runs/*/run.json` |
+| kpex | 0.3.12 (2.5D coupling capacitance only) | `kpex --version` in the container, recorded in `layout/runs/pex-rc-*/run.json` |
+| LibreLane, CACE | not used | — |
 
 Models: `cornerMOSlv.lib mos_tt|mos_ss|mos_ff`, `cornerRES.lib res_typ|res_wcs|res_bcs`,
 `cornerCAP.lib cap_typ|cap_wcs|cap_bcs`, `cornerDIO.lib dio_tt`; the mismatch decks use the `*_mismatch` sections
@@ -94,7 +103,7 @@ ff = mos_ff/res_bcs/cap_bcs. Load on `osc_clk`: 50 fF. Transient step 20 ps.
 | --- | --- | --- |
 | Trim, 32 codes, tt/1.2 V/27 °C: monotonic, step ≤ 2 % | **passed** (step 1.16–1.80 %) | `r1a-trim32-tt` |
 | Trim, 32 codes, ss/1.08 V/125 °C and ff/1.32 V/−40 °C: monotonic, step ≤ 2 % | **passed** (1.15–1.78 %, 1.17–1.81 %) | `r1a-reach` |
-| Trim, 32 codes, ss/1.08 V/−40 °C and ff/1.32 V/125 °C | **not run** (dropped for time; the two runs above bound them) | — |
+| Trim, 32 codes, ss/1.08 V/−40 °C and ff/1.32 V/125 °C: monotonic, step ≤ 2 % | **passed** (1.15–1.78 %, 1.16–1.80 %; 33.41 and 53.19 MHz at code 0; run 2026-10-21) | `r1d-trim32-cross` (`run.json` written by hand, see "Layout", failure 14) |
 | Reach ≥ 32 MHz at ss/1.08 V/125 °C | **passed**, 32.61 MHz at code 0 (margin 1.9 %) | `r1a-reach` |
 | Reach ≥ 32 MHz at ss/1.08 V/125 °C under local mismatch, 50 samples | **passed** for 50/50 (min 32.04 MHz); mean − 3σ = 31.76 MHz (open issue 3) | `r1a-mcreach` |
 | 30 MHz at the mid code 16, tt | **failed** by design choice: 32.59 MHz; 30.03 MHz is at code 22 (open issue 1) | `r1a-trim32-tt` |
@@ -110,7 +119,8 @@ ff = mos_ff/res_bcs/cap_bcs. Load on `osc_clk`: 50 fF. Transient step 20 ps.
 | Transient-noise jitter, code 22, tt (white noise) | **passed** against the S5 budget: σ period 14.9 ps, σ 30 cycles 103 ps (≤ 280 ps) | `r1b-jitter`, floor `r1c-jitter-ref` (`r1a-jitter` and the `r1b-jitter` ref case: failed, timestep too small with `trnoise`) |
 | Jitter at ss/ff corners, jitter with 1/f noise | **not run** | — |
 | xschem sheet vs SPICE source | **passed** (0 differences) | `schematic/compare_netlists.py` |
-| Layout, DRC, LVS, PEX, post-layout | **not run** (not in this step) | — |
+| Layout, DRC, antenna, LVS, PEX | **passed** (layout k: DRC 0, antenna 0, LVS match) | `layout/runs/layout-{drc,ant,lvs}-20261021-k`, `layout/runs/pex-rc-20261021-h` |
+| Post-layout simulation (trim, reach, PVT points, duty, IDD, jitter) | **failed** 2 targets: reach at ss code 0 and step ≤ 2 % (details in "Layout") | `post-trim32-tt-20261021`, `post-reach-20261021`, `post-jitter-20261021-b` |
 | Measurement | **not run** | — |
 
 Tuning runs `tune01-quick` … `tune04-probe` and deck checks `smoke01`, `mcseed02` are kept in `sim/runs/` with
@@ -218,6 +228,169 @@ Current (simulated): 231 µA at tt/1.2 V/27 °C (code 16 and code 22), 169–311
 parts (*estimated*): two comparator tails ≈ 2 × 60 µA, bias reference ≈ 30 µA, bank charging
 C·V·2f ≈ 1.78 pF × 0.64 V × 60 MHz ≈ 68 µA, divider 6 µA.
 
+## Layout (T1, 2026-10-21)
+
+Layout of record: **layout k** (`layout/r1_osc.gds`, sha256 `0b98903c…c0059`, generator sha256 `e0394750…6b73e`).
+PEX of record: `pex-rc-20261021-h` (PEX netlist sha256 `86ce652d…36b8a`). Netlist of record:
+`schematic/r1_osc.spice` sha256 `d9d84501…5cd949` (unchanged in this step).
+
+### Commands
+
+From the repository root (POSIX sh):
+
+```
+G1_CPUSET=100-102; export G1_CPUSET; G1_RESULTS_ROOT=<G1_RESULTS_ROOT>; export G1_RESULTS_ROOT
+sh designs/r1-joint/blocks/r1_osc/layout/run_checks.sh 20261021-k
+sh designs/r1-joint/blocks/r1_osc/layout/run_pex.sh 20261021-k 20261021-h
+G1_CPUS=1; export G1_CPUS; G1_WORKDIR=designs/r1-joint/blocks/r1_osc; export G1_WORKDIR
+P=<G1_RESULTS_ROOT>/r1_osc/pex-rc-20261021-h
+flow/run.sh python3 sim/run_osc30.py trim32 <run-id> --jobs 1 --netlist $P/r1_osc_pex.spice
+flow/run.sh python3 sim/run_osc30.py reach <run-id> --jobs 1 --netlist $P/r1_osc_pex.spice
+flow/run.sh python3 sim/run_osc30.py jitter <run-id> --jobs 1 --cases "noise ref" --code 22 --tstop 6u \
+  --method gear --en 12.2e-9 --netlist $P/r1_osc_pex.spice
+```
+
+DRC: PDK `run_drc.py --run_mode=deep --no_density` (main + `sg13g2_maximal` tables) and `--antenna_only`.
+LVS: PDK `run_lvs.py --run_mode=deep`. Outputs go to `<G1_RESULTS_ROOT>/r1_osc/<run-id>/`.
+
+### Floorplan
+
+Macro 154.4 × 118.4 µm = **0.01828 mm²** (estimate before layout: ≈ 0.018 mm²; the tighter ≈ 0.012 mm² of C10
+is not realised). `vss` bar (Metal3) at the bottom edge, `vdd` bar (Metal3) at the top edge, p+ guard ring
+(Activ + pSD + Metal1) 1.0 µm inside the edge.
+
+- **Bottom (y 2–20 µm), east half:** five device row groups from west to east: trim switches (10 NMOS),
+  comparator A (+ bias diode), latch and enable logic (+ reset switches RA, RB), comparator B, output buffer.
+  Each comparator is in one group with its PMOS partners. Inter-group nets: `ca`, `cb`, `qn_b`.
+- **Metal4 channel (y 21–43 µm):** 28 horizontal tracks at 0.8 µm pitch. `va`, `vb`, `vth` and `vbn` are
+  separated by `vss` shield tracks (`vbn | vss | va | vss | vb | vss | vth`). The shields join `vss` at three points.
+- **West (x 3–53 µm):** `rppd` block: bias resistor, the 16-segment threshold divider, RA and RB, and `rppd`
+  dummies at both ends. The threshold hold cap (26 × 26 µm `cmim`) is above it.
+- **North-east:** trim banks A and B. Each bank is a 9 × 6 grid of 4.03 µm unit caps at 5.9 µm pitch plus the
+  28.55 µm fixed cap. Bits 0…4 use 1/2/4/8/16 units. The grid edge (column 0, rows 0 and 5) has 22 dummy units per
+  bank in the same orientation; their plates connect to `vss`.
+- **Timing R and C vs output buffer:** the buffer is the eastmost group. `osc_clk` runs on Metal3 below the channel
+  to the east edge. Extracted coupling from `osc_clk` to `va`, `vb`, `vth`: 0 (no capacitor in the PEX netlist);
+  its largest coupling is 0.78 fF to `qn_b`.
+- **Pins (Metal3, at the edge):** `en`, `trim0`…`trim4` on the west edge; `osc_clk` on the east edge; `vdd` and
+  `vss` bars. An antenna diode (`dpantenna`) is on the `vth` gate input of comparator A.
+- **Metals:** all routing is on Metal1–Metal4. Metal5 and TopMetal1 are used only for the MIM plates and the
+  plate-to-plate joins inside a bank (this is the interpretation of "Metal1–Metal4 only" that was recorded).
+
+Shield effect (layout j → layout k, PEX `pex-rc-20261021-g` → `-h`): `vb`–`vth` coupling 8.2 → 0.57 fF;
+`va`–`vbn` 5.5 → 0.91 fF.
+
+### Extraction method
+
+The method of `r1_bgr`. kpex 0.3.12 (2.5D) gives the coupling capacitance. kpex cannot process the MIM layers, so
+`pex_input.py` removes them from its input. KLayout `RNetExtractor` gives the wiring resistance (Metal1
+0.110 Ω/sq, Metal2–Metal4 0.088 Ω/sq, 9 Ω per via cut). `pex_build.py` re-inserts the 13 `cap_cmim` devices at
+their attach points. It writes three views: full RC (`r1_osc_pex.spice`), wiring C with R shorted
+(`r1_osc_pex_c.spice`), and devices + MIM only (`r1_osc_pex_dev.spice`). PEX `-h` totals: 223 R, 498 C,
+486 fF. Net totals: `va` 28.4, `vb` 39.0, `vth` 34.8, bit nodes 14.2–22.7, `ca` 14.8, `q` 22.6 fF.
+
+### Status (layout and post-layout)
+
+| Check | Criterion | Status | Evidence |
+| --- | --- | --- | --- |
+| DRC, main + maximal, deep, density off | 0 markers | **passed**: 0 | `layout/runs/layout-drc-20261021-k` |
+| Antenna | 0 markers | **passed**: 0 | `layout/runs/layout-ant-20261021-k` |
+| LVS vs netlist of record (dummies excluded, see below) | match | **passed**: 34 NMOS, 19 PMOS, 5 `rppd`, 13 `cap_cmim` (65 units), 1 `dpantenna` after combination; 43 nets | `layout/runs/layout-lvs-20261021-k` |
+| Density | — | **not applicable** at block level (waived; chip-level fill) | — |
+| Pins Metal3 at the edge | 9 pins | **passed** | `layout/r1_osc_layout.py` |
+| Area | ≈ 0.018 mm² | **passed**: 0.01828 mm² | `layout/r1_osc_layout_meta.json` |
+| PEX (RC) | extracted | **passed** | `layout/runs/pex-rc-20261021-h` |
+| Post-layout trim, 32 codes, tt | monotonic, step ≤ 2 % | **failed**: monotonic; step 0.73–2.52 % (> 2 % at codes 3→4, 7→8, 15→16) | `sim/runs/post-trim32-tt-20261021` |
+| Post-layout trim, 32 codes, ss/1.08 V/125 °C and ff/1.32 V/−40 °C | monotonic, step ≤ 2 % | **failed**: monotonic; step max 2.41 % (ss), 2.63 % (ff) | `sim/runs/post-reach-20261021` |
+| Post-layout reach at ss/1.08 V/125 °C | ≥ 32 MHz at code 0 | **failed**: 28.36 MHz | same |
+| Post-layout code 22, tt | 28–32 MHz (D13 window) | **failed**: 27.54 MHz | `sim/runs/post-trim32-tt-20261021` |
+| Post-layout code 22, ff/1.32 V/−40 °C | ≤ 42 MHz (STA) | **passed**: 35.86 MHz | `sim/runs/post-reach-20261021` |
+| Post-layout duty, 3 × 32 codes | 50 % | **passed**: 49.03–49.52 % | trim32 + reach runs |
+| Post-layout loop delay | ≤ 3–4 ns | **passed**, small margin: max 3.91 ns (ss/1.08 V/125 °C, code 31) | `sim/runs/post-reach-20261021` |
+| Post-layout IDD | record | 228.0 µA (tt, code 22); 171–307 µA over the 3 corners | trim32 + reach runs |
+| Post-layout jitter, tt, code 22 | ≤ 280 ps over 30 cycles | **passed**: σ period 12.8 ps, σ 30 cycles 39.1 ps (6 µs, 154 periods; floor 0.47 ps with gear, 0.38 ps trapezoidal over 15 µs) | `sim/runs/post-jitter-20261021-b`, `sim/runs/post-jitter-ref-20261021` |
+| Post-layout PVT points other than tt, ss/1.08/125, ff/1.32/−40; mismatch; start-up; supply ripple | — | **not run** | — |
+| LEF / abstract | — | **not run** | — |
+
+### Pre- versus post-layout
+
+Frequencies in MHz. "Devices" = layout devices and MIM, no wiring. "Wiring C" = + wiring capacitance, R shorted.
+"Full RC" = PEX of record. Evidence: `r1a-trim32-tt`, `r1a-reach`, `post-attr-r1_osc_pex_dev-20261021`,
+`post-attr-r1_osc_pex_c-20261021`, `post-trim32-tt-20261021`, `post-reach-20261021`.
+
+| Point | Schematic | Devices | Wiring C | Full RC | RC vs schematic |
+| --- | --- | --- | --- | --- | --- |
+| tt/1.2 V/27 °C, code 0 | 42.24 | 42.07 | 37.15 | 37.11 | −12.1 % |
+| tt, code 15 | 33.07 | — | — | 30.27 | −8.5 % |
+| tt, code 22 | 30.03 | 29.90 | 27.62 | 27.54 | −8.3 % |
+| tt, code 31 | 26.86 | 26.74 | 25.17 | 25.09 | −6.6 % |
+| ss/1.08 V/125 °C, code 0 | 32.61 | 32.51 | 28.45 | 28.36 | −13.0 % |
+| ss, code 22 | 23.27 | 23.19 | 21.24 | 21.15 | −9.1 % |
+| ff/1.32 V/−40 °C, code 15 | 42.91 | — | — | 39.45 | −8.1 % |
+| ff, code 22 | 38.94 | 38.73 | 35.94 | 35.86 | −7.9 % |
+| Loop delay, tt code 22 (ns) | 1.33 | 1.33 | 2.22 | 2.34 | +1.0 ns |
+| IDD, tt code 22 (µA) | 230.6 | 229.5 | 234.8 | 228.0 | −1.1 % |
+| Duty, tt code 22 (%) | 49.85 | 49.85 | 49.47 | 49.39 | −0.46 pt |
+| Trim step, tt (%) | 1.16–1.80 | — | — | 0.73–2.52 | — |
+| σ period / σ 30 cycles, tt code 22 (ps) | 14.9 / 103 | — | — | 12.8 / 39.1 | fewer periods (see L6) |
+
+Device parasitics (junctions, MIM model) change the frequency by less than 0.6 %. Wiring capacitance causes the
+loss. Wiring resistance adds less than 0.5 %. The loss is larger at code 0 than at code 31, so part of it is
+fixed (loop delay +1.0 ns at tt) and part is proportional to C (bank wiring ≈ 50 fF per bank, *estimated* from
+the attribution views).
+
+**Reset code.** With layout k, code 22 gives 27.54 MHz at tt. This is outside the D13 window 28–32 MHz. The code
+nearest 30.0 MHz is **15** (30.27 MHz at tt; 39.45 MHz at ff/1.32 V/−40 °C, below the 42 MHz STA limit). If
+layout k is used without a schematic change, `OSC_TRIM` must reset to 15, not 22. Owner of `r1_ctrl`: decision
+needed (this step did not change `r1_ctrl`). Recommended option: the RA/RB change in L1, which keeps 22.
+
+### Open issues (layout)
+
+- **L1. Reach at ss/1.08 V/125 °C fails after layout** (28.36 MHz at code 0; target 32 MHz). The fix is a
+  schematic change. What-if runs (PEX netlist with the RA/RB `rppd` length edited; not a design):
+  RA/RB × 0.85 (48.3 → 41.1 µm) gives ss code 0 **32.67 MHz**, tt code 22 **31.94 MHz**, ff code 22
+  **41.63 MHz** (0.9 % below 42 MHz). RA/RB × 0.75 gives 36.36 / 35.75 / 46.64 MHz (ff fails 42 MHz). Evidence:
+  `sim/runs/post-whatif-ra0.85-20261021`, `sim/runs/post-whatif-ra0.75-20261021`. Recommended: RA/RB ≈ 41 µm in
+  a schematic revision, then re-generate the layout (only the RA/RB lengths change) and re-run PEX and the
+  post-layout suites. The ff margin to 42 MHz is then small.
+- **L2. Trim step > 2 % at the carry codes** (3→4, 7→8, 15→16). Cause (*estimated*, not isolated by a run): each
+  bit node has 14–23 fF of wiring to its switch. When the switch is off, this capacitance is in series with the
+  bit MIM, so an off bit still adds capacitance. This makes the bits non-binary. Fix options: move the trim
+  switches next to the banks, or add one unit to bits 2–4. Not done in this step.
+- **L3. MIM bottom-plate parasitics.** kpex cannot process MIM. Only the `cap_cmim` model capacitance is in the
+  PEX netlist. The plate-to-substrate capacitance of the Metal5 plates is **not modelled**.
+- **L4. Metal5 and TopMetal1** carry the MIM plates and the plate joins inside each bank. All signal routing is on
+  Metal1–Metal4. If the chip integration needs Metal5 over this block, the bank area must be blocked.
+- **L5. LVS and dummies.** The PDK LVS deck deletes two-terminal devices with both terminals on one net. The
+  44 dummy MIM units (both plates on `vss`) are not in the extracted netlist, so they are not in the CDL.
+  Internal labels (Metal2: `ca cb q qb rsta rstb en_n qn_b`; Metal4: `va vb vth vbn`, `ba0`…`bb4` in the PEX
+  input only) name nets for PEX. They are not pins.
+- **L6. Jitter statistics.** The post-layout run is 6 µs (154 periods), not 15 µs, because a 15 µs run at the
+  50 ps step did not fit the time budget. The σ 30-cycle number uses few independent windows and is less
+  reliable than the schematic number. Trapezoidal integration aborts on the PEX netlist with `trnoise`
+  (`post-jitter-20261021`); the run of record uses `.option method=gear` (runner option `--method`).
+- **L7. Not run:** LEF/abstract, density (block level), post-layout PVT at other points, mismatch, start-up and
+  supply ripple on the PEX netlist.
+
+### Failures and mistakes (layout step)
+
+| # | What happened | Class | Evidence |
+| --- | --- | --- | --- |
+| 1 | DRC: TopMetal1 strap of the fixed cap stopped 0.2 µm past the plate, but the plate TopMetal1 starts 0.415 µm in (TM1.b × 8); a Via3 and a Metal3 pad too small (V3.b, M3.d); a shield track with one connection (M4.d) | estimation | `layout/runs/layout-drc-20261021-a` |
+| 2 | Antenna: `trim0`/`trim1` gate ratio 209–216 > 200 on 0.24 µm tracks; fixed with 0.20 µm tracks | estimation | `layout/runs/layout-ant-20261021-a` |
+| 3 | LVS: fixed-cap top plate not connected; dummy MIM units (both plates on `vss`) are deleted by the deck but were in the CDL | verification-gap | `layout/runs/layout-lvs-20261021-a` |
+| 4 | Generator crash (CDL header string format) | functional-bug | `layout/runs/layout-gen-20261021-b` |
+| 5 | Run c clean, but the `vbn` label was off its track, so the net was unnamed in PEX | verification-gap | `layout/runs/layout-gen-20261021-c` |
+| 6 | GDS hash changed on each re-generation (GDS timestamps); fixed with a deterministic write | tooling | `layout/runs/layout-gen-20261021-e` |
+| 7 | `run_pex.sh` gave kpex a container prefix + absolute path for the schematic | tooling | `layout/runs/pex-in-20261021-b` |
+| 8 | First floorplan (one 89 µm device row) put PMOS ≈ 50 µm from their NMOS partners: ≈ 25 fF per node, loop delay 3.9 ns, 25.34 MHz at tt code 22. Four more floorplans (three, four, five row groups) followed | planning | `sim/runs/post-c22-tt-20261021-a`, `post-probe-20261021-c`, `-d-*`, `-g-*` |
+| 9 | DRC: `vss` vias in the buffer group 0.31 µm apart near a ring via (13 markers) | regression | `layout/runs/layout-drc-20261021-h` |
+| 10 | LVS: the buffer `vss` rail had no via after the group split | regression | `layout/runs/layout-lvs-20261021-i` |
+| 11 | Post-layout jitter aborted (timestep too small, trapezoidal + `trnoise`) | numerical | `sim/runs/post-jitter-20261021` |
+| 12 | The runner wrote the absolute results path into the `command` field of `run.json`; fixed in the runner and in the existing records | process-hygiene | `sim/run_osc30.py` |
+| 13 | Post-layout loss (8–13 %) was predicted from G1 (9–13 %, open issue 3) but no schematic margin was added; reach and the D13 window now fail | planning | this section |
+| 14 | The fix for #12 had a bug (`.replace` on a tuple). `r1d-trim32-cross` finished all 64 jobs (rc 0) but crashed before `run.json`; the record was written by hand | regression | `sim/runs/r1d-trim32-cross/run.json` |
+
 ## Open issues
 
 1. **30 MHz at the mid code conflicts with the reach and step targets.** With a binary capacitor trim the
@@ -233,6 +406,7 @@ C·V·2f ≈ 1.78 pF × 0.64 V × 60 MHz ≈ 68 µA, divider 6 µA.
    2.4 σ of local mismatch (mean − 3σ = 31.76 MHz). G1 lost
    9–13 % of frequency after layout. In R1 the bank parasitic adds to C_fix, so the fixed capacitor must be
    reduced by the extracted bank capacitance after PEX. Re-run `reach` and `trim32` on the extracted netlist.
+   Update 2026-10-21: done. After layout, reach fails (28.36 MHz). See "Layout", L1.
 4. **Duty under mismatch** is 48.6–51.3 % (50 samples). No duty limit is specified. If the digital block uses
    both edges, specify the limit.
 5. **1 MHz supply ripple** gives 3.2 × the DC frequency sensitivity (373 vs 117 ppm/mV). The cause is not analysed.

@@ -1,0 +1,29 @@
+{
+ "run_id": "post-jitter-20261021-b",
+ "suite": "jitter",
+ "command": "G1_CPUSET=100-102 G1_CPUS=3 G1_WORKDIR=designs/r1-joint/blocks/r1_osc flow/run.sh python3 sim/run_osc30.py jitter post-jitter-20261021-b --jobs 1 --cases 'noise ref' --code 22 --tstop 6u --method gear --en 12.2e-9 --netlist <G1_RESULTS_ROOT>/r1_osc/pex-rc-20261021-h/r1_osc_pex.spice --question 'post-layout transient-noise jitter, code 22, tt/1.2/27, gear integration (trapezoidal aborted in post-jitter-20261021), 6 us, noise and numerical floor'",
+ "start_utc": "2026-10-21T02:29:08.662012Z",
+ "end_utc": "2026-10-21T03:09:34.456563Z",
+ "wall_s": 2425.8,
+ "tools": {
+  "ngspice": "ngspice-46",
+  "container_image": "tapeoutbench-eda:latest sha256:ddeb69576f2808676d1c5d474ecf04f6d1d6f8abdcff6b72b39790ded924bab2"
+ },
+ "pdk_commit": "84374023ee8b4b126bebbba67fcbada0a9c0ff0b",
+ "inputs": {
+  "netlist": "<G1_RESULTS_ROOT>/r1_osc/pex-rc-20261021-h/r1_osc_pex.spice",
+  "netlist_sha256": "86ce652db7785ff54d99767ccd22cd67493c3268635898660324948c6ce36b8a",
+  "netlist_of_record_sha256": "d9d84501f5a18d5621ef9b6243d41172209fd738fe359d6067557669525cd949",
+  "decks": {
+   "tb_osc30_jitter.cir": "67c42418f8fa2a2c990f51f9491faa73f5abb8d66cb6aaec64801944d52dc331"
+  },
+  "runner_sha256": "6561b9d097be2acdd1c10b76d0eb8a1811d0fe0a4bb1977d894541b1c142d715"
+ },
+ "raw_results": "G1_RESULTS_ROOT/r1_osc/post-jitter-20261021-b/ (expanded decks, logs, raw)",
+ "n_points": 2,
+ "n_rc_nonzero": 0,
+ "question": "post-layout transient-noise jitter, code 22, tt/1.2/27, gear integration (trapezoidal aborted in post-jitter-20261021), 6 us, noise and numerical floor",
+ "result": "noise: sigma period 12.8 ps, sigma 30 cycles 39.1 ps (154 periods); floor 0.47 ps",
+ "disposition": "of record (method=gear, 6 us)",
+ "probe": null
+}

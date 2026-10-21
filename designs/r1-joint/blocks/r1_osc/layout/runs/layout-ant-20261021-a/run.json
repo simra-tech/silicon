@@ -1,0 +1,35 @@
+{
+ "tag": "20261021-a",
+ "written": "2026-10-21T03:45:07",
+ "pdk_commit": "84374023ee8b4b126bebbba67fcbada0a9c0ff0b",
+ "container": "tapeoutbench-eda:latest sha256:ddeb69576f2808676d1c5d474ecf04f6d1d6f8abdcff6b72b39790ded924bab2",
+ "cpuset": "100-102",
+ "inputs": {
+  "gds_sha256": "66576ba13662187335715514633799ecdbf5dfc97a2433ea0569ffa9f20a5591",
+  "lvs_cdl_sha256": "a0065bd3927658f3f629bc0ee39cb972bfcf6725585f93d38bcfc03bc8ce13d4",
+  "generator_sha256": "21d43ceab28064e1854e1a9b081122d9963c97926c40ed9f3bea1377af59cae8",
+  "netlist_of_record": "designs/r1-joint/blocks/r1_osc/schematic/r1_osc.spice",
+  "netlist_of_record_sha256": "d9d84501f5a18d5621ef9b6243d41172209fd738fe359d6067557669525cd949"
+ },
+ "run_id": "layout-ant-20261021-a",
+ "question": "PDK antenna deck on r1_osc.gds: 0 markers?",
+ "command": "flow/run.sh python3 $PDK_ROOT/$PDK/libs.tech/klayout/tech/drc/run_drc.py --path=/work/designs/r1-joint/blocks/r1_osc/layout/r1_osc.gds --topcell=r1_osc --run_mode=deep --antenna_only --run_dir=<run dir>",
+ "tools": {
+  "klayout": "0.30.9"
+ },
+ "result": {
+  "status": "failed",
+  "total_markers": 16,
+  "markers_per_rule": {
+   "Ant.b_Metal4": 4,
+   "Ant.b_Metal5": 4,
+   "Ant.b_TopMetal1": 4,
+   "Ant.b_TopMetal2": 4
+  },
+  "lyrdb": [
+   "<G1_RESULTS_ROOT>/r1_osc/layout-ant-20261021-a/r1_osc_r1_osc_antenna.lyrdb"
+  ],
+  "what": "PDK antenna deck (--antenna_only)"
+ },
+ "disposition": "failed"
+}

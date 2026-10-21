@@ -32,6 +32,11 @@ from concurrent.futures import ThreadPoolExecutor
 HERE = os.path.dirname(os.path.abspath(__file__))
 BLOCK = os.path.dirname(HERE)
 NETLIST = os.path.join(BLOCK, "schematic", "r1_osc.spice")
+# --netlist <path>: run the decks on another netlist with the same subckt ports (post-layout netlists from
+# layout/pex_build.py, which live in the results root); its sha256 and path go to run.json, it is not copied.
+NETLIST_OF_RECORD = NETLIST
+if "--netlist" in sys.argv:
+    NETLIST = os.path.abspath(sys.argv[sys.argv.index("--netlist") + 1])
 MOD = {"tt": ("mos_tt", "res_typ", "cap_typ"), "ss": ("mos_ss", "res_wcs", "cap_wcs"),
        "ff": ("mos_ff", "res_bcs", "cap_bcs")}
 MID = 16
@@ -125,7 +130,7 @@ def run_point(p, outdir):
         sub["B%d" % i] = str((p["code"] >> i) & 1)
     if p["deck"] == "tb_osc30_psrr.cir":
         sub["VSRC"], sub["TSTOP"] = PSRR_CASES[p["case"]]
-    with open(NETLIST) as f:
+    with open(NETLIST_OF_RECORD) as f:
         hdr = f.read(2000)
     if p["deck"] == "tb_osc30_jitter.cir":
         sub.update(jitter_netlist(p, outdir, t))
@@ -173,11 +178,14 @@ def jitter_netlist(p, outdir, t):
     en = float(ARG("--en", "20e-9")) if p["case"] == "noise" else 0.0
     with open(NETLIST) as f:
         net = f.read()
-    lr = float(re.search(r"L_R=([0-9.]+)u", net).group(1))
+    with open(NETLIST_OF_RECORD) as f:
+        lr = float(re.search(r"L_R=([0-9.]+)u", f.read()).group(1))
     r = 70.0 + 260.0 * lr                  # rppd w = 1 um, typ (estimate, Ohm)
     i_n = (4 * 1.380649e-23 * 300.15 / r) ** 0.5 if p["case"] == "noise" else 0.0
     nt = 50e-12    # white to 10 GHz; 200 ps aborted with "timestep too small" at 25 ns (run r1a-jitter)
     bw = (1.0 / (2 * nt)) ** 0.5
+    if "pex_build.py" in net[:300]:   # post-layout netlist: same sources on the extracted nodes
+        return jitter_netlist_pex(net, p, outdir, t, en, i_n, nt, bw)
     if p["case"] == "noise":
         net = net.replace("XM1 d1 inp tail", "VNI inpn inp dc 0 trnoise(%g %g 0 0)\nXM1 d1 inpn tail" % (en * bw, nt))
         net = net.replace("XRA vdd va", "INRA vdd va dc 0 trnoise(%g %g 0 0)\nINRB vdd vb dc 0 trnoise(%g %g 0 0)\nXRA vdd va"
@@ -189,6 +197,39 @@ def jitter_netlist(p, outdir, t):
     fn = os.path.join(outdir, t + "_netlist.spice")
     with open(fn, "w") as f:
         f.write(net)
+    return {"NETLIST": fn, "EN": "%g" % en, "IN": "%g" % i_n, "NT": "%g" % nt, "TMAX": "%g" % nt, "TSTOP": ARG("--tstop", "35u")}
+
+
+def jitter_netlist_pex(net, p, outdir, t, en, i_n, nt, bw):
+    """Post-layout jitter netlist: comparator + input noise in series with the gate of each comparator input
+    device (the only NMOS w=4u l=0.3u whose gate is on the va / vb main node), 4kT/R current from vdd to va / vb."""
+    out = []
+    if ARG("--method"):
+        # integration method for the stiff RC network (trapezoidal stalls on the PEX netlist with trnoise)
+        out.append(".option method=%s" % ARG("--method"))
+    hit = {"va": 0, "vb": 0}
+    for ln in net.splitlines():
+        f = ln.split()
+        if f and f[0].startswith("XM") and len(f) > 5 and f[5] == "sg13_lv_nmos" and f[2] in hit and "w=4u" in ln and "l=0.3u" in ln:
+            node = f[2]
+            hit[node] += 1
+            f[2] = node + "_nin"
+            if p["case"] == "noise":
+                out.append("VNI_%s %s_nin %s dc 0 trnoise(%g %g 0 0)" % (node, node, node, en * bw, nt))
+            else:
+                out.append("VNI_%s %s_nin %s dc 0" % (node, node, node))
+            ln = " ".join(f)
+        if ln.startswith(".ends"):
+            for node in ("va", "vb"):
+                if p["case"] == "noise":
+                    out.append("INR_%s vdd %s dc 0 trnoise(%g %g 0 0)" % (node, node, i_n * bw, nt))
+                else:
+                    out.append("INR_%s vdd %s dc 0" % (node, node))
+        out.append(ln)
+    assert hit == {"va": 1, "vb": 1}, hit
+    fn = os.path.join(outdir, t + "_netlist.spice")
+    with open(fn, "w") as f:
+        f.write("\n".join(out) + "\n")
     return {"NETLIST": fn, "EN": "%g" % en, "IN": "%g" % i_n, "NT": "%g" % nt, "TMAX": "%g" % nt, "TSTOP": ARG("--tstop", "35u")}
 
 
@@ -252,7 +293,8 @@ def main():
     os.makedirs(rundir, exist_ok=False)
     P = points(suite)
     import shutil
-    shutil.copy(NETLIST, os.path.join(rundir, "r1_osc.spice"))  # netlist snapshot as simulated
+    if NETLIST == NETLIST_OF_RECORD:
+        shutil.copy(NETLIST, os.path.join(rundir, "r1_osc.spice"))  # netlist snapshot as simulated
     start = datetime.datetime.now(datetime.timezone.utc).replace(tzinfo=None)
     with ThreadPoolExecutor(max_workers=jobs) as ex:
         res = list(ex.map(lambda p: run_point(p, outdir), P))
@@ -276,12 +318,14 @@ def main():
     run = {
         "run_id": run_id, "suite": suite,
         "command": "G1_CPUSET=%s G1_CPUS=%s G1_WORKDIR=designs/r1-joint/blocks/r1_osc flow/run.sh python3 sim/run_osc30.py %s"
-                   % (ARG("--cpuset", "100-102"), ARG("--cpus", "3"), " ".join(repr(a) if " " in a else a for a in sys.argv[1:])),
+                   % (ARG("--cpuset", "100-102"), ARG("--cpus", "3"), " ".join((repr(a) if " " in a else a).replace(root, "<G1_RESULTS_ROOT>") for a in sys.argv[1:])),
         "start_utc": start.isoformat() + "Z", "end_utc": end.isoformat() + "Z",
         "wall_s": round((end - start).total_seconds(), 1),
         "tools": {"ngspice": ver, "container_image": "tapeoutbench-eda:latest sha256:ddeb69576f2808676d1c5d474ecf04f6d1d6f8abdcff6b72b39790ded924bab2"},
         "pdk_commit": pdk,
-        "inputs": {"netlist": "schematic/r1_osc.spice", "netlist_sha256": sha(NETLIST),
+        "inputs": {"netlist": ("schematic/r1_osc.spice" if NETLIST == NETLIST_OF_RECORD else
+                               NETLIST.replace(root, "<G1_RESULTS_ROOT>")), "netlist_sha256": sha(NETLIST),
+                   "netlist_of_record_sha256": sha(NETLIST_OF_RECORD),
                    "decks": {d: sha(os.path.join(HERE, d)) for d in decks},
                    "runner_sha256": runner_sha},
         "raw_results": "G1_RESULTS_ROOT/r1_osc/%s/ (expanded decks, logs, raw)" % run_id,
@@ -293,6 +337,10 @@ def main():
         json.dump(run, f, indent=1)
     for r in res:
         print(json.dumps(r))
+    bad = [r["tag"] for r in res if r["rc"] != 0 or (r["deck"] == "tb_osc30.cir" and "f_MHz" not in r)]
+    if bad:   # block rule: runners exit non-zero on a failed job
+        print("FAILED jobs:", bad)
+        sys.exit(1)
 
 
 if __name__ == "__main__":
