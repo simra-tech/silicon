@@ -34,6 +34,11 @@ for d in ('tb_isense_dc.cir',):
     t = open(os.path.join(BLK, 'sim', d)).read()
     assert t.count(INC) == 1
     open(os.path.join(OUTD, d), 'w').write(t.replace(INC, '.include ' + POST))
+    # layout b: the same deck with a fixed bias current @@IBIAS@@ (r1_bias output range 3.5-7.7 uA, INTERFACES.md)
+    IBL = 'Ibias vdda ibias dc {5u*(@@TEMP@@+273.15)/300.15}'
+    assert t.count(IBL) == 1
+    open(os.path.join(OUTD, d.replace('.cir', '_ib.cir')), 'w').write(
+        t.replace(INC, '.include ' + POST).replace(IBL, '* r1_bias output (sweep over its PVT range 3.5-7.7 uA, fixed per run)\nIbias vdda ibias dc @@IBIAS@@'))
 
 # ---- stb decks
 PINS = set('isp isn outp outn vref vcm ibias az_lv azh_lv vdda vdd vss'.split())
@@ -114,6 +119,16 @@ def fix(t):
 open(os.path.join(OUTD, 'tb_isense_stbpre.cir'), 'w').write(fix(G.PRE))
 open(os.path.join(OUTD, 'tb_isense_stb.cir'), 'w').write(fix(G.stb_deck(False, [1, 2, 3, 4, 5], 'stb', 'r1_isense POST-LAYOUT loop gain, NORMAL state (az = azh = 0), shunt levels 0 / +100 mV / -20 mV')))
 open(os.path.join(OUTD, 'tb_isense_stbaz.cir'), 'w').write(fix(G.stb_deck(True, [1, 2, 3, 6, 7], 'stbaz', 'r1_isense POST-LAYOUT loop gain, AZ CLOSED state (az = azh = 1), zero shunt current')))
+open(os.path.join(OUTD, 'tb_isense_stbazi.cir'), 'w').write(fix(G.stb_deck(True, [1, 2, 3, 6, 7], 'stbazi', 'r1_isense POST-LAYOUT loop gain, INTERMEDIATE state (az = 1, azh = 0: RF arms at VCM, hold open), zero shunt current', azh=False)))
+# layout b: cross-check deck for the input-gate break (loop 4): besides the Tian return ratio it writes the single
+# voltage-injection ratio Tv = -v(network side)/v(gate side) of the same probe. At the gate the load side draws no DC
+# current, so Tv equals the loop gain at low frequency and is independent of the Tian current-injection run.
+_d = fix(G.stb_deck(False, [1, 4], 'stbdiag', 'r1_isense POST-LAYOUT loop gain cross-check at the input gates (Tian and voltage-only ratio), normal state'))
+_a = '    let tdb = db(tl)'
+_b = 'wrdata @@OUT@@_t$&fid tdb tph'
+assert _d.count(_a) == 1 and _d.count(_b) == 1
+_d = _d.replace(_a, _a + '\n    let tv = -v1/(v1-1)\n    let tvdb = db(tv)\n    let tvph = 180/pi*cph(tv)').replace(_b, _b + ' tvdb tvph')
+open(os.path.join(OUTD, 'tb_isense_stbdiag.cir'), 'w').write(_d)
 open(os.path.join(OUTD, 'tb_isense_stbstep.cir'), 'w').write(G.STEP)
 open(os.path.join(OUTD, 'tb_isense_stbcm.cir'), 'w').write(G.CMSTEP)
 print('wrote', POST, 'and decks in', OUTD)

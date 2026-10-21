@@ -233,7 +233,8 @@ class Router:
         `halo` grid steps on the same layer, and directly above/below, are reserved for the net (cost None: no other
         net runs next to, over or under them) or get the extra path cost `cost` (other nets avoid them where they can).
         route_all() keeps these routes unless a rip-up needs them (r1_isense addition)."""
-        self.guarded = set()
+        if not hasattr(self, 'guarded'):
+            self.guarded = set()
         for name in names:
             k = self.nid(name)
             if not self.route_net(k):
@@ -250,6 +251,95 @@ class Router:
                             else:
                                 self.pen[ll, ii, jj] = max(self.pen[ll, ii, jj], cost)
         return self.guarded
+
+    def route_shielded(self, names, shield_net, halo=1, min_comp=3, log=print):
+        """r1_isense layout b: route the listed (hold) nets first and wrap them in a grounded shield. Every free node
+        within `halo` grid steps of a path node on the same layer and on the layers directly above and below becomes a
+        node of `shield_net` (drawn by the layout as solid metal, stacked with vias); nodes next to or above another
+        net's pin are left free so that the pin stays reachable. Every 3D-connected shield component becomes one pin
+        of `shield_net` (the router then ties it to the rest of that net); components smaller than `min_comp` nodes are
+        released. Returns the set of routed nets."""
+        if not hasattr(self, 'guarded'):
+            self.guarded = set()
+        ks = shield_net if isinstance(shield_net, int) else self.nid(shield_net)
+        done = []
+        for name in names:
+            k = self.nid(name)
+            if not self.route_net(k):
+                self.unroute(k); log('shielded route failed: %s' % name); continue
+            self.guarded.add(k); done.append(k)
+            for path in self.paths[k]:          # keep the route: no rip-up may cross it later
+                for n in path:
+                    self.res[n] = k
+        pinnear = set()
+        for kk, plist in self.pins.items():
+            if kk == ks:
+                continue
+            for pin in plist:
+                for (l, i, j) in pin:
+                    for di in (-1, 0, 1):
+                        for dj in (-1, 0, 1):
+                            pinnear.add((l, i + di, j + dj))
+                    if l + 1 < NL:
+                        pinnear.add((l + 1, i, j))
+        cand = set()
+        for k in done:
+            for path in self.paths[k]:
+                for (l, i, j) in path:
+                    for ll in (l - 1, l, l + 1):
+                        if not 0 <= ll < NL:
+                            continue
+                        for di in range(-halo, halo + 1):
+                            for dj in range(-halo, halo + 1):
+                                n = (ll, i + di, j + dj)
+                                if not self.inside(n[1], n[2]) or n in pinnear:
+                                    continue
+                                if self.res[n] == FREE and self.occ[n] == FREE:
+                                    cand.add(n)
+        # 3D components (same-layer orthogonal neighbours, vertical neighbours)
+        comps, seen = [], set()
+        for n in cand:
+            if n in seen:
+                continue
+            st, comp = [n], []
+            seen.add(n)
+            while st:
+                u = st.pop(); comp.append(u)
+                l, i, j = u
+                for v in ((l, i + 1, j), (l, i - 1, j), (l, i, j + 1), (l, i, j - 1), (l + 1, i, j), (l - 1, i, j)):
+                    if v in cand and v not in seen:
+                        seen.add(v); st.append(v)
+            comps.append(comp)
+        self.shield = getattr(self, 'shield', {})
+        sh = self.shield.setdefault(ks, set())
+        nkeep = 0
+        for comp in comps:
+            if len(comp) < min_comp:
+                continue
+            for n in comp:
+                self.res[n] = ks
+            sh.update(comp)
+            self.pins.setdefault(ks, []).append(list(comp))
+            nkeep += 1
+        log('shield: %d nets, %d nodes, %d components kept of %d' % (len(done), len(sh), nkeep, len(comps)))
+        return set(done)
+
+    def shield_shapes(self):
+        """solid shield geometry: (layer name, x1, y1, x2, y2); pads 0.40, orthogonal links 0.40 wide, full 2 x 2
+        node squares filled, vias (Via2 / Via3, 0.19) where two shield nodes are stacked."""
+        hp, hv = 0.20, 0.095
+        for ks, nodes in getattr(self, 'shield', {}).items():
+            for (l, i, j) in nodes:
+                x, y = self.xy(i, j)
+                yield (LNAME[l], x - hp, y - hp, x + hp, y + hp)
+                if (l, i + 1, j) in nodes:
+                    yield (LNAME[l], x - hp, y - hp, x + P + hp, y + hp)
+                if (l, i, j + 1) in nodes:
+                    yield (LNAME[l], x - hp, y - hp, x + hp, y + P + hp)
+                if (l, i + 1, j) in nodes and (l, i, j + 1) in nodes and (l, i + 1, j + 1) in nodes:
+                    yield (LNAME[l], x - hp, y - hp, x + P + hp, y + P + hp)
+                if (l + 1, i, j) in nodes:
+                    yield ('Via2' if l == 0 else 'Via3', x - hv, y - hv, x + hv, y + hv)
 
     def route_all(self, order=None, rounds=6, log=print):
         ids = [k for k in self.pins if len(self.pins[k]) >= 2 and k not in getattr(self, 'guarded', set())]

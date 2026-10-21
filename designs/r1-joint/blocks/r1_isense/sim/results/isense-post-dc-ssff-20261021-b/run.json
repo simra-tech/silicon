@@ -1,0 +1,86 @@
+{
+ "block": "r1_isense",
+ "command": "python3 designs/r1-joint/blocks/r1_isense/sim/run_deck.py --block r1_isense --deck <G1_RESULTS_ROOT>/r1_isense/pex-20261021-b/decks/tb_isense_dc.cir --netlist <G1_RESULTS_ROOT>/r1_isense/pex-20261021-b/rc/r1_isense_post.spice --run-id isense-post-dc-ssff-20261021-b --corners ss,ff --jobs 2 --set VCMIN=0 --analyze analyze_dc.py --question \"Post-layout (RC): gain, pedestal, residual offset after AZ, output CM at ss/125 C and ff/-40 C, ideal PTAT bias\"",
+ "container_image": "tapeoutbench-eda:latest sha256:ddeb6957... (checked by flow/run.sh)",
+ "corners": {
+  "ff": {
+   "cap": "cap_bcs",
+   "mos": "mos_ff",
+   "res": "res_bcs",
+   "temp_C": -40,
+   "vdd": 1.32,
+   "vdda": 3.6
+  },
+  "ss": {
+   "cap": "cap_wcs",
+   "mos": "mos_ss",
+   "res": "res_wcs",
+   "temp_C": 125,
+   "vdd": 1.08,
+   "vdda": 3.0
+  }
+ },
+ "cpuset": "109-111",
+ "date_utc": "2026-10-21T10:04:21.832013Z",
+ "deck": "<G1_RESULTS_ROOT>/r1_isense/pex-20261021-b/decks/tb_isense_dc.cir",
+ "deck_sha256": "f72f07937faeb71fe0bc8da45ebada9136e9d45991efcc5c4866e88a184b68ac",
+ "disposition": "offset <= 100 uV: ff passed, ss passed",
+ "included_netlists": {},
+ "included_netlists_results_root": {
+  "<G1_RESULTS_ROOT>/r1_isense/pex-20261021-b/rc/r1_isense_post.spice": "7f3873c0de6e5f640b514578635d7b8c40dd87ce594d2c6eb08c9a3645a3451a"
+ },
+ "jobs": {
+  "ff": {
+   "log": "r1_isense/isense-post-dc-ssff-20261021-b/tb_isense_dc_ff.log",
+   "rc": 0,
+   "wall_s": 76.1
+  },
+  "ss": {
+   "log": "r1_isense/isense-post-dc-ssff-20261021-b/tb_isense_dc_ss.log",
+   "rc": 0,
+   "wall_s": 78.1
+  }
+ },
+ "netlist": "<G1_RESULTS_ROOT>/r1_isense/pex-20261021-b/rc/r1_isense_post.spice",
+ "netlist_sha256": "7f3873c0de6e5f640b514578635d7b8c40dd87ce594d2c6eb08c9a3645a3451a",
+ "ngspice_version": "** ngspice-46 : Circuit level simulation program ** Copyright 2001-2025, The ngspice team. ** Please get your ngspice manual from https://ngspice.sourceforge.io/docs.html ** Please file your bug-reports at http://ngspice.sourceforge.net/bugrep.html",
+ "overrides": {
+  "VCMIN": "0"
+ },
+ "pdk_commit": "84374023ee8b4b126bebbba67fcbada0a9c0ff0b (checked by flow/run.sh)",
+ "prerun": {},
+ "question": "Post-layout (RC): gain, pedestal, residual offset after AZ, output CM at ss/125 C and ff/-40 C, ideal PTAT bias",
+ "raw_results": "$G1_RESULTS_ROOT/r1_isense/isense-post-dc-ssff-20261021-b/",
+ "result": {
+  "ff": {
+   "gain": 14.0649,
+   "gain_error_pct": 0.4636,
+   "inl_max_pct_fs": 0.013,
+   "offset_pedestal_off_uV": 35.1554,
+   "pedestal_error_uV": 649.9993,
+   "pedestal_mV": 41.0346,
+   "vcm_out_V": 0.5964,
+   "vod_range_V": [
+    -0.8586333230000001,
+    0.8291225099999999
+   ]
+  },
+  "ss": {
+   "gain": 14.0547,
+   "gain_error_pct": 0.391,
+   "inl_max_pct_fs": 0.2206,
+   "offset_pedestal_off_uV": 25.8092,
+   "pedestal_error_uV": 593.8832,
+   "pedestal_mV": 40.9785,
+   "vcm_out_V": 0.5932,
+   "vod_range_V": [
+    -0.860187533,
+    0.825810977
+   ]
+  }
+ },
+ "run_id": "isense-post-dc-ssff-20261021-b",
+ "tool": "ngspice-46 (container banner from flow/run.sh ngspice -v; batch logs carry no banner)",
+ "wall_s": 84.2,
+ "workdir": "designs/r1-joint/blocks/r1_isense/sim"
+}

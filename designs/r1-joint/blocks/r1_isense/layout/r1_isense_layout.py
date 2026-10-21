@@ -211,7 +211,11 @@ class Block:
             if not xs:
                 t = gceil(xl + 0.2); er = t + 0.2 - xr; xs = [t]
             m.rail(side, strips, ext=(0.0, er), lo=lo, hi=hi)
-            if side == 'bot' and net == tie:
+            if side == 'bot' and net == tie and d['name'] in OWN_RETURN:
+                # option (not used in layout b): output-stage source with its own return to the vss trunk (vss_o), not
+                # through the row's tie strip that the bias diode and mirrors share
+                self.pin(net + '_o', [(0, x, yc) for x in xs], 'm1')
+            elif side == 'bot' and net == tie:
                 # source on the row's supply / well net: Metal1 fill from the rail into the tie strip, no router pin
                 self.box('M1', xl, yg - 1.6, xr + er, yg - 0.8)
             elif (d['name'], net) in KELVIN_JUNCTION and len(xs) >= 2:
@@ -227,6 +231,15 @@ class Block:
             yc = m.y0 + m.wf / 2
             self.box('GatPoly', xd - ld / 2, yc - (m.wf + 0.36) / 2, xd + ld / 2, yc + (m.wf + 0.36) / 2)
         return m, right, yd
+
+    def strip_net(self, s, r):
+        """router net of a row's tie strip. Layout b: the HV NMOS strips are private nets (vss_t<row>, one pin, not
+        routed; option, not used in layout b): each strip reaches vss only through its own via stack at the west trunk, so no trunk or output-stage
+        current flows along a strip under the sink and bias sources (layout a: the router joined the strips to other
+        vss pins; dev-b-vssprobe-02 shows 17 uV per V of output DM between the xms1 and xms2 sources)."""
+        if s['kind'] == 'n' and getattr(self, 'private_strips', False):
+            return 'vss_t%d' % r
+        return 'vss' if s['kind'] in ('n', 'nlv') else s['well']
 
     # ---- rows of transistors --------------------------------------------------------------------------
     def rows(self, rows, x_start, y_start, tie_west=None, tie_east=None):
@@ -279,7 +292,7 @@ class Block:
                 placed_all += placed
                 yt = round(yg - 2 * P, 4)
                 ptap = s['kind'] in ('n', 'nlv')
-                tnet = 'vss' if ptap else s['well']
+                tnet = self.strip_net(s, r)
                 xa, xb = s['x0'], s['x1']
                 self.box('M1', xa, yg - 1.93, xb, yg - 1.25)      # widened tie strip Metal1 (supply bus of the row)
                 self.D.tap_strip(xa, xb, yt, ptype=ptap, w=0.30, inset=0.2)
@@ -308,8 +321,8 @@ class Block:
                             self.D.sq(v, xt + dx, yc, VIA)
                     for lay in ('M2', 'M3'):
                         self.box(lay, xt - 0.75, y0b, xt + 0.75, y1b)
-                    self.R.reserve(0, xt - 0.75, y0b, xt + 0.75, y1b, net)
-                    self.R.reserve(1, xt - 0.75, y0b, xt + 0.75, y1b, net)
+                    self.R.reserve(0, xt - 0.75, y0b, xt + 0.75, y1b, self.strip_net(s, r))
+                    self.R.reserve(1, xt - 0.75, y0b, xt + 0.75, y1b, self.strip_net(s, r))
             xr = max(s['x1'] for s in segs)
             row = dict(row=r, segs=segs, yg=yg, yd=ydmax, x0=x_start, x1=xr,
                        ymin_act=min(m.y0 for m in placed_all), ymax_act=max(m.y1 for m in placed_all))
@@ -479,6 +492,8 @@ class Block:
         lay = {'M2': 'M2', 'M3': 'M3', 'M4': 'M4', 'Via2': 'Via2', 'Via3': 'Via3'}
         for kind, net, ln, x1, y1, x2, y2 in self.R.shapes():
             self.box(lay[ln], x1, y1, x2, y2)
+        for ln, x1, y1, x2, y2 in self.R.shield_shapes():
+            self.box(lay[ln], x1, y1, x2, y2)
         for k in list(self.R.paths):
             for (l, i, j) in self.R.used_nodes(k):
                 if l == 0 and (i, j) in self.m1pins:
@@ -494,10 +509,12 @@ class Block:
                 x, y = self.R.xy(i, j)
                 if l != 0 or abs(y - yr) > 1e-6:
                     continue
+                # stitch from the node pad to the rail; layout b: the box starts under the pad (was at its edge),
+                # so a router wire arriving at the node leaves no same-net notch (M2.b, layout-dev-b03)
                 if 0 < x1 - (x + 0.2) < 0.3:
-                    self.box('M2', x + 0.2 - 0.01, yr - 0.2, x1 + 0.01, yr + 0.2)
+                    self.box('M2', x - 0.2, yr - 0.2, x1 + 0.01, yr + 0.2)
                 elif 0 < (x - 0.2) - x2 < 0.3:
-                    self.box('M2', x2 - 0.01, yr - 0.2, x - 0.2 + 0.01, yr + 0.2)
+                    self.box('M2', x2 - 0.01, yr - 0.2, x + 0.2, yr + 0.2)
         for k, paths in self.R.paths.items():
             if not paths:
                 continue
@@ -515,7 +532,16 @@ X_VSS = (0.8, 2.4)       # west trunks (Metal4)
 # joins the current tree at one node of the xmo drain rail. vss_k: Kelvin tap of the RPA arm to the vss trunk.
 KELVIN_JUNCTION = {('xmoa', 'outp'), ('xmob', 'outn')}
 SENSE = {'xsfb': {'outp': 'outp_s'}, 'xsfa': {'outn': 'outn_s'}, 'xrca_s0': {'outp': 'outp_s'}, 'xrcb_s0': {'outn': 'outn_s'}}
-ALIAS = {'vss_k': 'vss', 'outp_s': 'outp', 'outn_s': 'outn'}
+ALIAS = {'vss_k': 'vss', 'vss_o': 'vss', 'vss_sh': 'vss', 'outp_s': 'outp', 'outn_s': 'outn'}
+# Option (dev-b02..b05, not used): the output-stage drivers return their current to the vss trunk on their own route (vss_o). In layout a their
+# sources fed the NMOS row-3 tie strip, which also carries the sources of the bias diode xmbn and the mirrors
+# xmb2/xmb3/xmb5: the shared wiring resistance closed a parasitic DC loop (output current -> bias -> amplifier) that
+# shows as a right-half-plane pole of the broken DM loop at 0 mV (dev-b-stbdiag-svss).
+# Tried in dev-b02..b05 and NOT used in layout b (residual offset rose to +77 / +162 / +182 uV and the parasitic DC loop
+# moved to the -20 mV level instead of disappearing): OWN_RETURN = {'xmoa', 'xmob'}, private NMOS tie strips, vss_o
+# junction south of the reference. Kept as options (empty set / False = layout b).
+OWN_RETURN = set()
+PRIVATE_STRIPS = False
 X_VDDA = (3.2, 4.8)
 X0 = 6.4                 # devices start
 GAP_MAIN = 5.6           # gap between the two slots of the main array (input bands isp/isn)
@@ -535,6 +561,7 @@ def build_channel(ly, W=None, H=None):
     H = H or 400.0
     blk = Block(ly, 'r1_isense_ch', W, H)
     blk.by = by
+    blk.private_strips = PRIVATE_STRIPS
     # ---------------- resistor band
     pos = list(range(-20, 21))
     cols = {}
@@ -668,7 +695,16 @@ EDGE_W = ['vcm', 'outp', 'outn', 'vref', 'ibias', 'az_lv', 'azh_lv']
 EDGE_E = ['isp', 'isn']
 # hold and summing nodes: routed first; other nets pay GUARD_COST next to them. Guarding the auto-zero clock nets as
 # well was tried (layout-dev-12, pex-dev-07) and raised the post-layout offset (-216 -> -295 uV); not used.
-GUARDED = ['h1', 'h2', 'xh1', 'xh2', 'sa', 'sb']
+GUARDED = ['sa', 'sb']
+# layout b (2026-10-21): the hold nets are routed first and wrapped in a grounded shield (vss, Metal2-Metal4, one grid
+# step around the route on its layer and on the layers above and below; Router.route_shielded). Reason: in layout a
+# the auto-zero clock nets (az, azb, azh, azhb, az_lv, azh_lv and the level-shifter nodes) coupled unequally into
+# h1/h2 and xh1/xh2; removing only those 35 coupling capacitors from the layout-a extraction moves the residual offset
+# from -216 to +7 uV (dev-b-attr-v_hx).
+SHIELDED = ['h1', 'h2', 'xh1', 'xh2']
+# shield net: 'vss' (the shield components are vss pins; vss routes may run through them) or 'vss_sh' (a separate tree
+# tied to the vss trunk at one point, south of the vss_k tap: no DC current flows in the shield)
+SHIELD_NET = 'vss'      # layout b; 'vss_sh' = dev-b06 (loop flags removed, offset +164 uV: not used)
 GUARD_COST = 6                                    # per grid node next to, over or under a guarded route
 
 
@@ -699,6 +735,26 @@ def finish_channel(blk, Wc, Hc, log=print):
     for pin in R.pins[R.nid('vss')]:
         pin[:] = [n for n in pin if R.res[n] == R.nid('vss')]
     blk.pin('vss_k', knodes, 'm4')
+    # vss_o joins the trunk south of the channel's vss reference point (the vss_k tap at Hc / 2) and so south of every
+    # row junction: the output-stage current never flows along the trunk between two row junctions (at the top level
+    # it flows south to the pin). Joining at row 3 (dev-b02) left 11 vs 125 uV per V of output between the sources of
+    # the slow-CMFB mirror xmgd (row 1) and xmgm (row 2) (dev-b-supprobe-04).
+    if SHIELD_NET != 'vss':
+        ks = R.nid(SHIELD_NET)
+        snodes = [(2, x, y) for x in gpts(X_VSS[0] + 0.2, X_VSS[1] - 0.2) for y in gpts(Hc / 2 + 2.4, Hc / 2 + 4.0)]
+        for (l, x, y) in snodes:
+            i, j = R.ij(x, y); R.res[l, i, j] = ks
+        for pin in R.pins[R.nid('vss')]:
+            pin[:] = [n for n in pin if R.res[n] == R.nid('vss')]
+        blk.pin(SHIELD_NET, snodes, 'm4')
+    ko = R.nid('vss_o') if OWN_RETURN else None
+    if OWN_RETURN:
+        onodes = [(2, x, y) for x in gpts(X_VSS[0] + 0.2, X_VSS[1] - 0.2) for y in gpts(Hc / 2 - 6.4, Hc / 2 - 4.0)]
+        for (l, x, y) in onodes:
+            i, j = R.ij(x, y); R.res[l, i, j] = ko
+        for pin in R.pins[R.nid('vss')]:
+            pin[:] = [n for n in pin if R.res[n] == R.nid('vss')]
+        blk.pin('vss_o', onodes, 'm4')
     blk.trunk('vdda', X_VDDA[0], X_VDDA[1], 0.0, Hc)
     blk.trunk('vdd', Wc - 2.4, Wc - 0.8, 0.0, Hc)
     R.block_edges()
@@ -714,8 +770,9 @@ def finish_channel(blk, Wc, Hc, log=print):
         blk.box('M3', xb + 0.02, y - BAND_W / 2, Wc, y + BAND_W / 2)
         R.reserve(1, xb, y - BAND_W / 2, Wc, y + BAND_W / 2, net)
         edge.setdefault(net, []).append(('E', Wc, y))
+    gs = R.route_shielded(SHIELDED, SHIELD_NET, log=log)
     g = R.route_guarded(GUARDED, cost=GUARD_COST, log=log)
-    ok = R.route_all(rounds=ROUTE_ROUNDS, log=log) and len(g) == len(GUARDED)
+    ok = R.route_all(rounds=ROUTE_ROUNDS, log=log) and len(g) == len(GUARDED) + len(SHIELDED) and len(gs) == len(SHIELDED)
     blk.stats['route_ok'] = ok
     blk.stats['route_failed'] = R.failed
     blk.draw_routes()

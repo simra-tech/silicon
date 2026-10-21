@@ -1,11 +1,182 @@
 # r1_isense — two low-side shunt sense channels (3.3 V / 1.2 V, auto-zero)
 
-State (2026-10-21, revision 2 + layout): **laid out, DRC / antenna / LVS clean, extracted, simulated post-layout.**
-The schematic (revision 2) is unchanged. Post-layout: loop margins and settling pass; the residual offset after the
-auto-zero fails (−216 µV against 100 µV, simulated). Area 0.047 mm² (target 0.025 mm² failed; S7 floorplan box met).
+State (2026-10-21, revision 2 + layout b): **laid out, DRC / antenna / LVS clean, extracted, simulated post-layout.**
+The schematic (revision 2) is unchanged. Layout b: the residual offset after the auto-zero passes (+26 … +36 µV against 100 µV,
+tt / ss / ff and the r1_bias current range). The loop crossover margins and the settling pass. The stb loop-validity flag fails
+(regression from layout a; open issue 1). Area 0.047 mm² (target 0.025 mm² failed; S7 floorplan box met).
 All numbers are **simulated** (ngspice-46, pinned PDK). Nothing is measured.
 
-## Layout (2026-10-21, track T4 layout) — current state
+## Layout (revision b, 2026-10-21, track T4) — current state
+
+Layout of record: `layout/r1_isense.gds` (sha256 `221ad69af11d…`). Box, pins and pin sides are unchanged: 158.4 × 296.8 µm,
+19 Metal3 pins, inputs east, outputs west. Layout a is kept as `layout/r1_isense_layout_a.gds` (sha256 `054373fc7286…`).
+The netlist of record is unchanged: revision 2, `schematic/r1_isense.spice`, sha256 `af013b95f5fd…`.
+Runs: checks `layout-20261021-b`, extraction `pex-20261021-b`, post-layout campaign suffix `20261021-b`.
+All numbers are **simulated** (ngspice-46, extracted RC). Nothing is measured.
+
+Result: **the residual offset after the auto-zero passes** at tt, ss/125 °C and ff/−40 °C (+28.7, +25.8, +35.2 µV;
+limit 100 µV). It also passes over the r1_bias current range. **Regression:** the loop-validity flag of the stb suite fails in most
+loop results. The DC loop phase is −180° (right-half-plane pole of the broken loop). The crossover margins pass (PM ≥ 70.9°, GM ≥ 18.1 dB).
+The cause is the wiring resistance of `vss` (see "Loop validity flag"). This is open for revision c.
+
+### 1. Cause of the layout-a offset (quantified)
+
+Method: remove groups of coupling capacitors from the layout-a extraction (`pex-20261021-a`), then run the same DC
+deck at tt. Script `<G1_RESULTS_ROOT>/r1_isense/t4b-work/zeroc.py`. Results are in `sim/results/dev-b-attr-*/`.
+Clock nets: `az`, `azb`, `azh`, `azhb`, `az_lv`, `azh_lv` and the level-shifter nodes `xls1_*`, `xls2_*`.
+
+| Variant of the layout-a extraction | Residual offset, tt |
+| --- | --- |
+| as extracted | −216.4 µV |
+| clock → `h1`/`h2` removed (18 caps, 2.9 fF) | +101.0 µV |
+| clock → `xh1`/`xh2` removed | −218.9 µV |
+| clock → amplifier nodes removed (`x1a/b`, `sa/b`, `f1/2`, `outp/n`, `rfoa/b`, … 142 caps) | −311.0 µV |
+| clock → `h1`/`h2`, `xh1`/`xh2` and amplifier nodes removed | +5.7 µV |
+| clock → `h1`/`h2`, `xh1`/`xh2` removed (35 caps, 4.7 fF) | **+7.0 µV** |
+| every non-supply net → `h1`/`h2`, `xh1`/`xh2` removed (155 caps) | −2.3 µV |
+
+The hold nodes are the whole cause. The driven pairs only act through their coupling into the hold nodes.
+Hand estimate from the clock steps at the end of the auto-zero: dV(h1 − h2) = Σ dC × dV_clock / C_hold = −2.80 fC / 1.01 pF = −2.77 mV.
+Referred to the input with gm_aux / gm1 ≈ 1/12, this gives −231 µV (estimated; simulated −216 µV).
+
+### 2. Fix: grounded shield around the hold nets
+
+1. The generator routes `h1`, `h2`, `xh1` and `xh2` first. It then wraps them in a `vss` shield
+   (`Router.route_shielded` in `layout/maze_router.py`).
+2. The shield takes every free grid node within one step of the route, on the route layer and on the layers above and below (Metal2–Metal4).
+3. The shield is drawn as solid metal with Via2/Via3 stacks. It has 3125 nodes in 5 components, each tied to `vss` by the router.
+4. Nodes next to or above another net's pin stay free, so the pins remain reachable.
+5. The switch placement is unchanged: `xsh1` and `xsh2` are adjacent in NMOS row 3, in the same orientation. The MIM hold caps have their `vss` Metal5 bottom plate under the `h` top plate.
+6. Mirrored hand-placed clock routes were not drawn. With the shield, the coupling of a hold route to a clock line is near zero wherever the clock line runs. The grid router is not symmetric. Recorded as a deviation from the task wording.
+
+Coupling of each clock net to the hold pairs (kpex 2.5D CC; dC = C to the p side − C to the n side, in fF; full table for
+all pairs: `reports/layout-20261021-b/coupling_ab.md`, script `layout/tools/coupling_table.py`):
+
+| Clock net (step at AZ end) | Pair | dC layout a | dC layout b |
+| --- | --- | --- | --- |
+| `azh` (−3.3 V) | `h1/h2` | +0.567 | +0.102 |
+| `azh` (−3.3 V) | `xh1/xh2` | −0.491 | −0.023 |
+| `azhb` (+3.3 V) | `h1/h2` | −0.351 | +0.070 |
+| `azb` (+3.3 V) | `h1/h2` | +0.239 | +0.075 |
+| `xls2_inb` (+1.2 V) | `xh1/xh2` | +0.517 | −0.013 |
+| `xls2_a` (+3.3 V) | `h1/h2` | −0.115 | +0.002 |
+| `azh_lv` (−1.2 V) | `h1/h2` | −0.110 | −0.002 |
+| `xls2_b` (−3.3 V) | `h1/h2` | +0.076 | +0.001 |
+| `xls2_inb` (+1.2 V) | `h1/h2` | −0.042 | −0.000 |
+| sum of abs(dC), clock → `h1/h2` | | 1.514 | 0.258 |
+| estimated input-referred kick | | −231 µV | +12 µV |
+
+Per-pair target ≤ 0.2 fF: **passed for the hold pairs** (worst 0.102 fF, `azh` → `h1/h2`). **Failed for the driven pairs**,
+for example `xls1_inb` → `outp/outn` 5.19 fF (a: 4.98), `azhb` → `f1/f2` 1.64 fF (a: 0.06), `azb` → `sa/sb` 1.70 fF (a: 1.50).
+The attribution above shows no residual-offset effect from these pairs, so they were not changed further. See open issue 2.
+
+### Status (revision b)
+
+| Check | Result | Evidence |
+| --- | --- | --- |
+| DRC, PDK deck, main + maximal, deep, density off | **passed**, 0 | `reports/layout-20261021-b/drc.log`, `run.json` |
+| Density | **not run** (block level; top-level fill) | — |
+| Antenna | **passed**, 0 | `reports/layout-20261021-b/antenna.log` |
+| LVS against `layout/r1_isense_lvs.cdl` | **passed**: `r1_isense_ch` 143/143 nets, 177/177 devices; `r1_isense` 19/19 | `reports/layout-20261021-b/lvs_summary.txt` |
+| Pin check (19 pins, sides) | **passed** | `reports/layout-20261021-b/pin_check.txt` |
+| Box ≤ 158.4 × 296.8 µm (S7) | **passed** (equal) | `layout/r1_isense_layout.json` |
+| PEX (kpex 2.5D CC + RNetExtractor + MIM) | **passed** (no open or negative element) | `<G1_RESULTS_ROOT>/r1_isense/pex-20261021-b/run.json` |
+| Residual offset after AZ, ideal PTAT bias: tt / ss 125 °C / ff −40 °C | **passed**: +28.7 / +25.8 / +35.2 µV (≤ 100) | `sim/results/isense-post-dc-20261021-b/`, `isense-post-dc-ssff-20261021-b/` |
+| Residual offset, `ibias` 3.5 / 5.07 / 7.7 µA × tt / ss / ff (9 points) | **passed**: +25.8 … +35.9 µV | `sim/results/isense-post-dc-ib{3.5u,5.07u,7.7u}-20261021-b/` |
+| Gain, same 12 points | 14.050 … 14.065 (report; a 14.051) | same |
+| Output CM, same 12 points | **passed**: 0.5913 … 0.5970 V (0.60 ± 0.03) | same |
+| Pedestal error | +508 … +668 µV (report; a +829 µV at tt); split at tt: devices + C −68 µV, devices + R +589 µV | same, `isense-post-dc_c-`, `isense-post-dc_r-20261021-b/` |
+| CM rejection, Kelvin CM −0.1 → +0.1 V, tt | input-referred offset +63.4 → −6.0 µV: 69.4 µV per 0.2 V (≈ 69 dB) (report; layout a by the same method: −183.0 → −249.9 µV, 67.0 µV) | `sim/results/isense-post-dc-cmm100-20261021-b/`, `-cmp100-` |
+| Loops, normal state, tt and ffx, 3 shunt levels: crossover margins | PM 71.6–88.8°, GM ≥ 18.1 dB | `sim/results/isense-post-stb-20261021-b/` |
+| Loops, normal state: validity flag | **failed** in 6 of 8 loop results: `cm_out` at all levels (tt, ffx), `dm_out`/`dm_in` at 0 mV (tt, ffx) and −20 mV (tt); DC phase −178.9 … −180° (layout a: `dm_in` tt 0 mV only) | same |
+| Loops, AZ closed (az = azh = 1), tt and ffx | AZ servo `dm_aux` **passed** (80.7° / 44.6 dB tt, 83.8° / 39.3 dB ffx); `cm_out` crossover PM 75.9° / 77.8°, validity flag **failed** | `sim/results/isense-post-stbaz-20261021-b/` |
+| Loops, intermediate state az = 1, azh = 0, tt and ffx | `cm_out` crossover PM 70.9° (ffx), validity flag **failed** (tt, ffx); other loops below 0 dB (not applicable) | `sim/results/isense-post-stbazi-20261021-b/` |
+| Input-gate cross-check (`dm_in`) | **failed** flag (tt 0 and −20 mV, ffx 0 mV); the voltage-only ratio at the same probe equals the Tian result at every point → not a probe artefact, see below | `<G1_RESULTS_ROOT>/r1_isense/isense-post-stbdiag-20261021-b/` (`*_t4`, `*_t24`: columns 5–8) |
+| Shunt step 0 → 100 mV, 10 ns edge, tt and ss | **passed**: 99.9 / 277.7 ns to 0.5 % (≤ 300; a 94.1 / 248.5), no overshoot | `sim/results/isense-post-stbstep-20261021-b/` |
+| Offset and gain with the `r1_bias` netlist (bandgap + distribution) | **not run**; the 3.5–7.7 µA range of `ib_is_a/b` (INTERFACES.md) is used as a fixed-current sweep instead (recommended option, cheaper deck) | — |
+| CM step (`stbcm`), sf / fs / ssx corners, MC on the extraction, EM / IR at the top level | **not run** | — |
+
+### Loop validity flag and the input-gate cross-check (explanation)
+
+1. **Not the probe.** The new deck `tb_isense_stbdiag.cir` (from `make_post.py`) also writes the voltage-only ratio
+   Tv = −v(network side) / v(gate side) of the same probe. At a MOS gate the load side draws no current, so Tv is the loop gain at low frequency without the
+   current-injection run. Tv equals the Tian result at every point, in layout a (−178.8° at tt / 0 mV, `dev-b-dmin-a`) and in
+   layout b. The open issue 3 hypothesis of layout a (incomplete break) is therefore wrong.
+2. **A real low-frequency property of the extracted circuit.** With the main loop broken, the rest of the circuit has a pole
+   in the right half plane: T ≈ −K / (1 − s/p) with p of a few kHz. The DC phase is −180°, the magnitude is the same as a normal
+   pole, and the high-frequency part is the same as the normal loop. With one open-loop RHP pole the Nyquist plot encircles
+   −1 once counter-clockwise, so the closed loop is stable. The DC runs (16 µs transients) and the step runs (no overshoot) agree.
+   The analyzer flag is correct in that the single-break margin is not a complete stability proof in this case.
+3. **Source: wiring resistance of `vss`.** At tt in layout b, the effect is absent in the devices + C view (71.2 dB, −2.8°). It is present in the devices + R view.
+   It is absent when only the `vss` wiring R is shorted (`dev-b-stbdiag-svss`: 71.0 dB, −2.8°), and present when only the output wiring R is shorted.
+   The output-stage source current and the CMFB currents flow through `vss` wiring shared with the stage-1 sinks, the bias row and the
+   slow-CMFB mirror (`xmgd` row 1, `xmgm` row 2). This closes a local loop around stages 1 and 2 that no single break opens.
+   Probe `dev-b-supprobe-04`: per 1 V of output DM, 11 µV at the `xmgd` source and 125 µV at the `xmgm` source.
+4. Layout a had a weaker form (`dm_in` at 0 mV only). The shield changed the `vss` network, because the shield components are `vss`
+   pins and `vss` routes may run through them.
+5. Five layout variants were tried (table below). None meets both goals. A shield that is a current-free tree (`dev-b06`) removes all
+   flags at tt but raises the offset to +164 µV. **Recommended option, taken:** keep the variant that meets the stated goal (offset) and record the
+   flags as open issue 1.
+
+| Variant (dev run) | Change from b | Offset tt / ss | Normal-state flags at tt |
+| --- | --- | --- | --- |
+| b (`pex-20261021-b`; `pex-dev-b01` + the M2 stitch fix) | — | +28.7 / +25.8 µV | `dm` 0 and −20 mV, `cm` all |
+| `pex-dev-b02` | output-stage sources on their own route to the trunk at row 3 (`vss_o`) | +76.6 / +68.0 µV | `dm` −20 mV |
+| `pex-dev-b04` | + private NMOS tie strips (one via stack each) | +161.9 / +143.5 µV | `dm` −20 mV |
+| `pex-dev-b05` | + `vss_o` joins south of the reference | +182.2 / +161.4 µV | `dm` −20 mV |
+| `pex-dev-b06` | shield as a separate tree `vss_sh`, one trunk tap | +163.7 / +146.0 µV | none (all passed) |
+
+The options stay in the generator, disabled: `OWN_RETURN`, `PRIVATE_STRIPS`, `SHIELD_NET`. Dev summaries: `sim/results/dev-b-*`. Raw data and check
+reports: `<G1_RESULTS_ROOT>/r1_isense/pex-dev-b0*`, `reports-dev/layout-dev-b0*`.
+
+### Open issues (revision b)
+
+1. **Loop-validity flags (regression from a).** The fix needs a `vss` topology in which no varying current flows in wiring shared by the
+   stage-1 sinks, the bias mirrors and the slow-CMFB mirror, while the static drops stay equal between AZ and normal mode.
+   A candidate is a solid Metal1/Metal2 `vss` strap grid under the NMOS rows plus the `vss_sh` shield tree. Re-run the offset and the loops together on every
+   variant. Revision c.
+2. The driven pairs keep clock-coupling differences up to 5.2 fF. They have no effect on the residual offset (attribution), but they
+   can add kick-back and a settling difference after the AZ. The ss step settling went from 248.5 to 277.7 ns (limit 300).
+3. The pedestal error is +575 µV at tt, dominated by the wiring R (split +589 µV). It is a fixed term and is calibrated. Report only.
+4. The offset and gain rows use a fixed-current sweep, not the `r1_bias` netlist with the bandgap. **Not run** with the real bias network.
+5. kpex 2.5D runs about 22 min per extraction (layout a: about 6 min) because of the solid shield.
+6. Open issues 2 and 4–9 of layout a (area 0.047 mm², `vssa`, top-level `vss` reference, MIM over resistors, router copy) still apply.
+
+### Failures and mistakes (revision b)
+
+| # | What happened | Class | Evidence |
+| --- | --- | --- | --- |
+| 1 | The record extraction `pex-20261021-b` was started before the loop check on the dev extraction. The layout then changed, so the run was stopped before kpex finished and renamed `pex-20261021-b-abandoned` (note `ABANDONED.txt`). The later record run reused the id. | process-hygiene | `<G1_RESULTS_ROOT>/r1_isense/pex-20261021-b-abandoned/` |
+| 2 | The shield fix turned the single `dm_in` flag of layout a into flags in `dm_out` and `cm_out` in all states. Only the DC offset was checked on the first dev extraction. | regression | `sim/results/dev-b-stbdiag-01`, `isense-post-stb-20261021-b` |
+| 3 | The layout-a explanation of the `dm_in` flag (incomplete break at the probe) was not tested; the voltage-only ratio shows it is a real circuit property. | verification-gap | `sim/results/dev-b-dmin-a`, `dev-b-dmin-a-hxall` |
+| 4 | Three supply-topology changes (b02, b04, b05) were each based on one probe reading. None removed the flags, and each raised the offset. | estimation | table above |
+| 5 | The current-free shield tree (b06) removed the flags but raised the offset to +164 µV: the two goals conflict through the `vss` R. Not resolved in the time budget. | estimation | `sim/results/dev-b-stb-06`, `dev-b-post-dc-06` |
+| 6 | M2.b notch (0.04 µm, same net) between a router wire and a gate-rail stitch box (layout-dev-b03). The generator now starts the stitch under the node pad. | functional-bug | `<G1_RESULTS_ROOT>/r1_isense/reports-dev/layout-dev-b03/` |
+| 7 | The GDS sha256 changes on every run (header time stamp). Reproduction is checked by a geometry comparison (KLayout `LayoutDiff`) of the regenerated file against the layout of record: identical. The generator sha256 in the check `run.json` (`54c40125…`) is older than the file; later edits only add the disabled options. | tooling | `<G1_RESULTS_ROOT>/r1_isense/t4b-work/gdsdiff.py` |
+| 8 | The coupling attribution is not additive (clock → `xh` alone: −2.5 µV; together with clock → `h`: about −94 µV). Single-group removal underestimates the coupled paths. | numerical | `sim/results/dev-b-attr-*` |
+| 9 | The per-pair target ≤ 0.2 fF was read as applying to every pair. It is met only where it affects the offset (hold pairs); the driven pairs fail it. | spec-ambiguity | `reports/layout-20261021-b/coupling_ab.md` |
+| 10 | The layout-a CM-rejection row ("64.5 µV output change, ≈ 93 dB") does not match its own summaries: the analyzer offsets are input-referred, giving 67.0 µV per 0.2 V input-referred (≈ 69 dB). Revision b reports the input-referred value. | verification-gap | `sim/results/isense-post-dc-cmm100-20261021-a/`, `-cmp100-` |
+| 11 | `cpuset` is null in the check and PEX `run.json` (as in layout a); the CPU set was 109–111. | tooling | `reports/layout-20261021-b/run.json` |
+
+### Built against (revision b)
+
+As layout a: IHP-Open-PDK `84374023ee8b4b126bebbba67fcbada0a9c0ff0b`, KLayout 0.30.9, kpex 0.3.12, ngspice-46, container
+`tapeoutbench-eda` `sha256:ddeb6957…` (all checked by `flow/run.sh` and written in each `run.json`), CPU set 109–111.
+
+### Reproduce (revision b)
+
+From the repository root, POSIX sh, with `G1_CPUSET=109-111; export G1_CPUSET` and `G1_RESULTS_ROOT` set and exported:
+
+1. `G1_WORKDIR=designs/r1-joint/blocks/r1_isense/layout; export G1_WORKDIR; flow/run.sh klayout -b -r r1_isense_layout.py`
+2. `flow/run.sh sh run_checks.sh layout-20261021-b all`
+3. `unset G1_WORKDIR; sh designs/r1-joint/blocks/r1_isense/layout/pex/run_pex.sh pex-20261021-b`
+4. `sh designs/r1-joint/blocks/r1_isense/layout/pex/run_post.sh pex-20261021-b 20261021-b` (now includes the ss/ff DC, the
+   `ibias` sweep, the intermediate AZ state and the input-gate cross-check)
+5. `python3 designs/r1-joint/blocks/r1_isense/layout/tools/coupling_table.py a=<kpex netlist a> b=<kpex netlist b>`
+
+---
+
+## Layout (revision a, 2026-10-21, track T4 layout) — superseded by revision b
 
 Layout of record: `layout/r1_isense.gds` (sha256 `054373fc7286…`), both channels, generated by
 `layout/r1_isense_layout.py` from the revision-2 netlist of record (`schematic/r1_isense.spice`, sha256 `af013b95f5fd…`,

@@ -1,0 +1,86 @@
+{
+ "block": "r1_isense",
+ "command": "python3 designs/r1-joint/blocks/r1_isense/sim/run_deck.py --block r1_isense --deck <G1_RESULTS_ROOT>/r1_isense/pex-dev-b02/decks/tb_isense_dc.cir --netlist <G1_RESULTS_ROOT>/r1_isense/pex-dev-b02/rc/r1_isense_post.spice --run-id dev-b-post-dc-02 --corners tt,ss --jobs 2 --set VCMIN=0 --analyze analyze_dc.py --question \"Layout b dev 02: residual offset after AZ, tt/ss\"",
+ "container_image": "tapeoutbench-eda:latest sha256:ddeb6957... (checked by flow/run.sh)",
+ "corners": {
+  "ss": {
+   "cap": "cap_wcs",
+   "mos": "mos_ss",
+   "res": "res_wcs",
+   "temp_C": 125,
+   "vdd": 1.08,
+   "vdda": 3.0
+  },
+  "tt": {
+   "cap": "cap_typ",
+   "mos": "mos_tt",
+   "res": "res_typ",
+   "temp_C": 27,
+   "vdd": 1.2,
+   "vdda": 3.3
+  }
+ },
+ "cpuset": "109-111",
+ "date_utc": "2026-10-21T08:24:14.810754Z",
+ "deck": "<G1_RESULTS_ROOT>/r1_isense/pex-dev-b02/decks/tb_isense_dc.cir",
+ "deck_sha256": "9ab6586934da7f0fcdfa888427cbc1650dd9c5b3d7fc644f64c64f43477dec4e",
+ "disposition": "offset <= 100 uV: ss passed, tt passed",
+ "included_netlists": {},
+ "included_netlists_results_root": {
+  "<G1_RESULTS_ROOT>/r1_isense/pex-dev-b02/rc/r1_isense_post.spice": "307ac6736a918a47c4cf5653796dcdee7247c76d92f4f1e4a9f4feee573e2393"
+ },
+ "jobs": {
+  "ss": {
+   "log": "r1_isense/dev-b-post-dc-02/tb_isense_dc_ss.log",
+   "rc": 0,
+   "wall_s": 76.1
+  },
+  "tt": {
+   "log": "r1_isense/dev-b-post-dc-02/tb_isense_dc_tt.log",
+   "rc": 0,
+   "wall_s": 78.1
+  }
+ },
+ "netlist": "<G1_RESULTS_ROOT>/r1_isense/pex-dev-b02/rc/r1_isense_post.spice",
+ "netlist_sha256": "307ac6736a918a47c4cf5653796dcdee7247c76d92f4f1e4a9f4feee573e2393",
+ "ngspice_version": "** ngspice-46 : Circuit level simulation program ** Copyright 2001-2025, The ngspice team. ** Please get your ngspice manual from https://ngspice.sourceforge.io/docs.html ** Please file your bug-reports at http://ngspice.sourceforge.net/bugrep.html",
+ "overrides": {
+  "VCMIN": "0"
+ },
+ "pdk_commit": "84374023ee8b4b126bebbba67fcbada0a9c0ff0b (checked by flow/run.sh)",
+ "prerun": {},
+ "question": "Layout b dev 02: residual offset after AZ, tt/ss",
+ "raw_results": "$G1_RESULTS_ROOT/r1_isense/dev-b-post-dc-02/",
+ "result": {
+  "ss": {
+   "gain": 14.0471,
+   "gain_error_pct": 0.3368,
+   "inl_max_pct_fs": 0.0332,
+   "offset_pedestal_off_uV": 67.9974,
+   "pedestal_error_uV": 433.7928,
+   "pedestal_mV": 40.8184,
+   "vcm_out_V": 0.5946,
+   "vod_range_V": [
+    -0.8540152960000001,
+    0.8307727810000001
+   ]
+  },
+  "tt": {
+   "gain": 14.0586,
+   "gain_error_pct": 0.4186,
+   "inl_max_pct_fs": 0.011,
+   "offset_pedestal_off_uV": 76.608,
+   "pedestal_error_uV": 511.2416,
+   "pedestal_mV": 40.8959,
+   "vcm_out_V": 0.5961,
+   "vod_range_V": [
+    -0.856208462,
+    0.8307355120000001
+   ]
+  }
+ },
+ "run_id": "dev-b-post-dc-02",
+ "tool": "ngspice-46 (container banner from flow/run.sh ngspice -v; batch logs carry no banner)",
+ "wall_s": 84.1,
+ "workdir": "designs/r1-joint/blocks/r1_isense/sim"
+}
