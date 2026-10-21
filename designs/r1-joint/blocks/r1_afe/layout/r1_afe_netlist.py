@@ -13,6 +13,13 @@ Unit split (the only difference between the CDL and the revision-E netlist; valu
   * MOS: total W and L as in the netlist; the finger count is re-cut so a finger is <= 10 um (HV PCell
     limit) and >= 0.5 um. LVS compares W and L only (the deck combines the fingers).
 The LVS compare runs with --no_series_res, so every resistor segment is compared 1:1.
+Plate orientation (revision E2): the PDK MIM device class has non-swappable terminals (mim_top, mim_btm), so the CDL
+writes each cap_cmim with its top-plate net first, as laid out (orient()). The schematic order is "top, bottom" except:
+  * CM-sense caps XCS1/XCS2 of both OTAs: bottom plate (Metal5, with its parasitic to the layers below) on the OTA
+    output, top plate on vcms (revision E had the bottom plate on vcms);
+  * output differential cap XCOD (4 units): units 1 and 2 (one diagonal of the 2 x 2 block) reversed, so each output
+    carries the bottom plate of two units (revision E: all four on outn).
+Electrically the same capacitor (the PDK model has 55 mOhm in series with PLUS only).
 Usage (python3, no KLayout needed):  python3 r1_afe_netlist.py   -> writes r1_afe_lvs.cdl next to this file
 """
 import math, os, re
@@ -129,10 +136,26 @@ def split_units(devs):
     return out
 
 
+FLIP_ALL = ('xa1_xcs1', 'xa1_xcs2', 'xa2_xcs1', 'xa2_xcs2')   # bottom plate to the OTA output
+FLIP_UNITS = {'xcod': (1, 2)}                                     # alternate units: balanced bottom plate
+ORIENT = os.environ.get('R1AFE_ORIENT', 'e2')                     # 'e' = revision-E orientation (reference runs)
+
+
+def orient(devs):
+    if ORIENT == 'e':
+        return devs
+    out = []
+    for d in devs:
+        if d['kind'] == 'cmim' and (d['orig'] in FLIP_ALL or d.get('unit') in FLIP_UNITS.get(d['orig'], ())):
+            d = dict(d, nets=[d['nets'][1], d['nets'][0]], flipped=True)
+        out.append(d)
+    return out
+
+
 def channel_devices():
     gp, sc = parse()
     devs = flatten(sc, gp, 'r1_afe_ch', {p: p for p in CH_PORTS}, '', {}, [])
-    return split_units(devs)
+    return orient(split_units(devs))
 
 
 def top_devices():
@@ -164,8 +187,8 @@ def cdl_line(d):
 def write_cdl(path=os.path.join(HERE, 'r1_afe_lvs.cdl')):
     ch = channel_devices()
     top, insts, ports = top_devices()
-    L = ['* LVS reference CDL for r1_afe (revision E), written by layout/r1_afe_netlist.py from schematic/r1_afe.spice',
-         '* unit split only (see the module docstring): long rppd -> straight series segments, large cap_cmim -> 4 units',
+    L = ['* LVS reference CDL for r1_afe (revision E netlist, layout revision E2), written by layout/r1_afe_netlist.py from schematic/r1_afe.spice',
+         '* unit split and MIM plate orientation (see the module docstring): long rppd -> straight series segments, large cap_cmim -> 4 units; cap_cmim nets in top, bottom order as laid out',
          '.subckt r1_afe_ch ' + ' '.join(CH_PORTS)]
     L += [cdl_line(d) for d in ch]
     L += ['.ends', '.subckt r1_afe ' + ' '.join(ports)]

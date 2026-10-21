@@ -47,7 +47,7 @@ def sha(p):
 
 def job(name, tmpl, corner, mismatch=False, edits=(), src=None, **kw):
     mos, res, cap, v, t = mm(corner) if mismatch else ALLC[corner]
-    subs = dict(MOS=mos, RES=res, CAP=cap, VDDA=v, TEMP=t, VCMI=2.5, ACVDD=0, NMC=1, SEED=1, LSB=LSB, CL='2.8p', KLIST='0 1 2 3 4 5', LLIST='1 2 3 4 5 6 7 8',
+    subs = dict(MOS=mos, RES=res, CAP=cap, VDDA=v, TEMP=t, VCMI=2.5, ACVDD=0, NMC=1, SEED=1, LSB=LSB, CL='2.8p', KLIST='0 1 2 3 4 5', LLIST='1 2 3 4 5 6 7 8', IB='10u',
                 DIO={'tt': 'dio_tt', 'ss': 'dio_ss', 'ff': 'dio_ff'}.get(corner[:2], 'dio_tt'))
     subs.update(kw)
     if tmpl == 'tb_afe_stb.cir':
@@ -219,6 +219,23 @@ def devvar(vn):
                   ('r1_afe_ota', 'XMN2 gp inn tn vss sg13_hv_nmos w=80u l=2u ng=16', 'XMN2 gp inn tn vss sg13_hv_nmos w=160u l=2u ng=32')]
         else:
             raise SystemExit('unknown variant ' + v)
+    return tuple(E)
+
+def postvar(vn):
+    """E2 revision-F candidates on a post-layout netlist: MIM compensation capacitors only. Names joined by '+':
+    <ota><cap><side>, ota = a1 | a2, cap = cs (CM sense XCS1/2) | cc (Miller XCC1/2) | cx (XCX1/2) | ccb (XCC1B/2B),
+    side in um (square), e.g. a2cs18 = OTA2 XCS1/XCS2 18 um x 18 um."""
+    E = []
+    for v in vn.split('+'):
+        if v == 'base':
+            continue
+        m = re.match(r'^(a[12])(ccb|cs|cc|cx)([0-9.]+)$', v)
+        if not m:
+            raise SystemExit('unknown post variant ' + v)
+        sub = 'r1_afe_ota' if m.group(1) == 'a1' else 'r1_afe_ota2'
+        inst = {'cs': 'XCS[12]', 'cc': 'XCC[12]', 'cx': 'XCX[12]', 'ccb': 'XCC[12]B'}[m.group(2)]
+        w = m.group(3)
+        E.append(('@re', sub, r'(?m)^(%s [^\n]*cap_cmim) w=[0-9.]+u l=[0-9.]+u' % inst, r'\1 w=%su l=%su' % (w, w)))
     return tuple(E)
 
 def campaign(c):
@@ -399,6 +416,43 @@ def campaign(c):
                                  AMP=round(lv * 0.7 / 2 ** code, 6), VCMI=2.45, CS='2.8p', VRST=0.0))
         J.append(job('noise_ss', 'tb_afe_noise.cir', 'ss'))
         J.append(job('noise_tt', 'tb_afe_noise.cir', 'tt'))
+    elif c == 'postbias':   # E2: r1_bias PTAT current instead of the ideal 10 uA (r1_bias commit 7ff9a3fc3: 10.14 uA tt,
+        # 11.81 uA ss/125 C, 9.00 uA ff/-40 C, 6.9-15.4 uA over PVT). ffx (ff, 125 C) has no given value: run at both extremes.
+        BIAS = [('tt', '10.14u'), ('ss', '11.81u'), ('ff', '9.00u'), ('tt', '6.9u'), ('tt', '15.4u'), ('ffx', '6.9u'), ('ffx', '15.4u')]
+        for k, ib in BIAS:
+            for cm in (0.5, 2.5):
+                J.append(job('bstb_%s_ib%s_cm%.2f' % (k, ib[:-1], cm), 'tb_afe_stb.cir', k, VCMI=cm, KLIST='0 5', LLIST='1 2 4 5', IB=ib))
+        for k, ib in BIAS[:5]:
+            J.append(job('bac_%s_ib%s_cm2.5' % (k, ib[:-1]), 'tb_afe_ac.cir', k, VCMI=2.5, IB=ib))
+        J.append(job('bnoise_ss_ib11.81', 'tb_afe_noise.cir', 'ss', IB='11.81u'))
+    elif c == 'postcm':     # E2: CM step transient on the post-layout netlist (CM2 loop with one open-loop RHP pole at ffx)
+        for k in ('ffx', 'tt'):
+            for code in (0, 5):
+                J.append(job('cmstep_%s_x%d' % (k, 2 ** code), 'tb_afe_cmstep.cir', k, CODE=code, AMP=round(0.7 / 2 ** code, 6)))
+    elif c.startswith('postac:'):    # E2: f_c and output CM (ac deck) for post-layout MIM variants: postac:<v>,<v>
+        for vn in c.split(':')[1].split(','):
+            for k, cm in (('tt', 2.5), ('ss', 2.5), ('ss', 0.5), ('ff', 2.5)):
+                J.append(job('pac_%s_%s_cm%.1f' % (vn, k, cm), 'tb_afe_ac.cir', k, edits=postvar(vn), VCMI=cm))
+    elif c.startswith('poststb:'):   # E2: loop gain at ffx (x1/x32, CM 0.5/2.5) for post-layout MIM variants: poststb:<v>,<v>
+        for vn in c.split(':')[1].split(','):
+            for cm in (0.5, 2.5):
+                J.append(job('pstb_%s_ffx_cm%.2f' % (vn, cm), 'tb_afe_stb.cir', 'ffx', edits=postvar(vn), VCMI=cm,
+                             KLIST='0 5', LLIST='1 2 4 5'))
+    elif c in ('post2', 'post2stb'):   # layout revision E2: 'post' plus f_c/pole matching at ss, output CM at tt/ss/ff (all
+        # gains, OPROW of the ac deck), THD at tt (x1, x32); 'post2stb' = loop gain at tt and ffx only (quick screen)
+        if c == 'post2':
+            J += campaign('post')
+            J.append(job('ac_ss_cm2.5', 'tb_afe_ac.cir', 'ss', VCMI=2.5))
+            J.append(job('ac_ss_cm0.5', 'tb_afe_ac.cir', 'ss', VCMI=0.5))
+            J.append(job('ac_ff_cm2.5', 'tb_afe_ac.cir', 'ff', VCMI=2.5))
+            for part in range(2):
+                J.append(job('acmc_ss_p%d' % part, 'tb_afe_ac.cir', 'ss', True, NMC=10, SEED=101 + part))
+            for code in (0, 5):
+                J.append(job('tran_tt_x%d' % 2 ** code, 'tb_afe_tran.cir', 'tt', CODE=code, AMP=round(0.7 / 2 ** code, 6), VCMI=2.45))
+        else:
+            for k in ('tt', 'ffx'):
+                for cm in (0.5, 2.5):
+                    J.append(job('stbx_%s_cm%.2f' % (k, cm), 'tb_afe_stb.cir', k, VCMI=cm, KLIST='0 5', LLIST='1 2 4 5'))
     elif c == 'stbval':
         J.append(job('toy', 'tb_stb_toy.cir', 'tt'))
     elif c == 'stbq':
@@ -528,6 +582,14 @@ def apply_edit(src, e, name):
                 t.append(kv)
         lines[i] = ' '.join(t)
         return '\n'.join(lines)
+    if len(e) == 4 and e[0] == '@re':      # ('@re', subckt, regex, replacement): regex edit inside one subckt (E2,
+        import re as _re                    # post-layout netlists, where node names carry port suffixes)
+        a = src.index('.subckt %s ' % e[1])
+        b = src.index('.ends', a)
+        body, n = _re.subn(e[2], e[3], src[a:b])
+        if n == 0:
+            raise SystemExit('netlist regex edit found nothing in %s: %r (%s)' % (e[1], e[2], name))
+        return src[:a] + body + src[b:]
     if len(e) == 3 and e[0] == '?':
         return src.replace(e[1], e[2], 1) if e[1] in src else src
     if len(e) == 3:
@@ -753,6 +815,8 @@ def main():
                 question='', result='', disposition='')
     json.dump(runj, open(os.path.join(HERE, 'runs', rid, 'run.json'), 'w'), indent=1)
     print(json.dumps({k: runj[k] for k in ('run_id', 'jobs', 'failed_jobs', 'wall_seconds')}))
+    if runj['failed_jobs']:
+        sys.exit(1)       # blocks/README.md: runners exit non-zero on a failed job
 
 if __name__ == '__main__':
     main()

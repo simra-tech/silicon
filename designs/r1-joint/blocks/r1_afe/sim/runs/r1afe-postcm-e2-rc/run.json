@@ -1,0 +1,31 @@
+{
+ "run_id": "r1afe-postcm-e2-rc",
+ "campaign": "postcm",
+ "date_utc": "2026-10-21T10:32:38Z",
+ "command": "G1_CPUSET=106-108 G1_CPUS=3 G1_WORKDIR=designs/r1-joint/blocks/r1_afe/sim G1_RESULTS_ROOT=<bulk> flow/run.sh python3 run_afe.py postcm r1afe-postcm-e2-rc",
+ "tools": {
+  "ngspice": "ngspice-46 : Circuit level simulation program",
+  "image_id": "sha256:ddeb69576f2808676d1c5d474ecf04f6d1d6f8abdcff6b72b39790ded924bab2",
+  "pdk_commit": "84374023ee8b4b126bebbba67fcbada0a9c0ff0b"
+ },
+ "inputs": {
+  "sim/tb_afe_cmstep.cir": "896747b675dc379db9a4460ca98f7d7c72b6e15e0bee5f83edb2cf1ea2daac63",
+  "sim/common_head.inc": "52ea3b1f1dda8aa3c448bf5977fb76f41feeb33019c36e7ad163e81eab0fcfd0",
+  "sim/gain_codes.inc": "a62c9d6daa3d544c36ac868c4e6a9266f32e581d093ac404c6c52bcc6e5276f6",
+  "netlist_override": "cd6971a98d3cf8ae8d425e9cbef7d4dddd80732c5b7bd512382bb291371dca03",
+  "sim/run_afe.py": "8301cbd3a20ba15f17c7bd9868969d681dca9c2072d5c0df061f450fa6288faa"
+ },
+ "netlist_edits": null,
+ "netlist_sha256": "cd6971a98d3cf8ae8d425e9cbef7d4dddd80732c5b7bd512382bb291371dca03",
+ "netlist_override": "$G1_RESULTS_ROOT/r1_afe/pexrc-e2-dev11/r1_afe_post_rc.spice",
+ "frozen_inputs": "$G1_RESULTS_ROOT/r1_afe/r1afe-postcm-e2-rc/frozen/",
+ "lsb_V": 0.000439453125,
+ "raw": "$G1_RESULTS_ROOT/r1_afe/r1afe-postcm-e2-rc/",
+ "jobs": 4,
+ "failed_jobs": [],
+ "wall_seconds": 847.3,
+ "summary": "results/r1afe-postcm-e2-rc.json",
+ "question": "CM2 stability on the RC netlist: transient CM step at tt and ffx, x1 and x32",
+ "result": "every step settles, no growing oscillation; steady-state ripple 0.37-0.49 mV stage-1 CM, 0.08-0.16 mV output CM",
+ "disposition": "CM2 stable; ripple cause open (README E2 open issue 8)"
+}

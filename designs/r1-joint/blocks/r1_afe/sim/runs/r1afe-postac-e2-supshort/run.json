@@ -1,0 +1,31 @@
+{
+ "run_id": "r1afe-postac-e2-supshort",
+ "campaign": "postac:base",
+ "date_utc": "2026-10-21T10:24:06Z",
+ "command": "G1_CPUSET=106-108 G1_CPUS=3 G1_WORKDIR=designs/r1-joint/blocks/r1_afe/sim G1_RESULTS_ROOT=<bulk> flow/run.sh python3 run_afe.py postac:base r1afe-postac-e2-supshort",
+ "tools": {
+  "ngspice": "ngspice-46 : Circuit level simulation program",
+  "image_id": "sha256:ddeb69576f2808676d1c5d474ecf04f6d1d6f8abdcff6b72b39790ded924bab2",
+  "pdk_commit": "84374023ee8b4b126bebbba67fcbada0a9c0ff0b"
+ },
+ "inputs": {
+  "sim/tb_afe_ac.cir": "9a5808e3927045e0a57713d0ac6c0e00626d575a9002f8a57f8183c7b823d251",
+  "sim/common_head.inc": "52ea3b1f1dda8aa3c448bf5977fb76f41feeb33019c36e7ad163e81eab0fcfd0",
+  "sim/gain_codes.inc": "a62c9d6daa3d544c36ac868c4e6a9266f32e581d093ac404c6c52bcc6e5276f6",
+  "netlist_override": "42a23cdaa1a40e314f8ca5517f7ce0c03bdbbb46ce6d42443307a658e3dd0819",
+  "sim/run_afe.py": "8301cbd3a20ba15f17c7bd9868969d681dca9c2072d5c0df061f450fa6288faa"
+ },
+ "netlist_edits": null,
+ "netlist_sha256": "42a23cdaa1a40e314f8ca5517f7ce0c03bdbbb46ce6d42443307a658e3dd0819",
+ "netlist_override": "$G1_RESULTS_ROOT/r1_afe/pexrc-e2-dev11-supshort/r1_afe_post_rc.spice",
+ "frozen_inputs": "$G1_RESULTS_ROOT/r1_afe/r1afe-postac-e2-supshort/frozen/",
+ "lsb_V": 0.000439453125,
+ "raw": "$G1_RESULTS_ROOT/r1_afe/r1afe-postac-e2-supshort/",
+ "jobs": 4,
+ "failed_jobs": [],
+ "wall_seconds": 355.9,
+ "summary": "results/r1afe-postac-e2-supshort.json",
+ "question": "Diagnostic: is the output-CM shift and f_c loss caused by the vdd/vss wiring resistance? (supply R x 1e-3)",
+ "result": "output CM 0.594-0.598 V (RC 0.623-0.630 V), f_c ss 1.027 MHz (RC 1.015 MHz)",
+ "disposition": "yes: the supply R causes +31 mV output CM and -1.2 % f_c (open issue 1 of README E2)"
+}

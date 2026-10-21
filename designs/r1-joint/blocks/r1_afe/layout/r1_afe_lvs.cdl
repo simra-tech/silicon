@@ -1,5 +1,5 @@
-* LVS reference CDL for r1_afe (revision E), written by layout/r1_afe_netlist.py from schematic/r1_afe.spice
-* unit split only (see the module docstring): long rppd -> straight series segments, large cap_cmim -> 4 units
+* LVS reference CDL for r1_afe (revision E netlist, layout revision E2), written by layout/r1_afe_netlist.py from schematic/r1_afe.spice
+* unit split and MIM plate orientation (see the module docstring): long rppd -> straight series segments, large cap_cmim -> 4 units; cap_cmim nets in top, bottom order as laid out
 .subckt r1_afe_ch inp inn outp outn vcm1 vcm2 ib1 ib2 c1 c2 c3 c4 vdd vss
 Mxi1_xn c1b c1 vss vss sg13_hv_nmos w=1u l=0.45u m=1
 Mxi1_xp c1b c1 vdd vdd sg13_hv_pmos w=2u l=0.45u m=1
@@ -148,8 +148,8 @@ Rxa1_xrs2_s8 xa1_xrs2_n8 xa1_xrs2_n9 vss rppd w=1u l=77u m=1 b=0
 Rxa1_xrs2_s9 xa1_xrs2_n9 xa1_vcms vss rppd w=1u l=77u m=1 b=0
 Cxa1_xcx1 xa1_cz1 m1n cap_cmim w=15u l=15u m=1
 Cxa1_xcx2 xa1_cz2 m1p cap_cmim w=15u l=15u m=1
-Cxa1_xcs1 m1p xa1_vcms cap_cmim w=22u l=22u m=1
-Cxa1_xcs2 m1n xa1_vcms cap_cmim w=22u l=22u m=1
+Cxa1_xcs1 xa1_vcms m1p cap_cmim w=22u l=22u m=1
+Cxa1_xcs2 xa1_vcms m1n cap_cmim w=22u l=22u m=1
 Mxa1_xmct xa1_tc xa1_vbp vdd vdd sg13_hv_pmos w=48u l=1u m=1
 Mxa1_xmc1 xa1_vcmfb xa1_vcms xa1_tc vdd sg13_hv_pmos w=32u l=1u m=1
 Mxa1_xmc2 xa1_cmd vcm1 xa1_tc vdd sg13_hv_pmos w=32u l=1u m=1
@@ -241,8 +241,8 @@ Rxa2_xrs2_s6 xa2_xrs2_n6 xa2_xrs2_n7 vss rppd w=1u l=77u m=1 b=0
 Rxa2_xrs2_s7 xa2_xrs2_n7 xa2_xrs2_n8 vss rppd w=1u l=77u m=1 b=0
 Rxa2_xrs2_s8 xa2_xrs2_n8 xa2_xrs2_n9 vss rppd w=1u l=77u m=1 b=0
 Rxa2_xrs2_s9 xa2_xrs2_n9 xa2_vcms vss rppd w=1u l=77u m=1 b=0
-Cxa2_xcs1 on2 xa2_vcms cap_cmim w=14u l=14u m=1
-Cxa2_xcs2 op2 xa2_vcms cap_cmim w=14u l=14u m=1
+Cxa2_xcs1 xa2_vcms on2 cap_cmim w=14u l=14u m=1
+Cxa2_xcs2 xa2_vcms op2 cap_cmim w=14u l=14u m=1
 Mxa2_xmct xa2_tc xa2_vbp vdd vdd sg13_hv_pmos w=32u l=1u m=1
 Mxa2_xmc1 xa2_vcmfb xa2_vcms xa2_tc vdd sg13_hv_pmos w=32u l=1u m=1
 Mxa2_xmc2 xa2_cmd vcm2 xa2_tc vdd sg13_hv_pmos w=32u l=1u m=1
@@ -251,8 +251,8 @@ Mxa2_xmc4 xa2_cmd xa2_cmd vss vss sg13_hv_nmos w=8u l=2u m=1
 Rxro1 op2 outp vss rppd w=1u l=11.55u m=1 b=0
 Rxro2 on2 outn vss rppd w=1u l=11.55u m=1 b=0
 Cxcod_u0 outp outn cap_cmim w=22.35u l=22.35u m=1
-Cxcod_u1 outp outn cap_cmim w=22.35u l=22.35u m=1
-Cxcod_u2 outp outn cap_cmim w=22.35u l=22.35u m=1
+Cxcod_u1 outn outp cap_cmim w=22.35u l=22.35u m=1
+Cxcod_u2 outn outp cap_cmim w=22.35u l=22.35u m=1
 Cxcod_u3 outp outn cap_cmim w=22.35u l=22.35u m=1
 Cxco1_u0 outp vss cap_cmim w=15u l=15u m=1
 Cxco1_u1 outp vss cap_cmim w=15u l=15u m=1

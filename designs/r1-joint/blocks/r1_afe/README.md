@@ -1,6 +1,6 @@
 # r1_afe — encoder analog front end (sine and cosine channels)
 
-State (2026-10-21): **revision E, laid out: DRC, antenna and LVS clean (PDK decks); channel PEX and post-layout key decks run. Post-layout CM1/CM2 phase margins at ffx are below 60° (59.7°, 58.3°) and the ×32 settling has a new −0.25 mV offset (open issues in "Layout (revision E)").** Schematic-level record: "Revision E" below.
+State (2026-10-21): **revision E, layout revision E2 (re-route): DRC, antenna and LVS clean (PDK decks); P/N pairs balanced (≤ 3.4 fF); full RC extraction and post-layout campaign run. Open: CM1/CM2 phase margins at ffx 61.3°/57.7° (target 63°), output CM +31 mV from supply resistance, ×32 settling offset −0.41 mV, two bias-range failures (see "Layout (revision E2)").** The revision-E layout record follows it. Schematic-level record: "Revision E" below.
 Revision D is superseded by revision E (record below). Revision C is superseded; its record follows the revision-D section ("Revision C record"). Revision B is superseded; its
 record is kept at the end ("Revision B record").
 All numbers in this file are **simulated** unless they are marked estimated. Nothing is measured.
@@ -8,9 +8,243 @@ All numbers in this file are **simulated** unless they are marked estimated. Not
 Track T3 of `../README.md`. Specification row: `../../specification/R1_TOP_LEVEL_SPECIFICATION.md` §2 (`r1_afe`),
 §4 (encoder input), gate V1. Input standard and accuracy budget: `../../specification/studies/S1_ENCODER_CHAIN_20261020.md`.
 
+## Layout (revision E2, 2026-10-21, track T3)
+
+Layout revision E2 is a re-route of the revision-E layout. The schematic netlist of record does not change
+(`schematic/r1_afe.spice`, revision E, sha256 `4a84a3d8…9e46`). The placement does not change. The changes are:
+1. P/N pairs are routed first, with a halo cost, and the shorter net gets trim stubs on Metal3/Metal4.
+2. The supply nets are widened, and two Metal5 straps (`vss`, `vdd`, 4.8 µm) feed the channels from the south pins.
+3. The CM-sense nets (`xa1_vcms`, `xa2_vcms`) are routed first and are shorter.
+4. The CS caps have the bottom plate on the OTA output (MIM plate orientation; see "LVS reference").
+
+All post-layout numbers are **simulated**. Nothing is measured.
+
+### Files (revision E2)
+
+| Path | Content |
+| --- | --- |
+| `layout/r1_afe.gds` | layout of record, revision E2 (sha256 `fb3d6a3b…6a03`, 3.9 MB, top cell `r1_afe`) |
+| `layout/r1_afe_revE.gds` | revision-E layout, kept for comparison (sha256 `0181e988…91e1`) |
+| `layout/r1_afe_lvs.cdl` | LVS reference (sha256 `dc1b5e28…0652`): revision E with unit split and plate orientation |
+| `layout/r1_afe_trim_e2.json` | trim stubs from the dev10 extraction (input of the generator, `-rd trim=`) |
+| `layout/r1_afe_layout.json`, `layout/r1_afe_ports.json` | router statistics, pair lengths before/after trim; device-terminal ports for the RC build |
+| `layout/r1_afe_layout.py`, `layout/maze_router.py`, `layout/r1_afe_netlist.py` | generator, router (priority nets, halo, stubs, widening), netlist flattener |
+| `layout/tools/pin_layer_check.py` | pin set and layer check against `r1_afe_revE.gds` |
+| `pex/run_pex.sh` | kpex of the channel cell and of the top cell without channels |
+| `pex/pex_prepare.py` | flat GDS for kpex; mode `top_only` adds a dummy gate at each channel pin |
+| `pex/pex_rc_build.py`, `pex/klrun.py` | wire and via resistance (KLayout `RNetExtractor`) plus kpex capacitance into one RC netlist |
+| `pex/pair_loads.py`, `pex/rnet_report.py` | per-net capacitance of the pairs; supply resistance per port |
+| `schematic/r1_afe_revF_candidate.spice` | revision-F candidate (MIM sizes only). **Not the netlist of record. It does not pass** (see below) |
+| `sim/run_afe.py` | new campaigns `post2`, `postbias`, `postcm`, `poststb:<v>`, `postac:<v>`; parameter `IB` (bias current) |
+| `reports/layout-e2-dev11/` | DRC, antenna and LVS logs, `run.json`, `pin_layer_check.json` |
+| `reports/pex-e2-dev11/` | extraction `run.json`, `pair_loads.json`, `rnet_supply.json`, `pex_rc_report.json` |
+| `reports/post-e2.json` | pre/post reduction (`sim/compare_post.py`) |
+| `reports/layout-e2-dev1/` … `layout-e2-dev10/` | development check logs |
+
+Reproduce (repository root). Set `G1_CPUSET=106-108; export G1_CPUSET` and `G1_RESULTS_ROOT=<bulk results root>; export G1_RESULTS_ROOT`. Then:
+1. Set `G1_WORKDIR=designs/r1-joint/blocks/r1_afe/layout; export G1_WORKDIR`.
+2. Run `flow/run.sh klayout -b -r r1_afe_layout.py -rd trim=r1_afe_trim_e2.json -rd out=<dir>/r1_afe.gds` (about 330 s).
+3. Run `flow/run.sh sh run_checks.sh <run-id> all <dir>/r1_afe.gds`.
+4. Run `sh designs/r1-joint/blocks/r1_afe/pex/run_pex.sh <abs dir> <abs gds>` (about 40 min).
+5. Run the RC build and the campaigns with the commands in `reports/pex-e2-dev11/run.json` and `sim/runs/r1afe-*-e2-*/run.json`.
+
+### Built against (revision E2)
+
+| Item | Version | How established |
+| --- | --- | --- |
+| IHP SG13G2 open PDK | commit `84374023ee8b4b126bebbba67fcbada0a9c0ff0b` | `flow/run.sh` compares `/foss/pdks/ihp-sg13g2/COMMIT` before every command; in each `run.json` |
+| KLayout (layout, DRC, LVS, antenna, `klayout.pex`) | 0.30.9 | `reports/layout-e2-dev11/run.json` |
+| kpex (klayout-pex) | 0.3.12 | `reports/pex-e2-dev11/run.json` |
+| ngspice | ngspice-46 | `sim/runs/r1afe-post2-e2-rc/run.json` |
+| Container image | `sha256:ddeb6957…bab2` | verified by `flow/run.sh` |
+| CPU set | `G1_CPUSET=106-108` | command lines in the run records |
+
+### Status (revision E2; run ids `layout-e2-dev11`, `pex-e2-dev11`, `r1afe-post2-e2-rc`, `r1afe-postbias-e2-rc`, `r1afe-postcm-e2-rc`)
+
+| Check | Criterion | Status | Evidence |
+| --- | --- | --- | --- |
+| DRC, PDK deck, main + maximal rule set | 0 violations | **passed**: 0 | `reports/layout-e2-dev11/drc.log` |
+| DRC density | block level | **not run** (waived at block level, as revision E) | — |
+| Antenna, PDK deck | 0 violations | **passed**: 0 | `reports/layout-e2-dev11/antenna.log` |
+| LVS against `layout/r1_afe_lvs.cdl` | match | **passed**: `r1_afe` nets 63/63, devices 46/46; `r1_afe_ch` nets 143/143, devices 241/241 | `reports/layout-e2-dev11/lvs_summary.txt` |
+| Pins | same pins as revision E | **passed**: 21 Metal3 pins; pin set (label, box) equal to `r1_afe_revE.gds` | `reports/layout-e2-dev11/pin_layer_check.json` |
+| Bounding box | ≤ 192.8 × 494.4 µm | **passed**: 192.8 × 494.4 µm | same |
+| TopMetal1 only on MIM plates; no TopMetal2 | — | **passed**: TopMetal2 area 0; TopMetal1 29 257 µm², all within 5 µm of a MIM (plates and 1.6 µm tabs), same as revision E. Metal5 adds the two supply straps | same |
+| Reproduction of the GDS | same layout from the same inputs | **passed**: regenerated with `-rd trim=r1_afe_trim_e2.json`; KLayout `LayoutDiff` identical (file hash differs by the GDS time stamp); `r1_afe_ports.json` byte-identical | `<G1_RESULTS_ROOT>/r1_afe/layout-e2-repro/ldiff.out` |
+| P/N pair imbalance, extracted | ≤ 5 fF per pair | **passed**: worst 3.4 fF (`op2`/`on2`) | `reports/pex-e2-dev11/pair_loads.json` |
+| Full RC extraction (channel + top level, R and C) | completes | **passed**: channel 3192 C, 979 R; top 229 C, 58 R | `reports/pex-e2-dev11/run.json` |
+| CM1/CM2 phase margin at ffx, post-layout | ≥ 60° + 3° allowance | **failed**: CM1 61.3°, CM2 57.7° | table below |
+| CM2 stability, transient CM step, tt and ffx | settles, no growing oscillation | **passed** (ripple: open issue 8) | `sim/runs/r1afe-postcm-e2-rc/run.json` |
+| Revision-F MIM candidate | CM1/CM2 ≥ 63° at ffx, other limits kept | **failed**: CM margins reached, f_c at ss 0.981 MHz < 1.0 MHz | "Revision-F candidate" below |
+| Post-layout campaign `post2` | runs complete | **37 jobs, 4 failed** (settling decks, "timestep too small"; one stopped after 75 min) | `sim/runs/r1afe-post2-e2-rc/run.json` |
+| Bias range (`r1_bias` PTAT current) | per value, below | **2 values fail** (see "Bias range") | `sim/runs/r1afe-postbias-e2-rc/run.json` |
+| EM/IR sign-off | — | **not run** (supply R is extracted; currents not checked against EM rules) | — |
+| LEF / abstract, fill | — | **not run** | — |
+
+### Pair loads (kpex 2.5D CC, fF; P / N, difference P − N)
+
+| Net pair | Revision E | Revision E2 |
+| --- | --- | --- |
+| `outp`/`outn` (stage-2 OTA output) | 73.9 / 132.8 (−59.0) | 115.7 / 119.0 (−3.3) |
+| `op2`/`on2` | 180.2 / 187.4 (−7.2) | 205.3 / 208.8 (−3.4) |
+| `m1p`/`m1n` (stage-1 outputs) | 251.7 / 246.7 (+5.0) | 287.6 / 286.4 (+1.3) |
+| `x1p`/`x1n` (OTA1 inputs) | 209.5 / 220.0 (−10.5) | 225.0 / 224.5 (+0.6) |
+| `x2p`/`x2n` (OTA2 inputs) | 117.0 / 129.2 (−12.2) | 136.4 / 137.0 (−0.7) |
+| `inp`/`inn` | 18.3 / 21.3 (−3.0) | 23.1 / 23.5 (−0.4) |
+| top level `souts_p`/`souts_n` | not extracted | 19.9 / 20.2 (−0.3) |
+| top level `soutc_p`/`soutc_n` | not extracted | 55.3 / 53.9 (+1.3) |
+| top level `sinp`/`sinn`, `cosp`/`cosn` | not extracted | 0.9 / 0.9 each |
+| CM sense `xa1_vcms`, `xa2_vcms` | 117.0, 72.5 | 49.7, 53.9 |
+| CM feedback `xa1_vcmfb`, `xa2_vcmfb` | 54.8, 50.6 | 51.9, 50.6 |
+| Channel total | 3712.1 | 3819.8 |
+
+The channel values are for one channel cell. Both channels use the same cell.
+
+### Pre-layout vs post-layout (simulated; tt = 3.3 V, 27 °C; ss = 3.0 V, 125 °C; ff = 3.6 V, −40 °C; ffx = ff, 3.0 V, 125 °C; bias 10 µA ideal)
+
+Columns: **schematic** = netlist of record (`r1afe-post-20261021e-sch`; ss, ff and THD rows from `r1afe-ac-20261021e`,
+`r1afe-ac_mc-20261021e`, `r1afe-tran-20261021e`). **E post** = revision-E layout, channel capacitance only
+(`r1afe-post-20261021e-pex`). **E2 post** = revision E2, full RC (`r1afe-post2-e2-rc`). Loop margins are the worst
+over ×1 and ×32 and input CM 0.5 and 2.5 V. Reduction: `reports/post-e2.json`.
+
+| Quantity | Limit | Schematic | E post | E2 post | Status (E2) |
+| --- | --- | --- | --- | --- | --- |
+| f_c min over steps, tt | ≥ 1.0 MHz | 1.280 MHz | 1.292 MHz | 1.281 MHz | **passed** |
+| f_c min over steps, ss | ≥ 1.0 MHz | 1.017 MHz | not run | 1.015 MHz | **passed** (margin 1.5 %) |
+| f_c min, ff (E2: CM 2.5 V only) | ≥ 1.0 MHz | 1.645 MHz | not run | 1.877 MHz | passed |
+| Pole matching, worst \|Δf3\| (σ), 20 MC × 6 steps, tt | ≤ 1 % | 0.563 % (0.232 %) | 0.716 % (0.228 %) | 0.645 % (0.233 %) | **passed** |
+| Pole matching, ss | ≤ 1 % | 0.977 % (0.252 %) | not run | 0.802 % (0.219 %) | **passed** |
+| DM1 PM, tt / ffx | ≥ 55° | 78.3° / 72.5° | 74.5° / 67.0° | 74.3° / 68.4° | **passed** |
+| CM1 PM, tt / ffx | ≥ 60° (+3° allowance) | 75.6° / 62.3° | 72.9° / 59.7° | 74.5° / **61.3°** | passed against 60°; **failed** against 63° |
+| DM2 PM, tt / ffx | ≥ 55° | 78.7° / 72.9° | 74.1° / 69.0° | 73.5° / 68.5° | **passed** |
+| CM2 PM, tt / ffx | ≥ 60° (+3° allowance) | 68.2° / 61.7° | 65.5° / 58.3° | not readable / **57.7°** | **failed** (see open issue 2) |
+| Settling, non-linear residual, tt/ss, ×1/×32 | ≤ 0.25 LSB | 0.0054 LSB | 0.0060 LSB | 0.0052 LSB | **passed** (16 of 20 decks; 4 failed, open issue 4) |
+| Settling, total error (worst) | 0.25 LSB (linear part calibrated, INTERFACES.md) | 0.39 LSB | 1.28 LSB | **1.29 LSB** | failed (also before layout) |
+| Settling offset at ×32, tt / ss | — | −0.0003 / −0.0002 mV | −0.25 / −0.23 mV | **−0.41 / −0.42 mV** | recorded (open issue 3) |
+| Noise ×32 input-referred, ss | ≤ 35 µV | 31.01 µV | 30.82 µV | 31.48 µV | **passed** |
+| Noise ×1 output, ss | ≤ 180 µV | 163.8 µV | 164.8 µV | 164.7 µV | passed |
+| THD at 100 kHz (schematic: tt/ss/ff; E2: tt ×1, ×32) | ≤ 0.1 % | 0.025 % | not run | 0.012 % | **passed** |
+| Output CM, all gains, tt/ss/ff | 0.600 V ± 30 mV | 0.5935–0.5973 V | 0.5953–0.5959 V (tt) | **0.6232–0.6296 V** | passed (margin 0.4 mV; open issue 1) |
+
+Reading of the table:
+1. Pair balance works: every pair is within 3.4 fF. The ×32 offset did not go away. It is larger (−0.41 mV). The
+   revision-E hypothesis (P/N load imbalance causes the offset) is therefore **not supported**.
+2. The full RC netlist shows a supply-resistance effect that the revision-E C-only run did not show. With the
+   supply R divided by 1000 (diagnostic run `r1afe-postac-e2-supshort`), the output CM returns to 0.594–0.598 V and
+   the ss f_c to 1.027 MHz. The +31 mV output-CM shift and −1.2 % f_c come from the `vss`/`vdd` wiring resistance.
+3. The CM-sense nets are 26–58 % lighter, but CM1 and CM2 at ffx improve by only +1.6° and −0.6°. The CM-sense
+   capacitance is not the main limit of the CM loops.
+
+### Supply resistance (`reports/pex-e2-dev11/rnet_supply.json`; pin to farthest port, other ports open)
+
+| Net | Top level | Inside the channel |
+| --- | --- | --- |
+| `vdd` | 6.2 Ω (sine channel), 11.1 Ω (cosine channel), 53.9 Ω (VCM1 divider head) | 203.5 Ω (gain-logic inverters `xi1`/`xi2`), others ≤ 138 Ω |
+| `vss` | 42.3 Ω (divider foot), all other ports ≤ 19.9 Ω | 62.4 Ω worst |
+
+The first E2 try (dev1) had vdd 54/131 Ω and vss 41/74 Ω from the pins to the two channels.
+
+### Bias range (`r1_bias` PTAT current instead of the ideal 10 µA; run `r1afe-postbias-e2-rc`, E2 RC netlist)
+
+Input from `r1_bias` (commit `7ff9a3fc3`): 10.14 µA at tt, 11.81 µA at ss/125 °C, 9.00 µA at ff/−40 °C, 6.9–15.4 µA
+over PVT. No value is given for ffx (ff, 125 °C); ffx is run at both extremes (assumption). Loops: worst over ×1/×32
+and CM 0.5/2.5 V. f_c: CM 2.5 V only. Noise: ss ×32.
+
+| Corner, I_bias | DM1 PM | CM1 PM | DM2 PM | CM2 PM | f_c min | Output CM | Result |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| tt, 10.14 µA | 74.2° | 74.7° | 73.6° | not readable (4 of 4 rows) | 1.452 MHz | 0.628 V | **pass** (CM2 not read) |
+| ss, 11.81 µA | 75.5° | 72.8° | 76.6° | 67.7° (1 of 4 readable) | 1.122 MHz | 0.633 V | **pass** (noise ×32 31.32 µV ≤ 35 µV) |
+| ff, 9.00 µA | 73.7° | 75.2° | 69.2° | not readable | 1.862 MHz | 0.626 V | **pass** (CM2 not read) |
+| tt, 6.9 µA | 73.7° | 69.4° | 72.3° | not readable | 1.403 MHz | 0.617 V | **pass** (CM2 not read) |
+| tt, 15.4 µA | 67.1° | 81.3° | 75.4° (GM 7.2 dB) | 69.5° (1 of 4 readable) | 1.491 MHz | **0.646 V** | **fail**: output CM +46 mV |
+| ffx, 6.9 µA | 60.5° | **56.4°** | 68.5° | not readable | not run | not run | **fail**: CM1 < 60° |
+| ffx, 15.4 µA | 72.6° | 67.0° | 69.3° | 61.6° (3 of 4 readable) | not run | not run | **pass** (CM2 61.6°, below the 63° allowance) |
+
+Both failures are at bias extremes. The netlist is not changed for them (coordinator instruction).
+
+### CM2 loop reading and CM step
+
+The Tian probe of the CM2 loop on the RC netlist often gives a phase that starts at −180° and rises (RHP flag; the
+row is "not readable"). The magnitude curve is the same as in revision E. A transient CM step decides stability
+(run `r1afe-postcm-e2-rc`, deck `tb_afe_cmstep.cir`, tt and ffx, ×1 and ×32; events: input CM ±, `vcm2` ±50 mV, VDDA ±):
+
+| Quantity | E2 post, tt / ffx | Schematic (tt, `r1afe-cmstep-20261021e`) |
+| --- | --- | --- |
+| Output CM after a `vcm2` step of 50 mV: settle to 2 mV | 136–138 ns / 116 ns, 1 overshoot | 132 ns, 1 overshoot |
+| Output CM after an input-CM step, peak / settle to 2 mV | ≤ 11.1 mV / ≤ 166 ns; ffx ≤ 15.0 mV / ≤ 146 ns | ≤ 3.1 mV / ≤ 46 ns |
+| Stage-1 CM after an input-CM step (×32), settle to 5 mV | 430–470 ns / 382–388 ns | 404–420 ns |
+| Steady-state ripple, stage-1 CM / output CM (peak-peak) | 0.37–0.49 mV / 0.08–0.16 mV | 0.008–0.022 mV / 0.006 mV |
+
+Result: **every step settles; no growing oscillation**. The CM2 loop is stable at tt and ffx. The steady-state ripple is
+about 20 times larger than in the schematic run and does not grow. Its cause (a small sustained oscillation or
+numerical ringing of the RC netlist) is not isolated (open issue 8).
+
+### Revision-F candidate (MIM sizes only; `schematic/r1_afe_revF_candidate.spice`, not the netlist of record)
+
+Screens on the E2 RC netlist at ffx, ×1/×32, CM 0.5/2.5 V (`r1afe-poststb-e2dev10p-01` on the dev10 extraction, `r1afe-poststb-e2-02` on dev11):
+
+| Variant (square side, µm) | CM1 | CM2 | DM1 | DM2 | f_c ss (CM 0.5 V) |
+| --- | --- | --- | --- | --- | --- |
+| E2 base (`WCS` 22/14, OTA2 `WCC` 18, `XCX` 15) | 61.3° | 57.7° | 68.4° | 68.5° | 1.015 MHz |
+| OTA2 CS 18 or 22; OTA1 CS 26 | 61.0–61.9° | 57.6–59.0° | 66.4–68.4° | 65.6–67.2° | not run |
+| OTA1 cross cap 17 + OTA2 CS 18 | 62.6° | 58.0° | 66.8° | 67.2° | not run |
+| OTA1 cross cap 19 + OTA2 Miller 21 | 64.1° | 61.7° | 65.1° | 77.0° | not run |
+| cross 19 + OTA1 Miller 27 + OTA2 Miller 22 | 65.7° | 62.7° | 67.4° | 79.2° | not run |
+| **cross 21 + OTA2 Miller 24 (candidate)** | **65.5°** | **64.6°** | 63.6° | 82.8° | **0.981 MHz (fails 1.0 MHz)** |
+
+The candidate reaches the CM target but fails f_c at ss (run `r1afe-postac-e2-01`; tt 1.393 MHz, ss CM 2.5 V
+1.060 MHz). A MIM-only change cannot give CM2 ≥ 63° and f_c ≥ 1.0 MHz at ss together: the OTA2 Miller cap is the
+only MIM lever for CM2, and it also slows the DM path. Recommendation for revision F: OTA1 cross cap 21 µm for CM1
+(about +4°), and the OTA2 Miller zero resistor `LRZ` for CM2 (revision E: +2° for 6 → 10 µm). `LRZ` is not a MIM,
+so it is outside this task. Not run on the candidate: tt/ss/ff loops, pole matching, settling, noise, THD; no layout.
+
+### Open issues (revision E2)
+
+1. **Supply resistance moves the output CM by +31 mV and lowers f_c by 1.2 %.** The output CM is 0.6296 V worst at
+   10 µA (limit 0.630 V) and 0.646 V at 15.4 µA. Next step: find the net (channel `vss` is the probable one, 62 Ω)
+   with a per-net R short, then widen it or give the CMFB reference a separate return.
+2. **CM2 at ffx is 57.7° and many CM2 rows are not readable** (the Tian loop phase starts at −180°, the RHP flag is
+   set). See "CM2 loop reading and CM step". CM1 at ffx is 61.3° (60° passed, 63° allowance not met).
+   `r1_isense` revision b found the same flag and traced it to `vss` wiring R that closes a local loop; the
+   same cause is probable here (not checked).
+3. **×32 settling offset −0.41 mV** (revision E −0.25 mV). Not caused by P/N load imbalance (item 1 of the reading).
+   Probable cause: supply or reference-path resistance; not isolated.
+4. Four settling decks failed on the RC netlist ("timestep too small" at `vcm1__p1`; one stopped after 75 min). The
+   residual and total error use the remaining 16 decks (at least 3 levels per gain and corner).
+5. Bias range: CM1 at ffx with 6.9 µA is 56.4°; output CM at 15.4 µA is 0.646 V. The ffx bias value is an assumption.
+6. Revision-F candidate fails f_c at ss. A non-MIM change (`LRZ`) is needed for CM2.
+7. EM check of the supply wiring, LEF, fill: not run. Pole matching at ff on the E2 netlist: not run.
+8. Steady-state CM ripple in the CM-step run: 0.37–0.49 mV (stage 1) and 0.08–0.16 mV (output), about 20 times the
+   schematic value. Not growing. Cause not isolated; check with a tighter `reltol` and with the C-only netlist.
+
+### Failures and mistakes (revision E2)
+
+| # | What happened | Class | Record |
+| --- | --- | --- | --- |
+| 1 | A locked priority pass for the pairs walled in other pins. Fallback to an unlocked pass; lock is now off by default. | planning | `reports/layout-e2-dev1/` |
+| 2 | dev1 had one M2.b notch from a Metal2 trim stub. Metal2 deficits now go to Metal3. | functional-bug | `reports/layout-e2-dev1/drc.log` |
+| 3 | The PDK LVS database has unnamed layers, so the RC build could not use it. The kpex database is used. | tooling | `pex/pex_rc_build.py` |
+| 4 | `klayout -b` did not print the `SystemExit` message of the RC build. Added `pex/klrun.py`. | tooling | — |
+| 5 | kpex removed the top-level nets without devices. Added a dummy gate at each channel pin. The first try found only 4 of 36 pins (it used the bounding box, not the prBoundary). | tooling | `pex/pex_prepare.py` |
+| 6 | The first C-only netlist used 1e-4 Ω links; ngspice stalled. Four ngspice processes were stopped by PID; run `r1afe-post2stb-e2dev1-c` is recorded with 4 failed jobs. The C-only view now merges the nodes. | numerical | `sim/runs/r1afe-post2stb-e2dev1-c/` |
+| 7 | The RNetExtractor port index was mapped wrongly at first; fixed by keying on (kind, layer, port index). The tessellation mode gave negative elements; square counting stays the default. | tooling | `pex/pex_rc_build.py` |
+| 8 | The RC run found about 100 mV `vdd` and 70 mV `vss` drop in the revision-E-style top-level supply wiring. The revision-E C-only extraction could not show it. Fixed by widening, Metal5 straps, Via4 farm and via feet (dev7–dev10). | verification-gap | `reports/layout-e2-dev6/` … `dev10/` |
+| 9 | dev7: the router used the Metal1 guard ring as a `vss` conductor (vss 175–180 Ω). The ring is now a `vss` pin only near the south `vss` pins. | functional-bug | `reports/layout-e2-dev7/` |
+| 10 | dev1 and dev6 routes differ for the same inputs, because the failed lock pass changed the router history. | process-hygiene | — |
+| 11 | The first trim (dev10) over-corrected `souts_n` (19.9 / 35.5 fF). dev11 removed it. | estimation | `layout/r1_afe_trim_e2.json` |
+| 12 | The ×32 offset hypothesis of revision E (P/N load imbalance) was wrong: the offset grew after balancing. | estimation | reading item 1 |
+| 13 | The MIM-only revision-F path was planned without an f_c check at ss in the screens; the chosen candidate then failed f_c. | planning | `r1afe-postac-e2-01` |
+| 14 | Settling decks on the RC netlist: 3 failed with "timestep too small", 1 was stopped by PID after 75 min. | numerical | `sim/runs/r1afe-post2-e2-rc/` |
+| 15 | The time budget (about 5 h) was exceeded by about 4 h: three CPUs for 37 + 20 + 14 decks on an RC netlist that runs 3–5 times slower than the C-only one. | estimation | run records |
+| 16 | Waits written with `sleep` were blocked; replaced by condition loops. | process-hygiene | — |
+
+---
+
 ## Layout (revision E, 2026-10-21, track T3)
 
-Layout of record: `layout/r1_afe.gds` (sha256 `0181e988…91e1`, 3.6 MB, top cell `r1_afe`, child cell `r1_afe_ch`
+**Superseded by layout revision E2 (above).** The revision-E GDS is kept as `layout/r1_afe_revE.gds`.
+
+Layout of record (until E2): `layout/r1_afe_revE.gds` (sha256 `0181e988…91e1`, 3.6 MB, top cell `r1_afe`, child cell `r1_afe_ch`
 placed twice). It is generated from the revision-E netlist of record (`schematic/r1_afe.spice`, sha256 `4a84a3d8…9e46`)
 by `layout/r1_afe_layout.py`. The block contains both channels, both stages, the gain switches, the anti-alias
 filters, the CMFB circuits, the bias mirrors and the VCM1 divider. All post-layout numbers are **simulated**.

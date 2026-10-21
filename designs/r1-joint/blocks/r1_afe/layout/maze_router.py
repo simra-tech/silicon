@@ -12,6 +12,9 @@ Pins are sets of nodes; reaching any node of a pin connects it (the pin's own me
 the router joins them itself when they are on the routing layers).
 Algorithm: nets one after the other (A* from the growing tree to the nearest unconnected pin), then
 rip-up and re-route of the nets that failed, moved to the front of the order.
+Revision E2: `first` nets are routed before all others in the given order (P/N pairs one after the other, CM-sense
+nets); with `lock` they cannot be ripped up by later nets. `add_stub()` grows dead-end wires of a net on one layer
+(capacitance/length trim of the lighter net of a pair); `net_stats()` gives the wire length per layer and the vias.
 """
 import heapq, itertools
 import numpy as np
@@ -36,6 +39,11 @@ class Router:
         self.pins = {}          # net id -> list of pins (list of node tuples)
         self.paths = {}         # net id -> list of node lists
         self.failed = []
+        self.lock = set()       # net ids that rip-up may not cross
+        self.stubs = {}         # net id -> list of stub paths (also in self.paths)
+        self.halo_cost = 0      # E2: soft cost on the nodes next to the priority nets (other nets keep one track away)
+        self.fat = {}           # E2: net id -> list of (layer, i1, j1, i2, j2) wide-wire boxes (supply widening)
+        self.xvia = {}          # E2: net id -> list of (lower layer, i, j) extra vias
 
     # ---- coordinates --------------------------------------------------------------------------
     def nid(self, name):
@@ -165,7 +173,7 @@ class Router:
                 o = occ[vl, vi, vj]
                 extra = 0
                 if o != FREE and o != k:
-                    if not soft:
+                    if not soft or o in self.lock:
                         continue
                     extra = soft
                 ng = gu + c + extra + (pen[vl, vi, vj] if o != k else 0)
@@ -228,16 +236,22 @@ class Router:
         self.occ[self.occ == k] = FREE
         self.paths.pop(k, None)
 
-    def route_all(self, order=None, rounds=6, log=print):
+    def route_all(self, order=None, rounds=6, log=print, first=(), lock=False):
         ids = [k for k in self.pins if len(self.pins[k]) >= 2]
         def span(k):
             ns = [n for p in self.pins[k] for n in p]
             return (max(n[1] for n in ns) - min(n[1] for n in ns)) + (max(n[2] for n in ns) - min(n[2] for n in ns))
         ids.sort(key=span)
+        fid = [self.nets[n] for n in first if n in self.nets and self.nets[n] in ids]
+        ids = fid + [k for k in ids if k not in fid]
+        if lock:
+            self.lock = set(fid)
         failed = []
         for k in ids:
             if not self.route_net(k):
                 self.unroute(k); failed.append(k)
+            elif self.halo_cost and k in fid:
+                self.add_halo(k, self.halo_cost)
         log('initial pass: %d nets, %d failed %s' % (len(ids), len(failed), [self.names[k] for k in failed]))
         hist = {}
         for it in range(rounds * 10):
@@ -264,6 +278,127 @@ class Router:
         self.failed = [self.names[k] for k in ids if k in failed or k not in self.paths]
         return not self.failed
 
+    # ---- trim stubs and statistics ------------------------------------------------------------------
+    def add_stub(self, k, layer, n_edges, log=print):
+        """grow dead-end straight wires of net k on routing layer `layer` with n_edges grid edges in total,
+        starting from nodes of the net on that layer (or one via from an adjacent layer). Preferred direction of the
+        layer first. Returns the number of edges added on `layer`."""
+        if n_edges <= 0:
+            return 0
+        dirs = {0: [(1, 0), (-1, 0), (0, 1), (0, -1)], 1: [(0, 1), (0, -1)], 2: [(1, 0), (-1, 0)]}[layer]
+        def free(l, i, j):
+            if not self.inside(i, j):
+                return False
+            r = self.res[l, i, j]
+            return r == FREE and self.occ[l, i, j] == FREE
+        added = 0
+        for _ in range(200):
+            left = n_edges - added
+            if left <= 0:
+                break
+            best = None
+            for n in sorted(self.used_nodes(k)):
+                l0, i0, j0 = n
+                if l0 == layer:
+                    starts = [(n, None)]
+                elif abs(l0 - layer) == 1 and free(layer, i0, j0):
+                    starts = [(n, (layer, i0, j0))]
+                else:
+                    continue
+                for (s0, via) in starts:
+                    for (di, dj) in dirs:
+                        run = 0
+                        i, j = i0 + di, j0 + dj
+                        while free(layer, i, j) and run < left:
+                            # keep one free node beside the run end free of other-net pads: stop before a node next to a
+                            # foreign via/pad on this layer is not needed (grid rules), so only the node itself is checked
+                            run += 1; i += di; j += dj
+                        if run >= 2 and (best is None or run > best[0]):
+                            best = (run, s0, via, di, dj)
+            if best is None:
+                break
+            run, s0, via, di, dj = best
+            path = [s0]
+            if via is not None:
+                path.append(via)
+            l0, i0, j0 = path[-1]
+            for q in range(1, run + 1):
+                path.append((layer, i0 + q * di, j0 + q * dj))
+            for n in path:
+                self.occ[n] = k
+            self.paths.setdefault(k, []).append(path)
+            self.stubs.setdefault(k, []).append(path)
+            added += run
+        if added < n_edges:
+            log('stub: net %s layer %d: %d of %d edges placed' % (self.names[k], layer, added, n_edges))
+        return added
+
+    def add_halo(self, k, cost):
+        """soft cost on the free nodes next to net k (same layer, four neighbours) for all other nets."""
+        for (l, i, j) in self.used_nodes(k):
+            for di, dj in ((1, 0), (-1, 0), (0, 1), (0, -1)):
+                a, b = i + di, j + dj
+                if self.inside(a, b) and self.occ[l, a, b] == FREE:
+                    self.pen[l, a, b] = min(int(self.pen[l, a, b]) + cost, 300)
+
+    def widen(self, k, layers=(1, 2), sides=(1, -1)):
+        """supply widening after routing: every wire edge of net k on `layers` takes the parallel free track on each
+        side (one 1.1 um box per side, up to 1.9 um total width); then extra vias on the widened nodes next to each
+        via of the net. Only free nodes are used, so the grid spacing rules still hold."""
+        def free_or_own(l, i, j):
+            return self.inside(i, j) and self.res[l, i, j] in (FREE, k) and self.occ[l, i, j] in (FREE, k)
+        n_box = 0
+        for path in list(self.paths.get(k, [])):
+            for a, b in zip(path[:-1], path[1:]):
+                if a[0] != b[0] or a[0] not in layers:
+                    continue
+                l = a[0]
+                di, dj = b[1] - a[1], b[2] - a[2]
+                for sd in sides:
+                    oi, oj = (0, sd) if di else (sd, 0)
+                    a2 = (l, a[1] + oi, a[2] + oj); b2 = (l, b[1] + oi, b[2] + oj)
+                    if free_or_own(*a2) and free_or_own(*b2):
+                        if self.res[a2] == k or self.res[b2] == k:
+                            continue           # own pin node: leave it (pin shapes are drawn separately)
+                        self.occ[a2] = k; self.occ[b2] = k
+                        i1, i2 = sorted((a[1], b2[1])); j1, j2 = sorted((a[2], b2[2]))
+                        i1, i2 = min(i1, a[1], b[1], a2[1]), max(i2, a[1], b[1], a2[1])
+                        j1, j2 = min(j1, a[2], b[2], a2[2]), max(j2, a[2], b[2], a2[2])
+                        self.fat.setdefault(k, []).append((l, i1, j1, i2, j2))
+                        n_box += 1
+        n_via = 0
+        for path in self.paths.get(k, []):
+            for a, b in zip(path[:-1], path[1:]):
+                if a[0] == b[0]:
+                    continue
+                lo = min(a[0], b[0])
+                if lo + 1 not in layers or (lo not in layers):
+                    continue
+                for (oi, oj) in ((1, 0), (-1, 0), (0, 1), (0, -1)):
+                    i, j = a[1] + oi, a[2] + oj
+                    if not self.inside(i, j):
+                        continue
+                    if self.occ[lo, i, j] == k and self.occ[lo + 1, i, j] == k and self.res[lo, i, j] in (FREE, k) \
+                            and self.res[lo + 1, i, j] in (FREE, k):
+                        self.xvia.setdefault(k, []).append((lo, i, j)); n_via += 1
+        return n_box, n_via
+
+    def net_stats(self, k):
+        """edges per routing layer and via count of net k (stubs included)."""
+        e = [0] * NL; v = [0, 0]
+        seen = set()
+        for path in self.paths.get(k, []):
+            for a, b in zip(path[:-1], path[1:]):
+                key = (min(a, b), max(a, b))
+                if key in seen:
+                    continue
+                seen.add(key)
+                if a[0] == b[0]:
+                    e[a[0]] += 1
+                else:
+                    v[min(a[0], b[0])] += 1
+        return dict(edges=e, um=[round(x * P, 2) for x in e], vias=v)
+
     # ---- geometry output ----------------------------------------------------------------------------
     def shapes(self):
         """yields (kind, net, layer_name, x1, y1, x2, y2): wires 0.30, pads 0.40, vias 0.19."""
@@ -283,6 +418,22 @@ class Router:
                 for n in (path[0], path[-1]):
                     x, y = self.xy(n[1], n[2])
                     yield ('pad', net, LNAME[n[0]], x - hp, y - hp, x + hp, y + hp)
+
+    def fat_shapes(self):
+        """wide-wire boxes and extra vias of widen() (wire half width 0.15, pads 0.40, vias 0.19)."""
+        hw, hp, hv = 0.15, 0.20, 0.095
+        for k, boxes in self.fat.items():
+            net = self.names[k]
+            for (l, i1, j1, i2, j2) in boxes:
+                x1, y1 = self.xy(i1, j1); x2, y2 = self.xy(i2, j2)
+                yield ('wire', net, LNAME[l], x1 - hw, y1 - hw, x2 + hw, y2 + hw)
+        for k, vs in self.xvia.items():
+            net = self.names[k]
+            for (lo, i, j) in vs:
+                x, y = self.xy(i, j)
+                for l in (lo, lo + 1):
+                    yield ('pad', net, LNAME[l], x - hp, y - hp, x + hp, y + hp)
+                yield ('via', net, 'Via2' if lo == 0 else 'Via3', x - hv, y - hv, x + hv, y + hv)
 
     def used_nodes(self, k):
         s = set()

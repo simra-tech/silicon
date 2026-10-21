@@ -1,0 +1,52 @@
+{
+ "run_id": "pex-e2-dev11",
+ "step": "Layout revision E2: kpex 2.5D CC of r1_afe_ch and of the top cell without channels; wire and via resistance by the KLayout RNetExtractor; RC and C-only post-layout netlists",
+ "date": "2026-10-21",
+ "commands": [
+  "G1_RESULTS_ROOT=<bulk>; export G1_RESULTS_ROOT; sh designs/r1-joint/blocks/r1_afe/pex/run_pex.sh <G1_RESULTS_ROOT>/r1_afe/pex-e2-dev11 <G1_RESULTS_ROOT>/r1_afe/layout-e2-dev11/r1_afe.gds",
+  "G1_WORKDIR=designs/r1-joint/blocks/r1_afe; flow/run.sh klayout -b -r pex/klrun.py -rd script=pex/pex_rc_build.py -rd kchdir=<run>/kpex_ch/r1_afe_ch_flat__r1_afe_ch -rd ktopdir=<run>/kpex_top/r1_afe_top_flat__r1_afe -rd ports=layout/r1_afe_ports.json -rd out=<G1_RESULTS_ROOT>/r1_afe/pexrc-e2-dev11",
+  "python3 pex/pair_loads.py revE=<pex-20261021-b kpex_ch netlist> dev11=<kpex_ch netlist>,<kpex_top netlist> > pair_loads.json",
+  "python3 pex/rnet_report.py <G1_RESULTS_ROOT>/r1_afe/pexrc-e2-dev11/r1_afe_post_rc.spice vdd vss > rnet_supply.json"
+ ],
+ "env": "G1_CPUSET=106-108; G1_RESULTS_ROOT=<bulk>",
+ "tools": {
+  "kpex": "0.3.12",
+  "klayout": "KLayout 0.30.9",
+  "image_id": "sha256:ddeb69576f2808676d1c5d474ecf04f6d1d6f8abdcff6b72b39790ded924bab2",
+  "pdk_commit": "84374023ee8b4b126bebbba67fcbada0a9c0ff0b"
+ },
+ "inputs": {
+  "layout/r1_afe.gds": "fb3d6a3b18740ac51e6005e60c2e2734e436eedaf91d3a6758a38e9a2f676a03",
+  "layout/r1_afe_lvs.cdl": "dc1b5e28b7eb46dd63e2602f01de47dc9d27a22f74e7ee947a989b559f652100",
+  "layout/r1_afe_ports.json": "8bc4a6cc915e94f448e2930efce64892c76d2a34defdd6dcb162553d1ade2289",
+  "schematic/r1_afe.spice": "4a84a3d8dce9be13f6e57e4aaa2fa9154c9aa2339eb8bdb955e6d8452bb59f46",
+  "pex/pex_prepare.py": "d598f2f90b590fe6cdb06aa98f8e4917a378fd27b7864eb44dac4e43076ca202",
+  "pex/run_pex.sh": "2ae6053443fbb1fded0caf1d9cc3f27093c1ded71af7763f9a91a6c5d07afdd6",
+  "pex/pex_rc_build.py": "1475b2690946241c2419864943baf943906c4f21b1fdf6169b47d70b47bd7127",
+  "pex/klrun.py": "06b5e75c3417e26fcffbf671b56f241a8f098b5180448da8147b4b5b859182f2",
+  "pex/pair_loads.py": "97b588e0e4491a2da0cd44ae30d4efeba59473fd542f0187a1ab3147f65773ba",
+  "pex/rnet_report.py": "15876c95fbcc47885dca948402d241ac02b707765a6bfcc409665e82d3f81c15"
+ },
+ "outputs": {
+  "kpex_ch netlist": "00c3a4fe8b0afd33c7d023fe2d97b8ced69b3da7dc3c7ee937d66e7f5be437d6",
+  "kpex_top netlist": "620012ebb9e9c2dc6066273b0a8981aedab79a505094b54276bd55f319e37af4",
+  "r1_afe_post_rc.spice": "cd6971a98d3cf8ae8d425e9cbef7d4dddd80732c5b7bd512382bb291371dca03",
+  "r1_afe_post_c.spice": "665fa0db9cb713bd2785935a173601ec9a860fd90a4c260c2a6c843eec949cb9",
+  "reports": [
+   "pair_loads.json",
+   "rnet_supply.json",
+   "pex_rc_report.json"
+  ]
+ },
+ "method": [
+  "MIM (36/0), Vmim and the TopMetal1 plate inside the MIM removed before kpex (no MIM model in kpex 0.3.12; plate capacitance is in the cap_cmim model)",
+  "top cell without channel instances: one dummy NMOS gate at each channel edge pin so that kpex keeps the nets (36 pins)",
+  "R: klayout.pex RNetExtractor, square counting, Metal1-Metal5 and Via1-Via4; sheet R 0.088 ohm/sq (Metal1 0.110), 9 ohm per via cut; geometry from the kpex lvsdb",
+  "ports: device terminals from layout/r1_afe_ports.json; Kron reduction per net (<= 60 ports); R > 1 Mohm dropped",
+  "loop-probe devices (XMN7/8, XMP7/8, XCC1/2, XCC1B/2B, XCX1/2, XMC1) and gate/bulk terminals stay on the main node of the net",
+  "C-only view: same capacitors, R nodes merged (comparison of R effects)",
+  "both channel instances use the same extracted channel"
+ ],
+ "result": "all six channel pairs and the four top-level pairs have |P - N| <= 3.4 fF (pair_loads.json). Supply R, pin to the farthest port: top level vdd 53.9 ohm (VCM1 divider head xrd1), 11.1 ohm (cosine channel pin), 6.2 ohm (sine channel pin); vss 42.3 ohm (divider foot xrd2), others <= 19.9 ohm; inside the channel vdd <= 203.5 ohm (gain-logic inverters xi1/xi2), vss <= 62.4 ohm (rnet_supply.json)",
+ "disposition": "input to the post-layout campaigns r1afe-post2-e2-rc, r1afe-postbias-e2-rc, r1afe-postcm-e2-rc, r1afe-poststb-*"
+}

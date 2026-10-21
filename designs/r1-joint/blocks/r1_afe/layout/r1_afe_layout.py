@@ -18,6 +18,12 @@ Structure:
              ports on the channel edge (Metal3).
   r1_afe     sine channel (south), VCM1 divider and its capacitor, cosine channel (north) as a translated
              copy (same orientation), east routing strip, p+ guard ring, pins on Metal3 at the boundary.
+Revision E2 (2026-10-21): MIM plate orientation from r1_afe_netlist.orient() (CM-sense caps with the bottom plate on
+the OTA output, the output cap XCOD with alternating units); the P/N pairs and the CM-sense nets are routed first
+(CH_FIRST, TOP_FIRST, locked against rip-up); after routing, each pair is balanced per routing layer with dead-end
+trim stubs on the shorter net (Router.add_stub), plus an optional extra trim from a JSON file (-rd trim=<file>,
+from the extraction of the previous iteration). Device-terminal port positions and per-net wire statistics are
+written to r1_afe_ports.json (input of pex/pex_rc_build.py).
 Layers: no TopMetal2 anywhere; TopMetal1 only on the MIM top plates and their 1.64 um tabs (the PDK MIM
 has its top plate on TopMetal1); boundary on 189/4 only.
 """
@@ -35,6 +41,17 @@ except Exception:
     pass
 OUT = globals().get('out', os.path.join(HERE, 'r1_afe.gds'))
 ROUTE_ROUNDS = int(globals().get('rounds', '6'))
+TRIM = json.load(open(globals()['trim'])) if globals().get('trim') else {}
+LOCK = globals().get("lock", "0") == "1"
+BALANCE = globals().get('balance', '1') == '1'
+STRAPS = globals().get('straps', '1') == '1'     # E2: Metal5 supply straps in the east strip (build_top)
+WIDEN = globals().get('widen', '1') == '1'       # E2: widen vdd/vss after routing (Router.widen)
+TOP_HALO = int(globals().get('tophalo', '40'))   # E2: keep-away cost around the top-level output/input pairs
+# P/N pairs of the channel and of the top level, balanced per layer after routing
+CH_PAIRS = [('outp', 'outn'), ('op2', 'on2'), ('m1p', 'm1n'), ('x1p', 'x1n'), ('x2p', 'x2n'), ('inp', 'inn')]
+CH_FIRST = ['xa1_vcms', 'xa2_vcms'] + [n for pr in CH_PAIRS for n in pr]
+TOP_PAIRS = [('souts_p', 'souts_n'), ('soutc_p', 'soutc_n'), ('sinp', 'sinn'), ('cosp', 'cosn')]
+TOP_FIRST = [n for pr in TOP_PAIRS for n in pr]
 
 
 def gceil(v):
@@ -91,9 +108,16 @@ class Block:
         self.W, self.H = W, H
         self.R = Router(0.0, 0.0, int(round(W / P)) + 1, int(round(H / P)) + 1)
         self.m1pins = {}     # (i, j) -> net : Metal2 node whose Via1 + Metal1 pad is drawn when used
+        self.m5pins = {}     # (i, j) -> net : Metal4 node under a Metal5 strap; Via4 drawn when used (E2)
+        self.straps = []
         self.labels = {}
         self.grails = []     # (net, x1, x2, y): gate rails, bridged to router pads closer than 0.3 um
         self.stats = {}
+        self.ports = []      # device-terminal ports for the RC extraction: dict(dev, term, net, layer, box|pt)
+
+    def port(self, dev, term, net, layer, box=None, pt=None):
+        self.ports.append(dict(dev=dev, term=term, net=net, layer=layer,
+                               box=[round(v, 4) for v in box] if box else None, pt=[round(v, 4) for v in pt] if pt else None))
 
     def L(self, name):
         return self.ly.layer(*LAYERS[name])
@@ -133,14 +157,15 @@ class Block:
         kmax = int(math.ceil((0.33 + m.wf + 0.5) / P - 1e-6))
         yd = round(yg + kmax * P, 4)
         dt = yd - (y0 + m.wf)
-        for side, strips, lo, hi, yc, net in (('bot', m.strips(0), 0.88, 1.38, yg - P, Sn),
-                                               ('top', m.strips(1), dt - 0.25, dt + 0.25, yd, Dn)):
+        for side, strips, lo, hi, yc, net, term in (('bot', m.strips(0), 0.88, 1.38, yg - P, Sn, 2),
+                                                     ('top', m.strips(1), dt - 0.25, dt + 0.25, yd, Dn, 0)):
             xl, xr = m.sx(strips[0]) - 0.13, m.sx(strips[-1]) + 0.13
             xs = gpts(xl + 0.2, xr - 0.2)
             er = 0.0
             if not xs:
                 t = gceil(xl + 0.2); er = t + 0.2 - xr; xs = [t]
-            m.rail(side, strips, ext=(0.0, er), lo=lo, hi=hi)
+            rb_ = m.rail(side, strips, ext=(0.0, er), lo=lo, hi=hi)
+            self.port(d['name'], term, net, 1, box=(rb_[0], rb_[2], rb_[1], rb_[3]))
             self.pin(net, [(0, x, yc) for x in xs], 'm1')
             right = max(right, xr + er)
         m.end_dummies()
@@ -279,6 +304,7 @@ class Block:
                     else:
                         yp = gceil(ys + L + 0.75)
                         self.box('M1', xp - 0.17, ys + L + 0.13, xp + 0.17, yp + 0.17)
+                    self.port(seg['name'], 0 if net == na else 1, net, 1, pt=(xp, yp))
                     self.pin(net, [(0, xp, yp)], 'm1')
         return x, ytop_all
 
@@ -295,17 +321,21 @@ class Block:
         self.D.sq('Via4', xt, yt, VIA)
         self.D.sq('M4', xt, yt, 0.40)
         self.pin(top, [(2, xt, yt)], 'm4')
+        self.port(d['name'], 0, top, 4, pt=(xt, yt))
         # bottom plate: Metal5 tab south, Via4 to the Metal4 pin node
         xb = gfloor(mx + s / 2); yb = gfloor(my - 1.5)
         self.box('M5', xb - 0.31, yb - 0.31, xb + 0.31, my - 0.3)
         self.D.sq('Via4', xb, yb, VIA)
         self.D.sq('M4', xb, yb, 0.40)
         self.pin(bot, [(2, xb, yb)], 'm4')
+        self.port(d['name'], 1, bot, 4, pt=(xb, yb))
 
     # ---- output ------------------------------------------------------------------------------------------
     def draw_routes(self):
         lay = {'M2': 'M2', 'M3': 'M3', 'M4': 'M4', 'Via2': 'Via2', 'Via3': 'Via3'}
         for kind, net, ln, x1, y1, x2, y2 in self.R.shapes():
+            self.box(lay[ln], x1, y1, x2, y2)
+        for kind, net, ln, x1, y1, x2, y2 in self.R.fat_shapes():
             self.box(lay[ln], x1, y1, x2, y2)
         # Via1 + Metal1 pad on every used Metal1-type pin node
         for k in list(self.R.paths):
@@ -315,6 +345,31 @@ class Block:
                     self.D.sq('Via1', x, y, VIA)
                     self.D.sq('M1', x, y, 0.34)
                     self.D.sq('M2', x, y, 0.40)
+        # E2: Metal5 straps and the Via4 on every used strap node
+        for (net, x1, y1, x2, y2) in self.straps:
+            self.box('M5', x1, y1, x2, y2)
+        for (net, fx, fy, xc) in getattr(self, 'feet', []):
+            xa, xb = fx[0] - 0.2, fx[-1] + 0.2
+            ya, yb = fy[0] - 0.2, fy[-1] + 0.2
+            self.box('M3', xa, ya, xb, yb)
+            self.box('M4', xa, ya, xb, yb)
+            self.box('M5', min(xa, xc - 2.4), ya, max(xb, xc + 2.4), yb + 0.4)
+            self.box('M5', xc - 2.4, ya, xc + 2.4, [s_ for s_ in self.straps if s_[0] == net][0][2] + 0.1)
+            for x in fx:
+                for y in fy:
+                    self.D.sq('Via3', x, y, VIA)
+                    self.D.sq('Via4', x, y, VIA)
+        import numpy as _np
+        for (net, x1, y1, x2, y2) in self.straps:     # Via4 on every Metal4 node of the net under its own strap
+            k = self.R.nets.get(net)
+            if k is None:
+                continue
+            for (i, j) in zip(*_np.nonzero(self.R.occ[2] == k)):
+                x, y = self.R.xy(int(i), int(j))
+                if x1 + 0.3 <= x <= x2 - 0.3 and y1 + 0.3 <= y <= y2 - 0.3 and self.R.res[2, i, j] in (-1, k):
+                    self.D.sq('Via4', x, y, VIA)
+                    self.D.sq('M4', x, y, 0.40)
+                    self.stats['strap_vias'] = self.stats.get('strap_vias', 0) + 1
         # bridge router pads that end just short of a same-net gate rail (avoids M2.b notches)
         for (net, x1, x2, yr) in self.grails:
             k = self.R.nets.get(net)
@@ -336,6 +391,53 @@ class Block:
             n = sorted(self.R.used_nodes(k))[0]
             x, y = self.R.xy(n[1], n[2])
             self.D.label(LNAME[n[0]] + 'txt', x, y, net, 0.1)
+
+
+def route_and_balance(blk, first, pairs, cellname, log=print):
+    R = blk.R
+    ok = R.route_all(rounds=ROUTE_ROUNDS, log=log, first=first, lock=LOCK)
+    if not ok:
+        log('%s: locked priority routing failed %s; re-routing without the lock' % (cellname, R.failed))
+        for k in list(R.paths):
+            R.unroute(k)
+        R.lock = set()
+        ok = R.route_all(rounds=ROUTE_ROUNDS, log=log, first=first, lock=False)
+    before, after, trims = {}, {}, {}
+    for a, b in pairs:
+        if a not in R.nets or b not in R.nets:
+            continue
+        ka, kb = R.nets[a], R.nets[b]
+        sa, sb = R.net_stats(ka), R.net_stats(kb)
+        before[a], before[b] = sa, sb
+        if BALANCE and ok:
+            for l in range(3):
+                d = sa['edges'][l] - sb['edges'][l]
+                ls = 1 if l == 0 else l    # no Metal2 stubs (Metal2 notches next to device rails, dev1 M2.b): Metal3
+                if d > 0:
+                    R.add_stub(kb, ls, d, log=log)
+                elif d < 0:
+                    R.add_stub(ka, ls, -d, log=log)
+    if ok:
+        for key, ed in TRIM.items():       # extra trim from the previous extraction: 'cell:net' -> [M2, M3, M4] edges
+            c, net = key.split(':')
+            if c == cellname and net in R.nets:
+                for l, n in enumerate(ed):
+                    if n > 0 and l > 0:
+                        trims[key] = trims.get(key, [0, 0, 0])
+                        trims[key][l] += R.add_stub(R.nets[net], l, int(n), log=log)
+    if ok and WIDEN:
+        for net in ('vss', 'vdd'):        # E2: supply widening (RC extraction showed 70-140 Ohm supply paths)
+            if net in R.nets:
+                nb, nv = R.widen(R.nets[net])
+                blk.stats.setdefault('widen', {})[net] = dict(boxes=nb, extra_vias=nv)
+                log('%s: widened %s: %d boxes, %d extra vias' % (cellname, net, nb, nv))
+    for a, b in pairs:
+        if a in R.nets and b in R.nets:
+            after[a], after[b] = R.net_stats(R.nets[a]), R.net_stats(R.nets[b])
+    blk.stats['pairs_before'] = before
+    blk.stats['pairs_after'] = after
+    blk.stats['trim_placed'] = trims
+    return ok
 
 
 def build_channel(ly, W=400.0, H=600.0):
@@ -454,10 +556,13 @@ def finish_channel(blk, cblocks, Wc, Hc, log=print):
         R.unblock(1, 0.0, y)
         blk.pin(net, [(1, 0.0, y)], 'm3')
         edge.setdefault(net, []).append(('W', 0.0, y))
-    ok = R.route_all(rounds=ROUTE_ROUNDS, log=log)
+    ok = route_and_balance(blk, CH_FIRST, CH_PAIRS, 'r1_afe_ch', log=log)
     blk.stats['route_ok'] = ok
     blk.stats['route_failed'] = R.failed
     blk.draw_routes()
+    for net, lst in edge.items():
+        for (_, x, y) in lst:
+            blk.ports.append(dict(dev='@pin', term=0, net=net, layer=3, box=None, pt=[x, y]))
     for net, lst in edge.items():
         for (_, x, y) in lst:
             blk.D.label('M3txt', x, y, net, 0.1)
@@ -508,10 +613,38 @@ def build_top(ly, chcell, Wc, Hc, edge, log=print):
                 R.unblock(1, X, Y)
                 blk.pin(pm[port], [(1, X, Y)], 'm3')
     R.block_edges()
+    # E2: Metal5 supply straps along the east routing strip (vss west, vdd east), 4.8 um wide, from the south band to
+    # the top of the cosine channel. Each strap is one router pin (Metal4 nodes every 4.8 um on its centre line); a
+    # used node gets a Via4 to the strap. Metal5 is otherwise unused at the top level (no TopMetal1/2 added).
+    blk.straps = []
+    blk.feet = []
+    if STRAPS:
+        xs0 = MARGIN + Wc
+        nS = len(SOUTH)
+        sx = [(net, gfloor(8.0 + q * (W - 16.0) / (nS - 1))) for q, net in enumerate(SOUTH)]
+        for net, xc in (('vss', xs0 + 4.0), ('vdd', xs0 + 12.0)):
+            xc = gfloor(xc)
+            y0, y1 = gceil(MARGIN + 1.6), gfloor(H - MARGIN - 1.6)
+            nodes = [(2, xc, y) for y in gpts(y0, y1)][::6]
+            blk.pin(net, nodes, 'm5')
+            blk.straps.append((net, xc - 2.4, y0 - 0.4, xc + 2.4, y1 + 0.4))
+            for (_, x, y) in nodes:
+                blk.m5pins[R.ij(x, y)] = net
+            # foot: the south pin of this net nearest to the strap gets a 3 x 2 Via3/Via4 array under a Metal5 foot
+            # that joins the strap (reserved before routing; dev9: 35-48 Ohm from the south pins to the channels)
+            xp = min((x for n_, x in sx if n_ == net), key=lambda x: abs(x - xc))
+            fx = [round(xp + d, 4) for d in (-P, 0.0, P)]
+            fy = [0.8, 1.6]
+            for l in (1, 2):
+                for x in fx:
+                    for y in fy:
+                        R.res[l][R.ij(x, y)] = R.nid(net)
+            blk.feet.append((net, fx, fy, xc))
     # p+ guard ring (substrate tie, vss) with its centre line on the grid at 2.4 um from the edge
     blk.D.tap_ring(2.7, 2.7, W - 2.7, H - 2.7, w=0.6, ptype=True)
     ring = [(0, x, 2.4) for x in gpts(4.0, W - 4.0)] + [(0, x, H - 2.4) for x in gpts(4.0, W - 4.0)]
-    blk.pin('vss', ring, 'm1')
+    if not STRAPS:
+        blk.pin('vss', ring, 'm1')
     # block pins on Metal3: south edge (to r1_adc, r1_bgr, r1_ctrl level shifters, VDDA trunk), west edge inputs
     bp = []
     n = len(SOUTH)
@@ -520,13 +653,29 @@ def build_top(ly, chcell, Wc, Hc, edge, log=print):
         R.unblock(1, x, 0.8)
         blk.pin(net, [(1, x, 0.8)], 'm3')
         bp.append((net, 'S', x, 0.8))
+    if STRAPS:
+        # E2: the guard ring is a vss pin only at a few nodes next to each south vss pin, so the router cannot use the
+        # 0.6 um Metal1 ring as a long supply conductor (dev7: 270-1370 Ohm from the vss pins to the channels)
+        for (net, side, x, y) in bp:
+            if net == 'vss':
+                blk.pin('vss', [n for n in ring if n[2] == 2.4 and abs(n[1] - x) <= 1.6 + 1e-6], 'm1')
     for net, ch, port in (('sinp', ysin, 'inp'), ('sinn', ysin, 'inn'), ('cosp', ycos, 'inp'), ('cosn', ycos, 'inn')):
         y = round(ch + edge[port][0][2], 4)
         R.unblock(1, 0.8, y)
         blk.pin(net, [(1, 0.8, y)], 'm3')
         bp.append((net, 'W', 0.8, y))
-    ok = R.route_all(rounds=ROUTE_ROUNDS, log=log)
+    R.halo_cost = TOP_HALO
+    ok = route_and_balance(blk, TOP_FIRST, TOP_PAIRS, 'r1_afe', log=log)
     blk.stats.update(route_ok=ok, route_failed=R.failed, W=W, H=H)
+    for net, side, x, y in bp:
+        blk.ports.append(dict(dev='@pin', term=0, net=net, layer=3, box=None, pt=[x, y]))
+    for name, pm in insts:   # channel instance ports: top net at the channel edge pin
+        y0 = ysin if name == 'xsin' else ycos
+        for port, lst in edge.items():
+            for (side, x, y) in lst:
+                blk.ports.append(dict(dev='@' + name, term=port, net=pm[port], layer=3, box=None,
+                                      pt=[round(MARGIN + x, 4), round(y0 + y, 4)]))
+    blk.stats['inst_origin'] = {'xsin': [MARGIN, ysin], 'xcos': [MARGIN, ycos]}
     blk.draw_routes()
     for net, side, x, y in bp:
         if side == 'S':
@@ -560,7 +709,16 @@ def main():
                            rows=blk.stats['rows'], caps_top=blk.stats.get('caps_top')),
               top=dict(W=top.stats['W'], H=top.stats['H'], route_ok=top.stats['route_ok'], failed=top.stats['route_failed'],
                        pins=top.stats['pins']), runtime_s=round(time.time() - t0, 1))
+    st['channel'].update(pairs_before=blk.stats['pairs_before'], pairs_after=blk.stats['pairs_after'], trim_placed=blk.stats['trim_placed'])
+    st['top'].update(pairs_before=top.stats['pairs_before'], pairs_after=top.stats['pairs_after'], trim_placed=top.stats['trim_placed'])
+    st['trim_input'] = TRIM
+    st['widen'] = dict(channel=blk.stats.get('widen'), top=top.stats.get('widen'), strap_vias=top.stats.get('strap_vias'))
     json.dump(st, open(os.path.join(os.path.dirname(OUT), 'r1_afe_layout.json'), 'w'), indent=1)
+    nets = {}
+    for cname, b in (('r1_afe_ch', blk), ('r1_afe', top)):
+        nets[cname] = {b.R.names[k]: b.R.net_stats(k) for k in b.R.paths}
+    json.dump({'r1_afe_ch': blk.ports, 'r1_afe': top.ports, 'inst_origin': top.stats['inst_origin'], 'channel_size': [Wc, Hc],
+               'net_stats': nets}, open(os.path.join(os.path.dirname(OUT), 'r1_afe_ports.json'), 'w'))
 
 
 if __name__ == '__main__' or True:
