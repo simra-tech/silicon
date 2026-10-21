@@ -631,7 +631,7 @@ module tb_top;
         // =================================================================
         if (test == "spi") begin
             spi_rd(7'h00);
-            check(rd_val == 16'h5203, "spi: ID reads 0x5203 (revision 0.3)");
+            check(rd_val == 16'h5204, "spi: ID reads 0x5204 (revision 0.4)");
             spi_rd(7'h08);
             check(rd_val == 16'd22 && osc_trim == 5'd22, "spi: OSC_TRIM reset value 22 (D13), on the oscillator port");
             spi_rd(7'h05);
@@ -653,9 +653,10 @@ module tb_top;
             for (i = 0; i < 16; i = i + 1) begin
                 spi_wr(7'h20 + (i % 7), 16'h0001 << i);
                 spi_rd(7'h20 + (i % 7));
-                if (rd_val == (16'h0001 << i)) nb = nb + 1;
+                // revision 0.4: PWM words are 13 bit; bits 15:13 ignore writes and read 0
+                if (rd_val == ((16'h0001 << i) & 16'h1FFF)) nb = nb + 1;
             end
-            check(nb == 16, "spi: walking-one write/read on PWM registers");
+            check(nb == 16, "spi: walking-one write/read on PWM registers (13 bit, bits 15:13 read 0)");
             spi_wr(7'h20, 16'h0000);
             spi_wr(7'h0C, 16'hA5C3); spi_rd(7'h0C);
             check(rd_val == 16'hA5C3 && ana_ctrl == 16'hA5C3, "spi: ANA_CTRL write reaches the analog control port");
@@ -701,7 +702,7 @@ module tb_top;
             check(b_crc_wire == 6'h3A && b_data[19:2] == 18'h0, "spi/biss: BiSS frame after SPI sees the new TEST_POS");
             // MA traffic while CS_N high does not disturb SPI state; SPI after BiSS
             spi_rd(7'h00);
-            check(rd_val == 16'h5203, "spi/biss: SPI read correct after BiSS traffic on the shared pad");
+            check(rd_val == 16'h5204, "spi/biss: SPI read correct after BiSS traffic on the shared pad");
         end
 
         // =================================================================

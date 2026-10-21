@@ -1,4 +1,5 @@
-# LibreLane Classic flow for the r1_ctrl macro (revision 0.3; first trial was revision 0.2).
+# LibreLane Classic flow for the r1_ctrl macro (revision 0.4, D10 floorplan constraint;
+# 0.3 used a relative 55 % start utilisation, first trial was revision 0.2).
 # Structure follows designs/g1-guardian/blocks/g1_ctrl/flow/config.yaml.
 # Run with flow/librelane/run_harden.sh, which copies this file, the SDC and the
 # RTL to the bulk results root, so run directories never land in the repository.
@@ -29,8 +30,10 @@ VERILOG_FILES:
   - dir::../rtl/r1_ctrl_top.v
 VERILOG_DEFINES:
   - SYNTHESIS
-  # revision 0.3: flip-flop register file (rtl/r1_lib.v), design of record
+  # revision 0.3: flip-flop register file (rtl/r1_lib.v)
   - R1_CFG_FLOPS
+  # revision 0.4: one clock gate per configuration word (flip-flops on the gated clock)
+  - R1_CFG_GATED
 # the configuration register file is latch-based by design (r1_lib.v)
 LINTER_ERROR_ON_LATCH: false
 
@@ -46,11 +49,21 @@ FALLBACK_SDC: dir::r1_ctrl.sdc
 SYNTH_STRATEGY: AREA 0
 SYNTH_MUL_BOOTH: true
 
-# Utilisation 55 % at the start, square core
-FP_SIZING: relative
-FP_CORE_UTIL: 55
-FP_ASPECT_RATIO: 1
-PL_TARGET_DENSITY_PCT: 65
+# Revision 0.4 (D10, S6 floorplan): fixed die 520 x 664 um, portrait, core inset 10.7 um per side
+# (498.6 x 642.6 = 320 400 um2; 75 % = 240 300 um2 of placed standard cells).
+FP_SIZING: absolute
+DIE_AREA: [0, 0, 520, 664]
+CORE_AREA: [10.7, 10.7, 509.3, 653.3]
+PL_TARGET_DENSITY_PCT: 80
+IO_PIN_ORDER_CFG: dir::pins.cfg
+# Revision 0.4: small clock buffers and larger sink clusters. With one clock gate per configuration
+# word, the 67 gated nets each got a buf_16 root and three buffers with the default list (clock
+# buffer area 15.5 k um2 against 7 k in 0.3; studies t7c to t7h, README revision 0.4).
+CTS_ROOT_BUFFER: sg13g2_buf_2
+CTS_CLK_BUFFERS:
+  - sg13g2_buf_2
+CTS_SINK_CLUSTERING_SIZE: 30
+CTS_SINK_CLUSTERING_MAX_DIAMETER: 120
 DRT_THREADS: 4
 STA_THREADS: 4
 GRT_ALLOW_CONGESTION: true

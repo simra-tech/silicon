@@ -1,8 +1,8 @@
-# R1 bus protocols and register map (draft 0.3, 2026-10-20)
+# R1 bus protocols and register map (draft 0.4, 2026-10-21)
 
 Owner block: `r1_ctrl` (`designs/r1-joint/blocks/r1_ctrl`). This document is the contract between
 the host, the digital macro (`rtl/r1_ctrl_top.v`) and the analog blocks it connects to. It is a
-draft: nothing here is on silicon. The RTL in `rtl/` implements this version (revision 0.3; change log in section 7).
+draft: nothing here is on silicon. The RTL in `rtl/` implements this version (revision 0.4; change log in section 7).
 Revision 0.2 checked every BiSS interpretation item of 0.1 against the BiSS C Rev D2 document
 ("D2", page numbers of that PDF). Section 3.4 lists the result. One item stays **[verify]**: the
 BP_ID (profile) code. The protocol testbench uses our own master model, so the interop runs of
@@ -163,7 +163,7 @@ read 0. Reset values apply after `por_n`. `EN` does not reset the registers.
 
 | Addr | Name | Type | Reset | Bits |
 | --- | --- | --- | --- | --- |
-| 0x00 | `ID` | RO | 0x5203 | chip 'R', RTL revision 0.3 (0.2: 0x5202, 0.1: 0x5210) |
+| 0x00 | `ID` | RO | 0x5204 | chip 'R', RTL revision 0.4 (0.3: 0x5203, 0.2: 0x5202, 0.1: 0x5210) |
 | 0x01 | `STATUS` | RO | — | 0 AMP_LOW, 1 AMP_HIGH, 2 OVERSPEED, 3 TRACK_ERR, 4 CAL_VALID, 5 CLK_FAULT, 6 POS_VALID, 7 FAULT, 8 EN (synchronised), 9 GATE_ACTIVE, 10 OSC_DONE, 11 CAL_BUSY, 12 CAL_DONE, 13 CAL_EXH (any comparator) |
 | 0x02 | `FAULT` | RO | 0x1800 | latched causes: 0–3 comparator flags `cmp[3:0]`, 4 OTEMP, 5 AMP, 6 OVERSPEED, 7 WDT, 8 STO (EN low), 9 I2T_A, 10 I2T_B, 11 CAL (CRC mismatch), 12 POR |
 | 0x03 | `FAULT_MASK` | RW | 0x0000 | 1 = source does not latch; bits 8, 11, 12 cannot be masked |
@@ -264,13 +264,13 @@ probability 2^−8. S1 lists `PHASE` as 10 bit with a LUT. R1 uses two host-comp
 
 | Addr | Name | Type | Reset | Format |
 | --- | --- | --- | --- | --- |
-| 0x20 | `PWM_PERIOD` | RW | 0 | ticks; 0 = PWM off (f_PWM = f_clk / PERIOD) |
-| 0x21–0x23 | `DUTY_A/B/C` | RW | 0 | ideal low-side on-time, ticks |
-| 0x24–0x26 | `PHASE_A/B/C` | RW | 0 | start of the ideal on-window, ticks (< PERIOD) |
+| 0x20 | `PWM_PERIOD` | RW | 0 | [12:0] ticks, 0 = PWM off (f_PWM = f_clk / PERIOD, at most 8191 ticks: 3.66 kHz at 30 MHz). Bits 15:13 read 0 and ignore writes (0.4; was 16 bit) |
+| 0x21–0x23 | `DUTY_A/B/C` | RW | 0 | [12:0] ideal low-side on-time, ticks (bits 15:13 read 0, 0.4) |
+| 0x24–0x26 | `PHASE_A/B/C` | RW | 0 | [12:0] start of the ideal on-window, ticks (< PERIOD; bits 15:13 read 0, 0.4) |
 | 0x27 | `DEAD` | RW | 15 | [7:0] ticks removed at both ends of each on-window (15 = 500 ns) |
 | 0x28 | `SCHED` | RW | 0x1416 | 7:0 PAIR_TICKS (encoder frame period, reset 22, D18), 15:8 GUARD (reset 20) |
 | 0x35 | `LATE` | RO | 0 | [3:0] current frames that started after their strobe (saturating) |
-| 0x38 | `AZ_START` | RW | 0 | counter value at which `az_win` starts |
+| 0x38 | `AZ_START` | RW | 0 | [12:0] counter value at which `az_win` starts (bits 15:13 read 0, 0.4) |
 | 0x39 | `AZ_CFG` | RW | 0x4E00 | 7:0 AZ_LEN (ticks; 0 = no window), 13:8 THR_ZERO (reset 14, section 4.10), 15:14 CAL_STEP (calibration step length 16 << CAL_STEP ticks, reset 1 = 32) |
 
 Channel x is on while DEAD ≤ (cnt − PHASE_x) mod PERIOD < DUTY_x − DEAD. The gate output is the
@@ -327,7 +327,22 @@ CMP_FILT + 1 ticks before it latches (0 = 1 tick, 4 ticks from the pin to `FAULT
 
 | Addr | Name | Type | Reset | Format |
 | --- | --- | --- | --- | --- |
-| 0x0C | `ANA_CTRL` | RW | 0 | 16 bits to the analog blocks (PGA gain, enables); bit assignment open until the AFE/ADC/T2F interfaces are written |
+| 0x0C | `ANA_CTRL` | RW | 0 | 16 bits to the analog blocks (`ana_ctrl[15:0]`). Bit assignment from 0.4, below |
+
+`ANA_CTRL` bit assignment (revision 0.4). The register already existed; only the meaning is new. The
+RTL is unchanged: `ana_ctrl[15:0]` is the register output.
+
+| Bits | Name | Reset | Meaning |
+| --- | --- | --- | --- |
+| 2:0 | `PGA_GAIN` | 0 | Gain code of `r1_afe`, one code for both channels (SIN and COS), because `r1_afe` has one control vector `c1 c2 c3 c4`. 0 = x1, 1 = x2, 2 = x4, 3 = x8, 4 = x16, 5 = x32 (table in `r1_afe` README: `c1 c2 c3 c4` = 0000, 1000, 1100, 1110, 1101, 1111). Codes 6 and 7 are reserved; the decoder must treat them as 5. Gain steps are made by the host while the gates are off, because a step disturbs the encoder path for the settling time |
+| 15:3 | reserved | 0 | Stored and read back. No analog block uses them. Write 0 |
+
+The decoder from `PGA_GAIN` to `c1..c4` and the 1.2 V to 3.3 V level shifters are not in `r1_ctrl`
+(`r1_afe` open issue 6); the chip-level integration owns them. There is no oscillator enable bit:
+`r1_ctrl` runs on the `r1_osc` clock, so a register bit that stops that clock would stop the macro
+with no way to restart it. The top level ties `osc_en` high. `osc_trim` is `OSC_CFG` (0x08). No analog
+test enables exist in the block interfaces of 2026-10-21; they would use bits from 3 upward.
+
 
 ### 4.9 BiSS identification (0x40–0x7F)
 
@@ -404,14 +419,34 @@ The host can write the codes when no search runs; a search overwrites them. Duri
 
 | Addr | Name | Type | Reset | Format |
 | --- | --- | --- | --- | --- |
-| 0x50–0x5D | `ADC_A_W0`–`ADC_A_W13` | RW | nominal × 4 | [13:0] weight of decision i of slice A (SIN, ISA), units of 1/4 LSB |
-| 0x60–0x6D | `ADC_B_W0`–`ADC_B_W13` | RW | nominal × 4 | [13:0] weight of decision i of slice B (COS, ISB), units of 1/4 LSB |
+| 0x50–0x5D | `ADC_A_W0`–`ADC_A_W13` | RW | nominal × 4 | [WW(i)-1:0] weight of decision i of slice A (SIN, ISA), units of 1/4 LSB; stored width WW(i) in the table below (0.4) |
+| 0x60–0x6D | `ADC_B_W0`–`ADC_B_W13` | RW | nominal × 4 | [WW(i)-1:0] weight of decision i of slice B (COS, ISB), units of 1/4 LSB; same widths (0.4) |
+
+Stored width WW(i) (revision 0.4; was 14 bit for all): the bit length of the nominal weight plus 2,
+at most 14. Higher bits read 0 and ignore writes. This is 4 x the nominal value, so the 1/8-LSB
+unit proposed by `r1_adc` (2 x nominal) also fits.
+
+| i | 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12 | 13 |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| WW(i) bits | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 11 | 12 | 13 | 14 | 14 |
+| largest value | 7 | 15 | 31 | 63 | 127 | 255 | 511 | 1023 | 2047 | 2047 | 4095 | 8191 | 16383 | 16383 |
 
 Per slice: code = min(4095, (Σ raw[i] · W[i] + 2) >> 2), i = 0..13. raw[13] is the first (most
 significant) decision. The reset weights are the nominal `r1_adc` revision-3 weights × 4,
 rounded: W13…W0 = 8130, 4065, 2032, 1016, 508, 315, 158, 79, 39, 20, 10, 5, 2, 1 (sum 16380 =
 4095 LSB). The host loads the measured weights of each slice; then it writes `CAL_CRC` (the
-weights are covered, section 4.4). Weight correction adds 4 ticks from `valid` to the code (four
+weights are covered, section 4.4). One-hot readback of raw decisions (revision 0.4, confirmed by simulation, no RAW register added). To
+read decision bit i of a slice, write 4 to that slice's weight W_i and 0 to the other 13 weights. The
+code is then exactly b_i (code = (W_i * b_i + 2) >> 2 = b_i; no clamp, because the sum is at most
+W_i). Read it in `I_A` / `I_B` (0x29, 0x2A, current frame) or in `RAW_SIN` / `RAW_COS` (0x1D, 0x1E,
+encoder frame). Any W_i = 4k gives code k * b_i exactly (k up to 4095, if the stored width of W_i
+allows 4k; W_0 allows 4 only). The value 4 fits every stored width. A weight set with all but one
+weight zero stops the position loop, so the bench does this with the gates off. Each weight write
+clears `CAL_VALID`; the bench restores the weights, writes a new `CAL_CRC` and `CTRL.CLR`
+(section 4.4). Evidence: `tb/tb_adcw_onehot.v`, 168 checks (14 decisions, 4 weight values, raw
+all ones / bit clear / only bit set), 0 failed (`sim/results/r1ctrl_20261021_v04/adcw_onehot.log`).
+
+Weight correction adds 4 ticks from `valid` to the code (four
 decisions per tick). A weight write takes effect for the next conversion. The weight unit
 (1/4 LSB) and the bit order are this map's contract; `r1_adc` revision 4 confirms them.
 
@@ -422,6 +457,8 @@ Revision 0.3: all RW registers are flip-flops with a write enable (`R1_CFG_FLOPS
 slow corner (README revision 0.3). A write changes the register at the clock edge that ends the
 internal write pulse, 3–5 ticks after `CS_N` rises. The PWM shadow registers stay latch words
 (loaded at the counter wrap); they pass sign-off STA in the flip-flop configuration.
+
+Revision 0.4: each word is a bank of flip-flops on its own gated clock (`R1_CFG_GATED`, one clock gate per word) instead of enabled flip-flops. The write edge and the timing seen by the host are the same as in 0.3. The `PWM_PERIOD` shadow is a flip-flop word (no latch, no static logic loop); the duty and phase shadows stay latch words.
 
 ## 5. Position path (r1_pos) number formats
 
@@ -470,5 +507,6 @@ The testbench ADC model delivers `adc_valid_a` 17 ticks and `adc_valid_b` 16 tic
 | Version | Date | Change |
 | --- | --- | --- |
 | 0.1 | 2026-10-20 | first draft with the first RTL |
+| 0.4 | 2026-10-21 | ID 0x5204. Width changes only, no register, bit meaning or reset value removed (D10 area closure, S6 cut C2): `PWM_PERIOD`, `DUTY_A/B/C`, `PHASE_A/B/C`, `AZ_START` are 13 bit (bits 15:13 read 0, ignore writes; f_PWM at least 3.66 kHz at 30 MHz); ADC weights are stored in WW(i) bits (3 to 14, section 4.11). The configuration words are flip-flops on per-word gated clocks (section 4.12, implementation only). Documentation only: `ANA_CTRL` bit assignment (`PGA_GAIN` in 2:0), one-hot weight readback of raw decisions (section 4.11). |
 | 0.3 | 2026-10-20 | ID 0x5203. Configuration registers are flip-flops again (section 4.12). Comparator calibration per the `r1_safe` revision-3 contract: two-sided search (release pass with preset 0, trip pass with preset 63, 14 windows), decisions after `az_win`, result relative to the new `CMP_CAL_IDEAL` (0x3C, half codes, reset 72 / 55). `AZ_CFG` 16 bit: THR_ZERO reset 14 (was 32), CAL_STEP bits 15:14 (reset 32 ticks); reset 0x4E00. `CAL_CRC` covers 0x10–0x17, 0x36–0x3C, 0x50–0x5D and 0x60–0x6D (was 0x10–0x17); a search clears `CAL_VALID`. Comparator blanking extended 16 ticks after a search. Host bring-up order in section 4.1 updated. D18: two ADC slices with 14 decisions each (`adc_raw_a/b`, `adc_valid_a/b`, one `adc_start` with `adc_sel`; `adc_mux` and the 13-bit port removed); weights per slice `ADC_A_W0`–`W13` (0x50–0x5D) and `ADC_B_W0`–`W13` (0x60–0x6D), reset = nominal `r1_adc` revision-3 weights × 4 (was `ADC_W0`–`ADC_W12`, binary); encoder frame every 22 ticks, the current frame replaces one encoder frame at the strobe and restarts the frame grid; `SCHED` reset 0x1416 (was 0x201E); weight correction 4 ticks (was 8); `r1_pos` 19 ticks per pair (was 28). |
 | 0.2 | 2026-10-20 | ID 0x5202. AS5047P mode removed (`BUS_CFG` bit 8 reserved). `BUS_CFG.LAT_HALF` (bit 14, reset 1). Control channel per D2 (section 3.4): CTS in the header CRC, IDL0, R/W echo, W inverted on refusal, `S` echo, stop bit `P`, sequential read, BSEL refused, EDS_BANK readable. `CTRL.CMP_CAL`, `STATUS` bits 11–13, `CMP_THR_A/B`, `AZ_START`, `AZ_CFG`, `CMP_CAL_A/B`, `ADC_W0`–`ADC_W12`. One current strobe at the channel A centre; `is_smp`, `az_win` ports; 13-bit raw ADC port. `OSC_TRIM` reset 22. `TIMEOUT_TICKS` 12 bit, `TEMP`/`OT_LIM` 14 bit, diagnostic counters 4 bit saturating, KI clamped to 8–23. Configuration registers are latch words (section 4.12). |

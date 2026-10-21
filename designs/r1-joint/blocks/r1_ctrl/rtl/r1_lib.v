@@ -64,7 +64,19 @@ module r1_cword #(
     input  wire [W-1:0] d,
     output wire [W-1:0] q
 );
-`ifdef R1_CFG_FLOPS
+`ifdef R1_CFG_GATED
+    // revision 0.4: flip-flops on a clock-gated clock, one gate per word. Same
+    // write edge as the enabled flop form (wr is high in cycle N; the gate latch
+    // takes it in the low phase of N; the flops see the rising edge that ends N),
+    // without a recirculating multiplexer per bit (-18 um2 per bit).
+    wire gclk;
+    r1_cgate u_cg (.clk(clk), .en(wr && (addr == A)), .gclk(gclk));
+    reg [W-1:0] r;
+    always @(posedge gclk or negedge rst_n)
+        if (!rst_n) r <= RV;
+        else        r <= d;
+    assign q = r;
+`elsif R1_CFG_FLOPS
     // revision 0.3 design of record (every flow sets R1_CFG_FLOPS): flip-flops
     // with write enable. The latch form below failed sign-off STA at the slow
     // corner (LibreLane runs t2, t4); the flop form closes 42 MHz at all three

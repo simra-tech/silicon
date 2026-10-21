@@ -1,7 +1,7 @@
-# r1_ctrl — R1 digital macro (RTL revision 0.3)
+# r1_ctrl — R1 digital macro (RTL revision 0.4)
 
-State (2026-10-20): RTL revision 0.3. It is simulated at RTL level, synthesized with Yosys, and
-hardened with LibreLane (see the revision 0.3 status). It is not signed off: no gate-level
+State (2026-10-21): RTL revision 0.4 (area closure for the D10 die; function unchanged from 0.3). It is simulated at RTL level, synthesized with Yosys, and
+hardened with LibreLane (see the revision 0.4 and 0.3 status). It is not signed off: no gate-level
 simulation, no formal equivalence, no CDC check. Track T5, CPU set 112–115.
 
 `r1_ctrl` is the digital core of R1. It holds these parts:
@@ -15,11 +15,189 @@ simulation, no formal equivalence, no CDC check. Track T5, CPU set 112–115.
 - The register file.
 
 The contract with the host and the analog blocks is [`R1_REGISTER_MAP.md`](R1_REGISTER_MAP.md),
-draft 0.3 (change log in its section 7). All RTL is clean-room Verilog-2005 under Apache-2.0,
+draft 0.4 (change log in its section 7). All RTL is clean-room Verilog-2005 under Apache-2.0,
 written from the specification and studies S1, S2, S3 and S5. No third-party RTL is used.
 Patterns copied from G1 `g1_ctrl` (not shared): the two-flop synchroniser, the
 async-assert/sync-release reset, the SCLK-domain shift logic with a hand-off to the core clock,
 the `run_sim.sh` style and the `ALL TESTS PASSED` convention.
+
+## Revision 0.4 (2026-10-21, D10 area closure, run of record `r1ctrl_20261021_v04`, hardening `r1ctrl_ll_20261021_t7`)
+
+Goal (PLAN.md section 2a, D10 closure; S6 cuts C1 and C2): the macro must fit `DIE_AREA 0 0 520 664` um
+with at most 240 000 um^2 of placed standard cells (75 % utilisation), 42 MHz at three corners, sign-off
+clean, and no change of function. All numbers are simulated, synthesized or from LibreLane; nothing is
+measured. Paths are relative to this directory unless they start with `<G1_RESULTS_ROOT>`.
+Evidence files without a directory are in `sim/results/r1ctrl_20261021_v04/`.
+
+Result in one line: placed standard-cell area 269 618 -> 239 201 um^2, Yosys cell area 245 386 -> 219 649 um^2.
+The 218 000 um^2 synthesis target was **not** reached (1 649 um^2 above); the placed target was reached
+because the clock-tree and repair overhead is smaller than the 1.099 ratio assumed by S6 (placed / synthesis
+is 1.089 here).
+
+### What changed
+
+Each trim is one step with its own Yosys cell area (flow `flow/synth.tcl`, flat, typical library; the
+baseline was re-run first and reproduces 245 386). The run ids are `<G1_RESULTS_ROOT>/r1_ctrl/syn_v04_*`.
+
+| # | Step | Cell area (um^2) | Delta | Note |
+| --- | --- | --- | --- | --- |
+| 0 | revision 0.3 RTL, re-run | 245 386 | - | 16 logic-loop warnings (`syn_v04_base`) |
+| 1 | PWM words to 13 bit: `PWM_PERIOD`, `DUTY_A/B/C`, `PHASE_A/B/C`, `AZ_START`, counter, shadows | 240 361 | -5 025 | register map 0.4; f_PWM at least 3.66 kHz at 30 MHz |
+| 2 | relative counters per PWM channel (`ra`, `rb`, `rc` replace three modular subtractions; the strobe is `ra == DUTY_A/2`) | 239 149 | -1 212 | bit-exact for PHASE < PERIOD (the map already requires it); the gate test passes unchanged |
+| 3 | `PWM_PERIOD` shadow as a flip-flop word (item 2 below) | 240 333 | +1 184 | removes all 16 logic-loop warnings |
+| 4 | configuration words as flip-flops on one gated clock per word (`R1_CFG_GATED`, was an enabled flip-flop per bit) | 228 426 | -11 907 | same write edge; clock-tree cost found in hardening, see below |
+| 5 | one-hot AND-OR read of the 28 ADC weights | 228 123 | -303 | kept (no effect on function) |
+| 6 | ADC weight words stored in 3 to 14 bit (nominal bit length + 2) | 219 137 | -8 986 | register map 0.4 section 4.11 |
+| - | final RTL of record (ID 0x5204, testbench-neutral), `r1ctrl_20261021_v04` | **219 649** | -25 737 (-10.5 %) | the +512 against step 6 is synthesis variation between two runs; r1_pos was edited and restored between them |
+
+Tried and not kept: a single-adder form of the NCO update in `r1_pos` (-97 um^2 on `r1_pos` alone, not
+worth a change in a verified block). The trims named in the 0.3 README and S6 C2 that were **not** taken, with
+the reason: "fewer writable words" and removal of `TEST_POS` or the diagnostic counters (the brief forbids
+removing a register or function; the counters are 4 bit already); a shared `r1_adcw` (breaks the 22-tick D18
+frame); latch weight words (failed slow-corner STA in 0.3). The PWM words stop at 13 bit, not 12 bit: 12 bit
+would save about 1 000 um^2 more and raise the lowest PWM frequency to 7.3 kHz at 30 MHz; it was not needed.
+
+Decisions (taken without asking, recommended option):
+
+1. **Weight widths (step 6).** Stored width of `ADC_x_W0..W13` = bit length of the nominal weight + 2, at
+   most 14: 3 4 5 6 7 8 9 10 11 11 12 13 14 14 bit. That is 4 x the nominal value in the 1/4-LSB unit, so the
+   1/8-LSB unit proposed by `r1_adc` (2 x nominal) fits with 2 x spare. The mismatched-CDAC example weights of
+   `adcw_meta.json` (`w_cal`, `w_actual_lsb`) fit all widths. This is the one trim with a contract effect:
+   `r1_adc` revision 4 must confirm that its calibrated weights stay below 4 x nominal. Written in the register
+   map (section 4.11) with the table of widths.
+2. **PWM words 13 bit (step 1).** Written in the register map (section 4.6).
+3. **`ID` = 0x5204** (width changes are visible to the host).
+4. **SDC ports corrected.** The constraint file of 0.3 named ADC ports of the 0.2 interface (`adc_valid`,
+   `adc_raw[*]`, `adc_mux[*]`). Since D18 these matched nothing, so the ADC inputs and `adc_sel` had no I/O
+   delay in run t6 (20 warnings `STA-0366` in `librelane.log` of t6). The 0.4 file names `adc_valid_a/b`,
+   `adc_raw_a/b[*]` and `adc_sel`. Run t7 is the first hardening with these constraints.
+5. **CTS buffers.** With 67 gated clock nets the default clock buffer list gave each net a `buf_16` root and
+   three buffers: 15 508 um^2 of clock buffers (t6: 6 984). The config now uses `buf_2` only, root `buf_2`,
+   sink cluster size 30 and diameter 120: 4 736 um^2 (studies t7c to t7h below).
+6. **Pin sides** in `flow/librelane/pins.cfg` from the S6 drawing (see the table below). The brief said gate pins
+   on the east; S6 puts the gate pads (13-15) and bus pads (16-18) on the north edge, so north was used.
+7. **Register map 0.4** also gets two documentation items from the coordinator (no area): the `ANA_CTRL` bit
+   assignment (`PGA_GAIN` in bits 2:0, reset 0 = x1, one code for both AFE channels because `r1_afe` has one
+   `c1..c4` vector; no oscillator enable bit, because a register that stops the macro clock cannot be undone;
+   bits 15:3 reserved) and the one-hot weight readback of raw ADC decisions: **confirmed, no RAW register
+   added** (write 4 to one weight and 0 to the others: code = that decision bit, `tb/tb_adcw_onehot.v`,
+   168 checks passed).
+
+### Item 2: static logic loop through the `PWM_PERIOD` shadow latch
+
+Cause: the shadow latch output fed the load enable of its own clock gate (`ld = (p_s == 0) || wrap`). Fix: the
+`PWM_PERIOD` shadow is a 13-bit flip-flop word on the gated clock `g_sh` (flip-flop outputs break the path),
+and the term `p_s == 0` is removed, because `wrap = (cnt + 1 >= p_s)` is already true while `p_s == 0`. The
+duty and phase shadows stay latch words (they do not feed their own enable). Evidence: Yosys `check` after
+flattening and after the final netlist: 0 logic-loop warnings and "Found and reported 0 problems"
+(`yosys_check.txt`; 0.3 RTL: 16 warnings). STA is unchanged in meaning; no CDC tool was run; the LibreLane lint step (Verilator) ran and gave warnings only.
+
+### Status (revision 0.4)
+
+| # | Check | Status | Evidence |
+| --- | --- | --- | --- |
+| 1 | Trims one at a time with synthesis delta | **passed** (table above); final 219 649 um^2, target 218 000 **not met** by 1 649 | `summary.md`, `stat_flat.txt` |
+| 2 | Yosys check, no logic loop | **passed**: 0 warnings, 0 problems | `yosys_check.txt` |
+| 3 | `pos` 16 cases (9 of 30 ticks, 7 of the D18 22-tick frame incl. 208 and 250 kHz gap cases) | **passed**: results identical to `r1ctrl_20261020_v03` (`r1_pos` and its testbench are unchanged) | `summary.md`, `pos_*_check.log` |
+| 3 | `adcw` bit-exact, mismatch example, calibrated DNL/INL | **passed**: `adcw_result.json` identical to 0.3 | `adcw_result.json` |
+| 3 | one-hot weights read a single decision bit | **passed** (new): 168 checks, 0 failed. Run separately from `v04` (same RTL; script step added to `run_all.sh`) | `adcw_onehot.log` |
+| 3 | chip-level checks `top_biss` 3 x 48, `top_ssi` 3 x 9, `top_spi` 26, `top_gate` 22, `top_safe` 32, `top_cal` 2 x 32 | **passed**: 315 checks, 0 failed (`spi` walking test now expects 13-bit PWM words) | `top_*.log`, `summary.md` |
+| 3 | comparator calibration, model against `r1_safe` and RTL on the same tables (274 cases) | **passed**: 274/274 identical | `calmc_check.json`, `top_calmc.log`, `cmpcal_model.json` |
+| 3 | 208 and 250 kHz gap cases (22-tick frame, 44-tick gap) | **passed**: step error 0.78 deg el (208), 0.96 (250), no slip; as in 0.3 | `summary.md` count-safety table |
+| 3 | Gate-level simulation, formal equivalence, CDC check | not run | - |
+| 3 | Gated-clock write timing in gate-level or post-layout simulation | not run (RTL simulation only; STA closed) | - |
+| 4 | LibreLane to completion in `DIE_AREA 0 0 520 664` at 42 MHz (run `r1ctrl_ll_20261021_t7`) | **passed**: exit 0, see the table below | `reports/ll_t7.md` |
+| 4 | Placed standard-cell area <= 240 000 um^2 | **passed**: 239 201 | `reports/ll_t7.md` |
+| 4 | Utilisation <= 75 % | **failed by 0.15 point** against the snapped core (75.15 %); passes against the S6 core of 320 400 um^2 (74.65 %). The area criterion (<= 240 000 um^2) is met | `reports/ll_t7.md` |
+| 4 | Setup at 3 corners, DRC (Magic, KLayout), LVS, antenna | **passed**: 0 violators at typ, fast, slow; Magic 0, KLayout 0, LVS 0, antenna 0 | `reports/ll_t7.md` |
+| 4 | Max-fanout violations (limit 16) | 6 in each corner, reported by OpenROAD; no slew or cap violation | `<G1_RESULTS_ROOT>/r1_ctrl/r1ctrl_ll_20261021_t7/` metrics |
+| 4 | Hold slack | passed, but thin at the fast corner: +0.021 ns (typ +0.075, slow +0.183) | `reports/ll_t7.md` |
+| - | Co-simulation with `r1_adc`, `r1_osc`, analog `r1_safe`; interop against BiSS masters | not run | - |
+
+### Hardening (revision 0.4)
+
+Command (repository root; CPU set 112-115; POSIX shell `X=v; export X`):
+`flow/run.sh sh flow/librelane/run_harden.sh r1ctrl_ll_20261021_t7 7200` with `G1_CPUSET=112-115`,
+`G1_CPUS=4`, `G1_WORKDIR=designs/r1-joint/blocks/r1_ctrl`, `G1_RESULTS_ROOT=<G1_RESULTS_ROOT>`. The run copies the
+RTL; `run.json` has tool versions, PDK commit and the RTL sha256 `6ca24fce...6eb0` (the same value as the
+simulation run `v04`).
+
+| Quantity | t6 (0.3) | t7 (0.4) |
+| --- | --- | --- |
+| Die (um) | 690.8 x 690.8 | 520 x 664 |
+| Core area (um^2) | 448 003 | 318 286 (S6 assumed 320 400; the core is snapped to the site grid, bbox 11.04 11.34 509.28 650.16) |
+| Standard-cell area (um^2), placed | 269 618 | **239 201** |
+| Utilisation (instance area / core area) | 60.2 % | **75.15 %** (74.65 % against the S6 core of 320 400) |
+| Sequential cells / clock buffers / timing-repair buffers (um^2) | 99 977 / 6 984 / 15 040 | 94 753 / 4 736 / 13 354 |
+| Setup WNS / TNS, typ, fast, slow (ns) | 0 / 0 each (clipped) | 0 / 0 each (clipped); 0 violators |
+| Hold worst slack typ / fast / slow (ns) | 0.182 / 0.102 / 0.314 | 0.075 / 0.021 / 0.183 |
+| Magic DRC / KLayout DRC / LVS / antenna | 0 / 0 / 0 / 0 | 0 / 0 / 0 / 0 |
+| Wall time | 59 min | 72 min |
+
+Setup WNS 0.000 is the clipped value printed by the flow (as in t6). The actual worst setup slack is not
+extracted in this revision (not run).
+
+Pin sides in t7 (from `final/def`, `flow/librelane/pins.cfg`): north (7): `gate_a/b/c`, `cs_n`, `ma_sclk`,
+`slo_sdo`, `por_n`. East (60): `fault_n`, `clk`, `az_win`, `osc_trim`, `cmp`, `thr_*`, `cal_*`. South (35):
+`adc_raw_a/b`, `adc_valid_a/b`, `adc_hold`, `adc_start`, `adc_sel`, `is_smp`, `t2f_clk`. West (18): `ana_ctrl`,
+`sdi`, `en_pad` (the order inside the west list puts `sdi` and `en_pad` first, which is the south-west end
+in the drawing; not checked pin by pin).
+
+Hardening and area studies of this revision (all partial runs stop at CTS and are area studies, not results):
+
+| Run | RTL | Change | Result |
+| --- | --- | --- | --- |
+| `r1ctrl_ll_20261021_t7a` | 13-bit PWM, gated words | first launch | **failed** in 2 min: comment lines in `pins.cfg` are not allowed before a side tag (tooling) |
+| `r1ctrl_ll_20261021_t7b` | same | corrected pins | stopped by PID after 14 s and deleted: the SDC still named the 0.2 ADC ports (see decision 4) |
+| `r1ctrl_ll_20261021_t7c` | before weight narrowing | default CTS buffers | stopped by PID in detailed routing: after CTS 258 207 um^2 (clock buffers 15 508, repair buffers 12 481), 81.4 % utilisation |
+| `r1ctrl_ll_20261021_t7d` | final | `CTS_SINK_CLUSTERING_ENABLE: false` | CTS stop: 252 144 um^2, clock buffers 18 661: worse, rejected |
+| `r1ctrl_ll_20261021_t7e` | final | root `buf_4`, list `buf_2 buf_4` | CTS stop: 240 798, clock buffers 7 682 |
+| `r1ctrl_ll_20261021_t7f`, `t7g` | final | SDC `set_max_fanout 40`, then also `MAX_FANOUT_CONSTRAINT 40` | CTS stop: 240 798, identical to t7e: no effect on the 1 460 repair buffers, reverted |
+| `r1ctrl_ll_20261021_t7h` | final | `buf_2` only, cluster size 30, diameter 120 | CTS stop: 237 211, clock buffers 4 736; **adopted** |
+| `r1ctrl_ll_20261021_t7` | final | adopted config | **run of record**, exit 0 |
+| `r1ctrl_ll_20261021_t8` | final | `CORE_AREA [9.6 9.45 510.4 654.55]` (larger core) | **timed out** (exit 124, 7 200 s) in detailed routing, stuck at 2 violations from iteration 30 on; no result. Core 323 070 um^2 would have given about 74.0 % |
+
+Why the gated words need the CTS change: the synthesis saving of step 4 (11 907 um^2) was almost spent by the
+clock tree (+8 500 um^2 for 67 nets) in the first trial (t7c); with small clock buffers the net gain is about 10 000 um^2.
+
+### Area (revision 0.4)
+
+| Item | 0.3 (t6) | 0.4 |
+| --- | --- | --- |
+| Yosys cell area, flat (um^2) | 245 386 | 219 649 |
+| Placed standard-cell area (um^2) | 269 618 | 239 201 |
+| Placed / synthesis | 1.099 | 1.089 |
+| Die (um^2) | 477 221 | 345 280 |
+| Core utilisation | 60.2 % | 75.15 % |
+| S6 requirement | - | <= 240 000 um^2, <= 75 %, die 520 x 664 |
+
+### Open issues (revision 0.4)
+
+1. Utilisation is 75.15 % of the snapped core (74.65 % of the S6 core). Area passes. A larger core (t8) did not route within the time limit; a rerun with a longer limit or a 1 to 2 % smaller RTL area closes it. Not run.
+2. The synthesis target of 218 000 um^2 was missed by 1 649 um^2; the margin to 240 000 um^2 placed is 799 um^2 (0.3 %). Any RTL growth in the ring-level integration needs a new trim (12-bit PWM words, about 1 000 um^2, is the next step).
+3. `r1_adc` revision 4 must confirm that its calibrated weights fit the narrowed word widths (decision 1) and the 1/4-LSB unit (open since 0.3).
+4. Hold slack at the fast corner is +0.021 ns. It passes, but the margin is small with 67 gated clocks; a gate-level simulation with SDF is not run.
+5. Setup WNS is clipped in the report; true slack not extracted.
+6. Six max-fanout violations (limit 16) remain at all corners; slew and capacitance are clean.
+7. The PWM minimum frequency is 3.66 kHz at 30 MHz (was 458 Hz); no specification line needs less, but the host must know (register map 4.6).
+8. `ANA_CTRL` bits 15:3 are reserved; the PGA decoder and level shifters belong to the integration (`r1_afe` open issue 6).
+9. Open from 0.3 and unchanged: BP_ID / MFR_ID placeholders, ADC-weight Monte Carlo, EN glitch filter, shared-pad rule.
+
+### Failures and mistakes (revision 0.4)
+
+| # | What happened | Class | Effect / fix |
+| --- | --- | --- | --- |
+| 1 | The 0.3 SDC kept 0.2 port names, so the ADC inputs were unconstrained in t6 (20 `STA-0366` warnings were in the log and not read) | verification-gap | found while starting t7b; SDC fixed; t6 timing claims for the ADC input paths are void, t7 is the first constrained run |
+| 2 | The S6 estimate for the PWM trims (-10 to -15 k) was too high: steps 1 and 2 gave -6.2 k | estimation | recorded; the shortfall was covered by steps 4 and 6 |
+| 3 | The relative-counter step (2) saved only 1.2 k and the flip-flop shadow (3) cost 1.2 k | estimation | both kept: step 3 is required for the loop, step 2 is bit-exact |
+| 4 | Gated clocks were judged by synthesis area only; CTS then added 8.5 k um^2 of clock buffers (t7c) | planning | trial hardening before the regression; CTS buffer list changed |
+| 5 | `pins.cfg` with comment lines failed the pin step (t7a) | tooling | comments removed; the file is documented here |
+| 6 | t7b was started before the SDC was checked and had to be stopped and deleted | process-hygiene | deleted own run directory only, by absolute path |
+| 7 | Two CTS experiments (no clustering t7d; max-fanout t7f, t7g) had no or a negative effect | estimation | recorded, reverted (t7d, fanout) |
+| 8 | `spi` walking-one test failed after the PWM words became 13 bit | regression | expected by the map; test updated to the 13-bit expectation (check count unchanged) |
+| 9 | A comment-only edit of `rtl/r1_gate.v` after the run changes the RTL sha256 | process-hygiene | reverted at once, sha checked equal to the run of record |
+| 10 | The 218 000 um^2 synthesis target was missed (219 649) | planning | placed target met anyway; next trim named |
+| 11 | The core was snapped by the floorplanner, 318 286 instead of 320 400 um^2, which moves the utilisation from 74.65 to 75.15 % | numerical | reported both; run t8 tests a larger core |
 
 ## Revision 0.3 (2026-10-20, run of record `r1ctrl_20261020_v03`)
 

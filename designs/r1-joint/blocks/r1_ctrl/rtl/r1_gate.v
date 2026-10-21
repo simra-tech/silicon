@@ -38,13 +38,13 @@
 module r1_gate (
     input  wire         clk,
     input  wire         rst_n,
-    input  wire [15:0]  period,
-    input  wire [15:0]  duty_a, duty_b, duty_c,
-    input  wire [15:0]  phase_a, phase_b, phase_c,
+    input  wire [12:0]  period,
+    input  wire [12:0]  duty_a, duty_b, duty_c,
+    input  wire [12:0]  phase_a, phase_b, phase_c,
     input  wire [7:0]   dead,
     input  wire [7:0]   pair_ticks,
     input  wire [7:0]   guard,
-    input  wire [15:0]  az_start,
+    input  wire [12:0]  az_start,
     input  wire [7:0]   az_len,
     input  wire         gate_ok,        // clk domain: enabled and no fault
     input  wire         en_pad,         // EN/STO_IN pad level (asynchronous)
@@ -71,72 +71,81 @@ module r1_gate (
     output reg  [3:0]   late_cnt        // saturating
 );
     // ---------------- PWM ----------------
-    reg  [15:0] cnt;
-    wire [15:0] p_s, da_s, db_s, dc_s, pa_s, pb_s, pc_s;
+    reg  [12:0] cnt;
+    wire [12:0] p_s, da_s, db_s, dc_s, pa_s, pb_s, pc_s;
     reg         pwm_a, pwm_b, pwm_c;
-    wire        wrap = (cnt + 16'd1 >= p_s);
+    wire        wrap = ({1'b0, cnt} + 14'd1 >= {1'b0, p_s});
 
-    function [15:0] rel;               // (c - p) mod per: one subtraction, add per on borrow
-        input [15:0] c, p, per;
-        reg [16:0] t;
-        begin t = {1'b0, c} - {1'b0, p}; rel = t[16] ? (t[15:0] + per) : t[15:0]; end
-    endfunction
     function on_win;                   // dt <= r < d - dt
-        input [15:0] r, d; input [7:0] dt;
-        reg [16:0] e;
-        begin e = {1'b0, d} - {9'd0, dt}; on_win = (r >= {8'd0, dt}) && !e[16] && (r < e[15:0]); end
-    endfunction
-    function [15:0] centre;            // (ph + d/2) mod per
-        input [15:0] ph, d, per;
-        reg [16:0] t;
-        begin t = {1'b0, ph} + {2'b0, d[15:1]}; centre = (t >= {1'b0, per}) ? (t[15:0] - per) : t[15:0]; end
+        input [12:0] r, d; input [7:0] dt;
+        reg [13:0] e;
+        begin e = {1'b0, d} - {6'd0, dt}; on_win = (r >= {5'd0, dt}) && !e[13] && (r < e[12:0]); end
     endfunction
 
-    wire [15:0] ra = rel(cnt, pa_s, p_s);
-    wire [15:0] rb = rel(cnt, pb_s, p_s);
-    wire [15:0] rc = rel(cnt, pc_s, p_s);
-    wire [16:0] min_d = {8'd0, dead, 1'b0} + 17'd2;
+    // revision 0.4: per-channel relative counters r_x = (cnt - PHASE_x) mod PERIOD,
+    // counted up and wrapped at PERIOD; loaded with (PERIOD - PHASE_x) mod PERIOD
+    // from the words that the shadows load in the same tick (PHASE < PERIOD)
+    reg  [12:0] ra, rb, rc;
+    function [12:0] rload;             // (0 - ph) mod per, ph < per
+        input [12:0] ph, per;
+        begin rload = (ph == 13'd0) ? 13'd0 : (per - ph); end
+    endfunction
+    function [12:0] rnext;             // r + 1, wrapped at per
+        input [12:0] r, per;
+        begin rnext = ({1'b0, r} + 14'd1 >= {1'b0, per}) ? 13'd0 : (r + 13'd1); end
+    endfunction
+    wire [9:0]  min_d = {1'b0, dead, 1'b0} + 10'd2;
     reg  [7:0]  az_cnt;
 
     // shadow registers (revision 0.2: latch words): loaded in the tick of the
     // counter wrap (and continuously while PERIOD = 0), i.e. at the same clock
     // edge that sets cnt to 0, as the flip-flops of revision 0.1 did
-    wire ld = (p_s == 16'd0) || wrap;
+    // revision 0.4: PERIOD shadow is a flip-flop word on the gated clock (no latch,
+    // so no static logic loop through the enable of its own clock gate). wrap is
+    // true while p_s = 0 (cnt + 1 >= 0), so the shadows also load continuously then.
+    wire ld = wrap;
     wire g_sh;
     r1_cgate u_cgs (.clk(clk), .en(ld), .gclk(g_sh));
-    r1_creg #(.W(16)) u_ps (.rst_n(rst_n), .gclk(g_sh), .d(period),  .q(p_s));
-    r1_creg #(.W(16)) u_da (.rst_n(rst_n), .gclk(g_sh), .d(duty_a),  .q(da_s));
-    r1_creg #(.W(16)) u_db (.rst_n(rst_n), .gclk(g_sh), .d(duty_b),  .q(db_s));
-    r1_creg #(.W(16)) u_dc (.rst_n(rst_n), .gclk(g_sh), .d(duty_c),  .q(dc_s));
-    r1_creg #(.W(16)) u_pa (.rst_n(rst_n), .gclk(g_sh), .d(phase_a), .q(pa_s));
-    r1_creg #(.W(16)) u_pb (.rst_n(rst_n), .gclk(g_sh), .d(phase_b), .q(pb_s));
-    r1_creg #(.W(16)) u_pc (.rst_n(rst_n), .gclk(g_sh), .d(phase_c), .q(pc_s));
+    reg  [12:0] p_r;
+    always @(posedge g_sh or negedge rst_n)
+        if (!rst_n) p_r <= 13'd0;
+        else        p_r <= period;
+    assign p_s = p_r;
+    r1_creg #(.W(13)) u_da (.rst_n(rst_n), .gclk(g_sh), .d(duty_a),  .q(da_s));
+    r1_creg #(.W(13)) u_db (.rst_n(rst_n), .gclk(g_sh), .d(duty_b),  .q(db_s));
+    r1_creg #(.W(13)) u_dc (.rst_n(rst_n), .gclk(g_sh), .d(duty_c),  .q(dc_s));
+    r1_creg #(.W(13)) u_pa (.rst_n(rst_n), .gclk(g_sh), .d(phase_a), .q(pa_s));
+    r1_creg #(.W(13)) u_pb (.rst_n(rst_n), .gclk(g_sh), .d(phase_b), .q(pb_s));
+    r1_creg #(.W(13)) u_pc (.rst_n(rst_n), .gclk(g_sh), .d(phase_c), .q(pc_s));
     // strobe tick and valid, from the shadowed values (revision 0.2 after the
     // first hardening trial: a 17-bit shadow latch loaded from the unshadowed
     // words gave a latch-to-latch path with half a clock period, -3.3 ns at
     // 42 MHz; computed here it is a full-cycle path to the scheduler flops)
-    wire [15:0] sa = centre(pa_s, da_s, p_s);
-    wire        va = ({1'b0, da_s} >= min_d) && (pa_s < p_s) && (da_s <= p_s);
+    wire [12:0] hc = {1'b0, da_s[12:1]};         // half the ideal on-time: strobe at ra == hc
+    wire        va = ({1'b0, da_s} >= {4'd0, min_d}) && (pa_s < p_s) && (da_s <= p_s);
 
     always @(posedge clk or negedge rst_n) begin
         if (!rst_n) begin
-            cnt <= 16'd0; pwm_a <= 1'b0; pwm_b <= 1'b0; pwm_c <= 1'b0; pwm_wrap <= 1'b0;
+            ra <= 13'd0; rb <= 13'd0; rc <= 13'd0;
+            cnt <= 13'd0; pwm_a <= 1'b0; pwm_b <= 1'b0; pwm_c <= 1'b0; pwm_wrap <= 1'b0;
             az_cnt <= 8'd0; az_win <= 1'b0;
         end else begin
             pwm_wrap <= 1'b0;
             if (ld) begin
-                cnt  <= 16'd0;
-                pwm_wrap <= (period != 16'd0);
+                cnt  <= 13'd0;
+                ra <= rload(phase_a, period); rb <= rload(phase_b, period); rc <= rload(phase_c, period);
+                pwm_wrap <= (period != 13'd0);
             end else begin
-                cnt <= cnt + 16'd1;
+                cnt <= cnt + 13'd1;
+                ra <= rnext(ra, p_s); rb <= rnext(rb, p_s); rc <= rnext(rc, p_s);
             end
-            pwm_a <= (p_s != 16'd0) && on_win(ra, da_s, dead);
-            pwm_b <= (p_s != 16'd0) && on_win(rb, db_s, dead);
-            pwm_c <= (p_s != 16'd0) && on_win(rc, dc_s, dead);
+            pwm_a <= (p_s != 13'd0) && on_win(ra, da_s, dead);
+            pwm_b <= (p_s != 13'd0) && on_win(rb, db_s, dead);
+            pwm_c <= (p_s != 13'd0) && on_win(rc, dc_s, dead);
             // auto-zero window (same counter value as the PWM decision)
-            if (p_s != 16'd0 && cnt == az_start && az_len != 8'd0) az_cnt <= az_len;
+            if (p_s != 13'd0 && cnt == az_start && az_len != 8'd0) az_cnt <= az_len;
             else if (az_cnt != 8'd0)                               az_cnt <= az_cnt - 8'd1;
-            az_win <= (p_s != 16'd0 && cnt == az_start && az_len != 8'd0) || (az_cnt > 8'd1);
+            az_win <= (p_s != 13'd0 && cnt == az_start && az_len != 8'd0) || (az_cnt > 8'd1);
         end
     end
     assign gate_a = pwm_a & gate_ok & en_pad;
@@ -145,9 +154,10 @@ module r1_gate (
 
     // strobe and guard (the strobe tick is compared with the counter value that
     // pwm_x is computed from, so the strobe sits at the window centre)
-    wire stb  = va && (p_s != 16'd0) && (cnt == sa);
-    wire [15:0] ta = rel(sa, cnt, p_s);          // ticks until the strobe
-    wire soon = va && (p_s != 16'd0) && ta <= {8'd0, guard};
+    wire stb  = va && (p_s != 13'd0) && (ra == hc);
+    wire [13:0] tt = {1'b0, hc} - {1'b0, ra};
+    wire [12:0] ta = tt[13] ? (tt[12:0] + p_s) : tt[12:0];     // ticks until the strobe
+    wire soon = va && (p_s != 13'd0) && ta <= {5'd0, guard};
 
     // ---------------- ADC weight correction (one per slice) ----------------
     wire        cva, cvb;

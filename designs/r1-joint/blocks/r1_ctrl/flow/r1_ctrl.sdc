@@ -1,4 +1,4 @@
-# r1_ctrl macro timing constraints (revision 0.2). Applies to LibreLane PnR and
+# r1_ctrl macro timing constraints (revision 0.4; port names of the D18 ADC interface). Applies to LibreLane PnR and
 # signoff STA. Structure follows the G1 g1_digital.sdc (same repository).
 #   clk     : r1_osc, STA closes at 42 MHz (23.81 ns), the fastest untrimmed
 #             clock at OSC_TRIM reset code 22 is 38.9 MHz (PLAN.md D13).
@@ -22,8 +22,10 @@ set_clock_uncertainty -hold  0.05 [all_clocks]
 set_clock_transition  0.3 [all_clocks]
 
 # ADC: SAR logic and decisions are synchronous to clk (r1_adc); 30 % of the period
-set_input_delay  -clock clk -max 7.0 [get_ports {adc_valid adc_raw[*]}]
-set_input_delay  -clock clk -min 0.5 [get_ports {adc_valid adc_raw[*]}]
+# Revision 0.4: the 0.2 port names (adc_valid, adc_raw, adc_mux) no longer exist since D18, so up to
+# the 0.3 hardening (t6) these constraints matched nothing and the ADC ports were unconstrained.
+set_input_delay  -clock clk -max 7.0 [get_ports {adc_valid_a adc_valid_b adc_raw_a[*] adc_raw_b[*]}]
+set_input_delay  -clock clk -min 0.5 [get_ports {adc_valid_a adc_valid_b adc_raw_a[*] adc_raw_b[*]}]
 # SPI data in, sampled on the rising SCLK edge
 set_input_delay  -clock ma -max 20.0 [get_ports sdi]
 set_input_delay  -clock ma -min  2.0 [get_ports sdi]
@@ -36,7 +38,7 @@ set_output_delay -clock ma -min  0.0 [get_ports slo_sdo]
 set_false_path -from [get_ports {por_n cs_n en_pad cmp[*] t2f_clk}]
 
 # Outputs to the analog blocks and pads, registered in clk (gates: AND with EN)
-set clk_outputs [get_ports {gate_a gate_b gate_c fault_n adc_hold is_smp adc_start adc_mux[*] \
+set clk_outputs [get_ports {gate_a gate_b gate_c fault_n adc_hold is_smp adc_start adc_sel \
                             az_win thr_* cal_* osc_trim[*] ana_ctrl[*]}]
 set_output_delay -clock clk -max 5.0 $clk_outputs
 set_output_delay -clock clk -min 0.0 $clk_outputs

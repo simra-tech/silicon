@@ -47,9 +47,12 @@ for w in nom cal; do
   vvp -n "$OUT/adcw/tb_adcw.vvp" +dir="$OUT/adcw" +set=$w > "$OUT/adcw/tb_$w.log" 2>&1
 done
 python3 tb/adcw_ref.py check "$OUT/adcw" > "$OUT/adcw/check.log" 2>&1
+# revision 0.4: one-hot weights read a single decision bit exactly (register map section 4.11)
+iverilog -g2005 -Wall -Wno-timescale -o "$OUT/adcw/tb_onehot.vvp" rtl/r1_adcw.v tb/tb_adcw_onehot.v > "$OUT/adcw/onehot.compile.log" 2>&1
+vvp -n "$OUT/adcw/tb_onehot.vvp" > "$OUT/adcw/onehot.log" 2>&1
 
 # (b..f, cal) chip level
-iverilog -g2005 -Wall -Wno-timescale -DR1_CFG_FLOPS -o "$OUT/tb_top.vvp" rtl/*.v tb/tb_top.v > "$OUT/tb_top.compile.log" 2>&1
+iverilog -g2005 -Wall -Wno-timescale -DR1_CFG_FLOPS -DR1_CFG_GATED -o "$OUT/tb_top.vvp" rtl/*.v tb/tb_top.v > "$OUT/tb_top.compile.log" 2>&1
 for t in biss ssi; do
   for ck in 23.810 33.333 47.619; do
     vvp -n "$OUT/tb_top.vvp" +test=$t +clk_ns=$ck > "$OUT/top_${t}_${ck}.log" 2>&1

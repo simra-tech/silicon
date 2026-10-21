@@ -13,7 +13,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 module r1_ctrl_top #(
-    parameter [15:0] CHIP_ID    = 16'h5203,
+    parameter [15:0] CHIP_ID    = 16'h5204,
     parameter [15:0] PROFILE_ID = 16'h0001,
     parameter [47:0] DEV_ID     = 48'h52_31_4A_46_45_30,
     parameter [31:0] DEV_SN     = 32'h0000_0000,
@@ -66,8 +66,9 @@ module r1_ctrl_top #(
     wire [4:0]  st_len;
     wire [17:0] test_pos;
     wire [15:0] osc_win, wdt_period, amp_lim, ovs_lim, gain, ph_sin, ph_icos, h3,
-                zero_ofs, period, duty_a, duty_b, duty_c, phase_a, phase_b, phase_c, sched,
-                i2t_lim, az_start;
+                zero_ofs, sched,
+                i2t_lim;
+    wire [12:0] period, duty_a, duty_b, duty_c, phase_a, phase_b, phase_c, az_start;   // 0.4: 13 bit
     wire [11:0] timeout_ticks, i2t_cfg;
     wire [13:0] ot_lim;
     wire [13:0] cmp_thr_a, cmp_thr_b;

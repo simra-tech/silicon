@@ -144,9 +144,7 @@ run = dict(
     tools=ver, pdk_commit=ver.get("pdk_commit"),
     inputs="inputs.sha256 (RTL, testbenches, scripts)",
     bulk_results="$G1_RESULTS_ROOT/r1_ctrl/" + rid,
-    question="Does the r1_ctrl revision 0.3 RTL (two-sided comparator calibration per the r1_safe contract, "
-             "CAL_CRC over comparator words and ADC weights, 22-tick D18 encoder frame count safety at 208 and 250 kHz) pass the "
-             "revision-0.2 regression plus the new checks, and what is its synthesized cell area?",
+    question="Does the r1_ctrl revision 0.4 RTL (D10 area closure: 13-bit PWM words, relative PWM counters, flip-flop PERIOD shadow, gated-clock configuration words, narrowed ADC weight words; no function removed) pass the whole revision-0.3 regression, and what is its synthesized cell area?",
     result=res,
     disposition=("simulation checks passed" if (top_ok and pos_ok and aw["passed"] and cs_ok and cal_ok) else "simulation checks FAILED (see summary.md)")
                 + f"; cell area {area/1e6:.3f} mm2 = {area/180000:.2f} x the 0.18 mm2 budget (before placement)",

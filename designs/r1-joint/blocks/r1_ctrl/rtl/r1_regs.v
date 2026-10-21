@@ -18,7 +18,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 module r1_regs #(
-    parameter [15:0] CHIP_ID = 16'h5203
+    parameter [15:0] CHIP_ID = 16'h5204
 ) (
     input  wire        clk,
     input  wire        rst_n,
@@ -73,7 +73,7 @@ module r1_regs #(
     output wire [9:0]  pos_cfg,
     output wire [7:0]  cal_crc,
     output reg         cal_valid,
-    output wire [15:0] period, duty_a, duty_b, duty_c, phase_a, phase_b, phase_c,
+    output wire [12:0] period, duty_a, duty_b, duty_c, phase_a, phase_b, phase_c,
     output wire [7:0]  dead,
     output wire [15:0] sched,
     output wire [13:0] ot_lim,
@@ -83,7 +83,7 @@ module r1_regs #(
     output wire [3:0]  t2f_win,
     output wire [13:0] cmp_thr_a,      // [5:0] THR_OC_A, [13:8] THR_NEG_A
     output wire [13:0] cmp_thr_b,
-    output wire [15:0] az_start,
+    output wire [12:0] az_start,
     output wire [15:0] az_cfg,         // [7:0] AZ_LEN, [13:8] THR_ZERO, [15:14] CAL_STEP
     output wire [6:0]  ideal_oc,       // CMP_CAL_IDEAL [6:0]
     output wire [6:0]  ideal_neg,      // CMP_CAL_IDEAL [14:8]
@@ -118,13 +118,13 @@ module r1_regs #(
     r1_cword #(.W(16), .A(7'h16)) u_16 (clk, rst_n, wr, addr, wdata, zero_ofs);
     r1_cword #(.W(10), .RV(10'h164), .A(7'h17)) u_17 (clk, rst_n, wr, addr, wdata[9:0], pos_cfg);
     r1_cword #(.W(8),  .A(7'h18)) u_18 (clk, rst_n, wr, addr, wdata[7:0], cal_crc);
-    r1_cword #(.W(16), .A(7'h20)) u_20 (clk, rst_n, wr, addr, wdata, period);
-    r1_cword #(.W(16), .A(7'h21)) u_21 (clk, rst_n, wr, addr, wdata, duty_a);
-    r1_cword #(.W(16), .A(7'h22)) u_22 (clk, rst_n, wr, addr, wdata, duty_b);
-    r1_cword #(.W(16), .A(7'h23)) u_23 (clk, rst_n, wr, addr, wdata, duty_c);
-    r1_cword #(.W(16), .A(7'h24)) u_24 (clk, rst_n, wr, addr, wdata, phase_a);
-    r1_cword #(.W(16), .A(7'h25)) u_25 (clk, rst_n, wr, addr, wdata, phase_b);
-    r1_cword #(.W(16), .A(7'h26)) u_26 (clk, rst_n, wr, addr, wdata, phase_c);
+    r1_cword #(.W(13), .A(7'h20)) u_20 (clk, rst_n, wr, addr, wdata[12:0], period);
+    r1_cword #(.W(13), .A(7'h21)) u_21 (clk, rst_n, wr, addr, wdata[12:0], duty_a);
+    r1_cword #(.W(13), .A(7'h22)) u_22 (clk, rst_n, wr, addr, wdata[12:0], duty_b);
+    r1_cword #(.W(13), .A(7'h23)) u_23 (clk, rst_n, wr, addr, wdata[12:0], duty_c);
+    r1_cword #(.W(13), .A(7'h24)) u_24 (clk, rst_n, wr, addr, wdata[12:0], phase_a);
+    r1_cword #(.W(13), .A(7'h25)) u_25 (clk, rst_n, wr, addr, wdata[12:0], phase_b);
+    r1_cword #(.W(13), .A(7'h26)) u_26 (clk, rst_n, wr, addr, wdata[12:0], phase_c);
     r1_cword #(.W(8),  .RV(8'd15), .A(7'h27)) u_27 (clk, rst_n, wr, addr, wdata[7:0], dead);
     r1_cword #(.W(16), .RV(16'h1416), .A(7'h28)) u_28 (clk, rst_n, wr, addr, wdata, sched);
     r1_cword #(.W(14), .RV(14'h3FFF), .A(7'h2C)) u_2c (clk, rst_n, wr, addr, wdata[13:0], ot_lim);
@@ -138,7 +138,7 @@ module r1_regs #(
     r1_cword #(.W(12), .RV(12'hFFF), .A(7'h37)) u_37 (clk, rst_n, wr, addr, thr_w, thr_b);
     assign cmp_thr_a = {thr_a[11:6], 2'b00, thr_a[5:0]};
     assign cmp_thr_b = {thr_b[11:6], 2'b00, thr_b[5:0]};
-    r1_cword #(.W(16), .A(7'h38)) u_38 (clk, rst_n, wr, addr, wdata, az_start);
+    r1_cword #(.W(13), .A(7'h38)) u_38 (clk, rst_n, wr, addr, wdata[12:0], az_start);
     // AZ_CFG reset: THR_ZERO 14 (r1_safe contract), CAL_STEP 1 (32 ticks)
     r1_cword #(.W(16), .RV(16'h4E00), .A(7'h39)) u_39 (clk, rst_n, wr, addr, wdata, az_cfg);
     // CMP_CAL_IDEAL: 2 x k_ideal (half codes), reset 72 (OC, 36.31) and 55 (NEG, 27.69)
@@ -154,11 +154,29 @@ module r1_regs #(
     // r1_adc revision-3 weights x 4 (2032.4 .. 0.31 LSB; sum 16380 = 4095 LSB).
     localparam [195:0] WNOM = {14'd8130, 14'd4065, 14'd2032, 14'd1016, 14'd508, 14'd315, 14'd158,
                                14'd79,   14'd39,   14'd20,   14'd10,   14'd5,   14'd2,   14'd1};
+    // Revision 0.4: stored width per weight = bit length of the nominal weight + 2 (4 x headroom
+    // over the nominal value, so a 1/8-LSB unit still fits with 2 x spare), at most 14 bit:
+    // W0..W13 = 3 4 5 6 7 8 9 10 11 11 12 13 14 14 bits. Higher bits read 0 and ignore writes.
+    function integer wwid;
+        input integer i;
+        begin
+            case (i)
+                0: wwid = 3;   1: wwid = 4;   2: wwid = 5;   3: wwid = 6;
+                4: wwid = 7;   5: wwid = 8;   6: wwid = 9;   7: wwid = 10;
+                8: wwid = 11;  9: wwid = 11;  10: wwid = 12; 11: wwid = 13;
+                default: wwid = 14;
+            endcase
+        end
+    endfunction
     genvar gi;
     generate
         for (gi = 0; gi < 14; gi = gi + 1) begin : g_w
-            r1_cword #(.W(14), .RV(WNOM[14*gi +: 14]), .A(7'h50 + gi)) u_wa (clk, rst_n, wr, addr, wdata[13:0], adc_wa[14*gi +: 14]);
-            r1_cword #(.W(14), .RV(WNOM[14*gi +: 14]), .A(7'h60 + gi)) u_wb (clk, rst_n, wr, addr, wdata[13:0], adc_wb[14*gi +: 14]);
+            localparam integer WW = wwid(gi);
+            wire [WW-1:0] qa, qb;
+            r1_cword #(.W(WW), .RV(WNOM[14*gi +: WW]), .A(7'h50 + gi)) u_wa (clk, rst_n, wr, addr, wdata[WW-1:0], qa);
+            r1_cword #(.W(WW), .RV(WNOM[14*gi +: WW]), .A(7'h60 + gi)) u_wb (clk, rst_n, wr, addr, wdata[WW-1:0], qb);
+            assign adc_wa[14*gi +: 14] = {{(14-WW){1'b0}}, qa};
+            assign adc_wb[14*gi +: 14] = {{(14-WW){1'b0}}, qb};
         end
     endgenerate
 
@@ -235,6 +253,19 @@ module r1_regs #(
     end
 
     // ---------------- read multiplexer ----------------
+    // ADC weights (revision 0.4): one-hot AND-OR read, decode shared by both slices
+    // (a 14-to-1 index per bit costs more than the AND-OR form)
+    reg [13:0] w_or;
+    reg        wsel_any;
+    integer    wi;
+    always @(*) begin
+        w_or = 14'd0; wsel_any = 1'b0;
+        for (wi = 0; wi < 14; wi = wi + 1) begin
+            w_or     = w_or | ({14{maddr == 7'h50 + wi}} & adc_wa[14*wi +: 14])
+                            | ({14{maddr == 7'h60 + wi}} & adc_wb[14*wi +: 14]);
+            wsel_any = wsel_any | (maddr == 7'h50 + wi) | (maddr == 7'h60 + wi);
+        end
+    end
     always @(*) begin
         case (maddr)
             7'h00: rdata = CHIP_ID;
@@ -269,13 +300,13 @@ module r1_regs #(
             7'h1D: rdata = {4'd0, raw_sin};
             7'h1E: rdata = {4'd0, raw_cos_hold};
             7'h1F: rdata = meas_angle[17:2];
-            7'h20: rdata = period;
-            7'h21: rdata = duty_a;
-            7'h22: rdata = duty_b;
-            7'h23: rdata = duty_c;
-            7'h24: rdata = phase_a;
-            7'h25: rdata = phase_b;
-            7'h26: rdata = phase_c;
+            7'h20: rdata = {3'd0, period};
+            7'h21: rdata = {3'd0, duty_a};
+            7'h22: rdata = {3'd0, duty_b};
+            7'h23: rdata = {3'd0, duty_c};
+            7'h24: rdata = {3'd0, phase_a};
+            7'h25: rdata = {3'd0, phase_b};
+            7'h26: rdata = {3'd0, phase_c};
             7'h27: rdata = {8'd0, dead};
             7'h28: rdata = sched;
             7'h29: rdata = {4'd0, i_a};
@@ -293,18 +324,14 @@ module r1_regs #(
             7'h35: rdata = {12'd0, late_cnt};
             7'h36: rdata = {2'd0, cmp_thr_a};
             7'h37: rdata = {2'd0, cmp_thr_b};
-            7'h38: rdata = az_start;
+            7'h38: rdata = {3'd0, az_start};
             7'h39: rdata = az_cfg;
             7'h3A: rdata = cmp_cal_a;
             7'h3B: rdata = cmp_cal_b;
             7'h3C: rdata = {1'b0, ideal_neg, 1'b0, ideal_oc};
             default: begin
-                if (maddr[6:4] == 3'b101 && maddr[3:0] <= 4'd13)
-                    rdata = {2'd0, adc_wa[14*maddr[3:0] +: 14]};
-                else if (maddr[6:4] == 3'b110 && maddr[3:0] <= 4'd13)
-                    rdata = {2'd0, adc_wb[14*maddr[3:0] +: 14]};
-                else
-                    rdata = maddr[6] ? {8'd0, id_byte} : 16'd0;
+                if (wsel_any) rdata = {2'd0, w_or};
+                else          rdata = maddr[6] ? {8'd0, id_byte} : 16'd0;
             end
         endcase
     end
