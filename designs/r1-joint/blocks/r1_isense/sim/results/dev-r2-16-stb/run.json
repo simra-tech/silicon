@@ -1,0 +1,1132 @@
+{
+ "block": "r1_isense",
+ "command": "python3 designs/r1-joint/blocks/r1_isense/sim/run_deck.py --block r1_isense --deck <G1_RESULTS_ROOT>/r1_isense/dev-r2-16-net/tb_isense_stb.cir --run-id dev-r2-16-stb --corners tt,ff,ssx,ffx --jobs 3 --set RL=0.001 --set CL=2p --set CW=0 --netlist <G1_RESULTS_ROOT>/r1_isense/dev-r2-16-net/r1_isense.spice --analyze analyze_stb.py --question \"revision-2 development screen, variant [TP=1 MTC=9 RDG=60 BFC=1 FDC=1 RH=50 TIW=2 TIL=4 TMW=2 TML=4], state stb\" --pre <G1_RESULTS_ROOT>/r1_isense/dev-r2-16-net/tb_isense_stbpre.cir",
+ "container_image": "tapeoutbench-eda:latest sha256:ddeb6957... (checked by flow/run.sh)",
+ "corners": {
+  "ff": {
+   "cap": "cap_bcs",
+   "mos": "mos_ff",
+   "res": "res_bcs",
+   "temp_C": -40,
+   "vdd": 1.32,
+   "vdda": 3.6
+  },
+  "ffx": {
+   "cap": "cap_bcs",
+   "mos": "mos_ff",
+   "res": "res_bcs",
+   "temp_C": 125,
+   "vdd": 1.08,
+   "vdda": 3.0
+  },
+  "ssx": {
+   "cap": "cap_wcs",
+   "mos": "mos_ss",
+   "res": "res_wcs",
+   "temp_C": -40,
+   "vdd": 1.32,
+   "vdda": 3.6
+  },
+  "tt": {
+   "cap": "cap_typ",
+   "mos": "mos_tt",
+   "res": "res_typ",
+   "temp_C": 27,
+   "vdd": 1.2,
+   "vdda": 3.3
+  }
+ },
+ "cpuset": "109-111",
+ "date_utc": "2026-10-21T01:55:09.504005Z",
+ "deck": "<G1_RESULTS_ROOT>/r1_isense/dev-r2-16-net/tb_isense_stb.cir",
+ "deck_sha256": "55297b2e046d180cdf236bf36a7ad1945993b22390c5f2475306cfcc5d3c0299",
+ "disposition": "failed: state normal, 4 corners; 8 loop results passed, 4 failed, 4 not applicable; criterion PM >= 60 deg, GM >= 10 dB",
+ "included_netlists": {
+  "/work/designs/r1-joint/blocks/r1_safe/schematic/r1_safe.spice": "812f886dce2b759af121230bd2e9100aeac59041effdf9a3341647c29299cbde"
+ },
+ "included_netlists_results_root": {
+  "<G1_RESULTS_ROOT>/r1_isense/dev-r2-16-net/r1_isense.spice": "4665d00a12ea3efdafa37c8d68a1f25f9f11181dd6f72b7cb1336e90407145c2"
+ },
+ "jobs": {
+  "ff": {
+   "log": "r1_isense/dev-r2-16-stb/tb_isense_stb_ff.log",
+   "rc": 0,
+   "wall_s": 56.1
+  },
+  "ffx": {
+   "log": "r1_isense/dev-r2-16-stb/tb_isense_stb_ffx.log",
+   "rc": 0,
+   "wall_s": 30.0
+  },
+  "ssx": {
+   "log": "r1_isense/dev-r2-16-stb/tb_isense_stb_ssx.log",
+   "rc": 0,
+   "wall_s": 54.1
+  },
+  "tt": {
+   "log": "r1_isense/dev-r2-16-stb/tb_isense_stb_tt.log",
+   "rc": 0,
+   "wall_s": 52.1
+  }
+ },
+ "netlist": "<G1_RESULTS_ROOT>/r1_isense/dev-r2-16-net/r1_isense.spice",
+ "netlist_sha256": "4665d00a12ea3efdafa37c8d68a1f25f9f11181dd6f72b7cb1336e90407145c2",
+ "ngspice_version": "** ngspice-46 : Circuit level simulation program ** Copyright 2001-2025, The ngspice team. ** Please get your ngspice manual from https://ngspice.sourceforge.io/docs.html ** Please file your bug-reports at http://ngspice.sourceforge.net/bugrep.html (read after the run with flow/run.sh ngspice -v, same container image; the in-run read failed: python 3.6 has no capture_output)",
+ "overrides": {
+  "CL": "2p",
+  "CW": "0",
+  "RL": "0.001"
+ },
+ "pdk_commit": "84374023ee8b4b126bebbba67fcbada0a9c0ff0b (checked by flow/run.sh)",
+ "prerun": {
+  "ff": {
+   "deck": "<G1_RESULTS_ROOT>/r1_isense/dev-r2-16-net/tb_isense_stbpre.cir",
+   "holdvals": {
+    "VH1": "0.82921",
+    "VH2": "0.829209",
+    "VON": "0.883904",
+    "VOP": "0.318913"
+   },
+   "rc": 0
+  },
+  "ffx": {
+   "deck": "<G1_RESULTS_ROOT>/r1_isense/dev-r2-16-net/tb_isense_stbpre.cir",
+   "holdvals": {
+    "VH1": "0.918542",
+    "VH2": "0.91853",
+    "VON": "0.886223",
+    "VOP": "0.321762"
+   },
+   "rc": 0
+  },
+  "ssx": {
+   "deck": "<G1_RESULTS_ROOT>/r1_isense/dev-r2-16-net/tb_isense_stbpre.cir",
+   "holdvals": {
+    "VH1": "0.961781",
+    "VH2": "0.961781",
+    "VON": "0.883895",
+    "VOP": "0.31885"
+   },
+   "rc": 0
+  },
+  "tt": {
+   "deck": "<G1_RESULTS_ROOT>/r1_isense/dev-r2-16-net/tb_isense_stbpre.cir",
+   "holdvals": {
+    "VH1": "0.929665",
+    "VH2": "0.929665",
+    "VON": "0.884395",
+    "VOP": "0.319414"
+   },
+   "rc": 0
+  }
+ },
+ "question": "revision-2 development screen, variant [TP=1 MTC=9 RDG=60 BFC=1 FDC=1 RH=50 TIW=2 TIL=4 TMW=2 TML=4], state stb",
+ "raw_results": "$G1_RESULTS_ROOT/r1_isense/dev-r2-16-stb/",
+ "result": {
+  "margins": {
+   "ff": {
+    "cm_in": {
+     "vsh_+0.000": {
+      "f_180_Hz": 12022414.084660472,
+      "f_unity_Hz": null,
+      "gm_db": 50.91,
+      "ph_min_deg": -1231.8,
+      "phase_dc_deg": -179.5,
+      "pm_deg": null,
+      "pm_valid": false,
+      "status": "not applicable (loop gain below 0 dB at all frequencies)",
+      "t_dc_db": -120.31,
+      "t_max_db": -50.54
+     },
+     "vsh_+0.100": {
+      "f_180_Hz": 11769626.855103761,
+      "f_unity_Hz": null,
+      "gm_db": 52.16,
+      "ph_min_deg": -1235.7,
+      "phase_dc_deg": -179.5,
+      "pm_deg": null,
+      "pm_valid": false,
+      "status": "not applicable (loop gain below 0 dB at all frequencies)",
+      "t_dc_db": -120.36,
+      "t_max_db": -51.83
+     },
+     "vsh_-0.020": {
+      "f_180_Hz": 11740030.611359911,
+      "f_unity_Hz": null,
+      "gm_db": 52.34,
+      "ph_min_deg": -1236.3,
+      "phase_dc_deg": -179.5,
+      "pm_deg": null,
+      "pm_valid": false,
+      "status": "not applicable (loop gain below 0 dB at all frequencies)",
+      "t_dc_db": -120.3,
+      "t_max_db": -52.01
+     }
+    },
+    "cm_out": {
+     "vsh_+0.000": {
+      "f_180_Hz": 47163520.819521606,
+      "f_unity_Hz": 7649101.460997224,
+      "gm_db": 21.28,
+      "ph_min_deg": -523.6,
+      "phase_dc_deg": -2.7,
+      "pm_deg": 38.19,
+      "pm_valid": true,
+      "status": "failed",
+      "t_dc_db": 119.04,
+      "t_max_db": 119.04
+     },
+     "vsh_+0.100": {
+      "f_180_Hz": 47490121.49160685,
+      "f_unity_Hz": 7027907.682594733,
+      "gm_db": 22.16,
+      "ph_min_deg": -535.4,
+      "phase_dc_deg": -1.7,
+      "pm_deg": 38.67,
+      "pm_valid": true,
+      "status": "failed",
+      "t_dc_db": 112.49,
+      "t_max_db": 112.49
+     },
+     "vsh_-0.020": {
+      "f_180_Hz": 47455050.75864933,
+      "f_unity_Hz": 6975775.764050041,
+      "gm_db": 22.2,
+      "ph_min_deg": -541.0,
+      "phase_dc_deg": -1.6,
+      "pm_deg": 38.69,
+      "pm_valid": true,
+      "status": "failed",
+      "t_dc_db": 112.06,
+      "t_max_db": 112.06
+     }
+    },
+    "cmfb": {
+     "vsh_+0.000": {
+      "f_180_Hz": null,
+      "f_unity_Hz": 8810409.330182033,
+      "gm_db": null,
+      "ph_min_deg": -159.4,
+      "phase_dc_deg": 0.5,
+      "pm_deg": 402.99,
+      "pm_valid": false,
+      "status": "informational (failed (right-half-plane / invalid))",
+      "t_dc_db": -47.51,
+      "t_max_db": 10.55
+     },
+     "vsh_+0.100": {
+      "f_180_Hz": null,
+      "f_unity_Hz": 8194419.068398026,
+      "gm_db": null,
+      "ph_min_deg": -160.0,
+      "phase_dc_deg": 0.5,
+      "pm_deg": 404.76,
+      "pm_valid": false,
+      "status": "informational (failed (right-half-plane / invalid))",
+      "t_dc_db": -47.52,
+      "t_max_db": 10.7
+     },
+     "vsh_-0.020": {
+      "f_180_Hz": null,
+      "f_unity_Hz": 8140109.313211467,
+      "gm_db": null,
+      "ph_min_deg": -160.1,
+      "phase_dc_deg": 0.5,
+      "pm_deg": 404.92,
+      "pm_valid": false,
+      "status": "informational (failed (right-half-plane / invalid))",
+      "t_dc_db": -47.51,
+      "t_max_db": 10.69
+     }
+    },
+    "dm_in": {
+     "vsh_+0.000": {
+      "f_180_Hz": 52104184.768664934,
+      "f_unity_Hz": 9651661.288162889,
+      "gm_db": 17.25,
+      "ph_min_deg": -627.4,
+      "phase_dc_deg": -2.0,
+      "pm_deg": 71.87,
+      "pm_valid": true,
+      "status": "passed",
+      "t_dc_db": 70.78,
+      "t_max_db": 70.78
+     },
+     "vsh_+0.100": {
+      "f_180_Hz": 52415411.80400219,
+      "f_unity_Hz": 8711507.977994949,
+      "gm_db": 18.22,
+      "ph_min_deg": -632.0,
+      "phase_dc_deg": -1.1,
+      "pm_deg": 74.47,
+      "pm_valid": true,
+      "status": "passed",
+      "t_dc_db": 64.46,
+      "t_max_db": 64.46
+     },
+     "vsh_-0.020": {
+      "f_180_Hz": 52324670.5075054,
+      "f_unity_Hz": 8640217.957185885,
+      "gm_db": 18.29,
+      "ph_min_deg": -632.6,
+      "phase_dc_deg": -1.1,
+      "pm_deg": 74.69,
+      "pm_valid": true,
+      "status": "passed",
+      "t_dc_db": 64.0,
+      "t_max_db": 64.0
+     }
+    },
+    "dm_out": {
+     "vsh_+0.000": {
+      "f_180_Hz": 52074847.18447994,
+      "f_unity_Hz": 9654571.693789018,
+      "gm_db": 17.21,
+      "ph_min_deg": -648.9,
+      "phase_dc_deg": -2.0,
+      "pm_deg": 71.85,
+      "pm_valid": true,
+      "status": "passed",
+      "t_dc_db": 70.78,
+      "t_max_db": 70.78
+     },
+     "vsh_+0.100": {
+      "f_180_Hz": 52340566.73633271,
+      "f_unity_Hz": 8722153.440294039,
+      "gm_db": 18.12,
+      "ph_min_deg": -640.1,
+      "phase_dc_deg": -1.1,
+      "pm_deg": 74.4,
+      "pm_valid": true,
+      "status": "passed",
+      "t_dc_db": 64.46,
+      "t_max_db": 64.46
+     },
+     "vsh_-0.020": {
+      "f_180_Hz": 52257257.19536028,
+      "f_unity_Hz": 8652789.208166225,
+      "gm_db": 18.17,
+      "ph_min_deg": -643.5,
+      "phase_dc_deg": -1.1,
+      "pm_deg": 74.62,
+      "pm_valid": true,
+      "status": "passed",
+      "t_dc_db": 64.0,
+      "t_max_db": 64.0
+     }
+    }
+   },
+   "ffx": {
+    "cm_in": {
+     "vsh_+0.000": {
+      "f_180_Hz": 10638418.197116327,
+      "f_unity_Hz": null,
+      "gm_db": 64.93,
+      "ph_min_deg": -1256.8,
+      "phase_dc_deg": -179.9,
+      "pm_deg": null,
+      "pm_valid": false,
+      "status": "not applicable (loop gain below 0 dB at all frequencies)",
+      "t_dc_db": -103.26,
+      "t_max_db": -58.8
+     },
+     "vsh_+0.100": {
+      "f_180_Hz": 9975014.674079929,
+      "f_unity_Hz": null,
+      "gm_db": 67.7,
+      "ph_min_deg": -1274.9,
+      "phase_dc_deg": -179.9,
+      "pm_deg": null,
+      "pm_valid": false,
+      "status": "not applicable (loop gain below 0 dB at all frequencies)",
+      "t_dc_db": -103.26,
+      "t_max_db": -65.99
+     },
+     "vsh_-0.020": {
+      "f_180_Hz": 1215070.4010637668,
+      "f_unity_Hz": null,
+      "gm_db": 71.0,
+      "ph_min_deg": -1279.4,
+      "phase_dc_deg": -179.9,
+      "pm_deg": null,
+      "pm_valid": false,
+      "status": "not applicable (loop gain below 0 dB at all frequencies)",
+      "t_dc_db": -104.44,
+      "t_max_db": -60.52
+     }
+    },
+    "cm_out": {
+     "vsh_+0.000": {
+      "f_180_Hz": 43756701.781883106,
+      "f_unity_Hz": 6265911.442364184,
+      "gm_db": 23.34,
+      "ph_min_deg": -535.3,
+      "phase_dc_deg": -0.9,
+      "pm_deg": 43.89,
+      "pm_valid": true,
+      "status": "failed",
+      "t_dc_db": 93.94,
+      "t_max_db": 93.94
+     },
+     "vsh_+0.100": {
+      "f_180_Hz": 50178367.73609595,
+      "f_unity_Hz": 3217038.996190139,
+      "gm_db": 31.76,
+      "ph_min_deg": -528.3,
+      "phase_dc_deg": -0.3,
+      "pm_deg": 41.79,
+      "pm_valid": true,
+      "status": "failed",
+      "t_dc_db": 71.59,
+      "t_max_db": 71.59
+     },
+     "vsh_-0.020": {
+      "f_180_Hz": 50183384.80928001,
+      "f_unity_Hz": 3103330.1079228465,
+      "gm_db": 32.26,
+      "ph_min_deg": -522.1,
+      "phase_dc_deg": -0.3,
+      "pm_deg": 41.47,
+      "pm_valid": true,
+      "status": "failed",
+      "t_dc_db": 69.92,
+      "t_max_db": 69.92
+     }
+    },
+    "cmfb": {
+     "vsh_+0.000": {
+      "f_180_Hz": null,
+      "f_unity_Hz": 7310143.025032009,
+      "gm_db": null,
+      "ph_min_deg": -159.7,
+      "phase_dc_deg": 0.1,
+      "pm_deg": 408.88,
+      "pm_valid": false,
+      "status": "informational (failed (right-half-plane / invalid))",
+      "t_dc_db": -34.27,
+      "t_max_db": 12.72
+     },
+     "vsh_+0.100": {
+      "f_180_Hz": null,
+      "f_unity_Hz": 4036426.0524744866,
+      "gm_db": null,
+      "ph_min_deg": -161.5,
+      "phase_dc_deg": 0.1,
+      "pm_deg": 422.21,
+      "pm_valid": false,
+      "status": "informational (failed (right-half-plane / invalid))",
+      "t_dc_db": -34.27,
+      "t_max_db": 13.79
+     },
+     "vsh_-0.020": {
+      "f_180_Hz": null,
+      "f_unity_Hz": 3903208.555309998,
+      "gm_db": null,
+      "ph_min_deg": -161.3,
+      "phase_dc_deg": 0.1,
+      "pm_deg": 422.88,
+      "pm_valid": false,
+      "status": "informational (failed (right-half-plane / invalid))",
+      "t_dc_db": -34.3,
+      "t_max_db": 13.27
+     }
+    },
+    "dm_in": {
+     "vsh_+0.000": {
+      "f_180_Hz": 51301382.6489121,
+      "f_unity_Hz": 6643791.149444828,
+      "gm_db": 20.33,
+      "ph_min_deg": -647.1,
+      "phase_dc_deg": -0.4,
+      "pm_deg": 77.47,
+      "pm_valid": true,
+      "status": "passed",
+      "t_dc_db": 52.94,
+      "t_max_db": 52.94
+     },
+     "vsh_+0.100": {
+      "f_180_Hz": 57674824.82530872,
+      "f_unity_Hz": 2814355.175226432,
+      "gm_db": 28.04,
+      "ph_min_deg": -670.0,
+      "phase_dc_deg": -0.1,
+      "pm_deg": 89.52,
+      "pm_valid": true,
+      "status": "passed",
+      "t_dc_db": 32.88,
+      "t_max_db": 32.88
+     },
+     "vsh_-0.020": {
+      "f_180_Hz": 57505150.27772442,
+      "f_unity_Hz": 2616269.0603343262,
+      "gm_db": 28.56,
+      "ph_min_deg": -673.0,
+      "phase_dc_deg": -0.1,
+      "pm_deg": 91.19,
+      "pm_valid": true,
+      "status": "passed",
+      "t_dc_db": 28.4,
+      "t_max_db": 28.4
+     }
+    },
+    "dm_out": {
+     "vsh_+0.000": {
+      "f_180_Hz": 51289613.14457181,
+      "f_unity_Hz": 6642862.330865253,
+      "gm_db": 20.36,
+      "ph_min_deg": -508.4,
+      "phase_dc_deg": -0.4,
+      "pm_deg": 77.47,
+      "pm_valid": true,
+      "status": "passed",
+      "t_dc_db": 52.94,
+      "t_max_db": 52.94
+     },
+     "vsh_+0.100": {
+      "f_180_Hz": 57509707.34503353,
+      "f_unity_Hz": 2812354.253709449,
+      "gm_db": 28.25,
+      "ph_min_deg": -460.4,
+      "phase_dc_deg": -0.1,
+      "pm_deg": 89.5,
+      "pm_valid": true,
+      "status": "passed",
+      "t_dc_db": 32.88,
+      "t_max_db": 32.88
+     },
+     "vsh_-0.020": {
+      "f_180_Hz": 57199195.37738279,
+      "f_unity_Hz": 2614461.863976024,
+      "gm_db": 28.81,
+      "ph_min_deg": -454.0,
+      "phase_dc_deg": -0.1,
+      "pm_deg": 91.16,
+      "pm_valid": true,
+      "status": "passed",
+      "t_dc_db": 28.4,
+      "t_max_db": 28.4
+     }
+    }
+   },
+   "ssx": {
+    "cm_in": {
+     "vsh_+0.000": {
+      "f_180_Hz": 10810337.577291913,
+      "f_unity_Hz": null,
+      "gm_db": 53.63,
+      "ph_min_deg": -1233.3,
+      "phase_dc_deg": -179.3,
+      "pm_deg": null,
+      "pm_valid": false,
+      "status": "not applicable (loop gain below 0 dB at all frequencies)",
+      "t_dc_db": -120.49,
+      "t_max_db": -53.57
+     },
+     "vsh_+0.100": {
+      "f_180_Hz": 10636609.085781572,
+      "f_unity_Hz": null,
+      "gm_db": 54.79,
+      "ph_min_deg": -1237.8,
+      "phase_dc_deg": -179.3,
+      "pm_deg": null,
+      "pm_valid": false,
+      "status": "not applicable (loop gain below 0 dB at all frequencies)",
+      "t_dc_db": -120.46,
+      "t_max_db": -54.76
+     },
+     "vsh_-0.020": {
+      "f_180_Hz": 10621999.649393568,
+      "f_unity_Hz": null,
+      "gm_db": 54.95,
+      "ph_min_deg": -1238.5,
+      "phase_dc_deg": -179.3,
+      "pm_deg": null,
+      "pm_valid": false,
+      "status": "not applicable (loop gain below 0 dB at all frequencies)",
+      "t_dc_db": -120.49,
+      "t_max_db": -54.92
+     }
+    },
+    "cm_out": {
+     "vsh_+0.000": {
+      "f_180_Hz": 48978515.254244916,
+      "f_unity_Hz": 5280665.477805057,
+      "gm_db": 24.54,
+      "ph_min_deg": -522.1,
+      "phase_dc_deg": -4.0,
+      "pm_deg": 41.57,
+      "pm_valid": true,
+      "status": "failed",
+      "t_dc_db": 120.62,
+      "t_max_db": 120.62
+     },
+     "vsh_+0.100": {
+      "f_180_Hz": 49243729.33220659,
+      "f_unity_Hz": 4845435.63422383,
+      "gm_db": 25.37,
+      "ph_min_deg": -535.1,
+      "phase_dc_deg": -2.4,
+      "pm_deg": 40.82,
+      "pm_valid": true,
+      "status": "failed",
+      "t_dc_db": 113.81,
+      "t_max_db": 113.81
+     },
+     "vsh_-0.020": {
+      "f_180_Hz": 49217588.33250591,
+      "f_unity_Hz": 4808988.719403139,
+      "gm_db": 25.4,
+      "ph_min_deg": -540.4,
+      "phase_dc_deg": -2.3,
+      "pm_deg": 40.74,
+      "pm_valid": true,
+      "status": "failed",
+      "t_dc_db": 113.36,
+      "t_max_db": 113.36
+     }
+    },
+    "cmfb": {
+     "vsh_+0.000": {
+      "f_180_Hz": null,
+      "f_unity_Hz": 6393506.939238421,
+      "gm_db": null,
+      "ph_min_deg": -153.6,
+      "phase_dc_deg": 0.7,
+      "pm_deg": 413.41,
+      "pm_valid": false,
+      "status": "informational (failed (right-half-plane / invalid))",
+      "t_dc_db": -49.27,
+      "t_max_db": 10.95
+     },
+     "vsh_+0.100": {
+      "f_180_Hz": null,
+      "f_unity_Hz": 5915691.360229749,
+      "gm_db": null,
+      "ph_min_deg": -154.6,
+      "phase_dc_deg": 0.7,
+      "pm_deg": 414.51,
+      "pm_valid": false,
+      "status": "informational (failed (right-half-plane / invalid))",
+      "t_dc_db": -49.27,
+      "t_max_db": 10.66
+     },
+     "vsh_-0.020": {
+      "f_180_Hz": null,
+      "f_unity_Hz": 5873754.136563679,
+      "gm_db": null,
+      "ph_min_deg": -154.7,
+      "phase_dc_deg": 0.7,
+      "pm_deg": 414.62,
+      "pm_valid": false,
+      "status": "informational (failed (right-half-plane / invalid))",
+      "t_dc_db": -49.27,
+      "t_max_db": 10.6
+     }
+    },
+    "dm_in": {
+     "vsh_+0.000": {
+      "f_180_Hz": 47683401.91743663,
+      "f_unity_Hz": 7555609.262561613,
+      "gm_db": 18.61,
+      "ph_min_deg": -646.1,
+      "phase_dc_deg": -3.1,
+      "pm_deg": 74.52,
+      "pm_valid": true,
+      "status": "passed",
+      "t_dc_db": 72.27,
+      "t_max_db": 72.27
+     },
+     "vsh_+0.100": {
+      "f_180_Hz": 47943756.96563288,
+      "f_unity_Hz": 6805780.963695691,
+      "gm_db": 19.57,
+      "ph_min_deg": -651.7,
+      "phase_dc_deg": -1.6,
+      "pm_deg": 76.71,
+      "pm_valid": true,
+      "status": "passed",
+      "t_dc_db": 65.6,
+      "t_max_db": 65.6
+     },
+     "vsh_-0.020": {
+      "f_180_Hz": 47876004.39616805,
+      "f_unity_Hz": 6748897.965613007,
+      "gm_db": 19.64,
+      "ph_min_deg": -652.4,
+      "phase_dc_deg": -1.5,
+      "pm_deg": 76.9,
+      "pm_valid": true,
+      "status": "passed",
+      "t_dc_db": 65.14,
+      "t_max_db": 65.14
+     }
+    },
+    "dm_out": {
+     "vsh_+0.000": {
+      "f_180_Hz": 47671540.17705373,
+      "f_unity_Hz": 7557245.613985684,
+      "gm_db": 18.57,
+      "ph_min_deg": -659.6,
+      "phase_dc_deg": -3.1,
+      "pm_deg": 74.51,
+      "pm_valid": true,
+      "status": "passed",
+      "t_dc_db": 72.27,
+      "t_max_db": 72.27
+     },
+     "vsh_+0.100": {
+      "f_180_Hz": 47909860.99202241,
+      "f_unity_Hz": 6811378.457942733,
+      "gm_db": 19.47,
+      "ph_min_deg": -643.1,
+      "phase_dc_deg": -1.6,
+      "pm_deg": 76.66,
+      "pm_valid": true,
+      "status": "passed",
+      "t_dc_db": 65.6,
+      "t_max_db": 65.6
+     },
+     "vsh_-0.020": {
+      "f_180_Hz": 47854571.126215264,
+      "f_unity_Hz": 6755315.658570888,
+      "gm_db": 19.53,
+      "ph_min_deg": -645.7,
+      "phase_dc_deg": -1.5,
+      "pm_deg": 76.86,
+      "pm_valid": true,
+      "status": "passed",
+      "t_dc_db": 65.14,
+      "t_max_db": 65.14
+     }
+    }
+   },
+   "tt": {
+    "cm_in": {
+     "vsh_+0.000": {
+      "f_180_Hz": 11048067.599528259,
+      "f_unity_Hz": null,
+      "gm_db": 53.34,
+      "ph_min_deg": -1238.3,
+      "phase_dc_deg": -179.5,
+      "pm_deg": null,
+      "pm_valid": false,
+      "status": "not applicable (loop gain below 0 dB at all frequencies)",
+      "t_dc_db": -117.02,
+      "t_max_db": -53.25
+     },
+     "vsh_+0.100": {
+      "f_180_Hz": 10652418.70010248,
+      "f_unity_Hz": null,
+      "gm_db": 56.08,
+      "ph_min_deg": -1245.6,
+      "phase_dc_deg": -179.5,
+      "pm_deg": null,
+      "pm_valid": false,
+      "status": "not applicable (loop gain below 0 dB at all frequencies)",
+      "t_dc_db": -116.9,
+      "t_max_db": -56.05
+     },
+     "vsh_-0.020": {
+      "f_180_Hz": 10631862.447906101,
+      "f_unity_Hz": null,
+      "gm_db": 56.41,
+      "ph_min_deg": -1246.5,
+      "phase_dc_deg": -179.5,
+      "pm_deg": null,
+      "pm_valid": false,
+      "status": "not applicable (loop gain below 0 dB at all frequencies)",
+      "t_dc_db": -117.05,
+      "t_max_db": -56.38
+     }
+    },
+    "cm_out": {
+     "vsh_+0.000": {
+      "f_180_Hz": 48689508.69905332,
+      "f_unity_Hz": 6109422.4270085525,
+      "gm_db": 23.65,
+      "ph_min_deg": -527.4,
+      "phase_dc_deg": -2.7,
+      "pm_deg": 41.57,
+      "pm_valid": true,
+      "status": "failed",
+      "t_dc_db": 115.72,
+      "t_max_db": 115.72
+     },
+     "vsh_+0.100": {
+      "f_180_Hz": 50426123.1494406,
+      "f_unity_Hz": 5036549.11547223,
+      "gm_db": 25.78,
+      "ph_min_deg": -543.5,
+      "phase_dc_deg": -1.4,
+      "pm_deg": 41.29,
+      "pm_valid": true,
+      "status": "failed",
+      "t_dc_db": 105.95,
+      "t_max_db": 105.95
+     },
+     "vsh_-0.020": {
+      "f_180_Hz": 50491543.20013178,
+      "f_unity_Hz": 4961469.978473982,
+      "gm_db": 25.91,
+      "ph_min_deg": -548.4,
+      "phase_dc_deg": -1.4,
+      "pm_deg": 41.22,
+      "pm_valid": true,
+      "status": "failed",
+      "t_dc_db": 105.42,
+      "t_max_db": 105.42
+     }
+    },
+    "cmfb": {
+     "vsh_+0.000": {
+      "f_180_Hz": null,
+      "f_unity_Hz": 7209247.080834474,
+      "gm_db": null,
+      "ph_min_deg": -157.0,
+      "phase_dc_deg": 0.5,
+      "pm_deg": 409.32,
+      "pm_valid": false,
+      "status": "informational (failed (right-half-plane / invalid))",
+      "t_dc_db": -46.68,
+      "t_max_db": 11.3
+     },
+     "vsh_+0.100": {
+      "f_180_Hz": null,
+      "f_unity_Hz": 6084333.668939236,
+      "gm_db": null,
+      "ph_min_deg": -158.2,
+      "phase_dc_deg": 0.5,
+      "pm_deg": 412.86,
+      "pm_valid": false,
+      "status": "informational (failed (right-half-plane / invalid))",
+      "t_dc_db": -46.68,
+      "t_max_db": 11.33
+     },
+     "vsh_-0.020": {
+      "f_180_Hz": null,
+      "f_unity_Hz": 6003436.500210057,
+      "gm_db": null,
+      "ph_min_deg": -158.3,
+      "phase_dc_deg": 0.5,
+      "pm_deg": 413.09,
+      "pm_valid": false,
+      "status": "informational (failed (right-half-plane / invalid))",
+      "t_dc_db": -46.68,
+      "t_max_db": 11.24
+     }
+    },
+    "dm_in": {
+     "vsh_+0.000": {
+      "f_180_Hz": 49539078.50671383,
+      "f_unity_Hz": 7885066.429980392,
+      "gm_db": 18.62,
+      "ph_min_deg": -641.7,
+      "phase_dc_deg": -2.0,
+      "pm_deg": 74.46,
+      "pm_valid": true,
+      "status": "passed",
+      "t_dc_db": 68.75,
+      "t_max_db": 68.75
+     },
+     "vsh_+0.100": {
+      "f_180_Hz": 51130358.386793025,
+      "f_unity_Hz": 6198607.495481376,
+      "gm_db": 20.86,
+      "ph_min_deg": -650.7,
+      "phase_dc_deg": -0.9,
+      "pm_deg": 79.83,
+      "pm_valid": true,
+      "status": "passed",
+      "t_dc_db": 59.21,
+      "t_max_db": 59.21
+     },
+     "vsh_-0.020": {
+      "f_180_Hz": 51171648.21605056,
+      "f_unity_Hz": 6079700.170128064,
+      "gm_db": 21.03,
+      "ph_min_deg": -651.6,
+      "phase_dc_deg": -0.8,
+      "pm_deg": 80.25,
+      "pm_valid": true,
+      "status": "passed",
+      "t_dc_db": 58.6,
+      "t_max_db": 58.6
+     }
+    },
+    "dm_out": {
+     "vsh_+0.000": {
+      "f_180_Hz": 49514335.87045204,
+      "f_unity_Hz": 7887307.242223847,
+      "gm_db": 18.58,
+      "ph_min_deg": -653.4,
+      "phase_dc_deg": -2.0,
+      "pm_deg": 74.45,
+      "pm_valid": true,
+      "status": "passed",
+      "t_dc_db": 68.75,
+      "t_max_db": 68.75
+     },
+     "vsh_+0.100": {
+      "f_180_Hz": 51071878.262538314,
+      "f_unity_Hz": 6205896.628069281,
+      "gm_db": 20.76,
+      "ph_min_deg": -640.2,
+      "phase_dc_deg": -0.9,
+      "pm_deg": 79.8,
+      "pm_valid": true,
+      "status": "passed",
+      "t_dc_db": 59.21,
+      "t_max_db": 59.21
+     },
+     "vsh_-0.020": {
+      "f_180_Hz": 51121827.98360499,
+      "f_unity_Hz": 6086612.565048843,
+      "gm_db": 20.91,
+      "ph_min_deg": -643.2,
+      "phase_dc_deg": -0.8,
+      "pm_deg": 80.22,
+      "pm_valid": true,
+      "status": "passed",
+      "t_dc_db": 58.6,
+      "t_max_db": 58.6
+     }
+    }
+   }
+  },
+  "per_loop": {
+   "ff": {
+    "cm_in": {
+     "f_unity_Hz": [
+      null,
+      null,
+      null
+     ],
+     "max_t_db": -50.54,
+     "status": "not applicable",
+     "worst_gm_db": 50.91,
+     "worst_pm_deg": null
+    },
+    "cm_out": {
+     "f_unity_Hz": [
+      7649101.460997224,
+      7027907.682594733,
+      6975775.764050041
+     ],
+     "max_t_db": 119.04,
+     "status": "failed",
+     "worst_gm_db": 21.28,
+     "worst_pm_deg": 38.19
+    },
+    "cmfb": {
+     "f_unity_Hz": [
+      8810409.330182033,
+      8194419.068398026,
+      8140109.313211467
+     ],
+     "max_t_db": 10.7,
+     "status": "informational",
+     "worst_gm_db": null,
+     "worst_pm_deg": 402.99
+    },
+    "dm_in": {
+     "f_unity_Hz": [
+      9651661.288162889,
+      8711507.977994949,
+      8640217.957185885
+     ],
+     "max_t_db": 70.78,
+     "status": "passed",
+     "worst_gm_db": 17.25,
+     "worst_pm_deg": 71.87
+    },
+    "dm_out": {
+     "f_unity_Hz": [
+      9654571.693789018,
+      8722153.440294039,
+      8652789.208166225
+     ],
+     "max_t_db": 70.78,
+     "status": "passed",
+     "worst_gm_db": 17.21,
+     "worst_pm_deg": 71.85
+    }
+   },
+   "ffx": {
+    "cm_in": {
+     "f_unity_Hz": [
+      null,
+      null,
+      null
+     ],
+     "max_t_db": -58.8,
+     "status": "not applicable",
+     "worst_gm_db": 64.93,
+     "worst_pm_deg": null
+    },
+    "cm_out": {
+     "f_unity_Hz": [
+      6265911.442364184,
+      3217038.996190139,
+      3103330.1079228465
+     ],
+     "max_t_db": 93.94,
+     "status": "failed",
+     "worst_gm_db": 23.34,
+     "worst_pm_deg": 41.47
+    },
+    "cmfb": {
+     "f_unity_Hz": [
+      7310143.025032009,
+      4036426.0524744866,
+      3903208.555309998
+     ],
+     "max_t_db": 13.79,
+     "status": "informational",
+     "worst_gm_db": null,
+     "worst_pm_deg": 408.88
+    },
+    "dm_in": {
+     "f_unity_Hz": [
+      6643791.149444828,
+      2814355.175226432,
+      2616269.0603343262
+     ],
+     "max_t_db": 52.94,
+     "status": "passed",
+     "worst_gm_db": 20.33,
+     "worst_pm_deg": 77.47
+    },
+    "dm_out": {
+     "f_unity_Hz": [
+      6642862.330865253,
+      2812354.253709449,
+      2614461.863976024
+     ],
+     "max_t_db": 52.94,
+     "status": "passed",
+     "worst_gm_db": 20.36,
+     "worst_pm_deg": 77.47
+    }
+   },
+   "ssx": {
+    "cm_in": {
+     "f_unity_Hz": [
+      null,
+      null,
+      null
+     ],
+     "max_t_db": -53.57,
+     "status": "not applicable",
+     "worst_gm_db": 53.63,
+     "worst_pm_deg": null
+    },
+    "cm_out": {
+     "f_unity_Hz": [
+      5280665.477805057,
+      4845435.63422383,
+      4808988.719403139
+     ],
+     "max_t_db": 120.62,
+     "status": "failed",
+     "worst_gm_db": 24.54,
+     "worst_pm_deg": 40.74
+    },
+    "cmfb": {
+     "f_unity_Hz": [
+      6393506.939238421,
+      5915691.360229749,
+      5873754.136563679
+     ],
+     "max_t_db": 10.95,
+     "status": "informational",
+     "worst_gm_db": null,
+     "worst_pm_deg": 413.41
+    },
+    "dm_in": {
+     "f_unity_Hz": [
+      7555609.262561613,
+      6805780.963695691,
+      6748897.965613007
+     ],
+     "max_t_db": 72.27,
+     "status": "passed",
+     "worst_gm_db": 18.61,
+     "worst_pm_deg": 74.52
+    },
+    "dm_out": {
+     "f_unity_Hz": [
+      7557245.613985684,
+      6811378.457942733,
+      6755315.658570888
+     ],
+     "max_t_db": 72.27,
+     "status": "passed",
+     "worst_gm_db": 18.57,
+     "worst_pm_deg": 74.51
+    }
+   },
+   "tt": {
+    "cm_in": {
+     "f_unity_Hz": [
+      null,
+      null,
+      null
+     ],
+     "max_t_db": -53.25,
+     "status": "not applicable",
+     "worst_gm_db": 53.34,
+     "worst_pm_deg": null
+    },
+    "cm_out": {
+     "f_unity_Hz": [
+      6109422.4270085525,
+      5036549.11547223,
+      4961469.978473982
+     ],
+     "max_t_db": 115.72,
+     "status": "failed",
+     "worst_gm_db": 23.65,
+     "worst_pm_deg": 41.22
+    },
+    "cmfb": {
+     "f_unity_Hz": [
+      7209247.080834474,
+      6084333.668939236,
+      6003436.500210057
+     ],
+     "max_t_db": 11.33,
+     "status": "informational",
+     "worst_gm_db": null,
+     "worst_pm_deg": 409.32
+    },
+    "dm_in": {
+     "f_unity_Hz": [
+      7885066.429980392,
+      6198607.495481376,
+      6079700.170128064
+     ],
+     "max_t_db": 68.75,
+     "status": "passed",
+     "worst_gm_db": 18.62,
+     "worst_pm_deg": 74.46
+    },
+    "dm_out": {
+     "f_unity_Hz": [
+      7887307.242223847,
+      6205896.628069281,
+      6086612.565048843
+     ],
+     "max_t_db": 68.75,
+     "status": "passed",
+     "worst_gm_db": 18.58,
+     "worst_pm_deg": 74.45
+    }
+   }
+  },
+  "state": "normal"
+ },
+ "run_id": "dev-r2-16-stb",
+ "tool": "ngspice-46 (container banner from flow/run.sh ngspice -v; batch logs carry no banner)",
+ "wall_s": 82.2,
+ "workdir": "designs/r1-joint/blocks/r1_isense/sim"
+}

@@ -1,0 +1,117 @@
+{
+ "block": "r1_isense",
+ "command": "python3 designs/r1-joint/blocks/r1_isense/sim/run_deck.py --block r1_isense --deck <G1_RESULTS_ROOT>/r1_isense/dev-r2-22-net/tb_isense_mc.cir --run-id dev-r2-22-mc --corners tt_mm_s1,tt_mm_s2,tt_mm_s3 --jobs 3 --set N=6 --netlist <G1_RESULTS_ROOT>/r1_isense/dev-r2-22-net/r1_isense.spice --analyze analyze_mc.py --question \"revision-2 development screen, variant [TP=2 RTG=0 TPW=2 TPL=16 TMW=4 TML=16 BFC=1 FDC=1 RH=50 TGW=1 TPC=36 RDG=120], mismatch MC incl. output CM\"",
+ "container_image": "tapeoutbench-eda:latest sha256:ddeb6957... (checked by flow/run.sh)",
+ "corners": {
+  "tt_mm_s1": {
+   "cap": "cap_typ_mismatch",
+   "mos": "mos_tt_mismatch",
+   "res": "res_typ_mismatch",
+   "temp_C": 27,
+   "vdd": 1.2,
+   "vdda": 3.3
+  },
+  "tt_mm_s2": {
+   "cap": "cap_typ_mismatch",
+   "mos": "mos_tt_mismatch",
+   "res": "res_typ_mismatch",
+   "temp_C": 27,
+   "vdd": 1.2,
+   "vdda": 3.3
+  },
+  "tt_mm_s3": {
+   "cap": "cap_typ_mismatch",
+   "mos": "mos_tt_mismatch",
+   "res": "res_typ_mismatch",
+   "temp_C": 27,
+   "vdd": 1.2,
+   "vdda": 3.3
+  }
+ },
+ "cpuset": "109-111",
+ "date_utc": "2026-10-21T02:22:26.655475Z",
+ "deck": "<G1_RESULTS_ROOT>/r1_isense/dev-r2-22-net/tb_isense_mc.cir",
+ "deck_sha256": "857818564c19ccb7bca177788602d48a6b427797df336a5e72c9d64056e10237",
+ "disposition": "tt_mm: 18/18 samples within 100 uV",
+ "included_netlists": {},
+ "included_netlists_results_root": {
+  "<G1_RESULTS_ROOT>/r1_isense/dev-r2-22-net/r1_isense.spice": "7e693a56c9a43d37035ebbed3a7bbcf9a6a87abf26efe973b0e343d7c33474a8"
+ },
+ "jobs": {
+  "tt_mm_s1": {
+   "log": "r1_isense/dev-r2-22-mc/tb_isense_mc_tt_mm_s1.log",
+   "rc": 0,
+   "wall_s": 58.1
+  },
+  "tt_mm_s2": {
+   "log": "r1_isense/dev-r2-22-mc/tb_isense_mc_tt_mm_s2.log",
+   "rc": 0,
+   "wall_s": 58.1
+  },
+  "tt_mm_s3": {
+   "log": "r1_isense/dev-r2-22-mc/tb_isense_mc_tt_mm_s3.log",
+   "rc": 0,
+   "wall_s": 58.1
+  }
+ },
+ "netlist": "<G1_RESULTS_ROOT>/r1_isense/dev-r2-22-net/r1_isense.spice",
+ "netlist_sha256": "7e693a56c9a43d37035ebbed3a7bbcf9a6a87abf26efe973b0e343d7c33474a8",
+ "ngspice_version": "** ngspice-46 : Circuit level simulation program ** Copyright 2001-2025, The ngspice team. ** Please get your ngspice manual from https://ngspice.sourceforge.io/docs.html ** Please file your bug-reports at http://ngspice.sourceforge.net/bugrep.html (read after the run with flow/run.sh ngspice -v, same container image; the in-run read failed: python 3.6 has no capture_output)",
+ "overrides": {
+  "N": "6"
+ },
+ "pdk_commit": "84374023ee8b4b126bebbba67fcbada0a9c0ff0b (checked by flow/run.sh)",
+ "prerun": {},
+ "question": "revision-2 development screen, variant [TP=2 RTG=0 TPW=2 TPL=16 TMW=4 TML=16 BFC=1 FDC=1 RH=50 TGW=1 TPC=36 RDG=120], mismatch MC incl. output CM",
+ "raw_results": "$G1_RESULTS_ROOT/r1_isense/dev-r2-22-mc/",
+ "result": {
+  "tt_mm": {
+   "gain": {
+    "max": 14.0391,
+    "max_abs": 14.0391,
+    "mean": 14.002638888888889,
+    "min": 13.9407,
+    "n": 18,
+    "sigma": 0.028054532984664822
+   },
+   "ocm_V": {
+    "max": 0.6072106545,
+    "max_abs": 0.6072106545,
+    "mean": 0.6003692882222222,
+    "min": 0.5961867304999999,
+    "n": 18,
+    "sigma": 0.0034199471779109898
+   },
+   "ocm_within_30mV": 18,
+   "ped_mV": {
+    "max": 40.4947,
+    "max_abs": 40.4947,
+    "mean": 40.3599,
+    "min": 40.2343,
+    "n": 18,
+    "sigma": 0.06883260693724914
+   },
+   "raw_uV": {
+    "max": 5531.92,
+    "max_abs": 7637.73,
+    "mean": -831.8447111111111,
+    "min": -7637.73,
+    "n": 18,
+    "sigma": 3081.690837642146
+   },
+   "res_uV": {
+    "max": 33.1943,
+    "max_abs": 34.0908,
+    "mean": -0.8190915555555557,
+    "min": -34.0908,
+    "n": 18,
+    "sigma": 15.194689014205627
+   },
+   "res_within_100uV": 18
+  }
+ },
+ "run_id": "dev-r2-22-mc",
+ "tool": "ngspice-46 (container banner from flow/run.sh ngspice -v; batch logs carry no banner)",
+ "wall_s": 58.2,
+ "workdir": "designs/r1-joint/blocks/r1_isense/sim"
+}

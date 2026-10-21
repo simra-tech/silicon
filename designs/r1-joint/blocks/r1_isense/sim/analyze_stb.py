@@ -6,7 +6,9 @@ Usage: analyze_stb.py RAW_DIR TREE_DIR   (state and levels are read from the dec
 import sys, os, json, glob, re
 rdir, tdir = sys.argv[1], sys.argv[2]
 PM_MIN, GM_MIN = 60.0, 10.0
-az = bool(glob.glob(os.path.join(rdir, "tb_isense_stbaz_*.cir")))
+azi = bool(glob.glob(os.path.join(rdir, "tb_isense_stbazi_*.cir")))   # intermediate state az = 1, azh = 0 (revision 2)
+az = azi or bool(glob.glob(os.path.join(rdir, "tb_isense_stbaz_*.cir")))
+STATE = "az1_azh0" if azi else ("az_closed" if az else "normal")
 LOOPS = {1: "dm_out", 2: "cm_out", 3: "cmfb", 4: "dm_in", 5: "cm_in", 6: "dm_aux", 7: "cm_aux"}
 INFO = {"cmfb"}                                  # informational: not a valid Nyquist break (other loops closed)
 LEVELS = [0.0] if az else [0.0, 0.1, -0.02]       # order of the foreach in the deck
@@ -69,9 +71,9 @@ for c, d in summ.items():
         tab.append("%s %s %s %s %s %s" % (c, n, r["status"], r["worst_pm_deg"], r["worst_gm_db"], r["max_t_db"]))
 valid = [r["status"] for d in summ.values() for n, r in d.items() if n not in INFO]
 disp = "%s: state %s, %d corners; %d loop results passed, %d failed, %d not applicable; criterion PM >= %g deg, GM >= %g dB" % (
-    "failed" if any(v.startswith("failed") or v.startswith("mixed") for v in valid) else "passed", "AZ closed" if az else "normal",
+    "failed" if any(v.startswith("failed") or v.startswith("mixed") for v in valid) else "passed", {"az1_azh0": "az = 1, azh = 0", "az_closed": "AZ closed", "normal": "normal"}[STATE],
     len(summ), sum(v == "passed" for v in valid), sum(v.startswith("failed") or v.startswith("mixed") for v in valid), sum(v.startswith("not applicable") for v in valid), PM_MIN, GM_MIN)
-res = {"result": {"state": "az_closed" if az else "normal", "margins": out, "per_loop": summ}, "criterion": "PM >= 60 deg and GM >= 10 dB per loop, corner and shunt level; informational loops excluded",
+res = {"result": {"state": STATE, "margins": out, "per_loop": summ}, "criterion": "PM >= 60 deg and GM >= 10 dB per loop, corner and shunt level; informational loops excluded",
        "disposition": disp}
 json.dump(res, open(os.path.join(tdir, "summary.json"), "w"), indent=1)
 rp = os.path.join(tdir, "run.json")

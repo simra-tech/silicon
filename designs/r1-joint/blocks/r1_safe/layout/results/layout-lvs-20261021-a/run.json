@@ -1,0 +1,34 @@
+{
+ "tag": "20261021-a",
+ "written": "2026-10-21T05:45:17",
+ "pdk_commit": "84374023ee8b4b126bebbba67fcbada0a9c0ff0b",
+ "container": "tapeoutbench-eda:latest sha256:ddeb69576f2808676d1c5d474ecf04f6d1d6f8abdcff6b72b39790ded924bab2",
+ "cpuset": "116-117",
+ "inputs": {
+  "gds_sha256": "2219825dbde842cfcc7be892e27556ec72b4e8f6b2ac3db4cc025f0696192f19",
+  "lvs_cdl_sha256": "a083d26387c3006de04e2f6b19f454aaa39c81af23b213f545aae8af3b570732",
+  "generator_sha256": {
+   "r1_safe_layout.py": "0f5584cb7bfa5269f3e5cbbbea0a2e39452cedbe250901025cb24dffeadaccf8",
+   "r1_safe_parts.py": "b6bb7bb1980213e5d474d88c858c5f568b798041935e765694c062b55c582c67",
+   "r1_safe_lib.py": "426543e10122ab638be1741c3c36a83be79f494673fe609723cc190c7f5498b7",
+   "r1_safe_cmp_cell.py": "49783c2aa5507b36c8956c9e900559de73852b8c72b3a8df558b65b5692cb57f",
+   "make_cdl.py": "2cef33190a020d0a6ef49f969146e2fdc35c03d8986197c88d4365df6a1f0cd7"
+  },
+  "netlist_of_record": "designs/r1-joint/blocks/r1_safe/schematic/r1_safe.spice",
+  "netlist_of_record_sha256": "812f886dce2b759af121230bd2e9100aeac59041effdf9a3341647c29299cbde"
+ },
+ "run_id": "layout-lvs-20261021-a",
+ "question": "PDK LVS (stock deck) r1_safe.gds vs netlist of record: match?",
+ "command": "flow/run.sh python3 $PDK_ROOT/$PDK/libs.tech/klayout/tech/lvs/run_lvs.py --layout=<gds> --netlist=<cdl> --topcell=r1_safe --run_mode=deep --run_dir=<run dir>",
+ "tools": {
+  "klayout": "0.30.9"
+ },
+ "result": {
+  "status": "failed",
+  "tool_crash_signal_11": true,
+  "extracted_netlist": null,
+  "extracted_devices_top_level_lines": {},
+  "note": "device/net totals of the comparison are in the README"
+ },
+ "disposition": "failed"
+}

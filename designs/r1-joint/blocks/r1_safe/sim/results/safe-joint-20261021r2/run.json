@@ -1,0 +1,270 @@
+{
+ "block": "r1_safe",
+ "command": "python3 designs/r1-joint/blocks/r1_isense/sim/run_deck.py --block r1_safe --deck tb_safe_joint3.cir --run-id safe-joint-20261021r2 --corners tt,ss_cold,ff_hot --analyze analyze_joint3.py --netlist designs/r1-joint/blocks/r1_safe/schematic/r1_safe.spice --question \"REV2 regression: joint r1_isense revision 2 -> r1_safe rev 3 (path fixture, both channels): threshold centres, simultaneous vs staggered, delays, cross-channel kickback; compare with safe-joint-20261020-r3b (limits: centre within 0.05 LSB, delays within 20 ns)\"",
+ "container_image": "tapeoutbench-eda:latest sha256:ddeb6957... (checked by flow/run.sh)",
+ "corners": {
+  "ff_hot": {
+   "cap": "cap_bcs",
+   "mos": "mos_ff",
+   "res": "res_bcs",
+   "temp_C": 125,
+   "vdd": 1.32,
+   "vdda": 3.6
+  },
+  "ss_cold": {
+   "cap": "cap_wcs",
+   "mos": "mos_ss",
+   "res": "res_wcs",
+   "temp_C": -40,
+   "vdd": 1.08,
+   "vdda": 3.0
+  },
+  "tt": {
+   "cap": "cap_typ",
+   "mos": "mos_tt",
+   "res": "res_typ",
+   "temp_C": 27,
+   "vdd": 1.2,
+   "vdda": 3.3
+  }
+ },
+ "cpuset": "109-111",
+ "date_utc": "2026-10-21T03:58:02.214515Z",
+ "deck": "designs/r1-joint/blocks/r1_safe/sim/tb_safe_joint3.cir",
+ "deck_sha256": "37660f358e5daa43da9b41d684b2af98fae1b304f100ac47eff2bcc89b6da4d3",
+ "disposition": "ff_hot: passed (max centre 0.051 LSB, sim-stag 0.0062 LSB, cross-channel glitches 0, worst trip delay 130 ns); ss_cold: passed (max centre 0.021 LSB, sim-stag 0.0011 LSB, cross-channel glitches 0, worst trip delay 158 ns); tt: passed (max centre 0.031 LSB, sim-stag 0.0009 LSB, cross-channel glitches 0, worst trip delay 140 ns)",
+ "included_netlists": {
+  "/work/designs/r1-joint/blocks/r1_isense/schematic/r1_isense.spice": "af013b95f5fd57e2f1cd0d1345a4c75471c2f216b063ede3a39bdea6412ba4ee",
+  "/work/designs/r1-joint/blocks/r1_safe/schematic/r1_safe.spice": "812f886dce2b759af121230bd2e9100aeac59041effdf9a3341647c29299cbde"
+ },
+ "included_netlists_results_root": {},
+ "jobs": {
+  "ff_hot": {
+   "log": "r1_safe/safe-joint-20261021r2/tb_safe_joint3_ff_hot.log",
+   "rc": 0,
+   "wall_s": 308.3
+  },
+  "ss_cold": {
+   "log": "r1_safe/safe-joint-20261021r2/tb_safe_joint3_ss_cold.log",
+   "rc": 0,
+   "wall_s": 304.3
+  },
+  "tt": {
+   "log": "r1_safe/safe-joint-20261021r2/tb_safe_joint3_tt.log",
+   "rc": 0,
+   "wall_s": 308.3
+  }
+ },
+ "netlist": "designs/r1-joint/blocks/r1_safe/schematic/r1_safe.spice",
+ "netlist_sha256": "812f886dce2b759af121230bd2e9100aeac59041effdf9a3341647c29299cbde",
+ "ngspice_version": "** ngspice-46 : Circuit level simulation program ** Copyright 2001-2025, The ngspice team. ** Please get your ngspice manual from https://ngspice.sourceforge.io/docs.html ** Please file your bug-reports at http://ngspice.sourceforge.net/bugrep.html (read after the run with flow/run.sh ngspice -v, same container image; the in-run read failed: python 3.6 has no capture_output)",
+ "overrides": {},
+ "pdk_commit": "84374023ee8b4b126bebbba67fcbada0a9c0ff0b (checked by flow/run.sh)",
+ "prerun": {},
+ "question": "REV2 regression: joint r1_isense revision 2 -> r1_safe rev 3 (path fixture, both channels): threshold centres, simultaneous vs staggered, delays, cross-channel kickback; compare with safe-joint-20261020-r3b (limits: centre within 0.05 LSB, delays within 20 ns)",
+ "raw_results": "$G1_RESULTS_ROOT/r1_safe/safe-joint-20261021r2/",
+ "result": {
+  "ff_hot": {
+   "cross_channel_glitches": 0,
+   "cross_channel_transitions_us": {
+    "neg_b": [],
+    "oc_b": []
+   },
+   "delays_from_shunt_step": {
+    "neg_release_a_ns": 104.16571202735315,
+    "neg_release_b_ns": 104.1657105919779,
+    "neg_trip_a_ns": 23.653514739512296,
+    "neg_trip_b_ns": 23.65351043064553,
+    "oc_release_a_ns": 24.152915370241598,
+    "oc_release_b_ns": 24.152919427400665,
+    "oc_trip_a_ns": 130.36912669257106,
+    "oc_trip_b_ns": 130.3691152648701
+   },
+   "idda_uA_total": 1012.2991791333333,
+   "max_abs_centre_err_LSB": 0.050970919668763,
+   "max_sim_minus_stag_LSB": 0.006187177105506925,
+   "max_sim_minus_stag_uV_shunt": 14.731374060730772,
+   "n_points": 8,
+   "simultaneous_neg_a": {
+    "centre_err_LSB": -0.05082911975303279,
+    "centre_err_uV_shunt": -121.0217136976971,
+    "hyst_uV_shunt": 1212.308932317191
+   },
+   "simultaneous_neg_b": {
+    "centre_err_LSB": -0.050829116807140924,
+    "centre_err_uV_shunt": -121.02170668366885,
+    "hyst_uV_shunt": 1212.3089277944755
+   },
+   "simultaneous_oc_a": {
+    "centre_err_LSB": -0.008889546101389922,
+    "centre_err_uV_shunt": -21.16558595569029,
+    "hyst_uV_shunt": 1279.0266816761903
+   },
+   "simultaneous_oc_b": {
+    "centre_err_LSB": -0.008889542997121413,
+    "centre_err_uV_shunt": -21.165578564574794,
+    "hyst_uV_shunt": 1279.026687484988
+   },
+   "staggered_neg_a": {
+    "centre_err_LSB": -0.04972662918917043,
+    "centre_err_uV_shunt": -118.39673616469149,
+    "hyst_uV_shunt": 1196.763894623143
+   },
+   "staggered_neg_b": {
+    "centre_err_LSB": -0.050970919668763,
+    "centre_err_uV_shunt": -121.35933254467379,
+    "hyst_uV_shunt": 1191.286596373256
+   },
+   "staggered_oc_a": {
+    "centre_err_LSB": -0.014186746224978954,
+    "centre_err_uV_shunt": -33.77796720233084,
+    "hyst_uV_shunt": 1236.4399851364367
+   },
+   "staggered_oc_b": {
+    "centre_err_LSB": -0.01507672010262834,
+    "centre_err_uV_shunt": -35.896952625305566,
+    "hyst_uV_shunt": 1231.3890003101124
+   },
+   "tap_t176_max_dev_mV": 15.882856000000057,
+   "tap_t176_max_dev_step_mV": 37.496422919158334,
+   "tap_t76_max_dev_mV": 29.642298999999984,
+   "tap_t76_max_dev_step_mV": 70.6481038936878
+  },
+  "ss_cold": {
+   "cross_channel_glitches": 0,
+   "cross_channel_transitions_us": {
+    "neg_b": [],
+    "oc_b": []
+   },
+   "delays_from_shunt_step": {
+    "neg_release_a_ns": 127.10163052567817,
+    "neg_release_b_ns": 127.10142452039089,
+    "neg_trip_a_ns": 27.879726309572458,
+    "neg_trip_b_ns": 27.87972211489251,
+    "oc_release_a_ns": 28.168514186580104,
+    "oc_release_b_ns": 28.16849320615337,
+    "oc_trip_a_ns": 157.79169725121585,
+    "oc_trip_b_ns": 157.79154402261346
+   },
+   "idda_uA_total": 581.0561997066669,
+   "max_abs_centre_err_LSB": 0.02065336117697131,
+   "max_sim_minus_stag_LSB": 0.0010789134290745128,
+   "max_sim_minus_stag_uV_shunt": 2.568841497796459,
+   "n_points": 8,
+   "simultaneous_neg_a": {
+    "centre_err_LSB": 0.0020457288076070057,
+    "centre_err_uV_shunt": 4.8707828752547755,
+    "hyst_uV_shunt": 1270.1366442694207
+   },
+   "simultaneous_neg_b": {
+    "centre_err_LSB": 0.002045730757279929,
+    "centre_err_uV_shunt": 4.870787517333164,
+    "hyst_uV_shunt": 1270.1366438986895
+   },
+   "simultaneous_oc_a": {
+    "centre_err_LSB": -0.02031380372412184,
+    "centre_err_uV_shunt": -48.36619934314723,
+    "hyst_uV_shunt": 1292.7350883969734
+   },
+   "simultaneous_oc_b": {
+    "centre_err_LSB": -0.020313801573948468,
+    "centre_err_uV_shunt": -48.36619422368682,
+    "hyst_uV_shunt": 1292.735089017491
+   },
+   "staggered_neg_a": {
+    "centre_err_LSB": 0.003124642236681519,
+    "centre_err_uV_shunt": 7.439624373051235,
+    "hyst_uV_shunt": 1250.9580059855834
+   },
+   "staggered_neg_b": {
+    "centre_err_LSB": 0.0018204867399987392,
+    "centre_err_uV_shunt": 4.334492238092236,
+    "hyst_uV_shunt": 1245.3635127474827
+   },
+   "staggered_oc_a": {
+    "centre_err_LSB": -0.019254906790140417,
+    "centre_err_uV_shunt": -45.845016167000985,
+    "hyst_uV_shunt": 1272.9169807241258
+   },
+   "staggered_oc_b": {
+    "centre_err_LSB": -0.02065336117697131,
+    "centre_err_uV_shunt": -49.1746694689793,
+    "hyst_uV_shunt": 1267.4528086173698
+   },
+   "tap_t176_max_dev_mV": 17.590015000000015,
+   "tap_t176_max_dev_step_mV": 31.103448777408225,
+   "tap_t76_max_dev_mV": 32.92270499999999,
+   "tap_t76_max_dev_step_mV": 64.04709877297921
+  },
+  "tt": {
+   "cross_channel_glitches": 0,
+   "cross_channel_transitions_us": {
+    "neg_b": [],
+    "oc_b": []
+   },
+   "delays_from_shunt_step": {
+    "neg_release_a_ns": 110.59680614187029,
+    "neg_release_b_ns": 110.59676348678863,
+    "neg_trip_a_ns": 24.820270961325015,
+    "neg_trip_b_ns": 24.820271678592515,
+    "oc_release_a_ns": 25.227976200001457,
+    "oc_release_b_ns": 25.227966814761206,
+    "oc_trip_a_ns": 139.75494815085864,
+    "oc_trip_b_ns": 139.75493314162117
+   },
+   "idda_uA_total": 765.5103595099998,
+   "max_abs_centre_err_LSB": 0.030507670989580186,
+   "max_sim_minus_stag_LSB": 0.0009469681143578494,
+   "max_sim_minus_stag_uV_shunt": 2.254685986566308,
+   "n_points": 8,
+   "simultaneous_neg_a": {
+    "centre_err_LSB": -0.024537659113104408,
+    "centre_err_uV_shunt": -58.42299788834382,
+    "hyst_uV_shunt": 1224.07212100889
+   },
+   "simultaneous_neg_b": {
+    "centre_err_LSB": -0.02453765912704659,
+    "centre_err_uV_shunt": -58.42299792153949,
+    "hyst_uV_shunt": 1224.0721207661397
+   },
+   "simultaneous_oc_a": {
+    "centre_err_LSB": -0.03007238211291841,
+    "centre_err_uV_shunt": -71.60090979266288,
+    "hyst_uV_shunt": 1241.943977215429
+   },
+   "simultaneous_oc_b": {
+    "centre_err_LSB": -0.030072382048791372,
+    "centre_err_uV_shunt": -71.60090963997945,
+    "hyst_uV_shunt": 1241.9439770332829
+   },
+   "staggered_neg_a": {
+    "centre_err_LSB": -0.02359069099874656,
+    "centre_err_uV_shunt": -56.168311901777514,
+    "hyst_uV_shunt": 1206.6453527417032
+   },
+   "staggered_neg_b": {
+    "centre_err_LSB": -0.02473008422591905,
+    "centre_err_uV_shunt": -58.88115291885487,
+    "hyst_uV_shunt": 1200.761557512753
+   },
+   "staggered_oc_a": {
+    "centre_err_LSB": -0.02923468263546836,
+    "centre_err_uV_shunt": -69.60638722730562,
+    "hyst_uV_shunt": 1225.2532090690354
+   },
+   "staggered_oc_b": {
+    "centre_err_LSB": -0.030507670989580186,
+    "centre_err_uV_shunt": -72.63731187995282,
+    "hyst_uV_shunt": 1219.337355137226
+   },
+   "tap_t176_max_dev_mV": 17.852219999999974,
+   "tap_t176_max_dev_step_mV": 38.841384596899786,
+   "tap_t76_max_dev_mV": 32.57621299999997,
+   "tap_t76_max_dev_step_mV": 72.44186754042093
+  }
+ },
+ "run_id": "safe-joint-20261021r2",
+ "tool": "ngspice-46 (container banner from flow/run.sh ngspice -v; batch logs carry no banner)",
+ "wall_s": 309.1,
+ "workdir": "designs/r1-joint/blocks/r1_safe/sim"
+}

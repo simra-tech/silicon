@@ -1,0 +1,104 @@
+{
+ "block": "r1_isense",
+ "command": "python3 designs/r1-joint/blocks/r1_isense/sim/run_deck.py --block r1_isense --deck tb_isense_mc.cir --run-id isense-mc-20261021r2 --corners tt_mm_s1,tt_mm_s2 --jobs 2 --set N=25 --analyze analyze_mc.py --question \"REV2 regression: mismatch MC, 50 samples (2 seeds x 25), tt: residual offset after AZ (<= 100 uV), pedestal, gain; output CM (new)\"",
+ "container_image": "tapeoutbench-eda:latest sha256:ddeb6957... (checked by flow/run.sh)",
+ "corners": {
+  "tt_mm_s1": {
+   "cap": "cap_typ_mismatch",
+   "mos": "mos_tt_mismatch",
+   "res": "res_typ_mismatch",
+   "temp_C": 27,
+   "vdd": 1.2,
+   "vdda": 3.3
+  },
+  "tt_mm_s2": {
+   "cap": "cap_typ_mismatch",
+   "mos": "mos_tt_mismatch",
+   "res": "res_typ_mismatch",
+   "temp_C": 27,
+   "vdd": 1.2,
+   "vdda": 3.3
+  }
+ },
+ "cpuset": "109-111",
+ "date_utc": "2026-10-21T03:36:39.399385Z",
+ "deck": "designs/r1-joint/blocks/r1_isense/sim/tb_isense_mc.cir",
+ "deck_sha256": "ea29e0dfb5a51ade4bfaaa6853e8b4278f0fb9aed36a1930e79e8a6c5388aa09",
+ "disposition": "tt_mm: 50/50 samples within 100 uV",
+ "included_netlists": {
+  "/work/designs/r1-joint/blocks/r1_isense/schematic/r1_isense.spice": "af013b95f5fd57e2f1cd0d1345a4c75471c2f216b063ede3a39bdea6412ba4ee"
+ },
+ "included_netlists_results_root": {},
+ "jobs": {
+  "tt_mm_s1": {
+   "log": "r1_isense/isense-mc-20261021r2/tb_isense_mc_tt_mm_s1.log",
+   "rc": 0,
+   "wall_s": 208.2
+  },
+  "tt_mm_s2": {
+   "log": "r1_isense/isense-mc-20261021r2/tb_isense_mc_tt_mm_s2.log",
+   "rc": 0,
+   "wall_s": 208.2
+  }
+ },
+ "netlist": "designs/r1-joint/blocks/r1_isense/schematic/r1_isense.spice",
+ "netlist_sha256": "af013b95f5fd57e2f1cd0d1345a4c75471c2f216b063ede3a39bdea6412ba4ee",
+ "ngspice_version": "** ngspice-46 : Circuit level simulation program ** Copyright 2001-2025, The ngspice team. ** Please get your ngspice manual from https://ngspice.sourceforge.io/docs.html ** Please file your bug-reports at http://ngspice.sourceforge.net/bugrep.html (read after the run with flow/run.sh ngspice -v, same container image; the in-run read failed: python 3.6 has no capture_output)",
+ "overrides": {
+  "N": "25"
+ },
+ "pdk_commit": "84374023ee8b4b126bebbba67fcbada0a9c0ff0b (checked by flow/run.sh)",
+ "prerun": {},
+ "question": "REV2 regression: mismatch MC, 50 samples (2 seeds x 25), tt: residual offset after AZ (<= 100 uV), pedestal, gain; output CM (new)",
+ "raw_results": "$G1_RESULTS_ROOT/r1_isense/isense-mc-20261021r2/",
+ "result": {
+  "tt_mm": {
+   "gain": {
+    "max": 14.0607,
+    "max_abs": 14.0607,
+    "mean": 14.00821,
+    "min": 13.9409,
+    "n": 50,
+    "sigma": 0.027948969569556562
+   },
+   "ocm_V": {
+    "max": 0.6077962185,
+    "max_abs": 0.6077962185,
+    "mean": 0.59787211002,
+    "min": 0.5927580809999999,
+    "n": 50,
+    "sigma": 0.0031903920779510907
+   },
+   "ocm_within_30mV": 50,
+   "ped_mV": {
+    "max": 40.5731,
+    "max_abs": 40.5731,
+    "mean": 40.33629,
+    "min": 40.1531,
+    "n": 50,
+    "sigma": 0.09168640738953567
+   },
+   "raw_uV": {
+    "max": 9079.07,
+    "max_abs": 9079.07,
+    "mean": -14.149799999999988,
+    "min": -7885.03,
+    "n": 50,
+    "sigma": 3365.092025516877
+   },
+   "res_uV": {
+    "max": 29.342,
+    "max_abs": 36.5962,
+    "mean": -2.4139422600000002,
+    "min": -36.5962,
+    "n": 50,
+    "sigma": 13.204251400911907
+   },
+   "res_within_100uV": 50
+  }
+ },
+ "run_id": "isense-mc-20261021r2",
+ "tool": "ngspice-46 (container banner from flow/run.sh ngspice -v; batch logs carry no banner)",
+ "wall_s": 208.4,
+ "workdir": "designs/r1-joint/blocks/r1_isense/sim"
+}

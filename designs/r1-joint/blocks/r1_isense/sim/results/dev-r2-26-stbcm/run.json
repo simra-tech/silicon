@@ -1,0 +1,153 @@
+{
+ "block": "r1_isense",
+ "command": "python3 designs/r1-joint/blocks/r1_isense/sim/run_deck.py --block r1_isense --deck <G1_RESULTS_ROOT>/r1_isense/dev-r2-26-net/tb_isense_stbcm.cir --run-id dev-r2-26-stbcm --corners tt,ss,ff,ssx,ffx --jobs 3 --set RL=0.001 --set CL=2p --set CW=0 --netlist <G1_RESULTS_ROOT>/r1_isense/dev-r2-26-net/r1_isense.spice --analyze analyze_stbcm.py --question \"revision-2 development screen, variant [TP=2 TCR=vcm RTG=0 TPW=2 TPL=16 TMW=4 TML=16 BFC=1 FDC=1 RH=50 TGW=1 TPC=36 MS=8 MCS=1 RDG=40], state stbcm\"",
+ "container_image": "tapeoutbench-eda:latest sha256:ddeb6957... (checked by flow/run.sh)",
+ "corners": {
+  "ff": {
+   "cap": "cap_bcs",
+   "mos": "mos_ff",
+   "res": "res_bcs",
+   "temp_C": -40,
+   "vdd": 1.32,
+   "vdda": 3.6
+  },
+  "ffx": {
+   "cap": "cap_bcs",
+   "mos": "mos_ff",
+   "res": "res_bcs",
+   "temp_C": 125,
+   "vdd": 1.08,
+   "vdda": 3.0
+  },
+  "ss": {
+   "cap": "cap_wcs",
+   "mos": "mos_ss",
+   "res": "res_wcs",
+   "temp_C": 125,
+   "vdd": 1.08,
+   "vdda": 3.0
+  },
+  "ssx": {
+   "cap": "cap_wcs",
+   "mos": "mos_ss",
+   "res": "res_wcs",
+   "temp_C": -40,
+   "vdd": 1.32,
+   "vdda": 3.6
+  },
+  "tt": {
+   "cap": "cap_typ",
+   "mos": "mos_tt",
+   "res": "res_typ",
+   "temp_C": 27,
+   "vdd": 1.2,
+   "vdda": 3.3
+  }
+ },
+ "cpuset": "109-111",
+ "date_utc": "2026-10-21T02:45:08.431369Z",
+ "deck": "<G1_RESULTS_ROOT>/r1_isense/dev-r2-26-net/tb_isense_stbcm.cir",
+ "deck_sha256": "e947c1223710f68b566a286d82a9ca7c9181b6da381ae1fc358780241c5163d5",
+ "disposition": "informational: CM step response overshoot ff 6.7 %, ffx 2.3 %, ss 2.6 %, ssx 5.8 %, tt 4.8 %",
+ "included_netlists": {
+  "/work/designs/r1-joint/blocks/r1_safe/schematic/r1_safe.spice": "812f886dce2b759af121230bd2e9100aeac59041effdf9a3341647c29299cbde"
+ },
+ "included_netlists_results_root": {
+  "<G1_RESULTS_ROOT>/r1_isense/dev-r2-26-net/r1_isense.spice": "1848b500abb35fd025f3b7b783f30d46afeebeae1c5f34f696f2f4387848005a"
+ },
+ "jobs": {
+  "ff": {
+   "log": "r1_isense/dev-r2-26-stbcm/tb_isense_stbcm_ff.log",
+   "rc": 0,
+   "wall_s": 46.0
+  },
+  "ffx": {
+   "log": "r1_isense/dev-r2-26-stbcm/tb_isense_stbcm_ffx.log",
+   "rc": 0,
+   "wall_s": 44.0
+  },
+  "ss": {
+   "log": "r1_isense/dev-r2-26-stbcm/tb_isense_stbcm_ss.log",
+   "rc": 0,
+   "wall_s": 46.0
+  },
+  "ssx": {
+   "log": "r1_isense/dev-r2-26-stbcm/tb_isense_stbcm_ssx.log",
+   "rc": 0,
+   "wall_s": 42.0
+  },
+  "tt": {
+   "log": "r1_isense/dev-r2-26-stbcm/tb_isense_stbcm_tt.log",
+   "rc": 0,
+   "wall_s": 44.0
+  }
+ },
+ "netlist": "<G1_RESULTS_ROOT>/r1_isense/dev-r2-26-net/r1_isense.spice",
+ "netlist_sha256": "1848b500abb35fd025f3b7b783f30d46afeebeae1c5f34f696f2f4387848005a",
+ "ngspice_version": "** ngspice-46 : Circuit level simulation program ** Copyright 2001-2025, The ngspice team. ** Please get your ngspice manual from https://ngspice.sourceforge.io/docs.html ** Please file your bug-reports at http://ngspice.sourceforge.net/bugrep.html (read after the run with flow/run.sh ngspice -v, same container image; the in-run read failed: python 3.6 has no capture_output)",
+ "overrides": {
+  "CL": "2p",
+  "CW": "0",
+  "RL": "0.001"
+ },
+ "pdk_commit": "84374023ee8b4b126bebbba67fcbada0a9c0ff0b (checked by flow/run.sh)",
+ "prerun": {},
+ "question": "revision-2 development screen, variant [TP=2 TCR=vcm RTG=0 TPW=2 TPL=16 TMW=4 TML=16 BFC=1 FDC=1 RH=50 TGW=1 TPC=36 MS=8 MCS=1 RDG=40], state stbcm",
+ "raw_results": "$G1_RESULTS_ROOT/r1_isense/dev-r2-26-stbcm/",
+ "result": {
+  "ff": {
+   "cm_after_V": 0.6208624528812496,
+   "cm_before_V": 0.600768983303947,
+   "cm_step_V": 0.020093469577302625,
+   "overshoot_pct_of_cm_step": 6.668246683807531,
+   "pm_equiv_deg_2nd_order": 62.512016657950724,
+   "settle_2pct_ns": 182.75000000000009,
+   "vod_change_mV": -0.004606044081145733,
+   "zeta_from_overshoot": 0.6528765056055229
+  },
+  "ffx": {
+   "cm_after_V": 0.6210140622962499,
+   "cm_before_V": 0.6008784233671052,
+   "cm_step_V": 0.020135638929144717,
+   "overshoot_pct_of_cm_step": 2.3429959456974316,
+   "pm_equiv_deg_2nd_order": 68.42926259741917,
+   "settle_2pct_ns": 315.24999999999966,
+   "vod_change_mV": -0.0018470374981705007,
+   "zeta_from_overshoot": 0.766865577141809
+  },
+  "ss": {
+   "cm_after_V": 0.6215724536875001,
+   "cm_before_V": 0.6013075877986842,
+   "cm_step_V": 0.02026486588881593,
+   "overshoot_pct_of_cm_step": 2.570556426861932,
+   "pm_equiv_deg_2nd_order": 68.0668261488843,
+   "settle_2pct_ns": 364.25000000000034,
+   "vod_change_mV": -0.014302862104909053,
+   "zeta_from_overshoot": 0.7588927034054037
+  },
+  "ssx": {
+   "cm_after_V": 0.6212813206900001,
+   "cm_before_V": 0.601078507868421,
+   "cm_step_V": 0.020202812821579097,
+   "overshoot_pct_of_cm_step": 5.792922601103732,
+   "pm_equiv_deg_2nd_order": 63.603934305923225,
+   "settle_2pct_ns": 332.24999999999966,
+   "vod_change_mV": -0.004891221314751171,
+   "zeta_from_overshoot": 0.6717090701431502
+  },
+  "tt": {
+   "cm_after_V": 0.6211331694799997,
+   "cm_before_V": 0.6009780730052633,
+   "cm_step_V": 0.020155096474736456,
+   "overshoot_pct_of_cm_step": 4.821076005358068,
+   "pm_equiv_deg_2nd_order": 64.8608344902416,
+   "settle_2pct_ns": 255.75000000000006,
+   "vod_change_mV": -0.010173349471509496,
+   "zeta_from_overshoot": 0.6944654405622104
+  }
+ },
+ "run_id": "dev-r2-26-stbcm",
+ "tool": "ngspice-46 (container banner from flow/run.sh ngspice -v; batch logs carry no banner)",
+ "wall_s": 90.3,
+ "workdir": "designs/r1-joint/blocks/r1_isense/sim"
+}

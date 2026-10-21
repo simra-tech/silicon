@@ -1,0 +1,191 @@
+{
+ "block": "r1_isense",
+ "command": "python3 designs/r1-joint/blocks/r1_isense/sim/run_deck.py --block r1_isense --deck tb_isense_step.cir --run-id isense-step-20261021r2 --corners tt,ss,ff,ss_cold,ff_hot --set VCMIN=0 --analyze analyze_step.py --question \"REV2 regression: settling to 0.5 % within 300 ns after 100 mV / 120 mV PWM edges, overload recovery, output node range, 5 corners\"",
+ "container_image": "tapeoutbench-eda:latest sha256:ddeb6957... (checked by flow/run.sh)",
+ "corners": {
+  "ff": {
+   "cap": "cap_bcs",
+   "mos": "mos_ff",
+   "res": "res_bcs",
+   "temp_C": -40,
+   "vdd": 1.32,
+   "vdda": 3.6
+  },
+  "ff_hot": {
+   "cap": "cap_bcs",
+   "mos": "mos_ff",
+   "res": "res_bcs",
+   "temp_C": 125,
+   "vdd": 1.32,
+   "vdda": 3.6
+  },
+  "ss": {
+   "cap": "cap_wcs",
+   "mos": "mos_ss",
+   "res": "res_wcs",
+   "temp_C": 125,
+   "vdd": 1.08,
+   "vdda": 3.0
+  },
+  "ss_cold": {
+   "cap": "cap_wcs",
+   "mos": "mos_ss",
+   "res": "res_wcs",
+   "temp_C": -40,
+   "vdd": 1.08,
+   "vdda": 3.0
+  },
+  "tt": {
+   "cap": "cap_typ",
+   "mos": "mos_tt",
+   "res": "res_typ",
+   "temp_C": 27,
+   "vdd": 1.2,
+   "vdda": 3.3
+  }
+ },
+ "cpuset": "109-111",
+ "date_utc": "2026-10-21T02:59:57.203131Z",
+ "deck": "designs/r1-joint/blocks/r1_isense/sim/tb_isense_step.cir",
+ "deck_sha256": "05e9e44597f791969239534af8e4bc8b78746bd39cd710ff762009a0937b9654",
+ "disposition": "superseded (candidate a): settling limit 300 ns: ff_hot passed, ff passed, ss_cold passed, ss passed, tt passed",
+ "included_netlists": {
+  "/work/designs/r1-joint/blocks/r1_isense/schematic/r1_isense.spice": "d0eb3bd96b345a27603ccd5e301e241a8a07c338275094cee84b4a0ea4291ea0"
+ },
+ "included_netlists_results_root": {},
+ "jobs": {
+  "ff": {
+   "log": "r1_isense/isense-step-20261021r2/tb_isense_step_ff.log",
+   "rc": 0,
+   "wall_s": 84.1
+  },
+  "ff_hot": {
+   "log": "r1_isense/isense-step-20261021r2/tb_isense_step_ff_hot.log",
+   "rc": 0,
+   "wall_s": 74.1
+  },
+  "ss": {
+   "log": "r1_isense/isense-step-20261021r2/tb_isense_step_ss.log",
+   "rc": 0,
+   "wall_s": 82.1
+  },
+  "ss_cold": {
+   "log": "r1_isense/isense-step-20261021r2/tb_isense_step_ss_cold.log",
+   "rc": 0,
+   "wall_s": 76.1
+  },
+  "tt": {
+   "log": "r1_isense/isense-step-20261021r2/tb_isense_step_tt.log",
+   "rc": 0,
+   "wall_s": 82.1
+  }
+ },
+ "netlist": "designs/r1-joint/blocks/r1_isense/schematic/r1_isense.spice",
+ "netlist_sha256": "d0eb3bd96b345a27603ccd5e301e241a8a07c338275094cee84b4a0ea4291ea0",
+ "ngspice_version": "** ngspice-46 : Circuit level simulation program ** Copyright 2001-2025, The ngspice team. ** Please get your ngspice manual from https://ngspice.sourceforge.io/docs.html ** Please file your bug-reports at http://ngspice.sourceforge.net/bugrep.html (read after the run with flow/run.sh ngspice -v, same container image; the in-run read failed: python 3.6 has no capture_output)",
+ "note_superseded": "SUPERSEDED frozen candidate a of revision 2 (netlist sha256 d0eb3bd96b34..., slow-path mirror w=2/l=32). Renamed from suffix 20261021r2 to 20261021r2a on 2026-10-21 after the ss 125 C mismatch MC showed 2/30 samples with the output CM outside 0.6 V +- 30 mV (slow CMFB path at the end of its range, vint 0.30-0.31 V, replay dev-r2-mcvint-01). Kept as a record; revision 2 of record widens the slow-path mirror to w=8 um.",
+ "overrides": {
+  "VCMIN": "0"
+ },
+ "pdk_commit": "84374023ee8b4b126bebbba67fcbada0a9c0ff0b (checked by flow/run.sh)",
+ "prerun": {},
+ "question": "REV2 regression: settling to 0.5 % within 300 ns after 100 mV / 120 mV PWM edges, overload recovery, output node range, 5 corners",
+ "raw_results": "$G1_RESULTS_ROOT/r1_isense/isense-step-20261021r2a/",
+ "result": {
+  "ff": {
+   "az_release_recovery_ns": 32.8,
+   "cm_ripple_pp_mV": 3.486,
+   "idd_uA": 336.9,
+   "idda_uA": 143.4,
+   "output_node_range_V": [
+    0.0123,
+    1.3077
+   ],
+   "overload_recovery_ns": {
+    "from_+200mV": 172.6,
+    "from_-200mV": 140.3
+   },
+   "overshoot_max_pct": 0.0,
+   "settle_100mV_edges_worst_ns": 59.3,
+   "settle_20mV_edge_ns": 65.8,
+   "vcm_out_V": 0.6008
+  },
+  "ff_hot": {
+   "az_release_recovery_ns": 52.3,
+   "cm_ripple_pp_mV": 0.892,
+   "idd_uA": 567.2,
+   "idda_uA": 226.2,
+   "output_node_range_V": [
+    0.0364,
+    1.3092
+   ],
+   "overload_recovery_ns": {
+    "from_+200mV": 203.6,
+    "from_-200mV": 157.0
+   },
+   "overshoot_max_pct": 0.0,
+   "settle_100mV_edges_worst_ns": 120.8,
+   "settle_20mV_edge_ns": 207.7,
+   "vcm_out_V": 0.6016
+  },
+  "ss": {
+   "az_release_recovery_ns": 83.0,
+   "cm_ripple_pp_mV": 4.449,
+   "idd_uA": 495.5,
+   "idda_uA": 213.8,
+   "output_node_range_V": [
+    0.0436,
+    1.0735
+   ],
+   "overload_recovery_ns": {
+    "from_+200mV": 191.2,
+    "from_-200mV": 168.9
+   },
+   "overshoot_max_pct": 0.0,
+   "settle_100mV_edges_worst_ns": 208.4,
+   "settle_20mV_edge_ns": 295.7,
+   "vcm_out_V": 0.6019
+  },
+  "ss_cold": {
+   "az_release_recovery_ns": 59.5,
+   "cm_ripple_pp_mV": 8.153,
+   "idd_uA": 286.4,
+   "idda_uA": 131.2,
+   "output_node_range_V": [
+    0.0134,
+    1.0732
+   ],
+   "overload_recovery_ns": {
+    "from_+200mV": 170.2,
+    "from_-200mV": 152.4
+   },
+   "overshoot_max_pct": 0.0,
+   "settle_100mV_edges_worst_ns": 112.0,
+   "settle_20mV_edge_ns": 164.2,
+   "vcm_out_V": 0.6011
+  },
+  "tt": {
+   "az_release_recovery_ns": 49.7,
+   "cm_ripple_pp_mV": 5.152,
+   "idd_uA": 403.6,
+   "idda_uA": 170.9,
+   "output_node_range_V": [
+    0.0211,
+    1.1908
+   ],
+   "overload_recovery_ns": {
+    "from_+200mV": 178.6,
+    "from_-200mV": 146.4
+   },
+   "overshoot_max_pct": 0.0,
+   "settle_100mV_edges_worst_ns": 88.4,
+   "settle_20mV_edge_ns": 110.2,
+   "vcm_out_V": 0.6011
+  }
+ },
+ "run_id": "isense-step-20261021r2a",
+ "run_id_original": "isense-step-20261021r2",
+ "tool": "ngspice-46 (container banner from flow/run.sh ngspice -v; batch logs carry no banner)",
+ "wall_s": 160.1,
+ "workdir": "designs/r1-joint/blocks/r1_isense/sim"
+}

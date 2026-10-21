@@ -5,7 +5,12 @@
   tb_isense_stb.cir      loop gain, NORMAL state (az = azh = 0): hold caps tied at DC to the pre-run values through 1 GH
                          (open for AC), five breaks (see LOOPS), three shunt levels (0, +100 mV, -20 mV)
   tb_isense_stbaz.cir    loop gain, AZ CLOSED state (az = azh = 1): output breaks and the AZ servo break at the aux-pair gates
+  tb_isense_stbazi.cir   loop gain, INTERMEDIATE state az = 1, azh = 0 (RF arms at VCM, hold switches open, hold caps
+                         tied at DC to the pre-run values through 1 GH as in the normal state); added in revision 2
   tb_isense_stbstep.cir  shunt step 0 -> 100 mV, 10 ns edge, real netlist, same load fixture
+
+Revision 2 (2026-10-21): R1_NET = netlist to read and include (repo-relative, or an absolute path under the results
+root for development variants; default the netlist of record), R1_OUTDIR = directory for the decks (default here).
 
 Method: Tian double injection, Wiedmann form, as r1_afe (r1_afe/sim/tb_afe_stb.cir, validated on a toy network in
 r1_afe/sim/tb_stb_toy.cir, relative error 4.7e-8):  T = -1/(1-1/(2*(i1*v2-v1*i2)+v1+i2)),  v = driver-side node
@@ -27,7 +32,12 @@ real r1_safe_cmp (OC and NEG of channel a, code THR = 44 on the string, path-fix
 """
 import os, re, sys
 here = os.path.dirname(os.path.abspath(__file__))
-net = open(os.path.join(here, "..", "schematic", "r1_isense.spice")).read()
+REPO = os.path.abspath(os.path.join(here, "..", "..", "..", "..", ".."))
+NETP = os.environ.get("R1_NET", "designs/r1-joint/blocks/r1_isense/schematic/r1_isense.spice")
+NETABS = NETP if os.path.isabs(NETP) else os.path.join(REPO, NETP)
+NETINC = NETP if os.path.isabs(NETP) else "/work/" + NETP
+OUTDIR = os.environ.get("R1_OUTDIR", here)
+net = open(NETABS).read()
 a = net.index(".subckt r1_isense_ch "); b = net.index(".ends r1_isense_ch", a) + len(".ends r1_isense_ch")
 sub0 = net[a:b]
 
@@ -48,7 +58,7 @@ def stb_sub(hold):
                  ("XMLA outp vbl", "XMLA outpi vbl"), ("XMLB outn vbl", "XMLB outni vbl"),
                  ("XCCA cza outp ", "XCCA cza outpi "), ("XCCB czb outn ", "XCCB czb outni "),
                  ("XM1 f1 sa tail", "XM1 f1 sai tail"), ("XM2 f2 sb tail", "XM2 f2 sbi tail"),
-                 ("XMF1 vcmfb vcms ctail", "XMF1 vcmfb vcmsy ctail"),
+                 ("XMF1 vcmfb vcms ", "XMF1 vcmfb vcmsy "),
                  ("XA1 f1 h1 atail", "XA1 f1 h1g atail"), ("XA2 f2 h2 atail", "XA2 f2 h2g atail")):
         s = edit(s, o, n)
     P = ["* ---- loop-gain probes (test only; Tian double injection). Driver-side node carries the + terminal and the current injection",
@@ -66,7 +76,7 @@ LIB = """.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerMOSlv.lib @@M
 .lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerRES.lib @@RES@@
 .lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerCAP.lib @@CAP@@
 .temp @@TEMP@@
-.include /work/designs/r1-joint/blocks/r1_isense/schematic/r1_isense.spice"""
+.include %s""" % NETINC
 SUP = """Vdda vdda 0 dc @@VDDA@@
 Vdd vdd 0 dc @@VDD@@
 * IDEAL REFERENCE SOURCES (this step only), as the joint path fixture of r1_safe
@@ -101,13 +111,14 @@ def fixture():
 
 SAFE_INC = ".include /work/designs/r1-joint/blocks/r1_safe/schematic/r1_safe.spice"
 
-def stb_deck(az, loops, name, title):
-    hold = not az
+def stb_deck(az, loops, name, title, azh=None):
+    hold = not az or azh is False
     azv = "@@VDD@@" if az else "0"
+    azhv = azv if azh is None else ("@@VDD@@" if azh else "0")
     lev = "0 0.1 -0.02" if not az else "0"
     H = ["* " + title, "* " + __doc__.strip().replace("\n", "\n* "),
          LIB, SAFE_INC, ".option gmin=1e-12", SUP,
-         "Vaz az 0 dc %s\nVazh azh 0 dc %s" % (azv, azv),
+         "Vaz az 0 dc %s\nVazh azh 0 dc %s" % (azv, azhv),
          "Vnn isn 0 dc 0\nVin isp isn dc 0",
          "* loop-gain probe parameters (AC magnitudes; all zero except the break under test)",
          ".param vo_p=0 vo_n=0 io_p=0 io_n=0 vi_p=0 vi_n=0 ii_p=0 ii_n=0 vc=0 ic=0 va_p=0 va_n=0 ja_p=0 ja_n=0",
@@ -204,8 +215,11 @@ assert "3.51u 0.62" in CMSTEP and "_cmstep.txt" in CMSTEP, (("3.51u 0.62" in CMS
 
 TAG = os.environ.get("R1_TAG", "")      # e.g. R1_TAG=c14 R1_THR=14 -> tb_isense_stbc14.cir (comparators at the calibration point)
 if __name__ == "__main__":
+    here = OUTDIR
     if not TAG:
         open(os.path.join(here, "tb_isense_stbpre.cir"), "w").write(PRE)
+        open(os.path.join(here, "tb_isense_stbazi.cir"), "w").write(
+            stb_deck(True, [1, 2, 3, 6, 7], "stbazi", "r1_isense loop gain, INTERMEDIATE state (az = 1, azh = 0: RF arms at VCM, hold open), zero shunt current", azh=False))
     open(os.path.join(here, "tb_isense_stb%s.cir" % TAG), "w").write(
         stb_deck(False, [1, 2, 3, 4, 5], "stb", "r1_isense loop gain, NORMAL state (az = azh = 0), shunt levels 0 / +100 mV / -20 mV"))
     if not TAG:

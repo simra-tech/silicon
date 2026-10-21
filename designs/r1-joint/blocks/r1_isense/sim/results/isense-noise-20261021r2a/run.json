@@ -1,0 +1,196 @@
+{
+ "block": "r1_isense",
+ "command": "python3 designs/r1-joint/blocks/r1_isense/sim/run_deck.py --block r1_isense --deck tb_isense_noise.cir --run-id isense-noise-20261021r2 --corners tt,ss,ff,ss_cold,ff_hot --set VH=0.93 --analyze analyze_noise.py --question \"REV2 regression: closed-loop bandwidth (>= 1 MHz), peaking, input noise, CM and supply rejection, 5 corners\"",
+ "container_image": "tapeoutbench-eda:latest sha256:ddeb6957... (checked by flow/run.sh)",
+ "corners": {
+  "ff": {
+   "cap": "cap_bcs",
+   "mos": "mos_ff",
+   "res": "res_bcs",
+   "temp_C": -40,
+   "vdd": 1.32,
+   "vdda": 3.6
+  },
+  "ff_hot": {
+   "cap": "cap_bcs",
+   "mos": "mos_ff",
+   "res": "res_bcs",
+   "temp_C": 125,
+   "vdd": 1.32,
+   "vdda": 3.6
+  },
+  "ss": {
+   "cap": "cap_wcs",
+   "mos": "mos_ss",
+   "res": "res_wcs",
+   "temp_C": 125,
+   "vdd": 1.08,
+   "vdda": 3.0
+  },
+  "ss_cold": {
+   "cap": "cap_wcs",
+   "mos": "mos_ss",
+   "res": "res_wcs",
+   "temp_C": -40,
+   "vdd": 1.08,
+   "vdda": 3.0
+  },
+  "tt": {
+   "cap": "cap_typ",
+   "mos": "mos_tt",
+   "res": "res_typ",
+   "temp_C": 27,
+   "vdd": 1.2,
+   "vdda": 3.3
+  }
+ },
+ "cpuset": "109-111",
+ "date_utc": "2026-10-21T03:01:35.878231Z",
+ "deck": "designs/r1-joint/blocks/r1_isense/sim/tb_isense_noise.cir",
+ "deck_sha256": "98a4b2426b9b67b4a0ec869670976536f9da0905048749665221ff59f22fb889",
+ "disposition": "superseded (candidate a): bandwidth >= 1 MHz: ff passed, ff_hot passed, ss passed, ss_cold passed, tt passed",
+ "included_netlists": {
+  "/work/designs/r1-joint/blocks/r1_isense/schematic/r1_isense.spice": "d0eb3bd96b345a27603ccd5e301e241a8a07c338275094cee84b4a0ea4291ea0"
+ },
+ "included_netlists_results_root": {},
+ "jobs": {
+  "ff": {
+   "log": "r1_isense/isense-noise-20261021r2/tb_isense_noise_ff.log",
+   "rc": 0,
+   "wall_s": 8.0
+  },
+  "ff_hot": {
+   "log": "r1_isense/isense-noise-20261021r2/tb_isense_noise_ff_hot.log",
+   "rc": 0,
+   "wall_s": 10.0
+  },
+  "ss": {
+   "log": "r1_isense/isense-noise-20261021r2/tb_isense_noise_ss.log",
+   "rc": 0,
+   "wall_s": 10.0
+  },
+  "ss_cold": {
+   "log": "r1_isense/isense-noise-20261021r2/tb_isense_noise_ss_cold.log",
+   "rc": 0,
+   "wall_s": 10.0
+  },
+  "tt": {
+   "log": "r1_isense/isense-noise-20261021r2/tb_isense_noise_tt.log",
+   "rc": 0,
+   "wall_s": 8.0
+  }
+ },
+ "netlist": "designs/r1-joint/blocks/r1_isense/schematic/r1_isense.spice",
+ "netlist_sha256": "d0eb3bd96b345a27603ccd5e301e241a8a07c338275094cee84b4a0ea4291ea0",
+ "ngspice_version": "** ngspice-46 : Circuit level simulation program ** Copyright 2001-2025, The ngspice team. ** Please get your ngspice manual from https://ngspice.sourceforge.io/docs.html ** Please file your bug-reports at http://ngspice.sourceforge.net/bugrep.html (read after the run with flow/run.sh ngspice -v, same container image; the in-run read failed: python 3.6 has no capture_output)",
+ "note_superseded": "SUPERSEDED frozen candidate a of revision 2 (netlist sha256 d0eb3bd96b34..., slow-path mirror w=2/l=32). Renamed from suffix 20261021r2 to 20261021r2a on 2026-10-21 after the ss 125 C mismatch MC showed 2/30 samples with the output CM outside 0.6 V +- 30 mV (slow CMFB path at the end of its range, vint 0.30-0.31 V, replay dev-r2-mcvint-01). Kept as a record; revision 2 of record widens the slow-path mirror to w=8 um.",
+ "overrides": {
+  "VH": "0.93"
+ },
+ "pdk_commit": "84374023ee8b4b126bebbba67fcbada0a9c0ff0b (checked by flow/run.sh)",
+ "prerun": {},
+ "question": "REV2 regression: closed-loop bandwidth (>= 1 MHz), peaking, input noise, CM and supply rejection, 5 corners",
+ "raw_results": "$G1_RESULTS_ROOT/r1_isense/isense-noise-20261021r2a/",
+ "result": {
+  "ff": {
+   "cm_to_diff_dB_1M": -81.1442,
+   "cm_to_diff_dB_1k": -81.1367,
+   "corner_Hz_sqrt2_of_1MHz": 63095.7344,
+   "f3dB_Hz": 15215800.0,
+   "gain_1k_dB": 22.9262,
+   "in_nV_rtHz_at_1000": 221.257939,
+   "in_nV_rtHz_at_10000": 69.64251920000001,
+   "in_nV_rtHz_at_100000": 31.179841300000003,
+   "in_nV_rtHz_at_1e+06": 24.9395299,
+   "inoise_total_10k_5M_V": 5.34039e-05,
+   "onoise_total_10k_5M_V": 0.000738794,
+   "peaking_dB": 0.0,
+   "vdd_to_diff_dB_1M": -95.6378,
+   "vdd_to_diff_dB_1k": -125.743,
+   "vdda_to_diff_dB_1M": -84.7193,
+   "vdda_to_diff_dB_1k": -84.6971,
+   "vod_at_40mV": 0.598438
+  },
+  "ff_hot": {
+   "cm_to_diff_dB_1M": -73.9318,
+   "cm_to_diff_dB_1k": -73.9163,
+   "corner_Hz_sqrt2_of_1MHz": 70794.5784,
+   "f3dB_Hz": 12631800.0,
+   "gain_1k_dB": 22.9269,
+   "in_nV_rtHz_at_1000": 338.543793,
+   "in_nV_rtHz_at_10000": 105.425491,
+   "in_nV_rtHz_at_100000": 45.605366000000004,
+   "in_nV_rtHz_at_1e+06": 35.6257589,
+   "inoise_total_10k_5M_V": 7.64723e-05,
+   "onoise_total_10k_5M_V": 0.00105158,
+   "peaking_dB": 0.0,
+   "vdd_to_diff_dB_1M": -94.6472,
+   "vdd_to_diff_dB_1k": -117.548,
+   "vdda_to_diff_dB_1M": -75.6914,
+   "vdda_to_diff_dB_1k": -75.898,
+   "vod_at_40mV": 0.599391
+  },
+  "ss": {
+   "cm_to_diff_dB_1M": -69.3501,
+   "cm_to_diff_dB_1k": -69.3248,
+   "corner_Hz_sqrt2_of_1MHz": 70794.5784,
+   "f3dB_Hz": 9117480.0,
+   "gain_1k_dB": 22.9316,
+   "in_nV_rtHz_at_1000": 358.822815,
+   "in_nV_rtHz_at_10000": 111.74051899999999,
+   "in_nV_rtHz_at_100000": 48.0443466,
+   "in_nV_rtHz_at_1e+06": 37.3207943,
+   "inoise_total_10k_5M_V": 8.02844e-05,
+   "onoise_total_10k_5M_V": 0.00108573,
+   "peaking_dB": 0.0,
+   "vdd_to_diff_dB_1M": -81.8627,
+   "vdd_to_diff_dB_1k": -114.429,
+   "vdda_to_diff_dB_1M": -71.5689,
+   "vdda_to_diff_dB_1k": -71.6164,
+   "vod_at_40mV": 0.599621
+  },
+  "ss_cold": {
+   "cm_to_diff_dB_1M": -76.3477,
+   "cm_to_diff_dB_1k": -76.3195,
+   "corner_Hz_sqrt2_of_1MHz": 63095.7344,
+   "f3dB_Hz": 10429300.0,
+   "gain_1k_dB": 22.9274,
+   "in_nV_rtHz_at_1000": 237.302347,
+   "in_nV_rtHz_at_10000": 74.74831590000001,
+   "in_nV_rtHz_at_100000": 33.3988817,
+   "in_nV_rtHz_at_1e+06": 26.6595266,
+   "inoise_total_10k_5M_V": 5.71852e-05,
+   "onoise_total_10k_5M_V": 0.000779214,
+   "peaking_dB": 0.0,
+   "vdd_to_diff_dB_1M": -86.0198,
+   "vdd_to_diff_dB_1k": -120.209,
+   "vdda_to_diff_dB_1M": -79.4329,
+   "vdda_to_diff_dB_1k": -79.2568,
+   "vod_at_40mV": 0.598565
+  },
+  "tt": {
+   "cm_to_diff_dB_1M": -75.523,
+   "cm_to_diff_dB_1k": -75.5116,
+   "corner_Hz_sqrt2_of_1MHz": 70794.5784,
+   "f3dB_Hz": 12068400.0,
+   "gain_1k_dB": 22.9283,
+   "in_nV_rtHz_at_1000": 278.105653,
+   "in_nV_rtHz_at_10000": 87.1887298,
+   "in_nV_rtHz_at_100000": 38.2119841,
+   "in_nV_rtHz_at_1e+06": 30.078999300000003,
+   "inoise_total_10k_5M_V": 6.45361e-05,
+   "onoise_total_10k_5M_V": 0.000885823,
+   "peaking_dB": 0.0,
+   "vdd_to_diff_dB_1M": -90.7767,
+   "vdd_to_diff_dB_1k": -123.246,
+   "vdda_to_diff_dB_1M": -78.3226,
+   "vdda_to_diff_dB_1k": -78.3348,
+   "vod_at_40mV": 0.598748
+  }
+ },
+ "run_id": "isense-noise-20261021r2a",
+ "run_id_original": "isense-noise-20261021r2",
+ "tool": "ngspice-46 (container banner from flow/run.sh ngspice -v; batch logs carry no banner)",
+ "wall_s": 18.1,
+ "workdir": "designs/r1-joint/blocks/r1_isense/sim"
+}

@@ -1,0 +1,150 @@
+{
+ "block": "r1_isense",
+ "command": "python3 designs/r1-joint/blocks/r1_isense/sim/run_deck.py --block r1_isense --deck tb_isense_mc.cir --run-id isense-mc-ssff-20261021r2 --corners ss_mm_s4,ff_mm_s5 --jobs 2 --set N=30 --analyze analyze_mc.py --question \"REV2 regression: mismatch MC at ss 125 C (seed 4) and ff -40 C (seed 5), 30 samples each; output CM (new)\"",
+ "container_image": "tapeoutbench-eda:latest sha256:ddeb6957... (checked by flow/run.sh)",
+ "corners": {
+  "ff_mm_s5": {
+   "cap": "cap_bcs_mismatch",
+   "mos": "mos_ff_mismatch",
+   "res": "res_bcs_mismatch",
+   "temp_C": -40,
+   "vdd": 1.32,
+   "vdda": 3.6
+  },
+  "ss_mm_s4": {
+   "cap": "cap_wcs_mismatch",
+   "mos": "mos_ss_mismatch",
+   "res": "res_wcs_mismatch",
+   "temp_C": 125,
+   "vdd": 1.08,
+   "vdda": 3.0
+  }
+ },
+ "cpuset": "109-111",
+ "date_utc": "2026-10-21T03:09:22.931258Z",
+ "deck": "designs/r1-joint/blocks/r1_isense/sim/tb_isense_mc.cir",
+ "deck_sha256": "ea29e0dfb5a51ade4bfaaa6853e8b4278f0fb9aed36a1930e79e8a6c5388aa09",
+ "disposition": "superseded (candidate a): ff_mm: 30/30 samples within 100 uV; ss_mm: 30/30 samples within 100 uV",
+ "included_netlists": {
+  "/work/designs/r1-joint/blocks/r1_isense/schematic/r1_isense.spice": "d0eb3bd96b345a27603ccd5e301e241a8a07c338275094cee84b4a0ea4291ea0"
+ },
+ "included_netlists_results_root": {},
+ "jobs": {
+  "ff_mm_s5": {
+   "log": "r1_isense/isense-mc-ssff-20261021r2/tb_isense_mc_ff_mm_s5.log",
+   "rc": 0,
+   "wall_s": 246.2
+  },
+  "ss_mm_s4": {
+   "log": "r1_isense/isense-mc-ssff-20261021r2/tb_isense_mc_ss_mm_s4.log",
+   "rc": 0,
+   "wall_s": 258.2
+  }
+ },
+ "netlist": "designs/r1-joint/blocks/r1_isense/schematic/r1_isense.spice",
+ "netlist_sha256": "d0eb3bd96b345a27603ccd5e301e241a8a07c338275094cee84b4a0ea4291ea0",
+ "ngspice_version": "** ngspice-46 : Circuit level simulation program ** Copyright 2001-2025, The ngspice team. ** Please get your ngspice manual from https://ngspice.sourceforge.io/docs.html ** Please file your bug-reports at http://ngspice.sourceforge.net/bugrep.html (read after the run with flow/run.sh ngspice -v, same container image; the in-run read failed: python 3.6 has no capture_output)",
+ "note_superseded": "SUPERSEDED frozen candidate a of revision 2 (netlist sha256 d0eb3bd96b34..., slow-path mirror w=2/l=32). Renamed from suffix 20261021r2 to 20261021r2a on 2026-10-21 after the ss 125 C mismatch MC showed 2/30 samples with the output CM outside 0.6 V +- 30 mV (slow CMFB path at the end of its range, vint 0.30-0.31 V, replay dev-r2-mcvint-01). Kept as a record; revision 2 of record widens the slow-path mirror to w=8 um.",
+ "overrides": {
+  "N": "30"
+ },
+ "pdk_commit": "84374023ee8b4b126bebbba67fcbada0a9c0ff0b (checked by flow/run.sh)",
+ "prerun": {},
+ "question": "REV2 regression: mismatch MC at ss 125 C (seed 4) and ff -40 C (seed 5), 30 samples each; output CM (new)",
+ "raw_results": "$G1_RESULTS_ROOT/r1_isense/isense-mc-ssff-20261021r2a/",
+ "result": {
+  "ff_mm": {
+   "gain": {
+    "max": 14.0614,
+    "max_abs": 14.0614,
+    "mean": 14.00031,
+    "min": 13.9501,
+    "n": 30,
+    "sigma": 0.026437036520760154
+   },
+   "ocm_V": {
+    "max": 0.6081686049999999,
+    "max_abs": 0.6081686049999999,
+    "mean": 0.5996581097166667,
+    "min": 0.593185811,
+    "n": 30,
+    "sigma": 0.003954430378016356
+   },
+   "ocm_within_30mV": 30,
+   "ped_mV": {
+    "max": 40.4858,
+    "max_abs": 40.4858,
+    "mean": 40.338116666666664,
+    "min": 40.2143,
+    "n": 30,
+    "sigma": 0.07114005942895668
+   },
+   "raw_uV": {
+    "max": 3494.77,
+    "max_abs": 5498.75,
+    "mean": 263.99306666666666,
+    "min": -5498.75,
+    "n": 30,
+    "sigma": 2277.2295981653665
+   },
+   "res_uV": {
+    "max": 28.7288,
+    "max_abs": 28.7288,
+    "mean": -2.2777650333333335,
+    "min": -22.0852,
+    "n": 30,
+    "sigma": 11.760054548736129
+   },
+   "res_within_100uV": 30
+  },
+  "ss_mm": {
+   "gain": {
+    "max": 14.0553,
+    "max_abs": 14.0553,
+    "mean": 14.011696666666667,
+    "min": 13.9595,
+    "n": 30,
+    "sigma": 0.02403670087364098
+   },
+   "ocm_V": {
+    "max": 0.645724384,
+    "max_abs": 0.645724384,
+    "mean": 0.5982713827666667,
+    "min": 0.588037945,
+    "n": 30,
+    "sigma": 0.012993024150273631
+   },
+   "ocm_within_30mV": 28,
+   "ped_mV": {
+    "max": 40.5231,
+    "max_abs": 40.5231,
+    "mean": 40.31610666666667,
+    "min": 40.1566,
+    "n": 30,
+    "sigma": 0.08264730660395939
+   },
+   "raw_uV": {
+    "max": 8382.84,
+    "max_abs": 8382.84,
+    "mean": 404.8256,
+    "min": -7855.39,
+    "n": 30,
+    "sigma": 3613.152798416148
+   },
+   "res_uV": {
+    "max": 24.1744,
+    "max_abs": 27.226,
+    "mean": 2.6511551166666667,
+    "min": -27.226,
+    "n": 30,
+    "sigma": 12.733706555227077
+   },
+   "res_within_100uV": 30
+  }
+ },
+ "run_id": "isense-mc-ssff-20261021r2a",
+ "run_id_original": "isense-mc-ssff-20261021r2",
+ "tool": "ngspice-46 (container banner from flow/run.sh ngspice -v; batch logs carry no banner)",
+ "wall_s": 258.5,
+ "workdir": "designs/r1-joint/blocks/r1_isense/sim"
+}

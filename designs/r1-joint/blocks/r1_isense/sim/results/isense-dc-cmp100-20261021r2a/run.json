@@ -1,0 +1,62 @@
+{
+ "block": "r1_isense",
+ "command": "python3 designs/r1-joint/blocks/r1_isense/sim/run_deck.py --block r1_isense --deck tb_isense_dc.cir --run-id isense-dc-cmp100-20261021r2 --corners tt --set VCMIN=0.1 --analyze analyze_dc.py --question \"REV2 regression: as isense-dc at tt with Kelvin common mode +0.1 V\"",
+ "container_image": "tapeoutbench-eda:latest sha256:ddeb6957... (checked by flow/run.sh)",
+ "corners": {
+  "tt": {
+   "cap": "cap_typ",
+   "mos": "mos_tt",
+   "res": "res_typ",
+   "temp_C": 27,
+   "vdd": 1.2,
+   "vdda": 3.3
+  }
+ },
+ "cpuset": "109-111",
+ "date_utc": "2026-10-21T03:01:17.755648Z",
+ "deck": "designs/r1-joint/blocks/r1_isense/sim/tb_isense_dc.cir",
+ "deck_sha256": "1341df33f85dbeedc8619b5f0077ac063a64d1c8c5507cd1aa04e56f224d297d",
+ "disposition": "superseded (candidate a): offset <= 100 uV: tt passed",
+ "included_netlists": {
+  "/work/designs/r1-joint/blocks/r1_isense/schematic/r1_isense.spice": "d0eb3bd96b345a27603ccd5e301e241a8a07c338275094cee84b4a0ea4291ea0"
+ },
+ "included_netlists_results_root": {},
+ "jobs": {
+  "tt": {
+   "log": "r1_isense/isense-dc-cmp100-20261021r2/tb_isense_dc_tt.log",
+   "rc": 0,
+   "wall_s": 16.0
+  }
+ },
+ "netlist": "designs/r1-joint/blocks/r1_isense/schematic/r1_isense.spice",
+ "netlist_sha256": "d0eb3bd96b345a27603ccd5e301e241a8a07c338275094cee84b4a0ea4291ea0",
+ "ngspice_version": "** ngspice-46 : Circuit level simulation program ** Copyright 2001-2025, The ngspice team. ** Please get your ngspice manual from https://ngspice.sourceforge.io/docs.html ** Please file your bug-reports at http://ngspice.sourceforge.net/bugrep.html (read after the run with flow/run.sh ngspice -v, same container image; the in-run read failed: python 3.6 has no capture_output)",
+ "note_superseded": "SUPERSEDED frozen candidate a of revision 2 (netlist sha256 d0eb3bd96b34..., slow-path mirror w=2/l=32). Renamed from suffix 20261021r2 to 20261021r2a on 2026-10-21 after the ss 125 C mismatch MC showed 2/30 samples with the output CM outside 0.6 V +- 30 mV (slow CMFB path at the end of its range, vint 0.30-0.31 V, replay dev-r2-mcvint-01). Kept as a record; revision 2 of record widens the slow-path mirror to w=8 um.",
+ "overrides": {
+  "VCMIN": "0.1"
+ },
+ "pdk_commit": "84374023ee8b4b126bebbba67fcbada0a9c0ff0b (checked by flow/run.sh)",
+ "prerun": {},
+ "question": "REV2 regression: as isense-dc at tt with Kelvin common mode +0.1 V",
+ "raw_results": "$G1_RESULTS_ROOT/r1_isense/isense-dc-cmp100-20261021r2a/",
+ "result": {
+  "tt": {
+   "gain": 14.0081,
+   "gain_error_pct": 0.0576,
+   "inl_max_pct_fs": 0.0022,
+   "offset_pedestal_off_uV": 0.0,
+   "pedestal_error_uV": -55.7202,
+   "pedestal_mV": 40.3289,
+   "vcm_out_V": 0.601,
+   "vod_range_V": [
+    -0.845054724,
+    0.835847453
+   ]
+  }
+ },
+ "run_id": "isense-dc-cmp100-20261021r2a",
+ "run_id_original": "isense-dc-cmp100-20261021r2",
+ "tool": "ngspice-46 (container banner from flow/run.sh ngspice -v; batch logs carry no banner)",
+ "wall_s": 16.1,
+ "workdir": "designs/r1-joint/blocks/r1_isense/sim"
+}

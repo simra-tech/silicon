@@ -1,6 +1,10 @@
 #!/usr/bin/env python3
 """Run one ngspice deck template at one or more corners through flow/run.sh (host side driver).
 
+SHARED MODULE (2026-10-21, r1_isense revision 2): this file is the one runner of r1_isense and r1_safe;
+r1_safe/sim/run_deck.py is a shim that executes this file. It merges the two hand-edited copies of 2026-10-20/21
+(the r1_safe copy differed only in the NET handling, kept here: --set NET=<block-relative netlist> or --netlist).
+
 Usage (from anywhere):
   python3 run_deck.py --block r1_isense --deck tb_isense_step.cir --run-id ID [--corners tt,ss,ff] [--set K=V ...]
                       [--question "..."] [--analyze analyze_x.py]
@@ -22,6 +26,9 @@ CORNERS = {
     "tt_hot": ("mos_tt", "res_typ", "cap_typ", 125, 3.3, 1.2),
     "tt_cold": ("mos_tt", "res_typ", "cap_typ", -40, 3.3, 1.2),
     "sf":     ("mos_sf", "res_typ", "cap_typ", 27, 3.3, 1.2),      # stb suite (T4 follow-up c): mixed MOS corners, as r1_afe
+    # cross corners (r1_isense revision 2, as r1_afe ssx/ffx; both supplies at the same extreme as VDDA)
+    "ssx":    ("mos_ss", "res_wcs", "cap_wcs", -40, 3.6, 1.32),
+    "ffx":    ("mos_ff", "res_bcs", "cap_bcs", 125, 3.0, 1.08),
     "fs":     ("mos_fs", "res_typ", "cap_typ", 27, 3.3, 1.2),
     "tt_mm_s1": ("mos_tt_mismatch", "res_typ_mismatch", "cap_typ_mismatch", 27, 3.3, 1.2),
     "tt_mm_s2": ("mos_tt_mismatch", "res_typ_mismatch", "cap_typ_mismatch", 27, 3.3, 1.2),
@@ -44,6 +51,7 @@ def main():
     ap.add_argument("--question", default="")
     ap.add_argument("--analyze", default="")
     ap.add_argument("--jobs", type=int, default=3)
+    ap.add_argument("--netlist", default="", help="netlist whose sha256 goes into run.json (repo-relative or absolute); default schematic/<block>.spice")
     ap.add_argument("--pre", default="", help="stb suite: pre-run deck per corner; its log line 'HOLDVALS K=V ...' fills @@K@@ of the main deck")
     a = ap.parse_args()
     simdir = os.path.join(REPO, "designs/r1-joint/blocks", a.block, "sim")
@@ -54,7 +62,8 @@ def main():
     os.makedirs(rdir)
     tdir = os.path.join(simdir, "results", a.run_id)
     os.makedirs(tdir, exist_ok=True)
-    tmpl = open(os.path.join(simdir, a.deck)).read()
+    deckpath = a.deck if os.path.isabs(a.deck) else os.path.join(simdir, a.deck)
+    tmpl = open(deckpath).read()
     extra = dict(kv.split("=", 1) for kv in a.set)
     env = dict(os.environ)
     env.update({"G1_CPUSET": env.get("G1_CPUSET", "109-111"), "G1_CPUS": "1",
@@ -62,14 +71,14 @@ def main():
     jobs, procs = [], []
     pre_vals, pre_info = {}, {}
     if a.pre:   # stb suite: operating-point pre-run (hold-cap voltages after the auto-zero), same corner substitution
-        ptmpl = open(os.path.join(simdir, a.pre)).read()
+        ptmpl = open(a.pre if os.path.isabs(a.pre) else os.path.join(simdir, a.pre)).read()
         prun = []
         for c in a.corners.split(","):
             mos, res, cap, temp, vdda, vdd = CORNERS[c]
             txt = ptmpl
             for k, v in (("MOS", mos), ("RES", res), ("CAP", cap), ("TEMP", str(temp)), ("VDDA", str(vdda)), ("VDD", str(vdd))):
                 txt = txt.replace("@@%s@@" % k, v)
-            deck = os.path.join(rdir, "%s_%s.cir" % (os.path.splitext(a.pre)[0], c))
+            deck = os.path.join(rdir, "%s_%s.cir" % (os.path.splitext(os.path.basename(a.pre))[0], c))
             open(deck, "w").write(txt)
             prun.append((c, deck))
         pend, run_ = list(prun), []
@@ -102,10 +111,16 @@ def main():
             txt = txt.replace("@@%s@@" % k, v)
         if "@@" in txt:
             sys.exit("unfilled placeholder in deck for corner " + c)
-        deck = os.path.join(rdir, "%s_%s.cir" % (os.path.splitext(a.deck)[0], c))
+        deck = os.path.join(rdir, "%s_%s.cir" % (os.path.splitext(os.path.basename(a.deck))[0], c))
         open(deck, "w").write(txt)
         jobs.append((c, deck))
     t0 = time.time()
+    try:   # tool version, once per run (batch logs carry no banner)
+        vb = subprocess.run([os.path.join(REPO, "flow/run.sh"), "ngspice", "-v"], env=env, cwd=REPO, stdout=subprocess.PIPE,
+                            stderr=subprocess.PIPE, universal_newlines=True, timeout=120)   # python 3.6: no capture_output
+        ngv = " ".join(l.strip() for l in (vb.stdout + vb.stderr).splitlines() if "ngspice" in l.lower() and "warning" not in l.lower())[:300]
+    except Exception as e:
+        ngv = "not read (%s)" % e
     pending = list(jobs)
     running = []
     results = {}
@@ -138,17 +153,32 @@ def main():
                 banner = line.strip(); break
         if banner:
             break
-    netlist = os.path.join(REPO, "designs/r1-joint/blocks", a.block, "schematic", a.block + ".spice")
+    if a.netlist:
+        netlist = a.netlist if os.path.isabs(a.netlist) else os.path.join(REPO, a.netlist)
+    elif "NET" in extra:
+        netlist = os.path.join(REPO, "designs/r1-joint/blocks", a.block, extra["NET"])
+    else:
+        netlist = os.path.join(REPO, "designs/r1-joint/blocks", a.block, "schematic", a.block + ".spice")
+    def rel(p):
+        p = os.path.abspath(p)
+        if p.startswith(root.rstrip("/") + "/"):
+            return "<G1_RESULTS_ROOT>/" + os.path.relpath(p, root)
+        return os.path.relpath(p, REPO)
     run = {
         "run_id": a.run_id, "block": a.block, "date_utc": datetime.datetime.utcnow().isoformat() + "Z",
-        "command": "python3 sim/run_deck.py " + " ".join(sys.argv[1:]),
-        "deck": "sim/" + a.deck, "deck_sha256": sha(os.path.join(simdir, a.deck)),
-        "netlist": "schematic/%s.spice" % a.block,
+        "command": "python3 designs/r1-joint/blocks/r1_isense/sim/run_deck.py " + " ".join(
+            ('"%s"' % x if (" " in x or x.startswith("=")) else x).replace(root.rstrip("/"), "<G1_RESULTS_ROOT>") for x in sys.argv[1:]),
+        "deck": rel(deckpath), "deck_sha256": sha(deckpath),
+        "netlist": rel(netlist),
         "netlist_sha256": sha(netlist) if os.path.exists(netlist) else None,
         "corners": {c: dict(zip(("mos", "res", "cap", "temp_C", "vdda", "vdd"), CORNERS[c])) for c, _ in jobs},
-        "overrides": extra, "prerun": pre_info,
+        "overrides": extra, "prerun": {k: dict(v, deck=rel(v["deck"] if os.path.isabs(v["deck"]) else os.path.join(simdir, v["deck"]))) for k, v in pre_info.items()},
         "included_netlists": {m: sha(os.path.join(REPO, m[len("/work/"):])) for m in sorted(set(
-            re.findall(r"^\.include\s+(/work/\S+\.spice)", open(os.path.join(simdir, a.deck)).read(), re.M)))}, "tool": banner or "ngspice-46 (container banner from flow/run.sh ngspice -v; batch logs carry no banner)",
+            re.findall(r"^\.include\s+(/work/\S+\.spice)", tmpl, re.M)))},
+        "included_netlists_results_root": {rel(m): sha(m) for m in sorted(set(
+            re.findall(r"^\.include\s+(%s/\S+\.spice)" % re.escape(root.rstrip("/")), tmpl, re.M)))},
+        "tool": banner or "ngspice-46 (container banner from flow/run.sh ngspice -v; batch logs carry no banner)",
+        "ngspice_version": ngv, "workdir": env["G1_WORKDIR"],
         "pdk_commit": "84374023ee8b4b126bebbba67fcbada0a9c0ff0b (checked by flow/run.sh)",
         "container_image": "tapeoutbench-eda:latest sha256:ddeb6957... (checked by flow/run.sh)",
         "cpuset": env["G1_CPUSET"], "raw_results": "$G1_RESULTS_ROOT/%s/%s/" % (a.block, a.run_id),

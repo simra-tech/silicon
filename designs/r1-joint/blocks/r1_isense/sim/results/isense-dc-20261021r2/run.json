@@ -1,0 +1,164 @@
+{
+ "block": "r1_isense",
+ "command": "python3 designs/r1-joint/blocks/r1_isense/sim/run_deck.py --block r1_isense --deck tb_isense_dc.cir --run-id isense-dc-20261021r2 --corners tt,ss,ff,ss_cold,ff_hot --set VCMIN=0 --analyze analyze_dc.py --question \"REV2 regression: gain, pedestal, residual offset after AZ, INL over -20..100 mV, 5 corners, Kelvin CM 0 V\"",
+ "container_image": "tapeoutbench-eda:latest sha256:ddeb6957... (checked by flow/run.sh)",
+ "corners": {
+  "ff": {
+   "cap": "cap_bcs",
+   "mos": "mos_ff",
+   "res": "res_bcs",
+   "temp_C": -40,
+   "vdd": 1.32,
+   "vdda": 3.6
+  },
+  "ff_hot": {
+   "cap": "cap_bcs",
+   "mos": "mos_ff",
+   "res": "res_bcs",
+   "temp_C": 125,
+   "vdd": 1.32,
+   "vdda": 3.6
+  },
+  "ss": {
+   "cap": "cap_wcs",
+   "mos": "mos_ss",
+   "res": "res_wcs",
+   "temp_C": 125,
+   "vdd": 1.08,
+   "vdda": 3.0
+  },
+  "ss_cold": {
+   "cap": "cap_wcs",
+   "mos": "mos_ss",
+   "res": "res_wcs",
+   "temp_C": -40,
+   "vdd": 1.08,
+   "vdda": 3.0
+  },
+  "tt": {
+   "cap": "cap_typ",
+   "mos": "mos_tt",
+   "res": "res_typ",
+   "temp_C": 27,
+   "vdd": 1.2,
+   "vdda": 3.3
+  }
+ },
+ "cpuset": "109-111",
+ "date_utc": "2026-10-21T03:30:17.599516Z",
+ "deck": "designs/r1-joint/blocks/r1_isense/sim/tb_isense_dc.cir",
+ "deck_sha256": "1341df33f85dbeedc8619b5f0077ac063a64d1c8c5507cd1aa04e56f224d297d",
+ "disposition": "offset <= 100 uV: ff passed, ff_hot passed, ss passed, ss_cold passed, tt passed",
+ "included_netlists": {
+  "/work/designs/r1-joint/blocks/r1_isense/schematic/r1_isense.spice": "af013b95f5fd57e2f1cd0d1345a4c75471c2f216b063ede3a39bdea6412ba4ee"
+ },
+ "included_netlists_results_root": {},
+ "jobs": {
+  "ff": {
+   "log": "r1_isense/isense-dc-20261021r2/tb_isense_dc_ff.log",
+   "rc": 0,
+   "wall_s": 34.0
+  },
+  "ff_hot": {
+   "log": "r1_isense/isense-dc-20261021r2/tb_isense_dc_ff_hot.log",
+   "rc": 0,
+   "wall_s": 42.0
+  },
+  "ss": {
+   "log": "r1_isense/isense-dc-20261021r2/tb_isense_dc_ss.log",
+   "rc": 0,
+   "wall_s": 32.0
+  },
+  "ss_cold": {
+   "log": "r1_isense/isense-dc-20261021r2/tb_isense_dc_ss_cold.log",
+   "rc": 0,
+   "wall_s": 44.0
+  },
+  "tt": {
+   "log": "r1_isense/isense-dc-20261021r2/tb_isense_dc_tt.log",
+   "rc": 0,
+   "wall_s": 30.0
+  }
+ },
+ "netlist": "designs/r1-joint/blocks/r1_isense/schematic/r1_isense.spice",
+ "netlist_sha256": "af013b95f5fd57e2f1cd0d1345a4c75471c2f216b063ede3a39bdea6412ba4ee",
+ "ngspice_version": "** ngspice-46 : Circuit level simulation program ** Copyright 2001-2025, The ngspice team. ** Please get your ngspice manual from https://ngspice.sourceforge.io/docs.html ** Please file your bug-reports at http://ngspice.sourceforge.net/bugrep.html (read after the run with flow/run.sh ngspice -v, same container image; the in-run read failed: python 3.6 has no capture_output)",
+ "overrides": {
+  "VCMIN": "0"
+ },
+ "pdk_commit": "84374023ee8b4b126bebbba67fcbada0a9c0ff0b (checked by flow/run.sh)",
+ "prerun": {},
+ "question": "REV2 regression: gain, pedestal, residual offset after AZ, INL over -20..100 mV, 5 corners, Kelvin CM 0 V",
+ "raw_results": "$G1_RESULTS_ROOT/r1_isense/isense-dc-20261021r2/",
+ "result": {
+  "ff": {
+   "gain": 14.0054,
+   "gain_error_pct": 0.0388,
+   "inl_max_pct_fs": 0.0009,
+   "offset_pedestal_off_uV": 0.0,
+   "pedestal_error_uV": -44.4343,
+   "pedestal_mV": 40.3402,
+   "vcm_out_V": 0.6004,
+   "vod_range_V": [
+    -0.8450746310000001,
+    0.8355488219999999
+   ]
+  },
+  "ff_hot": {
+   "gain": 14.0011,
+   "gain_error_pct": 0.0079,
+   "inl_max_pct_fs": 0.0199,
+   "offset_pedestal_off_uV": 0.0,
+   "pedestal_error_uV": -77.8328,
+   "pedestal_mV": 40.3068,
+   "vcm_out_V": 0.6003,
+   "vod_range_V": [
+    -0.8440265819999999,
+    0.8357383190000001
+   ]
+  },
+  "ss": {
+   "gain": 14.0069,
+   "gain_error_pct": 0.0496,
+   "inl_max_pct_fs": 0.0247,
+   "offset_pedestal_off_uV": 0.0,
+   "pedestal_error_uV": -73.8621,
+   "pedestal_mV": 40.3108,
+   "vcm_out_V": 0.6006,
+   "vod_range_V": [
+    -0.8443546420000001,
+    0.8358579629999999
+   ]
+  },
+  "ss_cold": {
+   "gain": 14.007,
+   "gain_error_pct": 0.0503,
+   "inl_max_pct_fs": 0.0034,
+   "offset_pedestal_off_uV": 0.0,
+   "pedestal_error_uV": -42.9873,
+   "pedestal_mV": 40.3416,
+   "vcm_out_V": 0.6007,
+   "vod_range_V": [
+    -0.84515089,
+    0.83559813
+   ]
+  },
+  "tt": {
+   "gain": 14.0084,
+   "gain_error_pct": 0.0597,
+   "inl_max_pct_fs": 0.0022,
+   "offset_pedestal_off_uV": 0.0,
+   "pedestal_error_uV": -54.4927,
+   "pedestal_mV": 40.3301,
+   "vcm_out_V": 0.6005,
+   "vod_range_V": [
+    -0.8450891049999999,
+    0.835848172
+   ]
+  }
+ },
+ "run_id": "isense-dc-20261021r2",
+ "tool": "ngspice-46 (container banner from flow/run.sh ngspice -v; batch logs carry no banner)",
+ "wall_s": 74.2,
+ "workdir": "designs/r1-joint/blocks/r1_isense/sim"
+}

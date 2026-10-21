@@ -1,0 +1,571 @@
+{
+ "block": "r1_isense",
+ "command": "python3 designs/r1-joint/blocks/r1_isense/sim/run_deck.py --block r1_isense --deck <G1_RESULTS_ROOT>/r1_isense/dev-r2-08-net/tb_isense_stbaz.cir --run-id dev-r2-08-stbaz --corners tt,ff,ssx,ffx --jobs 3 --set RL=0.001 --set CL=2p --set CW=0 --netlist <G1_RESULTS_ROOT>/r1_isense/dev-r2-08-net/r1_isense.spice --analyze analyze_stb.py --question \"revision-2 development screen, variant [RDG=50 BFC=1 FDC=1 RZL=6], state stbaz\"",
+ "container_image": "tapeoutbench-eda:latest sha256:ddeb6957... (checked by flow/run.sh)",
+ "corners": {
+  "ff": {
+   "cap": "cap_bcs",
+   "mos": "mos_ff",
+   "res": "res_bcs",
+   "temp_C": -40,
+   "vdd": 1.32,
+   "vdda": 3.6
+  },
+  "ffx": {
+   "cap": "cap_bcs",
+   "mos": "mos_ff",
+   "res": "res_bcs",
+   "temp_C": 125,
+   "vdd": 1.08,
+   "vdda": 3.0
+  },
+  "ssx": {
+   "cap": "cap_wcs",
+   "mos": "mos_ss",
+   "res": "res_wcs",
+   "temp_C": -40,
+   "vdd": 1.32,
+   "vdda": 3.6
+  },
+  "tt": {
+   "cap": "cap_typ",
+   "mos": "mos_tt",
+   "res": "res_typ",
+   "temp_C": 27,
+   "vdd": 1.2,
+   "vdda": 3.3
+  }
+ },
+ "cpuset": "109-111",
+ "date_utc": "2026-10-21T01:32:59.258050Z",
+ "deck": "<G1_RESULTS_ROOT>/r1_isense/dev-r2-08-net/tb_isense_stbaz.cir",
+ "deck_sha256": "eb9172900f2ff23dbe1448d5848df0673f16d13e49334e3b244e773e88205dbf",
+ "disposition": "failed: state AZ closed, 4 corners; 5 loop results passed, 3 failed, 8 not applicable; criterion PM >= 60 deg, GM >= 10 dB",
+ "included_netlists": {
+  "/work/designs/r1-joint/blocks/r1_safe/schematic/r1_safe.spice": "812f886dce2b759af121230bd2e9100aeac59041effdf9a3341647c29299cbde"
+ },
+ "included_netlists_results_root": {
+  "<G1_RESULTS_ROOT>/r1_isense/dev-r2-08-net/r1_isense.spice": "c518f89037484b52af31fdd14a31e912c0e84b814a3174e38fb4ef43eb147a56"
+ },
+ "jobs": {
+  "ff": {
+   "log": "r1_isense/dev-r2-08-stbaz/tb_isense_stbaz_ff.log",
+   "rc": 0,
+   "wall_s": 22.0
+  },
+  "ffx": {
+   "log": "r1_isense/dev-r2-08-stbaz/tb_isense_stbaz_ffx.log",
+   "rc": 0,
+   "wall_s": 14.0
+  },
+  "ssx": {
+   "log": "r1_isense/dev-r2-08-stbaz/tb_isense_stbaz_ssx.log",
+   "rc": 0,
+   "wall_s": 22.0
+  },
+  "tt": {
+   "log": "r1_isense/dev-r2-08-stbaz/tb_isense_stbaz_tt.log",
+   "rc": 0,
+   "wall_s": 22.0
+  }
+ },
+ "netlist": "<G1_RESULTS_ROOT>/r1_isense/dev-r2-08-net/r1_isense.spice",
+ "netlist_sha256": "c518f89037484b52af31fdd14a31e912c0e84b814a3174e38fb4ef43eb147a56",
+ "ngspice_version": "** ngspice-46 : Circuit level simulation program ** Copyright 2001-2025, The ngspice team. ** Please get your ngspice manual from https://ngspice.sourceforge.io/docs.html ** Please file your bug-reports at http://ngspice.sourceforge.net/bugrep.html (read after the run with flow/run.sh ngspice -v, same container image; the in-run read failed: python 3.6 has no capture_output)",
+ "overrides": {
+  "CL": "2p",
+  "CW": "0",
+  "RL": "0.001"
+ },
+ "pdk_commit": "84374023ee8b4b126bebbba67fcbada0a9c0ff0b (checked by flow/run.sh)",
+ "prerun": {},
+ "question": "revision-2 development screen, variant [RDG=50 BFC=1 FDC=1 RZL=6], state stbaz",
+ "raw_results": "$G1_RESULTS_ROOT/r1_isense/dev-r2-08-stbaz/",
+ "result": {
+  "margins": {
+   "ff": {
+    "cm_aux": {
+     "vsh_+0.000": {
+      "f_180_Hz": 102655862.37505624,
+      "f_unity_Hz": null,
+      "gm_db": 50.92,
+      "ph_min_deg": -332.8,
+      "phase_dc_deg": 0.0,
+      "pm_deg": null,
+      "pm_valid": false,
+      "status": "not applicable (loop gain below 0 dB at all frequencies)",
+      "t_dc_db": -84.35,
+      "t_max_db": -50.84
+     }
+    },
+    "cm_out": {
+     "vsh_+0.000": {
+      "f_180_Hz": 29919239.8103524,
+      "f_unity_Hz": 7231787.524591223,
+      "gm_db": 20.05,
+      "ph_min_deg": -498.9,
+      "phase_dc_deg": -3.1,
+      "pm_deg": 50.78,
+      "pm_valid": true,
+      "status": "failed",
+      "t_dc_db": 73.44,
+      "t_max_db": 73.44
+     }
+    },
+    "cmfb": {
+     "vsh_+0.000": {
+      "f_180_Hz": 29919191.815070637,
+      "f_unity_Hz": 7231787.4937939225,
+      "gm_db": 20.05,
+      "ph_min_deg": -508.5,
+      "phase_dc_deg": -3.1,
+      "pm_deg": 50.78,
+      "pm_valid": true,
+      "status": "informational (failed)",
+      "t_dc_db": 73.44,
+      "t_max_db": 73.44
+     }
+    },
+    "dm_aux": {
+     "vsh_+0.000": {
+      "f_180_Hz": 122234740.02182764,
+      "f_unity_Hz": 872887.3296723414,
+      "gm_db": 30.22,
+      "ph_min_deg": -334.2,
+      "phase_dc_deg": -4.0,
+      "pm_deg": 96.52,
+      "pm_valid": true,
+      "status": "passed",
+      "t_dc_db": 55.46,
+      "t_max_db": 55.46
+     }
+    },
+    "dm_out": {
+     "vsh_+0.000": {
+      "f_180_Hz": 290998136.52525204,
+      "f_unity_Hz": null,
+      "gm_db": 155.19,
+      "ph_min_deg": -766.0,
+      "phase_dc_deg": -180.0,
+      "pm_deg": null,
+      "pm_valid": false,
+      "status": "not applicable (loop gain below 0 dB at all frequencies)",
+      "t_dc_db": -255.46,
+      "t_max_db": -152.05
+     }
+    }
+   },
+   "ffx": {
+    "cm_aux": {
+     "vsh_+0.000": {
+      "f_180_Hz": 85267497.97143357,
+      "f_unity_Hz": null,
+      "gm_db": 51.44,
+      "ph_min_deg": -344.2,
+      "phase_dc_deg": 0.0,
+      "pm_deg": null,
+      "pm_valid": true,
+      "status": "not applicable (loop gain below 0 dB at all frequencies)",
+      "t_dc_db": -68.83,
+      "t_max_db": -51.35
+     }
+    },
+    "cm_out": {
+     "vsh_+0.000": {
+      "f_180_Hz": 38325789.38886014,
+      "f_unity_Hz": 6066391.931661153,
+      "gm_db": 25.56,
+      "ph_min_deg": -507.8,
+      "phase_dc_deg": -1.3,
+      "pm_deg": 57.75,
+      "pm_valid": true,
+      "status": "failed",
+      "t_dc_db": 63.79,
+      "t_max_db": 63.79
+     }
+    },
+    "cmfb": {
+     "vsh_+0.000": {
+      "f_180_Hz": 38325907.50954416,
+      "f_unity_Hz": 6066392.061924257,
+      "gm_db": 25.56,
+      "ph_min_deg": -518.1,
+      "phase_dc_deg": -1.3,
+      "pm_deg": 57.75,
+      "pm_valid": true,
+      "status": "informational (failed)",
+      "t_dc_db": 63.79,
+      "t_max_db": 63.79
+     }
+    },
+    "dm_aux": {
+     "vsh_+0.000": {
+      "f_180_Hz": 102881889.0688406,
+      "f_unity_Hz": 1152260.1529455464,
+      "gm_db": 31.11,
+      "ph_min_deg": -345.9,
+      "phase_dc_deg": -1.3,
+      "pm_deg": 93.47,
+      "pm_valid": true,
+      "status": "passed",
+      "t_dc_db": 48.3,
+      "t_max_db": 48.3
+     }
+    },
+    "dm_out": {
+     "vsh_+0.000": {
+      "f_180_Hz": 12034853.027656252,
+      "f_unity_Hz": null,
+      "gm_db": 142.81,
+      "ph_min_deg": -788.4,
+      "phase_dc_deg": 9.4,
+      "pm_deg": null,
+      "pm_valid": false,
+      "status": "not applicable (loop gain below 0 dB at all frequencies)",
+      "t_dc_db": -225.52,
+      "t_max_db": -142.73
+     }
+    }
+   },
+   "ssx": {
+    "cm_aux": {
+     "vsh_+0.000": {
+      "f_180_Hz": 99216530.52466333,
+      "f_unity_Hz": null,
+      "gm_db": 52.43,
+      "ph_min_deg": -333.0,
+      "phase_dc_deg": 0.0,
+      "pm_deg": null,
+      "pm_valid": false,
+      "status": "not applicable (loop gain below 0 dB at all frequencies)",
+      "t_dc_db": -81.28,
+      "t_max_db": -52.35
+     }
+    },
+    "cm_out": {
+     "vsh_+0.000": {
+      "f_180_Hz": 33816212.803588465,
+      "f_unity_Hz": 4911489.152316246,
+      "gm_db": 25.65,
+      "ph_min_deg": -484.7,
+      "phase_dc_deg": -4.1,
+      "pm_deg": 61.72,
+      "pm_valid": true,
+      "status": "passed",
+      "t_dc_db": 72.24,
+      "t_max_db": 72.24
+     }
+    },
+    "cmfb": {
+     "vsh_+0.000": {
+      "f_180_Hz": 33816091.24689575,
+      "f_unity_Hz": 4911489.147317175,
+      "gm_db": 25.65,
+      "ph_min_deg": -495.5,
+      "phase_dc_deg": -4.1,
+      "pm_deg": 61.72,
+      "pm_valid": true,
+      "status": "informational (passed)",
+      "t_dc_db": 72.24,
+      "t_max_db": 72.24
+     }
+    },
+    "dm_aux": {
+     "vsh_+0.000": {
+      "f_180_Hz": 118549944.29889637,
+      "f_unity_Hz": 680884.7369679357,
+      "gm_db": 32.47,
+      "ph_min_deg": -333.5,
+      "phase_dc_deg": -5.9,
+      "pm_deg": 95.64,
+      "pm_valid": true,
+      "status": "passed",
+      "t_dc_db": 56.8,
+      "t_max_db": 56.8
+     }
+    },
+    "dm_out": {
+     "vsh_+0.000": {
+      "f_180_Hz": 265683551.92628318,
+      "f_unity_Hz": null,
+      "gm_db": 155.32,
+      "ph_min_deg": -786.5,
+      "phase_dc_deg": -0.0,
+      "pm_deg": null,
+      "pm_valid": false,
+      "status": "not applicable (loop gain below 0 dB at all frequencies)",
+      "t_dc_db": -251.41,
+      "t_max_db": -151.9
+     }
+    }
+   },
+   "tt": {
+    "cm_aux": {
+     "vsh_+0.000": {
+      "f_180_Hz": 95281326.75066464,
+      "f_unity_Hz": null,
+      "gm_db": 51.86,
+      "ph_min_deg": -336.3,
+      "phase_dc_deg": 0.0,
+      "pm_deg": null,
+      "pm_valid": false,
+      "status": "not applicable (loop gain below 0 dB at all frequencies)",
+      "t_dc_db": -77.15,
+      "t_max_db": -51.77
+     }
+    },
+    "cm_out": {
+     "vsh_+0.000": {
+      "f_180_Hz": 37653162.66729862,
+      "f_unity_Hz": 5653808.026619744,
+      "gm_db": 26.01,
+      "ph_min_deg": -493.6,
+      "phase_dc_deg": -2.8,
+      "pm_deg": 58.51,
+      "pm_valid": true,
+      "status": "failed",
+      "t_dc_db": 70.09,
+      "t_max_db": 70.09
+     }
+    },
+    "cmfb": {
+     "vsh_+0.000": {
+      "f_180_Hz": 37652986.249445714,
+      "f_unity_Hz": 5653808.014937491,
+      "gm_db": 26.01,
+      "ph_min_deg": -504.5,
+      "phase_dc_deg": -2.8,
+      "pm_deg": 58.51,
+      "pm_valid": true,
+      "status": "informational (failed)",
+      "t_dc_db": 70.09,
+      "t_max_db": 70.09
+     }
+    },
+    "dm_aux": {
+     "vsh_+0.000": {
+      "f_180_Hz": 114244571.56124337,
+      "f_unity_Hz": 845941.7591149248,
+      "gm_db": 31.75,
+      "ph_min_deg": -337.5,
+      "phase_dc_deg": -4.5,
+      "pm_deg": 95.15,
+      "pm_valid": true,
+      "status": "passed",
+      "t_dc_db": 56.39,
+      "t_max_db": 56.39
+     }
+    },
+    "dm_out": {
+     "vsh_+0.000": {
+      "f_180_Hz": 277728123.92970103,
+      "f_unity_Hz": null,
+      "gm_db": 151.03,
+      "ph_min_deg": -782.5,
+      "phase_dc_deg": -179.2,
+      "pm_deg": null,
+      "pm_valid": false,
+      "status": "not applicable (loop gain below 0 dB at all frequencies)",
+      "t_dc_db": -259.32,
+      "t_max_db": -148.12
+     }
+    }
+   }
+  },
+  "per_loop": {
+   "ff": {
+    "cm_aux": {
+     "f_unity_Hz": [
+      null
+     ],
+     "max_t_db": -50.84,
+     "status": "not applicable",
+     "worst_gm_db": 50.92,
+     "worst_pm_deg": null
+    },
+    "cm_out": {
+     "f_unity_Hz": [
+      7231787.524591223
+     ],
+     "max_t_db": 73.44,
+     "status": "failed",
+     "worst_gm_db": 20.05,
+     "worst_pm_deg": 50.78
+    },
+    "cmfb": {
+     "f_unity_Hz": [
+      7231787.4937939225
+     ],
+     "max_t_db": 73.44,
+     "status": "informational",
+     "worst_gm_db": 20.05,
+     "worst_pm_deg": 50.78
+    },
+    "dm_aux": {
+     "f_unity_Hz": [
+      872887.3296723414
+     ],
+     "max_t_db": 55.46,
+     "status": "passed",
+     "worst_gm_db": 30.22,
+     "worst_pm_deg": 96.52
+    },
+    "dm_out": {
+     "f_unity_Hz": [
+      null
+     ],
+     "max_t_db": -152.05,
+     "status": "not applicable",
+     "worst_gm_db": 155.19,
+     "worst_pm_deg": null
+    }
+   },
+   "ffx": {
+    "cm_aux": {
+     "f_unity_Hz": [
+      null
+     ],
+     "max_t_db": -51.35,
+     "status": "not applicable",
+     "worst_gm_db": 51.44,
+     "worst_pm_deg": null
+    },
+    "cm_out": {
+     "f_unity_Hz": [
+      6066391.931661153
+     ],
+     "max_t_db": 63.79,
+     "status": "failed",
+     "worst_gm_db": 25.56,
+     "worst_pm_deg": 57.75
+    },
+    "cmfb": {
+     "f_unity_Hz": [
+      6066392.061924257
+     ],
+     "max_t_db": 63.79,
+     "status": "informational",
+     "worst_gm_db": 25.56,
+     "worst_pm_deg": 57.75
+    },
+    "dm_aux": {
+     "f_unity_Hz": [
+      1152260.1529455464
+     ],
+     "max_t_db": 48.3,
+     "status": "passed",
+     "worst_gm_db": 31.11,
+     "worst_pm_deg": 93.47
+    },
+    "dm_out": {
+     "f_unity_Hz": [
+      null
+     ],
+     "max_t_db": -142.73,
+     "status": "not applicable",
+     "worst_gm_db": 142.81,
+     "worst_pm_deg": null
+    }
+   },
+   "ssx": {
+    "cm_aux": {
+     "f_unity_Hz": [
+      null
+     ],
+     "max_t_db": -52.35,
+     "status": "not applicable",
+     "worst_gm_db": 52.43,
+     "worst_pm_deg": null
+    },
+    "cm_out": {
+     "f_unity_Hz": [
+      4911489.152316246
+     ],
+     "max_t_db": 72.24,
+     "status": "passed",
+     "worst_gm_db": 25.65,
+     "worst_pm_deg": 61.72
+    },
+    "cmfb": {
+     "f_unity_Hz": [
+      4911489.147317175
+     ],
+     "max_t_db": 72.24,
+     "status": "informational",
+     "worst_gm_db": 25.65,
+     "worst_pm_deg": 61.72
+    },
+    "dm_aux": {
+     "f_unity_Hz": [
+      680884.7369679357
+     ],
+     "max_t_db": 56.8,
+     "status": "passed",
+     "worst_gm_db": 32.47,
+     "worst_pm_deg": 95.64
+    },
+    "dm_out": {
+     "f_unity_Hz": [
+      null
+     ],
+     "max_t_db": -151.9,
+     "status": "not applicable",
+     "worst_gm_db": 155.32,
+     "worst_pm_deg": null
+    }
+   },
+   "tt": {
+    "cm_aux": {
+     "f_unity_Hz": [
+      null
+     ],
+     "max_t_db": -51.77,
+     "status": "not applicable",
+     "worst_gm_db": 51.86,
+     "worst_pm_deg": null
+    },
+    "cm_out": {
+     "f_unity_Hz": [
+      5653808.026619744
+     ],
+     "max_t_db": 70.09,
+     "status": "failed",
+     "worst_gm_db": 26.01,
+     "worst_pm_deg": 58.51
+    },
+    "cmfb": {
+     "f_unity_Hz": [
+      5653808.014937491
+     ],
+     "max_t_db": 70.09,
+     "status": "informational",
+     "worst_gm_db": 26.01,
+     "worst_pm_deg": 58.51
+    },
+    "dm_aux": {
+     "f_unity_Hz": [
+      845941.7591149248
+     ],
+     "max_t_db": 56.39,
+     "status": "passed",
+     "worst_gm_db": 31.75,
+     "worst_pm_deg": 95.15
+    },
+    "dm_out": {
+     "f_unity_Hz": [
+      null
+     ],
+     "max_t_db": -148.12,
+     "status": "not applicable",
+     "worst_gm_db": 151.03,
+     "worst_pm_deg": null
+    }
+   }
+  },
+  "state": "az_closed"
+ },
+ "run_id": "dev-r2-08-stbaz",
+ "tool": "ngspice-46 (container banner from flow/run.sh ngspice -v; batch logs carry no banner)",
+ "wall_s": 36.1,
+ "workdir": "designs/r1-joint/blocks/r1_isense/sim"
+}

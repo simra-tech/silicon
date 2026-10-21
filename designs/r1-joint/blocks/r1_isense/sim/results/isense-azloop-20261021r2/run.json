@@ -1,0 +1,188 @@
+{
+ "analyzer": "sim/analyze_azloop.py (run after the deck)",
+ "block": "r1_isense",
+ "command": "python3 designs/r1-joint/blocks/r1_isense/sim/run_deck.py --block r1_isense --deck tb_isense_azloop.cir --run-id isense-azloop-20261021r2 --corners tt,ss,ff,ss_cold,ff_hot --question \"REV2 regression: return ratio of the auto-zero loop during AZ hold, 5 corners\"",
+ "container_image": "tapeoutbench-eda:latest sha256:ddeb6957... (checked by flow/run.sh)",
+ "corners": {
+  "ff": {
+   "cap": "cap_bcs",
+   "mos": "mos_ff",
+   "res": "res_bcs",
+   "temp_C": -40,
+   "vdd": 1.32,
+   "vdda": 3.6
+  },
+  "ff_hot": {
+   "cap": "cap_bcs",
+   "mos": "mos_ff",
+   "res": "res_bcs",
+   "temp_C": 125,
+   "vdd": 1.32,
+   "vdda": 3.6
+  },
+  "ss": {
+   "cap": "cap_wcs",
+   "mos": "mos_ss",
+   "res": "res_wcs",
+   "temp_C": 125,
+   "vdd": 1.08,
+   "vdda": 3.0
+  },
+  "ss_cold": {
+   "cap": "cap_wcs",
+   "mos": "mos_ss",
+   "res": "res_wcs",
+   "temp_C": -40,
+   "vdd": 1.08,
+   "vdda": 3.0
+  },
+  "tt": {
+   "cap": "cap_typ",
+   "mos": "mos_tt",
+   "res": "res_typ",
+   "temp_C": 27,
+   "vdd": 1.2,
+   "vdda": 3.3
+  }
+ },
+ "cpuset": "109-111",
+ "date_utc": "2026-10-21T03:41:14.159755Z",
+ "deck": "designs/r1-joint/blocks/r1_isense/sim/tb_isense_azloop.cir",
+ "deck_sha256": "9c536f35b9121a7ad52663baf1cc4332c1713b11f431bff06d7dfbbce5f26ae7",
+ "disposition": "passed: differential AZ loop worst phase margin 77.2 deg, unity gain 0.71-1.10 MHz, DC loop gain >= 47.9 dB over 5 corners; common mode: loop gain <= -54.2 dB (no loop)",
+ "included_netlists": {
+  "/work/designs/r1-joint/blocks/r1_isense/schematic/r1_isense.spice": "af013b95f5fd57e2f1cd0d1345a4c75471c2f216b063ede3a39bdea6412ba4ee"
+ },
+ "included_netlists_results_root": {},
+ "jobs": {
+  "ff": {
+   "log": "r1_isense/isense-azloop-20261021r2/tb_isense_azloop_ff.log",
+   "rc": 0,
+   "wall_s": 8.0
+  },
+  "ff_hot": {
+   "log": "r1_isense/isense-azloop-20261021r2/tb_isense_azloop_ff_hot.log",
+   "rc": 0,
+   "wall_s": 8.0
+  },
+  "ss": {
+   "log": "r1_isense/isense-azloop-20261021r2/tb_isense_azloop_ss.log",
+   "rc": 0,
+   "wall_s": 6.0
+  },
+  "ss_cold": {
+   "log": "r1_isense/isense-azloop-20261021r2/tb_isense_azloop_ss_cold.log",
+   "rc": 0,
+   "wall_s": 8.0
+  },
+  "tt": {
+   "log": "r1_isense/isense-azloop-20261021r2/tb_isense_azloop_tt.log",
+   "rc": 0,
+   "wall_s": 8.0
+  }
+ },
+ "netlist": "designs/r1-joint/blocks/r1_isense/schematic/r1_isense.spice",
+ "netlist_sha256": "af013b95f5fd57e2f1cd0d1345a4c75471c2f216b063ede3a39bdea6412ba4ee",
+ "ngspice_version": "** ngspice-46 : Circuit level simulation program ** Copyright 2001-2025, The ngspice team. ** Please get your ngspice manual from https://ngspice.sourceforge.io/docs.html ** Please file your bug-reports at http://ngspice.sourceforge.net/bugrep.html (read after the run with flow/run.sh ngspice -v, same container image; the in-run read failed: python 3.6 has no capture_output)",
+ "overrides": {},
+ "pdk_commit": "84374023ee8b4b126bebbba67fcbada0a9c0ff0b (checked by flow/run.sh)",
+ "prerun": {},
+ "question": "REV2 regression: return ratio of the auto-zero loop during AZ hold, 5 corners",
+ "raw_results": "$G1_RESULTS_ROOT/r1_isense/isense-azloop-20261021r2/",
+ "result": {
+  "ff": {
+   "cm": {
+    "dc_gain_dB": -121.335953,
+    "f_unity_Hz": null,
+    "max_gain_dB": -65.1200461,
+    "note": "loop gain below 0 dB at all frequencies (no loop to destabilise)",
+    "phase_at_dc_deg": 64.4753,
+    "phase_margin_deg": null
+   },
+   "dm": {
+    "dc_gain_dB": 55.4936383,
+    "f_unity_Hz": 869473.6768772579,
+    "gain_margin_dB": 41.6753123,
+    "max_gain_dB": 55.4936383,
+    "phase_at_dc_deg": -0.366539423,
+    "phase_margin_deg": 85.83766577924811
+   }
+  },
+  "ff_hot": {
+   "cm": {
+    "dc_gain_dB": -116.557154,
+    "f_unity_Hz": null,
+    "max_gain_dB": -62.0158478,
+    "note": "loop gain below 0 dB at all frequencies (no loop to destabilise)",
+    "phase_at_dc_deg": 23.3712152,
+    "phase_margin_deg": null
+   },
+   "dm": {
+    "dc_gain_dB": 47.873722,
+    "f_unity_Hz": 1100858.453089503,
+    "gain_margin_dB": 39.3702035,
+    "max_gain_dB": 47.873722,
+    "phase_at_dc_deg": -0.117908375,
+    "phase_margin_deg": 85.88915897634348
+   }
+  },
+  "ss": {
+   "cm": {
+    "dc_gain_dB": -103.266767,
+    "f_unity_Hz": null,
+    "max_gain_dB": -54.1544567,
+    "note": "loop gain below 0 dB at all frequencies (no loop to destabilise)",
+    "phase_at_dc_deg": 10.7726549,
+    "phase_margin_deg": null
+   },
+   "dm": {
+    "dc_gain_dB": 54.5315237,
+    "f_unity_Hz": 911703.0457580262,
+    "gain_margin_dB": 45.7976804,
+    "max_gain_dB": 54.5315237,
+    "phase_at_dc_deg": -0.299651715,
+    "phase_margin_deg": 78.54487346425336
+   }
+  },
+  "ss_cold": {
+   "cm": {
+    "dc_gain_dB": -115.377871,
+    "f_unity_Hz": null,
+    "max_gain_dB": -69.3456009,
+    "note": "loop gain below 0 dB at all frequencies (no loop to destabilise)",
+    "phase_at_dc_deg": 56.5041701,
+    "phase_margin_deg": null
+   },
+   "dm": {
+    "dc_gain_dB": 56.8566726,
+    "f_unity_Hz": 705436.4933995857,
+    "gain_margin_dB": 48.9622823,
+    "max_gain_dB": 56.8566726,
+    "phase_at_dc_deg": -0.509265956,
+    "phase_margin_deg": 77.17708869896038
+   }
+  },
+  "tt": {
+   "cm": {
+    "dc_gain_dB": -117.612278,
+    "f_unity_Hz": null,
+    "max_gain_dB": -67.3009928,
+    "note": "loop gain below 0 dB at all frequencies (no loop to destabilise)",
+    "phase_at_dc_deg": 46.4356635,
+    "phase_margin_deg": null
+   },
+   "dm": {
+    "dc_gain_dB": 56.4256038,
+    "f_unity_Hz": 835366.8973726976,
+    "gain_margin_dB": 44.810624,
+    "max_gain_dB": 56.4256038,
+    "phase_at_dc_deg": -0.417919868,
+    "phase_margin_deg": 82.33250663383158
+   }
+  }
+ },
+ "run_id": "isense-azloop-20261021r2",
+ "tool": "ngspice-46 (container banner from flow/run.sh ngspice -v; batch logs carry no banner)",
+ "wall_s": 16.0,
+ "workdir": "designs/r1-joint/blocks/r1_isense/sim"
+}

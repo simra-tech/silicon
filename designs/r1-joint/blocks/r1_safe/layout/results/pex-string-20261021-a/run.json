@@ -1,0 +1,41 @@
+{
+ "date_utc": "2026-10-21T04:03:44Z",
+ "pdk_commit": "84374023ee8b4b126bebbba67fcbada0a9c0ff0b",
+ "container": "tapeoutbench-eda:latest sha256:ddeb69576f2808676d1c5d474ecf04f6d1d6f8abdcff6b72b39790ded924bab2",
+ "tools": {
+  "klayout": "0.30.9",
+  "kpex": "0.3.12"
+ },
+ "cpuset": "116-119",
+ "run_id": "pex-string-20261021-a",
+ "question": "Reference-string tap error from the extracted metal resistance (Metal1-4, Via1-3), in steps of VREF/252 = LSB/8",
+ "command": [
+  "flow/run.sh klayout -b -r designs/r1-joint/blocks/r1_safe/layout/flatten_gds.py -rd src=<layout-gen-20261021-a>/r1_safe.gds -rd dst=r1_safe_flat.gds",
+  "flow/run.sh python3 <copy of the PDK lvs directory with comparer limits, as layout-lvsx>/run_lvs.py --layout=r1_safe_flat.gds --netlist=<layout-gen-20261021-a>/r1_safe_lvs.cdl --topcell=r1_safe --run_mode=flat --run_dir=lvs",
+  "flow/run.sh klayout -b -r designs/r1-joint/blocks/r1_safe/layout/string_rnet.py -rd lvsdb=lvs/r1_safe_flat.lvsdb -rd gds=r1_safe_flat.gds -rd out=.",
+  "python3 designs/r1-joint/blocks/r1_safe/layout/string_tap_error.py <run dir>"
+ ],
+ "inputs": {
+  "gds_sha256": "2219825dbde842cfcc7be892e27556ec72b4e8f6b2ac3db4cc025f0696192f19",
+  "gds_flat_sha256": "07a2fa7da5c7772d65d96b57cc6aae1c9d31a2e2ac1934e959c9f031ab1f4bd1"
+ },
+ "result": {
+  "R_unit_ohm": 1001.0,
+  "nodes": 4570,
+  "elements": 4610,
+  "units": 252,
+  "tap_nets": 253,
+  "unit": "step = VREF/252 = LSB/8",
+  "max_abs_tap_error_steps": 0.049677241516274034,
+  "max_abs_tap_error_lsb": 0.006209655189534254,
+  "worst_net": "t1",
+  "max_adjacent_step_error_steps": 0.02828501698579256,
+  "max_spread_between_mux_inputs_steps": 0.0208149030620148,
+  "code44_T176_T76_error_steps": [
+   -0.003713422126930155,
+   0.02679550910795947
+  ]
+ },
+ "note": "flat LVS: circuit match (5084 devices, 2751 nets); the strict-port step fails only because the flat copy lifts the 8 comparator-cell pin labels to the top (88 vs 80 pins).",
+ "disposition": "run (report)"
+}

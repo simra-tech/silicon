@@ -1,0 +1,36 @@
+{
+ "date_utc": "2026-10-21T04:03:44Z",
+ "pdk_commit": "84374023ee8b4b126bebbba67fcbada0a9c0ff0b",
+ "container": "tapeoutbench-eda:latest sha256:ddeb69576f2808676d1c5d474ecf04f6d1d6f8abdcff6b72b39790ded924bab2",
+ "tools": {
+  "klayout": "0.30.9",
+  "kpex": "0.3.12"
+ },
+ "cpuset": "116-119",
+ "run_id": "pex-cmp-20261021-a",
+ "question": "Device-level RC netlist of the r1_safe comparator cell r1s_cmp (standalone, same cell as the 4 placed copies)",
+ "command": [
+  "flow/run.sh klayout -b -r designs/r1-joint/blocks/r1_safe/layout/flatten_gds.py -rd src=<cmpcell-dev-04>/gen/r1s_cmp.gds -rd dst=in/r1s_cmp_flat.gds -rd top=r1s_cmp",
+  "flow/run.sh python3 designs/r1-joint/blocks/r1_safe/layout/kpex_wrap.py --pdk ihp_sg13g2 --gds in/r1s_cmp_flat.gds --cell r1s_cmp --schematic in/r1s_cmp_lvs.cdl --2.5D --mode CC --out_dir cc3",
+  "flow/run.sh klayout -b -r designs/r1-joint/blocks/r1_safe/layout/pex_cmp.py -rd kpexdir=cc3/r1s_cmp_flat__r1s_cmp -rd gds=in/r1s_cmp_flat.gds -rd out=rc"
+ ],
+ "inputs": {
+  "gds_sha256": "e054e757550b3ce92a68f643f22a1483de4c2a44ade77129bbd06121a74eb072",
+  "gds_flat_sha256": "4f303a8a98b9a7bba991e379fe90207d8edff9e0c2bc20991e903aed90d352a4",
+  "cdl_sha256": "0a6478393f277efc7da4a6b3266edce9daf6b9f622b9eb5b71c5fd812555f5be",
+  "generator_sha256": "49783c2aa5507b36c8956c9e900559de73852b8c72b3a8df558b65b5692cb57f"
+ },
+ "result": {
+  "pex_netlist": "<G1_RESULTS_ROOT>/r1_safe/pex-cmp-20261021-a/rc/r1_safe_cmp_pex.spice",
+  "pex_sha256": "598c5bd6f53f991d66f06191b7e3f98d2f95509bce5941d1f0e4aeaefd3e893d",
+  "build_log": [
+   "devices 73 nets 36 terminal ports 146 terminals without Metal1 port 0",
+   "resistors 147 island ties 0 element stats {'open': 0, 'neg': 0, 'neg_min': 0.0, 'floor': 0}",
+   "device lines {'sg13_lv_nmos': 1, 'sg13_hv_nmos': 13, 'sg13_lv_pmos': 1, 'sg13_hv_pmos': 42, 'rppd': 16}",
+   "capacitors 244 total 352.7 fF",
+   "wrote <G1_RESULTS_ROOT>/r1_safe/pex-cmp-20261021-a/rc/r1_safe_cmp_pex.spice"
+  ],
+  "note": "kpex internal LVS runs without simplification and reports a mismatch (split fingers and 4-segment resistors); only the layout side of its database is used. The full-block LVS of record is layout-lvsx-20261021-a."
+ },
+ "disposition": "run"
+}

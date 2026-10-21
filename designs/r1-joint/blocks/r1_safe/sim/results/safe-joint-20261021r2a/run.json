@@ -1,0 +1,272 @@
+{
+ "block": "r1_safe",
+ "command": "python3 designs/r1-joint/blocks/r1_isense/sim/run_deck.py --block r1_safe --deck tb_safe_joint3.cir --run-id safe-joint-20261021r2 --corners tt,ss_cold,ff_hot --analyze analyze_joint3.py --netlist designs/r1-joint/blocks/r1_safe/schematic/r1_safe.spice --question \"REV2 regression: joint r1_isense revision 2 -> r1_safe rev 3 (path fixture, both channels): threshold centres, simultaneous vs staggered, delays, cross-channel kickback; compare with safe-joint-20261020-r3b (limits: centre within 0.05 LSB, delays within 20 ns)\"",
+ "container_image": "tapeoutbench-eda:latest sha256:ddeb6957... (checked by flow/run.sh)",
+ "corners": {
+  "ff_hot": {
+   "cap": "cap_bcs",
+   "mos": "mos_ff",
+   "res": "res_bcs",
+   "temp_C": 125,
+   "vdd": 1.32,
+   "vdda": 3.6
+  },
+  "ss_cold": {
+   "cap": "cap_wcs",
+   "mos": "mos_ss",
+   "res": "res_wcs",
+   "temp_C": -40,
+   "vdd": 1.08,
+   "vdda": 3.0
+  },
+  "tt": {
+   "cap": "cap_typ",
+   "mos": "mos_tt",
+   "res": "res_typ",
+   "temp_C": 27,
+   "vdd": 1.2,
+   "vdda": 3.3
+  }
+ },
+ "cpuset": "109-111",
+ "date_utc": "2026-10-21T03:28:29.647410Z",
+ "deck": "designs/r1-joint/blocks/r1_safe/sim/tb_safe_joint3.cir",
+ "deck_sha256": "37660f358e5daa43da9b41d684b2af98fae1b304f100ac47eff2bcc89b6da4d3",
+ "disposition": "superseded (candidate a): ff_hot: passed (max centre 0.051 LSB, sim-stag 0.0062 LSB, cross-channel glitches 0, worst trip delay 130 ns); ss_cold: passed (max centre 0.021 LSB, sim-stag 0.0011 LSB, cross-channel glitches 0, worst trip delay 158 ns); tt: passed (max centre 0.030 LSB, sim-stag 0.0009 LSB, cross-channel glitches 0, worst trip delay 140 ns)",
+ "included_netlists": {
+  "/work/designs/r1-joint/blocks/r1_isense/schematic/r1_isense.spice": "d0eb3bd96b345a27603ccd5e301e241a8a07c338275094cee84b4a0ea4291ea0",
+  "/work/designs/r1-joint/blocks/r1_safe/schematic/r1_safe.spice": "812f886dce2b759af121230bd2e9100aeac59041effdf9a3341647c29299cbde"
+ },
+ "included_netlists_results_root": {},
+ "jobs": {
+  "ff_hot": {
+   "log": "r1_safe/safe-joint-20261021r2/tb_safe_joint3_ff_hot.log",
+   "rc": 0,
+   "wall_s": 294.3
+  },
+  "ss_cold": {
+   "log": "r1_safe/safe-joint-20261021r2/tb_safe_joint3_ss_cold.log",
+   "rc": 0,
+   "wall_s": 296.3
+  },
+  "tt": {
+   "log": "r1_safe/safe-joint-20261021r2/tb_safe_joint3_tt.log",
+   "rc": 0,
+   "wall_s": 296.3
+  }
+ },
+ "netlist": "designs/r1-joint/blocks/r1_safe/schematic/r1_safe.spice",
+ "netlist_sha256": "812f886dce2b759af121230bd2e9100aeac59041effdf9a3341647c29299cbde",
+ "ngspice_version": "** ngspice-46 : Circuit level simulation program ** Copyright 2001-2025, The ngspice team. ** Please get your ngspice manual from https://ngspice.sourceforge.io/docs.html ** Please file your bug-reports at http://ngspice.sourceforge.net/bugrep.html (read after the run with flow/run.sh ngspice -v, same container image; the in-run read failed: python 3.6 has no capture_output)",
+ "note_superseded": "SUPERSEDED frozen candidate a of revision 2 (netlist sha256 d0eb3bd96b34..., slow-path mirror w=2/l=32). Renamed from suffix 20261021r2 to 20261021r2a on 2026-10-21 after the ss 125 C mismatch MC showed 2/30 samples with the output CM outside 0.6 V +- 30 mV (slow CMFB path at the end of its range, vint 0.30-0.31 V, replay dev-r2-mcvint-01). Kept as a record; revision 2 of record widens the slow-path mirror to w=8 um.",
+ "overrides": {},
+ "pdk_commit": "84374023ee8b4b126bebbba67fcbada0a9c0ff0b (checked by flow/run.sh)",
+ "prerun": {},
+ "question": "REV2 regression: joint r1_isense revision 2 -> r1_safe rev 3 (path fixture, both channels): threshold centres, simultaneous vs staggered, delays, cross-channel kickback; compare with safe-joint-20261020-r3b (limits: centre within 0.05 LSB, delays within 20 ns)",
+ "raw_results": "$G1_RESULTS_ROOT/r1_safe/safe-joint-20261021r2a/",
+ "result": {
+  "ff_hot": {
+   "cross_channel_glitches": 0,
+   "cross_channel_transitions_us": {
+    "neg_b": [],
+    "oc_b": []
+   },
+   "delays_from_shunt_step": {
+    "neg_release_a_ns": 104.17751766762657,
+    "neg_release_b_ns": 104.17751901865428,
+    "neg_trip_a_ns": 23.648796301191844,
+    "neg_trip_b_ns": 23.648793223744963,
+    "oc_release_a_ns": 24.15820343109384,
+    "oc_release_b_ns": 24.158206396264806,
+    "oc_trip_a_ns": 130.3810581291566,
+    "oc_trip_b_ns": 130.3810484575379
+   },
+   "idda_uA_total": 1012.250986033333,
+   "max_abs_centre_err_LSB": 0.05086149678572683,
+   "max_sim_minus_stag_LSB": 0.006164813981834882,
+   "max_sim_minus_stag_uV_shunt": 14.678128528178291,
+   "n_points": 8,
+   "simultaneous_neg_a": {
+    "centre_err_LSB": -0.050689467847305776,
+    "centre_err_uV_shunt": -120.68920916025183,
+    "hyst_uV_shunt": 1212.1669942677104
+   },
+   "simultaneous_neg_b": {
+    "centre_err_LSB": -0.05068946612335979,
+    "centre_err_uV_shunt": -120.68920505561853,
+    "hyst_uV_shunt": 1212.1669860311463
+   },
+   "simultaneous_oc_a": {
+    "centre_err_LSB": -0.008815030991124462,
+    "centre_err_uV_shunt": -20.988169026486815,
+    "hyst_uV_shunt": 1279.4747649433198
+   },
+   "simultaneous_oc_b": {
+    "centre_err_LSB": -0.008815030007781055,
+    "centre_err_uV_shunt": -20.988166685192986,
+    "hyst_uV_shunt": 1279.4747613494305
+   },
+   "staggered_neg_a": {
+    "centre_err_LSB": -0.049615881015514514,
+    "centre_err_uV_shunt": -118.1330500369393,
+    "hyst_uV_shunt": 1196.7624562583408
+   },
+   "staggered_neg_b": {
+    "centre_err_LSB": -0.05086149678572683,
+    "centre_err_uV_shunt": -121.09880187077815,
+    "hyst_uV_shunt": 1191.2730592164855
+   },
+   "staggered_oc_a": {
+    "centre_err_LSB": -0.01409005830052046,
+    "centre_err_uV_shunt": -33.54775785838204,
+    "hyst_uV_shunt": 1236.9663972204987
+   },
+   "staggered_oc_b": {
+    "centre_err_LSB": -0.01497984398961594,
+    "centre_err_uV_shunt": -35.66629521337128,
+    "hyst_uV_shunt": 1231.8892412226528
+   },
+   "tap_t176_max_dev_mV": 15.904841000000003,
+   "tap_t176_max_dev_step_mV": 37.52497457807247,
+   "tap_t76_max_dev_mV": 29.68096099999995,
+   "tap_t76_max_dev_step_mV": 70.70435695238048
+  },
+  "ss_cold": {
+   "cross_channel_glitches": 0,
+   "cross_channel_transitions_us": {
+    "neg_b": [],
+    "oc_b": []
+   },
+   "delays_from_shunt_step": {
+    "neg_release_a_ns": 127.11683635436692,
+    "neg_release_b_ns": 127.11664925482114,
+    "neg_trip_a_ns": 27.880607960668176,
+    "neg_trip_b_ns": 27.880603826178387,
+    "oc_release_a_ns": 28.171679720373856,
+    "oc_release_b_ns": 28.171658018373307,
+    "oc_trip_a_ns": 157.80414396566826,
+    "oc_trip_b_ns": 157.80399672899054
+   },
+   "idda_uA_total": 581.0389867766667,
+   "max_abs_centre_err_LSB": 0.0205461385955269,
+   "max_sim_minus_stag_LSB": 0.0010746687057608397,
+   "max_sim_minus_stag_uV_shunt": 2.5587350137162845,
+   "n_points": 8,
+   "simultaneous_neg_a": {
+    "centre_err_LSB": 0.002148015229897493,
+    "centre_err_uV_shunt": 5.114321975946412,
+    "hyst_uV_shunt": 1270.182469335898
+   },
+   "simultaneous_neg_b": {
+    "centre_err_LSB": 0.0021480146092489605,
+    "centre_err_uV_shunt": 5.114320498211811,
+    "hyst_uV_shunt": 1270.182469167741
+   },
+   "simultaneous_oc_a": {
+    "centre_err_LSB": -0.020204548400265535,
+    "centre_err_uV_shunt": -48.106067619679834,
+    "hyst_uV_shunt": 1292.8583638271984
+   },
+   "simultaneous_oc_b": {
+    "centre_err_LSB": -0.020204549092087968,
+    "centre_err_uV_shunt": -48.106069266876105,
+    "hyst_uV_shunt": 1292.8583634249646
+   },
+   "staggered_neg_a": {
+    "centre_err_LSB": 0.003222683935658333,
+    "centre_err_uV_shunt": 7.673056989662697,
+    "hyst_uV_shunt": 1251.0203259048226
+   },
+   "staggered_neg_b": {
+    "centre_err_LSB": 0.0019224914964377506,
+    "centre_err_uV_shunt": 4.577360705804168,
+    "hyst_uV_shunt": 1245.4145812734603
+   },
+   "staggered_oc_a": {
+    "centre_err_LSB": -0.019146284472613132,
+    "centre_err_uV_shunt": -45.58639160145983,
+    "hyst_uV_shunt": 1273.0256250282762
+   },
+   "staggered_oc_b": {
+    "centre_err_LSB": -0.0205461385955269,
+    "centre_err_uV_shunt": -48.919377608397376,
+    "hyst_uV_shunt": 1267.5609422764383
+   },
+   "tap_t176_max_dev_mV": 17.594245999999924,
+   "tap_t176_max_dev_step_mV": 31.107324885935704,
+   "tap_t76_max_dev_mV": 32.92989699999998,
+   "tap_t76_max_dev_step_mV": 64.06045111184955
+  },
+  "tt": {
+   "cross_channel_glitches": 0,
+   "cross_channel_transitions_us": {
+    "neg_b": [],
+    "oc_b": []
+   },
+   "delays_from_shunt_step": {
+    "neg_release_a_ns": 110.61100554634668,
+    "neg_release_b_ns": 110.61096186027345,
+    "neg_trip_a_ns": 24.82024661473853,
+    "neg_trip_b_ns": 24.820247321960217,
+    "oc_release_a_ns": 25.232139444789706,
+    "oc_release_b_ns": 25.232129389299057,
+    "oc_trip_a_ns": 139.76633680117604,
+    "oc_trip_b_ns": 139.7663221246836
+   },
+   "idda_uA_total": 765.4931164399994,
+   "max_abs_centre_err_LSB": 0.030459345936730834,
+   "max_sim_minus_stag_LSB": 0.0009483631002546446,
+   "max_sim_minus_stag_uV_shunt": 2.258007381558677,
+   "n_points": 8,
+   "simultaneous_neg_a": {
+    "centre_err_LSB": -0.024492083747405528,
+    "centre_err_uV_shunt": -58.314485112870294,
+    "hyst_uV_shunt": 1224.111187164506
+   },
+   "simultaneous_neg_b": {
+    "centre_err_LSB": -0.02449208477610765,
+    "centre_err_uV_shunt": -58.31448756216106,
+    "hyst_uV_shunt": 1224.1111875307686
+   },
+   "simultaneous_oc_a": {
+    "centre_err_LSB": -0.030029398626690577,
+    "centre_err_uV_shunt": -71.49856815878708,
+    "hyst_uV_shunt": 1242.0936664813144
+   },
+   "simultaneous_oc_b": {
+    "centre_err_LSB": -0.030029399628003776,
+    "centre_err_uV_shunt": -71.49857054286612,
+    "hyst_uV_shunt": 1242.0936664605254
+   },
+   "staggered_neg_a": {
+    "centre_err_LSB": -0.023543720647150882,
+    "centre_err_uV_shunt": -56.05647773131162,
+    "hyst_uV_shunt": 1206.683076350079
+   },
+   "staggered_neg_b": {
+    "centre_err_LSB": -0.024682093218254545,
+    "centre_err_uV_shunt": -58.76688861489177,
+    "hyst_uV_shunt": 1200.8012564346805
+   },
+   "staggered_oc_a": {
+    "centre_err_LSB": -0.029186487351844374,
+    "centre_err_uV_shunt": -69.4916365520104,
+    "hyst_uV_shunt": 1225.4213412717652
+   },
+   "staggered_oc_b": {
+    "centre_err_LSB": -0.030459345936730834,
+    "centre_err_uV_shunt": -72.5222522303115,
+    "hyst_uV_shunt": 1219.4999172835257
+   },
+   "tap_t176_max_dev_mV": 17.860686999999984,
+   "tap_t176_max_dev_step_mV": 38.85127504208119,
+   "tap_t76_max_dev_mV": 32.59052000000001,
+   "tap_t76_max_dev_step_mV": 72.46045216389771
+  }
+ },
+ "run_id": "safe-joint-20261021r2a",
+ "run_id_original": "safe-joint-20261021r2",
+ "tool": "ngspice-46 (container banner from flow/run.sh ngspice -v; batch logs carry no banner)",
+ "wall_s": 297.1,
+ "workdir": "designs/r1-joint/blocks/r1_safe/sim"
+}

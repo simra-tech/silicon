@@ -1,0 +1,85 @@
+{
+ "block": "r1_isense",
+ "command": "python3 designs/r1-joint/blocks/r1_isense/sim/run_deck.py --block r1_isense --deck tb_isense_stbstep.cir --run-id isense-stbstep-20261021r2 --corners tt,ss --jobs 2 --set RL=0.001 --set CL=2p --set CW=0 --analyze analyze_stbstep.py --question \"REV2 regression: shunt step 0 -> 100 mV, 10 ns edge, after AZ, joint load fixture: settling to 0.5 percent, overshoot count\"",
+ "container_image": "tapeoutbench-eda:latest sha256:ddeb6957... (checked by flow/run.sh)",
+ "corners": {
+  "ss": {
+   "cap": "cap_wcs",
+   "mos": "mos_ss",
+   "res": "res_wcs",
+   "temp_C": 125,
+   "vdd": 1.08,
+   "vdda": 3.0
+  },
+  "tt": {
+   "cap": "cap_typ",
+   "mos": "mos_tt",
+   "res": "res_typ",
+   "temp_C": 27,
+   "vdd": 1.2,
+   "vdda": 3.3
+  }
+ },
+ "cpuset": "109-111",
+ "date_utc": "2026-10-21T03:20:40.037811Z",
+ "deck": "designs/r1-joint/blocks/r1_isense/sim/tb_isense_stbstep.cir",
+ "deck_sha256": "e0c88ff2a5cee085af05b801b7de46830f606ae902d4b94be125a5f5bfcdeeb9",
+ "disposition": "superseded (candidate a): passed: step 0 -> 100 mV, 10 ns edge: settling to 0.5 % ss 209/tt 93 ns from the edge start, overshoot count ss 0/tt 0, peak overshoot ss 0.000/tt 0.000 %",
+ "included_netlists": {
+  "/work/designs/r1-joint/blocks/r1_isense/schematic/r1_isense.spice": "d0eb3bd96b345a27603ccd5e301e241a8a07c338275094cee84b4a0ea4291ea0",
+  "/work/designs/r1-joint/blocks/r1_safe/schematic/r1_safe.spice": "812f886dce2b759af121230bd2e9100aeac59041effdf9a3341647c29299cbde"
+ },
+ "included_netlists_results_root": {},
+ "jobs": {
+  "ss": {
+   "log": "r1_isense/isense-stbstep-20261021r2/tb_isense_stbstep_ss.log",
+   "rc": 0,
+   "wall_s": 78.1
+  },
+  "tt": {
+   "log": "r1_isense/isense-stbstep-20261021r2/tb_isense_stbstep_tt.log",
+   "rc": 0,
+   "wall_s": 82.1
+  }
+ },
+ "netlist": "designs/r1-joint/blocks/r1_isense/schematic/r1_isense.spice",
+ "netlist_sha256": "d0eb3bd96b345a27603ccd5e301e241a8a07c338275094cee84b4a0ea4291ea0",
+ "ngspice_version": "** ngspice-46 : Circuit level simulation program ** Copyright 2001-2025, The ngspice team. ** Please get your ngspice manual from https://ngspice.sourceforge.io/docs.html ** Please file your bug-reports at http://ngspice.sourceforge.net/bugrep.html (read after the run with flow/run.sh ngspice -v, same container image; the in-run read failed: python 3.6 has no capture_output)",
+ "note_superseded": "SUPERSEDED frozen candidate a of revision 2 (netlist sha256 d0eb3bd96b34..., slow-path mirror w=2/l=32). Renamed from suffix 20261021r2 to 20261021r2a on 2026-10-21 after the ss 125 C mismatch MC showed 2/30 samples with the output CM outside 0.6 V +- 30 mV (slow CMFB path at the end of its range, vint 0.30-0.31 V, replay dev-r2-mcvint-01). Kept as a record; revision 2 of record widens the slow-path mirror to w=8 um.",
+ "overrides": {
+  "CL": "2p",
+  "CW": "0",
+  "RL": "0.001"
+ },
+ "pdk_commit": "84374023ee8b4b126bebbba67fcbada0a9c0ff0b (checked by flow/run.sh)",
+ "prerun": {},
+ "question": "REV2 regression: shunt step 0 -> 100 mV, 10 ns edge, after AZ, joint load fixture: settling to 0.5 percent, overshoot count",
+ "raw_results": "$G1_RESULTS_ROOT/r1_isense/isense-stbstep-20261021r2a/",
+ "result": {
+  "ss": {
+   "oc_a_high_after_ns": 92.03544999999977,
+   "overshoot_count": 0,
+   "peak_overshoot_pct_of_step": 0.0,
+   "settle_0p5pct_from_edge_end_ns": 198.6782799999999,
+   "settle_0p5pct_from_edge_start_ns": 208.67827999999977,
+   "step_V": 1.400699077,
+   "vod_after_V": 0.835851629,
+   "vod_before_V": -0.564847448
+  },
+  "tt": {
+   "oc_a_high_after_ns": 71.97569000000003,
+   "overshoot_count": 0,
+   "peak_overshoot_pct_of_step": 0.0,
+   "settle_0p5pct_from_edge_end_ns": 82.58121999999992,
+   "settle_0p5pct_from_edge_start_ns": 92.58121999999982,
+   "step_V": 1.400830256,
+   "vod_after_V": 0.835848832,
+   "vod_before_V": -0.5649814240000001
+  }
+ },
+ "run_id": "isense-stbstep-20261021r2a",
+ "run_id_original": "isense-stbstep-20261021r2",
+ "tool": "ngspice-46 (container banner from flow/run.sh ngspice -v; batch logs carry no banner)",
+ "wall_s": 82.7,
+ "workdir": "designs/r1-joint/blocks/r1_isense/sim"
+}

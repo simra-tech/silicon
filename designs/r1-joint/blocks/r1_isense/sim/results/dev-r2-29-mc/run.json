@@ -1,0 +1,148 @@
+{
+ "block": "r1_isense",
+ "command": "python3 designs/r1-joint/blocks/r1_isense/sim/run_deck.py --block r1_isense --deck <G1_RESULTS_ROOT>/r1_isense/dev-r2-29-net/tb_isense_mc.cir --run-id dev-r2-29-mc --corners ss_mm_s4,tt_mm_s1 --jobs 3 --set N=30 --netlist <G1_RESULTS_ROOT>/r1_isense/dev-r2-29-net/r1_isense.spice --analyze analyze_mc.py --question \"revision-2 development screen, variant [TMW=8], mismatch MC incl. output CM\"",
+ "container_image": "tapeoutbench-eda:latest sha256:ddeb6957... (checked by flow/run.sh)",
+ "corners": {
+  "ss_mm_s4": {
+   "cap": "cap_wcs_mismatch",
+   "mos": "mos_ss_mismatch",
+   "res": "res_wcs_mismatch",
+   "temp_C": 125,
+   "vdd": 1.08,
+   "vdda": 3.0
+  },
+  "tt_mm_s1": {
+   "cap": "cap_typ_mismatch",
+   "mos": "mos_tt_mismatch",
+   "res": "res_typ_mismatch",
+   "temp_C": 27,
+   "vdd": 1.2,
+   "vdda": 3.3
+  }
+ },
+ "cpuset": "109-111",
+ "date_utc": "2026-10-21T03:23:32.806096Z",
+ "deck": "<G1_RESULTS_ROOT>/r1_isense/dev-r2-29-net/tb_isense_mc.cir",
+ "deck_sha256": "649d44890f681092013527cbc3e05d54dada4d485a000a5e38c6b0d716bab9d6",
+ "disposition": "ss_mm: 30/30 samples within 100 uV; tt_mm: 30/30 samples within 100 uV",
+ "included_netlists": {},
+ "included_netlists_results_root": {
+  "<G1_RESULTS_ROOT>/r1_isense/dev-r2-29-net/r1_isense.spice": "f19af0371d50dadde04eca1bbef8a01769fdd38f72bc45ddcd9e5facd370837a"
+ },
+ "jobs": {
+  "ss_mm_s4": {
+   "log": "r1_isense/dev-r2-29-mc/tb_isense_mc_ss_mm_s4.log",
+   "rc": 0,
+   "wall_s": 372.4
+  },
+  "tt_mm_s1": {
+   "log": "r1_isense/dev-r2-29-mc/tb_isense_mc_tt_mm_s1.log",
+   "rc": 0,
+   "wall_s": 354.4
+  }
+ },
+ "netlist": "<G1_RESULTS_ROOT>/r1_isense/dev-r2-29-net/r1_isense.spice",
+ "netlist_sha256": "f19af0371d50dadde04eca1bbef8a01769fdd38f72bc45ddcd9e5facd370837a",
+ "ngspice_version": "** ngspice-46 : Circuit level simulation program ** Copyright 2001-2025, The ngspice team. ** Please get your ngspice manual from https://ngspice.sourceforge.io/docs.html ** Please file your bug-reports at http://ngspice.sourceforge.net/bugrep.html (read after the run with flow/run.sh ngspice -v, same container image; the in-run read failed: python 3.6 has no capture_output)",
+ "overrides": {
+  "N": "30"
+ },
+ "pdk_commit": "84374023ee8b4b126bebbba67fcbada0a9c0ff0b (checked by flow/run.sh)",
+ "prerun": {},
+ "question": "revision-2 development screen, variant [TMW=8], mismatch MC incl. output CM",
+ "raw_results": "$G1_RESULTS_ROOT/r1_isense/dev-r2-29-mc/",
+ "result": {
+  "ss_mm": {
+   "gain": {
+    "max": 14.0553,
+    "max_abs": 14.0553,
+    "mean": 14.011643333333334,
+    "min": 13.9595,
+    "n": 30,
+    "sigma": 0.024063328715888257
+   },
+   "ocm_V": {
+    "max": 0.6017557695,
+    "max_abs": 0.6017557695,
+    "mean": 0.5933459066833333,
+    "min": 0.5867361945,
+    "n": 30,
+    "sigma": 0.004124108798116167
+   },
+   "ocm_within_30mV": 30,
+   "ped_mV": {
+    "max": 40.5208,
+    "max_abs": 40.5208,
+    "mean": 40.316073333333335,
+    "min": 40.1575,
+    "n": 30,
+    "sigma": 0.0826129123617426
+   },
+   "raw_uV": {
+    "max": 8392.21,
+    "max_abs": 8392.21,
+    "mean": 383.3598333333333,
+    "min": -7861.44,
+    "n": 30,
+    "sigma": 3598.934759173415
+   },
+   "res_uV": {
+    "max": 25.2079,
+    "max_abs": 27.8782,
+    "mean": 2.7931159466666666,
+    "min": -27.8782,
+    "n": 30,
+    "sigma": 13.233580861152303
+   },
+   "res_within_100uV": 30
+  },
+  "tt_mm": {
+   "gain": {
+    "max": 14.0607,
+    "max_abs": 14.0607,
+    "mean": 14.005686666666668,
+    "min": 13.9433,
+    "n": 30,
+    "sigma": 0.03206560705109989
+   },
+   "ocm_V": {
+    "max": 0.6077962185,
+    "max_abs": 0.6077962185,
+    "mean": 0.59843905155,
+    "min": 0.5937047245,
+    "n": 30,
+    "sigma": 0.0029400358297186928
+   },
+   "ocm_within_30mV": 30,
+   "ped_mV": {
+    "max": 40.4979,
+    "max_abs": 40.4979,
+    "mean": 40.347703333333335,
+    "min": 40.1611,
+    "n": 30,
+    "sigma": 0.0946841644040274
+   },
+   "raw_uV": {
+    "max": 6081.69,
+    "max_abs": 7885.03,
+    "mean": -103.21993333333333,
+    "min": -7885.03,
+    "n": 30,
+    "sigma": 3104.6368424067136
+   },
+   "res_uV": {
+    "max": 20.6949,
+    "max_abs": 32.9566,
+    "mean": -1.3625816333333334,
+    "min": -32.9566,
+    "n": 30,
+    "sigma": 11.61306445775719
+   },
+   "res_within_100uV": 30
+  }
+ },
+ "run_id": "dev-r2-29-mc",
+ "tool": "ngspice-46 (container banner from flow/run.sh ngspice -v; batch logs carry no banner)",
+ "wall_s": 372.6,
+ "workdir": "designs/r1-joint/blocks/r1_isense/sim"
+}
