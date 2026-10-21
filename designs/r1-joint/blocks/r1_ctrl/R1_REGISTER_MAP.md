@@ -209,6 +209,18 @@ To measure the oscillator, do these steps:
 the BiSS frame; it does not latch a `FAULT` bit. Example at 30 MHz with a 1 MHz reference:
 OSC_COUNT = 480, OSC_COUNT[11:4] = 30; `OSC_WIN` = 0x201C (LO 28, HI 32) accepts ±7 %.
 
+**`OSC_TRIM` rule (PLAN.md D13 amendment, 2026-10-21; documentation only, revision 0.6).** With `r1_osc` revision 2 the
+frequency at ff, 1.32 V, -40 C is 39.5 MHz at the reset code 22 and up to 56.4 MHz at code 0. The digital macro closes
+static timing at 42 MHz only. Codes 0 to 17 can exceed 42 MHz at that corner. Rules for the host:
+
+1. Keep the reset code 22. It is below 42 MHz at every corner.
+2. Write a code below 18 only after `OSC_COUNT` shows that the resulting frequency is 40 MHz or less.
+3. Do the check in small steps. Write one code, measure again (`OSC_CFG.MEAS`), then go on.
+
+The STA limit stays 42 MHz and no timing constraint changes. The macro does not enforce the rule. A hardware lock is an
+open item: writes below 18 would be ignored until `OSC_COUNT` has been read once since reset (one status bit). It is not
+in revision 0.5 or 0.6 (see `README.md`, revision 0.6, open issues).
+
 ### 4.4 Calibration (position words; `CAL_CRC`)
 
 | Addr | Name | Type | Reset | Format |

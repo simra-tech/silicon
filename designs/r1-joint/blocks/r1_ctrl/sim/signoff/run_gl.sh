@@ -4,11 +4,13 @@
 #   G1_CPUSET=112-115 G1_CPUS=4 G1_WORKDIR=designs/r1-joint/blocks/r1_ctrl G1_RESULTS_ROOT=<root> \
 #     flow/run.sh sh sim/signoff/run_gl.sh <run-id> <mode>      mode: slow | typ | zd
 #   slow: SDF nom_slow_1p08V_125C, MAXIMUM; typ: SDF nom_typ_1p20V_25C, TYPICAL; zd: no SDF (zero delay)
+# Revision 0.6: LLRUN=<hardening run id>; the 0.5 tests tap and ana also run (add them to GL_JOBS); disc, cdc, cal are GLSKIP (README 0.6).
 # Tests (same set as sim/run_all.sh, 315 RTL checks): biss, ssi at 23.810 33.333 47.619 ns; spi gate safe cal at 33.333; cal at 23.810.
 set -u
 export LD_LIBRARY_PATH=/foss/tools/iverilog/lib
 RID="$1"; MODE="$2"; PAR="${3:-4}"
-T7=$G1_RESULTS_ROOT/r1_ctrl/r1ctrl_ll_20261021_t7/flow/runs/r1ctrl_ll_20261021_t7/final
+LL=${LLRUN:-r1ctrl_ll_20261021_t7}   # hardening run whose netlist and SDF are simulated (0.6: r1ctrl_ll_20261021_t9)
+T7=$G1_RESULTS_ROOT/r1_ctrl/$LL/flow/runs/$LL/final
 V=/foss/pdks/ihp-sg13g2/libs.ref/sg13g2_stdcell/verilog
 OUT="$G1_RESULTS_ROOT/r1_ctrl/$RID/$MODE"
 mkdir -p "$OUT"
@@ -25,7 +27,8 @@ if [ -z "${GL_JOBS:-}" ]; then
   echo "pdk_commit $(cat /foss/pdks/ihp-sg13g2/COMMIT)"
   sha256sum "$T7/nl/r1_ctrl_top.nl.v" tb/tb_top.v sim/signoff/mk_gl_tb.sh
   [ -n "$SDFARG" ] && sha256sum "$T7"/sdf/*/*.sdf; } > "$OUT/versions.txt"
-sh sim/signoff/mk_gl_tb.sh tb/tb_top.v "$OUT/tb_top_gl.v"
+sh sim/signoff/mk_gl_tb.sh tb/tb_top.v "$OUT/tb_top_gl0.v"
+python3 sim/signoff/mk_gl_tb_v05.py "$OUT/tb_top_gl0.v" "$OUT/tb_top_gl.v" "$T7/nl/r1_ctrl_top.nl.v"   # revision 0.5 probes
 NL="$T7/nl/r1_ctrl_top.nl.v"
 if [ -n "$SDFARG" ]; then
   python3 sim/signoff/prep_sdf.py "$T7/nl/r1_ctrl_top.nl.v" "$SDFSRC" "$OUT/nl_sdf.v" "$OUT/delays.sdf" "$PICK" > "$OUT/prep_sdf.log" 2>&1 || exit 1

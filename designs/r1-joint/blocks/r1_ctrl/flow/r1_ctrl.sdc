@@ -46,6 +46,7 @@ set_output_delay -clock clk -max 5.0 $clk_outputs
 set_output_delay -clock clk -min 0.0 $clk_outputs
 
 set_load 0.05 [all_outputs]
-set_max_fanout 16 [current_design]
+# revision 0.6: 8 = liberty default_max_fanout (0.3 to 0.5 carried 16, which the library limit overrides)
+set_max_fanout 8 [current_design]
 set_max_transition 1.5 [current_design]
 set_propagated_clock [all_clocks]

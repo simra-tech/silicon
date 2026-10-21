@@ -1,4 +1,6 @@
-# r1_ctrl — R1 digital macro (RTL revision 0.5)
+# r1_ctrl — R1 digital macro (RTL revision 0.5, hardening revision 0.6 not closed)
+
+State (2026-10-21, later): the hardening of RTL 0.5 in 520 x 664 um (revision 0.6, first section below) is **not closed**: utilisation 77.5 % against 75 %, detailed routing stalls at 68 to 69 violations with the dense east pin template; two runs were still going when this was written. The last hardened and signed-off macro stays revision 0.4 (t7).
 
 State (2026-10-21): RTL revision 0.5 (closes the signal-ownership gaps of the r1_top assembly, see the revision 0.5 section; hardening deferred to 0.6). Revision 0.4 (area closure for the D10 die; function unchanged from 0.3) is the last hardened and signed-off RTL. It is simulated at RTL level, synthesized with Yosys, and
 hardened with LibreLane (see the revision 0.4 and 0.3 status). It is not signed off. The sign-off checks of 2026-10-21
@@ -21,6 +23,104 @@ written from the specification and studies S1, S2, S3 and S5. No third-party RTL
 Patterns copied from G1 `g1_ctrl` (not shared): the two-flop synchroniser, the
 async-assert/sync-release reset, the SCLK-domain shift logic with a hand-off to the core clock,
 the `run_sim.sh` style and the `ALL TESTS PASSED` convention.
+
+## Revision 0.6 (2026-10-21, hardening of RTL 0.5 with the S7 pin template; **not closed**)
+
+Goal: harden the 0.5 RTL (sha256 `10ba8006...2454a2352d`, the same as the simulation run `r1ctrl_20261021_v05c`) in `DIE_AREA 0 0 520 664` at utilisation
+at most 75 %, with the S7 (C4) pin template, max-fanout 8, and sign-off clean. **Result: not met.** No 0.6 GDS, LEF, netlist or SDF exists. The RTL, register map
+(function) and timing constraints did not change. All numbers are LibreLane or simulated; nothing is measured. Paths are relative to this directory;
+`<G1_RESULTS_ROOT>` is the bulk results root (run directories `r1_ctrl/<run-id>/`). Report: `reports/ll_t9.md`.
+
+### What changed (flow only)
+
+| # | Change | Where |
+| --- | --- | --- |
+| 1 | `r1_tapidx.v` was missing from the LibreLane file list (first launch failed in lint, "Cannot find file containing module"). Added. | `flow/librelane/config.yaml` |
+| 2 | Pin template from the S7 C4 floorplan: every pin on an exact track slot. `gen_pins_v06.py` writes `pins_v06.cfg` (die 520 x 664), the table (`pins_v06.md`, `.json`) and variants (`PIN_STRIDE_E`, other die sizes). `check_pins_v06.py` compares a finished DEF with the table. | `flow/librelane/` |
+| 3 | `MAX_FANOUT_CONSTRAINT: 8` (the PDK default of the flow is 10) and `set_max_fanout 8` in the SDC (was 16). SDC port check: see status table. | `config.yaml`, `flow/r1_ctrl.sdc` |
+| 4 | CTS: `CTS_BALANCE_LEVELS: true`, `CTS_DISTANCE_BETWEEN_BUFFERS: 60` (run `t9c` and later). The clock-root fanout violations at typ fall 4 -> 1 (520 x 664) and 4 -> 0 (532 x 679). Cluster size 45 / 60 (runs `t9a`, `t9b`, stopped by PID) did not change the buffer count (529 -> 529 / 530). | `R1_CFG_APPEND` files in the run copies |
+| 5 | Sign-off scripts take the run id (`LLRUN`); `sta_fanout06.tcl` lists the fanout violators with their loads; `mk_gl_tb_v05.py` makes the gate-level testbench of the 0.5 tests. | `sim/signoff/` |
+| 6 | `R1_REGISTER_MAP.md` section 4.3: the `OSC_TRIM` rule of the D13 amendment (codes below 18 only after `OSC_COUNT` shows 40 MHz or less). Documentation only. | `R1_REGISTER_MAP.md` |
+
+### Status (revision 0.6)
+
+| # | Check | Status | Evidence |
+| --- | --- | --- | --- |
+| 1 | Pin template written, every pin placed (127 of 127; 76 east, 34 south, 11 west, 6 north), slots verified against the t7 track grid | **passed** (generator). DEF position check of a finished run: **not run** (no finished run) | `flow/librelane/pins_v06.md`, `check_pins_v06.py` |
+| 2 | Placed utilisation <= 75 % in 520 x 664 | **failed**: 77.5 to 77.6 % of the snapped core (318 286 um^2) after global-route repair; 247 076 um^2 placed (t9) | `<G1_RESULTS_ROOT>/r1_ctrl/r1ctrl_ll_20261021_t9/` (step 41 metrics) |
+| 3 | Detailed routing in 520 x 664, template pitch 0.84 um (run `t9`) | **failed**: violations 17 865, 10 536, 9 926, 1 542, 627, ..., 69 (constant for the last 4 iterations); timeout 10 800 s, exit 124 | `reports/ll_t9.md`, `<G1_RESULTS_ROOT>/r1_ctrl/r1ctrl_ll_20261021_t9/librelane.log` |
+| 4 | Same, 532 x 679 (utilisation 74.2 % at step 41), template pitch 0.84 um (run `t9d`) | **failed / stopped**: plateau 68 violations; stopped by PID | `<G1_RESULTS_ROOT>/r1_ctrl/r1ctrl_ll_20261021_t9d/` |
+| 5 | Stride-2 east pins (1.68 um), 520 x 664 (`t9e`) and 532 x 679 (`t9f`) | **running at the time of writing** (violations 213 and 133, falling slowly); timeout 10 800 s | `<G1_RESULTS_ROOT>/r1_ctrl/r1ctrl_ll_20261021_t9{e,f}/` |
+| 6 | Sign-off STA (typ, fast, slow) true slack, hold; Magic and KLayout DRC; LVS; antenna; max-fanout (final); max-slew; max-cap | **not run** (no finished layout). Mid-flow typ values (before routing, estimated parasitics): setup 0, hold +0.001 (t9), +0.030 (t9c), +0.107 (t9d); slew 0, cap 0 | step 44 metrics |
+| 7 | Max-fanout 8, clock-tree roots by CTS settings | **partly**: before routing, typ corner: 4 violators (t9, default), 1 (balance levels, 520 x 664), 0 (532 x 679). Final count after routing: **not run** | step 44 metrics |
+| 8 | Gate-level simulation with SDF at slow (chip-level target, `tap`, `ana`, `disc`, `cdc`) | **not run** (no post-layout netlist or SDF) | - |
+| 9 | Gate-level, zero delay, post-synthesis netlist of t9 (228 322 um^2): `tap` 5, `ana` 9, `spi` 27, `gate` 22, `safe` 32, `ssi` 9 checks | **passed**, 0 failed. Not SDF, not post-layout | `<G1_RESULTS_ROOT>/r1_ctrl/r1ctrl_gl_20261021_syn_zd/` |
+| 10 | Gate-level `disc`, `cdc`, `cal`, `biss` | **not run**: `adc_arm`, `u_gate.nra/nrb`, the `frame_pos` force and `thr_*`/`cal_*` are not nets of the flattened netlist (`mk_gl_tb_v05.py` GLSKIP); `cal` needs the thresholds back from the taps; `biss` takes more than 1 h with SDF | `sim/signoff/mk_gl_tb_v05.py` |
+| 11 | SDC covers every port (`check_sdc_ports.py`) | not re-run for the `set_max_fanout` edit (the edit does not touch port patterns) | - |
+| 12 | `OSC_TRIM` lock (coordinator, 2026-10-21) | **not done**: documented in the register map; estimate 10 to 15 cells (a status flag, a 5-bit compare, one gate on the write enable), **not synthesized**. A change of RTL invalidates the 0.5 evidence, so it needs its own revision (0.7) | `R1_REGISTER_MAP.md` 4.3 |
+
+### Area and utilisation
+
+| Run | Box (um) | Core (um^2) | Synthesis (um^2) | Placed after global-route repair (um^2) | Utilisation | Clock buffers (um^2) |
+| --- | --- | --- | --- | --- | --- | --- |
+| t9 | 520 x 664 | 318 286 | 228 322 | 247 076 | 77.63 % | 4 799 |
+| t9c (balance levels) | 520 x 664 | 318 286 | 228 322 | 246 573 | 77.47 % | 5 089 |
+| t9d | 532 x 679 | 333 666 | 228 322 | 247 473 | 74.17 % | 5 334 |
+| t9e (stride 2) | 520 x 664 | 318 286 | 228 322 | 246 513 | 77.45 % | 5 126 |
+| t9f (stride 2) | 532 x 679 | 333 666 | 228 322 | 247 056 | 74.04 % | 5 380 |
+
+The 0.4 ratio placed / synthesis was 1.089; the 0.5 ratio is 1.082 (247 076 / 228 322). The 240 000 um^2 line of D10 is missed by 7 000 um^2 (2.9 %). The core that
+holds 247 000 um^2 at 75 % is 329 400 um^2 or more. **Smallest box tried that reaches <= 75 % at step 41: 532 x 679 um** (+2.3 % in each direction, +4.6 % in area;
+the floorplan margin of the C4 plan is 13 %). Whether it routes is open (runs t9d, t9f). The final placed area adds hold buffers and fill after step 41 (t7: not
+measured at step 41), so 74.2 % may rise by about 0.5 point.
+
+### Pin template (table: `flow/librelane/pins_v06.md`, 127 rows; local frame, chip frame of C4 in the same table)
+
+Origin of the macro in the C4 floorplan: chip (543.8, 673.3) um (S7 rectangles), orientation R0. Slot grids: east and west Metal3, y = 0.42 + 0.84 k; north and
+south Metal2, x = 0.48 + 0.96 k (checked on the t7 DEF: tracks 0.42 / 0.48 um, `min_distance` 0.84 / 0.96 um).
+
+| Nets | Edge | Coordinate (local, um) | Consumer pin |
+| --- | --- | --- | --- |
+| `adc_raw_a[13:0]`, `adc_valid_a`, `adc_raw_b[13:0]`, `adc_valid_b`, `adc_hold`, `adc_start`, `adc_sel`, `is_smp` (34) | south | x 19.68 + 7.68 n, n = 0..33 (to 273.1) | `r1_adc` north edge, slot pins at the same x (the ADC is not laid out) |
+| `gate_a`, `gate_b`, `gate_c` | north | x 13.92, 17.76, 21.60 | `r1_gate_lv` `pwm_a/b/c` (west edge, chip x 441), then the north band |
+| `cs_n` | north | x 376.80 | pad 16 `CS_N` (chip x 921) |
+| `ma_sclk`, `slo_sdo` | north | x 495.84, 508.32 | pads 17, 18 (chip x 1063, 1205: east of the macro, clamped) |
+| `cmp[3:0]` | east | y 0.42 to 2.94 | `r1_safe` `oc_a`, `neg_a`, `oc_b`, `neg_b` (bottom edge) |
+| `tap_p[i]`, `tap_n[i]` (64) | east | y 3.78 to 56.7, 0.84 pitch, ordered by the x of the `r1_safe` top-edge pin | `r1_safe` `oa/na/ob/nb_p/n[j]`, comparator i div 8 |
+| `az_win` | east | y 62.58 | `r1_isense` `az_a`/`azh_a` (the other two by wiring) |
+| `clk`, `osc_trim[4:0]` | east | y 389.34, 394.38 + 0.84 n | `r1_osc` `osc_clk`, `trim0..4` (west edge, revision 2) |
+| `fault_n` | east | y 531.30 | pad 12 `FAULT_N` (chip y 1205) |
+| `t2f_clk`, `t2f_en`, `t2f_mode`, `bias_en` | west | y 6.30, 9.66, 13.86, 18.06 | `r1_t2f` `fout`, `en`, `mode`; bias slot |
+| `sdi`, `en_pad` | west | y 22.26, 25.62 | pads 19, 20 |
+| `pga_c[3:0]` | west | y 29.82 to 41.58 | `r1_ls` to `r1_afe` `c1..c4` |
+| `por_n` | west | y 623.70 | `r1_por` slot (superseded, see open issue 2) |
+
+### Open issues (revision 0.6)
+
+1. **Detailed routing does not converge with the dense east pins.** Both boxes stop at 68 or 69 violations, the number of east `cmp`/`tap` pins (68). Cause not proven (the DRC
+   report is written only at the end of the router). Runs t9e / t9f test 1.68 um pitch. If they fail too, the taps need a different interface (for example pins on two edges).
+2. **A newer template exists.** `../r1_top/reports/integration_checklist_e.md` (try e, written after the S7 study, found only after the template was fixed) fixes the pins that the top
+   level has already routed (north `gate_a` 36.5, `gate_b` 110.9, ..., west `sdi` 27.7, `en_pad` 63.4, south `t2f_clk` 14.9 and the 30 ADC pins at their 0.4 x), puts the taps at
+   y 1.50 + 0.64 k, moves `por_n` to the south edge (x 23.7) and asks for an `adc_clk` output. `pins_v06` follows the S7 text and differs. The 0.64 um pitch is below the
+   0.84 um minimum of the Metal3 track grid (width 0.4 + spacing 0.21 at 0.42 tracks: 0.64 is not a multiple of 0.42 and 0.42 is below the rule). `adc_clk` is a new RTL port (not added: RTL frozen).
+   The two templates must be reconciled before the next run; the generator takes the pin list as data.
+3. The 520 x 664 box does not hold the 0.5 RTL at 75 %. Options: 532 x 679 (needs the C4 neighbours to move by 12 and 15 um; the 13 % margin allows it), or a trim of about 8 000 um^2 in RTL
+   (12-bit PWM words save about 1 000; the tap registers 3 140; not enough alone).
+4. `OSC_TRIM` lock: see status row 12.
+5. All mid-flow fast and slow numbers (setup -14 / -45 ns, 485 fanout violators) are before repair and equal in every run and in t7; they are not results.
+
+### Failures and mistakes (revision 0.6)
+
+| # | What happened | Class | Effect / fix |
+| --- | --- | --- | --- |
+| 1 | The LibreLane file list did not contain `r1_tapidx.v` (new in 0.5); four launches failed in lint at once | regression | list fixed; the four empty run directories removed by absolute path |
+| 2 | The CTS studies `t9a..t9c` were first launched with `R1_CFG_APPEND` and `R1_LL_EXTRA` as host variables; `flow/run.sh` does not pass them into the container, so four identical runs ran for 13 minutes | tooling | stopped by PID, deleted, relaunched with the variables set inside the container |
+| 3 | The template was derived from S7 only. The try-e checklist of the top level (newer, with routed pins) was read after the first harden | coordination | open issue 2; the S7 text was the instruction, the checklist is the later fact |
+| 4 | The east tap pins were set at the minimum pitch (0.84 um) to fit the 61 um `chan_safe`; the router stalls at 68 to 69 violations | planning | strides 2 tried (t9e, t9f); cause unproven |
+| 5 | Planned time: 2 h for the hardening. Each router iteration took 10 to 30 min with 3 to 4 runs on 4 CPUs; run t9 used its 3 h timeout | estimation | the sign-off steps and the SDF simulation could not start |
+| 6 | The first `sta_fanout06.tcl` called `sta::max_fanout_violation_count` before any check and crashed OpenSTA (segmentation fault) | tooling | count taken from the violator report |
+| 7 | `mk_gl_tb.sh` (0.4) cannot compile the 0.5 testbench (38 unbound probes) | verification-gap | `mk_gl_tb_v05.py`; `disc`, `cdc`, `cal` stay not run at gate level |
+| 8 | The mid-flow fast and slow corner values (setup -45 ns) first looked like a timing failure | verification-gap | equal to the t7 values at the same step, not results; true values need a finished run |
 
 ## Revision 0.5 (2026-10-21, ownership gaps of the r1_top assembly, run of record `r1ctrl_20261021_v05c`)
 
