@@ -1,0 +1,457 @@
+* r1_isense loop gain, AZ CLOSED state (az = azh = 1), zero shunt current
+* Generate the `stb` suite decks of r1_isense (T4 follow-up c, 2026-10-21):
+* 
+*   tb_isense_stbpre.cir   AZ sequence on the channel alone; prints HOLDVALS (hold-cap voltages after the auto-zero)
+*   tb_isense_stb.cir      loop gain, NORMAL state (az = azh = 0): hold caps tied at DC to the pre-run values through 1 GH
+*                          (open for AC), five breaks (see LOOPS), three shunt levels (0, +100 mV, -20 mV)
+*   tb_isense_stbaz.cir    loop gain, AZ CLOSED state (az = azh = 1): output breaks and the AZ servo break at the aux-pair gates
+*   tb_isense_stbstep.cir  shunt step 0 -> 100 mV, 10 ns edge, real netlist, same load fixture
+* 
+* Method: Tian double injection, Wiedmann form, as r1_afe (r1_afe/sim/tb_afe_stb.cir, validated on a toy network in
+* r1_afe/sim/tb_stb_toy.cir, relative error 4.7e-8):  T = -1/(1-1/(2*(i1*v2-v1*i2)+v1+i2)),  v = driver-side node
+* voltage, i = probe-source current, run 1 voltage injection, run 2 current injection; DM/CM from (p -/+ n)/2.
+* The probes sit in a deck-local copy of r1_isense_ch (r1_isense_ch_stb) generated from the netlist of record, which is
+* included unchanged; no edit of the record.
+* 
+* Breaks (driver side | load side), all other loops closed:
+*   1 dm_out / 2 cm_out  OTA outputs OUTP/OUTN: output devices XMOx/XMLx + Miller Cc (incl. Rz, stage-1 outputs, folding,
+*                        aux pair, input pair) | RF arms, CMFB sense, pins (2 pF + comparator gates)
+*                        dm_out = main differential loop; cm_out = CM loop incl. the CMFB path and the CM path through
+*                        the input pair and the resistor network (the Nyquist-valid CM loop)
+*   3 cmfb               CMFB path alone (vcms -> gate of XMF1), other loops closed (informational, not a valid Nyquist
+*                        break when the input-pair CM loop is also > 1, as in r1_afe revision C finding 2)
+*   4 dm_in / 5 cm_in    input-pair gates sa/sb (resistor network | gates), cross-check of 1 and 2 (normal state)
+*   6 dm_aux / 7 cm_aux  aux-pair gates (hold node | gates), the AZ servo (AZ closed state)
+* Load fixture = the joint path fixture of r1_safe (tb_safe_joint3.cir): sense outputs drive the thick-PMOS gates of two
+* real r1_safe_cmp (OC and NEG of channel a, code THR = 44 on the string, path-fixture muxes) and 2 pF per output.
+.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerMOSlv.lib @@MOS@@
+.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerMOShv.lib @@MOS@@
+.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerRES.lib @@RES@@
+.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerCAP.lib @@CAP@@
+.temp @@TEMP@@
+.include /work/designs/r1-joint/blocks/r1_isense/schematic/r1_isense.spice
+.include /work/designs/r1-joint/blocks/r1_safe/schematic/r1_safe.spice
+.option gmin=1e-12
+Vdda vdda 0 dc @@VDDA@@
+Vdd vdd 0 dc @@VDD@@
+* IDEAL REFERENCE SOURCES (this step only), as the joint path fixture of r1_safe
+Vref vref 0 dc 1.05
+Vcm vcm 0 dc 0.6
+Iba vdda iba dc {5u*(@@TEMP@@+273.15)/300.15}
+Vaz az 0 dc @@VDD@@
+Vazh azh 0 dc @@VDD@@
+Vnn isn 0 dc 0
+Vin isp isn dc 0
+* loop-gain probe parameters (AC magnitudes; all zero except the break under test)
+.param vo_p=0 vo_n=0 io_p=0 io_n=0 vi_p=0 vi_n=0 ii_p=0 ii_n=0 vc=0 ic=0 va_p=0 va_n=0 ja_p=0 ja_n=0
+.subckt r1_isense_ch_stb isp isn outp outn vref vcm ibias az_lv azh_lv vdda vdd vss
+*.ipin isp isn       shunt Kelvin pins (through the analog pads)
+*.ipin vref         1.05 V reference for the pedestal (buffered; ideal source in this step)
+*.ipin vcm          0.6 V output common mode (from the r1_adc reference; ideal source in this step)
+*.ipin ibias        5 uA bias current sunk into this pin's diode (from r1_bgr; ideal source in this step)
+*.ipin az_lv azh_lv auto-zero phases, 1.2 V logic from r1_ctrl
+*.opin outp outn    differential output to the ADC multiplexer and r1_safe
+* ---- level shifters for the AZ phases
+XLS1 az_lv vdd vdda vss az azb r1_ls
+XLS2 azh_lv vdd vdda vss azh azhb r1_ls
+* ---- resistor network, unit RIN = 4 kOhm (rppd w=2 l=30.8)
+XRIA isp sa vss rppd w=2u l=30.8u m=1 b=0 mm_ok=1
+XRIB isn sb vss rppd w=2u l=30.8u m=1 b=0 mm_ok=1
+* feedback arms: 14 units each (two-terminal multiple: m units in series written out)
+XRFA1 rfoa rfa1 vss rppd w=2u l=30.8u m=1 b=0 mm_ok=1
+XRFA2 rfa1 rfa2 vss rppd w=2u l=30.8u m=1 b=0 mm_ok=1
+XRFA3 rfa2 rfa3 vss rppd w=2u l=30.8u m=1 b=0 mm_ok=1
+XRFA4 rfa3 rfa4 vss rppd w=2u l=30.8u m=1 b=0 mm_ok=1
+XRFA5 rfa4 rfa5 vss rppd w=2u l=30.8u m=1 b=0 mm_ok=1
+XRFA6 rfa5 rfa6 vss rppd w=2u l=30.8u m=1 b=0 mm_ok=1
+XRFA7 rfa6 rfa7 vss rppd w=2u l=30.8u m=1 b=0 mm_ok=1
+XRFA8 rfa7 rfa8 vss rppd w=2u l=30.8u m=1 b=0 mm_ok=1
+XRFA9 rfa8 rfa9 vss rppd w=2u l=30.8u m=1 b=0 mm_ok=1
+XRFA10 rfa9 rfa10 vss rppd w=2u l=30.8u m=1 b=0 mm_ok=1
+XRFA11 rfa10 rfa11 vss rppd w=2u l=30.8u m=1 b=0 mm_ok=1
+XRFA12 rfa11 rfa12 vss rppd w=2u l=30.8u m=1 b=0 mm_ok=1
+XRFA13 rfa12 rfa13 vss rppd w=2u l=30.8u m=1 b=0 mm_ok=1
+XRFA14 rfa13 sa vss rppd w=2u l=30.8u m=1 b=0 mm_ok=1
+XRFB1 rfob rfb1 vss rppd w=2u l=30.8u m=1 b=0 mm_ok=1
+XRFB2 rfb1 rfb2 vss rppd w=2u l=30.8u m=1 b=0 mm_ok=1
+XRFB3 rfb2 rfb3 vss rppd w=2u l=30.8u m=1 b=0 mm_ok=1
+XRFB4 rfb3 rfb4 vss rppd w=2u l=30.8u m=1 b=0 mm_ok=1
+XRFB5 rfb4 rfb5 vss rppd w=2u l=30.8u m=1 b=0 mm_ok=1
+XRFB6 rfb5 rfb6 vss rppd w=2u l=30.8u m=1 b=0 mm_ok=1
+XRFB7 rfb6 rfb7 vss rppd w=2u l=30.8u m=1 b=0 mm_ok=1
+XRFB8 rfb7 rfb8 vss rppd w=2u l=30.8u m=1 b=0 mm_ok=1
+XRFB9 rfb8 rfb9 vss rppd w=2u l=30.8u m=1 b=0 mm_ok=1
+XRFB10 rfb9 rfb10 vss rppd w=2u l=30.8u m=1 b=0 mm_ok=1
+XRFB11 rfb10 rfb11 vss rppd w=2u l=30.8u m=1 b=0 mm_ok=1
+XRFB12 rfb11 rfb12 vss rppd w=2u l=30.8u m=1 b=0 mm_ok=1
+XRFB13 rfb12 rfb13 vss rppd w=2u l=30.8u m=1 b=0 mm_ok=1
+XRFB14 rfb13 sb vss rppd w=2u l=30.8u m=1 b=0 mm_ok=1
+* pedestal: RP = 26 RIN units (104 kOhm) from vref into sb (ISN side), matching RP from sa to vss;
+* VPED = 1.05 V / 26 = 40.38 mV, set by a unit ratio only
+XRPB1 vref rpb1 vss rppd w=2u l=30.8u m=1 b=0 mm_ok=1
+XRPB2 rpb1 rpb2 vss rppd w=2u l=30.8u m=1 b=0 mm_ok=1
+XRPB3 rpb2 rpb3 vss rppd w=2u l=30.8u m=1 b=0 mm_ok=1
+XRPB4 rpb3 rpb4 vss rppd w=2u l=30.8u m=1 b=0 mm_ok=1
+XRPB5 rpb4 rpb5 vss rppd w=2u l=30.8u m=1 b=0 mm_ok=1
+XRPB6 rpb5 rpb6 vss rppd w=2u l=30.8u m=1 b=0 mm_ok=1
+XRPB7 rpb6 rpb7 vss rppd w=2u l=30.8u m=1 b=0 mm_ok=1
+XRPB8 rpb7 rpb8 vss rppd w=2u l=30.8u m=1 b=0 mm_ok=1
+XRPB9 rpb8 rpb9 vss rppd w=2u l=30.8u m=1 b=0 mm_ok=1
+XRPB10 rpb9 rpb10 vss rppd w=2u l=30.8u m=1 b=0 mm_ok=1
+XRPB11 rpb10 rpb11 vss rppd w=2u l=30.8u m=1 b=0 mm_ok=1
+XRPB12 rpb11 rpb12 vss rppd w=2u l=30.8u m=1 b=0 mm_ok=1
+XRPB13 rpb12 rpb13 vss rppd w=2u l=30.8u m=1 b=0 mm_ok=1
+XRPB14 rpb13 rpb14 vss rppd w=2u l=30.8u m=1 b=0 mm_ok=1
+XRPB15 rpb14 rpb15 vss rppd w=2u l=30.8u m=1 b=0 mm_ok=1
+XRPB16 rpb15 rpb16 vss rppd w=2u l=30.8u m=1 b=0 mm_ok=1
+XRPB17 rpb16 rpb17 vss rppd w=2u l=30.8u m=1 b=0 mm_ok=1
+XRPB18 rpb17 rpb18 vss rppd w=2u l=30.8u m=1 b=0 mm_ok=1
+XRPB19 rpb18 rpb19 vss rppd w=2u l=30.8u m=1 b=0 mm_ok=1
+XRPB20 rpb19 rpb20 vss rppd w=2u l=30.8u m=1 b=0 mm_ok=1
+XRPB21 rpb20 rpb21 vss rppd w=2u l=30.8u m=1 b=0 mm_ok=1
+XRPB22 rpb21 rpb22 vss rppd w=2u l=30.8u m=1 b=0 mm_ok=1
+XRPB23 rpb22 rpb23 vss rppd w=2u l=30.8u m=1 b=0 mm_ok=1
+XRPB24 rpb23 rpb24 vss rppd w=2u l=30.8u m=1 b=0 mm_ok=1
+XRPB25 rpb24 rpb25 vss rppd w=2u l=30.8u m=1 b=0 mm_ok=1
+XRPB26 rpb25 rpbs vss rppd w=2u l=30.8u m=1 b=0 mm_ok=1
+XRPA1 vss rpa1 vss rppd w=2u l=30.8u m=1 b=0 mm_ok=1
+XRPA2 rpa1 rpa2 vss rppd w=2u l=30.8u m=1 b=0 mm_ok=1
+XRPA3 rpa2 rpa3 vss rppd w=2u l=30.8u m=1 b=0 mm_ok=1
+XRPA4 rpa3 rpa4 vss rppd w=2u l=30.8u m=1 b=0 mm_ok=1
+XRPA5 rpa4 rpa5 vss rppd w=2u l=30.8u m=1 b=0 mm_ok=1
+XRPA6 rpa5 rpa6 vss rppd w=2u l=30.8u m=1 b=0 mm_ok=1
+XRPA7 rpa6 rpa7 vss rppd w=2u l=30.8u m=1 b=0 mm_ok=1
+XRPA8 rpa7 rpa8 vss rppd w=2u l=30.8u m=1 b=0 mm_ok=1
+XRPA9 rpa8 rpa9 vss rppd w=2u l=30.8u m=1 b=0 mm_ok=1
+XRPA10 rpa9 rpa10 vss rppd w=2u l=30.8u m=1 b=0 mm_ok=1
+XRPA11 rpa10 rpa11 vss rppd w=2u l=30.8u m=1 b=0 mm_ok=1
+XRPA12 rpa11 rpa12 vss rppd w=2u l=30.8u m=1 b=0 mm_ok=1
+XRPA13 rpa12 rpa13 vss rppd w=2u l=30.8u m=1 b=0 mm_ok=1
+XRPA14 rpa13 rpa14 vss rppd w=2u l=30.8u m=1 b=0 mm_ok=1
+XRPA15 rpa14 rpa15 vss rppd w=2u l=30.8u m=1 b=0 mm_ok=1
+XRPA16 rpa15 rpa16 vss rppd w=2u l=30.8u m=1 b=0 mm_ok=1
+XRPA17 rpa16 rpa17 vss rppd w=2u l=30.8u m=1 b=0 mm_ok=1
+XRPA18 rpa17 rpa18 vss rppd w=2u l=30.8u m=1 b=0 mm_ok=1
+XRPA19 rpa18 rpa19 vss rppd w=2u l=30.8u m=1 b=0 mm_ok=1
+XRPA20 rpa19 rpa20 vss rppd w=2u l=30.8u m=1 b=0 mm_ok=1
+XRPA21 rpa20 rpa21 vss rppd w=2u l=30.8u m=1 b=0 mm_ok=1
+XRPA22 rpa21 rpa22 vss rppd w=2u l=30.8u m=1 b=0 mm_ok=1
+XRPA23 rpa22 rpa23 vss rppd w=2u l=30.8u m=1 b=0 mm_ok=1
+XRPA24 rpa23 rpa24 vss rppd w=2u l=30.8u m=1 b=0 mm_ok=1
+XRPA25 rpa24 rpa25 vss rppd w=2u l=30.8u m=1 b=0 mm_ok=1
+XRPA26 rpa25 rpas vss rppd w=2u l=30.8u m=1 b=0 mm_ok=1
+* pedestal switches (on in normal mode, open during AZ), at the summing-node end (source near 0 V, matched Vgs)
+XSPB rpbs azb sb vss sg13_hv_nmos w=10u l=0.45u ng=1 m=1 mm_ok=1
+XSPA rpas azb sa vss sg13_hv_nmos w=10u l=0.45u ng=1 m=1 mm_ok=1
+* ---- bias (unit NMOS nu = w4/l1 at 5 uA, unit PMOS pu = w4/l2 at 5 uA)
+XMBN ibias ibias vss vss sg13_hv_nmos w=4u l=1u ng=1 m=1 mm_ok=1
+XMB2 vbp ibias vss vss sg13_hv_nmos w=4u l=1u ng=1 m=2 mm_ok=1
+XMBP vbp vbp vdda vdda sg13_hv_pmos w=4u l=2u ng=1 m=2 mm_ok=1
+XMB3 vbpc ibias vss vss sg13_hv_nmos w=4u l=1u ng=1 m=1 mm_ok=1
+XMBPC vbpc vbpc vdda vdda sg13_hv_pmos w=0.5u l=3u ng=1 m=1 mm_ok=1
+XMB4 vbnc vbp vdda vdda sg13_hv_pmos w=4u l=2u ng=1 m=1 mm_ok=1
+XMBNC vbnc vbnc vss vss sg13_hv_nmos w=1u l=3u ng=1 m=1 mm_ok=1
+XMB5 vbl ibias vss vss sg13_hv_nmos w=4u l=1u ng=1 m=4 mm_ok=1
+XMB6 vbf vbp vdda vdda sg13_hv_pmos w=4u l=2u ng=1 m=1 mm_ok=1
+XMBF vbf vbf vss vss sg13_hv_nmos w=8u l=2u ng=1 m=1 mm_ok=1
+XMBL vbl vbl vdd vdd sg13_lv_pmos w=4u l=0.25u ng=1 m=1 mm_ok=1
+* ---- stage 1: input pair, tail 40 uA
+XMT tail vbp vdda vdda sg13_hv_pmos w=4u l=2u ng=1 m=8 mm_ok=1
+XM1 f1 sai tail tail sg13_hv_pmos w=40u l=1u ng=8 m=1 mm_ok=1
+XM2 f2 sbi tail tail sg13_hv_pmos w=40u l=1u ng=8 m=1 mm_ok=1
+* auxiliary (AZ) pair, tail 10 uA
+XMTA atail vbp vdda vdda sg13_hv_pmos w=4u l=2u ng=1 m=2 mm_ok=1
+XA1 f1 h1g atail atail sg13_hv_pmos w=8u l=4u ng=1 m=1 mm_ok=1
+XA2 f2 h2g atail atail sg13_hv_pmos w=8u l=4u ng=1 m=1 mm_ok=1
+* folding sinks per side: 35 uA fixed (7 units), mirrored from a PMOS-fed diode (vbf), so they track the PMOS currents,
+* + 2/3 x the CMFB diode current (nominal 10 uA at balance, range 0..20 uA). Required 45 uA = 20 (pair) + 5 (aux) + 20 (load).
+* The small CMFB share keeps the CM loop crossover below the second-stage pole (a 8/3 share oscillated at 46 MHz).
+* Sink mirrors use L = 2 um to limit channel-length modulation at the low fold-node voltage.
+XMS1 f1 vbf vss vss sg13_hv_nmos w=8u l=2u ng=1 m=7 mm_ok=1
+XMC1S f1 vcmfb vss vss sg13_hv_nmos w=8u l=2u ng=1 m=2 mm_ok=1
+XMS2 f2 vbf vss vss sg13_hv_nmos w=8u l=2u ng=1 m=7 mm_ok=1
+XMC2S f2 vcmfb vss vss sg13_hv_nmos w=8u l=2u ng=1 m=2 mm_ok=1
+* NMOS cascodes
+XMN1 x1a vbnc f1 vss sg13_hv_nmos w=40u l=2u ng=4 m=1 mm_ok=1
+XMN2 x1b vbnc f2 vss sg13_hv_nmos w=40u l=2u ng=4 m=1 mm_ok=1
+* PMOS cascoded loads, 20 uA
+XMP1 p1 vbp vdda vdda sg13_hv_pmos w=4u l=2u ng=1 m=4 mm_ok=1
+XMP2 p2 vbp vdda vdda sg13_hv_pmos w=4u l=2u ng=1 m=4 mm_ok=1
+XMPC1 x1a vbpc p1 vdda sg13_hv_pmos w=16u l=2u ng=2 m=1 mm_ok=1
+XMPC2 x1b vbpc p2 vdda sg13_hv_pmos w=16u l=2u ng=2 m=1 mm_ok=1
+* ---- stage 2 on VDD: thick NMOS driver, thin PMOS load
+XMOA outpi x1a vss vss sg13_hv_nmos w=16u l=0.5u ng=4 m=1 mm_ok=1
+XMOB outni x1b vss vss sg13_hv_nmos w=16u l=0.5u ng=4 m=1 mm_ok=1
+XMLA outpi vbl vdd vdd sg13_lv_pmos w=40u l=0.25u ng=4 m=1 mm_ok=1
+XMLB outni vbl vdd vdd sg13_lv_pmos w=40u l=0.25u ng=4 m=1 mm_ok=1
+* Miller compensation with nulling resistor
+XRZA x1a cza vss rppd w=1u l=3.6u m=1 b=0 mm_ok=1
+XCCA cza outpi cap_cmim w=12u l=12u m=1 mm_ok=1
+XRZB x1b czb vss rppd w=1u l=3.6u m=1 b=0 mm_ok=1
+XCCB czb outni cap_cmim w=12u l=12u m=1 mm_ok=1
+* ---- CMFB: rhigh sense 2 x 200 k with 0.1 pF bypass, thick PMOS pair, tail 30 uA
+XRCA outp vcms vss rhigh w=1u l=150u m=1 b=0 mm_ok=1
+XRCB outn vcms vss rhigh w=1u l=150u m=1 b=0 mm_ok=1
+XCMA outp vcms cap_cmim w=8u l=8u m=1 mm_ok=1
+XCMB outn vcms cap_cmim w=8u l=8u m=1 mm_ok=1
+XMTC ctail vbp vdda vdda sg13_hv_pmos w=4u l=2u ng=1 m=6 mm_ok=1
+XMF1 vcmfb vcmsy ctail ctail sg13_hv_pmos w=24u l=1u ng=4 m=1 mm_ok=1
+XMF2 vcmd vcm ctail ctail sg13_hv_pmos w=24u l=1u ng=4 m=1 mm_ok=1
+XMFD vcmfb vcmfb vss vss sg13_hv_nmos w=8u l=2u ng=1 m=3 mm_ok=1
+XMFE vcmd vcmd vss vss sg13_hv_nmos w=8u l=2u ng=1 m=3 mm_ok=1
+* ---- auto-zero: hold switches and caps
+XSH1 h1 azh x1a vss sg13_hv_nmos w=1u l=0.45u ng=1 m=1 mm_ok=1
+XSH2 h2 azh x1b vss sg13_hv_nmos w=1u l=0.45u ng=1 m=1 mm_ok=1
+XCH1 h1 vss cap_cmim w=26u l=26u m=1 mm_ok=1
+XCH2 h2 vss cap_cmim w=26u l=26u m=1 mm_ok=1
+* RF arm output ends: connected to the outputs in normal mode, to VCM during AZ (network sees Vod = 0 exactly)
+XSFA outn azb rfoa vss sg13_hv_nmos w=40u l=0.45u ng=4 m=1 mm_ok=1
+XSFB outp azb rfob vss sg13_hv_nmos w=40u l=0.45u ng=4 m=1 mm_ok=1
+XSVA rfoa az vcm vss sg13_hv_nmos w=4u l=0.45u ng=1 m=1 mm_ok=1
+XSVB rfob az vcm vss sg13_hv_nmos w=4u l=0.45u ng=1 m=1 mm_ok=1
+* ---- loop-gain probes (test only; Tian double injection). Driver-side node carries the + terminal and the current injection
+Vpop outpi outp dc 0 ac {vo_p}
+Vpon outni outn dc 0 ac {vo_n}
+Ipop 0 outpi dc 0 ac {io_p}
+Ipon 0 outni dc 0 ac {io_n}
+Vpsa sa sai dc 0 ac {vi_p}
+Vpsb sb sbi dc 0 ac {vi_n}
+Ipsa 0 sa dc 0 ac {ii_p}
+Ipsb 0 sb dc 0 ac {ii_n}
+Vpc vcms vcmsy dc 0 ac {vc}
+Ipc 0 vcms dc 0 ac {ic}
+Vpq1 h1 h1g dc 0 ac {va_p}
+Vpq2 h2 h2g dc 0 ac {va_n}
+Ipq1 0 h1 dc 0 ac {ja_p}
+Ipq2 0 h2 dc 0 ac {ja_n}
+.ends r1_isense_ch_stb
+XA isp isn outa_p outa_n vref vcm iba az azh vdda vdd 0 r1_isense_ch_stb
+* ---- r1_safe load of channel a: string, conducting mux paths (path fixture), OC and NEG comparators, code 44, k = 32
+Ioa vdda ibias_oa dc {5u*(@@TEMP@@+273.15)/300.15}
+Ina vdda ibias_na dc {5u*(@@TEMP@@+273.15)/300.15}
+Cba ibias_oa 0 100f
+Cbb ibias_na 0 100f
+XSTR vref t0 t1 t2 t3 t4 t5 t6 t7 t8 t9 t10 t11 t12 t13 t14 t15 t16 t17 t18 t19 t20 t21 t22 t23 t24 t25 t26 t27 t28 t29 t30 t31 t32 t33 t34 t35 t36 t37 t38 t39 t40 t41 t42 t43 t44 t45 t46 t47 t48 t49 t50 t51 t52 t53 t54 t55 t56 t57 t58 t59 t60 t61 t62 t63 t64 t65 t66 t67 t68 t69 t70 t71 t72 t73 t74 t75 t76 t77 t78 t79 t80 t81 t82 t83 t84 t85 t86 t87 t88 t89 t90 t91 t92 t93 t94 t95 t96 t97 t98 t99 t100 t101 t102 t103 t104 t105 t106 t107 t108 t109 t110 t111 t112 t113 t114 t115 t116 t117 t118 t119 t120 t121 t122 t123 t124 t125 t126 t127 t128 t129 t130 t131 t132 t133 t134 t135 t136 t137 t138 t139 t140 t141 t142 t143 t144 t145 t146 t147 t148 t149 t150 t151 t152 t153 t154 t155 t156 t157 t158 t159 t160 t161 t162 t163 t164 t165 t166 t167 t168 t169 t170 t171 t172 t173 t174 t175 t176 t177 t178 t179 t180 t181 t182 t183 t184 t185 t186 t187 t188 t189 t190 t191 t192 t193 t194 t195 t196 t197 t198 t199 t200 t201 t202 t203 t204 t205 t206 t207 t208 t209 t210 t211 t212 t213 t214 t215 t216 t217 t218 t219 t220 t221 t222 t223 t224 t225 t226 t227 t228 t229 t230 t231 t232 t233 t234 t235 t236 t237 t238 t239 t240 t241 t242 t243 t244 t245 t246 t247 t248 t249 t250 t251 t252 0 r1_safe_string
+* oa: cell code 44: REFP = T176, REFN = T76
+Xmpoa_on0 t176 vdda mpoa_l0 0 sg13_hv_nmos w=0.5u l=0.45u ng=1 m=1 mm_ok=1
+Xmpoa_off0 t177 0 mpoa_l0 0 sg13_hv_nmos w=0.5u l=0.45u ng=1 m=1 mm_ok=1
+Xmpoa_on1 mpoa_l0 vdda mpoa_l1 0 sg13_hv_nmos w=0.5u l=0.45u ng=1 m=1 mm_ok=1
+Xmpoa_off1 t178 0 mpoa_l1 0 sg13_hv_nmos w=0.5u l=0.45u ng=1 m=1 mm_ok=1
+Xmpoa_on2 mpoa_l1 vdda mpoa_l2 0 sg13_hv_nmos w=0.5u l=0.45u ng=1 m=1 mm_ok=1
+Xmpoa_off2 t180 0 mpoa_l2 0 sg13_hv_nmos w=0.5u l=0.45u ng=1 m=1 mm_ok=1
+Xmpoa_on3 mpoa_l2 vdda mpoa_l3 0 sg13_hv_nmos w=0.5u l=0.45u ng=1 m=1 mm_ok=1
+Xmpoa_off3 t184 0 mpoa_l3 0 sg13_hv_nmos w=0.5u l=0.45u ng=1 m=1 mm_ok=1
+Xmpoa_on4 mpoa_l3 vdda mpoa_l4 0 sg13_hv_nmos w=0.5u l=0.45u ng=1 m=1 mm_ok=1
+Xmpoa_off4 t160 0 mpoa_l4 0 sg13_hv_nmos w=0.5u l=0.45u ng=1 m=1 mm_ok=1
+Xmpoa_on5 mpoa_l4 vdda mpoa_l5 0 sg13_hv_nmos w=0.5u l=0.45u ng=1 m=1 mm_ok=1
+Xmpoa_off5 t144 0 mpoa_l5 0 sg13_hv_nmos w=0.5u l=0.45u ng=1 m=1 mm_ok=1
+Xmpoa_on6 mpoa_l5 vdda mpoa_l6 0 sg13_hv_nmos w=0.5u l=0.45u ng=1 m=1 mm_ok=1
+Xmpoa_off6 t240 0 mpoa_l6 0 sg13_hv_nmos w=0.5u l=0.45u ng=1 m=1 mm_ok=1
+Xmpoa_on7 mpoa_l6 vdda refp_oa 0 sg13_hv_nmos w=0.5u l=0.45u ng=1 m=1 mm_ok=1
+Xmpoa_off7 t48 0 refp_oa 0 sg13_hv_nmos w=0.5u l=0.45u ng=1 m=1 mm_ok=1
+Xmnoa_on0 t76 vdda mnoa_l0 0 sg13_hv_nmos w=0.5u l=0.45u ng=1 m=1 mm_ok=1
+Xmnoa_off0 t77 0 mnoa_l0 0 sg13_hv_nmos w=0.5u l=0.45u ng=1 m=1 mm_ok=1
+Xmnoa_on1 mnoa_l0 vdda mnoa_l1 0 sg13_hv_nmos w=0.5u l=0.45u ng=1 m=1 mm_ok=1
+Xmnoa_off1 t78 0 mnoa_l1 0 sg13_hv_nmos w=0.5u l=0.45u ng=1 m=1 mm_ok=1
+Xmnoa_on2 mnoa_l1 vdda mnoa_l2 0 sg13_hv_nmos w=0.5u l=0.45u ng=1 m=1 mm_ok=1
+Xmnoa_off2 t72 0 mnoa_l2 0 sg13_hv_nmos w=0.5u l=0.45u ng=1 m=1 mm_ok=1
+Xmnoa_on3 mnoa_l2 vdda mnoa_l3 0 sg13_hv_nmos w=0.5u l=0.45u ng=1 m=1 mm_ok=1
+Xmnoa_off3 t68 0 mnoa_l3 0 sg13_hv_nmos w=0.5u l=0.45u ng=1 m=1 mm_ok=1
+Xmnoa_on4 mnoa_l3 vdda mnoa_l4 0 sg13_hv_nmos w=0.5u l=0.45u ng=1 m=1 mm_ok=1
+Xmnoa_off4 t92 0 mnoa_l4 0 sg13_hv_nmos w=0.5u l=0.45u ng=1 m=1 mm_ok=1
+Xmnoa_on5 mnoa_l4 vdda mnoa_l5 0 sg13_hv_nmos w=0.5u l=0.45u ng=1 m=1 mm_ok=1
+Xmnoa_off5 t108 0 mnoa_l5 0 sg13_hv_nmos w=0.5u l=0.45u ng=1 m=1 mm_ok=1
+Xmnoa_on6 mnoa_l5 vdda mnoa_l6 0 sg13_hv_nmos w=0.5u l=0.45u ng=1 m=1 mm_ok=1
+Xmnoa_off6 t12 0 mnoa_l6 0 sg13_hv_nmos w=0.5u l=0.45u ng=1 m=1 mm_ok=1
+Xmnoa_on7 mnoa_l6 vdda refn_oa 0 sg13_hv_nmos w=0.5u l=0.45u ng=1 m=1 mm_ok=1
+Xmnoa_off7 t204 0 refn_oa 0 sg13_hv_nmos w=0.5u l=0.45u ng=1 m=1 mm_ok=1
+XOA outa_p outa_n refp_oa refn_oa oc_a ibias_oa vdda vdd 0 r1_safe_cmp
+* na: cell code 19: REFP = T76, REFN = T176
+Xmpna_on0 t76 vdda mpna_l0 0 sg13_hv_nmos w=0.5u l=0.45u ng=1 m=1 mm_ok=1
+Xmpna_off0 t77 0 mpna_l0 0 sg13_hv_nmos w=0.5u l=0.45u ng=1 m=1 mm_ok=1
+Xmpna_on1 mpna_l0 vdda mpna_l1 0 sg13_hv_nmos w=0.5u l=0.45u ng=1 m=1 mm_ok=1
+Xmpna_off1 t78 0 mpna_l1 0 sg13_hv_nmos w=0.5u l=0.45u ng=1 m=1 mm_ok=1
+Xmpna_on2 mpna_l1 vdda mpna_l2 0 sg13_hv_nmos w=0.5u l=0.45u ng=1 m=1 mm_ok=1
+Xmpna_off2 t72 0 mpna_l2 0 sg13_hv_nmos w=0.5u l=0.45u ng=1 m=1 mm_ok=1
+Xmpna_on3 mpna_l2 vdda mpna_l3 0 sg13_hv_nmos w=0.5u l=0.45u ng=1 m=1 mm_ok=1
+Xmpna_off3 t68 0 mpna_l3 0 sg13_hv_nmos w=0.5u l=0.45u ng=1 m=1 mm_ok=1
+Xmpna_on4 mpna_l3 vdda mpna_l4 0 sg13_hv_nmos w=0.5u l=0.45u ng=1 m=1 mm_ok=1
+Xmpna_off4 t92 0 mpna_l4 0 sg13_hv_nmos w=0.5u l=0.45u ng=1 m=1 mm_ok=1
+Xmpna_on5 mpna_l4 vdda mpna_l5 0 sg13_hv_nmos w=0.5u l=0.45u ng=1 m=1 mm_ok=1
+Xmpna_off5 t108 0 mpna_l5 0 sg13_hv_nmos w=0.5u l=0.45u ng=1 m=1 mm_ok=1
+Xmpna_on6 mpna_l5 vdda mpna_l6 0 sg13_hv_nmos w=0.5u l=0.45u ng=1 m=1 mm_ok=1
+Xmpna_off6 t12 0 mpna_l6 0 sg13_hv_nmos w=0.5u l=0.45u ng=1 m=1 mm_ok=1
+Xmpna_on7 mpna_l6 vdda refp_na 0 sg13_hv_nmos w=0.5u l=0.45u ng=1 m=1 mm_ok=1
+Xmpna_off7 t204 0 refp_na 0 sg13_hv_nmos w=0.5u l=0.45u ng=1 m=1 mm_ok=1
+Xmnna_on0 t176 vdda mnna_l0 0 sg13_hv_nmos w=0.5u l=0.45u ng=1 m=1 mm_ok=1
+Xmnna_off0 t177 0 mnna_l0 0 sg13_hv_nmos w=0.5u l=0.45u ng=1 m=1 mm_ok=1
+Xmnna_on1 mnna_l0 vdda mnna_l1 0 sg13_hv_nmos w=0.5u l=0.45u ng=1 m=1 mm_ok=1
+Xmnna_off1 t178 0 mnna_l1 0 sg13_hv_nmos w=0.5u l=0.45u ng=1 m=1 mm_ok=1
+Xmnna_on2 mnna_l1 vdda mnna_l2 0 sg13_hv_nmos w=0.5u l=0.45u ng=1 m=1 mm_ok=1
+Xmnna_off2 t180 0 mnna_l2 0 sg13_hv_nmos w=0.5u l=0.45u ng=1 m=1 mm_ok=1
+Xmnna_on3 mnna_l2 vdda mnna_l3 0 sg13_hv_nmos w=0.5u l=0.45u ng=1 m=1 mm_ok=1
+Xmnna_off3 t184 0 mnna_l3 0 sg13_hv_nmos w=0.5u l=0.45u ng=1 m=1 mm_ok=1
+Xmnna_on4 mnna_l3 vdda mnna_l4 0 sg13_hv_nmos w=0.5u l=0.45u ng=1 m=1 mm_ok=1
+Xmnna_off4 t160 0 mnna_l4 0 sg13_hv_nmos w=0.5u l=0.45u ng=1 m=1 mm_ok=1
+Xmnna_on5 mnna_l4 vdda mnna_l5 0 sg13_hv_nmos w=0.5u l=0.45u ng=1 m=1 mm_ok=1
+Xmnna_off5 t144 0 mnna_l5 0 sg13_hv_nmos w=0.5u l=0.45u ng=1 m=1 mm_ok=1
+Xmnna_on6 mnna_l5 vdda mnna_l6 0 sg13_hv_nmos w=0.5u l=0.45u ng=1 m=1 mm_ok=1
+Xmnna_off6 t240 0 mnna_l6 0 sg13_hv_nmos w=0.5u l=0.45u ng=1 m=1 mm_ok=1
+Xmnna_on7 mnna_l6 vdda refn_na 0 sg13_hv_nmos w=0.5u l=0.45u ng=1 m=1 mm_ok=1
+Xmnna_off7 t48 0 refn_na 0 sg13_hv_nmos w=0.5u l=0.45u ng=1 m=1 mm_ok=1
+XNA outa_n outa_p refp_na refn_na neg_a ibias_na vdda vdd 0 r1_safe_cmp
+CL1 oc_a 0 10f
+CL2 neg_a 0 10f
+* ADC input load per output: series @@RL@@ ohm + @@CL@@ to ground + @@CW@@ wiring (joint fixture: 0.001 ohm, 2p, 0)
+Rld1 outa_p ldp @@RL@@
+Cld1 ldp 0 @@CL@@
+Rld2 outa_n ldn @@RL@@
+Cld2 ldn 0 @@CL@@
+Cw1 outa_p 0 @@CW@@
+Cw2 outa_n 0 @@CW@@
+.control
+let li = 0
+foreach vs 0
+  foreach lp 1 2 3 6 7
+    if $lp = 1
+      alterparam vo_p=1
+      alterparam vo_n=-1
+    end
+    if $lp = 2
+      alterparam vo_p=1
+      alterparam vo_n=1
+    end
+    if $lp = 3
+      alterparam vc=1
+    end
+    if $lp = 4
+      alterparam vi_p=1
+      alterparam vi_n=-1
+    end
+    if $lp = 5
+      alterparam vi_p=1
+      alterparam vi_n=1
+    end
+    if $lp = 6
+      alterparam va_p=1
+      alterparam va_n=-1
+    end
+    if $lp = 7
+      alterparam va_p=1
+      alterparam va_n=1
+    end
+    reset
+    alter vin dc = $vs
+    ac dec 20 100 1g
+    alterparam vo_p=0
+    alterparam vo_n=0
+    alterparam io_p=0
+    alterparam io_n=0
+    alterparam vi_p=0
+    alterparam vi_n=0
+    alterparam ii_p=0
+    alterparam ii_n=0
+    alterparam vc=0
+    alterparam ic=0
+    alterparam va_p=0
+    alterparam va_n=0
+    alterparam ja_p=0
+    alterparam ja_n=0
+    if $lp = 1
+      alterparam io_p=1
+      alterparam io_n=-1
+    end
+    if $lp = 2
+      alterparam io_p=1
+      alterparam io_n=1
+    end
+    if $lp = 3
+      alterparam ic=1
+    end
+    if $lp = 4
+      alterparam ii_p=1
+      alterparam ii_n=-1
+    end
+    if $lp = 5
+      alterparam ii_p=1
+      alterparam ii_n=1
+    end
+    if $lp = 6
+      alterparam ja_p=1
+      alterparam ja_n=-1
+    end
+    if $lp = 7
+      alterparam ja_p=1
+      alterparam ja_n=1
+    end
+    reset
+    alter vin dc = $vs
+    ac dec 20 100 1g
+    alterparam vo_p=0
+    alterparam vo_n=0
+    alterparam io_p=0
+    alterparam io_n=0
+    alterparam vi_p=0
+    alterparam vi_n=0
+    alterparam ii_p=0
+    alterparam ii_n=0
+    alterparam vc=0
+    alterparam ic=0
+    alterparam va_p=0
+    alterparam va_n=0
+    alterparam ja_p=0
+    alterparam ja_n=0
+    if $lp = 1
+      let v1 = (ac1.v(xa.outpi)-ac1.v(xa.outni))/2
+      let i1 = (ac1.i(v.xa.vpop)-ac1.i(v.xa.vpon))/2
+      let v2 = (ac2.v(xa.outpi)-ac2.v(xa.outni))/2
+      let i2 = (ac2.i(v.xa.vpop)-ac2.i(v.xa.vpon))/2
+    end
+    if $lp = 2
+      let v1 = (ac1.v(xa.outpi)+ac1.v(xa.outni))/2
+      let i1 = (ac1.i(v.xa.vpop)+ac1.i(v.xa.vpon))/2
+      let v2 = (ac2.v(xa.outpi)+ac2.v(xa.outni))/2
+      let i2 = (ac2.i(v.xa.vpop)+ac2.i(v.xa.vpon))/2
+    end
+    if $lp = 3
+      let v1 = ac1.v(xa.vcms)
+      let i1 = ac1.i(v.xa.vpc)
+      let v2 = ac2.v(xa.vcms)
+      let i2 = ac2.i(v.xa.vpc)
+    end
+    if $lp = 4
+      let v1 = (ac1.v(xa.sa)-ac1.v(xa.sb))/2
+      let i1 = (ac1.i(v.xa.vpsa)-ac1.i(v.xa.vpsb))/2
+      let v2 = (ac2.v(xa.sa)-ac2.v(xa.sb))/2
+      let i2 = (ac2.i(v.xa.vpsa)-ac2.i(v.xa.vpsb))/2
+    end
+    if $lp = 5
+      let v1 = (ac1.v(xa.sa)+ac1.v(xa.sb))/2
+      let i1 = (ac1.i(v.xa.vpsa)+ac1.i(v.xa.vpsb))/2
+      let v2 = (ac2.v(xa.sa)+ac2.v(xa.sb))/2
+      let i2 = (ac2.i(v.xa.vpsa)+ac2.i(v.xa.vpsb))/2
+    end
+    if $lp = 6
+      let v1 = (ac1.v(xa.h1)-ac1.v(xa.h2))/2
+      let i1 = (ac1.i(v.xa.vpq1)-ac1.i(v.xa.vpq2))/2
+      let v2 = (ac2.v(xa.h1)-ac2.v(xa.h2))/2
+      let i2 = (ac2.i(v.xa.vpq1)-ac2.i(v.xa.vpq2))/2
+    end
+    if $lp = 7
+      let v1 = (ac1.v(xa.h1)+ac1.v(xa.h2))/2
+      let i1 = (ac1.i(v.xa.vpq1)+ac1.i(v.xa.vpq2))/2
+      let v2 = (ac2.v(xa.h1)+ac2.v(xa.h2))/2
+      let i2 = (ac2.i(v.xa.vpq1)+ac2.i(v.xa.vpq2))/2
+    end
+    let tl = -1/(1-1/(2*(i1*v2-v1*i2)+v1+i2))
+    let tdb = db(tl)
+    let tph = 180/pi*cph(tl)
+    let fid = 10*li + $lp
+    wrdata @@OUT@@_t$&fid tdb tph
+    echo "STBFILE level=$vs loop=$lp"
+    destroy all
+  end
+  let li = li + 1
+end
+.endc
+.end

@@ -80,9 +80,12 @@ threshold (hysteresis-centre) error ≤ 0.25 LSB after calibration in ≥ 50/51 
 | Delay from the shunt step through r1_isense, 10 % overdrive (code 44), tt / ss_cold / ff_hot | **passed** (< 300 ns): OC trip 139 / 156 / 130 ns, NEG release 110 / 125 / 104 ns; back to zero current: OC release and NEG trip 24–28 ns | `sim/results/safe-joint-20261020-r3b/` |
 | Static supply current, tt / ss / ff | run (report): IDDA 418 / 368 / 361 µA (four comparators incl. 4 × 5 µA bias), IDD < 0.02 µA, VREF load 4.0 / 3.6 / 4.6 µA | `sim/results/safe-op-20261020-r3/` |
 | Hysteresis | run (report): 6.5–12.0 mV Vod nominal over 5 corners (0.2–0.36 LSB) | `sim/results/safe-dccorner-20261020-r3/` |
+| Hysteresis in calibration steps (1 step = VREF/252 = 4.167 mV Vod = LSB/8), DC sweep of the comparator alone, 0.5 mV resolution (0.12 step) | run (report), trip minus release: **tt 1.94 steps** (nominal 8.1 mV; MC 51 draws mean 1.97, σ 0.10, range 1.68–2.28), **ss 125 °C 2.79 steps** (nominal 11.6 mV; MC 12 draws mean 2.80, σ 0.10, range 2.52–3.00), **ff −40 °C 1.56 steps** (nominal 6.5 mV; MC 12 draws mean 1.51, σ 0.11, range 1.32–1.68); ss −40 °C 1.77, ff 125 °C 2.22 (nominal). The values at the two calibration points (−0.5654 V / +0.5654 V) differ from the all-threshold mean by ≤ 0.1 step. The two-sided average does not depend on the hysteresis (centre = (trip + release)/2); only the integer quantisation of k_rel and k_trip enters. Model of the r1_ctrl 0.3 search with this hysteresis: stored code minus exact code lies in −0.66…+0.34 (OC, tt), −0.29…+0.71 (OC, ss), −0.47…+0.53 (OC, ff) steps, NEG mirrored; **worst ≤ 0.71 step = 0.089 LSB for 1.3–2.9 steps (≤ 0.81 step for 1–3.5)**. Of this, 0.31 (OC) / 0.19 (NEG) step is the constant bias from the half-code IDEAL (72 / 55 against 72.62 / 55.38) | `sim/results/safe-hyst-steps-20261021-r1/` from `safe-dcmc-20261020-r3rppd`, `safe-dccorner-20261020-r3`, `safe-hyst-20261021-r1` |
+| Mismatch MC at ss 125 °C (12 draws, seed 4) and ff −40 °C (12 draws, seed 5), comparator alone, DC, modelled calibration (`cal_model.py`), 0.25 LSB criterion | **failed at ss, passed at ff** (small samples, report): ss OC 10/12 within 0.25 LSB, worst 0.274 LSB (draw 4_004); ss NEG 12/12, worst 0.108 LSB (0.214 over all codes); ff OC 12/12 worst 0.108 LSB, NEG 12/12 worst 0.047 LSB; raw worst 0.65 LSB (ss), 0.35 LSB (ff); no draw outside the calibration range (shift −0.62…+0.38 LSB). This is the ss systematic gain error of open issue 3 plus mismatch. Full-path MC at ss / ff: **not run** | `sim/results/safe-hyst-20261021-r1/`, `sim/results/cal-model-hyst-20261021-r1/` |
+| Comparator input load on r1_isense stability (OC and NEG comparator gates of one channel in the loop-gain fixture) | **passed** (effect small): the differential loop margin of r1_isense is 72–79° with the comparators; moving them to the calibration point changes PM by ≤ 0.3°. The comparator gates are not the cause of the r1_isense CM-loop failure (see the r1_isense README) | `r1_isense/sim/results/isense-stb-20261021-r1/`, `isense-stb-c14-20261021-r1/` |
 | Threshold vs code transient deck at 5 corners with the full netlist (`tb_safe_cmp3.cir`, generated) | **not run**: CPU budget (the full 256:1 muxes run at about 55 s per simulated µs); replaced by the DC corner deck (threshold vs code) and the joint deck (delay, path fixture) | — |
 | Joint path with the full 256:1 mux netlist | **not run** (`dev-joint3-fullmux` stopped at 0.6 µs: about 8 min per simulated µs); the path fixture is used | — |
-| Mismatch MC at ss / ff (comparator or full path) | **not run** | — |
+| Mismatch MC at ss / ff, full path (isense + comparators, transient) | **not run** (the DC comparator MC at ss / ff is run, see above) | — |
 | Calibration search with the full 256:1 mux netlist and code-change transients | **not run** at sample level (`dev-mc3-smoke-fullmux` stopped, too slow); the MC uses ideal tap switches | — |
 | Real VREF buffer, real bias, digital summing logic and calibration FSM (gate level) | **not run** (ideal sources; summing and search modelled) | — |
 | Layout, DRC, LVS, PEX | **not run** | — |
@@ -93,6 +96,27 @@ The muxes carry no DC current into the comparator gates, so they add no mismatch
 deck (full netlist). The full-mux version ran at about 55 s per simulated µs (`dev-mc3-smoke-fullmux`, stopped).
 The mean centre error in the MC (+67 µV OC, +70 µV NEG, shunt) agrees with the ramp lag of the measurement
 (ramp 1.33 mV/µs × (trip delay − release delay)/2 ≈ 67 µV). It is not corrected.
+
+## Calibration contract with r1_ctrl 0.3
+
+Closed by r1_ctrl 0.3 (2026-10-20); the open mismatch of INTERFACES.md between this README and `r1_ctrl` revision 0.2 is gone.
+
+- Search (r1_ctrl, `rtl/r1_cmpcal.v`): `AZ_CFG.THR_ZERO` = 14 on all four comparators (OC cell code 14, NEG cell code 49, i.e.
+  `thr_neg` = 14), zero shunt current, gates off, after `az_win`. Release pass: preset code 0, ascending SAR, `k_rel` = first
+  code at which the output falls. Trip pass: preset code 63, `k_trip` = first code at which it rises. 14 PWM periods per search.
+- Contract formula (this README): `k_cal = 32 + round((k_rel + k_trip)/2 − k_ideal)`, `k_ideal` = 36.31 (OC) / 27.69 (NEG).
+- Formula in r1_ctrl 0.3: `cal = 32 + floor((k_rel + k_trip − CMP_CAL_IDEAL)/2)`, `CMP_CAL_IDEAL` (0x3C) in half codes,
+  reset **72 (OC) / 55 (NEG)** = floor(2 · k_ideal). A 6-bit integer ideal of 36 / 28 with `round((k_up + k_dn)/2)` was tried and
+  rejected: it differs by one code on 103 of 274 samples (the fractions .31 and .69 round in opposite directions).
+- Saturation: `cal` is clipped to 0..63 and the exhaustion flag `EXH` is set (also when a pass ends at 63 with flag 1 or at 0 with
+  flag 0). A comparator with `EXH` is out of calibration range (−4.0…+3.9 LSB).
+- Evidence: the r1_ctrl model of the RTL search gives identical `k_cal` on all 274 samples of this block's data (DC MC 51 + 51,
+  5 corners, transient MC 30; OC and NEG), and the RTL on the same tables gives 274/274 identical code and EXH
+  (`r1_ctrl/README.md` revision 0.3). This agreement is the evidence for the contract; it is not a new analog run.
+- Error of the two-sided average (new, 2026-10-21): the hysteresis cancels; the quantisation leaves at most 0.71 step
+  (0.089 LSB) at the measured hysteresis of 1.6–2.8 steps (table row above).
+- Open on this side: comparator delay at small overdrive against the 32-tick probe time (not run); the gate-level search with the
+  real comparator and code-change transients (not run).
 
 ## Numbers (revision 3, simulated, schematic level)
 
@@ -149,9 +173,9 @@ Layout estimate: the degeneration resistors and string pack well (factor ≈ 1.5
 
 ## Open issues (revision 3)
 
-1. **Summing logic and search in r1_ctrl.** The two 8-bit adders per comparator (equations above) and the
+1. **Summing logic and search in r1_ctrl** (the search is implemented in r1_ctrl 0.3, see "Calibration contract"; text below is the revision-3 statement). The two 8-bit adders per comparator (equations above) and the
    two-sided search are digital. They are modelled (`sim/cal_model.py`) and simulated as stimulus (`tb_safe_mc3`),
-   not implemented. T5 must decide whether the adders sit in r1_ctrl (then the analog port is nP/nN, 64 bits)
+   not implemented at that time. T5 must decide whether the adders sit in r1_ctrl (then the analog port is nP/nN, 64 bits)
    or in a small r1_safe digital wrapper (then the port is thr + cal as in INTERFACES.md).
 2. **Calibration time vs zero-current window.** A two-sided search over ±8 codes with 200 ns per step takes
    6.8 µs; a full 64-code search takes 26 µs. The r1_isense AZ window is ≥ 2.05 µs per PWM period. Proposal:
@@ -268,3 +292,22 @@ area).
   run. Runs named `dev-*` are development runs (`dev-dcmc3-smoke`, `dev-mc3-smoke-fullmux` stopped,
   `dev-mc3-smoke-a` lost the calibration variables, `dev-mc3-smoke-b` 2-sample check, `dev-joint3-fullmux` stopped);
   they are a record, not evidence.
+
+## Hysteresis and loop-load follow-up (2026-10-21, T4 follow-up c)
+
+Commands: `python3 sim/run_deck.py --block r1_safe --deck tb_safe_dcmc3.cir --run-id safe-hyst-20261021-r1 --corners ss_mm_s4,ff_mm_s5 --jobs 1 --set N=12 --set NET=schematic/r1_safe.spice --analyze analyze_dcmc3.py`
+(CPU 111), then `python3 sim/cal_model.py sim/results/cal-model-hyst-20261021-r1 safe-hyst-20261021-r1` and
+`python3 sim/analyze_hyst.py sim/results/safe-hyst-steps-20261021-r1 safe-dcmc-20261020-r3rppd safe-dccorner-20261020-r3 safe-hyst-20261021-r1`.
+Netlist of record in `safe-hyst-20261021-r1/run.json`: `schematic/r1_safe.spice`, sha256 `812f886dce2b…` (matches). The
+comparator-load runs use `r1_isense/sim/run_deck.py --pre …` (the `stb` options were added to this block's `run_deck.py` too).
+Raw files: `<G1_RESULTS_ROOT>/r1_safe/safe-hyst-20261021-r1/`.
+
+### Failures and mistakes (follow-up c)
+
+| # | What happened | Class | Evidence |
+| --- | --- | --- | --- |
+| 1 | The brief gave the ctrl formula as `round((k_up + k_dn)/2) − CAL_IDEAL` with CAL_IDEAL 36 / 28. r1_ctrl 0.3 implements the half-code form (72 / 55) because the integer form is one code off on 103/274 samples. The contract section states the implemented form. | spec-ambiguity | `r1_ctrl/README.md` revision 0.3 |
+| 2 | The ss mismatch MC (12 draws) was new and is small: OC 10/12 within 0.25 LSB, worst 0.274 LSB. It shows that open issue 3 (ss systematic gain error) is real with mismatch; it is a report on a small sample, not a pass/fail on 50 draws. | verification-gap | `cal-model-hyst-20261021-r1` |
+| 3 | The hysteresis is a DC-sweep value (0.5 mV resolution). The dynamic hysteresis during the 32-tick probe, with comparator delay at small overdrive, is not run. | verification-gap | table row above |
+| 4 | First draft of the error model in `analyze_hyst.py` mixed the phase of the centre with the `k_ideal` fraction and gave a meaningless bias. Rewritten with the exact target code before any number was used. | estimation | `sim/analyze_hyst.py` |
+| 5 | `analyze_dcmc3.py` keys MC samples by seed only, so the ss and ff draws sit in one summary (24 samples). `analyze_hyst.py` splits them by seed (4 = ss, 5 = ff). | tooling | `safe-hyst-20261021-r1/summary.json` |

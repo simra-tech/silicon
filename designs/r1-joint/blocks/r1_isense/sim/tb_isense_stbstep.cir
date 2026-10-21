@@ -1,0 +1,111 @@
+* r1_isense stb suite, shunt step 0 -> 100 mV (10 ns edge) at 3.0 us after the auto-zero, real netlist of record, joint load fixture
+* (two real r1_safe_cmp at code 44 on the string, path-fixture muxes, @@CL@@ per output).
+.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerMOSlv.lib @@MOS@@
+.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerMOShv.lib @@MOS@@
+.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerRES.lib @@RES@@
+.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerCAP.lib @@CAP@@
+.temp @@TEMP@@
+.include /work/designs/r1-joint/blocks/r1_isense/schematic/r1_isense.spice
+.include /work/designs/r1-joint/blocks/r1_safe/schematic/r1_safe.spice
+.option gmin=1e-12 method=gear reltol=1e-4 abstol=1e-12 vntol=1e-7
+Vdda vdda 0 dc @@VDDA@@
+Vdd vdd 0 dc @@VDD@@
+* IDEAL REFERENCE SOURCES (this step only), as the joint path fixture of r1_safe
+Vref vref 0 dc 1.05
+Vcm vcm 0 dc 0.6
+Iba vdda iba dc {5u*(@@TEMP@@+273.15)/300.15}
+Vaz az 0 pwl(0 @@VDD@@ 2.05u @@VDD@@ 2.051u 0)
+Vazh azh 0 pwl(0 @@VDD@@ 2.0u @@VDD@@ 2.001u 0)
+Vnn isn 0 dc 0
+Vin isp isn pwl(0 0 3u 0 3.01u 0.1 7u 0.1)
+XA isp isn outa_p outa_n vref vcm iba az azh vdda vdd 0 r1_isense_ch
+* ---- r1_safe load of channel a: string, conducting mux paths (path fixture), OC and NEG comparators, code 44, k = 32
+Ioa vdda ibias_oa dc {5u*(@@TEMP@@+273.15)/300.15}
+Ina vdda ibias_na dc {5u*(@@TEMP@@+273.15)/300.15}
+Cba ibias_oa 0 100f
+Cbb ibias_na 0 100f
+XSTR vref t0 t1 t2 t3 t4 t5 t6 t7 t8 t9 t10 t11 t12 t13 t14 t15 t16 t17 t18 t19 t20 t21 t22 t23 t24 t25 t26 t27 t28 t29 t30 t31 t32 t33 t34 t35 t36 t37 t38 t39 t40 t41 t42 t43 t44 t45 t46 t47 t48 t49 t50 t51 t52 t53 t54 t55 t56 t57 t58 t59 t60 t61 t62 t63 t64 t65 t66 t67 t68 t69 t70 t71 t72 t73 t74 t75 t76 t77 t78 t79 t80 t81 t82 t83 t84 t85 t86 t87 t88 t89 t90 t91 t92 t93 t94 t95 t96 t97 t98 t99 t100 t101 t102 t103 t104 t105 t106 t107 t108 t109 t110 t111 t112 t113 t114 t115 t116 t117 t118 t119 t120 t121 t122 t123 t124 t125 t126 t127 t128 t129 t130 t131 t132 t133 t134 t135 t136 t137 t138 t139 t140 t141 t142 t143 t144 t145 t146 t147 t148 t149 t150 t151 t152 t153 t154 t155 t156 t157 t158 t159 t160 t161 t162 t163 t164 t165 t166 t167 t168 t169 t170 t171 t172 t173 t174 t175 t176 t177 t178 t179 t180 t181 t182 t183 t184 t185 t186 t187 t188 t189 t190 t191 t192 t193 t194 t195 t196 t197 t198 t199 t200 t201 t202 t203 t204 t205 t206 t207 t208 t209 t210 t211 t212 t213 t214 t215 t216 t217 t218 t219 t220 t221 t222 t223 t224 t225 t226 t227 t228 t229 t230 t231 t232 t233 t234 t235 t236 t237 t238 t239 t240 t241 t242 t243 t244 t245 t246 t247 t248 t249 t250 t251 t252 0 r1_safe_string
+* oa: cell code 44: REFP = T176, REFN = T76
+Xmpoa_on0 t176 vdda mpoa_l0 0 sg13_hv_nmos w=0.5u l=0.45u ng=1 m=1 mm_ok=1
+Xmpoa_off0 t177 0 mpoa_l0 0 sg13_hv_nmos w=0.5u l=0.45u ng=1 m=1 mm_ok=1
+Xmpoa_on1 mpoa_l0 vdda mpoa_l1 0 sg13_hv_nmos w=0.5u l=0.45u ng=1 m=1 mm_ok=1
+Xmpoa_off1 t178 0 mpoa_l1 0 sg13_hv_nmos w=0.5u l=0.45u ng=1 m=1 mm_ok=1
+Xmpoa_on2 mpoa_l1 vdda mpoa_l2 0 sg13_hv_nmos w=0.5u l=0.45u ng=1 m=1 mm_ok=1
+Xmpoa_off2 t180 0 mpoa_l2 0 sg13_hv_nmos w=0.5u l=0.45u ng=1 m=1 mm_ok=1
+Xmpoa_on3 mpoa_l2 vdda mpoa_l3 0 sg13_hv_nmos w=0.5u l=0.45u ng=1 m=1 mm_ok=1
+Xmpoa_off3 t184 0 mpoa_l3 0 sg13_hv_nmos w=0.5u l=0.45u ng=1 m=1 mm_ok=1
+Xmpoa_on4 mpoa_l3 vdda mpoa_l4 0 sg13_hv_nmos w=0.5u l=0.45u ng=1 m=1 mm_ok=1
+Xmpoa_off4 t160 0 mpoa_l4 0 sg13_hv_nmos w=0.5u l=0.45u ng=1 m=1 mm_ok=1
+Xmpoa_on5 mpoa_l4 vdda mpoa_l5 0 sg13_hv_nmos w=0.5u l=0.45u ng=1 m=1 mm_ok=1
+Xmpoa_off5 t144 0 mpoa_l5 0 sg13_hv_nmos w=0.5u l=0.45u ng=1 m=1 mm_ok=1
+Xmpoa_on6 mpoa_l5 vdda mpoa_l6 0 sg13_hv_nmos w=0.5u l=0.45u ng=1 m=1 mm_ok=1
+Xmpoa_off6 t240 0 mpoa_l6 0 sg13_hv_nmos w=0.5u l=0.45u ng=1 m=1 mm_ok=1
+Xmpoa_on7 mpoa_l6 vdda refp_oa 0 sg13_hv_nmos w=0.5u l=0.45u ng=1 m=1 mm_ok=1
+Xmpoa_off7 t48 0 refp_oa 0 sg13_hv_nmos w=0.5u l=0.45u ng=1 m=1 mm_ok=1
+Xmnoa_on0 t76 vdda mnoa_l0 0 sg13_hv_nmos w=0.5u l=0.45u ng=1 m=1 mm_ok=1
+Xmnoa_off0 t77 0 mnoa_l0 0 sg13_hv_nmos w=0.5u l=0.45u ng=1 m=1 mm_ok=1
+Xmnoa_on1 mnoa_l0 vdda mnoa_l1 0 sg13_hv_nmos w=0.5u l=0.45u ng=1 m=1 mm_ok=1
+Xmnoa_off1 t78 0 mnoa_l1 0 sg13_hv_nmos w=0.5u l=0.45u ng=1 m=1 mm_ok=1
+Xmnoa_on2 mnoa_l1 vdda mnoa_l2 0 sg13_hv_nmos w=0.5u l=0.45u ng=1 m=1 mm_ok=1
+Xmnoa_off2 t72 0 mnoa_l2 0 sg13_hv_nmos w=0.5u l=0.45u ng=1 m=1 mm_ok=1
+Xmnoa_on3 mnoa_l2 vdda mnoa_l3 0 sg13_hv_nmos w=0.5u l=0.45u ng=1 m=1 mm_ok=1
+Xmnoa_off3 t68 0 mnoa_l3 0 sg13_hv_nmos w=0.5u l=0.45u ng=1 m=1 mm_ok=1
+Xmnoa_on4 mnoa_l3 vdda mnoa_l4 0 sg13_hv_nmos w=0.5u l=0.45u ng=1 m=1 mm_ok=1
+Xmnoa_off4 t92 0 mnoa_l4 0 sg13_hv_nmos w=0.5u l=0.45u ng=1 m=1 mm_ok=1
+Xmnoa_on5 mnoa_l4 vdda mnoa_l5 0 sg13_hv_nmos w=0.5u l=0.45u ng=1 m=1 mm_ok=1
+Xmnoa_off5 t108 0 mnoa_l5 0 sg13_hv_nmos w=0.5u l=0.45u ng=1 m=1 mm_ok=1
+Xmnoa_on6 mnoa_l5 vdda mnoa_l6 0 sg13_hv_nmos w=0.5u l=0.45u ng=1 m=1 mm_ok=1
+Xmnoa_off6 t12 0 mnoa_l6 0 sg13_hv_nmos w=0.5u l=0.45u ng=1 m=1 mm_ok=1
+Xmnoa_on7 mnoa_l6 vdda refn_oa 0 sg13_hv_nmos w=0.5u l=0.45u ng=1 m=1 mm_ok=1
+Xmnoa_off7 t204 0 refn_oa 0 sg13_hv_nmos w=0.5u l=0.45u ng=1 m=1 mm_ok=1
+XOA outa_p outa_n refp_oa refn_oa oc_a ibias_oa vdda vdd 0 r1_safe_cmp
+* na: cell code 19: REFP = T76, REFN = T176
+Xmpna_on0 t76 vdda mpna_l0 0 sg13_hv_nmos w=0.5u l=0.45u ng=1 m=1 mm_ok=1
+Xmpna_off0 t77 0 mpna_l0 0 sg13_hv_nmos w=0.5u l=0.45u ng=1 m=1 mm_ok=1
+Xmpna_on1 mpna_l0 vdda mpna_l1 0 sg13_hv_nmos w=0.5u l=0.45u ng=1 m=1 mm_ok=1
+Xmpna_off1 t78 0 mpna_l1 0 sg13_hv_nmos w=0.5u l=0.45u ng=1 m=1 mm_ok=1
+Xmpna_on2 mpna_l1 vdda mpna_l2 0 sg13_hv_nmos w=0.5u l=0.45u ng=1 m=1 mm_ok=1
+Xmpna_off2 t72 0 mpna_l2 0 sg13_hv_nmos w=0.5u l=0.45u ng=1 m=1 mm_ok=1
+Xmpna_on3 mpna_l2 vdda mpna_l3 0 sg13_hv_nmos w=0.5u l=0.45u ng=1 m=1 mm_ok=1
+Xmpna_off3 t68 0 mpna_l3 0 sg13_hv_nmos w=0.5u l=0.45u ng=1 m=1 mm_ok=1
+Xmpna_on4 mpna_l3 vdda mpna_l4 0 sg13_hv_nmos w=0.5u l=0.45u ng=1 m=1 mm_ok=1
+Xmpna_off4 t92 0 mpna_l4 0 sg13_hv_nmos w=0.5u l=0.45u ng=1 m=1 mm_ok=1
+Xmpna_on5 mpna_l4 vdda mpna_l5 0 sg13_hv_nmos w=0.5u l=0.45u ng=1 m=1 mm_ok=1
+Xmpna_off5 t108 0 mpna_l5 0 sg13_hv_nmos w=0.5u l=0.45u ng=1 m=1 mm_ok=1
+Xmpna_on6 mpna_l5 vdda mpna_l6 0 sg13_hv_nmos w=0.5u l=0.45u ng=1 m=1 mm_ok=1
+Xmpna_off6 t12 0 mpna_l6 0 sg13_hv_nmos w=0.5u l=0.45u ng=1 m=1 mm_ok=1
+Xmpna_on7 mpna_l6 vdda refp_na 0 sg13_hv_nmos w=0.5u l=0.45u ng=1 m=1 mm_ok=1
+Xmpna_off7 t204 0 refp_na 0 sg13_hv_nmos w=0.5u l=0.45u ng=1 m=1 mm_ok=1
+Xmnna_on0 t176 vdda mnna_l0 0 sg13_hv_nmos w=0.5u l=0.45u ng=1 m=1 mm_ok=1
+Xmnna_off0 t177 0 mnna_l0 0 sg13_hv_nmos w=0.5u l=0.45u ng=1 m=1 mm_ok=1
+Xmnna_on1 mnna_l0 vdda mnna_l1 0 sg13_hv_nmos w=0.5u l=0.45u ng=1 m=1 mm_ok=1
+Xmnna_off1 t178 0 mnna_l1 0 sg13_hv_nmos w=0.5u l=0.45u ng=1 m=1 mm_ok=1
+Xmnna_on2 mnna_l1 vdda mnna_l2 0 sg13_hv_nmos w=0.5u l=0.45u ng=1 m=1 mm_ok=1
+Xmnna_off2 t180 0 mnna_l2 0 sg13_hv_nmos w=0.5u l=0.45u ng=1 m=1 mm_ok=1
+Xmnna_on3 mnna_l2 vdda mnna_l3 0 sg13_hv_nmos w=0.5u l=0.45u ng=1 m=1 mm_ok=1
+Xmnna_off3 t184 0 mnna_l3 0 sg13_hv_nmos w=0.5u l=0.45u ng=1 m=1 mm_ok=1
+Xmnna_on4 mnna_l3 vdda mnna_l4 0 sg13_hv_nmos w=0.5u l=0.45u ng=1 m=1 mm_ok=1
+Xmnna_off4 t160 0 mnna_l4 0 sg13_hv_nmos w=0.5u l=0.45u ng=1 m=1 mm_ok=1
+Xmnna_on5 mnna_l4 vdda mnna_l5 0 sg13_hv_nmos w=0.5u l=0.45u ng=1 m=1 mm_ok=1
+Xmnna_off5 t144 0 mnna_l5 0 sg13_hv_nmos w=0.5u l=0.45u ng=1 m=1 mm_ok=1
+Xmnna_on6 mnna_l5 vdda mnna_l6 0 sg13_hv_nmos w=0.5u l=0.45u ng=1 m=1 mm_ok=1
+Xmnna_off6 t240 0 mnna_l6 0 sg13_hv_nmos w=0.5u l=0.45u ng=1 m=1 mm_ok=1
+Xmnna_on7 mnna_l6 vdda refn_na 0 sg13_hv_nmos w=0.5u l=0.45u ng=1 m=1 mm_ok=1
+Xmnna_off7 t48 0 refn_na 0 sg13_hv_nmos w=0.5u l=0.45u ng=1 m=1 mm_ok=1
+XNA outa_n outa_p refp_na refn_na neg_a ibias_na vdda vdd 0 r1_safe_cmp
+CL1 oc_a 0 10f
+CL2 neg_a 0 10f
+* ADC input load per output: series @@RL@@ ohm + @@CL@@ to ground + @@CW@@ wiring (joint fixture: 0.001 ohm, 2p, 0)
+Rld1 outa_p ldp @@RL@@
+Cld1 ldp 0 @@CL@@
+Rld2 outa_n ldn @@RL@@
+Cld2 ldn 0 @@CL@@
+Cw1 outa_p 0 @@CW@@
+Cw2 outa_n 0 @@CW@@
+.control
+set wr_singlescale
+set wr_vecnames
+tran 0.5n 7u 0 0.5n
+wrdata @@OUT@@_step.txt v(outa_p) v(outa_n) v(isp) v(oc_a) v(neg_a)
+.endc
+.end

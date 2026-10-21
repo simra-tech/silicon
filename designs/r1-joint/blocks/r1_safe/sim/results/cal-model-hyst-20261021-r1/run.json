@@ -1,0 +1,84 @@
+{
+ "run_id": "cal-model-hyst-20261021-r1",
+ "block": "r1_safe",
+ "date_utc": "2026-10-21T00:57:19.291090Z",
+ "command": "python3 sim/cal_model.py sim/results/cal-model-hyst-20261021-r1 safe-hyst-20261021-r1",
+ "tool": "python3 3.6.8, numpy 1.19.5 (host)",
+ "inputs_summary_sha256": {
+  "safe-hyst-20261021-r1": "8358139173c7262dd1f4c3f6812ef4aa7990fbf054e0c55755b4da2749a18ff2"
+ },
+ "script_sha256": "743b0283a8b9604210885a81393d05b3ce346c41c97bca184cbf2de236e31e3c",
+ "question": "Does a 6-bit calibration code (step VREF/252 = LSB/8, range -4..+3.9 LSB) found by the zero-current search bring every comparator threshold within 0.25 LSB?",
+ "result": [
+  {
+   "run": "safe-hyst-20261021-r1",
+   "samples": 24,
+   "OC": {
+    "in_range": 24,
+    "outside_range": [],
+    "pass_role_range_0p25": 22,
+    "pass_all_codes_0p25": 22,
+    "worst_resid_role_LSB": 0.274166541666917,
+    "worst_resid_all_LSB": 0.274166541666917,
+    "resid_sigma_all_LSB": 0.06462859591617036,
+    "cal_shift_LSB_min_max": [
+     -0.375,
+     0.375
+    ],
+    "cal_range_LSB": [
+     -4.0,
+     3.8749999999999996
+    ],
+    "raw_max_abs_LSB": 0.6525449099101788,
+    "worst_samples_role": [
+     [
+      0.274166541666917,
+      "4_004"
+     ],
+     [
+      0.27204263591472877,
+      "4_011"
+     ],
+     [
+      0.2450449999999993,
+      "4_001"
+     ]
+    ]
+   },
+   "NEG": {
+    "in_range": 24,
+    "outside_range": [],
+    "pass_role_range_0p25": 24,
+    "pass_all_codes_0p25": 24,
+    "worst_resid_role_LSB": 0.10804151391697214,
+    "worst_resid_all_LSB": 0.214438626122746,
+    "resid_sigma_all_LSB": 0.06837999757009454,
+    "cal_shift_LSB_min_max": [
+     -0.625,
+     0.375
+    ],
+    "cal_range_LSB": [
+     -4.0,
+     3.8749999999999996
+    ],
+    "raw_max_abs_LSB": 0.6525449099101788,
+    "worst_samples_role": [
+     [
+      0.10804151391697214,
+      "4_010"
+     ],
+     [
+      0.08254490991017827,
+      "4_005"
+     ],
+     [
+      0.0791665416669185,
+      "4_008"
+     ]
+    ]
+   }
+  }
+ ],
+ "disposition": "failed (safe-hyst-20261021-r1): OC 22/24 and NEG 24/24 samples within 0.25 LSB over their role ranges; all codes 4..59: OC 22, NEG 24; outside cal range: 0 / 0; cal shift used ['-0.38', '0.38'] / ['-0.62', '0.38'] LSB of +-4",
+ "raw_results": "none (model on the DC MC summaries)"
+}

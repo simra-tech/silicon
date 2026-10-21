@@ -1,0 +1,149 @@
+{
+ "block": "r1_isense",
+ "command": "python3 sim/run_deck.py --block r1_isense --deck tb_isense_stbcm.cir --run-id isense-stbcm-20261021-r1 --corners tt,ss,ff,sf,fs --jobs 2 --set RL=0.001 --set CL=2p --set CW=0 --analyze analyze_stbcm.py --question Cross-check of the CM/CMFB loop-gain phase margin: output common-mode response to a 20 mV step of the VCM reference after the auto-zero, joint load fixture",
+ "container_image": "tapeoutbench-eda:latest sha256:ddeb6957... (checked by flow/run.sh)",
+ "corners": {
+  "ff": {
+   "cap": "cap_bcs",
+   "mos": "mos_ff",
+   "res": "res_bcs",
+   "temp_C": -40,
+   "vdd": 1.32,
+   "vdda": 3.6
+  },
+  "fs": {
+   "cap": "cap_typ",
+   "mos": "mos_fs",
+   "res": "res_typ",
+   "temp_C": 27,
+   "vdd": 1.2,
+   "vdda": 3.3
+  },
+  "sf": {
+   "cap": "cap_typ",
+   "mos": "mos_sf",
+   "res": "res_typ",
+   "temp_C": 27,
+   "vdd": 1.2,
+   "vdda": 3.3
+  },
+  "ss": {
+   "cap": "cap_wcs",
+   "mos": "mos_ss",
+   "res": "res_wcs",
+   "temp_C": 125,
+   "vdd": 1.08,
+   "vdda": 3.0
+  },
+  "tt": {
+   "cap": "cap_typ",
+   "mos": "mos_tt",
+   "res": "res_typ",
+   "temp_C": 27,
+   "vdd": 1.2,
+   "vdda": 3.3
+  }
+ },
+ "cpuset": "109-110",
+ "date_utc": "2026-10-21T00:57:05.148035Z",
+ "deck": "sim/tb_isense_stbcm.cir",
+ "deck_sha256": "38b3863ee17b7ddb832e9e4c4fec9e71da4e7ef307c4257c4f8a87e0ca7c1e85",
+ "disposition": "informational: CM step response overshoot ff 43.9 %, fs 35.8 %, sf 36.7 %, ss 24.6 %, tt 36.2 %",
+ "included_netlists": {
+  "/work/designs/r1-joint/blocks/r1_isense/schematic/r1_isense.spice": "5db34e0a8f7c54abbc4d4b547462129dd862404f205e2c3472fb4095b93faf8b",
+  "/work/designs/r1-joint/blocks/r1_safe/schematic/r1_safe.spice": "812f886dce2b759af121230bd2e9100aeac59041effdf9a3341647c29299cbde"
+ },
+ "jobs": {
+  "ff": {
+   "log": "r1_isense/isense-stbcm-20261021-r1/tb_isense_stbcm_ff.log",
+   "rc": 0,
+   "wall_s": 42.0
+  },
+  "fs": {
+   "log": "r1_isense/isense-stbcm-20261021-r1/tb_isense_stbcm_fs.log",
+   "rc": 0,
+   "wall_s": 32.0
+  },
+  "sf": {
+   "log": "r1_isense/isense-stbcm-20261021-r1/tb_isense_stbcm_sf.log",
+   "rc": 0,
+   "wall_s": 42.0
+  },
+  "ss": {
+   "log": "r1_isense/isense-stbcm-20261021-r1/tb_isense_stbcm_ss.log",
+   "rc": 0,
+   "wall_s": 42.0
+  },
+  "tt": {
+   "log": "r1_isense/isense-stbcm-20261021-r1/tb_isense_stbcm_tt.log",
+   "rc": 0,
+   "wall_s": 44.0
+  }
+ },
+ "netlist": "schematic/r1_isense.spice",
+ "netlist_sha256": "5db34e0a8f7c54abbc4d4b547462129dd862404f205e2c3472fb4095b93faf8b",
+ "overrides": {
+  "CL": "2p",
+  "CW": "0",
+  "RL": "0.001"
+ },
+ "pdk_commit": "84374023ee8b4b126bebbba67fcbada0a9c0ff0b (checked by flow/run.sh)",
+ "prerun": {},
+ "question": "Cross-check of the CM/CMFB loop-gain phase margin: output common-mode response to a 20 mV step of the VCM reference after the auto-zero, joint load fixture",
+ "raw_results": "$G1_RESULTS_ROOT/r1_isense/isense-stbcm-20261021-r1/",
+ "result": {
+  "ff": {
+   "cm_after_V": 0.5845201099999998,
+   "cm_before_V": 0.564527453000003,
+   "cm_step_V": 0.01999265699999686,
+   "overshoot_pct_of_cm_step": 43.9043794929384,
+   "pm_equiv_deg_2nd_order": 28.38969902058691,
+   "settle_2pct_ns": 77.75000000000023,
+   "vod_change_mV": -0.0054320000072438646,
+   "zeta_from_overshoot": 0.25346255802542833
+  },
+  "fs": {
+   "cm_after_V": 0.5904984919999966,
+   "cm_before_V": 0.5705113614999976,
+   "cm_step_V": 0.019987130499999006,
+   "overshoot_pct_of_cm_step": 35.83978200374365,
+   "pm_equiv_deg_2nd_order": 34.348598525798764,
+   "settle_2pct_ns": 63.2500000000002,
+   "vod_change_mV": -0.01104899999615494,
+   "zeta_from_overshoot": 0.3104798458403904
+  },
+  "sf": {
+   "cm_after_V": 0.5892368844999969,
+   "cm_before_V": 0.5692465470000039,
+   "cm_step_V": 0.019990337499993016,
+   "overshoot_pct_of_cm_step": 36.67066901699697,
+   "pm_equiv_deg_2nd_order": 33.70419812138823,
+   "settle_2pct_ns": 79.74999999999996,
+   "vod_change_mV": -0.012483000000229616,
+   "zeta_from_overshoot": 0.3041934552694051
+  },
+  "ss": {
+   "cm_after_V": 0.6014653077925037,
+   "cm_before_V": 0.5814880974999995,
+   "cm_step_V": 0.01997721029250421,
+   "overshoot_pct_of_cm_step": 24.591307472693234,
+   "pm_equiv_deg_2nd_order": 43.83391706676723,
+   "settle_2pct_ns": 61.25000000000005,
+   "vod_change_mV": -0.020544584997117532,
+   "zeta_from_overshoot": 0.4077188041311746
+  },
+  "tt": {
+   "cm_after_V": 0.5898152517487485,
+   "cm_before_V": 0.5698266855000026,
+   "cm_step_V": 0.019988566248745898,
+   "overshoot_pct_of_cm_step": 36.24706325150292,
+   "pm_equiv_deg_2nd_order": 34.03181780820189,
+   "settle_2pct_ns": 63.2500000000002,
+   "vod_change_mV": -0.01174249750091061,
+   "zeta_from_overshoot": 0.30738542925511186
+  }
+ },
+ "run_id": "isense-stbcm-20261021-r1",
+ "tool": "ngspice-46 (container banner from flow/run.sh ngspice -v; batch logs carry no banner)",
+ "wall_s": 116.3
+}

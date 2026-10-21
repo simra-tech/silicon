@@ -1,0 +1,30 @@
+* r1_isense stb suite, pre-run: auto-zero sequence on the channel alone (zero shunt current), hold-cap voltages after AZ.
+.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerMOSlv.lib @@MOS@@
+.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerMOShv.lib @@MOS@@
+.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerRES.lib @@RES@@
+.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerCAP.lib @@CAP@@
+.temp @@TEMP@@
+.include /work/designs/r1-joint/blocks/r1_isense/schematic/r1_isense.spice
+.option gmin=1e-12 method=gear reltol=1e-4 abstol=1e-12 vntol=1e-7
+Vdda vdda 0 dc @@VDDA@@
+Vdd vdd 0 dc @@VDD@@
+* IDEAL REFERENCE SOURCES (this step only), as the joint path fixture of r1_safe
+Vref vref 0 dc 1.05
+Vcm vcm 0 dc 0.6
+Iba vdda iba dc {5u*(@@TEMP@@+273.15)/300.15}
+Vaz az 0 pwl(0 @@VDD@@ 2.05u @@VDD@@ 2.051u 0)
+Vazh azh 0 pwl(0 @@VDD@@ 2.0u @@VDD@@ 2.001u 0)
+Vnn isn 0 dc 0
+Vin isp isn dc 0
+XDUT isp isn outp outn vref vcm iba az azh vdda vdd 0 r1_isense_ch
+CLP outp 0 2p
+CLN outn 0 2p
+.control
+tran 0.5n 3.6u 0 0.5n
+meas tran vh1 find v(xdut.h1) at=3.5u
+meas tran vh2 find v(xdut.h2) at=3.5u
+meas tran vop find v(outp) at=3.5u
+meas tran von find v(outn) at=3.5u
+echo "HOLDVALS VH1=$&vh1 VH2=$&vh2 VOP=$&vop VON=$&von"
+.endc
+.end
