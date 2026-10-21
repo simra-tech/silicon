@@ -1,0 +1,78 @@
+{
+ "run_id": "pex-20261021-b",
+ "step": "PEX (capacitance) of the channel cell r1_afe_ch and post-layout netlist",
+ "commands": [
+  "flow/run.sh klayout -b -r pex/pex_prepare.py -rd gds=layout/r1_afe.gds -rd out=<G1_RESULTS_ROOT>/r1_afe/pex-20261021-b/r1_afe_ch_flat.gds -rd cell=r1_afe_ch",
+  "flow/run.sh kpex --pdk ihp-sg13g2 --threads 1 --gds <flat gds> --schematic layout/r1_afe_lvs.cdl --cell r1_afe_ch --2.5D --mode CC --out_dir <G1_RESULTS_ROOT>/r1_afe/pex-20261021-b/kpex_ch",
+  "python3 pex/make_postlayout.py - <G1_RESULTS_ROOT>/r1_afe/pex-20261021-b/r1_afe_post_ch.spice <...>/post_ch_report.json <kpex netlist>"
+ ],
+ "env": "G1_CPUSET=106-108; G1_RESULTS_ROOT=<bulk>",
+ "tools": {
+  "kpex": "0.3.12 (kpex --version)",
+  "klayout": "KLayout 0.30.9",
+  "image_id": "sha256:ddeb69576f2808676d1c5d474ecf04f6d1d6f8abdcff6b72b39790ded924bab2",
+  "pdk_commit": "84374023ee8b4b126bebbba67fcbada0a9c0ff0b"
+ },
+ "inputs": {
+  "layout/r1_afe.gds": "0181e98856e8bdd4500bb8d54b271c2a88209e3f5078f4a794a235af234891e1",
+  "layout/r1_afe_lvs.cdl": "0cfb19809b80bd9ea972f1fce88ce8b6ade9979a428396a6e1fc46588b91cbb1",
+  "schematic/r1_afe.spice": "4a84a3d8dce9be13f6e57e4aaa2fa9154c9aa2339eb8bdb955e6d8452bb59f46",
+  "pex/pex_prepare.py": "db3de81daa15c7fc1fed820f1168fec66e34272633e36ec8b9bd926f905a5181",
+  "pex/make_postlayout.py": "29738e9538d59f7998ece60eb9ddd56915863a97998daa6869fec98081793ead"
+ },
+ "outputs": {
+  "kpex netlist": "754a36b9cfd05cdf8331cf6f8965e149d891a2354308272fa66546401b4f8401",
+  "post-layout netlist r1_afe_post_ch.spice": "f36a2d2f4cc27c2eff59d683464b11fb95f151a66b68681f245ae00f3c1f193d"
+ },
+ "method": [
+  "MIM (36/0), Vmim (129/0) and the TopMetal1 plate inside the MIM removed before extraction (kpex 0.3.12 has no MIM model; the plate-to-plate capacitance is in the cap_cmim model)",
+  "kpex internal LVS reports a mismatch (the flat layout has no MIM devices; expected); extraction is geometric and net names come from the layout labels",
+  "capacitance only: no wire resistance extracted",
+  "both channel instances use the same extracted channel; top-level routing (r1_afe cell) not included, see README"
+ ],
+ "n_caps": 3297,
+ "channel_total_pF": 3.609,
+ "largest_net_totals_fF": {
+  "ch:vss": 1649.634,
+  "ch:vdd": 269.797,
+  "ch:m1p": 251.69,
+  "ch:m1n": 246.691,
+  "ch:x1n": 220.004,
+  "ch:x1p": 209.535,
+  "ch:on2": 187.412,
+  "ch:op2": 180.18,
+  "ch:xa1_vbp": 167.869,
+  "ch:xa2_vbp": 138.765,
+  "ch:outn": 132.817,
+  "ch:x2n": 129.193,
+  "ch:xa1_vcms": 117.028,
+  "ch:x2p": 116.992,
+  "ch:c3": 103.978,
+  "ch:c3b": 79.672,
+  "ch:outp": 73.86,
+  "ch:xa1_cz2": 73.625,
+  "ch:xa2_vcms": 72.542,
+  "ch:ib2": 68.714,
+  "ch:c4": 64.471,
+  "ch:xa1_tn": 64.292,
+  "ch:xs1n_a1": 61.104,
+  "ch:c2": 59.039,
+  "ch:xa1_cz1": 58.078,
+  "ch:xs1n_a2": 58.029,
+  "ch:xs1n_a4": 57.698,
+  "ch:xa2_o1n": 56.977,
+  "ch:xa2_vbpc": 56.495,
+  "ch:xa1_o1n": 55.439,
+  "ch:xa1_vcmfb": 54.849,
+  "ch:xa1_gn": 54.796,
+  "ch:xs1n_a7": 54.647,
+  "ch:ib1": 54.527,
+  "ch:xa1_o1p": 54.183,
+  "ch:xs1n_a6": 52.343,
+  "ch:c1": 51.691,
+  "ch:xs1n_a8": 50.989,
+  "ch:xa2_vcmfb": 50.633,
+  "ch:xa2_vbnc": 50.236
+ },
+ "raw": "<G1_RESULTS_ROOT>/r1_afe/pex-20261021-b/"
+}

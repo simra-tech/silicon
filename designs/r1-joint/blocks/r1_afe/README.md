@@ -1,6 +1,6 @@
 # r1_afe — encoder analog front end (sine and cosine channels)
 
-State (2026-10-21): **schematic level, revision E, simulated (ngspice, corners, cross corners, mismatch, loop gain). Not laid out.**
+State (2026-10-21): **revision E, laid out: DRC, antenna and LVS clean (PDK decks); channel PEX and post-layout key decks run. Post-layout CM1/CM2 phase margins at ffx are below 60° (59.7°, 58.3°) and the ×32 settling has a new −0.25 mV offset (open issues in "Layout (revision E)").** Schematic-level record: "Revision E" below.
 Revision D is superseded by revision E (record below). Revision C is superseded; its record follows the revision-D section ("Revision C record"). Revision B is superseded; its
 record is kept at the end ("Revision B record").
 All numbers in this file are **simulated** unless they are marked estimated. Nothing is measured.
@@ -8,7 +8,166 @@ All numbers in this file are **simulated** unless they are marked estimated. Not
 Track T3 of `../README.md`. Specification row: `../../specification/R1_TOP_LEVEL_SPECIFICATION.md` §2 (`r1_afe`),
 §4 (encoder input), gate V1. Input standard and accuracy budget: `../../specification/studies/S1_ENCODER_CHAIN_20261020.md`.
 
-## Revision E (2026-10-21, track T3 revision E) — current state
+## Layout (revision E, 2026-10-21, track T3)
+
+Layout of record: `layout/r1_afe.gds` (sha256 `0181e988…91e1`, 3.6 MB, top cell `r1_afe`, child cell `r1_afe_ch`
+placed twice). It is generated from the revision-E netlist of record (`schematic/r1_afe.spice`, sha256 `4a84a3d8…9e46`)
+by `layout/r1_afe_layout.py`. The block contains both channels, both stages, the gain switches, the anti-alias
+filters, the CMFB circuits, the bias mirrors and the VCM1 divider. All post-layout numbers are **simulated**.
+
+### Built against (layout)
+
+| Item | Version | How established |
+| --- | --- | --- |
+| IHP SG13G2 open PDK | commit `84374023ee8b4b126bebbba67fcbada0a9c0ff0b` | `flow/run.sh` compares `/foss/pdks/ihp-sg13g2/COMMIT` before every command; also in each `run.json` |
+| KLayout (layout, DRC, LVS, antenna) | 0.30.9 | `klayout -v` in `reports/layout-20261021-a/run.json`; DRC log line "KLayout version detected" |
+| kpex (klayout-pex) | 0.3.12 | `kpex --version` (`reports/pex-20261021-b/run.json`) |
+| ngspice | ngspice-46 | `ngspice -v` in `sim/runs/r1afe-post-20261021e-*/run.json` |
+| Container image | `sha256:ddeb6957…bab2` | verified by `flow/run.sh` |
+| PDK decks | `libs.tech/klayout/tech/drc/run_drc.py`, `lvs/run_lvs.py` (unmodified) | `layout/run_checks.sh` |
+| CPU set | `G1_CPUSET=106-108` | command lines in the run records |
+
+### Files (layout)
+
+| Path | Content |
+| --- | --- |
+| `layout/r1_afe_layout.py` | generator (KLayout batch Python): PDK PCells (`nmosHV`, `pmosHV`, `cmim`), `rppd` body copied from the PDK PCell, placement, routing, pins |
+| `layout/maze_router.py` | grid maze router on Metal2–Metal4 (0.8 µm grid, A* with rip-up and history costs) |
+| `layout/r1_afe_netlist.py` | flattens the netlist of record and writes the LVS reference `layout/r1_afe_lvs.cdl` (unit split, see below) |
+| `layout/r1_afe.gds`, `layout/r1_afe_lvs.cdl`, `layout/r1_afe_layout.json` | layout, LVS reference, bounding box and router statistics |
+| `layout/run_checks.sh` | DRC, antenna and LVS with the PDK decks; writes `reports/<run-id>/run.json` |
+| `layout/tools/lvsdb_report.py` | net and device counts per circuit from the LVS database |
+| `pex/pex_prepare.py`, `pex/make_postlayout.py` | flat GDS for kpex (MIM removed); post-layout netlist from the kpex capacitors |
+| `sim/run_afe.py` | new campaign `post`; `R1AFE_NETLIST=<file>` replaces the netlist of record for a whole campaign (recorded in `run.json`) |
+| `sim/compare_post.py` | pre/post-layout reduction (`reports/post-20261021e.json`) |
+| `reports/layout-20261021-a/` | `run.json` (checks), `layout_run.json` (generation, reproduction), `drc.log`, `antenna.log`, `lvs.log`, `lvs_summary.txt` |
+| `reports/pex-20261021-b/run.json` | extraction record |
+| `reports/layout-dev4/`, `reports/layout-dev5/` | development check logs (dev4: failing DRC/LVS before the fixes in the mistakes list) |
+
+Bulk outputs (flat GDS, kpex netlists, LVS databases, decks, waveforms) are in `<G1_RESULTS_ROOT>/r1_afe/<run-id>/`.
+
+Reproduce (repository root): `G1_CPUSET=106-108; export G1_CPUSET; G1_RESULTS_ROOT=<bulk results root>; export G1_RESULTS_ROOT`, then
+1. `G1_WORKDIR=designs/r1-joint/blocks/r1_afe/layout; export G1_WORKDIR; flow/run.sh klayout -b -r r1_afe_layout.py` (about 200 s).
+2. `flow/run.sh sh run_checks.sh <run-id> all`.
+3. The PEX and post-layout commands in `reports/pex-20261021-b/run.json` and `sim/runs/r1afe-post-20261021e-pex/run.json`.
+
+### Floorplan and construction
+
+- Block: **192.8 × 494.4 µm = 0.0953 mm²** (bounding box (0, 0; 192.8, 494.4) µm). Channel cell 168.8 × 193.6 µm.
+- The sine channel is at the south and the cosine channel at the north. The cosine channel is a translated copy (same
+  orientation, same dummies). The VCM1 divider (`RD1`/`RD2`) and its capacitor `CD` (2 × 2 units) are between the channels.
+- Each channel, from south to north: the `rppd` array, NMOS rows, PMOS rows (one NWell). MIM units (Metal5 bottom
+  plate, TopMetal1 top plate) cover the resistor array and the transistor rows (cut C6): 14 736 µm² of the 30 060 µm²
+  of MIM are over `rppd` bodies.
+- `rppd` (w = 1 µm): unit columns with two poly dummy columns at each end of every group. The PGA input resistors U1
+  (18 per channel) are P/N interleaved in one group. Long resistors are straight series segments of equal length
+  (≤ 78 µm, for example U1 = 2 × 76.925 µm).
+- MIM: the feedback and output capacitors (`CF1`, `CF2`, `CO1`/`CO2`) are 2 × 4 common-centroid blocks (ABBA/BAAB);
+  `COD` 2 × 2; compensation capacitors in P/N pairs. Capacitors larger than 28 µm are four units of half the side.
+- All MOS are thick-oxide (`sg13_hv_*`, ThickGateOx over every row), fingers ≤ 10 µm, end dummies on every row,
+  one tie strip per row. The input pairs are adjacent in one row, **not** interdigitated (open issue).
+- A p+ guard ring (Activ 0.6 µm with pSD, contacts and a Metal1 ring, net `vss`) surrounds the block.
+- Routing: Metal2–Metal4 only. **TopMetal1 is used only for the MIM top plates and their 1.64 µm tabs** (the PDK MIM
+  has its top plate on TopMetal1). No TopMetal2. The core ring may pass over the block (C7) on TopMetal2.
+- Pins: 21 pins on Metal3 (`30/2` pin shapes and labels) at the block edge: 17 at the south edge (outputs, `vcm2`,
+  bias, `c1`–`c4`, supplies) and `sinp`, `sinn`, `cosp`, `cosn` at the west edge. VDDA = `vdd`, VSSA = `vss`.
+  The netlist has no digital VDD/VSS (not applicable).
+
+LVS reference (`layout/r1_afe_lvs.cdl`): the netlist of record with three mechanical changes, written by `r1_afe_netlist.py`:
+`rppd` longer than 78 µm split into equal series segments; `cap_cmim` larger than 28 µm split into four parallel units of
+half the side (the PDK deck merges parallel MIM units into m = 4); MOS finger count re-cut to ≤ 10 µm per finger.
+The split changes the electrical netlist a little (each extra `rppd` segment adds two contact heads; four MIM units have
+twice the perimeter). Its effect was simulated separately (column "split" below).
+
+### Status (layout, run ids `layout-20261021-a`, `pex-20261021-b`, `r1afe-post-20261021e-*`)
+
+| Check | Criterion | Status | Evidence |
+| --- | --- | --- | --- |
+| Area | ≤ 0.10 mm² (task); S6 estimate 0.069 mm² | **passed** against 0.10: 0.0953 mm². Above the S6 estimate (open issue 6) | `reports/layout-20261021-a/layout_run.json` |
+| Reproduction of the GDS | same layout from the same inputs | **passed**: regenerated, KLayout `LayoutDiff` identical (file hash differs only by the GDS time stamp) | `reports/layout-20261021-a/layout_run.json` |
+| DRC, PDK deck, main + maximal rule set (deep, `--no_density`) | 0 violations | **passed**: 0 | `reports/layout-20261021-a/drc.log` |
+| DRC density rules | block level | **not run** (waived at block level; chip-level fill and density are the integrator's) | — |
+| Antenna, PDK deck | 0 violations | **passed**: 0 | `reports/layout-20261021-a/antenna.log` |
+| LVS, PDK deck (`--no_series_res`) against `layout/r1_afe_lvs.cdl` (revision E, unit split) | netlists match | **passed**: `r1_afe` nets 63/63, devices 46/46; `r1_afe_ch` nets 143/143, devices 240/240 (after the deck merges parallel MIM units) | `reports/layout-20261021-a/lvs.log`, `lvs_summary.txt` |
+| No TopMetal2; TopMetal1 only on MIM | C7 | **passed** (TopMetal2 area 0; TopMetal1 29 257 µm², all MIM plates and tabs). Spec ambiguity: see open issue 2 | layer report, `<G1_RESULTS_ROOT>/r1_afe/layout-20261021-a/r1afe_layers.py` |
+| Pins on the boundary, Metal3 or lower | — | **passed**: 21 Metal3 pins | same |
+| Fill (G1 fill scripts) | if the deck needs it | **not run** (block-level DRC without density does not need fill) | — |
+| PEX, channel cell (kpex 0.3.12, 2.5D, CC) | extraction completes | **passed**: 3297 capacitors, 3.61 pF total in one channel | `reports/pex-20261021-b/run.json` |
+| PEX, full block (top-level routing, VCM1 divider, outputs to the pins) | extraction completes | **not run to completion**: flat kpex of the whole block stopped after 2 h 33 min without a result (the channel alone took about 30 min) | `<G1_RESULTS_ROOT>/r1_afe/pex-20261021-a/` |
+| Wiring resistance | — | **not run** (kpex CC mode is capacitance only) | — |
+| Post-layout key decks | see the table below | **run**: 30 jobs, 0 failed; results in the table | `sim/runs/r1afe-post-20261021e-pex/run.json` |
+| EM/IR of the 0.3 µm supply routing | — | **not run** | — |
+| LEF / abstract | — | **not run** | — |
+
+### Pre-layout vs post-layout (simulated; tt = 3.3 V, 27 °C; ffx = ff, 3.0 V, 125 °C; ss = 3.0 V, 125 °C)
+
+Columns: **schematic** = netlist of record (`r1afe-post-20261021e-sch`); **split** = LVS unit split, no parasitics
+(`…-split`); **post-layout** = split + kpex capacitances of the channel cell (`…-pex`). Reduction: `sim/compare_post.py` →
+`reports/post-20261021e.json`. Loop margins are the worst over ×1 and ×32 and input CM 0.5 and 2.5 V.
+
+| Quantity | Limit | Schematic | Split | Post-layout | Status (post-layout) |
+| --- | --- | --- | --- | --- | --- |
+| f_c, minimum over steps, tt, CM 0.5/2.5 V | ≥ 1.0 MHz | 1.280 MHz | 1.278 MHz | 1.292 MHz | **passed** |
+| Pole matching, tt, 20 MC samples × 6 steps, worst \|Δf3\| (σ) | ≤ 1 % | 0.563 % (0.232 %) | 0.536 % (0.236 %) | 0.716 % (0.228 %) | **passed** at tt; ss not run post-layout (pre-layout ss worst 0.976 %) |
+| DM1 phase margin, tt / ffx | ≥ 55° | 78.3° / 72.5° | 78.5° / 72.8° | 74.5° / 67.0° | **passed** |
+| CM1 phase margin, tt / ffx | ≥ 60° | 75.6° / 62.3° | 75.8° / 62.8° | 72.9° / **59.7°** | **failed** at ffx (−0.3°) |
+| DM2 phase margin, tt / ffx (information) | ≥ 55° | 78.7° / 72.9° | 79.0° / 73.2° | 74.1° / 69.0° | passed |
+| CM2 phase margin, tt / ffx (information) | ≥ 60° | 68.2° / 61.7° | 70.0° / 63.1° | 65.5° / **58.3°** | **failed** at ffx (−1.7°) |
+| Settling into the r1_adc T/H, non-linear residual, tt/ss, ×1/×32 | ≤ 0.25 LSB | 0.0054 LSB | 0.0053 LSB | 0.0060 LSB | **passed** |
+| Settling, total error (worst) | 0.25 LSB (INTERFACES.md) | 0.39 LSB | 0.39 LSB | **1.28 LSB** (tt ×32) | **failed** (was failed before layout). New part: an output offset at ×32 of −0.25 mV (−0.57 LSB) tt and −0.23 mV ss; gain error 0.044 % |
+| Noise ×32 input-referred, ss | ≤ 35 µV | 31.01 µV | 30.69 µV | 30.82 µV | **passed** |
+| Noise ×1 output, ss | ≤ 0.41 LSB (180 µV) | 163.8 µV | 163.5 µV | 164.8 µV | passed |
+
+Reading of the table:
+1. The unit split alone changes nothing that matters (≤ 0.4° and ≤ 0.2 %).
+2. The extracted capacitance lowers every loop margin by 3–6°. CM1 and CM2 at ffx fall below 60°.
+3. The ×32 settling now has an offset of about −0.25 mV at the sample instant. Capacitors cannot give a DC offset, so the
+   offset is dynamic. The probable cause is the P/N imbalance of the extracted loads (net totals: `outn` 132.8 fF and
+   `outp` 73.9 fF; `x1n` 220.0 fF and `x1p` 209.5 fF; `m1p` 251.7 fF and `m1n` 246.7 fF). The reset kick of the T/H model is common mode; an
+   unequal P/N load converts part of it to a differential error. This is a hypothesis; no run isolates it yet.
+
+### Open issues (layout)
+
+1. **CM1 (59.7°) and CM2 (58.3°) phase margins at ffx are below 60° after layout.** A next revision needs about +3° of
+   CM margin at ffx before layout, or a layout with less capacitance on the CM-sense nodes (`xa1_vcms` 117 fF, `xa2_vcms` 73 fF in total).
+2. **Settling offset at ×32 (−0.25 mV, −0.57 LSB).** Balance the P/N routing of `outp`/`outn`, `x1p`/`x1n` and `m1p`/`m1n`
+   (route the pairs as matched pairs), then re-run `post`. The total-error limit was failed before layout (coordinator item).
+3. **TopMetal1 is used in the block** for the MIM top plates. The PDK MIM has its top plate on TopMetal1, so C7 ("no
+   TopMetal1/TopMetal2 inside the block") cannot hold with MIM. Recommended reading, taken here: no TopMetal2; TopMetal1
+   only on MIM plates and their tabs. The core ring on TopMetal2 may pass over the block. Needs the coordinator's confirmation.
+4. **Top-level parasitics are not in the post-layout netlist.** The full-block extraction did not finish (2 h 33 min). The
+   output routing to the south pins and the VCM1 divider are therefore without wiring capacitance. Both channel
+   instances use the same channel extraction, so channel-to-channel differences from the top-level routing are not
+   simulated. Next step: extract the top cell with the channels as black boxes, or with an abstract.
+5. No wiring resistance (kpex CC). The supply routing is 0.3 µm Metal2–Metal4; EM/IR not run.
+6. Area 0.0953 mm² is above the S6 estimate for `r1_afe` (0.069 mm²) and inside the task limit 0.10 mm².
+7. The input pairs (`MN1`/`MN2` of each OTA) are adjacent with end dummies, not interdigitated or common-centroid.
+8. Post-layout runs cover tt, ss (settling, noise) and ffx (loops) only. Pole matching at ss, the cross corners other than
+   ffx, the transient and overload decks are not run on the extracted netlist.
+9. No LEF or abstract view. No block-level fill.
+10. The netlist of record still has "revision D" in its header comment line (content is revision E; sha256 unchanged here).
+
+### Failures and mistakes (layout)
+
+| # | What happened | Class | Record |
+| --- | --- | --- | --- |
+| 1 | The first extraction kept the TopMetal1 top plate over the removed MIM. kpex counted the plate overlap as a capacitor between the two MIM terminals (for example 104 fF `outp`–`outn`), on top of the `cap_cmim` model (f_c −2.5 % in the first deck). Found by reading the largest capacitors; `pex_prepare.py` now removes TopMetal1 inside the MIM; run `pex-20261021-a` and `r1afe-post-20261021e-pexa` (stopped) are superseded. | verification-gap | `<G1_RESULTS_ROOT>/r1_afe/pex-20261021-a/` |
+| 2 | The full-block flat kpex was started without an estimate of its run time; it ran 2 h 33 min without a result and was stopped. The channel alone took about 30 min. | estimation | open issue 4 |
+| 3 | The first kpex was started as a background job with the default 30 min limit. The shell was stopped; the container kept running. Its output directory was renamed for a moment while it still ran, and then renamed back. | process-hygiene | — |
+| 4 | `flow/run.sh` does not pass environment variables into the container. The first "split" campaign ran on the schematic netlist; it was stopped and restarted with `flow/run.sh env R1AFE_NETLIST=…`. | tooling | `sim/run_afe.py` header comment |
+| 5 | The first `post` campaign had two settling levels, too few for the linear fit; it was stopped and restarted with five. | planning | — |
+| 6 | The layout regeneration check first wrote into a directory that did not exist (exit 1); repeated after `mkdir`. | process-hygiene | — |
+| 7 | Router: the many-pin nets (`c1`–`c4`, `vdd`) failed in the first pass; rip-up with history costs added. Only three tracks were left between the guard ring and the sine channel; a 12.8 µm south routing band was added. | planning | `layout/maze_router.py` |
+| 8 | DRC TM1.b: the TopMetal1 tab did not reach the inset PCell top plate (it would also have been an open). The tab now starts at the plate centre. | functional-bug | `reports/layout-dev4/drc.log` |
+| 9 | DRC V4.c1 (Via4 without Metal4 cover on unrouted MIM pins) and M2.b (0.015 µm and 0.175 µm notches between router pads and gate rails). Fixed: Metal4 pads always drawn; gate rails 0.40 µm; same-net pads bridged. | functional-bug | `reports/layout-dev4/drc.log` |
+| 10 | LVS: the last `RD2` segment was 0.02 µm longer than the others (the PCell rounds lengths to three digits). The split now uses equal segments on the 5 nm grid and the `rppd` body is copied and stretched, not taken from the PCell. | numerical | `reports/layout-dev4/lvs.log` |
+| 11 | First floorplan: stacked `S2` resistors made the array 155 µm tall; changed to single slots (80 µm). | estimation | — |
+| 12 | Host Python 3.8 has no dict `|` operator; the size pass had too small a grid ("pin has no usable node"); `klayout -b` output was buffered. Fixed in the generator. | tooling | — |
+| 13 | Waits written as `sleep` chains were blocked by the harness; replaced by condition loops. | process-hygiene | — |
+
+---
+
+## Revision E (2026-10-21, track T3 revision E) — schematic record
 
 Netlist of record: `schematic/r1_afe.spice` (revision E, sha256 `4a84a3d8…9e46`). Revision D is kept as
 `schematic/r1_afe_revD.spice` (sha256 `f32486ce…146b`). Revision E fixes open issue 1 of revision D (the ffx cross
@@ -83,7 +242,7 @@ All 14 campaigns ran with no failed job. Revision-D values are in brackets.
 | Source impedance 0/100/300/1000 Ω | recorded | **recorded**: at 1 kΩ ×1 −2.8 %, ×32 −18.8 % (same as revision D) | `r1afe-rsrc-20261021e` |
 | Development screens | — | **recorded** (not part of the campaign of record) | `dev-reve-01…05` |
 | Gain-switch transients, bias from r1_bgr, c1..c4 level shifters | — | **not run** | — |
-| Layout, DRC, LVS, PEX, post-layout | — | **not run** | — |
+| Layout, DRC, LVS, PEX, post-layout | — | **run** after this record: see "Layout (revision E)" | `reports/layout-20261021-a/`, `reports/pex-20261021-b/` |
 
 Regression list (revision-D list, 17 rows): every row re-run; 16 passed or recorded as in revision D, the settling total error stays
 **failed** (it failed in revision D and is a coordinator item). No row that passed in revision D fails. Two rows lost margin:

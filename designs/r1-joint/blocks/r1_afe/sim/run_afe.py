@@ -14,6 +14,11 @@ from concurrent.futures import ThreadPoolExecutor
 HERE = os.path.dirname(os.path.abspath(__file__))
 BLOCK = os.path.dirname(HERE)
 NETLIST = os.path.join(BLOCK, 'schematic', 'r1_afe.spice')
+# T3 layout track: R1AFE_NETLIST=<file> replaces the netlist of record for a whole campaign (post-layout re-runs on the
+# extracted netlist, pex/make_postlayout.py). Recorded in run.json (netlist_override, inputs, netlist_sha256).
+NETLIST_OVERRIDE = os.environ.get('R1AFE_NETLIST') or None
+if NETLIST_OVERRIDE:
+    NETLIST = os.path.abspath(NETLIST_OVERRIDE)
 PDK_COMMIT_FILE = '/foss/pdks/ihp-sg13g2/COMMIT'
 IMAGE_ID = 'sha256:ddeb69576f2808676d1c5d474ecf04f6d1d6f8abdcff6b72b39790ded924bab2'  # verified by flow/run.sh
 
@@ -379,6 +384,21 @@ def campaign(c):
                 for cm in (0.5, 2.5):
                     J.append(job('ccsw_%s_%s_cm%.1f' % (vn, k, cm), 'tb_afe_stb.cir', k, edits=ed, VCMI=cm, LLIST='1 2 4 5', KLIST='0 3 5'))
                     J.append(job('ccswac_%s_%s_cm%.1f' % (vn, k, cm), 'tb_afe_ac.cir', k, edits=ed, VCMI=cm))
+    elif c == 'post':   # T3 layout: key decks for the pre/post-layout comparison (run once on each netlist)
+        J.append(job('ac_tt_cm2.5', 'tb_afe_ac.cir', 'tt', VCMI=2.5))
+        J.append(job('ac_tt_cm0.5', 'tb_afe_ac.cir', 'tt', VCMI=0.5))
+        for part in range(2):
+            J.append(job('acmc_tt_p%d' % part, 'tb_afe_ac.cir', 'tt', True, NMC=10, SEED=101 + part))
+        for k in ('tt', 'ffx'):
+            for cm in (0.5, 2.5):
+                J.append(job('stbx_%s_cm%.2f' % (k, cm), 'tb_afe_stb.cir', k, VCMI=cm, KLIST='0 5', LLIST='1 2 4 5'))
+        for k in ('tt', 'ss'):
+            for code in (0, 5):
+                for lv, tag in ((1, 'p100'), (0.5, 'p50'), (-1, 'm100'), (-0.5, 'm50'), (0.25, 'p25')):
+                    J.append(job('settleadc_%s_x%d_%s' % (k, 2 ** code, tag), 'tb_afe_settle_adc.cir', k, CODE=code,
+                                 AMP=round(lv * 0.7 / 2 ** code, 6), VCMI=2.45, CS='2.8p', VRST=0.0))
+        J.append(job('noise_ss', 'tb_afe_noise.cir', 'ss'))
+        J.append(job('noise_tt', 'tb_afe_noise.cir', 'tt'))
     elif c == 'stbval':
         J.append(job('toy', 'tb_stb_toy.cir', 'tt'))
     elif c == 'stbq':
@@ -721,10 +741,12 @@ def main():
                 tools=dict(ngspice=ver[0] if ver else 'unknown', image_id=IMAGE_ID,
                            pdk_commit=open(PDK_COMMIT_FILE).read().strip()),
                 inputs={**{'sim/' + t: sha(os.path.join(frz, t)) for t in templates},
-                        'schematic/r1_afe.spice': sha(NETLIST), 'sim/run_afe.py': sha(os.path.join(frz, 'run_afe.py')),
+                        ('netlist_override' if NETLIST_OVERRIDE else 'schematic/r1_afe.spice'): sha(NETLIST), 'sim/run_afe.py': sha(os.path.join(frz, 'run_afe.py')),
                         **({NETLIST_REVB: sha(os.path.join(BLOCK, NETLIST_REVB))} if any(j.get('src') for j in jobs) else {})},
                 netlist_edits={j['name']: j['edits'] for j in jobs if j.get('edits')} or None,
-                netlist_sha256=sha(NETLIST), frozen_inputs='$G1_RESULTS_ROOT/r1_afe/%s/frozen/' % rid, lsb_V=LSB,
+                netlist_sha256=sha(NETLIST),
+                netlist_override=(NETLIST_OVERRIDE.replace(os.environ['G1_RESULTS_ROOT'], '$G1_RESULTS_ROOT')
+                                  if NETLIST_OVERRIDE else None), frozen_inputs='$G1_RESULTS_ROOT/r1_afe/%s/frozen/' % rid, lsb_V=LSB,
                 raw='$G1_RESULTS_ROOT/r1_afe/%s/' % rid, jobs=len(jobs),
                 failed_jobs=[r['name'] for r in res if r['rc'] != 0 or not r['rows']],
                 wall_seconds=round(time.time() - t0, 1), summary='results/%s.json' % rid,
