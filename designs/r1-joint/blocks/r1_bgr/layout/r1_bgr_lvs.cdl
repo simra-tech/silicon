@@ -1,0 +1,157 @@
+* r1_bgr LVS reference netlist, written by layout/r1_bgr_layout.py from schematic/r1_bgr.spice (netlist of record).
+* Format conversion only (X-calls -> M/R/Q, sub! -> vss, mm_ok dropped, npn13G2 le/we written out), plus the layout
+* dummies: 38 npn13G2 (all terminals vss), 4 sg13_hv_pmos 10/4 (all vdd), 2 sg13_hv_nmos 10/1 (all vss).
+.subckt r1_bgr vdd vss vref iptat pbias pcasc vbe dvbe
+MMP1_0 d1_0 pbias vdd vdd sg13_hv_pmos w=10u l=4u ng=1 m=1
+MMC1_0 n1 pcasc d1_0 d1_0 sg13_hv_pmos w=10u l=4u ng=1 m=1
+MMNC1_0 n1 vb2 vbe vss sg13_hv_nmos w=20u l=1u ng=1 m=1
+MMP1_1 d1_1 pbias vdd vdd sg13_hv_pmos w=10u l=4u ng=1 m=1
+MMC1_1 n1 pcasc d1_1 d1_1 sg13_hv_pmos w=10u l=4u ng=1 m=1
+MMNC1_1 n1 vb2 vbe vss sg13_hv_nmos w=20u l=1u ng=1 m=1
+MMP1_2 d1_2 pbias vdd vdd sg13_hv_pmos w=10u l=4u ng=1 m=1
+MMC1_2 n1 pcasc d1_2 d1_2 sg13_hv_pmos w=10u l=4u ng=1 m=1
+MMNC1_2 n1 vb2 vbe vss sg13_hv_nmos w=20u l=1u ng=1 m=1
+MMP1_3 d1_3 pbias vdd vdd sg13_hv_pmos w=10u l=4u ng=1 m=1
+MMC1_3 n1 pcasc d1_3 d1_3 sg13_hv_pmos w=10u l=4u ng=1 m=1
+MMNC1_3 n1 vb2 vbe vss sg13_hv_nmos w=20u l=1u ng=1 m=1
+MMP1_4 d1_4 pbias vdd vdd sg13_hv_pmos w=10u l=4u ng=1 m=1
+MMC1_4 n1 pcasc d1_4 d1_4 sg13_hv_pmos w=10u l=4u ng=1 m=1
+MMNC1_4 n1 vb2 vbe vss sg13_hv_nmos w=20u l=1u ng=1 m=1
+MMP1_5 d1_5 pbias vdd vdd sg13_hv_pmos w=10u l=4u ng=1 m=1
+MMC1_5 n1 pcasc d1_5 d1_5 sg13_hv_pmos w=10u l=4u ng=1 m=1
+MMNC1_5 n1 vb2 vbe vss sg13_hv_nmos w=20u l=1u ng=1 m=1
+MMP1_6 d1_6 pbias vdd vdd sg13_hv_pmos w=10u l=4u ng=1 m=1
+MMC1_6 n1 pcasc d1_6 d1_6 sg13_hv_pmos w=10u l=4u ng=1 m=1
+MMNC1_6 n1 vb2 vbe vss sg13_hv_nmos w=20u l=1u ng=1 m=1
+MMP1_7 d1_7 pbias vdd vdd sg13_hv_pmos w=10u l=4u ng=1 m=1
+MMC1_7 n1 pcasc d1_7 d1_7 sg13_hv_pmos w=10u l=4u ng=1 m=1
+MMNC1_7 n1 vb2 vbe vss sg13_hv_nmos w=20u l=1u ng=1 m=1
+MMP2 d2 pbias vdd vdd sg13_hv_pmos w=10u l=4u ng=1 m=1
+MMC2 pbias pcasc d2 d2 sg13_hv_pmos w=10u l=4u ng=1 m=1
+RRB pbias pcasc vss rppd w=1u l=500u m=1 b=0
+MMNC2 pcasc vb2 c2 vss sg13_hv_nmos w=20u l=1u ng=1 m=1
+MMP5 d5 pbias vdd vdd sg13_hv_pmos w=10u l=4u ng=1 m=1
+MMC5 vb2 pcasc d5 d5 sg13_hv_pmos w=10u l=4u ng=1 m=1
+RRX vb2 vd1 vss rppd w=1u l=192u m=1 b=0
+QQD1 vd1 vd1 vd2 vss npn13G2 le=900n we=70n Nx=1
+QQD2 vd2 vd2 vss vss npn13G2 le=900n we=70n Nx=1
+QQ1_0 vbe vbe vss vss npn13G2 le=900n we=70n Nx=1
+QQ1_1 vbe vbe vss vss npn13G2 le=900n we=70n Nx=1
+QQ1_2 vbe vbe vss vss npn13G2 le=900n we=70n Nx=1
+QQ1_3 vbe vbe vss vss npn13G2 le=900n we=70n Nx=1
+QQ1_4 vbe vbe vss vss npn13G2 le=900n we=70n Nx=1
+QQ1_5 vbe vbe vss vss npn13G2 le=900n we=70n Nx=1
+QQ1_6 vbe vbe vss vss npn13G2 le=900n we=70n Nx=1
+QQ1_7 vbe vbe vss vss npn13G2 le=900n we=70n Nx=1
+QQ1_8 vbe vbe vss vss npn13G2 le=900n we=70n Nx=1
+QQ1_9 vbe vbe vss vss npn13G2 le=900n we=70n Nx=1
+QQ1_10 vbe vbe vss vss npn13G2 le=900n we=70n Nx=1
+QQ1_11 vbe vbe vss vss npn13G2 le=900n we=70n Nx=1
+QQ2_0 c2 vbe dvbe vss npn13G2 le=900n we=70n Nx=1
+QQ2_1 c2 vbe dvbe vss npn13G2 le=900n we=70n Nx=1
+QQ2_2 c2 vbe dvbe vss npn13G2 le=900n we=70n Nx=1
+QQ2_3 c2 vbe dvbe vss npn13G2 le=900n we=70n Nx=1
+QQ2_4 c2 vbe dvbe vss npn13G2 le=900n we=70n Nx=1
+QQ2_5 c2 vbe dvbe vss npn13G2 le=900n we=70n Nx=1
+QQ2_6 c2 vbe dvbe vss npn13G2 le=900n we=70n Nx=1
+QQ2_7 c2 vbe dvbe vss npn13G2 le=900n we=70n Nx=1
+QQ2_8 c2 vbe dvbe vss npn13G2 le=900n we=70n Nx=1
+QQ2_9 c2 vbe dvbe vss npn13G2 le=900n we=70n Nx=1
+QQ2_10 c2 vbe dvbe vss npn13G2 le=900n we=70n Nx=1
+QQ2_11 c2 vbe dvbe vss npn13G2 le=900n we=70n Nx=1
+QQ2_12 c2 vbe dvbe vss npn13G2 le=900n we=70n Nx=1
+QQ2_13 c2 vbe dvbe vss npn13G2 le=900n we=70n Nx=1
+QQ2_14 c2 vbe dvbe vss npn13G2 le=900n we=70n Nx=1
+QQ2_15 c2 vbe dvbe vss npn13G2 le=900n we=70n Nx=1
+QQ2_16 c2 vbe dvbe vss npn13G2 le=900n we=70n Nx=1
+QQ2_17 c2 vbe dvbe vss npn13G2 le=900n we=70n Nx=1
+QQ2_18 c2 vbe dvbe vss npn13G2 le=900n we=70n Nx=1
+QQ2_19 c2 vbe dvbe vss npn13G2 le=900n we=70n Nx=1
+QQ2_20 c2 vbe dvbe vss npn13G2 le=900n we=70n Nx=1
+QQ2_21 c2 vbe dvbe vss npn13G2 le=900n we=70n Nx=1
+QQ2_22 c2 vbe dvbe vss npn13G2 le=900n we=70n Nx=1
+QQ2_23 c2 vbe dvbe vss npn13G2 le=900n we=70n Nx=1
+QQ2_24 c2 vbe dvbe vss npn13G2 le=900n we=70n Nx=1
+QQ2_25 c2 vbe dvbe vss npn13G2 le=900n we=70n Nx=1
+QQ2_26 c2 vbe dvbe vss npn13G2 le=900n we=70n Nx=1
+QQ2_27 c2 vbe dvbe vss npn13G2 le=900n we=70n Nx=1
+QQ2_28 c2 vbe dvbe vss npn13G2 le=900n we=70n Nx=1
+QQ2_29 c2 vbe dvbe vss npn13G2 le=900n we=70n Nx=1
+QQ2_30 c2 vbe dvbe vss npn13G2 le=900n we=70n Nx=1
+QQ2_31 c2 vbe dvbe vss npn13G2 le=900n we=70n Nx=1
+QQ2_32 c2 vbe dvbe vss npn13G2 le=900n we=70n Nx=1
+QQ2_33 c2 vbe dvbe vss npn13G2 le=900n we=70n Nx=1
+QQ2_34 c2 vbe dvbe vss npn13G2 le=900n we=70n Nx=1
+QQ2_35 c2 vbe dvbe vss npn13G2 le=900n we=70n Nx=1
+QQ2_36 c2 vbe dvbe vss npn13G2 le=900n we=70n Nx=1
+QQ2_37 c2 vbe dvbe vss npn13G2 le=900n we=70n Nx=1
+QQ2_38 c2 vbe dvbe vss npn13G2 le=900n we=70n Nx=1
+QQ2_39 c2 vbe dvbe vss npn13G2 le=900n we=70n Nx=1
+QQ2_40 c2 vbe dvbe vss npn13G2 le=900n we=70n Nx=1
+QQ2_41 c2 vbe dvbe vss npn13G2 le=900n we=70n Nx=1
+QQ2_42 c2 vbe dvbe vss npn13G2 le=900n we=70n Nx=1
+QQ2_43 c2 vbe dvbe vss npn13G2 le=900n we=70n Nx=1
+QQ2_44 c2 vbe dvbe vss npn13G2 le=900n we=70n Nx=1
+QQ2_45 c2 vbe dvbe vss npn13G2 le=900n we=70n Nx=1
+QQ2_46 c2 vbe dvbe vss npn13G2 le=900n we=70n Nx=1
+QQ2_47 c2 vbe dvbe vss npn13G2 le=900n we=70n Nx=1
+RR1 dvbe vss vss rppd w=1u l=84u m=1 b=0
+MMP3 d3 pbias vdd vdd sg13_hv_pmos w=10u l=4u ng=1 m=1
+MMC3 vref pcasc d3 d3 sg13_hv_pmos w=10u l=4u ng=1 m=1
+RR2 vref vbe3 vss rppd w=1u l=347.5u m=1 b=0
+QQ3_0 vbe3 vbe3 vss vss npn13G2 le=900n we=70n Nx=1
+QQ3_1 vbe3 vbe3 vss vss npn13G2 le=900n we=70n Nx=1
+QQ3_2 vbe3 vbe3 vss vss npn13G2 le=900n we=70n Nx=1
+QQ3_3 vbe3 vbe3 vss vss npn13G2 le=900n we=70n Nx=1
+MMP4 d4 pbias vdd vdd sg13_hv_pmos w=10u l=4u ng=1 m=1
+MMC4 iptat pcasc d4 d4 sg13_hv_pmos w=10u l=4u ng=1 m=1
+MMPS det pbias vdd vdd sg13_hv_pmos w=10u l=4u ng=1 m=1
+RRDET det vss vss rhigh w=0.5u l=735u m=1 b=0
+MMNI kick det vss vss sg13_hv_nmos w=1u l=0.5u ng=1 m=1
+MMPI kick det vdd vdd sg13_hv_pmos w=2u l=0.5u ng=1 m=1
+MMKFB pbias kick vss vss sg13_hv_nmos w=1u l=4u ng=1 m=1
+QDUM1 vss vss vss vss npn13G2 le=900n we=70n Nx=1
+QDUM2 vss vss vss vss npn13G2 le=900n we=70n Nx=1
+QDUM3 vss vss vss vss npn13G2 le=900n we=70n Nx=1
+QDUM4 vss vss vss vss npn13G2 le=900n we=70n Nx=1
+QDUM5 vss vss vss vss npn13G2 le=900n we=70n Nx=1
+QDUM6 vss vss vss vss npn13G2 le=900n we=70n Nx=1
+QDUM7 vss vss vss vss npn13G2 le=900n we=70n Nx=1
+QDUM8 vss vss vss vss npn13G2 le=900n we=70n Nx=1
+QDUM9 vss vss vss vss npn13G2 le=900n we=70n Nx=1
+QDUM10 vss vss vss vss npn13G2 le=900n we=70n Nx=1
+QDUM11 vss vss vss vss npn13G2 le=900n we=70n Nx=1
+QDUM12 vss vss vss vss npn13G2 le=900n we=70n Nx=1
+QDUM13 vss vss vss vss npn13G2 le=900n we=70n Nx=1
+QDUM14 vss vss vss vss npn13G2 le=900n we=70n Nx=1
+QDUM15 vss vss vss vss npn13G2 le=900n we=70n Nx=1
+QDUM16 vss vss vss vss npn13G2 le=900n we=70n Nx=1
+QDUM17 vss vss vss vss npn13G2 le=900n we=70n Nx=1
+QDUM18 vss vss vss vss npn13G2 le=900n we=70n Nx=1
+QDUM19 vss vss vss vss npn13G2 le=900n we=70n Nx=1
+QDUM20 vss vss vss vss npn13G2 le=900n we=70n Nx=1
+QDUM21 vss vss vss vss npn13G2 le=900n we=70n Nx=1
+QDUM22 vss vss vss vss npn13G2 le=900n we=70n Nx=1
+QDUM23 vss vss vss vss npn13G2 le=900n we=70n Nx=1
+QDUM24 vss vss vss vss npn13G2 le=900n we=70n Nx=1
+QDUM25 vss vss vss vss npn13G2 le=900n we=70n Nx=1
+QDUM26 vss vss vss vss npn13G2 le=900n we=70n Nx=1
+QDUM27 vss vss vss vss npn13G2 le=900n we=70n Nx=1
+QDUM28 vss vss vss vss npn13G2 le=900n we=70n Nx=1
+QDUM29 vss vss vss vss npn13G2 le=900n we=70n Nx=1
+QDUM30 vss vss vss vss npn13G2 le=900n we=70n Nx=1
+QDUM31 vss vss vss vss npn13G2 le=900n we=70n Nx=1
+QDUM32 vss vss vss vss npn13G2 le=900n we=70n Nx=1
+QDUM33 vss vss vss vss npn13G2 le=900n we=70n Nx=1
+QDUM34 vss vss vss vss npn13G2 le=900n we=70n Nx=1
+QDUM35 vss vss vss vss npn13G2 le=900n we=70n Nx=1
+QDUM36 vss vss vss vss npn13G2 le=900n we=70n Nx=1
+QDUM37 vss vss vss vss npn13G2 le=900n we=70n Nx=1
+QDUM38 vss vss vss vss npn13G2 le=900n we=70n Nx=1
+MDUMP1 vdd vdd vdd vdd sg13_hv_pmos w=10u l=4u ng=1 m=1
+MDUMP2 vdd vdd vdd vdd sg13_hv_pmos w=10u l=4u ng=1 m=1
+MDUMP3 vdd vdd vdd vdd sg13_hv_pmos w=10u l=4u ng=1 m=1
+MDUMP4 vdd vdd vdd vdd sg13_hv_pmos w=10u l=4u ng=1 m=1
+MDUMN1 vss vss vss vss sg13_hv_nmos w=10u l=1u ng=1 m=1
+MDUMN2 vss vss vss vss sg13_hv_nmos w=10u l=1u ng=1 m=1
+.ends

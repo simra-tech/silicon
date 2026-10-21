@@ -1,7 +1,8 @@
 # r1_bgr — compact bandgap reference with PTAT current (R1)
 
-State (2026-10-20): **schematic simulated** (revision r1). Layout not run. All numbers are
-simulated (ngspice 46, schematic level); nothing is measured.
+State (2026-10-21): **schematic simulated** (revision r1). **Layout done** (2026-10-21): DRC 0, antenna 0,
+LVS clean, post-layout simulated (see "Layout (T7, 2026-10-21)"). All numbers are simulated (ngspice 46);
+nothing is measured.
 
 ## What it is
 
@@ -40,6 +41,14 @@ Pins: `vdd vss vref iptat pbias pcasc vbe dvbe`.
 | `sim/tb_r1_bgr.spice.tmpl`, `sim/run_bgr.py`, `sim/.spiceinit` | testbench template and runner (suites `size temp mc psrr startup op`; `stb` and `noise` added 2026-10-21) |
 | `sim/tb_stb_toy.cir` | toy loop for the loop-gain method check (copy of the r1_afe deck) |
 | `sim/probe/` | unit-device mismatch probe |
+| `layout/r1_bgr_layout.py` | layout generator (KLayout batch, SG13_dev PCells); writes the three files below |
+| `layout/r1_bgr.gds` | layout, top cell `r1_bgr`, 96.0 × 194.3 µm, sha256 `324e3c27477a77c4a32d6760366d8d1fb82bea4887ae26b905cd7022aac54005` |
+| `layout/r1_bgr_lvs.cdl` | LVS reference: netlist of record plus the layout dummies (38 HBT, 4 PMOS, 2 NMOS), sha256 `c4d175ee…fae2b` |
+| `layout/r1_bgr_layout_meta.json` | bounding box, trunks, channel use |
+| `layout/run_checks.sh`, `layout/write_runjson.py` | generator + PDK DRC + PDK LVS, run.json per run |
+| `layout/pex_build.py` | device-level RC netlist: KLayout `RNetExtractor` wiring R + kpex 2.5D CC capacitance |
+| `layout/pex_paths.py` | effective resistance and IR drop of the precision paths from the extracted networks |
+| `sim/run_bgr_post.py` | pre- vs post-layout runner (op, TC, start-up, core loop) |
 | `sim/results/<run-id>.json` | summaries; `sim/runs/<run-id>/run.json` per run; raw decks, logs, waveforms at `<G1_RESULTS_ROOT>/r1_bgr/<run-id>/` |
 
 Loads in every deck (as on G1): `iptat` sinks into a 1.0 V source, `vref` carries 1 pF.
@@ -52,7 +61,10 @@ Corner names: `hbt_typ/bcs/wcs`, `mos_tt/ss/ff`, `res_typ/bcs/wcs`.
 | PDK | IHP SG13G2 open PDK `84374023ee8b4b126bebbba67fcbada0a9c0ff0b` | `/foss/pdks/ihp-sg13g2/COMMIT` in the container (checked by `flow/run.sh`) |
 | ngspice | 46 (KLU), PSP 103 and R3 via OSDI | `ngspice -v` in the container |
 | Container | `tapeoutbench-eda:latest` `sha256:ddeb6957…` | `flow/run.sh` image check |
-| xschem / KLayout | not used (netlist generator; no layout) | — |
+| xschem | not used (netlist generator) | — |
+| KLayout | 0.30.9 (layout generator, PDK DRC/LVS decks, `RNetExtractor`) | `klayout -v` in the container |
+| kpex | 0.3.12 (2.5D CC capacitance only) | `kpex --version` in the container |
+| Python (extraction post-processing) | numpy 2.5.1, scipy 1.18.0 | import in the container |
 
 Command (from the repository root): `G1_CPUSET=116,117 G1_CPUS=2 G1_WORKDIR=designs/r1-joint/blocks/r1_bgr/sim G1_RESULTS_ROOT=<G1_RESULTS_ROOT> flow/run.sh python3 run_bgr.py <suite> <run-id>`.
 
@@ -79,7 +91,14 @@ Command (from the repository root): `G1_CPUSET=116,117 G1_CPUS=2 G1_WORKDIR=desi
 | Noise of `vref`, 10 Hz–10 MHz, tt/27 °C and ss/125 °C (1 pF load) | record (no limit) | **run**: 10 Hz–100 kHz 57.1 µV rms (tt), 73.7 µV (ss/125); 10 Hz–10 MHz 158 / 189 µV; 1/f corner 6.0 / 6.9 kHz. 0.25 LSB (110 µV): met only if the buffer pole is ≤ 0.62 MHz (tt) or ≤ 0.28 MHz (ss/125), estimate. | `bgr-noise-20261021-b` |
 | Mismatch at −40 / 125 °C and at corners | — | **not run** (TC per sample covers −40…125 °C at tt only) | — |
 | Load: ADC reference buffer, r1_safe DAC, T2F with r1_bgr rails | — | **not run** | — |
-| Layout, DRC, LVS, PEX | — | **not run** | — |
+| DRC, PDK deck, main + `sg13g2_maximal` tables, `--run_mode=deep --no_density` | 0 markers | **passed**: 0. Density is waived at block level; it is checked at chip level after fill. | `layout-drc-20261021-c` |
+| Antenna, PDK deck `--antenna_only` | 0 markers | **passed**: 0 | `layout-ant-20261021-c` |
+| LVS, PDK deck vs netlist of record + dummies | match | **passed**: 108 + 44 dummy devices; after series/parallel combination 4 `rppd`, 1 `rhigh`, 27 PMOS, 5 NMOS, 6 `npn13G2` (104 units), 28 nets | `layout-lvs-20261021-c` |
+| Pins on the boundary, Metal3, no TopMetal | 8 pins | **passed**: `vdd vss vref iptat pbias pcasc vbe dvbe` on Metal3 at the edge; top layer used is Metal4 | `layout/r1_bgr_layout.py` |
+| Area | ≤ 0.020 mm² | **passed**: 96.0 × 194.3 µm = 0.01865 mm² | `layout/r1_bgr_layout_meta.json` |
+| PEX (RC, device level) | extracted | **passed**: 2730 R, 372 C (866 fF) | `pex-rc-20261021-b` |
+| Post-layout V<sub>REF</sub>, TC, current, start-up, core loop | as schematic rows | **passed** (table in "Layout") | `bgr-post-20261021-a`, `sim/results/bgr-post-20261021-a.json` |
+| Fill, LEF, chip-level density | — | **not run** | — |
 | Runs `bgr-size-20261020-a/b/c`, `bgr-temp-20261020-a` | — | **invalid**, kept as record: RB generated as 130 µm instead of 500 µm (unit error in the runner) | `sim/runs/*/run.json` |
 
 ## Loop stability and noise (T7, 2026-10-21)
@@ -173,11 +192,124 @@ Estimate against 0.25 LSB (110 µV rms, 12 bit, 0.9 V full scale). This is a fir
 | 9 | The r3_cmc resistor model prints "voltage greater than vmax" warnings (`rppd`, `rhigh`) in noise and transient logs. They also appear in the earlier `op` and `mc` logs, but not in AC runs. Not investigated. The AC and noise results do not depend on them in any visible way. | verification-gap | `bgr-noise-20261021-b/noise_tt27.log` |
 | 10 | No per-device noise split and no Monte Carlo of the loop gain were run (time budget). | verification-gap | — |
 
+## Layout (T7, 2026-10-21)
+
+### Files and built-against
+
+Generator `layout/r1_bgr_layout.py` writes `layout/r1_bgr.gds`, `layout/r1_bgr_lvs.cdl` and
+`layout/r1_bgr_layout_meta.json`. Tools: KLayout 0.30.9, kpex 0.3.12, ngspice 46, PDK
+`84374023ee8b4b126bebbba67fcbada0a9c0ff0b` (see "Built against"). Each run directory has a `run.json`
+(command, tool versions, PDK commit, GDS/CDL/netlist sha256).
+
+Commands (from the repository root, POSIX sh):
+
+1. `G1_CPUSET=100-102; export G1_CPUSET; G1_RESULTS_ROOT=<G1_RESULTS_ROOT>; export G1_RESULTS_ROOT`
+2. `sh designs/r1-joint/blocks/r1_bgr/layout/run_checks.sh <tag>` (generator, DRC, LVS, run.json).
+3. `flow/run.sh kpex --pdk ihp_sg13g2 --gds <gds> --cell r1_bgr --schematic <cdl> --2.5D --mode CC --out_dir <pex-cc dir>`
+4. `flow/run.sh klayout -b -r designs/r1-joint/blocks/r1_bgr/layout/pex_build.py -rd kpexdir=<pex-cc dir>/r1_bgr__r1_bgr -rd gds=<gds> -rd out=<pex-rc dir>`
+5. `G1_WORKDIR=designs/r1-joint/blocks/r1_bgr/sim flow/run.sh python3 run_bgr_post.py <run-id> <pex-rc run-id>`
+6. `flow/run.sh python3 designs/r1-joint/blocks/r1_bgr/layout/pex_paths.py <pex-rc dir> <post dir>`
+
+### Floorplan
+
+Bottom to top: `vss` bus; resistor row (30 `rppd` columns: RB 12 units, R1 2 + R2 8 units interleaved
+`R2 R2 R1 R2 R2 R2 R2 R1 R2 R2`, RX 4 units, dummy at each group end, all units carry current bottom to
+top); `rhigh` RDET (15 units + 2 dummies); HBT bank 8 × 13 cells (66 active `npn13G2` Nx=1, 38 dummies,
+common centroid for Q1 12, Q2 48, Q3 4; same cell orientation and emitter contact as G1); NMOS row
+(interdigitated `D A×8 B×2 A×8 D`, then MNI, MKFB); two cascode rows; PMOS mirror row (`D MP5 MP1_0..3 MP2
+MP3 MP1_4..7 MP4 MPS D`); `vdd` bus. Each device group has a p+ guard ring. Routing uses Metal1–Metal4:
+Metal3 horizontal tracks, Metal4 vertical trunks. Metal5 and TopMetal are not used.
+
+Precision returns: the Q1/Q3/QD2 emitters return on a separate `vssq` Metal3 track and a 2 µm Metal4 trunk
+to the top head of R1 (the star). The trunk then goes to the `vss` bus. The Q2 emitters (`dvbe`) go on
+their own Metal3 tracks and a 1 µm trunk to the bottom head of R1. `vbe` has a sense track (Q1 and Q2
+bases, pin) and a force track (Q1 collectors from MNC1). This follows the G1 BGR586 lesson (metal
+resistance in the emitter return).
+
+### Extraction method
+
+kpex RC mode leaves the devices on unsplit net nodes, and Magic RC leaves every `npn13G2` emitter on an
+isolated node. Thus `layout/pex_build.py` builds the RC netlist itself:
+
+1. It reads the kpex LVS database and the kpex 2.5D CC capacitances (373 C).
+2. It extracts each net with `klayout.pex.RNetExtractor` (square counting). Sheet resistance: Metal1
+   0.110 Ω/sq, Metal2–Metal4 0.088 Ω/sq, Via1–Via3 9 Ω per cut (PDK ITF typical values).
+3. It puts one port on Metal1 at each device terminal and one port at each pin label.
+4. It writes the layout devices with layout geometry (MOS AS/AD/PS/PD, resistor units, 104 HBT units).
+
+Result: 197 devices, 64 nets, 372 terminal ports, 2730 R (0 negative, 0 open), 372 C, 866 fF.
+Not modelled: contact resistance inside the PCells (Cont, EmWind, `rppd` heads are in the model).
+The `dev` view is the layout devices + C with the wiring R shorted; `rc` is the full netlist.
+
+### Pre- vs post-layout (simulated, `bgr-post-20261021-a`)
+
+| Quantity | Condition | Schematic | Layout devices + C | Full RC |
+| --- | --- | --- | --- | --- |
+| V<sub>REF</sub> | tt/27 °C/3.3 V | 1.04489 V | 1.04565 V (+0.76 mV) | 1.04601 V (+1.12 mV, +0.11 %) |
+| TC box −40…125 °C | tt/3.3 V | 8.4 ppm/°C | 9.3 ppm/°C | 9.9 ppm/°C |
+| Supply current | tt/27 °C | 51.80 µA | 51.63 µA | 51.49 µA |
+| `iptat` | tt/27 °C | 4.203 µA | 4.190 µA | 4.178 µA |
+| ΔV<sub>BE</sub> (`dvbe`) | tt/27 °C | 91.13 mV | 91.13 mV | 91.35 mV |
+| Start-up, 10 µs ramp to 3.0 V | tt/27 °C | end 1.0449 V, max 1.0645 V, 1 % at 8.2 µs | not run | end 1.0460 V, max 1.0734 V, 1 % at 10.1 µs |
+| Start-up, 10 µs ramp to 3.0 V | ss/−40 °C | end 1.0469 V, max 1.1154 V, 1 % at 8.6 µs | not run | end 1.0477 V, max 1.1291 V, 1 % at 10.2 µs |
+| Core loop (`pbias` gate cut, 13 gates) | tt/27 °C/3.3 V | PM 132.4°, GM 21.2 dB, f<sub>u</sub> 2.68 MHz | not run | PM 127.1°, no −180° crossing, f<sub>u</sub> 2.36 MHz |
+| Core loop | ss/125 °C/3.0 V | PM 131.7°, f<sub>u</sub> 2.33 MHz | not run | PM 126.5°, f<sub>u</sub> 2.04 MHz |
+
+All criteria of the schematic rows still pass (V<sub>REF</sub> within 0.11 %, TC ≤ 30 ppm/°C, start-up
+ends 0.95–1.15 V, PM ≥ 60°). The V<sub>REF</sub> shift is mostly in the device view (+0.76 mV). A likely
+cause is the `rppd` head resistance: R2 has 16 heads and R1 has 4 (ratio 4) while the body ratio is 4.137.
+This split was not run. The wiring adds +0.36 mV.
+
+### Precision-path resistance from the extraction (`pex-rc-20261021-b/pex_paths.json`)
+
+| Path | Effective R | IR drop at tt/27 °C (min / mean / max over units) |
+| --- | --- | --- |
+| 48 Q2 emitters (`dvbe`) to R1 bottom head, all units together | 21.1 Ω | 86.2 / 90.0 / 94.0 µV |
+| one Q2 emitter alone to R1 bottom head | 28.4–37.0 Ω | — |
+| R1 bottom head to `dvbe` pin (sense only) | 33.5 Ω | no current |
+| 12 Q1 emitters to the star (R1 top head) | 15.7 Ω | 20.4 / 34.9 / 51.1 µV |
+| one Q1 emitter alone to the star | 19.2–22.5 Ω | — |
+| star to `vss` pin | 16.3 Ω | 186 µV (common to Q1 and R1, outside ΔV<sub>BE</sub>) |
+| Q1 bases to Q2 bases (`vbe`) | 2.5 Ω | 15.9 µV (mean) |
+| 4 Q3 collectors to R2 bottom head (`vbe3`) | 29.9 Ω | — |
+| R2 top head to `vref` pin | 32.4 Ω | — |
+
+Most of the per-emitter resistance is in the via stack (9 Ω per cut). The net error in the ΔV<sub>BE</sub>
+seen by R1 is estimated at −39 µV (0.04 % of 91.4 mV). This is an estimate from the port voltages.
+
+### Open issues (layout)
+
+1. Contact and EmWind resistance inside the PCells are not in the extracted wiring network. Their effect
+   is in the device models only.
+2. `rppd` head ratio (16:4) differs from the body ratio (4.137). It is a probable cause of the +0.76 mV
+   device-view shift. A split run (head vs body) was not run.
+3. Fill and density: not run at block level (waived). The chip-level fill must keep fill away from the
+   HBT bank and the R1/R2 columns, or the chip-level run must check the shift.
+4. No LEF and no abstract: not run. The chip integrator needs one.
+5. The LVS reference (`r1_bgr_lvs.cdl`) adds 44 dummy devices to the netlist of record. The netlist of
+   record itself is unchanged.
+6. Post-layout mismatch, corner TC, PSRR and noise: not run. Only the rows in the table above were run.
+7. Start-up overshoot at ss/−40 °C rises from 1.115 V to 1.129 V post-layout. The reference buffer input
+   range must cover 1.13 V.
+
+### Failures and mistakes
+
+| # | What happened | Class | Evidence |
+| --- | --- | --- | --- |
+| 1 | The generator did not update the last x position for dummy NMOS fingers. MNI was placed over the last dummy. LVS shorted `det` and `kick` to `vss`. Fixed in run b. | functional-bug | `layout-lvs-20261021-a` |
+| 2 | Run b had 50 DRC markers: M3.c1 41, M4.c1 5, M3.d 3, V2.b 1 (track-end enclosure, short-track area, Via2 spacing of same-net taps). The generator self-check covered only Metal2/Metal4 spacing. Fixed in run c. | verification-gap | `layout-drc-20261021-b` |
+| 3 | Channel stubs of different nets collided (NC `pcasc`/`n1`, C12/DC tie taps). The first channel plan had no track-order rule. Fixed by track order and tap offset. | planning | generator self-check output in `layout-gen-20261021-b` |
+| 4 | kpex RC mode does not split nets at device terminals, so it gives no device-level wiring R (G1 recorded the same). | tooling | `pex-rc-20261021-a` |
+| 5 | Magic RC leaves every HBT emitter on an isolated node. | tooling | `pex-magic-20261021-a` |
+| 6 | `RNetExtractor` with the tesselation method gave 24397 negative and 17771 open elements and `inf` values in ngspice. Square counting gives 0 and 0. | numerical | `pex-rc-20261021-b/pex_build.log` |
+| 7 | kpex clears its `--out_dir`. It deleted the console log that was written there. Logs now go next to the run directory. | tooling | `pex-cc-20261021-a.console.log` |
+| 8 | Wrong use of the KLayout 0.30 `RNode` API (type is a method; `decompose_convex` returns shapes). Some ports fell outside Metal1 until the convex-piece fix. | tooling | `layout-debug-20261021` |
+
 ## Area and current
 
 | Quantity | Value | Basis |
 | --- | --- | --- |
-| Area | **≈ 0.016–0.020 mm² (estimated)** | G1 Sep-19 macro 84 × 124 µm (laid out) plus: HBT array 66 active + dummies (≈ 8 × 13 units at 6.3 × 6.7 µm, +≈ 40 µm height), a second mirror row and cascode row for the 7 extra legs (+≈ 25 µm), 7 extra NMOS 20/1 (+≈ 5 µm): ≈ 84 × 195 µm. Resistor area unchanged within 6 %. Not laid out. |
+| Area | **0.01865 mm² (laid out)**, 96.0 × 194.3 µm | `layout/r1_bgr.gds` bounding box. The estimate before layout was 0.016–0.020 mm². |
 | Comparison | Sep-19 0.0104 mm², BGR586 0.148 mm² | G1 README |
 | VDDA current | 51.8 µA (tt/27 °C), 35.5–79.6 µA over corners and −40…125 °C | simulated |
 
@@ -199,4 +331,5 @@ and start-up detector one leg each.
 5. Start-up overshoot to 1.115 V with a 10 µs supply ramp at ss/−40 °C settles in 8.6 µs; check the
    reference buffer input range.
 6. The `r4` HBT-ratio test mode of G1 is removed. If the T2F RATIO mode is wanted on R1, it must come back.
-7. Mismatch at corners, joint T2F simulation with these rails, and layout: not run.
+7. Mismatch at corners and joint T2F simulation with these rails: not run.
+9. Layout open items: see "Layout (T7, 2026-10-21)", open issues.
