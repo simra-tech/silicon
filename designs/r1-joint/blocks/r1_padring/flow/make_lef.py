@@ -7,19 +7,23 @@ PINS = [(1,'VDD'),(2,'VSS'),(3,'IOVDD'),(4,'IOVSS'),(5,'VSS'),(6,'IOVSS'),(7,'VD
  (12,'FAULT_N'),(13,'GATE_A'),(14,'GATE_B'),(15,'GATE_C'),(16,'CS_N'),(17,'MA_SCLK'),(18,'SLO_SDO'),(19,'SDI'),(20,'EN_STO_IN'),
  (21,'SIN_P'),(22,'SIN_N'),(23,'COS_P'),(24,'COS_N')]
 USE = {'VDD':'POWER','VDDA':'POWER','IOVDD':'POWER','VSS':'GROUND','IOVSS':'GROUND'}
+DIE = int(sys.argv[2]) if len(sys.argv) > 2 else 1414     # 1414 (revision a) or 1600 (revision b)
+S = DIE - 1414
 def centre(n):
     i = (n-1) % 6
-    if n <= 6: return (395+112*i, 101)
-    if n <= 12: return (1313, 395+112*i)
-    if n <= 18: return (395+112*i, 1313)
-    return (101, 395+112*i)
-TM1R = [(324.82,321,339.82,1093),(344.82,321,361.8,1093),(1054.42,321,1069.42,1093),(1074.42,321,1089.42,1093),
-        (1054.42,347.16,1069.42,1066.3),(344.82,347.16,359.82,1066.3),(1074.42,327.16,1089.42,1086.3),(324.82,327.16,339.82,1086.3)]
-TM2R = [(344.82,1051.3,1069.42,1066.3),(344.82,347.16,1069.42,362.16),(328,1071.3,1086,1086.3),(328,327.16,1086,342.16)]
+    a = 395+112*i if DIE == 1414 else 450+140*i
+    if n <= 6: return (a, 101)
+    if n <= 12: return (1313+S, a)
+    if n <= 18: return (a, 1313+S)
+    return (101, a)
+_f = lambda c: c if c < 707 else c + S      # revision b stretches the ring at the die centre line
+TM1R = [tuple(_f(c) for c in t) for t in [(324.82,321,339.82,1093),(344.82,321,361.8,1093),(1054.42,321,1069.42,1093),(1074.42,321,1089.42,1093),
+        (1054.42,347.16,1069.42,1066.3),(344.82,347.16,359.82,1066.3),(1074.42,327.16,1089.42,1086.3),(324.82,327.16,339.82,1086.3)]]
+TM2R = [tuple(_f(c) for c in t) for t in [(344.82,1051.3,1069.42,1066.3),(344.82,347.16,1069.42,362.16),(328,1071.3,1086,1086.3),(328,327.16,1086,342.16)]]
 o = ['VERSION 5.8 ;', 'BUSBITCHARS "[]" ;', 'DIVIDERCHAR "/" ;', '',
      '# R1 pad ring reference abstract (empty core). Units um. Pins: bondpad TopMetal2 squares (70 x 70 um).',
      '# Core window and ring: see README. Obstructions: core power ring (TopMetal1 / TopMetal2).', '',
-     'MACRO r1_padring', '  CLASS BLOCK ;', '  ORIGIN 0 0 ;', '  FOREIGN r1_padring 0 0 ;', '  SIZE 1414 BY 1414 ;', '  SYMMETRY X Y ;']
+     'MACRO r1_padring', '  CLASS BLOCK ;', '  ORIGIN 0 0 ;', '  FOREIGN r1_padring 0 0 ;', '  SIZE %d BY %d ;' % (DIE, DIE), '  SYMMETRY X Y ;']
 nets = []
 for _, n in PINS:
     if n not in nets: nets.append(n)

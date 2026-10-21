@@ -1,0 +1,129 @@
+{
+ "run_id": "ring-20261021-b",
+ "date": "2026-10-21",
+ "question": "Can the R1 ring be rebuilt at 1600 um (pitch 140 um, same 24 cells, same order) and pass the revision a checks?",
+ "pdk": "IHP-Open-PDK 84374023ee8b4b126bebbba67fcbada0a9c0ff0b (checked by flow/run.sh)",
+ "container_image": "tapeoutbench-eda:latest sha256:ddeb69576f2808676d1c5d474ecf04f6d1d6f8abdcff6b72b39790ded924bab2",
+ "tools": {
+  "klayout": "0.30.9",
+  "ngspice": "not applicable",
+  "librelane": "not used"
+ },
+ "cpu_set": "116-119 (G1_CPUSET, G1_CPUS=4)",
+ "inputs": {
+  "source_ring": "r1_padring_nofill.gds of ring-20261020-a, sha256 6d8a34d04c9e5d03d6fbfcdb0a6d8d07d113a9abd289fc88f6fd353232ffc730",
+  "io_cells": "PDK sg13g2_io.gds, cell sg13g2_Filler200 only",
+  "pin_map": "unchanged"
+ },
+ "output": {
+  "gds": "<G1_RESULTS_ROOT>/r1_padring/ring-20261021-b/r1_padring_1600.gds",
+  "sha256": "40514b4f4ff7888ac0ca95329470e47c8c93c1b3efc7fec1bee2f646b8dbac19",
+  "nofill_sha256": "edd52b57cfb1156d555713a56bd8cbc227067de3f71e62e2b6c33d86d3d4b39a"
+ },
+ "all commands run with": "G1_CPUSET=116-119 G1_CPUS=4 G1_RESULTS_ROOT=<results root> G1_WORKDIR=designs/r1-joint/blocks/r1_padring flow/run.sh ...",
+ "steps": [
+  {
+   "step": "build",
+   "command": "klayout -b -r flow/build_ring_1600.py -rd src=<nofill of ring-20261020-a> -rd io_gds=/foss/pdks/ihp-sg13g2/libs.ref/sg13g2_io/gds/sg13g2_io.gds -rd out=<nofill 1600> -rd report=<json>",
+   "result": "1600 x 1600 um, 24 IO cells, 132 new fillers",
+   "report": "build_ring_1600.json",
+   "disposition": "done"
+  },
+  {
+   "step": "fill",
+   "command": "klayout -n sg13g2 -zz -r $PDK_ROOT/$PDK/libs.tech/klayout/tech/scripts/filler.py",
+   "log": "fill.log",
+   "disposition": "done"
+  },
+  {
+   "step": "rewrite",
+   "command": "klayout -b -r flow/rewrite_gds.py",
+   "result": "63 cells, sha256 40514b4f...",
+   "disposition": "ring of record, revision b"
+  },
+  {
+   "step": "measure",
+   "command": "klayout -b -r flow/measure_ring_1600.py",
+   "evidence": "measure_ring_1600.json",
+   "result": "row continuous on 4 sides; core window 878.62 x 875.14 um",
+   "disposition": "passed"
+  },
+  {
+   "step": "compare_order",
+   "command": "klayout -b -r flow/compare_order.py",
+   "evidence": "compare_order.json",
+   "result": "identical to revision a",
+   "disposition": "passed"
+  },
+  {
+   "step": "drc_main",
+   "command": "run_drc.py --run_mode=deep --no_density --disable_extra_rules --density_thr=4",
+   "result": "0 items, 561 categories, 179.5 s",
+   "evidence": "drc_main/",
+   "disposition": "passed"
+  },
+  {
+   "step": "drc_maximal",
+   "command": "flow/run_maximal.py",
+   "result": "0 items, 272 categories, 271.8 s",
+   "evidence": "drc_maximal/",
+   "disposition": "passed"
+  },
+  {
+   "step": "precheck",
+   "command": "run_drc.py --precheck_drc --disable_extra_rules --density_thr=4",
+   "result": "0 items, 455 categories, 107.3 s",
+   "evidence": "precheck/",
+   "disposition": "passed"
+  },
+  {
+   "step": "density",
+   "command": "run_drc.py --density_only",
+   "result": "0 items, 7 categories",
+   "evidence": "density/",
+   "disposition": "passed"
+  },
+  {
+   "step": "antenna",
+   "command": "run_drc.py --antenna_only --antenna",
+   "result": "12 items (Ant.e_Metal5, Ant.e_TopMetal1, Ant.e_TopMetal2, 4 each)",
+   "evidence": "antenna/",
+   "disposition": "failed, same as revision a (empty core)"
+  },
+  {
+   "step": "lvs_projected_g1_form",
+   "command": "run_lvs.py --run_mode deep --top_lvl_pins --spice_comments, netlist/r1_padring_projected_ref.cdl",
+   "result": "NoMatch: devices 209 match + 1 with warning + 52 mismatch, nets 58 match + 61 mismatch (revision a: 210 and 59 match)",
+   "evidence": "lvs_projected/",
+   "disposition": "failed; revision a failed too (empty core). Counts differ by one device and one net; cause not established"
+  },
+  {
+   "step": "lvs_projected_ringonly",
+   "command": "run_lvs.py --run_mode deep --top_lvl_pins --spice_comments, netlist/r1_padring_ringonly_projected_ref.cdl",
+   "result": "NoMatch: devices 259 match + 2 with warning, nets 116 match + 3 mismatch ($1/SUBSTRATE_NODE, VSS, IOVSS); revision a: 261 of 261 and 119 of 119",
+   "evidence": "lvs_projected_ringonly/ (diagnosis.txt)",
+   "disposition": "failed; regression against revision a; cause not established"
+  },
+  {
+   "step": "lvs_canonical",
+   "command": "run_lvs.py --run_mode deep --top_lvl_pins --spice_comments, netlist/r1_padring.cdl",
+   "result": "14 pairs: 12 NoMatch, 2 Skipped, 0 Match (same as revision a)",
+   "evidence": "lvs_canonical/",
+   "disposition": "failed (known PDK reason)"
+  },
+  {
+   "step": "bondmap",
+   "command": "bondplan_r1.py -rd die_um=1600, then flow/verify_bondmap.py",
+   "result": "24 of 24 openings, all_ok true, 0 crossings",
+   "evidence": "../bondmap/verify_bondmap_r1_1600.json",
+   "disposition": "passed"
+  },
+  {
+   "step": "screenshot",
+   "command": "klayout -b -r flow/screenshot_ring.py",
+   "result": "r1_padring_1600.png 249 kB",
+   "disposition": "done"
+  }
+ ],
+ "try1": "Earlier GDS 16ba76ab93ff60125ffb64a42eba42ddcbf4c0a40791831d129ec20a00f56981 with the 1 um filler named sg13g2_Filler200: DRC 0 items, bond map passed, canonical LVS 13 NoMatch. Superseded. Bulk copy: <G1_RESULTS_ROOT>/r1_padring/ring-20261021-b-try1/"
+}

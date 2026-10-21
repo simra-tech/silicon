@@ -12,7 +12,7 @@ drawing only; the assembly house's package drawing governs.
 
 Run in the pinned container from the repository root:
   klayout -b -r designs/r1-joint/padframe/bondplan_r1.py -rd gds=<r2.gds> -rd src_csv=<r2 csv> \
-          -rd out_csv=<r3 csv> -rd out_svg=<svg> -rd out_json=<json> [-rd gds_sha=<expected sha256>]"""
+          -rd out_csv=<r3 csv> -rd out_svg=<svg> -rd out_json=<json> [-rd gds_sha=<expected sha256>] [-rd die_um=1600]"""
 import pya, csv, json, hashlib, math
 # expected GDS sha256: r2 by default; -rd gds_sha=<sha> binds another chip of record (r3: 7d07a784…,
 # 2026-09-26; the r3 pads, openings and labels are geometrically unchanged from r2)
@@ -21,7 +21,8 @@ assert GDS_SHA, 'pass -rd gds_sha=<sha256>'
 BODY, PITCH, LEAD_W, LEAD_L, PADDLE = 4.0, 0.5, 0.25, 0.40, 2.60
 sha = hashlib.sha256(open(gds, 'rb').read()).hexdigest(); assert sha == GDS_SHA, sha
 ly = pya.Layout(); ly.read(gds); top, = ly.top_cells(); dbu = ly.dbu
-die = top.bbox(); assert die == pya.Box(0, 0, 1414000, 1414000)
+DIE_UM = int(globals().get('die_um', 1414))   # -rd die_um=1600 for the 1600 um ring (revision b)
+die = top.bbox(); assert die == pya.Box(0, 0, DIE_UM * 1000, DIE_UM * 1000)
 W = die.width() * dbu / 1000.0                                  # mm
 li = ly.find_layer(9, 0)
 ops = [p.bbox() for p in pya.Region(top.begin_shapes_rec(li)).merged().each() if p.bbox().width() < 200000]
@@ -86,7 +87,7 @@ o = [f'<svg xmlns="http://www.w3.org/2000/svg" width="{size}" height="{size + 70
      f'<text x="{X(-H + 0.36)}" y="{Y(H - 0.22) + 4}" font-size="12" fill="#111">pin 1</text>']
 hw = W / 2
 o.append(f'<rect x="{X(-hw)}" y="{Y(hw)}" width="{W * S}" height="{W * S}" fill="#cfd8e3" stroke="#1f3b5a" stroke-width="1.5"/>')
-o.append(f'<text x="{X(0)}" y="{Y(0.05)}" font-size="9" text-anchor="middle" fill="#1f3b5a">die 1414 um</text>')
+o.append(f'<text x="{X(0)}" y="{Y(0.05)}" font-size="9" text-anchor="middle" fill="#1f3b5a">die {DIE_UM} um</text>')
 o.append(f'<line x1="{X(-0.09)}" y1="{Y(-0.04)}" x2="{X(0.07)}" y2="{Y(-0.04)}" stroke="#1f3b5a" stroke-width="1.5"/>')
 o.append(f'<path d="M {X(0.09)} {Y(-0.04)} l -8 -4 l 0 8 z" fill="#1f3b5a"/>')
 o.append(f'<text x="{X(0)}" y="{Y(-0.10)}" font-size="9" text-anchor="middle" fill="#1f3b5a">GDS north</text>')

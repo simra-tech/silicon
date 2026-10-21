@@ -1,5 +1,154 @@
 # R1_PADRING
 
+Block `r1_padring` (track T6). This block builds the pad ring of the R1 chip: 24 pads, empty core.
+
+## Revision b (1600 um)
+
+State 2026-10-21: **the 1600 um ring is the ring of record**, run `ring-20261021-b`. It follows decision D10
+(`../../PLAN.md` section 2a and `../../specification/studies/S6_FLOORPLAN.md`). It is a reference for chip assembly.
+It is not a tape-out file and it has no core.
+The 1414 um ring (revision a, section "Revision a (1414 um, superseded)" below) stays in the tree as the superseded record.
+
+Result in one paragraph. Main DRC, maximal DRC, precheck DRC and density (with fill) pass with 0 markers.
+The bond-map check passes: 24 of 24 openings. The core window is 878.6 x 875.1 um (0.769 mm2).
+The antenna check fails with 12 markers, the same 12 as revision a (empty core).
+The LVS results are worse than revision a. The ring-only projected LVS **fails** (259 of 261 devices, 116 of 119 nets; revision a: 261 of 261, 119 of 119).
+The G1-form projected LVS fails as in revision a, with counts that differ by one. The canonical LVS fails in the same 12 circuits as revision a.
+I did not find the cause of the ring-only difference (see "Failures and mistakes", item 2).
+
+### What changed against revision a
+
+| Item | Revision a (1414 um) | Revision b (1600 um) |
+| --- | --- | --- |
+| Die, EdgeSeal 39/4 | 0 to 1414 um | 0 to 1600 um |
+| IO cells | 24, same types, order and orientation | the same 24 (`reports/ring-20261021-b/compare_order.json`: identical) |
+| Pad pitch, pad centres | 112 um; 395, 507, 619, 731, 843, 955 | 140 um, row centred; 450, 590, 730, 870, 1010, 1150 |
+| Pad centre from the edge | 101 um (south, west) | 101 um (south, west); 1499 um (north, east) |
+| Corner cells | 180 x 180 um at 141 and 1093 | 180 x 180 um at 141 and 1279 |
+| IO row inner edge | 321 um (south, west), 1093 um (north, east) | 321 um (south, west), 1279 um (north, east) |
+| IO fillers | 112 cells (20 / 10 / 2 um) | 132 cells (92 x `Filler4000`, 32 x `Filler400`, 8 x `Filler200`); every gap is filled |
+| Seal ring, core power ring, registration texts | 1414 um | stretched by 186 um at the die centre line; texts read 1600.0 um and 2.560000 sq mm |
+| Core power ring width and spacing | as G1 r4 | unchanged (same rectangles, longer) |
+| Pin map | specification section 3 | unchanged. The optional S6 pin-map change is not applied |
+
+### How the ring was made
+
+The script `flow/build_ring_1600.py` reads the 1414 um ring before fill (`r1_padring_nofill.gds` of run `ring-20261020-a`).
+It makes the 1600 um ring in these steps.
+
+1. Move the IO cells, bondpad cells, the TopMetal2 pad squares and the TopMetal1 bridge shapes of each pad to the new pad centre.
+   The cell types, the order and the orientation do not change.
+2. Move the four corner cells. Map all top-level shapes (seal ring, Passiv ring, EdgeSeal, core power ring, TopVia2 array)
+   with the rule: a coordinate of 707 um or more moves by +186 um.
+3. Delete the 112 IO fillers. Write new fillers in every gap with the same orientation per side as in revision a.
+   A gap of 60 um uses 3 x `Filler4000`. A gap of 89 um (corner to first IO cell) uses 4 x `Filler4000`, 4 x `Filler400` and 1 x `Filler200`.
+   The 89 um gap is odd. The 1 um filler is the PDK cell `sg13g2_Filler200`, copied under the name `retained_fullchip_sg13g2_Filler200`.
+4. Write the 22 net labels (134/25) and the 24 pad labels of `new_signal_routes` at the new centres. Change the registration text.
+5. Run the PDK filler script (Activ/GatPoly, Metal1-5, TopMetal1/2) on the empty core. Write the GDS without timestamps (`flow/rewrite_gds.py`).
+
+`flow/run_signoff.sh` ran the checks with the revision a commands. In revision b the two LVS runs go in parallel with the DRC runs.
+I ran the steps one by one with the commands in `reports/ring-20261021-b/run.json`.
+
+### Ring reference (identity)
+
+| Item | Value |
+| --- | --- |
+| Ring GDS | `r1_padring_1600.gds`, run `ring-20261021-b`, in `<G1_RESULTS_ROOT>/r1_padring/ring-20261021-b/`. Not in the tree (47 MB) |
+| SHA-256 | `40514b4f4ff7888ac0ca95329470e47c8c93c1b3efc7fec1bee2f646b8dbac19` (unchanged after all checks: `<G1_RESULTS_ROOT>/r1_padring/ring-20261021-b/signoff/input_gds.sha256` and `.after`) |
+| Cells, top cell, size | 63 cells, one top cell `r1_padring`, bbox 0,0 to 1600,1600 um, database unit 1 nm |
+| Same ring before fill | `r1_padring_1600_nofill.gds`, `edd52b57cfb1156d555713a56bd8cbc227067de3f71e62e2b6c33d86d3d4b39a` (bulk only) |
+| Source | `r1_padring_nofill.gds` of run `ring-20261020-a`, `6d8a34d04c9e5d03d6fbfcdb0a6d8d07d113a9abd289fc88f6fd353232ffc730` |
+| LEF reference | [`layout/r1_padring_1600_ref.lef`](layout/r1_padring_1600_ref.lef) (`flow/make_lef.py <out> 1600`) |
+| Netlists | the revision a netlists apply without change: the cells, their order and their nets are the same |
+| Bond map and plan | [`../../padframe/`](../../padframe/README.md): `bondmap_r1_1600_ring.csv`, `bondplan_r1_1600.svg`, `bondplan_r1_1600.json` |
+| Screenshot | [`reports/ring-20261021-b/r1_padring_1600.png`](reports/ring-20261021-b/r1_padring_1600.png) (249 kB, 700 x 700 px) |
+
+### Core window (KLayout measurement, `reports/ring-20261021-b/measure_ring_1600.json`)
+
+| Edge | IO row inner edge (um) | Core power ring inner edge (um) |
+| --- | ---: | ---: |
+| West | x = 321.0 | x = 361.8 (TopMetal1 column) |
+| East | x = 1279.0 | x = 1240.42 (TopMetal1 column) |
+| South | y = 321.0 | y = 362.16 (TopMetal2 row) |
+| North | y = 1279.0 | y = 1237.3 (TopMetal2 row) |
+
+The core window inside the ring is x = 361.8 to 1240.42 um, y = 362.16 to 1237.3 um. Size 878.62 x 875.14 um = **0.769 mm2**.
+This equals the conservative window of S6 (878.6 x 875.1 um). The IO row window is 958 x 958 um = 0.918 mm2.
+The extended window of S6 (analog macros under the core ring, from 331 um) is 0.880 mm2. It was not measured on this GDS.
+The ring conductors carry no net name in this GDS (same as revision a). The ring has no TopVia1.
+
+### Status (revision b)
+
+| Check | Status | Evidence |
+| --- | --- | --- |
+| Ring built: die 1600 x 1600 um, EdgeSeal 0..1600, 24 IO cells, 4 corners, 24 bondpads, seal ring, core ring | passed | `reports/ring-20261021-b/build_ring_1600.json`, `measure_ring_1600.json` |
+| Same 24 IO cells in the same order and orientation as revision a | passed | `reports/ring-20261021-b/compare_order.json` (`identical_order_type_orientation: true`) |
+| Corner cells, IO cells and IO fillers continuous on all four sides (no gap, no overlap, 141 to 1459 um) | passed (geometric abutment) | `measure_ring_1600.json` (`row_continuous_all: true`). Rail connectivity by extraction: not shown, the ring-only LVS failed |
+| Bond map against the GDS (24 openings, size 65.8 um, TopMetal2 enclosure, dfpad, labels, die size, hash) | passed | `reports/bondmap/verify_bondmap_r1_1600.json` (`all_ok: true`, 24 of 24, 22 labels) |
+| Bond plan: 0 wire crossings | passed | `../../padframe/bondplan_r1_1600.json` |
+| PDK fill (Activ/GatPoly, Metal1-5, TopMetal1/2) | passed | `reports/ring-20261021-b/fill.log`; density below |
+| KLayout main DRC (`run_drc.py`, deep, no density, no extra rules) | **passed**, 0 items, 561 rule categories, 179.5 s | `reports/ring-20261021-b/drc_main/`, `drc_summary.json` |
+| KLayout maximal DRC (`sg13g2_maximal`, G1 wrapper) | **passed**, 0 items, 272 categories, 271.8 s | `reports/ring-20261021-b/drc_maximal/` |
+| KLayout precheck DRC (`--precheck_drc --disable_extra_rules`, with density) | **passed**, 0 items, 455 categories, 107.3 s | `reports/ring-20261021-b/precheck/` |
+| Density with fill | **passed**, 0 items, 7 categories | `reports/ring-20261021-b/density/`; values below |
+| DRC density waivers | none needed | no density item |
+| KLayout antenna | **failed**, 12 items (4 x `Ant.e_Metal5`, 4 x `Ant.e_TopMetal1`, 4 x `Ant.e_TopMetal2`) | `reports/ring-20261021-b/antenna/`; same cause as revision a: empty core, no gate load on `vdd` |
+| LVS, projected reference, G1 form (`netlist/r1_padring_projected_ref.cdl`) | **failed** (as revision a): 209 of 261 devices match, 1 with warning; 58 of 119 nets match (revision a: 210 and 59) | `reports/ring-20261021-b/lvs_projected/`. Cause of the revision a failure: empty core, substrate not tied to `VSS`. The difference of one device and one net is not explained |
+| LVS, projected reference, ring-only form (`netlist/r1_padring_ringonly_projected_ref.cdl`) | **failed**: 259 of 261 devices match, 2 tap devices with warning; 116 of 119 nets match. The 3 nets are the substrate net `$1` (`SUBSTRATE_NODE`), `VSS` and `IOVSS`. Revision a passed 261 of 261 and 119 of 119 | `reports/ring-20261021-b/lvs_projected_ringonly/` (`diagnosis.txt`). Cause not established |
+| LVS, canonical reference (`netlist/r1_padring.cdl`) | **failed** (known): 14 circuit pairs, 12 NoMatch, 2 Skipped, 0 Match. Same as revision a | `reports/ring-20261021-b/lvs_canonical/` |
+| Hash of the ring GDS unchanged by the checks | passed | `<G1_RESULTS_ROOT>/r1_padring/ring-20261021-b/signoff/input_gds.sha256`, `.after` |
+| LibreLane `Chip` flow | not applicable | the ring is a hand-assembled lineage, as revision a |
+| IHP `dev` branch DRC deck on this ring | not run | not repeated for R1 |
+| Magic DRC, Magic or netgen LVS | not run | known library failures on G1 |
+| IHP submission intake pre-check | not run | ring only; run it on the full chip. The registration texts read 1600.0 um |
+| Full-chip PEX, IR drop, EM, ESD or latch-up simulation | not run | no core |
+| Identity of the core ring nets (`VDD` or `VSS` per conductor) | not run | as revision a |
+| Design-local copy of `sg13g2_IOPadTriOut4mA` with PolyRes 128/0 | not run | only needed if SLO and SDO are bused |
+| Optional S6 pin-map change on the west side | not applied | the owner brief says: do not apply |
+| Measurement | not run | no silicon |
+
+Density with fill (die area 2 560 000 um2): Activ 50.21 % (limit 35 to 55), GatPoly 17.88 % (min 15), Metal1 52.68 %, Metal2 45.25 %,
+Metal3 52.84 %, Metal4 52.47 %, Metal5 52.83 % (limit 35 to 60), TopMetal1 53.52 %, TopMetal2 50.62 % (limit 25 to 70), LBE 0 % (max 20).
+
+### Built against (revision b)
+
+| Item | Value | How established |
+| --- | --- | --- |
+| PDK | IHP-Open-PDK `84374023ee8b4b126bebbba67fcbada0a9c0ff0b` | `flow/run.sh` stops if `/foss/pdks/ihp-sg13g2/COMMIT` differs |
+| Container image | `tapeoutbench-eda:latest`, `sha256:ddeb69576f2808676d1c5d474ecf04f6d1d6f8abdcff6b72b39790ded924bab2` | `flow/run.sh` identity check |
+| KLayout | 0.30.9 | DRC and LVS logs |
+| Rule decks | stock PDK `run_drc.py`, `run_lvs.py`, decks unmodified | invoked from `/foss/pdks/ihp-sg13g2/libs.tech/klayout/tech/` |
+| ngspice, xschem | not applicable | no simulation or schematic in this block |
+| LibreLane | not used | see "Status" |
+| Source ring | `r1_padring_nofill.gds` of `ring-20261020-a`, `6d8a34d0…` | SHA-256 of the file |
+| CPUs | 116-119 (`G1_CPUSET`, `G1_CPUS=4`) | `reports/ring-20261021-b/run.json` |
+
+### Failures and mistakes (revision b)
+
+| # | Class | What happened | Effect and fix |
+| --- | --- | --- | --- |
+| 1 | spec-ambiguity | S6 gives pad centres 450 to 1150 um (centred row). That makes a gap of 89 um between a corner and the first IO cell. The filler cells have widths 20, 10 and 2 um, so an odd gap needs a 1 um cell. S6 did not say this. | Used the PDK `Filler200` (1 um). The pads stay centred. The other choice was a 1 um shift of the row (gaps 88 and 90 um) |
+| 2 | regression | In try 1 (GDS `16ba76ab…`) the 1 um filler kept the PDK name `sg13g2_Filler200`. The canonical LVS then paired this cell with the reference and reported one more NoMatch circuit (13 instead of 12). | Renamed the copy `retained_fullchip_sg13g2_Filler200`, like the other filler copies. The canonical LVS is back to 12 NoMatch. Rebuilt, refilled and re-ran every check. Try 1 stays in `<G1_RESULTS_ROOT>/r1_padring/ring-20261021-b-try1/` (DRC 0 items there too) |
+| 2b | regression | The final ring-only projected LVS fails (3 nets: `$1`, `VSS`, `IOVSS`; 2 tap devices with a warning). Revision a passed. The G1-form LVS shows one device and one net more mismatch. The device and net counts per net are equal in layout and reference. The layout shows source and drain of the `sg13_hv_nmos` devices on `VSS` and `IOVSS` in the other order than the reference, which should not matter. Only the pad positions, the filler cells and the die size changed. | **Not resolved.** I had no time left to find out if this is a graph-matching ambiguity of the LVS tool or a layout fault. A test is needed: LVS of the revision a ring-only GDS with the 1 um filler added, or of a 1600 um ring with a 1 um row shift and no `Filler200`. Evidence: `reports/ring-20261021-b/lvs_projected_ringonly/diagnosis.txt` |
+| 3 | estimation | I planned the LVS runs as 10 minutes each from revision a. On the busy server one run took 34 minutes. Try 1 and the re-run together used about 2 hours 30 minutes, not 2 hours. | Ran the three LVS in parallel on the re-run |
+| 4 | tooling | The first inspection script was in `/tmp`. The container mounts only the repository, so it did not start. | Put scripts in `flow/`. The inspection scripts were deleted after use, except `flow/inspect_fillers.py` |
+| 5 | tooling | `G1_WORKDIR` is the block directory. The first measure run used a repository-relative output path and failed. | Used paths relative to the block directory |
+| 6 | verification-gap | The first `flow/compare_order.py` sorted pad 1 of the old ring into the wrong side. It reported "not identical" for a ring that was identical. | Classified the side by the position relative to the die centre. Result now `true` |
+| 7 | tooling | The first screenshot at 1000 px was 514 kB (limit 300 kB). | 700 px gives 249 kB |
+| 8 | process-hygiene | I stopped the try 1 ring-only LVS by killing its own process ids (SIGTERM did not stop it; SIGKILL did). No other process was touched. | Recorded here. The try 1 ring-only result does not exist |
+| 9 | process-hygiene | The first draft of `flow/build_ring_1600.py` had dead code from editing. | Removed before the build that counts |
+
+### Open items (revision b)
+
+1. Find the cause of the ring-only LVS failure (item 2b) before the ring is used as an LVS reference for the chip.
+2. Place the core in the 878.6 x 875.1 um window. Run all checks on the full chip with the G1 form of the projected LVS.
+3. The antenna check, the pad 18 cell decision, the ring net identity and the intake pre-check stay as in revision a (below).
+4. Re-run the bond plan on the chip GDS. The package paddle for a 1.6 mm die is not checked (S6 lists it as not run).
+
+---
+
+# Revision a (1414 um, superseded)
+
 Block `r1_padring` (track T6). This block builds the pad ring of the R1 chip: 24 pads, 1414 um die, empty core.
 State 2026-10-20: **ring reference built and checked, run `ring-20261020-a`**. It is a reference for chip assembly.
 It is not a tape-out file and it has no core.
@@ -230,7 +379,11 @@ The `lvsdb` files (155 MB each) stay in the bulk results root.
 | `layout/r1_padring_ref.lef` | LEF reference |
 | `netlist/` | canonical CDL, projection sources, flat projected references (with their `.json` records) |
 | `reports/ring-20261020-a/` | logs, lyrdb reports, pair counts, `run.json` per run |
-| `reports/bondmap/` | bond map check |
+| `reports/bondmap/` | bond map check (`verify_bondmap_r1.json` for revision a, `verify_bondmap_r1_1600.json` for revision b) |
+| `flow/build_ring_1600.py`, `flow/measure_ring_1600.py`, `flow/compare_order.py`, `flow/screenshot_ring.py`, `flow/summarize_lyrdb.py` | revision b: build, geometry measurement, order check, PNG, marker count per rule |
+| `flow/inspect_fillers.py`, `flow/lvs_netdiff.py`, `flow/lvs_netterms.py` | revision b diagnostics (filler cells, LVS net mismatch) |
+| `layout/r1_padring_1600_ref.lef` | LEF reference of revision b |
+| `reports/ring-20261021-b/` | revision b: logs, lyrdb reports, `run.json`, `measure_ring_1600.json`, PNG |
 
 ## Open items for the next steps
 

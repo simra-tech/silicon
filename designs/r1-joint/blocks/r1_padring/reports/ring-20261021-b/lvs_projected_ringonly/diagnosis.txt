@@ -1,0 +1,11 @@
+NET Mismatch $1 | SUBSTRATE_NODE
+NET Mismatch IOVSS | IOVSS
+NET Mismatch VSS | VSS
+DEV MatchWithWarning $1 | 1PAD01_VDD._G1_TAP_SYNTAX_XR1
+DEV MatchWithWarning $2 | 2PAD01_VDD._G1_TAP_SYNTAX_XR0
+layout $1 0 {('ptap1', 'WELL'): 2, ('dantenna', 'A'): 40, ('rppd', 'rppd_sub'): 24, ('sg13_hv_nmos', 'B'): 66, ('sg13_lv_nmos', 'B'): 14} subcircuit pins 0
+ref SUBSTRATE_NODE 0 {('PTAP1', 'WELL'): 2, ('sg13_hv_nmos', 'B'): 66, ('DANTENNA', 'A'): 40, ('RPPD', 'RPPD_sub'): 24, ('sg13_lv_nmos', 'B'): 14} subcircuit pins 0
+layout IOVSS 1 {('ptap1', 'TIE'): 1, ('dpantenna', 'A'): 1, ('dantenna', 'C'): 1, ('sg13_hv_nmos', 'S'): 24, ('sg13_hv_nmos', 'D'): 6, ('rppd', 'rppd_1'): 9} subcircuit pins 0
+ref IOVSS 1 {('PTAP1', 'TIE'): 1, ('sg13_hv_nmos', 'D'): 28, ('sg13_hv_nmos', 'S'): 2, ('DANTENNA', 'C'): 1, ('DPANTENNA', 'A'): 1, ('RPPD', 'RPPD_1'): 9} subcircuit pins 0
+layout VSS 1 {('ptap1', 'TIE'): 1, ('dpantenna', 'A'): 1, ('dantenna', 'C'): 1, ('sg13_lv_nmos', 'D'): 14, ('sg13_hv_nmos', 'S'): 24, ('sg13_hv_nmos', 'D'): 10} subcircuit pins 0
+ref VSS 1 {('PTAP1', 'TIE'): 1, ('DANTENNA', 'C'): 1, ('DPANTENNA', 'A'): 1, ('sg13_lv_nmos', 'D'): 14, ('sg13_hv_nmos', 'D'): 34} subcircuit pins 0
