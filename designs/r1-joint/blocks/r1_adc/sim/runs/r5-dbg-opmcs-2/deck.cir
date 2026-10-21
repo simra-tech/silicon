@@ -1,0 +1,368 @@
+* tb_adc5_points.cir -- R1 ADC revision 5 (D18): both slices, one held differential input per frame and slice.
+* Frame s: slice A samples vda (SIN path) at tsA = 0.6 us + s * 22 T, slice B samples vdb (COS path) at tsA.
+* vda/vdb are PWL sources written by sim/r5/run_points5.py (value of frame s applied 550 ns before its edge).
+* Inputs are linear E sources around the common mode CM (R2-7). Track is high from t = 0 (revision-5 timing).
+* Reference: REFLINES (ideal source, or the buffer under test fed by the r1_bgr Thevenin + noise model, see
+* run_points5.py); the core has per-slice ports vrefa vrefb (MSB array) and vrefla vreflb (LSB array).
+* Substitutions: CORNER TEMP VDD CM CAPLIB TIMING OPTS TMAX TSTOP PWLA PWLB REFLINES INSTANCES SAVE RAW
+.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerMOSlv.lib mos_tt
+.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerCAP.lib cap_typ
+.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerMOShv.lib mos_tt
+.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerRES.lib res_typ
+.include schematic/r1_adc_r5.spice
+.include sim/r5/r1_adc_timing_r5_n0_cq.inc
+.temp 27
+.option reltol=1e-4 vntol=1e-6 abstol=1e-12 method=trap klu seed=1 interp
+
+Vdd vdd 0 1.2
+Vref vref 0 1.045
+Vtvrefa vrefa vref 0
+Vtvrefb vrefb vref 0
+Vtvrefla vrefla vref 0
+Vtvreflb vreflb vref 0
+Vcm vcm 0 0.6
+Vda vda 0 PWL(0 0.0000000 7.883333e-07 0.0000000 7.983333e-07 0.8800000 1.521667e-06 0.8800000 1.531667e-06 -0.8800000 2.255000e-06 -0.8800000 2.265000e-06 0.4400000)
+Vdb vdb 0 PWL(0 0.0000000 7.883333e-07 0.0000000 7.983333e-07 0.8800000 1.521667e-06 0.8800000 1.531667e-06 -0.8800000 2.255000e-06 -0.8800000 2.265000e-06 -0.4400000)
+Esp sinp vcm vda 0 0.5
+Esn sinn vcm vda 0 -0.5
+Ecp cosp vcm vdb 0 0.5
+Ecn cosn vcm vdb 0 -0.5
+Vip isap 0 0.6
+Vin isan 0 0.6
+
+.subckt r1_cdac5s_0ap top lsb b12 b11 b10 b9 b8 b7 b6 b5 b4 b3 b2 b1 b0
+XC12 top b12 cap_cmim w=3.78203u l=3.78203u m=16
+XC11 top b11 cap_cmim w=3.77892u l=3.77892u m=8
+XC10 top b10 cap_cmim w=3.77868u l=3.77868u m=4
+XC9 top b9 cap_cmim w=3.77620u l=3.77620u m=2
+XC8 top b8 cap_cmim w=3.78432u l=3.78432u m=1
+XC7 lsb b7 cap_cmim w=3.77856u l=3.77856u m=64
+XC6 lsb b6 cap_cmim w=3.78154u l=3.78154u m=32
+XC5 lsb b5 cap_cmim w=3.77905u l=3.77905u m=16
+XC4 lsb b4 cap_cmim w=3.78056u l=3.78056u m=8
+XC3 lsb b3 cap_cmim w=3.77938u l=3.77938u m=4
+XC2 lsb b2 cap_cmim w=3.78517u l=3.78517u m=2
+XC1 lsb b1 cap_cmim w=3.76969u l=3.76969u m=1
+XC0 lsb b0 cap_cmim w=2.66839u l=2.66839u m=1
+XCB top lsb cap_cmim w=4.22808u l=4.22808u m=1
+.ends r1_cdac5s_0ap
+.subckt r1_cdac5s_0an top lsb b12 b11 b10 b9 b8 b7 b6 b5 b4 b3 b2 b1 b0
+XC12 top b12 cap_cmim w=3.78142u l=3.78142u m=16
+XC11 top b11 cap_cmim w=3.77806u l=3.77806u m=8
+XC10 top b10 cap_cmim w=3.77957u l=3.77957u m=4
+XC9 top b9 cap_cmim w=3.77690u l=3.77690u m=2
+XC8 top b8 cap_cmim w=3.78021u l=3.78021u m=1
+XC7 lsb b7 cap_cmim w=3.78036u l=3.78036u m=64
+XC6 lsb b6 cap_cmim w=3.77903u l=3.77903u m=32
+XC5 lsb b5 cap_cmim w=3.78143u l=3.78143u m=16
+XC4 lsb b4 cap_cmim w=3.78159u l=3.78159u m=8
+XC3 lsb b3 cap_cmim w=3.78126u l=3.78126u m=4
+XC2 lsb b2 cap_cmim w=3.78318u l=3.78318u m=2
+XC1 lsb b1 cap_cmim w=3.77658u l=3.77658u m=1
+XC0 lsb b0 cap_cmim w=2.66939u l=2.66939u m=1
+XCB top lsb cap_cmim w=4.22532u l=4.22532u m=1
+.ends r1_cdac5s_0an
+.subckt r1_th5s_0a in0p in0n in1p in1n trk0 trk1 top_p top_n cp12 cp11 cp10 cp9 cp8 cp7 cp6 cp5 cp4 cp3 cp2 cp1 cp0 cn12 cn11 cn10 cn9 cn8 cn7 cn6 cn5 cn4 cn3 cn2 cn1 cn0 vdd vref vrefl gnd
+XPT0a t0b trk0 vdd vdd sg13_lv_pmos w=2u l=0.13u ng=1 m=1
+XNT0a t0b trk0 gnd gnd sg13_lv_nmos w=1u l=0.13u ng=1 m=1
+XPT0b t0 t0b vdd vdd sg13_lv_pmos w=4u l=0.13u ng=1 m=1
+XNT0b t0 t0b gnd gnd sg13_lv_nmos w=2u l=0.13u ng=1 m=1
+XS0P in0p top_p t0 t0b vdd gnd r1_bootsw
+XS0N in0n top_n t0 t0b vdd gnd r1_bootsw
+XS1P in1p top_p gnd r1_offsw
+XS1N in1n top_n gnd r1_offsw
+Rtrk1 trk1 gnd 1e9
+XLRP lsb_p t0b vrefl vrefl sg13_lv_pmos w=1u l=0.13u ng=1 m=1
+XLRN lsb_n t0b vrefl vrefl sg13_lv_pmos w=1u l=0.13u ng=1 m=1
+XDACP top_p lsb_p bp12 bp11 bp10 bp9 bp8 bp7 bp6 bp5 bp4 bp3 bp2 bp1 bp0 r1_cdac5s_0ap
+XDACN top_n lsb_n bn12 bn11 bn10 bn9 bn8 bn7 bn6 bn5 bn4 bn3 bn2 bn1 bn0 r1_cdac5s_0an
+XDp12 cp12 bp12 vref gnd r1_drv_sw
+XDp11 cp11 bp11 vref gnd r1_drv_sw
+XDp10 cp10 bp10 vref gnd r1_drv_sw
+XDp9 cp9 bp9 vref gnd r1_drv_sw
+XDp8 cp8 bp8 vref gnd r1_drv_sw
+XDp7 cp7 bp7 vrefl gnd r1_drv_sw
+XDp6 cp6 bp6 vrefl gnd r1_drv_sw
+XDp5 cp5 bp5 vrefl gnd r1_drv_sw
+XDp4 cp4 bp4 vrefl gnd r1_drv_sw
+XDp3 cp3 bp3 vrefl gnd r1_drv_sw
+XDp2 cp2 bp2 vrefl gnd r1_drv_sw
+XDp1 cp1 bp1 vrefl gnd r1_drv_sw
+XDp0 cp0 bp0 vrefl gnd r1_drv_sw
+XDn12 cn12 bn12 vref gnd r1_drv_sw
+XDn11 cn11 bn11 vref gnd r1_drv_sw
+XDn10 cn10 bn10 vref gnd r1_drv_sw
+XDn9 cn9 bn9 vref gnd r1_drv_sw
+XDn8 cn8 bn8 vref gnd r1_drv_sw
+XDn7 cn7 bn7 vrefl gnd r1_drv_sw
+XDn6 cn6 bn6 vrefl gnd r1_drv_sw
+XDn5 cn5 bn5 vrefl gnd r1_drv_sw
+XDn4 cn4 bn4 vrefl gnd r1_drv_sw
+XDn3 cn3 bn3 vrefl gnd r1_drv_sw
+XDn2 cn2 bn2 vrefl gnd r1_drv_sw
+XDn1 cn1 bn1 vrefl gnd r1_drv_sw
+XDn0 cn0 bn0 vrefl gnd r1_drv_sw
+* revision 4: LSB-array drivers C7..C0 and the lsb-node reset on vrefl
+.ends r1_th5s_0a
+.subckt r1_cdac5s_0bp top lsb b12 b11 b10 b9 b8 b7 b6 b5 b4 b3 b2 b1 b0
+XC12 top b12 cap_cmim w=3.77967u l=3.77967u m=16
+XC11 top b11 cap_cmim w=3.78094u l=3.78094u m=8
+XC10 top b10 cap_cmim w=3.77827u l=3.77827u m=4
+XC9 top b9 cap_cmim w=3.77860u l=3.77860u m=2
+XC8 top b8 cap_cmim w=3.77656u l=3.77656u m=1
+XC7 lsb b7 cap_cmim w=3.77947u l=3.77947u m=64
+XC6 lsb b6 cap_cmim w=3.77941u l=3.77941u m=32
+XC5 lsb b5 cap_cmim w=3.77998u l=3.77998u m=16
+XC4 lsb b4 cap_cmim w=3.77802u l=3.77802u m=8
+XC3 lsb b3 cap_cmim w=3.78059u l=3.78059u m=4
+XC2 lsb b2 cap_cmim w=3.78586u l=3.78586u m=2
+XC1 lsb b1 cap_cmim w=3.78371u l=3.78371u m=1
+XC0 lsb b0 cap_cmim w=2.66904u l=2.66904u m=1
+XCB top lsb cap_cmim w=4.22556u l=4.22556u m=1
+.ends r1_cdac5s_0bp
+.subckt r1_cdac5s_0bn top lsb b12 b11 b10 b9 b8 b7 b6 b5 b4 b3 b2 b1 b0
+XC12 top b12 cap_cmim w=3.77907u l=3.77907u m=16
+XC11 top b11 cap_cmim w=3.78299u l=3.78299u m=8
+XC10 top b10 cap_cmim w=3.78013u l=3.78013u m=4
+XC9 top b9 cap_cmim w=3.77775u l=3.77775u m=2
+XC8 top b8 cap_cmim w=3.78095u l=3.78095u m=1
+XC7 lsb b7 cap_cmim w=3.78131u l=3.78131u m=64
+XC6 lsb b6 cap_cmim w=3.78011u l=3.78011u m=32
+XC5 lsb b5 cap_cmim w=3.78077u l=3.78077u m=16
+XC4 lsb b4 cap_cmim w=3.78053u l=3.78053u m=8
+XC3 lsb b3 cap_cmim w=3.77912u l=3.77912u m=4
+XC2 lsb b2 cap_cmim w=3.77596u l=3.77596u m=2
+XC1 lsb b1 cap_cmim w=3.77825u l=3.77825u m=1
+XC0 lsb b0 cap_cmim w=2.66896u l=2.66896u m=1
+XCB top lsb cap_cmim w=4.23293u l=4.23293u m=1
+.ends r1_cdac5s_0bn
+.subckt r1_th5s_0b in0p in0n in1p in1n trk0 trk1 top_p top_n cp12 cp11 cp10 cp9 cp8 cp7 cp6 cp5 cp4 cp3 cp2 cp1 cp0 cn12 cn11 cn10 cn9 cn8 cn7 cn6 cn5 cn4 cn3 cn2 cn1 cn0 vdd vref vrefl gnd
+XPT0a t0b trk0 vdd vdd sg13_lv_pmos w=2u l=0.13u ng=1 m=1
+XNT0a t0b trk0 gnd gnd sg13_lv_nmos w=1u l=0.13u ng=1 m=1
+XPT0b t0 t0b vdd vdd sg13_lv_pmos w=4u l=0.13u ng=1 m=1
+XNT0b t0 t0b gnd gnd sg13_lv_nmos w=2u l=0.13u ng=1 m=1
+XS0P in0p top_p t0 t0b vdd gnd r1_bootsw
+XS0N in0n top_n t0 t0b vdd gnd r1_bootsw
+XS1P in1p top_p gnd r1_offsw
+XS1N in1n top_n gnd r1_offsw
+Rtrk1 trk1 gnd 1e9
+XLRP lsb_p t0b vrefl vrefl sg13_lv_pmos w=1u l=0.13u ng=1 m=1
+XLRN lsb_n t0b vrefl vrefl sg13_lv_pmos w=1u l=0.13u ng=1 m=1
+XDACP top_p lsb_p bp12 bp11 bp10 bp9 bp8 bp7 bp6 bp5 bp4 bp3 bp2 bp1 bp0 r1_cdac5s_0bp
+XDACN top_n lsb_n bn12 bn11 bn10 bn9 bn8 bn7 bn6 bn5 bn4 bn3 bn2 bn1 bn0 r1_cdac5s_0bn
+XDp12 cp12 bp12 vref gnd r1_drv_sw
+XDp11 cp11 bp11 vref gnd r1_drv_sw
+XDp10 cp10 bp10 vref gnd r1_drv_sw
+XDp9 cp9 bp9 vref gnd r1_drv_sw
+XDp8 cp8 bp8 vref gnd r1_drv_sw
+XDp7 cp7 bp7 vrefl gnd r1_drv_sw
+XDp6 cp6 bp6 vrefl gnd r1_drv_sw
+XDp5 cp5 bp5 vrefl gnd r1_drv_sw
+XDp4 cp4 bp4 vrefl gnd r1_drv_sw
+XDp3 cp3 bp3 vrefl gnd r1_drv_sw
+XDp2 cp2 bp2 vrefl gnd r1_drv_sw
+XDp1 cp1 bp1 vrefl gnd r1_drv_sw
+XDp0 cp0 bp0 vrefl gnd r1_drv_sw
+XDn12 cn12 bn12 vref gnd r1_drv_sw
+XDn11 cn11 bn11 vref gnd r1_drv_sw
+XDn10 cn10 bn10 vref gnd r1_drv_sw
+XDn9 cn9 bn9 vref gnd r1_drv_sw
+XDn8 cn8 bn8 vref gnd r1_drv_sw
+XDn7 cn7 bn7 vrefl gnd r1_drv_sw
+XDn6 cn6 bn6 vrefl gnd r1_drv_sw
+XDn5 cn5 bn5 vrefl gnd r1_drv_sw
+XDn4 cn4 bn4 vrefl gnd r1_drv_sw
+XDn3 cn3 bn3 vrefl gnd r1_drv_sw
+XDn2 cn2 bn2 vrefl gnd r1_drv_sw
+XDn1 cn1 bn1 vrefl gnd r1_drv_sw
+XDn0 cn0 bn0 vrefl gnd r1_drv_sw
+* revision 4: LSB-array drivers C7..C0 and the lsb-node reset on vrefl
+.ends r1_th5s_0b
+.subckt r1_core5s_0 sinp sinn cosp cosn isap isan isbp isbn trka0 trka1 trkb0 trkb1 clk30 wina winb lata latb stba0 stba1 stba2 stba3 stba4 stba5 stba6 stba7 stba8 stba9 stba10 stba11 stba12 stba13 stbb0 stbb1 stbb2 stbb3 stbb4 stbb5 stbb6 stbb7 stbb8 stbb9 stbb10 stbb11 stbb12 stbb13 rawa rawb topap topan topbp topbn vdd vrefa vrefb vrefla vreflb gnd
+XCKG clk30 mclk mclkb vdd gnd r1_cmp4_clkgen
+XTHA sinp sinn isap isan trka0 trka1 topap topan cpa12 cpa11 cpa10 cpa9 cpa8 cpa7 cpa6 cpa5 cpa4 cpa3 cpa2 cpa1 cpa0 cna12 cna11 cna10 cna9 cna8 cna7 cna6 cna5 cna4 cna3 cna2 cna1 cna0 vdd vrefa vrefla gnd r1_th5s_0a
+XCBIAS vbp vdd gnd r1_cmp4_bias
+XCBIASN vbn vdd gnd r1_cmp5n_bias
+XCMPA topap topan clka clkab oap oan vbp vdd gnd r1_cmp4
+XCMPNA topap topan clkna clknab oanp oann vbn vdd gnd r1_cmp5n
+XTHB cosp cosn isbp isbn trkb0 trkb1 topbp topbn cpb12 cpb11 cpb10 cpb9 cpb8 cpb7 cpb6 cpb5 cpb4 cpb3 cpb2 cpb1 cpb0 cnb12 cnb11 cnb10 cnb9 cnb8 cnb7 cnb6 cnb5 cnb4 cnb3 cnb2 cnb1 cnb0 vdd vrefb vreflb gnd r1_th5s_0b
+XCMPB topbp topbn clkb clkbb obp obn vbp vdd gnd r1_cmp4
+XCMPNB topbp topbn clknb clknbb obnp obnn vbn vdd gnd r1_cmp5n
+XSAR oap oan obp obn oanp obnp mclk wina winb trka0 trka1 trkb0 trkb1 lata latb stba0 stba1 stba2 stba3 stba4 stba5 stba6 stba7 stba8 stba9 stba10 stba11 stba12 stba13 stbb0 stbb1 stbb2 stbb3 stbb4 stbb5 stbb6 stbb7 stbb8 stbb9 stbb10 stbb11 stbb12 stbb13 clka clkab clkb clkbb clkna clknab clknb clknbb cpa12 cpa11 cpa10 cpa9 cpa8 cpa7 cpa6 cpa5 cpa4 cpa3 cpa2 cpa1 cpa0 cna12 cna11 cna10 cna9 cna8 cna7 cna6 cna5 cna4 cna3 cna2 cna1 cna0 cpb12 cpb11 cpb10 cpb9 cpb8 cpb7 cpb6 cpb5 cpb4 cpb3 cpb2 cpb1 cpb0 cnb12 cnb11 cnb10 cnb9 cnb8 cnb7 cnb6 cnb5 cnb4 cnb3 cnb2 cnb1 cnb0 rawa rawb vdd gnd r1_sar5_logic
+.ends r1_core5s_0
+.subckt r1_cdac5s_1ap top lsb b12 b11 b10 b9 b8 b7 b6 b5 b4 b3 b2 b1 b0
+XC12 top b12 cap_cmim w=3.78105u l=3.78105u m=16
+XC11 top b11 cap_cmim w=3.78165u l=3.78165u m=8
+XC10 top b10 cap_cmim w=3.78071u l=3.78071u m=4
+XC9 top b9 cap_cmim w=3.78313u l=3.78313u m=2
+XC8 top b8 cap_cmim w=3.77623u l=3.77623u m=1
+XC7 lsb b7 cap_cmim w=3.78078u l=3.78078u m=64
+XC6 lsb b6 cap_cmim w=3.78045u l=3.78045u m=32
+XC5 lsb b5 cap_cmim w=3.77963u l=3.77963u m=16
+XC4 lsb b4 cap_cmim w=3.78086u l=3.78086u m=8
+XC3 lsb b3 cap_cmim w=3.77981u l=3.77981u m=4
+XC2 lsb b2 cap_cmim w=3.78400u l=3.78400u m=2
+XC1 lsb b1 cap_cmim w=3.78759u l=3.78759u m=1
+XC0 lsb b0 cap_cmim w=2.68091u l=2.68091u m=1
+XCB top lsb cap_cmim w=4.22301u l=4.22301u m=1
+.ends r1_cdac5s_1ap
+.subckt r1_cdac5s_1an top lsb b12 b11 b10 b9 b8 b7 b6 b5 b4 b3 b2 b1 b0
+XC12 top b12 cap_cmim w=3.77819u l=3.77819u m=16
+XC11 top b11 cap_cmim w=3.77911u l=3.77911u m=8
+XC10 top b10 cap_cmim w=3.78040u l=3.78040u m=4
+XC9 top b9 cap_cmim w=3.78310u l=3.78310u m=2
+XC8 top b8 cap_cmim w=3.78158u l=3.78158u m=1
+XC7 lsb b7 cap_cmim w=3.77874u l=3.77874u m=64
+XC6 lsb b6 cap_cmim w=3.77973u l=3.77973u m=32
+XC5 lsb b5 cap_cmim w=3.78103u l=3.78103u m=16
+XC4 lsb b4 cap_cmim w=3.78041u l=3.78041u m=8
+XC3 lsb b3 cap_cmim w=3.78190u l=3.78190u m=4
+XC2 lsb b2 cap_cmim w=3.77921u l=3.77921u m=2
+XC1 lsb b1 cap_cmim w=3.77900u l=3.77900u m=1
+XC0 lsb b0 cap_cmim w=2.67093u l=2.67093u m=1
+XCB top lsb cap_cmim w=4.23205u l=4.23205u m=1
+.ends r1_cdac5s_1an
+.subckt r1_th5s_1a in0p in0n in1p in1n trk0 trk1 top_p top_n cp12 cp11 cp10 cp9 cp8 cp7 cp6 cp5 cp4 cp3 cp2 cp1 cp0 cn12 cn11 cn10 cn9 cn8 cn7 cn6 cn5 cn4 cn3 cn2 cn1 cn0 vdd vref vrefl gnd
+XPT0a t0b trk0 vdd vdd sg13_lv_pmos w=2u l=0.13u ng=1 m=1
+XNT0a t0b trk0 gnd gnd sg13_lv_nmos w=1u l=0.13u ng=1 m=1
+XPT0b t0 t0b vdd vdd sg13_lv_pmos w=4u l=0.13u ng=1 m=1
+XNT0b t0 t0b gnd gnd sg13_lv_nmos w=2u l=0.13u ng=1 m=1
+XS0P in0p top_p t0 t0b vdd gnd r1_bootsw
+XS0N in0n top_n t0 t0b vdd gnd r1_bootsw
+XS1P in1p top_p gnd r1_offsw
+XS1N in1n top_n gnd r1_offsw
+Rtrk1 trk1 gnd 1e9
+XLRP lsb_p t0b vrefl vrefl sg13_lv_pmos w=1u l=0.13u ng=1 m=1
+XLRN lsb_n t0b vrefl vrefl sg13_lv_pmos w=1u l=0.13u ng=1 m=1
+XDACP top_p lsb_p bp12 bp11 bp10 bp9 bp8 bp7 bp6 bp5 bp4 bp3 bp2 bp1 bp0 r1_cdac5s_1ap
+XDACN top_n lsb_n bn12 bn11 bn10 bn9 bn8 bn7 bn6 bn5 bn4 bn3 bn2 bn1 bn0 r1_cdac5s_1an
+XDp12 cp12 bp12 vref gnd r1_drv_sw
+XDp11 cp11 bp11 vref gnd r1_drv_sw
+XDp10 cp10 bp10 vref gnd r1_drv_sw
+XDp9 cp9 bp9 vref gnd r1_drv_sw
+XDp8 cp8 bp8 vref gnd r1_drv_sw
+XDp7 cp7 bp7 vrefl gnd r1_drv_sw
+XDp6 cp6 bp6 vrefl gnd r1_drv_sw
+XDp5 cp5 bp5 vrefl gnd r1_drv_sw
+XDp4 cp4 bp4 vrefl gnd r1_drv_sw
+XDp3 cp3 bp3 vrefl gnd r1_drv_sw
+XDp2 cp2 bp2 vrefl gnd r1_drv_sw
+XDp1 cp1 bp1 vrefl gnd r1_drv_sw
+XDp0 cp0 bp0 vrefl gnd r1_drv_sw
+XDn12 cn12 bn12 vref gnd r1_drv_sw
+XDn11 cn11 bn11 vref gnd r1_drv_sw
+XDn10 cn10 bn10 vref gnd r1_drv_sw
+XDn9 cn9 bn9 vref gnd r1_drv_sw
+XDn8 cn8 bn8 vref gnd r1_drv_sw
+XDn7 cn7 bn7 vrefl gnd r1_drv_sw
+XDn6 cn6 bn6 vrefl gnd r1_drv_sw
+XDn5 cn5 bn5 vrefl gnd r1_drv_sw
+XDn4 cn4 bn4 vrefl gnd r1_drv_sw
+XDn3 cn3 bn3 vrefl gnd r1_drv_sw
+XDn2 cn2 bn2 vrefl gnd r1_drv_sw
+XDn1 cn1 bn1 vrefl gnd r1_drv_sw
+XDn0 cn0 bn0 vrefl gnd r1_drv_sw
+* revision 4: LSB-array drivers C7..C0 and the lsb-node reset on vrefl
+.ends r1_th5s_1a
+.subckt r1_cdac5s_1bp top lsb b12 b11 b10 b9 b8 b7 b6 b5 b4 b3 b2 b1 b0
+XC12 top b12 cap_cmim w=3.78025u l=3.78025u m=16
+XC11 top b11 cap_cmim w=3.78021u l=3.78021u m=8
+XC10 top b10 cap_cmim w=3.77832u l=3.77832u m=4
+XC9 top b9 cap_cmim w=3.78133u l=3.78133u m=2
+XC8 top b8 cap_cmim w=3.78061u l=3.78061u m=1
+XC7 lsb b7 cap_cmim w=3.78071u l=3.78071u m=64
+XC6 lsb b6 cap_cmim w=3.78106u l=3.78106u m=32
+XC5 lsb b5 cap_cmim w=3.78023u l=3.78023u m=16
+XC4 lsb b4 cap_cmim w=3.77934u l=3.77934u m=8
+XC3 lsb b3 cap_cmim w=3.77840u l=3.77840u m=4
+XC2 lsb b2 cap_cmim w=3.78150u l=3.78150u m=2
+XC1 lsb b1 cap_cmim w=3.78039u l=3.78039u m=1
+XC0 lsb b0 cap_cmim w=2.66828u l=2.66828u m=1
+XCB top lsb cap_cmim w=4.23022u l=4.23022u m=1
+.ends r1_cdac5s_1bp
+.subckt r1_cdac5s_1bn top lsb b12 b11 b10 b9 b8 b7 b6 b5 b4 b3 b2 b1 b0
+XC12 top b12 cap_cmim w=3.77922u l=3.77922u m=16
+XC11 top b11 cap_cmim w=3.78123u l=3.78123u m=8
+XC10 top b10 cap_cmim w=3.77888u l=3.77888u m=4
+XC9 top b9 cap_cmim w=3.78433u l=3.78433u m=2
+XC8 top b8 cap_cmim w=3.78202u l=3.78202u m=1
+XC7 lsb b7 cap_cmim w=3.78037u l=3.78037u m=64
+XC6 lsb b6 cap_cmim w=3.77903u l=3.77903u m=32
+XC5 lsb b5 cap_cmim w=3.78021u l=3.78021u m=16
+XC4 lsb b4 cap_cmim w=3.78131u l=3.78131u m=8
+XC3 lsb b3 cap_cmim w=3.77761u l=3.77761u m=4
+XC2 lsb b2 cap_cmim w=3.77906u l=3.77906u m=2
+XC1 lsb b1 cap_cmim w=3.78016u l=3.78016u m=1
+XC0 lsb b0 cap_cmim w=2.66313u l=2.66313u m=1
+XCB top lsb cap_cmim w=4.23158u l=4.23158u m=1
+.ends r1_cdac5s_1bn
+.subckt r1_th5s_1b in0p in0n in1p in1n trk0 trk1 top_p top_n cp12 cp11 cp10 cp9 cp8 cp7 cp6 cp5 cp4 cp3 cp2 cp1 cp0 cn12 cn11 cn10 cn9 cn8 cn7 cn6 cn5 cn4 cn3 cn2 cn1 cn0 vdd vref vrefl gnd
+XPT0a t0b trk0 vdd vdd sg13_lv_pmos w=2u l=0.13u ng=1 m=1
+XNT0a t0b trk0 gnd gnd sg13_lv_nmos w=1u l=0.13u ng=1 m=1
+XPT0b t0 t0b vdd vdd sg13_lv_pmos w=4u l=0.13u ng=1 m=1
+XNT0b t0 t0b gnd gnd sg13_lv_nmos w=2u l=0.13u ng=1 m=1
+XS0P in0p top_p t0 t0b vdd gnd r1_bootsw
+XS0N in0n top_n t0 t0b vdd gnd r1_bootsw
+XS1P in1p top_p gnd r1_offsw
+XS1N in1n top_n gnd r1_offsw
+Rtrk1 trk1 gnd 1e9
+XLRP lsb_p t0b vrefl vrefl sg13_lv_pmos w=1u l=0.13u ng=1 m=1
+XLRN lsb_n t0b vrefl vrefl sg13_lv_pmos w=1u l=0.13u ng=1 m=1
+XDACP top_p lsb_p bp12 bp11 bp10 bp9 bp8 bp7 bp6 bp5 bp4 bp3 bp2 bp1 bp0 r1_cdac5s_1bp
+XDACN top_n lsb_n bn12 bn11 bn10 bn9 bn8 bn7 bn6 bn5 bn4 bn3 bn2 bn1 bn0 r1_cdac5s_1bn
+XDp12 cp12 bp12 vref gnd r1_drv_sw
+XDp11 cp11 bp11 vref gnd r1_drv_sw
+XDp10 cp10 bp10 vref gnd r1_drv_sw
+XDp9 cp9 bp9 vref gnd r1_drv_sw
+XDp8 cp8 bp8 vref gnd r1_drv_sw
+XDp7 cp7 bp7 vrefl gnd r1_drv_sw
+XDp6 cp6 bp6 vrefl gnd r1_drv_sw
+XDp5 cp5 bp5 vrefl gnd r1_drv_sw
+XDp4 cp4 bp4 vrefl gnd r1_drv_sw
+XDp3 cp3 bp3 vrefl gnd r1_drv_sw
+XDp2 cp2 bp2 vrefl gnd r1_drv_sw
+XDp1 cp1 bp1 vrefl gnd r1_drv_sw
+XDp0 cp0 bp0 vrefl gnd r1_drv_sw
+XDn12 cn12 bn12 vref gnd r1_drv_sw
+XDn11 cn11 bn11 vref gnd r1_drv_sw
+XDn10 cn10 bn10 vref gnd r1_drv_sw
+XDn9 cn9 bn9 vref gnd r1_drv_sw
+XDn8 cn8 bn8 vref gnd r1_drv_sw
+XDn7 cn7 bn7 vrefl gnd r1_drv_sw
+XDn6 cn6 bn6 vrefl gnd r1_drv_sw
+XDn5 cn5 bn5 vrefl gnd r1_drv_sw
+XDn4 cn4 bn4 vrefl gnd r1_drv_sw
+XDn3 cn3 bn3 vrefl gnd r1_drv_sw
+XDn2 cn2 bn2 vrefl gnd r1_drv_sw
+XDn1 cn1 bn1 vrefl gnd r1_drv_sw
+XDn0 cn0 bn0 vrefl gnd r1_drv_sw
+* revision 4: LSB-array drivers C7..C0 and the lsb-node reset on vrefl
+.ends r1_th5s_1b
+.subckt r1_core5s_1 sinp sinn cosp cosn isap isan isbp isbn trka0 trka1 trkb0 trkb1 clk30 wina winb lata latb stba0 stba1 stba2 stba3 stba4 stba5 stba6 stba7 stba8 stba9 stba10 stba11 stba12 stba13 stbb0 stbb1 stbb2 stbb3 stbb4 stbb5 stbb6 stbb7 stbb8 stbb9 stbb10 stbb11 stbb12 stbb13 rawa rawb topap topan topbp topbn vdd vrefa vrefb vrefla vreflb gnd
+XCKG clk30 mclk mclkb vdd gnd r1_cmp4_clkgen
+XTHA sinp sinn isap isan trka0 trka1 topap topan cpa12 cpa11 cpa10 cpa9 cpa8 cpa7 cpa6 cpa5 cpa4 cpa3 cpa2 cpa1 cpa0 cna12 cna11 cna10 cna9 cna8 cna7 cna6 cna5 cna4 cna3 cna2 cna1 cna0 vdd vrefa vrefla gnd r1_th5s_1a
+XCBIAS vbp vdd gnd r1_cmp4_bias
+XCBIASN vbn vdd gnd r1_cmp5n_bias
+XCMPA topap topan clka clkab oap oan vbp vdd gnd r1_cmp4
+XCMPNA topap topan clkna clknab oanp oann vbn vdd gnd r1_cmp5n
+XTHB cosp cosn isbp isbn trkb0 trkb1 topbp topbn cpb12 cpb11 cpb10 cpb9 cpb8 cpb7 cpb6 cpb5 cpb4 cpb3 cpb2 cpb1 cpb0 cnb12 cnb11 cnb10 cnb9 cnb8 cnb7 cnb6 cnb5 cnb4 cnb3 cnb2 cnb1 cnb0 vdd vrefb vreflb gnd r1_th5s_1b
+XCMPB topbp topbn clkb clkbb obp obn vbp vdd gnd r1_cmp4
+XCMPNB topbp topbn clknb clknbb obnp obnn vbn vdd gnd r1_cmp5n
+XSAR oap oan obp obn oanp obnp mclk wina winb trka0 trka1 trkb0 trkb1 lata latb stba0 stba1 stba2 stba3 stba4 stba5 stba6 stba7 stba8 stba9 stba10 stba11 stba12 stba13 stbb0 stbb1 stbb2 stbb3 stbb4 stbb5 stbb6 stbb7 stbb8 stbb9 stbb10 stbb11 stbb12 stbb13 clka clkab clkb clkbb clkna clknab clknb clknbb cpa12 cpa11 cpa10 cpa9 cpa8 cpa7 cpa6 cpa5 cpa4 cpa3 cpa2 cpa1 cpa0 cna12 cna11 cna10 cna9 cna8 cna7 cna6 cna5 cna4 cna3 cna2 cna1 cna0 cpb12 cpb11 cpb10 cpb9 cpb8 cpb7 cpb6 cpb5 cpb4 cpb3 cpb2 cpb1 cpb0 cnb12 cnb11 cnb10 cnb9 cnb8 cnb7 cnb6 cnb5 cnb4 cnb3 cnb2 cnb1 cnb0 rawa rawb vdd gnd r1_sar5_logic
+.ends r1_core5s_1
+XM0 sinp sinn cosp cosn isap isan isap isan trka0 trka1 trkb0 trkb1 clk30 wina winb lata latb
++ stba0 stba1 stba2 stba3 stba4 stba5 stba6 stba7 stba8 stba9 stba10 stba11 stba12 stba13
++ stbb0 stbb1 stbb2 stbb3 stbb4 stbb5 stbb6 stbb7 stbb8 stbb9 stbb10 stbb11 stbb12 stbb13
++ m0rawa m0rawb m0tpa m0tna m0tpb m0tnb vdd vrefa vrefb vrefla vreflb 0 r1_core5s_0
+XM1 sinp sinn cosp cosn isap isan isap isan trka0 trka1 trkb0 trkb1 clk30 wina winb lata latb
++ stba0 stba1 stba2 stba3 stba4 stba5 stba6 stba7 stba8 stba9 stba10 stba11 stba12 stba13
++ stbb0 stbb1 stbb2 stbb3 stbb4 stbb5 stbb6 stbb7 stbb8 stbb9 stbb10 stbb11 stbb12 stbb13
++ m1rawa m1rawb m1tpa m1tna m1tpb m1tnb vdd vrefa vrefb vrefla vreflb 0 r1_core5s_1
+
+.control
+set num_threads=1
+save all
+op
+print v(vrefa) v(vrefb) v(vrefla) v(vreflb) v(topap) v(topan) v(xadc.xtha.lsb_p) v(xadc.xtha.lsb_n) > <G1_RESULTS_ROOT>/r1_adc/r5-dbg-opmcs-2/op.txt
+.endc
+.end

@@ -1,0 +1,36 @@
+* tb_adc5_points.cir -- R1 ADC revision 5 (D18): both slices, one held differential input per frame and slice.
+* Frame s: slice A samples vda (SIN path) at tsA = 0.6 us + s * 22 T, slice B samples vdb (COS path) at tsA.
+* vda/vdb are PWL sources written by sim/r5/run_points5.py (value of frame s applied 550 ns before its edge).
+* Inputs are linear E sources around the common mode CM (R2-7). Track is high from t = 0 (revision-5 timing).
+* Reference: REFLINES (ideal source, or the buffer under test fed by the r1_bgr Thevenin + noise model, see
+* run_points5.py); the core has per-slice ports vrefa vrefb (MSB array) and vrefla vreflb (LSB array).
+* Substitutions: CORNER TEMP VDD CM CAPLIB TIMING OPTS TMAX TSTOP PWLA PWLB REFLINES INSTANCES SAVE RAW
+.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerMOSlv.lib @CORNER@
+.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerCAP.lib @CAPLIB@
+.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerMOShv.lib @CORNER@
+.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerRES.lib res_typ
+.include schematic/r1_adc_r5.spice
+.include sim/r5/@TIMING@
+.temp @TEMP@
+.option @OPTS@
+
+Vdd vdd 0 @VDD@
+@REFLINES@
+Vcm vcm 0 @CM@
+Vda vda 0 PWL(@PWLA@)
+Vdb vdb 0 PWL(@PWLB@)
+Esp sinp vcm vda 0 0.5
+Esn sinn vcm vda 0 -0.5
+Ecp cosp vcm vdb 0 0.5
+Ecn cosn vcm vdb 0 -0.5
+Vip isap 0 0.6
+Vin isan 0 0.6
+
+@INSTANCES@
+
+.control
+set num_threads=1
+save @SAVE@
+@ANALYSIS@
+.endc
+.end

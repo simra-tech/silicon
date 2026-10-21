@@ -1,0 +1,62 @@
+{
+  "run_id": "r5-op-ideal-gdef",
+  "block": "r1_adc",
+  "question": "gmin item: operating point of the revision-5 deck (track high at t = 0, no rshunt), ideal VREF, PDK-default gmin",
+  "command": "G1_CPUSET=103 G1_CPUS=1 G1_WORKDIR=designs/r1-joint/blocks/r1_adc G1_RESULTS_ROOT=<bulk> flow/run.sh ngspice -b <G1_RESULTS_ROOT>/r1_adc/r5-op-ideal-gdef/deck.cir (= sim/runs/r5-op-ideal-gdef/deck.cir with the bulk path filled in)",
+  "deck": "sim/runs/r5-op-ideal-gdef/deck.cir",
+  "deck_template": "sim/r5/tb_adc5_points.cir",
+  "deck_sha256": "c920d6f0ead50ed1c4dd6c2b80548a46265a7aef1a93522599dc11789af21169",
+  "library_sha256_at_start": {
+    "r1_adc_r5.spice": "a2c3c9a2eb05cd61b7cb0aa28ef020fdf0ec5038aae88816101f926cb34c99e8"
+  },
+  "substitutions": {
+    "RAW": "<bulk>/r1_adc/r5-op-ideal-gdef",
+    "CORNER": "mos_tt",
+    "TEMP": "27",
+    "VDD": "1.2",
+    "CM": "0.6",
+    "CAPLIB": "cap_typ",
+    "TIMING": "r1_adc_timing_r5_n0.inc",
+    "OPTS": "reltol=1e-4 vntol=1e-6 abstol=1e-12 method=trap klu seed=1 interp",
+    "TSTOP": "7.7267u",
+    "PWLA": "0 0.0000000 7.833333e-07 0.0000000 7.933333e-07 0.8800000 1.516667e-06 0.8800000 1.526667e-06 -0.8800000 2.250000e-06 -0.8800000 2.260000e-06 0.4400000 2.983333e-06 0.4400000\n+ 2.993333e-06 -0.4400000 3.716667e-06 -0.4400000 3.726667e-06 0.0003000 4.450000e-06 0.0003000 4.460000e-06 0.8700000 5.183333e-06 0.8700000 5.193333e-06 -0.8700000 5.916667e-06 -0.8700000\n+ 5.926667e-06 0.8800000 6.650000e-06 0.8800000 6.660000e-06 -0.8800000",
+    "PWLB": "0 0.0000000 7.833333e-07 0.0000000 7.933333e-07 0.8800000 1.516667e-06 0.8800000 1.526667e-06 -0.8800000 2.250000e-06 -0.8800000 2.260000e-06 -0.4400000 2.983333e-06 -0.4400000\n+ 2.993333e-06 0.4400000 3.716667e-06 0.4400000 3.726667e-06 -0.0003000 4.450000e-06 -0.0003000 4.460000e-06 -0.8700000 5.183333e-06 -0.8700000 5.193333e-06 0.8700000 5.916667e-06 0.8700000\n+ 5.926667e-06 -0.8800000 6.650000e-06 -0.8800000 6.660000e-06 0.8800000",
+    "REFLINES": "Vref vref 0 1.045\nVtvrefa vrefa vref 0\nVtvrefb vrefb vref 0\nVtvrefla vrefla vref 0\nVtvreflb vreflb vref 0",
+    "INSTANCES": "XADC sinp sinn cosp cosn isap isan isap isan trka0 trka1 trkb0 trkb1 clk30 wina winb lata latb\n+ stba0 stba1 stba2 stba3 stba4 stba5 stba6 stba7 stba8 stba9 stba10 stba11 stba12 stba13\n+ stbb0 stbb1 stbb2 stbb3 stbb4 stbb5 stbb6 stbb7 stbb8 stbb9 stbb10 stbb11 stbb12 stbb13\n+ rawa rawb topap topan topbp topbn vdd vrefa vrefb vrefla vreflb 0 r1_adc5_core_fast",
+    "SAVE": "v(rawa) v(rawb)",
+    "ANALYSIS": "op\nprint v(vrefa) v(vrefb) v(vrefla) v(vreflb) v(topap) v(topan) v(xadc.xtha.lsb_p) v(xadc.xtha.lsb_n) > @RAW@/op.txt"
+  },
+  "tool": "ngspice (banner not found in log)",
+  "ngspice_version": "ngspice-46 : Circuit level simulation program (creation date Mon Jul 27 13:15:13 UTC 2026)",
+  "netlist_sha256": {
+    "r1_adc_r5.spice": "a2c3c9a2eb05cd61b7cb0aa28ef020fdf0ec5038aae88816101f926cb34c99e8"
+  },
+  "container_image": "sha256:ddeb69576f2808676d1c5d474ecf04f6d1d6f8abdcff6b72b39790ded924bab2",
+  "pdk_commit": "84374023ee8b4b126bebbba67fcbada0a9c0ff0b",
+  "raw_results": "r1_adc/r5-op-ideal-gdef (under G1_RESULTS_ROOT)",
+  "started_utc": "2026-10-21T01:14:53.701421Z",
+  "wall_s": 7.1,
+  "returncode": 0,
+  "status": "failed",
+  "errors": [],
+  "failure_lines": [],
+  "missing_outputs": [
+    "op.txt"
+  ],
+  "frozen_netlist_check": {
+    "r1_adc_r5.spice": "frozen"
+  },
+  "result": "",
+  "disposition": "failed: @RAW@ inside a substituted value not expanded (wrapper fixed)",
+  "points_file": "sim/r5/points/ref10.json",
+  "first_slot": 0,
+  "n_stag": 0,
+  "runner": "sim/r5/run_points5.py",
+  "ref_model": "ideal",
+  "ref_params": "",
+  "refl_params": "",
+  "bgr_model": null,
+  "gmin": "default",
+  "mc": 0,
+  "seed": 1
+}

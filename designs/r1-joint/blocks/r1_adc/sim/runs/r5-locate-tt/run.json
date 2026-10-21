@@ -1,0 +1,60 @@
+{
+  "run_id": "r5-locate-tt",
+  "block": "r1_adc",
+  "question": "item 3: locate decision-0/1 toggles and major code transitions on the nominal circuit, tt, ideal VREF 1.045 V",
+  "command": "G1_CPUSET=103 G1_CPUS=1 G1_WORKDIR=designs/r1-joint/blocks/r1_adc G1_RESULTS_ROOT=<bulk> flow/run.sh ngspice -b <G1_RESULTS_ROOT>/r1_adc/r5-locate-tt/deck.cir (= sim/runs/r5-locate-tt/deck.cir with the bulk path filled in)",
+  "deck": "sim/runs/r5-locate-tt/deck.cir",
+  "deck_template": "sim/r5/tb_adc5_points.cir",
+  "deck_sha256": "e24a99f812399cc7ffc70b2f08e9663511700afaf8dcc08aa19ce2bd4fdf4212",
+  "library_sha256_at_start": {
+    "r1_adc_r5.spice": "a2c3c9a2eb05cd61b7cb0aa28ef020fdf0ec5038aae88816101f926cb34c99e8"
+  },
+  "substitutions": {
+    "RAW": "<bulk>/r1_adc/r5-locate-tt",
+    "CORNER": "mos_tt",
+    "TEMP": "27",
+    "VDD": "1.2",
+    "CM": "0.6",
+    "CAPLIB": "cap_typ",
+    "TIMING": "r1_adc_timing_r5_n0_cq.inc",
+    "OPTS": "reltol=1e-4 vntol=1e-6 abstol=1e-12 method=trap klu seed=1 interp",
+    "TSTOP": "21.6600u",
+    "PWLA": "0 -0.0040000 7.833333e-07 -0.0040000 7.933333e-07 -0.0035000 1.516667e-06 -0.0035000 1.526667e-06 -0.0030000 2.250000e-06 -0.0030000 2.260000e-06 -0.0025000 2.983333e-06 -0.0025000\n+ 2.993333e-06 -0.0020000 3.716667e-06 -0.0020000 3.726667e-06 -0.0015000 4.450000e-06 -0.0015000 4.460000e-06 -0.0010000 5.183333e-06 -0.0010000 5.193333e-06 -0.0005000 5.916667e-06 -0.0005000\n+ 5.926667e-06 0.0000000 6.650000e-06 0.0000000 6.660000e-06 0.0005000 7.383333e-06 0.0005000 7.393333e-06 0.0010000 8.116667e-06 0.0010000 8.126667e-06 0.0015000 8.850000e-06 0.0015000\n+ 8.860000e-06 0.0020000 9.583333e-06 0.0020000 9.593333e-06 0.0025000 1.031667e-05 0.0025000 1.032667e-05 0.0030000 1.105000e-05 0.0030000 1.106000e-05 0.0035000 1.178333e-05 0.0035000\n+ 1.179333e-05 0.0040000 1.251667e-05 0.0040000 1.252667e-05 0.4710000 1.325000e-05 0.4710000 1.326000e-05 0.4720000 1.398333e-05 0.4720000 1.399333e-05 0.4730000 1.471667e-05 0.4730000\n+ 1.472667e-05 0.4740000 1.545000e-05 0.4740000 1.546000e-05 0.4750000 1.618333e-05 0.4750000 1.619333e-05 0.4760000 1.691667e-05 0.4760000 1.692667e-05 0.4770000 1.765000e-05 0.4770000\n+ 1.766000e-05 0.4780000 1.838333e-05 0.4780000 1.839333e-05 0.4790000 1.911667e-05 0.4790000 1.912667e-05 0.4800000 1.985000e-05 0.4800000 1.986000e-05 0.4810000 2.058333e-05 0.4810000\n+ 2.059333e-05 0.4820000",
+    "PWLB": "0 -0.0037500 7.833333e-07 -0.0037500 7.933333e-07 -0.0032500 1.516667e-06 -0.0032500 1.526667e-06 -0.0027500 2.250000e-06 -0.0027500 2.260000e-06 -0.0022500 2.983333e-06 -0.0022500\n+ 2.993333e-06 -0.0017500 3.716667e-06 -0.0017500 3.726667e-06 -0.0012500 4.450000e-06 -0.0012500 4.460000e-06 -0.0007500 5.183333e-06 -0.0007500 5.193333e-06 -0.0002500 5.916667e-06 -0.0002500\n+ 5.926667e-06 0.0002500 6.650000e-06 0.0002500 6.660000e-06 0.0007500 7.383333e-06 0.0007500 7.393333e-06 0.0012500 8.116667e-06 0.0012500 8.126667e-06 0.0017500 8.850000e-06 0.0017500\n+ 8.860000e-06 0.0022500 9.583333e-06 0.0022500 9.593333e-06 0.0027500 1.031667e-05 0.0027500 1.032667e-05 0.0032500 1.105000e-05 0.0032500 1.106000e-05 0.0037500 1.178333e-05 0.0037500\n+ 1.179333e-05 0.0042500 1.251667e-05 0.0042500 1.252667e-05 -0.4820000 1.325000e-05 -0.4820000 1.326000e-05 -0.4810000 1.398333e-05 -0.4810000 1.399333e-05 -0.4800000 1.471667e-05 -0.4800000\n+ 1.472667e-05 -0.4790000 1.545000e-05 -0.4790000 1.546000e-05 -0.4780000 1.618333e-05 -0.4780000 1.619333e-05 -0.4770000 1.691667e-05 -0.4770000 1.692667e-05 -0.4760000 1.765000e-05 -0.4760000\n+ 1.766000e-05 -0.4750000 1.838333e-05 -0.4750000 1.839333e-05 -0.4740000 1.911667e-05 -0.4740000 1.912667e-05 -0.4730000 1.985000e-05 -0.4730000 1.986000e-05 -0.4720000 2.058333e-05 -0.4720000\n+ 2.059333e-05 -0.4710000",
+    "REFLINES": "Vref vref 0 1.045\nVtvrefa vrefa vref 0\nVtvrefb vrefb vref 0\nVtvrefla vrefla vref 0\nVtvreflb vreflb vref 0",
+    "INSTANCES": "XADC sinp sinn cosp cosn isap isan isap isan trka0 trka1 trkb0 trkb1 clk30 wina winb lata latb\n+ stba0 stba1 stba2 stba3 stba4 stba5 stba6 stba7 stba8 stba9 stba10 stba11 stba12 stba13\n+ stbb0 stbb1 stbb2 stbb3 stbb4 stbb5 stbb6 stbb7 stbb8 stbb9 stbb10 stbb11 stbb12 stbb13\n+ rawa rawb topap topan topbp topbn vdd vrefa vrefb vrefla vreflb 0 r1_adc5_core_fast",
+    "SAVE": "v(rawa) v(rawb)",
+    "ANALYSIS": "tran 1n 21.6600u 0 0.2n\nwrite @RAW@/codes.raw"
+  },
+  "tool": "ngspice (banner not found in log)",
+  "ngspice_version": "ngspice-46 : Circuit level simulation program (creation date Mon Jul 27 13:15:13 UTC 2026)",
+  "netlist_sha256": {
+    "r1_adc_r5.spice": "a2c3c9a2eb05cd61b7cb0aa28ef020fdf0ec5038aae88816101f926cb34c99e8"
+  },
+  "container_image": "sha256:ddeb69576f2808676d1c5d474ecf04f6d1d6f8abdcff6b72b39790ded924bab2",
+  "pdk_commit": "84374023ee8b4b126bebbba67fcbada0a9c0ff0b",
+  "raw_results": "r1_adc/r5-locate-tt (under G1_RESULTS_ROOT)",
+  "started_utc": "2026-10-21T01:45:59.808530Z",
+  "wall_s": 1704.1,
+  "returncode": 0,
+  "status": "completed",
+  "errors": [],
+  "failure_lines": [],
+  "missing_outputs": [],
+  "frozen_netlist_check": {
+    "r1_adc_r5.spice": "frozen"
+  },
+  "result": "",
+  "disposition": "item 3 window-placement check (place_windows5.py)",
+  "points_file": "sim/r5/points/locate5.json",
+  "first_slot": 0,
+  "n_stag": 0,
+  "runner": "sim/r5/run_points5.py",
+  "ref_model": "ideal",
+  "ref_params": "",
+  "refl_params": "",
+  "bgr_model": null,
+  "gmin": "default",
+  "mc": 0,
+  "seed": 1
+}

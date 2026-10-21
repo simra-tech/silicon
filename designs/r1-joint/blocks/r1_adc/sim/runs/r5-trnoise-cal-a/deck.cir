@@ -1,0 +1,16 @@
+* tb_trnoise_cal.cir -- R1 ADC revision 5: calibration of the ngspice TRNOISE source used as the r1_bgr noise model
+* in every revision-5 reference deck. Source 1: white only (NA = 1 mV, NT = 50 ns). Source 2: 1/f only
+* (NALPHA 1.15, NAMP 1 mV, NT 50 ns). sim/r5/post_trnoise_cal.py estimates the one-sided PSD (Welch) of both and
+* derives the NA / NAMP that reproduce the r1_bgr density (run bgr-noise-20261021-b).
+.option seed=5
+Vw w 0 DC 0 TRNOISE(1m 50n 0 0)
+Vf f 0 DC 0 TRNOISE(0 50n 1.15 1m)
+Rw w 0 1k
+Rf f 0 1k
+.control
+set num_threads=1
+tran 50n 4m 0 50n
+linearize v(w) v(f)
+wrdata <G1_RESULTS_ROOT>/r1_adc/r5-trnoise-cal-a/trnoise.txt v(w) v(f)
+.endc
+.end

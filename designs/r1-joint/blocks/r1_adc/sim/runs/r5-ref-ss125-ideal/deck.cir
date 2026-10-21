@@ -1,0 +1,48 @@
+* tb_adc5_points.cir -- R1 ADC revision 5 (D18): both slices, one held differential input per frame and slice.
+* Frame s: slice A samples vda (SIN path) at tsA = 0.6 us + s * 22 T, slice B samples vdb (COS path) at tsA.
+* vda/vdb are PWL sources written by sim/r5/run_points5.py (value of frame s applied 550 ns before its edge).
+* Inputs are linear E sources around the common mode CM (R2-7). Track is high from t = 0 (revision-5 timing).
+* Reference: REFLINES (ideal source, or the buffer under test fed by the r1_bgr Thevenin + noise model, see
+* run_points5.py); the core has per-slice ports vrefa vrefb (MSB array) and vrefla vreflb (LSB array).
+* Substitutions: CORNER TEMP VDD CM CAPLIB TIMING OPTS TMAX TSTOP PWLA PWLB REFLINES INSTANCES SAVE RAW
+.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerMOSlv.lib mos_ss
+.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerCAP.lib cap_typ
+.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerMOShv.lib mos_ss
+.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerRES.lib res_typ
+.include schematic/r1_adc_r5.spice
+.include sim/r5/r1_adc_timing_r5_n0_cq_vdd108.inc
+.temp 125
+.option reltol=1e-4 vntol=1e-6 abstol=1e-12 method=trap klu seed=1
+
+Vdd vdd 0 1.08
+Vref vref 0 1.045
+Vtvrefa vrefa vref 0
+Vtvrefb vrefb vref 0
+Vtvrefla vrefla vref 0
+Vtvreflb vreflb vref 0
+Vcm vcm 0 0.6
+Vda vda 0 PWL(0 0.0000000 7.833333e-07 0.0000000 7.933333e-07 0.8800000 1.516667e-06 0.8800000 1.526667e-06 -0.8800000 2.250000e-06 -0.8800000 2.260000e-06 0.4400000 2.983333e-06 0.4400000
++ 2.993333e-06 -0.4400000 3.716667e-06 -0.4400000 3.726667e-06 0.0003000 4.450000e-06 0.0003000 4.460000e-06 0.8700000 5.183333e-06 0.8700000 5.193333e-06 -0.8700000 5.916667e-06 -0.8700000
++ 5.926667e-06 0.8800000 6.650000e-06 0.8800000 6.660000e-06 -0.8800000)
+Vdb vdb 0 PWL(0 0.0000000 7.833333e-07 0.0000000 7.933333e-07 0.8800000 1.516667e-06 0.8800000 1.526667e-06 -0.8800000 2.250000e-06 -0.8800000 2.260000e-06 -0.4400000 2.983333e-06 -0.4400000
++ 2.993333e-06 0.4400000 3.716667e-06 0.4400000 3.726667e-06 -0.0003000 4.450000e-06 -0.0003000 4.460000e-06 -0.8700000 5.183333e-06 -0.8700000 5.193333e-06 0.8700000 5.916667e-06 0.8700000
++ 5.926667e-06 -0.8800000 6.650000e-06 -0.8800000 6.660000e-06 0.8800000)
+Esp sinp vcm vda 0 0.5
+Esn sinn vcm vda 0 -0.5
+Ecp cosp vcm vdb 0 0.5
+Ecn cosn vcm vdb 0 -0.5
+Vip isap 0 0.6
+Vin isan 0 0.6
+
+XADC sinp sinn cosp cosn isap isan isap isan trka0 trka1 trkb0 trkb1 clk30 wina winb lata latb
++ stba0 stba1 stba2 stba3 stba4 stba5 stba6 stba7 stba8 stba9 stba10 stba11 stba12 stba13
++ stbb0 stbb1 stbb2 stbb3 stbb4 stbb5 stbb6 stbb7 stbb8 stbb9 stbb10 stbb11 stbb12 stbb13
++ rawa rawb topap topan topbp topbn vdd vrefa vrefb vrefla vreflb 0 r1_adc5_core_fast
+
+.control
+set num_threads=1
+save v(rawa) v(rawb) v(vrefa) v(vrefb) v(vrefla) v(vreflb) v(topap) v(topan) v(topbp) v(topbn) i(vdd) v(clk30) v(trka0) v(trkb0)
+tran 1n 7.7267u 0 0.2n
+write <G1_RESULTS_ROOT>/r1_adc/r5-ref-ss125-ideal/codes.raw
+.endc
+.end

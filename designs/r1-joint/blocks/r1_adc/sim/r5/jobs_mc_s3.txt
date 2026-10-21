@@ -1,0 +1,6 @@
+# R2-4 reruns with the input steps 5 ns off the clk30 falling edge (gmin pair and ss baseline), then the MC
+--id r5-ref-tt-buf-p --points sim/r5/points/ref10.json --save full --ref buf --disposition "R2-4 run, input steps off the clock grid (post_ref5.py)" --question "R2-4 rev 5 baseline, PDK-default gmin, tt (gmin pair)"
+--id r5-ref-tt-buf-g15-p --points sim/r5/points/ref10.json --save full --ref buf --gmin 1e-15 --disposition "R2-4 run, input steps off the clock grid (post_ref5.py)" --question "R2-4 rev 5 baseline, gmin 1e-15, tt (gmin pair)"
+--id r5-ref-ss125-buf-p --points sim/r5/points/ref10.json --save full --corner mos_ss --temp 125 --vdd 1.08 --ref buf --disposition "R2-4 run, input steps off the clock grid (post_ref5.py)" --question "R2-4 rev 5 baseline at ss/125 C/1.08 V"
+# MC weight calibration, seed 3 (item 3): 2 instances x 2 slices
+--id r5-mc-tt-s3 --points sim/r5/points/mccal5.json --mc 2 --seed 3 --ref ideal --vref 1.045 --disposition "item 3 MC weight calibration (post_mc5.py)" --question "item 3: MIM-mismatch MC (cap_typ_mismatch, seed 3), 2 instances, 14-weight fit and major-transition DNL, tt, ideal VREF 1.045 V"

@@ -1,0 +1,236 @@
+* tb_adc5_points.cir -- R1 ADC revision 5 (D18): both slices, one held differential input per frame and slice.
+* Frame s: slice A samples vda (SIN path) at tsA = 0.6 us + s * 22 T, slice B samples vdb (COS path) at tsA.
+* vda/vdb are PWL sources written by sim/r5/run_points5.py (value of frame s applied 550 ns before its edge).
+* Inputs are linear E sources around the common mode CM (R2-7). Track is high from t = 0 (revision-5 timing).
+* Reference: REFLINES (ideal source, or the buffer under test fed by the r1_bgr Thevenin + noise model, see
+* run_points5.py); the core has per-slice ports vrefa vrefb (MSB array) and vrefla vreflb (LSB array).
+* Substitutions: CORNER TEMP VDD CM CAPLIB TIMING OPTS TMAX TSTOP PWLA PWLB REFLINES INSTANCES SAVE RAW
+.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerMOSlv.lib mos_tt
+.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerCAP.lib cap_typ
+.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerMOShv.lib mos_tt
+.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerRES.lib res_typ
+.include schematic/r1_adc_r5.spice
+.include sim/r5/r1_adc_timing_r5_n0_cq.inc
+.temp 27
+.option reltol=1e-4 vntol=1e-6 abstol=1e-12 method=trap klu seed=6 interp
+
+Vdd vdd 0 1.2
+Vref vref 0 1.045
+Vtvrefa vrefa vref 0
+Vtvrefb vrefb vref 0
+Vtvrefla vrefla vref 0
+Vtvreflb vreflb vref 0
+Vcm vcm 0 0.6
+Vda vda 0 PWL(0 -0.8468353 7.883333e-07 -0.8468353 7.983333e-07 -0.6367335 1.521667e-06 -0.6367335 1.531667e-06 -0.6057213 2.255000e-06 -0.6057213 2.265000e-06 -0.5241804 2.988333e-06 -0.5241804
++ 2.998333e-06 -0.4653136 3.721667e-06 -0.4653136 3.731667e-06 -0.4013638 4.455000e-06 -0.4013638 4.465000e-06 -0.2914552 5.188333e-06 -0.2914552 5.198333e-06 -0.2083703 5.921667e-06 -0.2083703
++ 5.931667e-06 -0.1669387 6.655000e-06 -0.1669387 6.665000e-06 -0.0226998 7.388333e-06 -0.0226998 7.398333e-06 0.1673882 8.121667e-06 0.1673882 8.131667e-06 0.2678767 8.855000e-06 0.2678767
++ 8.865000e-06 0.2729467 9.588333e-06 0.2729467 9.598333e-06 0.3268604 1.032167e-05 0.3268604 1.033167e-05 0.8357683 1.105500e-05 0.8357683 1.106500e-05 -0.4668447 1.178833e-05 -0.4668447
++ 1.179833e-05 -0.4667280 1.252167e-05 -0.4667280 1.253167e-05 -0.4666114 1.325500e-05 -0.4666114 1.326500e-05 -0.4664948 1.398833e-05 -0.4664948 1.399833e-05 -0.4663782 1.472167e-05 -0.4663782
++ 1.473167e-05 -0.4662616 1.545500e-05 -0.4662616 1.546500e-05 -0.4661449 1.618833e-05 -0.4661449 1.619833e-05 -0.4660283 1.692167e-05 -0.4660283 1.693167e-05 -0.4659117 1.765500e-05 -0.4659117
++ 1.766500e-05 -0.4657951 1.838833e-05 -0.4657951 1.839833e-05 -0.4656784 1.912167e-05 -0.4656784 1.913167e-05 -0.4655618 1.985500e-05 -0.4655618 1.986500e-05 -0.4654452 2.058833e-05 -0.4654452
++ 2.059833e-05 -0.4653286 2.132167e-05 -0.4653286 2.133167e-05 -0.4652120 2.205500e-05 -0.4652120 2.206500e-05 -0.4650953 2.278833e-05 -0.4650953 2.279833e-05 -0.4649787 2.352167e-05 -0.4649787
++ 2.353167e-05 -0.0008080 2.425500e-05 -0.0008080 2.426500e-05 -0.0006914 2.498833e-05 -0.0006914 2.499833e-05 -0.0005747 2.572167e-05 -0.0005747 2.573167e-05 -0.0004581 2.645500e-05 -0.0004581
++ 2.646500e-05 -0.0003415 2.718833e-05 -0.0003415 2.719833e-05 -0.0002249 2.792167e-05 -0.0002249 2.793167e-05 -0.0001082 2.865500e-05 -0.0001082 2.866500e-05 0.0000084 2.938833e-05 0.0000084
++ 2.939833e-05 0.0001250 3.012167e-05 0.0001250 3.013167e-05 0.0002416 3.085500e-05 0.0002416 3.086500e-05 0.0003582 3.158833e-05 0.0003582 3.159833e-05 0.0004749 3.232167e-05 0.0004749
++ 3.233167e-05 0.0005915 3.305500e-05 0.0005915 3.306500e-05 0.0007081 3.378833e-05 0.0007081 3.379833e-05 0.0008247 3.452167e-05 0.0008247 3.453167e-05 0.0009414 3.525500e-05 0.0009414
++ 3.526500e-05 0.0010580 3.598833e-05 0.0010580 3.599833e-05 0.4649787 3.672167e-05 0.4649787 3.673167e-05 0.4650953 3.745500e-05 0.4650953 3.746500e-05 0.4652120 3.818833e-05 0.4652120
++ 3.819833e-05 0.4653286 3.892167e-05 0.4653286 3.893167e-05 0.4654452 3.965500e-05 0.4654452 3.966500e-05 0.4655618 4.038833e-05 0.4655618 4.039833e-05 0.4656784 4.112167e-05 0.4656784
++ 4.113167e-05 0.4657951 4.185500e-05 0.4657951 4.186500e-05 0.4659117 4.258833e-05 0.4659117 4.259833e-05 0.4660283 4.332167e-05 0.4660283 4.333167e-05 0.4661449 4.405500e-05 0.4661449
++ 4.406500e-05 0.4662616 4.478833e-05 0.4662616 4.479833e-05 0.4663782 4.552167e-05 0.4663782 4.553167e-05 0.4664948 4.625500e-05 0.4664948 4.626500e-05 0.4666114 4.698833e-05 0.4666114
++ 4.699833e-05 0.4667280 4.772167e-05 0.4667280 4.773167e-05 0.4668447)
+Vdb vdb 0 PWL(0 -0.8814206 7.883333e-07 -0.8814206 7.983333e-07 -0.8297642 1.521667e-06 -0.8297642 1.531667e-06 -0.7471909 2.255000e-06 -0.7471909 2.265000e-06 -0.5379666 2.988333e-06 -0.5379666
++ 2.998333e-06 -0.1531048 3.721667e-06 -0.1531048 3.731667e-06 0.0392974 4.455000e-06 0.0392974 4.465000e-06 0.2202645 5.188333e-06 0.2202645 5.198333e-06 0.2234442 5.921667e-06 0.2234442
++ 5.931667e-06 0.2539892 6.655000e-06 0.2539892 6.665000e-06 0.4924479 7.388333e-06 0.4924479 7.398333e-06 0.4928168 8.121667e-06 0.4928168 8.131667e-06 0.4999779 8.855000e-06 0.4999779
++ 8.865000e-06 0.6009852 9.588333e-06 0.6009852 9.598333e-06 0.8568165 1.032167e-05 0.8568165 1.033167e-05 0.8935986 1.105500e-05 0.8935986 1.106500e-05 -0.4670558 1.178833e-05 -0.4670558
++ 1.179833e-05 -0.4669392 1.252167e-05 -0.4669392 1.253167e-05 -0.4668225 1.325500e-05 -0.4668225 1.326500e-05 -0.4667059 1.398833e-05 -0.4667059 1.399833e-05 -0.4665893 1.472167e-05 -0.4665893
++ 1.473167e-05 -0.4664727 1.545500e-05 -0.4664727 1.546500e-05 -0.4663561 1.618833e-05 -0.4663561 1.619833e-05 -0.4662394 1.692167e-05 -0.4662394 1.693167e-05 -0.4661228 1.765500e-05 -0.4661228
++ 1.766500e-05 -0.4660062 1.838833e-05 -0.4660062 1.839833e-05 -0.4658896 1.912167e-05 -0.4658896 1.913167e-05 -0.4657729 1.985500e-05 -0.4657729 1.986500e-05 -0.4656563 2.058833e-05 -0.4656563
++ 2.059833e-05 -0.4655397 2.132167e-05 -0.4655397 2.133167e-05 -0.4654231 2.205500e-05 -0.4654231 2.206500e-05 -0.4653065 2.278833e-05 -0.4653065 2.279833e-05 -0.4651898 2.352167e-05 -0.4651898
++ 2.353167e-05 -0.0009330 2.425500e-05 -0.0009330 2.426500e-05 -0.0008164 2.498833e-05 -0.0008164 2.499833e-05 -0.0006997 2.572167e-05 -0.0006997 2.573167e-05 -0.0005831 2.645500e-05 -0.0005831
++ 2.646500e-05 -0.0004665 2.718833e-05 -0.0004665 2.719833e-05 -0.0003499 2.792167e-05 -0.0003499 2.793167e-05 -0.0002332 2.865500e-05 -0.0002332 2.866500e-05 -0.0001166 2.938833e-05 -0.0001166
++ 2.939833e-05 0.0000000 3.012167e-05 0.0000000 3.013167e-05 0.0001166 3.085500e-05 0.0001166 3.086500e-05 0.0002332 3.158833e-05 0.0002332 3.159833e-05 0.0003499 3.232167e-05 0.0003499
++ 3.233167e-05 0.0004665 3.305500e-05 0.0004665 3.306500e-05 0.0005831 3.378833e-05 0.0005831 3.379833e-05 0.0006997 3.452167e-05 0.0006997 3.453167e-05 0.0008164 3.525500e-05 0.0008164
++ 3.526500e-05 0.0009330 3.598833e-05 0.0009330 3.599833e-05 0.4651898 3.672167e-05 0.4651898 3.673167e-05 0.4653065 3.745500e-05 0.4653065 3.746500e-05 0.4654231 3.818833e-05 0.4654231
++ 3.819833e-05 0.4655397 3.892167e-05 0.4655397 3.893167e-05 0.4656563 3.965500e-05 0.4656563 3.966500e-05 0.4657729 4.038833e-05 0.4657729 4.039833e-05 0.4658896 4.112167e-05 0.4658896
++ 4.113167e-05 0.4660062 4.185500e-05 0.4660062 4.186500e-05 0.4661228 4.258833e-05 0.4661228 4.259833e-05 0.4662394 4.332167e-05 0.4662394 4.333167e-05 0.4663561 4.405500e-05 0.4663561
++ 4.406500e-05 0.4664727 4.478833e-05 0.4664727 4.479833e-05 0.4665893 4.552167e-05 0.4665893 4.553167e-05 0.4667059 4.625500e-05 0.4667059 4.626500e-05 0.4668225 4.698833e-05 0.4668225
++ 4.699833e-05 0.4669392 4.772167e-05 0.4669392 4.773167e-05 0.4670558)
+Esp sinp vcm vda 0 0.5
+Esn sinn vcm vda 0 -0.5
+Ecp cosp vcm vdb 0 0.5
+Ecn cosn vcm vdb 0 -0.5
+Vip isap 0 0.6
+Vin isan 0 0.6
+
+.subckt r1_cdac5s_0ap top lsb b12 b11 b10 b9 b8 b7 b6 b5 b4 b3 b2 b1 b0
+XC12 top b12 cap_cmim w=3.77961u l=3.77961u m=16
+XC11 top b11 cap_cmim w=3.78129u l=3.78129u m=8
+XC10 top b10 cap_cmim w=3.78054u l=3.78054u m=4
+XC9 top b9 cap_cmim w=3.77682u l=3.77682u m=2
+XC8 top b8 cap_cmim w=3.76755u l=3.76755u m=1
+XC7 lsb b7 cap_cmim w=3.78057u l=3.78057u m=64
+XC6 lsb b6 cap_cmim w=3.78100u l=3.78100u m=32
+XC5 lsb b5 cap_cmim w=3.77811u l=3.77811u m=16
+XC4 lsb b4 cap_cmim w=3.78290u l=3.78290u m=8
+XC3 lsb b3 cap_cmim w=3.77893u l=3.77893u m=4
+XC2 lsb b2 cap_cmim w=3.78929u l=3.78929u m=2
+XC1 lsb b1 cap_cmim w=3.78301u l=3.78301u m=1
+XC0 lsb b0 cap_cmim w=2.66832u l=2.66832u m=1
+XCB top lsb cap_cmim w=4.23618u l=4.23618u m=1
+.ends r1_cdac5s_0ap
+.subckt r1_cdac5s_0an top lsb b12 b11 b10 b9 b8 b7 b6 b5 b4 b3 b2 b1 b0
+XC12 top b12 cap_cmim w=3.78014u l=3.78014u m=16
+XC11 top b11 cap_cmim w=3.78023u l=3.78023u m=8
+XC10 top b10 cap_cmim w=3.78019u l=3.78019u m=4
+XC9 top b9 cap_cmim w=3.77945u l=3.77945u m=2
+XC8 top b8 cap_cmim w=3.78317u l=3.78317u m=1
+XC7 lsb b7 cap_cmim w=3.78051u l=3.78051u m=64
+XC6 lsb b6 cap_cmim w=3.78031u l=3.78031u m=32
+XC5 lsb b5 cap_cmim w=3.78227u l=3.78227u m=16
+XC4 lsb b4 cap_cmim w=3.77760u l=3.77760u m=8
+XC3 lsb b3 cap_cmim w=3.77884u l=3.77884u m=4
+XC2 lsb b2 cap_cmim w=3.78291u l=3.78291u m=2
+XC1 lsb b1 cap_cmim w=3.77411u l=3.77411u m=1
+XC0 lsb b0 cap_cmim w=2.67781u l=2.67781u m=1
+XCB top lsb cap_cmim w=4.23356u l=4.23356u m=1
+.ends r1_cdac5s_0an
+.subckt r1_th5s_0a in0p in0n in1p in1n trk0 trk1 top_p top_n cp12 cp11 cp10 cp9 cp8 cp7 cp6 cp5 cp4 cp3 cp2 cp1 cp0 cn12 cn11 cn10 cn9 cn8 cn7 cn6 cn5 cn4 cn3 cn2 cn1 cn0 vdd vref vrefl gnd
+XPT0a t0b trk0 vdd vdd sg13_lv_pmos w=2u l=0.13u ng=1 m=1
+XNT0a t0b trk0 gnd gnd sg13_lv_nmos w=1u l=0.13u ng=1 m=1
+XPT0b t0 t0b vdd vdd sg13_lv_pmos w=4u l=0.13u ng=1 m=1
+XNT0b t0 t0b gnd gnd sg13_lv_nmos w=2u l=0.13u ng=1 m=1
+XS0P in0p top_p t0 t0b vdd gnd r1_bootsw
+XS0N in0n top_n t0 t0b vdd gnd r1_bootsw
+XS1P in1p top_p gnd r1_offsw
+XS1N in1n top_n gnd r1_offsw
+Rtrk1 trk1 gnd 1e9
+XLRP lsb_p t0b vrefl vrefl sg13_lv_pmos w=1u l=0.13u ng=1 m=1
+XLRN lsb_n t0b vrefl vrefl sg13_lv_pmos w=1u l=0.13u ng=1 m=1
+XDACP top_p lsb_p bp12 bp11 bp10 bp9 bp8 bp7 bp6 bp5 bp4 bp3 bp2 bp1 bp0 r1_cdac5s_0ap
+XDACN top_n lsb_n bn12 bn11 bn10 bn9 bn8 bn7 bn6 bn5 bn4 bn3 bn2 bn1 bn0 r1_cdac5s_0an
+XDp12 cp12 bp12 vref gnd r1_drv_sw
+XDp11 cp11 bp11 vref gnd r1_drv_sw
+XDp10 cp10 bp10 vref gnd r1_drv_sw
+XDp9 cp9 bp9 vref gnd r1_drv_sw
+XDp8 cp8 bp8 vref gnd r1_drv_sw
+XDp7 cp7 bp7 vrefl gnd r1_drv_sw
+XDp6 cp6 bp6 vrefl gnd r1_drv_sw
+XDp5 cp5 bp5 vrefl gnd r1_drv_sw
+XDp4 cp4 bp4 vrefl gnd r1_drv_sw
+XDp3 cp3 bp3 vrefl gnd r1_drv_sw
+XDp2 cp2 bp2 vrefl gnd r1_drv_sw
+XDp1 cp1 bp1 vrefl gnd r1_drv_sw
+XDp0 cp0 bp0 vrefl gnd r1_drv_sw
+XDn12 cn12 bn12 vref gnd r1_drv_sw
+XDn11 cn11 bn11 vref gnd r1_drv_sw
+XDn10 cn10 bn10 vref gnd r1_drv_sw
+XDn9 cn9 bn9 vref gnd r1_drv_sw
+XDn8 cn8 bn8 vref gnd r1_drv_sw
+XDn7 cn7 bn7 vrefl gnd r1_drv_sw
+XDn6 cn6 bn6 vrefl gnd r1_drv_sw
+XDn5 cn5 bn5 vrefl gnd r1_drv_sw
+XDn4 cn4 bn4 vrefl gnd r1_drv_sw
+XDn3 cn3 bn3 vrefl gnd r1_drv_sw
+XDn2 cn2 bn2 vrefl gnd r1_drv_sw
+XDn1 cn1 bn1 vrefl gnd r1_drv_sw
+XDn0 cn0 bn0 vrefl gnd r1_drv_sw
+* revision 4: LSB-array drivers C7..C0 and the lsb-node reset on vrefl
+.ends r1_th5s_0a
+.subckt r1_cdac5s_0bp top lsb b12 b11 b10 b9 b8 b7 b6 b5 b4 b3 b2 b1 b0
+XC12 top b12 cap_cmim w=3.77977u l=3.77977u m=16
+XC11 top b11 cap_cmim w=3.78094u l=3.78094u m=8
+XC10 top b10 cap_cmim w=3.77853u l=3.77853u m=4
+XC9 top b9 cap_cmim w=3.77476u l=3.77476u m=2
+XC8 top b8 cap_cmim w=3.78428u l=3.78428u m=1
+XC7 lsb b7 cap_cmim w=3.78059u l=3.78059u m=64
+XC6 lsb b6 cap_cmim w=3.78010u l=3.78010u m=32
+XC5 lsb b5 cap_cmim w=3.77997u l=3.77997u m=16
+XC4 lsb b4 cap_cmim w=3.77624u l=3.77624u m=8
+XC3 lsb b3 cap_cmim w=3.77791u l=3.77791u m=4
+XC2 lsb b2 cap_cmim w=3.77835u l=3.77835u m=2
+XC1 lsb b1 cap_cmim w=3.78117u l=3.78117u m=1
+XC0 lsb b0 cap_cmim w=2.67692u l=2.67692u m=1
+XCB top lsb cap_cmim w=4.22740u l=4.22740u m=1
+.ends r1_cdac5s_0bp
+.subckt r1_cdac5s_0bn top lsb b12 b11 b10 b9 b8 b7 b6 b5 b4 b3 b2 b1 b0
+XC12 top b12 cap_cmim w=3.77902u l=3.77902u m=16
+XC11 top b11 cap_cmim w=3.78169u l=3.78169u m=8
+XC10 top b10 cap_cmim w=3.77968u l=3.77968u m=4
+XC9 top b9 cap_cmim w=3.77516u l=3.77516u m=2
+XC8 top b8 cap_cmim w=3.78609u l=3.78609u m=1
+XC7 lsb b7 cap_cmim w=3.77946u l=3.77946u m=64
+XC6 lsb b6 cap_cmim w=3.77950u l=3.77950u m=32
+XC5 lsb b5 cap_cmim w=3.77871u l=3.77871u m=16
+XC4 lsb b4 cap_cmim w=3.78063u l=3.78063u m=8
+XC3 lsb b3 cap_cmim w=3.78268u l=3.78268u m=4
+XC2 lsb b2 cap_cmim w=3.77867u l=3.77867u m=2
+XC1 lsb b1 cap_cmim w=3.78198u l=3.78198u m=1
+XC0 lsb b0 cap_cmim w=2.66764u l=2.66764u m=1
+XCB top lsb cap_cmim w=4.24167u l=4.24167u m=1
+.ends r1_cdac5s_0bn
+.subckt r1_th5s_0b in0p in0n in1p in1n trk0 trk1 top_p top_n cp12 cp11 cp10 cp9 cp8 cp7 cp6 cp5 cp4 cp3 cp2 cp1 cp0 cn12 cn11 cn10 cn9 cn8 cn7 cn6 cn5 cn4 cn3 cn2 cn1 cn0 vdd vref vrefl gnd
+XPT0a t0b trk0 vdd vdd sg13_lv_pmos w=2u l=0.13u ng=1 m=1
+XNT0a t0b trk0 gnd gnd sg13_lv_nmos w=1u l=0.13u ng=1 m=1
+XPT0b t0 t0b vdd vdd sg13_lv_pmos w=4u l=0.13u ng=1 m=1
+XNT0b t0 t0b gnd gnd sg13_lv_nmos w=2u l=0.13u ng=1 m=1
+XS0P in0p top_p t0 t0b vdd gnd r1_bootsw
+XS0N in0n top_n t0 t0b vdd gnd r1_bootsw
+XS1P in1p top_p gnd r1_offsw
+XS1N in1n top_n gnd r1_offsw
+Rtrk1 trk1 gnd 1e9
+XLRP lsb_p t0b vrefl vrefl sg13_lv_pmos w=1u l=0.13u ng=1 m=1
+XLRN lsb_n t0b vrefl vrefl sg13_lv_pmos w=1u l=0.13u ng=1 m=1
+XDACP top_p lsb_p bp12 bp11 bp10 bp9 bp8 bp7 bp6 bp5 bp4 bp3 bp2 bp1 bp0 r1_cdac5s_0bp
+XDACN top_n lsb_n bn12 bn11 bn10 bn9 bn8 bn7 bn6 bn5 bn4 bn3 bn2 bn1 bn0 r1_cdac5s_0bn
+XDp12 cp12 bp12 vref gnd r1_drv_sw
+XDp11 cp11 bp11 vref gnd r1_drv_sw
+XDp10 cp10 bp10 vref gnd r1_drv_sw
+XDp9 cp9 bp9 vref gnd r1_drv_sw
+XDp8 cp8 bp8 vref gnd r1_drv_sw
+XDp7 cp7 bp7 vrefl gnd r1_drv_sw
+XDp6 cp6 bp6 vrefl gnd r1_drv_sw
+XDp5 cp5 bp5 vrefl gnd r1_drv_sw
+XDp4 cp4 bp4 vrefl gnd r1_drv_sw
+XDp3 cp3 bp3 vrefl gnd r1_drv_sw
+XDp2 cp2 bp2 vrefl gnd r1_drv_sw
+XDp1 cp1 bp1 vrefl gnd r1_drv_sw
+XDp0 cp0 bp0 vrefl gnd r1_drv_sw
+XDn12 cn12 bn12 vref gnd r1_drv_sw
+XDn11 cn11 bn11 vref gnd r1_drv_sw
+XDn10 cn10 bn10 vref gnd r1_drv_sw
+XDn9 cn9 bn9 vref gnd r1_drv_sw
+XDn8 cn8 bn8 vref gnd r1_drv_sw
+XDn7 cn7 bn7 vrefl gnd r1_drv_sw
+XDn6 cn6 bn6 vrefl gnd r1_drv_sw
+XDn5 cn5 bn5 vrefl gnd r1_drv_sw
+XDn4 cn4 bn4 vrefl gnd r1_drv_sw
+XDn3 cn3 bn3 vrefl gnd r1_drv_sw
+XDn2 cn2 bn2 vrefl gnd r1_drv_sw
+XDn1 cn1 bn1 vrefl gnd r1_drv_sw
+XDn0 cn0 bn0 vrefl gnd r1_drv_sw
+* revision 4: LSB-array drivers C7..C0 and the lsb-node reset on vrefl
+.ends r1_th5s_0b
+.subckt r1_core5s_0 sinp sinn cosp cosn isap isan isbp isbn trka0 trka1 trkb0 trkb1 clk30 wina winb lata latb stba0 stba1 stba2 stba3 stba4 stba5 stba6 stba7 stba8 stba9 stba10 stba11 stba12 stba13 stbb0 stbb1 stbb2 stbb3 stbb4 stbb5 stbb6 stbb7 stbb8 stbb9 stbb10 stbb11 stbb12 stbb13 rawa rawb topap topan topbp topbn vdd vrefa vrefb vrefla vreflb gnd
+XCKG clk30 mclk mclkb vdd gnd r1_cmp4_clkgen
+XTHA sinp sinn isap isan trka0 trka1 topap topan cpa12 cpa11 cpa10 cpa9 cpa8 cpa7 cpa6 cpa5 cpa4 cpa3 cpa2 cpa1 cpa0 cna12 cna11 cna10 cna9 cna8 cna7 cna6 cna5 cna4 cna3 cna2 cna1 cna0 vdd vrefa vrefla gnd r1_th5s_0a
+XCBIAS vbp vdd gnd r1_cmp4_bias
+XCBIASN vbn vdd gnd r1_cmp5n_bias
+XCMPA topap topan clka clkab oap oan vbp vdd gnd r1_cmp4
+XCMPNA topap topan clkna clknab oanp oann vbn vdd gnd r1_cmp5n
+XTHB cosp cosn isbp isbn trkb0 trkb1 topbp topbn cpb12 cpb11 cpb10 cpb9 cpb8 cpb7 cpb6 cpb5 cpb4 cpb3 cpb2 cpb1 cpb0 cnb12 cnb11 cnb10 cnb9 cnb8 cnb7 cnb6 cnb5 cnb4 cnb3 cnb2 cnb1 cnb0 vdd vrefb vreflb gnd r1_th5s_0b
+XCMPB topbp topbn clkb clkbb obp obn vbp vdd gnd r1_cmp4
+XCMPNB topbp topbn clknb clknbb obnp obnn vbn vdd gnd r1_cmp5n
+XSAR oap oan obp obn oanp obnp mclk wina winb trka0 trka1 trkb0 trkb1 lata latb stba0 stba1 stba2 stba3 stba4 stba5 stba6 stba7 stba8 stba9 stba10 stba11 stba12 stba13 stbb0 stbb1 stbb2 stbb3 stbb4 stbb5 stbb6 stbb7 stbb8 stbb9 stbb10 stbb11 stbb12 stbb13 clka clkab clkb clkbb clkna clknab clknb clknbb cpa12 cpa11 cpa10 cpa9 cpa8 cpa7 cpa6 cpa5 cpa4 cpa3 cpa2 cpa1 cpa0 cna12 cna11 cna10 cna9 cna8 cna7 cna6 cna5 cna4 cna3 cna2 cna1 cna0 cpb12 cpb11 cpb10 cpb9 cpb8 cpb7 cpb6 cpb5 cpb4 cpb3 cpb2 cpb1 cpb0 cnb12 cnb11 cnb10 cnb9 cnb8 cnb7 cnb6 cnb5 cnb4 cnb3 cnb2 cnb1 cnb0 rawa rawb vdd gnd r1_sar5_logic
+.ends r1_core5s_0
+XM0 sinp sinn cosp cosn isap isan isap isan trka0 trka1 trkb0 trkb1 clk30 wina winb lata latb
++ stba0 stba1 stba2 stba3 stba4 stba5 stba6 stba7 stba8 stba9 stba10 stba11 stba12 stba13
++ stbb0 stbb1 stbb2 stbb3 stbb4 stbb5 stbb6 stbb7 stbb8 stbb9 stbb10 stbb11 stbb12 stbb13
++ m0rawa m0rawb m0tpa m0tna m0tpb m0tnb vdd vrefa vrefb vrefla vreflb 0 r1_core5s_0
+
+.control
+set num_threads=1
+save v(m0rawa) v(m0rawb)
+tran 1n 48.7933u 0 0.2n
+write <G1_RESULTS_ROOT>/r1_adc/r5-mcs1-tt-s6/codes.raw
+.endc
+.end
