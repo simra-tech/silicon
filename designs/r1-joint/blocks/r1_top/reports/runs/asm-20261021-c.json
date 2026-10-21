@@ -1,0 +1,322 @@
+{
+ "run": "asm-20261021-c",
+ "track": "T8 (r1_top assembly, P3 preparation)",
+ "question": "Try b + decap row reuses the library cell from r1_ctrl_top: does LVS match?",
+ "command": "sh designs/r1-joint/blocks/r1_top/flow/run_try.sh asm-20261021-c <steps>  (steps in steps.log)",
+ "steps_log": [
+  "step gen start 05:04:27",
+  "step gen end 05:04:43",
+  "step cdl start 05:04:43",
+  "step cdl end 05:04:54",
+  "done",
+  "step lvs start 05:04:59",
+  "runner stopped during lvs (05:1x): V3.c1 fix moves the remaining steps to try d; the lvs step continues to completion"
+ ],
+ "tools": {
+  "klayout": "0.30.9 (container)",
+  "python": "3 (container)",
+  "container": "tapeoutbench-eda:latest sha256:ddeb69576f2808676d1c5d474ecf04f6d1d6f8abdcff6b72b39790ded924bab2",
+  "cpuset": "116-119"
+ },
+ "pdk_commit": "84374023ee8b4b126bebbba67fcbada0a9c0ff0b",
+ "inputs": {
+  "u_ring": {
+   "macro": "r1_padring",
+   "source": "r1_padring/ring-20261021-b/r1_padring_1600.gds (fill instances removed: 4198; west TopMetal1 ECO)",
+   "sha256": "40514b4f4ff7888ac0ca95329470e47c8c93c1b3efc7fec1bee2f646b8dbac19"
+  },
+  "u_ctrl": {
+   "macro": "r1_ctrl_top",
+   "source": "r1_ctrl/r1ctrl_ll_20261021_t7/flow/runs/r1ctrl_ll_20261021_t7/final/gds/r1_ctrl_top.gds",
+   "sha256": "d52e67e86a4830a98b66af94eba1a06f869948198678b2d4aa32d18ccfb23dda"
+  },
+  "u_safe": {
+   "macro": "r1_safe",
+   "source": "designs/r1-joint/blocks/r1_safe/layout/r1_safe.gds",
+   "sha256": "fbc3113948e0c15e1e049cfad1e2e5c5349b10ba0ae7d250f5b228e50aa28324"
+  },
+  "u_bgr": {
+   "macro": "r1_bgr",
+   "source": "designs/r1-joint/blocks/r1_bgr/layout/r1_bgr.gds",
+   "sha256": "324e3c27477a77c4a32d6760366d8d1fb82bea4887ae26b905cd7022aac54005"
+  },
+  "u_t2f": {
+   "macro": "r1_t2f",
+   "source": "designs/r1-joint/blocks/r1_t2f/layout/r1_t2f.gds",
+   "sha256": "5e7aa75ae9335b12b1c825d326e586c742755bd9305074fc1cdc2507d17af9a7"
+  },
+  "u_gate": {
+   "macro": "r1_gate_lv",
+   "source": "designs/r1-joint/blocks/r1_gate/layout/r1_gate_lv_filled.gds",
+   "sha256": "a3dee0f091c5236f7b6ff231b765d0b70e60a6e791d9db0b12fd821ce44e013b"
+  },
+  "u_ls_afe0": {
+   "macro": "r1_ls",
+   "source": "designs/r1-joint/blocks/r1_ls/layout/r1_ls.gds",
+   "sha256": "a4f496364b55c71a035f44a9b13b68fd8475f98b05f5e13a4e38e9ec1703b4de"
+  },
+  "u_ls_afe1": {
+   "macro": "r1_ls",
+   "source": "designs/r1-joint/blocks/r1_ls/layout/r1_ls.gds",
+   "sha256": "a4f496364b55c71a035f44a9b13b68fd8475f98b05f5e13a4e38e9ec1703b4de"
+  },
+  "u_ls_afe2": {
+   "macro": "r1_ls",
+   "source": "designs/r1-joint/blocks/r1_ls/layout/r1_ls.gds",
+   "sha256": "a4f496364b55c71a035f44a9b13b68fd8475f98b05f5e13a4e38e9ec1703b4de"
+  },
+  "u_ls_afe3": {
+   "macro": "r1_ls",
+   "source": "designs/r1-joint/blocks/r1_ls/layout/r1_ls.gds",
+   "sha256": "a4f496364b55c71a035f44a9b13b68fd8475f98b05f5e13a4e38e9ec1703b4de"
+  },
+  "u_ls_t2f0": {
+   "macro": "r1_ls",
+   "source": "designs/r1-joint/blocks/r1_ls/layout/r1_ls.gds",
+   "sha256": "a4f496364b55c71a035f44a9b13b68fd8475f98b05f5e13a4e38e9ec1703b4de"
+  },
+  "u_ls_t2f1": {
+   "macro": "r1_ls",
+   "source": "designs/r1-joint/blocks/r1_ls/layout/r1_ls.gds",
+   "sha256": "a4f496364b55c71a035f44a9b13b68fd8475f98b05f5e13a4e38e9ec1703b4de"
+  },
+  "u_r1_afe_ph": {
+   "macro": "r1_afe_ph",
+   "source": "placeholder (outline + Metal3 pin stubs)",
+   "sha256": "-"
+  },
+  "u_r1_adc_ph": {
+   "macro": "r1_adc_ph",
+   "source": "placeholder (outline + Metal3 pin stubs)",
+   "sha256": "-"
+  },
+  "u_r1_isense_a_ph": {
+   "macro": "r1_isense_a_ph",
+   "source": "placeholder (outline + Metal3 pin stubs)",
+   "sha256": "-"
+  },
+  "u_r1_isense_b_ph": {
+   "macro": "r1_isense_b_ph",
+   "source": "placeholder (outline + Metal3 pin stubs)",
+   "sha256": "-"
+  },
+  "u_r1_osc_ph": {
+   "macro": "r1_osc_ph",
+   "source": "placeholder (outline + Metal3 pin stubs)",
+   "sha256": "-"
+  }
+ },
+ "lvs_reference_inputs": {
+  "r1_bgr_lvs.cdl": "c4d175eebf104a852ce0d9b4b426a0cfa6ede80bc39e7088c179c9ae179fae2b",
+  "r1_t2f_lvs.cdl": "9867279d8e07805a9af642fd42067b14862e43fcbc39ae31cbb17bf753cef9aa",
+  "r1_ls_lvs.cdl": "4f3fefbedfa219acf7d9506d8e8edc878be372f5abc551cba2471caaf2a12460",
+  "r1_gate_lv_lvs.cdl": "c0602540bbe0bc34c023a511e7ee1c8f03e6c4e519624d611fe187a5b3afe4ea",
+  "r1_safe_lvs.cdl": "a083d26387c3006de04e2f6b19f454aaa39c81af23b213f545aae8af3b570732",
+  "r1_padring_1600_projected_ref.cdl": "89749d92bb66c5deffb817518985147396f79c9d47ce8de359e950c81e1fa742",
+  "r1_ctrl_top.cdl": "f5ba597b5ca02c24846f56341ac856a55acb87457bddda4a43dfa6506abd3391"
+ },
+ "placeholders": {
+  "r1_afe_ph": [
+   "sinp",
+   "sinn",
+   "cosp",
+   "cosn",
+   "souts_p",
+   "souts_n",
+   "soutc_p",
+   "soutc_n",
+   "vcm2",
+   "ib_s1",
+   "ib_s2",
+   "ib_c1",
+   "ib_c2",
+   "c1",
+   "c2",
+   "c3",
+   "c4",
+   "vdd",
+   "vss"
+  ],
+  "r1_adc_ph": [
+   "adc_hold",
+   "is_smp",
+   "adc_start",
+   "adc_sel",
+   "adc_valid_a",
+   "adc_raw_a[0]",
+   "adc_raw_a[1]",
+   "adc_raw_a[2]",
+   "adc_raw_a[3]",
+   "adc_raw_a[4]",
+   "adc_raw_a[5]",
+   "adc_raw_a[6]",
+   "adc_raw_a[7]",
+   "adc_raw_a[8]",
+   "adc_raw_a[9]",
+   "adc_raw_a[10]",
+   "adc_raw_a[11]",
+   "adc_raw_a[12]",
+   "adc_raw_a[13]",
+   "adc_valid_b",
+   "adc_raw_b[0]",
+   "adc_raw_b[1]",
+   "adc_raw_b[2]",
+   "adc_raw_b[3]",
+   "adc_raw_b[4]",
+   "adc_raw_b[5]",
+   "adc_raw_b[6]",
+   "adc_raw_b[7]",
+   "adc_raw_b[8]",
+   "adc_raw_b[9]",
+   "adc_raw_b[10]",
+   "adc_raw_b[11]",
+   "adc_raw_b[12]",
+   "adc_raw_b[13]",
+   "ain_sin_p",
+   "ain_sin_n",
+   "ain_cos_p",
+   "ain_cos_n",
+   "ain_isa_p",
+   "ain_isa_n",
+   "ain_isb_p",
+   "ain_isb_n",
+   "vref_in",
+   "vdda",
+   "vdd",
+   "vss"
+  ],
+  "r1_isense_a_ph": [
+   "inp",
+   "inn",
+   "outp",
+   "outn",
+   "az_win",
+   "is_smp",
+   "vdda",
+   "vdd",
+   "vss"
+  ],
+  "r1_isense_b_ph": [
+   "inp",
+   "inn",
+   "outp",
+   "outn",
+   "az_win",
+   "is_smp",
+   "vdda",
+   "vdd",
+   "vss"
+  ],
+  "r1_osc_ph": [
+   "clk",
+   "osc_trim[0]",
+   "osc_trim[1]",
+   "osc_trim[2]",
+   "osc_trim[3]",
+   "osc_trim[4]",
+   "vdd",
+   "vss"
+  ]
+ },
+ "outputs": {
+  "r1_top.gds": "b0e25bbe3d06e011664275d26b17caba210b22a987e2ac374f9a16087c38b9c6",
+  "cdl/r1_top.cdl": "94f191a8542556acdbab68cb422f34c78a3cb77b2901f056741bd850974b53ae",
+  "r1_top.png": "39c4bf285dd369923b5fc32df4594317de3391317fce98cf3945986d4e4d1dd6"
+ },
+ "self_check": {
+  "net_conflicts": 0,
+  "instance_overlaps": [],
+  "outside_io_row": []
+ },
+ "ring_eco": {
+  "cut_tm1": [
+   321.0,
+   645.0,
+   365.0,
+   1148.0
+  ],
+  "tm2": [
+   [
+    324.82,
+    630.0,
+    339.82,
+    1163.0
+   ],
+   [
+    344.82,
+    630.0,
+    361.8,
+    1163.0
+   ]
+  ],
+  "tv2": [
+   [
+    324.82,
+    630.0,
+    339.82,
+    645.0
+   ],
+   [
+    324.82,
+    1148.0,
+    339.82,
+    1163.0
+   ],
+   [
+    344.82,
+    630.0,
+    361.8,
+    645.0
+   ],
+   [
+    344.82,
+    1148.0,
+    361.8,
+    1163.0
+   ]
+  ]
+ },
+ "antenna_decap_row": {
+  "cell": "sg13g2_decap_8",
+  "count": 34,
+  "origin_um": [
+   1057.0,
+   1255.0
+  ],
+  "pitch_um": 3.36,
+  "bbox_um": [
+   1057.0,
+   1255.0,
+   1171.24,
+   1258.78
+  ],
+  "gate_area_on_VDD_um2": 28.56,
+  "cell_source": "from r1_ctrl_top (PDK library cell)"
+ },
+ "checks": {
+  "drc_main": {
+   "state": "not run"
+  },
+  "drc_maximal": {
+   "state": "not run"
+  },
+  "drc_density": {
+   "state": "not run"
+  },
+  "drc_antenna": {
+   "state": "not run"
+  },
+  "lvs_limits": {
+   "state": "match",
+   "start": "2026-10-21T05:05:04Z",
+   "end": "2026-10-21T05:08:53Z",
+   "exit": "exit 0",
+   "deck": "run-time copy of the PDK LVS directory with max_depth(8) and max_branch_complexity(100) after align",
+   "evidence": "<G1_RESULTS_ROOT>/r1_top/asm-20261021-c/lvs_limits/"
+  },
+  "lvs_stock": {
+   "state": "not run"
+  }
+ },
+ "disposition": "superseded. LVS (comparer-limit deck) match. Runner stopped during LVS because the V3.c1 fix went into try d; no DRC on this GDS."
+}
