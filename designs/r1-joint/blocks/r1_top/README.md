@@ -3,7 +3,165 @@
 Block `r1_top` (track T8, P3 preparation). This block assembles the R1 chip top level from the ring of record and
 the finished macros. The four macros that are not finished are placeholder outlines.
 
-## What it is
+## Try e (2026-10-21): floorplan C4 on the 1700 µm ring — run of record `asm-20261021-e4`
+
+Try e builds `r1_top` on the 1700 µm ring of record (`r1_padring` revision d, GDS `81bba04b…`) with floorplan C4
+of S7. Every macro that exists today is placed. Only `r1_adc` is a placeholder. The generator is
+`layout/r1_top_assemble_e.py`. The try-d files below this section stay as the record of try d.
+
+### What try e contains
+
+1. Ring of record, 1700 × 1700 µm, pitch 142 µm (4141 fill instances removed; 22 pad labels copied to the top).
+2. Real macros: `r1_ctrl_top` 0.4 (t7), `r1_afe` revision E (d17d505f7), `r1_isense` layout a (db5461161),
+   `r1_osc` revision 2 layout r2d (679a97320), `r1_bias` (934b90195), `r1_safe`, `r1_bgr`, `r1_t2f` (MY),
+   `r1_gate_lv`, 6 × `r1_ls`, 34 × `sg13g2_decap_8`, 1 × `sg13g2_tiehi` (`u_tie_osc`).
+3. Placeholder: `r1_adc_ph`, S7 hard slot 439.0 × 182.3 µm at (592.0, 376.0), 51 Metal3 pin stubs.
+4. Supplies per S7: core ring (outer `VSS`, inner `VDD`), `r1_ctrl` stripes, north and south straps, south
+   Metal4 trunks (`VSS`, `VDD`, `VDDA`), `VDDA` feed from pad 7, west `VDDA` riser.
+5. MIM rule: TopMetal2 only over MIM blocks. In C4 only `r1_afe` is under a ring column. The west TopMetal1
+   columns are cut for y 735–1239.4 and replaced by TopMetal2 (y 720–1254.4); TopVia2 only in the 15 µm overlaps.
+   `r1_isense`, `r1_osc` and the ADC slot are not under the ring.
+6. 46 routed signal nets (try d: 20). List: [`reports/connectivity_e.md`](reports/connectivity_e.md).
+
+Placement with the S7 C4 deltas: [`reports/placement_e.csv`](reports/placement_e.csv). Drop-in requirements:
+[`reports/integration_checklist_e.md`](reports/integration_checklist_e.md). Picture:
+[`layout/r1_top_e.png`](layout/r1_top_e.png) (run e4, 96 kB).
+
+### Position deltas against S7 C4
+
+| Item | S7 C4 | Try e | Delta | Reason |
+| --- | --- | --- | --- | --- |
+| Pad centres (all sides) | 500, 640, 780, 920, 1060, 1200 | 495, 637, 779, 921, 1063, 1205 | −5, −3, −1, +1, +3, +5 | ring of record, pitch 142 µm (S7 assumed 140) |
+| `r1_afe` | (336.0, 720.0) | (336.0, 740.0) | +20.0 y | `sinp`, `cosp` inside the pad 21 / 23 `pad` windows: straight 15 µm lines (S7: 36 µm) |
+| `r1_ctrl_top` | (543.8, 673.3) | (543.8, 673.0) | −0.3 y | top edge 0.3 µm under the inner north TopMetal2 row (as try d) |
+| `r1_bias` (real, 120 × 165.94) | bias slot (442.0, 488.6), 86.8 × 69.7; POR slot (345, 1270) | (444.0, 488.6) | +2.0 x; POR slot dropped (POR is inside `r1_bias`) | layout larger than the slot; 10 µm from `r1_bgr` |
+| `r1_t2f` (MY) | (442.0, 376.0) | (444.0, 376.0) | +2.0 x | aligned with `r1_bias` |
+| ADC slot | (556.0, 376.0) | (592.0, 376.0) | +36.0 x | the wider `r1_bias` and its east supply risers |
+| `VDDA` decap of C4 | (849.4, 376) | not placed | — | the 439 µm ADC slot takes the place |
+| `r1_gate_lv` | (440.0, 1300.0) | (440.0, 1296.0) | −4.0 y | try-d relation to the north ring row |
+| `r1_isense`, `r1_osc`, `r1_safe`, `r1_bgr` | C4 | C4 | 0 | — |
+
+Pad route lengths: `SIN_P`, `COS_P` 15 µm; `SIN_N` 153, `COS_N` 157 µm; `ISA_N`, `ISB_P` 132 µm; `ISA_P` 272,
+`ISB_N` 270 µm (Manhattan).
+
+### Status (run `asm-20261021-e4`)
+
+GDS `<G1_RESULTS_ROOT>/r1_top/asm-20261021-e4/r1_top.gds`, SHA-256 `67d5148ef70d5d413925072c75386045ccaa6077c27121dde076d7de84d9378e`.
+LVS reference `<G1_RESULTS_ROOT>/r1_top/asm-20261021-e4/cdl/r1_top.cdl`, SHA-256 `6d117ccaaf3bbe5aa9534c06f5c8d5b8df1407d2cfb975cd58806f617687fc95`.
+LVS pair report: `reports/runs/asm-20261021-e4_lvs_report.txt`.
+
+| Check | Result | Evidence |
+| --- | --- | --- |
+| Generator self-check (net spacing, overlaps, pairs < 10 µm, outside window, routes inside macros) | passed (0 / 0 / 0 / 0 / 0) | `<G1_RESULTS_ROOT>/r1_top/asm-20261021-e4/r1_top_assembly.json` |
+| KLayout DRC main (deep, no density, `--disable_extra_rules`) | passed, 0 markers (run `-e3`: 34 `*_drw_Offgrid`, fixed, E9) | `<G1_RESULTS_ROOT>/r1_top/asm-20261021-e4/drc_main/` |
+| KLayout DRC maximal | passed, 0 markers | `<G1_RESULTS_ROOT>/r1_top/asm-20261021-e4/drc_maximal/` |
+| KLayout antenna | passed, 0 (runs `-e`, `-e2`: 8, fixed, E7) | `<G1_RESULTS_ROOT>/r1_top/asm-20261021-e4/drc_antenna/` |
+| KLayout density | failed, 53 markers, all class (b): no fill, empty ADC slot | `<G1_RESULTS_ROOT>/r1_top/asm-20261021-e4/drc_density/` |
+| LVS, deck copy with comparer limits | passed: "Netlists match"; all 52 circuit pairs match; `r1_top` 261 devices, 50 subcircuits | `<G1_RESULTS_ROOT>/r1_top/asm-20261021-e4/lvs_limits/` (`report.txt`) |
+| LVS, stock PDK deck | failed: crash in the comparison (exit 11) after extraction; no comparison result. The wrapper prints "Status PASS"; that line is wrong and is not used (as try d) | `<G1_RESULTS_ROOT>/r1_top/asm-20261021-e4/lvs_stock/` |
+| Run record | written | `reports/runs/asm-20261021-e4.json` (and `-e`, `-e2`, `-e3`, superseded) |
+| Chip fill | not run | — |
+| IR drop and EM of ring and trunks | not run (ring resistance estimated by square count only) | `reports/connectivity_e.md` |
+| Post-layout simulation of any top-level net | not run | — |
+| Bond plan on the chip GDS | not run (ring bond map 24/24 is from `r1_padring` revision d) | — |
+| IHP intake pre-check | not run (chip not complete) | — |
+| Drop-in probe of the in-progress `r1_afe` E2, `r1_isense` b | not run (tracks still running; the checklist states the requirements instead) | — |
+
+DRC classes as try d: (a) violation in the assembled parts; (b) placeholder or empty-region density (no fill).
+
+| Deck | Rule | Count | Class (a) | Class (b) |
+| --- | --- | --- | --- | --- |
+| main | all | 0 | 0 | 0 |
+| maximal | all | 0 | 0 | 0 |
+| antenna | all | 0 | 0 | 0 (runs `-e`, `-e2`: `Ant.e_TopMetal1` 4 + `Ant.e_TopMetal2` 4, class a, fixed, E7) |
+| density | `M2Fil.h` | 16 | 0 | 16 |
+| density | `M1Fil.h`, `M4Fil.h` | 7 + 7 | 0 | 14 |
+| density | `AFil.g2`, `M5Fil.h` | 6 + 6 | 0 | 12 |
+| density | `M3Fil.h` | 4 | 0 | 4 |
+| density | `AFil.g`, `GFil.g`, `M1.j`…`M5.j` | 7 × 1 | 0 | 7 |
+| **all** | | **53** | **0** | **53** |
+
+Density cause: 800 × 800 µm window coverage and global density below the minimum, because no fill is inserted and
+the ADC slot is empty (try d: 35 on the 1600 µm die).
+
+### LVS: what is checked and what is not
+
+The reference is `lvs/make_top_cdl_e.py`: `r1_ctrl_top` 0.4 netlist, the block CDLs of record (hash-checked),
+the ring (flat projected reference), decaps and the tie cell. The ADC placeholder is an empty subcircuit; the deck
+drops it on both sides. Layout `r1_top` has 147 nets and the reference 362: the reference counts every floating pin net of the unconnected macro pins; they have no layout counterpart and cause no mismatch. Not checked by this comparison:
+
+1. The 51 ADC placeholder pins (floating on both sides).
+2. Unconnected macro pins (floating on both sides): `r1_ctrl` 99 (ADC bus 36, `thr_*`/`cal_*` 48 (the
+   0.4 safe-threshold words), `ana_ctrl`, `az_win`), `r1_safe` 68 (64 tap inputs, 4 outputs), `r1_afe` 9, `r1_isense` 9, `r1_bgr` 3
+   (`iptat`, `vbe`, `dvbe`), `r1_t2f` 2 (`en`, `mode`), `r1_bias` 1 (`ib_adc_ref`), `r1_gate_lv` 1 (`vdda`), and all
+   pins except `vss` of the 6 `r1_ls`.
+3. The comparison uses the comparer-limit deck copy (`max_depth(8)`, `max_branch_complexity(100)` after `align`,
+   no extraction change; `deck_diff.txt` in the run). The stock-deck state is in the table.
+4. Block-internal correctness is from the block LVS runs, not from this run (the macros are compared as cells).
+
+### Open issues (try e)
+
+1. `r1_adc` does not exist: 36 digital, 9 analog, `ib_adc_ref`, `vref_in` and supplies are pending (checklist).
+2. ctrl 0.4 has no safe tap outputs, `pga_c`, `t2f_en/mode`, `az*`, ADC clock or `osc_en`. ctrl 0.6 template:
+   checklist. `OSC_EN` is held by a tie cell until then.
+3. `POR_N` runs about 1 330 µm (bias east pin → ctrl north pin, around the AFE). ctrl 0.6 should put `por_n` on
+   the south edge (local x 23.7): 146 µm.
+4. `VREF_BG` and the 13 bias lines are not shielded. Coupling and the bandgap load (t2f, safe, isense, later the
+   ADC) are not simulated.
+5. The C4 `VDDA` decap is not placed (ADC slot). The `VDDA` decoupling is open.
+6. `u_ls_t2f0/1` at x 545 sit under the bias-output path region; they are not connected. A t2f level-shift place
+   is open with ctrl 0.6 (`t2f_en`, `mode`).
+7. The north IO-row rail heights (y 1381–1399) are the try-d values + 100 µm, not probed separately; DRC is clean.
+8. `r1_gate_lv` `vdda` is not connected (as try d).
+
+### Failures and mistakes (try e)
+
+| # | What happened | Class | Fix |
+| --- | --- | --- | --- |
+| E1 | The brief named the working-tree files of `r1_afe`, `r1_isense`, `r1_osc`. At the start they were revisions in progress, without block LVS. | spec-ambiguity | Used the committed layouts of record (GDS and CDL agree, block LVS passed); snapshots kept in the run `inputs/` |
+| E2 | `pin()` by edge chose large internal straps with the same label: 3 routes ended inside macros (dev run). | functional-bug | Smallest shape at the edge wins; self-check "routes inside macros" added (0) |
+| E3 | `r1_t2f` pins asked on the east edge after the MY mirror. | functional-bug | West edge |
+| E4 | The coordinator said ctrl 0.4 has no `por_n` port. The t7 GDS and CDL have it (north edge, local (482.9, 663.8)). | coordination | Routed `POR_N`; recorded here |
+| E5 | `r1_bias` (120 × 165.94) is larger than the S7 slots; the ADC slot moves +36 µm east and the C4 `VDDA` decap drops out. | estimation | Placement table; open issue 5 |
+| E6 | `r1_osc` revision 2 was committed during the run (run `-e` used layout k, `osc_clk` east, 360 µm detour). | coordination | Run `-e2` with revision 2 |
+| E7 | Runs `-e` and `-e2`: antenna 8 (`Ant.e_TopMetal1/2`) on the four `r1_osc` `en` gates; `en` was tied straight to `VDD`, which carries the ring metal. Try d had an osc placeholder, so the tie was never checked. | verification-gap | `sg13g2_tiehi` drives `OSC_EN` (run `-e3`: antenna 0) |
+| E8 | Run `-e2` clean-up deleted its finished `lvs_limits` directory; the result is lost. | process-hygiene | Recorded in `steps.log` and `run.json`; run `-e3` repeated LVS |
+| E9 | Run `-e3`: DRC main 34 × `*_drw_Offgrid` at the tie-cell `L_HI` pad (centre y 1037.4625). | numerical | Pad centre rounded to 1037.46 (run `-e4`) |
+
+### Built against (try e)
+
+| Item | Version | How established |
+| --- | --- | --- |
+| PDK | IHP-Open-PDK `84374023ee8b4b126bebbba67fcbada0a9c0ff0b` | checked by `flow/run.sh` |
+| KLayout | 0.30.9 | container, DRC and LVS logs |
+| Container | `tapeoutbench-eda:latest`, id `sha256:ddeb6957…` | `flow/run.sh` |
+| ngspice / xschem / LibreLane / CACE | not used | — |
+| Ring | `r1_padring` revision d GDS `81bba04b…` | hash checked by the generator |
+| `r1_ctrl_top` | 0.4, run `r1ctrl_ll_20261021_t7`, GDS `d52e67e8…` | hash in `run.json` |
+| `r1_afe` | revision E, GDS `0181e988…`, CDL `0cfb1980…` | `EXPECT_SHA` (generator) and `EXPECT` (CDL builder) |
+| `r1_isense` | layout a, GDS `054373fc…`, CDL `b7923cbd…` | same |
+| `r1_osc` | revision 2 (layout r2d), GDS `7c5fb60f…`, CDL `600d5f2b…` | same |
+| `r1_bias` | GDS `354fa73c…`, CDL `37636bf6…` | same |
+| Other blocks | as try d | `reports/placement_e.csv` |
+
+### Reproduce try e (repository root, POSIX shell)
+
+1. Copy the GDS, CDL and layout JSON of record of `r1_afe` (revision E) and `r1_isense` (layout a) from git into
+   `<G1_RESULTS_ROOT>/r1_top/<run>/inputs/ofrecord/` (names `r1_afe.gds`, `r1_afe_lvs.cdl`, `r1_isense.gds`,
+   `r1_isense_lvs.cdl`). The generator and the CDL builder check the hashes.
+2. Set the environment:
+   `G1_CPUSET=116-119; export G1_CPUSET; G1_RESULTS_ROOT=<results root>; export G1_RESULTS_ROOT; G1_WORKDIR=.; export G1_WORKDIR`.
+3. Run `sh designs/r1-joint/blocks/r1_top/flow/run_try_e.sh asm-20261021-e4` (steps: gen cdl lvs main antenna
+   density maximal stock; one KLayout job at a time).
+4. Write the record: `python3 designs/r1-joint/blocks/r1_top/flow/write_run_json.py <run dir> <question> <disposition> run_try_e.sh`.
+5. Write the placement table: `python3 designs/r1-joint/blocks/r1_top/flow/write_placement_e.py <run dir>/r1_top_assembly.json designs/r1-joint/blocks/r1_top/reports/placement_e.csv`.
+
+New files of try e: `layout/r1_top_assemble_e.py`, `lvs/make_top_cdl_e.py`, `flow/run_try_e.sh`,
+`flow/write_placement_e.py`, `flow/probe_ring_pins.py`, `flow/probe_pin_boxes.py`; changed: `layout/r1_top_png.py`
+(die size argument), `flow/write_run_json.py` (driver argument, input snapshots, try-e self-check keys).
+
+
+## What it is (try d, 1600 µm)
 
 `layout/r1_top_assemble.py` is a KLayout generator. It writes `r1_top.gds` (top cell `r1_top`, 1600 × 1600 µm).
 It does these steps:

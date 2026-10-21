@@ -1,7 +1,7 @@
 # SPDX-License-Identifier: Apache-2.0
 """Write run.json for one r1_top assembly try (track T8).
 
-  python3 write_run_json.py <run_dir> <question> <disposition>
+  python3 write_run_json.py <run_dir> <question> <disposition> [driver script, default run_try.sh]
 
 Reads r1_top_assembly.json, cdl/r1_top_cdl.json, steps.log and the check directories of the run.
 Paths are written relative to the results root (<G1_RESULTS_ROOT>) or to the repository root.
@@ -14,6 +14,7 @@ import re
 import sys
 
 run, question, disposition = sys.argv[1:4]
+driver = sys.argv[4] if len(sys.argv) > 4 else "run_try.sh"
 name = os.path.basename(run.rstrip("/"))
 
 def sha(p):
@@ -71,7 +72,7 @@ res = {
     "run": name,
     "track": "T8 (r1_top assembly, P3 preparation)",
     "question": question,
-    "command": "sh designs/r1-joint/blocks/r1_top/flow/run_try.sh %s <steps>  (steps in steps.log)" % name,
+    "command": "sh designs/r1-joint/blocks/r1_top/flow/%s %s <steps>  (steps in steps.log)" % (driver, name),
     "steps_log": rd(os.path.join(run, "steps.log")).splitlines(),
     "tools": {"klayout": "0.30.9 (container)", "python": "3 (container)",
               "container": "tapeoutbench-eda:latest sha256:ddeb69576f2808676d1c5d474ecf04f6d1d6f8abdcff6b72b39790ded924bab2",
@@ -84,8 +85,12 @@ res = {
     "outputs": {"r1_top.gds": asm["gds_sha256"],
                 "cdl/r1_top.cdl": cdl.get("output_sha256"),
                 "r1_top.png": sha(os.path.join(run, "r1_top.png")) if os.path.exists(os.path.join(run, "r1_top.png")) else None},
-    "self_check": {"net_conflicts": len(asm["self_check_net_conflicts"]), "instance_overlaps": asm["instance_overlaps"],
-                   "outside_io_row": asm["outside_io_row"]},
+    "input_snapshots": {os.path.relpath(f, run): rd(f).splitlines()
+                        for f in sorted(glob.glob(os.path.join(run, "inputs", "**", "sha256.txt"), recursive=True))},
+    "self_check": {k: asm[k] for k in ("instance_overlaps", "outside_io_row", "instance_pairs_closer_than_10um",
+                                       "outside_extended_window", "routes_inside_macros") if k in asm},
+    "net_conflicts": len(asm["self_check_net_conflicts"]),
+    "routed_nets": len(asm.get("nets", [])),
     "ring_eco": asm["ring_eco"],
     "antenna_decap_row": asm.get("antenna_decap_row"),
     "checks": checks,
