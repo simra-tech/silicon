@@ -24,3 +24,6 @@
 | T4 | `r1_isense`, `r1_safe` | 109–111 | Opus |
 | T5 | `r1_ctrl` (`r1_pos`, `r1_bus`, `r1_gate` logic, `r1_safe` FSM, registers) | 112–115 | Opus |
 | T6 | `r1_padring` | 116–119 | Sonnet |
+- Every block with a feedback loop (amplifier, CMFB, auto-zero servo, regulator, bandgap, oscillator amplitude control) records loop gain and phase margin at the five process corners and the two mixed supply/temperature corners (ssx, ffx) before it is called passed. Transient evidence alone is not enough (2026-10-21, after r1_afe revision B and r1_isense revision 1 were recorded passed with 13–50° margins).
+- Block decks use the real source and load of the neighbour block once it exists (its netlist or a fitted model), never an ideal source (2026-10-21, after the ADC reference buffer loaded the bandgap unseen).
+- Runners exit non-zero on a failed job and never resubmit or skip silently.
