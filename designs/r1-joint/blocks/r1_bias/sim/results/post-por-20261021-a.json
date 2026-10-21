@@ -1,0 +1,127 @@
+{
+ "run_id": "post-por-20261021-a",
+ "suite": "por",
+ "question": "POR power-up (VDD first / VDDA first) with 1 ms and 10 ms ramps, ramp-down, brown-out dips: thresholds, delay, transitions, current.",
+ "args": {
+  "cases": "tt,ss",
+  "ramps": "1e-3",
+  "kinds": "upA,upD",
+  "pex": "pex-rc-20261021-b",
+  "view": "rc",
+  "conv": "1"
+ },
+ "command": "G1_CPUSET=116-119 G1_WORKDIR=designs/r1-joint/blocks/r1_bias/sim G1_RESULTS_ROOT=<G1_RESULTS_ROOT> flow/run.sh python3 run_bias.py por post-por-20261021-a cases=tt,ss ramps=1e-3 kinds=upA,upD pex=pex-rc-20261021-b view=rc conv=1",
+ "r1_bias_netlist": "<G1_RESULTS_ROOT>/r1_bias/pex-rc-20261021-b/r1_bias_pex.spice",
+ "pdk_commit": "84374023ee8b4b126bebbba67fcbada0a9c0ff0b",
+ "ngspice": "** ngspice-46 : Circuit level simulation program",
+ "git_head": "6b3d9cccbc649a096b7b79a72ee3fb57cb6f3747",
+ "netlist_sha256": {
+  "r1_bias": "0f87c8d87d58b67d1a8a293a005b4e73e7ad343519ba297601b587cad316acd2",
+  "r1_bgr": "c19a7425d605906962724fdda21add8ae3926dc9a097c6f835a16f05f92c0c26",
+  "r1_t2f": "8011b76104e9faa4a29dae4323ce59fb6f5864373a087df0767a61672a7b4391",
+  "loads": "4df2d4bb037313efe2c6a75a2ee2edb1dea50e2dde84f9fe69320f7749d8856c"
+ },
+ "raw": "<G1_RESULTS_ROOT>/r1_bias/post-por-20261021-a/",
+ "seconds": 159.8,
+ "failed_jobs": 0,
+ "result": [
+  {
+   "case": "tt",
+   "kind": "upA",
+   "ramp_s": 0.001,
+   "rc": 0,
+   "seconds": 103.4,
+   "por_n_rise_ms": [
+    1.0725
+   ],
+   "por_n_fall_ms": [
+    2.2112
+   ],
+   "rst_fall_ms": [
+    0.8208,
+    2.7273
+   ],
+   "delay_us": 251.73,
+   "vdda_at_rst_fall": 2.7085,
+   "vdd_at_rst_fall": 1.2,
+   "vdda_at_por_fall": 2.6029,
+   "vdd_at_por_fall": 1.2,
+   "idda_por_uA": 20.857,
+   "idd_por_uA": 0.5021,
+   "por_n_max_before_release": 0.0067
+  },
+  {
+   "case": "tt",
+   "kind": "upD",
+   "ramp_s": 0.001,
+   "rc": 0,
+   "seconds": 86.3,
+   "por_n_rise_ms": [
+    1.3879
+   ],
+   "por_n_fall_ms": [
+    2.5085
+   ],
+   "rst_fall_ms": [
+    1.1351
+   ],
+   "delay_us": 252.82,
+   "vdda_at_rst_fall": 3.3,
+   "vdd_at_rst_fall": 1.0021,
+   "vdda_at_por_fall": 3.3,
+   "vdd_at_por_fall": 0.9498,
+   "idda_por_uA": 20.857,
+   "idd_por_uA": 0.5021,
+   "por_n_max_before_release": 0.015
+  },
+  {
+   "case": "ss",
+   "kind": "upA",
+   "ramp_s": 0.001,
+   "rc": 0,
+   "seconds": 78.9,
+   "por_n_rise_ms": [
+    1.1305
+   ],
+   "por_n_fall_ms": [
+    2.1417
+   ],
+   "rst_fall_ms": [
+    0.8924,
+    2.7
+   ],
+   "delay_us": 238.08,
+   "vdda_at_rst_fall": 2.6773,
+   "vdd_at_rst_fall": 1.08,
+   "vdda_at_por_fall": 2.5748,
+   "vdd_at_por_fall": 1.08,
+   "idda_por_uA": 23.525,
+   "idd_por_uA": 0.4129,
+   "por_n_max_before_release": 0.0067
+  },
+  {
+   "case": "ss",
+   "kind": "upD",
+   "ramp_s": 0.001,
+   "rc": 0,
+   "seconds": 80.4,
+   "por_n_rise_ms": [
+    1.4561
+   ],
+   "por_n_fall_ms": [
+    2.4472
+   ],
+   "rst_fall_ms": [
+    1.2171
+   ],
+   "delay_us": 238.98,
+   "vdda_at_rst_fall": 3.0,
+   "vdd_at_rst_fall": 0.9905,
+   "vdda_at_por_fall": 3.0,
+   "vdd_at_por_fall": 0.921,
+   "idda_por_uA": 23.525,
+   "idd_por_uA": 0.4129,
+   "por_n_max_before_release": 0.0268
+  }
+ ]
+}

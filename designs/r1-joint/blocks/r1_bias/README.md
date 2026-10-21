@@ -1,7 +1,8 @@
 # r1_bias — bias distribution and power-on reset (R1, track T9)
 
-State (2026-10-21): **schematic simulated**, revision 1d. Layout **not run**. All numbers are simulated (ngspice 46,
-schematic level, no layout parasitics). Nothing is measured.
+State (2026-10-21): **schematic simulated**, revision 1d. **Layout done** (DRC 0, antenna 0, LVS match,
+0.01991 mm²), PEX and post-layout op, POR and start-up simulated (see "Layout"). All numbers are simulated
+(ngspice 46). Nothing is measured.
 
 ## What it is
 
@@ -82,6 +83,7 @@ decks used an ideal constant 10 µA, so the AFE is **not run** with this range (
 | `sim/run.sh`, `sim/chain.sh`, `sim/chain_e.sh` | wrapper (CPU set 116–119, needs `G1_RESULTS_ROOT`); campaign d chains |
 | `sim/r1_bias_loads.spice` | consumer bias-pin load models (copied devices, source sha256 in the header) |
 | `sim/tb_stb_toy.cir`, `sim/.spiceinit` | loop-gain method check (copy of the `r1_bgr` file); OSDI model load |
+| `layout/` | layout generator, GDS of record, LVS netlist, checks and PEX scripts (see "Layout") |
 | `sim/results/<run-id>.json` | summaries; `sim/runs/<run-id>/run.json` per run (command, versions, sha256, disposition) |
 
 Raw decks, logs and waveforms: `<G1_RESULTS_ROOT>/r1_bias/<run-id>/`.
@@ -93,7 +95,8 @@ Raw decks, logs and waveforms: `<G1_RESULTS_ROOT>/r1_bias/<run-id>/`.
 | PDK | IHP SG13G2 open PDK `84374023ee8b4b126bebbba67fcbada0a9c0ff0b` | `/foss/pdks/ihp-sg13g2/COMMIT`, checked by `flow/run.sh` |
 | ngspice | 46 (PSP 103 and R3 via OSDI) | `ngspice -v` in the container, recorded in every `run.json` |
 | Container | `tapeoutbench-eda:latest` `sha256:ddeb6957…` | `flow/run.sh` image check |
-| xschem, KLayout | not used (netlist generator; no layout) | — |
+| xschem | not used (netlist generator) | — |
+| KLayout, kpex | 0.30.9, 0.3.12 (layout, checks, PEX; see "Layout") | `klayout -v`, `kpex --version` in the container |
 | Neighbour netlists | `r1_bgr` `c19a7425…`, `r1_t2f` `8011b761…`, loads from `r1_afe` `4a84a3d8…` (rev E), `r1_isense` `af013b95…` (rev 2), `r1_safe` `812f886d…` (rev 3), `r1_adc_r5` `a2c3c9a2…` | sha256 in the runner (`r1_bgr`, `r1_t2f`) and in the load-file header |
 
 Command (from the repository root): `G1_RESULTS_ROOT=<G1_RESULTS_ROOT> sh designs/r1-joint/blocks/r1_bias/sim/run.sh <suite> <run-id> [cases=… n=… conv=1]`.
@@ -119,8 +122,8 @@ ffx = ff at 125 °C 3.0/1.08 V (r1_isense convention). Transient decks: `method=
 | POR thresholds under mismatch, 30 samples, tt | record | **run**: 24/30 complete (6 numerical aborts); σ VDDA 15.7 / 15.3 mV (rise / fall), σ VDD 4.7 / 4.4 mV | `bias-mcthr-20261021-d2` |
 | `por_n` before release (fast 1 µs VDD ramp with VDDA absent) | stays low | **passed** (1d): ≤ 2.0 mV at tt/ss/ff; **failed** in 1c (0.36 µs pulse to 0.66 V at ff) | `bias-startup-20261021-d`, `bias-startup-20261021-c` |
 | Loop-gain margins inside r1_bias | every feedback loop | **not applicable**: the legs and the local rail are open-loop mirrors; the comparators are open-loop; the two hysteresis loops and the Schmitt trigger are positive feedback by design (bistable). Their evidence is the single transition per ramp above | — |
-| Area | estimate | **estimated**: ≈ 0.020 mm² (0.015 with MIM over devices; upper bound 0.035) (see "Area and current") | `schematic/area.py` |
-| Layout, DRC, LVS, PEX, post-layout | — | **not run** | — |
+| Area | estimate | **estimated** before layout: ≈ 0.020 mm² (layout: 0.01991 mm²) (0.015 with MIM over devices; upper bound 0.035) (see "Area and current") | `schematic/area.py` |
+| Layout, DRC, LVS, PEX, post-layout | DRC/antenna 0, LVS match, post-layout within 0.5 % | **passed**: DRC 0, antenna 0, LVS match, 0.01991 mm²; outputs −0.08…−0.10 % post-layout; POR thresholds +0.7…+3.6 mV, delay +2…+3 %. Post-layout MC, PSRR, loop gain: **not run** (see "Layout") | `layout/runs/layout-*-20261021-d`, `layout/runs/pex-rc-20261021-c`, `sim/runs/post-*-20261021-*` |
 | AFE, isense, safe, ADC campaigns with r1_bias instead of ideal sources | — | **not run** (owners' tracks) | — |
 
 ## POR transients
@@ -213,6 +216,136 @@ Supply current (`bias-op-20261021-d`): see the status row. At tt: legs 76.1 µA 
 | `ib_adc_ref` | out | VDDA | 5 µA (tt), into `r1_refbuf5` `nb` |
 | `por_n` | out | VDD | active low reset to `r1_ctrl` and the ADC sequencers; load 0.2 pF assumed |
 
+## Layout
+
+State (2026-10-21): layout of record `layout-*-20261021-d`. DRC, antenna and LVS are clean. PEX and
+post-layout simulation are done at tt, ss and ff (full RC). All post-layout numbers are simulated. Nothing is
+measured.
+
+### Files
+
+| Path | What |
+| --- | --- |
+| `layout/r1_bias_layout.py` | KLayout batch generator (SG13_dev PCells, channel router from `r1_bgr`, Metal2/Metal4 self-check) |
+| `layout/r1_bias.gds` | layout of record, 794 kB, sha256 `354fa73cbf92bb82f4e0b1eea57acd3cd12aea2eeb19102be28ca925b07d2d14` |
+| `layout/r1_bias_lvs.cdl` | flattened LVS netlist from the generator, 137 units, sha256 `37636bf6…48ae`; dummies not listed (the deck deletes them) |
+| `layout/r1_bias_layout_meta.json` | bands, trunks, channels, MIM plates, mirror-unit positions, hierarchical name map |
+| `layout/run_checks.sh` | generator, DRC (main + maximal, density off), antenna, LVS, `run.json`, pin check |
+| `layout/check_pins.py` | pin check from the GDS: every CDL port has a Metal3 pin and label on the boundary |
+| `layout/pex_input.py`, `layout/run_pex.sh`, `layout/pex_build.py` | PEX: MIM/Metal5/TopMetal1/Via4 removed, kpex 2.5D CC, KLayout `RNetExtractor` wiring R, devices and MIM put back. Views: `rc` (full), `c` (wiring R 10 mΩ), `dev` (devices + MIM only) |
+| `layout/pex_paths.py` | IR drop of the source bus and pin-to-gate resistance per mirror unit |
+| `layout/runs/<run-id>/run.json` | record of every layout and PEX run (`pin_check.log` in `layout-gen-20261021-d`, `pex_paths.json` in `pex-rc-20261021-b`) |
+| `sim/run_bias.py` | arguments `pex=<run-id> view=rc\|c\|dev` replace the schematic `r1_bias` with the extracted netlist |
+
+Command (from the repository root):
+1. `G1_CPUSET=116-119 G1_RESULTS_ROOT=<G1_RESULTS_ROOT> sh designs/r1-joint/blocks/r1_bias/layout/run_checks.sh 20261021-d`.
+2. `sh designs/r1-joint/blocks/r1_bias/layout/run_pex.sh 20261021-d 20261021-c`.
+3. `sh designs/r1-joint/blocks/r1_bias/sim/run.sh <suite> <run-id> pex=pex-rc-20261021-c view=rc conv=1`.
+
+Extracted netlists, LVS reports and DRC databases stay in `<G1_RESULTS_ROOT>/r1_bias/<run-id>/`.
+
+### Built against (layout)
+
+| Item | Value | Established by |
+| --- | --- | --- |
+| PDK | `84374023ee8b4b126bebbba67fcbada0a9c0ff0b` | `flow/run.sh`, recorded in every `run.json` |
+| KLayout | 0.30.9 (generator, PDK DRC, antenna and LVS decks, `RNetExtractor`) | `klayout -v` in the container |
+| kpex | 0.3.12 (2.5D coupling capacitance only) | `kpex --version` in the container |
+| ngspice | 46 | `ngspice -v`, recorded in `sim/runs/post-*/run.json` |
+| Container | `tapeoutbench-eda:latest` `sha256:ddeb6957…` | `flow/run.sh` image check |
+| Netlist of record | `schematic/r1_bias.spice` revision 1d `3fa56d92…` | sha256 in `layout/runs/layout-*-20261021-d/run.json` |
+
+### Floorplan
+
+- Size: 120.0 × 165.94 µm = **0.01991 mm²** (limit 0.022 mm²). Routing on Metal1–Metal4. Metal5 and TopMetal1
+  are used only for the four MIM plates (`cdel` 32, `vrh`, `vrl`, `tapa` 18 µm sides) and their via islands.
+- North band: one row of 15 mirror units (12/4 µm pmosHV) plus one dummy at each end, all with the same
+  orientation, pitch 5.4 µm. The AFE pairs are in common-centroid order. Two cascode rows follow (row A: the
+  four 2-unit AFE legs; row B: the seven single legs and the two POR mirrors). Each row has a dummy at each end.
+  The `pbias` and `pcasc` gate buses run the full row width.
+- South band: the POR (resistor band with `rppd` and `rhigh`, 4 HBT, LV inverters, HV NMOS and PMOS bands, the
+  stack devices). The POR has its own p+ guard ring. A p+ guard ring goes around the whole block.
+- Pins (all Metal3 on the boundary): `pbias`, `pcasc` on the west edge (bandgap side). The 11 outputs on the
+  north edge. `por_n` and `vdd` on the east edge. `vdda` west and east, `vss` west, east and south.
+- The netlist of record has no `iptat`, `vref` or `bias_en` pin. These pins are not drawn (failure 16).
+
+### Layout status
+
+| Check | Criterion | Status | Evidence |
+| --- | --- | --- | --- |
+| DRC, main + maximal rule tables, deep, density off | 0 markers | **passed**: 0 | `layout/runs/layout-drc-20261021-d` |
+| Density | chip level after fill | **not applicable** at block level (waived) | — |
+| Antenna | 0 markers | **passed**: 0 | `layout/runs/layout-ant-20261021-d` |
+| LVS against `r1_bias_lvs.cdl` (revision 1d) | match | **passed**: 77 nets; hv_pmos 65, hv_nmos 22, lv_pmos 2, lv_nmos 2, rhigh 4, rppd 2, npn13G2 1 (m = 4), cap_cmim 4 | `layout/runs/layout-lvs-20261021-d` |
+| Dummies in LVS | — | **not applicable**: the deck deletes devices with all terminals on one net | — |
+| Pin check | 17 CDL ports as Metal3 pins on the boundary | **passed**: 17/17, no extra labels | `layout/runs/layout-gen-20261021-d/pin_check.log` |
+| Area | ≤ 0.022 mm² | **passed**: 0.01991 mm² | same |
+| PEX | full RC netlist | **run**: 169 devices, 137 nets, 891 R, 1081 C (1071.8 fF), 0 island ties. MIM plate-to-substrate C not in the netlist | `layout/runs/pex-rc-20261021-c` |
+| Output currents tt / ss / ff, full RC | within 0.5 % of the schematic | **passed**: see the pre/post table | `sim/runs/post-op-20261021-b1`, `post-op-20261021-b`, `post-startup-20261021-b` |
+| Array mismatch from wiring R | record | **run**: source drop 102.3–113.5 µV (spread 11.2 µV); output spread 0.007 % (10 µA) and 0.012 % (5 µA) at tt | `layout/runs/pex-rc-20261021-b/pex_paths.json`, `post-op-20261021-b1` |
+| `c` and `dev` views at tt | separate wiring C from wiring R | **run**: both 10.1430 / 5.0715 µA (schematic 10.1419 / 5.071) | `post-op-20261021-c2`, `post-op-20261021-dev2` |
+| POR thresholds tt, ss/125 °C | one transition, inside the assumed window | **passed** | `post-thr-20261021-a` |
+| POR delay, 1 ms ramp, tt and ss | ≥ 100 µs, one transition | **passed**: 238–253 µs | `post-por-20261021-a` |
+| Start-up, 10 µs VDDA ramp, tt | outputs settle, `por_n` low before release | **passed**: `vref` at 11.86 µs, outputs within 1 % at 10.8 µs, `por_n` ≤ 7.2 mV before release (see note) | `post-startup-20261021-a1` |
+| Start-up, 10 µs ramp, ff | — | **not run** to the end: solver stall at 258.6 µs (at the `por_n` release, numerical); data up to the stall kept | `post-startup-20261021-b` |
+| MC, PSRR, loop gain, cross corners post-layout | — | **not run** | — |
+| LEF | — | **not run** | — |
+
+### Pre/post (schematic → full RC, simulated)
+
+| Item | Corner | Schematic | Post-layout | Change |
+| --- | --- | --- | --- | --- |
+| 10 µA outputs (µA) | tt | 10.1419 | 10.1332–10.1339 | −0.08 % |
+| 5 µA outputs (µA) | tt | 5.0710 | 5.0664–5.0670 | −0.09 % |
+| 10 / 5 µA outputs | ss | 11.81 / 5.90 | 11.796 / 5.898 | −0.1 % |
+| 10 / 5 µA outputs | ff | 9.0005 / 4.5002 | 8.9915 / 4.4960 (transient, 20–100 µs) | −0.10 % |
+| VDDA current, whole block (µA) | tt | 96.88 | 96.69 | −0.2 % |
+| POR current (µA) | tt | 20.81 | 20.69 | −0.6 % |
+| `vrh` (V) | tt | 1.000301 | 1.001353 | +1.05 mV |
+| VDDA rising / falling (V) | tt | 2.7013 / 2.6043 | 2.7049 / 2.6064 | +3.6 / +2.1 mV |
+| VDDA rising / falling (V) | ss | 2.6706 / 2.5771 | 2.6736 / 2.5788 | +3.0 / +1.7 mV |
+| VDD rising / falling (V) | tt | 1.0005 / 0.9496 | 1.0015 / 0.9507 | +1.0 / +1.1 mV |
+| VDD rising / falling (V) | ss | 0.9891 / 0.9210 | 0.9898 / 0.9219 | +0.7 / +0.9 mV |
+| POR delay upA / upD, 1 ms (µs) | tt | 246.6 / 246.2 | 251.7 / 252.8 | +2.1 / +2.7 % |
+| POR delay upA / upD, 1 ms (µs) | ss | 233.4 / 233.5 | 238.1 / 239.0 | +2.0 / +2.4 % |
+| `por_n` max before release (mV) | tt / ss | 1.9–26.3 | 6.7–26.8 | — |
+| `vref` settled, 10 µs ramp (µs) | tt | 12.02 | 11.86 | — |
+| `por_n` rise, 10 µs ramp (µs) | tt | 253.8 | 260.2 | +6.4 µs |
+| Overshoot at the ramp end | tt | 1.3 % | 3.8 % | see note |
+
+Every case has exactly one rise and one fall of `gooda`, `goodd` and `por_n`.
+
+Notes on the start-up (`post-startup-20261021-a1`):
+
+1. The outputs are within 1 % at 10.8 µs. A second excursion occurs at the `por_n` edge (260.22 µs): −0.4 to
+   +1.6 % for 117–166 ns. Thus the t99 metric reads 260.22 µs for 10 outputs. In the schematic, the outputs stay inside
+   1 % at this edge. The likely path is the extracted coupling C between the POR and the shared rails (not isolated).
+2. The overshoot at the ramp end is 3.8 % (schematic 1.3 %). The `ib_adc_ref` value of 17.5 % is a spike in the
+   first nanoseconds, with VDDA near 0 V. It is not a bias overshoot.
+
+Wiring resistance (`pex_paths.json`, unit currents from the tt post-layout op):
+
+- Source bus: vdda pin to a unit source 7.6–9.2 Ω. The drop is 108.2 µV mean, 11.2 µV spread. It is common to
+  all outputs. It shifts them about 0.1 % against the `r1_bgr` reference (same as the tt pre/post shift).
+- Gate buses: `pbias` pin to gate 25–47 Ω, `pcasc` 29–68 Ω. The DC gate current is 0, so the DC drop is 0.
+- Mirror drain to cascode source: 24–71 Ω (V_DS loss < 1 mV).
+- `c` and `dev` views give the schematic current. The −0.09 % comes from the wiring R.
+
+### Layout open issues
+
+1. **Floorplan slot.** S7 (§ 3.1) gives a bias slot of 86.8 × 69.7 µm and a POR slot of 55 × 55 µm, next to
+   `r1_bgr`. The layout is one 120 × 165.94 µm macro. T8 and the coordinator must re-slot it (or ask for a split POR macro).
+2. **Common vdda feed.** The 108 µV source drop shifts all outputs by about 0.1 %. Feed `r1_bgr` and `r1_bias`
+   from the same `vdda` trunk point.
+3. Dummies are not checked by LVS (the deck deletes them). Visual and GDS checks only.
+4. MIM plate-to-substrate capacitance is not in the PEX netlist (plates removed before kpex).
+5. The kpex LVS gives NoMatch (series devices not combined). 100 nets named from the cross-reference, 38 not
+   paired. `xpor.vq` has no name in the extracted netlist.
+6. The 12/4 µm unit is drawn as the 10 µm PCell plus a 2 µm extension. LVS extracts W = 12 µm.
+7. Not run: post-layout MC, PSRR, loop gain, cross corners, ff start-up to the end, LEF, density with fill.
+8. The DC op at ff with the full RC netlist gives a false 1.2 % output spread (numerical, see failure 22).
+   Use the transient value.
+
 ## Open issues
 
 1. **PTAT bias for the AFE.** The AFE was designed with an ideal constant 10 µA. r1_bias gives 6.9–15.4 µA over
@@ -233,7 +366,7 @@ Supply current (`bias-op-20261021-d`): see the status row. At tt: legs 76.1 µA 
    issue in these decks, but it was cured only by circuit changes (1b, 1c) in two cases.
 6. **Thresholds are assumptions** (VDDA 2.70/2.60 V, VDD 1.00/0.95 V, delay ≥ 100 µs). `r1_ctrl` 0.5 defines the
    reset polarity and the ADC-enable discard; the system owner confirms the values.
-7. Layout, LVS, PEX, post-layout checks and chip-level start-up with all blocks: **not run**.
+7. Layout open issues: see "Layout". Chip-level start-up with all blocks: **not run**.
 
 ## Failures and mistakes
 
@@ -251,3 +384,14 @@ Supply current (`bias-op-20261021-d`): see the status row. At tt: legs 76.1 µA 
 | 10 | The 150 µA budget has 2 % margin at ffx after the local rail (+8 µA) | estimation | Open issue 4 | `bias-op-20261021-d` |
 | 11 | `bias-op-20261021-b` was marked abandoned but had completed (netlist 1) | process-hygiene | Disposition corrected: superseded | `sim/runs/bias-op-20261021-b/run.json` |
 | 12 | Threshold MC: 6 of 30 samples aborted with solver stalls at a comparator edge (with `conv=1`) | numerical | Statistics from 24 samples; recorded as a gap | `bias-mcthr-20261021-d2` |
+| 13 | First generator run: the Metal2 self-check found `vdd`/`tapa` stubs that crossed in channel NP | functional-bug | Mixed nets get one track each, in topological order; caught by the self-check before DRC | `layout/runs/layout-gen-20261021-a` |
+| 14 | DRC run a: 164 markers (Metal3/Via3/Metal4 off-grid 148, M1.d 16); trunk x not rounded to the grid, stack strips too short | verification-gap | Trunk x rounded to 0.01 µm, strips lengthened; run b 0 markers | `layout/runs/layout-drc-20261021-a` |
+| 15 | The 12/4 µm units came out at W = 0.3 µm: the pmosHV PCell limits a finger to 10 µm; the "wrong width" warning was missed | tooling | 10 µm PCell plus a 2 µm drawn extension; LVS extracts 12 µm | `layout/runs/layout-lvs-20261021-a` |
+| 16 | The brief asked for 10/4 µm units and `iptat`/`vref`/`bias_en` pins; the netlist of record has 12/4 µm units and none of these pins | spec-ambiguity | The netlist of record was followed; the pins are not drawn | `schematic/r1_bias.spice` |
+| 17 | LVS run b mismatch: the dummy units were in the CDL, but the deck deletes devices with all terminals on one net (known from `r1_osc`) | verification-gap | Dummies removed from the CDL; run c match | `layout/runs/layout-lvs-20261021-b` |
+| 18 | kpex LVS NoMatch (series devices not combined); 38 nets not paired, `xpor.vq` unnamed | tooling | Names from the KLayout cross-reference and the hierarchical map; probes on named nodes only | `layout/runs/pex-rc-20261021-b` |
+| 19 | `c` and `dev` views: no operating point with the wiring R replaced by 0.1 mΩ (also with `conv=1`) | numerical | Short set to 10 mΩ (`pex-rc-20261021-c`); both views passed | `post-op-20261021-c`, `-c1`, `-dev`, `-dev1`, `-c2`, `-dev2` |
+| 20 | Post-layout: no op at ff; the tt 10 µs start-up stalled at 259.5 µs and the ff one at 258.6 µs (POR replica HBT at the `por_n` release) | numerical | `conv=1` retries for op and tt start-up passed; ff start-up not run to the end | `post-op-20261021-b`, `post-startup-20261021-a`, `-b` |
+| 21 | The layout (120 × 165.94 µm) does not fit the S7 slots (86.8 × 69.7 and 55 × 55 µm, 0.0091 mm² together; the schematic estimate was 0.020 mm²) | estimation | Layout open issue 1 (T8, coordinator) | `designs/r1-joint/specification/studies/S7_REFLOORPLAN.md` § 3.1 |
+| 22 | The ff op on the full RC netlist converged with `conv=1` but gives a false 1.2 % output spread; the `dev` view and the ff transient give 0.003 % | numerical | Pre/post table uses the ff transient value; op dispositions say so | `post-op-20261021-b1`, `post-op-20261021-d`, `post-op-20261021-dev3`, `post-startup-20261021-b` |
+| 23 | `run_pex.sh` copied machine paths from the build log into `run.json` | process-hygiene | Paths replaced by `<G1_RESULTS_ROOT>` in the script and the records | `layout/runs/pex-rc-20261021-*/run.json` |

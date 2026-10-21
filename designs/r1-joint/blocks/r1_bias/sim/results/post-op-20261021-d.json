@@ -1,0 +1,79 @@
+{
+ "run_id": "post-op-20261021-d",
+ "suite": "op",
+ "question": "Output currents, consumer pin voltages and supply currents at the corners (DC, real loads).",
+ "args": {
+  "cases": "ff",
+  "pex": "pex-rc-20261021-c",
+  "view": "rc",
+  "conv": "1"
+ },
+ "command": "G1_CPUSET=116-119 G1_WORKDIR=designs/r1-joint/blocks/r1_bias/sim G1_RESULTS_ROOT=<G1_RESULTS_ROOT> flow/run.sh python3 run_bias.py op post-op-20261021-d cases=ff pex=pex-rc-20261021-c view=rc conv=1",
+ "r1_bias_netlist": "<G1_RESULTS_ROOT>/r1_bias/pex-rc-20261021-c/r1_bias_pex.spice",
+ "pdk_commit": "84374023ee8b4b126bebbba67fcbada0a9c0ff0b",
+ "ngspice": "** ngspice-46 : Circuit level simulation program",
+ "git_head": "cc7e8b9f30a1fcaad4da925ffe1fd5cf7357c683",
+ "netlist_sha256": {
+  "r1_bias": "3df91f2a0c1f007e4e2813a4c72569b151bad194a1b8df1b8b6d8eac89d1dd0c",
+  "r1_bgr": "c19a7425d605906962724fdda21add8ae3926dc9a097c6f835a16f05f92c0c26",
+  "r1_t2f": "8011b76104e9faa4a29dae4323ce59fb6f5864373a087df0767a61672a7b4391",
+  "loads": "4df2d4bb037313efe2c6a75a2ee2edb1dea50e2dde84f9fe69320f7749d8856c"
+ },
+ "raw": "<G1_RESULTS_ROOT>/r1_bias/post-op-20261021-d/",
+ "seconds": 15.6,
+ "failed_jobs": 0,
+ "result": [
+  {
+   "case": "ff",
+   "rc": 0,
+   "seconds": 15.5,
+   "i_uA": {
+    "ib_afe_s1": 9.022076,
+    "ib_afe_s2": 9.004265,
+    "ib_afe_c1": 9.003133,
+    "ib_afe_c2": 9.006347,
+    "ib_is_a": 4.541933,
+    "ib_is_b": 4.53184,
+    "ib_sf_oa": 4.491109,
+    "ib_sf_na": 4.487750999999999,
+    "ib_sf_ob": 4.491605,
+    "ib_sf_nb": 4.494897,
+    "ib_adc_ref": 4.5329310000000005
+   },
+   "v_pin": {
+    "ib_afe_s1": 0.7920063,
+    "ib_afe_s2": 0.7885362,
+    "ib_afe_c1": 0.7920051,
+    "ib_afe_c2": 0.7885407,
+    "ib_is_a": 0.7323469,
+    "ib_is_b": 0.7323382,
+    "ib_sf_oa": 0.7323463,
+    "ib_sf_na": 0.7323479,
+    "ib_sf_ob": 0.7323456,
+    "ib_sf_nb": 0.7323407,
+    "ib_adc_ref": 0.7751001
+   },
+   "idda_bias_uA": 86.73022999999999,
+   "idda_legs_uA": 67.60788699999999,
+   "idda_por_uA": 19.122342999999997,
+   "idda_bgr_uA": 47.412259999999996,
+   "idda_t2f_uA": 31.147050000000004,
+   "idd_uA": 0.050103,
+   "iptat_uA": 3.700143,
+   "v(vref)": 1.04117,
+   "v(pbias)": 2.644597,
+   "v(pcasc)": 2.226481,
+   "v(por_n)": 8.052956e-05,
+   "v(xbias.xpor.gooda)": 3.599307,
+   "v(xbias.xpor.goodd)": 3.599336,
+   "v(xbias.xpor.rst)": 0.0002541364,
+   "v(xbias.xpor.cdel)": 0.08981775,
+   "v(xbias.xpor.ready)": 0.0002737015,
+   "v(xbias.xpor.vrh)": 1.00856,
+   "v(xbias.xpor.vrl)": 0.9697731,
+   "v(xbias.xpor.tapa)": 1.383094,
+   "vds_leg_afe_s1": 0.4189700000000003,
+   "vds_casc_afe_s1": 2.3890236999999996
+  }
+ ]
+}

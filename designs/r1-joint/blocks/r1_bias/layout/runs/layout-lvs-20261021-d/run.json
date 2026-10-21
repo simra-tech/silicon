@@ -1,0 +1,47 @@
+{
+ "tag": "20261021-d",
+ "written": "2026-10-21T09:44:43",
+ "pdk_commit": "84374023ee8b4b126bebbba67fcbada0a9c0ff0b",
+ "container": "tapeoutbench-eda:latest sha256:ddeb69576f2808676d1c5d474ecf04f6d1d6f8abdcff6b72b39790ded924bab2",
+ "cpuset": "116-119",
+ "inputs": {
+  "gds_sha256": "354fa73cbf92bb82f4e0b1eea57acd3cd12aea2eeb19102be28ca925b07d2d14",
+  "lvs_cdl_sha256": "37636bf624d9ea2f9a3a8a4a301c785741015b09c66dfc0353f3381359e448ae",
+  "generator_sha256": "2105a4de1ff8ca275a162d9a1fe9e6b1789c45ddb1e152dd06fecc7331db38b0",
+  "netlist_of_record": "designs/r1-joint/blocks/r1_bias/schematic/r1_bias.spice",
+  "netlist_of_record_sha256": "3fa56d9296f8c409fd1335a6595eae459b39324837c5bfae9ea7693584b29ff4"
+ },
+ "run_id": "layout-lvs-20261021-d",
+ "question": "PDK LVS r1_bias.gds vs netlist of record (dummies dropped by the deck, not in the CDL): match?",
+ "command": "flow/run.sh python3 $PDK_ROOT/$PDK/libs.tech/klayout/tech/lvs/run_lvs.py --layout=/work/designs/r1-joint/blocks/r1_bias/layout/r1_bias.gds --netlist=/work/designs/r1-joint/blocks/r1_bias/layout/r1_bias_lvs.cdl --topcell=r1_bias --run_mode=deep --run_dir=<run dir>",
+ "tools": {
+  "klayout": "0.30.9"
+ },
+ "result": {
+  "status": "passed",
+  "extracted_netlist": "<G1_RESULTS_ROOT>/r1_bias/layout-lvs-20261021-d/r1_bias_extracted.cir",
+  "extracted_devices_after_combination": {
+   "sg13_hv_pmos": 65,
+   "rhigh": 4,
+   "sg13_hv_nmos": 22,
+   "sg13_lv_pmos": 2,
+   "sg13_lv_nmos": 2,
+   "npn13G2": 1,
+   "cap_cmim": 4,
+   "rppd": 2
+  },
+  "extracted_unit_count_from_m": {
+   "sg13_hv_pmos": 65,
+   "rhigh": 4,
+   "sg13_hv_nmos": 22,
+   "sg13_lv_pmos": 2,
+   "sg13_lv_nmos": 2,
+   "npn13G2": 4,
+   "cap_cmim": 4,
+   "rppd": 2
+  },
+  "extracted_nets": 77,
+  "options": "--run_mode=deep (defaults: series/parallel resistor simplification on, tap extraction on)"
+ },
+ "disposition": "passed"
+}

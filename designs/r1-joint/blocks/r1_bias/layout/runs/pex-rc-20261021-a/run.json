@@ -1,0 +1,39 @@
+{
+ "run_id": "pex-rc-20261021-a",
+ "written": "2026-10-21T09:46:19",
+ "pdk_commit": "84374023ee8b4b126bebbba67fcbada0a9c0ff0b",
+ "container": "tapeoutbench-eda:latest sha256:ddeb69576f2808676d1c5d474ecf04f6d1d6f8abdcff6b72b39790ded924bab2",
+ "cpuset": "116-119",
+ "tools": {
+  "klayout": "0.30.9",
+  "kpex": "0.3.12"
+ },
+ "command": "sh designs/r1-joint/blocks/r1_bias/layout/run_pex.sh 20261021-d 20261021-a",
+ "inputs": {
+  "layout_run": "<G1_RESULTS_ROOT>/r1_bias/layout-gen-20261021-d",
+  "gds_sha256": "354fa73cbf92bb82f4e0b1eea57acd3cd12aea2eeb19102be28ca925b07d2d14",
+  "pex_input_gds_sha256": "2bfdb22b7b3a7b9b15696b9b7b6a873ddf28173dbae59852c0277406c4631630",
+  "lvs_cdl_sha256": "37636bf624d9ea2f9a3a8a4a301c785741015b09c66dfc0353f3381359e448ae"
+ },
+ "question": "post-layout RC netlist of r1_bias (devices + MIM re-inserted + kpex 2.5D CC + RNetExtractor wiring R)",
+ "result": {
+  "log": [
+   "kpex LVS circuit pair status: NoMatch",
+   "net pairs named from the cross-reference 100 unpaired 38",
+   "cap XPOR.XCDEL top xpor.cdel bottom vss",
+   "cap XPOR.XCF_vrh top xpor.vrh bottom vss",
+   "cap XPOR.XCF_vrl top xpor.vrl bottom vss",
+   "cap XPOR.XCF_tapa top xpor.tapa bottom vss",
+   "devices 169 nets 137 terminal ports 342 terminals without Metal1 port 0",
+   "resistors 826 island ties 0 element stats {'open': 0, 'neg': 0, 'neg_min': 0.0, 'floor': 0}",
+   "device lines {'sg13_lv_nmos': 2, 'sg13_hv_nmos': 22, 'sg13_lv_pmos': 2, 'sg13_hv_pmos': 73, 'npn13G2': 4, 'rppd': 12, 'rhigh': 54, 'cap_cmim': 4}",
+   "capacitors 1081 total 1071.8 fF",
+   "wrote <G1_RESULTS_ROOT>/r1_bias/pex-rc-20261021-a/r1_bias_pex.spice"
+  ],
+  "pex_netlist": "<G1_RESULTS_ROOT>/r1_bias/pex-rc-20261021-a/r1_bias_pex.spice",
+  "pex_netlist_sha256": "caa8b0e5271631f23ebd0cf054a4275db6dfe57f9d880a0fcedd994206d09d1a",
+  "c_only_netlist_sha256": "8eebf391ac712c81139d24e6b24fed991610556632963b3cff522a46f0377e1e",
+  "dev_netlist_sha256": "c8421e9d8f763883567572d34eff9bc912b7e7fba8e1dbf473a30ae98b1a662e"
+ },
+ "disposition": "superseded by pex-rc-20261021-b (same layout; pex_build naming fix)"
+}

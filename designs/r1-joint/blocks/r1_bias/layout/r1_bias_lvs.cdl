@@ -1,0 +1,143 @@
+* r1_bias LVS reference netlist, written by layout/r1_bias_layout.py from schematic/r1_bias.spice (netlist of
+* record, revision 1d), flattened: internal nets carry the instance path (xpor_..., xl_<leg>_d), m>1 written as
+* separate units, sub! -> vss. The 6 layout dummies (sg13_hv_pmos 12/4, every terminal on vdda) are not listed:
+* the PDK LVS deck drops devices whose terminals are all on one net (run layout-lvs-20261021-b).
+.subckt r1_bias vdda vdd vss pbias pcasc ib_afe_s1 ib_afe_s2 ib_afe_c1 ib_afe_c2 ib_is_a ib_is_b ib_sf_oa ib_sf_na ib_sf_ob ib_sf_nb ib_adc_ref por_n
+Mxl_ib_afe_s1_xmp_u0 xl_ib_afe_s1_d pbias vdda vdda sg13_hv_pmos w=12u l=4u ng=1 m=1
+Mxl_ib_afe_s1_xmp_u1 xl_ib_afe_s1_d pbias vdda vdda sg13_hv_pmos w=12u l=4u ng=1 m=1
+Mxl_ib_afe_s1_xmc_u0 ib_afe_s1 pcasc xl_ib_afe_s1_d xl_ib_afe_s1_d sg13_hv_pmos w=12u l=4u ng=1 m=1
+Mxl_ib_afe_s1_xmc_u1 ib_afe_s1 pcasc xl_ib_afe_s1_d xl_ib_afe_s1_d sg13_hv_pmos w=12u l=4u ng=1 m=1
+Mxl_ib_afe_s2_xmp_u0 xl_ib_afe_s2_d pbias vdda vdda sg13_hv_pmos w=12u l=4u ng=1 m=1
+Mxl_ib_afe_s2_xmp_u1 xl_ib_afe_s2_d pbias vdda vdda sg13_hv_pmos w=12u l=4u ng=1 m=1
+Mxl_ib_afe_s2_xmc_u0 ib_afe_s2 pcasc xl_ib_afe_s2_d xl_ib_afe_s2_d sg13_hv_pmos w=12u l=4u ng=1 m=1
+Mxl_ib_afe_s2_xmc_u1 ib_afe_s2 pcasc xl_ib_afe_s2_d xl_ib_afe_s2_d sg13_hv_pmos w=12u l=4u ng=1 m=1
+Mxl_ib_afe_c1_xmp_u0 xl_ib_afe_c1_d pbias vdda vdda sg13_hv_pmos w=12u l=4u ng=1 m=1
+Mxl_ib_afe_c1_xmp_u1 xl_ib_afe_c1_d pbias vdda vdda sg13_hv_pmos w=12u l=4u ng=1 m=1
+Mxl_ib_afe_c1_xmc_u0 ib_afe_c1 pcasc xl_ib_afe_c1_d xl_ib_afe_c1_d sg13_hv_pmos w=12u l=4u ng=1 m=1
+Mxl_ib_afe_c1_xmc_u1 ib_afe_c1 pcasc xl_ib_afe_c1_d xl_ib_afe_c1_d sg13_hv_pmos w=12u l=4u ng=1 m=1
+Mxl_ib_afe_c2_xmp_u0 xl_ib_afe_c2_d pbias vdda vdda sg13_hv_pmos w=12u l=4u ng=1 m=1
+Mxl_ib_afe_c2_xmp_u1 xl_ib_afe_c2_d pbias vdda vdda sg13_hv_pmos w=12u l=4u ng=1 m=1
+Mxl_ib_afe_c2_xmc_u0 ib_afe_c2 pcasc xl_ib_afe_c2_d xl_ib_afe_c2_d sg13_hv_pmos w=12u l=4u ng=1 m=1
+Mxl_ib_afe_c2_xmc_u1 ib_afe_c2 pcasc xl_ib_afe_c2_d xl_ib_afe_c2_d sg13_hv_pmos w=12u l=4u ng=1 m=1
+Mxl_ib_is_a_xmp xl_ib_is_a_d pbias vdda vdda sg13_hv_pmos w=12u l=4u ng=1 m=1
+Mxl_ib_is_a_xmc ib_is_a pcasc xl_ib_is_a_d xl_ib_is_a_d sg13_hv_pmos w=12u l=4u ng=1 m=1
+Mxl_ib_is_b_xmp xl_ib_is_b_d pbias vdda vdda sg13_hv_pmos w=12u l=4u ng=1 m=1
+Mxl_ib_is_b_xmc ib_is_b pcasc xl_ib_is_b_d xl_ib_is_b_d sg13_hv_pmos w=12u l=4u ng=1 m=1
+Mxl_ib_sf_oa_xmp xl_ib_sf_oa_d pbias vdda vdda sg13_hv_pmos w=12u l=4u ng=1 m=1
+Mxl_ib_sf_oa_xmc ib_sf_oa pcasc xl_ib_sf_oa_d xl_ib_sf_oa_d sg13_hv_pmos w=12u l=4u ng=1 m=1
+Mxl_ib_sf_na_xmp xl_ib_sf_na_d pbias vdda vdda sg13_hv_pmos w=12u l=4u ng=1 m=1
+Mxl_ib_sf_na_xmc ib_sf_na pcasc xl_ib_sf_na_d xl_ib_sf_na_d sg13_hv_pmos w=12u l=4u ng=1 m=1
+Mxl_ib_sf_ob_xmp xl_ib_sf_ob_d pbias vdda vdda sg13_hv_pmos w=12u l=4u ng=1 m=1
+Mxl_ib_sf_ob_xmc ib_sf_ob pcasc xl_ib_sf_ob_d xl_ib_sf_ob_d sg13_hv_pmos w=12u l=4u ng=1 m=1
+Mxl_ib_sf_nb_xmp xl_ib_sf_nb_d pbias vdda vdda sg13_hv_pmos w=12u l=4u ng=1 m=1
+Mxl_ib_sf_nb_xmc ib_sf_nb pcasc xl_ib_sf_nb_d xl_ib_sf_nb_d sg13_hv_pmos w=12u l=4u ng=1 m=1
+Mxl_ib_adc_ref_xmp xl_ib_adc_ref_d pbias vdda vdda sg13_hv_pmos w=12u l=4u ng=1 m=1
+Mxl_ib_adc_ref_xmc ib_adc_ref pcasc xl_ib_adc_ref_d xl_ib_adc_ref_d sg13_hv_pmos w=12u l=4u ng=1 m=1
+Mxpor_xmpr xpor_dr pbias vdda vdda sg13_hv_pmos w=10u l=4u ng=1 m=1
+Mxpor_xmcr xpor_vrh pcasc xpor_dr xpor_dr sg13_hv_pmos w=10u l=4u ng=1 m=1
+Rxpor_xrra xpor_vrh xpor_vrl vss rppd w=1u l=45.9u m=1 b=0
+Rxpor_xrrb xpor_vrl xpor_vq vss rppd w=1u l=260.3u m=1 b=0
+Qxpor_xqr_0 xpor_vq xpor_vq vss vss npn13G2 le=900n we=70n Nx=1
+Qxpor_xqr_1 xpor_vq xpor_vq vss vss npn13G2 le=900n we=70n Nx=1
+Qxpor_xqr_2 xpor_vq xpor_vq vss vss npn13G2 le=900n we=70n Nx=1
+Qxpor_xqr_3 xpor_vq xpor_vq vss vss npn13G2 le=900n we=70n Nx=1
+Mxpor_xmpl xpor_dl pbias vdda vdda sg13_hv_pmos w=10u l=4u ng=1 m=1
+Mxpor_xmcl xpor_nl pcasc xpor_dl xpor_dl sg13_hv_pmos w=10u l=4u ng=1 m=1
+Mxpor_xnl xpor_nl xpor_nl vss vss sg13_hv_nmos w=4u l=4u ng=1 m=1
+Mxpor_xnm xpor_pl xpor_nl vss vss sg13_hv_nmos w=4u l=4u ng=1 m=1
+Mxpor_xpl xpor_pl xpor_pl vdda vdda sg13_hv_pmos w=10u l=4u ng=1 m=1
+Mxpor_xcpl vdda xpor_pl vdda vdda sg13_hv_pmos w=10u l=10u ng=1 m=1
+Rxpor_xrt1_0 vdda xpor_dt1_1 vss rhigh w=0.5u l=27u m=1 b=0
+Rxpor_xrt1_1 xpor_dt1_1 xpor_dt1_2 vss rhigh w=0.5u l=27u m=1 b=0
+Rxpor_xrt1_2 xpor_dt1_2 xpor_dt1_3 vss rhigh w=0.5u l=27u m=1 b=0
+Rxpor_xrt1_3 xpor_dt1_3 xpor_dt1_4 vss rhigh w=0.5u l=27u m=1 b=0
+Rxpor_xrt1_4 xpor_dt1_4 xpor_dt1_5 vss rhigh w=0.5u l=27u m=1 b=0
+Rxpor_xrt1_5 xpor_dt1_5 xpor_dt1_6 vss rhigh w=0.5u l=27u m=1 b=0
+Rxpor_xrt1_6 xpor_dt1_6 xpor_dt1_7 vss rhigh w=0.5u l=27u m=1 b=0
+Rxpor_xrt1_7 xpor_dt1_7 xpor_dt1_8 vss rhigh w=0.5u l=27u m=1 b=0
+Rxpor_xrt1_8 xpor_dt1_8 xpor_dt1_9 vss rhigh w=0.5u l=27u m=1 b=0
+Rxpor_xrt1_9 xpor_dt1_9 xpor_dt1_10 vss rhigh w=0.5u l=27u m=1 b=0
+Rxpor_xrt1_10 xpor_dt1_10 xpor_dt1_11 vss rhigh w=0.5u l=27u m=1 b=0
+Rxpor_xrt1_11 xpor_dt1_11 xpor_dt1_12 vss rhigh w=0.5u l=27u m=1 b=0
+Rxpor_xrt1_12 xpor_dt1_12 xpor_dt1_13 vss rhigh w=0.5u l=27u m=1 b=0
+Rxpor_xrt1_13 xpor_dt1_13 xpor_dt1_14 vss rhigh w=0.5u l=27u m=1 b=0
+Rxpor_xrt1_14 xpor_dt1_14 xpor_dt1_15 vss rhigh w=0.5u l=27u m=1 b=0
+Rxpor_xrt1_15 xpor_dt1_15 xpor_na vss rhigh w=0.5u l=27u m=1 b=0
+Rxpor_xrt2_0 xpor_na xpor_tapa vss rhigh w=0.5u l=27u m=1 b=0
+Rxpor_xrb_0 xpor_tapa xpor_db_1 vss rhigh w=0.5u l=27u m=1 b=0
+Rxpor_xrb_1 xpor_db_1 xpor_db_2 vss rhigh w=0.5u l=27u m=1 b=0
+Rxpor_xrb_2 xpor_db_2 xpor_db_3 vss rhigh w=0.5u l=27u m=1 b=0
+Rxpor_xrb_3 xpor_db_3 xpor_db_4 vss rhigh w=0.5u l=27u m=1 b=0
+Rxpor_xrb_4 xpor_db_4 xpor_db_5 vss rhigh w=0.5u l=27u m=1 b=0
+Rxpor_xrb_5 xpor_db_5 xpor_db_6 vss rhigh w=0.5u l=27u m=1 b=0
+Rxpor_xrb_6 xpor_db_6 xpor_db_7 vss rhigh w=0.5u l=27u m=1 b=0
+Rxpor_xrb_7 xpor_db_7 xpor_db_8 vss rhigh w=0.5u l=27u m=1 b=0
+Rxpor_xrb_8 xpor_db_8 xpor_db_9 vss rhigh w=0.5u l=27u m=1 b=0
+Rxpor_xrb_9 xpor_db_9 vss vss rhigh w=0.5u l=27u m=1 b=0
+Mxpor_xha xpor_na xpor_gooda xpor_tapa vss sg13_hv_nmos w=1u l=0.5u ng=1 m=1
+Cxpor_xcf_vrh xpor_vrh vss cap_cmim w=18u l=18u m=1
+Cxpor_xcf_vrl xpor_vrl vss cap_cmim w=18u l=18u m=1
+Cxpor_xcf_tapa xpor_tapa vss cap_cmim w=18u l=18u m=1
+Mxpor_xca_xmt xpor_xca_tail xpor_pl vdda vdda sg13_hv_pmos w=5u l=4u ng=1 m=1
+Mxpor_xca_xm1 xpor_xca_d1 xpor_tapa xpor_xca_tail vdda sg13_hv_pmos w=8u l=2u ng=1 m=1
+Mxpor_xca_xm2 xpor_xca_d2 xpor_vrh xpor_xca_tail vdda sg13_hv_pmos w=8u l=2u ng=1 m=1
+Mxpor_xca_xml1 xpor_xca_d1 xpor_xca_d1 vss vss sg13_hv_nmos w=2u l=4u ng=1 m=1
+Mxpor_xca_xml2 xpor_xca_d2 xpor_xca_d1 vss vss sg13_hv_nmos w=2u l=4u ng=1 m=1
+Mxpor_xca_xmg xpor_oa xpor_xca_d2 vss vss sg13_hv_nmos w=1u l=2u ng=1 m=1
+Mxpor_xca_xmgl xpor_oa xpor_pl vdda vdda sg13_hv_pmos w=2.5u l=4u ng=1 m=1
+Mxpor_xcd_xmt xpor_xcd_tail xpor_pl vdda vdda sg13_hv_pmos w=5u l=4u ng=1 m=1
+Mxpor_xcd_xm1 xpor_xcd_d1 vdd xpor_xcd_tail vdda sg13_hv_pmos w=8u l=2u ng=1 m=1
+Mxpor_xcd_xm2 xpor_xcd_d2 xpor_refd xpor_xcd_tail vdda sg13_hv_pmos w=8u l=2u ng=1 m=1
+Mxpor_xcd_xml1 xpor_xcd_d1 xpor_xcd_d1 vss vss sg13_hv_nmos w=2u l=4u ng=1 m=1
+Mxpor_xcd_xml2 xpor_xcd_d2 xpor_xcd_d1 vss vss sg13_hv_nmos w=2u l=4u ng=1 m=1
+Mxpor_xcd_xmg xpor_od xpor_xcd_d2 vss vss sg13_hv_nmos w=1u l=2u ng=1 m=1
+Mxpor_xcd_xmgl xpor_od xpor_pl vdda vdda sg13_hv_pmos w=2.5u l=4u ng=1 m=1
+Mxpor_xia_xp xpor_gooda xpor_oa vdda vdda sg13_hv_pmos w=1u l=0.5u ng=1 m=1
+Mxpor_xia_xn xpor_gooda xpor_oa vss vss sg13_hv_nmos w=0.5u l=0.5u ng=1 m=1
+Mxpor_xid_xp xpor_goodd xpor_od vdda vdda sg13_hv_pmos w=1u l=0.5u ng=1 m=1
+Mxpor_xid_xn xpor_goodd xpor_od vss vss sg13_hv_nmos w=0.5u l=0.5u ng=1 m=1
+Mxpor_xidb_xp xpor_badd xpor_goodd vdda vdda sg13_hv_pmos w=1u l=0.5u ng=1 m=1
+Mxpor_xidb_xn xpor_badd xpor_goodd vss vss sg13_hv_nmos w=0.5u l=0.5u ng=1 m=1
+Mxpor_xhd1 xpor_refd xpor_goodd xpor_vrl vss sg13_hv_nmos w=1u l=0.5u ng=1 m=1
+Mxpor_xhd2 xpor_refd xpor_badd xpor_vrh vss sg13_hv_nmos w=1u l=0.5u ng=1 m=1
+Mxpor_xnr_xp1 xpor_rst xpor_gooda vdda vdda sg13_hv_pmos w=1u l=0.5u ng=1 m=1
+Mxpor_xnr_xp2 xpor_rst xpor_goodd vdda vdda sg13_hv_pmos w=1u l=0.5u ng=1 m=1
+Mxpor_xnr_xn1 xpor_rst xpor_gooda xpor_xnr_x vss sg13_hv_nmos w=1u l=0.5u ng=1 m=1
+Mxpor_xnr_xn2 xpor_xnr_x xpor_goodd vss vss sg13_hv_nmos w=1u l=0.5u ng=1 m=1
+Mxpor_xst_0 xpor_st_1 xpor_pl vdda vdda sg13_hv_pmos w=0.5u l=4u ng=1 m=1
+Mxpor_xst_1 xpor_st_2 xpor_pl xpor_st_1 vdda sg13_hv_pmos w=0.5u l=4u ng=1 m=1
+Mxpor_xst_2 xpor_st_3 xpor_pl xpor_st_2 vdda sg13_hv_pmos w=0.5u l=4u ng=1 m=1
+Mxpor_xst_3 xpor_st_4 xpor_pl xpor_st_3 vdda sg13_hv_pmos w=0.5u l=4u ng=1 m=1
+Mxpor_xst_4 xpor_st_5 xpor_pl xpor_st_4 vdda sg13_hv_pmos w=0.5u l=4u ng=1 m=1
+Mxpor_xst_5 xpor_st_6 xpor_pl xpor_st_5 vdda sg13_hv_pmos w=0.5u l=4u ng=1 m=1
+Mxpor_xst_6 xpor_st_7 xpor_pl xpor_st_6 vdda sg13_hv_pmos w=0.5u l=4u ng=1 m=1
+Mxpor_xst_7 xpor_st_8 xpor_pl xpor_st_7 vdda sg13_hv_pmos w=0.5u l=4u ng=1 m=1
+Mxpor_xst_8 xpor_st_9 xpor_pl xpor_st_8 vdda sg13_hv_pmos w=0.5u l=4u ng=1 m=1
+Mxpor_xst_9 xpor_st_10 xpor_pl xpor_st_9 vdda sg13_hv_pmos w=0.5u l=4u ng=1 m=1
+Mxpor_xst_10 xpor_st_11 xpor_pl xpor_st_10 vdda sg13_hv_pmos w=0.5u l=4u ng=1 m=1
+Mxpor_xst_11 xpor_st_12 xpor_pl xpor_st_11 vdda sg13_hv_pmos w=0.5u l=4u ng=1 m=1
+Mxpor_xst_12 xpor_st_13 xpor_pl xpor_st_12 vdda sg13_hv_pmos w=0.5u l=4u ng=1 m=1
+Mxpor_xst_13 xpor_st_14 xpor_pl xpor_st_13 vdda sg13_hv_pmos w=0.5u l=4u ng=1 m=1
+Mxpor_xst_14 xpor_st_15 xpor_pl xpor_st_14 vdda sg13_hv_pmos w=0.5u l=4u ng=1 m=1
+Mxpor_xst_15 xpor_st_16 xpor_pl xpor_st_15 vdda sg13_hv_pmos w=0.5u l=4u ng=1 m=1
+Mxpor_xst_16 xpor_st_17 xpor_pl xpor_st_16 vdda sg13_hv_pmos w=0.5u l=4u ng=1 m=1
+Mxpor_xst_17 xpor_st_18 xpor_pl xpor_st_17 vdda sg13_hv_pmos w=0.5u l=4u ng=1 m=1
+Mxpor_xst_18 xpor_st_19 xpor_pl xpor_st_18 vdda sg13_hv_pmos w=0.5u l=4u ng=1 m=1
+Mxpor_xst_19 xpor_cdel xpor_pl xpor_st_19 vdda sg13_hv_pmos w=0.5u l=4u ng=1 m=1
+Cxpor_xcdel xpor_cdel vss cap_cmim w=32u l=32u m=1
+Mxpor_xrst xpor_cdel xpor_rst vss vss sg13_hv_nmos w=1u l=0.5u ng=1 m=1
+Mxpor_xsch_xp1 xpor_xsch_sp xpor_cdel vdda vdda sg13_hv_pmos w=1u l=0.5u ng=1 m=1
+Mxpor_xsch_xp2 xpor_sy xpor_cdel xpor_xsch_sp vdda sg13_hv_pmos w=1u l=0.5u ng=1 m=1
+Mxpor_xsch_xp3 xpor_xsch_sp xpor_sy vss vdda sg13_hv_pmos w=1u l=0.5u ng=1 m=1
+Mxpor_xsch_xn1 xpor_xsch_sn xpor_cdel vss vss sg13_hv_nmos w=0.5u l=0.5u ng=1 m=1
+Mxpor_xsch_xn2 xpor_sy xpor_cdel xpor_xsch_sn vss sg13_hv_nmos w=0.5u l=0.5u ng=1 m=1
+Mxpor_xsch_xn3 xpor_xsch_sn xpor_sy vdda vss sg13_hv_nmos w=0.5u l=0.5u ng=1 m=1
+Mxpor_xir_xp xpor_ready xpor_sy vdda vdda sg13_hv_pmos w=1u l=0.5u ng=1 m=1
+Mxpor_xir_xn xpor_ready xpor_sy vss vss sg13_hv_nmos w=0.5u l=0.5u ng=1 m=1
+Mxpor_xdps vdd xpor_ready xpor_por_raw vss sg13_hv_nmos w=1u l=0.5u ng=1 m=1
+Rxpor_xrpd xpor_por_raw vss vss rhigh w=0.5u l=735u m=1 b=0
+Mxpor_xdp1 xpor_o3 xpor_por_raw vdd vdd sg13_lv_pmos w=1u l=0.13u ng=1 m=1
+Mxpor_xdn1 xpor_o3 xpor_por_raw vss vss sg13_lv_nmos w=0.5u l=0.13u ng=1 m=1
+Mxpor_xdp2 por_n xpor_o3 vdd vdd sg13_lv_pmos w=1u l=0.13u ng=1 m=1
+Mxpor_xdn2 por_n xpor_o3 vss vss sg13_lv_nmos w=0.5u l=0.13u ng=1 m=1
+.ends

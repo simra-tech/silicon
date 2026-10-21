@@ -9,6 +9,9 @@ checked), the r1_t2f netlist (en = 0, pbias/pcasc gate load), the ADC reference 
 consumer bias-pin loads of sim/r1_bias_loads.spice. Raw decks, logs and waveforms go to
 $G1_RESULTS_ROOT/r1_bias/<run-id>/; the summary goes to results/<run-id>.json and runs/<run-id>/run.json.
 At most BIAS_JOBS (default 3) ngspice processes run at a time. Exit status 1 if any job fails or cannot be parsed.
+Post-layout (layout track, 2026-10-21): pex=<pex-rc run id> view=rc|c|dev replaces the schematic r1_bias with the
+extracted netlist <G1_RESULTS_ROOT>/r1_bias/<pex run>/r1_bias_pex[_c|_dev].spice (layout/pex_build.py); suite por takes
+ramps=<s,...> and kinds=upA,upD,bo.
 """
 # transient tmax: 0.2 us (1 us stalls in the r1_bgr HBTs at POR comparator edges at ssx/ffx, dev-num-20261021-a)
 TMAX = "0.2u"
@@ -544,10 +547,11 @@ def por_srcs(c, kind, tr):
     raise KeyError(kind)
 
 
-def por_suite(rundir, cases, ramps=(1e-3, 10e-3)):
+def por_suite(rundir, cases, ramps=(1e-3, 10e-3), kinds=("upA", "upD", "bo")):
     items, meta = [], []
     vecs = ["v(vdda)", "v(vdd)", "v(por_n)", "i(vmb)", "i(vdd)", "ilegs", "v(pbias)", "v(vref)"] + ["v(%s)" % n for n in POR_NODES[:5]]
-    jobs = [(c, k, tr) for c in cases for k in ("upA", "upD") for tr in ramps] + [(c, "bo", 0) for c in cases]
+    jobs = [(c, k, tr) for c in cases for k in ("upA", "upD") if k in kinds for tr in ramps] + \
+        [(c, "bo", 0) for c in cases if "bo" in kinds]
     for c, kind, tr in jobs:
         a, d, tend = por_srcs(c, kind, tr)
         name = "por_%s_%s_%s" % (c, kind, "%gms" % (tr * 1e3))
@@ -634,6 +638,13 @@ def main():
     assert sha(BGR) == BGR_SHA, "r1_bgr netlist sha256 mismatch"
     assert sha(T2F) == T2F_SHA, "r1_t2f netlist sha256 mismatch"
     cases = args.get("cases", ",".join(MAIN3)).split(",")
+    global NET
+    if "pex" in args:
+        # post-layout: the extracted r1_bias (layout/pex_build.py, same pins, main nodes keep the hierarchical names)
+        # replaces the schematic subcircuit; view rc (full RC), c (wiring R shorted) or dev (layout devices + MIM only)
+        sfx = {"rc": "", "c": "_c", "dev": "_dev"}[args.get("view", "rc")]
+        NET = os.path.join(ROOT, "r1_bias", args["pex"], "r1_bias_pex%s.spice" % sfx)
+        assert os.path.exists(NET), "no extracted netlist for pex=%s" % args["pex"]
     global CONV
     CONV = args.get("conv") == "1"
     seeds_arg = [int(x) for x in args["seeds"].split(",")] if "seeds" in args else None
@@ -683,12 +694,15 @@ def main():
             st[k] = dict(mean=m, sigma=s, min=min(xs), max=max(xs))
         res = dict(stats=st, n_ok=len(ok), n=n, rows=res)
     elif suite == "por":
-        res, fails = por_suite(rundir, cases)
+        res, fails = por_suite(rundir, cases, ramps=ramps_arg or (1e-3, 10e-3),
+                               kinds=tuple(args.get("kinds", "upA,upD,bo").split(",")))
     else:
         raise SystemExit("unknown suite " + suite)
     summary = dict(run_id=runid, suite=suite, question=QUESTIONS.get(suite), args=args,
                    command="G1_CPUSET=116-119 G1_WORKDIR=designs/r1-joint/blocks/r1_bias/sim G1_RESULTS_ROOT=<G1_RESULTS_ROOT> "
                            "flow/run.sh python3 run_bias.py %s %s %s" % (suite, runid, " ".join("%s=%s" % kv for kv in args.items())),
+                   r1_bias_netlist=("<G1_RESULTS_ROOT>/r1_bias/%s/%s" % (args["pex"], os.path.basename(NET))) if "pex" in args
+                   else "designs/r1-joint/blocks/r1_bias/schematic/r1_bias.spice",
                    pdk_commit=PDK_COMMIT, ngspice=ngspice_version(), git_head=git_rev(),
                    netlist_sha256=dict(r1_bias=sha(NET), r1_bgr=sha(BGR), r1_t2f=sha(T2F), loads=sha(LOADS)),
                    raw="<G1_RESULTS_ROOT>/r1_bias/%s/" % runid, seconds=round(time.time() - t0, 1),

@@ -1,0 +1,93 @@
+{
+ "run_id": "post-startup-20261021-b",
+ "suite": "startup",
+ "question": "Start-up with r1_bgr from 0 V, VDDA ramps 10 us and 1 ms: 1 % settling of every output, por_n release.",
+ "args": {
+  "cases": "ff",
+  "ramps": "10e-6",
+  "pex": "pex-rc-20261021-c",
+  "view": "rc",
+  "conv": "1"
+ },
+ "command": "G1_CPUSET=116-119 G1_WORKDIR=designs/r1-joint/blocks/r1_bias/sim G1_RESULTS_ROOT=<G1_RESULTS_ROOT> flow/run.sh python3 run_bias.py startup post-startup-20261021-b cases=ff ramps=10e-6 pex=pex-rc-20261021-c view=rc conv=1",
+ "r1_bias_netlist": "<G1_RESULTS_ROOT>/r1_bias/pex-rc-20261021-c/r1_bias_pex.spice",
+ "pdk_commit": "84374023ee8b4b126bebbba67fcbada0a9c0ff0b",
+ "ngspice": "** ngspice-46 : Circuit level simulation program",
+ "git_head": "cc7e8b9f30a1fcaad4da925ffe1fd5cf7357c683",
+ "netlist_sha256": {
+  "r1_bias": "3df91f2a0c1f007e4e2813a4c72569b151bad194a1b8df1b8b6d8eac89d1dd0c",
+  "r1_bgr": "c19a7425d605906962724fdda21add8ae3926dc9a097c6f835a16f05f92c0c26",
+  "r1_t2f": "8011b76104e9faa4a29dae4323ce59fb6f5864373a087df0767a61672a7b4391",
+  "loads": "4df2d4bb037313efe2c6a75a2ee2edb1dea50e2dde84f9fe69320f7749d8856c"
+ },
+ "raw": "<G1_RESULTS_ROOT>/r1_bias/post-startup-20261021-b/",
+ "seconds": 22.8,
+ "failed_jobs": 1,
+ "result": [
+  {
+   "case": "ff",
+   "ramp_s": 1e-05,
+   "rc": 1,
+   "seconds": 22.7,
+   "t99_us": {
+    "ib_afe_s1": 0.84,
+    "ib_afe_s2": 0.84,
+    "ib_afe_c1": 0.84,
+    "ib_afe_c2": 0.84,
+    "ib_is_a": 0.84,
+    "ib_is_b": 0.84,
+    "ib_sf_oa": 0.84,
+    "ib_sf_na": 0.84,
+    "ib_sf_ob": 0.84,
+    "ib_sf_nb": 0.84,
+    "ib_adc_ref": 0.84
+   },
+   "t99_from_start_us": {
+    "ib_afe_s1": 10.84,
+    "ib_afe_s2": 10.84,
+    "ib_afe_c1": 10.84,
+    "ib_afe_c2": 10.84,
+    "ib_is_a": 10.84,
+    "ib_is_b": 10.84,
+    "ib_sf_oa": 10.84,
+    "ib_sf_na": 10.84,
+    "ib_sf_ob": 10.84,
+    "ib_sf_nb": 10.84,
+    "ib_adc_ref": 10.84
+   },
+   "t99_vref_from_start_us": 10.36,
+   "por_n_max_before_release": 0.0069,
+   "i_end_uA": {
+    "ib_afe_s1": 8.9838,
+    "ib_afe_s2": 8.9871,
+    "ib_afe_c1": 8.9851,
+    "ib_afe_c2": 8.9887,
+    "ib_is_a": 4.4956,
+    "ib_is_b": 4.4887,
+    "ib_sf_oa": 4.4954,
+    "ib_sf_na": 4.4952,
+    "ib_sf_ob": 4.4928,
+    "ib_sf_nb": 4.4907,
+    "ib_adc_ref": 4.4945
+   },
+   "overshoot_pct": {
+    "ib_afe_s1": 5.01,
+    "ib_afe_s2": 4.98,
+    "ib_afe_c1": 5.01,
+    "ib_afe_c2": 4.97,
+    "ib_is_a": 4.94,
+    "ib_is_b": 5.09,
+    "ib_sf_oa": 4.94,
+    "ib_sf_na": 4.98,
+    "ib_sf_ob": 5.01,
+    "ib_sf_nb": 5.04,
+    "ib_adc_ref": 31.07
+   },
+   "vref_end": 1.04112406,
+   "t99_vref_us": 0.36,
+   "por_n_rise_us": [],
+   "por_n_fall_us": [],
+   "por_n_end": 0.000753571523
+  }
+ ]
+}
