@@ -13,6 +13,11 @@
 *   OTA2: CMFB pair 64u -> 32u, fixed sink 0.5u -> 20u and CMFB sink 20u -> 10u (lower CM loop gain), sense caps
 *         6u -> 14u square, Cc 16u -> 18u square, Rz 1.0k -> 1.6k (LRZ 6u)
 *   stage 2: Rin2 14k -> 17.5k (gain 8/7 and 32/7, D11)
+* revision E (2026-10-21, track T3 rev E; fixes the ffx cross corner of rev D, runs dev-reve-01..04):
+*   OTA1: switched Miller part WCCB 20.4u -> 24u square (dm1 at ffx x1 52.8 -> 56.7 deg, f_c unchanged)
+*   OTA1: Miller Rz LRZ 13u -> 21u (rppd, w = 1u); cross-coupled caps XCX1/XCX2 13u -> 15u square
+*   OTA2: Miller Rz LRZ 6u -> 10u
+*         (ffx: cm1 54.3 -> 62.3 deg, cm2 59.6 -> 61.6 deg, dm1 72.5 deg; f_c min 1.020 -> 1.017 MHz)
 * revision D (2026-10-20, track T3 rev D):
 *   stage 2: Rin2 17.5k -> 19.44k (gain 36/35 and 144/35, D16: 1.44 Vpp differential = 80 % of the ADC +-0.9 V FS)
 *   OTA2: bias references XMB0 XMB1 XMB4 XMC3 XMC4 4u/1u -> 8u/2u, so every mirror has the length of its reference
@@ -80,8 +85,8 @@ XTC2 cz2 cb2 cen cenb vdd vss r1_afe_tg
 * CMFB: NMOS sinks = fixed part (MN3A/MN4A, from ibias) + CMFB part (MN3/MN4, mirror of MC3)
 XRS1 outp vcms vss rppd w=1u l=770u m=1 b=0 mm_ok=1
 XRS2 outn vcms vss rppd w=1u l=770u m=1 b=0 mm_ok=1
-XCX1 cz1 outn cap_cmim w=13u l=13u m=1 mm_ok=1
-XCX2 cz2 outp cap_cmim w=13u l=13u m=1 mm_ok=1
+XCX1 cz1 outn cap_cmim w=15u l=15u m=1 mm_ok=1
+XCX2 cz2 outp cap_cmim w=15u l=15u m=1 mm_ok=1
 XCS1 outp vcms cap_cmim w={WCS} l={WCS} m=1 mm_ok=1
 XCS2 outn vcms cap_cmim w={WCS} l={WCS} m=1 mm_ok=1
 XMCT tc vbp vdd vdd sg13_hv_pmos w={WCT} l=1u ng=4 m=1 mm_ok=1
@@ -227,11 +232,11 @@ XI4 c4 c4b vdd vss r1_afe_inv
 * stage 1 (inverting: inp -> m1n)
 XS1P inp x1p m1n c1 c1b c2 c2b c3 c3b vdd vss r1_afe_s1side
 XS1N inn x1n m1p c1 c1b c2 c2b c3 c3b vdd vss r1_afe_s1side
-XA1 x1p x1n m1p m1n vcm1 ib1 c3b c3 vdd vss r1_afe_ota W2N=8u W2P=48u WCC=25u WCCB=20.4u LRZ=13u WCP=32u LCP=1u WCT=48u WN3A=0.5u WN3B=16u LN3B=2u WCS=22u WPT=72u
+XA1 x1p x1n m1p m1n vcm1 ib1 c3b c3 vdd vss r1_afe_ota W2N=8u W2P=48u WCC=25u WCCB=24u LRZ=21u WCP=32u LCP=1u WCT=48u WN3A=0.5u WN3B=16u LN3B=2u WCS=22u WPT=72u
 * stage 2 (inverting again: m1n -> outp, so outp follows inp)
 XS2P m1n x2p op2 c4 c4b vdd vss r1_afe_s2side
 XS2N m1p x2n on2 c4 c4b vdd vss r1_afe_s2side
-XA2 x2p x2n on2 op2 vcm2 ib2 vdd vss r1_afe_ota2 W2N=60u W2P=120u WCC=18u LRZ=6u WCP=32u LCP=1u WCT=32u WN3A=20u WN3B=10u WCS=14u
+XA2 x2p x2n on2 op2 vcm2 ib2 vdd vss r1_afe_ota2 W2N=60u W2P=120u WCC=18u LRZ=10u WCP=32u LCP=1u WCT=32u WN3A=20u WN3B=10u WCS=14u
 * output R-C: limits the OTA2 wideband noise, charge reservoir for the track-and-hold
 XRO1 op2 outp vss rppd w=1u l={LRO} m=1 b=0 mm_ok=1
 XRO2 on2 outn vss rppd w=1u l={LRO} m=1 b=0 mm_ok=1

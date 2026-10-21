@@ -1,0 +1,559 @@
+{
+ "run_id": "dev-reve-04",
+ "campaign": "dev:settle3:base,rz1_21+cxs15+rz2_8,rz1_21+cxs15+rz2_10",
+ "date_utc": "2026-10-20T23:26:31Z",
+ "command": "G1_CPUSET=106-108 G1_CPUS=3 G1_WORKDIR=designs/r1-joint/blocks/r1_afe/sim G1_RESULTS_ROOT=<bulk> flow/run.sh python3 run_afe.py dev:settle3:base,rz1_21+cxs15+rz2_8,rz1_21+cxs15+rz2_10 dev-reve-04",
+ "tools": {
+  "ngspice": "ngspice-46 : Circuit level simulation program",
+  "image_id": "sha256:ddeb69576f2808676d1c5d474ecf04f6d1d6f8abdcff6b72b39790ded924bab2",
+  "pdk_commit": "84374023ee8b4b126bebbba67fcbada0a9c0ff0b"
+ },
+ "inputs": {
+  "sim/tb_afe_settle_adc.cir": "3bbc68e33f27d156ed90af01d08102f3fe2fa4b3f2f34ca2412f338080d83182",
+  "sim/common_head.inc": "ae7e19db8bdacb4ed6ce7126dc07e6b7ed9ba069506c5eb46f7463bfa9bc71af",
+  "sim/gain_codes.inc": "a62c9d6daa3d544c36ac868c4e6a9266f32e581d093ac404c6c52bcc6e5276f6",
+  "schematic/r1_afe.spice": "f8c554c0ce892fd45a3771f17e0f5755f5e245c1c8315a66f873632f9e5a82ab",
+  "sim/run_afe.py": "389cc887a66027d4dd83d400461fd7e1839441f5b806bda0b248854de16e2a41"
+ },
+ "netlist_edits": {
+  "rz1_21+cxs15+rz2_8_st_tt_x1_p100": [
+   [
+    "@inst",
+    "XA1",
+    "LRZ=21u"
+   ],
+   [
+    "r1_afe_ota",
+    "XCX1 cz1 outn cap_cmim w=13u l=13u",
+    "XCX1 cz1 outn cap_cmim w=15u l=15u"
+   ],
+   [
+    "r1_afe_ota",
+    "XCX2 cz2 outp cap_cmim w=13u l=13u",
+    "XCX2 cz2 outp cap_cmim w=15u l=15u"
+   ],
+   [
+    "@inst",
+    "XA2",
+    "LRZ=8u"
+   ]
+  ],
+  "rz1_21+cxs15+rz2_8_st_tt_x1_m100": [
+   [
+    "@inst",
+    "XA1",
+    "LRZ=21u"
+   ],
+   [
+    "r1_afe_ota",
+    "XCX1 cz1 outn cap_cmim w=13u l=13u",
+    "XCX1 cz1 outn cap_cmim w=15u l=15u"
+   ],
+   [
+    "r1_afe_ota",
+    "XCX2 cz2 outp cap_cmim w=13u l=13u",
+    "XCX2 cz2 outp cap_cmim w=15u l=15u"
+   ],
+   [
+    "@inst",
+    "XA2",
+    "LRZ=8u"
+   ]
+  ],
+  "rz1_21+cxs15+rz2_8_st_tt_x32_p100": [
+   [
+    "@inst",
+    "XA1",
+    "LRZ=21u"
+   ],
+   [
+    "r1_afe_ota",
+    "XCX1 cz1 outn cap_cmim w=13u l=13u",
+    "XCX1 cz1 outn cap_cmim w=15u l=15u"
+   ],
+   [
+    "r1_afe_ota",
+    "XCX2 cz2 outp cap_cmim w=13u l=13u",
+    "XCX2 cz2 outp cap_cmim w=15u l=15u"
+   ],
+   [
+    "@inst",
+    "XA2",
+    "LRZ=8u"
+   ]
+  ],
+  "rz1_21+cxs15+rz2_8_st_tt_x32_m100": [
+   [
+    "@inst",
+    "XA1",
+    "LRZ=21u"
+   ],
+   [
+    "r1_afe_ota",
+    "XCX1 cz1 outn cap_cmim w=13u l=13u",
+    "XCX1 cz1 outn cap_cmim w=15u l=15u"
+   ],
+   [
+    "r1_afe_ota",
+    "XCX2 cz2 outp cap_cmim w=13u l=13u",
+    "XCX2 cz2 outp cap_cmim w=15u l=15u"
+   ],
+   [
+    "@inst",
+    "XA2",
+    "LRZ=8u"
+   ]
+  ],
+  "rz1_21+cxs15+rz2_8_st_ss_x1_p100": [
+   [
+    "@inst",
+    "XA1",
+    "LRZ=21u"
+   ],
+   [
+    "r1_afe_ota",
+    "XCX1 cz1 outn cap_cmim w=13u l=13u",
+    "XCX1 cz1 outn cap_cmim w=15u l=15u"
+   ],
+   [
+    "r1_afe_ota",
+    "XCX2 cz2 outp cap_cmim w=13u l=13u",
+    "XCX2 cz2 outp cap_cmim w=15u l=15u"
+   ],
+   [
+    "@inst",
+    "XA2",
+    "LRZ=8u"
+   ]
+  ],
+  "rz1_21+cxs15+rz2_8_st_ss_x1_m100": [
+   [
+    "@inst",
+    "XA1",
+    "LRZ=21u"
+   ],
+   [
+    "r1_afe_ota",
+    "XCX1 cz1 outn cap_cmim w=13u l=13u",
+    "XCX1 cz1 outn cap_cmim w=15u l=15u"
+   ],
+   [
+    "r1_afe_ota",
+    "XCX2 cz2 outp cap_cmim w=13u l=13u",
+    "XCX2 cz2 outp cap_cmim w=15u l=15u"
+   ],
+   [
+    "@inst",
+    "XA2",
+    "LRZ=8u"
+   ]
+  ],
+  "rz1_21+cxs15+rz2_8_st_ss_x32_p100": [
+   [
+    "@inst",
+    "XA1",
+    "LRZ=21u"
+   ],
+   [
+    "r1_afe_ota",
+    "XCX1 cz1 outn cap_cmim w=13u l=13u",
+    "XCX1 cz1 outn cap_cmim w=15u l=15u"
+   ],
+   [
+    "r1_afe_ota",
+    "XCX2 cz2 outp cap_cmim w=13u l=13u",
+    "XCX2 cz2 outp cap_cmim w=15u l=15u"
+   ],
+   [
+    "@inst",
+    "XA2",
+    "LRZ=8u"
+   ]
+  ],
+  "rz1_21+cxs15+rz2_8_st_ss_x32_m100": [
+   [
+    "@inst",
+    "XA1",
+    "LRZ=21u"
+   ],
+   [
+    "r1_afe_ota",
+    "XCX1 cz1 outn cap_cmim w=13u l=13u",
+    "XCX1 cz1 outn cap_cmim w=15u l=15u"
+   ],
+   [
+    "r1_afe_ota",
+    "XCX2 cz2 outp cap_cmim w=13u l=13u",
+    "XCX2 cz2 outp cap_cmim w=15u l=15u"
+   ],
+   [
+    "@inst",
+    "XA2",
+    "LRZ=8u"
+   ]
+  ],
+  "rz1_21+cxs15+rz2_8_st_ff_x1_p100": [
+   [
+    "@inst",
+    "XA1",
+    "LRZ=21u"
+   ],
+   [
+    "r1_afe_ota",
+    "XCX1 cz1 outn cap_cmim w=13u l=13u",
+    "XCX1 cz1 outn cap_cmim w=15u l=15u"
+   ],
+   [
+    "r1_afe_ota",
+    "XCX2 cz2 outp cap_cmim w=13u l=13u",
+    "XCX2 cz2 outp cap_cmim w=15u l=15u"
+   ],
+   [
+    "@inst",
+    "XA2",
+    "LRZ=8u"
+   ]
+  ],
+  "rz1_21+cxs15+rz2_8_st_ff_x1_m100": [
+   [
+    "@inst",
+    "XA1",
+    "LRZ=21u"
+   ],
+   [
+    "r1_afe_ota",
+    "XCX1 cz1 outn cap_cmim w=13u l=13u",
+    "XCX1 cz1 outn cap_cmim w=15u l=15u"
+   ],
+   [
+    "r1_afe_ota",
+    "XCX2 cz2 outp cap_cmim w=13u l=13u",
+    "XCX2 cz2 outp cap_cmim w=15u l=15u"
+   ],
+   [
+    "@inst",
+    "XA2",
+    "LRZ=8u"
+   ]
+  ],
+  "rz1_21+cxs15+rz2_8_st_ff_x32_p100": [
+   [
+    "@inst",
+    "XA1",
+    "LRZ=21u"
+   ],
+   [
+    "r1_afe_ota",
+    "XCX1 cz1 outn cap_cmim w=13u l=13u",
+    "XCX1 cz1 outn cap_cmim w=15u l=15u"
+   ],
+   [
+    "r1_afe_ota",
+    "XCX2 cz2 outp cap_cmim w=13u l=13u",
+    "XCX2 cz2 outp cap_cmim w=15u l=15u"
+   ],
+   [
+    "@inst",
+    "XA2",
+    "LRZ=8u"
+   ]
+  ],
+  "rz1_21+cxs15+rz2_8_st_ff_x32_m100": [
+   [
+    "@inst",
+    "XA1",
+    "LRZ=21u"
+   ],
+   [
+    "r1_afe_ota",
+    "XCX1 cz1 outn cap_cmim w=13u l=13u",
+    "XCX1 cz1 outn cap_cmim w=15u l=15u"
+   ],
+   [
+    "r1_afe_ota",
+    "XCX2 cz2 outp cap_cmim w=13u l=13u",
+    "XCX2 cz2 outp cap_cmim w=15u l=15u"
+   ],
+   [
+    "@inst",
+    "XA2",
+    "LRZ=8u"
+   ]
+  ],
+  "rz1_21+cxs15+rz2_10_st_tt_x1_p100": [
+   [
+    "@inst",
+    "XA1",
+    "LRZ=21u"
+   ],
+   [
+    "r1_afe_ota",
+    "XCX1 cz1 outn cap_cmim w=13u l=13u",
+    "XCX1 cz1 outn cap_cmim w=15u l=15u"
+   ],
+   [
+    "r1_afe_ota",
+    "XCX2 cz2 outp cap_cmim w=13u l=13u",
+    "XCX2 cz2 outp cap_cmim w=15u l=15u"
+   ],
+   [
+    "@inst",
+    "XA2",
+    "LRZ=10u"
+   ]
+  ],
+  "rz1_21+cxs15+rz2_10_st_tt_x1_m100": [
+   [
+    "@inst",
+    "XA1",
+    "LRZ=21u"
+   ],
+   [
+    "r1_afe_ota",
+    "XCX1 cz1 outn cap_cmim w=13u l=13u",
+    "XCX1 cz1 outn cap_cmim w=15u l=15u"
+   ],
+   [
+    "r1_afe_ota",
+    "XCX2 cz2 outp cap_cmim w=13u l=13u",
+    "XCX2 cz2 outp cap_cmim w=15u l=15u"
+   ],
+   [
+    "@inst",
+    "XA2",
+    "LRZ=10u"
+   ]
+  ],
+  "rz1_21+cxs15+rz2_10_st_tt_x32_p100": [
+   [
+    "@inst",
+    "XA1",
+    "LRZ=21u"
+   ],
+   [
+    "r1_afe_ota",
+    "XCX1 cz1 outn cap_cmim w=13u l=13u",
+    "XCX1 cz1 outn cap_cmim w=15u l=15u"
+   ],
+   [
+    "r1_afe_ota",
+    "XCX2 cz2 outp cap_cmim w=13u l=13u",
+    "XCX2 cz2 outp cap_cmim w=15u l=15u"
+   ],
+   [
+    "@inst",
+    "XA2",
+    "LRZ=10u"
+   ]
+  ],
+  "rz1_21+cxs15+rz2_10_st_tt_x32_m100": [
+   [
+    "@inst",
+    "XA1",
+    "LRZ=21u"
+   ],
+   [
+    "r1_afe_ota",
+    "XCX1 cz1 outn cap_cmim w=13u l=13u",
+    "XCX1 cz1 outn cap_cmim w=15u l=15u"
+   ],
+   [
+    "r1_afe_ota",
+    "XCX2 cz2 outp cap_cmim w=13u l=13u",
+    "XCX2 cz2 outp cap_cmim w=15u l=15u"
+   ],
+   [
+    "@inst",
+    "XA2",
+    "LRZ=10u"
+   ]
+  ],
+  "rz1_21+cxs15+rz2_10_st_ss_x1_p100": [
+   [
+    "@inst",
+    "XA1",
+    "LRZ=21u"
+   ],
+   [
+    "r1_afe_ota",
+    "XCX1 cz1 outn cap_cmim w=13u l=13u",
+    "XCX1 cz1 outn cap_cmim w=15u l=15u"
+   ],
+   [
+    "r1_afe_ota",
+    "XCX2 cz2 outp cap_cmim w=13u l=13u",
+    "XCX2 cz2 outp cap_cmim w=15u l=15u"
+   ],
+   [
+    "@inst",
+    "XA2",
+    "LRZ=10u"
+   ]
+  ],
+  "rz1_21+cxs15+rz2_10_st_ss_x1_m100": [
+   [
+    "@inst",
+    "XA1",
+    "LRZ=21u"
+   ],
+   [
+    "r1_afe_ota",
+    "XCX1 cz1 outn cap_cmim w=13u l=13u",
+    "XCX1 cz1 outn cap_cmim w=15u l=15u"
+   ],
+   [
+    "r1_afe_ota",
+    "XCX2 cz2 outp cap_cmim w=13u l=13u",
+    "XCX2 cz2 outp cap_cmim w=15u l=15u"
+   ],
+   [
+    "@inst",
+    "XA2",
+    "LRZ=10u"
+   ]
+  ],
+  "rz1_21+cxs15+rz2_10_st_ss_x32_p100": [
+   [
+    "@inst",
+    "XA1",
+    "LRZ=21u"
+   ],
+   [
+    "r1_afe_ota",
+    "XCX1 cz1 outn cap_cmim w=13u l=13u",
+    "XCX1 cz1 outn cap_cmim w=15u l=15u"
+   ],
+   [
+    "r1_afe_ota",
+    "XCX2 cz2 outp cap_cmim w=13u l=13u",
+    "XCX2 cz2 outp cap_cmim w=15u l=15u"
+   ],
+   [
+    "@inst",
+    "XA2",
+    "LRZ=10u"
+   ]
+  ],
+  "rz1_21+cxs15+rz2_10_st_ss_x32_m100": [
+   [
+    "@inst",
+    "XA1",
+    "LRZ=21u"
+   ],
+   [
+    "r1_afe_ota",
+    "XCX1 cz1 outn cap_cmim w=13u l=13u",
+    "XCX1 cz1 outn cap_cmim w=15u l=15u"
+   ],
+   [
+    "r1_afe_ota",
+    "XCX2 cz2 outp cap_cmim w=13u l=13u",
+    "XCX2 cz2 outp cap_cmim w=15u l=15u"
+   ],
+   [
+    "@inst",
+    "XA2",
+    "LRZ=10u"
+   ]
+  ],
+  "rz1_21+cxs15+rz2_10_st_ff_x1_p100": [
+   [
+    "@inst",
+    "XA1",
+    "LRZ=21u"
+   ],
+   [
+    "r1_afe_ota",
+    "XCX1 cz1 outn cap_cmim w=13u l=13u",
+    "XCX1 cz1 outn cap_cmim w=15u l=15u"
+   ],
+   [
+    "r1_afe_ota",
+    "XCX2 cz2 outp cap_cmim w=13u l=13u",
+    "XCX2 cz2 outp cap_cmim w=15u l=15u"
+   ],
+   [
+    "@inst",
+    "XA2",
+    "LRZ=10u"
+   ]
+  ],
+  "rz1_21+cxs15+rz2_10_st_ff_x1_m100": [
+   [
+    "@inst",
+    "XA1",
+    "LRZ=21u"
+   ],
+   [
+    "r1_afe_ota",
+    "XCX1 cz1 outn cap_cmim w=13u l=13u",
+    "XCX1 cz1 outn cap_cmim w=15u l=15u"
+   ],
+   [
+    "r1_afe_ota",
+    "XCX2 cz2 outp cap_cmim w=13u l=13u",
+    "XCX2 cz2 outp cap_cmim w=15u l=15u"
+   ],
+   [
+    "@inst",
+    "XA2",
+    "LRZ=10u"
+   ]
+  ],
+  "rz1_21+cxs15+rz2_10_st_ff_x32_p100": [
+   [
+    "@inst",
+    "XA1",
+    "LRZ=21u"
+   ],
+   [
+    "r1_afe_ota",
+    "XCX1 cz1 outn cap_cmim w=13u l=13u",
+    "XCX1 cz1 outn cap_cmim w=15u l=15u"
+   ],
+   [
+    "r1_afe_ota",
+    "XCX2 cz2 outp cap_cmim w=13u l=13u",
+    "XCX2 cz2 outp cap_cmim w=15u l=15u"
+   ],
+   [
+    "@inst",
+    "XA2",
+    "LRZ=10u"
+   ]
+  ],
+  "rz1_21+cxs15+rz2_10_st_ff_x32_m100": [
+   [
+    "@inst",
+    "XA1",
+    "LRZ=21u"
+   ],
+   [
+    "r1_afe_ota",
+    "XCX1 cz1 outn cap_cmim w=13u l=13u",
+    "XCX1 cz1 outn cap_cmim w=15u l=15u"
+   ],
+   [
+    "r1_afe_ota",
+    "XCX2 cz2 outp cap_cmim w=13u l=13u",
+    "XCX2 cz2 outp cap_cmim w=15u l=15u"
+   ],
+   [
+    "@inst",
+    "XA2",
+    "LRZ=10u"
+   ]
+  ]
+ },
+ "netlist_sha256": "f8c554c0ce892fd45a3771f17e0f5755f5e245c1c8315a66f873632f9e5a82ab",
+ "frozen_inputs": "$G1_RESULTS_ROOT/r1_afe/dev-reve-04/frozen/",
+ "lsb_V": 0.000439453125,
+ "raw": "$G1_RESULTS_ROOT/r1_afe/dev-reve-04/",
+ "jobs": 36,
+ "failed_jobs": [],
+ "wall_seconds": 881.4,
+ "summary": "results/dev-reve-04.json",
+ "question": "Revision E screen 4: settling into the T/H at tt/ss/ff, x1 and x32, +-FS, for base, rz1_21+cxs15+rz2_8 and +rz2_10",
+ "result": "worst total error 0.383 LSB (base), 0.385 (rz2_8), 0.387 (rz2_10); settling insensitive to the Rz values",
+ "disposition": "development screen"
+}

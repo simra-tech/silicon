@@ -1,14 +1,148 @@
 # r1_afe — encoder analog front end (sine and cosine channels)
 
-State (2026-10-20): **schematic level, revision D, simulated (ngspice, corners, cross corners, mismatch, loop gain). Not laid out.**
-Revision C is superseded; its record follows the revision-D section ("Revision C record"). Revision B is superseded; its
+State (2026-10-21): **schematic level, revision E, simulated (ngspice, corners, cross corners, mismatch, loop gain). Not laid out.**
+Revision D is superseded by revision E (record below). Revision C is superseded; its record follows the revision-D section ("Revision C record"). Revision B is superseded; its
 record is kept at the end ("Revision B record").
 All numbers in this file are **simulated** unless they are marked estimated. Nothing is measured.
 
 Track T3 of `../README.md`. Specification row: `../../specification/R1_TOP_LEVEL_SPECIFICATION.md` §2 (`r1_afe`),
 §4 (encoder input), gate V1. Input standard and accuracy budget: `../../specification/studies/S1_ENCODER_CHAIN_20261020.md`.
 
-## Revision D (2026-10-20, track T3 revision D) — current state
+## Revision E (2026-10-21, track T3 revision E) — current state
+
+Netlist of record: `schematic/r1_afe.spice` (revision E, sha256 `4a84a3d8…9e46`). Revision D is kept as
+`schematic/r1_afe_revD.spice` (sha256 `f32486ce…146b`). Revision E fixes open issue 1 of revision D (the ffx cross
+corner: ff, 3.0 V, 125 °C). Only compensation values changed. There is no topology change, no bias change and no
+change to the ADC interface. All numbers are **simulated** (ngspice-46, IHP SG13G2 `84374023`), schematic level.
+LSB = 1.8 V / 4096 = 0.439 mV. Built against: same as revision D (PDK commit checked by `flow/run.sh`; image
+`sha256:ddeb6957…bab2`; `G1_CPUSET=106-108`).
+
+### What changed (revision D → E)
+
+| Instance | Parameter | Revision D | Revision E | Effect |
+| --- | --- | --- | --- | --- |
+| `XA1` (OTA1) | `WCCB`, switched Miller part (square side) | 20.4 µm | **24 µm** | DM1 at ffx ×1: 52.8° → 56.7° with no f_c change (the fix named in revision D) |
+| `XA1` (OTA1) | `LRZ`, Miller zero resistor (rppd, w = 1 µm) | 13 µm | **21 µm** | main CM1 and DM1 lever: ffx CM1 ×32 54.3° → 61.2°, DM1 ×1 → 74° (f_c −0.7 %) |
+| `XCX1`, `XCX2` (OTA1) | cross-coupled Miller caps (square side) | 13 µm | **15 µm** | CM1 +1.1°, f_c +0.5 % (the cap subtracts for DM) |
+| `XA2` (OTA2) | `LRZ`, Miller zero resistor | 6 µm | **10 µm** | ffx CM2 ×32 59.6° → 61.6° |
+
+Unchanged: `WCC` 25 µm, `WCS` 22/14 µm, all device sizes, bias, gain strings, output network. The edits are in the
+netlist header (revision E block). `sim/apply_reve.py` writes the three `rz1_21+cxs15+rz2_10` edits from `devvar()`; `WCCB` was set by hand.
+
+How the values were found (development screens, all at ffx CM 0.5/2.5 V and ss CM 0.5 V, ×1/×8/×32, plus ss f_c;
+`sim/run_afe.py` campaign `dev:stbe:<variants>`): `dev-reve-01` screened cross cap, Rz, CM sense cap and Miller cap
+(the CM sense cap and a larger Miller cap are not useful: f_c 0.986 MHz at `cc1_27`). `dev-reve-02` and `-03` went to
+larger Rz and to OTA2 Rz. `dev-reve-04` showed that settling into the T/H does not depend on the Rz values (total error
+0.383/0.385/0.387 LSB). `dev-reve-05` (after the campaign) gives the gain margins of the Rz steps; see open issue 1.
+
+### Margins at the seven corners (worst loop-gain PM, degrees; ×1 and ×32, input CM 0.5 and 2.5 V; `r1afe-stbx-*`)
+
+| Corner | DM1 D → E | CM1 D → E | DM2 D → E | CM2 D → E |
+| --- | --- | --- | --- | --- |
+| tt | 66.9 → 78.3 | 64.4 → 75.6 | 71.5 → 78.7 | 65.1 → 68.2 |
+| ss | 65.5 → 80.6 | 62.4 → 70.8 | 73.8 → 80.8 | 66.0 → 69.0 |
+| ff | 65.3 → 76.2 | 70.5 → 76.7 | 68.0 → 74.8 | 62.7 → 65.7 |
+| sf | 67.7 → 78.5 | 64.6 → 77.2 | 71.1 → 78.3 | 65.0 → 68.1 |
+| fs | 66.2 → 78.1 | 64.3 → 73.3 | 72.0 → 79.1 | 65.3 → 68.3 |
+| ssx (ss, 3.6 V, −40 °C) | 76.2 → 70.5 | 78.2 → 83.2 | 75.6 → 84.7 | 69.3 → 73.5 |
+| **ffx (ff, 3.0 V, 125 °C)** | **52.8 → 72.5** | **54.3 → 62.3** | 67.9 → 72.9 | **59.6 → 61.6** |
+
+Limits: DM ≥ 55°, CM ≥ 60°. Every cell passes. The smallest margin is CM2 at ffx (61.6°, +1.6°) and CM1 at ffx (62.3°, +2.3°).
+One cell fell: DM1 at ssx (76.2° → 70.5°, still 15° above the limit).
+
+### Status (revision E, run suffix `20261021e`)
+
+Evidence: `sim/runs/<run-id>/run.json` (question, result, disposition, netlist sha256 `4a84a3d8…`), `sim/results/<run-id>.json`,
+reduced numbers in `sim/results/summary-20261021e.json` (small) and `sim/results/reduction-full-20261021e.json` (output of
+`report_afe.py`); raw decks, logs and waveforms in `<G1_RESULTS_ROOT>/r1_afe/<run-id>/`, frozen inputs in `…/<run-id>/frozen/`.
+All 14 campaigns ran with no failed job. Revision-D values are in brackets.
+
+| Check | Criterion | Status | Evidence (run id) |
+| --- | --- | --- | --- |
+| Loop-gain method (toy loop) | matches an exact return ratio | **passed** (relative error 4.7e-8) | `r1afe-stbval-20261021e` |
+| Stage-1 DM loop, tt/ss/ff, CM 0.5/2.5/2.8 V, six-step coverage | PM ≥ 55° | **passed**: worst 68.0° [64.4°] | `r1afe-stb-20261021e` |
+| Stage-1 CM loop | PM ≥ 60° | **passed**: worst 70.8° [62.4°] | `r1afe-stb-20261021e` |
+| Stage-2 DM loop | PM ≥ 55° | **passed**: worst 74.5° [67.7°]. **Gain margin fell to 7.0 dB** [10.0 dB] (no limit set; open issue 1) | `r1afe-stb-20261021e` |
+| Stage-2 CM loop | PM ≥ 60° | **passed**: worst 64.4° [61.3°], GM ≥ 23.4 dB | `r1afe-stb-20261021e` |
+| CMFB-node breaks | informational | **not applicable** (`pm_valid = false`, as in revision D) | `r1afe-stb-20261021e` |
+| Loop gain at the seven corners, ×1 and ×32, CM 0.5/2.5 V | DM ≥ 55°, CM ≥ 60° | **passed** at all seven, including ffx (table above). ×8 at ffx was checked only in the screens (CM1 ×8 67.6°, DM1 ×8 74.9°, `dev-reve-03`); the campaign does not cover ×8 at the cross corners | `r1afe-stbx-20261021e`, `dev-reve-03` |
+| Anti-alias f_c | ≥ 1.0 MHz | **passed**: min 1.017 MHz [1.020] (ss, ×32); peaking ≤ 0.00002 dB. Not measured at the cross corners (the `ac` campaign covers tt/ss/ff) | `r1afe-ac-20261021e` |
+| Output swing, output CM | 1.44 Vpp; 0.600 V ± 30 mV | **passed**: gain steps within 0 to 1.41 % of ideal; output CM 0.5935–0.5973 V | `r1afe-ac-20261021e`, `r1afe-tran-20261021e` |
+| Gain steps, ratio error | recorded | **passed**: step-ratio error ≤ 1.41 % [1.41 %] | `r1afe-ac-20261021e` |
+| CM-step transient, tt/ss/ff, ×1/×32 | no sustained oscillation (≤ 1 mV pp); detects `dev-revb-02` | **passed**: ≤ 0.24 mV pp; `dev-revb-02` 1490 mVpp. Recorded: pin step settles to 5 mV in ≤ 600 ns [596], ≤ 3 excursions | `r1afe-cmstep-20261021e` |
+| Settling into the T/H, total error | ≤ 0.25 LSB (INTERFACES.md) | **failed** (unchanged open issue 2): worst 0.39 LSB [0.38] (tt ×32) | `r1afe-settle_adc-20261021e` |
+| Settling, non-linear residual | ≤ 0.25 LSB (accepted criterion) | **passed**: ≤ 0.005 LSB; linear part −0.023 % to +0.024 % | `r1afe-settle_adc-20261021e` |
+| Noise ×32 input-referred | ≤ 35 µV, ≥ 5 % margin at ss | **passed**: 31.0 µV ss [31.0] | `r1afe-noise-20261021e` |
+| Noise ×1 output | ≤ 0.41 LSB | **passed**: 164 µV = 0.37 LSB [0.37] | `r1afe-noise-20261021e` |
+| THD at 100 kHz | ≤ 0.1 % | **passed**: worst 0.025 % [0.025] | `r1afe-tran-20261021e` |
+| Pole matching, 20 MC per corner | \|Δf3\| ≤ 1 % | **passed**, margin 0.024 %: worst 0.976 % (ss) [0.961 %], σ ≤ 0.36 %; phase mismatch ≤ 0.078° | `r1afe-ac_mc-20261021e` |
+| Temperature −40/27/125 °C | f_c ≥ 1 MHz | **passed**: 1.369 MHz [1.371]; gain spread ≤ 0.53 % | `r1afe-temp-20261021e` |
+| Input CM 0–3.3 V with stock pad | gain within 2 %; pad < 1 µA at 2.8 V | **passed**: ≤ 1.54 %; ≤ 4.1 nA | `r1afe-cm-20261021e` |
+| PSRR (20 MC, tt) | ≥ 40 dB | **passed**: worst 54.3 dB (20 kHz), 54.7 dB (1 MHz) [54.3, 54.7] | `r1afe-psrr-20261021e` |
+| Input overload ±1.0 V | recorded | **recorded**: ×32 recovery to 1 LSB ≤ 1240 ns [1236] | `r1afe-overload-20261021e` |
+| Source impedance 0/100/300/1000 Ω | recorded | **recorded**: at 1 kΩ ×1 −2.8 %, ×32 −18.8 % (same as revision D) | `r1afe-rsrc-20261021e` |
+| Development screens | — | **recorded** (not part of the campaign of record) | `dev-reve-01…05` |
+| Gain-switch transients, bias from r1_bgr, c1..c4 level shifters | — | **not run** | — |
+| Layout, DRC, LVS, PEX, post-layout | — | **not run** | — |
+
+Regression list (revision-D list, 17 rows): every row re-run; 16 passed or recorded as in revision D, the settling total error stays
+**failed** (it failed in revision D and is a coordinator item). No row that passed in revision D fails. Two rows lost margin:
+stage-2 DM gain margin (10.0 → 7.0 dB) and pole matching (0.961 → 0.976 %, limit 1 %).
+
+### Area and current (revision E)
+
+| Item | Value | Basis |
+| --- | --- | --- |
+| Area, both channels with VCM1 divider | ≈ 0.1006 mm² (MOS 0.0286, rppd 0.0329, MIM 0.0391); revision D 0.0994 | **estimated**, `sim/area_estimate.py` → `sim/results/area_estimate_revE.json` |
+| of which revision E | ≈ +0.0012 mm² (MIM +0.0011: `WCCB` and cross caps; rppd +0.0001: longer Rz) | estimated |
+| VDDA current, both channels | 1.71–2.00 mA (tt 1.76–1.95, ss 1.71–1.90, ff 1.93–2.00), same as revision D | simulated, `r1afe-ac-20261021e` |
+
+### Open issues (revision E)
+
+1. **Stage-2 DM gain margin is 7.0 dB (ff, ×1, hold load) and 5.5 dB at ssx** (revision D 10.0 and 9.8 dB). The longer OTA2 Rz
+   (6 → 10 µm) raises the PM and lowers the GM. The screen `dev-reve-05` shows the trade: OTA2 Rz 8 µm gives GM 11.0 dB (min over
+   ffx and ss) and CM2 60.6° at ffx; 10 µm gives 9.2 dB and 61.6°; 6 µm gives 11.7 dB and 59.5° (fails). Stage-1 DM GM also fell
+   (15.5 → 11.0 dB). The CM2 margin at ffx is thin whatever the Rz value. No GM limit exists in the specification. A next revision should set one
+   (suggest ≥ 6 dB) and choose between OTA2 Rz 8 and 10 µm after a full run.
+2. **Settling total error 0.39 LSB** against 0.25 LSB in INTERFACES.md. Unchanged from revision D. The coordinator decision stands.
+3. **Pole-matching margin is 0.024 %** (0.976 % of 1 %), and f_c margin is 1.7 % (1.017 MHz). Layout will move both. The longer Rz adds a little to the mismatch (σ 0.356 → 0.363 %).
+4. ×8 at the cross corners and f_c at the cross corners are not in the campaigns of record (screens only).
+5. CM-step ringing, source impedance, interfaces not designed, `vcm2`, VCM1 and bias: as revision D (issues 4 and 5).
+6. Checks marked **not run** in the status table.
+
+### Failures and mistakes (revision E)
+
+| # | What happened | Class | Record |
+| --- | --- | --- | --- |
+| 1 | The screens printed PM and f_c only. The gain margin of the stage-2 DM loop fell from 10.0 to 7.0 dB (5.5 dB at ssx) because of the OTA2 Rz choice, and it was seen only in the campaign. A rerun with OTA2 Rz 8 µm did not fit the time budget. | verification-gap | `dev-reve-03`, `dev-reve-05`, open issue 1 |
+| 2 | The OTA2 Rz was chosen from the CM2 PM alone (monotonic in Rz) with no second criterion; the largest screened value (10 µm) was taken. | planning | `dev-reve-03` |
+| 3 | The campaigns of record cover cross corners at ×1 and ×32 only. The ×8 CM1 margin at ffx (57.7° in revision D) was checked in the screens, not in the campaign; the CM1 ×8 value is not in the regression list. | verification-gap | `r1afe-stbx-20261021e` |
+| 4 | `report_afe.py` took the revision from the suffix letter (`c`, `d`); the letter `e` fell through to the revision-A/B reductions (the first call also failed for a missing `G1_RESULTS_ROOT`). Fixed in `report_afe.py` lines 11–12. | tooling | `report_afe.py` |
+| 5 | `report_afe.py` writes `summary-<suffix>.json` as a 150 kB file. The small summary required by the task took that name; the full reduction was renamed `reduction-full-20261021e.json`. | process-hygiene | `sim/results/` |
+| 6 | The report prints PSRR for the nominal corners as 190–265 dB (numerical zero of the differential path). Only the mismatch rows (`tt_mc`) are meaningful. Same as revision D; not fixed. | tooling | `summary` psrr table |
+| 7 | Revision D expected a CM1 fix from the cross cap (+0.9° at ffx). At 13 → 15 µm it gave only +1.1°. Rz was the larger lever (+7° for +8 µm). A plan with cross cap and Miller cap only would not reach 60° (the larger Miller cap fails f_c, 0.986 MHz). | estimation | `dev-reve-01` |
+| 8 | A first background wait command used `sleep` in a chain and was blocked; the three waits ended by the time limit, not by the job. No effect on results. | process-hygiene | — |
+
+### Files (revision E additions)
+
+| Path | Content |
+| --- | --- |
+| `schematic/r1_afe.spice` | revision E netlist of record |
+| `schematic/r1_afe_revD.spice` | revision D netlist (runs `r1afe-*-20261020d`) |
+| `sim/run_afe.py` | driver; new `devvar()` terms `rz1_<um>`, `rz2_<um>`, `cs2_<um>`, `cc2_<um>`; new `dev:stbe` kind |
+| `sim/apply_reve.py` | writes the Rz and cross-cap edits into the netlist |
+| `sim/report_afe.py` | suffix letter `e` handled like `d` |
+| `sim/results/summary-20261021e.json`, `reduction-full-20261021e.json`, `area_estimate_revE.json` | small summary; full reduction; area estimate |
+| `sim/runs/r1afe-*-20261021e/`, `sim/runs/dev-reve-0*/` | run records |
+
+Reproduce: `G1_RESULTS_ROOT=<bulk results root>; export G1_RESULTS_ROOT`, then
+`sh designs/r1-joint/blocks/r1_afe/sim/run_all.sh 20261021e` and `cd designs/r1-joint/blocks/r1_afe/sim && python3 report_afe.py 20261021e`.
+
+---
+
+# Revision D record (superseded by revision E)
+
+## Revision D (2026-10-20, track T3 revision D)
 
 Netlist of record: `schematic/r1_afe.spice` (revision D, sha256 `f32486ce…146b`). Revision C is kept as
 `schematic/r1_afe_revC.spice`; its record follows below ("Revision C record"). All numbers are **simulated**

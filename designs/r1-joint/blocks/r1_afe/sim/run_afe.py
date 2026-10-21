@@ -174,6 +174,14 @@ def devvar(vn):
             E.append(ie('XA1', WCS=v[4:] + 'u'))
         elif v.startswith('ccb'):   # OTA1 switched Miller part side (um)
             E.append(ie('XA1', WCCB=v[3:] + 'u'))
+        elif v.startswith('rz1_'):  # rev E: OTA1 Miller Rz length (um)
+            E.append(ie('XA1', LRZ=v[4:] + 'u'))
+        elif v.startswith('rz2_'):  # rev E: OTA2 Miller Rz length (um)
+            E.append(ie('XA2', LRZ=v[4:] + 'u'))
+        elif v.startswith('cs2_'):  # rev E: OTA2 CM sense cap side (um)
+            E.append(ie('XA2', WCS=v[4:] + 'u'))
+        elif v.startswith('cc2_'):  # rev E: OTA2 Miller cap side (um)
+            E.append(ie('XA2', WCC=v[4:] + 'u'))
         elif v.startswith('cc1_'):  # OTA1 fixed Miller part side (um)
             E.append(ie('XA1', WCC=v[4:] + 'u'))
         # ---- settling (open issue 4): OTA2 Cc split, fixed part <a> um + part <b> um switched off at x16/x32 (c4)
@@ -232,6 +240,11 @@ def campaign(c):
             elif kind == 'stbffx':    # rev D: the failing cross corner ffx (ff, 3.0 V, 125 C) only, x1 x8 x32
                 for cm in (0.5, 2.5):
                     J.append(job('%s_stb_ffx_cm%.1f' % (vn, cm), 'tb_afe_stb.cir', 'ffx', edits=ed, VCMI=cm, KLIST='0 3 5', LLIST='1 2 4 5'))
+                J.append(job('%s_ac_ss_cm0.5' % vn, 'tb_afe_ac.cir', 'ss', edits=ed, VCMI=0.5))
+            elif kind == 'stbe':      # rev E: ffx (CM 0.5/2.5 V) and ss (CM 0.5 V) loop gain at x1 x8 x32, f_c at ss
+                for cm in (0.5, 2.5):
+                    J.append(job('%s_stb_ffx_cm%.1f' % (vn, cm), 'tb_afe_stb.cir', 'ffx', edits=ed, VCMI=cm, KLIST='0 3 5', LLIST='1 2 4 5'))
+                J.append(job('%s_stb_ss_cm0.5' % vn, 'tb_afe_stb.cir', 'ss', edits=ed, VCMI=0.5, KLIST='0 3 5', LLIST='1 2 4 5'))
                 J.append(job('%s_ac_ss_cm0.5' % vn, 'tb_afe_ac.cir', 'ss', edits=ed, VCMI=0.5))
             elif kind == 'settle3':   # tt/ss/ff, x1 and x32, +FS and -FS
                 for k in CORNERS:

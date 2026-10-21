@@ -1,0 +1,30 @@
+{
+ "run_id": "r1afe-noise-20261021e",
+ "campaign": "noise",
+ "date_utc": "2026-10-20T23:52:28Z",
+ "command": "G1_CPUSET=106-108 G1_CPUS=3 G1_WORKDIR=designs/r1-joint/blocks/r1_afe/sim G1_RESULTS_ROOT=<bulk> flow/run.sh python3 run_afe.py noise r1afe-noise-20261021e",
+ "tools": {
+  "ngspice": "ngspice-46 : Circuit level simulation program",
+  "image_id": "sha256:ddeb69576f2808676d1c5d474ecf04f6d1d6f8abdcff6b72b39790ded924bab2",
+  "pdk_commit": "84374023ee8b4b126bebbba67fcbada0a9c0ff0b"
+ },
+ "inputs": {
+  "sim/tb_afe_noise.cir": "c96b9665b88a532e4c7633dc66efa733b265e4c0f590a9cabdcf472f1bb1ea6a",
+  "sim/common_head.inc": "ae7e19db8bdacb4ed6ce7126dc07e6b7ed9ba069506c5eb46f7463bfa9bc71af",
+  "sim/gain_codes.inc": "a62c9d6daa3d544c36ac868c4e6a9266f32e581d093ac404c6c52bcc6e5276f6",
+  "schematic/r1_afe.spice": "4a84a3d8dce9be13f6e57e4aaa2fa9154c9aa2339eb8bdb955e6d8452bb59f46",
+  "sim/run_afe.py": "389cc887a66027d4dd83d400461fd7e1839441f5b806bda0b248854de16e2a41"
+ },
+ "netlist_edits": null,
+ "netlist_sha256": "4a84a3d8dce9be13f6e57e4aaa2fa9154c9aa2339eb8bdb955e6d8452bb59f46",
+ "frozen_inputs": "$G1_RESULTS_ROOT/r1_afe/r1afe-noise-20261021e/frozen/",
+ "lsb_V": 0.000439453125,
+ "raw": "$G1_RESULTS_ROOT/r1_afe/r1afe-noise-20261021e/",
+ "jobs": 3,
+ "failed_jobs": [],
+ "wall_seconds": 27.4,
+ "summary": "results/r1afe-noise-20261021e.json",
+ "question": "Noise at every step, 1 Hz-100 MHz; required x1 (output <= 0.41 LSB rms) and x32 (input <= 35 uV rms)",
+ "result": "x1 output worst 164 uV rms (0.37 LSB of 0.439 mV); x32 input-referred worst 31.0 uV rms",
+ "disposition": "x1: passed; x32 <= 35 uV: passed; x32 with >= 5 % margin (<= 33.25 uV, rev D item 5): passed"
+}
