@@ -1,0 +1,19 @@
+{
+ "run_id": "r1ctrl_20261021_t7sta",
+ "block": "r1_ctrl",
+ "pdk_commit": "84374023ee8b4b126bebbba67fcbada0a9c0ff0b",
+ "tools": {
+  "container": "tapeoutbench-eda:latest sha256:ddeb69576f28",
+  "iverilog": "Icarus Verilog 14.0 (devel) s20260301",
+  "yosys": "0.67 (2d1509d1b)",
+  "opensta": "sta 3.1.0"
+ },
+ "rtl_concat_sha256": "6ca24fce22d79594601c5d73de0db91f73fd3fa7b62944b96e08eda01e2f6eb0",
+ "subject": "hardening run r1ctrl_ll_20261021_t7 (RTL revision 0.4)",
+ "command": "flow/run.sh sh sim/signoff/sta_all.sh <dir>; sta_borrow.sh; sta_fanout.sh; sta_names.sh; sta_en.sh (OpenSTA on t7 final/nl + final/sdc + final/spef/nom)",
+ "question": "What is the true setup slack per corner, the hold slack, the max-fanout nets, and the EN to gate delay of the t7 netlist?",
+ "result": "setup (excluding latch borrow) typ +9.570 recovery / +9.725 flop, fast +10.235 / +11.247, slow +1.776 (meas_angle[2] -> u_pos.cx[15]); latch borrow <= 1.02 ns of 11.47 (slow); hold typ +0.0748, fast +0.0209, slow +0.1834; 6 max-fanout nets, limit 8; en_pad -> gate_x 0.90 / 0.58 / 1.47 ns (typ / fast / slow)",
+ "disposition": "passed (information; no path below +0.3 ns at slow)",
+ "inputs": "scripts under sim/signoff/, t7 run files under <G1_RESULTS_ROOT>/r1_ctrl/r1ctrl_ll_20261021_t7/",
+ "bulk_results": "<G1_RESULTS_ROOT>/r1_ctrl/r1ctrl_20261021_t7sta"
+}

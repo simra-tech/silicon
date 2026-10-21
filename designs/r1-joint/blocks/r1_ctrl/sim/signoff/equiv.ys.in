@@ -1,0 +1,26 @@
+# Yosys equiv_* flow: RTL (revision 0.4 tree, run copy) vs post-synthesis netlist of r1ctrl_ll_20261021_t7 (step 06).
+# @RTL@, @NL@, @LIB@ replaced by run_equiv.sh.
+read_verilog -defer -DSYNTHESIS -DR1_CFG_FLOPS -DR1_CFG_GATED @RTL@/r1_sync2.v @RTL@/r1_lib.v @RTL@/r1_sinlut.v @RTL@/r1_pos.v @RTL@/r1_adcw.v @RTL@/r1_gate.v @RTL@/r1_safe.v @RTL@/r1_cmpcal.v @RTL@/r1_idrom.v @RTL@/r1_biss.v @RTL@/r1_spi.v @RTL@/r1_regs.v @RTL@/r1_ctrl_top.v
+hierarchy -top r1_ctrl_top
+proc; flatten; memory_map; opt_clean
+opt -fast; techmap; opt -fast; opt_clean
+splitnets
+rename r1_ctrl_top gold
+design -stash gold
+read_liberty -overwrite -ignore_miss_func -ignore_miss_dir -ignore_miss_data_latch @LIB@
+read_verilog @NL@
+hierarchy -top r1_ctrl_top
+proc; flatten; opt_clean
+rename r1_ctrl_top gate
+design -stash gate
+design -copy-from gold -as gold gold
+design -copy-from gate -as gate gate
+equiv_make gold gate eq
+hierarchy -top eq
+async2sync
+opt_clean
+tee -o equiv_make_stat.txt stat
+equiv_simple -undef
+equiv_induct -undef
+tee -o equiv_status.txt equiv_status
+equiv_status -assert

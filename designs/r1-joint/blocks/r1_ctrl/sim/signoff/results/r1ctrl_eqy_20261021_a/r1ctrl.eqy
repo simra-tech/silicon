@@ -1,0 +1,18 @@
+# Equivalence of r1_ctrl_top RTL (revision 0.4 tree) against the post-synthesis netlist of
+# hardening run r1ctrl_ll_20261021_t7 (step 06-yosys-synthesis, before placement).
+# <G1_RESULTS_ROOT>/r1_ctrl/r1ctrl_ll_20261021_t7/rtl, <G1_RESULTS_ROOT>/r1_ctrl/r1ctrl_ll_20261021_t7/flow/runs/r1ctrl_ll_20261021_t7/06-yosys-synthesis/r1_ctrl_top.nl.v, /foss/pdks/ihp-sg13g2/libs.ref/sg13g2_stdcell/lib/sg13g2_stdcell_typ_1p20V_25C.lib are replaced by sim/signoff/run_eqy.sh.
+[options]
+
+[gold]
+read_verilog -defer -DSYNTHESIS -DR1_CFG_FLOPS -DR1_CFG_GATED <G1_RESULTS_ROOT>/r1_ctrl/r1ctrl_ll_20261021_t7/rtl/r1_sync2.v <G1_RESULTS_ROOT>/r1_ctrl/r1ctrl_ll_20261021_t7/rtl/r1_lib.v <G1_RESULTS_ROOT>/r1_ctrl/r1ctrl_ll_20261021_t7/rtl/r1_sinlut.v <G1_RESULTS_ROOT>/r1_ctrl/r1ctrl_ll_20261021_t7/rtl/r1_pos.v <G1_RESULTS_ROOT>/r1_ctrl/r1ctrl_ll_20261021_t7/rtl/r1_adcw.v <G1_RESULTS_ROOT>/r1_ctrl/r1ctrl_ll_20261021_t7/rtl/r1_gate.v <G1_RESULTS_ROOT>/r1_ctrl/r1ctrl_ll_20261021_t7/rtl/r1_safe.v <G1_RESULTS_ROOT>/r1_ctrl/r1ctrl_ll_20261021_t7/rtl/r1_cmpcal.v <G1_RESULTS_ROOT>/r1_ctrl/r1ctrl_ll_20261021_t7/rtl/r1_idrom.v <G1_RESULTS_ROOT>/r1_ctrl/r1ctrl_ll_20261021_t7/rtl/r1_biss.v <G1_RESULTS_ROOT>/r1_ctrl/r1ctrl_ll_20261021_t7/rtl/r1_spi.v <G1_RESULTS_ROOT>/r1_ctrl/r1ctrl_ll_20261021_t7/rtl/r1_regs.v <G1_RESULTS_ROOT>/r1_ctrl/r1ctrl_ll_20261021_t7/rtl/r1_ctrl_top.v
+prep -flatten -top r1_ctrl_top
+
+[gate]
+read_liberty -overwrite -ignore_miss_func -ignore_miss_dir -ignore_miss_data_latch /foss/pdks/ihp-sg13g2/libs.ref/sg13g2_stdcell/lib/sg13g2_stdcell_typ_1p20V_25C.lib
+read_verilog -defer <G1_RESULTS_ROOT>/r1_ctrl/r1ctrl_ll_20261021_t7/flow/runs/r1ctrl_ll_20261021_t7/06-yosys-synthesis/r1_ctrl_top.nl.v
+prep -flatten -top r1_ctrl_top
+
+[strategy sby]
+use sby
+depth 5
+engine smtbmc yices

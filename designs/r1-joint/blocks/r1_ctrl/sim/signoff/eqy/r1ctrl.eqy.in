@@ -1,0 +1,20 @@
+# Equivalence of r1_ctrl_top RTL (revision 0.4 tree) against the post-synthesis netlist of
+# hardening run r1ctrl_ll_20261021_t7 (step 06-yosys-synthesis, before placement).
+# @RTL@, @NL@, @LIB@ are replaced by sim/signoff/run_eqy.sh.
+[options]
+
+[gold]
+read_verilog -defer -DSYNTHESIS -DR1_CFG_FLOPS -DR1_CFG_GATED @RTL@/r1_sync2.v @RTL@/r1_lib.v @RTL@/r1_sinlut.v @RTL@/r1_pos.v @RTL@/r1_adcw.v @RTL@/r1_gate.v @RTL@/r1_safe.v @RTL@/r1_cmpcal.v @RTL@/r1_idrom.v @RTL@/r1_biss.v @RTL@/r1_spi.v @RTL@/r1_regs.v @RTL@/r1_ctrl_top.v
+prep -flatten -top r1_ctrl_top
+memory_map
+splitnets
+
+[gate]
+read_liberty -overwrite -ignore_miss_func -ignore_miss_dir -ignore_miss_data_latch @LIB@
+read_verilog -defer @NL@
+prep -flatten -top r1_ctrl_top
+memory_map
+
+[strategy sat]
+use sat
+depth 10
