@@ -1,0 +1,33 @@
+{
+ "run_id": "pex-rc-20261021-r2d",
+ "written": "2026-10-21T08:24:00",
+ "pdk_commit": "84374023ee8b4b126bebbba67fcbada0a9c0ff0b",
+ "container": "tapeoutbench-eda:latest sha256:ddeb69576f2808676d1c5d474ecf04f6d1d6f8abdcff6b72b39790ded924bab2",
+ "cpuset": "100-102",
+ "tools": {
+  "klayout": "0.30.9",
+  "kpex": "0.3.12"
+ },
+ "command": "sh designs/r1-joint/blocks/r1_osc/layout/run_pex.sh 20261021-r2d 20261021-r2d",
+ "inputs": {
+  "layout_run": "<G1_RESULTS_ROOT>/r1_osc/layout-gen-20261021-r2d",
+  "gds_sha256": "7c5fb60fdbbfa3cce7714520d3bc652292f0ff964452e3bf4afe226ea68ba971",
+  "pex_input_gds_sha256": "5346bebffa0b3226cd7c482c894907acf7c4ab41c58d43bfe6b2fc208592c8ac",
+  "lvs_cdl_sha256": "600d5f2bb983601d904142c9d15f62beb363b91bbfafe7ded63c1e2cea6912aa"
+ },
+ "question": "post-layout RC netlist of r1_osc (devices + MIM re-inserted + kpex 2.5D CC + RNetExtractor wiring R)",
+ "result": {
+  "log": [
+   "devices 78 nets 60 terminal ports 154 terminals without Metal1 port 0",
+   "resistors 220 island ties 0 element stats {'open': 0, 'neg': 0, 'neg_min': 0.0, 'floor': 0}",
+   "device lines {'sg13_lv_nmos': 36, 'sg13_lv_pmos': 19, 'dpantenna': 1, 'rppd': 22, 'cap_cmim': 13}",
+   "capacitors 428 total 372.0 fF",
+   "per-net total C (fF): {\"$17\": 5.22, \"$19\": 5.25, \"$2\": 0.6, \"$20\": 5.79, \"$21\": 5.58, \"$22\": 5.23, \"$24\": 4.13, \"$28\": 4.8, \"$29\": 5.56, \"$3\": 0.6, \"$30\": 5.6, \"$33\": 2.78, \"$34\": 0.58, \"$35\": 1.53, \"$37\": 1.92, \"$4\": 0.6, \"$41\": 0.62, \"$42\": 0.62, \"$48\": 0.59, \"$49\": 0.6, \"$5\": 0.61, \"$50\": 0.59, \"$51\": 0.58, \"$52\": 0.58, \"$53\": 0.59, \"$6\": 0.6, \"$7\": 0.6, \"$8\": 0.6, \"$9\": 0.61, \"ba0\": 1.13, \"ba1\": 1.77, \"ba2\": 2.61, \"ba3\": 1.65, \"ba4\": 1.52, \"bb0\": 1.13, \"bb1\": 1.77, \"bb2\": 2.56, \"bb3\": 1.66, \"bb4\": 1.52, \"ca\": 17.14, \"cb\": 17.49, \"en\": 32.83, \"en_n\": 9.53, \"osc_clk\": 14.72, \"q\": 22.56, \"qb\": 15.94, \"qn_b\": 16.0, \"rsta\": 13.52, \"rstb\": 9.83, \"trim0\": 17.42, \"trim1\": 17.82, \"trim2\": 17.58, \"trim3\": 18.69, \"trim4\": 19.33, \"va\": 22.15, \"vb\": 32.38, \"vbn\": 33.36, \"vdd\": 62.76, \"vss\": 220.89, \"vth\": 31.25}",
+   "wrote <G1_RESULTS_ROOT>/r1_osc/pex-rc-20261021-r2d/r1_osc_pex.spice"
+  ],
+  "pex_netlist": "<G1_RESULTS_ROOT>/r1_osc/pex-rc-20261021-r2d/r1_osc_pex.spice",
+  "pex_netlist_sha256": "c6d76aac02c310790dbea47e8362a6f663f070edaa097eea7b5711aff2184c77",
+  "c_only_netlist_sha256": "5df600edca79ce35dc687dcec8b442330b4930770fff7ec5c69b39baa3fdb44f"
+ },
+ "disposition": "run"
+}

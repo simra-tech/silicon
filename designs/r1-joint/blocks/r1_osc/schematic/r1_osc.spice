@@ -1,6 +1,6 @@
-* R1_OSC schematic-level source, revision r1, written by schematic/gen_r1_osc.py
+* R1_OSC schematic-level source, revision r2, written by schematic/gen_r1_osc.py
 * 30 MHz nominal ping-pong RC relaxation oscillator, 5-bit cmim trim; lineage G1 g1_osc R0.95
-* sizes: L_R=48.3u C_fix=28.55x28.55 um C_unit=4.03x4.03 um SW_W=0.5u,0.5u,1u,2u,4u L_RBIAS=80u M_TAIL=2
+* sizes: L_R=48.3u C_fix=26.70x26.70 um C_unit=4.03x4.03 um SW_W=0.5u,0.5u,1u,2u,4u L_RBIAS=80u M_TAIL=2
 .subckt r1_osc en trim0 trim1 trim2 trim3 trim4 osc_clk vdd vss
 XRA vdd va sub! rppd w=1u l=48.3u m=1 b=0 mm_ok=1
 XRB vdd vb sub! rppd w=1u l=48.3u m=1 b=0 mm_ok=1
@@ -27,7 +27,7 @@ XB2 qn_b osc_clk vdd vss r1_osc_buf4
 
 .subckt r1_osc_cbank t0 t1 t2 t3 t4 top vss
 * fixed cmim + 5-bit binary trim; bit i = 2**i unit cmim in parallel (m), NMOS switch to vss
-XCF top vss cap_cmim w=28.55u l=28.55u m=1 mm_ok=1
+XCF top vss cap_cmim w=26.70u l=26.70u m=1 mm_ok=1
 XCT0 top b0 cap_cmim w=4.03u l=4.03u m=1 mm_ok=1
 XMS0 b0 t0 vss vss sg13_lv_nmos w=0.5u l=0.13u ng=1 m=1 mm_ok=1
 XCT1 top b1 cap_cmim w=4.03u l=4.03u m=2 mm_ok=1

@@ -1,0 +1,29 @@
+{
+ "run_id": "r2-whatif-v0-20261021",
+ "suite": "probe",
+ "command": "G1_CPUSET=100-102 G1_CPUS=3 G1_WORKDIR=designs/r1-joint/blocks/r1_osc flow/run.sh python3 sim/run_osc30.py probe r2-whatif-v0-20261021 --jobs 3 --netlist <G1_RESULTS_ROOT>/r1_osc/whatif-r2-20261021/v0.spice --probe 'tt:1.2:27:0 tt:1.2:27:1 tt:1.2:27:3 tt:1.2:27:4 tt:1.2:27:22 tt:1.2:27:31 ss:1.08:125:0 ff:1.32:-40:0 ff:1.32:-40:22' --question 'what-if (not a design): layout r2b PEX (switches at the banks) with v0 edits of RA/RB length / CF side; where are tt code 22, ss code 0, step?'",
+ "start_utc": "2026-10-21T05:14:55.131696Z",
+ "end_utc": "2026-10-21T05:17:54.611900Z",
+ "wall_s": 179.5,
+ "tools": {
+  "ngspice": "ngspice-46",
+  "container_image": "tapeoutbench-eda:latest sha256:ddeb69576f2808676d1c5d474ecf04f6d1d6f8abdcff6b72b39790ded924bab2"
+ },
+ "pdk_commit": "84374023ee8b4b126bebbba67fcbada0a9c0ff0b",
+ "inputs": {
+  "netlist": "<G1_RESULTS_ROOT>/r1_osc/whatif-r2-20261021/v0.spice",
+  "netlist_sha256": "f1cc6d391a96e41e37f58b8364f12c4a888efd21f451fe13be1619da25770eba",
+  "netlist_of_record_sha256": "d9d84501f5a18d5621ef9b6243d41172209fd738fe359d6067557669525cd949",
+  "decks": {
+   "tb_osc30.cir": "b6c4e521f05460d5d9e18e5516f0ca8cfe2b5d8c471d688d856ce6f24feeb63c"
+  },
+  "runner_sha256": "a19df92ff6c8f0497c12d3be1f755b707cadeb504023ddeec7e2f218c0add7b9"
+ },
+ "raw_results": "G1_RESULTS_ROOT/r1_osc/r2-whatif-v0-20261021/ (expanded decks, logs, raw)",
+ "n_points": 9,
+ "n_rc_nonzero": 0,
+ "question": "what-if (not a design): layout r2b PEX (switches at the banks) with v0 edits of RA/RB length / CF side; where are tt code 22, ss code 0, step?",
+ "result": "what-if (not a design): layout r2b PEX with revision-1 sizes; tt c22 27.97, ss c0 29.30, step 3->4 1.60 %",
+ "disposition": "what-if only",
+ "probe": "tt:1.2:27:0 tt:1.2:27:1 tt:1.2:27:3 tt:1.2:27:4 tt:1.2:27:22 tt:1.2:27:31 ss:1.08:125:0 ff:1.32:-40:0 ff:1.32:-40:22"
+}

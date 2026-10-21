@@ -19,8 +19,12 @@ Floorplan (y up):
   VDD bar (Metal3, pin `vdd`)                                  north edge
   p+ guard ring (Activ + pSD + Metal1) 1 um inside the macro edge, tied to the VSS bar.
 
+Revision 2 (layout r2c): the ten trim switches left the transistor rows. Each bank has a switch column directly west
+  of its unit array (p+ tap column, five NMOS with the drain on the bit line, gate to a trim riser in the lane), so the
+  bit nodes are 1-3 fF instead of 14-23 fF (layout k). The lane carries vss, va, vb, trim4..trim0 only; the channel
+  lost the ten bit tracks (macro 8 um lower). RA/RB lengths and the CF side are read from the netlist of record.
 Resistors: rppd w = 1 um at 1.9 um pitch, all heads with connections at the top, links Metal1 straps:
-  RA = 2 x 24.15 um, RB = 2 x 24.15 um (va, vdd, vdd, vb), RT1/RT2 = 8 + 8 segments (7 x 48.04 + 48.02 um each),
+  RA = 2 x L_R/2, RB = 2 x L_R/2 (va, vdd, vdd, vb), RT1/RT2 = 8 + 8 segments (7 x 48.04 + 48.02 um each),
   RBIAS = 2 x 40 um; a dummy strip (GatPoly + pSD, no resistor marker) at each group edge.
 Trim banks: 31 cmim units 4.03 x 4.03 um (25 fF) per bank on a 5.9 um grid, 4 rows x 8 columns inside, bit 4 = rows
   3-4, bit 3 = row 2, row 1 = bit 2 (4) | bit 1 (2) | bit 0 (1) | va landing slot; dummy units (same PCell, same
@@ -28,9 +32,10 @@ Trim banks: 31 cmim units 4.03 x 4.03 um (25 fF) per bank on a 5.9 um grid, 4 ro
   same gap as the units. Unit top plates and CF are joined on TopMetal1 (the plate layer); the bottom plate of each bit
   group is one Metal5 polygon. Metal5 and TopMetal1 are used only for the MIM plates and their joins; every
   connection leaves the plates through Via4 onto Metal4 under the bank and runs on Metal1-Metal4.
-Shielding: the output buffer is at the east end of the rows; `osc_clk` runs on Metal2/Metal3 inside the row area to
-  the east pin and never enters the track channel. The lowest channel track is vss and a second vss track lies
-  between va and vb. The bank bit lines leave the arrays under the vss dummy column.
+Shielding: the output buffer is at the east end of the rows. Revision 2 (layout r2d, S7 floorplan constraint: all
+  signal pins on the west edge): `osc_clk` is the lowest Metal4 channel track and runs west to its pin; its neighbour
+  is `ca`, then `cb`, `qn_b` and a vss track; va / vb / vth / vbn are 4.0-10.4 um above it with vss shields between
+  them (layout k ran osc_clk east on Metal3 below the channel). The bank bit lines leave the arrays under the vss dummy column.
 """
 import json
 import os
@@ -39,7 +44,7 @@ import sys
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, HERE)
-from r1_layout_lib import (Draw, RowLayout, Rppd, Cmim, pya, um, VIA)  # noqa: E402
+from r1_layout_lib import (Draw, RowLayout, Rppd, Cmim, Mos, pya, um, VIA)  # noqa: E402
 
 SCH = os.path.join(HERE, '..', 'schematic', 'r1_osc.spice')
 OUT_GDS = os.path.join(HERE, 'r1_osc.gds')
@@ -91,6 +96,12 @@ BYNAME = {p['name']: p for p in PRIM}
 
 def um_of(v):
     return float(v.rstrip('u'))
+
+
+# revision-2 sizes read from the netlist of record (timing R length, fixed bank cap side)
+L_R = um_of(BYNAME['XRA']['par']['l'])
+C_FIX = um_of(BYNAME['XCA.XCF']['par']['w'])
+assert um_of(BYNAME['XRB']['par']['l']) == L_R and um_of(BYNAME['XCB.XCF']['par']['w']) == C_FIX
 
 
 # =============================================================================================
@@ -168,13 +179,15 @@ LOG_P = ['XEN.XMP', 'XNQ.XMP0', 'XNQ.XMP1', 'XNQ.XMP2', 'XNQB.XMP0', 'XNQB.XMP1'
 # between neighbours; only qn_b (output path, not in the loop) crosses comparator B.
 # History: one 89 um row put the PMOS ~50 um east of their NMOS partners (25 fF per internal node, +2.6 ns loop
 # delay, run post-c22-tt-20261021-a); three and four groups: post-probe-20261021-c / -d.
-GROUP_DEF = [('SWT', sum([['XCA.XMS%d' % k, 'XCB.XMS%d' % k] for k in range(5)], []), []),
-             ('CMPA', ['XMBD'] + comp_n('XCMPA'), comp_p('XCMPA')),
+# Revision 2: the trim switches XC[AB].XMS0..4 are no longer a row group; each bank has its own switch column
+# directly west of its unit array (section 4, bank()), so the bit nodes are a few um long.
+SWITCHES = sum([['XCA.XMS%d' % k, 'XCB.XMS%d' % k] for k in range(5)], [])
+GROUP_DEF = [('CMPA', ['XMBD'] + comp_n('XCMPA'), comp_p('XCMPA')),
              ('LOG', LOG_N, LOG_P),
              ('CMPB', comp_n('XCMPB'), comp_p('XCMPB')),
              ('BUF', ['XB2.XMN'], ['XB2.XMP'])]
 ALLN = sum([g[1] + g[2] for g in GROUP_DEF], [])
-assert sorted(ALLN) == sorted(MOS), (set(MOS) ^ set(ALLN))
+assert sorted(ALLN + SWITCHES) == sorted(MOS), (set(MOS) ^ set(ALLN + SWITCHES))
 BITS_A = ['XCA.b%d' % k for k in range(5)]
 BITS_B = ['XCB.b%d' % k for k in range(5)]
 EXTERNAL = set(['en', 'trim0', 'trim1', 'trim2', 'trim3', 'trim4', 'va', 'vb', 'vth', 'vbn', 'osc_clk'] + BITS_A + BITS_B)
@@ -187,7 +200,7 @@ def gnets(names):
 GN = {g[0]: gnets(g[1] + g[2]) for g in GROUP_DEF}
 
 # lane (Metal3 verticals from the banks down to the channel): x positions known before the rows are built
-LANE_NETS = ['vss', 'va'] + BITS_A + ['vb'] + BITS_B
+LANE_NETS = ['vss', 'va', 'vb', 'trim4', 'trim3', 'trim2', 'trim1', 'trim0']   # trim0 (smallest gate) nearest its switches
 LANE_X0 = 53.3
 LANE_X = {n: LANE_X0 + LANE_P * i for i, n in enumerate(LANE_NETS)}
 ROWS = {}
@@ -210,7 +223,6 @@ for gname, nlist, plist in GROUP_DEF:
     print('group', gname, 'extent', [round(v, 2) for v in r.extent], 'tracks', len(set(r.track_y.values())), 'ports', ports)
     ox = r.extent[2] + 1.0 + 1.5
 BUF = ROWS['BUF']
-# the osc_clk Metal3 run to the east pin is checked against every Metal3 port vertical by the self-check (section 7)
 for r in ROWS.values():
     for net, (x, y) in r.port_pos.items():
         REG['M3'].append((net, x - 0.12, y - 0.15, x + 0.12, y + 0.15))
@@ -221,7 +233,7 @@ print('rows extent', ROW_EXT, 'inter-group nets', INTER)
 
 # =============================================================================================
 # 2. channel tracks (Metal4 horizontal)
-TRACKS = sorted(INTER) + ['vss'] + BITS_A + BITS_B + ['en', 'trim0', 'trim1', 'trim2', 'trim3', 'trim4'] + \
+TRACKS = ['osc_clk'] + sorted(INTER) + ['vss'] + ['en', 'trim0', 'trim1', 'trim2', 'trim3', 'trim4'] + \
          ['vbn', 'vss#2', 'va', 'vss#1', 'vb', 'vss#3', 'vth', 'vdd']
 SHIELDS = ['vss#1', 'vss#2', 'vss#3']   # grounded tracks between vbn | va | vb | vth (pex-rc-20261021-g: vb-vth 8.2 fF,
 #                                        va-vbn 5.5 fF without them)
@@ -237,15 +249,14 @@ def connect(key, x, y_from):
 
 for r in ROWS.values():
     for net, (x, y) in r.port_pos.items():
-        if net != 'osc_clk':
-            connect(net, x, y)
+        connect(net, x, y)
 
 # =============================================================================================
 # 3. resistor block
 GROUPS = [('D', 40.0, None), ('RBIAS', 40.0, 'vbn'), ('RBIAS', 40.0, 'vdd'), ('D', 48.04, None)] + \
          [('RT', 48.04 if j % 8 != 7 else 48.02, None) for j in range(16)] + \
          [('D', 48.04, None)] + \
-         [('RA', 24.15, 'va'), ('RA', 24.15, 'vdd'), ('RB', 24.15, 'vdd'), ('RB', 24.15, 'vb')] + [('D', 24.15, None)]
+         [('RA', L_R / 2, 'va'), ('RA', L_R / 2, 'vdd'), ('RB', L_R / 2, 'vdd'), ('RB', L_R / 2, 'vb')] + [('D', L_R / 2, None)]
 SEG = []
 for i, (kind, ln, _) in enumerate(GROUPS):
     x = XR0 + SEGP * i
@@ -291,7 +302,7 @@ for i, net in HEADS:
 
 # =============================================================================================
 # 4. MIM: CTH above the resistor block, banks A and B east of the lane
-Y_CAP0 = TY[TRACKS[-1]] + 2.5           # lowest Metal5 edge above the channel
+Y_CAP0 = TY[TRACKS[-1]] + 1.7           # lowest Metal5 edge above the channel (r2d: 2.5 -> 1.7 for the osc_clk track)
 
 
 def pick_x(cands, avoid, d=0.7):
@@ -347,8 +358,9 @@ def bank(tag, bx, by, top, bits):
     for (c, r), k in g.items():
         if k != 'VA':
             Cmim(D, U, U, X(c), Y(r))
-    cfx, cfy = X(9), by + 16.765 - 14.275
-    Cmim(D, 28.55, 28.55, cfx, cfy)
+    cfx, cfy = X(9), by + 16.765 - C_FIX / 2
+    assert cfy - 0.6 < Y(0) + U + 0.6 - 0.3 and cfy + C_FIX + 0.6 > Y(5) - 0.6 + 0.3, 'CF too small for the row-0/5 joins'
+    Cmim(D, C_FIX, C_FIX, cfx, cfy)
     # Metal5: merge neighbours of the same group (gap and 4-corner fills); dummies merge with the CF plate
     for (c, r), k in g.items():
         if k == 'VA':
@@ -393,20 +405,49 @@ def bank(tag, bx, by, top, bits):
     for i in (-1, 0, 1):
         for j in (-1, 0, 1):
             D.square('TopVia1', X(8) + U / 2 + 0.84 * i, Y(1) + U / 2 + 0.84 * j, 0.42)
-    # Metal4 lines to the lane (Via4 in the bottom Metal5 margin of the group's west unit, stub up to the line)
+    # Revision 2: bit lines (Metal4) from the Via4 of each bit group west to its switch in the switch column directly
+    # west of the array (layout k ran them down the lane to a switch row ~25-60 um away: 14-23 fF per bit node).
+    # Lines of bits 0-2 run below row 1 (b0 highest, so that no line crosses another bit's stub), bits 3 and 4 at
+    # their Via4 height. The switch drain sits on its line: Via1-Via2-Via3 on the drain strip, no Metal3 run.
     lines = {}
-    spec = [(bits[0], 1, 1, Y(1) + 0.6), (bits[1], 2, 1, Y(1) + 1.4), (bits[2], 4, 1, Y(1) + 2.2),
+    spec = [(bits[0], 1, 1, Y(1) - 1.0), (bits[1], 2, 1, Y(1) - 2.6), (bits[2], 4, 1, Y(1) - 4.4),
             (bits[3], 1, 2, Y(2) - 0.3), (bits[4], 1, 3, Y(3) - 0.3)]
-    for net, c, r, yl in spec:
+    sw_ox = SW_OX
+    xtap = sw_ox - 0.8
+    for k, (net, c, r, yl) in enumerate(spec):
         xv = X(c) + U / 2
         yv = Y(r) - 0.3
         D.square('Via4', xv, yv, VIA)
         D.square('Via4', xv + 0.42, yv, VIA)
         rbox('M4', net, xv - 0.15, min(yv, yl) - 0.15, xv + 0.57, max(yv, yl) + 0.15)
-        m4h(net, yl, LANE_X[net], xv)
+        # switch XC?.XMSk: NMOS, Activ centred on the line, gate strap below with the contact on the west side
+        d = MOS['XC%s.XMS%d' % (tag, k)]
+        assert d['D'] == net and d['S'] == 'vss' and d['G'] == 'trim%d' % k, d
+        m = Mos(D, 'nmos', d['w'], d['l'], 1, sw_ox, yl - d['w'] / 2)
+        SWDEV.append(dict(name='XC%s.XMS%d' % (tag, k), kind='n', w=d['w'], l=d['l'], S='vss', D=net, G=d['G']))
+        _, gc = m.gate_strap('bottom', 'left', gap=0.10)
+        xd = m.strip_x(1)
+        D.vpad('Via1', xd, yl, hi='s')
+        D.vpad('Via2', xd, yl, lo='s', hi='s')
+        via3(net, xd, yl)
+        D.box('M2', xd - 0.30, yl - 0.15, xd + 0.30, yl + 0.15)      # M2.d / M3.d minimum area (0.144 um2)
+        rbox('M3', net, xd - 0.30, yl - 0.15, xd + 0.30, yl + 0.15)
+        m4h(net, yl, xd, xv)
+        s0 = m.strip(0)
+        D.box('M1', xtap - 0.15, yl - 0.10, s0[2], yl + 0.10)          # source -> p+ tap column (vss)
+        D.vpad('Via1', gc[0], gc[1], hi='h')
+        xt = LANE_X[d['G']]
+        D.hwire('M2', xt, gc[0], gc[1], w=0.20)                          # 0.20 um: antenna ratio of trim0
+        D.vpad('Via2', xt, gc[1], lo='h', hi='v')
+        rbox('M3', d['G'], xt - 0.12, gc[1] - 0.15, xt + 0.12, gc[1] + 0.15)
+        TRIM_UP.setdefault(d['G'], []).append(gc[1])
         lines[net] = yl
         CAPS.append(('%s.CT%d' % (tag, bits.index(net)), 4.03, 4.03, 2 ** bits.index(net), top, None, net, (xv, yv)))
-        PEXLAB.append(('b%s%d' % (tag.lower(), bits.index(net)), LANE_X[net], yl))
+        PEXLAB.append(('b%s%d' % (tag.lower(), bits.index(net)), xd + 1.0, yl))
+    # p+ substrate tap column west of the switches (vss through the bank vss line, below)
+    ytap0, ytap1 = spec[2][3] - 1.1, spec[4][3] + 2.1
+    D.tap_bar(xtap - 0.15, ytap0, xtap + 0.15, ytap1, kind='p')
+    SWCOL[tag] = (xtap - 0.5, ytap0 - 0.2, sw_ox + 1.0, ytap1 + 0.2)
     yva = Y(1) + 3.0
     for i in (-1, 0, 1):
         D.square('Via4', X(8) + U / 2 + 0.42 * i, yva, VIA)
@@ -418,7 +459,13 @@ def bank(tag, bx, by, top, bits):
         D.square('Via4', X(0) + U / 2 + dx, yv, VIA)
     rbox('M4', 'vss', X(0) + U / 2 - 0.4, yv - 0.15, X(0) + U / 2 + 0.4, yv + 0.15)
     m4h('vss', yv, LANE_X['vss'], X(0) + U / 2)
-    CAPS.append(('%s.CF' % tag, 28.55, 28.55, 1, top, None, 'vss', (X(0) + U / 2, yv)))
+    D.vpad('Via1', xtap, yv, hi='s')
+    D.vpad('Via2', xtap, yv, lo='s', hi='s')
+    via3('vss', xtap, yv)
+    D.box('M2', xtap - 0.30, yv - 0.15, xtap + 0.30, yv + 0.15)
+    rbox('M3', 'vss', xtap - 0.30, yv - 0.15, xtap + 0.30, yv + 0.15)
+    assert ytap0 < yv < ytap1
+    CAPS.append(('%s.CF' % tag, C_FIX, C_FIX, 1, top, None, 'vss', (X(0) + U / 2, yv)))
     for i, c in enumerate(CAPS):
         if c[0].startswith(tag + '.') and c[5] is None:
             CAPS[i] = c[:5] + ((X(8) + U / 2, yva),) + c[6:]
@@ -426,13 +473,17 @@ def bank(tag, bx, by, top, bits):
     return lines, yv
 
 
-BX = LANE_X[LANE_NETS[-1]] + 1.5 + 0.6
+SW_OX = LANE_X[LANE_NETS[-1]] + 1.7     # switch Activ x (tap column 0.8 west of it, trim verticals further west)
+BX = SW_OX + 2.4                          # unit array (dummy column Metal5 starts 0.6 west of BX)
+SWDEV, SWCOL, TRIM_UP = [], {}, {}
 BY_A = Y_CAP0 + 0.6
 BY_B = BY_A + 6 * P
 lines_a, vssa = bank('A', BX, BY_A, 'va', BITS_A)
 lines_b, vssb = bank('B', BX, BY_B, 'vb', BITS_B)
 for lines in (lines_a, lines_b):
     for net, yl in lines.items():
+        if net not in LANE_X:      # bit lines end in the switch column (revision 2)
+            continue
         via3(net, LANE_X[net], yl)
         connect(net, LANE_X[net], yl)
 for yv in (vssa, vssb):
@@ -440,7 +491,9 @@ for yv in (vssa, vssb):
 connect('vss', LANE_X['vss'], max(vssa, vssb))
 D.label('M4txt', LANE_X['va'] + 0.6 * 0, lines_a['va'], 'va')
 D.label('M4txt', LANE_X['vb'], lines_b['vb'], 'vb')
-CAP_RIGHT = BX + 9 * P + 28.55 + 0.6
+for k in range(5):            # trim verticals: channel track -> highest switch gate of the net (bank B)
+    connect('trim%d' % k, LANE_X['trim%d' % k], max(TRIM_UP['trim%d' % k]))
+CAP_RIGHT = BX + 9 * P + C_FIX + 0.6
 
 # =============================================================================================
 # 5. macro box, bars, pins, ring
@@ -460,7 +513,7 @@ for x in RING_VIA_X:
     D.vpad('Via2', x, ringc[1], lo='s', hi='v')
     D.via('Via1', x, ringc[1])
 # west pins
-for net in ('en', 'trim0', 'trim1', 'trim2', 'trim3', 'trim4'):
+for net in ('osc_clk', 'en', 'trim0', 'trim1', 'trim2', 'trim3', 'trim4'):
     y = TY[net]
     rbox('M3', net, 0.0, y - 0.15, 1.5, y + 0.15)
     D.box('M3pin', 0.0, y - 0.15, 1.5, y + 0.15)
@@ -493,13 +546,7 @@ for r in ROWS.values():
     connect('vdd', xv, TY['vdd'])
 XE = W - 2.3
 connect('vdd', XE, VDD_Y0 + 0.2)
-# osc_clk: Metal3 east from the row port to the east pin (stays below the channel)
-xo, yo = BUF.port_pos['osc_clk']
-yo2 = yo - 1.5          # jog down: the qn_b port vertical of the BUF group starts just above the osc_clk port
-rbox('M3', 'osc_clk', xo - 0.12, yo2 - 0.15, xo + 0.12, yo + 0.15)
-rbox('M3', 'osc_clk', xo - 0.12, yo2 - 0.15, W, yo2 + 0.15)
-D.box('M3pin', W - 1.5, yo2 - 0.15, W, yo2 + 0.15)
-D.label('M3txt', W - 0.75, yo2, 'osc_clk')
+# osc_clk: BUF port -> lowest channel track -> west pin (section 2 and the west-pin loop above)
 # vth antenna diode (dpantenna) on the vth port vertical above the PMOS row (G1 revision 5 placement)
 xd, yport = ROWS['CMPA'].port_pos['vth']
 yd = ROWS['CMPA'].extent[3] + 0.15 + 0.39
@@ -535,7 +582,7 @@ for k in TRACKS:
     m4h(net, ty, min(xs), max(xs), w=0.20 if net in ('en', 'trim0', 'trim1', 'trim2', 'trim3', 'trim4') else 0.24)
     for x, y in pts:
         if abs(y - ty) > 0.01:
-            m3v(net, x, y, ty)
+            m3v(net, x, y, ty, w=0.20 if net.startswith('trim') else 0.24)
         via3(net, x, ty)
 
 # =============================================================================================
@@ -611,7 +658,7 @@ def cdl():
 open(OUT_CDL, 'w').write(cdl())
 meta = dict(W=W, H=H, area_mm2=W * H * 1e-6, tracks=TRACKS, track_y={k: round(v, 3) for k, v in TY.items()},
             row_groups={g: dict(extent=r.extent, tracks=len(set(r.track_y.values()))) for g, r in ROWS.items()}, banks=BANK_INFO,
-            caps=CAPS, pex_labels=PEXLAB, lane_x=LANE_X, mim_plates=N_MIM, dummy_units=2 * BANK_INFO['A']['dummies'], resistor_block=[XR0, YTOP, RES_RIGHT], selfcheck_errors=len(ERR), n_mos=len(DEVS))
+            caps=CAPS, pex_labels=PEXLAB, lane_x=LANE_X, mim_plates=N_MIM, dummy_units=2 * BANK_INFO['A']['dummies'], resistor_block=[XR0, YTOP, RES_RIGHT], selfcheck_errors=len(ERR), n_mos=len(DEVS) + len(SWDEV), switch_columns=SWCOL)
 json.dump(meta, open(OUT_META, 'w'), indent=1, default=str)
 print('wrote', OUT_GDS, 'W x H = %.1f x %.1f um = %.5f mm2' % (W, H, W * H * 1e-6))
 if ERR:

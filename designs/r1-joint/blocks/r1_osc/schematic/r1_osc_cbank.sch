@@ -9,9 +9,9 @@ T {C(top) = C_fix + 25 fF unit x code (bit b = 2**b units, m); a trim cap counts
 T {r1_osc_cbank - timing capacitor: fixed cmim + 5-bit binary trim (25 fF unit)} 112 -610 0 0 0.55 0.55 {}
 T {G1 guardian, chip of record g1_chip_top_1414_r2.gds 9049e87b (r2 2026-09-25; geometry XOR-identical to r1 629d303a); block map: g1_padring/reports/signoff-1414-20260924} 112 -571 0 0 0.3 0.3 {}
 T {On-chip variant: R1 30 MHz re-tune of G1 g1_osc R0.95 (5-bit trim, tail x2)} 112 -547 0 0 0.3 0.3 {}
-T {Netlist-equivalent to the r1_osc_cbank subcircuit in schematic/r1_osc.spice (gen_r1_osc.py revision r1)} 112 -523 0 0 0.3 0.3 {}
+T {Netlist-equivalent to the r1_osc_cbank subcircuit in schematic/r1_osc.spice (gen_r1_osc.py revision r2)} 112 -523 0 0 0.3 0.3 {}
 T {Drawn 2026-09-25 by the block generator; device sizes (w, l, ng, m) are on each symbol. Proof: review/schematics-readability-20260925} 112 -499 0 0 0.25 0.25 {}
-C {sg13g2_pr/cap_cmim.sym} 160 -300 0 0 {name=CF model=cap_cmim w=28.55u l=28.55u m=1}
+C {sg13g2_pr/cap_cmim.sym} 160 -300 0 0 {name=CF model=cap_cmim w=26.70u l=26.70u m=1}
 C {sg13g2_pr/cap_cmim.sym} 380 -300 0 0 {name=CT0 model=cap_cmim w=4.03u l=4.03u m=1}
 C {sg13g2_pr/sg13_lv_nmos.sym} 360 -180 0 0 {name=MS0 model=sg13_lv_nmos w=0.5u l=0.13u ng=1 m=1}
 C {sg13g2_pr/cap_cmim.sym} 600 -300 0 0 {name=CT1 model=cap_cmim w=4.03u l=4.03u m=2}

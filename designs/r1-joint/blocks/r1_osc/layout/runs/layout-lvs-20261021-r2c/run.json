@@ -1,0 +1,41 @@
+{
+ "tag": "20261021-r2c",
+ "written": "2026-10-21T07:32:08",
+ "pdk_commit": "84374023ee8b4b126bebbba67fcbada0a9c0ff0b",
+ "container": "tapeoutbench-eda:latest sha256:ddeb69576f2808676d1c5d474ecf04f6d1d6f8abdcff6b72b39790ded924bab2",
+ "cpuset": "100-102",
+ "inputs": {
+  "gds_sha256": "6b6bc0ee72c2fff8ff87711b3c6648353cf39e068c36f06c30cffbe30a7e814e",
+  "lvs_cdl_sha256": "600d5f2bb983601d904142c9d15f62beb363b91bbfafe7ded63c1e2cea6912aa",
+  "generator_sha256": "52c0406ec155ee3447aa372e3a957a21a148d28e1a3ba73a4b5f62603c99e88b",
+  "netlist_of_record": "designs/r1-joint/blocks/r1_osc/schematic/r1_osc.spice",
+  "netlist_of_record_sha256": "00c73f748d86f2cbf5081d5c4c5fe298bd5213bf9ba2ae63bf4b0ea802c91c02"
+ },
+ "run_id": "layout-lvs-20261021-r2c",
+ "question": "PDK LVS r1_osc.gds vs netlist of record (+ 44 dummy MIM units): match?",
+ "command": "flow/run.sh python3 $PDK_ROOT/$PDK/libs.tech/klayout/tech/lvs/run_lvs.py --layout=/work/designs/r1-joint/blocks/r1_osc/layout/r1_osc.gds --netlist=/work/designs/r1-joint/blocks/r1_osc/layout/r1_osc_lvs.cdl --topcell=r1_osc --run_mode=deep --run_dir=<run dir>",
+ "tools": {
+  "klayout": "0.30.9"
+ },
+ "result": {
+  "status": "passed",
+  "extracted_netlist": "<G1_RESULTS_ROOT>/r1_osc/layout-lvs-20261021-r2c/r1_osc_extracted.cir",
+  "extracted_devices_after_combination": {
+   "sg13_lv_nmos": 34,
+   "sg13_lv_pmos": 19,
+   "dpantenna": 1,
+   "rppd": 5,
+   "cap_cmim": 13
+  },
+  "extracted_unit_count_from_m": {
+   "sg13_lv_nmos": 34,
+   "sg13_lv_pmos": 19,
+   "dpantenna": 1,
+   "rppd": 5,
+   "cap_cmim": 65
+  },
+  "extracted_nets": 43,
+  "options": "--run_mode=deep (defaults: series/parallel resistor simplification on, tap extraction on)"
+ },
+ "disposition": "passed"
+}

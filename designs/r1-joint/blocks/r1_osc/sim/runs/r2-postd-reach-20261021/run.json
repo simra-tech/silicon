@@ -1,0 +1,29 @@
+{
+ "run_id": "r2-postd-reach-20261021",
+ "suite": "reach",
+ "command": "G1_CPUSET=100-102 G1_CPUS=3 G1_WORKDIR=designs/r1-joint/blocks/r1_osc flow/run.sh python3 sim/run_osc30.py reach r2-postd-reach-20261021 --jobs 3 --netlist <G1_RESULTS_ROOT>/r1_osc/pex-rc-20261021-r2d/r1_osc_pex.spice --question 'revision 2 post-layout (layout r2d): 32 codes at ss/1.08/125 (reach >= 32 MHz at code 0) and ff/1.32/-40 (code 0 and 22 vs 42 MHz STA); step <= 2 %'",
+ "start_utc": "2026-10-21T06:38:31.923457Z",
+ "end_utc": "2026-10-21T07:00:29.714391Z",
+ "wall_s": 1317.8,
+ "tools": {
+  "ngspice": "ngspice-46",
+  "container_image": "tapeoutbench-eda:latest sha256:ddeb69576f2808676d1c5d474ecf04f6d1d6f8abdcff6b72b39790ded924bab2"
+ },
+ "pdk_commit": "84374023ee8b4b126bebbba67fcbada0a9c0ff0b",
+ "inputs": {
+  "netlist": "<G1_RESULTS_ROOT>/r1_osc/pex-rc-20261021-r2d/r1_osc_pex.spice",
+  "netlist_sha256": "c6d76aac02c310790dbea47e8362a6f663f070edaa097eea7b5711aff2184c77",
+  "netlist_of_record_sha256": "00c73f748d86f2cbf5081d5c4c5fe298bd5213bf9ba2ae63bf4b0ea802c91c02",
+  "decks": {
+   "tb_osc30.cir": "b6c4e521f05460d5d9e18e5516f0ca8cfe2b5d8c471d688d856ce6f24feeb63c"
+  },
+  "runner_sha256": "19979350851bc7000d54b7f29ec4b112879ddf1f29474a15c02b7c5a57ea593d"
+ },
+ "raw_results": "G1_RESULTS_ROOT/r1_osc/r2-postd-reach-20261021/ (expanded decks, logs, raw)",
+ "n_points": 64,
+ "n_rc_nonzero": 0,
+ "question": "revision 2 post-layout (layout r2d): 32 codes at ss/1.08/125 (reach >= 32 MHz at code 0) and ff/1.32/-40 (code 0 and 22 vs 42 MHz STA); step <= 2 %",
+ "result": "ss/1.08/125 c0 32.70 MHz (>= 32), step max 1.84 %; ff/1.32/-40 c0 56.37 MHz (target <= 41 not reachable, R2-1), c22 39.53 (<= 42), step max 1.92 %",
+ "disposition": "passed (reach, step, ff c22); failed: ff c0 <= 41 MHz",
+ "probe": null
+}

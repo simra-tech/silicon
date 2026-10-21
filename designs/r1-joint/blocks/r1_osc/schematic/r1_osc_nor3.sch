@@ -8,7 +8,7 @@ B 4 100 -860 1702 -708 {fill=false}
 T {r1_osc_nor3 - 1.2 V 3-input NOR} 112 -850 0 0 0.55 0.55 {}
 T {G1 guardian, chip of record g1_chip_top_1414_r2.gds 9049e87b (r2 2026-09-25; geometry XOR-identical to r1 629d303a); block map: g1_padring/reports/signoff-1414-20260924} 112 -811 0 0 0.3 0.3 {}
 T {On-chip variant: R1 30 MHz re-tune of G1 g1_osc R0.95 (5-bit trim, tail x2)} 112 -787 0 0 0.3 0.3 {}
-T {Netlist-equivalent to the r1_osc_nor3 subcircuit in schematic/r1_osc.spice (gen_r1_osc.py revision r1)} 112 -763 0 0 0.3 0.3 {}
+T {Netlist-equivalent to the r1_osc_nor3 subcircuit in schematic/r1_osc.spice (gen_r1_osc.py revision r2)} 112 -763 0 0 0.3 0.3 {}
 T {Drawn 2026-09-25 by the block generator; device sizes (w, l, ng, m) are on each symbol. Proof: review/schematics-readability-20260925} 112 -739 0 0 0.25 0.25 {}
 C {sg13g2_pr/sg13_lv_pmos.sym} 200 -530 0 0 {name=MP0 model=sg13_lv_pmos w=3u l=0.13u ng=1 m=1}
 C {sg13g2_pr/sg13_lv_pmos.sym} 200 -420 0 0 {name=MP1 model=sg13_lv_pmos w=3u l=0.13u ng=1 m=1}

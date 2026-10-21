@@ -19,7 +19,7 @@ T {Simulated values: see ../README.md (schematic level, not measured).} 140 46 0
 T {r1_osc - 1.2 V ping-pong RC relaxation oscillator, 30 MHz nominal, 5-bit trim} 112 -1290 0 0 0.55 0.55 {}
 T {G1 guardian, chip of record g1_chip_top_1414_r2.gds 9049e87b (r2 2026-09-25; geometry XOR-identical to r1 629d303a); block map: g1_padring/reports/signoff-1414-20260924} 112 -1251 0 0 0.3 0.3 {}
 T {On-chip variant: R1 30 MHz re-tune of G1 g1_osc R0.95 (5-bit trim, tail x2)} 112 -1227 0 0 0.3 0.3 {}
-T {Netlist-equivalent to schematic/r1_osc.spice (gen_r1_osc.py revision r1)} 112 -1203 0 0 0.3 0.3 {}
+T {Netlist-equivalent to schematic/r1_osc.spice (gen_r1_osc.py revision r2)} 112 -1203 0 0 0.3 0.3 {}
 T {Drawn 2026-09-25 by the block generator; device sizes (w, l, ng, m) are on each symbol. Proof: review/schematics-readability-20260925} 112 -1179 0 0 0.25 0.25 {}
 C {sg13g2_pr/rppd.sym} 200 -800 0 0 {name=RA w=1u l=48.3u model=rppd b=0 m=1}
 C {sg13g2_pr/rppd.sym} 200 -420 0 0 {name=RB w=1u l=48.3u model=rppd b=0 m=1}

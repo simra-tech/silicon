@@ -74,7 +74,7 @@ def points(suite):
             P.append(dict(deck="tb_osc30_psrr.cir", corner="tt", vdd=1.2, temp=27, code=MID, case=case))
     elif suite == "startup":
         for (c, v, t) in (("tt", 1.2, 27), ("ss", 1.08, 125), ("ff", 1.32, -40)):
-            P.append(dict(deck="tb_osc30_startup.cir", corner=c, vdd=v, temp=t, code=MID))
+            P.append(dict(deck="tb_osc30_startup.cir", corner=c, vdd=v, temp=t, code=int(ARG("--code", str(MID)))))
     elif suite == "mc":
         P += [dict(deck="tb_osc30_mc.cir", corner="tt", vdd=1.2, temp=27, code=MID, seed=s) for s in range(1, 51)]
     elif suite == "smoke":  # deck check: short versions of psrr step, startup, one mc seed, short jitter

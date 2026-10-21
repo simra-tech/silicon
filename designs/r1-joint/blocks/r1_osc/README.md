@@ -1,4 +1,237 @@
-# R1_OSC — 30 MHz RC relaxation oscillator (revision r1: schematic and layout)
+# R1_OSC — 30 MHz RC relaxation oscillator (revision 2: schematic r2 and layout r2d)
+
+## Revision 2 (T1, 2026-10-21): schematic change and layout r2d, closed post-layout
+
+State: **schematic revision 2 and layout r2d are DRC-, antenna- and LVS-clean. Post-layout (full RC) meets the D13
+window at code 22, the ss reach and the 2 % step at all five corners.** The fast-corner code-0 target (≤ 41 MHz) is
+not met and cannot be met with any RC trim (see "Open issues (revision 2)", R2-1). Nothing is measured. All numbers
+are **simulated** (ngspice 46, PDK models as in "Built against").
+
+**Reset code: `OSC_TRIM` = 22 (unchanged).** Post-layout code 22 gives 30.30 MHz at tt / 1.2 V / 27 °C
+(window 29.4–30.6 MHz for 30 MHz ± 2 %; D13 window 28–32 MHz). `r1_ctrl` keeps the reset value 22.
+
+**Binding number for the `r1_ctrl` STA:** 56.37 MHz at ff / 1.32 V / −40 °C, code 0 (post-layout). At the reset
+code 22 the ff value is 39.53 MHz (≤ 42 MHz). The target "code 0 ≤ 41 MHz at ff" fails by design (R2-1).
+
+### What changed
+
+| Item | Revision 1 (layout k) | Revision 2 (layout r2d) | Reason |
+| --- | --- | --- | --- |
+| Fixed bank capacitor CF (`C_FIX_SIDE`) | 28.55 × 28.55 µm (≈ 1.23 pF) | **26.70 × 26.70 µm (≈ 1.07 pF)** | larger trim range per code: ss code-0 reach with code 22 still at 30 MHz |
+| Timing resistor RA/RB | `rppd` 1 × 48.3 µm | **unchanged**, 1 × 48.3 µm | see "Design steps": with the switches at the banks the RA/RB cut of L1 is no longer needed |
+| Trim unit, switches, comparator, latch, divider | — | unchanged | — |
+| Trim switches (layout) | one row group at the bottom, 25–60 µm of wire to the banks | **one switch column per bank, directly west of the unit array**; drain on the bit line, p+ tap column | L2: bit-node wiring 14–23 fF made the trim non-binary |
+| Bit-node wiring C (PEX) | 14.2–22.7 fF | **1.1–2.6 fF** | same |
+| Channel tracks | 28 (10 bit tracks) | 19 (bit tracks removed, `osc_clk` added) | — |
+| `osc_clk` pin | east edge (Metal3 under the channel) | **west edge**, lowest Metal4 channel track | S7 floorplan constraint (coordinator, 2026-10-21) |
+| Macro | 154.4 × 118.4 µm = 0.01828 mm² | **148.2 × 110.4 µm = 0.01636 mm²** (−10.5 %) | — |
+
+Netlist of record: `schematic/r1_osc.spice` sha256 `00c73f748d86f2cbf5081d5c4c5fe298bd5213bf9ba2ae63bf4b0ea802c91c02`
+(revision 1 kept as `schematic/r1_osc_rev1.spice`, sha256 `d9d84501f5a18d5621ef9b6243d41172209fd738fe359d6067557669525cd949`).
+Layout of record: `layout/r1_osc.gds` (layout r2d) sha256 `7c5fb60fdbbfa3cce7714520d3bc652292f0ff964452e3bf4afe226ea68ba971`,
+generator `layout/r1_osc_layout.py` sha256 `c80061077826532d8fb7cb376e280f7de68bf7172431b26a9742ccfe4ca16102`,
+LVS CDL sha256 `600d5f2bb983601d904142c9d15f62beb363b91bbfafe7ded63c1e2cea6912aa`.
+PEX of record: `pex-rc-20261021-r2d`, PEX netlist sha256 `c6d76aac02c310790dbea47e8362a6f663f070edaa097eea7b5711aff2184c77`
+(220 R, 428 C, 372 fF; in the results root, not in the tree).
+xschem sheets re-generated from `gen_r1_osc.py`: `compare_netlists.py` 8 sub-circuits, 0 differences.
+
+### Design steps (schematic → layout → RC extraction)
+
+1. Layout first, with the revision-1 sizes: switch columns at the banks (layout r2b, PEX `pex-rc-20261021-r2b`).
+   Post-layout tt: code 0 38.45 MHz, code 22 27.97 MHz, step 3→4 1.60 % (layout k: 2.52 % at the carries); ss code 0
+   29.30 MHz (`sim/runs/r2-whatif-v0-20261021`). The carry error is gone. Reach still fails.
+2. Model from step 1 (half period linear in code: 0.221 ns per code; fixed part ≈ 49.7 units incl. wiring; loop delay
+   2.05 ns tt, 3.30 ns ss): ss code 0 ≥ 32 MHz with tt code 22 ≤ 30.6 MHz needs f(0)/f(22) ≥ 1.37 at tt, i.e. a
+   step of ≈ 1.8–1.9 % at code 0. A shorter RA/RB lowers this ratio (more of the period is loop delay): RA/RB × 0.85
+   gave ss code 0 / tt code 22 = 1.040 against 1.048 at × 1.0 (`r2-whatif-v85-20261021`). So the knob is CF, not RA/RB.
+3. What-if CF 26.4 / 26.7 / 27.0 µm on PEX r2b (`r2-whatif-cf*-20261021`): tt code 22 30.72 / 30.31 / 29.92 MHz,
+   ss code 0 33.33 / 32.72 / 32.13 MHz. Chosen: **26.70 µm** (balances the 30.6 MHz window edge and the 32 MHz reach).
+4. Schematic revision 2 written, layout regenerated (r2c), PEX r2c, full post-layout campaign started.
+5. The S7 constraint (all signal pins west) came during step 4. Layout r2d moves `osc_clk` to the west edge. PEX r2d:
+   `osc_clk` wiring 3.0 → 14.7 fF; coupling to `va`, `vb`, `vth`, `vbn` ≤ 0.09 fF each. tt trim r2d vs r2c: −0.03 to
+   −0.05 %. All post-layout numbers of record below are on r2d; the r2c runs are kept as superseded.
+
+### Status (revision 2)
+
+| Check | Criterion | Status | Evidence |
+| --- | --- | --- | --- |
+| xschem sheets vs SPICE source (revision 2) | 0 differences | **passed**: 8 sub-circuits, 0 differences | `schematic/compare_netlists.py`, `schematic/xschem_netlist/r1_osc.spice` |
+| DRC, main + maximal, deep, density off | 0 markers | **passed**: 0 | `layout/runs/layout-drc-20261021-r2d` |
+| Antenna | 0 markers | **passed**: 0 | `layout/runs/layout-ant-20261021-r2d` |
+| LVS vs netlist of record (dummies excluded, as layout k) | match | **passed**: 34 NMOS, 19 PMOS, 5 `rppd`, 13 `cap_cmim`, 1 `dpantenna`; 43 nets | `layout/runs/layout-lvs-20261021-r2d` |
+| Pins: 9 Metal3 pins at the edge, all signal pins west (S7) | as layout k, `osc_clk` west | **passed** (table "Pins") | `layout/runs/layout-pins-20261021-r2d` |
+| Bounding box | ≤ 154.4 × 118.4 µm (preferred ≤ 148.2 × 110.4 µm) | **passed**: 148.2 × 110.4 µm = 0.01636 mm² | `layout/r1_osc_layout_meta.json`, `layout/runs/layout-gen-20261021-r2d` |
+| Routing Metal1–Metal4, Metal5/TopMetal1 only on MIM plates; MIM plates, dummies, guard ring and `vss` shields as layout k | as layout k | **not run** as a separate check (by construction in the generator; LVS and DRC pass) | `layout/r1_osc_layout.py` |
+| Density | — | **not applicable** at block level (waived; chip-level fill) | — |
+| PEX (full RC) | extracted | **passed** | `layout/runs/pex-rc-20261021-r2d` |
+| Post-layout code 22, tt | 30 MHz ± 2 % (29.4–30.6 MHz) | **passed**: 30.30 MHz | `sim/runs/r2-postd-trim32-tt-20261021` |
+| Post-layout code 22, tt | 28–32 MHz (D13) | **passed**: 30.30 MHz | same |
+| Post-layout reach, ss / 1.08 V / 125 °C, code 0 | ≥ 32 MHz | **passed**: 32.70 MHz (margin 2.2 %) | `sim/runs/r2-postd-reach-20261021` |
+| Post-layout trim, 32 codes, tt, ss / 1.08 V / 125 °C, ff / 1.32 V / −40 °C | monotonic, step ≤ 2 % | **passed**: max step 1.89 / 1.84 / 1.92 % | `r2-postd-trim32-tt-20261021`, `r2-postd-reach-20261021` |
+| Post-layout trim, 32 codes, ss / 1.08 V / −40 °C and ff / 1.32 V / 125 °C | monotonic, step ≤ 2 % | **passed**: max step 1.84 / 1.90 % | `sim/runs/r2-postd-cross-20261021` |
+| Post-layout ff / 1.32 V / −40 °C, code 0 | ≤ 41 MHz | **failed**: 56.37 MHz (not reachable, R2-1; binding number for the STA) | `sim/runs/r2-postd-reach-20261021` |
+| Post-layout ff / 1.32 V / −40 °C, code 22 | ≤ 42 MHz (D13 STA) | **passed**: 39.53 MHz | same |
+| Post-layout loop delay | ≤ 3–4 ns | **passed**, small margin: max 3.74 ns (ss / 1.08 V / −40 °C and 125 °C, code 31) | trim32, reach and cross runs |
+| Post-layout duty, 5 × 32 codes | 50 % (no limit specified) | 48.66–49.44 % (record) | same |
+| Post-layout IDD | record | 229.9 µA (tt, code 22); 168.2–316.6 µA over 5 × 32 points | same |
+| Post-layout jitter, tt, code 22 (white noise, gear) | ≤ 280 ps over 30 cycles (S5) | **passed**: σ period 11.6 ps, σ 30 cycles 64.2 ps (6 µs, 170 periods; no-noise floor 0.007 / 0.03 ps) | `sim/runs/r2-postd-jitter-20261021` |
+| Post-layout start-up at reset code 22, tt and ss / 1.08 V / 125 °C (and ff / 1.32 V / −40 °C) | starts, correct frequency | **passed**: first edge 17.1 / 22.3 / 13.1 ns after `en`; en tied high: first edge 0.503 / 0.541 / 0.496 µs into the 1 µs ramp | `sim/runs/r2-postd-startup-20261021` |
+| Schematic revision 2, 32 codes at the 5 corners (pre-layout reference) | record | ran: tt code 22 32.69 MHz, ss code 0 36.80 MHz, step max 2.01–2.05 % at code 0→1 (the schematic alone is not the design point: CF is sized with the extracted wiring, which adds ≈ 8 % to the period) | `sim/runs/r2-sch-trim32-tt-20261021`, `r2-sch-reach-20261021`, `r2-sch-cross-20261021` |
+| Post-layout mismatch MC (tt, ss reach), PVT points other than the 5 corners, supply step / ripple, comparator noise, jitter at ss / ff, LEF | — | **not run** | — |
+| Measurement | — | **not run** | — |
+
+### Post-layout trim curves (layout r2d, full RC)
+
+| Corner | Code 0 | Code 16 | Code 22 | Code 31 | Step min–max (codes of max) | Monotonic | Duty | IDD code 22 | Loop delay max |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| tt / 1.2 V / 27 °C | 43.03 | 32.93 | 30.30 | 27.06 | 1.15–1.89 % (1→2) | yes | 48.92–49.32 % | 229.9 µA | 2.30 ns |
+| ss / 1.08 V / 125 °C | 32.70 | 25.19 | 23.21 | 20.77 | 1.14–1.84 % (1→2) | yes | 48.81–49.25 % | 173.2 µA | 3.74 ns |
+| ff / 1.32 V / −40 °C | 56.37 | 43.00 | 39.53 | 35.26 | 1.16–1.92 % (1→2) | yes | 49.02–49.39 % | 304.3 µA | 1.45 ns |
+| ss / 1.08 V / −40 °C | 33.41 | 25.74 | 23.72 | 21.23 | 1.13–1.84 % (1→2) | yes | 48.66–49.15 % | 169.2 µA | 3.74 ns |
+| ff / 1.32 V / 125 °C | 54.43 | 41.63 | 38.30 | 34.19 | 1.15–1.90 % (1→2) | yes | 49.10–49.44 % | 308.6 µA | 1.59 ns |
+
+Full tt curve (step = (f(k) − f(k+1)) / f(k)):
+
+| Code | 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12 | 13 | 14 | 15 |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| f (MHz) | 43.03 | 42.22 | 41.42 | 40.70 | 39.99 | 39.29 | 38.63 | 38.00 | 37.32 | 36.71 | 36.11 | 35.56 | 35.02 | 34.48 | 33.97 | 33.48 |
+| step to next (%) | 1.87 | 1.89 | 1.74 | 1.75 | 1.74 | 1.69 | 1.63 | 1.80 | 1.62 | 1.64 | 1.52 | 1.53 | 1.52 | 1.48 | 1.43 | 1.64 |
+| Code | 16 | 17 | 18 | 19 | 20 | 21 | 22 | 23 | 24 | 25 | 26 | 27 | 28 | 29 | 30 | 31 |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| f (MHz) | 32.93 | 32.46 | 31.99 | 31.56 | 31.13 | 30.71 | 30.30 | 29.92 | 29.50 | 29.12 | 28.74 | 28.39 | 28.05 | 27.70 | 27.37 | 27.06 |
+| step to next (%) | 1.43 | 1.45 | 1.35 | 1.36 | 1.35 | 1.32 | 1.28 | 1.40 | 1.28 | 1.30 | 1.21 | 1.22 | 1.22 | 1.19 | 1.15 | — |
+
+### Pre- versus post-layout, revision 1 versus revision 2 (MHz)
+
+| Point | r1 schematic | r1 post (layout k) | r2 schematic | r2 post (layout r2d) | r2 post vs r2 schematic |
+| --- | --- | --- | --- | --- | --- |
+| tt / 1.2 V / 27 °C, code 0 | 42.24 | 37.11 | 47.73 | 43.03 | -9.9 % |
+| tt / 1.2 V / 27 °C, code 22 | 30.03 | 27.54 | 32.69 | 30.30 | -7.3 % |
+| tt / 1.2 V / 27 °C, code 31 | 26.86 | 25.09 | 28.97 | 27.06 | -6.6 % |
+| ss / 1.08 V / 125 °C, code 0 | 32.61 | 28.36 | 36.80 | 32.70 | -11.1 % |
+| ss / 1.08 V / 125 °C, code 22 | 23.27 | 21.15 | 25.32 | 23.21 | -8.3 % |
+| ss / 1.08 V / 125 °C, code 31 | 20.84 | 19.29 | 22.46 | 20.77 | -7.5 % |
+| ff / 1.32 V / −40 °C, code 0 | 54.88 | 48.39 | 62.05 | 56.37 | -9.2 % |
+| ff / 1.32 V / −40 °C, code 22 | 38.94 | 35.86 | 42.40 | 39.53 | -6.8 % |
+| ff / 1.32 V / −40 °C, code 31 | 34.81 | 32.67 | 37.55 | 35.26 | -6.1 % |
+| ss / 1.08 V / −40 °C, code 0 | 33.41 | not run | 37.70 | 33.41 | -11.4 % |
+| ss / 1.08 V / −40 °C, code 22 | 23.86 | not run | 25.95 | 23.72 | -8.6 % |
+| ss / 1.08 V / −40 °C, code 31 | 21.37 | not run | 23.03 | 21.23 | -7.8 % |
+| ff / 1.32 V / 125 °C, code 0 | 53.19 | not run | 60.10 | 54.43 | -9.4 % |
+| ff / 1.32 V / 125 °C, code 22 | 37.81 | not run | 41.16 | 38.30 | -7.0 % |
+| ff / 1.32 V / 125 °C, code 31 | 33.82 | not run | 36.47 | 34.19 | -6.3 % |
+| Step max, all codes | 1.81 % | 2.63 % | 2.05 % | 1.92 % | — |
+
+### Start-up and jitter (layout r2d, full RC, reset code 22)
+
+| Corner | First edge after `en` rises | f after enable | `osc_clk` max while `en` = 0 (supply ramp) | First edge, `en` tied to `vdd` (1 µs ramp) |
+| --- | --- | --- | --- | --- |
+| tt / 1.2 V / 27 °C | 17.1 ns | 30.30 MHz | 81 mV | 0.503 µs |
+| ss / 1.08 V / 125 °C | 22.3 ns | 23.21 MHz | 85 mV | 0.541 µs |
+| ff / 1.32 V / −40 °C | 13.1 ns | 39.53 MHz | 75 mV | 0.496 µs |
+
+The second enable gives the same delay and frequency. While `en` = 0 after running, `osc_clk` stays at or below 0.1 mV.
+Revision 1 (schematic, code 16): 15.6 / 20.2 / 12.1 ns and 34–45 mV during the ramp. The ramp glitch on `osc_clk`
+is about twice as large (more `osc_clk` wiring); it stays far below the logic threshold.
+
+| Jitter, tt / 1.2 V / 27 °C, code 22 | Run | Mean period | σ period | σ over 30 cycles |
+| --- | --- | --- | --- | --- |
+| Revision 1 schematic, 15 µs | `r1b-jitter` | 33.300 ns | 14.9 ps | 103 ps |
+| Layout k, 6 µs | `post-jitter-20261021-b` | 36.304 ns | 12.8 ps | 39.1 ps |
+| **Layout r2d, 6 µs** | `r2-postd-jitter-20261021` | 32.997 ns | **11.6 ps** | **64.2 ps** |
+| Layout r2d, no noise (floor) | same, case `ref` | 33.012 ns | 0.007 ps | 0.03 ps |
+
+The 6 µs runs have about 5 independent 30-cycle windows, so the 30-cycle σ is uncertain by tens of percent (L6 of
+revision 1). Against the S5 budget (280 ps over ≈ 30 cycles) the margin is 4.4 ×.
+
+### Pins (layout r2d, S7)
+
+| Pin | Layer | Edge | Position (µm, centre) | Layout k |
+| --- | --- | --- | --- | --- |
+| `osc_clk` | Metal3 | **west** | x 0–1.5, y 21.15 | east edge |
+| `en` | Metal3 | west | y 25.15 | west, y 32.35 |
+| `trim0` … `trim4` | Metal3 | west | y 25.95, 26.75, 27.55, 28.35, 29.15 | west, y 33.15 … 36.35 |
+| `vdd` | Metal3 bar | north (full width) | y 108.4–110.4 | north |
+| `vss` | Metal3 bar | south (full width) | y 0–2 | south |
+
+### Commands (revision 2)
+
+From the repository root (POSIX sh):
+
+```
+G1_CPUSET=100-102; export G1_CPUSET; G1_RESULTS_ROOT=<G1_RESULTS_ROOT>; export G1_RESULTS_ROOT
+python3 designs/r1-joint/blocks/r1_osc/schematic/gen_r1_osc.py designs/r1-joint/blocks/r1_osc/schematic/r1_osc.spice
+sh designs/r1-joint/blocks/r1_osc/layout/run_checks.sh 20261021-r2d
+flow/run.sh klayout -b -r designs/r1-joint/blocks/r1_osc/layout/pin_check.py \
+  -rd gds=designs/r1-joint/blocks/r1_osc/layout/r1_osc.gds -rd ref=designs/r1-joint/blocks/r1_osc/layout/r1_osc_layout_k.gds
+sh designs/r1-joint/blocks/r1_osc/layout/run_pex.sh 20261021-r2d 20261021-r2d
+G1_CPUS=3; export G1_CPUS; G1_WORKDIR=designs/r1-joint/blocks/r1_osc; export G1_WORKDIR
+P=<G1_RESULTS_ROOT>/r1_osc/pex-rc-20261021-r2d/r1_osc_pex.spice
+flow/run.sh python3 sim/run_osc30.py trim32 <run-id> --jobs 3 --netlist $P
+flow/run.sh python3 sim/run_osc30.py reach <run-id> --jobs 3 --netlist $P
+flow/run.sh python3 sim/run_osc30.py probe <run-id> --jobs 3 --netlist $P --probe "ss:1.08:-40:0 ... ff:1.32:125:31"
+flow/run.sh python3 sim/run_osc30.py startup <run-id> --jobs 3 --code 22 --netlist $P
+flow/run.sh python3 sim/run_osc30.py jitter <run-id> --jobs 2 --cases "noise ref" --code 22 --tstop 6u \
+  --method gear --en 12.2e-9 --netlist $P
+python3 designs/r1-joint/blocks/r1_osc/sim/summarize_r2.py
+```
+
+The campaign script used is `<G1_RESULTS_ROOT>/r1_osc/r2d-campaign.sh` (one runner call per run id). New in this
+step: `layout/pin_check.py`, `sim/summarize_r2.py` (writes `sim/results/summary_r2.json`), runner option
+`startup --code N`. Frozen revision-1 files: `schematic/r1_osc_rev1.spice`, `layout/r1_osc_layout_k.py`,
+`layout/r1_osc_layout_k.gds`, `layout/r1_osc_lvs_k.cdl`, `layout/r1_osc_layout_meta_k.json`. A re-run of `r1_osc_layout_k.py`
+writes `r1_osc_layout_k.gds` byte-identical (sha256 `0b98903c…c0059`, checked 2026-10-21).
+
+Built against: as in "Built against" below (PDK `84374023ee8b4b126bebbba67fcbada0a9c0ff0b`, container image
+`sha256:ddeb6957…`, ngspice-46, KLayout 0.30.9, kpex 0.3.12, xschem 3.4.8RC). Each `run.json` records them.
+
+### Open issues (revision 2)
+
+- **R2-1. ff code 0 ≤ 41 MHz cannot be met together with the ss reach** (spec-ambiguity). Code 0 is the same
+  capacitor at both corners, so f(ff, 0) / f(ss, 0) is fixed by PVT: 1.72 post-layout (56.37 / 32.70 MHz),
+  1.68 at schematic level in revision 1. ≥ 32 MHz at ss and ≤ 41 MHz at ff would need ≤ 1.28. As the task
+  states for this case, the ss reach and the tt window are kept. **Binding number for the `r1_ctrl` STA:
+  56.37 MHz at ff / 1.32 V / −40 °C, code 0** (revision 1 schematic: 54.88 MHz; layout k: 48.39 MHz). At the reset
+  code 22 the fastest corner gives 39.53 MHz (≤ 42 MHz). Codes 0 … 17 exceed 42 MHz at ff / −40 °C
+  (code 17: 42.38 MHz, code 18: 41.75 MHz; revision 1 schematic: codes 0 … 16). D13 already says such codes are flagged by `OSC_COUNT`, not prevented; the host must not write
+  them at the fast corner. Owner of `r1_ctrl`: confirm that the STA closes at 42 MHz with this rule, or close at
+  56.4 MHz.
+- **R2-2. ss reach margin.** 32.70 MHz at code 0 is 2.2 % above 32 MHz. Local mismatch at this point was
+  σ 0.78 % in revision 1 (`r1a-mcreach`, schematic); mean − 3σ ≈ 31.9 MHz (*estimated*, the MC was not re-run
+  on revision 2 or on the PEX netlist). Not run: `mcreach` on the PEX netlist.
+- **R2-3. tt window margin.** Code 22 gives 30.30 MHz, 1.0 % above 30 MHz and 1.0 % below the 30.6 MHz edge of
+  the ± 2 % window. The code-to-code step is 1.3–1.4 % around code 22, so a ± 1 code error moves it out of ± 2 %
+  but stays inside the D13 window 28–32 MHz.
+- **R2-4. Loop delay at ss / 1.08 V / 125 °C** is up to 3.74 ns at code 31 (revision 1 schematic 2.32 ns; layout k 3.91 ns). The
+  limit is "≤ 3–4 ns". It costs reach margin, and it is mostly row-group wiring (unchanged from layout k).
+- **R2-5. Duty** is 48.6–49.4 % post-layout (schematic 49.7–49.9 %). `vb` has ≈ 10 fF more wiring than `va`
+  (32.4 vs 22.2 fF: the `vb` riser passes bank A). No duty limit is specified (open issue 4 of revision 1).
+- **R2-6. `osc_clk` now crosses the macro** (west pin, S7) on the lowest channel track, above the resistor block.
+  Extracted coupling to `va`, `vb`, `vth`, `vbn` ≤ 0.09 fF each; the tt curve moved −0.03 to −0.05 % (r2c → r2d).
+  The pin moved from the east to the west edge and the `en` / `trim` pins moved down by 7.2 µm: the chip-level
+  floorplan must use the new pin table.
+- **R2-7. Not run on revision 2:** PVT points other than the five corners, mismatch MC (tt and ss reach), supply
+  step and ripple, comparator noise, jitter at ss/ff and with 1/f noise, LEF/abstract, density at block level
+  (waived as in layout k). MIM bottom-plate parasitics are still not modelled (L3 of revision 1).
+- **R2-8. Area.** 0.01636 mm² (−10.5 % against layout k). The S6 option C10 (0.012 mm²) is not reached: the
+  resistor block and CTH (west half) and the two banks are unchanged in size.
+
+### Failures and mistakes (revision 2)
+
+| # | What happened | Class | Evidence |
+| --- | --- | --- | --- |
+| 1 | First switch-column layout (r2a): Gat.b × 4 (switch gate straps 0.11–0.16 µm from the next gate) and M2.d / M3.d × 12 each (0.30 µm via pads below minimum area) | estimation | `layout/runs/layout-drc-20261021-r2a` |
+| 2 | r2a antenna: Ant.b on the two bit-0 switch gates (`trim0`): the new 50 µm riser to bank B was not counted. Fixed with 0.20 µm risers and trim0 next to the switches | estimation | `layout/runs/layout-ant-20261021-r2a` |
+| 3 | The revision-1 recommendation (L1: RA/RB ≈ 41 µm) was based on the layout-k parasitics. With the switches at the banks it lowers the reach ratio; the right knob is CF. The what-if `v80` was built but not run (chain stopped) | estimation | `sim/runs/r2-whatif-v85-20261021`, `r2-whatif-cf*-20261021` |
+| 4 | The task target "ff code 0 ≤ 41 MHz" is not reachable with any RC trim (f(ff,0)/f(ss,0) is fixed by PVT); recorded as R2-1 | spec-ambiguity | this section |
+| 5 | S7 (osc_clk on the west edge) arrived after layout r2c and during its post-layout campaign; trim32-tt, reach and cross on r2c (≈ 55 min of 3 CPUs) are superseded | coordination | `sim/runs/r2-post-*-20261021`, `<G1_RESULTS_ROOT>/r1_osc/r2-campaign.out` |
+| 6 | Campaign script not executable (exit 126); relaunched | tooling | `<G1_RESULTS_ROOT>/r1_osc/r2d-campaign.out` |
+| 7 | A `find /` for the antenna deck ran past 2 min and was stopped; foreground wait loops hit the 10 min tool limit several times | tooling | session |
+| 8 | The generator docstring was edited after the r2c run, so the generator sha256 in `layout-gen-20261021-r2c/run.json` differs from the file; a re-run gave the same GDS sha256 (`6b6bc0ee…`). r2d records the final generator | process-hygiene | `layout/runs/layout-gen-20261021-r2d` |
+
+*The sections below describe revision 1 (schematic r1 and layout k). They are kept as the record of that revision.*
+
+## Revision 1 (schematic r1, layout k)
 
 State on 2026-10-21: **schematic sized and simulated; layout DRC-clean and LVS-clean; post-layout simulation fails
 two targets** (reach at ss/1.08 V/125 °C and trim step ≤ 2 %; see "Layout"). Nothing is measured. Every number in
@@ -56,7 +289,7 @@ The reason is in "Open issues", item 1. The `r1_ctrl` register `OSC_TRIM` must r
 | `sim/runs/<run-id>/` | Per run: `run.json`, `results.json`, `results.csv`, netlist snapshot. |
 | `layout/r1_osc_layout.py` | Layout generator (KLayout Python, PDK PCells). Writes `layout/r1_osc.gds`, `layout/r1_osc_lvs.cdl`, `layout/r1_osc_layout_meta.json`. |
 | `layout/r1_layout_lib.py` | Drawing library. Copy of the G1 `g1_osc` layout library (two header lines added). |
-| `layout/r1_osc.gds` | Layout of record (layout k), sha256 `0b98903c7e04bbdaec6cbef6e60f610d2f6a5b993ebc158a09294e2c2db0c059`. Written without GDS timestamps, so a re-run gives the same hash. |
+| `layout/r1_osc.gds` | Revision 1: layout k (now frozen as `layout/r1_osc_layout_k.gds`; `r1_osc.gds` is layout r2d, see "Revision 2"), sha256 `0b98903c7e04bbdaec6cbef6e60f610d2f6a5b993ebc158a09294e2c2db0c059`. Written without GDS timestamps, so a re-run gives the same hash. |
 | `layout/r1_osc_lvs.cdl` | LVS reference: the netlist of record in CDL form. The 44 dummy MIM units are not in it (see "Layout"). |
 | `layout/run_checks.sh`, `layout/write_runjson.py` | Generator + PDK DRC + antenna + LVS, and the `run.json` writer. |
 | `layout/pex_input.py`, `layout/run_pex.sh`, `layout/pex_build.py` | Extraction (method of `r1_bgr`): kpex coupling C, KLayout `RNetExtractor` wiring R, MIM re-inserted. |

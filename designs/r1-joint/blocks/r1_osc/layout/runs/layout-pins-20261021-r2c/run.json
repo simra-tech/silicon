@@ -1,0 +1,20 @@
+{
+ "run_id": "layout-pins-20261021-r2c",
+ "written": "2026-10-21",
+ "pdk_commit": "84374023ee8b4b126bebbba67fcbada0a9c0ff0b",
+ "container": "tapeoutbench-eda:latest sha256:ddeb69576f2808676d1c5d474ecf04f6d1d6f8abdcff6b72b39790ded924bab2",
+ "cpuset": "100-102",
+ "tools": {
+  "klayout": "0.30.9"
+ },
+ "command": "flow/run.sh klayout -b -r designs/r1-joint/blocks/r1_osc/layout/pin_check.py -rd gds=designs/r1-joint/blocks/r1_osc/layout/r1_osc.gds -rd ref=designs/r1-joint/blocks/r1_osc/layout/r1_osc_layout_k.gds",
+ "inputs": {
+  "gds_sha256": "6b6bc0ee72c2fff8ff87711b3c6648353cf39e068c36f06c30cffbe30a7e814e",
+  "ref_gds_sha256": "0b98903c7e04bbdaec6cbef6e60f610d2f6a5b993ebc158a09294e2c2db0c059",
+  "script_sha256": "743d58bd4666f789e772de0e4a7d79412c4f575e8913e3e3192fd91082b6288b"
+ },
+ "question": "revision 2 layout: the 9 ports as one Metal3 pin each at the macro edge, same names and sides as layout k?",
+ "result": "9/9 pins, one Metal3 pin shape each at the edge, no extra pins, same names and sides as layout k; boundary 148.2 x 110.4 um (k: 154.4 x 118.4). Pin y positions changed (see README Revision 2).",
+ "disposition": "passed at the time; superseded: the S7 constraint (osc_clk on the west edge, 2026-10-21) came after this run, r2c has osc_clk on the east edge and fails the new west-edge check (layout-pins-20261021-r2d)",
+ "log": "pin_check.log"
+}

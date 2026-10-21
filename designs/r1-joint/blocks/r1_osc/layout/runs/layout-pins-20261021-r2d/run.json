@@ -1,0 +1,20 @@
+{
+ "run_id": "layout-pins-20261021-r2d",
+ "written": "2026-10-21",
+ "pdk_commit": "84374023ee8b4b126bebbba67fcbada0a9c0ff0b",
+ "container": "tapeoutbench-eda:latest sha256:ddeb69576f2808676d1c5d474ecf04f6d1d6f8abdcff6b72b39790ded924bab2",
+ "cpuset": "100-102",
+ "tools": {
+  "klayout": "0.30.9"
+ },
+ "command": "flow/run.sh klayout -b -r designs/r1-joint/blocks/r1_osc/layout/pin_check.py -rd gds=designs/r1-joint/blocks/r1_osc/layout/r1_osc.gds -rd ref=designs/r1-joint/blocks/r1_osc/layout/r1_osc_layout_k.gds",
+ "inputs": {
+  "gds_sha256": "7c5fb60fdbbfa3cce7714520d3bc652292f0ff964452e3bf4afe226ea68ba971",
+  "ref_gds_sha256": "0b98903c7e04bbdaec6cbef6e60f610d2f6a5b993ebc158a09294e2c2db0c059",
+  "script_sha256": "b9a54998ddf3479a089e785e2554af75babcf18a3ba909729052a9ffbb333b41"
+ },
+ "question": "revision 2 layout r2d: 9 ports, one Metal3 pin each at the macro edge, every signal pin (incl. osc_clk) on the west edge (S7)?",
+ "result": "passed: 9/9 pins at the edge, en, trim0-4 and osc_clk on the west edge, vdd (Metal3 bar, north) and vss (Metal3 bar, south); boundary 148.2 x 110.4 um (k: 154.4 x 118.4; osc_clk was east in k)",
+ "disposition": "passed",
+ "log": "pin_check.log"
+}

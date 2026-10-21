@@ -1,0 +1,29 @@
+{
+ "run_id": "r2-postd-startup-20261021",
+ "suite": "startup",
+ "command": "G1_CPUSET=100-102 G1_CPUS=3 G1_WORKDIR=designs/r1-joint/blocks/r1_osc flow/run.sh python3 sim/run_osc30.py startup r2-postd-startup-20261021 --jobs 3 --code 22 --netlist <G1_RESULTS_ROOT>/r1_osc/pex-rc-20261021-r2d/r1_osc_pex.spice --question 'revision 2 post-layout (layout r2d): start-up (supply ramp en low, en toggle, en tied high) at tt, ss/1.08/125, ff/1.32/-40, reset code 22'",
+ "start_utc": "2026-10-21T07:21:31.642423Z",
+ "end_utc": "2026-10-21T07:28:10.449153Z",
+ "wall_s": 398.8,
+ "tools": {
+  "ngspice": "ngspice-46",
+  "container_image": "tapeoutbench-eda:latest sha256:ddeb69576f2808676d1c5d474ecf04f6d1d6f8abdcff6b72b39790ded924bab2"
+ },
+ "pdk_commit": "84374023ee8b4b126bebbba67fcbada0a9c0ff0b",
+ "inputs": {
+  "netlist": "<G1_RESULTS_ROOT>/r1_osc/pex-rc-20261021-r2d/r1_osc_pex.spice",
+  "netlist_sha256": "c6d76aac02c310790dbea47e8362a6f663f070edaa097eea7b5711aff2184c77",
+  "netlist_of_record_sha256": "00c73f748d86f2cbf5081d5c4c5fe298bd5213bf9ba2ae63bf4b0ea802c91c02",
+  "decks": {
+   "tb_osc30_startup.cir": "d666f33f31047848f9d9ea01091a53f2ab2f8f38c69bf8d158e47c577aec46a1"
+  },
+  "runner_sha256": "19979350851bc7000d54b7f29ec4b112879ddf1f29474a15c02b7c5a57ea593d"
+ },
+ "raw_results": "G1_RESULTS_ROOT/r1_osc/r2-postd-startup-20261021/ (expanded decks, logs, raw)",
+ "n_points": 3,
+ "n_rc_nonzero": 0,
+ "question": "revision 2 post-layout (layout r2d): start-up (supply ramp en low, en toggle, en tied high) at tt, ss/1.08/125, ff/1.32/-40, reset code 22",
+ "result": "code 22: first edge after en 17.1 / 22.3 / 13.1 ns (tt/ss/ff); en tied high 0.503 / 0.541 / 0.496 us; osc_clk <= 85 mV during ramp with en low",
+ "disposition": "passed",
+ "probe": null
+}

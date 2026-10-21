@@ -1,0 +1,77 @@
+* r1_osc LVS reference netlist, written by layout/r1_osc_layout.py from schematic/r1_osc.spice (netlist of
+* record). Format conversion only (X-calls of primitives -> M/R/C/D, sub! -> vss, mm_ok and ng dropped). The 44 dummy
+* cap_cmim units of the layout (both plates on vss) are not listed: the PDK LVS deck purges two-terminal devices
+* whose terminals are on one net (run layout-lvs-20261021-a). Their count is checked in r1_osc_layout_meta.json.
+.subckt r1_osc en trim0 trim1 trim2 trim3 trim4 osc_clk vdd vss
+RRA vdd va vss rppd w=1u l=48.3u b=0 m=1
+RRB vdd vb vss rppd w=1u l=48.3u b=0 m=1
+XCA trim0 trim1 trim2 trim3 trim4 va vss r1_osc_cbank
+XCB trim0 trim1 trim2 trim3 trim4 vb vss r1_osc_cbank
+MMRA va rsta vss vss sg13_lv_nmos w=4u l=0.13u m=1
+MMRB vb rstb vss vss sg13_lv_nmos w=4u l=0.13u m=1
+RRT1 vdd vth vss rppd w=1u l=384.3u b=0 m=1
+RRT2 vth vss vss rppd w=1u l=384.3u b=0 m=1
+CCTH vth vss cap_cmim w=26u l=26u m=1
+DDANT vth vdd dpantenna w=0.78u l=0.78u
+RRBIAS vdd vbn vss rppd w=1u l=80u b=0 m=1
+MMBD vbn vbn vss vss sg13_lv_nmos w=2u l=0.5u m=1
+XCMPA va vth vbn ca vdd vss r1_osc_cmp
+XCMPB vb vth vbn cb vdd vss r1_osc_cmp
+XEN en en_n vdd vss r1_osc_inv
+XNQ ca en_n qb q vdd vss r1_osc_nor3
+XNQB cb q qb vdd vss r1_osc_nor2
+XRSTB qb en rstb vdd vss r1_osc_nand2
+XRSTA q rsta vdd vss r1_osc_inv
+XB1 q qn_b vdd vss r1_osc_inv
+XB2 qn_b osc_clk vdd vss r1_osc_buf4
+.ends
+.subckt r1_osc_cbank t0 t1 t2 t3 t4 top vss
+CCF top vss cap_cmim w=28.55u l=28.55u m=1
+CCT0 top b0 cap_cmim w=4.03u l=4.03u m=1
+MMS0 b0 t0 vss vss sg13_lv_nmos w=0.5u l=0.13u m=1
+CCT1 top b1 cap_cmim w=4.03u l=4.03u m=2
+MMS1 b1 t1 vss vss sg13_lv_nmos w=0.5u l=0.13u m=1
+CCT2 top b2 cap_cmim w=4.03u l=4.03u m=4
+MMS2 b2 t2 vss vss sg13_lv_nmos w=1u l=0.13u m=1
+CCT3 top b3 cap_cmim w=4.03u l=4.03u m=8
+MMS3 b3 t3 vss vss sg13_lv_nmos w=2u l=0.13u m=1
+CCT4 top b4 cap_cmim w=4.03u l=4.03u m=16
+MMS4 b4 t4 vss vss sg13_lv_nmos w=4u l=0.13u m=1
+.ends
+.subckt r1_osc_cmp inp inn vbn out vdd vss
+MMT tail vbn vss vss sg13_lv_nmos w=2u l=0.5u m=2
+MM1 d1 inp tail vss sg13_lv_nmos w=4u l=0.3u m=1
+MM2 o1 inn tail vss sg13_lv_nmos w=4u l=0.3u m=1
+MM3 d1 d1 vdd vdd sg13_lv_pmos w=2u l=0.3u m=1
+MM4 o1 d1 vdd vdd sg13_lv_pmos w=2u l=0.3u m=1
+XI1 o1 o2 vdd vss r1_osc_inv
+XI2 o2 out vdd vss r1_osc_inv
+.ends
+.subckt r1_osc_inv a y vdd vss
+MMP y a vdd vdd sg13_lv_pmos w=1u l=0.13u m=1
+MMN y a vss vss sg13_lv_nmos w=0.5u l=0.13u m=1
+.ends
+.subckt r1_osc_buf4 a y vdd vss
+MMP y a vdd vdd sg13_lv_pmos w=4u l=0.13u m=1
+MMN y a vss vss sg13_lv_nmos w=2u l=0.13u m=1
+.ends
+.subckt r1_osc_nor3 a0 a1 a2 y vdd vss
+MMP0 p0 a0 vdd vdd sg13_lv_pmos w=3u l=0.13u m=1
+MMP1 p1 a1 p0 vdd sg13_lv_pmos w=3u l=0.13u m=1
+MMP2 y a2 p1 vdd sg13_lv_pmos w=3u l=0.13u m=1
+MMN0 y a0 vss vss sg13_lv_nmos w=0.5u l=0.13u m=1
+MMN1 y a1 vss vss sg13_lv_nmos w=0.5u l=0.13u m=1
+MMN2 y a2 vss vss sg13_lv_nmos w=0.5u l=0.13u m=1
+.ends
+.subckt r1_osc_nor2 a0 a1 y vdd vss
+MMP0 p0 a0 vdd vdd sg13_lv_pmos w=2u l=0.13u m=1
+MMP1 y a1 p0 vdd sg13_lv_pmos w=2u l=0.13u m=1
+MMN0 y a0 vss vss sg13_lv_nmos w=0.5u l=0.13u m=1
+MMN1 y a1 vss vss sg13_lv_nmos w=0.5u l=0.13u m=1
+.ends
+.subckt r1_osc_nand2 a0 a1 y vdd vss
+MMP0 y a0 vdd vdd sg13_lv_pmos w=1u l=0.13u m=1
+MMP1 y a1 vdd vdd sg13_lv_pmos w=1u l=0.13u m=1
+MMN0 y a0 n0 vss sg13_lv_nmos w=1u l=0.13u m=1
+MMN1 n0 a1 vss vss sg13_lv_nmos w=1u l=0.13u m=1
+.ends

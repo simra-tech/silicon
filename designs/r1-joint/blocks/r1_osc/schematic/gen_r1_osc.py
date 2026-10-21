@@ -20,10 +20,10 @@ mm_ok=1 on every device, which this netlist carries; the non-mismatch model sect
 import sys
 
 # ---- sizes (revision tracked in ../README.md) ----
-REV = "r1"
+REV = "r2"
 L_R = "48.3u"         # timing rppd length per branch, w = 1 um  (R ~ 70 + 260*L[um] Ohm)
 C_UNIT_SIDE = 4.03   # um: unit cmim 4.03 x 4.03 um  ~ 25.0 fF (1.5 fF/um2 + 40 aF/um perimeter)
-C_FIX_SIDE = 28.55   # um: fixed cmim per bank ~ 1.23 pF
+C_FIX_SIDE = 26.70   # um: fixed cmim per bank ~ 1.07 pF (revision 2; r1: 28.55 um ~ 1.23 pF, see README "Revision 2")
 SW_W = ["0.5u", "0.5u", "1u", "2u", "4u"]   # trim switch NMOS widths, bit 0..4 (l = 0.13 um)
 L_RBIAS = "80u"      # bias reference rppd (vdd -> diode), w = 1 um
 M_TAIL = 2           # comparator tail = M_TAIL x reference diode (2u/0.5u)
