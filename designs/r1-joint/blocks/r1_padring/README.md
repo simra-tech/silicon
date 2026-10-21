@@ -2,6 +2,96 @@
 
 Block `r1_padring` (track T6). This block builds the pad ring of the R1 chip: 24 pads, empty core.
 
+## Revision c (1600 um, LVS reference fixed)
+
+State 2026-10-21: **the ring-only projected LVS of the 1600 um ring passes**, run `ring-20261021-c`.
+The ring GDS does not change. It is the same file as revision b, byte for byte (SHA-256 `40514b4f4ff7888ac0ca95329470e47c8c93c1b3efc7fec1bee2f646b8dbac19`).
+The fault was in the LVS reference netlists, not in the layout. The pad centres do not change. The pad map in `../../padframe/README.md` stays valid.
+
+### Cause
+
+1. Revision b used the revision a reference netlists without change. These netlists list the revision a IO fillers:
+   40 x `Filler4000`, 28 x `Filler2000`, 44 x `Filler400` (112 cells). The 1600 um layout has 92 x `Filler4000`, 32 x `Filler400` and 8 x `Filler200` (132 cells).
+2. Every IO cell, corner and filler has two `ptap1` tap devices (tie to `VSS` and to `IOVSS`). The deck combines all taps in parallel.
+   It then compares the area `A` and the perimeter `P` of the combined taps as primary parameters, with no tolerance (`custom_devices.lvs`, class `CustomTap`).
+3. Thus the two combined tap devices had the topology of the reference but other `A` and `P`. The LVS tool reported them as "match with warning".
+   It then marked the three nets on their terminals (`$1`/`SUBSTRATE_NODE`, `VSS`, `IOVSS`) as mismatched.
+   Layout `IOVSS` tap: A = 288 962.04 um², P = 70 906.21 um. Reference: 235 272.82 um², 63 576.85 um (the revision a values).
+4. The change of the tap sums equals the change of the filler set exactly. This gives the tap values of the 1 um filler:
+   `IOVSS` tap A = 40.9752 um², P = 149.7 um; `VSS` tap A = 0.678 um², P = 5.12 um.
+
+Evidence: [`reports/ring-20261021-c/diagnosis.txt`](reports/ring-20261021-c/diagnosis.txt) (`flow/lvs_tapdiag.py` on the revision a and b databases).
+
+The corner gaps are not the cause. `flow/check_abutment.py` compares the cross-section of each layer on the two sides of every cell boundary in the IO row (160 boundaries, nofill GDS).
+On Metal2, Metal3, Metal4, Metal5, TopMetal1 and TopMetal2 there is no break at any boundary.
+At the `Filler200` boundaries only Activ differs: the 1 um cell has less tap Activ. Metal1 is continuous there.
+The Metal1 and Activ differences at the IO-cell and corner boundaries are the same in revision a (`abutment_1414_nofill.json`). They are cell-internal shapes at the cell edge, not rail breaks.
+The PDK cell `sg13g2_Filler200` has the CDL counterpart `sg13g2_Filler200`. The ring uses the copy `retained_fullchip_sg13g2_Filler200` (revision b, item 2). The cell name has no effect on the projected (flat) LVS.
+The 22 net labels and 24 pad labels are at the pad centres (bond-map check: 22 labels at the row centres).
+
+### Fix
+
+1. `flow/make_cdl.py` has a new option `--fillers=<build report>`. It takes the IO filler population from the key `fillers` of the ring build report.
+   It writes one instance line per filler. It adds the explicit-VSS derivative `G1_VSS_DERIVATIVE__sg13g2_Filler200` with the tap values of step 4 above. This has the same form as the G1 derivatives of `Filler400` and `Filler4000`.
+2. Without the option, the script writes the revision a files again (only the spelling of the source path in line 2 differs). The revision a netlists stay as they are.
+3. New references for the 1600 um ring: `netlist/r1_padring_1600.cdl` (canonical), `netlist/r1_padring_1600_projection_src.cdl` and `netlist/r1_padring_1600_projected_ref.cdl` (G1 form),
+   `netlist/r1_padring_1600_ringonly_projection_src.cdl` and `netlist/r1_padring_1600_ringonly_projected_ref.cdl` (ring-only form).
+   The tap sums of the flat ring-only reference equal the layout extraction (`IOVSS` 288 962.0397 um² / 70 906.208 um, `VSS` 1203.0816 um² / 8111.936 um).
+4. The ring generator `flow/build_ring_1600.py` does not change. I ran it again: the nofill and filled GDS are byte-identical to revision b.
+5. `flow/run_ring_1600_c.sh` lists the command sequence. I ran the steps one by one with these commands, not the chained script.
+
+### Status (revision c)
+
+| Check | Status | Evidence |
+| --- | --- | --- |
+| Ring GDS regenerated, same bytes as revision b | passed | `<G1_RESULTS_ROOT>/r1_padring/ring-20261021-c/r1_padring_1600.gds`; [`reports/ring-20261021-c/run.json`](reports/ring-20261021-c/run.json); `build_ring_1600.json` |
+| IO-row rail continuity on Metal2 to TopMetal2 (160 cell boundaries, corners and `Filler200` included) | passed, 0 breaks | `reports/ring-20261021-c/abutment_1600_nofill.json` |
+| LVS, projected reference, ring-only form (`netlist/r1_padring_1600_ringonly_projected_ref.cdl`) | **passed**: 261 of 261 devices, 119 of 119 nets, 40 pins; "Congratulations! Netlists match."; 2957 s | `reports/ring-20261021-c/lvs_projected_ringonly/` (`pair_counts.json`, `tapdiag.txt`) |
+| LVS, projected reference, G1 form (`netlist/r1_padring_1600_projected_ref.cdl`) | **failed**, as revision a: 210 of 261 devices, 59 of 119 nets (revision a: 210 and 59) | `reports/ring-20261021-c/lvs_projected/`; see "G1-form and canonical LVS" below |
+| LVS, canonical reference (`netlist/r1_padring_1600.cdl`) | **failed** (known): 14 pairs, 12 NoMatch, 2 Skipped; per-circuit counts equal to revisions a and b | `reports/ring-20261021-c/lvs_canonical/` |
+| KLayout main DRC | **passed**, 0 items, 561 categories, 181.4 s | `reports/ring-20261021-c/drc_main/`, `drc_summary.json` |
+| KLayout maximal DRC (`sg13g2_maximal`) | **passed**, 0 items, 272 categories, 271.3 s | `reports/ring-20261021-c/drc_maximal/` |
+| KLayout precheck DRC (with density) | **passed**, 0 items, 455 categories, 117.9 s | `reports/ring-20261021-c/precheck/` |
+| Density with fill | **passed**, 0 items, 7 categories; values equal to revision b | `reports/ring-20261021-c/density/` |
+| KLayout antenna | **failed**, 12 items (4 x `Ant.e_Metal5`, 4 x `Ant.e_TopMetal1`, 4 x `Ant.e_TopMetal2`), as revisions a and b (empty core) | `reports/ring-20261021-c/antenna/` |
+| Bond map against the GDS | **passed**, 24 of 24 openings, `all_ok: true` | `reports/ring-20261021-c/verify_bondmap_r1_1600.json` |
+| Core window | passed: 878.62 x 875.14 um = 0.769 mm², row continuous on 4 sides | `reports/ring-20261021-c/measure_ring_1600.json` |
+| Same 24 IO cells in the same order and orientation as revision a | passed | `reports/ring-20261021-c/compare_order.json` |
+| PNG | done, 248 891 bytes, byte-identical to revision b | [`reports/ring-20261021-c/r1_padring_1600.png`](reports/ring-20261021-c/r1_padring_1600.png) |
+| Hash of the ring GDS unchanged by the checks | passed | `reports/ring-20261021-c/input_gds.sha256`, `.after` |
+| Pad centres, pad map | not applicable | no change |
+| Other items of the revision b table (LibreLane, `dev` deck, Magic/netgen, intake pre-check, PEX/IR/EM/ESD, net identity, tri-state pad, measurement) | not run | as revision b |
+
+Built against: as revision b (PDK `84374023…`, image `sha256:ddeb6957…`, KLayout 0.30.9, stock decks unmodified, CPUs 116-119).
+
+### G1-form and canonical LVS
+
+The G1-form failure is real for a ring without a core, but it is not a ring fault. The G1-form reference ties the substrate pin of every IO cell to `VSS`.
+The layout substrate reaches `VSS` only through the ordinary p-taps of core cells. The empty core has none. So all devices with a substrate terminal (taps, antenna diodes, NMOS bulks) sit on a separate layout net `$1`.
+The ring-only form, which keeps the substrate as its own node, now matches completely. This shows that no other difference exists.
+The one device and one net more mismatch of revision b came from the filler set (same cause as item 1). With the 1600 um reference the counts equal revision a (210 and 59).
+The canonical failure is a deck limitation. The 12 NoMatch circuits are IO-cell internals (clamps, `DCNDiode`, `DCPDiode`, `LevelUpInv`, `RCClampInverter`, `g1_LevelDown_polyres`).
+The KLayout deck compares them against the PDK IO-cell CDL. That CDL does not describe these cells as the deck extracts them (G1 record R13, upstream issues in `designs/g1-guardian/review/upstream/evidence/README.md`).
+The counts per circuit are the same for the 1414 um and the 1600 um ring and for both filler sets. The filler cause does not apply there.
+Use the G1-form projected LVS on the full chip, where the core taps tie the substrate to `VSS`.
+
+### Failures and mistakes (revision c)
+
+| # | Class | What happened | Effect and fix |
+| --- | --- | --- | --- |
+| 1 | regression | Revision b changed the IO filler set but kept the revision a reference netlists. The README said "the revision a netlists apply without change". The two combined tap devices then differed in area and perimeter. | Ring-only LVS failed in revision b. Fixed: `make_cdl.py --fillers` writes the references from the build report. Ring-only LVS passes |
+| 2 | verification-gap | The revision b diagnosis counted terminals per net but did not print device parameters. The parameter difference stayed hidden for one revision. | `flow/lvs_tapdiag.py` prints status, parameters and terminal nets of the tap devices |
+| 3 | process-hygiene | The first version of `flow/check_abutment.py` used the cell bounding box, not the `prBoundary` (189/4). Filler shapes reach past the outline, so it reported overlaps that do not exist. | Changed to the `prBoundary` outline before any result was used |
+| 4 | tooling | Two diagnostic scripts failed once on the KLayout API (`each_log_entry` does not exist; a polygon has no `bottom`). | Fixed in place; the log API line prints "no log API" and is harmless |
+| 5 | estimation | The three LVS runs took 40 to 49 minutes on the busy server (load average 37 to 56), not the 34 minutes of revision b. | No effect on results |
+
+### Open items (revision c)
+
+1. Use `netlist/r1_padring_1600_projected_ref.cdl` (G1 form) as the base of the full-chip LVS reference. If the filler set changes again, run `make_cdl.py --fillers` with the new build report.
+2. The open items 2 to 4 of revision b stay open (core placement, antenna on the full chip, bond plan on the chip GDS).
+
+---
+
 ## Revision b (1600 um)
 
 State 2026-10-21: **the 1600 um ring is the ring of record**, run `ring-20261021-b`. It follows decision D10
@@ -59,7 +149,7 @@ I ran the steps one by one with the commands in `reports/ring-20261021-b/run.jso
 | Same ring before fill | `r1_padring_1600_nofill.gds`, `edd52b57cfb1156d555713a56bd8cbc227067de3f71e62e2b6c33d86d3d4b39a` (bulk only) |
 | Source | `r1_padring_nofill.gds` of run `ring-20261020-a`, `6d8a34d04c9e5d03d6fbfcdb0a6d8d07d113a9abd289fc88f6fd353232ffc730` |
 | LEF reference | [`layout/r1_padring_1600_ref.lef`](layout/r1_padring_1600_ref.lef) (`flow/make_lef.py <out> 1600`) |
-| Netlists | the revision a netlists apply without change: the cells, their order and their nets are the same |
+| Netlists | the revision a netlists were used without change. This was wrong: the filler set differs (revision c). Use `netlist/r1_padring_1600*.cdl` |
 | Bond map and plan | [`../../padframe/`](../../padframe/README.md): `bondmap_r1_1600_ring.csv`, `bondplan_r1_1600.svg`, `bondplan_r1_1600.json` |
 | Screenshot | [`reports/ring-20261021-b/r1_padring_1600.png`](reports/ring-20261021-b/r1_padring_1600.png) (249 kB, 700 x 700 px) |
 
@@ -129,7 +219,7 @@ Metal3 52.84 %, Metal4 52.47 %, Metal5 52.83 % (limit 35 to 60), TopMetal1 53.52
 | --- | --- | --- | --- |
 | 1 | spec-ambiguity | S6 gives pad centres 450 to 1150 um (centred row). That makes a gap of 89 um between a corner and the first IO cell. The filler cells have widths 20, 10 and 2 um, so an odd gap needs a 1 um cell. S6 did not say this. | Used the PDK `Filler200` (1 um). The pads stay centred. The other choice was a 1 um shift of the row (gaps 88 and 90 um) |
 | 2 | regression | In try 1 (GDS `16ba76ab…`) the 1 um filler kept the PDK name `sg13g2_Filler200`. The canonical LVS then paired this cell with the reference and reported one more NoMatch circuit (13 instead of 12). | Renamed the copy `retained_fullchip_sg13g2_Filler200`, like the other filler copies. The canonical LVS is back to 12 NoMatch. Rebuilt, refilled and re-ran every check. Try 1 stays in `<G1_RESULTS_ROOT>/r1_padring/ring-20261021-b-try1/` (DRC 0 items there too) |
-| 2b | regression | The final ring-only projected LVS fails (3 nets: `$1`, `VSS`, `IOVSS`; 2 tap devices with a warning). Revision a passed. The G1-form LVS shows one device and one net more mismatch. The device and net counts per net are equal in layout and reference. The layout shows source and drain of the `sg13_hv_nmos` devices on `VSS` and `IOVSS` in the other order than the reference, which should not matter. Only the pad positions, the filler cells and the die size changed. | **Not resolved.** I had no time left to find out if this is a graph-matching ambiguity of the LVS tool or a layout fault. A test is needed: LVS of the revision a ring-only GDS with the 1 um filler added, or of a 1600 um ring with a 1 um row shift and no `Filler200`. Evidence: `reports/ring-20261021-b/lvs_projected_ringonly/diagnosis.txt` |
+| 2b | regression | The final ring-only projected LVS fails (3 nets: `$1`, `VSS`, `IOVSS`; 2 tap devices with a warning). Revision a passed. The G1-form LVS shows one device and one net more mismatch. The device and net counts per net are equal in layout and reference. The layout shows source and drain of the `sg13_hv_nmos` devices on `VSS` and `IOVSS` in the other order than the reference, which should not matter. Only the pad positions, the filler cells and the die size changed. | **Resolved in revision c** (cause: the reference netlists kept the revision a filler set; see "Revision c"). Original note: I had no time left to find out if this is a graph-matching ambiguity of the LVS tool or a layout fault. A test is needed: LVS of the revision a ring-only GDS with the 1 um filler added, or of a 1600 um ring with a 1 um row shift and no `Filler200`. Evidence: `reports/ring-20261021-b/lvs_projected_ringonly/diagnosis.txt` |
 | 3 | estimation | I planned the LVS runs as 10 minutes each from revision a. On the busy server one run took 34 minutes. Try 1 and the re-run together used about 2 hours 30 minutes, not 2 hours. | Ran the three LVS in parallel on the re-run |
 | 4 | tooling | The first inspection script was in `/tmp`. The container mounts only the repository, so it did not start. | Put scripts in `flow/`. The inspection scripts were deleted after use, except `flow/inspect_fillers.py` |
 | 5 | tooling | `G1_WORKDIR` is the block directory. The first measure run used a repository-relative output path and failed. | Used paths relative to the block directory |
@@ -140,7 +230,7 @@ Metal3 52.84 %, Metal4 52.47 %, Metal5 52.83 % (limit 35 to 60), TopMetal1 53.52
 
 ### Open items (revision b)
 
-1. Find the cause of the ring-only LVS failure (item 2b) before the ring is used as an LVS reference for the chip.
+1. Find the cause of the ring-only LVS failure (item 2b) before the ring is used as an LVS reference for the chip. Done in revision c.
 2. Place the core in the 878.6 x 875.1 um window. Run all checks on the full chip with the G1 form of the projected LVS.
 3. The antenna check, the pad 18 cell decision, the ring net identity and the intake pre-check stay as in revision a (below).
 4. Re-run the bond plan on the chip GDS. The package paddle for a 1.6 mm die is not checked (S6 lists it as not run).
@@ -384,6 +474,9 @@ The `lvsdb` files (155 MB each) stay in the bulk results root.
 | `flow/inspect_fillers.py`, `flow/lvs_netdiff.py`, `flow/lvs_netterms.py` | revision b diagnostics (filler cells, LVS net mismatch) |
 | `layout/r1_padring_1600_ref.lef` | LEF reference of revision b |
 | `reports/ring-20261021-b/` | revision b: logs, lyrdb reports, `run.json`, `measure_ring_1600.json`, PNG |
+| `flow/make_cdl.py --fillers`, `flow/lvs_tapdiag.py`, `flow/check_abutment.py`, `flow/run_ring_1600_c.sh` | revision c: references with the real filler set, tap-device diagnosis, IO-row abutment check, command sequence |
+| `netlist/r1_padring_1600*.cdl` | revision c: canonical, projection sources and flat projected references of the 1600 um ring (with `.json` records) |
+| `reports/ring-20261021-c/` | revision c: `run.json`, `diagnosis.txt`, abutment reports, all check logs and reports, PNG |
 
 ## Open items for the next steps
 

@@ -1,0 +1,48 @@
+{
+ "run_id": "ring-20261021-c",
+ "date": "2026-10-21",
+ "question": "Why does the ring-only projected LVS of the 1600 um ring (revision b) fail when revision a passed, and does the ring pass after the fix?",
+ "answer": "The projected references of revision b still listed the revision a IO filler population (112 cells: 40 x Filler4000, 28 x Filler2000, 44 x Filler400). The layout has 132 fillers (92 x Filler4000, 32 x Filler400, 8 x Filler200). The deck combines all ptap1 devices in parallel and compares their area and perimeter without tolerance, so the two combined tap devices differed in A and P. The layout is not at fault: Metal2 to TopMetal2 abut without a break at every filler and corner boundary. Fix: flow/make_cdl.py takes the filler population from the build report (--fillers) and adds the explicit-VSS derivative of the 1 um filler. The ring GDS is unchanged.",
+ "pdk": "IHP-Open-PDK 84374023ee8b4b126bebbba67fcbada0a9c0ff0b (checked by flow/run.sh)",
+ "container_image": "tapeoutbench-eda:latest sha256:ddeb69576f2808676d1c5d474ecf04f6d1d6f8abdcff6b72b39790ded924bab2",
+ "tools": {"klayout": "0.30.9", "ngspice": "not applicable", "librelane": "not used", "python3 (host, make_cdl.py)": "standard library only"},
+ "cpu_set": "116-119 (G1_CPUSET, G1_CPUS=4)",
+ "command_sequence": "flow/run_ring_1600_c.sh (the steps were run one by one with these commands; the chained script was not run as one piece)",
+ "inputs": {
+  "source_ring": "r1_padring_nofill.gds of ring-20261020-a, sha256 6d8a34d04c9e5d03d6fbfcdb0a6d8d07d113a9abd289fc88f6fd353232ffc730",
+  "generator": "flow/build_ring_1600.py, unchanged from revision b",
+  "reference_source": "designs/g1-guardian/blocks/g1_padring/netlist/g1_chip_top_1414_r4.cdl sha256 e060c0c59a168e5b69b0c47dc31cbfe4f4444d2ec8af62960c339c1230a2c99f"
+ },
+ "output": {
+  "gds": "<G1_RESULTS_ROOT>/r1_padring/ring-20261021-c/r1_padring_1600.gds",
+  "sha256": "40514b4f4ff7888ac0ca95329470e47c8c93c1b3efc7fec1bee2f646b8dbac19",
+  "nofill_sha256": "edd52b57cfb1156d555713a56bd8cbc227067de3f71e62e2b6c33d86d3d4b39a",
+  "same_bytes_as_revision_b": true,
+  "references": {
+   "netlist/r1_padring_1600.cdl": "9c65868d891cb91b5190bd69c4cb5704d40cfa92f70085c0b42bf058cecff392",
+   "netlist/r1_padring_1600_projection_src.cdl": "a45d550aec7512002dc1dead7c9ad72ce211c22035255d45fd929456bd83e720",
+   "netlist/r1_padring_1600_projected_ref.cdl": "89749d92bb66c5deffb817518985147396f79c9d47ce8de359e950c81e1fa742",
+   "netlist/r1_padring_1600_ringonly_projection_src.cdl": "b1de2a45c4772a14307edcbab4ff847e6fd73258efddb481566039c27bdecba1",
+   "netlist/r1_padring_1600_ringonly_projected_ref.cdl": "09eae88de2da61e27d8bc971cb52ec02a3651662e18d4f48f2478aa12eff986f"
+  }
+ },
+ "steps": [
+  {"step": "diagnose", "command": "klayout -b -r flow/lvs_tapdiag.py -rd db=<lvsdb of ring-20261020-a and ring-20261021-b>", "evidence": "diagnosis.txt", "result": "only the two combined ptap1 devices differ, in A and P", "disposition": "cause found"},
+  {"step": "abutment", "command": "klayout -b -r flow/check_abutment.py -rd gds=<nofill gds>", "evidence": "abutment_1600_nofill.json, abutment_1414_nofill.json", "result": "160 abutting pairs; Metal2-TopMetal2: 0 breaks; Metal1/Activ differences at IO-cell and corner edges as in revision a; Filler200 edges differ in Activ only", "disposition": "passed (no rail break)"},
+  {"step": "build + fill + rewrite", "command": "flow/build_ring_1600.py, PDK filler.py, flow/rewrite_gds.py", "result": "sha256 40514b4f..., byte-identical to revision b", "disposition": "done"},
+  {"step": "references", "command": "python3 flow/make_cdl.py ... --fillers=reports/ring-20261021-c/build_ring_1600.json; flow/flatten_reference.rb", "result": "132 filler lines; roundtrip match 1144 devices; reference tap sums IOVSS A=288962.0397 P=70906.208, VSS A=1203.0816 P=8111.936 (equal to the layout extraction)", "control": "without --fillers the script writes the revision a CDL files again (only the source path spelling in line 2 differs)", "disposition": "done"},
+  {"step": "lvs_projected_ringonly", "command": "run_lvs.py --run_mode deep --top_lvl_pins --spice_comments, netlist/r1_padring_1600_ringonly_projected_ref.cdl", "result": "Match: 261 of 261 devices, 119 of 119 nets, 40 pins; 'Congratulations! Netlists match.'; 2957 s", "evidence": "lvs_projected_ringonly/", "disposition": "passed"},
+  {"step": "lvs_projected_g1_form", "command": "run_lvs.py, netlist/r1_padring_1600_projected_ref.cdl", "result": "NoMatch: 210 of 261 devices, 59 of 119 nets (equal to revision a)", "evidence": "lvs_projected/", "disposition": "failed, as revision a (empty core: substrate not tied to VSS)"},
+  {"step": "lvs_canonical", "command": "run_lvs.py, netlist/r1_padring_1600.cdl", "result": "14 pairs: 12 NoMatch, 2 Skipped; per-circuit counts equal to revisions a and b", "evidence": "lvs_canonical/", "disposition": "failed (known PDK IO-cell reference semantics)"},
+  {"step": "drc_main", "command": "run_drc.py --run_mode=deep --no_density --disable_extra_rules --density_thr=4", "result": "0 items, 561 categories, 181.4 s", "evidence": "drc_main/", "disposition": "passed"},
+  {"step": "drc_maximal", "command": "flow/run_maximal.py", "result": "0 items, 272 categories, 271.3 s", "evidence": "drc_maximal/", "disposition": "passed"},
+  {"step": "precheck", "command": "run_drc.py --precheck_drc --disable_extra_rules --density_thr=4", "result": "0 items, 455 categories, 117.9 s", "evidence": "precheck/", "disposition": "passed"},
+  {"step": "density", "command": "run_drc.py --density_only", "result": "0 items, 7 categories; values equal to revision b", "evidence": "density/", "disposition": "passed"},
+  {"step": "antenna", "command": "run_drc.py --antenna_only --antenna", "result": "12 items (Ant.e_Metal5, Ant.e_TopMetal1, Ant.e_TopMetal2, 4 each); run_drc exit code 1", "evidence": "antenna/", "disposition": "failed, same as revisions a and b (empty core)"},
+  {"step": "measure", "command": "flow/measure_ring_1600.py", "result": "row continuous on 4 sides; core window 878.62 x 875.14 um = 0.7689 mm2", "evidence": "measure_ring_1600.json", "disposition": "passed"},
+  {"step": "compare_order", "command": "flow/compare_order.py", "result": "identical order, type and orientation to revision a", "evidence": "compare_order.json", "disposition": "passed"},
+  {"step": "bondmap", "command": "flow/verify_bondmap.py with padframe/bondmap_r1_1600_ring.csv", "result": "24 of 24 openings, all_ok true", "evidence": "verify_bondmap_r1_1600.json", "disposition": "passed"},
+  {"step": "screenshot", "command": "flow/screenshot_ring.py -rd w=700", "result": "r1_padring_1600.png 248 891 bytes, byte-identical to revision b", "disposition": "done"},
+  {"step": "gds hash before and after checks", "evidence": "input_gds.sha256, input_gds.sha256.after", "result": "equal", "disposition": "passed"}
+ ]
+}

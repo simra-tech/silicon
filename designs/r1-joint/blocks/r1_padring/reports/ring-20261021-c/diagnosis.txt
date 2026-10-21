@@ -1,0 +1,26 @@
+Revision c diagnosis of the revision b ring-only LVS failure (flow/lvs_tapdiag.py on the lvsdb of ring-20261021-b and ring-20261020-a).
+
+Revision a (1414 um), Match:
+ DEV Match | L: $1 ptap1 [TIE=IOVSS WELL=$1] A=235273 P=63576.8 | R: PTAP1 [TIE=IOVSS WELL=SUBSTRATE_NODE] A=235273 P=63576.8
+ DEV Match | L: $2 ptap1 [TIE=VSS WELL=$1] A=981.322 P=6621.54 | R: PTAP1 [TIE=VSS WELL=SUBSTRATE_NODE] A=981.322 P=6621.54
+Revision b (1600 um), NoMatch, reference still revision a:
+ DEV MatchWithWarning | L: $1 ptap1 [TIE=IOVSS WELL=$1] A=288962 P=70906.2 | R: PTAP1 [TIE=IOVSS WELL=SUBSTRATE_NODE] A=235273 P=63576.8
+ DEV MatchWithWarning | L: $2 ptap1 [TIE=VSS WELL=$1] A=1203.08 P=8111.94 | R: PTAP1 [TIE=VSS WELL=SUBSTRATE_NODE] A=981.322 P=6621.54
+ NET Mismatch $1 | SUBSTRATE_NODE ; IOVSS | IOVSS ; VSS | VSS   (the three nets of the two tap devices)
+
+Topology: all 261 devices and 119 nets pair; only the two ptap1 devices differ, in the parameters A and P.
+The deck (custom_devices.lvs, class CustomTap) compares A and P as primary parameters, with no tolerance.
+The deck combines all ptap1 devices of the ring in parallel, so A and P are sums over every IO cell, corner and IO filler.
+
+Reference filler set (make_cdl.py, from G1 r4): 40 x Filler4000, 28 x Filler2000, 44 x Filler400 (112).
+Layout filler set (build_ring_1600.py):         92 x Filler4000, 32 x Filler400, 8 x Filler200 (132).
+Expected change from the G1 derivative tap values (Filler4000 1426.815/263.34, Filler2000 695.115/203.34, Filler400 114.1452/155.7,
+IOVSS tap; 5.85/39.6, 2.85/19.6, 0.672/5.08, VSS tap) plus 8 x Filler200 accounts for the layout change exactly with
+Filler200 = IOVSS tap A 40.9752 um2, P 149.7 um; VSS tap A 0.678 um2, P 5.12 um.
+
+IO-row abutment (flow/check_abutment.py, nofill GDS, all 160 abutting cell pairs): Metal2..TopMetal2 have no break at any
+Filler200 or corner boundary. Metal1 and Activ differences sit at IO-cell and corner boundaries and are the same in revision a
+(abutment_1414_nofill.json). The Filler200 boundaries differ only in Activ (the 1 um cell has less tap Activ). No rail break.
+
+Cause: the ring-only (and G1-form) projected references were not regenerated for revision b; they still list the
+revision a filler population. Layout is not at fault.
