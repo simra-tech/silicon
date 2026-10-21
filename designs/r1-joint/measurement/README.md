@@ -369,7 +369,7 @@ The bench must decide or measure these. Each item names the specification (or ma
 | O-12 | Choice of three interop masters, the encoder head, the motor and the driver stage. | Spec section 5, V4 and V8 | Select before T35, T46, T47. Part numbers go into `fixture/` |
 | O-13 | The gate pad has no stated V_OH, V_OL, rise and fall limits for 1 nF. | Spec section 4, Gate drive | T44 measures them; the bench proposes limits |
 | O-14 | The system current-loop accuracy has no limit. | Spec section 4, Current sense | T47 records the error; the owner sets a limit |
-| O-15 | The fault-path requirement (<= 200 ns at <= 1 nF) and the simulation (443-933 ns over corners) disagree. The specification says the 200 ns was written without a load figure. | Spec section 4, Gate drive | S01 measures; the result decides the final number |
+| O-15 | Closed by D19 (2026-10-21): the requirement is <= 1 us at direct loads <= 1 nF; 5 nF is not a supported direct load and is measured as a documented experiment only. | Spec section 4, Gate drive | S01 measures; the result decides the final number |
 | O-16 | Whether an ill-formed SPI/BiSS frame kicks the watchdog is not stated for BiSS frames with a CRC error. | Map 4.7 | S10 tests both cases |
 | O-17 | No on-chip brown-out detector is specified. | Spec section 3 (no row) | S12 records the response; board supervisor per G1 B7/B11 |
 | O-18 | Encoder CM at the default test point. The user plan default of 0.5 V CM with 1 Vpp differential puts the negative pin at 0.25 V, which is outside the supported pin range 0.5-2.8 V. | Spec section 6, open item 4 | This plan uses 1.65 V as the default CM; 0.5 V CM is allowed only up to 0.5 Vpp differential |
