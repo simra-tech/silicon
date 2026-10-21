@@ -1,0 +1,51 @@
+* r1_bias consumer loads (T9, 2026-10-21): fitted models of the neighbour bias inputs.
+* Each subckt copies, unchanged, every device of the consumer netlist of record whose gate or drain is on the
+* consumer's bias pin. The diode stays a diode; the drains of the mirror devices (not on the bias net) are held at
+* the common node vdl (1.0 V DC source in the deck), so their gate and overlap capacitance load the pin as in the block.
+* Sources (sha256 at the time of copy):
+*   r1_afe    schematic/r1_afe.spice      4a84a3d8dce9be13f6e57e4aaa2fa9154c9aa2339eb8bdb955e6d8452bb59f46 (rev E)
+*   r1_isense schematic/r1_isense.spice   af013b95f5fd57e2f1cd0d1345a4c75471c2f216b063ede3a39bdea6412ba4ee (rev 2)
+*   r1_safe   schematic/r1_safe.spice     812f886dce2b759af121230bd2e9100aeac59041effdf9a3341647c29299cbde (rev 3)
+*   r1_adc    schematic/r1_adc_r5.spice   a2c3c9a2eb05cd61b7cb0aa28ef020fdf0ec5038aae88816101f926cb34c99e8 (rev 5,
+*             r1_refbuf5 option 3c: mt 1, lt 8u, mib 160, mibl 40; its internal "Ibias vdda nb 5u" is the pin served here)
+
+* r1_afe_ota (stage 1, one per channel) on pin ibias; instance parameter WN3A = 0.5u (r1_afe_ch XA1)
+.subckt ld_afe_ota1 ibias vdl vss
+XMB0 ibias ibias vss vss sg13_hv_nmos w=4u l=1u ng=1 m=1 mm_ok=1
+XMB1 vdl ibias vss vss sg13_hv_nmos w=4u l=1u ng=1 m=1 mm_ok=1
+XMB4 vdl ibias vss vss sg13_hv_nmos w=4u l=1u ng=1 m=1 mm_ok=1
+XMNT vdl ibias vss vss sg13_hv_nmos w=24u l=1u ng=4 m=1 mm_ok=1
+XMN3A vdl ibias vss vss sg13_hv_nmos w=0.5u l=2u ng=4 m=1 mm_ok=1
+XMN4A vdl ibias vss vss sg13_hv_nmos w=0.5u l=2u ng=4 m=1 mm_ok=1
+.ends ld_afe_ota1
+
+* r1_afe_ota2 (stage 2, one per channel) on pin ibias; instance parameter WN3A = 20u (r1_afe_ch XA2)
+.subckt ld_afe_ota2 ibias vdl vss
+XMB0 ibias ibias vss vss sg13_hv_nmos w=8u l=2u ng=1 m=1 mm_ok=1
+XMB1 vdl ibias vss vss sg13_hv_nmos w=8u l=2u ng=1 m=1 mm_ok=1
+XMB4 vdl ibias vss vss sg13_hv_nmos w=8u l=2u ng=1 m=1 mm_ok=1
+XMN3A vdl ibias vss vss sg13_hv_nmos w=20u l=2u ng=4 m=1 mm_ok=1
+XMN4A vdl ibias vss vss sg13_hv_nmos w=20u l=2u ng=4 m=1 mm_ok=1
+.ends ld_afe_ota2
+
+* r1_isense_ch (one per channel) on pin ibias
+.subckt ld_isense ibias vdl vss
+XMBN ibias ibias vss vss sg13_hv_nmos w=4u l=1u ng=1 m=1 mm_ok=1
+XMB2 vdl ibias vss vss sg13_hv_nmos w=4u l=1u ng=1 m=2 mm_ok=1
+XMB3 vdl ibias vss vss sg13_hv_nmos w=4u l=1u ng=1 m=1 mm_ok=1
+XMB5 vdl ibias vss vss sg13_hv_nmos w=4u l=1u ng=1 m=4 mm_ok=1
+.ends ld_isense
+
+* r1_safe_cmp (four comparators) on pin ibias
+.subckt ld_safe ibias vdl vss
+XMBN ibias ibias vss vss sg13_hv_nmos w=4u l=1u ng=1 m=1 mm_ok=1
+XMB2 vdl ibias vss vss sg13_hv_nmos w=4u l=1u ng=1 m=1 mm_ok=1
+.ends ld_safe
+
+* r1_refbuf5 (ADC reference buffer, option 3c) on node nb
+.subckt ld_adcref nb vdl vss
+XMB0 nb nb vss vss sg13_hv_nmos w=2u l=1u ng=1 m=1 mm_ok=1
+XMT vdl nb vss vss sg13_hv_nmos w=2u l=8u ng=1 m=1 mm_ok=1
+XMIB vdl nb vss vss sg13_hv_nmos w=2u l=1u ng=1 m=160 mm_ok=1
+XMIBL vdl nb vss vss sg13_hv_nmos w=2u l=1u ng=1 m=40 mm_ok=1
+.ends ld_adcref

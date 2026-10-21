@@ -1,0 +1,405 @@
+{
+ "run_id": "bias-por-20261021-d2",
+ "suite": "por",
+ "question": "POR power-up (VDD first / VDDA first) with 1 ms and 10 ms ramps, ramp-down, brown-out dips: thresholds, delay, transitions, current.",
+ "args": {
+  "conv": "1"
+ },
+ "command": "G1_CPUSET=116-119 G1_WORKDIR=designs/r1-joint/blocks/r1_bias/sim G1_RESULTS_ROOT=<G1_RESULTS_ROOT> flow/run.sh python3 run_bias.py por bias-por-20261021-d2 conv=1",
+ "pdk_commit": "84374023ee8b4b126bebbba67fcbada0a9c0ff0b",
+ "ngspice": "** ngspice-46 : Circuit level simulation program",
+ "git_head": "9db92b0d5e3352d7a945b0711d7d18cf10abe4cd",
+ "netlist_sha256": {
+  "r1_bias": "3fa56d9296f8c409fd1335a6595eae459b39324837c5bfae9ea7693584b29ff4",
+  "r1_bgr": "c19a7425d605906962724fdda21add8ae3926dc9a097c6f835a16f05f92c0c26",
+  "r1_t2f": "8011b76104e9faa4a29dae4323ce59fb6f5864373a087df0767a61672a7b4391",
+  "loads": "4df2d4bb037313efe2c6a75a2ee2edb1dea50e2dde84f9fe69320f7749d8856c"
+ },
+ "raw": "<G1_RESULTS_ROOT>/r1_bias/bias-por-20261021-d2/",
+ "seconds": 833.1,
+ "failed_jobs": 1,
+ "result": [
+  {
+   "case": "tt",
+   "kind": "upA",
+   "ramp_s": 0.001,
+   "rc": 0,
+   "seconds": 80.0,
+   "por_n_rise_ms": [
+    1.0658
+   ],
+   "por_n_fall_ms": [
+    2.2115
+   ],
+   "rst_fall_ms": [
+    0.8192,
+    2.7273
+   ],
+   "delay_us": 246.57,
+   "vdda_at_rst_fall": 2.7033,
+   "vdd_at_rst_fall": 1.2,
+   "vdda_at_por_fall": 2.6021,
+   "vdd_at_por_fall": 1.2,
+   "idda_por_uA": 20.959,
+   "idd_por_uA": 0.5038,
+   "por_n_max_before_release": 0.0019
+  },
+  {
+   "case": "tt",
+   "kind": "upA",
+   "ramp_s": 0.01,
+   "rc": 1,
+   "seconds": 195.3,
+   "por_n_rise_ms": [
+    8.3973
+   ],
+   "por_n_fall_ms": [],
+   "rst_fall_ms": [
+    8.1855
+   ],
+   "delay_us": 211.77,
+   "vdda_at_rst_fall": 2.7012,
+   "vdd_at_rst_fall": 1.2,
+   "idda_por_uA": 20.539,
+   "idd_por_uA": 0.5035,
+   "por_n_max_before_release": 0.0019
+  },
+  {
+   "case": "tt",
+   "kind": "upD",
+   "ramp_s": 0.001,
+   "rc": 0,
+   "seconds": 65.0,
+   "por_n_rise_ms": [
+    1.3803
+   ],
+   "por_n_fall_ms": [
+    2.5092
+   ],
+   "rst_fall_ms": [
+    0.004,
+    1.134
+   ],
+   "delay_us": 246.23,
+   "vdda_at_rst_fall": 1.3188,
+   "vdd_at_rst_fall": 0.0,
+   "vdda_at_por_fall": 3.3,
+   "vdd_at_por_fall": 0.949,
+   "idda_por_uA": 20.961,
+   "idd_por_uA": 0.5038,
+   "por_n_max_before_release": 0.0058
+  },
+  {
+   "case": "tt",
+   "kind": "upD",
+   "ramp_s": 0.01,
+   "rc": 0,
+   "seconds": 319.1,
+   "por_n_rise_ms": [
+    8.8832
+   ],
+   "por_n_fall_ms": [
+    13.3849
+   ],
+   "rst_fall_ms": [
+    0.004,
+    8.637
+   ],
+   "delay_us": 246.22,
+   "vdda_at_rst_fall": 1.3188,
+   "vdd_at_rst_fall": 0.0,
+   "vdda_at_por_fall": 3.3,
+   "vdd_at_por_fall": 0.9498,
+   "idda_por_uA": 20.962,
+   "idd_por_uA": 0.4388,
+   "por_n_max_before_release": 0.0208
+  },
+  {
+   "case": "ss",
+   "kind": "upA",
+   "ramp_s": 0.001,
+   "rc": 0,
+   "seconds": 59.5,
+   "por_n_rise_ms": [
+    1.1243
+   ],
+   "por_n_fall_ms": [
+    2.1418
+   ],
+   "rst_fall_ms": [
+    0.8909,
+    2.7
+   ],
+   "delay_us": 233.39,
+   "vdda_at_rst_fall": 2.6727,
+   "vdd_at_rst_fall": 1.08,
+   "vdda_at_por_fall": 2.5747,
+   "vdd_at_por_fall": 1.08,
+   "idda_por_uA": 23.648,
+   "idd_por_uA": 0.4139,
+   "por_n_max_before_release": 0.002
+  },
+  {
+   "case": "ss",
+   "kind": "upA",
+   "ramp_s": 0.01,
+   "rc": 0,
+   "seconds": 311.5,
+   "por_n_rise_ms": [
+    9.1171
+   ],
+   "por_n_fall_ms": [
+    12.4084
+   ],
+   "rst_fall_ms": [
+    8.9018,
+    18.0
+   ],
+   "delay_us": 215.26,
+   "vdda_at_rst_fall": 2.6705,
+   "vdd_at_rst_fall": 1.08,
+   "vdda_at_por_fall": 2.5775,
+   "vdd_at_por_fall": 1.08,
+   "idda_por_uA": 23.485,
+   "idd_por_uA": 0.4138,
+   "por_n_max_before_release": 0.002
+  },
+  {
+   "case": "ss",
+   "kind": "upD",
+   "ramp_s": 0.001,
+   "rc": 0,
+   "seconds": 64.9,
+   "por_n_rise_ms": [
+    1.4497
+   ],
+   "por_n_fall_ms": [
+    2.4478
+   ],
+   "rst_fall_ms": [
+    1.2161
+   ],
+   "delay_us": 233.54,
+   "vdda_at_rst_fall": 3.0,
+   "vdd_at_rst_fall": 0.9894,
+   "vdda_at_por_fall": 3.0,
+   "vdd_at_por_fall": 0.9204,
+   "idda_por_uA": 23.647,
+   "idd_por_uA": 0.4139,
+   "por_n_max_before_release": 0.0263
+  },
+  {
+   "case": "ss",
+   "kind": "upD",
+   "ramp_s": 0.01,
+   "rc": 0,
+   "seconds": 316.2,
+   "por_n_rise_ms": [
+    9.6914
+   ],
+   "por_n_fall_ms": [
+    12.7706
+   ],
+   "rst_fall_ms": [
+    9.458
+   ],
+   "delay_us": 233.39,
+   "vdda_at_rst_fall": 3.0,
+   "vdd_at_rst_fall": 0.9891,
+   "vdda_at_por_fall": 3.0,
+   "vdd_at_por_fall": 0.9212,
+   "idda_por_uA": 23.648,
+   "idd_por_uA": 0.394,
+   "por_n_max_before_release": 0.043
+  },
+  {
+   "case": "ff",
+   "kind": "upA",
+   "ramp_s": 0.001,
+   "rc": 0,
+   "seconds": 126.9,
+   "por_n_rise_ms": [
+    1.0021
+   ],
+   "por_n_fall_ms": [
+    2.2723
+   ],
+   "rst_fall_ms": [
+    0.7561,
+    2.75
+   ],
+   "delay_us": 245.99,
+   "vdda_at_rst_fall": 2.722,
+   "vdd_at_rst_fall": 1.32,
+   "vdda_at_por_fall": 2.6196,
+   "vdd_at_por_fall": 1.32,
+   "idda_por_uA": 19.83,
+   "idd_por_uA": 0.6957,
+   "por_n_max_before_release": 0.0018
+  },
+  {
+   "case": "ff",
+   "kind": "upA",
+   "ramp_s": 0.01,
+   "rc": 0,
+   "seconds": 319.6,
+   "por_n_rise_ms": [
+    7.7532
+   ],
+   "por_n_fall_ms": [
+    13.7161
+   ],
+   "rst_fall_ms": [
+    7.5558,
+    18.5
+   ],
+   "delay_us": 197.35,
+   "vdda_at_rst_fall": 2.7201,
+   "vdd_at_rst_fall": 1.32,
+   "vdda_at_por_fall": 2.6222,
+   "vdd_at_por_fall": 1.32,
+   "idda_por_uA": 18.777,
+   "idd_por_uA": 0.6953,
+   "por_n_max_before_release": 0.0018
+  },
+  {
+   "case": "ff",
+   "kind": "upD",
+   "ramp_s": 0.001,
+   "rc": 0,
+   "seconds": 66.0,
+   "por_n_rise_ms": [
+    1.3085
+   ],
+   "por_n_fall_ms": [
+    2.567
+   ],
+   "rst_fall_ms": [
+    0.0044,
+    1.0635
+   ],
+   "delay_us": 244.99,
+   "vdda_at_rst_fall": 1.5992,
+   "vdd_at_rst_fall": 0.0,
+   "vdda_at_por_fall": 3.6,
+   "vdd_at_por_fall": 0.9675,
+   "idda_por_uA": 19.826,
+   "idd_por_uA": 0.6957,
+   "por_n_max_before_release": 0.003
+  },
+  {
+   "case": "ff",
+   "kind": "upD",
+   "ramp_s": 0.01,
+   "rc": 0,
+   "seconds": 317.7,
+   "por_n_rise_ms": [
+    8.1769
+   ],
+   "por_n_fall_ms": [
+    13.9639
+   ],
+   "rst_fall_ms": [
+    0.0044,
+    7.9321
+   ],
+   "delay_us": 244.84,
+   "vdda_at_rst_fall": 1.5992,
+   "vdd_at_rst_fall": 0.0,
+   "vdda_at_por_fall": 3.6,
+   "vdd_at_por_fall": 0.9684,
+   "idda_por_uA": 19.837,
+   "idd_por_uA": 0.5567,
+   "por_n_max_before_release": 0.0116
+  },
+  {
+   "case": "tt",
+   "kind": "bo",
+   "ramp_s": 0,
+   "rc": 0,
+   "seconds": 55.9,
+   "por_n_rise_ms": [
+    0.2546,
+    1.2677,
+    2.2677
+   ],
+   "por_n_fall_ms": [
+    1.001,
+    2.0015
+   ],
+   "rst_fall_ms": [
+    0.0031,
+    0.0085,
+    1.0214,
+    2.0216
+   ],
+   "delay_us": 246.08,
+   "vdda_at_rst_fall": 1.0192,
+   "vdd_at_rst_fall": 0.3706,
+   "vdda_at_por_fall": 3.3,
+   "vdd_at_por_fall": 0.9,
+   "idda_por_uA": 20.961,
+   "idd_por_uA": 0.5038,
+   "por_n_max_before_release": 0.0016
+  },
+  {
+   "case": "ss",
+   "kind": "bo",
+   "ramp_s": 0,
+   "rc": 0,
+   "seconds": 56.0,
+   "por_n_rise_ms": [
+    0.2427,
+    1.255,
+    2.2553
+   ],
+   "por_n_fall_ms": [
+    1.0011,
+    2.0016
+   ],
+   "rst_fall_ms": [
+    0.0093,
+    1.0216,
+    2.0218
+   ],
+   "delay_us": 233.44,
+   "vdda_at_rst_fall": 2.7816,
+   "vdd_at_rst_fall": 1.0014,
+   "vdda_at_por_fall": 3.0,
+   "vdd_at_por_fall": 0.9,
+   "idda_por_uA": 23.648,
+   "idd_por_uA": 0.4139,
+   "por_n_max_before_release": 0.0026
+  },
+  {
+   "case": "ff",
+   "kind": "bo",
+   "ramp_s": 0,
+   "rc": 0,
+   "seconds": 60.5,
+   "por_n_rise_ms": [
+    0.2526,
+    1.2664,
+    2.2662
+   ],
+   "por_n_fall_ms": [
+    1.001,
+    2.0014
+   ],
+   "rst_fall_ms": [
+    0.0033,
+    0.0079,
+    1.0213,
+    2.0215
+   ],
+   "delay_us": 244.74,
+   "vdda_at_rst_fall": 1.1837,
+   "vdd_at_rst_fall": 0.434,
+   "vdda_at_por_fall": 3.6,
+   "vdd_at_por_fall": 0.9052,
+   "idda_por_uA": 19.825,
+   "idd_por_uA": 0.6957,
+   "por_n_max_before_release": 0.0015
+  }
+ ]
+}
