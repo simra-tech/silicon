@@ -1,0 +1,47 @@
+{
+ "tag": "b",
+ "written": "2026-10-21T03:35:40",
+ "pdk_commit": "84374023ee8b4b126bebbba67fcbada0a9c0ff0b",
+ "container": "tapeoutbench-eda:latest sha256:ddeb69576f2808676d1c5d474ecf04f6d1d6f8abdcff6b72b39790ded924bab2",
+ "cpuset": "100-102",
+ "inputs": {
+  "gds_sha256": "5e7aa75ae9335b12b1c825d326e586c742755bd9305074fc1cdc2507d17af9a7",
+  "lvs_cdl_sha256": "9867279d8e07805a9af642fd42067b14862e43fcbc39ae31cbb17bf753cef9aa",
+  "generator_sha256": "735ddb992e5e53a9ae5871172e63abe331dc5710dcd0ce7b4224d4c2df097d06",
+  "netlist_of_record": "designs/r1-joint/blocks/r1_t2f/schematic/g1_t2f_rev2.spice",
+  "netlist_of_record_sha256": "8011b76104e9faa4a29dae4323ce59fb6f5864373a087df0767a61672a7b4391",
+  "g1_source_gds": "designs/g1-guardian/blocks/g1_t2f/layout/g1_t2f.gds",
+  "g1_source_gds_sha256": "c2ae89a9ca31808f7489e2671845db4194b1de5bacc15ab860d2de10146f0059"
+ },
+ "run_id": "layout-lvs-b",
+ "question": "PDK LVS r1_t2f.gds vs netlist of record (+ documented layout dummies): match?",
+ "command": "flow/run.sh python3 $PDK_ROOT/$PDK/libs.tech/klayout/tech/lvs/run_lvs.py --layout=/work/designs/r1-joint/blocks/r1_t2f/layout/r1_t2f.gds --netlist=/work/designs/r1-joint/blocks/r1_t2f/layout/r1_t2f_lvs.cdl --topcell=r1_t2f --run_mode=deep --no_series_res --run_dir=<run dir>",
+ "tools": {
+  "klayout": "0.30.9"
+ },
+ "result": {
+  "status": "passed",
+  "extracted_netlist": "<G1_RESULTS_ROOT>/r1_t2f/layout-lvs-b/r1_t2f_extracted.cir",
+  "extracted_devices_after_combination": {
+   "sg13_hv_nmos": 32,
+   "rppd": 10,
+   "sg13_lv_pmos": 4,
+   "sg13_lv_nmos": 2,
+   "sg13_hv_pmos": 29,
+   "npn13G2": 5,
+   "cap_cmim": 2
+  },
+  "extracted_unit_count_from_m": {
+   "sg13_hv_nmos": 32,
+   "rppd": 10,
+   "sg13_lv_pmos": 4,
+   "sg13_lv_nmos": 2,
+   "sg13_hv_pmos": 29,
+   "npn13G2": 6,
+   "cap_cmim": 2
+  },
+  "extracted_nets": 57,
+  "options": "--run_mode=deep --no_series_res (RREF units compared one-to-one, as in G1)"
+ },
+ "disposition": "passed"
+}

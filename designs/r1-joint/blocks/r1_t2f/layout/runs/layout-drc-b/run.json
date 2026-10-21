@@ -1,0 +1,32 @@
+{
+ "tag": "b",
+ "written": "2026-10-21T03:35:40",
+ "pdk_commit": "84374023ee8b4b126bebbba67fcbada0a9c0ff0b",
+ "container": "tapeoutbench-eda:latest sha256:ddeb69576f2808676d1c5d474ecf04f6d1d6f8abdcff6b72b39790ded924bab2",
+ "cpuset": "100-102",
+ "inputs": {
+  "gds_sha256": "5e7aa75ae9335b12b1c825d326e586c742755bd9305074fc1cdc2507d17af9a7",
+  "lvs_cdl_sha256": "9867279d8e07805a9af642fd42067b14862e43fcbc39ae31cbb17bf753cef9aa",
+  "generator_sha256": "735ddb992e5e53a9ae5871172e63abe331dc5710dcd0ce7b4224d4c2df097d06",
+  "netlist_of_record": "designs/r1-joint/blocks/r1_t2f/schematic/g1_t2f_rev2.spice",
+  "netlist_of_record_sha256": "8011b76104e9faa4a29dae4323ce59fb6f5864373a087df0767a61672a7b4391",
+  "g1_source_gds": "designs/g1-guardian/blocks/g1_t2f/layout/g1_t2f.gds",
+  "g1_source_gds_sha256": "c2ae89a9ca31808f7489e2671845db4194b1de5bacc15ab860d2de10146f0059"
+ },
+ "run_id": "layout-drc-b",
+ "question": "PDK DRC (main + maximal, density off) on r1_t2f.gds: 0 markers?",
+ "command": "flow/run.sh python3 $PDK_ROOT/$PDK/libs.tech/klayout/tech/drc/run_drc.py --path=/work/designs/r1-joint/blocks/r1_t2f/layout/r1_t2f.gds --run_mode=deep --no_density --run_dir=<run dir>",
+ "tools": {
+  "klayout": "0.30.9"
+ },
+ "result": {
+  "status": "passed",
+  "total_markers": 0,
+  "markers_per_rule": {},
+  "lyrdb": [
+   "<G1_RESULTS_ROOT>/r1_t2f/layout-drc-b/r1_t2f_r1_t2f_full.lyrdb"
+  ],
+  "note": "main + sg13g2_maximal rule tables; density waived at block level (--no_density)"
+ },
+ "disposition": "passed"
+}

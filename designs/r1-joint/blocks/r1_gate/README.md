@@ -1,6 +1,6 @@
 # R1_GATE — gate output path for the three `sg13g2_IOPadOut30mA` pads (schematic level)
 
-State on 2026-10-20: **schematic written, simulated with the PDK pad model at three corners. Not laid out.** No parasitics. All numbers are
+State on 2026-10-21: **schematic written, simulated with the PDK pad model at three corners. Laid out (both variants), DRC, antenna and LVS clean, see "Layout" at the end. No PEX, no post-layout simulation.** No parasitics in the simulations. All numbers are
 **simulated** (ngspice-46). Nothing is measured.
 
 ## Answer first: does the pad need an extra 1.2 V to 3.3 V shifter?
@@ -273,7 +273,8 @@ Current (simulated; table (e) above and tables (c)):
 | Power-up order (IOVDD before core), GATE state | not run in R1. G1 found that the pad holds `GATE` high for about 4 us when IOVDD comes first (board rule P1) | G1 README, `designs/g1-guardian/blocks/g1_top/README.md` |
 | Single-event upset of the gating logic (H versus L) | not run | - |
 | Real FET gate model (Miller charge, series gate resistor value) | not run (capacitor and 10 ohm stand-in) | - |
-| Layout, DRC, LVS, PEX | not run (the pads are ring cells; the logic is small) | - |
+| Layout, DRC, antenna, LVS of both variants | passed (2026-10-21), see "Layout" at the end | `layout/runs/` |
+| PEX, post-layout simulation | not run | - |
 | Temperature -40 / 27 / 125 C only with the matching process corner | done; cross corners (for example ss/-40 C) not run | - |
 
 ## Open issues
@@ -302,3 +303,83 @@ Current (simulated; table (e) above and tables (c)):
 | `sim/runs/g20261020b/<case>/metrics.json`, `run.json` | all numbers and the run record per case |
 | `sim/runs/g20261020a-stock/<case>/run.json` | failed runs with the stock pad model |
 | `<G1_RESULTS_ROOT>/r1_gate/g20261020b/<case>/` | deck, log, waveform (`wave.dat`, 288 MB in total for all cases) |
+
+## Layout
+
+Scope: the whole netlist of record `schematic/r1_gate.spice` (sha256 `a95a9a8c...`) is the on-chip part. It holds no pad device. The `sg13g2_IOPadOut30mA`
+and its `dantenna` removal exist only in the simulation decks (`sim/make_nodcn.sh`), so no device leaves the block and the padring owns the pad.
+The netlist has two top cells, and both are laid out. Variant H is `r1_gate_hv` (3.3 V domain AND, G1 style). Variant L is `r1_gate_lv` (1.2 V AND, 3 NAND2 + 3 inverters).
+The choice between them is still open (see "Open issues" above). Recommendation L: then the AND can move into `r1_ctrl` and `r1_gate_lv` is not placed.
+
+Source: the G1 generator `designs/g1-guardian/blocks/g1_gate/layout/g1_gate_layout.py` (sha256 `234302ef...`) with the G1 library
+`g1_sense/layout/g1_layout_lib.py` (copied unchanged, sha256 `08412793...`), `fill_prep.py` (`f4823b17...`) and `spice2cdl.py` (`5d0b13c4...`). The G1 cell
+generators (LV inverter and NAND2, LV cross-coupled PMOS pair, HV inverter and NOR2, `g1_lvlup` pull-downs and keepers, `g1_lvldn` pull-downs) and the
+row, track and rail code are unchanged. Only the netlist part (which cells, in which order, with which nets) is new. There is no single G1 GDS to copy: the
+R1 composition differs from `g1_gate`. G1 cell netlists: `schematic/g1_cells_copy.spice` (sha256 `846a55e0...`, equal to the G1 file).
+
+Files in `layout/`:
+
+| File | Content |
+| --- | --- |
+| `r1_gate_hv_filled.gds` | GDS of record, variant H, top cell `r1_gate_hv`, sha256 `861ec889fd70eb270f183a807e82442829bc18bedf01e3c0ec044664dc35e7b1`, 267 kB |
+| `r1_gate_lv_filled.gds` | GDS of record, variant L, top cell `r1_gate_lv`, sha256 `a3dee0f091c5236f7b6ff231b765d0b70e60a6e791d9db0b12fd821ce44e013b`, 62 kB |
+| `r1_gate_hv.gds`, `r1_gate_lv.gds` | generator output before the fill (`65791e14...`, `4a165022...`) |
+| `r1_gate_hv.lef`, `r1_gate_lv.lef` | LEF (pins on Metal3, Metal1/Metal2 obstruction, Metal3 obstruction between the bars) |
+| `r1_gate_hv_lvs.cdl`, `r1_gate_lv_lvs.cdl` | LVS references from `schematic/r1_gate.spice` and `g1_cells_copy.spice` by `make_lvs_cdl.py` |
+| `r1_gate_layout.py` | generator (`-rd variant=hv` or `lv`) |
+| `g1_layout_lib.py`, `fill_prep.py`, `spice2cdl.py` | G1 files, unchanged |
+| `fill_r1_gate.sh`, `fill_r1_gate_hv.log`, `fill_r1_gate_lv.log` | PDK fill (G1 `fill.sh` method) and logs |
+| `run_checks.sh`, `write_runjson.py`, `check_pins.py` | check flow |
+| `runs/` | `run.json` of the runs (tags `hv-a`, `lv-a`) |
+
+Built against: PDK commit `84374023ee8b4b126bebbba67fcbada0a9c0ff0b`, KLayout 0.30.9, container image `sha256:ddeb6957...`, CPU set 100-102.
+
+| Check (on the filled GDS) | Variant H `r1_gate_hv` | Variant L `r1_gate_lv` | Evidence |
+| --- | --- | --- | --- |
+| DRC, deep, `--no_density`, main + maximal tables | passed, 0 markers | passed, 0 markers | `layout/runs/layout-drc-{hv,lv}-a/run.json`, `<G1_RESULTS_ROOT>/r1_gate/layout-drc-{hv,lv}-a/` |
+| Antenna, `--antenna_only` | passed, 0 markers | passed, 0 markers | `layout/runs/layout-ant-{hv,lv}-a/run.json` |
+| LVS, deep, `--no_series_res`, against `r1_gate_<v>_lvs.cdl` | passed (25 HV PMOS, 31 HV NMOS, 10 LV PMOS, 4 LV NMOS; 42 nets) | passed (9 LV PMOS, 9 LV NMOS; 15 nets) | `layout/runs/layout-lvs-{hv,lv}-a/run.json`, `<G1_RESULTS_ROOT>/r1_gate/layout-lvs-{hv,lv}-a/` |
+| Device counts against the netlist (hand count from the cell list) | equal | equal | - |
+| Pin names equal the CDL ports | passed | passed | `layout/runs/layout-gen-{hv,lv}-a/check_pins.log` |
+| Density | not run (waived at block level; chip level) | not run | - |
+| PEX, post-layout simulation | not run | not run | - |
+
+Area (`prBoundary` 189/4): variant H 126.00 x 49.05 um = 6180.3 um2 (G1 `g1_gate`: 130.68 x 50.65 um = 6619 um2). Variant L 28.39 x 27.90 um = 792.1 um2.
+The estimate in "Area and current estimates" was 1135 to 5722 um2 (H) and 69 to 348 um2 (L). H is 8 % above the high estimate. L is 2.3 times above the high estimate:
+5 Metal2 tracks, three bars, a guard ring and 2 um pin stubs set a floor that does not scale with the 6 cells.
+
+Pins (all Metal3, `check_pins.log`). Inputs on the west edge: `pwm_a`, `pwm_b`, `pwm_c`, `gate_en` (0.5 um wide, 2 um long, 0.8 um pitch) and `vdd` (a 2 um stub at y 14.08..14.58).
+Outputs on the east edge: `gc_a`, `gc_b`, `gc_c`. `vss` bar on the south edge (y 1.5..4.5), `vdda` bar on the north edge (H: y 44.55..47.55; L: y 23.4..26.4), both across the full width.
+Variant L has no 3.3 V device. Its `vdda` bar is a bare pin with no connection, so that the pin list equals the netlist of record. The chip must not rely on it.
+H pin y positions: `pwm_a/b/c`, `gate_en` 15.65..18.55; `gc_a/b/c` 24.45..27.35. L: inputs and outputs 15.65..18.55.
+
+Differences between the G1 layout (`g1_gate`) and the R1 layout:
+
+| Item | G1 `g1_gate` | R1 `r1_gate_hv` | R1 `r1_gate_lv` |
+| --- | --- | --- | --- |
+| Top cell | `g1_gate` | `r1_gate_hv` | `r1_gate_lv` |
+| Inputs | `trip_d clr_d fast_en hard_cmp en_core` | `pwm_a pwm_b pwm_c gate_en` | same as H |
+| Outputs | `gate_core fault_core tripped` | `gc_a gc_b gc_c` | same as H |
+| `g1_lvlup` | 4 (`fast`, `trip_d`, `clr_d`, `en_core`) | 4 (`pwm_a/b/c`, `gate_en`) | 0 |
+| 1.2 V `g1_lv_nand2` + `g1_lv_inv` (`fast_en & hard_cmp`) | 1 + 1 | 0 | 3 + 3 (the channel AND) |
+| `g1_hv_nor2` | 5 (set, reset, 2 for the latch, gate) | 3 (one per channel) | 0 |
+| `g1_hv_inv` (outside the `g1_lvlup`) | 4 | 7 (`en_hn`, 3 `p?_hn`, 3 `g?_hn`) | 0 |
+| `g1_lvldn` | 3 (`gate`, `fault`, `tripped`) | 3 (`gc_a/b/c`) | 0 |
+| SR latch, no-fill box over the latch | yes | no (the G1 latch is dropped in the netlist) | no |
+| Devices | 78 | 70 | 18 |
+| Outline | 130.68 x 50.65 um | 126.00 x 49.05 um | 28.39 x 27.90 um |
+| Generator | `g1_gate_layout.py`, imports `g1_sense_layout.write_lef` | `write_lef` copied into the file, `variant` switch, output next to the script | same file; 3.3 V rows, TGO and 3.3 V rails not drawn; bare `vdda` bar added |
+| Output location | `layout/` and `build/g1_gate_lay/` | `layout/` only | same |
+| Fill scratch | `build/<macro>_fill` | `/tmp` in the container | same |
+
+Open issues: (1) Variant choice (H, L, or the AND in `r1_ctrl`) is open; the unused GDS is then dropped. (2) No PEX and no post-layout simulation of either variant;
+the simulated gate delay (schematic) excludes wiring. (3) Single-event robustness of H against L is not run (as before). (4) The G1 latch no-fill region is gone, and no other no-fill is drawn;
+the fill inside the block is the PDK default. (5) `r1_gate_lv` carries a bare `vdda` pin; if variant L is placed, drop that bar or tie it at chip level.
+
+Failures and mistakes:
+
+| Class | What happened |
+| --- | --- |
+| spec-ambiguity | The brief spoke of a pad copy "without dantenna" that might sit in the block. The netlist of record has no pad device; the copy is a deck file. Nothing was removed from the layout. |
+| verification-gap | The PDK LVS selects `IGNORE_TOP_PORTS_MISMATCH` by default. `check_pins.py` compares the LEF pins with the CDL ports. |
+| planning | Both variants were laid out although the recommendation is L. The reason: the netlist of record has two top cells and the choice is open. Cost: one more generator branch and four more runs. |

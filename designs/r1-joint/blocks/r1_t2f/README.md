@@ -50,7 +50,8 @@ Bulk logs: `<G1_RESULTS_ROOT>/r1_t2f/20261020-a` and `<G1_RESULTS_ROOT>/r1_t2f/2
 | Corners with separate hbt/mos/res/cap combinations, cap corners | not run (G1 ran 9 combinations at 3.3 V, 27 C) | G1 README |
 | 3.3 V corner decks, 85 C, 150/175 C | not run | - |
 | Re-run with `r1_bgr` (the R1 bandgap) | not run (pending) | open item 1 |
-| Layout, DRC, LVS, antenna, PEX of the macro | not run here (G1 results apply to the copied G1 macro only) | G1 `g1_t2f/reports` |
+| Layout, DRC, LVS, antenna of the macro | passed for the R1 copy of the G1 layout, see "Layout" below | `layout/runs/` |
+| PEX of the macro | not run here (G1 results apply to the identical G1 geometry only) | G1 `g1_t2f/reports/pex` |
 | Monte Carlo, V_CE check, start-up with the R1 supplies | not run | - |
 | Measurement | not run | - |
 
@@ -180,3 +181,66 @@ The PTAT-mode reading also moves by -13 kHz/V (-2.6 C/V at 27 C) with VDDA, if t
 - `sim/r1_run_t2f.py` - deck generator and runner. `sim/analyze_r1_t2f.py` - tables and `results/summary.json`.
 - `sim/decks/*.cir` - decks. `sim/results/*.json` - parsed .meas values. `sim/results/tables.md` - generated tables.
 - `sim/runs/run_*.json` - one record per run (command, tool versions, PDK commit, inputs, question, result, disposition).
+
+## Layout
+
+Source: the G1 layout of the same netlist, copied and renamed. `designs/g1-guardian/blocks/g1_t2f/layout/g1_t2f.gds`,
+sha256 `c2ae89a9ca31808f7489e2671845db4194b1de5bacc15ab860d2de10146f0059` (filled GDS, revision 2). The netlist of record
+`schematic/g1_t2f_rev2.spice` (sha256 `8011b761...`) is byte equal to the G1 netlist `g1_t2f/xschem/g1_t2f.spice` that the G1 layout was
+drawn and checked against. So no device changed. The G1 generator was copied, the top cell was renamed, and the layout was generated again
+and filled again. A geometry XOR of the new GDS against the G1 GDS shows no difference on any layer (`layout/runs/layout-gen-b/xor_vs_g1.log`).
+
+Files in `layout/`:
+
+| File | Content |
+| --- | --- |
+| `r1_t2f.gds` | GDS of record (filled), top cell `r1_t2f`, sha256 `5e7aa75ae9335b12b1c825d326e586c742755bd9305074fc1cdc2507d17af9a7`, 351 kB |
+| `r1_t2f.lef` | LEF, macro `r1_t2f`, 9 pins |
+| `r1_t2f_lvs.cdl` | LVS reference, written by `make_lvs_cdl.py` from `schematic/g1_t2f_rev2.spice` (sha256 `9867279d...`) |
+| `r1_t2f_layout.py`, `t2f_lib.py` | generator (G1 files, renamed; `t2f_lib.py` is unchanged) |
+| `fill_r1_t2f.sh`, `fill_frame.py`, `fill_filler.log` | PDK fill (G1 method) and its log |
+| `run_checks.sh`, `write_runjson.py`, `check_pins.py`, `xor_vs_g1.py` | check flow (copy of the `r1_bgr` method plus antenna, fill and an XOR against G1) |
+| `runs/` | `run.json` of every run (tag `b`); the failed tag `a` is described below |
+
+Built against: PDK commit `84374023ee8b4b126bebbba67fcbada0a9c0ff0b` (checked by `flow/run.sh` in the container), KLayout 0.30.9 (from the DRC and LVS logs),
+container `tapeoutbench-eda:latest` image id `sha256:ddeb6957...` (pinned in `flow/run.sh`), CPU set 100-102.
+
+| Check | Status | Evidence |
+| --- | --- | --- |
+| Generator runs, 0 Metal2/Metal3 proximity issues | passed | `<G1_RESULTS_ROOT>/r1_t2f/layout-gen-b/gen.log` |
+| Geometry equal to the G1 GDS (XOR, every layer, top cell names differ) | passed, XOR area 0 on all layers | `layout/runs/layout-gen-b/xor_vs_g1.log` |
+| DRC, `run_drc.py --run_mode=deep --no_density`, main + `sg13g2_maximal` tables, filled GDS | passed, 0 markers | `layout/runs/layout-drc-b/run.json`, `<G1_RESULTS_ROOT>/r1_t2f/layout-drc-b/` |
+| Antenna, `run_drc.py --antenna_only` | passed, 0 markers | `layout/runs/layout-ant-b/run.json`, `<G1_RESULTS_ROOT>/r1_t2f/layout-ant-b/` |
+| LVS, `run_lvs.py --run_mode=deep --no_series_res` against `r1_t2f_lvs.cdl` | passed, netlists match (32 HV NMOS, 29 HV PMOS, 4 LV PMOS, 2 LV NMOS, 10 `rppd`, 5 `npn13G2`, 2 `cap_cmim`; 57 nets) | `layout/runs/layout-lvs-b/run.json`, `<G1_RESULTS_ROOT>/r1_t2f/layout-lvs-b/` |
+| Pin names equal the CDL ports (LVS ignores top-port mismatches by default) | passed | `layout/runs/layout-gen-b/check_pins.log` |
+| Density | not run (waived at block level, `--no_density`; chip level after the chip filler) | - |
+| PEX, post-layout simulation | not run (G1 PEX applies to identical geometry; the bandgap in the R1 chip is `r1_bgr`, not the G1 bandgap) | - |
+
+Area: 92.0 x 102.6 um = 9439.2 um2 = 0.00944 mm2 (`prBoundary` 189/4). Metal1 to Metal3 wiring, Metal5/TopMetal1 for the two 28 x 28 um MIM capacitors.
+Pins (all Metal3, `check_pins.log`): `vss` south bar (0..92, 0..2.6); `vdd` north bar (0..92, 100..102.6); east edge, x 90.4..92:
+`vdd12` y 94.2..95.0, `en` 98.7..99.5, `fout` 96.3..97.1, `pbias` 67.7..68.5, `pcasc` 65.5..66.3, `vref` 50.1..50.9, `mode` 34.8..35.6.
+
+Differences between the G1 layout and the R1 layout:
+
+| Item | G1 | R1 | Reason |
+| --- | --- | --- | --- |
+| Top cell, LEF macro | `g1_t2f` | `r1_t2f` | R1 name |
+| LVS reference subcircuit | `g1_t2f` | `r1_t2f` | same |
+| Netlist source in `make_lvs_cdl.py` | `../xschem/g1_t2f.spice` | `../schematic/g1_t2f_rev2.spice` | R1 copy, same sha256 |
+| Fill scratch directory | `build/g1_t2f_fill` | `/tmp` inside the container | `build/` is not mounted in the container (failed run `a`) |
+| Devices, nets, geometry, pins | - | no difference (XOR 0) | netlist unchanged |
+
+The brief expected a netlist difference (G1 r4 HBT-ratio test mode removed, rails from `r1_bgr`). The netlist of record has none. The `BGR_R4` bit
+belongs to the G1 bandgap. The T2F netlist already takes `pbias`, `pcasc` and `vref` as pins. The rails come from `r1_bgr` at chip level only.
+
+Open issues: (1) no PEX and no post-layout simulation for R1 (G1 post-layout numbers were taken with the Sep-19 bandgap). (2) Chip-level density and
+antenna after placement are not run here. (3) The LVS reference carries the two layout dummy HBTs of the G1 comparator row (documented in `make_lvs_cdl.py`).
+
+Failures and mistakes:
+
+| Class | What happened |
+| --- | --- |
+| tooling | Run `a`: `fill_r1_t2f.sh` (G1 text) did `mkdir -p /work/build`. In the container `build` is a link without a target, so the script stopped after the generator. No DRC or LVS evidence exists for tag `a` (`<G1_RESULTS_ROOT>/r1_t2f/layout-gen-a/FAILED.txt`). Fixed with a container-local scratch directory; run `b` is the record. |
+| process-hygiene | The first call of `run_checks.sh` ran without `G1_RESULTS_ROOT` exported (the shell does not keep variables between calls). It stopped at once and created no run directory. |
+| spec-ambiguity | The brief assumed a netlist difference that does not exist (see above). No generator edit was needed. |
+| verification-gap | The PDK LVS selects `IGNORE_TOP_PORTS_MISMATCH` by default, so a wrong pin label would pass. `check_pins.py` compares LEF pins with CDL ports. |

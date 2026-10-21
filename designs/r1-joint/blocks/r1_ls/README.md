@@ -114,7 +114,7 @@ The R1 corners above stay in the pA range. The hot-ff point is **not run** in R1
 | One `g1_ls_up` | 9.20 x 11.70 um = **107.64 um2** | G1 LEF `SIZE 9.200 BY 11.700` |
 | 6 x `g1_ls_up` (the counted set) | **645.8 um2 = 0.00065 mm2** | 6 x 107.64 |
 | Spacing rule from G1 | instances at least 1.2 um apart, own three supply straps each | `designs/g1-guardian/blocks/g1_ctrl/ls/README.md` |
-| `g1_lvlup`, `g1_lvldn` | no stand-alone layout | only an estimate in `../r1_gate/README.md` |
+| `g1_lvlup`, `g1_lvldn` | no stand-alone layout | laid out inside `../r1_gate/layout/r1_gate_hv_filled.gds` (variant H only) |
 
 At 20 um pitch (the G1 placement) six cells use a strip of 120 um by 11.7 um, about 0.0014 mm2 including the gaps. This is a placement choice and is not part of the count.
 The P0 budget line "BGR, T2F, 3 gates, level shifters 0.055 mm2" is not affected.
@@ -132,7 +132,8 @@ The P0 budget line "BGR, T2F, 3 gates, level shifters 0.055 mm2" is not affected
 | Receivers for `oc_a neg_a oc_b neg_b` | not applicable, inside `r1_safe` | `../r1_safe/README.md` |
 | 81-point sweep, hot-ff static current, back-powering and power-up order of `g1_ls_up` in R1 | not run in R1 (G1 ran 81 points and 6 power-up cases on the same netlist) | G1 README |
 | Mismatch Monte Carlo, instance-to-instance skew | not run | - |
-| Layout, DRC, LVS, PEX of the R1 placement | not run (G1 cell DRC and LVS passed; not repeated) | - |
+| Layout, DRC, LVS, antenna of the cell | passed (R1 copy of the G1 cell), see "Layout" below | `layout/runs/` |
+| PEX of the R1 placement | not run | - |
 | Timing into the real loads (AFE gain switches, T2F pins) | not run (20 fF + 1 inverter only) | - |
 
 ## Open issues
@@ -152,3 +153,47 @@ The P0 budget line "BGR, T2F, 3 gates, level shifters 0.055 mm2" is not affected
 | `sim/results/ls-20261020b.json`, `ls-20261020b_tables.md` | results, tables |
 | `sim/runs/ls-20261020b/run.json` | command, versions, inputs, result, disposition |
 | `<G1_RESULTS_ROOT>/r1_ls/ls-20261020b/` | decks and logs (bulk results root) |
+
+## Layout
+
+Source: the G1 cell layout, copied and renamed. `designs/g1-guardian/blocks/g1_ctrl/ls/layout/g1_ls_up.gds` sha256
+`85de277ca1c2de41fa59e577db1d6d7633edddb24abf3b6d57e6787afd335546` (generator `g1_ls_up.py`, sha256 `3f441cd5...`). The netlist of record
+`schematic/g1_ls_up_copy.spice` (sha256 `5567c807...`) is the G1 netlist. The layout is one cell: one `g1_ls_up` level shifter (1.2 V to 3.3 V).
+The top cell is named `r1_ls`. The chip places this cell several times (six in the S6 floorplan); a placement is not part of this layout.
+`g1_lvlup` and `g1_lvldn` have no stand-alone layout; they exist in `../r1_gate/layout/r1_gate_hv_filled.gds` (variant H only).
+
+Files in `layout/`:
+
+| File | Content |
+| --- | --- |
+| `r1_ls.gds` | GDS of record, top cell `r1_ls`, sha256 `a4f496364b55c71a035f44a9b13b68fd8475f98b05f5e13a4e38e9ec1703b4de`, 21 kB. No fill (single cell) |
+| `r1_ls.lef`, `r1_ls.vh` | LEF and black-box Verilog, macro and module `r1_ls` |
+| `r1_ls_lvs.cdl` | LVS reference from `schematic/g1_ls_up_copy.spice` by `make_lvs_cdl.py` (sha256 `4f3fefbe...`); equal to the G1 `g1_ls_up.cdl` except the subcircuit name |
+| `r1_ls_layout.py` | generator (G1 `g1_ls_up.py`, cell and file names changed) |
+| `run_checks.sh`, `write_runjson.py`, `check_pins.py`, `xor_vs_g1.py` | check flow |
+| `runs/` | `run.json` of the runs (tag `a`) |
+
+Built against: PDK commit `84374023ee8b4b126bebbba67fcbada0a9c0ff0b`, KLayout 0.30.9, container image `sha256:ddeb6957...`, CPU set 100-102.
+
+| Check | Status | Evidence |
+| --- | --- | --- |
+| Generator runs | passed | `<G1_RESULTS_ROOT>/r1_ls/layout-gen-a/gen.log` |
+| Geometry equal to the G1 GDS (XOR, every layer) | passed, XOR area 0 | `layout/runs/layout-gen-a/xor_vs_g1.log` |
+| DRC, deep, `--no_density`, main + maximal tables | passed, 0 markers | `layout/runs/layout-drc-a/run.json`, `<G1_RESULTS_ROOT>/r1_ls/layout-drc-a/` |
+| Antenna, `--antenna_only` | passed, 0 markers | `layout/runs/layout-ant-a/run.json` |
+| LVS, deep, against `r1_ls_lvs.cdl` | passed, netlists match (8 devices: 3 HV PMOS, 3 HV NMOS, 1 LV PMOS, 1 LV NMOS; 8 nets) | `layout/runs/layout-lvs-a/run.json`, `<G1_RESULTS_ROOT>/r1_ls/layout-lvs-a/` |
+| Pin names equal the CDL ports | passed | `layout/runs/layout-gen-a/check_pins.log` |
+| Density, PEX, post-layout simulation | not run (density: chip level; PEX: G1 ran a bounded C-PEX on this geometry, not repeated) | - |
+
+Area: 9.2 x 11.7 um = 107.64 um2 (`prBoundary` 189/4). Pins: `in` Metal2 (0..0.85, 4.8..5.0), west edge; `out` Metal1 (8.0..9.2, 4.1..5.7), east edge;
+`vdd` Metal1 (0.2..1.8, 9.8..10.2), `vdda` Metal1 (4.0..8.6, 11.2..11.6), `vss` Metal1 (0.2..8.7, 0.3..0.85), inside the cell (the chip strapping reaches them).
+
+| Item | G1 | R1 |
+| --- | --- | --- |
+| Top cell, LEF macro, Verilog module | `g1_ls_up` | `r1_ls` |
+| LVS reference subcircuit | `g1_ls_up` | `r1_ls` |
+| Devices, geometry, pins | - | no difference (XOR 0) |
+
+Open issues: the power-up check on the R1 supply order (see "Open issues" above) is a schematic-level item and is still open. Rail strapping of the six placements is a chip-level item.
+
+Failures and mistakes: none in this block. (The shared T7 tooling failure of the fill script does not apply: this cell has no fill step.)

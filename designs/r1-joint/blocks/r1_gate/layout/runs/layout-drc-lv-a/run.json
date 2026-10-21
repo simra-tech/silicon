@@ -1,0 +1,31 @@
+{
+ "tag": "lv-a",
+ "written": "2026-10-21T03:42:47",
+ "pdk_commit": "84374023ee8b4b126bebbba67fcbada0a9c0ff0b",
+ "container": "tapeoutbench-eda:latest sha256:ddeb69576f2808676d1c5d474ecf04f6d1d6f8abdcff6b72b39790ded924bab2",
+ "cpuset": "100-102",
+ "inputs": {
+  "gds_sha256": "a3dee0f091c5236f7b6ff231b765d0b70e60a6e791d9db0b12fd821ce44e013b",
+  "lvs_cdl_sha256": "c0602540bbe0bc34c023a511e7ee1c8f03e6c4e519624d611fe187a5b3afe4ea",
+  "generator_sha256": "e6260ae553df9c29c9824652af5b0f7827edfd258d2831c42f1c786a47bb9123",
+  "unfilled_gds_sha256": "4a1650223b0f21dd6955c4cac6deedc1c4274edaef772a89bc360e83deb20010",
+  "netlist_of_record": "designs/r1-joint/blocks/r1_gate/schematic/r1_gate.spice",
+  "netlist_of_record_sha256": "a95a9a8c558e8b594dcf1e5580a0df719765ea6a917af1b08e4e4b4a777662c7"
+ },
+ "run_id": "layout-drc-lv-a",
+ "question": "PDK DRC (main + maximal, density off) on r1_gate_lv_filled.gds: 0 markers?",
+ "command": "flow/run.sh python3 $PDK_ROOT/$PDK/libs.tech/klayout/tech/drc/run_drc.py --path=/work/designs/r1-joint/blocks/r1_gate/layout/r1_gate_lv_filled.gds --run_mode=deep --no_density --run_dir=<run dir>",
+ "tools": {
+  "klayout": "0.30.9"
+ },
+ "result": {
+  "status": "passed",
+  "total_markers": 0,
+  "markers_per_rule": {},
+  "lyrdb": [
+   "<G1_RESULTS_ROOT>/r1_gate/layout-drc-lv-a/r1_gate_lv_filled_r1_gate_lv_full.lyrdb"
+  ],
+  "note": "main + sg13g2_maximal rule tables; density waived at block level (--no_density)"
+ },
+ "disposition": "passed"
+}

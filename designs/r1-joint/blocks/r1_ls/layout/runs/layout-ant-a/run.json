@@ -1,0 +1,32 @@
+{
+ "tag": "a",
+ "written": "2026-10-21T03:37:44",
+ "pdk_commit": "84374023ee8b4b126bebbba67fcbada0a9c0ff0b",
+ "container": "tapeoutbench-eda:latest sha256:ddeb69576f2808676d1c5d474ecf04f6d1d6f8abdcff6b72b39790ded924bab2",
+ "cpuset": "100-102",
+ "inputs": {
+  "gds_sha256": "a4f496364b55c71a035f44a9b13b68fd8475f98b05f5e13a4e38e9ec1703b4de",
+  "lvs_cdl_sha256": "4f3fefbedfa219acf7d9506d8e8edc878be372f5abc551cba2471caaf2a12460",
+  "generator_sha256": "49a261dd50eabd4bb66bee29c077c862fb7ff41b353a8090ac7668b0316bb42d",
+  "netlist_of_record": "designs/r1-joint/blocks/r1_ls/schematic/g1_ls_up_copy.spice",
+  "netlist_of_record_sha256": "5567c8079e57ced973d3e47dad6a7afe1776987de3962f9be397c6a8d0549b56",
+  "g1_source_gds": "designs/g1-guardian/blocks/g1_ctrl/ls/layout/g1_ls_up.gds",
+  "g1_source_gds_sha256": "85de277ca1c2de41fa59e577db1d6d7633edddb24abf3b6d57e6787afd335546"
+ },
+ "run_id": "layout-ant-a",
+ "question": "PDK antenna check on r1_ls.gds: 0 markers?",
+ "command": "flow/run.sh python3 $PDK_ROOT/$PDK/libs.tech/klayout/tech/drc/run_drc.py --path=/work/designs/r1-joint/blocks/r1_ls/layout/r1_ls.gds --run_mode=deep --antenna_only --run_dir=<run dir>",
+ "tools": {
+  "klayout": "0.30.9"
+ },
+ "result": {
+  "status": "passed",
+  "total_markers": 0,
+  "markers_per_rule": {},
+  "lyrdb": [
+   "<G1_RESULTS_ROOT>/r1_ls/layout-ant-a/r1_ls_r1_ls_antenna.lyrdb"
+  ],
+  "note": "--antenna_only"
+ },
+ "disposition": "passed"
+}
