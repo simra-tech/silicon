@@ -7,11 +7,11 @@ PINS = [(1,'VDD'),(2,'VSS'),(3,'IOVDD'),(4,'IOVSS'),(5,'VSS'),(6,'IOVSS'),(7,'VD
  (12,'FAULT_N'),(13,'GATE_A'),(14,'GATE_B'),(15,'GATE_C'),(16,'CS_N'),(17,'MA_SCLK'),(18,'SLO_SDO'),(19,'SDI'),(20,'EN_STO_IN'),
  (21,'SIN_P'),(22,'SIN_N'),(23,'COS_P'),(24,'COS_N')]
 USE = {'VDD':'POWER','VDDA':'POWER','IOVDD':'POWER','VSS':'GROUND','IOVSS':'GROUND'}
-DIE = int(sys.argv[2]) if len(sys.argv) > 2 else 1414     # 1414 (revision a) or 1600 (revision b)
+DIE = int(sys.argv[2]) if len(sys.argv) > 2 else 1414     # 1414 (revision a), 1600 (revision b) or 1700 (revision d)
 S = DIE - 1414
 def centre(n):
     i = (n-1) % 6
-    a = 395+112*i if DIE == 1414 else 450+140*i
+    a = {1414: 395+112*i, 1600: 450+140*i, 1700: 495+142*i}[DIE]
     if n <= 6: return (a, 101)
     if n <= 12: return (1313+S, a)
     if n <= 18: return (a, 1313+S)

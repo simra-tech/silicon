@@ -1,0 +1,43 @@
+{
+ "run_id": "ring-20261021-d",
+ "date": "2026-10-21",
+ "question": "Can the R1 pad ring be rebuilt at 1700 um (D10 amendment) with the same 24 IO cells, no odd filler gap, and pass the checks of revision c?",
+ "answer": "Yes. Pitch 142 um (IO cell gap 62 um, corner gap 134 um, both even), 152 IO fillers, no Filler200. Main, maximal, precheck DRC and density: 0 items. Antenna: 12 items, same four pads as the 1600 um ring (empty core). Ring-only projected LVS: Match, 261/261 devices, 119/119 nets, 40 pins. Bond map 24/24. Core window 978.62 x 975.14 um = 0.954 mm2. G1-form LVS fails as in revisions a and c (210/261 devices, 59/119 nets). Canonical LVS: not run.",
+ "pdk": "IHP-Open-PDK 84374023ee8b4b126bebbba67fcbada0a9c0ff0b (checked by flow/run.sh)",
+ "container_image": "tapeoutbench-eda:latest sha256:ddeb69576f2808676d1c5d474ecf04f6d1d6f8abdcff6b72b39790ded924bab2",
+ "tools": {"klayout": "0.30.9", "ngspice": "not applicable", "librelane": "not used", "python3 (host, make_cdl.py, make_lef.py)": "standard library only"},
+ "cpu_set": "116-119 (G1_CPUSET, G1_CPUS=4), one KLayout job at a time",
+ "command_sequence": "flow/run_ring_1700_d.sh (steps run one by one; the checks ran in a detached driver script in the results root, reports/ring-20261021-d/driver.log)",
+ "inputs": {
+  "source_ring": "r1_padring_nofill.gds of ring-20261020-a, sha256 6d8a34d04c9e5d03d6fbfcdb0a6d8d07d113a9abd289fc88f6fd353232ffc730",
+  "generator": "flow/build_ring_1700.py (constants of build_ring_1600.py: stretch 286 um, pitch 142 um, first cell origin 455 um)",
+  "reference_source": "designs/g1-guardian/blocks/g1_padring/netlist/g1_chip_top_1414_r4.cdl",
+  "bond_map_source": "designs/r1-joint/padframe/bondmap_src_r1_1700.csv"
+ },
+ "output": {
+  "gds": "<G1_RESULTS_ROOT>/r1_padring/ring-20261021-d/r1_padring_1700.gds",
+  "sha256": "81bba04b3c0655ece75587d6c90b159d4bb860e0dbe0e3dd80e2c65c50d0725d",
+  "nofill_sha256": "85d8894c40f07139afca513253bb27793471489488ff3d3153a1976094d604b7",
+  "fillers": {"Filler4000": 108, "Filler2000": 8, "Filler400": 36, "Filler200": 0},
+  "references": "netlist/r1_padring_1700*.cdl (see README, revision d)"
+ },
+ "steps": [
+  {"step": "build + fill + rewrite", "command": "flow/build_ring_1700.py, PDK filler.py, flow/rewrite_gds.py", "result": "sha256 81bba04b..., 63 cells, bbox 0..1700 um", "disposition": "done"},
+  {"step": "references", "command": "python3 flow/make_cdl.py ... --fillers=reports/ring-20261021-d/build_ring_1700.json; flow/flatten_reference.rb (twice)", "result": "round trip match 1184 devices (G1 form 168 nets, ring-only 169 nets)", "disposition": "done"},
+  {"step": "measure", "command": "flow/measure_ring_1700.py", "result": "row continuous on 4 sides (46 cells per side, 141 to 1559 um); core window 978.62 x 975.14 um = 0.9543 mm2", "evidence": "measure_ring_1700.json", "disposition": "passed"},
+  {"step": "compare_order", "command": "flow/compare_order.py", "result": "identical order, type and orientation to revision a", "evidence": "compare_order.json", "disposition": "passed"},
+  {"step": "abutment", "command": "flow/check_abutment.py", "result": "180 pairs; Metal3-TopMetal2 0 breaks; Metal2 2 differences at IOPadIOVss edge (same in 1414 and 1600 rings); Metal1 and Activ differences at cell edges as before", "evidence": "abutment_1700_nofill.json", "disposition": "passed (no rail break)"},
+  {"step": "bondplan", "command": "padframe/bondplan_r1.py -rd die_um=1700", "result": "0 crossings (30 if pad n goes to lead n)", "disposition": "done"},
+  {"step": "bondmap", "command": "flow/verify_bondmap.py with padframe/bondmap_r1_1700_ring.csv", "result": "24 of 24 openings, 22 labels, all_ok true", "evidence": "verify_bondmap_r1_1700.json", "disposition": "passed"},
+  {"step": "screenshot", "command": "flow/screenshot_ring.py -rd w=700", "result": "r1_padring_1700.png 228 784 bytes", "disposition": "done"},
+  {"step": "drc_main", "command": "run_drc.py --run_mode=deep --no_density --disable_extra_rules --density_thr=4", "result": "0 items, 561 categories, 171.8 s", "evidence": "drc_main/", "disposition": "passed"},
+  {"step": "drc_maximal", "command": "flow/run_maximal.py", "result": "0 items, 272 categories, 330.7 s", "evidence": "drc_maximal/", "disposition": "passed"},
+  {"step": "precheck", "command": "run_drc.py --precheck_drc --disable_extra_rules --density_thr=4", "result": "0 items, 455 categories, 128.2 s", "evidence": "precheck/", "disposition": "passed"},
+  {"step": "density", "command": "run_drc.py --density_only", "result": "0 items, 7 categories", "evidence": "density/", "disposition": "passed"},
+  {"step": "antenna", "command": "run_drc.py --antenna_only --antenna", "result": "12 items (Ant.e_Metal5, Ant.e_TopMetal1, Ant.e_TopMetal2, 4 each) on pads 16, 17, 19, 20, as the 1600 um ring; run_drc exit code 1", "evidence": "antenna/", "disposition": "failed as expected (empty core)"},
+  {"step": "lvs_projected_ringonly", "command": "run_lvs.py --run_mode deep --top_lvl_pins --spice_comments, netlist/r1_padring_1700_ringonly_projected_ref.cdl", "result": "Match: 261 of 261 devices, 119 of 119 nets, 40 pins; 'Congratulations! Netlists match.'; 3110 s", "evidence": "lvs_projected_ringonly/", "disposition": "passed"},
+  {"step": "lvs_projected_g1_form", "command": "run_lvs.py, netlist/r1_padring_1700_projected_ref.cdl", "result": "NoMatch: 210 of 261 devices, 59 of 119 nets (equal to revisions a and c); 2175 s; exit code not recorded (driver stopped, result from the log and pair_counts.json)", "evidence": "lvs_projected/", "disposition": "failed, as revision a (empty core: substrate not tied to VSS)"},
+  {"step": "lvs_canonical", "result": "not run", "disposition": "not run (time budget; known deck limitation)"},
+  {"step": "gds hash before and after checks", "evidence": "input_gds.sha256, input_gds.sha256.after", "result": "equal", "disposition": "passed"}
+ ]
+}

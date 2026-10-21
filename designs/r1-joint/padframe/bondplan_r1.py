@@ -12,7 +12,7 @@ drawing only; the assembly house's package drawing governs.
 
 Run in the pinned container from the repository root:
   klayout -b -r designs/r1-joint/padframe/bondplan_r1.py -rd gds=<r2.gds> -rd src_csv=<r2 csv> \
-          -rd out_csv=<r3 csv> -rd out_svg=<svg> -rd out_json=<json> [-rd gds_sha=<expected sha256>] [-rd die_um=1600]"""
+          -rd out_csv=<r3 csv> -rd out_svg=<svg> -rd out_json=<json> [-rd gds_sha=<expected sha256>] [-rd die_um=1600 or 1700]"""
 import pya, csv, json, hashlib, math
 # expected GDS sha256: r2 by default; -rd gds_sha=<sha> binds another chip of record (r3: 7d07a784…,
 # 2026-09-26; the r3 pads, openings and labels are geometrically unchanged from r2)
@@ -21,7 +21,7 @@ assert GDS_SHA, 'pass -rd gds_sha=<sha256>'
 BODY, PITCH, LEAD_W, LEAD_L, PADDLE = 4.0, 0.5, 0.25, 0.40, 2.60
 sha = hashlib.sha256(open(gds, 'rb').read()).hexdigest(); assert sha == GDS_SHA, sha
 ly = pya.Layout(); ly.read(gds); top, = ly.top_cells(); dbu = ly.dbu
-DIE_UM = int(globals().get('die_um', 1414))   # -rd die_um=1600 for the 1600 um ring (revision b)
+DIE_UM = int(globals().get('die_um', 1414))   # -rd die_um=1600 or 1700 for the revision b or d ring
 die = top.bbox(); assert die == pya.Box(0, 0, DIE_UM * 1000, DIE_UM * 1000)
 W = die.width() * dbu / 1000.0                                  # mm
 li = ly.find_layer(9, 0)
