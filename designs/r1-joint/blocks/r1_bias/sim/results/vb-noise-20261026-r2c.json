@@ -1,0 +1,97 @@
+{
+ "run_id": "vb-noise-20261026-r2c",
+ "suite": "vbnoise",
+ "question": "Output noise of vref_b against the raw vref, 10 Hz - 100 kHz.",
+ "args": {},
+ "command": "G1_CPUSET=116-119 G1_WORKDIR=designs/r1-joint/blocks/r1_bias/sim G1_RESULTS_ROOT=<G1_RESULTS_ROOT> flow/run.sh python3 run_vbuf.py vbnoise vb-noise-20261026-r2c ",
+ "r1_bias_netlist": "designs/r1-joint/blocks/r1_bias/schematic/r1_bias.spice",
+ "pdk_commit": "84374023ee8b4b126bebbba67fcbada0a9c0ff0b",
+ "ngspice": "** ngspice-46 : Circuit level simulation program",
+ "git_head": "b4a95ae606f9df4a30609a1d1734af4d59aa9e0a",
+ "netlist_sha256": {
+  "r1_bias": "5511ea8db822408d882fad324b1f694f82b0e4448b7e6f81a6319fd14957dfeb",
+  "r1_bgr": "c19a7425d605906962724fdda21add8ae3926dc9a097c6f835a16f05f92c0c26",
+  "r1_t2f": "8011b76104e9faa4a29dae4323ce59fb6f5864373a087df0767a61672a7b4391",
+  "loads": "4df2d4bb037313efe2c6a75a2ee2edb1dea50e2dde84f9fe69320f7749d8856c",
+  "vrefb_loads": "ecde790902f01776a120e47c7bd52b75e5340062af0070628f5b540cb1e38fa6"
+ },
+ "cvb_default": "25p",
+ "raw": "<G1_RESULTS_ROOT>/r1_bias/vb-noise-20261026-r2c/",
+ "seconds": 16.4,
+ "failed_jobs": 0,
+ "spec_failures": [],
+ "result": [
+  {
+   "case": "tt",
+   "vref_b": {
+    "rms_uV_10Hz_100kHz": 57.155,
+    "density_nV_rtHz": {
+     "10": 5320.3,
+     "100": 1421.3,
+     "1000": 404.0,
+     "10000": 178.0,
+     "100000": 119.6
+    }
+   },
+   "vref": {
+    "rms_uV_10Hz_100kHz": 54.547,
+    "density_nV_rtHz": {
+     "10": 5290.4,
+     "100": 1411.1,
+     "1000": 397.5,
+     "10000": 168.8,
+     "100000": 109.8
+    }
+   },
+   "buffer_added_rms_uV": 17.068
+  },
+  {
+   "case": "ss",
+   "vref_b": {
+    "rms_uV_10Hz_100kHz": 72.48,
+    "density_nV_rtHz": {
+     "10": 7109.0,
+     "100": 1897.9,
+     "1000": 535.2,
+     "10000": 227.1,
+     "100000": 138.4
+    }
+   },
+   "vref": {
+    "rms_uV_10Hz_100kHz": 69.755,
+    "density_nV_rtHz": {
+     "10": 7075.2,
+     "100": 1886.4,
+     "1000": 527.9,
+     "10000": 216.6,
+     "100000": 129.6
+    }
+   },
+   "buffer_added_rms_uV": 19.687
+  },
+  {
+   "case": "ff",
+   "vref_b": {
+    "rms_uV_10Hz_100kHz": 45.929,
+    "density_nV_rtHz": {
+     "10": 4066.5,
+     "100": 1087.3,
+     "1000": 311.6,
+     "10000": 142.4,
+     "100000": 103.0
+    }
+   },
+   "vref": {
+    "rms_uV_10Hz_100kHz": 43.375,
+    "density_nV_rtHz": {
+     "10": 4039.0,
+     "100": 1077.9,
+     "1000": 305.5,
+     "10000": 133.9,
+     "100000": 93.0
+    }
+   },
+   "buffer_added_rms_uV": 15.102
+  }
+ ]
+}

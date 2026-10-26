@@ -1,8 +1,8 @@
 * r1_bias LVS reference netlist, written by layout/r1_bias_layout.py from schematic/r1_bias.spice (netlist of
-* record, revision 1d), flattened: internal nets carry the instance path (xpor_..., xl_<leg>_d), m>1 written as
+* record, revision 2), flattened: internal nets carry the instance path (xpor_..., xvb_..., xl_<leg>_d), m>1 written as
 * separate units, sub! -> vss. The 6 layout dummies (sg13_hv_pmos 12/4, every terminal on vdda) are not listed:
 * the PDK LVS deck drops devices whose terminals are all on one net (run layout-lvs-20261021-b).
-.subckt r1_bias vdda vdd vss pbias pcasc ib_afe_s1 ib_afe_s2 ib_afe_c1 ib_afe_c2 ib_is_a ib_is_b ib_sf_oa ib_sf_na ib_sf_ob ib_sf_nb ib_adc_ref por_n
+.subckt r1_bias vdda vdd vss pbias pcasc ib_afe_s1 ib_afe_s2 ib_afe_c1 ib_afe_c2 ib_is_a ib_is_b ib_sf_oa ib_sf_na ib_sf_ob ib_sf_nb ib_adc_ref por_n vref vref_b
 Mxl_ib_afe_s1_xmp_u0 xl_ib_afe_s1_d pbias vdda vdda sg13_hv_pmos w=12u l=4u ng=1 m=1
 Mxl_ib_afe_s1_xmp_u1 xl_ib_afe_s1_d pbias vdda vdda sg13_hv_pmos w=12u l=4u ng=1 m=1
 Mxl_ib_afe_s1_xmc_u0 ib_afe_s1 pcasc xl_ib_afe_s1_d xl_ib_afe_s1_d sg13_hv_pmos w=12u l=4u ng=1 m=1
@@ -33,6 +33,8 @@ Mxl_ib_sf_nb_xmp xl_ib_sf_nb_d pbias vdda vdda sg13_hv_pmos w=12u l=4u ng=1 m=1
 Mxl_ib_sf_nb_xmc ib_sf_nb pcasc xl_ib_sf_nb_d xl_ib_sf_nb_d sg13_hv_pmos w=12u l=4u ng=1 m=1
 Mxl_ib_adc_ref_xmp xl_ib_adc_ref_d pbias vdda vdda sg13_hv_pmos w=12u l=4u ng=1 m=1
 Mxl_ib_adc_ref_xmc ib_adc_ref pcasc xl_ib_adc_ref_d xl_ib_adc_ref_d sg13_hv_pmos w=12u l=4u ng=1 m=1
+Mxl_ibvb_xmp xl_ibvb_d pbias vdda vdda sg13_hv_pmos w=12u l=4u ng=1 m=1
+Mxl_ibvb_xmc ibvb pcasc xl_ibvb_d xl_ibvb_d sg13_hv_pmos w=12u l=4u ng=1 m=1
 Mxpor_xmpr xpor_dr pbias vdda vdda sg13_hv_pmos w=10u l=4u ng=1 m=1
 Mxpor_xmcr xpor_vrh pcasc xpor_dr xpor_dr sg13_hv_pmos w=10u l=4u ng=1 m=1
 Rxpor_xrra xpor_vrh xpor_vrl vss rppd w=1u l=45.9u m=1 b=0
@@ -140,4 +142,31 @@ Mxpor_xdp1 xpor_o3 xpor_por_raw vdd vdd sg13_lv_pmos w=1u l=0.13u ng=1 m=1
 Mxpor_xdn1 xpor_o3 xpor_por_raw vss vss sg13_lv_nmos w=0.5u l=0.13u ng=1 m=1
 Mxpor_xdp2 por_n xpor_o3 vdd vdd sg13_lv_pmos w=1u l=0.13u ng=1 m=1
 Mxpor_xdn2 por_n xpor_o3 vss vss sg13_lv_nmos w=0.5u l=0.13u ng=1 m=1
+Mxvb_xm1_u0 xvb_d1 vref xvb_ns vss sg13_hv_nmos w=8u l=24u ng=1 m=1
+Mxvb_xm1_u1 xvb_d1 vref xvb_ns vss sg13_hv_nmos w=8u l=24u ng=1 m=1
+Mxvb_xm1_u2 xvb_d1 vref xvb_ns vss sg13_hv_nmos w=8u l=24u ng=1 m=1
+Mxvb_xm1_u3 xvb_d1 vref xvb_ns vss sg13_hv_nmos w=8u l=24u ng=1 m=1
+Mxvb_xm2_u0 xvb_x1 vref_b xvb_ns vss sg13_hv_nmos w=8u l=24u ng=1 m=1
+Mxvb_xm2_u1 xvb_x1 vref_b xvb_ns vss sg13_hv_nmos w=8u l=24u ng=1 m=1
+Mxvb_xm2_u2 xvb_x1 vref_b xvb_ns vss sg13_hv_nmos w=8u l=24u ng=1 m=1
+Mxvb_xm2_u3 xvb_x1 vref_b xvb_ns vss sg13_hv_nmos w=8u l=24u ng=1 m=1
+Mxvb_xm3 xvb_d1 xvb_d1 vdda vdda sg13_hv_pmos w=5u l=20u ng=1 m=1
+Mxvb_xm4 xvb_x1 xvb_d1 vdda vdda sg13_hv_pmos w=5u l=20u ng=1 m=1
+Mxvb_xmb_u0 ibvb ibvb vss vss sg13_hv_nmos w=5u l=2u ng=1 m=1
+Mxvb_xmb_u1 ibvb ibvb vss vss sg13_hv_nmos w=5u l=2u ng=1 m=1
+Mxvb_xmb_u2 ibvb ibvb vss vss sg13_hv_nmos w=5u l=2u ng=1 m=1
+Mxvb_xmb_u3 ibvb ibvb vss vss sg13_hv_nmos w=5u l=2u ng=1 m=1
+Mxvb_xmb_u4 ibvb ibvb vss vss sg13_hv_nmos w=5u l=2u ng=1 m=1
+Mxvb_xmt_u0 xvb_ns ibvb vss vss sg13_hv_nmos w=5u l=2u ng=1 m=1
+Mxvb_xmt_u1 xvb_ns ibvb vss vss sg13_hv_nmos w=5u l=2u ng=1 m=1
+Mxvb_xm8_u0 vref_b ibvb vss vss sg13_hv_nmos w=10u l=2u ng=1 m=1
+Mxvb_xm8_u1 vref_b ibvb vss vss sg13_hv_nmos w=10u l=2u ng=1 m=1
+Mxvb_xm8_u2 vref_b ibvb vss vss sg13_hv_nmos w=10u l=2u ng=1 m=1
+Mxvb_xm8_u3 vref_b ibvb vss vss sg13_hv_nmos w=10u l=2u ng=1 m=1
+Mxvb_xm7_u0 vdda xvb_x1 vref_b vss sg13_hv_nmos w=10u l=1u ng=1 m=1
+Mxvb_xm7_u1 vdda xvb_x1 vref_b vss sg13_hv_nmos w=10u l=1u ng=1 m=1
+Mxvb_xm7_u2 vdda xvb_x1 vref_b vss sg13_hv_nmos w=10u l=1u ng=1 m=1
+Mxvb_xm7_u3 vdda xvb_x1 vref_b vss sg13_hv_nmos w=10u l=1u ng=1 m=1
+Cxvb_xcc1 xvb_x1 vss cap_cmim w=48.3u l=48.3u m=1
+Cxvb_xcc2 xvb_x1 vss cap_cmim w=48.3u l=48.3u m=1
 .ends

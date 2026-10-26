@@ -8,7 +8,7 @@
 Method of r1_bgr (blocks/r1_bgr/layout/pex_build.py) with the MIM handling of r1_osc (blocks/r1_osc/layout):
   1. Devices, nets and terminal geometry from the LVS database that kpex wrote on the PEX input (pex_input.py: the
      layout without the MIM layers; devices not combined, every layout device with its layout parameters). kpex is
-     given the LVS CDL without the 4 cap_cmim lines, so the comparison matches and the cross-reference names every
+     given the LVS CDL without the cap_cmim lines, so the comparison matches and the cross-reference names every
      layout net with its schematic net; the main node of every net carries the hierarchical name of the netlist of
      record (meta `hier`: xpor_xca_tail -> xpor.xca.tail), so that the decks can probe xbias.xpor.gooda as before.
   2. Capacitance: kpex 0.3.12 2.5D CC (coupling and ground capacitance between nets, VSUBS -> vss), lumped at the
@@ -20,7 +20,7 @@ Method of r1_bgr (blocks/r1_bgr/layout/pex_build.py) with the MIM handling of r1
      leg). Vertex ports: each pin label (Metal3) and each MIM landing point (Metal4, meta `caps`). Gates, MOS bulk,
      the HBT and resistor substrate terminals carry no DC current and connect to the net's main node (except the
      pbias/pcasc gates above).
-  4. The 4 MIM devices (cap_cmim) are inserted between their landing ports.
+  4. The MIM devices (4 in 1d, 6 in revision 2) (cap_cmim) are inserted between their landing ports.
 Not modelled: contact resistance (Cont, EmWind), Activ / GatPoly wiring resistance, substrate resistance, the plate
 capacitance of the MIM plates to the wiring below (MIM layers removed for kpex).
 Outputs in <out>: r1_bias_pex.spice (full RC), r1_bias_pex_c.spice (wiring R set to 10 mOhm: devices + MIM + C;
@@ -110,7 +110,7 @@ for s in tc.shapes(ly.layer(30, 25)).each():
     if s.is_text():
         PINPT.setdefault(s.text_string, s.text.trans.disp)
 PIN_ORDER = ['vdda', 'vdd', 'vss', 'pbias', 'pcasc', 'ib_afe_s1', 'ib_afe_s2', 'ib_afe_c1', 'ib_afe_c2', 'ib_is_a',
-             'ib_is_b', 'ib_sf_oa', 'ib_sf_na', 'ib_sf_ob', 'ib_sf_nb', 'ib_adc_ref', 'por_n']
+             'ib_is_b', 'ib_sf_oa', 'ib_sf_na', 'ib_sf_ob', 'ib_sf_nb', 'ib_adc_ref', 'por_n', 'vref', 'vref_b']
 assert all(p in PINPT for p in PIN_ORDER), PINPT.keys()
 NETS = {n.expanded_name(): n for n in top.each_net()}
 assert all(p in NETS for p in PIN_ORDER), [p for p in PIN_ORDER if p not in NETS]
@@ -339,7 +339,7 @@ P('capacitors', len(lines_c), 'total %.1f fF' % (ctot * 1e15))
 P('per-net total C (fF):', json.dumps({k: round(v * 1e15, 2) for k, v in sorted(CNET.items())}))
 
 hdr = ['* r1_bias post-layout netlist (RC), written by layout/pex_build.py',
-       '* devices: KLayout LVS (PDK deck, via kpex) on the layout without MIM layers, not combined; 4 cap_cmim',
+       '* devices: KLayout LVS (PDK deck, via kpex) on the layout without MIM layers, not combined; the cap_cmim',
        '* re-inserted at their Via4 landing points; C: kpex 0.3.12 2.5D CC; R: KLayout RNetExtractor, Metal1..Metal4',
        '* + Via1..Via3, sg13g2_typ.itf values; device terminals on Metal1 are separate nodes. Main nodes carry the',
        '* hierarchical names of the netlist of record (xpor.gooda, xl_ib_afe_s1.d).',

@@ -26,14 +26,20 @@ Floorplan, bottom to top (the bandgap r1_bgr is on the west side, the consumers 
   channel PS
   POR delay stack band: 2 x 10 series PMOS 0.5/4 (one n-well on vdda)          -- POR p+ ring ends here
   channel B
-  cascode row B: dummy, 7 single-unit legs, replica cascodes MCR/MCL, dummy  (own n-well per leg, body = source)
+  revision 2 (D20) VREF buffer band r1_vbuf, own p+ ring:
+     V2: NMOS bias diode XMB x5, tail XMT x2, sink XM8 x4 (sources on a Metal1 vss bar) | source follower XM7 x4 10/1
+     channel V1 | V1a: input pair units A B B A (A = XM1, B = XM2, 8/24) | channel V2c | V1b: B A A B | channel V3c
+     V3: PMOS mirror XM3/XM4 5/20 (one n-well on vdda, tie strip)
+     compensation capacitor: two MIM plates 48.3 um over the band (TopMetal1 top plate x1, Metal5 bottom plate vss)
+  channel B2
+  cascode row B: dummy, 8 single-unit legs (+ ibvb for the buffer), replica cascodes MCR/MCL, dummy
   channel A
   cascode row A: dummy, 4 two-unit AFE legs, dummy
   channel M (gate bus pbias, mirror drains)
   mirror row: D + 15 units 12/4 (common centroid for the 2-unit AFE legs) + D, one n-well on vdda, same orientation
   vdda bus (Metal3, pin)
   output pins (Metal3, north edge)
-Pins: west pbias, pcasc (bandgap side); north the 11 outputs; east por_n, vdd; vdda/vss buses span the width.
+Pins: west pbias, pcasc, vref (bandgap side); north the 11 outputs; east por_n, vdd, vref_b; vdda/vss buses span the width.
 """
 import json
 import os
@@ -47,7 +53,7 @@ import pya  # noqa: E402
 import sg13g2_pycell_lib  # noqa: E402,F401  (registers library SG13_dev)
 
 HERE = os.path.dirname(os.path.abspath(__file__))
-SCH = os.path.join(HERE, '..', 'schematic', 'r1_bias.spice')
+SCH = os.path.join(HERE, '..', 'schematic', 'r1_bias.spice')   # netlist of record, revision 2
 lib = pya.Library.library_by_name('SG13_dev', 'sg13g2')
 ly = pya.Layout()
 ly.dbu = 0.001
@@ -66,7 +72,7 @@ W3 = 0.3                   # signal wire width
 TP = 0.6                   # channel track pitch
 W = 120.0                  # macro width
 # channel track counts (set from the router report; the generator stops on an overflow)
-NT = dict(RB=2, R1=8, H=10, NP=16, PS=6, B=6, A=8, M=9)
+NT = dict(RB=2, R1=8, H=10, NP=16, PS=6, B=8, V1=8, V2c=8, V3c=8, B2=8, A=8, M=9)
 
 
 def um(v):
@@ -256,7 +262,26 @@ SW_TOP = YS + 3.5
 POR_RING_IN_Y2 = SW_TOP + 0.5
 y = POR_RING_IN_Y2 + 0.3 + 0.1
 CH['B'] = Channel('B', y, y + ch_h(NT['B']))
-BIAS_RING_IN_Y1 = CH['B'].y1 + 0.1 + 0.3
+# revision 2: buffer band
+VB_RING_IN_Y1 = CH['B'].y1 + 0.1 + 0.3
+Y_V2 = VB_RING_IN_Y1 + 1.8                     # NMOS bias/sink row device bottom
+V2_TOP = Y_V2 + 10.1
+V2_RAIL = V2_TOP + 0.45                        # Metal1 vss bar (sources of the V2 row)
+y = V2_RAIL + 0.15 + 0.3
+CH['V1'] = Channel('V1', y, y + ch_h(NT['V1']))
+Y_V1A = CH['V1'].y1 + 1.3                      # input pair row a
+y = Y_V1A + 8.0 + 0.8
+CH['V2c'] = Channel('V2c', y, y + ch_h(NT['V2c']))
+Y_V1B = CH['V2c'].y1 + 1.3                     # input pair row b
+y = Y_V1B + 8.0 + 0.8
+CH['V3c'] = Channel('V3c', y, y + ch_h(NT['V3c']))
+Y_V3 = CH['V3c'].y1 + 1.3                      # PMOS row (n-well on vdda)
+TIE_V3 = (Y_V3 + 11.6, Y_V3 + 12.0)
+V3_TOP = Y_V3 + 13.0
+VB_RING_IN_Y2 = V3_TOP + 0.5
+y = VB_RING_IN_Y2 + 0.3 + 0.1
+CH['B2'] = Channel('B2', y, y + ch_h(NT['B2']))
+BIAS_RING_IN_Y1 = CH['B2'].y1 + 0.1 + 0.3
 YCB = BIAS_RING_IN_Y1 + 1.8                    # cascode row B device bottom
 y = YCB + 14.4 + 0.1
 CH['A'] = Channel('A', y, y + ch_h(NT['A']))
@@ -274,7 +299,7 @@ PIN_Y = H - 0.7
 VDDA_MID = (VDDA_Y0 + VDDA_Y1) / 2
 VSS_MID = 1.0
 
-print('plan', ' '.join('%s=%.2f..%.2f' % (n, c.y0, c.y1) for n, c in CH.items()), 'YA %.2f YH %.2f YN %.2f YP %.2f YS %.2f YCB %.2f YCA %.2f YD %.2f H %.2f' % (YA, YH, YN, YP, YS, YCB, YCA, YD, H))
+print('plan', ' '.join('%s=%.2f..%.2f' % (n, c.y0, c.y1) for n, c in CH.items()), 'YA %.2f YH %.2f YN %.2f YP %.2f YS %.2f YV2 %.2f YV1A %.2f YV1B %.2f YV3 %.2f YCB %.2f YCA %.2f YD %.2f H %.2f' % (YA, YH, YN, YP, YS, Y_V2, Y_V1A, Y_V1B, Y_V3, YCB, YCA, YD, H))
 # ---------------------------------------------------------------------------------------------
 # power buses and edge columns
 box('M3', 0, YB_VSS[0], W, YB_VSS[1])
@@ -321,8 +346,40 @@ def ring_both(R, y):
 KIND = {'p': 'pmosHV', 'n': 'nmosHV', 'pl': 'pmos', 'nl': 'nmos'}
 
 
+def mos_long(kind, w, l, x, y):
+    """single-finger MOS with L > 10 um (the PDK PCell limits L to 10 um and warns "using maximum length 10u"):
+    the 10 um PCell is flattened into the top cell and stretched in x across the gate (shapes right of the gate
+    centre move by l - 10, shapes that span it grow by l - 10). Revision 2 input pair 8/24 and mirror 5/20."""
+    pcv = lib.layout().add_pcell_variant(lib.layout().pcell_id(KIND[kind]), {'w': '%gu' % w, 'l': '10u', 'ng': 1})
+    c = ly.cell(ly.add_lib_cell(lib, pcv))
+    gc = um(0.34 + 5.0)
+    dl = um(l - 10.0)
+    for li in ly.layer_indexes():
+        it = c.begin_shapes_rec(li)
+        while not it.at_end():
+            sh = it.shape()
+            if sh.is_text():
+                it.next()
+                continue
+            pg = sh.polygon.transformed(it.trans())
+            b = pg.bbox()
+            if b.left >= gc:
+                pg = pg.moved(dl, 0)
+            elif b.right > gc:
+                assert pg.is_box(), ('non-box shape across the gate', kind, w, l, li)
+                pg = pya.Polygon(pya.Box(b.left, b.bottom, b.right + dl, b.top))
+            top.shapes(li).insert(pg.moved(um(x), um(y)))
+            it.next()
+    ly.delete_cell(c.cell_index())
+    lf = l + 0.68
+    return dict(x=x, y=y, w=w, l=l, lf=lf, gx=x + 0.34 + l / 2)
+
+
 def mos(kind, w, l, x, y, ng=1):
     lf = ng * l + (ng - 1) * 0.38 + 0.68
+    if l > 10.0:
+        assert ng == 1 and w <= 10.0
+        return mos_long(kind, w, l, x, y)
     if w > 10.0:
         # The PDK PCell limits one finger to 10 um (pmosHV_maxW); the netlist of record unit is 12/4 with one finger.
         # Draw the 10 um PCell and extend every layer of it by w - 10 at the top, with the same contact pitch.
@@ -715,17 +772,114 @@ for yy in (YA + 5.0, YP + 6.0, YS + 1.0):
     ring_both(PR_, yy)
 
 # =============================================================================================
+# Revision 2 (D20): VREF buffer band r1_vbuf (own p+ ring). Net names = flattened CDL names (xvb_<net>).
+VB = 'xvb_'
+X0V = 6.0
+# --- V2: NMOS bias diode / tail / sink units (sources up to a Metal1 vss bar), then the source-follower output XM7
+V2_ORDER = [('XVB.XMB', 5.0, 'ibvb'), ('XVB.XMB', 5.0, 'ibvb'), ('XVB.XMT', 5.0, VB + 'ns'), ('XVB.XMB', 5.0, 'ibvb'),
+            ('XVB.XMT', 5.0, VB + 'ns'), ('XVB.XMB', 5.0, 'ibvb'), ('XVB.XMB', 5.0, 'ibvb')] + [('XVB.XM8', 10.0, 'vref_b')] * 4
+x = X0V
+for name, w_, dn in V2_ORDER:
+    x = mos_dev(name, 'n', w_, 2.0, x, Y_V2, 'vss', dn, 'ibvb', 'vss', V2_RAIL + 0.15, 'V1', 'B', gap=1.0)
+XV2_SINK_END = x - 1.0
+x += 1.0
+# XM7 x4 10/1: drain (left strip) on vdda up into channel V1, source (right strip) vref_b and gate x1 down into channel B
+for i in range(4):
+    x = mos_dev('XVB.XM7', 'n', 10.0, 1.0, x, Y_V2, 'vdda', 'vref_b', VB + 'x1', 'vss', V2_RAIL + 0.15, 'V1', 'B', gap=1.0)
+XV2_END = x - 1.0
+box('TGO', X0V - 0.5, Y_V2 - 1.5, XV2_END + 0.5, Y_V2 + 10.8)
+# Metal1 vss bar over the V2 sources (bias, tail and sink units only), tied to the left side of the band ring
+VR = guard_ring_p(3.4, VB_RING_IN_Y1, W - 3.4, VB_RING_IN_Y2)
+box('M1', VR[0], V2_RAIL - 0.15, XV2_SINK_END + 0.3, V2_RAIL + 0.15)
+assert XV2_END < W - 5.0, XV2_END
+print('V2 row: sink end x %.2f, XM7 end x %.2f' % (XV2_SINK_END, XV2_END))
+
+# --- V1a / V1b: input pair, common centroid (A = XM1: drain d1, gate vref; B = XM2: drain x1, gate vref_b)
+LPU = 24.0 + 0.68
+XP0 = round((W - (4 * LPU + 3 * 1.0)) / 2, 2)
+PAIR = {'A': ('XVB.XM1', VB + 'd1', 'vref'), 'B': ('XVB.XM2', VB + 'x1', 'vref_b')}
+for row, yrow, cu, cd in (('ABBA', Y_V1A, 'V2c', 'V1'), ('BAAB', Y_V1B, 'V3c', 'V2c')):
+    x = XP0
+    for k in row:
+        nm, dn, gn = PAIR[k]
+        x = mos_dev(nm, 'n', 8.0, 24.0, x, yrow, VB + 'ns', dn, gn, None, None, cu, cd, gap=1.0)
+XP_END = x - 1.0
+# p+ substrate tie across the band in channel V2c (LU.b: N+ Activ <= 20 um from a tie; run layout-drc-20261026-r2a
+# flagged the inner pair units), joined to both sides of the band ring on Activ and Metal1
+YT_V2C = round((CH['V2c'].y0 + CH['V2c'].y1) / 2, 2)
+box('Activ', 3.4, YT_V2C - 0.15, W - 3.4, YT_V2C + 0.15)
+box('pSD', 3.43, YT_V2C - 0.21, W - 3.43, YT_V2C + 0.21)
+xc = 4.0
+while xc < W - 4.0:
+    square('Cont', xc, YT_V2C, CONT)
+    xc += 1.0
+box('M1', VR[0], YT_V2C - 0.13, VR[2], YT_V2C + 0.13)
+box('TGO', XP0 - 0.5, Y_V1A - 1.5, XP_END + 0.5, Y_V1B + 8.8)
+box('TGO', X0V - 0.5, Y_V2 + 10.8, XV2_END + 0.5, Y_V1A - 1.5)
+print('pair rows x %.2f .. %.2f' % (XP0, XP_END))
+
+# --- V3: PMOS mirror (one n-well on vdda, sources to the tie strip)
+V3_ORDER = [('XVB.XM3', 5.0, 20.0, VB + 'd1', VB + 'd1'), ('XVB.XM4', 5.0, 20.0, VB + 'x1', VB + 'd1')]
+x = X0V
+for name, w_, l_, dn, gn in V3_ORDER:
+    x = mos_dev(name, 'p', w_, l_, x, Y_V3, 'vdda', dn, gn, 'vdda', TIE_V3[1], 'B2', 'V3c', gap=0.9)
+XV3_END = x - 0.9
+box('NWell', X0V - 1.2, Y_V3 - 1.2, XV3_END + 1.2, V3_TOP)
+box('TGO', X0V - 1.2, Y_V3 - 1.5, XV3_END + 1.2, V3_TOP)
+ntap_strip(X0V - 0.3, TIE_V3[0], XV3_END + 0.3, TIE_V3[1])
+for xx in (X0V + 2.0, XV3_END - 2.0):
+    m1_tap('B2', 'vdda', xx, (TIE_V3[0] + TIE_V3[1]) / 2)
+print('V3 row end x %.2f' % XV3_END)
+for yy in (Y_V2 + 4.0, Y_V1A + 4.0, Y_V1B + 4.0, Y_V3 + 6.0):
+    ring_both(VR, yy)
+
+# --- compensation capacitor x1 to vss: two MIM plates over the band; bottom plates (vss) joined on Metal5, one Via4
+#     landing on the vss trunk; top plates (x1): one island each, joined on Metal3 between the two Metal4 landings
+S_CC = 48.3
+MIMV_Y = VB_RING_IN_Y1 + 0.5
+xm0 = round((W - (2 * S_CC + 3.0)) / 2, 2)
+CCX = [xm0, xm0 + S_CC + 3.0]
+for i, x0 in enumerate(CCX):
+    pcell('cmim', {'w': '%gu' % S_CC, 'l': '%gu' % S_CC, 'Calculate': 'C'}, x0, MIMV_Y)
+box('M5', CCX[0] - 0.6, MIMV_Y - 0.6, CCX[1] + S_CC + 0.6, MIMV_Y)
+assert CCX[0] - 0.6 < XVSS_T - 0.5, (CCX[0], XVSS_T)
+for dx in (0.0, 0.42):
+    square('Via4', XVSS_T - 0.21 + dx, MIMV_Y - 0.3, VIA)
+mbox('M4', 'vss', XVSS_T - 0.5, MIMV_Y - 0.5, XVSS_T + 0.5, MIMV_Y - 0.1)
+POINTS['vss'].append((XVSS_T, MIMV_Y - 0.3))
+YI_CC = MIMV_Y + S_CC + 2.4
+XI_CC = []
+for i, x0 in enumerate(CCX):
+    xi = x0 + S_CC / 2
+    box('TM1', xi - 0.82, MIMV_Y + S_CC - 0.6, xi + 0.82, YI_CC + 0.82)
+    square('TopVia1', xi, YI_CC, 0.42)
+    square('M5', xi, YI_CC, 0.66)
+    square('Via4', xi, YI_CC, VIA)
+    mbox('M4', VB + 'x1', xi - 0.33, YI_CC - 0.33, xi + 0.33, YI_CC + 0.33)
+    for dx in (-0.21, 0.21):
+        square('Via3', xi + dx, YI_CC, VIA)
+    XI_CC.append(xi)
+    CAPS.append(dict(name='XVB.XCC%d' % (i + 1), net_top=VB + 'x1', net_bot='vss', w=S_CC, l=S_CC, top=(xi, YI_CC), bot=(XVSS_T, MIMV_Y - 0.3)))
+box('M3', XI_CC[0] - 0.4, YI_CC - 0.3, XI_CC[1] + 0.4, YI_CC + 0.3)      # top plates joined on Metal3
+TRUNK_SPEC[VB + 'x1'] = dict(x=XI_CC[0], w=0.6)
+POINTS.setdefault(VB + 'x1', []).append((XI_CC[0], YI_CC))
+FIXED_M4.append((VB + 'x1', XI_CC[1] - 0.33, YI_CC - 0.33, XI_CC[1] + 0.33, YI_CC + 0.33))
+assert all(not (c.y0 - 0.5 < YI_CC < c.y1 + 0.5) for c in CH.values()), 'Cc island bar inside a channel'
+print('MIM plates x %.2f, %.2f y %.2f..%.2f, islands y %.2f' % (CCX[0], CCX[1], MIMV_Y, MIMV_Y + S_CC, YI_CC))
+
+# =============================================================================================
 # Bias distribution: mirror row + two cascode rows
 LEGS = [('ib_afe_s1', 2), ('ib_afe_s2', 2), ('ib_afe_c1', 2), ('ib_afe_c2', 2), ('ib_is_a', 1), ('ib_is_b', 1),
         ('ib_sf_oa', 1), ('ib_sf_na', 1), ('ib_sf_ob', 1), ('ib_sf_nb', 1), ('ib_adc_ref', 1)]
 # mirror units: 2-unit AFE legs placed symmetric about the row centre (common centroid), single legs between
-MORDER = ['ib_afe_s1', 'ib_is_a', 'ib_afe_c1', 'ib_sf_oa', 'ib_afe_s2', 'ib_sf_na', 'ib_afe_c2', 'ib_adc_ref',
+# revision 2: unit ibvb (r1_vbuf bias) next to the centre; the AFE pairs stay symmetric about the row centre
+MORDER = ['ib_afe_s1', 'ib_is_a', 'ib_afe_c1', 'ib_sf_oa', 'ib_afe_s2', 'ib_sf_na', 'ib_afe_c2', 'ib_adc_ref', 'ibvb',
           'ib_afe_c2', 'ib_sf_ob', 'ib_afe_s2', 'ib_sf_nb', 'ib_afe_c1', 'ib_is_b', 'ib_afe_s1']
-assert sorted(MORDER) == sorted(sum([[n] * m for n, m in LEGS], []))
+assert sorted(MORDER) == sorted(sum([[n] * m for n, m in LEGS + [('ibvb', 1)]], []))
 for n, m in LEGS:
     if m == 2:
         p = [i for i, k in enumerate(MORDER) if k == n]
-        assert p[0] + p[1] == 14, (n, p)
+        assert p[0] + p[1] == len(MORDER) - 1, (n, p)
 
 
 def dnet(leg):
@@ -768,7 +922,7 @@ for j in range(len(MIR)):                       # tie strip -> vdda bus, one Met
 
 # cascode rows (own n-well per leg, body = source = the leg's mirror drain)
 CASC_A = [('D', 1), ('ib_afe_s1', 2), ('ib_afe_c1', 2), ('ib_afe_s2', 2), ('ib_afe_c2', 2), ('D', 1)]
-CASC_B = [('D', 1), ('ib_is_a', 1), ('ib_sf_oa', 1), ('ib_sf_na', 1), ('ib_adc_ref', 1), ('ib_sf_ob', 1),
+CASC_B = [('D', 1), ('ib_is_a', 1), ('ib_sf_oa', 1), ('ib_sf_na', 1), ('ib_adc_ref', 1), ('ibvb', 1), ('ib_sf_ob', 1),
           ('ib_sf_nb', 1), ('ib_is_b', 1), ('MCR', 1), ('MCL', 1), ('D', 1)]
 WELL_GAP = 2.08
 
@@ -815,14 +969,14 @@ def casc_row(groups, YC, ch_up, ch_down):
 
 
 casc_row(CASC_A, YCA, 'M', 'A')
-casc_row(CASC_B, YCB, 'A', 'B')
+casc_row(CASC_B, YCB, 'A', 'B2')
 BR = guard_ring_p(3.4, BIAS_RING_IN_Y1, W - 3.4, BIAS_RING_IN_Y2)
 for yy in (YCB + 6.0, YCA + 6.0, YD + 6.0):
     ring_both(BR, yy)
 
 # =============================================================================================
 # pins
-PINS_WE = {'pbias': ('M', 'W'), 'pcasc': ('A', 'W'), 'por_n': ('R1', 'E'), 'vdd': ('H', 'E')}
+PINS_WE = {'pbias': ('M', 'W'), 'pcasc': ('A', 'W'), 'por_n': ('R1', 'E'), 'vdd': ('H', 'E'), 'vref': ('V1', 'W'), 'vref_b': ('V3c', 'E')}
 for net, (ch, side) in PINS_WE.items():
     CH[ch].extra.setdefault(net, []).append(0.0 if side == 'W' else W)
 PIN_N = [n for n, _ in LEGS]
@@ -1127,17 +1281,17 @@ TOP_PINS = SUBS['r1_bias']['pins']
 flatten('r1_bias', '', {p: p for p in TOP_PINS}, {})
 NDEV_SCH = len(CDL)
 hdr = ['* r1_bias LVS reference netlist, written by layout/r1_bias_layout.py from schematic/r1_bias.spice (netlist of',
-       '* record, revision 1d), flattened: internal nets carry the instance path (xpor_..., xl_<leg>_d), m>1 written as',
+       '* record, revision 2), flattened: internal nets carry the instance path (xpor_..., xvb_..., xl_<leg>_d), m>1 written as',
        '* separate units, sub! -> vss. The %d layout dummies (sg13_hv_pmos 12/4, every terminal on vdda) are not listed:' % N_DUM,
        '* the PDK LVS deck drops devices whose terminals are all on one net (run layout-lvs-20261021-b).',
        '.subckt r1_bias ' + ' '.join(TOP_PINS)]
 with open(os.path.join(HERE, 'r1_bias_lvs.cdl'), 'w') as fh:
     fh.write('\n'.join(hdr + CDL + ['.ends']) + '\n')
 meta = dict(W=W, H=H, area_mm2=round(W * H * 1e-6, 6), n_dummy_pmos=N_DUM, n_devices_schematic_units=NDEV_SCH,
-            bands=dict(YA=YA, YH=YH, YN=YN, YP=YP, YS=YS, YCB=YCB, YCA=YCA, YD=YD),
+            bands=dict(YA=YA, YH=YH, YN=YN, YP=YP, YS=YS, YV2=Y_V2, YV1A=Y_V1A, YV1B=Y_V1B, YV3=Y_V3, YCB=YCB, YCA=YCA, YD=YD),
             trunks={n: dict(x=t['x'], w=t['w'], y0=round(t['y0'], 3), y1=round(t['y1'], 3)) for n, t in TRUNKS.items()},
             channels=REPORT, caps=CAPS, mirror_units=MIRX, hier=HIER,
-            pins=dict(north=PIN_N, west=['pbias', 'pcasc', 'vdda', 'vss'], east=['por_n', 'vdd', 'vdda', 'vss']))
+            pins=dict(north=PIN_N, west=['pbias', 'pcasc', 'vref', 'vdda', 'vss'], east=['por_n', 'vdd', 'vref_b', 'vdda', 'vss']))
 with open(os.path.join(HERE, 'r1_bias_layout_meta.json'), 'w') as fh:
     json.dump(meta, fh, indent=1)
 print('wrote r1_bias_lvs.cdl (%d schematic units; %d layout dummies not listed) and r1_bias_layout_meta.json' % (NDEV_SCH, N_DUM))

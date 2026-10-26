@@ -1,0 +1,34 @@
+{
+ "run_id": "post-op-20261026-r2e1",
+ "suite": "op",
+ "question": "Output currents, consumer pin voltages and supply currents at the corners (DC, real loads).",
+ "args": {
+  "pex": "pex-rc-20261026-r2d",
+  "view": "rc",
+  "conv": "2",
+  "cases": "ss"
+ },
+ "command": "G1_CPUSET=116-119 G1_WORKDIR=designs/r1-joint/blocks/r1_bias/sim G1_RESULTS_ROOT=<G1_RESULTS_ROOT> flow/run.sh python3 run_bias.py op post-op-20261026-r2e1 pex=pex-rc-20261026-r2d view=rc conv=2 cases=ss",
+ "r1_bias_netlist": "<G1_RESULTS_ROOT>/r1_bias/pex-rc-20261026-r2d/r1_bias_pex.spice",
+ "pdk_commit": "84374023ee8b4b126bebbba67fcbada0a9c0ff0b",
+ "ngspice": "** ngspice-46 : Circuit level simulation program",
+ "git_head": "b4a95ae606f9df4a30609a1d1734af4d59aa9e0a",
+ "netlist_sha256": {
+  "r1_bias": "0ae828e6c431e12ab5cfa03dc7e82340c4017a164df1fe5a0de3bbd43883f1be",
+  "r1_bgr": "c19a7425d605906962724fdda21add8ae3926dc9a097c6f835a16f05f92c0c26",
+  "r1_t2f": "8011b76104e9faa4a29dae4323ce59fb6f5864373a087df0767a61672a7b4391",
+  "loads": "4df2d4bb037313efe2c6a75a2ee2edb1dea50e2dde84f9fe69320f7749d8856c",
+  "vrefb_loads": "ecde790902f01776a120e47c7bd52b75e5340062af0070628f5b540cb1e38fa6"
+ },
+ "raw": "<G1_RESULTS_ROOT>/r1_bias/post-op-20261026-r2e1/",
+ "seconds": 94.3,
+ "failed_jobs": 2,
+ "result": [
+  {
+   "case": "ss",
+   "rc": 1,
+   "seconds": 94.2,
+   "error": "KeyError('i(vm_ib_afe_s1)')"
+  }
+ ]
+}

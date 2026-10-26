@@ -14,7 +14,7 @@ for k in in cc rc; do test ! -e "$R/pex-$k-$PT" || { echo "run dir exists: $R/pe
 mkdir -p "$R/pex-in-$PT"
 flow/run.sh klayout -b -r $L/pex_input.py -rd gds=$G/r1_bias.gds -rd meta=$G/r1_bias_layout_meta.json \
   -rd out=$R/pex-in-$PT/r1_bias_pexin.gds > "$R/pex-in-$PT/pex_input.log" 2>&1
-# LVS CDL for kpex: the 4 cap_cmim lines removed (the MIM layers are not in the PEX input)
+# LVS CDL for kpex: the cap_cmim lines (4 in 1d, 6 in revision 2) removed (the MIM layers are not in the PEX input)
 grep -v '^C.* cap_cmim ' $G/r1_bias_lvs.cdl > "$R/pex-in-$PT/r1_bias_pexin.cdl"
 # kpex clears its --out_dir: its console log goes next to the directory
 flow/run.sh kpex --pdk ihp_sg13g2 --gds $R/pex-in-$PT/r1_bias_pexin.gds --cell r1_bias --schematic $R/pex-in-$PT/r1_bias_pexin.cdl \

@@ -1,0 +1,24 @@
+{
+ "run_id": "vb-noise-20261026-r2b",
+ "suite": "vbnoise",
+ "question": "Output noise of vref_b against the raw vref, 10 Hz - 100 kHz.",
+ "args": {},
+ "command": "G1_CPUSET=116-119 G1_WORKDIR=designs/r1-joint/blocks/r1_bias/sim G1_RESULTS_ROOT=<G1_RESULTS_ROOT> flow/run.sh python3 run_vbuf.py vbnoise vb-noise-20261026-r2b ",
+ "r1_bias_netlist": "designs/r1-joint/blocks/r1_bias/schematic/r1_bias.spice",
+ "pdk_commit": "84374023ee8b4b126bebbba67fcbada0a9c0ff0b",
+ "ngspice": "** ngspice-46 : Circuit level simulation program",
+ "git_head": "37fa396f51f1e8f2d93be31043d365a5107a19d8",
+ "netlist_sha256": {
+  "r1_bias": "1580b07452e600140a664e0e68c23367bce8606169a3a1ed530357606a62e851",
+  "r1_bgr": "c19a7425d605906962724fdda21add8ae3926dc9a097c6f835a16f05f92c0c26",
+  "r1_t2f": "8011b76104e9faa4a29dae4323ce59fb6f5864373a087df0767a61672a7b4391",
+  "loads": "4df2d4bb037313efe2c6a75a2ee2edb1dea50e2dde84f9fe69320f7749d8856c",
+  "vrefb_loads": "ecde790902f01776a120e47c7bd52b75e5340062af0070628f5b540cb1e38fa6"
+ },
+ "cvb_default": "25p",
+ "raw": "<G1_RESULTS_ROOT>/r1_bias/vb-noise-20261026-r2b/",
+ "seconds": 8.4,
+ "failed_jobs": 12,
+ "summary": "sim/results/vb-noise-20261026-r2b.json",
+ "disposition": "failed (tooling): noise deck without an AC value on vdda; fixed in run_vbuf.py. superseded: first revision-2 buffer (PMOS common-source output, Miller Cc + Rz, netlist sha 1580b074...); it failed the supply step (vb-step-20261026-r2b), so revision 2 changed to the source-follower buffer, runs 20261026-r2c / r2e"
+}

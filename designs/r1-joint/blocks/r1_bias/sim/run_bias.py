@@ -15,7 +15,8 @@ ramps=<s,...> and kinds=upA,upD,bo.
 """
 # transient tmax: 0.2 us (1 us stalls in the r1_bgr HBTs at POR comparator edges at ssx/ffx, dev-num-20261021-a)
 TMAX = "0.2u"
-CONV = False   # set by the argument conv=1
+CONV = False   # set by the argument conv=1 (conv=2: also more op iterations and finer stepping)
+CONV2 = False
 import hashlib, json, math, os, subprocess, sys, time
 from multiprocessing.pool import ThreadPool
 
@@ -27,6 +28,9 @@ NET = os.path.join(BLK, "schematic", "r1_bias.spice")
 BGR = os.path.join(R1, "r1_bgr", "schematic", "r1_bgr.spice")
 T2F = os.path.join(R1, "r1_t2f", "schematic", "g1_t2f_rev2.spice")
 LOADS = os.path.join(HERE, "r1_bias_loads.spice")
+VBLOADS = os.path.join(HERE, "r1_vrefb_loads.spice")   # revision 2: vref_b consumers (make_vrefb_loads.py)
+CVB = "25p"      # vref_b load capacitance: 20 pF decoupling (D20) + 5 pF chip routing (estimate), argument cvb=
+VSB = 0.04       # r1_isense summing-node voltage held under the pedestal arms (sb = sa = 0.02-0.06 V at zero current)
 BGR_SHA = "c19a7425d605906962724fdda21add8ae3926dc9a097c6f835a16f05f92c0c26"
 T2F_SHA = "8011b76104e9faa4a29dae4323ce59fb6f5864373a087df0767a61672a7b4391"
 JOBS = int(os.environ.get("BIAS_JOBS", "3"))
@@ -62,6 +66,7 @@ CORNERS = {
 }
 MAIN3 = ["tt", "ss", "ff"]
 
+VB_NODES = ["xbias.xvb.x1", "xbias.xvb.ns", "xbias.xvb.d1", "xbias.ibvb"]
 POR_NODES = ["xbias.xpor.gooda", "xbias.xpor.goodd", "xbias.xpor.rst", "xbias.xpor.cdel", "xbias.xpor.ready",
              "xbias.xpor.vrh", "xbias.xpor.vrl", "xbias.xpor.tapa"]
 
@@ -70,7 +75,7 @@ def sha(p):
     return hashlib.sha256(open(p, "rb").read()).hexdigest()
 
 
-def deck(corner, body, control, mism=False, outs_mode="load", vdda_src=None, vdd_src=None, bgr_net=None):
+def deck(corner, body, control, mism=False, outs_mode="load", vdda_src=None, vdd_src=None, bgr_net=None, azb_src=(None, None), cvb=None):
     h, m, r, c, t, va, vd = CORNERS[corner]
     sfx = "_mismatch" if mism else ""
     L = ["* r1_bias deck, corner %s (%s %s %s %s, %g C, VDDA %g V, VDD %g V)%s" % (corner, h, m, r, c, t, va, vd, " mismatch" if mism else "")]
@@ -83,10 +88,14 @@ def deck(corner, body, control, mism=False, outs_mode="load", vdda_src=None, vdd
     L.append(".include %s" % T2F)
     L.append(".include %s" % NET)
     L.append(".include %s" % LOADS)
+    L.append(".include %s" % VBLOADS)
     L.append(".option gmin=1e-15 abstol=1e-14 reltol=1e-5 vntol=1e-7")
     if CONV:
         # convergence aids for the retry runs (chain d): <= 1 pA/V per node, negligible against uA bias currents
         L.append(".option gmin=1e-12 rshunt=1e12")
+    if CONV2:
+        # conv=2 (revision 2 post-layout retry): more operating-point iterations and finer gmin / source stepping
+        L.append(".option itl1=1000 gminsteps=100 srcsteps=100")
     if "tran " in control:
         # trapezoidal integration stalls ("timestep too small" in the r1_bgr HBTs) at POR comparator edges (dev-thr-20261021-a)
         L.append(".option method=gear")
@@ -106,8 +115,22 @@ def deck(corner, body, control, mism=False, outs_mode="load", vdda_src=None, vdd
     L.append("Cvref vref 0 11p")
     L.append("Ven en 0 dc 0")
     L.append("Vmode mode 0 dc 0")
-    L.append("XT2F vdda_t vdd 0 pbias pcasc vref en mode fout g1_t2f")
-    L.append("Xbias vdda_b vdd 0 pbias pcasc %s por_n r1_bias" % " ".join(PINS))
+    L.append("* revision 2 (D20): the T2F vref pin is on vref_b (its mode-0 base current must not load the raw vref)")
+    L.append("Vmtv vref_b vref_bt dc 0")
+    L.append("XT2F vdda_t vdd 0 pbias pcasc vref_bt en mode fout g1_t2f")
+    L.append("* raw vref -> r1_bias vref pin (buffer gate) through an ammeter")
+    L.append("Vmvr vref vref_bi dc 0")
+    L.append("Xbias vdda_b vdd 0 pbias pcasc %s por_n vref_bi vref_b r1_bias" % " ".join(PINS))
+    L.append("* vref_b loads (sim/r1_vrefb_loads.spice): r1_safe threshold string, two r1_isense pedestal arms, decoupling + routing C")
+    L.append("Vmvb vref_b vref_bl dc 0")
+    L.append("XSTR vref_bl %s 0 r1_safe_string" % " ".join("st%d" % i for i in range(253)))
+    L.append("XPA vref_bl azb_a sba 0 ld_isped")
+    L.append("XPB vref_bl azb_b sbb 0 ld_isped")
+    L.append("Vsba sba 0 dc %g" % VSB)
+    L.append("Vsbb sbb 0 dc %g" % VSB)
+    L.append("Vaza azb_a 0 %s" % (azb_src[0] or "dc %g" % va))
+    L.append("Vazb azb_b 0 %s" % (azb_src[1] or "dc %g" % va))
+    L.append("Cvb vref_bl 0 %s" % (cvb or CVB))
     L.append("* por_n load: r1_ctrl reset input and wiring (estimate)")
     L.append("Cpor por_n 0 0.2p")
     for pin, ld, _ in OUTS:
@@ -167,6 +190,28 @@ def parse_prints(log):
 
 
 # ------------------------------------------------------------------ op
+def vb_devices():
+    """r1_vbuf output/bias devices of the current netlist: class -> list of ngspice device names (the extracted
+    netlist is flat inside r1_bias, so the units are found by their terminal nets: XM7 gate x1 on vref_b/vdda, XM8
+    gate ibvb on vref_b, XMT gate ibvb on ns, XMB gate ibvb on ibvb)."""
+    if "pex" not in os.path.basename(NET):
+        return {k: ["@n.xbias.xvb.%s.nsg13_hv_nmos[ids]" % k] for k in ("xm7", "xm8", "xmt", "xmb")}
+    base = lambda n: n.split("__")[0]
+    out = {"xm7": [], "xm8": [], "xmt": [], "xmb": []}
+    for l in open(NET):
+        t = l.split()
+        if len(t) < 6 or not t[0].upper().startswith("X") or t[5] != "sg13_hv_nmos":
+            continue
+        d, g, s_ = base(t[1]), base(t[2]), base(t[3])
+        ds = {d, s_}
+        k = ("xm7" if g == "xvb.x1" and ds == {"vref_b", "vdda"} else "xm8" if g == "ibvb" and "vref_b" in ds else
+             "xmt" if g == "ibvb" and "xvb.ns" in ds else "xmb" if g == "ibvb" and "ibvb" in ds else None)
+        if k:
+            out[k].append("@n.xbias.%s.nsg13_hv_nmos[ids]" % t[0].lower())
+    assert all(out.values()), out
+    return out
+
+
 def ctl_op():
     pr = " ".join("i(vm_%s)" % p for p in PINS)
     pv = " ".join("v(%s_l)" % p for p in PINS)
@@ -177,8 +222,12 @@ print %s
 print i(vmb) i(vmg) i(vmt) i(vdd) i(vload) v(vref) v(pbias) v(pcasc) v(por_n)
 print %s
 print v(xbias.xl_ib_afe_s1.d) v(xbias.xl_ib_is_a.d)
+print v(vref_b) i(vmvr) i(vmvb) i(vmtv) i(vsba) i(vsbb)
+print %s
+print %s
 .endc
-""" % (pr, pv, " ".join("v(%s)" % n for n in POR_NODES))
+""" % (pr, pv, " ".join("v(%s)" % n for n in POR_NODES), " ".join(sum(vb_devices().values(), [])),
+       " ".join("v(%s)" % n for n in VB_NODES))
 
 
 def op_rows(rundir, cases, mism_seeds=None):
@@ -213,6 +262,22 @@ def op_rows(rundir, cases, mism_seeds=None):
                 row[k] = d[k]
             row["vds_leg_afe_s1"] = CORNERS[c][5] - d["v(xbias.xl_ib_afe_s1.d)"]
             row["vds_casc_afe_s1"] = d["v(xbias.xl_ib_afe_s1.d)"] - d["v(ib_afe_s1_l)"]
+            # revision 2: VREF buffer
+            vbd = vb_devices()
+            i7, i8, it, ib = (sum(abs(d[v]) for v in vbd[k]) for k in ("xm7", "xm8", "xmt", "xmb"))
+            row["vref_b"] = d["v(vref_b)"]
+            row["vos_mV"] = (d["v(vref_b)"] - d["v(vref)"]) * 1e3
+            row["i_vref_in_nA"] = d["i(vmvr)"] * 1e9
+            row["i_load_vrefb_uA"] = (d["i(vmvb)"] + d["i(vmtv)"]) * 1e6
+            row["i_t2f_vref_nA"] = d["i(vmtv)"] * 1e9
+            row["i_ped_a_uA"] = d["i(vsba)"] * 1e6
+            row["i_ped_b_uA"] = d["i(vsbb)"] * 1e6
+            row["i_string_uA"] = (d["i(vmvb)"] - d["i(vsba)"] - d["i(vsbb)"]) * 1e6
+            row["vb_i_m7_uA"] = i7 * 1e6; row["vb_i_tail_uA"] = it * 1e6; row["vb_i_bias_uA"] = ib * 1e6; row["vb_i_sink_uA"] = i8 * 1e6
+            row["idda_vbuf_uA"] = (i7 + it + ib) * 1e6
+            row["idda_por_uA"] = row["idda_bias_uA"] - row["idda_legs_uA"] - row["idda_vbuf_uA"]
+            for n in VB_NODES:
+                row["v(%s)" % n] = d["v(%s)" % n]
         except Exception as e:
             row["error"] = repr(e); fails += 1
         if rc != 0:
@@ -303,7 +368,7 @@ def crossings(t, x, th):
 
 def startup_suite(rundir, cases, ramps=(10e-6, 1e-3)):
     items, meta = [], []
-    vecs = ["v(vdda)", "v(vdd)", "v(vref)", "v(pbias)", "v(por_n)"] + ["i(vm_%s)" % p for p in PINS] + ["v(%s)" % n for n in POR_NODES[:5]]
+    vecs = ["v(vdda)", "v(vdd)", "v(vref)", "v(pbias)", "v(por_n)", "v(vref_b)"] + ["i(vm_%s)" % p for p in PINS] + ["v(%s)" % n for n in POR_NODES[:5]]
     for c in cases:
         va, vd = CORNERS[c][5], CORNERS[c][6]
         for tr in ramps:
@@ -331,6 +396,15 @@ def startup_suite(rundir, cases, ramps=(10e-6, 1e-3)):
             row["overshoot_pct"] = {p: round((max(d["i(vm_%s)" % p]) / d["i(vm_%s)" % p][-1] - 1) * 100, 2) for p in PINS}
             row["vref_end"] = d["v(vref)"][-1]
             row["t99_vref_us"] = round(settle_time(t, d["v(vref)"], tr, 0.01) * 1e6, 2)
+            # revision 2: buffered reference
+            vb = d["v(vref_b)"]
+            row["t99_vref_b_from_start_us"] = round(settle_time(t, vb, 0.0, 0.01) * 1e6, 2)
+            row["t999_vref_b_from_start_us"] = round(settle_time(t, vb, 0.0, 0.001) * 1e6, 2)
+            row["vref_b_end"] = vb[-1]
+            row["vos_end_mV"] = round((vb[-1] - d["v(vref)"][-1]) * 1e3, 4)
+            row["vref_b_overshoot_pct"] = round((max(vb) / vb[-1] - 1) * 100, 3)
+            kp = [k for k in range(len(t)) if rr and abs(t[k] - rr[0]) < 2e-6]
+            row["vref_b_dev_at_por_edge_mV"] = round(max(abs(vb[k] - vb[-1]) for k in kp) * 1e3, 3) if kp else None
             vd = CORNERS[c][6]
             r, f = crossings(t, d["v(por_n)"], vd / 2)
             row["por_n_rise_us"] = [round(x * 1e6, 2) for x in r]
@@ -645,8 +719,9 @@ def main():
         sfx = {"rc": "", "c": "_c", "dev": "_dev"}[args.get("view", "rc")]
         NET = os.path.join(ROOT, "r1_bias", args["pex"], "r1_bias_pex%s.spice" % sfx)
         assert os.path.exists(NET), "no extracted netlist for pex=%s" % args["pex"]
-    global CONV
-    CONV = args.get("conv") == "1"
+    global CONV, CONV2
+    CONV = args.get("conv") in ("1", "2")
+    CONV2 = args.get("conv") == "2"
     seeds_arg = [int(x) for x in args["seeds"].split(",")] if "seeds" in args else None
     ramps_arg = tuple(float(x) for x in args["ramps"].split(",")) if "ramps" in args else None
     t0 = time.time()
@@ -674,6 +749,8 @@ def main():
         if ok:
             ip = [r["iptat_uA"] for r in ok]; m = sum(ip) / len(ip)
             stats["iptat"] = dict(mean=m, sigma_pct=100 * (sum((x - m) ** 2 for x in ip) / (len(ip) - 1)) ** 0.5 / m)
+            vs = [r["vos_mV"] for r in ok]; m = sum(vs) / len(vs); sd = (sum((x - m) ** 2 for x in vs) / (len(vs) - 1)) ** 0.5
+            stats["vos_mV"] = dict(mean=m, sigma=sd, abs_mean_plus_3sigma=abs(m) + 3 * sd, min=min(vs), max=max(vs))
             res = dict(stats=stats, ratio_to_iptat=ratios, n_ok=len(ok), n=n, rows=res)
     elif suite == "startup":
         res, fails = startup_suite(rundir, cases, ramps=ramps_arg or (10e-6, 1e-3))
@@ -704,7 +781,7 @@ def main():
                    r1_bias_netlist=("<G1_RESULTS_ROOT>/r1_bias/%s/%s" % (args["pex"], os.path.basename(NET))) if "pex" in args
                    else "designs/r1-joint/blocks/r1_bias/schematic/r1_bias.spice",
                    pdk_commit=PDK_COMMIT, ngspice=ngspice_version(), git_head=git_rev(),
-                   netlist_sha256=dict(r1_bias=sha(NET), r1_bgr=sha(BGR), r1_t2f=sha(T2F), loads=sha(LOADS)),
+                   netlist_sha256=dict(r1_bias=sha(NET), r1_bgr=sha(BGR), r1_t2f=sha(T2F), loads=sha(LOADS), vrefb_loads=sha(VBLOADS)),
                    raw="<G1_RESULTS_ROOT>/r1_bias/%s/" % runid, seconds=round(time.time() - t0, 1),
                    failed_jobs=fails, result=res)
     os.makedirs(os.path.join(HERE, "results"), exist_ok=True)

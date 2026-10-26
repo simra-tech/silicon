@@ -1,0 +1,61 @@
+{
+ "run_id": "dev-vbstb-20261026-r2a",
+ "suite": "vbstb",
+ "question": "r1_vbuf loop gain (Tian probe at the XM1 gate) with the real vref_b load: PM >= 65 deg, GM >= 10 dB.",
+ "args": {
+  "cases": "tt",
+  "states": "n"
+ },
+ "command": "G1_CPUSET=116-119 G1_WORKDIR=designs/r1-joint/blocks/r1_bias/sim G1_RESULTS_ROOT=<G1_RESULTS_ROOT> flow/run.sh python3 run_vbuf.py vbstb dev-vbstb-20261026-r2a cases=tt states=n",
+ "r1_bias_netlist": "designs/r1-joint/blocks/r1_bias/schematic/r1_bias.spice",
+ "pdk_commit": "84374023ee8b4b126bebbba67fcbada0a9c0ff0b",
+ "ngspice": "** ngspice-46 : Circuit level simulation program",
+ "git_head": "c0a30b53d8265b3eb0890022199dd77ab038695e",
+ "netlist_sha256": {
+  "r1_bias": "112739327b675bdddf6a95a01865fe7b8195059600cd374c54ef6f953768ef8c",
+  "r1_bgr": "c19a7425d605906962724fdda21add8ae3926dc9a097c6f835a16f05f92c0c26",
+  "r1_t2f": "8011b76104e9faa4a29dae4323ce59fb6f5864373a087df0767a61672a7b4391",
+  "loads": "4df2d4bb037313efe2c6a75a2ee2edb1dea50e2dde84f9fe69320f7749d8856c",
+  "vrefb_loads": "ecde790902f01776a120e47c7bd52b75e5340062af0070628f5b540cb1e38fa6"
+ },
+ "cvb_default": "25p",
+ "raw": "<G1_RESULTS_ROOT>/r1_bias/dev-vbstb-20261026-r2a/",
+ "seconds": 11.7,
+ "failed_jobs": 0,
+ "result": {
+  "probe_moved_gates": 1,
+  "toy": "TOYROW rel_err_max=4.73208E-08 t_dc_db=42.3833 f_unity_exact=131866 f_unity_tian=131866 pm_exact=88.6147 pm_tian=88.6147",
+  "rows": [
+   {
+    "case": "tt",
+    "state": "n",
+    "cvb": "25p",
+    "ib_unit_uA": null,
+    "rc": 0,
+    "seconds": 11.6,
+    "t_dc_db": 87.45,
+    "phase_dc_deg": -5.5,
+    "dc_feedback": "negative",
+    "gain_max_db": 87.45,
+    "f_gain_max": 1.0,
+    "min_1pT": 0.8529,
+    "f_min_1pT": 707945.784,
+    "unity": true,
+    "pm_deg": 74.46,
+    "f_unity": 230936.16052976457,
+    "gm_db": 31.75,
+    "f_180": 8353943.493447415,
+    "rhp_flag": false,
+    "th_min_deg": -316.7,
+    "th_max_deg": -5.5,
+    "pass_pm65": true,
+    "pass_gm10": true,
+    "vref": 1.044902,
+    "vref_b": 1.04504,
+    "i_bias_diode_uA": 5.070957,
+    "i_m7_uA": 44.126360000000005
+   }
+  ],
+  "all_pass_pm65_gm10_25p": true
+ }
+}

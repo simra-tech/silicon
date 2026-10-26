@@ -1,8 +1,166 @@
 # r1_bias — bias distribution and power-on reset (R1, track T9)
 
-State (2026-10-21): **schematic simulated**, revision 1d. **Layout done** (DRC 0, antenna 0, LVS match,
-0.01991 mm²), PEX and post-layout op, POR and start-up simulated (see "Layout"). All numbers are simulated
-(ngspice 46). Nothing is measured.
+State (2026-10-26): **revision 2** (decision D20, VREF buffer `r1_vbuf`). Schematic simulated, layout done (DRC 0,
+antenna 0, LVS match, 0.02841 mm²), PEX and post-layout buffer checks at tt and ffx. The layout does **not** fit
+the try-e slot (see "Revision 2"). All numbers are simulated (ngspice 46). Nothing is measured. The sections after
+"Revision 2" describe revision 1d; the legs, the POR and their results are unchanged in revision 2.
+
+## Revision 2 (VREF buffer)
+
+Revision 2 = revision 1d + `r1_vbuf`, a unit-gain buffer of the raw bandgap `vref`. New pins: `vref` (input, gate
+only) and `vref_b` (output). The buffer bias comes from one more `r1_bias_leg` unit (`ibvb`, 5.07 µA at tt) of the
+same mirror array. The 11 outputs, the POR and their devices are unchanged. Revision 1d is kept as
+`schematic/r1_bias_rev1d.spice` (sha256 `3fa56d92…`).
+
+### Circuit and sizes
+
+Netlist of record: `schematic/r1_bias.spice`, sha256 `5511ea8db822408d882fad324b1f694f82b0e4448b7e6f81a6319fd14957dfeb`.
+All devices are thick-oxide (`sg13_hv_*`). Units are single-finger devices (`m` = number of units).
+
+| Device | Function | Size | Current tt |
+| --- | --- | --- | --- |
+| `XM1`, `XM2` | NMOS input pair. `XM1` gate = `vref` (diode side), `XM2` gate = `vref_b` (feedback) | 8/24 µm, m = 4 each, common centroid ABBA/BAAB | 0.98 µA each |
+| `XM3`, `XM4` | PMOS mirror load; `XM4` drain = high-impedance node `x1` | 5/20 µm | 0.98 µA |
+| `XMT` | tail | 5/2 µm, m = 2 | 1.95 µA |
+| `XMB` | bias diode, fed by the leg `ibvb` | 5/2 µm, m = 5 | 5.07 µA |
+| `XM7` | NMOS source follower, drain on `vdda`, source `vref_b` | 10/1 µm, m = 4 | 31.6 µA |
+| `XM8` | sink | 10/2 µm, m = 4 | 8.4 µA |
+| `XCC1`, `XCC2` | compensation, `x1` to `vss` (dominant pole) | 2 MIM plates 48.3 × 48.3 µm (≈ 7 pF) | — |
+
+Why a source follower: the first revision-2 buffer (PMOS common-source output, Miller capacitor and nulling
+resistor) failed the supply step (`vref_b` moved 22–24 %, failure 24). With the Miller capacitor, `x1` follows
+`vref_b` at high frequency, so a `vdda` step changes V<sub>SG</sub> of the output device directly. In the
+follower, the output device has its drain on `vdda`, and `x1` is held to `vss` by the capacitor.
+
+### Load budget (`vref_b`)
+
+The loads in every deck are the consumer netlists of record: `r1_safe_string` (copied unchanged from
+`r1_safe.spice`, sha256 `812f886d…`) and the two `r1_isense` pedestal arms (26 `rppd` units and the switch, copied
+from `r1_isense.spice`, sha256 `af013b95…`), in `sim/r1_vrefb_loads.spice` (written by `sim/make_vrefb_loads.py`).
+The `r1_t2f` `vref` pin is on `vref_b`, because it draws current (5.7–74 nA). Capacitance: 25 pF (20 pF consumer
+decoupling + 5 pF routing), with 2 pF and 50 pF as checks. Run `bias-op-20261026-r2e` (13 cases).
+
+| Load | tt (µA) | Range over 13 cases (µA) |
+| --- | --- | --- |
+| `r1_safe` threshold string | 4.03 | 3.57–4.54 |
+| `r1_isense` pedestal arm A | 9.61 | 8.48–10.89 |
+| `r1_isense` pedestal arm B | 9.61 | 8.48–10.89 |
+| `r1_t2f` `vref` pin | 0.022 | 0.006–0.074 |
+| Total | 23.3 | 20.6–26.3 |
+| Total + 50 % margin | 35.0 | 39.5 (worst) |
+| Drive checked (`vb-drive-20261026-r2c`) | 50 µA total: `vref_b` moves ≤ 0.04 mV | 1 mV drop only above 100 µA total |
+
+### Status (revision 2)
+
+| Check | Criterion | Status | Evidence |
+| --- | --- | --- | --- |
+| Load on the raw `vref` | ≤ 10 nA | **passed**: < 1 fA (gate input; the model has no gate leakage) | `sim/results/bias-op-20261026-r2e.json` |
+| Offset, 13 cases (7 corners, tt −40/125 °C, `res_bcs/wcs`, 3.0/3.6 V) | ≤ 2 mV | **passed**: −0.16 … +0.21 mV (systematic) | same |
+| Offset, mismatch MC, 200 samples, tt | ≤ 2 mV at 3σ | **passed**: mean 0.05 mV, σ 0.44 mV, \|mean\| + 3σ = 1.37 mV. Worst corner systematic + 3σ = 1.54 mV (estimate; MC at the corners **not run**) | `bias-mc-20261026-r2c` |
+| Loop gain, 7 corners × pedestals on / off, 25 pF | PM ≥ 65°, GM ≥ 10 dB | **passed** 14/14: PM 67.6° (ffx, off) … 76.7°, GM ≥ 20.1 dB, f<sub>u</sub> 153–250 kHz | `vb-stb-20261026-r2c` |
+| Loop gain at the bias extremes 3.5 / 7.7 µA (tt, 25 pF) | same | **passed**: PM 75.6 / 71.8° and 73.2 / 69.8° (on / off), GM ≥ 20.9 dB | same |
+| Loop gain with 2 pF and 50 pF (tt, ff, ffx, ssx) | record | **run**: 2 pF PM ≥ 75.6°; 50 pF PM ≥ 67.5°, GM ≥ 20.3 dB | same |
+| Method check (toy loop) | error < 1e-6 | **passed**: 4.7e-8 | same |
+| Output impedance at DC | ≤ 1 kΩ | **passed**: 0.78–2.79 Ω (5 corners, pedestals on / off) | `vb-zout-20261026-r2c` |
+| Output impedance to 10 MHz | record | **run**: peak 1.96–4.80 kΩ at 0.63–0.79 MHz; tables `sim/results/vb-zout-20261026-r2c_zbuf_<corner>_<state>.csv` | same |
+| Supply step 3.3 → 3.0 → 3.3 V in 100 ns (tt, ss, ff, ssx, ffx) | `vref_b` within 1 %, one overshoot | **passed**: ≤ 0.27 % (2.77–2.84 mV; raw `vref` 2.5–2.6 mV, buffer 1.0–1.4 mV); one excursion per edge; settled to 1 mV in 3.0–4.0 µs | `vb-step-20261026-r2c` |
+| PSRR of `vref_b` | record | **run**: 10 Hz −64…−67 dB; worst −37.0…−37.4 dB (near 100 kHz); raw `vref` worst −38.5…−38.9 dB | `vb-psrr-20261026-r2c` |
+| Pedestal switching (`azb` of one or both arms, 1 ns edges) | record | **run**: one arm (8.6–10.9 µA step) 17–22 mV; both arms 41–50 mV; back within 0.5 mV 1.6–3.5 µs after the closing edge; after the opening edge 1.5 µs (ff, ffx) or not within the 2 µs pulse (tt, ss, ssx) (open issue R2-2) | `vb-az-20261026-r2c` |
+| Start-up, 10 µs VDDA ramp, POR, tt/ss/ff/ssx/ffx | settles, no step at the `por_n` edge | **passed**: `vref_b` within 1 % at 12.2–25.4 µs, overshoot ≤ 0.23 %, no step at `por_n` (< 0.05 mV) | `bias-startup-20261026-r2c` |
+| Noise 10 Hz–100 kHz (tt, ss, ff) | record against the raw `vref` | **run**: `vref_b` 45.9–72.5 µV rms, raw `vref` 43.4–69.8 µV rms; the buffer adds 15–20 µV rms | `vb-noise-20261026-r2c` |
+| The 11 output currents against 1d | unchanged | **passed**: tt 10.1419 / 5.0710 µA; all 11 outputs in all 13 cases equal to `bias-op-20261021-d` (difference 0 at the printed precision) | `bias-op-20261026-r2e` |
+| `r1_bgr` loop gain with the buffer input attached, 5 cuts × 7 corners | PM ≥ 60°, GM ≥ 10 dB | **passed** 35/35: core PM 100.9–101.1° (1d: 101.3–101.5°), GM ≥ 12.95 dB | `bias-stb-20261026-r2c` |
+| Output PSRR (`ib_afe_s1`, tt/ss/ff) | record | **run**: tt −44.75 dB at 20 kHz, −22.44 dB at 1 MHz (inside the 1d range) | `bias-psrr-20261026-r2c` |
+| Output mismatch MC, 200 samples | record | **run**: σ 1.15 % (10 µA) and 1.10 % (5 µA) | `bias-mc-20261026-r2c` |
+| Supply current, whole r1_bias | ≤ 150 µA (revision-1 budget) | **failed**: 98.0–195.7 µA; tt 135.5, ss 150.6, tt 125 °C 171.1, `res_bcs` 155.1, ffx 195.7 µA. Buffer 31.6–49.0 µA, of which 20.6–26.3 µA is the load (open issue R2-1) | `bias-op-20261026-r2e` |
+| Layout: DRC main + maximal, antenna, LVS, pins | 0, 0, match, all ports | **passed**: DRC 0, antenna 0, LVS match (84 nets), pin check 19/19 | `layout/runs/layout-*-20261026-r2c` |
+| Layout box against the try-e slot | ≤ 120 × 174.4 µm (ctrl at chip y 673.0, 10 µm keep-out) | **failed**: 120.0 × 236.74 µm (+62.3 µm in height) (open issue R2-3) | same |
+| PEX | full RC netlist | **run**: 196 devices, 144 nets, 1162 R, 1162 C (1573.1 fF) | `layout/runs/pex-rc-20261026-r2d` |
+| Post-layout loop gain tt, ffx | PM ≥ 65°, GM ≥ 10 dB | **passed**: tt 73.8 / 70.1°, ffx 70.9 / 66.9° (on / off), GM ≥ 21.0 dB | `sim/runs/post-vbstb-20261026-r2e` |
+| Post-layout offset, Zout, supply step at tt | as above | **passed**: offset 0.039 mV; Z at DC 1.04 / 1.89 Ω; step 0.70 % (see pre/post) | `post-op-20261026-r2e`, `post-vbzout-20261026-r2e`, `post-vbstep-20261026-r2e` |
+| Post-layout op at ss | — | **not run**: no operating point (`r1_bgr` HBT, also with `conv=1` and `conv=2`) | `post-op-20261026-r2e`, `-r2e1` |
+| Post-layout MC, PSRR, noise, pedestal switching, start-up; buffer at sf/fs | — | **not run** | — |
+| `r1_safe`, `r1_isense` decks with this `vref_b` source | — | **not run** (owners' tracks) | — |
+
+### Area and floorplan
+
+| Item | Value |
+| --- | --- |
+| Box | 120.0 × 236.74 µm = **0.02841 mm²** (1d: 120.0 × 165.94 µm = 0.01991 mm²; +70.8 µm in height) |
+| Buffer band | between the POR ring and the cascode rows: NMOS row (bias, tail, sink, follower), two pair rows, PMOS mirror row, own p+ ring, a p+ tie across the pair rows (LU.b); the two MIM plates lie over the band |
+| Drawn device area (`schematic/area.py`) | `r1_vbuf` 6 592 µm² (MIM 4 666, MOS 1 926); r1_bias 11 704 µm² |
+| Try-e slot (`r1_top/reports/integration_checklist_e.md`) | origin chip (444.0, 488.6); `r1_ctrl` box starts at chip y 673.0, so the height limit is about 174.4 µm with a 10 µm keep-out. The new top edge is at chip y 725.3 and overlaps `r1_ctrl` in x 543.8–564.0 |
+| Pins kept | `por_n` (east, y 38.38), `vdd` (east, y 48.74), `vss` bar (y 0–2), `ib_afe_s1` 42.39, `ib_afe_s2` 69.19, `ib_afe_c2` 82.59 |
+| Pins moved | north edge to y 236.14; `vdda` bar to y 233.14–235.14; `pbias` west y 212.99 (was 142.19), `pcasc` west y 191.94 (was 121.14); `ib_is_a` 26.49, `ib_sf_oa` 34.49, `ib_sf_na` 43.34, `ib_adc_ref` 50.49, `ib_afe_c1` 55.79, `ib_sf_ob` 66.49, `ib_sf_nb` 74.49, `ib_is_b` 81.69 (the mirror row has one more unit, `ibvb`) |
+| Pins new | `vref` west y 116.44; `vref_b` east y 147.14 |
+
+GDS of record: `layout/r1_bias.gds`, 1 104 848 bytes, sha256 `e7ee13940db0ecc2a36c8bf7c6d1947358aceb6dd1dff3b3add9f4eafa2bb78c`;
+LVS netlist `layout/r1_bias_lvs.cdl` sha256 `abb7bc28…`. Layout runs `layout-{gen,drc,ant,lvs}-20261026-r2c`; PEX
+`pex-rc-20261026-r2d` (`pex-rc-20261026-r2c` lacked the `vref`/`vref_b` ports, failure 29).
+
+### Pre/post (revision 2, schematic → full RC, simulated)
+
+| Item | Corner | Schematic (`bias-op-20261026-r2e`, `vb-*-20261026-r2c`) | Post-layout (`post-*-20261026-r2e`) | 1d post-layout |
+| --- | --- | --- | --- | --- |
+| 10 µA outputs (µA) | tt | 10.1419 | 10.1312–10.1329 (−0.09…−0.11 %) | 10.1332–10.1339 |
+| 5 µA outputs (µA) | tt | 5.0710 | 5.0646–5.0666 (−0.09…−0.13 %) | 5.0664–5.0670 |
+| 10 / 5 µA outputs (µA) | ssx | 6.9382 / 3.4691 | 6.9318–6.9330 / 3.4652–3.4667 | not run |
+| 10 / 5 µA outputs (µA) | ffx | 15.3552 / 7.6776 | 15.3375–15.3399 / 7.6673–7.6702 | not run |
+| 10 / 5 µA outputs | ss | 11.8062 / 5.9031 | **not run** (no operating point) | 11.796 / 5.898 |
+| 10 / 5 µA outputs | ff | 8.9996 / 4.4998 | op spread −1.1…0 %: the known op artifact of the RC netlist (failure 22); transient **not run** | 8.9915 / 4.4960 (transient) |
+| Offset `vref_b` − `vref` (mV) | tt / ssx / ffx | 0.040 / 0.137 / −0.105 | 0.039 / 0.137 / −0.107 | — |
+| PM pedestals on / off (°) | tt | 74.43 / 70.75 | 73.75 / 70.07 | — |
+| PM pedestals on / off (°) | ffx | 71.66 / 67.61 | 70.94 / 66.88 | — |
+| GM on / off (dB) | tt / ffx | 24.45 / 21.53, 23.17 / 20.38 | 25.26 / 22.14, 23.96 / 21.00 | — |
+| Z<sub>out</sub> at DC on / off (Ω) | tt | 1.006 / 1.851 | 1.042 / 1.893 | — |
+| Z<sub>out</sub> peak on / off | tt | 2.27 / 4.17 kΩ at 0.71 MHz | 2.33 / 4.26 kΩ at 0.63 MHz | — |
+| Supply step, `vref_b` deviation | tt | 2.80 mV (0.27 %); raw `vref` 2.59 mV | 7.27 mV (0.70 %); raw `vref` 7.22 mV; buffer part 2.37 mV | — |
+| VDDA current, whole block (µA) | tt | 135.5 (buffer 38.7) | 135.2 (buffer 38.6) | 96.7 (1d) |
+
+Note: post-layout, the raw `vref` moves more on the supply step (7.2 against 2.6 mV). The extracted `vref` net has
+15.2 fF to `xvb.d1` (the mirror diode, which follows `vdda`) and 7.8 fF to `vdda`. The cause is not isolated
+(**not run**: a deck with only these capacitors).
+
+### Open issues (revision 2)
+
+1. **R2-1 Supply budget.** The block draws up to 195.7 µA (ffx) against the revision-1 limit of 150 µA. The buffer
+   load (20.6–26.3 µA) is new current that the safe string and the pedestals need from any source; the buffer
+   overhead is 11–23 µA. The coordinator must set a new budget, or the sink (`XM8`, 8 µA) and the follower bias
+   must be reduced (not run).
+2. **R2-2 Pedestal switching.** A pedestal edge moves `vref_b` by 17–22 mV (one arm) or 41–50 mV (both) for
+   1.5–3.5 µs. `r1_isense` and `r1_safe` must confirm that their samples are outside this window (the safe
+   threshold step is 4.17 mV). Options: break-before-make with a dummy load, slower `azb` edges, or more capacitance
+   at `vref_b` (PM at 50 pF is still ≥ 67.5°).
+3. **R2-3 Slot.** The box is 62.3 µm higher than the try-e slot and overlaps `r1_ctrl`. T10/T8 must move the block
+   (or `r1_ctrl`), or the buffer must become a separate macro (its band is 70.8 µm high; the MIM plates need about
+   100 × 50 µm).
+4. **R2-4 Raw `vref` coupling.** See the pre/post note. The ADC uses the raw `vref`.
+5. Not run: post-layout MC, PSRR, noise, pedestal switching, start-up; offset MC at the corners; consumer decks with
+   this source.
+
+### Failures (revision 2)
+
+| # | What | Class | Consequence / fix | Evidence |
+| --- | --- | --- | --- | --- |
+| 24 | First revision-2 buffer (PMOS common-source output, Miller C<sub>c</sub> + R<sub>z</sub>) passed the loop, offset and Z<sub>out</sub> checks but failed the supply step: `vref_b` moved 226–256 mV (22–24 %); PSRR about 0 dB near 1 MHz. The prototype sweeps checked only loop gain and offset | functional-bug | Output stage changed to an NMOS source follower with C<sub>c</sub> to `vss`; step now 0.27 %. Campaign r2b superseded | `sim/runs/vb-step-20261026-r2b`, `vb-psrr-20261026-r2b` |
+| 25 | `vb-step` and `vb-psrr` exited 0 although the step criterion failed: the runner counted only failed jobs | verification-gap | `run_vbuf.py` now counts every `pass_*` flag that is false and exits 1 (`spec_failures` in the summary) | `sim/runs/vb-step-20261026-r2b` |
+| 26 | Campaign r2 started with multi-finger devices; the netlist changed to single-finger units for the layout while the decks read the live netlist | process-hygiene | Run stopped (`podman stop`) and recorded abandoned; campaign restarted as r2b | `sim/runs/vb-stb-20261026-r2` |
+| 27 | The SG13G2 PCell limits L to 10 µm ("using maximum length"); the 24 µm and 20 µm devices came out short | tooling | `mos_long()` draws the PCell and extends the gate | `layout/runs/layout-gen-20261026-r2a` |
+| 28 | DRC r2a: 8 × LU.b on the inner input-pair units (N+ more than 20 µm from a p-tap) | verification-gap | p+ tie strip across the band in channel V2c; r2b and r2c clean | `layout/runs/layout-drc-20261026-r2a` |
+| 29 | `pex_build.py` kept the 1d port list; `pex-rc-20261026-r2c` had no `vref`/`vref_b` ports | process-hygiene | Ports added; PEX re-run as `pex-rc-20261026-r2d` | `layout/runs/pex-rc-20261026-r2c` |
+| 30 | `bias-op-20261026-r2c`: the op print list kept the removed node `xvb.cz`, so ngspice printed no line and 13/13 rows failed | process-hygiene | Node removed; re-run as `bias-op-20261026-r2e` | `sim/runs/bias-op-20261026-r2c` |
+| 31 | Noise deck r2b: no AC value on `vdda` and no convergence | tooling | Deck fixed; r2c passed | `sim/runs/vb-noise-20261026-r2b` |
+| 32 | MC r2b seed 198 and post-layout ss op: no operating point (`r1_bgr` HBT) | numerical | MC r2c 200/200; post-layout ss **not run** (also with `conv=2`) | `bias-mc-20261026-r2b`, `post-op-20261026-r2e1` |
+| 33 | The supply current exceeds the 150 µA budget; the D20 brief gave the load but no current budget for the buffer | estimation | Open issue R2-1 | `bias-op-20261026-r2e` |
+| 34 | The block height (236.74 µm) does not fit the try-e slot (174.4 µm) | estimation | Open issue R2-3 | `layout/runs/layout-gen-20261026-r2c` |
+
+### Commands (revision 2, from the repository root, POSIX shell)
+
+1. `G1_CPUSET=116-119; export G1_CPUSET; G1_RESULTS_ROOT=<G1_RESULTS_ROOT>; export G1_RESULTS_ROOT`.
+2. Schematic campaign: `sh designs/r1-joint/blocks/r1_bias/sim/chain_r2.sh <tag>` (suites `vbstb op vbzout vbstep vbaz vbpsrr vbnoise vbdrive mc startup stb psrr`).
+3. Layout: `sh designs/r1-joint/blocks/r1_bias/layout/run_checks.sh 20261026-r2c`, then `sh designs/r1-joint/blocks/r1_bias/layout/run_pex.sh 20261026-r2c 20261026-r2d`.
+4. Op re-run and post-layout: `sh designs/r1-joint/blocks/r1_bias/sim/chain_r2_post.sh 20261026-r2e pex-rc-20261026-r2d`.
+5. One suite: `sh designs/r1-joint/blocks/r1_bias/sim/run_vb.sh <suite> <run-id> [cases=… pex=<run-id> view=rc conv=1]`.
 
 ## What it is
 
@@ -77,9 +235,13 @@ decks used an ideal constant 10 µA, so the AFE is **not run** with this range (
 | Path | What |
 | --- | --- |
 | `schematic/gen_r1_bias.py` | netlist generator (parameters of record in `P`, outputs in `LEGS`) |
-| `schematic/r1_bias.spice` | netlist of record, revision 1d, sha256 `3fa56d9296f8c409fd1335a6595eae459b39324837c5bfae9ea7693584b29ff4`; subckts `r1_bias_leg`, `r1_por_inv`, `r1_por_nand2`, `r1_por_cmp`, `r1_por_schmitt`, `r1_por`, `r1_bias` |
+| `schematic/r1_bias.spice` | netlist of record, **revision 2**, sha256 `5511ea8db822408d882fad324b1f694f82b0e4448b7e6f81a6319fd14957dfeb`; subckts `r1_bias_leg`, `r1_por_inv`, `r1_por_nand2`, `r1_por_cmp`, `r1_por_schmitt`, `r1_por`, `r1_vbuf`, `r1_bias` |
+| `schematic/r1_bias_rev1d.spice` | revision 1d, sha256 `3fa56d9296f8c409fd1335a6595eae459b39324837c5bfae9ea7693584b29ff4` (the runs `*-20261021-*`) |
 | `schematic/area.py` | device-area estimate from the netlist (method of `r1_isense/schematic/area.py` + HBT and device counts) |
-| `sim/run_bias.py` | runner, suites `op comp mc startup psrr stb thr mcthr por`; exit 1 on any failed or unparsed job |
+| `sim/run_bias.py` | runner, suites `op comp mc startup psrr stb thr mcthr por`; exit 1 on any failed or unparsed job; revision 2: `vref_b` loads, offset and buffer currents in `op`/`mc`/`startup`, `conv=2` |
+| `sim/run_vbuf.py`, `sim/run_vb.sh` | revision-2 buffer runner and wrapper, suites `vbstb vbzout vbpsrr vbstep vbaz vbnoise vbdrive`; exit 1 on a failed job or a failed `pass_*` check |
+| `sim/make_vrefb_loads.py`, `sim/r1_vrefb_loads.spice` | `vref_b` loads copied from `r1_safe` and `r1_isense` (source sha256 in the header) |
+| `sim/chain_r2.sh`, `sim/chain_r2_post.sh` | revision-2 schematic campaign; op re-run and post-layout buffer checks |
 | `sim/run.sh`, `sim/chain.sh`, `sim/chain_e.sh` | wrapper (CPU set 116–119, needs `G1_RESULTS_ROOT`); campaign d chains |
 | `sim/r1_bias_loads.spice` | consumer bias-pin load models (copied devices, source sha256 in the header) |
 | `sim/tb_stb_toy.cir`, `sim/.spiceinit` | loop-gain method check (copy of the `r1_bgr` file); OSDI model load |
@@ -215,6 +377,8 @@ Supply current (`bias-op-20261021-d`): see the status row. At tt: legs 76.1 µA 
 | `ib_sf_oa`, `ib_sf_na`, `ib_sf_ob`, `ib_sf_nb` | out | VDDA | 5 µA (tt) |
 | `ib_adc_ref` | out | VDDA | 5 µA (tt), into `r1_refbuf5` `nb` |
 | `por_n` | out | VDD | active low reset to `r1_ctrl` and the ADC sequencers; load 0.2 pF assumed |
+| `vref` | in | VDDA | revision 2: raw `r1_bgr` `vref`, gate load only (4 units 8/24 µm) |
+| `vref_b` | out | VDDA | revision 2: buffered `vref` for `r1_safe`, the `r1_isense` pedestals and `r1_t2f`; Z<sub>out</sub> ≤ 2.8 Ω at DC, peak ≤ 4.8 kΩ near 0.7 MHz; drive ≥ 100 µA |
 
 ## Layout
 
@@ -227,8 +391,8 @@ measured.
 | Path | What |
 | --- | --- |
 | `layout/r1_bias_layout.py` | KLayout batch generator (SG13_dev PCells, channel router from `r1_bgr`, Metal2/Metal4 self-check) |
-| `layout/r1_bias.gds` | layout of record, 794 kB, sha256 `354fa73cbf92bb82f4e0b1eea57acd3cd12aea2eeb19102be28ca925b07d2d14` |
-| `layout/r1_bias_lvs.cdl` | flattened LVS netlist from the generator, 137 units, sha256 `37636bf6…48ae`; dummies not listed (the deck deletes them) |
+| `layout/r1_bias.gds` | layout of record, **revision 2**, 1 104 848 bytes, sha256 `e7ee13940db0ecc2a36c8bf7c6d1947358aceb6dd1dff3b3add9f4eafa2bb78c` (1d: 794 kB, `354fa73c…`) |
+| `layout/r1_bias_lvs.cdl` | flattened LVS netlist from the generator, revision 2: 166 units, sha256 `abb7bc280fd1632ec405e7cef62a2b4ba0ab688bc6fa85d897d1b0913a36b4a8` (1d: 137 units, `37636bf6…48ae`); dummies not listed (the deck deletes them) |
 | `layout/r1_bias_layout_meta.json` | bands, trunks, channels, MIM plates, mirror-unit positions, hierarchical name map |
 | `layout/run_checks.sh` | generator, DRC (main + maximal, density off), antenna, LVS, `run.json`, pin check |
 | `layout/check_pins.py` | pin check from the GDS: every CDL port has a Metal3 pin and label on the boundary |
@@ -253,7 +417,7 @@ Extracted netlists, LVS reports and DRC databases stay in `<G1_RESULTS_ROOT>/r1_
 | kpex | 0.3.12 (2.5D coupling capacitance only) | `kpex --version` in the container |
 | ngspice | 46 | `ngspice -v`, recorded in `sim/runs/post-*/run.json` |
 | Container | `tapeoutbench-eda:latest` `sha256:ddeb6957…` | `flow/run.sh` image check |
-| Netlist of record | `schematic/r1_bias.spice` revision 1d `3fa56d92…` | sha256 in `layout/runs/layout-*-20261021-d/run.json` |
+| Netlist of record | revision 2 `5511ea8d…` (layout `layout-*-20261026-r2c`); revision 1d `3fa56d92…` (layout `layout-*-20261021-d`) | sha256 in `layout/runs/<run-id>/run.json` |
 
 ### Floorplan
 

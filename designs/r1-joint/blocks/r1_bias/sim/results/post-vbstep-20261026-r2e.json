@@ -1,0 +1,65 @@
+{
+ "run_id": "post-vbstep-20261026-r2e",
+ "suite": "vbstep",
+ "question": "VDDA step 3.3 -> 3.0 V in 100 ns and back: vref_b within 1 %, at most one overshoot.",
+ "args": {
+  "pex": "pex-rc-20261026-r2d",
+  "view": "rc",
+  "conv": "1",
+  "cases": "tt"
+ },
+ "command": "G1_CPUSET=116-119 G1_WORKDIR=designs/r1-joint/blocks/r1_bias/sim G1_RESULTS_ROOT=<G1_RESULTS_ROOT> flow/run.sh python3 run_vbuf.py vbstep post-vbstep-20261026-r2e pex=pex-rc-20261026-r2d view=rc conv=1 cases=tt",
+ "r1_bias_netlist": "<G1_RESULTS_ROOT>/r1_bias/pex-rc-20261026-r2d/r1_bias_pex.spice",
+ "pdk_commit": "84374023ee8b4b126bebbba67fcbada0a9c0ff0b",
+ "ngspice": "** ngspice-46 : Circuit level simulation program",
+ "git_head": "b4a95ae606f9df4a30609a1d1734af4d59aa9e0a",
+ "netlist_sha256": {
+  "r1_bias": "0ae828e6c431e12ab5cfa03dc7e82340c4017a164df1fe5a0de3bbd43883f1be",
+  "r1_bgr": "c19a7425d605906962724fdda21add8ae3926dc9a097c6f835a16f05f92c0c26",
+  "r1_t2f": "8011b76104e9faa4a29dae4323ce59fb6f5864373a087df0767a61672a7b4391",
+  "loads": "4df2d4bb037313efe2c6a75a2ee2edb1dea50e2dde84f9fe69320f7749d8856c",
+  "vrefb_loads": "ecde790902f01776a120e47c7bd52b75e5340062af0070628f5b540cb1e38fa6"
+ },
+ "cvb_default": "25p",
+ "raw": "<G1_RESULTS_ROOT>/r1_bias/post-vbstep-20261026-r2e/",
+ "seconds": 39.8,
+ "failed_jobs": 0,
+ "spec_failures": [],
+ "result": [
+  {
+   "case": "tt",
+   "rc": 0,
+   "seconds": 39.6,
+   "down": {
+    "v_before": 1.04499,
+    "v_final": 1.044846,
+    "dev_max_mV": 7.264,
+    "dev_max_pct": 0.695,
+    "vref_dev_max_mV": 7.22,
+    "buffer_dev_max_mV": 2.367,
+    "excursions_0p5mV": [
+     -1
+    ],
+    "settle_1mV_us": 4.86,
+    "pass_1pct": true,
+    "pass_one_overshoot": true,
+    "info_buffer_within_1pct": true
+   },
+   "up": {
+    "v_before": 1.044846,
+    "v_final": 1.04499,
+    "dev_max_mV": 7.273,
+    "dev_max_pct": 0.696,
+    "vref_dev_max_mV": 7.217,
+    "buffer_dev_max_mV": 2.36,
+    "excursions_0p5mV": [
+     1
+    ],
+    "settle_1mV_us": 4.83,
+    "pass_1pct": true,
+    "pass_one_overshoot": true,
+    "info_buffer_within_1pct": true
+   }
+  }
+ ]
+}

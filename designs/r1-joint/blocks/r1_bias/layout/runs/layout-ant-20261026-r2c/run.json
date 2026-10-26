@@ -1,0 +1,30 @@
+{
+ "tag": "20261026-r2c",
+ "written": "2026-10-26T21:22:27",
+ "pdk_commit": "84374023ee8b4b126bebbba67fcbada0a9c0ff0b",
+ "container": "tapeoutbench-eda:latest sha256:ddeb69576f2808676d1c5d474ecf04f6d1d6f8abdcff6b72b39790ded924bab2",
+ "cpuset": "116-119",
+ "inputs": {
+  "gds_sha256": "e7ee13940db0ecc2a36c8bf7c6d1947358aceb6dd1dff3b3add9f4eafa2bb78c",
+  "lvs_cdl_sha256": "abb7bc280fd1632ec405e7cef62a2b4ba0ab688bc6fa85d897d1b0913a36b4a8",
+  "generator_sha256": "101b9c9a74dc2e9994248772aa12f5e6aced92dca2977faf6e105943a6e23610",
+  "netlist_of_record": "designs/r1-joint/blocks/r1_bias/schematic/r1_bias.spice",
+  "netlist_of_record_sha256": "5511ea8db822408d882fad324b1f694f82b0e4448b7e6f81a6319fd14957dfeb"
+ },
+ "run_id": "layout-ant-20261026-r2c",
+ "question": "PDK antenna deck on r1_bias.gds: 0 markers?",
+ "command": "flow/run.sh python3 $PDK_ROOT/$PDK/libs.tech/klayout/tech/drc/run_drc.py --path=/work/designs/r1-joint/blocks/r1_bias/layout/r1_bias.gds --topcell=r1_bias --run_mode=deep --antenna_only --run_dir=<run dir>",
+ "tools": {
+  "klayout": "0.30.9"
+ },
+ "result": {
+  "status": "passed",
+  "total_markers": 0,
+  "markers_per_rule": {},
+  "lyrdb": [
+   "<G1_RESULTS_ROOT>/r1_bias/layout-ant-20261026-r2c/r1_bias_r1_bias_antenna.lyrdb"
+  ],
+  "what": "PDK antenna deck (--antenna_only)"
+ },
+ "disposition": "passed"
+}

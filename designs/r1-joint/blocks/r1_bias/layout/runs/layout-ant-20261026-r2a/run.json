@@ -1,0 +1,32 @@
+{
+ "tag": "20261026-r2a",
+ "written": "2026-10-26T20:57:25",
+ "pdk_commit": "84374023ee8b4b126bebbba67fcbada0a9c0ff0b",
+ "container": "tapeoutbench-eda:latest sha256:ddeb69576f2808676d1c5d474ecf04f6d1d6f8abdcff6b72b39790ded924bab2",
+ "cpuset": "116-119",
+ "inputs": {
+  "gds_sha256": "650340d7688442540d4565fe81f74478314d6821e15c24be025ef07bb87c36f6",
+  "lvs_cdl_sha256": "570a94d6d6e557023b1b5dd04d23230120ec5e583934e937624a3fcf59331c2f",
+  "generator_sha256": "462c8d43126d6a7d762e09124f07761034f8e3cdb2cef2f9b91ff95ba117025d",
+  "netlist_of_record": "designs/r1-joint/blocks/r1_bias/schematic/r1_bias.spice",
+  "netlist_of_record_sha256": "1580b07452e600140a664e0e68c23367bce8606169a3a1ed530357606a62e851"
+ },
+ "run_id": "layout-ant-20261026-r2a",
+ "question": "PDK antenna deck on r1_bias.gds: 0 markers?",
+ "command": "flow/run.sh python3 $PDK_ROOT/$PDK/libs.tech/klayout/tech/drc/run_drc.py --path=/work/designs/r1-joint/blocks/r1_bias/layout/r1_bias.gds --topcell=r1_bias --run_mode=deep --antenna_only --run_dir=<run dir>",
+ "tools": {
+  "klayout": "0.30.9"
+ },
+ "result": {
+  "status": "passed",
+  "total_markers": 0,
+  "markers_per_rule": {},
+  "lyrdb": [
+   "<G1_RESULTS_ROOT>/r1_bias/layout-ant-20261026-r2a/r1_bias_r1_bias_antenna.lyrdb"
+  ],
+  "what": "PDK antenna deck (--antenna_only)"
+ },
+ "disposition": "passed",
+ "superseded_by": "layout-ant-20261026-r2c",
+ "superseded_note": "layout of the first revision-2 buffer (PMOS common-source output, Miller Cc and Rz); that buffer failed the supply-step check (vb-step-20261026-r2b), so revision 2 changed to the source-follower buffer of run 20261026-r2c"
+}

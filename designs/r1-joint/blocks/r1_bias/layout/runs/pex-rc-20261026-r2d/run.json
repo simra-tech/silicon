@@ -1,0 +1,41 @@
+{
+ "run_id": "pex-rc-20261026-r2d",
+ "written": "2026-10-26T21:27:58",
+ "pdk_commit": "84374023ee8b4b126bebbba67fcbada0a9c0ff0b",
+ "container": "tapeoutbench-eda:latest sha256:ddeb69576f2808676d1c5d474ecf04f6d1d6f8abdcff6b72b39790ded924bab2",
+ "cpuset": "116-119",
+ "tools": {
+  "klayout": "0.30.9",
+  "kpex": "0.3.12"
+ },
+ "command": "sh designs/r1-joint/blocks/r1_bias/layout/run_pex.sh 20261026-r2c 20261026-r2d",
+ "inputs": {
+  "layout_run": "<G1_RESULTS_ROOT>/r1_bias/layout-gen-20261026-r2c",
+  "gds_sha256": "e7ee13940db0ecc2a36c8bf7c6d1947358aceb6dd1dff3b3add9f4eafa2bb78c",
+  "pex_input_gds_sha256": "f2695aa7e5adf6290a5a12f9fadd2c42caffe113643676d9ce350d7da0aa8986",
+  "lvs_cdl_sha256": "abb7bc280fd1632ec405e7cef62a2b4ba0ab688bc6fa85d897d1b0913a36b4a8"
+ },
+ "question": "post-layout RC netlist of r1_bias (devices + MIM re-inserted + kpex 2.5D CC + RNetExtractor wiring R)",
+ "result": {
+  "log": [
+   "kpex LVS circuit pair status: NoMatch",
+   "net pairs named from the cross-reference 107 unpaired 38",
+   "cap XPOR.XCDEL top xpor.cdel bottom vss",
+   "cap XPOR.XCF_vrh top xpor.vrh bottom vss",
+   "cap XPOR.XCF_vrl top xpor.vrl bottom vss",
+   "cap XPOR.XCF_tapa top xpor.tapa bottom vss",
+   "cap XVB.XCC1 top xvb.x1 bottom vss",
+   "cap XVB.XCC2 top xvb.x1 bottom vss",
+   "devices 196 nets 144 terminal ports 432 terminals without Metal1 port 0",
+   "resistors 1162 island ties 0 element stats {'open': 0, 'neg': 0, 'neg_min': 0.0, 'floor': 0}",
+   "device lines {'sg13_lv_nmos': 2, 'sg13_hv_nmos': 45, 'sg13_lv_pmos': 2, 'sg13_hv_pmos': 77, 'npn13G2': 4, 'rppd': 12, 'rhigh': 54, 'cap_cmim': 6}",
+   "capacitors 1162 total 1573.1 fF",
+   "wrote <G1_RESULTS_ROOT>/pex-rc-20261026-r2d/r1_bias_pex.spice"
+  ],
+  "pex_netlist": "<G1_RESULTS_ROOT>/r1_bias/pex-rc-20261026-r2d/r1_bias_pex.spice",
+  "pex_netlist_sha256": "0ae828e6c431e12ab5cfa03dc7e82340c4017a164df1fe5a0de3bbd43883f1be",
+  "c_only_netlist_sha256": "1eb8d13ad79a6163ef54ee9dad2056bdb3260f57f074c290bd03a3482325d162",
+  "dev_netlist_sha256": "8f5105a7a38553507cecce65913358630de164b0404f112e0ab1ae483fb49931"
+ },
+ "disposition": "run"
+}
