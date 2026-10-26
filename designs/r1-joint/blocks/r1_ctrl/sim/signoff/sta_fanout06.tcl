@@ -4,7 +4,8 @@ set run $::env(RUN)
 read_liberty /foss/pdks/ihp-sg13g2/libs.ref/sg13g2_stdcell/lib/sg13g2_stdcell_$::env(LIBNAME).lib
 read_verilog $run/final/nl/r1_ctrl_top.nl.v
 link_design r1_ctrl_top
-read_sdc $run/final/sdc/r1_ctrl_top.sdc
+# SDC=<file> overrides the final SDC (0.6: the final SDC is the place-and-route copy with limit 7; sign-off uses flow/r1_ctrl.sdc)
+read_sdc [expr {[info exists ::env(SDC)] ? $::env(SDC) : "$run/final/sdc/r1_ctrl_top.sdc"}]
 read_spef $run/final/spef/nom/r1_ctrl_top.nom.spef
 report_check_types -max_fanout -violators -verbose
 foreach t [list max_slew max_capacitance] { puts "=== $t violators"; report_check_types -$t -violators }

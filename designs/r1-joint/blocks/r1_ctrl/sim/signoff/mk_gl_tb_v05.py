@@ -5,6 +5,7 @@ Probes that survive as escaped nets (sin_code, cos_code, i_a, i_b, u_biss.ma_rst
 Probes that do not survive are replaced by constants and the checks that depend on them are labelled GLSKIP in the log:
  - thr_* / cal_* / ana_ctrl (folded into the tap logic): the cal test and two single checks cannot run
  - adc_arm, u_gate.nra / nrb (disc monitors), force of frame_pos (cdc D): disc and cdc cannot run at gate level
+Revision 0.6 also delays the ADC inputs by the SDC minimum input delay (0.5 ns), see the end of the script.
 SPDX-License-Identifier: Apache-2.0"""
 import re, sys
 t = open(sys.argv[1]).read()
@@ -24,4 +25,11 @@ for n in ["sin_code", "cos_code", "i_a", "i_b"]: t = re.sub(r"dut\.%s\b" % n, "g
 t = t.replace("dut.u_biss.ma_rst_n", "gl_ma_rst_n")
 t = t.replace("dut.u_gate.conv", "dut.\\u_gate.conv ")
 t = t.replace("force dut.frame_pos = alt_pos;", "; // GLSKIP force frame_pos").replace("release dut.frame_pos;", "; // GLSKIP release frame_pos")
+# Revision 0.6: honour the SDC minimum input delay of the ADC inputs (set_input_delay -min 0.5 ns). The RTL testbench changes
+# adc_valid_* / adc_raw_* at the clock edge (zero delay); with the post-layout clock latency of 1.6 ns at the slow corner that
+# is a hold violation of the stimulus, not of the design (t12: is_smp stuck high; t9f passed by chance of the latency).
+t = t.replace(".adc_valid_a(adc_valid_a), .adc_raw_a(adc_raw_a), .adc_valid_b(adc_valid_b), .adc_raw_b(adc_raw_b),",
+              ".adc_valid_a(adc_valid_a_d), .adc_raw_a(adc_raw_a_d), .adc_valid_b(adc_valid_b_d), .adc_raw_b(adc_raw_b_d),")
+t = t.replace("    r1_ctrl_top dut (", "    wire #0.5 adc_valid_a_d = adc_valid_a, adc_valid_b_d = adc_valid_b;   // GL: SDC set_input_delay -min 0.5 ns\n"
+              "    wire [13:0] #0.5 adc_raw_a_d = adc_raw_a, adc_raw_b_d = adc_raw_b;\n    r1_ctrl_top dut (", 1)
 open(sys.argv[2], "w").write(t)
