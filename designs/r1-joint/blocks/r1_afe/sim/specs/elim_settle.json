@@ -1,0 +1,49 @@
+{
+ "question": "Elimination of the x32 settling offset (-0.41 mV, E2 RC): which parasitic group (supply R, signal R, all R, all C, top-level C) or the CDAC reset kick (vrst06: VRST 0.6 V) causes it? offset = (err(+FS) + err(-FS))/2",
+ "variants": {
+  "base": {
+   "netlist": "$G1_RESULTS_ROOT/r1_afe/revF/elim-net/base.spice"
+  },
+  "supall": {
+   "netlist": "$G1_RESULTS_ROOT/r1_afe/revF/elim-net/supall.spice"
+  },
+  "sigR": {
+   "netlist": "$G1_RESULTS_ROOT/r1_afe/revF/elim-net/sigR.spice"
+  },
+  "allR": {
+   "netlist": "$G1_RESULTS_ROOT/r1_afe/revF/elim-net/allR.spice"
+  },
+  "noC": {
+   "netlist": "$G1_RESULTS_ROOT/r1_afe/revF/elim-net/noC.spice"
+  },
+  "noC_top": {
+   "netlist": "$G1_RESULTS_ROOT/r1_afe/revF/elim-net/noC_top.spice"
+  }
+ },
+ "jobs": [
+  {
+   "tag": "st_tt_x32_p100",
+   "tmpl": "tb_afe_settle_adc.cir",
+   "corner": "tt",
+   "subs": {
+    "CODE": 5,
+    "AMP": 0.021875,
+    "VCMI": 2.45,
+    "CS": "2.8p",
+    "VRST": 0.0
+   }
+  },
+  {
+   "tag": "st_tt_x32_m100",
+   "tmpl": "tb_afe_settle_adc.cir",
+   "corner": "tt",
+   "subs": {
+    "CODE": 5,
+    "AMP": -0.021875,
+    "VCMI": 2.45,
+    "CS": "2.8p",
+    "VRST": 0.0
+   }
+  }
+ ]
+}

@@ -1,12 +1,283 @@
 # r1_afe — encoder analog front end (sine and cosine channels)
 
-State (2026-10-21): **revision E, layout revision E2 (re-route): DRC, antenna and LVS clean (PDK decks); P/N pairs balanced (≤ 3.4 fF); full RC extraction and post-layout campaign run. Open: CM1/CM2 phase margins at ffx 61.3°/57.7° (target 63°), output CM +31 mV from supply resistance, ×32 settling offset −0.41 mV, two bias-range failures (see "Layout (revision E2)").** The revision-E layout record follows it. Schematic-level record: "Revision E" below.
+State (2026-10-26): **revision F (netlist of record), layout E3 (`layout-e3-dev11`, `layout/r1_afe.gds`): DRC, antenna, LVS clean; not closed: pole matching 1.37 % (> 1 %), DM1 59.6° at ffx 6.9 µA after layout, wrong DC point at tt after layout (see "Revision F / Layout E3").** Revision E is kept as `schematic/r1_afe_revE.spice`, layout E2 as `layout/r1_afe_revE2.gds`; their records follow.
 Revision D is superseded by revision E (record below). Revision C is superseded; its record follows the revision-D section ("Revision C record"). Revision B is superseded; its
 record is kept at the end ("Revision B record").
 All numbers in this file are **simulated** unless they are marked estimated. Nothing is measured.
 
 Track T3 of `../README.md`. Specification row: `../../specification/R1_TOP_LEVEL_SPECIFICATION.md` §2 (`r1_afe`),
 §4 (encoder input), gate V1. Input standard and accuracy budget: `../../specification/studies/S1_ENCODER_CHAIN_20261020.md`.
+
+## Revision F / Layout E3 (2026-10-26, track T3; not closed)
+
+Status: **not closed** (see "Status" below: pole matching, DM1 at ffx 6.9 µA after layout, and the tt post-layout DC
+point fail). All numbers are **simulated** (ngspice-46,
+IHP SG13G2 `84374023`). Nothing is measured. Run records: `sim/runs/<run-id>/run.json`, layout records `reports/<run-id>/`.
+
+### Schematic changes (revision E → F; netlist of record `schematic/r1_afe.spice`, sha256 `44b7b406…4007`)
+
+Revision E is kept as `schematic/r1_afe_revE.spice` (sha256 `4a84a3d8…9e46`). `sim/apply_revf.py` writes revision F from
+it (command: `python3 apply_revf.py a1cc=28 a1cx=20 a1cp=16 a2cc=25.5 a2cx=18 a2rz=7 wcf1=28.9 wcf2=40.7`).
+An intermediate revision F1 (sha256 `116ac4b0…ff91`: `WCCB` 27 µm, `WCF1`/`WCF2` 30.5/42.9 µm) was regressed and laid out
+(`layout-e3-dev9`); its results are the basis of the final values (see the progress record below).
+No bias, topology or interface change except the two new OTA2 capacitors.
+
+| Instance | Parameter | Revision E | Revision F | Purpose |
+| --- | --- | --- | --- | --- |
+| `XA1` (OTA1) | Miller cap `WCC` (square side) | 25 µm | **28 µm** | with the cross caps: DM compensation about equal (WCC² − WCX² 400 → 384 µm²), CM compensation +39 % (850 → 1184 µm²) |
+| `XA1` `XCX1`/`XCX2` | cross-coupled Miller caps | 15 µm | **20 µm** | CM1 margin at ffx with 6.9 µA |
+| `XA1` | CMFB pair `WCP` (`XMC1`/`XMC2`) | 32 µm | **16 µm** | lower stage-1 CM loop gain (CM1 +3.3° at ffx 6.9 µA, screen F1) |
+| `XA1` | switched Miller part `WCCB` (connected for stage-1 n1 < 8: ×1–×16) | 24 µm | 24 µm (F1: 27 µm) | F1 value cost 2.4 % f_c at ×16 (the f_c minimum); reverted |
+| `XA2` (OTA2) | new cross-coupled caps `XCX1` (cz1 → outn), `XCX2` (cz2 → outp) | — | **18 µm** | CM compensation of OTA2 ×3 with the DM compensation kept |
+| `XA2` | Miller cap `WCC` | 18 µm | **25.5 µm** | DM: 25.5² − 18² = 326 µm² (revision E 324 µm²) |
+| `XA2` | Miller zero resistor `LRZ` (rppd, w = 1 µm) | 10 µm | **7 µm** | stage-2 DM gain margin ≥ 10 dB (HF loop-gain floor ≈ gm1·Rz·β) |
+| stage 1 / stage 2 | anti-alias caps `WCF1` / `WCF2` | 31.0 / 43.6 µm | **28.9 / 40.7 µm** | f_c margin after layout: −13 % C (area) gives +6.5 % f_c on the dev9 RC (`r1afe-fccf-e3d9`) |
+
+The OTA2 cross caps were chosen instead of the CMFB-gain step of the first attempt (`a2k1.6+a2cp48`, screen F1, −12° CM2).
+Not chosen: OTA1 output stage ×1.33 (`a1o1.33`, screen F1: DM1 GM 7.8 dB at 15.4 µA); larger OTA1 Rz (DM1 GM).
+The values are from screens, not from a full optimisation (**estimation**).
+
+Screens (worst over ×1/×32; PM degrees / GM dB; schematic level):
+
+| Point | Rev E (F0) | Rev F (`r1afe-screen-f4`) | Run |
+| --- | --- | --- | --- |
+| ffx, 6.9 µA, CM 0.5 V: DM1 / CM1 / DM2 / CM2 | 64.1 / **57.3** / 72.5 / **59.0** | 64.2 / 66.8 / 71.3 / 68.1 (WCCB 24 µm) | `r1afe-screen-f2`, `-f4` |
+| tt, 15.4 µA: DM1 GM / DM2 GM | 10.7 / **5.1** | 12.2 / 10.5 | same |
+| ff 9.0 µA and ssx 6.94 µA, hold load: DM2 GM | **7.7 / 7.7** | 12.3 / 13.4 | same |
+| f_c, ss, 11.81 µA, CM 0.5 V | 1.038 MHz | 1.026 MHz | same |
+
+`r1afe-screen-f4` ran with `WCCB` = 24 µm, the final value.
+
+### Resume and triage (2026-10-26)
+
+A first attempt of this track stopped on 2026-10-22 (API limit). Its uncommitted work was read and kept:
+1. `sim/run_afe.py`: new campaign kind `var:<spec.json>` (variant netlists frozen per run) and `fvar()` (revision-F
+   size variants that also apply to a post-layout RC netlist). Kept.
+2. `pex/rc_eliminate.py` (scale or remove groups of extracted R and C) and `sim/revf_reduce.py` (per-variant reduction). Kept.
+3. `pex/pex_rc_build.py`: the sources of the output-stage MOS (`XMN7/8`, `XMP7/8`) now stay on their own port, so their
+   supply current flows through the extracted wiring (`-rd probesrc=0` gives the E2 method). Kept: the E2 method hid the
+   supply drop at the output stages.
+4. `layout/r1_afe_layout.py`: channel `vdd` grid (Metal5 plate over the PMOS rows, Metal4 row buses, east trunk). Kept;
+   runs `layout-e3-dev1` (LVS fail, router) and `layout-e3-dev2` (DRC 0, antenna 0, LVS match, revision-E devices).
+5. Elimination runs on the E2 RC netlist (`r1afe-elim-*-f1..f3`, specs in `sim/specs/elim_*.json`): complete, reused (below).
+6. Schematic screen `r1afe-screen-f1` (CMFB gain up, OTA2 cross caps, OTA1 output stage): reused as input only. Its
+   CMFB-gain step (`a2k1.6+a2cp48`) costs 12° of CM2 margin; it is not used in revision F.
+7. Two LVS-extracted netlists left in `blocks/` were moved to `pex/stray-20261021/` (output of `layout-e3-dev2`, not evidence).
+8. `schematic/r1_afe_revE.spice` is byte-identical to the revision-E netlist of record (kept as the revision-E copy).
+
+### Elimination result (reused from the 2026-10-21 runs; E2 RC netlist, tt, 10 µA)
+
+×32 settling offset = (error at +FS + error at −FS) / 2 at the end of the 250 ns track window (`tb_afe_settle_adc.cir`):
+
+| Variant (what is removed or shorted) | +FS / −FS error (mV) | Offset (mV) | Run |
+| --- | --- | --- | --- |
+| none (E2 RC) | −0.220 / −0.565 | **−0.39** | `r1afe-elim-settle-f1` |
+| all supply R × 1e-3 | −0.238 / −0.570 | −0.40 | same |
+| all signal R × 1e-3 | −0.073 / −0.613 | −0.34 | same |
+| all extracted C removed | +0.078 / −0.120 | −0.02 | same |
+| top-level C removed | −0.220 / −0.565 | −0.39 | same |
+| channel C on stage-1 nets removed | +0.085 / failed | — | `r1afe-elim-settle-f3` |
+| channel C on stage-2 nets removed | −0.227 / failed | — | same |
+| channel C on the output nets removed | +0.090 / −0.197 | −0.05 | same |
+| channel C on control, bias, `vcm`, `vdd` nets removed | −0.220 / −0.560 | −0.39 | same |
+| E2 RC, CDAC reset to 0.6 V instead of 0 V (no CM kick) | +0.121 / −0.125 | **−0.002** | `r1afe-elim-settle-f2` |
+
+Reading: the offset is not caused by wiring resistance (supply or signal). It needs both the extracted channel
+capacitance (stage-1 nets and the output nets) and the common-mode kick of the CDAC top-plate reset to 0 V at the
+start of track. With a CM-neutral reset it goes away (−0.002 mV). The CM kick is converted to a differential error
+by the extracted capacitance. The error is the same at every time sample from 2.25 to 5.25 µs, so it is a periodic
+steady state, not slow settling. It is input-independent at these two levels, so it adds to the constant (offset)
+term, not to the non-linear residual. The INTERFACES.md row "top plate near 0 V at track start" makes the kick real.
+Two −FS jobs of `r1afe-elim-settle-f3` failed ("timestep too small"); they are recorded, not re-run.
+
+Output CM (op, tt ×1, `r1afe-elim-ocm-f1`): E2 RC 0.6280 V; channel `vdd` wiring × 1e-3 0.5963 V; channel `vss` × 1e-3
+0.6277 V; top-level `vdd`/`vss` × 1e-3 no change. The +31 mV output-CM shift comes from the **channel `vdd` wiring**
+(uneven drop between the OTA bias diodes and their PMOS current sources, up to 8 mV, `r1afe-elim-opv-f1`).
+
+
+### Offset: result and decision
+
+The ×32 offset is explained, not removed. Layout E3 does not change it: on the dev10 RC netlist the ×32 errors are
++0.160 / −0.895 mV at +FS / −FS (tt, 10.14 µA, `r1afe-post-e3d10`), offset **−0.37 mV** (E2: −0.39 mV). On dev11 (of record): +0.110 / −0.929 mV, offset **−0.41 mV**.
+It is a constant term, input-independent and periodic, so the system offset calibration removes it. A CM-neutral top-plate
+reset (0.6 V instead of 0 V) removes it in simulation (−0.002 mV). That is an interface change for `r1_adc`
+(INTERFACES.md "top plate near 0 V at track start"), so it is not made here (open issue 3).
+
+### Layout E3 iterations (box 192.8 × 494.4 µm, pins equal to revision E in all three)
+
+| Run | Netlist | Change | DRC main / maximal | Antenna | LVS | Supply islands (metal only) | Use |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| `layout-e3-dev9` | F1 `116ac4b0` | `vdd` grid + `vss` grid, island rules | 0 / 0 | 0 | match | 2 ports (`xi3_xp`, `xi4_xp` sources) | iteration 1, post-layout `r1afe-elim-e3d9` |
+| `layout-e3-dev10` | F final `44b7b406` | trunk over all rows, `vss` trunk to the pin | 0 / 0 | 0 | match | **15 ports**: OTA1 `vdd` row (`xmp7`, `xmp8`, `xmpt`, `xmct`, `xmb2/3/5`), `vss` of `xi1–4_xn` and of the output caps | iteration 2, superseded |
+| `layout-e3-dev11` | F final `44b7b406` | grid segment kept only with a stack up to the plate or a trunk connection | 0 / 0 | 0 | match (263 devices) | **0** | **layout of record** (`layout/r1_afe.gds`) |
+
+Evidence: `reports/layout-e3-dev9/`, `-dev10/`, `-dev11/` (`run.json`, DRC/antenna/LVS logs, `pin_layer_check.json`,
+`supply_island_check.json`). The E2 GDS is kept as `layout/r1_afe_revE2.gds`.
+LVS matched dev10 although 15 supply ports had no metal path: the PDK LVS joins them through the well and substrate
+ties. The new check `layout/tools/supply_island_check.py` (metal-only flood fill from the cell pins) finds this. The RC
+build reports it as a "tie" (`pex/pex_rc_build.py`); dev11 has 0 ties.
+
+### Supply strap resistance, before and after (`pex/rnet_report.py`, pin to the farthest port, Ω)
+
+| Layout | Channel `vdd` worst / mean | Channel `vss` worst / mean | Output-stage sources OTA1 `XMP7/XMP8`, `XMN7/XMN8` | OTA2 `XMP7/XMP8`, `XMN7/XMN8` | Top-level `vdd` / `vss` worst |
+| --- | --- | --- | --- | --- | --- |
+| E2 (before) | 203.5 / 77.0 | 62.4 / 35.7 | (tied to the pin node by the E2 method) | (tied) | 53.9 / 42.3 |
+| E3-dev9 | 55.4 / 31.7 | 72.5 / 49.8 | 40.4 / 27.4, 54.5 / 52.9 | 27.1 / 25.5, 49.1 / 51.5 | 53.9 / 42.3 |
+| **E3-dev11 (after)** | 82.4 / 39.8 | 107.4 / 39.2 | **64.0 / 82.4**, 34.0 / 32.4 | 25.7 / 24.3, 29.4 / 32.0 | 53.9 / 42.3 |
+
+The `vss` worst port in dev11 is an output-cap plate (no DC current). The worst DC ports are the OTA1 output PMOS
+sources (64 / 82 Ω, routed by the maze router after the island fix). The top-level straps are unchanged from E2.
+Evidence: `reports/pex-e2-dev11/rnet_supply.json`, `reports/pex-e3-dev11/rnet_supply.json`.
+
+### Schematic regression, revision F final (`r1afe-*-20261026f2`, 14 campaigns, 0 failed jobs; `sim/results/reduction-full-20261026f2.json`)
+
+| Item | Revision E (`20261021e`) | Revision F final | Limit | Result |
+| --- | --- | --- | --- | --- |
+| Loops, 7 corners × CM 0.5/2.5 V (`stbx`), worst PM / GM | passed at 10 µA (CM1/CM2 57.3/59.0° only at ffx 6.9 µA, screen F0) | 70.3° (ffx CM2) / 11.5 dB (ssx DM2) | ≥ 63° / ≥ 10 dB | passed |
+| Loops, tt/ss/ff incl. hold load (`stb`), worst PM / GM | — | 73.5° (DM1 ff) / 11.8 dB (DM2 ff hold) | ≥ 63° / ≥ 10 dB | passed |
+| f_c min, 10 µA (`ac`) | 1.038 MHz | 1.072 MHz (ss, CM 0.5 V) | ≥ 1.0 MHz | passed |
+| Output CM (`ac`, `cm`) | 0.593–0.597 V | 0.5934–0.5973 V | 0.600 ± 0.030 V | passed |
+| Pole matching, 20 MC per corner, 10 µA (`ac_mc`) | 0.976 % | **1.371 %** (ss ×32; tt 1.016 %, ff 1.066 %) | ≤ 1 % | **failed** |
+| Noise ×32, input-referred, ss (`noise`) | 31.0 µV | 31.9 µV | ≤ 35 µV | passed |
+| Settling non-linear residual (`settle_adc`) | — | 0.011 LSB | ≤ 0.25 LSB | passed |
+| THD (`tran`) | — | 0.033 % | ≤ 0.1 % | passed |
+| PSRR min (`psrr`) | 54.3 dB | 52.6 dB | — | recorded |
+| Overload recovery to 1 LSB (`overload`) | 1240 ns | 1206 ns | — | recorded |
+| f_3dB over temperature, min (`temp`) | 1.369 MHz | 1.495 MHz | — | recorded |
+| CM step (`cmstep`) | unchanged behaviour | unchanged behaviour | — | recorded |
+
+Pole-matching cause screen (`r1afe-screen-f6`, ss 11.81 µA, 20 MC samples, worst / σ at ×32): F final 1.058 / 0.399 %;
+revision E 0.832 / 0.301 %; F with the OTA1 caps of revision E 0.760 / 0.342 %; F with OTA2 of revision E 1.402 / 0.510 %;
+F with the anti-alias caps of revision E 0.998 / 0.405 %. The OTA1 compensation change (`WCC` 28, `XCX` 20, `WCP` 16 µm) is
+the main contributor. The OTA2 change is not. The earlier "not supported" reading (progress record item 4) was wrong.
+
+### Post-layout, layout E3 (RC netlists with the output-stage sources on their own ports)
+
+Runs: `r1afe-post-e3d10` (dev10 RC, stopped, `ABANDONED.txt`; supply islands tied with 1 mΩ, so optimistic for the
+OTA1 `vdd` row) and `r1afe-post-e3d11` (dev11 RC `pexrc-e3-dev11`, 0 ties; stopped at the track deadline, partial).
+Spec generator `sim/specs/make_post_e3.py`; specs `sim/specs/post_e3d10.json`, `post_e3d11.json`. Values read from the
+job logs with the runner's parsers (`run_afe.parse`, `stb_post`); the runs were stopped before the results JSON.
+
+| Point | dev10 | dev11 (of record) | Limit | Result (dev11) |
+| --- | --- | --- | --- | --- |
+| f_c, ss, 11.81 µA, CM 0.5 V (minimum at ×16) | 1.068 MHz | **1.004 MHz** | ≥ 1.0 MHz | passed (0.4 % margin) |
+| f_c, ffx, 6.9 µA, CM 0.5 V | not run | 1.494 MHz | ≥ 1.0 MHz | passed |
+| f_c, **tt, 10.14 µA**, CM 0.5 V | not run | **0.194 MHz**; gain ×1 −1.0 dB, ×32 27.9 dB | ≥ 1.0 MHz | **failed** |
+| Output CM (ss / ffx / tt ac benches, all codes) | 0.5956–0.5957 V | 0.5952–0.5960 V | 0.600 ± 0.030 V | passed |
+| Loops ffx, 6.9 µA, CM 0.5 V: DM1 / CM1 / DM2 / CM2 PM | 59.4 / 66.2 / 67.2 / 64.2° | **59.6** / 66.9 / 67.1 / 64.2° | ≥ 63° | **failed** (DM1, −3.4°) |
+| Loops ffx, 6.9 µA, CM 2.5 V | 65.6 / 66.6 / 67.5 / 64.5° | 65.7 / 66.7 / 67.4 / 64.6° | ≥ 63° | passed |
+| Loops ffx, 15.36 µA, CM 2.5 V: PM min / GM min | 69.0° / 14.3 dB | 68.9° / 14.4 dB | ≥ 63° / ≥ 10 dB | passed |
+| Loops **tt, 15.4 µA, CM 0.5 V** | DM1 91.6°, all PM ≥ 72.7° | **DM1 has no unity-gain crossing** (loop gain < 0 dB: wrong DC point, as the tt ac bench); DM2 72.6°, CM2 75.7° | ≥ 63° | **failed** |
+| Loops tt, 15.4 µA, CM 2.5 V: PM min / GM min | 70.4° / 11.7 dB | 71.3° / 11.8 dB | ≥ 63° / ≥ 10 dB | passed |
+| Loops ffx 15.36 CM 0.5 V; ss 11.81; ssx 6.94 (CM 0.5 and 2.5) | PM ≥ 68.8°, GM ≥ 11.8 dB | not run (stopped) | ≥ 63° / ≥ 10 dB | not run (dev10 passed) |
+| Loops tt 10.14, ff 9.00, tt 6.9 µA; hold load | not run | not run | — | not run |
+| Noise ×32, input-referred, ss | 32.5 µV | 32.9 µV | ≤ 35 µV | passed |
+| ×32 errors at end of track, tt: +FS / −FS; offset | +0.160 / −0.895 mV; −0.37 mV | +0.110 / −0.929 mV; **−0.41 mV** | — | recorded (explained, above) |
+| Settling non-linear residual (needs ≥ 3 levels) | not run | not run (only ±FS finished) | ≤ 0.25 LSB | not run |
+| THD ×32, tt (transient bench) | not run | 0.011 %; output swing +0.624 / −0.670 V (DC offset about −23 mV at the ×32 output) | ≤ 0.1 % | passed |
+| Pole matching post-layout (MC on the RC netlist) | not run | not run | ≤ 1 % | not run |
+| Gain ×32 (noise bench, ss) | 29.67 V/V | 29.62 V/V (schematic 32.20) | — | recorded (open issue 4) |
+
+The tt failure: the ac and loop benches at tt, CM 0.5 V find a DC point with the stage-1 output CM at 0.06 V (schematic 0.73 V; dev11 ss 0.31 V,
+dev9 ss 0.45 V, E3-dev2 ss 0.61 V). The OTA1 CM control is out of range there. The settling bench at the same corner and
+bias settles to a normal state (×32 errors above), so the result depends on the DC solution. Cause (estimated, not
+isolated): the OTA1 `vdd` row devices (`xmb2/3/5`, `xmpt`, `xmct`, `xmp7/8`) are router-connected in dev11 with 64–82 Ω and
+unequal drops between bias diodes and current sources (the E2 output-CM mechanism). Next step: elimination run of the
+channel `vdd` R on dev11 at tt (`r1afe-elim` method) and a metal path from that row to the Metal5 plate.
+
+### Status (revision F final, layout E3 = `layout-e3-dev11`)
+
+Overall: **not closed**. Layout checks pass. Two criteria fail at schematic or post-layout level, and part of the
+post-layout set did not run in the time budget.
+
+| Criterion | Schematic (F final, `20261026f2`) | Post-layout (E3 = dev11) | Evidence |
+| --- | --- | --- | --- |
+| Loop PM ≥ 63°, GM ≥ 10 dB, corners tt/ss/ff/ssx/ffx with r1_bias currents | passed (PM ≥ 70.3°, GM ≥ 11.5 dB) | partial: ffx 15.36 µA CM 2.5 V passed; tt, ss, ff, ssx not run on dev11 (dev10 ss/ssx: passed) | `sim/runs/r1afe-stbx-20261026f2/`, `r1afe-post-e3d11/` |
+| Loop PM at the bias extremes 6.9 / 15.4 µA (tt, ffx) | passed (screen F4: DM1 64.2°, DM2 GM 10.5 dB) | **failed**: DM1 59.6° at ffx 6.9 µA, CM 0.5 V; tt 15.4 µA CM 0.5 V DM1 loop broken (wrong DC point); ffx 6.9 µA CM 2.5 V and tt 15.4 µA CM 2.5 V passed; tt 6.9 µA not run | `sim/runs/r1afe-screen-f4/`, `r1afe-post-e3d11/` |
+| f_c ≥ 1.0 MHz | passed (1.072 MHz) | **failed** at tt 10.14 µA (0.194 MHz, wrong DC point); ss 1.004 MHz and ffx 1.494 MHz passed | `sim/results/reduction-full-20261026f2.json`, `r1afe-post-e3d11/` |
+| Pole matching ≤ 1 % | **failed** (1.371 %) | not run | `sim/runs/r1afe-ac_mc-20261026f2/`, `r1afe-screen-f6/` |
+| Output CM 0.600 ± 0.030 V, with extracted supply wiring | passed (0.5934–0.5973 V) | passed (0.5952–0.5960 V) | same |
+| Noise ×32 at ss ≤ 35 µV | passed (31.9 µV) | passed (32.9 µV) | same |
+| Settling residual ≤ 0.25 LSB | passed (0.011 LSB) | not run | same |
+| THD ≤ 0.1 % | passed (0.033 %) | passed (0.011 %, tt ×32) | same |
+| ×32 offset | — | explained (−0.41 mV, CDAC reset CM kick); not fixed | "Offset" above |
+| Remaining revision-E list (`cm`, `psrr`, `cmstep`, `overload`, `rsrc`, `temp`) | run, recorded (no failed jobs) | not run | `sim/results/reduction-full-20261026f2.json` |
+| DRC main + maximal | — | passed (0 / 0) | `reports/layout-e3-dev11/` |
+| Antenna | — | passed (0) | same |
+| LVS against revision F | — | passed (match) | same |
+| Supply ports with a metal path | — | passed (0 islands) | `reports/layout-e3-dev11/supply_island_check.json` |
+| Pins and box | — | passed (pin set equal to revision E; 192.8 × 494.4 µm) | `reports/layout-e3-dev11/pin_layer_check.json` |
+| Supply strap R reported before / after | — | done | `reports/pex-e2-dev11/`, `reports/pex-e3-dev11/` |
+| EM/IR sign-off, LEF, fill | — | not run | — |
+
+### Open issues
+
+1. **Pole matching 1.37 % > 1 %** (schematic, ss, 10 µA). Lever: OTA1 caps back to revision E (screen: 0.76 %) and
+   CM1 margin from a lower OTA1 CMFB gain (`WCP` 8 µm, screen F5 H1) instead of the cross caps; then 4 × 20 MC samples.
+2. **DM1 phase margin at ffx, 6.9 µA, CM 0.5 V after layout**: 59.4° on dev10 (schematic 64.2°). dev11: 59.6°. Lever: `WCCB`
+   27 µm (+3.9° at schematic level) with the f_c margin from a further `WCF` reduction (f_c post-layout at ss is only 1.004 MHz on dev11, so the f_c margin must come first).
+3. The ×32 offset −0.37 mV stays (CM kick of the 0 V top-plate reset). Lever: CM-neutral reset in `r1_adc` (interface change).
+4. Post-layout gain at ×32 is low: 29.67 V/V at ss on dev10 (schematic 32.20, −0.71 dB). Cause not isolated (signal-path
+   wiring R in series with the gain resistors, estimated). It is a common gain error of both channels.
+5. OTA1 output PMOS sources see 64 / 82 Ω (dev11). The 18 Ω difference adds a DC differential offset. Lever: a metal path
+   from the `vdd` row at y = 152 µm to the Metal5 plate (row cover is 0 %: the MIM caps occupy the plate area).
+6. `op2`/`on2` extracted imbalance 15.6 fF (dev11; E2 3.4 fF) (`reports/pex-e3-dev11/pair_loads.json`).
+7. Post-layout campaign on dev11 is incomplete (time budget): see the status table for the jobs that did not run.
+
+### Failures and mistakes (this track)
+
+| # | What | Class | Effect |
+| --- | --- | --- | --- |
+| 1 | The E2 extraction tied the output-stage MOS sources to the pin node; the supply drop at the output stages was not simulated | verification-gap | output-CM and f_c effect of `vss` wiring found only in E3 |
+| 2 | `layout-e3-dev3` drew the full `vss` bus over 4 foreign nodes and shorted `outp`/`outn` to `vss` | functional-bug | caught by LVS; fixed with owned-segment drawing |
+| 3 | `layout-e3-dev4/5/6`: an output-cap `vss` plate floated on a bus island | functional-bug | caught by LVS; fixed with the gap and island rules |
+| 4 | `layout-e3-dev10`: 15 supply ports without a metal path; LVS matched through well/substrate | verification-gap | found by the RC "tie" message; new metal-only check; fixed in dev11 |
+| 5 | Assumption "`WCCB` has no effect at the f_c minimum": the minimum is at ×16, where `WCCB` is connected (F1 lost 2.4 % f_c) | estimation | one regression and one layout iteration on F1 |
+| 6 | Estimate "difference caps amplify mismatch" first stated as the cause, then called not supported from 10 samples, then confirmed for OTA1 with 20 samples | estimation | pole matching not fixed in time |
+| 7 | `r1afe-screen-f4` ran with `WCCB` 24 µm while the frozen F1 had 27 µm | process-hygiene | screen and regression did not match one netlist; F final returned to 24 µm |
+| 8 | `r1afe-screen-f3` and `layout-e3-dev8` were stopped (slow under CPU contention); SIGTERM did not stop the runner, `kill -9` by PID | tooling | runs kept and marked `ABANDONED.txt` |
+| 9 | RC-netlist loop analysis takes 25 min per job with 3 CPUs; the post-layout plan did not fit the time budget | planning | post-layout loops only on dev10, dev11 partial |
+| 10 | Two −FS settling jobs of `r1afe-elim-settle-f3` failed ("timestep too small") | numerical | recorded, not re-run |
+
+### Supply wiring after the E3 `vdd` grid (E3-dev2 extraction, revision-E devices; `r1afe-elim-e3d2`)
+
+`layout-e3-dev2` (vdd grid only) was extracted by the first attempt (`pex-e3-dev2`, kpex complete). The RC build was run
+here (`pexrc-e3-dev2`, with the output-stage sources on their own ports). Elimination on it (tt 10.14 µA; ss 11.81 µA):
+
+| Variant | Output CM ×1 / ×32 (V) | DC output offset ×1 / ×32 (mV) | f_c ss, CM 0.5 V |
+| --- | --- | --- | --- |
+| E3-dev2 RC | 0.6265 / 0.6260 | 63.2 / 250.4 | **0.973 MHz** |
+| channel `vss` wiring × 1e-3 | 0.5963 / 0.5968 | −3.9 / 0.8 | 1.037 MHz |
+| channel `vdd` wiring × 1e-3 | 0.6267 / 0.6261 | 63.6 / 243.8 | 0.973 MHz |
+| all supply wiring × 1e-3 | 0.5961 / 0.5965 | −4.3 / −9.6 | 1.047 MHz |
+
+Reading: the `vdd` grid works (channel `vdd` R no longer matters). With the output-stage sources now on their own ports,
+the channel **`vss` wiring** sets the output-CM shift (+30 mV), the f_c loss (−6 %) and a large DC differential offset
+(250 mV at the ×32 output). The E2 extraction method hid these (output-stage sources tied to the pin node). Channel `vss`
+resistance in E3-dev2: 50–125 Ω along the NMOS rows (pin to port, `pex/rnet_report.py`), the gradient makes the
+output-stage NMOS sources unequal (OTA1 `XMN7`/`XMN8` 98.8/110.1 Ω).
+Fix in layout E3: a `vss` grid on the NMOS rows (Metal4 buses on each tie track and the track above, Metal1–Metal4
+via stacks at every second tie node, east Metal4 trunk), the same construction as the `vdd` grid without a plate.
+
+### Progress record (2026-10-26, history)
+
+1. Layout iteration 1 (`layout-e3-dev9`, revision F as frozen at sha256 `116ac4b0…`): DRC main + maximal 0, antenna 0,
+   LVS match (243 channel devices), pins equal to revision E, box 192.8 × 494.4 µm. Extraction `pex-e3-dev9`, RC build
+   `pexrc-e3-dev9`. Channel supply R (pin to farthest port): `vss` 46–72 Ω (E3-dev2 50–125 Ω), `vdd` 22–55 Ω (E3-dev2
+   20–38 Ω: the larger MIMs left 4545 µm² of Metal5 plate instead of 6852 µm²).
+2. dev9 post-layout (`r1afe-elim-e3d9`): f_c at ss **0.933 MHz** (fails; minimum at ×16, CM 0.5 V), output CM 0.579–0.584 V,
+   ×32 DC offset −57 mV at the output. Channel `vss` × 1e-3: 0.984 MHz; `vdd` × 1e-3: 0.942 MHz and output CM 0.598 V.
+3. Schematic regression of that revision F (`r1afe-*-20261026f`, 14 campaigns, 0 failed jobs): **pole matching failed**
+   (ss 1.267 %, ff 1.042 %; revision E 0.976 %), **f_c at 10 µA failed** (0.982 MHz at ss, CM 0.5 V; 1.026 MHz at the
+   corner-matched 11.81 µA). Worst pole mismatch at ×16/×32, where the OTA1 bandwidth sets the pole. Cause (estimated):
+   the DM compensation is now a difference of two caps (OTA1 784 − 400 µm², OTA2 650 − 324 µm²), so cap and routing
+   mismatch is amplified about 3× (revision E OTA1: 2.1×). Loops passed with margin (seven corners ≥ 70.2°, GM ≥ 11.2 dB).
+4. Screen `r1afe-screen-f5` (on F1, 10 MC samples per variant): restoring the OTA1 caps (25/15 µm, WCP 8 µm) gives
+   f_c 0.956 MHz and pole mismatch 0.803 % (F1: 0.982 MHz, 0.722 %). The difference-cap estimate in item 3 is **not
+   supported**: revision E itself gave 0.454 % and 0.267 % ×32 sigma in two 10-sample parts. Pole matching with 2 × 10
+   samples is a statistics limit, not a proven regression (**estimation**).
+5. Cf sweep on the dev9 RC (`r1afe-fccf-e3d9`, ss 11.81 µA, CM 0.5 V): `WCF` area −6 % gives 0.968 MHz, −10 % gives
+   0.994 MHz. Revision F final takes −10 % from F1 (28.9/40.7 µm) and `WCCB` back to 24 µm.
 
 ## Layout (revision E2, 2026-10-21, track T3)
 

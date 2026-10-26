@@ -1,0 +1,51 @@
+{
+ "question": "Which supply wiring (vdd/vss, top/channel) moves the output CM on the E2 RC netlist?",
+ "variants": {
+  "base": {
+   "netlist": "$G1_RESULTS_ROOT/r1_afe/revF/elim-net/base.spice"
+  },
+  "supall": {
+   "netlist": "$G1_RESULTS_ROOT/r1_afe/revF/elim-net/supall.spice"
+  },
+  "vss": {
+   "netlist": "$G1_RESULTS_ROOT/r1_afe/revF/elim-net/vss.spice"
+  },
+  "vdd": {
+   "netlist": "$G1_RESULTS_ROOT/r1_afe/revF/elim-net/vdd.spice"
+  },
+  "vss_top": {
+   "netlist": "$G1_RESULTS_ROOT/r1_afe/revF/elim-net/vss_top.spice"
+  },
+  "vss_ch": {
+   "netlist": "$G1_RESULTS_ROOT/r1_afe/revF/elim-net/vss_ch.spice"
+  },
+  "vdd_top": {
+   "netlist": "$G1_RESULTS_ROOT/r1_afe/revF/elim-net/vdd_top.spice"
+  },
+  "vdd_ch": {
+   "netlist": "$G1_RESULTS_ROOT/r1_afe/revF/elim-net/vdd_ch.spice"
+  },
+  "sigR": {
+   "netlist": "$G1_RESULTS_ROOT/r1_afe/revF/elim-net/sigR.spice"
+  }
+ },
+ "jobs": [
+  {
+   "tag": "op_tt_ib10",
+   "tmpl": "tb_afe_op.cir",
+   "corner": "tt",
+   "subs": {
+    "VCMI": 2.5
+   }
+  },
+  {
+   "tag": "op_tt_ib15.4",
+   "tmpl": "tb_afe_op.cir",
+   "corner": "tt",
+   "subs": {
+    "VCMI": 2.5,
+    "IB": "15.4u"
+   }
+  }
+ ]
+}

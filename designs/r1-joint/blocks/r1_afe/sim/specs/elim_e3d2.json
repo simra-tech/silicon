@@ -1,0 +1,37 @@
+{
+ "question": "E3-dev2 RC netlist (revision E devices, output-stage sources on their own ports): which supply wiring sets the output CM (0.629 V) and the ss f_c (0.973 MHz)?",
+ "variants": {
+  "base": {
+   "netlist": "$G1_RESULTS_ROOT/r1_afe/revF/elim-e3d2/base.spice"
+  },
+  "vss_ch": {
+   "netlist": "$G1_RESULTS_ROOT/r1_afe/revF/elim-e3d2/vss_ch.spice"
+  },
+  "vdd_ch": {
+   "netlist": "$G1_RESULTS_ROOT/r1_afe/revF/elim-e3d2/vdd_ch.spice"
+  },
+  "supall": {
+   "netlist": "$G1_RESULTS_ROOT/r1_afe/revF/elim-e3d2/supall.spice"
+  }
+ },
+ "jobs": [
+  {
+   "tag": "op_tt_ib10.14",
+   "tmpl": "tb_afe_op.cir",
+   "corner": "tt",
+   "subs": {
+    "VCMI": 2.5,
+    "IB": "10.14u"
+   }
+  },
+  {
+   "tag": "ac_ss_ib11.81_cm0.5",
+   "tmpl": "tb_afe_ac.cir",
+   "corner": "ss",
+   "subs": {
+    "VCMI": 0.5,
+    "IB": "11.81u"
+   }
+  }
+ ]
+}

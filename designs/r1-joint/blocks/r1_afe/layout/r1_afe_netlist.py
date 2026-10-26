@@ -187,7 +187,7 @@ def cdl_line(d):
 def write_cdl(path=os.path.join(HERE, 'r1_afe_lvs.cdl')):
     ch = channel_devices()
     top, insts, ports = top_devices()
-    L = ['* LVS reference CDL for r1_afe (revision E netlist, layout revision E2), written by layout/r1_afe_netlist.py from schematic/r1_afe.spice',
+    L = ['* LVS reference CDL for r1_afe (revision F netlist, layout revision E3), written by layout/r1_afe_netlist.py from schematic/r1_afe.spice',
          '* unit split and MIM plate orientation (see the module docstring): long rppd -> straight series segments, large cap_cmim -> 4 units; cap_cmim nets in top, bottom order as laid out',
          '.subckt r1_afe_ch ' + ' '.join(CH_PORTS)]
     L += [cdl_line(d) for d in ch]

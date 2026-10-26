@@ -1,0 +1,30 @@
+{
+ "run_id": "pex-e3-dev11",
+ "step": "Layout E3 final (layout-e3-dev11, revision F final): kpex 2.5D CC of r1_afe_ch and of the top cell without channels; wire and via resistance by the KLayout RNetExtractor; RC netlist with the output-stage MOS sources on their own ports",
+ "date": "2026-10-26",
+ "commands": [
+  "G1_CPUSET=106-108; G1_RESULTS_ROOT=<bulk>; export G1_CPUSET G1_RESULTS_ROOT; sh designs/r1-joint/blocks/r1_afe/pex/run_pex.sh <G1_RESULTS_ROOT>/r1_afe/pex-e3-dev11 <G1_RESULTS_ROOT>/r1_afe/layout-e3-dev11/r1_afe.gds",
+  "G1_WORKDIR=designs/r1-joint/blocks/r1_afe; flow/run.sh klayout -b -r pex/pex_rc_build.py -rd kchdir=<run>/kpex_ch/r1_afe_ch_flat__r1_afe_ch -rd ktopdir=<run>/kpex_top/r1_afe_top_flat__r1_afe -rd ports=<G1_RESULTS_ROOT>/r1_afe/layout-e3-dev11/r1_afe_ports.json -rd out=<G1_RESULTS_ROOT>/r1_afe/pexrc-e3-dev11",
+  "python3 pex/pair_loads.py dev9=<pex-e3-dev9 kpex_ch>,<kpex_top> dev11=<kpex_ch>,<kpex_top> > pair_loads.json",
+  "python3 pex/rnet_report.py <G1_RESULTS_ROOT>/r1_afe/pexrc-e3-dev11/r1_afe_post_rc.spice vdd vss > rnet_supply.json"
+ ],
+ "tools": {
+  "kpex": "0.3.12",
+  "klayout": "KLayout 0.30.9",
+  "image_id": "sha256:ddeb69576f2808676d1c5d474ecf04f6d1d6f8abdcff6b72b39790ded924bab2",
+  "pdk_commit": "84374023ee8b4b126bebbba67fcbada0a9c0ff0b"
+ },
+ "inputs": {
+  "layout/r1_afe.gds (= <G1_RESULTS_ROOT>/r1_afe/layout-e3-dev11/r1_afe.gds)": "1f3ad1f16b9595098779d73dee59694415ffb054e13e811acd63bcea1b5f33f4",
+  "layout/r1_afe_lvs.cdl": "112be732b3b772301fd1bb7c20dc1f697788197573fd83976aa49019419bad69",
+  "schematic/r1_afe.spice": "44b7b4066e86a78fa47269672919828456b87ae0f8069d6ec201d78fc8f34007",
+  "pex/pex_rc_build.py": "3eb0623cd630bd815bf968f0b1ecd07b9679a7b34fe66d1ba69d1d02b2376ce4",
+  "pex/run_pex.sh": "2ae6053443fbb1fded0caf1d9cc3f27093c1ded71af7763f9a91a6c5d07afdd6",
+  "pex/rnet_report.py": "15876c95fbcc47885dca948402d241ac02b707765a6bfcc409665e82d3f81c15",
+  "pex/pair_loads.py": "97b588e0e4491a2da0cd44ae30d4efeba59473fd542f0187a1ab3147f65773ba"
+ },
+ "outputs": {
+  "<G1_RESULTS_ROOT>/r1_afe/pexrc-e3-dev11/r1_afe_post_rc.spice": "28406d6e94a1653fbd21bac14ca63d55bb955e979830c3bbac7cac42cc0bf857"
+ },
+ "result": "channel R elements 1332, ties 0 (layout-e3-dev10: 2 ties = supply islands); top R elements 58, ties 0"
+}

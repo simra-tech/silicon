@@ -1,0 +1,43 @@
+{
+ "question": "Elimination step 2 of the x32 settling offset: which channel capacitance group (stage-1 nets, stage-2 nets, outputs, controls/bias/vcm/vdd) carries it? (step 1: removing all C removes it; top-level C and all R do not)",
+ "variants": {
+  "noC_s1": {
+   "netlist": "$G1_RESULTS_ROOT/r1_afe/revF/elim-net/noC_s1.spice"
+  },
+  "noC_s2": {
+   "netlist": "$G1_RESULTS_ROOT/r1_afe/revF/elim-net/noC_s2.spice"
+  },
+  "noC_out": {
+   "netlist": "$G1_RESULTS_ROOT/r1_afe/revF/elim-net/noC_out.spice"
+  },
+  "noC_ctl": {
+   "netlist": "$G1_RESULTS_ROOT/r1_afe/revF/elim-net/noC_ctl.spice"
+  }
+ },
+ "jobs": [
+  {
+   "tag": "st_tt_x32_p100",
+   "tmpl": "tb_afe_settle_adc.cir",
+   "corner": "tt",
+   "subs": {
+    "CODE": 5,
+    "AMP": 0.021875,
+    "VCMI": 2.45,
+    "CS": "2.8p",
+    "VRST": 0.0
+   }
+  },
+  {
+   "tag": "st_tt_x32_m100",
+   "tmpl": "tb_afe_settle_adc.cir",
+   "corner": "tt",
+   "subs": {
+    "CODE": 5,
+    "AMP": -0.021875,
+    "VCMI": 2.45,
+    "CS": "2.8p",
+    "VRST": 0.0
+   }
+  }
+ ]
+}

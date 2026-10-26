@@ -1,0 +1,55 @@
+{
+ "question": "f_c sensitivity to the anti-alias caps on the dev9 RC netlist (revision F): Cf area -6 % and -10 %",
+ "variants": {
+  "cf94": {
+   "netlist": "$G1_RESULTS_ROOT/r1_afe/pexrc-e3-dev9/r1_afe_post_rc.spice",
+   "rx": [
+    [
+     "r1_afe_ch",
+     "(?m)^(Xxs1[pn]_xcf_u\\d [^\\n]*cap_cmim) w=15\\.25u l=15\\.25u",
+     "\\1 w=14.8u l=14.8u"
+    ],
+    [
+     "r1_afe_ch",
+     "(?m)^(Xxs2[pn]_xcf_u\\d [^\\n]*cap_cmim) w=21\\.45u l=21\\.45u",
+     "\\1 w=20.8u l=20.8u"
+    ]
+   ]
+  },
+  "cf90": {
+   "netlist": "$G1_RESULTS_ROOT/r1_afe/pexrc-e3-dev9/r1_afe_post_rc.spice",
+   "rx": [
+    [
+     "r1_afe_ch",
+     "(?m)^(Xxs1[pn]_xcf_u\\d [^\\n]*cap_cmim) w=15\\.25u l=15\\.25u",
+     "\\1 w=14.45u l=14.45u"
+    ],
+    [
+     "r1_afe_ch",
+     "(?m)^(Xxs2[pn]_xcf_u\\d [^\\n]*cap_cmim) w=21\\.45u l=21\\.45u",
+     "\\1 w=20.35u l=20.35u"
+    ]
+   ]
+  }
+ },
+ "jobs": [
+  {
+   "tag": "ac_ss_ib11.81_cm0.5",
+   "tmpl": "tb_afe_ac.cir",
+   "corner": "ss",
+   "subs": {
+    "VCMI": 0.5,
+    "IB": "11.81u"
+   }
+  },
+  {
+   "tag": "ac_ss_ib11.81_cm2.5",
+   "tmpl": "tb_afe_ac.cir",
+   "corner": "ss",
+   "subs": {
+    "VCMI": 2.5,
+    "IB": "11.81u"
+   }
+  }
+ ]
+}

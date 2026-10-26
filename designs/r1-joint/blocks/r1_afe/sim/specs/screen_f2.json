@@ -1,0 +1,118 @@
+{
+ "question": "Revision F screen 2 (schematic level): CMFB pair width halved (a1cp16, a2cp16) vs cross-cap route without the CMFB gain increase of screen 1; OTA2 Rz 7 um for the DM2 gain margin; corner-matched r1_bias currents (ssx 6.94, ffx 15.36 uA) and extremes 6.9/15.4 uA",
+ "variants": {
+  "F0": {
+   "fv": "base"
+  },
+  "F1": {
+   "fv": "a2cp16+a1cp16"
+  },
+  "F2": {
+   "fv": "a2cp16+a2rz7+a1cp16"
+  },
+  "F3": {
+   "fv": "a2cx14+a2cc22.8+a2rz7"
+  },
+  "F4": {
+   "fv": "a2cx14+a2cc22.8+a2rz7+a1cx19+a1cc27.6"
+  },
+  "F5": {
+   "fv": "a2cp16+a2rz7+a1cp16+a1cx19+a1cc27.6"
+  }
+ },
+ "jobs": [
+  {
+   "tag": "stb_ffx_ib6.9_cm0.5",
+   "tmpl": "tb_afe_stb.cir",
+   "corner": "ffx",
+   "subs": {
+    "VCMI": 0.5,
+    "KLIST": "0 5",
+    "LLIST": "1 2 4 5",
+    "IB": "6.9u",
+    "CL": "2.8p"
+   }
+  },
+  {
+   "tag": "stb_ffx_ib6.9_cm2.5",
+   "tmpl": "tb_afe_stb.cir",
+   "corner": "ffx",
+   "subs": {
+    "VCMI": 2.5,
+    "KLIST": "0 5",
+    "LLIST": "1 2 4 5",
+    "IB": "6.9u",
+    "CL": "2.8p"
+   }
+  },
+  {
+   "tag": "stb_tt_ib15.4_cm2.5",
+   "tmpl": "tb_afe_stb.cir",
+   "corner": "tt",
+   "subs": {
+    "VCMI": 2.5,
+    "KLIST": "0 5",
+    "LLIST": "1 2 4 5",
+    "IB": "15.4u",
+    "CL": "2.8p"
+   }
+  },
+  {
+   "tag": "stb_tt_ib15.4_cm0.5",
+   "tmpl": "tb_afe_stb.cir",
+   "corner": "tt",
+   "subs": {
+    "VCMI": 0.5,
+    "KLIST": "0 5",
+    "LLIST": "1 2 4 5",
+    "IB": "15.4u",
+    "CL": "2.8p"
+   }
+  },
+  {
+   "tag": "stb_ffx_ib15.36_cm0.5",
+   "tmpl": "tb_afe_stb.cir",
+   "corner": "ffx",
+   "subs": {
+    "VCMI": 0.5,
+    "KLIST": "0 5",
+    "LLIST": "1 2 4 5",
+    "IB": "15.36u",
+    "CL": "2.8p"
+   }
+  },
+  {
+   "tag": "stb_ff_ib9.00_cm2.5_hold",
+   "tmpl": "tb_afe_stb.cir",
+   "corner": "ff",
+   "subs": {
+    "VCMI": 2.5,
+    "KLIST": "0 5",
+    "LLIST": "1 2 4 5",
+    "IB": "9.00u",
+    "CL": "1f"
+   }
+  },
+  {
+   "tag": "stb_ssx_ib6.94_cm2.5_hold",
+   "tmpl": "tb_afe_stb.cir",
+   "corner": "ssx",
+   "subs": {
+    "VCMI": 2.5,
+    "KLIST": "0 5",
+    "LLIST": "1 2 4 5",
+    "IB": "6.94u",
+    "CL": "1f"
+   }
+  },
+  {
+   "tag": "ac_ss_ib11.81_cm0.5",
+   "tmpl": "tb_afe_ac.cir",
+   "corner": "ss",
+   "subs": {
+    "VCMI": 0.5,
+    "IB": "11.81u"
+   }
+  }
+ ]
+}

@@ -1,0 +1,35 @@
+* tb_afe_opv -- revision F (track T3): operating point at x32 with the voltages of the listed internal nodes (@@NODES@@).
+* Prints the output CM of both channels and internal OTA2 nodes of the sine channel at gain codes x1 and x32.
+@@HEAD@@
+Vic ic 0 dc {VCMI}
+Esp sinp ic vd 0 0.5
+Esn sinn ic vd 0 -0.5
+Ecp cosp ic vd 0 0.5
+Ecn cosn ic vd 0 -0.5
+Vd vd 0 dc 0
+XDUT sinp sinn cosp cosn souts_p souts_n soutc_p soutc_n vcm2 ib_s1 ib_s2 ib_c1 ib_c2 c1 c2 c3 c4 vdd 0 r1_afe
+.control
+@@CODES@@
+let vh = @@VDDA@@
+foreach kk 5
+  let k = $kk
+  let a1 = ctab[4*k]*vh
+  let a2 = ctab[4*k+1]*vh
+  let a3 = ctab[4*k+2]*vh
+  let a4 = ctab[4*k+3]*vh
+  alter vc1 dc = $&a1
+  alter vc2 dc = $&a2
+  alter vc3 dc = $&a3
+  alter vc4 dc = $&a4
+  op
+  let ocs = (v(souts_p)+v(souts_n))/2
+  let occ = (v(soutc_p)+v(soutc_n))/2
+  let ods = v(souts_p)-v(souts_n)
+  let o1s = (v(xdut.xsin.m1p)+v(xdut.xsin.m1n))/2
+  let o1d = v(xdut.xsin.m1p)-v(xdut.xsin.m1n)
+  let ids = -i(vdd)
+  echo "OPROW code=$&k ocms=$&ocs ocmc=$&occ odiff=$&ods o1cm=$&o1s o1diff=$&o1d idd=$&ids"
+  print @@NODES@@
+end
+.endc
+.end

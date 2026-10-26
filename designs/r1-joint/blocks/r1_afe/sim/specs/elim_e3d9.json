@@ -1,0 +1,34 @@
+{
+ "question": "Layout E3 candidate dev9 (revision F) RC netlist: output CM, DC offset and ss f_c, and how much the channel vss/vdd wiring still moves them",
+ "variants": {
+  "base": {
+   "netlist": "$G1_RESULTS_ROOT/r1_afe/revF/elim-e3d9/base.spice"
+  },
+  "vss_ch": {
+   "netlist": "$G1_RESULTS_ROOT/r1_afe/revF/elim-e3d9/vss_ch.spice"
+  },
+  "vdd_ch": {
+   "netlist": "$G1_RESULTS_ROOT/r1_afe/revF/elim-e3d9/vdd_ch.spice"
+  }
+ },
+ "jobs": [
+  {
+   "tag": "op_tt_ib10.14",
+   "tmpl": "tb_afe_op.cir",
+   "corner": "tt",
+   "subs": {
+    "VCMI": 2.5,
+    "IB": "10.14u"
+   }
+  },
+  {
+   "tag": "ac_ss_ib11.81_cm0.5",
+   "tmpl": "tb_afe_ac.cir",
+   "corner": "ss",
+   "subs": {
+    "VCMI": 0.5,
+    "IB": "11.81u"
+   }
+  }
+ ]
+}

@@ -1,0 +1,101 @@
+{
+ "question": "Revision F pole-matching and f_c regression: restore the OTA1 Miller/cross caps (25/15 um) and lower the OTA1 CMFB gain instead (WCP 8 um); anti-alias caps revision E or F; OTA2 cross caps 18 or 14 um. Pole matching from 10 MC samples at ss (seed 101), 10 uA",
+ "variants": {
+  "H0": {
+   "fv": "base"
+  },
+  "H1": {
+   "fv": "a1cc25+a1cx15+a1cp8",
+   "rx": [
+    [
+     "r1_afe_s1side",
+     "w=\\{WCF1\\} l=\\{WCF1\\}",
+     "w=31.0u l=31.0u"
+    ],
+    [
+     "r1_afe_s2side",
+     "w=\\{WCF2\\} l=\\{WCF2\\}",
+     "w=43.6u l=43.6u"
+    ]
+   ]
+  },
+  "H2": {
+   "fv": "a1cc25+a1cx15+a1cp8"
+  },
+  "H3": {
+   "fv": "a1cc25+a1cx15+a1cp8+a2cc22.8",
+   "rx": [
+    [
+     "r1_afe_s1side",
+     "w=\\{WCF1\\} l=\\{WCF1\\}",
+     "w=31.0u l=31.0u"
+    ],
+    [
+     "r1_afe_s2side",
+     "w=\\{WCF2\\} l=\\{WCF2\\}",
+     "w=43.6u l=43.6u"
+    ],
+    [
+     "r1_afe_ota2",
+     "(?m)^(XCX[12] [^\\n]*cap_cmim) w=18u l=18u",
+     "\\1 w=14u l=14u"
+    ]
+   ]
+  }
+ },
+ "jobs": [
+  {
+   "tag": "stb_ffx_ib6.9_cm0.5",
+   "tmpl": "tb_afe_stb.cir",
+   "corner": "ffx",
+   "subs": {
+    "VCMI": 0.5,
+    "KLIST": "0 5",
+    "LLIST": "1 2 4 5",
+    "IB": "6.9u",
+    "CL": "2.8p"
+   }
+  },
+  {
+   "tag": "stb_tt_ib15.4_cm2.5",
+   "tmpl": "tb_afe_stb.cir",
+   "corner": "tt",
+   "subs": {
+    "VCMI": 2.5,
+    "KLIST": "0 5",
+    "LLIST": "1 2 4 5",
+    "IB": "15.4u",
+    "CL": "2.8p"
+   }
+  },
+  {
+   "tag": "ac_ss_ib10_cm0.5",
+   "tmpl": "tb_afe_ac.cir",
+   "corner": "ss",
+   "subs": {
+    "VCMI": 0.5,
+    "IB": "10u"
+   }
+  },
+  {
+   "tag": "ac_ss_ib11.81_cm0.5",
+   "tmpl": "tb_afe_ac.cir",
+   "corner": "ss",
+   "subs": {
+    "VCMI": 0.5,
+    "IB": "11.81u"
+   }
+  },
+  {
+   "tag": "acmc_ss_ib10",
+   "tmpl": "tb_afe_ac.cir",
+   "corner": "ss",
+   "mismatch": true,
+   "subs": {
+    "NMC": 10,
+    "SEED": 101,
+    "IB": "10u"
+   }
+  }
+ ]
+}

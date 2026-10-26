@@ -1,0 +1,34 @@
+{
+ "question": "Elimination of the x32 settling offset: CDAC reset at 0.6 V instead of 0 V (no common-mode kick at the start of track), E2 RC netlist",
+ "variants": {
+  "vrst06": {
+   "netlist": "$G1_RESULTS_ROOT/r1_afe/revF/elim-net/base.spice"
+  }
+ },
+ "jobs": [
+  {
+   "tag": "st_tt_x32_p100",
+   "tmpl": "tb_afe_settle_adc.cir",
+   "corner": "tt",
+   "subs": {
+    "CODE": 5,
+    "AMP": 0.021875,
+    "VCMI": 2.45,
+    "CS": "2.8p",
+    "VRST": 0.6
+   }
+  },
+  {
+   "tag": "st_tt_x32_m100",
+   "tmpl": "tb_afe_settle_adc.cir",
+   "corner": "tt",
+   "subs": {
+    "CODE": 5,
+    "AMP": -0.021875,
+    "VCMI": 2.45,
+    "CS": "2.8p",
+    "VRST": 0.6
+   }
+  }
+ ]
+}

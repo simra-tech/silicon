@@ -46,7 +46,11 @@ LOCK = globals().get("lock", "0") == "1"
 BALANCE = globals().get('balance', '1') == '1'
 STRAPS = globals().get('straps', '1') == '1'     # E2: Metal5 supply straps in the east strip (build_top)
 WIDEN = globals().get('widen', '1') == '1'       # E2: widen vdd/vss after routing (Router.widen)
-TOP_HALO = int(globals().get('tophalo', '40'))   # E2: keep-away cost around the top-level output/input pairs
+TOP_HALO = int(globals().get('tophalo', '40'))
+VDDGRID = globals().get('vddgrid', '1') == '1'   # E3: channel vdd grid (Metal5 plate, Metal4 row buses and trunk)
+VSSGRID = globals().get('vssgrid', '1') == '1'   # E3 (revision F): channel vss grid (Metal4 NMOS row buses and trunk)
+TRUNK_ALL = globals().get('trunkall', '1') == '1'  # E3 final: grid trunks over all bus rows; vss trunk down to the east vss pin
+ISLANDFIX = globals().get('islandfix', '1') == '1'  # E3 final (dev11): drop grid segments with no path up to the plate or trunk
 # P/N pairs of the channel and of the top level, balanced per layer after routing
 CH_PAIRS = [('outp', 'outn'), ('op2', 'on2'), ('m1p', 'm1n'), ('x1p', 'x1n'), ('x2p', 'x2n'), ('inp', 'inn')]
 CH_FIRST = ['xa1_vcms', 'xa2_vcms'] + [n for pr in CH_PAIRS for n in pr]
@@ -502,6 +506,8 @@ def build_channel(ly, W=400.0, H=600.0):
     cblocks = [abba(cf2p, cf2n), [cod[:2], cod[2:]], abba(cf1p, cf1n), abba(co1, co2),
                [[by['xa1_xcc1'], by['xa1_xcc2']]], [[by['xa1_xcc1b'], by['xa1_xcc2b']]], [[by['xa1_xcs1'], by['xa1_xcs2']]],
                [[by['xa1_xcx1'], by['xa1_xcx2']]], [[by['xa2_xcc1'], by['xa2_xcc2']]], [[by['xa2_xcs1'], by['xa2_xcs2']]]]
+    if 'xa2_xcx1' in by:     # revision F: OTA2 cross-coupled Miller caps
+        cblocks.append([[by['xa2_xcx1'], by['xa2_xcx2']]])
     ncap = sum(len(r) for b in cblocks for r in b)
     assert ncap == len(caps), (ncap, len(caps))
 
@@ -534,6 +540,235 @@ def place_caps(blk, cblocks, x0, y0, x1, y1):
     return y + rowh
 
 
+def vdd_grid(blk, Wc, Hc, log=print, net='vdd', kind='p', use_plate=True, trunk_lo=None):
+    """E3 (revision F): low-resistance vdd distribution inside the channel, built before routing.
+    The E2 extraction showed 25-104 Ohm from the channel vdd pin to the PMOS source rails and up to 7 mV of uneven
+    drop between the OTA2 bias reference and its current sources (+31 mV output CM). Here:
+      * Metal5 plate (vdd) on the free Metal5 area above the MIM shelf (MIM bottom plates grown by 1.2 um removed,
+        slivers below 4 um removed, largest polygon kept);
+      * at every second tie-strip node of each PMOS row: a via stack Metal1-Metal2-Metal3-Metal4, and Via4 to the
+        plate where the plate covers the node;
+      * PMOS rows not covered by the plate: a Metal4 bus on the tie track and the track above it (1.4 um), extended
+        east to a vertical Metal4 trunk (2 tracks) near the east edge that rises into the plate.
+    All these nodes form one router pin of net vdd (merged with the tie-strip pins), so the router only connects the
+    remaining vdd terminals and the east vdd pins to it.
+    E3 (revision F, 2026-10-26): the same function builds the vss grid of the NMOS rows (net='vss', kind='n',
+    use_plate=False): Metal4 buses on the tie track and the track above it, via stacks Metal1-Metal4 at every second
+    tie node, and an east Metal4 trunk below the vdd trunk (the E3-dev2 extraction had a 50-125 Ohm gradient along
+    the NMOS rows)."""
+    R = blk.R
+    ly = blk.ly
+    k = R.nid(net)
+    m5 = pya.Region(blk.cell.begin_shapes_rec(blk.L('M5')))
+    m5.merge()
+    um_ = lambda v: int(round(v * 1000))
+    rows = [r for r in blk.stats['rows'] if r['kind'] == kind]
+    ylo = min(r['yt'] for r in rows) - 2.4         # plate only over the PMOS rows (no vdd shield over the signal area)
+    win = pya.Region(pya.Box(um_(1.6), um_(ylo), um_(Wc - 1.2), um_(Hc - 1.2)))
+    if not use_plate:
+        win = pya.Region()
+    plate = win - m5.sized(um_(1.2))
+    plate = plate.sized(-um_(2.0)).sized(um_(2.0)) & win
+    if not use_plate:
+        plate = pya.Region()
+    polys = sorted(plate.each(), key=lambda q: -q.area())
+    plate = pya.Region(polys[0]) if polys else pya.Region()
+    # slits: 16 x 3.2 um holes in rows every 16 um (y) and every 24 um (x, rows staggered by 12 um), so that no
+    # plate part is wider than 30 um without a slit (Slt.c.M5); slit width 3.2 um (Slt.a/b: 2.8-20 um)
+    holes = pya.Region()
+    bb = plate.bbox()
+    q = 0
+    y = bb.bottom + um_(8.0)
+    while y < bb.top:
+        x = bb.left + um_(4.0) + (um_(12.0) if q % 2 else 0)
+        while x < bb.right:
+            holes.insert(pya.Box(x, y, x + um_(16.0), y + um_(3.2)))
+            x += um_(24.0)
+        y += um_(16.0); q += 1
+    plate = (plate - holes).sized(-um_(1.0)).sized(um_(1.0))
+    polys = sorted(plate.each(), key=lambda q_: -q_.area())
+    plate = pya.Region(polys[0]) if polys else pya.Region()
+    inner = plate.sized(-um_(0.8))
+    def inplate(x, y):
+        return not (inner & pya.Region(pya.Box(um_(x) - 1, um_(y) - 1, um_(x) + 1, um_(y) + 1))).is_empty()
+    xt0 = gfloor(Wc - 4.8)                        # trunk tracks xt0, xt0 + P
+    nodes, stacks, buses = [], [], []
+    for r in rows:
+        yt = r['yt']
+        xs = gpts(r['x0'] + 0.4, r['x1'] - 0.4)[::2]
+        cover = sum(1 for x in xs if inplate(x, yt)) / max(1, len(xs))
+        bus = cover < 0.8
+        for x in xs:
+            top = 5 if inplate(x, yt) else (4 if bus else 0)
+            if top:
+                stacks.append((x, yt, top))
+                nodes += [(0, x, yt), (1, x, yt), (2, x, yt)]
+        if bus:
+            xe = round(xt0 + P, 4)
+            bx = gpts(r['x0'] + 0.4, xe)
+            buses.append((bx[0], yt, bx[-1]))
+            for x in bx:
+                nodes += [(2, x, yt), (2, x, round(yt + P, 4))]
+        r[net + '_plate_cover'] = round(cover, 2)
+        r[net + '_bus'] = bus
+    trunk = None
+    if buses:
+        y0 = min(b[1] for b in buses)
+        ys = [y for y in gpts(y0, Hc - 2.4)] if use_plate else []
+        y1 = y0
+        for y in ys:                              # trunk rises until it is well inside the plate
+            y1 = y
+            if inplate(xt0, y) and inplate(xt0 + P, y) and y > y0 + 4.0 and inplate(xt0, y - 3.2):
+                break
+        if not use_plate:                         # vss: trunk spans the NMOS rows (tie track + 1 of the top row)
+            y1 = round(max(b[1] for b in buses) + P, 4)
+        if TRUNK_ALL:   # E3 final (dev10): the trunk spans every bus row (dev9: vdd rows 7-9 had no trunk, 50-55 Ohm)
+            y1 = max(y1, round(max(b[1] for b in buses) + P, 4))
+        if trunk_lo is not None:   # E3 final: vss trunk down to the east vss pin below the NMOS rows (pin -> trunk short)
+            y0 = min(y0, gfloor(trunk_lo))
+        trunk = (xt0, y0, y1)
+        for y in gpts(y0, y1):
+            nodes += [(2, xt0, y), (2, round(xt0 + P, 4), y)]
+        for y in gpts(y0, y1)[::2]:
+            if inplate(xt0, y):
+                stacks.append((xt0, y, 'v4')); stacks.append((round(xt0 + P, 4), y, 'v4'))
+    # reserve and merge into one pin of vdd (drop nodes that another net already owns)
+    good = []
+    # E3 (revision F): keep a gap of 2 grid steps (x) on both bus tracks around every node another net already owns
+    # (layout-e3-dev4: an output-cap pin inside the vss bus row was left unreachable and floated)
+    foreign = set()
+    for (l, x, y) in set(nodes):
+        i, j = R.ij(x, y)
+        if R.inside(i, j) and R.res[l, i, j] not in (-1, k):
+            foreign.add((l, x, y))
+    near, prev = set(), {}
+    for (l, x, y) in foreign:
+        for dx in (-2, -1, 0, 1, 2):
+            for dy in (-1, 0, 1):
+                near.add((l, round(x + dx * P, 4), round(y + dy * P, 4)))
+    for (l, x, y) in sorted(set(nodes)):
+        i, j = R.ij(x, y)
+        if not R.inside(i, j) or (l, x, y) in near:
+            continue
+        if R.res[l, i, j] in (-1, k):
+            prev[(l, i, j)] = int(R.res[l, i, j])
+            R.res[l, i, j] = k
+            good.append((l, i, j))
+    goodset = set(good)
+    # E3 (revision F): draw only the bus and trunk parts whose router nodes this net owns (a node owned by another
+    # net splits the bus; layout-e3-dev3 drew the full vss bus over 4 foreign nodes and shorted outp/outn to vss)
+    def own(l, x, y):
+        return (l, *R.ij(x, y)) in goodset
+    segs = []
+    for (xa, yt, xe) in buses:
+        run = []
+        for x in gpts(xa, xe) + [None]:
+            if x is not None and own(2, x, yt) and own(2, x, round(yt + P, 4)):
+                run.append(x)
+                continue
+            if len(run) >= 2:
+                segs.append((run[0], yt, run[-1]))
+            run = []
+    if trunk:
+        xt0_, ya, yb = trunk
+        run, tsegs = [], []
+        for y in gpts(ya, yb) + [None]:
+            if y is not None and own(2, xt0_, y) and own(2, round(xt0_ + P, 4), y):
+                run.append(y)
+                continue
+            if len(run) >= 2:
+                tsegs.append((xt0_, run[0], run[-1]))
+            run = []
+    else:
+        tsegs = []
+    stacks_d = [s_ for s_ in stacks if s_[2] == 'v4' or all(own(l_, s_[0], s_[1]) for l_ in (0, 1, 2))]
+    # keep only connected parts (layout-e3-dev6: a bus island between two gaps, with no via stack, floated with the
+    # output-cap vss pin the router attached to it): a bus segment needs a via stack in it or must reach the trunk
+    tx = trunk[0] if trunk else None
+    def on_trunk(y):
+        return any(ya - 1e-6 <= y <= yb + 1e-6 for (_, ya, yb) in tsegs)
+    # E3 final (layout-e3-dev11): a segment must also reach the supply. A segment with only Metal1-Metal4 stacks (no
+    # stack up to the Metal5 plate, not on the trunk) is an island (layout-e3-dev10: the vdd bus of row 152.0 fed the
+    # OTA1 XMP7 source with no metal path to vdd; LVS matched through a non-metal connection). Such a segment is
+    # dropped with its stacks, and the router connects those device pins.
+    def up(st):
+        return st[2] == 5
+    segs = [(xa, yt, xe) for (xa, yt, xe) in segs
+            if (any(st[1] == yt and xa - 1e-6 <= st[0] <= xe + 1e-6 and up(st) for st in stacks_d) if ISLANDFIX else
+                any(st[1] == yt and xa - 1e-6 <= st[0] <= xe + 1e-6 and st[2] != 'v4' for st in stacks_d))
+            or (tx is not None and xe >= tx - 1e-6 and on_trunk(yt))]
+    if ISLANDFIX:
+        stacks_d = [st for st in stacks_d if st[2] != 4
+                    or any(st[1] == yt and xa - 1e-6 <= st[0] <= xe + 1e-6 for (xa, yt, xe) in segs)]
+    tsegs = [(x_, ya, yb) for (x_, ya, yb) in tsegs
+             if any(xe >= x_ - 1e-6 and ya - 1e-6 <= yt <= yb + 1e-6 for (_, yt, xe) in segs)
+             or any(st[2] == 'v4' and ya - 1e-6 <= st[1] <= yb + 1e-6 for st in stacks_d)]
+    stacks_d = [st for st in stacks_d if st[2] != 'v4' or on_trunk(st[1])]
+    # E3 (revision F): the grid pin holds only drawn nodes; reserved but undrawn nodes go back to the router; another pin
+    # of the net joins the grid pin only if it touches a drawn node or a drawn via stack (layout-e3-dev4/-dev5: an
+    # output-cap vss pin was merged through an undrawn node and floated)
+    drawn = set()
+    for (xa, yt, xe) in segs:
+        for x in gpts(xa, xe):
+            drawn.add((2, *R.ij(x, yt))); drawn.add((2, *R.ij(x, round(yt + P, 4))))
+    for (xt0_, ya, yb) in tsegs:
+        for y in gpts(ya, yb):
+            drawn.add((2, *R.ij(xt0_, y))); drawn.add((2, *R.ij(round(xt0_ + P, 4), y)))
+    anchors = set()
+    for (x, y, top) in stacks_d:
+        if top == 'v4':
+            drawn.add((2, *R.ij(x, y)))
+            continue
+        for l_ in (0, 1, 2):
+            drawn.add((l_, *R.ij(x, y)))
+        anchors.add((0, *R.ij(x, y)))
+    released = 0
+    for n_ in goodset - drawn:
+        if prev.get(n_) == -1:
+            R.res[n_] = -1
+            released += 1
+    merged = list(drawn)
+    rest = []
+    for pin in R.pins.get(k, []):
+        if any(n_ in drawn or n_ in anchors for n_ in pin):
+            merged += list(pin)
+        else:
+            rest.append(pin)
+    R.pins[k] = [sorted(set(merged))] + rest
+    g = dict(plate=plate, stacks=stacks_d, buses=segs, trunk=None, trunks=tsegs, dropped=len(set(nodes)) - len(good),
+             released=released)
+    if not hasattr(blk, 'grids'):
+        blk.grids = []
+    blk.grids.append(g)
+    if net == 'vdd':
+        blk.vddgrid = g
+    st = dict(plate_um2=round(plate.area() / 1e6, 1), stacks=len(g['stacks']), buses=len(buses), bus_segments=len(segs), trunk=trunk, trunk_segments=tsegs,
+              dropped_nodes=g['dropped'], released_nodes=g['released'], rows=[dict(yt=r['yt'], cover=r[net + '_plate_cover'], bus=r[net + '_bus']) for r in rows])
+    blk.stats[net + 'grid'] = st
+    log('%s grid: %s' % (net, st))
+
+
+def draw_vdd_grid(blk):
+    for g in getattr(blk, 'grids', []):
+        draw_grid(blk, g)
+
+
+def draw_grid(blk, g):
+    blk.cell.shapes(blk.L('M5')).insert(g['plate'])
+    for (x, y, top) in g['stacks']:
+        if top == 'v4':
+            blk.D.sq('M4', x, y, 0.40); blk.D.sq('Via4', x, y, VIA)
+            continue
+        blk.D.sq('M1', x, y, 0.34); blk.D.sq('Via1', x, y, VIA); blk.D.sq('M2', x, y, 0.40)
+        blk.D.sq('Via2', x, y, VIA); blk.D.sq('M3', x, y, 0.40); blk.D.sq('Via3', x, y, VIA); blk.D.sq('M4', x, y, 0.40)
+        if top == 5:
+            blk.D.sq('Via4', x, y, VIA)
+    for (xa, yt, xe) in g['buses']:
+        blk.box('M4', xa - 0.3, yt - 0.3, xe + 0.3, yt + P + 0.3)
+    for (xt0, y0, y1) in g.get('trunks', []):
+        blk.box('M4', xt0 - 0.3, y0 - 0.3, xt0 + P + 0.3, y1 + 0.3)
+
+
 CH_EAST = ['vss', 'outp', 'outn', 'vss', 'ib1', 'ib2', 'vcm1', 'vcm2', 'vdd', 'c1', 'c2', 'c3', 'c4', 'vdd', 'vss', 'vdd']
 CH_WEST = [('inp', 20.0), ('inn', 24.0)]
 
@@ -556,10 +791,18 @@ def finish_channel(blk, cblocks, Wc, Hc, log=print):
         R.unblock(1, 0.0, y)
         blk.pin(net, [(1, 0.0, y)], 'm3')
         edge.setdefault(net, []).append(('W', 0.0, y))
+    if VDDGRID:
+        vdd_grid(blk, Wc, Hc, log=log)
+    if VSSGRID:
+        ylo_vss = [gfloor(6.0 + q * (Hc - 12.0) / (len(CH_EAST) - 1)) for q, nn in enumerate(CH_EAST) if nn == 'vss']
+        ylo_vss = [y for y in ylo_vss if y < min(r['yt'] for r in blk.stats['rows'] if r['kind'] == 'n')]
+        vdd_grid(blk, Wc, Hc, log=log, net='vss', kind='n', use_plate=False,
+                 trunk_lo=(max(ylo_vss) if (ylo_vss and TRUNK_ALL) else None))
     ok = route_and_balance(blk, CH_FIRST, CH_PAIRS, 'r1_afe_ch', log=log)
     blk.stats['route_ok'] = ok
     blk.stats['route_failed'] = R.failed
     blk.draw_routes()
+    draw_vdd_grid(blk)
     for net, lst in edge.items():
         for (_, x, y) in lst:
             blk.ports.append(dict(dev='@pin', term=0, net=net, layer=3, box=None, pt=[x, y]))
@@ -712,6 +955,8 @@ def main():
     st['channel'].update(pairs_before=blk.stats['pairs_before'], pairs_after=blk.stats['pairs_after'], trim_placed=blk.stats['trim_placed'])
     st['top'].update(pairs_before=top.stats['pairs_before'], pairs_after=top.stats['pairs_after'], trim_placed=top.stats['trim_placed'])
     st['trim_input'] = TRIM
+    st['vddgrid'] = blk.stats.get('vddgrid')
+    st['vssgrid'] = blk.stats.get('vssgrid')
     st['widen'] = dict(channel=blk.stats.get('widen'), top=top.stats.get('widen'), strap_vias=top.stats.get('strap_vias'))
     json.dump(st, open(os.path.join(os.path.dirname(OUT), 'r1_afe_layout.json'), 'w'), indent=1)
     nets = {}

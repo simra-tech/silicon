@@ -1,0 +1,35 @@
+{
+ "question": "Which wiring resistance makes the CM2 loop phase start at -180 deg (RHP flag, \"not readable\") on the E2 RC netlist?",
+ "variants": {
+  "base": {
+   "netlist": "$G1_RESULTS_ROOT/r1_afe/revF/elim-net/base.spice"
+  },
+  "supall": {
+   "netlist": "$G1_RESULTS_ROOT/r1_afe/revF/elim-net/supall.spice"
+  },
+  "vss": {
+   "netlist": "$G1_RESULTS_ROOT/r1_afe/revF/elim-net/vss.spice"
+  },
+  "vdd": {
+   "netlist": "$G1_RESULTS_ROOT/r1_afe/revF/elim-net/vdd.spice"
+  },
+  "sigR": {
+   "netlist": "$G1_RESULTS_ROOT/r1_afe/revF/elim-net/sigR.spice"
+  },
+  "allR": {
+   "netlist": "$G1_RESULTS_ROOT/r1_afe/revF/elim-net/allR.spice"
+  }
+ },
+ "jobs": [
+  {
+   "tag": "stbcm2_tt_cm2.5",
+   "tmpl": "tb_afe_stb.cir",
+   "corner": "tt",
+   "subs": {
+    "VCMI": 2.5,
+    "KLIST": "0",
+    "LLIST": "5"
+   }
+  }
+ ]
+}

@@ -1,0 +1,98 @@
+{
+ "run_id": "r1afe-fccf-e3d9",
+ "campaign": "var:$G1_RESULTS_ROOT/r1_afe/r1afe-fccf-e3d9/frozen/var_spec.json",
+ "date_utc": "2026-10-26T16:28:11Z",
+ "command": "G1_CPUSET=106-108 G1_CPUS=3 G1_WORKDIR=designs/r1-joint/blocks/r1_afe/sim G1_RESULTS_ROOT=<bulk> flow/run.sh python3 run_afe.py var:$G1_RESULTS_ROOT/r1_afe/r1afe-fccf-e3d9/frozen/var_spec.json r1afe-fccf-e3d9",
+ "tools": {
+  "ngspice": "ngspice-46 : Circuit level simulation program",
+  "image_id": "sha256:ddeb69576f2808676d1c5d474ecf04f6d1d6f8abdcff6b72b39790ded924bab2",
+  "pdk_commit": "84374023ee8b4b126bebbba67fcbada0a9c0ff0b"
+ },
+ "inputs": {
+  "sim/tb_afe_ac.cir": "9a5808e3927045e0a57713d0ac6c0e00626d575a9002f8a57f8183c7b823d251",
+  "sim/common_head.inc": "52ea3b1f1dda8aa3c448bf5977fb76f41feeb33019c36e7ad163e81eab0fcfd0",
+  "sim/gain_codes.inc": "a62c9d6daa3d544c36ac868c4e6a9266f32e581d093ac404c6c52bcc6e5276f6",
+  "schematic/r1_afe.spice": "116ac4b036492ee7cf35547be32a3af5c1a75195ce15cb541257a23330aeff91",
+  "sim/run_afe.py": "41d65c69d353468b4592aee3ed5772a1ac81d04ef93ef4d60fe087c7e0ed06b7"
+ },
+ "netlist_edits": {
+  "cf94__ac_ss_ib11.81_cm0.5": [
+   [
+    "@re",
+    "r1_afe_ch",
+    "(?m)^(Xxs1[pn]_xcf_u\\d [^\\n]*cap_cmim) w=15\\.25u l=15\\.25u",
+    "\\1 w=14.8u l=14.8u"
+   ],
+   [
+    "@re",
+    "r1_afe_ch",
+    "(?m)^(Xxs2[pn]_xcf_u\\d [^\\n]*cap_cmim) w=21\\.45u l=21\\.45u",
+    "\\1 w=20.8u l=20.8u"
+   ]
+  ],
+  "cf94__ac_ss_ib11.81_cm2.5": [
+   [
+    "@re",
+    "r1_afe_ch",
+    "(?m)^(Xxs1[pn]_xcf_u\\d [^\\n]*cap_cmim) w=15\\.25u l=15\\.25u",
+    "\\1 w=14.8u l=14.8u"
+   ],
+   [
+    "@re",
+    "r1_afe_ch",
+    "(?m)^(Xxs2[pn]_xcf_u\\d [^\\n]*cap_cmim) w=21\\.45u l=21\\.45u",
+    "\\1 w=20.8u l=20.8u"
+   ]
+  ],
+  "cf90__ac_ss_ib11.81_cm0.5": [
+   [
+    "@re",
+    "r1_afe_ch",
+    "(?m)^(Xxs1[pn]_xcf_u\\d [^\\n]*cap_cmim) w=15\\.25u l=15\\.25u",
+    "\\1 w=14.45u l=14.45u"
+   ],
+   [
+    "@re",
+    "r1_afe_ch",
+    "(?m)^(Xxs2[pn]_xcf_u\\d [^\\n]*cap_cmim) w=21\\.45u l=21\\.45u",
+    "\\1 w=20.35u l=20.35u"
+   ]
+  ],
+  "cf90__ac_ss_ib11.81_cm2.5": [
+   [
+    "@re",
+    "r1_afe_ch",
+    "(?m)^(Xxs1[pn]_xcf_u\\d [^\\n]*cap_cmim) w=15\\.25u l=15\\.25u",
+    "\\1 w=14.45u l=14.45u"
+   ],
+   [
+    "@re",
+    "r1_afe_ch",
+    "(?m)^(Xxs2[pn]_xcf_u\\d [^\\n]*cap_cmim) w=21\\.45u l=21\\.45u",
+    "\\1 w=20.35u l=20.35u"
+   ]
+  ]
+ },
+ "variant_netlists": {
+  "cf94": {
+   "path": "r1_afe/r1afe-fccf-e3d9/frozen/var_cf94.spice",
+   "sha256": "68afa1ef8a828389d11f979e1ac4ab9f960affdf752b296dbebbe26c54753aa3"
+  },
+  "cf90": {
+   "path": "r1_afe/r1afe-fccf-e3d9/frozen/var_cf90.spice",
+   "sha256": "68afa1ef8a828389d11f979e1ac4ab9f960affdf752b296dbebbe26c54753aa3"
+  }
+ },
+ "netlist_sha256": "116ac4b036492ee7cf35547be32a3af5c1a75195ce15cb541257a23330aeff91",
+ "netlist_override": null,
+ "frozen_inputs": "$G1_RESULTS_ROOT/r1_afe/r1afe-fccf-e3d9/frozen/",
+ "lsb_V": 0.000439453125,
+ "raw": "$G1_RESULTS_ROOT/r1_afe/r1afe-fccf-e3d9/",
+ "jobs": 4,
+ "failed_jobs": [],
+ "wall_seconds": 271.4,
+ "summary": "results/r1afe-fccf-e3d9.json",
+ "question": "",
+ "result": "",
+ "disposition": ""
+}

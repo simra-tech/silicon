@@ -8,8 +8,8 @@ G = ['x1', 'x2', 'x4', 'x8', 'x16', 'x32']
 LSB = 2.4 / 4096      # revisions A and B (2.4 Vpp SAR full scale); revision C (suffix 20261020c, 20261020c2): 2.0 / 4096 (D11)
 ROOT = os.environ['G1_RESULTS_ROOT']
 
-REVC = lambda sfx: len(sfx) > 8 and sfx[8] in 'cde'   # suffix yyyymmdd + revision letter (+ pass); C, D and E share the rev-C reductions
-REVD = lambda sfx: len(sfx) > 8 and sfx[8] in 'de'
+REVC = lambda sfx: len(sfx) > 8 and sfx[8] in 'cdef'   # suffix yyyymmdd + revision letter (+ pass); C, D, E and F share the rev-C reductions
+REVD = lambda sfx: len(sfx) > 8 and sfx[8] in 'def'
 
 def load(c, sfx):
     p = 'results/r1afe-%s-%s.json' % (c, sfx)

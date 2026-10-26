@@ -1,0 +1,146 @@
+{
+ "run_id": "r1afe-screen-f6",
+ "campaign": "var:$G1_RESULTS_ROOT/r1_afe/r1afe-screen-f6/frozen/var_spec.json",
+ "date_utc": "2026-10-26T18:03:40Z",
+ "command": "G1_CPUSET=106-108 G1_CPUS=3 G1_WORKDIR=designs/r1-joint/blocks/r1_afe/sim G1_RESULTS_ROOT=<bulk> flow/run.sh python3 run_afe.py var:$G1_RESULTS_ROOT/r1_afe/r1afe-screen-f6/frozen/var_spec.json r1afe-screen-f6",
+ "tools": {
+  "ngspice": "ngspice-46 : Circuit level simulation program",
+  "image_id": "sha256:ddeb69576f2808676d1c5d474ecf04f6d1d6f8abdcff6b72b39790ded924bab2",
+  "pdk_commit": "84374023ee8b4b126bebbba67fcbada0a9c0ff0b"
+ },
+ "inputs": {
+  "sim/tb_afe_ac.cir": "9a5808e3927045e0a57713d0ac6c0e00626d575a9002f8a57f8183c7b823d251",
+  "sim/common_head.inc": "52ea3b1f1dda8aa3c448bf5977fb76f41feeb33019c36e7ad163e81eab0fcfd0",
+  "sim/gain_codes.inc": "a62c9d6daa3d544c36ac868c4e6a9266f32e581d093ac404c6c52bcc6e5276f6",
+  "schematic/r1_afe.spice": "44b7b4066e86a78fa47269672919828456b87ae0f8069d6ec201d78fc8f34007",
+  "sim/run_afe.py": "41d65c69d353468b4592aee3ed5772a1ac81d04ef93ef4d60fe087c7e0ed06b7"
+ },
+ "netlist_edits": {
+  "P2__acmc_ss_s101": [
+   [
+    "@re",
+    "r1_afe_ota2",
+    "(?m)^(XCC[12] [^\\n]*?cap_cmim) w=\\S+ l=\\S+",
+    "\\1 w=18u l=18u"
+   ],
+   [
+    "@re",
+    "r1_afe_ota2",
+    "(?m)^(XRZ[12] [^\\n]*?) l=\\S+",
+    "\\1 l=10u"
+   ],
+   [
+    "@re",
+    "r1_afe_ota2",
+    "(?m)^XCX[12] [^\\n]*\\n",
+    ""
+   ]
+  ],
+  "P2__acmc_ss_s102": [
+   [
+    "@re",
+    "r1_afe_ota2",
+    "(?m)^(XCC[12] [^\\n]*?cap_cmim) w=\\S+ l=\\S+",
+    "\\1 w=18u l=18u"
+   ],
+   [
+    "@re",
+    "r1_afe_ota2",
+    "(?m)^(XRZ[12] [^\\n]*?) l=\\S+",
+    "\\1 l=10u"
+   ],
+   [
+    "@re",
+    "r1_afe_ota2",
+    "(?m)^XCX[12] [^\\n]*\\n",
+    ""
+   ]
+  ],
+  "P3__acmc_ss_s101": [
+   [
+    "@re",
+    "r1_afe_ota",
+    "(?m)^(XCC[12] [^\\n]*?cap_cmim) w=\\S+ l=\\S+",
+    "\\1 w=25u l=25u"
+   ],
+   [
+    "@re",
+    "r1_afe_ota",
+    "(?m)^(XCX[12] [^\\n]*?cap_cmim) w=\\S+ l=\\S+",
+    "\\1 w=15u l=15u"
+   ],
+   [
+    "@re",
+    "r1_afe_ota",
+    "(?m)^(XMC[12] [^\\n]*?) w=\\S+",
+    "\\1 w=32u"
+   ]
+  ],
+  "P3__acmc_ss_s102": [
+   [
+    "@re",
+    "r1_afe_ota",
+    "(?m)^(XCC[12] [^\\n]*?cap_cmim) w=\\S+ l=\\S+",
+    "\\1 w=25u l=25u"
+   ],
+   [
+    "@re",
+    "r1_afe_ota",
+    "(?m)^(XCX[12] [^\\n]*?cap_cmim) w=\\S+ l=\\S+",
+    "\\1 w=15u l=15u"
+   ],
+   [
+    "@re",
+    "r1_afe_ota",
+    "(?m)^(XMC[12] [^\\n]*?) w=\\S+",
+    "\\1 w=32u"
+   ]
+  ],
+  "P4__acmc_ss_s101": [
+   [
+    "@re",
+    "r1_afe_s1side",
+    "w=\\{WCF1\\} l=\\{WCF1\\}",
+    "w=31.0u l=31.0u"
+   ],
+   [
+    "@re",
+    "r1_afe_s2side",
+    "w=\\{WCF2\\} l=\\{WCF2\\}",
+    "w=43.6u l=43.6u"
+   ]
+  ],
+  "P4__acmc_ss_s102": [
+   [
+    "@re",
+    "r1_afe_s1side",
+    "w=\\{WCF1\\} l=\\{WCF1\\}",
+    "w=31.0u l=31.0u"
+   ],
+   [
+    "@re",
+    "r1_afe_s2side",
+    "w=\\{WCF2\\} l=\\{WCF2\\}",
+    "w=43.6u l=43.6u"
+   ]
+  ]
+ },
+ "variant_netlists": {
+  "P1": {
+   "path": "r1_afe/r1afe-screen-f6/frozen/var_P1.spice",
+   "sha256": "4a84a3d8dce9be13f6e57e4aaa2fa9154c9aa2339eb8bdb955e6d8452bb59f46"
+  }
+ },
+ "netlist_sha256": "44b7b4066e86a78fa47269672919828456b87ae0f8069d6ec201d78fc8f34007",
+ "netlist_override": null,
+ "frozen_inputs": "$G1_RESULTS_ROOT/r1_afe/r1afe-screen-f6/frozen/",
+ "lsb_V": 0.000439453125,
+ "raw": "$G1_RESULTS_ROOT/r1_afe/r1afe-screen-f6/",
+ "jobs": 10,
+ "failed_jobs": [],
+ "wall_seconds": 1262.4,
+ "summary": "results/r1afe-screen-f6.json",
+ "question": "",
+ "result": "",
+ "disposition": ""
+}

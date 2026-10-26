@@ -79,7 +79,8 @@ STB_EDITS = (
     ('XCC1 cz1 outp ', 'XCC1 cz1 outpi '), ('XCC2 cz2 outn ', 'XCC2 cz2 outni '))) + (
     ('XCC1B cb1 outp ', 'XCC1B cb1 outpi '), ('XCC2B cb2 outn ', 'XCC2B cb2 outni '),   # OTA1 switched Miller part
     ('?', 'XCD1B cd1 outp ', 'XCD1B cd1 outpi '), ('?', 'XCD2B cd2 outn ', 'XCD2B cd2 outni '),  # OTA2 switched Cc (rev D)
-    ('?', 'XCX1 cz1 outn ', 'XCX1 cz1 outni '), ('?', 'XCX2 cz2 outp ', 'XCX2 cz2 outpi '))      # OTA1 cross Miller (rev D)
+    ('?', 'XCX1 cz1 outn ', 'XCX1 cz1 outni '), ('?', 'XCX2 cz2 outp ', 'XCX2 cz2 outpi '),      # OTA1 cross Miller (rev D)
+    ('?', 'XCX1 cz1 outn ', 'XCX1 cz1 outni '), ('?', 'XCX2 cz2 outp ', 'XCX2 cz2 outpi '))      # OTA2 cross Miller (rev F)
 
 def inst_edit(inst, **kw):
     """Edit: change instance parameters of one instance line (first line starting with '<inst> ') of the netlist."""
@@ -237,6 +238,46 @@ def postvar(vn):
         w = m.group(3)
         E.append(('@re', sub, r'(?m)^(%s [^\n]*cap_cmim) w=[0-9.]+u l=[0-9.]+u' % inst, r'\1 w=%su l=%su' % (w, w)))
     return tuple(E)
+
+def fvar(vn):
+    """Revision F (track T3) variants, valid on the schematic netlist and on a post-layout RC netlist (regex edits of
+    device lines inside one subcircuit). Names joined by '+':
+      a1o<x>    OTA1 output stage (XMN7/8, XMP7/8) widths x <x> (revision E: 8u / 48u)
+      a1rz<l>   OTA1 Miller Rz length l um (XRZ1/2)     a2rz<l>  the same for OTA2
+      a1cx<s>   OTA1 cross Miller caps side s um (XCX1/2)
+      a2cc<s>   OTA2 Miller caps side s um (XCC1/2)
+      a2cx<s>   OTA2 cross-coupled Miller caps (new: XCX1 cz1 -> outn, XCX2 cz2 -> outp), side s um
+      a2k<k>    OTA2 CMFB sink split: XMN3/4 width 10u * k, fixed XMN3A/4A 20u * (2 - k) (same total at balance)
+      a2cp<w>   OTA2 CMFB pair XMC1/2 width w um"""
+    E = []
+    for v in vn.split('+'):
+        if v == 'base':
+            continue
+        m = re.match(r'^(a[12])(o|rz|cx|cc|k|cp)([0-9.]+)$', v)
+        if not m:
+            raise SystemExit('unknown F variant ' + v)
+        ota, kind, x = m.group(1), m.group(2), float(m.group(3))
+        sub = 'r1_afe_ota' if ota == 'a1' else 'r1_afe_ota2'
+        if kind == 'o':
+            E.append(('@re', sub, r'(?m)^(XMN[78] [^\n]*?) w=\S+', r'\1 w=%gu' % (8 * x)))
+            E.append(('@re', sub, r'(?m)^(XMP[78] [^\n]*?) w=\S+', r'\1 w=%gu' % (48 * x)))
+        elif kind == 'rz':
+            E.append(('@re', sub, r'(?m)^(XRZ[12] [^\n]*?) l=\S+', r'\1 l=%gu' % x))
+        elif kind == 'cc':
+            E.append(('@re', sub, r'(?m)^(XCC[12] [^\n]*?cap_cmim) w=\S+ l=\S+', r'\1 w=%gu l=%gu' % (x, x)))
+        elif kind == 'cx' and ota == 'a1':
+            E.append(('@re', sub, r'(?m)^(XCX[12] [^\n]*?cap_cmim) w=\S+ l=\S+', r'\1 w=%gu l=%gu' % (x, x)))
+        elif kind == 'cx':
+            E.append(('@re', sub, r'(?m)^(XCC2 [^\n]*)$',
+                      r'\1\nXCX1 cz1 outn cap_cmim w=%gu l=%gu m=1 mm_ok=1\nXCX2 cz2 outp cap_cmim w=%gu l=%gu m=1 mm_ok=1' % (x, x, x, x)))
+        elif kind == 'k':
+            E.append(('@re', sub, r'(?m)^(XMN[34] [^\n]*?) w=\S+', r'\1 w=%gu' % (10 * x)))
+            E.append(('@re', sub, r'(?m)^(XMN[34]A [^\n]*?) w=\S+', r'\1 w=%gu' % (20 * (2 - x))))
+        elif kind == 'cp':
+            E.append(('@re', sub, r'(?m)^(XMC[12] [^\n]*?) w=\S+', r'\1 w=%gu' % x))
+    return tuple(E)
+
+VARNET = {}   # revision F 'var:' campaigns: variant label -> frozen netlist path
 
 def campaign(c):
     J = []
@@ -453,6 +494,24 @@ def campaign(c):
             for k in ('tt', 'ffx'):
                 for cm in (0.5, 2.5):
                     J.append(job('stbx_%s_cm%.2f' % (k, cm), 'tb_afe_stb.cir', k, VCMI=cm, KLIST='0 5', LLIST='1 2 4 5'))
+    elif c.startswith('var:'):   # revision F: var:<spec.json>; spec = {"variants": {label: {"netlist": path | null,
+        # "post": postvar names, "dev": devvar names, "rx": [[subckt, regex, repl], ...]}}, "jobs": [{"tag", "tmpl",
+        # "corner", "subs": {...}}]}; every job runs on every variant. Variant netlists are copied into frozen/.
+        spec = json.load(open(c[4:]))
+        for vn, v in spec['variants'].items():
+            ed = ()
+            if v.get('post'):
+                ed += postvar(v['post'])
+            if v.get('dev'):
+                ed += devvar(v['dev'])
+            if v.get('fv'):
+                ed += fvar(v['fv'])
+            for sub, rx, rp in v.get('rx', []):
+                ed += (('@re', sub, rx, rp),)
+            src = VARNET.get(vn)
+            for jj in spec['jobs']:
+                J.append(job('%s__%s' % (vn, jj['tag']), jj['tmpl'], jj['corner'], jj.get('mismatch', False), edits=ed,
+                             src=src, **jj.get('subs', {})))
     elif c == 'stbval':
         J.append(job('toy', 'tb_stb_toy.cir', 'tt'))
     elif c == 'stbq':
@@ -786,6 +845,15 @@ def main():
     out = os.path.join(root, 'r1_afe', rid)
     os.makedirs(out, exist_ok=False)
     frz = freeze(out)
+    if camp.startswith('var:'):    # revision F: freeze the spec and every variant netlist
+        import shutil
+        shutil.copy2(camp[4:], os.path.join(frz, 'var_spec.json'))
+        for vn, v in json.load(open(camp[4:]))['variants'].items():
+            if v.get('netlist'):
+                q = os.path.join(frz, 'var_%s.spice' % vn)
+                shutil.copy2(os.path.expandvars(v['netlist']), q)
+                VARNET[vn] = q
+        camp = 'var:' + os.path.join(frz, 'var_spec.json')
     jobs = campaign(camp)
     ncpu = int(os.environ.get('OMP_NUM_THREADS', '3'))
     t0 = time.time()
@@ -797,15 +865,16 @@ def main():
     os.makedirs(os.path.join(HERE, 'results'), exist_ok=True)
     os.makedirs(os.path.join(HERE, 'runs', rid), exist_ok=True)
     json.dump(res, open(os.path.join(HERE, 'results', rid + '.json'), 'w'), indent=1)
-    runj = dict(run_id=rid, campaign=camp, date_utc=time.strftime('%Y-%m-%dT%H:%M:%SZ', time.gmtime()),
+    runj = dict(run_id=rid, campaign=camp.replace(root, '$G1_RESULTS_ROOT'), date_utc=time.strftime('%Y-%m-%dT%H:%M:%SZ', time.gmtime()),
                 command='G1_CPUSET=106-108 G1_CPUS=3 G1_WORKDIR=designs/r1-joint/blocks/r1_afe/sim '
-                        'G1_RESULTS_ROOT=<bulk> flow/run.sh python3 run_afe.py %s %s' % (camp, rid),
+                        'G1_RESULTS_ROOT=<bulk> flow/run.sh python3 run_afe.py %s %s' % (camp.replace(root, '$G1_RESULTS_ROOT'), rid),
                 tools=dict(ngspice=ver[0] if ver else 'unknown', image_id=IMAGE_ID,
                            pdk_commit=open(PDK_COMMIT_FILE).read().strip()),
                 inputs={**{'sim/' + t: sha(os.path.join(frz, t)) for t in templates},
                         ('netlist_override' if NETLIST_OVERRIDE else 'schematic/r1_afe.spice'): sha(NETLIST), 'sim/run_afe.py': sha(os.path.join(frz, 'run_afe.py')),
-                        **({NETLIST_REVB: sha(os.path.join(BLOCK, NETLIST_REVB))} if any(j.get('src') for j in jobs) else {})},
+                        **({NETLIST_REVB: sha(os.path.join(BLOCK, NETLIST_REVB))} if any(j.get('src') == NETLIST_REVB for j in jobs) else {})},
                 netlist_edits={j['name']: j['edits'] for j in jobs if j.get('edits')} or None,
+                variant_netlists={vn: dict(path=os.path.relpath(q, root), sha256=sha(q)) for vn, q in VARNET.items()} or None,
                 netlist_sha256=sha(NETLIST),
                 netlist_override=(NETLIST_OVERRIDE.replace(os.environ['G1_RESULTS_ROOT'], '$G1_RESULTS_ROOT')
                                   if NETLIST_OVERRIDE else None), frozen_inputs='$G1_RESULTS_ROOT/r1_afe/%s/frozen/' % rid, lsb_V=LSB,

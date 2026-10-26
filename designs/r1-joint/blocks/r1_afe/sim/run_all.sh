@@ -8,8 +8,12 @@ G1_CPUSET=106-108; export G1_CPUSET
 G1_CPUS=3; export G1_CPUS
 G1_WORKDIR=designs/r1-joint/blocks/r1_afe/sim; export G1_WORKDIR
 : "${G1_RESULTS_ROOT:?set G1_RESULTS_ROOT to the bulk results root}"; export G1_RESULTS_ROOT
+FAILED=""
 for c in ${CAMPAIGNS:-stbval stb stbx cmstep ac noise tran settle_adc cm psrr overload rsrc temp ac_mc}; do
   echo "== $c $(date -u +%H:%M:%S)"
-  flow/run.sh python3 run_afe.py $c r1afe-$c-$1 2>&1 | grep -v "level=warning\|Resource enforcement"
+  # revision F: keep the exit code of each campaign (blocks/README.md: runners exit non-zero on a failed job)
+  flow/run.sh python3 run_afe.py $c r1afe-$c-$1 > "$G1_RESULTS_ROOT/r1_afe/run_all_$1_$c.out" 2>&1 || FAILED="$FAILED $c"
+  grep -v "level=warning\|Resource enforcement" "$G1_RESULTS_ROOT/r1_afe/run_all_$1_$c.out"
 done
-echo "== done $(date -u +%H:%M:%S)"
+echo "== done $(date -u +%H:%M:%S) failed:${FAILED:- none}"
+[ -z "$FAILED" ]

@@ -1,0 +1,64 @@
+{
+ "question": "Revision F final pole-matching regression (ss sigma x32 0.354 -> 0.598 %, same seeds as revision E): which change causes it. 20 MC samples at ss, 11.81 uA, per variant",
+ "variants": {
+  "P0": {
+   "fv": "base"
+  },
+  "P1": {
+   "netlist": "../schematic/r1_afe_revE.spice",
+   "fv": "base"
+  },
+  "P2": {
+   "fv": "a2cc18+a2rz10",
+   "rx": [
+    [
+     "r1_afe_ota2",
+     "(?m)^XCX[12] [^\\n]*\\n",
+     ""
+    ]
+   ]
+  },
+  "P3": {
+   "fv": "a1cc25+a1cx15+a1cp32"
+  },
+  "P4": {
+   "fv": "base",
+   "rx": [
+    [
+     "r1_afe_s1side",
+     "w=\\{WCF1\\} l=\\{WCF1\\}",
+     "w=31.0u l=31.0u"
+    ],
+    [
+     "r1_afe_s2side",
+     "w=\\{WCF2\\} l=\\{WCF2\\}",
+     "w=43.6u l=43.6u"
+    ]
+   ]
+  }
+ },
+ "jobs": [
+  {
+   "tag": "acmc_ss_s101",
+   "tmpl": "tb_afe_ac.cir",
+   "corner": "ss",
+   "mismatch": true,
+   "subs": {
+    "NMC": 10,
+    "SEED": 101,
+    "IB": "11.81u"
+   }
+  },
+  {
+   "tag": "acmc_ss_s102",
+   "tmpl": "tb_afe_ac.cir",
+   "corner": "ss",
+   "mismatch": true,
+   "subs": {
+    "NMC": 10,
+    "SEED": 102,
+    "IB": "11.81u"
+   }
+  }
+ ]
+}

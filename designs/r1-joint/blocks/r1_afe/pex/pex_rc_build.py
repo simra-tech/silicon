@@ -17,7 +17,8 @@ Method (the r1_bgr method, layout/pex_build.py of r1_bgr; kpex 0.3.12 RC mode ke
   3. Every net has a main node: the cell pin for port nets, else the port of the first loop-probe device on the
      net (XMN7/XMN8 drain, XCC*, XCX*, XMC1), else its first port. Gate, bulk and rppd substrate terminals and the
      terminals of the loop-probe devices (XMN7, XMN8, XMP7, XMP8, XCC1, XCC2, XCC1B, XCC2B, XCX1, XCX2, XMC1 of both
-     OTAs) connect to the main node (the probe edits need the plain net names on these lines).
+     OTAs) connect to the main node (the probe edits need the plain net names on these lines). E3 (revision F): the
+     source terminals of XMN7/8 and XMP7/8 stay on their own port (-rd probesrc=0 restores the E2 method).
   4. Capacitance: kpex 2.5D CC of the flat channel cell and of the top cell without the channel instances, lumped
      at the main node of each net (VSUBS -> vss; unnamed nets -> vss, counted). Both channel instances use the
      channel extraction; coupling between the top-level wiring and the channel interior is not extracted.
@@ -62,6 +63,7 @@ COND = {1: ('metal1_con', 0.110), 2: ('metal2_con', 0.088), 3: ('metal3_con', 0.
         5: ('metal5_con', 0.088)}
 VIAS = {11: ('via1_drw', 1, 2), 12: ('via2_drw', 2, 3), 13: ('via3_drw', 3, 4), 14: ('via4_drw', 4, 5)}
 RVIA = 9.0 * 0.19 * 0.19
+PROBESRC = globals().get('probesrc', '1') == '1'   # E3: output-stage MOS sources on their own port
 PROBE_DEVS = {'xmn7', 'xmn8', 'xmp7', 'xmp8', 'xcc1', 'xcc2', 'xcc1b', 'xcc2b', 'xcx1', 'xcx2', 'xmc1'}
 OTA_PREF = ('xa1', 'xa2')
 
@@ -218,8 +220,12 @@ def build_cell(cname, lvspath, recursive=False):
                     node_of[key] = net
             mainname = net
         main[net] = mainname
-        # probe devices: every terminal on the main node
+        # probe devices: every terminal on the main node (E3: except the source terminal of the output-stage MOS
+        # XMN7/8, XMP7/8, so that their supply current flows through the extracted vdd/vss wiring; option probesrc=0
+        # restores the E2 method)
         for (k_, L, i, p) in pidx:
+            if PROBESRC and p['term'] == 2 and p['dev'].split('_', 1)[-1] in ('xmn7', 'xmn8', 'xmp7', 'xmp8'):
+                continue
             if is_probe(p['dev']):
                 node_of[(p['dev'], p['term'])] = net
                 pname[(k_, L, i)] = net
