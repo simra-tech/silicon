@@ -60,10 +60,10 @@ LVS pair report: `reports/runs/asm-20261021-e4_lvs_report.txt`.
 | LVS, deck copy with comparer limits | passed: "Netlists match"; all 52 circuit pairs match; `r1_top` 261 devices, 50 subcircuits | `<G1_RESULTS_ROOT>/r1_top/asm-20261021-e4/lvs_limits/` (`report.txt`) |
 | LVS, stock PDK deck | failed: crash in the comparison (exit 11) after extraction; no comparison result. The wrapper prints "Status PASS"; that line is wrong and is not used (as try d) | `<G1_RESULTS_ROOT>/r1_top/asm-20261021-e4/lvs_stock/` |
 | Run record | written | `reports/runs/asm-20261021-e4.json` (and `-e`, `-e2`, `-e3`, superseded) |
-| Chip fill | not run | — |
+| Chip fill | see "Try e fill" below (run `-fill3`: density 2 markers, ADC window) | `<G1_RESULTS_ROOT>/r1_top/asm-20261021-e4-fill3/` |
 | IR drop and EM of ring and trunks | not run (ring resistance estimated by square count only) | `reports/connectivity_e.md` |
 | Post-layout simulation of any top-level net | not run | — |
-| Bond plan on the chip GDS | not run (ring bond map 24/24 is from `r1_padring` revision d) | — |
+| Bond plan on the chip GDS | passed on the filled GDS 24/24, see "Try e fill" (unfilled e4: not run) | `<G1_RESULTS_ROOT>/r1_top/asm-20261021-e4-fill3/bondmap/` |
 | IHP intake pre-check | not run (chip not complete) | — |
 | Drop-in probe of the in-progress `r1_afe` E2, `r1_isense` b | not run (tracks still running; the checklist states the requirements instead) | — |
 
@@ -177,6 +177,106 @@ It does these steps:
    (`VSS`, `VDD`, `VDDA`) and the `VDDA` feed from pad 7.
 7. It applies the coordinator MIM rule on the west ring columns (TopMetal2 only over the AFE).
 8. It places 34 `sg13g2_decap_8` cells on `VDD` (antenna load, see failure F2).
+### Try e fill (track T8, 2026-10-26)
+
+The chip fill of try e is done. Density has 2 markers left. Both markers are one 800 × 800 µm window, and the ADC
+placeholder is the cause. The filled GDS is `<G1_RESULTS_ROOT>/r1_top/asm-20261021-e4-fill3/r1_top.gds`, SHA-256
+`7c1dd00ec08e0d4dae5052e51019a6e7bb598de775eb841e4ba241416951d512`. Input: run `asm-20261021-e4` (GDS `67d5148e…`).
+Run record: `reports/runs/asm-20261021-e4-fill3.json`. The name `asm-20261021-e4-fill` is the first, partial attempt of
+this track (see "Reused"). It stays as a record and is not the result.
+
+Method (`flow/fill_top.sh`):
+
+1. `fill_top_pre.py` draws a temporary no-fill cell. It covers every macro and the ADC placeholder box (bbox + 1 µm),
+   the 24 bond openings (+10 µm) and the pad ring. The ring is the whole die outside the sealring hole.
+2. The unmodified PDK filler (`filler.py`, macros ActGatP, Metal, TopMetal) runs on a run-time copy of the macros.
+   It fills the free area and keeps its own distance from routed metal.
+3. `fill_top_fixj.py` removes the GatPoly filler rectangles that break rule `GFil.j` (2215 rectangles).
+4. `fill_top_post.py` removes the temporary cell. It checks that only the datatype-22 fill layers differ from the input,
+   that all texts and instances are kept and that no pattern cell is orphaned.
+
+Changes to the PDK filler parameters (all inside the rule limits, no rule deck or model card changed): Metal2-Metal5
+filler distance 0.45 µm (default 1.5 / 2.0; minimum 0.42 µm by `M2Fil.b`…`M5Fil.b`); GatPoly horizontal gap 1.6 µm
+(default 5.0; minimum 0.8 µm by `GFil.c`). Cause: the default values give less than the 800 µm window minimum
+(25 %, `M2Fil.h`…`M5Fil.h`) because the macros are sparse in M2-M4.
+Exception to "no fill over macros": on `r1_ctrl_top` the chip filler may fill Metal2-Metal5 (option `thru`). The fill is
+top-cell shapes. No macro cell is edited. The analog macros, the ADC box, the ring and the bond openings get no fill.
+
+| Check | Result | Evidence |
+| --- | --- | --- |
+| Fill gate (only fill layers differ, texts/instances kept, no orphan) | passed | `reports/runs/asm-20261021-e4-fill3.json` |
+| DRC main | passed, 0 markers | `<G1_RESULTS_ROOT>/r1_top/asm-20261021-e4-fill3/drc_main/` |
+| DRC maximal | passed, 0 markers (2215 `GFil.j` removed by step 3) | `<G1_RESULTS_ROOT>/r1_top/asm-20261021-e4-fill3/drc_maximal/` |
+| DRC antenna | passed, 0 | `<G1_RESULTS_ROOT>/r1_top/asm-20261021-e4-fill3/drc_antenna/` |
+| DRC density | failed, 2 markers: `M2Fil.h`, `M5Fil.h`. Both are the window (400, 400)–(1200, 1200); both overlap the ADC box | `<G1_RESULTS_ROOT>/r1_top/asm-20261021-e4-fill3/drc_density/` (`markers.json`) |
+| Density with the ADC box open to fill (what-if, not a deliverable) | passed, 0 markers | `<G1_RESULTS_ROOT>/r1_top/asm-20261021-e4-fill3-whatif-adc/drc_density/` |
+| LVS, deck copy with comparer limits, on the filled GDS | passed: "Netlists match", 52 of 52 circuit pairs match, `r1_top` 261 devices, 50 subcircuits (as unfilled e4) | `reports/runs/asm-20261021-e4-fill3_lvs_report.txt` |
+| LVS, stock PDK deck | not run (crashes on e4 already, exit 11) | — |
+| Bond map on the chip GDS | passed: 24 of 24 openings matched, 22 labels, die 1700 µm, hash ok | `<G1_RESULTS_ROOT>/r1_top/asm-20261021-e4-fill3/bondmap/verify_bondmap_chip.json` |
+| Post-fill parasitics, timing or simulation | not run | — |
+
+Density markers that remain (class: ADC placeholder):
+
+| Rule | Window (µm) | Window coverage | Minimum | Cause |
+| --- | --- | --- | --- | --- |
+| `M2Fil.h` | 400, 400, 1200, 1200 | 23.69 % | 25 % | 69 494 µm² of the ADC box in the window have no metal (no fill) |
+| `M5Fil.h` | 400, 400, 1200, 1200 | 23.35 % | 25 % | same |
+
+The what-if run opens the ADC box to the same filler. All density rules then pass. The ADC macro must bring fill of
+at least about 15 % Metal2 and Metal5 coverage over the part of its 439 × 182 µm box inside the window (estimate) (what-if: Metal2 56.7 %). Window values from
+the 100 µm-step scan: `reports/runs/asm-20261021-e4-fill3_window_density.json`.
+
+Fill and density of the delivered GDS (counts from `fill_counts.json`; density from `flow/probe_window_minmax.py`,
+100 µm step, drawn + filler; the deck reports violations only, it has no per-window numbers):
+
+| Layer | Fill rectangles | Fill area (µm²) | Window min / max (%) | Global (%) |
+| --- | --- | --- | --- | --- |
+| Activ | 37 349 | 431 754 | not scanned | — |
+| GatPoly | 53 235 | 372 645 | not scanned | — |
+| Metal1 | 53 463 | 484 192 | 26.5 / 49.4 | 42.2 |
+| Metal2 | 211 982 | 1 163 693 | 23.7 / 51.0 | 46.3 |
+| Metal3 | 142 493 | 674 879 | 25.5 / 58.3 | 52.6 |
+| Metal4 | 160 233 | 723 655 | 28.1 / 60.6 | 53.3 |
+| Metal5 | 41 652 | 455 337 | 21.9 / 50.7 | 43.7 |
+| TopMetal1 | 6 388 | 319 400 | not scanned | — |
+| TopMetal2 | 7 759 | 387 950 | not scanned | — |
+
+The minimum windows are in the ADC corner (400, 400), (500, 400). Metal5 shows 21.9 % on the scan grid; the deck
+windows flag (400, 400) only.
+
+Reused from the terminated attempt of 2026-10-21 (killed by an API limit): `fill_top_pre.py`, `fill_top_post.py`,
+`fill_density_markers.py`, `run_fill_checks.sh`, `write_fill_run_json.py`, the ideas of `thru` and of the run-time
+filler copy, and the density what-if. Its runs `asm-20261021-e4-fill`, `-attempt1`…`-attempt5`, `-whatif-adc` stay in
+`<G1_RESULTS_ROOT>/r1_top/`. Its best result: density 4 markers, main 0, antenna 0; maximal had 2215 `GFil.j` (attempt 5). Changed
+in this resume: `fill_top.sh` (Metal3-5 distance argument, `fill_top_fixj.py` step), `fill_top_fixj.py` (it had a
+syntax error and never ran; repaired), new probes `probe_window_cov.py`, `probe_window_minmax.py`, `probe_gfilj.py`.
+
+Reproduce (repository root, POSIX shell; one KLayout job at a time):
+
+1. `G1_CPUSET=116-119; export G1_CPUSET; G1_RESULTS_ROOT=<results root>; export G1_RESULTS_ROOT; G1_WORKDIR=.; export G1_WORKDIR`
+2. `sh designs/r1-joint/blocks/r1_top/flow/fill_top.sh $G1_RESULTS_ROOT/r1_top/asm-20261021-e4 $G1_RESULTS_ROOT/r1_top/asm-20261021-e4-fill3 0 "r1_ctrl_top:10,30,50,67" 0.45 1.6 0.45`
+3. `sh designs/r1-joint/blocks/r1_top/flow/run_fill_checks.sh $G1_RESULTS_ROOT/r1_top/asm-20261021-e4 $G1_RESULTS_ROOT/r1_top/asm-20261021-e4-fill3`
+4. What-if: same as step 2 with the `thru` argument `"r1_ctrl_top:10,30,50,67;r1_adc_ph:1,5,8,10,30,50,67,126,134"` into a new run directory.
+
+Open issues (fill):
+
+1. Two density markers (`M2Fil.h`, `M5Fil.h`) wait for the ADC macro and its own fill. Recheck when the ADC is placed.
+2. The fill is floating metal at 0.45 µm spacing next to routed metal. Coupling to the bias and reference lines is not simulated.
+3. The analog macros (`r1_afe`, `r1_isense`, `r1_osc`, `r1_bias`) have 1-8 % Metal2-Metal4 coverage inside their boxes. They carry the window minima. A fill inside them is a block decision.
+4. The `thru` fill over `r1_ctrl_top` is a deviation from "no fill over macros". Confirm it with the owner of the ctrl hardening.
+5. File size: filled GDS is 76 MB. IHP intake size limits are not checked.
+
+Failures and mistakes (fill):
+
+| # | What happened | Class | Fix |
+| --- | --- | --- | --- |
+| F1 | Default filler distances give 44 % coverage on free area and the macros are sparse. Windows stayed under 25 %. | estimation | Distances 0.45 µm (Metal2-5), gap 1.6 µm (GatPoly) |
+| F2 | Narrow GatPoly gap leaves 2215 rectangles that break `GFil.j` (maximal deck). Earlier attempts ran main and density only. | verification-gap | Step `fill_top_fixj.py`; maximal deck added to the checks, 0 markers |
+| F3 | `fill_top_fixj.py` of the earlier attempt was never run and had a syntax error. Three further faults followed: a Region copy call, zero-width marker boxes dropped, an orphan pattern cell. | functional-bug | Repaired in this resume; the post-step gate catches the orphan |
+| F4 | The first re-run (`-fill2`, distance 0.6 µm) left 3 markers. I picked the distance by guess, without a coverage estimate. | planning | Window coverage probe, then 0.45 µm (`-fill3`); `-fill2` has no checks beyond density |
+| F5 | The target name `asm-20261021-e4-fill` already held the earlier attempt. Run directories are not deleted. | process-hygiene | Result is `-fill3`; the name is explained above |
+| F6 | `fill_density_markers.py` needs the container Python (`klayout` module). Host Python failed. | tooling | Run it with `flow/run.sh python3` |
+
 9. It routes the 20 signal nets that exist today on Metal2–Metal4. The IO-row TopMetal is not touched inside the
    analog band (S6 cut C7).
 10. It runs a self-check (different nets on one layer, with the PDK spacing) and an overlap check.
@@ -205,7 +305,7 @@ Picture: [`layout/r1_top.png`](layout/r1_top.png) (try d, 93 kB).
 | KLayout density | failed, 35 markers, all class (b): no fill yet | `<G1_RESULTS_ROOT>/r1_top/asm-20261021-d/drc_density/` |
 | LVS, deck copy with comparer limits | passed: "Netlists match"; all 46 circuit pairs match; `r1_top` 261 devices, 45 subcircuits | `<G1_RESULTS_ROOT>/r1_top/asm-20261021-d/lvs_limits/` (`report.txt`) |
 | LVS, stock PDK deck | failed: crash in the comparison (signal 11, exit 11) after extraction, 5 min; no comparison result. The wrapper summary prints "Status PASS"; that line is wrong and is not used. Same behaviour as `r1_safe` (T4). The comparer-limit copy is the LVS of record | `<G1_RESULTS_ROOT>/r1_top/asm-20261021-d/lvs_stock/` |
-| Chip fill | not run | — |
+| Chip fill | see "Try e fill" below (run `-fill3`: density 2 markers, ADC window) | `<G1_RESULTS_ROOT>/r1_top/asm-20261021-e4-fill3/` |
 | IR drop and EM of the trunks and ring | not run (ring resistance only estimated by square count) | `reports/connectivity.md` |
 | Post-layout simulation of any top-level net | not run | — |
 | Bond plan on the chip GDS | not run | — |

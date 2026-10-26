@@ -9,6 +9,7 @@ contains its centre ("top-level" if none, i.e. chip routing or the ring band).
 """
 import json
 import sys
+import klayout.db  # noqa: F401  (binds DPolygon for klayout.rdb)
 import klayout.rdb as rdb
 
 asm = json.load(open(sys.argv[1]))

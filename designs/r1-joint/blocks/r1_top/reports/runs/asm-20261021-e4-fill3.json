@@ -1,0 +1,410 @@
+{
+ "run": "asm-20261021-e4-fill3",
+ "track": "T8 (r1_top chip fill)",
+ "question": "Does stock PDK fill (M2-M5 distance 0.45 um, GatPoly gap 1.6 um, ctrl thru M2-M5) close the density deck on try e outside the ADC placeholder?",
+ "command": "sh designs/r1-joint/blocks/r1_top/flow/fill_top.sh <G1_RESULTS_ROOT>/r1_top/asm-20261021-e4 <G1_RESULTS_ROOT>/r1_top/asm-20261021-e4-fill3 [args]; sh designs/r1-joint/blocks/r1_top/flow/run_fill_checks.sh <source> <run>",
+ "tools": {
+  "klayout": "0.30.9 (container)",
+  "container": "tapeoutbench-eda:latest sha256:ddeb69576f2808676d1c5d474ecf04f6d1d6f8abdcff6b72b39790ded924bab2",
+  "cpuset": "116-119"
+ },
+ "pdk_commit": "84374023ee8b4b126bebbba67fcbada0a9c0ff0b",
+ "input": {
+  "source_run": "asm-20261021-e4",
+  "gds": "<G1_RESULTS_ROOT>/r1_top/asm-20261021-e4/r1_top.gds",
+  "sha256": "67d5148ef70d5d413925072c75386045ccaa6077c27121dde076d7de84d9378e"
+ },
+ "output": {
+  "gds": "<G1_RESULTS_ROOT>/r1_top/asm-20261021-e4-fill3/r1_top.gds",
+  "sha256": "7c1dd00ec08e0d4dae5052e51019a6e7bb598de775eb841e4ba241416951d512"
+ },
+ "filler_macro_changes_against_pdk": [
+  "199,201c199,201",
+  "< \t\t'distance_m2' => 1.5,",
+  "< \t\t'distance_m3' => 2.0,",
+  "< \t\t'distance_m4' => 2.0,",
+  "---",
+  "> \t\t'distance_m2' => 0.45,",
+  "> \t\t'distance_m3' => 0.45,",
+  "> \t\t'distance_m4' => 0.45,",
+  "136c136",
+  "<   gp_spacing_h = gp_width + 5",
+  "---",
+  ">   gp_spacing_h = gp_width + 1.6"
+ ],
+ "exclusions": {
+  "thru": {
+   "r1_ctrl_top": [
+    10,
+    30,
+    50,
+    67
+   ]
+  },
+  "ring_depth_um": 0.0,
+  "halo_um": 1.0,
+  "bond_openings": 24,
+  "excluded_area_um2": 892117.1,
+  "deleted_orphan_cells": [
+   "Act_FILL_CELL",
+   "GatP_FILL_CELL",
+   "Met1_M_FILL_CELL",
+   "Met1_S_FILL_CELL",
+   "Met2_M_FILL_CELL",
+   "Met2_S_FILL_CELL",
+   "Met3_M_FILL_CELL",
+   "Met3_S_FILL_CELL",
+   "Met4_M_FILL_CELL",
+   "Met4_S_FILL_CELL",
+   "Met5_M_FILL_CELL",
+   "Met5_S_FILL_CELL",
+   "TM1_FILL_CELL",
+   "TM2_FILL_CELL"
+  ]
+ },
+ "excluded_instances": [
+  {
+   "cell": "r1_ctrl_top",
+   "bbox_um": [
+    543.8,
+    673.0,
+    1063.8,
+    1337.0
+   ]
+  },
+  {
+   "cell": "r1_afe",
+   "bbox_um": [
+    336.0,
+    740.0,
+    528.8,
+    1234.4
+   ]
+  },
+  {
+   "cell": "r1_isense",
+   "bbox_um": [
+    1088.8,
+    735.0,
+    1247.2,
+    1031.8
+   ]
+  },
+  {
+   "cell": "r1_osc",
+   "bbox_um": [
+    1088.8,
+    1041.8,
+    1237.0,
+    1152.2
+   ]
+  },
+  {
+   "cell": "r1_safe",
+   "bbox_um": [
+    1088.8,
+    376.0,
+    1338.14,
+    663.81
+   ]
+  },
+  {
+   "cell": "r1_bgr",
+   "bbox_um": [
+    336.0,
+    376.0,
+    432.0,
+    570.3
+   ]
+  },
+  {
+   "cell": "r1_t2f",
+   "bbox_um": [
+    444.0,
+    376.0,
+    536.0,
+    478.6
+   ]
+  },
+  {
+   "cell": "r1_bias",
+   "bbox_um": [
+    444.0,
+    488.6,
+    564.0,
+    654.54
+   ]
+  },
+  {
+   "cell": "r1_gate_lv",
+   "bbox_um": [
+    440.0,
+    1296.0,
+    468.39,
+    1323.9
+   ]
+  },
+  {
+   "cell": "r1_ls",
+   "bbox_um": [
+    405.0,
+    716.0,
+    414.2,
+    727.7
+   ]
+  },
+  {
+   "cell": "r1_ls",
+   "bbox_um": [
+    416.2,
+    716.0,
+    425.4,
+    727.7
+   ]
+  },
+  {
+   "cell": "r1_ls",
+   "bbox_um": [
+    427.4,
+    716.0,
+    436.6,
+    727.7
+   ]
+  },
+  {
+   "cell": "r1_ls",
+   "bbox_um": [
+    438.6,
+    716.0,
+    447.8,
+    727.7
+   ]
+  },
+  {
+   "cell": "r1_ls",
+   "bbox_um": [
+    545.0,
+    400.0,
+    554.2,
+    411.7
+   ]
+  },
+  {
+   "cell": "r1_ls",
+   "bbox_um": [
+    545.0,
+    420.0,
+    554.2,
+    431.7
+   ]
+  },
+  {
+   "cell": "r1_adc_ph",
+   "bbox_um": [
+    592.0,
+    376.0,
+    1031.0,
+    558.3
+   ]
+  },
+  {
+   "cell": "sg13g2_decap_8",
+   "bbox_um": [
+    1214.76,
+    1354.78,
+    1329.48,
+    1359.17
+   ]
+  },
+  {
+   "cell": "sg13g2_tiehi",
+   "bbox_um": [
+    1094.76,
+    1035.83,
+    1097.16,
+    1040.22
+   ]
+  }
+ ],
+ "fill": {
+  "layers": {
+   "Activ": {
+    "rectangles": 37349,
+    "area_um2": 431754.4,
+    "pdk_cell_rectangles": 37349,
+    "supplementary_flat_rectangles": 0
+   },
+   "GatPoly": {
+    "rectangles": 53235,
+    "area_um2": 372645.0,
+    "pdk_cell_rectangles": 0,
+    "supplementary_flat_rectangles": 53235
+   },
+   "Metal1": {
+    "rectangles": 53463,
+    "area_um2": 484191.8,
+    "pdk_cell_rectangles": 53463,
+    "supplementary_flat_rectangles": 0
+   },
+   "Metal2": {
+    "rectangles": 211982,
+    "area_um2": 1163692.6,
+    "pdk_cell_rectangles": 211982,
+    "supplementary_flat_rectangles": 0
+   },
+   "Metal3": {
+    "rectangles": 142493,
+    "area_um2": 674879.1,
+    "pdk_cell_rectangles": 142493,
+    "supplementary_flat_rectangles": 0
+   },
+   "Metal4": {
+    "rectangles": 160233,
+    "area_um2": 723654.6,
+    "pdk_cell_rectangles": 160233,
+    "supplementary_flat_rectangles": 0
+   },
+   "Metal5": {
+    "rectangles": 41652,
+    "area_um2": 455337.0,
+    "pdk_cell_rectangles": 41652,
+    "supplementary_flat_rectangles": 0
+   },
+   "TopMetal1": {
+    "rectangles": 6388,
+    "area_um2": 319400.0,
+    "pdk_cell_rectangles": 6388,
+    "supplementary_flat_rectangles": 0
+   },
+   "TopMetal2": {
+    "rectangles": 7759,
+    "area_um2": 387950.0,
+    "pdk_cell_rectangles": 7759,
+    "supplementary_flat_rectangles": 0
+   }
+  },
+  "cells": {
+   "Act_FILL_CELL": {
+    "placements": 37349,
+    "rectangles": 37349
+   },
+   "GatP_FILL_CELL": {
+    "placements": 0,
+    "rectangles": 0
+   },
+   "Met1_S_FILL_CELL": {
+    "placements": 15176,
+    "rectangles": 15176
+   },
+   "Met1_M_FILL_CELL": {
+    "placements": 38287,
+    "rectangles": 38287
+   },
+   "Met2_S_FILL_CELL": {
+    "placements": 21735,
+    "rectangles": 21735
+   },
+   "Met2_M_FILL_CELL": {
+    "placements": 190247,
+    "rectangles": 190247
+   },
+   "Met3_S_FILL_CELL": {
+    "placements": 36069,
+    "rectangles": 36069
+   },
+   "Met3_M_FILL_CELL": {
+    "placements": 106424,
+    "rectangles": 106424
+   },
+   "Met4_S_FILL_CELL": {
+    "placements": 47605,
+    "rectangles": 47605
+   },
+   "Met4_M_FILL_CELL": {
+    "placements": 112628,
+    "rectangles": 112628
+   },
+   "Met5_S_FILL_CELL": {
+    "placements": 14073,
+    "rectangles": 14073
+   },
+   "Met5_M_FILL_CELL": {
+    "placements": 27579,
+    "rectangles": 27579
+   },
+   "TM1_FILL_CELL": {
+    "placements": 6388,
+    "rectangles": 6388
+   },
+   "TM2_FILL_CELL": {
+    "placements": 7759,
+    "rectangles": 7759
+   }
+  },
+  "gate_passed": true
+ },
+ "steps_log": [
+  "step density start 14:37:27",
+  "step density end 14:38:55",
+  "done",
+  "step main start 14:44:16",
+  "step main end 14:51:14",
+  "step antenna start 14:51:14",
+  "step antenna end 14:54:38",
+  "step maximal start 14:54:38",
+  "step maximal end 15:10:51",
+  "step lvs start 15:10:51",
+  "step lvs end 15:33:34",
+  "step bondmap start 15:33:34",
+  "step bondmap end 15:33:53",
+  "done"
+ ],
+ "checks": {
+  "drc_main": {
+   "state": "completed",
+   "exit": "0",
+   "total": 0,
+   "rules": {},
+   "evidence": "<G1_RESULTS_ROOT>/r1_top/asm-20261021-e4-fill3/drc_main/"
+  },
+  "drc_maximal": {
+   "state": "completed",
+   "exit": "0",
+   "total": 0,
+   "rules": {},
+   "evidence": "<G1_RESULTS_ROOT>/r1_top/asm-20261021-e4-fill3/drc_maximal/"
+  },
+  "drc_density": {
+   "state": "completed",
+   "exit": "1",
+   "total": 2,
+   "rules": {
+    "M2Fil.h": 1,
+    "M5Fil.h": 1
+   },
+   "evidence": "<G1_RESULTS_ROOT>/r1_top/asm-20261021-e4-fill3/drc_density/",
+   "markers_overlapping_adc_box": 2,
+   "markers_not_overlapping_adc_box": 0
+  },
+  "drc_antenna": {
+   "state": "completed",
+   "exit": "0",
+   "total": 0,
+   "rules": {},
+   "evidence": "<G1_RESULTS_ROOT>/r1_top/asm-20261021-e4-fill3/drc_antenna/"
+  },
+  "lvs_limits": {
+   "state": "match",
+   "evidence": "<G1_RESULTS_ROOT>/r1_top/asm-20261021-e4-fill3/lvs_limits/"
+  },
+  "bondmap": {
+   "state": "passed",
+   "openings_in_gds": 24,
+   "rows": 24,
+   "labels_134_25": 22,
+   "openings_unmatched": 0,
+   "evidence": "<G1_RESULTS_ROOT>/r1_top/asm-20261021-e4-fill3/bondmap/"
+  }
+ },
+ "disposition": "Density 2 markers (M2Fil.h, M5Fil.h), both windows overlap the ADC placeholder; with the ADC box fillable (what-if) density 0. Other decks 0; LVS match; bondmap 24/24."
+}
