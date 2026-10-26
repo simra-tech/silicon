@@ -153,6 +153,8 @@ class Block:
         self.stats = {}
         self.respos = {}
         self.ends_np = {}
+        self.oret = []          # layout c: (x left, x right, y) of the output-stage source rails (vss_o)
+        self.gm_rails = []      # layout c: XMGD / XMGM source rails (vss_g)
 
     def box(self, layer, x1, y1, x2, y2):
         self.D.box(layer, x1, y1, x2, y2)
@@ -211,7 +213,17 @@ class Block:
             if not xs:
                 t = gceil(xl + 0.2); er = t + 0.2 - xr; xs = [t]
             m.rail(side, strips, ext=(0.0, er), lo=lo, hi=hi)
-            if side == 'bot' and net == tie and d['name'] in OWN_RETURN:
+            if side == 'bot' and net == tie and RETURN_C.get(d['name']) == 'vss_o':
+                # layout c: output-stage source rail -> drawn vss_o Metal2 strap (finish_channel), no router pin
+                self.oret.append((xl, xr + er, yc))
+            elif side == 'bot' and net == tie and RETURN_C.get(d['name']) == 'vss_sw':
+                # layout c: level-shifter NMOS source rail -> router net vss_sw (own return to the vss_sw strap)
+                self.pin('vss_sw', [(0, x, yc) for x in xs], 'm1')
+            elif side == 'bot' and net == tie and d['name'] in GM_PRIVATE:
+                # layout c: slow-CMFB mirror XMGD/XMGM sources on a private net vss_g with one tap on the row-1 strip
+                self.pin('vss_g', [(0, x, yc) for x in xs], 'm1')
+                self.gm_rails.append((d['name'], xl, xr + er, yc))
+            elif side == 'bot' and net == tie and d['name'] in OWN_RETURN:
                 # option (not used in layout b): output-stage source with its own return to the vss trunk (vss_o), not
                 # through the row's tie strip that the bias diode and mirrors share
                 self.pin(net + '_o', [(0, x, yc) for x in xs], 'm1')
@@ -316,13 +328,27 @@ class Block:
                     else:
                         self.box('M1', s['x1'] - 0.1, y0b, xt + 0.75, y1b)
                     yc = round((y0b + y1b) / 2, 3)
-                    for v in ('Via1', 'Via2', 'Via3'):
-                        for dx in (-0.25, 0.25):
-                            self.D.sq(v, xt + dx, yc, VIA)
+                    if net == 'vss' and STACK_C:
+                        # layout c: 3 x 4 cuts per via level on a 1.5 x 2.0 um landing (layout b: 2 cuts, 13.5 ohm
+                        # per stack, shared by every source of the row: the main term of the b vss map)
+                        y0b, y1b = round(yc - 1.0, 3), round(yc + 1.0, 3)
+                        self.box('M1', xt - 0.75, y0b, xt + 0.75, y1b)
+                        for v in ('Via1', 'Via2', 'Via3'):
+                            for dx in (-0.5, 0.0, 0.5):
+                                for dy in (-0.75, -0.25, 0.25, 0.75):
+                                    self.D.sq(v, xt + dx, yc + dy, VIA)
+                    else:
+                        for v in ('Via1', 'Via2', 'Via3'):
+                            for dx in (-0.25, 0.25):
+                                self.D.sq(v, xt + dx, yc, VIA)
                     for lay in ('M2', 'M3'):
                         self.box(lay, xt - 0.75, y0b, xt + 0.75, y1b)
                     self.R.reserve(0, xt - 0.75, y0b, xt + 0.75, y1b, self.strip_net(s, r))
                     self.R.reserve(1, xt - 0.75, y0b, xt + 0.75, y1b, self.strip_net(s, r))
+                    if STACK_C:
+                        # layout c: no router via (Metal3 node) on or next to a drawn stack (V2.b / V3.b, layout-dev-c01:
+                        # router Via2/Via3 at the grid node between the drawn cuts)
+                        self.R.reserve(1, xt - 0.75, y0b, xt + 0.75, y1b, None, clear=0.3)
             xr = max(s['x1'] for s in segs)
             row = dict(row=r, segs=segs, yg=yg, yd=ydmax, x0=x_start, x1=xr,
                        ymin_act=min(m.y0 for m in placed_all), ymax_act=max(m.y1 for m in placed_all))
@@ -518,7 +544,8 @@ class Block:
         for k, paths in self.R.paths.items():
             if not paths:
                 continue
-            net = ALIAS.get(self.R.names[k], self.R.names[k])    # router aliases of Kelvin trees
+            al = getattr(self, 'alias', ALIAS)
+            net = al.get(self.R.names[k], self.R.names[k])    # router aliases of Kelvin trees
             n = sorted(self.R.used_nodes(k))[0]
             x, y = self.R.xy(n[1], n[2])
             self.D.label(LNAME[n[0]] + 'txt', x, y, net, 0.1)
@@ -532,7 +559,7 @@ X_VSS = (0.8, 2.4)       # west trunks (Metal4)
 # joins the current tree at one node of the xmo drain rail. vss_k: Kelvin tap of the RPA arm to the vss trunk.
 KELVIN_JUNCTION = {('xmoa', 'outp'), ('xmob', 'outn')}
 SENSE = {'xsfb': {'outp': 'outp_s'}, 'xsfa': {'outn': 'outn_s'}, 'xrca_s0': {'outp': 'outp_s'}, 'xrcb_s0': {'outn': 'outn_s'}}
-ALIAS = {'vss_k': 'vss', 'vss_o': 'vss', 'vss_sh': 'vss', 'outp_s': 'outp', 'outn_s': 'outn'}
+ALIAS = {'vss_k': 'vss', 'vss_o': 'vss', 'vss_sh': 'vss', 'vss_g': 'vss', 'outp_s': 'outp', 'outn_s': 'outn'}
 # Option (dev-b02..b05, not used): the output-stage drivers return their current to the vss trunk on their own route (vss_o). In layout a their
 # sources fed the NMOS row-3 tie strip, which also carries the sources of the bias diode xmbn and the mirrors
 # xmb2/xmb3/xmb5: the shared wiring resistance closed a parasitic DC loop (output current -> bias -> amplifier) that
@@ -542,6 +569,29 @@ ALIAS = {'vss_k': 'vss', 'vss_o': 'vss', 'vss_sh': 'vss', 'outp_s': 'outp', 'out
 # junction south of the reference. Kept as options (empty set / False = layout b).
 OWN_RETURN = set()
 PRIVATE_STRIPS = False
+# ---- layout revision c (2026-10-21): vss as part of the circuit. The layout-b vss map (layout/tools/vss_tools.py map,
+# t4c-work/b) gives 14-20 ohm from every NMOS source to the vss pin, 13.5 ohm of it in the two-cut via stack of each row,
+# and 365 of the 556 uA of vss current from the output stage, which makes 3.4 mV at the bias mirrors (row 3) against
+# 1.2 mV at the stage-1 sinks (row 1). Idealising only the output-stage source ports removes every validity flag
+# (dev-c-b-stb-out). Revision c: star returns.
+#   vss     quiet return: p+ ties of every row, shield, hold caps, bias, stage 1, CMFB; west Metal4 trunk, via arrays
+#   vss_o   output stage XMOA/XMOB: drawn Metal2 strap on their source rails -> Metal4 strap X_VSO (own column)
+#   vss_sw  level shifters (HV and 1.2 V NMOS): router net to a Metal3 strap X_VSO under the vss_o strap
+# The three meet only at the block vss pin (channel A) / at the channel-B star in the channel gap (build_top).
+RETURN_C = NLM.RETURN
+GM_PRIVATE = {'xmgd', 'xmgm'}      # private source net vss_g, one tap on the row-1 tie strip
+STACK_C = True
+X_VSO = (5.05, 6.25)               # vss_o Metal4 strap and vss_sw Metal3 strap (channel coordinates)
+ALIAS.pop('vss_o')                 # layout c: vss_o is a channel port of its own (b02-b05 option: joined vss inside)
+# ---- layout revision c, Kelvin pedestal reference (2026-10-26). Candidate c1 (layout-20261021-c) tied the RPA end
+# (router net vss_k) to the south end of the channel's quiet trunk. For channel B that point is B's star in the gap,
+# 18.4 ohm above the block pin: the pedestal reference moved by I x R / 26 = +430 uV (isense-post-dc-chb-20261021-c).
+# KELVIN_C: vss_k is a channel port (west edge pin at KELVIN_Y) and the top cell runs it on its own line to a landing
+# next to the vss pin stub (no supply current in it).
+KELVIN_C = True
+KELVIN_Y = 4.0                     # channel coordinate of the vss_k west edge pin (south of the vcm pin at 8.0)
+if KELVIN_C:
+    ALIAS.pop('vss_k')
 X_VDDA = (3.2, 4.8)
 X0 = 6.4                 # devices start
 GAP_MAIN = 5.6           # gap between the two slots of the main array (input bands isp/isn)
@@ -550,8 +600,9 @@ RF_PAT = 'ABBAABBAABBAAB'                 # columns -7..-1, +1..+7 around the ce
 RP_PAT = 'AABABBABBAABB' + 'AABBAABAABABB'  # columns -20..-8, +8..+20
 ROWS_N = [['xmfd', 'xmc1s', 'xms1', 'xmbf', 'xms2', 'xmc2s', 'xmfe', 'xmgd'],
           ['xsfa', 'xspa', 'xmfdc', 'xmn1', 'xmbfc', 'xmn2', 'xmfec', 'xspb', 'xsfb', 'xmgm'],
-          ['xmoa', 'xmob', 'xls1_xmn1', 'xls1_xmn2', 'xls1_xmb1n', 'xls1_xmb2n', 'xsva', 'xmbn', 'xmb2', 'xmb3', 'xmb5',
-           'xmbnc', 'xsvb', 'xsh1', 'xsh2', 'xls2_xmn1', 'xls2_xmn2', 'xls2_xmb1n', 'xls2_xmb2n']]
+          # layout c: both level shifters next to the output stage (one vss_sw span), bias mirrors east of them
+          ['xmoa', 'xmob', 'xls1_xmn1', 'xls1_xmn2', 'xls1_xmb1n', 'xls1_xmb2n', 'xls2_xmn1', 'xls2_xmn2', 'xls2_xmb1n',
+           'xls2_xmb2n', 'xsva', 'xmbn', 'xmb2', 'xmb3', 'xmb5', 'xmbnc', 'xsvb', 'xsh1', 'xsh2']]
 
 
 def build_channel(ly, W=None, H=None):
@@ -729,12 +780,16 @@ def finish_channel(blk, Wc, Hc, log=print):
     # supply trunks
     blk.trunk('vss', X_VSS[0], X_VSS[1], 0.0, Hc)
     kk = R.nid('vss_k')
-    knodes = [(2, x, y) for x in gpts(X_VSS[0] + 0.2, X_VSS[1] - 0.2) for y in gpts(Hc / 2 - 1.2, Hc / 2 + 1.2)]
-    for (l, x, y) in knodes:
-        i, j = R.ij(x, y); R.res[l, i, j] = kk
-    for pin in R.pins[R.nid('vss')]:
-        pin[:] = [n for n in pin if R.res[n] == R.nid('vss')]
-    blk.pin('vss_k', knodes, 'm4')
+    # layout c: the RPA Kelvin tap sits at the south end of the trunk, next to the channel's vss port (the star side),
+    # not at Hc / 2 (layout b)
+    ky = (2.4, 4.8) if STACK_C else (Hc / 2 - 1.2, Hc / 2 + 1.2)
+    knodes = [(2, x, y) for x in gpts(X_VSS[0] + 0.2, X_VSS[1] - 0.2) for y in gpts(*ky)]
+    if not KELVIN_C:
+        for (l, x, y) in knodes:
+            i, j = R.ij(x, y); R.res[l, i, j] = kk
+        for pin in R.pins[R.nid('vss')]:
+            pin[:] = [n for n in pin if R.res[n] == R.nid('vss')]
+        blk.pin('vss_k', knodes, 'm4')
     # vss_o joins the trunk south of the channel's vss reference point (the vss_k tap at Hc / 2) and so south of every
     # row junction: the output-stage current never flows along the trunk between two row junctions (at the top level
     # it flows south to the pin). Joining at row 3 (dev-b02) left 11 vs 125 uV per V of output between the sources of
@@ -757,6 +812,8 @@ def finish_channel(blk, Wc, Hc, log=print):
         blk.pin('vss_o', onodes, 'm4')
     blk.trunk('vdda', X_VDDA[0], X_VDDA[1], 0.0, Hc)
     blk.trunk('vdd', Wc - 2.4, Wc - 0.8, 0.0, Hc)
+    if blk.oret:
+        draw_returns(blk, Wc, Hc)
     R.block_edges()
     edge = {}
     for q, net in enumerate(EDGE_W):
@@ -764,6 +821,11 @@ def finish_channel(blk, Wc, Hc, log=print):
         R.unblock(1, 0.0, y)
         blk.pin(net + '_s' if net in ('outp', 'outn') else net, [(1, 0.0, y)], 'm3')
         edge.setdefault(net, []).append(('W', 0.0, y))
+    if KELVIN_C:
+        # Kelvin reference: west edge pin of its own (Metal3), routed in the top cell to the block vss pin
+        R.unblock(1, 0.0, KELVIN_Y)
+        blk.pin('vss_k', [(1, 0.0, KELVIN_Y)], 'm3')
+        edge.setdefault('vss_k', []).append(('W', 0.0, KELVIN_Y))
     for net in EDGE_E:
         # input band: Metal3, BAND_W wide, from the RIA/RIB head stack to the east edge (no router pin)
         xb, y = blk.bands[net]
@@ -780,9 +842,62 @@ def finish_channel(blk, Wc, Hc, log=print):
         for (_, x, y) in lst:
             blk.D.label('M3txt', x, y, net, 0.1)
     for net, xr in (('vss', X_VSS), ('vdda', X_VDDA), ('vdd', (Wc - 2.4, Wc - 0.8))):
-        blk.D.label('M4txt', sum(xr) / 2, Hc / 2, net, 0.1)
+        # layout c: the vss port label (extraction pin) at the south end of the trunk, where the current leaves
+        blk.D.label('M4txt', sum(xr) / 2, 0.6 if (net == 'vss' and STACK_C) else Hc / 2, net, 0.1)
+    if blk.oret:
+        blk.D.label('M4txt', sum(X_VSO) / 2, 0.6, 'vss_o', 0.1)
+        blk.D.label('M3txt', sum(X_VSO) / 2, 0.6, 'vss_sw', 0.1)
     blk.D.boundary(0, 0, Wc, Hc)
     return edge
+
+
+def draw_returns(blk, Wc, Hc):
+    """layout c: vss_o (drawn) and vss_sw (strap + router pins) returns, vss_g tap. Called before routing."""
+    R = blk.R
+    xa, xb = X_VSO
+    yc = blk.oret[0][2]
+    assert all(abs(o[2] - yc) < 1e-6 for o in blk.oret)
+    xr = max(o[1] for o in blk.oret)
+    # Metal2 strap on the output-stage source rails (0.5 um, the rail footprint), Via1 every 0.45 um along each rail
+    blk.box('M2', xa, yc - 0.25, xr, yc + 0.25)
+    for (x1, x2, _) in blk.oret:
+        n = int((x2 - x1 - 0.3) / 0.45) + 1
+        for k in range(n):
+            blk.D.sq('Via1', round(x1 + 0.15 + 0.095 + k * 0.45, 3), yc, VIA)
+    R.reserve(0, xa, yc - 0.25, xr, yc + 0.25, 'vss_o')
+    # landing at the vss_o column: Metal2 + Metal3 plates, 2 x 4 Via2 and Via3
+    ly0, ly1 = round(yc - 1.25, 3), round(yc + 0.7, 3)
+    for lay in ('M2', 'M3'):
+        blk.box(lay, xa, ly0, xb, ly1)
+    for v in ('Via2', 'Via3'):
+        for dx in (0.3, 0.9):
+            for dy in (-0.9, -0.45, 0.0, 0.45):
+                blk.D.sq(v, xa + dx, yc + dy, VIA)
+    R.reserve(0, xa, ly0, xb, ly1, 'vss_o')
+    R.reserve(1, xa, ly0, xb, ly1, 'vss_o')
+    # vss_o column: Metal4, full channel height (channel B's star current passes through channel A's column)
+    blk.box('M4', xa, 0.0, xb, Hc)
+    R.reserve(2, xa, 0.0, xb, Hc, 'vss_o')
+    # vss_sw strap: Metal3 under the column, from the south edge to just below the landing; router pins along it
+    ys = round(ly0 - 0.4, 3)
+    blk.box('M3', xa, 0.0, xb, ys)
+    R.reserve(1, xa, 0.0, xb, ys, 'vss_sw')
+    blk.pin('vss_sw', [(1, x, y) for x in gpts(xa + 0.2, xb - 0.2) for y in gpts(1.6, ys - 0.8)], 'm3')
+    blk.stats['returns'] = dict(vss_o_rail_y=yc, vss_o_strap_x=[xa, xr], landing=[xa, ly0, xb, ly1], vss_sw_strap_top=ys)
+    # vss_g: one tap node on the row-1 tie strip under XMGD (the private source net of the slow-CMFB mirror)
+    if blk.gm_rails:
+        g = [r for r in blk.gm_rails if r[0] == 'xmgd'][0]
+        row1 = blk.stats['rows'][0]
+        yt = round(row1['yg'] - 2 * P, 4)
+        xm = gceil((g[1] + g[2]) / 2)
+        kg, kv = R.nid('vss_g'), R.nid('vss')
+        i, j = R.ij(xm, yt)
+        assert R.res[0, i, j] == kv, ('vss_g tap not on a vss tie node', xm, yt)
+        R.res[0, i, j] = kg
+        for pin in R.pins[kv]:
+            pin[:] = [n for n in pin if n != (0, i, j)]
+        blk.pin('vss_g', [(0, xm, yt)], 'm1')
+        blk.stats['returns']['vss_g_tap'] = [xm, yt]
 
 
 MARGIN = 3.2          # guard ring band
@@ -790,6 +905,66 @@ STRIP = 4.8           # west routing strip
 GAP = 1.6             # between the channels
 SOUTH_PINS = ['vcm', 'vref', 'ibias_a', 'az_a', 'azh_a']     # west of the supply stubs, x = 1.6 + 0.8 q
 NORTH_PINS = ['az_b', 'azh_b', 'ibias_b']
+
+
+def via_array(blk, vias, x1, y1, x2, y2, pitch=0.45):
+    """Via cuts (0.19 um) on a pitch inside the box (enclosure >= 0.15 um)"""
+    xs, ys = [], []
+    x = x1 + 0.245
+    while x <= x2 - 0.245 + 1e-6:
+        xs.append(round(x, 3)); x += pitch
+    y = y1 + 0.245
+    while y <= y2 - 0.245 + 1e-6:
+        ys.append(round(y, 3)); y += pitch
+    for v in vias:
+        for x in xs:
+            for y in ys:
+                blk.D.sq(v, x, y, VIA)
+    return len(xs) * len(ys)
+
+
+def top_returns(blk, xc, ya, yb, Hc, sup):
+    """layout c, top cell: star wiring of the channel returns.
+    Channel A: quiet trunk stub to the pin (as b, but only up to channel A); vss_o column and vss_sw strap end in a
+    Metal4 / Metal3 landing south of channel A, each with its own Metal2 bar to the trunk stub at the pin (the star).
+    Channel B: B's quiet trunk, vss_sw strap and vss_o column meet in the 1.6 um gap between the channels (B's star);
+    B's current then runs down the vss_o column (shared with channel A's output stage only) to the star."""
+    R = blk.R
+    X1, X2 = sup['vss']
+    XO1, XO2 = xc + X_VSO[0], xc + X_VSO[1]
+    st = {}
+    # vss_o column through channel A, the gap and into channel B's column
+    blk.box('M4', XO1, 3.1, XO2, yb + 0.01)
+    R.reserve(2, XO1, 3.1, XO2, yb + 0.01, 'vss')
+    # channel A: vss_o landing (y 3.1-4.2) and bar; vss_sw landing (y 4.6-5.61) and bar; bars cross the vdda trunk on Metal2
+    blk.box('M3', XO1, 3.1, XO2, 4.2)
+    st['a_o_cuts'] = via_array(blk, ('Via2', 'Via3'), XO1, 3.1, XO2, 4.2)
+    blk.box('M2', X1, 3.1, XO2, 4.2)
+    blk.box('M3', X1, 3.1, X2, 4.2)
+    st['a_o_trunk_cuts'] = via_array(blk, ('Via2', 'Via3'), X1, 3.1, X2, 4.2)
+    blk.box('M3', XO1, 4.6, XO2, ya + 0.01)
+    st['a_sw_cuts'] = via_array(blk, ('Via2',), XO1, 4.6, XO2, 5.4)
+    blk.box('M2', X1, 4.6, XO2, 5.4)
+    blk.box('M3', X1, 4.6, X2, 5.4)
+    st['a_sw_trunk_cuts'] = via_array(blk, ('Via2', 'Via3'), X1, 4.6, X2, 5.4)
+    for l, y1, y2 in ((0, 3.1, 4.2), (1, 3.1, 4.2), (0, 4.6, 5.4), (1, 4.6, 5.4)):
+        R.reserve(l, X1, y1, XO2, y2, 'vss')
+    for y1, y2 in ((3.1, 4.2), (4.6, 5.4)):        # no router via next to the drawn arrays
+        R.reserve(1, X1, y1, XO2, y2, None, clear=0.3)
+    # the guard ring joins the star on the Metal2 bar (pins on the bar instead of the trunk Metal4 nodes)
+    blk.pin('vss', [(0, x, 4.0) for x in gpts(X1 + 0.2, X2 - 0.2)], 'm2')
+    # channel B star in the gap (y ya + Hc .. yb): B's trunk bottom, B's vss_sw strap bottom, the vss_o column
+    g0, g1 = round(ya + Hc + 0.3, 3), round(yb + 0.01, 3)
+    blk.box('M4', X1, g0, X2, g1)
+    blk.box('M3', X1, g0, X2, g1)
+    blk.box('M2', X1, g0, XO2, g1)
+    blk.box('M3', XO1, g0, XO2, g1)
+    st['b_trunk_cuts'] = via_array(blk, ('Via2', 'Via3'), X1, g0, X2, g1 - 0.01)
+    st['b_o_cuts'] = via_array(blk, ('Via2', 'Via3'), XO1, g0, XO2, g1 - 0.01)
+    for l in (0, 1, 2):
+        R.reserve(l, X1, g0, XO2, g1, 'vss')
+    R.reserve(1, X1, g0, XO2, g1, None, clear=0.3)
+    blk.stats['top_returns'] = st
 
 
 def build_top(ly, chcell, Wc, Hc, edge, log=print):
@@ -800,10 +975,11 @@ def build_top(ly, chcell, Wc, Hc, edge, log=print):
     H = round(yb + Hc + MARGIN, 4)
     xc = MARGIN + STRIP
     blk = Block(ly, 'r1_isense', W, H)
+    blk.alias = dict(ALIAS, vss_k='vss')     # top cell: the Kelvin line is vss (joined at the pin landing)
     R = blk.R
     for name, y in (('xcha', ya), ('xchb', yb)):
         blk.D.inst(chcell, xc, y)
-    pm = dict(insts)
+    pm = {n: dict(m, vss_k='vss_k') for n, m in insts}
     for name, y0 in (('xcha', ya), ('xchb', yb)):
         R.block_area([0, 1, 2], xc, y0, xc + Wc, y0 + Hc)
         for port, lst in edge.items():
@@ -817,8 +993,10 @@ def build_top(ly, chcell, Wc, Hc, edge, log=print):
     sup = {}
     for net, (x1, x2) in (('vss', X_VSS), ('vdda', X_VDDA), ('vdd', (Wc - 2.4, Wc - 0.8))):
         X1, X2 = xc + x1, xc + x2
-        blk.box('M4', X1, 0.0, X2, yb + 0.01)
-        R.reserve(2, X1, 0.0, X2, yb, net)
+        # layout c: the vss trunk stub reaches channel A only; channel B's quiet return joins B's star in the gap
+        ytop = ya + 0.01 if (net == 'vss' and STACK_C) else yb + 0.01
+        blk.box('M4', X1, 0.0, X2, ytop)
+        R.reserve(2, X1, 0.0, X2, ytop, net)
         # Metal3 pin stub at the south edge with a Via3 array
         blk.box('M3', X1, 0.0, X2, 2.4)
         blk.box('M3pin', X1, 0.0, X2, 1.2)
@@ -828,6 +1006,16 @@ def build_top(ly, chcell, Wc, Hc, edge, log=print):
         R.block_area([1], X1, 0.0, X2, 2.4)
         blk.D.label('M3txt', (X1 + X2) / 2, 0.6, net, 0.3)
         sup[net] = (X1, X2)
+    if STACK_C:
+        top_returns(blk, xc, ya, yb, Hc, sup)
+    if KELVIN_C:
+        # Kelvin landing: Metal3 node west of the vss pin stub; after routing a 0.3 um Metal3 bridge joins it to the
+        # stub (the only junction of vss_k and vss)
+        X1 = sup['vss'][0]
+        kx, ky = round(gfloor(X1 - 0.6), 4), 1.6
+        R.reserve(1, kx, ky - 0.15, X1, ky + 0.15, 'vss_k')
+        blk.pin('vss_k', [(1, kx, ky)], 'm3')
+        blk.stats['kelvin_landing'] = (kx, ky)
     R.block_edges()
     # p+ guard ring (vss)
     blk.D.tap_ring(2.7, 2.7, W - 2.7, H - 2.7, w=0.6, ptype=True)
@@ -837,7 +1025,8 @@ def build_top(ly, chcell, Wc, Hc, edge, log=print):
     blk.pin('vss', ring, 'm1')
     # vss trunk joins the ring: vss trunk Metal4 nodes as pins
     X1, X2 = sup['vss']
-    blk.pin('vss', [(2, x, y) for x in gpts(X1 + 0.2, X2 - 0.2) for y in gpts(4.0, ya - 1.0)], 'm4')
+    if not STACK_C:
+        blk.pin('vss', [(2, x, y) for x in gpts(X1 + 0.2, X2 - 0.2) for y in gpts(4.0, ya - 1.0)], 'm4')
     bp = []
     # west pins: per channel near the channel's edge pins, shared vref/vcm once
     used_y = []
@@ -867,6 +1056,14 @@ def build_top(ly, chcell, Wc, Hc, edge, log=print):
     ok = R.route_all(rounds=ROUTE_ROUNDS, log=log)
     blk.stats.update(route_ok=ok, route_failed=R.failed, W=W, H=H)
     blk.draw_routes()
+    if KELVIN_C:
+        kx, ky = blk.stats['kelvin_landing']
+        blk.box('M3', kx, ky - 0.15, sup['vss'][0] + 0.01, ky + 0.15)
+        # Kelvin line length per layer and via count (top cell part; for the make_post square-count estimate)
+        k = R.nid('vss_k')
+        nodes = set(R.used_nodes(k))
+        blk.stats['kelvin_nodes'] = {LN: sum(1 for n in nodes if n[0] == q) for q, LN in enumerate(('M2', 'M3', 'M4'))}
+        blk.stats['kelvin_paths'] = [[(l, *R.xy(i, j)) for (l, i, j) in p] for p in R.paths.get(k, [])]
     for net, side, x, y in bp:
         if side == 'W':
             blk.box('M3', 0.0, y - 0.2, x + 0.2, y + 0.2); blk.box('M3pin', 0.0, y - 0.2, x + 0.2, y + 0.2)
@@ -906,7 +1103,9 @@ def main():
                            rows=blk.stats['rows'], lv_rows=blk.stats['lv_rows'], caps=blk.stats['caps'],
                            caps_top=blk.stats.get('caps_top'), res_top=blk.stats['res_top']),
               top=dict(W=top.stats['W'], H=top.stats['H'], area_mm2=round(top.stats['W'] * top.stats['H'] * 1e-6, 6),
-                       route_ok=top.stats['route_ok'], failed=top.stats['route_failed'], pins=top.stats['pins']),
+                       route_ok=top.stats['route_ok'], failed=top.stats['route_failed'], pins=top.stats['pins'],
+                       kelvin=dict(landing=top.stats.get('kelvin_landing'), nodes=top.stats.get('kelvin_nodes'),
+                                   paths=top.stats.get('kelvin_paths'))),
               runtime_s=round(time.time() - t0, 1))
     json.dump(st, open(os.path.join(os.path.dirname(OUT), 'r1_isense_layout.json'), 'w'), indent=1)
 

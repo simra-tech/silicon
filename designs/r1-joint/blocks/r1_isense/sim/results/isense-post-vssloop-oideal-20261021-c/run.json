@@ -1,0 +1,419 @@
+{
+ "block": "r1_isense",
+ "command": "python3 designs/r1-joint/blocks/r1_isense/sim/run_deck.py --block r1_isense --deck <G1_RESULTS_ROOT>/r1_isense/t4c-work/c/stb_oideal.cir --pre <G1_RESULTS_ROOT>/r1_isense/t4c-work/c/pre_oideal.cir --netlist <G1_RESULTS_ROOT>/r1_isense/t4c-work/c/post_oideal.spice --run-id isense-post-vssloop-oideal-20261021-c --corners tt,ss,ff --jobs 1 --set RL=0.001 --set CL=2p --set CW=0 --analyze analyze_stb.py --question \"Layout c, output-stage sources tied to the deck ground (vss loop removed): dm_out, cm_out for the Blackman estimate of the loop gain through vss\"",
+ "container_image": "tapeoutbench-eda:latest sha256:ddeb6957... (checked by flow/run.sh)",
+ "corners": {
+  "ff": {
+   "cap": "cap_bcs",
+   "mos": "mos_ff",
+   "res": "res_bcs",
+   "temp_C": -40,
+   "vdd": 1.32,
+   "vdda": 3.6
+  },
+  "ss": {
+   "cap": "cap_wcs",
+   "mos": "mos_ss",
+   "res": "res_wcs",
+   "temp_C": 125,
+   "vdd": 1.08,
+   "vdda": 3.0
+  },
+  "tt": {
+   "cap": "cap_typ",
+   "mos": "mos_tt",
+   "res": "res_typ",
+   "temp_C": 27,
+   "vdd": 1.2,
+   "vdda": 3.3
+  }
+ },
+ "cpuset": "109-111",
+ "date_utc": "2026-10-21T11:53:31.749657Z",
+ "deck": "<G1_RESULTS_ROOT>/r1_isense/t4c-work/c/stb_oideal.cir",
+ "deck_sha256": "475b0cbb0f17cb376a57b18e45b5436faecdac74ded424909f559423775c9407",
+ "disposition": "passed: state normal, 3 corners; 6 loop results passed, 0 failed, 0 not applicable; criterion PM >= 60 deg, GM >= 10 dB",
+ "included_netlists": {
+  "/work/designs/r1-joint/blocks/r1_safe/schematic/r1_safe.spice": "812f886dce2b759af121230bd2e9100aeac59041effdf9a3341647c29299cbde"
+ },
+ "included_netlists_results_root": {
+  "<G1_RESULTS_ROOT>/r1_isense/t4c-work/c/post_oideal.spice": "142b4b66b93eada10fc154f91099196d39a16621a6e2b77800b224a791c0345b"
+ },
+ "jobs": {
+  "ff": {
+   "log": "r1_isense/isense-post-vssloop-oideal-20261021-c/stb_oideal_ff.log",
+   "rc": 0,
+   "wall_s": 114.1
+  },
+  "ss": {
+   "log": "r1_isense/isense-post-vssloop-oideal-20261021-c/stb_oideal_ss.log",
+   "rc": 0,
+   "wall_s": 76.1
+  },
+  "tt": {
+   "log": "r1_isense/isense-post-vssloop-oideal-20261021-c/stb_oideal_tt.log",
+   "rc": 0,
+   "wall_s": 98.1
+  }
+ },
+ "netlist": "<G1_RESULTS_ROOT>/r1_isense/t4c-work/c/post_oideal.spice",
+ "netlist_sha256": "142b4b66b93eada10fc154f91099196d39a16621a6e2b77800b224a791c0345b",
+ "ngspice_version": "** ngspice-46 : Circuit level simulation program ** Copyright 2001-2025, The ngspice team. ** Please get your ngspice manual from https://ngspice.sourceforge.io/docs.html ** Please file your bug-reports at http://ngspice.sourceforge.net/bugrep.html",
+ "overrides": {
+  "CL": "2p",
+  "CW": "0",
+  "RL": "0.001"
+ },
+ "pdk_commit": "84374023ee8b4b126bebbba67fcbada0a9c0ff0b (checked by flow/run.sh)",
+ "prerun": {
+  "ff": {
+   "deck": "<G1_RESULTS_ROOT>/r1_isense/t4c-work/c/pre_oideal.cir",
+   "holdvals": {
+    "VH1": "0.825497",
+    "VH2": "0.831129",
+    "VON": "0.889679",
+    "VOP": "0.312972"
+   },
+   "rc": 0
+  },
+  "ss": {
+   "deck": "<G1_RESULTS_ROOT>/r1_isense/t4c-work/c/pre_oideal.cir",
+   "holdvals": {
+    "VH1": "1.04739",
+    "VH2": "1.05621",
+    "VON": "0.888843",
+    "VOP": "0.315002"
+   },
+   "rc": 0
+  },
+  "tt": {
+   "deck": "<G1_RESULTS_ROOT>/r1_isense/t4c-work/c/pre_oideal.cir",
+   "holdvals": {
+    "VH1": "0.924614",
+    "VH2": "0.931498",
+    "VON": "0.88918",
+    "VOP": "0.313879"
+   },
+   "rc": 0
+  }
+ },
+ "question": "Layout c, output-stage sources tied to the deck ground (vss loop removed): dm_out, cm_out for the Blackman estimate of the loop gain through vss",
+ "raw_results": "$G1_RESULTS_ROOT/r1_isense/isense-post-vssloop-oideal-20261021-c/",
+ "result": {
+  "margins": {
+   "ff": {
+    "cm_out": {
+     "vsh_+0.000": {
+      "f_180_Hz": null,
+      "f_unity_Hz": 3956692.108320355,
+      "gm_db": null,
+      "ph_min_deg": -158.0,
+      "phase_dc_deg": -31.1,
+      "pm_deg": 62.42,
+      "pm_valid": true,
+      "status": "passed",
+      "t_dc_db": 114.91,
+      "t_max_db": 114.91
+     },
+     "vsh_+0.100": {
+      "f_180_Hz": null,
+      "f_unity_Hz": 3511148.0157753876,
+      "gm_db": null,
+      "ph_min_deg": -154.4,
+      "phase_dc_deg": -24.6,
+      "pm_deg": 65.43,
+      "pm_valid": true,
+      "status": "passed",
+      "t_dc_db": 108.96,
+      "t_max_db": 108.96
+     },
+     "vsh_-0.020": {
+      "f_180_Hz": null,
+      "f_unity_Hz": 3403769.306976894,
+      "gm_db": null,
+      "ph_min_deg": -147.5,
+      "phase_dc_deg": -35.3,
+      "pm_deg": 66.38,
+      "pm_valid": true,
+      "status": "passed",
+      "t_dc_db": 107.17,
+      "t_max_db": 107.17
+     }
+    },
+    "dm_out": {
+     "vsh_+0.000": {
+      "f_180_Hz": 40031443.50923176,
+      "f_unity_Hz": 8784356.132005174,
+      "gm_db": 17.08,
+      "ph_min_deg": -515.2,
+      "phase_dc_deg": -2.0,
+      "pm_deg": 67.51,
+      "pm_valid": true,
+      "status": "passed",
+      "t_dc_db": 69.94,
+      "t_max_db": 69.94
+     },
+     "vsh_+0.100": {
+      "f_180_Hz": 40440804.95112432,
+      "f_unity_Hz": 7810626.109387002,
+      "gm_db": 18.12,
+      "ph_min_deg": -515.1,
+      "phase_dc_deg": -1.2,
+      "pm_deg": 70.82,
+      "pm_valid": true,
+      "status": "passed",
+      "t_dc_db": 63.88,
+      "t_max_db": 63.88
+     },
+     "vsh_-0.020": {
+      "f_180_Hz": 41286691.74480211,
+      "f_unity_Hz": 7395773.3671102105,
+      "gm_db": 18.89,
+      "ph_min_deg": -526.0,
+      "phase_dc_deg": -1.1,
+      "pm_deg": 71.75,
+      "pm_valid": true,
+      "status": "passed",
+      "t_dc_db": 62.66,
+      "t_max_db": 62.66
+     }
+    }
+   },
+   "ss": {
+    "cm_out": {
+     "vsh_+0.000": {
+      "f_180_Hz": null,
+      "f_unity_Hz": 1975866.3755025892,
+      "gm_db": null,
+      "ph_min_deg": -145.4,
+      "phase_dc_deg": -34.2,
+      "pm_deg": 73.37,
+      "pm_valid": true,
+      "status": "passed",
+      "t_dc_db": 101.06,
+      "t_max_db": 101.06
+     },
+     "vsh_+0.100": {
+      "f_180_Hz": null,
+      "f_unity_Hz": 817548.014518883,
+      "gm_db": null,
+      "ph_min_deg": -150.0,
+      "phase_dc_deg": -34.3,
+      "pm_deg": 82.54,
+      "pm_valid": true,
+      "status": "passed",
+      "t_dc_db": 84.73,
+      "t_max_db": 84.73
+     },
+     "vsh_-0.020": {
+      "f_180_Hz": null,
+      "f_unity_Hz": 686007.0471128159,
+      "gm_db": null,
+      "ph_min_deg": -152.0,
+      "phase_dc_deg": -28.7,
+      "pm_deg": 83.57,
+      "pm_valid": true,
+      "status": "passed",
+      "t_dc_db": 81.47,
+      "t_max_db": 81.47
+     }
+    },
+    "dm_out": {
+     "vsh_+0.000": {
+      "f_180_Hz": 37869545.99594413,
+      "f_unity_Hz": 4440960.8958295705,
+      "gm_db": 22.53,
+      "ph_min_deg": -519.7,
+      "phase_dc_deg": -0.9,
+      "pm_deg": 78.53,
+      "pm_valid": true,
+      "status": "passed",
+      "t_dc_db": 57.14,
+      "t_max_db": 57.14
+     },
+     "vsh_+0.100": {
+      "f_180_Hz": 44562751.806494854,
+      "f_unity_Hz": 1738310.2557422,
+      "gm_db": 31.92,
+      "ph_min_deg": -540.0,
+      "phase_dc_deg": -0.4,
+      "pm_deg": 87.17,
+      "pm_valid": true,
+      "status": "passed",
+      "t_dc_db": 41.54,
+      "t_max_db": 41.54
+     },
+     "vsh_-0.020": {
+      "f_180_Hz": 44133300.372320384,
+      "f_unity_Hz": 1483203.074251872,
+      "gm_db": 33.06,
+      "ph_min_deg": -526.5,
+      "phase_dc_deg": -0.3,
+      "pm_deg": 88.65,
+      "pm_valid": true,
+      "status": "passed",
+      "t_dc_db": 37.32,
+      "t_max_db": 37.32
+     }
+    }
+   },
+   "tt": {
+    "cm_out": {
+     "vsh_+0.000": {
+      "f_180_Hz": null,
+      "f_unity_Hz": 3070061.853703098,
+      "gm_db": null,
+      "ph_min_deg": -154.8,
+      "phase_dc_deg": -35.7,
+      "pm_deg": 66.62,
+      "pm_valid": true,
+      "status": "passed",
+      "t_dc_db": 111.35,
+      "t_max_db": 111.35
+     },
+     "vsh_+0.100": {
+      "f_180_Hz": null,
+      "f_unity_Hz": 2328681.0241577844,
+      "gm_db": null,
+      "ph_min_deg": -148.1,
+      "phase_dc_deg": -28.4,
+      "pm_deg": 72.01,
+      "pm_valid": true,
+      "status": "passed",
+      "t_dc_db": 102.4,
+      "t_max_db": 102.4
+     },
+     "vsh_-0.020": {
+      "f_180_Hz": null,
+      "f_unity_Hz": 2185206.289548254,
+      "gm_db": null,
+      "ph_min_deg": -140.9,
+      "phase_dc_deg": -37.8,
+      "pm_deg": 73.38,
+      "pm_valid": true,
+      "status": "passed",
+      "t_dc_db": 100.19,
+      "t_max_db": 100.19
+     }
+    },
+    "dm_out": {
+     "vsh_+0.000": {
+      "f_180_Hz": 38495657.45723366,
+      "f_unity_Hz": 7104182.5878149755,
+      "gm_db": 18.65,
+      "ph_min_deg": -519.1,
+      "phase_dc_deg": -1.9,
+      "pm_deg": 71.18,
+      "pm_valid": true,
+      "status": "passed",
+      "t_dc_db": 67.79,
+      "t_max_db": 67.79
+     },
+     "vsh_+0.100": {
+      "f_180_Hz": 40677079.666716784,
+      "f_unity_Hz": 5340143.990674206,
+      "gm_db": 21.25,
+      "ph_min_deg": -530.2,
+      "phase_dc_deg": -0.9,
+      "pm_deg": 78.02,
+      "pm_valid": true,
+      "status": "passed",
+      "t_dc_db": 58.55,
+      "t_max_db": 58.55
+     },
+     "vsh_-0.020": {
+      "f_180_Hz": 41697218.91323552,
+      "f_unity_Hz": 4863132.553188708,
+      "gm_db": 22.52,
+      "ph_min_deg": -530.3,
+      "phase_dc_deg": -0.9,
+      "pm_deg": 79.04,
+      "pm_valid": true,
+      "status": "passed",
+      "t_dc_db": 57.03,
+      "t_max_db": 57.03
+     }
+    }
+   }
+  },
+  "per_loop": {
+   "ff": {
+    "cm_out": {
+     "f_unity_Hz": [
+      3956692.108320355,
+      3511148.0157753876,
+      3403769.306976894
+     ],
+     "max_t_db": 114.91,
+     "status": "passed",
+     "worst_gm_db": null,
+     "worst_pm_deg": 62.42
+    },
+    "dm_out": {
+     "f_unity_Hz": [
+      8784356.132005174,
+      7810626.109387002,
+      7395773.3671102105
+     ],
+     "max_t_db": 69.94,
+     "status": "passed",
+     "worst_gm_db": 17.08,
+     "worst_pm_deg": 67.51
+    }
+   },
+   "ss": {
+    "cm_out": {
+     "f_unity_Hz": [
+      1975866.3755025892,
+      817548.014518883,
+      686007.0471128159
+     ],
+     "max_t_db": 101.06,
+     "status": "passed",
+     "worst_gm_db": null,
+     "worst_pm_deg": 73.37
+    },
+    "dm_out": {
+     "f_unity_Hz": [
+      4440960.8958295705,
+      1738310.2557422,
+      1483203.074251872
+     ],
+     "max_t_db": 57.14,
+     "status": "passed",
+     "worst_gm_db": 22.53,
+     "worst_pm_deg": 78.53
+    }
+   },
+   "tt": {
+    "cm_out": {
+     "f_unity_Hz": [
+      3070061.853703098,
+      2328681.0241577844,
+      2185206.289548254
+     ],
+     "max_t_db": 111.35,
+     "status": "passed",
+     "worst_gm_db": null,
+     "worst_pm_deg": 66.62
+    },
+    "dm_out": {
+     "f_unity_Hz": [
+      7104182.5878149755,
+      5340143.990674206,
+      4863132.553188708
+     ],
+     "max_t_db": 67.79,
+     "status": "passed",
+     "worst_gm_db": 18.65,
+     "worst_pm_deg": 71.18
+    }
+   }
+  },
+  "state": "normal"
+ },
+ "run_id": "isense-post-vssloop-oideal-20261021-c",
+ "tool": "ngspice-46 (container banner from flow/run.sh ngspice -v; batch logs carry no banner)",
+ "wall_s": 293.9,
+ "workdir": "designs/r1-joint/blocks/r1_isense/sim"
+}

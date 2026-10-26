@@ -1,27 +1,30 @@
 * LVS reference CDL for r1_isense (revision 2), written by layout/r1_isense_netlist.py from schematic/r1_isense.spice
 * unit split only (see the module docstring): long rhigh/rppd -> straight series segments, MOS finger re-cut;
 * r1_ls instances flattened into r1_isense_ch (prefix xls1_/xls2_). Layout dummies are poly only (no devices).
-.subckt r1_isense_ch isp isn outp outn vref vcm ibias az_lv azh_lv vdda vdd vss
+* layout revision c: the channel vss is split into the returns vss (quiet), vss_o (output stage sources) and
+* vss_sw (level-shifter NMOS sources), and the Kelvin end vss_k of the pedestal arm (xrpa1); r1_isense ties the
+* four to its vss pin (flattened circuit unchanged).
+.subckt r1_isense_ch isp isn outp outn vref vcm ibias az_lv azh_lv vdda vdd vss vss_o vss_sw vss_k
 Mxls1_xmip xls1_inb az_lv vdd vdd sg13_lv_pmos w=1u l=0.13u m=1
-Mxls1_xmin xls1_inb az_lv vss vss sg13_lv_nmos w=0.5u l=0.13u m=1
-Mxls1_xmn1 xls1_a az_lv vss vss sg13_hv_nmos w=4u l=0.45u m=1
-Mxls1_xmn2 xls1_b xls1_inb vss vss sg13_hv_nmos w=4u l=0.45u m=1
+Mxls1_xmin xls1_inb az_lv vss_sw vss sg13_lv_nmos w=0.5u l=0.13u m=1
+Mxls1_xmn1 xls1_a az_lv vss_sw vss sg13_hv_nmos w=4u l=0.45u m=1
+Mxls1_xmn2 xls1_b xls1_inb vss_sw vss sg13_hv_nmos w=4u l=0.45u m=1
 Mxls1_xmp1 xls1_a xls1_b vdda vdda sg13_hv_pmos w=0.6u l=0.5u m=1
 Mxls1_xmp2 xls1_b xls1_a vdda vdda sg13_hv_pmos w=0.6u l=0.5u m=1
 Mxls1_xmb1p azb xls1_b vdda vdda sg13_hv_pmos w=2u l=0.5u m=1
-Mxls1_xmb1n azb xls1_b vss vss sg13_hv_nmos w=1u l=0.45u m=1
+Mxls1_xmb1n azb xls1_b vss_sw vss sg13_hv_nmos w=1u l=0.45u m=1
 Mxls1_xmb2p az azb vdda vdda sg13_hv_pmos w=2u l=0.5u m=1
-Mxls1_xmb2n az azb vss vss sg13_hv_nmos w=1u l=0.45u m=1
+Mxls1_xmb2n az azb vss_sw vss sg13_hv_nmos w=1u l=0.45u m=1
 Mxls2_xmip xls2_inb azh_lv vdd vdd sg13_lv_pmos w=1u l=0.13u m=1
-Mxls2_xmin xls2_inb azh_lv vss vss sg13_lv_nmos w=0.5u l=0.13u m=1
-Mxls2_xmn1 xls2_a azh_lv vss vss sg13_hv_nmos w=4u l=0.45u m=1
-Mxls2_xmn2 xls2_b xls2_inb vss vss sg13_hv_nmos w=4u l=0.45u m=1
+Mxls2_xmin xls2_inb azh_lv vss_sw vss sg13_lv_nmos w=0.5u l=0.13u m=1
+Mxls2_xmn1 xls2_a azh_lv vss_sw vss sg13_hv_nmos w=4u l=0.45u m=1
+Mxls2_xmn2 xls2_b xls2_inb vss_sw vss sg13_hv_nmos w=4u l=0.45u m=1
 Mxls2_xmp1 xls2_a xls2_b vdda vdda sg13_hv_pmos w=0.6u l=0.5u m=1
 Mxls2_xmp2 xls2_b xls2_a vdda vdda sg13_hv_pmos w=0.6u l=0.5u m=1
 Mxls2_xmb1p azhb xls2_b vdda vdda sg13_hv_pmos w=2u l=0.5u m=1
-Mxls2_xmb1n azhb xls2_b vss vss sg13_hv_nmos w=1u l=0.45u m=1
+Mxls2_xmb1n azhb xls2_b vss_sw vss sg13_hv_nmos w=1u l=0.45u m=1
 Mxls2_xmb2p azh azhb vdda vdda sg13_hv_pmos w=2u l=0.5u m=1
-Mxls2_xmb2n azh azhb vss vss sg13_hv_nmos w=1u l=0.45u m=1
+Mxls2_xmb2n azh azhb vss_sw vss sg13_hv_nmos w=1u l=0.45u m=1
 Rxria isp sa vss rppd w=2u l=30.8u m=1 b=0
 Rxrib isn sb vss rppd w=2u l=30.8u m=1 b=0
 Rxrfa1 rfoa rfa1 vss rppd w=2u l=30.8u m=1 b=0
@@ -78,7 +81,7 @@ Rxrpb23 rpb22 rpb23 vss rppd w=2u l=30.8u m=1 b=0
 Rxrpb24 rpb23 rpb24 vss rppd w=2u l=30.8u m=1 b=0
 Rxrpb25 rpb24 rpb25 vss rppd w=2u l=30.8u m=1 b=0
 Rxrpb26 rpb25 rpbs vss rppd w=2u l=30.8u m=1 b=0
-Rxrpa1 vss rpa1 vss rppd w=2u l=30.8u m=1 b=0
+Rxrpa1 vss_k rpa1 vss rppd w=2u l=30.8u m=1 b=0
 Rxrpa2 rpa1 rpa2 vss rppd w=2u l=30.8u m=1 b=0
 Rxrpa3 rpa2 rpa3 vss rppd w=2u l=30.8u m=1 b=0
 Rxrpa4 rpa3 rpa4 vss rppd w=2u l=30.8u m=1 b=0
@@ -138,8 +141,8 @@ Mxmp1 p1 vbp vdda vdda sg13_hv_pmos w=16u l=2u m=1
 Mxmp2 p2 vbp vdda vdda sg13_hv_pmos w=16u l=2u m=1
 Mxmpc1 x1a vbpc p1 vdda sg13_hv_pmos w=16u l=2u m=1
 Mxmpc2 x1b vbpc p2 vdda sg13_hv_pmos w=16u l=2u m=1
-Mxmoa outp x1a vss vss sg13_hv_nmos w=16u l=0.5u m=1
-Mxmob outn x1b vss vss sg13_hv_nmos w=16u l=0.5u m=1
+Mxmoa outp x1a vss_o vss sg13_hv_nmos w=16u l=0.5u m=1
+Mxmob outn x1b vss_o vss sg13_hv_nmos w=16u l=0.5u m=1
 Mxmla outp vbl vdd vdd sg13_lv_pmos w=40u l=0.25u m=1
 Mxmlb outn vbl vdd vdd sg13_lv_pmos w=40u l=0.25u m=1
 Rxrza x1a cza vss rppd w=1u l=3.6u m=1 b=0
@@ -185,6 +188,6 @@ Mxsva rfoa az vcm vss sg13_hv_nmos w=4u l=0.45u m=1
 Mxsvb rfob az vcm vss sg13_hv_nmos w=4u l=0.45u m=1
 .ends
 .subckt r1_isense isa_p isa_n isb_p isb_n outa_p outa_n outb_p outb_n vref vcm ibias_a ibias_b az_a azh_a az_b azh_b vdda vdd vss
-Xxcha isa_p isa_n outa_p outa_n vref vcm ibias_a az_a azh_a vdda vdd vss r1_isense_ch
-Xxchb isb_p isb_n outb_p outb_n vref vcm ibias_b az_b azh_b vdda vdd vss r1_isense_ch
+Xxcha isa_p isa_n outa_p outa_n vref vcm ibias_a az_a azh_a vdda vdd vss vss vss vss r1_isense_ch
+Xxchb isb_p isb_n outb_p outb_n vref vcm ibias_b az_b azh_b vdda vdd vss vss vss vss r1_isense_ch
 .ends

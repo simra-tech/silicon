@@ -1,12 +1,187 @@
 # r1_isense — two low-side shunt sense channels (3.3 V / 1.2 V, auto-zero)
 
-State (2026-10-21, revision 2 + layout b): **laid out, DRC / antenna / LVS clean, extracted, simulated post-layout.**
-The schematic (revision 2) is unchanged. Layout b: the residual offset after the auto-zero passes (+26 … +36 µV against 100 µV,
-tt / ss / ff and the r1_bias current range). The loop crossover margins and the settling pass. The stb loop-validity flag fails
-(regression from layout a; open issue 1). Area 0.047 mm² (target 0.025 mm² failed; S7 floorplan box met).
+State (2026-10-26, revision 2 + layout c): **laid out, DRC / antenna / LVS clean, extracted, simulated post-layout.**
+The schematic (revision 2) is unchanged. Layout c: star `vss` returns and a Kelvin pedestal reference. The residual offset after the auto-zero passes
+(−26.6 … −33.9 µV against 100 µV, both channels, tt / ss / ff and the r1_bias current range). The stb validity flags and all loop margins pass.
+Open: the pedestal reference at the top level (revision c, open issue 1). Area 0.047 mm² (target 0.025 mm² failed; S7 floorplan box met).
 All numbers are **simulated** (ngspice-46, pinned PDK). Nothing is measured.
 
-## Layout (revision b, 2026-10-21, track T4) — current state
+## Layout (revision c, 2026-10-26, track T4) — current state
+
+Result: **passed** at block level. The offset after the auto-zero passes in both channels at tt / ss / ff (−26.6 … −33.9 µV).
+The DC loop gain through `vss` is below −20 dB, and every stb validity flag passes in all three states at tt, ffx, ss/125 °C and ff/−40 °C.
+At the top level the pedestal moves by −408 µV with a 9.4 Ω trunk (open issue 1). All numbers are **simulated**. Nothing is measured.
+
+Layout c of record: `layout/r1_isense.gds` (sha256 `192dd37aa592…`; candidate c2, star returns and a Kelvin pedestal reference). Layout b is kept as
+`layout/r1_isense_layout_b.gds` (sha256 `221ad69af11d…`, equal to the git HEAD file). Box, pins and pin sides are unchanged.
+The netlist of record is unchanged (revision 2, `schematic/r1_isense.spice`, sha256 `af013b95f5fd…`).
+
+### Reused from the interrupted attempt (2026-10-21, candidate c1)
+
+The attempt of 2026-10-21 stopped at the API limit before it wrote the README. Its work was triaged on 2026-10-26 and kept:
+
+1. The vss map and the loop identification (step 1): `layout/tools/vss_tools.py`, `layout/tools/vss_loop_report.py`, dev runs `sim/results/dev-c-b-*`.
+2. The star returns in the generator (`RETURN_C`, `STACK_C`, `draw_returns`, `top_returns`), the split LVS ports `vss_o`, `vss_sw`, and the extraction port handling (`pex_build.py`, `make_post.py`).
+3. The candidate-c1 checks and campaign: `reports/layout-dev-c01/` (DRC V2.b/V3.b, fixed), `layout-dev-c02/`, `layout-20261021-c/`, extraction `pex-20261021-c`, results `sim/results/*-20261021-c/`.
+   Candidate c1 is superseded by c2. Its runs stay in the record, labelled "candidate c1".
+4. `sim/analyze_stb.py` loops 8 and 9 (`dm_vso`, `cm_vso`: Tian probe in the output-stage return).
+
+New on 2026-10-26: the cause of the c1 offset failures, the Kelvin port `vss_k` (generator `KELVIN_C`, netlist `KELVIN`, `pex_build.py`, `make_post.py` `RK`),
+checks `reports/layout-dev-c03/` (first run on the c2 file) and `reports/layout-20261026-c/` (record, same file), extraction `pex-20261026-c`, and the campaign below.
+
+### 1. vss map and the loop (layout b; step 1, done in the attempt of 2026-10-21, cited)
+
+Method: `layout/tools/vss_tools.py map` on the layout-b extraction and the DC node voltages of run `dev-c-b-vssop` (normal state, 0 mV, tt).
+Raw map: `<G1_RESULTS_ROOT>/r1_isense/t4c-work/b/vssmap_b.json`.
+
+| Device group (vss source / bulk ties) | R to the block vss pin | DC current | vss rise at the group's ports made by the output-stage current |
+| --- | --- | --- | --- |
+| output stage `XMOA/XMOB` (row 3) | 13.7 – 14.4 Ω | 364.6 µA | 4.41 mV |
+| bias mirrors `XMBN`, `XMB2/3/5`, `XMBNC`, `XMBF` (row 3) | 15.2 – 16.5 Ω | 52.8 µA | 3.44 mV |
+| level shifters (row 3) | 13.9 – 27.8 Ω | 0 (static) | 3.35 mV |
+| stage-1 sinks `XMS1/XMS2` (row 1) | 15.8 – 18.4 Ω | 91.6 µA | 1.21 mV |
+| CMFB sinks and fast-pair loads | 14.7 – 19.3 Ω | 45.2 µA | 1.15 mV |
+| slow-CMFB mirror `XMGD/XMGM` | 17.0 – 20.5 Ω | 0.8 µA | 1.36 mV |
+| RPA arm end (Kelvin `vss_k`) | 68.3 Ω | 0.5 µA | 0 |
+| total per channel | | 555.6 µA | |
+
+1. 13.5 Ω of each path is the two-cut Via1–Via3 stack that joins each NMOS row strip to the Metal4 trunk. Every source of the row shares it.
+2. The output-stage current (66 % of the vss current) shares the row-3 strip and stack with the bias mirrors.
+3. The loop: output current → shared row-3 vss segment → source voltage of the bias mirrors → stage-1 bias currents → `x1a/x1b` → output-stage gate → output current.
+4. Group test (`dev-c-b-stb-*`, tt): only "output-stage source ports tied to the pin" (`dev-c-b-stb-out`) removes every validity flag. Bias, CMFB, slow-CMFB, level shifter, RPA or sink ports tied to the pin leave the flags.
+5. Loop gain through vss with the main loop open, L = (1 + T1o)(1 + T2) / (1 + T1) − 1 (Blackman; T1 main loop, T1o the same with the output-stage returns ideal, T2 Tian probe in the output-stage source wires; `layout/tools/vss_loop_report.py`, first point 100 Hz).
+   Layout b, tt: DM +11.0 dB (0 mV), +3.9 dB (+100 mV), +24.5 dB (−20 mV); CM +42.3, +36.8, +37.8 dB. |L| > 0 dB: the vss loop dominates at DC. This is the right-half-plane pole of the stb flag.
+
+### 2. Fix by layout: star returns (candidate c1) and a Kelvin pedestal reference (c2, of record)
+
+Candidate c1 (generator of 2026-10-21, kept):
+
+1. Three returns per channel, joined only at a star. `vss` (quiet): p+ ties of every row, shield, hold caps, bias, stage 1, CMFB, on the west Metal4 trunk with 3 × 4 cut via arrays per row (`STACK_C`).
+   `vss_o`: the output-stage sources `XMOA/XMOB`, a drawn Metal2 strap to its own Metal4 column. `vss_sw`: the level-shifter NMOS sources, a Metal3 strap under that column.
+2. The level shifters moved next to the output stage in NMOS row 3. The slow-CMFB mirror sources (`XMGD/XMGM`) have one private tap.
+3. Channel A star: at the block `vss` pin. Channel B star: in the gap between the channels, then down the `vss_o` column to the pin (18.4 Ω, estimated by square count).
+4. The hold-net shield stays on the quiet return.
+
+Candidate c1 result: every stb validity flag passed, and the offset passed for channel A. Two runs failed the offset:
+channel B (+430.2 µV, `sim/results/isense-post-dc-chb-20261021-c/`) and channel A with the top-level trunk (+382.0 µV tt, `isense-post-dc-top-20261021-c/`).
+
+Cause (found 2026-10-26, run `sim/results/dev-c2-dc-top-vk/`): the pedestal arm. RPB is driven from `vref`. RPA returns to `vss` inside the channel (router net `vss_k`).
+If that point rises by ΔV against the ground of `vref`, the input-referred pedestal moves by ΔV / 26. Channel B: 18.4 Ω × 556 µA + 7.8 Ω × 190 µA ≈ 11.7 mV, so +451 µV (estimated; simulated +458 µV against channel A).
+With `Vref` referenced to the block `vss` node, the top-level case gives −24.7 µV (c1 without the trunk: −28.3 µV). The amplifier residual after the auto-zero does not change.
+
+Layout c (c2, of record): `vss_k` is a channel port (west edge pin, Metal3, channel y 4.0). The top cell routes it on its own Metal3 line to a landing at the `vss` pin stub (0.3 µm Metal3 bridge, the only junction).
+The line carries only the RPA current (0.5 µA). Resistance: 22.3 Ω inside the channel (extracted), plus 3.1 Ω (channel A) or 45.8 Ω (channel B) in the top cell (square count, `r1_isense_layout.json` `top.kelvin`). Error from the line: below 2 µV input-referred (estimated).
+LVS reference: `r1_isense_ch` has the ports `vss`, `vss_o`, `vss_sw`, `vss_k`. The top cell ties the four to its `vss` pin, so the flattened circuit is the netlist of record.
+
+### 3. vss map of layout c (`pex-20261026-c`, normal state, 0 mV, tt)
+
+Method: `layout/tools/vss_tools.py map … nets=<net>` with the node voltages of run `isense-post-vssop-20261026-c`. Raw maps: `<G1_RESULTS_ROOT>/r1_isense/t4c2-work/vssmap_c_*.json`.
+R is from the device port to the channel port; the block-level part (`make_post.py`, square count) is added after the arrow.
+
+| Return | Device groups | R to the channel port → + block wiring to the pin | DC current per channel | Mean rise at the ports |
+| --- | --- | --- | --- | --- |
+| `vss` (quiet) | bias 14.1–16.0 Ω, stage-1 sinks 12.7–16.6 Ω, CMFB 10.6–17.6 Ω, slow-CMFB mirror 36.8–161 Ω (private tap) | + 0.08 Ω (A); + 7.8 + 18.4 Ω (B) | 190.2 µA | 1.43–1.77 mV |
+| `vss_o` | output stage `XMOA/XMOB` 13.1–14.3 Ω | + 7.9 Ω (A); + 0 + 18.4 Ω (B) | 362.4 µA | 6.87 mV |
+| `vss_sw` | level shifters 50–100 Ω | + 11.0 Ω (A); + 2.25 + 18.4 Ω (B) | 0 (static) | 0 |
+| `vss_k` (Kelvin) | RPA arm end 22.3 Ω | + 3.1 Ω (A); + 45.8 Ω (B), joined at the pin, not the star | 0.5 µA (layout-b map) | < 0.1 mV |
+
+The output-stage current no longer flows in any segment that the bias, stage-1 or CMFB devices use. Only channel B's star feed (18.4 Ω) is common to its three returns.
+
+### 4. Loop gain through vss (layout c, `reports/layout-20261026-c/vss_loop_c.md`; layout b: `vss_loop_b.md`)
+
+| Corner | DM, 0 / +100 / −20 mV | CM, 0 / +100 / −20 mV | Limit |
+| --- | --- | --- | --- |
+| layout b, tt | +11.0 / +3.9 / +24.5 dB | +42.3 / +36.8 / +37.8 dB | — |
+| layout c, tt | −35.2 / −23.9 / −23.9 dB | −26.7 / −21.8 / **−20.7** dB | < −20 dB |
+| layout c, ss/125 °C | −37.5 / −42.5 / −33.5 dB | −26.6 / −35.6 / −36.4 dB | < −20 dB |
+| layout c, ff/−40 °C | −42.8 / −25.4 / −24.5 dB | −28.2 / −22.8 / −21.9 dB | < −20 dB |
+
+Passed at every point, with 0.7 dB margin at tt, −20 mV, CM. Runs `isense-post-vssloop-20261026-c` (actual) and `isense-post-vssloop-oideal-20261026-c` (output-stage returns ideal).
+The Tian probe in the output-stage return (`dm_vso`, `cm_vso`) is below 0 dB at every point (not applicable as a loop: no crossover).
+
+### Status (revision c)
+
+| Check | Result | Evidence |
+| --- | --- | --- |
+| DRC, PDK deck, main + maximal, deep, density off | **passed**, 0 | `reports/layout-20261026-c/drc.log`, `run.json` |
+| Density | **not run** (block level; top-level fill) | — |
+| Antenna | **passed**, 0 | `reports/layout-20261026-c/antenna.log` |
+| LVS against `layout/r1_isense_lvs.cdl` | **passed**: `r1_isense_ch` 146/146 nets, 177/177 devices; `r1_isense` 19/19 | `reports/layout-20261026-c/lvs_summary.txt` |
+| Pin check, box 158.4 × 296.8 µm, 19 Metal3 pins, same sides | **passed** | `reports/layout-20261026-c/pin_check.txt` |
+| PEX (kpex 2.5D CC + R + MIM) | **passed** (no open or negative element) | `<G1_RESULTS_ROOT>/r1_isense/pex-20261026-c/run.json` |
+| Clock → hold coupling difference ≤ 0.2 fF | **passed**: worst 0.051 fF (`azh` → `h1/h2`); sum 0.059 fF (b 0.258) | `reports/layout-20261026-c/coupling_bc.md` |
+| Loop gain through vss < −20 dB, tt / ss / ff, 3 levels | **passed**, worst −20.7 dB | section 4 |
+| Validity flags, normal state, tt / ffx / ss / ff | **passed** (all loop results valid; `cmfb` informational) | `sim/results/isense-post-stb-20261026-c2/`, `isense-post-stb-ssff-20261026-c/` |
+| Validity flags, AZ closed, tt / ffx / ss / ff | **passed** | `isense-post-stbaz-20261026-c2/`, `isense-post-stbaz-ssff-20261026-c/` |
+| Validity flags, az = 1, azh = 0, tt / ffx / ss / ff | **passed** | `isense-post-stbazi-20261026-c2/`, `isense-post-stbazi-ssff-20261026-c/` |
+| Margins, normal state (PM / GM, worst) | **passed**: `dm_out` 67.5° / 17.1 dB (ff), `cm_out` 62.2° (ff), `dm_in` 67.1° / 16.1 dB | same |
+| Margins, AZ closed / intermediate (worst) | **passed**: `dm_aux` 77.4° / 38.9 dB, `cm_out` 69.8° (ff) / 67.0° (ff) | same |
+| Residual offset after AZ, channel A, tt / ss / ff | **passed**: −29.7 / −27.1 / −32.8 µV (≤ 100; b +28.7 / +25.8 / +35.2) | `isense-post-dc-20261026-c2/`, `isense-post-dc-ssff-20261026-c2/` |
+| Residual offset, channel B star configuration, tt / ss / ff | **passed**: −29.3 / −26.9 / −32.3 µV (candidate c1: +430.2 µV tt, failed) | `isense-post-dc-chb-20261026-c/` |
+| Channel B loops, three states, tt | **passed** | `isense-post-stb-chb-`, `stbaz-chb-`, `stbazi-chb-20261026-c/` |
+| Residual offset, `ibias` 3.5 / 5.07 / 7.7 µA × tt / ss / ff | **passed**: −26.6 … −33.9 µV | `isense-post-dc-ib{3.5u,5.07u,7.7u}-20261026-c2/` |
+| Gain (12 points) | 14.025 … 14.045 (report) | same |
+| Output CM (12 points) | **passed**: 0.6008 … 0.6014 V (0.60 ± 0.03) | same |
+| Pedestal error | +485 … +678 µV (report, calibrated term); split at tt: devices + C −64.8 µV, devices + R +591.8 µV | same, `isense-post-dc_c-`, `dc_r-20261026-c2/` |
+| CM rejection, Kelvin CM −0.1 → +0.1 V, tt | −0.4 → −58.9 µV input-referred: 58.5 µV per 0.2 V (≈ 71 dB) (report; b 69.4 µV) | `isense-post-dc-cmm100-`, `-cmp100-20261026-c2/` |
+| Shunt step 0 → 100 mV, 10 ns edge, tt / ss | **passed**: 98.0 / 284.0 ns to 0.5 % (≤ 300), no overshoot | `isense-post-stbstep-20261026-c2/` |
+| Shunt step 0 → 10 mV, tt / ss (stability evidence) | **passed**: 64.8 / 137.2 ns; one overshoot of 0.15 % at tt, none at ss | `isense-post-stbstep10-20261026-c/` |
+| CM step `vcm` 0.60 → 0.62 V, tt / ss (stability evidence) | **passed**: one overshoot 6.3 % (tt), 0.3 % (ss); 2 % settling 220 / 229 ns | `isense-post-stbcm-20261026-c/` |
+| Input-gate cross-check (`dm_in` Tian vs voltage-only ratio) | run, raw data kept; ratio comparison **not run** (no analyzer); `dm_in` in the stb suite is valid | `<G1_RESULTS_ROOT>/r1_isense/isense-post-stbdiag-20261026-c2/` |
+| Top level: 9.4 Ω common vss impedance + other channel 556 µA, loops tt / ffx, three states (tt) | **passed**, flags valid; also with 1.0 Ω | `isense-post-vssloop-top-`, `stbaz-top-`, `stbazi-top-`, `vssloop-top1-20261026-c/` |
+| Top level: amplifier residual after AZ (vref referenced to the block pin), tt / ss / ff | **passed**: −26.1 / −23.6 / −29.0 µV | `isense-post-dc-topvk-20261026-c/` |
+| Top level: pedestal with vref referenced to the core-ring ground | **changes**: −407.6 µV at tt (581.4 → 173.9 µV error) = −9.4 Ω × 1.11 mA / 26; the pedestal-off figure of that deck reads +380.6 µV for the same reason | `isense-post-dc-top-20261026-c/`; open issue 1 |
+| Offset with the `r1_bias` netlist, MC on the extraction, sf / fs / ssx, EM / IR at top level | **not run** | — |
+
+Runs with suffix `20261026-c` of the `run_post.sh` set (`dc`, `dc_c`, `dc_r`, `dc-cmm100`, `dc-cmp100`, `dc-ssff`, `dc-ib*`, `stb`, `stbaz`, `stbazi`, `stbdiag`, `stbstep`) used the c1 extraction by mistake.
+They carry `WRONG_INPUT.txt` and are not evidence for layout c. Their reruns on `pex-20261026-c` have the suffix `20261026-c2` (failure 2).
+
+### Chip-level context (step 4)
+
+1. Trunk estimate (from the attempt of 2026-10-21, try-e assembly, square count): Metal4 trunk 242 × 3 µm to the core ring 7.1 Ω, jog 0.6 Ω, 6 pin Via3 1.5 Ω, ring stack 0.2 Ω: 9.4 Ω. Not extracted.
+2. The decks add it as `Rcom` between the block `vss` pin and the deck ground, with the other channel's 556 µA (`layout/tools/vss_tools.py variant … rcom=9.4 ib=556u`).
+3. Loops and the amplifier residual do not change. The pedestal changes, because `vref` (from the bandgap, on the core-ring ground) and the RPA Kelvin end (on the block pin) then differ by 10.5 mV.
+
+### Open issues (revision c)
+
+1. **Pedestal reference at the top level.** The ground of `vref` and the `r1_isense` `vss` pin must differ by ≤ 2.6 mV for ≤ 100 µV of pedestal shift: common impedance ≤ 2.3 Ω at 1.11 mA, or a Kelvin `vss` route from the bandgap ground. Otherwise the shift is a static term for the pedestal calibration; its drift with the supply current is not known. Owner: `r1_top`. Recommended: route the `r1_isense` `vss` trunk to the same ring point as the `r1_bias`/`r1_bgr` ground; record in `INTERFACES.md`.
+2. The vss-loop margin is 0.7 dB at tt, −20 mV, CM (−20.7 dB). The estimate comes from a 0.8 dB difference of two main-loop gains (Blackman, T1 vs T1o); it is sensitive to the assumption T1|vss open ≈ T1o.
+3. The block-level star wiring (`Rstar_*`, `Rkelvin`) is estimated by square count, not extracted. The top cell is not in the channel extraction.
+4. The driven pairs keep clock-coupling differences above 0.2 fF (layout-b open issue 2); not changed.
+5. Open issues 3–6 of revision b (pedestal error value, `r1_bias` netlist, kpex run time, area 0.047 mm²) still apply.
+
+### Failures and mistakes (revision c)
+
+| # | What happened | Class | Evidence |
+| --- | --- | --- | --- |
+| 1 | The attempt of 2026-10-21 was stopped by an API limit after its campaign and before the README. Its results were not interpreted; the channel-B and top-level offset failures were left without a cause. | process-hygiene | `sim/results/*-20261021-c/` |
+| 2 | Campaign script `campaign_c2.sh` was derived from the c1 script. The `run_post.sh` call kept the c1 extraction id, so 14 runs with suffix `20261026-c` used `pex-20261021-c`. Found by a netlist-hash check; rerun as `20261026-c2`. | process-hygiene | `WRONG_INPUT.txt` in those runs |
+| 3 | Candidate c1 put the RPA Kelvin end on channel B's local star. The star design treated the pedestal reference as a quiet-return node, not as a reference that must equal the ground of `vref`. | functional-bug | `isense-post-dc-chb-20261021-c/` (+430.2 µV) |
+| 4 | The pedestal-off offset in a deck with a lifted block `vss` mixes the pedestal reference shift into the "residual offset" (`Vref = 0` at the deck ground). Reading it as an AZ residual would be wrong; `dc-topvk` separates the two. | verification-gap | `isense-post-dc-top-`, `dc-topvk-20261026-c/` |
+| 5 | Candidate c1 DRC (`layout-dev-c01`): 20 V2.b / V3.b markers, router vias between drawn via arrays. Fixed in the generator before c1 (router keep-out at the stacks). | functional-bug | `reports/layout-dev-c01/` |
+| 6 | The vss map gives 0 µA for `vss_k` and `vss_sw` because the op deck prints no RPA current at 0 mV; the 0.5 µA value is from the layout-b map. | tooling | `<G1_RESULTS_ROOT>/r1_isense/t4c2-work/vssmap_c_vss_k.json` |
+| 7 | `cpuset` is null in the check and PEX `run.json` (as in a and b); the CPU set was 109–111. | tooling | `reports/layout-20261026-c/run.json` |
+
+### Built against (revision c)
+
+IHP-Open-PDK `84374023ee8b4b126bebbba67fcbada0a9c0ff0b`, KLayout 0.30.9, kpex 0.3.12, ngspice-46, container `tapeoutbench-eda` `sha256:ddeb6957…`
+(checked by `flow/run.sh`, written in each `run.json`), CPU set 109–111. Layout `192dd37aa592…`, generator `dbfe20be6f7b…`, LVS reference `3021793df19e…`.
+
+### Reproduce (revision c)
+
+From the repository root, POSIX sh, with `G1_CPUSET=109-111; export G1_CPUSET` and `G1_RESULTS_ROOT` set and exported:
+
+1. `G1_WORKDIR=designs/r1-joint/blocks/r1_isense/layout; export G1_WORKDIR; flow/run.sh klayout -b -r r1_isense_layout.py`
+2. `flow/run.sh sh run_checks.sh layout-20261026-c all`
+3. `unset G1_WORKDIR; sh designs/r1-joint/blocks/r1_isense/layout/pex/run_pex.sh pex-20261026-c`
+4. `sh designs/r1-joint/blocks/r1_isense/layout/pex/run_post.sh pex-20261026-c 20261026-c2`
+5. `sh <G1_RESULTS_ROOT>/r1_isense/t4c2-work/campaign_c2.sh` (ss/ff loops, vss loop, step and CM step, channel B, top level; its `run_post.sh` line must name `pex-20261026-c`)
+6. `python3 designs/r1-joint/blocks/r1_isense/layout/tools/vss_loop_report.py <raw vssloop> <raw vssloop-oideal> tt,ss,ff`
+
+
+---
+
+## Layout (revision b, 2026-10-21, track T4) — superseded by revision c
 
 Layout of record: `layout/r1_isense.gds` (sha256 `221ad69af11d…`). Box, pins and pin sides are unchanged: 158.4 × 296.8 µm,
 19 Metal3 pins, inputs east, outputs west. Layout a is kept as `layout/r1_isense_layout_a.gds` (sha256 `054373fc7286…`).

@@ -1,0 +1,60 @@
+{
+ "block": "r1_isense",
+ "command": "python3 designs/r1-joint/blocks/r1_isense/sim/run_deck.py --block r1_isense --deck <G1_RESULTS_ROOT>/r1_isense/pex-20261021-c/decks_c/tb_isense_dc.cir --netlist <G1_RESULTS_ROOT>/r1_isense/pex-20261021-c/rc/r1_isense_post_c.spice --run-id isense-post-dc_c-20261026-c --corners tt --set VCMIN=0 --analyze analyze_dc.py --question \"Post-layout split (_c: _c devices + C, _r devices + wiring R): gain, pedestal, offset, output CM at tt\"",
+ "container_image": "tapeoutbench-eda:latest sha256:ddeb6957... (checked by flow/run.sh)",
+ "corners": {
+  "tt": {
+   "cap": "cap_typ",
+   "mos": "mos_tt",
+   "res": "res_typ",
+   "temp_C": 27,
+   "vdd": 1.2,
+   "vdda": 3.3
+  }
+ },
+ "cpuset": "109-111",
+ "date_utc": "2026-10-26T14:52:55.562347Z",
+ "deck": "<G1_RESULTS_ROOT>/r1_isense/pex-20261021-c/decks_c/tb_isense_dc.cir",
+ "deck_sha256": "15b513a0ec694034b30f2dea00894366f88b206244c2af65cead44e3dba36000",
+ "disposition": "offset <= 100 uV: tt passed",
+ "included_netlists": {},
+ "included_netlists_results_root": {
+  "<G1_RESULTS_ROOT>/r1_isense/pex-20261021-c/rc/r1_isense_post_c.spice": "53b96989018a8bfac1ece960246a1a5903dfd3bcc2d5e0340a6314e1eaef599c"
+ },
+ "jobs": {
+  "tt": {
+   "log": "r1_isense/isense-post-dc_c-20261026-c/tb_isense_dc_tt.log",
+   "rc": 0,
+   "wall_s": 652.6
+  }
+ },
+ "netlist": "<G1_RESULTS_ROOT>/r1_isense/pex-20261021-c/rc/r1_isense_post_c.spice",
+ "netlist_sha256": "53b96989018a8bfac1ece960246a1a5903dfd3bcc2d5e0340a6314e1eaef599c",
+ "ngspice_version": "** ngspice-46 : Circuit level simulation program ** Copyright 2001-2025, The ngspice team. ** Please get your ngspice manual from https://ngspice.sourceforge.io/docs.html ** Please file your bug-reports at http://ngspice.sourceforge.net/bugrep.html",
+ "overrides": {
+  "VCMIN": "0"
+ },
+ "pdk_commit": "84374023ee8b4b126bebbba67fcbada0a9c0ff0b (checked by flow/run.sh)",
+ "prerun": {},
+ "question": "Post-layout split (_c: _c devices + C, _r devices + wiring R): gain, pedestal, offset, output CM at tt",
+ "raw_results": "$G1_RESULTS_ROOT/r1_isense/isense-post-dc_c-20261026-c/",
+ "result": {
+  "tt": {
+   "gain": 14.0081,
+   "gain_error_pct": 0.0581,
+   "inl_max_pct_fs": 0.0026,
+   "offset_pedestal_off_uV": 13.1438,
+   "pedestal_error_uV": -65.3684,
+   "pedestal_mV": 40.3192,
+   "vcm_out_V": 0.601,
+   "vod_range_V": [
+    -0.844916791,
+    0.8359810330000002
+   ]
+  }
+ },
+ "run_id": "isense-post-dc_c-20261026-c",
+ "tool": "ngspice-46 (container banner from flow/run.sh ngspice -v; batch logs carry no banner)",
+ "wall_s": 657.3,
+ "workdir": "designs/r1-joint/blocks/r1_isense/sim"
+}

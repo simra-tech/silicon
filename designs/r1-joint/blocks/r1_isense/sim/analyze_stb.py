@@ -9,7 +9,8 @@ PM_MIN, GM_MIN = 60.0, 10.0
 azi = bool(glob.glob(os.path.join(rdir, "tb_isense_stbazi_*.cir")))   # intermediate state az = 1, azh = 0 (revision 2)
 az = azi or bool(glob.glob(os.path.join(rdir, "tb_isense_stbaz_*.cir")))
 STATE = "az1_azh0" if azi else ("az_closed" if az else "normal")
-LOOPS = {1: "dm_out", 2: "cm_out", 3: "cmfb", 4: "dm_in", 5: "cm_in", 6: "dm_aux", 7: "cm_aux"}
+LOOPS = {1: "dm_out", 2: "cm_out", 3: "cmfb", 4: "dm_in", 5: "cm_in", 6: "dm_aux", 7: "cm_aux",
+         8: "dm_vso", 9: "cm_vso"}   # 8/9: Tian probe in the output-stage vss return (layout c, layout/tools/vss_tools.py)
 INFO = {"cmfb"}                                  # informational: not a valid Nyquist break (other loops closed)
 LEVELS = [0.0] if az else [0.0, 0.1, -0.02]       # order of the foreach in the deck
 def margins(p):

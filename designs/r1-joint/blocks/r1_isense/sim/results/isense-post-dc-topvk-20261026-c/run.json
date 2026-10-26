@@ -1,0 +1,112 @@
+{
+ "block": "r1_isense",
+ "command": "python3 designs/r1-joint/blocks/r1_isense/sim/run_deck.py --block r1_isense --deck <G1_RESULTS_ROOT>/r1_isense/t4c2-work/c2/dc_top_vk.cir --netlist <G1_RESULTS_ROOT>/r1_isense/t4c2-work/c2/post_top.spice --run-id isense-post-dc-topvk-20261026-c --corners tt,ss,ff --jobs 1 --set VCMIN=0 --analyze analyze_dc.py --question \"Layout c + top-level vss common impedance (9.4 ohm, other channel 556 uA), Vref referenced to the block vss pin: residual offset of the amplifier after AZ (separates it from the pedestal reference shift of isense-post-dc-top), tt/ss/ff\"",
+ "container_image": "tapeoutbench-eda:latest sha256:ddeb6957... (checked by flow/run.sh)",
+ "corners": {
+  "ff": {
+   "cap": "cap_bcs",
+   "mos": "mos_ff",
+   "res": "res_bcs",
+   "temp_C": -40,
+   "vdd": 1.32,
+   "vdda": 3.6
+  },
+  "ss": {
+   "cap": "cap_wcs",
+   "mos": "mos_ss",
+   "res": "res_wcs",
+   "temp_C": 125,
+   "vdd": 1.08,
+   "vdda": 3.0
+  },
+  "tt": {
+   "cap": "cap_typ",
+   "mos": "mos_tt",
+   "res": "res_typ",
+   "temp_C": 27,
+   "vdd": 1.2,
+   "vdda": 3.3
+  }
+ },
+ "cpuset": "109-111",
+ "date_utc": "2026-10-26T15:37:00.210460Z",
+ "deck": "<G1_RESULTS_ROOT>/r1_isense/t4c2-work/c2/dc_top_vk.cir",
+ "deck_sha256": "5fb6184008332f731069f20fc661fd8e668e04286f2e59f7d569a57a67cadde4",
+ "disposition": "offset <= 100 uV: ff passed, ss passed, tt passed",
+ "included_netlists": {},
+ "included_netlists_results_root": {
+  "<G1_RESULTS_ROOT>/r1_isense/t4c2-work/c2/post_top.spice": "1989529ba5df464802534b66a3b291db23c14ea03cef5e1c2a1135b33a44c2f1"
+ },
+ "jobs": {
+  "ff": {
+   "log": "r1_isense/isense-post-dc-topvk-20261026-c/dc_top_vk_ff.log",
+   "rc": 0,
+   "wall_s": 62.1
+  },
+  "ss": {
+   "log": "r1_isense/isense-post-dc-topvk-20261026-c/dc_top_vk_ss.log",
+   "rc": 0,
+   "wall_s": 56.1
+  },
+  "tt": {
+   "log": "r1_isense/isense-post-dc-topvk-20261026-c/dc_top_vk_tt.log",
+   "rc": 0,
+   "wall_s": 50.0
+  }
+ },
+ "netlist": "<G1_RESULTS_ROOT>/r1_isense/t4c2-work/c2/post_top.spice",
+ "netlist_sha256": "1989529ba5df464802534b66a3b291db23c14ea03cef5e1c2a1135b33a44c2f1",
+ "ngspice_version": "** ngspice-46 : Circuit level simulation program ** Copyright 2001-2025, The ngspice team. ** Please get your ngspice manual from https://ngspice.sourceforge.io/docs.html ** Please file your bug-reports at http://ngspice.sourceforge.net/bugrep.html",
+ "overrides": {
+  "VCMIN": "0"
+ },
+ "pdk_commit": "84374023ee8b4b126bebbba67fcbada0a9c0ff0b (checked by flow/run.sh)",
+ "prerun": {},
+ "question": "Layout c + top-level vss common impedance (9.4 ohm, other channel 556 uA), Vref referenced to the block vss pin: residual offset of the amplifier after AZ (separates it from the pedestal reference shift of isense-post-dc-top), tt/ss/ff",
+ "raw_results": "$G1_RESULTS_ROOT/r1_isense/isense-post-dc-topvk-20261026-c/",
+ "result": {
+  "ff": {
+   "gain": 14.045,
+   "gain_error_pct": 0.3214,
+   "inl_max_pct_fs": 0.0016,
+   "offset_pedestal_off_uV": -28.9868,
+   "pedestal_error_uV": 673.1435,
+   "pedestal_mV": 41.0578,
+   "vcm_out_V": 0.6009,
+   "vod_range_V": [
+    -0.857528441,
+    0.827827274
+   ]
+  },
+  "ss": {
+   "gain": 14.0313,
+   "gain_error_pct": 0.2239,
+   "inl_max_pct_fs": 0.0459,
+   "offset_pedestal_off_uV": -23.6404,
+   "pedestal_error_uV": 482.5228,
+   "pedestal_mV": 40.8671,
+   "vcm_out_V": 0.6013,
+   "vod_range_V": [
+    -0.8532750800000001,
+    0.829457215
+   ]
+  },
+  "tt": {
+   "gain": 14.0428,
+   "gain_error_pct": 0.3057,
+   "inl_max_pct_fs": 0.0043,
+   "offset_pedestal_off_uV": -26.0711,
+   "pedestal_error_uV": 577.9395,
+   "pedestal_mV": 40.9626,
+   "vcm_out_V": 0.6011,
+   "vod_range_V": [
+    -0.856012758,
+    0.829009638
+   ]
+  }
+ },
+ "run_id": "isense-post-dc-topvk-20261026-c",
+ "tool": "ngspice-46 (container banner from flow/run.sh ngspice -v; batch logs carry no banner)",
+ "wall_s": 173.6,
+ "workdir": "designs/r1-joint/blocks/r1_isense/sim"
+}

@@ -73,11 +73,30 @@ ly = pya.Layout()
 ly.read(GDS)
 tc = ly.top_cell()
 PINPT = {}   # net -> (conductor index, point): channel edge pins on Metal3, supply trunk labels on Metal4
+SUPPLY_LAYER = {'vdda': 4, 'vdd': 4, 'vss': 4, 'vss_o': 4, 'vss_sw': 3}
+CAND = {}
 for lay, k in ((30, 3), (50, 4)):
     for s in tc.shapes(ly.layer(lay, 25)).each():
-        if s.is_text() and s.text_string in ('isp', 'isn', 'outp', 'outn', 'vref', 'vcm', 'ibias', 'az_lv', 'azh_lv', 'vdda', 'vdd', 'vss'):
-            PINPT.setdefault(s.text_string, (k, s.text.trans.disp))
-PIN_ORDER = ['isp', 'isn', 'outp', 'outn', 'vref', 'vcm', 'ibias', 'az_lv', 'azh_lv', 'vdda', 'vdd', 'vss']
+        if s.is_text() and s.text_string in ('isp', 'isn', 'outp', 'outn', 'vref', 'vcm', 'ibias', 'az_lv', 'azh_lv', 'vdda', 'vdd', 'vss', 'vss_o', 'vss_sw', 'vss_k'):
+            CAND.setdefault(s.text_string, []).append((k, s.text.trans.disp))
+for nm, lst in CAND.items():
+    if nm in SUPPLY_LAYER:
+        # layout c: supply ports at the drawn trunk / strap label (fixed layer); of those, the southmost (the port
+        # where the current leaves the channel). Layout b took the first Metal3 text of the name, which for vss
+        # could be a router label.
+        lst2 = [c for c in lst if c[0] == SUPPLY_LAYER[nm]] or lst
+        if nm in ('vss', 'vss_o', 'vss_sw'):
+            PINPT[nm] = sorted(lst2, key=lambda c: (c[1].y, c[1].x))[0]
+        else:       # vdda: westmost Metal4 label (west trunk), vdd: eastmost (east trunk)
+            PINPT[nm] = sorted(lst2, key=lambda c: c[1].x * (1 if nm == 'vdda' else -1))[0]
+    elif nm == 'vss_k':
+        # layout c (Kelvin): the west edge pin (westmost Metal3 text), not a router label along the line
+        PINPT[nm] = sorted(lst, key=lambda c: (c[1].x, c[1].y))[0]
+    else:
+        PINPT[nm] = lst[0]
+P('pin points', {k: (v[0], v[1].x * 0.001, v[1].y * 0.001) for k, v in PINPT.items()})
+PIN_ORDER = ['isp', 'isn', 'outp', 'outn', 'vref', 'vcm', 'ibias', 'az_lv', 'azh_lv', 'vdda', 'vdd', 'vss'] + \
+    [n for n in ('vss_o', 'vss_sw', 'vss_k') if n in CAND]
 # MIM devices (removed for kpex, no MIM model): taken from the netlist with their net names (layout labels)
 import sys as _s
 _s.path.insert(0, os.path.join(os.path.dirname(GDS), '.'))

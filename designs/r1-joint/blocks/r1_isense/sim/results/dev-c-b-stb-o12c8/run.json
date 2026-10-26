@@ -1,0 +1,218 @@
+{
+ "block": "r1_isense",
+ "command": "python3 designs/r1-joint/blocks/r1_isense/sim/run_deck.py --block r1_isense --deck <G1_RESULTS_ROOT>/r1_isense/t4c-work/b/stb_o12c8.cir --pre <G1_RESULTS_ROOT>/r1_isense/t4c-work/b/pre_o12c8.cir --netlist <G1_RESULTS_ROOT>/r1_isense/t4c-work/b/post_o12c8.spice --run-id dev-c-b-stb-o12c8 --corners tt --jobs 1 --set RL=0.001 --set CL=2p --set CW=0 --analyze analyze_stb.py --question \"Layout b extraction, model check of the layout-c topology: as o12 plus 8 ohm common impedance between the channel vss pin and the deck ground (top-level trunk estimate)\"",
+ "container_image": "tapeoutbench-eda:latest sha256:ddeb6957... (checked by flow/run.sh)",
+ "corners": {
+  "tt": {
+   "cap": "cap_typ",
+   "mos": "mos_tt",
+   "res": "res_typ",
+   "temp_C": 27,
+   "vdd": 1.2,
+   "vdda": 3.3
+  }
+ },
+ "cpuset": "109-111",
+ "date_utc": "2026-10-21T10:57:06.313973Z",
+ "deck": "<G1_RESULTS_ROOT>/r1_isense/t4c-work/b/stb_o12c8.cir",
+ "deck_sha256": "3e26ea0f0ab72a11684b3d8ca84f4cc164a4839c27427ab46364c4667432ca20",
+ "disposition": "failed: state normal, 1 corners; 1 loop results passed, 1 failed, 1 not applicable; criterion PM >= 60 deg, GM >= 10 dB",
+ "included_netlists": {
+  "/work/designs/r1-joint/blocks/r1_safe/schematic/r1_safe.spice": "812f886dce2b759af121230bd2e9100aeac59041effdf9a3341647c29299cbde"
+ },
+ "included_netlists_results_root": {
+  "<G1_RESULTS_ROOT>/r1_isense/t4c-work/b/post_o12c8.spice": "324eee7912738f45748a6f09562add9425f7260f0ae540721aa9bff5818d1841"
+ },
+ "jobs": {
+  "tt": {
+   "log": "r1_isense/dev-c-b-stb-o12c8/stb_o12c8_tt.log",
+   "rc": 0,
+   "wall_s": 94.1
+  }
+ },
+ "netlist": "<G1_RESULTS_ROOT>/r1_isense/t4c-work/b/post_o12c8.spice",
+ "netlist_sha256": "324eee7912738f45748a6f09562add9425f7260f0ae540721aa9bff5818d1841",
+ "ngspice_version": "** ngspice-46 : Circuit level simulation program ** Copyright 2001-2025, The ngspice team. ** Please get your ngspice manual from https://ngspice.sourceforge.io/docs.html ** Please file your bug-reports at http://ngspice.sourceforge.net/bugrep.html",
+ "overrides": {
+  "CL": "2p",
+  "CW": "0",
+  "RL": "0.001"
+ },
+ "pdk_commit": "84374023ee8b4b126bebbba67fcbada0a9c0ff0b (checked by flow/run.sh)",
+ "prerun": {
+  "tt": {
+   "deck": "<G1_RESULTS_ROOT>/r1_isense/t4c-work/b/pre_o12c8.cir",
+   "holdvals": {
+    "VH1": "0.93681",
+    "VH2": "0.940688",
+    "VON": "0.882335",
+    "VOP": "0.309947"
+   },
+   "rc": 0
+  }
+ },
+ "question": "Layout b extraction, model check of the layout-c topology: as o12 plus 8 ohm common impedance between the channel vss pin and the deck ground (top-level trunk estimate)",
+ "raw_results": "$G1_RESULTS_ROOT/r1_isense/dev-c-b-stb-o12c8/",
+ "result": {
+  "margins": {
+   "tt": {
+    "cm_out": {
+     "vsh_+0.000": {
+      "f_180_Hz": null,
+      "f_unity_Hz": 3010946.8432489606,
+      "gm_db": null,
+      "ph_min_deg": -155.9,
+      "phase_dc_deg": -45.8,
+      "pm_deg": 68.08,
+      "pm_valid": true,
+      "status": "passed",
+      "t_dc_db": 113.74,
+      "t_max_db": 113.74
+     },
+     "vsh_+0.100": {
+      "f_180_Hz": null,
+      "f_unity_Hz": 2146670.985106567,
+      "gm_db": null,
+      "ph_min_deg": -149.3,
+      "phase_dc_deg": -35.4,
+      "pm_deg": 74.88,
+      "pm_valid": true,
+      "status": "passed",
+      "t_dc_db": 99.51,
+      "t_max_db": 99.51
+     },
+     "vsh_-0.020": {
+      "f_180_Hz": null,
+      "f_unity_Hz": 2012464.979990619,
+      "gm_db": null,
+      "ph_min_deg": -150.6,
+      "phase_dc_deg": -23.3,
+      "pm_deg": 76.44,
+      "pm_valid": true,
+      "status": "passed",
+      "t_dc_db": 98.37,
+      "t_max_db": 98.37
+     }
+    },
+    "cm_vso": {
+     "vsh_+0.000": {
+      "f_180_Hz": null,
+      "f_unity_Hz": null,
+      "gm_db": null,
+      "ph_min_deg": -161.9,
+      "phase_dc_deg": -0.0,
+      "pm_deg": null,
+      "pm_valid": true,
+      "status": "not applicable (loop gain below 0 dB at all frequencies)",
+      "t_dc_db": -71.2,
+      "t_max_db": -38.71
+     },
+     "vsh_+0.100": {
+      "f_180_Hz": null,
+      "f_unity_Hz": null,
+      "gm_db": null,
+      "ph_min_deg": -160.3,
+      "phase_dc_deg": -0.0,
+      "pm_deg": null,
+      "pm_valid": true,
+      "status": "not applicable (loop gain below 0 dB at all frequencies)",
+      "t_dc_db": -62.68,
+      "t_max_db": -39.43
+     },
+     "vsh_-0.020": {
+      "f_180_Hz": null,
+      "f_unity_Hz": null,
+      "gm_db": null,
+      "ph_min_deg": -180.0,
+      "phase_dc_deg": -180.0,
+      "pm_deg": null,
+      "pm_valid": false,
+      "status": "not applicable (loop gain below 0 dB at all frequencies)",
+      "t_dc_db": -82.78,
+      "t_max_db": -39.58
+     }
+    },
+    "dm_out": {
+     "vsh_+0.000": {
+      "f_180_Hz": 41229805.91044655,
+      "f_unity_Hz": 7017199.785291134,
+      "gm_db": 20.38,
+      "ph_min_deg": -509.1,
+      "phase_dc_deg": -4.7,
+      "pm_deg": 72.49,
+      "pm_valid": true,
+      "status": "passed",
+      "t_dc_db": 75.53,
+      "t_max_db": 75.53
+     },
+     "vsh_+0.100": {
+      "f_180_Hz": 45078644.880619854,
+      "f_unity_Hz": 5047862.306989108,
+      "gm_db": 24.21,
+      "ph_min_deg": -517.2,
+      "phase_dc_deg": -0.5,
+      "pm_deg": 80.3,
+      "pm_valid": true,
+      "status": "passed",
+      "t_dc_db": 51.32,
+      "t_max_db": 51.33
+     },
+     "vsh_-0.020": {
+      "f_180_Hz": 43809222.292406105,
+      "f_unity_Hz": 4733201.895048585,
+      "gm_db": 23.83,
+      "ph_min_deg": -529.7,
+      "phase_dc_deg": -175.8,
+      "pm_deg": 80.73,
+      "pm_valid": false,
+      "status": "failed (right-half-plane / invalid)",
+      "t_dc_db": 70.88,
+      "t_max_db": 70.9
+     }
+    }
+   }
+  },
+  "per_loop": {
+   "tt": {
+    "cm_out": {
+     "f_unity_Hz": [
+      3010946.8432489606,
+      2146670.985106567,
+      2012464.979990619
+     ],
+     "max_t_db": 113.74,
+     "status": "passed",
+     "worst_gm_db": null,
+     "worst_pm_deg": 68.08
+    },
+    "cm_vso": {
+     "f_unity_Hz": [
+      null,
+      null,
+      null
+     ],
+     "max_t_db": -38.71,
+     "status": "not applicable",
+     "worst_gm_db": null,
+     "worst_pm_deg": null
+    },
+    "dm_out": {
+     "f_unity_Hz": [
+      7017199.785291134,
+      5047862.306989108,
+      4733201.895048585
+     ],
+     "max_t_db": 75.53,
+     "status": "failed",
+     "worst_gm_db": 20.38,
+     "worst_pm_deg": 72.49
+    }
+   }
+  },
+  "state": "normal"
+ },
+ "run_id": "dev-c-b-stb-o12c8",
+ "tool": "ngspice-46 (container banner from flow/run.sh ngspice -v; batch logs carry no banner)",
+ "wall_s": 99.4,
+ "workdir": "designs/r1-joint/blocks/r1_isense/sim"
+}

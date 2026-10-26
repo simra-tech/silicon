@@ -1,0 +1,112 @@
+{
+ "block": "r1_isense",
+ "command": "python3 designs/r1-joint/blocks/r1_isense/sim/run_deck.py --block r1_isense --deck <G1_RESULTS_ROOT>/r1_isense/t4c-work/c/dc_top.cir --netlist <G1_RESULTS_ROOT>/r1_isense/t4c-work/c/post_top.spice --run-id isense-post-dc-top-20261021-c --corners tt,ss,ff --jobs 1 --set VCMIN=0 --analyze analyze_dc.py --question \"Layout c + top-level vss common impedance (9.4 ohm, other channel 556 uA): residual offset, gain, output CM, tt/ss/ff\"",
+ "container_image": "tapeoutbench-eda:latest sha256:ddeb6957... (checked by flow/run.sh)",
+ "corners": {
+  "ff": {
+   "cap": "cap_bcs",
+   "mos": "mos_ff",
+   "res": "res_bcs",
+   "temp_C": -40,
+   "vdd": 1.32,
+   "vdda": 3.6
+  },
+  "ss": {
+   "cap": "cap_wcs",
+   "mos": "mos_ss",
+   "res": "res_wcs",
+   "temp_C": 125,
+   "vdd": 1.08,
+   "vdda": 3.0
+  },
+  "tt": {
+   "cap": "cap_typ",
+   "mos": "mos_tt",
+   "res": "res_typ",
+   "temp_C": 27,
+   "vdd": 1.2,
+   "vdda": 3.3
+  }
+ },
+ "cpuset": "109-111",
+ "date_utc": "2026-10-21T12:15:29.131573Z",
+ "deck": "<G1_RESULTS_ROOT>/r1_isense/t4c-work/c/dc_top.cir",
+ "deck_sha256": "aeb9db6dca365a4e9f37e166280117615f8efe76514d0cd9e6391b1b1d8425aa",
+ "disposition": "offset <= 100 uV: ff failed, ss failed, tt failed",
+ "included_netlists": {},
+ "included_netlists_results_root": {
+  "<G1_RESULTS_ROOT>/r1_isense/t4c-work/c/post_top.spice": "3f39fc5e9567c5e65860526da1b8db0198791d5f0aa58d40d28fae12f0ddf8b4"
+ },
+ "jobs": {
+  "ff": {
+   "log": "r1_isense/isense-post-dc-top-20261021-c/dc_top_ff.log",
+   "rc": 0,
+   "wall_s": 70.1
+  },
+  "ss": {
+   "log": "r1_isense/isense-post-dc-top-20261021-c/dc_top_ss.log",
+   "rc": 0,
+   "wall_s": 84.1
+  },
+  "tt": {
+   "log": "r1_isense/isense-post-dc-top-20261021-c/dc_top_tt.log",
+   "rc": 0,
+   "wall_s": 58.1
+  }
+ },
+ "netlist": "<G1_RESULTS_ROOT>/r1_isense/t4c-work/c/post_top.spice",
+ "netlist_sha256": "3f39fc5e9567c5e65860526da1b8db0198791d5f0aa58d40d28fae12f0ddf8b4",
+ "ngspice_version": "** ngspice-46 : Circuit level simulation program ** Copyright 2001-2025, The ngspice team. ** Please get your ngspice manual from https://ngspice.sourceforge.io/docs.html ** Please file your bug-reports at http://ngspice.sourceforge.net/bugrep.html",
+ "overrides": {
+  "VCMIN": "0"
+ },
+ "pdk_commit": "84374023ee8b4b126bebbba67fcbada0a9c0ff0b (checked by flow/run.sh)",
+ "prerun": {},
+ "question": "Layout c + top-level vss common impedance (9.4 ohm, other channel 556 uA): residual offset, gain, output CM, tt/ss/ff",
+ "raw_results": "$G1_RESULTS_ROOT/r1_isense/isense-post-dc-top-20261021-c/",
+ "result": {
+  "ff": {
+   "gain": 14.0452,
+   "gain_error_pct": 0.3226,
+   "inl_max_pct_fs": 0.0025,
+   "offset_pedestal_off_uV": 343.9374,
+   "pedestal_error_uV": 300.673,
+   "pedestal_mV": 40.6853,
+   "vcm_out_V": 0.6009,
+   "vod_range_V": [
+    -0.852332202,
+    0.83304264
+   ]
+  },
+  "ss": {
+   "gain": 14.0319,
+   "gain_error_pct": 0.2276,
+   "inl_max_pct_fs": 0.047,
+   "offset_pedestal_off_uV": 438.69,
+   "pedestal_error_uV": 39.3319,
+   "pedestal_mV": 40.4239,
+   "vcm_out_V": 0.6013,
+   "vod_range_V": [
+    -0.8476561039999999,
+    0.8351715500000001
+   ]
+  },
+  "tt": {
+   "gain": 14.043,
+   "gain_error_pct": 0.307,
+   "inl_max_pct_fs": 0.0073,
+   "offset_pedestal_off_uV": 382.0433,
+   "pedestal_error_uV": 172.3838,
+   "pedestal_mV": 40.557,
+   "vcm_out_V": 0.6011,
+   "vod_range_V": [
+    -0.850416307,
+    0.83463352
+   ]
+  }
+ },
+ "run_id": "isense-post-dc-top-20261021-c",
+ "tool": "ngspice-46 (container banner from flow/run.sh ngspice -v; batch logs carry no banner)",
+ "wall_s": 219.0,
+ "workdir": "designs/r1-joint/blocks/r1_isense/sim"
+}

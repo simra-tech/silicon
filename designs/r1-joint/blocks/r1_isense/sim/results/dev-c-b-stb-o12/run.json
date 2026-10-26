@@ -1,0 +1,192 @@
+{
+ "block": "r1_isense",
+ "command": "python3 designs/r1-joint/blocks/r1_isense/sim/run_deck.py --block r1_isense --deck <G1_RESULTS_ROOT>/r1_isense/t4c-work/b/stb_o12.cir --pre <G1_RESULTS_ROOT>/r1_isense/t4c-work/b/pre_o12.cir --netlist <G1_RESULTS_ROOT>/r1_isense/t4c-work/b/post_o12.spice --run-id dev-c-b-stb-o12 --corners tt --jobs 1 --set RL=0.001 --set CL=2p --set CW=0 --analyze analyze_stb.py --question \"Layout b extraction, model check of the layout-c topology: output-stage sources on their own 12 ohm return to the vss pin (planned vss_o strap), Tian probe in that return\"",
+ "container_image": "tapeoutbench-eda:latest sha256:ddeb6957... (checked by flow/run.sh)",
+ "corners": {
+  "tt": {
+   "cap": "cap_typ",
+   "mos": "mos_tt",
+   "res": "res_typ",
+   "temp_C": 27,
+   "vdd": 1.2,
+   "vdda": 3.3
+  }
+ },
+ "cpuset": "109-111",
+ "date_utc": "2026-10-21T10:57:03.181436Z",
+ "deck": "<G1_RESULTS_ROOT>/r1_isense/t4c-work/b/stb_o12.cir",
+ "deck_sha256": "53ed3054cbd13d0fdfe5291219276f49b0297da774b19dc283bd5404a0e05d2b",
+ "disposition": "passed: state normal, 1 corners; 2 loop results passed, 0 failed, 1 not applicable; criterion PM >= 60 deg, GM >= 10 dB",
+ "included_netlists": {
+  "/work/designs/r1-joint/blocks/r1_safe/schematic/r1_safe.spice": "812f886dce2b759af121230bd2e9100aeac59041effdf9a3341647c29299cbde"
+ },
+ "included_netlists_results_root": {
+  "<G1_RESULTS_ROOT>/r1_isense/t4c-work/b/post_o12.spice": "324eee7912738f45748a6f09562add9425f7260f0ae540721aa9bff5818d1841"
+ },
+ "jobs": {
+  "tt": {
+   "log": "r1_isense/dev-c-b-stb-o12/stb_o12_tt.log",
+   "rc": 0,
+   "wall_s": 90.1
+  }
+ },
+ "netlist": "<G1_RESULTS_ROOT>/r1_isense/t4c-work/b/post_o12.spice",
+ "netlist_sha256": "324eee7912738f45748a6f09562add9425f7260f0ae540721aa9bff5818d1841",
+ "ngspice_version": "** ngspice-46 : Circuit level simulation program ** Copyright 2001-2025, The ngspice team. ** Please get your ngspice manual from https://ngspice.sourceforge.io/docs.html ** Please file your bug-reports at http://ngspice.sourceforge.net/bugrep.html",
+ "overrides": {
+  "CL": "2p",
+  "CW": "0",
+  "RL": "0.001"
+ },
+ "pdk_commit": "84374023ee8b4b126bebbba67fcbada0a9c0ff0b (checked by flow/run.sh)",
+ "prerun": {
+  "tt": {
+   "deck": "<G1_RESULTS_ROOT>/r1_isense/t4c-work/b/pre_o12.cir",
+   "holdvals": {
+    "VH1": "0.932365",
+    "VH2": "0.936244",
+    "VON": "0.883532",
+    "VOP": "0.308714"
+   },
+   "rc": 0
+  }
+ },
+ "question": "Layout b extraction, model check of the layout-c topology: output-stage sources on their own 12 ohm return to the vss pin (planned vss_o strap), Tian probe in that return",
+ "raw_results": "$G1_RESULTS_ROOT/r1_isense/dev-c-b-stb-o12/",
+ "result": {
+  "margins": {
+   "tt": {
+    "cm_out": {
+     "vsh_+0.000": {
+      "f_180_Hz": null,
+      "f_unity_Hz": 3019181.2403190616,
+      "gm_db": null,
+      "ph_min_deg": -155.9,
+      "phase_dc_deg": -39.1,
+      "pm_deg": 68.09,
+      "pm_valid": true,
+      "status": "passed",
+      "t_dc_db": 112.66,
+      "t_max_db": 112.66
+     },
+     "vsh_+0.100": {
+      "f_180_Hz": null,
+      "f_unity_Hz": 2207628.338286522,
+      "gm_db": null,
+      "ph_min_deg": -142.7,
+      "phase_dc_deg": -48.4,
+      "pm_deg": 74.3,
+      "pm_valid": true,
+      "status": "passed",
+      "t_dc_db": 102.38,
+      "t_max_db": 102.38
+     },
+     "vsh_-0.020": {
+      "f_180_Hz": null,
+      "f_unity_Hz": 2045169.784337816,
+      "gm_db": null,
+      "ph_min_deg": -146.5,
+      "phase_dc_deg": -34.8,
+      "pm_deg": 76.05,
+      "pm_valid": true,
+      "status": "passed",
+      "t_dc_db": 101.74,
+      "t_max_db": 101.74
+     }
+    },
+    "cm_vso": {
+     "vsh_-0.020": {
+      "f_180_Hz": 125906.04535066025,
+      "f_unity_Hz": null,
+      "gm_db": 313.1,
+      "ph_min_deg": -1980.0,
+      "phase_dc_deg": 90.0,
+      "pm_deg": null,
+      "pm_valid": false,
+      "status": "not applicable (loop gain below 0 dB at all frequencies)",
+      "t_dc_db": -410.62,
+      "t_max_db": -303.53
+     }
+    },
+    "dm_out": {
+     "vsh_+0.000": {
+      "f_180_Hz": 41231669.97725854,
+      "f_unity_Hz": 7034427.5106667625,
+      "gm_db": 20.36,
+      "ph_min_deg": -508.7,
+      "phase_dc_deg": -2.9,
+      "pm_deg": 72.45,
+      "pm_valid": true,
+      "status": "passed",
+      "t_dc_db": 71.38,
+      "t_max_db": 71.38
+     },
+     "vsh_+0.100": {
+      "f_180_Hz": 44871034.022568636,
+      "f_unity_Hz": 5147974.1725773495,
+      "gm_db": 23.97,
+      "ph_min_deg": -517.2,
+      "phase_dc_deg": -0.6,
+      "pm_deg": 79.75,
+      "pm_valid": true,
+      "status": "passed",
+      "t_dc_db": 53.35,
+      "t_max_db": 53.36
+     },
+     "vsh_-0.020": {
+      "f_180_Hz": 43823657.36951353,
+      "f_unity_Hz": 4770442.269735887,
+      "gm_db": 23.78,
+      "ph_min_deg": -528.4,
+      "phase_dc_deg": -6.1,
+      "pm_deg": 80.51,
+      "pm_valid": true,
+      "status": "passed",
+      "t_dc_db": 74.18,
+      "t_max_db": 74.18
+     }
+    }
+   }
+  },
+  "per_loop": {
+   "tt": {
+    "cm_out": {
+     "f_unity_Hz": [
+      3019181.2403190616,
+      2207628.338286522,
+      2045169.784337816
+     ],
+     "max_t_db": 112.66,
+     "status": "passed",
+     "worst_gm_db": null,
+     "worst_pm_deg": 68.09
+    },
+    "cm_vso": {
+     "f_unity_Hz": [
+      null
+     ],
+     "max_t_db": -303.53,
+     "status": "not applicable",
+     "worst_gm_db": 313.1,
+     "worst_pm_deg": null
+    },
+    "dm_out": {
+     "f_unity_Hz": [
+      7034427.5106667625,
+      5147974.1725773495,
+      4770442.269735887
+     ],
+     "max_t_db": 74.18,
+     "status": "passed",
+     "worst_gm_db": 20.36,
+     "worst_pm_deg": 72.45
+    }
+   }
+  },
+  "state": "normal"
+ },
+ "run_id": "dev-c-b-stb-o12",
+ "tool": "ngspice-46 (container banner from flow/run.sh ngspice -v; batch logs carry no banner)",
+ "wall_s": 96.2,
+ "workdir": "designs/r1-joint/blocks/r1_isense/sim"
+}

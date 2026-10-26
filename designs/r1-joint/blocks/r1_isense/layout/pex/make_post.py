@@ -21,6 +21,48 @@ REC = os.path.join(BLK, 'schematic', 'r1_isense.spice')
 ext = open(os.path.join(PEX, 'r1_isense_ch_pex%s.spice' % VAR)).read()
 a = ext.index('.subckt r1_isense_ch '); b = ext.index('.ends', a)
 body_ext = ext[a:b] + '.ends r1_isense_ch'
+# ---- layout revision c: the extracted channel has the ports vss (quiet), vss_o, vss_sw. The post-layout r1_isense_ch
+# keeps the 12 ports of the netlist of record: the quiet pin becomes the internal node vssq, and the block-level wiring
+# from each channel port to the star at the block vss pin (top cell r1_isense, not in the channel extraction) is added
+# as resistors estimated by square count and via count (layout/r1_isense_layout.py top_returns; Metal2-4 0.088 ohm/sq,
+# 9 ohm per Via cut, sg13g2_typ.itf as pex_build.py). STAR = channel A (default) or B (gap star + feed down the vss_o
+# column), from the environment variable R1_STAR.
+STAR = {
+    # channel A: quiet trunk stub 1.4 um (0.08); vss_o: column 0.10 + 2x2 Via3 2.25 + 2x2 Via2 2.25 + bar 0.32 + 3x2 Via2
+    # 1.5 + 3x2 Via3 1.5 = 7.9; vss_sw: 2 Via2 4.5 + bar 0.45 + 3 Via2 3.0 + 3 Via3 3.0 = 11.0 (ohm)
+    'a': dict(rq=0.08, ro=7.9, rsw=11.0, feed=0.0),
+    # channel B: gap star: quiet 6 Via3 1.5 + 6 Via2 1.5 + bar 0.3 + 4 Via2 2.25 + 4 Via3 2.25 = 7.8; vss_sw 4 Via3 2.25;
+    # vss_o 0; feed = vss_o column gap -> channel A landing 145 um / 1.2 um = 10.6 + channel A's landing path 7.8 = 18.4
+    'b': dict(rq=7.8, ro=0.0, rsw=2.25, feed=18.4)}
+# layout c, Kelvin pedestal reference (2026-10-26): the channel port vss_k (vss end of the RPA arm) runs on its own
+# Metal3 line (router wire 0.30 um) to the landing at the block vss pin stub. Square count from the generator
+# (r1_isense_layout.json top.kelvin.paths): channel A 10.4 um = 35 sq, channel B 156 um = 520 sq; 0.088 ohm/sq,
+# no via. It joins the pin directly, not the star.
+RK = {'a': 3.1, 'b': 45.8}
+SPLIT = ' vss_o ' in body_ext.split('\n', 1)[0] + ' '
+if SPLIT:
+    sv = STAR[os.environ.get('R1_STAR', 'a')]
+    L = body_ext.split('\n')
+    hdr = L[0].split()
+    KEL = hdr[-1] == 'vss_k'
+    if KEL:
+        hdr = hdr[:-1]
+    assert hdr[-3:] == ['vss', 'vss_o', 'vss_sw'], hdr
+    out = [' '.join(hdr[:-2])]
+    for ln in L[1:-1]:
+        f = ln.split()
+        if f and not ln.startswith('*'):
+            f = ['vssq' if x == 'vss' else x for x in f]
+            ln = ' '.join(f)
+        out.append(ln)
+    out += ['* ---- layout c: block-level star wiring (estimated, see make_post.py STAR, channel %s)' % os.environ.get('R1_STAR', 'a'),
+            'Rstar_q vssq vstar %g' % max(sv['rq'], 1e-4), 'Rstar_o vss_o vstar %g' % max(sv['ro'], 1e-4),
+            'Rstar_sw vss_sw vstar %g' % max(sv['rsw'], 1e-4), 'Rstar_feed vstar vss %g' % max(sv['feed'], 1e-4)]
+    if KEL:
+        out += ['* ---- layout c: Kelvin line of the RPA arm to the block vss pin (estimated, RK, channel %s)'
+                % os.environ.get('R1_STAR', 'a'), 'Rkelvin vss_k vss %g' % RK[os.environ.get('R1_STAR', 'a')]]
+    out += [L[-1]]
+    body_ext = '\n'.join(out)
 rec = open(REC).read()
 a = rec.index('.subckt r1_isense_ch '); b = rec.index('.ends r1_isense_ch', a) + len('.ends r1_isense_ch')
 post = ('* r1_isense POST-LAYOUT netlist: netlist of record with r1_isense_ch replaced by the layout extraction\n'

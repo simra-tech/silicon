@@ -25,6 +25,19 @@ PRIM = {'sg13_hv_nmos': 'nmos', 'sg13_hv_pmos': 'pmos', 'sg13_lv_nmos': 'nmoslv'
         'rppd': 'rppd', 'rhigh': 'rhigh', 'cap_cmim': 'cmim'}
 MODEL = {v: k for k, v in PRIM.items()}
 CH_PORTS = ['isp', 'isn', 'outp', 'outn', 'vref', 'vcm', 'ibias', 'az_lv', 'azh_lv', 'vdda', 'vdd', 'vss']
+# layout revision c (2026-10-21): separate vss returns inside the channel cell (star at the block vss pin). The LVS
+# reference splits the channel's vss into three ports; the top cell r1_isense ties them to its one vss pin, so the
+# flattened circuit is the netlist of record unchanged. Device bulks stay on vss (the p+ ties are on the quiet return).
+RETURN = {'xmoa': 'vss_o', 'xmob': 'vss_o'}
+for _ls in ('xls1', 'xls2'):
+    for _d in ('xmn1', 'xmn2', 'xmb1n', 'xmb2n', 'xmin'):
+        RETURN['%s_%s' % (_ls, _d)] = 'vss_sw'
+# layout revision c, Kelvin tap (2026-10-26): the vss end of the pedestal arm RPA (xrpa1, terminal a) is a port of its
+# own (vss_k). It carries only the RPA current; the top cell runs it on its own line to the block vss pin, so the
+# pedestal reference is the pin and not the channel's star (channel B: 18.4 ohm above the pin, +430 uV, run
+# isense-post-dc-chb-20261021-c). The resistor body terminal (substrate) stays vss.
+KELVIN = {'xrpa1': 'vss_k'}
+CH_PORTS_LVS = CH_PORTS + ['vss_o', 'vss_sw', 'vss_k']
 # common-centroid split: device -> number of sub-devices (each W/n)
 SPLIT = {'xm1': 2, 'xm2': 2, 'xa1': 2, 'xa2': 2}
 
@@ -119,9 +132,20 @@ def split_units(devs):
     return out
 
 
-def channel_devices():
+def channel_devices(split_returns=False):
     sc = parse()
-    return split_units(flatten(sc, 'r1_isense_ch', {p: p for p in CH_PORTS}, '', []))
+    devs = split_units(flatten(sc, 'r1_isense_ch', {p: p for p in CH_PORTS}, '', []))
+    if split_returns:
+        for d in devs:
+            r = RETURN.get(d.get('orig', d['name']), RETURN.get(d['name']))
+            if r and d['kind'] in ('nmos', 'nmoslv'):
+                assert d['nets'][2] == 'vss', (d['name'], d['nets'])
+                d['nets'] = d['nets'][:2] + [r] + d['nets'][3:]
+            k = KELVIN.get(d.get('orig', d['name']))
+            if k and d['kind'] in ('rppd', 'rhigh') and d.get('seg', 0) == 0:
+                assert d['nets'][0] == 'vss', (d['name'], d['nets'])
+                d['nets'] = [k] + d['nets'][1:]
+    return devs
 
 
 def top_info():
@@ -145,16 +169,20 @@ def cdl_line(d):
 
 
 def write_cdl(path=os.path.join(HERE, 'r1_isense_lvs.cdl')):
-    ch = channel_devices()
+    ch = channel_devices(split_returns=True)
     insts, ports = top_info()
     L = ['* LVS reference CDL for r1_isense (revision 2), written by layout/r1_isense_netlist.py from schematic/r1_isense.spice',
          '* unit split only (see the module docstring): long rhigh/rppd -> straight series segments, MOS finger re-cut;',
          '* r1_ls instances flattened into r1_isense_ch (prefix xls1_/xls2_). Layout dummies are poly only (no devices).',
-         '.subckt r1_isense_ch ' + ' '.join(CH_PORTS)]
+         '* layout revision c: the channel vss is split into the returns vss (quiet), vss_o (output stage sources) and',
+         '* vss_sw (level-shifter NMOS sources), and the Kelvin end vss_k of the pedestal arm (xrpa1); r1_isense ties the',
+         '* four to its vss pin (flattened circuit unchanged).',
+         '.subckt r1_isense_ch ' + ' '.join(CH_PORTS_LVS)]
     L += [cdl_line(d) for d in ch]
     L += ['.ends', '.subckt r1_isense ' + ' '.join(ports)]
     for name, pm in insts:
-        L.append('X%s %s r1_isense_ch' % (name, ' '.join(pm[p] for p in CH_PORTS)))
+        pm = dict(pm, vss_o=pm['vss'], vss_sw=pm['vss'], vss_k=pm['vss'])
+        L.append('X%s %s r1_isense_ch' % (name, ' '.join(pm[p] for p in CH_PORTS_LVS)))
     L += ['.ends', '']
     open(path, 'w').write('\n'.join(L))
     return path, len(ch)

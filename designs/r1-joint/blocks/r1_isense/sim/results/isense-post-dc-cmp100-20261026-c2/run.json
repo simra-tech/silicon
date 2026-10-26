@@ -1,0 +1,60 @@
+{
+ "block": "r1_isense",
+ "command": "python3 designs/r1-joint/blocks/r1_isense/sim/run_deck.py --block r1_isense --deck <G1_RESULTS_ROOT>/r1_isense/pex-20261026-c/decks/tb_isense_dc.cir --netlist <G1_RESULTS_ROOT>/r1_isense/pex-20261026-c/rc/r1_isense_post.spice --run-id isense-post-dc-cmp100-20261026-c2 --corners tt --set VCMIN=0.1 --analyze analyze_dc.py --question \"Post-layout (RC): as isense-post-dc at tt with Kelvin common mode +0.1 V\"",
+ "container_image": "tapeoutbench-eda:latest sha256:ddeb6957... (checked by flow/run.sh)",
+ "corners": {
+  "tt": {
+   "cap": "cap_typ",
+   "mos": "mos_tt",
+   "res": "res_typ",
+   "temp_C": 27,
+   "vdd": 1.2,
+   "vdda": 3.3
+  }
+ },
+ "cpuset": "109-111",
+ "date_utc": "2026-10-26T15:47:23.708880Z",
+ "deck": "<G1_RESULTS_ROOT>/r1_isense/pex-20261026-c/decks/tb_isense_dc.cir",
+ "deck_sha256": "4d315448d65407a7be1695b36a39f83880d4abfaecf433727b9c662ff77c044b",
+ "disposition": "offset <= 100 uV: tt passed",
+ "included_netlists": {},
+ "included_netlists_results_root": {
+  "<G1_RESULTS_ROOT>/r1_isense/pex-20261026-c/rc/r1_isense_post.spice": "1989529ba5df464802534b66a3b291db23c14ea03cef5e1c2a1135b33a44c2f1"
+ },
+ "jobs": {
+  "tt": {
+   "log": "r1_isense/isense-post-dc-cmp100-20261026-c2/tb_isense_dc_tt.log",
+   "rc": 0,
+   "wall_s": 54.1
+  }
+ },
+ "netlist": "<G1_RESULTS_ROOT>/r1_isense/pex-20261026-c/rc/r1_isense_post.spice",
+ "netlist_sha256": "1989529ba5df464802534b66a3b291db23c14ea03cef5e1c2a1135b33a44c2f1",
+ "ngspice_version": "** ngspice-46 : Circuit level simulation program ** Copyright 2001-2025, The ngspice team. ** Please get your ngspice manual from https://ngspice.sourceforge.io/docs.html ** Please file your bug-reports at http://ngspice.sourceforge.net/bugrep.html",
+ "overrides": {
+  "VCMIN": "0.1"
+ },
+ "pdk_commit": "84374023ee8b4b126bebbba67fcbada0a9c0ff0b (checked by flow/run.sh)",
+ "prerun": {},
+ "question": "Post-layout (RC): as isense-post-dc at tt with Kelvin common mode +0.1 V",
+ "raw_results": "$G1_RESULTS_ROOT/r1_isense/isense-post-dc-cmp100-20261026-c2/",
+ "result": {
+  "tt": {
+   "gain": 14.0427,
+   "gain_error_pct": 0.3051,
+   "inl_max_pct_fs": 0.0037,
+   "offset_pedestal_off_uV": -58.907,
+   "pedestal_error_uV": 609.4074,
+   "pedestal_mV": 40.994,
+   "vcm_out_V": 0.601,
+   "vod_range_V": [
+    -0.8564587029999999,
+    0.8285677599999999
+   ]
+  }
+ },
+ "run_id": "isense-post-dc-cmp100-20261026-c2",
+ "tool": "ngspice-46 (container banner from flow/run.sh ngspice -v; batch logs carry no banner)",
+ "wall_s": 60.0,
+ "workdir": "designs/r1-joint/blocks/r1_isense/sim"
+}

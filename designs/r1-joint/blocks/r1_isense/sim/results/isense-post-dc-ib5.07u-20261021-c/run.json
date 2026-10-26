@@ -1,0 +1,113 @@
+{
+ "block": "r1_isense",
+ "command": "python3 designs/r1-joint/blocks/r1_isense/sim/run_deck.py --block r1_isense --deck <G1_RESULTS_ROOT>/r1_isense/pex-20261021-c/decks/tb_isense_dc_ib.cir --netlist <G1_RESULTS_ROOT>/r1_isense/pex-20261021-c/rc/r1_isense_post.spice --run-id isense-post-dc-ib5.07u-20261021-c --corners tt,ss,ff --set VCMIN=0 --set IBIAS=5.07u --analyze analyze_dc.py --question \"Post-layout (RC): gain, pedestal, residual offset after AZ, output CM with ibias = 5.07u (r1_bias output range 3.5-7.7 uA, INTERFACES.md), tt/ss/ff\"",
+ "container_image": "tapeoutbench-eda:latest sha256:ddeb6957... (checked by flow/run.sh)",
+ "corners": {
+  "ff": {
+   "cap": "cap_bcs",
+   "mos": "mos_ff",
+   "res": "res_bcs",
+   "temp_C": -40,
+   "vdd": 1.32,
+   "vdda": 3.6
+  },
+  "ss": {
+   "cap": "cap_wcs",
+   "mos": "mos_ss",
+   "res": "res_wcs",
+   "temp_C": 125,
+   "vdd": 1.08,
+   "vdda": 3.0
+  },
+  "tt": {
+   "cap": "cap_typ",
+   "mos": "mos_tt",
+   "res": "res_typ",
+   "temp_C": 27,
+   "vdd": 1.2,
+   "vdda": 3.3
+  }
+ },
+ "cpuset": "109-111",
+ "date_utc": "2026-10-21T11:56:53.124420Z",
+ "deck": "<G1_RESULTS_ROOT>/r1_isense/pex-20261021-c/decks/tb_isense_dc_ib.cir",
+ "deck_sha256": "df13fc175e3d50c689f93f229b76b0b1e6f801dc80672a6de78a24f2fd95fcdc",
+ "disposition": "offset <= 100 uV: ff passed, ss passed, tt passed",
+ "included_netlists": {},
+ "included_netlists_results_root": {
+  "<G1_RESULTS_ROOT>/r1_isense/pex-20261021-c/rc/r1_isense_post.spice": "3f39fc5e9567c5e65860526da1b8db0198791d5f0aa58d40d28fae12f0ddf8b4"
+ },
+ "jobs": {
+  "ff": {
+   "log": "r1_isense/isense-post-dc-ib5.07u-20261021-c/tb_isense_dc_ib_ff.log",
+   "rc": 0,
+   "wall_s": 132.1
+  },
+  "ss": {
+   "log": "r1_isense/isense-post-dc-ib5.07u-20261021-c/tb_isense_dc_ib_ss.log",
+   "rc": 0,
+   "wall_s": 132.1
+  },
+  "tt": {
+   "log": "r1_isense/isense-post-dc-ib5.07u-20261021-c/tb_isense_dc_ib_tt.log",
+   "rc": 0,
+   "wall_s": 132.1
+  }
+ },
+ "netlist": "<G1_RESULTS_ROOT>/r1_isense/pex-20261021-c/rc/r1_isense_post.spice",
+ "netlist_sha256": "3f39fc5e9567c5e65860526da1b8db0198791d5f0aa58d40d28fae12f0ddf8b4",
+ "ngspice_version": "** ngspice-46 : Circuit level simulation program ** Copyright 2001-2025, The ngspice team. ** Please get your ngspice manual from https://ngspice.sourceforge.io/docs.html ** Please file your bug-reports at http://ngspice.sourceforge.net/bugrep.html",
+ "overrides": {
+  "IBIAS": "5.07u",
+  "VCMIN": "0"
+ },
+ "pdk_commit": "84374023ee8b4b126bebbba67fcbada0a9c0ff0b (checked by flow/run.sh)",
+ "prerun": {},
+ "question": "Post-layout (RC): gain, pedestal, residual offset after AZ, output CM with ibias = 5.07u (r1_bias output range 3.5-7.7 uA, INTERFACES.md), tt/ss/ff",
+ "raw_results": "$G1_RESULTS_ROOT/r1_isense/isense-post-dc-ib5.07u-20261021-c/",
+ "result": {
+  "ff": {
+   "gain": 14.0447,
+   "gain_error_pct": 0.3196,
+   "inl_max_pct_fs": 0.0021,
+   "offset_pedestal_off_uV": -31.6941,
+   "pedestal_error_uV": 675.6957,
+   "pedestal_mV": 41.0603,
+   "vcm_out_V": 0.601,
+   "vod_range_V": [
+    -0.857540433,
+    0.827771928
+   ]
+  },
+  "ss": {
+   "gain": 14.0391,
+   "gain_error_pct": 0.2792,
+   "inl_max_pct_fs": 0.0247,
+   "offset_pedestal_off_uV": -25.6941,
+   "pedestal_error_uV": 484.8026,
+   "pedestal_mV": 40.8694,
+   "vcm_out_V": 0.601,
+   "vod_range_V": [
+    -0.854134311,
+    0.8299657970000001
+   ]
+  },
+  "tt": {
+   "gain": 14.043,
+   "gain_error_pct": 0.307,
+   "inl_max_pct_fs": 0.0039,
+   "offset_pedestal_off_uV": -28.2676,
+   "pedestal_error_uV": 579.9432,
+   "pedestal_mV": 40.9646,
+   "vcm_out_V": 0.6011,
+   "vod_range_V": [
+    -0.8560585330000001,
+    0.828996297
+   ]
+  }
+ },
+ "run_id": "isense-post-dc-ib5.07u-20261021-c",
+ "tool": "ngspice-46 (container banner from flow/run.sh ngspice -v; batch logs carry no banner)",
+ "wall_s": 138.9,
+ "workdir": "designs/r1-joint/blocks/r1_isense/sim"
+}
