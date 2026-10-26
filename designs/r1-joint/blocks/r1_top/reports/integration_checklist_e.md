@@ -78,6 +78,7 @@ frame (origin lower-left corner of the `prBoundary`), orientation R0. Pin positi
 | North pins | routed: `ibias_b` 3.2; pending: `az_b` 1.6, `azh_b` 2.4 |
 | West pins | pending: `outa_p` 33.6–34.6, `outa_n` 55.2–56.2, `outb_p` 178.4–179.4, `outb_n` 200.0–201.0 |
 | Ring | none above (east column from chip x 1340.42); a block wider than 251.6 µm would reach it |
+| vss trunk (layout c, 2026-10-26) | shared vss resistance from the bandgap ground to the isense `vss` pins ≤ 2.3 Ω, else the 40 mV pedestal shifts (−408 µV at 9.4 Ω); block pins and box unchanged by layout c (`vss_k` is internal to the macro) |
 
 ## r1_osc (placed in try e: revision 2, layout r2d, commit 679a97320)
 
