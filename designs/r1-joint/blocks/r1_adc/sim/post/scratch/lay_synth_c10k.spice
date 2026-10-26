@@ -1,0 +1,2459 @@
+* r1_adc layout-mapped simulation netlist, written by sim/post/make_sim_netlist.py (do not edit)
+* devices: layout/r1_adc_netlist.py (sha256 a04d6f2b237aafa1), netlist of record schematic/r1_adc_r5.spice (sha256 340c0e6a17ecec3a)
+* decap shapes: layout/r1_adc_decap.json
+* parasitics: {"slice": "sim/post/scratch/synth_c10k_slice.spice", "top": "sim/post/scratch/synth_c10k_top.spice"}
+* identical parallel devices merged into m = count (552 -> 179 slice, 56 -> 45 top devices; exact for net-name parasitics; --no-merge writes every drawn device)
+* requires cornerMOSlv/hv.lib, cornerCAP.lib, cornerRES.lib
+.subckt r1_adc_slice_lay in0p in0n in1p in1n trk0 trk1 cp0 cp1 cp2 cp3 cp4 cp5 cp6 cp7 cp8 cp9 cp10 cp11 cp12 cn0 cn1 cn2 cn3 cn4 cn5 cn6 cn7 cn8 cn9 cn10 cn11 cn12 clk clkb clkn clknb op on onp onn vbp vbn vref vrefl top_p top_n vdd gnd
+Xxpt0a t0b trk0 vdd vdd sg13_lv_pmos w=2u l=0.13u ng=1 m=1
+Xxnt0a t0b trk0 gnd gnd sg13_lv_nmos w=1u l=0.13u ng=1 m=1
+Xxpt0b t0 t0b vdd vdd sg13_lv_pmos w=4u l=0.13u ng=1 m=1
+Xxnt0b t0 t0b gnd gnd sg13_lv_nmos w=2u l=0.13u ng=1 m=1
+Xxpt1a t1b trk1 vdd vdd sg13_lv_pmos w=2u l=0.13u ng=1 m=1
+Xxnt1a t1b trk1 gnd gnd sg13_lv_nmos w=1u l=0.13u ng=1 m=1
+Xxpt1b t1 t1b vdd vdd sg13_lv_pmos w=4u l=0.13u ng=1 m=1
+Xxnt1b t1 t1b gnd gnd sg13_lv_nmos w=2u l=0.13u ng=1 m=1
+Xxs0p_xms in0p xs0p_g top_p gnd sg13_lv_nmos w=6u l=0.13u ng=2 m=1
+Xxs0p_cboot xs0p_cbp xs0p_cbn cap_cmim w=11.49u l=11.49u m=1
+Xxs0p_xm1 xs0p_cbn t0b gnd gnd sg13_lv_nmos w=1u l=0.13u ng=1 m=1
+Xxs0p_xm3 xs0p_cbp xs0p_g vdd xs0p_cbp sg13_lv_pmos w=1u l=0.13u ng=1 m=1
+Xxs0p_xm8 xs0p_g xs0p_x xs0p_cbp xs0p_cbp sg13_lv_pmos w=2u l=0.13u ng=1 m=1
+Xxs0p_xm4 xs0p_x t0 vdd vdd sg13_lv_pmos w=0.5u l=0.13u ng=1 m=1
+Xxs0p_xm5 xs0p_x t0 xs0p_cbn gnd sg13_lv_nmos w=1u l=0.13u ng=1 m=1
+Xxs0p_xm7 xs0p_x xs0p_g xs0p_cbn gnd sg13_lv_nmos w=0.5u l=0.13u ng=1 m=1
+Xxs0p_xm9 xs0p_cbn xs0p_g in0p gnd sg13_lv_nmos w=2u l=0.13u ng=1 m=1
+Xxs0p_xm10 xs0p_g vdd xs0p_n10 gnd sg13_lv_nmos w=2u l=0.13u ng=1 m=1
+Xxs0p_xm11 xs0p_n10 t0b gnd gnd sg13_lv_nmos w=2u l=0.13u ng=1 m=1
+Xxs0n_xms in0n xs0n_g top_n gnd sg13_lv_nmos w=6u l=0.13u ng=2 m=1
+Xxs0n_cboot xs0n_cbp xs0n_cbn cap_cmim w=11.49u l=11.49u m=1
+Xxs0n_xm1 xs0n_cbn t0b gnd gnd sg13_lv_nmos w=1u l=0.13u ng=1 m=1
+Xxs0n_xm3 xs0n_cbp xs0n_g vdd xs0n_cbp sg13_lv_pmos w=1u l=0.13u ng=1 m=1
+Xxs0n_xm8 xs0n_g xs0n_x xs0n_cbp xs0n_cbp sg13_lv_pmos w=2u l=0.13u ng=1 m=1
+Xxs0n_xm4 xs0n_x t0 vdd vdd sg13_lv_pmos w=0.5u l=0.13u ng=1 m=1
+Xxs0n_xm5 xs0n_x t0 xs0n_cbn gnd sg13_lv_nmos w=1u l=0.13u ng=1 m=1
+Xxs0n_xm7 xs0n_x xs0n_g xs0n_cbn gnd sg13_lv_nmos w=0.5u l=0.13u ng=1 m=1
+Xxs0n_xm9 xs0n_cbn xs0n_g in0n gnd sg13_lv_nmos w=2u l=0.13u ng=1 m=1
+Xxs0n_xm10 xs0n_g vdd xs0n_n10 gnd sg13_lv_nmos w=2u l=0.13u ng=1 m=1
+Xxs0n_xm11 xs0n_n10 t0b gnd gnd sg13_lv_nmos w=2u l=0.13u ng=1 m=1
+Xxs1p_xms in1p xs1p_g top_p gnd sg13_lv_nmos w=6u l=0.13u ng=2 m=1
+Xxs1p_cboot xs1p_cbp xs1p_cbn cap_cmim w=11.49u l=11.49u m=1
+Xxs1p_xm1 xs1p_cbn t1b gnd gnd sg13_lv_nmos w=1u l=0.13u ng=1 m=1
+Xxs1p_xm3 xs1p_cbp xs1p_g vdd xs1p_cbp sg13_lv_pmos w=1u l=0.13u ng=1 m=1
+Xxs1p_xm8 xs1p_g xs1p_x xs1p_cbp xs1p_cbp sg13_lv_pmos w=2u l=0.13u ng=1 m=1
+Xxs1p_xm4 xs1p_x t1 vdd vdd sg13_lv_pmos w=0.5u l=0.13u ng=1 m=1
+Xxs1p_xm5 xs1p_x t1 xs1p_cbn gnd sg13_lv_nmos w=1u l=0.13u ng=1 m=1
+Xxs1p_xm7 xs1p_x xs1p_g xs1p_cbn gnd sg13_lv_nmos w=0.5u l=0.13u ng=1 m=1
+Xxs1p_xm9 xs1p_cbn xs1p_g in1p gnd sg13_lv_nmos w=2u l=0.13u ng=1 m=1
+Xxs1p_xm10 xs1p_g vdd xs1p_n10 gnd sg13_lv_nmos w=2u l=0.13u ng=1 m=1
+Xxs1p_xm11 xs1p_n10 t1b gnd gnd sg13_lv_nmos w=2u l=0.13u ng=1 m=1
+Xxs1n_xms in1n xs1n_g top_n gnd sg13_lv_nmos w=6u l=0.13u ng=2 m=1
+Xxs1n_cboot xs1n_cbp xs1n_cbn cap_cmim w=11.49u l=11.49u m=1
+Xxs1n_xm1 xs1n_cbn t1b gnd gnd sg13_lv_nmos w=1u l=0.13u ng=1 m=1
+Xxs1n_xm3 xs1n_cbp xs1n_g vdd xs1n_cbp sg13_lv_pmos w=1u l=0.13u ng=1 m=1
+Xxs1n_xm8 xs1n_g xs1n_x xs1n_cbp xs1n_cbp sg13_lv_pmos w=2u l=0.13u ng=1 m=1
+Xxs1n_xm4 xs1n_x t1 vdd vdd sg13_lv_pmos w=0.5u l=0.13u ng=1 m=1
+Xxs1n_xm5 xs1n_x t1 xs1n_cbn gnd sg13_lv_nmos w=1u l=0.13u ng=1 m=1
+Xxs1n_xm7 xs1n_x xs1n_g xs1n_cbn gnd sg13_lv_nmos w=0.5u l=0.13u ng=1 m=1
+Xxs1n_xm9 xs1n_cbn xs1n_g in1n gnd sg13_lv_nmos w=2u l=0.13u ng=1 m=1
+Xxs1n_xm10 xs1n_g vdd xs1n_n10 gnd sg13_lv_nmos w=2u l=0.13u ng=1 m=1
+Xxs1n_xm11 xs1n_n10 t1b gnd gnd sg13_lv_nmos w=2u l=0.13u ng=1 m=1
+Xxpr1 rstb_n t0b vdd vdd sg13_lv_pmos w=1u l=0.13u ng=1 m=1
+Xxpr2 rstb_n t1b vdd vdd sg13_lv_pmos w=1u l=0.13u ng=1 m=1
+Xxnr1 rstb_n t0b nr gnd sg13_lv_nmos w=1u l=0.13u ng=1 m=1
+Xxnr2 nr t1b gnd gnd sg13_lv_nmos w=1u l=0.13u ng=1 m=1
+Xxpr3 rstb rstb_n vdd vdd sg13_lv_pmos w=1u l=0.13u ng=1 m=1
+Xxnr3 rstb rstb_n gnd gnd sg13_lv_nmos w=0.5u l=0.13u ng=1 m=1
+Xxlrp lsb_p rstb vrefl vrefl sg13_lv_pmos w=1u l=0.13u ng=1 m=1
+Xxlrn lsb_n rstb vrefl vrefl sg13_lv_pmos w=1u l=0.13u ng=1 m=1
+Xxdp12_xmp bp12 cp12 vref vref sg13_lv_pmos w=2u l=0.13u ng=1 m=1
+Xxdp12_xmn bp12 cp12 gnd gnd sg13_lv_nmos w=1u l=0.13u ng=1 m=1
+Xxdp11_xmp bp11 cp11 vref vref sg13_lv_pmos w=2u l=0.13u ng=1 m=1
+Xxdp11_xmn bp11 cp11 gnd gnd sg13_lv_nmos w=1u l=0.13u ng=1 m=1
+Xxdp10_xmp bp10 cp10 vref vref sg13_lv_pmos w=2u l=0.13u ng=1 m=1
+Xxdp10_xmn bp10 cp10 gnd gnd sg13_lv_nmos w=1u l=0.13u ng=1 m=1
+Xxdp9_xmp bp9 cp9 vref vref sg13_lv_pmos w=1u l=0.13u ng=1 m=1
+Xxdp9_xmn bp9 cp9 gnd gnd sg13_lv_nmos w=0.5u l=0.13u ng=1 m=1
+Xxdp8_xmp bp8 cp8 vref vref sg13_lv_pmos w=1u l=0.13u ng=1 m=1
+Xxdp8_xmn bp8 cp8 gnd gnd sg13_lv_nmos w=0.5u l=0.13u ng=1 m=1
+Xxdp7_xmp bp7 cp7 vrefl vrefl sg13_lv_pmos w=1u l=0.13u ng=1 m=1
+Xxdp7_xmn bp7 cp7 gnd gnd sg13_lv_nmos w=0.5u l=0.13u ng=1 m=1
+Xxdp6_xmp bp6 cp6 vrefl vrefl sg13_lv_pmos w=1u l=0.13u ng=1 m=1
+Xxdp6_xmn bp6 cp6 gnd gnd sg13_lv_nmos w=0.5u l=0.13u ng=1 m=1
+Xxdp5_xmp bp5 cp5 vrefl vrefl sg13_lv_pmos w=1u l=0.13u ng=1 m=1
+Xxdp5_xmn bp5 cp5 gnd gnd sg13_lv_nmos w=0.5u l=0.13u ng=1 m=1
+Xxdp4_xmp bp4 cp4 vrefl vrefl sg13_lv_pmos w=1u l=0.13u ng=1 m=1
+Xxdp4_xmn bp4 cp4 gnd gnd sg13_lv_nmos w=0.5u l=0.13u ng=1 m=1
+Xxdp3_xmp bp3 cp3 vrefl vrefl sg13_lv_pmos w=1u l=0.13u ng=1 m=1
+Xxdp3_xmn bp3 cp3 gnd gnd sg13_lv_nmos w=0.5u l=0.13u ng=1 m=1
+Xxdp2_xmp bp2 cp2 vrefl vrefl sg13_lv_pmos w=1u l=0.13u ng=1 m=1
+Xxdp2_xmn bp2 cp2 gnd gnd sg13_lv_nmos w=0.5u l=0.13u ng=1 m=1
+Xxdp1_xmp bp1 cp1 vrefl vrefl sg13_lv_pmos w=1u l=0.13u ng=1 m=1
+Xxdp1_xmn bp1 cp1 gnd gnd sg13_lv_nmos w=0.5u l=0.13u ng=1 m=1
+Xxdp0_xmp bp0 cp0 vrefl vrefl sg13_lv_pmos w=1u l=0.13u ng=1 m=1
+Xxdp0_xmn bp0 cp0 gnd gnd sg13_lv_nmos w=0.5u l=0.13u ng=1 m=1
+Xxdn12_xmp bn12 cn12 vref vref sg13_lv_pmos w=2u l=0.13u ng=1 m=1
+Xxdn12_xmn bn12 cn12 gnd gnd sg13_lv_nmos w=1u l=0.13u ng=1 m=1
+Xxdn11_xmp bn11 cn11 vref vref sg13_lv_pmos w=2u l=0.13u ng=1 m=1
+Xxdn11_xmn bn11 cn11 gnd gnd sg13_lv_nmos w=1u l=0.13u ng=1 m=1
+Xxdn10_xmp bn10 cn10 vref vref sg13_lv_pmos w=2u l=0.13u ng=1 m=1
+Xxdn10_xmn bn10 cn10 gnd gnd sg13_lv_nmos w=1u l=0.13u ng=1 m=1
+Xxdn9_xmp bn9 cn9 vref vref sg13_lv_pmos w=1u l=0.13u ng=1 m=1
+Xxdn9_xmn bn9 cn9 gnd gnd sg13_lv_nmos w=0.5u l=0.13u ng=1 m=1
+Xxdn8_xmp bn8 cn8 vref vref sg13_lv_pmos w=1u l=0.13u ng=1 m=1
+Xxdn8_xmn bn8 cn8 gnd gnd sg13_lv_nmos w=0.5u l=0.13u ng=1 m=1
+Xxdn7_xmp bn7 cn7 vrefl vrefl sg13_lv_pmos w=1u l=0.13u ng=1 m=1
+Xxdn7_xmn bn7 cn7 gnd gnd sg13_lv_nmos w=0.5u l=0.13u ng=1 m=1
+Xxdn6_xmp bn6 cn6 vrefl vrefl sg13_lv_pmos w=1u l=0.13u ng=1 m=1
+Xxdn6_xmn bn6 cn6 gnd gnd sg13_lv_nmos w=0.5u l=0.13u ng=1 m=1
+Xxdn5_xmp bn5 cn5 vrefl vrefl sg13_lv_pmos w=1u l=0.13u ng=1 m=1
+Xxdn5_xmn bn5 cn5 gnd gnd sg13_lv_nmos w=0.5u l=0.13u ng=1 m=1
+Xxdn4_xmp bn4 cn4 vrefl vrefl sg13_lv_pmos w=1u l=0.13u ng=1 m=1
+Xxdn4_xmn bn4 cn4 gnd gnd sg13_lv_nmos w=0.5u l=0.13u ng=1 m=1
+Xxdn3_xmp bn3 cn3 vrefl vrefl sg13_lv_pmos w=1u l=0.13u ng=1 m=1
+Xxdn3_xmn bn3 cn3 gnd gnd sg13_lv_nmos w=0.5u l=0.13u ng=1 m=1
+Xxdn2_xmp bn2 cn2 vrefl vrefl sg13_lv_pmos w=1u l=0.13u ng=1 m=1
+Xxdn2_xmn bn2 cn2 gnd gnd sg13_lv_nmos w=0.5u l=0.13u ng=1 m=1
+Xxdn1_xmp bn1 cn1 vrefl vrefl sg13_lv_pmos w=1u l=0.13u ng=1 m=1
+Xxdn1_xmn bn1 cn1 gnd gnd sg13_lv_nmos w=0.5u l=0.13u ng=1 m=1
+Xxdn0_xmp bn0 cn0 vrefl vrefl sg13_lv_pmos w=1u l=0.13u ng=1 m=1
+Xxdn0_xmn bn0 cn0 gnd gnd sg13_lv_nmos w=0.5u l=0.13u ng=1 m=1
+Xxc4_xs1_xmt1 xc4_xs1_tail0 clkb vdd vdd sg13_lv_pmos w=16u l=0.13u ng=4 m=1
+Xxc4_xs1_xmtc xc4_xs1_tail vbp xc4_xs1_tail0 vdd sg13_lv_pmos w=16u l=0.5u ng=2 m=1
+Xxc4_xs1_xm1 xc4_dip top_p xc4_xs1_tail vdd sg13_lv_pmos w=48u l=0.3u ng=12 m=1
+Xxc4_xs1_xm2 xc4_din top_n xc4_xs1_tail vdd sg13_lv_pmos w=48u l=0.3u ng=12 m=1
+Xxc4_xci1 vdd xc4_dip vdd vdd sg13_lv_pmos w=80u l=4u ng=4 m=1
+Xxc4_xci2 vdd xc4_din vdd vdd sg13_lv_pmos w=80u l=4u ng=4 m=1
+Xxc4_xmr1 xc4_dip clkb gnd gnd sg13_lv_nmos w=20u l=0.13u ng=1 m=1
+Xxc4_xmr2 xc4_din clkb gnd gnd sg13_lv_nmos w=20u l=0.13u ng=1 m=1
+Xxc4_xmt2 xc4_lt clk gnd gnd sg13_lv_nmos w=4u l=0.13u ng=1 m=1
+Xxc4_xmn1 op on xc4_lt gnd sg13_lv_nmos w=2u l=0.13u ng=1 m=1
+Xxc4_xmn2 on op xc4_lt gnd sg13_lv_nmos w=2u l=0.13u ng=1 m=1
+Xxc4_xmp1 op on vdd vdd sg13_lv_pmos w=2u l=0.13u ng=1 m=1
+Xxc4_xmp2 on op vdd vdd sg13_lv_pmos w=2u l=0.13u ng=1 m=1
+Xxc4_xmh1 op xc4_dip vdd vdd sg13_lv_pmos w=8u l=0.13u ng=2 m=1
+Xxc4_xmh2 on xc4_din vdd vdd sg13_lv_pmos w=8u l=0.13u ng=2 m=1
+Xxc4_xbp1 xc4_outpb op vdd vdd sg13_lv_pmos w=1u l=0.13u ng=1 m=1
+Xxc4_xbn1 xc4_outpb op gnd gnd sg13_lv_nmos w=0.5u l=0.13u ng=1 m=1
+Xxc4_xbp2 xc4_outnb on vdd vdd sg13_lv_pmos w=1u l=0.13u ng=1 m=1
+Xxc4_xbn2 xc4_outnb on gnd gnd sg13_lv_nmos w=0.5u l=0.13u ng=1 m=1
+Xxc5_xs1_xmt1 xc5_xs1_tail0 clkn gnd gnd sg13_lv_nmos w=8u l=0.13u ng=2 m=1
+Xxc5_xs1_xmtc xc5_xs1_tail vbn xc5_xs1_tail0 gnd sg13_lv_nmos w=4u l=0.5u ng=1 m=1
+Xxc5_xs1_xm1 xc5_dip top_p xc5_xs1_tail gnd sg13_lv_nmos w=16u l=0.5u ng=4 m=1
+Xxc5_xs1_xm2 xc5_din top_n xc5_xs1_tail gnd sg13_lv_nmos w=16u l=0.5u ng=4 m=1
+Xxc5_xci1 gnd xc5_dip gnd gnd sg13_lv_nmos w=30u l=4u ng=2 m=1
+Xxc5_xci2 gnd xc5_din gnd gnd sg13_lv_nmos w=30u l=4u ng=2 m=1
+Xxc5_xmr1 xc5_dip clkn vdd vdd sg13_lv_pmos w=16u l=0.13u ng=1 m=1
+Xxc5_xmr2 xc5_din clkn vdd vdd sg13_lv_pmos w=16u l=0.13u ng=1 m=1
+Xxc5_xmt2 xc5_lt clknb vdd vdd sg13_lv_pmos w=8u l=0.13u ng=1 m=1
+Xxc5_xmp1 onp onn xc5_lt vdd sg13_lv_pmos w=4u l=0.13u ng=1 m=1
+Xxc5_xmp2 onn onp xc5_lt vdd sg13_lv_pmos w=4u l=0.13u ng=1 m=1
+Xxc5_xmn1 onp onn gnd gnd sg13_lv_nmos w=1u l=0.13u ng=1 m=1
+Xxc5_xmn2 onn onp gnd gnd sg13_lv_nmos w=1u l=0.13u ng=1 m=1
+Xxc5_xmh1 onp xc5_dip gnd gnd sg13_lv_nmos w=8u l=0.13u ng=1 m=1
+Xxc5_xmh2 onn xc5_din gnd gnd sg13_lv_nmos w=8u l=0.13u ng=1 m=1
+Xxc5_xbp1 xc5_outpb onp vdd vdd sg13_lv_pmos w=1u l=0.13u ng=1 m=1
+Xxc5_xbn1 xc5_outpb onp gnd gnd sg13_lv_nmos w=0.5u l=0.13u ng=1 m=1
+Xxc5_xbp2 xc5_outnb onn vdd vdd sg13_lv_pmos w=1u l=0.13u ng=1 m=1
+Xxc5_xbn2 xc5_outnb onn gnd gnd sg13_lv_nmos w=0.5u l=0.13u ng=1 m=1
+Xxdacp_xc12_u0 top_p bp12 cap_cmim w=3.78u l=3.78u m=16
+Xxdacp_xc11_u0 top_p bp11 cap_cmim w=3.78u l=3.78u m=8
+Xxdacp_xc10_u0 top_p bp10 cap_cmim w=3.78u l=3.78u m=4
+Xxdacp_xc9_u0 top_p bp9 cap_cmim w=3.78u l=3.78u m=2
+Xxdacp_xc8_u0 top_p bp8 cap_cmim w=3.78u l=3.78u m=1
+Xxdacp_xcb top_p lsb_p cap_cmim w=4.23u l=4.23u m=1
+Xxdacp_xc7_u0 lsb_p bp7 cap_cmim w=3.78u l=3.78u m=64
+Xxdacp_xc6_u0 lsb_p bp6 cap_cmim w=3.78u l=3.78u m=32
+Xxdacp_xc5_u0 lsb_p bp5 cap_cmim w=3.78u l=3.78u m=16
+Xxdacp_xc4_u0 lsb_p bp4 cap_cmim w=3.78u l=3.78u m=8
+Xxdacp_xc3_u0 lsb_p bp3 cap_cmim w=3.78u l=3.78u m=4
+Xxdacp_xc2_u0 lsb_p bp2 cap_cmim w=3.78u l=3.78u m=2
+Xxdacp_xc1_u0 lsb_p bp1 cap_cmim w=3.78u l=3.78u m=1
+Xxdacp_xc0 lsb_p bp0 cap_cmim w=2.67u l=2.67u m=1
+Xxdacn_xc12_u0 top_n bn12 cap_cmim w=3.78u l=3.78u m=16
+Xxdacn_xc11_u0 top_n bn11 cap_cmim w=3.78u l=3.78u m=8
+Xxdacn_xc10_u0 top_n bn10 cap_cmim w=3.78u l=3.78u m=4
+Xxdacn_xc9_u0 top_n bn9 cap_cmim w=3.78u l=3.78u m=2
+Xxdacn_xc8_u0 top_n bn8 cap_cmim w=3.78u l=3.78u m=1
+Xxdacn_xcb top_n lsb_n cap_cmim w=4.23u l=4.23u m=1
+Xxdacn_xc7_u0 lsb_n bn7 cap_cmim w=3.78u l=3.78u m=64
+Xxdacn_xc6_u0 lsb_n bn6 cap_cmim w=3.78u l=3.78u m=32
+Xxdacn_xc5_u0 lsb_n bn5 cap_cmim w=3.78u l=3.78u m=16
+Xxdacn_xc4_u0 lsb_n bn4 cap_cmim w=3.78u l=3.78u m=8
+Xxdacn_xc3_u0 lsb_n bn3 cap_cmim w=3.78u l=3.78u m=4
+Xxdacn_xc2_u0 lsb_n bn2 cap_cmim w=3.78u l=3.78u m=2
+Xxdacn_xc1_u0 lsb_n bn1 cap_cmim w=3.78u l=3.78u m=1
+Xxdacn_xc0 lsb_n bn0 cap_cmim w=2.67u l=2.67u m=1
+Xxdmy_u0 gnd gnd cap_cmim w=3.78u l=3.78u m=82
+* not drawn: comparator output loads (SAR flip-flop input model), ideal as in the netlist of record
+Cld_xc4_outpb xc4_outpb gnd 3f
+Cld_xc4_outnb xc4_outnb gnd 3f
+Cld_xc5_outpb xc5_outpb gnd 3f
+Cld_xc5_outnb xc5_outnb gnd 3f
+* parasitics, scope slice_a: 1510 C (8.087e-13 F total), 0 R
+Cps0 bn0 bn3 3.9e-17
+Cps1 bn0 bn6 2.5e-16
+Cps2 bn0 bp8 2.41e-16
+Cps3 bn0 clkn 1.49e-16
+Cps4 bn0 cn1 7.93e-17
+Cps5 bn0 cn2 4.61e-17
+Cps6 bn0 cn6 2.57e-16
+Cps7 bn0 cp1 3.18e-16
+Cps8 bn0 cp2 4.45e-17
+Cps9 bn0 cp4 9.16e-17
+Cps10 bn0 gnd 4.1316e-15
+Cps11 bn0 in0p 6.28e-17
+Cps12 bn0 in1p 1.24e-16
+Cps13 bn0 on 4.86e-17
+Cps14 bn0 rstb_n 3.39e-17
+Cps15 bn0 vbn 2.83e-16
+Cps16 bn0 vbp 2.11e-16
+Cps17 bn0 vref 1.32e-16
+Cps18 bn0 xc4_din 4.33e-17
+Cps19 bn0 xc4_dip 1.05e-16
+Cps20 bn0 xc4_xs1_tail0 3.93e-16
+Cps21 bn0 xc5_xs1_tail0 1.3e-16
+Cps22 bn0 xs0n_x 2.95e-16
+Cps23 bn0 xs0p_cbn 1.31e-16
+Cps24 bn0 xs0p_n10 5.43e-17
+Cps25 bn0 xs1n_cbp 5.49e-17
+Cps26 bn0 xs1n_g 2.63e-16
+Cps27 bn0 xs1n_x 1.38e-16
+Cps28 bn0 xs1p_n10 1.99e-16
+Cps29 bn1 bn3 1.15e-16
+Cps30 bn1 bn6 2.69e-17
+Cps31 bn1 bp1 6.13e-16
+Cps32 bn1 bp11 1.34e-16
+Cps33 bn1 cp11 6.41e-17
+Cps34 bn1 cp12 3.09e-16
+Cps35 bn1 cp6 5.49e-17
+Cps36 bn1 cp9 2.674e-16
+Cps37 bn1 gnd 4.1925e-15
+Cps38 bn1 onp 7.33e-17
+Cps39 bn1 rstb 8.58e-17
+Cps40 bn1 rstb_n 2.69e-17
+Cps41 bn1 t0 1.69e-16
+Cps42 bn1 t1 1.45e-16
+Cps43 bn1 vrefl 3.66e-16
+Cps44 bn1 xc4_outnb 6.04e-17
+Cps45 bn1 xs0n_cbp 1.7e-16
+Cps46 bn1 xs0p_x 1.54e-15
+Cps47 bn1 xs1n_g 1.84e-16
+Cps48 bn10 bn12 4.16e-17
+Cps49 bn10 bn2 7.29e-17
+Cps50 bn10 bn4 1.75e-16
+Cps51 bn10 bn6 3.42e-16
+Cps52 bn10 bp1 1.41e-16
+Cps53 bn10 bp11 2.91e-16
+Cps54 bn10 bp8 1.219e-16
+Cps55 bn10 cn1 1.37e-16
+Cps56 bn10 cn6 2.39e-16
+Cps57 bn10 cp0 2.88e-16
+Cps58 bn10 cp11 2.56e-16
+Cps59 bn10 cp2 2.06e-16
+Cps60 bn10 gnd 5.307e-15
+Cps61 bn10 in1n 6.7e-17
+Cps62 bn10 onp 1.156e-15
+Cps63 bn10 xc4_xs1_tail 6.5e-17
+Cps64 bn10 xc4_xs1_tail0 2.87e-16
+Cps65 bn10 xc5_din 2.3e-16
+Cps66 bn10 xc5_xs1_tail 1.05e-16
+Cps67 bn10 xs0p_g 2.45e-16
+Cps68 bn10 xs1n_cbn 6.76e-16
+Cps69 bn10 xs1n_cbp 2.27e-16
+Cps70 bn10 xs1p_cbp 2.49e-16
+Cps71 bn11 bn12 1.46e-16
+Cps72 bn11 bn2 4.05e-16
+Cps73 bn11 bn3 5.84e-17
+Cps74 bn11 bn6 5.4e-16
+Cps75 bn11 bn8 9.51e-17
+Cps76 bn11 bp11 5.35e-16
+Cps77 bn11 cn11 4.19e-16
+Cps78 bn11 cn6 1.56e-16
+Cps79 bn11 cp1 1.16e-16
+Cps80 bn11 cp10 2.03e-16
+Cps81 bn11 gnd 3.6993e-15
+Cps82 bn11 lsb_n 1.49e-16
+Cps83 bn11 lsb_p 1.93e-16
+Cps84 bn11 onn 1.24e-16
+Cps85 bn11 t0b 1.53e-16
+Cps86 bn11 top_n 7.89e-16
+Cps87 bn11 xc4_din 1.74e-16
+Cps88 bn11 xc4_outnb 1.13e-16
+Cps89 bn11 xc4_outpb 3.18e-17
+Cps90 bn11 xc5_dip 2.73e-16
+Cps91 bn11 xc5_lt 2.26e-16
+Cps92 bn11 xs0n_cbp 3.37e-17
+Cps93 bn11 xs0n_g 3.72e-17
+Cps94 bn11 xs0p_cbn 2e-16
+Cps95 bn11 xs1n_g 1.18e-15
+Cps96 bn11 xs1n_n10 9.02e-17
+Cps97 bn12 bn3 1.94e-16
+Cps98 bn12 bn6 7e-16
+Cps99 bn12 bn7 1.24e-16
+Cps100 bn12 bn9 6.72e-17
+Cps101 bn12 bp5 1.85e-16
+Cps102 bn12 bp9 3.9e-16
+Cps103 bn12 cn0 5.36e-17
+Cps104 bn12 cn1 3.23e-16
+Cps105 bn12 cn12 6.67e-16
+Cps106 bn12 cn2 1.02e-16
+Cps107 bn12 cn5 1.083e-16
+Cps108 bn12 cn6 1.26e-16
+Cps109 bn12 cp0 7.63e-17
+Cps110 bn12 cp11 1.64e-16
+Cps111 bn12 cp12 1.47e-16
+Cps112 bn12 cp2 4e-16
+Cps113 bn12 gnd 4.4616e-15
+Cps114 bn12 in1n 3.01e-16
+Cps115 bn12 lsb_p 5.78e-17
+Cps116 bn12 onn 2.55e-17
+Cps117 bn12 t0 3.4e-16
+Cps118 bn12 t0b 9.92e-17
+Cps119 bn12 t1b 2.16e-16
+Cps120 bn12 top_p 1.49e-16
+Cps121 bn12 trk0 1.66e-16
+Cps122 bn12 vbn 3.1e-16
+Cps123 bn12 vref 1.43e-16
+Cps124 bn12 xc4_lt 2.51e-17
+Cps125 bn12 xc4_outpb 4.71e-16
+Cps126 bn12 xs1p_n10 2.208e-16
+Cps127 bn2 bn5 4.15e-17
+Cps128 bn2 bn9 1.77e-16
+Cps129 bn2 bp5 1.961e-15
+Cps130 bn2 bp6 1.11e-16
+Cps131 bn2 clkb 1.69e-16
+Cps132 bn2 clknb 2.839e-16
+Cps133 bn2 cn3 1.55e-16
+Cps134 bn2 cn5 3.6e-16
+Cps135 bn2 cn7 2.58e-16
+Cps136 bn2 cn9 1.33e-16
+Cps137 bn2 cp11 1.28e-16
+Cps138 bn2 cp12 1.03e-16
+Cps139 bn2 cp3 1.34e-16
+Cps140 bn2 cp6 5.72e-17
+Cps141 bn2 gnd 3.9874e-15
+Cps142 bn2 in1n 4.42e-16
+Cps143 bn2 in1p 9.76e-16
+Cps144 bn2 rstb_n 2.2e-16
+Cps145 bn2 t0 6.8e-16
+Cps146 bn2 xc4_xs1_tail0 2.94e-16
+Cps147 bn2 xc5_lt 2.81e-16
+Cps148 bn2 xc5_xs1_tail 1.14e-16
+Cps149 bn2 xs0p_g 8.87e-17
+Cps150 bn2 xs1n_cbn 3.2e-16
+Cps151 bn2 xs1p_g 2.03e-16
+Cps152 bn3 bn4 6.97e-17
+Cps153 bn3 bn5 2.02e-16
+Cps154 bn3 bp5 4.03e-16
+Cps155 bn3 bp9 1.12e-16
+Cps156 bn3 cn1 1.54e-16
+Cps157 bn3 cp10 1.5e-16
+Cps158 bn3 cp11 1.63e-16
+Cps159 bn3 cp7 1.26e-16
+Cps160 bn3 gnd 4.5155e-15
+Cps161 bn3 in0n 7.04e-16
+Cps162 bn3 t1b 3.17e-16
+Cps163 bn3 vrefl 7.23e-17
+Cps164 bn3 xc5_outpb 3.067e-16
+Cps165 bn3 xs0n_cbp 4.43e-16
+Cps166 bn3 xs0p_x 1.442e-16
+Cps167 bn3 xs1n_cbn 3.85e-17
+Cps168 bn3 xs1n_g 1.55e-16
+Cps169 bn4 bn6 4.81e-17
+Cps170 bn4 bn7 5.85e-17
+Cps171 bn4 bp1 1.57e-17
+Cps172 bn4 bp3 7.49e-17
+Cps173 bn4 bp5 1.33e-16
+Cps174 bn4 bp7 1.77e-16
+Cps175 bn4 clk 6.02e-17
+Cps176 bn4 cn12 1.92e-16
+Cps177 bn4 cn4 4.1e-17
+Cps178 bn4 cn7 2.35e-16
+Cps179 bn4 cn9 2.58e-16
+Cps180 bn4 cp1 1.21e-16
+Cps181 bn4 cp2 1.34e-16
+Cps182 bn4 cp4 6.61e-16
+Cps183 bn4 cp6 4.52e-16
+Cps184 bn4 gnd 4.6206e-15
+Cps185 bn4 lsb_p 7e-17
+Cps186 bn4 nr 1.21e-16
+Cps187 bn4 onp 4.74e-16
+Cps188 bn4 t1b 5.22e-16
+Cps189 bn4 top_n 1.97e-16
+Cps190 bn4 vbn 1.33e-16
+Cps191 bn4 vbp 5.6e-17
+Cps192 bn4 vdd 2e-16
+Cps193 bn4 vref 2.37e-16
+Cps194 bn4 xc4_din 1.2e-16
+Cps195 bn4 xc4_xs1_tail 1.73e-16
+Cps196 bn4 xc5_din 1.23e-16
+Cps197 bn4 xc5_xs1_tail0 3.08e-16
+Cps198 bn4 xs0n_n10 8.5e-17
+Cps199 bn4 xs1n_n10 2.91e-16
+Cps200 bn4 xs1n_x 1.2e-16
+Cps201 bn5 bn9 1.01e-16
+Cps202 bn5 bp1 3.57e-17
+Cps203 bn5 bp12 1.35e-16
+Cps204 bn5 bp2 4.4e-17
+Cps205 bn5 bp5 1.31e-16
+Cps206 bn5 clkb 6.48e-17
+Cps207 bn5 clkn 5.62e-17
+Cps208 bn5 clknb 2.54e-16
+Cps209 bn5 cn1 4.28e-16
+Cps210 bn5 cn2 1.62e-16
+Cps211 bn5 cn3 1.53e-16
+Cps212 bn5 cn8 1.49e-16
+Cps213 bn5 cp0 9.27e-17
+Cps214 bn5 cp12 5.73e-17
+Cps215 bn5 cp2 6.15e-17
+Cps216 bn5 cp4 4.67e-17
+Cps217 bn5 cp8 1.37e-16
+Cps218 bn5 gnd 3.9136e-15
+Cps219 bn5 lsb_n 1.04e-16
+Cps220 bn5 rstb 4.38e-16
+Cps221 bn5 t0 3.38e-16
+Cps222 bn5 t1b 2.147e-16
+Cps223 bn5 top_n 1.23e-16
+Cps224 bn5 top_p 2.97e-16
+Cps225 bn5 vdd 9.55e-17
+Cps226 bn5 xc4_din 4.32e-16
+Cps227 bn5 xc5_outnb 4.26e-17
+Cps228 bn5 xs0n_cbn 8.66e-16
+Cps229 bn5 xs0n_n10 1.21e-16
+Cps230 bn5 xs0n_x 7.6e-17
+Cps231 bn5 xs0p_n10 1.7e-16
+Cps232 bn5 xs1p_cbn 1.97e-16
+Cps233 bn5 xs1p_g 1.79e-16
+Cps234 bn6 bp0 2.23e-16
+Cps235 bn6 bp12 9.13e-17
+Cps236 bn6 bp7 1.27e-16
+Cps237 bn6 clk 8.93e-17
+Cps238 bn6 clkb 5.35e-17
+Cps239 bn6 cn12 8.12e-17
+Cps240 bn6 cp10 5.56e-16
+Cps241 bn6 gnd 3.0537e-15
+Cps242 bn6 in1p 6.3e-16
+Cps243 bn6 lsb_n 2.41e-16
+Cps244 bn6 vbn 1.13e-16
+Cps245 bn6 xs0p_cbp 1.14e-16
+Cps246 bn6 xs0p_n10 3.13e-16
+Cps247 bn6 xs1n_cbn 1.57e-16
+Cps248 bn6 xs1n_n10 7.78e-17
+Cps249 bn6 xs1p_cbn 2.8e-16
+Cps250 bn6 xs1p_g 7.67e-17
+Cps251 bn7 bn9 1.59e-16
+Cps252 bn7 bp2 2.28e-16
+Cps253 bn7 bp5 4.55e-17
+Cps254 bn7 bp6 4.33e-16
+Cps255 bn7 bp9 4.85e-16
+Cps256 bn7 clkb 5.59e-17
+Cps257 bn7 clkn 6.21e-17
+Cps258 bn7 cn8 2.89e-16
+Cps259 bn7 cp11 3.01e-16
+Cps260 bn7 cp2 9.32e-17
+Cps261 bn7 gnd 5.9042e-15
+Cps262 bn7 in1p 1.3e-16
+Cps263 bn7 onn 5.97e-16
+Cps264 bn7 trk0 3.14e-16
+Cps265 bn7 vbp 9.02e-17
+Cps266 bn7 vdd 1.56e-16
+Cps267 bn7 xc4_outpb 1.03e-16
+Cps268 bn7 xs0p_g 5.17e-17
+Cps269 bn7 xs0p_x 3.15e-16
+Cps270 bn8 bp1 7.23e-17
+Cps271 bn8 bp9 1.69e-16
+Cps272 bn8 cn12 2.46e-17
+Cps273 bn8 cn2 3.776e-16
+Cps274 bn8 cn4 2.1e-16
+Cps275 bn8 cn5 7.98e-17
+Cps276 bn8 cn6 1.32e-16
+Cps277 bn8 cp7 3.78e-17
+Cps278 bn8 cp8 1.78e-16
+Cps279 bn8 gnd 3.8692e-15
+Cps280 bn8 in1p 1.86e-16
+Cps281 bn8 trk1 8.81e-17
+Cps282 bn8 xc4_outpb 2.63e-16
+Cps283 bn8 xs0n_cbn 1.67e-16
+Cps284 bn8 xs0p_n10 1.94e-16
+Cps285 bn8 xs1n_cbn 1.75e-16
+Cps286 bn8 xs1p_n10 1.6e-16
+Cps287 bn9 bp5 4.1e-17
+Cps288 bn9 bp7 4.78e-17
+Cps289 bn9 clk 4.38e-16
+Cps290 bn9 cn6 2.18e-16
+Cps291 bn9 cn7 9.89e-17
+Cps292 bn9 cp1 6.79e-17
+Cps293 bn9 cp12 2.52e-17
+Cps294 bn9 cp4 2.77e-16
+Cps295 bn9 cp8 5.59e-16
+Cps296 bn9 cp9 1.74e-16
+Cps297 bn9 gnd 4.1949e-15
+Cps298 bn9 in1p 6.85e-17
+Cps299 bn9 lsb_p 2.65e-17
+Cps300 bn9 rstb_n 2.09e-16
+Cps301 bn9 xc4_dip 4.3e-16
+Cps302 bn9 xc4_outnb 2.45e-16
+Cps303 bn9 xs0n_cbp 1.37e-16
+Cps304 bn9 xs1n_g 1.77e-17
+Cps305 bn9 xs1p_n10 1.98e-16
+Cps306 bp0 bp11 7.18e-17
+Cps307 bp0 bp9 1.49e-16
+Cps308 bp0 cn7 2.6e-17
+Cps309 bp0 cn9 2.26e-16
+Cps310 bp0 cp3 1.04e-16
+Cps311 bp0 gnd 3.555e-15
+Cps312 bp0 in1n 2.17e-16
+Cps313 bp0 nr 1.55e-16
+Cps314 bp0 rstb_n 1.03e-16
+Cps315 bp0 t0b 7.08e-16
+Cps316 bp0 top_n 6.24e-17
+Cps317 bp0 trk1 4.07e-17
+Cps318 bp0 vrefl 1.87e-16
+Cps319 bp0 xc4_outnb 8.05e-17
+Cps320 bp0 xc4_xs1_tail 2.44e-16
+Cps321 bp0 xc4_xs1_tail0 2.45e-16
+Cps322 bp0 xc5_xs1_tail 3.59e-16
+Cps323 bp0 xs0p_g 1.659e-16
+Cps324 bp0 xs0p_n10 2.23e-17
+Cps325 bp0 xs1n_g 2e-16
+Cps326 bp0 xs1n_n10 9.11e-17
+Cps327 bp0 xs1p_x 1.1e-16
+Cps328 bp1 bp5 2.09e-16
+Cps329 bp1 clkn 2.84e-16
+Cps330 bp1 cn12 1.55e-16
+Cps331 bp1 cn3 1.29e-16
+Cps332 bp1 cn4 9.29e-17
+Cps333 bp1 cn6 1.59e-16
+Cps334 bp1 cp12 1.97e-16
+Cps335 bp1 cp3 9.94e-17
+Cps336 bp1 gnd 5.8343e-15
+Cps337 bp1 rstb_n 3.14e-16
+Cps338 bp1 t0 7.94e-17
+Cps339 bp1 top_n 2.96e-16
+Cps340 bp1 trk0 9.86e-17
+Cps341 bp1 vdd 3.27e-16
+Cps342 bp1 vref 4.21e-16
+Cps343 bp1 xc4_lt 8.73e-17
+Cps344 bp1 xc4_outnb 1.3e-16
+Cps345 bp1 xc5_dip 5.61e-17
+Cps346 bp1 xs0n_g 2.02e-16
+Cps347 bp1 xs1n_g 3.56e-17
+Cps348 bp1 xs1p_cbp 1.15e-16
+Cps349 bp1 xs1p_x 8.75e-17
+Cps350 bp10 bp4 2.1e-16
+Cps351 bp10 cn10 1.945e-16
+Cps352 bp10 cn11 6.31e-17
+Cps353 bp10 cn2 1.31e-16
+Cps354 bp10 cn7 7.44e-17
+Cps355 bp10 cp3 9.15e-17
+Cps356 bp10 cp6 2.59e-16
+Cps357 bp10 cp7 5.36e-17
+Cps358 bp10 cp8 2.83e-16
+Cps359 bp10 gnd 3.4333e-15
+Cps360 bp10 in0p 4.14e-16
+Cps361 bp10 lsb_p 5.76e-17
+Cps362 bp10 on 1.3e-16
+Cps363 bp10 rstb 2.12e-16
+Cps364 bp10 t0b 4.38e-16
+Cps365 bp10 t1 9.92e-17
+Cps366 bp10 top_p 6.81e-17
+Cps367 bp10 vref 4.46e-16
+Cps368 bp10 xc5_xs1_tail0 2.91e-16
+Cps369 bp11 clkb 7.99e-17
+Cps370 bp11 cn0 2.43e-16
+Cps371 bp11 cn10 5.07e-17
+Cps372 bp11 cn2 3.25e-16
+Cps373 bp11 cn3 1.5e-16
+Cps374 bp11 cn5 2.18e-16
+Cps375 bp11 cp10 2.62e-16
+Cps376 bp11 gnd 3.3743e-15
+Cps377 bp11 in0n 1.07e-16
+Cps378 bp11 in1n 1.27e-16
+Cps379 bp11 lsb_p 6.71e-17
+Cps380 bp11 top_p 3.85e-17
+Cps381 bp11 vref 4.91e-17
+Cps382 bp11 vrefl 1.94e-16
+Cps383 bp11 xc4_din 1.31e-16
+Cps384 bp11 xc4_outpb 1.34e-16
+Cps385 bp11 xc5_din 3.35e-16
+Cps386 bp11 xc5_dip 1.11e-16
+Cps387 bp11 xs0n_x 2.28e-16
+Cps388 bp11 xs1p_cbp 7.21e-17
+Cps389 bp12 bp3 4.49e-17
+Cps390 bp12 bp6 6.46e-17
+Cps391 bp12 bp9 6.16e-16
+Cps392 bp12 cn10 3.9e-16
+Cps393 bp12 cn8 4.35e-17
+Cps394 bp12 cp7 1.6e-16
+Cps395 bp12 cp9 3.96e-16
+Cps396 bp12 gnd 4.917e-15
+Cps397 bp12 top_n 3.2e-16
+Cps398 bp12 trk1 1.27e-16
+Cps399 bp12 vbp 1.94e-16
+Cps400 bp12 vdd 6.2e-16
+Cps401 bp12 vref 7.34e-17
+Cps402 bp12 vrefl 2.4e-16
+Cps403 bp12 xc4_lt 1.68e-16
+Cps404 bp12 xc5_din 7.79e-17
+Cps405 bp12 xs1n_cbn 3.36e-16
+Cps406 bp12 xs1n_cbp 2.83e-16
+Cps407 bp12 xs1n_n10 2.16e-16
+Cps408 bp2 bp5 5.93e-17
+Cps409 bp2 bp8 1.18e-16
+Cps410 bp2 clknb 9.44e-16
+Cps411 bp2 cn1 8.85e-17
+Cps412 bp2 cn11 5.29e-17
+Cps413 bp2 cn8 7.28e-17
+Cps414 bp2 cp3 4.9e-16
+Cps415 bp2 cp4 1.28e-16
+Cps416 bp2 gnd 3.4652e-15
+Cps417 bp2 in1p 1.17e-16
+Cps418 bp2 t0b 3.55e-16
+Cps419 bp2 t1 2.55e-16
+Cps420 bp2 top_n 2.27e-16
+Cps421 bp2 top_p 4.15e-16
+Cps422 bp2 trk0 3.12e-16
+Cps423 bp2 trk1 2.73e-16
+Cps424 bp2 xs1p_n10 4.5e-16
+Cps425 bp3 bp8 3.63e-16
+Cps426 bp3 cn1 2.45e-16
+Cps427 bp3 cn12 1.77e-16
+Cps428 bp3 cn3 3.78e-16
+Cps429 bp3 cn4 7.12e-17
+Cps430 bp3 cn6 2.18e-16
+Cps431 bp3 cp1 1.41e-16
+Cps432 bp3 cp10 1.91e-16
+Cps433 bp3 cp11 7.63e-16
+Cps434 bp3 cp2 2.537e-16
+Cps435 bp3 cp3 1.51e-16
+Cps436 bp3 cp8 6.74e-17
+Cps437 bp3 gnd 5.99e-15
+Cps438 bp3 in1n 1.59e-16
+Cps439 bp3 lsb_n 2.84e-16
+Cps440 bp3 nr 1.35e-16
+Cps441 bp3 t0 3.12e-16
+Cps442 bp3 top_n 3.81e-16
+Cps443 bp3 top_p 1.75e-16
+Cps444 bp3 vbp 3.1e-16
+Cps445 bp3 vdd 8.95e-17
+Cps446 bp3 xc4_xs1_tail0 2.11e-16
+Cps447 bp3 xc5_din 5.84e-17
+Cps448 bp3 xc5_xs1_tail0 4.81e-16
+Cps449 bp3 xs0n_cbp 2.79e-17
+Cps450 bp3 xs0p_cbn 8.25e-16
+Cps451 bp3 xs0p_n10 5.71e-17
+Cps452 bp3 xs1n_g 6.34e-16
+Cps453 bp3 xs1p_g 3.284e-16
+Cps454 bp4 clknb 4.27e-16
+Cps455 bp4 cn3 2.61e-16
+Cps456 bp4 cp0 4.71e-16
+Cps457 bp4 cp12 3.72e-17
+Cps458 bp4 cp6 7.53e-17
+Cps459 bp4 cp9 4.5e-16
+Cps460 bp4 gnd 3.5925e-15
+Cps461 bp4 in1n 1.0644e-15
+Cps462 bp4 rstb 8.2e-16
+Cps463 bp4 trk0 2.38e-16
+Cps464 bp4 vrefl 2.65e-16
+Cps465 bp4 xc4_dip 1.77e-16
+Cps466 bp4 xs1p_cbp 2.25e-16
+Cps467 bp4 xs1p_n10 1.49e-16
+Cps468 bp5 bp6 2.46e-17
+Cps469 bp5 bp8 1.75e-16
+Cps470 bp5 cn1 2.13e-16
+Cps471 bp5 cn12 1.4e-16
+Cps472 bp5 cn4 5.06e-17
+Cps473 bp5 cn9 3.32e-16
+Cps474 bp5 cp11 2.7e-16
+Cps475 bp5 cp3 8.19e-17
+Cps476 bp5 cp4 1.8e-16
+Cps477 bp5 gnd 4.3373e-15
+Cps478 bp5 onn 1.99e-16
+Cps479 bp5 rstb_n 1.37e-16
+Cps480 bp5 t0b 5.039e-16
+Cps481 bp5 top_n 4.9e-17
+Cps482 bp5 vbn 8.88e-17
+Cps483 bp5 vbp 3.21e-16
+Cps484 bp5 xc4_dip 1.4e-16
+Cps485 bp5 xc4_outpb 2.6e-16
+Cps486 bp5 xc5_lt 2.91e-16
+Cps487 bp5 xc5_outpb 8.49e-17
+Cps488 bp5 xs0n_g 2.683e-16
+Cps489 bp5 xs0p_cbn 1.04e-16
+Cps490 bp5 xs1n_g 2.42e-17
+Cps491 bp5 xs1n_n10 7.157e-16
+Cps492 bp5 xs1p_cbn 4.007e-16
+Cps493 bp5 xs1p_n10 2.9e-17
+Cps494 bp6 clkn 1.83e-16
+Cps495 bp6 clknb 8.44e-16
+Cps496 bp6 cn1 7.76e-16
+Cps497 bp6 cn2 8.04e-17
+Cps498 bp6 cn3 6.66e-17
+Cps499 bp6 cn6 9.19e-16
+Cps500 bp6 cn8 7.33e-17
+Cps501 bp6 cn9 6.034e-16
+Cps502 bp6 cp0 4.86e-17
+Cps503 bp6 cp2 3.13e-16
+Cps504 bp6 gnd 4.4586e-15
+Cps505 bp6 in1n 1.96e-16
+Cps506 bp6 onp 1.03e-16
+Cps507 bp6 rstb_n 4.44e-16
+Cps508 bp6 t1 1.08e-16
+Cps509 bp6 t1b 2.35e-16
+Cps510 bp6 top_p 5.3e-17
+Cps511 bp6 vbn 4.44e-17
+Cps512 bp6 xc4_din 1.38e-16
+Cps513 bp6 xc4_outnb 1.08e-16
+Cps514 bp6 xc5_xs1_tail0 2e-16
+Cps515 bp6 xs0n_cbn 4.48e-17
+Cps516 bp6 xs0n_cbp 2.11e-16
+Cps517 bp6 xs1n_n10 5.32e-16
+Cps518 bp7 clknb 7.19e-17
+Cps519 bp7 cn12 5.36e-16
+Cps520 bp7 cn4 4.2e-16
+Cps521 bp7 cn9 5.29e-16
+Cps522 bp7 cp10 2.92e-17
+Cps523 bp7 cp4 1.11e-16
+Cps524 bp7 cp8 3.76e-16
+Cps525 bp7 cp9 1.43e-16
+Cps526 bp7 gnd 3.3209e-15
+Cps527 bp7 op 1.83e-16
+Cps528 bp7 rstb 3.68e-16
+Cps529 bp7 rstb_n 7.21e-17
+Cps530 bp7 t1b 2.57e-16
+Cps531 bp7 top_n 8.85e-17
+Cps532 bp7 vbp 5.99e-17
+Cps533 bp7 vrefl 1.5e-16
+Cps534 bp7 xc5_dip 3.047e-16
+Cps535 bp7 xc5_lt 1.77e-16
+Cps536 bp7 xc5_xs1_tail 2.2e-16
+Cps537 bp7 xc5_xs1_tail0 8.05e-17
+Cps538 bp7 xs0n_cbn 7.09e-17
+Cps539 bp7 xs0n_g 1.33e-16
+Cps540 bp7 xs0p_n10 2.95e-16
+Cps541 bp7 xs1n_n10 7.92e-17
+Cps542 bp7 xs1p_cbp 5.74e-16
+Cps543 bp8 cp1 1.45e-16
+Cps544 bp8 cp3 2.52e-17
+Cps545 bp8 gnd 7.0133e-15
+Cps546 bp8 lsb_n 8.02e-17
+Cps547 bp8 on 2.58e-16
+Cps548 bp8 op 5.8e-17
+Cps549 bp8 t0 7.9e-17
+Cps550 bp8 t1b 1.63e-16
+Cps551 bp8 vbp 8.09e-16
+Cps552 bp8 xc4_outpb 3.16e-16
+Cps553 bp8 xc4_xs1_tail0 2.34e-16
+Cps554 bp8 xc5_outnb 2.27e-16
+Cps555 bp8 xs0n_g 1.66e-16
+Cps556 bp8 xs0n_x 2.21e-16
+Cps557 bp8 xs0p_cbn 1.55e-16
+Cps558 bp8 xs0p_n10 1.08e-16
+Cps559 bp8 xs0p_x 6.96e-17
+Cps560 bp8 xs1n_cbp 5.99e-17
+Cps561 bp8 xs1n_x 1.09e-16
+Cps562 bp8 xs1p_cbn 1.54e-16
+Cps563 bp9 clkb 5.38e-17
+Cps564 bp9 clknb 2.04e-16
+Cps565 bp9 cn1 5.22e-16
+Cps566 bp9 cn10 4.02e-16
+Cps567 bp9 cp1 1.99e-16
+Cps568 bp9 cp11 1.03e-15
+Cps569 bp9 cp4 8.43e-17
+Cps570 bp9 cp5 1.34e-16
+Cps571 bp9 cp7 5.1e-16
+Cps572 bp9 gnd 4.9209e-15
+Cps573 bp9 in0p 5.29e-17
+Cps574 bp9 on 4.013e-16
+Cps575 bp9 onn 2.77e-16
+Cps576 bp9 vbn 4.209e-16
+Cps577 bp9 xc5_outpb 2.18e-16
+Cps578 bp9 xs0p_cbn 2.93e-16
+Cps579 bp9 xs0p_g 4.9e-16
+Cps580 bp9 xs1n_cbn 2.48e-16
+Cps581 bp9 xs1p_cbn 1.21e-16
+Cps582 clk clkn 1.77e-16
+Cps583 clk cn0 2.09e-16
+Cps584 clk cn4 1.51e-16
+Cps585 clk cn5 4.96e-17
+Cps586 clk cn7 5.46e-17
+Cps587 clk cn8 1.47e-16
+Cps588 clk cp5 8.58e-17
+Cps589 clk cp7 9.07e-17
+Cps590 clk gnd 4.9871e-15
+Cps591 clk t1b 2.8e-16
+Cps592 clk vdd 8.59e-17
+Cps593 clk xc4_din 1.18e-16
+Cps594 clk xc5_dip 1.43e-16
+Cps595 clk xc5_xs1_tail0 1.62e-16
+Cps596 clk xs0n_cbn 6.24e-16
+Cps597 clk xs0n_cbp 4.38e-16
+Cps598 clk xs0n_n10 1.21e-15
+Cps599 clk xs0p_cbn 2.88e-16
+Cps600 clk xs0p_cbp 1.97e-16
+Cps601 clk xs0p_n10 1.411e-16
+Cps602 clk xs1n_x 2.02e-16
+Cps603 clk xs1p_x 1.31e-16
+Cps604 clkb cn2 1.65e-16
+Cps605 clkb cn3 7.27e-16
+Cps606 clkb cp10 2.98e-16
+Cps607 clkb cp2 2.7e-17
+Cps608 clkb cp6 2.33e-16
+Cps609 clkb gnd 3.2805e-15
+Cps610 clkb in1n 1.61e-16
+Cps611 clkb in1p 1.21e-16
+Cps612 clkb rstb 2.12e-16
+Cps613 clkb top_n 2.38e-17
+Cps614 clkb xc4_lt 5.95e-17
+Cps615 clkb xc4_outpb 8.2e-17
+Cps616 clkb xs0n_cbn 3.855e-16
+Cps617 clkb xs0p_cbn 2.842e-16
+Cps618 clkb xs0p_cbp 4.39e-16
+Cps619 clkb xs0p_x 1.82e-16
+Cps620 clkb xs1n_n10 2.17e-16
+Cps621 clkb xs1p_cbn 2e-16
+Cps622 clkb xs1p_n10 2.18e-16
+Cps623 clkn cn0 1.39e-16
+Cps624 clkn cn7 3.64e-16
+Cps625 clkn cp1 3.1e-16
+Cps626 clkn cp5 2.86e-16
+Cps627 clkn cp7 9.36e-17
+Cps628 clkn gnd 4.6967e-15
+Cps629 clkn in0p 1.34e-16
+Cps630 clkn in1n 5.05e-16
+Cps631 clkn lsb_p 6.81e-17
+Cps632 clkn t0 1.39e-16
+Cps633 clkn trk1 4.71e-16
+Cps634 clkn xc5_outnb 3.68e-16
+Cps635 clkn xs1n_cbn 7.62e-17
+Cps636 clkn xs1p_g 5.46e-17
+Cps637 clknb cn8 3.5e-16
+Cps638 clknb cp11 1.55e-16
+Cps639 clknb cp12 4.932e-16
+Cps640 clknb cp4 2.85e-16
+Cps641 clknb cp5 9.48e-17
+Cps642 clknb gnd 3.4653e-15
+Cps643 clknb on 2.28e-16
+Cps644 clknb rstb_n 1.58e-16
+Cps645 clknb top_p 2.88e-16
+Cps646 clknb vbn 9.214e-16
+Cps647 clknb xc4_outnb 3.86e-16
+Cps648 clknb xc4_xs1_tail 1.65e-16
+Cps649 clknb xc5_lt 9.34e-17
+Cps650 clknb xs0p_cbp 1.32e-16
+Cps651 clknb xs1n_cbn 2.035e-16
+Cps652 clknb xs1p_cbn 1.991e-16
+Cps653 cn0 cn1 1.03e-16
+Cps654 cn0 cn12 9.09e-17
+Cps655 cn0 cn2 1.79e-16
+Cps656 cn0 cn6 6.82e-17
+Cps657 cn0 cp10 7.06e-17
+Cps658 cn0 cp2 4.35e-16
+Cps659 cn0 cp8 3.33e-16
+Cps660 cn0 cp9 6.02e-17
+Cps661 cn0 gnd 3.9017e-15
+Cps662 cn0 onn 5.21e-16
+Cps663 cn0 t0 4.88e-16
+Cps664 cn0 t1b 6.6e-17
+Cps665 cn0 trk0 2.57e-16
+Cps666 cn0 trk1 6.79e-17
+Cps667 cn0 vbn 5.8e-17
+Cps668 cn0 xc4_outnb 2.18e-16
+Cps669 cn0 xc4_xs1_tail 1.36e-16
+Cps670 cn0 xc5_dip 6.77e-17
+Cps671 cn0 xc5_lt 6.68e-16
+Cps672 cn0 xc5_outpb 7.26e-17
+Cps673 cn0 xs0n_cbn 5.52e-17
+Cps674 cn0 xs0n_cbp 1.18e-16
+Cps675 cn0 xs0n_n10 2.71e-16
+Cps676 cn0 xs1n_n10 3.6e-17
+Cps677 cn1 cn10 4.7e-16
+Cps678 cn1 cn2 1.13e-16
+Cps679 cn1 cn7 7.19e-17
+Cps680 cn1 cp0 1.32e-16
+Cps681 cn1 cp10 1.07e-16
+Cps682 cn1 cp9 4.98e-16
+Cps683 cn1 gnd 3.8134e-15
+Cps684 cn1 in1n 1.18e-16
+Cps685 cn1 lsb_n 1.43e-16
+Cps686 cn1 t0 1.69e-16
+Cps687 cn1 t1 2.06e-16
+Cps688 cn1 trk0 1e-16
+Cps689 cn1 xc4_dip 2.81e-16
+Cps690 cn1 xc4_outpb 3.49e-16
+Cps691 cn1 xc5_lt 5.91e-16
+Cps692 cn1 xc5_outnb 8.27e-17
+Cps693 cn1 xc5_xs1_tail 3.196e-16
+Cps694 cn1 xs0p_cbp 2.57e-17
+Cps695 cn1 xs1n_cbn 8.06e-16
+Cps696 cn1 xs1n_n10 3.84e-16
+Cps697 cn1 xs1p_cbn 7.32e-17
+Cps698 cn1 xs1p_x 1.08e-16
+Cps699 cn10 cn11 2.78e-16
+Cps700 cn10 cn12 1.42e-16
+Cps701 cn10 cn3 1.01e-15
+Cps702 cn10 cn6 1.01e-16
+Cps703 cn10 gnd 4.1968e-15
+Cps704 cn10 in1n 5.06e-16
+Cps705 cn10 on 2.84e-16
+Cps706 cn10 rstb 2.54e-16
+Cps707 cn10 t0b 2.65e-16
+Cps708 cn10 t1 1.9e-16
+Cps709 cn10 top_p 1.83e-16
+Cps710 cn10 xc5_xs1_tail 2.76e-16
+Cps711 cn10 xc5_xs1_tail0 6.76e-16
+Cps712 cn10 xs0p_g 1.716e-16
+Cps713 cn11 cn3 3.06e-16
+Cps714 cn11 cn6 6.15e-17
+Cps715 cn11 cp12 1.35e-16
+Cps716 cn11 cp4 9.32e-17
+Cps717 cn11 gnd 6.4771e-15
+Cps718 cn11 t0 2.21e-16
+Cps719 cn11 t1 6.69e-17
+Cps720 cn11 vbn 1.1144e-15
+Cps721 cn11 xs0n_g 3.91e-16
+Cps722 cn11 xs0p_n10 3.21e-16
+Cps723 cn11 xs1n_n10 6.39e-17
+Cps724 cn11 xs1n_x 1.62e-16
+Cps725 cn12 cn2 5.78e-17
+Cps726 cn12 cn8 1.8e-16
+Cps727 cn12 cp11 1.58e-16
+Cps728 cn12 gnd 5.159e-15
+Cps729 cn12 in0n 2.923e-16
+Cps730 cn12 in1p 8.29e-17
+Cps731 cn12 lsb_n 9.72e-17
+Cps732 cn12 t0 1.11e-16
+Cps733 cn12 vbp 1.8e-16
+Cps734 cn12 xc4_dip 2.19e-16
+Cps735 cn12 xc4_xs1_tail0 9.42e-17
+Cps736 cn12 xc5_dip 2e-16
+Cps737 cn12 xs0p_cbp 2.55e-16
+Cps738 cn12 xs1n_cbn 4.11e-16
+Cps739 cn12 xs1p_n10 4.33e-16
+Cps740 cn2 cn4 5.76e-17
+Cps741 cn2 cn6 2.48e-16
+Cps742 cn2 cn7 1.02e-16
+Cps743 cn2 cp1 3.454e-16
+Cps744 cn2 cp3 2.2e-16
+Cps745 cn2 cp4 6.35e-17
+Cps746 cn2 cp6 5.44e-17
+Cps747 cn2 gnd 5.3074e-15
+Cps748 cn2 lsb_n 5.08e-17
+Cps749 cn2 t1 1.9e-16
+Cps750 cn2 trk1 1.58e-16
+Cps751 cn2 xc4_outnb 1.15e-16
+Cps752 cn2 xc5_xs1_tail 2.18e-16
+Cps753 cn2 xc5_xs1_tail0 5.09e-16
+Cps754 cn2 xs0n_cbp 5.17e-17
+Cps755 cn3 cn5 6.6e-16
+Cps756 cn3 cn7 4.42e-16
+Cps757 cn3 cn9 3.54e-16
+Cps758 cn3 cp11 5.4e-17
+Cps759 cn3 cp2 5.28e-17
+Cps760 cn3 cp5 1.17e-16
+Cps761 cn3 cp6 1.27e-16
+Cps762 cn3 gnd 4e-15
+Cps763 cn3 lsb_n 1.67e-16
+Cps764 cn3 onp 8.66e-17
+Cps765 cn3 op 2.33e-16
+Cps766 cn3 rstb_n 6.85e-17
+Cps767 cn3 t0b 4.39e-16
+Cps768 cn3 t1 1.781e-16
+Cps769 cn3 t1b 8.7e-17
+Cps770 cn3 top_n 1.56e-16
+Cps771 cn3 xc4_dip 1.67e-16
+Cps772 cn3 xc4_outpb 3.32e-17
+Cps773 cn3 xc5_dip 6.92e-16
+Cps774 cn3 xs0n_cbn 4.19e-17
+Cps775 cn3 xs0n_n10 1.26e-16
+Cps776 cn3 xs1p_n10 4.28e-17
+Cps777 cn4 cn9 1.93e-16
+Cps778 cn4 cp0 2.26e-17
+Cps779 cn4 cp7 1.47e-16
+Cps780 cn4 cp9 1.27e-16
+Cps781 cn4 gnd 4.4344e-15
+Cps782 cn4 in0n 6.98e-17
+Cps783 cn4 lsb_n 4.23e-17
+Cps784 cn4 lsb_p 1.72e-16
+Cps785 cn4 t0 1.44e-16
+Cps786 cn4 t0b 1.43e-16
+Cps787 cn4 trk1 2.15e-16
+Cps788 cn4 vbp 8.36e-17
+Cps789 cn4 vref 2.08e-16
+Cps790 cn4 xc5_din 2.7e-16
+Cps791 cn4 xs0n_cbp 2.18e-16
+Cps792 cn4 xs0n_n10 7.21e-17
+Cps793 cn4 xs0p_g 2.52e-16
+Cps794 cn4 xs1n_g 3.11e-16
+Cps795 cn4 xs1p_cbp 4.663e-16
+Cps796 cn5 cp1 2.3e-16
+Cps797 cn5 cp12 1.731e-16
+Cps798 cn5 cp9 2.33e-17
+Cps799 cn5 gnd 3.6579e-15
+Cps800 cn5 in0n 2.95e-17
+Cps801 cn5 lsb_p 1.08e-16
+Cps802 cn5 on 5.94e-16
+Cps803 cn5 op 4.7e-16
+Cps804 cn5 rstb_n 1.65e-16
+Cps805 cn5 top_p 1.23e-16
+Cps806 cn5 vref 6.44e-17
+Cps807 cn5 xc4_din 2.66e-16
+Cps808 cn5 xc4_lt 1.17e-16
+Cps809 cn5 xc4_outnb 4e-16
+Cps810 cn5 xs1n_cbn 2.76e-16
+Cps811 cn5 xs1n_cbp 9.54e-17
+Cps812 cn5 xs1p_n10 1.18e-16
+Cps813 cn6 cp0 1.29e-16
+Cps814 cn6 cp12 6.87e-16
+Cps815 cn6 cp2 3.644e-16
+Cps816 cn6 cp5 2.98e-16
+Cps817 cn6 gnd 4.0809e-15
+Cps818 cn6 t1b 1.32e-16
+Cps819 cn6 top_p 4.12e-17
+Cps820 cn6 vrefl 4.412e-16
+Cps821 cn6 xc4_xs1_tail0 3.4e-17
+Cps822 cn6 xc5_din 8.71e-17
+Cps823 cn6 xs0n_cbp 4.68e-17
+Cps824 cn6 xs1n_cbn 1.5e-16
+Cps825 cn6 xs1n_g 1.54e-16
+Cps826 cn6 xs1p_cbn 1.13e-15
+Cps827 cn7 cn8 5.94e-17
+Cps828 cn7 cn9 3.51e-16
+Cps829 cn7 cp7 5.08e-16
+Cps830 cn7 cp8 2.6e-17
+Cps831 cn7 gnd 3.3592e-15
+Cps832 cn7 in0p 1.28e-16
+Cps833 cn7 in1p 3.68e-16
+Cps834 cn7 lsb_n 6.89e-17
+Cps835 cn7 nr 1.04e-16
+Cps836 cn7 onp 2.73e-16
+Cps837 cn7 t1b 8.23e-17
+Cps838 cn7 xc4_outpb 2.33e-16
+Cps839 cn7 xs1n_cbp 6.95e-17
+Cps840 cn7 xs1n_g 1.38e-16
+Cps841 cn8 cn9 4.76e-17
+Cps842 cn8 cp12 1.4e-16
+Cps843 cn8 cp2 2.82e-16
+Cps844 cn8 cp4 2.2e-16
+Cps845 cn8 cp9 3.932e-16
+Cps846 cn8 gnd 3.8223e-15
+Cps847 cn8 in0n 2.56e-16
+Cps848 cn8 on 3.4e-16
+Cps849 cn8 op 5.43e-17
+Cps850 cn8 trk0 2.26e-16
+Cps851 cn8 vbp 3.88e-16
+Cps852 cn8 xc4_outpb 1.05e-16
+Cps853 cn8 xc5_lt 5.92e-16
+Cps854 cn8 xs1p_cbn 6e-17
+Cps855 cn9 cp0 2.92e-16
+Cps856 cn9 cp1 3.47e-17
+Cps857 cn9 gnd 6.2315e-15
+Cps858 cn9 on 2.79e-16
+Cps859 cn9 onp 3.13e-17
+Cps860 cn9 t1b 3.82e-16
+Cps861 cn9 vbn 6.75e-17
+Cps862 cn9 vrefl 1.45e-16
+Cps863 cn9 xc4_outnb 1.22e-16
+Cps864 cn9 xc4_xs1_tail0 7.76e-17
+Cps865 cn9 xc5_xs1_tail 1.54e-16
+Cps866 cn9 xs1p_g 2.21e-16
+Cps867 cn9 xs1p_n10 9.01e-17
+Cps868 cp0 cp5 5.53e-16
+Cps869 cp0 cp7 7.03e-17
+Cps870 cp0 cp8 1.65e-16
+Cps871 cp0 gnd 3.3224e-15
+Cps872 cp0 in1n 1.97e-16
+Cps873 cp0 nr 5.47e-17
+Cps874 cp0 rstb 2.02e-16
+Cps875 cp0 rstb_n 3.613e-16
+Cps876 cp0 top_n 4.04e-17
+Cps877 cp0 trk0 2.43e-16
+Cps878 cp0 vbp 7.18e-17
+Cps879 cp0 xc4_lt 5.16e-17
+Cps880 cp0 xc4_xs1_tail0 1.82e-16
+Cps881 cp0 xc5_outnb 1.31e-16
+Cps882 cp0 xc5_xs1_tail 3.24e-16
+Cps883 cp0 xs0p_g 2.38e-16
+Cps884 cp1 cp2 1.13e-16
+Cps885 cp1 gnd 4.2681e-15
+Cps886 cp1 t1b 9.08e-16
+Cps887 cp1 top_n 1.69e-16
+Cps888 cp1 trk0 2.05e-16
+Cps889 cp1 vbn 7.57e-17
+Cps890 cp1 xc4_dip 1.11e-16
+Cps891 cp1 xc4_xs1_tail0 1.37e-16
+Cps892 cp1 xc5_lt 2.37e-16
+Cps893 cp1 xc5_xs1_tail 4.75e-16
+Cps894 cp1 xs0p_g 1.53e-16
+Cps895 cp1 xs0p_x 4.81e-16
+Cps896 cp1 xs1n_cbp 6.91e-16
+Cps897 cp1 xs1p_n10 3.25e-16
+Cps898 cp1 xs1p_x 1.17e-16
+Cps899 cp10 gnd 6.2979e-15
+Cps900 cp10 in0p 7.11e-16
+Cps901 cp10 lsb_n 5.08e-16
+Cps902 cp10 lsb_p 3.94e-16
+Cps903 cp10 trk0 1.74e-16
+Cps904 cp10 xc5_outnb 2.29e-16
+Cps905 cp10 xc5_outpb 2.57e-16
+Cps906 cp10 xc5_xs1_tail 3.44e-17
+Cps907 cp10 xs0n_cbp 7.31e-17
+Cps908 cp10 xs1n_cbp 7.598e-16
+Cps909 cp10 xs1p_cbn 2.672e-16
+Cps910 cp10 xs1p_g 4.82e-16
+Cps911 cp11 cp8 1.63e-16
+Cps912 cp11 gnd 3.1422e-15
+Cps913 cp11 lsb_p 8.04e-17
+Cps914 cp11 t0 1.47e-16
+Cps915 cp11 top_n 4.79e-16
+Cps916 cp11 top_p 1.05e-16
+Cps917 cp11 vdd 1.64e-16
+Cps918 cp11 vref 2.89e-17
+Cps919 cp11 vrefl 4.32e-17
+Cps920 cp11 xc4_lt 6.02e-17
+Cps921 cp11 xc4_xs1_tail0 1.39e-16
+Cps922 cp11 xs0p_cbn 4.01e-17
+Cps923 cp11 xs1n_g 6.33e-16
+Cps924 cp11 xs1p_cbn 3.3e-17
+Cps925 cp12 cp8 3.41e-16
+Cps926 cp12 gnd 6.7601e-15
+Cps927 cp12 lsb_p 3.393e-16
+Cps928 cp12 onn 1.22e-16
+Cps929 cp12 top_n 4.3e-17
+Cps930 cp12 trk0 3.82e-16
+Cps931 cp12 xc4_dip 2.28e-16
+Cps932 cp12 xc4_outpb 4.49e-16
+Cps933 cp12 xc4_xs1_tail 8.01e-17
+Cps934 cp12 xc4_xs1_tail0 6.09e-17
+Cps935 cp12 xc5_outpb 1.06e-16
+Cps936 cp12 xs0p_cbp 1.06e-16
+Cps937 cp12 xs1n_cbp 2.09e-16
+Cps938 cp12 xs1n_g 1.48e-16
+Cps939 cp12 xs1n_n10 2.52e-16
+Cps940 cp12 xs1p_g 4.41e-16
+Cps941 cp2 cp8 1.19e-16
+Cps942 cp2 gnd 4.5463e-15
+Cps943 cp2 in0n 2.47e-16
+Cps944 cp2 onn 4.52e-17
+Cps945 cp2 t0b 5.603e-16
+Cps946 cp2 t1 1.18e-16
+Cps947 cp2 top_n 1.04e-16
+Cps948 cp2 top_p 3.53e-17
+Cps949 cp2 xs0n_n10 6.64e-17
+Cps950 cp2 xs0n_x 2.19e-16
+Cps951 cp2 xs0p_x 8.7e-17
+Cps952 cp2 xs1n_cbn 9.68e-17
+Cps953 cp2 xs1n_cbp 1.95e-16
+Cps954 cp2 xs1n_g 1.66e-16
+Cps955 cp2 xs1n_n10 1.62e-16
+Cps956 cp2 xs1n_x 3.4e-16
+Cps957 cp2 xs1p_n10 1.95e-16
+Cps958 cp3 cp9 1.735e-16
+Cps959 cp3 gnd 2.742e-15
+Cps960 cp3 in0p 3.88e-16
+Cps961 cp3 nr 1.65e-16
+Cps962 cp3 on 3.7e-16
+Cps963 cp3 onp 8.96e-17
+Cps964 cp3 t0 2.43e-16
+Cps965 cp3 t0b 1.58e-16
+Cps966 cp3 t1 2.47e-16
+Cps967 cp3 vbn 5.43e-16
+Cps968 cp3 vrefl 5.65e-17
+Cps969 cp3 xc5_dip 4.742e-16
+Cps970 cp3 xs0n_cbn 1.395e-16
+Cps971 cp4 gnd 3.9878e-15
+Cps972 cp4 in0n 5.3e-17
+Cps973 cp4 in1p 1.83e-16
+Cps974 cp4 lsb_n 2.62e-16
+Cps975 cp4 lsb_p 1.6e-16
+Cps976 cp4 rstb 1.97e-16
+Cps977 cp4 trk1 2.09e-16
+Cps978 cp4 xc5_din 8.15e-17
+Cps979 cp4 xs0p_n10 3.59e-16
+Cps980 cp4 xs1n_cbn 1.64e-16
+Cps981 cp4 xs1n_g 3.74e-17
+Cps982 cp5 cp7 1.91e-16
+Cps983 cp5 gnd 3.6154e-15
+Cps984 cp5 rstb_n 7.98e-17
+Cps985 cp5 vbp 5.67e-17
+Cps986 cp5 vref 3.03e-16
+Cps987 cp5 xc4_din 4.59e-16
+Cps988 cp5 xc5_din 5.26e-17
+Cps989 cp5 xc5_lt 6.76e-17
+Cps990 cp5 xs0n_n10 1.6e-16
+Cps991 cp5 xs0n_x 2.97e-16
+Cps992 cp5 xs0p_n10 1.2e-16
+Cps993 cp5 xs1n_x 1.39e-16
+Cps994 cp6 cp9 1.69e-16
+Cps995 cp6 gnd 5.1503e-15
+Cps996 cp6 in0n 1.3e-16
+Cps997 cp6 in1n 1.12e-16
+Cps998 cp6 onn 2.7e-16
+Cps999 cp6 op 2.46e-16
+Cps1000 cp6 t1 1.57e-16
+Cps1001 cp6 t1b 2.8e-16
+Cps1002 cp6 top_n 1.62e-16
+Cps1003 cp6 trk1 1.24e-16
+Cps1004 cp6 vbp 1.57e-16
+Cps1005 cp6 vref 5.266e-16
+Cps1006 cp6 xc4_din 6.88e-17
+Cps1007 cp6 xc4_lt 1.58e-16
+Cps1008 cp6 xc4_outpb 4.47e-16
+Cps1009 cp6 xc4_xs1_tail0 1.03e-16
+Cps1010 cp6 xc5_din 4.76e-16
+Cps1011 cp6 xc5_outnb 1.48e-16
+Cps1012 cp6 xs0n_cbn 5.48e-17
+Cps1013 cp6 xs0n_g 1.05e-16
+Cps1014 cp6 xs1p_g 4.81e-17
+Cps1015 cp7 cp8 1.49e-16
+Cps1016 cp7 gnd 5.4779e-15
+Cps1017 cp7 lsb_p 1.55e-16
+Cps1018 cp7 nr 1.87e-16
+Cps1019 cp7 op 1.88e-16
+Cps1020 cp7 t0b 2.56e-16
+Cps1021 cp7 t1 7.82e-17
+Cps1022 cp7 top_n 1.4e-16
+Cps1023 cp7 top_p 2.79e-16
+Cps1024 cp7 vdd 1.04e-16
+Cps1025 cp7 vref 1.41e-16
+Cps1026 cp7 xc5_din 1.35e-16
+Cps1027 cp7 xc5_xs1_tail0 6.41e-16
+Cps1028 cp7 xs0n_cbn 9.86e-17
+Cps1029 cp7 xs0n_cbp 2.11e-16
+Cps1030 cp7 xs0n_g 1.03e-16
+Cps1031 cp7 xs0p_cbn 1.69e-16
+Cps1032 cp7 xs0p_cbp 2.23e-16
+Cps1033 cp7 xs1n_x 3.33e-16
+Cps1034 cp7 xs1p_cbp 7.13e-17
+Cps1035 cp8 gnd 2.7575e-15
+Cps1036 cp8 in1n 3.99e-16
+Cps1037 cp8 nr 1.17e-16
+Cps1038 cp8 t1 5.24e-17
+Cps1039 cp8 t1b 1.463e-16
+Cps1040 cp8 top_n 7.44e-17
+Cps1041 cp8 top_p 7.44e-17
+Cps1042 cp8 vdd 2.29e-16
+Cps1043 cp8 xc4_lt 2.33e-16
+Cps1044 cp8 xc4_outpb 6.44e-16
+Cps1045 cp8 xc4_xs1_tail0 2.52e-16
+Cps1046 cp8 xc5_xs1_tail0 2.46e-16
+Cps1047 cp8 xs0p_cbn 2.526e-16
+Cps1048 cp8 xs1n_cbn 5.67e-16
+Cps1049 cp8 xs1n_x 8.57e-16
+Cps1050 cp8 xs1p_g 2.79e-16
+Cps1051 cp8 xs1p_n10 1.99e-16
+Cps1052 cp9 gnd 4.5818e-15
+Cps1053 cp9 in0p 8.76e-17
+Cps1054 cp9 lsb_n 2.429e-16
+Cps1055 cp9 onp 1.02e-16
+Cps1056 cp9 rstb_n 8.594e-16
+Cps1057 cp9 vrefl 7.02e-17
+Cps1058 cp9 xc4_dip 1.26e-16
+Cps1059 cp9 xc4_outnb 1.9e-16
+Cps1060 cp9 xc4_outpb 1.86e-16
+Cps1061 cp9 xc5_din 6.55e-17
+Cps1062 cp9 xc5_lt 1.45e-16
+Cps1063 cp9 xc5_outpb 5.6e-16
+Cps1064 cp9 xs0n_cbn 6.88e-17
+Cps1065 cp9 xs0n_g 6.45e-16
+Cps1066 cp9 xs0n_n10 8.97e-17
+Cps1067 cp9 xs0p_n10 3.87e-16
+Cps1068 cp9 xs1n_cbp 2.75e-16
+Cps1069 cp9 xs1n_n10 9.94e-17
+Cps1070 gnd in0n 4.3791e-15
+Cps1071 gnd in0p 2.8182e-15
+Cps1072 gnd in1n 3.5398e-15
+Cps1073 gnd in1p 3.5702e-15
+Cps1074 gnd lsb_n 4.6963e-15
+Cps1075 gnd lsb_p 4.2887e-15
+Cps1076 gnd nr 5.659e-15
+Cps1077 gnd on 3.3755e-15
+Cps1078 gnd onn 6.3007e-15
+Cps1079 gnd onp 4.7652e-15
+Cps1080 gnd op 3.6843e-15
+Cps1081 gnd rstb 3.9346e-15
+Cps1082 gnd rstb_n 2.4821e-15
+Cps1083 gnd t0 3.7023e-15
+Cps1084 gnd t0b 5.7637e-15
+Cps1085 gnd t1 6.1903e-15
+Cps1086 gnd t1b 3.3435e-15
+Cps1087 gnd top_n 4.9898e-15
+Cps1088 gnd top_p 8.3866e-15
+Cps1089 gnd trk0 3.8756e-15
+Cps1090 gnd trk1 5.1735e-15
+Cps1091 gnd vbn 3.5336e-15
+Cps1092 gnd vbp 4.751e-15
+Cps1093 gnd vdd 4.9225e-15
+Cps1094 gnd vref 6.2898e-15
+Cps1095 gnd vrefl 4.2081e-15
+Cps1096 gnd xc4_din 3.1983e-15
+Cps1097 gnd xc4_dip 3.7421e-15
+Cps1098 gnd xc4_lt 4.5315e-15
+Cps1099 gnd xc4_outnb 4.5412e-15
+Cps1100 gnd xc4_outpb 5.696e-15
+Cps1101 gnd xc4_xs1_tail 5.9755e-15
+Cps1102 gnd xc4_xs1_tail0 1.3669e-15
+Cps1103 gnd xc5_din 4.0085e-15
+Cps1104 gnd xc5_dip 4.1736e-15
+Cps1105 gnd xc5_lt 4.545e-15
+Cps1106 gnd xc5_outnb 3.1315e-15
+Cps1107 gnd xc5_outpb 5.7348e-15
+Cps1108 gnd xc5_xs1_tail 3.7096e-15
+Cps1109 gnd xc5_xs1_tail0 4.4444e-15
+Cps1110 gnd xs0n_cbn 4.2548e-15
+Cps1111 gnd xs0n_cbp 2.8669e-15
+Cps1112 gnd xs0n_g 3.0976e-15
+Cps1113 gnd xs0n_n10 3.6886e-15
+Cps1114 gnd xs0n_x 3.3765e-15
+Cps1115 gnd xs0p_cbn 3.918e-15
+Cps1116 gnd xs0p_cbp 4.9035e-15
+Cps1117 gnd xs0p_g 4.291e-15
+Cps1118 gnd xs0p_n10 3.2789e-15
+Cps1119 gnd xs0p_x 3.4656e-15
+Cps1120 gnd xs1n_cbn 4.5742e-15
+Cps1121 gnd xs1n_cbp 2.6012e-15
+Cps1122 gnd xs1n_g 2.3755e-15
+Cps1123 gnd xs1n_n10 4.2145e-15
+Cps1124 gnd xs1n_x 3.5842e-15
+Cps1125 gnd xs1p_cbn 5.5265e-15
+Cps1126 gnd xs1p_cbp 4.2345e-15
+Cps1127 gnd xs1p_g 4.4105e-15
+Cps1128 gnd xs1p_n10 4.3938e-15
+Cps1129 gnd xs1p_x 3.3252e-15
+Cps1130 in0n in0p 1.27e-16
+Cps1131 in0n in1p 7.87e-17
+Cps1132 in0n onp 1.09e-16
+Cps1133 in0n vrefl 1.6e-16
+Cps1134 in0n xc4_din 1.28e-16
+Cps1135 in0n xc4_dip 1.02e-16
+Cps1136 in0n xc4_lt 2.6e-16
+Cps1137 in0n xc4_xs1_tail 3.06e-17
+Cps1138 in0n xc5_lt 1.57e-16
+Cps1139 in0n xs0n_g 2.55e-17
+Cps1140 in0n xs0p_x 4.14e-16
+Cps1141 in0n xs1n_x 1.63e-16
+Cps1142 in0n xs1p_cbn 5.83e-17
+Cps1143 in0n xs1p_cbp 3.48e-17
+Cps1144 in0n xs1p_x 1.25e-16
+Cps1145 in0p lsb_p 2.725e-16
+Cps1146 in0p nr 3.1e-16
+Cps1147 in0p on 8.08e-17
+Cps1148 in0p onp 5.86e-16
+Cps1149 in0p rstb 2.01e-16
+Cps1150 in0p top_p 1.14e-16
+Cps1151 in0p vbn 5.25e-17
+Cps1152 in0p xc5_dip 6.12e-16
+Cps1153 in0p xs0n_x 1.83e-16
+Cps1154 in0p xs0p_cbp 2.27e-16
+Cps1155 in0p xs0p_n10 2.732e-16
+Cps1156 in0p xs1n_cbn 1.42e-16
+Cps1157 in0p xs1n_cbp 1.02e-16
+Cps1158 in0p xs1p_cbn 2.37e-16
+Cps1159 in0p xs1p_g 5.12e-17
+Cps1160 in1n lsb_n 3.82e-16
+Cps1161 in1n onp 1.41e-16
+Cps1162 in1n t0 2.74e-16
+Cps1163 in1n t0b 1.25e-16
+Cps1164 in1n vbn 1.34e-17
+Cps1165 in1n vbp 5.24e-17
+Cps1166 in1n vdd 1.44e-16
+Cps1167 in1n xc4_lt 2.88e-16
+Cps1168 in1n xc5_dip 1.65e-16
+Cps1169 in1n xc5_xs1_tail0 2.51e-16
+Cps1170 in1n xs0p_g 2.94e-16
+Cps1171 in1n xs0p_x 1.03e-16
+Cps1172 in1n xs1n_n10 3.33e-16
+Cps1173 in1p on 8.36e-17
+Cps1174 in1p t1 1.17e-16
+Cps1175 in1p vdd 2.55e-16
+Cps1176 in1p vrefl 3.53e-16
+Cps1177 in1p xc4_dip 6.29e-17
+Cps1178 in1p xc4_xs1_tail0 3.81e-16
+Cps1179 in1p xc5_outpb 2.59e-16
+Cps1180 in1p xs0n_g 4.29e-16
+Cps1181 in1p xs0p_cbn 5.72e-16
+Cps1182 in1p xs0p_g 4.52e-17
+Cps1183 in1p xs0p_n10 2.28e-16
+Cps1184 in1p xs1n_g 6.1e-17
+Cps1185 lsb_n on 5.18e-16
+Cps1186 lsb_n onn 1.86e-17
+Cps1187 lsb_n xc4_lt 2.38e-16
+Cps1188 lsb_n xc5_din 5.11e-16
+Cps1189 lsb_n xc5_outnb 5.79e-17
+Cps1190 lsb_n xs0n_g 1.69e-16
+Cps1191 lsb_n xs0p_cbn 4.214e-16
+Cps1192 lsb_n xs0p_g 7.74e-17
+Cps1193 lsb_n xs1p_cbn 9.84e-16
+Cps1194 lsb_n xs1p_n10 1.34e-16
+Cps1195 lsb_p on 4.03e-16
+Cps1196 lsb_p onn 2.01e-16
+Cps1197 lsb_p rstb_n 1.01e-16
+Cps1198 lsb_p top_p 4.87e-17
+Cps1199 lsb_p trk0 3.44e-16
+Cps1200 lsb_p trk1 9.49e-17
+Cps1201 lsb_p vdd 1.64e-16
+Cps1202 lsb_p xc4_lt 2.47e-16
+Cps1203 lsb_p xc5_outpb 1.69e-16
+Cps1204 lsb_p xs0n_cbn 3.03e-16
+Cps1205 lsb_p xs0n_x 5.3e-17
+Cps1206 nr on 1.21e-15
+Cps1207 nr rstb 2.643e-16
+Cps1208 nr vbp 1.15e-16
+Cps1209 nr vrefl 1.2742e-15
+Cps1210 nr xc5_dip 3.08e-16
+Cps1211 nr xc5_outnb 2.39e-16
+Cps1212 nr xs0p_cbp 7.79e-16
+Cps1213 nr xs1n_g 8.96e-17
+Cps1214 nr xs1n_n10 3.35e-16
+Cps1215 on op 3.3e-17
+Cps1216 on t1b 1.41e-16
+Cps1217 on vrefl 5.04e-16
+Cps1218 on xc4_lt 1.33e-16
+Cps1219 on xc5_dip 1.01e-16
+Cps1220 on xc5_outpb 1.65e-16
+Cps1221 on xc5_xs1_tail 4.48e-16
+Cps1222 on xs0n_g 3.3e-17
+Cps1223 on xs0p_n10 2.37e-16
+Cps1224 on xs0p_x 1.18e-16
+Cps1225 on xs1n_g 3.54e-16
+Cps1226 on xs1p_cbn 1.62e-17
+Cps1227 on xs1p_n10 1.02e-16
+Cps1228 onn rstb 4.85e-16
+Cps1229 onn top_p 4.88e-17
+Cps1230 onn xc4_dip 2.67e-16
+Cps1231 onn xc4_outnb 1.34e-16
+Cps1232 onn xc5_dip 1.37e-16
+Cps1233 onn xc5_outnb 1.18e-16
+Cps1234 onn xc5_xs1_tail 1.1e-16
+Cps1235 onn xs0p_n10 1.29e-16
+Cps1236 onp trk1 5.88e-17
+Cps1237 onp xc4_din 2.92e-16
+Cps1238 onp xc4_dip 7.95e-17
+Cps1239 onp xc4_xs1_tail 7.11e-17
+Cps1240 onp xc5_lt 1.4e-16
+Cps1241 onp xs0n_cbn 4.431e-16
+Cps1242 onp xs0p_cbp 2.26e-16
+Cps1243 onp xs0p_g 4.53e-16
+Cps1244 onp xs1n_cbn 1.45e-16
+Cps1245 onp xs1n_g 3e-16
+Cps1246 op t1 8.52e-17
+Cps1247 op trk0 6.52e-16
+Cps1248 op vdd 1.82e-16
+Cps1249 op xc4_din 5.17e-16
+Cps1250 op xc4_outnb 1.4e-16
+Cps1251 op xc4_xs1_tail 3.34e-16
+Cps1252 op xc5_din 1.08e-16
+Cps1253 op xc5_outpb 2.37e-16
+Cps1254 op xs0p_cbp 3.904e-16
+Cps1255 op xs0p_n10 9.96e-17
+Cps1256 op xs1n_cbn 2.42e-16
+Cps1257 op xs1n_cbp 4.21e-16
+Cps1258 op xs1n_g 3.04e-16
+Cps1259 op xs1n_n10 7.23e-17
+Cps1260 op xs1p_cbn 6.81e-17
+Cps1261 op xs1p_g 2.02e-16
+Cps1262 rstb top_p 6.39e-17
+Cps1263 rstb trk0 4.31e-16
+Cps1264 rstb trk1 1.59e-16
+Cps1265 rstb vbn 1.24e-16
+Cps1266 rstb xc4_outnb 1.73e-16
+Cps1267 rstb xc4_xs1_tail0 1.815e-16
+Cps1268 rstb xs0p_g 3.61e-16
+Cps1269 rstb xs0p_x 8.84e-17
+Cps1270 rstb xs1n_cbp 2.04e-16
+Cps1271 rstb_n xc4_din 1.01e-16
+Cps1272 rstb_n xc4_outpb 7.48e-16
+Cps1273 rstb_n xc4_xs1_tail0 6.28e-16
+Cps1274 rstb_n xc5_outnb 1.11e-16
+Cps1275 rstb_n xc5_xs1_tail 1.53e-16
+Cps1276 rstb_n xs0n_x 2.52e-16
+Cps1277 rstb_n xs0p_n10 5.21e-17
+Cps1278 rstb_n xs1n_cbn 9.64e-17
+Cps1279 rstb_n xs1n_x 2.31e-16
+Cps1280 t0 t0b 6.4e-17
+Cps1281 t0 t1b 5.17e-17
+Cps1282 t0 top_n 2.23e-16
+Cps1283 t0 vbn 6.7e-17
+Cps1284 t0 vrefl 6.627e-16
+Cps1285 t0 xc5_outnb 4.87e-16
+Cps1286 t0 xc5_outpb 3.04e-16
+Cps1287 t0 xs0p_cbn 1.68e-16
+Cps1288 t0 xs0p_cbp 7.31e-17
+Cps1289 t0 xs1p_cbn 1.5e-16
+Cps1290 t0 xs1p_x 2.03e-16
+Cps1291 t0b top_p 6.31e-17
+Cps1292 t0b trk1 4.55e-16
+Cps1293 t0b vbp 1.71e-16
+Cps1294 t0b xc4_dip 7.3e-17
+Cps1295 t0b xc5_din 1.181e-15
+Cps1296 t0b xc5_dip 2.33e-16
+Cps1297 t0b xs1n_cbn 2.685e-16
+Cps1298 t0b xs1n_x 1.17e-16
+Cps1299 t1 top_n 4.87e-17
+Cps1300 t1 trk0 1.31e-16
+Cps1301 t1 xc4_outnb 5.88e-16
+Cps1302 t1 xc5_lt 1.7e-16
+Cps1303 t1 xc5_xs1_tail 2.965e-16
+Cps1304 t1 xs1n_cbn 6.9e-17
+Cps1305 t1 xs1n_g 2.45e-16
+Cps1306 t1 xs1p_g 9.14e-17
+Cps1307 t1 xs1p_x 2.88e-16
+Cps1308 t1b top_p 3.7e-17
+Cps1309 t1b trk0 4.93e-17
+Cps1310 t1b vbn 2.39e-17
+Cps1311 t1b xc4_lt 1.053e-16
+Cps1312 t1b xc4_outpb 2.6e-16
+Cps1313 t1b xc5_din 5.36e-16
+Cps1314 t1b xc5_dip 5.86e-16
+Cps1315 t1b xc5_lt 1.71e-16
+Cps1316 t1b xs0p_n10 5.94e-16
+Cps1317 t1b xs1p_cbn 2.93e-16
+Cps1318 t1b xs1p_n10 4.34e-16
+Cps1319 top_n top_p 4.46e-16
+Cps1320 top_n vbp 1.27e-16
+Cps1321 top_n xc4_din 1.71e-16
+Cps1322 top_n xc4_dip 2e-16
+Cps1323 top_n xc4_outpb 2.28e-16
+Cps1324 top_n xc4_xs1_tail 1.139e-16
+Cps1325 top_n xc4_xs1_tail0 3.19e-17
+Cps1326 top_n xc5_lt 1.18e-16
+Cps1327 top_n xs0n_cbn 7.87e-17
+Cps1328 top_n xs0n_g 1.29e-16
+Cps1329 top_n xs1p_g 2.2e-16
+Cps1330 top_n xs1p_n10 9.98e-17
+Cps1331 top_p vrefl 7.05e-17
+Cps1332 top_p xc4_outnb 2.19e-16
+Cps1333 top_p xc5_outnb 9.83e-17
+Cps1334 top_p xs0p_x 2.735e-16
+Cps1335 top_p xs1p_cbp 3.85e-16
+Cps1336 trk0 vbn 8.49e-17
+Cps1337 trk0 xc4_xs1_tail0 2.99e-17
+Cps1338 trk0 xc5_xs1_tail 1.68e-16
+Cps1339 trk0 xs0p_cbn 4.453e-16
+Cps1340 trk0 xs0p_cbp 1.54e-16
+Cps1341 trk0 xs0p_n10 4.61e-16
+Cps1342 trk0 xs0p_x 1.43e-16
+Cps1343 trk0 xs1p_n10 2.58e-16
+Cps1344 trk0 xs1p_x 1.04e-16
+Cps1345 trk1 xs0n_cbn 2.36e-16
+Cps1346 trk1 xs0p_cbn 6.32e-16
+Cps1347 trk1 xs0p_n10 1.05e-16
+Cps1348 trk1 xs1n_cbp 1.04e-16
+Cps1349 trk1 xs1n_n10 8.99e-17
+Cps1350 trk1 xs1p_cbn 1.24e-16
+Cps1351 vbn xc4_xs1_tail0 1.46e-16
+Cps1352 vbn xc5_din 1.16e-16
+Cps1353 vbn xc5_dip 1.53e-16
+Cps1354 vbn xc5_outnb 6.56e-17
+Cps1355 vbn xc5_outpb 5.55e-16
+Cps1356 vbn xs0n_x 7.16e-17
+Cps1357 vbn xs0p_cbn 1.83e-16
+Cps1358 vbn xs0p_x 8.1e-17
+Cps1359 vbn xs1n_g 9.47e-17
+Cps1360 vbn xs1n_n10 1.59e-16
+Cps1361 vbn xs1p_cbp 3.57e-16
+Cps1362 vbp xc4_xs1_tail 7.08e-16
+Cps1363 vbp xc5_dip 1.835e-16
+Cps1364 vbp xc5_lt 3.2e-17
+Cps1365 vbp xc5_outnb 1.64e-16
+Cps1366 vbp xc5_xs1_tail 3.06e-16
+Cps1367 vbp xs0n_cbp 5.06e-16
+Cps1368 vbp xs0n_x 3.97e-16
+Cps1369 vbp xs0p_g 1.74e-16
+Cps1370 vbp xs1n_n10 2.4e-17
+Cps1371 vdd vrefl 2.35e-17
+Cps1372 vdd xc4_dip 7.57e-17
+Cps1373 vdd xc4_outnb 3.89e-17
+Cps1374 vdd xc5_din 1.07e-16
+Cps1375 vdd xc5_lt 6.75e-17
+Cps1376 vdd xs1p_x 2.9e-16
+Cps1377 vref xc4_xs1_tail 5.55e-17
+Cps1378 vref xc5_dip 3.25e-16
+Cps1379 vref xc5_xs1_tail0 1.5e-16
+Cps1380 vref xs0n_cbn 5.07e-17
+Cps1381 vref xs0n_g 1.31e-16
+Cps1382 vref xs0p_n10 5.6e-17
+Cps1383 vref xs0p_x 1.32e-16
+Cps1384 vref xs1n_g 4.56e-16
+Cps1385 vref xs1p_cbn 9.32e-18
+Cps1386 vref xs1p_x 3.02e-16
+Cps1387 vrefl xc4_din 1.9e-16
+Cps1388 vrefl xc4_dip 2.062e-16
+Cps1389 vrefl xc4_outnb 3.29e-16
+Cps1390 vrefl xc4_xs1_tail0 2.88e-16
+Cps1391 vrefl xs0p_cbn 6.69e-17
+Cps1392 vrefl xs0p_g 4.11e-17
+Cps1393 vrefl xs0p_n10 2.416e-16
+Cps1394 xc4_din xc4_outnb 1.9e-16
+Cps1395 xc4_din xc5_din 3.65e-17
+Cps1396 xc4_din xc5_outnb 1.68e-16
+Cps1397 xc4_din xs0n_g 2.48e-16
+Cps1398 xc4_din xs0p_g 6.48e-16
+Cps1399 xc4_din xs0p_x 4.91e-16
+Cps1400 xc4_din xs1n_n10 2.43e-16
+Cps1401 xc4_dip xc4_xs1_tail 7.14e-17
+Cps1402 xc4_dip xs0n_cbn 9.16e-17
+Cps1403 xc4_dip xs0p_cbp 1.77e-16
+Cps1404 xc4_dip xs1n_cbn 4.32e-17
+Cps1405 xc4_dip xs1p_cbp 7.39e-17
+Cps1406 xc4_lt xc5_xs1_tail 9.59e-17
+Cps1407 xc4_lt xc5_xs1_tail0 2.78e-16
+Cps1408 xc4_lt xs0n_cbp 2.76e-16
+Cps1409 xc4_lt xs0p_g 5.01e-16
+Cps1410 xc4_outnb xc4_xs1_tail0 1.141e-16
+Cps1411 xc4_outnb xc5_din 1.52e-16
+Cps1412 xc4_outnb xc5_dip 2.17e-16
+Cps1413 xc4_outnb xc5_outpb 8.47e-17
+Cps1414 xc4_outnb xc5_xs1_tail 1.14e-16
+Cps1415 xc4_outnb xs0n_g 1.33e-17
+Cps1416 xc4_outnb xs0p_n10 3.07e-16
+Cps1417 xc4_outnb xs1n_cbp 1.03e-16
+Cps1418 xc4_outnb xs1n_g 3.93e-16
+Cps1419 xc4_outnb xs1p_n10 1.68e-16
+Cps1420 xc4_outnb xs1p_x 2.92e-16
+Cps1421 xc4_outpb xc5_outnb 2.01e-16
+Cps1422 xc4_outpb xs0n_cbp 2.45e-16
+Cps1423 xc4_outpb xs0n_x 1.42e-16
+Cps1424 xc4_outpb xs0p_cbp 2.6e-16
+Cps1425 xc4_outpb xs1n_cbn 1.89e-16
+Cps1426 xc4_outpb xs1n_x 1.07e-16
+Cps1427 xc4_outpb xs1p_n10 3.88e-17
+Cps1428 xc4_xs1_tail xc4_xs1_tail0 5.27e-16
+Cps1429 xc4_xs1_tail xs0n_cbp 1.16e-16
+Cps1430 xc4_xs1_tail xs0n_g 1.27e-16
+Cps1431 xc4_xs1_tail xs0p_cbp 6.68e-16
+Cps1432 xc4_xs1_tail xs0p_x 3.6e-17
+Cps1433 xc4_xs1_tail xs1n_g 3.37e-16
+Cps1434 xc4_xs1_tail0 xc5_lt 1.23e-16
+Cps1435 xc4_xs1_tail0 xc5_outpb 1.82e-16
+Cps1436 xc4_xs1_tail0 xc5_xs1_tail0 1.73e-17
+Cps1437 xc4_xs1_tail0 xs0n_cbp 1.82e-16
+Cps1438 xc4_xs1_tail0 xs1p_cbn 9.7e-17
+Cps1439 xc4_xs1_tail0 xs1p_cbp 2.8e-16
+Cps1440 xc4_xs1_tail0 xs1p_n10 4.93e-17
+Cps1441 xc5_din xs0n_x 2.37e-16
+Cps1442 xc5_din xs0p_n10 8.34e-17
+Cps1443 xc5_din xs1n_g 2.99e-16
+Cps1444 xc5_din xs1n_n10 7.56e-17
+Cps1445 xc5_dip xs0n_g 1.7e-16
+Cps1446 xc5_dip xs0p_cbn 4.09e-16
+Cps1447 xc5_dip xs0p_g 5.63e-16
+Cps1448 xc5_dip xs1p_g 2.76e-17
+Cps1449 xc5_lt xc5_xs1_tail 4.33e-16
+Cps1450 xc5_lt xc5_xs1_tail0 5.71e-17
+Cps1451 xc5_lt xs0p_cbp 3.12e-16
+Cps1452 xc5_lt xs1n_x 2.4e-16
+Cps1453 xc5_lt xs1p_cbn 8.24e-17
+Cps1454 xc5_outnb xs0p_n10 6.75e-16
+Cps1455 xc5_outnb xs1p_n10 3.32e-16
+Cps1456 xc5_outpb xs0n_g 1.85e-16
+Cps1457 xc5_outpb xs0p_cbn 4.18e-16
+Cps1458 xc5_outpb xs0p_cbp 1.9e-16
+Cps1459 xc5_outpb xs0p_n10 1.05e-16
+Cps1460 xc5_outpb xs1n_g 7.46e-17
+Cps1461 xc5_outpb xs1n_n10 6.32e-17
+Cps1462 xc5_outpb xs1p_g 4.4e-16
+Cps1463 xc5_outpb xs1p_n10 1.71e-16
+Cps1464 xc5_xs1_tail xs0n_cbn 2.57e-16
+Cps1465 xc5_xs1_tail xs0p_cbp 1.34e-16
+Cps1466 xc5_xs1_tail xs0p_n10 2.23e-17
+Cps1467 xc5_xs1_tail xs1n_n10 4.84e-17
+Cps1468 xc5_xs1_tail xs1p_cbp 1.41e-16
+Cps1469 xc5_xs1_tail0 xs0n_cbn 2.23e-16
+Cps1470 xc5_xs1_tail0 xs0n_cbp 1.34e-16
+Cps1471 xc5_xs1_tail0 xs0n_x 3.37e-16
+Cps1472 xc5_xs1_tail0 xs0p_cbn 1.31e-16
+Cps1473 xc5_xs1_tail0 xs1p_g 1.29e-16
+Cps1474 xs0n_cbn xs0p_x 2.32e-16
+Cps1475 xs0n_cbp xs0p_cbp 1.22e-16
+Cps1476 xs0n_cbp xs0p_g 1.6e-16
+Cps1477 xs0n_cbp xs1n_cbn 1.08e-16
+Cps1478 xs0n_cbp xs1n_g 2.47e-16
+Cps1479 xs0n_cbp xs1p_cbn 2.011e-16
+Cps1480 xs0n_cbp xs1p_n10 5.02e-16
+Cps1481 xs0n_g xs0n_x 4.08e-16
+Cps1482 xs0n_g xs1n_x 4.17e-17
+Cps1483 xs0n_g xs1p_x 1.43e-16
+Cps1484 xs0n_n10 xs1n_g 2.03e-16
+Cps1485 xs0n_x xs1n_cbn 6.26e-16
+Cps1486 xs0n_x xs1n_g 8.02e-17
+Cps1487 xs0n_x xs1n_x 8.28e-17
+Cps1488 xs0n_x xs1p_g 1.19e-16
+Cps1489 xs0p_cbn xs1n_cbp 1.23e-16
+Cps1490 xs0p_cbn xs1p_cbp 3.34e-17
+Cps1491 xs0p_cbn xs1p_g 1.09e-16
+Cps1492 xs0p_cbn xs1p_n10 1.35e-16
+Cps1493 xs0p_cbp xs1n_cbn 5.29e-16
+Cps1494 xs0p_cbp xs1n_n10 1.91e-16
+Cps1495 xs0p_n10 xs0p_x 2.3e-16
+Cps1496 xs0p_n10 xs1n_x 1.15e-16
+Cps1497 xs0p_n10 xs1p_n10 6.76e-17
+Cps1498 xs0p_x xs1n_cbn 4.96e-16
+Cps1499 xs0p_x xs1n_x 1e-16
+Cps1500 xs0p_x xs1p_cbp 1.84e-16
+Cps1501 xs0p_x xs1p_g 1.28e-16
+Cps1502 xs1n_cbn xs1n_n10 5.36e-16
+Cps1503 xs1n_cbn xs1p_cbn 7.44e-17
+Cps1504 xs1n_cbp xs1p_g 1.4e-16
+Cps1505 xs1n_g xs1p_cbp 7.11e-16
+Cps1506 xs1n_n10 xs1p_g 9.99e-17
+Cps1507 xs1n_x xs1p_cbp 3.26e-16
+Cps1508 xs1p_cbp xs1p_g 2.1e-16
+Cps1509 xs1p_g xs1p_n10 6.69e-17
+.ends
+.subckt r1_adc_lay adc_hold is_smp clk adc_start adc_sel adc_valid_a adc_raw_a_0 adc_raw_a_1 adc_raw_a_2 adc_raw_a_3 adc_raw_a_4 adc_raw_a_5 adc_raw_a_6 adc_raw_a_7 adc_raw_a_8 adc_raw_a_9 adc_raw_a_10 adc_raw_a_11 adc_raw_a_12 adc_raw_a_13 adc_valid_b adc_raw_b_0 adc_raw_b_1 adc_raw_b_2 adc_raw_b_3 adc_raw_b_4 adc_raw_b_5 adc_raw_b_6 adc_raw_b_7 adc_raw_b_8 adc_raw_b_9 adc_raw_b_10 adc_raw_b_11 adc_raw_b_12 adc_raw_b_13 por_n ain_sin_p ain_sin_n ain_cos_p ain_cos_n vcm2 ibias ain_isa_p ain_isa_n ain_isb_p ain_isb_n vcm vdda vdd vss vref_in topap topan topbp topbn sar_clka sar_clkab sar_clkb sar_clkbb sar_clkna sar_clknab sar_clknb sar_clknbb sar_cna0 sar_cna1 sar_cna10 sar_cna11 sar_cna12 sar_cna2 sar_cna3 sar_cna4 sar_cna5 sar_cna6 sar_cna7 sar_cna8 sar_cna9 sar_cnb0 sar_cnb1 sar_cnb10 sar_cnb11 sar_cnb12 sar_cnb2 sar_cnb3 sar_cnb4 sar_cnb5 sar_cnb6 sar_cnb7 sar_cnb8 sar_cnb9 sar_cpa0 sar_cpa1 sar_cpa10 sar_cpa11 sar_cpa12 sar_cpa2 sar_cpa3 sar_cpa4 sar_cpa5 sar_cpa6 sar_cpa7 sar_cpa8 sar_cpa9 sar_cpb0 sar_cpb1 sar_cpb10 sar_cpb11 sar_cpb12 sar_cpb2 sar_cpb3 sar_cpb4 sar_cpb5 sar_cpb6 sar_cpb7 sar_cpb8 sar_cpb9 sar_oan sar_oann sar_oanp sar_oap sar_obn sar_obnn sar_obnp sar_obp sar_trka0 sar_trka1 sar_trkb0 sar_trkb1 sar_mclk
+Xxckg_xpd0 xckg_d0 clk vdd vdd sg13_lv_pmos w=1u l=0.5u ng=1 m=1
+Xxckg_xnd0 xckg_d0 clk vss vss sg13_lv_nmos w=0.5u l=0.5u ng=1 m=1
+Xxckg_cd0 xckg_d0 vss cap_cmim w=2.53u l=2.53u m=1
+Xxckg_xpd1 xckg_d1 xckg_d0 vdd vdd sg13_lv_pmos w=1u l=0.5u ng=1 m=1
+Xxckg_xnd1 xckg_d1 xckg_d0 vss vss sg13_lv_nmos w=0.5u l=0.5u ng=1 m=1
+Xxckg_cd1 xckg_d1 vss cap_cmim w=2.53u l=2.53u m=1
+Xxckg_xpd2 xckg_d2 xckg_d1 vdd vdd sg13_lv_pmos w=1u l=0.5u ng=1 m=1
+Xxckg_xnd2 xckg_d2 xckg_d1 vss vss sg13_lv_nmos w=0.5u l=0.5u ng=1 m=1
+Xxckg_cd2 xckg_d2 vss cap_cmim w=2.53u l=2.53u m=1
+Xxckg_xpd3 xckg_d3 xckg_d2 vdd vdd sg13_lv_pmos w=1u l=0.5u ng=1 m=1
+Xxckg_xnd3 xckg_d3 xckg_d2 vss vss sg13_lv_nmos w=0.5u l=0.5u ng=1 m=1
+Xxckg_cd3 xckg_d3 vss cap_cmim w=2.53u l=2.53u m=1
+Xxckg_xpd4 xckg_x xckg_d3 vdd vdd sg13_lv_pmos w=1u l=0.5u ng=1 m=1
+Xxckg_xnd4 xckg_x xckg_d3 vss vss sg13_lv_nmos w=0.5u l=0.5u ng=1 m=1
+Xxckg_cd4 xckg_x vss cap_cmim w=2.53u l=2.53u m=1
+Xxckg_xpa sar_mclk clk vdd vdd sg13_lv_pmos w=2u l=0.13u ng=1 m=1
+Xxckg_xpb sar_mclk xckg_x vdd vdd sg13_lv_pmos w=2u l=0.13u ng=1 m=1
+Xxckg_xna sar_mclk clk xckg_nn vss sg13_lv_nmos w=2u l=0.13u ng=1 m=1
+Xxckg_xnb xckg_nn xckg_x vss vss sg13_lv_nmos w=2u l=0.13u ng=1 m=1
+Xxckg_xpi mclkb sar_mclk vdd vdd sg13_lv_pmos w=2u l=0.13u ng=1 m=1
+Xxckg_xni mclkb sar_mclk vss vss sg13_lv_nmos w=1u l=0.13u ng=1 m=1
+Xxcbias_xmbd vbp vbp vdd vdd sg13_lv_pmos w=0.8u l=0.5u ng=1 m=1
+Xxcbias_xrb_g0 vbp xcbias_xrb_s1 vss rppd w=1u l=40u m=1 b=0
+Xxcbias_xrb_g1 xcbias_xrb_s1 xcbias_xrb_s2 vss rppd w=1u l=40u m=1 b=0
+Xxcbias_xrb_g2 xcbias_xrb_s2 xcbias_xrb_s3 vss rppd w=1u l=40u m=1 b=0
+Xxcbias_xrb_g3 xcbias_xrb_s3 vss vss rppd w=1u l=40u m=1 b=0
+Xxcbiasn_xmbd vbn vbn vss vss sg13_lv_nmos w=0.2u l=0.5u ng=1 m=1
+Xxcbiasn_xrb_g0 vdd xcbiasn_xrb_s1 vss rppd w=1u l=40u m=1 b=0
+Xxcbiasn_xrb_g1 xcbiasn_xrb_s1 xcbiasn_xrb_s2 vss rppd w=1u l=40u m=1 b=0
+Xxcbiasn_xrb_g2 xcbiasn_xrb_s2 xcbiasn_xrb_s3 vss rppd w=1u l=40u m=1 b=0
+Xxcbiasn_xrb_g3 xcbiasn_xrb_s3 vbn vss rppd w=1u l=40u m=1 b=0
+Xxref_xmb0 ibias ibias vss vss sg13_hv_nmos w=2u l=1u ng=1 m=1
+Xxref_xmt xref_ntl ibias vss vss sg13_hv_nmos w=2u l=8u ng=1 m=1
+Xxref_xm1 xref_na vref_in xref_ntl vss sg13_hv_nmos w=10u l=1u ng=2 m=1
+Xxref_xm2 xref_ng vref xref_ntl vss sg13_hv_nmos w=10u l=1u ng=2 m=1
+Xxref_xm3 xref_na xref_na vdda vdda sg13_hv_pmos w=4u l=1u ng=1 m=1
+Xxref_xm4 xref_ng xref_na vdda vdda sg13_hv_pmos w=4u l=1u ng=1 m=1
+Xxref_xcg_u0 vss xref_ng cap_cmim w=26.32u l=95u m=1
+Xxref_xmsf_s0 vdda xref_ng vref vss sg13_hv_nmos w=80u l=0.45u ng=32 m=4
+Xxref_xmib_s0 vref ibias vss vss sg13_hv_nmos w=80u l=1u ng=40 m=4
+Xxref_xcd_u0 vss vref cap_cmim w=51.58u l=95u m=4
+Xxref_xmsfl_s0 vdda xref_ng vrefl vss sg13_hv_nmos w=80u l=0.45u ng=32 m=1
+Xxref_xmibl_s0 vrefl ibias vss vss sg13_hv_nmos w=80u l=1u ng=40 m=1
+Xxref_xcdl_u0 vss vrefl cap_cmim w=51.58u l=95u m=2
+Xxfilt_xcf_u0 vss vref_in cap_cmim w=37.36u l=90u m=2
+Xslice_a ain_sin_p ain_sin_n ain_isa_p ain_isa_n sar_trka0 sar_trka1 sar_cpa0 sar_cpa1 sar_cpa2 sar_cpa3 sar_cpa4 sar_cpa5 sar_cpa6 sar_cpa7 sar_cpa8 sar_cpa9 sar_cpa10 sar_cpa11 sar_cpa12 sar_cna0 sar_cna1 sar_cna2 sar_cna3 sar_cna4 sar_cna5 sar_cna6 sar_cna7 sar_cna8 sar_cna9 sar_cna10 sar_cna11 sar_cna12 sar_clka sar_clkab sar_clkna sar_clknab sar_oap sar_oan sar_oanp sar_oann vbp vbn vref vrefl topap topan vdd vss r1_adc_slice_lay
+Xslice_b ain_cos_p ain_cos_n ain_isb_p ain_isb_n sar_trkb0 sar_trkb1 sar_cpb0 sar_cpb1 sar_cpb2 sar_cpb3 sar_cpb4 sar_cpb5 sar_cpb6 sar_cpb7 sar_cpb8 sar_cpb9 sar_cpb10 sar_cpb11 sar_cpb12 sar_cnb0 sar_cnb1 sar_cnb2 sar_cnb3 sar_cnb4 sar_cnb5 sar_cnb6 sar_cnb7 sar_cnb8 sar_cnb9 sar_cnb10 sar_cnb11 sar_cnb12 sar_clkb sar_clkbb sar_clknb sar_clknbb sar_obp sar_obn sar_obnp sar_obnn vbp vbn vref vrefl topbp topbn vdd vss r1_adc_slice_lay
+* parasitics, scope top: 328 C (4.037e-13 F total), 0 R
+Cpt0 clk ibias 1.36e-16
+Cpt1 clk mclkb 3.116e-16
+Cpt2 clk sar_mclk 2.876e-16
+Cpt3 clk vbn 5.013e-16
+Cpt4 clk vbp 5.97e-17
+Cpt5 clk vdd 5.18e-16
+Cpt6 clk vdda 1.061e-15
+Cpt7 clk vref 6.916e-16
+Cpt8 clk vref_in 7.3e-16
+Cpt9 clk vrefl 8.815e-16
+Cpt10 clk vss 1.0104e-14
+Cpt11 clk xcbias_xrb_s1 1.163e-16
+Cpt12 clk xcbias_xrb_s2 5.19e-16
+Cpt13 clk xcbias_xrb_s3 1.27e-16
+Cpt14 clk xcbiasn_xrb_s1 2.848e-16
+Cpt15 clk xcbiasn_xrb_s2 8.199e-16
+Cpt16 clk xcbiasn_xrb_s3 2.085e-15
+Cpt17 clk xckg_d0 1.0394e-15
+Cpt18 clk xckg_d1 4.17e-16
+Cpt19 clk xckg_d2 6.2e-16
+Cpt20 clk xckg_d3 5.544e-16
+Cpt21 clk xckg_nn 5.952e-16
+Cpt22 clk xckg_x 7.99e-17
+Cpt23 clk xref_na 7.21e-16
+Cpt24 clk xref_ng 2.851e-16
+Cpt25 ibias mclkb 2.36e-16
+Cpt26 ibias sar_mclk 7.05e-16
+Cpt27 ibias vbn 5.563e-16
+Cpt28 ibias vbp 5.276e-16
+Cpt29 ibias vdd 6.298e-16
+Cpt30 ibias vdda 2.094e-16
+Cpt31 ibias vref 5.07e-16
+Cpt32 ibias vref_in 4.34e-16
+Cpt33 ibias vss 6.2967e-15
+Cpt34 ibias xcbias_xrb_s1 5.08e-16
+Cpt35 ibias xcbias_xrb_s2 1.452e-16
+Cpt36 ibias xcbias_xrb_s3 4.9e-16
+Cpt37 ibias xcbiasn_xrb_s1 1.615e-15
+Cpt38 ibias xcbiasn_xrb_s2 7.296e-16
+Cpt39 ibias xcbiasn_xrb_s3 1.464e-16
+Cpt40 ibias xckg_d1 6.48e-16
+Cpt41 ibias xckg_d2 6.324e-16
+Cpt42 ibias xckg_d3 2.558e-16
+Cpt43 ibias xckg_x 5.422e-16
+Cpt44 ibias xref_na 3.899e-16
+Cpt45 ibias xref_ng 2.235e-16
+Cpt46 ibias xref_ntl 4.997e-16
+Cpt47 mclkb sar_mclk 2.82e-16
+Cpt48 mclkb vbn 8.7e-16
+Cpt49 mclkb vbp 2.863e-16
+Cpt50 mclkb vdd 4.77e-16
+Cpt51 mclkb vdda 1.96e-17
+Cpt52 mclkb vref 1.865e-16
+Cpt53 mclkb vref_in 7.98e-17
+Cpt54 mclkb vrefl 7.774e-16
+Cpt55 mclkb vss 9.7532e-15
+Cpt56 mclkb xcbias_xrb_s1 1.1623e-15
+Cpt57 mclkb xcbias_xrb_s2 2.29e-16
+Cpt58 mclkb xcbiasn_xrb_s1 5.111e-16
+Cpt59 mclkb xcbiasn_xrb_s2 9.39e-17
+Cpt60 mclkb xcbiasn_xrb_s3 3.17e-16
+Cpt61 mclkb xckg_d0 2.2e-16
+Cpt62 mclkb xckg_d1 2.44e-16
+Cpt63 mclkb xckg_d2 3.95e-16
+Cpt64 mclkb xckg_d3 1.02e-16
+Cpt65 mclkb xckg_nn 6.958e-16
+Cpt66 mclkb xckg_x 1.7e-16
+Cpt67 mclkb xref_na 5.319e-16
+Cpt68 mclkb xref_ng 1.51e-16
+Cpt69 mclkb xref_ntl 2.24e-16
+Cpt70 sar_mclk vbn 2.64e-16
+Cpt71 sar_mclk vbp 2.39e-16
+Cpt72 sar_mclk vdd 6.254e-16
+Cpt73 sar_mclk vdda 4.78e-16
+Cpt74 sar_mclk vref 2.99e-16
+Cpt75 sar_mclk vref_in 6.85e-17
+Cpt76 sar_mclk vss 9.8525e-15
+Cpt77 sar_mclk xcbias_xrb_s1 2.49e-16
+Cpt78 sar_mclk xcbias_xrb_s2 1.02e-15
+Cpt79 sar_mclk xcbias_xrb_s3 1.727e-15
+Cpt80 sar_mclk xcbiasn_xrb_s1 2.223e-16
+Cpt81 sar_mclk xcbiasn_xrb_s2 3.952e-16
+Cpt82 sar_mclk xcbiasn_xrb_s3 1.8e-16
+Cpt83 sar_mclk xckg_d0 3.91e-16
+Cpt84 sar_mclk xckg_d1 3.98e-17
+Cpt85 sar_mclk xckg_d2 1.2706e-15
+Cpt86 sar_mclk xckg_d3 6.156e-16
+Cpt87 sar_mclk xckg_nn 5.047e-16
+Cpt88 sar_mclk xckg_x 8.47e-16
+Cpt89 sar_mclk xref_na 4.36e-16
+Cpt90 sar_mclk xref_ng 2.02e-16
+Cpt91 vbn vbp 1.932e-16
+Cpt92 vbn vdda 9.77e-16
+Cpt93 vbn vref 2.11e-16
+Cpt94 vbn vref_in 1.096e-16
+Cpt95 vbn vrefl 9.008e-16
+Cpt96 vbn vss 1.3694e-14
+Cpt97 vbn xcbias_xrb_s1 1.176e-16
+Cpt98 vbn xcbias_xrb_s2 6.697e-16
+Cpt99 vbn xcbias_xrb_s3 9.09e-16
+Cpt100 vbn xcbiasn_xrb_s1 8.924e-16
+Cpt101 vbn xcbiasn_xrb_s2 2.41e-16
+Cpt102 vbn xcbiasn_xrb_s3 4.454e-16
+Cpt103 vbn xckg_d0 4.369e-16
+Cpt104 vbn xckg_d1 4.91e-16
+Cpt105 vbn xckg_d2 5.25e-16
+Cpt106 vbn xckg_d3 3.89e-16
+Cpt107 vbn xckg_nn 3.513e-16
+Cpt108 vbn xckg_x 2.79e-16
+Cpt109 vbn xref_ng 6.27e-16
+Cpt110 vbn xref_ntl 6.12e-16
+Cpt111 vbp vdda 5.104e-16
+Cpt112 vbp vref 3.53e-16
+Cpt113 vbp vref_in 1.86e-16
+Cpt114 vbp vrefl 7.924e-16
+Cpt115 vbp vss 1.0302e-14
+Cpt116 vbp xcbias_xrb_s1 7.752e-16
+Cpt117 vbp xcbias_xrb_s2 2.134e-16
+Cpt118 vbp xcbias_xrb_s3 1.073e-15
+Cpt119 vbp xcbiasn_xrb_s1 8.385e-16
+Cpt120 vbp xcbiasn_xrb_s2 3.78e-16
+Cpt121 vbp xcbiasn_xrb_s3 3.672e-16
+Cpt122 vbp xckg_d0 6.88e-16
+Cpt123 vbp xckg_d1 1.73e-16
+Cpt124 vbp xckg_d2 1.33e-16
+Cpt125 vbp xckg_d3 8.94e-16
+Cpt126 vbp xckg_nn 3.47e-16
+Cpt127 vbp xckg_x 1.3e-16
+Cpt128 vbp xref_na 6.78e-17
+Cpt129 vbp xref_ng 7.778e-16
+Cpt130 vbp xref_ntl 1.07e-16
+Cpt131 vdd vdda 8.99e-16
+Cpt132 vdd vref 1.445e-15
+Cpt133 vdd vref_in 6.007e-16
+Cpt134 vdd vrefl 6.32e-17
+Cpt135 vdd vss 1.5951e-14
+Cpt136 vdd xcbias_xrb_s1 4.6e-16
+Cpt137 vdd xcbias_xrb_s2 4.96e-16
+Cpt138 vdd xcbias_xrb_s3 5.74e-17
+Cpt139 vdd xcbiasn_xrb_s1 2.607e-16
+Cpt140 vdd xcbiasn_xrb_s2 2.6517e-15
+Cpt141 vdd xcbiasn_xrb_s3 2.49e-16
+Cpt142 vdd xckg_d0 6.146e-16
+Cpt143 vdd xckg_d2 5.27e-17
+Cpt144 vdd xckg_d3 4.81e-17
+Cpt145 vdd xckg_nn 2.51e-17
+Cpt146 vdd xckg_x 5.401e-16
+Cpt147 vdd xref_na 1.21e-16
+Cpt148 vdda vref 9.89e-17
+Cpt149 vdda vref_in 4.37e-16
+Cpt150 vdda vrefl 4.738e-16
+Cpt151 vdda vss 8.5984e-15
+Cpt152 vdda xcbias_xrb_s1 5.38e-16
+Cpt153 vdda xcbias_xrb_s2 3.874e-16
+Cpt154 vdda xcbias_xrb_s3 5.842e-16
+Cpt155 vdda xcbiasn_xrb_s1 9.85e-17
+Cpt156 vdda xcbiasn_xrb_s2 9.631e-16
+Cpt157 vdda xcbiasn_xrb_s3 7.59e-16
+Cpt158 vdda xckg_d0 4.36e-16
+Cpt159 vdda xckg_d1 9.28e-16
+Cpt160 vdda xckg_d2 4.58e-16
+Cpt161 vdda xckg_d3 1.915e-16
+Cpt162 vdda xckg_nn 4.7e-16
+Cpt163 vdda xckg_x 2.1e-16
+Cpt164 vdda xref_na 2.562e-15
+Cpt165 vdda xref_ng 5.03e-16
+Cpt166 vref vref_in 1.76e-16
+Cpt167 vref vrefl 2.68e-16
+Cpt168 vref vss 8.2839e-15
+Cpt169 vref xcbias_xrb_s1 5.07e-16
+Cpt170 vref xcbias_xrb_s2 5.08e-16
+Cpt171 vref xcbias_xrb_s3 1.69e-16
+Cpt172 vref xcbiasn_xrb_s1 1.031e-16
+Cpt173 vref xcbiasn_xrb_s2 3.328e-16
+Cpt174 vref xcbiasn_xrb_s3 1.95e-16
+Cpt175 vref xckg_d1 6.075e-16
+Cpt176 vref xckg_d2 2.625e-16
+Cpt177 vref xckg_d3 2.24e-16
+Cpt178 vref xckg_nn 8.11e-16
+Cpt179 vref xckg_x 4.287e-16
+Cpt180 vref xref_na 9.343e-16
+Cpt181 vref xref_ng 4.83e-16
+Cpt182 vref xref_ntl 4.729e-16
+Cpt183 vref_in vrefl 1.5282e-15
+Cpt184 vref_in vss 7.9953e-15
+Cpt185 vref_in xcbias_xrb_s1 1.0387e-15
+Cpt186 vref_in xcbias_xrb_s2 1.735e-15
+Cpt187 vref_in xcbias_xrb_s3 1.342e-15
+Cpt188 vref_in xcbiasn_xrb_s1 1.771e-16
+Cpt189 vref_in xcbiasn_xrb_s2 3.065e-16
+Cpt190 vref_in xcbiasn_xrb_s3 2.57e-16
+Cpt191 vref_in xckg_d0 3.48e-16
+Cpt192 vref_in xckg_d1 5.92e-17
+Cpt193 vref_in xckg_d2 3.19e-16
+Cpt194 vref_in xckg_nn 5.43e-16
+Cpt195 vref_in xckg_x 2.4e-16
+Cpt196 vref_in xref_na 5.81e-16
+Cpt197 vref_in xref_ng 2.64e-16
+Cpt198 vref_in xref_ntl 2.032e-16
+Cpt199 vrefl vss 1.2285e-14
+Cpt200 vrefl xcbias_xrb_s1 1.457e-15
+Cpt201 vrefl xcbias_xrb_s2 9.72e-16
+Cpt202 vrefl xcbias_xrb_s3 9.11e-17
+Cpt203 vrefl xcbiasn_xrb_s1 3.48e-16
+Cpt204 vrefl xckg_d0 8.81e-16
+Cpt205 vrefl xckg_d1 2.511e-16
+Cpt206 vrefl xckg_d2 1.328e-16
+Cpt207 vrefl xckg_d3 1.135e-15
+Cpt208 vrefl xckg_nn 5.764e-16
+Cpt209 vrefl xckg_x 3.62e-16
+Cpt210 vrefl xref_na 6.2e-16
+Cpt211 vrefl xref_ng 9.498e-16
+Cpt212 vrefl xref_ntl 2.953e-16
+Cpt213 vss xcbias_xrb_s1 5.4485e-15
+Cpt214 vss xcbias_xrb_s2 9.4395e-15
+Cpt215 vss xcbias_xrb_s3 8.9968e-15
+Cpt216 vss xcbiasn_xrb_s1 1.0547e-14
+Cpt217 vss xcbiasn_xrb_s2 1.0697e-14
+Cpt218 vss xcbiasn_xrb_s3 8.4028e-15
+Cpt219 vss xckg_d0 7.6779e-15
+Cpt220 vss xckg_d1 1.0253e-14
+Cpt221 vss xckg_d2 1.0064e-14
+Cpt222 vss xckg_d3 1.1753e-14
+Cpt223 vss xckg_nn 9.3313e-15
+Cpt224 vss xckg_x 6.8222e-15
+Cpt225 vss xref_na 7.4841e-15
+Cpt226 vss xref_ng 1.1493e-14
+Cpt227 vss xref_ntl 1.1855e-14
+Cpt228 xcbias_xrb_s1 xcbias_xrb_s2 9.05e-16
+Cpt229 xcbias_xrb_s1 xcbias_xrb_s3 1.18e-16
+Cpt230 xcbias_xrb_s1 xcbiasn_xrb_s1 6.899e-16
+Cpt231 xcbias_xrb_s1 xcbiasn_xrb_s2 1e-16
+Cpt232 xcbias_xrb_s1 xcbiasn_xrb_s3 8.77e-17
+Cpt233 xcbias_xrb_s1 xckg_d0 1.02e-16
+Cpt234 xcbias_xrb_s1 xckg_d1 1.08e-16
+Cpt235 xcbias_xrb_s1 xckg_d2 5.2e-16
+Cpt236 xcbias_xrb_s1 xckg_d3 3.9e-17
+Cpt237 xcbias_xrb_s1 xckg_nn 2.155e-16
+Cpt238 xcbias_xrb_s1 xckg_x 2.45e-16
+Cpt239 xcbias_xrb_s1 xref_na 4e-16
+Cpt240 xcbias_xrb_s1 xref_ng 5.407e-16
+Cpt241 xcbias_xrb_s1 xref_ntl 4.53e-16
+Cpt242 xcbias_xrb_s2 xcbias_xrb_s3 1.5e-16
+Cpt243 xcbias_xrb_s2 xcbiasn_xrb_s1 6.89e-17
+Cpt244 xcbias_xrb_s2 xcbiasn_xrb_s2 5.83e-17
+Cpt245 xcbias_xrb_s2 xcbiasn_xrb_s3 1.183e-16
+Cpt246 xcbias_xrb_s2 xckg_d0 1.587e-15
+Cpt247 xcbias_xrb_s2 xckg_d2 6.865e-16
+Cpt248 xcbias_xrb_s2 xckg_d3 8.03e-16
+Cpt249 xcbias_xrb_s2 xckg_nn 4.61e-16
+Cpt250 xcbias_xrb_s2 xckg_x 9.787e-16
+Cpt251 xcbias_xrb_s2 xref_na 1.4828e-15
+Cpt252 xcbias_xrb_s2 xref_ng 3.91e-16
+Cpt253 xcbias_xrb_s2 xref_ntl 8.135e-16
+Cpt254 xcbias_xrb_s3 xcbiasn_xrb_s1 7.93e-17
+Cpt255 xcbias_xrb_s3 xcbiasn_xrb_s2 1.23e-16
+Cpt256 xcbias_xrb_s3 xcbiasn_xrb_s3 4.2e-16
+Cpt257 xcbias_xrb_s3 xckg_d1 1.582e-16
+Cpt258 xcbias_xrb_s3 xckg_d2 6.415e-16
+Cpt259 xcbias_xrb_s3 xckg_d3 2.45e-16
+Cpt260 xcbias_xrb_s3 xckg_nn 2.58e-16
+Cpt261 xcbias_xrb_s3 xckg_x 2.902e-16
+Cpt262 xcbias_xrb_s3 xref_na 5.02e-16
+Cpt263 xcbias_xrb_s3 xref_ng 7.231e-16
+Cpt264 xcbias_xrb_s3 xref_ntl 4.87e-17
+Cpt265 xcbiasn_xrb_s1 xcbiasn_xrb_s2 7.085e-16
+Cpt266 xcbiasn_xrb_s1 xcbiasn_xrb_s3 3.46e-16
+Cpt267 xcbiasn_xrb_s1 xckg_d0 6.88e-16
+Cpt268 xcbiasn_xrb_s1 xckg_d1 8.349e-16
+Cpt269 xcbiasn_xrb_s1 xckg_d2 4.843e-16
+Cpt270 xcbiasn_xrb_s1 xckg_d3 1.128e-15
+Cpt271 xcbiasn_xrb_s1 xckg_nn 2.695e-16
+Cpt272 xcbiasn_xrb_s1 xckg_x 5.36e-16
+Cpt273 xcbiasn_xrb_s1 xref_na 8.999e-16
+Cpt274 xcbiasn_xrb_s1 xref_ng 1.789e-16
+Cpt275 xcbiasn_xrb_s1 xref_ntl 7.18e-16
+Cpt276 xcbiasn_xrb_s2 xcbiasn_xrb_s3 4.321e-16
+Cpt277 xcbiasn_xrb_s2 xckg_d0 7.08e-17
+Cpt278 xcbiasn_xrb_s2 xckg_d1 1.4584e-15
+Cpt279 xcbiasn_xrb_s2 xckg_d2 5.15e-16
+Cpt280 xcbiasn_xrb_s2 xckg_d3 4.539e-16
+Cpt281 xcbiasn_xrb_s2 xckg_nn 5.931e-16
+Cpt282 xcbiasn_xrb_s2 xckg_x 2.5e-16
+Cpt283 xcbiasn_xrb_s2 xref_na 9.336e-16
+Cpt284 xcbiasn_xrb_s2 xref_ng 6.788e-16
+Cpt285 xcbiasn_xrb_s2 xref_ntl 1.29e-16
+Cpt286 xcbiasn_xrb_s3 xckg_d0 5.33e-16
+Cpt287 xcbiasn_xrb_s3 xckg_d1 6.46e-16
+Cpt288 xcbiasn_xrb_s3 xckg_d2 5.37e-16
+Cpt289 xcbiasn_xrb_s3 xckg_d3 3.21e-16
+Cpt290 xcbiasn_xrb_s3 xckg_nn 1.941e-16
+Cpt291 xcbiasn_xrb_s3 xckg_x 9.317e-16
+Cpt292 xcbiasn_xrb_s3 xref_na 5.37e-16
+Cpt293 xcbiasn_xrb_s3 xref_ng 2.81e-16
+Cpt294 xcbiasn_xrb_s3 xref_ntl 1e-16
+Cpt295 xckg_d0 xckg_d1 4.3e-16
+Cpt296 xckg_d0 xckg_d2 4.39e-16
+Cpt297 xckg_d0 xckg_d3 7.179e-16
+Cpt298 xckg_d0 xckg_nn 1.1949e-15
+Cpt299 xckg_d0 xckg_x 1.67e-16
+Cpt300 xckg_d0 xref_na 1.454e-16
+Cpt301 xckg_d0 xref_ng 2.49e-16
+Cpt302 xckg_d0 xref_ntl 1.34e-16
+Cpt303 xckg_d1 xckg_nn 6.383e-16
+Cpt304 xckg_d1 xckg_x 1.199e-15
+Cpt305 xckg_d1 xref_na 6.5e-17
+Cpt306 xckg_d1 xref_ng 8.152e-16
+Cpt307 xckg_d1 xref_ntl 1.5e-16
+Cpt308 xckg_d2 xckg_d3 2.52e-16
+Cpt309 xckg_d2 xckg_nn 8.2e-16
+Cpt310 xckg_d2 xckg_x 6.799e-16
+Cpt311 xckg_d2 xref_na 4.474e-16
+Cpt312 xckg_d2 xref_ng 7.5e-16
+Cpt313 xckg_d2 xref_ntl 1.071e-16
+Cpt314 xckg_d3 xckg_nn 2.486e-16
+Cpt315 xckg_d3 xckg_x 3.103e-16
+Cpt316 xckg_d3 xref_na 5.48e-16
+Cpt317 xckg_d3 xref_ng 7.914e-16
+Cpt318 xckg_d3 xref_ntl 2.51e-16
+Cpt319 xckg_nn xckg_x 8.66e-17
+Cpt320 xckg_nn xref_na 3.327e-16
+Cpt321 xckg_nn xref_ng 1.625e-16
+Cpt322 xckg_nn xref_ntl 8.91e-16
+Cpt323 xckg_x xref_na 5.292e-16
+Cpt324 xckg_x xref_ntl 2.131e-16
+Cpt325 xref_na xref_ng 5.1e-16
+Cpt326 xref_na xref_ntl 1.62e-16
+Cpt327 xref_ng xref_ntl 1.3909e-15
+.ends
+.subckt r1_adc_lay_pr adc_hold is_smp clk adc_start adc_sel adc_valid_a adc_raw_a_0 adc_raw_a_1 adc_raw_a_2 adc_raw_a_3 adc_raw_a_4 adc_raw_a_5 adc_raw_a_6 adc_raw_a_7 adc_raw_a_8 adc_raw_a_9 adc_raw_a_10 adc_raw_a_11 adc_raw_a_12 adc_raw_a_13 adc_valid_b adc_raw_b_0 adc_raw_b_1 adc_raw_b_2 adc_raw_b_3 adc_raw_b_4 adc_raw_b_5 adc_raw_b_6 adc_raw_b_7 adc_raw_b_8 adc_raw_b_9 adc_raw_b_10 adc_raw_b_11 adc_raw_b_12 adc_raw_b_13 por_n ain_sin_p ain_sin_n ain_cos_p ain_cos_n vcm2 ibias ain_isa_p ain_isa_n ain_isb_p ain_isb_n vcm vdda vdd vss vref_in topap topan topbp topbn sar_clka sar_clkab sar_clkb sar_clkbb sar_clkna sar_clknab sar_clknb sar_clknbb sar_cna0 sar_cna1 sar_cna10 sar_cna11 sar_cna12 sar_cna2 sar_cna3 sar_cna4 sar_cna5 sar_cna6 sar_cna7 sar_cna8 sar_cna9 sar_cnb0 sar_cnb1 sar_cnb10 sar_cnb11 sar_cnb12 sar_cnb2 sar_cnb3 sar_cnb4 sar_cnb5 sar_cnb6 sar_cnb7 sar_cnb8 sar_cnb9 sar_cpa0 sar_cpa1 sar_cpa10 sar_cpa11 sar_cpa12 sar_cpa2 sar_cpa3 sar_cpa4 sar_cpa5 sar_cpa6 sar_cpa7 sar_cpa8 sar_cpa9 sar_cpb0 sar_cpb1 sar_cpb10 sar_cpb11 sar_cpb12 sar_cpb2 sar_cpb3 sar_cpb4 sar_cpb5 sar_cpb6 sar_cpb7 sar_cpb8 sar_cpb9 sar_oan sar_oann sar_oanp sar_oap sar_obn sar_obnn sar_obnp sar_obp sar_trka0 sar_trka1 sar_trkb0 sar_trkb1 sar_mclk vref vrefl
+Xxckg_xpd0 xckg_d0 clk vdd vdd sg13_lv_pmos w=1u l=0.5u ng=1 m=1
+Xxckg_xnd0 xckg_d0 clk vss vss sg13_lv_nmos w=0.5u l=0.5u ng=1 m=1
+Xxckg_cd0 xckg_d0 vss cap_cmim w=2.53u l=2.53u m=1
+Xxckg_xpd1 xckg_d1 xckg_d0 vdd vdd sg13_lv_pmos w=1u l=0.5u ng=1 m=1
+Xxckg_xnd1 xckg_d1 xckg_d0 vss vss sg13_lv_nmos w=0.5u l=0.5u ng=1 m=1
+Xxckg_cd1 xckg_d1 vss cap_cmim w=2.53u l=2.53u m=1
+Xxckg_xpd2 xckg_d2 xckg_d1 vdd vdd sg13_lv_pmos w=1u l=0.5u ng=1 m=1
+Xxckg_xnd2 xckg_d2 xckg_d1 vss vss sg13_lv_nmos w=0.5u l=0.5u ng=1 m=1
+Xxckg_cd2 xckg_d2 vss cap_cmim w=2.53u l=2.53u m=1
+Xxckg_xpd3 xckg_d3 xckg_d2 vdd vdd sg13_lv_pmos w=1u l=0.5u ng=1 m=1
+Xxckg_xnd3 xckg_d3 xckg_d2 vss vss sg13_lv_nmos w=0.5u l=0.5u ng=1 m=1
+Xxckg_cd3 xckg_d3 vss cap_cmim w=2.53u l=2.53u m=1
+Xxckg_xpd4 xckg_x xckg_d3 vdd vdd sg13_lv_pmos w=1u l=0.5u ng=1 m=1
+Xxckg_xnd4 xckg_x xckg_d3 vss vss sg13_lv_nmos w=0.5u l=0.5u ng=1 m=1
+Xxckg_cd4 xckg_x vss cap_cmim w=2.53u l=2.53u m=1
+Xxckg_xpa sar_mclk clk vdd vdd sg13_lv_pmos w=2u l=0.13u ng=1 m=1
+Xxckg_xpb sar_mclk xckg_x vdd vdd sg13_lv_pmos w=2u l=0.13u ng=1 m=1
+Xxckg_xna sar_mclk clk xckg_nn vss sg13_lv_nmos w=2u l=0.13u ng=1 m=1
+Xxckg_xnb xckg_nn xckg_x vss vss sg13_lv_nmos w=2u l=0.13u ng=1 m=1
+Xxckg_xpi mclkb sar_mclk vdd vdd sg13_lv_pmos w=2u l=0.13u ng=1 m=1
+Xxckg_xni mclkb sar_mclk vss vss sg13_lv_nmos w=1u l=0.13u ng=1 m=1
+Xxcbias_xmbd vbp vbp vdd vdd sg13_lv_pmos w=0.8u l=0.5u ng=1 m=1
+Xxcbias_xrb_g0 vbp xcbias_xrb_s1 vss rppd w=1u l=40u m=1 b=0
+Xxcbias_xrb_g1 xcbias_xrb_s1 xcbias_xrb_s2 vss rppd w=1u l=40u m=1 b=0
+Xxcbias_xrb_g2 xcbias_xrb_s2 xcbias_xrb_s3 vss rppd w=1u l=40u m=1 b=0
+Xxcbias_xrb_g3 xcbias_xrb_s3 vss vss rppd w=1u l=40u m=1 b=0
+Xxcbiasn_xmbd vbn vbn vss vss sg13_lv_nmos w=0.2u l=0.5u ng=1 m=1
+Xxcbiasn_xrb_g0 vdd xcbiasn_xrb_s1 vss rppd w=1u l=40u m=1 b=0
+Xxcbiasn_xrb_g1 xcbiasn_xrb_s1 xcbiasn_xrb_s2 vss rppd w=1u l=40u m=1 b=0
+Xxcbiasn_xrb_g2 xcbiasn_xrb_s2 xcbiasn_xrb_s3 vss rppd w=1u l=40u m=1 b=0
+Xxcbiasn_xrb_g3 xcbiasn_xrb_s3 vbn vss rppd w=1u l=40u m=1 b=0
+Xxref_xmb0 ibias ibias vss vss sg13_hv_nmos w=2u l=1u ng=1 m=1
+Xxref_xmt xref_ntl ibias vss vss sg13_hv_nmos w=2u l=8u ng=1 m=1
+Xxref_xm1 xref_na vref_in xref_ntl vss sg13_hv_nmos w=10u l=1u ng=2 m=1
+Xxref_xm2 xref_ng vref xref_ntl vss sg13_hv_nmos w=10u l=1u ng=2 m=1
+Xxref_xm3 xref_na xref_na vdda vdda sg13_hv_pmos w=4u l=1u ng=1 m=1
+Xxref_xm4 xref_ng xref_na vdda vdda sg13_hv_pmos w=4u l=1u ng=1 m=1
+Xxref_xcg_u0 vss xref_ng cap_cmim w=26.32u l=95u m=1
+Xxref_xmsf_s0 vdda xref_ng vref vss sg13_hv_nmos w=80u l=0.45u ng=32 m=4
+Xxref_xmib_s0 vref ibias vss vss sg13_hv_nmos w=80u l=1u ng=40 m=4
+Xxref_xcd_u0 vss vref cap_cmim w=51.58u l=95u m=4
+Xxref_xmsfl_s0 vdda xref_ng vrefl vss sg13_hv_nmos w=80u l=0.45u ng=32 m=1
+Xxref_xmibl_s0 vrefl ibias vss vss sg13_hv_nmos w=80u l=1u ng=40 m=1
+Xxref_xcdl_u0 vss vrefl cap_cmim w=51.58u l=95u m=2
+Xxfilt_xcf_u0 vss vref_in cap_cmim w=37.36u l=90u m=2
+Xslice_a ain_sin_p ain_sin_n ain_isa_p ain_isa_n sar_trka0 sar_trka1 sar_cpa0 sar_cpa1 sar_cpa2 sar_cpa3 sar_cpa4 sar_cpa5 sar_cpa6 sar_cpa7 sar_cpa8 sar_cpa9 sar_cpa10 sar_cpa11 sar_cpa12 sar_cna0 sar_cna1 sar_cna2 sar_cna3 sar_cna4 sar_cna5 sar_cna6 sar_cna7 sar_cna8 sar_cna9 sar_cna10 sar_cna11 sar_cna12 sar_clka sar_clkab sar_clkna sar_clknab sar_oap sar_oan sar_oanp sar_oann vbp vbn vref vrefl topap topan vdd vss r1_adc_slice_lay
+Xslice_b ain_cos_p ain_cos_n ain_isb_p ain_isb_n sar_trkb0 sar_trkb1 sar_cpb0 sar_cpb1 sar_cpb2 sar_cpb3 sar_cpb4 sar_cpb5 sar_cpb6 sar_cpb7 sar_cpb8 sar_cpb9 sar_cpb10 sar_cpb11 sar_cpb12 sar_cnb0 sar_cnb1 sar_cnb2 sar_cnb3 sar_cnb4 sar_cnb5 sar_cnb6 sar_cnb7 sar_cnb8 sar_cnb9 sar_cnb10 sar_cnb11 sar_cnb12 sar_clkb sar_clkbb sar_clknb sar_clknbb sar_obp sar_obn sar_obnp sar_obnn vbp vbn vref vrefl topbp topbn vdd vss r1_adc_slice_lay
+* parasitics, scope top: 328 C (4.037e-13 F total), 0 R
+Cpt0 clk ibias 1.36e-16
+Cpt1 clk mclkb 3.116e-16
+Cpt2 clk sar_mclk 2.876e-16
+Cpt3 clk vbn 5.013e-16
+Cpt4 clk vbp 5.97e-17
+Cpt5 clk vdd 5.18e-16
+Cpt6 clk vdda 1.061e-15
+Cpt7 clk vref 6.916e-16
+Cpt8 clk vref_in 7.3e-16
+Cpt9 clk vrefl 8.815e-16
+Cpt10 clk vss 1.0104e-14
+Cpt11 clk xcbias_xrb_s1 1.163e-16
+Cpt12 clk xcbias_xrb_s2 5.19e-16
+Cpt13 clk xcbias_xrb_s3 1.27e-16
+Cpt14 clk xcbiasn_xrb_s1 2.848e-16
+Cpt15 clk xcbiasn_xrb_s2 8.199e-16
+Cpt16 clk xcbiasn_xrb_s3 2.085e-15
+Cpt17 clk xckg_d0 1.0394e-15
+Cpt18 clk xckg_d1 4.17e-16
+Cpt19 clk xckg_d2 6.2e-16
+Cpt20 clk xckg_d3 5.544e-16
+Cpt21 clk xckg_nn 5.952e-16
+Cpt22 clk xckg_x 7.99e-17
+Cpt23 clk xref_na 7.21e-16
+Cpt24 clk xref_ng 2.851e-16
+Cpt25 ibias mclkb 2.36e-16
+Cpt26 ibias sar_mclk 7.05e-16
+Cpt27 ibias vbn 5.563e-16
+Cpt28 ibias vbp 5.276e-16
+Cpt29 ibias vdd 6.298e-16
+Cpt30 ibias vdda 2.094e-16
+Cpt31 ibias vref 5.07e-16
+Cpt32 ibias vref_in 4.34e-16
+Cpt33 ibias vss 6.2967e-15
+Cpt34 ibias xcbias_xrb_s1 5.08e-16
+Cpt35 ibias xcbias_xrb_s2 1.452e-16
+Cpt36 ibias xcbias_xrb_s3 4.9e-16
+Cpt37 ibias xcbiasn_xrb_s1 1.615e-15
+Cpt38 ibias xcbiasn_xrb_s2 7.296e-16
+Cpt39 ibias xcbiasn_xrb_s3 1.464e-16
+Cpt40 ibias xckg_d1 6.48e-16
+Cpt41 ibias xckg_d2 6.324e-16
+Cpt42 ibias xckg_d3 2.558e-16
+Cpt43 ibias xckg_x 5.422e-16
+Cpt44 ibias xref_na 3.899e-16
+Cpt45 ibias xref_ng 2.235e-16
+Cpt46 ibias xref_ntl 4.997e-16
+Cpt47 mclkb sar_mclk 2.82e-16
+Cpt48 mclkb vbn 8.7e-16
+Cpt49 mclkb vbp 2.863e-16
+Cpt50 mclkb vdd 4.77e-16
+Cpt51 mclkb vdda 1.96e-17
+Cpt52 mclkb vref 1.865e-16
+Cpt53 mclkb vref_in 7.98e-17
+Cpt54 mclkb vrefl 7.774e-16
+Cpt55 mclkb vss 9.7532e-15
+Cpt56 mclkb xcbias_xrb_s1 1.1623e-15
+Cpt57 mclkb xcbias_xrb_s2 2.29e-16
+Cpt58 mclkb xcbiasn_xrb_s1 5.111e-16
+Cpt59 mclkb xcbiasn_xrb_s2 9.39e-17
+Cpt60 mclkb xcbiasn_xrb_s3 3.17e-16
+Cpt61 mclkb xckg_d0 2.2e-16
+Cpt62 mclkb xckg_d1 2.44e-16
+Cpt63 mclkb xckg_d2 3.95e-16
+Cpt64 mclkb xckg_d3 1.02e-16
+Cpt65 mclkb xckg_nn 6.958e-16
+Cpt66 mclkb xckg_x 1.7e-16
+Cpt67 mclkb xref_na 5.319e-16
+Cpt68 mclkb xref_ng 1.51e-16
+Cpt69 mclkb xref_ntl 2.24e-16
+Cpt70 sar_mclk vbn 2.64e-16
+Cpt71 sar_mclk vbp 2.39e-16
+Cpt72 sar_mclk vdd 6.254e-16
+Cpt73 sar_mclk vdda 4.78e-16
+Cpt74 sar_mclk vref 2.99e-16
+Cpt75 sar_mclk vref_in 6.85e-17
+Cpt76 sar_mclk vss 9.8525e-15
+Cpt77 sar_mclk xcbias_xrb_s1 2.49e-16
+Cpt78 sar_mclk xcbias_xrb_s2 1.02e-15
+Cpt79 sar_mclk xcbias_xrb_s3 1.727e-15
+Cpt80 sar_mclk xcbiasn_xrb_s1 2.223e-16
+Cpt81 sar_mclk xcbiasn_xrb_s2 3.952e-16
+Cpt82 sar_mclk xcbiasn_xrb_s3 1.8e-16
+Cpt83 sar_mclk xckg_d0 3.91e-16
+Cpt84 sar_mclk xckg_d1 3.98e-17
+Cpt85 sar_mclk xckg_d2 1.2706e-15
+Cpt86 sar_mclk xckg_d3 6.156e-16
+Cpt87 sar_mclk xckg_nn 5.047e-16
+Cpt88 sar_mclk xckg_x 8.47e-16
+Cpt89 sar_mclk xref_na 4.36e-16
+Cpt90 sar_mclk xref_ng 2.02e-16
+Cpt91 vbn vbp 1.932e-16
+Cpt92 vbn vdda 9.77e-16
+Cpt93 vbn vref 2.11e-16
+Cpt94 vbn vref_in 1.096e-16
+Cpt95 vbn vrefl 9.008e-16
+Cpt96 vbn vss 1.3694e-14
+Cpt97 vbn xcbias_xrb_s1 1.176e-16
+Cpt98 vbn xcbias_xrb_s2 6.697e-16
+Cpt99 vbn xcbias_xrb_s3 9.09e-16
+Cpt100 vbn xcbiasn_xrb_s1 8.924e-16
+Cpt101 vbn xcbiasn_xrb_s2 2.41e-16
+Cpt102 vbn xcbiasn_xrb_s3 4.454e-16
+Cpt103 vbn xckg_d0 4.369e-16
+Cpt104 vbn xckg_d1 4.91e-16
+Cpt105 vbn xckg_d2 5.25e-16
+Cpt106 vbn xckg_d3 3.89e-16
+Cpt107 vbn xckg_nn 3.513e-16
+Cpt108 vbn xckg_x 2.79e-16
+Cpt109 vbn xref_ng 6.27e-16
+Cpt110 vbn xref_ntl 6.12e-16
+Cpt111 vbp vdda 5.104e-16
+Cpt112 vbp vref 3.53e-16
+Cpt113 vbp vref_in 1.86e-16
+Cpt114 vbp vrefl 7.924e-16
+Cpt115 vbp vss 1.0302e-14
+Cpt116 vbp xcbias_xrb_s1 7.752e-16
+Cpt117 vbp xcbias_xrb_s2 2.134e-16
+Cpt118 vbp xcbias_xrb_s3 1.073e-15
+Cpt119 vbp xcbiasn_xrb_s1 8.385e-16
+Cpt120 vbp xcbiasn_xrb_s2 3.78e-16
+Cpt121 vbp xcbiasn_xrb_s3 3.672e-16
+Cpt122 vbp xckg_d0 6.88e-16
+Cpt123 vbp xckg_d1 1.73e-16
+Cpt124 vbp xckg_d2 1.33e-16
+Cpt125 vbp xckg_d3 8.94e-16
+Cpt126 vbp xckg_nn 3.47e-16
+Cpt127 vbp xckg_x 1.3e-16
+Cpt128 vbp xref_na 6.78e-17
+Cpt129 vbp xref_ng 7.778e-16
+Cpt130 vbp xref_ntl 1.07e-16
+Cpt131 vdd vdda 8.99e-16
+Cpt132 vdd vref 1.445e-15
+Cpt133 vdd vref_in 6.007e-16
+Cpt134 vdd vrefl 6.32e-17
+Cpt135 vdd vss 1.5951e-14
+Cpt136 vdd xcbias_xrb_s1 4.6e-16
+Cpt137 vdd xcbias_xrb_s2 4.96e-16
+Cpt138 vdd xcbias_xrb_s3 5.74e-17
+Cpt139 vdd xcbiasn_xrb_s1 2.607e-16
+Cpt140 vdd xcbiasn_xrb_s2 2.6517e-15
+Cpt141 vdd xcbiasn_xrb_s3 2.49e-16
+Cpt142 vdd xckg_d0 6.146e-16
+Cpt143 vdd xckg_d2 5.27e-17
+Cpt144 vdd xckg_d3 4.81e-17
+Cpt145 vdd xckg_nn 2.51e-17
+Cpt146 vdd xckg_x 5.401e-16
+Cpt147 vdd xref_na 1.21e-16
+Cpt148 vdda vref 9.89e-17
+Cpt149 vdda vref_in 4.37e-16
+Cpt150 vdda vrefl 4.738e-16
+Cpt151 vdda vss 8.5984e-15
+Cpt152 vdda xcbias_xrb_s1 5.38e-16
+Cpt153 vdda xcbias_xrb_s2 3.874e-16
+Cpt154 vdda xcbias_xrb_s3 5.842e-16
+Cpt155 vdda xcbiasn_xrb_s1 9.85e-17
+Cpt156 vdda xcbiasn_xrb_s2 9.631e-16
+Cpt157 vdda xcbiasn_xrb_s3 7.59e-16
+Cpt158 vdda xckg_d0 4.36e-16
+Cpt159 vdda xckg_d1 9.28e-16
+Cpt160 vdda xckg_d2 4.58e-16
+Cpt161 vdda xckg_d3 1.915e-16
+Cpt162 vdda xckg_nn 4.7e-16
+Cpt163 vdda xckg_x 2.1e-16
+Cpt164 vdda xref_na 2.562e-15
+Cpt165 vdda xref_ng 5.03e-16
+Cpt166 vref vref_in 1.76e-16
+Cpt167 vref vrefl 2.68e-16
+Cpt168 vref vss 8.2839e-15
+Cpt169 vref xcbias_xrb_s1 5.07e-16
+Cpt170 vref xcbias_xrb_s2 5.08e-16
+Cpt171 vref xcbias_xrb_s3 1.69e-16
+Cpt172 vref xcbiasn_xrb_s1 1.031e-16
+Cpt173 vref xcbiasn_xrb_s2 3.328e-16
+Cpt174 vref xcbiasn_xrb_s3 1.95e-16
+Cpt175 vref xckg_d1 6.075e-16
+Cpt176 vref xckg_d2 2.625e-16
+Cpt177 vref xckg_d3 2.24e-16
+Cpt178 vref xckg_nn 8.11e-16
+Cpt179 vref xckg_x 4.287e-16
+Cpt180 vref xref_na 9.343e-16
+Cpt181 vref xref_ng 4.83e-16
+Cpt182 vref xref_ntl 4.729e-16
+Cpt183 vref_in vrefl 1.5282e-15
+Cpt184 vref_in vss 7.9953e-15
+Cpt185 vref_in xcbias_xrb_s1 1.0387e-15
+Cpt186 vref_in xcbias_xrb_s2 1.735e-15
+Cpt187 vref_in xcbias_xrb_s3 1.342e-15
+Cpt188 vref_in xcbiasn_xrb_s1 1.771e-16
+Cpt189 vref_in xcbiasn_xrb_s2 3.065e-16
+Cpt190 vref_in xcbiasn_xrb_s3 2.57e-16
+Cpt191 vref_in xckg_d0 3.48e-16
+Cpt192 vref_in xckg_d1 5.92e-17
+Cpt193 vref_in xckg_d2 3.19e-16
+Cpt194 vref_in xckg_nn 5.43e-16
+Cpt195 vref_in xckg_x 2.4e-16
+Cpt196 vref_in xref_na 5.81e-16
+Cpt197 vref_in xref_ng 2.64e-16
+Cpt198 vref_in xref_ntl 2.032e-16
+Cpt199 vrefl vss 1.2285e-14
+Cpt200 vrefl xcbias_xrb_s1 1.457e-15
+Cpt201 vrefl xcbias_xrb_s2 9.72e-16
+Cpt202 vrefl xcbias_xrb_s3 9.11e-17
+Cpt203 vrefl xcbiasn_xrb_s1 3.48e-16
+Cpt204 vrefl xckg_d0 8.81e-16
+Cpt205 vrefl xckg_d1 2.511e-16
+Cpt206 vrefl xckg_d2 1.328e-16
+Cpt207 vrefl xckg_d3 1.135e-15
+Cpt208 vrefl xckg_nn 5.764e-16
+Cpt209 vrefl xckg_x 3.62e-16
+Cpt210 vrefl xref_na 6.2e-16
+Cpt211 vrefl xref_ng 9.498e-16
+Cpt212 vrefl xref_ntl 2.953e-16
+Cpt213 vss xcbias_xrb_s1 5.4485e-15
+Cpt214 vss xcbias_xrb_s2 9.4395e-15
+Cpt215 vss xcbias_xrb_s3 8.9968e-15
+Cpt216 vss xcbiasn_xrb_s1 1.0547e-14
+Cpt217 vss xcbiasn_xrb_s2 1.0697e-14
+Cpt218 vss xcbiasn_xrb_s3 8.4028e-15
+Cpt219 vss xckg_d0 7.6779e-15
+Cpt220 vss xckg_d1 1.0253e-14
+Cpt221 vss xckg_d2 1.0064e-14
+Cpt222 vss xckg_d3 1.1753e-14
+Cpt223 vss xckg_nn 9.3313e-15
+Cpt224 vss xckg_x 6.8222e-15
+Cpt225 vss xref_na 7.4841e-15
+Cpt226 vss xref_ng 1.1493e-14
+Cpt227 vss xref_ntl 1.1855e-14
+Cpt228 xcbias_xrb_s1 xcbias_xrb_s2 9.05e-16
+Cpt229 xcbias_xrb_s1 xcbias_xrb_s3 1.18e-16
+Cpt230 xcbias_xrb_s1 xcbiasn_xrb_s1 6.899e-16
+Cpt231 xcbias_xrb_s1 xcbiasn_xrb_s2 1e-16
+Cpt232 xcbias_xrb_s1 xcbiasn_xrb_s3 8.77e-17
+Cpt233 xcbias_xrb_s1 xckg_d0 1.02e-16
+Cpt234 xcbias_xrb_s1 xckg_d1 1.08e-16
+Cpt235 xcbias_xrb_s1 xckg_d2 5.2e-16
+Cpt236 xcbias_xrb_s1 xckg_d3 3.9e-17
+Cpt237 xcbias_xrb_s1 xckg_nn 2.155e-16
+Cpt238 xcbias_xrb_s1 xckg_x 2.45e-16
+Cpt239 xcbias_xrb_s1 xref_na 4e-16
+Cpt240 xcbias_xrb_s1 xref_ng 5.407e-16
+Cpt241 xcbias_xrb_s1 xref_ntl 4.53e-16
+Cpt242 xcbias_xrb_s2 xcbias_xrb_s3 1.5e-16
+Cpt243 xcbias_xrb_s2 xcbiasn_xrb_s1 6.89e-17
+Cpt244 xcbias_xrb_s2 xcbiasn_xrb_s2 5.83e-17
+Cpt245 xcbias_xrb_s2 xcbiasn_xrb_s3 1.183e-16
+Cpt246 xcbias_xrb_s2 xckg_d0 1.587e-15
+Cpt247 xcbias_xrb_s2 xckg_d2 6.865e-16
+Cpt248 xcbias_xrb_s2 xckg_d3 8.03e-16
+Cpt249 xcbias_xrb_s2 xckg_nn 4.61e-16
+Cpt250 xcbias_xrb_s2 xckg_x 9.787e-16
+Cpt251 xcbias_xrb_s2 xref_na 1.4828e-15
+Cpt252 xcbias_xrb_s2 xref_ng 3.91e-16
+Cpt253 xcbias_xrb_s2 xref_ntl 8.135e-16
+Cpt254 xcbias_xrb_s3 xcbiasn_xrb_s1 7.93e-17
+Cpt255 xcbias_xrb_s3 xcbiasn_xrb_s2 1.23e-16
+Cpt256 xcbias_xrb_s3 xcbiasn_xrb_s3 4.2e-16
+Cpt257 xcbias_xrb_s3 xckg_d1 1.582e-16
+Cpt258 xcbias_xrb_s3 xckg_d2 6.415e-16
+Cpt259 xcbias_xrb_s3 xckg_d3 2.45e-16
+Cpt260 xcbias_xrb_s3 xckg_nn 2.58e-16
+Cpt261 xcbias_xrb_s3 xckg_x 2.902e-16
+Cpt262 xcbias_xrb_s3 xref_na 5.02e-16
+Cpt263 xcbias_xrb_s3 xref_ng 7.231e-16
+Cpt264 xcbias_xrb_s3 xref_ntl 4.87e-17
+Cpt265 xcbiasn_xrb_s1 xcbiasn_xrb_s2 7.085e-16
+Cpt266 xcbiasn_xrb_s1 xcbiasn_xrb_s3 3.46e-16
+Cpt267 xcbiasn_xrb_s1 xckg_d0 6.88e-16
+Cpt268 xcbiasn_xrb_s1 xckg_d1 8.349e-16
+Cpt269 xcbiasn_xrb_s1 xckg_d2 4.843e-16
+Cpt270 xcbiasn_xrb_s1 xckg_d3 1.128e-15
+Cpt271 xcbiasn_xrb_s1 xckg_nn 2.695e-16
+Cpt272 xcbiasn_xrb_s1 xckg_x 5.36e-16
+Cpt273 xcbiasn_xrb_s1 xref_na 8.999e-16
+Cpt274 xcbiasn_xrb_s1 xref_ng 1.789e-16
+Cpt275 xcbiasn_xrb_s1 xref_ntl 7.18e-16
+Cpt276 xcbiasn_xrb_s2 xcbiasn_xrb_s3 4.321e-16
+Cpt277 xcbiasn_xrb_s2 xckg_d0 7.08e-17
+Cpt278 xcbiasn_xrb_s2 xckg_d1 1.4584e-15
+Cpt279 xcbiasn_xrb_s2 xckg_d2 5.15e-16
+Cpt280 xcbiasn_xrb_s2 xckg_d3 4.539e-16
+Cpt281 xcbiasn_xrb_s2 xckg_nn 5.931e-16
+Cpt282 xcbiasn_xrb_s2 xckg_x 2.5e-16
+Cpt283 xcbiasn_xrb_s2 xref_na 9.336e-16
+Cpt284 xcbiasn_xrb_s2 xref_ng 6.788e-16
+Cpt285 xcbiasn_xrb_s2 xref_ntl 1.29e-16
+Cpt286 xcbiasn_xrb_s3 xckg_d0 5.33e-16
+Cpt287 xcbiasn_xrb_s3 xckg_d1 6.46e-16
+Cpt288 xcbiasn_xrb_s3 xckg_d2 5.37e-16
+Cpt289 xcbiasn_xrb_s3 xckg_d3 3.21e-16
+Cpt290 xcbiasn_xrb_s3 xckg_nn 1.941e-16
+Cpt291 xcbiasn_xrb_s3 xckg_x 9.317e-16
+Cpt292 xcbiasn_xrb_s3 xref_na 5.37e-16
+Cpt293 xcbiasn_xrb_s3 xref_ng 2.81e-16
+Cpt294 xcbiasn_xrb_s3 xref_ntl 1e-16
+Cpt295 xckg_d0 xckg_d1 4.3e-16
+Cpt296 xckg_d0 xckg_d2 4.39e-16
+Cpt297 xckg_d0 xckg_d3 7.179e-16
+Cpt298 xckg_d0 xckg_nn 1.1949e-15
+Cpt299 xckg_d0 xckg_x 1.67e-16
+Cpt300 xckg_d0 xref_na 1.454e-16
+Cpt301 xckg_d0 xref_ng 2.49e-16
+Cpt302 xckg_d0 xref_ntl 1.34e-16
+Cpt303 xckg_d1 xckg_nn 6.383e-16
+Cpt304 xckg_d1 xckg_x 1.199e-15
+Cpt305 xckg_d1 xref_na 6.5e-17
+Cpt306 xckg_d1 xref_ng 8.152e-16
+Cpt307 xckg_d1 xref_ntl 1.5e-16
+Cpt308 xckg_d2 xckg_d3 2.52e-16
+Cpt309 xckg_d2 xckg_nn 8.2e-16
+Cpt310 xckg_d2 xckg_x 6.799e-16
+Cpt311 xckg_d2 xref_na 4.474e-16
+Cpt312 xckg_d2 xref_ng 7.5e-16
+Cpt313 xckg_d2 xref_ntl 1.071e-16
+Cpt314 xckg_d3 xckg_nn 2.486e-16
+Cpt315 xckg_d3 xckg_x 3.103e-16
+Cpt316 xckg_d3 xref_na 5.48e-16
+Cpt317 xckg_d3 xref_ng 7.914e-16
+Cpt318 xckg_d3 xref_ntl 2.51e-16
+Cpt319 xckg_nn xckg_x 8.66e-17
+Cpt320 xckg_nn xref_na 3.327e-16
+Cpt321 xckg_nn xref_ng 1.625e-16
+Cpt322 xckg_nn xref_ntl 8.91e-16
+Cpt323 xckg_x xref_na 5.292e-16
+Cpt324 xckg_x xref_ntl 2.131e-16
+Cpt325 xref_na xref_ng 5.1e-16
+Cpt326 xref_na xref_ntl 1.62e-16
+Cpt327 xref_ng xref_ntl 1.3909e-15
+.ends

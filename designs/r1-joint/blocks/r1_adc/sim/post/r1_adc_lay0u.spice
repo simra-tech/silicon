@@ -1,0 +1,687 @@
+* r1_adc layout-mapped simulation netlist, written by sim/post/make_sim_netlist.py (do not edit)
+* devices: layout/r1_adc_netlist.py (sha256 a04d6f2b237aafa1), netlist of record schematic/r1_adc_r5.spice (sha256 340c0e6a17ecec3a)
+* decap shapes: layout/r1_adc_decap.json
+* parasitics: none (device-mapped only)
+* requires cornerMOSlv/hv.lib, cornerCAP.lib, cornerRES.lib
+.subckt r1_adc_slice_lay in0p in0n in1p in1n trk0 trk1 cp0 cp1 cp2 cp3 cp4 cp5 cp6 cp7 cp8 cp9 cp10 cp11 cp12 cn0 cn1 cn2 cn3 cn4 cn5 cn6 cn7 cn8 cn9 cn10 cn11 cn12 clk clkb clkn clknb op on onp onn vbp vbn vref vrefl top_p top_n vdd gnd
+Xxpt0a t0b trk0 vdd vdd sg13_lv_pmos w=2u l=0.13u ng=1 m=1
+Xxnt0a t0b trk0 gnd gnd sg13_lv_nmos w=1u l=0.13u ng=1 m=1
+Xxpt0b t0 t0b vdd vdd sg13_lv_pmos w=4u l=0.13u ng=1 m=1
+Xxnt0b t0 t0b gnd gnd sg13_lv_nmos w=2u l=0.13u ng=1 m=1
+Xxpt1a t1b trk1 vdd vdd sg13_lv_pmos w=2u l=0.13u ng=1 m=1
+Xxnt1a t1b trk1 gnd gnd sg13_lv_nmos w=1u l=0.13u ng=1 m=1
+Xxpt1b t1 t1b vdd vdd sg13_lv_pmos w=4u l=0.13u ng=1 m=1
+Xxnt1b t1 t1b gnd gnd sg13_lv_nmos w=2u l=0.13u ng=1 m=1
+Xxs0p_xms in0p xs0p_g top_p gnd sg13_lv_nmos w=6u l=0.13u ng=2 m=1
+Xxs0p_cboot xs0p_cbp xs0p_cbn cap_cmim w=11.49u l=11.49u m=1
+Xxs0p_xm1 xs0p_cbn t0b gnd gnd sg13_lv_nmos w=1u l=0.13u ng=1 m=1
+Xxs0p_xm3 xs0p_cbp xs0p_g vdd xs0p_cbp sg13_lv_pmos w=1u l=0.13u ng=1 m=1
+Xxs0p_xm8 xs0p_g xs0p_x xs0p_cbp xs0p_cbp sg13_lv_pmos w=2u l=0.13u ng=1 m=1
+Xxs0p_xm4 xs0p_x t0 vdd vdd sg13_lv_pmos w=0.5u l=0.13u ng=1 m=1
+Xxs0p_xm5 xs0p_x t0 xs0p_cbn gnd sg13_lv_nmos w=1u l=0.13u ng=1 m=1
+Xxs0p_xm7 xs0p_x xs0p_g xs0p_cbn gnd sg13_lv_nmos w=0.5u l=0.13u ng=1 m=1
+Xxs0p_xm9 xs0p_cbn xs0p_g in0p gnd sg13_lv_nmos w=2u l=0.13u ng=1 m=1
+Xxs0p_xm10 xs0p_g vdd xs0p_n10 gnd sg13_lv_nmos w=2u l=0.13u ng=1 m=1
+Xxs0p_xm11 xs0p_n10 t0b gnd gnd sg13_lv_nmos w=2u l=0.13u ng=1 m=1
+Xxs0n_xms in0n xs0n_g top_n gnd sg13_lv_nmos w=6u l=0.13u ng=2 m=1
+Xxs0n_cboot xs0n_cbp xs0n_cbn cap_cmim w=11.49u l=11.49u m=1
+Xxs0n_xm1 xs0n_cbn t0b gnd gnd sg13_lv_nmos w=1u l=0.13u ng=1 m=1
+Xxs0n_xm3 xs0n_cbp xs0n_g vdd xs0n_cbp sg13_lv_pmos w=1u l=0.13u ng=1 m=1
+Xxs0n_xm8 xs0n_g xs0n_x xs0n_cbp xs0n_cbp sg13_lv_pmos w=2u l=0.13u ng=1 m=1
+Xxs0n_xm4 xs0n_x t0 vdd vdd sg13_lv_pmos w=0.5u l=0.13u ng=1 m=1
+Xxs0n_xm5 xs0n_x t0 xs0n_cbn gnd sg13_lv_nmos w=1u l=0.13u ng=1 m=1
+Xxs0n_xm7 xs0n_x xs0n_g xs0n_cbn gnd sg13_lv_nmos w=0.5u l=0.13u ng=1 m=1
+Xxs0n_xm9 xs0n_cbn xs0n_g in0n gnd sg13_lv_nmos w=2u l=0.13u ng=1 m=1
+Xxs0n_xm10 xs0n_g vdd xs0n_n10 gnd sg13_lv_nmos w=2u l=0.13u ng=1 m=1
+Xxs0n_xm11 xs0n_n10 t0b gnd gnd sg13_lv_nmos w=2u l=0.13u ng=1 m=1
+Xxs1p_xms in1p xs1p_g top_p gnd sg13_lv_nmos w=6u l=0.13u ng=2 m=1
+Xxs1p_cboot xs1p_cbp xs1p_cbn cap_cmim w=11.49u l=11.49u m=1
+Xxs1p_xm1 xs1p_cbn t1b gnd gnd sg13_lv_nmos w=1u l=0.13u ng=1 m=1
+Xxs1p_xm3 xs1p_cbp xs1p_g vdd xs1p_cbp sg13_lv_pmos w=1u l=0.13u ng=1 m=1
+Xxs1p_xm8 xs1p_g xs1p_x xs1p_cbp xs1p_cbp sg13_lv_pmos w=2u l=0.13u ng=1 m=1
+Xxs1p_xm4 xs1p_x t1 vdd vdd sg13_lv_pmos w=0.5u l=0.13u ng=1 m=1
+Xxs1p_xm5 xs1p_x t1 xs1p_cbn gnd sg13_lv_nmos w=1u l=0.13u ng=1 m=1
+Xxs1p_xm7 xs1p_x xs1p_g xs1p_cbn gnd sg13_lv_nmos w=0.5u l=0.13u ng=1 m=1
+Xxs1p_xm9 xs1p_cbn xs1p_g in1p gnd sg13_lv_nmos w=2u l=0.13u ng=1 m=1
+Xxs1p_xm10 xs1p_g vdd xs1p_n10 gnd sg13_lv_nmos w=2u l=0.13u ng=1 m=1
+Xxs1p_xm11 xs1p_n10 t1b gnd gnd sg13_lv_nmos w=2u l=0.13u ng=1 m=1
+Xxs1n_xms in1n xs1n_g top_n gnd sg13_lv_nmos w=6u l=0.13u ng=2 m=1
+Xxs1n_cboot xs1n_cbp xs1n_cbn cap_cmim w=11.49u l=11.49u m=1
+Xxs1n_xm1 xs1n_cbn t1b gnd gnd sg13_lv_nmos w=1u l=0.13u ng=1 m=1
+Xxs1n_xm3 xs1n_cbp xs1n_g vdd xs1n_cbp sg13_lv_pmos w=1u l=0.13u ng=1 m=1
+Xxs1n_xm8 xs1n_g xs1n_x xs1n_cbp xs1n_cbp sg13_lv_pmos w=2u l=0.13u ng=1 m=1
+Xxs1n_xm4 xs1n_x t1 vdd vdd sg13_lv_pmos w=0.5u l=0.13u ng=1 m=1
+Xxs1n_xm5 xs1n_x t1 xs1n_cbn gnd sg13_lv_nmos w=1u l=0.13u ng=1 m=1
+Xxs1n_xm7 xs1n_x xs1n_g xs1n_cbn gnd sg13_lv_nmos w=0.5u l=0.13u ng=1 m=1
+Xxs1n_xm9 xs1n_cbn xs1n_g in1n gnd sg13_lv_nmos w=2u l=0.13u ng=1 m=1
+Xxs1n_xm10 xs1n_g vdd xs1n_n10 gnd sg13_lv_nmos w=2u l=0.13u ng=1 m=1
+Xxs1n_xm11 xs1n_n10 t1b gnd gnd sg13_lv_nmos w=2u l=0.13u ng=1 m=1
+Xxpr1 rstb_n t0b vdd vdd sg13_lv_pmos w=1u l=0.13u ng=1 m=1
+Xxpr2 rstb_n t1b vdd vdd sg13_lv_pmos w=1u l=0.13u ng=1 m=1
+Xxnr1 rstb_n t0b nr gnd sg13_lv_nmos w=1u l=0.13u ng=1 m=1
+Xxnr2 nr t1b gnd gnd sg13_lv_nmos w=1u l=0.13u ng=1 m=1
+Xxpr3 rstb rstb_n vdd vdd sg13_lv_pmos w=1u l=0.13u ng=1 m=1
+Xxnr3 rstb rstb_n gnd gnd sg13_lv_nmos w=0.5u l=0.13u ng=1 m=1
+Xxlrp lsb_p rstb vrefl vrefl sg13_lv_pmos w=1u l=0.13u ng=1 m=1
+Xxlrn lsb_n rstb vrefl vrefl sg13_lv_pmos w=1u l=0.13u ng=1 m=1
+Xxdp12_xmp bp12 cp12 vref vref sg13_lv_pmos w=2u l=0.13u ng=1 m=1
+Xxdp12_xmn bp12 cp12 gnd gnd sg13_lv_nmos w=1u l=0.13u ng=1 m=1
+Xxdp11_xmp bp11 cp11 vref vref sg13_lv_pmos w=2u l=0.13u ng=1 m=1
+Xxdp11_xmn bp11 cp11 gnd gnd sg13_lv_nmos w=1u l=0.13u ng=1 m=1
+Xxdp10_xmp bp10 cp10 vref vref sg13_lv_pmos w=2u l=0.13u ng=1 m=1
+Xxdp10_xmn bp10 cp10 gnd gnd sg13_lv_nmos w=1u l=0.13u ng=1 m=1
+Xxdp9_xmp bp9 cp9 vref vref sg13_lv_pmos w=1u l=0.13u ng=1 m=1
+Xxdp9_xmn bp9 cp9 gnd gnd sg13_lv_nmos w=0.5u l=0.13u ng=1 m=1
+Xxdp8_xmp bp8 cp8 vref vref sg13_lv_pmos w=1u l=0.13u ng=1 m=1
+Xxdp8_xmn bp8 cp8 gnd gnd sg13_lv_nmos w=0.5u l=0.13u ng=1 m=1
+Xxdp7_xmp bp7 cp7 vrefl vrefl sg13_lv_pmos w=1u l=0.13u ng=1 m=1
+Xxdp7_xmn bp7 cp7 gnd gnd sg13_lv_nmos w=0.5u l=0.13u ng=1 m=1
+Xxdp6_xmp bp6 cp6 vrefl vrefl sg13_lv_pmos w=1u l=0.13u ng=1 m=1
+Xxdp6_xmn bp6 cp6 gnd gnd sg13_lv_nmos w=0.5u l=0.13u ng=1 m=1
+Xxdp5_xmp bp5 cp5 vrefl vrefl sg13_lv_pmos w=1u l=0.13u ng=1 m=1
+Xxdp5_xmn bp5 cp5 gnd gnd sg13_lv_nmos w=0.5u l=0.13u ng=1 m=1
+Xxdp4_xmp bp4 cp4 vrefl vrefl sg13_lv_pmos w=1u l=0.13u ng=1 m=1
+Xxdp4_xmn bp4 cp4 gnd gnd sg13_lv_nmos w=0.5u l=0.13u ng=1 m=1
+Xxdp3_xmp bp3 cp3 vrefl vrefl sg13_lv_pmos w=1u l=0.13u ng=1 m=1
+Xxdp3_xmn bp3 cp3 gnd gnd sg13_lv_nmos w=0.5u l=0.13u ng=1 m=1
+Xxdp2_xmp bp2 cp2 vrefl vrefl sg13_lv_pmos w=1u l=0.13u ng=1 m=1
+Xxdp2_xmn bp2 cp2 gnd gnd sg13_lv_nmos w=0.5u l=0.13u ng=1 m=1
+Xxdp1_xmp bp1 cp1 vrefl vrefl sg13_lv_pmos w=1u l=0.13u ng=1 m=1
+Xxdp1_xmn bp1 cp1 gnd gnd sg13_lv_nmos w=0.5u l=0.13u ng=1 m=1
+Xxdp0_xmp bp0 cp0 vrefl vrefl sg13_lv_pmos w=1u l=0.13u ng=1 m=1
+Xxdp0_xmn bp0 cp0 gnd gnd sg13_lv_nmos w=0.5u l=0.13u ng=1 m=1
+Xxdn12_xmp bn12 cn12 vref vref sg13_lv_pmos w=2u l=0.13u ng=1 m=1
+Xxdn12_xmn bn12 cn12 gnd gnd sg13_lv_nmos w=1u l=0.13u ng=1 m=1
+Xxdn11_xmp bn11 cn11 vref vref sg13_lv_pmos w=2u l=0.13u ng=1 m=1
+Xxdn11_xmn bn11 cn11 gnd gnd sg13_lv_nmos w=1u l=0.13u ng=1 m=1
+Xxdn10_xmp bn10 cn10 vref vref sg13_lv_pmos w=2u l=0.13u ng=1 m=1
+Xxdn10_xmn bn10 cn10 gnd gnd sg13_lv_nmos w=1u l=0.13u ng=1 m=1
+Xxdn9_xmp bn9 cn9 vref vref sg13_lv_pmos w=1u l=0.13u ng=1 m=1
+Xxdn9_xmn bn9 cn9 gnd gnd sg13_lv_nmos w=0.5u l=0.13u ng=1 m=1
+Xxdn8_xmp bn8 cn8 vref vref sg13_lv_pmos w=1u l=0.13u ng=1 m=1
+Xxdn8_xmn bn8 cn8 gnd gnd sg13_lv_nmos w=0.5u l=0.13u ng=1 m=1
+Xxdn7_xmp bn7 cn7 vrefl vrefl sg13_lv_pmos w=1u l=0.13u ng=1 m=1
+Xxdn7_xmn bn7 cn7 gnd gnd sg13_lv_nmos w=0.5u l=0.13u ng=1 m=1
+Xxdn6_xmp bn6 cn6 vrefl vrefl sg13_lv_pmos w=1u l=0.13u ng=1 m=1
+Xxdn6_xmn bn6 cn6 gnd gnd sg13_lv_nmos w=0.5u l=0.13u ng=1 m=1
+Xxdn5_xmp bn5 cn5 vrefl vrefl sg13_lv_pmos w=1u l=0.13u ng=1 m=1
+Xxdn5_xmn bn5 cn5 gnd gnd sg13_lv_nmos w=0.5u l=0.13u ng=1 m=1
+Xxdn4_xmp bn4 cn4 vrefl vrefl sg13_lv_pmos w=1u l=0.13u ng=1 m=1
+Xxdn4_xmn bn4 cn4 gnd gnd sg13_lv_nmos w=0.5u l=0.13u ng=1 m=1
+Xxdn3_xmp bn3 cn3 vrefl vrefl sg13_lv_pmos w=1u l=0.13u ng=1 m=1
+Xxdn3_xmn bn3 cn3 gnd gnd sg13_lv_nmos w=0.5u l=0.13u ng=1 m=1
+Xxdn2_xmp bn2 cn2 vrefl vrefl sg13_lv_pmos w=1u l=0.13u ng=1 m=1
+Xxdn2_xmn bn2 cn2 gnd gnd sg13_lv_nmos w=0.5u l=0.13u ng=1 m=1
+Xxdn1_xmp bn1 cn1 vrefl vrefl sg13_lv_pmos w=1u l=0.13u ng=1 m=1
+Xxdn1_xmn bn1 cn1 gnd gnd sg13_lv_nmos w=0.5u l=0.13u ng=1 m=1
+Xxdn0_xmp bn0 cn0 vrefl vrefl sg13_lv_pmos w=1u l=0.13u ng=1 m=1
+Xxdn0_xmn bn0 cn0 gnd gnd sg13_lv_nmos w=0.5u l=0.13u ng=1 m=1
+Xxc4_xs1_xmt1 xc4_xs1_tail0 clkb vdd vdd sg13_lv_pmos w=16u l=0.13u ng=4 m=1
+Xxc4_xs1_xmtc xc4_xs1_tail vbp xc4_xs1_tail0 vdd sg13_lv_pmos w=16u l=0.5u ng=2 m=1
+Xxc4_xs1_xm1 xc4_dip top_p xc4_xs1_tail vdd sg13_lv_pmos w=48u l=0.3u ng=12 m=1
+Xxc4_xs1_xm2 xc4_din top_n xc4_xs1_tail vdd sg13_lv_pmos w=48u l=0.3u ng=12 m=1
+Xxc4_xci1 vdd xc4_dip vdd vdd sg13_lv_pmos w=80u l=4u ng=4 m=1
+Xxc4_xci2 vdd xc4_din vdd vdd sg13_lv_pmos w=80u l=4u ng=4 m=1
+Xxc4_xmr1 xc4_dip clkb gnd gnd sg13_lv_nmos w=20u l=0.13u ng=1 m=1
+Xxc4_xmr2 xc4_din clkb gnd gnd sg13_lv_nmos w=20u l=0.13u ng=1 m=1
+Xxc4_xmt2 xc4_lt clk gnd gnd sg13_lv_nmos w=4u l=0.13u ng=1 m=1
+Xxc4_xmn1 op on xc4_lt gnd sg13_lv_nmos w=2u l=0.13u ng=1 m=1
+Xxc4_xmn2 on op xc4_lt gnd sg13_lv_nmos w=2u l=0.13u ng=1 m=1
+Xxc4_xmp1 op on vdd vdd sg13_lv_pmos w=2u l=0.13u ng=1 m=1
+Xxc4_xmp2 on op vdd vdd sg13_lv_pmos w=2u l=0.13u ng=1 m=1
+Xxc4_xmh1 op xc4_dip vdd vdd sg13_lv_pmos w=8u l=0.13u ng=2 m=1
+Xxc4_xmh2 on xc4_din vdd vdd sg13_lv_pmos w=8u l=0.13u ng=2 m=1
+Xxc4_xbp1 xc4_outpb op vdd vdd sg13_lv_pmos w=1u l=0.13u ng=1 m=1
+Xxc4_xbn1 xc4_outpb op gnd gnd sg13_lv_nmos w=0.5u l=0.13u ng=1 m=1
+Xxc4_xbp2 xc4_outnb on vdd vdd sg13_lv_pmos w=1u l=0.13u ng=1 m=1
+Xxc4_xbn2 xc4_outnb on gnd gnd sg13_lv_nmos w=0.5u l=0.13u ng=1 m=1
+Xxc5_xs1_xmt1 xc5_xs1_tail0 clkn gnd gnd sg13_lv_nmos w=8u l=0.13u ng=2 m=1
+Xxc5_xs1_xmtc xc5_xs1_tail vbn xc5_xs1_tail0 gnd sg13_lv_nmos w=4u l=0.5u ng=1 m=1
+Xxc5_xs1_xm1 xc5_dip top_p xc5_xs1_tail gnd sg13_lv_nmos w=16u l=0.5u ng=4 m=1
+Xxc5_xs1_xm2 xc5_din top_n xc5_xs1_tail gnd sg13_lv_nmos w=16u l=0.5u ng=4 m=1
+Xxc5_xci1 gnd xc5_dip gnd gnd sg13_lv_nmos w=30u l=4u ng=2 m=1
+Xxc5_xci2 gnd xc5_din gnd gnd sg13_lv_nmos w=30u l=4u ng=2 m=1
+Xxc5_xmr1 xc5_dip clkn vdd vdd sg13_lv_pmos w=16u l=0.13u ng=1 m=1
+Xxc5_xmr2 xc5_din clkn vdd vdd sg13_lv_pmos w=16u l=0.13u ng=1 m=1
+Xxc5_xmt2 xc5_lt clknb vdd vdd sg13_lv_pmos w=8u l=0.13u ng=1 m=1
+Xxc5_xmp1 onp onn xc5_lt vdd sg13_lv_pmos w=4u l=0.13u ng=1 m=1
+Xxc5_xmp2 onn onp xc5_lt vdd sg13_lv_pmos w=4u l=0.13u ng=1 m=1
+Xxc5_xmn1 onp onn gnd gnd sg13_lv_nmos w=1u l=0.13u ng=1 m=1
+Xxc5_xmn2 onn onp gnd gnd sg13_lv_nmos w=1u l=0.13u ng=1 m=1
+Xxc5_xmh1 onp xc5_dip gnd gnd sg13_lv_nmos w=8u l=0.13u ng=1 m=1
+Xxc5_xmh2 onn xc5_din gnd gnd sg13_lv_nmos w=8u l=0.13u ng=1 m=1
+Xxc5_xbp1 xc5_outpb onp vdd vdd sg13_lv_pmos w=1u l=0.13u ng=1 m=1
+Xxc5_xbn1 xc5_outpb onp gnd gnd sg13_lv_nmos w=0.5u l=0.13u ng=1 m=1
+Xxc5_xbp2 xc5_outnb onn vdd vdd sg13_lv_pmos w=1u l=0.13u ng=1 m=1
+Xxc5_xbn2 xc5_outnb onn gnd gnd sg13_lv_nmos w=0.5u l=0.13u ng=1 m=1
+Xxdacp_xc12_u0 top_p bp12 cap_cmim w=3.78u l=3.78u m=1
+Xxdacp_xc12_u1 top_p bp12 cap_cmim w=3.78u l=3.78u m=1
+Xxdacp_xc12_u2 top_p bp12 cap_cmim w=3.78u l=3.78u m=1
+Xxdacp_xc12_u3 top_p bp12 cap_cmim w=3.78u l=3.78u m=1
+Xxdacp_xc12_u4 top_p bp12 cap_cmim w=3.78u l=3.78u m=1
+Xxdacp_xc12_u5 top_p bp12 cap_cmim w=3.78u l=3.78u m=1
+Xxdacp_xc12_u6 top_p bp12 cap_cmim w=3.78u l=3.78u m=1
+Xxdacp_xc12_u7 top_p bp12 cap_cmim w=3.78u l=3.78u m=1
+Xxdacp_xc12_u8 top_p bp12 cap_cmim w=3.78u l=3.78u m=1
+Xxdacp_xc12_u9 top_p bp12 cap_cmim w=3.78u l=3.78u m=1
+Xxdacp_xc12_u10 top_p bp12 cap_cmim w=3.78u l=3.78u m=1
+Xxdacp_xc12_u11 top_p bp12 cap_cmim w=3.78u l=3.78u m=1
+Xxdacp_xc12_u12 top_p bp12 cap_cmim w=3.78u l=3.78u m=1
+Xxdacp_xc12_u13 top_p bp12 cap_cmim w=3.78u l=3.78u m=1
+Xxdacp_xc12_u14 top_p bp12 cap_cmim w=3.78u l=3.78u m=1
+Xxdacp_xc12_u15 top_p bp12 cap_cmim w=3.78u l=3.78u m=1
+Xxdacp_xc11_u0 top_p bp11 cap_cmim w=3.78u l=3.78u m=1
+Xxdacp_xc11_u1 top_p bp11 cap_cmim w=3.78u l=3.78u m=1
+Xxdacp_xc11_u2 top_p bp11 cap_cmim w=3.78u l=3.78u m=1
+Xxdacp_xc11_u3 top_p bp11 cap_cmim w=3.78u l=3.78u m=1
+Xxdacp_xc11_u4 top_p bp11 cap_cmim w=3.78u l=3.78u m=1
+Xxdacp_xc11_u5 top_p bp11 cap_cmim w=3.78u l=3.78u m=1
+Xxdacp_xc11_u6 top_p bp11 cap_cmim w=3.78u l=3.78u m=1
+Xxdacp_xc11_u7 top_p bp11 cap_cmim w=3.78u l=3.78u m=1
+Xxdacp_xc10_u0 top_p bp10 cap_cmim w=3.78u l=3.78u m=1
+Xxdacp_xc10_u1 top_p bp10 cap_cmim w=3.78u l=3.78u m=1
+Xxdacp_xc10_u2 top_p bp10 cap_cmim w=3.78u l=3.78u m=1
+Xxdacp_xc10_u3 top_p bp10 cap_cmim w=3.78u l=3.78u m=1
+Xxdacp_xc9_u0 top_p bp9 cap_cmim w=3.78u l=3.78u m=1
+Xxdacp_xc9_u1 top_p bp9 cap_cmim w=3.78u l=3.78u m=1
+Xxdacp_xc8_u0 top_p bp8 cap_cmim w=3.78u l=3.78u m=1
+Xxdacp_xcb top_p lsb_p cap_cmim w=4.23u l=4.23u m=1
+Xxdacp_xc7_u0 lsb_p bp7 cap_cmim w=3.78u l=3.78u m=1
+Xxdacp_xc7_u1 lsb_p bp7 cap_cmim w=3.78u l=3.78u m=1
+Xxdacp_xc7_u2 lsb_p bp7 cap_cmim w=3.78u l=3.78u m=1
+Xxdacp_xc7_u3 lsb_p bp7 cap_cmim w=3.78u l=3.78u m=1
+Xxdacp_xc7_u4 lsb_p bp7 cap_cmim w=3.78u l=3.78u m=1
+Xxdacp_xc7_u5 lsb_p bp7 cap_cmim w=3.78u l=3.78u m=1
+Xxdacp_xc7_u6 lsb_p bp7 cap_cmim w=3.78u l=3.78u m=1
+Xxdacp_xc7_u7 lsb_p bp7 cap_cmim w=3.78u l=3.78u m=1
+Xxdacp_xc7_u8 lsb_p bp7 cap_cmim w=3.78u l=3.78u m=1
+Xxdacp_xc7_u9 lsb_p bp7 cap_cmim w=3.78u l=3.78u m=1
+Xxdacp_xc7_u10 lsb_p bp7 cap_cmim w=3.78u l=3.78u m=1
+Xxdacp_xc7_u11 lsb_p bp7 cap_cmim w=3.78u l=3.78u m=1
+Xxdacp_xc7_u12 lsb_p bp7 cap_cmim w=3.78u l=3.78u m=1
+Xxdacp_xc7_u13 lsb_p bp7 cap_cmim w=3.78u l=3.78u m=1
+Xxdacp_xc7_u14 lsb_p bp7 cap_cmim w=3.78u l=3.78u m=1
+Xxdacp_xc7_u15 lsb_p bp7 cap_cmim w=3.78u l=3.78u m=1
+Xxdacp_xc7_u16 lsb_p bp7 cap_cmim w=3.78u l=3.78u m=1
+Xxdacp_xc7_u17 lsb_p bp7 cap_cmim w=3.78u l=3.78u m=1
+Xxdacp_xc7_u18 lsb_p bp7 cap_cmim w=3.78u l=3.78u m=1
+Xxdacp_xc7_u19 lsb_p bp7 cap_cmim w=3.78u l=3.78u m=1
+Xxdacp_xc7_u20 lsb_p bp7 cap_cmim w=3.78u l=3.78u m=1
+Xxdacp_xc7_u21 lsb_p bp7 cap_cmim w=3.78u l=3.78u m=1
+Xxdacp_xc7_u22 lsb_p bp7 cap_cmim w=3.78u l=3.78u m=1
+Xxdacp_xc7_u23 lsb_p bp7 cap_cmim w=3.78u l=3.78u m=1
+Xxdacp_xc7_u24 lsb_p bp7 cap_cmim w=3.78u l=3.78u m=1
+Xxdacp_xc7_u25 lsb_p bp7 cap_cmim w=3.78u l=3.78u m=1
+Xxdacp_xc7_u26 lsb_p bp7 cap_cmim w=3.78u l=3.78u m=1
+Xxdacp_xc7_u27 lsb_p bp7 cap_cmim w=3.78u l=3.78u m=1
+Xxdacp_xc7_u28 lsb_p bp7 cap_cmim w=3.78u l=3.78u m=1
+Xxdacp_xc7_u29 lsb_p bp7 cap_cmim w=3.78u l=3.78u m=1
+Xxdacp_xc7_u30 lsb_p bp7 cap_cmim w=3.78u l=3.78u m=1
+Xxdacp_xc7_u31 lsb_p bp7 cap_cmim w=3.78u l=3.78u m=1
+Xxdacp_xc7_u32 lsb_p bp7 cap_cmim w=3.78u l=3.78u m=1
+Xxdacp_xc7_u33 lsb_p bp7 cap_cmim w=3.78u l=3.78u m=1
+Xxdacp_xc7_u34 lsb_p bp7 cap_cmim w=3.78u l=3.78u m=1
+Xxdacp_xc7_u35 lsb_p bp7 cap_cmim w=3.78u l=3.78u m=1
+Xxdacp_xc7_u36 lsb_p bp7 cap_cmim w=3.78u l=3.78u m=1
+Xxdacp_xc7_u37 lsb_p bp7 cap_cmim w=3.78u l=3.78u m=1
+Xxdacp_xc7_u38 lsb_p bp7 cap_cmim w=3.78u l=3.78u m=1
+Xxdacp_xc7_u39 lsb_p bp7 cap_cmim w=3.78u l=3.78u m=1
+Xxdacp_xc7_u40 lsb_p bp7 cap_cmim w=3.78u l=3.78u m=1
+Xxdacp_xc7_u41 lsb_p bp7 cap_cmim w=3.78u l=3.78u m=1
+Xxdacp_xc7_u42 lsb_p bp7 cap_cmim w=3.78u l=3.78u m=1
+Xxdacp_xc7_u43 lsb_p bp7 cap_cmim w=3.78u l=3.78u m=1
+Xxdacp_xc7_u44 lsb_p bp7 cap_cmim w=3.78u l=3.78u m=1
+Xxdacp_xc7_u45 lsb_p bp7 cap_cmim w=3.78u l=3.78u m=1
+Xxdacp_xc7_u46 lsb_p bp7 cap_cmim w=3.78u l=3.78u m=1
+Xxdacp_xc7_u47 lsb_p bp7 cap_cmim w=3.78u l=3.78u m=1
+Xxdacp_xc7_u48 lsb_p bp7 cap_cmim w=3.78u l=3.78u m=1
+Xxdacp_xc7_u49 lsb_p bp7 cap_cmim w=3.78u l=3.78u m=1
+Xxdacp_xc7_u50 lsb_p bp7 cap_cmim w=3.78u l=3.78u m=1
+Xxdacp_xc7_u51 lsb_p bp7 cap_cmim w=3.78u l=3.78u m=1
+Xxdacp_xc7_u52 lsb_p bp7 cap_cmim w=3.78u l=3.78u m=1
+Xxdacp_xc7_u53 lsb_p bp7 cap_cmim w=3.78u l=3.78u m=1
+Xxdacp_xc7_u54 lsb_p bp7 cap_cmim w=3.78u l=3.78u m=1
+Xxdacp_xc7_u55 lsb_p bp7 cap_cmim w=3.78u l=3.78u m=1
+Xxdacp_xc7_u56 lsb_p bp7 cap_cmim w=3.78u l=3.78u m=1
+Xxdacp_xc7_u57 lsb_p bp7 cap_cmim w=3.78u l=3.78u m=1
+Xxdacp_xc7_u58 lsb_p bp7 cap_cmim w=3.78u l=3.78u m=1
+Xxdacp_xc7_u59 lsb_p bp7 cap_cmim w=3.78u l=3.78u m=1
+Xxdacp_xc7_u60 lsb_p bp7 cap_cmim w=3.78u l=3.78u m=1
+Xxdacp_xc7_u61 lsb_p bp7 cap_cmim w=3.78u l=3.78u m=1
+Xxdacp_xc7_u62 lsb_p bp7 cap_cmim w=3.78u l=3.78u m=1
+Xxdacp_xc7_u63 lsb_p bp7 cap_cmim w=3.78u l=3.78u m=1
+Xxdacp_xc6_u0 lsb_p bp6 cap_cmim w=3.78u l=3.78u m=1
+Xxdacp_xc6_u1 lsb_p bp6 cap_cmim w=3.78u l=3.78u m=1
+Xxdacp_xc6_u2 lsb_p bp6 cap_cmim w=3.78u l=3.78u m=1
+Xxdacp_xc6_u3 lsb_p bp6 cap_cmim w=3.78u l=3.78u m=1
+Xxdacp_xc6_u4 lsb_p bp6 cap_cmim w=3.78u l=3.78u m=1
+Xxdacp_xc6_u5 lsb_p bp6 cap_cmim w=3.78u l=3.78u m=1
+Xxdacp_xc6_u6 lsb_p bp6 cap_cmim w=3.78u l=3.78u m=1
+Xxdacp_xc6_u7 lsb_p bp6 cap_cmim w=3.78u l=3.78u m=1
+Xxdacp_xc6_u8 lsb_p bp6 cap_cmim w=3.78u l=3.78u m=1
+Xxdacp_xc6_u9 lsb_p bp6 cap_cmim w=3.78u l=3.78u m=1
+Xxdacp_xc6_u10 lsb_p bp6 cap_cmim w=3.78u l=3.78u m=1
+Xxdacp_xc6_u11 lsb_p bp6 cap_cmim w=3.78u l=3.78u m=1
+Xxdacp_xc6_u12 lsb_p bp6 cap_cmim w=3.78u l=3.78u m=1
+Xxdacp_xc6_u13 lsb_p bp6 cap_cmim w=3.78u l=3.78u m=1
+Xxdacp_xc6_u14 lsb_p bp6 cap_cmim w=3.78u l=3.78u m=1
+Xxdacp_xc6_u15 lsb_p bp6 cap_cmim w=3.78u l=3.78u m=1
+Xxdacp_xc6_u16 lsb_p bp6 cap_cmim w=3.78u l=3.78u m=1
+Xxdacp_xc6_u17 lsb_p bp6 cap_cmim w=3.78u l=3.78u m=1
+Xxdacp_xc6_u18 lsb_p bp6 cap_cmim w=3.78u l=3.78u m=1
+Xxdacp_xc6_u19 lsb_p bp6 cap_cmim w=3.78u l=3.78u m=1
+Xxdacp_xc6_u20 lsb_p bp6 cap_cmim w=3.78u l=3.78u m=1
+Xxdacp_xc6_u21 lsb_p bp6 cap_cmim w=3.78u l=3.78u m=1
+Xxdacp_xc6_u22 lsb_p bp6 cap_cmim w=3.78u l=3.78u m=1
+Xxdacp_xc6_u23 lsb_p bp6 cap_cmim w=3.78u l=3.78u m=1
+Xxdacp_xc6_u24 lsb_p bp6 cap_cmim w=3.78u l=3.78u m=1
+Xxdacp_xc6_u25 lsb_p bp6 cap_cmim w=3.78u l=3.78u m=1
+Xxdacp_xc6_u26 lsb_p bp6 cap_cmim w=3.78u l=3.78u m=1
+Xxdacp_xc6_u27 lsb_p bp6 cap_cmim w=3.78u l=3.78u m=1
+Xxdacp_xc6_u28 lsb_p bp6 cap_cmim w=3.78u l=3.78u m=1
+Xxdacp_xc6_u29 lsb_p bp6 cap_cmim w=3.78u l=3.78u m=1
+Xxdacp_xc6_u30 lsb_p bp6 cap_cmim w=3.78u l=3.78u m=1
+Xxdacp_xc6_u31 lsb_p bp6 cap_cmim w=3.78u l=3.78u m=1
+Xxdacp_xc5_u0 lsb_p bp5 cap_cmim w=3.78u l=3.78u m=1
+Xxdacp_xc5_u1 lsb_p bp5 cap_cmim w=3.78u l=3.78u m=1
+Xxdacp_xc5_u2 lsb_p bp5 cap_cmim w=3.78u l=3.78u m=1
+Xxdacp_xc5_u3 lsb_p bp5 cap_cmim w=3.78u l=3.78u m=1
+Xxdacp_xc5_u4 lsb_p bp5 cap_cmim w=3.78u l=3.78u m=1
+Xxdacp_xc5_u5 lsb_p bp5 cap_cmim w=3.78u l=3.78u m=1
+Xxdacp_xc5_u6 lsb_p bp5 cap_cmim w=3.78u l=3.78u m=1
+Xxdacp_xc5_u7 lsb_p bp5 cap_cmim w=3.78u l=3.78u m=1
+Xxdacp_xc5_u8 lsb_p bp5 cap_cmim w=3.78u l=3.78u m=1
+Xxdacp_xc5_u9 lsb_p bp5 cap_cmim w=3.78u l=3.78u m=1
+Xxdacp_xc5_u10 lsb_p bp5 cap_cmim w=3.78u l=3.78u m=1
+Xxdacp_xc5_u11 lsb_p bp5 cap_cmim w=3.78u l=3.78u m=1
+Xxdacp_xc5_u12 lsb_p bp5 cap_cmim w=3.78u l=3.78u m=1
+Xxdacp_xc5_u13 lsb_p bp5 cap_cmim w=3.78u l=3.78u m=1
+Xxdacp_xc5_u14 lsb_p bp5 cap_cmim w=3.78u l=3.78u m=1
+Xxdacp_xc5_u15 lsb_p bp5 cap_cmim w=3.78u l=3.78u m=1
+Xxdacp_xc4_u0 lsb_p bp4 cap_cmim w=3.78u l=3.78u m=1
+Xxdacp_xc4_u1 lsb_p bp4 cap_cmim w=3.78u l=3.78u m=1
+Xxdacp_xc4_u2 lsb_p bp4 cap_cmim w=3.78u l=3.78u m=1
+Xxdacp_xc4_u3 lsb_p bp4 cap_cmim w=3.78u l=3.78u m=1
+Xxdacp_xc4_u4 lsb_p bp4 cap_cmim w=3.78u l=3.78u m=1
+Xxdacp_xc4_u5 lsb_p bp4 cap_cmim w=3.78u l=3.78u m=1
+Xxdacp_xc4_u6 lsb_p bp4 cap_cmim w=3.78u l=3.78u m=1
+Xxdacp_xc4_u7 lsb_p bp4 cap_cmim w=3.78u l=3.78u m=1
+Xxdacp_xc3_u0 lsb_p bp3 cap_cmim w=3.78u l=3.78u m=1
+Xxdacp_xc3_u1 lsb_p bp3 cap_cmim w=3.78u l=3.78u m=1
+Xxdacp_xc3_u2 lsb_p bp3 cap_cmim w=3.78u l=3.78u m=1
+Xxdacp_xc3_u3 lsb_p bp3 cap_cmim w=3.78u l=3.78u m=1
+Xxdacp_xc2_u0 lsb_p bp2 cap_cmim w=3.78u l=3.78u m=1
+Xxdacp_xc2_u1 lsb_p bp2 cap_cmim w=3.78u l=3.78u m=1
+Xxdacp_xc1_u0 lsb_p bp1 cap_cmim w=3.78u l=3.78u m=1
+Xxdacp_xc0 lsb_p bp0 cap_cmim w=2.67u l=2.67u m=1
+Xxdacn_xc12_u0 top_n bn12 cap_cmim w=3.78u l=3.78u m=1
+Xxdacn_xc12_u1 top_n bn12 cap_cmim w=3.78u l=3.78u m=1
+Xxdacn_xc12_u2 top_n bn12 cap_cmim w=3.78u l=3.78u m=1
+Xxdacn_xc12_u3 top_n bn12 cap_cmim w=3.78u l=3.78u m=1
+Xxdacn_xc12_u4 top_n bn12 cap_cmim w=3.78u l=3.78u m=1
+Xxdacn_xc12_u5 top_n bn12 cap_cmim w=3.78u l=3.78u m=1
+Xxdacn_xc12_u6 top_n bn12 cap_cmim w=3.78u l=3.78u m=1
+Xxdacn_xc12_u7 top_n bn12 cap_cmim w=3.78u l=3.78u m=1
+Xxdacn_xc12_u8 top_n bn12 cap_cmim w=3.78u l=3.78u m=1
+Xxdacn_xc12_u9 top_n bn12 cap_cmim w=3.78u l=3.78u m=1
+Xxdacn_xc12_u10 top_n bn12 cap_cmim w=3.78u l=3.78u m=1
+Xxdacn_xc12_u11 top_n bn12 cap_cmim w=3.78u l=3.78u m=1
+Xxdacn_xc12_u12 top_n bn12 cap_cmim w=3.78u l=3.78u m=1
+Xxdacn_xc12_u13 top_n bn12 cap_cmim w=3.78u l=3.78u m=1
+Xxdacn_xc12_u14 top_n bn12 cap_cmim w=3.78u l=3.78u m=1
+Xxdacn_xc12_u15 top_n bn12 cap_cmim w=3.78u l=3.78u m=1
+Xxdacn_xc11_u0 top_n bn11 cap_cmim w=3.78u l=3.78u m=1
+Xxdacn_xc11_u1 top_n bn11 cap_cmim w=3.78u l=3.78u m=1
+Xxdacn_xc11_u2 top_n bn11 cap_cmim w=3.78u l=3.78u m=1
+Xxdacn_xc11_u3 top_n bn11 cap_cmim w=3.78u l=3.78u m=1
+Xxdacn_xc11_u4 top_n bn11 cap_cmim w=3.78u l=3.78u m=1
+Xxdacn_xc11_u5 top_n bn11 cap_cmim w=3.78u l=3.78u m=1
+Xxdacn_xc11_u6 top_n bn11 cap_cmim w=3.78u l=3.78u m=1
+Xxdacn_xc11_u7 top_n bn11 cap_cmim w=3.78u l=3.78u m=1
+Xxdacn_xc10_u0 top_n bn10 cap_cmim w=3.78u l=3.78u m=1
+Xxdacn_xc10_u1 top_n bn10 cap_cmim w=3.78u l=3.78u m=1
+Xxdacn_xc10_u2 top_n bn10 cap_cmim w=3.78u l=3.78u m=1
+Xxdacn_xc10_u3 top_n bn10 cap_cmim w=3.78u l=3.78u m=1
+Xxdacn_xc9_u0 top_n bn9 cap_cmim w=3.78u l=3.78u m=1
+Xxdacn_xc9_u1 top_n bn9 cap_cmim w=3.78u l=3.78u m=1
+Xxdacn_xc8_u0 top_n bn8 cap_cmim w=3.78u l=3.78u m=1
+Xxdacn_xcb top_n lsb_n cap_cmim w=4.23u l=4.23u m=1
+Xxdacn_xc7_u0 lsb_n bn7 cap_cmim w=3.78u l=3.78u m=1
+Xxdacn_xc7_u1 lsb_n bn7 cap_cmim w=3.78u l=3.78u m=1
+Xxdacn_xc7_u2 lsb_n bn7 cap_cmim w=3.78u l=3.78u m=1
+Xxdacn_xc7_u3 lsb_n bn7 cap_cmim w=3.78u l=3.78u m=1
+Xxdacn_xc7_u4 lsb_n bn7 cap_cmim w=3.78u l=3.78u m=1
+Xxdacn_xc7_u5 lsb_n bn7 cap_cmim w=3.78u l=3.78u m=1
+Xxdacn_xc7_u6 lsb_n bn7 cap_cmim w=3.78u l=3.78u m=1
+Xxdacn_xc7_u7 lsb_n bn7 cap_cmim w=3.78u l=3.78u m=1
+Xxdacn_xc7_u8 lsb_n bn7 cap_cmim w=3.78u l=3.78u m=1
+Xxdacn_xc7_u9 lsb_n bn7 cap_cmim w=3.78u l=3.78u m=1
+Xxdacn_xc7_u10 lsb_n bn7 cap_cmim w=3.78u l=3.78u m=1
+Xxdacn_xc7_u11 lsb_n bn7 cap_cmim w=3.78u l=3.78u m=1
+Xxdacn_xc7_u12 lsb_n bn7 cap_cmim w=3.78u l=3.78u m=1
+Xxdacn_xc7_u13 lsb_n bn7 cap_cmim w=3.78u l=3.78u m=1
+Xxdacn_xc7_u14 lsb_n bn7 cap_cmim w=3.78u l=3.78u m=1
+Xxdacn_xc7_u15 lsb_n bn7 cap_cmim w=3.78u l=3.78u m=1
+Xxdacn_xc7_u16 lsb_n bn7 cap_cmim w=3.78u l=3.78u m=1
+Xxdacn_xc7_u17 lsb_n bn7 cap_cmim w=3.78u l=3.78u m=1
+Xxdacn_xc7_u18 lsb_n bn7 cap_cmim w=3.78u l=3.78u m=1
+Xxdacn_xc7_u19 lsb_n bn7 cap_cmim w=3.78u l=3.78u m=1
+Xxdacn_xc7_u20 lsb_n bn7 cap_cmim w=3.78u l=3.78u m=1
+Xxdacn_xc7_u21 lsb_n bn7 cap_cmim w=3.78u l=3.78u m=1
+Xxdacn_xc7_u22 lsb_n bn7 cap_cmim w=3.78u l=3.78u m=1
+Xxdacn_xc7_u23 lsb_n bn7 cap_cmim w=3.78u l=3.78u m=1
+Xxdacn_xc7_u24 lsb_n bn7 cap_cmim w=3.78u l=3.78u m=1
+Xxdacn_xc7_u25 lsb_n bn7 cap_cmim w=3.78u l=3.78u m=1
+Xxdacn_xc7_u26 lsb_n bn7 cap_cmim w=3.78u l=3.78u m=1
+Xxdacn_xc7_u27 lsb_n bn7 cap_cmim w=3.78u l=3.78u m=1
+Xxdacn_xc7_u28 lsb_n bn7 cap_cmim w=3.78u l=3.78u m=1
+Xxdacn_xc7_u29 lsb_n bn7 cap_cmim w=3.78u l=3.78u m=1
+Xxdacn_xc7_u30 lsb_n bn7 cap_cmim w=3.78u l=3.78u m=1
+Xxdacn_xc7_u31 lsb_n bn7 cap_cmim w=3.78u l=3.78u m=1
+Xxdacn_xc7_u32 lsb_n bn7 cap_cmim w=3.78u l=3.78u m=1
+Xxdacn_xc7_u33 lsb_n bn7 cap_cmim w=3.78u l=3.78u m=1
+Xxdacn_xc7_u34 lsb_n bn7 cap_cmim w=3.78u l=3.78u m=1
+Xxdacn_xc7_u35 lsb_n bn7 cap_cmim w=3.78u l=3.78u m=1
+Xxdacn_xc7_u36 lsb_n bn7 cap_cmim w=3.78u l=3.78u m=1
+Xxdacn_xc7_u37 lsb_n bn7 cap_cmim w=3.78u l=3.78u m=1
+Xxdacn_xc7_u38 lsb_n bn7 cap_cmim w=3.78u l=3.78u m=1
+Xxdacn_xc7_u39 lsb_n bn7 cap_cmim w=3.78u l=3.78u m=1
+Xxdacn_xc7_u40 lsb_n bn7 cap_cmim w=3.78u l=3.78u m=1
+Xxdacn_xc7_u41 lsb_n bn7 cap_cmim w=3.78u l=3.78u m=1
+Xxdacn_xc7_u42 lsb_n bn7 cap_cmim w=3.78u l=3.78u m=1
+Xxdacn_xc7_u43 lsb_n bn7 cap_cmim w=3.78u l=3.78u m=1
+Xxdacn_xc7_u44 lsb_n bn7 cap_cmim w=3.78u l=3.78u m=1
+Xxdacn_xc7_u45 lsb_n bn7 cap_cmim w=3.78u l=3.78u m=1
+Xxdacn_xc7_u46 lsb_n bn7 cap_cmim w=3.78u l=3.78u m=1
+Xxdacn_xc7_u47 lsb_n bn7 cap_cmim w=3.78u l=3.78u m=1
+Xxdacn_xc7_u48 lsb_n bn7 cap_cmim w=3.78u l=3.78u m=1
+Xxdacn_xc7_u49 lsb_n bn7 cap_cmim w=3.78u l=3.78u m=1
+Xxdacn_xc7_u50 lsb_n bn7 cap_cmim w=3.78u l=3.78u m=1
+Xxdacn_xc7_u51 lsb_n bn7 cap_cmim w=3.78u l=3.78u m=1
+Xxdacn_xc7_u52 lsb_n bn7 cap_cmim w=3.78u l=3.78u m=1
+Xxdacn_xc7_u53 lsb_n bn7 cap_cmim w=3.78u l=3.78u m=1
+Xxdacn_xc7_u54 lsb_n bn7 cap_cmim w=3.78u l=3.78u m=1
+Xxdacn_xc7_u55 lsb_n bn7 cap_cmim w=3.78u l=3.78u m=1
+Xxdacn_xc7_u56 lsb_n bn7 cap_cmim w=3.78u l=3.78u m=1
+Xxdacn_xc7_u57 lsb_n bn7 cap_cmim w=3.78u l=3.78u m=1
+Xxdacn_xc7_u58 lsb_n bn7 cap_cmim w=3.78u l=3.78u m=1
+Xxdacn_xc7_u59 lsb_n bn7 cap_cmim w=3.78u l=3.78u m=1
+Xxdacn_xc7_u60 lsb_n bn7 cap_cmim w=3.78u l=3.78u m=1
+Xxdacn_xc7_u61 lsb_n bn7 cap_cmim w=3.78u l=3.78u m=1
+Xxdacn_xc7_u62 lsb_n bn7 cap_cmim w=3.78u l=3.78u m=1
+Xxdacn_xc7_u63 lsb_n bn7 cap_cmim w=3.78u l=3.78u m=1
+Xxdacn_xc6_u0 lsb_n bn6 cap_cmim w=3.78u l=3.78u m=1
+Xxdacn_xc6_u1 lsb_n bn6 cap_cmim w=3.78u l=3.78u m=1
+Xxdacn_xc6_u2 lsb_n bn6 cap_cmim w=3.78u l=3.78u m=1
+Xxdacn_xc6_u3 lsb_n bn6 cap_cmim w=3.78u l=3.78u m=1
+Xxdacn_xc6_u4 lsb_n bn6 cap_cmim w=3.78u l=3.78u m=1
+Xxdacn_xc6_u5 lsb_n bn6 cap_cmim w=3.78u l=3.78u m=1
+Xxdacn_xc6_u6 lsb_n bn6 cap_cmim w=3.78u l=3.78u m=1
+Xxdacn_xc6_u7 lsb_n bn6 cap_cmim w=3.78u l=3.78u m=1
+Xxdacn_xc6_u8 lsb_n bn6 cap_cmim w=3.78u l=3.78u m=1
+Xxdacn_xc6_u9 lsb_n bn6 cap_cmim w=3.78u l=3.78u m=1
+Xxdacn_xc6_u10 lsb_n bn6 cap_cmim w=3.78u l=3.78u m=1
+Xxdacn_xc6_u11 lsb_n bn6 cap_cmim w=3.78u l=3.78u m=1
+Xxdacn_xc6_u12 lsb_n bn6 cap_cmim w=3.78u l=3.78u m=1
+Xxdacn_xc6_u13 lsb_n bn6 cap_cmim w=3.78u l=3.78u m=1
+Xxdacn_xc6_u14 lsb_n bn6 cap_cmim w=3.78u l=3.78u m=1
+Xxdacn_xc6_u15 lsb_n bn6 cap_cmim w=3.78u l=3.78u m=1
+Xxdacn_xc6_u16 lsb_n bn6 cap_cmim w=3.78u l=3.78u m=1
+Xxdacn_xc6_u17 lsb_n bn6 cap_cmim w=3.78u l=3.78u m=1
+Xxdacn_xc6_u18 lsb_n bn6 cap_cmim w=3.78u l=3.78u m=1
+Xxdacn_xc6_u19 lsb_n bn6 cap_cmim w=3.78u l=3.78u m=1
+Xxdacn_xc6_u20 lsb_n bn6 cap_cmim w=3.78u l=3.78u m=1
+Xxdacn_xc6_u21 lsb_n bn6 cap_cmim w=3.78u l=3.78u m=1
+Xxdacn_xc6_u22 lsb_n bn6 cap_cmim w=3.78u l=3.78u m=1
+Xxdacn_xc6_u23 lsb_n bn6 cap_cmim w=3.78u l=3.78u m=1
+Xxdacn_xc6_u24 lsb_n bn6 cap_cmim w=3.78u l=3.78u m=1
+Xxdacn_xc6_u25 lsb_n bn6 cap_cmim w=3.78u l=3.78u m=1
+Xxdacn_xc6_u26 lsb_n bn6 cap_cmim w=3.78u l=3.78u m=1
+Xxdacn_xc6_u27 lsb_n bn6 cap_cmim w=3.78u l=3.78u m=1
+Xxdacn_xc6_u28 lsb_n bn6 cap_cmim w=3.78u l=3.78u m=1
+Xxdacn_xc6_u29 lsb_n bn6 cap_cmim w=3.78u l=3.78u m=1
+Xxdacn_xc6_u30 lsb_n bn6 cap_cmim w=3.78u l=3.78u m=1
+Xxdacn_xc6_u31 lsb_n bn6 cap_cmim w=3.78u l=3.78u m=1
+Xxdacn_xc5_u0 lsb_n bn5 cap_cmim w=3.78u l=3.78u m=1
+Xxdacn_xc5_u1 lsb_n bn5 cap_cmim w=3.78u l=3.78u m=1
+Xxdacn_xc5_u2 lsb_n bn5 cap_cmim w=3.78u l=3.78u m=1
+Xxdacn_xc5_u3 lsb_n bn5 cap_cmim w=3.78u l=3.78u m=1
+Xxdacn_xc5_u4 lsb_n bn5 cap_cmim w=3.78u l=3.78u m=1
+Xxdacn_xc5_u5 lsb_n bn5 cap_cmim w=3.78u l=3.78u m=1
+Xxdacn_xc5_u6 lsb_n bn5 cap_cmim w=3.78u l=3.78u m=1
+Xxdacn_xc5_u7 lsb_n bn5 cap_cmim w=3.78u l=3.78u m=1
+Xxdacn_xc5_u8 lsb_n bn5 cap_cmim w=3.78u l=3.78u m=1
+Xxdacn_xc5_u9 lsb_n bn5 cap_cmim w=3.78u l=3.78u m=1
+Xxdacn_xc5_u10 lsb_n bn5 cap_cmim w=3.78u l=3.78u m=1
+Xxdacn_xc5_u11 lsb_n bn5 cap_cmim w=3.78u l=3.78u m=1
+Xxdacn_xc5_u12 lsb_n bn5 cap_cmim w=3.78u l=3.78u m=1
+Xxdacn_xc5_u13 lsb_n bn5 cap_cmim w=3.78u l=3.78u m=1
+Xxdacn_xc5_u14 lsb_n bn5 cap_cmim w=3.78u l=3.78u m=1
+Xxdacn_xc5_u15 lsb_n bn5 cap_cmim w=3.78u l=3.78u m=1
+Xxdacn_xc4_u0 lsb_n bn4 cap_cmim w=3.78u l=3.78u m=1
+Xxdacn_xc4_u1 lsb_n bn4 cap_cmim w=3.78u l=3.78u m=1
+Xxdacn_xc4_u2 lsb_n bn4 cap_cmim w=3.78u l=3.78u m=1
+Xxdacn_xc4_u3 lsb_n bn4 cap_cmim w=3.78u l=3.78u m=1
+Xxdacn_xc4_u4 lsb_n bn4 cap_cmim w=3.78u l=3.78u m=1
+Xxdacn_xc4_u5 lsb_n bn4 cap_cmim w=3.78u l=3.78u m=1
+Xxdacn_xc4_u6 lsb_n bn4 cap_cmim w=3.78u l=3.78u m=1
+Xxdacn_xc4_u7 lsb_n bn4 cap_cmim w=3.78u l=3.78u m=1
+Xxdacn_xc3_u0 lsb_n bn3 cap_cmim w=3.78u l=3.78u m=1
+Xxdacn_xc3_u1 lsb_n bn3 cap_cmim w=3.78u l=3.78u m=1
+Xxdacn_xc3_u2 lsb_n bn3 cap_cmim w=3.78u l=3.78u m=1
+Xxdacn_xc3_u3 lsb_n bn3 cap_cmim w=3.78u l=3.78u m=1
+Xxdacn_xc2_u0 lsb_n bn2 cap_cmim w=3.78u l=3.78u m=1
+Xxdacn_xc2_u1 lsb_n bn2 cap_cmim w=3.78u l=3.78u m=1
+Xxdacn_xc1_u0 lsb_n bn1 cap_cmim w=3.78u l=3.78u m=1
+Xxdacn_xc0 lsb_n bn0 cap_cmim w=2.67u l=2.67u m=1
+Xxdmy_u0 gnd gnd cap_cmim w=3.78u l=3.78u m=1
+Xxdmy_u1 gnd gnd cap_cmim w=3.78u l=3.78u m=1
+Xxdmy_u2 gnd gnd cap_cmim w=3.78u l=3.78u m=1
+Xxdmy_u3 gnd gnd cap_cmim w=3.78u l=3.78u m=1
+Xxdmy_u4 gnd gnd cap_cmim w=3.78u l=3.78u m=1
+Xxdmy_u5 gnd gnd cap_cmim w=3.78u l=3.78u m=1
+Xxdmy_u6 gnd gnd cap_cmim w=3.78u l=3.78u m=1
+Xxdmy_u7 gnd gnd cap_cmim w=3.78u l=3.78u m=1
+Xxdmy_u8 gnd gnd cap_cmim w=3.78u l=3.78u m=1
+Xxdmy_u9 gnd gnd cap_cmim w=3.78u l=3.78u m=1
+Xxdmy_u10 gnd gnd cap_cmim w=3.78u l=3.78u m=1
+Xxdmy_u11 gnd gnd cap_cmim w=3.78u l=3.78u m=1
+Xxdmy_u12 gnd gnd cap_cmim w=3.78u l=3.78u m=1
+Xxdmy_u13 gnd gnd cap_cmim w=3.78u l=3.78u m=1
+Xxdmy_u14 gnd gnd cap_cmim w=3.78u l=3.78u m=1
+Xxdmy_u15 gnd gnd cap_cmim w=3.78u l=3.78u m=1
+Xxdmy_u16 gnd gnd cap_cmim w=3.78u l=3.78u m=1
+Xxdmy_u17 gnd gnd cap_cmim w=3.78u l=3.78u m=1
+Xxdmy_u18 gnd gnd cap_cmim w=3.78u l=3.78u m=1
+Xxdmy_u19 gnd gnd cap_cmim w=3.78u l=3.78u m=1
+Xxdmy_u20 gnd gnd cap_cmim w=3.78u l=3.78u m=1
+Xxdmy_u21 gnd gnd cap_cmim w=3.78u l=3.78u m=1
+Xxdmy_u22 gnd gnd cap_cmim w=3.78u l=3.78u m=1
+Xxdmy_u23 gnd gnd cap_cmim w=3.78u l=3.78u m=1
+Xxdmy_u24 gnd gnd cap_cmim w=3.78u l=3.78u m=1
+Xxdmy_u25 gnd gnd cap_cmim w=3.78u l=3.78u m=1
+Xxdmy_u26 gnd gnd cap_cmim w=3.78u l=3.78u m=1
+Xxdmy_u27 gnd gnd cap_cmim w=3.78u l=3.78u m=1
+Xxdmy_u28 gnd gnd cap_cmim w=3.78u l=3.78u m=1
+Xxdmy_u29 gnd gnd cap_cmim w=3.78u l=3.78u m=1
+Xxdmy_u30 gnd gnd cap_cmim w=3.78u l=3.78u m=1
+Xxdmy_u31 gnd gnd cap_cmim w=3.78u l=3.78u m=1
+Xxdmy_u32 gnd gnd cap_cmim w=3.78u l=3.78u m=1
+Xxdmy_u33 gnd gnd cap_cmim w=3.78u l=3.78u m=1
+Xxdmy_u34 gnd gnd cap_cmim w=3.78u l=3.78u m=1
+Xxdmy_u35 gnd gnd cap_cmim w=3.78u l=3.78u m=1
+Xxdmy_u36 gnd gnd cap_cmim w=3.78u l=3.78u m=1
+Xxdmy_u37 gnd gnd cap_cmim w=3.78u l=3.78u m=1
+Xxdmy_u38 gnd gnd cap_cmim w=3.78u l=3.78u m=1
+Xxdmy_u39 gnd gnd cap_cmim w=3.78u l=3.78u m=1
+Xxdmy_u40 gnd gnd cap_cmim w=3.78u l=3.78u m=1
+Xxdmy_u41 gnd gnd cap_cmim w=3.78u l=3.78u m=1
+Xxdmy_u42 gnd gnd cap_cmim w=3.78u l=3.78u m=1
+Xxdmy_u43 gnd gnd cap_cmim w=3.78u l=3.78u m=1
+Xxdmy_u44 gnd gnd cap_cmim w=3.78u l=3.78u m=1
+Xxdmy_u45 gnd gnd cap_cmim w=3.78u l=3.78u m=1
+Xxdmy_u46 gnd gnd cap_cmim w=3.78u l=3.78u m=1
+Xxdmy_u47 gnd gnd cap_cmim w=3.78u l=3.78u m=1
+Xxdmy_u48 gnd gnd cap_cmim w=3.78u l=3.78u m=1
+Xxdmy_u49 gnd gnd cap_cmim w=3.78u l=3.78u m=1
+Xxdmy_u50 gnd gnd cap_cmim w=3.78u l=3.78u m=1
+Xxdmy_u51 gnd gnd cap_cmim w=3.78u l=3.78u m=1
+Xxdmy_u52 gnd gnd cap_cmim w=3.78u l=3.78u m=1
+Xxdmy_u53 gnd gnd cap_cmim w=3.78u l=3.78u m=1
+Xxdmy_u54 gnd gnd cap_cmim w=3.78u l=3.78u m=1
+Xxdmy_u55 gnd gnd cap_cmim w=3.78u l=3.78u m=1
+Xxdmy_u56 gnd gnd cap_cmim w=3.78u l=3.78u m=1
+Xxdmy_u57 gnd gnd cap_cmim w=3.78u l=3.78u m=1
+Xxdmy_u58 gnd gnd cap_cmim w=3.78u l=3.78u m=1
+Xxdmy_u59 gnd gnd cap_cmim w=3.78u l=3.78u m=1
+Xxdmy_u60 gnd gnd cap_cmim w=3.78u l=3.78u m=1
+Xxdmy_u61 gnd gnd cap_cmim w=3.78u l=3.78u m=1
+Xxdmy_u62 gnd gnd cap_cmim w=3.78u l=3.78u m=1
+Xxdmy_u63 gnd gnd cap_cmim w=3.78u l=3.78u m=1
+Xxdmy_u64 gnd gnd cap_cmim w=3.78u l=3.78u m=1
+Xxdmy_u65 gnd gnd cap_cmim w=3.78u l=3.78u m=1
+Xxdmy_u66 gnd gnd cap_cmim w=3.78u l=3.78u m=1
+Xxdmy_u67 gnd gnd cap_cmim w=3.78u l=3.78u m=1
+Xxdmy_u68 gnd gnd cap_cmim w=3.78u l=3.78u m=1
+Xxdmy_u69 gnd gnd cap_cmim w=3.78u l=3.78u m=1
+Xxdmy_u70 gnd gnd cap_cmim w=3.78u l=3.78u m=1
+Xxdmy_u71 gnd gnd cap_cmim w=3.78u l=3.78u m=1
+Xxdmy_u72 gnd gnd cap_cmim w=3.78u l=3.78u m=1
+Xxdmy_u73 gnd gnd cap_cmim w=3.78u l=3.78u m=1
+Xxdmy_u74 gnd gnd cap_cmim w=3.78u l=3.78u m=1
+Xxdmy_u75 gnd gnd cap_cmim w=3.78u l=3.78u m=1
+Xxdmy_u76 gnd gnd cap_cmim w=3.78u l=3.78u m=1
+Xxdmy_u77 gnd gnd cap_cmim w=3.78u l=3.78u m=1
+Xxdmy_u78 gnd gnd cap_cmim w=3.78u l=3.78u m=1
+Xxdmy_u79 gnd gnd cap_cmim w=3.78u l=3.78u m=1
+Xxdmy_u80 gnd gnd cap_cmim w=3.78u l=3.78u m=1
+Xxdmy_u81 gnd gnd cap_cmim w=3.78u l=3.78u m=1
+* not drawn: comparator output loads (SAR flip-flop input model), ideal as in the netlist of record
+Cld_xc4_outpb xc4_outpb gnd 3f
+Cld_xc4_outnb xc4_outnb gnd 3f
+Cld_xc5_outpb xc5_outpb gnd 3f
+Cld_xc5_outnb xc5_outnb gnd 3f
+* parasitics, scope slice_a: 0 C (0 F total), 0 R
+.ends
+.subckt r1_adc_lay adc_hold is_smp clk adc_start adc_sel adc_valid_a adc_raw_a_0 adc_raw_a_1 adc_raw_a_2 adc_raw_a_3 adc_raw_a_4 adc_raw_a_5 adc_raw_a_6 adc_raw_a_7 adc_raw_a_8 adc_raw_a_9 adc_raw_a_10 adc_raw_a_11 adc_raw_a_12 adc_raw_a_13 adc_valid_b adc_raw_b_0 adc_raw_b_1 adc_raw_b_2 adc_raw_b_3 adc_raw_b_4 adc_raw_b_5 adc_raw_b_6 adc_raw_b_7 adc_raw_b_8 adc_raw_b_9 adc_raw_b_10 adc_raw_b_11 adc_raw_b_12 adc_raw_b_13 por_n ain_sin_p ain_sin_n ain_cos_p ain_cos_n vcm2 ibias ain_isa_p ain_isa_n ain_isb_p ain_isb_n vcm vdda vdd vss vref_in topap topan topbp topbn sar_clka sar_clkab sar_clkb sar_clkbb sar_clkna sar_clknab sar_clknb sar_clknbb sar_cna0 sar_cna1 sar_cna10 sar_cna11 sar_cna12 sar_cna2 sar_cna3 sar_cna4 sar_cna5 sar_cna6 sar_cna7 sar_cna8 sar_cna9 sar_cnb0 sar_cnb1 sar_cnb10 sar_cnb11 sar_cnb12 sar_cnb2 sar_cnb3 sar_cnb4 sar_cnb5 sar_cnb6 sar_cnb7 sar_cnb8 sar_cnb9 sar_cpa0 sar_cpa1 sar_cpa10 sar_cpa11 sar_cpa12 sar_cpa2 sar_cpa3 sar_cpa4 sar_cpa5 sar_cpa6 sar_cpa7 sar_cpa8 sar_cpa9 sar_cpb0 sar_cpb1 sar_cpb10 sar_cpb11 sar_cpb12 sar_cpb2 sar_cpb3 sar_cpb4 sar_cpb5 sar_cpb6 sar_cpb7 sar_cpb8 sar_cpb9 sar_oan sar_oann sar_oanp sar_oap sar_obn sar_obnn sar_obnp sar_obp sar_trka0 sar_trka1 sar_trkb0 sar_trkb1 sar_mclk
+Xxckg_xpd0 xckg_d0 clk vdd vdd sg13_lv_pmos w=1u l=0.5u ng=1 m=1
+Xxckg_xnd0 xckg_d0 clk vss vss sg13_lv_nmos w=0.5u l=0.5u ng=1 m=1
+Xxckg_cd0 xckg_d0 vss cap_cmim w=2.53u l=2.53u m=1
+Xxckg_xpd1 xckg_d1 xckg_d0 vdd vdd sg13_lv_pmos w=1u l=0.5u ng=1 m=1
+Xxckg_xnd1 xckg_d1 xckg_d0 vss vss sg13_lv_nmos w=0.5u l=0.5u ng=1 m=1
+Xxckg_cd1 xckg_d1 vss cap_cmim w=2.53u l=2.53u m=1
+Xxckg_xpd2 xckg_d2 xckg_d1 vdd vdd sg13_lv_pmos w=1u l=0.5u ng=1 m=1
+Xxckg_xnd2 xckg_d2 xckg_d1 vss vss sg13_lv_nmos w=0.5u l=0.5u ng=1 m=1
+Xxckg_cd2 xckg_d2 vss cap_cmim w=2.53u l=2.53u m=1
+Xxckg_xpd3 xckg_d3 xckg_d2 vdd vdd sg13_lv_pmos w=1u l=0.5u ng=1 m=1
+Xxckg_xnd3 xckg_d3 xckg_d2 vss vss sg13_lv_nmos w=0.5u l=0.5u ng=1 m=1
+Xxckg_cd3 xckg_d3 vss cap_cmim w=2.53u l=2.53u m=1
+Xxckg_xpd4 xckg_x xckg_d3 vdd vdd sg13_lv_pmos w=1u l=0.5u ng=1 m=1
+Xxckg_xnd4 xckg_x xckg_d3 vss vss sg13_lv_nmos w=0.5u l=0.5u ng=1 m=1
+Xxckg_cd4 xckg_x vss cap_cmim w=2.53u l=2.53u m=1
+Xxckg_xpa sar_mclk clk vdd vdd sg13_lv_pmos w=2u l=0.13u ng=1 m=1
+Xxckg_xpb sar_mclk xckg_x vdd vdd sg13_lv_pmos w=2u l=0.13u ng=1 m=1
+Xxckg_xna sar_mclk clk xckg_nn vss sg13_lv_nmos w=2u l=0.13u ng=1 m=1
+Xxckg_xnb xckg_nn xckg_x vss vss sg13_lv_nmos w=2u l=0.13u ng=1 m=1
+Xxckg_xpi mclkb sar_mclk vdd vdd sg13_lv_pmos w=2u l=0.13u ng=1 m=1
+Xxckg_xni mclkb sar_mclk vss vss sg13_lv_nmos w=1u l=0.13u ng=1 m=1
+Xxcbias_xmbd vbp vbp vdd vdd sg13_lv_pmos w=0.8u l=0.5u ng=1 m=1
+Xxcbias_xrb_g0 vbp xcbias_xrb_s1 vss rppd w=1u l=40u m=1 b=0
+Xxcbias_xrb_g1 xcbias_xrb_s1 xcbias_xrb_s2 vss rppd w=1u l=40u m=1 b=0
+Xxcbias_xrb_g2 xcbias_xrb_s2 xcbias_xrb_s3 vss rppd w=1u l=40u m=1 b=0
+Xxcbias_xrb_g3 xcbias_xrb_s3 vss vss rppd w=1u l=40u m=1 b=0
+Xxcbiasn_xmbd vbn vbn vss vss sg13_lv_nmos w=0.2u l=0.5u ng=1 m=1
+Xxcbiasn_xrb_g0 vdd xcbiasn_xrb_s1 vss rppd w=1u l=40u m=1 b=0
+Xxcbiasn_xrb_g1 xcbiasn_xrb_s1 xcbiasn_xrb_s2 vss rppd w=1u l=40u m=1 b=0
+Xxcbiasn_xrb_g2 xcbiasn_xrb_s2 xcbiasn_xrb_s3 vss rppd w=1u l=40u m=1 b=0
+Xxcbiasn_xrb_g3 xcbiasn_xrb_s3 vbn vss rppd w=1u l=40u m=1 b=0
+Xxref_xmb0 ibias ibias vss vss sg13_hv_nmos w=2u l=1u ng=1 m=1
+Xxref_xmt xref_ntl ibias vss vss sg13_hv_nmos w=2u l=8u ng=1 m=1
+Xxref_xm1 xref_na vref_in xref_ntl vss sg13_hv_nmos w=10u l=1u ng=2 m=1
+Xxref_xm2 xref_ng vref xref_ntl vss sg13_hv_nmos w=10u l=1u ng=2 m=1
+Xxref_xm3 xref_na xref_na vdda vdda sg13_hv_pmos w=4u l=1u ng=1 m=1
+Xxref_xm4 xref_ng xref_na vdda vdda sg13_hv_pmos w=4u l=1u ng=1 m=1
+Xxref_xcg_u0 vss xref_ng cap_cmim w=26.32u l=95u m=1
+Xxref_xmsf_s0 vdda xref_ng vref vss sg13_hv_nmos w=80u l=0.45u ng=32 m=1
+Xxref_xmsf_s1 vdda xref_ng vref vss sg13_hv_nmos w=80u l=0.45u ng=32 m=1
+Xxref_xmsf_s2 vdda xref_ng vref vss sg13_hv_nmos w=80u l=0.45u ng=32 m=1
+Xxref_xmsf_s3 vdda xref_ng vref vss sg13_hv_nmos w=80u l=0.45u ng=32 m=1
+Xxref_xmib_s0 vref ibias vss vss sg13_hv_nmos w=80u l=1u ng=40 m=1
+Xxref_xmib_s1 vref ibias vss vss sg13_hv_nmos w=80u l=1u ng=40 m=1
+Xxref_xmib_s2 vref ibias vss vss sg13_hv_nmos w=80u l=1u ng=40 m=1
+Xxref_xmib_s3 vref ibias vss vss sg13_hv_nmos w=80u l=1u ng=40 m=1
+Xxref_xcd_u0 vss vref cap_cmim w=51.58u l=95u m=1
+Xxref_xcd_u1 vss vref cap_cmim w=51.58u l=95u m=1
+Xxref_xcd_u2 vss vref cap_cmim w=51.58u l=95u m=1
+Xxref_xcd_u3 vss vref cap_cmim w=51.58u l=95u m=1
+Xxref_xmsfl_s0 vdda xref_ng vrefl vss sg13_hv_nmos w=80u l=0.45u ng=32 m=1
+Xxref_xmibl_s0 vrefl ibias vss vss sg13_hv_nmos w=80u l=1u ng=40 m=1
+Xxref_xcdl_u0 vss vrefl cap_cmim w=51.58u l=95u m=1
+Xxref_xcdl_u1 vss vrefl cap_cmim w=51.58u l=95u m=1
+Xxfilt_xcf_u0 vss vref_in cap_cmim w=37.36u l=90u m=1
+Xxfilt_xcf_u1 vss vref_in cap_cmim w=37.36u l=90u m=1
+Xslice_a ain_sin_p ain_sin_n ain_isa_p ain_isa_n sar_trka0 sar_trka1 sar_cpa0 sar_cpa1 sar_cpa2 sar_cpa3 sar_cpa4 sar_cpa5 sar_cpa6 sar_cpa7 sar_cpa8 sar_cpa9 sar_cpa10 sar_cpa11 sar_cpa12 sar_cna0 sar_cna1 sar_cna2 sar_cna3 sar_cna4 sar_cna5 sar_cna6 sar_cna7 sar_cna8 sar_cna9 sar_cna10 sar_cna11 sar_cna12 sar_clka sar_clkab sar_clkna sar_clknab sar_oap sar_oan sar_oanp sar_oann vbp vbn vref vrefl topap topan vdd vss r1_adc_slice_lay
+Xslice_b ain_cos_p ain_cos_n ain_isb_p ain_isb_n sar_trkb0 sar_trkb1 sar_cpb0 sar_cpb1 sar_cpb2 sar_cpb3 sar_cpb4 sar_cpb5 sar_cpb6 sar_cpb7 sar_cpb8 sar_cpb9 sar_cpb10 sar_cpb11 sar_cpb12 sar_cnb0 sar_cnb1 sar_cnb2 sar_cnb3 sar_cnb4 sar_cnb5 sar_cnb6 sar_cnb7 sar_cnb8 sar_cnb9 sar_cnb10 sar_cnb11 sar_cnb12 sar_clkb sar_clkbb sar_clknb sar_clknbb sar_obp sar_obn sar_obnp sar_obnn vbp vbn vref vrefl topbp topbn vdd vss r1_adc_slice_lay
+* parasitics, scope top: 0 C (0 F total), 0 R
+.ends
+.subckt r1_adc_lay_pr adc_hold is_smp clk adc_start adc_sel adc_valid_a adc_raw_a_0 adc_raw_a_1 adc_raw_a_2 adc_raw_a_3 adc_raw_a_4 adc_raw_a_5 adc_raw_a_6 adc_raw_a_7 adc_raw_a_8 adc_raw_a_9 adc_raw_a_10 adc_raw_a_11 adc_raw_a_12 adc_raw_a_13 adc_valid_b adc_raw_b_0 adc_raw_b_1 adc_raw_b_2 adc_raw_b_3 adc_raw_b_4 adc_raw_b_5 adc_raw_b_6 adc_raw_b_7 adc_raw_b_8 adc_raw_b_9 adc_raw_b_10 adc_raw_b_11 adc_raw_b_12 adc_raw_b_13 por_n ain_sin_p ain_sin_n ain_cos_p ain_cos_n vcm2 ibias ain_isa_p ain_isa_n ain_isb_p ain_isb_n vcm vdda vdd vss vref_in topap topan topbp topbn sar_clka sar_clkab sar_clkb sar_clkbb sar_clkna sar_clknab sar_clknb sar_clknbb sar_cna0 sar_cna1 sar_cna10 sar_cna11 sar_cna12 sar_cna2 sar_cna3 sar_cna4 sar_cna5 sar_cna6 sar_cna7 sar_cna8 sar_cna9 sar_cnb0 sar_cnb1 sar_cnb10 sar_cnb11 sar_cnb12 sar_cnb2 sar_cnb3 sar_cnb4 sar_cnb5 sar_cnb6 sar_cnb7 sar_cnb8 sar_cnb9 sar_cpa0 sar_cpa1 sar_cpa10 sar_cpa11 sar_cpa12 sar_cpa2 sar_cpa3 sar_cpa4 sar_cpa5 sar_cpa6 sar_cpa7 sar_cpa8 sar_cpa9 sar_cpb0 sar_cpb1 sar_cpb10 sar_cpb11 sar_cpb12 sar_cpb2 sar_cpb3 sar_cpb4 sar_cpb5 sar_cpb6 sar_cpb7 sar_cpb8 sar_cpb9 sar_oan sar_oann sar_oanp sar_oap sar_obn sar_obnn sar_obnp sar_obp sar_trka0 sar_trka1 sar_trkb0 sar_trkb1 sar_mclk vref vrefl
+Xxckg_xpd0 xckg_d0 clk vdd vdd sg13_lv_pmos w=1u l=0.5u ng=1 m=1
+Xxckg_xnd0 xckg_d0 clk vss vss sg13_lv_nmos w=0.5u l=0.5u ng=1 m=1
+Xxckg_cd0 xckg_d0 vss cap_cmim w=2.53u l=2.53u m=1
+Xxckg_xpd1 xckg_d1 xckg_d0 vdd vdd sg13_lv_pmos w=1u l=0.5u ng=1 m=1
+Xxckg_xnd1 xckg_d1 xckg_d0 vss vss sg13_lv_nmos w=0.5u l=0.5u ng=1 m=1
+Xxckg_cd1 xckg_d1 vss cap_cmim w=2.53u l=2.53u m=1
+Xxckg_xpd2 xckg_d2 xckg_d1 vdd vdd sg13_lv_pmos w=1u l=0.5u ng=1 m=1
+Xxckg_xnd2 xckg_d2 xckg_d1 vss vss sg13_lv_nmos w=0.5u l=0.5u ng=1 m=1
+Xxckg_cd2 xckg_d2 vss cap_cmim w=2.53u l=2.53u m=1
+Xxckg_xpd3 xckg_d3 xckg_d2 vdd vdd sg13_lv_pmos w=1u l=0.5u ng=1 m=1
+Xxckg_xnd3 xckg_d3 xckg_d2 vss vss sg13_lv_nmos w=0.5u l=0.5u ng=1 m=1
+Xxckg_cd3 xckg_d3 vss cap_cmim w=2.53u l=2.53u m=1
+Xxckg_xpd4 xckg_x xckg_d3 vdd vdd sg13_lv_pmos w=1u l=0.5u ng=1 m=1
+Xxckg_xnd4 xckg_x xckg_d3 vss vss sg13_lv_nmos w=0.5u l=0.5u ng=1 m=1
+Xxckg_cd4 xckg_x vss cap_cmim w=2.53u l=2.53u m=1
+Xxckg_xpa sar_mclk clk vdd vdd sg13_lv_pmos w=2u l=0.13u ng=1 m=1
+Xxckg_xpb sar_mclk xckg_x vdd vdd sg13_lv_pmos w=2u l=0.13u ng=1 m=1
+Xxckg_xna sar_mclk clk xckg_nn vss sg13_lv_nmos w=2u l=0.13u ng=1 m=1
+Xxckg_xnb xckg_nn xckg_x vss vss sg13_lv_nmos w=2u l=0.13u ng=1 m=1
+Xxckg_xpi mclkb sar_mclk vdd vdd sg13_lv_pmos w=2u l=0.13u ng=1 m=1
+Xxckg_xni mclkb sar_mclk vss vss sg13_lv_nmos w=1u l=0.13u ng=1 m=1
+Xxcbias_xmbd vbp vbp vdd vdd sg13_lv_pmos w=0.8u l=0.5u ng=1 m=1
+Xxcbias_xrb_g0 vbp xcbias_xrb_s1 vss rppd w=1u l=40u m=1 b=0
+Xxcbias_xrb_g1 xcbias_xrb_s1 xcbias_xrb_s2 vss rppd w=1u l=40u m=1 b=0
+Xxcbias_xrb_g2 xcbias_xrb_s2 xcbias_xrb_s3 vss rppd w=1u l=40u m=1 b=0
+Xxcbias_xrb_g3 xcbias_xrb_s3 vss vss rppd w=1u l=40u m=1 b=0
+Xxcbiasn_xmbd vbn vbn vss vss sg13_lv_nmos w=0.2u l=0.5u ng=1 m=1
+Xxcbiasn_xrb_g0 vdd xcbiasn_xrb_s1 vss rppd w=1u l=40u m=1 b=0
+Xxcbiasn_xrb_g1 xcbiasn_xrb_s1 xcbiasn_xrb_s2 vss rppd w=1u l=40u m=1 b=0
+Xxcbiasn_xrb_g2 xcbiasn_xrb_s2 xcbiasn_xrb_s3 vss rppd w=1u l=40u m=1 b=0
+Xxcbiasn_xrb_g3 xcbiasn_xrb_s3 vbn vss rppd w=1u l=40u m=1 b=0
+Xxref_xmb0 ibias ibias vss vss sg13_hv_nmos w=2u l=1u ng=1 m=1
+Xxref_xmt xref_ntl ibias vss vss sg13_hv_nmos w=2u l=8u ng=1 m=1
+Xxref_xm1 xref_na vref_in xref_ntl vss sg13_hv_nmos w=10u l=1u ng=2 m=1
+Xxref_xm2 xref_ng vref xref_ntl vss sg13_hv_nmos w=10u l=1u ng=2 m=1
+Xxref_xm3 xref_na xref_na vdda vdda sg13_hv_pmos w=4u l=1u ng=1 m=1
+Xxref_xm4 xref_ng xref_na vdda vdda sg13_hv_pmos w=4u l=1u ng=1 m=1
+Xxref_xcg_u0 vss xref_ng cap_cmim w=26.32u l=95u m=1
+Xxref_xmsf_s0 vdda xref_ng vref vss sg13_hv_nmos w=80u l=0.45u ng=32 m=1
+Xxref_xmsf_s1 vdda xref_ng vref vss sg13_hv_nmos w=80u l=0.45u ng=32 m=1
+Xxref_xmsf_s2 vdda xref_ng vref vss sg13_hv_nmos w=80u l=0.45u ng=32 m=1
+Xxref_xmsf_s3 vdda xref_ng vref vss sg13_hv_nmos w=80u l=0.45u ng=32 m=1
+Xxref_xmib_s0 vref ibias vss vss sg13_hv_nmos w=80u l=1u ng=40 m=1
+Xxref_xmib_s1 vref ibias vss vss sg13_hv_nmos w=80u l=1u ng=40 m=1
+Xxref_xmib_s2 vref ibias vss vss sg13_hv_nmos w=80u l=1u ng=40 m=1
+Xxref_xmib_s3 vref ibias vss vss sg13_hv_nmos w=80u l=1u ng=40 m=1
+Xxref_xcd_u0 vss vref cap_cmim w=51.58u l=95u m=1
+Xxref_xcd_u1 vss vref cap_cmim w=51.58u l=95u m=1
+Xxref_xcd_u2 vss vref cap_cmim w=51.58u l=95u m=1
+Xxref_xcd_u3 vss vref cap_cmim w=51.58u l=95u m=1
+Xxref_xmsfl_s0 vdda xref_ng vrefl vss sg13_hv_nmos w=80u l=0.45u ng=32 m=1
+Xxref_xmibl_s0 vrefl ibias vss vss sg13_hv_nmos w=80u l=1u ng=40 m=1
+Xxref_xcdl_u0 vss vrefl cap_cmim w=51.58u l=95u m=1
+Xxref_xcdl_u1 vss vrefl cap_cmim w=51.58u l=95u m=1
+Xxfilt_xcf_u0 vss vref_in cap_cmim w=37.36u l=90u m=1
+Xxfilt_xcf_u1 vss vref_in cap_cmim w=37.36u l=90u m=1
+Xslice_a ain_sin_p ain_sin_n ain_isa_p ain_isa_n sar_trka0 sar_trka1 sar_cpa0 sar_cpa1 sar_cpa2 sar_cpa3 sar_cpa4 sar_cpa5 sar_cpa6 sar_cpa7 sar_cpa8 sar_cpa9 sar_cpa10 sar_cpa11 sar_cpa12 sar_cna0 sar_cna1 sar_cna2 sar_cna3 sar_cna4 sar_cna5 sar_cna6 sar_cna7 sar_cna8 sar_cna9 sar_cna10 sar_cna11 sar_cna12 sar_clka sar_clkab sar_clkna sar_clknab sar_oap sar_oan sar_oanp sar_oann vbp vbn vref vrefl topap topan vdd vss r1_adc_slice_lay
+Xslice_b ain_cos_p ain_cos_n ain_isb_p ain_isb_n sar_trkb0 sar_trkb1 sar_cpb0 sar_cpb1 sar_cpb2 sar_cpb3 sar_cpb4 sar_cpb5 sar_cpb6 sar_cpb7 sar_cpb8 sar_cpb9 sar_cpb10 sar_cpb11 sar_cpb12 sar_cnb0 sar_cnb1 sar_cnb2 sar_cnb3 sar_cnb4 sar_cnb5 sar_cnb6 sar_cnb7 sar_cnb8 sar_cnb9 sar_cnb10 sar_cnb11 sar_cnb12 sar_clkb sar_clkbb sar_clknb sar_clknbb sar_obp sar_obn sar_obnp sar_obnn vbp vbn vref vrefl topbp topbn vdd vss r1_adc_slice_lay
+* parasitics, scope top: 0 C (0 F total), 0 R
+.ends

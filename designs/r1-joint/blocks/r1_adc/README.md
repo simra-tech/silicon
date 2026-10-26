@@ -1,10 +1,292 @@
 # R1_ADC — 12-bit SAR ADC with two simultaneous track-and-holds (schematic level, revisions 1 to 5)
 
+## Layout (revision 5, layout A, 2026-10-26, track T2)
+
+State: **layout A is DRC clean (main + maximal, density waived), antenna clean and LVS clean against the PDK decks, in
+the checklist box 439.0 × 182.3 µm.** PEX is done. The post-layout runs show three failures (simulated): R2-4 reference
+settling fails at tt and ss (5.0 / 4.7 LSB, limit 0.25), the gain is 1.13 (full scale about ±0.81 V, D16 asks ±0.9 V),
+and IDD is 30 % low from supply IR drop. Layout B must fix them (open issues). All numbers in this section
+are from layout tools or are **simulated**. Nothing is measured. This section supersedes the "no layout" statement
+in the state line below.
+
+### Files
+
+| Path | Content |
+| --- | --- |
+| `layout/r1_adc.gds` | layout A (3.2 MB), top cell `r1_adc`, one child cell `r1_adc_slice` placed twice (slices A and B) |
+| `layout/r1_adc_layout.py` | generator (KLayout batch): floor plan, CDAC arrays, device rows, maze routing, decoupling plates, pins |
+| `layout/r1_adc_netlist.py` | LVS mapping of the netlist of record `schematic/r1_adc_r5.spice` (unchanged) to drawn devices; writes `layout/r1_adc_lvs.cdl` |
+| `layout/r1_adc_lvs.cdl` | LVS reference: slice 552 devices (406 MIM, 80 NMOS, 66 PMOS), top 56 devices, 128 top ports |
+| `layout/adc_lib.py`, `layout/maze_router.py` | device and router helpers (from `r1_afe/layout`, revision E2; changes below) |
+| `layout/run_checks.sh` | DRC (main + maximal, `--no_density`), antenna and LVS (`--no_series_res`) with the PDK decks; writes `reports/<run-id>/` |
+| `layout/check_pins.py` | pin check against the floor-plan checklist and the CDL top ports |
+| `layout/tools/` | `lvsdb_report.py`, `rdb_report.py` (per-rule counts), `net_shapes.py`, `short_path.py` (short locator), `dump_win.py` |
+| `layout/r1_adc_decap.json`, `layout/r1_adc_layout.json` | drawn decoupling plates; router statistics, device ports |
+| `pex/run_pex.sh`, `pex/pex_prepare.py` | kpex 2.5D CC of the flat slice and of the top cell without the slices (MIM layer stripped, dummy gates on the slice pins) |
+| `pex/pex_build.py` | post-layout netlist: LVS reference devices, KLayout RNetExtractor R per net (Metal1–5, Via1–4), kpex C lumped per net; Kron reduction |
+| `pex/r1_adc_post_rc.spice`, `pex/r1_adc_post_c.spice` | post-layout netlists (full RC; C only), subcircuits `r1_adc_lay`, `r1_adc_lay_pr` with the ports of `sim/post/r1_adc_lay0.spice` |
+| `pex/pex_report.json`, `pex/pex_build.log` | R element counts, ties, C per net, lumped C per net pair |
+| `sim/post/` | post-layout harness (`run_post.py`, `post_post.py`, `merge_parallel.py`), run records `sim/post/runs/<id>/`, results `sim/post/results/` |
+| `reports/layout-a/` | sign-off logs of layout A: `drc.log`, `antenna.log`, `lvs.log`, `lvs_summary.txt`, `drc_counts.txt`, `antenna_counts.txt`, `pin_check.txt`, `run.json` |
+
+### Built against
+
+| Item | Version | How established |
+| --- | --- | --- |
+| PDK | IHP SG13G2 open PDK `84374023ee8b4b126bebbba67fcbada0a9c0ff0b` | `reports/layout-a/run.json` (`pdk_commit`) |
+| KLayout | 0.30.9 | `run.json` (`klayout -v` in the container) |
+| Container image | `sha256:ddeb6957…bab2` | `run.json` (`image_id`) |
+| Flow | `flow/run.sh`, CPU set 103-105 | command in `run.json` |
+| kpex | 0.3.12 (2.5D, CC mode) | `flow/run.sh kpex --version` in the container (2026-10-26) |
+| ngspice | 46 (creation date 27 Jul 2026) | `sim/post/runs/<id>/run.json` (`ngspice_version`) |
+
+### Status
+
+| Check | Result | Evidence |
+| --- | --- | --- |
+| DRC main rule set (`--no_density`) | **passed** (0) | `reports/layout-a/drc.log`, `drc_counts.txt`; database `<G1_RESULTS_ROOT>/r1_adc/layout-a/drc/` |
+| DRC maximal rule set (`--no_density`) | **passed** (0) | same |
+| DRC density | not applicable at block level (waived by the brief; chip-level fill) | — |
+| Antenna | **passed** (0) | `reports/layout-a/antenna.log`, `antenna_counts.txt` |
+| LVS (stock deck, `--no_series_res`) | **passed**: netlists match. Slice 117/117 nets, 179/179 devices; top 111/111 nets, 45/45 devices (after the deck merges parallel devices) | `reports/layout-a/lvs.log`, `lvs_summary.txt`; `<G1_RESULTS_ROOT>/r1_adc/layout-a/lvs/r1_adc.lvsdb` |
+| Pin check (checklist, 51 edge pins, 128 CDL ports) | **passed** | `reports/layout-a/pin_check.txt` |
+| Box 439.0 × 182.3 µm | **met** (bounding box 439.000 × 182.300 µm, origin 0,0) | `pin_check.txt` |
+| PEX (full RC) | **done**: R 1277 + 452 elements, C 1426 + 145 net pairs, unknown C 6 fF to ground | `pex/pex_report.json`, `pex/pex_build.log`; netlists `pex/r1_adc_post_rc.spice`, `pex/r1_adc_post_c.spice`; kpex runs `<G1_RESULTS_ROOT>/r1_adc/pex-a/` |
+| Post-layout static window, tt (1024 / 2048 / 3072) | **failed** (not resolved): monotonic in all 6 windows. Windows A-0, A-1 and B-0 skip one code at the last step (886, 2044; 883). Max \|DNL\| 0.54 LSB at this resolution. With the gain 1.13, the input step is 0.57 code, so a code narrower than 0.57 LSB is skipped. So a missing code is not proven. A finer window is not run. The windows are at codes 869–887, 2030–2045 and 3190–3208 (gain and offset). Wall time 9876 s | run `post-win-tt-rc-103`; `sim/post/results/win3_tt_rc.json` |
+| Post-layout R2-4 reference settling, tt (buffer in the loop, limit 0.25 LSB) | **failed**: 5.03 LSB (1.09 after a gain fit) | runs `post-ref-tt-rc3` + base `post-ref-tt-rc4-sp`; `sim/post/results/ref_tt_rc4.json` |
+| Post-layout R2-4, ss / 125 °C / 1.08 V | **failed**: 4.70 LSB (1.52 after a gain fit) | runs `post-ref-ss125-rc3` + `post-ref-ss125-rc4-sp`; `sim/post/results/ref_ss125_rc4.json` |
+| Post-layout mux sequence, tt | **failed** (gain): gain 1.127, offset −10.7 LSB, residual 4.6 LSB (frames 0, 2, 3); ±0.85 V clips | run `post-isa-tt-rc2`; `sim/post/results/isa_tt_rc.json`; C only `post-isa-tt-cm2`, `isa_tt_cm2.json` |
+| Post-layout first conversion, 33 ns hold pulse, tt | **passed**: frame 0 − frame 1 ≤ 1 LSB (codes 2037 / 2036, 2037 / 2037) | run `post-fc-tt-rcm2`; `sim/post/results/firstconv_rc.json` |
+| Post-layout first conversion, ss / 125 °C | not run (time budget) | — |
+| CDAC top-plate parasitic ratio per slice | **done**: 8.2 % (`top_p`), 8.6 % (`top_n`); LSB node 2.3 % / 1.8 % | PEX section; `pex/pex_report.json` |
+| Supply current, tt (mux deck) | **done**: IDD 0.636 mA (pre 0.903), IDDA 1.023 mA (pre 1.034) | `post-isa-tt-rc2` |
+
+The stock LVS deck did not crash, so the `r1_safe` comparer-limit copy was not used.
+
+### Area
+
+The block uses the checklist box: 439.0 × 182.3 µm = 80 032 µm². The two slices (213.6 × 111.2 µm each) are at
+(3.2, 54.4) and (223.2, 54.4). The decoupling and filter MIM (4 + 2 + 1 + 2 plates, 95 µm tall; filter 90 µm) cover
+y 3.4 to 98.4 µm over the full width; the reference buffer, the bias and the slice lower regions are under them.
+
+
+
 State on 2026-10-21: **schematic written and simulated at schematic level only.** No layout, no PEX, nothing
 measured. Every number in this file is **simulated** with ngspice 46 and the PDK models named below, unless it is
 marked *estimated* or *derived*. The reference is an **ideal source** in revision 1 and in most revision-2 decks;
 revision 2 adds the buffer `r1_refbuf` and simulates it in two decks. The SAR logic and the timing generator are
 **behavioural** (XSPICE digital cells and ideal pulse sources).
+### PEX (layout A)
+
+Method (`pex/pex_build.py` docstring; same method as `r1_afe/pex`):
+1. Devices are the LVS reference devices, with the finger count drawn in the layout.
+2. R comes from the KLayout RNetExtractor, per net and per cell, over Metal1–Metal5 and Via1–Via4. Nets with up to 60
+   ports are Kron-reduced to their ports.
+3. C comes from kpex 0.3.12 2.5D CC. It runs on the flat slice and on the top cell without the slices. The MIM layer
+   is stripped, so all C is wiring C. C is lumped at the main node of each net.
+4. Both slice instances use the one slice extraction. Coupling between top-level wiring and the slice interior is
+   not extracted.
+
+Commands (CPU 103):
+1. `sh pex/run_pex.sh <G1_RESULTS_ROOT>/r1_adc/pex-a <abs path of layout/r1_adc.gds>` (16 min; `pex.done`: fail=0).
+2. `flow/run.sh klayout -b -r pex/pex_build.py -rd kdir=<G1_RESULTS_ROOT>/r1_adc/pex-a -rd out=<G1_RESULTS_ROOT>/r1_adc/pex-a/build`
+   with `G1_WORKDIR=designs/r1-joint/blocks/r1_adc`. The outputs are copied to `pex/`.
+
+Size: slice 1277 R and 1426 C (net pairs); top 452 R and 145 C. Ties of 1 mΩ:
+- 4 in the slice: the `top_p` / `top_n` islands. The TopMetal1 sheets join them, and the R extraction does not
+  include TopMetal1.
+- 1 at the top: one `vss` port.
+
+Unnamed nets lumped to ground: 2.0 fF (slice) and 4.0 fF (top). kpex names the second half of each cut top plate
+`top_p$1` / `top_n$1` (the MIM strip cuts the plate). These 119.6 fF are mapped back to `top_p` / `top_n`.
+
+Extracted wiring C (simulated values; one extraction, so slices A and B are equal):
+
+| Node | Wiring C (fF) | MIM on the node (fF, PDK typical 1.5 fF/µm² + 40 aF/µm) | Ratio |
+| --- | --- | --- | --- |
+| `top_p` (comparator node, C8–C12 + bridge) | 58.4 | 31 × 22.04 + 27.5 = 710.7 | 8.2 % |
+| `top_n` | 61.2 | 710.7 | 8.6 % |
+| `lsb_p` (LSB array node, C0–C7 + bridge) | 64.3 | 127 × 22.04 + 27.5 + 11.1 = 2838 | 2.3 % |
+| `lsb_n` | 50.3 | 2838 | 1.8 % |
+
+The device capacitances (switch junctions, comparator gates) are in the device models and are not in this table.
+The largest terms are:
+- on `top_p`: gnd 21.2 fF, `top_n` 14.3 fF, `xc5_din` 4.7 fF;
+- on `lsb_p`: `bp12` 17.7 fF, gnd 11.3 fF, `xc4_din` 9.5 fF.
+
+Input pairs, top-level wiring C, p / n in fF:
+- `ain_sin` 1.11 / 1.18
+- `ain_cos` 46.61 / 54.86 (difference 8.25 fF, see open issues)
+- `ain_isa` 57.44 / 56.97
+- `ain_isb` 1.08 / 1.14
+
+Slice inputs: `in0` 8.81 / 7.06 fF, `in1` 6.02 / 9.72 fF.
+
+Supply and reference resistance, from a port to the pins of its net with all pins held (Kron network):
+- slice `gnd` up to 249 Ω (bootstrap switch `xs1p_xm11`); slice `vdd` up to 116 Ω
+- slice `vref` up to 85 Ω; slice `vrefl` up to 99 Ω
+- top `vss` from the pin to the slice edge pins up to 253 Ω
+- top `vdd` to the clock generator up to 200 Ω
+- `vdda` to the followers up to 130 Ω
+
+The cause is that layout A routes these nets with 0.40 µm router wires (see open issues).
+
+### Pre-layout and post-layout (simulated)
+
+Pre-layout = netlist of record (full core `r1_adc5_core` unless stated). Layout-mapped = `sim/post/r1_adc_lay0.spice`
+(drawn devices, no parasitics). Post-layout = `sim/post/r1_adc_post_rc_m.spice` (`pex/r1_adc_post_rc.spice` with
+identical parallel MIM units merged, `sim/post/merge_parallel.py`), Sparse solver. Harness: `sim/post/`.
+Run `post-fc-tt-rcm2` used `sim/post/scratch/rcm_nom.spice`, the first fixed copy. It is equal to
+`sim/post/r1_adc_post_rc_m.spice` except for the parameter order (line-set comparison, 2026-10-26). The harness
+record, the H-numbered harness findings and the run times are in `sim/post/README_harness.md`.
+
+| Quantity | Pre-layout | Layout-mapped | Post-layout C only | Post-layout RC |
+| --- | --- | --- | --- | --- |
+| Static window tt, max \|DNL\| (LSB) | 0.54 (`post-win-tt-rec`) | 0.54 (`post-win-tt-lay0m`) | not run | 0.54, monotonic, 3 codes skipped (not resolved; `post-win-tt-rc-103`) |
+| R2-4 tt, worst comparator-input error (LSB) | 0.179 (`post-ref-tt-rec`) | 0.178 (`post-ref-tt-lay0m`) | not run | 5.03; 1.09 after gain fit |
+| R2-4 ss / 125 °C / 1.08 V (LSB) | 0.168 (`post-ref-ss125-rec`) | 0.169 (`post-ref-ss125-lay0`) | not run | 4.70; 1.52 after gain fit |
+| Mux sequence tt: gain / offset / residual | 0.998 / 0 / 0.45 LSB (`t2-isa-tt`) | codes identical to pre (`post-isa-tt-lay0m`) | 1.089 / −4.6 / 7.0 LSB (`post-isa-tt-cm2`, all frames) | 1.127 / −10.7 / 4.6 LSB (frames 0, 2, 3; `post-isa-tt-rc2`) |
+| First conversion tt, frame 0 − frame 1 | −1 / +1 LSB (`post-fc-tt-rec`) | +1 / +1 LSB (`post-fc-tt-lay0m`) | 0 / 0 LSB, code 2040 (`post-fc-tt-cm-nom`) | +1 / 0 LSB, code 2037 (`post-fc-tt-rcm2`) |
+| IDD / IDDA tt (mA) | 0.903 / 1.034 | 0.904 / 1.034 | 0.894 / 1.036 | 0.636 / 1.023 |
+| Reference droop at the buffer source, tt (mV) | 1.20 | 1.19 | — | 2.79 (`post-ref-tt-rc3`) |
+
+R2-4 in the post-layout RC runs fails at both corners. The error is 4–5 LSB at decision 6 and decays slowly (1.3 LSB
+at the final residue, tt). The reference at the slice pins does not recover from the MSB charge draw. The wiring adds
+only 0.2 mV of dynamic droop (static IR drop 5.6 mV, a gain term). The buffer droop increases 2.3 times (source 2.79 mV
+against 1.19 mV). The `vrefl` droop at the slice pins is 3.47 mV against 0.73 mV. In the buffer OP the slice `vss` is
+8–15 mV above 0 V (this supports open issue 1). The
+probable cause (not separated) is the bottom-plate wiring C: 1.7 pF per slice over the 26 bottom-plate nets. The
+drivers charge it from `vref` / `vrefl` in each bit cycle, and its charge depends on the code. The extraction puts the
+decoupling plates on the buffer node with no R (PEX simplification), so the droop is not from the decap connection.
+
+The R2-4 base runs need care. The first two methods were invalid (the buffer current through the RC wiring changed the
+static reference): `ref_tt_rc2`, `ref_tt_rc3`, `ref_tt_rc3c` and `ref_ss125_rc3` are renamed `*_INVALID_base.json`.
+The valid base (`sim/post/make_sp_netlist.py`) drives only the slice reference pins with ideal sources at the
+buffer-OP port values. The buffer, its wiring and the supplies stay as extracted. Before each base transient, compare the base OP with the buffer OP (harness finding H12). Layout B must use the same method.
+
+### Open issues (layout A)
+
+1. **Supply and reference wiring resistance.** Layout A routes `vdd`, `gnd`, `vss`, `vdda`, `vref` and `vrefl`
+   with 0.40 µm router wires. The worst port resistances are 85–253 Ω (PEX section). Simulated effects (tt, mux
+   deck), RC against C only:
+   - IDD 0.636 mA against 0.894 mA (pre-layout 0.903 mA). The comparator tails mirror `vbp` from `xcbias`, and the
+     IR drop on the slice `vdd` lowers their Vsg.
+   - Gain 1.127 against 1.089, and offset −10.7 against −4.6 LSB. Probable cause (not separated): the CDAC drivers
+     and the comparators share `gnd`, so the comparator current lifts the driver ground and the DAC step gets
+     smaller.
+
+   Layout B needs wide straps or a Metal4/Metal5 mesh. It also needs a separate (Kelvin) driver ground for the CDAC.
+2. **`ain_cos` pair imbalance.** The wiring C is 46.61 / 54.86 fF, a difference of 8.25 fF. The n line runs in the north
+   channel at y 168.0 and has 19.5 fF to `vss`. The p line has 0.08 fF to `vss`, 3.5 fF to `ibias` and 2.5 fF to
+   `vdd`. Estimate (not run): with a 1 kΩ source, the time
+   constants differ by about 8 ps. Layout B: route the p and n lines as a pair in the same channel.
+3. **Post-layout gain and offset.** The top-plate wiring C adds to the sampling capacitance (about 73 fF per side for
+   a differential signal: 58 fF to ground plus 2 × 14.3 fF between `top_p` and `top_n`). The C-only gain is 1.089, so
+   the full scale shrinks from ±0.914 V to about ±0.84 V (C only) or ±0.81 V (RC). The mux inputs at ±0.85 V clip
+   (codes 4095 / 0). The first conversion at 0 V gives −11 LSB (RC) and −8 LSB (C only). Pre-layout it is
+   0 / −1 LSB. The `r1_ctrl` gain and offset calibration must cover this. The calibration range is not checked.
+   D16 (full scale ±0.9 V) is not met with layout A (simulated). For comparison, the revision-3 AC model with a 100 fF
+   top-plate parasitic gave ±0.877 V.
+4. **`vcm`, `vcm2` have no driver in the layout.** The pins exist and connect to no internal net. The harness ties
+   them to ground through 1 kΩ.
+5. **35 north pins are stubs.** The SAR logic is behavioural and is not laid out, so the `adc_raw_*`, `adc_valid_*`,
+   `adc_hold`, `adc_start`, `adc_sel`, `is_smp` and `por_n` pins connect to nothing. The behavioural SAR in the
+   decks connects to the `sar_*` nets of the layout contract.
+6. **PEX simplifications** (`pex/pex_build.py` docstring, item 6). These are not modelled: contact resistance,
+   GatPoly / Activ wiring, substrate resistance, TopMetal1 / Metal5 plate resistance, the MIM bit-line resistance
+   between the units and the collector, and the coupling between top-level wiring and the slice interior. The same
+   slice extraction is used for both slices.
+7. **LSB-node C asymmetry.** `lsb_p` has 64.3 fF and `lsb_n` has 50.3 fF. The largest term is `lsb_p`–`bp12`
+   (17.7 fF). This changes the LSB-array weights. The weight calibration of revision 5 (R2-11) covers it, but the
+   size of the change is not computed.
+
+### Floor plan and design
+
+1. **Slices.** The two CDAC slices are one cell `r1_adc_slice`, placed twice without rotation. Slice A takes SIN
+   (west pins) and ISA (east, through the middle gap); slice B takes COS (west, through the north channel) and ISB
+   (east pins).
+2. **CDAC array (per slice).** 34 × 12 slots at 5.45 µm pitch, unit MIM 3.78 × 3.78 µm (22 fF), origin (14.15, 45.2).
+   Rows 0 and 11 and columns 0 and 33 are the dummy ring (82 units: 88 slots minus 6 tab gaps; top and bottom plate
+   on gnd). N side: LSB sub-array rows 1–4 (C7 32 pairs … C1 + C0 at the centre), MSB row 5. P side: MSB row 6, LSB
+   rows 7–10 (point mirror of N). Every bit is a set of point-symmetric pairs about the array centre, so the
+   centroids coincide. C0 is 2.67 µm (half unit). The bridge capacitor CB is a fractional unit, 4.23 × 4.23 µm
+   (netlist of record value); it sits on the end pair of the MSB row (N: column 32, P: column 1), because two CB
+   plates (Metal5 5.43 µm) cannot be neighbours at the 5.45 µm pitch.
+3. **Top plates.** TopMetal1 sheets join the units of one sub-array (centre-to-centre bridges 3.46 µm). Each sheet
+   leaves the array through a ring gap to a TopVia1 island (west: `lsb_n`, `top_n`, `top_p`, `lsb_p`; east: `top_n`,
+   `top_p`). The routed nets `top_x@W` (bootstrap switch outputs) and `top_x@E` (comparator inputs) meet on the sheet.
+4. **Bottom plates.** Via4 at each unit to a Metal4 stub, Metal3 bit tracks per row, one Metal4 collector per bit
+   down to the driver rows below the array (y 32.0 NMOS, 39.2 PMOS; three NWell groups: `vrefl` LSB drivers, `vref`
+   MSB drivers, `vrefl` LSB drivers).
+5. **Switches and comparators.** Bootstrap switches and their Cboot (MIM 11.49 µm, 200 fF) at the west end (in0) and
+   the east end (in1) of each slice, symmetric to the array. Comparators in the lower region (rows at y 4.0 and 20.0);
+   the `r1_cmp4` integration capacitors (MOS, W 80 L 4) under the array centre (Metal1/Metal2 only there).
+6. **Clock shields.** The comparator clocks `clkb`, `clkn` (slice) and `clk` (top) are routed first with a soft
+   halo; a ground track is added on both sides wherever the next track is free and joined to ground: `clkb` 366 of
+   372 edge-sides, `clkn` 117 of 124, top `clk` 158 of 160 (`layout/r1_adc_layout.json`, `shield`). `clk` and
+   `clknb` of the slice have one gate each and no wire.
+7. **Reference.** `r1_refbuf5` (HV rows) at the south centre; the 4 + 2 decoupling plates and the gate plate CG next
+   to it, the two 10 pF filter plates (2 × 37.36 × 90 µm) at the two ends; `vref_in` pin at x 400. `vref` and
+   `vrefl` are full-width Metal3 + Metal4 buses (1.6 µm, y 49.2 and 45.2) under the plates; each slice takes them at
+   the same three south pins, so both slices see the same bus length. Plate orientation: TopMetal1 on vss (one
+   sheet), Metal5 on the signal (Via4 to the buses). The filter plate joins `vref_in` through a TopMetal1 jumper only,
+   so the `r1_refbuf5` input gate sees no plate area below TopMetal1 (antenna rule Ant.b; `vref_in` has no diffusion
+   inside the block).
+8. **SAR logic.** `r1_sar5_logic` is behavioural (XSPICE) and has no standard-cell implementation. It is not laid
+   out. Its interface nets are top-level ports `sar_*` (labelled pads on the slice nets). 35 of the 36 north pins are
+   stubs without a connection; only `clk` is connected (to the clock generator `r1_cmp4_clkgen`, north-west).
+   `vcm2` (west) and `vcm` (east) have no generator in the netlist of record and are stubs.
+9. **Guard ring and wells.** p+ substrate ring (vss) around the block; HV devices in TGO with merged TGO boxes.
+   Metal1–Metal4 for routing; Metal5 / TopMetal1 only for MIM plates, islands and the jumper; no TopMetal2.
+
+### Changes to the helpers and to the LVS mapping
+
+1. `maze_router.py`: router wires 0.40 µm (were 0.30): no 0.05 µm notch where a wire meets a 0.40 µm pad or rail;
+   new `shield()` (ground shield tracks); `halo_only` (halo for selected priority nets).
+2. `r1_adc_layout.py`: LV PCell fingers wider than 10 µm are split (the PDK PCell falls back to 0.15 µm above 10 µm
+   with a warning only); a separate drawing for the W 0.2 µm dogbone device (`xcbiasn_xmbd`).
+3. `r1_adc_netlist.py`: `NDUMMY` 82; decoupling and filter MIM listed as (vss, signal). The netlist of record is
+   unchanged.
+
+### Failures and mistakes (layout track, 2026-10-26)
+
+| # | What happened | Class | Effect and fix |
+| --- | --- | --- | --- |
+| 1 | The PCell probe script was written to the host `/tmp`, which the container does not see | tooling | probe did not run; dev scripts now live in `layout/dev/` |
+| 2 | Slice origin y 54.0 was off the 0.8 µm router grid; the generator stopped ("off grid") | planning | SY 54.4; the edge stubs jog 0.4 µm to the checklist y |
+| 3 | ISB stubs first placed at y 110/114 (the SIN y) instead of 130/134 | planning | slice east pins at local 76/80 (global 130.4/134.4) |
+| 4 | Drain-riser reservations blocked LV gate pin nodes | functional-bug | drain Via1 near the active top |
+| 5 | Comparator rows estimated too narrow; they overlapped the trk rows and drivers | estimation | rows re-arranged (row A right-aligned, B rows moved) |
+| 6 | `NDUMMY` 88 in the LVS mapping, 82 drawn (6 tab gaps) | functional-bug | `NDUMMY` 82 |
+| 7 | LV PCell fingers > 10 µm fell back to 0.15 µm; only a console warning ("wrong width") | verification-gap | 12 devices were wrong in dev2 LVS; fingers split in the generator |
+| 8 | Device pins on `top_p`/`top_n` were routed as one net and never reached the sheet islands | functional-bug | pins join the nearer island net (`@W`/`@E`) |
+| 9 | Edge pin boxes, input stubs and hand-drawn via stacks were drawn after routing without router reservation | functional-bug | shorts SIN/COS–vdd, ISB–vcm–vss; all reserved before routing |
+| 10 | NWell of the B_p row reached over the east bootstrap NMOS | planning | B_p row moved to the lower west region |
+| 11 | The 10 pF filter plate (TopMetal1) on `vref_in` violated Ant.b at the buffer input gate | planning | plate orientation swapped (TopMetal1 vss), TopMetal1 jumper |
+| 12 | Plate tab islands 0.94 µm from the next plate (TM1.b 1.64 µm) | estimation | islands removed: Metal5 plates connect by Via4 from below |
+| 13 | W 0.2 µm PCell is a dogbone; the strip model put the gate bar 0.03 µm off and the strips 0.06 µm off | tooling | separate drawing for narrow devices |
+| 14 | Notches between 0.30 µm wires and 0.40 µm pads / rails (M2.b 54, M4.b 66) | functional-bug | 0.40 µm wires; gate-rail gap fill; no node beside drain risers |
+| 15 | N and P bridge caps were neighbours (Metal5 space 0.02 µm) | planning | CB on the end pair, P row mirrored |
+| 16 | Decoupling plate widths off the 5 nm grid (offgrid rules) | numerical | widths on the 0.01 µm grid |
+| 17 | First check run started with a wrong GDS path (`/work/../opt`) | process-hygiene | run repeated with the absolute bulk path |
+| 18 | Hand-drawn COS stubs reached x −0.15 µm (outside the boundary); the pin check saw the box shifted | functional-bug | stubs clipped to the box |
+| 19 | `pex_build.py` sent the C of unknown net names to ground. With the MIM strip, kpex names one half of each top plate `top_p$1`, so 119.6 fF of top-plate C went to ground | verification-gap | Found in the first report (top-plate total missing). The `$k` suffix now maps back to the net; the remaining unknown C is reported |
+| 20 | With the R networks, KLU fails every OP method (singular matrix at bottom-plate R nodes) | tooling | runs `post-op-tt-rc-t1`, `post-op-tt-rcm-t1` failed; `--solver sparse` in `sim/post/run_post.py`; Sparse 1.3 converges at the first gmin step |
+| 21 | Unmerged MIM units (about 830 instances, each a 55 mΩ R in series with C) made the RC deck very slow | estimation | run `post-fc-tt-rc` stopped (SIGKILL on its ngspice PID); `sim/post/merge_parallel.py` merges identical parallel units (exact: all units of a bit share the collector and island nodes) |
+| 22 | `merge_parallel.py` (first version) wrote `m=1` on the slice instances. In ngspice 46 this overrides the `m` of the merged MIM inside the slice, so the CDAC weights collapsed (code 1428 at 0 V) | functional-bug | Found by bisection (no parasitic C: still wrong; without `m=1`: 2040). Runs `post-fc-tt-rcm`, `post-fc-tt-cm`, `post-isa-tt-rc-s`, `post-op-tt-rc-s`, `post-ref-tt-rc-s`, `post-isa-tt-cm` are invalid. The script is fixed and the files are regenerated |
+| 23 | Effective-resistance check first stripped only `__pK` from node names, so `gnd` looked broken into 53 fragments | verification-gap | `__iK` internal nodes are counted; `gnd` is one network (249 Ω worst port) |
+
+### Reuse of the first attempt
+
+The first attempt of this track left five files. They were read and triaged on 2026-10-26:
+1. `layout/adc_lib.py`: kept (AFE device helpers); one change: poly bridge for dogbone devices.
+2. `layout/maze_router.py`: kept (copy of the AFE router), changes above.
+3. `layout/r1_adc_netlist.py`: kept as the port contract; revised (slice ports `top_p`, `top_n`, probes, `NDUMMY`,
+   decap orientation).
+4. `layout/r1_adc_lvs.cdl`: regenerated by the generator.
+5. `layout/dev/t_mim.py` and run `<G1_RESULTS_ROOT>/r1_adc/layout/probe-mim-1`: kept as the MIM probe (its DRC
+   result gave the TopMetal1 sheet and tab rules). The run directory is not deleted.
+
 
 ## Revision 5 (2026-10-21, schematic level)
 

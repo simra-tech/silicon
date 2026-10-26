@@ -1,0 +1,183 @@
+{
+ "label": "pre-layout values (simulated, schematic level, ngspice 46, PDK 84374023) for the pre / post-layout table; collected by sim/post/post_post.py pre",
+ "a_static_window_tt": {
+  "source": "sim/post/results/win3_tt_rec.json",
+  "run": "post-win-tt-rec",
+  "core": "r1_adc5_core",
+  "vref_V": 1.045,
+  "max_abs_dnl_lsb": [
+   0.5383126875103545,
+   0.5383126875103545
+  ],
+  "monotonic": [
+   true,
+   true
+  ],
+  "missing_inside": [
+   0,
+   0
+  ]
+ },
+ "a_static_window_ss125_ffm40_reference": {
+  "source": [
+   "sim/results/r5/win5_ss125.json",
+   "sim/results/r5/win5_ffm40.json"
+  ],
+  "core": "r1_adc5_core_fast",
+  "max_abs_dnl_lsb": [
+   0.5383126875103545,
+   0.5383126875103545
+  ],
+  "note": "2 windows (2048, 3072), not 1024"
+ },
+ "b_r24_tt": {
+  "source": "sim/results/r5/ref5_tt_opt3c_ib5.json",
+  "core": "r1_adc5_core_fast",
+  "runs": [
+   "t2-ref-tt-opt3c-ib5",
+   "r5-ref-tt-ideal10505"
+  ],
+  "videal_V": 1.0505,
+  "worst_case_lsb": 0.209,
+  "after_gain_fit_lsb": 0.143,
+  "idda_mA": 1.047,
+  "pass_0p25": true,
+  "note": "README value 0.209 LSB; base run at 1.0505 V"
+ },
+ "b_r24_tt_full_core": {
+  "source": "sim/post/results/ref_tt_rec.json",
+  "core": "r1_adc5_core",
+  "runs": [
+   "post-ref-tt-rec",
+   "post-ref-tt-rec-ideal"
+  ],
+  "videal_V": 1.050271,
+  "worst_case_lsb": 0.179,
+  "after_gain_fit_lsb": 0.153,
+  "idda_mA": 1.04,
+  "pass_0p25": true,
+  "note": "like-for-like with the layout (full core: transistor drivers r1_drv)"
+ },
+ "b_r24_ss125": {
+  "source": "sim/results/r5/ref5_ss125_opt3c.json",
+  "core": "r1_adc5_core_fast",
+  "runs": [
+   "r5-ref-ss125-opt3c",
+   "r5-ref-ss125-ideal10505"
+  ],
+  "videal_V": 1.0505,
+  "worst_case_lsb": 0.163,
+  "after_gain_fit_lsb": 0.144,
+  "idda_mA": 1.037,
+  "pass_0p25": true,
+  "note": "README value 0.163 LSB; base run at 1.0505 V"
+ },
+ "b_r24_ss125_full_core": {
+  "source": "sim/post/results/ref_ss125_rec.json",
+  "core": "r1_adc5_core",
+  "runs": [
+   "post-ref-ss125-rec",
+   "post-ref-ss125-rec-ideal"
+  ],
+  "videal_V": 1.050499,
+  "worst_case_lsb": 0.168,
+  "after_gain_fit_lsb": 0.149,
+  "idda_mA": 1.032,
+  "pass_0p25": true,
+  "note": "like-for-like with the layout"
+ },
+ "c_mux_tt": {
+  "source": "sim/results/r5/isa5_tt.json",
+  "run": "t2-isa-tt",
+  "core": "r1_adc5_core",
+  "codes": [
+   [
+    2921,
+    1174
+   ],
+   [
+    3903,
+    192
+   ],
+   [
+    1174,
+    2921
+   ],
+   [
+    3620,
+    475
+   ]
+  ],
+  "max_abs_error_lsb": 3.66,
+  "gain": 0.99825,
+  "residual_after_gain_fit_lsb": 0.45,
+  "min_track_ns": 257.8
+ },
+ "d_first_conversion": {
+  "source": "sim/results/r5/firstconv5.json",
+  "core": "r1_adc5_core_fast",
+  "tt_pre33": {
+   "a": {
+    "code_frame0": 2047,
+    "code_frame1": 2048,
+    "frame0_minus_frame1_lsb": -1
+   },
+   "b": {
+    "code_frame0": 2048,
+    "code_frame1": 2047,
+    "frame0_minus_frame1_lsb": 1
+   }
+  },
+  "ss125_pre33": {
+   "a": {
+    "code_frame0": 73,
+    "code_frame1": 73,
+    "frame0_minus_frame1_lsb": 0
+   },
+   "b": {
+    "code_frame0": 116,
+    "code_frame1": 115,
+    "frame0_minus_frame1_lsb": 1
+   },
+   "slice_a_in0n_boost_V_at_599ns": 0.923,
+   "slice_a_topan_V_at_599ns": 1.05,
+   "slice_a_in0n_gate_V_at_599ns": 1.973
+  },
+  "full_core": {
+   "source": "sim/post/results/firstconv_rec.json",
+   "runs": {
+    "post-fc-tt-rec": {
+     "a": {
+      "code_frame0": 2047,
+      "code_frame1": 2048,
+      "frame0_minus_frame1_lsb": -1
+     },
+     "b": {
+      "code_frame0": 2048,
+      "code_frame1": 2047,
+      "frame0_minus_frame1_lsb": 1
+     }
+    },
+    "post-fc-ss-rec": {
+     "a": {
+      "code_frame0": 74,
+      "code_frame1": 74,
+      "frame0_minus_frame1_lsb": 0
+     },
+     "b": {
+      "code_frame0": 116,
+      "code_frame1": 116,
+      "frame0_minus_frame1_lsb": 0
+     }
+    }
+   }
+  }
+ },
+ "e_supply_tt": {
+  "source": "sim/results/r5/isa5_tt.json",
+  "run": "t2-isa-tt",
+  "idd_mA": 0.9026,
+  "idda_mA": 1.0344,
+  "note": "time average 0.6 us .. 3.31 us; SAR behavioural (no current)"
+ }
+}
