@@ -1,0 +1,48 @@
+{
+ "run_id": "t10-diag-t2enc-a",
+ "test": 2,
+ "view": "sch",
+ "corner": "tt",
+ "temp_c": 27.0,
+ "sim_status": "completed",
+ "ngspice_wall_s": 3664.3,
+ "tstop_us": 4.3,
+ "master_done_us": null,
+ "t_end_us": 4.3,
+ "vref_bg_t0_V": 1.0429673619899171,
+ "criteria": [
+  {
+   "name": "start state: vref_bg at t = 0 is the on-state of r1_bgr (1.045 V record)",
+   "value": 1.0429673619899171,
+   "limit": "1.00-1.09",
+   "unit": "V",
+   "status": "passed"
+  },
+  {
+   "name": "master sequence completed (DONE line)",
+   "value": null,
+   "limit": "before tstop",
+   "unit": "",
+   "status": "failed"
+  },
+  {
+   "name": "enough encoder pairs (>= 10) after the reset",
+   "value": 0,
+   "limit": ">= 10",
+   "unit": "",
+   "status": "failed"
+  }
+ ],
+ "measurements": {
+  "pairs_used": 0
+ },
+ "spi": [
+  {
+   "kind": "SPIWR",
+   "t": "3476.0",
+   "addr": "07",
+   "data": "0040"
+  }
+ ],
+ "verdict": "failed"
+}

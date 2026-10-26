@@ -1,0 +1,141 @@
+* views/ctrl_rtl.inc -- written by tb/run_tb.py from views/ctrl_rtl.inc.tmpl (template written by tb/gen_chip.py)
+* r1_ctrl revision 0.5 RTL + MODEL glue (rtl/r1_chip_dig.v) + TESTBENCH master (rtl/t10_master.v), root rtl/t10_top.v,
+* in one XSPICE d_cosim instance (Icarus shim ivlng), the G1 g1_top method. Core inputs: adc_bridge with a single
+* 0.6 V threshold (no unknown state, G1 numerical note 7); pad probes at 1.65 V. Core outputs: dac_bridge 0 / 1.2 V;
+* master pad drives 0 / 3.3 V. The seq_* outputs drive the global nodes of the r1_adc wrapper (views/sch.inc).
+.subckt r1_ctrl_top_tb
++ p_osc_clk p_por_n p_cs_n_p2c p_ma_sclk_p2c p_sdi_p2c p_en_sto_in_p2c p_cmp_neg_b p_cmp_oc_b p_cmp_neg_a p_cmp_oc_a p_t2f_fout p_adc_valid_a p_adc_raw_a13 p_adc_raw_a12 p_adc_raw_a11 p_adc_raw_a10
++ p_adc_raw_a9 p_adc_raw_a8 p_adc_raw_a7 p_adc_raw_a6 p_adc_raw_a5 p_adc_raw_a4 p_adc_raw_a3 p_adc_raw_a2 p_adc_raw_a1 p_adc_raw_a0 p_adc_valid_b p_adc_raw_b13 p_adc_raw_b12 p_adc_raw_b11 p_adc_raw_b10 p_adc_raw_b9
++ p_adc_raw_b8 p_adc_raw_b7 p_adc_raw_b6 p_adc_raw_b5 p_adc_raw_b4 p_adc_raw_b3 p_adc_raw_b2 p_adc_raw_b1 p_adc_raw_b0 p_SLO_SDO p_FAULT_N p_GATE_A p_slo_sdo_c2p p_fault_n_c2p p_pwm_a p_pwm_b
++ p_pwm_c p_adc_hold p_is_smp p_adc_start p_adc_sel p_tap_p31 p_tap_p30 p_tap_p29 p_tap_p28 p_tap_p27 p_tap_p26 p_tap_p25 p_tap_p24 p_tap_p23 p_tap_p22 p_tap_p21
++ p_tap_p20 p_tap_p19 p_tap_p18 p_tap_p17 p_tap_p16 p_tap_p15 p_tap_p14 p_tap_p13 p_tap_p12 p_tap_p11 p_tap_p10 p_tap_p9 p_tap_p8 p_tap_p7 p_tap_p6 p_tap_p5
++ p_tap_p4 p_tap_p3 p_tap_p2 p_tap_p1 p_tap_p0 p_tap_n31 p_tap_n30 p_tap_n29 p_tap_n28 p_tap_n27 p_tap_n26 p_tap_n25 p_tap_n24 p_tap_n23 p_tap_n22 p_tap_n21
++ p_tap_n20 p_tap_n19 p_tap_n18 p_tap_n17 p_tap_n16 p_tap_n15 p_tap_n14 p_tap_n13 p_tap_n12 p_tap_n11 p_tap_n10 p_tap_n9 p_tap_n8 p_tap_n7 p_tap_n6 p_tap_n5
++ p_tap_n4 p_tap_n3 p_tap_n2 p_tap_n1 p_tap_n0 p_az_a p_azh_a p_az_b p_azh_b p_osc_trim4 p_osc_trim3 p_osc_trim2 p_osc_trim1 p_osc_trim0 p_pga_c3 p_pga_c2
++ p_pga_c1 p_pga_c0 p_t2f_en p_t2f_mode p_bias_en p_seq_trka0 p_seq_trka1 p_seq_trkb0 p_seq_trkb1 p_seq_win p_seq_lat p_seq_stb13 p_seq_stb12 p_seq_stb11 p_seq_stb10 p_seq_stb9
++ p_seq_stb8 p_seq_stb7 p_seq_stb6 p_seq_stb5 p_seq_stb4 p_seq_stb3 p_seq_stb2 p_seq_stb1 p_seq_stb0 p_seq_valid p_cur_trk p_tbm_cs_n p_tbm_sclk p_tbm_sdi p_tbm_en p_tbs_a2
++ p_tbs_a1 p_tbs_a0 p_tbs_b2 p_tbs_b1 p_tbs_b0 vdd vss
+.model t10_adcb adc_bridge(in_low=0.6 in_high=0.6 rise_delay=1e-12 fall_delay=1e-12)
+.model t10_adcp adc_bridge(in_low=1.65 in_high=1.65 rise_delay=1e-12 fall_delay=1e-12)
+.model t10_dacb dac_bridge(out_low=0 out_high=1.2 out_undef=0.6 input_load=1e-15 t_rise=250p t_fall=250p)
+.model t10_dacp dac_bridge(out_low=0 out_high=3.3 out_undef=1.65 input_load=1e-15 t_rise=1n t_fall=1n)
+.model t10_dig d_cosim simulation="ivlng" sim_args=["@VVP@"]
+A_in [p_osc_clk p_por_n p_cs_n_p2c p_ma_sclk_p2c p_sdi_p2c p_en_sto_in_p2c p_cmp_neg_b p_cmp_oc_b p_cmp_neg_a p_cmp_oc_a p_t2f_fout p_adc_valid_a p_adc_raw_a13 p_adc_raw_a12 p_adc_raw_a11 p_adc_raw_a10 p_adc_raw_a9 p_adc_raw_a8 p_adc_raw_a7 p_adc_raw_a6 p_adc_raw_a5 p_adc_raw_a4 p_adc_raw_a3 p_adc_raw_a2 p_adc_raw_a1 p_adc_raw_a0 p_adc_valid_b p_adc_raw_b13 p_adc_raw_b12 p_adc_raw_b11 p_adc_raw_b10 p_adc_raw_b9 p_adc_raw_b8 p_adc_raw_b7 p_adc_raw_b6 p_adc_raw_b5 p_adc_raw_b4 p_adc_raw_b3 p_adc_raw_b2 p_adc_raw_b1 p_adc_raw_b0] [d_osc_clk d_por_n d_cs_n_p2c d_ma_sclk_p2c d_sdi_p2c d_en_sto_in_p2c d_cmp_neg_b d_cmp_oc_b d_cmp_neg_a d_cmp_oc_a d_t2f_fout d_adc_valid_a d_adc_raw_a13 d_adc_raw_a12 d_adc_raw_a11 d_adc_raw_a10 d_adc_raw_a9 d_adc_raw_a8 d_adc_raw_a7 d_adc_raw_a6 d_adc_raw_a5 d_adc_raw_a4 d_adc_raw_a3 d_adc_raw_a2 d_adc_raw_a1 d_adc_raw_a0 d_adc_valid_b d_adc_raw_b13 d_adc_raw_b12 d_adc_raw_b11 d_adc_raw_b10 d_adc_raw_b9 d_adc_raw_b8 d_adc_raw_b7 d_adc_raw_b6 d_adc_raw_b5 d_adc_raw_b4 d_adc_raw_b3 d_adc_raw_b2 d_adc_raw_b1 d_adc_raw_b0] t10_adcb
+A_inp [p_SLO_SDO p_FAULT_N p_GATE_A] [d_SLO_SDO d_FAULT_N d_GATE_A] t10_adcp
+A_dig [d_osc_clk d_por_n d_cs_n_p2c d_ma_sclk_p2c d_sdi_p2c d_en_sto_in_p2c d_cmp_neg_b d_cmp_oc_b d_cmp_neg_a d_cmp_oc_a d_t2f_fout d_adc_valid_a d_adc_raw_a13 d_adc_raw_a12 d_adc_raw_a11 d_adc_raw_a10 d_adc_raw_a9 d_adc_raw_a8 d_adc_raw_a7 d_adc_raw_a6 d_adc_raw_a5 d_adc_raw_a4 d_adc_raw_a3 d_adc_raw_a2 d_adc_raw_a1 d_adc_raw_a0 d_adc_valid_b d_adc_raw_b13 d_adc_raw_b12 d_adc_raw_b11 d_adc_raw_b10 d_adc_raw_b9 d_adc_raw_b8 d_adc_raw_b7 d_adc_raw_b6 d_adc_raw_b5 d_adc_raw_b4 d_adc_raw_b3 d_adc_raw_b2 d_adc_raw_b1 d_adc_raw_b0 d_SLO_SDO d_FAULT_N d_GATE_A] [d_slo_sdo_c2p d_fault_n_c2p d_pwm_a d_pwm_b d_pwm_c d_adc_hold d_is_smp d_adc_start d_adc_sel d_tap_p31 d_tap_p30 d_tap_p29 d_tap_p28 d_tap_p27 d_tap_p26 d_tap_p25 d_tap_p24 d_tap_p23 d_tap_p22 d_tap_p21 d_tap_p20 d_tap_p19 d_tap_p18 d_tap_p17 d_tap_p16 d_tap_p15 d_tap_p14 d_tap_p13 d_tap_p12 d_tap_p11 d_tap_p10 d_tap_p9 d_tap_p8 d_tap_p7 d_tap_p6 d_tap_p5 d_tap_p4 d_tap_p3 d_tap_p2 d_tap_p1 d_tap_p0 d_tap_n31 d_tap_n30 d_tap_n29 d_tap_n28 d_tap_n27 d_tap_n26 d_tap_n25 d_tap_n24 d_tap_n23 d_tap_n22 d_tap_n21 d_tap_n20 d_tap_n19 d_tap_n18 d_tap_n17 d_tap_n16 d_tap_n15 d_tap_n14 d_tap_n13 d_tap_n12 d_tap_n11 d_tap_n10 d_tap_n9 d_tap_n8 d_tap_n7 d_tap_n6 d_tap_n5 d_tap_n4 d_tap_n3 d_tap_n2 d_tap_n1 d_tap_n0 d_az_a d_azh_a d_az_b d_azh_b d_osc_trim4 d_osc_trim3 d_osc_trim2 d_osc_trim1 d_osc_trim0 d_pga_c3 d_pga_c2 d_pga_c1 d_pga_c0 d_t2f_en d_t2f_mode d_bias_en d_seq_trka0 d_seq_trka1 d_seq_trkb0 d_seq_trkb1 d_seq_win d_seq_lat d_seq_stb13 d_seq_stb12 d_seq_stb11 d_seq_stb10 d_seq_stb9 d_seq_stb8 d_seq_stb7 d_seq_stb6 d_seq_stb5 d_seq_stb4 d_seq_stb3 d_seq_stb2 d_seq_stb1 d_seq_stb0 d_seq_valid d_cur_trk d_tbm_cs_n d_tbm_sclk d_tbm_sdi d_tbm_en d_tbs_a2 d_tbs_a1 d_tbs_a0 d_tbs_b2 d_tbs_b1 d_tbs_b0] t10_dig
+* core outputs: dac_bridge to 0 / 1.2 V, then scaled by the macro supply (output high = VDD, also during the ramp)
+A_out [d_slo_sdo_c2p d_fault_n_c2p d_pwm_a d_pwm_b d_pwm_c d_adc_hold d_is_smp d_adc_start d_adc_sel d_tap_p31 d_tap_p30 d_tap_p29 d_tap_p28 d_tap_p27 d_tap_p26 d_tap_p25 d_tap_p24 d_tap_p23 d_tap_p22 d_tap_p21 d_tap_p20 d_tap_p19 d_tap_p18 d_tap_p17 d_tap_p16 d_tap_p15 d_tap_p14 d_tap_p13 d_tap_p12 d_tap_p11 d_tap_p10 d_tap_p9 d_tap_p8 d_tap_p7 d_tap_p6 d_tap_p5 d_tap_p4 d_tap_p3 d_tap_p2 d_tap_p1 d_tap_p0 d_tap_n31 d_tap_n30 d_tap_n29 d_tap_n28 d_tap_n27 d_tap_n26 d_tap_n25 d_tap_n24 d_tap_n23 d_tap_n22 d_tap_n21 d_tap_n20 d_tap_n19 d_tap_n18 d_tap_n17 d_tap_n16 d_tap_n15 d_tap_n14 d_tap_n13 d_tap_n12 d_tap_n11 d_tap_n10 d_tap_n9 d_tap_n8 d_tap_n7 d_tap_n6 d_tap_n5 d_tap_n4 d_tap_n3 d_tap_n2 d_tap_n1 d_tap_n0 d_az_a d_azh_a d_az_b d_azh_b d_osc_trim4 d_osc_trim3 d_osc_trim2 d_osc_trim1 d_osc_trim0 d_pga_c3 d_pga_c2 d_pga_c1 d_pga_c0 d_t2f_en d_t2f_mode d_bias_en d_seq_trka0 d_seq_trka1 d_seq_trkb0 d_seq_trkb1 d_seq_win d_seq_lat d_seq_stb13 d_seq_stb12 d_seq_stb11 d_seq_stb10 d_seq_stb9 d_seq_stb8 d_seq_stb7 d_seq_stb6 d_seq_stb5 d_seq_stb4 d_seq_stb3 d_seq_stb2 d_seq_stb1 d_seq_stb0 d_seq_valid d_cur_trk] [q_slo_sdo_c2p q_fault_n_c2p q_pwm_a q_pwm_b q_pwm_c q_adc_hold q_is_smp q_adc_start q_adc_sel q_tap_p31 q_tap_p30 q_tap_p29 q_tap_p28 q_tap_p27 q_tap_p26 q_tap_p25 q_tap_p24 q_tap_p23 q_tap_p22 q_tap_p21 q_tap_p20 q_tap_p19 q_tap_p18 q_tap_p17 q_tap_p16 q_tap_p15 q_tap_p14 q_tap_p13 q_tap_p12 q_tap_p11 q_tap_p10 q_tap_p9 q_tap_p8 q_tap_p7 q_tap_p6 q_tap_p5 q_tap_p4 q_tap_p3 q_tap_p2 q_tap_p1 q_tap_p0 q_tap_n31 q_tap_n30 q_tap_n29 q_tap_n28 q_tap_n27 q_tap_n26 q_tap_n25 q_tap_n24 q_tap_n23 q_tap_n22 q_tap_n21 q_tap_n20 q_tap_n19 q_tap_n18 q_tap_n17 q_tap_n16 q_tap_n15 q_tap_n14 q_tap_n13 q_tap_n12 q_tap_n11 q_tap_n10 q_tap_n9 q_tap_n8 q_tap_n7 q_tap_n6 q_tap_n5 q_tap_n4 q_tap_n3 q_tap_n2 q_tap_n1 q_tap_n0 q_az_a q_azh_a q_az_b q_azh_b q_osc_trim4 q_osc_trim3 q_osc_trim2 q_osc_trim1 q_osc_trim0 q_pga_c3 q_pga_c2 q_pga_c1 q_pga_c0 q_t2f_en q_t2f_mode q_bias_en q_seq_trka0 q_seq_trka1 q_seq_trkb0 q_seq_trkb1 q_seq_win q_seq_lat q_seq_stb13 q_seq_stb12 q_seq_stb11 q_seq_stb10 q_seq_stb9 q_seq_stb8 q_seq_stb7 q_seq_stb6 q_seq_stb5 q_seq_stb4 q_seq_stb3 q_seq_stb2 q_seq_stb1 q_seq_stb0 q_seq_valid q_cur_trk] t10_dacb
+B_slo_sdo_c2p p_slo_sdo_c2p vss V=v(q_slo_sdo_c2p)*v(vdd)/1.2
+B_fault_n_c2p p_fault_n_c2p vss V=v(q_fault_n_c2p)*v(vdd)/1.2
+B_pwm_a p_pwm_a vss V=v(q_pwm_a)*v(vdd)/1.2
+B_pwm_b p_pwm_b vss V=v(q_pwm_b)*v(vdd)/1.2
+B_pwm_c p_pwm_c vss V=v(q_pwm_c)*v(vdd)/1.2
+B_adc_hold p_adc_hold vss V=v(q_adc_hold)*v(vdd)/1.2
+B_is_smp p_is_smp vss V=v(q_is_smp)*v(vdd)/1.2
+B_adc_start p_adc_start vss V=v(q_adc_start)*v(vdd)/1.2
+B_adc_sel p_adc_sel vss V=v(q_adc_sel)*v(vdd)/1.2
+B_tap_p31 p_tap_p31 vss V=v(q_tap_p31)*v(vdd)/1.2
+B_tap_p30 p_tap_p30 vss V=v(q_tap_p30)*v(vdd)/1.2
+B_tap_p29 p_tap_p29 vss V=v(q_tap_p29)*v(vdd)/1.2
+B_tap_p28 p_tap_p28 vss V=v(q_tap_p28)*v(vdd)/1.2
+B_tap_p27 p_tap_p27 vss V=v(q_tap_p27)*v(vdd)/1.2
+B_tap_p26 p_tap_p26 vss V=v(q_tap_p26)*v(vdd)/1.2
+B_tap_p25 p_tap_p25 vss V=v(q_tap_p25)*v(vdd)/1.2
+B_tap_p24 p_tap_p24 vss V=v(q_tap_p24)*v(vdd)/1.2
+B_tap_p23 p_tap_p23 vss V=v(q_tap_p23)*v(vdd)/1.2
+B_tap_p22 p_tap_p22 vss V=v(q_tap_p22)*v(vdd)/1.2
+B_tap_p21 p_tap_p21 vss V=v(q_tap_p21)*v(vdd)/1.2
+B_tap_p20 p_tap_p20 vss V=v(q_tap_p20)*v(vdd)/1.2
+B_tap_p19 p_tap_p19 vss V=v(q_tap_p19)*v(vdd)/1.2
+B_tap_p18 p_tap_p18 vss V=v(q_tap_p18)*v(vdd)/1.2
+B_tap_p17 p_tap_p17 vss V=v(q_tap_p17)*v(vdd)/1.2
+B_tap_p16 p_tap_p16 vss V=v(q_tap_p16)*v(vdd)/1.2
+B_tap_p15 p_tap_p15 vss V=v(q_tap_p15)*v(vdd)/1.2
+B_tap_p14 p_tap_p14 vss V=v(q_tap_p14)*v(vdd)/1.2
+B_tap_p13 p_tap_p13 vss V=v(q_tap_p13)*v(vdd)/1.2
+B_tap_p12 p_tap_p12 vss V=v(q_tap_p12)*v(vdd)/1.2
+B_tap_p11 p_tap_p11 vss V=v(q_tap_p11)*v(vdd)/1.2
+B_tap_p10 p_tap_p10 vss V=v(q_tap_p10)*v(vdd)/1.2
+B_tap_p9 p_tap_p9 vss V=v(q_tap_p9)*v(vdd)/1.2
+B_tap_p8 p_tap_p8 vss V=v(q_tap_p8)*v(vdd)/1.2
+B_tap_p7 p_tap_p7 vss V=v(q_tap_p7)*v(vdd)/1.2
+B_tap_p6 p_tap_p6 vss V=v(q_tap_p6)*v(vdd)/1.2
+B_tap_p5 p_tap_p5 vss V=v(q_tap_p5)*v(vdd)/1.2
+B_tap_p4 p_tap_p4 vss V=v(q_tap_p4)*v(vdd)/1.2
+B_tap_p3 p_tap_p3 vss V=v(q_tap_p3)*v(vdd)/1.2
+B_tap_p2 p_tap_p2 vss V=v(q_tap_p2)*v(vdd)/1.2
+B_tap_p1 p_tap_p1 vss V=v(q_tap_p1)*v(vdd)/1.2
+B_tap_p0 p_tap_p0 vss V=v(q_tap_p0)*v(vdd)/1.2
+B_tap_n31 p_tap_n31 vss V=v(q_tap_n31)*v(vdd)/1.2
+B_tap_n30 p_tap_n30 vss V=v(q_tap_n30)*v(vdd)/1.2
+B_tap_n29 p_tap_n29 vss V=v(q_tap_n29)*v(vdd)/1.2
+B_tap_n28 p_tap_n28 vss V=v(q_tap_n28)*v(vdd)/1.2
+B_tap_n27 p_tap_n27 vss V=v(q_tap_n27)*v(vdd)/1.2
+B_tap_n26 p_tap_n26 vss V=v(q_tap_n26)*v(vdd)/1.2
+B_tap_n25 p_tap_n25 vss V=v(q_tap_n25)*v(vdd)/1.2
+B_tap_n24 p_tap_n24 vss V=v(q_tap_n24)*v(vdd)/1.2
+B_tap_n23 p_tap_n23 vss V=v(q_tap_n23)*v(vdd)/1.2
+B_tap_n22 p_tap_n22 vss V=v(q_tap_n22)*v(vdd)/1.2
+B_tap_n21 p_tap_n21 vss V=v(q_tap_n21)*v(vdd)/1.2
+B_tap_n20 p_tap_n20 vss V=v(q_tap_n20)*v(vdd)/1.2
+B_tap_n19 p_tap_n19 vss V=v(q_tap_n19)*v(vdd)/1.2
+B_tap_n18 p_tap_n18 vss V=v(q_tap_n18)*v(vdd)/1.2
+B_tap_n17 p_tap_n17 vss V=v(q_tap_n17)*v(vdd)/1.2
+B_tap_n16 p_tap_n16 vss V=v(q_tap_n16)*v(vdd)/1.2
+B_tap_n15 p_tap_n15 vss V=v(q_tap_n15)*v(vdd)/1.2
+B_tap_n14 p_tap_n14 vss V=v(q_tap_n14)*v(vdd)/1.2
+B_tap_n13 p_tap_n13 vss V=v(q_tap_n13)*v(vdd)/1.2
+B_tap_n12 p_tap_n12 vss V=v(q_tap_n12)*v(vdd)/1.2
+B_tap_n11 p_tap_n11 vss V=v(q_tap_n11)*v(vdd)/1.2
+B_tap_n10 p_tap_n10 vss V=v(q_tap_n10)*v(vdd)/1.2
+B_tap_n9 p_tap_n9 vss V=v(q_tap_n9)*v(vdd)/1.2
+B_tap_n8 p_tap_n8 vss V=v(q_tap_n8)*v(vdd)/1.2
+B_tap_n7 p_tap_n7 vss V=v(q_tap_n7)*v(vdd)/1.2
+B_tap_n6 p_tap_n6 vss V=v(q_tap_n6)*v(vdd)/1.2
+B_tap_n5 p_tap_n5 vss V=v(q_tap_n5)*v(vdd)/1.2
+B_tap_n4 p_tap_n4 vss V=v(q_tap_n4)*v(vdd)/1.2
+B_tap_n3 p_tap_n3 vss V=v(q_tap_n3)*v(vdd)/1.2
+B_tap_n2 p_tap_n2 vss V=v(q_tap_n2)*v(vdd)/1.2
+B_tap_n1 p_tap_n1 vss V=v(q_tap_n1)*v(vdd)/1.2
+B_tap_n0 p_tap_n0 vss V=v(q_tap_n0)*v(vdd)/1.2
+B_az_a p_az_a vss V=v(q_az_a)*v(vdd)/1.2
+B_azh_a p_azh_a vss V=v(q_azh_a)*v(vdd)/1.2
+B_az_b p_az_b vss V=v(q_az_b)*v(vdd)/1.2
+B_azh_b p_azh_b vss V=v(q_azh_b)*v(vdd)/1.2
+B_osc_trim4 p_osc_trim4 vss V=v(q_osc_trim4)*v(vdd)/1.2
+B_osc_trim3 p_osc_trim3 vss V=v(q_osc_trim3)*v(vdd)/1.2
+B_osc_trim2 p_osc_trim2 vss V=v(q_osc_trim2)*v(vdd)/1.2
+B_osc_trim1 p_osc_trim1 vss V=v(q_osc_trim1)*v(vdd)/1.2
+B_osc_trim0 p_osc_trim0 vss V=v(q_osc_trim0)*v(vdd)/1.2
+B_pga_c3 p_pga_c3 vss V=v(q_pga_c3)*v(vdd)/1.2
+B_pga_c2 p_pga_c2 vss V=v(q_pga_c2)*v(vdd)/1.2
+B_pga_c1 p_pga_c1 vss V=v(q_pga_c1)*v(vdd)/1.2
+B_pga_c0 p_pga_c0 vss V=v(q_pga_c0)*v(vdd)/1.2
+B_t2f_en p_t2f_en vss V=v(q_t2f_en)*v(vdd)/1.2
+B_t2f_mode p_t2f_mode vss V=v(q_t2f_mode)*v(vdd)/1.2
+B_bias_en p_bias_en vss V=v(q_bias_en)*v(vdd)/1.2
+B_seq_trka0 p_seq_trka0 vss V=v(q_seq_trka0)*v(vdd)/1.2
+B_seq_trka1 p_seq_trka1 vss V=v(q_seq_trka1)*v(vdd)/1.2
+B_seq_trkb0 p_seq_trkb0 vss V=v(q_seq_trkb0)*v(vdd)/1.2
+B_seq_trkb1 p_seq_trkb1 vss V=v(q_seq_trkb1)*v(vdd)/1.2
+B_seq_win p_seq_win vss V=v(q_seq_win)*v(vdd)/1.2
+B_seq_lat p_seq_lat vss V=v(q_seq_lat)*v(vdd)/1.2
+B_seq_stb13 p_seq_stb13 vss V=v(q_seq_stb13)*v(vdd)/1.2
+B_seq_stb12 p_seq_stb12 vss V=v(q_seq_stb12)*v(vdd)/1.2
+B_seq_stb11 p_seq_stb11 vss V=v(q_seq_stb11)*v(vdd)/1.2
+B_seq_stb10 p_seq_stb10 vss V=v(q_seq_stb10)*v(vdd)/1.2
+B_seq_stb9 p_seq_stb9 vss V=v(q_seq_stb9)*v(vdd)/1.2
+B_seq_stb8 p_seq_stb8 vss V=v(q_seq_stb8)*v(vdd)/1.2
+B_seq_stb7 p_seq_stb7 vss V=v(q_seq_stb7)*v(vdd)/1.2
+B_seq_stb6 p_seq_stb6 vss V=v(q_seq_stb6)*v(vdd)/1.2
+B_seq_stb5 p_seq_stb5 vss V=v(q_seq_stb5)*v(vdd)/1.2
+B_seq_stb4 p_seq_stb4 vss V=v(q_seq_stb4)*v(vdd)/1.2
+B_seq_stb3 p_seq_stb3 vss V=v(q_seq_stb3)*v(vdd)/1.2
+B_seq_stb2 p_seq_stb2 vss V=v(q_seq_stb2)*v(vdd)/1.2
+B_seq_stb1 p_seq_stb1 vss V=v(q_seq_stb1)*v(vdd)/1.2
+B_seq_stb0 p_seq_stb0 vss V=v(q_seq_stb0)*v(vdd)/1.2
+B_seq_valid p_seq_valid vss V=v(q_seq_valid)*v(vdd)/1.2
+B_cur_trk p_cur_trk vss V=v(q_cur_trk)*v(vdd)/1.2
+A_sel [d_tbs_a2 d_tbs_a1 d_tbs_a0 d_tbs_b2 d_tbs_b1 d_tbs_b0] [p_tbs_a2 p_tbs_a1 p_tbs_a0 p_tbs_b2 p_tbs_b1 p_tbs_b0] t10_dacb
+A_outp [d_tbm_cs_n d_tbm_sclk d_tbm_sdi d_tbm_en] [p_tbm_cs_n p_tbm_sclk p_tbm_sdi p_tbm_en] t10_dacp
+.ends r1_ctrl_top_tb

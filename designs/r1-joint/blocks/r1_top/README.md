@@ -3,6 +3,32 @@
 Block `r1_top` (track T8, P3 preparation). This block assembles the R1 chip top level from the ring of record and
 the finished macros. The four macros that are not finished are placeholder outlines.
 
+## Full-chip testbench, schematic level (track T10, 2026-10-26)
+
+Method, coverage, MODEL parts and the swap to post-layout netlists: [`tb/README.md`](tb/README.md). One deck per
+test on the schematic netlists of record, with the r1_ctrl 0.5 RTL in an XSPICE `d_cosim` instance (G1 method).
+Raw data: `<G1_RESULTS_ROOT>/r1_top/tb/<run-id>/`. Summaries: `tb/results/<run-id>.json`.
+
+| Test | Status | Evidence |
+| --- | --- | --- |
+| 1 Power-up (ramps, `por_n`, bandgap and bias settle, oscillator at code 22, reset exit, `ID` over SPI) | failed (simulator abort, not a chip result): the ramp stops at 16.28 µs in a T2F HBT, "timestep too small" (run `t10-t1-sch-a`, before M6); the POR release at about 240 µs needs about 50 h at the measured rate. Not rerun | `tb/runs/t10-t1-sch-a/run.json` |
+| 2 Encoder path (10 kHz, pads → AFE → ADC → weights → CORDIC; SPI `POS`; one BiSS-C frame with CRC) | failed (run `t10-t2-sch-b`: simulator abort at 4.55 µs in `xu_bgr.xqd1`, before the SPI reads). Partial: AFE outputs correct; ADC words constant at 2063 because of a testbench sequencer bug (finding R2, fixed after this run); rerun `t10-t2-sch-c` with the fix running | `tb/runs/t10-t2-sch-b/run.json`, `tb/results/t10-t2-sch-b.json`, `tb/runs/t10-diag-t2enc-b/run.json` |
+| 3 Current path (shunt levels at the PWM centre strobe; `I_A`/`I_B` within 1 %) | failed (simulator abort, not a chip result): "timestep too small" in `xu_bgr.xqd1` before the first strobe, in five option sets (runs `t10-t3-sch-a` .. `-e`, 0.56-1.78 µs) | `tb/runs/t10-t3-sch-e/run.json`, `tb/results/t10-t3-sch-e.json` |
+| 4 Safety (OC step → `FAULT_N` and gates low; EN low → gates low; clear sequences) | running (run `t10-t4-sch-c`, started 2026-10-26) | `tb/runs/t10-t4-sch-c/run.json` |
+| 5 Thermal (T2F count at 27 °C and 125 °C) | 27 °C: running (run `t10-t5-sch-27-a`); 125 °C: not run (no CPU in the track budget) | `tb/runs/t10-t5-sch-27-a/run.json` |
+| 6 Oscillator trim count (`OSC_COUNT` against the simulated frequency) | not run (no CPU in the track budget; deck and criterion ready) | — |
+| Post-layout rerun (`--view pex`) | not run (no `views/pex.inc`; ADC layout does not exist) | — |
+
+Finding R1 (functional bug, chip level): no block of record buffers `vref_bg`. The `r1_bgr` output (about 180 kΩ
+source) is loaded by the `r1_safe` string and the `r1_isense` pedestals to 0.22 V instead of 1.045 V (runs
+`t10-diag-nodeset-b`, `t10-diag-m6-a`). The decks use an ideal buffer model (M6 in `tb/README.md`) until a VREF
+buffer exists. All results above are with M6.
+
+Finding R2 (testbench bug, fixed): in deck 2 both ADC slices returned the constant code 2063. The cause is the
+testbench sequencer model M1: its strobes reached the ADC 0.54 ns after the clk30 edge (`tb/README.md` section 10).
+The fix is in `tb/rtl/r1_chip_dig.v` and is confirmed on the first conversion (run `t10-diag-t2enc-b`); deck 2
+runs again with it (`t10-t2-sch-c`, running at the end of the track budget).
+
 ## Try e (2026-10-21): floorplan C4 on the 1700 µm ring — run of record `asm-20261021-e4`
 
 Try e builds `r1_top` on the 1700 µm ring of record (`r1_padring` revision d, GDS `81bba04b…`) with floorplan C4
@@ -161,22 +187,6 @@ New files of try e: `layout/r1_top_assemble_e.py`, `lvs/make_top_cdl_e.py`, `flo
 (die size argument), `flow/write_run_json.py` (driver argument, input snapshots, try-e self-check keys).
 
 
-## What it is (try d, 1600 µm)
-
-`layout/r1_top_assemble.py` is a KLayout generator. It writes `r1_top.gds` (top cell `r1_top`, 1600 × 1600 µm).
-It does these steps:
-
-1. It reads the ring of record `r1_padring_1600.gds` (SHA-256 `40514b4f…`, revision b/c) and checks the hash.
-2. It removes the 4198 fill instances from the ring top cell. The ring fill covers the core area. Chip fill comes later.
-3. It copies the pad labels of the ring (22 × TopMetal2 pin text) into the top cell (see failure F1).
-4. It places the finished macros: `r1_ctrl_top` (0.4, run `r1ctrl_ll_20261021_t7`), `r1_safe`, `r1_bgr`, `r1_t2f`,
-   `r1_gate_lv` (one instance with three channels), and six `r1_ls`.
-5. It draws placeholders for `r1_afe`, `r1_adc`, `r1_isense_a`, `r1_isense_b` and `r1_osc`. Each placeholder is a
-   `prBoundary` outline with a text and Metal3 pin stubs with pin labels. The sizes are the S6 sizes.
-6. It builds the supplies: core ring identity, `r1_ctrl` stripes, north and south straps, the south Metal4 trunks
-   (`VSS`, `VDD`, `VDDA`) and the `VDDA` feed from pad 7.
-7. It applies the coordinator MIM rule on the west ring columns (TopMetal2 only over the AFE).
-8. It places 34 `sg13g2_decap_8` cells on `VDD` (antenna load, see failure F2).
 ### Try e fill (track T8, 2026-10-26)
 
 The chip fill of try e is done. Density has 2 markers left. Both markers are one 800 × 800 µm window, and the ADC
@@ -277,6 +287,22 @@ Failures and mistakes (fill):
 | F5 | The target name `asm-20261021-e4-fill` already held the earlier attempt. Run directories are not deleted. | process-hygiene | Result is `-fill3`; the name is explained above |
 | F6 | `fill_density_markers.py` needs the container Python (`klayout` module). Host Python failed. | tooling | Run it with `flow/run.sh python3` |
 
+## What it is (try d, 1600 µm)
+
+`layout/r1_top_assemble.py` is a KLayout generator. It writes `r1_top.gds` (top cell `r1_top`, 1600 × 1600 µm).
+It does these steps:
+
+1. It reads the ring of record `r1_padring_1600.gds` (SHA-256 `40514b4f…`, revision b/c) and checks the hash.
+2. It removes the 4198 fill instances from the ring top cell. The ring fill covers the core area. Chip fill comes later.
+3. It copies the pad labels of the ring (22 × TopMetal2 pin text) into the top cell (see failure F1).
+4. It places the finished macros: `r1_ctrl_top` (0.4, run `r1ctrl_ll_20261021_t7`), `r1_safe`, `r1_bgr`, `r1_t2f`,
+   `r1_gate_lv` (one instance with three channels), and six `r1_ls`.
+5. It draws placeholders for `r1_afe`, `r1_adc`, `r1_isense_a`, `r1_isense_b` and `r1_osc`. Each placeholder is a
+   `prBoundary` outline with a text and Metal3 pin stubs with pin labels. The sizes are the S6 sizes.
+6. It builds the supplies: core ring identity, `r1_ctrl` stripes, north and south straps, the south Metal4 trunks
+   (`VSS`, `VDD`, `VDDA`) and the `VDDA` feed from pad 7.
+7. It applies the coordinator MIM rule on the west ring columns (TopMetal2 only over the AFE).
+8. It places 34 `sg13g2_decap_8` cells on `VDD` (antenna load, see failure F2).
 9. It routes the 20 signal nets that exist today on Metal2–Metal4. The IO-row TopMetal is not touched inside the
    analog band (S6 cut C7).
 10. It runs a self-check (different nets on one layer, with the PDK spacing) and an overlap check.

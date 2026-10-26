@@ -1,0 +1,87 @@
+{
+ "run_id": "t10-t1-sch-a",
+ "test": 1,
+ "view": "sch",
+ "corner": "tt",
+ "temp_c": 27.0,
+ "sim_status": "failed",
+ "ngspice_wall_s": 2528.6,
+ "tstop_us": 262.0,
+ "master_done_us": null,
+ "t_end_us": 16.281026987183512,
+ "criteria": [
+  {
+   "name": "master sequence completed (DONE line)",
+   "value": null,
+   "limit": "before tstop",
+   "unit": "",
+   "status": "failed"
+  },
+  {
+   "name": "por_n rises after both rails are in range",
+   "value": null,
+   "limit": "after 1000000.00 us",
+   "unit": "",
+   "status": "failed"
+  },
+  {
+   "name": "bandgap VREF within 1 % of its final value before por_n",
+   "value": 16.281026987183512,
+   "limit": "< 0.00 us",
+   "unit": "us",
+   "status": "failed"
+  },
+  {
+   "name": "bias line ib_afe_s1 (consumer diode) within 1 % of its final value before por_n",
+   "value": 13.272897599394089,
+   "limit": "< 0.00 us",
+   "unit": "us",
+   "status": "failed"
+  },
+  {
+   "name": "bias line ib_adc_ref (refbuf nb) within 1 % of its final value before por_n",
+   "value": 13.28289759939409,
+   "limit": "< 0.00 us",
+   "unit": "us",
+   "status": "failed"
+  },
+  {
+   "name": "ctrl comes out of reset after por_n (within 5 ticks)",
+   "value": [],
+   "limit": "por_n + 0.17 us",
+   "unit": "us",
+   "status": "failed"
+  },
+  {
+   "name": "ID over SPI equals the RTL 0.5 value 0x5205 (task text: 0x5204, which is RTL 0.4)",
+   "value": [],
+   "limit": "0x5205",
+   "unit": "",
+   "status": "failed"
+  },
+  {
+   "name": "FAULT after reset has POR (bit 12) and CAL (bit 11) set",
+   "value": [],
+   "limit": "0x1800",
+   "unit": "",
+   "status": "failed"
+  }
+ ],
+ "measurements": {
+  "t_vdda_3v0_us": null,
+  "t_vdd_1v08_us": null,
+  "t_por_us": null,
+  "vref_bg_final_V": 0.6138175439302694,
+  "vref_bg_settle_1pct_us": 16.281026987183512,
+  "ib_afe_s1_final_V": 0.827410318504234,
+  "ib_afe_s1_settle_1pct_us": 13.272897599394089,
+  "ib_adc_ref_final_V": 0.8142547702047386,
+  "ib_adc_ref_settle_1pct_us": 13.28289759939409,
+  "osc_first_edge_us": 13.47838138122059,
+  "core_out_of_reset_us": [],
+  "id_read": [],
+  "fault_after_reset": []
+ },
+ "spi": [],
+ "verdict": "failed"
+}
