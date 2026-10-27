@@ -1,0 +1,43 @@
+{
+ "run_id": "t10-t3-full-07-a",
+ "test": 3,
+ "source": "ngspice.log T10RES lines (deck stopped by the 3 h runner timeout at 19.574 us of 19.6 us, after the master DONE at 19.401 us; no tran.raw)",
+ "lsb_source": "adc_lsb_uV and adc_vrefo_V of t10-t3-sub-07-a (same fast view, M6 VREF buffer, same ADC reference path)",
+ "adc_lsb_uV": 457.0248856129808,
+ "adc_vrefo_V": 1.0498813046066497,
+ "vref_buffer": "M6",
+ "ctrl_rev": "0.7",
+ "deck_options": "all blocks real (fast view, D11), --nodcp --por-fixed, tmax 4n, 3 threads",
+ "master_done_us": 19.401,
+ "I_A_words": [
+  821,
+  1740
+ ],
+ "I_B_words": [
+  823,
+  3272
+ ],
+ "criteria": [
+  {
+   "name": "I_A code step for 30 mV within 1 % of 14 x dV / LSB",
+   "measured_codes": 919,
+   "expected_codes": 918.99,
+   "error_pct": 0.001,
+   "ok": true
+  },
+  {
+   "name": "I_B code step for 80 mV within 1 % of 14 x dV / LSB",
+   "measured_codes": 2449,
+   "expected_codes": 2450.63,
+   "error_pct": -0.067,
+   "ok": true
+  }
+ ],
+ "verdict": "passed",
+ "handshake_from_log": {
+  "T10MON_STALL_or_LOSTEV_lines": 0,
+  "T10HS_VA_lines": 36,
+  "cosim_time_reversal_messages": 651
+ },
+ "not_evaluated": "strobe position (needs tran.raw): not run"
+}

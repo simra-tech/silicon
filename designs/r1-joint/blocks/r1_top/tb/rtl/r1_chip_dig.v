@@ -8,7 +8,8 @@
 //        (trk, win, stb, lat) with the r1_adc revision-5 D18 timing (gen_timing_r5.py), and returns adc_valid.
 //        The raw decisions come from the ADC netlist (decoded in views/sch.inc), not from this model.
 //     b. cur_trk: the ctrl 'soon' window (GUARD ticks before the PWM-centre strobe), taken by hierarchical
-//        reference. The shared CDAC top plate must track ISA/ISB before the strobe; no pin carries this today.
+//        reference. The shared CDAC top plate must track ISA/ISB before the strobe. With -DT10_CTRL07
+//        (run_tb --ctrl-rev 0.7) the ctrl 0.7 output port cur_trk drives this choice instead.
 //     c. isense auto-zero mapping: azh = az_win, az = az_win stretched by 2 ticks (azh falls first, as the
 //        r1_isense block decks).
 //  3. Testbench monitors ($display lines parsed by tb/post.py). They read, they do not drive.
@@ -61,13 +62,20 @@ module r1_chip_dig (
 `else
     wire va_ctrl = seq_valid, vb_ctrl = seq_valid;
 `endif
+`ifdef T10_CTRL07
+    wire cur_trk_c;     // ctrl 0.7 output port
+`endif
     r1_ctrl_top u_ctrl (
         .clk(clk), .por_n(por_eff), .cs_n(cs_n), .ma_sclk(ma_sclk), .sdi(sdi), .slo_sdo(slo_sdo),
         .en_pad(en_pad), .fault_n(fault_n), .gate_a(gate_a), .gate_b(gate_b), .gate_c(gate_c),
         .adc_hold(adc_hold), .is_smp(is_smp), .adc_start(adc_start), .adc_sel(adc_sel),
         .adc_valid_a(va_ctrl), .adc_raw_a(adc_raw_a), .adc_valid_b(vb_ctrl), .adc_raw_b(adc_raw_b),
         .cmp(cmp), .tap_p(tap_p), .tap_n(tap_n), .az_win(az_win), .t2f_clk(t2f_clk),
-        .osc_trim(osc_trim), .pga_c(pga_c), .t2f_en(t2f_en), .t2f_mode(t2f_mode), .bias_en(bias_en));
+        .osc_trim(osc_trim), .pga_c(pga_c), .t2f_en(t2f_en), .t2f_mode(t2f_mode), .bias_en(bias_en)
+`ifdef T10_CTRL07
+        , .cur_trk(cur_trk_c)
+`endif
+        );
 
     // ---- 2c. isense auto-zero mapping (MODEL) ----
     reg [1:0] azd;
@@ -79,9 +87,15 @@ module r1_chip_dig (
     assign az_b  = az_a;
 
     // ---- 2b. current-frame track request (MODEL of a missing port) ----
+`ifdef T10_CTRL07
+    // ctrl revision 0.7 drives cur_trk itself (r1_gate: soon | req, registered); the sequencer model uses it for
+    // the idle-track choice (t0_on / t1_on below)
+    wire cur_q = cur_trk_c;
+`else
     reg cur_q;
     always @(posedge clk or negedge por_eff)
         if (!por_eff) cur_q <= 1'b0; else cur_q <= u_ctrl.u_gate.soon;
+`endif
     assign cur_trk = cur_q;
 
     // ---- 2a. ADC sequencer model (MODEL), r1_adc revision-5 D18 timing ----

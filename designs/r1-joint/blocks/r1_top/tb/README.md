@@ -564,3 +564,81 @@ raw-word codes (0 difference in 22 pairs); CORDIC MEAS against atan2 of the code
 | `t10-t2-fast-f` | 2 | as `-e` + `--encoder-subset --t2f-stub` (isense, safe, T2F stubs), 3 threads | M6 | 21.5 µs | 1148 s | failed: POS −19.9° / −7.5° (reads inside the acquisition), `STATUS` 0x0190, BiSS data null with nE = nW = 0 (no POS_VALID); MEAS 0.049° passed; BiSS CRC passed |
 | `t10-t2-fast-g` | 2 | as `-f` + `T10_T2_WAIT_NS=16000` | M6 | 11.9 µs of 38 | — | failed: timestep too small at `b.xu_bias.bpor` (fast-view POR source) |
 | `t10-t2-fast-h` | 2 | as `-g`, `tmax` 4 ns | M6 | 38 µs | 1922 s | position criteria passed (MEAS 0.045°, POS 0.50°, ST 0.42°, STATUS 0x01D0, BiSS CRC); nW = 0 failed (R3) |
+
+## 15. Fifth budget (2026-10-27): ctrl revision 0.7, abort bisection, test 2 nW
+
+### 15.1 Changes to the testbench
+
+| Item | Change |
+| --- | --- |
+| `--ctrl-rev 0.7` | Compiles the ctrl from `<G1_RESULTS_ROOT>/r1_top/tb/ctrl_rtl_0.7` (r1_ctrl RTL 0.7, commit fdf0fcc0a, every file sha256-checked against `PINNED_RTL_07`) and adds `-DT10_CTRL07`. `run.json` fields `ctrl_rev`, `ctrl_rtl_dir`. Default stays 0.5 |
+| `rtl/r1_chip_dig.v` | With `T10_CTRL07`, the 0.7 output port `cur_trk` drives the idle-track choice of the sequencer model (`t0_on` / `t1_on`). The hierarchical reference to `u_gate.soon` is used only for 0.5 |
+| `rtl/t10_master.v` | With `T10_CTRL07`, the `CAL_CRC` shadow uses the 0.7 reset value of `CMP_THR_A/B` (0x003F, was 0x3F3F): CRC 0x46, not 0xBA. Test 2 writes `CTRL.CLR` after the lock wait (register map section 4, step 4; `T10_T2_NO_CLR` removes it). New define `T10_SCK_HALF_NS` (SPI half period, default 25 ns) |
+| `post_tb.py` | The `ID` criterion uses the ctrl revision of the run (0x5205 for 0.5, 0x5207 for 0.7). The `FAULT` criterion names the STO bit |
+| `--nodcp` | Bisection option: the deck-local pad copy also loses the `dpantenna` instances (6 more than the 7 `dantenna` of deviation D1). Extends D1 |
+| `--por-fixed` | Bisection option: the fast-view POR source `Bpor por_n vss V=v(vdd)` becomes `Vpor por_n vss DC 1.2` |
+| `--bridge-fixed` | Bisection option (static VDD only): the 111 core output bridges `V=v(q)*v(vdd)/1.2` become `V=v(q)` |
+| `run.json` `command` | Records the real CPU list of the process (it was a fixed `100-102`, T10-36) |
+
+### 15.2 Test 1b and test 3 with ctrl 0.7
+
+- `t10-t1b-sub-07-a` (as `t10-t1b-sub-a`, ctrl 0.7): **passed**. Reset exit 1.041 µs, `ID` 0x5207, `FAULT` 0x1800 (POR and CAL set, STO bit 8 clear). Finding R3 is closed at chip level.
+- `t10-t3-sub-07-a` (as `t10-t3-sub-b`, ctrl 0.7): **passed**. `I_A` step +0.11 %, `I_B` +0.10 %, 19 conversions, no lost event. `cur_trk` from the ctrl port is high for 0.70 µs before each PWM-centre strobe (PWM period 2.133 µs).
+
+### 15.3 Abort bisection (priority 2)
+
+1. All T10 decks already used the deck-local pad copy without `dantenna` (the G1 `--inpads nodcn` method, 7 instances). The remaining pad diodes are `dpantenna` (`dparea`), the element named in three aborts.
+2. Two full-view bisection decks (`t10-t3-bis-a`, `--nodcp`; `t10-t3-bis-b`, `--por-fixed`) ran at 4.5-5 µs per hour on 1-2 threads. They could not reach 14 µs inside 3 h, so they were stopped (by PID) and the bisection used the faster decks that show the same failure (T10-38).
+3. Results (each row changes one item against the row named in "Base"):
+
+| Run | Base | Change | Result |
+| --- | --- | --- | --- |
+| `t10-t3-fast-f` | `t10-t3-fast-e` (abort 14.0601 µs, T2F HBT) | T2F stub | abort at the same time, now `xp_sin_p.xi2.xd1` (`dparea`) |
+| `t10-t2-fast-h` | `t10-t2-fast-g` (abort 11.9 µs, `bpor`) | `tmax` 5 → 4 ns | completed (fourth budget) |
+| `t10-t3-sub-d` | `t10-t3-sub-c` (abort 17.18 µs, `xp_isa_p.xi2.xd1`) | `--nodcp` | **completed**, test 3 passed |
+| `t10-t2-fast-07-b` | `t10-t2-fast-07-a` (abort 24.01 µs, `xp_sin_p.xi2.xd1`) | `--nodcp` | abort 25.04 µs at `b.xu_ctrl.b_osc_trim1` |
+| `t10-t2-fast-07-c` | `t10-t2-fast-07-a` | `d_cosim irreversible=1` | bit-identical to the base (no effect, T10-39) |
+| `t10-t2-fast-07-d` | `t10-t2-fast-07-b` | `--por-fixed --bridge-fixed` | abort 25.09 µs, "cause unrecorded" |
+| `t10-t2-fast-07-e` | `t10-t2-fast-07-a` | SCLK 12.5 MHz | abort 27.37 µs at `b_osc_trim1` |
+| `t10-t2-fast-07-f` | `t10-t2-fast-07-a` | master CRC fix (digital change only) | abort 14.84 µs at `b_osc_trim1` |
+| `t10-t2-fast-07-i` | `t10-t2-fast-07-f` | `--nodcp --por-fixed --bridge-fixed` | abort 6.86 µs, "cause unrecorded" |
+| `t10-t2-fast-07-g` | `t10-t2-fast-07-f` | `tmax` 4 → 3.5 ns | **completed** (38 µs) |
+| `t10-t2-fast-07-h` | `t10-t2-fast-07-f` | `tmax` 4 → 4.5 ns | **completed** (38 µs) |
+
+4. Conclusion: no single element causes the abort. The element in the message is the place where the step fails. When it is removed, the abort moves to another element (T2F HBT → `SIN_P` pad diode → bridge source `b_osc_trim1`). The aborts are deterministic (a rerun is bit-identical), but a small change (one `tmax` step, one SPI write, the CRC value) moves the abort time or removes it. Every abort comes after `d_cosim` "time reversal in Icarus Shim VPI" messages: the analog solver rejects a step after the digital side has advanced. Passing decks have the same messages (`t10-t2-fast-h`: 1609), so the count does not predict an abort. The `osc_trim` outputs are static (code 22), so `b_osc_trim1` is not active at the abort.
+5. The working method: if a deck aborts, rerun it with one other `tmax` (3.5 or 4.5 ns). In this budget 3 of 5 such reruns completed (`-07-g`, `-07-h`, `-07-k`); `-07-j` (3.5 ns) aborted at 25.48 µs at the `SIN_P` pad diode, and `-07-l` (4 ns) repeated the 14.84 µs abort of `-07-f` (same deck up to that time).
+6. Full-chip deck (all blocks real, fast view, D11): `t10-t3-full-07-a` (ctrl 0.7, `--nodcp --por-fixed`, `tmax` 4 ns, 3 threads) ran through the 14.06 µs point of `t10-t3-fast-e` and through the master `DONE` at 19.401 µs. The runner stopped it at its 3 h limit (10 802 s) at 19.574 of 19.6 µs, so it has no `tran.raw`. Its SPI words are in the log and give test 3 **passed** (`tb/results/t10-t3-full-07-a.logeval.json`, LSB 457.0 µV taken from `t10-t3-sub-07-a`, same reference path): `I_A` 821 → 1740, step 919 against 919.0 (+0.00 %); `I_B` 823 → 3272, step 2449 against 2450.6 (−0.07 %); no `STALL` or `LOSTEV` line, 18 conversions. Strobe position: not run (needs the waveform).
+7. Named elements, as asked: the abort is not caused by one element. The `dpantenna` pad diodes (`xp_sin_p` / `xp_isa_p` `.xi2.xd1`, DCPDiode pad to IOVDD) are the most frequent place (5 of 14 aborts; `b_osc_trim1` 4, T2F HBT 2, POR source 1, cause unrecorded 2). `--nodcp` removed the abort in `t10-t3-sub-c` → `-d` and is in the full-chip deck above, but it moved the abort in `-07-a` → `-07-b`. The T2F HBT and the fast-view POR source are also places only.
+
+### 15.4 Test 2 nW (priority 1)
+
+1. With ctrl 0.7 the first decks (`-07-a` to `-07-e`) read the SPI status byte 0xC0, not 0xD0: `CAL_VALID` (bit 4) was 0, because the master `CAL_CRC` shadow had the 0.5 reset value of `CMP_THR_A/B` (T10-40). Fixed.
+2. With the CRC fix (`-07-g`, `-07-h`): all position and bus criteria passed (MEAS 0.045°, POS 0.50°, ST −0.42°, `STATUS` 0x01D0, BiSS-C CRC), but nW = 0. `STATUS` bit 7 (`FAULT`) is 1: test 2 never wrote `CTRL.CLR`, so the reset value POR (bit 12) stayed latched. nW = 0 is the register-map rule for a set `FAULT`, not a design error. The fourth budget gave R3 as the only cause; that was incomplete (T10-41).
+3. Test 2 now writes `CTRL.CLR` after the lock wait. `t10-t2-fast-07-k` (ctrl 0.7, CRC fix, CLR, `tmax` 4.5 ns, encoder subset, T2F stub, M6, 1 thread, 4088 s): **passed**, all 11 criteria. MEAS residual 0.046°; `POS` 0.39°; `STATUS` 0x0150 (POS_VALID, CAL_VALID, EN, FAULT clear); BiSS-C ACK, start, CRC and stop correct; nE = 1, nW = 1; ST −0.43°. The CLR reruns with 3.5 ns and 4 ns aborted (15.3 item 5).
+
+### 15.5 Run log, fifth budget
+
+| Run | Test | View, options | VREF buffer | Simulated | Deck time | Result |
+| --- | --- | --- | --- | --- | --- | --- |
+| `t10-t1b-sub-07-a` | 1b | thermal subset, fast, ctrl 0.7, `reltol=1e-4`, 1 thread | M6 | 13 µs | 367 s | **passed**: `ID` 0x5207, `FAULT` 0x1800 |
+| `t10-t2-fast-07-a` | 2 | encoder subset, T2F stub, ctrl 0.7, `tmax` 4 ns, 3 threads | M6 | 24.01 of 38 µs | 1145 s | failed: abort at `xp_sin_p.xi2.xd1`; `CAL_VALID` 0 (T10-40) |
+| `t10-t3-bis-a` | 3 | as `t10-t3-fast-e` + `--nodcp`, 2 threads | M6 | 3.9 µs | stopped | not run to the abort point (T10-38) |
+| `t10-t3-bis-b` | 3 | as `t10-t3-fast-e` + `--por-fixed`, 1 thread | M6 | 2.3 µs | stopped | not run to the abort point (T10-38) |
+| `t10-t2-fast-07-b` | 2 | `-07-a` + `--nodcp` | M6 | 25.04 µs | — | failed: abort at `b_osc_trim1` |
+| `t10-t3-sub-d` | 3 | `t10-t3-sub-c` + `--nodcp`, 1 thread | M6 | 19.6 µs | 1649 s | **passed**: A +0.11 %, B +0.10 % |
+| `t10-t2-fast-07-c` | 2 | `-07-a` + `irreversible=1` | M6 | 24.01 µs | 1148 s | failed: identical to `-07-a` (T10-39) |
+| `t10-t3-sub-07-a` | 3 | current subset, ctrl 0.7, `tmax` 4 ns, 2 threads | M6 | 19.6 µs | 1091 s | **passed**: A +0.11 %, B +0.10 %; `cur_trk` from the port |
+| `t10-t3-full-07-a` | 3 | all blocks real, ctrl 0.7, `--nodcp --por-fixed`, `tmax` 4 ns, 3 threads | M6 | 19.574 of 19.6 µs | 10 802 s (limit) | **passed** from the log (DONE 19.401 µs): A +0.00 %, B −0.07 %; no raw file |
+| `t10-t3-full-07-b` | 3 | as `full-07-a`, `tmax` 5 ns | M6 | under 1 µs | stopped | not run: stopped by PID after 2 min, CPUs 109-111 used for test 2 |
+| `t10-t2-fast-07-d` | 2 | `-07-b` + `--por-fixed --bridge-fixed` | M6 | 25.09 µs | — | failed: abort, cause unrecorded |
+| `t10-t2-fast-07-e` | 2 | `-07-a`, SCLK 12.5 MHz | M6 | 27.37 µs | — | failed: abort at `b_osc_trim1` |
+| `t10-t2-fast-07-f` | 2 | `-07-a` + CRC fix | M6 | 14.84 µs | 687 s | failed: abort at `b_osc_trim1` |
+| `t10-t2-fast-07-g` | 2 | `-07-f`, `tmax` 3.5 ns, 1 thread | M6 | 38 µs | 3846 s | position and bus criteria passed; nW = 0 (no CLR, T10-41) |
+| `t10-t2-fast-07-h` | 2 | `-07-f`, `tmax` 4.5 ns, 1 thread | M6 | 38 µs | 3824 s | as `-07-g` |
+| `t10-t2-fast-07-i` | 2 | `-07-f` + `--nodcp --por-fixed --bridge-fixed`, 1 thread | M6 | 6.86 µs | 694 s | failed: abort, cause unrecorded |
+| `t10-t2-fast-07-j` | 2 | CRC fix + CLR, `tmax` 3.5 ns, 1 thread | M6 | 25.48 µs | 2674 s | failed: abort at `xp_sin_p.xi2.xd1` |
+| `t10-t2-fast-07-k` | 2 | CRC fix + CLR, `tmax` 4.5 ns, 1 thread | M6 | 39 µs | 4088 s | **passed**, all 11 criteria, nW = 1 |
+| `t10-t2-fast-07-l` | 2 | CRC fix + CLR, `tmax` 4 ns, 1 thread | M6 | 14.84 µs | 1522 s | failed: abort at `b_osc_trim1` (as `-07-f`) |
+
+All runs: tt, 27 °C, fast view, D11 (T2F held off), fixes F22-F24, PDK 84374023. Evidence: `tb/results/<run>.json` and
+`tb/runs/<run>/` (deck and `run.json`); waveforms and logs under `<G1_RESULTS_ROOT>/r1_top/tb/<run>/`.

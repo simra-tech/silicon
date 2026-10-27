@@ -1,0 +1,82 @@
+{
+ "run_id": "t10-t2-fast-07-i",
+ "test": 2,
+ "view": "sch",
+ "corner": "tt",
+ "temp_c": 27.0,
+ "sim_status": "failed",
+ "ngspice_wall_s": 696.1,
+ "tstop_us": 38.0,
+ "master_done_us": null,
+ "t_end_us": 6.860047528786389,
+ "vref_bg_t0_V": 1.0449,
+ "criteria": [
+  {
+   "name": "start state: vref_bg at t = 0 is the on-state of r1_bgr (1.045 V record)",
+   "value": 1.0449,
+   "limit": "1.00-1.09",
+   "unit": "V",
+   "status": "passed"
+  },
+  {
+   "name": "master sequence completed (DONE line)",
+   "value": null,
+   "limit": "before tstop",
+   "unit": "",
+   "status": "failed"
+  },
+  {
+   "name": "ADC strobes 0.6 ns before the clk30 edge (M1 check, 7 conversions)",
+   "value": [
+    0.583,
+    0.601
+   ],
+   "limit": "0.3-0.9 ns",
+   "unit": "ns",
+   "status": "passed"
+  },
+  {
+   "name": "ADC handshake integrity: strobes per started conversion, no stalled frame (O10, F22, F24)",
+   "value": {
+    "conversions_started": 7,
+    "complete_in_deck": 6,
+    "strobe_rises": {
+     "seq_stb0": 7,
+     "seq_stb13": 6,
+     "seq_lat": 6
+    },
+    "lost_valid_events": 0,
+    "stalls": 0,
+    "short": []
+   },
+   "limit": "strobe rises = conversions, 0 stalls",
+   "unit": "",
+   "status": "passed"
+  },
+  {
+   "name": "enough encoder pairs (>= 10) after the reset",
+   "value": 4,
+   "limit": ">= 10",
+   "unit": "",
+   "status": "failed"
+  }
+ ],
+ "measurements": {
+  "pairs_used": 4
+ },
+ "spi": [
+  {
+   "kind": "SPIWR",
+   "t": "3476.0",
+   "addr": "07",
+   "data": "0040"
+  },
+  {
+   "kind": "SPIWR",
+   "t": "5051.0",
+   "addr": "18",
+   "data": "0046"
+  }
+ ],
+ "verdict": "failed"
+}

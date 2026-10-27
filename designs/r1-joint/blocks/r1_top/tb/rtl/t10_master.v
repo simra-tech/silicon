@@ -20,7 +20,11 @@ module t10_master (
     real ma_half;                   // BiSS half period, ns
     initial begin
         m_cs_n = 1'b1; m_sclk = 1'b1; m_sdi = 1'b0; m_en = 1'b1; sel_a = 3'd0; sel_b = 3'd0;
+`ifdef T10_SCK_HALF_NS
+        sck_half = `T10_SCK_HALF_NS; // fifth budget: slower SCLK moves the SPI edges against the clk30 edges
+`else
         sck_half = 25.0;            // 20 MHz SPI (README: SCLK choice)
+`endif
         ma_half = 50.0;             // 10 MHz BiSS MA (S2 maximum)
         tb_rst_n = (`T10_TEST == 1) ? 1'b1 : 1'b0;
     end
@@ -57,6 +61,10 @@ module t10_master (
         sh[7'h12] = 16'h4000; sh[7'h14] = 16'h4000; sh[7'h17] = 16'h0164;
         sh[7'h36] = 16'h3F3F; sh[7'h37] = 16'h3F3F; sh[7'h39] = 16'h4E00; sh[7'h3A] = 16'h2020; sh[7'h3B] = 16'h2020;
         sh[7'h3C] = 16'h3748;
+`ifdef T10_CTRL07
+        // ctrl 0.7: CMP_THR_A/B reset 0x003F (was 0x3F3F); the CAL_CRC shadow must follow, or CAL_VALID stays 0
+        sh[7'h36] = 16'h003F; sh[7'h37] = 16'h003F;
+`endif
         sh[7'h50] = 1; sh[7'h51] = 2; sh[7'h52] = 5; sh[7'h53] = 10; sh[7'h54] = 20; sh[7'h55] = 39; sh[7'h56] = 79;
         sh[7'h57] = 158; sh[7'h58] = 315; sh[7'h59] = 508; sh[7'h5A] = 1016; sh[7'h5B] = 2032; sh[7'h5C] = 4065;
         sh[7'h5D] = 8130;
@@ -146,6 +154,11 @@ module t10_master (
             // fourth budget: wait until the tracking loop has locked (POS_VALID: 16 pairs with |e| < 11.25 deg
             // after the acquisition, about 21 us after the reset at the reset loop gains) before the reads
             #(`T10_T2_WAIT_NS);
+`endif
+`ifndef T10_T2_NO_CLR
+            // fifth budget: register map section 4 step 4, CTRL.CLR after CAL_CRC; without it POR (bit 12) stays
+            // latched, STATUS.FAULT = 1 and the BiSS frame has nW = 0 (t10-t2-fast-h, -07-g/h: STATUS 0x01D0)
+            spi_wr(7'h04, 16'h0001);
 `endif
             // pipelined reads: each frame returns the register named in the previous frame
             spi_x({1'b1, 7'h19, 16'd0}, 24); t0 = t_cs;

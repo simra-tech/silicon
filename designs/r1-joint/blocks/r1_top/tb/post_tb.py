@@ -134,17 +134,23 @@ def test1(w, res, mon, run):
                   bool(oor) and t_por is not None and 0 <= oor[-1] - t_por <= 0.17e-6, 'us'))
     ids = spird(res, '00')
     M['id_read'] = ['0x%04X' % v for _, v in ids]
-    C.append(crit('ID over SPI equals the RTL 0.5 value 0x5205 (task text: 0x5204, which is RTL 0.4)',
-                  M['id_read'], '0x5205', bool(ids) and ids[0][1] == 0x5205))
+    rid = ctrl_id(run)
+    C.append(crit('ID over SPI equals the RTL %s value 0x%04X' % (run.get('ctrl_rev', '0.5'), rid),
+                  M['id_read'], '0x%04X' % rid, bool(ids) and ids[0][1] == rid))
     flt = spird(res, '02')
     M['fault_after_reset'] = ['0x%04X' % v for _, v in flt]
     C.append(crit('FAULT after reset has POR (bit 12) and CAL (bit 11) set', M['fault_after_reset'], '0x1800',
                   bool(flt) and (flt[0][1] & 0x1800) == 0x1800))
     # register map 0x02 reset value 0x1800 with EN high: no other cause may be latched (finding R3)
-    C.append(crit('FAULT after reset equals the register-map reset value 0x1800 (EN high throughout)', M['fault_after_reset'],
-                  '0x1800', bool(flt) and flt[0][1] == 0x1800))
+    C.append(crit('FAULT after reset equals the register-map reset value 0x1800 (EN high throughout, STO bit 8 clear)',
+                  M['fault_after_reset'], '0x1800', bool(flt) and flt[0][1] == 0x1800))
     return C, M
 
+
+
+def ctrl_id(run):
+    """Expected ID register for the co-simulated ctrl revision (run.json ctrl_rev; 0.5 when absent)."""
+    return {'0.5': 0x5205, '0.7': 0x5207}[str((run or {}).get('ctrl_rev', '0.5'))]
 
 
 def test1b(w, res, mon, run):
@@ -159,15 +165,16 @@ def test1b(w, res, mon, run):
                   bool(oor) and t_por is not None and 0 <= oor[-1] - t_por <= 0.17e-6, 'us'))
     ids = spird(res, '00')
     M['id_read'] = ['0x%04X' % v for _, v in ids]
-    C.append(crit('ID over SPI equals the RTL 0.5 value 0x5205 (task text: 0x5204, which is RTL 0.4)',
-                  M['id_read'], '0x5205', bool(ids) and ids[0][1] == 0x5205))
+    rid = ctrl_id(run)
+    C.append(crit('ID over SPI equals the RTL %s value 0x%04X' % (run.get('ctrl_rev', '0.5'), rid),
+                  M['id_read'], '0x%04X' % rid, bool(ids) and ids[0][1] == rid))
     flt = spird(res, '02')
     M['fault_after_reset'] = ['0x%04X' % v for _, v in flt]
     C.append(crit('FAULT after reset has POR (bit 12) and CAL (bit 11) set', M['fault_after_reset'], '0x1800',
                   bool(flt) and (flt[0][1] & 0x1800) == 0x1800))
     # register map 0x02 reset value 0x1800 with EN high: no other cause may be latched (finding R3)
-    C.append(crit('FAULT after reset equals the register-map reset value 0x1800 (EN high throughout)', M['fault_after_reset'],
-                  '0x1800', bool(flt) and flt[0][1] == 0x1800))
+    C.append(crit('FAULT after reset equals the register-map reset value 0x1800 (EN high throughout, STO bit 8 clear)',
+                  M['fault_after_reset'], '0x1800', bool(flt) and flt[0][1] == 0x1800))
     return C, M
 
 

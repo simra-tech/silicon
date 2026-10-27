@@ -74,7 +74,7 @@ def sha(p):
     return hashlib.sha256(open(p, 'rb').read()).hexdigest()
 
 
-def nodcn_io_lib():
+def nodcn_io_lib(drop=('dantenna',)):
     """Deck-local copy of the PDK sg13g2_io.spi, cells renamed t10nd_<cell>, every dantenna instance removed
     (G1 run_top.py nodcn_io_lib, the documented G1 deviation; PDK file unchanged)."""
     lines = open(IOSPI).read().splitlines()
@@ -90,8 +90,8 @@ def nodcn_io_lib():
         elif t[0][0] in 'Xx':
             refs = [i for i, w in enumerate(t) if '=' not in w]
             ref = refs[-1]
-            if t[ref] == 'dantenna':
-                out.append('* removed (nodcn): ' + l)
+            if t[ref] in drop:
+                out.append('* removed (%s): ' % ('nodcn' if t[ref] == 'dantenna' else 'nodcp') + l)
                 n += 1
                 continue
             if t[ref] in cells:
@@ -100,6 +100,17 @@ def nodcn_io_lib():
         else:
             out.append(l)
     return out, n
+
+
+def cpus_allowed():
+    """CPU list of this process (the G1_CPUSET taskset of flow/run.sh); the record used a fixed 100-102 before."""
+    try:
+        for l in open('/proc/self/status'):
+            if l.startswith('Cpus_allowed_list:'):
+                return l.split()[1]
+    except OSError:
+        pass
+    return os.environ.get('G1_CPUSET', 'unknown')
 
 
 def subckt_names(path):
@@ -282,6 +293,24 @@ PINNED_RTL = {
  "r1_ctrl_top.v": "bb75421096187133c243e8c5d1e387aac0e562ce65082d35080a9535dfb77dd9"
 }
 
+PINNED_RTL_07 = {   # r1_ctrl RTL revision 0.7, commit fdf0fcc0a (frozen copy ctrl_rtl_0.7)
+ "r1_adcw.v": "198de6c050266d8fb8d863b5c7a34c61e2711dc94ff13b1a8b753c8ab69dfba2",
+ "r1_biss.v": "fda134e13102b358e21860db7b2fb1fac6eb6b17ad2faaff9a2953ddbcce64b8",
+ "r1_cmpcal.v": "98c3f1b9135240de3c9d1abd3996e309b3cec08b3e77af9aefdca06bd10f4a11",
+ "r1_ctrl_top.v": "d2a53a6f5b7e834066e0201e4e98b0e8116b979a3921e1913592ac9d476b4639",
+ "r1_gate.v": "05be2446f9c6d137cb62d9a96996f22ef85f487b1a020d7475cf41eca075faff",
+ "r1_idrom.v": "ea79c1cf13683cd151e715d74f3ca59848a86b122ce07f42008aa949156d787c",
+ "r1_lib.v": "ed65a30a374f75e062e0ec4567e5c414cb72d7b2c790921dfdbd80938e068869",
+ "r1_pos.v": "b245a234f2de924892ecd9161761925aef056c496385d9679ff92156dc669171",
+ "r1_regs.v": "9ce08813d82dcba9ab65dca4e8deb274f36d2dae110e1cde3c924b36b6054fd5",
+ "r1_safe.v": "47e4ae4071fd3b100f04b38b0c6489990e5ff0ec060b74547266f05895b239de",
+ "r1_sinlut.v": "3e10c65e93bb9bf6d6379d8ae3fae3aec2fce6cf612038d3421fac3db2a35e86",
+ "r1_spi.v": "884ceaf4639583549e91d039c99f4ea931052b3b24dcdf42af27e0bc7d3f764b",
+ "r1_sync2.v": "c3164e4bc1ba06279047eaad2e9bf36f2904cdc73064bc8696df6c2fcc09d18f",
+ "r1_tapidx.v": "fbbf0029b95ca1daed4339d968b12527cedbe23668ac41304a289ec17712946f",
+}
+
+
 def interp_t(tab, t):
     ks = sorted(tab)
     if t <= ks[0]:
@@ -432,6 +461,11 @@ def fast_view(view, a, rec):
     if a.test == 1:
         bias += ['* deck 1b: por_n released at %g us (1 ns tanh edge); the delay itself is the r1_bias record' % a.por_step,
                  'Bpor por_n vss V=v(vdd)*0.5*(1+tanh((time-%ge-6)/1e-9))' % a.por_step, '.ends r1_bias']
+    elif a.por_fixed:
+        # fifth-budget bisection of the 14-17 us aborts: the POR B-source (follows v(vdd)) replaced by an
+        # independent source, high (1.2 V, the V12 rail) from the operating point on
+        bias += ['* bisection option --por-fixed: Bpor replaced by an independent source at 1.2 V',
+                 'Vpor por_n vss DC 1.2', '.ends r1_bias']
     else:
         bias += ['Bpor por_n vss V=v(vdd)', '.ends r1_bias']
     view = view.replace(bgr_inc, '\n'.join(bgr)).replace(bias_inc, '\n'.join(bias))
@@ -479,6 +513,10 @@ def main():
     ap.add_argument('--por-step', type=float, default=1.0, help='deck 1b: por_n release time in us (fast view)')
     ap.add_argument('--t2f-off', action='store_true', help='deviation D11: T2F enable input held at VSS')
     ap.add_argument('--thermal-subset', action='store_true', help='tests 1b, 5, 6: AFE, isense, safe, ADC as stubs (F18)')
+    ap.add_argument('--nodcp', action='store_true', help='bisection: also remove dpantenna from the pad copy')
+    ap.add_argument('--bridge-fixed', action='store_true', help='bisection: core output bridges not scaled by v(vdd) (static VDD only)')
+    ap.add_argument('--por-fixed', action='store_true', help='bisection: fast-view POR B-source replaced by a 1.2 V source')
+    ap.add_argument('--ctrl-rev', choices=['0.5', '0.7'], default='0.5', help='r1_ctrl RTL revision (frozen copies)')
     ap.add_argument('--encoder-subset', action='store_true', help='test 2: isense and safe as stubs (deck time)')
     ap.add_argument('--t2f-stub', action='store_true', help='decks 2, 3: r1_t2f as a 1 GOhm output stub (HBT abort, F18)')
     ap.add_argument('--current-subset', action='store_true', help='test 3: AFE as a stub; isense, safe, ADC, gate real')
@@ -498,6 +536,8 @@ def main():
         # F24: with the 1 ps output delay the clk-edge-to-analog latency of the macro outputs is 0.141 ns
         # (run t10-diag-hs-dly-b), not 1.14 ns; the strobe timing of the sequencer model follows it
         a.vdefine = a.vdefine + ['T10_SEQ_LAT=%g' % (0.141 + (a.cosim_delay - 1e-12) * 1e9)]
+    if a.bridge_fixed and not (a.fast and a.start == 'op'):
+        sys.exit('--bridge-fixed needs a static VDD (--fast --start op)')
     if a.thermal_subset and 'T10_VALID_BRIDGE' not in a.vdefine:
         # F24/T10-29: with the ADC as a stub, the old valid path keeps the frames stopped after frame 1 (the reference
         # behaviour of the subset results); running frames put strobe events next to master SPI edges, and d_cosim lost one
@@ -519,7 +559,7 @@ def main():
     rec = {'run_id': a.run_id, 'block': 'r1_top', 'track': 'T10', 'test': a.test, 'description': TESTS[a.test][0],
            'question': a.question or TESTS[a.test][0], 'view': a.view, 'corner': a.corner, 'temp_c': a.temp,
            'tstop_us': a.tstop, 'tmax': a.tmax, 'options': a.opts, 'threads': a.threads, 'vdefine': a.vdefine, 'cosim_irreversible': a.cosim_irrev, 'cosim_delay_s': a.cosim_delay, 'stall_abort': a.stall_abort, 'settle_us': a.settle, 'hbt_selft0': a.hbt_selft0, 'start': a.start, 'nodeset': a.nodeset, 'fast': a.fast, 't2f_off': a.t2f_off, 'por_step_us': a.por_step if (a.fast and a.test == 1) else None, 'ctrl': a.ctrl, 'bridge_delay_ps': a.bridge_delay_ps if a.bridge_delay_ps is not None else 1.0, 'm6_vref_buffer': ('ideal unity buffer (MODEL M6; D20 buffer r1_vbuf exists in r1_bias revision 2, not used in this deck)' if a.vbuf == 'm6' else 'not used: r1_vbuf of r1_bias revision 2 (ae4dfac95), bias leg ideal'), 'vbuf': a.vbuf, 'osc': a.osc, 'fosc_mhz': a.fosc if a.osc == 'ideal' else None,
-           'command': 'G1_CPUSET=100-102 G1_WORKDIR=designs/r1-joint/blocks/r1_top/tb G1_RESULTS_ROOT=<G1_RESULTS_ROOT> '
+           'command': 'G1_CPUSET=' + cpus_allowed() + ' G1_WORKDIR=designs/r1-joint/blocks/r1_top/tb G1_RESULTS_ROOT=<G1_RESULTS_ROOT> '
                       'flow/run.sh python3 ' + ' '.join(sys.argv),
            'bulk_dir': '<G1_RESULTS_ROOT>/r1_top/tb/' + a.run_id,
            'started_utc': time.strftime('%Y-%m-%dT%H:%M:%SZ', time.gmtime()),
@@ -532,10 +572,19 @@ def main():
     bad_pin = [n for n in NETLISTS if sha(os.path.join(BLOCKS, n)) != PINNED[n]]
     # r1_ctrl RTL 0.5 of record (commit f65d55c49); track T5g edits the tree for revision 0.7
     # frozen copy <G1_RESULTS_ROOT>/r1_top/tb/ctrl_rtl_0.5 (taken 2026-10-27 from the tree = f65d55c49) is used when present
-    frz = os.path.join(os.environ.get('G1_RESULTS_ROOT', ''), 'r1_top', 'tb', 'ctrl_rtl_0.5')
-    CTRL_DIR = frz if os.path.isdir(frz) else os.path.join(BLOCKS, 'r1_ctrl', 'rtl')
-    bad_pin += ['r1_ctrl/rtl/' + n for n in CTRL_RTL if sha(os.path.join(CTRL_DIR, n)) != PINNED_RTL.get(n)]
-    rec['ctrl_rtl_dir'] = 'frozen copy ctrl_rtl_0.5 (= r1_ctrl RTL 0.5, f65d55c49)' if CTRL_DIR == frz else 'tree'
+    if a.ctrl_rev == '0.7':
+        # fifth budget: r1_ctrl RTL 0.7 from commit fdf0fcc0a, frozen (the tree copy is changed by another track)
+        CTRL_DIR = os.path.join(os.environ.get('G1_RESULTS_ROOT', ''), 'r1_top', 'tb', 'ctrl_rtl_0.7')
+        bad_pin += ['r1_ctrl/rtl/' + n for n in CTRL_RTL if sha(os.path.join(CTRL_DIR, n)) != PINNED_RTL_07.get(n)]
+        rec['ctrl_rtl_dir'] = 'frozen copy ctrl_rtl_0.7 (= r1_ctrl RTL 0.7, fdf0fcc0a)'
+        if 'T10_CTRL07' not in a.vdefine:
+            a.vdefine = a.vdefine + ['T10_CTRL07']
+    else:
+        frz = os.path.join(os.environ.get('G1_RESULTS_ROOT', ''), 'r1_top', 'tb', 'ctrl_rtl_0.5')
+        CTRL_DIR = frz if os.path.isdir(frz) else os.path.join(BLOCKS, 'r1_ctrl', 'rtl')
+        bad_pin += ['r1_ctrl/rtl/' + n for n in CTRL_RTL if sha(os.path.join(CTRL_DIR, n)) != PINNED_RTL.get(n)]
+        rec['ctrl_rtl_dir'] = 'frozen copy ctrl_rtl_0.5 (= r1_ctrl RTL 0.5, f65d55c49)' if CTRL_DIR == frz else 'tree'
+    rec['ctrl_rev'] = a.ctrl_rev
     if bad_pin and not a.allow_unpinned:
         sys.exit('netlist differs from the pinned record: ' + ', '.join(bad_pin))
     for n in NETLISTS:
@@ -581,6 +630,12 @@ def main():
     vvp_inc = os.path.join(out, 'ctrl_rtl.inc')
     if a.cosim_delay:
         inc = inc.replace('sim_args=["%s"]' % vvp, 'sim_args=["%s"] delay=%g' % (vvp, a.cosim_delay))
+    if a.bridge_fixed:
+        # fifth-budget bisection: the core output bridges no longer scale with v(vdd) (VDD is static in the fast
+        # view, 1.1985 V against 1.2 V); every digital edge then stops coupling into the VDD rail node
+        n_b = inc.count('*v(vdd)/1.2')
+        inc = inc.replace('*v(vdd)/1.2', '')
+        rec['bridge_fixed'] = '%d core output bridges V=v(q) (0 / 1.2 V), not scaled by v(vdd)' % n_b
     if a.cosim_irrev is not None:
         inc = inc.replace('sim_args=["%s"]' % vvp, 'sim_args=["%s"] irreversible=%d' % (vvp, a.cosim_irrev))
     if a.bridge_delay_ps is not None:
@@ -649,10 +704,17 @@ def main():
         open(vvp_inc, 'w').write(txt_ctrl)
         rec['ctrl'] = 'static (DIAGNOSTIC: every macro pin tied to vss through 1 MOhm, no co-simulation)'
     open(os.path.join(out, 'view_%s.inc' % a.view), 'w').write(view)
-    io_lines, nrem = nodcn_io_lib()
+    if a.nodcp:
+        # fifth-budget bisection: also remove the dpantenna diodes (DCPDiode pad-to-IOVDD, clamp and secondary
+        # protection P diodes); the aborts of t10-t3-fast-f and t10-t3-sub-c named dparea-instance xp_*.xi2.xd1.d1
+        io_lines, nrem = nodcn_io_lib(('dantenna', 'dpantenna'))
+        rec['nodcp'] = 'dantenna and dpantenna instances removed from the deck-local pad copy (bisection, deviation D1 extended)'
+    else:
+        io_lines, nrem = nodcn_io_lib()
     io_inc = os.path.join(out, 'sg13g2_io_nodcn.spi')
     open(io_inc, 'w').write('\n'.join(io_lines) + '\n')
     rec['nodcn_dantenna_removed'] = nrem
+    rec['por_fixed'] = bool(a.por_fixed)
     deck = build_deck(a, out, vvp_inc, io_inc)
     dpath = os.path.join(out, 'deck.cir')
     open(dpath, 'w').write(deck)
