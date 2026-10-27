@@ -1,0 +1,48 @@
+{
+  "run_id": "b6-runner-timeout-test",
+  "block": "r1_adc",
+  "track": "T2l",
+  "harness": "sim/post/b5 decks, runner sim/post/b6/run_b6.py",
+  "question": "runner test: does the 40 s limit stop ngspice in the container (README Layout B6 item 4)",
+  "command": "G1_CPUSET=103 G1_CPUS=1 G1_WORKDIR=designs/r1-joint/blocks/r1_adc G1_RESULTS_ROOT=<G1_RESULTS_ROOT> flow/run.sh timeout -s TERM -k 30 40 ngspice -b <G1_RESULTS_ROOT>/r1_adc/b6-runner-timeout-test/deck.cir (runner sim/post/b6/run_b6.py)",
+  "argv": [
+    "--id",
+    "b6-runner-timeout-test",
+    "--cpu",
+    "103",
+    "--deck",
+    "sim/post/b5/decks/b6s4/fc_tt.cir",
+    "--timeout",
+    "40",
+    "--question",
+    "runner test: does the 40 s limit stop ngspice in the container (README Layout B6 item 4)",
+    "--disposition",
+    "runner test only"
+  ],
+  "deck_template": "sim/post/b5/decks/b6s4/fc_tt.cir",
+  "deck": "sim/post/b6/runs/b6-runner-timeout-test/deck.cir",
+  "deck_template_sha256": "5df697e78dd7f582f1bf388b9872d623d299ad418dd01210aee4be905e5f4232",
+  "tstop": "1.86u",
+  "smoke_test": false,
+  "includes_sha256": {
+    "sim/post/r1_adc_post_rc_mb6.spice": "b9e1ae7aa2487a3cd03374b7541d606c096fcc8758865efc0059b6a275eff900",
+    "/foss/pdks/ihp-sg13g2/libs.ref/sg13g2_stdcell/spice/sg13g2_stdcell.spice": "container path (PDK 84374023)",
+    "sim/post/b5/sar/r1_adc_sar_gl_lumpc.spice": "102f66b6a65f778556d45695f7a38ee7122dba367afe0e5a41c8bf97f841a59a"
+  },
+  "pdk_commit": "84374023ee8b4b126bebbba67fcbada0a9c0ff0b (checked by flow/run.sh)",
+  "container_image": "tapeoutbench-eda:latest sha256:ddeb69576f2808676d1c5d474ecf04f6d1d6f8abdcff6b72b39790ded924bab2",
+  "ngspice_version": "not found in log",
+  "raw_results": "<G1_RESULTS_ROOT>/r1_adc/b6-runner-timeout-test/",
+  "started_utc": "2026-10-27T15:18:22.708453Z",
+  "wall_s": 45.9,
+  "sim_us_per_wall_min": 2.4331,
+  "returncode": 124,
+  "killed_by_host": false,
+  "status": "timeout",
+  "errors": [],
+  "missing_outputs": [
+    "b5.raw"
+  ],
+  "result": "passed as a runner test: the in-container timeout stopped ngspice at the 40 s limit (rc 124, wall 46 s); after the run no ngspice process and no container of this run were left (ps / podman ps checked)",
+  "disposition": "runner test only (README r1_adc, Layout B6, item 4)"
+}

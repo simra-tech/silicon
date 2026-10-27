@@ -1,0 +1,195 @@
+{
+ "tool": "sim/post/b5/b5_post.py dec",
+ "run": "b6-ms-fc-tt",
+ "reference_run": "postb6-fc-tt-rc",
+ "label": "simulated; closed loop (gate-level r1_adc_sar) against the behavioural r1_sar5_logic run on the same analog netlist; design weights; tie threshold 0.25 LSB at 16 ns (see header)",
+ "top_plate_lsb_V": {
+  "a": 0.00045030764740688596,
+  "b": 0.00045021708264760885
+ },
+ "lsb_source": "sim/post/results/postb4_ref_tt_rc.json",
+ "frames": [
+  {
+   "frame": 0,
+   "type": "e",
+   "slice": "A",
+   "word_bits": "01111110110101",
+   "ref_bits": "01111110110101",
+   "code": 2040,
+   "ref_code": 2040,
+   "code_diff_lsb": 0,
+   "valid_at_E15": true,
+   "valid_low_before_E14": true,
+   "decisions_differ_at": []
+  },
+  {
+   "frame": 0,
+   "type": "e",
+   "slice": "B",
+   "word_bits": "01111110110100",
+   "ref_bits": "01111110110010",
+   "code": 2040,
+   "ref_code": 2039,
+   "code_diff_lsb": 1,
+   "valid_at_E15": true,
+   "valid_low_before_E14": true,
+   "decisions_differ_at": [
+    11,
+    12
+   ],
+   "first_difference": {
+    "frame": 0,
+    "slice": "B",
+    "decision": 11,
+    "vd_cl_mV": {
+     "10ns": 2.6969,
+     "16ns": 2.9305,
+     "19ns": 3.0552
+    },
+    "vd_cl_lsb_16ns": 6.509,
+    "min_abs_vd_cl_4_16ns_lsb": 4.972,
+    "closed_loop_decision": 1,
+    "reference_decision": 0,
+    "vd_ref_mV": "not saved in the reference run",
+    "vd_cl_minus_vth_lsb_16ns": 0.125,
+    "class": "tie"
+   }
+  },
+  {
+   "frame": 1,
+   "type": "e",
+   "slice": "A",
+   "word_bits": "01111110110110",
+   "ref_bits": "01111110110110",
+   "code": 2040,
+   "ref_code": 2040,
+   "code_diff_lsb": 0,
+   "valid_at_E15": true,
+   "valid_low_before_E14": true,
+   "decisions_differ_at": []
+  },
+  {
+   "frame": 1,
+   "type": "e",
+   "slice": "B",
+   "word_bits": "01111110110101",
+   "ref_bits": "01111110110011",
+   "code": 2040,
+   "ref_code": 2039,
+   "code_diff_lsb": 1,
+   "valid_at_E15": true,
+   "valid_low_before_E14": true,
+   "decisions_differ_at": [
+    11,
+    12
+   ],
+   "first_difference": {
+    "frame": 1,
+    "slice": "B",
+    "decision": 11,
+    "vd_cl_mV": {
+     "10ns": 2.8069,
+     "16ns": 3.0369,
+     "19ns": 3.1859
+    },
+    "vd_cl_lsb_16ns": 6.746,
+    "min_abs_vd_cl_4_16ns_lsb": 5.223,
+    "closed_loop_decision": 1,
+    "reference_decision": 0,
+    "vd_ref_mV": "not saved in the reference run",
+    "vd_cl_minus_vth_lsb_16ns": 0.361,
+    "class": "near threshold"
+   }
+  }
+ ],
+ "decisions_total": 56,
+ "decisions_equal": 52,
+ "words_equal": 2,
+ "words_total": 4,
+ "valid_ok": 4,
+ "first_differences": [
+  {
+   "frame": 0,
+   "slice": "B",
+   "decision": 11,
+   "vd_cl_mV": {
+    "10ns": 2.6969,
+    "16ns": 2.9305,
+    "19ns": 3.0552
+   },
+   "vd_cl_lsb_16ns": 6.509,
+   "min_abs_vd_cl_4_16ns_lsb": 4.972,
+   "closed_loop_decision": 1,
+   "reference_decision": 0,
+   "vd_ref_mV": "not saved in the reference run",
+   "vd_cl_minus_vth_lsb_16ns": 0.125,
+   "class": "tie"
+  },
+  {
+   "frame": 1,
+   "slice": "B",
+   "decision": 11,
+   "vd_cl_mV": {
+    "10ns": 2.8069,
+    "16ns": 3.0369,
+    "19ns": 3.1859
+   },
+   "vd_cl_lsb_16ns": 6.746,
+   "min_abs_vd_cl_4_16ns_lsb": 5.223,
+   "closed_loop_decision": 1,
+   "reference_decision": 0,
+   "vd_ref_mV": "not saved in the reference run",
+   "vd_cl_minus_vth_lsb_16ns": 0.361,
+   "class": "near threshold"
+  }
+ ],
+ "comparator_threshold_16ns": {
+  "a": {
+   "vth_mV": 3.1679,
+   "dec0_max_mV": 3.1475,
+   "dec1_min_mV": 3.1884,
+   "separable": true
+  },
+  "b": {
+   "vth_mV": 2.8744,
+   "dec0_max_mV": 2.8212,
+   "dec1_min_mV": 2.9276,
+   "separable": true
+  }
+ },
+ "first_conversion": {
+  "a": {
+   "frame0_minus_frame1_lsb": 0,
+   "codes": [
+    2040,
+    2040
+   ],
+   "ref_codes": [
+    2040,
+    2040
+   ]
+  },
+  "b": {
+   "frame0_minus_frame1_lsb": 0,
+   "codes": [
+    2040,
+    2040
+   ],
+   "ref_codes": [
+    2039,
+    2039
+   ]
+  }
+ },
+ "supply_mA": {
+  "idd_total": 0.9256879736456345,
+  "idd_sar": 0.0,
+  "idd_analog": 0.9256879736456345,
+  "idda": 0.005628687131678307,
+  "window": "0.6 us .. end, time average"
+ },
+ "pass_bit_exact": false,
+ "all_differences_ties": false,
+ "all_differences_within_0p5lsb_of_threshold": true,
+ "max_abs_code_diff_lsb": 1
+}

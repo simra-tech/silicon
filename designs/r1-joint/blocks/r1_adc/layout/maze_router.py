@@ -251,7 +251,8 @@ class Router:
             if not self.route_net(k):
                 self.unroute(k); failed.append(k)
             elif self.halo_cost and k in fid and (not getattr(self, 'halo_only', None) or self.names[k] in self.halo_only):
-                self.add_halo(k, self.halo_cost)
+                # layout B6 (r1_adc): per-net halo cost (top plates 300, the cap of add_halo)
+                self.add_halo(k, getattr(self, 'halo_cost_net', {}).get(self.names[k], self.halo_cost))
         log('initial pass: %d nets, %d failed %s' % (len(ids), len(failed), [self.names[k] for k in failed]))
         hist = {}
         for it in range(rounds * 10):
@@ -335,11 +336,17 @@ class Router:
 
     def add_halo(self, k, cost):
         """soft cost on the free nodes next to net k (same layer, four neighbours) for all other nets."""
+        vert = self.names[k] in getattr(self, 'halo_vertical', set())
         for (l, i, j) in self.used_nodes(k):
             for di, dj in ((1, 0), (-1, 0), (0, 1), (0, -1)):
                 a, b = i + di, j + dj
                 if self.inside(a, b) and self.occ[l, a, b] == FREE:
                     self.pen[l, a, b] = min(int(self.pen[l, a, b]) + cost, 300)
+            if vert:
+                # layout B6 (r1_adc): also the nodes directly above / below (area coupling across one layer)
+                for l2 in (l - 1, l + 1):
+                    if 0 <= l2 < NL and self.occ[l2, i, j] == FREE:
+                        self.pen[l2, i, j] = min(int(self.pen[l2, i, j]) + cost, 300)
 
     def shield(self, k, g, layers=(0, 1, 2), maxlen=24):
         """shield wires of net g (ground) on the free parallel tracks on both sides of every wire edge of net k
@@ -423,7 +430,14 @@ class Router:
         """supply widening after routing: every wire edge of net k on `layers` takes the parallel free track on each
         side (one 1.1 um box per side, up to 1.9 um total width); then extra vias on the widened nodes next to each
         via of the net. Only free nodes are used, so the grid spacing rules still hold."""
+        avoid = getattr(self, 'widen_avoid', set())
+
         def free_or_own(l, i, j):
+            # layout B6 (r1_adc): no widening on a node next to a net of widen_avoid (the top plates): B5 widened vdd
+            # along the east top_p route (+5 fF top_p - top_n)
+            if avoid and any(self.inside(i + a, j + b) and int(self.occ[l, i + a, j + b]) in avoid
+                             for a, b in ((1, 0), (-1, 0), (0, 1), (0, -1))):
+                return False
             return self.inside(i, j) and self.res[l, i, j] in (FREE, k) and self.occ[l, i, j] in (FREE, k)
         n_box = 0
         for path in list(self.paths.get(k, [])):

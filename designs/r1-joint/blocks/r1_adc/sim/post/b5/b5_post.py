@@ -48,7 +48,10 @@ RAWN = ["v(adc_raw_%s_%d)" % (s, k) for s in "ab" for k in range(ND)]
 
 
 def b5run(rid):
-    d = json.load(open(os.path.join(HERE, "runs", rid, "run.json")))
+    rj = os.path.join(HERE, "runs", rid, "run.json")
+    if not os.path.exists(rj):      # T2l: layout B6 runs are recorded under sim/post/b6/runs
+        rj = os.path.join(HERE, "..", "b6", "runs", rid, "run.json")
+    d = json.load(open(rj))
     if d["status"] not in ("completed", "completed-late") or d.get("smoke_test"):
         sys.exit("run %s is %s%s: not post-processed" % (rid, d["status"], " (smoke test)" if d.get("smoke_test") else ""))
     raw, var = read(os.path.join(root, "r1_adc", rid, "b5.raw"))

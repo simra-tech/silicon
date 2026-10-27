@@ -45,6 +45,10 @@ except Exception:
 OUT = globals().get('out', os.path.join(HERE, 'r1_adc.gds'))
 ROUNDS = int(globals().get('rounds', '6'))
 TRIM = json.load(open(globals()['trim'])) if globals().get('trim') else {}
+# layout B6 (2026-10-27, T2l): -rd rev=B5 reproduces layout B5; default B6 (README "Layout B6")
+REV = globals().get('rev', 'B6')
+assert REV in ('B5', 'B6'), REV
+B6 = REV == 'B6'
 
 W, H = 439.0, 182.3               # H: analog part (layouts A-B4); B5 box height HB5
 HB5 = round(H + 23.12, 2)
@@ -626,6 +630,8 @@ def slice_north():
     return sorted([(port, gnear(x - SX[0])) for (ch, port, x) in sar_south_map().values() if ch == 'a'], key=lambda t: t[1])
 
 
+TOPP_RISER_SIDES = (12.0, 13.6)       # layout B6: Metal3 columns next to the west top_p riser (x 12.8)
+TOPP_RISER_Y = (77.6, 105.6)
 SLICE_PAIRS = [('top_p@W', 'top_n@W'), ('top_p@E', 'top_n@E'), ('in0p', 'in0n'), ('in1p', 'in1n'),
                ('xc4_dip', 'xc4_din'), ('op', 'on'), ('xc5_dip', 'xc5_din'), ('onp', 'onn')]
 
@@ -850,8 +856,31 @@ def build_slice(ly):
     # ---- route -------------------------------------------------------------------------------------------------------
     # comparator clocks first, with a soft halo (other nets keep the next track free for the ground shield)
     CLK = ['clkb', 'clkn', 'clk', 'clknb']
-    R.halo_cost, R.halo_only = 40, set(CLK) | {'top_p@W', 'top_n@W', 'top_p@E', 'top_n@E'}    # layout B: top plates too
+    TOPS = ['top_p@W', 'top_n@W', 'top_p@E', 'top_n@E']
+    R.halo_cost, R.halo_only = 40, set(CLK) | set(TOPS)    # layout B: top plates too
     first = CLK + [n for pr in SLICE_PAIRS for n in pr]
+    if B6:
+        # layout B6 (T2l, offset): the top plates are routed before the comparator clocks, with the full halo cost
+        # (300) on their neighbour nodes, so the clocks, the track lines and the B5 north lines (clk, trk0 at slice x
+        # 12.0 / 13.4 ran next to the top_p riser at y 80-105: +2.5 / +1.5 fF top_p - top_n) keep one free track away;
+        # widen() keeps vdd / gnd off the nodes next to a top plate (B5: vdd widened along the east top_p riser)
+        first = TOPS + CLK + [n for pr in SLICE_PAIRS for n in pr if n not in TOPS]
+        R.halo_cost_net = {n: 300 for n in TOPS}
+        R.halo_vertical = set(TOPS)     # dev3: also above / below (dev2: trk0 Metal2 under the top_n Metal3 riser)
+    if B6:
+        # layout B6 (T2l, dev2): the west top_p riser (Metal3, x 12.8, y 80.8 -> 104.2, from its island to the in0p
+        # switch) shares the corridor west of the array with the north lines trk0 (x 12.0) and clk (x 13.6) in B5 / dev1
+        # (+1.5 / +2.5 fF top_p - top_n, the halo cost alone did not move them: no other free column). Metal3 nodes
+        # next to the riser are blocked for every net, so the next line is >= 1.6 um away.
+        nblk = 0
+        for xb in TOPP_RISER_SIDES:
+            for yb in gpts(*TOPP_RISER_Y):
+                i, j = R.ij(xb, yb)
+                if R.inside(i, j) and R.res[1, i, j] == FREE and R.occ[1, i, j] == FREE:
+                    R.res[1, i, j] = BLOCK; nblk += 1
+        log('B6: %d Metal3 nodes blocked next to the west top_p riser' % nblk)
+        R.widen_avoid = set()       # filled in route_pairs after routing (ids exist once the pins are added)
+        R.widen_avoid_names = set(TOPS)
     ok = route_pairs(blk, first, SLICE_PAIRS, 'r1_adc_slice')
     blk.stats['route_ok'] = ok
     blk.stats['route_failed'] = R.failed
@@ -903,6 +932,8 @@ def route_pairs(blk, first, pairs, cellname):
                 kept, tot = R.shield(R.nets[net], R.nets[gname])
                 blk.stats.setdefault('shield', {})[net] = dict(shielded_edges=kept, edge_sides=tot)
                 log('%s: shield %s %d of %d edge-sides (%d free candidates)' % (cellname, net, kept, tot, R.shield_cand))
+        if getattr(R, 'widen_avoid_names', None):
+            R.widen_avoid = {R.nets[n] for n in R.widen_avoid_names if n in R.nets}
         for net in ('gnd', 'vss', 'vdd', 'vdda', 'vref', 'vrefl'):
             if net in R.nets:
                 nb, nv = R.widen(R.nets[net])
@@ -1026,12 +1057,25 @@ def b5_draw(blk):
     t1, t2 = VSS_TM1_X
     ys1, ys2 = H + SAR_VSS_BUS_Y[0], H + SAR_VSS_BUS_Y[1]
     D.box('TM1', t1, DEC_Y + DEC_H - 3.0, t2, ys2)
-    D.box('M5', 16.8, ys1, 397.4, ys2)
-    ntv = via_array(D, 'TV1', t1, ys1, t2, ys2)
     nvs = 0
-    for n in range(8):
-        xs = 17.28 + 54 * n
-        nvs += via_array(D, 'Via4', xs, ys1, xs + 1.6, ys2)
+    if not B6:
+        D.box('M5', 16.8, ys1, 397.4, ys2)
+        ntv = via_array(D, 'TV1', t1, ys1, t2, ys2)
+        for n in range(8):
+            xs = 17.28 + 54 * n
+            nvs += via_array(D, 'Via4', xs, ys1, xs + 1.6, ys2)
+    else:
+        # layout B6 (T2l, Metal5 density): the VSS bus is TopMetal1 (joined to the TopMetal1 strap in the same layer);
+        # Metal5 only as one island per macro VSS strap (Via4 onto the strap, TopVia1 up to the bus). Metal5 of the bus
+        # 1142 -> 8 x 14.4 um2
+        D.box('TM1', 16.8, ys1, 397.4, ys2)
+        ntv = 0
+        for n in range(8):
+            xs = 17.28 + 54 * n
+            D.box('M5', xs - 1.6, ys1, xs + 3.2, ys2)
+            nvs += via_array(D, 'Via4', xs, ys1, xs + 1.6, ys2)
+            # TopVia1 beside the strap (not stacked on the Via4 cuts)
+            ntv += via_array(D, 'TV1', xs - 1.6, ys1, xs, ys2) + via_array(D, 'TV1', xs + 1.6, ys1, xs + 3.2, ys2)
     # clk feed: Via4 on the macro clk Metal4 (x 6.14-6.34, macro y 19.5-22.825), Metal5 down to SAR_CLK_Y5 and east to
     # the router pin (Metal4 pad + Via4)
     xk, yk = 6.24, H + 21.2

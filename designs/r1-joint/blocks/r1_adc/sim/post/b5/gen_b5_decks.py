@@ -67,6 +67,7 @@ ap.add_argument("--port-map", action="append", default=[])
 ap.add_argument("--ref-probes", default="v(xadc.xl.vref__p13) v(xadc.xl.vref__p16) v(xadc.xl.vrefl__p4) v(xadc.xl.vrefl__p6)")
 ap.add_argument("--ref-slots", type=int, default=10)
 ap.add_argument("--out-load", default="50f")
+ap.add_argument("--ff", action="store_true", help="T2l: also write fc_ffm40 (first conversion at ff / -40 C / 1.32 V)")
 ap.add_argument("--b5", action="store_true", help="B5 netlist: require the ports vdd_sar / vss_sar (macro supply points)")
 a = ap.parse_args()
 if a.b5 and a.adc_subckt == "r1_adc_lay_pr":
@@ -292,6 +293,12 @@ rec["fc_tt"] = deck("fc_tt", a.adc_netlist, "tt", "ee", "lay-ideal", inp, "1.86u
 va, inp = pts_inputs("sim/post/points/ffb.json")
 rec["fc_ss125"] = deck("fc_ss125", a.adc_netlist, "ss125", "ee", "lay-ideal", inp, "1.86u",
                        "first conversion at ss / 125 C / 1.08 V, A -0.80 V, B -0.781 V (as postb4-fc-ss125-rc)")
+if a.ff:
+    # T2l (layout B6): first conversion at ff / -40 C / 1.32 V, 0 V (as fc_tt; the B4 / B5 records have no ff first
+    # conversion), for the first-conversion and output-window rows at ff
+    va, inp = pts_inputs("sim/r5/points/fixtt.json")
+    rec["fc_ffm40"] = deck("fc_ffm40", a.adc_netlist, "ffm40", "ee", "lay-ideal", inp, "1.86u",
+                           "first conversion at ff / -40 C / 1.32 V, 0 V, ideal VREF 1.045 V at the follower nodes (T2l)")
 va, inp = pts_inputs("sim/r5/points/ref10.json", a.ref_slots)
 tst = "%.4fu" % ((18 * T + (len(va) - 1) * 22 * T + 14 * T + 60) * 1e-3)
 rec["ref_tt_buf"] = deck("ref_tt_buf", a.adc_netlist, "tt", "e" * len(va), "lay", inp, tst,
