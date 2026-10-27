@@ -48,7 +48,7 @@ MODEL parts (no block owns them yet; each is a gap of the chip, listed as an ope
 | M4 | `vcm2` (AFE output CM) and `vcm` (isense CM): ideal 0.6 V, 1 kOhm | `views/sch.inc` | the ADC revision 5 has no CM generator |
 | M5 | raw decisions: decoded from the ADC netlist raw word (`rawa`, `rawb`) by B sources | `views/sch.inc` | the ADC netlist exports the word as one analog node |
 | M6 | VREF buffer: ideal unity gain, 10 Ohm output, from `vref_bg` to `vref_l`; `r1_isense` and `r1_safe` take `vref_l`, T2F and the ADC filter keep `vref_bg` | `gen_chip.py` → `r1_chip.sp` | finding R1 (section 9): no block of record buffers the bandgap; without it `vref_bg` is 0.22 V |
-| M7 | Co-simulation time: Icarus cannot step back. When ngspice rejects a step, the shim reports "time reversal" and the digital side keeps its later time. Measured lead: up to 1.88 ns, mean 0.5-0.85 ns, 9-77 events per deck (runs `t10-t1b-fast-b`, `t10-t3-fast-b`, `t10-t4-fast-b`, `t10-t4-fast-a`, `t10-diag-t2enc-b`) | ngspice `d_cosim` + Icarus shim | the ADC strobe window (0.3-0.9 ns before the clk edge) is smaller than this lead; `post_tb.py` measures the strobe in the analog domain, so a moved strobe shows as a failure |
+| M7 | Co-simulation time: Icarus cannot step back. When ngspice rejects a step, the shim reports "time reversal" and the digital side keeps its later time. Measured lead: up to 1.88 ns, mean 0.5-0.85 ns, 9-77 events per deck (runs `t10-t1b-fast-b`, `t10-t3-fast-b`, `t10-t4-fast-b`, `t10-t4-fast-a`, `t10-diag-t2enc-b`) | ngspice `d_cosim` + Icarus shim | the ADC strobe window (0.3-0.9 ns before the clk edge) is smaller than this lead; `post_tb.py` measures the strobe in the analog domain, so a moved strobe shows as a failure. Third budget: an output event that the shim returned in a step that ngspice then rejects is lost (the HDL cannot repeat it): `seq_valid` (F22) and strobes (F24). Cause: the d_cosim default output delay (about 1 ns) lets a second output event replace a pending one; fixed with `delay=1e-12` (section 13.3). `post_tb.py` counts the analog edges per conversion (handshake integrity criterion) |
 
 TESTBENCH parts (not chip logic): the host/bench master `rtl/t10_master.v` (SPI host at 20 MHz, BiSS-C master at
 10 MHz, reference clock for `OSC_COUNT`, shunt level selector, testbench reset pulse `tb_rst_n` for decks 2-5),
@@ -183,9 +183,12 @@ evaluation alone.
 | F16 | Fast view: the `pcasc` source used VDDA − (2 VSG + VDS(MP1)) = VDDA − 2.550 V (0.75 V) in place of VDDA − (VSG + VDS(MP1)) = VDDA − 1.547 V (1.75 V, chip OP of `t10-diag-m6-a`). Only the T2F uses `pcasc`. Decks with the T2F held off (D11) are not affected. The fast-view T2F aborts of F15 ran with this wrong bias. | functional-bug (testbench) | fixed in `run_tb.py` (2026-10-26 23:15); T2F-alone decks `t10-diag-t2falone-a` (correct) and `-b` (old value) |
 | F17 | Deck 1b `tstop` 8 µs was set without timing the host sequence (2 µs wait, then six 1.575 µs SPI frames: about 12.5 µs). The `FAULT` read did not happen. | estimation | rerun to 13 µs, or pipeline the reads |
 | F18 | The T2F alone (`g1_t2f` rev 2, ideal fast-view rails, enable step at 1 µs) aborts in `x1.xqa1` 0.24-0.58 µs after the enable at `reltol` 2e-3, 1e-3, 5e-4 and 2e-4, with every other production option varied (`maxord`, `rshunt`, `vntol`, `abstol`, `method=trap`, no `klu`). It runs at `reltol=1e-4`, the value of the T2F block decks (1.624 MHz at 27 °C). The `pcasc` error F16 does not change it. `reltol` cannot be changed during a run (stop/resume test: same time points). | numerical | test 5 runs on the thermal subset at `reltol=1e-4` (section 12.6); decks 2-4 keep D11 |
-| F19 | Deck 3 (`t10-t3-fast-b`): the ADC sequencer model M1 stopped after the conversion that started at 12.94 µs; no conversion followed, so `I_A`/`I_B` kept the level-0 values (821/823 → 811) and both step criteria failed. The isense outputs were correct (level 0: −0.560 V on both channels; level 1: A −0.140 V, B +0.559 V; gain 14 as specified). Time reversals came at every strobe of that conversion (13.04-13.34 µs). Cause (most likely, not observed directly): a clock edge delivered twice gave a period near zero, a delay became negative, and Verilog took it as a very large delay. | verification-gap (testbench, M1 with M7) | periods below 20 ns ignored, delays clamped at zero (`rtl/r1_chip_dig.v`). The fix did **not** cure it: rerun `t10-t3-fast-c` (20 µs, deck 9257 s) stopped after the third conversion (`adc_start` last at 3.475 µs, `seq_stb13` last at 3.940 µs; no PWM edge, no `is_smp`; SPI still answers, `I_A`/`I_B` read 0). The negative-delay cause is therefore not confirmed. Deck 2 rerun `t10-t2-fast-b` with the same change stopped at the same conversion (START 3.507 µs in both decks), so the change itself causes this early stop; it is reverted (`rtl/r1_chip_dig.v` = HEAD, sha `9bc7ff1e…`). Decks `t10-t4-safe-a/-b` used the changed file; their ADC is a stub, so the change has no effect there. Open (O10) |
+| F19 | Deck 3 (`t10-t3-fast-b`): the ADC sequencer model M1 stopped after the conversion that started at 12.94 µs; no conversion followed, so `I_A`/`I_B` kept the level-0 values (821/823 → 811) and both step criteria failed. The isense outputs were correct (level 0: −0.560 V on both channels; level 1: A −0.140 V, B +0.559 V; gain 14 as specified). Time reversals came at every strobe of that conversion (13.04-13.34 µs). Cause (most likely, not observed directly): a clock edge delivered twice gave a period near zero, a delay became negative, and Verilog took it as a very large delay. | verification-gap (testbench, M1 with M7) | periods below 20 ns ignored, delays clamped at zero (`rtl/r1_chip_dig.v`). The fix did **not** cure it: rerun `t10-t3-fast-c` (20 µs, deck 9257 s) stopped after the third conversion (`adc_start` last at 3.475 µs, `seq_stb13` last at 3.940 µs; no PWM edge, no `is_smp`; SPI still answers, `I_A`/`I_B` read 0). The negative-delay cause is therefore not confirmed. Deck 2 rerun `t10-t2-fast-b` with the same change stopped at the same conversion (START 3.507 µs in both decks), so the change itself causes this early stop; it is reverted (`rtl/r1_chip_dig.v` = HEAD, sha `9bc7ff1e…`). Decks `t10-t4-safe-a/-b` used the changed file; their ADC is a stub, so the change has no effect there. **Correction (third budget, section 13):** the HEAD model with handshake monitors (`t10-diag-hs-head-a`) stops at the same conversion, so the change was not the cause. The cause is a lost `d_cosim` output event (F22). The change returns as F23 |
 | F20 | Deck 4 (`t10-t4-fast-b`, 36 µs, deck 11 634 s): the gates never switched, so the OC step was never applied (master waits for `GATE_A`). Cause: the sequence wrote `CMP_THR_A` = 0x3F2C (THR_NEG_A 63) and left THR_NEG_B at its reset value 63. NEG cell code c = 63 − THR_NEG = 0 gives the cell threshold −VREF, so NEG is active at zero current (`cmp_neg_a`, `cmp_neg_b` = 1.2 V from t = 0 in decks 3 and 4). FAULT bits 1 and 3 latch at the reset exit, and `CLR` keeps a bit whose source is active, also when it is masked. | functional-bug (testbench) | THR_NEG 0 on both channels (`rtl/t10_master.v`), `tstop` 38 µs; rerun `t10-t4-safe-a` |
 | F21 | Deck 4 `tstop` 38 µs (36 + one added SPI write) did not cover the last 3.6 µs clear window, which ends at 39.3 µs (the gate waits add time). The last criterion is not run. | estimation | rerun `t10-t4-safe-b` with `tstop` 40.5 µs |
+| F22 | The ctrl frame stopped because one `seq_valid` output event of the macro did not reach the analog side (O10). | verification-gap (testbench, co-simulation) | the ctrl takes the valid inside the macro (section 13.3) |
+| F23 | The sequencer model re-measured the clock period inside a conversion; a late or doubled clock edge gave a wrong or negative delay (stop in `t10-t4-safe-vb-a`; strobes moved 4.7 ns in the subsets). | functional-bug (testbench model) | period frozen per conversion as the mean of 7 periods, delays limited at zero (F23b) |
+| F24 | Macro output events (strobes, `seq_valid`, one master `MA_SCLK` pulse) were lost when a second output event came within about 1 ns: the default d_cosim output delay. | tooling | `delay=1e-12`, `T10_SEQ_LAT` 0.141 ns (`t10-diag-hs-dly-b`: no loss) |
 
 ## 10. Findings on the chip (from the testbench)
 
@@ -207,7 +210,7 @@ evaluation alone.
 | O6 | MODEL parts M1-M5 (ADC sequencer, `cur_trk`, isense auto-zero phases, CM sources, raw-word decode) have no block of record. | coordination |
 | O8 | `xu_bgr.xqd1` (VBIC, diode-connected, emitter on `vd2`) aborts the transient in a reproducible way (F12). A fix needs either a model-side answer (PDK issue) or an accepted deck-local numerical aid. | numerical |
 | O9 | Decks 2-4 run at `reltol=2e-3` (D9). The T2F needs `reltol=1e-4` (F18). The other block decks of record were not re-run at `reltol=2e-3` by this track; a block-level comparison at both values is not run | verification-gap |
-| O10 | The ADC handshake between the testbench sequencer (M1) and the ctrl RTL stops after 13 conversions with the HEAD model (`t10-t3-fast-b`) and after 3 with the reverted F19 change (`t10-t3-fast-c`, `t10-t2-fast-b`); both decks show co-simulation time reversals at the strobes of the last conversion. Not explained. Next lever: monitor lines for `seq_valid`, `adc_valid` as seen by the ctrl, and the busy flags; reproduce on a short deck 3 (5 µs) with the AFE as a stub; test a two-tick `seq_valid` | verification-gap |
+| O10 | Closed in the third budget (section 13). The ADC handshake stop is a lost `d_cosim` output event (`seq_valid`), not a chip-contract problem; the D18 frame (22 ticks, 733 ns) is confirmed. Fix F22: the ctrl takes the valid inside the macro. Lost strobe and master events (F24: `seq_stb13`, `seq_stb6`, one master `MA_SCLK` pulse): cause is the about 1 ns default `d_cosim` output delay; fixed with `delay=1e-12` (`t10-diag-hs-dly-b`: no loss). Decks before this fix (`t10-t3-fast-d`, `t10-t2-fast-d`) carry the loss; `post_tb.py` flags every affected conversion | verification-gap (testbench) |
 | O7 | Every deck exceeds the 2 h budget (3.1-5.6 h at 563 s per simulated µs). Decks 5 (27 and 125 °C) and 6 did not run in the 8 h track budget: the three CPUs ran decks 2-4. | estimation |
 
 Finding R2 (cause found: testbench bug in MODEL M1, not a chip bug). In deck 2 both ADC slices returned 2063 (raw
@@ -353,6 +356,124 @@ run on the full fast view.
 | `t10-diag-t5sub-a` | 5 (probe) | thermal subset, 4 µs | 4 µs | 147 s | DIAGNOSTIC (T2F starts, no abort; verdict not used) |
 | `t10-diag-t2fopt-a` | — | T2F alone, 12 option sets | 12 µs each | 1-24 s each | DIAGNOSTIC (F18) |
 | `t10-t3-fast-c` | 3 | fast, D11, F19 change, 2 threads | 20 µs | 9257 s | failed: ADC handshake stopped after 3 conversions (O10) |
-
 | `t10-t4-safe-a` | 4 | safety subset, D11, F20 fix, 1 thread | 38 µs | 8121 s | 8 passed, 1 not run (F21) |
 | `t10-t2-fast-b` | 2 | fast, D11, R2 fix, F19 change (reverted), 3 threads | 24 µs | 9004 s | failed: 0 encoder pairs, ADC handshake stopped after 3 conversions (O10); SPI and BiSS frame worked |
+
+## 13. Third budget (2026-10-27): ADC handshake (O10), tests 2-4 to completion, real VREF buffer
+
+Every result names the VREF buffer: **M6** (ideal unity buffer) or **r1_vbuf** (the buffer of `r1_bias`
+revision 2, commit ae4dfac95).
+
+### 13.1 New runner options
+
+| Option | What it does |
+| --- | --- |
+| `--vbuf real` | Takes `.subckt r1_vbuf` from `blocks/r1_bias/schematic/r1_bias.spice` (sha256 checked: `5511ea8d…`) into the run directory and replaces M6 by `XU_VBUF vref_bg vref_l ibvb VDDA VSS r1_vbuf`. The bias leg is an ideal current source `ibvb` (5.07 µA at 27 °C, the fast-view value). The T2F `vref` pin moves to `vref_l` |
+| `--vdefine NAME` | Extra iverilog define (for example `T10_SEQ_F19`, `T10_VALID_BRIDGE`, `T10_STALL_TICKS`) |
+| `--stall-abort` | The runner stops ngspice when the log has `T10MON STALL` (a frame open for 60 ticks) |
+| `--current-subset` | Test 3 only: `r1_afe` and `r1_t2f` as 1 GΩ stubs. Measured: not faster than the fast view (the ADC dominates), so no result uses it |
+| `--cosim-delay S` | `d_cosim` output delay, default 1e-12 s (F24 fix); with it the runner sets `T10_SEQ_LAT` = 0.141 ns. `0` = not set (d_cosim default, about 1 ns) |
+| `--cosim-irrev N` | Sets the `d_cosim` parameter `irreversible=N` (O10 test only) |
+| frozen ctrl RTL | The runner compiles the ctrl from `<G1_RESULTS_ROOT>/r1_top/tb/ctrl_rtl_0.5` (r1_ctrl RTL 0.5, f65d55c49, sha256 checked), because track T5g changes the tree copy to revision 0.7. `run.json` field `ctrl_rtl_dir` |
+
+### 13.2 Handshake monitors (`rtl/r1_chip_dig.v`, section 3b)
+
+The model prints `T10HS` lines: sequencer start (`SEQ`), model valid (`SVAL1`, `SVAL0`), analog valid at the
+macro input (`VA1`/`VB1` with the raw word), ctrl conversion start and frame number (`CSTART`), and the valid as
+the ctrl samples it (`CSEEN`). `T10MON STALL` marks a frame open for `T10_STALL_TICKS` (60) ticks. `T10MON
+LOSTEV` marks a model `seq_valid` rise that did not come back through the analog `adc_valid_a` in 20 ns.
+`T10MON CLKPER` marks a clock period outside 30-37 ns. `post_tb.py` has the criterion "ADC handshake integrity"
+in tests 2 and 3: analog strobe and latch rises per started conversion, lost valid events and stalls.
+
+### 13.3 O10: cause and fix
+
+1. Reproduction on 5 µs test-3 decks from the operating point (3 threads, about 40 min each). The F19 variant
+   (`t10-diag-hs-f19-a`, `-b`) and the HEAD model (`t10-diag-hs-head-a`) stop at the same conversion (frame 3,
+   start 3.507 µs). The F19 change is therefore not the cause (correction of the second-budget text, F19).
+2. In frame 3 the model `seq_valid` rose at 3945.624 ns. The analog `seq_valid` and `adc_valid_a` did not rise
+   (raw file of `t10-diag-hs-f19-b`: rises only at 2479.7 and 3213.1 ns). The ctrl frame generator closes a frame
+   only when it has seen the valid of both slices (D18), so the frame stayed open.
+3. Mechanism (M7): when the HDL output changes, the shim stops the HDL and returns the change at the HDL time.
+   If ngspice then rejects that step, the event is rolled back. Icarus cannot step back, so the change is lost.
+4. Fix **F22** (testbench): the ctrl takes `adc_valid_a/b` from the model `seq_valid` inside the macro. The
+   analog `adc_valid_a/b` nets stay for observation. `-DT10_VALID_BRIDGE` restores the old path. Check
+   `t10-diag-hs-f19-c`: the valid at 3945.6 ns is lost on the analog side (`LOSTEV`), and frames 4 and 5 start.
+5. Fix **F23** (testbench): the sequencer model re-measured the clock period on every clock input inside a
+   conversion. In `t10-t4-safe-vb-a` it stopped inside conversion 2 (no `SVAL1`); a negative delay is a very long
+   delay in Icarus. The period is now frozen at the start of a conversion (20-50 ns, else 33.333 ns), and every
+   delay is limited at zero.
+   **F23b**: one clock edge that the shim delivers 0.34 ns late (subset decks: period 33.670 ns at the conversion
+   start) moved all 14 strobes by up to 4.7 ns when the period of one cycle was frozen. The model now uses the mean
+   of the last 7 periods. In the full fast view the measured period is 33.329-33.334 ns (`t10-t2-fast-d`).
+   The thermal subset runs with `T10_VALID_BRIDGE` by default (frames stop after frame 1 with the ADC stub, as in
+   the second-budget subset results).
+6. Finding **F24** (testbench, open): strobe events are also lost. In 5 µs decks `seq_stb13` reached the ADC in
+   2 of 4 conversions (`t10-diag-hs-f23-a`, 1 thread; `t10-diag-hs-irr1-a`, `irreversible=1`, 2 threads) and in
+   3 of 4 (`t10-diag-hs-f19-c`). `seq_stb0`, `seq_stb6`, `seq_lat` and the valid were complete in these short decks;
+   the 20 µs test-3 deck `t10-t3-fast-d` also lost `seq_stb6` in 2 of 19 conversions (a mid-word decision: the word is
+   wrong by more than 1 LSB). `irreversible=1`
+   gave no change. `seq_stb13` clocks only the LSB decision register (`AFPa13`, no DAC bit), so a lost
+   `seq_stb13` gives a raw-word error of at most 1 LSB of 14 bits. The decks of tests 2 and 3 save all 14
+   strobes and the latch, and the integrity criterion lists every short strobe.
+   The loss also hits testbench outputs: in the test-5 subset one master `MA_SCLK` pulse (2377.5-2402.5 ns)
+   was lost 1.3 ns after a `seq_stb10` event, so the `T2F_WIN` write did not happen and `TEMP` read 0
+   (`t10-t5-sub-27-vb-a`, `-m6-b`, `-m6-c`, `-vb-b`). Two output events of the macro within about 1.5 ns are the
+   common condition of every loss seen.
+7. Cause and fix of F24 (testbench): the `d_cosim` output delay. Without the `delay` parameter, every macro
+   output reaches the analog side about 1 ns after the HDL event (this is most of the 1.14 ns latency of R2). In
+   every loss seen, a second output event of the macro came less than about 1.5 ns after the lost one, so the
+   pending output was replaced. Run `t10-diag-hs-dly-b` (`delay=1e-12`, strobe latency define
+   `T10_SEQ_LAT` = 0.141 ns, 5 µs, 3 threads, 2618 s): all 14 strobes, the latch and the valid in every
+   conversion (4 of 4; the same deck without the change: `seq_stb13` 2 of 4), strobe position 0.596-0.601 ns, raw
+   word 10458-10459 in all four conversions (with the 1 ns delay: 10304-10459, so conversions with a lost
+   strobe gave wrong words). `run_tb.py` now sets `delay=1e-12` and `T10_SEQ_LAT=0.141` by default
+   (`--cosim-delay 0` restores the old set-up). A 1 ps step warning ("output scheduled with impossible delay",
+   one at 10 ps) is harmless.
+8. Chip-level contract: not affected. The D18 frame (22 ticks, `CSTART` 733 ns apart: 2040.5, 2773.8, 3507.1 ns),
+   the current pair at the centre strobe and the first-conversion hold are as specified. O10 is a testbench
+   (co-simulation) finding, not a chip finding.
+
+### 13.4 Real VREF buffer (`--vbuf real`) against M6
+
+| Test | Run with r1_vbuf | Against M6 | Difference |
+| --- | --- | --- | --- |
+| 1b subset | `t10-t1b-sub-vb-b` (13 µs, 363 s) | `t10-t1b-sub-a` | none in the criteria: reset exit, `ID` 0x5205, POR/CAL passed; `FAULT` 0x1900 failed in both (R3). `vref_l` mean 1.04497 V against `vref_bg` 1.04490 V (+0.07 mV), range 1.04447-1.04549 V. T2F output mean 0.5889 V (M6: 0.5885 V) |
+| 5 thermal subset, 27 °C | `t10-t5-sub-27-vb-c` (25 µs, 1 thread, F23b) | `t10-t5-sub-27-a` | none: `TEMP` = 14 in both (expected 13.86 ± 1); f_T2F 1.62395 MHz, +1.478 % against the record (M6: 1.62406 MHz, +1.485 %): −0.007 % |
+| 5 thermal subset, 125 °C | `t10-t5-sub-125-vb-a` (25 µs, 1 thread, F23b) | `t10-t5-sub-125-a` | none: `TEMP` = 18 in both (expected 18.21 ± 1); f_T2F 2.13439 MHz, +1.156 % (M6: 2.13459 MHz, +1.165 %): −0.009 % |
+| 4 safety subset | `t10-t4-safe-vb-a` (40.5 µs, 1 thread, 8360 s) | `t10-t4-safe-b` | none: all 10 criteria passed in both. OC threshold 69.806 mV, `FAULT_N` 165.507 ns, gates 277.686 ns, EN low 85.258 ns: equal to M6 within 0.01 ps. `vref_l` time-weighted mean 1.04495 V (+0.05 mV), rms deviation 0.56 mV. Two dips to 1.0218 V (−23 mV, 23 ns above 5 mV, 49 ns above 1 mV) at 3.676 µs and 5.242 µs, the two `CMP_THR` writes (register 0x36, 0x37: the comparator tap codes change); no dip at the OC step or at EN low |
+
+Result: with the D20 buffer in place of M6, tests 1b, 4 and 5 (27 °C and 125 °C) give the same verdicts and the same numbers. The
+`vref_l` load steps at the threshold writes are the only visible effect. Tests 2 and 3 run with M6 in this
+budget (the decks were started before the r1_vbuf result; one deck each fits the CPU budget).
+
+### 13.5 Run log, third budget (records in `runs/<run-id>/run.json`)
+
+`rtl/r1_chip_dig.v` changed during the budget (monitors, F22, F23, F23b). Each `run.json` holds the sha256 of the
+file that the deck compiled (`inputs_sha256`).
+
+| Run | Test | View, options | VREF buffer | Simulated | Deck time | Result |
+| --- | --- | --- | --- | --- | --- | --- |
+| `t10-t4-safe-b` | 4 | safety subset, D11, F20 fix, 2 threads | M6 | 40.5 µs | 5980 s | passed (10 of 10) |
+| `t10-diag-hs-f19-a` | 3 | F19 variant, monitors, 3 threads | M6 | 5 µs | 2168 s | DIAGNOSTIC (O10 reproduction) |
+| `t10-diag-hs-f19-b` | 3 | F19 variant, monitors, 3 threads | M6 | 4.3 µs | 1958 s | DIAGNOSTIC (valid lost at 3945.6 ns) |
+| `t10-diag-hs-head-a` | 3 | HEAD model, monitors, stall abort | M6 | 5.47 µs | 4087 s | DIAGNOSTIC (same stop as F19 variant; stall abort) |
+| `t10-diag-hs-f19-c` | 3 | F19 variant + F22, 3 threads | M6 | 5 µs | 2401 s | DIAGNOSTIC (frames 4, 5 start; stb13 3 of 4) |
+| `t10-t1b-sub-vb-a` | 1b | thermal subset | r1_vbuf | — | — | failed: empty netlist (runner bug: a variable shadowed the deck list; fixed) |
+| `t10-t1b-sub-vb-b` | 1b | thermal subset, `reltol=1e-4` | r1_vbuf | 13 µs | 363 s | same as M6: `FAULT` 0x1900 (R3, expected until ctrl 0.7); reset exit, `ID`, POR/CAL passed |
+| `t10-diag-hs-f23-a` | 3 | F22 + F23, 1 thread | M6 | 5 µs | 3864 s | DIAGNOSTIC (no lost valid; stb13 2 of 4) |
+| `t10-diag-hs-irr1-a` | 3 | F22 + F23, `irreversible=1`, 2 threads | M6 | 5 µs | 2673 s | DIAGNOSTIC (same as f23-a) |
+| `t10-t4-safe-vb-a` | 4 | safety subset, D11, F20 fix, F22, 1 thread | r1_vbuf | 40.5 µs | 8360 s | passed (10 of 10), equal to M6 |
+| `t10-t3-sub-a` | 3 | current subset (AFE stub), F22 + F23, 1 thread | M6 | 1.347 µs of 19.6 | 1238 s | failed: HBT abort `xu_t2f.x1.xqa1` (F18; the T2F is now a stub in this subset; the subset is not faster, so not used) |
+| `t10-t5-sub-27-vb-a` | 5 | thermal subset, F22 + F23 | r1_vbuf | 25 µs | 305 s | failed: `TEMP` 0 (lost `MA_SCLK` pulse, F24; not a buffer effect) |
+| `t10-t5-sub-27-m6-b` | 5 | thermal subset, F22 + F23 (control) | M6 | 25 µs | 299 s | failed: `TEMP` 0 (same cause) |
+| `t10-t5-sub-27-m6-c` | 5 | as `-m6-b` + T2F edge counters | M6 | 25 µs | 326 s | DIAGNOSTIC (T2F edges reach the ctrl; the `T2F_WIN` write is missing) |
+| `t10-t5-sub-27-vb-b` | 5 | thermal subset, valid bridge, F23 | r1_vbuf | 25 µs | 362 s | failed: same lost SCLK pulse (frame 1 strobes) |
+| `t10-t5-sub-27-vb-c` | 5 | thermal subset, valid bridge, F23b | r1_vbuf | 25 µs | 358 s | passed: `TEMP` 14, f_T2F +1.478 % |
+| `t10-t5-sub-125-vb-a` | 5 | thermal subset, 125 °C, valid bridge, F23b | r1_vbuf | 25 µs | 388 s | passed: `TEMP` 18, f_T2F +1.156 % |
+| `t10-t3-fast-d` | 3 | fast, D11, F22 (F23 not yet), 2 threads, runner paused so its timeout check did not stop the deck (T10-28) | M6 | 20 µs | 11 600 s | failed: `I_B` step +2.37 %, `I_A` step +9.1 % (level-0 word from a conversion with lost strobes), integrity failed (stb6 2, stb13 6 of 19) |
+| `t10-diag-hs-dly-a` | 3 | `delay=1e-12` without the latency change | M6 | — | — | stopped by the track (strobe latency define not adapted) |
+| `t10-diag-hs-dly-b` | 3 | F22 + F23b, `delay=1e-12`, `T10_SEQ_LAT=0.141`, 3 threads | M6 | 5 µs | 2618 s | DIAGNOSTIC: no lost event (all 14 strobes, latch, valid in 4 of 4 conversions) |
+| `t10-t2-fast-c` | 2 | fast, D11, before F22 | M6 | — | — | stopped by the track (superseded by F22) |
+| `t10-t2-fast-d` | 2 | fast, D11, F22 + F23, 3 threads, runner paused for its timeout check (T10-28) | M6 | 21.5 µs | 11 813 s | failed (testbench): words invalid, strobes lost (F24); BiSS-C frame and CRC passed; residual 128° el on invalid words |
+| `t10-t3-fast-e` | 3 | fast, D11, F22 + F23b + F24 fix, 3 threads | M6 | 19.6 µs | running | not run yet (started 09:21) |
+| `t10-t2-fast-e` | 2 | fast, D11, F22 + F23b + F24 fix, 3 threads | M6 | 21.5 µs | running | not run yet (started 09:51) |

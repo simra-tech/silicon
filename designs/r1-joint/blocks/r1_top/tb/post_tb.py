@@ -187,12 +187,39 @@ def strobe_check(w):
     return crit('ADC strobes 0.6 ns before the clk30 edge (M1 check, %d conversions)' % len(off),
                 [round(min(off), 3), round(max(off), 3)], '0.3-0.9 ns', 0.3 <= min(off) and max(off) <= 0.9, 'ns')
 
+def hs_check(w, mon):
+    """O10 / F22: every conversion the macro started must reach the ADC: analog strobe pulses (stb0, stb6, stb13)
+    per started conversion, and no lost model events (T10MON LOSTEV) and no stalled frame (T10MON STALL)."""
+    t = w['time']
+    nconv = len([m for m in mon if m['kind'] == 'START'])
+    t_end = t[-1]
+    # a conversion started in the last 0.5 us may not have all strobes inside the deck
+    nfull = len([m for m in mon if m['kind'] == 'START' and float(m['t']) * 1e-9 < t_end - 0.5e-6])
+    cnt = {}
+    for n in ['seq_stb%d' % k for k in range(14)] + ['seq_lat']:
+        if n in w:
+            cnt[n] = len([c for c in crossings(t, w[n], 0.6, True) if c < t_end - 0.0e-6])
+    lost = [m for m in mon if m['kind'] == 'LOSTEV']
+    stall = [m for m in mon if m['kind'] == 'STALL']
+    short = sorted(n for n, v in cnt.items() if v < nfull)
+    ok = (not stall) and all(nfull <= v <= nconv for v in cnt.values())
+    val = {'conversions_started': nconv, 'complete_in_deck': nfull, 'strobe_rises': cnt,
+           'lost_valid_events': len(lost), 'stalls': len(stall), 'short': short}
+    # F24: a lost seq_stb13 leaves only the LSB decision register unclocked (raw-word error <= 1 LSB of 14 bits)
+    if short == ['seq_stb13']:
+        val['effect'] = 'only the LSB strobe lost in %d of %d conversions: raw-word error <= 1 LSB' % (
+            nfull - cnt['seq_stb13'], nfull)
+    return crit('ADC handshake integrity: strobes per started conversion, no stalled frame (O10, F22, F24)',
+                val, 'strobe rises = conversions, 0 stalls', ok)
+
+
 def test2(w, res, mon, run):
     t = w['time']
     C, M = [], {}
     sc = strobe_check(w)
     if sc:
         C.append(sc)
+    C.append(hs_check(w, mon))
     f = 1e4
     stim = lambda tt: (360.0 * f * tt + THETA0_DEG)
     rst = [float(r['t']) * 1e-9 for r in res if r['kind'] == 'TBRESET']
@@ -272,6 +299,7 @@ def test3(w, res, mon, run):
     sc = strobe_check(w)
     if sc:
         C.append(sc)
+    C.append(hs_check(w, mon))
     lsb, vr = adc_lsb(w)
     M['adc_vrefo_V'] = vr
     M['adc_lsb_uV'] = lsb * 1e6

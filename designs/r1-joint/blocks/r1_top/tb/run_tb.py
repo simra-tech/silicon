@@ -147,6 +147,25 @@ def build_deck(a, out, vvp_inc, io_inc):
                                  '* T2F HBTs abort the transient, F15); the level-shifter output t2f_en33 is loaded by 1 MOhm\n'
                                  'XU_T2F VDDA VDD VSS pbias pcasc vref_bg VSS t2f_mode33 t2f_fout r1_t2f\n'
                                  'Rt2f_en_ld t2f_en33 VSS 1meg')
+    if a.vbuf == 'real':
+        # D20: the VREF buffer r1_vbuf of r1_bias revision 2 (blocks/r1_bias/schematic/r1_bias.spice, commit ae4dfac95)
+        # replaces MODEL M6. Its bias leg ibvb (one r1_bias_leg unit) is an ideal source of the recorded 5 uA leg current
+        # (fast view). r1_t2f vref moves to the buffered net as in D20 / the r1_bias README load budget.
+        src = os.path.join(BLOCKS, 'r1_bias', 'schematic', 'r1_bias.spice')
+        if sha(src) != VBUF_SHA:
+            raise SystemExit('--vbuf real: r1_bias.spice differs from the revision-2 record')
+        VL = open(src).read().splitlines()
+        i0 = [k for k, l in enumerate(VL) if l.startswith('.subckt r1_vbuf ')][0]
+        i1 = [k for k, l in enumerate(VL) if l.startswith('.ends r1_vbuf')][0]
+        open(os.path.join(out, 'r1_vbuf_rev2.spice'), 'w').write('\n'.join(VL[i0:i1 + 1]) + '\n')
+        m6 = 'Evref_m6 vref_m6i VSS vref_bg VSS 1\nRvref_m6 vref_m6i vref_l 10'
+        if m6 not in chip:
+            raise SystemExit('--vbuf real: M6 lines not found in r1_chip.sp')
+        ivb = interp_t(FAST_REC['i5'], a.temp)
+        chip = chip.replace(m6, '* D20: r1_vbuf (r1_bias revision 2) in place of MODEL M6; bias leg as an ideal %.4g uA source\n'
+                                'XU_VBUF vref_bg vref_l ibvb VDDA VSS r1_vbuf\nIvbuf_leg VDDA ibvb DC %.6g' % (ivb * 1e6, ivb))
+        chip = chip.replace(' pbias pcasc vref_bg t2f_en33 ', ' pbias pcasc vref_l t2f_en33 ').replace(' pbias pcasc vref_bg VSS t2f_mode33 ', ' pbias pcasc vref_l VSS t2f_mode33 ')
+        A('.include %s' % os.path.join(out, 'r1_vbuf_rev2.spice'))
     open(os.path.join(out, 'r1_chip_nodcn.sp'), 'w').write(chip)
     A('.include %s' % os.path.join(out, 'r1_chip_nodcn.sp'))
     A('.temp %g' % a.temp)
@@ -245,6 +264,24 @@ FAST_REC = {'vref': {-40: 1.0435, 27: 1.0449, 125: 1.04397},
             'i5': {-40: 3.93e-6, 27: 5.07e-6, 125: 6.71e-6}}
 
 
+VBUF_SHA = '5511ea8db822408d882fad324b1f694f82b0e4448b7e6f81a6319fd14957dfeb'
+PINNED_RTL = {
+ "r1_lib.v": "ed65a30a374f75e062e0ec4567e5c414cb72d7b2c790921dfdbd80938e068869",
+ "r1_sync2.v": "c3164e4bc1ba06279047eaad2e9bf36f2904cdc73064bc8696df6c2fcc09d18f",
+ "r1_sinlut.v": "3e10c65e93bb9bf6d6379d8ae3fae3aec2fce6cf612038d3421fac3db2a35e86",
+ "r1_pos.v": "b245a234f2de924892ecd9161761925aef056c496385d9679ff92156dc669171",
+ "r1_adcw.v": "198de6c050266d8fb8d863b5c7a34c61e2711dc94ff13b1a8b753c8ab69dfba2",
+ "r1_gate.v": "4f8f689adf86040b214359a309c92e49e68355bc56ce92891638b9065162ecd5",
+ "r1_safe.v": "00ea31607e8dc8c1036e09631889fe46f3420b6f8c8078543e9e9517021af7dd",
+ "r1_cmpcal.v": "98c3f1b9135240de3c9d1abd3996e309b3cec08b3e77af9aefdca06bd10f4a11",
+ "r1_tapidx.v": "fbbf0029b95ca1daed4339d968b12527cedbe23668ac41304a289ec17712946f",
+ "r1_idrom.v": "ea79c1cf13683cd151e715d74f3ca59848a86b122ce07f42008aa949156d787c",
+ "r1_regs.v": "28734fad344a7c498d98682543a71bce46d8871d1082b2a76e21ea3dc9c81c7b",
+ "r1_spi.v": "884ceaf4639583549e91d039c99f4ea931052b3b24dcdf42af27e0bc7d3f764b",
+ "r1_biss.v": "fda134e13102b358e21860db7b2fb1fac6eb6b17ad2faaff9a2953ddbcce64b8",
+ "r1_ctrl_top.v": "bb75421096187133c243e8c5d1e387aac0e562ce65082d35080a9535dfb77dd9"
+}
+
 def interp_t(tab, t):
     ks = sorted(tab)
     if t <= ks[0]:
@@ -288,6 +325,23 @@ def stub(name, pins):
         else:
             out.append('Rstub%d %s 0 1e9' % (k, q))
     return out + ['.ends %s' % name]
+
+
+def current_subset(view, rec):
+    # test 3 (current path: shunt -> isense -> ADC current slices -> ctrl): only r1_afe is a stub (third budget, speed);
+    # the ADC encoder slices then sample a 1 GOhm stub output (their words are not used in test 3)
+    inc = '.include /work/designs/r1-joint/blocks/r1_afe/schematic/r1_afe_revE.spice'
+    if inc not in view:
+        raise SystemExit('--current-subset: include not found in the view: ' + inc)
+    view = view.replace(inc, '* T10 current subset: removed ' + inc)
+    pins, _, _ = subckt_header(open(os.path.join(BLOCKS, 'r1_afe/schematic/r1_afe_revE.spice')).read(), 'r1_afe')
+    # the T2F (held off by D11) still aborted on its HBT in this subset (run t10-t3-sub-a, 1.347 us, F18): stub it too
+    x1 = 'X1 vdd vdd12 vss pbias pcasc vref en mode fout g1_t2f'
+    if x1 not in view:
+        raise SystemExit('--current-subset: r1_t2f wrapper line not found')
+    view = view.replace(x1, '* T10 current subset: T2F stub\nRt2fstub fout vss 1e9')
+    rec['current_subset'] = 'r1_afe and r1_t2f replaced by 1 GOhm stubs (test 3 only; isense, safe, ADC, gate real)'
+    return view + '\n'.join(stub('r1_afe', pins)) + '\n'
 
 
 def thermal_subset(view, rec, keep_safety=False):
@@ -390,12 +444,27 @@ def main():
     ap.add_argument('--por-step', type=float, default=1.0, help='deck 1b: por_n release time in us (fast view)')
     ap.add_argument('--t2f-off', action='store_true', help='deviation D11: T2F enable input held at VSS')
     ap.add_argument('--thermal-subset', action='store_true', help='tests 1b, 5, 6: AFE, isense, safe, ADC as stubs (F18)')
+    ap.add_argument('--current-subset', action='store_true', help='test 3: AFE as a stub; isense, safe, ADC, gate real')
     ap.add_argument('--safety-subset', action='store_true', help='test 4: AFE and ADC as stubs; isense, safe, gate real')
     ap.add_argument('--fast', action='store_true', help='fast view: r1_bgr and r1_bias (with POR) as recorded behaviour')
     ap.add_argument('--ctrl', default='rtl', choices=('rtl', 'static'), help='static = DIAGNOSTIC, no co-simulation')
     ap.add_argument('--nodeset', default='', help='comma list node=value, e.g. vref_bg=1.045')
+    ap.add_argument('--vbuf', default='m6', choices=('m6', 'real'), help='VREF buffer: ideal MODEL M6 or r1_vbuf (D20, fast view)')
+    ap.add_argument('--cosim-delay', type=float, default=1e-12,
+                    help='d_cosim output delay in s (F24 fix, default 1 ps; 0 = parameter not set, the d_cosim default of about 1 ns)')
+    ap.add_argument('--cosim-irrev', type=int, default=None, help='d_cosim irreversible parameter (O10 output-event loss test); default: not set')
+    ap.add_argument('--vdefine', action='append', default=[], help='extra iverilog define, e.g. T10_SEQ_F19')
+    ap.add_argument('--stall-abort', action='store_true', help='stop ngspice when the monitor prints T10MON STALL')
     ap.add_argument('--threads', type=int, default=1, help='ngspice OpenMP threads (device load)')
     a = ap.parse_args()
+    if a.cosim_delay and not any(d.startswith('T10_SEQ_LAT') for d in a.vdefine):
+        # F24: with the 1 ps output delay the clk-edge-to-analog latency of the macro outputs is 0.141 ns
+        # (run t10-diag-hs-dly-b), not 1.14 ns; the strobe timing of the sequencer model follows it
+        a.vdefine = a.vdefine + ['T10_SEQ_LAT=%g' % (0.141 + (a.cosim_delay - 1e-12) * 1e9)]
+    if a.thermal_subset and 'T10_VALID_BRIDGE' not in a.vdefine:
+        # F24/T10-29: with the ADC as a stub, the old valid path keeps the frames stopped after frame 1 (the reference
+        # behaviour of the subset results); running frames put strobe events next to master SPI edges, and d_cosim lost one
+        a.vdefine = a.vdefine + ['T10_VALID_BRIDGE']
     if a.run_id != a.run_id.lower():
         raise SystemExit('run id must be lower case (ngspice lower-cases the d_cosim path)')
     if a.tstop is None:
@@ -412,7 +481,7 @@ def main():
     t_start = time.time()
     rec = {'run_id': a.run_id, 'block': 'r1_top', 'track': 'T10', 'test': a.test, 'description': TESTS[a.test][0],
            'question': a.question or TESTS[a.test][0], 'view': a.view, 'corner': a.corner, 'temp_c': a.temp,
-           'tstop_us': a.tstop, 'tmax': a.tmax, 'options': a.opts, 'threads': a.threads, 'settle_us': a.settle, 'hbt_selft0': a.hbt_selft0, 'start': a.start, 'nodeset': a.nodeset, 'fast': a.fast, 't2f_off': a.t2f_off, 'por_step_us': a.por_step if (a.fast and a.test == 1) else None, 'ctrl': a.ctrl, 'bridge_delay_ps': a.bridge_delay_ps if a.bridge_delay_ps is not None else 1.0, 'm6_vref_buffer': 'ideal unity buffer (MODEL M6; D20: r1_bias revision 2 output vref_b, not yet designed)', 'osc': a.osc, 'fosc_mhz': a.fosc if a.osc == 'ideal' else None,
+           'tstop_us': a.tstop, 'tmax': a.tmax, 'options': a.opts, 'threads': a.threads, 'vdefine': a.vdefine, 'cosim_irreversible': a.cosim_irrev, 'cosim_delay_s': a.cosim_delay, 'stall_abort': a.stall_abort, 'settle_us': a.settle, 'hbt_selft0': a.hbt_selft0, 'start': a.start, 'nodeset': a.nodeset, 'fast': a.fast, 't2f_off': a.t2f_off, 'por_step_us': a.por_step if (a.fast and a.test == 1) else None, 'ctrl': a.ctrl, 'bridge_delay_ps': a.bridge_delay_ps if a.bridge_delay_ps is not None else 1.0, 'm6_vref_buffer': ('ideal unity buffer (MODEL M6; D20 buffer r1_vbuf exists in r1_bias revision 2, not used in this deck)' if a.vbuf == 'm6' else 'not used: r1_vbuf of r1_bias revision 2 (ae4dfac95), bias leg ideal'), 'vbuf': a.vbuf, 'osc': a.osc, 'fosc_mhz': a.fosc if a.osc == 'ideal' else None,
            'command': 'G1_CPUSET=100-102 G1_WORKDIR=designs/r1-joint/blocks/r1_top/tb G1_RESULTS_ROOT=<G1_RESULTS_ROOT> '
                       'flow/run.sh python3 ' + ' '.join(sys.argv),
            'bulk_dir': '<G1_RESULTS_ROOT>/r1_top/tb/' + a.run_id,
@@ -424,12 +493,18 @@ def main():
                                      universal_newlines=True).stdout.splitlines()[0]
     rec['inputs_sha256'] = {}
     bad_pin = [n for n in NETLISTS if sha(os.path.join(BLOCKS, n)) != PINNED[n]]
+    # r1_ctrl RTL 0.5 of record (commit f65d55c49); track T5g edits the tree for revision 0.7
+    # frozen copy <G1_RESULTS_ROOT>/r1_top/tb/ctrl_rtl_0.5 (taken 2026-10-27 from the tree = f65d55c49) is used when present
+    frz = os.path.join(os.environ.get('G1_RESULTS_ROOT', ''), 'r1_top', 'tb', 'ctrl_rtl_0.5')
+    CTRL_DIR = frz if os.path.isdir(frz) else os.path.join(BLOCKS, 'r1_ctrl', 'rtl')
+    bad_pin += ['r1_ctrl/rtl/' + n for n in CTRL_RTL if sha(os.path.join(CTRL_DIR, n)) != PINNED_RTL.get(n)]
+    rec['ctrl_rtl_dir'] = 'frozen copy ctrl_rtl_0.5 (= r1_ctrl RTL 0.5, f65d55c49)' if CTRL_DIR == frz else 'tree'
     if bad_pin and not a.allow_unpinned:
         sys.exit('netlist differs from the pinned record: ' + ', '.join(bad_pin))
     for n in NETLISTS:
         rec['inputs_sha256']['blocks/' + n] = sha(os.path.join(BLOCKS, n))
     for n in CTRL_RTL:
-        rec['inputs_sha256']['blocks/r1_ctrl/rtl/' + n] = sha(os.path.join(BLOCKS, 'r1_ctrl', 'rtl', n))
+        rec['inputs_sha256']['blocks/r1_ctrl/rtl/' + n] = sha(os.path.join(CTRL_DIR, n))
     for n in TB_RTL + ['r1_chip.sp', 'gen_chip.py', 'run_tb.py', 'post_tb.py', 'views/%s.inc' % a.view, 'views/ctrl_rtl.inc.tmpl']:
         rec['inputs_sha256']['r1_top/tb/' + n] = sha(os.path.join(HERE, n))
 
@@ -457,8 +532,8 @@ def main():
         sys.exit(1)
     # compile the digital view
     vvp = os.path.join(out, 't10.vvp')
-    cmd = (['iverilog', '-g2005', '-Wall', '-Wno-timescale', '-DR1_CFG_FLOPS', '-DR1_CFG_GATED', '-DT10_TEST=%d' % a.test, '-DT10_SETTLE_NS=%g' % (a.settle * 1000),
-            '-s', 't10_top', '-o', vvp] + [os.path.join(BLOCKS, 'r1_ctrl', 'rtl', f) for f in CTRL_RTL] +
+    cmd = (['iverilog', '-g2005', '-Wall', '-Wno-timescale', '-DR1_CFG_FLOPS', '-DR1_CFG_GATED', '-DT10_TEST=%d' % a.test, '-DT10_SETTLE_NS=%g' % (a.settle * 1000)] + ['-D' + d for d in a.vdefine] + [
+            '-s', 't10_top', '-o', vvp] + [os.path.join(CTRL_DIR, f) for f in CTRL_RTL] +
            [os.path.join(HERE, f) for f in TB_RTL])
     r = subprocess.run(cmd, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, universal_newlines=True)
     open(os.path.join(out, 'iverilog.log'), 'w').write(' '.join(cmd) + '\n' + r.stdout)
@@ -467,6 +542,10 @@ def main():
         sys.exit(1)
     inc = open(os.path.join(HERE, 'views', 'ctrl_rtl.inc.tmpl')).read().replace('@VVP@', vvp)
     vvp_inc = os.path.join(out, 'ctrl_rtl.inc')
+    if a.cosim_delay:
+        inc = inc.replace('sim_args=["%s"]' % vvp, 'sim_args=["%s"] delay=%g' % (vvp, a.cosim_delay))
+    if a.cosim_irrev is not None:
+        inc = inc.replace('sim_args=["%s"]' % vvp, 'sim_args=["%s"] irreversible=%d' % (vvp, a.cosim_irrev))
     if a.bridge_delay_ps is not None:
         d = '%ge-12' % a.bridge_delay_ps
         inc = inc.replace('adc_bridge(in_low=0.6 in_high=0.6 rise_delay=1e-12 fall_delay=1e-12)',
@@ -481,6 +560,8 @@ def main():
     view = view.replace('@G1_RESULTS_ROOT@', bulk)
     if a.thermal_subset or a.safety_subset:
         view = thermal_subset(view, rec, keep_safety=a.safety_subset)
+    if a.current_subset:
+        view = current_subset(view, rec)
     if a.fast:
         view = fast_view(view, a, rec)
     if a.hbt_selft0:
@@ -537,13 +618,18 @@ def main():
     t0 = time.time()
     with open(log, 'w') as lf:
         p = subprocess.Popen(['ngspice', '-b', dpath], stdout=lf, stderr=subprocess.STDOUT, cwd=HERE, env=env)
-        try:
-            rc = p.wait(timeout=a.timeout)
-            status = 'completed'
-        except subprocess.TimeoutExpired:
-            p.kill()
-            rc = p.wait()
-            status = 'timeout'
+        status = None
+        while status is None:
+            try:
+                rc = p.wait(timeout=15)
+                status = 'completed'
+            except subprocess.TimeoutExpired:
+                if time.time() - t0 > a.timeout:
+                    p.kill(); rc = p.wait(); status = 'timeout'
+                elif a.stall_abort:
+                    lf.flush()
+                    if 'T10MON STALL' in open(log, errors='replace').read():
+                        p.kill(); rc = p.wait(); status = 'stalled'   # early abort (open issue O10 monitors)
     wall = time.time() - t0
     txt = open(log, errors='replace').read()
     errs = [l for l in txt.splitlines() if ('rror' in l or 'too small' in l or 'aborted' in l.lower()) and 'T10RES' not in l][:20]
