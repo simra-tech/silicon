@@ -1,7 +1,218 @@
 # R1_TOP
 
 Block `r1_top` (track T8, P3 preparation). This block assembles the R1 chip top level from the ring of record and
-the macros. Try f (below) has no placeholder: every macro is a real layout. Tries d and e had placeholder outlines.
+the macros. Try g (below) is the current state: the current macros, the chip CDL of record and the extracted supply network. Try f has no placeholder: every macro is a real layout. Tries d and e had placeholder outlines.
+
+## Try g (2026-10-27, track T8e; run names as the brief, `asm-20261028-g…`): current macros, ADC 23.12 µm taller, ctrl 0.8 — run of record `asm-20261028-g3`, filled `asm-20261028-g3-fill`
+
+State: every macro is the current layout: `r1_ctrl_top` 0.8, `r1_adc` with the SAR sub-macro (439.0 × 205.42 µm),
+`r1_afe` E6. All 173 top-level signal nets are routed, including the new `CUR_TRK`. The 30 temporary antenna diodes
+of try f are removed. Chip DRC (main, antenna, maximal, density) and LVS (comparer-limit deck) pass on the filled
+chip; the stock LVS deck crashes in KLayout (tooling, F1). The supply network is **extracted** (KLayout
+RNetExtractor and ngspice DC), not estimated. The chip CDL of record for the post-layout campaign is
+`<G1_RESULTS_ROOT>/r1_top/asm-20261028-g3/lvs/r1_top_g.cdl`. Generator: `layout/r1_top_assemble_g.py`. Driver:
+`flow/run_try_g.sh`. LVS reference builder: `lvs/make_top_cdl_g.py`. Picture: [`layout/r1_top_g.png`](layout/r1_top_g.png).
+
+Runs: `g1` and `g2` are development runs; `g3` is the run of record.
+
+| Run | Change | GDS sha256 (unfilled) | Result |
+| --- | --- | --- | --- |
+| `asm-20261028-g1` | try-f floorplan with the current macros | `cd045218…` | DRC main / antenna / maximal 0; LVS limits deck match; VDD drop at the ctrl 56 mV typ (too high, F5) |
+| `asm-20261028-g2` | + south VDD feed (TopMetal2 strap and bar to the ctrl stripes), south supply stacks | `9d379180…` | VDD drop 23.6 mV; DRC main 1 (`TM2.bR`, the bar 3.14 µm from the first ctrl TopMetal2 strap, F6); IO-filler VDD strap 10.5 mA in 6 µm (limit 12 mA) |
+| `asm-20261028-g3` | bar 2 µm lower (5.14 µm space), IO-filler VDD straps 6 → 10 µm | `8f1c5d7cd9df4a1e47ef9c19b009f4b7b8eb06b4c60493b2f1c964d4aaa510b7` | of record (below) |
+
+### Inputs (sha256)
+
+The ADC GDS is the file `blocks/r1_adc/layout/r1_adc.gds` at the start of try g (2026-10-27 17:47 CET). It is the
+B6 generator run `layout-b6-dev3`. Its README gives block DRC, antenna, LVS on both decks and the pin check as
+passed. B6 has the same box, the same pins and the same LVS netlist as B5. Layout B5
+(`r1_adc_layout_b5.gds`) is in the snapshot as the fallback; the generator takes it with `R1G_SHA_r1_adc`.
+Snapshots: `<G1_RESULTS_ROOT>/r1_top/asm-20261028-g3/inputs/` (`inputs.sha256`).
+
+| Macro | Revision | GDS sha256 | LVS netlist sha256 |
+| --- | --- | --- | --- |
+| `r1_padring` | revision d | `81bba04b3c0655ece75587d6c90b159d4bb860e0dbe0e3dd80e2c65c50d0725d` | projected ref `62405f601d7e5c250fc4ad08359553d8185609e559c2dfecc7fa4ca2166bd8dc` |
+| `r1_ctrl_top` | 0.8, release `r1ctrl_08_release` (run `r1ctrl_ll_20261027_t22`; `SHA256SUMS` checked) | `f8bc16ed7233d1ea3eb12dd3f0cc1045eb169ea842c0d7ab6aad06d9ed302d2e` | `final/pnl/r1_ctrl_top.pnl.v` `160148ae00de2bec44a6ec40d08497e346e2009b95246f9ce3983da93b75415a` (CDL by `pnl2cdl`: `6cdbdd21fae2c8b564cc6157f0ec1f1b74878e717aa9274a27ae694819826926`) |
+| `r1_adc` | B6-dev3 at the start (B5 analog part + SAR sub-macro `r1_adc_sar` `t2j-ll-h2312-h`) | `9d6dad3d23a033e0484d4fc8d23ba25280c3231680f244c25b44dc9c5c49d880` (B5: `551dab83d55b31763e292663fd24b6b74f5cb5bd628db89a28f9d1dbaf0ae327`) | B5 CDL `layout/r1_adc_lvs_b5.cdl` (analog netlist of record + SAR gate level) `0740d3a21d00e32faeec149c3f5b594d45e4791c6ffee137edf84795e70b0392` |
+| `r1_afe` | layout E6 (`layout-e6-dev16`, revision F2, commit fd0fcf4e4) | `12a059ca4b9468541c479b13e8e77d946852b57c826f7dd568db60ae4f64ba7f` | `4271a5f9d38794c7be2daa399c04ba8a702daae5cd796a3e525d300f0bec91a7` |
+| `r1_isense` | layout c (revision 2) | `192dd37aa592b85d68b158b18f0f71c8e906664783b047dcdd3bf1ceacd6c7ac` | `3021793df19e112a96bdcb6d5618b3b3a00e06bc80baa02c7e293da16f3212f2` |
+| `r1_bias` | revision 2 | `e7ee13940db0ecc2a36c8bf7c6d1947358aceb6dd1dff3b3add9f4eafa2bb78c` | `abb7bc280fd1632ec405e7cef62a2b4ba0ab688bc6fa85d897d1b0913a36b4a8` |
+| `r1_osc` | revision 2, layout r2d | `7c5fb60fdbbfa3cce7714520d3bc652292f0ff964452e3bf4afe226ea68ba971` | `600d5f2bb983601d904142c9d15f62beb363b91bbfafe7ded63c1e2cea6912aa` |
+| `r1_safe` | revision 3 (as try f) | `fbc3113948e0c15e1e049cfad1e2e5c5349b10ba0ae7d250f5b228e50aa28324` | `a083d26387c3006de04e2f6b19f454aaa39c81af23b213f545aae8af3b570732` |
+| `r1_bgr` | as try f | `324e3c27477a77c4a32d6760366d8d1fb82bea4887ae26b905cd7022aac54005` | `c4d175eebf104a852ce0d9b4b426a0cfa6ede80bc39e7088c179c9ae179fae2b` |
+| `r1_t2f` | as try f | `5e7aa75ae9335b12b1c825d326e586c742755bd9305074fc1cdc2507d17af9a7` | `9867279d8e07805a9af642fd42067b14862e43fcbc39ae31cbb17bf753cef9aa` |
+| `r1_ls` (6) | as try f | `a4f496364b55c71a035f44a9b13b68fd8475f98b05f5e13a4e38e9ec1703b4de` | `4f3fefbedfa219acf7d9506d8e8edc878be372f5abc551cba2471caaf2a12460` |
+| `r1_gate_lv` | as try f | `a3dee0f091c5236f7b6ff231b765d0b70e60a6e791d9db0b12fd821ce44e013b` | `c0602540bbe0bc34c023a511e7ee1c8f03e6c4e519624d611fe187a5b3afe4ea` |
+
+### Placement (deltas against try f)
+
+No macro moved. The ADC stays at its try-f origin and grows 23.12 µm to the north only.
+
+| Macro | Origin (µm) | Size (µm) | Delta against try f | Note |
+| --- | --- | --- | --- | --- |
+| `r1_adc` | (592.0, 376.0) | 439.0 × 205.42 (try f 439.0 × 182.3) | (0, 0); north edge +23.12 µm (y 558.3 → 581.42) | channel ADC north edge – `r1_ctrl` south edge: 91.88 µm (try f 115.0 µm) |
+| `r1_ctrl_top` 0.8 | (538.8, 673.3) | 532 × 679 | (0, 0) | same box and pins as 0.6, plus `cur_trk` (south, local x 280.80) |
+| `r1_afe` E6 | (336.0, 740.0) | 192.8 × 494.4 | (0, 0) | same pins as E3; supply pins 1.0 µm |
+| all other macros, the decap row and the tie cell | as try f | as try f | (0, 0) | — |
+| 30 × `sg13g2_antennanp` (y 661.0) | — | — | removed | the SAR sub-macro drives the ADC outputs |
+
+Clearances at the ADC: west 28.0 µm to `r1_bias` (x 564), east 57.8 µm to `r1_safe` (x 1088.8), north 91.88 µm to
+`r1_ctrl`. The `VREF_B` Metal5 run (y 642–648) is 60.6 µm above the new ADC north edge. Full table:
+[`reports/placement_g.csv`](reports/placement_g.csv).
+
+### Connectivity
+
+1. 173 top-level signal nets, all routed: 99 by hand, 74 by the maze router (try f: 172). 76 maze jobs and 139
+   access stubs, 0 failed. Generator self-check: 0 net conflicts, 0 overlaps, 0 pairs closer than 10 µm, 0 routes
+   inside macros, 0 TopMetal1 over MIM blocks.
+2. The 37 ADC north pins (`adc_*`, `is_smp`, `clk`, `cur_trk`, `por_n`) are on Metal2 in B5/B6. The access stubs now
+   start on Metal2 and go north. The labels use the CDL form (`adc_raw_a<k>`).
+3. `CUR_TRK` (new): `r1_ctrl` south pin (local x 280.80) → `r1_adc` north pin (local x 16.80), maze, Metal2 1.6,
+   Metal3 89.6, Metal4 209.6 µm.
+4. `OSC_CLK`: osc → ctrl clk by the straight Metal3 line; ADC branch by the maze, 1032.8 µm (Metal2 26.4, Metal3
+   479.2, Metal4 527.2 µm, 9 vias).
+5. `VREF_B` (Metal4 riser x 566, Metal5 run y 642–648 with VSS shields) and the isense VSS trunk are as try f.
+6. 45 PDK cells that the macro GDS files bring as second copies (`sg13g2_*$N`: 31 standard cells, mostly of the ADC
+   SAR, and 14 IO-cell sub-cells such as `sg13g2_DCNDiode`) are merged with the identical first copies (shapes and
+   labels compared per layer; 0 cells differ). The CDL builder drops 85 duplicate
+   `.SUBCKT` blocks of the ADC CDL (84 standard cells and the bondpad); each one is identical text.
+7. Unconnected macro pins: `r1_ctrl` `bias_en`; `r1_bgr` `iptat`, `vbe`, `dvbe` (test nodes); `r1_adc` `topap`,
+   `topan`, `topbp`, `topbn` (CDAC top-plate test ports).
+8. Supply: south VDD feed (TopMetal2 strap x 566–590 from the inner south VDD row to a TopMetal2 bar at y 684–692,
+   with TopVia2 onto the 7 ctrl VDD TopMetal1 stripes); five south supply stacks (Metal4 → TopMetal2) at the
+   IO-filler straps; IO-filler VDD Metal3 straps 10 µm.
+
+### Clock skew (`OSC_CLK`, ADC pin against ctrl pin)
+
+**Estimated** (`flow/clk_skew_g.py`): RNetExtractor resistance of the extracted `OSC_CLK` net, Elmore delay with
+assumed wire capacitance. Resistance osc → ADC clk 313.3 Ω typ / 451.9 Ω max sheet; osc → ctrl clk 5.2 / 6.1 Ω.
+
+| Case | Skew (ps) |
+| --- | --- |
+| typ sheet, 0.2 fF/µm, ADC pin 34–60 fF | 48–51 |
+| all cases (typ / max sheet, 0.1–0.3 fF/µm, 34–60 fF) | +30.7 to +97.1 |
+
+The INTERFACES row "ADC → ctrl timing" allows 0.09 ns (ADC bits change ≥ 0.596 ns after the `clk30` edge at tt,
+0.096 ns margin). Result: typ 48–51 ps, **passed**; the bound case (max sheet, 0.3 fF/µm, 60 fF) is 97 ps. The sign
+is always positive: the ADC clock edge is later than the ctrl clock edge, so the ADC → ctrl hold margin grows (0.096
+→ ≥ 0.127 ns). The ctrl → ADC direction has ≥ 0.6 ns (ctrl outputs change after its clock latency of about
+0.67 ns; estimate). No length matching or retiming is needed. The skew is not extracted with capacitance (not run).
+
+### Supply network
+
+Report: [`reports/supply_g.md`](reports/supply_g.md). **Extracted**: KLayout RNetExtractor on the top-level
+supply nets plus the ctrl power grid; ngspice DC with the block currents (ctrl 0.8: 40.25 mA).
+
+| Item | typ | max sheet | State |
+| --- | --- | --- | --- |
+| Shared `r1_isense`–`r1_bgr` VSS path resistance (limit ≤ 2.3 Ω) | 1.494 Ω | 2.021 Ω | passed |
+| Ground offset isense − bgr, all currents / ctrl return current alone | 5.34 / 3.60 mV | 6.78 / 4.46 mV | — |
+| Static drop VDD at `r1_ctrl` (worst of 63 grid points) | 22.8 mV | 30.6 mV | — |
+| VSS rise at `r1_ctrl` (worst) | 46.1 mV | 63.6 mV | — |
+| Static drop VDDA, worst (`r1_afe` far pin) | 45.3 mV | 57.2 mV | — |
+| EM, top-level trunks, straps, stacks (75 rows, bound or extracted) | all passed | all passed | passed |
+| EM, macro supply pins (all ≥ 1 µm now) | `r1_adc` `vss` 1.972 mA of 2.0 mA (1.4 % margin) | — | passed |
+
+### Fill and density
+
+Fill (`flow/fill_top.sh`, thru `r1_ctrl_top:10,30,50,67;r1_safe:10`, distances Metal2 0.45, GatPoly gap 1.6,
+Metal3-5 0.45 µm): geometry gate passed (only fill datatypes differ). Chip density deck: **0**.
+
+Window coverage, 800 µm windows, 100 µm step (`flow/probe_window_minmax.py`, finer than the deck's 400 µm step):
+minimum Metal1 26.29 %, Metal2 25.58 %, Metal3 25.86 %, Metal4 27.30 %, Metal5 27.35 % (limit 25 %), all at the
+ADC corner window (400, 400) or (500, 500). Maximum Metal5 54.52 % (limit 75 %, `M5Fil.k`). Global Metal1-Metal5
+42.0 / 46.9 / 52.4 / 52.9 / 46.2 % (limits 35-60 %). Margins are small: Metal2 0.58 %, Metal3 0.86 %.
+
+ADC Metal5 density: inside the ADC box the chip has 70.46 % Metal5 (`flow/probe_adc_box_density.py`; B5 block
+value 71.6 %). The chip density deck does **not** flag it. The deck checks Metal5 only over the whole chip (`M5.j`
+/ `M5.k`, 35-60 %) and in 800 × 800 µm windows (`M5Fil.h` / `M5Fil.k`, 25-75 %). The ADC box is 0.09 mm², 14 % of a
+window; the highest Metal5 window is 54.52 %, at (100, 100), not at the ADC.
+
+### Status
+
+GDS (unfilled) `<G1_RESULTS_ROOT>/r1_top/asm-20261028-g3/r1_top.gds`, sha256
+`8f1c5d7cd9df4a1e47ef9c19b009f4b7b8eb06b4c60493b2f1c964d4aaa510b7`. Filled chip (the deliverable)
+`<G1_RESULTS_ROOT>/r1_top/asm-20261028-g3-fill/r1_top.gds`, sha256
+`3b337a55e747942c0c202888bbf675a65222e64645f565688355e23ba8c4ddff`. Chip CDL of record
+`<G1_RESULTS_ROOT>/r1_top/asm-20261028-g3/lvs/r1_top_g.cdl`, sha256
+`979e6cc3f27c5787c06f270e015a04e8334bb30a8a6403ef512fe9c699043b72`; include list with the sha256 of each source:
+`lvs/r1_top_g_includes.txt` in the same directory. The CDL is the same for g1, g2 and g3.
+
+| Check | Unfilled `-g3` | Filled `-g3-fill` (of record) | Evidence |
+| --- | --- | --- | --- |
+| Generator self-check | passed (0 / 0 / 0 / 0 / 0) | — | `r1_top_assembly.json` |
+| DRC main | passed, 0 (run `-g2`: 1, F6) | passed, 0 | `drc_main/` |
+| DRC antenna | passed, 0 (try f needed 30 diodes) | passed, 0 | `drc_antenna/` |
+| DRC maximal | passed, 0 (run `-g1`: 0) | passed, 0 | `drc_maximal/` |
+| DRC density | not run on the unfilled GDS | passed, 0 | `drc_density/` |
+| LVS, comparer-limit deck copy | passed: "Netlists match", 59 circuit pairs; `r1_top` 261 devices, 51 subcircuits; `r1_ctrl_top` 19465 / 19469 nets | passed: "Netlists match", 59 pairs, `r1_top` 261 devices, 51 subcircuits | `lvs_limits/`, [`reports/runs/asm-20261028-g3_lvs_report.txt`](reports/runs/asm-20261028-g3_lvs_report.txt) |
+| LVS, stock PDK deck | failed to run: KLayout signal 11 at "Extracting diodevdd_2kv ESD device" (g1 twice, g2, g3; F1) | not run (same deck, same crash expected) | `lvs_stock/` |
+| Bond map (24 openings) | — | passed, 24 of 24 openings matched, 22 labels at row centres, `all_ok` | `bondmap/` |
+| Supply R, IR drop, EM | passed (extracted; see the table above) | — | `supply_g.json`, `supply_rnet/`, `reports/supply_g.md` |
+| `OSC_CLK` skew | passed at typ (48–51 ps ≤ 90 ps; estimated, not extracted with C) | — | `clk_skew_g.json` |
+| Post-layout simulation of top-level nets | not run | not run | — |
+| IHP intake pre-check | not run | not run | — |
+| Run records | written | written | `reports/runs/asm-20261028-g1.json`, `-g2.json`, `-g3.json`, `-g3-fill.json` |
+
+Evidence paths are relative to `<G1_RESULTS_ROOT>/r1_top/<run>/` unless they start with `reports/`.
+
+### Open issues (try g)
+
+1. `r1_adc` B6 final and `r1_afe` E7 are not in this try. Drop-in: `reports/integration_checklist_g.md`.
+2. The stock LVS deck crashes on the chip (F1). Only the comparer-limit deck copy gives a result.
+3. `r1_adc` `vss` pin: 1.972 mA in 1.0 µm (limit 2.0 mA, tt; ff not known). Recommended: ≥ 2 µm in B6/B7.
+4. Window density margins are small (Metal2 0.58 %, Metal3 0.86 %, at the ADC corner). A lower Metal2/Metal3 coverage
+   in B6 or E7 can fail `M2Fil.h` / `M3Fil.h`.
+5. Supply loss at `r1_ctrl`: 69 mV typ / 94 mV max sheet (VDD drop + VSS rise). The ctrl timing sign-off has no
+   IR-drop derate check (not run).
+6. The `OSC_CLK` skew is an Elmore estimate with assumed capacitance; extraction with capacitance not run.
+7. `bias_en` is open; `az` pins are tied to `az_win`; `r1_t2f` vref is on `VREF_B` (INTERFACES T9), as try f.
+8. No post-layout simulation of any top-level net with this GDS (the T10 campaign takes the CDL of record).
+
+### Failures and mistakes (try g)
+
+| # | What happened | Class | Fix |
+| --- | --- | --- | --- |
+| F1 | The stock PDK LVS deck crashes with signal 11 at "Extracting diodevdd_2kv ESD device" on the chip (g1 twice, g2, g3). The same crash is in the `r1_safe` record (KLayout 0.30.9). | tooling | Recorded; the comparer-limit deck copy gives the result |
+| F2 | The ADC GDS in the working tree at the start was B6-dev3, not B5 of record. | spec-ambiguity | Took the file as found (brief: "take the GDS as it is at your start"); B5 kept as fallback |
+| F3 | RNetExtractor internal error (`dbPLC.cc:543`) on the Metal1 ring annulus. | tooling | Metal1 and Via1 left out of the supply network (conservative) |
+| F4 | Run g2, first supply run: the ctrl internal grid was not in the network, so the new south feed showed no effect. | verification-gap | Ctrl TopMetal1/TopVia2/TopMetal2 grid and 63 ctrl ports added; first files kept as `*_try1` |
+| F5 | Run g1: VDD drop at the ctrl 56 mV typ; the ctrl 0.8 current (40 mA) came from pad 1 around the ring. Try f estimated 32 mV by square count. | estimation | South VDD feed (run g2): 23.6 mV |
+| F6 | Run g2: DRC main 1, `TM2.bR`: the new TopMetal2 bar was 3.14 µm from the first ctrl TopMetal2 strap (5.0 µm needed for a parallel run > 50 µm). | functional-bug | Bar top 694.0 → 692.0 µm (run g3) |
+| F7 | EM cut lines: first 0 elements (node locations are already in µm, the script scaled them again); then values above the total net current on wide shapes (Metal4 trunks, VDDA risers: up to 324 mA against 4.31 mA). | numerical | Unit fix; cut sums only on narrow straps; gradient method and bound rows for the rest |
+| F8 | Run g2: IO-filler VDD strap at x 537 carried 10.5 mA in 6 µm (limit 12 mA). | estimation | Straps 10 µm (run g3: 8.85 mA, limit 20 mA) |
+| F9 | A foreground `sleep` to wait for a run was blocked by the tool. | process-hygiene | Background wait loop |
+| F10 | `flow/write_run_json.py` reads only `inputs/**/sha256.txt` and cpuset 116-119. | tooling | `flow/write_run_json_g.py` adds the try-g snapshot list and cpuset |
+
+### Built against (try g)
+
+| Item | Version | How established |
+| --- | --- | --- |
+| PDK | IHP-Open-PDK `84374023ee8b4b126bebbba67fcbada0a9c0ff0b` | checked by `flow/run.sh` |
+| KLayout | 0.30.9 | container, DRC and LVS logs |
+| ngspice | 46 | `ngspice -v` in the container |
+| Container | `tapeoutbench-eda:latest`, `sha256:ddeb6957…` | `flow/run.sh` |
+| xschem / LibreLane / CACE | not used by this try (ctrl 0.8 is a LibreLane release) | — |
+
+### Reproduce try g (repository root, POSIX shell)
+
+1. Set the environment: `G1_CPUSET=112-119; export G1_CPUSET; G1_RESULTS_ROOT=<results root>; export G1_RESULTS_ROOT; G1_WORKDIR=.; export G1_WORKDIR`.
+2. Copy the snapshot `inputs/` of `asm-20261028-g3` into `<G1_RESULTS_ROOT>/r1_top/<run>/inputs/`. The scripts
+   check every hash (`R1G_SHA_<macro>`, `R1G_CDL_SHA_<macro>` select other revisions).
+3. Run `sh designs/r1-joint/blocks/r1_top/flow/run_try_g.sh <run> gen cdl main antenna maximal lvs lvsstock`.
+4. Run `sh designs/r1-joint/blocks/r1_top/flow/fill_top.sh <run dir> <run dir>-fill 0 "r1_ctrl_top:10,30,50,67;r1_safe:10" 0.45 1.6 0.45`.
+5. Run `sh designs/r1-joint/blocks/r1_top/flow/run_fill_checks.sh <run dir> <run dir>-fill`.
+6. Run `flow/run.sh klayout -b -r designs/r1-joint/blocks/r1_top/flow/probe_window_minmax.py -rd g=<run dir>-fill/r1_top.gds -rd out=<run dir>-fill/window_density.json`
+   and the same with `flow/probe_adc_box_density.py`.
+7. Run the supply and skew scripts as in `reports/supply_g.md`, then
+   `flow/run.sh python3 designs/r1-joint/blocks/r1_top/flow/clk_skew_g.py <run dir> <run dir>/clk_skew_g.json`.
+8. Write the records with `flow/write_run_json_g.py` and `flow/write_fill_run_json.py`, and the placement with
+   `flow/write_placement_g.py`.
+
+New files of try g: `layout/r1_top_assemble_g.py`, `lvs/make_top_cdl_g.py`, `flow/run_try_g.sh`,
+`flow/write_placement_g.py`, `flow/supply_g_rnet.py`, `flow/supply_g.py`, `flow/clk_skew_g.py`,
+`flow/probe_adc_box_density.py`, `flow/write_run_json_g.py`, `reports/supply_g.md`,
+`reports/integration_checklist_g.md`, `reports/placement_g.csv`, `layout/r1_top_g.png`.
 
 ## Try f (2026-10-27, track T8): every macro real — run of record `asm-20261027-f3`, filled `asm-20261027-f3-fill`
 
