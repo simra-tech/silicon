@@ -21,7 +21,7 @@ val = {} if PER_PORT else {'a': (op['v(xadc.xl.vref__p8)'], op['v(xadc.xl.vrefl_
 L = open(src).read().split('\n')
 inpr, done = False, []
 for i, ln in enumerate(L):
-    if ln.startswith('.subckt r1_adc_lay_pr '):
+    if ln.startswith('.subckt r1_adc_lay_pr ') or ln.startswith('.subckt r1_adc_lay_sar '):     # B5: also the SAR cell
         inpr = True
     elif ln.startswith('.ends'):
         inpr = False
@@ -47,7 +47,7 @@ for i, ln in enumerate(L):
             L[i] = ' '.join(t) + '\nVsp_vref_%s sp_vref_%s 0 DC %.6f\nVsp_vrefl_%s sp_vrefl_%s 0 DC %.6f' % (
                 sl, sl, val[sl][0], sl, sl, val[sl][1])
         done.append(sl)
-assert sorted(done) == ['a', 'b'], done
+assert sorted(set(done)) == ['a', 'b'] and len(done) in (2, 4), done
 hdr = '* %s: %s with ideal slice references from op run %s (sim/post/make_sp_netlist.py)' % (os.path.basename(out), os.path.basename(src), oprun)
 open(out, 'w').write(hdr + '\n' + '\n'.join(L))
 print(out, val)

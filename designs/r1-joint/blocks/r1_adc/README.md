@@ -1,5 +1,134 @@
 # R1_ADC — 12-bit SAR ADC with two simultaneous track-and-holds (schematic level, revisions 1 to 5)
 
+## Layout B5 (2026-10-27, track T2k): analog part B4 + SAR sub-macro `r1_adc_sar`
+
+State: **layout closed (DRC, antenna, LVS, pins); post-layout partly failed** (offset +12 LSB from the layout, closed-loop R2-4 0.353 LSB as defined, bit-exact not met; output timing passed).
+Layout of record: `layout/r1_adc.gds`, sha256 `551dab83d55b…` (run `layout-b5-dev6`), box **439.0 ×
+205.42 µm**: the B4 analog part (y 0 … 182.3 µm) and the hardened `r1_adc_sar` (release `t2j-ll-h2312-h`, GDS sha256
+`70e2c5b7…`) as a cell reference at (0, 182.3), R0, not flattened. Layout B4 is kept as `layout/r1_adc_layout_b4.gds`
+(sha256 `f35046d2391e…`). All numbers are from layout tools or are simulated. Nothing is measured.
+
+### Status (layout B5)
+
+| Check | Result | Evidence |
+| --- | --- | --- |
+| DRC main + maximal (PDK deck) | passed, 0 | `reports/layout-b5-dev6/drc.log` |
+| Antenna | passed, 0 | `reports/layout-b5-dev6a/` |
+| LVS, comparer-limit deck | passed: `r1_adc` 147/147 nets, 45/45 devices; `r1_adc_slice` 117/117, 179/179; `r1_adc_sar` 419 nets, all cells match | `reports/lvs-b5-dev6-lim/lvs_summary.txt` |
+| LVS, stock deck | passed (same counts; no crash) | `reports/lvs-b5-dev6-stock/lvs_summary.txt` |
+| Pin check (B5 pin list, 52 pins) | passed | `reports/layout-b5-dev6/pin_table_b5.md` |
+| Density | reported, waived at block level: Activ 9.28 %, GatPoly 6.0, M1 6.46, M2 6.19, M3 17.28, M4 16.67, **M5 71.60 (above the 60 % maximum, M5.k)**, TM1 65.0, TM2 0 | `reports/layout-b5-dens/density.log` |
+| Extraction (analog part + SAR interconnect) | passed, 0 failed nets | `pex/pex_report_b5.json`, `pex/pex_build_b5.log`, `<G1_RESULTS_ROOT>/r1_adc/pex-b5/` |
+| Mux sequence tt, gate-level SAR (bit-exact target against the behavioural SAR on the B5 netlist) | **failed** bit-exact: 99/112 decisions, 2/8 words equal; codes equal or ±1 LSB (A/B: 2979/1129, 4023/93, 1134/2977, 3720/388 against 2979/1130, 4023/94, 1134/2977, 3719/388); valid 8/8. All 6 first differences are on the comparator threshold: 4 ties (≤ 0.25 LSB, includes the decision-13 case of frame 1 A) and 2 near threshold (0.29, 0.44 LSB). Class numerical, not functional. B4 netlist with the same SAR (`b5pre-ms-mux-tt`): 103/112, 4/8, same classes. IDD 0.870 mA (SAR included), IDDA 1.102 mA | `sim/post/b5/runs/b5-ms-mux-tt/run.json` (completed-late, see failure 12), `sim/post/b5/results/b5_ms_mux_tt_dec.json`; reference `postb5-isa-tt-rc` |
+| Mux sequence tt, behavioural SAR, B5 netlist | gain 1.0570, **offset +8.0 LSB** (B4 −3.0), residual 3.55 LSB; ±0.85 V gives codes 4023 / 94 (no clip) | `postb5-isa-tt-rc`, `sim/post/results/postb5_isa_tt_rc.json` |
+| First conversion tt, gate-level SAR (0 V, frames 0 and 1) | **failed** bit-exact, passed as a first conversion: codes 2057 / 2057 (A), 2055 / 2055 (B); behavioural SAR on the B5 netlist 2057 / 2057, 2056 / 2055; 52/56 decisions, 1/4 words equal; the 3 first differences are ties (0.12–0.18 LSB from the threshold, includes a decision-13 case); frame 0 = frame 1, valid 4/4. Against B4 (2043 / 2042) the codes are +14 / +13 LSB: the layout offset (open issue 3) | `sim/post/b5/runs/b5-ms-fc-tt/run.json`, `sim/post/b5/results/b5_ms_fc_tt_dec_b5ref.json` (B5 reference `postb5-fc-tt-rc`), `b5_ms_fc_tt_dec.json` (B4 reference), `b5_ms_fc_tt_timing.json` |
+| R2-4 runs, behavioural SAR, B5 netlist (codes only) | B5 codes are +9 … +15 LSB above B4 in all 10 slots of `ref10` (e.g. slot 0 2057 / 2057 against 2048 / 2048): a static offset of about +12 LSB from the layout | `postb5-ref-tt-rc` (`<G1_RESULTS_ROOT>/r1_adc/postb5-ref-tt-rc/`) against `postb4-ref-tt-rc` |
+| First conversion ss / 125 °C / 1.08 V, gate-level SAR (A −0.80 V, B −0.781 V) | **failed** bit-exact, passed as a first conversion: codes 195 / 195 (A), 236 / 235 (B); behavioural SAR on the B5 netlist 197 / 196, 237 / 236 (B4 178 / 178, 220 / 219: +19 / +17 LSB layout offset at ss); 43/56 decisions, 0/4 words; frame 0 − frame 1 ≤ 1 LSB; valid 4/4. 3 of 4 first differences are **not ties** (0.58–0.96 LSB from the threshold, decisions 8 and 11), code error −1 … −2 LSB; probably the later CDAC switching at ss (not proven) | `sim/post/b5/runs/b5-ms-fc-ss125/run.json`, `sim/post/b5/results/b5_ms_fc_ss125_dec.json`; reference `postb5-fc-ss125-rc` |
+| R2-4 tt, behavioural SAR timing (as B4, limit 0.25 LSB) | **passed** on the metric: 0.191 / 0.186 LSB (A / B; B4 0.243 / 0.233), after gain fit 0.133 / 0.128. Open: slot 4 of slice A is excluded from the metric (decisions differ from decision 1); `post_ref5.py` gives code 1038 against 1072 (−34 LSB), but the words read directly at the strobe give 1038 against 1042 (−4 LSB, redundancy recovers the path). B4 had at most 1 LSB. Not resolved (verification gap) | `postb5-ref-tt-rc` / `-sp`; `sim/post/results/postb5_ref_tt_rc.json` |
+| R2-4 tt, real CDAC timing (gate-level SAR, first 4 of the 10 `ref10` slots, limit 0.25 LSB) | **failed as defined: 0.353 LSB** (A 0.272, B 0.353; by 0.103 LSB); corrected value (README B4 method) 0.306. With the capacitor steps sampled at 4 ns instead of 1.2 ns after the edge (the gate-level SAR switches the CDAC 0.6–1.1 ns after the edge, so at 1.2 ns the step is not complete): 0.243 as defined, 0.204 corrected, both pass. Which sample time the metric must use with the real switching is not decided (spec-ambiguity); 6 slots not run | `sim/post/b5/runs/b5-ms-ref-tt-buf-s4/`, `.../b5-ms-ref-tt-base-s4/` (both completed-late), `sim/post/b5/results/b5_ms_ref_tt_s4_r24.json` |
+| Output-change window (decision bits, valid) vs `clk30` (macro pins, 50 fF load, ideal clock) | **passed** (ctrl: change ≥ 0.5 ns, settled ≤ 7.0 ns): tt `adc_raw_*` change ≥ 0.596 ns, settled ≤ 1.07 ns, `adc_valid_*` 1.08–2.07 ns; ss / 125 °C / 1.08 V `adc_raw_*` ≥ 0.934 ns, ≤ 1.59 ns, `adc_valid_*` 1.73–3.15 ns. No glitch, no raw edge at the capture edge E15 (setup 31.7 ns, hold 33.9 ns). Margin at tt 0.096 ns before the clock-route skew. ff not run | `sim/post/b5/results/b5_ms_mux_tt_timing.json`, `b5_ms_fc_tt_timing.json`, `b5_ms_fc_ss125_timing.json` |
+| First conversion ff, R2-4 ss, windows / DNL on B5 | not run (time budget) | — |
+
+### Open issues (layout B5)
+
+1. **Metal5 density 71.6 %** (maximum 60 %, M5.k), from the B4 decoupling sheets and the two SAR supply buses. It is
+   waived at block level; the assembly must cut slots in the Metal5 sheets or accept a fill-free region. Other
+   density rules (minimum, fill) are the usual block-level violations.
+2. **Slice-B comparator clocks are not shielded** (0/40, 0/38, 0/38 edge sides for `sar_clkb`, `sar_clkbb`,
+   `sar_clknb`): no free `vss` track next to them in the channel. Slice-A clocks are shielded on 30–36 of 38 sides.
+3. **Offset of about +12 LSB from the top-plate coupling (regression against B4, −3 LSB).** The new slice routes
+   to the north edge run past the `top_p` side only. Extracted differential coupling `top_p` − `top_n` (slice):
+   `clk` +2.51 fF, `trk0` +1.46 fF (both switch between sampling and decision 0), `vdd` +5.0 fF; total `top_p` /
+   `top_n` 44.0 / 39.9 fF (B4 imbalance 1.2 fF). Simulated: all B5 codes +9 … +15 LSB above B4 (behavioural and
+   gate-level SAR). The ±0.85 V inputs do not clip (B4 codes 4017 / 86 + 15 LSB < 4095), and the `r1_ctrl` 0.8
+   offset word (D22) removes a static offset; its drift is not checked. Diagnostic (behavioural SAR, first
+   conversion tt, couplings moved to `gnd`, netlists in `sim/post/b5/diag/`): without `clk`/`trk0`–`top_p` the codes
+   are 2050 / 2049 (runs `postb5-fc-tt-nocc`, `postb5-fc-tt-nosar`; B5 2057 / 2056, B4 2043 / 2042), so these two
+   couplings give about 7 of the 14 LSB; the other clock and comparator-output couplings give nothing; the other
+   7 LSB are not located. Lever: re-route the slice `clk` / `trk0`
+   north lines symmetrically to both top plates, or put a `gnd` shield between them and the `top_p` tabs (B5
+   revision; DRC, LVS, PEX and the behavioural first-conversion deck, about 1.5 h, then the gate-level decks).
+4. **North pins changed form:** Metal3 → Metal2, x +0.20 … +0.40 µm, y +23.12 µm, labels `adc_raw_a<k>` (CDL form, the
+   form that strict-port LVS needs). The assembly (T8/T10) must use the B5 pin table.
+5. **`cur_trk` has no driver in `r1_ctrl`** (open issue S1 of `r1_adc_sar`); the post-layout decks hold it at 0.
+6. **SAR supply IR drop** is not separately checked; the extracted strap is in the post-layout runs (ports `vdd_sar`,
+   `vss_sar` of `r1_adc_lay_sar`).
+7. The LVS reference CDL header first held a machine path in a comment; it was replaced by `<G1_RESULTS_ROOT>` after
+   the LVS runs (comment only, netlist identical).
+8. **R2-4 with the real CDAC timing fails as defined (0.353 LSB, 4 slots).** It passes (0.243) when the step is
+   sampled at 4 ns, after the gate-level SAR has switched. The coordinator must decide the sample time; then run
+   all 10 slots and ss (not run).
+9. **Bit-exact is not met** at tt (2/8 words, all differences ties or near the threshold, ±1 LSB) and at ss (0/4
+   words, 3 differences 0.58–0.96 LSB from the threshold, −1 … −2 LSB). In B5 the comparator threshold of slice B
+   cannot be separated (offset), so the tie rule gives no answer there (verification gap).
+
+### Failures and mistakes (layout B5)
+
+| # | What happened | Class | Fix |
+| --- | --- | --- | --- |
+| 1 | dev1: slice north pins unreachable (edge blocking also blocked Metal2 at the north edge) | planning | unblock Metal2 at the pin |
+| 2 | dev1: top router could not reach `sar_clkna`, `sar_cnb2` (jog reservation 0.45 µm blocked the neighbour pin nodes) | numerical | clearance 0.42 µm |
+| 3 | dev2: 20 slice nets failed (cmp4 cap-row Metal2 rails under array row 0 block the verticals) | planning | Metal3 free in the dummy-ring rows |
+| 4 | dev3 DRC M2.b: my north pin boxes 0.585 µm were wider than the macro pins | functional-bug | exact macro pin rectangle 0.40 µm |
+| 5 | dev3 DRC TM1.b: `vss` TopMetal1 strap 1.28–1.54 µm from the slice TopMetal1 | planning | strap at x 216.8–222.2 |
+| 6 | dev3 LVS: reference netlist path not visible in the container | tooling | `/work` path |
+| 7 | dev5 LVS failed in strict port mode: labels `adc_raw_a[k]` (B4 form) against CDL `adc_raw_a<k>` | spec-ambiguity | labels in CDL form (dev6) |
+| 8 | B4 north keep-out row (331.8 × 10.7 µm) not usable: the macro is 23.12 µm and sits above the box | coordination | keep-out removed |
+| 9 | wait loop with `pgrep -f` matched its own shell | tooling | wait on `run.json` files |
+| 10 | machine paths in merge / netlist headers and the CDL comment | process-hygiene | replaced by `<G1_RESULTS_ROOT>` |
+| 11 | R2-4 closed loop reduced to 4 of 10 slots (time per run with the gate-level SAR ≈ 2.5 h) | estimation | recorded; full 10 slots not run |
+| 12 | the 2 h `timeout` of `run_b5.py` sends TERM to `flow/run.sh` only; ngspice in the container goes on. `b5-ms-mux-tt` and `b5-ms-ref-tt-buf-s4` ended normally after the limit with rc 124 | tooling | runner labels such runs completed-late after a log check; `b5-ms-mux-tt` relabelled by hand with the same rule (note in its run.json) |
+| 13 | B5 closed-loop decks run about 2× slower than the same decks on the B4 netlist (mux 224 min against 109 min); the plan assumed the B4 rate | estimation | ss run started late; see status |
+| 14 | the first-conversion and R2-4 comparisons first used B4 behavioural runs as the reference; the +12 LSB layout offset then looks like a SAR error | verification-gap | behavioural runs on the B5 netlist added (`postb5-isa-tt-rc`, `postb5-fc-tt-rc`) |
+
+### Integration (what B5 changes against B4)
+
+1. **SAR macro.** `r1_adc_sar` (439.0 × 23.12 µm, GDS sha256 `70e2c5b7…`, hash-checked by the generator) is copied
+   into `r1_adc.gds` as its own cell and placed once at (0, 182.3), R0. Its north edge is the ADC north edge.
+2. **73 SAR-side connections.** The slice routes each of its 36 SAR ports (26 CDAC switch lines, 4 comparator clocks,
+   4 comparator outputs, 2 track lines) to a Metal3 north-edge pin at the x of its slice-A macro pin (Metal2 through the
+   array band; Metal3 is now allowed in the two dummy-ring rows of the array, which have no bottom-plate tracks, so the
+   lines hop over the cmp4 cap-row rails). The top router joins the 72 slice pins and the clock-generator `mclk`
+   output to the macro south pins (router node 1.5 µm below the macro, 0.4 µm Metal2 jog onto the pin). Slice router
+   72 s, top router 85 s, 0 failed nets.
+3. **Comparator clock generator moved** from x 8 (under the slice-A macro pins, where 30 SAR lines must pass) to
+   x 157.6–220.1 in the north band, between the slice-A and slice-B macro pin groups. Its five 10 fF delay MIMs sit over
+   its own device rows (MIM over MOS, as the decoupling plates). `clk` reaches it from the macro `clk` pin: Via4 on
+   the macro's Metal4 clk riser (x 6.24), Metal5 down to y 180.0 and east to x 158.4.
+4. **SAR supplies (INTEGRATION.md 3–4).** `vdd`: a Metal4 riser 2.4 µm wide in the gap between the slices
+   (x 220.8–223.2) from the top `vdd` strap (y 49.8) to y 182.0, Via4 (16 cuts) to a Metal5 riser, a Metal5 bus
+   (3 µm, macro y 4–7) over the eight macro VDD straps, 18 Via4 per strap (144). `vss`: a TopMetal1 strap 5.4 µm wide
+   (x 216.8–222.2) from the decoupling TopMetal1 sheet (the top-level `vss` plane) to a Metal5 bus (macro y 15–18), 15
+   TopVia1, 18 Via4 per macro VSS strap (144). The macro `VSS` touches the slice `gnd` / `gnd@K` only through the
+   TopMetal1 sheet. The `vdd` router pins of the clock generator are on the riser.
+5. **North pins = macro pins.** The 36 north pins of B4 and the new `cur_trk` are the macro's Metal2 pins (0.40 ×
+   0.40 µm at y 205.42), labelled in the CDL form `adc_raw_a<k>`. They move by +0.20 … +0.40 µm in x (macro pin
+   slots, `sar/flow/pins.md`), Metal3 → Metal2, and up by 23.12 µm. West, east and south pins are unchanged.
+6. **Removed:** the B4 north keep-out and the 35 Metal3 north stubs of the analog part. No antenna diode is added
+   (the try-f diodes were a top-level measure).
+7. **Shielding of the clock lines** (router `shield()`, `vss` / `gnd` tracks on both sides where free): top level
+   `clk` 147/152 edge sides, `sar_mclk` 477/512, slice-A comparator clocks 30–36 of 38 each, slice-B comparator clocks
+   0/40, 0/38, 0/38 and 36/38 (no free `vss` track next to them in the channel); in the slice `clk` 95/208, `clkb`
+   267/574, `clkn` 192/432, `clknb` 217/272 (the slice routes now run to the north edge).
+
+### LVS method
+
+`layout/r1_adc_lvs_b5.cdl` = `layout/r1_adc_lvs.cdl` (analog netlist of record, unchanged, sha256 `2e18b5c2…`) with the
+73 `sar_*` ports turned into internal nets, the new port `cur_trk`, one instance `Xsar` of `r1_adc_sar`, and the
+`r1_adc_sar` subcircuit from the release `r1_adc_sar.pnl.v` through `r1_top/lvs/pnl2cdl.py` with the PDK
+`sg13g2_stdcell.cdl` (`layout/b5/make_cdl_b5.py`; 619 cell instances incl. fill, decap and the antenna diode). Run
+script `layout/b5/run_lvs_b5.sh <id> <gds> stock|limits` (limits = the comparer-limit deck copy of `r1_safe`).
+
+### Pin table (B5)
+
+`reports/layout-b5-dev6/pin_table_b5.md` (written by `layout/b5/check_pins_b5.py` from the GDS): 52 pins, box 439.00 ×
+205.42 µm, north pitch ≥ 1.92 µm, supply pins 1.0 µm. North pins (local x, Metal2, y 205.02–205.42): `adc_hold` 2.40,
+`is_smp` 4.32, `clk` 6.24, `adc_start` 10.08, **`cur_trk` 16.80 (new, between `adc_start` and `adc_sel`)**, `adc_sel`
+24.48, `adc_valid_a` 38.88, `adc_raw_a<k>` 53.28 + 14.40 k (k 0–13), `adc_valid_b` 254.88, `adc_raw_b<k>` 269.28 +
+14.40 k (k 0–11), `adc_raw_b<12>` 430.56, `adc_raw_b<13>` 433.44, `por_n` 437.28. West (`ain_sin_*` 110/114,
+`ain_cos_*` 130/134, `vcm2` 150, `ibias` 165), east (`ain_isa_*` 110/114, `ain_isb_*` 130/134, `vcm` 150) and south
+(`vdda` 50, `vdd` 100, `vss` 150, `vref_in` 400; Metal3 1.0 µm) as B4.
+
 ## SAR logic sub-macro (`r1_adc_sar`, decision D21, 2026-10-27, track T2j)
 
 The SAR logic and the frame sequencer are now a standard-cell sub-macro, `sar/` (spec, RTL, testbenches, flow,
@@ -22,7 +151,7 @@ reports: `sar/README.md`; integration for layout B5: `sar/INTEGRATION.md`). It r
 
 ## Layout B4 (revision 5, 2026-10-27, track T2, closure attempt)
 
-State: **layout B4 is the layout of record** (`layout/r1_adc.gds`, sha256 `f35046d2391e…`; layout B3 kept as
+State: superseded by layout B5 (section above) on 2026-10-27. Before that, **layout B4 was the layout of record** (`layout/r1_adc.gds`, sha256 `f35046d2391e…`; layout B3 kept as
 `layout/r1_adc_layout_b3.gds`). B4 passes the post-layout set on its own extraction (status table below). Not met:
 the 15 µm north row (D21); the hardened SAR macro is recommended above the box instead. Same box (439.0 × 182.3 µm), same 51 pins, netlist of record unchanged. All
 numbers in this section are from layout tools or are **simulated**. Nothing is measured.

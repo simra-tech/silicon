@@ -1,0 +1,42 @@
+{
+ "run_id": "b5-ms-mux-tt",
+ "block": "r1_adc",
+ "track": "T2k (helper)",
+ "harness": "sim/post/b5",
+ "question": "layout B5 post-layout (RC, mb5) + hardened SAR gate level (PDK cells, SPEF lumped C), r5 mux sequence e c e e at tt: decisions vs behavioural, output timing",
+ "command": "G1_CPUSET=103 G1_CPUS=1 G1_WORKDIR=designs/r1-joint/blocks/r1_adc G1_RESULTS_ROOT=<G1_RESULTS_ROOT> flow/run.sh ngspice -b <G1_RESULTS_ROOT>/r1_adc/b5-ms-mux-tt/deck.cir (runner sim/post/b5/run_b5.py)",
+ "argv": [
+  "--id",
+  "b5-ms-mux-tt",
+  "--cpu",
+  "103",
+  "--deck",
+  "sim/post/b5/decks/b5/mux_tt.cir",
+  "--question",
+  "layout B5 post-layout (RC, mb5) + hardened SAR gate level (PDK cells, SPEF lumped C), r5 mux sequence e c e e at tt: decisions vs behavioural, output timing"
+ ],
+ "deck_template": "sim/post/b5/decks/b5/mux_tt.cir",
+ "deck": "sim/post/b5/runs/b5-ms-mux-tt/deck.cir",
+ "deck_template_sha256": "c57c29ba0fb4bbdc8508c1f32aee1c64f9db7577a3471a020185499c56578c5b",
+ "tstop": "3.31u",
+ "smoke_test": false,
+ "includes_sha256": {
+  "sim/post/r1_adc_post_rc_mb5.spice": "7bf2b33fe2c6ddc544c4c754f8f37a9d4ee09bed36801e903b498b6360b949e9",
+  "/foss/pdks/ihp-sg13g2/libs.ref/sg13g2_stdcell/spice/sg13g2_stdcell.spice": "container path (PDK 84374023)",
+  "sim/post/b5/sar/r1_adc_sar_gl_lumpc.spice": "102f66b6a65f778556d45695f7a38ee7122dba367afe0e5a41c8bf97f841a59a"
+ },
+ "pdk_commit": "84374023ee8b4b126bebbba67fcbada0a9c0ff0b (checked by flow/run.sh)",
+ "container_image": "tapeoutbench-eda:latest sha256:ddeb69576f2808676d1c5d474ecf04f6d1d6f8abdcff6b72b39790ded924bab2",
+ "ngspice_version": "not found in log",
+ "raw_results": "<G1_RESULTS_ROOT>/r1_adc/b5-ms-mux-tt/",
+ "started_utc": "2026-10-27T08:27:11.219594Z",
+ "wall_s": 13448.7,
+ "sim_us_per_wall_min": 0.0148,
+ "returncode": 124,
+ "status": "completed-late",
+ "errors": [],
+ "missing_outputs": [],
+ "result": "",
+ "disposition": "pending post-processing (sim/post/b5/b5_post.py)",
+ "status_note": "relabelled by the T2k lead with the completed-late rule of run_b5.py (added during this run): rc 124 from the ineffective timeout (TERM reaches flow/run.sh only), ngspice ended normally, b5.raw complete (37660 rows), no error lines"
+}

@@ -23,10 +23,15 @@ Layout B (2026-10-26, T2b): wide supply / reference straps drawn before routing 
   feeders from the south pins; top: decoupling TopMetal1 sheet used as the vss plane with Via4 / TopVia1 drops onto the
   slice gnd strap, vdd strap under the slices, vdda strap to the buffer), comparator input pairs at the east end of the
   comparator row (short top-plate routes, halo on the top-plate nets), symmetric COS input pair. See README "Layout B".
+Layout B5 (2026-10-27, T2k, D21): box 439.0 x 205.42 um = this analog part (y 0 - 182.3) + the hardened SAR sub-macro
+  r1_adc_sar (release t2j-ll-h2312-h) as a cell reference at (0, 182.3); the slice routes its 36 SAR ports to north
+  edge pins, the top router joins them to the macro south pins; clock generator moved to x 157.6; macro supplies:
+  vdd Metal4 riser + Metal5 bus, vss TopMetal1 strap + Metal5 bus; north pins = macro pins (README "Layout B5").
+  -rd out=<gds> writes the GDS elsewhere; needs G1_RESULTS_ROOT (the macro GDS, hash-checked).
 Layers: Metal1-Metal4 routing (maze router + hand-drawn buses), Metal5 only as MIM bottom plates and TopVia1 islands,
 TopMetal1 only on MIM plates, their sheets and 1.64 um tabs; no TopMetal2. Boundary on 189/4.
 """
-import json, math, os, sys, time
+import json, math, os, re, sys, time
 HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, HERE)
 from adc_lib import *            # noqa  Block, gceil, gfloor, gnear, gpts, s5, pya, LAYERS, Mos, VIA, TV1, ...
@@ -41,7 +46,8 @@ OUT = globals().get('out', os.path.join(HERE, 'r1_adc.gds'))
 ROUNDS = int(globals().get('rounds', '6'))
 TRIM = json.load(open(globals()['trim'])) if globals().get('trim') else {}
 
-W, H = 439.0, 182.3
+W, H = 439.0, 182.3               # H: analog part (layouts A-B4); B5 box height HB5
+HB5 = round(H + 23.12, 2)
 SX = [3.2, 223.2]                 # slice origins (x); y origin SY
 SY = 54.4                         # on the 0.8 um router grid; slice edge pins at global 110.4 / 114.4 (stubs jog to 110 / 114)
 WS, HS = 213.6, 111.2
@@ -506,7 +512,10 @@ def draw_cdac(blk, coll_x):
         blk.pin(n, [(2, x, yc0)], 'm4')
         blk.port('@coll', 0, n, 4, pt=(x, yc0))
     # whole array band: no router use of Metal3/Metal4 inside (tracks, stubs, collectors), Metal2 free
-    blk.R.block_area([1, 2], AX, AY, AX + NC * SP, AY + NR * SP)
+    # layout B5: Metal3 stays free in the two dummy-ring rows (row 0 and row NR-1 have no bottom-plate tracks), so the
+    # SAR lines can hop over the cmp4 cap-row Metal2 rails under row 0 and jog under the top row
+    blk.R.block_area([2], AX, AY, AX + NC * SP, AY + NR * SP)
+    blk.R.block_area([1], AX, AY + SP, AX + NC * SP, AY + (NR - 1) * SP)
     # tabs: TopMetal1 from the end unit through the gap slot to a TopVia1 island west / east of the array
     xw = gfloor(AX - 1.0); xe = gceil(AX + NC * SP + 1.0)
     isl = {}
@@ -573,6 +582,50 @@ SLICE_DROPS = [('gnd', 11.06, 24.0), ('gnd', 37.2, 24.0), ('gnd', 65.84, 24.0), 
                ('gnd', 146.76, 24.0), ('gnd', 175.4, 24.0), ('gnd', 201.54, 24.0)]
 SLICE_WEST = [('in0p', 56.0), ('in0n', 60.0)]
 SLICE_EAST = [('in1p', 76.0), ('in1n', 80.0)]     # global 130.4 / 134.4 (ISB pins 130 / 134)
+# layout B5 (2026-10-27, T2k, D21): the hardened SAR sub-macro r1_adc_sar (release t2j-ll-h2312-h, 439.0 x 23.12 um)
+# sits on top of the analog part at (0, H); the ADC box is 439.0 x HB5. Its south pins are at the x of the slice SAR
+# ports; the slice routes each SAR port to a north edge pin (Metal3) at the macro pin x (slice A frame), the top router
+# joins the slice north pins to the macro pins across the north channel.
+SAR_PINS_JSON = os.path.join(HERE, '..', 'sar', 'flow', 'pins.json')
+SAR_H = 23.12
+SAR_GDS_SHA = '70e2c5b7b3d50b7952af2044063dd1068d1200b99aeb560d47e150a9298afc92'
+SAR_SLICE_NET = {'clk': 'clk', 'clkb': 'clkb', 'clkn': 'clkn', 'clknb': 'clknb', 'p': 'op', 'n': 'on', 'np': 'onp',
+                 'nn': 'onn', 'trk0': 'trk0', 'trk1': 'trk1'}
+
+
+def sar_pins():
+    """r1_adc_sar pins (flow/pins.json): list of dict(net, edge, x, y) in the macro frame."""
+    return json.load(open(SAR_PINS_JSON))['pins']
+
+
+def sar_south_map():
+    """macro south pin -> (slice 'a'/'b' or None, slice-local port name, macro x). mclk: (None, 'sar_mclk', x)."""
+    out = {}
+    for p in sar_pins():
+        if p['edge'] != 'S':
+            continue
+        n = p['net']
+        m = re.match(r'^(cp|cn)([ab])\[(\d+)\]$', n)
+        if m:
+            out[n] = (m.group(2), '%s%s' % (m.group(1), m.group(3)), p['x']); continue
+        m = re.match(r'^clkn([ab])(b?)$', n)
+        if m:
+            out[n] = (m.group(1), 'clkn' + m.group(2), p['x']); continue
+        m = re.match(r'^(clk|trk|o)([ab])(.*)$', n)
+        if m and n != 'mclk':
+            kind, ch, rest = m.groups()
+            key = {'clk': 'clk' + rest, 'trk': 'trk' + rest, 'o': rest}[kind]
+            out[n] = (ch, SAR_SLICE_NET[key], p['x']); continue
+        assert n == 'mclk', n
+        out[n] = (None, 'sar_mclk', p['x'])
+    return out
+
+
+def slice_north():
+    """slice north edge pins (port, local x): slice A macro pin x - SX[0] on the router grid."""
+    return sorted([(port, gnear(x - SX[0])) for (ch, port, x) in sar_south_map().values() if ch == 'a'], key=lambda t: t[1])
+
+
 SLICE_PAIRS = [('top_p@W', 'top_n@W'), ('top_p@E', 'top_n@E'), ('in0p', 'in0n'), ('in1p', 'in1n'),
                ('xc4_dip', 'xc4_din'), ('op', 'on'), ('xc5_dip', 'xc5_din'), ('onp', 'onn')]
 
@@ -786,6 +839,14 @@ def build_slice(ly):
         R.unblock(1, WS, y)
         blk.pin(net, [(1, WS, y)], 'm3')
         edge.setdefault(net, []).append(('E', WS, y))
+    # layout B5: SAR ports to the north edge (Metal3 edge node at the slice A macro pin x)
+    xs_n = [x for _, x in slice_north()]
+    assert len(set(xs_n)) == len(xs_n), 'two slice north pins on one grid column'
+    for net, x in slice_north():
+        R.unblock(1, x, HS)
+        R.unblock(0, x, HS)          # Metal2 below the edge node: the only free layer over the array
+        blk.pin(net, [(1, x, HS)], 'm3')
+        edge.setdefault(net, []).append(('N', x, HS))
     # ---- route -------------------------------------------------------------------------------------------------------
     # comparator clocks first, with a soft halo (other nets keep the next track free for the ground shield)
     CLK = ['clkb', 'clkn', 'clk', 'clknb']
@@ -837,7 +898,7 @@ def route_pairs(blk, first, pairs, cellname):
                         R.add_stub(R.nets[net], l, int(n), log=log)
         # comparator clocks (slice) and the clock input (top): ground shield tracks on both sides where free
         gname = 'gnd' if cellname == 'r1_adc_slice' else 'vss'
-        for net in (('clk', 'clkb', 'clkn', 'clknb') if cellname == 'r1_adc_slice' else ('clk',)):
+        for net in (('clk', 'clkb', 'clkn', 'clknb') if cellname == 'r1_adc_slice' else tuple(B5_CLOCKS)):
             if net in R.nets and gname in R.nets:
                 kept, tot = R.shield(R.nets[net], R.nets[gname])
                 blk.stats.setdefault('shield', {})[net] = dict(shielded_edges=kept, edge_sides=tot)
@@ -872,7 +933,19 @@ SUPPLY_PINS = ('vdd', 'vdda', 'vss', 'vref_in')
 SUPPLY_PIN_HW = 0.5
 # layout B4 (D21, SAR sub-macro r1_adc_sar for B5): router keep-out at the north edge, all routing layers, y >= NORTH_KEEP_Y
 # and x >= NORTH_KEEP_X0 (east of the comparator clock generator); the pin stubs stay
-NORTH_KEEP_Y, NORTH_KEEP_X0 = 171.6, 107.2
+NORTH_KEEP_Y, NORTH_KEEP_X0 = 171.6, 107.2      # layout B4 only; B5 has no north keep-out
+# layout B5: comparator clock generator moved from x 8 (under the macro's slice-A pins) to the north band between the
+# slice-A and slice-B macro pin groups; its five 10 fF delay MIMs over its device rows (MIM over MOS, as the decap)
+CKG_X0 = 157.6
+# layout B5 supplies of the SAR macro (INTEGRATION.md 3, 4): vdd riser (Metal4, inter-slice gap) from the top vdd strap
+# to a Metal5 bus over the macro VDD straps; vss: TopMetal1 strap (inter-slice gap) from the decoupling TopMetal1 sheet
+# (the top-level vss plane) to a Metal5 bus over the macro VSS straps. Macro straps: VDD x 14.08 + 54 n, VSS x 17.28 +
+# 54 n, 1.6 um wide, macro y 3.56-22.90 (LEF)
+VDD_RISER_X = (220.8, 223.2)
+VSS_TM1_X = (216.8, 222.2)        # TM1.b 1.64 um to the slice TopMetal1 (215.06 / 223.88)
+SAR_VDD_BUS_Y = (4.0, 7.0)          # macro frame
+SAR_VSS_BUS_Y = (15.0, 18.0)
+SAR_CLK_Y5 = 180.0                  # clk: Metal5 from the macro clk pin (Metal4 at x 6.24) to the clock generator
 
 
 def decap_plan():
@@ -900,6 +973,92 @@ def decap_plan():
 NORTH, WEST, EAST, SOUTH = NLM.NORTH, NLM.WEST, NLM.EAST, NLM.SOUTH
 
 
+B5_CLOCKS = ['clk', 'sar_mclk', 'sar_clka', 'sar_clkab', 'sar_clkna', 'sar_clknab', 'sar_clkb', 'sar_clkbb', 'sar_clknb',
+             'sar_clknbb']
+B5_NODE_Y = 180.8                   # router node of a macro south pin (Metal2); a Metal2 jog joins it to the pin
+
+
+def b5_sar_connect(blk):
+    """layout B5: router pins at the macro south pins, the clk feed point, supply straps (reserved before routing)."""
+    R, D = blk.R, blk.D
+    jogs = []
+    for name, (ch, port, x) in sorted(sar_south_map().items()):
+        net = port if ch is None else NLM.slice_map(ch)[port]
+        xg = gnear(x)
+        R.unblock(0, xg, B5_NODE_Y)
+        blk.pin(net, [(0, xg, B5_NODE_Y)], 'm2')
+        # clear 0.42: a foreign pad closer than 0.21 um to the jog is reserved; the next pin node (>= 0.44 um) is not
+        R.reserve(0, min(x, xg) - 0.2, B5_NODE_Y - 0.2, max(x, xg) + 0.2, H, net, clear=0.42)
+        jogs.append((net, x, xg))
+    blk.stats['b5_jogs'] = jogs
+    # macro area: no router use above the analog box
+    R.block_area([0, 1, 2], 0.0, H - 0.3, W, H + 1.0)
+    # clk: Metal4 pad under the Metal5 feed end (drawn in b5_draw) is the router pin of clk
+    xc = gnear(CKG_X0 + 0.8)
+    R.unblock(2, xc, SAR_CLK_Y5)
+    blk.pin('clk', [(2, xc, SAR_CLK_Y5)], 'm4')
+    R.reserve(2, xc - 0.2, SAR_CLK_Y5 - 0.2, xc + 0.2, SAR_CLK_Y5 + 0.2, 'clk')
+    blk.stats['b5_clk_feed'] = (xc, SAR_CLK_Y5)
+    # vdd riser (Metal4) from the top vdd strap to y H - 0.3; router pins along it for the clock generator
+    x1, x2 = VDD_RISER_X
+    R.reserve(2, x1, TOP_VDD_Y[0], x2, H - 0.3, 'vdd')
+    blk.pin('vdd', [(2, x, y) for x in gpts(x1 + 0.4, x2 - 0.4) for y in gpts(TOP_VDD_Y[1] + 0.8, H - 1.2)][::3], 'm4')
+
+
+def b5_draw(blk):
+    """layout B5: Metal2 jogs to the macro pins, macro north pins as ADC pins, supply straps and buses, clk feed."""
+    D = blk.D
+    for net, x, xg in blk.stats['b5_jogs']:
+        D.box('M2', min(x, xg) - 0.2, B5_NODE_Y - 0.2, max(x, xg) + 0.2, B5_NODE_Y + 0.2)
+        D.box('M2', x - 0.2, B5_NODE_Y - 0.2, x + 0.2, H + 0.3)
+    # vdd: Metal4 riser, Via4 array, Metal5 riser to the VDD bus over the macro, Via4 on each macro VDD strap
+    x1, x2 = VDD_RISER_X
+    yb1, yb2 = H + SAR_VDD_BUS_Y[0], H + SAR_VDD_BUS_Y[1]
+    D.box('M4', x1, TOP_VDD_Y[0], x2, H - 0.3)
+    D.box('M5', x1, H - 2.6, x2, yb2)
+    n4 = via_array(D, 'Via4', x1, H - 2.6, x2, H - 0.3)
+    D.box('M5', 13.6, yb1, 394.2, yb2)
+    nv = 0
+    for n in range(8):
+        xs = 14.08 + 54 * n
+        nv += via_array(D, 'Via4', xs, yb1, xs + 1.6, yb2)
+    # vss: TopMetal1 strap from the decoupling sheet to the VSS bus; TopVia1 array; Via4 on each macro VSS strap
+    t1, t2 = VSS_TM1_X
+    ys1, ys2 = H + SAR_VSS_BUS_Y[0], H + SAR_VSS_BUS_Y[1]
+    D.box('TM1', t1, DEC_Y + DEC_H - 3.0, t2, ys2)
+    D.box('M5', 16.8, ys1, 397.4, ys2)
+    ntv = via_array(D, 'TV1', t1, ys1, t2, ys2)
+    nvs = 0
+    for n in range(8):
+        xs = 17.28 + 54 * n
+        nvs += via_array(D, 'Via4', xs, ys1, xs + 1.6, ys2)
+    # clk feed: Via4 on the macro clk Metal4 (x 6.14-6.34, macro y 19.5-22.825), Metal5 down to SAR_CLK_Y5 and east to
+    # the router pin (Metal4 pad + Via4)
+    xk, yk = 6.24, H + 21.2
+    D.box('M4', xk - 0.1, yk - 0.3, xk + 0.1, yk + 0.3)
+    D.sq('Via4', xk, yk, VIA)
+    xc, yc = blk.stats['b5_clk_feed']
+    D.box('M5', xk - 0.2, yc - 0.2, xk + 0.2, yk + 0.25)
+    D.box('M5', xk - 0.2, yc - 0.2, xc + 0.2, yc + 0.2)
+    D.sq('Via4', xc, yc, VIA); D.sq('M4', xc, yc, 0.40)
+    # north pins of the ADC = macro north pins (Metal2, 0.40 x 0.585 at the macro edge); B5 pin list
+    pins = []
+    for p in sar_pins():
+        if p['edge'] != 'N':
+            continue
+        # label in the CDL form adc_raw_a<k>: with adc_raw_a[k] (layouts A-B4) the strict-port LVS fails (dev5); in B4 the
+        # north pins had no devices, so the name form was never compared
+        net = p['net'].replace('[', '<').replace(']', '>')
+        x = p['x']
+        D.box('M2', x - 0.2, HB5 - 0.4, x + 0.2, HB5)          # = the macro pin shape (10/2), inside its Metal2
+        D.box('M2pin', x - 0.2, HB5 - 0.4, x + 0.2, HB5)
+        D.label('M2txt', x, HB5 - 0.3, net, 0.2)
+        pins.append((net, round(x, 3), HB5))
+    blk.stats['b5'] = dict(north_pins=pins, vdd_riser=dict(x=VDD_RISER_X, via4=n4), vdd_bus_via4=nv,
+                           vss_tm1=dict(x=VSS_TM1_X, tv1=ntv), vss_bus_via4=nvs, clk_feed=(xk, yk, xc, yc))
+    log('B5 straps: vdd riser via4 %d, vdd bus via4 %d, vss TV1 %d, vss bus via4 %d' % (n4, nv, ntv, nvs))
+
+
 def build_top(ly, sl):
     plan, shapes = decap_plan()
     top_devs = NLM.top_devices()
@@ -918,7 +1077,7 @@ def build_top(ly, sl):
             for (side, x, y) in lst:
                 X, Y = round(x0 + x, 4), round(SY + y, 4)
                 R.unblock(1, X, Y)
-                if side == 'S' and net != 'vdd':
+                if (side == 'S' and net != 'vdd') or side == 'N':
                     blk.pin(net, [(1, X, Y)], 'm3')
     # ---- guard ring (p+ substrate tie, vss) -----------------------------------------------------------------------
     D.tap_ring(1.0, 1.0, W - 1.0, H - 1.0, w=0.6, ptype=True)
@@ -1181,23 +1340,19 @@ def build_top(ly, sl):
     ck = lambda n: by['xckg_' + n]
     cn = [ck('xnd0'), ck('xnd1'), ck('xnd2'), ck('xnd3'), ck('xnd4'), ck('xna'), ck('xnb'), ck('xni')]
     cp_ = [ck('xpd0'), ck('xpd1'), ck('xpd2'), ck('xpd3'), ck('xpd4'), ck('xpa'), ck('xpb'), ck('xpi')]
-    tk1, _ = blk.mrow([dict(x0=8.0, devs=cn, bulk='vss', gap=0.4)], 175.2, 'n')
+    tk1, _ = blk.mrow([dict(x0=CKG_X0, devs=cn, bulk='vss', gap=0.4)], 175.2, 'n')
     wk = blk.seg_w(cn, 0.4)
-    tk2, ek2 = blk.mrow([dict(x0=gceil(8.0 + wk + 2.4), devs=cp_, bulk='vdd', gap=0.4)], 175.2, 'p')
+    tk2, ek2 = blk.mrow([dict(x0=gceil(CKG_X0 + wk + 2.4), devs=cp_, bulk='vdd', gap=0.4)], 175.2, 'p')
     for k in range(5):
         d = ck('cd%d' % k)
-        mx = gceil(ek2[0][1] + 2.0) + k * 7.2     # 7.2 pitch: TopMetal1 tab islands 1.64 um clear of the next plate
+        mx = gceil(CKG_X0 + 1.6) + k * 7.2     # 7.2 pitch: TopMetal1 tab islands 1.64 um clear of the next plate
         blk.mim_rect(d['name'], d['w'], d['l'], mx, 175.2, d['nets'][0], d['nets'][1], tab='E')
-    log('clkgen top %.2f %.2f, x end %.2f' % (tk1, tk2, ek2[0][1] + 34))
+    log('clkgen (B5) top %.2f %.2f, x %.2f - %.2f, MIM x end %.2f' % (tk1, tk2, CKG_X0, ek2[0][1], gceil(CKG_X0 + 1.6) + 4 * 7.2 + 5))
+    assert ek2[0][1] + 0.6 < VDD_RISER_X[0], ek2
     # ---- long input pairs (hand-drawn), north channel shields -------------------------------------------------------
     long_pairs(blk)
     # layout B4 (D21): north keep-out for the SAR sub-macro row (free nodes only; pin stubs are reserved below)
-    for l in range(3):
-        for gx in gpts(NORTH_KEEP_X0, W):
-            for gy in gpts(NORTH_KEEP_Y, H):
-                i, j = R.ij(gx, gy)
-                if R.inside(i, j) and R.res[l, i, j] == FREE:
-                    R.res[l, i, j] = BLOCK
+    # layout B5: no north keep-out (B4 kept y >= 171.6 free for a SAR row inside the box)
     # ---- block pins -------------------------------------------------------------------------------------------------
     R.block_edges()
     bp = []
@@ -1215,8 +1370,6 @@ def build_top(ly, sl):
             R.unblock(1, xg, 0.8)
             if net not in FEED_X:
                 blk.pin(net, [(1, xg, 0.8)], 'm3')
-        elif net == 'clk':
-            R.unblock(1, gnear(x), gfloor(H - 0.8)); blk.pin(net, [(1, gnear(x), gfloor(H - 0.8))], 'm3')
         elif net in ('ain_sin_p', 'ain_sin_n', 'ain_isb_p', 'ain_isb_n'):
             pass       # straight Metal3 stubs to the slice edge pins (drawn below)
         elif net == 'ibias':
@@ -1224,7 +1377,7 @@ def build_top(ly, sl):
     # reserve the edge pin boxes and the straight input stubs (drawn after routing) for their nets
     for (net, side, x, y) in bp:
         if side == 'N':
-            R.reserve(1, x - 0.2, H - 1.2, x + 0.2, H, net)
+            pass        # layout B5: north pins belong to the macro
         elif side == 'W':
             R.reserve(1, 0.0, y - 0.2, 1.0, y + 0.2, net)
         elif side == 'E':
@@ -1236,12 +1389,13 @@ def build_top(ly, sl):
         R.reserve(1, 0.0, y - 0.2, SX[0] + 0.2, y + 0.6, net)
     for net, y in (('ain_isb_p', 130.0), ('ain_isb_n', 134.0)):
         R.reserve(1, SX[1] + WS - 0.2, y - 0.2, W, y + 0.6, net)
+    b5_sar_connect(blk)
     # guard ring as vss at a few nodes next to the south vss pin
     blk.pin('vss', [(0, x, 0.8) for x in gpts(146.0, 154.0)], 'm1')
     # ---- route ------------------------------------------------------------------------------------------------------
     TOP_PAIRS = []
-    R.halo_cost, R.halo_only = 40, {'clk'}
-    ok = route_pairs(blk, ['clk', 'vref', 'vrefl'], TOP_PAIRS, 'r1_adc')
+    R.halo_cost, R.halo_only = 40, set(B5_CLOCKS)
+    ok = route_pairs(blk, B5_CLOCKS + ['vref', 'vrefl'], TOP_PAIRS, 'r1_adc')
     blk.stats.update(route_ok=ok, route_failed=R.failed)
     blk.draw_routes()
     # pins: Metal3 boxes, pin shapes, labels
@@ -1255,12 +1409,7 @@ def build_top(ly, sl):
             if abs(xg - x) > 1e-6:
                 D.box(L, min(x, xg) - 0.2, 0.6, max(x, xg) + 0.2, 1.0)
         elif side == 'N':
-            yb = H - 1.2
-            D.box(L, x - 0.2, yb, x + 0.2, H); D.box('M3pin', x - 0.2, yb, x + 0.2, H)
-            D.label('M3txt', x, H - 0.4, net, 0.3)
-            if net == 'clk':
-                xg = gnear(x)
-                D.box(L, min(x, xg) - 0.2, gfloor(H - 0.8) - 0.2, max(x, xg) + 0.2, H - 0.4)
+            pass        # layout B5: drawn by b5_north_pins() on the macro pins
         elif side == 'W':
             D.box(L, 0.0, y - 0.2, 1.0, y + 0.2); D.box('M3pin', 0.0, y - 0.2, 1.0, y + 0.2)
             D.label('M3txt', 0.4, y, net, 0.3)
@@ -1280,7 +1429,8 @@ def build_top(ly, sl):
             D.label(lay, x0 + x, SY + y, net, 0.1)
     for (lay, x, y, text) in blk.labels:
         D.label(lay, x, y, text, 0.2)
-    D.boundary(0, 0, W, H)
+    b5_draw(blk)
+    D.boundary(0, 0, W, HB5)
     blk.stats['decap_plan'] = plan
     blk.stats['pins'] = bp
     return blk, shapes
@@ -1495,13 +1645,26 @@ def main():
     top, shapes = build_top(ly, sl)
     log('top routed', top.stats['route_ok'], top.stats['route_failed'], '%.0f s' % (time.time() - t0))
     json.dump(shapes, open(os.path.join(HERE, 'r1_adc_decap.json'), 'w'), indent=1)
+    # layout B5: the SAR macro as a cell reference (not flattened) at (0, H), R0
+    import hashlib
+    sgds = os.path.join(os.environ['G1_RESULTS_ROOT'], 'r1_adc_sar', 'release-t2j-h', 'r1_adc_sar.gds')
+    assert hashlib.sha256(open(sgds, 'rb').read()).hexdigest() == SAR_GDS_SHA, 'r1_adc_sar.gds hash'
+    sl2 = pya.Layout(); sl2.read(sgds)
+    names = set(c.name for c in ly.each_cell())
+    clash = [c.name for c in sl2.each_cell() if c.name in names]
+    assert not clash, clash
+    mc = ly.create_cell('r1_adc_sar')
+    mc.copy_tree(sl2.top_cell())
+    topc = ly.cell('r1_adc')
+    topc.insert(pya.DCellInstArray(mc.cell_index(), pya.DTrans(0.0, H)))
+    log('B5: r1_adc_sar placed at (0, %.2f), cells copied %d' % (H, sl2.cells()))
     import importlib
     importlib.reload(NLM)
     NLM.write_cdl()
     ly.write(OUT)
     rr = os.environ.get('G1_RESULTS_ROOT')
     log('wrote', (OUT.replace(rr, '<G1_RESULTS_ROOT>') if rr else OUT).replace('/work/', '<repo>/'))
-    meta = dict(box=[W, H], slice=dict(origins=[[x, SY] for x in SX], size=[WS, HS], stats=sl.stats),
+    meta = dict(box=[W, HB5], analog_box=[W, H], slice=dict(origins=[[x, SY] for x in SX], size=[WS, HS], stats=sl.stats, edge=sl.edge),
                 top=dict(stats=top.stats), log=LOG,
                 ports=dict(slice=sl.ports, top=top.ports))
     json.dump(meta, open(os.path.join(HERE, 'r1_adc_layout.json'), 'w'), indent=1, default=str)

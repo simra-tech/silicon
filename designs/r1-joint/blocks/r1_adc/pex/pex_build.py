@@ -113,20 +113,41 @@ for k, (_, b, t) in VIAS.items():
     tech.add_via(v)
 
 LJ = json.load(open(os.path.join(BLOCK, 'layout', 'r1_adc_layout.json')))
+# layout B5 (2026-10-27, T2k): slice north pins (SAR ports) are slice edge pins; the SAR macro pins are top-level pins
+# (Metal2 router node of each macro south pin), so each SAR line has R from the macro pin to the slice port; clk
+# enters at the Metal5 feed on the macro clk pin; vdd / vss of the macro: extra ports vdd_sar / vss_sar (see write())
+B5 = 'edge' in LJ['slice']
+if B5:
+    SLICE_PINS += [(n, 'N', x, y) for n, lst in sorted(LJ['slice']['edge'].items()) for (side, x, y) in lst if side == 'N']
 PORTS = {'r1_adc_slice': [dict(p, key=(p['dev'], p['term'], p['net'])) for p in LJ['ports']['slice']],
          'r1_adc': [dict(p, key=(p['dev'], p['term'], p['net'])) for p in LJ['ports']['top']]}
 # cell pins: slice edge pins (one port per pin, numbered per net); top checklist pins and slice-instance pins
 cnt = defaultdict(int)
 for (n, side, x, y) in SLICE_PINS:
     k = cnt[n]; cnt[n] += 1
-    pt = {'S': (x, 0.05), 'W': (0.05, y), 'E': (WS - 0.05, y), 'D': (x, y)}[side]
+    pt = {'S': (x, 0.05), 'W': (0.05, y), 'E': (WS - 0.05, y), 'D': (x, y), 'N': (x, HS - 0.05)}[side]
     PORTS['r1_adc_slice'].append(dict(dev='@pin', term=k, net=n, layer=4 if side == 'D' else 3, box=None, pt=list(pt),
                                       key=('@pin', k, n)))
 SLICE_MULTI = {n: c for n, c in cnt.items() if c > 1}
 for side, lst in (('N', N.NORTH), ('W', N.WEST), ('E', N.EAST), ('S', N.SOUTH)):
     for n, c in lst:
         pt = {'N': (c, H - 0.3), 'W': (0.3, c), 'E': (W - 0.3, c), 'S': (c, 0.3)}[side]
-        PORTS['r1_adc'].append(dict(dev='@pin', term=0, net=n, layer=3, box=None, pt=list(pt), key=('@pin', 0, n)))
+        L_ = 3
+        if B5 and side == 'N':
+            if n != 'clk':
+                continue             # macro pins: no analog geometry
+            xk, yk = LJ['top']['stats']['b5']['clk_feed'][:2]
+            pt, L_ = (xk, yk), 5     # Metal5 feed on the macro clk pin
+        PORTS['r1_adc'].append(dict(dev='@pin', term=0, net=n, layer=L_, box=None, pt=list(pt), key=('@pin', 0, n)))
+if B5:
+    for net, x, xg in LJ['top']['stats']['b5_jogs']:
+        PORTS['r1_adc'].append(dict(dev='@pin', term=0, net=net, layer=2, box=None, pt=[xg, 180.8], key=('@pin', 0, net)))
+    # macro supply points: vdd on the Metal5 riser at the VDD bus, vss on the Metal5 VSS bus (joined to the TopMetal1
+    # strap by TopVia1, not extracted: tied with 1 mOhm)
+    vx = LJ['top']['stats']['b5']['vdd_riser']['x']
+    PORTS['r1_adc'].append(dict(dev='@sar', term=0, net='vdd', layer=5, box=None, pt=[(vx[0] + vx[1]) / 2, H + 5.5], key=('@sar', 0, 'vdd')))
+    tx = LJ['top']['stats']['b5']['vss_tm1']['x']
+    PORTS['r1_adc'].append(dict(dev='@sar', term=1, net='vss', layer=5, box=None, pt=[(tx[0] + tx[1]) / 2, H + 16.5], key=('@sar', 1, 'vss')))
 # layout B (2026-10-26, PEX B.1): top-level MIM decoupling plates (r1_adc_decap plan: xref_xcd, xref_xcdl, xref_xcg,
 # xfilt_xcf) get a Metal5 port at the plate centre for the bottom-plate terminal (cap_cmim terminal 1, the Metal5 plate
 # that joins the bus through its Via4 array). Before (layout A and the first layout B build), these terminals had no port
@@ -153,7 +174,7 @@ for q, ch in enumerate('ab'):
                                             key=('@xslice_' + ch, k, n)))
                 DROP_KEYS.add(('@xslice_' + ch, k, n))
             continue
-        pt = {'S': (X, Y - 0.1), 'W': (X - 0.1, Y), 'E': (X + 0.1, Y)}[side]
+        pt = {'S': (X, Y - 0.1), 'W': (X - 0.1, Y), 'E': (X + 0.1, Y), 'N': (X, Y + 0.1)}[side]
         PORTS['r1_adc'].append(dict(dev='@xslice_' + ch, term=k, net=m[n], layer=3, box=None, pt=list(pt),
                                     key=('@xslice_' + ch, k, n)))
 MAIN_PREF = {'vref': ('xref_xmsf_s0', 2), 'vrefl': ('xref_xmsfl_s0', 2)}
@@ -442,8 +463,18 @@ def write(path, with_r):
         body += ['Rt%d %s %s %.6g' % (k, a, b, r) for k, (a, b, r) in enumerate(tp_el)]
     body += ['Cq%d %s %s %.4g' % (k, mapn(a), mapn(b), c) for k, ((a, b), c) in enumerate(sorted(tpc.items())) if mapn(a) != mapn(b)]
     ports = [safe(p) for p in N.TOP_PORTS]
-    for nm, extra in (('r1_adc_lay', []), ('r1_adc_lay_pr', ['vref', 'vrefl'])):
+    cells = [('r1_adc_lay', []), ('r1_adc_lay_pr', ['vref', 'vrefl'])]
+    if B5:
+        # layout B5: r1_adc_lay and r1_adc_lay_pr keep the B4 port list (behavioural-SAR decks unchanged; the macro supply
+        # points stay internal). r1_adc_lay_sar = r1_adc_lay_pr + two ports vdd_sar, vss_sar: the macro VDD and VSS points
+        # (Metal5 buses over the macro), joined by 1 mOhm to their extracted nodes; the gate-level SAR connects there
+        vn = mapn(tp_node[('@sar', 0, 'vdd')]) if with_r else 'vdd'
+        sn_ = mapn(tp_node[('@sar', 1, 'vss')]) if with_r else 'vss'
+        cells.append(('r1_adc_lay_sar', ['vref', 'vrefl', 'vdd_sar', 'vss_sar']))
+    for nm, extra in cells:
         L.append('.subckt %s %s' % (nm, ' '.join(ports + extra)))
+        if nm == 'r1_adc_lay_sar':
+            L += ['Rsar_vdd vdd_sar %s 1m' % vn, 'Rsar_vss vss_sar %s 1m' % sn_]
         L += body
         L.append('.ends')
     L.append('')

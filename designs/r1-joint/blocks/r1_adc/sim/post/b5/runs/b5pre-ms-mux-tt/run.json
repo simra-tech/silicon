@@ -1,0 +1,41 @@
+{
+  "run_id": "b5pre-ms-mux-tt",
+  "block": "r1_adc",
+  "track": "T2k (helper)",
+  "harness": "sim/post/b5",
+  "question": "b5pre (B4 RC analog netlist + hardened r1_adc_sar gate level, SPEF lumped C, r1_gate protocol, cur_trk ctrl 0.7): r5 mux sequence e c e e at tt; decisions vs postb4-isa-tt-rc, output timing",
+  "command": "G1_CPUSET=105 G1_CPUS=1 G1_WORKDIR=designs/r1-joint/blocks/r1_adc G1_RESULTS_ROOT=<G1_RESULTS_ROOT> flow/run.sh ngspice -b <G1_RESULTS_ROOT>/r1_adc/b5pre-ms-mux-tt/deck.cir (runner sim/post/b5/run_b5.py)",
+  "argv": [
+    "--id",
+    "b5pre-ms-mux-tt",
+    "--cpu",
+    "105",
+    "--deck",
+    "sim/post/b5/decks/b4/mux_tt.cir",
+    "--question",
+    "b5pre (B4 RC analog netlist + hardened r1_adc_sar gate level, SPEF lumped C, r1_gate protocol, cur_trk ctrl 0.7): r5 mux sequence e c e e at tt; decisions vs postb4-isa-tt-rc, output timing"
+  ],
+  "deck_template": "sim/post/b5/decks/b4/mux_tt.cir",
+  "deck": "sim/post/b5/runs/b5pre-ms-mux-tt/deck.cir",
+  "deck_template_sha256": "ada76ad2e0ff112d50ce375da8d05e3e35d7a594bf8818f4d692f379d12bf6a2",
+  "tstop": "3.31u",
+  "smoke_test": false,
+  "includes_sha256": {
+    "sim/post/r1_adc_post_rc_mb4.spice": "8db3008a614df0d8f8d0c7bcd7fcd9438ab9bf0a5bfd89b1e210fe70c2ed01ed",
+    "/foss/pdks/ihp-sg13g2/libs.ref/sg13g2_stdcell/spice/sg13g2_stdcell.spice": "container path (PDK 84374023)",
+    "sim/post/b5/sar/r1_adc_sar_gl_lumpc.spice": "102f66b6a65f778556d45695f7a38ee7122dba367afe0e5a41c8bf97f841a59a"
+  },
+  "pdk_commit": "84374023ee8b4b126bebbba67fcbada0a9c0ff0b (checked by flow/run.sh)",
+  "container_image": "tapeoutbench-eda:latest sha256:ddeb69576f2808676d1c5d474ecf04f6d1d6f8abdcff6b72b39790ded924bab2",
+  "ngspice_version": "not found in log",
+  "raw_results": "<G1_RESULTS_ROOT>/r1_adc/b5pre-ms-mux-tt/",
+  "started_utc": "2026-10-27T07:45:10.787473Z",
+  "wall_s": 6526.1,
+  "sim_us_per_wall_min": 0.0304,
+  "returncode": 0,
+  "status": "completed",
+  "errors": [],
+  "missing_outputs": [],
+  "result": "decisions 103/112 equal to postb4-isa-tt-rc, words 4/8, valid 8/8; codes equal or +1 LSB; the 4 first differences (f2A d12, f2B d9, f3A d13, f3B d11) are 0.01 / 0.32 / 0.18 / 0.42 LSB from the comparator effective threshold (2 tie, 2 near threshold); IDD 0.873 mA (SAR 0.112), IDDA 1.102 mA; outputs: raw change >= 0.58 ns, settled <= 0.96 ns; valid change >= 1.07 ns, settled <= 1.88 ns (sim/post/b5/results/b5pre_ms_mux_tt_dec.json, b5pre_ms_mux_tt_timing.json)",
+  "disposition": "failed bit-exact (numerical: near-threshold decisions at 9-13, code difference <= 1 LSB); output timing passed at tt"
+}

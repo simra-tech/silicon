@@ -50,6 +50,12 @@ pins = []          # slice edge pins (constants of the generator): (x, y, stub d
 pins += [(x, 0.0, 0, 1) for _, x in const('SLICE_SOUTH')]
 pins += [(0.0, y, 1, 0) for _, y in const('SLICE_WEST')]
 pins += [(ws, y, -1, 0) for _, y in const('SLICE_EAST')]
+# layout B5: slice north pins (SAR ports) from the layout record; stub downward into the empty slice area
+import json
+LJ = json.load(open(os.path.join(os.getcwd(), 'layout', 'r1_adc_layout.json')))
+B5 = 'edge' in LJ['slice']
+if B5:
+    pins += [(x, y, 0, -1) for lst in LJ['slice']['edge'].values() for (side, x, y) in lst if side == 'N']
 
 
 def B(k, x1, y1, x2, y2):
@@ -77,8 +83,10 @@ for inst in list(top.each_inst()):
         B((1, 0), xd - 0.6, yd - 1.8, xd + 0.6, yd - 1.2)          # Activ
         ndum += 1
 for inst in list(top.each_inst()):
-    if inst.cell.name == 'r1_adc_slice':
+    if inst.cell.name in ('r1_adc_slice', 'r1_adc_sar'):     # B5: the SAR macro is simulated from its gate-level netlist
         inst.delete()
+if ly.has_cell('r1_adc_sar'):
+    ly.delete_cell_rec(ly.cell('r1_adc_sar').cell_index())
 ly.delete_cell(sl.cell_index())
 top.flatten(-1, True)
 # top-level labels of slice-internal nets (sar_*, probes) sit on pads over the removed slice metal: drop them
@@ -92,6 +100,11 @@ for l in ly.layer_indexes():
                 if any(ox <= X <= ox + ws and 54.4 <= Y <= 54.4 + hs for ox in (3.2, 223.2)) and \
                         (s.text.string.startswith('sar_') or s.text.string.startswith('top')):
                     top.shapes(l).erase(s)
+if B5:
+    # SAR interconnect nets: a label at the macro-pin router node (the slice-edge labels may be erased above)
+    lt = ly.layer(10, 25)
+    for net, x, xg in LJ['top']['stats']['b5_jogs']:
+        top.shapes(lt).insert(pya.Text(net, pya.Trans(int(round(xg / ly.dbu)), int(round(180.8 / ly.dbu)))))
 if nomim:
     strip_mim(top)
 ly.write(out)
