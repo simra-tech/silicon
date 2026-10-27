@@ -1,0 +1,31 @@
+{
+ "question": "Layout E6 step 2 (track T3j): does the top-level wiring of layout E5 (pexrc-e5-dev15b, F2) make the nominal sine/cosine pole mismatch 1.567 % at ffx 15.36 uA CM 0.5 V? Variants short (x 1e-3) the top-level vdd+vss, vdd, vss wiring, or the top-level signal wiring with the top output-net capacitors removed",
+ "variants": {
+  "E5": {
+   "netlist": "$G1_RESULTS_ROOT/r1_afe/pexrc-e5-dev15b/r1_afe_post_rc.spice"
+  },
+  "TOPSUP": {
+   "netlist": "$G1_RESULTS_ROOT/r1_afe/revF2/e6/elim-pole/TOPSUP.spice"
+  },
+  "TOPVDD": {
+   "netlist": "$G1_RESULTS_ROOT/r1_afe/revF2/e6/elim-pole/TOPVDD.spice"
+  },
+  "TOPVSS": {
+   "netlist": "$G1_RESULTS_ROOT/r1_afe/revF2/e6/elim-pole/TOPVSS.spice"
+  },
+  "TOPSIG": {
+   "netlist": "$G1_RESULTS_ROOT/r1_afe/revF2/e6/elim-pole/TOPSIG.spice"
+  }
+ },
+ "jobs": [
+  {
+   "tag": "ac_ffx_ib15.36_cm0.5",
+   "tmpl": "tb_afe_ac.cir",
+   "corner": "ffx",
+   "subs": {
+    "VCMI": 0.5,
+    "IB": "15.36u"
+   }
+  }
+ ]
+}

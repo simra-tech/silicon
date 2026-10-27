@@ -1,0 +1,44 @@
+{
+ "question": "Layout E6 screen (track T3j): which channel wiring of build s11a (R-only view) makes the x32 offset at CM 2.5 V with VDDA 3.6 V (tt -7.2 mV, ff -8.6 mV; tt 3.3 V +0.4 mV)? One group shorted (x 1e-3) per variant",
+ "variants": {
+  "VDD": {
+   "netlist": "$G1_RESULTS_ROOT/r1_afe/revF2/e6/elim-s11a/VDD.spice"
+  },
+  "VSS": {
+   "netlist": "$G1_RESULTS_ROOT/r1_afe/revF2/e6/elim-s11a/VSS.spice"
+  },
+  "A1": {
+   "netlist": "$G1_RESULTS_ROOT/r1_afe/revF2/e6/elim-s11a/A1.spice"
+  },
+  "A2": {
+   "netlist": "$G1_RESULTS_ROOT/r1_afe/revF2/e6/elim-s11a/A2.spice"
+  },
+  "X1": {
+   "netlist": "$G1_RESULTS_ROOT/r1_afe/revF2/e6/elim-s11a/X1.spice"
+  },
+  "IN": {
+   "netlist": "$G1_RESULTS_ROOT/r1_afe/revF2/e6/elim-s11a/IN.spice"
+  },
+  "M1": {
+   "netlist": "$G1_RESULTS_ROOT/r1_afe/revF2/e6/elim-s11a/M1.spice"
+  },
+  "OUT": {
+   "netlist": "$G1_RESULTS_ROOT/r1_afe/revF2/e6/elim-s11a/OUT.spice"
+  },
+  "SW": {
+   "netlist": "$G1_RESULTS_ROOT/r1_afe/revF2/e6/elim-s11a/SW.spice"
+  }
+ },
+ "jobs": [
+  {
+   "tag": "op_tt_ib10.14_cm2.5_v3.6",
+   "tmpl": "tb_afe_op.cir",
+   "corner": "tt",
+   "subs": {
+    "VCMI": 2.5,
+    "IB": "10.14u",
+    "VDDA": 3.6
+   }
+  }
+ ]
+}

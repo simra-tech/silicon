@@ -9,8 +9,9 @@ Method (the r1_bgr method, layout/pex_build.py of r1_bgr; kpex 0.3.12 RC mode ke
   1. Devices: the LVS reference of layout/r1_afe_netlist.py (revision-E values, unit split, plate orientation), with
      the instance names of the netlist of record, so that the loop-gain probe edits of sim/run_afe.py still apply.
   2. Resistance: per net and per cell (channel cell r1_afe_ch, top cell r1_afe), a KLayout RNetExtractor network
-     (klayout.pex, square counting) over Metal1..Metal5 and Via1..Via4 with the PDK typical values (sg13g2_typ.itf:
-     Metal1 0.110, Metal2-5 0.088 Ohm/sq, Via1-4 9 Ohm per 0.19 um cut; Metal5 carries the top-level supply straps
+     (klayout.pex, square counting) over Metal1..TopMetal1 and Via1..TopVia1 with the PDK typical values (sg13g2_typ.itf:
+     Metal1 0.110, Metal2-5 0.088 Ohm/sq, Via1-4 9 Ohm per 0.19 um cut; E6: TopMetal1 0.018 Ohm/sq, TopVia1 2.2 Ohm per
+     0.42 um cut, for the TopMetal1 supply straps of layout E6; Metal5 carries the top-level supply straps
      and the MIM bottom plates, whose MIM is removed for the extraction). Net geometry from the LVS databases that
      kpex writes for the two flat extraction layouts (named layers; the PDK LVS run's database has unnamed layers). Ports from the layout generator (layout/r1_afe_ports.json): MOS source and drain Metal1 rails
      (polygon ports), rppd heads (Metal1 vertex), MIM top and bottom plate pins (Metal4 vertex), cell pins (Metal3).
@@ -60,9 +61,10 @@ def P(*a):
 DBU = 0.001
 ALGO = globals().get('algo', 'sq')       # 'sq' (square counting, as r1_bgr; default) or 'tess' (tesselation, check only)
 COND = {1: ('metal1_con', 0.110), 2: ('metal2_con', 0.088), 3: ('metal3_con', 0.088), 4: ('metal4_con', 0.088),
-        5: ('metal5_con', 0.088)}
-VIAS = {11: ('via1_drw', 1, 2), 12: ('via2_drw', 2, 3), 13: ('via3_drw', 3, 4), 14: ('via4_drw', 4, 5)}
+        5: ('metal5_con', 0.088), 6: ('topmetal1_con', 0.018)}
+VIAS = {11: ('via1_drw', 1, 2), 12: ('via2_drw', 2, 3), 13: ('via3_drw', 3, 4), 14: ('via4_drw', 4, 5), 15: ('topvia1_drw', 5, 6)}
 RVIA = 9.0 * 0.19 * 0.19
+RVIA_K = {15: 2.2 * 0.42 * 0.42}   # E6 (layout E6, TopMetal1 supply straps): TopVia1 2.2 Ohm per 0.42 um cut, TopMetal1 0.018 Ohm/sq (sg13g2_typ.itf)
 PROBESRC = globals().get('probesrc', '1') == '1'   # E3: output-stage MOS sources on their own port
 PROBE_DEVS = {'xmn7', 'xmn8', 'xmp7', 'xmp8', 'xcc1', 'xcc2', 'xcc1b', 'xcc2b', 'xcx1', 'xcx2', 'xmc1'}
 OTA_PREF = ('xa1', 'xa2')
@@ -74,6 +76,8 @@ def load_lvs(path):
     lvs.read(path)
     LAY = {k: lvs.layer_by_name(v[0]) for k, v in COND.items()}
     LAY.update({k: lvs.layer_by_name(v[0]) for k, v in VIAS.items()})
+    if LAY.get(15) is None:      # E6: the kpex LVS database names the TopVia1 connection layer topvia1_n_cap
+        LAY[15] = lvs.layer_by_name('topvia1_n_cap')
     for k, v in LAY.items():
         if v is None:
             raise RuntimeError('layer %s not in the LVS database %s' % (k, path))
@@ -93,7 +97,7 @@ for k, (_, b, t) in VIAS.items():
     v.cut_layer = k
     v.bottom_conductor = b
     v.top_conductor = t
-    v.resistance = RVIA
+    v.resistance = RVIA_K.get(k, RVIA)
     v.merge_distance = 0.0
     tech.add_via(v)
 

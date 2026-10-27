@@ -1,0 +1,95 @@
+{
+ "question": "Layout E6 (track T3j): the last jobs of the post-layout set post_e6.json, run beside it on the same RC netlist so that the set completes within the time budget (hold-state loops, ss x1 settling, pole matching MC)",
+ "variants": {
+  "E6": {
+   "netlist": "$G1_RESULTS_ROOT/r1_afe/pexrc-layout-e6-dev16/r1_afe_post_rc.spice"
+  }
+ },
+ "jobs": [
+  {
+   "tag": "acmc_ss_p0",
+   "tmpl": "tb_afe_ac.cir",
+   "corner": "ss",
+   "mismatch": true,
+   "subs": {
+    "NMC": 10,
+    "SEED": 101,
+    "IB": "11.81u"
+   }
+  },
+  {
+   "tag": "acmc_ss_p1",
+   "tmpl": "tb_afe_ac.cir",
+   "corner": "ss",
+   "mismatch": true,
+   "subs": {
+    "NMC": 10,
+    "SEED": 102,
+    "IB": "11.81u"
+   }
+  },
+  {
+   "tag": "settle_ss_x1_p100",
+   "tmpl": "tb_afe_settle_adc_rs.cir",
+   "corner": "ss",
+   "subs": {
+    "CODE": 0,
+    "AMP": 0.7,
+    "VCMI": 2.45,
+    "CS": "2.8p",
+    "VRST": 0.0,
+    "IB": "11.81u"
+   }
+  },
+  {
+   "tag": "settle_ss_x1_m100",
+   "tmpl": "tb_afe_settle_adc_rs.cir",
+   "corner": "ss",
+   "subs": {
+    "CODE": 0,
+    "AMP": -0.7,
+    "VCMI": 2.45,
+    "CS": "2.8p",
+    "VRST": 0.0,
+    "IB": "11.81u"
+   }
+  },
+  {
+   "tag": "settle_ss_x1_p50",
+   "tmpl": "tb_afe_settle_adc_rs.cir",
+   "corner": "ss",
+   "subs": {
+    "CODE": 0,
+    "AMP": 0.35,
+    "VCMI": 2.45,
+    "CS": "2.8p",
+    "VRST": 0.0,
+    "IB": "11.81u"
+   }
+  },
+  {
+   "tag": "stb_ssx_ib6.94_cm2.5_hold",
+   "tmpl": "tb_afe_stb.cir",
+   "corner": "ssx",
+   "subs": {
+    "VCMI": 2.5,
+    "KLIST": "0 5",
+    "LLIST": "1 2 4 5",
+    "IB": "6.94u",
+    "CL": "1f"
+   }
+  },
+  {
+   "tag": "stb_ff_ib9.00_cm2.5_hold",
+   "tmpl": "tb_afe_stb.cir",
+   "corner": "ff",
+   "subs": {
+    "VCMI": 2.5,
+    "KLIST": "0 5",
+    "LLIST": "1 2 4 5",
+    "IB": "9.00u",
+    "CL": "1f"
+   }
+  }
+ ]
+}

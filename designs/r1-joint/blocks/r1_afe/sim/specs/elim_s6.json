@@ -1,0 +1,34 @@
+{
+ "question": "Layout E6 screen (track T3j): which wiring of dev build s6 (R-only view pex-e6-s6) makes the +52 mV x32 offset at tt CM 2.5 V? One group shorted (x 1e-3) per variant",
+ "variants": {
+  "X1": {
+   "netlist": "$G1_RESULTS_ROOT/r1_afe/revF2/e6/elim-s6/X1.spice"
+  },
+  "A1": {
+   "netlist": "$G1_RESULTS_ROOT/r1_afe/revF2/e6/elim-s6/A1.spice"
+  },
+  "S1IN": {
+   "netlist": "$G1_RESULTS_ROOT/r1_afe/revF2/e6/elim-s6/S1IN.spice"
+  },
+  "VSS": {
+   "netlist": "$G1_RESULTS_ROOT/r1_afe/revF2/e6/elim-s6/VSS.spice"
+  },
+  "VDD": {
+   "netlist": "$G1_RESULTS_ROOT/r1_afe/revF2/e6/elim-s6/VDD.spice"
+  },
+  "M1": {
+   "netlist": "$G1_RESULTS_ROOT/r1_afe/revF2/e6/elim-s6/M1.spice"
+  }
+ },
+ "jobs": [
+  {
+   "tag": "op_tt_ib10.14_cm2.5",
+   "tmpl": "tb_afe_op.cir",
+   "corner": "tt",
+   "subs": {
+    "VCMI": 2.5,
+    "IB": "10.14u"
+   }
+  }
+ ]
+}

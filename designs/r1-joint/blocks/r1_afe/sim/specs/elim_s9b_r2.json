@@ -1,0 +1,25 @@
+{
+ "question": "Layout E6 screen (track T3j): which channel wiring of dev build s9b (R-only view pex-e6-s9b) makes the +15 mV x32 offset at tt CM 0.5 V? One group shorted (x 1e-3) per variant (rerun of A1, A2, SW after the group regex fix)",
+ "variants": {
+  "A1": {
+   "netlist": "$G1_RESULTS_ROOT/r1_afe/revF2/e6/elim-s9b/A1.spice"
+  },
+  "A2": {
+   "netlist": "$G1_RESULTS_ROOT/r1_afe/revF2/e6/elim-s9b/A2.spice"
+  },
+  "SW": {
+   "netlist": "$G1_RESULTS_ROOT/r1_afe/revF2/e6/elim-s9b/SW.spice"
+  }
+ },
+ "jobs": [
+  {
+   "tag": "op_tt_ib10.14_cm0.5",
+   "tmpl": "tb_afe_op.cir",
+   "corner": "tt",
+   "subs": {
+    "VCMI": 0.5,
+    "IB": "10.14u"
+   }
+  }
+ ]
+}

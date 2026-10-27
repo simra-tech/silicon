@@ -1,0 +1,52 @@
+{
+ "question": "Layout E6 screen (track T3j): which channel wiring of dev build s10a (R-only view pex-e6-s10a) makes the x32 offset (-5.0 mV tt CM 0.5 V, +5.4 mV tt CM 2.5 V)? One group shorted (x 1e-3) per variant",
+ "variants": {
+  "VDD": {
+   "netlist": "$G1_RESULTS_ROOT/r1_afe/revF2/e6/elim-s10a/VDD.spice"
+  },
+  "VSS": {
+   "netlist": "$G1_RESULTS_ROOT/r1_afe/revF2/e6/elim-s10a/VSS.spice"
+  },
+  "A1": {
+   "netlist": "$G1_RESULTS_ROOT/r1_afe/revF2/e6/elim-s10a/A1.spice"
+  },
+  "A1F": {
+   "netlist": "$G1_RESULTS_ROOT/r1_afe/revF2/e6/elim-s10a/A1F.spice"
+  },
+  "A1T": {
+   "netlist": "$G1_RESULTS_ROOT/r1_afe/revF2/e6/elim-s10a/A1T.spice"
+  },
+  "A2": {
+   "netlist": "$G1_RESULTS_ROOT/r1_afe/revF2/e6/elim-s10a/A2.spice"
+  },
+  "X1": {
+   "netlist": "$G1_RESULTS_ROOT/r1_afe/revF2/e6/elim-s10a/X1.spice"
+  },
+  "IN": {
+   "netlist": "$G1_RESULTS_ROOT/r1_afe/revF2/e6/elim-s10a/IN.spice"
+  },
+  "M1": {
+   "netlist": "$G1_RESULTS_ROOT/r1_afe/revF2/e6/elim-s10a/M1.spice"
+  }
+ },
+ "jobs": [
+  {
+   "tag": "op_tt_ib10.14_cm0.5",
+   "tmpl": "tb_afe_op.cir",
+   "corner": "tt",
+   "subs": {
+    "VCMI": 0.5,
+    "IB": "10.14u"
+   }
+  },
+  {
+   "tag": "op_tt_ib10.14_cm2.5",
+   "tmpl": "tb_afe_op.cir",
+   "corner": "tt",
+   "subs": {
+    "VCMI": 2.5,
+    "IB": "10.14u"
+   }
+  }
+ ]
+}

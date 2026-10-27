@@ -1,0 +1,108 @@
+* tb_afe_supl -- r1_afe layout E6 (track T3j): loop gain through the top-level supply path of the sine channel
+* (supply-network method of the 2026-10-28 rule amendment). Tian double injection as tb_afe_stb.cir, all amplifier
+* loops closed. The probes sit in the wires between the top-level supply network and the sine channel's supply
+* ports (inserted by the variant edit of the campaign, node names vss__xsin / vdd__xsin of the pex_rc_build netlist):
+*   Vps vss__xsin vss_ys ac {vs1}, Ips 0 vss__xsin ac {is1}; Vpd vdd__xsin vdd_ys ac {vs2}, Ipd 0 vdd__xsin ac {is2}
+* loop 1 = vss entry, 2 = vdd entry, 3 = both entries in phase ((s + d)/2 quantities).
+* T = -1/(1-1/(2*(i1*v2-v1*i2)+v1+i2)), v = network-side node voltage, i = probe-source current.
+* Output: SUPLROW per code and loop with the loop gain at the first frequency (10 Hz) and its phase; T(f) files.
+@@HEAD@@
+.param vs1=0 is1=0 vs2=0 is2=0
+Vic ic 0 dc {VCMI}
+Esp sinp ic vd 0 0.5
+Esn sinn ic vd 0 -0.5
+Ecp cosp ic vd 0 0.5
+Ecn cosn ic vd 0 -0.5
+Vd vd 0 dc 0
+Rl1 souts_p l1 100
+Rl2 souts_n l2 100
+Rl3 soutc_p l3 100
+Rl4 soutc_n l4 100
+Cl1 l1 0 @@CL@@
+Cl2 l2 0 @@CL@@
+Cl3 l3 0 @@CL@@
+Cl4 l4 0 @@CL@@
+Cw1 souts_p 0 0.2p
+Cw2 souts_n 0 0.2p
+Cw3 soutc_p 0 0.2p
+Cw4 soutc_n 0 0.2p
+XDUT sinp sinn cosp cosn souts_p souts_n soutc_p soutc_n vcm2 ib_s1 ib_s2 ib_c1 ib_c2 c1 c2 c3 c4 vdd 0 r1_afe
+.control
+@@CODES@@
+let vh = @@VDDA@@
+* gain codes to run (@@KLIST@@); "reset" (needed by alterparam) discards alter, so the controls are re-applied
+foreach kk @@KLIST@@
+  let k = $kk
+  let a1 = ctab[4*k]*vh
+  let a2 = ctab[4*k+1]*vh
+  let a3 = ctab[4*k+2]*vh
+  let a4 = ctab[4*k+3]*vh
+  foreach lp @@LLIST@@
+    if $lp = 1
+      alterparam vs1=1
+    end
+    if $lp = 2
+      alterparam vs2=1
+    end
+    if $lp = 3
+      alterparam vs1=1
+      alterparam vs2=1
+    end
+    reset
+    alter vc1 dc = $&a1
+    alter vc2 dc = $&a2
+    alter vc3 dc = $&a3
+    alter vc4 dc = $&a4
+    ac dec 10 10 100meg
+    alterparam vs1=0
+    alterparam vs2=0
+    if $lp = 1
+      alterparam is1=1
+    end
+    if $lp = 2
+      alterparam is2=1
+    end
+    if $lp = 3
+      alterparam is1=1
+      alterparam is2=1
+    end
+    reset
+    alter vc1 dc = $&a1
+    alter vc2 dc = $&a2
+    alter vc3 dc = $&a3
+    alter vc4 dc = $&a4
+    ac dec 10 10 100meg
+    alterparam is1=0
+    alterparam is2=0
+    if $lp = 1
+      let v1 = ac1.v(xdut.vss__xsin)
+      let i1 = ac1.i(v.xdut.vps)
+      let v2 = ac2.v(xdut.vss__xsin)
+      let i2 = ac2.i(v.xdut.vps)
+    end
+    if $lp = 2
+      let v1 = ac1.v(xdut.vdd__xsin)
+      let i1 = ac1.i(v.xdut.vpd)
+      let v2 = ac2.v(xdut.vdd__xsin)
+      let i2 = ac2.i(v.xdut.vpd)
+    end
+    if $lp = 3
+      let v1 = (ac1.v(xdut.vss__xsin)+ac1.v(xdut.vdd__xsin))/2
+      let i1 = (ac1.i(v.xdut.vps)+ac1.i(v.xdut.vpd))/2
+      let v2 = (ac2.v(xdut.vss__xsin)+ac2.v(xdut.vdd__xsin))/2
+      let i2 = (ac2.i(v.xdut.vps)+ac2.i(v.xdut.vpd))/2
+    end
+    let tl = -1/(1-1/(2*(i1*v2-v1*i2)+v1+i2))
+    let tdb = db(tl)
+    let tph = 180/pi*cph(tl)
+    let t0 = tdb[0]
+    let p0 = tph[0]
+    let tmax = vecmax(tdb)
+    let fid = 10*k + $lp
+    wrdata @@RAW@@_s$&fid tdb tph
+    echo "SUPLROW code=$&k loop=$lp t_dc_db=$&t0 ph_dc_deg=$&p0 t_max_db=$&tmax"
+    destroy all
+  end
+end
+.endc
+.end

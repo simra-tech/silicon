@@ -1,0 +1,50 @@
+{
+ "question": "Layout E6 (track T3j), supply-network method: CM step transient (input CM 2.45 -> 0.6 V and back, vcm2 +50 mV, VDDA -0.2 V, with a full-scale 100 kHz sine) on the E6 RC netlist; criterion at most one overshoot per event (stage-1 CM 5 mV band, output CM 2 mV band)",
+ "variants": {
+  "E6": {
+   "netlist": "$G1_RESULTS_ROOT/r1_afe/pexrc-layout-e6-dev16/r1_afe_post_rc.spice"
+  }
+ },
+ "jobs": [
+  {
+   "tag": "cmstep_tt_x1",
+   "tmpl": "tb_afe_cmstep.cir",
+   "corner": "tt",
+   "subs": {
+    "CODE": 0,
+    "AMP": 0.7,
+    "IB": "10.14u"
+   }
+  },
+  {
+   "tag": "cmstep_tt_x32",
+   "tmpl": "tb_afe_cmstep.cir",
+   "corner": "tt",
+   "subs": {
+    "CODE": 5,
+    "AMP": 0.021875,
+    "IB": "10.14u"
+   }
+  },
+  {
+   "tag": "cmstep_ss_x32",
+   "tmpl": "tb_afe_cmstep.cir",
+   "corner": "ss",
+   "subs": {
+    "CODE": 5,
+    "AMP": 0.021875,
+    "IB": "11.81u"
+   }
+  },
+  {
+   "tag": "cmstep_ff_x32",
+   "tmpl": "tb_afe_cmstep.cir",
+   "corner": "ff",
+   "subs": {
+    "CODE": 5,
+    "AMP": 0.021875,
+    "IB": "9.00u"
+   }
+  }
+ ]
+}

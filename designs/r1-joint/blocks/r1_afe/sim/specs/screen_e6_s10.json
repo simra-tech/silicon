@@ -1,0 +1,49 @@
+{
+ "question": "Layout E6 screen (track T3j): dev builds s10a/s10b (adjpairs=2, mirror order of the folded-cascode sinks and cascodes; x1wmode x1p:1/x1n:12 and 12/12), R-only views; x32 offset",
+ "variants": {
+  "S10A": {
+   "netlist": "$G1_RESULTS_ROOT/r1_afe/pex-e6-s10a/pexr/r1_afe_post_rc.spice"
+  },
+  "S10B": {
+   "netlist": "$G1_RESULTS_ROOT/r1_afe/pex-e6-s10b/pexr/r1_afe_post_rc.spice"
+  }
+ },
+ "jobs": [
+  {
+   "tag": "op_tt_ib10.14_cm2.5",
+   "tmpl": "tb_afe_op.cir",
+   "corner": "tt",
+   "subs": {
+    "VCMI": 2.5,
+    "IB": "10.14u"
+   }
+  },
+  {
+   "tag": "op_tt_ib10.14_cm0.5",
+   "tmpl": "tb_afe_op.cir",
+   "corner": "tt",
+   "subs": {
+    "VCMI": 0.5,
+    "IB": "10.14u"
+   }
+  },
+  {
+   "tag": "op_ss_ib11.81_cm0.5",
+   "tmpl": "tb_afe_op.cir",
+   "corner": "ss",
+   "subs": {
+    "VCMI": 0.5,
+    "IB": "11.81u"
+   }
+  },
+  {
+   "tag": "op_ff_ib10.14_cm0.5",
+   "tmpl": "tb_afe_op.cir",
+   "corner": "ff",
+   "subs": {
+    "VCMI": 0.5,
+    "IB": "10.14u"
+   }
+  }
+ ]
+}

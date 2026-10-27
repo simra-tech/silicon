@@ -1,0 +1,58 @@
+{
+ "question": "Layout E6 step 1b (track T3j): which channel signal-net group of layout E5 (pexrc-e5-dev15b, F2) carries the non-x1 part of the x32 DC offset? One group shorted (x 1e-3) per variant: m1, x2, op2, out, in, OTA1 internal, OTA2 internal, stage-1 gain network, stage-2 gain network, rest; operating point tt CM 0.5/2.5 V",
+ "variants": {
+  "E5": {
+   "netlist": "$G1_RESULTS_ROOT/r1_afe/pexrc-e5-dev15b/r1_afe_post_rc.spice"
+  },
+  "M1": {
+   "netlist": "$G1_RESULTS_ROOT/r1_afe/revF2/e6/elim-ofs2/M1.spice"
+  },
+  "X2": {
+   "netlist": "$G1_RESULTS_ROOT/r1_afe/revF2/e6/elim-ofs2/X2.spice"
+  },
+  "OP2": {
+   "netlist": "$G1_RESULTS_ROOT/r1_afe/revF2/e6/elim-ofs2/OP2.spice"
+  },
+  "OUT": {
+   "netlist": "$G1_RESULTS_ROOT/r1_afe/revF2/e6/elim-ofs2/OUT.spice"
+  },
+  "IN": {
+   "netlist": "$G1_RESULTS_ROOT/r1_afe/revF2/e6/elim-ofs2/IN.spice"
+  },
+  "A1": {
+   "netlist": "$G1_RESULTS_ROOT/r1_afe/revF2/e6/elim-ofs2/A1.spice"
+  },
+  "A2": {
+   "netlist": "$G1_RESULTS_ROOT/r1_afe/revF2/e6/elim-ofs2/A2.spice"
+  },
+  "S1": {
+   "netlist": "$G1_RESULTS_ROOT/r1_afe/revF2/e6/elim-ofs2/S1.spice"
+  },
+  "S2": {
+   "netlist": "$G1_RESULTS_ROOT/r1_afe/revF2/e6/elim-ofs2/S2.spice"
+  },
+  "REST": {
+   "netlist": "$G1_RESULTS_ROOT/r1_afe/revF2/e6/elim-ofs2/REST.spice"
+  }
+ },
+ "jobs": [
+  {
+   "tag": "op_tt_ib10.14_cm0.5",
+   "tmpl": "tb_afe_op.cir",
+   "corner": "tt",
+   "subs": {
+    "VCMI": 0.5,
+    "IB": "10.14u"
+   }
+  },
+  {
+   "tag": "op_tt_ib10.14_cm2.5",
+   "tmpl": "tb_afe_op.cir",
+   "corner": "tt",
+   "subs": {
+    "VCMI": 2.5,
+    "IB": "10.14u"
+   }
+  }
+ ]
+}

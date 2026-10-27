@@ -33,7 +33,7 @@ sys.path.insert(0, HERE)
 sys.path.insert(0, os.path.join(HERE, '..', '..', '..', '..', 'g1-guardian', 'blocks', 'g1_sense', 'layout'))
 from g1_layout_lib import *   # noqa  (pya, LIB, Draw, Mos, new_layout, write_gds, CONT, ...)
 import r1_afe_netlist as NLM
-from maze_router import Router, P, LNAME
+from maze_router import Router, P, LNAME, BLOCK
 
 try:
     sys.stdout.reconfigure(line_buffering=True)
@@ -56,10 +56,23 @@ VSSMESH = globals().get('vssmesh', '1') == '1'  # layout E4 iteration 2 (layout-
 X1BAR = globals().get('x1bar', '1') == '1'      # E5: Metal2 collector bar over the TG source rails of x1p/x1n (one Via1 per rail node, no rail-to-rail daisy chain)
 X1WIDE = globals().get('x1wide', '1') == '1'    # E5: widen the x1p/x1n routes (Metal3/Metal4) after routing
 X1NETS = ('x1p', 'x1n')
+PAIRBAR = globals().get('pairbar', '1') == '1'  # E6: the source rails of each input pair (OTA1 PMOS and NMOS, OTA2 PMOS) joined by a Metal2 bar fed only at its centre (E5: tail fed at XMP1's end; 20 Ohm to XMP2, 1.0 mV source difference at tt CM 0.5 V, portv run)
+PAIRBAR_NETS = ('xa1_tp', 'xa1_tn', 'xa2_tp')
+SUPBAR = globals().get('supbar', '1') == '1'  # E6: matched current-source pairs (folded-cascode tops XMP3/XMP4, CMFB sinks XMN3A+XMN3/XMN4+XMN4A) get their supply through one Metal3 bar over the row, fed only at its centre (E5: 0.2 mV source difference per pair, +26 mV of x32 offset from the supply wiring, r1afe-elim-ofs-e6)
+ADJPAIRS = globals().get('adjpairs', '2') in ('1', '2')  # E6: XMP3/XMP4 and XMN3A+XMN3/XMN4+XMN4A of both OTAs placed side by side (short supply bars; the long E6-s8 bars blocked the only free crossing layer of the NMOS rows, Metal3, and forced detours)
+ADJSYM = globals().get('adjpairs', '2') == '2'  # E6: mirror order XMN5 | XMN3A XMN3 XMN4 XMN4A | XMN6 (E6-s9 order 1 put XMN5 east of the group, next to the fp sinks: fn/fp wiring 364/495 Ohm with different topology, +14 mV x32 offset at tt CM 0.5 V, r1afe-elim-s9b-a1)
+SUPBAR_PAIRS = [('xa1_xmp3', 'xa1_xmp4', 'vdd'), ('xa1_xmn3a', 'xa1_xmn4a', 'vss'), ('xa2_xmp3', 'xa2_xmp4', 'vdd'), ('xa2_xmn3a', 'xa2_xmn4a', 'vss')]
+X1CENTRE = globals().get('x1centre', '1') == '1'  # E6: x1 bars fed only at their centre node (E5: the router entered a bar at any node)
+X1WMODE = dict((kv.split(':')[0], tuple(int(c) for c in kv.split(':')[1] if c.isdigit())) for kv in globals().get('x1wmode', 'x1p:12,x1n:12').split(',') if ':' in kv)  # E6: widening layers per x1 net (1 = Metal3, 2 = Metal4); E5 = both nets, both layers
+X1WHALF = set(kv.split(':')[0] for kv in globals().get('x1wmode', 'x1p:12,x1n:12').split(',') if kv.endswith('h'))  # E6: 'h' suffix = widen on one side only (about half the added width; R trim of one x1 net)
+FWIDE = globals().get('fwide', '1') == '1'  # E6: widen the OTA folding nodes fn/fp of both OTAs (Metal3 + Metal4) after routing (s10a: fn/fp wiring 300-500 Ohm, -6 mV of x32 offset at tt CM 0.5 V, r1afe-elim-s10a)
+X1CBAL = globals().get('x1cbal', '1') == '1'  # E6: after the x1 widening, dead-end stubs on the net with less widened area (C balance; 1 widened edge side ~ 2 stub edges)
 SUPPIN = float(globals().get('suppin', '1.0'))  # E5 (assembly try f, chip-level EM): vdd/vss block pins this wide at the macro edge (um), same centres; E4: 0.4
 BIGFOOT = globals().get('bigfoot', '1') == '1'  # E5: strap feet 5 x 4 Via3/Via4 (E2-E4: 3 x 2); the foot is shared by both channels (top-level mutual supply impedance 4.2-4.9 Ohm, pex/top_supply_z.py)
 TGROWS = globals().get('tgrows', 'e5')  # E5: 'e5' = stage-1 PMOS TGs of both sides in one row, mirrored (x1p/x1n bars at the same y); 'e4' = E4 split
 OUTEAST = globals().get('outeast', '1') == '1'  # E5: output-stage NMOS XMN7/XMN8 of both OTAs at the east end of their row, next to the vss trunk (r1afe-elim-vss-e5)
+TM1STRAP = globals().get('tm1strap', '1') == '1'  # E6: TopMetal1 over both Metal5 supply straps (TopVia1 every 1 um, 4 columns); E5 top-level supply z vdd 5.07 / 10.0, vss 3.69 / 7.62 Ohm (sine / cosine), pex/top_supply_z.py
+SYMENTRY = globals().get('symentry', '1') == '1'  # E6: every channel vdd/vss edge pin joins its strap by a drawn Metal3 bar (3 tracks) and a 3 x 3 Via3/Via4 array, the same for both channels, reserved before routing
 # P/N pairs of the channel and of the top level, balanced per layer after routing
 CH_PAIRS = [('outp', 'outn'), ('op2', 'on2'), ('m1p', 'm1n'), ('x1p', 'x1n'), ('x2p', 'x2n'), ('inp', 'inn')]
 CH_FIRST = ['xa1_vcms', 'xa2_vcms'] + [n for pr in CH_PAIRS for n in pr]
@@ -446,11 +459,32 @@ def route_and_balance(blk, first, pairs, cellname, log=print):
                         trims[key] = trims.get(key, [0, 0, 0])
                         trims[key][l] += R.add_stub(R.nets[net], l, int(n), log=log)
     if ok and X1WIDE:
-        for net in X1NETS:                 # E5: the summing nodes carry the stage-1 input current (31 uA at x32, CM 2.5 V)
-            if net in R.nets:
-                nb, nv = R.widen(R.nets[net])
-                blk.stats.setdefault('widen_x1', {})[net] = dict(boxes=nb, extra_vias=nv)
-                log('%s: widened %s: %d boxes, %d extra vias' % (cellname, net, nb, nv))
+        for net in X1NETS + ('inp', 'inn'):   # E5: the summing nodes carry the stage-1 input current (31 uA at x32, CM 2.5 V); E6: inp/inn optional
+            if net in R.nets and X1WMODE.get(net, (1, 2) if net in X1NETS else ()):
+                sd = (1,) if net in X1WHALF else (1, -1)
+                nb, nv = R.widen(R.nets[net], layers=X1WMODE.get(net, (1, 2)), sides=sd)
+                blk.stats.setdefault('widen_x1', {})[net] = dict(boxes=nb, extra_vias=nv, layers=list(X1WMODE.get(net, (1, 2))), sides=list(sd))
+                log('%s: widened %s on %s sides %s: %d boxes, %d extra vias' % (cellname, net, X1WMODE.get(net, (1, 2)), sd, nb, nv))
+        if FWIDE:
+            for net in ('xa1_fn', 'xa1_fp', 'xa2_fn', 'xa2_fp'):
+                if net in R.nets:
+                    nb, nv = R.widen(R.nets[net], layers=(1, 2))
+                    blk.stats.setdefault('widen_f', {})[net] = dict(boxes=nb, extra_vias=nv)
+                    log('%s: widened %s: %d boxes, %d extra vias' % (cellname, net, nb, nv))
+        for pr_ in (X1NETS, ('inp', 'inn')):
+          if X1CBAL and all(n_ in R.nets for n_ in pr_):
+            ka, kb = R.nets[pr_[0]], R.nets[pr_[1]]
+            cb = blk.stats.setdefault('x1_cbal', {})
+            for l in (1, 2):
+                fa = sum(1 for f in R.fat.get(ka, []) if f[0] == l); fb = sum(1 for f in R.fat.get(kb, []) if f[0] == l)
+                d = 2 * (fa - fb)
+                got = 0
+                if d > 0:
+                    got = R.add_stub(kb, l, d, log=log)
+                elif d < 0:
+                    got = -R.add_stub(ka, l, -d, log=log)
+                cb['%s:%d' % (pr_[0], l)] = dict(fat=[fa, fb], stub_edges=got)
+            log('%s: %s C balance stubs %s' % (cellname, pr_, cb))
     if ok and WIDEN:
         for net in ('vss', 'vdd'):        # E2: supply widening (RC extraction showed 70-140 Ohm supply paths)
             if net in R.nets:
@@ -495,6 +529,17 @@ def build_channel(ly, W=400.0, H=600.0):
             for nm in ('xmn7', 'xmn8'):
                 lst.remove(pre + nm)
             lst += [pre + 'xmn7', pre + 'xmn8']
+    if ADJPAIRS:
+        for lst, pre in ((a1n, 'xa1_'), (a2n, 'xa2_')):
+            for nm in ('xmn3a', 'xmn3', 'xmn4', 'xmn4a'):
+                lst.remove(pre + nm)
+            i5 = lst.index(pre + 'xmn5')
+            lst[i5:i5] = [pre + 'xmn3a', pre + 'xmn3', pre + 'xmn4', pre + 'xmn4a']
+            if ADJSYM:
+                grp = [pre + n_ for n_ in ('xmn5', 'xmn3a', 'xmn3', 'xmn4', 'xmn4a', 'xmn6')]
+                i3 = lst.index(pre + 'xmn3a')
+                rest = [n_ for n_ in lst if n_ not in grp]
+                lst[:] = rest[:i3] + grp + rest[i3:]
     a1p = ['xa1_xmb2', 'xa1_xmb3', 'xa1_xmb5', 'xa1_xmpt', 'xa1_xmp5', 'xa1_xmp7', 'xa1_xmct', 'xa1_xmc1', 'xa1_xmc2',
            'xa1_xmp8', 'xa1_xmp6']
     a2p1 = ['xa2_xmp3', 'xa2_xmp1', 'xa2_xmp2', 'xa2_xmp4', 'xa2_xmpt']
@@ -508,8 +553,11 @@ def build_channel(ly, W=400.0, H=600.0):
         prow2 = [n for n in tgp if n not in prow1]
     else:
         prow1, prow2 = tgp[:half], tgp[half:]
+    a1in = ['xa1_xmp1', 'xa1_xmp2', 'xa1_xmp3', 'xa1_xmp4'] if ADJPAIRS else ['xa1_xmp3', 'xa1_xmp1', 'xa1_xmp2', 'xa1_xmp4']
+    if ADJPAIRS:
+        a2p1 = ['xa2_xmp1', 'xa2_xmp2', 'xa2_xmp3', 'xa2_xmp4', 'xa2_xmpt']
     rows = [('n', tgn), ('n', ['xa1_xmn1', 'xa1_xmn2']), ('n', a1n), ('n', a2n),
-            ('p', prow1), ('p', prow2), ('p', ['xa1_xmp3', 'xa1_xmp1', 'xa1_xmp2', 'xa1_xmp4']), ('p', a1p),
+            ('p', prow1), ('p', prow2), ('p', a1in), ('p', a1p),
             ('p', a2p1), ('p', a2p2)]
     placed_names = [n for _, r in rows for n in r]
     assert sorted(placed_names) == sorted(d['name'] for d in mos), set(d['name'] for d in mos) ^ set(placed_names)
@@ -896,7 +944,7 @@ def draw_grid(blk, g):
         blk.box('M4', x - 0.3, y0 - 0.3, x + P + 0.3, y1 + 0.3)
 
 
-def x1_bars(blk, nets, log=print):
+def x1_bars(blk, nets, log=print, centre=False):
     """E5 (layout E5, x32 DC offset): the TG source rails of one side of one row (Metal1, one router pin each) are
     joined by a straight Metal2 bar on their pin track, with a Via1 on every rail node. The rails then become one pin.
     Layout E4: the router entered a rail at one node and left it at another, so the summing-node current passed
@@ -931,11 +979,93 @@ def x1_bars(blk, nets, log=print):
                 for (l, i, jj) in nodes:
                     R.res[l, i, jj] = k
                 rails = [R.xy(i, jj) for p in run for (_, i, jj) in p]
-                R.pins[k] = [p for p in R.pins[k] if p not in run] + [nodes]
+                if centre:
+                    # E6: only the centre node is a pin; the other bar nodes are blocked for routing (the router cannot
+                    # enter the bar off-centre, so both ends see the same bar resistance from the feed)
+                    ic = (ia + ib) // 2
+                    for (l, i, jj) in nodes:
+                        if i != ic:
+                            R.res[l, i, jj] = BLOCK
+                    if R.res[1, ic, j] == -1:
+                        R.res[1, ic, j] = k
+                    R.pins[k] = [p for p in R.pins[k] if p not in run] + [[(0, ic, j)]]
+                else:
+                    R.pins[k] = [p for p in R.pins[k] if p not in run] + [nodes]
                 xa, y = R.xy(ia, j); xb, _ = R.xy(ib, j)
                 blk.bars.append((net, xa, xb, y, rails))
                 log('x1 bar %s: y %.2f x %.2f-%.2f, %d rails, %d rail nodes' % (net, y, xa, xb, len(run), len(rails)))
     blk.stats['x1_bars'] = [dict(net=b[0], x=[b[1], b[2]], y=b[3], rail_nodes=len(b[4])) for b in blk.bars]
+    log('bars: %s' % blk.stats['x1_bars'])
+
+
+def supply_bars(blk, log=print):
+    """E6: one Metal3 bar on the source track of a row from the source rail of device A to that of device B (and every
+    rail of the same net between them that belongs to the listed end devices' neighbours is NOT joined: only A, B and
+    the devices adjacent to them inside the span with the same source net, e.g. XMN3A+XMN3 and XMN4+XMN4A).
+    The rail nodes of the joined devices get Via1 + Metal2 pad + Via2; all bar and rail nodes are blocked for routing
+    except the bar centre, which is the only pin, so the supply enters the pair at the centre."""
+    R = blk.R
+    blk.supbars = []
+    ports = {(p['dev'], p['term']): p for p in blk.ports}
+    for (da, db, net) in SUPBAR_PAIRS:
+        if net not in R.nets or (da, 2) not in ports or (db, 2) not in ports:
+            log('supply bar %s/%s: device not found' % (da, db)); continue
+        k = R.nets[net]
+        ba, bb = ports[(da, 2)]['box'], ports[(db, 2)]['box']
+        # neighbours with the same source net and the same track (XMN3A -> XMN3, XMN4A -> XMN4)
+        devs = [p for p in blk.ports if p['term'] == 2 and p['net'] == net and p['box'] and abs(p['box'][1] - ba[1]) < 1e-3]
+        lo, hi = min(ba[0], bb[0]), max(ba[2], bb[2])
+        inner = [p for p in devs if lo - 1e-3 <= p['box'][0] and p['box'][2] <= hi + 1e-3]
+        # keep the end devices and, per end, the next device inward if its name differs only by the trailing 'a'
+        keep = [p for p in inner if p['dev'] in (da, db, da[:-1] if da.endswith('a') else da, db[:-1] if db.endswith('a') else db)]
+        rails = []
+        pins = R.pins.get(k, [])
+        used_pins = []
+        for p in keep:
+            b = p['box']
+            for pin in pins:
+                if pin and all(l == 0 for (l, _, _) in pin):
+                    xs = [R.xy(i, j)[0] for (_, i, j) in pin]; ys = {R.xy(i, j)[1] for (_, i, j) in pin}
+                    if len(ys) == 1 and b[1] - 0.1 <= min(ys) <= b[3] + 0.1 and b[0] - 0.5 <= min(xs) and max(xs) <= b[2] + 0.5 and pin not in used_pins:
+                        used_pins.append(pin)
+        if len(used_pins) < 2:
+            log('supply bar %s/%s: rails not found (%d)' % (da, db, len(used_pins))); continue
+        j = used_pins[0][0][2]
+        if any(n_[2] != j for p_ in used_pins for n_ in p_):
+            log('supply bar %s/%s: rails on different tracks' % (da, db)); continue
+        ia = min(i for p_ in used_pins for (_, i, _) in p_); ib = max(i for p_ in used_pins for (_, i, _) in p_)
+        bad = [i for i in range(ia, ib + 1) if R.res[1, i, j] not in (-1, k)]
+        ic = (ia + ib) // 2
+        split = False
+        if bad:
+            # E6: the Metal3 node at the bar centre is the access of the input-pair bar (same track); split the supply bar
+            # there and feed both halves from the net's Metal4 row bus right beside the centre (Via3 at ic - 1, ic + 1)
+            ics = [i for i in bad if abs(i - ic) <= 1]
+            if len(bad) == len(ics) and all(R.res[2, i, j] == k for i in (min(bad) - 1, max(bad) + 1)):
+                split = (min(bad) - 1, max(bad) + 1)
+            else:
+                log('supply bar %s/%s: %d Metal3 nodes owned by other nets, skipped' % (da, db, len(bad))); continue
+        for i in range(ia, ib + 1):
+            if split and split[0] < i < split[1]:
+                continue
+            R.res[1, i, j] = k if (i == ic and not split) else BLOCK
+        rnodes = []
+        for p_ in used_pins:
+            for (l, i, jj) in p_:
+                R.res[0, i, jj] = BLOCK
+                rnodes.append(R.xy(i, jj))
+        R.pins[k] = [p_ for p_ in R.pins[k] if p_ not in used_pins] + ([] if split else [[(1, ic, j)]])
+        xa, y = R.xy(ia, j); xb, _ = R.xy(ib, j)
+        if split:
+            xs1, _ = R.xy(split[0], j); xs2, _ = R.xy(split[1], j)
+            blk.supbars.append((net, xa, xs1, y, [q for q in rnodes if q[0] <= xs1], [p['dev'] for p in keep]))
+            blk.supbars.append((net, xs2, xb, y, [q for q in rnodes if q[0] >= xs2], [p['dev'] for p in keep]))
+            blk.supfeeds = getattr(blk, 'supfeeds', []) + [(xs1, y), (xs2, y)]
+            log('supply bar %s: %s y %.2f x %.2f-%.2f split at %.2f/%.2f, fed from the Metal4 bus' % (net, [p['dev'] for p in keep], y, xa, xb, xs1, xs2))
+            continue
+        blk.supbars.append((net, xa, xb, y, rnodes, [p['dev'] for p in keep]))
+        log('supply bar %s: %s y %.2f x %.2f-%.2f, %d rail nodes, centre x %.2f' % (net, [p['dev'] for p in keep], y, xa, xb, len(rnodes), R.xy(ic, j)[0]))
+    blk.stats['supply_bars'] = [dict(net=b[0], x=[b[1], b[2]], y=b[3], rail_nodes=len(b[4]), devs=b[5]) for b in blk.supbars]
 
 
 CH_EAST = ['vss', 'outp', 'outn', 'vss', 'ib1', 'ib2', 'vcm1', 'vcm2', 'vdd', 'c1', 'c2', 'c3', 'c4', 'vdd', 'vss', 'vdd']
@@ -968,7 +1098,11 @@ def finish_channel(blk, cblocks, Wc, Hc, log=print):
         vdd_grid(blk, Wc, Hc, log=log, net='vss', kind='n', use_plate=False,
                  trunk_lo=(max(ylo_vss) if (ylo_vss and TRUNK_ALL) else None))
     if X1BAR:
-        x1_bars(blk, X1NETS, log=log)
+        x1_bars(blk, X1NETS, log=log, centre=X1CENTRE)
+    if PAIRBAR:
+        x1_bars(blk, PAIRBAR_NETS, log=log, centre=True)
+    if SUPBAR:
+        supply_bars(blk, log=log)
     ok = route_and_balance(blk, CH_FIRST, CH_PAIRS, 'r1_afe_ch', log=log)
     blk.stats['route_ok'] = ok
     blk.stats['route_failed'] = R.failed
@@ -978,6 +1112,12 @@ def finish_channel(blk, cblocks, Wc, Hc, log=print):
         blk.box('M2', xa - 0.2, y - 0.2, xb + 0.2, y + 0.2)
         for (x, yy) in rails:
             blk.D.sq('Via1', x, yy, VIA); blk.D.sq('M1', x, yy, 0.34)
+    for (x, y) in getattr(blk, 'supfeeds', []):
+        blk.D.sq('Via3', x, y, VIA); blk.D.sq('M4', x, y, 0.40)
+    for (net, xa, xb, y, rnodes, _d) in getattr(blk, 'supbars', []):
+        blk.box('M3', xa - 0.2, y - 0.2, xb + 0.2, y + 0.2)
+        for (x, yy) in rnodes:
+            blk.D.sq('Via1', x, yy, VIA); blk.D.sq('M1', x, yy, 0.34); blk.D.sq('M2', x, yy, 0.40); blk.D.sq('Via2', x, yy, VIA)
     draw_vdd_grid(blk)
     for net, lst in edge.items():
         for (_, x, y) in lst:
@@ -1059,6 +1199,53 @@ def build_top(ly, chcell, Wc, Hc, edge, log=print):
                     for y in fy:
                         R.res[l][R.ij(x, y)] = R.nid(net)
             blk.feet.append((net, fx, fy, xc))
+    blk.entries = []
+    if STRAPS and SYMENTRY:
+        # E6: symmetric strap entry. Each channel supply edge pin (3 vss, 3 vdd per channel) gets a drawn Metal3 bar to its
+        # strap centre (3 tracks wide after the edge node) and a 3 x 3 Via3 + Via4 array under the strap; the nodes join the
+        # strap pin, so the router adds no other supply path to the channel pins. Same geometry for xsin and xcos.
+        xs0 = MARGIN + Wc
+        sxc = {'vss': gfloor(xs0 + 4.0), 'vdd': gfloor(xs0 + 12.0)}
+        spin = {}
+        for net in ('vss', 'vdd'):
+            k = R.nid(net)
+            spin[net] = [p_ for p_ in R.pins[k] if any(n_[0] == 2 and abs(R.xy(n_[1], n_[2])[0] - sxc[net]) < 1e-6 for n_ in p_)][0]
+        for name, pm in insts:
+            y0 = ysin if name == 'xsin' else ycos
+            for port, lst in edge.items():
+                net = pm[port]
+                if net not in ('vss', 'vdd'):
+                    continue
+                k = R.nid(net)
+                for (side, x, y) in lst:
+                    X, Y = round(MARGIN + x, 4), round(y0 + y, 4)
+                    xc = sxc[net]
+                    nodes = [(1, X, Y)]
+                    for xx in gpts(X + P, xc + P):
+                        for yy in (Y - P, Y, Y + P):
+                            nodes.append((1, round(xx, 4), round(yy, 4)))
+                    for xx in (xc - P, xc, xc + P):
+                        for yy in (Y - P, Y, Y + P):
+                            nodes.append((2, round(xx, 4), round(yy, 4)))
+                    bad = []
+                    for (l, xx, yy) in nodes:
+                        i_, j_ = R.ij(xx, yy)
+                        if R.res[l, i_, j_] not in (-1, k):
+                            bad.append((l, xx, yy))
+                    if bad:
+                        log('WARNING entry %s %s y %.2f: %d nodes owned by another net, entry skipped' % (name, net, Y, len(bad)))
+                        continue
+                    ij_ = []
+                    for (l, xx, yy) in nodes:
+                        i_, j_ = R.ij(xx, yy)
+                        R.res[l, i_, j_] = k
+                        ij_.append((l, i_, j_))
+                    edge_pin = [p_ for p_ in R.pins[k] if (1, *R.ij(X, Y)) in p_]
+                    R.pins[k] = [p_ for p_ in R.pins[k] if p_ not in edge_pin and p_ is not spin[net]]
+                    spin[net] = sorted(set(spin[net]) | set(ij_))
+                    R.pins[k].append(spin[net])
+                    blk.entries.append((name, net, X, Y, xc))
+        log('symmetric entries: %d' % len(blk.entries))
     # p+ guard ring (substrate tie, vss) with its centre line on the grid at 2.4 um from the edge
     blk.D.tap_ring(2.7, 2.7, W - 2.7, H - 2.7, w=0.6, ptype=True)
     ring = [(0, x, 2.4) for x in gpts(4.0, W - 4.0)] + [(0, x, H - 2.4) for x in gpts(4.0, W - 4.0)]
@@ -1104,6 +1291,26 @@ def build_top(ly, chcell, Wc, Hc, edge, log=print):
                                       pt=[round(MARGIN + x, 4), round(y0 + y, 4)]))
     blk.stats['inst_origin'] = {'xsin': [MARGIN, ysin], 'xcos': [MARGIN, ycos]}
     blk.draw_routes()
+    for (name, net, X, Y, xc) in getattr(blk, 'entries', []):
+        blk.box('M3', X - 0.2, Y - 0.2, X + P + 0.2, Y + 0.2)
+        blk.box('M3', X + P - 0.2, Y - P - 0.2, xc + P + 0.2, Y + P + 0.2)
+        blk.box('M4', xc - P - 0.2, Y - P - 0.2, xc + P + 0.2, Y + P + 0.2)
+        for xx in (xc - P, xc, xc + P):
+            for yy in (Y - P, Y, Y + P):
+                blk.D.sq('Via3', xx, yy, VIA)
+                blk.D.sq('Via4', xx, yy, VIA)
+    if TM1STRAP:
+        ntv = 0
+        for (net, x1, y1, x2, y2) in blk.straps:
+            xc = (x1 + x2) / 2
+            blk.box('TM1', x1, y1, x2, y2)
+            y = y1 + 1.0
+            while y <= y2 - 1.0 + 1e-6:
+                for dx in (-1.5, -0.5, 0.5, 1.5):
+                    blk.D.sq('TV1', xc + dx, round(y, 4), TV1); ntv += 1
+                y += 1.0
+        blk.stats['tm1_vias'] = ntv
+    blk.stats['entries'] = [list(e) for e in getattr(blk, 'entries', [])]
     for net, side, x, y in bp:
         if side == 'S':
             hw = SUPPIN / 2 if net in ('vdd', 'vss') else 0.2
@@ -1142,6 +1349,8 @@ def main():
     st['trim_input'] = TRIM
     st['vddgrid'] = blk.stats.get('vddgrid')
     st['vssgrid'] = blk.stats.get('vssgrid')
+    st['top'].update(entries=top.stats.get('entries'), tm1_vias=top.stats.get('tm1_vias'))
+    st['channel'].update(supply_bars=blk.stats.get('supply_bars'), bars=blk.stats.get('x1_bars'), widen_x1=blk.stats.get('widen_x1'), widen_f=blk.stats.get('widen_f'), x1_cbal=blk.stats.get('x1_cbal'))
     st['widen'] = dict(channel=blk.stats.get('widen'), top=top.stats.get('widen'), strap_vias=top.stats.get('strap_vias'))
     json.dump(st, open(os.path.join(os.path.dirname(OUT), 'r1_afe_layout.json'), 'w'), indent=1)
     nets = {}

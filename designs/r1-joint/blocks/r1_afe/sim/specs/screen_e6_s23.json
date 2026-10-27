@@ -1,0 +1,58 @@
+{
+ "question": "Layout E6 screen (track T3j): x32 DC offset on the wiring-R-only netlists of dev builds s2 (centre-fed input-pair and x1 bars, both x1 nets widened) and s3 (x1n not widened); operating points tt CM 0.5/2.5 V, ss, ff, ffx 6.9 uA CM 0.5 V",
+ "variants": {
+  "S2R": {
+   "netlist": "$G1_RESULTS_ROOT/r1_afe/pex-e6-s2/pexr/r1_afe_post_rc.spice"
+  },
+  "S3R": {
+   "netlist": "$G1_RESULTS_ROOT/r1_afe/pex-e6-s3/pexr/r1_afe_post_rc.spice"
+  }
+ },
+ "jobs": [
+  {
+   "tag": "op_tt_ib10.14_cm0.5",
+   "tmpl": "tb_afe_op.cir",
+   "corner": "tt",
+   "subs": {
+    "VCMI": 0.5,
+    "IB": "10.14u"
+   }
+  },
+  {
+   "tag": "op_tt_ib10.14_cm2.5",
+   "tmpl": "tb_afe_op.cir",
+   "corner": "tt",
+   "subs": {
+    "VCMI": 2.5,
+    "IB": "10.14u"
+   }
+  },
+  {
+   "tag": "op_ss_ib11.81_cm0.5",
+   "tmpl": "tb_afe_op.cir",
+   "corner": "ss",
+   "subs": {
+    "VCMI": 0.5,
+    "IB": "11.81u"
+   }
+  },
+  {
+   "tag": "op_ff_ib9.00_cm0.5",
+   "tmpl": "tb_afe_op.cir",
+   "corner": "ff",
+   "subs": {
+    "VCMI": 0.5,
+    "IB": "9.00u"
+   }
+  },
+  {
+   "tag": "op_ffx_ib6.9_cm0.5",
+   "tmpl": "tb_afe_op.cir",
+   "corner": "ffx",
+   "subs": {
+    "VCMI": 0.5,
+    "IB": "6.9u"
+   }
+  }
+ ]
+}

@@ -1,0 +1,46 @@
+{
+ "question": "Layout E6 screen (track T3j): x32 DC offset on the wiring-R-only netlists of dev builds s9a-d (adjacent matched pairs with short centre-fed supply bars; x1 widening a: both nets M3+M4, b: x1p M3, c: x1n M3, d: x1p M4); tt CM 2.5/0.5 V, ss CM 0.5 V",
+ "variants": {
+  "S9A": {
+   "netlist": "$G1_RESULTS_ROOT/r1_afe/pex-e6-s9a/pexr/r1_afe_post_rc.spice"
+  },
+  "S9B": {
+   "netlist": "$G1_RESULTS_ROOT/r1_afe/pex-e6-s9b/pexr/r1_afe_post_rc.spice"
+  },
+  "S9C": {
+   "netlist": "$G1_RESULTS_ROOT/r1_afe/pex-e6-s9c/pexr/r1_afe_post_rc.spice"
+  },
+  "S9D": {
+   "netlist": "$G1_RESULTS_ROOT/r1_afe/pex-e6-s9d/pexr/r1_afe_post_rc.spice"
+  }
+ },
+ "jobs": [
+  {
+   "tag": "op_tt_ib10.14_cm2.5",
+   "tmpl": "tb_afe_op.cir",
+   "corner": "tt",
+   "subs": {
+    "VCMI": 2.5,
+    "IB": "10.14u"
+   }
+  },
+  {
+   "tag": "op_tt_ib10.14_cm0.5",
+   "tmpl": "tb_afe_op.cir",
+   "corner": "tt",
+   "subs": {
+    "VCMI": 0.5,
+    "IB": "10.14u"
+   }
+  },
+  {
+   "tag": "op_ss_ib11.81_cm0.5",
+   "tmpl": "tb_afe_op.cir",
+   "corner": "ss",
+   "subs": {
+    "VCMI": 0.5,
+    "IB": "11.81u"
+   }
+  }
+ ]
+}

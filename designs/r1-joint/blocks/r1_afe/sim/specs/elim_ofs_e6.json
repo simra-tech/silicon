@@ -1,0 +1,55 @@
+{
+ "question": "Layout E6 step 1 (track T3j): which wiring of layout E5 (pexrc-e5-dev15b, revision F2) makes the x32 DC output offset (-14 to -25 mV, same sign at input CM 0.5 and 2.5 V)? Variants short (x 1e-3) the channel x1p/x1n wiring, channel vdd, channel vss, all other channel signal wiring, all channel wiring, or all top-level wiring; operating point at tt CM 0.5/2.5 V and ss CM 0.5 V",
+ "variants": {
+  "E5": {
+   "netlist": "$G1_RESULTS_ROOT/r1_afe/pexrc-e5-dev15b/r1_afe_post_rc.spice"
+  },
+  "X1": {
+   "netlist": "$G1_RESULTS_ROOT/r1_afe/revF2/e6/elim-ofs/X1.spice"
+  },
+  "VDD": {
+   "netlist": "$G1_RESULTS_ROOT/r1_afe/revF2/e6/elim-ofs/VDD.spice"
+  },
+  "VSS": {
+   "netlist": "$G1_RESULTS_ROOT/r1_afe/revF2/e6/elim-ofs/VSS.spice"
+  },
+  "SIG": {
+   "netlist": "$G1_RESULTS_ROOT/r1_afe/revF2/e6/elim-ofs/SIG.spice"
+  },
+  "CHALL": {
+   "netlist": "$G1_RESULTS_ROOT/r1_afe/revF2/e6/elim-ofs/CHALL.spice"
+  },
+  "TOP": {
+   "netlist": "$G1_RESULTS_ROOT/r1_afe/revF2/e6/elim-ofs/TOP.spice"
+  }
+ },
+ "jobs": [
+  {
+   "tag": "op_tt_ib10.14_cm0.5",
+   "tmpl": "tb_afe_op.cir",
+   "corner": "tt",
+   "subs": {
+    "VCMI": 0.5,
+    "IB": "10.14u"
+   }
+  },
+  {
+   "tag": "op_tt_ib10.14_cm2.5",
+   "tmpl": "tb_afe_op.cir",
+   "corner": "tt",
+   "subs": {
+    "VCMI": 2.5,
+    "IB": "10.14u"
+   }
+  },
+  {
+   "tag": "op_ss_ib11.81_cm0.5",
+   "tmpl": "tb_afe_op.cir",
+   "corner": "ss",
+   "subs": {
+    "VCMI": 0.5,
+    "IB": "11.81u"
+   }
+  }
+ ]
+}
