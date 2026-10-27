@@ -1,0 +1,264 @@
+{
+ "run": "asm-20261027-f2",
+ "track": "T8 (r1_top assembly, P3 preparation)",
+ "question": "r1_top try f: every macro real, all nets routed, DRC/LVS clean before fill?",
+ "command": "sh designs/r1-joint/blocks/r1_top/flow/run_try_f.sh asm-20261027-f2 <steps>  (steps in steps.log)",
+ "steps_log": [
+  "step gen start 00:46:20",
+  "step gen end 00:46:38",
+  "step cdl start 00:46:38",
+  "step cdl end 00:46:51",
+  "done",
+  "step gen start 00:46:59",
+  "step gen end 00:48:06",
+  "step cdl start 00:48:06",
+  "step cdl end 00:48:18",
+  "done",
+  "step main start 00:48:21",
+  "step main end 00:54:56",
+  "step antenna start 00:54:56",
+  "step antenna end 00:58:26",
+  "step lvs start 00:58:26",
+  "step lvs end 01:03:51",
+  "done"
+ ],
+ "tools": {
+  "klayout": "0.30.9 (container)",
+  "python": "3 (container)",
+  "container": "tapeoutbench-eda:latest sha256:ddeb69576f2808676d1c5d474ecf04f6d1d6f8abdcff6b72b39790ded924bab2",
+  "cpuset": "116-119"
+ },
+ "pdk_commit": "84374023ee8b4b126bebbba67fcbada0a9c0ff0b",
+ "inputs": {
+  "u_ring": {
+   "macro": "r1_padring",
+   "source": "<G1_RESULTS_ROOT>/r1_padring/ring-20261021-d/r1_padring_1700.gds (fill instances removed: 4141; west TopMetal1 ECO)",
+   "sha256": "81bba04b3c0655ece75587d6c90b159d4bb860e0dbe0e3dd80e2c65c50d0725d"
+  },
+  "u_ctrl": {
+   "macro": "r1_ctrl_top",
+   "source": "<G1_RESULTS_ROOT>/r1_ctrl/r1ctrl_06_release/r1_ctrl_top.gds",
+   "sha256": "a16423f78e8039b5fe033377d1d856dea9012501fb9888ad37b26809ccf97497"
+  },
+  "u_afe": {
+   "macro": "r1_afe",
+   "source": "<G1_RESULTS_ROOT>/r1_top/asm-20261027-f2/inputs/ofrecord/r1_afe.gds",
+   "sha256": "1f3ad1f16b9595098779d73dee59694415ffb054e13e811acd63bcea1b5f33f4"
+  },
+  "u_isense": {
+   "macro": "r1_isense",
+   "source": "<G1_RESULTS_ROOT>/r1_top/asm-20261027-f2/inputs/ofrecord/r1_isense.gds",
+   "sha256": "192dd37aa592b85d68b158b18f0f71c8e906664783b047dcdd3bf1ceacd6c7ac"
+  },
+  "u_osc": {
+   "macro": "r1_osc",
+   "source": "designs/r1-joint/blocks/r1_osc/layout/r1_osc.gds",
+   "sha256": "7c5fb60fdbbfa3cce7714520d3bc652292f0ff964452e3bf4afe226ea68ba971"
+  },
+  "u_safe": {
+   "macro": "r1_safe",
+   "source": "designs/r1-joint/blocks/r1_safe/layout/r1_safe.gds",
+   "sha256": "fbc3113948e0c15e1e049cfad1e2e5c5349b10ba0ae7d250f5b228e50aa28324"
+  },
+  "u_bgr": {
+   "macro": "r1_bgr",
+   "source": "designs/r1-joint/blocks/r1_bgr/layout/r1_bgr.gds",
+   "sha256": "324e3c27477a77c4a32d6760366d8d1fb82bea4887ae26b905cd7022aac54005"
+  },
+  "u_bias": {
+   "macro": "r1_bias",
+   "source": "<G1_RESULTS_ROOT>/r1_top/asm-20261027-f2/inputs/ofrecord/r1_bias.gds",
+   "sha256": "e7ee13940db0ecc2a36c8bf7c6d1947358aceb6dd1dff3b3add9f4eafa2bb78c"
+  },
+  "u_t2f": {
+   "macro": "r1_t2f",
+   "source": "designs/r1-joint/blocks/r1_t2f/layout/r1_t2f.gds",
+   "sha256": "5e7aa75ae9335b12b1c825d326e586c742755bd9305074fc1cdc2507d17af9a7"
+  },
+  "u_adc": {
+   "macro": "r1_adc",
+   "source": "<G1_RESULTS_ROOT>/r1_top/asm-20261027-f2/inputs/ofrecord/r1_adc.gds",
+   "sha256": "95c8296acc97bc3ace0e09a51db01465a0e800aa4fa2fc3162b784e316578a5d"
+  },
+  "u_gate": {
+   "macro": "r1_gate_lv",
+   "source": "designs/r1-joint/blocks/r1_gate/layout/r1_gate_lv_filled.gds",
+   "sha256": "a3dee0f091c5236f7b6ff231b765d0b70e60a6e791d9db0b12fd821ce44e013b"
+  },
+  "u_ls_t2f0": {
+   "macro": "r1_ls",
+   "source": "designs/r1-joint/blocks/r1_ls/layout/r1_ls.gds",
+   "sha256": "a4f496364b55c71a035f44a9b13b68fd8475f98b05f5e13a4e38e9ec1703b4de"
+  },
+  "u_ls_t2f1": {
+   "macro": "r1_ls",
+   "source": "designs/r1-joint/blocks/r1_ls/layout/r1_ls.gds",
+   "sha256": "a4f496364b55c71a035f44a9b13b68fd8475f98b05f5e13a4e38e9ec1703b4de"
+  },
+  "u_ls_afe0": {
+   "macro": "r1_ls",
+   "source": "designs/r1-joint/blocks/r1_ls/layout/r1_ls.gds",
+   "sha256": "a4f496364b55c71a035f44a9b13b68fd8475f98b05f5e13a4e38e9ec1703b4de"
+  },
+  "u_ls_afe1": {
+   "macro": "r1_ls",
+   "source": "designs/r1-joint/blocks/r1_ls/layout/r1_ls.gds",
+   "sha256": "a4f496364b55c71a035f44a9b13b68fd8475f98b05f5e13a4e38e9ec1703b4de"
+  },
+  "u_ls_afe2": {
+   "macro": "r1_ls",
+   "source": "designs/r1-joint/blocks/r1_ls/layout/r1_ls.gds",
+   "sha256": "a4f496364b55c71a035f44a9b13b68fd8475f98b05f5e13a4e38e9ec1703b4de"
+  },
+  "u_ls_afe3": {
+   "macro": "r1_ls",
+   "source": "designs/r1-joint/blocks/r1_ls/layout/r1_ls.gds",
+   "sha256": "a4f496364b55c71a035f44a9b13b68fd8475f98b05f5e13a4e38e9ec1703b4de"
+  }
+ },
+ "lvs_reference_inputs": {
+  "designs/r1-joint/blocks/r1_bgr/layout/r1_bgr_lvs.cdl": "c4d175eebf104a852ce0d9b4b426a0cfa6ede80bc39e7088c179c9ae179fae2b",
+  "designs/r1-joint/blocks/r1_t2f/layout/r1_t2f_lvs.cdl": "9867279d8e07805a9af642fd42067b14862e43fcbc39ae31cbb17bf753cef9aa",
+  "designs/r1-joint/blocks/r1_ls/layout/r1_ls_lvs.cdl": "4f3fefbedfa219acf7d9506d8e8edc878be372f5abc551cba2471caaf2a12460",
+  "designs/r1-joint/blocks/r1_gate/layout/r1_gate_lv_lvs.cdl": "c0602540bbe0bc34c023a511e7ee1c8f03e6c4e519624d611fe187a5b3afe4ea",
+  "designs/r1-joint/blocks/r1_safe/layout/r1_safe_lvs.cdl": "a083d26387c3006de04e2f6b19f454aaa39c81af23b213f545aae8af3b570732",
+  "designs/r1-joint/blocks/r1_osc/layout/r1_osc_lvs.cdl": "600d5f2bb983601d904142c9d15f62beb363b91bbfafe7ded63c1e2cea6912aa",
+  "<G1_RESULTS_ROOT>/r1_top/<run>/inputs/ofrecord/r1_bias_lvs.cdl": "abb7bc280fd1632ec405e7cef62a2b4ba0ab688bc6fa85d897d1b0913a36b4a8",
+  "<G1_RESULTS_ROOT>/r1_top/<run>/inputs/ofrecord/r1_afe_lvs.cdl": "112be732b3b772301fd1bb7c20dc1f697788197573fd83976aa49019419bad69",
+  "<G1_RESULTS_ROOT>/r1_top/<run>/inputs/ofrecord/r1_adc_lvs.cdl": "2e18b5c2f80a2755f83f4c181012f6733bfb8cbede01f993abfadf51a534e18b",
+  "<G1_RESULTS_ROOT>/r1_top/<run>/inputs/ofrecord/r1_isense_lvs.cdl": "3021793df19e112a96bdcb6d5618b3b3a00e06bc80baa02c7e293da16f3212f2",
+  "designs/r1-joint/blocks/r1_padring/netlist/r1_padring_1700_projected_ref.cdl": "62405f601d7e5c250fc4ad08359553d8185609e559c2dfecc7fa4ca2166bd8dc"
+ },
+ "placeholders": {},
+ "outputs": {
+  "r1_top.gds": "ddce0db7b3b38c496ee781dcc368d18f95be123e9b7af5e574d59603e6a0b18d",
+  "cdl/r1_top.cdl": "42c6a5de163f3fdd287bb161d6b13436a9afe162cf53ce2f1beb0150da0841b5",
+  "r1_top.png": "a4313f645aa2f5bf81b1fed025f3bf9fd010cf83f508dabaeaac2a396e0c06db"
+ },
+ "input_snapshots": {},
+ "self_check": {
+  "instance_overlaps": [],
+  "instance_pairs_closer_than_10um": [],
+  "outside_extended_window": [],
+  "routes_inside_macros": []
+ },
+ "net_conflicts": 0,
+ "routed_nets": 172,
+ "ring_eco": {
+  "cut_tm1": [
+   321.0,
+   735.0,
+   365.0,
+   1239.4
+  ],
+  "tm2": [
+   [
+    324.82,
+    720.0,
+    339.82,
+    1254.4
+   ],
+   [
+    344.82,
+    720.0,
+    361.8,
+    1254.4
+   ]
+  ],
+  "tv2": [
+   [
+    324.82,
+    720.0,
+    339.82,
+    735.0
+   ],
+   [
+    324.82,
+    1239.4,
+    339.82,
+    1254.4
+   ],
+   [
+    344.82,
+    720.0,
+    361.8,
+    735.0
+   ],
+   [
+    344.82,
+    1239.4,
+    361.8,
+    1254.4
+   ]
+  ],
+  "east_columns": "no MIM block under the east columns (isense ends at x 1272.2, osc at 1237.0; column from 1340.42); no cut"
+ },
+ "antenna_decap_row": {
+  "cell": "sg13g2_decap_8",
+  "count": 34,
+  "origin_um": [
+   1215.0,
+   1355.0
+  ],
+  "pitch_um": 3.36,
+  "bbox_um": [
+   1215.0,
+   1355.0,
+   1329.24,
+   1358.78
+  ],
+  "gate_area_on_VDD_um2": 28.56,
+  "cell_source": "from r1_ctrl_top (PDK library cell)"
+ },
+ "antenna_diodes": 30,
+ "tm1_over_mim_blocks": [],
+ "maze": {
+  "grid_origin_um": [
+   319.4,
+   330.0
+  ],
+  "pitch_um": 0.8,
+  "failed": [],
+  "access_failed": []
+ },
+ "checks": {
+  "drc_main": {
+   "state": "completed",
+   "exit": "1",
+   "total": 1,
+   "class_a": 1,
+   "class_b": 0,
+   "rules": {
+    "M2.b": 1
+   },
+   "evidence": "<G1_RESULTS_ROOT>/r1_top/asm-20261027-f2/drc_main/"
+  },
+  "drc_maximal": {
+   "state": "not run"
+  },
+  "drc_density": {
+   "state": "not run"
+  },
+  "drc_antenna": {
+   "state": "completed",
+   "exit": "0",
+   "total": 0,
+   "class_a": 0,
+   "class_b": 0,
+   "rules": {},
+   "evidence": "<G1_RESULTS_ROOT>/r1_top/asm-20261027-f2/drc_antenna/"
+  },
+  "lvs_limits": {
+   "state": "match",
+   "start": "2026-10-27T00:58:31Z",
+   "end": "2026-10-27T01:03:32Z",
+   "exit": "exit 0",
+   "deck": "run-time copy of the PDK LVS directory with max_depth(8) and max_branch_complexity(100) after align",
+   "evidence": "<G1_RESULTS_ROOT>/r1_top/asm-20261027-f2/lvs_limits/"
+  },
+  "lvs_stock": {
+   "state": "not run"
+  }
+ },
+ "disposition": "unfilled: DRC main 1 (M2.b inside r1_afe_ch, AFE E3 macro defect), antenna 0, LVS limits match; maximal and density run on the filled GDS (asm-20261027-f2-fill)"
+}

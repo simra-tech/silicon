@@ -1,0 +1,679 @@
+{
+ "run": "asm-20261027-f3-fill",
+ "track": "T8 (r1_top chip fill)",
+ "question": "try f run of record: filled chip, density, DRC main/antenna/maximal, LVS, bond map",
+ "command": "sh designs/r1-joint/blocks/r1_top/flow/fill_top.sh <G1_RESULTS_ROOT>/r1_top/asm-20261027-f3 <G1_RESULTS_ROOT>/r1_top/asm-20261027-f3-fill [args]; sh designs/r1-joint/blocks/r1_top/flow/run_fill_checks.sh <source> <run>",
+ "tools": {
+  "klayout": "0.30.9 (container)",
+  "container": "tapeoutbench-eda:latest sha256:ddeb69576f2808676d1c5d474ecf04f6d1d6f8abdcff6b72b39790ded924bab2",
+  "cpuset": "116-119"
+ },
+ "pdk_commit": "84374023ee8b4b126bebbba67fcbada0a9c0ff0b",
+ "input": {
+  "source_run": "asm-20261027-f3",
+  "gds": "<G1_RESULTS_ROOT>/r1_top/asm-20261027-f3/r1_top.gds",
+  "sha256": "c69abb8e19f16030d82ec06a752f8c6f10f7bddefcafa9d446075336ec6a50e8"
+ },
+ "output": {
+  "gds": "<G1_RESULTS_ROOT>/r1_top/asm-20261027-f3-fill/r1_top.gds",
+  "sha256": "53f25a1975bba3af7ce60194452b03b6d72699f2f3a77aa5586bdc86462a8bf0"
+ },
+ "filler_macro_changes_against_pdk": [
+  "199,201c199,201",
+  "< \t\t'distance_m2' => 1.5,",
+  "< \t\t'distance_m3' => 2.0,",
+  "< \t\t'distance_m4' => 2.0,",
+  "---",
+  "> \t\t'distance_m2' => 0.45,",
+  "> \t\t'distance_m3' => 0.45,",
+  "> \t\t'distance_m4' => 0.45,",
+  "136c136",
+  "<   gp_spacing_h = gp_width + 5",
+  "---",
+  ">   gp_spacing_h = gp_width + 1.6"
+ ],
+ "exclusions": {
+  "thru": {
+   "r1_ctrl_top": [
+    10,
+    30,
+    50,
+    67
+   ],
+   "r1_safe": [
+    10
+   ]
+  },
+  "ring_depth_um": 0.0,
+  "halo_um": 1.0,
+  "bond_openings": 24,
+  "excluded_area_um2": 917508.2,
+  "deleted_orphan_cells": [
+   "Act_FILL_CELL",
+   "GatP_FILL_CELL",
+   "Met1_M_FILL_CELL",
+   "Met1_S_FILL_CELL",
+   "Met2_M_FILL_CELL",
+   "Met2_S_FILL_CELL",
+   "Met3_M_FILL_CELL",
+   "Met3_S_FILL_CELL",
+   "Met4_M_FILL_CELL",
+   "Met4_S_FILL_CELL",
+   "Met5_M_FILL_CELL",
+   "Met5_S_FILL_CELL",
+   "TM1_FILL_CELL",
+   "TM2_FILL_CELL"
+  ]
+ },
+ "excluded_instances": [
+  {
+   "cell": "r1_ctrl_top",
+   "bbox_um": [
+    538.8,
+    673.3,
+    1070.8,
+    1352.3
+   ]
+  },
+  {
+   "cell": "r1_afe",
+   "bbox_um": [
+    336.0,
+    740.0,
+    528.8,
+    1234.4
+   ]
+  },
+  {
+   "cell": "r1_isense",
+   "bbox_um": [
+    1113.8,
+    735.0,
+    1272.2,
+    1031.8
+   ]
+  },
+  {
+   "cell": "r1_osc",
+   "bbox_um": [
+    1088.8,
+    1041.8,
+    1237.0,
+    1152.2
+   ]
+  },
+  {
+   "cell": "r1_safe",
+   "bbox_um": [
+    1088.8,
+    376.0,
+    1338.14,
+    663.81
+   ]
+  },
+  {
+   "cell": "r1_bgr",
+   "bbox_um": [
+    336.0,
+    376.0,
+    432.0,
+    570.3
+   ]
+  },
+  {
+   "cell": "r1_bias",
+   "bbox_um": [
+    444.0,
+    376.0,
+    564.0,
+    612.74
+   ]
+  },
+  {
+   "cell": "r1_t2f",
+   "bbox_um": [
+    366.8,
+    622.74,
+    458.8,
+    725.34
+   ]
+  },
+  {
+   "cell": "r1_adc",
+   "bbox_um": [
+    592.0,
+    376.0,
+    1031.0,
+    558.3
+   ]
+  },
+  {
+   "cell": "r1_gate_lv",
+   "bbox_um": [
+    440.0,
+    1296.0,
+    468.39,
+    1323.9
+   ]
+  },
+  {
+   "cell": "r1_ls",
+   "bbox_um": [
+    480.25,
+    640.3,
+    489.45,
+    652.0
+   ]
+  },
+  {
+   "cell": "r1_ls",
+   "bbox_um": [
+    495.45,
+    640.3,
+    504.65,
+    652.0
+   ]
+  },
+  {
+   "cell": "r1_ls",
+   "bbox_um": [
+    510.65,
+    640.3,
+    519.85,
+    652.0
+   ]
+  },
+  {
+   "cell": "r1_ls",
+   "bbox_um": [
+    480.25,
+    660.3,
+    489.45,
+    672.0
+   ]
+  },
+  {
+   "cell": "r1_ls",
+   "bbox_um": [
+    495.45,
+    660.3,
+    504.65,
+    672.0
+   ]
+  },
+  {
+   "cell": "r1_ls",
+   "bbox_um": [
+    510.65,
+    660.3,
+    519.85,
+    672.0
+   ]
+  },
+  {
+   "cell": "sg13g2_decap_8",
+   "bbox_um": [
+    1214.76,
+    1354.78,
+    1329.48,
+    1359.17
+   ]
+  },
+  {
+   "cell": "sg13g2_tiehi",
+   "bbox_um": [
+    1094.76,
+    1035.83,
+    1097.16,
+    1040.22
+   ]
+  },
+  {
+   "cell": "sg13g2_antennanp",
+   "bbox_um": [
+    664.845,
+    660.78,
+    666.765,
+    665.17
+   ]
+  },
+  {
+   "cell": "sg13g2_antennanp",
+   "bbox_um": [
+    780.045,
+    660.78,
+    781.965,
+    665.17
+   ]
+  },
+  {
+   "cell": "sg13g2_antennanp",
+   "bbox_um": [
+    657.645,
+    660.78,
+    659.565,
+    665.17
+   ]
+  },
+  {
+   "cell": "sg13g2_antennanp",
+   "bbox_um": [
+    772.845,
+    660.78,
+    774.765,
+    665.17
+   ]
+  },
+  {
+   "cell": "sg13g2_antennanp",
+   "bbox_um": [
+    649.645,
+    660.78,
+    651.565,
+    665.17
+   ]
+  },
+  {
+   "cell": "sg13g2_antennanp",
+   "bbox_um": [
+    764.845,
+    660.78,
+    766.765,
+    665.17
+   ]
+  },
+  {
+   "cell": "sg13g2_antennanp",
+   "bbox_um": [
+    641.645,
+    660.78,
+    643.565,
+    665.17
+   ]
+  },
+  {
+   "cell": "sg13g2_antennanp",
+   "bbox_um": [
+    756.845,
+    660.78,
+    758.765,
+    665.17
+   ]
+  },
+  {
+   "cell": "sg13g2_antennanp",
+   "bbox_um": [
+    634.445,
+    660.78,
+    636.365,
+    665.17
+   ]
+  },
+  {
+   "cell": "sg13g2_antennanp",
+   "bbox_um": [
+    749.645,
+    660.78,
+    751.565,
+    665.17
+   ]
+  },
+  {
+   "cell": "sg13g2_antennanp",
+   "bbox_um": [
+    626.445,
+    660.78,
+    628.365,
+    665.17
+   ]
+  },
+  {
+   "cell": "sg13g2_antennanp",
+   "bbox_um": [
+    741.645,
+    660.78,
+    743.565,
+    665.17
+   ]
+  },
+  {
+   "cell": "sg13g2_antennanp",
+   "bbox_um": [
+    619.245,
+    660.78,
+    621.165,
+    665.17
+   ]
+  },
+  {
+   "cell": "sg13g2_antennanp",
+   "bbox_um": [
+    734.445,
+    660.78,
+    736.365,
+    665.17
+   ]
+  },
+  {
+   "cell": "sg13g2_antennanp",
+   "bbox_um": [
+    611.245,
+    660.78,
+    613.165,
+    665.17
+   ]
+  },
+  {
+   "cell": "sg13g2_antennanp",
+   "bbox_um": [
+    726.445,
+    660.78,
+    728.365,
+    665.17
+   ]
+  },
+  {
+   "cell": "sg13g2_antennanp",
+   "bbox_um": [
+    603.245,
+    660.78,
+    605.165,
+    665.17
+   ]
+  },
+  {
+   "cell": "sg13g2_antennanp",
+   "bbox_um": [
+    718.445,
+    660.78,
+    720.365,
+    665.17
+   ]
+  },
+  {
+   "cell": "sg13g2_antennanp",
+   "bbox_um": [
+    596.045,
+    660.78,
+    597.965,
+    665.17
+   ]
+  },
+  {
+   "cell": "sg13g2_antennanp",
+   "bbox_um": [
+    711.245,
+    660.78,
+    713.165,
+    665.17
+   ]
+  },
+  {
+   "cell": "sg13g2_antennanp",
+   "bbox_um": [
+    588.045,
+    660.78,
+    589.965,
+    665.17
+   ]
+  },
+  {
+   "cell": "sg13g2_antennanp",
+   "bbox_um": [
+    703.245,
+    660.78,
+    705.165,
+    665.17
+   ]
+  },
+  {
+   "cell": "sg13g2_antennanp",
+   "bbox_um": [
+    580.845,
+    660.78,
+    582.765,
+    665.17
+   ]
+  },
+  {
+   "cell": "sg13g2_antennanp",
+   "bbox_um": [
+    696.045,
+    660.78,
+    697.965,
+    665.17
+   ]
+  },
+  {
+   "cell": "sg13g2_antennanp",
+   "bbox_um": [
+    572.845,
+    660.78,
+    574.765,
+    665.17
+   ]
+  },
+  {
+   "cell": "sg13g2_antennanp",
+   "bbox_um": [
+    688.045,
+    660.78,
+    689.965,
+    665.17
+   ]
+  },
+  {
+   "cell": "sg13g2_antennanp",
+   "bbox_um": [
+    564.845,
+    660.78,
+    566.765,
+    665.17
+   ]
+  },
+  {
+   "cell": "sg13g2_antennanp",
+   "bbox_um": [
+    680.045,
+    660.78,
+    681.965,
+    665.17
+   ]
+  },
+  {
+   "cell": "sg13g2_antennanp",
+   "bbox_um": [
+    557.645,
+    660.78,
+    559.565,
+    665.17
+   ]
+  },
+  {
+   "cell": "sg13g2_antennanp",
+   "bbox_um": [
+    672.845,
+    660.78,
+    674.765,
+    665.17
+   ]
+  }
+ ],
+ "fill": {
+  "layers": {
+   "Activ": {
+    "rectangles": 36197,
+    "area_um2": 418437.3,
+    "pdk_cell_rectangles": 36197,
+    "supplementary_flat_rectangles": 0
+   },
+   "GatPoly": {
+    "rectangles": 51630,
+    "area_um2": 361410.0,
+    "pdk_cell_rectangles": 0,
+    "supplementary_flat_rectangles": 51630
+   },
+   "Metal1": {
+    "rectangles": 52639,
+    "area_um2": 469800.2,
+    "pdk_cell_rectangles": 52639,
+    "supplementary_flat_rectangles": 0
+   },
+   "Metal2": {
+    "rectangles": 218535,
+    "area_um2": 1180730.9,
+    "pdk_cell_rectangles": 218535,
+    "supplementary_flat_rectangles": 0
+   },
+   "Metal3": {
+    "rectangles": 142421,
+    "area_um2": 648378.9,
+    "pdk_cell_rectangles": 142421,
+    "supplementary_flat_rectangles": 0
+   },
+   "Metal4": {
+    "rectangles": 156305,
+    "area_um2": 690632.0,
+    "pdk_cell_rectangles": 156305,
+    "supplementary_flat_rectangles": 0
+   },
+   "Metal5": {
+    "rectangles": 40765,
+    "area_um2": 419830.0,
+    "pdk_cell_rectangles": 40765,
+    "supplementary_flat_rectangles": 0
+   },
+   "TopMetal1": {
+    "rectangles": 6009,
+    "area_um2": 300450.0,
+    "pdk_cell_rectangles": 6009,
+    "supplementary_flat_rectangles": 0
+   },
+   "TopMetal2": {
+    "rectangles": 7521,
+    "area_um2": 376050.0,
+    "pdk_cell_rectangles": 7521,
+    "supplementary_flat_rectangles": 0
+   }
+  },
+  "cells": {
+   "Act_FILL_CELL": {
+    "placements": 36197,
+    "rectangles": 36197
+   },
+   "GatP_FILL_CELL": {
+    "placements": 0,
+    "rectangles": 0
+   },
+   "Met1_S_FILL_CELL": {
+    "placements": 15558,
+    "rectangles": 15558
+   },
+   "Met1_M_FILL_CELL": {
+    "placements": 37081,
+    "rectangles": 37081
+   },
+   "Met2_S_FILL_CELL": {
+    "placements": 26192,
+    "rectangles": 26192
+   },
+   "Met2_M_FILL_CELL": {
+    "placements": 192343,
+    "rectangles": 192343
+   },
+   "Met3_S_FILL_CELL": {
+    "placements": 41280,
+    "rectangles": 41280
+   },
+   "Met3_M_FILL_CELL": {
+    "placements": 101141,
+    "rectangles": 101141
+   },
+   "Met4_S_FILL_CELL": {
+    "placements": 49493,
+    "rectangles": 49493
+   },
+   "Met4_M_FILL_CELL": {
+    "placements": 106812,
+    "rectangles": 106812
+   },
+   "Met5_S_FILL_CELL": {
+    "placements": 15494,
+    "rectangles": 15494
+   },
+   "Met5_M_FILL_CELL": {
+    "placements": 25271,
+    "rectangles": 25271
+   },
+   "TM1_FILL_CELL": {
+    "placements": 6009,
+    "rectangles": 6009
+   },
+   "TM2_FILL_CELL": {
+    "placements": 7521,
+    "rectangles": 7521
+   }
+  },
+  "gate_passed": true
+ },
+ "steps_log": [
+  "step maximal start 02:20:47",
+  "step maximal end 02:38:44",
+  "step density start 02:38:44",
+  "step density end 02:40:21",
+  "step main start 02:40:21",
+  "step main end 02:48:05",
+  "step antenna start 02:48:05",
+  "step antenna end 02:51:51",
+  "step lvs start 02:51:51",
+  "step lvs end 03:15:57",
+  "step bondmap start 03:15:57",
+  "step bondmap end 03:16:15",
+  "done"
+ ],
+ "checks": {
+  "drc_main": {
+   "state": "completed",
+   "exit": "1",
+   "total": 1,
+   "rules": {
+    "M2.b": 1
+   },
+   "evidence": "<G1_RESULTS_ROOT>/r1_top/asm-20261027-f3-fill/drc_main/"
+  },
+  "drc_maximal": {
+   "state": "completed",
+   "exit": "0",
+   "total": 0,
+   "rules": {},
+   "evidence": "<G1_RESULTS_ROOT>/r1_top/asm-20261027-f3-fill/drc_maximal/"
+  },
+  "drc_density": {
+   "state": "completed",
+   "exit": "0",
+   "total": 0,
+   "rules": {},
+   "evidence": "<G1_RESULTS_ROOT>/r1_top/asm-20261027-f3-fill/drc_density/"
+  },
+  "drc_antenna": {
+   "state": "completed",
+   "exit": "0",
+   "total": 0,
+   "rules": {},
+   "evidence": "<G1_RESULTS_ROOT>/r1_top/asm-20261027-f3-fill/drc_antenna/"
+  },
+  "lvs_limits": {
+   "state": "match",
+   "evidence": "<G1_RESULTS_ROOT>/r1_top/asm-20261027-f3-fill/lvs_limits/"
+  },
+  "bondmap": {
+   "state": "passed",
+   "openings_in_gds": 24,
+   "rows": 24,
+   "labels_134_25": 22,
+   "openings_unmatched": 0,
+   "evidence": "<G1_RESULTS_ROOT>/r1_top/asm-20261027-f3-fill/bondmap/"
+  }
+ },
+ "disposition": "of record: density 0, maximal 0, antenna 0, main 1 (M2.b inside r1_afe_ch, AFE E3 macro defect; top level 0), LVS limits match (53 pairs), bond map 24/24"
+}

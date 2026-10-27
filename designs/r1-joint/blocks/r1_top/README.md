@@ -1,7 +1,173 @@
 # R1_TOP
 
 Block `r1_top` (track T8, P3 preparation). This block assembles the R1 chip top level from the ring of record and
-the finished macros. The four macros that are not finished are placeholder outlines.
+the macros. Try f (below) has no placeholder: every macro is a real layout. Tries d and e had placeholder outlines.
+
+## Try f (2026-10-27, track T8): every macro real — run of record `asm-20261027-f3`, filled `asm-20261027-f3-fill`
+
+State: every macro is a real layout. No placeholder is left. All 172 top-level signal nets are routed. The filled
+chip passes LVS (limits deck), density, maximal, antenna and the bond map (24/24). DRC main has 1 marker inside
+`r1_afe` E3 (a macro defect, not top-level). The supply network is checked by square count (estimated). The chip is **not** functional: `r1_adc`
+layout A has no SAR logic (open issue 1). Generator: `layout/r1_top_assemble_f.py`. Driver: `flow/run_try_f.sh`.
+
+### Inputs (sha256)
+
+| Macro | Revision | GDS sha256 | LVS netlist sha256 |
+| --- | --- | --- | --- |
+| `r1_padring` | revision d | `81bba04b3c0655ece75587d6c90b159d4bb860e0dbe0e3dd80e2c65c50d0725d` | projected ref `62405f601d7e5c250fc4ad08359553d8185609e559c2dfecc7fa4ca2166bd8dc` |
+| `r1_ctrl_top` | 0.6, run `r1ctrl_ll_20261026_t12` | `a16423f78e8039b5fe033377d1d856dea9012501fb9888ad37b26809ccf97497` | `final/pnl/r1_ctrl_top.pnl.v` `8f8a70771beccdcdd72247103eb33f36fce1a4e12a77cc977de3baad645ce242` (CDL by `pnl2cdl`: `6c8ccf850e52314bd5a69550f5262df8b8490f77386e2031b4fc8efa1101fef7`) |
+| `r1_afe` | E3 (commit 902d1ab26) | `1f3ad1f16b9595098779d73dee59694415ffb054e13e811acd63bcea1b5f33f4` | `112be732b3b772301fd1bb7c20dc1f697788197573fd83976aa49019419bad69` |
+| `r1_adc` | layout A (commit b4a95ae60) | `95c8296acc97bc3ace0e09a51db01465a0e800aa4fa2fc3162b784e316578a5d` | `2e18b5c2f80a2755f83f4c181012f6733bfb8cbede01f993abfadf51a534e18b` |
+| `r1_isense` | layout c (commit c09410f07) | `192dd37aa592b85d68b158b18f0f71c8e906664783b047dcdd3bf1ceacd6c7ac` | `3021793df19e112a96bdcb6d5618b3b3a00e06bc80baa02c7e293da16f3212f2` |
+| `r1_bias` | revision 2 (commit ae4dfac95) | `e7ee13940db0ecc2a36c8bf7c6d1947358aceb6dd1dff3b3add9f4eafa2bb78c` | `abb7bc280fd1632ec405e7cef62a2b4ba0ab688bc6fa85d897d1b0913a36b4a8` |
+| `r1_osc` | revision 2, layout r2d | `7c5fb60fdbbfa3cce7714520d3bc652292f0ff964452e3bf4afe226ea68ba971` | `600d5f2bb983601d904142c9d15f62beb363b91bbfafe7ded63c1e2cea6912aa` |
+| `r1_safe` | as try e | `fbc3113948e0c15e1e049cfad1e2e5c5349b10ba0ae7d250f5b228e50aa28324` | `a083d26387c3006de04e2f6b19f454aaa39c81af23b213f545aae8af3b570732` |
+| `r1_bgr` | as try e | `324e3c27477a77c4a32d6760366d8d1fb82bea4887ae26b905cd7022aac54005` | `c4d175eebf104a852ce0d9b4b426a0cfa6ede80bc39e7088c179c9ae179fae2b` |
+| `r1_t2f` | as try e (now R0) | `5e7aa75ae9335b12b1c825d326e586c742755bd9305074fc1cdc2507d17af9a7` | `9867279d8e07805a9af642fd42067b14862e43fcbc39ae31cbb17bf753cef9aa` |
+| `r1_ls` (6) | as try e | `a4f496364b55c71a035f44a9b13b68fd8475f98b05f5e13a4e38e9ec1703b4de` | `4f3fefbedfa219acf7d9506d8e8edc878be372f5abc551cba2471caaf2a12460` |
+| `r1_gate_lv` | as try e | `a3dee0f091c5236f7b6ff231b765d0b70e60a6e791d9db0b12fd821ce44e013b` | `c0602540bbe0bc34c023a511e7ee1c8f03e6c4e519624d611fe187a5b3afe4ea` |
+
+The generator and `lvs/make_top_cdl_f.py` check every hash. Snapshots of the inputs of record and of the working-tree
+files at the start: `<G1_RESULTS_ROOT>/r1_top/asm-20261027-f2/inputs/` (`inputs.sha256`).
+
+### Placement (deltas against try e)
+
+| Macro | Origin (µm) | Delta against try e | Reason |
+| --- | --- | --- | --- |
+| `r1_ctrl_top` 0.6 | (538.8, 673.3) | (−5.0, +0.3) | 0.6 outline 532 × 679 µm and its pin template |
+| `r1_bias` revision 2 | (444, 376) | y −112.6 | 236.74 µm high; next to `r1_bgr`, short bias lines to the ADC and the AFE |
+| `r1_t2f` | (366.8, 622.74), R0 | was MY at (444, 376) | the slot under the bias is taken; t2f moves west of the bias, above the bgr |
+| `r1_isense` layout c | (1113.8, 735) | (+25, 0) | clear channel for the isense pairs between `r1_safe` and `r1_ctrl` |
+| `r1_adc` layout A | (592, 376) | 0 (real macro in the try-e slot) | — |
+| `r1_ls` (6) | x 480.25 / 495.45 / 510.65, y 640.3 / 660.3 | moved from x 545 | under the t2f and AFE control lines |
+| `r1_afe`, `r1_osc`, `r1_safe`, `r1_bgr`, `r1_gate_lv` | as try e | 0 | — |
+
+Full table with the S7 C4 deltas: [`reports/placement_f.csv`](reports/placement_f.csv). Generator self-check: 0 net
+conflicts, 0 overlaps, 0 pairs closer than 10 µm, 0 routes inside macros, 0 shapes outside the window.
+Picture: [`layout/r1_top_f.png`](layout/r1_top_f.png) (run f3, about 100 kB).
+
+### Connectivity
+
+1. 172 signal nets routed: 99 by hand-drawn geometry, 73 by the maze router (`layout/maze_router_top.py`, grid
+   origin (319.4, 330.0), pitch 0.8 µm, Metal2-Metal4). 75 maze jobs, 0 failed; 137 pin access stubs, 0 failed.
+2. `r1_ctrl` 0.6 pins: all used except `bias_en` (no consumer in revision 2 of `r1_bias`; left open, recorded).
+3. 64 safe taps: crossbar, Metal3 columns x = 1075.6 + 0.54 r, Metal4 rows y = 665.4 + 0.6 r (r = rank by ctrl pin y).
+4. 36 ADC north pins to the `r1_ctrl` south pins (34 nets plus `OSC_CLK` and `POR_N` branches).
+5. `VREF_B` (buffered, `r1_bias` revision 2): Metal5 2 µm at y 645 with Metal5 `VSS` shields at y 642 and 648, and a
+   Metal4 riser at x 566 with a `VSS` shield at x 568. Loads: `r1_safe` vref, `r1_isense` vref, `r1_t2f` vref.
+6. `VREF_BG` (raw bandgap): Metal5 1 µm at y 368, `VSS` shields at y 365.5 and 370.5, to the ADC `vref_in` and the
+   bias `vref` only.
+7. 11 bias currents, `POR_N` (bias → ctrl → ADC), AFE pairs (Metal5 0.5 µm), isense pairs, `az` pins tied to `az_win`.
+8. `OSC_CLK`: osc → ctrl clk by a straight Metal3 line; branch to the ADC clk by the maze, 1057 µm (Metal2 25.6,
+   Metal3 504.0, Metal4 527.2 µm, 8 vias). Skew ADC clk against ctrl clk: about 27 ps typ, 32 ps at max sheet
+   (**estimated**, Elmore, 0.4 µm wire 232-272 Ω, assumed 0.2 fF/µm wire and 10 fF pin load; not extracted).
+9. Unconnected macro pins: `r1_ctrl` `bias_en`; `r1_bgr` `iptat`, `vbe`, `dvbe` (test nodes); `r1_adc` 77 SAR-internal
+   pins of layout A (`sar_*`, `top*`), which wait for the SAR logic of layout B.
+10. 30 `sg13g2_antennanp` diodes at y 661 under the `r1_ctrl` `adc_raw_*` / `adc_valid_*` inputs (temporary, open issue 1).
+
+### Supply network
+
+Core ring, `r1_ctrl` TopMetal1 stripes, south Metal4 trunks, a Metal5 `VDDA` trunk (y 343-361) in parallel with the
+Metal4 trunk, and a Metal4/Metal5 riser from pad 7. TopMetal2 only over MIM blocks (`tm1_over_mim_blocks`: none).
+Report: [`reports/supply_f.md`](reports/supply_f.md) (square count, **estimated**; PDK process specification
+Rev 1.2, EM section 2.15).
+
+| Item | Result |
+| --- | --- |
+| Shared `r1_isense`–`r1_bgr` VSS resistance (limit ≤ 2.3 Ω) | passed: 1.657 Ω typ, 2.218 Ω at max sheet |
+| Worst static drop VDDA | 35.75 mV at the far `r1_afe` pin (max sheet, 1.1 %) |
+| Worst static drop VDD | 32.38 mV at `r1_ctrl` (ring from pad 1 and stripes, 2.7 %) |
+| EM, top-level shapes | passed (all) |
+| EM, macro supply pins | failed: `r1_adc` vdda/vdd/vss and `r1_afe` vdd/vss pins are 0.4 µm (limit 0.8 mA, current up to 1.94 mA) |
+
+### Status
+
+Run f3 is run f2 with two top-level fixes from the maximal deck (F13): the west `VDDA` Via3 row ends inside the
+Metal3 riser, and the two wide `VSS` Metal3 bodies under `r1_bgr` and `r1_bias` have 2 µm gaps. The LVS reference
+is unchanged. GDS (unfilled) `<G1_RESULTS_ROOT>/r1_top/asm-20261027-f3/r1_top.gds`, sha256
+`c69abb8e19f16030d82ec06a752f8c6f10f7bddefcafa9d446075336ec6a50e8`. Filled chip (the deliverable)
+`<G1_RESULTS_ROOT>/r1_top/asm-20261027-f3-fill/r1_top.gds`, sha256
+`53f25a1975bba3af7ce60194452b03b6d72699f2f3a77aa5586bdc86462a8bf0`. LVS reference
+`<G1_RESULTS_ROOT>/r1_top/asm-20261027-f3/cdl/r1_top.cdl`, sha256
+`42c6a5de163f3fdd287bb161d6b13436a9afe162cf53ce2f1beb0150da0841b5`.
+
+| Check | Unfilled `-f2` | Filled `-f3-fill` (of record) | Evidence |
+| --- | --- | --- | --- |
+| Generator self-check | passed (0 / 0 / 0 / 0 / 0) | — | `r1_top_assembly.json` |
+| DRC main | failed, 1: `M2.b` inside `r1_afe_ch` (E3 macro defect, `r1_afe` README failure 3); top-level 0 (run `-f`: 9) | failed, 1: the same `r1_afe_ch` `M2.b`; top-level and fill 0 | `drc_main/` |
+| DRC antenna | passed, 0 (run `-f`: 296) | passed, 0 | `drc_antenna/` |
+| DRC maximal | not run on the unfilled GDS | passed, 0 (run `-f2-fill2`: 21, F13) | `drc_maximal/` |
+| DRC density | not run on the unfilled GDS | passed, 0 (run `-f2-fill`: 1, `M2Fil.h`, F9; `-f2-fill2`: 0) | `drc_density/` |
+| LVS, comparer-limit deck copy | passed: "Netlists match", 53 circuit pairs; `r1_top` 261 devices, 81 subcircuits | passed: "Netlists match", 53 pairs, `r1_top` 261 devices, 81 subcircuits (`-f2-fill2`: the same) | `lvs_limits/`, [`reports/runs/asm-20261027-f3-fill_lvs_report.txt`](reports/runs/asm-20261027-f3-fill_lvs_report.txt), [`reports/runs/asm-20261027-f2_lvs_report.txt`](reports/runs/asm-20261027-f2_lvs_report.txt) |
+| LVS, stock PDK deck | not run (try e: the comparison crashes; no change expected) | not run | — |
+| Bond map (24 openings) | — | passed, 24 of 24 openings matched, labels and sizes correct (`-f2-fill2`: the same) | `bondmap/` |
+| Supply R, IR drop, EM | estimated by square count (run `-f3`): shared VSS passed; macro pin EM failed | — | `<G1_RESULTS_ROOT>/r1_top/asm-20261027-f3/supply_f.json`, `reports/supply_f.md` |
+| `OSC_CLK` skew | estimated 27 ps typ (not extracted) | — | this section |
+| Post-layout simulation of top-level nets | not run | not run | — |
+| IHP intake pre-check | not run | not run | — |
+| Run records | written | written | `reports/runs/asm-20261027-f.json`, `-f2.json`, `-f2-fill.json`, `-f2-fill2.json`, `-f3.json`, `-f3-fill.json` |
+
+Fill (`flow/fill_top.sh`, thru `r1_ctrl_top:10,30,50,67;r1_safe:10`, distances Metal2 0.45, GatPoly gap 1.6,
+Metal3-5 0.45 µm): geometry gate passed (only fill datatypes differ). Window coverage, 800 µm windows, 100 µm step:
+minimum Metal1 26.41 %, Metal2 25.97 % (run `-f2-fill`: 23.87 %), Metal3 25.58 %, Metal4 27.94 %, Metal5 28.92 % (limit 25 %; all at the ADC corner (400, 400) or (500, 500)); global Metal1-Metal5 42.0 / 47.1 / 52.5 / 53.1 / 46.5 %. Margins are small: Metal3 0.58 %, Metal2 0.97 %. `flow/probe_window_minmax.py`, `<G1_RESULTS_ROOT>/r1_top/asm-20261027-f3-fill/window_density.json` (run `-f3-fill`; `-f2-fill2` the same within 0.01 %).
+
+### Open issues (try f)
+
+1. `r1_adc` layout A has no SAR logic. 77 SAR-internal pins are open and the 30 ADC outputs to `r1_ctrl` are not
+   driven. The 30 antenna diodes are a temporary fix for the 296 antenna markers; remove them when layout B
+   drives the pins. The chip is not functional until layout B.
+2. Macro supply pins fail EM: `r1_adc` and `r1_afe` supply pins are 0.4 µm. Layout B and E4 must give pins ≥ 1 µm
+   (`reports/integration_checklist_f.md`).
+3. `r1_afe` E3 has 1 `M2.b` marker inside `r1_afe_ch`. Chip DRC main stays at 1 until E4.
+4. The `r1_ctrl` return current shares the east `VSS` column and the south row with the isense ground. Estimated
+   ground offset about 8 mV between the isense and the bgr (not simulated).
+5. `r1_safe` is open to Metal2 fill (F9). Its effect on the safe comparators and string is not simulated.
+6. `bias_en` is open; `az` pins are tied to `az_win`; `r1_t2f` vref is on `VREF_B` (INTERFACES T9), not on raw vref.
+7. ADC-to-ctrl output timing window: open row in the interfaces (ctrl 0.6 SDC assumption).
+8. No post-layout simulation of any top-level net; the `OSC_CLK` skew and all supply numbers are estimates.
+
+### Failures and mistakes (try f)
+
+| # | What happened | Class | Fix |
+| --- | --- | --- | --- |
+| F1 | The working-tree `r1_afe` and `r1_adc` at the start were work in progress (E4, layout B) without block LVS. | spec-ambiguity | Used the committed records (E3, layout A); snapshots in `inputs/` |
+| F2 | The brief says raw vref to the ADC and t2f only; INTERFACES T9 puts t2f on `VREF_B`. | spec-ambiguity | Followed INTERFACES T9; recorded |
+| F3 | Dev runs: isense lines and the `VREF_B` Metal5 ran inside the `r1_ctrl` box (self-check). | functional-bug | Isense rows at y 667-670; `VREF_B` isense branch at y 645 over `r1_safe` |
+| F4 | Dev run: Metal3 VDD/VSS short between the IO-filler strap at x 537 and the bias VSS riser. | functional-bug | Riser ends at x 534 |
+| F5 | Run `-f`: DRC main 7 notches (`M2.b`, `M3.b`) between 0.3 µm access stubs and 0.4 µm pins (same lesson as `r1_adc` failure 14). | regression | 0.4 µm stubs and jogs outside the macro outline |
+| F6 | Run `-f`: `M3.f` in `r1_bias`: the wide top-level riser made the bias VSS bar a wide shape. | functional-bug | Riser joins the bar by six 6 µm fingers |
+| F7 | Run `-f`: antenna 296 (`Ant.b`, Metal3-TopMetal2) at the `r1_ctrl` inputs from the ADC: layout A has no drivers. | verification-gap | 30 `sg13g2_antennanp` diodes (run `-f2`: 0) |
+| F8 | Generator crashes during development (`path` overwritten by a loop variable, `DBox.contains` with a box, `ADC_NET` used before definition, a TopVia1 box too small). | tooling | Fixed in the generator |
+| F9 | Run `-f2-fill`: density 1, `M2Fil.h` window (400, 400)-(1200, 1200) at 23.87 % (minimum 25 %); the real ADC box gets no fill. | estimation | `r1_safe` opened to Metal2 fill (its README defers density to chip fill); ADC not opened (CDAC) |
+| F10 | `flow/drc_summary.py` labels the `r1_afe_ch` item as "top-level". | tooling | Cell read from the database by hand; recorded |
+| F11 | `flow/write_run_json.py` failed on try f (no placeholder pins). | tooling | Key made optional; maze and diode keys added |
+| F12 | The `-f2-fill` check chain was stopped by the track after density to start `-fill2`; its main step ended without a summary. | process-hygiene | Recorded in its `checks_steps.log`; `-fill2` repeats all checks |
+| F13 | Run `-f2-fill2`: DRC maximal 21. 19 `V3.c1`: the west `VDDA` Via3 array box went to y 738.4, the Metal3 riser ends at y 738.0 (one via row outside the metal; the main deck does not check it). 2 `Slt.c.M3`: the `VSS` Metal3 bodies under `r1_bgr` (90 × 44 µm) and `r1_bias` (84 × 41 µm) are wider than 30 µm without a slit. The maximal deck was not run on the unfilled `-f2`. | verification-gap | Via box to y 738.0; bodies split in bars ≤ 24 µm by 2 µm gaps above y 342 (run `-f3`); maximal now runs first on the filled chip |
+
+### Built against (try f)
+
+| Item | Version | How established |
+| --- | --- | --- |
+| PDK | IHP-Open-PDK `84374023ee8b4b126bebbba67fcbada0a9c0ff0b` | checked by `flow/run.sh` |
+| KLayout | 0.30.9 | container, DRC and LVS logs |
+| Container | `tapeoutbench-eda:latest`, `sha256:ddeb6957…` | `flow/run.sh` |
+| ngspice / xschem / LibreLane / CACE | not used by this try | — |
+
+### Reproduce try f (repository root, POSIX shell)
+
+1. Set the environment: `G1_CPUSET=116-119; export G1_CPUSET; G1_RESULTS_ROOT=<results root>; export G1_RESULTS_ROOT; G1_WORKDIR=.; export G1_WORKDIR`.
+2. Copy the GDS and CDL of record of `r1_afe`, `r1_adc`, `r1_isense` and `r1_bias` from git into
+   `<G1_RESULTS_ROOT>/r1_top/<run>/inputs/ofrecord/`. The scripts check the hashes.
+3. Run `sh designs/r1-joint/blocks/r1_top/flow/run_try_f.sh <run> gen cdl` (add `main antenna lvs maximal` for the unfilled checks).
+4. Run `sh designs/r1-joint/blocks/r1_top/flow/fill_top.sh <run dir> <run dir>-fill 0 "r1_ctrl_top:10,30,50,67;r1_safe:10" 0.45 1.6 0.45`.
+5. Run `sh designs/r1-joint/blocks/r1_top/flow/run_fill_checks.sh <run dir> <run dir>-fill`.
+6. Run `python3 designs/r1-joint/blocks/r1_top/flow/supply_f.py <run dir>/supply_f.json`.
+7. Write the records with `flow/write_run_json.py` and `flow/write_fill_run_json.py`, and the placement with
+   `flow/write_placement_e.py`.
+
+New files of try f: `layout/r1_top_assemble_f.py`, `layout/maze_router_top.py`, `lvs/make_top_cdl_f.py`,
+`flow/run_try_f.sh`, `flow/supply_f.py`, `reports/supply_f.md`, `reports/integration_checklist_f.md`,
+`reports/placement_f.csv`, `layout/r1_top_f.png`; changed: `flow/write_run_json.py`.
 
 ## Full-chip testbench, schematic level (track T10, 2026-10-26)
 
