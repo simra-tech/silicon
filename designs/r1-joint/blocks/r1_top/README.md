@@ -454,6 +454,235 @@ the kpex 2.5D model; no field solver ran on them.
 Commands as run: `run_*.sh` in the run directory. Tools: KLayout 0.30.9, kpex 0.3.12, ngspice 46 (container
 `tapeoutbench-eda`), PDK `84374023`.
 
+## Filled-chip extraction and ctrl IR derate (try g) (track T11b, 2026-10-27/28, runs `pex-20261029-g3-fill`, `r1ctrl_irderate_g3`)
+
+State: **Goal A done**: fast netlists with the fill on the 111 sensitive nets, typ and max sheet, same ports as
+`pex-20261029-g3`; checks (a), (b), (c), (e) passed; `OSC_CLK` skew with fill 41.5 ps (simulated, ≤ 90 ps).
+**Goal B failed**: `r1_ctrl` 0.8 setup slack at the worst internal supply is −1.13 ns (max sheet) and +0.39 ns
+(typ sheet, below the 1 ns goal). Try h needs a ctrl supply-feed resistance ≤ 1.43 Ω (VDD + VSS, max sheet; try g
+2.34 Ω). Report with the full per-net table: [`reports/pex_fill_g.md`](reports/pex_fill_g.md). Output roots:
+`<G1_RESULTS_ROOT>/r1_top/pex-20261029-g3-fill/` and `<G1_RESULTS_ROOT>/r1_top/r1ctrl_irderate_g3/`. All numbers are
+extracted, simulated or STA results; nothing is measured.
+
+### Method A (chosen: per-net band method; the full-chip kpex on the filled GDS is not feasible in the budget)
+
+1. Feasibility of one full-chip kpex with fill: the filled GDS has 612 165 fill polygons (Metal1 52 533, Metal2
+   216 059, Metal3 138 987, Metal4 151 310, Metal5 40 020, TopMetal1 5 874, TopMetal2 7 382). Each piece is a
+   floating net for kpex. The band runs below took 530-3 020 s for 7 572-35 489 pieces on 2 threads (0.063-0.085 s
+   per piece, growing with the count). The full chip has 17 × the largest band. Estimate: more than 12 h on 2
+   threads, more than 6 h on 4 threads even with ideal scaling (the unfilled full-chip run alone took 2 h). Decision
+   (recommended option): **not run**; per-net band method instead.
+2. Sensitive-net set, 111 nets in 4 groups (one band run each): `clk` = `OSC_CLK`, `VREF_B`, `VREF_BG`, `CUR_TRK`,
+   `POR_N`; `ana` = `AFE_SOUTS_P/N`, `AFE_SOUTC_P/N`, `ISN_OUTA_P/N`, `ISN_OUTB_P/N`; `tap` = `TAP_P_0..31`,
+   `TAP_N_0..31`; `bus` = `ADC_RAW_A_0..13`, `ADC_RAW_B_0..13`, `ADC_VALID_A/B`, `ADC_START`, `ADC_SEL`, `ADC_HOLD`,
+   `IS_SMP`. The "raw VREF to the ADC and t2f" is `VREF_BG` (bgr → ADC `vref_in`, bias `vref`); the t2f `vref` is on
+   `VREF_B` (INTERFACES T9), so both are in the set (F8).
+3. Band layouts (`pex/top_wire.py --band <group> --band-um 10`, with and without the fill of `-g3-fill`), own LVS
+   database (`pex/make_lvsdb.py`), kpex 0.3.12 2.5D CC (`run_kpex_slot.sh`). Bands: `clk` 87 971 µm², 35 489 fill
+   pieces; `ana` 38 852 µm², 14 605; `tap` 21 586 µm², 7 572; `bus` 39 279 µm², 16 284.
+4. Fill correction (`pex/fill_net.py`, extension of `pex/fill_eff.py`): the Maxwell matrix of each band run is reduced
+   over the floating fill (Schur complement). Row with fill minus row without fill = the fill delta of every coupling
+   of a sensitive net to a named net; the rest of its total delta (clipped wiring pieces, substrate) goes to VSUBS. A
+   pair of two sensitive nets in different groups takes the mean of the two estimates. Each sensitive net's total C
+   change equals its own band result exactly.
+5. Netlists: `pex/top_netlist.py` with the new options `--cfill <cfill.json> --stem r1_top_g_pex_fill`. The deltas are
+   added to the full-chip kpex pair totals of `pex-20261029-g3` (unfilled, of record) before the location split;
+   a pair that exists only through the fill takes the locations of the pair (sensitive net, VSUBS), so the fill C is
+   spread along the net. Same R networks (`rnet_typ.json`, `rnet_max.json`; floating fill does not change R), same
+   reduction (`--fast --tau 1e-11 --maxdeg 16`), same 628 + 24 ports, same `pin_map.csv` (byte-identical).
+   Regression: with the options unused the script rebuilds `fast/r1_top_g_pex_fast.spice` of `pex-20261029-g3`
+   bit-identical (`cce466ec…`).
+6. Window margin: (i) without fill, the C of every sensitive net in its 10 µm band equals the full-chip kpex within
+   0.007 % (the band loses no coupling of the unfilled layout); (ii) with fill, a 20 µm band for the `clk` group
+   (156 033 µm², 50 363 pieces) against the 10 µm band: the fill delta changes by +0.04 % to +0.72 % (`OSC_CLK` 82.33 →
+   82.92 fF, `VREF_B` 98.85 → 99.25 fF). The 10 µm band is low by at most 0.6 fF per net (margin table in
+   `reports/pex_fill_g.md`).
+7. Not in the correction: the change of non-sensitive nets other than their coupling to a sensitive net, the fill
+   over the black-boxed macros (none in the band layouts), and fill coupling between two non-sensitive nets.
+
+### Files A (`<G1_RESULTS_ROOT>/r1_top/pex-20261029-g3-fill/`)
+
+| File | Content | sha256 |
+| --- | --- | --- |
+| `fast/r1_top_g_pex_fill_fast.spice` | **Fast, typ, with fill (recommended include)**: 52 022 R, 2 315 C to `sub`, 18 356 coupling C; 2.6 MB | `f173747716ea2fc48c51db58e573e80efe50dc66f5e18134c2d00091d1169fa8` |
+| `fast/max/r1_top_g_pex_fill_fast.spice` | Fast, max sheet, with fill | `46d5d57937f4aba64a7c2bf1a247be7df34ab1628735498caa1afdaa51bb5131` |
+| `r1_top_g_pex_fill.spice` / `_red.spice` | Full / reduced, typ, with fill | `cc925671…` / `1b4852ca…` |
+| `max/r1_top_g_pex_fill.spice` / `_red.spice` | Full / reduced, max sheet, with fill | `7a314872…` / `a6062e1c…` |
+| `cfill.json` | Fill correction: 3 444 pair deltas (+1 532.7 fF), per-net table, window check | `11cba280ab8f59e5774672b3e9a73b6fdd9bf6a4ef8c363f1b457e4430811824` |
+| `checks/checks.json`, `checks_fast/checks.json` | Checks (a), (b), (c), (e) on the filled full and fast netlists | `d8e3af60…`, `ebe2e946…` |
+| `band_<group>_fill/`, `band_<group>_nofill/` | Band layouts, LVS databases, kpex outputs | — |
+| `run.json` | Inputs with sha256, scripts, commands, kpex band times | — |
+
+### Results A (extracted, typ sheet unless stated)
+
+Per group (C unfilled → filled; R does not change):
+
+| Group | Nets | Fill delta of the total C |
+| --- | --- | --- |
+| `clk` | 5 | +33.8 % (`CUR_TRK`) to +90.7 % (`VREF_B`) |
+| `ana` | 8 | +21.6 % (`AFE_SOUTS_N`) to +54.1 % (`ISN_OUTB_N`) |
+| `tap` | 64 | +14.7 % to +26.6 % |
+| `bus` | 34 | +28.0 % to +68.9 % (`ADC_RAW_A_1`, 10.2 → 17.2 fF) |
+
+| Net | R typ (Ω) | C unfilled (fF) | C filled (fF) | Delta |
+| --- | --- | --- | --- | --- |
+| `OSC_CLK` | 313.5 (osc → ADC) | 98.17 | 180.50 | +83.9 % |
+| `VREF_B` | 59.5-84.2 (bias → t2f / safe / isense) | 108.98 | 207.84 | +90.7 % |
+| `VREF_BG` | 95.8 | 98.65 | 156.42 | +58.6 % |
+| `POR_N` | 348.9 | 153.99 | 257.09 | +67.0 % |
+| `CUR_TRK` | 102.7 | 63.24 | 84.58 | +33.8 % |
+| `AFE_SOUTS_P` / `_N` | 122.96 / 120.28 | 77.29 / 68.77 | 96.50 / 83.59 | +24.9 / +21.6 % |
+| `AFE_SOUTC_P` / `_N` | 98.04 / 95.36 | 44.92 / 42.96 | 63.23 / 59.69 | +40.7 / +38.9 % |
+| `ISN_OUTA_P` / `_N` | 138.5 / 143.5 | 88.51 / 133.06 | 124.44 / 168.55 | +40.6 / +26.7 % |
+| `ISN_OUTB_P` / `_N` | 186.1 / 191.2 | 167.78 / 125.08 | 219.00 / 192.74 | +30.5 / +54.1 % |
+
+Pair imbalance with fill:
+
+| Pair | ΔR P−N (Ω) | ΔC P−N unfilled → filled (fF) | P–N coupling unfilled → filled (fF) |
+| --- | --- | --- | --- |
+| `AFE_SOUTS` | 2.67 | 8.52 → 12.90 | 34.63 → 37.22 |
+| `AFE_SOUTC` | 2.68 | 1.96 → 3.54 | 20.93 → 23.69 |
+| `ISN_OUTA` | −5.02 | −44.55 → −44.11 | 58.29 → 62.98 |
+| `ISN_OUTB` | −5.02 | 42.70 → 26.26 | 85.52 → 97.13 |
+
+The fill makes the `AFE_SOUTS` imbalance 51 % larger (8.5 → 12.9 fF) and the `AFE_SOUTC` imbalance 80 % larger
+(2.0 → 3.5 fF); the AFE/ADC tracks take them as a load imbalance (open issue A2).
+
+`OSC_CLK` skew (ADC pin against ctrl pin) with fill, filled full netlist, ideal driver with 250 ps edge: ngspice
+transient at 50 fF ADC pin load **41.5 ps** (simulated; unfilled 29.6 ps); Elmore 37.0 / 41.9 / 45.0 ps at 34 / 50 /
+60 fF. Limit 90 ps (INTERFACES "ADC → ctrl timing"): **passed**. Max sheet (R × 1.44, not simulated): about 60 ps,
+estimated, ≤ 90 ps. The sign stays positive (ADC later).
+
+Checks on the filled netlists: (a) connectivity 181 CDL nets, 0 opens, 0 shorts; (b) supply DC all 10 numbers within
+3 % of `supply_g.md` (the fill correction touches no supply R); (e) reduction error fast and reduced against full: C
+equal to 0.001 fF, `OSC_CLK` skew 41.927 against 41.930 ps, Elmore τ at the AFE ADC pins and the far `VREF_B` pin
+equal to 0.0001 ps. Check (d), 1 µs transient of the current-path subset with the filled fast netlist (`pex/tran_subset.py`, ngspice 46, one
+thread, tt): completed in 514 s per simulated µs (unfilled fast: 473 s); ADC pins `ain_isa_p` 0.326 → 0.534 V,
+`ain_isb_p` 0.315 → 0.868 V, `VREF_B` at the bias pin 1.0451 → 1.0455 V, `POR_N` 1.200 V (same values as the unfilled
+run to 1 mV) (simulated).
+
+### Method B (ctrl IR-drop derate)
+
+1. Worst internal supply: specification VDD 1.08-1.32 V (`../../specification/R1_TOP_LEVEL_SPECIFICATION.md`);
+   static loss at the ctrl grid, `reports/supply_g.md` (VDD drop + VSS rise at 40.25 mA, worst / best of 63
+   points): typ 68.9 / 49.7 mV, max sheet 94.2 / 71.9 mV. Worst internal VDD − VSS: **1.011 V** typ, **0.986 V**
+   max sheet (best grid point 1.030 / 1.008 V).
+2. Library corners in the container (`sg13g2_stdcell/lib`): typ 1.20 V and 1.50 V / 25 °C, slow 1.08 V and 1.35 V /
+   125 °C, fast 1.32 V and 1.65 V / −40 °C. **No library at 1.0 V or lower**: the direct check is not possible (not
+   applicable).
+3. Delay against voltage (`irderate/char_cells.py`): ngspice 46, `cornerMOSlv.lib mos_ss`, 125 °C, PDK cell SPICE
+   netlists; `buf_1` (A → X), `o21ai_1` (A1 → Y through the PMOS stack), `dfrbpq_1` (CLK → Q), plus `xor2_1`; each
+   driven by two `buf_1` from the same supply, loads 3 × `inv_1` + 4 fF and 6 × `inv_1` + 15 fF; mean of rise and
+   fall; 10 voltages 0.90-1.08 V. Same at `mos_ff`, −40 °C, 1.32 / 1.248 / 1.226 V for the hold check.
+4. Derate factor of record: the largest delay ratio over the 8 cell/load cases (always `dfrbpq_1` fo3); the mean ratio
+   is reported as well.
+5. OpenSTA (`irderate/sta_derate.tcl`): the release netlist `r1ctrl_08_release/r1_ctrl_top.nl.v` (identical to the
+   t22 final netlist), the release sign-off SDC (identical to `flow/r1_ctrl.sdc`), the t22 nominal SPEF, slow (or
+   fast) library; `set_timing_derate -early/-late -cell_delay` and `-cell_check`, clock and data paths, net delays
+   not scaled. Uniform cases: early = late = F(worst point). Grid-spread cases: late = F(worst point), early =
+   F(best point).
+6. Target (`irderate/derate.py target`): a sweep F = 1.00-1.30 gives slack = 23.217 − 19.503 F ns (fit residual
+   0.04 ps); F at 1 ns slack, the voltage with that F, the allowed loss, and the feed resistance at 40.25 mA.
+
+### Results B
+
+Delay ratio against 1.08 V (slow, 125 °C), largest over the cells: 1.030 V 1.118, 1.011 V **1.170**, 1.000 V 1.203,
+0.986 V **1.248**, 0.95 V 1.377, 0.90 V 1.604 (`buf_1` 1.232, `o21ai_1` 1.213, `xor2_1` 1.232, `dfrbpq_1` 1.248 at
+0.986 V). Fast (−40 °C) against 1.32 V: 1.111 at 1.248 V, 1.151 at 1.226 V.
+
+| Case (slow 1.08 V library, 125 °C) | early / late | Setup, flop D (ns) | TNS (ns) | Hold (ns) | Result |
+| --- | --- | --- | --- | --- | --- |
+| No derate (0.8 sign-off reproduced) | 1.000 / 1.000 | +3.714 | 0 | +0.360 | passed |
+| typ sheet, worst point, uniform | 1.170 / 1.170 | +0.392 | 0 | +0.431 | passed, below the 1 ns goal |
+| typ sheet, grid spread | 1.117 / 1.170 | +0.372 | 0 | +0.351 | passed, below the 1 ns goal |
+| max sheet, worst point, uniform | 1.248 / 1.248 | **−1.127** | −10.20 | +0.463 | **failed** |
+| max sheet, mean cell ratio | 1.227 / 1.227 | **−0.722** | −4.20 | +0.454 | **failed** |
+| max sheet, grid spread | 1.179 / 1.248 | **−1.153** | −10.65 | +0.358 | **failed** |
+| fast 1.32 V / −40 °C, max sheet, grid spread (hold) | 1.100 / 1.151 | +9.953 | 0 | +0.115 | passed |
+| fast, bound: early paths without drop | 1.000 / 1.151 | +9.912 | 0 | +0.046 | passed |
+
+Worst path in every slow case: `_27652_` → `_27611_` (19.5 ns of cell delay, 23.81 ns clock). Outputs keep ≥ 13.27
+ns; the worst latch borrow grows 2.25 → 2.80 ns and closes. Hold improves with a uniform drop; with the grid spread
+it is at least +0.046 ns (fast bound).
+
+Try-h target (setup ≥ 1 ns): F ≤ 1.139 → worst internal supply ≥ **1.022 V** at the spec minimum → total static
+loss at the ctrl ≤ **57.6 mV** (now 94.2 mV max sheet, 68.9 mV typ) → VDD + VSS feed resistance seen by the worst
+ctrl grid point ≤ **1.43 Ω** at 40.25 mA, max sheet (try g: 2.34 Ω max, 1.71 Ω typ; a 39 % cut). The VSS return is
+63.6 of the 94.2 mV, so the return path is the first lever. With the mean cell ratio: ≤ 62.1 mV, 1.54 Ω. Zero slack is
+at 75.7 mV loss (1.88 Ω).
+
+### Status (T11b)
+
+| Check | Result | Evidence |
+| --- | --- | --- |
+| Full-chip kpex on the filled GDS | not run (time: estimate > 6 h on 4 threads; method A1) | `<G1_RESULTS_ROOT>/r1_top/pex-20261029-g3-fill/probe/count_fill.py`, `kpex.done` |
+| Band extraction with fill, 111 sensitive nets, 4 groups | passed (all 8 kpex runs rc 0) | `kpex.done`, `band_*/` |
+| Window check, band without fill against the full chip | passed: ≤ 0.007 % on all 111 nets | `cfill.json` (`window_check_max_abs_err_pct`) |
+| Window margin with fill, 20 µm band (`clk` group) | passed: fill delta within +0.72 % of the 10 µm band (≤ 0.6 fF) | `fill_margin_20um.json` |
+| Fast netlists with fill, typ and max sheet, same ports | passed (written; ports and pin map identical to `pex-20261029-g3`) | `fast/`, `fast/max/` |
+| top_netlist.py regression (options unused) | passed: bit-identical `cce466ec…` | `regress_nofill_fast/` |
+| (a) connectivity, filled netlist | passed: 181 nets, 0 opens, 0 shorts | `checks/checks.log` |
+| (b) supply DC, filled netlist | passed: within 3 % | `checks/checks.log` |
+| (c) `OSC_CLK` skew with fill | passed: 41.5 ps at 50 fF (simulated; ≤ 90 ps) | `checks/checks.json` |
+| (c) AFE and isense pair imbalance with fill | reported (tables above); acceptance with the AFE/ADC tracks (open issue A2) | `checks/checks.json`, `cfill.json` |
+| (d) 1 µs transient, filled fast netlist | passed: completed, 514 s per simulated µs | `tran_fast/tran_subset.json` |
+| (e) reduction error, fast and reduced | passed: ≤ 0.01 % | `checks_fast/checks.json`, `checks/checks.json` |
+| Cell delay against voltage, slow 125 °C and fast −40 °C | passed (written: 8 cases × 10 / 3 voltages) | `<G1_RESULTS_ROOT>/r1_top/r1ctrl_irderate_g3/factors.json`, `factors_ff.json` |
+| Sign-off STA reproduction (no derate) | passed: +3.714 / +0.360 ns slow, hold +0.120 fast | `sta/base_*.rpt` |
+| Derated STA, setup ≥ 0 at the max-sheet worst point | **failed**: −1.127 ns (F 1.248) | `sta/derate_summary.json` |
+| Derated STA, setup ≥ 1 ns at the typ-sheet worst point | **failed**: +0.392 ns (F 1.170) | same |
+| Derated hold, slow and fast | passed: ≥ +0.046 ns (fast bound) | `sta/derate_fast_summary.json` |
+| STA on a library at 1.0 V or lower | not applicable (no such PDK library) | `run.json` (`pdk_libraries_found`) |
+| Dynamic IR drop, ctrl Metal1-Metal5 rails in the supply network | not run | — |
+
+### Open issues (T11b)
+
+1. A1. Try h must cut the ctrl supply loss to ≤ 57.6 mV (≤ 1.43 Ω VDD + VSS feed, max sheet) or the ctrl needs more
+   setup margin (for example a 0.9 release with the `_27652_` → `_27611_` path pipelined, or a lower worst-case
+   clock); `reports/integration_checklist_g.md` has the row.
+2. A2. The fill increases the `AFE_SOUTS` C imbalance to 12.9 fF and `AFE_SOUTC` to 3.5 fF; `ISN_OUTB` imbalance falls
+   to 26.3 fF. The AFE and ADC records use the unfilled loads; a rerun with the filled loads is open (tracks T2/T3).
+3. A3. The ctrl supply network has no Metal1-Metal5 rails (`supply_g.md` item 9) and no dynamic drop: the real loss is
+   higher than the static 94 mV. The ctrl current 40.25 mA is the typ 1.2 V power; at 0.99 V and slow it is lower
+   (conservative). The two effects are not quantified.
+4. A4. The fill correction covers the 111 sensitive nets only; the other nets keep the unfilled C except their
+   coupling to a sensitive net (the full netlist with fill everywhere needs the full-chip kpex, method A1).
+5. A5. The filled fast netlist has 18 356 coupling C (unfilled 9 719): the fill adds many small couplings from the
+   sensitive nets to other signals.
+6. A6. kpex 2.5D model only; no field solver on the filled bands.
+
+### Failures and mistakes (T11b)
+
+| # | What happened | Class | Fix |
+| --- | --- | --- | --- |
+| F1 | `char_cells.py` first version: `buf_1` and `inv_1` instances with A and X/Y swapped (PDK pin order X/Y first); the load inverters drove the output, the decks ran for minutes and gave no delay | functional-bug | pin orders from the PDK subckts; kept as `chartest_try1_pinorder/` |
+| F2 | `dfrbpq_1` measurement on the wrong edges (Q rose before the measured clock edge): delays of +10 / −19.7 ns | numerical | D edges 5 ns before the clock, `td` on trig and targ; kept as `chartest_try2_dffmeas/` |
+| F3 | Stopping the host-side process of the first test did not stop the container `ngspice`; a stale deck used 4 CPUs of 112-119 for about 30 min next to the kpex runs | process-hygiene | stopped by PID (`kill -9` of the container processes, own PIDs only) |
+| F4 | The first fast-corner characterization stayed on its first deck for over 30 CPU-min (contention, no per-deck limit) | tooling | per-deck timeout (180 s) in `char_cells.py`; rerun complete; first run kept as `char_ff_try1_stopped/` |
+| F5 | The `tap` band runs were queued behind the 50 363-piece 20 µm margin run on one CPU pair | planning | slot shell stopped, `tap` run on 116-117; the margin run continued (`kpex.done` notes) |
+| F6 | OpenSTA has no `reset_timing_derate` | tooling | `unset_timing_derate` in a `catch`, then set both early and late each case |
+| F7 | A foreground `sleep` to wait for runs was blocked by the tool | process-hygiene | background wait loops |
+| F8 | The brief names "the raw VREF to the ADC and t2f"; the t2f `vref` is on `VREF_B`, the raw `VREF_BG` goes to the ADC and the bias | spec-ambiguity | both nets in the set |
+| F9 | The try-g record lists the 69 / 94 mV ctrl loss as acceptable for EM and drop, but no timing check used it; at the spec minimum it breaks setup | verification-gap | this derate; try-h feed target |
+
+### Reproduce (repository root, POSIX shell)
+
+1. `G1_CPUSET=112-119; export G1_CPUSET; G1_RESULTS_ROOT=<G1_RESULTS_ROOT>; export G1_RESULTS_ROOT; G1_WORKDIR=.; export G1_WORKDIR`
+2. Band layouts: `sh <P>/run_prep.sh <group> 10 <group>` for `clk ana tap bus`, and `sh <P>/run_prep.sh clk 20 clk20`
+   (`<P>` = `<G1_RESULTS_ROOT>/r1_top/pex-20261029-g3-fill`; groups in `groups.sh` and in `pex/fill_net.py`).
+3. kpex: `sh <P>/run_kpex_slot.sh <cpuset> band_<tag>_fill band_<tag>_nofill`.
+4. Netlists and checks: `sh <P>/run_build.sh` (`pex/fill_net.py`, `pex/top_netlist.py --cfill`, `pex/top_checks.py`).
+5. Margin: `flow/run.sh python3 designs/r1-joint/blocks/r1_top/pex/fill_net.py <P> <kpex_full dir> <P>/fill_margin_20um.json clk clk20`;
+   table: `pex/fill_report.py`.
+6. Derate: `sh <R>/run_char.sh` and `char_cells.py <R>/char_ff ff-40 1.32,1.2258,1.2481 180`
+   (`<R>` = `<G1_RESULTS_ROOT>/r1_top/r1ctrl_irderate_g3`); `irderate/derate.py factors`; `sh <R>/run_sta_base.sh`,
+   `run_sta_sweep.sh`, `run_sta_derate.sh`, `run_sta_fast.sh`; `irderate/sta_parse.py`; `irderate/derate.py target
+   <R>/target.json <R>/factors.json <R>/sta/sweep_summary.json 1.0`.
+
+New files: `pex/fill_net.py`, `pex/fill_report.py`, `irderate/char_cells.py`, `irderate/sta_derate.tcl`,
+`irderate/sta_parse.py`, `irderate/derate.py`, `reports/pex_fill_g.md`; changed: `pex/top_netlist.py` (options
+`--cfill`, `--stem`; default output unchanged).
+
 ## Try f (2026-10-27, track T8): every macro real — run of record `asm-20261027-f3`, filled `asm-20261027-f3-fill`
 
 State: every macro is a real layout. No placeholder is left. All 172 top-level signal nets are routed. The filled

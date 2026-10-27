@@ -138,6 +138,37 @@ No new asynchronous input, no new clock. The 0.5 CDC table (revision 0.5 section
 | 3 | Hardening `_t19`/`_t20` were launched with `R1_CFG_APPEND` in the host environment; `flow/run.sh` forwards only its own variables, so the runs used `config.yaml` without the append. Seen in the run copy of the configuration within a minute | process-hygiene | stopped and kept; relaunched as `_t21`/`_t22` with the variable set inside the container command (as `reports/ll_t17.md` shows: `flow/run.sh env R1_CFG_APPEND=...`) |
 | 4 | `_t21` (the t18 settings exactly) did not finish detailed routing (10 violations for the last iterations after 2 h 20 min); the parallel variant `_t22` with the post-GRT repair routed clean. The 0.7 estimate "utilisation near 76 % with t18" did not hold: 79.9 % | estimation | `_t22` is the run of record; open issue 1 |
 
+### IR-drop derate (chip try g)
+
+Track T11b, 2026-10-27/28; method and files: `../r1_top/README.md` "Filled-chip extraction and ctrl IR derate (try
+g)". Simulated and STA results; nothing is measured.
+
+Worst internal supply: the specification minimum VDD 1.08 V minus the static supply loss at the ctrl grid of try g
+(`../r1_top/reports/supply_g.md`, VDD drop + VSS rise at 40.25 mA): 1.080 − 0.069 = **1.011 V** (typ sheet) and
+1.080 − 0.094 = **0.986 V** (max sheet). The PDK has no standard-cell library below 1.08 V (`sg13g2_stdcell`: typ
+1.20 / 1.50 V, slow 1.08 / 1.35 V, fast 1.32 / 1.65 V), so a direct check is not possible.
+
+Derate: ngspice, PDK models `mos_ss`, 125 °C, cells `buf_1`, `o21ai_1`, `dfrbpq_1` (CLK→Q) and `xor2_1`, two loads;
+delay ratio against 1.08 V; the largest ratio is used. OpenSTA on the 0.8 release netlist and sign-off SDC (t22 SPEF),
+slow library, `set_timing_derate` on cell delays and cell checks (clock and data).
+
+| Case | Factor (early / late) | Setup, flop D (ns) | Hold (ns) | Result |
+| --- | --- | --- | --- | --- |
+| Sign-off (no derate) | 1.000 / 1.000 | +3.714 | +0.360 | reproduced |
+| typ sheet, 1.011 V, uniform | 1.170 / 1.170 | +0.392 | +0.431 | passed, below the 1 ns goal |
+| typ sheet, grid spread (best point 1.030 V) | 1.117 / 1.170 | +0.372 | +0.351 | passed, below the 1 ns goal |
+| max sheet, 0.986 V, uniform | 1.248 / 1.248 | **−1.127** (TNS −10.2) | +0.463 | **failed** |
+| max sheet, mean cell ratio | 1.227 / 1.227 | **−0.722** | +0.454 | **failed** |
+| max sheet, grid spread (best point 1.008 V) | 1.179 / 1.248 | **−1.153** (TNS −10.7) | +0.358 | **failed** |
+| fast 1.32 V / −40 °C, max sheet, grid spread | 1.100 / 1.151 | +9.953 | +0.115 | passed |
+| fast, bound (no drop on the early paths) | 1.000 / 1.151 | +9.912 | +0.046 | passed |
+
+Setup slack falls by 19.50 ns per unit of derate (the 19.5 ns cell delay of the worst path `_27652_` → `_27611_`).
+Setup ≥ 1 ns needs F ≤ 1.139, that is ≥ 1.022 V at the worst cell, a total supply loss ≤ 57.6 mV: VDD + VSS feed
+resistance ≤ **1.43 Ω** at 40.25 mA (max sheet; try g: 2.34 Ω max, 1.71 Ω typ). Zero slack is at 75.7 mV.
+Outputs (+13.27 ns) and latch borrow (2.80 ns at F 1.248) are not limiting. Open: dynamic drop, the ctrl Metal1-Metal5
+rails (not in the supply extraction) and the lower ctrl current at the slow corner (conservative) are not included.
+
 ## Revision 0.7 (2026-10-27, RTL fixes R3, R4, OSC_TRIM lock, comparator mask, new output `cur_trk`; hardening runs `r1ctrl_ll_20261027_t13` to `_t18`; run of record `_t17`)
 
 Goal: fix the two `r1_ctrl` findings of the r1_top full-chip testbench (R3, R4 in `../r1_top/README.md`), add the `OSC_TRIM` lock (PLAN.md D13 amendment) and the comparator mask of `../INTERFACES.md` ("vref_b disturbance at the isense pedestal switch"), then harden in the same 532 x 679 um box with the same `pins_v06` template. Coordinator addition (2026-10-27, during the track): one new output `cur_trk` for the `r1_adc` SAR (`../r1_adc/sar/README.md` open issue S1). It takes the next free south slot of the ADC group; no other pin moves (template `pins_v07` = `pins_v06` + 1 pin). Register map: `R1_REGISTER_MAP.md` draft 0.7, `ID` 0x5207. All numbers are simulated, synthesized or LibreLane/OpenSTA results; nothing is measured. Paths are relative to this directory; `<G1_RESULTS_ROOT>` is the bulk results root (`r1_ctrl/<run-id>/`). Track T5, CPU set 112-115.
