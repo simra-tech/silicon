@@ -17,6 +17,12 @@
 // (isense auto-zero window plus recovery, and the calibration search); the
 // synchronised flags go to r1_cmpcal; the T2F window counter is 16 bits
 // (window <= 2^15 ticks).
+// Revision 0.7 (r1_top finding R3): the EN/STO_IN synchroniser u_sen resets to 1, the
+// idle (enabled) level of the pad. With reset value 0 the fault latch saw ~en_s = 1 for
+// two ticks after the reset release and latched STO with EN high. EN low at power-up
+// still latches STO (en_s falls two ticks after the release). The combinational
+// gate-off path from the pad (r1_gate) does not use en_s. Reset value of every
+// synchroniser = idle level of its source: README revision 0.7, synchroniser table.
 // SPDX-License-Identifier: Apache-2.0
 
 module r1_safe (
@@ -57,7 +63,7 @@ module r1_safe (
     r1_sync2 #(.W(4)) u_scmp (.clk(clk), .rst_n(rst_n), .d(cmp), .q(cmp_s));
     assign cmp_sync = cmp_s;
     wire [3:0] cmp_v = cmp_s & {4{~cmp_blank}};
-    r1_sync2 #(.W(1)) u_sen  (.clk(clk), .rst_n(rst_n), .d(en_pad), .q(en_s));
+    r1_sync2 #(.W(1), .RST_VAL(1)) u_sen  (.clk(clk), .rst_n(rst_n), .d(en_pad), .q(en_s));
     wire t2f_s;
     r1_sync2 #(.W(1)) u_st2f (.clk(clk), .rst_n(rst_n), .d(t2f_clk), .q(t2f_s));
 

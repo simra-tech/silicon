@@ -4,7 +4,7 @@
 // with the crossings described in r1_biss.v and r1_spi.v.
 // Reset: por_n asynchronous assert, synchronous release. EN/STO_IN does not
 // reset the core; it is a fault source and gates the outputs directly.
-// Interface: R1_REGISTER_MAP.md (revision 0.5) and blocks/INTERFACES.md 0.1.
+// Interface: R1_REGISTER_MAP.md (revision 0.7) and blocks/INTERFACES.md 0.1.
 // Revision 0.2 ports: 13 raw ADC decisions with adc_valid (weights applied
 // here, D12); is_smp (isense pair track-and-hold); az_win (isense auto-zero
 // window); comparator threshold and calibration codes to r1_safe (analog).
@@ -12,10 +12,13 @@
 // each, one adc_start and adc_sel for both; 2 x 14 weights.
 // Revision 0.5: tap_p / tap_n replace the thr / cal ports (r1_tapidx); ANA_CTRL bits decoded to
 // pga_c, t2f_en, t2f_mode, bias_en; first-conversion discard (ADC_CFG, r1_gate).
+// Revision 0.7: EN synchroniser reset 1 (r1_safe), CMP_THR reset 0x003F,
+// comparator mask az_win + AZ_EXT ticks aligned to the synchronised flags, OSC_TRIM lock
+// (STATUS bit 14 TRIM_UNLK), ID 0x5207. One new port: cur_trk (r1_adc SAR input, coordinator 2026-10-27).
 // SPDX-License-Identifier: Apache-2.0
 
 module r1_ctrl_top #(
-    parameter [15:0] CHIP_ID    = 16'h5205,
+    parameter [15:0] CHIP_ID    = 16'h5207,
     parameter [15:0] PROFILE_ID = 16'h0001,
     parameter [47:0] DEV_ID     = 48'h52_31_4A_46_45_30,
     parameter [31:0] DEV_SN     = 32'h0000_0000,
@@ -36,6 +39,7 @@ module r1_ctrl_top #(
     output wire        is_smp,         // ISA/ISB track-and-holds (trk_cur; is_smp_a = is_smp_b)
     output wire        adc_start,      // both slices (D18)
     output wire        adc_sel,        // 0: slice A SIN, slice B COS; 1: slice A ISA, slice B ISB
+    output wire        cur_trk,        // 0.7: 1 = SAR CDACs track ISA/ISB while idle (registered strobe window)
     input  wire        adc_valid_a,
     input  wire [13:0] adc_raw_a,      // 14 decisions, [13] first (D18)
     input  wire        adc_valid_b,
@@ -122,15 +126,25 @@ module r1_ctrl_top #(
     wire [3:0]  cmp_s;
     wire        cal_busy, cal_done;
     wire [3:0]  cal_exh;
-    // comparator blanking: auto-zero window plus 16 ticks of recovery
-    // (r1_safe README open issue 4: about 200 ns), and the calibration search
-    // plus 16 ticks after it (revision 0.3: the codes change at the end)
+    // comparator mask (revision 0.7, INTERFACES.md "vref_b disturbance at the isense pedestal
+    // switch"): az_win delayed by two ticks (the latency of the flag synchroniser u_scmp, so
+    // the mask covers the flags that the comparators produce from the az_win edges on), held
+    // for AZ_EXT ticks after the delayed window (reset 120 = 4 us at 30 MHz; 0.6 had a fixed
+    // 16). The calibration search and 16 ticks after it stay masked as in revision 0.3.
+    wire [7:0]  az_ext;
+    reg  [1:0]  az_dl;
+    reg  [7:0]  az_cnt;
     reg  [3:0]  blank_cnt;
     always @(posedge clk or negedge rst_n)
-        if (!rst_n) blank_cnt <= 4'd0;
-        else if (az_win | cal_busy) blank_cnt <= 4'hF;
-        else if (blank_cnt != 4'd0) blank_cnt <= blank_cnt - 4'd1;
-    wire        cmp_blank = az_win | (blank_cnt != 4'd0) | cal_busy;
+        if (!rst_n) begin az_dl <= 2'b00; az_cnt <= 8'd0; blank_cnt <= 4'd0; end
+        else begin
+            az_dl <= {az_dl[0], az_win};
+            if (az_dl[1])              az_cnt <= az_ext;
+            else if (az_cnt != 8'd0)   az_cnt <= az_cnt - 8'd1;
+            if (cal_busy)              blank_cnt <= 4'hF;
+            else if (blank_cnt != 4'd0) blank_cnt <= blank_cnt - 4'd1;
+        end
+    wire        cmp_blank = az_dl[1] | (az_cnt != 8'd0) | cal_busy | (blank_cnt != 4'd0);
     r1_safe u_safe (
         .clk(clk), .rst_n(rst_n), .cmp(cmp), .cmp_blank(cmp_blank), .en_pad(en_pad), .t2f_clk(t2f_clk),
         .amp_flag(amp_low | amp_high), .ovs_flag(overspeed), .cal_valid(cal_valid),
@@ -198,7 +212,7 @@ module r1_ctrl_top #(
         .pair_ticks(sched[7:0]), .guard(sched[15:8]), .az_start(az_start), .az_len(az_cfg[7:0]),
         .gate_ok(gate_ok), .en_pad(en_pad),
         .gate_a(gate_a), .gate_b(gate_b), .gate_c(gate_c), .pwm_wrap(pwm_wrap), .az_win(az_win),
-        .adc_hold(adc_hold), .is_smp(is_smp), .adc_start(adc_start), .adc_sel(adc_sel),
+        .adc_hold(adc_hold), .is_smp(is_smp), .adc_start(adc_start), .adc_sel(adc_sel), .cur_trk(cur_trk),
         .adc_valid_a(adc_valid_a), .adc_raw_a(adc_raw_a), .adc_valid_b(adc_valid_b), .adc_raw_b(adc_raw_b),
         .adc_wa(adc_wa), .adc_wb(adc_wb), .adc_arm(adc_arm), .adc_disc(adc_disc),
         .smp_sh(smp_sh), .smp_valid(smp_valid), .sin_code(sin_code),
@@ -209,7 +223,9 @@ module r1_ctrl_top #(
     wire        clk_fault = (osc_win != 16'd0) && osc_done &&
                             ((osc_count[11:4] < osc_win[7:0]) || (osc_count[11:4] > osc_win[15:8]) ||
                              (osc_count[15:12] != 4'd0));
-    wire [15:0] status = {2'd0, |cal_exh, cal_done, cal_busy, osc_done, gate_ok, en_s, fault, pos_valid,
+    wire        trim_unlk;
+    wire        osc_meas_ok = osc_done && (osc_win != 16'd0) && !clk_fault;   // 0.7: OSC_TRIM lock
+    wire [15:0] status = {1'b0, trim_unlk, |cal_exh, cal_done, cal_busy, osc_done, gate_ok, en_s, fault, pos_valid,
                           clk_fault, cal_valid, track_err, overspeed, amp_high, amp_low};
     wire [17:0] frame_pos = test_pos_en ? test_pos : pos_out;
     wire        slo, sdo;
@@ -273,6 +289,7 @@ module r1_ctrl_top #(
         .temp(temp), .e_a(e_a), .e_b(e_b), .biss_frames(biss_frames), .biss_cc_err(biss_cc_err),
         .spi_err(spi_err), .pos_ovr(pos_ovr_cnt), .late_cnt(late_cnt), .id_byte(id_byte),
         .cmp_cal_a(cmp_cal_a), .cmp_cal_b(cmp_cal_b), .cal_busy(cal_busy), .rd_sel(spi_rd_sel),
+        .osc_meas_ok(osc_meas_ok), .trim_unlk(trim_unlk), .az_ext(az_ext),
         .fault_mask(fault_mask), .clr_pulse(clr_pulse), .gate_en(gate_en), .wdt_en(wdt_en),
         .cal_run(cal_run),
         .st_len(st_len), .mt_en(mt_en), .ssi_mode(ssi_mode), .gray(gray), .as_mode(as_mode),

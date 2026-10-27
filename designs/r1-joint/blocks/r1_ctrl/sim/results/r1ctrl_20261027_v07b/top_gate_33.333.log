@@ -1,0 +1,30 @@
+# tb_top test=gate clk_ns=33.333
+PASS init: FAULT_N high after CAL_CRC load and CLR
+INFO gate A on 16 off 586 (width 570), B on 516 off 786 (width 270), C on 1016 off 386 (width 870); current frame start 301 is_smp 301; az_win 1201..1241
+INFO gate encoder frames in one period 67: 65 gaps of 22 ticks, 1 other, longest 48 ticks
+PASS gate: A on-time = DUTY - 2 DEAD
+PASS gate: B on-time = DUTY - 2 DEAD
+PASS gate: C on-time = DUTY - 2 DEAD (window wraps the period)
+PASS gate: B rising edge at PHASE_B + DEAD (same offset as A)
+PASS gate: current strobe at the centre of the A on-time (+-1 tick)
+PASS gate: one current frame per period; is_smp rises with its start (both slices, adc_sel = 1)
+PASS gate: D18 frames: encoder frames every 22 ticks, one gap of 44..64 ticks around the current frame
+PASS gate: az_win is AZ_LEN = 40 ticks wide and starts at counter value AZ_START
+PASS gate: no late current conversion over 20 PWM periods (guard)
+PASS gate: no position pair overrun with current conversions interleaved
+PASS gate: comparator flags inside az_win and 8 ticks after it are blanked
+PASS gate: the same flag 132 ticks after az_win (AZ_EXT 120) latches OC_A
+PASS gate: CLR releases the blanking-test fault
+PASS gate: new DUTY_A applied at the period wrap
+PASS gate: DUTY_A <= 2 DEAD keeps channel A off and suppresses the current strobe
+PASS gate: EN low forces GATE_C low within 1 us (specification; STA: 1.47 ns slow corner)
+INFO gate: GATE_C = 0 1 ns after EN low in the zero-delay RTL (combinational path)
+PASS gate: EN low latches a fault (FAULT_N low)
+PASS gate: CLR after EN high releases the fault
+PASS gate: I_A, I_B = corrected codes with the reset (nominal) weights
+INFO gate with ADC_A_W13 = 8530: I_A 2948 I_B 2848
+PASS gate: ADC_A_W13 = 8130 + 400 adds 100 LSB to I_A only (slice A weights)
+PASS gate: ADC_B_W13 = 8130 + 400 adds 100 LSB to I_B only (slice B weights)
+# 22 checks, 0 failed
+ALL TESTS PASSED
+tb/tb_top.v:1509: $finish called at 2937692577 (1ps)

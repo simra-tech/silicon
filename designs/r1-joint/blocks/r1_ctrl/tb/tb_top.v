@@ -1,6 +1,7 @@
 // Chip-level testbench for r1_ctrl_top (testbenches b..f and cal of the r1_ctrl
 // README, revision 0.3).
-//   +test=biss | ssi | spi | gate | safe | cal | calmc | tap | ana | disc | cdc    test group
+//   +test=biss | ssi | spi | gate | safe | cal | calmc | tap | ana | disc | cdc | v07    test group
+//   (v07, revision 0.7: R3 EN synchroniser, R4 threshold reset, OSC_TRIM lock, comparator mask, reset-value table)
 //   +vec=<file> +out=<file>                   (calmc) comparator tables from tb/cmpcal_ref.py, RTL results
 //   +clk_ns=<real>                            clk period (RC corners: 23.81, 33.33, 47.62)
 // Models: encoder head (ideal sin/cos, amplitude ENC_AMP, electrical frequency
@@ -27,6 +28,7 @@ module tb_top;
     reg  [3:0] cmp = 4'd0;             // forced comparator flags
     reg  [3:0] cmp_mdl = 4'd0;         // behavioural comparators (test cal)
     wire slo_sdo, fault_n, gate_a, gate_b, gate_c, adc_hold, is_smp, adc_start, adc_sel, az_win;
+    wire cur_trk;                      // 0.7: SAR current-track request (r1_adc/sar S1)
     wire [4:0] osc_trim;
     // revision 0.5: thr / cal no longer leave the macro; the testbench probes them inside (they are the
     // inputs of r1_tapidx) and the behavioural comparators below use the tap ports tap_p / tap_n
@@ -42,7 +44,7 @@ module tb_top;
     r1_ctrl_top dut (
         .clk(clk), .por_n(por_n), .cs_n(cs_n), .ma_sclk(ma), .sdi(sdi), .slo_sdo(slo_sdo),
         .en_pad(en_pad), .fault_n(fault_n), .gate_a(gate_a), .gate_b(gate_b), .gate_c(gate_c),
-        .adc_hold(adc_hold), .is_smp(is_smp), .adc_start(adc_start), .adc_sel(adc_sel),
+        .adc_hold(adc_hold), .is_smp(is_smp), .adc_start(adc_start), .adc_sel(adc_sel), .cur_trk(cur_trk),
         .adc_valid_a(adc_valid_a), .adc_raw_a(adc_raw_a), .adc_valid_b(adc_valid_b), .adc_raw_b(adc_raw_b),
         .cmp(cmp | cmp_mdl),
         .tap_p(tap_p), .tap_n(tap_n),
@@ -710,7 +712,7 @@ module tb_top;
         // =================================================================
         if (test == "spi") begin
             spi_rd(7'h00);
-            check(rd_val == 16'h5205, "spi: ID reads 0x5205 (revision 0.5)");
+            check(rd_val == 16'h5207, "spi: ID reads 0x5207 (revision 0.7)");
             spi_rd(7'h08);
             check(rd_val == 16'd22 && osc_trim == 5'd22, "spi: OSC_TRIM reset value 22 (D13), on the oscillator port");
             spi_rd(7'h05);
@@ -785,7 +787,7 @@ module tb_top;
             check(b_crc_wire == 6'h3A && b_data[19:2] == 18'h0, "spi/biss: BiSS frame after SPI sees the new TEST_POS");
             // MA traffic while CS_N high does not disturb SPI state; SPI after BiSS
             spi_rd(7'h00);
-            check(rd_val == 16'h5205, "spi/biss: SPI read correct after BiSS traffic on the shared pad");
+            check(rd_val == 16'h5207, "spi/biss: SPI read correct after BiSS traffic on the shared pad");
         end
 
         // =================================================================
@@ -850,13 +852,13 @@ module tb_top;
                 check(rd_val == n_late, "gate: no late current conversion over 20 PWM periods (guard)");
                 spi_rd(7'h33);
                 check(rd_val[11:8] == 4'd0, "gate: no position pair overrun with current conversions interleaved");
-                // comparator blanking: az_win and 16 ticks after it
+                // comparator blanking: az_win and AZ_EXT ticks after it (0.7: reset 120; 0.6: fixed 16; exact edges in test v07)
                 @(posedge az_win); #(5 * clk_ns); @(negedge clk); cmp[0] = 1'b1; #(4 * clk_ns); cmp[0] = 1'b0;
                 @(negedge az_win); #(8 * clk_ns); @(negedge clk); cmp[0] = 1'b1; #(4 * clk_ns); cmp[0] = 1'b0;
                 #(20 * clk_ns);
                 check(fault_n == 1'b1, "gate: comparator flags inside az_win and 8 ticks after it are blanked");
                 #(100 * clk_ns); @(negedge clk); cmp[0] = 1'b1; #(4 * clk_ns); cmp[0] = 1'b0; #(10 * clk_ns);
-                check(fault_n == 1'b0, "gate: the same flag 100 ticks after az_win latches OC_A");
+                check(fault_n == 1'b0, "gate: the same flag 132 ticks after az_win (AZ_EXT 120) latches OC_A");
                 spi_wr(7'h04, 16'h0003); #(20 * clk_ns);
                 check(fault_n == 1'b1, "gate: CLR releases the blanking-test fault");
                 // shadow update: change duty mid-period, takes effect at wrap
@@ -1027,8 +1029,8 @@ module tb_top;
                 integer n, j, seed, ok, o_a, n_a, o_b, n_b, ca_o, ca_n, cb_o, cb_n, lane_ok;
                 reg [15:0] e0, e1, e2, e3;
                 por_n = 0; #(10 * clk_ns); por_n = 1; #(4 * clk_ns);
-                check(tap_p == {8'd0, 8'd252, 8'd0, 8'd252} && tap_n == {8'd252, 8'd0, 8'd252, 8'd0},
-                      "tap: reset values = taps of THR 63 / CAL 32 (OC nP 252 nN 0, NEG nP 0 nN 252)");
+                check(tap_p == {4{8'd252}} && tap_n == 32'd0,
+                      "tap: reset values (0.7) = taps of THR_OC 63 / THR_NEG 0 / CAL 32 (cell code 63: nP 252 nN 0 on all four)");
                 #(30 * clk_ns);
                 seed = 5;
                 ok = 0;
@@ -1056,7 +1058,7 @@ module tb_top;
                       "tap: CMP_THR_A write moves lanes 0 and 1 only");
                 // reset restores the reset taps
                 por_n = 0; #(10 * clk_ns); por_n = 1; #(4 * clk_ns);
-                check(tap_p == {8'd0, 8'd252, 8'd0, 8'd252} && tap_n == {8'd252, 8'd0, 8'd252, 8'd0}, "tap: por_n restores the reset taps");
+                check(tap_p == {4{8'd252}} && tap_n == 32'd0, "tap: por_n restores the reset taps");
             end
         end
 
@@ -1239,6 +1241,185 @@ module tb_top;
                 $display("INFO calmc: %0d vectors in %0d searches written to %0s", nv, ng, ofile);
                 check(nv > 0, "calmc: vectors read and RTL results written (compared by cmpcal_ref.py check)");
                 cmp_mdl_en = 1'b0; cmp_tab = 1'b0;
+            end
+        end
+
+
+        // =================================================================
+        // Revision 0.7 tests (README revision 0.7). Only ports and SPI are used, so the group also runs at gate level.
+        if (test == "v07") begin
+            begin : v7
+                integer j, ok, cnt, hi, fast, per;
+                // ---- 1. R3: EN/STO_IN synchroniser reset value
+                en_pad = 1'b1; por_n = 0; #(10 * clk_ns); por_n = 1; #(20 * clk_ns);
+                spi_rd(7'h00); check(rd_val == 16'h5207, "v07: ID reads 0x5207 (RTL revision 0.7)");
+                spi_rd(7'h02);
+                $display("INFO v07 R3: FAULT after power-up with EN high = 0x%04h", rd_val);
+                check(rd_val == 16'h1800, "v07 R3: power-up with EN high: FAULT = 0x1800 (POR, CAL), STO bit 8 clear");
+                #(700 * clk_ns); load_cal_crc; spi_wr(7'h04, 16'h0001); #(20 * clk_ns);
+                spi_rd(7'h02); check(rd_val == 16'h0000 && fault_n, "v07 R3: CAL_CRC and one CLR clear FAULT to 0 (no STO to clear)");
+                en_pad = 1'b0; por_n = 0; #(10 * clk_ns); por_n = 1; #(20 * clk_ns);
+                spi_rd(7'h02);
+                $display("INFO v07 R3: FAULT after power-up with EN low = 0x%04h", rd_val);
+                check(rd_val == 16'h1900 && !fault_n && !gate_a && !gate_b && !gate_c,
+                      "v07 R3: power-up with EN low still latches STO: FAULT = 0x1900, gates low");
+                spi_wr(7'h04, 16'h0001); #(20 * clk_ns); spi_rd(7'h02);
+                check(rd_val[8], "v07 R3: CLR while EN is low keeps STO");
+                en_pad = 1'b1; #(700 * clk_ns); load_cal_crc; spi_wr(7'h04, 16'h0001); #(20 * clk_ns);
+                spi_rd(7'h02); check(rd_val == 16'h0000 && fault_n, "v07 R3: after EN high, CAL_CRC and CLR the FAULT word is 0");
+
+                // ---- 2. R4: comparator threshold reset at zero current (behavioural comparators, input = zero-current level)
+                for (j = 0; j < 4; j = j + 1) begin cofs[j] = 0.0; chy[j] = 4.0; end
+                cmp_tab = 1'b0; cmp_vin = 0.0; cmp_mdl_en = 1'b1;
+                por_n = 0; #(10 * clk_ns); por_n = 1; #(20 * clk_ns);
+                spi_rd(7'h36); ok = (rd_val == 16'h003F); spi_rd(7'h37); ok = ok && (rd_val == 16'h003F);
+                check(ok, "v07 R4: CMP_THR_A and CMP_THR_B reset 0x003F (THR_OC 63, THR_NEG 0)");
+                check(tap_p == {4{8'd252}} && tap_n == 32'd0, "v07 R4: reset taps nP 252 nN 0 on all four comparators (cell code 63)");
+                #(700 * clk_ns); load_cal_crc; spi_wr(7'h04, 16'h0001); #(40 * clk_ns);
+                spi_rd(7'h02);
+                $display("INFO v07 R4: zero-current power-up, flags %b, FAULT 0x%04h", cmp_mdl, rd_val);
+                check(cmp_mdl == 4'b0000 && rd_val == 16'h0000 && fault_n,
+                      "v07 R4: zero-current power-up: no OC/NEG flag, CAL_CRC + CLR give FAULT 0");
+                // the revision-0.6 reset value reproduces the finding
+                spi_wr(7'h36, 16'h3F3F); spi_wr(7'h37, 16'h3F3F); #(40 * clk_ns);
+                check(cmp_mdl == 4'b1010, "v07 R4: with the 0.6 value 0x3F3F both NEG flags are high at zero current (finding reproduced)");
+                load_cal_crc; spi_wr(7'h04, 16'h0001); #(20 * clk_ns); spi_rd(7'h02);
+                check(rd_val[1] && rd_val[3] && !fault_n, "v07 R4: with 0x3F3F, CLR cannot clear FAULT bits 1 and 3");
+                spi_wr(7'h36, 16'h003F); spi_wr(7'h37, 16'h003F); #(40 * clk_ns);
+                load_cal_crc; spi_wr(7'h04, 16'h0001); #(20 * clk_ns); spi_rd(7'h02);
+                check(rd_val == 16'h0000 && fault_n, "v07 R4: back at 0x003F, CLR works");
+                cmp_mdl_en = 1'b0; cmp_vin = 100.0; #(20 * clk_ns);
+
+                // ---- 3. reset values of the analog-facing registers (table in README revision 0.7)
+                por_n = 0; #(10 * clk_ns); por_n = 1; #(20 * clk_ns);
+                ok = 0;
+                spi_rd(7'h08); ok = ok + (rd_val == 16'h0016 && osc_trim == 5'd22);
+                spi_rd(7'h0C); ok = ok + (rd_val == 16'h0028 && pga_c == 4'b0000 && t2f_en && !t2f_mode && bias_en);
+                spi_rd(7'h38); ok = ok + (rd_val == 16'h0000);
+                spi_rd(7'h39); ok = ok + (rd_val == 16'h4E00);
+                spi_rd(7'h3A); ok = ok + (rd_val == 16'h2020);
+                spi_rd(7'h3B); ok = ok + (rd_val == 16'h2020);
+                spi_rd(7'h3C); ok = ok + (rd_val == 16'h3748);
+                spi_rd(7'h3D); ok = ok + (rd_val == 16'h0001);
+                spi_rd(7'h3E); ok = ok + (rd_val == 16'h0078);
+                spi_rd(7'h5D); ok = ok + (rd_val == 16'd8130);
+                spi_rd(7'h6D); ok = ok + (rd_val == 16'd8130);
+                spi_rd(7'h01); ok = ok + (rd_val[14] == 1'b0);
+                check(ok == 12 && !az_win && !gate_a && !gate_b && !gate_c,
+                      "v07: reset values OSC_CFG 0x16, ANA_CTRL 0x28, AZ_START 0, AZ_CFG 0x4E00, CMP_CAL 0x2020, IDEAL 0x3748, ADC_CFG 1, AZ_EXT 120, W13 8130, TRIM_UNLK 0; az_win and gates low");
+
+                // ---- 4. OSC_TRIM lock (PLAN.md D13 amendment)
+                spi_wr(7'h08, 16'h000A); spi_rd(7'h08);
+                check(rd_val == 16'h0016 && osc_trim == 5'd22, "v07 lock: code 10 ignored after reset (locked)");
+                spi_wr(7'h08, 16'h0013); spi_rd(7'h08);
+                check(rd_val == 16'h0013 && osc_trim == 5'd19, "v07 lock: code 19 (>= 18) accepted while locked");
+                spi_wr(7'h08, 16'h0016);
+                spi_wr(7'h0A, 16'h2814);                            // OSC_WIN LO 20, HI 40 (40 MHz with a 1 MHz reference)
+                spi_rd(7'h09); spi_rd(7'h01);
+                check(rd_val[14] == 1'b0, "v07 lock: an OSC_COUNT read before OSC_DONE does not unlock");
+                spi_wr(7'h0A, 16'h1D14);                            // HI 29: the 30 MHz count is above the window
+                spi_wr(7'h08, 16'h0116); sck_half = 500.0; spi_x(24'd0, 40); sck_half = 50.0; #(20 * clk_ns);
+                spi_rd(7'h09); cnt = rd_val; spi_rd(7'h01);
+                $display("INFO v07 lock: clk %0.3f ns, OSC_COUNT %0d (OSC_COUNT[11:4] = %0d), STATUS 0x%04h", clk_ns, cnt, cnt >> 4, rd_val);
+                check(rd_val[10] && (rd_val[14] == ((cnt >> 4) <= 29 && (cnt >> 4) >= 20)),
+                      "v07 lock: a completed count unlocks only when it is inside OSC_WIN (HI 29)");
+                spi_wr(7'h0A, 16'h2814); spi_rd(7'h09); spi_rd(7'h01);
+                fast = ((cnt >> 4) > 40);
+                check(rd_val[14] == !fast, "v07 lock: with HI 40, the read unlocks if and only if OSC_COUNT[11:4] <= 40");
+                spi_wr(7'h08, 16'h000A); spi_rd(7'h08);
+                if (fast) check(rd_val == 16'h0016, "v07 lock: count above 40 MHz: code 10 still ignored");
+                else begin
+                    check(rd_val == 16'h000A && osc_trim == 5'd10, "v07 lock: code 10 accepted after the qualifying OSC_COUNT read");
+                    spi_rd(7'h01); check(rd_val[14] == 1'b0, "v07 lock: the accepted change consumes TRIM_UNLK");
+                    spi_wr(7'h08, 16'h0005); spi_rd(7'h08);
+                    check(rd_val == 16'h000A, "v07 lock: a second lower code is ignored until the next qualifying read");
+                    spi_wr(7'h08, 16'h010A); sck_half = 500.0; spi_x(24'd0, 40); sck_half = 50.0; #(20 * clk_ns);
+                    spi_rd(7'h08); check(rd_val == 16'h000A, "v07 lock: MEAS with the same code is accepted (code unchanged)");
+                    spi_rd(7'h09); spi_wr(7'h08, 16'h0005); spi_rd(7'h08);
+                    check(rd_val == 16'h0005 && osc_trim == 5'd5, "v07 lock: after a new measurement and read, code 5 is accepted");
+                end
+                spi_wr(7'h0A, 16'h0000); spi_wr(7'h08, 16'h0116); sck_half = 500.0; spi_x(24'd0, 40); sck_half = 50.0; #(20 * clk_ns);
+                spi_rd(7'h09); spi_rd(7'h01);
+                check(rd_val[14] == 1'b0, "v07 lock: with OSC_WIN = 0 (no window) a read does not unlock");
+                por_n = 0; #(10 * clk_ns); por_n = 1; #(20 * clk_ns);
+                spi_rd(7'h08); check(rd_val == 16'h0016, "v07 lock: por_n restores code 22 and the lock");
+
+                // ---- 5. comparator mask az_win + AZ_EXT (INTERFACES.md "vref_b disturbance"); CMP_FILT 0 = 1-tick flags latch
+                per = 1500;
+                #(700 * clk_ns);
+                spi_wr(7'h20, per); spi_wr(7'h21, 16'd300); spi_wr(7'h24, 16'd0);
+                spi_wr(7'h38, 16'd800); spi_wr(7'h39, 16'h4E28);     // AZ_START 800, AZ_LEN 40
+                load_cal_crc; spi_wr(7'h04, 16'h0001); #(20 * clk_ns);
+                check(fault_n, "v07 mask: setup, no fault");
+                // a 4-tick flag inside az_win
+                @(posedge az_win); repeat (5) @(posedge clk); @(negedge clk); cmp[0] = 1'b1; repeat (4) @(negedge clk); cmp[0] = 1'b0;
+                #(20 * clk_ns);
+                check(fault_n, "v07 mask: a flag inside az_win does not trip");
+                // the first sample after the az_win rise is masked
+                @(posedge az_win); @(negedge clk); cmp[2] = 1'b1; @(negedge clk); cmp[2] = 1'b0; #(20 * clk_ns);
+                check(fault_n, "v07 mask: a 1-tick flag sampled at the first edge after the az_win rise does not trip");
+                // 1-tick flag sampled at the edge AZ_EXT = 120 ticks after the az_win fall: masked
+                @(negedge az_win); repeat (119) @(posedge clk); @(negedge clk); cmp[0] = 1'b1; @(negedge clk); cmp[0] = 1'b0;
+                #(20 * clk_ns);
+                check(fault_n, "v07 mask: a flag sampled 120 ticks (AZ_EXT) after the az_win fall does not trip");
+                // the same flag one tick later: latches OC_A
+                @(negedge az_win); repeat (120) @(posedge clk); @(negedge clk); cmp[0] = 1'b1; @(negedge clk); cmp[0] = 1'b0;
+                #(20 * clk_ns); spi_rd(7'h02);
+                check(!fault_n && rd_val == 16'h0001, "v07 mask: the same flag 121 ticks after the az_win fall latches OC_A");
+                spi_wr(7'h04, 16'h0001); #(20 * clk_ns);
+                // programmable: AZ_EXT 30
+                spi_wr(7'h3E, 16'd30); spi_rd(7'h3E); check(rd_val == 16'd30, "v07 mask: AZ_EXT write reads back");
+                @(negedge az_win); repeat (29) @(posedge clk); @(negedge clk); cmp[1] = 1'b1; @(negedge clk); cmp[1] = 1'b0;
+                #(20 * clk_ns);
+                check(fault_n, "v07 mask: AZ_EXT 30: a flag 30 ticks after the fall does not trip");
+                @(negedge az_win); repeat (30) @(posedge clk); @(negedge clk); cmp[1] = 1'b1; @(negedge clk); cmp[1] = 1'b0;
+                #(20 * clk_ns); spi_rd(7'h02);
+                check(!fault_n && rd_val == 16'h0002, "v07 mask: AZ_EXT 30: a flag 31 ticks after the fall latches NEG_A");
+                spi_wr(7'h04, 16'h0001); #(20 * clk_ns);
+                // AZ_EXT 0: only the window itself is masked
+                spi_wr(7'h3E, 16'd0);
+                @(negedge az_win); @(negedge clk); cmp[3] = 1'b1; @(negedge clk); cmp[3] = 1'b0;
+                #(20 * clk_ns); spi_rd(7'h02);
+                check(!fault_n && rd_val == 16'h0008, "v07 mask: AZ_EXT 0: a flag at the first edge after the fall latches NEG_B");
+                spi_wr(7'h3E, 16'd120); spi_wr(7'h04, 16'h0001); #(20 * clk_ns);
+                // a long flag that starts in the window and stays high trips once the mask ends
+                @(posedge az_win); repeat (5) @(posedge clk); @(negedge clk); cmp[2] = 1'b1;
+                j = 0; while (fault_n && j < 400) begin @(posedge clk); #1; j = j + 1; end
+                cmp[2] = 1'b0;
+                $display("INFO v07 mask: flag from az_win start + 5 ticks, FAULT_N low after %0d ticks (window 40 + AZ_EXT 120 + 2 sync + 2 latch)", j);
+                check(!fault_n && j >= 35 + 120 && j <= 35 + 120 + 6, "v07 mask: a flag held through the window trips 120 + a few ticks after the window ends");
+                spi_wr(7'h04, 16'h0001); #(20 * clk_ns);
+                check(fault_n, "v07 mask: CLR releases");
+
+                // ---- 6. cur_trk (r1_adc SAR S1): high before the current strobe, low at the encoder frames
+                begin : ct
+                    integer tk2, run, n_cur, n_cur_ok, n_enc, n_enc_ok, min_run, ovl, n_ovl;
+                    reg in_enc;
+                    @(posedge az_win); tk2 = 0; run = 0; n_cur = 0; n_cur_ok = 0; n_enc = 0; n_enc_ok = 0;
+                    min_run = 9999; ovl = 0; n_ovl = 0; in_enc = 1'b0;
+                    while (tk2 < 4 * per) begin
+                        @(posedge clk); #1; tk2 = tk2 + 1;
+                        if (adc_start && adc_sel) begin
+                            n_cur = n_cur + 1;
+                            if (cur_trk && run >= 20) n_cur_ok = n_cur_ok + 1;
+                            if (run < min_run) min_run = run;
+                        end
+                        if (adc_start && !adc_sel) begin
+                            n_enc = n_enc + 1; if (!cur_trk) n_enc_ok = n_enc_ok + 1;
+                            in_enc = 1'b1;
+                        end
+                        if (in_enc && adc_valid_a) begin in_enc = 1'b0; if (ovl > 0) n_ovl = n_ovl + 1; ovl = 0; end
+                        else if (in_enc && cur_trk) ovl = ovl + 1;
+                        run = cur_trk ? run + 1 : 0;
+                    end
+                    $display("INFO v07 cur_trk: %0d current frames, cur_trk high for >= %0d ticks up to each strobe (GUARD 20); %0d encoder frames, %0d with cur_trk low at the start; %0d encoder frames still converting when cur_trk rose",
+                             n_cur, min_run, n_enc, n_enc_ok, n_ovl);
+                    check(n_cur == 4 && n_cur_ok == 4, "v07 cur_trk: high at every current-frame start and for >= GUARD = 20 ticks before it");
+                    check(n_enc > 200 && n_enc_ok == n_enc, "v07 cur_trk: low at the start (sampling edge) of every encoder frame");
+                    spi_wr(7'h20, 16'd0); #(50 * clk_ns);
+                    check(!cur_trk, "v07 cur_trk: low with the PWM off (no current strobe)");
+                end
+                spi_wr(7'h20, 16'd0);
             end
         end
 

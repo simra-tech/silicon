@@ -1,5 +1,5 @@
 #!/bin/sh
-# Full r1_ctrl verification run (revision 0.5; the list below is the 0.3 list plus: exhaustive r1_tapidx check,
+# Full r1_ctrl verification run (revision 0.7: the 0.5 list plus the v07 group at three clocks; revision 0.5: the list below is the 0.3 list plus: exhaustive r1_tapidx check,
 # chip-level tests tap / ana / disc, SDC port check, Yosys CHECK pass): V3 position (tb_pos + pos_ref.py,
 # 30-tick cases of 0.2 and 22-tick D18 frame cases), ADC weight correction
 # (tb_adcw + adcw_ref.py), comparator calibration search model against the
@@ -71,6 +71,11 @@ vvp -n "$OUT/tb_top.vvp" +test=tap +clk_ns=23.810 > "$OUT/top_tap_23.810.log" 2>
 # revision 0.5: clock-domain crossing tests (SSI at the asynchronous worst phase, registered ma-domain reset)
 for ck in 23.810 33.333 47.619; do
   vvp -n "$OUT/tb_top.vvp" +test=cdc +clk_ns=$ck > "$OUT/top_cdc_${ck}.log" 2>&1
+done
+
+# revision 0.7: R3 (EN synchroniser), R4 (threshold reset), OSC_TRIM lock, comparator mask, reset-value table
+for ck in 23.810 33.333 47.619; do
+  vvp -n "$OUT/tb_top.vvp" +test=v07 +clk_ns=$ck > "$OUT/top_v07_${ck}.log" 2>&1
 done
 
 # revision 0.5: exhaustive r1_tapidx check (4096 pairs per cell type) against the Python form of the r1_safe formula

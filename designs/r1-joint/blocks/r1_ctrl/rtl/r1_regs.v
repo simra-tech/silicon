@@ -15,10 +15,17 @@
 // comparator calibration search (cal_busy), clear CAL_VALID until the next
 // complete pass (<= 2 x 86 ticks plus the SPI pauses).
 // Revision 0.2 covered 0x10..0x17 only.
+// Revision 0.7: CMP_THR_A/B reset 0x003F (THR_OC 63, THR_NEG 0: both cells at the
+// least-sensitive code 63, r1_top finding R4); AZ_EXT (0x3E) comparator mask after
+// az_win, reset 120 ticks (INTERFACES.md "vref_b disturbance"); OSC_TRIM lock
+// (PLAN.md D13 amendment): a write that changes OSC_TRIM to a code below 18 is ignored
+// unless TRIM_UNLK is set. TRIM_UNLK is set by an SPI read of OSC_COUNT that returns a
+// completed count inside OSC_WIN (osc_meas_ok, from the top level) and cleared by every
+// accepted write that changes OSC_TRIM.
 // SPDX-License-Identifier: Apache-2.0
 
 module r1_regs #(
-    parameter [15:0] CHIP_ID = 16'h5204
+    parameter [15:0] CHIP_ID = 16'h5207
 ) (
     input  wire        clk,
     input  wire        rst_n,
@@ -48,6 +55,9 @@ module r1_regs #(
     input  wire [15:0] cmp_cal_a,      // CMP_CAL_A / _B read values (r1_cmpcal)
     input  wire [15:0] cmp_cal_b,
     input  wire        cal_busy,       // comparator calibration search running (r1_cmpcal)
+    input  wire        osc_meas_ok,    // 0.7: OSC_DONE, OSC_WIN != 0 and the count inside OSC_WIN
+    output reg         trim_unlk,      // 0.7: STATUS.TRIM_UNLK, codes below 18 accepted
+    output wire [7:0]  az_ext,         // 0.7: AZ_EXT, comparator mask ticks after az_win
     // configuration outputs
     output wire [12:0] fault_mask,
     output reg         clr_pulse,
@@ -103,7 +113,13 @@ module r1_regs #(
     assign test_pos[17:16] = bus_cfg[13:12];  assign lat_half = bus_cfg[14];
     r1_cword #(.W(16), .A(7'h06)) u_06 (clk, rst_n, wr, addr, wdata, test_pos[15:0]);
     r1_cword #(.W(12), .RV(12'd600), .A(7'h07)) u_07 (clk, rst_n, wr, addr, wdata[11:0], timeout_ticks);
-    r1_cword #(.W(5),  .RV(5'd22),  .A(7'h08)) u_08 (clk, rst_n, wr, addr, wdata[4:0], osc_trim);
+    // 0.7: OSC_TRIM lock. A write is accepted if the code does not change, is 18 or above, or TRIM_UNLK is set.
+    // A refused write rewrites the present code (data select, not a gated enable: run t13 gated the clock-gate
+    // enable with trim_ok, which depends on the word's own outputs, and failed the clock-gating setup check).
+    wire trim_chg = (wdata[4:0] != osc_trim);
+    wire trim_ok  = !trim_chg || (wdata[4:0] >= 5'd18) || trim_unlk;
+    wire [4:0] trim_d = trim_ok ? wdata[4:0] : osc_trim;
+    r1_cword #(.W(5),  .RV(5'd22),  .A(7'h08)) u_08 (clk, rst_n, wr, addr, trim_d, osc_trim);
     r1_cword #(.W(16), .A(7'h0A)) u_0a (clk, rst_n, wr, addr, wdata, osc_win);
     r1_cword #(.W(16), .RV(16'hFFFF), .A(7'h0B)) u_0b (clk, rst_n, wr, addr, wdata, wdt_period);
     // 0.5: ANA_CTRL reset 0x0028 = T2F_EN 1, BIAS_EN 1 (bit meaning: register map 4.8)
@@ -136,8 +152,9 @@ module r1_regs #(
     r1_cword #(.W(4),  .RV(4'd15), .A(7'h34)) u_34 (clk, rst_n, wr, addr, wdata[3:0], t2f_win);
     wire [11:0] thr_w = {wdata[13:8], wdata[5:0]};
     wire [11:0] thr_a, thr_b;
-    r1_cword #(.W(12), .RV(12'hFFF), .A(7'h36)) u_36 (clk, rst_n, wr, addr, thr_w, thr_a);
-    r1_cword #(.W(12), .RV(12'hFFF), .A(7'h37)) u_37 (clk, rst_n, wr, addr, thr_w, thr_b);
+    // 0.7: reset THR_NEG 0, THR_OC 63 = cell code 63 for both cells (was 0x3F3F: NEG cell code 0 tripped at zero current)
+    r1_cword #(.W(12), .RV(12'h03F), .A(7'h36)) u_36 (clk, rst_n, wr, addr, thr_w, thr_a);
+    r1_cword #(.W(12), .RV(12'h03F), .A(7'h37)) u_37 (clk, rst_n, wr, addr, thr_w, thr_b);
     assign cmp_thr_a = {thr_a[11:6], 2'b00, thr_a[5:0]};
     assign cmp_thr_b = {thr_b[11:6], 2'b00, thr_b[5:0]};
     r1_cword #(.W(13), .A(7'h38)) u_38 (clk, rst_n, wr, addr, wdata[12:0], az_start);
@@ -150,6 +167,8 @@ module r1_regs #(
     assign ideal_neg = ideal_w[13:7];
     // 0.5: ADC_CFG (0x3D), DISCARD in bits 3:0, reset 1; not covered by CAL_CRC
     r1_cword #(.W(4), .RV(4'd1), .A(7'h3D)) u_3d (clk, rst_n, wr, addr, wdata[3:0], adc_disc);
+    // 0.7: AZ_EXT (0x3E), [7:0] comparator mask after az_win in ticks, reset 120 (4 us at 30 MHz); not covered by CAL_CRC
+    r1_cword #(.W(8), .RV(8'd120), .A(7'h3E)) u_3e (clk, rst_n, wr, addr, wdata[7:0], az_ext);
     assign cmp_cal_wr_a = wr && (addr == 7'h3A);
     assign cmp_cal_wr_b = wr && (addr == 7'h3B);
 
@@ -186,10 +205,11 @@ module r1_regs #(
 
     // ---------------- flip-flop registers ----------------
     reg [11:0] raw_cos_hold;
+    reg        trim_wr_d;
     always @(posedge clk or negedge rst_n) begin
         if (!rst_n) begin
             clr_pulse <= 1'b0; osc_arm <= 1'b0; cal_run <= 1'b0; gate_en <= 1'b0; wdt_en <= 1'b0;
-            raw_cos_hold <= 12'h800;
+            raw_cos_hold <= 12'h800; trim_unlk <= 1'b0; trim_wr_d <= 1'b0;
         end else begin
             clr_pulse <= 1'b0;
             osc_arm   <= 1'b0;
@@ -199,6 +219,11 @@ module r1_regs #(
                 clr_pulse <= wdata[0]; gate_en <= wdata[1]; wdt_en <= wdata[2]; cal_run <= wdata[3];
             end
             if (wr && addr == 7'h08) osc_arm <= wdata[8];
+            // 0.7: OSC_TRIM lock bit (set by the OSC_COUNT read path, consumed by a trim change one tick after
+            // the write edge, so the word on its gated clock samples trim_d with the old TRIM_UNLK)
+            trim_wr_d <= wr && addr == 7'h08 && trim_ok && trim_chg;
+            if (trim_wr_d)                                trim_unlk <= 1'b0;
+            else if (rd && addr == 7'h09 && osc_meas_ok)  trim_unlk <= 1'b1;
         end
     end
 
@@ -334,6 +359,7 @@ module r1_regs #(
             7'h3B: rdata = cmp_cal_b;
             7'h3C: rdata = {1'b0, ideal_neg, 1'b0, ideal_oc};
             7'h3D: rdata = {12'd0, adc_disc};
+            7'h3E: rdata = {8'd0, az_ext};
             default: begin
                 if (wsel_any) rdata = {2'd0, w_or};
                 else          rdata = maddr[6] ? {8'd0, id_byte} : 16'd0;

@@ -3,6 +3,8 @@
 Writes the LibreLane pin order file (pins_v06.cfg) and the pin table (pins_v06.md / pins_v06.json).
 
 usage: gen_pins_v06.py [W H] [outdir]       default die 520 x 664 um, outdir = this directory
+Revision 0.7: PINS_V07=1 adds `cur_trk` (r1_adc SAR input, INTERFACES "ADC -> ctrl") at the next free south
+slot of the ADC group (n = 34, local x 280.80) and writes pins_v07*; every other pin keeps its 0.6 slot.
 
 How exact positions are obtained. LibreLane's custom I/O placement puts the pins of one side on the
 slots of a track subset (E/W: Metal3, one slot per `min_distance`; N/S: Metal2). If the number of pins
@@ -49,6 +51,9 @@ def put(side, net, want, consumer, after):
 s_nets = ["adc_raw_a[%d]" % b for b in range(13, -1, -1)] + ["adc_valid_a"] + \
          ["adc_raw_b[%d]" % b for b in range(13, -1, -1)] + ["adc_valid_b"] + \
          ["adc_hold", "adc_start", "adc_sel", "is_smp"]
+V07 = bool(os.environ.get("PINS_V07"))
+if V07: s_nets += ["cur_trk"]      # revision 0.7
+PFX = "pins_v07" if V07 else "pins_v06"
 k = slot_near("S", 20.0)
 for i, n in enumerate(s_nets):
     pins.append(dict(net=n, side="S", k=k + 8 * i, want=None,
@@ -128,7 +133,7 @@ for side in "NESW":
     if tail > 0: cfg.append("$%d" % tail)
     # total entries (real + virtual) is S-1: every pin sits on slot = running index
     if not sp: cfg = cfg[:-1] + ["$%d" % (S - 1)]
-open(os.path.join(OUT, "pins_v06%s.cfg" % TAG), "w").write("\n".join(cfg) + "\n")
+open(os.path.join(OUT, "%s%s.cfg" % (PFX, TAG)), "w").write("\n".join(cfg) + "\n")
 
 rows = []
 for side in "SWEN":
@@ -136,9 +141,9 @@ for side in "SWEN":
         x, y = coord(p)
         rows.append(dict(net=p["net"], edge=side, x=round(x, 3), y=round(y, 3), chip_x=round(ORG[0] + x, 2),
                          chip_y=round(ORG[1] + y, 2), consumer=p["consumer"]))
-json.dump(dict(die=[W, H], origin_chip=ORG, pins=rows), open(os.path.join(OUT, "pins_v06%s.json" % TAG), "w"), indent=1)
+json.dump(dict(die=[W, H], origin_chip=ORG, pins=rows), open(os.path.join(OUT, "%s%s.json" % (PFX, TAG)), "w"), indent=1)
 md = ["| Net | Edge | Local x (um) | Local y (um) | Chip x, y (C4, um) | Consumer pin |", "| --- | --- | ---: | ---: | --- | --- |"]
 for r in rows:
     md.append("| `%s` | %s | %.2f | %.2f | %.2f, %.2f | %s |" % (r["net"], r["edge"], r["x"], r["y"], r["chip_x"], r["chip_y"], r["consumer"]))
-open(os.path.join(OUT, "pins_v06%s.md" % TAG), "w").write("\n".join(md) + "\n")
+open(os.path.join(OUT, "%s%s.md" % (PFX, TAG)), "w").write("\n".join(md) + "\n")
 print("pins", len(rows), {s: len([r for r in rows if r["edge"] == s]) for s in "NESW"})

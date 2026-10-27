@@ -56,6 +56,7 @@ module r1_gate (
     output reg          is_smp,         // isense track-and-holds hold while high
     output reg          adc_start,      // pulse: both slices start a conversion of adc_sel
     output reg          adc_sel,        // 0 encoder {SIN, COS}, 1 current {ISA, ISB}
+    output reg          cur_trk,        // 0.7: 1 = the shared CDAC of each slice tracks ISA/ISB while idle (r1_adc SAR S1)
     input  wire         adc_valid_a,    // pulse: adc_raw_a valid (slice A)
     input  wire [13:0]  adc_raw_a,
     input  wire         adc_valid_b,    // pulse: adc_raw_b valid (slice B)
@@ -198,6 +199,12 @@ module r1_gate (
     wire       nra = pa_r | cva,  nrb = pb_r | cvb;
     wire [11:0] nca = cva ? codea : ca, ncb = cvb ? codeb : cb;
     wire       enc_done = nra && nrb && !tag_a;  // encoder pair leaves r1_adcw in this tick
+    // revision 0.7: cur_trk (INTERFACES.md "ADC -> ctrl", r1_adc/sar open issue S1) = soon registered, held while a late
+    // current frame is pending (req), so the SAR selects the current input for the next idle track. The SAR switches
+    // its input with one tick break before make and only while idle (its hold is closed during a conversion).
+    always @(posedge clk or negedge rst_n)
+        if (!rst_n) cur_trk <= 1'b0;
+        else        cur_trk <= soon | req;
 
     always @(posedge clk or negedge rst_n) begin
         if (!rst_n) begin

@@ -1,0 +1,46 @@
+# tb_top test=v07 clk_ns=23.810
+PASS init: FAULT_N high after CAL_CRC load and CLR
+PASS v07: ID reads 0x5207 (RTL revision 0.7)
+INFO v07 R3: FAULT after power-up with EN high = 0x1800
+PASS v07 R3: power-up with EN high: FAULT = 0x1800 (POR, CAL), STO bit 8 clear
+PASS v07 R3: CAL_CRC and one CLR clear FAULT to 0 (no STO to clear)
+INFO v07 R3: FAULT after power-up with EN low = 0x1900
+PASS v07 R3: power-up with EN low still latches STO: FAULT = 0x1900, gates low
+PASS v07 R3: CLR while EN is low keeps STO
+PASS v07 R3: after EN high, CAL_CRC and CLR the FAULT word is 0
+PASS v07 R4: CMP_THR_A and CMP_THR_B reset 0x003F (THR_OC 63, THR_NEG 0)
+PASS v07 R4: reset taps nP 252 nN 0 on all four comparators (cell code 63)
+INFO v07 R4: zero-current power-up, flags 0000, FAULT 0x0000
+PASS v07 R4: zero-current power-up: no OC/NEG flag, CAL_CRC + CLR give FAULT 0
+PASS v07 R4: with the 0.6 value 0x3F3F both NEG flags are high at zero current (finding reproduced)
+PASS v07 R4: with 0x3F3F, CLR cannot clear FAULT bits 1 and 3
+PASS v07 R4: back at 0x003F, CLR works
+PASS x28, AZ_START 0, AZ_CFG 0x4E00, CMP_CAL 0x2020, IDEAL 0x3748, ADC_CFG 1, AZ_EXT 120, W13 8130, TRIM_UNLK 0; az_win and gates low
+PASS v07 lock: code 10 ignored after reset (locked)
+PASS v07 lock: code 19 (>= 18) accepted while locked
+PASS v07 lock: an OSC_COUNT read before OSC_DONE does not unlock
+INFO v07 lock: clk 23.810 ns, OSC_COUNT 672 (OSC_COUNT[11:4] = 42), STATUS 0x05e0
+PASS v07 lock: a completed count unlocks only when it is inside OSC_WIN (HI 29)
+PASS v07 lock: with HI 40, the read unlocks if and only if OSC_COUNT[11:4] <= 40
+PASS v07 lock: count above 40 MHz: code 10 still ignored
+PASS v07 lock: with OSC_WIN = 0 (no window) a read does not unlock
+PASS v07 lock: por_n restores code 22 and the lock
+PASS v07 mask: setup, no fault
+PASS v07 mask: a flag inside az_win does not trip
+PASS v07 mask: a 1-tick flag sampled at the first edge after the az_win rise does not trip
+PASS v07 mask: a flag sampled 120 ticks (AZ_EXT) after the az_win fall does not trip
+PASS v07 mask: the same flag 121 ticks after the az_win fall latches OC_A
+PASS v07 mask: AZ_EXT write reads back
+PASS v07 mask: AZ_EXT 30: a flag 30 ticks after the fall does not trip
+PASS v07 mask: AZ_EXT 30: a flag 31 ticks after the fall latches NEG_A
+PASS v07 mask: AZ_EXT 0: a flag at the first edge after the fall latches NEG_B
+INFO v07 mask: flag from az_win start + 5 ticks, FAULT_N low after 159 ticks (window 40 + AZ_EXT 120 + 2 sync + 2 latch)
+PASS v07 mask: a flag held through the window trips 120 + a few ticks after the window ends
+PASS v07 mask: CLR releases
+INFO v07 cur_trk: 4 current frames, cur_trk high for >= 20 ticks up to each strobe (GUARD 20); 268 encoder frames, 268 with cur_trk low at the start; 4 encoder frames still converting when cur_trk rose
+PASS v07 cur_trk: high at every current-frame start and for >= GUARD = 20 ticks before it
+PASS v07 cur_trk: low at the start (sampling edge) of every encoder frame
+PASS v07 cur_trk: low with the PWM off (no current strobe)
+# 36 checks, 0 failed
+ALL TESTS PASSED
+tb/tb_top.v:1539: $finish called at 2702528735 (1ps)

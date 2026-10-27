@@ -42,7 +42,7 @@ set_output_delay -clock ma -min  0.0 [get_ports slo_sdo]
 set_false_path -from [get_ports {por_n cs_n en_pad cmp[*] t2f_clk}]
 
 # Outputs to the analog blocks and pads, registered in clk (gates: AND with EN)
-set clk_outputs [get_ports {gate_a gate_b gate_c fault_n adc_hold is_smp adc_start adc_sel \
+set clk_outputs [get_ports {gate_a gate_b gate_c fault_n adc_hold is_smp adc_start adc_sel cur_trk \
                             az_win tap_p[*] tap_n[*] osc_trim[*] pga_c[*] t2f_en t2f_mode bias_en}]
 set_output_delay -clock clk -max 5.0 $clk_outputs
 set_output_delay -clock clk -min 0.0 $clk_outputs

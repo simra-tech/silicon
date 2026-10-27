@@ -1,4 +1,6 @@
-# r1_ctrl — R1 digital macro (RTL revision 0.5, hardened as revision 0.6 in 532 x 679 um)
+# r1_ctrl — R1 digital macro (revision 0.7 hardened and signed off in 532 x 679 um)
+
+State (2026-10-27): revision 0.7 (RTL fixes R3, R4, `OSC_TRIM` lock, comparator mask, new output `cur_trk`; "Revision 0.7" below) is hardened and signed off. Run of record `r1ctrl_ll_20261027_t17`: DRC, LVS, antenna 0; setup, hold, fanout, slew, cap clean at typ / fast / slow; gate-level SDF slow 379 checks passed; release `r1ctrl_07_release`. It is a drop-in for 0.6 (same box, same 127 pin positions) plus one south pin `cur_trk`. Revision 0.7 replaces 0.6 as the macro of record.
 
 State (2026-10-26): revision 0.6 is hardened and signed off from the 0.5 RTL in 532 x 679 um (run of record `r1ctrl_ll_20261026_t12`, "Revision 0.6" below): DRC, LVS, antenna, fanout 8, slew and cap clean at typ, fast and slow; utilisation 75.47 %; gate-level SDF simulation at slow: 263 checks passed, 0 failed (tap, ana, ssi, spi, gate, safe, biss); disc, cdc, cal not run at gate level. Revision 0.4 (t7) is superseded for the top-level assembly.
 
@@ -18,11 +20,152 @@ equivalence inconclusive, CDC reviewed by hand only (no tool). Track T5, CPU set
 - The register file.
 
 The contract with the host and the analog blocks is [`R1_REGISTER_MAP.md`](R1_REGISTER_MAP.md),
-draft 0.5 (change log in its section 7). All RTL is clean-room Verilog-2005 under Apache-2.0,
+draft 0.7 (change log in its section 7). All RTL is clean-room Verilog-2005 under Apache-2.0,
 written from the specification and studies S1, S2, S3 and S5. No third-party RTL is used.
 Patterns copied from G1 `g1_ctrl` (not shared): the two-flop synchroniser, the
 async-assert/sync-release reset, the SCLK-domain shift logic with a hand-off to the core clock,
 the `run_sim.sh` style and the `ALL TESTS PASSED` convention.
+
+## Revision 0.7 (2026-10-27, RTL fixes R3, R4, OSC_TRIM lock, comparator mask, new output `cur_trk`; hardening runs `r1ctrl_ll_20261027_t13` to `_t18`; run of record `_t17`)
+
+Goal: fix the two `r1_ctrl` findings of the r1_top full-chip testbench (R3, R4 in `../r1_top/README.md`), add the `OSC_TRIM` lock (PLAN.md D13 amendment) and the comparator mask of `../INTERFACES.md` ("vref_b disturbance at the isense pedestal switch"), then harden in the same 532 x 679 um box with the same `pins_v06` template. Coordinator addition (2026-10-27, during the track): one new output `cur_trk` for the `r1_adc` SAR (`../r1_adc/sar/README.md` open issue S1). It takes the next free south slot of the ADC group; no other pin moves (template `pins_v07` = `pins_v06` + 1 pin). Register map: `R1_REGISTER_MAP.md` draft 0.7, `ID` 0x5207. All numbers are simulated, synthesized or LibreLane/OpenSTA results; nothing is measured. Paths are relative to this directory; `<G1_RESULTS_ROOT>` is the bulk results root (`r1_ctrl/<run-id>/`). Track T5, CPU set 112-115.
+
+### What changed
+
+| # | Change | Where |
+| --- | --- | --- |
+| 1 | **R3.** EN/STO_IN synchroniser `u_sen` resets to 1 (the idle level of the pad). With 0 the fault latch saw `~en_s` = 1 for two ticks after the reset release and latched STO with EN high (`FAULT` 0x1900 at power-up). A power-up with EN low still latches STO. The combinational gate-off path from the pad does not use `en_s`, so STO is not weakened. All synchronisers reviewed (table below); no other one changed. | `rtl/r1_safe.v` |
+| 2 | **R4.** `CMP_THR_A/B` reset 0x003F (was 0x3F3F): THR_OC 63 and THR_NEG 0 give cell code 63 for both cells, the least-sensitive code. Thresholds below. Reset taps: nP 252, nN 0 on all four comparators. | `rtl/r1_regs.v` |
+| 3 | **OSC_TRIM lock.** A write that changes `OSC_TRIM` to a code below 18 is ignored unless `STATUS.TRIM_UNLK` (bit 14) is 1. The bit is set by the **read path**: an SPI read of `OSC_COUNT` that returns a completed count (`OSC_DONE`) inside a non-zero `OSC_WIN` (the existing `CLK_FAULT` compare; the host sets `OSC_WIN.HI` for 40 MHz at its reference). It is cleared by every accepted write that changes `OSC_TRIM` (one tick after the write) and by reset, so each step below 18 needs a new measurement. A write with the present code (for example `MEAS` only) is always accepted. A refused write rewrites the present code (a data select in front of the word; the clock-gate enable stays `wr && addr == 0x08`, see failure 4). | `rtl/r1_regs.v`, `rtl/r1_ctrl_top.v`, map 4.3 |
+| 4 | **Comparator mask.** The four flags are ignored during `az_win` and for `AZ_EXT` ticks after it. `AZ_EXT` is a new register 0x3E ([7:0], reset 120 = 4 us at 30 MHz). The window is delayed by 2 ticks inside the macro so that the mask lines up with the 2-flop flag synchroniser: flags sampled from the first edge after the `az_win` rise to the edge 120 ticks after its fall are ignored. Replaces the fixed 16-tick blanking; the calibration-search blanking (search + 16 ticks) is unchanged. | `rtl/r1_ctrl_top.v`, `rtl/r1_regs.v`, map 4.6 |
+| 5 | **ADC -> ctrl timing: no change.** No retime is added (it waits for `r1_adc` layout B). The SDC assumption stays: `set_input_delay -min 0.5` on `adc_valid_*`, `adc_raw_*` relative to `clk` at the macro pins, `-max` as in 0.5. See "ADC -> ctrl timing" below. | `flow/r1_ctrl.sdc` (unchanged) |
+| 6 | `ID` 0x5207 (versioning rule: 0x52 + RTL revision digit; 0.6 had no RTL change and kept 0x5205). Register map 0.7, change log section 7. | `rtl/r1_ctrl_top.v`, `R1_REGISTER_MAP.md` |
+| 7 | **`cur_trk` (new output).** 1 = the shared CDAC of each slice tracks ISA/ISB while idle. `cur_trk` = registered (`soon` OR `req`): the frame-generator window in which the current strobe is due within GUARD ticks, held while a late current frame is pending. Reset 0; 0 with the PWM off. SDC: `clk` output (output delay as `adc_start`) in `r1_ctrl.sdc`, `r1_ctrl_pnr.sdc`, `r1_ctrl_pnr6.sdc`. Pin: south, local x 280.80 um, y 0 (Metal2, chip 824.60, 673.30 in C4), the slot after `is_smp` (n = 34 of the 7.68 um ADC grid). Pin files `flow/librelane/pins_v07.cfg/.json/.md` by `PIN_STRIDE_E=2 PINS_V07=1 gen_pins_v06.py 532 679`; the same command without `PINS_V07` reproduces `pins_v06.*` byte for byte (127 pins unchanged). | `rtl/r1_gate.v`, `rtl/r1_ctrl_top.v`, `flow/*.sdc`, `flow/librelane/` |
+| 8 | Testbench: new group `v07` (40 checks at 33.3 and 47.6 ns, 36 at 23.8 ns: the lock branch depends on the measured count); `tap` reset expectations and `spi` ID updated; `run_all.sh` runs `v07` at three clocks. | `tb/tb_top.v`, `sim/run_all.sh`, `sim/summarize.py` |
+
+Decisions (recommended option, taken without asking):
+
+1. **`AZ_EXT` is a new register, not an `AZ_CFG` field.** `AZ_CFG` has no free bit (7:0 AZ_LEN, 13:8 THR_ZERO, 15:14 CAL_STEP). 0x3E was unused.
+2. **`AZ_EXT` is not covered by `CAL_CRC`.** Adding it changes the CRC engine (43 to 44 words) and every host CRC routine. An upset can only lengthen the mask (at most 255 ticks per window, only when AZ_LEN is not 0). Open issue 3.
+3. **Lock by the read path with the `OSC_WIN` compare**, not a fixed count compare: the macro does not know the reference frequency, so a fixed count limit cannot mean "40 MHz". The host states the limit as `OSC_WIN.HI`.
+4. **The lock bit is consumed by any accepted trim change**, so the "small steps" rule 3 of D13 is enforced, not only rule 2.
+5. **The mask starts at the first edge after the `az_win` rise** (the 2-tick delay), not 2 ticks earlier as in 0.6. Flags sampled before the window opens are real and are not masked.
+6. **No change to `CAL_STEP`.** The calibration search does not use the mask (residual in the INTERFACES row).
+7. **`cur_trk` is not gated off during an encoder conversion.** The SAR changes its input only while idle, so an early `cur_trk` gives the current input the most track time. An encoder frame that started just before the window is still converting for its last ticks when `cur_trk` rises (4 of 268 frames in the test); every encoder frame starts with `cur_trk` low.
+8. **Port name `cur_trk`** (the SAR port name), not `adc_cur_trk` (the SAR README's suggestion for the ctrl side): one name on both ends of the wire.
+
+### Synchronisers on safety or pad inputs (reset value = idle level of the source)
+
+| Instance | Block | Source | Idle level of the source | Reset value 0.6 | Reset value 0.7 | Reason |
+| --- | --- | --- | --- | --- | --- | --- |
+| `u_sen` | `r1_safe` | `en_pad` (EN/STO_IN pad) | 1 (enabled; low = STO) | 0 | **1** | R3: 0 latched STO after reset with EN high. EN low at reset: `en_s` falls 2 ticks after the release and STO latches (test `v07`) |
+| `u_scmp[3:0]` | `r1_safe` | `cmp[3:0]` (analog comparators) | 0 (no flag) | 0 | 0 | equals the idle level; a flag present at reset latches 2 ticks after the release (intended) |
+| `u_st2f` | `r1_safe` | `t2f_clk` (free-running T2F output) | none (a clock) | 0 | 0 | edge detector `t2f_d` also resets to 0: at most one extra edge in the first window, which the host discards (map 4.8, `T2F_EN`) |
+| `u_sma` | `r1_biss` | `ma_sclk` (MA/SCLK pad) | 1 (BiSS/SSI idle high) | 1 | 1 | unchanged |
+| `u_scs` | `r1_biss` | `cs_n` pad | 1 (BiSS mode) | 1 | 1 | unchanged |
+| `u_scs` | `r1_spi` | `cs_n` pad | 1 (no SPI frame) | 1 | 1 | unchanged; 0 would decode a false frame end at the release |
+| `u_smt`, `u_slt`, `n1`-`n3` | `r1_biss` | `ma_tog`, `lat_tog` (MA-domain toggles, reset 0 by `rst_n`) | 0 at reset | 0 | 0 | equal the reset value of the toggle |
+| `u_sp16` | top | `p16_tog` (MA-domain toggle, reset 0) | 0 at reset | 0 | 0 | equal the reset value of the toggle |
+| `rdy_n1`, `rdy_p2` | `r1_biss` (MA domain) | `rdy_tog` (clk domain) | toggle | 0 (`ma_rst_n`) | 0 | not a pad input; re-sampled at the first MA falling edge of every frame, before LAT (`biss` tests) |
+| `rs0`, `rs1` | top | `por_n` | - | 0 | 0 | they are the reset (asynchronous assert, synchronous release) |
+
+`sdi` is sampled only by SCLK inside a frame and `t2f_en`/`bias_en` etc. are outputs: no synchroniser.
+
+### Reset values of the analog-facing registers (same class as R4: a reset value that trips or holds a fault at zero input)
+
+Threshold formulas (`r1_safe` README): Vth_od(code) = (2 code - 63)/63 x VREF, Vsh_th(code) = VREF x (1/26 + (2 code - 63)/882), VREF = 1.05 V; zero current gives Vod = -14 VREF/26 = -0.565 V.
+
+| Register / port | Reset (0.7) | Effect at reset | R4 class? | Decision |
+| --- | --- | --- | --- | --- |
+| `CMP_THR_A/B` OC | THR_OC 63 (c 63) | OC trips at Vod > +1.050 V (shunt +115.4 mV) | no | unchanged (already least sensitive) |
+| `CMP_THR_A/B` NEG | **THR_NEG 0 (c 63)** | NEG trips at Vod < -1.050 V (shunt -34.6 mV); zero current is 0.485 V Vod inside | **was yes**: 0.6 THR_NEG 63 (c 0) tripped at Vod < +1.050 V, i.e. at zero current | **fixed** (0x3F3F to 0x003F) |
+| `tap_p` / `tap_n` (derived) | nP 252, nN 0 x 4 | as the two rows above | no | follows `CMP_THR` |
+| `CMP_CAL_A/B` | 0x2020 (k 32, d 0) | no threshold shift | no | unchanged |
+| `CMP_CAL_IDEAL`, `AZ_CFG.THR_ZERO`, `CAL_STEP` | 0x3748, 14, 1 | used only during a search | no | unchanged |
+| `AZ_START`, `AZ_CFG.AZ_LEN` | 0, 0 | no `az_win`, no isense auto-zero, no mask | no | unchanged |
+| `AZ_EXT` (new) | 120 | mask length after `az_win` | no | new |
+| `ANA_CTRL.PGA_GAIN` / `pga_c` | 0 / 0000 (x1) | lowest AFE gain, no saturation | no | unchanged |
+| `ANA_CTRL.T2F_EN`, `T2F_MODE` | 1, 0 (PTAT) | T2F runs; `OT_LIM` 0x3FFF cannot be reached (TEMP <= 2^13) | no | unchanged |
+| `ANA_CTRL.BIAS_EN` | 1 | bias on (needed by every analog block) | no | unchanged |
+| `ANA_CTRL.ADC_ARM`, `ADC_CFG.DISCARD` | 0, 1 | first frame after reset dropped | no | unchanged |
+| `OSC_CFG.OSC_TRIM` | 22 | below 42 MHz at every corner (39.5 MHz ff, 1.32 V, -40 C) | no | unchanged; lock added |
+| `OSC_WIN` | 0 | no `CLK_FAULT` check; no unlock possible until the host writes it | no | unchanged |
+| ADC weights | nominal x 4 | nominal codes | no | unchanged |
+| `OT_LIM`, `I2T_LIM`, `WDT_EN` | 0x3FFF, 0xFFFF, 0 | cannot trip (I2t E <= 255^2 = 65 025 < 65 535) | no | unchanged |
+
+### ADC -> ctrl timing (item 5, no retime)
+
+The sign-off SDC `flow/r1_ctrl.sdc` (0.7 adds only `cur_trk` to the `clk` outputs) assumes that `adc_valid_a/b` and `adc_raw_a/b[13:0]` change **at least 0.5 ns after** the `clk` edge at the macro pins (`set_input_delay -min 0.5`) and are stable before the next edge with the `-max` input delay of the file. With this assumption the hold slack is positive at every corner (0.6: +0.110 ns slow). The gate-level testbench delays the ADC inputs by the same 0.5 ns. The assumption is not checked against `r1_adc`: its decision-latch timing relative to the shared oscillator edge and the `osc_clk` route skew between the ADC and ctrl pins come with `r1_adc` layout B and the assembly. If the window is inside 0.5 ns, revision 0.8 takes the ADC bits through a half-cycle retime (`INTERFACES.md` row "ADC -> ctrl timing", not edited by this track; T2 added there on 2026-10-27 that the assumption holds by 0.12 ns before the clock-route skew, with a behavioural SAR).
+
+### Status (revision 0.7)
+
+| # | Check | Status | Evidence |
+| --- | --- | --- | --- |
+| 1 | Regression run `r1ctrl_20261027_v07c` (`sim/run_all.sh`, RTL concat sha256 `cb0e2d35...822a6a`, the final 0.7 RTL with `cur_trk`, = t16 and t17): chip-level `biss` 3 x 48, `ssi` 3 x 9, `spi` 27, `gate` 22, `safe` 32, `cal` 2 x 32, `tap` 2 x 5, `ana` 9, `disc` 14, `cdc` 3 x 4 | **passed**: 21 logs, 477 checks (361 of the 0.5 groups + 116 `v07`), 0 failed | `sim/results/r1ctrl_20261027_v07c/summary.md`, `top_*.log`; superseded: `r1ctrl_20261027_v07` (RTL before failure 4) and `_v07b` (RTL without `cur_trk`; 468 checks, 0 failed) |
+| 1a | Position V3 (16 cases incl. the 22-tick gap cases), RTL vs float reference | **passed**: max 0.023 deg el (limit 0.05), no count slip | `pos_*_check.log` |
+| 1b | ADC weight correction, one-hot read-back, `r1_tapidx` exhaustive (16 384 lane samples), calibration search vs `r1_safe` model (`calmc`, 274 cases) | **passed**: 0 mismatches | `adcw_result.json`, `tapidx_result.json`, `calmc_check.json` |
+| 1c | SDC covers every port (`check_sdc_ports.py` on the 0.7 port list: 30 ports, 128 bits, `cur_trk` added) | **passed**: 0 unconstrained, 0 stale | `sdc_ports.json` |
+| 1d | Yosys CHECK | **passed**: 0 problems | `yosys_check.txt` |
+| 2 | New group `v07` at 23.8 / 33.3 / 47.6 ns: `cur_trk` (high >= 20 ticks before each of 4 current frames, low at all 268 encoder starts, low with the PWM off), R3 (EN high and EN low power-up), R4 (zero-current power-up with the behavioural comparators, 0x3F3F reproduces the finding), reset-value table, `OSC_TRIM` lock (locked / unlock only inside `OSC_WIN` / consumed / `OSC_WIN` 0 / reset), mask edges (window, 120 masked, 121 trips, `AZ_EXT` 30 and 0, held flag) | **passed**: 36 / 40 / 40 checks, 0 failed. At 23.8 ns (42 MHz) the count is above 40 MHz, so the lock stays closed and the 4 accept checks do not apply | `top_v07_*.log` |
+| 3 | Negative control: `v07` on the 0.6 RTL (git HEAD) | **passed as a control**: 14 of 37 checks fail (R3, R4, lock, mask), as expected | `<G1_RESULTS_ROOT>/r1_ctrl/r1ctrl_dev07/rtl06/top_v07_33.333.log` |
+| 4 | Yosys area delta (flat, typical) | 230 118 um^2, +1 592 um^2 (+0.7 %) over 0.5; table below | `stat_flat.txt` |
+| 5 | LibreLane hardening `r1ctrl_ll_20261027_t13` (0.6 configuration, DIE_AREA 532 x 679, `pins_v06`; RTL of `_v07`) | **failed** (exit 2): setup -0.800 ns slow at the u_08 clock gate (failure 4), hold -0.041 ns slow, 1 fanout violator; DRC, LVS, antenna 0; pins 127 of 127; utilisation 75.98 % | `<G1_RESULTS_ROOT>/r1_ctrl/r1ctrl_ll_20261027_t13/`, `r1ctrl_20261027_t13sta/` |
+| 5a | Hardening `_t14` (GRT hold margin 0.15) on the RTL without `cur_trk` | **failed**: hold -0.045 ns slow (`adc_raw` inputs); setup, fanout, slew 0 (information only: superseded RTL) | `<G1_RESULTS_ROOT>/r1_ctrl/r1ctrl_ll_20261027_t14/` |
+| 5b | Hardening `_t15` (as t14 + fanout limit 6) | **abandoned**: stopped in routing when `cur_trk` was added | `<G1_RESULTS_ROOT>/r1_ctrl/r1ctrl_ll_20261027_t15/disposition.json` |
+| 5c | Hardening `_t16` (post-CTS hold margin 0.3) on the final RTL with `cur_trk`, `pins_v07` | **abandoned**: the margin inserted 1 595 hold buffers (t13: 71); detailed routing had 61 violations after 2 h 15 min; stopped at 09:30 | `<G1_RESULTS_ROOT>/r1_ctrl/r1ctrl_ll_20261027_t16/disposition.json` |
+| 5d | Hardening `_t17` (post-CTS hold margin 0.3, post-GRT timing repair with hold margin 0.15, place-and-route fanout limit 6; `flow/librelane/cfg_v07_t17.yaml`) on the final RTL, `pins_v07` | **passed** (exit 0), **run of record for 0.7**: 1 606 hold buffers; placed utilisation 84.8 % (section below) | `<G1_RESULTS_ROOT>/r1_ctrl/r1ctrl_ll_20261027_t17/`, `reports/ll_t17.md` |
+| 5e | Hardening `_t18`: post-CTS hold margin 0.1 (as 0.6), hold target only on the ADC inputs (`flow/r1_ctrl_pnr6h.sdc`: place-and-route `-min` input delay 0.30 ns, fanout limit 6; sign-off SDC unchanged) | **abandoned**: stopped in detailed routing when t17 passed (83 hold buffers: the better configuration for a later revision; not signed off) | `<G1_RESULTS_ROOT>/r1_ctrl/r1ctrl_ll_20261027_t18/disposition.json` |
+| 6 | Sign-off STA with `flow/r1_ctrl.sdc`, t17: true setup slack (worst flip-flop D) typ / fast / slow; outputs; hold; max-fanout 8, slew, cap | **passed**: setup +9.556 / +10.222 / **+3.559 ns** (0.6: +3.680 at slow; the flow summary shows 0.000 = latch borrow, worst borrow 1.228 ns of 11.5 ns); outputs +15.239 / +16.302 / +13.386 ns; hold +0.323 / +0.195 / **+0.550 ns**; 0 VIOLATED paths; fanout, slew, cap 0 / 0 / 0 at all corners | `<G1_RESULTS_ROOT>/r1_ctrl/r1ctrl_20261027_t17sta/` |
+| 7 | Detailed routing, Magic DRC, KLayout DRC, LVS, antenna (t17); pins 128 of 128 on the `pins_v07` slots | **passed**: 0 / 0 / 0 / 0 / 0; 0 pin mismatches (the 127 `pins_v06` pins have the same positions) | same, `pins_check.txt` |
+| 8 | Gate-level simulation with SDF at slow (MAXIMUM), t17 netlist: chip-level list and `v07` at 23.8 / 33.3 / 47.6 ns | **passed**: 379 checks, 0 failed: `tap` 5, `ana` 9, `ssi` 3 x 9, `spi` 27, `gate` 22, `safe` 32, `biss` 3 x 47 (1 GLSKIP each, as in 0.6), `v07` 36 / 40 / 40 (R3, R4, lock, mask, `cur_trk`). `disc`, `cdc`, `cal`: **not run** (as 0.6) | `<G1_RESULTS_ROOT>/r1_ctrl/r1ctrl_gl_20261027_t17/` |
+| 9 | Release files `r1ctrl_07_release` (GDS, LEF, DEF, netlist, SDF x 3, sign-off and place-and-route SDC, `pins_v07.*`, `SOURCE.txt`) with `SHA256SUMS` | **passed** (written): GDS sha256 `79dbc1d3…`, LEF `e6bb490d…` | `<G1_RESULTS_ROOT>/r1_ctrl/r1ctrl_07_release/` |
+
+### Area delta (Yosys, flat, no hardening)
+
+| Quantity | 0.5 (`r1ctrl_20261021_v05c`) | 0.7 (`r1ctrl_20261027_v07c`) | Delta |
+| --- | --- | --- | --- |
+| Cell area (um^2) | 228 526 | **230 118** | +1 592 (+0.7 %) |
+| Cells / flip-flops and latches | 15 390 / 2 072 | 15 444 / 2 093 | +54 / +21 |
+
+New flip-flops: `AZ_EXT` 8, mask counter 8, window delay 2, `TRIM_UNLK` and its clear delay 2, `cur_trk` 1. The hierarchical run of `_v07` gave `r1_regs` +4 169 and top glue +826 um^2; the hierarchical numbers include synthesis variation of the register file (0.5 showed the same effect in `r1_pos`) and are not the delta of record.
+
+### Area and utilisation (hardening of record `r1ctrl_ll_20261027_t17`)
+
+| Quantity | 0.6 (`_t12`) | 0.7 (`_t17`) |
+| --- | --- | --- |
+| Die / core (um^2) | 361 228 / 333 666 | same (532 x 679) |
+| Standard-cell area, utilisation | 251 815 um^2, 75.47 % | **283 041 um^2, 84.8 %** |
+| Sequential / clock buffers / timing-repair buffers (um^2) | see `reports/ll_t10.md` | 100 004 / 6 831 / 45 182 |
+| Hold buffers inserted post-CTS | 71 (t13, same configuration as 0.6) | 1 606 |
+
+The increase is almost all hold buffers from the 0.3 ns post-CTS margin (failure 9). Run t18 shows that a hold target on the ADC inputs only needs 83 buffers; utilisation would then stay near 76 % (estimate, t18 not finished).
+
+### Open issues (revision 0.7)
+
+1. `AZ_EXT` 120 ticks is 2.9 us at 42 MHz, below the 3.5 us disturbance (simulated, `r1_bias` revision 2 buffer). The host sets `AZ_EXT` from `OSC_COUNT` (148 ticks at 42 MHz).
+2. The mask delays an over-current that starts inside the window by up to AZ_LEN + AZ_EXT ticks (160 ticks = 5.3 us at the reset value and AZ_LEN 40). The specification fault reaction time has to allow it, or `r1_bias` reduces the disturbance (INTERFACES row).
+3. `AZ_EXT` is not covered by `CAL_CRC` (decision 2).
+4. The calibration search samples its flags 3 x STEP after the window, inside the disturbance at CAL_STEP 1 (INTERFACES row, residual 3).
+5. ADC -> ctrl timing: assumption only (section above).
+6. `cur_trk` with a late current frame (`req` pending) is not exercised by a test (no test produces a late strobe with the reset GUARD).
+7. With GUARD 20 the current input can track only about 7 ticks after the last encoder frame (estimate, INTERFACES "ADC -> ctrl" row); the host may need a larger GUARD.
+8. The assembly must route one more south pin (`cur_trk`, local x 280.80) to the `r1_adc` SAR `cur_trk` pin.
+9. Utilisation 84.8 % with 1 606 hold buffers (more leakage and switching power, less room for an ECO). A later revision uses the t18 configuration (`cfg_v07_t18.yaml`, `flow/r1_ctrl_pnr6h.sdc`).
+10. Not run, as in 0.6: formal equivalence RTL vs netlist, a CDC tool, IR drop with real supply locations, gate-level `disc`, `cdc`, `cal` (probes are not nets of the netlist).
+
+### Failures and mistakes (revision 0.7)
+
+| # | What happened | Class | Effect / fix |
+| --- | --- | --- | --- |
+| 1 | R3 was present since revision 0.1: `u_sen` used the default `RST_VAL` 0, while `u_sma` and `u_scs` already had 1. No RTL test powered up with EN high and read `FAULT` before the first `CLR`; `init_chip` always clears | verification-gap | test `v07` R3 reads `FAULT` before any `CLR`; synchroniser table above |
+| 2 | R4: the reset value 0x3F3F was chosen as "all ones = highest threshold" without the NEG inversion c = 63 - THR_NEG; the RTL testbench forced the flags to 0, so the behavioural comparators never saw the reset thresholds at zero current | spec-ambiguity | reset 0x003F; `v07` R4 runs the behavioural comparators at the zero-current input |
+| 3 | The task asked for an `AZ_CFG` field; the register has no free bit | spec-ambiguity | new register `AZ_EXT` (decision 1) |
+| 4 | First lock form gated the clock-gate enable of `OSC_CFG` (u_08) with `trim_ok`, which depends on the word's own outputs. RTL simulation passed; hardening run t13 (1 h 45 min) failed the clock-gating setup check at all corners (-0.498 / -0.321 / -0.800 ns typ / fast / slow) | functional-bug | data select `trim_ok ? wdata : osc_trim` with the plain enable; the RTL regression `r1ctrl_20261027_v07` is superseded by `_v07b`. Rule: a clock-gate enable must not depend on the gated word |
+| 5 | The data-select form first failed 4 `v07` lock checks in RTL simulation: `TRIM_UNLK` cleared on the same `clk` edge at which the gated-clock flops (10 ps later in simulation) sampled `trim_d` | verification-gap | clear one tick after the write (`trim_wr_d`); hardware and simulation then see the same old value |
+| 6 | t13 also ended with 5 hold violators at slow (-0.041 ns, `adc_raw_b` inputs at the SDC minimum delay 0.5 ns; 0.6: +0.110 ns) and 1 fanout violator (`reg_wdata[6]` buffer: 5 loads + 5 antenna diodes added after the fanout repair) | estimation | the 0.6 configuration has no margin for placement variation: t14 adds a post-GRT hold margin of 0.15 ns, t15 also the place-and-route fanout limit 6 (`flow/r1_ctrl_pnr6.sdc`); both in parallel on 2 CPUs each |
+| 7 | t14 set `GRT_RESIZER_HOLD_SLACK_MARGIN` 0.15, but no step uses it: `RUN_POST_GRT_RESIZER_TIMING` is false, the only hold repair is post-CTS (`PL_RESIZER_HOLD_SLACK_MARGIN` 0.1). t14 ended at -0.045 ns, as t13 | tooling | read the resolved configuration before choosing a key; t16/t17 raise the post-CTS margin to 0.3 ns |
+| 8 | The coordinator added `cur_trk` (a new port) while t14 and t15 were routing; both became superseded (t15 stopped, about 1 h 45 min on 2 CPUs each lost) | coordination | t16/t17 on the final RTL; regression `r1ctrl_20261027_v07c` |
+| 9 | t16 and t17 raised the post-CTS hold margin from 0.1 to 0.3 ns for the whole design to repair 5 ADC input paths at -0.041 ns. The resizer then inserted about 1 600 hold buffers and detailed routing did not converge in 2 h on 2 CPUs | estimation | t16 stopped; t17 routed clean after 3 h 25 min and is the run of record, at 84.8 % utilisation (open issue 9). t18 (hold target only on the ADC input paths, 83 hold buffers) was stopped when t17 passed. Rule: repair a local hold failure with a local constraint |
 
 ## Revision 0.6 (2026-10-26, hardening of RTL 0.5 in 532 x 679 um; run of record `r1ctrl_ll_20261026_t12`)
 

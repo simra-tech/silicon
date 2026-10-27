@@ -1,8 +1,10 @@
-# R1 bus protocols and register map (draft 0.5, 2026-10-21)
+# R1 bus protocols and register map (draft 0.7, 2026-10-27)
 
 Owner block: `r1_ctrl` (`designs/r1-joint/blocks/r1_ctrl`). This document is the contract between
 the host, the digital macro (`rtl/r1_ctrl_top.v`) and the analog blocks it connects to. It is a
-draft: nothing here is on silicon. The RTL in `rtl/` implements this version (revision 0.5; change log in section 7).
+draft: nothing here is on silicon. The RTL in `rtl/` implements this version (revision 0.7; change log in section 7).
+Versioning rule: `ID` = 0x52 followed by the RTL revision digit (0.5 = 0x5205, 0.7 = 0x5207). Revision 0.6 was a
+hardening of the 0.5 RTL without an RTL change, so it has no `ID` of its own.
 Revision 0.2 checked every BiSS interpretation item of 0.1 against the BiSS C Rev D2 document
 ("D2", page numbers of that PDF). Section 3.4 lists the result. One item stays **[verify]**: the
 BP_ID (profile) code. The protocol testbench uses our own master model, so the interop runs of
@@ -163,14 +165,16 @@ read 0. Reset values apply after `por_n`. `EN` does not reset the registers.
 
 | Addr | Name | Type | Reset | Bits |
 | --- | --- | --- | --- | --- |
-| 0x00 | `ID` | RO | 0x5205 | chip 'R', RTL revision 0.5 (0.4: 0x5204, 0.3: 0x5203, 0.2: 0x5202, 0.1: 0x5210) |
-| 0x01 | `STATUS` | RO | — | 0 AMP_LOW, 1 AMP_HIGH, 2 OVERSPEED, 3 TRACK_ERR, 4 CAL_VALID, 5 CLK_FAULT, 6 POS_VALID, 7 FAULT, 8 EN (synchronised), 9 GATE_ACTIVE, 10 OSC_DONE, 11 CAL_BUSY, 12 CAL_DONE, 13 CAL_EXH (any comparator) |
-| 0x02 | `FAULT` | RO | 0x1800 | latched causes: 0–3 comparator flags `cmp[3:0]`, 4 OTEMP, 5 AMP, 6 OVERSPEED, 7 WDT, 8 STO (EN low), 9 I2T_A, 10 I2T_B, 11 CAL (CRC mismatch), 12 POR |
+| 0x00 | `ID` | RO | 0x5207 | chip 'R', RTL revision 0.7 (0.5 and 0.6: 0x5205, 0.4: 0x5204, 0.3: 0x5203, 0.2: 0x5202, 0.1: 0x5210) |
+| 0x01 | `STATUS` | RO | — | 0 AMP_LOW, 1 AMP_HIGH, 2 OVERSPEED, 3 TRACK_ERR, 4 CAL_VALID, 5 CLK_FAULT, 6 POS_VALID, 7 FAULT, 8 EN (synchronised), 9 GATE_ACTIVE, 10 OSC_DONE, 11 CAL_BUSY, 12 CAL_DONE, 13 CAL_EXH (any comparator), 14 TRIM_UNLK (0.7, section 4.3) |
+| 0x02 | `FAULT` | RO | 0x1800 (EN high at reset; 0x1900 with EN low) | latched causes: 0–3 comparator flags `cmp[3:0]`, 4 OTEMP, 5 AMP, 6 OVERSPEED, 7 WDT, 8 STO (EN low), 9 I2T_A, 10 I2T_B, 11 CAL (CRC mismatch), 12 POR |
 | 0x03 | `FAULT_MASK` | RW | 0x0000 | 1 = source does not latch; bits 8, 11, 12 cannot be masked |
 | 0x04 | `CTRL` | RW | 0x0000 | 0 CLR (W1), 1 GATE_EN, 2 WDT_EN, 3 CMP_CAL (W1, section 4.10) |
 
 `CLR` clears each `FAULT` bit whose source is inactive at that moment. Bit 11 stays set while the
-calibration CRC does not match. After reset, the gates stay off until the host does these steps:
+calibration CRC does not match. Revision 0.7: the `EN` synchroniser resets to 1 (the idle level of the pad), so a
+power-up with `EN` high gives 0x1800, not 0x1900 (0.5 and 0.6 latched STO for the two ticks of synchroniser latency,
+r1_top finding R3). A power-up with `EN` low still latches STO. After reset, the gates stay off until the host does these steps:
 
 1. Write the calibration registers (section 4.4), the comparator words and the ADC weights of both slices.
 2. Run the comparator calibration (section 4.10), if it is used.
@@ -192,7 +196,7 @@ calibration CRC does not match. After reset, the gates stay off until the host d
 
 | Addr | Name | Type | Reset | Bits |
 | --- | --- | --- | --- | --- |
-| 0x08 | `OSC_CFG` | RW | 0x0016 | 4:0 OSC_TRIM (to `r1_osc`, reset 22, PLAN.md D13), 8 MEAS (W1) |
+| 0x08 | `OSC_CFG` | RW | 0x0016 | 4:0 OSC_TRIM (to `r1_osc`, reset 22, PLAN.md D13; codes below 18 locked, see the rule below), 8 MEAS (W1) |
 | 0x09 | `OSC_COUNT` | RO | 0 | clk ticks in 16 periods of the MA/SCLK pad; a read before `OSC_DONE` returns the running count |
 | 0x0A | `OSC_WIN` | RW | 0 | 7:0 LO, 15:8 HI, compared with OSC_COUNT[11:4]; 0 = no check |
 
@@ -209,7 +213,7 @@ To measure the oscillator, do these steps:
 the BiSS frame; it does not latch a `FAULT` bit. Example at 30 MHz with a 1 MHz reference:
 OSC_COUNT = 480, OSC_COUNT[11:4] = 30; `OSC_WIN` = 0x201C (LO 28, HI 32) accepts ±7 %.
 
-**`OSC_TRIM` rule (PLAN.md D13 amendment, 2026-10-21; documentation only, revision 0.6).** With `r1_osc` revision 2 the
+**`OSC_TRIM` rule (PLAN.md D13 amendment, 2026-10-21; hardware lock since revision 0.7).** With `r1_osc` revision 2 the
 frequency at ff, 1.32 V, -40 C is 39.5 MHz at the reset code 22 and up to 56.4 MHz at code 0. The digital macro closes
 static timing at 42 MHz only. Codes 0 to 17 can exceed 42 MHz at that corner. Rules for the host:
 
@@ -217,9 +221,26 @@ static timing at 42 MHz only. Codes 0 to 17 can exceed 42 MHz at that corner. Ru
 2. Write a code below 18 only after `OSC_COUNT` shows that the resulting frequency is 40 MHz or less.
 3. Do the check in small steps. Write one code, measure again (`OSC_CFG.MEAS`), then go on.
 
-The STA limit stays 42 MHz and no timing constraint changes. The macro does not enforce the rule. A hardware lock is an
-open item: writes below 18 would be ignored until `OSC_COUNT` has been read once since reset (one status bit). It is not
-in revision 0.5 or 0.6 (see `README.md`, revision 0.6, open issues).
+Hardware lock (revision 0.7). The macro enforces rules 2 and 3 with the status bit `STATUS.TRIM_UNLK` (bit 14, reset 0):
+
+- A write to `OSC_CFG` changes `OSC_TRIM` only if the new code equals the present code, or is 18 or above, or
+  `TRIM_UNLK` = 1. Otherwise the trim field keeps its value (read back `OSC_CFG` to see it); `MEAS` acts in all cases.
+- `TRIM_UNLK` is set by the read path: an SPI read of `OSC_COUNT` (0x09) sets it when, at that read, `OSC_DONE` = 1,
+  `OSC_WIN` is not 0 and the count is inside `OSC_WIN` (the `CLK_FAULT` compare: LO ≤ OSC_COUNT[11:4] ≤ HI and
+  OSC_COUNT < 4096). The macro does not know the reference frequency, so the host states the 40 MHz limit through
+  `OSC_WIN.HI`: HI = 40 MHz / f_ref − 1 for f ≤ 40 MHz (39 at f_ref = 1 MHz; HI = 40 allows up to 40.9 MHz).
+- `TRIM_UNLK` is cleared by every accepted write that changes `OSC_TRIM` (also to a code of 18 or above), and by reset.
+  Each step below 18 therefore needs a new measurement and read at the present code.
+
+Procedure for a code below 18:
+
+1. Write `OSC_WIN` with HI for 40 MHz at the reference frequency.
+2. Write `OSC_CFG` = present code + `MEAS`, send the reference clock, wait for `STATUS.OSC_DONE` = 1.
+3. Read `OSC_COUNT`. If the count is inside `OSC_WIN`, `STATUS.TRIM_UNLK` is 1.
+4. Write the next code (one or two codes lower). Read `OSC_CFG` to confirm it.
+5. Do steps 2 to 4 again for each further step.
+
+The STA limit stays 42 MHz and no timing constraint changes.
 
 ### 4.4 Calibration (position words; `CAL_CRC`)
 
@@ -311,8 +332,17 @@ the later `valid` of the two slices: 22 ticks for a conversion of ≤ 17 ticks. 
 (`adc_hold`, `is_smp`) are released when both slices have returned `valid`.
 
 Auto-zero window: `az_win` is high for AZ_LEN ticks from counter value AZ_START. The host puts
-it where both low-side FETs are off. The comparator flags are blanked during `az_win` and for
-16 ticks after it.
+it where both low-side FETs are off. Comparator mask (revision 0.7, INTERFACES.md "vref_b disturbance at the isense
+pedestal switch"): the four comparator flags are ignored during `az_win` and for `AZ_EXT` ticks after it (reset 120 =
+4 µs at 30 MHz; 0.6: fixed 16 ticks). The mask is aligned with the synchronised flags: a flag sampled at the first
+clock edge after the `az_win` rise up to the edge `AZ_EXT` ticks after the `az_win` fall is ignored; a flag sampled
+one tick later latches. `AZ_EXT` = 0 masks the window only. A flag that stays high through the mask latches at the end
+of the mask (it is not lost). The mask delays an over-current that starts in the window by up to AZ_LEN + AZ_EXT ticks.
+
+| Addr | Name | Type | Reset | Format |
+| --- | --- | --- | --- | --- |
+| 0x3E | `AZ_EXT` | RW | 120 (0x0078) | [7:0] comparator mask after `az_win`, ticks (0 = window only, at most 255 = 8.5 µs at 30 MHz). Bits 15:8 read 0. Not covered by `CAL_CRC` |
+
 
 ### 4.7 Current, temperature, I²t
 
@@ -393,8 +423,8 @@ which are the ADC weights (section 4.11; the BiSS control channel does not acces
 
 | Addr | Name | Type | Reset | Bits |
 | --- | --- | --- | --- | --- |
-| 0x36 | `CMP_THR_A` | RW | 0x3F3F | 5:0 THR_OC_A, 13:8 THR_NEG_A (to `r1_safe`) |
-| 0x37 | `CMP_THR_B` | RW | 0x3F3F | 5:0 THR_OC_B, 13:8 THR_NEG_B |
+| 0x36 | `CMP_THR_A` | RW | 0x003F | 5:0 THR_OC_A, 13:8 THR_NEG_A (to `r1_safe`). Reset (0.7): THR_OC 63, THR_NEG 0 = cell code 63 for both cells, the least-sensitive code (0.6: 0x3F3F) |
+| 0x37 | `CMP_THR_B` | RW | 0x003F | 5:0 THR_OC_B, 13:8 THR_NEG_B (reset as `CMP_THR_A`) |
 | 0x3A | `CMP_CAL_A` | RW | 0x2020 | 5:0 CAL_OC_A, 6 EXH_OC_A (RO), 13:8 CAL_NEG_A, 14 EXH_NEG_A (RO) |
 | 0x3B | `CMP_CAL_B` | RW | 0x2020 | 5:0 CAL_OC_B, 6 EXH_OC_B (RO), 13:8 CAL_NEG_B, 14 EXH_NEG_B (RO) |
 | 0x3C | `CMP_CAL_IDEAL` | RW | 0x3748 | 6:0 IDEAL_OC, 14:8 IDEAL_NEG: 2 × k_ideal rounded down (half codes); reset 72 (k_ideal 36.31) and 55 (27.69), from `r1_safe` revision 3 |
@@ -404,12 +434,24 @@ Comparator order of `cmp[3:0]` and `FAULT[3:0]`: 0 OC_A, 1 NEG_A, 2 OC_B, 3 NEG_
 summed into the threshold DAC with step VREF/252 = LSB/8 (k = 32: no shift); a flag = 1 means the
 input is above the cell threshold (`POL` = 0 for all four).
 
+Reset thresholds (revision 0.7, r1_top finding R4). With the `r1_safe` formulas Vth_od(code) = (2 code − 63)/63 · VREF and
+Vsh_th(code) = VREF · (1/26 + (2 code − 63)/882), VREF = 1.05 V, CAL 32:
+
+| Cell | Reset field | Cell code c | Trips when | Vod threshold | Shunt-referred threshold | At zero current (Vod −0.565 V) |
+| --- | --- | --- | --- | --- | --- | --- |
+| OC | THR_OC = 63 | 63 | Vod > Vth_od(63) | +1.050 V | +115.4 mV | no flag (margin 1.615 V Vod) |
+| NEG | THR_NEG = 0 | 63 | Vod < Vth_od(0) | −1.050 V | −34.6 mV | no flag (margin 0.485 V Vod) |
+| NEG, 0.6 reset | THR_NEG = 63 | 0 | Vod < Vth_od(63) | +1.050 V | +115.4 mV | **flag** (R4: FAULT bits 1 and 3 latch, CLR cannot clear) |
+
+Both reset codes are outside the r1_isense output range (codes ≥ 60), so the comparators are in effect off until the host
+writes its thresholds. The host writes `CMP_THR_A/B` before `CAL_CRC` and `CLR` (section 4.1).
+
 **Tap indices to `r1_safe` (revision 0.5).** `thr` and `cal` no longer leave the macro. The macro computes the tap indices
 of the `r1_safe` string multiplexers and presents them as `tap_p[31:0]` and `tap_n[31:0]`; comparator i (0 OC_A, 1 NEG_A,
 2 OC_B, 3 NEG_B) uses `tap_p[8i+7:8i]` = nP and `tap_n[8i+7:8i]` = nN, with c = thr (OC) or 63 - thr (NEG), d = cal - 32:
 `nP = 4c + ceil(d/2)`, `nN = 4(63 - c) - floor(d/2)`, both clipped to 0..252. The thr in the formula is the effective
 threshold (THR_ZERO during a search). The ports are registered: they change one tick after `CMP_THR`, `CMP_CAL` or the end of a
-search, and nP and nN of a comparator always change in the same tick. Reset values: OC nP 252, nN 0; NEG nP 0, nN 252 (thr 63, cal 32).
+search, and nP and nN of a comparator always change in the same tick. Reset values (0.7): nP 252, nN 0 on all four comparators (cell code 63, cal 32; 0.6: NEG nP 0, nN 252).
 Not covered by `CAL_CRC` (they are derived).
 
 Contract (`r1_safe` README, `sim/cal_model.py`): at zero current, with THR_ZERO = 14 on all four
@@ -438,7 +480,7 @@ To calibrate the comparator offsets, do these steps:
 6. Write the new `CAL_CRC` and `CTRL.CLR` (section 4.4).
 
 During the search (`CAL_BUSY`): all four threshold outputs carry THR_ZERO, the gates are off,
-and the comparator faults are blanked (and for 16 ticks after the search). The four comparators
+and the comparator faults are blanked (and for 16 ticks after the search; the `AZ_EXT` mask applies in addition). The four comparators
 are searched at the same time. Each decision uses the zero-current time after one `az_win`
 (STEP = 16 << CAL_STEP ticks): STEP ticks of settling, the preset code for STEP ticks, the probe
 code for STEP ticks, then the synchronised flag is sampled. If `az_win` starts again before the
@@ -542,6 +584,7 @@ the README).
 | `adc_hold` | out | high: both sin/cos track-and-holds hold (rising edge = sampling instant) |
 | `is_smp` | out | high: both isense track-and-holds hold (rising edge = current sampling instant) |
 | `adc_start`, `adc_sel` | out | one-tick pulse: both slices convert; `adc_sel` 0 = {SIN, COS}, 1 = {ISA, ISB} (stable during the conversion) |
+| `cur_trk` | out | registered (0.7): 1 = the SAR logic connects the CDAC to ISA/ISB while idle (tracking before the current strobe); 0 = SIN/COS. High from the tick after the scheduler `soon` or `req` until the current frame starts; low during encoder frames |
 | `adc_valid_a`, `adc_raw_a[13:0]` | in | slice A: one-tick pulse with the 14 raw decisions ([13] first); synchronous to `clk` |
 | `adc_valid_b`, `adc_raw_b[13:0]` | in | slice B: the same |
 | `cmp[3:0]` | in | comparator flags (0 OC_A, 1 NEG_A, 2 OC_B, 3 NEG_B), asynchronous, synchronised inside |
@@ -563,6 +606,7 @@ The testbench ADC model delivers `adc_valid_a` 17 ticks and `adc_valid_b` 16 tic
 
 | Version | Date | Change |
 | --- | --- | --- |
+| 0.7 | 2026-10-27 | ID 0x5207. One new output port `cur_trk` (section 6; ADC SAR sub-macro, D21). `CMP_THR_A/B` reset 0x003F (was 0x3F3F: NEG cell code 0 tripped at zero current, r1_top finding R4). `EN` synchroniser reset 1 (`FAULT` after a power-up with `EN` high is 0x1800, finding R3). `OSC_TRIM` hardware lock with `STATUS.TRIM_UNLK` (bit 14) set by a qualifying `OSC_COUNT` read (section 4.3). New register `AZ_EXT` (0x3E, reset 120): comparator mask after `az_win`, replaces the fixed 16 ticks (section 4.6). |
 | 0.1 | 2026-10-20 | first draft with the first RTL |
 | 0.5 | 2026-10-21 | ID 0x5205. Ownership gaps of the r1_top assembly closed. Ports: `thr_*`, `cal_*` and `ana_ctrl` removed; added `tap_p[31:0]`, `tap_n[31:0]` (tap-index adders in `r1_tapidx`, section 4.10), `pga_c[3:0]`, `t2f_en`, `t2f_mode`, `bias_en`. `ANA_CTRL` (0x0C) reset 0x0028; bits 2:0 `PGA_GAIN` (decoder to the 4 AFE lines), 3 `T2F_EN` (reset 1), 4 `T2F_MODE`, 5 `BIAS_EN` (reset 1), 6 `ADC_ARM`. New register `ADC_CFG` (0x3D, `DISCARD` reset 1) and the first-conversion discard (section 4.11). Bootstrap pre-charge hold sequence after reset and `ADC_ARM` (section 4.11). `r1_biss`: the reset of the MA-domain flops is released through a registered `ma_rel` (CDC finding F), no function change. Bug fix in `r1_gate`: the encoder frame start compare was 8 bit and never fired after `PAIR_TICKS` had been 0 for more than 255 ticks; now 9 bit. No other register, bit meaning or reset value changed. |
 | 0.4 | 2026-10-21 | ID 0x5204. Width changes only, no register, bit meaning or reset value removed (D10 area closure, S6 cut C2): `PWM_PERIOD`, `DUTY_A/B/C`, `PHASE_A/B/C`, `AZ_START` are 13 bit (bits 15:13 read 0, ignore writes; f_PWM at least 3.66 kHz at 30 MHz); ADC weights are stored in WW(i) bits (3 to 14, section 4.11). The configuration words are flip-flops on per-word gated clocks (section 4.12, implementation only). Documentation only: `ANA_CTRL` bit assignment (`PGA_GAIN` in 2:0), one-hot weight readback of raw decisions (section 4.11). |

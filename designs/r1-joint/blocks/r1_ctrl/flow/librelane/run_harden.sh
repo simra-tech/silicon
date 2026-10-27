@@ -11,7 +11,7 @@ B="$G1_RESULTS_ROOT/r1_ctrl/$RID"
 if [ -e "$B" ]; then echo "run id $RID exists" >&2; exit 1; fi
 mkdir -p "$B/flow" "$B/rtl"
 cp rtl/*.v "$B/rtl/"
-cp flow/librelane/config.yaml flow/librelane/pins*.cfg flow/r1_ctrl.sdc flow/r1_ctrl_pnr.sdc "$B/flow/"
+cp flow/librelane/config.yaml flow/librelane/pins*.cfg flow/r1_ctrl.sdc flow/r1_ctrl_pnr*.sdc "$B/flow/"
 # optional comparison variant: R1_LIB_VARIANT=<file> replaces rtl/r1_lib.v in the run
 # copy and adds the define R1_CFG_FLOPS (flip-flop register file; area/timing study)
 if [ -n "${R1_LIB_VARIANT:-}" ]; then
@@ -28,7 +28,7 @@ c = yaml.safe_load(open(sys.argv[1])); c.update(yaml.safe_load(open(sys.argv[2])
 yaml.safe_dump(c, open(sys.argv[1], 'w'), sort_keys=False)" "$B/flow/config.yaml" "$R1_CFG_APPEND"
   cp "$R1_CFG_APPEND" "$B/cfg_append.txt"
 fi
-(cd "$B" && sha256sum rtl/*.v flow/config.yaml flow/pins*.cfg flow/r1_ctrl.sdc flow/r1_ctrl_pnr.sdc) > "$B/inputs.sha256"
+(cd "$B" && sha256sum rtl/*.v flow/config.yaml flow/pins*.cfg flow/r1_ctrl.sdc flow/r1_ctrl_pnr*.sdc) > "$B/inputs.sha256"
 T0=$(date -u +%Y-%m-%dT%H:%M:%SZ)
 cd "$B/flow"
 timeout "$TMO" librelane config.yaml --pdk ihp-sg13g2 --pdk-root /foss/pdks --manual-pdk \
