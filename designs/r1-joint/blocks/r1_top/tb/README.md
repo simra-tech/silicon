@@ -48,6 +48,7 @@ MODEL parts (no block owns them yet; each is a gap of the chip, listed as an ope
 | M4 | `vcm2` (AFE output CM) and `vcm` (isense CM): ideal 0.6 V, 1 kOhm | `views/sch.inc` | the ADC revision 5 has no CM generator |
 | M5 | raw decisions: decoded from the ADC netlist raw word (`rawa`, `rawb`) by B sources | `views/sch.inc` | the ADC netlist exports the word as one analog node |
 | M6 | VREF buffer: ideal unity gain, 10 Ohm output, from `vref_bg` to `vref_l`; `r1_isense` and `r1_safe` take `vref_l`, T2F and the ADC filter keep `vref_bg` | `gen_chip.py` → `r1_chip.sp` | finding R1 (section 9): no block of record buffers the bandgap; without it `vref_bg` is 0.22 V |
+| M7 | Co-simulation time: Icarus cannot step back. When ngspice rejects a step, the shim reports "time reversal" and the digital side keeps its later time. Measured lead: up to 1.88 ns, mean 0.5-0.85 ns, 9-77 events per deck (runs `t10-t1b-fast-b`, `t10-t3-fast-b`, `t10-t4-fast-b`, `t10-t4-fast-a`, `t10-diag-t2enc-b`) | ngspice `d_cosim` + Icarus shim | the ADC strobe window (0.3-0.9 ns before the clk edge) is smaller than this lead; `post_tb.py` measures the strobe in the analog domain, so a moved strobe shows as a failure |
 
 TESTBENCH parts (not chip logic): the host/bench master `rtl/t10_master.v` (SPI host at 20 MHz, BiSS-C master at
 10 MHz, reference clock for `OSC_COUNT`, shunt level selector, testbench reset pulse `tb_rst_n` for decks 2-5),
@@ -67,6 +68,7 @@ Deviations:
 | D8 | Clock and core-output edges 250 ps (were 100 ps / 80 ps) | a realistic clock-tree slew; no measurable change of the wall time (run `t10-diag-m6-a`) |
 | D9 | Simulator options of decks 2-6: `method=gear maxord=2 reltol=2e-3 abstol=1e-10 vntol=1e-5 chgtol=1e-14 trtol=30` (were `reltol=1e-3 vntol=1e-6`) | about 1.25x faster (563 against 690 s per simulated µs, runs `t10-diag-opt-b`/`-a`). `trtol=30` has no effect: XSPICE sets `trtol` to 1 (log line "Reducing trtol to 1 for xspice 'A' devices"; G1 numerical note 6); this is why `t10-diag-trtol-a` changed nothing. `abstol=1e-9 chgtol=1e-13` were faster (355 s/µs) but abort in `xu_bgr.xqd1` (F11, run `t10-diag-opt-c` at 0.264 µs). Newton tolerance on a 1 V node is 2 mV + 10 µV; the criteria are ≥ 1 % (test 3), 0.25° (≈ 0.4 % amplitude, test 2) and ns-scale delays (test 4). Not cross-checked against the tight options on a full deck (O3) |
 | D10 | `gmin=1e-10` in deck 3 runs `-c`, `-d` (default 1e-12); `-d` also `method=trap` | aid against the `xu_bgr.xqd1` abort (F11); 100 pA at 1 V across each junction, against µA branch currents |
+| D11 | `--t2f-off`: the T2F enable input is held at VSS in decks without a T2F criterion (1b, 2, 3, 4, 6); the ctrl `t2f_en` output (reset 1) still drives its level shifter, loaded by 1 MΩ | the T2F comparator HBTs abort the transient in the fast view (F15); the T2F is checked in deck 5 |
 
 ## 4. Tests and pass criteria
 
@@ -176,12 +178,22 @@ evaluation alone.
 | F11 | The first D9 options (`abstol=1e-9 chgtol=1e-13`) were chosen from one 0.3 µs probe. All three decks then aborted in `xu_bgr.xqd1` within 0.26-0.87 µs. | numerical / planning | option study `t10-diag-opt-a..c`: the abort follows the loose `abstol`/`chgtol`; D9 keeps them tight |
 | F12 | Deck 3 aborts in `xu_bgr.xqd1` in five option sets (gear/trap, gmin, minbreak) at a fixed time per option set, from a quiet state: Newton does not converge at any step size. Likely cause (not proven): a derivative discontinuity of the VBIC quasi-saturation terms (`rci`, `vo`, `gamm`, `hrcf`) in a diode-connected HBT whose emitter is not at ground, crossed while the bandgap drifts slowly from the OP. G1 met the same device in 14 variants. The model card may not be changed. | numerical | open (O8) |
 | F13 | MODEL M1 timed the ADC strobes from the analog-delayed `adc_start` (1.14 ns after clk30), so every decision was sampled 0.54 ns after the comparator reset; deck 2 gave constant ADC words. Found from the RTL monitor, then confirmed with saved top plates. | verification-gap (testbench) | `T10_SEQ_LAT` correction; run `t10-diag-t2enc-b` |
+| F14 | All first-budget chip decks included the working-tree `r1_afe.spice` (revision F work of another track), not the revision E of record; `run.json` recorded its sha but nothing compared it with the record. | process-hygiene | `PINNED` sha table in `run_tb.py`; decks include `r1_afe_revE.spice`, `r1_bias_rev1d.spice` |
+| F15 | With `abstol=1e-12 gmin=1e-15` the fast-view decks still aborted in `xu_t2f.x1.xqa1` (deck 4 at 3.912 µs, deck 1b at 2.686 µs). The 0.6 µs probe that cleared these options was too short again (same mistake as F11). | numerical / verification-gap | D11 for decks without a T2F criterion; deck 5 handled separately |
+| F16 | Fast view: the `pcasc` source used VDDA − (2 VSG + VDS(MP1)) = VDDA − 2.550 V (0.75 V) in place of VDDA − (VSG + VDS(MP1)) = VDDA − 1.547 V (1.75 V, chip OP of `t10-diag-m6-a`). Only the T2F uses `pcasc`. Decks with the T2F held off (D11) are not affected. The fast-view T2F aborts of F15 ran with this wrong bias. | functional-bug (testbench) | fixed in `run_tb.py` (2026-10-26 23:15); T2F-alone decks `t10-diag-t2falone-a` (correct) and `-b` (old value) |
+| F17 | Deck 1b `tstop` 8 µs was set without timing the host sequence (2 µs wait, then six 1.575 µs SPI frames: about 12.5 µs). The `FAULT` read did not happen. | estimation | rerun to 13 µs, or pipeline the reads |
+| F18 | The T2F alone (`g1_t2f` rev 2, ideal fast-view rails, enable step at 1 µs) aborts in `x1.xqa1` 0.24-0.58 µs after the enable at `reltol` 2e-3, 1e-3, 5e-4 and 2e-4, with every other production option varied (`maxord`, `rshunt`, `vntol`, `abstol`, `method=trap`, no `klu`). It runs at `reltol=1e-4`, the value of the T2F block decks (1.624 MHz at 27 °C). The `pcasc` error F16 does not change it. `reltol` cannot be changed during a run (stop/resume test: same time points). | numerical | test 5 runs on the thermal subset at `reltol=1e-4` (section 12.6); decks 2-4 keep D11 |
+| F19 | Deck 3 (`t10-t3-fast-b`): the ADC sequencer model M1 stopped after the conversion that started at 12.94 µs; no conversion followed, so `I_A`/`I_B` kept the level-0 values (821/823 → 811) and both step criteria failed. The isense outputs were correct (level 0: −0.560 V on both channels; level 1: A −0.140 V, B +0.559 V; gain 14 as specified). Time reversals came at every strobe of that conversion (13.04-13.34 µs). Cause (most likely, not observed directly): a clock edge delivered twice gave a period near zero, a delay became negative, and Verilog took it as a very large delay. | verification-gap (testbench, M1 with M7) | periods below 20 ns ignored, delays clamped at zero (`rtl/r1_chip_dig.v`). The fix did **not** cure it: rerun `t10-t3-fast-c` (20 µs, deck 9257 s) stopped after the third conversion (`adc_start` last at 3.475 µs, `seq_stb13` last at 3.940 µs; no PWM edge, no `is_smp`; SPI still answers, `I_A`/`I_B` read 0). The negative-delay cause is therefore not confirmed. Deck 2 rerun `t10-t2-fast-b` with the same change stopped at the same conversion (START 3.507 µs in both decks), so the change itself causes this early stop; it is reverted (`rtl/r1_chip_dig.v` = HEAD, sha `9bc7ff1e…`). Decks `t10-t4-safe-a/-b` used the changed file; their ADC is a stub, so the change has no effect there. Open (O10) |
+| F20 | Deck 4 (`t10-t4-fast-b`, 36 µs, deck 11 634 s): the gates never switched, so the OC step was never applied (master waits for `GATE_A`). Cause: the sequence wrote `CMP_THR_A` = 0x3F2C (THR_NEG_A 63) and left THR_NEG_B at its reset value 63. NEG cell code c = 63 − THR_NEG = 0 gives the cell threshold −VREF, so NEG is active at zero current (`cmp_neg_a`, `cmp_neg_b` = 1.2 V from t = 0 in decks 3 and 4). FAULT bits 1 and 3 latch at the reset exit, and `CLR` keeps a bit whose source is active, also when it is masked. | functional-bug (testbench) | THR_NEG 0 on both channels (`rtl/t10_master.v`), `tstop` 38 µs; rerun `t10-t4-safe-a` |
+| F21 | Deck 4 `tstop` 38 µs (36 + one added SPI write) did not cover the last 3.6 µs clear window, which ends at 39.3 µs (the gate waits add time). The last criterion is not run. | estimation | rerun `t10-t4-safe-b` with `tstop` 40.5 µs |
 
 ## 10. Findings on the chip (from the testbench)
 
 | # | Finding | Evidence | Owner / next step |
 | --- | --- | --- | --- |
 | R1 | **No VREF buffer in the chip.** `r1_bgr` drives `vref_bg` with a source of about 180 kΩ (r1_bgr noise section). The chip netlist connects it directly to the `r1_safe` threshold string (252 kΩ, 4.2 µA) and to the `r1_isense` pedestal resistors (104 kΩ units; the isense netlist states "buffered; ideal source in this step"). The OP gives `vref_bg` = 0.22 V instead of 1.045 V; the OC thresholds and the isense pedestal scale with it. The `r1_bgr` README lists the load row as not run. | runs `t10-diag-oscideal-b`, `t10-diag-nodeset-b` (loaded, 0.2195 V) and `t10-diag-m6-a` (buffered, 1.0430 V) | functional-bug, chip level: a VREF buffer (or a buffered output of `r1_bgr`) for the resistive loads is needed; the testbench uses the ideal model M6 until then |
+| R3 | **`FAULT` reset value 0x1900, not 0x1800.** With `EN_STO_IN` high from t = 0, bit 8 (STO) is latched at the reset exit: the EN synchroniser `u_sen` (`r1_sync2`, default `RST_VAL = 0`) gives `en_s` = 0 for two ticks, and the latch takes `~en_s` as a cause. | run `t10-t1b-sub-a` (`FAULT` read 0x1900); RTL `r1_safe.v` lines with `u_sen` and the cause latch | `r1_ctrl`: `RST_VAL(1)` on `u_sen` (the combinational gate-off path does not use `en_s`), or a register-map change |
+| R4 | **Reset value of THR_NEG trips NEG.** `CMP_THR_A/B` reset 0x3F3F: for OC, THR 63 is the never-trip end; for NEG (c = 63 − THR_NEG) it is the always-trip end. After every reset FAULT bits 1 and 3 latch and stay until the host writes NEG thresholds; masking does not help (`CLR` keeps active sources). The register map lists the threshold write as host step 1, so the chip can work, but the reset state is not fail-quiet and is asymmetric. | decks `t10-t3-fast-b`, `t10-t4-fast-b`: `cmp_neg_a/b` = 1.2 V at zero current with reset codes | `r1_ctrl` / register map owner: reset THR_NEG 0, or state the reset FAULT value with NEG set |
 
 ## 11. Open issues
 
@@ -194,6 +206,8 @@ evaluation alone.
 | O5 | `views/pex.inc` is a template: extracted netlists of `r1_safe` (full block), `r1_t2f`, level shifters, `r1_gate_lv`, `r1_adc` (no layout of record) and the top wiring do not exist. | coordination |
 | O6 | MODEL parts M1-M5 (ADC sequencer, `cur_trk`, isense auto-zero phases, CM sources, raw-word decode) have no block of record. | coordination |
 | O8 | `xu_bgr.xqd1` (VBIC, diode-connected, emitter on `vd2`) aborts the transient in a reproducible way (F12). A fix needs either a model-side answer (PDK issue) or an accepted deck-local numerical aid. | numerical |
+| O9 | Decks 2-4 run at `reltol=2e-3` (D9). The T2F needs `reltol=1e-4` (F18). The other block decks of record were not re-run at `reltol=2e-3` by this track; a block-level comparison at both values is not run | verification-gap |
+| O10 | The ADC handshake between the testbench sequencer (M1) and the ctrl RTL stops after 13 conversions with the HEAD model (`t10-t3-fast-b`) and after 3 with the reverted F19 change (`t10-t3-fast-c`, `t10-t2-fast-b`); both decks show co-simulation time reversals at the strobes of the last conversion. Not explained. Next lever: monitor lines for `seq_valid`, `adc_valid` as seen by the ctrl, and the busy flags; reproduce on a short deck 3 (5 µs) with the AFE as a stub; test a two-tick `seq_valid` | verification-gap |
 | O7 | Every deck exceeds the 2 h budget (3.1-5.6 h at 563 s per simulated µs). Decks 5 (27 and 125 °C) and 6 did not run in the 8 h track budget: the three CPUs ran decks 2-4. | estimation |
 
 Finding R2 (cause found: testbench bug in MODEL M1, not a chip bug). In deck 2 both ADC slices returned 2063 (raw
@@ -206,3 +220,139 @@ reset. Fix: M1 subtracts `T10_SEQ_LAT` = 1.14 ns from the strobe and latch times
 `t10-diag-t2enc-b` confirms the fix (first conversion: residue below 1 mV, raw-word ratio within 0.5 % of the input ratio). Interface note for the real sequencer: the strobe position
 must hold 0.6 ns before the clk30 edge with sub-ns accuracy; a sequencer clocked from the same clk30 must
 account for its clock-to-output delay.
+
+## 12. Second budget (2026-10-26 evening): fast view, speed, power-up split
+
+All results in this section use the ideal VREF buffer model M6. Decision D20 (PLAN.md section 2a) makes the buffer
+a new `r1_bias` revision 2 output `vref_b`; M6 stays until that output exists.
+
+### 12.1 Netlists of record (pinned)
+
+The working tree holds revision work of other tracks: `r1_afe.spice` is revision F work (sha `44b7b406…`) and
+`r1_bias.spice` is revision 2 work (two new pins `vref`, `vref_b`). The decks now include the committed
+netlists of record: `r1_afe_revE.spice` (sha `4a84a3d8…` = HEAD `r1_afe.spice`) and `r1_bias_rev1d.spice` (sha
+`3fa56d92…` = HEAD `r1_bias.spice`). `run_tb.py` holds a `PINNED` sha table and refuses a deck whose input
+differs. All first-budget chip decks used a working-tree `r1_afe.spice` that was not the record (F14).
+
+### 12.2 Speed: what dominates (test 3 deck, 0.6 µs after the OP, ideal clock, 1 thread unless stated)
+
+| Run | Digital macro | bgr/bias/POR | Time points | s per simulated µs |
+| --- | --- | --- | --- | --- |
+| `t10-speed2-sch-rtl` | RTL co-simulation | real | 1945 | 622 |
+| `t10-speed2-sch-static-c` | static (DIAGNOSTIC) | real | 1687 | 494 |
+| `t10-speed2-fast-static-c` | static (DIAGNOSTIC) | behavioural | 1687 | 487 |
+| `t10-speed2-fast-static-th3` | static, 3 threads | behavioural | 1687 | 297 |
+| `t10-abort-fast-a` | RTL, `abstol=1e-12 gmin=1e-15` | behavioural | 1913 | 573 |
+
+Findings:
+
+1. The co-simulation costs about 25 % (15 % more time points, plus the bridge evaluation).
+2. Replacing `r1_bgr`, `r1_bias` and the POR saves 1-2 %: they are about 2 % of the 47 990 equations.
+3. The rest is the analog netlist itself at about 2800 time points per µs (about 47 per 30 MHz clock period),
+   at about 0.17 s per time point. Matrix load dominates (`r1_safe` holds 5146 of about 7500 devices).
+   Correction (section 12.7): `r1_safe` is not the only large term. With the AFE and ADC as stubs and `r1_safe` +
+   `r1_isense` real, the deck runs at about 350 s per simulated µs (1 thread, shared host), about half the full rate.
+4. Three threads give 1.64x. This is the main lever within the allowed options. Each production deck now runs with
+   2 or 3 threads.
+
+### 12.3 Fast view (`--fast`)
+
+| Block | In the fast view |
+| --- | --- |
+| `r1_bgr` | `vref` = ideal 1.0449 V (27 °C) / 1.04397 V (125 °C); `pbias` = VDDA − VSG, `pcasc` = VDDA − 2 VSG − VDS(MP1) (record `bgr-op-20261020-b`, tt); `iptat`, `vbe`, `dvbe` unloaded (not connected in the chip) |
+| `r1_bias` | 11 ideal current sources from VDDA: 10.14 / 5.07 µA at 27 °C, 13.41 / 6.71 µA at 125 °C (record `bias-op-20261021-d`, tt) |
+| POR | `por_n` = VDD from t = 0 (decks 2-6); in deck 1b a step at `--por-step` µs. The POR delay is the `r1_bias` record (197-247 µs) |
+| everything else | real netlists of record: pads (nodcn, D1), AFE, ADC, isense, safe, gate, level shifters, T2F, ctrl (RTL), osc (ideal clock D5 in decks 1b-5; real in deck 6) |
+
+Start: `--start op`. ngspice computes the operating point with the supplies on (fast view: converges in one
+gmin-stepping pass), then the transient starts from it; `tb_rst_n` resets the macro (D2). Options of every
+production deck: `method=gear maxord=2 reltol=2e-3 abstol=1e-12 vntol=1e-5 chgtol=1e-14 gmin=1e-15 itl4=100 klu
+rshunt=1e12` (D9 revised); `run.json` lists them with `fast`, `ctrl`, `threads`, `bridge_delay_ps`, `m6_vref_buffer`.
+
+### 12.4 The HBT abort
+
+| Run | View | Result |
+| --- | --- | --- |
+| `t10-speed2-fast-rtl-b` (`selft=0`), `-c` (`selft=1`), `-d` (50 ps bridge delay) | fast, RTL, `abstol=1e-10` | "timestep too small" at 0.2329 / 0.2340 / 0.2329 µs in the T2F HBT `xu_t2f.x1.xqa1`; clock low, no saved node switching. Self-heating and the bridge delay are not the cause |
+| `t10-speed2-fast-static-c` | fast, static macro | no abort to 0.6 µs (but the static macro also changes the circuit state: `t2f_en` = 0) |
+| `t10-abort-fast-a` | fast, RTL, `abstol=1e-12 gmin=1e-15` | **no abort** to 0.6 µs |
+| `t10-abort-fast-b` | fast, RTL, `reltol=1e-4 vntol=1e-7` as well | OP not found |
+
+The abort moves from `xu_bgr.xqd1` (schematic view) to the T2F HBT (fast view). It follows `abstol`: with 1e-9 it
+came earlier (F11), with 1e-12 and `gmin=1e-15` (the values of the `r1_bias` block decks, which never aborted) it
+did not come in 0.6 µs. It came later in the production decks (deck 4 `t10-t4-fast-a` at 3.912 µs, deck 1b
+`t10-t1b-fast-a` at 2.686 µs, both in `xu_t2f.x1.xqa1`, the T2F comparator input HBT). In the fast view the T2F holds
+the only active HBTs. Decks without a T2F criterion therefore hold the T2F enable low (D11).
+
+### 12.5 Power-up (test 1)
+
+Deck 1a (`run_pwrup.py`, real `r1_bgr` + `r1_bias` rev 1d with `r1_por` + the `r1_bias` consumer loads; `r1_osc`
+separately, because its 30 MHz edges set the step): rails ramp 0 → 3.3 V (VDDA, 10 µs from 1 µs) and 0 → 1.2 V
+(VDD, 10 µs from 2 µs), start from 0 V (`uic`). The POR release is not simulated (197-247 µs, `r1_bias` record).
+Deck 1b (`run_tb.py --test 1 --fast --start op --por-step 1`): `por_n` steps at 1 µs, the macro leaves reset and the
+host reads `ID`, `STATUS`, `FAULT`.
+
+### 12.6 The HBT abort: cause found in the T2F-alone deck, and the thermal subset
+
+The T2F-alone deck (`g1_t2f` rev 2 only, 3 s per run) reproduces the chip abort in `xu_t2f.x1.xqa1`
+(run `t10-diag-t2fopt-a`, `summary.txt`):
+
+| `reltol` | other options | Result |
+| --- | --- | --- |
+| 2e-3 (production) | production; also without `maxord`, `rshunt`, `klu`; `vntol=1e-6`; `abstol=1e-13`; `method=trap` | abort at 1.28 µs (0.28 µs after the enable) |
+| 1e-3 | production | abort at 1.58 µs |
+| 5e-4, 2e-4 | production | abort at 1.59 / 1.28 µs |
+| 1e-4 | production | **no abort** to 12 µs; 1.624 MHz |
+| 1e-4 | T2F block-deck options (`gmin=1e-15 abstol=1e-13 vntol=1e-6 method=gear`) | **no abort**; 1.624 MHz |
+
+With the enable high from t = 0 the T2F does not start (the operating point is a stable non-oscillating state;
+runs `t10-diag-t2falone-a`, `-b`). With the enable step it starts in 0.28 µs. In the chip the ctrl reset value
+`ANA_CTRL` = 0x0028 sets `T2F_EN` = 1 after the reset release, so the chip decks also have an enable step.
+
+The whole chip at `reltol=1e-4` does not fit the budget. Test 5 checks only the path T2F → level shifter → ctrl
+counter → SPI. The thermal subset (`--thermal-subset`, `run_tb.py`) keeps the pads, T2F, level shifters, gate,
+oscillator, the fast-view bgr/bias and the ctrl RTL, and replaces `r1_afe`, `r1_isense`, `r1_safe` and `r1_adc` by
+stubs (every pin to ground through 1 GOhm: comparator and ADC outputs read 0). Deck rate: about 37 s per simulated
+µs at `reltol=1e-4`, 1 thread (probe `t10-diag-t5sub-a`, 4 µs, T2F at 1.624 MHz, no abort). The subset is not a
+view for tests 2-4.
+
+Open: the decks of tests 2-4 run at `reltol=2e-3` with the T2F held off (D11). The other blocks with HBTs
+(`r1_bgr`) are behavioural in the fast view. This track did not re-run the block decks of record of the AFE, ADC,
+isense or safe at `reltol=2e-3`. This is open issue O9.
+
+### 12.7 Subset decks (tests 1b, 4, 5, 6)
+
+| Option | Real netlists | Stubs (every pin to ground through 1 GOhm; `vcm`, `vcm2` keep MODEL M4) | Used for |
+| --- | --- | --- | --- |
+| `--thermal-subset` | pads, T2F, level shifters, gate, osc (ideal or real), ctrl RTL; bgr/bias in the fast view | `r1_afe`, `r1_isense`, `r1_safe`, `r1_adc` | test 1b (reset exit, `ID`, `FAULT`), test 5 (T2F), test 6 (`OSC_COUNT`) |
+| `--safety-subset` | as above plus `r1_isense` and `r1_safe` | `r1_afe`, `r1_adc` | test 4 (OC, EN, clear) |
+
+Reason: each of these tests uses only the listed path. The subsets let the T2F run at `reltol=1e-4` (F18) and cut
+the deck time from about 600-700 s per simulated µs to 26 s (test 5), 55 s (test 1b), 155 s (test 6, real
+`r1_osc`) and about 350 s (test 4, safety subset). Effects not in a subset deck: the ADC sampling load
+(kickback) on the isense outputs, and the AFE and ADC supply current. Tests 2 and 3 need the AFE and the ADC; they
+run on the full fast view.
+
+### 12.8 Run log, second budget (all with M6; records in `runs/<run-id>/run.json`)
+
+| Run | Test | View, options | Simulated | Deck time | Result |
+| --- | --- | --- | --- | --- | --- |
+| `t10-t1a-dc-a` | 1a | `run_pwrup.py --part dc`, real bgr + bias rev 1d + POR, `reltol=1e-4` | 40 µs | 13 s | passed |
+| `t10-t1a-osc-a` | 1a | `run_pwrup.py --part osc`, real `r1_osc` | 20 µs | 317 s | passed (32.72 MHz) |
+| `t10-t1b-fast-a` | 1b | fast, T2F on, production options | 2.686 µs of 8 | 1807 s | failed: HBT abort `xu_t2f.x1.xqa1` (F15, F18) |
+| `t10-t1b-fast-b` | 1b | fast, D11 | 8 µs | 5515 s | 2 of 3 criteria passed; `FAULT` not read (F17) |
+| `t10-t1b-sub-a` | 1b | thermal subset, `reltol=1e-4` | 13 µs | 717 s | failed: `FAULT` 0x1900 (R3); reset exit and `ID` passed |
+| `t10-t2-fast-a` | 2 | fast, D11, 1 thread | 4.3 µs of 24 | 5073 s | stopped by the track (rate; F19) |
+| `t10-t3-fast-a` | 3 | fast, T2F on | — | 1206 s | failed: HBT abort (superseded by D11) |
+| `t10-t3-fast-b` | 3 | fast, D11, 2 threads | 20 µs | 10 495 s | failed: sequencer model stopped (F19) |
+| `t10-t4-fast-a` | 4 | fast, T2F on, 3 threads | 3.912 µs of 36 | 1716 s | failed: HBT abort `xu_t2f.x1.xqa1` |
+| `t10-t4-fast-b` | 4 | fast, D11, 3 threads | 36 µs | 11 634 s | failed: gates never on (F20, R4) |
+| `t10-t5-sub-27-a` | 5 | thermal subset, `reltol=1e-4`, 27 °C | 25 µs | 650 s | passed |
+| `t10-t5-sub-125-a` | 5 | thermal subset, `reltol=1e-4`, 125 °C | 25 µs | 716 s | passed |
+| `t10-t6-sub-a` | 6 | thermal subset, real `r1_osc`, `reltol=1e-4` | 12.5 µs | 1939 s | passed |
+| `t10-diag-t5sub-a` | 5 (probe) | thermal subset, 4 µs | 4 µs | 147 s | DIAGNOSTIC (T2F starts, no abort; verdict not used) |
+| `t10-diag-t2fopt-a` | — | T2F alone, 12 option sets | 12 µs each | 1-24 s each | DIAGNOSTIC (F18) |
+| `t10-t3-fast-c` | 3 | fast, D11, F19 change, 2 threads | 20 µs | 9257 s | failed: ADC handshake stopped after 3 conversions (O10) |
+
+| `t10-t4-safe-a` | 4 | safety subset, D11, F20 fix, 1 thread | 38 µs | 8121 s | 8 passed, 1 not run (F21) |
+| `t10-t2-fast-b` | 2 | fast, D11, R2 fix, F19 change (reverted), 3 threads | 24 µs | 9004 s | failed: 0 encoder pairs, ADC handshake stopped after 3 conversions (O10); SPI and BiSS frame worked |

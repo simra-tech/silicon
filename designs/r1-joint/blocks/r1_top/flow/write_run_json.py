@@ -81,7 +81,7 @@ res = {
     "inputs": {r["instance"]: {"macro": r["macro"], "source": r["source"], "sha256": r["source_sha256"]}
                for r in asm["placement"]},
     "lvs_reference_inputs": cdl.get("inputs", {}),
-    "placeholders": {k: [p["pin"] for p in v] for k, v in asm["placeholder_pins"].items()},
+    "placeholders": {k: [p["pin"] for p in v] for k, v in asm.get("placeholder_pins", {}).items()},
     "outputs": {"r1_top.gds": asm["gds_sha256"],
                 "cdl/r1_top.cdl": cdl.get("output_sha256"),
                 "r1_top.png": sha(os.path.join(run, "r1_top.png")) if os.path.exists(os.path.join(run, "r1_top.png")) else None},
@@ -93,6 +93,10 @@ res = {
     "routed_nets": len(asm.get("nets", [])),
     "ring_eco": asm["ring_eco"],
     "antenna_decap_row": asm.get("antenna_decap_row"),
+    "antenna_diodes": len(asm.get("antenna_diodes", [])) if isinstance(asm.get("antenna_diodes"), list) else asm.get("antenna_diodes"),
+    "tm1_over_mim_blocks": asm.get("tm1_over_mim_blocks"),
+    "maze": {k: asm["maze"][k] for k in ("grid_origin_um", "pitch_um", "failed", "access_failed")
+             if "maze" in asm and k in asm["maze"]},
     "checks": checks,
     "disposition": disposition,
 }

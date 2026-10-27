@@ -1,0 +1,62 @@
+* T10 test 1a: power-up subset (r1_bgr + r1_bias/r1_por + r1_osc), run t10-t1a-pwrup-a
+.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerHBT.lib hbt_typ
+.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerMOShv.lib mos_tt
+.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerMOSlv.lib mos_tt
+.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerRES.lib res_typ
+.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerCAP.lib cap_typ
+.include /work/designs/r1-joint/blocks/r1_bgr/schematic/r1_bgr.spice
+.include /work/designs/r1-joint/blocks/r1_bias/schematic/r1_bias.spice
+.include /work/designs/r1-joint/blocks/r1_bias/sim/r1_bias_loads.spice
+.include /work/designs/r1-joint/blocks/r1_osc/schematic/r1_osc.spice
+.option method=gear reltol=1e-4 abstol=1e-12 vntol=1e-6 chgtol=1e-15 gmin=1e-15 itl4=100 klu
+.temp 27
+.global sub!
+Vsub sub! 0 0
+* rails: VDDA 0 -> 3.3 V in 10 us from 1 us, VDD 0 -> 1.2 V in 10 us from 2 us
+Vdda vdda 0 pwl(0 0 1u 0 11u 3.3)
+Vdd vdd 0 pwl(0 0 2u 0 12u 1.2)
+Vdl vdl 0 dc 1.0
+Xbgr vdda 0 vref iptat pbias pcasc vbe dvbe r1_bgr
+* bgr loads as in the r1_bias decks: iptat into 1.0 V, vref 11 pF (ADC r1_reffilt5 10 pF + 1 pF)
+Vload iptat 0 dc 1.0
+Cvref vref 0 11p
+Xbias vdda vdd 0 pbias pcasc ib_afe_s1 ib_afe_s2 ib_afe_c1 ib_afe_c2 ib_is_a ib_is_b ib_sf_oa ib_sf_na ib_sf_ob ib_sf_nb ib_adc_ref por_n r1_bias
+Cpor por_n 0 0.2p
+Vm_ib_afe_s1 ib_afe_s1 ib_afe_s1_l dc 0
+XLD_ib_afe_s1 ib_afe_s1_l vdl 0 ld_afe_ota1
+Vm_ib_afe_s2 ib_afe_s2 ib_afe_s2_l dc 0
+XLD_ib_afe_s2 ib_afe_s2_l vdl 0 ld_afe_ota2
+Vm_ib_afe_c1 ib_afe_c1 ib_afe_c1_l dc 0
+XLD_ib_afe_c1 ib_afe_c1_l vdl 0 ld_afe_ota1
+Vm_ib_afe_c2 ib_afe_c2 ib_afe_c2_l dc 0
+XLD_ib_afe_c2 ib_afe_c2_l vdl 0 ld_afe_ota2
+Vm_ib_is_a ib_is_a ib_is_a_l dc 0
+XLD_ib_is_a ib_is_a_l vdl 0 ld_isense
+Vm_ib_is_b ib_is_b ib_is_b_l dc 0
+XLD_ib_is_b ib_is_b_l vdl 0 ld_isense
+Vm_ib_sf_oa ib_sf_oa ib_sf_oa_l dc 0
+XLD_ib_sf_oa ib_sf_oa_l vdl 0 ld_safe
+Vm_ib_sf_na ib_sf_na ib_sf_na_l dc 0
+XLD_ib_sf_na ib_sf_na_l vdl 0 ld_safe
+Vm_ib_sf_ob ib_sf_ob ib_sf_ob_l dc 0
+XLD_ib_sf_ob ib_sf_ob_l vdl 0 ld_safe
+Vm_ib_sf_nb ib_sf_nb ib_sf_nb_l dc 0
+XLD_ib_sf_nb ib_sf_nb_l vdl 0 ld_safe
+Vm_ib_adc_ref ib_adc_ref ib_adc_ref_l dc 0
+XLD_ib_adc_ref ib_adc_ref_l vdl 0 ld_adcref
+* r1_osc: enable tie-high (chip XU_TIE_OSC), trim code 22 = 10110 (ctrl OSC_CFG reset value) at VDD level
+Btr4 tr4 0 V=v(vdd)
+Btr3 tr3 0 V=0
+Btr2 tr2 0 V=v(vdd)
+Btr1 tr1 0 V=v(vdd)
+Btr0 tr0 0 V=0
+Ben osc_en 0 V=v(vdd)
+Xosc osc_en tr0 tr1 tr2 tr3 tr4 osc_clk vdd 0 r1_osc
+Cosc osc_clk 0 20f
+.save v(vdda) v(vdd) v(vref) v(pbias) v(pcasc) v(por_n) v(osc_clk) i(vm_ib_afe_s1) i(vm_ib_afe_s2) i(vm_ib_afe_c1) i(vm_ib_afe_c2) i(vm_ib_is_a) i(vm_ib_is_b) i(vm_ib_sf_oa) i(vm_ib_sf_na) i(vm_ib_sf_ob) i(vm_ib_sf_nb) i(vm_ib_adc_ref)
+.control
+tran 1n 40u 0 1n uic
+rusage all
+write <G1_RESULTS_ROOT>/r1_top/tb/t10-t1a-pwrup-a/tran.raw
+.endc
+.end

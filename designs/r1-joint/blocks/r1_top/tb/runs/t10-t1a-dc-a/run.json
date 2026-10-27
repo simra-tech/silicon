@@ -1,0 +1,33 @@
+{
+ "run_id": "t10-t1a-dc-a",
+ "block": "r1_top",
+ "track": "T10",
+ "test": "1a",
+ "description": "power-up subset: r1_bgr + r1_bias (r1_por) + r1_osc on ramped rails, real netlists",
+ "part": "dc",
+ "temp_c": 27.0,
+ "ramp_us": 10.0,
+ "tstop_us": 40.0,
+ "tstep": "1n",
+ "tmax": "10n",
+ "options": "method=gear reltol=1e-4 abstol=1e-12 vntol=1e-6 chgtol=1e-15 gmin=1e-15 itl4=100 klu",
+ "method_note": "uic start from 0 V (no operating point)",
+ "command": "flow/run.sh python3 designs/r1-joint/blocks/r1_top/tb/run_pwrup.py --run-id t10-t1a-dc-a --part dc --tstop 40 --tmax 10n",
+ "bulk_dir": "<G1_RESULTS_ROOT>/r1_top/tb/t10-t1a-dc-a",
+ "started_utc": "2026-10-26T20:03:09Z",
+ "pdk_commit": "84374023ee8b4b126bebbba67fcbada0a9c0ff0b",
+ "inputs_sha256": {
+  "designs/r1-joint/blocks/r1_bgr/schematic/r1_bgr.spice": "c19a7425d605906962724fdda21add8ae3926dc9a097c6f835a16f05f92c0c26",
+  "designs/r1-joint/blocks/r1_bias/schematic/r1_bias_rev1d.spice": "3fa56d9296f8c409fd1335a6595eae459b39324837c5bfae9ea7693584b29ff4",
+  "designs/r1-joint/blocks/r1_bias/sim/r1_bias_loads.spice": "4df2d4bb037313efe2c6a75a2ee2edb1dea50e2dde84f9fe69320f7749d8856c",
+  "designs/r1-joint/blocks/r1_osc/schematic/r1_osc.spice": "00c73f748d86f2cbf5081d5c4c5fe298bd5213bf9ba2ae63bf4b0ea802c91c02"
+ },
+ "m6_vref_buffer": "not in this deck (bgr vref loaded by 11 pF only)",
+ "status": "completed",
+ "rc": 0,
+ "total_analysis_time": "13.1705",
+ "transient_analysis_time": "13.1581",
+ "accepted_timepoints": "4557",
+ "circuit_equations": "2137",
+ "verdict": "passed"
+}

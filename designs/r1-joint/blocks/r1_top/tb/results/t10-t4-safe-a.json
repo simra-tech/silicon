@@ -1,0 +1,220 @@
+{
+ "run_id": "t10-t4-safe-a",
+ "test": 4,
+ "view": "sch",
+ "corner": "tt",
+ "temp_c": 27.0,
+ "sim_status": "completed",
+ "ngspice_wall_s": 8120.9,
+ "tstop_us": 38.0,
+ "master_done_us": null,
+ "t_end_us": 37.99999999999999,
+ "vref_bg_t0_V": 1.0449,
+ "criteria": [
+  {
+   "name": "start state: vref_bg at t = 0 is the on-state of r1_bgr (1.045 V record)",
+   "value": 1.0449,
+   "limit": "1.00-1.09",
+   "unit": "V",
+   "status": "passed"
+  },
+  {
+   "name": "master sequence completed (DONE line)",
+   "value": null,
+   "limit": "before tstop",
+   "unit": "",
+   "status": "failed"
+  },
+  {
+   "name": "all three gates high before the step (fault path exercised on driven gates)",
+   "value": [
+    3.300000021883428,
+    3.3000000218834242,
+    3.30000002188343
+   ],
+   "limit": "> 3.0 V",
+   "unit": "",
+   "status": "passed"
+  },
+  {
+   "name": "OC step: all gates < 1 V within comparator 236 ns + 4 ticks + gate 1 us",
+   "value": [
+    277.68569602002185,
+    277.68569602002185,
+    277.68569602002185
+   ],
+   "limit": "<= 1369 ns",
+   "unit": "ns",
+   "status": "passed"
+  },
+  {
+   "name": "OC step: FAULT_N low",
+   "value": 165.50660587982802,
+   "limit": "<= 1369 ns",
+   "unit": "ns",
+   "status": "passed"
+  },
+  {
+   "name": "fault cause after the step is OC_A (bit 0, monitor of the latched cause)",
+   "value": [
+    "0001",
+    "0100"
+   ],
+   "limit": "bit 0",
+   "unit": "",
+   "status": "passed"
+  },
+  {
+   "name": "after CLR: PWM on GATE_A again",
+   "value": [
+    1
+   ],
+   "limit": ">= 1 rising edge in 3.6 us",
+   "unit": "",
+   "status": "passed"
+  },
+  {
+   "name": "EN low: all gates < 1 V within 1 us (gate-drive row)",
+   "value": [
+    85.25781537883107,
+    85.25781537883107,
+    85.25781537883107
+   ],
+   "limit": "<= 1000",
+   "unit": "ns",
+   "status": "passed"
+  },
+  {
+   "name": "FAULT register: STO (bit 8) latched after EN low",
+   "value": [
+    [
+     32.246500000000005,
+     "0x0100"
+    ]
+   ],
+   "limit": "bit 8",
+   "unit": "",
+   "status": "passed"
+  },
+  {
+   "name": "after EN high and CLR: PWM on GATE_A again",
+   "value": [],
+   "limit": ">= 1 rising edge in 3.6 us",
+   "unit": "",
+   "status": "failed"
+  }
+ ],
+ "measurements": {
+  "oc_threshold_shunt_mV": 69.80580847723704,
+  "t_cross_us": 19.78112379495062,
+  "fault_delay_ns": 165.50660587982802,
+  "gate_delay_ns": [
+   277.68569602002185,
+   277.68569602002185,
+   277.68569602002185
+  ],
+  "gates_before_V": [
+   3.300000021883428,
+   3.3000000218834242,
+   3.30000002188343
+  ],
+  "limit_ns": 1369.3327364499505,
+  "f_clk_MHz": 30.000134299362294,
+  "fault_reads": [
+   [
+    32.246500000000005,
+    "0x0100"
+   ]
+  ],
+  "fault_cause_monitor": [
+   "0001",
+   "0100"
+  ],
+  "en_gate_delay_ns": [
+   85.25781537883107,
+   85.25781537883107,
+   85.25781537883107
+  ],
+  "en_gates_before_V": [
+   3.299999997375451,
+   3.2999999973754566,
+   3.2999999973754512
+  ]
+ },
+ "spi": [
+  {
+   "kind": "SPIWR",
+   "t": "3476.0",
+   "addr": "36",
+   "data": "002c"
+  },
+  {
+   "kind": "SPIWR",
+   "t": "5051.0",
+   "addr": "37",
+   "data": "003f"
+  },
+  {
+   "kind": "SPIWR",
+   "t": "6626.0",
+   "addr": "18",
+   "data": "0039"
+  },
+  {
+   "kind": "SPIWR",
+   "t": "8201.0",
+   "addr": "20",
+   "data": "0064"
+  },
+  {
+   "kind": "SPIWR",
+   "t": "9776.0",
+   "addr": "21",
+   "data": "004b"
+  },
+  {
+   "kind": "SPIWR",
+   "t": "11351.0",
+   "addr": "22",
+   "data": "004b"
+  },
+  {
+   "kind": "SPIWR",
+   "t": "12926.0",
+   "addr": "23",
+   "data": "004b"
+  },
+  {
+   "kind": "SPIWR",
+   "t": "14501.0",
+   "addr": "03",
+   "data": "000e"
+  },
+  {
+   "kind": "SPIWR",
+   "t": "16076.0",
+   "addr": "04",
+   "data": "0003"
+  },
+  {
+   "kind": "SPIWR",
+   "t": "22546.5",
+   "addr": "04",
+   "data": "0003"
+  },
+  {
+   "kind": "SPIRD",
+   "t": "32246.5",
+   "addr": "02",
+   "data": "0100",
+   "status": "90"
+  },
+  {
+   "kind": "SPIWR",
+   "t": "35696.5",
+   "addr": "04",
+   "data": "0003"
+  }
+ ],
+ "verdict": "failed"
+}

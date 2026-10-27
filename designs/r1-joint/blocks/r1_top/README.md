@@ -7,16 +7,18 @@ the finished macros. The four macros that are not finished are placeholder outli
 
 Method, coverage, MODEL parts and the swap to post-layout netlists: [`tb/README.md`](tb/README.md). One deck per
 test on the schematic netlists of record, with the r1_ctrl 0.5 RTL in an XSPICE `d_cosim` instance (G1 method).
-Raw data: `<G1_RESULTS_ROOT>/r1_top/tb/<run-id>/`. Summaries: `tb/results/<run-id>.json`.
+Raw data: `<G1_RESULTS_ROOT>/r1_top/tb/<run-id>/`. Summaries: `tb/results/<run-id>.json`. Every result uses the
+ideal VREF buffer model M6 (D20: `r1_bias` revision 2 output `vref_b`, not yet designed). Second-budget decks use
+the fast view (`tb/README.md` section 12): `r1_bgr`, `r1_bias` and the POR as recorded behaviour, everything else real.
 
 | Test | Status | Evidence |
 | --- | --- | --- |
-| 1 Power-up (ramps, `por_n`, bandgap and bias settle, oscillator at code 22, reset exit, `ID` over SPI) | failed (simulator abort, not a chip result): the ramp stops at 16.28 µs in a T2F HBT, "timestep too small" (run `t10-t1-sch-a`, before M6); the POR release at about 240 µs needs about 50 h at the measured rate. Not rerun | `tb/runs/t10-t1-sch-a/run.json` |
-| 2 Encoder path (10 kHz, pads → AFE → ADC → weights → CORDIC; SPI `POS`; one BiSS-C frame with CRC) | failed (run `t10-t2-sch-b`: simulator abort at 4.55 µs in `xu_bgr.xqd1`, before the SPI reads). Partial: AFE outputs correct; ADC words constant at 2063 because of a testbench sequencer bug (finding R2, fixed after this run); rerun `t10-t2-sch-c` with the fix running | `tb/runs/t10-t2-sch-b/run.json`, `tb/results/t10-t2-sch-b.json`, `tb/runs/t10-diag-t2enc-b/run.json` |
-| 3 Current path (shunt levels at the PWM centre strobe; `I_A`/`I_B` within 1 %) | failed (simulator abort, not a chip result): "timestep too small" in `xu_bgr.xqd1` before the first strobe, in five option sets (runs `t10-t3-sch-a` .. `-e`, 0.56-1.78 µs) | `tb/runs/t10-t3-sch-e/run.json`, `tb/results/t10-t3-sch-e.json` |
-| 4 Safety (OC step → `FAULT_N` and gates low; EN low → gates low; clear sequences) | running (run `t10-t4-sch-c`, started 2026-10-26) | `tb/runs/t10-t4-sch-c/run.json` |
-| 5 Thermal (T2F count at 27 °C and 125 °C) | 27 °C: running (run `t10-t5-sch-27-a`); 125 °C: not run (no CPU in the track budget) | `tb/runs/t10-t5-sch-27-a/run.json` |
-| 6 Oscillator trim count (`OSC_COUNT` against the simulated frequency) | not run (no CPU in the track budget; deck and criterion ready) | — |
+| 1 Power-up (ramps, `por_n`, bandgap and bias settle, oscillator at code 22, reset exit, `ID` over SPI) | 1a **passed** (real `r1_bgr` + `r1_bias` rev 1d/POR + loads, 10 µs ramps: VREF 1.0449 V settled 1.9 µs after VDDA, all 11 bias outputs 10.14 / 5.07 µA within 0.02 % of the record, settled by 11.2 µs, `por_n` held low to 40 µs; deck 13 s). Oscillator part **passed** against the schematic record: 32.72 MHz at code 22 (record 32.69 MHz); the D13 band 28-32 MHz is not applicable at schematic level (post-layout record 30.30 MHz); deck 317 s. POR release not simulated: 197-247 µs (`r1_bias` record). 1b **failed** on one criterion (run `t10-t1b-sub-a`: subset F18, fast view, M6, `reltol=1e-4`, `por_n` step at 1.0 µs, 13 µs, deck 717 s): reset exit passed (1.041 µs, limit `por_n` + 0.17 µs); `ID` passed (0x5205); `FAULT` has POR and CAL set (passed) but reads 0x1900, not the reset value 0x1800 (failed: finding R3, STO latched at reset exit). Next lever: `r1_ctrl` owner, `u_sen` reset value. The full fast-view deck `t10-t1b-fast-b` (8 µs, deck 5516 s) gave the same reset exit and `ID`; its `tstop` was too short for the `FAULT` read (F17). First-budget full-chip ramp `t10-t1-sch-a` failed (simulator abort) | `tb/results/t10-t1a-dc-a.json`, `tb/results/t10-t1a-osc-a.json`, `tb/results/t10-t1b-sub-a.json`, `tb/results/t10-t1b-fast-b.json` |
+| 2 Encoder path (10 kHz, pads → AFE → ADC → weights → CORDIC; SPI `POS`; one BiSS-C frame with CRC) | **failed** (testbench, not a chip result). Run `t10-t2-fast-b` (fast view, D11, M6, R2 fix, 3 threads, 24 µs, deck 9004 s): the testbench ADC sequencer / ctrl handshake stopped after the third conversion (3.5 µs; the F19 change caused this early stop and is reverted; open issue O10), so 0 encoder pairs (limit ≥ 10). Parts that ran: strobe position passed (0.595-0.603 ns); SPI reads answered (`STATUS` 0x0190); one BiSS-C frame with ACK, stop bit and CRC equal to the computed CRC (0x3F; data 0). Next lever: O10, then rerun on the HEAD model. Run `t10-t2-fast-a` stopped by the track (rate) | `tb/results/t10-t2-fast-b.json`, `tb/runs/t10-t2-fast-a/run.json` |
+| 3 Current path (shunt levels at the PWM centre strobe; `I_A`/`I_B` within 1 %) | **failed** (testbench, not a chip result). Rerun `t10-t3-fast-c` (fast view, D11, M6, F19 change since reverted, 2 threads, 20 µs, deck 9257 s): the testbench ADC sequencer / ctrl handshake stopped after the third conversion (3.5 µs); no current frame; `I_A`/`I_B` read 0 (open issue O10 in `tb/README.md`). Run `t10-t3-fast-b` (deck 10 495 s): 13 conversions, then the same stop; strobe position passed (0.593-0.605 ns, limit 0.3-0.9 ns); isense outputs correct (gain 14: level 0 −0.560 V, level 1 A −0.140 V, B +0.559 V); steps failed (−101 %). Next lever: handshake monitors and a 5 µs reproduction deck (O10). First budget: simulator abort in `xu_bgr.xqd1` | `tb/results/t10-t3-fast-c.json`, `tb/results/t10-t3-fast-b.json` |
+| 4 Safety (OC step → `FAULT_N` and gates low; EN low → gates low; clear sequences) | 8 criteria **passed**, 1 **not run** (run `t10-t4-safe-a`: safety subset, isense/safe/gate real, AFE and ADC stubs; fast view, D11, M6, THR_NEG fix F20; 38 µs, deck 8121 s). OC step (30 → 100 mV on ISA, threshold 69.8 mV): `FAULT_N` low after 166 ns, all gates < 1 V after 278 ns (limit 1369 ns); cause OC_A; after `CLR` PWM on `GATE_A` again. EN low: gates < 1 V after 85 ns (limit 1 µs); `FAULT` = 0x0100 (STO). After EN high and `CLR`: not run, the 3.6 µs window ends at 39.3 µs and `tstop` was 38 µs (F21). Rerun `t10-t4-safe-b` (`tstop` 40.5 µs, 2 threads) running. Earlier run `t10-t4-fast-b` failed: gates never on (F20, finding R4) | `tb/results/t10-t4-safe-a.json`, `tb/runs/t10-t4-safe-b/run.json`, `tb/results/t10-t4-fast-b.json` |
+| 5 Thermal (T2F count at 27 °C and 125 °C) | 27 °C **passed** (run `t10-t5-sub-27-a`, thermal subset F18, fast view, M6, `reltol=1e-4`, 25 µs, deck 650 s): `TEMP` = 14, expected 13.86 ± 1 (f_T2F × 2^8 / f_clk); f_T2F 1.624 MHz, +1.49 % against the T2F record 1.6003 MHz (limit 3 %). 125 °C **passed** (run `t10-t5-sub-125-a`, deck 716 s): `TEMP` = 18, expected 18.22 ± 1; f_T2F 2.135 MHz, +1.17 % against the record 2.1100 MHz. The full fast view cannot run this test: the T2F HBT aborts at `reltol=2e-3` (F18) | `tb/runs/t10-t5-sub-27-a/run.json`, `tb/results/t10-t5-sub-27-a.json`, `tb/results/t10-t5-sub-125-a.json` |
+| 6 Oscillator trim count (`OSC_COUNT` against the simulated frequency) | **passed** (run `t10-t6-sub-a`: thermal subset F18 with the transistor-level `r1_osc`, fast view, M6, `reltol=1e-4`, 12.5 µs, deck 1939 s): `OSC_COUNT` = 53, expected 52.33 ± 1.5 (16 f_osc / f_ref, f_ref 10 MHz); `r1_osc` at code 22: 32.71 MHz (schematic record 32.69 MHz ± 2 %); `STATUS.OSC_DONE` set (0x0580) | `tb/runs/t10-t6-sub-a/run.json`, `tb/results/t10-t6-sub-a.json` |
 | Post-layout rerun (`--view pex`) | not run (no `views/pex.inc`; ADC layout does not exist) | — |
 
 Finding R1 (functional bug, chip level): no block of record buffers `vref_bg`. The `r1_bgr` output (about 180 kΩ
@@ -27,7 +29,19 @@ buffer exists. All results above are with M6.
 Finding R2 (testbench bug, fixed): in deck 2 both ADC slices returned the constant code 2063. The cause is the
 testbench sequencer model M1: its strobes reached the ADC 0.54 ns after the clk30 edge (`tb/README.md` section 10).
 The fix is in `tb/rtl/r1_chip_dig.v` and is confirmed on the first conversion (run `t10-diag-t2enc-b`); deck 2
-runs again with it (`t10-t2-sch-c`, running at the end of the track budget).
+runs again with it (run `t10-t2-fast-a`, fast view).
+
+Finding R3 (functional bug, `r1_ctrl` RTL 0.5): after reset, `FAULT` reads 0x1900, not the register-map reset value
+0x1800, with `EN_STO_IN` high the whole time (run `t10-t1b-sub-a`). Bit 8 (STO) is latched. Cause (from the RTL):
+the EN synchroniser `u_sen` in `r1_safe.v` uses `r1_sync2` with the default `RST_VAL = 0`. For two ticks after the
+reset release `en_s` = 0, and the fault latch takes `~en_s` as a cause. The host must write `CLR` once after
+power-up. Next step (owner `r1_ctrl`): `RST_VAL(1)` on `u_sen`, or document 0x1900 as the reset value. The
+combinational gate-off path from the EN pad does not use `en_s`, so `RST_VAL = 1` does not weaken STO.
+
+Finding R4 (specification, `r1_ctrl` register map): the reset value of `CMP_THR_A/B` (0x3F3F) makes both NEG
+comparators active at zero current (NEG cell code c = 63 − THR_NEG = 0, threshold −VREF; `cmp_neg_a/b` = 1.2 V in
+decks 3 and 4). FAULT bits 1 and 3 latch at every reset exit and `CLR` cannot clear them, even when masked, until
+the host writes NEG thresholds. Next step (owner `r1_ctrl`): reset THR_NEG 0, or document the reset behaviour.
 
 ## Try e (2026-10-21): floorplan C4 on the 1700 µm ring — run of record `asm-20261021-e4`
 

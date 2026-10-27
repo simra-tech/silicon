@@ -172,7 +172,10 @@ module t10_master (
         if (`T10_TEST == 4) begin
             // ---- test 4: PWM 160 ticks, all three windows 0..120 (on 90 ticks = 3 us), OC_A threshold 44 ----
             #(`T10_SETTLE_NS); tb_reset;
-            spi_wr(7'h36, 16'h3F2C);          // CMP_THR_A: THR_OC_A 44, THR_NEG_A 63
+            // CMP_THR: THR_NEG 0 (cell code c = 63: NEG never trips). The reset value THR_NEG 63 (c = 0) trips NEG at
+            // zero current, and CLR does not clear an active source (finding R4; the first sequence wrote 63, F20)
+            spi_wr(7'h36, 16'h002C);          // CMP_THR_A: THR_OC_A 44, THR_NEG_A 0
+            spi_wr(7'h37, 16'h003F);          // CMP_THR_B: THR_OC_B 63, THR_NEG_B 0
             write_crc;                        // CRC check runs (<= 174 ticks) during the next writes
             spi_wr(7'h20, 16'd100);           // PWM_PERIOD 100 ticks (3.3 us; compressed, D7)
             spi_wr(7'h21, 16'd75); spi_wr(7'h22, 16'd75); spi_wr(7'h23, 16'd75);      // DUTY_A/B/C

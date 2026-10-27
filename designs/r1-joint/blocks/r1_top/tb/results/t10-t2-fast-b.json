@@ -1,0 +1,92 @@
+{
+ "run_id": "t10-t2-fast-b",
+ "test": 2,
+ "view": "sch",
+ "corner": "tt",
+ "temp_c": 27.0,
+ "sim_status": "completed",
+ "ngspice_wall_s": 9003.8,
+ "tstop_us": 24.0,
+ "master_done_us": 21.076,
+ "t_end_us": 24.0,
+ "vref_bg_t0_V": 1.0449,
+ "criteria": [
+  {
+   "name": "start state: vref_bg at t = 0 is the on-state of r1_bgr (1.045 V record)",
+   "value": 1.0449,
+   "limit": "1.00-1.09",
+   "unit": "V",
+   "status": "passed"
+  },
+  {
+   "name": "master sequence completed (DONE line)",
+   "value": 21.076,
+   "limit": "before tstop",
+   "unit": "",
+   "status": "passed"
+  },
+  {
+   "name": "ADC strobes 0.6 ns before the clk30 edge (M1 check, 3 conversions)",
+   "value": [
+    0.595,
+    0.603
+   ],
+   "limit": "0.3-0.9 ns",
+   "unit": "ns",
+   "status": "passed"
+  },
+  {
+   "name": "enough encoder pairs (>= 10) after the reset",
+   "value": 0,
+   "limit": ">= 10",
+   "unit": "",
+   "status": "failed"
+  }
+ ],
+ "measurements": {
+  "pairs_used": 0
+ },
+ "spi": [
+  {
+   "kind": "SPIWR",
+   "t": "3476.0",
+   "addr": "07",
+   "data": "0040"
+  },
+  {
+   "kind": "SPIWR",
+   "t": "5051.0",
+   "addr": "18",
+   "data": "00ba"
+  },
+  {
+   "kind": "SPIRD",
+   "t": "6626.0",
+   "addr": "19",
+   "data": "0821",
+   "status": "80"
+  },
+  {
+   "kind": "SPIRD",
+   "t": "8201.0",
+   "addr": "1f",
+   "data": "1bfb",
+   "status": "80"
+  },
+  {
+   "kind": "SPIRD",
+   "t": "9776.0",
+   "addr": "19",
+   "data": "096d",
+   "status": "80"
+  },
+  {
+   "kind": "SPIRD",
+   "t": "11351.0",
+   "addr": "01",
+   "data": "0190",
+   "status": "90"
+  }
+ ],
+ "verdict": "failed"
+}

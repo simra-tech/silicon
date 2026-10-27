@@ -6,12 +6,12 @@
 * Paths are container paths (repository mounted at /work by flow/run.sh).
 *
 * Netlists of record (sha256 recorded by tb/run_tb.py in run.json; table in tb/README.md):
-.include /work/designs/r1-joint/blocks/r1_afe/schematic/r1_afe.spice
+.include /work/designs/r1-joint/blocks/r1_afe/schematic/r1_afe_revE.spice
 .include /work/designs/r1-joint/blocks/r1_adc/schematic/r1_adc_r5.spice
 .include /work/designs/r1-joint/blocks/r1_isense/schematic/r1_isense.spice
 .include /work/designs/r1-joint/blocks/r1_safe/schematic/r1_safe.spice
 .include /work/designs/r1-joint/blocks/r1_bgr/schematic/r1_bgr.spice
-.include /work/designs/r1-joint/blocks/r1_bias/schematic/r1_bias.spice
+.include /work/designs/r1-joint/blocks/r1_bias/schematic/r1_bias_rev1d.spice
 .include /work/designs/r1-joint/blocks/r1_osc/schematic/r1_osc.spice
 .include /work/designs/r1-joint/blocks/r1_t2f/schematic/g1_t2f_rev2.spice
 .include /work/designs/r1-joint/blocks/r1_gate/schematic/g1_cells_copy.spice
