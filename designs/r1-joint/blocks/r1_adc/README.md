@@ -1,5 +1,293 @@
 # R1_ADC — 12-bit SAR ADC with two simultaneous track-and-holds (schematic level, revisions 1 to 5)
 
+## Layout B (revision 5, 2026-10-26, track T2)
+
+State: **not closed.** Layout B3 is the layout of record (`layout/r1_adc.gds`, sha256 `677c7ef8…`). It is DRC
+clean (main + maximal), antenna clean, LVS clean and passes the pin check in the same box (439.0 × 182.3 µm)
+with the same 51 pins (run `layout-b3`). Post-layout (simulated, PEX B3): R2-4 tt 0.285 LSB **fails** the
+0.25 LSB limit by 0.035; R2-4 ss125 0.241 LSB passes; the first conversion passes at tt and ss; the static
+windows (B2 netlist) pass. The gain 1.058 gives a full scale of ±0.864 V, so D16 (±0.9 V) **fails**. IDD is 15 %
+low. Layout A is kept as `layout/r1_adc_layout_a.gds`. The netlist of record is not changed (no revision 5a, see
+"Top-plate reset level"). All numbers in this section are from layout tools or are **simulated**. Nothing is
+measured.
+
+### Diagnosis of layout A (simulated, tt)
+
+The diagnosis splits the layout A post-layout netlist into a C-only netlist and an R-only netlist
+(`sim/post/make_diag_netlist.py`: it removes the `Cp` elements or sets the wiring resistors to 0.05 Ω).
+
+| Quantity | Pre-layout | C only | R only | RC (layout A) | Evidence |
+| --- | --- | --- | --- | --- | --- |
+| Mux gain | 0.998 | 1.089 | 1.031 | 1.127 | `post-isa-tt-cm2`, `postb-diag-isa-tt-r` (`sim/post/results/postb_diag_isa_tt_r.json`), `post-isa-tt-rc2` |
+| Mux offset (LSB) | 0 | −4.6 | −2.75 | −10.7 | same |
+| IDD (mA) | 0.903 | 0.894 | 0.636 | 0.636 | same |
+| R2-4 worst error (LSB, limit 0.25) | 0.179 | 0.70 (decision 6) | 5.70 (flat 4–5 over decisions 5–13) | 5.03 | `postb-diag-ref-tt-c`, `postb-diag-ref-tt-r` (`sim/post/results/postb_diag_ref_tt_{c,r}.json`) |
+
+The R-only case is split once more (mux deck, tt; the other resistors 0.05 Ω):
+
+| Quantity | R only on `gnd`, `vdd`, `vss`, `vdda` | R only on `vref`, `vrefl` | Evidence |
+| --- | --- | --- | --- |
+| Mux gain / offset (LSB) | 1.026 / +0.4 | 1.003 / +0.1 | `postb-diag-isa-tt-rsup-b`, `postb-diag-isa-tt-rref-b` (`sim/post/results/postb_diag_isa_tt_rsup_b.json`, `..._rref_b.json`) |
+| IDD (mA) | 0.652 | 0.885 | same |
+
+1. **Gain.** The C share is about three quarters of the gain error (1.089). The R share is about one quarter
+   (1.031). The two multiply (1.089 × 1.031 = 1.123). The C share is the top-plate parasitic: gain =
+   (C_dac + C_p) / C_dac, and the `top_p`–`top_n` mutual C counts twice. The R share is from the supply and
+   ground resistance (1.026), not from the reference resistance (1.003): the drivers and the comparators share `gnd`. Gain tolerance: D16 (±0.9 V) needs a gain
+   of 1.013 or less (pre-layout full scale ±0.914 V). The mux test inputs (±0.85 V) do not clip for a gain of about
+   1.067 or less (10 LSB offset margin). The weight calibration removes a linear gain error. It does not restore
+   the full scale.
+2. **R2-4.** The R share dominates (5.70 LSB). The buffer sees the slice `vref` / `vrefl` straps through 85–253 Ω
+   port resistances. The C share alone also fails (0.70 LSB). It comes from the bottom-plate wiring C, 1700 fF per
+   slice: 277 fF to `gnd`, 644 fF bottom plate to bottom plate, 58 fF to `lsb_*` / `top_*`, 23 fF to `vref`, 55 fF
+   other. The top-level `vref` net has 719 fF and `vrefl` 433 fF.
+3. **IDD.** The IDD loss is entirely from R (0.636 mA in R only and in RC), and mostly from the supply ports (0.652
+   mA with R only on the supplies, 0.885 mA with R only on the references). The slice `vdd` port resistance (up to
+   365 Ω) lowers the Vsg of the comparator tail mirrors.
+
+### Changes in layout B
+
+1. Slice: Metal4 straps along the device rows: `vdd` (full width), `gnd`, and a separate Kelvin ground `gnd@K`
+   for the 26 CDAC bottom-plate driver NMOS sources. A Metal4 star at x 99.2 joins `gnd` and `gnd@K`.
+2. Slice: three reference straps (`vrefl`, `vref`, `vrefl`), one per driver group, each with its own Metal3 feeder
+   to its south pin. Via3 arrays connect the feeders to the straps. The slice south pins are now `vref` ×3 and
+   `vrefl` ×2 at equal positions in both slices.
+3. Slice ground: no edge pins. Eight `vss` drops (Metal4 pad, 12 Via4, Metal5 island, 3 TopVia1) connect the slice
+   `gnd` strap to the top-level TopMetal1 `vss` sheet. Four drops per slice are used.
+4. Top level: Metal4 `vdd` strap (4.2 µm), Metal4 `vdda` strap (2.4 µm), Metal3 `vss` strap with Metal3 feeders
+   (2 µm) and Via3 arrays from the south pins. The reference bus feeds both slices from the buffer at equal length.
+5. `ain_cos`: the p and n lines run as a pair (x 1.8 and 1.0) with Metal4 `vss` shields on both sides. The
+   `ain_sin` pair stays as in layout A (paired). `ibias` moves to Metal2.
+6. The comparator `cmp5n` input pair moves to the east end of the A_n row.
+7. Antenna: one Metal3 block band at the `vbn` diode row (the `vdda` strap had moved a long Metal3 riser there).
+8. Not changed: the common-centroid CDAC arrays, the device sizes, the pins and the box.
+
+### Top-plate reset level (INTERFACES.md row "AFE → ADC, CDAC top-plate reset level")
+
+Run `postb-rst-isa-tt-rec-rs20k` (netlist of record, mux deck, 20 kΩ in series with each ADC input, tt) shows the
+top-plate voltages at the start of the track phase (simulated):
+
+1. Before the track edge, the top plates are at a common mode of about 0.11 V (end of conversion, differential
+   about 0).
+2. About 0.5 ns after the edge, the SAR flag reset returns the bottom plates to VREF. The top plates go back to a
+   common mode of 0.49–0.57 V. The differential is the previous sample of that slice (for example +0.75 V after an
+   ISA frame at +0.85 V).
+3. The input node dips for about 0.5 ns (0.40 V to 0.16 V) and is at 0.57–0.59 V from 1 ns to 5 ns.
+
+Decision: **no netlist change (no revision 5a).** The ADC already starts each track phase near the sampling common
+mode. The AFE model "reset to 0 V" is pessimistic for the common mode (step about −30 mV, not −0.6 V). It is
+optimistic for the differential: the AFE sees a step of up to the previous sample (up to about 1.6 V differential
+when SIN follows an ISA frame). A reset to 0.6 V would change decision 0 and the first conversion only through
+the common-mode step at the track start. That step is already small. So the schematic R2-4, decision-0 and
+first-conversion decks are not re-run. The AFE must model its load as "previous sample, common mode 0.57–0.60 V".
+
+### PEX (layout B)
+
+Same method and commands as layout A (`pex/pex_build.py` docstring items 7 and 8), kpex run
+`<G1_RESULTS_ROOT>/r1_adc/pex-b/`. Two builds from the same kpex run:
+
+1. Build B.0 (`<G1_RESULTS_ROOT>/r1_adc/pex-b/build/`, merged `sim/post/r1_adc_post_rc_mb.spice`): the method of
+   layout A. The top-level decoupling MIM plates (`xref_xcd`, `xref_xcdl`, `xref_xcg`, `xfilt_xcf`) have no port, so
+   they sit on the main node of their net with no resistance. For `vref` and `vrefl` the main node is the source of
+   the first follower.
+2. Build B.1 (`pex/r1_adc_post_rc_b.spice`, `pex/r1_adc_post_c_b.spice`, `pex/pex_report_b.json`, merged
+   `sim/post/r1_adc_post_rc_mb1.spice`): each decoupling plate has a Metal5 port at its centre. The plate joins the
+   reference bus through its Via4 array. This is the netlist of record for layout B.
+
+Build B.0 puts 136 Ω between the `vref` decoupling (29 pF) and the slice pins. Build B.1 gives 1.1–1.6 Ω. So the
+layout A post-layout results also used a pessimistic decoupling path (41 Ω, see failures).
+
+Each used `vss` drop joins the top `vss` main node through 2.0 Ω (estimated, not extracted: the TopMetal1 sheet is
+removed with the MIM layer). Unused drop positions of a slice instance are dangling nodes.
+
+Extracted wiring C (one extraction, slices A and B are equal; MIM on the node as in layout A):
+
+| Node | Layout A wiring C (fF) | Layout B wiring C (fF) | Layout B ratio to the MIM on the node |
+| --- | --- | --- | --- |
+| `top_p` | 58.4 | 41.6 | 5.9 % (layout A 8.2 %) |
+| `top_n` | 61.2 | 40.4 | 5.7 % (layout A 8.6 %) |
+| `lsb_p` | 64.3 | 65.4 | 2.3 % |
+| `lsb_n` | 50.3 | 49.7 | 1.8 % |
+| bottom-plate nets, sum per slice | 1700 | 1709 | — |
+
+Input pairs, top-level wiring C, p / n (fF), limit 3 fF difference for `ain_cos` and `ain_sin`:
+
+| Pair | Layout A | Layout B | Difference B | Result |
+| --- | --- | --- | --- | --- |
+| `ain_cos` | 46.61 / 54.86 | 65.67 / 60.73 | 4.94 fF (p: `vss` 36.5 against 32.7, `vdd` 1.9 against 0.7) | **failed** (by 1.94 fF) |
+| `ain_sin` | 1.11 / 1.18 | 1.08 / 1.19 | 0.11 fF | **passed** |
+| `ain_isa` | 57.44 / 56.97 | 61.31 / 60.48 | 0.83 fF | (no limit) |
+| `ain_isb` | 1.08 / 1.14 | 0.98 / 0.99 | 0.01 fF | (no limit) |
+
+Port resistance, pins of the net held together, to the device ports (B.1; `sim/post/net_reff.py` and a two-point
+calculation on the same R network):
+
+| Path | Layout A | Layout B | Target |
+| --- | --- | --- | --- |
+| Slice `vref` pins to the CDAC driver sources | up to 85 Ω (main-node method) | median 19.5 Ω, worst 65 Ω (`xdn8_xmp`) | ≤ 5 Ω, **failed** |
+| Slice `vrefl` pins to the LSB driver sources | up to 106 Ω | median 37 Ω, worst 56 Ω | ≤ 5 Ω, **failed** |
+| Slice `gnd` drops to the device sources | up to 488 Ω | median 31 Ω, worst 235 Ω (bootstrap `xs1p_xm11`) | ≤ 5 Ω, **failed** |
+| Slice `vdd` pins to the device sources | up to 365 Ω | median 29 Ω, worst 137 Ω (comparator `xc4_xci2`) | ≤ 5 Ω, **failed** |
+| Top `vref`: follower source to the slice pins | 41 Ω | 136 Ω (follower `s0` to the bus; 4 followers joined through 19–55 Ω) | — |
+| Top `vref`: decoupling plates to the slice pins (B.1) | not extracted | 1.1–1.6 Ω | ≤ 5 Ω, **passed** |
+| Top `vref`: slice A pins to slice B pins (equal length) | — | 6.7 Ω; follower to slice A 43 Ω, to slice B 40 Ω | equal, **passed** |
+| Top `vss` pin to the slice ground ports | up to 253 Ω | up to 157 Ω (main-node method) | — |
+
+The straps are wide, but each device terminal still joins them through router wires and single via cuts (9 Ω per
+cut in this extraction). This is the remaining resistance.
+
+### Layout B2 (reference buffer output straps)
+
+Layout B (PEX B.1) left one large resistance: the reference buffer output. The router joined the four `vref`
+follower sources, the four bias sinks and the `vref` bus with 0.40 µm wires and single via cuts: 136 Ω from the
+follower to the bus. The sink current flowed follower → bus → sink, so the slice pins were 19 mV below the
+follower (simulated OP, tt). The `vrefl` path had the same pattern (4.5 mV).
+
+Layout B2 changes only the top-level buffer area (generator `layout/r1_adc_layout.py`, block "layout B2"):
+
+1. Metal2 straps with Via1 at every grid node on the follower source rails and the sink drain rails.
+2. `vref`: a Metal3 strap over the sink rails, four Metal3 verticals (2.0 µm) from the sinks through the
+   followers to y 44.8, and Metal2 jumpers under the `vrefl` bus into the `vref` bus (Via2 at grid nodes).
+3. `vrefl`: Metal3 straps on its follower and sink rails, a Metal4 run between them, and a Metal4 vertical
+   (2.0 µm) into the `vrefl` bus, east of the `vdda` strap.
+4. Via cuts of these straps sit on router grid nodes only. A 0.5 µm-pitch array next to a router via gave
+   16 V2.b errors in the first try (`layout-b2-dev1`).
+
+The slice, the pins and the box do not change. The router result of the slice is the same as in layout B (same
+log). Checks of record `reports/layout-b2/`: DRC main and maximal 0, antenna 0, LVS match (slice 117/117 nets,
+179/179 devices; top 111/111, 45/45), pin check passed (51 pins). GDS sha256 `51f2aec6…`
+(`<G1_RESULTS_ROOT>/r1_adc/layout-b2/r1_adc.gds`). PEX: `pex/r1_adc_post_rc_b2.spice`, `pex/pex_report_b2.json`
+(method B.1), merged `sim/post/r1_adc_post_rc_mb2.spice`; kpex run `<G1_RESULTS_ROOT>/r1_adc/pex-b2/`.
+
+Simulated effect (tt OP): follower to the slice `vref` pins 8.8–9.7 Ω (layout B 136 Ω); slice `vref` pins at
+1.0498 V, 0.8 mV below the follower (layout B 19.2 mV). The `vrefl` pins are at 1.0581 V. So `vrefl` is now
+8.4 mV above `vref` (layout B: 10.6 mV above). The cause is not separated. A probable cause is the `vss` resistance
+at the sink sources (the four `vref` sinks and the `vrefl` sink see different source degeneration).
+
+### Layout B3 (layout of record)
+
+Layout B3 is layout B2 plus one change at the top level: each slice `vrefl` pin gets a Metal2 jumper (2.0 µm)
+from inside the `vrefl` bus under the `vref` bus and a Metal3 stub (2.0 µm) in the gap of the `vdd` Metal3 strap
+up to the slice edge. In B2 these four connections were router wires (20–22 Ω from the `vrefl` decoupling to the
+slice pins); in B3 they are 4–6 Ω. `layout/r1_adc.gds` is layout B3 (sha256 `677c7ef8…`); the generator in
+`layout/` produces it. Checks of record `reports/layout-b3/`. PEX `pex/r1_adc_post_rc_b3.spice`,
+`pex/pex_report_b3.json` (method B.1), merged `sim/post/r1_adc_post_rc_mb3.spice`; kpex run
+`<G1_RESULTS_ROOT>/r1_adc/pex-b3/`. Layout B and B2 GDS files are kept in the results root only
+(`<G1_RESULTS_ROOT>/r1_adc/layout-b/`, `layout-b2/`; sha256 `2d9538d8…`, `51f2aec6…`).
+
+The change did not move R2-4 at tt (0.285 against 0.288 LSB). So the remaining R2-4 error is not in the top-level
+`vrefl` path.
+
+### Status (layout B3, the layout of record)
+
+Built against: PDK `84374023ee8b4b126bebbba67fcbada0a9c0ff0b`, KLayout 0.30.9, kpex 0.3.12, ngspice 46, container
+image `sha256:ddeb69576f28…` (as layout A; read from the run records `reports/layout-b3/run.json` and
+`sim/post/runs/*/run.json`).
+
+| Check | Result | Evidence |
+| --- | --- | --- |
+| DRC main rule set (`--no_density`) | **passed** (0) | `reports/layout-b3/drc.log`; `<G1_RESULTS_ROOT>/r1_adc/layout-b3/drc/` |
+| DRC maximal rule set (`--no_density`) | **passed** (0) | same |
+| DRC density | not applicable at block level (chip-level fill) | — |
+| Antenna | **passed** (0) | `reports/layout-b3/antenna.log` |
+| LVS (stock deck, `--no_series_res`) | **passed**: slice 117/117 nets, 179/179 devices; top 111/111 nets, 45/45 devices | `reports/layout-b3/lvs.log`, `lvs_summary.txt` |
+| Pin check (51 checklist pins, 128 CDL ports) and box 439.0 × 182.3 µm | **passed** | `reports/layout-b3/pin_check.txt` |
+| Layout A kept | done: `layout/r1_adc_layout_a.gds` (sha256 `95c8296a…`) | — |
+| Supply / reference straps ≤ 5 Ω from the pin to the arrays and the buffer | **failed**: slice `vref` to the drivers median 19.5 Ω (worst 65), `vrefl` 37 (56), `gnd` 31 (235), `vdd` 29 (137); buffer: follower to the `vref` slice pins 8.8–9.7 Ω, decoupling to the slice pins 1.1–1.6 Ω (`vref`) and 4.3–6.0 Ω (`vrefl`) | `pex/pex_report_b3.json`; `sim/post/net_reff.py` |
+| Kelvin driver ground (CDAC bottom-plate driver NMOS on `gnd@K`, star at x 99.2) | done | generator; LVS |
+| `ain_cos` / `ain_sin` pair imbalance ≤ 3 fF | **failed** for `ain_cos` (4.94 fF), **passed** for `ain_sin` (0.11 fF) | PEX (layout B) section |
+| Equal reference length to both slices | **passed**: `vref` decoupling to slice A / B pins 1.59 / 1.57 Ω | same |
+| Bottom-plate wiring C lower than layout A | **failed**: 1709 fF per slice (layout A 1700 fF); the CDAC arrays and their routing are unchanged | `pex/pex_report_b3.json` |
+| Top-plate parasitic ratio | **done**: 5.9 % (`top_p`), 5.7 % (`top_n`); layout A 8.2 / 8.6 % | same |
+| Post-layout R2-4, tt (limit 0.25 LSB) | **failed**: 0.285 LSB (by 0.035; worst at decisions 12–13); 0.206 after a gain fit | `postb3-ref-tt-rc` / `-sp`; `sim/post/results/postb3_ref_tt_rc.json` |
+| Post-layout R2-4, ss / 125 °C / 1.08 V | **passed**: 0.241 LSB (slice A; slice B 0.225); after a gain fit 0.267 / 0.239. Slice B: one of ten conversions ends 5 codes apart from the base run after a decision-9 flip (open issue 6) | `postb3-ref-ss125-rc` / `-sp`; `sim/post/results/postb3_ref_ss125_rc.json` |
+| Post-layout mux sequence, tt | gain 1.058, offset −8.6 LSB, residual 7.5 LSB (all frames); no clip at ±0.85 V (codes 4012 / 80); full scale about ±0.864 V. D16 (±0.9 V, gain ≤ 1.013) **failed** | `postb3-isa-tt-rc`; `sim/post/results/postb3_isa_tt_rc.json` |
+| Post-layout first conversion, 33 ns hold, tt | **passed**: frame 0 − frame 1 = 0 / 0 LSB (code 2037) | `postb3-fc-tt-rc`; `sim/post/results/postb3_fc_tt_rc.json` |
+| Post-layout first conversion, ss / 125 °C / 1.08 V, −0.80 V | **passed**: frame 0 − frame 1 = +1 / 0 LSB (codes 175 / 216) | `postb3-fc-ss125-rc`; `sim/post/results/postb3_fc_ss125_rc.json` |
+| Supply current, tt (mux deck) | IDD 0.767 mA (pre-layout 0.903, −15 %), IDDA 1.101 mA (pre 1.034) | `postb3-isa-tt-rc` |
+| Static windows, tt, 3 points per LSB (layout B2 netlist) | **passed** (monotonic, no missing code in each window; resolution 1/3 LSB): 1024: codes 1017–1029 both slices, max \|DNL\| 0 / 0.33; 2048: A 2042–2054, B 2043–2055, 0.33 / 0.33; 3072: A 3065–3077, B 3066–3077, 0.67 / 0.67 LSB | `postb2-win2048-tt-rc`, `postb2-win1024-tt-rc3`, `postb2-win3072-tt-rc3`; `sim/post/results/postb2_win*_tt_rc*.json` |
+| Static windows on the B3 netlist | not run (time budget). B3 differs from B2 only in the four top-level `vrefl` pin jumpers, and the windows force an ideal VREF at the buffer | — |
+| INL bow | not run (time budget; two halves of 105 min each). `sim/post/post_post.py inl` is ready; runs `postb2-inlb-tt-rc` and `postb2-inla-tt-rc` were stopped or not started | — |
+
+### Pre-layout and post-layout (simulated)
+
+Pre-layout = netlist of record (full core). Layout A = `sim/post/r1_adc_post_rc_m.spice` (PEX A method: decoupling
+on the follower node). Layout B = PEX B.1 (`r1_adc_post_rc_mb1.spice`), B2 = `r1_adc_post_rc_mb2.spice`, B3 =
+`r1_adc_post_rc_mb3.spice`. R2-4 base runs: one ideal source per slice reference port at the buffer-OP value
+(`make_sp_netlist.py --per-port`), static base correction from the OP runs (harness H12, H14).
+
+| Quantity | Pre-layout | Layout A | Layout B | Layout B2 | Layout B3 |
+| --- | --- | --- | --- | --- | --- |
+| R2-4 tt, worst comparator-input error (LSB, limit 0.25) | 0.179 | 5.03 (pessimistic PEX, H13) | 0.337 | 0.288 | 0.285 |
+| R2-4 tt after a gain fit (LSB) | 0.153 | 1.09 | 0.178 | 0.205 | 0.206 |
+| R2-4 ss / 125 °C / 1.08 V (LSB) | 0.168 | 4.70 (pessimistic PEX) | 0.294 | 0.239 | 0.241 |
+| Mux tt: gain / offset (LSB) / residual (LSB) | 0.998 / 0 / 0.45 | 1.127 / −10.7 / 4.6 (frames 0, 2, 3) | 1.076 / −8.5 / 7.1 | 1.058 / −8.6 / 7.5 | 1.058 / −8.6 / 7.5 |
+| Full scale (±V, from the gain) | 0.914 | 0.81 | 0.85 | 0.864 | 0.864 |
+| Mux ±0.85 V | no clip | clips (4095 / 0) | no clip (4046 / 46) | no clip (4012 / 80) | no clip (4012 / 80) |
+| First conversion tt, frame 0 − frame 1 (LSB) | −1 / +1 | +1 / 0 | 0 / 0 | 0 / 0 | 0 / 0 |
+| First conversion ss / 125 °C / 1.08 V (LSB) | 0 / +1 (−0.90 V) | not run | no information (−0.90 V clips at code 0) | +1 / 0 (−0.80 V) | +1 / 0 (−0.80 V) |
+| IDD / IDDA tt (mA) | 0.903 / 1.034 | 0.636 / 1.023 | 0.767 / 1.093 | 0.767 / 1.101 | 0.767 / 1.101 |
+| Slice `vref` pins below the follower, OP tt (mV) | 0 (pre: same node) | 5.6 | 19.2 | 0.8 | 0.8 |
+| Slice `vrefl` − `vref`, OP tt (mV) | 0 | +4.9 | +10.6 | +8.4 | +8.4 |
+| Top-plate wiring C ratio `top_p` / `top_n` | — | 8.2 / 8.6 % | 5.9 / 5.7 % | same as B | same as B |
+| Static window 2048, tt: codes, max \|DNL\| (resolution 1/3 LSB) | 0.54 (0.5 LSB resolution) | 0.54, not resolved | A 2044–2056, B 2047–2059: 0.33, monotonic, no missing code | A 2042–2054, B 2043–2055: 0.33, monotonic, no missing code | not run (B2 used) |
+
+| Static windows 1024 / 3072, tt: max \|DNL\| (resolution 1/3 LSB) | not run | not run | not run | 1024: 0 / 0.33; 3072: 0.67 / 0.67; monotonic, no missing code | not run (B2 used) |
+
+### Open issues (layout B3)
+
+1. **R2-4 at tt fails by 0.035 LSB** (0.285 against 0.25; simulated). The error is largest at decisions 12–13
+   (LSB array). It did not change with the top-level `vrefl` jumpers (B2 → B3). Next lever: the slice-internal
+   reference and ground connections of the drivers. Each driver source joins the strap through router wires and
+   single 9 Ω via cuts (slice `vrefl` median 37 Ω, `vref` 19.5 Ω, worst 65 Ω). Multi-cut via stacks from each
+   driver source rail straight up to the strap above it are the recommended change.
+2. **Full scale ±0.864 V, D16 asks ±0.9 V** (gain 1.058, limit 1.013). The C-only / R-only split is not run for
+   layout B. In layout A the C share alone was 1.089 at an 8.2–8.6 % top-plate ratio; layout B has 5.7–5.9 %. The
+   top-plate wiring C cannot go to near zero with this array and comparator placement, so a layout change alone is
+   not expected to reach 1.013 (estimate). Options: accept about ±0.86 V in D16 (the mux inputs at ±0.85 V do not
+   clip), or a CDAC change (a netlist change, outside this track). The weight calibration removes the linear gain
+   error only.
+3. **Static `vrefl` − `vref` = +8.4 mV** at the slice pins (tt OP). The weight calibration covers the LSB-array
+   scale error; the static windows force an ideal VREF and do not show it. Probable cause (not separated): `vss`
+   resistance at the buffer sink sources.
+4. **IDD 15 % low** (0.767 against 0.903 mA): slice `vdd` to the comparator tails up to 137 Ω.
+5. **`ain_cos` pair imbalance 4.94 fF** (limit 3 fF). The p line has 3.8 fF more to `vss` and 1.2 fF more to
+   `vdd`. Next lever: extract per segment and add a crossover in the north channel.
+6. **R2-4 at ss / 125 °C, slice B** (layouts B2 and B3): two of ten conversions end 5 codes apart between the buffer run
+   and the base run after a decision-9 flip, with a comparator-input error of 0.15 LSB at the flip. The R2-4 metric
+   (comparator-input error) passes there; the code sensitivity is not explained.
+7. **Offset −8.6 LSB** (mux tt; first conversion at 0 V gives code 2037). Not separated.
+8. As layout A: `vcm` / `vcm2` have no driver, the 35 north SAR pins are stubs, and the PEX simplifications of
+   `pex/pex_build.py` item 6 apply. The `vss` drops are an estimate (2.0 Ω each, not extracted).
+9. Not run: static windows and INL on the B3 netlist, INL bow on any layout B netlist, the AFE-side check of the
+   top-plate reset with the extracted channel (`r1_afe`).
+
+### Failures and mistakes (layout B track, 2026-10-26 / 27)
+
+| # | What happened | Class | Fix or state |
+| --- | --- | --- | --- |
+| 1 | `postb-diag-isa-tt-rsup` failed at the OP (timestep too small) with 901 resistors at 1 mΩ | numerical | rerun `-rsup-b` with 0.05 Ω |
+| 2 | `postb-diag-isa-tt-rref` (1876 resistors at 1 mΩ) made no progress in 58 min | numerical | stopped (`podman stop`; a plain `kill` does not reach the rootless container process); rerun `-rref-b` with 0.05 Ω |
+| 3 | `sim/post/diag/a_r_ref.spice` was regenerated while run `-rref` used it; the file header no longer matches the hash in that run.json | process-hygiene | recorded; the run was stopped and is not used |
+| 4 | dev1 LVS: the two `vrefl` straps were one router pin, so the router did not join them (net split) | functional-bug | one router pin per strap (dev2 LVS match) |
+| 5 | dev2 DRC: M2.b notch at the shield via pads; V3.a from overlapping Via3 arrays at the `vdd` stubs | functional-bug | 0.40 µm shield boxes; arrays skip the stubs and the feeder |
+| 6 | dev3 antenna Ant.b 209.6 > 200 at the `vbn` diode (`xcbiasn_xmbd`): the new `vdda` strap moved a long Metal3 riser there | functional-bug | Metal3 block band (dev4 clean) |
+| 7 | PEX and the checks were first started with the repository path of the GDS; the container does not mount it (failed after 10 s) | tooling | GDS copied to `<G1_RESULTS_ROOT>/r1_adc/layout-b/` |
+| 8 | The PEX method put the top-level decoupling MIM plates on the follower node with no R (layout A and build B.0). The slices saw the 29 pF `vref` decoupling through 41 Ω (A) or 136 Ω (B.0) instead of about 1.5 Ω. The layout A post-layout R2-4 (5.03 / 4.70 LSB) is therefore pessimistic; it is not re-run | verification-gap | PEX build B.1: Metal5 ports on the plates (`pex_build.py` item 8). B.0 runs kept as a comparison (`postb-*`): R2-4 tt 0.754 LSB against 0.337 (B.1) |
+| 9 | The B.0 campaign started before the PEX model was checked for the decoupling path | planning | B.0 mux, first conversion tt and R2-4 tt are superseded; B.0 first conversion ss stopped |
+| 10 | Layout B straps did not reach the ≤ 5 Ω target: each device terminal still joins the strap through router wires and single 9 Ω via cuts | estimation | open (see open issues) |
+| 11 | Layout B made the buffer output path worse than layout A (follower to bus 136 Ω against 41 Ω); the sink current flowed through the bus (19 mV static drop) | regression | layout B2 straps (8.8–9.7 Ω, 0.8 mV) |
+| 12 | B2 first try: 0.5 µm-pitch via arrays next to router vias of the same net (16 × V2.b) | functional-bug | cuts on router grid nodes only (dev2 clean) |
+| 13 | `ain_cos` pair: drawn symmetric, extracted 4.94 fF difference (limit 3 fF) | estimation | open |
+| 14 | First conversion at ss/125 °C with `ff2.json` (−0.90 V) clips at code 0 with the post-layout gain, so the B.1 run gives no information | verification-gap | B2/B3 use −0.80 V (`sim/post/points/ffb.json`) |
+| 15 | The README Layout B section was written after the diagnosis and the layout, not at the start | process-hygiene | written from the PEX milestone on |
+| 16 | B.1 window 1024 and B2 window 1024 were started and stopped (CPU moved to B2 / B3 PEX) | planning | B2 window 1024 rerun as `postb2-win1024-tt-rc2` |
+| 17 | The fine windows were centred with the mux-run transfer (buffer and bandgap model), but the window runs force an ideal 1.045 V; the B2 3072 window landed 12 codes high (codes 3078–3090, transition not in the window) | estimation | centres refitted from the 2048 and 3072 windows (`points/winb2c_*.json`, `gen_post_decks.py winb2c`); 1024 and 3072 rerun as `-rc3`; the first 1024 run (`-rc2`) was stopped |
+| 18 | The B3 PEX was first launched from the block directory with a repository-relative script path; it did not start, and 20 min passed before the check | tooling | relaunched from the repository root |
+| 19 | Layout B3 (top-level `vrefl` jumpers) was expected to lower the late-decision R2-4 error; it did not (0.288 → 0.285 LSB) | estimation | recorded; the next lever is inside the slice (open issue 1) |
+| 20 | INL bow runs were queued and then stopped to give the CPUs to the window reruns | planning | INL recorded as not run |
+
+
 ## Layout (revision 5, layout A, 2026-10-26, track T2)
 
 State: **layout A is DRC clean (main + maximal, density waived), antenna clean and LVS clean against the PDK decks, in

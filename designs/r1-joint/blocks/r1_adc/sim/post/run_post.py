@@ -31,7 +31,7 @@ for k, d in (('--id', None), ('--cpu', None), ('--deck', None), ('--core', None)
              ('--ref', ''), ('--vref', '1.045'), ('--points', ''), ('--save', 'codes'), ('--corner', 'mos_tt'), ('--temp', '27'),
              ('--vdd', '1.2'), ('--cm', '0.6'), ('--timing', ''), ('--tstop', ''), ('--tmax', '0.2n'), ('--noise', 'auto'),
              ('--ibias', '5u'), ('--bgr', '190k,82u'), ('--question', ''), ('--disposition', ''), ('--timeout', '36000'),
-             ('--seed', '1'), ('--noopiter', 'auto'), ('--ideal-bgr', 'off50m'), ('--solver', 'klu'), ('--base-ibias', ''), ('--probe-extra', ''), ('--save-extra', '')):
+             ('--seed', '1'), ('--noopiter', 'auto'), ('--ideal-bgr', 'off50m'), ('--solver', 'klu'), ('--base-ibias', ''), ('--probe-extra', ''), ('--save-extra', ''), ('--rs', '')):
     ap.add_argument(k, required=d is None, default=d)
 ap.add_argument('--op-only', action='store_true')
 a = ap.parse_args()
@@ -157,6 +157,16 @@ if os.path.exists(os.path.join(run_dir, 'run.json')) or os.path.exists(os.path.j
 os.makedirs(run_dir, exist_ok=True)
 os.makedirs(raw_dir, exist_ok=True)
 src = open(os.path.join(BLOCK, deck)).read()
+if a.rs:
+    # --rs R (isa deck, 2026-10-26 layout-B track, top-plate reset question): each of the 8 ADC inputs is driven through a
+    # series resistor R from its E source (node <in>_s), so the top-plate voltage at the start of track and the charge drawn
+    # from the source become visible; the inputs <in>_s are saved
+    assert a.deck == 'isa', '--rs: isa deck only'
+    for n in ('sinp', 'sinn', 'cosp', 'cosn', 'isap', 'isan', 'isbp', 'isbn'):
+        e = {'sinp': 'Esp', 'sinn': 'Esn', 'cosp': 'Ecp', 'cosn': 'Ecn', 'isap': 'Eap', 'isan': 'Ean', 'isbp': 'Ebp', 'isbn': 'Ebn'}[n]
+        assert ('\n%s %s ' % (e, n)) in src, (e, n)
+        src = src.replace('\n%s %s ' % (e, n), '\nRs%s %s_s %s %s\n%s %s_s ' % (n, n, n, a.rs, e, n))
+    src = src.replace('save v(rawa)', 'save v(sinp_s) v(sinn_s) v(isap_s) v(isan_s) v(sinp) v(sinn) v(isap) v(isan) v(rawa)', 1)
 subs['RAW'] = raw_dir
 for k, v in subs.items():
     src = src.replace('@%s@' % k, v)
@@ -209,7 +219,7 @@ rj = {'run_id': a.id, 'block': 'r1_adc', 'harness': 'sim/post (T2 post-layout ha
       'tool': next((l.strip() for l in lines_ if 'ngspice-' in l and 'Circuit level' in l), R5.NGSPICE_VERSION),
       'ngspice_version': R5.NGSPICE_VERSION, 'container_image': R5.IMAGE_ID, 'pdk_commit': R5.PDK_COMMIT,
       'netlist_sha256': lib_hash, 'frozen_netlist_check': R5.frozen_check({os.path.basename(k): v for k, v in lib_hash.items() if k.startswith('schematic/')}),
-      'raw_results': 'r1_adc/%s (under G1_RESULTS_ROOT)' % a.id, 'started_utc': started, 'wall_s': round(wall, 1),
+      'raw_results': 'r1_adc/%s (under G1_RESULTS_ROOT)' % a.id, 'input_series_r': a.rs or None, 'started_utc': started, 'wall_s': round(wall, 1),
       'sim_us_per_wall_min': round(tsim * 1e6 / (wall / 60.0), 3) if tsim else None, 'returncode': rc, 'status': status,
       'errors': errors, 'failure_lines': bad, 'missing_outputs': missing, 'meas': meas, 'result': '',
       'disposition': a.disposition if status == 'completed' else 'failed (%s)' % status}

@@ -18,6 +18,11 @@ Floorplan (box 439.0 x 182.3 um, integration checklist e):
   * north channel: long input pairs COS (west pins -> slice B in0) and ISA (east pins -> slice A in1) between vss
     shield lines, the comparator clock generator r1_cmp4_clkgen at the north-west next to the clk pin.
   * p+ guard ring at the boundary, pins on Metal3 at the checklist positions.
+Layout B (2026-10-26, T2b): wide supply / reference straps drawn before routing and given to the router as pins (slice:
+  Metal4 vdd, gnd and Kelvin driver-ground straps, Metal4 vref / vrefl straps over the driver rows with 2 um Metal3
+  feeders from the south pins; top: decoupling TopMetal1 sheet used as the vss plane with Via4 / TopVia1 drops onto the
+  slice gnd strap, vdd strap under the slices, vdda strap to the buffer), comparator input pairs at the east end of the
+  comparator row (short top-plate routes, halo on the top-plate nets), symmetric COS input pair. See README "Layout B".
 Layers: Metal1-Metal4 routing (maze router + hand-drawn buses), Metal5 only as MIM bottom plates and TopVia1 islands,
 TopMetal1 only on MIM plates, their sheets and 1.64 um tabs; no TopMetal2. Boundary on 189/4.
 """
@@ -52,6 +57,23 @@ def log(*a):
     s = ' '.join(str(x) for x in a)
     LOG.append(s)
     print(s)
+
+
+def via_array(D, via, x1, y1, x2, y2):
+    """layout B: array of Via1..Via4 cuts (0.19 at 0.50 pitch, 0.105 enclosure) or TopVia1 cuts (0.42 at 0.84 pitch,
+    0.12 Metal5 / 0.45 TopMetal1 enclosure) filling the box; the caller draws the metals."""
+    if via == 'TV1':
+        a, pitch, enc = TV1, 0.84, 0.45
+    else:
+        a, pitch, enc = VIA, VPITCH, 0.105 + 0.02
+    nx = max(1, int((x2 - x1 - 2 * enc - a) / pitch + 1e-6) + 1)
+    ny = max(1, int((y2 - y1 - 2 * enc - a) / pitch + 1e-6) + 1)
+    x0 = (x1 + x2) / 2 - (nx - 1) * pitch / 2
+    y0 = (y1 + y2) / 2 - (ny - 1) * pitch / 2
+    for i in range(nx):
+        for j in range(ny):
+            D.sq(via, round(x0 + i * pitch, 4), round(y0 + j * pitch, 4), a)
+    return nx * ny
 
 
 # =====================================================================================================================
@@ -427,8 +449,18 @@ def cboot(blk, d, mx, my, xi, yi, xb, yb):
 # =====================================================================================================================
 # slice
 # =====================================================================================================================
-SLICE_SOUTH = [('gnd', 4.0), ('vdd', 12.0), ('vbn', 140.0), ('vbp', 144.0), ('vrefl', 100.0), ('vref', 106.4),
-               ('vrefl', 112.8), ('gnd', 60.0), ('vdd', 68.0), ('gnd', 160.0), ('vdd', 170.4), ('gnd', 200.0), ('vdd', 208.0)]
+# layout B: no gnd edge pins (slice gnd = Metal4 strap fed from the top-level TopMetal1 vss sheet through the drops
+# SLICE_DROPS); vref pins x 100.0 / 106.4 / 112.8 (MSB driver group), vrefl pins at the two LSB driver groups
+SLICE_SOUTH = [('vdd', 12.0), ('vbn', 144.8), ('vbp', 148.8), ('vref', 100.0), ('vref', 106.4), ('vref', 112.8),
+               ('vrefl', 72.0), ('vrefl', 136.0), ('vdd', 68.0), ('vdd', 170.4), ('vdd', 208.0)]
+# slice straps (local y, Metal4): vdd, gnd, Kelvin driver ground gnd@K, reference straps over the driver P row
+STRAP_VDD = (17.6, 20.8)
+STRAP_GND = (22.4, 25.6)
+STRAP_GNDK = (28.0, 29.6)
+STRAP_REF = (40.0, 41.6)
+# drop points (local x on the gnd strap, y at its centre): every decoupling-plate gap that falls on slice A or slice B
+SLICE_DROPS = [('gnd', 11.06, 24.0), ('gnd', 37.2, 24.0), ('gnd', 65.84, 24.0), ('gnd', 91.98, 24.0), ('gnd', 120.62, 24.0),
+               ('gnd', 146.76, 24.0), ('gnd', 175.4, 24.0), ('gnd', 201.54, 24.0)]
 SLICE_WEST = [('in0p', 56.0), ('in0n', 60.0)]
 SLICE_EAST = [('in1p', 76.0), ('in1n', 80.0)]     # global 130.4 / 134.4 (ISB pins 130 / 134)
 SLICE_PAIRS = [('top_p@W', 'top_n@W'), ('top_p@E', 'top_n@E'), ('in0p', 'in0n'), ('in1p', 'in1n'),
@@ -438,6 +470,14 @@ SLICE_PAIRS = [('top_p@W', 'top_n@W'), ('top_p@E', 'top_n@E'), ('in0p', 'in0n'),
 def build_slice(ly):
     devs = NLM.slice_devices(NLM.NDUMMY)
     by = {d['name']: d for d in devs}
+    # layout B: Kelvin driver ground. The sources of the CDAC bottom-plate driver NMOS are routed as the router net
+    # gnd@K to their own Metal4 strap STRAP_GNDK, which joins the main gnd strap at one star point (port records keep
+    # the net name gnd; LVS sees one net)
+    for k in range(13):
+        for sd in ('n', 'p'):
+            d = by['xd%s%d_xmn' % (sd, k)]
+            assert d['nets'][2] == 'gnd', d
+            by[d['name']] = dict(d, nets=[d['nets'][0], d['nets'][1], 'gnd@K', d['nets'][3]])
     blk = Blk(ly, 'r1_adc_slice', WS, HS)
     R = blk.R
     # ---- drivers (two rows under the array) ------------------------------------------------------------------
@@ -526,8 +566,10 @@ def build_slice(ly):
     # ---- comparators: lower region, east part --------------------------------------------------------------------
     c4 = lambda n: by['xc4_' + n]
     c5 = lambda n: by['xc5_' + n]
-    A_n = [c5('xci1'), c5('xs1_xm1'), c5('xs1_xm2'), c5('xci2'), c5('xs1_xmt1'), c5('xs1_xmtc'), c5('xmh1'), c5('xmh2'),
-           c4('xmr1'), c4('xmr2')]
+    # layout B: the r1_cmp5n input pair (xs1_xm1/2, gates on top_p / top_n) at the east end of the row, next to the
+    # r1_cmp4 input pair at the west end of A_p: both comparator inputs sit below the east top-plate islands
+    A_n = [c5('xci1'), c5('xci2'), c5('xs1_xmt1'), c5('xs1_xmtc'), c5('xmh1'), c5('xmh2'),
+           c4('xmr1'), c4('xmr2'), c5('xs1_xm1'), c5('xs1_xm2')]
     A_p = [c4('xs1_xm1'), c4('xs1_xm2'), c5('xmr1'), c5('xmr2'), c5('xmt2')]
     # cmp4 integration caps (pmos W 80 L 4, 8 fingers of 10 um): FEOL under the CDAC array (Metal1/Metal2 only there)
     C_p = [c4('xci1'), c4('xci2')]
@@ -556,12 +598,54 @@ def build_slice(ly):
         % (xAn, eAp[0][1], max(tAp, tAn), eBn[0][0], eBn[0][1], eBp[0][0], eBp[0][1], t2, endsP[0][0], endsP[-1][1]))
     if eBn[0][1] > endsN[0][0] - 2.0 or eBp[0][1] > xAn - 2.0 or xAn < et1[0][1] + 2.0:
         log('WARNING lower-region overlap')
+    # ---- layout B: supply and reference straps (Metal4) and their Metal3 feeders, drawn before routing -------------
+    D = blk.D
+    strap_nodes = {}
+    def strap(net, x1, x2, ya, yb):
+        blk.box('M4', x1, ya, x2, yb)
+        R.reserve(2, x1, ya, x2, yb, net)
+        strap_nodes.setdefault(net, []).extend((2, x, y) for x in gpts(x1 + 0.4, x2 - 0.4) for y in gpts(ya + 0.3, yb - 0.3))
+    strap('vdd', 0.8, WS - 0.8, *STRAP_VDD)
+    strap('gnd', 0.8, WS - 0.8, *STRAP_GND)
+    xk1, xk2 = gfloor(endsN[0][0] - 0.8), gceil(endsN[0][1] + 0.8)
+    strap('gnd@K', xk1, xk2, *STRAP_GNDK)
+    # star point: the only joint of gnd@K and gnd, at the centre of the driver row (between the drop points)
+    xst = gnear((xk1 + xk2) / 2)
+    blk.box('M4', xst - 0.8, STRAP_GND[1] - 0.1, xst + 0.8, STRAP_GNDK[0] + 0.1)
+    R.reserve(2, xst - 0.8, STRAP_GND[1], xst + 0.8, STRAP_GNDK[0], 'gnd')
+    # reference straps over the driver P row: vrefl (LSB groups) and vref (MSB group), one per NWell group
+    for (bulk, g), sg in zip(pmos_groups, segs):
+        strap(bulk + '#%d' % len(strap_nodes), gfloor(sg['x0'] - 0.4), gceil(sg['xend'] + 0.4), *STRAP_REF)
+    # the two vrefl straps stay separate router pins: each has its own feeder, the router joins them inside the slice
+    # (dev1: one merged pin left the second vrefl group unconnected inside the slice, LVS split vrefl)
+    sx = {k: (sg['x0'], sg['xend']) for k, sg in zip([k for k in strap_nodes if '#' in k], segs)}
+    log('layout B straps: gnd@K x %.1f-%.1f, star x %.1f; P groups %s' % (xk1, xk2, xst,
+        ['%s %.1f-%.1f' % (b, sg['x0'], sg['xend']) for (b, _), sg in zip(pmos_groups, segs)]))
+    # feeders: Metal3 from the south pin up to the strap of the net, Via3 array on the overlap
+    ftop = {'vdd': STRAP_VDD, 'vref': STRAP_REF, 'vrefl': STRAP_REF}
+    fw = {'vdd': 0.8, 'vref': 1.0, 'vrefl': 1.0}
+    feeders = []
+    for net, x in SLICE_SOUTH:
+        if net not in ftop:
+            continue
+        ya, yb = ftop[net]
+        blk.box('M3', x - fw[net], 0.0, x + fw[net], yb)
+        R.reserve(1, x - fw[net], 0.0, x + fw[net], yb, net)
+        blk.box('M4', x - fw[net], ya, x + fw[net], yb)
+        via_array(D, 'Via3', x - fw[net], ya, x + fw[net], yb)
+        key = net if net in strap_nodes else [k for k, (a, b) in sx.items() if k.split('#')[0] == net and a <= x <= b][0]
+        strap_nodes[key].extend((1, xx, y) for xx in gpts(x - fw[net] + 0.4, x + fw[net] - 0.4) for y in gpts(0.0, yb - 0.3))
+        feeders.append((net, x))
+    for key, nodes in strap_nodes.items():
+        blk.pin(key.split('#')[0], sorted(set(nodes)), 'm4')
+    blk.stats['straps'] = dict(vdd=STRAP_VDD, gnd=STRAP_GND, gndk=[STRAP_GNDK, xk1, xk2, xst], ref=STRAP_REF, feeders=feeders)
     # ---- edge pins ---------------------------------------------------------------------------------------------------
     R.block_edges()
     edge = {}
     for net, x in SLICE_SOUTH:
         R.unblock(1, x, 0.0)
-        blk.pin(net, [(1, x, 0.0)], 'm3')
+        if net not in ftop:
+            blk.pin(net, [(1, x, 0.0)], 'm3')
         edge.setdefault(net, []).append(('S', x, 0.0))
     for net, y in SLICE_WEST:
         R.unblock(1, 0.0, y)
@@ -574,7 +658,7 @@ def build_slice(ly):
     # ---- route -------------------------------------------------------------------------------------------------------
     # comparator clocks first, with a soft halo (other nets keep the next track free for the ground shield)
     CLK = ['clkb', 'clkn', 'clk', 'clknb']
-    R.halo_cost, R.halo_only = 40, set(CLK)
+    R.halo_cost, R.halo_only = 40, set(CLK) | {'top_p@W', 'top_n@W', 'top_p@E', 'top_n@E'}    # layout B: top plates too
     first = CLK + [n for pr in SLICE_PAIRS for n in pr]
     ok = route_pairs(blk, first, SLICE_PAIRS, 'r1_adc_slice')
     blk.stats['route_ok'] = ok
@@ -645,8 +729,12 @@ def route_pairs(blk, first, pairs, cellname):
 DEC_H = 95.0
 DEC_Y = 3.4
 DEC_GAP = 3.2
-VREF_Y = (49.2, 50.8)
+VREF_Y = (47.6, 49.2)        # layout B: 1.6 um lower than layout A (room for the vdd strap)
 VREFL_Y = (45.2, 46.8)
+TOP_VDD_Y = (49.8, 54.0)     # layout B: vdd strap under the slices (Metal4 full width, Metal3 between the pin stubs)
+TOP_VSS_Y = (2.0, 4.4)       # layout B: vss Metal4 strap (layout A: 0.8 um at y 3.2)
+TOP_VDDA_Y = (30.4, 32.8)    # layout B: vdda strap from the pin to the buffer (Metal4)
+FEED_X = {'vdda': 50.0, 'vdd': 100.0, 'vss': 150.0}
 
 
 def decap_plan():
@@ -692,7 +780,7 @@ def build_top(ly, sl):
             for (side, x, y) in lst:
                 X, Y = round(x0 + x, 4), round(SY + y, 4)
                 R.unblock(1, X, Y)
-                if side == 'S':
+                if side == 'S' and net != 'vdd':
                     blk.pin(net, [(1, X, Y)], 'm3')
     # ---- guard ring (p+ substrate tie, vss) -----------------------------------------------------------------------
     D.tap_ring(1.0, 1.0, W - 1.0, H - 1.0, w=0.6, ptype=True)
@@ -707,20 +795,44 @@ def build_top(ly, sl):
         assert d['nets'][0] == 'vss', d
         p['net'] = d['nets'][1]
     gapc = [round(plan[i]['x'] + plan[i]['w'] + DEC_GAP / 2, 3) for i in range(len(plan) - 1)]
-    ys = 3.2                                    # vss Metal4 strap
+    ys = 3.2                                    # vss Metal4 strap (centre)
     yi = 9.6                                    # vss islands in the gaps
+    # layout B: the TopMetal1 top-plate sheet (all plates on vss) is the vss plane. Each gap: a 3.0 um TopMetal1 bridge,
+    # a Metal5 island 1.0 x 3.0 um with 3 TopVia1 and 12 Via4, a 1.6 um Metal4 riser to the 2.4 um vss strap; and, where
+    # the gap falls on a slice, a drop at the slice gnd strap (global y SY + STRAP_GND centre): bridge, island, TopVia1,
+    # Via4 and a Metal4 pad on the slice strap (SLICE_DROPS)
+    ydr = round(SY + sum(STRAP_GND) / 2, 4)
+    drops = []
+    def drop(xg, yc, h):
+        D.box('TM1', xg - 0.5, yc - h / 2, xg + 0.5, yc + h / 2)
+        D.box('M5', xg - 0.5, yc - h / 2, xg + 0.5, yc + h / 2)
+        n1 = via_array(D, 'TV1', xg - 0.5, yc - h / 2, xg + 0.5, yc + h / 2)
+        n4 = via_array(D, 'Via4', xg - 0.5, yc - h / 2, xg + 0.5, yc + h / 2)
+        D.box('M4', xg - 0.5, yc - h / 2, xg + 0.5, yc + h / 2)
+        return n1, n4
     for i in range(len(plan) - 1):
         pa, pb = plan[i], plan[i + 1]
         xa, xb = pa['x'] + pa['w'] - 2.0, pb['x'] + 2.0
-        for yb in (yi, 30.0, 70.0, 90.0):
-            D.box('TM1', xa, yb - 1.0, xb, yb + 1.0)
+        for yb, hb in ((yi, 3.0), (30.0, 2.0), (70.0, 2.0), (90.0, 2.0)):
+            D.box('TM1', xa, yb - hb / 2, xb, yb + hb / 2)
         xg = gapc[i]
-        D.sq('TV1', xg, yi, TV1); D.sq('M5', xg, yi, TV1 + 2 * TV1_M5); D.sq('Via4', xg, yi, VIA)
-        D.box('M4', xg - 0.2, ys - 0.4, xg + 0.2, yi + 0.2)
-        R.reserve(2, xg - 0.2, ys - 0.4, xg + 0.2, yi + 0.2, 'vss')
-    D.box('M4', 4.0, ys - 0.4, W - 4.0, ys + 0.4)
-    R.reserve(2, 4.0, ys - 0.4, W - 4.0, ys + 0.4, 'vss')
-    for x in gpts(6.0, W - 6.0)[::12]:
+        drop(xg, yi, 3.0)
+        D.box('M4', xg - 0.8, TOP_VSS_Y[0], xg + 0.8, yi + 1.5)
+        R.reserve(2, xg - 0.8, TOP_VSS_Y[0], xg + 0.8, yi + 1.5, 'vss')
+        if any(x0 + 2.0 < xg < x0 + WS - 2.0 for x0 in SX):
+            D.box('TM1', xa, ydr - 1.5, xb, ydr + 1.5)
+            n1, n4 = drop(xg, ydr, 3.0)
+            drops.append(dict(x=xg, y=ydr, tv1=n1, via4=n4, slice='a' if xg < SX[1] else 'b',
+                              local_x=round(xg - (SX[0] if xg < SX[1] else SX[1]), 3)))
+    blk.stats['vss_drops'] = drops
+    log('layout B vss drops', drops)
+    D.box('M4', 4.0, TOP_VSS_Y[0], W - 4.0, TOP_VSS_Y[1])
+    R.reserve(2, 4.0, TOP_VSS_Y[0], W - 4.0, TOP_VSS_Y[1], 'vss')
+    # vss pin feeder (Metal3 2 um, Via3 array into the strap)
+    xf = FEED_X['vss']
+    D.box('M3', xf - 1.0, 0.0, xf + 1.0, TOP_VSS_Y[1]); R.reserve(1, xf - 1.0, 0.0, xf + 1.0, TOP_VSS_Y[1], 'vss')
+    via_array(D, 'Via3', xf - 1.0, TOP_VSS_Y[0], xf + 1.0, TOP_VSS_Y[1])
+    for x in [x for x in gpts(6.0, W - 6.0)[::12] if all(abs(x - f) > 2.4 for f in FEED_X.values())]:
         D.box('M1', x - 0.2, 0.7, x + 0.2, ys + 0.2)
         for v, lo, hi in (('Via1', 'M1', 'M2'), ('Via2', 'M2', 'M3'), ('Via3', 'M3', 'M4')):
             D.sq(v, x, ys, VIA); D.sq(lo, x, ys, 0.40); D.sq(hi, x, ys, 0.40)
@@ -762,6 +874,55 @@ def build_top(ly, sl):
         nodes = [(l, x, y) for l in (1, 2) for x in gpts(4.4, W - 4.4) for y in gpts(ya + 0.3, yb - 0.3)]
         blk.pin(net, nodes, 'm4')
         blk.label('M4txt', 6.0, (ya + yb) / 2, net)
+    # ---- layout B: vdd strap under the slices, vdd and vdda feeders, vdda strap to the buffer ----------------------
+    va, vb = TOP_VDD_Y
+    nodes = []
+    D.box('M4', 4.0, va, W - 4.0, vb); R.reserve(2, 4.0, va, W - 4.0, vb, 'vdd')
+    nodes += [(2, x, y) for x in gpts(4.4, W - 4.4) for y in gpts(va + 0.3, vb - 0.3)]
+    # Metal3 in parallel, except around the slice south pins of other nets (their stubs cross the strap on Metal3)
+    excl = []
+    for q, x0 in enumerate(SX):
+        for (net, x) in SLICE_SOUTH:
+            if net != 'vdd':
+                excl.append((x0 + x - 1.4, x0 + x + 1.4))
+    vstub = [round(x0 + x, 4) for x0 in SX for (net, x) in SLICE_SOUTH if net == 'vdd']
+    segs3, xa_ = [], 4.0
+    for (e1, e2) in sorted(excl) + [(W - 4.0, W)]:
+        if e1 - xa_ > 2.0:
+            segs3.append((xa_, e1))
+        xa_ = max(xa_, e2)
+    for (x1, x2) in segs3:
+        D.box('M3', x1, va, x2, vb); R.reserve(1, x1, va, x2, vb, 'vdd')
+        nodes += [(1, x, y) for x in gpts(x1 + 0.4, x2 - 0.4) for y in gpts(va + 0.3, vb - 0.3)]
+        for xv in [x1 + 1.0 + k * 8.0 for k in range(int((x2 - x1 - 2.0) / 8.0) + 1)]:
+            if all(abs(xv - X) > 2.2 for X in vstub + [FEED_X['vdd']]):     # dev2: overlapping arrays (V3.a)
+                via_array(D, 'Via3', xv - 1.0, va, min(xv + 1.0, x2), vb)
+    for X in vstub:          # stubs to the slice vdd pins (the slice feeder starts at the slice edge)
+        D.box('M3', X - 0.8, va, X + 0.8, SY); R.reserve(1, X - 0.8, va, X + 0.8, SY, 'vdd')
+        via_array(D, 'Via3', X - 0.8, va, X + 0.8, vb)
+        nodes.append((1, X, SY))
+    # vdd pin feeder: Metal3 to below the vrefl bus, Metal2 under both reference buses, Metal3 into the strap
+    xf = FEED_X['vdd']
+    yb1 = VREFL_Y[0] - 1.2
+    D.box('M3', xf - 1.0, 0.0, xf + 1.0, yb1); R.reserve(1, xf - 1.0, 0.0, xf + 1.0, yb1, 'vdd')
+    D.box('M2', xf - 1.0, yb1 - 0.8, xf + 1.0, va + 0.8); R.reserve(0, xf - 1.0, yb1 - 0.8, xf + 1.0, va + 0.8, 'vdd')
+    D.box('M3', xf - 1.0, va, xf + 1.0, vb); R.reserve(1, xf - 1.0, va, xf + 1.0, vb, 'vdd')
+    via_array(D, 'Via2', xf - 1.0, yb1 - 0.8, xf + 1.0, yb1)
+    via_array(D, 'Via2', xf - 1.0, va, xf + 1.0, va + 0.8)
+    via_array(D, 'Via3', xf - 1.0, va + 0.8, xf + 1.0, vb)
+    nodes += [(1, x, y) for x in gpts(xf - 0.6, xf + 0.6) for y in gpts(0.8, yb1 - 0.3)]
+    blk.pin('vdd', sorted(set(nodes)), 'm4')
+    # vdda: Metal3 feeder from the pin, Metal4 strap to the buffer (followers, xm3 / xm4 sources)
+    xf = FEED_X['vdda']
+    da, db = TOP_VDDA_Y
+    xe_ = gceil(W / 2 + 26.0)
+    D.box('M3', xf - 1.0, 0.0, xf + 1.0, db); R.reserve(1, xf - 1.0, 0.0, xf + 1.0, db, 'vdda')
+    D.box('M4', xf - 1.0, da, xe_, db); R.reserve(2, xf - 1.0, da, xe_, db, 'vdda')
+    via_array(D, 'Via3', xf - 1.0, da, xf + 1.0, db)
+    nodes = [(2, x, y) for x in gpts(xf, xe_ - 0.4) for y in gpts(da + 0.3, db - 0.3)]
+    nodes += [(1, x, y) for x in gpts(xf - 0.6, xf + 0.6) for y in gpts(0.8, db - 0.3)]
+    blk.pin('vdda', sorted(set(nodes)), 'm4')
+    blk.stats['top_straps'] = dict(vdd=TOP_VDD_Y, vss=TOP_VSS_Y, vdda=[TOP_VDDA_Y, xe_], feeders=FEED_X, vdd_m3=segs3)
     # ---- reference buffer (thick oxide), biases ---------------------------------------------------------------------
     rb = lambda n: by['xref_' + n]
     xmib = [rb('xmib_s%d' % k) for k in range(4)]
@@ -790,12 +951,93 @@ def build_top(ly, sl):
             xl, xr = max(a[0], b[0]), min(a[2], b[2])
             if 0 < gap < 0.86 and xr > xl:
                 blk.box('TGO', xl, a[3] - 0.01, xr, b[1] + 0.01)
+    # ---- layout B2 (2026-10-26): buffer output straps -------------------------------------------------------------
+    # Layout B (PEX B.1) joined the follower sources, the bias sinks and the reference buses only through router wires:
+    # 136 Ohm from the vref follower to the bus, and the sink current flowed follower -> bus -> sink (static drop 19 mV
+    # at the slice pins). B2: Metal2 straps with Via1 at every grid node on the follower source rails and the sink drain
+    # rails; vref: Metal3 strap over the sink rails, four Metal3 verticals (sinks - followers - up to y 44.8) and Metal2
+    # jumpers under the vrefl bus into the vref bus; vrefl: Metal3 straps on its follower / sink rails, a Metal4 run
+    # between them and a Metal4 vertical into the vrefl bus (east of the vdda strap).
+    def rail(dev, term):
+        b = [q for q in blk.ports if q['dev'] == dev and q['term'] == term][0]['box']
+        return b[0], b[1], b[2], b[3]
+    def grid_vias(via, x1, y1, x2, y2):
+        # cuts only at router grid nodes (a router via of the same net at a node coincides; dev1 V2.b: 0.5 um pitch
+        # arrays next to router vias), 0.2 um from the box edge (0.105 enclosure)
+        n = 0
+        for x in gpts(x1 + 0.2, x2 - 0.2):
+            for y in gpts(y1 + 0.2, y2 - 0.2):
+                D.sq(via, x, y, VIA); n += 1
+        return n
+    def m2_strap(dev, term, net):
+        x1, y1, x2, y2 = rail(dev, term)
+        yc = round((y1 + y2) / 2, 4)
+        xs = gpts(x1 + 0.3, x2 - 0.3)
+        D.box('M2', xs[0] - 0.2, yc - 0.2, xs[-1] + 0.2, yc + 0.2); R.reserve(0, xs[0] - 0.2, yc - 0.2, xs[-1] + 0.2, yc + 0.2, net)
+        for x in xs:
+            D.sq('Via1', x, yc, VIA)
+        blk.pin(net, [(0, x, yc) for x in xs], 'm4')
+        return xs[0], xs[-1], yc
+    fol = [m2_strap('xref_xmsf_s%d' % k, 2, 'vref') for k in range(4)]
+    snk = [m2_strap('xref_xmib_s%d' % k, 0, 'vref') for k in range(4)]
+    ys_, xs1, xs2 = snk[0][2], max(snk[0][0], gceil(FEED_X['vdd'] + 2.0)), snk[-1][1]     # clear of the vdd feeder (Metal3, x 99-101)
+    D.box('M3', xs1 - 0.2, ys_ - 0.2, xs2 + 0.2, ys_ + 0.2); R.reserve(1, xs1 - 0.2, ys_ - 0.2, xs2 + 0.2, ys_ + 0.2, 'vref')
+    for (a, b, y) in snk:
+        for x in gpts(max(a, xs1), b):
+            D.sq('Via2', x, y, VIA)
+    yf = fol[0][2]
+    VX = [gnear(fol[0][0] + 17.6), gnear(fol[1][0] + 13.6), gnear(fol[2][0] + 4.8), gnear(fol[3][0] + 15.2)]
+    ytop3 = VREFL_Y[0] - 0.4
+    for xv in VX:
+        D.box('M3', xv - 1.0, ys_ - 0.2, xv + 1.0, ytop3); R.reserve(1, xv - 1.0, ys_ - 0.2, xv + 1.0, ytop3, 'vref')
+        grid_vias('Via2', xv - 1.0, yf - 0.2, xv + 1.0, yf + 0.2)
+        yj1, yj2 = ytop3 - 1.6, VREF_Y[1] - 0.2
+        D.box('M2', xv - 1.0, yj1, xv + 1.0, yj2); R.reserve(0, xv - 1.0, yj1, xv + 1.0, yj2, 'vref')
+        grid_vias('Via2', xv - 1.0, yj1, xv + 1.0, ytop3)
+        grid_vias('Via2', xv - 1.0, VREF_Y[0], xv + 1.0, yj2)
+        blk.pin('vref', [(1, xv, y) for y in gpts(ys_ + 0.8, ytop3 - 0.4)], 'm4')
+    # vrefl
+    lf = m2_strap('xref_xmsfl_s0', 2, 'vrefl')
+    ls = m2_strap('xref_xmibl_s0', 0, 'vrefl')
+    for (a, b, y) in (lf, ls):
+        D.box('M3', a - 0.2, y - 0.2, b + 0.2, y + 0.2); R.reserve(1, a - 0.2, y - 0.2, b + 0.2, y + 0.2, 'vrefl')
+        for x in gpts(a, b):
+            D.sq('Via2', x, y, VIA)
+    xl4 = gnear(lf[0] + 16.8)
+    assert xl4 - 0.8 > gceil(W / 2 + 26.0) + 0.4, xl4            # east of the vdda strap
+    D.box('M4', xl4 - 1.0, lf[2] - 0.2, xl4 + 1.0, VREFL_Y[1]); R.reserve(2, xl4 - 1.0, lf[2] - 0.2, xl4 + 1.0, VREFL_Y[1], 'vrefl')
+    grid_vias('Via3', xl4 - 1.0, lf[2] - 0.2, xl4 + 1.0, lf[2] + 0.2)
+    D.box('M4', ls[0] - 0.2, ls[2] - 0.6, xl4 + 1.0, ls[2] + 0.6); R.reserve(2, ls[0] - 0.2, ls[2] - 0.6, xl4 + 1.0, ls[2] + 0.6, 'vrefl')
+    for x in gpts(ls[0], ls[1]):
+        D.sq('Via3', x, ls[2], VIA)
+    blk.pin('vrefl', [(2, xl4, y) for y in gpts(lf[2] + 0.8, VREFL_Y[0] - 0.4)], 'm4')
+    # layout B3 (2026-10-27): vrefl bus to the slice vrefl pins. In B2 the router crossed under the vref bus with
+    # 0.40 um wires and single cuts (20-22 Ohm from the vrefl decoupling to the slice pins, vref 1.6 Ohm). B3: per pin
+    # a Metal2 jumper (2.0 um) from inside the vrefl bus under the vref bus and a Metal3 stub (2.0 um) in the gap of the
+    # vdd Metal3 strap up to the slice edge; Via2 at grid nodes at both ends
+    vl_pins = []
+    for x0 in SX:
+        for (net, x) in SLICE_SOUTH:
+            if net != 'vrefl':
+                continue
+            X = round(x0 + x, 4)
+            ys1, ys2 = VREF_Y[1] + 0.4, SY + 0.4
+            yj1, yj2 = VREFL_Y[0] + 0.2, ys1 + 1.8
+            D.box('M3', X - 1.0, ys1, X + 1.0, ys2); R.reserve(1, X - 1.0, ys1, X + 1.0, ys2, 'vrefl')
+            D.box('M2', X - 1.0, yj1, X + 1.0, yj2); R.reserve(0, X - 1.0, yj1, X + 1.0, yj2, 'vrefl')
+            grid_vias('Via2', X - 1.0, VREFL_Y[0], X + 1.0, VREFL_Y[1])
+            grid_vias('Via2', X - 1.0, ys1, X + 1.0, yj2)
+            vl_pins.append(X)
+    blk.stats['buffer_straps'] = dict(vrefl_pin_jumpers=vl_pins, vref_verticals=VX, vrefl_vertical=xl4, follower_rails=fol, sink_rails=snk, vrefl=[lf, ls])
     # comparator biases: rppd segments (west), diodes
     res = sorted([d for d in top_devs if d['kind'] == 'rppd'], key=lambda d: (d['orig'], d['seg']))
     groups = [dict(slots=[40.0], cols=[[d] for d in res if d['orig'] == 'xcbias_xrb']),
               dict(slots=[40.0], cols=[[d] for d in res if d['orig'] == 'xcbiasn_xrb'])]
     xe, ytop = resistor_array(blk, groups, 8.0, 6.4)
     tb1, _ = blk.mrow([dict(x0=gceil(xe + 2.4), devs=[by['xcbiasn_xmbd']], bulk='vss', gap=0.6)], 8.0, 'n')
+    # layout B (dev3 antenna Ant.b 209.6 > 200 at the W 0.2 um vbn diode gate): no Metal3 in a band above the bias
+    # diodes, so the vbn / vbp risers change to Metal4 after about 10 um of Metal3
+    R.block_area([1], gfloor(xe + 1.6), 19.6, gceil(xe + 16.0), 23.6)
     tb2, _ = blk.mrow([dict(x0=gceil(xe + 2.4), devs=[by['xcbias_xmbd']], bulk='vdd', gap=0.6)], gceil(tb1 + 3.2), 'p')
     # ---- clock generator (north-west) -----------------------------------------------------------------------------
     ck = lambda n: by['xckg_' + n]
@@ -825,7 +1067,9 @@ def build_top(ly, sl):
     for (net, side, x, y) in bp:
         if side == 'S':
             xg = gnear(x)
-            R.unblock(1, xg, 0.8); blk.pin(net, [(1, xg, 0.8)], 'm3')
+            R.unblock(1, xg, 0.8)
+            if net not in FEED_X:
+                blk.pin(net, [(1, xg, 0.8)], 'm3')
         elif net == 'clk':
             R.unblock(1, gnear(x), gfloor(H - 0.8)); blk.pin(net, [(1, gnear(x), gfloor(H - 0.8))], 'm3')
         elif net in ('ain_sin_p', 'ain_sin_n', 'ain_isb_p', 'ain_isb_n'):
@@ -915,7 +1159,9 @@ def long_pairs(blk):
             R.reserve(a, x - 0.2, y - 0.2, x + 0.2, y + 0.2, net); R.reserve(a + 1, x - 0.2, y - 0.2, x + 0.2, y + 0.2, net)
     xS0, xS1 = SX[0] + WS, SX[1]          # 216.8, 223.2
     # COS: p (0,130) -> x 1.6 up to 167.2 -> east to 220.8 -> down to 110 -> east to 223.2
-    for net, yp, xv, yh, xg, yend in (('ain_cos_p', 130.0, 1.6, 167.2, 220.8, 110.4), ('ain_cos_n', 134.0, 0.8, 168.0, 221.6, 114.4)):
+    # layout B: west verticals n at x 1.0, p at x 1.8 between Metal4 vss shields at x 0.2 and 2.6 (0.5 um spaces on
+    # both sides of both lines); ibias moves to Metal2 (layout A: the p line ran next to ibias and vdd, 8.25 fF imbalance)
+    for net, yp, xv, yh, xg, yend in (('ain_cos_p', 130.0, 1.8, 167.2, 220.8, 110.4), ('ain_cos_n', 134.0, 1.0, 168.0, 221.6, 114.4)):
         seg('M3', 0.0, yp, xv, yp, net); via(xv, yp, 1, 2, net)
         D.box('M3', 0.0, yp - 0.2, xv + 0.2, yp + 0.2)
         seg('M4', xv, yp, xv, yh, net); via(xv, yh, 0, 2, net)
@@ -930,13 +1176,23 @@ def long_pairs(blk):
         seg('M2', xv, yh, xg, yh, net); via(xg, yh, 0, 1, net)
         seg('M3', xg, yh, xg, yend, net)
         seg('M3', xg, yend, xS0, yend, net)
-    # ibias: west pin (0, 165) -> x 2.4 down to y 42.4 (router pin there)
-    seg('M3', 0.0, 165.0, 2.4, 165.0, 'ibias'); via(2.4, 165.0, 1, 2, 'ibias')
-    seg('M4', 2.4, 165.0, 2.4, 42.4, 'ibias')
-    blk.pin('ibias', [(2, 2.4, 42.4)], 'm4')
+    # ibias: west pin (0, 165) -> x 2.4 down to y 42.4 on Metal2 (router pin there)
+    seg('M3', 0.0, 165.0, 2.4, 165.0, 'ibias'); via(2.4, 165.0, 0, 1, 'ibias')
+    seg('M2', 2.4, 165.0, 2.4, 42.4, 'ibias')
+    blk.pin('ibias', [(0, 2.4, 42.4)], 'm2')
+    # COS / ISA shields: Metal4 at x 0.2 and 2.6 along the west COS verticals, joined to the channel shields; Metal3 at
+    # x 222.4 (COS n side) and 216.8 (ISA n side) in the middle gap
+    for x in (0.2, 2.6):
+        D.box('M4', x - 0.15, 127.6, x + 0.15, 171.4)
+        R.reserve(2, x - 0.15, 127.6, x + 0.15, 171.4, 'vss')
+    for y in (166.4, 168.8, 171.2):
+        via(2.6, y, 0, 2, 'vss')
+    seg('M3', 222.4, 166.4, 222.4, 115.2, 'vss'); via(222.4, 166.4, 0, 1, 'vss')
+    seg('M3', 216.8, 166.4, 216.8, 135.2, 'vss'); via(216.8, 166.4, 0, 1, 'vss')
     # shields: Metal2 in the channel (vss), Metal3 in the gap
     for y, xa, xb in ((166.4, 2.4, 436.8), (168.8, 2.4, 436.8), (171.2, 2.4, 436.8)):
         seg('M2', xa, y, xb, y, 'vss')
+        D.box('M2', xa - 0.15, y - 0.2, xb + 0.15, y + 0.2)     # layout B: 0.40 um, no notch at the via pads (dev2 M2.b)
     for x in (219.2, 220.0):
         seg('M3', x, 166.4, x, 117.6, 'vss'); via(x, 166.4, 0, 1, 'vss')
     blk.pin('vss', [(0, 3.2, 166.4), (0, 436.0, 168.8), (0, 3.2, 171.2)], 'm2')

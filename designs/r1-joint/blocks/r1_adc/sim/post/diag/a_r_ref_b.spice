@@ -1,0 +1,2771 @@
+* a_r_ref_b.spice: diagnostic variant of r1_adc_post_rc_m.spice (--no-c --r-nets vref,vrefl --tie 0.05): 1523 C dropped, 1876 R set to 0.05 Ohm, 0 R scaled
+* merged by sim/post/merge_parallel.py from pex/r1_adc_post_rc.spice (sha256 dab1c57ab9ae0af4): 668 -> 285 device instances (identical parallel devices as m = count)
+* r1_adc post-layout netlist, layout A (RC), written by pex/pex_build.py; see its docstring
+* devices: LVS reference of layout/r1_adc_netlist.py; R: KLayout RNetExtractor Metal1-5/Via1-4; C: kpex 0.3.12 2.5D CC
+* requires cornerMOSlv/hv.lib, cornerCAP.lib, cornerRES.lib
+.subckt r1_adc_slice_post in0p in0n in1p in1n trk0 trk1 cp0 cp1 cp2 cp3 cp4 cp5 cp6 cp7 cp8 cp9 cp10 cp11 cp12 cn0 cn1 cn2 cn3 cn4 cn5 cn6 cn7 cn8 cn9 cn10 cn11 cn12 clk clkb clkn clknb op on onp onn vbp vbn vref vrefl vrefl__p19 top_p top_n vdd vdd__p36 vdd__p37 vdd__p38 gnd gnd__p59 gnd__p60 gnd__p61
+Xxpt0a t0b__p7 trk0__p1 vdd__p12 vdd sg13_lv_pmos w=2u l=0.13u ng=1 m=1
+Xxnt0a t0b__p4 trk0 gnd__p36 gnd sg13_lv_nmos w=1u l=0.13u ng=1 m=1
+Xxpt0b t0__p5 t0b__p8 vdd__p13 vdd sg13_lv_pmos w=4u l=0.13u ng=1 m=1
+Xxnt0b t0__p4 t0b__p5 gnd__p37 gnd sg13_lv_nmos w=2u l=0.13u ng=1 m=1
+Xxpt1a t1b__p7 trk1__p1 vdd__p14 vdd sg13_lv_pmos w=2u l=0.13u ng=1 m=1
+Xxnt1a t1b__p4 trk1 gnd__p38 gnd sg13_lv_nmos w=1u l=0.13u ng=1 m=1
+Xxpt1b t1__p5 t1b__p8 vdd__p15 vdd sg13_lv_pmos w=4u l=0.13u ng=1 m=1
+Xxnt1b t1__p4 t1b__p5 gnd__p39 gnd sg13_lv_nmos w=2u l=0.13u ng=1 m=1
+Xxs0p_xms in0p__p0 xs0p_g top_p__p2 gnd sg13_lv_nmos w=6u l=0.13u ng=2 m=1
+Xxs0p_cboot xs0p_cbp__p2 xs0p_cbn__p4 cap_cmim w=11.49u l=11.49u m=1
+Xxs0p_xm1 xs0p_cbn__p1 t0b__p2 gnd__p30 gnd sg13_lv_nmos w=1u l=0.13u ng=1 m=1
+Xxs0p_xm3 xs0p_cbp xs0p_g__p4 vdd__p4 xs0p_cbp sg13_lv_pmos w=1u l=0.13u ng=1 m=1
+Xxs0p_xm8 xs0p_g__p5 xs0p_x__p2 xs0p_cbp__p1 xs0p_cbp sg13_lv_pmos w=2u l=0.13u ng=1 m=1
+Xxs0p_xm4 xs0p_x__p3 t0__p3 vdd__p5 vdd sg13_lv_pmos w=0.5u l=0.13u ng=1 m=1
+Xxs0p_xm5 xs0p_x t0__p2 xs0p_cbn__p2 gnd sg13_lv_nmos w=1u l=0.13u ng=1 m=1
+Xxs0p_xm7 xs0p_x__p1 xs0p_g__p2 xs0p_cbn__p3 gnd sg13_lv_nmos w=0.5u l=0.13u ng=1 m=1
+Xxs0p_xm9 xs0p_cbn xs0p_g__p1 in0p__p1 gnd sg13_lv_nmos w=2u l=0.13u ng=1 m=1
+Xxs0p_xm10 xs0p_g__p3 vdd__p3 xs0p_n10 gnd sg13_lv_nmos w=2u l=0.13u ng=1 m=1
+Xxs0p_xm11 xs0p_n10__p1 t0b__p3 gnd__p31 gnd sg13_lv_nmos w=2u l=0.13u ng=1 m=1
+Xxs0n_xms in0n__p0 xs0n_g top_n__p2 gnd sg13_lv_nmos w=6u l=0.13u ng=2 m=1
+Xxs0n_cboot xs0n_cbp__p2 xs0n_cbn__p4 cap_cmim w=11.49u l=11.49u m=1
+Xxs0n_xm1 xs0n_cbn__p1 t0b gnd__p28 gnd sg13_lv_nmos w=1u l=0.13u ng=1 m=1
+Xxs0n_xm3 xs0n_cbp xs0n_g__p4 vdd__p1 xs0n_cbp sg13_lv_pmos w=1u l=0.13u ng=1 m=1
+Xxs0n_xm8 xs0n_g__p5 xs0n_x__p2 xs0n_cbp__p1 xs0n_cbp sg13_lv_pmos w=2u l=0.13u ng=1 m=1
+Xxs0n_xm4 xs0n_x__p3 t0__p1 vdd__p2 vdd sg13_lv_pmos w=0.5u l=0.13u ng=1 m=1
+Xxs0n_xm5 xs0n_x t0 xs0n_cbn__p2 gnd sg13_lv_nmos w=1u l=0.13u ng=1 m=1
+Xxs0n_xm7 xs0n_x__p1 xs0n_g__p2 xs0n_cbn__p3 gnd sg13_lv_nmos w=0.5u l=0.13u ng=1 m=1
+Xxs0n_xm9 xs0n_cbn xs0n_g__p1 in0n__p1 gnd sg13_lv_nmos w=2u l=0.13u ng=1 m=1
+Xxs0n_xm10 xs0n_g__p3 vdd__p0 xs0n_n10 gnd sg13_lv_nmos w=2u l=0.13u ng=1 m=1
+Xxs0n_xm11 xs0n_n10__p1 t0b__p1 gnd__p29 gnd sg13_lv_nmos w=2u l=0.13u ng=1 m=1
+Xxs1p_xms in1p__p0 xs1p_g top_p__p3 gnd sg13_lv_nmos w=6u l=0.13u ng=2 m=1
+Xxs1p_cboot xs1p_cbp__p2 xs1p_cbn__p4 cap_cmim w=11.49u l=11.49u m=1
+Xxs1p_xm1 xs1p_cbn__p1 t1b__p2 gnd__p34 gnd sg13_lv_nmos w=1u l=0.13u ng=1 m=1
+Xxs1p_xm3 xs1p_cbp xs1p_g__p4 vdd__p10 xs1p_cbp sg13_lv_pmos w=1u l=0.13u ng=1 m=1
+Xxs1p_xm8 xs1p_g__p5 xs1p_x__p2 xs1p_cbp__p1 xs1p_cbp sg13_lv_pmos w=2u l=0.13u ng=1 m=1
+Xxs1p_xm4 xs1p_x__p3 t1__p3 vdd__p11 vdd sg13_lv_pmos w=0.5u l=0.13u ng=1 m=1
+Xxs1p_xm5 xs1p_x t1__p2 xs1p_cbn__p2 gnd sg13_lv_nmos w=1u l=0.13u ng=1 m=1
+Xxs1p_xm7 xs1p_x__p1 xs1p_g__p2 xs1p_cbn__p3 gnd sg13_lv_nmos w=0.5u l=0.13u ng=1 m=1
+Xxs1p_xm9 xs1p_cbn xs1p_g__p1 in1p__p1 gnd sg13_lv_nmos w=2u l=0.13u ng=1 m=1
+Xxs1p_xm10 xs1p_g__p3 vdd__p9 xs1p_n10 gnd sg13_lv_nmos w=2u l=0.13u ng=1 m=1
+Xxs1p_xm11 xs1p_n10__p1 t1b__p3 gnd__p35 gnd sg13_lv_nmos w=2u l=0.13u ng=1 m=1
+Xxs1n_xms in1n__p0 xs1n_g top_n__p3 gnd sg13_lv_nmos w=6u l=0.13u ng=2 m=1
+Xxs1n_cboot xs1n_cbp__p2 xs1n_cbn__p4 cap_cmim w=11.49u l=11.49u m=1
+Xxs1n_xm1 xs1n_cbn__p1 t1b gnd__p32 gnd sg13_lv_nmos w=1u l=0.13u ng=1 m=1
+Xxs1n_xm3 xs1n_cbp xs1n_g__p4 vdd__p7 xs1n_cbp sg13_lv_pmos w=1u l=0.13u ng=1 m=1
+Xxs1n_xm8 xs1n_g__p5 xs1n_x__p2 xs1n_cbp__p1 xs1n_cbp sg13_lv_pmos w=2u l=0.13u ng=1 m=1
+Xxs1n_xm4 xs1n_x__p3 t1__p1 vdd__p8 vdd sg13_lv_pmos w=0.5u l=0.13u ng=1 m=1
+Xxs1n_xm5 xs1n_x t1 xs1n_cbn__p2 gnd sg13_lv_nmos w=1u l=0.13u ng=1 m=1
+Xxs1n_xm7 xs1n_x__p1 xs1n_g__p2 xs1n_cbn__p3 gnd sg13_lv_nmos w=0.5u l=0.13u ng=1 m=1
+Xxs1n_xm9 xs1n_cbn xs1n_g__p1 in1n__p1 gnd sg13_lv_nmos w=2u l=0.13u ng=1 m=1
+Xxs1n_xm10 xs1n_g__p3 vdd__p6 xs1n_n10 gnd sg13_lv_nmos w=2u l=0.13u ng=1 m=1
+Xxs1n_xm11 xs1n_n10__p1 t1b__p1 gnd__p33 gnd sg13_lv_nmos w=2u l=0.13u ng=1 m=1
+Xxpr1 rstb_n__p2 t0b__p9 vdd__p16 vdd sg13_lv_pmos w=1u l=0.13u ng=1 m=1
+Xxpr2 rstb_n__p3 t1b__p9 vdd__p17 vdd sg13_lv_pmos w=1u l=0.13u ng=1 m=1
+Xxnr1 rstb_n t0b__p6 nr gnd sg13_lv_nmos w=1u l=0.13u ng=1 m=1
+Xxnr2 nr__p1 t1b__p6 gnd__p40 gnd sg13_lv_nmos w=1u l=0.13u ng=1 m=1
+Xxpr3 rstb__p3 rstb_n__p4 vdd__p18 vdd sg13_lv_pmos w=1u l=0.13u ng=1 m=1
+Xxnr3 rstb__p2 rstb_n__p1 gnd__p41 gnd sg13_lv_nmos w=0.5u l=0.13u ng=1 m=1
+Xxlrp lsb_p rstb__p1 vrefl__p9 vrefl sg13_lv_pmos w=1u l=0.13u ng=1 m=1
+Xxlrn lsb_n rstb vrefl__p8 vrefl sg13_lv_pmos w=1u l=0.13u ng=1 m=1
+Xxdp12_xmp bp12 cp12 vref__p5 vref sg13_lv_pmos w=2u l=0.13u ng=1 m=1
+Xxdp12_xmn bp12__p1 cp12__p1 gnd__p13 gnd sg13_lv_nmos w=1u l=0.13u ng=1 m=1
+Xxdp11_xmp bp11 cp11 vref__p6 vref sg13_lv_pmos w=2u l=0.13u ng=1 m=1
+Xxdp11_xmn bp11__p1 cp11__p1 gnd__p14 gnd sg13_lv_nmos w=1u l=0.13u ng=1 m=1
+Xxdp10_xmp bp10 cp10 vref__p7 vref sg13_lv_pmos w=2u l=0.13u ng=1 m=1
+Xxdp10_xmn bp10__p1 cp10__p1 gnd__p15 gnd sg13_lv_nmos w=1u l=0.13u ng=1 m=1
+Xxdp9_xmp bp9 cp9 vref__p8 vref sg13_lv_pmos w=1u l=0.13u ng=1 m=1
+Xxdp9_xmn bp9__p1 cp9__p1 gnd__p16 gnd sg13_lv_nmos w=0.5u l=0.13u ng=1 m=1
+Xxdp8_xmp bp8 cp8 vref__p9 vref sg13_lv_pmos w=1u l=0.13u ng=1 m=1
+Xxdp8_xmn bp8__p1 cp8__p1 gnd__p17 gnd sg13_lv_nmos w=0.5u l=0.13u ng=1 m=1
+Xxdp7_xmp bp7 cp7 vrefl__p10 vrefl sg13_lv_pmos w=1u l=0.13u ng=1 m=1
+Xxdp7_xmn bp7__p1 cp7__p1 gnd__p18 gnd sg13_lv_nmos w=0.5u l=0.13u ng=1 m=1
+Xxdp6_xmp bp6 cp6 vrefl__p11 vrefl sg13_lv_pmos w=1u l=0.13u ng=1 m=1
+Xxdp6_xmn bp6__p1 cp6__p1 gnd__p19 gnd sg13_lv_nmos w=0.5u l=0.13u ng=1 m=1
+Xxdp5_xmp bp5 cp5 vrefl__p12 vrefl sg13_lv_pmos w=1u l=0.13u ng=1 m=1
+Xxdp5_xmn bp5__p1 cp5__p1 gnd__p20 gnd sg13_lv_nmos w=0.5u l=0.13u ng=1 m=1
+Xxdp4_xmp bp4 cp4 vrefl__p13 vrefl sg13_lv_pmos w=1u l=0.13u ng=1 m=1
+Xxdp4_xmn bp4__p1 cp4__p1 gnd__p21 gnd sg13_lv_nmos w=0.5u l=0.13u ng=1 m=1
+Xxdp3_xmp bp3 cp3 vrefl__p14 vrefl sg13_lv_pmos w=1u l=0.13u ng=1 m=1
+Xxdp3_xmn bp3__p1 cp3__p1 gnd__p22 gnd sg13_lv_nmos w=0.5u l=0.13u ng=1 m=1
+Xxdp2_xmp bp2 cp2 vrefl__p15 vrefl sg13_lv_pmos w=1u l=0.13u ng=1 m=1
+Xxdp2_xmn bp2__p1 cp2__p1 gnd__p23 gnd sg13_lv_nmos w=0.5u l=0.13u ng=1 m=1
+Xxdp1_xmp bp1 cp1 vrefl__p16 vrefl sg13_lv_pmos w=1u l=0.13u ng=1 m=1
+Xxdp1_xmn bp1__p1 cp1__p1 gnd__p24 gnd sg13_lv_nmos w=0.5u l=0.13u ng=1 m=1
+Xxdp0_xmp bp0 cp0 vrefl__p17 vrefl sg13_lv_pmos w=1u l=0.13u ng=1 m=1
+Xxdp0_xmn bp0__p1 cp0__p1 gnd__p25 gnd sg13_lv_nmos w=0.5u l=0.13u ng=1 m=1
+Xxdn12_xmp bn12 cn12 vref__p4 vref sg13_lv_pmos w=2u l=0.13u ng=1 m=1
+Xxdn12_xmn bn12__p1 cn12__p1 gnd__p12 gnd sg13_lv_nmos w=1u l=0.13u ng=1 m=1
+Xxdn11_xmp bn11 cn11 vref__p3 vref sg13_lv_pmos w=2u l=0.13u ng=1 m=1
+Xxdn11_xmn bn11__p1 cn11__p1 gnd__p11 gnd sg13_lv_nmos w=1u l=0.13u ng=1 m=1
+Xxdn10_xmp bn10 cn10 vref__p2 vref sg13_lv_pmos w=2u l=0.13u ng=1 m=1
+Xxdn10_xmn bn10__p1 cn10__p1 gnd__p10 gnd sg13_lv_nmos w=1u l=0.13u ng=1 m=1
+Xxdn9_xmp bn9 cn9 vref__p1 vref sg13_lv_pmos w=1u l=0.13u ng=1 m=1
+Xxdn9_xmn bn9__p1 cn9__p1 gnd__p9 gnd sg13_lv_nmos w=0.5u l=0.13u ng=1 m=1
+Xxdn8_xmp bn8 cn8 vref__p0 vref sg13_lv_pmos w=1u l=0.13u ng=1 m=1
+Xxdn8_xmn bn8__p1 cn8__p1 gnd__p8 gnd sg13_lv_nmos w=0.5u l=0.13u ng=1 m=1
+Xxdn7_xmp bn7 cn7 vrefl__p7 vrefl sg13_lv_pmos w=1u l=0.13u ng=1 m=1
+Xxdn7_xmn bn7__p1 cn7__p1 gnd__p7 gnd sg13_lv_nmos w=0.5u l=0.13u ng=1 m=1
+Xxdn6_xmp bn6 cn6 vrefl__p6 vrefl sg13_lv_pmos w=1u l=0.13u ng=1 m=1
+Xxdn6_xmn bn6__p1 cn6__p1 gnd__p6 gnd sg13_lv_nmos w=0.5u l=0.13u ng=1 m=1
+Xxdn5_xmp bn5 cn5 vrefl__p5 vrefl sg13_lv_pmos w=1u l=0.13u ng=1 m=1
+Xxdn5_xmn bn5__p1 cn5__p1 gnd__p5 gnd sg13_lv_nmos w=0.5u l=0.13u ng=1 m=1
+Xxdn4_xmp bn4 cn4 vrefl__p4 vrefl sg13_lv_pmos w=1u l=0.13u ng=1 m=1
+Xxdn4_xmn bn4__p1 cn4__p1 gnd__p4 gnd sg13_lv_nmos w=0.5u l=0.13u ng=1 m=1
+Xxdn3_xmp bn3 cn3 vrefl__p3 vrefl sg13_lv_pmos w=1u l=0.13u ng=1 m=1
+Xxdn3_xmn bn3__p1 cn3__p1 gnd__p3 gnd sg13_lv_nmos w=0.5u l=0.13u ng=1 m=1
+Xxdn2_xmp bn2 cn2 vrefl__p2 vrefl sg13_lv_pmos w=1u l=0.13u ng=1 m=1
+Xxdn2_xmn bn2__p1 cn2__p1 gnd__p2 gnd sg13_lv_nmos w=0.5u l=0.13u ng=1 m=1
+Xxdn1_xmp bn1 cn1 vrefl__p1 vrefl sg13_lv_pmos w=1u l=0.13u ng=1 m=1
+Xxdn1_xmn bn1__p1 cn1__p1 gnd__p1 gnd sg13_lv_nmos w=0.5u l=0.13u ng=1 m=1
+Xxdn0_xmp bn0 cn0 vrefl__p0 vrefl sg13_lv_pmos w=1u l=0.13u ng=1 m=1
+Xxdn0_xmn bn0__p1 cn0__p1 gnd__p0 gnd sg13_lv_nmos w=0.5u l=0.13u ng=1 m=1
+Xxc4_xs1_xmt1 xc4_xs1_tail0 clkb__p2 vdd__p28 vdd sg13_lv_pmos w=16u l=0.13u ng=4 m=1
+Xxc4_xs1_xmtc xc4_xs1_tail__p2 vbp xc4_xs1_tail0__p1 vdd sg13_lv_pmos w=16u l=0.5u ng=4 m=1
+Xxc4_xs1_xm1 xc4_dip top_p__p4 xc4_xs1_tail vdd sg13_lv_pmos w=48u l=0.3u ng=12 m=1
+Xxc4_xs1_xm2 xc4_din top_n__p4 xc4_xs1_tail__p1 vdd sg13_lv_pmos w=48u l=0.3u ng=12 m=1
+Xxc4_xci1 vdd__p23 xc4_dip vdd__p22 vdd sg13_lv_pmos w=80u l=4u ng=8 m=1
+Xxc4_xci2 vdd__p25 xc4_din vdd__p24 vdd sg13_lv_pmos w=80u l=4u ng=8 m=1
+Xxc4_xmr1 xc4_dip__p1 clkb gnd__p49 gnd sg13_lv_nmos w=20u l=0.13u ng=2 m=1
+Xxc4_xmr2 xc4_din__p1 clkb__p1 gnd__p50 gnd sg13_lv_nmos w=20u l=0.13u ng=2 m=1
+Xxc4_xmt2 xc4_lt clk gnd__p55 gnd sg13_lv_nmos w=4u l=0.13u ng=1 m=1
+Xxc4_xmn1 op on xc4_lt__p1 gnd sg13_lv_nmos w=2u l=0.13u ng=1 m=1
+Xxc4_xmn2 on__p1 op__p1 xc4_lt__p2 gnd sg13_lv_nmos w=2u l=0.13u ng=1 m=1
+Xxc4_xmp1 op__p4 on__p4 vdd__p31 vdd sg13_lv_pmos w=2u l=0.13u ng=1 m=1
+Xxc4_xmp2 on__p5 op__p5 vdd__p32 vdd sg13_lv_pmos w=2u l=0.13u ng=1 m=1
+Xxc4_xmh1 op__p3 xc4_dip__p2 vdd__p29 vdd sg13_lv_pmos w=8u l=0.13u ng=2 m=1
+Xxc4_xmh2 on__p3 xc4_din__p2 vdd__p30 vdd sg13_lv_pmos w=8u l=0.13u ng=2 m=1
+Xxc4_xbp1 xc4_outpb__p1 op__p6 vdd__p33 vdd sg13_lv_pmos w=1u l=0.13u ng=1 m=1
+Xxc4_xbn1 xc4_outpb op__p2 gnd__p56 gnd sg13_lv_nmos w=0.5u l=0.13u ng=1 m=1
+Xxc4_xbp2 xc4_outnb__p1 on__p6 vdd__p34 vdd sg13_lv_pmos w=1u l=0.13u ng=1 m=1
+Xxc4_xbn2 xc4_outnb on__p2 gnd__p57 gnd sg13_lv_nmos w=0.5u l=0.13u ng=1 m=1
+Xxc5_xs1_xmt1 xc5_xs1_tail0 clkn__p2 gnd__p46 gnd sg13_lv_nmos w=8u l=0.13u ng=2 m=1
+Xxc5_xs1_xmtc xc5_xs1_tail__p2 vbn xc5_xs1_tail0__p1 gnd sg13_lv_nmos w=4u l=0.5u ng=1 m=1
+Xxc5_xs1_xm1 xc5_dip__p1 top_p xc5_xs1_tail gnd sg13_lv_nmos w=16u l=0.5u ng=4 m=1
+Xxc5_xs1_xm2 xc5_din__p1 top_n xc5_xs1_tail__p1 gnd sg13_lv_nmos w=16u l=0.5u ng=4 m=1
+Xxc5_xci1 gnd__p43 xc5_dip gnd__p42 gnd sg13_lv_nmos w=30u l=4u ng=4 m=1
+Xxc5_xci2 gnd__p45 xc5_din gnd__p44 gnd sg13_lv_nmos w=30u l=4u ng=4 m=1
+Xxc5_xmr1 xc5_dip clkn vdd__p19 vdd sg13_lv_pmos w=16u l=0.13u ng=2 m=1
+Xxc5_xmr2 xc5_din clkn__p1 vdd__p20 vdd sg13_lv_pmos w=16u l=0.13u ng=2 m=1
+Xxc5_xmt2 xc5_lt clknb vdd__p21 vdd sg13_lv_pmos w=8u l=0.13u ng=1 m=1
+Xxc5_xmp1 onp__p4 onn__p4 xc5_lt__p1 vdd sg13_lv_pmos w=4u l=0.13u ng=1 m=1
+Xxc5_xmp2 onn__p5 onp__p5 xc5_lt__p2 vdd sg13_lv_pmos w=4u l=0.13u ng=1 m=1
+Xxc5_xmn1 onp__p1 onn__p1 gnd__p51 gnd sg13_lv_nmos w=1u l=0.13u ng=1 m=1
+Xxc5_xmn2 onn__p2 onp__p2 gnd__p52 gnd sg13_lv_nmos w=1u l=0.13u ng=1 m=1
+Xxc5_xmh1 onp xc5_dip__p2 gnd__p47 gnd sg13_lv_nmos w=8u l=0.13u ng=1 m=1
+Xxc5_xmh2 onn xc5_din__p2 gnd__p48 gnd sg13_lv_nmos w=8u l=0.13u ng=1 m=1
+Xxc5_xbp1 xc5_outpb__p1 onp__p6 vdd__p26 vdd sg13_lv_pmos w=1u l=0.13u ng=1 m=1
+Xxc5_xbn1 xc5_outpb onp__p3 gnd__p53 gnd sg13_lv_nmos w=0.5u l=0.13u ng=1 m=1
+Xxc5_xbp2 xc5_outnb__p1 onn__p6 vdd__p27 vdd sg13_lv_pmos w=1u l=0.13u ng=1 m=1
+Xxc5_xbn2 xc5_outnb onn__p3 gnd__p54 gnd sg13_lv_nmos w=0.5u l=0.13u ng=1 m=1
+Xxdacp_xc12_u0 top_p__p1 bp12__p2 cap_cmim w=3.78u l=3.78u m=16
+Xxdacp_xc11_u0 top_p__p1 bp11__p2 cap_cmim w=3.78u l=3.78u m=8
+Xxdacp_xc10_u0 top_p__p1 bp10__p2 cap_cmim w=3.78u l=3.78u m=4
+Xxdacp_xc9_u0 top_p__p1 bp9__p2 cap_cmim w=3.78u l=3.78u m=2
+Xxdacp_xc8_u0 top_p__p1 bp8__p2 cap_cmim w=3.78u l=3.78u m=1
+Xxdacp_xcb top_p__p1 lsb_p__p1 cap_cmim w=4.23u l=4.23u m=1
+Xxdacp_xc7_u0 lsb_p__p1 bp7__p2 cap_cmim w=3.78u l=3.78u m=64
+Xxdacp_xc6_u0 lsb_p__p1 bp6__p2 cap_cmim w=3.78u l=3.78u m=32
+Xxdacp_xc5_u0 lsb_p__p1 bp5__p2 cap_cmim w=3.78u l=3.78u m=16
+Xxdacp_xc4_u0 lsb_p__p1 bp4__p2 cap_cmim w=3.78u l=3.78u m=8
+Xxdacp_xc3_u0 lsb_p__p1 bp3__p2 cap_cmim w=3.78u l=3.78u m=4
+Xxdacp_xc2_u0 lsb_p__p1 bp2__p2 cap_cmim w=3.78u l=3.78u m=2
+Xxdacp_xc1_u0 lsb_p__p1 bp1__p2 cap_cmim w=3.78u l=3.78u m=1
+Xxdacp_xc0 lsb_p__p1 bp0__p2 cap_cmim w=2.67u l=2.67u m=1
+Xxdacn_xc12_u0 top_n__p1 bn12__p2 cap_cmim w=3.78u l=3.78u m=16
+Xxdacn_xc11_u0 top_n__p1 bn11__p2 cap_cmim w=3.78u l=3.78u m=8
+Xxdacn_xc10_u0 top_n__p1 bn10__p2 cap_cmim w=3.78u l=3.78u m=4
+Xxdacn_xc9_u0 top_n__p1 bn9__p2 cap_cmim w=3.78u l=3.78u m=2
+Xxdacn_xc8_u0 top_n__p1 bn8__p2 cap_cmim w=3.78u l=3.78u m=1
+Xxdacn_xcb top_n__p1 lsb_n__p1 cap_cmim w=4.23u l=4.23u m=1
+Xxdacn_xc7_u0 lsb_n__p1 bn7__p2 cap_cmim w=3.78u l=3.78u m=64
+Xxdacn_xc6_u0 lsb_n__p1 bn6__p2 cap_cmim w=3.78u l=3.78u m=32
+Xxdacn_xc5_u0 lsb_n__p1 bn5__p2 cap_cmim w=3.78u l=3.78u m=16
+Xxdacn_xc4_u0 lsb_n__p1 bn4__p2 cap_cmim w=3.78u l=3.78u m=8
+Xxdacn_xc3_u0 lsb_n__p1 bn3__p2 cap_cmim w=3.78u l=3.78u m=4
+Xxdacn_xc2_u0 lsb_n__p1 bn2__p2 cap_cmim w=3.78u l=3.78u m=2
+Xxdacn_xc1_u0 lsb_n__p1 bn1__p2 cap_cmim w=3.78u l=3.78u m=1
+Xxdacn_xc0 lsb_n__p1 bn0__p2 cap_cmim w=2.67u l=2.67u m=1
+Xxdmy_u0 gnd__p27 gnd__p27 cap_cmim w=3.78u l=3.78u m=82
+Cld_xc4_outpb xc4_outpb gnd 3f
+Cld_xc4_outnb xc4_outnb gnd 3f
+Cld_xc5_outpb xc5_outpb gnd 3f
+Cld_xc5_outnb xc5_outnb gnd 3f
+Rw0 bn0 bn0__p1 0.05
+Rw1 bn0 bn0__p2 0.05
+Rw2 bn0__p1 bn0__p2 0.05
+Rw3 bn1 bn1__p1 0.05
+Rw4 bn1 bn1__p2 0.05
+Rw5 bn1__p1 bn1__p2 0.05
+Rw6 bn10 bn10__p1 0.05
+Rw7 bn10 bn10__p2 0.05
+Rw8 bn10__p1 bn10__p2 0.05
+Rw9 bn11 bn11__p2 0.05
+Rw10 bn11__p1 bn11__p2 0.05
+Rw11 bn12 bn12__p1 0.05
+Rw12 bn12 bn12__p2 0.05
+Rw13 bn12__p1 bn12__p2 0.05
+Rw14 bn2 bn2__p1 0.05
+Rw15 bn2 bn2__p2 0.05
+Rw16 bn2__p1 bn2__p2 0.05
+Rw17 bn3 bn3__p1 0.05
+Rw18 bn3 bn3__p2 0.05
+Rw19 bn3__p1 bn3__p2 0.05
+Rw20 bn4 bn4__p1 0.05
+Rw21 bn4 bn4__p2 0.05
+Rw22 bn4__p1 bn4__p2 0.05
+Rw23 bn5 bn5__p1 0.05
+Rw24 bn5 bn5__p2 0.05
+Rw25 bn5__p1 bn5__p2 0.05
+Rw26 bn6 bn6__p1 0.05
+Rw27 bn6 bn6__p2 0.05
+Rw28 bn6__p1 bn6__p2 0.05
+Rw29 bn7 bn7__p1 0.05
+Rw30 bn7 bn7__p2 0.05
+Rw31 bn7__p1 bn7__p2 0.05
+Rw32 bn8 bn8__p2 0.05
+Rw33 bn8__p1 bn8__p2 0.05
+Rw34 bn9 bn9__p2 0.05
+Rw35 bn9__p1 bn9__p2 0.05
+Rw36 bp0 bp0__p1 0.05
+Rw37 bp0 bp0__p2 0.05
+Rw38 bp0__p1 bp0__p2 0.05
+Rw39 bp1 bp1__p1 0.05
+Rw40 bp1 bp1__p2 0.05
+Rw41 bp1__p1 bp1__p2 0.05
+Rw42 bp10 bp10__p1 0.05
+Rw43 bp10 bp10__p2 0.05
+Rw44 bp10__p1 bp10__p2 0.05
+Rw45 bp11 bp11__p1 0.05
+Rw46 bp11 bp11__p2 0.05
+Rw47 bp11__p1 bp11__p2 0.05
+Rw48 bp12 bp12__p2 0.05
+Rw49 bp12__p1 bp12__p2 0.05
+Rw50 bp2 bp2__p1 0.05
+Rw51 bp2 bp2__p2 0.05
+Rw52 bp2__p1 bp2__p2 0.05
+Rw53 bp3 bp3__p2 0.05
+Rw54 bp3__p1 bp3__p2 0.05
+Rw55 bp4 bp4__p1 0.05
+Rw56 bp4 bp4__p2 0.05
+Rw57 bp4__p1 bp4__p2 0.05
+Rw58 bp5 bp5__p1 0.05
+Rw59 bp5 bp5__p2 0.05
+Rw60 bp5__p1 bp5__p2 0.05
+Rw61 bp6 bp6__p1 0.05
+Rw62 bp6 bp6__p2 0.05
+Rw63 bp6__p1 bp6__p2 0.05
+Rw64 bp7 bp7__p2 0.05
+Rw65 bp7__p1 bp7__p2 0.05
+Rw66 bp8 bp8__p1 0.05
+Rw67 bp8 bp8__p2 0.05
+Rw68 bp8__p1 bp8__p2 0.05
+Rw69 bp9 bp9__p1 0.05
+Rw70 bp9 bp9__p2 0.05
+Rw71 bp9__p1 bp9__p2 0.05
+Rw72 clkb clkb__p1 0.05
+Rw73 clkb clkb__p2 0.05
+Rw74 clkn clkn__p1 0.05
+Rw75 clkn clkn__p2 0.05
+Rw76 clkn__p1 clkn__p2 0.05
+Rw77 cn0 cn0__p1 0.05
+Rw78 cn1 cn1__p1 0.05
+Rw79 cn10 cn10__p1 0.05
+Rw80 cn11 cn11__p1 0.05
+Rw81 cn12 cn12__p1 0.05
+Rw82 cn2 cn2__p1 0.05
+Rw83 cn3 cn3__p1 0.05
+Rw84 cn4 cn4__p1 0.05
+Rw85 cn5 cn5__p1 0.05
+Rw86 cn6 cn6__p1 0.05
+Rw87 cn7 cn7__p1 0.05
+Rw88 cn8 cn8__p1 0.05
+Rw89 cn9 cn9__p1 0.05
+Rw90 cp0 cp0__p1 0.05
+Rw91 cp1 cp1__p1 0.05
+Rw92 cp10 cp10__p1 0.05
+Rw93 cp11 cp11__p1 0.05
+Rw94 cp12 cp12__p1 0.05
+Rw95 cp2 cp2__p1 0.05
+Rw96 cp3 cp3__p1 0.05
+Rw97 cp4 cp4__p1 0.05
+Rw98 cp5 cp5__p1 0.05
+Rw99 cp6 cp6__p1 0.05
+Rw100 cp7 cp7__p1 0.05
+Rw101 cp8 cp8__p1 0.05
+Rw102 cp9 cp9__p1 0.05
+Rw103 gnd__i56 gnd__i57 0.05
+Rw104 gnd__i58 gnd__i59 0.05
+Rw105 gnd__i61 gnd__i62 0.05
+Rw106 gnd__i66 gnd__i67 0.05
+Rw107 gnd__i69 gnd__i70 0.05
+Rw108 gnd__i41 gnd__i18 0.05
+Rw109 gnd__i42 gnd__i41 0.05
+Rw110 gnd__i39 gnd__i42 0.05
+Rw111 gnd__i40 gnd__i39 0.05
+Rw112 gnd__i16 gnd__i15 0.05
+Rw113 gnd__i17 gnd__i16 0.05
+Rw114 gnd__i28 gnd__i27 0.05
+Rw115 gnd__i29 gnd__i28 0.05
+Rw116 gnd__i30 gnd__i29 0.05
+Rw117 gnd__i31 gnd__i30 0.05
+Rw118 gnd__i32 gnd__i31 0.05
+Rw119 gnd__i7 gnd__i32 0.05
+Rw120 gnd__i8 gnd__i7 0.05
+Rw121 gnd__i9 gnd__i8 0.05
+Rw122 gnd__i10 gnd__i9 0.05
+Rw123 gnd__i11 gnd__i10 0.05
+Rw124 gnd__i12 gnd__i11 0.05
+Rw125 gnd__i13 gnd__i12 0.05
+Rw126 gnd__i14 gnd__i13 0.05
+Rw127 gnd__i0 gnd__i14 0.05
+Rw128 gnd__i35 gnd__i36 0.05
+Rw129 gnd__i43 gnd__i44 0.05
+Rw130 gnd__i45 gnd__i46 0.05
+Rw131 gnd__i45 gnd__i44 0.05
+Rw132 gnd__i37 gnd__i36 0.05
+Rw133 gnd__i34 gnd__i35 0.05
+Rw134 gnd__i47 gnd__i33 0.05
+Rw135 gnd__i0 gnd__i43 0.05
+Rw136 gnd__i34 gnd__i33 0.05
+Rw137 gnd__i47 gnd__i46 0.05
+Rw138 gnd__i22 gnd__i21 0.05
+Rw139 gnd__i22 gnd__i23 0.05
+Rw140 gnd__i24 gnd__i23 0.05
+Rw141 gnd__i25 gnd__i24 0.05
+Rw142 gnd__i48 gnd__i19 0.05
+Rw143 gnd__i52 gnd__i73 0.05
+Rw144 gnd__i58 gnd__i53 0.05
+Rw145 gnd__i65 gnd__i63 0.05
+Rw146 gnd__i64 gnd__p26 0.05
+Rw147 gnd__i72 gnd__p27 0.05
+Rw148 gnd__i56 gnd__i51 0.05
+Rw149 gnd__i64 gnd__i63 0.05
+Rw150 gnd__i61 gnd__i63 0.05
+Rw151 gnd__i68 gnd__i54 0.05
+Rw152 gnd__i66 gnd__i54 0.05
+Rw153 gnd__i72 gnd__i71 0.05
+Rw154 gnd__i69 gnd__i71 0.05
+Rw155 gnd__i51 gnd__i57 0.05
+Rw156 gnd__i60 gnd__i59 0.05
+Rw157 gnd__i53 gnd__i59 0.05
+Rw158 gnd__i63 gnd__i62 0.05
+Rw159 gnd__i65 gnd__i62 0.05
+Rw160 gnd__i64 gnd__i62 0.05
+Rw161 gnd__i68 gnd__i67 0.05
+Rw162 gnd__i54 gnd__i67 0.05
+Rw163 gnd__i71 gnd__i70 0.05
+Rw164 gnd__i72 gnd__i70 0.05
+Rw165 gnd__i1 gnd__p32 0.05
+Rw166 gnd__i2 gnd__p33 0.05
+Rw167 gnd__i3 gnd__p34 0.05
+Rw168 gnd__i4 gnd__p28 0.05
+Rw169 gnd__i5 gnd__p30 0.05
+Rw170 gnd__i6 gnd__p29 0.05
+Rw171 gnd__i16 gnd__i20 0.05
+Rw172 gnd__i19 gnd__p36 0.05
+Rw173 gnd__i20 gnd__p38 0.05
+Rw174 gnd__i26 gnd__i27 0.05
+Rw175 gnd__i38 gnd__p48 0.05
+Rw176 gnd__i48 gnd__i73 0.05
+Rw177 gnd__i60 gnd__i53 0.05
+Rw178 gnd__i0 gnd__p14 0.05
+Rw179 gnd__p31 gnd__i54 0.05
+Rw180 gnd__p54 gnd__i22 0.05
+Rw181 gnd__p57 gnd__i25 0.05
+Rw182 gnd__i26 gnd__p0 0.05
+Rw183 gnd__p1 gnd__i27 0.05
+Rw184 gnd__p2 gnd__i28 0.05
+Rw185 gnd__p3 gnd__i29 0.05
+Rw186 gnd__p4 gnd__i30 0.05
+Rw187 gnd__p5 gnd__i31 0.05
+Rw188 gnd__p6 gnd__i32 0.05
+Rw189 gnd__i7 gnd__p7 0.05
+Rw190 gnd__i8 gnd__p8 0.05
+Rw191 gnd__i9 gnd__p9 0.05
+Rw192 gnd__p52 gnd__i53 0.05
+Rw193 gnd__i10 gnd__p10 0.05
+Rw194 gnd__i11 gnd__p11 0.05
+Rw195 gnd__i12 gnd__p12 0.05
+Rw196 gnd__i14 gnd__p13 0.05
+Rw197 gnd__i18 gnd__p42 0.05
+Rw198 gnd__p42 gnd__i50 0.05
+Rw199 gnd__i48 gnd__p37 0.05
+Rw200 gnd__i20 gnd__p39 0.05
+Rw201 gnd__p43 gnd__i50 0.05
+Rw202 gnd__i21 gnd__i52 0.05
+Rw203 gnd__p15 gnd__i43 0.05
+Rw204 gnd__p50 gnd__i51 0.05
+Rw205 gnd__i41 gnd__p44 0.05
+Rw206 gnd__p47 gnd__i49 0.05
+Rw207 gnd__p16 gnd__i44 0.05
+Rw208 gnd__p17 gnd__i45 0.05
+Rw209 gnd__p18 gnd__i46 0.05
+Rw210 gnd__p19 gnd__i47 0.05
+Rw211 gnd__i33 gnd__p20 0.05
+Rw212 gnd__i34 gnd__p21 0.05
+Rw213 gnd__i35 gnd__p22 0.05
+Rw214 gnd__i36 gnd__p23 0.05
+Rw215 gnd__i37 gnd__p24 0.05
+Rw216 gnd__i15 gnd 0.05
+Rw217 gnd__i39 gnd__p60 0.05
+Rw218 gnd__i40 gnd__i49 0.05
+Rw219 gnd__i55 gnd__i38 0.05
+Rw220 gnd__i21 gnd__i58 0.05
+Rw221 gnd__i55 gnd__i49 0.05
+Rw222 gnd__p27 gnd__p26 0.05
+Rw223 gnd__i2 gnd__i1 0.05
+Rw224 gnd__i3 gnd__p35 0.05
+Rw225 gnd__i6 gnd__i4 0.05
+Rw226 gnd__i5 gnd__i66 0.05
+Rw227 gnd__p25 gnd__i37 0.05
+Rw228 gnd__i15 gnd__i19 0.05
+Rw229 gnd__p40 gnd__i17 0.05
+Rw230 gnd__p44 gnd__p45 0.05
+Rw231 gnd__p56 gnd__i24 0.05
+Rw232 gnd__i52 gnd__p51 0.05
+Rw233 gnd__p55 gnd__i23 0.05
+Rw234 gnd__i56 gnd__i55 0.05
+Rw235 gnd__i50 gnd__i13 0.05
+Rw236 gnd__i60 gnd__p53 0.05
+Rw237 gnd__i69 gnd__i68 0.05
+Rw238 gnd__i38 gnd__p49 0.05
+Rw239 gnd__p41 gnd__i17 0.05
+Rw240 gnd__p46 gnd__i42 0.05
+Rw241 gnd__i73 gnd__i61 0.05
+Rw242 gnd__i65 gnd__i4 0.05
+Rw243 gnd__p59 gnd__i18 0.05
+Rw244 gnd__i26 gnd__i25 0.05
+Rw245 gnd__i1 gnd__i57 0.05
+Rw246 gnd__i5 gnd__i6 0.05
+Rw247 gnd__i3 gnd__i2 0.05
+Rw248 gnd__p61 gnd__i40 0.05
+Rw249 in0n in0n__p0 0.05
+Rw250 in0n in0n__p1 0.05
+Rw251 in0n__p0 in0n__p1 0.05
+Rw252 in0p in0p__p0 0.05
+Rw253 in0p in0p__p1 0.05
+Rw254 in0p__p0 in0p__p1 0.05
+Rw255 in1n in1n__p0 0.05
+Rw256 in1n in1n__p1 0.05
+Rw257 in1n__p0 in1n__p1 0.05
+Rw258 in1p in1p__p0 0.05
+Rw259 in1p in1p__p1 0.05
+Rw260 in1p__p0 in1p__p1 0.05
+Rw261 lsb_n lsb_n__p1 0.05
+Rw262 lsb_n__p1 lsb_n__p2 0.05
+Rw263 lsb_p lsb_p__p1 0.05
+Rw264 lsb_p lsb_p__p2 0.05
+Rw265 lsb_p__p1 lsb_p__p2 0.05
+Rw266 nr nr__p1 0.05
+Rw267 on on__p1 0.05
+Rw268 on on__p2 0.05
+Rw269 on on__p3 0.05
+Rw270 on on__p4 0.05
+Rw271 on on__p5 0.05
+Rw272 on on__p6 0.05
+Rw273 on__p1 on__p2 0.05
+Rw274 on__p1 on__p3 0.05
+Rw275 on__p1 on__p4 0.05
+Rw276 on__p1 on__p5 0.05
+Rw277 on__p1 on__p6 0.05
+Rw278 on__p2 on__p3 0.05
+Rw279 on__p2 on__p4 0.05
+Rw280 on__p2 on__p5 0.05
+Rw281 on__p2 on__p6 0.05
+Rw282 on__p3 on__p4 0.05
+Rw283 on__p3 on__p5 0.05
+Rw284 on__p3 on__p6 0.05
+Rw285 on__p4 on__p5 0.05
+Rw286 on__p4 on__p6 0.05
+Rw287 on__p5 on__p6 0.05
+Rw288 onn onn__p1 0.05
+Rw289 onn onn__p2 0.05
+Rw290 onn onn__p3 0.05
+Rw291 onn onn__p4 0.05
+Rw292 onn onn__p5 0.05
+Rw293 onn onn__p6 0.05
+Rw294 onn__p1 onn__p2 0.05
+Rw295 onn__p1 onn__p3 0.05
+Rw296 onn__p1 onn__p4 0.05
+Rw297 onn__p1 onn__p5 0.05
+Rw298 onn__p1 onn__p6 0.05
+Rw299 onn__p2 onn__p3 0.05
+Rw300 onn__p2 onn__p4 0.05
+Rw301 onn__p2 onn__p5 0.05
+Rw302 onn__p2 onn__p6 0.05
+Rw303 onn__p3 onn__p4 0.05
+Rw304 onn__p3 onn__p5 0.05
+Rw305 onn__p3 onn__p6 0.05
+Rw306 onn__p4 onn__p5 0.05
+Rw307 onn__p4 onn__p6 0.05
+Rw308 onn__p5 onn__p6 0.05
+Rw309 onp onp__p5 0.05
+Rw310 onp onp__p6 0.05
+Rw311 onp__p1 onp__p2 0.05
+Rw312 onp__p2 onp__p3 0.05
+Rw313 onp__p3 onp__p4 0.05
+Rw314 onp__p3 onp__p5 0.05
+Rw315 onp__p4 onp__p5 0.05
+Rw316 onp__p5 onp__p6 0.05
+Rw317 op op__p1 0.05
+Rw318 op__p1 op__p2 0.05
+Rw319 op__p2 op__p3 0.05
+Rw320 op__p2 op__p4 0.05
+Rw321 op__p2 op__p5 0.05
+Rw322 op__p3 op__p4 0.05
+Rw323 op__p3 op__p5 0.05
+Rw324 op__p4 op__p5 0.05
+Rw325 op__p5 op__p6 0.05
+Rw326 rstb rstb__p1 0.05
+Rw327 rstb rstb__p2 0.05
+Rw328 rstb rstb__p3 0.05
+Rw329 rstb__p1 rstb__p2 0.05
+Rw330 rstb__p1 rstb__p3 0.05
+Rw331 rstb__p2 rstb__p3 0.05
+Rw332 rstb_n rstb_n__p1 0.05
+Rw333 rstb_n rstb_n__p3 0.05
+Rw334 rstb_n rstb_n__p4 0.05
+Rw335 rstb_n__p1 rstb_n__p3 0.05
+Rw336 rstb_n__p1 rstb_n__p4 0.05
+Rw337 rstb_n__p2 rstb_n__p3 0.05
+Rw338 rstb_n__p3 rstb_n__p4 0.05
+Rw339 t0 t0__p1 0.05
+Rw340 t0 t0__p2 0.05
+Rw341 t0 t0__p3 0.05
+Rw342 t0 t0__p4 0.05
+Rw343 t0 t0__p5 0.05
+Rw344 t0__p1 t0__p2 0.05
+Rw345 t0__p1 t0__p3 0.05
+Rw346 t0__p1 t0__p4 0.05
+Rw347 t0__p1 t0__p5 0.05
+Rw348 t0__p2 t0__p3 0.05
+Rw349 t0__p2 t0__p4 0.05
+Rw350 t0__p2 t0__p5 0.05
+Rw351 t0__p3 t0__p4 0.05
+Rw352 t0__p3 t0__p5 0.05
+Rw353 t0__p4 t0__p5 0.05
+Rw354 t0b t0b__p1 0.05
+Rw355 t0b t0b__p2 0.05
+Rw356 t0b t0b__p3 0.05
+Rw357 t0b t0b__p4 0.05
+Rw358 t0b t0b__p5 0.05
+Rw359 t0b t0b__p6 0.05
+Rw360 t0b t0b__p7 0.05
+Rw361 t0b t0b__p8 0.05
+Rw362 t0b t0b__p9 0.05
+Rw363 t0b__p1 t0b__p2 0.05
+Rw364 t0b__p1 t0b__p3 0.05
+Rw365 t0b__p1 t0b__p4 0.05
+Rw366 t0b__p1 t0b__p5 0.05
+Rw367 t0b__p1 t0b__p6 0.05
+Rw368 t0b__p1 t0b__p7 0.05
+Rw369 t0b__p1 t0b__p8 0.05
+Rw370 t0b__p1 t0b__p9 0.05
+Rw371 t0b__p2 t0b__p3 0.05
+Rw372 t0b__p2 t0b__p4 0.05
+Rw373 t0b__p2 t0b__p5 0.05
+Rw374 t0b__p2 t0b__p6 0.05
+Rw375 t0b__p2 t0b__p7 0.05
+Rw376 t0b__p2 t0b__p8 0.05
+Rw377 t0b__p2 t0b__p9 0.05
+Rw378 t0b__p3 t0b__p4 0.05
+Rw379 t0b__p3 t0b__p5 0.05
+Rw380 t0b__p3 t0b__p6 0.05
+Rw381 t0b__p3 t0b__p7 0.05
+Rw382 t0b__p3 t0b__p8 0.05
+Rw383 t0b__p3 t0b__p9 0.05
+Rw384 t0b__p4 t0b__p5 0.05
+Rw385 t0b__p4 t0b__p6 0.05
+Rw386 t0b__p4 t0b__p7 0.05
+Rw387 t0b__p4 t0b__p8 0.05
+Rw388 t0b__p4 t0b__p9 0.05
+Rw389 t0b__p5 t0b__p6 0.05
+Rw390 t0b__p5 t0b__p7 0.05
+Rw391 t0b__p5 t0b__p8 0.05
+Rw392 t0b__p5 t0b__p9 0.05
+Rw393 t0b__p6 t0b__p7 0.05
+Rw394 t0b__p6 t0b__p8 0.05
+Rw395 t0b__p6 t0b__p9 0.05
+Rw396 t0b__p7 t0b__p8 0.05
+Rw397 t0b__p7 t0b__p9 0.05
+Rw398 t0b__p8 t0b__p9 0.05
+Rw399 t1 t1__p1 0.05
+Rw400 t1 t1__p2 0.05
+Rw401 t1 t1__p3 0.05
+Rw402 t1 t1__p4 0.05
+Rw403 t1 t1__p5 0.05
+Rw404 t1__p1 t1__p2 0.05
+Rw405 t1__p1 t1__p3 0.05
+Rw406 t1__p1 t1__p4 0.05
+Rw407 t1__p1 t1__p5 0.05
+Rw408 t1__p2 t1__p3 0.05
+Rw409 t1__p2 t1__p4 0.05
+Rw410 t1__p2 t1__p5 0.05
+Rw411 t1__p3 t1__p4 0.05
+Rw412 t1__p3 t1__p5 0.05
+Rw413 t1__p4 t1__p5 0.05
+Rw414 t1b t1b__p1 0.05
+Rw415 t1b t1b__p2 0.05
+Rw416 t1b t1b__p3 0.05
+Rw417 t1b t1b__p4 0.05
+Rw418 t1b t1b__p5 0.05
+Rw419 t1b t1b__p6 0.05
+Rw420 t1b t1b__p7 0.05
+Rw421 t1b t1b__p8 0.05
+Rw422 t1b t1b__p9 0.05
+Rw423 t1b__p1 t1b__p2 0.05
+Rw424 t1b__p1 t1b__p3 0.05
+Rw425 t1b__p1 t1b__p4 0.05
+Rw426 t1b__p1 t1b__p5 0.05
+Rw427 t1b__p1 t1b__p6 0.05
+Rw428 t1b__p1 t1b__p7 0.05
+Rw429 t1b__p1 t1b__p8 0.05
+Rw430 t1b__p1 t1b__p9 0.05
+Rw431 t1b__p2 t1b__p3 0.05
+Rw432 t1b__p2 t1b__p4 0.05
+Rw433 t1b__p2 t1b__p5 0.05
+Rw434 t1b__p2 t1b__p6 0.05
+Rw435 t1b__p2 t1b__p7 0.05
+Rw436 t1b__p2 t1b__p8 0.05
+Rw437 t1b__p2 t1b__p9 0.05
+Rw438 t1b__p3 t1b__p4 0.05
+Rw439 t1b__p3 t1b__p5 0.05
+Rw440 t1b__p3 t1b__p6 0.05
+Rw441 t1b__p3 t1b__p7 0.05
+Rw442 t1b__p3 t1b__p8 0.05
+Rw443 t1b__p3 t1b__p9 0.05
+Rw444 t1b__p4 t1b__p5 0.05
+Rw445 t1b__p4 t1b__p6 0.05
+Rw446 t1b__p4 t1b__p7 0.05
+Rw447 t1b__p4 t1b__p8 0.05
+Rw448 t1b__p4 t1b__p9 0.05
+Rw449 t1b__p5 t1b__p6 0.05
+Rw450 t1b__p5 t1b__p7 0.05
+Rw451 t1b__p5 t1b__p8 0.05
+Rw452 t1b__p5 t1b__p9 0.05
+Rw453 t1b__p6 t1b__p7 0.05
+Rw454 t1b__p6 t1b__p8 0.05
+Rw455 t1b__p6 t1b__p9 0.05
+Rw456 t1b__p7 t1b__p8 0.05
+Rw457 t1b__p7 t1b__p9 0.05
+Rw458 t1b__p8 t1b__p9 0.05
+Rw459 top_n top_n__p1 0.05
+Rw460 top_n top_n__p2 0.05
+Rw461 top_n__p1 top_n__p3 0.05
+Rw462 top_n__p1 top_n__p4 0.05
+Rw463 top_n__p3 top_n__p4 0.05
+Rw464 top_p top_p__p1 0.05
+Rw465 top_p top_p__p2 0.05
+Rw466 top_p__p1 top_p__p3 0.05
+Rw467 top_p__p1 top_p__p4 0.05
+Rw468 top_p__p3 top_p__p4 0.05
+Rw469 trk0 trk0__p1 0.05
+Rw470 trk1 trk1__p1 0.05
+Rw471 vdd vdd__p0 0.05
+Rw472 vdd vdd__p1 0.05
+Rw473 vdd vdd__p12 0.05
+Rw474 vdd vdd__p13 0.05
+Rw475 vdd vdd__p14 0.05
+Rw476 vdd vdd__p15 0.05
+Rw477 vdd vdd__p16 0.05
+Rw478 vdd vdd__p17 0.05
+Rw479 vdd vdd__p18 0.05
+Rw480 vdd vdd__p2 0.05
+Rw481 vdd vdd__p22 0.05
+Rw482 vdd vdd__p24 0.05
+Rw483 vdd vdd__p26 0.05
+Rw484 vdd vdd__p27 0.05
+Rw485 vdd vdd__p28 0.05
+Rw486 vdd vdd__p29 0.05
+Rw487 vdd vdd__p3 0.05
+Rw488 vdd vdd__p30 0.05
+Rw489 vdd vdd__p31 0.05
+Rw490 vdd vdd__p32 0.05
+Rw491 vdd vdd__p33 0.05
+Rw492 vdd vdd__p34 0.05
+Rw493 vdd vdd__p36 0.05
+Rw494 vdd vdd__p4 0.05
+Rw495 vdd vdd__p5 0.05
+Rw496 vdd__p0 vdd__p1 0.05
+Rw497 vdd__p0 vdd__p12 0.05
+Rw498 vdd__p0 vdd__p13 0.05
+Rw499 vdd__p0 vdd__p14 0.05
+Rw500 vdd__p0 vdd__p15 0.05
+Rw501 vdd__p0 vdd__p16 0.05
+Rw502 vdd__p0 vdd__p17 0.05
+Rw503 vdd__p0 vdd__p18 0.05
+Rw504 vdd__p0 vdd__p2 0.05
+Rw505 vdd__p0 vdd__p22 0.05
+Rw506 vdd__p0 vdd__p24 0.05
+Rw507 vdd__p0 vdd__p26 0.05
+Rw508 vdd__p0 vdd__p27 0.05
+Rw509 vdd__p0 vdd__p28 0.05
+Rw510 vdd__p0 vdd__p29 0.05
+Rw511 vdd__p0 vdd__p3 0.05
+Rw512 vdd__p0 vdd__p30 0.05
+Rw513 vdd__p0 vdd__p31 0.05
+Rw514 vdd__p0 vdd__p32 0.05
+Rw515 vdd__p0 vdd__p33 0.05
+Rw516 vdd__p0 vdd__p34 0.05
+Rw517 vdd__p0 vdd__p36 0.05
+Rw518 vdd__p0 vdd__p4 0.05
+Rw519 vdd__p0 vdd__p5 0.05
+Rw520 vdd__p1 vdd__p12 0.05
+Rw521 vdd__p1 vdd__p13 0.05
+Rw522 vdd__p1 vdd__p14 0.05
+Rw523 vdd__p1 vdd__p15 0.05
+Rw524 vdd__p1 vdd__p16 0.05
+Rw525 vdd__p1 vdd__p17 0.05
+Rw526 vdd__p1 vdd__p18 0.05
+Rw527 vdd__p1 vdd__p2 0.05
+Rw528 vdd__p1 vdd__p26 0.05
+Rw529 vdd__p1 vdd__p27 0.05
+Rw530 vdd__p1 vdd__p28 0.05
+Rw531 vdd__p1 vdd__p29 0.05
+Rw532 vdd__p1 vdd__p3 0.05
+Rw533 vdd__p1 vdd__p30 0.05
+Rw534 vdd__p1 vdd__p31 0.05
+Rw535 vdd__p1 vdd__p32 0.05
+Rw536 vdd__p1 vdd__p33 0.05
+Rw537 vdd__p1 vdd__p34 0.05
+Rw538 vdd__p1 vdd__p36 0.05
+Rw539 vdd__p1 vdd__p4 0.05
+Rw540 vdd__p1 vdd__p5 0.05
+Rw541 vdd__p10 vdd__p11 0.05
+Rw542 vdd__p10 vdd__p19 0.05
+Rw543 vdd__p10 vdd__p20 0.05
+Rw544 vdd__p10 vdd__p21 0.05
+Rw545 vdd__p10 vdd__p37 0.05
+Rw546 vdd__p10 vdd__p38 0.05
+Rw547 vdd__p10 vdd__p6 0.05
+Rw548 vdd__p10 vdd__p7 0.05
+Rw549 vdd__p10 vdd__p8 0.05
+Rw550 vdd__p10 vdd__p9 0.05
+Rw551 vdd__p11 vdd__p19 0.05
+Rw552 vdd__p11 vdd__p20 0.05
+Rw553 vdd__p11 vdd__p21 0.05
+Rw554 vdd__p11 vdd__p37 0.05
+Rw555 vdd__p11 vdd__p38 0.05
+Rw556 vdd__p11 vdd__p6 0.05
+Rw557 vdd__p11 vdd__p7 0.05
+Rw558 vdd__p11 vdd__p8 0.05
+Rw559 vdd__p11 vdd__p9 0.05
+Rw560 vdd__p12 vdd__p13 0.05
+Rw561 vdd__p12 vdd__p14 0.05
+Rw562 vdd__p12 vdd__p15 0.05
+Rw563 vdd__p12 vdd__p16 0.05
+Rw564 vdd__p12 vdd__p17 0.05
+Rw565 vdd__p12 vdd__p18 0.05
+Rw566 vdd__p12 vdd__p2 0.05
+Rw567 vdd__p12 vdd__p22 0.05
+Rw568 vdd__p12 vdd__p24 0.05
+Rw569 vdd__p12 vdd__p26 0.05
+Rw570 vdd__p12 vdd__p27 0.05
+Rw571 vdd__p12 vdd__p28 0.05
+Rw572 vdd__p12 vdd__p29 0.05
+Rw573 vdd__p12 vdd__p3 0.05
+Rw574 vdd__p12 vdd__p30 0.05
+Rw575 vdd__p12 vdd__p31 0.05
+Rw576 vdd__p12 vdd__p32 0.05
+Rw577 vdd__p12 vdd__p33 0.05
+Rw578 vdd__p12 vdd__p34 0.05
+Rw579 vdd__p12 vdd__p36 0.05
+Rw580 vdd__p12 vdd__p37 0.05
+Rw581 vdd__p12 vdd__p4 0.05
+Rw582 vdd__p12 vdd__p5 0.05
+Rw583 vdd__p13 vdd__p14 0.05
+Rw584 vdd__p13 vdd__p15 0.05
+Rw585 vdd__p13 vdd__p16 0.05
+Rw586 vdd__p13 vdd__p17 0.05
+Rw587 vdd__p13 vdd__p18 0.05
+Rw588 vdd__p13 vdd__p2 0.05
+Rw589 vdd__p13 vdd__p22 0.05
+Rw590 vdd__p13 vdd__p24 0.05
+Rw591 vdd__p13 vdd__p26 0.05
+Rw592 vdd__p13 vdd__p27 0.05
+Rw593 vdd__p13 vdd__p28 0.05
+Rw594 vdd__p13 vdd__p29 0.05
+Rw595 vdd__p13 vdd__p3 0.05
+Rw596 vdd__p13 vdd__p30 0.05
+Rw597 vdd__p13 vdd__p31 0.05
+Rw598 vdd__p13 vdd__p32 0.05
+Rw599 vdd__p13 vdd__p33 0.05
+Rw600 vdd__p13 vdd__p34 0.05
+Rw601 vdd__p13 vdd__p36 0.05
+Rw602 vdd__p13 vdd__p37 0.05
+Rw603 vdd__p13 vdd__p4 0.05
+Rw604 vdd__p13 vdd__p5 0.05
+Rw605 vdd__p14 vdd__p15 0.05
+Rw606 vdd__p14 vdd__p16 0.05
+Rw607 vdd__p14 vdd__p17 0.05
+Rw608 vdd__p14 vdd__p18 0.05
+Rw609 vdd__p14 vdd__p2 0.05
+Rw610 vdd__p14 vdd__p22 0.05
+Rw611 vdd__p14 vdd__p24 0.05
+Rw612 vdd__p14 vdd__p26 0.05
+Rw613 vdd__p14 vdd__p27 0.05
+Rw614 vdd__p14 vdd__p28 0.05
+Rw615 vdd__p14 vdd__p29 0.05
+Rw616 vdd__p14 vdd__p3 0.05
+Rw617 vdd__p14 vdd__p30 0.05
+Rw618 vdd__p14 vdd__p31 0.05
+Rw619 vdd__p14 vdd__p32 0.05
+Rw620 vdd__p14 vdd__p33 0.05
+Rw621 vdd__p14 vdd__p34 0.05
+Rw622 vdd__p14 vdd__p36 0.05
+Rw623 vdd__p14 vdd__p37 0.05
+Rw624 vdd__p14 vdd__p4 0.05
+Rw625 vdd__p14 vdd__p5 0.05
+Rw626 vdd__p15 vdd__p16 0.05
+Rw627 vdd__p15 vdd__p17 0.05
+Rw628 vdd__p15 vdd__p18 0.05
+Rw629 vdd__p15 vdd__p2 0.05
+Rw630 vdd__p15 vdd__p22 0.05
+Rw631 vdd__p15 vdd__p24 0.05
+Rw632 vdd__p15 vdd__p26 0.05
+Rw633 vdd__p15 vdd__p27 0.05
+Rw634 vdd__p15 vdd__p28 0.05
+Rw635 vdd__p15 vdd__p29 0.05
+Rw636 vdd__p15 vdd__p3 0.05
+Rw637 vdd__p15 vdd__p30 0.05
+Rw638 vdd__p15 vdd__p31 0.05
+Rw639 vdd__p15 vdd__p32 0.05
+Rw640 vdd__p15 vdd__p33 0.05
+Rw641 vdd__p15 vdd__p34 0.05
+Rw642 vdd__p15 vdd__p36 0.05
+Rw643 vdd__p15 vdd__p37 0.05
+Rw644 vdd__p15 vdd__p4 0.05
+Rw645 vdd__p15 vdd__p5 0.05
+Rw646 vdd__p16 vdd__p17 0.05
+Rw647 vdd__p16 vdd__p18 0.05
+Rw648 vdd__p16 vdd__p2 0.05
+Rw649 vdd__p16 vdd__p22 0.05
+Rw650 vdd__p16 vdd__p24 0.05
+Rw651 vdd__p16 vdd__p26 0.05
+Rw652 vdd__p16 vdd__p27 0.05
+Rw653 vdd__p16 vdd__p28 0.05
+Rw654 vdd__p16 vdd__p29 0.05
+Rw655 vdd__p16 vdd__p3 0.05
+Rw656 vdd__p16 vdd__p30 0.05
+Rw657 vdd__p16 vdd__p31 0.05
+Rw658 vdd__p16 vdd__p32 0.05
+Rw659 vdd__p16 vdd__p33 0.05
+Rw660 vdd__p16 vdd__p34 0.05
+Rw661 vdd__p16 vdd__p36 0.05
+Rw662 vdd__p16 vdd__p37 0.05
+Rw663 vdd__p16 vdd__p4 0.05
+Rw664 vdd__p16 vdd__p5 0.05
+Rw665 vdd__p17 vdd__p18 0.05
+Rw666 vdd__p17 vdd__p2 0.05
+Rw667 vdd__p17 vdd__p22 0.05
+Rw668 vdd__p17 vdd__p24 0.05
+Rw669 vdd__p17 vdd__p26 0.05
+Rw670 vdd__p17 vdd__p27 0.05
+Rw671 vdd__p17 vdd__p28 0.05
+Rw672 vdd__p17 vdd__p29 0.05
+Rw673 vdd__p17 vdd__p3 0.05
+Rw674 vdd__p17 vdd__p30 0.05
+Rw675 vdd__p17 vdd__p31 0.05
+Rw676 vdd__p17 vdd__p32 0.05
+Rw677 vdd__p17 vdd__p33 0.05
+Rw678 vdd__p17 vdd__p34 0.05
+Rw679 vdd__p17 vdd__p36 0.05
+Rw680 vdd__p17 vdd__p37 0.05
+Rw681 vdd__p17 vdd__p4 0.05
+Rw682 vdd__p17 vdd__p5 0.05
+Rw683 vdd__p18 vdd__p2 0.05
+Rw684 vdd__p18 vdd__p22 0.05
+Rw685 vdd__p18 vdd__p24 0.05
+Rw686 vdd__p18 vdd__p26 0.05
+Rw687 vdd__p18 vdd__p27 0.05
+Rw688 vdd__p18 vdd__p28 0.05
+Rw689 vdd__p18 vdd__p29 0.05
+Rw690 vdd__p18 vdd__p3 0.05
+Rw691 vdd__p18 vdd__p30 0.05
+Rw692 vdd__p18 vdd__p31 0.05
+Rw693 vdd__p18 vdd__p32 0.05
+Rw694 vdd__p18 vdd__p33 0.05
+Rw695 vdd__p18 vdd__p34 0.05
+Rw696 vdd__p18 vdd__p36 0.05
+Rw697 vdd__p18 vdd__p37 0.05
+Rw698 vdd__p18 vdd__p4 0.05
+Rw699 vdd__p18 vdd__p5 0.05
+Rw700 vdd__p19 vdd__p20 0.05
+Rw701 vdd__p19 vdd__p21 0.05
+Rw702 vdd__p19 vdd__p22 0.05
+Rw703 vdd__p19 vdd__p24 0.05
+Rw704 vdd__p19 vdd__p37 0.05
+Rw705 vdd__p19 vdd__p38 0.05
+Rw706 vdd__p19 vdd__p6 0.05
+Rw707 vdd__p19 vdd__p7 0.05
+Rw708 vdd__p19 vdd__p8 0.05
+Rw709 vdd__p19 vdd__p9 0.05
+Rw710 vdd__p2 vdd__p22 0.05
+Rw711 vdd__p2 vdd__p24 0.05
+Rw712 vdd__p2 vdd__p26 0.05
+Rw713 vdd__p2 vdd__p27 0.05
+Rw714 vdd__p2 vdd__p28 0.05
+Rw715 vdd__p2 vdd__p29 0.05
+Rw716 vdd__p2 vdd__p3 0.05
+Rw717 vdd__p2 vdd__p30 0.05
+Rw718 vdd__p2 vdd__p31 0.05
+Rw719 vdd__p2 vdd__p32 0.05
+Rw720 vdd__p2 vdd__p33 0.05
+Rw721 vdd__p2 vdd__p34 0.05
+Rw722 vdd__p2 vdd__p36 0.05
+Rw723 vdd__p2 vdd__p4 0.05
+Rw724 vdd__p2 vdd__p5 0.05
+Rw725 vdd__p20 vdd__p21 0.05
+Rw726 vdd__p20 vdd__p22 0.05
+Rw727 vdd__p20 vdd__p24 0.05
+Rw728 vdd__p20 vdd__p37 0.05
+Rw729 vdd__p20 vdd__p38 0.05
+Rw730 vdd__p20 vdd__p6 0.05
+Rw731 vdd__p20 vdd__p7 0.05
+Rw732 vdd__p20 vdd__p8 0.05
+Rw733 vdd__p20 vdd__p9 0.05
+Rw734 vdd__p21 vdd__p22 0.05
+Rw735 vdd__p21 vdd__p24 0.05
+Rw736 vdd__p21 vdd__p37 0.05
+Rw737 vdd__p21 vdd__p38 0.05
+Rw738 vdd__p21 vdd__p6 0.05
+Rw739 vdd__p21 vdd__p7 0.05
+Rw740 vdd__p21 vdd__p8 0.05
+Rw741 vdd__p21 vdd__p9 0.05
+Rw742 vdd__p22 vdd__p23 0.05
+Rw743 vdd__p22 vdd__p24 0.05
+Rw744 vdd__p22 vdd__p25 0.05
+Rw745 vdd__p22 vdd__p26 0.05
+Rw746 vdd__p22 vdd__p27 0.05
+Rw747 vdd__p22 vdd__p28 0.05
+Rw748 vdd__p22 vdd__p29 0.05
+Rw749 vdd__p22 vdd__p30 0.05
+Rw750 vdd__p22 vdd__p31 0.05
+Rw751 vdd__p22 vdd__p32 0.05
+Rw752 vdd__p22 vdd__p33 0.05
+Rw753 vdd__p22 vdd__p34 0.05
+Rw754 vdd__p22 vdd__p36 0.05
+Rw755 vdd__p22 vdd__p37 0.05
+Rw756 vdd__p22 vdd__p38 0.05
+Rw757 vdd__p24 vdd__p25 0.05
+Rw758 vdd__p24 vdd__p26 0.05
+Rw759 vdd__p24 vdd__p27 0.05
+Rw760 vdd__p24 vdd__p28 0.05
+Rw761 vdd__p24 vdd__p29 0.05
+Rw762 vdd__p24 vdd__p30 0.05
+Rw763 vdd__p24 vdd__p31 0.05
+Rw764 vdd__p24 vdd__p32 0.05
+Rw765 vdd__p24 vdd__p33 0.05
+Rw766 vdd__p24 vdd__p34 0.05
+Rw767 vdd__p24 vdd__p36 0.05
+Rw768 vdd__p24 vdd__p37 0.05
+Rw769 vdd__p24 vdd__p38 0.05
+Rw770 vdd__p24 vdd__p6 0.05
+Rw771 vdd__p24 vdd__p8 0.05
+Rw772 vdd__p25 vdd__p37 0.05
+Rw773 vdd__p26 vdd__p27 0.05
+Rw774 vdd__p26 vdd__p28 0.05
+Rw775 vdd__p26 vdd__p29 0.05
+Rw776 vdd__p26 vdd__p3 0.05
+Rw777 vdd__p26 vdd__p30 0.05
+Rw778 vdd__p26 vdd__p31 0.05
+Rw779 vdd__p26 vdd__p32 0.05
+Rw780 vdd__p26 vdd__p33 0.05
+Rw781 vdd__p26 vdd__p34 0.05
+Rw782 vdd__p26 vdd__p36 0.05
+Rw783 vdd__p26 vdd__p37 0.05
+Rw784 vdd__p26 vdd__p4 0.05
+Rw785 vdd__p26 vdd__p5 0.05
+Rw786 vdd__p27 vdd__p28 0.05
+Rw787 vdd__p27 vdd__p29 0.05
+Rw788 vdd__p27 vdd__p3 0.05
+Rw789 vdd__p27 vdd__p30 0.05
+Rw790 vdd__p27 vdd__p31 0.05
+Rw791 vdd__p27 vdd__p32 0.05
+Rw792 vdd__p27 vdd__p33 0.05
+Rw793 vdd__p27 vdd__p34 0.05
+Rw794 vdd__p27 vdd__p36 0.05
+Rw795 vdd__p27 vdd__p37 0.05
+Rw796 vdd__p27 vdd__p4 0.05
+Rw797 vdd__p27 vdd__p5 0.05
+Rw798 vdd__p28 vdd__p29 0.05
+Rw799 vdd__p28 vdd__p3 0.05
+Rw800 vdd__p28 vdd__p30 0.05
+Rw801 vdd__p28 vdd__p31 0.05
+Rw802 vdd__p28 vdd__p32 0.05
+Rw803 vdd__p28 vdd__p33 0.05
+Rw804 vdd__p28 vdd__p34 0.05
+Rw805 vdd__p28 vdd__p36 0.05
+Rw806 vdd__p28 vdd__p37 0.05
+Rw807 vdd__p28 vdd__p4 0.05
+Rw808 vdd__p28 vdd__p5 0.05
+Rw809 vdd__p29 vdd__p3 0.05
+Rw810 vdd__p29 vdd__p30 0.05
+Rw811 vdd__p29 vdd__p31 0.05
+Rw812 vdd__p29 vdd__p32 0.05
+Rw813 vdd__p29 vdd__p33 0.05
+Rw814 vdd__p29 vdd__p34 0.05
+Rw815 vdd__p29 vdd__p36 0.05
+Rw816 vdd__p29 vdd__p37 0.05
+Rw817 vdd__p29 vdd__p38 0.05
+Rw818 vdd__p29 vdd__p4 0.05
+Rw819 vdd__p29 vdd__p5 0.05
+Rw820 vdd__p3 vdd__p30 0.05
+Rw821 vdd__p3 vdd__p31 0.05
+Rw822 vdd__p3 vdd__p32 0.05
+Rw823 vdd__p3 vdd__p33 0.05
+Rw824 vdd__p3 vdd__p34 0.05
+Rw825 vdd__p3 vdd__p36 0.05
+Rw826 vdd__p3 vdd__p4 0.05
+Rw827 vdd__p3 vdd__p5 0.05
+Rw828 vdd__p30 vdd__p31 0.05
+Rw829 vdd__p30 vdd__p32 0.05
+Rw830 vdd__p30 vdd__p33 0.05
+Rw831 vdd__p30 vdd__p34 0.05
+Rw832 vdd__p30 vdd__p36 0.05
+Rw833 vdd__p30 vdd__p37 0.05
+Rw834 vdd__p30 vdd__p38 0.05
+Rw835 vdd__p30 vdd__p4 0.05
+Rw836 vdd__p30 vdd__p5 0.05
+Rw837 vdd__p31 vdd__p32 0.05
+Rw838 vdd__p31 vdd__p33 0.05
+Rw839 vdd__p31 vdd__p34 0.05
+Rw840 vdd__p31 vdd__p36 0.05
+Rw841 vdd__p31 vdd__p37 0.05
+Rw842 vdd__p31 vdd__p38 0.05
+Rw843 vdd__p31 vdd__p4 0.05
+Rw844 vdd__p31 vdd__p5 0.05
+Rw845 vdd__p32 vdd__p33 0.05
+Rw846 vdd__p32 vdd__p34 0.05
+Rw847 vdd__p32 vdd__p36 0.05
+Rw848 vdd__p32 vdd__p37 0.05
+Rw849 vdd__p32 vdd__p4 0.05
+Rw850 vdd__p32 vdd__p5 0.05
+Rw851 vdd__p33 vdd__p34 0.05
+Rw852 vdd__p33 vdd__p36 0.05
+Rw853 vdd__p33 vdd__p37 0.05
+Rw854 vdd__p33 vdd__p4 0.05
+Rw855 vdd__p33 vdd__p5 0.05
+Rw856 vdd__p34 vdd__p36 0.05
+Rw857 vdd__p34 vdd__p37 0.05
+Rw858 vdd__p34 vdd__p4 0.05
+Rw859 vdd__p34 vdd__p5 0.05
+Rw860 vdd__p36 vdd__p37 0.05
+Rw861 vdd__p36 vdd__p4 0.05
+Rw862 vdd__p36 vdd__p5 0.05
+Rw863 vdd__p37 vdd__p38 0.05
+Rw864 vdd__p37 vdd__p6 0.05
+Rw865 vdd__p37 vdd__p7 0.05
+Rw866 vdd__p37 vdd__p8 0.05
+Rw867 vdd__p37 vdd__p9 0.05
+Rw868 vdd__p38 vdd__p6 0.05
+Rw869 vdd__p38 vdd__p7 0.05
+Rw870 vdd__p38 vdd__p8 0.05
+Rw871 vdd__p38 vdd__p9 0.05
+Rw872 vdd__p4 vdd__p5 0.05
+Rw873 vdd__p6 vdd__p7 0.05
+Rw874 vdd__p6 vdd__p8 0.05
+Rw875 vdd__p6 vdd__p9 0.05
+Rw876 vdd__p7 vdd__p8 0.05
+Rw877 vdd__p7 vdd__p9 0.05
+Rw878 vdd__p8 vdd__p9 0.05
+Rw879 vref vref__p0 904.248
+Rw880 vref vref__p1 900.128
+Rw881 vref vref__p2 684.24
+Rw882 vref vref__p3 665.538
+Rw883 vref vref__p4 689.98
+Rw884 vref vref__p5 592.398
+Rw885 vref vref__p6 584.169
+Rw886 vref vref__p7 526.571
+Rw887 vref vref__p8 653.311
+Rw888 vref vref__p9 249.676
+Rw889 vref__p0 vref__p1 270.872
+Rw890 vref__p0 vref__p2 235.259
+Rw891 vref__p0 vref__p3 251.747
+Rw892 vref__p0 vref__p4 285.253
+Rw893 vref__p0 vref__p5 270.167
+Rw894 vref__p0 vref__p6 291.423
+Rw895 vref__p0 vref__p7 291.428
+Rw896 vref__p0 vref__p8 396.513
+Rw897 vref__p0 vref__p9 312.62
+Rw898 vref__p1 vref__p2 234.187
+Rw899 vref__p1 vref__p3 250.6
+Rw900 vref__p1 vref__p4 283.954
+Rw901 vref__p1 vref__p5 268.936
+Rw902 vref__p1 vref__p6 290.095
+Rw903 vref__p1 vref__p7 290.1
+Rw904 vref__p1 vref__p8 394.706
+Rw905 vref__p1 vref__p9 311.196
+Rw906 vref__p2 vref__p3 190.496
+Rw907 vref__p2 vref__p4 215.85
+Rw908 vref__p2 vref__p5 204.434
+Rw909 vref__p2 vref__p6 220.518
+Rw910 vref__p2 vref__p7 220.522
+Rw911 vref__p2 vref__p8 300.039
+Rw912 vref__p2 vref__p9 236.558
+Rw913 vref__p3 vref__p4 209.95
+Rw914 vref__p3 vref__p5 198.846
+Rw915 vref__p3 vref__p6 214.491
+Rw916 vref__p3 vref__p7 214.494
+Rw917 vref__p3 vref__p8 291.839
+Rw918 vref__p3 vref__p9 230.092
+Rw919 vref__p4 vref__p5 206.149
+Rw920 vref__p4 vref__p6 222.368
+Rw921 vref__p4 vref__p7 222.372
+Rw922 vref__p4 vref__p8 302.557
+Rw923 vref__p4 vref__p9 238.543
+Rw924 vref__p5 vref__p6 190.919
+Rw925 vref__p5 vref__p7 190.922
+Rw926 vref__p5 vref__p8 259.767
+Rw927 vref__p5 vref__p9 204.806
+Rw928 vref__p6 vref__p7 188.27
+Rw929 vref__p6 vref__p8 256.158
+Rw930 vref__p6 vref__p9 201.961
+Rw931 vref__p7 vref__p8 230.902
+Rw932 vref__p7 vref__p9 182.048
+Rw933 vref__p8 vref__p9 225.865
+Rw934 vrefl vrefl__p0 3256.26
+Rw935 vrefl vrefl__p1 3050.67
+Rw936 vrefl vrefl__p10 919.591
+Rw937 vrefl vrefl__p11 1056.52
+Rw938 vrefl vrefl__p12 2169.88
+Rw939 vrefl vrefl__p13 9244.46
+Rw940 vrefl vrefl__p14 4733.33
+Rw941 vrefl vrefl__p15 9606.2
+Rw942 vrefl vrefl__p16 10061.9
+Rw943 vrefl vrefl__p17 10321.5
+Rw944 vrefl vrefl__p19 25.596
+Rw945 vrefl vrefl__p2 2688.63
+Rw946 vrefl vrefl__p3 2262.78
+Rw947 vrefl vrefl__p4 1842.79
+Rw948 vrefl vrefl__p5 1468.21
+Rw949 vrefl vrefl__p6 1153.53
+Rw950 vrefl vrefl__p7 898.495
+Rw951 vrefl vrefl__p8 696.177
+Rw952 vrefl vrefl__p9 188.414
+Rw953 vrefl__p0 vrefl__p1 104.365
+Rw954 vrefl__p0 vrefl__p10 17915.9
+Rw955 vrefl__p0 vrefl__p11 20583.6
+Rw956 vrefl__p0 vrefl__p12 42274.6
+Rw957 vrefl__p0 vrefl__p13 180105
+Rw958 vrefl__p0 vrefl__p14 92217
+Rw959 vrefl__p0 vrefl__p15 187153
+Rw960 vrefl__p0 vrefl__p16 196030
+Rw961 vrefl__p0 vrefl__p17 201088
+Rw962 vrefl__p0 vrefl__p19 2490.91
+Rw963 vrefl__p0 vrefl__p2 134.38
+Rw964 vrefl__p0 vrefl__p3 171.858
+Rw965 vrefl__p0 vrefl__p4 217.37
+Rw966 vrefl__p0 vrefl__p5 270.126
+Rw967 vrefl__p0 vrefl__p6 326.704
+Rw968 vrefl__p0 vrefl__p7 379.857
+Rw969 vrefl__p0 vrefl__p8 418.886
+Rw970 vrefl__p0 vrefl__p9 3670.77
+Rw971 vrefl__p1 vrefl__p10 16784.8
+Rw972 vrefl__p1 vrefl__p11 19284
+Rw973 vrefl__p1 vrefl__p12 39605.5
+Rw974 vrefl__p1 vrefl__p13 168734
+Rw975 vrefl__p1 vrefl__p14 86394.7
+Rw976 vrefl__p1 vrefl__p15 175336
+Rw977 vrefl__p1 vrefl__p16 183653
+Rw978 vrefl__p1 vrefl__p17 188392
+Rw979 vrefl__p1 vrefl__p19 2333.64
+Rw980 vrefl__p1 vrefl__p2 125.896
+Rw981 vrefl__p1 vrefl__p3 161.007
+Rw982 vrefl__p1 vrefl__p4 203.646
+Rw983 vrefl__p1 vrefl__p5 253.071
+Rw984 vrefl__p1 vrefl__p6 306.077
+Rw985 vrefl__p1 vrefl__p7 355.874
+Rw986 vrefl__p1 vrefl__p8 392.439
+Rw987 vrefl__p1 vrefl__p9 3439.01
+Rw988 vrefl__p10 vrefl__p11 85.8062
+Rw989 vrefl__p10 vrefl__p12 176.229
+Rw990 vrefl__p10 vrefl__p13 750.799
+Rw991 vrefl__p10 vrefl__p14 384.423
+Rw992 vrefl__p10 vrefl__p15 780.178
+Rw993 vrefl__p10 vrefl__p16 817.185
+Rw994 vrefl__p10 vrefl__p17 838.271
+Rw995 vrefl__p10 vrefl__p19 703.452
+Rw996 vrefl__p10 vrefl__p2 14792.8
+Rw997 vrefl__p10 vrefl__p3 12449.8
+Rw998 vrefl__p10 vrefl__p4 10139
+Rw999 vrefl__p10 vrefl__p5 8078.06
+Rw1000 vrefl__p10 vrefl__p6 6346.72
+Rw1001 vrefl__p10 vrefl__p7 4943.52
+Rw1002 vrefl__p10 vrefl__p8 3830.36
+Rw1003 vrefl__p10 vrefl__p9 93.4324
+Rw1004 vrefl__p11 vrefl__p12 154.064
+Rw1005 vrefl__p11 vrefl__p13 656.368
+Rw1006 vrefl__p11 vrefl__p14 336.072
+Rw1007 vrefl__p11 vrefl__p15 682.052
+Rw1008 vrefl__p11 vrefl__p16 714.404
+Rw1009 vrefl__p11 vrefl__p17 732.839
+Rw1010 vrefl__p11 vrefl__p19 808.195
+Rw1011 vrefl__p11 vrefl__p2 16995.5
+Rw1012 vrefl__p11 vrefl__p3 14303.6
+Rw1013 vrefl__p11 vrefl__p4 11648.7
+Rw1014 vrefl__p11 vrefl__p5 9280.87
+Rw1015 vrefl__p11 vrefl__p6 7291.74
+Rw1016 vrefl__p11 vrefl__p7 5679.6
+Rw1017 vrefl__p11 vrefl__p8 4400.7
+Rw1018 vrefl__p11 vrefl__p9 107.344
+Rw1019 vrefl__p12 vrefl__p13 1107.63
+Rw1020 vrefl__p12 vrefl__p14 567.128
+Rw1021 vrefl__p12 vrefl__p15 1150.98
+Rw1022 vrefl__p12 vrefl__p16 1205.57
+Rw1023 vrefl__p12 vrefl__p17 1236.68
+Rw1024 vrefl__p12 vrefl__p19 1659.87
+Rw1025 vrefl__p12 vrefl__p2 34905.3
+Rw1026 vrefl__p12 vrefl__p3 29376.7
+Rw1027 vrefl__p12 vrefl__p4 23924.1
+Rw1028 vrefl__p12 vrefl__p5 19061.1
+Rw1029 vrefl__p12 vrefl__p6 14975.8
+Rw1030 vrefl__p12 vrefl__p7 11664.8
+Rw1031 vrefl__p12 vrefl__p8 9038.16
+Rw1032 vrefl__p12 vrefl__p9 220.464
+Rw1033 vrefl__p13 vrefl__p14 129.075
+Rw1034 vrefl__p13 vrefl__p15 171.864
+Rw1035 vrefl__p13 vrefl__p16 180.791
+Rw1036 vrefl__p13 vrefl__p17 185.456
+Rw1037 vrefl__p13 vrefl__p19 7071.65
+Rw1038 vrefl__p13 vrefl__p2 148709
+Rw1039 vrefl__p13 vrefl__p3 125155
+Rw1040 vrefl__p13 vrefl__p4 101925
+Rw1041 vrefl__p13 vrefl__p5 81207
+Rw1042 vrefl__p13 vrefl__p6 63802.3
+Rw1043 vrefl__p13 vrefl__p7 49696.1
+Rw1044 vrefl__p13 vrefl__p8 38505.8
+Rw1045 vrefl__p13 vrefl__p9 939.256
+Rw1046 vrefl__p14 vrefl__p15 133.994
+Rw1047 vrefl__p14 vrefl__p16 140.333
+Rw1048 vrefl__p14 vrefl__p17 143.954
+Rw1049 vrefl__p14 vrefl__p19 3620.81
+Rw1050 vrefl__p14 vrefl__p2 76141.8
+Rw1051 vrefl__p14 vrefl__p3 64081.8
+Rw1052 vrefl__p14 vrefl__p4 52187.7
+Rw1053 vrefl__p14 vrefl__p5 41579.5
+Rw1054 vrefl__p14 vrefl__p6 32667.9
+Rw1055 vrefl__p14 vrefl__p7 25445.3
+Rw1056 vrefl__p14 vrefl__p8 19715.7
+Rw1057 vrefl__p14 vrefl__p9 480.916
+Rw1058 vrefl__p15 vrefl__p16 164.699
+Rw1059 vrefl__p15 vrefl__p17 168.949
+Rw1060 vrefl__p15 vrefl__p19 7348.37
+Rw1061 vrefl__p15 vrefl__p2 154528
+Rw1062 vrefl__p15 vrefl__p3 130053
+Rw1063 vrefl__p15 vrefl__p4 105914
+Rw1064 vrefl__p15 vrefl__p5 84384.7
+Rw1065 vrefl__p15 vrefl__p6 66298.9
+Rw1066 vrefl__p15 vrefl__p7 51640.8
+Rw1067 vrefl__p15 vrefl__p8 40012.6
+Rw1068 vrefl__p15 vrefl__p9 976.01
+Rw1069 vrefl__p16 vrefl__p17 153.904
+Rw1070 vrefl__p16 vrefl__p19 7696.93
+Rw1071 vrefl__p16 vrefl__p2 161858
+Rw1072 vrefl__p16 vrefl__p3 136222
+Rw1073 vrefl__p16 vrefl__p4 110938
+Rw1074 vrefl__p16 vrefl__p5 88387.4
+Rw1075 vrefl__p16 vrefl__p6 69443.7
+Rw1076 vrefl__p16 vrefl__p7 54090.3
+Rw1077 vrefl__p16 vrefl__p8 41910.5
+Rw1078 vrefl__p16 vrefl__p9 1022.31
+Rw1079 vrefl__p17 vrefl__p19 7895.54
+Rw1080 vrefl__p17 vrefl__p2 166035
+Rw1081 vrefl__p17 vrefl__p3 139737
+Rw1082 vrefl__p17 vrefl__p4 113800
+Rw1083 vrefl__p17 vrefl__p5 90668.1
+Rw1084 vrefl__p17 vrefl__p6 71235.6
+Rw1085 vrefl__p17 vrefl__p7 55486
+Rw1086 vrefl__p17 vrefl__p8 42992
+Rw1087 vrefl__p17 vrefl__p9 1048.69
+Rw1088 vrefl__p19 vrefl__p2 2056.7
+Rw1089 vrefl__p19 vrefl__p3 1730.94
+Rw1090 vrefl__p19 vrefl__p4 1409.66
+Rw1091 vrefl__p19 vrefl__p5 1123.12
+Rw1092 vrefl__p19 vrefl__p6 882.407
+Rw1093 vrefl__p19 vrefl__p7 687.314
+Rw1094 vrefl__p19 vrefl__p8 532.548
+Rw1095 vrefl__p19 vrefl__p9 144.129
+Rw1096 vrefl__p2 vrefl__p3 141.9
+Rw1097 vrefl__p2 vrefl__p4 179.478
+Rw1098 vrefl__p2 vrefl__p5 223.038
+Rw1099 vrefl__p2 vrefl__p6 269.753
+Rw1100 vrefl__p2 vrefl__p7 313.641
+Rw1101 vrefl__p2 vrefl__p8 345.866
+Rw1102 vrefl__p2 vrefl__p9 3030.88
+Rw1103 vrefl__p3 vrefl__p4 151.051
+Rw1104 vrefl__p3 vrefl__p5 187.711
+Rw1105 vrefl__p3 vrefl__p6 227.028
+Rw1106 vrefl__p3 vrefl__p7 263.964
+Rw1107 vrefl__p3 vrefl__p8 291.085
+Rw1108 vrefl__p3 vrefl__p9 2550.83
+Rw1109 vrefl__p4 vrefl__p5 152.87
+Rw1110 vrefl__p4 vrefl__p6 184.889
+Rw1111 vrefl__p4 vrefl__p7 214.97
+Rw1112 vrefl__p4 vrefl__p8 237.057
+Rw1113 vrefl__p4 vrefl__p9 2077.37
+Rw1114 vrefl__p5 vrefl__p6 147.307
+Rw1115 vrefl__p5 vrefl__p7 171.273
+Rw1116 vrefl__p5 vrefl__p8 188.87
+Rw1117 vrefl__p5 vrefl__p9 1655.1
+Rw1118 vrefl__p6 vrefl__p7 134.565
+Rw1119 vrefl__p6 vrefl__p8 148.391
+Rw1120 vrefl__p6 vrefl__p9 1300.37
+Rw1121 vrefl__p7 vrefl__p8 115.583
+Rw1122 vrefl__p7 vrefl__p9 1012.87
+Rw1123 vrefl__p8 vrefl__p9 784.798
+Rw1124 xc4_din xc4_din__p1 0.05
+Rw1125 xc4_din xc4_din__p2 0.05
+Rw1126 xc4_din__p1 xc4_din__p2 0.05
+Rw1127 xc4_dip xc4_dip__p1 0.05
+Rw1128 xc4_dip xc4_dip__p2 0.05
+Rw1129 xc4_dip__p1 xc4_dip__p2 0.05
+Rw1130 xc4_lt xc4_lt__p1 0.05
+Rw1131 xc4_lt xc4_lt__p2 0.05
+Rw1132 xc4_lt__p1 xc4_lt__p2 0.05
+Rw1133 xc4_outnb xc4_outnb__p1 0.05
+Rw1134 xc4_outpb xc4_outpb__p1 0.05
+Rw1135 xc4_xs1_tail xc4_xs1_tail__p1 0.05
+Rw1136 xc4_xs1_tail xc4_xs1_tail__p2 0.05
+Rw1137 xc4_xs1_tail__p1 xc4_xs1_tail__p2 0.05
+Rw1138 xc4_xs1_tail0 xc4_xs1_tail0__p1 0.05
+Rw1139 xc5_din xc5_din__p1 0.05
+Rw1140 xc5_din xc5_din__p2 0.05
+Rw1141 xc5_din__p1 xc5_din__p2 0.05
+Rw1142 xc5_dip xc5_dip__p1 0.05
+Rw1143 xc5_dip xc5_dip__p2 0.05
+Rw1144 xc5_dip__p1 xc5_dip__p2 0.05
+Rw1145 xc5_lt xc5_lt__p1 0.05
+Rw1146 xc5_lt xc5_lt__p2 0.05
+Rw1147 xc5_lt__p1 xc5_lt__p2 0.05
+Rw1148 xc5_outnb xc5_outnb__p1 0.05
+Rw1149 xc5_outpb xc5_outpb__p1 0.05
+Rw1150 xc5_xs1_tail xc5_xs1_tail__p1 0.05
+Rw1151 xc5_xs1_tail__p1 xc5_xs1_tail__p2 0.05
+Rw1152 xc5_xs1_tail0 xc5_xs1_tail0__p1 0.05
+Rw1153 xs0n_cbn xs0n_cbn__p1 0.05
+Rw1154 xs0n_cbn xs0n_cbn__p2 0.05
+Rw1155 xs0n_cbn xs0n_cbn__p3 0.05
+Rw1156 xs0n_cbn xs0n_cbn__p4 0.05
+Rw1157 xs0n_cbn__p1 xs0n_cbn__p2 0.05
+Rw1158 xs0n_cbn__p1 xs0n_cbn__p3 0.05
+Rw1159 xs0n_cbn__p1 xs0n_cbn__p4 0.05
+Rw1160 xs0n_cbn__p2 xs0n_cbn__p3 0.05
+Rw1161 xs0n_cbn__p2 xs0n_cbn__p4 0.05
+Rw1162 xs0n_cbn__p3 xs0n_cbn__p4 0.05
+Rw1163 xs0n_cbp xs0n_cbp__p1 0.05
+Rw1164 xs0n_cbp xs0n_cbp__p2 0.05
+Rw1165 xs0n_cbp__p1 xs0n_cbp__p2 0.05
+Rw1166 xs0n_g xs0n_g__p1 0.05
+Rw1167 xs0n_g__p1 xs0n_g__p2 0.05
+Rw1168 xs0n_g__p1 xs0n_g__p3 0.05
+Rw1169 xs0n_g__p1 xs0n_g__p4 0.05
+Rw1170 xs0n_g__p1 xs0n_g__p5 0.05
+Rw1171 xs0n_g__p2 xs0n_g__p3 0.05
+Rw1172 xs0n_g__p2 xs0n_g__p4 0.05
+Rw1173 xs0n_g__p2 xs0n_g__p5 0.05
+Rw1174 xs0n_g__p3 xs0n_g__p4 0.05
+Rw1175 xs0n_g__p3 xs0n_g__p5 0.05
+Rw1176 xs0n_g__p4 xs0n_g__p5 0.05
+Rw1177 xs0n_n10 xs0n_n10__p1 0.05
+Rw1178 xs0n_x xs0n_x__p1 0.05
+Rw1179 xs0n_x xs0n_x__p2 0.05
+Rw1180 xs0n_x xs0n_x__p3 0.05
+Rw1181 xs0n_x__p1 xs0n_x__p2 0.05
+Rw1182 xs0n_x__p1 xs0n_x__p3 0.05
+Rw1183 xs0n_x__p2 xs0n_x__p3 0.05
+Rw1184 xs0p_cbn xs0p_cbn__p1 0.05
+Rw1185 xs0p_cbn xs0p_cbn__p2 0.05
+Rw1186 xs0p_cbn xs0p_cbn__p3 0.05
+Rw1187 xs0p_cbn xs0p_cbn__p4 0.05
+Rw1188 xs0p_cbn__p1 xs0p_cbn__p2 0.05
+Rw1189 xs0p_cbn__p1 xs0p_cbn__p3 0.05
+Rw1190 xs0p_cbn__p1 xs0p_cbn__p4 0.05
+Rw1191 xs0p_cbn__p2 xs0p_cbn__p3 0.05
+Rw1192 xs0p_cbn__p2 xs0p_cbn__p4 0.05
+Rw1193 xs0p_cbn__p3 xs0p_cbn__p4 0.05
+Rw1194 xs0p_cbp xs0p_cbp__p1 0.05
+Rw1195 xs0p_cbp xs0p_cbp__p2 0.05
+Rw1196 xs0p_cbp__p1 xs0p_cbp__p2 0.05
+Rw1197 xs0p_g xs0p_g__p1 0.05
+Rw1198 xs0p_g__p1 xs0p_g__p2 0.05
+Rw1199 xs0p_g__p1 xs0p_g__p3 0.05
+Rw1200 xs0p_g__p1 xs0p_g__p4 0.05
+Rw1201 xs0p_g__p1 xs0p_g__p5 0.05
+Rw1202 xs0p_g__p2 xs0p_g__p3 0.05
+Rw1203 xs0p_g__p2 xs0p_g__p4 0.05
+Rw1204 xs0p_g__p2 xs0p_g__p5 0.05
+Rw1205 xs0p_g__p3 xs0p_g__p4 0.05
+Rw1206 xs0p_g__p3 xs0p_g__p5 0.05
+Rw1207 xs0p_g__p4 xs0p_g__p5 0.05
+Rw1208 xs0p_n10 xs0p_n10__p1 0.05
+Rw1209 xs0p_x xs0p_x__p1 0.05
+Rw1210 xs0p_x xs0p_x__p2 0.05
+Rw1211 xs0p_x xs0p_x__p3 0.05
+Rw1212 xs0p_x__p1 xs0p_x__p2 0.05
+Rw1213 xs0p_x__p1 xs0p_x__p3 0.05
+Rw1214 xs0p_x__p2 xs0p_x__p3 0.05
+Rw1215 xs1n_cbn xs1n_cbn__p1 0.05
+Rw1216 xs1n_cbn xs1n_cbn__p2 0.05
+Rw1217 xs1n_cbn xs1n_cbn__p3 0.05
+Rw1218 xs1n_cbn xs1n_cbn__p4 0.05
+Rw1219 xs1n_cbn__p1 xs1n_cbn__p2 0.05
+Rw1220 xs1n_cbn__p1 xs1n_cbn__p3 0.05
+Rw1221 xs1n_cbn__p1 xs1n_cbn__p4 0.05
+Rw1222 xs1n_cbn__p2 xs1n_cbn__p3 0.05
+Rw1223 xs1n_cbn__p2 xs1n_cbn__p4 0.05
+Rw1224 xs1n_cbn__p3 xs1n_cbn__p4 0.05
+Rw1225 xs1n_cbp xs1n_cbp__p1 0.05
+Rw1226 xs1n_cbp xs1n_cbp__p2 0.05
+Rw1227 xs1n_cbp__p1 xs1n_cbp__p2 0.05
+Rw1228 xs1n_g xs1n_g__p1 0.05
+Rw1229 xs1n_g__p1 xs1n_g__p2 0.05
+Rw1230 xs1n_g__p1 xs1n_g__p3 0.05
+Rw1231 xs1n_g__p1 xs1n_g__p4 0.05
+Rw1232 xs1n_g__p1 xs1n_g__p5 0.05
+Rw1233 xs1n_g__p2 xs1n_g__p3 0.05
+Rw1234 xs1n_g__p2 xs1n_g__p4 0.05
+Rw1235 xs1n_g__p2 xs1n_g__p5 0.05
+Rw1236 xs1n_g__p3 xs1n_g__p4 0.05
+Rw1237 xs1n_g__p3 xs1n_g__p5 0.05
+Rw1238 xs1n_g__p4 xs1n_g__p5 0.05
+Rw1239 xs1n_n10 xs1n_n10__p1 0.05
+Rw1240 xs1n_x xs1n_x__p1 0.05
+Rw1241 xs1n_x xs1n_x__p2 0.05
+Rw1242 xs1n_x xs1n_x__p3 0.05
+Rw1243 xs1n_x__p1 xs1n_x__p2 0.05
+Rw1244 xs1n_x__p1 xs1n_x__p3 0.05
+Rw1245 xs1n_x__p2 xs1n_x__p3 0.05
+Rw1246 xs1p_cbn xs1p_cbn__p1 0.05
+Rw1247 xs1p_cbn xs1p_cbn__p2 0.05
+Rw1248 xs1p_cbn xs1p_cbn__p3 0.05
+Rw1249 xs1p_cbn xs1p_cbn__p4 0.05
+Rw1250 xs1p_cbn__p1 xs1p_cbn__p2 0.05
+Rw1251 xs1p_cbn__p1 xs1p_cbn__p3 0.05
+Rw1252 xs1p_cbn__p1 xs1p_cbn__p4 0.05
+Rw1253 xs1p_cbn__p2 xs1p_cbn__p3 0.05
+Rw1254 xs1p_cbn__p2 xs1p_cbn__p4 0.05
+Rw1255 xs1p_cbn__p3 xs1p_cbn__p4 0.05
+Rw1256 xs1p_cbp xs1p_cbp__p1 0.05
+Rw1257 xs1p_cbp xs1p_cbp__p2 0.05
+Rw1258 xs1p_cbp__p1 xs1p_cbp__p2 0.05
+Rw1259 xs1p_g xs1p_g__p1 0.05
+Rw1260 xs1p_g__p1 xs1p_g__p2 0.05
+Rw1261 xs1p_g__p1 xs1p_g__p3 0.05
+Rw1262 xs1p_g__p1 xs1p_g__p4 0.05
+Rw1263 xs1p_g__p1 xs1p_g__p5 0.05
+Rw1264 xs1p_g__p2 xs1p_g__p3 0.05
+Rw1265 xs1p_g__p2 xs1p_g__p4 0.05
+Rw1266 xs1p_g__p2 xs1p_g__p5 0.05
+Rw1267 xs1p_g__p3 xs1p_g__p4 0.05
+Rw1268 xs1p_g__p3 xs1p_g__p5 0.05
+Rw1269 xs1p_g__p4 xs1p_g__p5 0.05
+Rw1270 xs1p_n10 xs1p_n10__p1 0.05
+Rw1271 xs1p_x xs1p_x__p1 0.05
+Rw1272 xs1p_x xs1p_x__p2 0.05
+Rw1273 xs1p_x xs1p_x__p3 0.05
+Rw1274 xs1p_x__p1 xs1p_x__p2 0.05
+Rw1275 xs1p_x__p1 xs1p_x__p3 0.05
+Rw1276 xs1p_x__p2 xs1p_x__p3 0.05
+.ends
+.subckt r1_adc_lay adc_hold is_smp clk adc_start adc_sel adc_valid_a adc_raw_a_0 adc_raw_a_1 adc_raw_a_2 adc_raw_a_3 adc_raw_a_4 adc_raw_a_5 adc_raw_a_6 adc_raw_a_7 adc_raw_a_8 adc_raw_a_9 adc_raw_a_10 adc_raw_a_11 adc_raw_a_12 adc_raw_a_13 adc_valid_b adc_raw_b_0 adc_raw_b_1 adc_raw_b_2 adc_raw_b_3 adc_raw_b_4 adc_raw_b_5 adc_raw_b_6 adc_raw_b_7 adc_raw_b_8 adc_raw_b_9 adc_raw_b_10 adc_raw_b_11 adc_raw_b_12 adc_raw_b_13 por_n ain_sin_p ain_sin_n ain_cos_p ain_cos_n vcm2 ibias ain_isa_p ain_isa_n ain_isb_p ain_isb_n vcm vdda vdd vss vref_in topap topan topbp topbn sar_clka sar_clkab sar_clkb sar_clkbb sar_clkna sar_clknab sar_clknb sar_clknbb sar_cna0 sar_cna1 sar_cna10 sar_cna11 sar_cna12 sar_cna2 sar_cna3 sar_cna4 sar_cna5 sar_cna6 sar_cna7 sar_cna8 sar_cna9 sar_cnb0 sar_cnb1 sar_cnb10 sar_cnb11 sar_cnb12 sar_cnb2 sar_cnb3 sar_cnb4 sar_cnb5 sar_cnb6 sar_cnb7 sar_cnb8 sar_cnb9 sar_cpa0 sar_cpa1 sar_cpa10 sar_cpa11 sar_cpa12 sar_cpa2 sar_cpa3 sar_cpa4 sar_cpa5 sar_cpa6 sar_cpa7 sar_cpa8 sar_cpa9 sar_cpb0 sar_cpb1 sar_cpb10 sar_cpb11 sar_cpb12 sar_cpb2 sar_cpb3 sar_cpb4 sar_cpb5 sar_cpb6 sar_cpb7 sar_cpb8 sar_cpb9 sar_oan sar_oann sar_oanp sar_oap sar_obn sar_obnn sar_obnp sar_obp sar_trka0 sar_trka1 sar_trkb0 sar_trkb1 sar_mclk
+Xxckg_xpd0 xckg_d0__p1 clk vdd__p2 vdd sg13_lv_pmos w=1u l=0.5u ng=1 m=1
+Xxckg_xnd0 xckg_d0 clk vss__p9 vss sg13_lv_nmos w=0.5u l=0.5u ng=1 m=1
+Xxckg_cd0 xckg_d0__p2 vss__p16 cap_cmim w=2.53u l=2.53u m=1
+Xxckg_xpd1 xckg_d1__p1 xckg_d0 vdd__p3 vdd sg13_lv_pmos w=1u l=0.5u ng=1 m=1
+Xxckg_xnd1 xckg_d1 xckg_d0 vss__p10 vss sg13_lv_nmos w=0.5u l=0.5u ng=1 m=1
+Xxckg_cd1 xckg_d1__p2 vss__p17 cap_cmim w=2.53u l=2.53u m=1
+Xxckg_xpd2 xckg_d2__p1 xckg_d1 vdd__p4 vdd sg13_lv_pmos w=1u l=0.5u ng=1 m=1
+Xxckg_xnd2 xckg_d2 xckg_d1 vss__p11 vss sg13_lv_nmos w=0.5u l=0.5u ng=1 m=1
+Xxckg_cd2 xckg_d2__p2 vss__p18 cap_cmim w=2.53u l=2.53u m=1
+Xxckg_xpd3 xckg_d3__p1 xckg_d2 vdd__p5 vdd sg13_lv_pmos w=1u l=0.5u ng=1 m=1
+Xxckg_xnd3 xckg_d3 xckg_d2 vss__p12 vss sg13_lv_nmos w=0.5u l=0.5u ng=1 m=1
+Xxckg_cd3 xckg_d3__p2 vss__p19 cap_cmim w=2.53u l=2.53u m=1
+Xxckg_xpd4 xckg_x__p2 xckg_d3 vdd__p6 vdd sg13_lv_pmos w=1u l=0.5u ng=1 m=1
+Xxckg_xnd4 xckg_x xckg_d3 vss__p13 vss sg13_lv_nmos w=0.5u l=0.5u ng=1 m=1
+Xxckg_cd4 xckg_x__p4 vss__p20 cap_cmim w=2.53u l=2.53u m=1
+Xxckg_xpa sar_mclk__p2 clk__p1 vdd__p7 vdd sg13_lv_pmos w=2u l=0.13u ng=1 m=1
+Xxckg_xpb sar_mclk__p3 xckg_x__p3 vdd__p8 vdd sg13_lv_pmos w=2u l=0.13u ng=1 m=1
+Xxckg_xna sar_mclk clk__p0 xckg_nn vss sg13_lv_nmos w=2u l=0.13u ng=1 m=1
+Xxckg_xnb xckg_nn__p1 xckg_x__p1 vss__p14 vss sg13_lv_nmos w=2u l=0.13u ng=1 m=1
+Xxckg_xpi mclkb__p1 sar_mclk__p4 vdd__p9 vdd sg13_lv_pmos w=2u l=0.13u ng=1 m=1
+Xxckg_xni mclkb sar_mclk__p1 vss__p15 vss sg13_lv_nmos w=1u l=0.13u ng=1 m=1
+Xxcbias_xmbd vbp__p1 vbp vdd__p1 vdd sg13_lv_pmos w=0.8u l=0.5u ng=1 m=1
+Xxcbias_xrb_g0 vbp xcbias_xrb_s1 vss rppd w=1u l=40u m=1 b=0
+Xxcbias_xrb_g1 xcbias_xrb_s1 xcbias_xrb_s2 vss rppd w=1u l=40u m=1 b=0
+Xxcbias_xrb_g2 xcbias_xrb_s2 xcbias_xrb_s3 vss rppd w=1u l=40u m=1 b=0
+Xxcbias_xrb_g3 xcbias_xrb_s3 vss__p7 vss rppd w=1u l=40u m=1 b=0
+Xxcbiasn_xmbd vbn__p1 vbn vss__p8 vss sg13_lv_nmos w=0.2u l=0.5u ng=1 m=1
+Xxcbiasn_xrb_g0 vdd__p0 xcbiasn_xrb_s1 vss rppd w=1u l=40u m=1 b=0
+Xxcbiasn_xrb_g1 xcbiasn_xrb_s1 xcbiasn_xrb_s2 vss rppd w=1u l=40u m=1 b=0
+Xxcbiasn_xrb_g2 xcbiasn_xrb_s2 xcbiasn_xrb_s3 vss rppd w=1u l=40u m=1 b=0
+Xxcbiasn_xrb_g3 xcbiasn_xrb_s3 vbn vss rppd w=1u l=40u m=1 b=0
+Xxref_xmb0 ibias__p0 ibias vss__p5 vss sg13_hv_nmos w=2u l=1u ng=1 m=1
+Xxref_xmt xref_ntl ibias vss__p6 vss sg13_hv_nmos w=2u l=8u ng=1 m=1
+Xxref_xm1 xref_na vref_in xref_ntl__p1 vss sg13_hv_nmos w=10u l=1u ng=2 m=1
+Xxref_xm2 xref_ng vref xref_ntl__p2 vss sg13_hv_nmos w=10u l=1u ng=2 m=1
+Xxref_xm3 xref_na__p1 xref_na vdda__p5 vdda sg13_hv_pmos w=4u l=1u ng=1 m=1
+Xxref_xm4 xref_ng__p1 xref_na vdda__p6 vdda sg13_hv_pmos w=4u l=1u ng=1 m=1
+Xxref_xcg_u0 vss xref_ng cap_cmim w=26.32u l=95u m=1
+Xxref_xmsf_s0 vdda__p1 xref_ng vref vss sg13_hv_nmos w=80u l=0.45u ng=32 m=1
+Xxref_xmsf_s1 vdda__p2 xref_ng vref__p5 vss sg13_hv_nmos w=80u l=0.45u ng=32 m=1
+Xxref_xmsf_s2 vdda__p3 xref_ng vref__p6 vss sg13_hv_nmos w=80u l=0.45u ng=32 m=1
+Xxref_xmsf_s3 vdda__p4 xref_ng vref__p7 vss sg13_hv_nmos w=80u l=0.45u ng=32 m=1
+Xxref_xmib_s0 vref__p0 ibias vss__p0 vss sg13_hv_nmos w=80u l=1u ng=40 m=1
+Xxref_xmib_s1 vref__p1 ibias vss__p1 vss sg13_hv_nmos w=80u l=1u ng=40 m=1
+Xxref_xmib_s2 vref__p2 ibias vss__p2 vss sg13_hv_nmos w=80u l=1u ng=40 m=1
+Xxref_xmib_s3 vref__p3 ibias vss__p3 vss sg13_hv_nmos w=80u l=1u ng=40 m=1
+Xxref_xcd_u0 vss vref cap_cmim w=51.58u l=95u m=4
+Xxref_xmsfl_s0 vdda__p0 xref_ng vrefl vss sg13_hv_nmos w=80u l=0.45u ng=32 m=1
+Xxref_xmibl_s0 vrefl__p0 ibias vss__p4 vss sg13_hv_nmos w=80u l=1u ng=40 m=1
+Xxref_xcdl_u0 vss vrefl cap_cmim w=51.58u l=95u m=2
+Xxfilt_xcf_u0 vss vref_in cap_cmim w=37.36u l=90u m=2
+Xslice_a ain_sin_p__p1 ain_sin_n__p1 ain_isa_p__p1 ain_isa_n__p1 sar_trka0 sar_trka1 sar_cpa0 sar_cpa1 sar_cpa2 sar_cpa3 sar_cpa4 sar_cpa5 sar_cpa6 sar_cpa7 sar_cpa8 sar_cpa9 sar_cpa10 sar_cpa11 sar_cpa12 sar_cna0 sar_cna1 sar_cna2 sar_cna3 sar_cna4 sar_cna5 sar_cna6 sar_cna7 sar_cna8 sar_cna9 sar_cna10 sar_cna11 sar_cna12 sar_clka sar_clkab sar_clkna sar_clknab sar_oap sar_oan sar_oanp sar_oann vbp__p2 vbn__p2 vref__p8 vrefl__p2 vrefl__p3 topap topan vdd__p11 vdd__p12 vdd__p13 vdd__p14 vss__p22 vss__p23 vss__p24 vss__p25 r1_adc_slice_post
+Xslice_b ain_cos_p__p1 ain_cos_n__p1 ain_isb_p__p1 ain_isb_n__p1 sar_trkb0 sar_trkb1 sar_cpb0 sar_cpb1 sar_cpb2 sar_cpb3 sar_cpb4 sar_cpb5 sar_cpb6 sar_cpb7 sar_cpb8 sar_cpb9 sar_cpb10 sar_cpb11 sar_cpb12 sar_cnb0 sar_cnb1 sar_cnb2 sar_cnb3 sar_cnb4 sar_cnb5 sar_cnb6 sar_cnb7 sar_cnb8 sar_cnb9 sar_cnb10 sar_cnb11 sar_cnb12 sar_clkb sar_clkbb sar_clknb sar_clknbb sar_obp sar_obn sar_obnp sar_obnn vbp__p3 vbn__p3 vref__p9 vrefl__p4 vrefl__p5 topbp topbn vdd__p15 vdd__p16 vdd__p17 vdd__p18 vss__p26 vss__p27 vss__p28 vss__p29 r1_adc_slice_post
+Rt0 ain_cos_n ain_cos_n__p1 0.05
+Rt1 ain_cos_p ain_cos_p__p1 0.05
+Rt2 ain_isa_n ain_isa_n__p1 0.05
+Rt3 ain_isa_p ain_isa_p__p1 0.05
+Rt4 ain_isb_n ain_isb_n__p1 0.05
+Rt5 ain_isb_p ain_isb_p__p1 0.05
+Rt6 ain_sin_n ain_sin_n__p1 0.05
+Rt7 ain_sin_p ain_sin_p__p1 0.05
+Rt8 clk clk__p0 0.05
+Rt9 clk clk__p1 0.05
+Rt10 clk__p0 clk__p1 0.05
+Rt11 ibias ibias__p0 0.05
+Rt12 mclkb mclkb__p1 0.05
+Rt13 sar_mclk sar_mclk__p1 0.05
+Rt14 sar_mclk sar_mclk__p3 0.05
+Rt15 sar_mclk sar_mclk__p4 0.05
+Rt16 sar_mclk__p1 sar_mclk__p3 0.05
+Rt17 sar_mclk__p1 sar_mclk__p4 0.05
+Rt18 sar_mclk__p2 sar_mclk__p3 0.05
+Rt19 sar_mclk__p3 sar_mclk__p4 0.05
+Rt20 vbn vbn__p1 0.05
+Rt21 vbn vbn__p2 0.05
+Rt22 vbn vbn__p3 0.05
+Rt23 vbn__p1 vbn__p2 0.05
+Rt24 vbn__p1 vbn__p3 0.05
+Rt25 vbn__p2 vbn__p3 0.05
+Rt26 vbp vbp__p1 0.05
+Rt27 vbp vbp__p2 0.05
+Rt28 vbp vbp__p3 0.05
+Rt29 vbp__p1 vbp__p2 0.05
+Rt30 vbp__p1 vbp__p3 0.05
+Rt31 vbp__p2 vbp__p3 0.05
+Rt32 vdd vdd__p0 0.05
+Rt33 vdd vdd__p1 0.05
+Rt34 vdd vdd__p11 0.05
+Rt35 vdd vdd__p12 0.05
+Rt36 vdd vdd__p13 0.05
+Rt37 vdd vdd__p14 0.05
+Rt38 vdd vdd__p15 0.05
+Rt39 vdd vdd__p16 0.05
+Rt40 vdd vdd__p17 0.05
+Rt41 vdd vdd__p18 0.05
+Rt42 vdd vdd__p2 0.05
+Rt43 vdd vdd__p3 0.05
+Rt44 vdd vdd__p4 0.05
+Rt45 vdd vdd__p5 0.05
+Rt46 vdd vdd__p6 0.05
+Rt47 vdd vdd__p7 0.05
+Rt48 vdd vdd__p8 0.05
+Rt49 vdd vdd__p9 0.05
+Rt50 vdd__p0 vdd__p1 0.05
+Rt51 vdd__p0 vdd__p11 0.05
+Rt52 vdd__p0 vdd__p12 0.05
+Rt53 vdd__p0 vdd__p13 0.05
+Rt54 vdd__p0 vdd__p14 0.05
+Rt55 vdd__p0 vdd__p15 0.05
+Rt56 vdd__p0 vdd__p16 0.05
+Rt57 vdd__p0 vdd__p17 0.05
+Rt58 vdd__p0 vdd__p18 0.05
+Rt59 vdd__p0 vdd__p2 0.05
+Rt60 vdd__p0 vdd__p3 0.05
+Rt61 vdd__p0 vdd__p4 0.05
+Rt62 vdd__p0 vdd__p5 0.05
+Rt63 vdd__p0 vdd__p6 0.05
+Rt64 vdd__p0 vdd__p7 0.05
+Rt65 vdd__p0 vdd__p8 0.05
+Rt66 vdd__p0 vdd__p9 0.05
+Rt67 vdd__p1 vdd__p11 0.05
+Rt68 vdd__p1 vdd__p12 0.05
+Rt69 vdd__p1 vdd__p13 0.05
+Rt70 vdd__p1 vdd__p14 0.05
+Rt71 vdd__p1 vdd__p15 0.05
+Rt72 vdd__p1 vdd__p16 0.05
+Rt73 vdd__p1 vdd__p17 0.05
+Rt74 vdd__p1 vdd__p18 0.05
+Rt75 vdd__p1 vdd__p2 0.05
+Rt76 vdd__p1 vdd__p3 0.05
+Rt77 vdd__p1 vdd__p4 0.05
+Rt78 vdd__p1 vdd__p5 0.05
+Rt79 vdd__p1 vdd__p6 0.05
+Rt80 vdd__p1 vdd__p7 0.05
+Rt81 vdd__p1 vdd__p8 0.05
+Rt82 vdd__p1 vdd__p9 0.05
+Rt83 vdd__p11 vdd__p12 0.05
+Rt84 vdd__p11 vdd__p13 0.05
+Rt85 vdd__p11 vdd__p14 0.05
+Rt86 vdd__p11 vdd__p15 0.05
+Rt87 vdd__p11 vdd__p16 0.05
+Rt88 vdd__p11 vdd__p17 0.05
+Rt89 vdd__p11 vdd__p18 0.05
+Rt90 vdd__p11 vdd__p2 0.05
+Rt91 vdd__p11 vdd__p3 0.05
+Rt92 vdd__p11 vdd__p4 0.05
+Rt93 vdd__p11 vdd__p5 0.05
+Rt94 vdd__p11 vdd__p6 0.05
+Rt95 vdd__p11 vdd__p7 0.05
+Rt96 vdd__p11 vdd__p8 0.05
+Rt97 vdd__p11 vdd__p9 0.05
+Rt98 vdd__p12 vdd__p13 0.05
+Rt99 vdd__p12 vdd__p14 0.05
+Rt100 vdd__p12 vdd__p15 0.05
+Rt101 vdd__p12 vdd__p16 0.05
+Rt102 vdd__p12 vdd__p17 0.05
+Rt103 vdd__p12 vdd__p18 0.05
+Rt104 vdd__p12 vdd__p2 0.05
+Rt105 vdd__p12 vdd__p3 0.05
+Rt106 vdd__p12 vdd__p4 0.05
+Rt107 vdd__p12 vdd__p5 0.05
+Rt108 vdd__p12 vdd__p6 0.05
+Rt109 vdd__p12 vdd__p7 0.05
+Rt110 vdd__p12 vdd__p8 0.05
+Rt111 vdd__p12 vdd__p9 0.05
+Rt112 vdd__p13 vdd__p14 0.05
+Rt113 vdd__p13 vdd__p15 0.05
+Rt114 vdd__p13 vdd__p16 0.05
+Rt115 vdd__p13 vdd__p17 0.05
+Rt116 vdd__p13 vdd__p18 0.05
+Rt117 vdd__p13 vdd__p2 0.05
+Rt118 vdd__p13 vdd__p3 0.05
+Rt119 vdd__p13 vdd__p4 0.05
+Rt120 vdd__p13 vdd__p5 0.05
+Rt121 vdd__p13 vdd__p6 0.05
+Rt122 vdd__p13 vdd__p7 0.05
+Rt123 vdd__p13 vdd__p8 0.05
+Rt124 vdd__p13 vdd__p9 0.05
+Rt125 vdd__p14 vdd__p15 0.05
+Rt126 vdd__p14 vdd__p16 0.05
+Rt127 vdd__p14 vdd__p17 0.05
+Rt128 vdd__p14 vdd__p18 0.05
+Rt129 vdd__p14 vdd__p2 0.05
+Rt130 vdd__p14 vdd__p3 0.05
+Rt131 vdd__p14 vdd__p4 0.05
+Rt132 vdd__p14 vdd__p5 0.05
+Rt133 vdd__p14 vdd__p6 0.05
+Rt134 vdd__p14 vdd__p7 0.05
+Rt135 vdd__p14 vdd__p8 0.05
+Rt136 vdd__p14 vdd__p9 0.05
+Rt137 vdd__p15 vdd__p16 0.05
+Rt138 vdd__p15 vdd__p17 0.05
+Rt139 vdd__p15 vdd__p18 0.05
+Rt140 vdd__p15 vdd__p2 0.05
+Rt141 vdd__p15 vdd__p3 0.05
+Rt142 vdd__p15 vdd__p4 0.05
+Rt143 vdd__p15 vdd__p5 0.05
+Rt144 vdd__p15 vdd__p6 0.05
+Rt145 vdd__p15 vdd__p7 0.05
+Rt146 vdd__p15 vdd__p8 0.05
+Rt147 vdd__p15 vdd__p9 0.05
+Rt148 vdd__p16 vdd__p17 0.05
+Rt149 vdd__p16 vdd__p18 0.05
+Rt150 vdd__p16 vdd__p2 0.05
+Rt151 vdd__p16 vdd__p3 0.05
+Rt152 vdd__p16 vdd__p4 0.05
+Rt153 vdd__p16 vdd__p5 0.05
+Rt154 vdd__p16 vdd__p6 0.05
+Rt155 vdd__p16 vdd__p7 0.05
+Rt156 vdd__p16 vdd__p8 0.05
+Rt157 vdd__p16 vdd__p9 0.05
+Rt158 vdd__p17 vdd__p18 0.05
+Rt159 vdd__p2 vdd__p3 0.05
+Rt160 vdd__p2 vdd__p4 0.05
+Rt161 vdd__p2 vdd__p5 0.05
+Rt162 vdd__p2 vdd__p6 0.05
+Rt163 vdd__p2 vdd__p7 0.05
+Rt164 vdd__p2 vdd__p8 0.05
+Rt165 vdd__p2 vdd__p9 0.05
+Rt166 vdd__p3 vdd__p4 0.05
+Rt167 vdd__p3 vdd__p5 0.05
+Rt168 vdd__p3 vdd__p6 0.05
+Rt169 vdd__p3 vdd__p7 0.05
+Rt170 vdd__p3 vdd__p8 0.05
+Rt171 vdd__p3 vdd__p9 0.05
+Rt172 vdd__p4 vdd__p5 0.05
+Rt173 vdd__p4 vdd__p6 0.05
+Rt174 vdd__p4 vdd__p7 0.05
+Rt175 vdd__p4 vdd__p8 0.05
+Rt176 vdd__p4 vdd__p9 0.05
+Rt177 vdd__p5 vdd__p6 0.05
+Rt178 vdd__p5 vdd__p7 0.05
+Rt179 vdd__p5 vdd__p8 0.05
+Rt180 vdd__p5 vdd__p9 0.05
+Rt181 vdd__p6 vdd__p7 0.05
+Rt182 vdd__p6 vdd__p8 0.05
+Rt183 vdd__p6 vdd__p9 0.05
+Rt184 vdd__p7 vdd__p8 0.05
+Rt185 vdd__p7 vdd__p9 0.05
+Rt186 vdd__p8 vdd__p9 0.05
+Rt187 vdda vdda__p1 0.05
+Rt188 vdda__p0 vdda__p3 0.05
+Rt189 vdda__p0 vdda__p4 0.05
+Rt190 vdda__p1 vdda__p2 0.05
+Rt191 vdda__p2 vdda__p3 0.05
+Rt192 vdda__p2 vdda__p5 0.05
+Rt193 vdda__p2 vdda__p6 0.05
+Rt194 vdda__p3 vdda__p4 0.05
+Rt195 vdda__p3 vdda__p5 0.05
+Rt196 vdda__p3 vdda__p6 0.05
+Rt197 vdda__p5 vdda__p6 0.05
+Rt198 vref vref__p1 86.8906
+Rt199 vref vref__p5 23.6974
+Rt200 vref vref__p8 154.432
+Rt201 vref vref__p9 282.142
+Rt202 vref__p0 vref__p1 54.8427
+Rt203 vref__p1 vref__p5 91.2944
+Rt204 vref__p1 vref__p8 108.337
+Rt205 vref__p1 vref__p9 197.929
+Rt206 vref__p2 vref__p3 54.8427
+Rt207 vref__p2 vref__p6 37.2232
+Rt208 vref__p5 vref__p6 54.9082
+Rt209 vref__p5 vref__p8 162.259
+Rt210 vref__p5 vref__p9 296.442
+Rt211 vref__p6 vref__p7 18.9765
+Rt212 vref__p8 vref__p9 6.67381
+Rt213 vrefl vrefl__p0 91.2046
+Rt214 vrefl vrefl__p2 13503.5
+Rt215 vrefl vrefl__p3 90.8685
+Rt216 vrefl vrefl__p4 76.5298
+Rt217 vrefl vrefl__p5 5238.83
+Rt218 vrefl__p0 vrefl__p2 10160.7
+Rt219 vrefl__p0 vrefl__p3 68.3742
+Rt220 vrefl__p0 vrefl__p4 96.5153
+Rt221 vrefl__p0 vrefl__p5 6606.94
+Rt222 vrefl__p2 vrefl__p3 16.5223
+Rt223 vrefl__p2 vrefl__p4 14289.8
+Rt224 vrefl__p2 vrefl__p5 978205
+Rt225 vrefl__p3 vrefl__p4 96.1596
+Rt226 vrefl__p3 vrefl__p5 6582.59
+Rt227 vrefl__p4 vrefl__p5 16.6771
+Rt228 vss vss__p0 0.05
+Rt229 vss vss__p1 0.05
+Rt230 vss vss__p10 0.05
+Rt231 vss vss__p2 0.05
+Rt232 vss vss__p22 0.05
+Rt233 vss vss__p23 0.05
+Rt234 vss vss__p24 0.05
+Rt235 vss vss__p25 0.05
+Rt236 vss vss__p26 0.05
+Rt237 vss vss__p27 0.05
+Rt238 vss vss__p28 0.05
+Rt239 vss vss__p29 0.05
+Rt240 vss vss__p3 0.05
+Rt241 vss vss__p4 0.05
+Rt242 vss vss__p5 0.05
+Rt243 vss vss__p6 0.05
+Rt244 vss vss__p7 0.05
+Rt245 vss vss__p8 0.05
+Rt246 vss__p0 vss__p1 0.05
+Rt247 vss__p0 vss__p2 0.05
+Rt248 vss__p0 vss__p22 0.05
+Rt249 vss__p0 vss__p23 0.05
+Rt250 vss__p0 vss__p24 0.05
+Rt251 vss__p0 vss__p25 0.05
+Rt252 vss__p0 vss__p26 0.05
+Rt253 vss__p0 vss__p27 0.05
+Rt254 vss__p0 vss__p28 0.05
+Rt255 vss__p0 vss__p29 0.05
+Rt256 vss__p0 vss__p3 0.05
+Rt257 vss__p0 vss__p4 0.05
+Rt258 vss__p0 vss__p5 0.05
+Rt259 vss__p0 vss__p6 0.05
+Rt260 vss__p0 vss__p7 0.05
+Rt261 vss__p0 vss__p8 0.05
+Rt262 vss__p1 vss__p2 0.05
+Rt263 vss__p1 vss__p22 0.05
+Rt264 vss__p1 vss__p23 0.05
+Rt265 vss__p1 vss__p24 0.05
+Rt266 vss__p1 vss__p25 0.05
+Rt267 vss__p1 vss__p26 0.05
+Rt268 vss__p1 vss__p27 0.05
+Rt269 vss__p1 vss__p28 0.05
+Rt270 vss__p1 vss__p29 0.05
+Rt271 vss__p1 vss__p3 0.05
+Rt272 vss__p1 vss__p4 0.05
+Rt273 vss__p1 vss__p5 0.05
+Rt274 vss__p1 vss__p6 0.05
+Rt275 vss__p1 vss__p7 0.05
+Rt276 vss__p1 vss__p8 0.05
+Rt277 vss__p10 vss__p11 0.05
+Rt278 vss__p10 vss__p12 0.05
+Rt279 vss__p10 vss__p13 0.05
+Rt280 vss__p10 vss__p14 0.05
+Rt281 vss__p10 vss__p15 0.05
+Rt282 vss__p10 vss__p16 0.05
+Rt283 vss__p10 vss__p17 0.05
+Rt284 vss__p10 vss__p18 0.05
+Rt285 vss__p10 vss__p19 0.05
+Rt286 vss__p10 vss__p20 0.05
+Rt287 vss__p10 vss__p9 0.05
+Rt288 vss__p11 vss__p12 0.05
+Rt289 vss__p11 vss__p13 0.05
+Rt290 vss__p11 vss__p14 0.05
+Rt291 vss__p11 vss__p15 0.05
+Rt292 vss__p11 vss__p16 0.05
+Rt293 vss__p11 vss__p17 0.05
+Rt294 vss__p11 vss__p18 0.05
+Rt295 vss__p11 vss__p19 0.05
+Rt296 vss__p11 vss__p20 0.05
+Rt297 vss__p11 vss__p9 0.05
+Rt298 vss__p12 vss__p13 0.05
+Rt299 vss__p12 vss__p14 0.05
+Rt300 vss__p12 vss__p15 0.05
+Rt301 vss__p12 vss__p16 0.05
+Rt302 vss__p12 vss__p17 0.05
+Rt303 vss__p12 vss__p18 0.05
+Rt304 vss__p12 vss__p19 0.05
+Rt305 vss__p12 vss__p20 0.05
+Rt306 vss__p12 vss__p9 0.05
+Rt307 vss__p13 vss__p14 0.05
+Rt308 vss__p13 vss__p15 0.05
+Rt309 vss__p13 vss__p16 0.05
+Rt310 vss__p13 vss__p17 0.05
+Rt311 vss__p13 vss__p18 0.05
+Rt312 vss__p13 vss__p19 0.05
+Rt313 vss__p13 vss__p20 0.05
+Rt314 vss__p13 vss__p9 0.05
+Rt315 vss__p14 vss__p15 0.05
+Rt316 vss__p14 vss__p16 0.05
+Rt317 vss__p14 vss__p17 0.05
+Rt318 vss__p14 vss__p18 0.05
+Rt319 vss__p14 vss__p19 0.05
+Rt320 vss__p14 vss__p20 0.05
+Rt321 vss__p14 vss__p9 0.05
+Rt322 vss__p15 vss__p16 0.05
+Rt323 vss__p15 vss__p17 0.05
+Rt324 vss__p15 vss__p18 0.05
+Rt325 vss__p15 vss__p19 0.05
+Rt326 vss__p15 vss__p20 0.05
+Rt327 vss__p15 vss__p9 0.05
+Rt328 vss__p16 vss__p17 0.05
+Rt329 vss__p16 vss__p18 0.05
+Rt330 vss__p16 vss__p19 0.05
+Rt331 vss__p16 vss__p20 0.05
+Rt332 vss__p16 vss__p9 0.05
+Rt333 vss__p17 vss__p18 0.05
+Rt334 vss__p17 vss__p19 0.05
+Rt335 vss__p17 vss__p20 0.05
+Rt336 vss__p17 vss__p9 0.05
+Rt337 vss__p18 vss__p19 0.05
+Rt338 vss__p18 vss__p20 0.05
+Rt339 vss__p18 vss__p9 0.05
+Rt340 vss__p19 vss__p20 0.05
+Rt341 vss__p19 vss__p9 0.05
+Rt342 vss__p2 vss__p22 0.05
+Rt343 vss__p2 vss__p23 0.05
+Rt344 vss__p2 vss__p28 0.05
+Rt345 vss__p2 vss__p29 0.05
+Rt346 vss__p2 vss__p3 0.05
+Rt347 vss__p2 vss__p4 0.05
+Rt348 vss__p2 vss__p5 0.05
+Rt349 vss__p2 vss__p6 0.05
+Rt350 vss__p2 vss__p7 0.05
+Rt351 vss__p2 vss__p8 0.05
+Rt352 vss__p20 vss__p9 0.05
+Rt353 vss__p22 vss__p23 0.05
+Rt354 vss__p22 vss__p26 0.05
+Rt355 vss__p22 vss__p27 0.05
+Rt356 vss__p22 vss__p28 0.05
+Rt357 vss__p22 vss__p29 0.05
+Rt358 vss__p22 vss__p3 0.05
+Rt359 vss__p22 vss__p4 0.05
+Rt360 vss__p22 vss__p5 0.05
+Rt361 vss__p22 vss__p6 0.05
+Rt362 vss__p22 vss__p7 0.05
+Rt363 vss__p22 vss__p8 0.05
+Rt364 vss__p23 vss__p26 0.05
+Rt365 vss__p23 vss__p27 0.05
+Rt366 vss__p23 vss__p28 0.05
+Rt367 vss__p23 vss__p29 0.05
+Rt368 vss__p23 vss__p3 0.05
+Rt369 vss__p23 vss__p4 0.05
+Rt370 vss__p23 vss__p5 0.05
+Rt371 vss__p23 vss__p6 0.05
+Rt372 vss__p23 vss__p7 0.05
+Rt373 vss__p23 vss__p8 0.05
+Rt374 vss__p24 vss__p25 0.05
+Rt375 vss__p24 vss__p26 0.05
+Rt376 vss__p24 vss__p27 0.05
+Rt377 vss__p24 vss__p4 0.05
+Rt378 vss__p24 vss__p5 0.05
+Rt379 vss__p24 vss__p6 0.05
+Rt380 vss__p25 vss__p26 0.05
+Rt381 vss__p25 vss__p27 0.05
+Rt382 vss__p25 vss__p4 0.05
+Rt383 vss__p25 vss__p5 0.05
+Rt384 vss__p25 vss__p6 0.05
+Rt385 vss__p26 vss__p27 0.05
+Rt386 vss__p26 vss__p29 0.05
+Rt387 vss__p26 vss__p4 0.05
+Rt388 vss__p26 vss__p5 0.05
+Rt389 vss__p26 vss__p6 0.05
+Rt390 vss__p26 vss__p7 0.05
+Rt391 vss__p26 vss__p8 0.05
+Rt392 vss__p27 vss__p4 0.05
+Rt393 vss__p27 vss__p5 0.05
+Rt394 vss__p27 vss__p6 0.05
+Rt395 vss__p27 vss__p7 0.05
+Rt396 vss__p27 vss__p8 0.05
+Rt397 vss__p28 vss__p29 0.05
+Rt398 vss__p28 vss__p3 0.05
+Rt399 vss__p28 vss__p4 0.05
+Rt400 vss__p28 vss__p5 0.05
+Rt401 vss__p28 vss__p6 0.05
+Rt402 vss__p28 vss__p7 0.05
+Rt403 vss__p28 vss__p8 0.05
+Rt404 vss__p29 vss__p3 0.05
+Rt405 vss__p29 vss__p4 0.05
+Rt406 vss__p29 vss__p5 0.05
+Rt407 vss__p29 vss__p6 0.05
+Rt408 vss__p29 vss__p7 0.05
+Rt409 vss__p29 vss__p8 0.05
+Rt410 vss__p3 vss__p4 0.05
+Rt411 vss__p3 vss__p5 0.05
+Rt412 vss__p3 vss__p6 0.05
+Rt413 vss__p3 vss__p7 0.05
+Rt414 vss__p3 vss__p8 0.05
+Rt415 vss__p4 vss__p5 0.05
+Rt416 vss__p4 vss__p6 0.05
+Rt417 vss__p4 vss__p7 0.05
+Rt418 vss__p4 vss__p8 0.05
+Rt419 vss__p5 vss__p6 0.05
+Rt420 vss__p5 vss__p7 0.05
+Rt421 vss__p5 vss__p8 0.05
+Rt422 vss__p6 vss__p7 0.05
+Rt423 vss__p6 vss__p8 0.05
+Rt424 vss__p7 vss__p8 0.05
+Rt425 xckg_d0 xckg_d0__p1 0.05
+Rt426 xckg_d0 xckg_d0__p2 0.05
+Rt427 xckg_d0__p1 xckg_d0__p2 0.05
+Rt428 xckg_d1 xckg_d1__p1 0.05
+Rt429 xckg_d1 xckg_d1__p2 0.05
+Rt430 xckg_d1__p1 xckg_d1__p2 0.05
+Rt431 xckg_d2 xckg_d2__p1 0.05
+Rt432 xckg_d2 xckg_d2__p2 0.05
+Rt433 xckg_d2__p1 xckg_d2__p2 0.05
+Rt434 xckg_d3 xckg_d3__p1 0.05
+Rt435 xckg_d3 xckg_d3__p2 0.05
+Rt436 xckg_d3__p1 xckg_d3__p2 0.05
+Rt437 xckg_nn xckg_nn__p1 0.05
+Rt438 xckg_x xckg_x__p1 0.05
+Rt439 xckg_x xckg_x__p2 0.05
+Rt440 xckg_x xckg_x__p3 0.05
+Rt441 xckg_x xckg_x__p4 0.05
+Rt442 xckg_x__p1 xckg_x__p2 0.05
+Rt443 xckg_x__p1 xckg_x__p3 0.05
+Rt444 xckg_x__p1 xckg_x__p4 0.05
+Rt445 xckg_x__p2 xckg_x__p3 0.05
+Rt446 xckg_x__p2 xckg_x__p4 0.05
+Rt447 xckg_x__p3 xckg_x__p4 0.05
+Rt448 xref_na xref_na__p1 0.05
+Rt449 xref_ng xref_ng__p1 0.05
+Rt450 xref_ntl xref_ntl__p1 0.05
+Rt451 xref_ntl__p1 xref_ntl__p2 0.05
+Cq0 ain_cos_n ain_cos_p 2.709e-14
+Cq1 ain_cos_n ain_isa_n 3.644e-17
+Cq2 ain_cos_n ain_isa_p 4.64e-17
+Cq3 ain_cos_n ibias 5.314e-17
+Cq4 ain_cos_n vdd 5.829e-16
+Cq5 ain_cos_n vss 2.705e-14
+Cq6 ain_cos_n xckg_d0 9.755e-19
+Cq7 ain_cos_n xckg_d1 9.755e-19
+Cq8 ain_cos_n xckg_d2 9.755e-19
+Cq9 ain_cos_n xckg_d3 1.006e-18
+Cq10 ain_cos_n xckg_x 5.633e-18
+Cq11 ain_cos_p ain_isa_n 4.287e-17
+Cq12 ain_cos_p ain_isa_p 7.229e-16
+Cq13 ain_cos_p ibias 3.52e-15
+Cq14 ain_cos_p vdd 2.509e-15
+Cq15 ain_cos_p vss 1.273e-14
+Cq16 ain_isa_n ain_isa_p 2.783e-14
+Cq17 ain_isa_n ain_isb_n 6.15e-17
+Cq18 ain_isa_n ain_isb_p 6.417e-17
+Cq19 ain_isa_n vss 2.894e-14
+Cq20 ain_isa_p ain_isb_n 7.645e-17
+Cq21 ain_isa_p ain_isb_p 7.912e-17
+Cq22 ain_isa_p vss 2.868e-14
+Cq23 ain_isb_n ain_isb_p 7.431e-17
+Cq24 ain_isb_n vss 9.265e-16
+Cq25 ain_isb_p vss 8.611e-16
+Cq26 ain_sin_n ain_sin_p 8.625e-17
+Cq27 ain_sin_n ibias 9.414e-17
+Cq28 ain_sin_n vdd 2.257e-16
+Cq29 ain_sin_n vss 7.685e-16
+Cq30 ain_sin_p ibias 9.681e-17
+Cq31 ain_sin_p vdd 1.633e-16
+Cq32 ain_sin_p vss 7.651e-16
+Cq33 clk mclkb 2.216e-18
+Cq34 clk sar_mclk 1.431e-16
+Cq35 clk vdd 4.347e-16
+Cq36 clk vss 1.85e-14
+Cq37 clk xckg_d0 2.205e-16
+Cq38 clk xckg_d1 1.236e-16
+Cq39 clk xckg_d2 1.227e-16
+Cq40 clk xckg_d3 1.663e-16
+Cq41 clk xckg_nn 2.534e-17
+Cq42 clk xckg_x 1.452e-16
+Cq43 ibias vbn 3.378e-16
+Cq44 ibias vbp 1.24e-16
+Cq45 ibias vdd 6.258e-15
+Cq46 ibias vdda 2.57e-16
+Cq47 ibias vref 3.367e-14
+Cq48 ibias vref_in 1.257e-14
+Cq49 ibias vrefl 1.528e-14
+Cq50 ibias vss 1.669e-13
+Cq51 ibias xref_ng 2.502e-15
+Cq52 ibias xref_ntl 1.763e-16
+Cq53 mclkb sar_mclk 2.613e-16
+Cq54 mclkb vdd 3.849e-16
+Cq55 mclkb vss 1.23e-15
+Cq56 mclkb xckg_d0 5.604e-17
+Cq57 mclkb xckg_d1 3.991e-15
+Cq58 mclkb xckg_d2 3.955e-15
+Cq59 mclkb xckg_d3 6.865e-17
+Cq60 mclkb xckg_nn 1.864e-17
+Cq61 mclkb xckg_x 9.575e-17
+Cq62 sar_mclk vdd 1.621e-15
+Cq63 sar_mclk vss 6.739e-15
+Cq64 sar_mclk xckg_d0 4.707e-15
+Cq65 sar_mclk xckg_d1 2.058e-16
+Cq66 sar_mclk xckg_d2 7.519e-17
+Cq67 sar_mclk xckg_d3 9.271e-17
+Cq68 sar_mclk xckg_nn 4.141e-16
+Cq69 sar_mclk xckg_x 1.044e-15
+Cq70 vbn vbp 4.048e-14
+Cq71 vbn vdd 2.668e-14
+Cq72 vbn vdda 4.597e-16
+Cq73 vbn vref 1.548e-14
+Cq74 vbn vref_in 2.405e-15
+Cq75 vbn vrefl 8.131e-15
+Cq76 vbn vss 1.116e-14
+Cq77 vbn xref_ng 1.543e-15
+Cq78 vbp vdd 1.669e-15
+Cq79 vbp vdda 1.395e-15
+Cq80 vbp vref 2.767e-14
+Cq81 vbp vref_in 4.117e-15
+Cq82 vbp vrefl 7.984e-15
+Cq83 vbp vss 1.325e-14
+Cq84 vbp xref_ng 1.886e-15
+Cq85 vdd vdda 3.895e-16
+Cq86 vdd vref 3.92e-14
+Cq87 vdd vref_in 2.491e-14
+Cq88 vdd vrefl 1.224e-14
+Cq89 vdd vss 6.927e-14
+Cq90 vdd xckg_d0 5.466e-16
+Cq91 vdd xckg_d1 3.974e-16
+Cq92 vdd xckg_d2 2.624e-16
+Cq93 vdd xckg_d3 3.649e-16
+Cq94 vdd xckg_x 1.1e-15
+Cq95 vdd xref_ng 3.009e-15
+Cq96 vdda vref 4e-14
+Cq97 vdda vref_in 3.048e-16
+Cq98 vdda vrefl 1.272e-14
+Cq99 vdda vss 3.096e-14
+Cq100 vdda xref_na 7.939e-16
+Cq101 vdda xref_ng 1.455e-14
+Cq102 vdda xref_ntl 1.132e-17
+Cq103 vref vref_in 4.546e-14
+Cq104 vref vrefl 1.197e-13
+Cq105 vref vss 3.586e-13
+Cq106 vref xref_na 1.908e-16
+Cq107 vref xref_ng 3.832e-14
+Cq108 vref xref_ntl 9.852e-16
+Cq109 vref_in vrefl 3.069e-14
+Cq110 vref_in vss 1.048e-13
+Cq111 vref_in xref_na 4.222e-16
+Cq112 vref_in xref_ng 3.86e-15
+Cq113 vref_in xref_ntl 1.282e-15
+Cq114 vrefl vss 1.991e-13
+Cq115 vrefl xref_na 8.519e-18
+Cq116 vrefl xref_ng 2.644e-14
+Cq117 vrefl xref_ntl 5.775e-16
+Cq118 vss xckg_d0 4.966e-15
+Cq119 vss xckg_d1 4.102e-15
+Cq120 vss xckg_d2 4.83e-15
+Cq121 vss xckg_d3 5.854e-15
+Cq122 vss xckg_nn 1.117e-15
+Cq123 vss xckg_x 1.086e-14
+Cq124 vss xref_na 4.919e-15
+Cq125 vss xref_ng 9.404e-14
+Cq126 vss xref_ntl 4.054e-15
+Cq127 xckg_d0 xckg_d1 8.434e-15
+Cq128 xckg_d0 xckg_d2 2.37e-16
+Cq129 xckg_d0 xckg_d3 1.818e-16
+Cq130 xckg_d0 xckg_nn 2.011e-17
+Cq131 xckg_d0 xckg_x 6.919e-16
+Cq132 xckg_d1 xckg_d2 2.001e-15
+Cq133 xckg_d1 xckg_d3 1.378e-16
+Cq134 xckg_d1 xckg_nn 5.907e-16
+Cq135 xckg_d1 xckg_x 4.219e-16
+Cq136 xckg_d2 xckg_d3 8.547e-15
+Cq137 xckg_d2 xckg_nn 5.574e-16
+Cq138 xckg_d2 xckg_x 4.153e-16
+Cq139 xckg_d3 xckg_nn 3.667e-17
+Cq140 xckg_d3 xckg_x 5.111e-15
+Cq141 xckg_nn xckg_x 1.118e-16
+Cq142 xref_na xref_ng 2.502e-15
+Cq143 xref_na xref_ntl 3.114e-16
+Cq144 xref_ng xref_ntl 2.861e-15
+.ends
+.subckt r1_adc_lay_pr adc_hold is_smp clk adc_start adc_sel adc_valid_a adc_raw_a_0 adc_raw_a_1 adc_raw_a_2 adc_raw_a_3 adc_raw_a_4 adc_raw_a_5 adc_raw_a_6 adc_raw_a_7 adc_raw_a_8 adc_raw_a_9 adc_raw_a_10 adc_raw_a_11 adc_raw_a_12 adc_raw_a_13 adc_valid_b adc_raw_b_0 adc_raw_b_1 adc_raw_b_2 adc_raw_b_3 adc_raw_b_4 adc_raw_b_5 adc_raw_b_6 adc_raw_b_7 adc_raw_b_8 adc_raw_b_9 adc_raw_b_10 adc_raw_b_11 adc_raw_b_12 adc_raw_b_13 por_n ain_sin_p ain_sin_n ain_cos_p ain_cos_n vcm2 ibias ain_isa_p ain_isa_n ain_isb_p ain_isb_n vcm vdda vdd vss vref_in topap topan topbp topbn sar_clka sar_clkab sar_clkb sar_clkbb sar_clkna sar_clknab sar_clknb sar_clknbb sar_cna0 sar_cna1 sar_cna10 sar_cna11 sar_cna12 sar_cna2 sar_cna3 sar_cna4 sar_cna5 sar_cna6 sar_cna7 sar_cna8 sar_cna9 sar_cnb0 sar_cnb1 sar_cnb10 sar_cnb11 sar_cnb12 sar_cnb2 sar_cnb3 sar_cnb4 sar_cnb5 sar_cnb6 sar_cnb7 sar_cnb8 sar_cnb9 sar_cpa0 sar_cpa1 sar_cpa10 sar_cpa11 sar_cpa12 sar_cpa2 sar_cpa3 sar_cpa4 sar_cpa5 sar_cpa6 sar_cpa7 sar_cpa8 sar_cpa9 sar_cpb0 sar_cpb1 sar_cpb10 sar_cpb11 sar_cpb12 sar_cpb2 sar_cpb3 sar_cpb4 sar_cpb5 sar_cpb6 sar_cpb7 sar_cpb8 sar_cpb9 sar_oan sar_oann sar_oanp sar_oap sar_obn sar_obnn sar_obnp sar_obp sar_trka0 sar_trka1 sar_trkb0 sar_trkb1 sar_mclk vref vrefl
+Xxckg_xpd0 xckg_d0__p1 clk vdd__p2 vdd sg13_lv_pmos w=1u l=0.5u ng=1 m=1
+Xxckg_xnd0 xckg_d0 clk vss__p9 vss sg13_lv_nmos w=0.5u l=0.5u ng=1 m=1
+Xxckg_cd0 xckg_d0__p2 vss__p16 cap_cmim w=2.53u l=2.53u m=1
+Xxckg_xpd1 xckg_d1__p1 xckg_d0 vdd__p3 vdd sg13_lv_pmos w=1u l=0.5u ng=1 m=1
+Xxckg_xnd1 xckg_d1 xckg_d0 vss__p10 vss sg13_lv_nmos w=0.5u l=0.5u ng=1 m=1
+Xxckg_cd1 xckg_d1__p2 vss__p17 cap_cmim w=2.53u l=2.53u m=1
+Xxckg_xpd2 xckg_d2__p1 xckg_d1 vdd__p4 vdd sg13_lv_pmos w=1u l=0.5u ng=1 m=1
+Xxckg_xnd2 xckg_d2 xckg_d1 vss__p11 vss sg13_lv_nmos w=0.5u l=0.5u ng=1 m=1
+Xxckg_cd2 xckg_d2__p2 vss__p18 cap_cmim w=2.53u l=2.53u m=1
+Xxckg_xpd3 xckg_d3__p1 xckg_d2 vdd__p5 vdd sg13_lv_pmos w=1u l=0.5u ng=1 m=1
+Xxckg_xnd3 xckg_d3 xckg_d2 vss__p12 vss sg13_lv_nmos w=0.5u l=0.5u ng=1 m=1
+Xxckg_cd3 xckg_d3__p2 vss__p19 cap_cmim w=2.53u l=2.53u m=1
+Xxckg_xpd4 xckg_x__p2 xckg_d3 vdd__p6 vdd sg13_lv_pmos w=1u l=0.5u ng=1 m=1
+Xxckg_xnd4 xckg_x xckg_d3 vss__p13 vss sg13_lv_nmos w=0.5u l=0.5u ng=1 m=1
+Xxckg_cd4 xckg_x__p4 vss__p20 cap_cmim w=2.53u l=2.53u m=1
+Xxckg_xpa sar_mclk__p2 clk__p1 vdd__p7 vdd sg13_lv_pmos w=2u l=0.13u ng=1 m=1
+Xxckg_xpb sar_mclk__p3 xckg_x__p3 vdd__p8 vdd sg13_lv_pmos w=2u l=0.13u ng=1 m=1
+Xxckg_xna sar_mclk clk__p0 xckg_nn vss sg13_lv_nmos w=2u l=0.13u ng=1 m=1
+Xxckg_xnb xckg_nn__p1 xckg_x__p1 vss__p14 vss sg13_lv_nmos w=2u l=0.13u ng=1 m=1
+Xxckg_xpi mclkb__p1 sar_mclk__p4 vdd__p9 vdd sg13_lv_pmos w=2u l=0.13u ng=1 m=1
+Xxckg_xni mclkb sar_mclk__p1 vss__p15 vss sg13_lv_nmos w=1u l=0.13u ng=1 m=1
+Xxcbias_xmbd vbp__p1 vbp vdd__p1 vdd sg13_lv_pmos w=0.8u l=0.5u ng=1 m=1
+Xxcbias_xrb_g0 vbp xcbias_xrb_s1 vss rppd w=1u l=40u m=1 b=0
+Xxcbias_xrb_g1 xcbias_xrb_s1 xcbias_xrb_s2 vss rppd w=1u l=40u m=1 b=0
+Xxcbias_xrb_g2 xcbias_xrb_s2 xcbias_xrb_s3 vss rppd w=1u l=40u m=1 b=0
+Xxcbias_xrb_g3 xcbias_xrb_s3 vss__p7 vss rppd w=1u l=40u m=1 b=0
+Xxcbiasn_xmbd vbn__p1 vbn vss__p8 vss sg13_lv_nmos w=0.2u l=0.5u ng=1 m=1
+Xxcbiasn_xrb_g0 vdd__p0 xcbiasn_xrb_s1 vss rppd w=1u l=40u m=1 b=0
+Xxcbiasn_xrb_g1 xcbiasn_xrb_s1 xcbiasn_xrb_s2 vss rppd w=1u l=40u m=1 b=0
+Xxcbiasn_xrb_g2 xcbiasn_xrb_s2 xcbiasn_xrb_s3 vss rppd w=1u l=40u m=1 b=0
+Xxcbiasn_xrb_g3 xcbiasn_xrb_s3 vbn vss rppd w=1u l=40u m=1 b=0
+Xxref_xmb0 ibias__p0 ibias vss__p5 vss sg13_hv_nmos w=2u l=1u ng=1 m=1
+Xxref_xmt xref_ntl ibias vss__p6 vss sg13_hv_nmos w=2u l=8u ng=1 m=1
+Xxref_xm1 xref_na vref_in xref_ntl__p1 vss sg13_hv_nmos w=10u l=1u ng=2 m=1
+Xxref_xm2 xref_ng vref xref_ntl__p2 vss sg13_hv_nmos w=10u l=1u ng=2 m=1
+Xxref_xm3 xref_na__p1 xref_na vdda__p5 vdda sg13_hv_pmos w=4u l=1u ng=1 m=1
+Xxref_xm4 xref_ng__p1 xref_na vdda__p6 vdda sg13_hv_pmos w=4u l=1u ng=1 m=1
+Xxref_xcg_u0 vss xref_ng cap_cmim w=26.32u l=95u m=1
+Xxref_xmsf_s0 vdda__p1 xref_ng vref vss sg13_hv_nmos w=80u l=0.45u ng=32 m=1
+Xxref_xmsf_s1 vdda__p2 xref_ng vref__p5 vss sg13_hv_nmos w=80u l=0.45u ng=32 m=1
+Xxref_xmsf_s2 vdda__p3 xref_ng vref__p6 vss sg13_hv_nmos w=80u l=0.45u ng=32 m=1
+Xxref_xmsf_s3 vdda__p4 xref_ng vref__p7 vss sg13_hv_nmos w=80u l=0.45u ng=32 m=1
+Xxref_xmib_s0 vref__p0 ibias vss__p0 vss sg13_hv_nmos w=80u l=1u ng=40 m=1
+Xxref_xmib_s1 vref__p1 ibias vss__p1 vss sg13_hv_nmos w=80u l=1u ng=40 m=1
+Xxref_xmib_s2 vref__p2 ibias vss__p2 vss sg13_hv_nmos w=80u l=1u ng=40 m=1
+Xxref_xmib_s3 vref__p3 ibias vss__p3 vss sg13_hv_nmos w=80u l=1u ng=40 m=1
+Xxref_xcd_u0 vss vref cap_cmim w=51.58u l=95u m=4
+Xxref_xmsfl_s0 vdda__p0 xref_ng vrefl vss sg13_hv_nmos w=80u l=0.45u ng=32 m=1
+Xxref_xmibl_s0 vrefl__p0 ibias vss__p4 vss sg13_hv_nmos w=80u l=1u ng=40 m=1
+Xxref_xcdl_u0 vss vrefl cap_cmim w=51.58u l=95u m=2
+Xxfilt_xcf_u0 vss vref_in cap_cmim w=37.36u l=90u m=2
+Xslice_a ain_sin_p__p1 ain_sin_n__p1 ain_isa_p__p1 ain_isa_n__p1 sar_trka0 sar_trka1 sar_cpa0 sar_cpa1 sar_cpa2 sar_cpa3 sar_cpa4 sar_cpa5 sar_cpa6 sar_cpa7 sar_cpa8 sar_cpa9 sar_cpa10 sar_cpa11 sar_cpa12 sar_cna0 sar_cna1 sar_cna2 sar_cna3 sar_cna4 sar_cna5 sar_cna6 sar_cna7 sar_cna8 sar_cna9 sar_cna10 sar_cna11 sar_cna12 sar_clka sar_clkab sar_clkna sar_clknab sar_oap sar_oan sar_oanp sar_oann vbp__p2 vbn__p2 vref__p8 vrefl__p2 vrefl__p3 topap topan vdd__p11 vdd__p12 vdd__p13 vdd__p14 vss__p22 vss__p23 vss__p24 vss__p25 r1_adc_slice_post
+Xslice_b ain_cos_p__p1 ain_cos_n__p1 ain_isb_p__p1 ain_isb_n__p1 sar_trkb0 sar_trkb1 sar_cpb0 sar_cpb1 sar_cpb2 sar_cpb3 sar_cpb4 sar_cpb5 sar_cpb6 sar_cpb7 sar_cpb8 sar_cpb9 sar_cpb10 sar_cpb11 sar_cpb12 sar_cnb0 sar_cnb1 sar_cnb2 sar_cnb3 sar_cnb4 sar_cnb5 sar_cnb6 sar_cnb7 sar_cnb8 sar_cnb9 sar_cnb10 sar_cnb11 sar_cnb12 sar_clkb sar_clkbb sar_clknb sar_clknbb sar_obp sar_obn sar_obnp sar_obnn vbp__p3 vbn__p3 vref__p9 vrefl__p4 vrefl__p5 topbp topbn vdd__p15 vdd__p16 vdd__p17 vdd__p18 vss__p26 vss__p27 vss__p28 vss__p29 r1_adc_slice_post
+Rt0 ain_cos_n ain_cos_n__p1 0.05
+Rt1 ain_cos_p ain_cos_p__p1 0.05
+Rt2 ain_isa_n ain_isa_n__p1 0.05
+Rt3 ain_isa_p ain_isa_p__p1 0.05
+Rt4 ain_isb_n ain_isb_n__p1 0.05
+Rt5 ain_isb_p ain_isb_p__p1 0.05
+Rt6 ain_sin_n ain_sin_n__p1 0.05
+Rt7 ain_sin_p ain_sin_p__p1 0.05
+Rt8 clk clk__p0 0.05
+Rt9 clk clk__p1 0.05
+Rt10 clk__p0 clk__p1 0.05
+Rt11 ibias ibias__p0 0.05
+Rt12 mclkb mclkb__p1 0.05
+Rt13 sar_mclk sar_mclk__p1 0.05
+Rt14 sar_mclk sar_mclk__p3 0.05
+Rt15 sar_mclk sar_mclk__p4 0.05
+Rt16 sar_mclk__p1 sar_mclk__p3 0.05
+Rt17 sar_mclk__p1 sar_mclk__p4 0.05
+Rt18 sar_mclk__p2 sar_mclk__p3 0.05
+Rt19 sar_mclk__p3 sar_mclk__p4 0.05
+Rt20 vbn vbn__p1 0.05
+Rt21 vbn vbn__p2 0.05
+Rt22 vbn vbn__p3 0.05
+Rt23 vbn__p1 vbn__p2 0.05
+Rt24 vbn__p1 vbn__p3 0.05
+Rt25 vbn__p2 vbn__p3 0.05
+Rt26 vbp vbp__p1 0.05
+Rt27 vbp vbp__p2 0.05
+Rt28 vbp vbp__p3 0.05
+Rt29 vbp__p1 vbp__p2 0.05
+Rt30 vbp__p1 vbp__p3 0.05
+Rt31 vbp__p2 vbp__p3 0.05
+Rt32 vdd vdd__p0 0.05
+Rt33 vdd vdd__p1 0.05
+Rt34 vdd vdd__p11 0.05
+Rt35 vdd vdd__p12 0.05
+Rt36 vdd vdd__p13 0.05
+Rt37 vdd vdd__p14 0.05
+Rt38 vdd vdd__p15 0.05
+Rt39 vdd vdd__p16 0.05
+Rt40 vdd vdd__p17 0.05
+Rt41 vdd vdd__p18 0.05
+Rt42 vdd vdd__p2 0.05
+Rt43 vdd vdd__p3 0.05
+Rt44 vdd vdd__p4 0.05
+Rt45 vdd vdd__p5 0.05
+Rt46 vdd vdd__p6 0.05
+Rt47 vdd vdd__p7 0.05
+Rt48 vdd vdd__p8 0.05
+Rt49 vdd vdd__p9 0.05
+Rt50 vdd__p0 vdd__p1 0.05
+Rt51 vdd__p0 vdd__p11 0.05
+Rt52 vdd__p0 vdd__p12 0.05
+Rt53 vdd__p0 vdd__p13 0.05
+Rt54 vdd__p0 vdd__p14 0.05
+Rt55 vdd__p0 vdd__p15 0.05
+Rt56 vdd__p0 vdd__p16 0.05
+Rt57 vdd__p0 vdd__p17 0.05
+Rt58 vdd__p0 vdd__p18 0.05
+Rt59 vdd__p0 vdd__p2 0.05
+Rt60 vdd__p0 vdd__p3 0.05
+Rt61 vdd__p0 vdd__p4 0.05
+Rt62 vdd__p0 vdd__p5 0.05
+Rt63 vdd__p0 vdd__p6 0.05
+Rt64 vdd__p0 vdd__p7 0.05
+Rt65 vdd__p0 vdd__p8 0.05
+Rt66 vdd__p0 vdd__p9 0.05
+Rt67 vdd__p1 vdd__p11 0.05
+Rt68 vdd__p1 vdd__p12 0.05
+Rt69 vdd__p1 vdd__p13 0.05
+Rt70 vdd__p1 vdd__p14 0.05
+Rt71 vdd__p1 vdd__p15 0.05
+Rt72 vdd__p1 vdd__p16 0.05
+Rt73 vdd__p1 vdd__p17 0.05
+Rt74 vdd__p1 vdd__p18 0.05
+Rt75 vdd__p1 vdd__p2 0.05
+Rt76 vdd__p1 vdd__p3 0.05
+Rt77 vdd__p1 vdd__p4 0.05
+Rt78 vdd__p1 vdd__p5 0.05
+Rt79 vdd__p1 vdd__p6 0.05
+Rt80 vdd__p1 vdd__p7 0.05
+Rt81 vdd__p1 vdd__p8 0.05
+Rt82 vdd__p1 vdd__p9 0.05
+Rt83 vdd__p11 vdd__p12 0.05
+Rt84 vdd__p11 vdd__p13 0.05
+Rt85 vdd__p11 vdd__p14 0.05
+Rt86 vdd__p11 vdd__p15 0.05
+Rt87 vdd__p11 vdd__p16 0.05
+Rt88 vdd__p11 vdd__p17 0.05
+Rt89 vdd__p11 vdd__p18 0.05
+Rt90 vdd__p11 vdd__p2 0.05
+Rt91 vdd__p11 vdd__p3 0.05
+Rt92 vdd__p11 vdd__p4 0.05
+Rt93 vdd__p11 vdd__p5 0.05
+Rt94 vdd__p11 vdd__p6 0.05
+Rt95 vdd__p11 vdd__p7 0.05
+Rt96 vdd__p11 vdd__p8 0.05
+Rt97 vdd__p11 vdd__p9 0.05
+Rt98 vdd__p12 vdd__p13 0.05
+Rt99 vdd__p12 vdd__p14 0.05
+Rt100 vdd__p12 vdd__p15 0.05
+Rt101 vdd__p12 vdd__p16 0.05
+Rt102 vdd__p12 vdd__p17 0.05
+Rt103 vdd__p12 vdd__p18 0.05
+Rt104 vdd__p12 vdd__p2 0.05
+Rt105 vdd__p12 vdd__p3 0.05
+Rt106 vdd__p12 vdd__p4 0.05
+Rt107 vdd__p12 vdd__p5 0.05
+Rt108 vdd__p12 vdd__p6 0.05
+Rt109 vdd__p12 vdd__p7 0.05
+Rt110 vdd__p12 vdd__p8 0.05
+Rt111 vdd__p12 vdd__p9 0.05
+Rt112 vdd__p13 vdd__p14 0.05
+Rt113 vdd__p13 vdd__p15 0.05
+Rt114 vdd__p13 vdd__p16 0.05
+Rt115 vdd__p13 vdd__p17 0.05
+Rt116 vdd__p13 vdd__p18 0.05
+Rt117 vdd__p13 vdd__p2 0.05
+Rt118 vdd__p13 vdd__p3 0.05
+Rt119 vdd__p13 vdd__p4 0.05
+Rt120 vdd__p13 vdd__p5 0.05
+Rt121 vdd__p13 vdd__p6 0.05
+Rt122 vdd__p13 vdd__p7 0.05
+Rt123 vdd__p13 vdd__p8 0.05
+Rt124 vdd__p13 vdd__p9 0.05
+Rt125 vdd__p14 vdd__p15 0.05
+Rt126 vdd__p14 vdd__p16 0.05
+Rt127 vdd__p14 vdd__p17 0.05
+Rt128 vdd__p14 vdd__p18 0.05
+Rt129 vdd__p14 vdd__p2 0.05
+Rt130 vdd__p14 vdd__p3 0.05
+Rt131 vdd__p14 vdd__p4 0.05
+Rt132 vdd__p14 vdd__p5 0.05
+Rt133 vdd__p14 vdd__p6 0.05
+Rt134 vdd__p14 vdd__p7 0.05
+Rt135 vdd__p14 vdd__p8 0.05
+Rt136 vdd__p14 vdd__p9 0.05
+Rt137 vdd__p15 vdd__p16 0.05
+Rt138 vdd__p15 vdd__p17 0.05
+Rt139 vdd__p15 vdd__p18 0.05
+Rt140 vdd__p15 vdd__p2 0.05
+Rt141 vdd__p15 vdd__p3 0.05
+Rt142 vdd__p15 vdd__p4 0.05
+Rt143 vdd__p15 vdd__p5 0.05
+Rt144 vdd__p15 vdd__p6 0.05
+Rt145 vdd__p15 vdd__p7 0.05
+Rt146 vdd__p15 vdd__p8 0.05
+Rt147 vdd__p15 vdd__p9 0.05
+Rt148 vdd__p16 vdd__p17 0.05
+Rt149 vdd__p16 vdd__p18 0.05
+Rt150 vdd__p16 vdd__p2 0.05
+Rt151 vdd__p16 vdd__p3 0.05
+Rt152 vdd__p16 vdd__p4 0.05
+Rt153 vdd__p16 vdd__p5 0.05
+Rt154 vdd__p16 vdd__p6 0.05
+Rt155 vdd__p16 vdd__p7 0.05
+Rt156 vdd__p16 vdd__p8 0.05
+Rt157 vdd__p16 vdd__p9 0.05
+Rt158 vdd__p17 vdd__p18 0.05
+Rt159 vdd__p2 vdd__p3 0.05
+Rt160 vdd__p2 vdd__p4 0.05
+Rt161 vdd__p2 vdd__p5 0.05
+Rt162 vdd__p2 vdd__p6 0.05
+Rt163 vdd__p2 vdd__p7 0.05
+Rt164 vdd__p2 vdd__p8 0.05
+Rt165 vdd__p2 vdd__p9 0.05
+Rt166 vdd__p3 vdd__p4 0.05
+Rt167 vdd__p3 vdd__p5 0.05
+Rt168 vdd__p3 vdd__p6 0.05
+Rt169 vdd__p3 vdd__p7 0.05
+Rt170 vdd__p3 vdd__p8 0.05
+Rt171 vdd__p3 vdd__p9 0.05
+Rt172 vdd__p4 vdd__p5 0.05
+Rt173 vdd__p4 vdd__p6 0.05
+Rt174 vdd__p4 vdd__p7 0.05
+Rt175 vdd__p4 vdd__p8 0.05
+Rt176 vdd__p4 vdd__p9 0.05
+Rt177 vdd__p5 vdd__p6 0.05
+Rt178 vdd__p5 vdd__p7 0.05
+Rt179 vdd__p5 vdd__p8 0.05
+Rt180 vdd__p5 vdd__p9 0.05
+Rt181 vdd__p6 vdd__p7 0.05
+Rt182 vdd__p6 vdd__p8 0.05
+Rt183 vdd__p6 vdd__p9 0.05
+Rt184 vdd__p7 vdd__p8 0.05
+Rt185 vdd__p7 vdd__p9 0.05
+Rt186 vdd__p8 vdd__p9 0.05
+Rt187 vdda vdda__p1 0.05
+Rt188 vdda__p0 vdda__p3 0.05
+Rt189 vdda__p0 vdda__p4 0.05
+Rt190 vdda__p1 vdda__p2 0.05
+Rt191 vdda__p2 vdda__p3 0.05
+Rt192 vdda__p2 vdda__p5 0.05
+Rt193 vdda__p2 vdda__p6 0.05
+Rt194 vdda__p3 vdda__p4 0.05
+Rt195 vdda__p3 vdda__p5 0.05
+Rt196 vdda__p3 vdda__p6 0.05
+Rt197 vdda__p5 vdda__p6 0.05
+Rt198 vref vref__p1 86.8906
+Rt199 vref vref__p5 23.6974
+Rt200 vref vref__p8 154.432
+Rt201 vref vref__p9 282.142
+Rt202 vref__p0 vref__p1 54.8427
+Rt203 vref__p1 vref__p5 91.2944
+Rt204 vref__p1 vref__p8 108.337
+Rt205 vref__p1 vref__p9 197.929
+Rt206 vref__p2 vref__p3 54.8427
+Rt207 vref__p2 vref__p6 37.2232
+Rt208 vref__p5 vref__p6 54.9082
+Rt209 vref__p5 vref__p8 162.259
+Rt210 vref__p5 vref__p9 296.442
+Rt211 vref__p6 vref__p7 18.9765
+Rt212 vref__p8 vref__p9 6.67381
+Rt213 vrefl vrefl__p0 91.2046
+Rt214 vrefl vrefl__p2 13503.5
+Rt215 vrefl vrefl__p3 90.8685
+Rt216 vrefl vrefl__p4 76.5298
+Rt217 vrefl vrefl__p5 5238.83
+Rt218 vrefl__p0 vrefl__p2 10160.7
+Rt219 vrefl__p0 vrefl__p3 68.3742
+Rt220 vrefl__p0 vrefl__p4 96.5153
+Rt221 vrefl__p0 vrefl__p5 6606.94
+Rt222 vrefl__p2 vrefl__p3 16.5223
+Rt223 vrefl__p2 vrefl__p4 14289.8
+Rt224 vrefl__p2 vrefl__p5 978205
+Rt225 vrefl__p3 vrefl__p4 96.1596
+Rt226 vrefl__p3 vrefl__p5 6582.59
+Rt227 vrefl__p4 vrefl__p5 16.6771
+Rt228 vss vss__p0 0.05
+Rt229 vss vss__p1 0.05
+Rt230 vss vss__p10 0.05
+Rt231 vss vss__p2 0.05
+Rt232 vss vss__p22 0.05
+Rt233 vss vss__p23 0.05
+Rt234 vss vss__p24 0.05
+Rt235 vss vss__p25 0.05
+Rt236 vss vss__p26 0.05
+Rt237 vss vss__p27 0.05
+Rt238 vss vss__p28 0.05
+Rt239 vss vss__p29 0.05
+Rt240 vss vss__p3 0.05
+Rt241 vss vss__p4 0.05
+Rt242 vss vss__p5 0.05
+Rt243 vss vss__p6 0.05
+Rt244 vss vss__p7 0.05
+Rt245 vss vss__p8 0.05
+Rt246 vss__p0 vss__p1 0.05
+Rt247 vss__p0 vss__p2 0.05
+Rt248 vss__p0 vss__p22 0.05
+Rt249 vss__p0 vss__p23 0.05
+Rt250 vss__p0 vss__p24 0.05
+Rt251 vss__p0 vss__p25 0.05
+Rt252 vss__p0 vss__p26 0.05
+Rt253 vss__p0 vss__p27 0.05
+Rt254 vss__p0 vss__p28 0.05
+Rt255 vss__p0 vss__p29 0.05
+Rt256 vss__p0 vss__p3 0.05
+Rt257 vss__p0 vss__p4 0.05
+Rt258 vss__p0 vss__p5 0.05
+Rt259 vss__p0 vss__p6 0.05
+Rt260 vss__p0 vss__p7 0.05
+Rt261 vss__p0 vss__p8 0.05
+Rt262 vss__p1 vss__p2 0.05
+Rt263 vss__p1 vss__p22 0.05
+Rt264 vss__p1 vss__p23 0.05
+Rt265 vss__p1 vss__p24 0.05
+Rt266 vss__p1 vss__p25 0.05
+Rt267 vss__p1 vss__p26 0.05
+Rt268 vss__p1 vss__p27 0.05
+Rt269 vss__p1 vss__p28 0.05
+Rt270 vss__p1 vss__p29 0.05
+Rt271 vss__p1 vss__p3 0.05
+Rt272 vss__p1 vss__p4 0.05
+Rt273 vss__p1 vss__p5 0.05
+Rt274 vss__p1 vss__p6 0.05
+Rt275 vss__p1 vss__p7 0.05
+Rt276 vss__p1 vss__p8 0.05
+Rt277 vss__p10 vss__p11 0.05
+Rt278 vss__p10 vss__p12 0.05
+Rt279 vss__p10 vss__p13 0.05
+Rt280 vss__p10 vss__p14 0.05
+Rt281 vss__p10 vss__p15 0.05
+Rt282 vss__p10 vss__p16 0.05
+Rt283 vss__p10 vss__p17 0.05
+Rt284 vss__p10 vss__p18 0.05
+Rt285 vss__p10 vss__p19 0.05
+Rt286 vss__p10 vss__p20 0.05
+Rt287 vss__p10 vss__p9 0.05
+Rt288 vss__p11 vss__p12 0.05
+Rt289 vss__p11 vss__p13 0.05
+Rt290 vss__p11 vss__p14 0.05
+Rt291 vss__p11 vss__p15 0.05
+Rt292 vss__p11 vss__p16 0.05
+Rt293 vss__p11 vss__p17 0.05
+Rt294 vss__p11 vss__p18 0.05
+Rt295 vss__p11 vss__p19 0.05
+Rt296 vss__p11 vss__p20 0.05
+Rt297 vss__p11 vss__p9 0.05
+Rt298 vss__p12 vss__p13 0.05
+Rt299 vss__p12 vss__p14 0.05
+Rt300 vss__p12 vss__p15 0.05
+Rt301 vss__p12 vss__p16 0.05
+Rt302 vss__p12 vss__p17 0.05
+Rt303 vss__p12 vss__p18 0.05
+Rt304 vss__p12 vss__p19 0.05
+Rt305 vss__p12 vss__p20 0.05
+Rt306 vss__p12 vss__p9 0.05
+Rt307 vss__p13 vss__p14 0.05
+Rt308 vss__p13 vss__p15 0.05
+Rt309 vss__p13 vss__p16 0.05
+Rt310 vss__p13 vss__p17 0.05
+Rt311 vss__p13 vss__p18 0.05
+Rt312 vss__p13 vss__p19 0.05
+Rt313 vss__p13 vss__p20 0.05
+Rt314 vss__p13 vss__p9 0.05
+Rt315 vss__p14 vss__p15 0.05
+Rt316 vss__p14 vss__p16 0.05
+Rt317 vss__p14 vss__p17 0.05
+Rt318 vss__p14 vss__p18 0.05
+Rt319 vss__p14 vss__p19 0.05
+Rt320 vss__p14 vss__p20 0.05
+Rt321 vss__p14 vss__p9 0.05
+Rt322 vss__p15 vss__p16 0.05
+Rt323 vss__p15 vss__p17 0.05
+Rt324 vss__p15 vss__p18 0.05
+Rt325 vss__p15 vss__p19 0.05
+Rt326 vss__p15 vss__p20 0.05
+Rt327 vss__p15 vss__p9 0.05
+Rt328 vss__p16 vss__p17 0.05
+Rt329 vss__p16 vss__p18 0.05
+Rt330 vss__p16 vss__p19 0.05
+Rt331 vss__p16 vss__p20 0.05
+Rt332 vss__p16 vss__p9 0.05
+Rt333 vss__p17 vss__p18 0.05
+Rt334 vss__p17 vss__p19 0.05
+Rt335 vss__p17 vss__p20 0.05
+Rt336 vss__p17 vss__p9 0.05
+Rt337 vss__p18 vss__p19 0.05
+Rt338 vss__p18 vss__p20 0.05
+Rt339 vss__p18 vss__p9 0.05
+Rt340 vss__p19 vss__p20 0.05
+Rt341 vss__p19 vss__p9 0.05
+Rt342 vss__p2 vss__p22 0.05
+Rt343 vss__p2 vss__p23 0.05
+Rt344 vss__p2 vss__p28 0.05
+Rt345 vss__p2 vss__p29 0.05
+Rt346 vss__p2 vss__p3 0.05
+Rt347 vss__p2 vss__p4 0.05
+Rt348 vss__p2 vss__p5 0.05
+Rt349 vss__p2 vss__p6 0.05
+Rt350 vss__p2 vss__p7 0.05
+Rt351 vss__p2 vss__p8 0.05
+Rt352 vss__p20 vss__p9 0.05
+Rt353 vss__p22 vss__p23 0.05
+Rt354 vss__p22 vss__p26 0.05
+Rt355 vss__p22 vss__p27 0.05
+Rt356 vss__p22 vss__p28 0.05
+Rt357 vss__p22 vss__p29 0.05
+Rt358 vss__p22 vss__p3 0.05
+Rt359 vss__p22 vss__p4 0.05
+Rt360 vss__p22 vss__p5 0.05
+Rt361 vss__p22 vss__p6 0.05
+Rt362 vss__p22 vss__p7 0.05
+Rt363 vss__p22 vss__p8 0.05
+Rt364 vss__p23 vss__p26 0.05
+Rt365 vss__p23 vss__p27 0.05
+Rt366 vss__p23 vss__p28 0.05
+Rt367 vss__p23 vss__p29 0.05
+Rt368 vss__p23 vss__p3 0.05
+Rt369 vss__p23 vss__p4 0.05
+Rt370 vss__p23 vss__p5 0.05
+Rt371 vss__p23 vss__p6 0.05
+Rt372 vss__p23 vss__p7 0.05
+Rt373 vss__p23 vss__p8 0.05
+Rt374 vss__p24 vss__p25 0.05
+Rt375 vss__p24 vss__p26 0.05
+Rt376 vss__p24 vss__p27 0.05
+Rt377 vss__p24 vss__p4 0.05
+Rt378 vss__p24 vss__p5 0.05
+Rt379 vss__p24 vss__p6 0.05
+Rt380 vss__p25 vss__p26 0.05
+Rt381 vss__p25 vss__p27 0.05
+Rt382 vss__p25 vss__p4 0.05
+Rt383 vss__p25 vss__p5 0.05
+Rt384 vss__p25 vss__p6 0.05
+Rt385 vss__p26 vss__p27 0.05
+Rt386 vss__p26 vss__p29 0.05
+Rt387 vss__p26 vss__p4 0.05
+Rt388 vss__p26 vss__p5 0.05
+Rt389 vss__p26 vss__p6 0.05
+Rt390 vss__p26 vss__p7 0.05
+Rt391 vss__p26 vss__p8 0.05
+Rt392 vss__p27 vss__p4 0.05
+Rt393 vss__p27 vss__p5 0.05
+Rt394 vss__p27 vss__p6 0.05
+Rt395 vss__p27 vss__p7 0.05
+Rt396 vss__p27 vss__p8 0.05
+Rt397 vss__p28 vss__p29 0.05
+Rt398 vss__p28 vss__p3 0.05
+Rt399 vss__p28 vss__p4 0.05
+Rt400 vss__p28 vss__p5 0.05
+Rt401 vss__p28 vss__p6 0.05
+Rt402 vss__p28 vss__p7 0.05
+Rt403 vss__p28 vss__p8 0.05
+Rt404 vss__p29 vss__p3 0.05
+Rt405 vss__p29 vss__p4 0.05
+Rt406 vss__p29 vss__p5 0.05
+Rt407 vss__p29 vss__p6 0.05
+Rt408 vss__p29 vss__p7 0.05
+Rt409 vss__p29 vss__p8 0.05
+Rt410 vss__p3 vss__p4 0.05
+Rt411 vss__p3 vss__p5 0.05
+Rt412 vss__p3 vss__p6 0.05
+Rt413 vss__p3 vss__p7 0.05
+Rt414 vss__p3 vss__p8 0.05
+Rt415 vss__p4 vss__p5 0.05
+Rt416 vss__p4 vss__p6 0.05
+Rt417 vss__p4 vss__p7 0.05
+Rt418 vss__p4 vss__p8 0.05
+Rt419 vss__p5 vss__p6 0.05
+Rt420 vss__p5 vss__p7 0.05
+Rt421 vss__p5 vss__p8 0.05
+Rt422 vss__p6 vss__p7 0.05
+Rt423 vss__p6 vss__p8 0.05
+Rt424 vss__p7 vss__p8 0.05
+Rt425 xckg_d0 xckg_d0__p1 0.05
+Rt426 xckg_d0 xckg_d0__p2 0.05
+Rt427 xckg_d0__p1 xckg_d0__p2 0.05
+Rt428 xckg_d1 xckg_d1__p1 0.05
+Rt429 xckg_d1 xckg_d1__p2 0.05
+Rt430 xckg_d1__p1 xckg_d1__p2 0.05
+Rt431 xckg_d2 xckg_d2__p1 0.05
+Rt432 xckg_d2 xckg_d2__p2 0.05
+Rt433 xckg_d2__p1 xckg_d2__p2 0.05
+Rt434 xckg_d3 xckg_d3__p1 0.05
+Rt435 xckg_d3 xckg_d3__p2 0.05
+Rt436 xckg_d3__p1 xckg_d3__p2 0.05
+Rt437 xckg_nn xckg_nn__p1 0.05
+Rt438 xckg_x xckg_x__p1 0.05
+Rt439 xckg_x xckg_x__p2 0.05
+Rt440 xckg_x xckg_x__p3 0.05
+Rt441 xckg_x xckg_x__p4 0.05
+Rt442 xckg_x__p1 xckg_x__p2 0.05
+Rt443 xckg_x__p1 xckg_x__p3 0.05
+Rt444 xckg_x__p1 xckg_x__p4 0.05
+Rt445 xckg_x__p2 xckg_x__p3 0.05
+Rt446 xckg_x__p2 xckg_x__p4 0.05
+Rt447 xckg_x__p3 xckg_x__p4 0.05
+Rt448 xref_na xref_na__p1 0.05
+Rt449 xref_ng xref_ng__p1 0.05
+Rt450 xref_ntl xref_ntl__p1 0.05
+Rt451 xref_ntl__p1 xref_ntl__p2 0.05
+Cq0 ain_cos_n ain_cos_p 2.709e-14
+Cq1 ain_cos_n ain_isa_n 3.644e-17
+Cq2 ain_cos_n ain_isa_p 4.64e-17
+Cq3 ain_cos_n ibias 5.314e-17
+Cq4 ain_cos_n vdd 5.829e-16
+Cq5 ain_cos_n vss 2.705e-14
+Cq6 ain_cos_n xckg_d0 9.755e-19
+Cq7 ain_cos_n xckg_d1 9.755e-19
+Cq8 ain_cos_n xckg_d2 9.755e-19
+Cq9 ain_cos_n xckg_d3 1.006e-18
+Cq10 ain_cos_n xckg_x 5.633e-18
+Cq11 ain_cos_p ain_isa_n 4.287e-17
+Cq12 ain_cos_p ain_isa_p 7.229e-16
+Cq13 ain_cos_p ibias 3.52e-15
+Cq14 ain_cos_p vdd 2.509e-15
+Cq15 ain_cos_p vss 1.273e-14
+Cq16 ain_isa_n ain_isa_p 2.783e-14
+Cq17 ain_isa_n ain_isb_n 6.15e-17
+Cq18 ain_isa_n ain_isb_p 6.417e-17
+Cq19 ain_isa_n vss 2.894e-14
+Cq20 ain_isa_p ain_isb_n 7.645e-17
+Cq21 ain_isa_p ain_isb_p 7.912e-17
+Cq22 ain_isa_p vss 2.868e-14
+Cq23 ain_isb_n ain_isb_p 7.431e-17
+Cq24 ain_isb_n vss 9.265e-16
+Cq25 ain_isb_p vss 8.611e-16
+Cq26 ain_sin_n ain_sin_p 8.625e-17
+Cq27 ain_sin_n ibias 9.414e-17
+Cq28 ain_sin_n vdd 2.257e-16
+Cq29 ain_sin_n vss 7.685e-16
+Cq30 ain_sin_p ibias 9.681e-17
+Cq31 ain_sin_p vdd 1.633e-16
+Cq32 ain_sin_p vss 7.651e-16
+Cq33 clk mclkb 2.216e-18
+Cq34 clk sar_mclk 1.431e-16
+Cq35 clk vdd 4.347e-16
+Cq36 clk vss 1.85e-14
+Cq37 clk xckg_d0 2.205e-16
+Cq38 clk xckg_d1 1.236e-16
+Cq39 clk xckg_d2 1.227e-16
+Cq40 clk xckg_d3 1.663e-16
+Cq41 clk xckg_nn 2.534e-17
+Cq42 clk xckg_x 1.452e-16
+Cq43 ibias vbn 3.378e-16
+Cq44 ibias vbp 1.24e-16
+Cq45 ibias vdd 6.258e-15
+Cq46 ibias vdda 2.57e-16
+Cq47 ibias vref 3.367e-14
+Cq48 ibias vref_in 1.257e-14
+Cq49 ibias vrefl 1.528e-14
+Cq50 ibias vss 1.669e-13
+Cq51 ibias xref_ng 2.502e-15
+Cq52 ibias xref_ntl 1.763e-16
+Cq53 mclkb sar_mclk 2.613e-16
+Cq54 mclkb vdd 3.849e-16
+Cq55 mclkb vss 1.23e-15
+Cq56 mclkb xckg_d0 5.604e-17
+Cq57 mclkb xckg_d1 3.991e-15
+Cq58 mclkb xckg_d2 3.955e-15
+Cq59 mclkb xckg_d3 6.865e-17
+Cq60 mclkb xckg_nn 1.864e-17
+Cq61 mclkb xckg_x 9.575e-17
+Cq62 sar_mclk vdd 1.621e-15
+Cq63 sar_mclk vss 6.739e-15
+Cq64 sar_mclk xckg_d0 4.707e-15
+Cq65 sar_mclk xckg_d1 2.058e-16
+Cq66 sar_mclk xckg_d2 7.519e-17
+Cq67 sar_mclk xckg_d3 9.271e-17
+Cq68 sar_mclk xckg_nn 4.141e-16
+Cq69 sar_mclk xckg_x 1.044e-15
+Cq70 vbn vbp 4.048e-14
+Cq71 vbn vdd 2.668e-14
+Cq72 vbn vdda 4.597e-16
+Cq73 vbn vref 1.548e-14
+Cq74 vbn vref_in 2.405e-15
+Cq75 vbn vrefl 8.131e-15
+Cq76 vbn vss 1.116e-14
+Cq77 vbn xref_ng 1.543e-15
+Cq78 vbp vdd 1.669e-15
+Cq79 vbp vdda 1.395e-15
+Cq80 vbp vref 2.767e-14
+Cq81 vbp vref_in 4.117e-15
+Cq82 vbp vrefl 7.984e-15
+Cq83 vbp vss 1.325e-14
+Cq84 vbp xref_ng 1.886e-15
+Cq85 vdd vdda 3.895e-16
+Cq86 vdd vref 3.92e-14
+Cq87 vdd vref_in 2.491e-14
+Cq88 vdd vrefl 1.224e-14
+Cq89 vdd vss 6.927e-14
+Cq90 vdd xckg_d0 5.466e-16
+Cq91 vdd xckg_d1 3.974e-16
+Cq92 vdd xckg_d2 2.624e-16
+Cq93 vdd xckg_d3 3.649e-16
+Cq94 vdd xckg_x 1.1e-15
+Cq95 vdd xref_ng 3.009e-15
+Cq96 vdda vref 4e-14
+Cq97 vdda vref_in 3.048e-16
+Cq98 vdda vrefl 1.272e-14
+Cq99 vdda vss 3.096e-14
+Cq100 vdda xref_na 7.939e-16
+Cq101 vdda xref_ng 1.455e-14
+Cq102 vdda xref_ntl 1.132e-17
+Cq103 vref vref_in 4.546e-14
+Cq104 vref vrefl 1.197e-13
+Cq105 vref vss 3.586e-13
+Cq106 vref xref_na 1.908e-16
+Cq107 vref xref_ng 3.832e-14
+Cq108 vref xref_ntl 9.852e-16
+Cq109 vref_in vrefl 3.069e-14
+Cq110 vref_in vss 1.048e-13
+Cq111 vref_in xref_na 4.222e-16
+Cq112 vref_in xref_ng 3.86e-15
+Cq113 vref_in xref_ntl 1.282e-15
+Cq114 vrefl vss 1.991e-13
+Cq115 vrefl xref_na 8.519e-18
+Cq116 vrefl xref_ng 2.644e-14
+Cq117 vrefl xref_ntl 5.775e-16
+Cq118 vss xckg_d0 4.966e-15
+Cq119 vss xckg_d1 4.102e-15
+Cq120 vss xckg_d2 4.83e-15
+Cq121 vss xckg_d3 5.854e-15
+Cq122 vss xckg_nn 1.117e-15
+Cq123 vss xckg_x 1.086e-14
+Cq124 vss xref_na 4.919e-15
+Cq125 vss xref_ng 9.404e-14
+Cq126 vss xref_ntl 4.054e-15
+Cq127 xckg_d0 xckg_d1 8.434e-15
+Cq128 xckg_d0 xckg_d2 2.37e-16
+Cq129 xckg_d0 xckg_d3 1.818e-16
+Cq130 xckg_d0 xckg_nn 2.011e-17
+Cq131 xckg_d0 xckg_x 6.919e-16
+Cq132 xckg_d1 xckg_d2 2.001e-15
+Cq133 xckg_d1 xckg_d3 1.378e-16
+Cq134 xckg_d1 xckg_nn 5.907e-16
+Cq135 xckg_d1 xckg_x 4.219e-16
+Cq136 xckg_d2 xckg_d3 8.547e-15
+Cq137 xckg_d2 xckg_nn 5.574e-16
+Cq138 xckg_d2 xckg_x 4.153e-16
+Cq139 xckg_d3 xckg_nn 3.667e-17
+Cq140 xckg_d3 xckg_x 5.111e-15
+Cq141 xckg_nn xckg_x 1.118e-16
+Cq142 xref_na xref_ng 2.502e-15
+Cq143 xref_na xref_ntl 3.114e-16
+Cq144 xref_ng xref_ntl 2.861e-15
+.ends

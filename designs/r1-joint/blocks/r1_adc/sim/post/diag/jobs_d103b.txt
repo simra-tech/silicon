@@ -1,0 +1,4 @@
+# layout-B diagnosis 1a/1c, rerun of postb-diag-isa-tt-rsup (OP failed with 901 resistors at 1 mOhm): disabled resistors 0.05 Ohm
+python3 sim/post/run_post.py --id postb-diag-isa-tt-rsup-b --cpu @CPU@ --deck isa --core lay --solver sparse --ref lay --netlist sim/post/diag/a_r_sup_b.spice --question "layout B diagnosis 1a/1c: layout A R only on gnd, vdd, vss, vdda (no parasitic C; other R 0.05 Ohm): mux tt gain, offset, IDD" --disposition "diagnosis (supply R only)"
+# rerun of postb-diag-isa-tt-rref (stopped after 58 min, no progress; 1876 R at 1 mOhm as in rsup): disabled resistors 0.05 Ohm
+python3 sim/post/run_post.py --id postb-diag-isa-tt-rref-b --cpu @CPU@ --deck isa --core lay --solver sparse --ref lay --netlist sim/post/diag/a_r_ref_b.spice --question "layout B diagnosis 1a: layout A R only on vref, vrefl (no parasitic C, other R 0.05 Ohm): mux tt gain, offset" --disposition "diagnosis (reference R only)"

@@ -25,6 +25,12 @@ node per net, so the resistance comes from KLayout's RNetExtractor):
      coupling between the top-level wiring and the slice interior is not extracted.
   6. Not modelled: contact resistance, GatPoly / Activ wiring, substrate resistance, TopMetal1 / Metal5 plate
      resistance (inside the cap_cmim model), MIM bit-line resistance between the units and the collector.
+  7. Layout B (2026-10-26): the slice gnd has no edge pins; it is fed by the vss drops (generator constant SLICE_DROPS,
+     Metal4 pads on the slice gnd strap). Each drop is one slice port. At the top level, the drop path (Metal4 pad, Via4,
+     Metal5 island, TopVia1, TopMetal1 sheet) is not in the R extraction (pex_prepare.py removes the TopMetal1 inside the
+     MIM, so the sheet is cut): each used drop is joined to the top vss main node by RDROP_EST (estimated, see below);
+     unused drop positions of a slice instance get a dangling node.
+  8. Layout B, build B.1 (2026-10-26): the top-level MIM decoupling plates have Metal5 ports (see DECAP_PORTS).
 Outputs in <out>: r1_adc_post_rc.spice (subcircuits r1_adc_lay and r1_adc_lay_pr, the port lists of
 sim/post/make_sim_netlist.py), r1_adc_post_c.spice (C only, port nodes merged), pex_report.json, pex_build.log.
 """
@@ -74,6 +80,15 @@ WS, HS = [float(v) for v in re.search(r'^WS, HS = ([0-9.]+), ([0-9.]+)', SRC, re
 W, H = [float(v) for v in re.search(r'^W, H = ([0-9.]+), ([0-9.]+)', SRC, re.M).groups()]
 SLICE_PINS = [(n, 'S', x, 0.0) for n, x in const('SLICE_SOUTH')] + [(n, 'W', 0.0, y) for n, y in const('SLICE_WEST')] + \
              [(n, 'E', WS, y) for n, y in const('SLICE_EAST')]
+try:
+    SLICE_PINS += [(n, 'D', x, y) for n, x, y in const('SLICE_DROPS')]       # layout B
+except AttributeError:
+    pass
+# layout B: estimated resistance of one vss drop path from the slice gnd strap to the vss pin (not extracted): 12 Via4
+# (9 Ohm per cut in this extraction: 0.75 Ohm) + 3 TopVia1 (assumed 2 Ohm per cut: 0.67 Ohm) + TopMetal1 sheet to the
+# pin-side gap (about 0.2 Ohm at 0.018 Ohm/sq) + the pin-side island and riser (0.75 + 0.67 + 0.35 Ohm), shared by all
+# drops; about 2.0 Ohm per drop (estimated, not extracted)
+RDROP_EST = 2.0
 
 
 def load_lvs(path):
@@ -104,19 +119,40 @@ PORTS = {'r1_adc_slice': [dict(p, key=(p['dev'], p['term'], p['net'])) for p in 
 cnt = defaultdict(int)
 for (n, side, x, y) in SLICE_PINS:
     k = cnt[n]; cnt[n] += 1
-    pt = {'S': (x, 0.05), 'W': (0.05, y), 'E': (WS - 0.05, y)}[side]
-    PORTS['r1_adc_slice'].append(dict(dev='@pin', term=k, net=n, layer=3, box=None, pt=list(pt), key=('@pin', k, n)))
+    pt = {'S': (x, 0.05), 'W': (0.05, y), 'E': (WS - 0.05, y), 'D': (x, y)}[side]
+    PORTS['r1_adc_slice'].append(dict(dev='@pin', term=k, net=n, layer=4 if side == 'D' else 3, box=None, pt=list(pt),
+                                      key=('@pin', k, n)))
 SLICE_MULTI = {n: c for n, c in cnt.items() if c > 1}
 for side, lst in (('N', N.NORTH), ('W', N.WEST), ('E', N.EAST), ('S', N.SOUTH)):
     for n, c in lst:
         pt = {'N': (c, H - 0.3), 'W': (0.3, c), 'E': (W - 0.3, c), 'S': (c, 0.3)}[side]
         PORTS['r1_adc'].append(dict(dev='@pin', term=0, net=n, layer=3, box=None, pt=list(pt), key=('@pin', 0, n)))
+# layout B (2026-10-26, PEX B.1): top-level MIM decoupling plates (r1_adc_decap plan: xref_xcd, xref_xcdl, xref_xcg,
+# xfilt_xcf) get a Metal5 port at the plate centre for the bottom-plate terminal (cap_cmim terminal 1, the Metal5 plate
+# that joins the bus through its Via4 array). Before (layout A and the first layout B build), these terminals had no port
+# and sat on the main node of the net (for vref / vrefl: the source of the first follower) with no resistance, so the
+# slices saw the decoupling through the full follower-to-bus wiring (pessimistic). The top plate (vss, TopMetal1 sheet)
+# stays on the main node.
+DECAP_PORTS = 0
+for u_ in LJ['top']['stats'].get('decap_plan', []):
+    PORTS['r1_adc'].append(dict(dev='%s_u%d' % (u_['name'], u_['u']), term=1, net=u_['net'], layer=5, box=None,
+                                pt=[u_['x'] + u_['w'] / 2.0, u_['y'] + u_['h'] / 2.0],
+                                key=('%s_u%d' % (u_['name'], u_['u']), 1, u_['net'])))
+    DECAP_PORTS += 1
+USED_DROPS = {(d['slice'], round(d['local_x'], 2)) for d in LJ['top']['stats'].get('vss_drops', [])}
+DROP_KEYS = set()
 for q, ch in enumerate('ab'):
     m = N.slice_map(ch)
     cnt = defaultdict(int)
     for (n, side, x, y) in SLICE_PINS:
         k = cnt[n]; cnt[n] += 1
         X, Y = SX[q] + x, SY + y
+        if side == 'D':
+            if (ch, round(x, 2)) in USED_DROPS:
+                PORTS['r1_adc'].append(dict(dev='@xslice_' + ch, term=k, net=m[n], layer=4, box=None, pt=[X, Y],
+                                            key=('@xslice_' + ch, k, n)))
+                DROP_KEYS.add(('@xslice_' + ch, k, n))
+            continue
         pt = {'S': (X, Y - 0.1), 'W': (X - 0.1, Y), 'E': (X + 0.1, Y)}[side]
         PORTS['r1_adc'].append(dict(dev='@xslice_' + ch, term=k, net=m[n], layer=3, box=None, pt=list(pt),
                                     key=('@xslice_' + ch, k, n)))
@@ -245,9 +281,10 @@ def build_cell(cname, lvspath):
                 continue
             els.append((a, b, max(r0, 1e-4)))
             par[f(a)] = f(b)
+        drop_nodes = {pname[(kind, L, i)] for (kind, L, i, p) in pidx if p['key'] in DROP_KEYS}
         for w in sorted(set(pname.values())):
             if f(w) != f(sn):
-                els.append((w, sn, 1e-3))
+                els.append((w, sn, RDROP_EST if w in drop_nodes else 1e-3))
                 par[f(w)] = f(sn)
                 stats['ties'] += 1
                 P('tie', cname, net, w)
@@ -364,7 +401,7 @@ def slice_ports():
 
 def write(path, with_r):
     mapn = (lambda n: n) if with_r else (lambda n: n.split('__')[0])
-    L = ['* r1_adc post-layout netlist, layout A (%s), written by pex/pex_build.py; see its docstring' % ('RC' if with_r else 'C only'),
+    L = ['* r1_adc post-layout netlist, layout %s (%s), written by pex/pex_build.py; see its docstring' % (globals().get('tag', 'B'), 'RC' if with_r else 'C only'),
          '* devices: LVS reference of layout/r1_adc_netlist.py; R: KLayout RNetExtractor Metal1-5/Via1-4; C: kpex 0.3.12 2.5D CC',
          '* requires cornerMOSlv/hv.lib, cornerCAP.lib, cornerRES.lib']
     sp = slice_ports()
@@ -388,7 +425,16 @@ def write(path, with_r):
     for ch in 'ab':
         m = N.slice_map(ch)
         if with_r:
-            nodes = [tp_node.get(('@xslice_' + ch, key[1], key[2]), tp_main.get(m[key[2]], safe(m[key[2]]))) for _, key in sp]
+            drop_k = {(k_, n_) for k_, n_ in [(i_, 'gnd') for i_ in range(len([1 for p_ in SLICE_PINS if p_[1] == 'D']))]}
+            nodes = []
+            for _, key in sp:
+                kk = ('@xslice_' + ch, key[1], key[2])
+                if kk in tp_node:
+                    nodes.append(tp_node[kk])
+                elif key[2] == 'gnd' and (key[1], 'gnd') in drop_k:
+                    nodes.append('xslice_%s_gnd_nc%d' % (ch, key[1]))       # unused drop position: dangling node
+                else:
+                    nodes.append(tp_main.get(m[key[2]], safe(m[key[2]])))
         else:
             nodes = [safe(m[p]) for p in N.SLICE_PORTS]
         body.append('Xslice_%s %s r1_adc_slice_post' % (ch, ' '.join(mapn(n) for n in nodes)))

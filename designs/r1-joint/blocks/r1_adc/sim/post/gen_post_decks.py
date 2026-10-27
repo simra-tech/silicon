@@ -104,7 +104,48 @@ def points():
               open(os.path.join(HERE, 'points', 'win3.json'), 'w'), indent=0)
 
 
-if __name__ == '__main__':
+def points_b(gk, c0, run, half=6.0, step_lsb=1.0 / 3, prefix='winb'):
+    """layout B (2026-10-26): sim/post/points/winb_<code>.json, one window per file around the transition into code
+    1024, 2048 or 3072 of each slice, predicted from the layout B mux run (code = c0 + gk * vin, per slice, frames 0
+    and 2 at +-0.4 V). Window +-half LSB at step_lsb LSB of layout B; frame 0 start-up (0 V, not used)."""
+    import json
+    import numpy as np
+    for c in (1024, 2048, 3072):
+        P = {}
+        for sl in 'ab':
+            L = 1.0 / gk[sl]
+            v0 = (c - 0.5 - c0[sl]) * L
+            n = int(round(half / step_lsb))
+            P[sl] = [0.0] + [round(float(v0 + k * step_lsb * L), 7) for k in range(-n, n + 1)]
+        L = 2.0 / (gk['a'] + gk['b'])
+        json.dump(dict(P, note='layout B fine window at code %d: +-%.1f LSB, step %.3f LSB, centres from %s (gk %s, c0 %s); frame 0 start-up (0 V, not used) (sim/post/gen_post_decks.py points_b)'
+                       % (c, half, step_lsb, run, gk, c0), windows=1, per_window=len(P['a']) - 1, step_V=step_lsb * L, lsb_V=L),
+                  open(os.path.join(HERE, 'points', '%s_%d.json' % (prefix, c)), 'w'), indent=0)
+        print('%s_%d.json' % (prefix, c), len(P['a']), P['a'][1], P['a'][-1])
+
+
+if __name__ == '__main__' and sys.argv[1:2] == ['winb']:
+    points_b({'a': (2977 - 1100) / 0.8, 'b': (2976 - 1095) / 0.8}, {'a': (2977 + 1100) / 2.0, 'b': (2976 + 1095) / 2.0},
+             'postb-isa-tt-rc')
+elif __name__ == '__main__' and sys.argv[1:2] == ['winb2']:
+    points_b({'a': (2960 - 1115) / 0.8, 'b': (2961 - 1111) / 0.8}, {'a': (2960 + 1115) / 2.0, 'b': (2961 + 1111) / 2.0},
+             'postb2-isa-tt-rc', prefix='winb2')
+elif __name__ == '__main__' and sys.argv[1:2] == ['winb2c']:
+    # 2026-10-27: centres from a straight-line fit of the B2 windows 2048 and 3072 (ideal VREF 1.045 V forced; the
+    # mux-run centres put the 3072 window 12 codes high, run postb2-win3072-tt-rc)
+    import json as _j
+    import numpy as _np
+    F = {}
+    for sl in 'ab':
+        V, C = [], []
+        for c in (2048, 3072):
+            P = _j.load(open(os.path.join(HERE, 'points', 'winb2_%d.json' % c)))
+            seq = _j.load(open(os.path.join(HERE, 'results', 'postb2_win%d_tt_rc.json' % c)))[sl]['windows']['0']['code_sequence']
+            v = sorted(P[sl][1:])
+            V += v[:len(seq)]; C += seq
+        F[sl] = list(_np.polyfit(V, C, 1))
+    points_b({k: F[k][0] for k in 'ab'}, {k: F[k][1] for k in 'ab'}, 'postb2-win2048-tt-rc + postb2-win3072-tt-rc (fit)', prefix='winb2c')
+elif __name__ == '__main__':
     wrapper()
     points()
     deck('tb_adc5_points.cir', 'tb_post_points.cir', 'include line -> NETLISTS substitution; instance in INSTANCES')

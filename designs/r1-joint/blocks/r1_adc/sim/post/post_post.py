@@ -12,6 +12,7 @@ read raw files only, and runs them on the run records of sim/post.
   post_post.py isa  OUT.json <run id> [pre json]     sim/r5/post_t2.py isa + comparison with the pre-layout result
                                                      (default sim/results/r5/isa5_tt.json): code differences, IDD, IDDA
   post_post.py first OUT.json <run id> ...           sim/r5/post_t2.py first
+  post_post.py inl  OUT.json <run:points file> ...    reduced-ramp INL bow with the design weights (layout B2)
   post_post.py pre  OUT.json                         collect the pre-layout values (revision 5 results + the sim/post pre
                                                      runs that exist) with their source files -> sim/post/pre_values.json
 """
@@ -48,18 +49,20 @@ if cmd == 'win':
     WD = cal3.quantise(WL)
     C = json.load(open(os.path.join(BLOCK, 'sim', 'results', 'r5', 'mc_window_check.json')))['slices']['a']
     LSB = (C['code_3071_3072_V'] - C['code_2047_2048_V']) / 1024.0
-    STEP = 0.5 * 466.488e-6
+    LSB = P.get('lsb_V', LSB)       # layout B fine windows: code width from the layout B mux gain (points file)
+    STEP = P.get('step_V', 0.5 * 466.488e-6)       # layout B fine windows (2026-10-26): step and window length from the points file
     M = LSB / STEP
     slots, ba, bb = load_segments(os.path.join(HERE, 'results', rid + '_segments.json'), root)
-    nw = (len(P['a']) - 1) // 25
+    PW = P.get('per_window', 25)
+    nw = (len(P['a']) - 1) // PW
     res = {'tool': 'sim/post/post_post.py win', 'run': rid, 'points': os.path.relpath(pf, BLOCK), 'core': runjson(rid)['core'],
            'label': 'simulated, %s, ideal VREF %s V, design weights; DNL from code counts at %.2f conversions per LSB '
-                    '(resolution about 0.5 LSB)' % (runjson(rid)['core'], runjson(rid)['vref_ideal_V'], M)}
+                    '(resolution about %.2f LSB)' % (runjson(rid)['core'], runjson(rid)['vref_ideal_V'], M, 1.0 / M)}
     for sl, bits in (('a', ba), ('b', bb)):
         keep = slots >= 1
         v = np.array(P[sl])[slots[keep]]
         bt = bits[keep]
-        wi = (slots[keep] - 1) // 25
+        wi = (slots[keep] - 1) // PW
         rs = {}
         for w in range(nw):
             o = np.argsort(v[wi == w])
@@ -78,6 +81,39 @@ if cmd == 'win':
     for sl in 'ab':
         print(sl, {k: res[sl][k] for k in ('max_abs_dnl', 'monotonic', 'missing_inside')},
               [(w, x['codes'], x['max_abs_dnl']) for w, x in res[sl]['windows'].items()])
+elif cmd == 'inl':
+    # layout B2 (2026-10-26): reduced-ramp INL bow with the design weights, A = <run:points file> ... (points files of
+    # sim/r5/points, frame 0 not used); conversions at code 0 / 4095 (clipped) are excluded; INL = deviation from the
+    # best straight line of code against input, in LSB of the fitted line
+    from p4common import load_segments
+    import cal3
+    WL = np.array(json.load(open(os.path.join(BLOCK, 'sim', 'results', 'r3', 'cdac3_mc50_tt_cp100_globalfit.json')))['nominal_design_weights_lsb'])
+    WD = cal3.quantise(WL)
+    V, BT = {'a': [], 'b': []}, {'a': [], 'b': []}
+    for arg in A:
+        rid, pf = arg.split(':')
+        need_completed(rid)
+        P = json.load(open(os.path.join(BLOCK, 'sim', 'r5', 'points', pf)))
+        slots, ba, bb = load_segments(os.path.join(HERE, 'results', rid + '_segments.json'), root)
+        keep = slots >= 1
+        for sl, bits in (('a', ba), ('b', bb)):
+            V[sl].append(np.array(P[sl])[slots[keep]]); BT[sl].append(bits[keep])
+    res = {'tool': 'sim/post/post_post.py inl', 'runs': A, 'label': 'simulated, design weights, reduced ramp; INL from the '
+           'best straight line through the unclipped conversions (LSB of that line)'}
+    for sl in 'ab':
+        v, bt = np.concatenate(V[sl]), np.concatenate(BT[sl])
+        c = cal3.code(bt, WD).astype(float)
+        inside = (c > 0) & (c < 4095)
+        p_ = np.polyfit(v[inside], c[inside], 1)
+        e = c[inside] - np.polyval(p_, v[inside])
+        cub = np.polyval(np.polyfit(v[inside], e, 3), v[inside])
+        o = np.argsort(v)
+        res[sl] = {'conversions': int(len(v)), 'unclipped': int(inside.sum()), 'codes_per_V': float(p_[0]),
+                   'max_abs_inl_lsb': float(np.max(np.abs(e))), 'rms_lsb': float(np.sqrt(np.mean(e ** 2))),
+                   'cubic_bow_peak_lsb': float(np.max(np.abs(cub))), 'monotonic_ramp': bool(np.all(np.diff(c[o]) >= 0)),
+                   'vin_V': [round(float(x), 6) for x in v[inside]], 'inl_lsb': [round(float(x), 3) for x in e]}
+        print(sl, {k: res[sl][k] for k in ('unclipped', 'codes_per_V', 'max_abs_inl_lsb', 'rms_lsb', 'cubic_bow_peak_lsb', 'monotonic_ramp')})
+    json.dump(res, open(out, 'w'), indent=1)
 elif cmd == 'ref':
     rb, ri = A[0], A[1]
     need_completed(rb)
