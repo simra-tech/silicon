@@ -1,0 +1,193 @@
+{
+ "run_id": "t10-t2-fast-g",
+ "test": 2,
+ "view": "sch",
+ "corner": "tt",
+ "temp_c": 27.0,
+ "sim_status": "failed",
+ "ngspice_wall_s": 549.0,
+ "tstop_us": 38.0,
+ "master_done_us": null,
+ "t_end_us": 11.907227668553924,
+ "vref_bg_t0_V": 1.0449,
+ "criteria": [
+  {
+   "name": "start state: vref_bg at t = 0 is the on-state of r1_bgr (1.045 V record)",
+   "value": 1.0449,
+   "limit": "1.00-1.09",
+   "unit": "V",
+   "status": "passed"
+  },
+  {
+   "name": "master sequence completed (DONE line)",
+   "value": null,
+   "limit": "before tstop",
+   "unit": "",
+   "status": "failed"
+  },
+  {
+   "name": "ADC strobes 0.6 ns before the clk30 edge (M1 check, 14 conversions)",
+   "value": [
+    0.596,
+    0.601
+   ],
+   "limit": "0.3-0.9 ns",
+   "unit": "ns",
+   "status": "passed"
+  },
+  {
+   "name": "ADC handshake integrity: strobes per started conversion, no stalled frame (O10, F22, F24)",
+   "value": {
+    "conversions_started": 14,
+    "complete_in_deck": 13,
+    "strobe_rises": {
+     "seq_stb0": 14,
+     "seq_stb1": 14,
+     "seq_stb2": 14,
+     "seq_stb3": 14,
+     "seq_stb4": 14,
+     "seq_stb5": 14,
+     "seq_stb6": 14,
+     "seq_stb7": 14,
+     "seq_stb8": 14,
+     "seq_stb9": 14,
+     "seq_stb10": 14,
+     "seq_stb11": 13,
+     "seq_stb12": 13,
+     "seq_stb13": 13,
+     "seq_lat": 13
+    },
+    "lost_valid_events": 0,
+    "stalls": 0,
+    "short": []
+   },
+   "limit": "strobe rises = conversions, 0 stalls",
+   "unit": "",
+   "status": "passed"
+  },
+  {
+   "name": "MEAS_ANGLE per pair: residual after a constant (latency, zero offset)",
+   "value": 0.053890988906241,
+   "limit": "<= 0.25 (spec electronic accuracy)",
+   "unit": "deg el",
+   "status": "passed"
+  },
+  {
+   "name": "POS over SPI against the stimulus angle (same constant removed)",
+   "value": null,
+   "limit": "<= 0.64 (spec total target)",
+   "unit": "deg el",
+   "status": "failed"
+  },
+  {
+   "name": "MEAS_ANGLE over SPI equals a monitored pair value (register path)",
+   "value": 0,
+   "limit": "all reads",
+   "unit": "",
+   "status": "failed"
+  },
+  {
+   "name": "STATUS: POS_VALID (bit 6) and CAL_VALID (bit 4) set, no AMP_LOW/HIGH",
+   "value": [],
+   "limit": "bits 6,4",
+   "unit": "",
+   "status": "failed"
+  },
+  {
+   "name": "BiSS-C frame received",
+   "value": null,
+   "limit": "one frame",
+   "unit": "",
+   "status": "failed"
+  }
+ ],
+ "measurements": {
+  "pairs_used": 10,
+  "meas_err_mean_deg": -0.6564503135156287,
+  "meas_resid_max_deg": 0.053890988906241,
+  "meas_resid_rms_deg": 0.02244131893467305,
+  "meas_samples": [
+   [
+    3.5071320000000004,
+    4.640475,
+    30557,
+    -0.6620216355468642
+   ],
+   [
+    4.240468,
+    5.373806,
+    32475,
+    -0.6680590675781275
+   ],
+   [
+    4.973801000000001,
+    6.107122,
+    34403,
+    -0.6603527894531283
+   ],
+   [
+    5.7071250000000004,
+    6.8404679999999995,
+    36335,
+    -0.6471209472656199
+   ],
+   [
+    6.440454000000001,
+    7.573805000000001,
+    38231,
+    -0.6833455816406229
+   ],
+   [
+    7.173796,
+    8.307139000000001,
+    40155,
+    -0.6811648675781328
+   ],
+   [
+    7.907136000000001,
+    9.040475,
+    42087,
+    -0.6679906253906438
+   ],
+   [
+    8.640456,
+    9.773809,
+    44057,
+    -0.6025593246093877
+   ],
+   [
+    9.3738,
+    10.507132,
+    45941,
+    -0.655317451171868
+   ],
+   [
+    10.107118000000002,
+    11.240472,
+    47877,
+    -0.6365708449218914
+   ]
+  ],
+  "latency_equiv_us": 0.18234730930989684,
+  "spi_pos": [],
+  "spi_pos_err_max_deg": null,
+  "spi_meas_angle": [],
+  "status": [],
+  "id_read": []
+ },
+ "spi": [
+  {
+   "kind": "SPIWR",
+   "t": "3476.0",
+   "addr": "07",
+   "data": "0040"
+  },
+  {
+   "kind": "SPIWR",
+   "t": "5051.0",
+   "addr": "18",
+   "data": "00ba"
+  }
+ ],
+ "verdict": "failed"
+}

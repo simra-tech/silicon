@@ -1,0 +1,121 @@
+{
+ "run_id": "t10-t3-fast-f",
+ "test": 3,
+ "view": "sch",
+ "corner": "tt",
+ "temp_c": 27.0,
+ "sim_status": "failed",
+ "ngspice_wall_s": 7683.7,
+ "tstop_us": 19.6,
+ "master_done_us": null,
+ "t_end_us": 14.060058154380012,
+ "vref_bg_t0_V": 1.0449,
+ "criteria": [
+  {
+   "name": "start state: vref_bg at t = 0 is the on-state of r1_bgr (1.045 V record)",
+   "value": 1.0449,
+   "limit": "1.00-1.09",
+   "unit": "V",
+   "status": "passed"
+  },
+  {
+   "name": "master sequence completed (DONE line)",
+   "value": null,
+   "limit": "before tstop",
+   "unit": "",
+   "status": "failed"
+  },
+  {
+   "name": "ADC strobes 0.6 ns before the clk30 edge (M1 check, 14 conversions)",
+   "value": [
+    0.596,
+    0.601
+   ],
+   "limit": "0.3-0.9 ns",
+   "unit": "ns",
+   "status": "passed"
+  },
+  {
+   "name": "ADC handshake integrity: strobes per started conversion, no stalled frame (O10, F22, F24)",
+   "value": {
+    "conversions_started": 14,
+    "complete_in_deck": 13,
+    "strobe_rises": {
+     "seq_stb0": 14,
+     "seq_stb1": 14,
+     "seq_stb2": 14,
+     "seq_stb3": 14,
+     "seq_stb4": 14,
+     "seq_stb5": 14,
+     "seq_stb6": 14,
+     "seq_stb7": 14,
+     "seq_stb8": 14,
+     "seq_stb9": 14,
+     "seq_stb10": 14,
+     "seq_stb11": 14,
+     "seq_stb12": 13,
+     "seq_stb13": 13,
+     "seq_lat": 13
+    },
+    "lost_valid_events": 0,
+    "stalls": 0,
+    "short": []
+   },
+   "limit": "strobe rises = conversions, 0 stalls",
+   "unit": "",
+   "status": "passed"
+  },
+  {
+   "name": "two I_A / I_B reads (levels 0 and 1, D7)",
+   "value": 1,
+   "limit": 2,
+   "unit": "",
+   "status": "failed"
+  }
+ ],
+ "measurements": {
+  "adc_vrefo_V": 1.0498570216508023,
+  "adc_lsb_uV": 457.0143149750718,
+  "I_A": [
+   [
+    8.926,
+    821
+   ]
+  ],
+  "I_B": [
+   [
+    10.501,
+    823
+   ]
+  ]
+ },
+ "spi": [
+  {
+   "kind": "SPIWR",
+   "t": "3476.0",
+   "addr": "20",
+   "data": "0040"
+  },
+  {
+   "kind": "SPIWR",
+   "t": "5051.0",
+   "addr": "21",
+   "data": "0028"
+  },
+  {
+   "kind": "SPIRD",
+   "t": "8926.0",
+   "addr": "29",
+   "data": "0335",
+   "status": "80"
+  },
+  {
+   "kind": "SPIRD",
+   "t": "10501.0",
+   "addr": "2a",
+   "data": "0337",
+   "status": "80"
+  }
+ ],
+ "verdict": "failed"
+}

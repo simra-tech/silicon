@@ -475,5 +475,92 @@ file that the deck compiled (`inputs_sha256`).
 | `t10-diag-hs-dly-b` | 3 | F22 + F23b, `delay=1e-12`, `T10_SEQ_LAT=0.141`, 3 threads | M6 | 5 µs | 2618 s | DIAGNOSTIC: no lost event (all 14 strobes, latch, valid in 4 of 4 conversions) |
 | `t10-t2-fast-c` | 2 | fast, D11, before F22 | M6 | — | — | stopped by the track (superseded by F22) |
 | `t10-t2-fast-d` | 2 | fast, D11, F22 + F23, 3 threads, runner paused for its timeout check (T10-28) | M6 | 21.5 µs | 11 813 s | failed (testbench): words invalid, strobes lost (F24); BiSS-C frame and CRC passed; residual 128° el on invalid words |
-| `t10-t3-fast-e` | 3 | fast, D11, F22 + F23b + F24 fix, 3 threads | M6 | 19.6 µs | running | not run yet (started 09:21) |
-| `t10-t2-fast-e` | 2 | fast, D11, F22 + F23b + F24 fix, 3 threads | M6 | 21.5 µs | running | not run yet (started 09:51) |
+(`t10-t3-fast-e` and `t10-t2-fast-e`: section 14.4.)
+
+## 14. Fourth budget (2026-10-27): tests 2 and 3 with the F24 fix, current-word scale, stage separation
+
+All decks in this section use M6 (ideal VREF buffer). Tests 1b and 4 are not rerun: F22-F24 change only the ADC
+handshake and the macro output timing, and the safety and power-up paths do not use ADC words.
+
+New runner options: `--t2f-stub` (decks 2 and 3: `r1_t2f` as a 1 GΩ output stub, because the held-off T2F
+aborted both long decks on its HBT, T10-32) and `--encoder-subset` (test 2: `r1_isense` and `r1_safe` as stubs).
+`post_tb.py` `adc_lsb` now uses the `r1_adc` revision-5 record (14.1).
+
+### 14.1 The I_B +2.37 % scale error (third budget, `t10-t3-fast-d`): cause
+
+1. The ctrl does not add a pedestal to the current word. `I_A`/`I_B` = the r1_adcw code of the current slice:
+   `code = (Σ raw[i]·w[i] + 2) >> 2` with the reset (design) weights of `r1_regs` (`WNOM`, revision-3 weights × 4,
+   which are also the revision-5 design weights).
+2. The decks use the schematic `r1_adc` revision 5, not the extraction. The D16 amendment gain 1.058 is a
+   post-layout number and does not apply here. The revision-5 record with the design weights is: code =
+   2047.5 + v / LSB, LSB = 454.9 µV × VREF / 1.045 V, gain fit 0.99825 (`blocks/r1_adc/sim/results/r5/isa5_tt.json`).
+   At the deck `vrefo` 1.0499 V: LSB 457.0 µV.
+3. `post_tb.py` used LSB = 2 × 0.914 V × `vrefo` / 4096 = 468.6 µV. 0.914 V is the revision-3 full scale at VREF
+   1.0 V, so this LSB is 2.5 % too large for revision 5. That is the +2.37 %.
+4. Measured in `t10-t3-fast-d`: isense output 14.01 × shunt on both channels (level 0 −0.560 V; level 1
+   A −0.1402 V, B +0.5593 V). Expected words with LSB 457.0 µV: level 0: 822.1; level 1 A: 1740.7; level 1 B:
+   3271.4. Read: `I_B` 821 (level 0) and 3268 (level 1); `I_A` 1740 (level 1). The A level-0 read (762) is raw
+   word 3072 from the conversion at 6.51 µs, which lost strobes (F24); the two level-1 A words and the B words
+   give a common level-0 code of 823.
+5. Both numbers for the `I_B` step (2447 codes for 80 mV × 14): against the revision-3 LSB +2.37 % (failed);
+   against the revision-5 record LSB −0.15 % (passed, limit 1 %). With the expected step scaled by the simulated
+   gain 0.99825 (2446.3 codes): +0.03 %. `post_tb.py` now uses the revision-5 record LSB
+   (`adc_lsb`); `t10-t3-fast-d` re-evaluated: `I_B` −0.15 % passed, `I_A` +6.4 % failed (invalid level-0 word).
+   The previous result file is kept in the run directory (`result_lsb_rev3.json`).
+6. Post-layout (not simulated in these decks): the gain 1.058 would make the words 5.8 % larger. The host weight
+   calibration (R2-11) removes it; with design weights a post-layout deck would fail the 1 % criterion by design.
+
+### 14.2 Stage separation tool for test 2 (`enc_stage_check.py <run-id>`)
+
+For every encoder conversion the tool compares, against the stimulus angle at the hold instant:
+(1) the AFE held outputs (`souts`, `soutc`): angle and amplitude; (2) the code from the raw decisions with the
+design weights against 2047.5 + v_AFE / LSB; (3) the r1_gate `sin_code`/`cos_code` (the `RAW_SIN`/`RAW_COS`
+register source, registers 0x1D/0x1E) against the stage-2 codes; (4) the MEAS angle after the pair against atan2
+of the stage-3 codes. The monitor values are the register sources, so no extra SPI reads (and no new deck) are
+needed. Output: `results/<run-id>.stages.json`.
+
+Check on `t10-t2-fast-d` (words with lost strobes): AFE angle residual 0.004° (constant −0.17°), amplitude
+0.512 V; ADC codes differ from the AFE-based expectation by up to 1896 LSB (lost strobes); ctrl codes equal the
+raw-word codes (0 difference in 22 pairs); CORDIC MEAS against atan2 of the codes ≤ 0.03° in 21 of 22 pairs,
+0.185° in one. So in that deck the ADC conversion (strobe loss, F24) was the failing stage.
+
+### 14.3 Results
+
+1. Test 2, stage separation on `t10-t2-fast-e` (`enc_stage_check.py`, 15 encoder conversions, F24 fix):
+
+   | Stage | Result |
+   | --- | --- |
+   | 1 AFE (pads → held AFE outputs) | angle residual 0.0023° max after a constant −0.17°; amplitude 0.5124 V (input 0.5 V) |
+   | 2 ADC (AFE output → code, design weights, LSB 457.0 µV) | code error mean −4.0 (sin) / +6.0 (cos) LSB, max 7.4 LSB; code-angle residual 0.053° max after a constant −0.55° |
+   | 3 ctrl codes (`RAW_SIN`/`RAW_COS` source) against stage 2 | 0 difference in 14 pairs |
+   | 4 CORDIC (MEAS against atan2 of the codes) | 0.009° max |
+   | 5 tracking loop (`POS`, `pos_out`) | not settled: error −41.6° at 3.4 µs, −19.7° at 6.3 µs, −8.2° at 10.0 µs, −3.3° at 14.4 µs (constant removed); velocity 616 of about 700 (3.6°/µs); POS_VALID 0 |
+
+   The failing stage is the `r1_pos` tracking loop acquisition, not the AFE, ADC, weight or CORDIC path. The loop
+   starts at velocity 0 at the reset and the error decays with about 4.5 µs time constant (reset `POS_CFG` 0x164:
+   KP 2, KI 11). The master reads `POS` at 6.6 and 9.8 µs, inside the acquisition. The specification gives no
+   acquisition time; the POS criterion needs reads after the loop settles (about 22 µs from the reset at the reset
+   gains), or a higher loop gain written by the host. Not done in this budget (the deck would exceed 3 h).
+2. Test 3: see 14.1 for the scale; `t10-t3-fast-e` level-0 reads `I_A` 821, `I_B` 823 (expected 822.1).
+3. Test 2 after the lock (`t10-t2-fast-h`, master define `T10_T2_WAIT_NS` = 16 µs before the reads): all position
+   criteria passed (row in `r1_top/README.md`). The ENC/MEAS pairs in this deck give the same stage figures as
+   `-e`. The encoder subset runs 38 µs in 32 min on 3 threads (isense and safe dominate the full fast view).
+4. Test 3 (`t10-t3-sub-b`): passed, `I_A` +0.11 %, `I_B` +0.10 %. The same `I_B` step against the revision-3 LSB
+   would read +2.6 %, and against the record line scaled by the gain fit 0.99825, +0.27 %. The current subset
+   (`--current-subset`: `r1_afe`, `r1_safe`, `r1_t2f` stubs) runs 19.6 µs in 16 min on 3 threads.
+5. The full fast view of decks 2 and 3 aborts between 14 and 17 µs (T2F HBT, pad diodes `xp_sin_p`, `xp_isa_p`,
+   fast-view POR source) at `tmax` 5 ns; the subsets with `tmax` 4 ns completed. Open: a full-view deck 2/3 to
+   completion (not run in this budget).
+
+### 14.4 Run log, fourth budget
+
+| Run | Test | View, options | VREF buffer | Simulated | Deck time | Result |
+| --- | --- | --- | --- | --- | --- | --- |
+| `t10-t3-fast-e` | 3 | fast, D11, F22 + F23b + F24 fix, 3 threads | M6 | 14.06 µs of 19.6 | 7569 s | failed: HBT abort `xu_t2f.x1.xqa1` (T10-32). Before the abort: no lost event (14 conversions, all strobes); level-0 reads `I_A` 821, `I_B` 823 (expected 822.1); level-1 raw words 6946 / 13109 (codes 1740 / 3271) |
+| `t10-t2-fast-e` | 2 | fast, D11, F22 + F23b + F24 fix, 3 threads | M6 | 14.93 µs of 21.5 | — | failed: HBT abort `xu_t2f.x1.xqa1` (T10-32). Before it: no lost event (18 conversions); MEAS residual 0.054° el **passed** (15 pairs, limit 0.25°); POS over SPI −19.9° / −7.5° at 6.6 / 9.8 µs failed (tracking loop not settled, 14.3); `STATUS` 0x0190; BiSS-C frame not reached |
+| `t10-t3-fast-f` | 3 | as `-e` + `--t2f-stub`, 3 threads | M6 | 14.06 µs of 19.6 | 7684 s | failed: timestep too small at the same time as `-e` (14.0601 µs), now at the `SIN_P` pad diode `xp_sin_p.xi2.xd1`; level-0 reads as `-e` |
+| `t10-t3-sub-b` | 3 | current subset (AFE, safe, T2F stubs), F22-F24, `tmax` 4 ns, 3 threads | M6 | 19.6 µs | 941 s | **passed**: `I_A` step +0.11 %, `I_B` +0.10 % (words 820/1740, 821/3274), no lost event |
+| `t10-t3-sub-c` | 3 | as `-b`, `tmax` 3 ns | M6 | 17.18 µs of 19.6 | 773 s | failed: timestep too small at the `ISA_P` pad diode `xp_isa_p.xi2.xd1` |
+| `t10-t2-fast-f` | 2 | as `-e` + `--encoder-subset --t2f-stub` (isense, safe, T2F stubs), 3 threads | M6 | 21.5 µs | 1148 s | failed: POS −19.9° / −7.5° (reads inside the acquisition), `STATUS` 0x0190, BiSS data null with nE = nW = 0 (no POS_VALID); MEAS 0.049° passed; BiSS CRC passed |
+| `t10-t2-fast-g` | 2 | as `-f` + `T10_T2_WAIT_NS=16000` | M6 | 11.9 µs of 38 | — | failed: timestep too small at `b.xu_bias.bpor` (fast-view POR source) |
+| `t10-t2-fast-h` | 2 | as `-g`, `tmax` 4 ns | M6 | 38 µs | 1922 s | position criteria passed (MEAS 0.045°, POS 0.50°, ST 0.42°, STATUS 0x01D0, BiSS CRC); nW = 0 failed (R3) |

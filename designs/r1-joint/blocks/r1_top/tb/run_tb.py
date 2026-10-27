@@ -328,20 +328,55 @@ def stub(name, pins):
 
 
 def current_subset(view, rec):
-    # test 3 (current path: shunt -> isense -> ADC current slices -> ctrl): only r1_afe is a stub (third budget, speed);
+    # test 3 (current path: shunt -> isense -> ADC current slices -> ctrl): r1_afe, r1_t2f and r1_safe are stubs;
     # the ADC encoder slices then sample a 1 GOhm stub output (their words are not used in test 3)
     inc = '.include /work/designs/r1-joint/blocks/r1_afe/schematic/r1_afe_revE.spice'
     if inc not in view:
         raise SystemExit('--current-subset: include not found in the view: ' + inc)
     view = view.replace(inc, '* T10 current subset: removed ' + inc)
-    pins, _, _ = subckt_header(open(os.path.join(BLOCKS, 'r1_afe/schematic/r1_afe_revE.spice')).read(), 'r1_afe')
+    apins, _, _ = subckt_header(open(os.path.join(BLOCKS, 'r1_afe/schematic/r1_afe_revE.spice')).read(), 'r1_afe')
     # the T2F (held off by D11) still aborted on its HBT in this subset (run t10-t3-sub-a, 1.347 us, F18): stub it too
     x1 = 'X1 vdd vdd12 vss pbias pcasc vref en mode fout g1_t2f'
     if x1 not in view:
         raise SystemExit('--current-subset: r1_t2f wrapper line not found')
     view = view.replace(x1, '* T10 current subset: T2F stub\nRt2fstub fout vss 1e9')
-    rec['current_subset'] = 'r1_afe and r1_t2f replaced by 1 GOhm stubs (test 3 only; isense, safe, ADC, gate real)'
-    return view + '\n'.join(stub('r1_afe', pins)) + '\n'
+    # fourth budget: r1_safe too (test 3 does not use the comparators; safe and isense dominate the deck time)
+    inc = '.include /work/designs/r1-joint/blocks/r1_safe/schematic/r1_safe.spice'
+    if inc not in view:
+        raise SystemExit('--current-subset: include not found in the view: ' + inc)
+    view = view.replace(inc, '* T10 current subset: removed ' + inc)
+    L = view.splitlines()
+    pins, i, j = subckt_header('\n'.join(L), 'r1_safe')
+    if pins is None:
+        raise SystemExit('--current-subset: no wrapper r1_safe in the view')
+    k = j
+    while not L[k].lower().startswith('.ends'):
+        k += 1
+    view = '\n'.join(L[:i] + stub('r1_safe', pins) + L[k + 1:]) + '\n'
+    rec['current_subset'] = 'r1_afe, r1_safe and r1_t2f replaced by 1 GOhm stubs (test 3 only; isense, ADC, gate real)'
+    return view + '\n'.join(stub('r1_afe', apins)) + '\n'
+
+
+def encoder_subset(view, rec):
+    # test 2 (pads -> AFE -> ADC -> ctrl): r1_isense and r1_safe are stubs (fourth budget, deck time <= 3 h);
+    # the T2F stub comes from --t2f-stub
+    for n in ('r1_isense/schematic/r1_isense.spice', 'r1_safe/schematic/r1_safe.spice'):
+        inc = '.include /work/designs/r1-joint/blocks/' + n
+        if inc not in view:
+            raise SystemExit('--encoder-subset: include not found in the view: ' + inc)
+        view = view.replace(inc, '* T10 encoder subset: removed ' + inc)
+    L = view.splitlines()
+    pins, i, j = subckt_header('\n'.join(L), 'r1_safe')
+    if pins is None:
+        raise SystemExit('--encoder-subset: no wrapper r1_safe in the view')
+    k = j
+    while not L[k].lower().startswith('.ends'):
+        k += 1
+    L = L[:i] + stub('r1_safe', pins) + L[k + 1:]
+    pins, _, _ = subckt_header(open(os.path.join(BLOCKS, 'r1_isense/schematic/r1_isense.spice')).read(), 'r1_isense')
+    L += stub('r1_isense', pins)
+    rec['encoder_subset'] = 'r1_isense and r1_safe replaced by 1 GOhm stubs (test 2 only; pads, AFE, ADC, ctrl real)'
+    return '\n'.join(L) + '\n'
 
 
 def thermal_subset(view, rec, keep_safety=False):
@@ -444,6 +479,8 @@ def main():
     ap.add_argument('--por-step', type=float, default=1.0, help='deck 1b: por_n release time in us (fast view)')
     ap.add_argument('--t2f-off', action='store_true', help='deviation D11: T2F enable input held at VSS')
     ap.add_argument('--thermal-subset', action='store_true', help='tests 1b, 5, 6: AFE, isense, safe, ADC as stubs (F18)')
+    ap.add_argument('--encoder-subset', action='store_true', help='test 2: isense and safe as stubs (deck time)')
+    ap.add_argument('--t2f-stub', action='store_true', help='decks 2, 3: r1_t2f as a 1 GOhm output stub (HBT abort, F18)')
     ap.add_argument('--current-subset', action='store_true', help='test 3: AFE as a stub; isense, safe, ADC, gate real')
     ap.add_argument('--safety-subset', action='store_true', help='test 4: AFE and ADC as stubs; isense, safe, gate real')
     ap.add_argument('--fast', action='store_true', help='fast view: r1_bgr and r1_bias (with POR) as recorded behaviour')
@@ -562,6 +599,16 @@ def main():
         view = thermal_subset(view, rec, keep_safety=a.safety_subset)
     if a.current_subset:
         view = current_subset(view, rec)
+    if a.encoder_subset:
+        view = encoder_subset(view, rec)
+    if a.t2f_stub:
+        # fourth budget: the T2F (held off by D11 in decks 2-4) aborted deck t10-t3-fast-e at 14.06 us on its HBT
+        # (F18 class); tests 2 and 3 do not use it, so it is a 1 GOhm output stub there
+        x1 = 'X1 vdd vdd12 vss pbias pcasc vref en mode fout g1_t2f'
+        if x1 not in view:
+            raise SystemExit('--t2f-stub: r1_t2f wrapper line not found')
+        view = view.replace(x1, '* T10 --t2f-stub: T2F stub\nRt2fstub fout vss 1e9')
+        rec['t2f_stub'] = 'r1_t2f replaced by a 1 GOhm output stub (decks 2 and 3; T2F held off by D11)'
     if a.fast:
         view = fast_view(view, a, rec)
     if a.hbt_selft0:

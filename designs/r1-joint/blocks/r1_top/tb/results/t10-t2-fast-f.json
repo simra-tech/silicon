@@ -1,0 +1,361 @@
+{
+ "run_id": "t10-t2-fast-f",
+ "test": 2,
+ "view": "sch",
+ "corner": "tt",
+ "temp_c": 27.0,
+ "sim_status": "completed",
+ "ngspice_wall_s": 1148.0,
+ "tstop_us": 21.5,
+ "master_done_us": 21.076,
+ "t_end_us": 21.499999999999996,
+ "vref_bg_t0_V": 1.0449,
+ "criteria": [
+  {
+   "name": "start state: vref_bg at t = 0 is the on-state of r1_bgr (1.045 V record)",
+   "value": 1.0449,
+   "limit": "1.00-1.09",
+   "unit": "V",
+   "status": "passed"
+  },
+  {
+   "name": "master sequence completed (DONE line)",
+   "value": 21.076,
+   "limit": "before tstop",
+   "unit": "",
+   "status": "passed"
+  },
+  {
+   "name": "ADC strobes 0.6 ns before the clk30 edge (M1 check, 27 conversions)",
+   "value": [
+    0.596,
+    0.601
+   ],
+   "limit": "0.3-0.9 ns",
+   "unit": "ns",
+   "status": "passed"
+  },
+  {
+   "name": "ADC handshake integrity: strobes per started conversion, no stalled frame (O10, F22, F24)",
+   "value": {
+    "conversions_started": 27,
+    "complete_in_deck": 26,
+    "strobe_rises": {
+     "seq_stb0": 27,
+     "seq_stb1": 27,
+     "seq_stb2": 27,
+     "seq_stb3": 27,
+     "seq_stb4": 27,
+     "seq_stb5": 27,
+     "seq_stb6": 27,
+     "seq_stb7": 27,
+     "seq_stb8": 27,
+     "seq_stb9": 27,
+     "seq_stb10": 27,
+     "seq_stb11": 27,
+     "seq_stb12": 26,
+     "seq_stb13": 26,
+     "seq_lat": 26
+    },
+    "lost_valid_events": 0,
+    "stalls": 0,
+    "short": []
+   },
+   "limit": "strobe rises = conversions, 0 stalls",
+   "unit": "",
+   "status": "passed"
+  },
+  {
+   "name": "MEAS_ANGLE per pair: residual after a constant (latency, zero offset)",
+   "value": 0.048839540319296826,
+   "limit": "<= 0.25 (spec electronic accuracy)",
+   "unit": "deg el",
+   "status": "passed"
+  },
+  {
+   "name": "POS over SPI against the stimulus angle (same constant removed)",
+   "value": 19.94108913663382,
+   "limit": "<= 0.64 (spec total target)",
+   "unit": "deg el",
+   "status": "failed"
+  },
+  {
+   "name": "MEAS_ANGLE over SPI equals a monitored pair value (register path)",
+   "value": 1,
+   "limit": "all reads",
+   "unit": "",
+   "status": "passed"
+  },
+  {
+   "name": "STATUS: POS_VALID (bit 6) and CAL_VALID (bit 4) set, no AMP_LOW/HIGH",
+   "value": [
+    "0x0190"
+   ],
+   "limit": "bits 6,4",
+   "unit": "",
+   "status": "failed"
+  },
+  {
+   "name": "BiSS-C: ACK, START, CRC (master check), stop bit",
+   "value": {
+    "ack": 1,
+    "start_edge": 4,
+    "stop": 1,
+    "mt": 0,
+    "st": 0,
+    "nE": 0,
+    "nW": 0,
+    "crc_wire": "3f",
+    "crc_calc": "3f",
+    "t_lat_us": 15.776,
+    "st_err_deg": -86.44219753507133
+   },
+   "limit": "ack 1, crc equal",
+   "unit": "",
+   "status": "passed"
+  },
+  {
+   "name": "BiSS-C: nE = 1, nW = 1",
+   "value": [
+    0,
+    0
+   ],
+   "limit": "1, 1",
+   "unit": "",
+   "status": "failed"
+  },
+  {
+   "name": "BiSS-C: ST against the stimulus angle at LAT (same constant removed)",
+   "value": -86.44219753507133,
+   "limit": "<= 0.64",
+   "unit": "deg el",
+   "status": "failed"
+  }
+ ],
+ "measurements": {
+  "pairs_used": 23,
+  "meas_err_mean_deg": -0.6514024649286697,
+  "meas_resid_max_deg": 0.048839540319296826,
+  "meas_resid_rms_deg": 0.020513075037042104,
+  "meas_samples": [
+   [
+    3.5071320000000004,
+    4.640475,
+    30557,
+    -0.6620216355468642
+   ],
+   [
+    4.240468,
+    5.373806,
+    32475,
+    -0.6680590675781275
+   ],
+   [
+    4.973801000000001,
+    6.107122,
+    34403,
+    -0.6603527894531283
+   ],
+   [
+    5.707129,
+    6.8404679999999995,
+    36335,
+    -0.6471353472656176
+   ],
+   [
+    6.4404650000000006,
+    7.573805000000001,
+    38231,
+    -0.6833851816406309
+   ],
+   [
+    7.173795,
+    8.307139000000001,
+    40155,
+    -0.6811612675781191
+   ],
+   [
+    7.907136000000001,
+    9.040475,
+    42087,
+    -0.6679906253906438
+   ],
+   [
+    8.640457,
+    9.773809,
+    44057,
+    -0.6025629246093729
+   ],
+   [
+    9.3738,
+    10.507137,
+    45941,
+    -0.655317451171868
+   ],
+   [
+    10.107133000000001,
+    11.240472,
+    47877,
+    -0.6366248449218688
+   ],
+   [
+    10.840449000000001,
+    11.973795,
+    49779,
+    -0.6645629332031149
+   ],
+   [
+    11.573782999999999,
+    12.707134,
+    51689,
+    -0.6815794933593793
+   ],
+   [
+    12.307118000000001,
+    13.440454,
+    53645,
+    -0.6354282667968789
+   ],
+   [
+    13.040466000000002,
+    14.1738,
+    55569,
+    -0.6332691527343854
+   ],
+   [
+    13.773794,
+    14.90713,
+    57469,
+    -0.6639970230468748
+   ],
+   [
+    14.507126000000001,
+    15.640464000000001,
+    59409,
+    -0.6398076527343903
+   ],
+   [
+    15.240458,
+    16.373791,
+    61321,
+    -0.6540704308593774
+   ],
+   [
+    15.973792000000001,
+    17.107129,
+    63267,
+    -0.6216485144531134
+   ],
+   [
+    16.707118,
+    17.84046,
+    65161,
+    -0.6606089308593823
+   ],
+   [
+    17.440457,
+    18.573792000000005,
+    67101,
+    -0.6364447605468797
+   ],
+   [
+    18.173791,
+    19.307127,
+    69001,
+    -0.6671942308593657
+   ],
+   [
+    18.907126,
+    20.040464,
+    70953,
+    -0.6265361683593937
+   ],
+   [
+    19.640441000000003,
+    20.773792000000004,
+    72871,
+    -0.6324980003906262
+   ]
+  ],
+  "latency_equiv_us": 0.1809451291468527,
+  "spi_pos": [
+   [
+    6.626,
+    6055,
+    -19.94108913663382
+   ],
+   [
+    9.776000000000002,
+    10376,
+    -7.545127222571324
+   ]
+  ],
+  "spi_pos_err_max_deg": 19.94108913663382,
+  "spi_meas_angle": [
+   [
+    8.201,
+    10038
+   ]
+  ],
+  "status": [
+   "0x0190"
+  ],
+  "id_read": [],
+  "biss": {
+   "ack": 1,
+   "start_edge": 4,
+   "stop": 1,
+   "mt": 0,
+   "st": 0,
+   "nE": 0,
+   "nW": 0,
+   "crc_wire": "3f",
+   "crc_calc": "3f",
+   "t_lat_us": 15.776,
+   "st_err_deg": -86.44219753507133
+  }
+ },
+ "spi": [
+  {
+   "kind": "SPIWR",
+   "t": "3476.0",
+   "addr": "07",
+   "data": "0040"
+  },
+  {
+   "kind": "SPIWR",
+   "t": "5051.0",
+   "addr": "18",
+   "data": "00ba"
+  },
+  {
+   "kind": "SPIRD",
+   "t": "6626.0",
+   "addr": "19",
+   "data": "17a7",
+   "status": "80"
+  },
+  {
+   "kind": "SPIRD",
+   "t": "8201.0",
+   "addr": "1f",
+   "data": "2736",
+   "status": "80"
+  },
+  {
+   "kind": "SPIRD",
+   "t": "9776.0",
+   "addr": "19",
+   "data": "2888",
+   "status": "80"
+  },
+  {
+   "kind": "SPIRD",
+   "t": "11351.0",
+   "addr": "01",
+   "data": "0190",
+   "status": "90"
+  }
+ ],
+ "verdict": "failed"
+}

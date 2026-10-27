@@ -142,6 +142,11 @@ module t10_master (
             #(`T10_SETTLE_NS); tb_reset;
             spi_wr(7'h07, 16'd64);  // TIMEOUT_TICKS 64 (about 2.1 us; deviation D3)
             write_crc;              // CAL_VALID = 1 so that nW = 1 in the frame
+`ifdef T10_T2_WAIT_NS
+            // fourth budget: wait until the tracking loop has locked (POS_VALID: 16 pairs with |e| < 11.25 deg
+            // after the acquisition, about 21 us after the reset at the reset loop gains) before the reads
+            #(`T10_T2_WAIT_NS);
+`endif
             // pipelined reads: each frame returns the register named in the previous frame
             spi_x({1'b1, 7'h19, 16'd0}, 24); t0 = t_cs;
             spi_x({1'b1, 7'h1F, 16'd0}, 24); $display("T10RES SPIRD t=%0.1f addr=19 data=%04h status=%02h", t0, mi[15:0], mi[23:16]); t0 = t_cs;

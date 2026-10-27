@@ -291,7 +291,11 @@ def test2(w, res, mon, run):
 
 def adc_lsb(w):
     vr = float(np.mean(w['xu_adc.vrefo'][w['time'] > w['time'][-1] / 2]))
-    return 2 * 0.914 * vr / 4096.0, vr
+    # Fourth budget: the r1_adc revision-5 record with the design weights (r1_regs reset weights): nominal line
+    # 2047.5 + v / LSB, LSB = 454.9 uV x VREF / 1.045 V (r1_adc sim/results/r5/isa5_tt.json, locate run; gain fit
+    # 0.99825 on that line). The earlier constant 2 x 0.914 V x VREF / 4096 was the revision-3 full scale at
+    # VREF 1.0 V and is 2.5 % too large for revision 5.
+    return 454.9e-6 * vr / 1.045, vr
 
 
 def test3(w, res, mon, run):
