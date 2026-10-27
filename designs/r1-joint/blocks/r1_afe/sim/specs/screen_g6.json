@@ -1,0 +1,167 @@
+{
+ "question": "Revision F1 screen G6 (schematic): with WCP 8 um the stage-1 CM error at input CM 0.5 V leaves the stage-1 output at 0.44 V (ss); raise the stage-1 CM target vcm1 (divider XRD1/XRD2, same total length) from 1.0 to 1.15 / 1.25 V at 3.3 V: stage-1 output CM at low and high input CM, CM1/DM1 margins, f_c",
+ "variants": {
+  "H1": {
+   "fv": "a1cc25+a1cx15+a1cp8",
+   "rx": [
+    [
+     "r1_afe_ota",
+     "(?m)^(XMB6 [^\\n]*?) l=\\S+",
+     "\\1 l=3u"
+    ],
+    [
+     "r1_afe_ch",
+     "WCCB=24u",
+     "WCCB=30u"
+    ],
+    [
+     "r1_afe_s1side",
+     "w=\\{WCF1\\} l=\\{WCF1\\}",
+     "w=28.17u l=28.17u"
+    ],
+    [
+     "r1_afe_s2side",
+     "w=\\{WCF2\\} l=\\{WCF2\\}",
+     "w=39.67u l=39.67u"
+    ],
+    [
+     "r1_afe",
+     "XRD1 vdd vcm1 vss rppd w=1u l=2142u",
+     "XRD1 vdd vcm1 vss rppd w=1u l=2007u"
+    ],
+    [
+     "r1_afe",
+     "XRD2 vcm1 vss vss rppd w=1u l=935u",
+     "XRD2 vcm1 vss vss rppd w=1u l=1070u"
+    ]
+   ]
+  },
+  "H2": {
+   "fv": "a1cc25+a1cx15+a1cp8",
+   "rx": [
+    [
+     "r1_afe_ota",
+     "(?m)^(XMB6 [^\\n]*?) l=\\S+",
+     "\\1 l=3u"
+    ],
+    [
+     "r1_afe_ch",
+     "WCCB=24u",
+     "WCCB=30u"
+    ],
+    [
+     "r1_afe_s1side",
+     "w=\\{WCF1\\} l=\\{WCF1\\}",
+     "w=28.17u l=28.17u"
+    ],
+    [
+     "r1_afe_s2side",
+     "w=\\{WCF2\\} l=\\{WCF2\\}",
+     "w=39.67u l=39.67u"
+    ],
+    [
+     "r1_afe",
+     "XRD1 vdd vcm1 vss rppd w=1u l=2142u",
+     "XRD1 vdd vcm1 vss rppd w=1u l=1912u"
+    ],
+    [
+     "r1_afe",
+     "XRD2 vcm1 vss vss rppd w=1u l=935u",
+     "XRD2 vcm1 vss vss rppd w=1u l=1165u"
+    ]
+   ]
+  }
+ },
+ "jobs": [
+  {
+   "tag": "op_tt_ib10.14_cm0.5",
+   "tmpl": "tb_afe_op.cir",
+   "corner": "tt",
+   "subs": {
+    "VCMI": 0.5,
+    "IB": "10.14u"
+   }
+  },
+  {
+   "tag": "op_ss_ib11.81_cm0.5",
+   "tmpl": "tb_afe_op.cir",
+   "corner": "ss",
+   "subs": {
+    "VCMI": 0.5,
+    "IB": "11.81u"
+   }
+  },
+  {
+   "tag": "op_ss_ib11.81_cm2.5",
+   "tmpl": "tb_afe_op.cir",
+   "corner": "ss",
+   "subs": {
+    "VCMI": 2.5,
+    "IB": "11.81u"
+   }
+  },
+  {
+   "tag": "op_ff_ib9.00_cm2.8",
+   "tmpl": "tb_afe_op.cir",
+   "corner": "ff",
+   "subs": {
+    "VCMI": 2.8,
+    "IB": "9.00u"
+   }
+  },
+  {
+   "tag": "stb_ffx_ib6.9_cm0.5",
+   "tmpl": "tb_afe_stb.cir",
+   "corner": "ffx",
+   "subs": {
+    "VCMI": 0.5,
+    "KLIST": "0 5",
+    "LLIST": "1 2 4 5",
+    "IB": "6.9u",
+    "CL": "2.8p"
+   }
+  },
+  {
+   "tag": "stb_ffx_ib6.9_cm2.5",
+   "tmpl": "tb_afe_stb.cir",
+   "corner": "ffx",
+   "subs": {
+    "VCMI": 2.5,
+    "KLIST": "0 5",
+    "LLIST": "1 2 4 5",
+    "IB": "6.9u",
+    "CL": "2.8p"
+   }
+  },
+  {
+   "tag": "stb_ssx_ib6.94_cm2.5",
+   "tmpl": "tb_afe_stb.cir",
+   "corner": "ssx",
+   "subs": {
+    "VCMI": 2.5,
+    "KLIST": "0 5",
+    "LLIST": "1 2 4 5",
+    "IB": "6.94u",
+    "CL": "2.8p"
+   }
+  },
+  {
+   "tag": "ac_ss_ib11.81_cm0.5",
+   "tmpl": "tb_afe_ac.cir",
+   "corner": "ss",
+   "subs": {
+    "VCMI": 0.5,
+    "IB": "11.81u"
+   }
+  },
+  {
+   "tag": "ac_ss_ib11.81_cm2.5",
+   "tmpl": "tb_afe_ac.cir",
+   "corner": "ss",
+   "subs": {
+    "VCMI": 2.5,
+    "IB": "11.81u"
+   }
+  }
+ ]
+}

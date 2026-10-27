@@ -1,0 +1,25 @@
+{
+ "question": "Post-layout DM2 return ratio has a DC phase of -180 deg and 91 dB DC gain (schematic 0 deg, 76 dB), flagged RHP by stb_post (also on E3-dev11): is it the extracted R or the extracted C? E4-dev12b R-only and C-only netlists, ffx 6.9 uA, CM 0.5 V, x1, DM2 loop only",
+ "variants": {
+  "Ronly": {
+   "netlist": "$G1_RESULTS_ROOT/r1_afe/pexr-e4-dev12b/r1_afe_post_rc.spice"
+  },
+  "Conly": {
+   "netlist": "$G1_RESULTS_ROOT/r1_afe/pexrc-e4-dev12b/r1_afe_post_c.spice"
+  }
+ },
+ "jobs": [
+  {
+   "tag": "stb_ffx_ib6.9_cm0.5_dm2",
+   "tmpl": "tb_afe_stb.cir",
+   "corner": "ffx",
+   "subs": {
+    "VCMI": 0.5,
+    "KLIST": "0",
+    "LLIST": "4",
+    "IB": "6.9u",
+    "CL": "2.8p"
+   }
+  }
+ ]
+}

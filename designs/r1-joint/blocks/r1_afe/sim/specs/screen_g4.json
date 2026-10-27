@@ -1,0 +1,151 @@
+{
+ "question": "Revision F1 screen G4 (schematic): the CMFB pair width WCP 8 um (G3 D2) lowers the stage-1 output CM at input CM 0.5 V (tt 0.61, ss 0.44 V); WCP 12 / 16, WCP 16 with CM-sense lead caps WCS 28 um, or WCP 8 with XMB6 L 4 um: CM1 margin at ffx 6.9 uA vs stage-1 CM and f_c",
+ "variants": {
+  "E2": {
+   "fv": "a1cc25+a1cx15+a1cp12",
+   "rx": [
+    [
+     "r1_afe_ota",
+     "(?m)^(XMB6 [^\\n]*?) l=\\S+",
+     "\\1 l=3u"
+    ],
+    [
+     "r1_afe_ch",
+     "WCCB=24u",
+     "WCCB=30u"
+    ],
+    [
+     "r1_afe_s1side",
+     "w=\\{WCF1\\} l=\\{WCF1\\}",
+     "w=28.17u l=28.17u"
+    ],
+    [
+     "r1_afe_s2side",
+     "w=\\{WCF2\\} l=\\{WCF2\\}",
+     "w=39.67u l=39.67u"
+    ]
+   ]
+  },
+  "E3": {
+   "fv": "a1cc25+a1cx15",
+   "rx": [
+    [
+     "r1_afe_ota",
+     "(?m)^(XMB6 [^\\n]*?) l=\\S+",
+     "\\1 l=3u"
+    ],
+    [
+     "r1_afe_ch",
+     "WCCB=24u",
+     "WCCB=30u"
+    ],
+    [
+     "r1_afe_s1side",
+     "w=\\{WCF1\\} l=\\{WCF1\\}",
+     "w=28.17u l=28.17u"
+    ],
+    [
+     "r1_afe_s2side",
+     "w=\\{WCF2\\} l=\\{WCF2\\}",
+     "w=39.67u l=39.67u"
+    ]
+   ]
+  },
+  "E4": {
+   "fv": "a1cc25+a1cx15",
+   "rx": [
+    [
+     "r1_afe_ota",
+     "(?m)^(XMB6 [^\\n]*?) l=\\S+",
+     "\\1 l=3u"
+    ],
+    [
+     "r1_afe_ch",
+     "WCCB=24u",
+     "WCCB=30u"
+    ],
+    [
+     "r1_afe_ch",
+     "WCS=22u",
+     "WCS=28u"
+    ],
+    [
+     "r1_afe_s1side",
+     "w=\\{WCF1\\} l=\\{WCF1\\}",
+     "w=28.17u l=28.17u"
+    ],
+    [
+     "r1_afe_s2side",
+     "w=\\{WCF2\\} l=\\{WCF2\\}",
+     "w=39.67u l=39.67u"
+    ]
+   ]
+  },
+  "E5": {
+   "fv": "a1cc25+a1cx15+a1cp8",
+   "rx": [
+    [
+     "r1_afe_ota",
+     "(?m)^(XMB6 [^\\n]*?) l=\\S+",
+     "\\1 l=4u"
+    ],
+    [
+     "r1_afe_ch",
+     "WCCB=24u",
+     "WCCB=30u"
+    ],
+    [
+     "r1_afe_s1side",
+     "w=\\{WCF1\\} l=\\{WCF1\\}",
+     "w=28.17u l=28.17u"
+    ],
+    [
+     "r1_afe_s2side",
+     "w=\\{WCF2\\} l=\\{WCF2\\}",
+     "w=39.67u l=39.67u"
+    ]
+   ]
+  }
+ },
+ "jobs": [
+  {
+   "tag": "stb_ffx_ib6.9_cm0.5",
+   "tmpl": "tb_afe_stb.cir",
+   "corner": "ffx",
+   "subs": {
+    "VCMI": 0.5,
+    "KLIST": "0 5",
+    "LLIST": "1 2 4 5",
+    "IB": "6.9u",
+    "CL": "2.8p"
+   }
+  },
+  {
+   "tag": "op_tt_ib10.14_cm0.5",
+   "tmpl": "tb_afe_op.cir",
+   "corner": "tt",
+   "subs": {
+    "VCMI": 0.5,
+    "IB": "10.14u"
+   }
+  },
+  {
+   "tag": "op_ss_ib11.81_cm0.5",
+   "tmpl": "tb_afe_op.cir",
+   "corner": "ss",
+   "subs": {
+    "VCMI": 0.5,
+    "IB": "11.81u"
+   }
+  },
+  {
+   "tag": "ac_ss_ib11.81_cm0.5",
+   "tmpl": "tb_afe_ac.cir",
+   "corner": "ss",
+   "subs": {
+    "VCMI": 0.5,
+    "IB": "11.81u"
+   }
+  }
+ ]
+}

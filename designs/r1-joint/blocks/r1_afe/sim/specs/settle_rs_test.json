@@ -1,0 +1,23 @@
+{
+ "question": "Convergence test: settle tt x32 +100 % on E4 dev12b with .option rshunt=1e12 (plain template did not converge in 30 min)",
+ "variants": {
+  "E4": {
+   "netlist": "$G1_RESULTS_ROOT/r1_afe/pexrc-e4-dev12b/r1_afe_post_rc.spice"
+  }
+ },
+ "jobs": [
+  {
+   "tag": "settle_tt_x32_p100",
+   "tmpl": "tb_afe_settle_adc_rs.cir",
+   "corner": "tt",
+   "subs": {
+    "CODE": 5,
+    "AMP": 0.021875,
+    "VCMI": 2.45,
+    "CS": "2.8p",
+    "VRST": 0.0,
+    "IB": "10.14u"
+   }
+  }
+ ]
+}

@@ -1,0 +1,37 @@
+{
+ "question": "Layout E4 dev12b wiring-R netlist, tt 10.14 uA, CM 2.5 V: which wiring makes the x32 DC differential output offset (-120 mV, schematic 0)?",
+ "variants": {
+  "base": {
+   "netlist": "$G1_RESULTS_ROOT/r1_afe/revF1/elim-e4d12b/base.spice"
+  },
+  "vdd_ch": {
+   "netlist": "$G1_RESULTS_ROOT/r1_afe/revF1/elim-e4d12b/vdd_ch.spice"
+  },
+  "vss_ch": {
+   "netlist": "$G1_RESULTS_ROOT/r1_afe/revF1/elim-e4d12b/vss_ch.spice"
+  },
+  "sig_ch": {
+   "netlist": "$G1_RESULTS_ROOT/r1_afe/revF1/elim-e4d12b/sig_ch.spice"
+  },
+  "top": {
+   "netlist": "$G1_RESULTS_ROOT/r1_afe/revF1/elim-e4d12b/top.spice"
+  },
+  "sig_s1": {
+   "netlist": "$G1_RESULTS_ROOT/r1_afe/revF1/elim-e4d12b/sig_s1.spice"
+  },
+  "sig_s2": {
+   "netlist": "$G1_RESULTS_ROOT/r1_afe/revF1/elim-e4d12b/sig_s2.spice"
+  }
+ },
+ "jobs": [
+  {
+   "tag": "op_tt_ib10.14_cm2.5",
+   "tmpl": "tb_afe_op.cir",
+   "corner": "tt",
+   "subs": {
+    "VCMI": 2.5,
+    "IB": "10.14u"
+   }
+  }
+ ]
+}

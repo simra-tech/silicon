@@ -1,0 +1,179 @@
+{
+ "question": "Revision F1 screen G2 (schematic): XMB6 L 3 um (OTA1 CMFB headroom, screen G1) with the OTA1 caps toward revision E (WCC 25 or 24.7, XCX 15, CMFB pair 8 um), WCCB 24/27 um, anti-alias cap area -5/-10 %: DM1/CM1 at ffx 6.9 uA, GM at tt 15.4 uA, f_c at ss, noise x32 ss, pole matching 20 MC at ss",
+ "variants": {
+  "C0": {
+   "rx": [
+    [
+     "r1_afe_ota",
+     "(?m)^(XMB6 [^\\n]*?) l=\\S+",
+     "\\1 l=3u"
+    ]
+   ]
+  },
+  "C1": {
+   "fv": "a1cc25+a1cx15+a1cp8",
+   "rx": [
+    [
+     "r1_afe_ota",
+     "(?m)^(XMB6 [^\\n]*?) l=\\S+",
+     "\\1 l=3u"
+    ]
+   ]
+  },
+  "C2": {
+   "fv": "a1cc25+a1cx15+a1cp8",
+   "rx": [
+    [
+     "r1_afe_ota",
+     "(?m)^(XMB6 [^\\n]*?) l=\\S+",
+     "\\1 l=3u"
+    ],
+    [
+     "r1_afe_ch",
+     "WCCB=24u",
+     "WCCB=27u"
+    ]
+   ]
+  },
+  "C3": {
+   "fv": "a1cc25+a1cx15+a1cp8",
+   "rx": [
+    [
+     "r1_afe_ota",
+     "(?m)^(XMB6 [^\\n]*?) l=\\S+",
+     "\\1 l=3u"
+    ],
+    [
+     "r1_afe_ch",
+     "WCCB=24u",
+     "WCCB=27u"
+    ],
+    [
+     "r1_afe_s1side",
+     "w=\\{WCF1\\} l=\\{WCF1\\}",
+     "w=28.17u l=28.17u"
+    ],
+    [
+     "r1_afe_s2side",
+     "w=\\{WCF2\\} l=\\{WCF2\\}",
+     "w=39.67u l=39.67u"
+    ]
+   ]
+  },
+  "C4": {
+   "fv": "a1cc25+a1cx15+a1cp8",
+   "rx": [
+    [
+     "r1_afe_ota",
+     "(?m)^(XMB6 [^\\n]*?) l=\\S+",
+     "\\1 l=3u"
+    ],
+    [
+     "r1_afe_ch",
+     "WCCB=24u",
+     "WCCB=27u"
+    ],
+    [
+     "r1_afe_s1side",
+     "w=\\{WCF1\\} l=\\{WCF1\\}",
+     "w=27.42u l=27.42u"
+    ],
+    [
+     "r1_afe_s2side",
+     "w=\\{WCF2\\} l=\\{WCF2\\}",
+     "w=38.61u l=38.61u"
+    ]
+   ]
+  },
+  "C5": {
+   "fv": "a1cc24.7+a1cx15+a1cp8",
+   "rx": [
+    [
+     "r1_afe_ota",
+     "(?m)^(XMB6 [^\\n]*?) l=\\S+",
+     "\\1 l=3u"
+    ],
+    [
+     "r1_afe_ch",
+     "WCCB=24u",
+     "WCCB=27u"
+    ],
+    [
+     "r1_afe_s1side",
+     "w=\\{WCF1\\} l=\\{WCF1\\}",
+     "w=28.17u l=28.17u"
+    ],
+    [
+     "r1_afe_s2side",
+     "w=\\{WCF2\\} l=\\{WCF2\\}",
+     "w=39.67u l=39.67u"
+    ]
+   ]
+  }
+ },
+ "jobs": [
+  {
+   "tag": "stb_ffx_ib6.9_cm0.5",
+   "tmpl": "tb_afe_stb.cir",
+   "corner": "ffx",
+   "subs": {
+    "VCMI": 0.5,
+    "KLIST": "0 5",
+    "LLIST": "1 2 4 5",
+    "IB": "6.9u",
+    "CL": "2.8p"
+   }
+  },
+  {
+   "tag": "stb_tt_ib15.4_cm2.5",
+   "tmpl": "tb_afe_stb.cir",
+   "corner": "tt",
+   "subs": {
+    "VCMI": 2.5,
+    "KLIST": "0 5",
+    "LLIST": "1 2 4 5",
+    "IB": "15.4u",
+    "CL": "2.8p"
+   }
+  },
+  {
+   "tag": "ac_ss_ib11.81_cm0.5",
+   "tmpl": "tb_afe_ac.cir",
+   "corner": "ss",
+   "subs": {
+    "VCMI": 0.5,
+    "IB": "11.81u"
+   }
+  },
+  {
+   "tag": "noise_ss_ib11.81",
+   "tmpl": "tb_afe_noise.cir",
+   "corner": "ss",
+   "subs": {
+    "IB": "11.81u"
+   }
+  },
+  {
+   "tag": "acmc_ss_s101",
+   "tmpl": "tb_afe_ac.cir",
+   "corner": "ss",
+   "mismatch": true,
+   "subs": {
+    "NMC": 10,
+    "SEED": 101,
+    "IB": "11.81u"
+   }
+  },
+  {
+   "tag": "acmc_ss_s102",
+   "tmpl": "tb_afe_ac.cir",
+   "corner": "ss",
+   "mismatch": true,
+   "subs": {
+    "NMC": 10,
+    "SEED": 102,
+    "IB": "11.81u"
+   }
+  }
+ ]
+}

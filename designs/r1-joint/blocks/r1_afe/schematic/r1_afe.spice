@@ -1,4 +1,4 @@
-* r1_afe -- R1 encoder analog front end, schematic-level SPICE source (revision F, 2026-10-26; revision E: r1_afe_revE.spice, revision D, 2026-10-20; revision C: r1_afe_revC.spice, revision B: r1_afe_revB.spice)
+* r1_afe -- R1 encoder analog front end, schematic-level SPICE source (revision F1, 2026-10-26; revision F: r1_afe_revF.spice, revision E: r1_afe_revE.spice, revision D, 2026-10-20; revision C: r1_afe_revC.spice, revision B: r1_afe_revB.spice)
 * Two identical channels (sine, cosine). Each channel:
 *   stage 1  PGA  : inverting, fully differential, gain n1 = 1/2/4/8 (Rf1 = 1 unit, Rin1 = n1 parallel units)
 *   stage 2  LS   : inverting, gain 36/35 or 144/35 (rev D, D16: 1.44 Vpp out; rev C 8/7 for D11), output common mode 0.6 V (level shift 1.0 V -> 0.6 V)
@@ -13,6 +13,13 @@
 *   OTA2: CMFB pair 64u -> 32u, fixed sink 0.5u -> 20u and CMFB sink 20u -> 10u (lower CM loop gain), sense caps
 *         6u -> 14u square, Cc 16u -> 18u square, Rz 1.0k -> 1.6k (LRZ 6u)
 *   stage 2: Rin2 14k -> 17.5k (gain 8/7 and 32/7, D11)
+* revision F1 (2026-10-26, track T3 revision F1 / layout E4; screens r1afe-screen-g1 .. -g6; revision F kept as
+*   r1_afe_revF.spice):
+*   OTA1: vbnc diode XMB6 L 2u -> 3u: more drain headroom for the CMFB sinks XMN3/4 at low input CM (the
+*         stage-1 CM loop ran out of range at input CM 0.5 V; layout E3 moved the stage-1 output CM to 0.06 V at tt)
+*   OTA1: Miller cap WCC 28u -> 25u, cross caps XCX1/XCX2 20u -> 15u square (back to revision E: pole matching),
+*         CMFB pair WCP 16u -> 8u, switched Miller part WCCB 24u -> 28u (DM1 margin after layout at ffx, 6.9 uA)
+*   anti-alias caps: WCF1 28.9u -> 28.17u, WCF2 40.7u -> 39.67u
 * revision F (2026-10-26, track T3 revision F / layout E3; screens r1afe-screen-f2, -f3 on the schematic and on the
 *   E3-dev2 RC netlist; revision E kept as r1_afe_revE.spice):
 *   OTA1: Miller cap WCC 25u -> 28u square and cross-coupled caps XCX1/XCX2 15u -> 20u square: the DM
@@ -38,7 +45,7 @@
 *   OTA2: output stage W2P/W2N 80u/40u -> 120u/60u (+50 % current, about +0.2 mA for both channels) and output
 *         per-side caps WCOS 18.3u -> 30u (settling into the r1_adc T/H, dev-revd-settle-05, o2i1.5 + ro11.55_44.7_30)
 .param LRO=11.55u WCOD=44.7u WCOS=30u
-.param LU1=153.85u LS2=74.79u LRF2=76.9u WCF1=28.9u WCF2=40.7u
+.param LU1=153.85u LS2=74.79u LRF2=76.9u WCF1=28.17u WCF2=39.67u
 
 *------------------------------------------------------------------------------
 * Rail-to-rail-input fully differential two-stage OTA
@@ -56,7 +63,7 @@ XMB2 vbp vbp vdd vdd sg13_hv_pmos w=8u l=1u ng=1 m=1 mm_ok=1
 XMB3 vbpc vbpc vdd vdd sg13_hv_pmos w=2u l=3u ng=1 m=1 mm_ok=1
 XMB4 vbpc ibias vss vss sg13_hv_nmos w=4u l=1u ng=1 m=1 mm_ok=1
 XMB5 vbnc vbp vdd vdd sg13_hv_pmos w=8u l=1u ng=1 m=1 mm_ok=1
-XMB6 vbnc vbnc vss vss sg13_hv_nmos w=1u l=2u ng=1 m=1 mm_ok=1
+XMB6 vbnc vbnc vss vss sg13_hv_nmos w=1u l=3u ng=1 m=1 mm_ok=1
 * PMOS input pair (60 uA tail)
 XMPT tp vbp vdd vdd sg13_hv_pmos w={WPT} l=1u ng=6 m=1 mm_ok=1
 XMP1 fn inp tp vdd sg13_hv_pmos w=80u l=2u ng=16 m=1 mm_ok=1
@@ -94,8 +101,8 @@ XTC2 cz2 cb2 cen cenb vdd vss r1_afe_tg
 * CMFB: NMOS sinks = fixed part (MN3A/MN4A, from ibias) + CMFB part (MN3/MN4, mirror of MC3)
 XRS1 outp vcms vss rppd w=1u l=770u m=1 b=0 mm_ok=1
 XRS2 outn vcms vss rppd w=1u l=770u m=1 b=0 mm_ok=1
-XCX1 cz1 outn cap_cmim w=20u l=20u m=1 mm_ok=1
-XCX2 cz2 outp cap_cmim w=20u l=20u m=1 mm_ok=1
+XCX1 cz1 outn cap_cmim w=15u l=15u m=1 mm_ok=1
+XCX2 cz2 outp cap_cmim w=15u l=15u m=1 mm_ok=1
 XCS1 outp vcms cap_cmim w={WCS} l={WCS} m=1 mm_ok=1
 XCS2 outn vcms cap_cmim w={WCS} l={WCS} m=1 mm_ok=1
 XMCT tc vbp vdd vdd sg13_hv_pmos w={WCT} l=1u ng=4 m=1 mm_ok=1
@@ -244,7 +251,7 @@ XI4 c4 c4b vdd vss r1_afe_inv
 * stage 1 (inverting: inp -> m1n)
 XS1P inp x1p m1n c1 c1b c2 c2b c3 c3b vdd vss r1_afe_s1side
 XS1N inn x1n m1p c1 c1b c2 c2b c3 c3b vdd vss r1_afe_s1side
-XA1 x1p x1n m1p m1n vcm1 ib1 c3b c3 vdd vss r1_afe_ota W2N=8u W2P=48u WCC=28u WCCB=24u LRZ=21u WCP=16u LCP=1u WCT=48u WN3A=0.5u WN3B=16u LN3B=2u WCS=22u WPT=72u
+XA1 x1p x1n m1p m1n vcm1 ib1 c3b c3 vdd vss r1_afe_ota W2N=8u W2P=48u WCC=25u WCCB=28u LRZ=21u WCP=8u LCP=1u WCT=48u WN3A=0.5u WN3B=16u LN3B=2u WCS=22u WPT=72u
 * stage 2 (inverting again: m1n -> outp, so outp follows inp)
 XS2P m1n x2p op2 c4 c4b vdd vss r1_afe_s2side
 XS2N m1p x2n on2 c4 c4b vdd vss r1_afe_s2side

@@ -51,6 +51,8 @@ VDDGRID = globals().get('vddgrid', '1') == '1'   # E3: channel vdd grid (Metal5 
 VSSGRID = globals().get('vssgrid', '1') == '1'   # E3 (revision F): channel vss grid (Metal4 NMOS row buses and trunk)
 TRUNK_ALL = globals().get('trunkall', '1') == '1'  # E3 final: grid trunks over all bus rows; vss trunk down to the east vss pin
 ISLANDFIX = globals().get('islandfix', '1') == '1'  # E3 final (dev11): drop grid segments with no path up to the plate or trunk
+JUMPERS = globals().get('jumpers', '1') == '1'  # E4 (revision F1): Metal4 jumpers from a vdd row bus without plate cover to the bus of the next row
+VSSMESH = globals().get('vssmesh', '1') == '1'  # layout E4 iteration 2 (layout-e4-dev13x): Metal4 jumpers between adjacent vss row buses every 16 um; -rd vssmesh=0 gives E4-dev12b
 # P/N pairs of the channel and of the top level, balanced per layer after routing
 CH_PAIRS = [('outp', 'outn'), ('op2', 'on2'), ('m1p', 'm1n'), ('x1p', 'x1n'), ('x2p', 'x2n'), ('inp', 'inn')]
 CH_FIRST = ['xa1_vcms', 'xa2_vcms'] + [n for pr in CH_PAIRS for n in pr]
@@ -693,10 +695,93 @@ def vdd_grid(blk, Wc, Hc, log=print, net='vdd', kind='p', use_plate=True, trunk_
     # dropped with its stacks, and the router connects those device pins.
     def up(st):
         return st[2] == 5
-    segs = [(xa, yt, xe) for (xa, yt, xe) in segs
-            if (any(st[1] == yt and xa - 1e-6 <= st[0] <= xe + 1e-6 and up(st) for st in stacks_d) if ISLANDFIX else
-                any(st[1] == yt and xa - 1e-6 <= st[0] <= xe + 1e-6 and st[2] != 'v4' for st in stacks_d))
-            or (tx is not None and xe >= tx - 1e-6 and on_trunk(yt))]
+    # E4 (revision F1, layout-e4-dev12): a vdd bus segment with no stack up to the plate and no trunk connection (the
+    # OTA1 row at y = 152 um under the MIM caps: the bias diode XMB2 and the row devices were router-connected with
+    # 56-82 Ohm while the folded-cascode sources XMP3/4 sat on a plate-fed row; 9-11 mV of source-gate difference moved
+    # the stage-1 output CM to 0.06 V at tt, r1afe-elim-e3d11) gets up to 3 vertical Metal4 jumpers (2 tracks wide) to
+    # a kept bus segment of the adjacent bus row, on columns whose router nodes are free.
+    def conn(sg):
+        xa, yt, xe = sg
+        return ((any(st[1] == yt and xa - 1e-6 <= st[0] <= xe + 1e-6 and up(st) for st in stacks_d) if ISLANDFIX else
+                 any(st[1] == yt and xa - 1e-6 <= st[0] <= xe + 1e-6 and st[2] != 'v4' for st in stacks_d))
+                or (tx is not None and xe >= tx - 1e-6 and on_trunk(yt)))
+    jumpers, jkept = [], set()
+    if JUMPERS and net == 'vdd':
+        kept = [sg for sg in segs if conn(sg)]
+        rest = [sg for sg in segs if not conn(sg)]
+        rowy = sorted(set(b[1] for b in buses))
+        changed = True
+        while changed and rest:
+            changed = False
+            for sg in list(rest):
+                xa, yt, xe = sg
+                for t in kept:
+                    xb, yb, xf = t
+                    if yb == yt or any(min(yb, yt) < y_ < max(yb, yt) for y_ in rowy):
+                        continue
+                    ya_, yz_ = (round(yb + P, 4), yt) if yb < yt else (round(yt + P, 4), yb)
+                    cols = []
+                    for x in gpts(max(xa, xb), min(xe, xf) - P):
+                        ok = True
+                        for xx in (x, round(x + P, 4)):
+                            for y_ in gpts(ya_, yz_):
+                                i, j = R.ij(xx, y_)
+                                if not R.inside(i, j) or R.res[2, i, j] not in (-1, k) or (2, xx, y_) in near:
+                                    ok = False; break
+                            if not ok:
+                                break
+                        if ok:
+                            cols.append(x)
+                    sel = []
+                    for x in ([cols[0], cols[len(cols) // 2], cols[-1]] if len(cols) >= 3 else cols):
+                        if all(abs(x - x_) >= 4 * P for x_ in sel):
+                            sel.append(x)
+                    if not sel:
+                        continue
+                    for x in sel:
+                        for xx in (x, round(x + P, 4)):
+                            for y_ in gpts(ya_, yz_):
+                                i, j = R.ij(xx, y_)
+                                if (2, i, j) not in goodset:
+                                    prev[(2, i, j)] = int(R.res[2, i, j])
+                                    R.res[2, i, j] = k
+                                    good.append((2, i, j)); goodset.add((2, i, j))
+                        jumpers.append((x, ya_, yz_))
+                    jkept.add(sg); kept.append(sg); rest.remove(sg); changed = True
+                    break
+    segs = [sg for sg in segs if conn(sg) or sg in jkept]
+    if VSSMESH and net == 'vss':
+        # E4 iteration 2 (layout-e4-dev13x): the OTA2 NMOS row bus carries the output-stage current past the CMFB sinks to the east trunk;
+        # mesh the row buses so that the gradient along the row is lower (r1afe-dm2-e4d12b2: channel vss wiring sets the
+        # DC -180 deg of the post-layout DM2 return ratio)
+        rowy = sorted(set(sg[1] for sg in segs))
+        for ya, yb in zip(rowy, rowy[1:]):
+            lo = [sg for sg in segs if sg[1] == ya]; hi = [sg for sg in segs if sg[1] == yb]
+            for (xa, _, xe) in lo:
+                for (xb, _, xf) in hi:
+                    y0_, y1_ = round(ya + P, 4), yb
+                    last = None
+                    for x in gpts(max(xa, xb), min(xe, xf) - P):
+                        if last is not None and x - last < 16.0 - 1e-6:
+                            continue
+                        ok = True
+                        for xx in (x, round(x + P, 4)):
+                            for y_ in gpts(y0_, y1_):
+                                i_, j_ = R.ij(xx, y_)
+                                if not R.inside(i_, j_) or R.res[2, i_, j_] not in (-1, k) or (2, xx, y_) in near:
+                                    ok = False; break
+                            if not ok:
+                                break
+                        if not ok:
+                            continue
+                        for xx in (x, round(x + P, 4)):
+                            for y_ in gpts(y0_, y1_):
+                                i_, j_ = R.ij(xx, y_)
+                                if (2, i_, j_) not in goodset:
+                                    prev[(2, i_, j_)] = int(R.res[2, i_, j_])
+                                    R.res[2, i_, j_] = k
+                                    good.append((2, i_, j_)); goodset.add((2, i_, j_))
+                        jumpers.append((x, y0_, y1_)); last = x
     if ISLANDFIX:
         stacks_d = [st for st in stacks_d if st[2] != 4
                     or any(st[1] == yt and xa - 1e-6 <= st[0] <= xe + 1e-6 for (xa, yt, xe) in segs)]
@@ -708,6 +793,9 @@ def vdd_grid(blk, Wc, Hc, log=print, net='vdd', kind='p', use_plate=True, trunk_
     # of the net joins the grid pin only if it touches a drawn node or a drawn via stack (layout-e3-dev4/-dev5: an
     # output-cap vss pin was merged through an undrawn node and floated)
     drawn = set()
+    for (x, ya_, yz_) in jumpers:
+        for y_ in gpts(ya_, yz_):
+            drawn.add((2, *R.ij(x, y_))); drawn.add((2, *R.ij(round(x + P, 4), y_)))
     for (xa, yt, xe) in segs:
         for x in gpts(xa, xe):
             drawn.add((2, *R.ij(x, yt))); drawn.add((2, *R.ij(x, round(yt + P, 4))))
@@ -737,13 +825,14 @@ def vdd_grid(blk, Wc, Hc, log=print, net='vdd', kind='p', use_plate=True, trunk_
     R.pins[k] = [sorted(set(merged))] + rest
     g = dict(plate=plate, stacks=stacks_d, buses=segs, trunk=None, trunks=tsegs, dropped=len(set(nodes)) - len(good),
              released=released)
+    g['jumpers'] = jumpers
     if not hasattr(blk, 'grids'):
         blk.grids = []
     blk.grids.append(g)
     if net == 'vdd':
         blk.vddgrid = g
     st = dict(plate_um2=round(plate.area() / 1e6, 1), stacks=len(g['stacks']), buses=len(buses), bus_segments=len(segs), trunk=trunk, trunk_segments=tsegs,
-              dropped_nodes=g['dropped'], released_nodes=g['released'], rows=[dict(yt=r['yt'], cover=r[net + '_plate_cover'], bus=r[net + '_bus']) for r in rows])
+              dropped_nodes=g['dropped'], released_nodes=g['released'], jumpers=jumpers, rows=[dict(yt=r['yt'], cover=r[net + '_plate_cover'], bus=r[net + '_bus']) for r in rows])
     blk.stats[net + 'grid'] = st
     log('%s grid: %s' % (net, st))
 
@@ -767,6 +856,8 @@ def draw_grid(blk, g):
         blk.box('M4', xa - 0.3, yt - 0.3, xe + 0.3, yt + P + 0.3)
     for (xt0, y0, y1) in g.get('trunks', []):
         blk.box('M4', xt0 - 0.3, y0 - 0.3, xt0 + P + 0.3, y1 + 0.3)
+    for (x, y0, y1) in g.get('jumpers', []):
+        blk.box('M4', x - 0.3, y0 - 0.3, x + P + 0.3, y1 + 0.3)
 
 
 CH_EAST = ['vss', 'outp', 'outn', 'vss', 'ib1', 'ib2', 'vcm1', 'vcm2', 'vdd', 'c1', 'c2', 'c3', 'c4', 'vdd', 'vss', 'vdd']

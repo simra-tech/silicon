@@ -1,0 +1,61 @@
+{
+ "run_id": "r1afe-elim-e4d12b",
+ "campaign": "var:$G1_RESULTS_ROOT/r1_afe/r1afe-elim-e4d12b/frozen/var_spec.json",
+ "date_utc": "2026-10-26T22:27:02Z",
+ "command": "G1_CPUSET=106-108 G1_CPUS=3 G1_WORKDIR=designs/r1-joint/blocks/r1_afe/sim G1_RESULTS_ROOT=<bulk> flow/run.sh python3 run_afe.py var:$G1_RESULTS_ROOT/r1_afe/r1afe-elim-e4d12b/frozen/var_spec.json r1afe-elim-e4d12b",
+ "tools": {
+  "ngspice": "ngspice-46 : Circuit level simulation program",
+  "image_id": "sha256:ddeb69576f2808676d1c5d474ecf04f6d1d6f8abdcff6b72b39790ded924bab2",
+  "pdk_commit": "84374023ee8b4b126bebbba67fcbada0a9c0ff0b"
+ },
+ "inputs": {
+  "sim/tb_afe_op.cir": "68a57662613efcd4cfae80246b256c0e45756de45ea9a1324a97e5df3bc91a4a",
+  "sim/common_head.inc": "52ea3b1f1dda8aa3c448bf5977fb76f41feeb33019c36e7ad163e81eab0fcfd0",
+  "sim/gain_codes.inc": "a62c9d6daa3d544c36ac868c4e6a9266f32e581d093ac404c6c52bcc6e5276f6",
+  "schematic/r1_afe.spice": "3762a0a29cab4302fe84869104fe2c0be1754834b80c61bcbdf124d86cfe126e",
+  "sim/run_afe.py": "41d65c69d353468b4592aee3ed5772a1ac81d04ef93ef4d60fe087c7e0ed06b7"
+ },
+ "netlist_edits": null,
+ "variant_netlists": {
+  "base": {
+   "path": "r1_afe/r1afe-elim-e4d12b/frozen/var_base.spice",
+   "sha256": "5c575a40bf67f8fb7632c74f0eb807bbebde362c76b32ab4f48643511ab8173a"
+  },
+  "vdd_ch": {
+   "path": "r1_afe/r1afe-elim-e4d12b/frozen/var_vdd_ch.spice",
+   "sha256": "7da9febce462e6d4eb3d0da7e0faf08f7622de3d0d6fb2222e625876d68e248f"
+  },
+  "vss_ch": {
+   "path": "r1_afe/r1afe-elim-e4d12b/frozen/var_vss_ch.spice",
+   "sha256": "c1dd13d82af79e7a0b32e71687e613fa018a474ad3cac6f8232eb44f38c99973"
+  },
+  "sig_ch": {
+   "path": "r1_afe/r1afe-elim-e4d12b/frozen/var_sig_ch.spice",
+   "sha256": "604dbdedc4596f5439eef7eb75ddb82a4ed8fcbc1693cf46b5e5466add390ad3"
+  },
+  "top": {
+   "path": "r1_afe/r1afe-elim-e4d12b/frozen/var_top.spice",
+   "sha256": "b667b95557d135a2b3e5829a83917c2de636e46bf811e2231ab41193259c09a5"
+  },
+  "sig_s1": {
+   "path": "r1_afe/r1afe-elim-e4d12b/frozen/var_sig_s1.spice",
+   "sha256": "f4c35cb970373c1889c983f9187f0216a0afc1fe92b4bc94e8125a194145a779"
+  },
+  "sig_s2": {
+   "path": "r1_afe/r1afe-elim-e4d12b/frozen/var_sig_s2.spice",
+   "sha256": "c997f3a63bee90dc285345671311574f03fadf553a4cfd3591b7d41caae31c1a"
+  }
+ },
+ "netlist_sha256": "3762a0a29cab4302fe84869104fe2c0be1754834b80c61bcbdf124d86cfe126e",
+ "netlist_override": null,
+ "frozen_inputs": "$G1_RESULTS_ROOT/r1_afe/r1afe-elim-e4d12b/frozen/",
+ "lsb_V": 0.000439453125,
+ "raw": "$G1_RESULTS_ROOT/r1_afe/r1afe-elim-e4d12b/",
+ "jobs": 7,
+ "failed_jobs": [],
+ "wall_seconds": 310.3,
+ "summary": "results/r1afe-elim-e4d12b.json",
+ "question": "Layout E4 dev12b wiring-R netlist, tt 10.14 uA, CM 2.5 V: which wiring group sets the x32 DC differential output offset (-120 mV, schematic 0)?",
+ "result": "x32 odiff: base -120.0 mV; vdd_ch short -125.7; vss_ch -117.2; top -122.1; stage-2 signal -121.9; channel signal short +2.2 mV; stage-1 signal short -9.0 mV.",
+ "disposition": "cause isolated to stage-1 signal wiring; follow-up r1afe-elim-e4d12b2"
+}

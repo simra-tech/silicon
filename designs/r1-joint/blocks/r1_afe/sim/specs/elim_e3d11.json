@@ -1,0 +1,50 @@
+{
+ "question": "Layout E3 (dev11) RC netlist, tt 10.14 uA, input CM 0.5 V: which wiring (channel vdd, channel vss, channel signal, top level) moves the OTA1 stage-1 output CM from the schematic 0.73 V to 0.06 V?",
+ "variants": {
+  "base": {
+   "netlist": "$G1_RESULTS_ROOT/r1_afe/revF1/elim-e3d11/base.spice"
+  },
+  "vdd_ch": {
+   "netlist": "$G1_RESULTS_ROOT/r1_afe/revF1/elim-e3d11/vdd_ch.spice"
+  },
+  "vss_ch": {
+   "netlist": "$G1_RESULTS_ROOT/r1_afe/revF1/elim-e3d11/vss_ch.spice"
+  },
+  "sig_ch": {
+   "netlist": "$G1_RESULTS_ROOT/r1_afe/revF1/elim-e3d11/sig_ch.spice"
+  },
+  "top": {
+   "netlist": "$G1_RESULTS_ROOT/r1_afe/revF1/elim-e3d11/top.spice"
+  }
+ },
+ "jobs": [
+  {
+   "tag": "op_tt_ib10.14_cm0.5",
+   "tmpl": "tb_afe_op.cir",
+   "corner": "tt",
+   "subs": {
+    "VCMI": 0.5,
+    "IB": "10.14u"
+   }
+  },
+  {
+   "tag": "opv_tt_ib10.14_cm0.5",
+   "tmpl": "tb_afe_opv.cir",
+   "corner": "tt",
+   "subs": {
+    "VCMI": 0.5,
+    "IB": "10.14u",
+    "NODES": "v(xdut.xsin.xa1_vcmfb) v(xdut.xsin.xa1_vcms) v(xdut.xsin.xa1_o1n) v(xdut.xsin.xa1_o1p) v(xdut.xsin.xa1_fn) v(xdut.xsin.xa1_gn) v(xdut.xsin.xa1_tc) v(xdut.xsin.xa1_tp) v(xdut.xsin.xa1_vbp) v(xdut.xsin.xa1_vbpc) v(xdut.xsin.xa1_vbnc) v(xdut.xsin.vdd__p4) v(xdut.xsin.vdd__p5) v(xdut.xsin.vdd__p6) v(xdut.xsin.vdd__p7) v(xdut.xsin.vdd__p9) v(xdut.xsin.vdd__p10) v(xdut.xsin.vdd__p11) v(xdut.xsin.vdd__p12) v(xdut.xsin.vss__p9) v(xdut.xsin.vss__p11) v(xdut.xsin.x1p) v(xdut.xsin.x1n) v(xdut.xsin.vcm1)"
+   }
+  },
+  {
+   "tag": "op_tt_ib10.14_cm2.5",
+   "tmpl": "tb_afe_op.cir",
+   "corner": "tt",
+   "subs": {
+    "VCMI": 2.5,
+    "IB": "10.14u"
+   }
+  }
+ ]
+}

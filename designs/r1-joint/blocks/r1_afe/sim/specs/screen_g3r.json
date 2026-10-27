@@ -1,0 +1,53 @@
+{
+ "question": "Revision F1 screen G3r: the F1 OTA1 device changes (XMB6 L 3 um, WCC 25, XCX 15, WCP 8, WCCB 30 um) applied to the dev11 RC netlist (E3 parasitics; anti-alias caps of revision F): stage-1 output CM at tt CM 0.5 V, DM1 at ffx 6.9 uA, f_c at ss (estimate of the post-layout loss before layout E4)",
+ "variants": {
+  "RD2": {
+   "netlist": "$G1_RESULTS_ROOT/r1_afe/pexrc-e3-dev11/r1_afe_post_rc.spice",
+   "fv": "a1cc25+a1cx15+a1cp8",
+   "rx": [
+    [
+     "r1_afe_ota",
+     "(?m)^(XMB6 [^\\n]*?) l=\\S+",
+     "\\1 l=3u"
+    ],
+    [
+     "r1_afe_ota",
+     "(?m)^(XCC[12]B [^\\n]*?cap_cmim) w=\\S+ l=\\S+",
+     "\\1 w=30u l=30u"
+    ]
+   ]
+  }
+ },
+ "jobs": [
+  {
+   "tag": "op_tt_ib10.14_cm0.5",
+   "tmpl": "tb_afe_op.cir",
+   "corner": "tt",
+   "subs": {
+    "VCMI": 0.5,
+    "IB": "10.14u"
+   }
+  },
+  {
+   "tag": "stb_ffx_ib6.9_cm0.5",
+   "tmpl": "tb_afe_stb.cir",
+   "corner": "ffx",
+   "subs": {
+    "VCMI": 0.5,
+    "KLIST": "0 5",
+    "LLIST": "1 2 4 5",
+    "IB": "6.9u",
+    "CL": "2.8p"
+   }
+  },
+  {
+   "tag": "ac_ss_ib11.81_cm0.5",
+   "tmpl": "tb_afe_ac.cir",
+   "corner": "ss",
+   "subs": {
+    "VCMI": 0.5,
+    "IB": "11.81u"
+   }
+  }
+ ]
+}

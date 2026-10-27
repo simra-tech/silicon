@@ -1,0 +1,30 @@
+{
+ "run_id": "pex-e4-dev12b",
+ "step": "Layout E4 iteration 1 (layout-e4-dev12b, revision F1): kpex 2.5D CC of r1_afe_ch and of the top cell without channels; wire and via resistance by the KLayout RNetExtractor; RC netlist with the output-stage MOS sources on their own ports; wiring-R-only netlist pexr-e4-dev12b (noc=1) built first for the DC check",
+ "date": "2026-10-26",
+ "commands": [
+  "G1_CPUSET=106-108; G1_RESULTS_ROOT=<bulk>; export G1_CPUSET G1_RESULTS_ROOT; sh designs/r1-joint/blocks/r1_afe/pex/run_pex.sh <G1_RESULTS_ROOT>/r1_afe/pex-e4-dev12b <G1_RESULTS_ROOT>/r1_afe/layout-e4-dev12b/r1_afe.gds",
+  "G1_WORKDIR=designs/r1-joint/blocks/r1_afe; flow/run.sh klayout -b -r pex/pex_rc_build.py -rd kchdir=<run>/kpex_ch/r1_afe_ch_flat__r1_afe_ch -rd ktopdir=<run>/kpex_top/r1_afe_top_flat__r1_afe -rd ports=<G1_RESULTS_ROOT>/r1_afe/layout-e4-dev12b/r1_afe_ports.json -rd out=<G1_RESULTS_ROOT>/r1_afe/pexrc-e4-dev12b  (and -rd noc=1 -rd out=.../pexr-e4-dev12b)",
+  "python3 pex/pair_loads.py dev11=<pex-e3-dev11 netlists> dev12b=<pex-e4-dev12b netlists> > pair_loads.json",
+  "python3 pex/rnet_report.py <G1_RESULTS_ROOT>/r1_afe/pexrc-e4-dev12b/r1_afe_post_rc.spice vdd vss > rnet_supply.json"
+ ],
+ "tools": {
+  "kpex": "0.3.12",
+  "klayout": "KLayout 0.30.9",
+  "image_id": "sha256:ddeb69576f2808676d1c5d474ecf04f6d1d6f8abdcff6b72b39790ded924bab2",
+  "pdk_commit": "84374023ee8b4b126bebbba67fcbada0a9c0ff0b"
+ },
+ "inputs": {
+  "<G1_RESULTS_ROOT>/r1_afe/layout-e4-dev12b/r1_afe.gds": "c17629b752d57a8b70faa29423512beac2649e0b5e488cfe492336823ab5ae97",
+  "layout/r1_afe_lvs.cdl": "6f38c1cc22a8ed4ec42cee3daadcd5d346cea8660863636fc5ed168578241ac7",
+  "schematic/r1_afe.spice": "3762a0a29cab4302fe84869104fe2c0be1754834b80c61bcbdf124d86cfe126e",
+  "pex/pex_rc_build.py": "3eb0623cd630bd815bf968f0b1ecd07b9679a7b34fe66d1ba69d1d02b2376ce4",
+  "pex/run_pex.sh": "2ae6053443fbb1fded0caf1d9cc3f27093c1ded71af7763f9a91a6c5d07afdd6"
+ },
+ "outputs": {
+  "<G1_RESULTS_ROOT>/r1_afe/pexrc-e4-dev12b/r1_afe_post_rc.spice": "809603dcafeeedfa9e960468ac61a24e46a70141e22b1b29738e3842b09a044a",
+  "<G1_RESULTS_ROOT>/r1_afe/pexr-e4-dev12b/r1_afe_post_rc.spice": "5c575a40bf67f8fb7632c74f0eb807bbebde362c76b32ab4f48643511ab8173a"
+ },
+ "result": "channel R elements 1338, ties 0; top 58, ties 0. Channel vdd worst 30.1 Ohm (dev11 82.4). Pair loads outp/outn 129.8/118.3 fF, op2/on2 244.1/258.6, m1p/m1n 311.3/322.8 (dev11: 4.5, 15.6, -4.7 fF differences).",
+ "disposition": "passed (extraction complete)"
+}

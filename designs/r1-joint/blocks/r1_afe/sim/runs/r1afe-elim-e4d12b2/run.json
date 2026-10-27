@@ -1,0 +1,49 @@
+{
+ "run_id": "r1afe-elim-e4d12b2",
+ "campaign": "var:$G1_RESULTS_ROOT/r1_afe/r1afe-elim-e4d12b2/frozen/var_spec.json",
+ "date_utc": "2026-10-26T22:30:43Z",
+ "command": "G1_CPUSET=106-108 G1_CPUS=3 G1_WORKDIR=designs/r1-joint/blocks/r1_afe/sim G1_RESULTS_ROOT=<bulk> flow/run.sh python3 run_afe.py var:$G1_RESULTS_ROOT/r1_afe/r1afe-elim-e4d12b2/frozen/var_spec.json r1afe-elim-e4d12b2",
+ "tools": {
+  "ngspice": "ngspice-46 : Circuit level simulation program",
+  "image_id": "sha256:ddeb69576f2808676d1c5d474ecf04f6d1d6f8abdcff6b72b39790ded924bab2",
+  "pdk_commit": "84374023ee8b4b126bebbba67fcbada0a9c0ff0b"
+ },
+ "inputs": {
+  "sim/tb_afe_op.cir": "68a57662613efcd4cfae80246b256c0e45756de45ea9a1324a97e5df3bc91a4a",
+  "sim/common_head.inc": "52ea3b1f1dda8aa3c448bf5977fb76f41feeb33019c36e7ad163e81eab0fcfd0",
+  "sim/gain_codes.inc": "a62c9d6daa3d544c36ac868c4e6a9266f32e581d093ac404c6c52bcc6e5276f6",
+  "schematic/r1_afe.spice": "3762a0a29cab4302fe84869104fe2c0be1754834b80c61bcbdf124d86cfe126e",
+  "sim/run_afe.py": "41d65c69d353468b4592aee3ed5772a1ac81d04ef93ef4d60fe087c7e0ed06b7"
+ },
+ "netlist_edits": null,
+ "variant_netlists": {
+  "s1_x1": {
+   "path": "r1_afe/r1afe-elim-e4d12b2/frozen/var_s1_x1.spice",
+   "sha256": "fdcd317066176eb8c32791a64e96c786db72c4fc99ee23a7f78481657bc833de"
+  },
+  "s1_m1": {
+   "path": "r1_afe/r1afe-elim-e4d12b2/frozen/var_s1_m1.spice",
+   "sha256": "2196f6a1ff3e3d7a9de173690c4bc92354a9d975d4630b7ffdf6b49b2f8fb666"
+  },
+  "s1_in": {
+   "path": "r1_afe/r1afe-elim-e4d12b2/frozen/var_s1_in.spice",
+   "sha256": "992ad5293ccafe9e3f2d0ab166513c7484430c19d826c44bc7616f6fe4a5a108"
+  },
+  "s1_xs": {
+   "path": "r1_afe/r1afe-elim-e4d12b2/frozen/var_s1_xs.spice",
+   "sha256": "27415cde65468e08497f43fa26f22e81f35796b839158b344fd74b42731357b8"
+  }
+ },
+ "netlist_sha256": "3762a0a29cab4302fe84869104fe2c0be1754834b80c61bcbdf124d86cfe126e",
+ "netlist_override": null,
+ "frozen_inputs": "$G1_RESULTS_ROOT/r1_afe/r1afe-elim-e4d12b2/frozen/",
+ "lsb_V": 0.000439453125,
+ "raw": "$G1_RESULTS_ROOT/r1_afe/r1afe-elim-e4d12b2/",
+ "jobs": 4,
+ "failed_jobs": [],
+ "wall_seconds": 181.4,
+ "summary": "results/r1afe-elim-e4d12b2.json",
+ "question": "Follow-up of r1afe-elim-e4d12b: which stage-1 net group (x1, m1, inp/inn, resistor-array internal nets) sets the x32 offset?",
+ "result": "x32 odiff with one group shorted: x1 summing nodes -7.4 mV; m1 -118.4; inp/inn -122.4; resistor-array internal -123.5 mV.",
+ "disposition": "cause: asymmetric x1p/x1n summing-node routing resistance. Lever for layout E5: symmetric, wider x1 routing. Not fixed in E4."
+}

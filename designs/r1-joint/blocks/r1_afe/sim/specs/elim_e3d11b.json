@@ -1,0 +1,23 @@
+{
+ "question": "Follow-up of r1afe-elim-e3d11 (whose opv print failed on a wrong node name): OTA1 internal node and vdd/vss port voltages, dev11 RC vs channel vdd shorted, tt 10.14 uA, CM 0.5 V, x32",
+ "variants": {
+  "base": {
+   "netlist": "$G1_RESULTS_ROOT/r1_afe/revF1/elim-e3d11/base.spice"
+  },
+  "vdd_ch": {
+   "netlist": "$G1_RESULTS_ROOT/r1_afe/revF1/elim-e3d11/vdd_ch.spice"
+  }
+ },
+ "jobs": [
+  {
+   "tag": "opv_tt_ib10.14_cm0.5",
+   "tmpl": "tb_afe_opv.cir",
+   "corner": "tt",
+   "subs": {
+    "VCMI": 0.5,
+    "IB": "10.14u",
+    "NODES": "v(xdut.xsin.xa1_vcmfb) v(xdut.xsin.xa1_vcms) v(xdut.xsin.xa1_o1n) v(xdut.xsin.xa1_o1p) v(xdut.xsin.xa1_fn) v(xdut.xsin.xa1_fp) v(xdut.xsin.xa1_gn) v(xdut.xsin.xa1_tc) v(xdut.xsin.xa1_tp) v(xdut.xsin.xa1_vbp) v(xdut.xsin.xa1_vbpc) v(xdut.xsin.xa1_vbnc) v(xdut.xsin.xa1_cmd) v(xdut.xsin.vdd__p4) v(xdut.xsin.vdd__p5) v(xdut.xsin.vdd__p6) v(xdut.xsin.vdd__p7) v(xdut.xsin.vdd__p8) v(xdut.xsin.vdd__p9) v(xdut.xsin.vdd__p10) v(xdut.xsin.vdd__p11) v(xdut.xsin.vdd__p12) v(xdut.xsin.vss__p8) v(xdut.xsin.vss__p9) v(xdut.xsin.vss__p11) v(xdut.xsin.vss__p13) v(xdut.xsin.x1p) v(xdut.xsin.x1n)"
+   }
+  }
+ ]
+}

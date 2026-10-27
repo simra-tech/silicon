@@ -4,8 +4,8 @@
 # below) adds stbx (cross corners) and drops stb_revb (revision-B method check, unchanged netlist, kept as history).
 # Usage: sh sim/run_all.sh <suffix>   (from the repository root). Run id r1afe-<campaign>-<suffix>.
 set -u
-G1_CPUSET=106-108; export G1_CPUSET
-G1_CPUS=3; export G1_CPUS
+G1_CPUSET=${G1_CPUSET:-106-108}; export G1_CPUSET
+G1_CPUS=${G1_CPUS:-3}; export G1_CPUS
 G1_WORKDIR=designs/r1-joint/blocks/r1_afe/sim; export G1_WORKDIR
 : "${G1_RESULTS_ROOT:?set G1_RESULTS_ROOT to the bulk results root}"; export G1_RESULTS_ROOT
 FAILED=""

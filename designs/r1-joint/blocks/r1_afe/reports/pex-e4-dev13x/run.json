@@ -1,0 +1,29 @@
+{
+ "run_id": "pex-e4-dev13x",
+ "step": "Layout E4 iteration 2 (layout-e4-dev13x = dev12b + channel vss mesh, revision F1): kpex 2.5D CC of r1_afe_ch only (the top cell without channels is the same as dev12b; its kpex run pex-e4-dev12b/kpex_top is reused); wire and via R by the KLayout RNetExtractor; wiring-R-only netlist pexr-e4-dev13x (noc=1) first for the DM2 experiment, then the RC netlist pexrc-e4-dev13x",
+ "date": "2026-10-27",
+ "commands": [
+  "G1_CPUSET=108; G1_RESULTS_ROOT=<bulk>; G1_WORKDIR=designs/r1-joint/blocks/r1_afe; export G1_CPUSET G1_RESULTS_ROOT G1_WORKDIR; flow/run.sh klayout -b -r pex/pex_prepare.py -rd gds=<G1_RESULTS_ROOT>/r1_afe/layout-e4-dev13x/r1_afe.gds -rd out=<run>/r1_afe_ch_flat.gds -rd cell=r1_afe_ch",
+  "flow/run.sh kpex --pdk ihp-sg13g2 --threads 1 --gds <run>/r1_afe_ch_flat.gds --schematic layout/r1_afe_lvs.cdl --cell r1_afe_ch --2.5D --mode CC --out_dir <run>/kpex_ch",
+  "flow/run.sh klayout -b -r pex/pex_rc_build.py -rd kchdir=<run>/kpex_ch/r1_afe_ch_flat__r1_afe_ch -rd ktopdir=<G1_RESULTS_ROOT>/r1_afe/pex-e4-dev12b/kpex_top/r1_afe_top_flat__r1_afe -rd ports=<G1_RESULTS_ROOT>/r1_afe/layout-e4-dev13x/r1_afe_ports.json -rd out=<G1_RESULTS_ROOT>/r1_afe/pexrc-e4-dev13x  (and -rd noc=1 -rd out=.../pexr-e4-dev13x)",
+  "python3 pex/rnet_report.py <G1_RESULTS_ROOT>/r1_afe/pexr-e4-dev13x/r1_afe_post_rc.spice vdd vss > rnet_supply_r_only.json",
+  "python3 pex/pair_loads.py dev12b=<pex-e4-dev12b channel kpex netlist> dev13x=<pex-e4-dev13x channel kpex netlist> > pair_loads.json"
+ ],
+ "tools": {
+  "kpex": "0.3.12",
+  "klayout": "KLayout 0.30.9",
+  "image_id": "sha256:ddeb69576f2808676d1c5d474ecf04f6d1d6f8abdcff6b72b39790ded924bab2",
+  "pdk_commit": "84374023ee8b4b126bebbba67fcbada0a9c0ff0b"
+ },
+ "inputs": {
+  "<G1_RESULTS_ROOT>/r1_afe/layout-e4-dev13x/r1_afe.gds": "65d9052c8389e106c7e865fb8d48fd55634307640c1a917334efd570e7613a85",
+  "layout/r1_afe_lvs.cdl": "6f38c1cc22a8ed4ec42cee3daadcd5d346cea8660863636fc5ed168578241ac7"
+ },
+ "result": "channel vss ports 25-32 ohm in the OTA rows (dev12b 25-37 ohm), worst 101.1 ohm (dev12b 105.6); vdd unchanged (worst 30.1 ohm); pair loads outp/outn +6.7 fF (dev12b +11.4), op2/on2 -14.3, m1p/m1n -14.0, x1p/x1n +0.8 fF",
+ "disposition": "netlists used by r1afe-dm2-e4d13x (R only) and r1afe-post-e4d13x (RC)",
+ "notes": "a second kpex start (kpex_ch2) was stopped by PID; the first start (kpex_ch) completed and is used",
+ "outputs": {
+  "<G1_RESULTS_ROOT>/r1_afe/pexrc-e4-dev13x/r1_afe_post_rc.spice": "54387a3037a67a8020a988415b0221d71b3f4d1a23fbd02613d44a54e3d1fa34",
+  "<G1_RESULTS_ROOT>/r1_afe/pexr-e4-dev13x/r1_afe_post_rc.spice": "c5186cee0d171acb9e1078f8329477c48f72d33eb54519066bb8993523cb0732"
+ }
+}

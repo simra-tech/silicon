@@ -1,0 +1,2750 @@
+[
+ {
+  "name": "E2__stb_ffx_ib6.9_cm0.5",
+  "corner": "ffx",
+  "mismatch": false,
+  "subs": {
+   "MOS": "mos_ff",
+   "RES": "res_bcs",
+   "CAP": "cap_bcs",
+   "VDDA": 3.0,
+   "TEMP": 125,
+   "VCMI": 0.5,
+   "ACVDD": 0,
+   "NMC": 1,
+   "SEED": 1,
+   "LSB": 0.000439453125,
+   "CL": "2.8p",
+   "KLIST": "0 5",
+   "LLIST": "1 2 4 5",
+   "IB": "6.9u",
+   "DIO": "dio_ff",
+   "RAW": "$G1_RESULTS_ROOT/r1_afe/r1afe-screen-g4/E2__stb_ffx_ib6.9_cm0.5"
+  },
+  "rc": 0,
+  "edits": [
+   [
+    "@re",
+    "r1_afe_ota",
+    "(?m)^(XCC[12] [^\\n]*?cap_cmim) w=\\S+ l=\\S+",
+    "\\1 w=25u l=25u"
+   ],
+   [
+    "@re",
+    "r1_afe_ota",
+    "(?m)^(XCX[12] [^\\n]*?cap_cmim) w=\\S+ l=\\S+",
+    "\\1 w=15u l=15u"
+   ],
+   [
+    "@re",
+    "r1_afe_ota",
+    "(?m)^(XMC[12] [^\\n]*?) w=\\S+",
+    "\\1 w=12u"
+   ],
+   [
+    "@re",
+    "r1_afe_ota",
+    "(?m)^(XMB6 [^\\n]*?) l=\\S+",
+    "\\1 l=3u"
+   ],
+   [
+    "@re",
+    "r1_afe_ch",
+    "WCCB=24u",
+    "WCCB=30u"
+   ],
+   [
+    "@re",
+    "r1_afe_s1side",
+    "w=\\{WCF1\\} l=\\{WCF1\\}",
+    "w=28.17u l=28.17u"
+   ],
+   [
+    "@re",
+    "r1_afe_s2side",
+    "w=\\{WCF2\\} l=\\{WCF2\\}",
+    "w=39.67u l=39.67u"
+   ],
+   [
+    "XA1 x1p x1n ",
+    "Vpa1p x1p y1p dc 0 ac {vdp1}\nVpa1n x1n y1n dc 0 ac {vdn1}\nIpa1p 0 x1p dc 0 ac {idp1}\nIpa1n 0 x1n dc 0 ac {idn1}\nXA1 y1p y1n "
+   ],
+   [
+    "XA2 x2p x2n ",
+    "Vpa2p x2p y2p dc 0 ac {vdp2}\nVpa2n x2n y2n dc 0 ac {vdn2}\nIpa2p 0 x2p dc 0 ac {idp2}\nIpa2n 0 x2n dc 0 ac {idn2}\nXA2 y2p y2n "
+   ],
+   [
+    "XMC1 vcmfb vcms tc",
+    "Vpc vcms vcmsy dc 0 ac {vc1}\nIpc 0 vcms dc 0 ac {ic1}\nXMC1 vcmfb vcmsy tc"
+   ],
+   [
+    "XMC1 vcmfb vcms tc",
+    "Vpc vcms vcmsy dc 0 ac {vc2}\nIpc 0 vcms dc 0 ac {ic2}\nXMC1 vcmfb vcmsy tc"
+   ],
+   [
+    "XMN7 outp ",
+    "Vpop outpi outp dc 0 ac {vop1}\nVpon outni outn dc 0 ac {von1}\nIpop 0 outpi dc 0 ac {iop1}\nIpon 0 outni dc 0 ac {ion1}\nXMN7 outpi "
+   ],
+   [
+    "XMN8 outn ",
+    "XMN8 outni "
+   ],
+   [
+    "XMP7 outp ",
+    "XMP7 outpi "
+   ],
+   [
+    "XMP8 outn ",
+    "XMP8 outni "
+   ],
+   [
+    "XCC1 cz1 outp ",
+    "XCC1 cz1 outpi "
+   ],
+   [
+    "XCC2 cz2 outn ",
+    "XCC2 cz2 outni "
+   ],
+   [
+    "XMN7 outp ",
+    "Vpop outpi outp dc 0 ac {vop2}\nVpon outni outn dc 0 ac {von2}\nIpop 0 outpi dc 0 ac {iop2}\nIpon 0 outni dc 0 ac {ion2}\nXMN7 outpi "
+   ],
+   [
+    "XMN8 outn ",
+    "XMN8 outni "
+   ],
+   [
+    "XMP7 outp ",
+    "XMP7 outpi "
+   ],
+   [
+    "XMP8 outn ",
+    "XMP8 outni "
+   ],
+   [
+    "XCC1 cz1 outp ",
+    "XCC1 cz1 outpi "
+   ],
+   [
+    "XCC2 cz2 outn ",
+    "XCC2 cz2 outni "
+   ],
+   [
+    "XCC1B cb1 outp ",
+    "XCC1B cb1 outpi "
+   ],
+   [
+    "XCC2B cb2 outn ",
+    "XCC2B cb2 outni "
+   ],
+   [
+    "?",
+    "XCD1B cd1 outp ",
+    "XCD1B cd1 outpi "
+   ],
+   [
+    "?",
+    "XCD2B cd2 outn ",
+    "XCD2B cd2 outni "
+   ],
+   [
+    "?",
+    "XCX1 cz1 outn ",
+    "XCX1 cz1 outni "
+   ],
+   [
+    "?",
+    "XCX2 cz2 outp ",
+    "XCX2 cz2 outpi "
+   ],
+   [
+    "?",
+    "XCX1 cz1 outn ",
+    "XCX1 cz1 outni "
+   ],
+   [
+    "?",
+    "XCX2 cz2 outp ",
+    "XCX2 cz2 outpi "
+   ]
+  ],
+  "seconds": 35.2,
+  "rows": [
+   {
+    "tag": "STBROW",
+    "code": 0,
+    "loop": "dm1",
+    "t_dc_db": 63.69,
+    "f_unity": 11983424.989397995,
+    "pm_valid": true,
+    "pm_deg": 70.38,
+    "gm_db": 26.0,
+    "f_180": 185297770.78398266,
+    "ph_min_deg": -315.9
+   },
+   {
+    "tag": "STBROW",
+    "code": 0,
+    "loop": "cm1",
+    "t_dc_db": 59.49,
+    "f_unity": 4035522.043644905,
+    "pm_valid": true,
+    "pm_deg": 82.29,
+    "gm_db": null,
+    "f_180": null,
+    "ph_min_deg": -137.7
+   },
+   {
+    "tag": "STBROW",
+    "code": 0,
+    "loop": "dm2",
+    "t_dc_db": 82.21,
+    "f_unity": 19798969.872453853,
+    "pm_valid": true,
+    "pm_deg": 71.94,
+    "gm_db": 17.86,
+    "f_180": 162390919.17312065,
+    "ph_min_deg": -332.0
+   },
+   {
+    "tag": "STBROW",
+    "code": 0,
+    "loop": "cm2",
+    "t_dc_db": 82.12,
+    "f_unity": 5938979.487331541,
+    "pm_valid": true,
+    "pm_deg": 68.78,
+    "gm_db": 37.35,
+    "f_180": 114855272.95172875,
+    "ph_min_deg": -472.0
+   },
+   {
+    "tag": "STBROW",
+    "code": 5,
+    "loop": "dm1",
+    "t_dc_db": 35.65,
+    "f_unity": 10496104.121066114,
+    "pm_valid": true,
+    "pm_deg": 105.25,
+    "gm_db": 25.42,
+    "f_180": 185266551.61263058,
+    "ph_min_deg": -320.3
+   },
+   {
+    "tag": "STBROW",
+    "code": 5,
+    "loop": "cm1",
+    "t_dc_db": 52.28,
+    "f_unity": 6736099.849492186,
+    "pm_valid": true,
+    "pm_deg": 63.68,
+    "gm_db": null,
+    "f_180": null,
+    "ph_min_deg": -158.8
+   },
+   {
+    "tag": "STBROW",
+    "code": 5,
+    "loop": "dm2",
+    "t_dc_db": 72.36,
+    "f_unity": 16135123.548564281,
+    "pm_valid": true,
+    "pm_deg": 86.39,
+    "gm_db": 19.08,
+    "f_180": 173655961.97872818,
+    "ph_min_deg": -331.0
+   },
+   {
+    "tag": "STBROW",
+    "code": 5,
+    "loop": "cm2",
+    "t_dc_db": 80.0,
+    "f_unity": 5834218.299084465,
+    "pm_valid": true,
+    "pm_deg": 68.06,
+    "gm_db": 36.31,
+    "f_180": 110117739.62496167,
+    "ph_min_deg": -474.2
+   }
+  ],
+  "errors": [
+   "Warning: singular matrix:  check nodes n.xdut.xsin.xa2.xmc1.nsg13_hv_pmos#GP and n.xdut.xsin.xa1.xmc1.nsg13_hv_pmos#GP",
+   "Warning: singular matrix:  check nodes n.xdut.xsin.xa2.xmc1.nsg13_hv_pmos#GP and n.xdut.xsin.xa1.xmc1.nsg13_hv_pmos#GP",
+   "Warning: singular matrix:  check nodes n.xdut.xsin.xa2.xmc1.nsg13_hv_pmos#GP and n.xdut.xsin.xa1.xmc1.nsg13_hv_pmos#GP",
+   "Warning: singular matrix:  check nodes n.xdut.xsin.xa2.xmc1.nsg13_hv_pmos#GP and n.xdut.xsin.xa1.xmc1.nsg13_hv_pmos#GP",
+   "Warning: singular matrix:  check nodes n.xdut.xsin.xa2.xmc1.nsg13_hv_pmos#GP and n.xdut.xsin.xa1.xmc1.nsg13_hv_pmos#GP",
+   "Warning: singular matrix:  check nodes n.xdut.xsin.xa2.xmc1.nsg13_hv_pmos#GP and n.xdut.xsin.xa1.xmc1.nsg13_hv_pmos#GP",
+   "Warning: singular matrix:  check nodes n.xdut.xsin.xa2.xmc1.nsg13_hv_pmos#GP and n.xdut.xsin.xa1.xmc1.nsg13_hv_pmos#GP",
+   "Warning: singular matrix:  check nodes n.xdut.xsin.xa2.xmc1.nsg13_hv_pmos#GP and n.xdut.xsin.xa1.xmc1.nsg13_hv_pmos#GP"
+  ],
+  "deck": "r1_afe/r1afe-screen-g4/E2__stb_ffx_ib6.9_cm0.5.cir",
+  "log": "r1_afe/r1afe-screen-g4/E2__stb_ffx_ib6.9_cm0.5.log"
+ },
+ {
+  "name": "E2__op_tt_ib10.14_cm0.5",
+  "corner": "tt",
+  "mismatch": false,
+  "subs": {
+   "MOS": "mos_tt",
+   "RES": "res_typ",
+   "CAP": "cap_typ",
+   "VDDA": 3.3,
+   "TEMP": 27,
+   "VCMI": 0.5,
+   "ACVDD": 0,
+   "NMC": 1,
+   "SEED": 1,
+   "LSB": 0.000439453125,
+   "CL": "2.8p",
+   "KLIST": "0 1 2 3 4 5",
+   "LLIST": "1 2 3 4 5 6 7 8",
+   "IB": "10.14u",
+   "DIO": "dio_tt",
+   "RAW": "$G1_RESULTS_ROOT/r1_afe/r1afe-screen-g4/E2__op_tt_ib10.14_cm0.5"
+  },
+  "rc": 0,
+  "edits": [
+   [
+    "@re",
+    "r1_afe_ota",
+    "(?m)^(XCC[12] [^\\n]*?cap_cmim) w=\\S+ l=\\S+",
+    "\\1 w=25u l=25u"
+   ],
+   [
+    "@re",
+    "r1_afe_ota",
+    "(?m)^(XCX[12] [^\\n]*?cap_cmim) w=\\S+ l=\\S+",
+    "\\1 w=15u l=15u"
+   ],
+   [
+    "@re",
+    "r1_afe_ota",
+    "(?m)^(XMC[12] [^\\n]*?) w=\\S+",
+    "\\1 w=12u"
+   ],
+   [
+    "@re",
+    "r1_afe_ota",
+    "(?m)^(XMB6 [^\\n]*?) l=\\S+",
+    "\\1 l=3u"
+   ],
+   [
+    "@re",
+    "r1_afe_ch",
+    "WCCB=24u",
+    "WCCB=30u"
+   ],
+   [
+    "@re",
+    "r1_afe_s1side",
+    "w=\\{WCF1\\} l=\\{WCF1\\}",
+    "w=28.17u l=28.17u"
+   ],
+   [
+    "@re",
+    "r1_afe_s2side",
+    "w=\\{WCF2\\} l=\\{WCF2\\}",
+    "w=39.67u l=39.67u"
+   ]
+  ],
+  "seconds": 5.3,
+  "rows": [
+   {
+    "tag": "OPROW",
+    "code": 0.0,
+    "ocms": 0.595296,
+    "ocmc": 0.595296,
+    "odiff": -4.62493e-11,
+    "o1cm": 0.724368,
+    "o1diff": -4.50229e-11,
+    "idd": 0.00197158
+   },
+   {
+    "tag": "OPROW",
+    "code": 5.0,
+    "ocms": 0.595267,
+    "ocmc": 0.595267,
+    "odiff": -6.72917e-11,
+    "o1cm": 0.659417,
+    "o1diff": -7.36122e-12,
+    "idd": 0.00197186
+   }
+  ],
+  "errors": [],
+  "deck": "r1_afe/r1afe-screen-g4/E2__op_tt_ib10.14_cm0.5.cir",
+  "log": "r1_afe/r1afe-screen-g4/E2__op_tt_ib10.14_cm0.5.log"
+ },
+ {
+  "name": "E2__op_ss_ib11.81_cm0.5",
+  "corner": "ss",
+  "mismatch": false,
+  "subs": {
+   "MOS": "mos_ss",
+   "RES": "res_wcs",
+   "CAP": "cap_wcs",
+   "VDDA": 3.0,
+   "TEMP": 125,
+   "VCMI": 0.5,
+   "ACVDD": 0,
+   "NMC": 1,
+   "SEED": 1,
+   "LSB": 0.000439453125,
+   "CL": "2.8p",
+   "KLIST": "0 1 2 3 4 5",
+   "LLIST": "1 2 3 4 5 6 7 8",
+   "IB": "11.81u",
+   "DIO": "dio_ss",
+   "RAW": "$G1_RESULTS_ROOT/r1_afe/r1afe-screen-g4/E2__op_ss_ib11.81_cm0.5"
+  },
+  "rc": 0,
+  "edits": [
+   [
+    "@re",
+    "r1_afe_ota",
+    "(?m)^(XCC[12] [^\\n]*?cap_cmim) w=\\S+ l=\\S+",
+    "\\1 w=25u l=25u"
+   ],
+   [
+    "@re",
+    "r1_afe_ota",
+    "(?m)^(XCX[12] [^\\n]*?cap_cmim) w=\\S+ l=\\S+",
+    "\\1 w=15u l=15u"
+   ],
+   [
+    "@re",
+    "r1_afe_ota",
+    "(?m)^(XMC[12] [^\\n]*?) w=\\S+",
+    "\\1 w=12u"
+   ],
+   [
+    "@re",
+    "r1_afe_ota",
+    "(?m)^(XMB6 [^\\n]*?) l=\\S+",
+    "\\1 l=3u"
+   ],
+   [
+    "@re",
+    "r1_afe_ch",
+    "WCCB=24u",
+    "WCCB=30u"
+   ],
+   [
+    "@re",
+    "r1_afe_s1side",
+    "w=\\{WCF1\\} l=\\{WCF1\\}",
+    "w=28.17u l=28.17u"
+   ],
+   [
+    "@re",
+    "r1_afe_s2side",
+    "w=\\{WCF2\\} l=\\{WCF2\\}",
+    "w=39.67u l=39.67u"
+   ]
+  ],
+  "seconds": 4.4,
+  "rows": [
+   {
+    "tag": "OPROW",
+    "code": 0.0,
+    "ocms": 0.594317,
+    "ocmc": 0.594317,
+    "odiff": -6.39702e-11,
+    "o1cm": 0.562552,
+    "o1diff": -6.23146e-11,
+    "idd": 0.00223414
+   },
+   {
+    "tag": "OPROW",
+    "code": 5.0,
+    "ocms": 0.594245,
+    "ocmc": 0.594245,
+    "odiff": 1.25993e-09,
+    "o1cm": 0.544191,
+    "o1diff": 3.0674e-10,
+    "idd": 0.00223426
+   }
+  ],
+  "errors": [],
+  "deck": "r1_afe/r1afe-screen-g4/E2__op_ss_ib11.81_cm0.5.cir",
+  "log": "r1_afe/r1afe-screen-g4/E2__op_ss_ib11.81_cm0.5.log"
+ },
+ {
+  "name": "E2__ac_ss_ib11.81_cm0.5",
+  "corner": "ss",
+  "mismatch": false,
+  "subs": {
+   "MOS": "mos_ss",
+   "RES": "res_wcs",
+   "CAP": "cap_wcs",
+   "VDDA": 3.0,
+   "TEMP": 125,
+   "VCMI": 0.5,
+   "ACVDD": 0,
+   "NMC": 1,
+   "SEED": 1,
+   "LSB": 0.000439453125,
+   "CL": "2.8p",
+   "KLIST": "0 1 2 3 4 5",
+   "LLIST": "1 2 3 4 5 6 7 8",
+   "IB": "11.81u",
+   "DIO": "dio_ss",
+   "RAW": "$G1_RESULTS_ROOT/r1_afe/r1afe-screen-g4/E2__ac_ss_ib11.81_cm0.5"
+  },
+  "rc": 0,
+  "edits": [
+   [
+    "@re",
+    "r1_afe_ota",
+    "(?m)^(XCC[12] [^\\n]*?cap_cmim) w=\\S+ l=\\S+",
+    "\\1 w=25u l=25u"
+   ],
+   [
+    "@re",
+    "r1_afe_ota",
+    "(?m)^(XCX[12] [^\\n]*?cap_cmim) w=\\S+ l=\\S+",
+    "\\1 w=15u l=15u"
+   ],
+   [
+    "@re",
+    "r1_afe_ota",
+    "(?m)^(XMC[12] [^\\n]*?) w=\\S+",
+    "\\1 w=12u"
+   ],
+   [
+    "@re",
+    "r1_afe_ota",
+    "(?m)^(XMB6 [^\\n]*?) l=\\S+",
+    "\\1 l=3u"
+   ],
+   [
+    "@re",
+    "r1_afe_ch",
+    "WCCB=24u",
+    "WCCB=30u"
+   ],
+   [
+    "@re",
+    "r1_afe_s1side",
+    "w=\\{WCF1\\} l=\\{WCF1\\}",
+    "w=28.17u l=28.17u"
+   ],
+   [
+    "@re",
+    "r1_afe_s2side",
+    "w=\\{WCF2\\} l=\\{WCF2\\}",
+    "w=39.67u l=39.67u"
+   ]
+  ],
+  "seconds": 21.7,
+  "rows": [
+   {
+    "tag": "OPROW",
+    "mc": 0.0,
+    "code": 0.0,
+    "ocms": 0.594317,
+    "ocmc": 0.594317,
+    "o1cm": 0.562552,
+    "idd": 0.00223414
+   },
+   {
+    "tag": "ACROW",
+    "mc": 0.0,
+    "code": 0.0,
+    "gs0": 0.234233,
+    "gc0": 0.234233,
+    "fs3": 1491470.0,
+    "fc3": 1491470.0,
+    "pks": 1.54786e-06,
+    "pkc": 1.54783e-06,
+    "ps100": -6.37472,
+    "pc100": -6.37472,
+    "ps1m": -61.5613,
+    "pc1m": -61.5613,
+    "gs1m": -1.44117,
+    "gc1m": -1.44117
+   },
+   {
+    "tag": "OPROW",
+    "mc": 0.0,
+    "code": 1.0,
+    "ocms": 0.594302,
+    "ocmc": 0.594302,
+    "o1cm": 0.552716,
+    "idd": 0.0022342
+   },
+   {
+    "tag": "ACROW",
+    "mc": 0.0,
+    "code": 1.0,
+    "gs0": 6.25152,
+    "gc0": 6.25152,
+    "fs3": 1403340.0,
+    "fc3": 1403340.0,
+    "pks": 1.8772e-06,
+    "pkc": 1.87715e-06,
+    "ps100": -6.66805,
+    "pc100": -6.66805,
+    "ps1m": -63.9771,
+    "pc1m": -63.9771,
+    "gs1m": -1.62211,
+    "gc1m": -1.62211
+   },
+   {
+    "tag": "OPROW",
+    "mc": 0.0,
+    "code": 2.0,
+    "ocms": 0.594294,
+    "ocmc": 0.594294,
+    "o1cm": 0.547162,
+    "idd": 0.00223423
+   },
+   {
+    "tag": "ACROW",
+    "mc": 0.0,
+    "code": 2.0,
+    "gs0": 12.2646,
+    "gc0": 12.2646,
+    "fs3": 1251900.0,
+    "fc3": 1251900.0,
+    "pks": 1.5225e-06,
+    "pkc": 1.52252e-06,
+    "ps100": -7.24324,
+    "pc100": -7.24324,
+    "ps1m": -68.3791,
+    "pc1m": -68.3791,
+    "gs1m": -2.01682,
+    "gc1m": -2.01682
+   },
+   {
+    "tag": "OPROW",
+    "mc": 0.0,
+    "code": 3.0,
+    "ocms": 0.594289,
+    "ocmc": 0.594289,
+    "o1cm": 0.544179,
+    "idd": 0.00223424
+   },
+   {
+    "tag": "ACROW",
+    "mc": 0.0,
+    "code": 3.0,
+    "gs0": 18.2697,
+    "gc0": 18.2697,
+    "fs3": 1347640.0,
+    "fc3": 1347640.0,
+    "pks": 6.95138e-06,
+    "pkc": 6.94625e-06,
+    "ps100": -6.74063,
+    "pc100": -6.74063,
+    "ps1m": -64.1979,
+    "pc1m": -64.1979,
+    "gs1m": -1.75825,
+    "gc1m": -1.75825
+   },
+   {
+    "tag": "OPROW",
+    "mc": 0.0,
+    "code": 4.0,
+    "ocms": 0.594252,
+    "ocmc": 0.594252,
+    "o1cm": 0.547174,
+    "idd": 0.00223424
+   },
+   {
+    "tag": "ACROW",
+    "mc": 0.0,
+    "code": 4.0,
+    "gs0": 24.2797,
+    "gc0": 24.2797,
+    "fs3": 1109870.0,
+    "fc3": 1109870.0,
+    "pks": 2.42368e-06,
+    "pkc": 2.42368e-06,
+    "ps100": -8.05414,
+    "pc100": -8.05414,
+    "ps1m": -74.7291,
+    "pc1m": -74.7291,
+    "gs1m": -2.50441,
+    "gc1m": -2.50441
+   },
+   {
+    "tag": "OPROW",
+    "mc": 0.0,
+    "code": 5.0,
+    "ocms": 0.594245,
+    "ocmc": 0.594245,
+    "o1cm": 0.544191,
+    "idd": 0.00223426
+   },
+   {
+    "tag": "ACROW",
+    "mc": 0.0,
+    "code": 5.0,
+    "gs0": 30.2629,
+    "gc0": 30.2629,
+    "fs3": 1196430.0,
+    "fc3": 1196430.0,
+    "pks": 8.40776e-06,
+    "pkc": 8.41125e-06,
+    "ps100": -7.49259,
+    "pc100": -7.49259,
+    "ps1m": -70.3181,
+    "pc1m": -70.3181,
+    "gs1m": -2.18889,
+    "gc1m": -2.18889
+   }
+  ],
+  "errors": [],
+  "deck": "r1_afe/r1afe-screen-g4/E2__ac_ss_ib11.81_cm0.5.cir",
+  "log": "r1_afe/r1afe-screen-g4/E2__ac_ss_ib11.81_cm0.5.log"
+ },
+ {
+  "name": "E3__stb_ffx_ib6.9_cm0.5",
+  "corner": "ffx",
+  "mismatch": false,
+  "subs": {
+   "MOS": "mos_ff",
+   "RES": "res_bcs",
+   "CAP": "cap_bcs",
+   "VDDA": 3.0,
+   "TEMP": 125,
+   "VCMI": 0.5,
+   "ACVDD": 0,
+   "NMC": 1,
+   "SEED": 1,
+   "LSB": 0.000439453125,
+   "CL": "2.8p",
+   "KLIST": "0 5",
+   "LLIST": "1 2 4 5",
+   "IB": "6.9u",
+   "DIO": "dio_ff",
+   "RAW": "$G1_RESULTS_ROOT/r1_afe/r1afe-screen-g4/E3__stb_ffx_ib6.9_cm0.5"
+  },
+  "rc": 0,
+  "edits": [
+   [
+    "@re",
+    "r1_afe_ota",
+    "(?m)^(XCC[12] [^\\n]*?cap_cmim) w=\\S+ l=\\S+",
+    "\\1 w=25u l=25u"
+   ],
+   [
+    "@re",
+    "r1_afe_ota",
+    "(?m)^(XCX[12] [^\\n]*?cap_cmim) w=\\S+ l=\\S+",
+    "\\1 w=15u l=15u"
+   ],
+   [
+    "@re",
+    "r1_afe_ota",
+    "(?m)^(XMB6 [^\\n]*?) l=\\S+",
+    "\\1 l=3u"
+   ],
+   [
+    "@re",
+    "r1_afe_ch",
+    "WCCB=24u",
+    "WCCB=30u"
+   ],
+   [
+    "@re",
+    "r1_afe_s1side",
+    "w=\\{WCF1\\} l=\\{WCF1\\}",
+    "w=28.17u l=28.17u"
+   ],
+   [
+    "@re",
+    "r1_afe_s2side",
+    "w=\\{WCF2\\} l=\\{WCF2\\}",
+    "w=39.67u l=39.67u"
+   ],
+   [
+    "XA1 x1p x1n ",
+    "Vpa1p x1p y1p dc 0 ac {vdp1}\nVpa1n x1n y1n dc 0 ac {vdn1}\nIpa1p 0 x1p dc 0 ac {idp1}\nIpa1n 0 x1n dc 0 ac {idn1}\nXA1 y1p y1n "
+   ],
+   [
+    "XA2 x2p x2n ",
+    "Vpa2p x2p y2p dc 0 ac {vdp2}\nVpa2n x2n y2n dc 0 ac {vdn2}\nIpa2p 0 x2p dc 0 ac {idp2}\nIpa2n 0 x2n dc 0 ac {idn2}\nXA2 y2p y2n "
+   ],
+   [
+    "XMC1 vcmfb vcms tc",
+    "Vpc vcms vcmsy dc 0 ac {vc1}\nIpc 0 vcms dc 0 ac {ic1}\nXMC1 vcmfb vcmsy tc"
+   ],
+   [
+    "XMC1 vcmfb vcms tc",
+    "Vpc vcms vcmsy dc 0 ac {vc2}\nIpc 0 vcms dc 0 ac {ic2}\nXMC1 vcmfb vcmsy tc"
+   ],
+   [
+    "XMN7 outp ",
+    "Vpop outpi outp dc 0 ac {vop1}\nVpon outni outn dc 0 ac {von1}\nIpop 0 outpi dc 0 ac {iop1}\nIpon 0 outni dc 0 ac {ion1}\nXMN7 outpi "
+   ],
+   [
+    "XMN8 outn ",
+    "XMN8 outni "
+   ],
+   [
+    "XMP7 outp ",
+    "XMP7 outpi "
+   ],
+   [
+    "XMP8 outn ",
+    "XMP8 outni "
+   ],
+   [
+    "XCC1 cz1 outp ",
+    "XCC1 cz1 outpi "
+   ],
+   [
+    "XCC2 cz2 outn ",
+    "XCC2 cz2 outni "
+   ],
+   [
+    "XMN7 outp ",
+    "Vpop outpi outp dc 0 ac {vop2}\nVpon outni outn dc 0 ac {von2}\nIpop 0 outpi dc 0 ac {iop2}\nIpon 0 outni dc 0 ac {ion2}\nXMN7 outpi "
+   ],
+   [
+    "XMN8 outn ",
+    "XMN8 outni "
+   ],
+   [
+    "XMP7 outp ",
+    "XMP7 outpi "
+   ],
+   [
+    "XMP8 outn ",
+    "XMP8 outni "
+   ],
+   [
+    "XCC1 cz1 outp ",
+    "XCC1 cz1 outpi "
+   ],
+   [
+    "XCC2 cz2 outn ",
+    "XCC2 cz2 outni "
+   ],
+   [
+    "XCC1B cb1 outp ",
+    "XCC1B cb1 outpi "
+   ],
+   [
+    "XCC2B cb2 outn ",
+    "XCC2B cb2 outni "
+   ],
+   [
+    "?",
+    "XCD1B cd1 outp ",
+    "XCD1B cd1 outpi "
+   ],
+   [
+    "?",
+    "XCD2B cd2 outn ",
+    "XCD2B cd2 outni "
+   ],
+   [
+    "?",
+    "XCX1 cz1 outn ",
+    "XCX1 cz1 outni "
+   ],
+   [
+    "?",
+    "XCX2 cz2 outp ",
+    "XCX2 cz2 outpi "
+   ],
+   [
+    "?",
+    "XCX1 cz1 outn ",
+    "XCX1 cz1 outni "
+   ],
+   [
+    "?",
+    "XCX2 cz2 outp ",
+    "XCX2 cz2 outpi "
+   ]
+  ],
+  "seconds": 35.7,
+  "rows": [
+   {
+    "tag": "STBROW",
+    "code": 0,
+    "loop": "dm1",
+    "t_dc_db": 63.43,
+    "f_unity": 11963150.048194405,
+    "pm_valid": true,
+    "pm_deg": 70.01,
+    "gm_db": 26.12,
+    "f_180": 184538538.25510868,
+    "ph_min_deg": -316.0
+   },
+   {
+    "tag": "STBROW",
+    "code": 0,
+    "loop": "cm1",
+    "t_dc_db": 60.54,
+    "f_unity": 4620154.160667516,
+    "pm_valid": true,
+    "pm_deg": 81.92,
+    "gm_db": null,
+    "f_180": null,
+    "ph_min_deg": -145.3
+   },
+   {
+    "tag": "STBROW",
+    "code": 0,
+    "loop": "dm2",
+    "t_dc_db": 82.25,
+    "f_unity": 19819178.60572318,
+    "pm_valid": true,
+    "pm_deg": 71.94,
+    "gm_db": 17.84,
+    "f_180": 162495804.4628156,
+    "ph_min_deg": -331.9
+   },
+   {
+    "tag": "STBROW",
+    "code": 0,
+    "loop": "cm2",
+    "t_dc_db": 82.15,
+    "f_unity": 5938849.876853439,
+    "pm_valid": true,
+    "pm_deg": 68.8,
+    "gm_db": 37.35,
+    "f_180": 114931579.86904033,
+    "ph_min_deg": -471.9
+   },
+   {
+    "tag": "STBROW",
+    "code": 5,
+    "loop": "dm1",
+    "t_dc_db": 34.83,
+    "f_unity": 10282999.57219324,
+    "pm_valid": true,
+    "pm_deg": 105.54,
+    "gm_db": 25.69,
+    "f_180": 183682156.1303567,
+    "ph_min_deg": -320.7
+   },
+   {
+    "tag": "STBROW",
+    "code": 5,
+    "loop": "cm1",
+    "t_dc_db": 52.64,
+    "f_unity": 7407532.136357076,
+    "pm_valid": true,
+    "pm_deg": 62.17,
+    "gm_db": null,
+    "f_180": null,
+    "ph_min_deg": -164.5
+   },
+   {
+    "tag": "STBROW",
+    "code": 5,
+    "loop": "dm2",
+    "t_dc_db": 72.47,
+    "f_unity": 16191798.109910326,
+    "pm_valid": true,
+    "pm_deg": 86.12,
+    "gm_db": 19.04,
+    "f_180": 173904353.53675973,
+    "ph_min_deg": -331.0
+   },
+   {
+    "tag": "STBROW",
+    "code": 5,
+    "loop": "cm2",
+    "t_dc_db": 80.1,
+    "f_unity": 5835556.933050157,
+    "pm_valid": true,
+    "pm_deg": 68.06,
+    "gm_db": 36.3,
+    "f_180": 110347408.24119624,
+    "ph_min_deg": -474.1
+   }
+  ],
+  "errors": [],
+  "deck": "r1_afe/r1afe-screen-g4/E3__stb_ffx_ib6.9_cm0.5.cir",
+  "log": "r1_afe/r1afe-screen-g4/E3__stb_ffx_ib6.9_cm0.5.log"
+ },
+ {
+  "name": "E3__op_tt_ib10.14_cm0.5",
+  "corner": "tt",
+  "mismatch": false,
+  "subs": {
+   "MOS": "mos_tt",
+   "RES": "res_typ",
+   "CAP": "cap_typ",
+   "VDDA": 3.3,
+   "TEMP": 27,
+   "VCMI": 0.5,
+   "ACVDD": 0,
+   "NMC": 1,
+   "SEED": 1,
+   "LSB": 0.000439453125,
+   "CL": "2.8p",
+   "KLIST": "0 1 2 3 4 5",
+   "LLIST": "1 2 3 4 5 6 7 8",
+   "IB": "10.14u",
+   "DIO": "dio_tt",
+   "RAW": "$G1_RESULTS_ROOT/r1_afe/r1afe-screen-g4/E3__op_tt_ib10.14_cm0.5"
+  },
+  "rc": 0,
+  "edits": [
+   [
+    "@re",
+    "r1_afe_ota",
+    "(?m)^(XCC[12] [^\\n]*?cap_cmim) w=\\S+ l=\\S+",
+    "\\1 w=25u l=25u"
+   ],
+   [
+    "@re",
+    "r1_afe_ota",
+    "(?m)^(XCX[12] [^\\n]*?cap_cmim) w=\\S+ l=\\S+",
+    "\\1 w=15u l=15u"
+   ],
+   [
+    "@re",
+    "r1_afe_ota",
+    "(?m)^(XMB6 [^\\n]*?) l=\\S+",
+    "\\1 l=3u"
+   ],
+   [
+    "@re",
+    "r1_afe_ch",
+    "WCCB=24u",
+    "WCCB=30u"
+   ],
+   [
+    "@re",
+    "r1_afe_s1side",
+    "w=\\{WCF1\\} l=\\{WCF1\\}",
+    "w=28.17u l=28.17u"
+   ],
+   [
+    "@re",
+    "r1_afe_s2side",
+    "w=\\{WCF2\\} l=\\{WCF2\\}",
+    "w=39.67u l=39.67u"
+   ]
+  ],
+  "seconds": 4.9,
+  "rows": [
+   {
+    "tag": "OPROW",
+    "code": 0.0,
+    "ocms": 0.595358,
+    "ocmc": 0.595358,
+    "odiff": 6.63931e-11,
+    "o1cm": 0.780464,
+    "o1diff": 5.75895e-11,
+    "idd": 0.00197145
+   },
+   {
+    "tag": "OPROW",
+    "code": 5.0,
+    "ocms": 0.595344,
+    "ocmc": 0.595344,
+    "odiff": -4.8363e-11,
+    "o1cm": 0.703898,
+    "o1diff": -1.33387e-11,
+    "idd": 0.00197177
+   }
+  ],
+  "errors": [],
+  "deck": "r1_afe/r1afe-screen-g4/E3__op_tt_ib10.14_cm0.5.cir",
+  "log": "r1_afe/r1afe-screen-g4/E3__op_tt_ib10.14_cm0.5.log"
+ },
+ {
+  "name": "E3__op_ss_ib11.81_cm0.5",
+  "corner": "ss",
+  "mismatch": false,
+  "subs": {
+   "MOS": "mos_ss",
+   "RES": "res_wcs",
+   "CAP": "cap_wcs",
+   "VDDA": 3.0,
+   "TEMP": 125,
+   "VCMI": 0.5,
+   "ACVDD": 0,
+   "NMC": 1,
+   "SEED": 1,
+   "LSB": 0.000439453125,
+   "CL": "2.8p",
+   "KLIST": "0 1 2 3 4 5",
+   "LLIST": "1 2 3 4 5 6 7 8",
+   "IB": "11.81u",
+   "DIO": "dio_ss",
+   "RAW": "$G1_RESULTS_ROOT/r1_afe/r1afe-screen-g4/E3__op_ss_ib11.81_cm0.5"
+  },
+  "rc": 0,
+  "edits": [
+   [
+    "@re",
+    "r1_afe_ota",
+    "(?m)^(XCC[12] [^\\n]*?cap_cmim) w=\\S+ l=\\S+",
+    "\\1 w=25u l=25u"
+   ],
+   [
+    "@re",
+    "r1_afe_ota",
+    "(?m)^(XCX[12] [^\\n]*?cap_cmim) w=\\S+ l=\\S+",
+    "\\1 w=15u l=15u"
+   ],
+   [
+    "@re",
+    "r1_afe_ota",
+    "(?m)^(XMB6 [^\\n]*?) l=\\S+",
+    "\\1 l=3u"
+   ],
+   [
+    "@re",
+    "r1_afe_ch",
+    "WCCB=24u",
+    "WCCB=30u"
+   ],
+   [
+    "@re",
+    "r1_afe_s1side",
+    "w=\\{WCF1\\} l=\\{WCF1\\}",
+    "w=28.17u l=28.17u"
+   ],
+   [
+    "@re",
+    "r1_afe_s2side",
+    "w=\\{WCF2\\} l=\\{WCF2\\}",
+    "w=39.67u l=39.67u"
+   ]
+  ],
+  "seconds": 4.5,
+  "rows": [
+   {
+    "tag": "OPROW",
+    "code": 0.0,
+    "ocms": 0.594419,
+    "ocmc": 0.594419,
+    "odiff": -1.25263e-10,
+    "o1cm": 0.629619,
+    "o1diff": -1.18108e-10,
+    "idd": 0.002234
+   },
+   {
+    "tag": "OPROW",
+    "code": 5.0,
+    "ocms": 0.594364,
+    "ocmc": 0.594364,
+    "odiff": 2.53454e-10,
+    "o1cm": 0.593909,
+    "o1diff": 6.24381e-11,
+    "idd": 0.00223419
+   }
+  ],
+  "errors": [],
+  "deck": "r1_afe/r1afe-screen-g4/E3__op_ss_ib11.81_cm0.5.cir",
+  "log": "r1_afe/r1afe-screen-g4/E3__op_ss_ib11.81_cm0.5.log"
+ },
+ {
+  "name": "E3__ac_ss_ib11.81_cm0.5",
+  "corner": "ss",
+  "mismatch": false,
+  "subs": {
+   "MOS": "mos_ss",
+   "RES": "res_wcs",
+   "CAP": "cap_wcs",
+   "VDDA": 3.0,
+   "TEMP": 125,
+   "VCMI": 0.5,
+   "ACVDD": 0,
+   "NMC": 1,
+   "SEED": 1,
+   "LSB": 0.000439453125,
+   "CL": "2.8p",
+   "KLIST": "0 1 2 3 4 5",
+   "LLIST": "1 2 3 4 5 6 7 8",
+   "IB": "11.81u",
+   "DIO": "dio_ss",
+   "RAW": "$G1_RESULTS_ROOT/r1_afe/r1afe-screen-g4/E3__ac_ss_ib11.81_cm0.5"
+  },
+  "rc": 0,
+  "edits": [
+   [
+    "@re",
+    "r1_afe_ota",
+    "(?m)^(XCC[12] [^\\n]*?cap_cmim) w=\\S+ l=\\S+",
+    "\\1 w=25u l=25u"
+   ],
+   [
+    "@re",
+    "r1_afe_ota",
+    "(?m)^(XCX[12] [^\\n]*?cap_cmim) w=\\S+ l=\\S+",
+    "\\1 w=15u l=15u"
+   ],
+   [
+    "@re",
+    "r1_afe_ota",
+    "(?m)^(XMB6 [^\\n]*?) l=\\S+",
+    "\\1 l=3u"
+   ],
+   [
+    "@re",
+    "r1_afe_ch",
+    "WCCB=24u",
+    "WCCB=30u"
+   ],
+   [
+    "@re",
+    "r1_afe_s1side",
+    "w=\\{WCF1\\} l=\\{WCF1\\}",
+    "w=28.17u l=28.17u"
+   ],
+   [
+    "@re",
+    "r1_afe_s2side",
+    "w=\\{WCF2\\} l=\\{WCF2\\}",
+    "w=39.67u l=39.67u"
+   ]
+  ],
+  "seconds": 24.8,
+  "rows": [
+   {
+    "tag": "OPROW",
+    "mc": 0.0,
+    "code": 0.0,
+    "ocms": 0.594419,
+    "ocmc": 0.594419,
+    "o1cm": 0.629619,
+    "idd": 0.002234
+   },
+   {
+    "tag": "ACROW",
+    "mc": 0.0,
+    "code": 0.0,
+    "gs0": 0.233224,
+    "gc0": 0.233224,
+    "fs3": 1498130.0,
+    "fc3": 1498130.0,
+    "pks": 1.48875e-06,
+    "pkc": 1.48873e-06,
+    "ps100": -6.3257,
+    "pc100": -6.3257,
+    "ps1m": -61.0894,
+    "pc1m": -61.0894,
+    "gs1m": -1.4299,
+    "gc1m": -1.4299
+   },
+   {
+    "tag": "OPROW",
+    "mc": 0.0,
+    "code": 1.0,
+    "ocms": 0.594389,
+    "ocmc": 0.594389,
+    "o1cm": 0.61042,
+    "idd": 0.0022341
+   },
+   {
+    "tag": "ACROW",
+    "mc": 0.0,
+    "code": 1.0,
+    "gs0": 6.25109,
+    "gc0": 6.25109,
+    "fs3": 1412700.0,
+    "fc3": 1412700.0,
+    "pks": 1.24399e-06,
+    "pkc": 1.24394e-06,
+    "ps100": -6.6205,
+    "pc100": -6.6205,
+    "ps1m": -63.5548,
+    "pc1m": -63.5548,
+    "gs1m": -1.60212,
+    "gc1m": -1.60212
+   },
+   {
+    "tag": "OPROW",
+    "mc": 0.0,
+    "code": 2.0,
+    "ocms": 0.594373,
+    "ocmc": 0.594373,
+    "o1cm": 0.599632,
+    "idd": 0.00223416
+   },
+   {
+    "tag": "ACROW",
+    "mc": 0.0,
+    "code": 2.0,
+    "gs0": 12.2643,
+    "gc0": 12.2643,
+    "fs3": 1261800.0,
+    "fc3": 1261800.0,
+    "pks": 6.44371e-07,
+    "pkc": 6.44308e-07,
+    "ps100": -7.19511,
+    "pc100": -7.19511,
+    "ps1m": -68.0025,
+    "pc1m": -68.0025,
+    "gs1m": -1.98783,
+    "gc1m": -1.98783
+   },
+   {
+    "tag": "OPROW",
+    "mc": 0.0,
+    "code": 3.0,
+    "ocms": 0.594364,
+    "ocmc": 0.594364,
+    "o1cm": 0.593909,
+    "idd": 0.00223419
+   },
+   {
+    "tag": "ACROW",
+    "mc": 0.0,
+    "code": 3.0,
+    "gs0": 18.2691,
+    "gc0": 18.2691,
+    "fs3": 1352190.0,
+    "fc3": 1352190.0,
+    "pks": 7.46378e-06,
+    "pkc": 7.47224e-06,
+    "ps100": -6.7201,
+    "pc100": -6.7201,
+    "ps1m": -64.0288,
+    "pc1m": -64.0288,
+    "gs1m": -1.74694,
+    "gc1m": -1.74694
+   },
+   {
+    "tag": "OPROW",
+    "mc": 0.0,
+    "code": 4.0,
+    "ocms": 0.594378,
+    "ocmc": 0.594378,
+    "o1cm": 0.599631,
+    "idd": 0.00223416
+   },
+   {
+    "tag": "ACROW",
+    "mc": 0.0,
+    "code": 4.0,
+    "gs0": 24.2764,
+    "gc0": 24.2764,
+    "fs3": 1119650.0,
+    "fc3": 1119650.0,
+    "pks": 5.98343e-06,
+    "pkc": 5.9836e-06,
+    "ps100": -7.99658,
+    "pc100": -7.99658,
+    "ps1m": -74.3175,
+    "pc1m": -74.3175,
+    "gs1m": -2.46587,
+    "gc1m": -2.46587
+   },
+   {
+    "tag": "OPROW",
+    "mc": 0.0,
+    "code": 5.0,
+    "ocms": 0.594364,
+    "ocmc": 0.594364,
+    "o1cm": 0.593909,
+    "idd": 0.00223419
+   },
+   {
+    "tag": "ACROW",
+    "mc": 0.0,
+    "code": 5.0,
+    "gs0": 30.2571,
+    "gc0": 30.2571,
+    "fs3": 1200810.0,
+    "fc3": 1200810.0,
+    "pks": 1.15161e-05,
+    "pkc": 1.15137e-05,
+    "ps100": -7.46857,
+    "pc100": -7.46857,
+    "ps1m": -70.1331,
+    "pc1m": -70.1331,
+    "gs1m": -2.17412,
+    "gc1m": -2.17412
+   }
+  ],
+  "errors": [],
+  "deck": "r1_afe/r1afe-screen-g4/E3__ac_ss_ib11.81_cm0.5.cir",
+  "log": "r1_afe/r1afe-screen-g4/E3__ac_ss_ib11.81_cm0.5.log"
+ },
+ {
+  "name": "E4__stb_ffx_ib6.9_cm0.5",
+  "corner": "ffx",
+  "mismatch": false,
+  "subs": {
+   "MOS": "mos_ff",
+   "RES": "res_bcs",
+   "CAP": "cap_bcs",
+   "VDDA": 3.0,
+   "TEMP": 125,
+   "VCMI": 0.5,
+   "ACVDD": 0,
+   "NMC": 1,
+   "SEED": 1,
+   "LSB": 0.000439453125,
+   "CL": "2.8p",
+   "KLIST": "0 5",
+   "LLIST": "1 2 4 5",
+   "IB": "6.9u",
+   "DIO": "dio_ff",
+   "RAW": "$G1_RESULTS_ROOT/r1_afe/r1afe-screen-g4/E4__stb_ffx_ib6.9_cm0.5"
+  },
+  "rc": 0,
+  "edits": [
+   [
+    "@re",
+    "r1_afe_ota",
+    "(?m)^(XCC[12] [^\\n]*?cap_cmim) w=\\S+ l=\\S+",
+    "\\1 w=25u l=25u"
+   ],
+   [
+    "@re",
+    "r1_afe_ota",
+    "(?m)^(XCX[12] [^\\n]*?cap_cmim) w=\\S+ l=\\S+",
+    "\\1 w=15u l=15u"
+   ],
+   [
+    "@re",
+    "r1_afe_ota",
+    "(?m)^(XMB6 [^\\n]*?) l=\\S+",
+    "\\1 l=3u"
+   ],
+   [
+    "@re",
+    "r1_afe_ch",
+    "WCCB=24u",
+    "WCCB=30u"
+   ],
+   [
+    "@re",
+    "r1_afe_ch",
+    "WCS=22u",
+    "WCS=28u"
+   ],
+   [
+    "@re",
+    "r1_afe_s1side",
+    "w=\\{WCF1\\} l=\\{WCF1\\}",
+    "w=28.17u l=28.17u"
+   ],
+   [
+    "@re",
+    "r1_afe_s2side",
+    "w=\\{WCF2\\} l=\\{WCF2\\}",
+    "w=39.67u l=39.67u"
+   ],
+   [
+    "XA1 x1p x1n ",
+    "Vpa1p x1p y1p dc 0 ac {vdp1}\nVpa1n x1n y1n dc 0 ac {vdn1}\nIpa1p 0 x1p dc 0 ac {idp1}\nIpa1n 0 x1n dc 0 ac {idn1}\nXA1 y1p y1n "
+   ],
+   [
+    "XA2 x2p x2n ",
+    "Vpa2p x2p y2p dc 0 ac {vdp2}\nVpa2n x2n y2n dc 0 ac {vdn2}\nIpa2p 0 x2p dc 0 ac {idp2}\nIpa2n 0 x2n dc 0 ac {idn2}\nXA2 y2p y2n "
+   ],
+   [
+    "XMC1 vcmfb vcms tc",
+    "Vpc vcms vcmsy dc 0 ac {vc1}\nIpc 0 vcms dc 0 ac {ic1}\nXMC1 vcmfb vcmsy tc"
+   ],
+   [
+    "XMC1 vcmfb vcms tc",
+    "Vpc vcms vcmsy dc 0 ac {vc2}\nIpc 0 vcms dc 0 ac {ic2}\nXMC1 vcmfb vcmsy tc"
+   ],
+   [
+    "XMN7 outp ",
+    "Vpop outpi outp dc 0 ac {vop1}\nVpon outni outn dc 0 ac {von1}\nIpop 0 outpi dc 0 ac {iop1}\nIpon 0 outni dc 0 ac {ion1}\nXMN7 outpi "
+   ],
+   [
+    "XMN8 outn ",
+    "XMN8 outni "
+   ],
+   [
+    "XMP7 outp ",
+    "XMP7 outpi "
+   ],
+   [
+    "XMP8 outn ",
+    "XMP8 outni "
+   ],
+   [
+    "XCC1 cz1 outp ",
+    "XCC1 cz1 outpi "
+   ],
+   [
+    "XCC2 cz2 outn ",
+    "XCC2 cz2 outni "
+   ],
+   [
+    "XMN7 outp ",
+    "Vpop outpi outp dc 0 ac {vop2}\nVpon outni outn dc 0 ac {von2}\nIpop 0 outpi dc 0 ac {iop2}\nIpon 0 outni dc 0 ac {ion2}\nXMN7 outpi "
+   ],
+   [
+    "XMN8 outn ",
+    "XMN8 outni "
+   ],
+   [
+    "XMP7 outp ",
+    "XMP7 outpi "
+   ],
+   [
+    "XMP8 outn ",
+    "XMP8 outni "
+   ],
+   [
+    "XCC1 cz1 outp ",
+    "XCC1 cz1 outpi "
+   ],
+   [
+    "XCC2 cz2 outn ",
+    "XCC2 cz2 outni "
+   ],
+   [
+    "XCC1B cb1 outp ",
+    "XCC1B cb1 outpi "
+   ],
+   [
+    "XCC2B cb2 outn ",
+    "XCC2B cb2 outni "
+   ],
+   [
+    "?",
+    "XCD1B cd1 outp ",
+    "XCD1B cd1 outpi "
+   ],
+   [
+    "?",
+    "XCD2B cd2 outn ",
+    "XCD2B cd2 outni "
+   ],
+   [
+    "?",
+    "XCX1 cz1 outn ",
+    "XCX1 cz1 outni "
+   ],
+   [
+    "?",
+    "XCX2 cz2 outp ",
+    "XCX2 cz2 outpi "
+   ],
+   [
+    "?",
+    "XCX1 cz1 outn ",
+    "XCX1 cz1 outni "
+   ],
+   [
+    "?",
+    "XCX2 cz2 outp ",
+    "XCX2 cz2 outpi "
+   ]
+  ],
+  "seconds": 40.1,
+  "rows": [
+   {
+    "tag": "STBROW",
+    "code": 0,
+    "loop": "dm1",
+    "t_dc_db": 63.43,
+    "f_unity": 11476309.9111488,
+    "pm_valid": true,
+    "pm_deg": 66.45,
+    "gm_db": 27.29,
+    "f_180": 181777336.84997952,
+    "ph_min_deg": -316.7
+   },
+   {
+    "tag": "STBROW",
+    "code": 0,
+    "loop": "cm1",
+    "t_dc_db": 60.54,
+    "f_unity": 4788168.954884275,
+    "pm_valid": true,
+    "pm_deg": 82.92,
+    "gm_db": null,
+    "f_180": null,
+    "ph_min_deg": -146.8
+   },
+   {
+    "tag": "STBROW",
+    "code": 0,
+    "loop": "dm2",
+    "t_dc_db": 82.25,
+    "f_unity": 19758757.10259584,
+    "pm_valid": true,
+    "pm_deg": 72.01,
+    "gm_db": 17.84,
+    "f_180": 162503556.6779473,
+    "ph_min_deg": -331.9
+   },
+   {
+    "tag": "STBROW",
+    "code": 0,
+    "loop": "cm2",
+    "t_dc_db": 82.15,
+    "f_unity": 5938511.694018589,
+    "pm_valid": true,
+    "pm_deg": 68.8,
+    "gm_db": 37.35,
+    "f_180": 114931367.77387007,
+    "ph_min_deg": -471.9
+   },
+   {
+    "tag": "STBROW",
+    "code": 5,
+    "loop": "dm1",
+    "t_dc_db": 34.83,
+    "f_unity": 9767957.438896565,
+    "pm_valid": true,
+    "pm_deg": 103.36,
+    "gm_db": 26.9,
+    "f_180": 180269390.7780689,
+    "ph_min_deg": -321.1
+   },
+   {
+    "tag": "STBROW",
+    "code": 5,
+    "loop": "cm1",
+    "t_dc_db": 52.64,
+    "f_unity": 7636956.457046634,
+    "pm_valid": true,
+    "pm_deg": 62.54,
+    "gm_db": null,
+    "f_180": null,
+    "ph_min_deg": -164.9
+   },
+   {
+    "tag": "STBROW",
+    "code": 5,
+    "loop": "dm2",
+    "t_dc_db": 72.47,
+    "f_unity": 15911654.126132617,
+    "pm_valid": true,
+    "pm_deg": 85.95,
+    "gm_db": 19.03,
+    "f_180": 174040882.3620189,
+    "ph_min_deg": -331.0
+   },
+   {
+    "tag": "STBROW",
+    "code": 5,
+    "loop": "cm2",
+    "t_dc_db": 80.1,
+    "f_unity": 5835924.665682458,
+    "pm_valid": true,
+    "pm_deg": 68.04,
+    "gm_db": 36.3,
+    "f_180": 110344227.47361979,
+    "ph_min_deg": -474.1
+   }
+  ],
+  "errors": [],
+  "deck": "r1_afe/r1afe-screen-g4/E4__stb_ffx_ib6.9_cm0.5.cir",
+  "log": "r1_afe/r1afe-screen-g4/E4__stb_ffx_ib6.9_cm0.5.log"
+ },
+ {
+  "name": "E4__op_tt_ib10.14_cm0.5",
+  "corner": "tt",
+  "mismatch": false,
+  "subs": {
+   "MOS": "mos_tt",
+   "RES": "res_typ",
+   "CAP": "cap_typ",
+   "VDDA": 3.3,
+   "TEMP": 27,
+   "VCMI": 0.5,
+   "ACVDD": 0,
+   "NMC": 1,
+   "SEED": 1,
+   "LSB": 0.000439453125,
+   "CL": "2.8p",
+   "KLIST": "0 1 2 3 4 5",
+   "LLIST": "1 2 3 4 5 6 7 8",
+   "IB": "10.14u",
+   "DIO": "dio_tt",
+   "RAW": "$G1_RESULTS_ROOT/r1_afe/r1afe-screen-g4/E4__op_tt_ib10.14_cm0.5"
+  },
+  "rc": 0,
+  "edits": [
+   [
+    "@re",
+    "r1_afe_ota",
+    "(?m)^(XCC[12] [^\\n]*?cap_cmim) w=\\S+ l=\\S+",
+    "\\1 w=25u l=25u"
+   ],
+   [
+    "@re",
+    "r1_afe_ota",
+    "(?m)^(XCX[12] [^\\n]*?cap_cmim) w=\\S+ l=\\S+",
+    "\\1 w=15u l=15u"
+   ],
+   [
+    "@re",
+    "r1_afe_ota",
+    "(?m)^(XMB6 [^\\n]*?) l=\\S+",
+    "\\1 l=3u"
+   ],
+   [
+    "@re",
+    "r1_afe_ch",
+    "WCCB=24u",
+    "WCCB=30u"
+   ],
+   [
+    "@re",
+    "r1_afe_ch",
+    "WCS=22u",
+    "WCS=28u"
+   ],
+   [
+    "@re",
+    "r1_afe_s1side",
+    "w=\\{WCF1\\} l=\\{WCF1\\}",
+    "w=28.17u l=28.17u"
+   ],
+   [
+    "@re",
+    "r1_afe_s2side",
+    "w=\\{WCF2\\} l=\\{WCF2\\}",
+    "w=39.67u l=39.67u"
+   ]
+  ],
+  "seconds": 5.0,
+  "rows": [
+   {
+    "tag": "OPROW",
+    "code": 0.0,
+    "ocms": 0.595358,
+    "ocmc": 0.595358,
+    "odiff": 6.63931e-11,
+    "o1cm": 0.780464,
+    "o1diff": 5.75895e-11,
+    "idd": 0.00197145
+   },
+   {
+    "tag": "OPROW",
+    "code": 5.0,
+    "ocms": 0.595344,
+    "ocmc": 0.595344,
+    "odiff": -4.8363e-11,
+    "o1cm": 0.703898,
+    "o1diff": -1.33387e-11,
+    "idd": 0.00197177
+   }
+  ],
+  "errors": [],
+  "deck": "r1_afe/r1afe-screen-g4/E4__op_tt_ib10.14_cm0.5.cir",
+  "log": "r1_afe/r1afe-screen-g4/E4__op_tt_ib10.14_cm0.5.log"
+ },
+ {
+  "name": "E4__op_ss_ib11.81_cm0.5",
+  "corner": "ss",
+  "mismatch": false,
+  "subs": {
+   "MOS": "mos_ss",
+   "RES": "res_wcs",
+   "CAP": "cap_wcs",
+   "VDDA": 3.0,
+   "TEMP": 125,
+   "VCMI": 0.5,
+   "ACVDD": 0,
+   "NMC": 1,
+   "SEED": 1,
+   "LSB": 0.000439453125,
+   "CL": "2.8p",
+   "KLIST": "0 1 2 3 4 5",
+   "LLIST": "1 2 3 4 5 6 7 8",
+   "IB": "11.81u",
+   "DIO": "dio_ss",
+   "RAW": "$G1_RESULTS_ROOT/r1_afe/r1afe-screen-g4/E4__op_ss_ib11.81_cm0.5"
+  },
+  "rc": 0,
+  "edits": [
+   [
+    "@re",
+    "r1_afe_ota",
+    "(?m)^(XCC[12] [^\\n]*?cap_cmim) w=\\S+ l=\\S+",
+    "\\1 w=25u l=25u"
+   ],
+   [
+    "@re",
+    "r1_afe_ota",
+    "(?m)^(XCX[12] [^\\n]*?cap_cmim) w=\\S+ l=\\S+",
+    "\\1 w=15u l=15u"
+   ],
+   [
+    "@re",
+    "r1_afe_ota",
+    "(?m)^(XMB6 [^\\n]*?) l=\\S+",
+    "\\1 l=3u"
+   ],
+   [
+    "@re",
+    "r1_afe_ch",
+    "WCCB=24u",
+    "WCCB=30u"
+   ],
+   [
+    "@re",
+    "r1_afe_ch",
+    "WCS=22u",
+    "WCS=28u"
+   ],
+   [
+    "@re",
+    "r1_afe_s1side",
+    "w=\\{WCF1\\} l=\\{WCF1\\}",
+    "w=28.17u l=28.17u"
+   ],
+   [
+    "@re",
+    "r1_afe_s2side",
+    "w=\\{WCF2\\} l=\\{WCF2\\}",
+    "w=39.67u l=39.67u"
+   ]
+  ],
+  "seconds": 4.7,
+  "rows": [
+   {
+    "tag": "OPROW",
+    "code": 0.0,
+    "ocms": 0.594419,
+    "ocmc": 0.594419,
+    "odiff": -1.25263e-10,
+    "o1cm": 0.629619,
+    "o1diff": -1.18108e-10,
+    "idd": 0.002234
+   },
+   {
+    "tag": "OPROW",
+    "code": 5.0,
+    "ocms": 0.594364,
+    "ocmc": 0.594364,
+    "odiff": 2.53454e-10,
+    "o1cm": 0.593909,
+    "o1diff": 6.24381e-11,
+    "idd": 0.00223419
+   }
+  ],
+  "errors": [],
+  "deck": "r1_afe/r1afe-screen-g4/E4__op_ss_ib11.81_cm0.5.cir",
+  "log": "r1_afe/r1afe-screen-g4/E4__op_ss_ib11.81_cm0.5.log"
+ },
+ {
+  "name": "E4__ac_ss_ib11.81_cm0.5",
+  "corner": "ss",
+  "mismatch": false,
+  "subs": {
+   "MOS": "mos_ss",
+   "RES": "res_wcs",
+   "CAP": "cap_wcs",
+   "VDDA": 3.0,
+   "TEMP": 125,
+   "VCMI": 0.5,
+   "ACVDD": 0,
+   "NMC": 1,
+   "SEED": 1,
+   "LSB": 0.000439453125,
+   "CL": "2.8p",
+   "KLIST": "0 1 2 3 4 5",
+   "LLIST": "1 2 3 4 5 6 7 8",
+   "IB": "11.81u",
+   "DIO": "dio_ss",
+   "RAW": "$G1_RESULTS_ROOT/r1_afe/r1afe-screen-g4/E4__ac_ss_ib11.81_cm0.5"
+  },
+  "rc": 0,
+  "edits": [
+   [
+    "@re",
+    "r1_afe_ota",
+    "(?m)^(XCC[12] [^\\n]*?cap_cmim) w=\\S+ l=\\S+",
+    "\\1 w=25u l=25u"
+   ],
+   [
+    "@re",
+    "r1_afe_ota",
+    "(?m)^(XCX[12] [^\\n]*?cap_cmim) w=\\S+ l=\\S+",
+    "\\1 w=15u l=15u"
+   ],
+   [
+    "@re",
+    "r1_afe_ota",
+    "(?m)^(XMB6 [^\\n]*?) l=\\S+",
+    "\\1 l=3u"
+   ],
+   [
+    "@re",
+    "r1_afe_ch",
+    "WCCB=24u",
+    "WCCB=30u"
+   ],
+   [
+    "@re",
+    "r1_afe_ch",
+    "WCS=22u",
+    "WCS=28u"
+   ],
+   [
+    "@re",
+    "r1_afe_s1side",
+    "w=\\{WCF1\\} l=\\{WCF1\\}",
+    "w=28.17u l=28.17u"
+   ],
+   [
+    "@re",
+    "r1_afe_s2side",
+    "w=\\{WCF2\\} l=\\{WCF2\\}",
+    "w=39.67u l=39.67u"
+   ]
+  ],
+  "seconds": 26.4,
+  "rows": [
+   {
+    "tag": "OPROW",
+    "mc": 0.0,
+    "code": 0.0,
+    "ocms": 0.594419,
+    "ocmc": 0.594419,
+    "o1cm": 0.629619,
+    "idd": 0.002234
+   },
+   {
+    "tag": "ACROW",
+    "mc": 0.0,
+    "code": 0.0,
+    "gs0": 0.233224,
+    "gc0": 0.233224,
+    "fs3": 1501800.0,
+    "fc3": 1501800.0,
+    "pks": 1.48881e-06,
+    "pkc": 1.48879e-06,
+    "ps100": -6.32585,
+    "pc100": -6.32585,
+    "ps1m": -61.0968,
+    "pc1m": -61.0968,
+    "gs1m": -1.42407,
+    "gc1m": -1.42407
+   },
+   {
+    "tag": "OPROW",
+    "mc": 0.0,
+    "code": 1.0,
+    "ocms": 0.594389,
+    "ocmc": 0.594389,
+    "o1cm": 0.61042,
+    "idd": 0.0022341
+   },
+   {
+    "tag": "ACROW",
+    "mc": 0.0,
+    "code": 1.0,
+    "gs0": 6.25109,
+    "gc0": 6.25109,
+    "fs3": 1416930.0,
+    "fc3": 1416930.0,
+    "pks": 1.24409e-06,
+    "pkc": 1.24404e-06,
+    "ps100": -6.62076,
+    "pc100": -6.62076,
+    "ps1m": -63.5755,
+    "pc1m": -63.5755,
+    "gs1m": -1.59358,
+    "gc1m": -1.59358
+   },
+   {
+    "tag": "OPROW",
+    "mc": 0.0,
+    "code": 2.0,
+    "ocms": 0.594373,
+    "ocmc": 0.594373,
+    "o1cm": 0.599632,
+    "idd": 0.00223416
+   },
+   {
+    "tag": "ACROW",
+    "mc": 0.0,
+    "code": 2.0,
+    "gs0": 12.2643,
+    "gc0": 12.2643,
+    "fs3": 1266230.0,
+    "fc3": 1266230.0,
+    "pks": 6.44537e-07,
+    "pkc": 6.44473e-07,
+    "ps100": -7.1956,
+    "pc100": -7.1956,
+    "ps1m": -68.0516,
+    "pc1m": -68.0516,
+    "gs1m": -1.97493,
+    "gc1m": -1.97493
+   },
+   {
+    "tag": "OPROW",
+    "mc": 0.0,
+    "code": 3.0,
+    "ocms": 0.594364,
+    "ocmc": 0.594364,
+    "o1cm": 0.593909,
+    "idd": 0.00223419
+   },
+   {
+    "tag": "ACROW",
+    "mc": 0.0,
+    "code": 3.0,
+    "gs0": 18.2691,
+    "gc0": 18.2691,
+    "fs3": 1357120.0,
+    "fc3": 1357120.0,
+    "pks": 7.46393e-06,
+    "pkc": 7.47239e-06,
+    "ps100": -6.72096,
+    "pc100": -6.72096,
+    "ps1m": -64.0744,
+    "pc1m": -64.0744,
+    "gs1m": -1.73493,
+    "gc1m": -1.73493
+   },
+   {
+    "tag": "OPROW",
+    "mc": 0.0,
+    "code": 4.0,
+    "ocms": 0.594378,
+    "ocmc": 0.594378,
+    "o1cm": 0.599631,
+    "idd": 0.00223416
+   },
+   {
+    "tag": "ACROW",
+    "mc": 0.0,
+    "code": 4.0,
+    "gs0": 24.2764,
+    "gc0": 24.2764,
+    "fs3": 1122760.0,
+    "fc3": 1122760.0,
+    "pks": 5.98359e-06,
+    "pkc": 5.98376e-06,
+    "ps100": -7.99708,
+    "pc100": -7.99708,
+    "ps1m": -74.3691,
+    "pc1m": -74.3691,
+    "gs1m": -2.45391,
+    "gc1m": -2.45391
+   },
+   {
+    "tag": "OPROW",
+    "mc": 0.0,
+    "code": 5.0,
+    "ocms": 0.594364,
+    "ocmc": 0.594364,
+    "o1cm": 0.593909,
+    "idd": 0.00223419
+   },
+   {
+    "tag": "ACROW",
+    "mc": 0.0,
+    "code": 5.0,
+    "gs0": 30.2571,
+    "gc0": 30.2571,
+    "fs3": 1204190.0,
+    "fc3": 1204190.0,
+    "pks": 1.15162e-05,
+    "pkc": 1.15139e-05,
+    "ps100": -7.46943,
+    "pc100": -7.46943,
+    "ps1m": -70.1809,
+    "pc1m": -70.1809,
+    "gs1m": -2.16293,
+    "gc1m": -2.16293
+   }
+  ],
+  "errors": [],
+  "deck": "r1_afe/r1afe-screen-g4/E4__ac_ss_ib11.81_cm0.5.cir",
+  "log": "r1_afe/r1afe-screen-g4/E4__ac_ss_ib11.81_cm0.5.log"
+ },
+ {
+  "name": "E5__stb_ffx_ib6.9_cm0.5",
+  "corner": "ffx",
+  "mismatch": false,
+  "subs": {
+   "MOS": "mos_ff",
+   "RES": "res_bcs",
+   "CAP": "cap_bcs",
+   "VDDA": 3.0,
+   "TEMP": 125,
+   "VCMI": 0.5,
+   "ACVDD": 0,
+   "NMC": 1,
+   "SEED": 1,
+   "LSB": 0.000439453125,
+   "CL": "2.8p",
+   "KLIST": "0 5",
+   "LLIST": "1 2 4 5",
+   "IB": "6.9u",
+   "DIO": "dio_ff",
+   "RAW": "$G1_RESULTS_ROOT/r1_afe/r1afe-screen-g4/E5__stb_ffx_ib6.9_cm0.5"
+  },
+  "rc": 0,
+  "edits": [
+   [
+    "@re",
+    "r1_afe_ota",
+    "(?m)^(XCC[12] [^\\n]*?cap_cmim) w=\\S+ l=\\S+",
+    "\\1 w=25u l=25u"
+   ],
+   [
+    "@re",
+    "r1_afe_ota",
+    "(?m)^(XCX[12] [^\\n]*?cap_cmim) w=\\S+ l=\\S+",
+    "\\1 w=15u l=15u"
+   ],
+   [
+    "@re",
+    "r1_afe_ota",
+    "(?m)^(XMC[12] [^\\n]*?) w=\\S+",
+    "\\1 w=8u"
+   ],
+   [
+    "@re",
+    "r1_afe_ota",
+    "(?m)^(XMB6 [^\\n]*?) l=\\S+",
+    "\\1 l=4u"
+   ],
+   [
+    "@re",
+    "r1_afe_ch",
+    "WCCB=24u",
+    "WCCB=30u"
+   ],
+   [
+    "@re",
+    "r1_afe_s1side",
+    "w=\\{WCF1\\} l=\\{WCF1\\}",
+    "w=28.17u l=28.17u"
+   ],
+   [
+    "@re",
+    "r1_afe_s2side",
+    "w=\\{WCF2\\} l=\\{WCF2\\}",
+    "w=39.67u l=39.67u"
+   ],
+   [
+    "XA1 x1p x1n ",
+    "Vpa1p x1p y1p dc 0 ac {vdp1}\nVpa1n x1n y1n dc 0 ac {vdn1}\nIpa1p 0 x1p dc 0 ac {idp1}\nIpa1n 0 x1n dc 0 ac {idn1}\nXA1 y1p y1n "
+   ],
+   [
+    "XA2 x2p x2n ",
+    "Vpa2p x2p y2p dc 0 ac {vdp2}\nVpa2n x2n y2n dc 0 ac {vdn2}\nIpa2p 0 x2p dc 0 ac {idp2}\nIpa2n 0 x2n dc 0 ac {idn2}\nXA2 y2p y2n "
+   ],
+   [
+    "XMC1 vcmfb vcms tc",
+    "Vpc vcms vcmsy dc 0 ac {vc1}\nIpc 0 vcms dc 0 ac {ic1}\nXMC1 vcmfb vcmsy tc"
+   ],
+   [
+    "XMC1 vcmfb vcms tc",
+    "Vpc vcms vcmsy dc 0 ac {vc2}\nIpc 0 vcms dc 0 ac {ic2}\nXMC1 vcmfb vcmsy tc"
+   ],
+   [
+    "XMN7 outp ",
+    "Vpop outpi outp dc 0 ac {vop1}\nVpon outni outn dc 0 ac {von1}\nIpop 0 outpi dc 0 ac {iop1}\nIpon 0 outni dc 0 ac {ion1}\nXMN7 outpi "
+   ],
+   [
+    "XMN8 outn ",
+    "XMN8 outni "
+   ],
+   [
+    "XMP7 outp ",
+    "XMP7 outpi "
+   ],
+   [
+    "XMP8 outn ",
+    "XMP8 outni "
+   ],
+   [
+    "XCC1 cz1 outp ",
+    "XCC1 cz1 outpi "
+   ],
+   [
+    "XCC2 cz2 outn ",
+    "XCC2 cz2 outni "
+   ],
+   [
+    "XMN7 outp ",
+    "Vpop outpi outp dc 0 ac {vop2}\nVpon outni outn dc 0 ac {von2}\nIpop 0 outpi dc 0 ac {iop2}\nIpon 0 outni dc 0 ac {ion2}\nXMN7 outpi "
+   ],
+   [
+    "XMN8 outn ",
+    "XMN8 outni "
+   ],
+   [
+    "XMP7 outp ",
+    "XMP7 outpi "
+   ],
+   [
+    "XMP8 outn ",
+    "XMP8 outni "
+   ],
+   [
+    "XCC1 cz1 outp ",
+    "XCC1 cz1 outpi "
+   ],
+   [
+    "XCC2 cz2 outn ",
+    "XCC2 cz2 outni "
+   ],
+   [
+    "XCC1B cb1 outp ",
+    "XCC1B cb1 outpi "
+   ],
+   [
+    "XCC2B cb2 outn ",
+    "XCC2B cb2 outni "
+   ],
+   [
+    "?",
+    "XCD1B cd1 outp ",
+    "XCD1B cd1 outpi "
+   ],
+   [
+    "?",
+    "XCD2B cd2 outn ",
+    "XCD2B cd2 outni "
+   ],
+   [
+    "?",
+    "XCX1 cz1 outn ",
+    "XCX1 cz1 outni "
+   ],
+   [
+    "?",
+    "XCX2 cz2 outp ",
+    "XCX2 cz2 outpi "
+   ],
+   [
+    "?",
+    "XCX1 cz1 outn ",
+    "XCX1 cz1 outni "
+   ],
+   [
+    "?",
+    "XCX2 cz2 outp ",
+    "XCX2 cz2 outpi "
+   ]
+  ],
+  "seconds": 40.0,
+  "rows": [
+   {
+    "tag": "STBROW",
+    "code": 0,
+    "loop": "dm1",
+    "t_dc_db": 54.22,
+    "f_unity": 11883987.95940145,
+    "pm_valid": true,
+    "pm_deg": 70.24,
+    "gm_db": 25.89,
+    "f_180": 165293462.5808952,
+    "ph_min_deg": -311.1
+   },
+   {
+    "tag": "STBROW",
+    "code": 0,
+    "loop": "cm1",
+    "t_dc_db": 48.41,
+    "f_unity": 3347196.5549031026,
+    "pm_valid": true,
+    "pm_deg": 82.75,
+    "gm_db": null,
+    "f_180": null,
+    "ph_min_deg": -136.9
+   },
+   {
+    "tag": "STBROW",
+    "code": 0,
+    "loop": "dm2",
+    "t_dc_db": 82.17,
+    "f_unity": 19769889.611915737,
+    "pm_valid": true,
+    "pm_deg": 71.89,
+    "gm_db": 17.88,
+    "f_180": 162262242.62898386,
+    "ph_min_deg": -332.0
+   },
+   {
+    "tag": "STBROW",
+    "code": 0,
+    "loop": "cm2",
+    "t_dc_db": 82.08,
+    "f_unity": 5939419.553441774,
+    "pm_valid": true,
+    "pm_deg": 68.75,
+    "gm_db": 37.36,
+    "f_180": 114759513.26529439,
+    "ph_min_deg": -472.1
+   },
+   {
+    "tag": "STBROW",
+    "code": 5,
+    "loop": "dm1",
+    "t_dc_db": 28.27,
+    "f_unity": 10389611.237944623,
+    "pm_valid": true,
+    "pm_deg": 105.88,
+    "gm_db": 25.3,
+    "f_180": 168780985.71400562,
+    "ph_min_deg": -315.9
+   },
+   {
+    "tag": "STBROW",
+    "code": 5,
+    "loop": "cm1",
+    "t_dc_db": 43.59,
+    "f_unity": 5887551.940432276,
+    "pm_valid": true,
+    "pm_deg": 65.76,
+    "gm_db": null,
+    "f_180": null,
+    "ph_min_deg": -143.5
+   },
+   {
+    "tag": "STBROW",
+    "code": 5,
+    "loop": "dm2",
+    "t_dc_db": 72.38,
+    "f_unity": 16068566.416079944,
+    "pm_valid": true,
+    "pm_deg": 86.34,
+    "gm_db": 19.13,
+    "f_180": 173353859.30427572,
+    "ph_min_deg": -331.1
+   },
+   {
+    "tag": "STBROW",
+    "code": 5,
+    "loop": "cm2",
+    "t_dc_db": 79.9,
+    "f_unity": 5834560.036769203,
+    "pm_valid": true,
+    "pm_deg": 68.08,
+    "gm_db": 36.3,
+    "f_180": 109811532.13177562,
+    "ph_min_deg": -474.5
+   }
+  ],
+  "errors": [],
+  "deck": "r1_afe/r1afe-screen-g4/E5__stb_ffx_ib6.9_cm0.5.cir",
+  "log": "r1_afe/r1afe-screen-g4/E5__stb_ffx_ib6.9_cm0.5.log"
+ },
+ {
+  "name": "E5__op_tt_ib10.14_cm0.5",
+  "corner": "tt",
+  "mismatch": false,
+  "subs": {
+   "MOS": "mos_tt",
+   "RES": "res_typ",
+   "CAP": "cap_typ",
+   "VDDA": 3.3,
+   "TEMP": 27,
+   "VCMI": 0.5,
+   "ACVDD": 0,
+   "NMC": 1,
+   "SEED": 1,
+   "LSB": 0.000439453125,
+   "CL": "2.8p",
+   "KLIST": "0 1 2 3 4 5",
+   "LLIST": "1 2 3 4 5 6 7 8",
+   "IB": "10.14u",
+   "DIO": "dio_tt",
+   "RAW": "$G1_RESULTS_ROOT/r1_afe/r1afe-screen-g4/E5__op_tt_ib10.14_cm0.5"
+  },
+  "rc": 0,
+  "edits": [
+   [
+    "@re",
+    "r1_afe_ota",
+    "(?m)^(XCC[12] [^\\n]*?cap_cmim) w=\\S+ l=\\S+",
+    "\\1 w=25u l=25u"
+   ],
+   [
+    "@re",
+    "r1_afe_ota",
+    "(?m)^(XCX[12] [^\\n]*?cap_cmim) w=\\S+ l=\\S+",
+    "\\1 w=15u l=15u"
+   ],
+   [
+    "@re",
+    "r1_afe_ota",
+    "(?m)^(XMC[12] [^\\n]*?) w=\\S+",
+    "\\1 w=8u"
+   ],
+   [
+    "@re",
+    "r1_afe_ota",
+    "(?m)^(XMB6 [^\\n]*?) l=\\S+",
+    "\\1 l=4u"
+   ],
+   [
+    "@re",
+    "r1_afe_ch",
+    "WCCB=24u",
+    "WCCB=30u"
+   ],
+   [
+    "@re",
+    "r1_afe_s1side",
+    "w=\\{WCF1\\} l=\\{WCF1\\}",
+    "w=28.17u l=28.17u"
+   ],
+   [
+    "@re",
+    "r1_afe_s2side",
+    "w=\\{WCF2\\} l=\\{WCF2\\}",
+    "w=39.67u l=39.67u"
+   ]
+  ],
+  "seconds": 5.4,
+  "rows": [
+   {
+    "tag": "OPROW",
+    "code": 0.0,
+    "ocms": 0.595202,
+    "ocmc": 0.595202,
+    "odiff": -4.47869e-08,
+    "o1cm": 0.637714,
+    "o1diff": 3.01787e-11,
+    "idd": 0.00197174
+   },
+   {
+    "tag": "OPROW",
+    "code": 5.0,
+    "ocms": 0.595167,
+    "ocmc": 0.595167,
+    "odiff": 2.10667e-11,
+    "o1cm": 0.601082,
+    "o1diff": 6.70919e-12,
+    "idd": 0.00197191
+   }
+  ],
+  "errors": [],
+  "deck": "r1_afe/r1afe-screen-g4/E5__op_tt_ib10.14_cm0.5.cir",
+  "log": "r1_afe/r1afe-screen-g4/E5__op_tt_ib10.14_cm0.5.log"
+ },
+ {
+  "name": "E5__op_ss_ib11.81_cm0.5",
+  "corner": "ss",
+  "mismatch": false,
+  "subs": {
+   "MOS": "mos_ss",
+   "RES": "res_wcs",
+   "CAP": "cap_wcs",
+   "VDDA": 3.0,
+   "TEMP": 125,
+   "VCMI": 0.5,
+   "ACVDD": 0,
+   "NMC": 1,
+   "SEED": 1,
+   "LSB": 0.000439453125,
+   "CL": "2.8p",
+   "KLIST": "0 1 2 3 4 5",
+   "LLIST": "1 2 3 4 5 6 7 8",
+   "IB": "11.81u",
+   "DIO": "dio_ss",
+   "RAW": "$G1_RESULTS_ROOT/r1_afe/r1afe-screen-g4/E5__op_ss_ib11.81_cm0.5"
+  },
+  "rc": 0,
+  "edits": [
+   [
+    "@re",
+    "r1_afe_ota",
+    "(?m)^(XCC[12] [^\\n]*?cap_cmim) w=\\S+ l=\\S+",
+    "\\1 w=25u l=25u"
+   ],
+   [
+    "@re",
+    "r1_afe_ota",
+    "(?m)^(XCX[12] [^\\n]*?cap_cmim) w=\\S+ l=\\S+",
+    "\\1 w=15u l=15u"
+   ],
+   [
+    "@re",
+    "r1_afe_ota",
+    "(?m)^(XMC[12] [^\\n]*?) w=\\S+",
+    "\\1 w=8u"
+   ],
+   [
+    "@re",
+    "r1_afe_ota",
+    "(?m)^(XMB6 [^\\n]*?) l=\\S+",
+    "\\1 l=4u"
+   ],
+   [
+    "@re",
+    "r1_afe_ch",
+    "WCCB=24u",
+    "WCCB=30u"
+   ],
+   [
+    "@re",
+    "r1_afe_s1side",
+    "w=\\{WCF1\\} l=\\{WCF1\\}",
+    "w=28.17u l=28.17u"
+   ],
+   [
+    "@re",
+    "r1_afe_s2side",
+    "w=\\{WCF2\\} l=\\{WCF2\\}",
+    "w=39.67u l=39.67u"
+   ]
+  ],
+  "seconds": 5.4,
+  "rows": [
+   {
+    "tag": "OPROW",
+    "code": 0.0,
+    "ocms": 0.594175,
+    "ocmc": 0.594175,
+    "odiff": -8.13875e-11,
+    "o1cm": 0.466914,
+    "o1diff": -7.70926e-11,
+    "idd": 0.00223427
+   },
+   {
+    "tag": "OPROW",
+    "code": 5.0,
+    "ocms": 0.594089,
+    "ocmc": 0.594089,
+    "odiff": -6.19821e-10,
+    "o1cm": 0.476369,
+    "o1diff": -1.499e-10,
+    "idd": 0.00223425
+   }
+  ],
+  "errors": [],
+  "deck": "r1_afe/r1afe-screen-g4/E5__op_ss_ib11.81_cm0.5.cir",
+  "log": "r1_afe/r1afe-screen-g4/E5__op_ss_ib11.81_cm0.5.log"
+ },
+ {
+  "name": "E5__ac_ss_ib11.81_cm0.5",
+  "corner": "ss",
+  "mismatch": false,
+  "subs": {
+   "MOS": "mos_ss",
+   "RES": "res_wcs",
+   "CAP": "cap_wcs",
+   "VDDA": 3.0,
+   "TEMP": 125,
+   "VCMI": 0.5,
+   "ACVDD": 0,
+   "NMC": 1,
+   "SEED": 1,
+   "LSB": 0.000439453125,
+   "CL": "2.8p",
+   "KLIST": "0 1 2 3 4 5",
+   "LLIST": "1 2 3 4 5 6 7 8",
+   "IB": "11.81u",
+   "DIO": "dio_ss",
+   "RAW": "$G1_RESULTS_ROOT/r1_afe/r1afe-screen-g4/E5__ac_ss_ib11.81_cm0.5"
+  },
+  "rc": 0,
+  "edits": [
+   [
+    "@re",
+    "r1_afe_ota",
+    "(?m)^(XCC[12] [^\\n]*?cap_cmim) w=\\S+ l=\\S+",
+    "\\1 w=25u l=25u"
+   ],
+   [
+    "@re",
+    "r1_afe_ota",
+    "(?m)^(XCX[12] [^\\n]*?cap_cmim) w=\\S+ l=\\S+",
+    "\\1 w=15u l=15u"
+   ],
+   [
+    "@re",
+    "r1_afe_ota",
+    "(?m)^(XMC[12] [^\\n]*?) w=\\S+",
+    "\\1 w=8u"
+   ],
+   [
+    "@re",
+    "r1_afe_ota",
+    "(?m)^(XMB6 [^\\n]*?) l=\\S+",
+    "\\1 l=4u"
+   ],
+   [
+    "@re",
+    "r1_afe_ch",
+    "WCCB=24u",
+    "WCCB=30u"
+   ],
+   [
+    "@re",
+    "r1_afe_s1side",
+    "w=\\{WCF1\\} l=\\{WCF1\\}",
+    "w=28.17u l=28.17u"
+   ],
+   [
+    "@re",
+    "r1_afe_s2side",
+    "w=\\{WCF2\\} l=\\{WCF2\\}",
+    "w=39.67u l=39.67u"
+   ]
+  ],
+  "seconds": 27.4,
+  "rows": [
+   {
+    "tag": "OPROW",
+    "mc": 0.0,
+    "code": 0.0,
+    "ocms": 0.594175,
+    "ocmc": 0.594175,
+    "o1cm": 0.466914,
+    "idd": 0.00223427
+   },
+   {
+    "tag": "ACROW",
+    "mc": 0.0,
+    "code": 0.0,
+    "gs0": 0.226467,
+    "gc0": 0.226467,
+    "fs3": 1479800.0,
+    "fc3": 1479800.0,
+    "pks": 1.51791e-06,
+    "pkc": 1.5179e-06,
+    "ps100": -6.45838,
+    "pc100": -6.45838,
+    "ps1m": -62.362,
+    "pc1m": -62.362,
+    "gs1m": -1.46158,
+    "gc1m": -1.46158
+   },
+   {
+    "tag": "OPROW",
+    "mc": 0.0,
+    "code": 1.0,
+    "ocms": 0.594182,
+    "ocmc": 0.594182,
+    "o1cm": 0.471565,
+    "idd": 0.00223424
+   },
+   {
+    "tag": "ACROW",
+    "mc": 0.0,
+    "code": 1.0,
+    "gs0": 6.23861,
+    "gc0": 6.23861,
+    "fs3": 1389690.0,
+    "fc3": 1389690.0,
+    "pks": 1.8061e-06,
+    "pkc": 1.80612e-06,
+    "ps100": -6.74089,
+    "pc100": -6.74089,
+    "ps1m": -64.623,
+    "pc1m": -64.623,
+    "gs1m": -1.65213,
+    "gc1m": -1.65213
+   },
+   {
+    "tag": "OPROW",
+    "mc": 0.0,
+    "code": 2.0,
+    "ocms": 0.594186,
+    "ocmc": 0.594186,
+    "o1cm": 0.474582,
+    "idd": 0.00223422
+   },
+   {
+    "tag": "ACROW",
+    "mc": 0.0,
+    "code": 2.0,
+    "gs0": 12.2426,
+    "gc0": 12.2426,
+    "fs3": 1239280.0,
+    "fc3": 1239280.0,
+    "pks": -6.22752e-07,
+    "pkc": -6.22726e-07,
+    "ps100": -7.3094,
+    "pc100": -7.3094,
+    "ps1m": -68.9005,
+    "pc1m": -68.9005,
+    "gs1m": -2.05486,
+    "gc1m": -2.05486
+   },
+   {
+    "tag": "OPROW",
+    "mc": 0.0,
+    "code": 3.0,
+    "ocms": 0.594189,
+    "ocmc": 0.594189,
+    "o1cm": 0.476305,
+    "idd": 0.00223421
+   },
+   {
+    "tag": "ACROW",
+    "mc": 0.0,
+    "code": 3.0,
+    "gs0": 18.2304,
+    "gc0": 18.2304,
+    "fs3": 1342290.0,
+    "fc3": 1342290.0,
+    "pks": 3.46527e-06,
+    "pkc": 3.45905e-06,
+    "ps100": -6.76904,
+    "pc100": -6.76904,
+    "ps1m": -64.4383,
+    "pc1m": -64.4383,
+    "gs1m": -1.77171,
+    "gc1m": -1.77171
+   },
+   {
+    "tag": "OPROW",
+    "mc": 0.0,
+    "code": 4.0,
+    "ocms": 0.594085,
+    "ocmc": 0.594085,
+    "o1cm": 0.474652,
+    "idd": 0.00223426
+   },
+   {
+    "tag": "ACROW",
+    "mc": 0.0,
+    "code": 4.0,
+    "gs0": 24.2344,
+    "gc0": 24.2344,
+    "fs3": 1098910.0,
+    "fc3": 1098910.0,
+    "pks": 6.29488e-06,
+    "pkc": 6.29483e-06,
+    "ps100": -8.12421,
+    "pc100": -8.12421,
+    "ps1m": -75.2383,
+    "pc1m": -75.2383,
+    "gs1m": -2.54872,
+    "gc1m": -2.54872
+   },
+   {
+    "tag": "OPROW",
+    "mc": 0.0,
+    "code": 5.0,
+    "ocms": 0.594089,
+    "ocmc": 0.594089,
+    "o1cm": 0.476369,
+    "idd": 0.00223425
+   },
+   {
+    "tag": "ACROW",
+    "mc": 0.0,
+    "code": 5.0,
+    "gs0": 30.1815,
+    "gc0": 30.1815,
+    "fs3": 1194260.0,
+    "fc3": 1194260.0,
+    "pks": 3.97325e-06,
+    "pkc": 3.9871e-06,
+    "ps100": -7.51019,
+    "pc100": -7.51019,
+    "ps1m": -70.4686,
+    "pc1m": -70.4686,
+    "gs1m": -2.19618,
+    "gc1m": -2.19618
+   }
+  ],
+  "errors": [
+   "Warning: singular matrix:  check node xdut.xsin.xa2.cz2",
+   "Warning: singular matrix:  check node xdut.xsin.xa2.cz2"
+  ],
+  "deck": "r1_afe/r1afe-screen-g4/E5__ac_ss_ib11.81_cm0.5.cir",
+  "log": "r1_afe/r1afe-screen-g4/E5__ac_ss_ib11.81_cm0.5.log"
+ }
+]

@@ -64,7 +64,10 @@ for j in res:
         continue
     s = [r for r in rows if r['tag'] == 'STROW']
     if s and not isinstance(s[-1]['err_s'], str):
-        _, k, g, lv = tag.split('_')
+        tg_ = tag.split('_')
+        if tg_[1] == 'vrst06':      # revision F1: settling with a 0.6 V CDAC top-plate reset (information)
+            tg_ = [tg_[0], tg_[2] + '-vrst06'] + tg_[3:]
+        _, k, g, lv = tg_
         x = {'p100': 1, 'm100': -1, 'p50': 0.5, 'm50': -0.5, 'p25': 0.25}[lv]
         st_pts[(k, g)].append((x, s[-1]['err_s'], s[-1]['err_c']))
 for (k, g), pts in sorted(st_pts.items()):

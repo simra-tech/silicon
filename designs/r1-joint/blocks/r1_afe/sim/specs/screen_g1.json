@@ -1,0 +1,114 @@
+{
+ "question": "Revision F1 screen G1: the OTA1 CMFB is out of range (stage-1 output CM 0.58-0.88 V instead of vcm1 at input CM 0.5 V, schematic); does more folded-node headroom (XMB6 L 2 -> 3/4 um, vbnc up) or a wider CMFB sink (XMN3/4 32 um with XMC3 8 um) restore regulation, on the schematic and on the dev11 RC netlist?",
+ "variants": {
+  "G0": {},
+  "G1": {
+   "rx": [
+    [
+     "r1_afe_ota",
+     "(?m)^(XMB6 [^\\n]*?) l=\\S+",
+     "\\1 l=3u"
+    ]
+   ]
+  },
+  "G2": {
+   "rx": [
+    [
+     "r1_afe_ota",
+     "(?m)^(XMB6 [^\\n]*?) l=\\S+",
+     "\\1 l=4u"
+    ]
+   ]
+  },
+  "G3": {
+   "rx": [
+    [
+     "r1_afe_ota",
+     "(?m)^(XMN[34] [^\\n]*?) w=\\S+",
+     "\\1 w=32u"
+    ],
+    [
+     "r1_afe_ota",
+     "(?m)^(XMC3 [^\\n]*?) w=\\S+",
+     "\\1 w=8u"
+    ]
+   ]
+  },
+  "R1": {
+   "netlist": "$G1_RESULTS_ROOT/r1_afe/pexrc-e3-dev11/r1_afe_post_rc.spice",
+   "rx": [
+    [
+     "r1_afe_ota",
+     "(?m)^(XMB6 [^\\n]*?) l=\\S+",
+     "\\1 l=3u"
+    ]
+   ]
+  },
+  "R2": {
+   "netlist": "$G1_RESULTS_ROOT/r1_afe/pexrc-e3-dev11/r1_afe_post_rc.spice",
+   "rx": [
+    [
+     "r1_afe_ota",
+     "(?m)^(XMB6 [^\\n]*?) l=\\S+",
+     "\\1 l=4u"
+    ]
+   ]
+  }
+ },
+ "jobs": [
+  {
+   "tag": "op_tt_ib10.14_cm0.5",
+   "tmpl": "tb_afe_op.cir",
+   "corner": "tt",
+   "subs": {
+    "VCMI": 0.5,
+    "IB": "10.14u"
+   }
+  },
+  {
+   "tag": "op_ss_ib11.81_cm0.5",
+   "tmpl": "tb_afe_op.cir",
+   "corner": "ss",
+   "subs": {
+    "VCMI": 0.5,
+    "IB": "11.81u"
+   }
+  },
+  {
+   "tag": "op_ff_ib9.00_cm0.5",
+   "tmpl": "tb_afe_op.cir",
+   "corner": "ff",
+   "subs": {
+    "VCMI": 0.5,
+    "IB": "9.00u"
+   }
+  },
+  {
+   "tag": "op_tt_ib10.14_cm2.5",
+   "tmpl": "tb_afe_op.cir",
+   "corner": "tt",
+   "subs": {
+    "VCMI": 2.5,
+    "IB": "10.14u"
+   }
+  },
+  {
+   "tag": "op_ss_ib11.81_cm2.5",
+   "tmpl": "tb_afe_op.cir",
+   "corner": "ss",
+   "subs": {
+    "VCMI": 2.5,
+    "IB": "11.81u"
+   }
+  },
+  {
+   "tag": "op_ffx_ib6.9_cm0.5",
+   "tmpl": "tb_afe_op.cir",
+   "corner": "ffx",
+   "subs": {
+    "VCMI": 0.5,
+    "IB": "6.9u"
+   }
+  }
+ ]
+}

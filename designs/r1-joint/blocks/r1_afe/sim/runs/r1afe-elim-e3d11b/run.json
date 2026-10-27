@@ -1,0 +1,41 @@
+{
+ "run_id": "r1afe-elim-e3d11b",
+ "campaign": "var:$G1_RESULTS_ROOT/r1_afe/r1afe-elim-e3d11b/frozen/var_spec.json",
+ "date_utc": "2026-10-26T20:03:42Z",
+ "command": "G1_CPUSET=106-108 G1_CPUS=3 G1_WORKDIR=designs/r1-joint/blocks/r1_afe/sim G1_RESULTS_ROOT=<bulk> flow/run.sh python3 run_afe.py var:$G1_RESULTS_ROOT/r1_afe/r1afe-elim-e3d11b/frozen/var_spec.json r1afe-elim-e3d11b",
+ "tools": {
+  "ngspice": "ngspice-46 : Circuit level simulation program",
+  "image_id": "sha256:ddeb69576f2808676d1c5d474ecf04f6d1d6f8abdcff6b72b39790ded924bab2",
+  "pdk_commit": "84374023ee8b4b126bebbba67fcbada0a9c0ff0b"
+ },
+ "inputs": {
+  "sim/tb_afe_opv.cir": "eb93fa8f0aeba4bc519ef8f47d72b33d6e7c5f3a3ecd5d777688bf0d9be470c7",
+  "sim/common_head.inc": "52ea3b1f1dda8aa3c448bf5977fb76f41feeb33019c36e7ad163e81eab0fcfd0",
+  "sim/gain_codes.inc": "a62c9d6daa3d544c36ac868c4e6a9266f32e581d093ac404c6c52bcc6e5276f6",
+  "schematic/r1_afe.spice": "44b7b4066e86a78fa47269672919828456b87ae0f8069d6ec201d78fc8f34007",
+  "sim/run_afe.py": "41d65c69d353468b4592aee3ed5772a1ac81d04ef93ef4d60fe087c7e0ed06b7"
+ },
+ "netlist_edits": null,
+ "variant_netlists": {
+  "base": {
+   "path": "r1_afe/r1afe-elim-e3d11b/frozen/var_base.spice",
+   "sha256": "28406d6e94a1653fbd21bac14ca63d55bb955e979830c3bbac7cac42cc0bf857"
+  },
+  "vdd_ch": {
+   "path": "r1_afe/r1afe-elim-e3d11b/frozen/var_vdd_ch.spice",
+   "sha256": "dbf9798d6ea96e7edd7974aaa1e0b190ca06fb543f9379d6bf4782d2fb7978b3"
+  }
+ },
+ "netlist_sha256": "44b7b4066e86a78fa47269672919828456b87ae0f8069d6ec201d78fc8f34007",
+ "netlist_override": null,
+ "frozen_inputs": "$G1_RESULTS_ROOT/r1_afe/r1afe-elim-e3d11b/frozen/",
+ "lsb_V": 0.000439453125,
+ "raw": "$G1_RESULTS_ROOT/r1_afe/r1afe-elim-e3d11b/",
+ "jobs": 2,
+ "failed_jobs": [],
+ "wall_seconds": 23.0,
+ "summary": "results/r1afe-elim-e3d11b.json",
+ "question": "OTA1 internal node and vdd/vss port voltages, dev11 RC vs channel vdd shorted, tt 10.14 uA, CM 0.5 V, x32",
+ "result": "dev11: XMP3/4 sources (vdd__p4/p5) 3.2834/3.2852 V, bias diode XMB2 (vdd__p6) 3.2744 V, other OTA1 row ports 3.2703-3.2746 V; vcms 0.090 V, o1n 1.21 V (XMN7 fully on). vdd shorted: all ports 3.2893 V, vcms 0.627 V, o1n 0.888 V.",
+ "disposition": "passed (segment identified: OTA1 vdd row at y = 152 um vs plate-fed XMP3/4)"
+}

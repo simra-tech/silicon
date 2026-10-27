@@ -1,0 +1,54 @@
+{
+ "run_id": "r1afe-elim-e3d11",
+ "campaign": "var:$G1_RESULTS_ROOT/r1_afe/r1afe-elim-e3d11/frozen/var_spec.json",
+ "date_utc": "2026-10-26T20:03:12Z",
+ "command": "G1_CPUSET=106-108 G1_CPUS=3 G1_WORKDIR=designs/r1-joint/blocks/r1_afe/sim G1_RESULTS_ROOT=<bulk> flow/run.sh python3 run_afe.py var:$G1_RESULTS_ROOT/r1_afe/r1afe-elim-e3d11/frozen/var_spec.json r1afe-elim-e3d11",
+ "tools": {
+  "ngspice": "ngspice-46 : Circuit level simulation program",
+  "image_id": "sha256:ddeb69576f2808676d1c5d474ecf04f6d1d6f8abdcff6b72b39790ded924bab2",
+  "pdk_commit": "84374023ee8b4b126bebbba67fcbada0a9c0ff0b"
+ },
+ "inputs": {
+  "sim/tb_afe_op.cir": "68a57662613efcd4cfae80246b256c0e45756de45ea9a1324a97e5df3bc91a4a",
+  "sim/tb_afe_opv.cir": "eb93fa8f0aeba4bc519ef8f47d72b33d6e7c5f3a3ecd5d777688bf0d9be470c7",
+  "sim/common_head.inc": "52ea3b1f1dda8aa3c448bf5977fb76f41feeb33019c36e7ad163e81eab0fcfd0",
+  "sim/gain_codes.inc": "a62c9d6daa3d544c36ac868c4e6a9266f32e581d093ac404c6c52bcc6e5276f6",
+  "schematic/r1_afe.spice": "44b7b4066e86a78fa47269672919828456b87ae0f8069d6ec201d78fc8f34007",
+  "sim/run_afe.py": "41d65c69d353468b4592aee3ed5772a1ac81d04ef93ef4d60fe087c7e0ed06b7"
+ },
+ "netlist_edits": null,
+ "variant_netlists": {
+  "base": {
+   "path": "r1_afe/r1afe-elim-e3d11/frozen/var_base.spice",
+   "sha256": "28406d6e94a1653fbd21bac14ca63d55bb955e979830c3bbac7cac42cc0bf857"
+  },
+  "vdd_ch": {
+   "path": "r1_afe/r1afe-elim-e3d11/frozen/var_vdd_ch.spice",
+   "sha256": "dbf9798d6ea96e7edd7974aaa1e0b190ca06fb543f9379d6bf4782d2fb7978b3"
+  },
+  "vss_ch": {
+   "path": "r1_afe/r1afe-elim-e3d11/frozen/var_vss_ch.spice",
+   "sha256": "13624870e6dbbe3f25a82354c8729538ed1a2e04b452c2ad5cb13353424c9c52"
+  },
+  "sig_ch": {
+   "path": "r1_afe/r1afe-elim-e3d11/frozen/var_sig_ch.spice",
+   "sha256": "a4ae5f34ed6aad27d3aaa6c46f0e35ed03070acbbfea3e84ae383a051a1303d3"
+  },
+  "top": {
+   "path": "r1_afe/r1afe-elim-e3d11/frozen/var_top.spice",
+   "sha256": "81476952123446a90cf1d7c4f814c4cddd17982021cb8ae59ba7842dbc0356c8"
+  }
+ },
+ "netlist_sha256": "44b7b4066e86a78fa47269672919828456b87ae0f8069d6ec201d78fc8f34007",
+ "netlist_override": null,
+ "frozen_inputs": "$G1_RESULTS_ROOT/r1_afe/r1afe-elim-e3d11/frozen/",
+ "lsb_V": 0.000439453125,
+ "raw": "$G1_RESULTS_ROOT/r1_afe/r1afe-elim-e3d11/",
+ "jobs": 15,
+ "failed_jobs": [],
+ "wall_seconds": 220.4,
+ "summary": "results/r1afe-elim-e3d11.json",
+ "question": "Layout E3 (dev11) RC, tt 10.14 uA, input CM 0.5 V: which wiring moves the OTA1 stage-1 output CM from the schematic 0.73 V to 0.06 V?",
+ "result": "Stage-1 output CM x1/x32 at CM 0.5 V: dev11 0.060/0.089 V; channel vdd R x1e-3 0.674/0.627 V; channel vss 0.173/0.451 V; channel signal 0.113/0.405 V; top level 0.051/0.089 V. CM 2.5 V: 0.85/1.04 V in all. The opv jobs printed nothing (wrong node name xdut.xsin.vcm1), rerun as r1afe-elim-e3d11b.",
+ "disposition": "passed (question answered: channel vdd wiring); opv jobs not usable"
+}

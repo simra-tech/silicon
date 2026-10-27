@@ -1,0 +1,135 @@
+{
+ "question": "Revision F1 screen G5 (schematic): CMFB pair width WCP 10 / 12 um (between G3 D2 = 8 um and G4 E3 = 16 um): CM1 margin at ffx/ssx/ff corners vs stage-1 output CM at input CM 0.5 V",
+ "variants": {
+  "W10": {
+   "fv": "a1cc25+a1cx15+a1cp10",
+   "rx": [
+    [
+     "r1_afe_ota",
+     "(?m)^(XMB6 [^\\n]*?) l=\\S+",
+     "\\1 l=3u"
+    ],
+    [
+     "r1_afe_ch",
+     "WCCB=24u",
+     "WCCB=30u"
+    ],
+    [
+     "r1_afe_s1side",
+     "w=\\{WCF1\\} l=\\{WCF1\\}",
+     "w=28.17u l=28.17u"
+    ],
+    [
+     "r1_afe_s2side",
+     "w=\\{WCF2\\} l=\\{WCF2\\}",
+     "w=39.67u l=39.67u"
+    ]
+   ]
+  },
+  "W12": {
+   "fv": "a1cc25+a1cx15+a1cp12",
+   "rx": [
+    [
+     "r1_afe_ota",
+     "(?m)^(XMB6 [^\\n]*?) l=\\S+",
+     "\\1 l=3u"
+    ],
+    [
+     "r1_afe_ch",
+     "WCCB=24u",
+     "WCCB=30u"
+    ],
+    [
+     "r1_afe_s1side",
+     "w=\\{WCF1\\} l=\\{WCF1\\}",
+     "w=28.17u l=28.17u"
+    ],
+    [
+     "r1_afe_s2side",
+     "w=\\{WCF2\\} l=\\{WCF2\\}",
+     "w=39.67u l=39.67u"
+    ]
+   ]
+  }
+ },
+ "jobs": [
+  {
+   "tag": "stb_ffx_ib6.9_cm0.5",
+   "tmpl": "tb_afe_stb.cir",
+   "corner": "ffx",
+   "subs": {
+    "VCMI": 0.5,
+    "KLIST": "0 5",
+    "LLIST": "1 2 4 5",
+    "IB": "6.9u",
+    "CL": "2.8p"
+   }
+  },
+  {
+   "tag": "stb_ffx_ib6.9_cm2.5",
+   "tmpl": "tb_afe_stb.cir",
+   "corner": "ffx",
+   "subs": {
+    "VCMI": 2.5,
+    "KLIST": "0 5",
+    "LLIST": "1 2 4 5",
+    "IB": "6.9u",
+    "CL": "2.8p"
+   }
+  },
+  {
+   "tag": "stb_ssx_ib6.94_cm0.5",
+   "tmpl": "tb_afe_stb.cir",
+   "corner": "ssx",
+   "subs": {
+    "VCMI": 0.5,
+    "KLIST": "0 5",
+    "LLIST": "1 2 4 5",
+    "IB": "6.94u",
+    "CL": "2.8p"
+   }
+  },
+  {
+   "tag": "stb_ffx_ib15.36_cm0.5",
+   "tmpl": "tb_afe_stb.cir",
+   "corner": "ffx",
+   "subs": {
+    "VCMI": 0.5,
+    "KLIST": "0 5",
+    "LLIST": "1 2 4 5",
+    "IB": "15.36u",
+    "CL": "2.8p"
+   }
+  },
+  {
+   "tag": "stb_ff_ib9.00_cm0.5",
+   "tmpl": "tb_afe_stb.cir",
+   "corner": "ff",
+   "subs": {
+    "VCMI": 0.5,
+    "KLIST": "0 5",
+    "LLIST": "1 2 4 5",
+    "IB": "9.00u",
+    "CL": "2.8p"
+   }
+  },
+  {
+   "tag": "op_tt_ib10.14_cm0.5",
+   "tmpl": "tb_afe_op.cir",
+   "corner": "tt",
+   "subs": {
+    "VCMI": 0.5,
+    "IB": "10.14u"
+   }
+  },
+  {
+   "tag": "op_ss_ib11.81_cm0.5",
+   "tmpl": "tb_afe_op.cir",
+   "corner": "ss",
+   "subs": {
+    "VCMI": 0.5,
+    "IB": "11.81u"
+   }
+  }
+ ]
+}

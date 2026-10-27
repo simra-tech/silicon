@@ -1,0 +1,28 @@
+{
+ "question": "Follow-up of r1afe-dm2-e4d12b (the extracted R sets the DC -180 deg of the DM2 return ratio): channel vdd, vss or signal wiring? E4-dev12b R-only netlist with one group shorted (x1e-3), ffx 6.9 uA, CM 0.5 V, x1, DM2 loop only",
+ "variants": {
+  "vdd_ch": {
+   "netlist": "$G1_RESULTS_ROOT/r1_afe/revF1/elim-e4d12b/vdd_ch.spice"
+  },
+  "vss_ch": {
+   "netlist": "$G1_RESULTS_ROOT/r1_afe/revF1/elim-e4d12b/vss_ch.spice"
+  },
+  "sig_ch": {
+   "netlist": "$G1_RESULTS_ROOT/r1_afe/revF1/elim-e4d12b/sig_ch.spice"
+  }
+ },
+ "jobs": [
+  {
+   "tag": "stb_ffx_ib6.9_cm0.5_dm2",
+   "tmpl": "tb_afe_stb.cir",
+   "corner": "ffx",
+   "subs": {
+    "VCMI": 0.5,
+    "KLIST": "0",
+    "LLIST": "4",
+    "IB": "6.9u",
+    "CL": "2.8p"
+   }
+  }
+ ]
+}

@@ -1,0 +1,205 @@
+{
+ "question": "Layout E4 dev12b post-layout set, part 3: settling (tt and ss x32, tt and ss x1, 0.6 V reset at tt x32, information) with the rshunt template (the plain template did not converge on E4 in part 1)",
+ "variants": {
+  "E4": {
+   "netlist": "$G1_RESULTS_ROOT/r1_afe/pexrc-e4-dev12b/r1_afe_post_rc.spice"
+  }
+ },
+ "jobs": [
+  {
+   "tag": "settle_tt_x32_p100",
+   "tmpl": "tb_afe_settle_adc_rs.cir",
+   "corner": "tt",
+   "subs": {
+    "CODE": 5,
+    "AMP": 0.021875,
+    "VCMI": 2.45,
+    "CS": "2.8p",
+    "VRST": 0.0,
+    "IB": "10.14u"
+   }
+  },
+  {
+   "tag": "settle_tt_x32_m100",
+   "tmpl": "tb_afe_settle_adc_rs.cir",
+   "corner": "tt",
+   "subs": {
+    "CODE": 5,
+    "AMP": -0.021875,
+    "VCMI": 2.45,
+    "CS": "2.8p",
+    "VRST": 0.0,
+    "IB": "10.14u"
+   }
+  },
+  {
+   "tag": "settle_tt_x32_p50",
+   "tmpl": "tb_afe_settle_adc_rs.cir",
+   "corner": "tt",
+   "subs": {
+    "CODE": 5,
+    "AMP": 0.010937,
+    "VCMI": 2.45,
+    "CS": "2.8p",
+    "VRST": 0.0,
+    "IB": "10.14u"
+   }
+  },
+  {
+   "tag": "settle_ss_x32_p100",
+   "tmpl": "tb_afe_settle_adc_rs.cir",
+   "corner": "ss",
+   "subs": {
+    "CODE": 5,
+    "AMP": 0.021875,
+    "VCMI": 2.45,
+    "CS": "2.8p",
+    "VRST": 0.0,
+    "IB": "11.81u"
+   }
+  },
+  {
+   "tag": "settle_ss_x32_m100",
+   "tmpl": "tb_afe_settle_adc_rs.cir",
+   "corner": "ss",
+   "subs": {
+    "CODE": 5,
+    "AMP": -0.021875,
+    "VCMI": 2.45,
+    "CS": "2.8p",
+    "VRST": 0.0,
+    "IB": "11.81u"
+   }
+  },
+  {
+   "tag": "settle_ss_x32_p50",
+   "tmpl": "tb_afe_settle_adc_rs.cir",
+   "corner": "ss",
+   "subs": {
+    "CODE": 5,
+    "AMP": 0.010937,
+    "VCMI": 2.45,
+    "CS": "2.8p",
+    "VRST": 0.0,
+    "IB": "11.81u"
+   }
+  },
+  {
+   "tag": "settle_tt_x1_p100",
+   "tmpl": "tb_afe_settle_adc_rs.cir",
+   "corner": "tt",
+   "subs": {
+    "CODE": 0,
+    "AMP": 0.7,
+    "VCMI": 2.45,
+    "CS": "2.8p",
+    "VRST": 0.0,
+    "IB": "10.14u"
+   }
+  },
+  {
+   "tag": "settle_tt_x1_m100",
+   "tmpl": "tb_afe_settle_adc_rs.cir",
+   "corner": "tt",
+   "subs": {
+    "CODE": 0,
+    "AMP": -0.7,
+    "VCMI": 2.45,
+    "CS": "2.8p",
+    "VRST": 0.0,
+    "IB": "10.14u"
+   }
+  },
+  {
+   "tag": "settle_tt_x1_p50",
+   "tmpl": "tb_afe_settle_adc_rs.cir",
+   "corner": "tt",
+   "subs": {
+    "CODE": 0,
+    "AMP": 0.35,
+    "VCMI": 2.45,
+    "CS": "2.8p",
+    "VRST": 0.0,
+    "IB": "10.14u"
+   }
+  },
+  {
+   "tag": "settle_vrst06_tt_x32_p100",
+   "tmpl": "tb_afe_settle_adc_rs.cir",
+   "corner": "tt",
+   "subs": {
+    "CODE": 5,
+    "AMP": 0.021875,
+    "VCMI": 2.45,
+    "CS": "2.8p",
+    "VRST": 0.6,
+    "IB": "10.14u"
+   }
+  },
+  {
+   "tag": "settle_vrst06_tt_x32_m100",
+   "tmpl": "tb_afe_settle_adc_rs.cir",
+   "corner": "tt",
+   "subs": {
+    "CODE": 5,
+    "AMP": -0.021875,
+    "VCMI": 2.45,
+    "CS": "2.8p",
+    "VRST": 0.6,
+    "IB": "10.14u"
+   }
+  },
+  {
+   "tag": "settle_vrst06_tt_x32_p50",
+   "tmpl": "tb_afe_settle_adc_rs.cir",
+   "corner": "tt",
+   "subs": {
+    "CODE": 5,
+    "AMP": 0.010937,
+    "VCMI": 2.45,
+    "CS": "2.8p",
+    "VRST": 0.6,
+    "IB": "10.14u"
+   }
+  },
+  {
+   "tag": "settle_ss_x1_p100",
+   "tmpl": "tb_afe_settle_adc_rs.cir",
+   "corner": "ss",
+   "subs": {
+    "CODE": 0,
+    "AMP": 0.7,
+    "VCMI": 2.45,
+    "CS": "2.8p",
+    "VRST": 0.0,
+    "IB": "11.81u"
+   }
+  },
+  {
+   "tag": "settle_ss_x1_m100",
+   "tmpl": "tb_afe_settle_adc_rs.cir",
+   "corner": "ss",
+   "subs": {
+    "CODE": 0,
+    "AMP": -0.7,
+    "VCMI": 2.45,
+    "CS": "2.8p",
+    "VRST": 0.0,
+    "IB": "11.81u"
+   }
+  },
+  {
+   "tag": "settle_ss_x1_p50",
+   "tmpl": "tb_afe_settle_adc_rs.cir",
+   "corner": "ss",
+   "subs": {
+    "CODE": 0,
+    "AMP": 0.35,
+    "VCMI": 2.45,
+    "CS": "2.8p",
+    "VRST": 0.0,
+    "IB": "11.81u"
+   }
+  }
+ ]
+}
