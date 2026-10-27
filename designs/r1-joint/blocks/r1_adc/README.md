@@ -20,9 +20,205 @@ reports: `sar/README.md`; integration for layout B5: `sar/INTEGRATION.md`). It r
    decisions equal; decision 13 of frame 3 differs in both slices, an input on that decision boundary (analog tie).
    Recorded as failed bit-exact (`sar/README.md` "Status"). ff and ss closed-loop runs: not run.
 
+## Layout B4 (revision 5, 2026-10-27, track T2, closure attempt)
+
+State: **layout B4 is the layout of record** (`layout/r1_adc.gds`, sha256 `f35046d2391e…`; layout B3 kept as
+`layout/r1_adc_layout_b3.gds`). B4 passes the post-layout set on its own extraction (status table below). Not met:
+the 15 µm north row (D21); the hardened SAR macro is recommended above the box instead. Same box (439.0 × 182.3 µm), same 51 pins, netlist of record unchanged. All
+numbers in this section are from layout tools or are **simulated**. Nothing is measured.
+
+### Changes in layout B4
+
+1. **Reference strap reservation (finding B4-1, functional bug of layouts B to B3).** The generator reserved the Metal4
+   reference straps for the router nets `vref#k` / `vrefl#k` (the dictionary key), not for `vref` / `vrefl`. The router
+   therefore dropped the strap nodes from the `vref` / `vrefl` pins, and every driver source reached its reference only
+   through router wires to the Metal3 feeder of the south pin. The straps carried current only at the feeders. B4
+   reserves each strap for its net.
+2. **Multi-cut source stacks on the CDAC drivers.** Each driver source rail gets a stack of two cut columns (pitch
+   0.5 µm): PMOS 3 rows of Via1, Via2, Via3 into the reference strap above the row (18 cuts); NMOS 2 rows of Via1 and
+   Via2, a Metal3 strip and 3 rows of Via3 into the Kelvin ground strap `gnd@K` below the gate rail (14 cuts). Stacks
+   keep 0.8 µm from the south-pin feeders. Ten of 54 drivers are next to a feeder and keep the router connection
+   (`xdn4_xmp`, `xdn11_xmp`, `xdp12_xmp`, `xdp10_xmp`, `xdp5_xmp`, `xdn4_xmn`, `xdp12_xmn`, `xdp10_xmn`, `xdp8_xmn`,
+   `xdp1_xmn`).
+3. **Reference feeders:** the Via3 cuts between each `vref` / `vrefl` feeder and its strap sit on router grid nodes
+   (two rows), so a router via on a feeder node coincides with a cut (dev2 V3.a).
+4. **`ain_cos` pair environment** (per-layer breakdown of the B3 extraction, `sim/post/b4/cap_breakdown.py`): (a) the
+   west Metal4 shield at x 0.2 had no via and was floating, so only the p line saw a `vss` Metal4 sidewall (3.7 fF);
+   B4 ties it to `vss` at its north end; (b) a widened top-level `vdd` Metal4 wire lay over the p line in the north
+   channel (1.0 fF overlap); B4 blocks Metal4 over the channel; (c) a widened `vss` Metal3 wire ran under the p Metal4
+   vertical (1.7 fF); B4 blocks Metal3 under the west verticals except the `vcm2` track, which crosses both lines.
+5. **Supply and reference pins 1.0 µm wide** (assembly try f, `r1_top/reports/integration_checklist_f.md`, chip-level
+   EM): `vdda`, `vdd`, `vss`, `vref_in` at the south edge are Metal3 boxes 1.0 × 1.0 µm, centres unchanged (50.0, 100.0,
+   150.0, 400.0). The ADC has no separate `gnd` pin: the slice ground is the top-level `vss`.
+6. **North keep-out for the SAR sub-macro (D21, `r1_adc_sar`, layout B5).** The top router may not use Metal2–Metal4 at
+   y ≥ 171.6 µm for x ≥ 107.2 µm. That band (331.8 × 10.7 µm) holds only the north pin stubs (26 Metal3 stubs) and the
+   boundary guard ring. See "North row for the SAR sub-macro" for what is not met.
+7. Not changed: arrays, device sizes, the 51 pin centres, the box, the top-level buffer straps of B2 / B3.
+
+### North row for the SAR sub-macro (D21): what B4 gives and what it does not
+
+Asked: a free row 439 × 15 µm at the north edge (y 167.3–182.3), with only the 30 output and strobe pin stubs.
+**Not met in B4** (recorded; recommended option taken):
+
+1. The north band of the fixed box holds the hand-drawn input-pair channel (y 166.2–171.4: `ain_cos` and `ain_isa`
+   pairs on Metal2 between three `vss` shields) and the comparator clock generator `r1_cmp4_clkgen` with its five
+   delay MIMs (x 7.8–106.4, y 172.6–179.7). The slices end at y 165.6. The channel cannot move below y 167.3 without
+   moving both slices down, and the south band (buffer, `vref` / `vrefl` buses at y 45–51, `vdd` strap at y 49.8–54.0)
+   leaves no room in this box.
+2. B4 gives: x 107.2–439.0, y 171.6–182.3 free of routes and devices (router keep-out, checked on the B4 GDS:
+   only the 26 Metal3 pin stubs and the guard ring). Over the full width the free height above the channel is
+   10.7 µm once the clock generator leaves the band.
+3. Recommended for B5: move `r1_cmp4_clkgen` into the SAR sub-macro (its only load is the SAR logic: `mclk` / `mclkb`)
+   or under the decoupling MIM in the south band; then a 439 × 10.7 µm row is free. A 15 µm row needs a floor-plan
+   change of the slices (not in this box).
+4. Later input from T2j (section above): the hardened `r1_adc_sar` is 439.0 × 23.12 µm, so it does not fit a 15 µm
+   row either. T2j recommends placing it on top of the B4 box (box 439.0 × 205.42 µm, macro at (0, 182.3)). With that
+   option the B4 north pin stubs face the macro directly and the 10.7 µm band stays free for its connections.
+
+Open SAR-side connections of the analog part today (73 top-level labels on Metal2 over the slice metal, no route to
+the north edge; list with positions: `reports/layout-b4/sar_open_ports.csv`, from the B4 GDS):
+
+| Signal (per slice a / b) | Count | Position (µm, slice a; slice b = x + 220.0) | Function |
+| --- | --- | --- | --- |
+| `sar_cpX0..12`, `sar_cnX0..12` | 2 × 13 | gate rails of the CDAC drivers, y 93.6: `cn` x 62.4–108.0, `cp` x 111.2–156.8 | CDAC switch control (inputs) |
+| `sar_oXp`, `sar_oXn` | 2 | x 68.8 / 72.0, y 74.4 | `r1_cmp4` outputs (decisions 1–13) |
+| `sar_oXnp`, `sar_oXnn` | 2 | x 38.4 / 41.6, y 74.4 | `r1_cmp5n` outputs (decision 0) |
+| `sar_clkX`, `sar_clkXb` | 2 | x 19.2, y 86.4 / x 44.8, y 74.4 | `r1_cmp4` clock and its complement (inputs) |
+| `sar_clknX`, `sar_clknXb` | 2 | x 148.0 / 213.6, y 58.4 | `r1_cmp5n` clock and complement (inputs) |
+| `sar_trkX0`, `sar_trkX1` | 2 | x 6.4 / 12.8, y 66.4 | track switches in0 / in1 (inputs) |
+| `sar_mclk` | 1 | x 30.4, y 179.2 (top level, clock generator output) | comparator master clock to the SAR logic |
+
+The 35 north checklist pins (`adc_*`, `is_smp`, `por_n`, `clk`) are Metal3 stubs at the north edge; only `clk` is
+routed (to the clock generator).
+
+### R2-4 at decisions 12–13: trace (layout B3 runs, before B4)
+
+`sim/post/b4/trace_dec.py` runs the R2-4 metric of `sim/post/post_post.py ref` unchanged, but samples the comparator
+input at 4 to 31 ns into each tick instead of only at 25 ns (`sim/post/b4/trace_b3_tt.json`). Result (simulated,
+`postb3-ref-tt-rc` / `-sp`):
+
+1. Where the buffer run and the base run take the same decision, the error is at most 0.18 LSB (decision 5, both
+   slices) and 0.10–0.13 LSB at decisions 6–13.
+2. The 0.285 LSB (slice A) and 0.259 LSB (slice B) values occur only at the **first decision that differs** between
+   the two runs (decision 13 in slots 1, 4, 8, 9; decision 12 in slots 6, 7). At that decision the error is 0.04–0.13
+   LSB up to 19 ns into the tick and steps by 0.13–0.40 LSB between 19 and 22 ns, when the comparator regenerates. The
+   comparator output and its kickback onto the top plates then differ in sign between the two runs.
+3. So the R2-4 failure at tt is not a reference-settling error. It is the comparator kickback of a decision that
+   resolves differently, which the metric includes (`j <= jmax` in `sim/r5/post_ref5.py`; the sample at 25 ns is after
+   the comparator decides, about 20 ns after the clk30 edge at tt). The reference error before the decision is at most
+   0.13 LSB.
+4. Recommended option (taken, recorded; the R2-4 limit is not changed): report the metric as defined **and** the
+   corrected value, in which the first differing decision is sampled before the comparator regenerates (16 ns) and
+   all other decisions at 25 ns. The R2-4 status row uses the metric as defined; the corrected value is a separate row.
+
+5. At ss/125 °C (B3, `sim/post/b4/trace_b3_ss125.json`) the comparator resolves 25–28 ns after the edge, so the
+   25 ns sample is still before regeneration. The 0.241 LSB (slice A) is reference settling at decision 5 in slots
+   where both runs take the same decision; the corrected value is the same, 0.241 LSB.
+
+### R2-4 on the B4 extraction (simulated)
+
+Static base correction from the B4 op-only runs (`postb4-op-tt-sp`, `postb4-op-ss125-sp`): tt `1.04976,1.058141,
+1.049738,1.058312`; ss/125 °C `1.050007,1.059002,1.049984,1.059173` (Ma, La, Mb, Lb in V). Records:
+`sim/post/results/postb4_ref_{tt,ss125}_rc.json`, traces `sim/post/b4/trace_b4_{tt,ss125}.json`.
+
+| Quantity (LSB) | B3 tt | B4 tt | B3 ss/125 °C | B4 ss/125 °C |
+| --- | --- | --- | --- | --- |
+| R2-4 as defined, slice A / B (limit 0.25) | 0.285 / 0.259 | **0.243 / 0.233** | 0.241 / 0.225 | **0.223 / 0.214** |
+| Same decision in both runs, 25 ns | 0.18 / 0.18 | 0.192 / 0.192 | 0.241 / 0.225 | 0.223 / 0.214 |
+| First differing decision, 16 ns | 0.106 / 0.096 | 0.111 / 0.097 | 0.121 / 0.140 | 0.121 / 0.122 |
+| Corrected value | 0.18 | 0.192 | 0.241 | 0.223 |
+
+At tt B4 lowers the error at the first differing decision (decisions 12 and 13) from 0.285 to 0.243 LSB. The
+largest same-decision error (decision 5, about 0.19 LSB) does not change: it is the settling of the decision-5 step,
+not the strap resistance. At ss/125 °C the worst decision is 5 or 6 (reference settling before the comparator
+regenerates); B4 lowers it from 0.241 to 0.223 LSB. **R2-4 passes at tt and at ss/125 °C on B4** (simulated).
+
+### Status (layout B4)
+
+Built against: PDK `84374023ee8b4b126bebbba67fcbada0a9c0ff0b`, KLayout 0.30.9, kpex 0.3.12, ngspice 46, container
+image `sha256:ddeb69576f28…` (read from `reports/layout-b4/run.json`, `pex/b4/run.json` and `sim/post/runs/*/run.json`).
+GDS candidate sha256 `f35046d2391e…` (`<G1_RESULTS_ROOT>/r1_adc/layout-b4-dev6/r1_adc.gds`), generator
+`layout/r1_adc_layout.py` sha256 `d849bf1b…`, CDL of record unchanged (`2e18b5c2…`). Every post-layout number below
+is from the B4 extraction (`pex-b4`, `sim/post/r1_adc_post_rc_mb4.spice`); nothing is inherited from B2 or B3.
+
+| Check | Result | Evidence |
+| --- | --- | --- |
+| DRC main rule set (`--no_density`) | **passed** (0) | `reports/layout-b4/drc.log`; `<G1_RESULTS_ROOT>/r1_adc/layout-b4-dev6/drc/` |
+| DRC maximal rule set (`--no_density`) | **passed** (0) | same |
+| DRC density | not applicable at block level (chip-level fill) | — |
+| Antenna | **passed** (0) | `reports/layout-b4/antenna.log` |
+| LVS (stock deck, `--no_series_res`) | **passed**: slice 117/117 nets, 179/179 devices; top 111/111 nets, 45/45 devices | `reports/layout-b4/lvs.log`, `lvs_summary.txt` |
+| Pin check (51 checklist pins, 128 CDL ports), box 439.0 × 182.3 µm, pin centres as B3 | **passed** | `reports/layout-b4/pin_check.txt` |
+| Supply / reference pins ≥ 1 µm wide (`vdda`, `vdd`, `vss`, `vref_in`) | **passed**: 1.0 × 1.0 µm Metal3, centres unchanged; no `gnd` pin on the macro | `reports/layout-b4/pin_check.txt`; GDS |
+| North row 439 × 15 µm free for `r1_adc_sar` (D21) | **failed**: 331.8 × 10.7 µm free (x 107.2–439.0, y 171.6–182.3). The hardened macro is 23.12 µm tall (T2j) and is recommended above the box, so B5 does not need this row | section "North row" above |
+| Layout B3 kept | done: `layout/r1_adc_layout_b3.gds` (sha256 `677c7ef8…`) | — |
+| Driver source to strap, median ≤ 10 Ω | **passed**: `vref` 6.19 Ω (max 9.5), `vrefl` 8.39 Ω (max 20.1), `gnd@K` 8.24 Ω (max 23.8); B3 19.5 / 37.2 / 39.4 Ω | `reports/layout-b4/strap_r_b4.txt`, `strap_r_b3.txt` (`sim/post/b4/strap_r.py`) |
+| `ain_cos` pair imbalance ≤ 3 fF | **passed**: 62.53 / 62.13 fF, 0.40 fF (B3 4.94) | `pex/pex_report_b4.json` |
+| `ain_sin` pair imbalance ≤ 3 fF (kept) | **passed**: 0.976 / 0.981 fF | same |
+| Top-plate parasitic ratio | **done**: `top_p` 41.65 fF (5.9 %), `top_n` 40.45 fF (5.7 %); as B3 | same |
+| Post-layout R2-4, tt (limit 0.25 LSB) | **passed**: 0.243 / 0.233 LSB (A / B); corrected value 0.192 | `postb4-ref-tt-rc` / `-sp`; `sim/post/results/postb4_ref_tt_rc.json`; `sim/post/b4/trace_b4_tt.json` |
+| Post-layout R2-4, ss / 125 °C / 1.08 V | **passed**: 0.223 / 0.214 LSB; corrected value 0.223 | `postb4-ref-ss125-rc` / `-sp`; `sim/post/results/postb4_ref_ss125_rc.json`; `sim/post/b4/trace_b4_ss125.json` |
+| Mux sequence tt / ss 125 °C / ff −40 °C | **passed**: gain 1.0573 / 1.0565 / 1.0590, offset −3.0 / −3.5 / +1.1 LSB, residual ≤ 8.0 LSB; ±0.85 V gives codes 4017 / 86, 4014 / 86, 4024 / 89 (no clip); frame sequence correct | `postb4-isa-{tt,ss125,ffm40}-rc`; `sim/post/results/postb4_isa_*_rc.json` |
+| Full scale, D16 amendment (≥ 1 % above ±0.85 V at tt, ss, ff) | **passed**: ±0.8645 / ±0.8651 / ±0.8631 V = +1.70 / +1.78 / +1.54 % (full scale = 0.914 V / gain). CDAC fallback not needed | same |
+| First conversion, 33 ns hold, tt (0 V) | **passed**: frame 0 − frame 1 = 0 / 0 LSB (codes 2043 / 2042) | `postb4-fc-tt-rc`; `sim/post/results/postb4_fc_tt_rc.json` |
+| First conversion, ss / 125 °C / 1.08 V (−0.80 V) | **passed**: 0 / +1 LSB (codes 178 / 220) | `postb4-fc-ss125-rc`; `sim/post/results/postb4_fc_ss125_rc.json` |
+| Supply current, tt (mux deck) | IDD 0.763 mA (pre-layout 0.903), IDDA 1.101 mA (pre 1.034); ss 0.531 / 1.084, ff 0.931 / 1.120 mA | `postb4-isa-*-rc` |
+| IR-drop share (supply R × 0.01 on `gnd`, `vdd`, `vss`, `vdda`, tt) | IDD 0.884 mA with low supply R: supply IR drop takes 0.121 mA (13.7 %), 86 % of the gap to pre-layout. Gain 1.0574 with low supply R: the supply share of the gain error is 0 (layout B 1.026); the gain is the top-plate C | `postb4-diag-isa-tt-rsup001`; `sim/post/results/postb4_diag_isa_tt_rsup001.json` |
+| INL bow, tt, reduced ramp (96 inputs per slice, ideal VREF 1.045 V, design weights) | **run**: max \|INL\| 1.69 / 1.99 LSB, rms 0.77 / 0.85 LSB, cubic bow 0.96 / 1.38 LSB, monotonic along the ramp (pre-layout, design weights, seed-1 MC sample: 1.96 / 1.83 LSB). No limit is set for the bow; code-level INL not resolved | `postb4-inla-tt-rc`, `postb4-inlb-tt-rc` (CPUs 103 / 104 in parallel); `sim/post/results/postb4_inl_tt_rc.json` |
+| Static windows 1024 / 2048 / 3072, tt, 1/3 LSB steps | **passed** (monotonic, no missing code, resolution 1/3 LSB): 1024: A 1017–1029, B 1016–1028; 2048: A and B 2041–2054; 3072: A and B 3066–3078; max \|DNL\| 0.33 LSB in every window. Centres from a local straight-line fit of the B4 INL ramp (`sim/post/gen_post_decks.py winb4`) | `postb4-win{1024,2048,3072}-tt-rc`; `sim/post/results/postb4_win*_tt_rc.json`; centres `sim/post/points/winb4_*.json` |
+| Output timing window for ctrl (INTERFACES row "ADC → ctrl timing") | recorded: decision bits change 0.624–0.642 ns after the `clk30` edge (tt, ss, ff; behavioural SAR latch; `valid` not modelled) | `sim/post/b4/out_timing_b4.json` |
+
+### Before and after (layout B3 → B4, simulated)
+
+| Quantity | Layout B3 | Layout B4 |
+| --- | --- | --- |
+| R2-4 tt, as defined (LSB, limit 0.25) | 0.285 (failed) | 0.243 (passed) |
+| R2-4 ss / 125 °C (LSB) | 0.241 | 0.223 |
+| R2-4 corrected value tt / ss (LSB) | 0.18 / 0.241 | 0.192 / 0.223 |
+| Driver source to strap, median `vref` / `vrefl` / `gnd@K` (Ω) | 19.5 / 37.2 / 39.4 | 6.19 / 8.39 / 8.24 |
+| `ain_cos` imbalance (fF) | 4.94 | 0.40 |
+| Mux tt gain / offset (LSB) | 1.058 / −8.6 | 1.057 / −3.0 |
+| Full scale tt (±V) | 0.864 | 0.8645 |
+| First conversion tt, code at 0 V | 2037 / 2037 | 2043 / 2042 |
+| IDD / IDDA tt (mA) | 0.767 / 1.101 | 0.763 / 1.101 |
+| Top-plate ratio `top_p` / `top_n` | 5.9 / 5.7 % | 5.9 / 5.7 % |
+| Bottom-plate wiring C, sum per slice (fF) | 1709 | 1721 |
+| Supply pins at the edge | 0.4 µm | 1.0 µm |
+
+### Open issues (layout B4)
+
+1. **North row for `r1_adc_sar`**: 10.7 µm free over x 107.2–439.0 µm, not 15 µm over 439 µm. B5 must move
+   `r1_cmp4_clkgen` out of the band, or the slices must move (floor-plan change).
+2. **Ten drivers keep the router connection** (they sit next to a south-pin feeder): worst `vrefl` 20.1 Ω
+   (`xdn4_xmp`), worst `gnd@K` 23.8 Ω (`xdp1_xmn`). The medians pass.
+3. **Static `vrefl` − `vref` = +8.4 mV** at the slice pins (tt OP), unchanged from B3. The weight calibration covers it.
+4. **IDD 15 % low** (0.763 against 0.903 mA). 86 % of it is supply IR drop (slice `vdd` to the comparator tails).
+5. **R2-4 metric**: at tt the worst value is the first differing decision, sampled after the comparator regenerates
+   (kickback, not settling). The corrected value is reported next to it; the limit is not changed.
+6. Full scale ±0.8645 V meets the D16 amendment with 1.5 % margin at the worst corner (ff). D16 ±0.9 V is not met.
+7. As B3: `vcm` / `vcm2` have no driver, the SAR logic is behavioural and `valid` is not modelled, the 35 north SAR
+   pins are stubs, and the PEX simplifications of `pex/pex_build.py` item 6 apply.
+
+### Failures and mistakes (layout B4 track, 2026-10-27)
+
+| # | What happened | Class | Consequence |
+| --- | --- | --- | --- |
+| 1 | Layouts B to B3 reserved the reference straps for the router keys `vref#k` / `vrefl#k`, so the straps carried no driver current (finding B4-1) | functional-bug | fixed in B4 (straps reserved for the net) |
+| 2 | The west Metal4 shield of the input channel had no via and was floating in layouts B to B3; no check looks for floating metal | verification-gap | tied to `vss` in B4; floating-metal check still missing |
+| 3 | The R2-4 metric samples at 25 ns, after the comparator regenerates, so it includes the kickback of a decision that differs between the runs | verification-gap | corrected value reported next to the metric |
+| 4 | First `trace_dec.py` ignored the static base correction (about 2 LSB everywhere) | tooling | rewritten to patch `post_ref5.py` as `post_post.py` does |
+| 5 | A probe script under `/tmp` did not run: the container does not mount it | tooling | probes moved to `sim/post/b4/` |
+| 6 | `cap_breakdown.py` missed the sidewall entries and the escaped en dash in the kpex report | tooling | parser fixed before use |
+| 7 | dev1: drivers without a free stack column had no pin node ("no usable node") | functional-bug | fallback to the old Metal1 pin |
+| 8 | dev1 DRC V2.b, V3.a, V3.b, M4.c1 at the south-pin feeders: no keep-out between stacks and feeders planned | planning | 0.8 µm keep-out (dev2) |
+| 9 | dev2 V3.a: a router via on a feeder node next to the 0.5 µm feeder via array, a side effect of fix 1 | planning | feeder Via3 cuts on router grid nodes (dev3) |
+| 10 | dev4 V2.b: off-grid feeder-mode cuts next to router grid vias, the layout B2 lesson repeated | regression | grid-only cuts in feeder mode (dev5) |
+| 11 | `out_timing.py` fallback for decks without `v(clk30)` gave inconsistent times | tooling | only decks that save `clk30` (mux decks) are used |
+| 12 | The 15 µm north row came after the floor plan was fixed by the box and the 51 pins; it does not fit | coordination | recorded as failed with options for B5 |
+
 ## Layout B (revision 5, 2026-10-26, track T2)
 
-State: **not closed.** Layout B3 is the layout of record (`layout/r1_adc.gds`, sha256 `677c7ef8…`). It is DRC
+State (2026-10-26): **not closed.** Layout B3 was the layout of record until B4 (now `layout/r1_adc_layout_b3.gds`, sha256 `677c7ef8…`). It is DRC
 clean (main + maximal), antenna clean, LVS clean and passes the pin check in the same box (439.0 × 182.3 µm)
 with the same 51 pins (run `layout-b3`). Post-layout (simulated, PEX B3): R2-4 tt 0.285 LSB **fails** the
 0.25 LSB limit by 0.035; R2-4 ss125 0.241 LSB passes; the first conversion passes at tt and ss; the static
@@ -184,7 +380,7 @@ Simulated effect (tt OP): follower to the slice `vref` pins 8.8–9.7 Ω (layout
 8.4 mV above `vref` (layout B: 10.6 mV above). The cause is not separated. A probable cause is the `vss` resistance
 at the sink sources (the four `vref` sinks and the `vrefl` sink see different source degeneration).
 
-### Layout B3 (layout of record)
+### Layout B3 (layout of record until B4)
 
 Layout B3 is layout B2 plus one change at the top level: each slice `vrefl` pin gets a Metal2 jumper (2.0 µm)
 from inside the `vrefl` bus under the `vref` bus and a Metal3 stub (2.0 µm) in the gap of the `vdd` Metal3 strap
@@ -198,7 +394,7 @@ slice pins); in B3 they are 4–6 Ω. `layout/r1_adc.gds` is layout B3 (sha256 `
 The change did not move R2-4 at tt (0.285 against 0.288 LSB). So the remaining R2-4 error is not in the top-level
 `vrefl` path.
 
-### Status (layout B3, the layout of record)
+### Status (layout B3)
 
 Built against: PDK `84374023ee8b4b126bebbba67fcbada0a9c0ff0b`, KLayout 0.30.9, kpex 0.3.12, ngspice 46, container
 image `sha256:ddeb69576f28…` (as layout A; read from the run records `reports/layout-b3/run.json` and

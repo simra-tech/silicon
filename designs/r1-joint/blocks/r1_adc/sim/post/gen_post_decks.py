@@ -145,6 +145,37 @@ elif __name__ == '__main__' and sys.argv[1:2] == ['winb2c']:
             V += v[:len(seq)]; C += seq
         F[sl] = list(_np.polyfit(V, C, 1))
     points_b({k: F[k][0] for k in 'ab'}, {k: F[k][1] for k in 'ab'}, 'postb2-win2048-tt-rc + postb2-win3072-tt-rc (fit)', prefix='winb2c')
+elif __name__ == '__main__' and sys.argv[1:2] == ['winb4']:
+    # layout B4 (2026-10-27): window centres from the B4 INL ramp (same deck condition as the windows: ideal VREF
+    # 1.045 V forced). Per slice and per target code, a straight line through the INL-ramp conversions within
+    # +-300 codes of the target (design weights, as post_post.py inl); one points file per code (prefix winb4)
+    import json as _j
+    import numpy as _np
+    sys.path.insert(0, os.path.join(BLOCK, 'sim', 'r4')); sys.path.insert(0, os.path.join(BLOCK, 'sim', 'r3'))
+    from p4common import load_segments
+    import cal3
+    root = os.environ['G1_RESULTS_ROOT']
+    WD = cal3.quantise(_np.array(_j.load(open(os.path.join(BLOCK, 'sim', 'results', 'r3', 'cdac3_mc50_tt_cp100_globalfit.json')))['nominal_design_weights_lsb']))
+    V, C = {'a': [], 'b': []}, {'a': [], 'b': []}
+    for rid, pf in (('postb4-inla-tt-rc', 'inlramp5a.json'), ('postb4-inlb-tt-rc', 'inlramp5b.json')):
+        P = _j.load(open(os.path.join(BLOCK, 'sim', 'r5', 'points', pf)))
+        slots, ba, bb = load_segments(os.path.join(HERE, 'results', rid + '_segments.json'), root)
+        keep = slots >= 1
+        for sl, bits in (('a', ba), ('b', bb)):
+            V[sl] += list(_np.array(P[sl])[slots[keep]]); C[sl] += list(cal3.code(bits[keep], WD).astype(float))
+    for c in (1024, 2048, 3072):
+        g, o = {}, {}
+        for sl in 'ab':
+            v, k = _np.array(V[sl]), _np.array(C[sl])
+            m = _np.abs(k - c) <= 300
+            g[sl], o[sl] = [float(x) for x in _np.polyfit(v[m], k[m], 1)]
+            print(sl, c, int(m.sum()), g[sl], o[sl])
+        points_b(g, o, 'postb4-inla-tt-rc + postb4-inlb-tt-rc (local fit +-300 codes around %d)' % c, prefix='winb4_tmp')
+        os.replace(os.path.join(HERE, 'points', 'winb4_tmp_%d.json' % c), os.path.join(HERE, 'points', 'winb4_%d.json' % c))
+        for cc in (1024, 2048, 3072):
+            f = os.path.join(HERE, 'points', 'winb4_tmp_%d.json' % cc)
+            if os.path.exists(f):
+                os.remove(f)
 elif __name__ == '__main__':
     wrapper()
     points()

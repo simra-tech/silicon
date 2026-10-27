@@ -31,7 +31,7 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, HERE)
 from adc_lib import *            # noqa  Block, gceil, gfloor, gnear, gpts, s5, pya, LAYERS, Mos, VIA, TV1, ...
 import r1_adc_netlist as NLM
-from maze_router import P, LNAME
+from maze_router import P, LNAME, FREE, BLOCK
 
 try:
     sys.stdout.reconfigure(line_buffering=True)
@@ -190,8 +190,18 @@ class Blk(Block):
             self.box('M1', x - 0.08, y0 + wf - 0.01, x + 0.08, yS + 0.15)
         sl = min(xs_pin[0] - 0.17, m.sx(S[0]) - 0.13)
         sr = max(xs_pin[-1] + 0.17, m.sx(S[-1]) + 0.13)
-        self.box('M1', sl, yS - 0.17, sr, yS + 0.17)      # 0.34 tall: flush with the 0.34 Via1 pad of an m1 pin
-        self.pin(Sn, [(0, x, yS) for x in xs_pin], 'm1')
+        mode = self.stacks.get(d['name'])
+        nodes = None
+        if mode:
+            # layout B4: multi-cut source stack (see src_stack); replaces the single m1 router pin of the source
+            nodes, sl2 = self.src_stack(d['name'], Sn, mode, xa, yS, cand, sxD, m.sx(S[-1]) + 0.13)
+        if nodes:
+            sl = min(sl, sl2)
+            self.box('M1', sl, yS - 0.17, sr, yS + 0.17)
+            self.pin(Sn, nodes, 'm2')
+        else:
+            self.box('M1', sl, yS - 0.17, sr, yS + 0.17)      # 0.34 tall: flush with the 0.34 Via1 pad of an m1 pin
+            self.pin(Sn, [(0, x, yS) for x in xs_pin], 'm1')
         self.port(d['name'], 2, Sn, 1, box=(sl, yS - 0.17, sr, yS + 0.17))
         # drain
         yv = round(y0 + wf - min(0.18, wf / 2), 4)
@@ -216,6 +226,106 @@ class Blk(Block):
         self.devpos[d['name']] = (m.x0, m.y0, m.x1, m.y1)
         right = max(dr, m.x1 + 0.3, gr, sr)
         return right + 0.25, yD + 0.2
+
+    stacks = {}                   # layout B4: device name -> 'p' (strap above, STRAP_REF) / 'n' (strap below, STRAP_GNDK)
+    stack_keepout = []            # layout B4: (net, x1, y1, x2, y2) Metal3 boxes of other nets a stack must clear
+    stack_log = []
+
+    def src_stack(self, name, net, mode, xa, yS, cand, sxD, xmax):
+        """layout B4 (2026-10-27): multi-cut via stack from a CDAC driver source rail (Metal1 at yS) to its Metal4 strap.
+        Columns: every source pin candidate on the router grid and, 0.5 um west of it, an off-grid column (cut pitch
+        0.5 um), kept >= 0.6 um from every drain strip and >= xa - 0.3. 'p' (PMOS, strap STRAP_REF over the row): three
+        cut rows yS, yS - 0.5, yS - 1.0 of Via1, Via2, Via3, Metal1-4 pads over the rows (the Metal4 pad merges into the
+        strap). 'n' (NMOS, strap STRAP_GNDK below the gate rail): two rows of Via1 / Via2, a Metal3 strip down to the
+        strap, three rows of Via3 under the strap. All boxes are reserved for the net; the grid nodes inside them form
+        the source pin (the Metal4 / strap node makes the router connection zero length). Returns (pin nodes, rail x min)."""
+        cols = []
+        for c in sorted(set([round(c - 0.5, 4) for c in cand] + list(cand))):
+            if c < xa - 0.3 or c > xmax + 1e-6 or any(abs(c - q) < 0.6 - 1e-6 for q in sxD):
+                continue
+            if cols and c - cols[-1] < 0.5 - 1e-6:
+                continue
+            cols.append(c)
+        rows = [yS, round(yS - 0.5, 4), round(yS - 1.0, 4)] if mode == 'p' else [yS, round(yS - 0.5, 4)]
+        ylo, yhi = rows[-1], rows[0]
+        if mode == 'n':
+            y3a = STRAP_GNDK[0] + 0.1
+            vrows3 = [round(STRAP_GNDK[0] + 0.3 + 0.5 * k, 4) for k in range(3)]
+        keep = []
+        fmode = False
+        for c in cols:
+            bx = (c - 0.2, (y3a if mode == 'n' else ylo - 0.2), c + 0.2, yhi + 0.2)
+            # dev1: stacks next to a feeder of the same net met the feeder Via3 array and the router vias on the feeder
+            # nodes (V2.b, V3.a, V3.b): every feeder is a keep-out (0.8 um), whatever its net
+            near = [(n2, b) for (n2, *b) in self.stack_keepout
+                    if bx[0] - 0.8 < b[2] and b[0] < bx[2] + 0.8 and bx[1] - 0.8 < b[3] and b[1] < bx[3] + 0.8]
+            if near:
+                # dev4: a PMOS column on its own reference feeder (the Metal3 feeder covers the column): Via1 / Via2 only,
+                # the Metal3 pad merges into the feeder, the feeder Via3 rows join the strap; the Metal3 grid nodes of
+                # the pad join the device pin, so the router adds no via next to the off-grid cuts
+                if mode == 'p' and all(n2 == net and b[0] + 0.2 <= c - 0.5 and c + 0.2 <= b[2] for n2, b in near):
+                    fmode = True
+                    keep.append(c)
+                continue
+            keep.append(c)
+        cols = keep
+        if fmode:
+            # dev4 V2.b: the router still places Via2 on the feeder grid nodes; feeder-mode cuts on grid nodes only
+            # (column on the grid, rows yS and yS - 0.8), so a router via coincides with a cut
+            cols = [c for c in cols if abs(c / P - round(c / P)) < 1e-6]
+            rows = [yS, round(yS - P, 4)]
+            ylo, yhi = rows[-1], rows[0]
+        if not cols:
+            self.stack_log.append((name, 'no column'))
+            return [], 1e9
+        D, R = self.D, self.R
+        groups = []
+        for c in cols:
+            if groups and c - groups[-1][-1] <= 0.5 + 1e-6:
+                groups[-1].append(c)
+            else:
+                groups.append([c])
+        nodes = []
+        ncut = 0
+        for g in groups:
+            x1, x2 = g[0], g[-1]
+            self.box('M1', x1 - 0.17, ylo - 0.17, x2 + 0.17, yhi + 0.17)
+            self.box('M2', x1 - 0.2, ylo - 0.2, x2 + 0.2, yhi + 0.2)
+            R.reserve(0, x1 - 0.2, ylo - 0.2, x2 + 0.2, yhi + 0.2, net)
+            if mode == 'p' and fmode:
+                self.box('M3', x1 - 0.2, ylo - 0.2, x2 + 0.2, yhi + 0.2)
+                R.reserve(1, x1 - 0.2, ylo - 0.2, x2 + 0.2, yhi + 0.2, net)
+                vias = ('Via1', 'Via2')
+            elif mode == 'p':
+                for L in ('M3', 'M4'):
+                    self.box(L, x1 - 0.2, ylo - 0.2, x2 + 0.2, yhi + 0.2)
+                R.reserve(1, x1 - 0.2, ylo - 0.2, x2 + 0.2, yhi + 0.2, net)
+                R.reserve(2, x1 - 0.2, ylo - 0.2, x2 + 0.2, yhi + 0.2, net)
+                vias = ('Via1', 'Via2', 'Via3')
+            else:
+                self.box('M3', x1 - 0.2, y3a, x2 + 0.2, yhi + 0.2)
+                R.reserve(1, x1 - 0.2, y3a, x2 + 0.2, yhi + 0.2, net)
+                vias = ('Via1', 'Via2')
+            for c in g:
+                for y in rows:
+                    for v in vias:
+                        D.sq(v, c, y, VIA); ncut += 1
+                if mode == 'n':
+                    for y in vrows3:
+                        D.sq('Via3', c, y, VIA); ncut += 1
+            for gx in gpts(x1 - 0.2, x2 + 0.2):
+                for gy in gpts(ylo - 0.2, yhi + 0.2):
+                    nodes.append((0, gx, gy))
+                    if mode == 'p' and fmode:
+                        nodes.append((1, gx, gy))
+                    elif mode == 'p':
+                        nodes += [(1, gx, gy), (2, gx, gy)]
+                if mode == 'n':
+                    for gy in gpts(y3a, yhi + 0.2):
+                        nodes.append((1, gx, gy))
+                    nodes += [(2, gx, gy) for gy in gpts(STRAP_GNDK[0] + 0.3, STRAP_GNDK[1] - 0.3)]
+        self.stack_log.append((name, mode + ('-feeder' if fmode else ''), cols, ncut))
+        return nodes, cols[0] - 0.17
 
     def mrow(self, segs, yg, kind):
         """segments of devices on one gate rail yg. segs: [dict(x0, devs, bulk)]; kind 'n', 'p', 'nHV', 'pHV'.
@@ -488,6 +598,13 @@ def build_slice(ly):
     pmos_groups = [('vrefl', [n + '_xmp' for n in nl] + ['xlrn']), ('vref', [n + '_xmp' for n in nm + pm]),
                    ('vrefl', ['xlrp'] + [n + '_xmp' for n in pl])]
     nmos_list = [n + '_xmn' for n in nl + nm + pm + pl]
+    # layout B4: multi-cut source stacks on every driver (PMOS to STRAP_REF, NMOS to STRAP_GNDK); keep-out: the Metal3
+    # feeders of the south pins (other nets than the device source)
+    blk.stacks = {n: 'p' for _, g in pmos_groups for n in g}
+    blk.stacks.update({n + '_xmn': 'n' for n in nl + nm + pm + pl})
+    _fw = {'vdd': (0.8, STRAP_VDD[1]), 'vref': (1.0, STRAP_REF[1]), 'vrefl': (1.0, STRAP_REF[1])}
+    blk.stack_keepout = [(n, x - _fw[n][0], 0.0, x + _fw[n][0], _fw[n][1]) for n, x in SLICE_SOUTH if n in _fw]
+    blk.stack_log = []
     wP = [blk.seg_w([by[n] for n in g], 0.6) for _, g in pmos_groups]
     gapP = 3.6
     totP = sum(wP) + gapP * 2
@@ -505,6 +622,8 @@ def build_slice(ly):
         segsn[0]['devs'].append(by[n])
     topN, endsN = blk.mrow(segsn, ygn, 'n')
     log('slice drivers: P row x %.1f-%.1f top %.2f, N row top %.2f' % (endsP[0][0], endsP[-1][1], topP, topN))
+    log('layout B4 source stacks: %s' % blk.stack_log)
+    blk.stats['source_stacks'] = blk.stack_log
     # collectors: one per bottom net, at a grid x near the driver drain pin, >= 0.6 um from slot centres
     centres = [AX + (c + 0.5) * SP for c in range(NC)]
     used = set()
@@ -603,7 +722,10 @@ def build_slice(ly):
     strap_nodes = {}
     def strap(net, x1, x2, ya, yb):
         blk.box('M4', x1, ya, x2, yb)
-        R.reserve(2, x1, ya, x2, yb, net)
+        # layout B4: reserve for the router net (net name without the '#k' strap key). Layouts B-B3 reserved the
+        # reference straps for 'vref#k' / 'vrefl#k', so the strap nodes were dropped from the 'vref' / 'vrefl' pins and
+        # the drivers reached the reference only through the Metal3 feeders (finding B4-1)
+        R.reserve(2, x1, ya, x2, yb, net.split('#')[0])
         strap_nodes.setdefault(net, []).extend((2, x, y) for x in gpts(x1 + 0.4, x2 - 0.4) for y in gpts(ya + 0.3, yb - 0.3))
     strap('vdd', 0.8, WS - 0.8, *STRAP_VDD)
     strap('gnd', 0.8, WS - 0.8, *STRAP_GND)
@@ -631,8 +753,17 @@ def build_slice(ly):
         ya, yb = ftop[net]
         blk.box('M3', x - fw[net], 0.0, x + fw[net], yb)
         R.reserve(1, x - fw[net], 0.0, x + fw[net], yb, net)
-        blk.box('M4', x - fw[net], ya, x + fw[net], yb)
-        via_array(D, 'Via3', x - fw[net], ya, x + fw[net], yb)
+        if net in ('vref', 'vrefl'):
+            # layout B4 (dev2 V3.a): the reference straps are now router pins of their net, so router vias can land on
+            # the feeder nodes; Via3 cuts on grid nodes only (they coincide with a router via), Metal4 0.2 um below the
+            # strap for a second row
+            blk.box('M4', x - fw[net], ya - 0.2, x + fw[net], yb)
+            for xx in gpts(x - fw[net] + 0.15, x + fw[net] - 0.15):
+                for yy in gpts(ya - 0.05, yb - 0.15):
+                    D.sq('Via3', xx, yy, VIA)
+        else:
+            blk.box('M4', x - fw[net], ya, x + fw[net], yb)
+            via_array(D, 'Via3', x - fw[net], ya, x + fw[net], yb)
         key = net if net in strap_nodes else [k for k, (a, b) in sx.items() if k.split('#')[0] == net and a <= x <= b][0]
         strap_nodes[key].extend((1, xx, y) for xx in gpts(x - fw[net] + 0.4, x + fw[net] - 0.4) for y in gpts(0.0, yb - 0.3))
         feeders.append((net, x))
@@ -735,6 +866,13 @@ TOP_VDD_Y = (49.8, 54.0)     # layout B: vdd strap under the slices (Metal4 full
 TOP_VSS_Y = (2.0, 4.4)       # layout B: vss Metal4 strap (layout A: 0.8 um at y 3.2)
 TOP_VDDA_Y = (30.4, 32.8)    # layout B: vdda strap from the pin to the buffer (Metal4)
 FEED_X = {'vdda': 50.0, 'vdd': 100.0, 'vss': 150.0}
+# layout B4 (2026-10-27, assembly try f, r1_top/reports/integration_checklist_f.md): supply and reference pins 1.0 um
+# wide at the macro edge (chip-level EM), centres unchanged
+SUPPLY_PINS = ('vdd', 'vdda', 'vss', 'vref_in')
+SUPPLY_PIN_HW = 0.5
+# layout B4 (D21, SAR sub-macro r1_adc_sar for B5): router keep-out at the north edge, all routing layers, y >= NORTH_KEEP_Y
+# and x >= NORTH_KEEP_X0 (east of the comparator clock generator); the pin stubs stay
+NORTH_KEEP_Y, NORTH_KEEP_X0 = 171.6, 107.2
 
 
 def decap_plan():
@@ -1053,6 +1191,13 @@ def build_top(ly, sl):
     log('clkgen top %.2f %.2f, x end %.2f' % (tk1, tk2, ek2[0][1] + 34))
     # ---- long input pairs (hand-drawn), north channel shields -------------------------------------------------------
     long_pairs(blk)
+    # layout B4 (D21): north keep-out for the SAR sub-macro row (free nodes only; pin stubs are reserved below)
+    for l in range(3):
+        for gx in gpts(NORTH_KEEP_X0, W):
+            for gy in gpts(NORTH_KEEP_Y, H):
+                i, j = R.ij(gx, gy)
+                if R.inside(i, j) and R.res[l, i, j] == FREE:
+                    R.res[l, i, j] = BLOCK
     # ---- block pins -------------------------------------------------------------------------------------------------
     R.block_edges()
     bp = []
@@ -1085,7 +1230,8 @@ def build_top(ly, sl):
         elif side == 'E':
             R.reserve(1, W - 1.0, y - 0.2, W, y + 0.2, net)
         elif side == 'S':
-            R.reserve(1, min(x, gnear(x)) - 0.2, 0.0, max(x, gnear(x)) + 0.2, 1.0, net)
+            hw = SUPPLY_PIN_HW if net in SUPPLY_PINS else 0.2
+            R.reserve(1, min(x, gnear(x)) - hw, 0.0, max(x, gnear(x)) + hw, 1.0, net)
     for net, y in (('ain_sin_p', 110.0), ('ain_sin_n', 114.0)):
         R.reserve(1, 0.0, y - 0.2, SX[0] + 0.2, y + 0.6, net)
     for net, y in (('ain_isb_p', 130.0), ('ain_isb_n', 134.0)):
@@ -1103,7 +1249,8 @@ def build_top(ly, sl):
         L = 'M3'
         if side == 'S':
             xg = gnear(x)       # pin at the checklist x, jog at y 0.6-1.0 to the router node (xg, 0.8)
-            D.box(L, x - 0.2, 0.0, x + 0.2, 1.0); D.box('M3pin', x - 0.2, 0.0, x + 0.2, 1.0)
+            hw = SUPPLY_PIN_HW if net in SUPPLY_PINS else 0.2
+            D.box(L, x - hw, 0.0, x + hw, 1.0); D.box('M3pin', x - hw, 0.0, x + hw, 1.0)
             D.label('M3txt', x, 0.5, net, 0.3)
             if abs(xg - x) > 1e-6:
                 D.box(L, min(x, xg) - 0.2, 0.6, max(x, xg) + 0.2, 1.0)
@@ -1196,6 +1343,22 @@ def long_pairs(blk):
     for x in (219.2, 220.0):
         seg('M3', x, 166.4, x, 117.6, 'vss'); via(x, 166.4, 0, 1, 'vss')
     blk.pin('vss', [(0, 3.2, 166.4), (0, 436.0, 168.8), (0, 3.2, 171.2)], 'm2')
+    # layout B4 (2026-10-27): ain_cos pair environment (B3 extraction, cap_breakdown.py: p 4.9 fF above n, from (a) the
+    # Metal4 shield at x 0.2 without a via (floating: n saw no Metal4 sidewall to vss, p saw 3.7 fF), (b) a widened
+    # top-level vdd Metal4 wire over the channel at y 166.2-167.4 (over p only, 1.0 fF overlap), (c) a widened vss Metal3
+    # wire under the p Metal4 vertical at x 1.4-2.6 (1.7 fF))
+    seg('M2', 0.2, 171.2, 2.4, 171.2, 'vss')
+    D.box('M2', 0.05, 171.0, 2.4, 171.4)
+    via(0.2, 171.2, 0, 2, 'vss')
+    def block_free(l, x1, y1, x2, y2):
+        for gx in gpts(x1, x2):
+            for gy in gpts(y1, y2):
+                i, j = R.ij(gx, gy)
+                if R.inside(i, j) and R.res[l, i, j] == FREE:
+                    R.res[l, i, j] = BLOCK
+    block_free(2, 2.4, 165.6, 436.8, 172.0)        # no Metal4 over the north channel (both pairs see the same)
+    block_free(1, 0.0, 127.6, 3.2, 148.8)          # no Metal3 under the west COS verticals (except the pin stubs and
+    block_free(1, 0.0, 151.2, 3.2, 172.0)          # the vcm2 pin track at y 150, which crosses both lines once)
     blk.label('M2txt', 30.0, 167.2, 'ain_cos_p'); blk.label('M2txt', 30.0, 168.0, 'ain_cos_n')
     blk.label('M2txt', 400.0, 169.6, 'ain_isa_p'); blk.label('M2txt', 400.0, 170.4, 'ain_isa_n')
     blk.label('M4txt', 2.4, 100.0, 'ibias')
