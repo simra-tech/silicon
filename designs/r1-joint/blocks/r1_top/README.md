@@ -214,6 +214,246 @@ New files of try g: `layout/r1_top_assemble_g.py`, `lvs/make_top_cdl_g.py`, `flo
 `flow/probe_adc_box_density.py`, `flow/write_run_json_g.py`, `reports/supply_g.md`,
 `reports/integration_checklist_g.md`, `reports/placement_g.csv`, `layout/r1_top_g.png`.
 
+## Chip-level extraction (try g) (track T11, 2026-10-27/28, run `pex-20261029-g3`)
+
+State: **extracted; checks (a)-(e) passed (check (d) with the fast variant); fill delta reported, not in the netlist**. Scripts:
+`pex/`. Output root: `<G1_RESULTS_ROOT>/r1_top/pex-20261029-g3/`.
+
+Goal: the top-level routing and supply network of try g (`asm-20261028-g3`), extracted with R and C, with the
+macros as hierarchical instances, in one include file for the testbench.
+
+### Method (chosen: RNetExtractor for R, kpex 0.3.12 2.5D for C, macros as black boxes)
+
+1. Wiring layout (`pex/top_wire.py`): every Metal1-TopMetal2 and Via1-TopVia2 shape of the chip outside the macros
+   (top-level routing, ring and IO cells, flat), plus the `r1_ctrl_top` power grid (as `flow/supply_g_rnet.py`).
+   The macros are black boxes: no device and no internal metal; their pin shapes (pin purpose, datatype 2) are
+   added as metal and are the ports. No FEOL layer is written.
+2. Nets are named from the chip CDL of record: a macro pin gives the CDL net of its instance line; an IO-cell pin
+   gives the pad net, the core net (`<PAD>_P2C`, `<PAD>_C2P`) or the ring supply.
+3. R (`pex/top_rnet.py`): KLayout RNetExtractor per net, square counting, typ (`sg13g2_typ.itf`) and max (process
+   specification) sheet and via values as `flow/supply_g_rnet.py`; one node every 20 µm along the signal wires.
+   Supply nets keep Metal1 and Via1 only inside the core box (322-1378 µm); the ring Metal1 annulus stops the
+   extractor (try g F3).
+4. C: kpex 0.3.12 2.5D CC on the same wiring layout. kpex can black-box the macros because the macros are not in
+   its input. Its own PDK LVS step writes an empty database for a layout without devices (F1), so `pex/make_lvsdb.py`
+   writes the LVS database (same layer names as the PDK deck) and kpex runs with `--lvsdb`. The C of record is one
+   full-chip kpex run (4 threads, 2 h, 82.64 pF in 3 556 net pairs). A tiled run (`pex/kpex_tiles.py`, 4 × 4
+   tiles, 20 µm halo, contributions kept in the tile core only) was the fallback while the full run was slow
+   (F7); it agrees within 2.6 % on the sensitive nets and within 13 % on every named net above 5 fF (table below).
+   Its outputs are kept in `c_tiles4_outputs/` and are superseded.
+5. Netlist (`pex/top_netlist.py`): each kpex pair total is split over the locations of its contributions and goes
+   to the nearest R node of each net. Coupling to unnamed metal (IO-cell internals, 1.86 pF in total) goes to
+   ground. The C of unnamed pieces to each other and to the substrate (4.67 pF) is not in the netlist.
+6. Reduced variant: TICER (Kron elimination of nodes with τ = C/G < 1 ps and at most 8 neighbours; the node C goes
+   to the neighbours by conductance). This removes 83 % of the nodes but adds coupling capacitors (fill-in), so the
+   element count does not go down, and the transient is slow (check (d)).
+7. Fast variant (`top_netlist.py --fast --tau 1e-11 --maxdeg 16`, recommended for the testbench): every coupling
+   capacitor with a supply net (VDD, VSS, VDDA, IOVDD, IOVSS) at one end goes to ground at both ends, then TICER
+   with τ < 10 ps and at most 16 neighbours. The total C of every net is kept; signal-to-signal coupling is kept;
+   supply noise coupled into signals is lost (open issue 9). The DC solution is exact (Kron).
+8. Fill: not in the extraction of record (unfilled `-g3`). A kpex run on a 10 µm band around the sensitive nets,
+   with and without the fill of `-g3-fill` as floating metal, gives the fill delta (`pex/fill_eff.py`: Schur
+   complement over the floating fill nets).
+
+### Files (`<G1_RESULTS_ROOT>/r1_top/pex-20261029-g3/`)
+
+| File | Content | sha256 |
+| --- | --- | --- |
+| `r1_top_g_pex.spice` | Full RC, typ sheet values: 91 678 nodes, 192 605 R, 14 191 C to `sub`, 35 044 coupling C; 8.7 MB | `bd90489e…` |
+| `r1_top_g_pex_red.spice` | Reduced (TICER), typ: 15 294 nodes, 110 641 R, 9 510 C to `sub`, 127 007 coupling C; 9.5 MB | `8f0295e7…` |
+| `max/r1_top_g_pex.spice` | Full RC, max sheet values (same C) | `bd5c02b7…` |
+| `max/r1_top_g_pex_red.spice` | Reduced, max sheet values | `9ed9347c…` |
+| `fast/r1_top_g_pex_fast.spice` | Fast, typ (recommended include): 3 834 nodes, 52 022 R, 2 315 C to `sub`, 9 719 coupling C; 2.2 MB | `cce466ec…` |
+| `fast/max/r1_top_g_pex_fast.spice` | Fast, max sheet values | `4b3b79a1…` |
+| `tran_fast/tran_subset.json` | Check (d), fast variant, 1 µs | `0733f732…` |
+| `checks_fast/checks.json` | Check (e) for the fast variant | `12977c94…` |
+| `kpex_full/r1_top_wire__r1_top_wire/r1_top_wire_k25d_pex_netlist.csv` | C pair totals, full-chip kpex (of record) | `a6990221…` |
+| `fill_eff.json` | Fill delta, band run | `1e3d7800…` |
+| `pin_map.csv` | Pad and macro pin → rc port → extracted node (copy in the repository: `pex/pin_map_g3.csv`) | `467d2ce1…` |
+| `checks/checks.json` | Checks (a), (b), (c), (e) | `97cacb37…` |
+| `tiles4/merged_k25d_pex_netlist.csv` | C pair totals of the 16 tiles (fallback, superseded): 3 576 pairs, 84.13 pF | `92d6f171…` |
+| `run.json` | Inputs with sha256, tools, commands | — |
+
+Inputs: unfilled GDS `asm-20261028-g3/r1_top.gds` `8f1c5d7c…`, filled GDS `asm-20261028-g3-fill/r1_top.gds`
+`3b337a55…`, CDL `asm-20261028-g3/lvs/r1_top_g.cdl` `979e6cc3…`, `reports/supply_g.md` `5404b848…`.
+
+### Results (extracted, typ sheet values unless stated)
+
+Check (b), supply DC against `reports/supply_g.md` (ngspice OP of the extracted netlist, block currents of
+supply_g, ctrl 40.25 mA on its 63 grid ports):
+
+| Quantity | typ extracted | typ supply_g | max extracted | max supply_g |
+| --- | --- | --- | --- | --- |
+| VDD drop at the ctrl (worst) | 22.86 mV | 22.8 mV | 30.64 mV | 30.6 mV |
+| VSS rise at the ctrl (worst) | 45.99 mV | 46.1 mV | 63.48 mV | 63.6 mV |
+| VDDA drop at the far AFE pin | 44.75 mV | 45.3 mV | 56.70 mV | 57.2 mV |
+| isense-bgr VSS offset | 5.45 mV | 5.34 mV | 6.92 mV | 6.78 mV |
+| Path R | 1.539 Ω | 1.494 Ω | 2.072 Ω | 2.021 Ω |
+
+All within 3 % (limit 10 %).
+
+`OSC_CLK`: R osc → ADC pin 313.5 Ω, osc → ctrl pin 5.5 Ω; wire C 98.2 fF (0.095 fF/µm). Skew ADC pin against
+ctrl pin (Elmore, extracted RC plus the ADC pin load): 24.7 ps at 34 fF, 29.7 ps at 50 fF, 32.8 ps at 60 fF;
+ngspice transient at 50 fF: 29.6 ps. The try-g estimate 48-51 ps used 0.2 fF/µm; the extracted wire C is 0.095
+fF/µm, so the estimate was conservative. The "LEF area+edge" case of the estimate (30.7-33.8 ps) agrees.
+
+AFE → ADC pairs:
+
+| Pair | R P / N | ΔR | C P / N | ΔC | C P-N |
+| --- | --- | --- | --- | --- | --- |
+| `AFE_SOUTS` | 122.96 / 120.28 Ω | 2.68 Ω | 77.29 / 68.77 fF | 8.52 fF | 34.63 fF |
+| `AFE_SOUTC` | 98.04 / 95.36 Ω | 2.68 Ω | 44.92 / 42.96 fF | 1.96 fF | 20.94 fF |
+
+`VREF_B`: R from the bias pin to `u_t2f` 59.5 Ω, `u_safe` 67.9 Ω, `u_isense` 84.2 Ω; C 109.0 fF (39.6 fF to VSS,
+6.6 fF to `ADC_RAW_A_12`, 4.2 fF to `IB_SF_OA`, 3.2 fF to `IB_SF_OB`, 2.2 fF to `PBIAS`, 2.0 fF to VDD).
+
+Full-chip C (of record) against the tiled fallback and the band run:
+
+| Net | Full chip (of record) | Tiles | Band run (10 µm) |
+| --- | --- | --- | --- |
+| `AFE_SOUTS_P` / `_N` | 77.29 / 68.77 fF | 77.01 / 68.52 fF | 77.29 / 68.77 fF |
+| `AFE_SOUTC_P` / `_N` | 44.92 / 42.96 fF | 44.92 / 42.96 fF | 44.93 / 42.96 fF |
+| `OSC_CLK` | 98.17 fF | 100.67 fF (+2.5 %) | 98.17 fF |
+| `VREF_B` | 108.99 fF | 106.63 fF (-2.2 %) | 108.99 fF |
+| Sum of all pairs | 82.64 pF | 84.13 pF (+1.8 %) | — |
+
+The tiled C is off by up to 12.7 % on single named nets (`IB_AFE_S2`), so it is not used.
+
+Top 20 nets by C (total, fF): IOVSS 34 438, IOVDD 28 085, VSS 19 230, VDD 17 389, VDDA 2 275, ISA_P 676,
+ISB_N 670, COS_N 666, SIN_N 666, ISA_N 660, ISB_P 660, COS_P 652, SIN_P 652, CS_N 262, EN_STO_IN 262,
+MA_SCLK 262, SDI 262, GATE_A 261, GATE_B 261, GATE_C 261. The pad nets are dominated by the IO-cell pad metal.
+
+Top 20 nets by R (largest pin-to-pin effective R, Ω): POR_N 349, IB_IS_B 314, OSC_CLK 313, IB_SF_NB 305,
+IB_SF_OB 276, IB_SF_NA 265, IB_SF_OA 254, IB_IS_A 223, ISN_OUTB_N 191, ISN_OUTB_P 186, CMP_NEG_B 162,
+ISN_OUTA_N 144, ISN_OUTA_P 138, SDI_P2C 137, ADC_RAW_B_13 134, ADC_RAW_B_12 131, VCM2 131, CMP_OC_B 131,
+TAP_N_31 130, TAP_N_27 129.
+
+Reduction error (e), reduced and fast against full (same numbers for both): C of every sensitive net equal to
+0.001 fF; `OSC_CLK` skew 29.671 ps against 29.670 ps (0.003 %); Elmore τ at the ADC pins of the AFE pairs and at the
+far `VREF_B` pin equal to 0.0001 ps.
+
+Check (d), simulated (ngspice 46, one thread, tt): extracted `r1_top_rc` + schematic `r1_isense`, `r1_bias`, four
+`sg13g2_IOPadAnalog`, ideal bgr, AZ and VCM sources (`pex/tran_subset.py` docstring). Shunt steps at 0.3 µs:
+ISA_P 30 mV, ISB_P 80 mV.
+
+| Netlist | Run | Wall time | Of which OP | Transient | Completed |
+| --- | --- | --- | --- | --- | --- |
+| fast | 1 µs | 473 s | 89 s | 384 s/µs (5 014 time points) | yes |
+| fast (tiled C, superseded) | 1 µs | 400 s | 88 s | 312 s/µs | yes |
+| fast (tiled C, superseded) | 0.05 µs | 122 s | 97 s | 25 s per 0.05 µs | yes |
+| reduced (tiled C) | 1 µs | stopped by the track after 1 h 48 min | — | — | no |
+| reduced (tiled C) | 0.05 µs | 3 475 s | 2 958 s | 517 s per 0.05 µs (about 10 300 s/µs) | yes |
+| full (tiled C) | 0.05 µs | 2 409 s | 1 988 s | 421 s per 0.05 µs (about 8 400 s/µs) | yes |
+
+The reduced and full variants are 22-27 times slower than the fast variant in the transient and 22-33 times slower
+in the OP. The supply-to-signal and supply-to-supply coupling capacitors make the matrix large and dense. The
+speed probes used the tiled-C netlists (element counts within 1 % of the netlists of record).
+
+Fast variant, 1 µs: ADC pin `ain_isa_p` 0.326 → 0.534 V, `ain_isa_n` 0.875 → 0.668 V, `ain_isb_p` 0.315 → 0.868 V,
+`ain_isb_n` 0.887 → 0.333 V (before the step at 0.29 µs → at 0.99 µs); isense `vref` 1.0435 → 1.0440 V, `VREF_B`
+at the bias pin 1.0450 → 1.0455 V, `POR_N` 1.200 V.
+
+Fill delta (check of the unfilled extraction; kpex 2.5D on a 10 µm band around the six nets, with the fill of
+`-g3-fill` as floating metal, 22 660 fill pieces; the floating pieces are removed by a Schur complement):
+
+| Net | C without fill | C with fill | Delta |
+| --- | --- | --- | --- |
+| `AFE_SOUTS_P` / `_N` | 77.29 / 68.77 fF | 96.50 / 83.60 fF | +24.9 % / +21.6 % |
+| `AFE_SOUTC_P` / `_N` | 44.93 / 42.96 fF | 63.25 / 59.70 fF | +40.8 % / +39.0 % |
+| `OSC_CLK` | 98.17 fF | 180.48 fF | +83.8 % |
+| `VREF_B` | 108.99 fF | 207.84 fF | +90.7 % |
+
+Pair imbalance with fill: `AFE_SOUTS` ΔC 8.52 → 12.90 fF, P-N coupling 34.63 → 37.22 fF; `AFE_SOUTC` ΔC 1.97 →
+3.55 fF, P-N coupling 20.94 → 23.69 fF. The fill raises the C of the sensitive nets by 22-91 %; the netlist of record
+does not include it (brief: unfilled extraction). `OSC_CLK` skew with the fill C, scaled from the Elmore result
+(estimate, not simulated): about 41 ps at 50 fF and 44 ps at 60 fF ADC pin load, ≤ 90 ps. These numbers are from
+the kpex 2.5D model; no field solver ran on them.
+
+### Status
+
+| Check | Result | Evidence |
+| --- | --- | --- |
+| (a) Connectivity against the try-g CDL (union-find on the netlist) | passed: 181 CDL nets, 0 opens, 0 shorts | `<G1_RESULTS_ROOT>/r1_top/pex-20261029-g3/checks/checks.log` |
+| (b) Supply DC against `supply_g.md`, typ and max | passed: all 10 numbers within 3 % (limit 10 %) | same |
+| (c) Top-20 C and R, `OSC_CLK` skew, AFE pair imbalance, `VREF_B` | passed (reported above; skew 29.7 ps at 50 fF ≤ 90 ps) | same |
+| (d) 1 µs transient, schematic macros on the current path (test 3 subset) | passed with the fast variant: 473 s per simulated µs (89 s OP + 384 s); reduced and full variants: 0.05 µs only, about 10 300 and 8 400 s per simulated µs | `<G1_RESULTS_ROOT>/r1_top/pex-20261029-g3/tran_fast/tran_subset.json`, `tran_red/`, `tran_red_short/`, `tran_full_short/` |
+| (e) Reduction error, reduced and fast | passed: 0.01 % or less | `checks/checks.json`, `checks_fast/checks.json` |
+| Fill delta on the sensitive nets (band run, `-g3-fill`) | done (reported above): C +22 % to +91 %; the netlist of record is unfilled (open issue 8) | `<G1_RESULTS_ROOT>/r1_top/pex-20261029-g3/fill_eff.json` |
+| Full-chip kpex in one run | passed (2 h; C of record) | `kpex_full/` |
+| Coupling into the macros (black-box pins against macro-internal metal) | not run | — |
+| Full-chip transient with every macro on the extracted netlist | not run (track T10 owns the testbench) | — |
+
+### Testbench include (track T10)
+
+1. Include `<G1_RESULTS_ROOT>/r1_top/pex-20261029-g3/fast/r1_top_g_pex_fast.spice` (recommended; `fast/max/` holds
+   the max sheet values). The full `r1_top_g_pex.spice` and the reduced `r1_top_g_pex_red.spice` have the same
+   ports and wrapper; use them only for short runs (check (d)).
+2. Instantiate `r1_top_pex` with the 22 ports in CDL order: `VDDA ISA_P ISA_N ISB_P ISB_N FAULT_N GATE_A GATE_B
+   GATE_C CS_N MA_SCLK SLO_SDO SDI EN_STO_IN SIN_P SIN_N COS_P COS_N VDD VSS IOVDD IOVSS`.
+3. Keep `ictrl=0` when the ctrl macro is a real instance. Set `ictrl=<A>` only for a supply study without the ctrl.
+4. Define every macro subckt with its CDL name and pin order: `r1_ctrl_top`, `r1_adc`, `r1_gate_lv`, `r1_bgr`,
+   `r1_t2f`, `r1_safe`, `r1_bias`, `r1_afe`, `r1_isense`, `r1_osc`, `r1_ls`, and the standard cells
+   `sg13g2_tiehi`, `sg13g2_decap_8` (34). The testbench renames `r1_ls` to `t10_ls`: apply the same
+   rename to the include (one `sed` on the `r1_ls` lines).
+5. The 18 signal IO cells are instances of the PDK cells (`sg13g2_IOPadAnalog`, `IOPadIn`, `IOPadOut30mA`,
+   `IOPadOut4mA`; pins `pad core vdd vss iovdd iovss`), so the
+   testbench IO replacement works unchanged. The supply pad cells are not instantiated.
+6. The substrate port `sub` is tied to VSS inside `r1_top_pex`.
+7. `pin_map.csv` gives the extracted node of every pad and macro pin, for probes.
+
+### Open issues
+
+1. Metal1 of the IO row and of the ring supply is not in the R network (extractor limit, try g F3); this is
+   conservative for R.
+2. The supply pad cells (VDD, VSS, VDDA, IOVDD, IOVSS) are not instantiated; their ESD paths are not in the netlist.
+3. The ctrl `vdd`/`vss` pins connect at one grid node (`s3_y350`); the ctrl current is spread on the 63 grid ports
+   only through `ictrl`.
+4. Coupling between top-level wires and macro-internal metal is not extracted (black boxes).
+5. kpex report values are rounded to 0.001 fF; the location split uses them, the pair totals are exact.
+6. The C of unnamed metal pieces to each other and to the substrate (4.67 pF, IO-cell internals) is left out; coupling of named nets to
+   unnamed metal goes to ground (1.86 pF).
+7. The reduced netlist has fewer nodes but slightly more elements than the full one (coupling fill-in).
+8. The netlist of record has no fill. With the fill, `OSC_CLK` and `VREF_B` C nearly doubles and the AFE pair C rises
+   by 22-41 % (band check). A filled-chip variant of the full netlist was not made (not run).
+9. The fast variant puts signal-to-supply coupling to ground: supply noise coupled into the signals is not in it.
+   Use the full or reduced netlist for such a study.
+
+### Failures and mistakes (T11)
+
+| # | What happened | Class | Fix |
+| --- | --- | --- | --- |
+| F1 | kpex with its own PDK LVS wrote an empty database for the wiring layout (no devices): "No extracted layers found". A dummy substrate tap did not help. | tooling | Own LVS database (`pex/make_lvsdb.py`), kpex `--lvsdb` |
+| F2 | kpex stopped on unknown layer names `metal5_con`, `topvia1_drw`. | tooling | PDK names `metal5_n_cap`, `topvia1_n_cap` |
+| F3 | RNetExtractor merged long plain wires into one element; the far pins had no node. | verification-gap | One vertex port every 20 µm |
+| F4 | Supply pins on Metal1 joined nodes 40-80 µm away. | estimation | Metal1 and Via1 inside the core box in the supply network |
+| F5 | A second pin shape with the same name replaced the first one. | verification-gap | Port names made unique (`#k`) |
+| F6 | `flow/run.sh` does not forward environment variables (`T11_FILL`, `T11_TICER_*`); one band run was started outside the repository root (rc 127). | process-hygiene | Command-line options; rerun from the root; recorded in `band.done` |
+| F7 | The full-chip kpex run took 2 h (4 threads); the plan had no time for it. | planning | 4 × 4 tiles as a fallback; the full run ended in the budget and is of record; the netlists were rebuilt and all checks rerun; the tiled outputs are kept in `c_tiles4_outputs/` |
+| F8 | Tile merge: first with the rounded report values (31.9 pF), then the overlap items were lost because the en dash in the net pair is octal-escaped in the XML (86.3 pF). | numerical | CSV-exact totals; regex for both forms (84.1 pF) |
+| F9 | The DC check matrix was singular (floating macro pins). | numerical | `rshunt`, 1 kΩ to ground on signal ports, R ≥ 10 µΩ |
+| F10 | First transient: PSP models not loaded (no `.spiceinit`); `sub` was an extra port. | tooling | `.spiceinit` copy, ngspice in the run directory; `sub` → VSS |
+| F11 | The first check run got the extraction directory as the assembly run directory (CDL not found). | process-hygiene | Rerun with the assembly run directory |
+| F12 | `pex/fill_eff.py` first version subtracted the chip-wide fill region per net (22 857 nets): over 30 min without a result. | planning | Fill classes by probing the band layout without fill (11 s); first run stopped |
+| F13 | The reduced variant (TICER, τ < 1 ps) was slow in the transient: the elimination spread the supply coupling over many nodes (35 044 → 127 007 coupling C), and a 0.05 µs run took 58 min, 49 min of it in the OP. | estimation | Fast variant: supply couplings to ground first, then TICER (1 µs in 473 s) |
+
+### Reproduce (repository root, POSIX shell)
+
+1. `G1_CPUSET=112-119; export G1_CPUSET; G1_RESULTS_ROOT=<G1_RESULTS_ROOT>; export G1_RESULTS_ROOT; G1_WORKDIR=.; export G1_WORKDIR`
+2. `P=<G1_RESULTS_ROOT>/r1_top/pex-20261029-g3; A=<G1_RESULTS_ROOT>/r1_top/asm-20261028-g3`
+3. `flow/run.sh python3 designs/r1-joint/blocks/r1_top/pex/top_wire.py $A $P/wire`
+4. `flow/run.sh python3 designs/r1-joint/blocks/r1_top/pex/top_rnet.py $P/wire $P/rnet/rnet_typ.json typ` (and `max`)
+5. `flow/run.sh python3 designs/r1-joint/blocks/r1_top/pex/make_lvsdb.py $P/wire/r1_top_wire.gds $P/wire/r1_top_wire.lvsdb`, then
+   `flow/run.sh kpex --pdk ihp-sg13g2 --threads 4 --lvsdb $P/wire/r1_top_wire.lvsdb --cell r1_top_wire --2.5D --mode CC --out_dir $P/kpex_full`
+   (fallback: `kpex_tiles.py prepare $P/wire $P/tiles4 4 20`, kpex per tile, `kpex_tiles.py merge $P/wire $P/tiles4 4`).
+6. `flow/run.sh python3 designs/r1-joint/blocks/r1_top/pex/top_netlist.py $P/wire $P/rnet/rnet_typ.json $P/kpex_full/r1_top_wire__r1_top_wire $A/lvs/r1_top_g.cdl $P` (max: `rnet_max.json`, out `$P/max`)
+   Fast variant: the same with `--fast --tau 1e-11 --maxdeg 16` and out `$P/fast` (max: `$P/fast/max`).
+7. `flow/run.sh python3 designs/r1-joint/blocks/r1_top/pex/top_checks.py $A $P/wire $P/rnet/rnet_typ.json $P/rnet/rnet_max.json $P $P/checks`
+8. `flow/run.sh python3 designs/r1-joint/blocks/r1_top/pex/tran_subset.py $P/fast r1_top_g_pex_fast.spice $P/tran_fast 1.0`
+9. `flow/run.sh python3 designs/r1-joint/blocks/r1_top/pex/fill_eff.py $P/band_fill $P/band_nofill <G1_RESULTS_ROOT>/r1_top/asm-20261028-g3-fill/r1_top.gds $P/fill_eff.json`
+
+Commands as run: `run_*.sh` in the run directory. Tools: KLayout 0.30.9, kpex 0.3.12, ngspice 46 (container
+`tapeoutbench-eda`), PDK `84374023`.
+
 ## Try f (2026-10-27, track T8): every macro real — run of record `asm-20261027-f3`, filled `asm-20261027-f3-fill`
 
 State: every macro is a real layout. No placeholder is left. All 172 top-level signal nets are routed. The filled
