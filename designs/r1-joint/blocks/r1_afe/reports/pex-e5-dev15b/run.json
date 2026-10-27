@@ -1,0 +1,34 @@
+{
+ "run_id": "pex-e5-dev15b",
+ "step": "Layout E5 of record (layout-e5-dev15b, revision F2): kpex 2.5D CC of r1_afe_ch and of the top cell without channels; wire and via R by the KLayout RNetExtractor; RC netlist pexrc-e5-dev15b and wiring-R-only netlist pexr-e5-dev15b (noc=1)",
+ "date": "2026-10-27",
+ "commands": [
+  "G1_CPUSET=106-108; G1_RESULTS_ROOT=<bulk>; G1_WORKDIR=designs/r1-joint/blocks/r1_afe; export G1_CPUSET G1_RESULTS_ROOT G1_WORKDIR; flow/run.sh klayout -b -r pex/pex_prepare.py -rd gds=<G1_RESULTS_ROOT>/r1_afe/layout-e5-dev15b/r1_afe.gds -rd out=<run>/r1_afe_ch_flat.gds -rd cell=r1_afe_ch  (and -rd cell=top_only -> r1_afe_top_flat.gds)",
+  "flow/run.sh kpex --pdk ihp-sg13g2 --threads 1 --gds <run>/r1_afe_ch_flat.gds --schematic layout/r1_afe_lvs.cdl --cell r1_afe_ch --2.5D --mode CC --out_dir <run>/kpex_ch  (top: r1_afe_top_flat.gds --cell r1_afe --out_dir <run>/kpex_top; one kpex at a time)",
+  "flow/run.sh klayout -b -r pex/pex_rc_build.py -rd kchdir=<run>/kpex_ch/r1_afe_ch_flat__r1_afe_ch -rd ktopdir=<run>/kpex_top/r1_afe_top_flat__r1_afe -rd ports=<G1_RESULTS_ROOT>/r1_afe/layout-e5-dev15b/r1_afe_ports.json -rd out=<G1_RESULTS_ROOT>/r1_afe/pexrc-e5-dev15b  (and -rd noc=1 -rd out=.../pexr-e5-dev15b)",
+  "python3 pex/pair_loads.py e4d13x=<pex-e4-dev13x channel kpex netlist> e5d15b=<channel kpex netlist>,<top kpex netlist> > pair_loads.json",
+  "python3 pex/x1_pair_r.py <pexr netlist> <layout ports json> > x1_pair_r.json",
+  "python3 pex/vss_mutual.py <pexr netlist> > vss_mutual.json",
+  "python3 pex/top_supply_z.py <pexr netlist> > top_supply_z.json",
+  "python3 pex/rnet_report.py <pexr netlist> vdd vss (summarised) > rnet_supply_r_only.json"
+ ],
+ "tools": {
+  "kpex": "0.3.12",
+  "klayout": "KLayout 0.30.9",
+  "image_id": "sha256:ddeb69576f2808676d1c5d474ecf04f6d1d6f8abdcff6b72b39790ded924bab2",
+  "pdk_commit": "84374023ee8b4b126bebbba67fcbada0a9c0ff0b"
+ },
+ "inputs": {
+  "<G1_RESULTS_ROOT>/r1_afe/layout-e5-dev15b/r1_afe.gds": "b2bdeaa48c5e39ba787cf07d0f5cf6fcfdf7cf23739a81aee0961bd2eefe139a",
+  "layout/r1_afe_lvs.cdl": "4271a5f9d38794c7be2daa399c04ba8a702daae5cd796a3e525d300f0bec91a7"
+ },
+ "outputs": {
+  "<run>/kpex_ch/r1_afe_ch_flat__r1_afe_ch/r1_afe_ch_k25d_pex_netlist.spice": "cb666abbcb93a2bbe7ead322ebdcaa20d052b6d1e844899ae152397305b34c80",
+  "<run>/kpex_top/r1_afe_top_flat__r1_afe/r1_afe_k25d_pex_netlist.spice": "65158076a96039c25d7d7391c7c6a39a22896503249992b4d3daa824651b6d0b",
+  "<G1_RESULTS_ROOT>/r1_afe/pexrc-e5-dev15b/r1_afe_post_rc.spice": "115845efcd62ecc0f1dc49aa81efb83ca4ea6bbec5c1219759a59deb3122413e",
+  "<G1_RESULTS_ROOT>/r1_afe/pexr-e5-dev15b/r1_afe_post_rc.spice": "97d80e4a91a18c321f2d2763f5ae6c8de31e4030f0545c4e8bb3fa03b7b0fcb7"
+ },
+ "result": "RC build: channel 89 nets, 0 open, 0 negative; top 20 nets, 0 open. Pair loads (channel): outp/outn +7.0 fF (E4 +6.7), op2/on2 -13.7 (-14.3), m1p/m1n -1.3 (-14.0), x1p/x1n +7.7 fF (E4 +0.8), x2p/x2n +4.4 (-1.8). x1 pair R P-N 19.41 ohm at x32, 21.11 at x1 (E4 73.9 / 89.8). Top supply z_mut vss 2.40 ohm, vdd 3.76 ohm (E4 4.24 / 4.89). Channel vss worst 82.1 ohm, vdd worst 27.6 ohm. The wiring-R-only netlist has the same sha256 as pexr-e5-dev15 (same geometry; dev15b only removes label texts).",
+ "disposition": "netlists used by r1afe-post-e5d15b (RC, the post-layout set of record for layout E5)",
+ "notes": "kpex ran with other tracks loading the shared CPUs (channel kpex about 50 min)"
+}

@@ -1,0 +1,26 @@
+{
+ "run_id": "pex-e5-dev15",
+ "step": "Layout E5 dev15: wiring-R-only netlist (no capacitance): KLayout LVS with the kpex 0.3.12 runset sg13g2.lvs (kpex options) on the flat channel and top-only layouts, then pex/pex_rc_build.py noc=1",
+ "date": "2026-10-27",
+ "commands": [
+  "sh pex/run_pexr.sh layout-e5-dev15 pex-e5-dev15  (flow/run.sh klayout pex/pex_prepare.py x2; flow/run.sh klayout -b -r <kpex>/pdk/ihp-sg13g2/libs.tech/kpex/sg13g2.lvs ... x2; flow/run.sh klayout -b -r pex/pex_rc_build.py ... -rd noc=1)",
+  "python3 pex/x1_pair_r.py <pexr netlist> <layout ports json> > x1_pair_r.json",
+  "python3 pex/vss_mutual.py <pexr netlist> > vss_mutual.json",
+  "python3 pex/top_supply_z.py <pexr netlist> > top_supply_z.json",
+  "python3 pex/rnet_report.py <pexr netlist> vdd vss (summarised) > rnet_supply_r_only.json"
+ ],
+ "tools": {
+  "klayout": "KLayout 0.30.9",
+  "kpex_lvs_runset": "kpex 0.3.12",
+  "image_id": "sha256:ddeb69576f2808676d1c5d474ecf04f6d1d6f8abdcff6b72b39790ded924bab2",
+  "pdk_commit": "84374023ee8b4b126bebbba67fcbada0a9c0ff0b"
+ },
+ "inputs": {
+  "<G1_RESULTS_ROOT>/r1_afe/layout-e5-dev15/r1_afe.gds": "a82bab3dc39400995cf25d58b3d551bfd56ecc4a116a9e235d6196e00a193768"
+ },
+ "outputs": {
+  "<G1_RESULTS_ROOT>/r1_afe/pex-e5-dev15/pexr/r1_afe_post_rc.spice": "97d80e4a91a18c321f2d2763f5ae6c8de31e4030f0545c4e8bb3fa03b7b0fcb7"
+ },
+ "notes": "",
+ "disposition": "development netlist (R only, not a post-layout view): x32 offset and loop validity on the wiring R (r1afe-e5d14-r / r1afe-e5d15-r)"
+}

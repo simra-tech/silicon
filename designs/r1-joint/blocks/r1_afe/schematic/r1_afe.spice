@@ -1,4 +1,4 @@
-* r1_afe -- R1 encoder analog front end, schematic-level SPICE source (revision F1, 2026-10-26; revision F: r1_afe_revF.spice, revision E: r1_afe_revE.spice, revision D, 2026-10-20; revision C: r1_afe_revC.spice, revision B: r1_afe_revB.spice)
+* r1_afe -- R1 encoder analog front end, schematic-level SPICE source (revision F2, 2026-10-27; revision F1: r1_afe_revF1.spice, revision F: r1_afe_revF.spice, revision E: r1_afe_revE.spice, revision D, 2026-10-20; revision C: r1_afe_revC.spice, revision B: r1_afe_revB.spice)
 * Two identical channels (sine, cosine). Each channel:
 *   stage 1  PGA  : inverting, fully differential, gain n1 = 1/2/4/8 (Rf1 = 1 unit, Rin1 = n1 parallel units)
 *   stage 2  LS   : inverting, gain 36/35 or 144/35 (rev D, D16: 1.44 Vpp out; rev C 8/7 for D11), output common mode 0.6 V (level shift 1.0 V -> 0.6 V)
@@ -13,6 +13,9 @@
 *   OTA2: CMFB pair 64u -> 32u, fixed sink 0.5u -> 20u and CMFB sink 20u -> 10u (lower CM loop gain), sense caps
 *         6u -> 14u square, Cc 16u -> 18u square, Rz 1.0k -> 1.6k (LRZ 6u)
 *   stage 2: Rin2 14k -> 17.5k (gain 8/7 and 32/7, D11)
+* revision F2 (2026-10-27, track T3 layout E5; screen r1afe-screen-h1 on the extracted E4-dev13x netlist;
+*   revision F1 kept as r1_afe_revF1.spice): OTA1 CMFB pair WCP 8u -> 6u (lower CM1 loop gain; CM1 PM at
+*   ffx 6.9 uA CM 2.5 V x32 after layout)
 * revision F1 (2026-10-26, track T3 revision F1 / layout E4; screens r1afe-screen-g1 .. -g6; revision F kept as
 *   r1_afe_revF.spice):
 *   OTA1: vbnc diode XMB6 L 2u -> 3u: more drain headroom for the CMFB sinks XMN3/4 at low input CM (the
@@ -251,7 +254,7 @@ XI4 c4 c4b vdd vss r1_afe_inv
 * stage 1 (inverting: inp -> m1n)
 XS1P inp x1p m1n c1 c1b c2 c2b c3 c3b vdd vss r1_afe_s1side
 XS1N inn x1n m1p c1 c1b c2 c2b c3 c3b vdd vss r1_afe_s1side
-XA1 x1p x1n m1p m1n vcm1 ib1 c3b c3 vdd vss r1_afe_ota W2N=8u W2P=48u WCC=25u WCCB=28u LRZ=21u WCP=8u LCP=1u WCT=48u WN3A=0.5u WN3B=16u LN3B=2u WCS=22u WPT=72u
+XA1 x1p x1n m1p m1n vcm1 ib1 c3b c3 vdd vss r1_afe_ota W2N=8u W2P=48u WCC=25u WCCB=28u LRZ=21u WCP=6u LCP=1u WCT=48u WN3A=0.5u WN3B=16u LN3B=2u WCS=22u WPT=72u
 * stage 2 (inverting again: m1n -> outp, so outp follows inp)
 XS2P m1n x2p op2 c4 c4b vdd vss r1_afe_s2side
 XS2N m1p x2n on2 c4 c4b vdd vss r1_afe_s2side

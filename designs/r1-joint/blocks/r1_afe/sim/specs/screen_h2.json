@@ -1,0 +1,77 @@
+{
+ "question": "Layout E5 step 3b (track T3): combined CM1 lever WCP 6 um + WCS 28 um (OTA1) on the E4-dev13x RC netlist (device edits): CM1/DM1 at ffx 6.9 uA CM 2.5 / 0.5 V and ss 11.81 uA CM 0.5 V, f_c at ss",
+ "variants": {
+  "wcp6_wcs28": {
+   "netlist": "$G1_RESULTS_ROOT/r1_afe/pexrc-e4-dev13x/r1_afe_post_rc.spice",
+   "rx": [
+    [
+     "r1_afe_ota",
+     "(?m)^(XMC1 [^\\n]*?) w=8u",
+     "\\1 w=6u"
+    ],
+    [
+     "r1_afe_ota",
+     "(?m)^(XMC2 [^\\n]*?) w=8u",
+     "\\1 w=6u"
+    ],
+    [
+     "r1_afe_ota",
+     "(?m)^(XCS1 [^\\n]*?) w=22u l=22u",
+     "\\1 w=28u l=28u"
+    ],
+    [
+     "r1_afe_ota",
+     "(?m)^(XCS2 [^\\n]*?) w=22u l=22u",
+     "\\1 w=28u l=28u"
+    ]
+   ]
+  }
+ },
+ "jobs": [
+  {
+   "tag": "stb_ffx_ib6.9_cm2.5",
+   "tmpl": "tb_afe_stb.cir",
+   "corner": "ffx",
+   "subs": {
+    "VCMI": 2.5,
+    "KLIST": "0 5",
+    "LLIST": "1 2",
+    "IB": "6.9u",
+    "CL": "2.8p"
+   }
+  },
+  {
+   "tag": "stb_ffx_ib6.9_cm0.5",
+   "tmpl": "tb_afe_stb.cir",
+   "corner": "ffx",
+   "subs": {
+    "VCMI": 0.5,
+    "KLIST": "0 5",
+    "LLIST": "1 2",
+    "IB": "6.9u",
+    "CL": "2.8p"
+   }
+  },
+  {
+   "tag": "stb_ss_ib11.81_cm0.5",
+   "tmpl": "tb_afe_stb.cir",
+   "corner": "ss",
+   "subs": {
+    "VCMI": 0.5,
+    "KLIST": "0 5",
+    "LLIST": "1 2",
+    "IB": "11.81u",
+    "CL": "2.8p"
+   }
+  },
+  {
+   "tag": "ac_ss_ib11.81_cm0.5",
+   "tmpl": "tb_afe_ac.cir",
+   "corner": "ss",
+   "subs": {
+    "VCMI": 0.5,
+    "IB": "11.81u"
+   }
+  }
+ ]
+}

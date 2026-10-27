@@ -1,0 +1,57 @@
+{
+ "run_id": "layout-e5-dev15",
+ "what": "all",
+ "date_utc": "2026-10-27T03:50:23Z",
+ "command": "G1_CPUSET=106-108; G1_RESULTS_ROOT=<bulk>; G1_WORKDIR=designs/r1-joint/blocks/r1_afe/layout; flow/run.sh sh run_checks.sh layout-e5-dev15 all <gds>",
+ "tools": {
+  "klayout": "KLayout 0.30.9",
+  "image_id": "sha256:ddeb69576f2808676d1c5d474ecf04f6d1d6f8abdcff6b72b39790ded924bab2",
+  "pdk_commit": "84374023ee8b4b126bebbba67fcbada0a9c0ff0b"
+ },
+ "inputs": {
+  "$G1_RESULTS_ROOT/r1_afe/layout-e5-dev15/r1_afe.gds": "a82bab3dc39400995cf25d58b3d551bfd56ecc4a116a9e235d6196e00a193768",
+  "layout/r1_afe_lvs.cdl": "4271a5f9d38794c7be2daa399c04ba8a702daae5cd796a3e525d300f0bec91a7",
+  "schematic/r1_afe.spice": "9e262f8cbc4d1b46a5a423fffbafe060ccf34d178fee7906facb3ae84691051a",
+  "layout/r1_afe_layout.py": "e28d2605eb9e9b129497cbee3e042da5fba7cd7d190f2d2294be5d40ca759249",
+  "layout/r1_afe_netlist.py": "311eb85ba9122e8b7460eaf46724ff020de9fc6f5854d8904be59f10c49588a3",
+  "layout/maze_router.py": "0b9f2d322f0ff4fc2fdef663402e140107b1538c80fd5e76c990a6a4a073fa92"
+ },
+ "drc": [
+  "Number of DRC errors for maximum rule set: 0",
+  "27-Oct-2026 04:49:57 | INFO    | \u2705 --- KLayout DRC Check Passed: No DRC violations detected in the layout. --- \u2705"
+ ],
+ "antenna": [
+  "27-Oct-2026 04:50:07 | INFO    | Completed running Antenna checks.",
+  "27-Oct-2026 04:50:07 | INFO    | \u2705 --- KLayout DRC Check Passed: No DRC violations detected in the layout. --- \u2705"
+ ],
+ "lvs": [
+  "27-Oct-2026 04:50:09 | INFO    | Running SG13G2 LVS checks on design <G1_RESULTS_ROOT>/r1_afe/layout-e5-dev15/r1_afe.gds on cell r1_afe",
+  "2026-10-27 04:50:11 +0100: Memory Usage (408860K) : Starting running SG13G2 Klayout LVS runset on <G1_RESULTS_ROOT>/r1_afe/layout-e5-dev15/r1_afe.gds",
+  "2026-10-27 04:50:11 +0100: Memory Usage (410524K) : SG13G2 Klayout LVS runset output at: <G1_RESULTS_ROOT>/r1_afe/layout-e5-dev15/lvs/r1_afe.lvsdb",
+  "2026-10-27 04:50:11 +0100: Memory Usage (412972K) : Netlist file: <repo>/designs/r1-joint/blocks/r1_afe/layout/r1_afe_lvs.cdl",
+  "2026-10-27 04:50:11 +0100: Memory Usage (412972K) : LVS extracted netlist at: <G1_RESULTS_ROOT>/r1_afe/layout-e5-dev15/lvs/r1_afe_extracted.cir",
+  "2026-10-27 04:50:11 +0100: Memory Usage (412972K) : Starting SG13G2 LVS runset",
+  "2026-10-27 04:50:11 +0100: Memory Usage (429704K) : Starting general LVS derivations",
+  "2026-10-27 04:50:15 +0100: Memory Usage (437884K) : Starting SG13G2 LVS connectivity setup",
+  "2026-10-27 04:50:15 +0100: Memory Usage (437884K) : Starting SG13G2 LVS connectivity setup (Inter-layer)",
+  "2026-10-27 04:50:15 +0100: Memory Usage (437884K) : Starting SG13G2 LVS connectivity setup (Global)",
+  "2026-10-27 04:50:15 +0100: Memory Usage (437884K) : Starting LVS MOSFET CONNECTIONS",
+  "2026-10-27 04:50:15 +0100: Memory Usage (437884K) : Starting LVS RF-MOSFET CONNECTIONS",
+  "2026-10-27 04:50:15 +0100: Memory Usage (437884K) : Starting LVS BJT CONNECTIONS",
+  "2026-10-27 04:50:15 +0100: Memory Usage (437884K) : Starting LVS DIODE CONNECTIONS",
+  "2026-10-27 04:50:15 +0100: Memory Usage (437884K) : Starting LVS CAP CONNECTIONS",
+  "2026-10-27 04:50:15 +0100: Memory Usage (437884K) : Starting LVS Taps CONNECTIONS",
+  "2026-10-27 04:50:15 +0100: Memory Usage (437884K) : Starting SG13G2 LVS DEVICES EXTRACTION",
+  "2026-10-27 04:50:17 +0100: Memory Usage (445664K) : Starting SG13G2 LVS RF MOS Model Mapping",
+  "2026-10-27 04:50:18 +0100: Memory Usage (445664K) : Starting SG13G2 LVS Options Preparations",
+  "2026-10-27 04:50:18 +0100: Memory Usage (445664K) : SG13G2 LVS flow: extraction -> alignment -> option preparation -> comparison.",
+  "2026-10-27 04:50:18 +0100: Memory Usage (445664K) : Starting SG13G2 LVS Alignment",
+  "2026-10-27 04:50:18 +0100: Memory Usage (445664K) : Starting SG13G2 LVS Simplification",
+  "2026-10-27 04:50:18 +0100: Memory Usage (445664K) : Starting SG13G2 LVS Comparison in strict port mode.",
+  "2026-10-27 04:50:18 +0100: Memory Usage (445664K) : INFO : Congratulations! Netlists match.",
+  "2026-10-27 04:50:18 +0100: Memory Usage (445664K) : LVS Total Run time 7.131452 seconds",
+  "27-Oct-2026 04:50:19 | INFO    | | Outcome          | Comparison mode: PASS (netlists match).                        |",
+  "27-Oct-2026 04:50:19 | INFO    | | Results Dir      | <G1_RESULTS_ROOT>/r1_afe/layout-e5-dev15/lvs |"
+ ],
+ "raw": "$G1_RESULTS_ROOT/r1_afe/layout-e5-dev15/"
+}

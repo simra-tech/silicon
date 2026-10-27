@@ -1,0 +1,61 @@
+{
+ "question": "Layout E5 step 2f (track T3): the run_afe.py probes sit in subcircuits shared by both channels, so both channels are injected in phase (even-mode return ratio). With unprobed copies for the cosine channel (pex/single_probe.py; sine probed, cosine loops closed): are the CM rows of E4-dev13x RC valid, and do the PM values change? Schematic F1 with the same transform as reference.",
+ "variants": {
+  "RCx_single": {
+   "netlist": "$G1_RESULTS_ROOT/r1_afe/revF1/e5/single/e4d13x_rc_single.spice"
+  },
+  "sch_single": {
+   "netlist": "$G1_RESULTS_ROOT/r1_afe/revF1/e5/single/f1_sch_single.spice"
+  }
+ },
+ "jobs": [
+  {
+   "tag": "stb_tt_ib10.14_cm2.5",
+   "tmpl": "tb_afe_stb.cir",
+   "corner": "tt",
+   "subs": {
+    "VCMI": 2.5,
+    "KLIST": "0 5",
+    "LLIST": "1 2 4 5",
+    "IB": "10.14u",
+    "CL": "2.8p"
+   }
+  },
+  {
+   "tag": "stb_ffx_ib6.9_cm2.5",
+   "tmpl": "tb_afe_stb.cir",
+   "corner": "ffx",
+   "subs": {
+    "VCMI": 2.5,
+    "KLIST": "0 5",
+    "LLIST": "1 2 4 5",
+    "IB": "6.9u",
+    "CL": "2.8p"
+   }
+  },
+  {
+   "tag": "stb_tt_ib6.9_cm0.5",
+   "tmpl": "tb_afe_stb.cir",
+   "corner": "tt",
+   "subs": {
+    "VCMI": 0.5,
+    "KLIST": "0 5",
+    "LLIST": "1 2 4 5",
+    "IB": "6.9u",
+    "CL": "2.8p"
+   }
+  },
+  {
+   "tag": "stb_ff_ib9.00_cm0.5",
+   "tmpl": "tb_afe_stb.cir",
+   "corner": "ff",
+   "subs": {
+    "VCMI": 0.5,
+    "KLIST": "0 5",
+    "LLIST": "1 2 4 5",
+    "IB": "9.00u",
+    "CL": "2.8p"
+   }
+  }
+ ]
+}

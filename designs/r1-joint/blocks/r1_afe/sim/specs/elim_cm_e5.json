@@ -1,0 +1,43 @@
+{
+ "question": "Layout E5 step 2b (track T3): which wiring group makes the CM1/CM2 rows flagged (DC phase -180 deg, phase rise > 30 deg) on the wiring-R netlist pexr-e4-dev13x? Groups shorted (R x 1e-3): channel vss, channel vdd, channel signal nets, top-level wiring; CM1/CM2 at tt 10.14 uA CM 2.5 V and tt 6.9 uA CM 0.5 V (x1, x32). The output-stage tie (r1afe-elim-vss-e5) removed the DM flags but not the CM flags.",
+ "variants": {
+  "G_vss": {
+   "netlist": "$G1_RESULTS_ROOT/r1_afe/revF1/e5/elim-cm/G_vss.spice"
+  },
+  "G_vdd": {
+   "netlist": "$G1_RESULTS_ROOT/r1_afe/revF1/e5/elim-cm/G_vdd.spice"
+  },
+  "G_sig": {
+   "netlist": "$G1_RESULTS_ROOT/r1_afe/revF1/e5/elim-cm/G_sig.spice"
+  },
+  "G_top": {
+   "netlist": "$G1_RESULTS_ROOT/r1_afe/revF1/e5/elim-cm/G_top.spice"
+  }
+ },
+ "jobs": [
+  {
+   "tag": "stb_tt_ib10.14_cm2.5",
+   "tmpl": "tb_afe_stb.cir",
+   "corner": "tt",
+   "subs": {
+    "VCMI": 2.5,
+    "KLIST": "0 5",
+    "LLIST": "2 5",
+    "IB": "10.14u",
+    "CL": "2.8p"
+   }
+  },
+  {
+   "tag": "stb_tt_ib6.9_cm0.5",
+   "tmpl": "tb_afe_stb.cir",
+   "corner": "tt",
+   "subs": {
+    "VCMI": 0.5,
+    "KLIST": "0 5",
+    "LLIST": "2 5",
+    "IB": "6.9u",
+    "CL": "2.8p"
+   }
+  }
+ ]
+}

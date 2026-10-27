@@ -1,0 +1,466 @@
+{
+ "run_id": "r1afe-elim-cm4-e5",
+ "campaign": "var:$G1_RESULTS_ROOT/r1_afe/r1afe-elim-cm4-e5/frozen/var_spec.json",
+ "date_utc": "2026-10-27T02:59:15Z",
+ "command": "G1_CPUSET=106-108 G1_CPUS=3 G1_WORKDIR=designs/r1-joint/blocks/r1_afe/sim G1_RESULTS_ROOT=<bulk> flow/run.sh python3 run_afe.py var:$G1_RESULTS_ROOT/r1_afe/r1afe-elim-cm4-e5/frozen/var_spec.json r1afe-elim-cm4-e5",
+ "tools": {
+  "ngspice": "ngspice-46 : Circuit level simulation program",
+  "image_id": "sha256:ddeb69576f2808676d1c5d474ecf04f6d1d6f8abdcff6b72b39790ded924bab2",
+  "pdk_commit": "84374023ee8b4b126bebbba67fcbada0a9c0ff0b"
+ },
+ "inputs": {
+  "sim/tb_afe_stb.cir": "9454a022bebab0e49bac0433dbbbd18cb02788006be58c0f9dbcac36536dabf0",
+  "sim/common_head.inc": "52ea3b1f1dda8aa3c448bf5977fb76f41feeb33019c36e7ad163e81eab0fcfd0",
+  "sim/gain_codes.inc": "a62c9d6daa3d544c36ac868c4e6a9266f32e581d093ac404c6c52bcc6e5276f6",
+  "schematic/r1_afe.spice": "3762a0a29cab4302fe84869104fe2c0be1754834b80c61bcbdf124d86cfe126e",
+  "sim/run_afe.py": "41d65c69d353468b4592aee3ed5772a1ac81d04ef93ef4d60fe087c7e0ed06b7"
+ },
+ "netlist_edits": {
+  "S_t05__stb_tt_ib10.14_cm2.5": [
+   [
+    "XA1 x1p x1n ",
+    "Vpa1p x1p y1p dc 0 ac {vdp1}\nVpa1n x1n y1n dc 0 ac {vdn1}\nIpa1p 0 x1p dc 0 ac {idp1}\nIpa1n 0 x1n dc 0 ac {idn1}\nXA1 y1p y1n "
+   ],
+   [
+    "XA2 x2p x2n ",
+    "Vpa2p x2p y2p dc 0 ac {vdp2}\nVpa2n x2n y2n dc 0 ac {vdn2}\nIpa2p 0 x2p dc 0 ac {idp2}\nIpa2n 0 x2n dc 0 ac {idn2}\nXA2 y2p y2n "
+   ],
+   [
+    "XMC1 vcmfb vcms tc",
+    "Vpc vcms vcmsy dc 0 ac {vc1}\nIpc 0 vcms dc 0 ac {ic1}\nXMC1 vcmfb vcmsy tc"
+   ],
+   [
+    "XMC1 vcmfb vcms tc",
+    "Vpc vcms vcmsy dc 0 ac {vc2}\nIpc 0 vcms dc 0 ac {ic2}\nXMC1 vcmfb vcmsy tc"
+   ],
+   [
+    "XMN7 outp ",
+    "Vpop outpi outp dc 0 ac {vop1}\nVpon outni outn dc 0 ac {von1}\nIpop 0 outpi dc 0 ac {iop1}\nIpon 0 outni dc 0 ac {ion1}\nXMN7 outpi "
+   ],
+   [
+    "XMN8 outn ",
+    "XMN8 outni "
+   ],
+   [
+    "XMP7 outp ",
+    "XMP7 outpi "
+   ],
+   [
+    "XMP8 outn ",
+    "XMP8 outni "
+   ],
+   [
+    "XCC1 cz1 outp ",
+    "XCC1 cz1 outpi "
+   ],
+   [
+    "XCC2 cz2 outn ",
+    "XCC2 cz2 outni "
+   ],
+   [
+    "XMN7 outp ",
+    "Vpop outpi outp dc 0 ac {vop2}\nVpon outni outn dc 0 ac {von2}\nIpop 0 outpi dc 0 ac {iop2}\nIpon 0 outni dc 0 ac {ion2}\nXMN7 outpi "
+   ],
+   [
+    "XMN8 outn ",
+    "XMN8 outni "
+   ],
+   [
+    "XMP7 outp ",
+    "XMP7 outpi "
+   ],
+   [
+    "XMP8 outn ",
+    "XMP8 outni "
+   ],
+   [
+    "XCC1 cz1 outp ",
+    "XCC1 cz1 outpi "
+   ],
+   [
+    "XCC2 cz2 outn ",
+    "XCC2 cz2 outni "
+   ],
+   [
+    "XCC1B cb1 outp ",
+    "XCC1B cb1 outpi "
+   ],
+   [
+    "XCC2B cb2 outn ",
+    "XCC2B cb2 outni "
+   ],
+   [
+    "?",
+    "XCD1B cd1 outp ",
+    "XCD1B cd1 outpi "
+   ],
+   [
+    "?",
+    "XCD2B cd2 outn ",
+    "XCD2B cd2 outni "
+   ],
+   [
+    "?",
+    "XCX1 cz1 outn ",
+    "XCX1 cz1 outni "
+   ],
+   [
+    "?",
+    "XCX2 cz2 outp ",
+    "XCX2 cz2 outpi "
+   ],
+   [
+    "?",
+    "XCX1 cz1 outn ",
+    "XCX1 cz1 outni "
+   ],
+   [
+    "?",
+    "XCX2 cz2 outp ",
+    "XCX2 cz2 outpi "
+   ]
+  ],
+  "S_t03__stb_tt_ib10.14_cm2.5": [
+   [
+    "XA1 x1p x1n ",
+    "Vpa1p x1p y1p dc 0 ac {vdp1}\nVpa1n x1n y1n dc 0 ac {vdn1}\nIpa1p 0 x1p dc 0 ac {idp1}\nIpa1n 0 x1n dc 0 ac {idn1}\nXA1 y1p y1n "
+   ],
+   [
+    "XA2 x2p x2n ",
+    "Vpa2p x2p y2p dc 0 ac {vdp2}\nVpa2n x2n y2n dc 0 ac {vdn2}\nIpa2p 0 x2p dc 0 ac {idp2}\nIpa2n 0 x2n dc 0 ac {idn2}\nXA2 y2p y2n "
+   ],
+   [
+    "XMC1 vcmfb vcms tc",
+    "Vpc vcms vcmsy dc 0 ac {vc1}\nIpc 0 vcms dc 0 ac {ic1}\nXMC1 vcmfb vcmsy tc"
+   ],
+   [
+    "XMC1 vcmfb vcms tc",
+    "Vpc vcms vcmsy dc 0 ac {vc2}\nIpc 0 vcms dc 0 ac {ic2}\nXMC1 vcmfb vcmsy tc"
+   ],
+   [
+    "XMN7 outp ",
+    "Vpop outpi outp dc 0 ac {vop1}\nVpon outni outn dc 0 ac {von1}\nIpop 0 outpi dc 0 ac {iop1}\nIpon 0 outni dc 0 ac {ion1}\nXMN7 outpi "
+   ],
+   [
+    "XMN8 outn ",
+    "XMN8 outni "
+   ],
+   [
+    "XMP7 outp ",
+    "XMP7 outpi "
+   ],
+   [
+    "XMP8 outn ",
+    "XMP8 outni "
+   ],
+   [
+    "XCC1 cz1 outp ",
+    "XCC1 cz1 outpi "
+   ],
+   [
+    "XCC2 cz2 outn ",
+    "XCC2 cz2 outni "
+   ],
+   [
+    "XMN7 outp ",
+    "Vpop outpi outp dc 0 ac {vop2}\nVpon outni outn dc 0 ac {von2}\nIpop 0 outpi dc 0 ac {iop2}\nIpon 0 outni dc 0 ac {ion2}\nXMN7 outpi "
+   ],
+   [
+    "XMN8 outn ",
+    "XMN8 outni "
+   ],
+   [
+    "XMP7 outp ",
+    "XMP7 outpi "
+   ],
+   [
+    "XMP8 outn ",
+    "XMP8 outni "
+   ],
+   [
+    "XCC1 cz1 outp ",
+    "XCC1 cz1 outpi "
+   ],
+   [
+    "XCC2 cz2 outn ",
+    "XCC2 cz2 outni "
+   ],
+   [
+    "XCC1B cb1 outp ",
+    "XCC1B cb1 outpi "
+   ],
+   [
+    "XCC2B cb2 outn ",
+    "XCC2B cb2 outni "
+   ],
+   [
+    "?",
+    "XCD1B cd1 outp ",
+    "XCD1B cd1 outpi "
+   ],
+   [
+    "?",
+    "XCD2B cd2 outn ",
+    "XCD2B cd2 outni "
+   ],
+   [
+    "?",
+    "XCX1 cz1 outn ",
+    "XCX1 cz1 outni "
+   ],
+   [
+    "?",
+    "XCX2 cz2 outp ",
+    "XCX2 cz2 outpi "
+   ],
+   [
+    "?",
+    "XCX1 cz1 outn ",
+    "XCX1 cz1 outni "
+   ],
+   [
+    "?",
+    "XCX2 cz2 outp ",
+    "XCX2 cz2 outpi "
+   ]
+  ],
+  "S_t03_cv05__stb_tt_ib10.14_cm2.5": [
+   [
+    "XA1 x1p x1n ",
+    "Vpa1p x1p y1p dc 0 ac {vdp1}\nVpa1n x1n y1n dc 0 ac {vdn1}\nIpa1p 0 x1p dc 0 ac {idp1}\nIpa1n 0 x1n dc 0 ac {idn1}\nXA1 y1p y1n "
+   ],
+   [
+    "XA2 x2p x2n ",
+    "Vpa2p x2p y2p dc 0 ac {vdp2}\nVpa2n x2n y2n dc 0 ac {vdn2}\nIpa2p 0 x2p dc 0 ac {idp2}\nIpa2n 0 x2n dc 0 ac {idn2}\nXA2 y2p y2n "
+   ],
+   [
+    "XMC1 vcmfb vcms tc",
+    "Vpc vcms vcmsy dc 0 ac {vc1}\nIpc 0 vcms dc 0 ac {ic1}\nXMC1 vcmfb vcmsy tc"
+   ],
+   [
+    "XMC1 vcmfb vcms tc",
+    "Vpc vcms vcmsy dc 0 ac {vc2}\nIpc 0 vcms dc 0 ac {ic2}\nXMC1 vcmfb vcmsy tc"
+   ],
+   [
+    "XMN7 outp ",
+    "Vpop outpi outp dc 0 ac {vop1}\nVpon outni outn dc 0 ac {von1}\nIpop 0 outpi dc 0 ac {iop1}\nIpon 0 outni dc 0 ac {ion1}\nXMN7 outpi "
+   ],
+   [
+    "XMN8 outn ",
+    "XMN8 outni "
+   ],
+   [
+    "XMP7 outp ",
+    "XMP7 outpi "
+   ],
+   [
+    "XMP8 outn ",
+    "XMP8 outni "
+   ],
+   [
+    "XCC1 cz1 outp ",
+    "XCC1 cz1 outpi "
+   ],
+   [
+    "XCC2 cz2 outn ",
+    "XCC2 cz2 outni "
+   ],
+   [
+    "XMN7 outp ",
+    "Vpop outpi outp dc 0 ac {vop2}\nVpon outni outn dc 0 ac {von2}\nIpop 0 outpi dc 0 ac {iop2}\nIpon 0 outni dc 0 ac {ion2}\nXMN7 outpi "
+   ],
+   [
+    "XMN8 outn ",
+    "XMN8 outni "
+   ],
+   [
+    "XMP7 outp ",
+    "XMP7 outpi "
+   ],
+   [
+    "XMP8 outn ",
+    "XMP8 outni "
+   ],
+   [
+    "XCC1 cz1 outp ",
+    "XCC1 cz1 outpi "
+   ],
+   [
+    "XCC2 cz2 outn ",
+    "XCC2 cz2 outni "
+   ],
+   [
+    "XCC1B cb1 outp ",
+    "XCC1B cb1 outpi "
+   ],
+   [
+    "XCC2B cb2 outn ",
+    "XCC2B cb2 outni "
+   ],
+   [
+    "?",
+    "XCD1B cd1 outp ",
+    "XCD1B cd1 outpi "
+   ],
+   [
+    "?",
+    "XCD2B cd2 outn ",
+    "XCD2B cd2 outni "
+   ],
+   [
+    "?",
+    "XCX1 cz1 outn ",
+    "XCX1 cz1 outni "
+   ],
+   [
+    "?",
+    "XCX2 cz2 outp ",
+    "XCX2 cz2 outpi "
+   ],
+   [
+    "?",
+    "XCX1 cz1 outn ",
+    "XCX1 cz1 outni "
+   ],
+   [
+    "?",
+    "XCX2 cz2 outp ",
+    "XCX2 cz2 outpi "
+   ]
+  ],
+  "S_t05_cv05__stb_tt_ib10.14_cm2.5": [
+   [
+    "XA1 x1p x1n ",
+    "Vpa1p x1p y1p dc 0 ac {vdp1}\nVpa1n x1n y1n dc 0 ac {vdn1}\nIpa1p 0 x1p dc 0 ac {idp1}\nIpa1n 0 x1n dc 0 ac {idn1}\nXA1 y1p y1n "
+   ],
+   [
+    "XA2 x2p x2n ",
+    "Vpa2p x2p y2p dc 0 ac {vdp2}\nVpa2n x2n y2n dc 0 ac {vdn2}\nIpa2p 0 x2p dc 0 ac {idp2}\nIpa2n 0 x2n dc 0 ac {idn2}\nXA2 y2p y2n "
+   ],
+   [
+    "XMC1 vcmfb vcms tc",
+    "Vpc vcms vcmsy dc 0 ac {vc1}\nIpc 0 vcms dc 0 ac {ic1}\nXMC1 vcmfb vcmsy tc"
+   ],
+   [
+    "XMC1 vcmfb vcms tc",
+    "Vpc vcms vcmsy dc 0 ac {vc2}\nIpc 0 vcms dc 0 ac {ic2}\nXMC1 vcmfb vcmsy tc"
+   ],
+   [
+    "XMN7 outp ",
+    "Vpop outpi outp dc 0 ac {vop1}\nVpon outni outn dc 0 ac {von1}\nIpop 0 outpi dc 0 ac {iop1}\nIpon 0 outni dc 0 ac {ion1}\nXMN7 outpi "
+   ],
+   [
+    "XMN8 outn ",
+    "XMN8 outni "
+   ],
+   [
+    "XMP7 outp ",
+    "XMP7 outpi "
+   ],
+   [
+    "XMP8 outn ",
+    "XMP8 outni "
+   ],
+   [
+    "XCC1 cz1 outp ",
+    "XCC1 cz1 outpi "
+   ],
+   [
+    "XCC2 cz2 outn ",
+    "XCC2 cz2 outni "
+   ],
+   [
+    "XMN7 outp ",
+    "Vpop outpi outp dc 0 ac {vop2}\nVpon outni outn dc 0 ac {von2}\nIpop 0 outpi dc 0 ac {iop2}\nIpon 0 outni dc 0 ac {ion2}\nXMN7 outpi "
+   ],
+   [
+    "XMN8 outn ",
+    "XMN8 outni "
+   ],
+   [
+    "XMP7 outp ",
+    "XMP7 outpi "
+   ],
+   [
+    "XMP8 outn ",
+    "XMP8 outni "
+   ],
+   [
+    "XCC1 cz1 outp ",
+    "XCC1 cz1 outpi "
+   ],
+   [
+    "XCC2 cz2 outn ",
+    "XCC2 cz2 outni "
+   ],
+   [
+    "XCC1B cb1 outp ",
+    "XCC1B cb1 outpi "
+   ],
+   [
+    "XCC2B cb2 outn ",
+    "XCC2B cb2 outni "
+   ],
+   [
+    "?",
+    "XCD1B cd1 outp ",
+    "XCD1B cd1 outpi "
+   ],
+   [
+    "?",
+    "XCD2B cd2 outn ",
+    "XCD2B cd2 outni "
+   ],
+   [
+    "?",
+    "XCX1 cz1 outn ",
+    "XCX1 cz1 outni "
+   ],
+   [
+    "?",
+    "XCX2 cz2 outp ",
+    "XCX2 cz2 outpi "
+   ],
+   [
+    "?",
+    "XCX1 cz1 outn ",
+    "XCX1 cz1 outni "
+   ],
+   [
+    "?",
+    "XCX2 cz2 outp ",
+    "XCX2 cz2 outpi "
+   ]
+  ]
+ },
+ "variant_netlists": {
+  "S_t05": {
+   "path": "r1_afe/r1afe-elim-cm4-e5/frozen/var_S_t05.spice",
+   "sha256": "0bd06de6f25c49f31c410b1f222608854084949e690bdef75965a92a402aaa51"
+  },
+  "S_t03": {
+   "path": "r1_afe/r1afe-elim-cm4-e5/frozen/var_S_t03.spice",
+   "sha256": "9b4a5f5972d12a56d4b27b35bd652f8108d030200116a869543868cf5d22dc37"
+  },
+  "S_t03_cv05": {
+   "path": "r1_afe/r1afe-elim-cm4-e5/frozen/var_S_t03_cv05.spice",
+   "sha256": "3b11c01efe57605cc109f648297d35ab99664c720dfecb33f6862df9428ff3be"
+  },
+  "S_t05_cv05": {
+   "path": "r1_afe/r1afe-elim-cm4-e5/frozen/var_S_t05_cv05.spice",
+   "sha256": "da55788cbaceb56b87d305fe71f10071a00e978f6f6d5dc14670ac85f5e556ab"
+  }
+ },
+ "netlist_sha256": "3762a0a29cab4302fe84869104fe2c0be1754834b80c61bcbdf124d86cfe126e",
+ "netlist_override": null,
+ "frozen_inputs": "$G1_RESULTS_ROOT/r1_afe/r1afe-elim-cm4-e5/frozen/",
+ "lsb_V": 0.000439453125,
+ "raw": "$G1_RESULTS_ROOT/r1_afe/r1afe-elim-cm4-e5/",
+ "jobs": 4,
+ "failed_jobs": [],
+ "wall_seconds": 155.0,
+ "summary": "results/r1afe-elim-cm4-e5.json",
+ "question": "",
+ "result": "",
+ "disposition": ""
+}

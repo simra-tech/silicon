@@ -1,12 +1,184 @@
 # r1_afe — encoder analog front end (sine and cosine channels)
 
-State (2026-10-27): **revision F1 (netlist of record, sha256 `3762a0a2…`), layout E4 (`layout-e4-dev13x`, `layout/r1_afe.gds`): DRC, antenna, LVS, supply-island and pin checks clean; not closed: CM1 PM 62.21° at ffx 6.9 µA CM 2.5 V ×32 (limit 63°), 39 of 144 loop rows flagged not valid (see "Revision F1 / Layout E4").** Revision F is kept as `schematic/r1_afe_revF.spice`, layout E3 as `layout/r1_afe_revE3.gds`. Revision E is kept as `schematic/r1_afe_revE.spice`, layout E2 as `layout/r1_afe_revE2.gds`; their records follow.
+State (2026-10-27): **revision F2 (netlist of record, sha256 `9e262f8c…`), layout E5 (`layout-e5-dev15b`, `layout/r1_afe.gds`): DRC, antenna, LVS, supply-island and pin checks clean, supply pins 1.0 µm; not closed: ×32 offset −6.0 to −24.8 mV (limit 5 mV), nominal pole matching 1.567 % at ffx 15.36 µA (limit 1 %), 25 of 144 CM loop rows not valid (see "Layout E5").** Revision F1 is kept as `schematic/r1_afe_revF1.spice`, layout E4 as `layout/r1_afe_revE4.gds`. Revision F is kept as `schematic/r1_afe_revF.spice`, layout E3 as `layout/r1_afe_revE3.gds`. Revision E is kept as `schematic/r1_afe_revE.spice`, layout E2 as `layout/r1_afe_revE2.gds`; their records follow.
 Revision D is superseded by revision E (record below). Revision C is superseded; its record follows the revision-D section ("Revision C record"). Revision B is superseded; its
 record is kept at the end ("Revision B record").
 All numbers in this file are **simulated** unless they are marked estimated. Nothing is measured.
 
 Track T3 of `../README.md`. Specification row: `../../specification/R1_TOP_LEVEL_SPECIFICATION.md` §2 (`r1_afe`),
 §4 (encoder input), gate V1. Input standard and accuracy budget: `../../specification/studies/S1_ENCODER_CHAIN_20261020.md`.
+
+## Layout E5 (2026-10-27, track T3; not closed)
+
+Status: **not closed** (×32 offset, nominal pole matching at ffx 15.36 µA, 25 CM rows not valid). All numbers are **simulated** (ngspice-46, IHP SG13G2 `84374023`). Nothing is measured.
+Starting point: revision F1 (`schematic/r1_afe.spice`, sha256 `3762a0a2…`) and layout E4 (`layout-e4-dev13x`, kept as
+`layout/r1_afe_revE4.gds`). Same 68 pins and the same box (192.8 × 494.4 µm) as E4 (the assembly track uses them).
+
+Work order: (1) `x1p`/`x1n` wiring asymmetry (×32 DC offset); (2) the flagged loop rows (vss elimination at CM 2.5 V,
+then a vss change); (3) CM1 margin (at most one schematic change); (4) at most two layout iterations, then the complete
+post-layout set on the final extraction and the schematic regression; (5) DRC, antenna, LVS, supply islands, pins.
+
+### Step 1: `x1p`/`x1n` wiring (×32 DC offset)
+
+Cause (extraction `pexr-e4-dev13x`, `pex/x1_pair_r.py`): every TG source rail of the stage-1 summing node was one
+router pin. The router entered a rail at one node and left it at another, so the input current passed Via1 – Metal1
+rail – Via1 of every TG in series (about 19 Ω per TG). The `x1p` PMOS TGs sat on another row than the `x1n` PMOS TGs.
+Generator changes (`layout/r1_afe_layout.py`): `x1bar` (a Metal2 bar over the TG source rails of each side and row, a
+Via1 on every rail node, the rails become one pin), `x1wide` (widen the `x1p`/`x1n` routes on Metal3/Metal4 after
+routing), `tgrows=e5` (iteration 2: the stage-1 PMOS TGs of both sides in one row, mirrored).
+
+Pair imbalance, effective wiring resistance in the input-current path (main node = feedback-unit head; ×32 = all 8
+TGs, ×1 = TG1; Ω) and ×32 DC differential output (tt, 10.14 µA, CM 2.5 V, operating point on the wiring-R netlist):
+
+| Layout | `x1p` / `x1n` R, ×32 | P − N, ×32 / ×1 | ×32 DC offset | Run |
+| --- | --- | --- | --- | --- |
+| E4-dev13x | 199.7 / 125.8 | +73.9 / +89.8 | −118.2 mV | `r1afe-dm2-e4d13x` |
+| E5-dev14 (bars, widening) | 84.7 / 66.7 | +18.0 / +18.7 | −17.1 mV | `r1afe-e5d14-r` |
+| E5-dev15 (dev14 + mirrored PMOS TG row; F2) | 80.1 / 60.7 | +19.4 / +21.1 | −14.4 mV | `r1afe-e5d15-r` |
+
+In dev14 the PMOS ports still differ (`x1p` 124–133 Ω, `x1n` 89–98 Ω; NMOS 73–80 / 69–75 Ω). Iteration 2 (dev15) puts
+both PMOS groups in one row, mirrored; the difference stays (PMOS 115–125 / 86–91 Ω, NMOS 70–77 / 63–68 Ω): it is in
+the router paths from the bars to the feedback-unit heads, not in the row position. The ×32 offset is −14.4 mV
+against ≤ 5 mV (**failed** by 9.4 mV; stage-1 differential −3.1 mV). Next lever (needs a third layout iteration, not
+allowed in this track): resistance-aware balancing of the two `x1` trees (route both from a fixed, mirrored Metal3/Metal4
+spine to the feedback-unit heads, or widen only the higher-R net until the extracted difference is below about 4 Ω). Capacitance imbalance: E4-dev13x `x1p`/`x1n` +0.8 fF (`reports/pex-e4-dev13x/pair_loads.json`);
+dev14 has no capacitance extraction (R only); E5-dev15b +7.7 fF (`reports/pex-e5-dev15b/pair_loads.json`; the
+widened `x1` routes add about 30 fF per net).
+Limitation: the extraction ties the OTA1 gates to the main node (feedback-unit head); the real gate tap position on the
+`x1` tree is not modelled (verification-gap, below).
+
+### Step 2: flagged loop rows (elimination on the wiring-R netlist `pexr-e4-dev13x`)
+
+DM flags, `r1afe-elim-vss-e5` (tt 10.14 µA CM 2.5 V, ff 9.00 µA CM 0.5 V, tt 6.9 µA CM 0.5 V; rows not valid of 8 per point):
+
+| Variant | tt CM 2.5 | ff CM 0.5 | tt 6.9 CM 0.5 | Flags left |
+| --- | --- | --- | --- | --- |
+| none (dev13x R) | 4 (DM2 ×1, CM2 ×1, DM1 ×32, CM2 ×32) | 3 | 1 | — |
+| XMN7/XMN8 sources of both OTAs to the pin (1 mΩ) | 2 | 2 | 1 | CM only |
+| OTA2 XMN7/XMN8 only | 3 | 2 | 2 | DM1 ×32 + CM |
+| OTA1 XMN7/XMN8 only | 3 | 3 | 0 | DM2 + CM |
+| all OTA2 NMOS-row vss ports tied together | 3 | 2 | 1 | DM1 ×32 + CM |
+
+Reading: the DM flags come from the output-stage return current along the NMOS row buses (it flowed east under the
+folded-cascode sinks and the CMFB mirrors; mutual vss resistance 0.6–1.5 Ω, `pex/vss_mutual.py`). Change: `outeast`
+(XMN7/XMN8 of both OTAs at the east end of their rows, next to the vss trunk). dev14: mutual coupling 0.06–0.31 Ω
+(OTA2 sinks 0.06–0.14 Ω); DM rows valid at the two points run (`r1afe-e5d14-r`).
+
+CM flags (`r1afe-elim-cm-e5`, `-cm2-e5`, `-cm3-e5`, `-cm4-e5`; CM1/CM2 at tt 10.14 µA CM 2.5 V): a single group shorted
+(channel vss, channel vdd, channel signal, top level) leaves them; channel vss + vdd + top level shorted removes them;
+all wiring shorted removes them; top-level vdd/vss only shorted leaves one CM1 ×32 row; top-level vdd/vss ×0.3 with
+channel vss ×0.5 still leaves both CM2 rows. Signature: DC phase −180°, flat gain 57–76 dB, phase rises to −90° by about
+30 kHz, then the normal loop shape (one real right-half-plane pole of the return ratio near 3 kHz; schematic: DC phase
+0°, 91 dB, pole near 100 Hz). Probing only the sine channel (`pex/single_probe.py`, cosine loops closed,
+`r1afe-single-e5`) leaves the CM flags, so it is not the in-phase injection of both channels.
+Reading: with the CMFB broken, the stage CM output is controlled by nothing, and a few ohms of supply impedance at the
+block (top-level vss 5.5 / 9.5 Ω self, 4.2 Ω mutual between the channels, `pex/top_supply_z.py`) set the sign of the
+open-loop CM pole. Removing it needs a supply impedance near 0 Ω, which no layout change gives (the package and bond
+wires add more). The flag rule (phase rise > 30° before the crossing) then marks a closed loop that the Nyquist count
+calls stable (one open-loop RHP pole, one counter-clockwise encirclement, T(0) ≈ −600 to −6000). These rows stay
+**not valid** under the rule of record; the decision on the rule is open (spec-ambiguity).
+Layout change kept for the supply anyway: `bigfoot` (strap feet 5 × 4 Via3/Via4 instead of 3 × 2).
+
+### Step 3: CM1 margin (device edits on the extracted E4-dev13x RC netlist; `r1afe-screen-h1`, `-h2`)
+
+| Variant (OTA1) | CM1 ×32, ffx 6.9 µA CM 2.5 V | CM1 ×32, CM 0.5 V | DM1 ×1, CM 0.5 V | f_c min, ss 11.81 µA CM 0.5 V (×16) |
+| --- | --- | --- | --- | --- |
+| F1 (E4-dev13x, `r1afe-post-e4d13x`) | 62.21° | 63.36° | 63.24° | 1.087 MHz |
+| WCP 6 µm | 63.01° | 64.91° | 63.96° | 1.038 MHz |
+| WCP 7 µm | 62.60° | 64.09° | 63.55° | 1.070 MHz |
+| WCS 28 µm | 62.75° | 64.04° | 60.22° | 1.090 MHz |
+
+Decision (one schematic change, **revision F2**): OTA1 CMFB pair `WCP` 8 → 6 µm, nothing else. `WCS` 28 µm is out: the
+CM-sense caps load the outputs in DM and DM1 ×1 drops to 60.22°. Netlist `schematic/r1_afe.spice` (revision F2, sha256
+`9e262f8c…051a`), written by `sim/apply_revf2.py a1cp=6` from `schematic/r1_afe_revF1.spice` (F1 kept, sha256
+`3762a0a2…`); frozen copy `<G1_RESULTS_ROOT>/r1_afe/revF2/frozen/r1_afe_revF2.spice`. The screen margin is small
+(63.01° against 63°, f_c 1.038 MHz against 1.0 MHz); the final values are the post-layout set below. The combined
+screen `r1afe-screen-h2` was not run (abandoned before start, `sim/runs/r1afe-screen-h2/ABANDONED.json`).
+
+### Layout E5 iterations (box 192.8 × 494.4 µm; generator `layout/r1_afe_layout.py`; checks `layout/run_checks_e5.sh`)
+
+| Run | Netlist | Change | DRC main + maximal (database items) | Antenna | LVS | Supply islands | Pins | Use |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| `layout-e5-dev14` | F1 | `x1bar`, `x1wide`, `outeast` | 0 | 0 | match | 0 (`vdd` 23, `vss` 42) | same as E4 | iteration 1 |
+| `layout-e5-dev15` | F2 | dev14 + `tgrows=e5`, `bigfoot`, `suppin=1.0` | 0 | 0 | match | 0 | 1 extra text (`c4` on its pin) | iteration 2, superseded |
+| `layout-e5-dev15b` | F2 | dev15 + no routed-net texts on Metal3 in the top cell (same geometry) | 0 | 0 | match | 0 | 21 pin shapes, labels and centres as E4; supply pins 1.0 µm | **layout of record** |
+
+Evidence: `reports/layout-e5-dev15b/` (`drc.log`, `drc_db_items.txt`, `antenna.log`, `lvs.log`, `lvs_summary.txt`,
+`supply_island_check.json`, `pin_layer_check.json`, `pin_count.txt`, `generator.json`), same files for dev14 and dev15.
+
+Pins (assembly try f request, 2026-10-27): the four block supply pins (`vss` x = 8.0 and 173.6 µm, `vdd` x = 162.4 and
+184.8 µm, south edge) are 1.0 µm wide (E4: 0.4 µm), same centres (`r1_afe` has no `vdda` pin; its `vdd` is the
+VDDA domain); the Metal3 nodes beside them are reserved for the same
+net. `tools/pin_layer_check.py` now also reports `centres_same` (unique label + centre) = true, `signal_pins_same` =
+true, `supply_min_width_um` = 1.0. The E4 count "68 pins" was a count of Metal3 texts: 21 pin labels, 11 duplicate
+routed-net texts on pin nodes and 36 texts inside the channel cells. E5 has no duplicate texts in the top cell (57
+entries, 35 unique, the same 21 pin shapes).
+DRC `M2.b` marker (try f, layout E3): E3-dev11 main-deck database has 1 item; E4-dev12b, E4-dev13x, E5-dev14, dev15 and
+dev15b have 0 items (`drc_db_items.txt`). Checked, nothing to fix.
+
+### Status (layout E5)
+
+Post-layout set of record: `r1afe-post-e5d15b` (54 jobs, 0 failed) on the RC netlist `pexrc-e5-dev15b` of layout
+`layout-e5-dev15b` with revision F2 (`reports/pex-e5-dev15b/run.json`); nothing is inherited from E4. Reduction:
+`sim/revf_post.py r1afe-post-e5d15b` → `sim/results/post-e5d15b-summary.json`. Schematic regression on the frozen F2
+netlist: `sim/run_all.sh 20261027f2` → `sim/results/summary-20261027f2.json` (all stages, 0 failed jobs).
+
+| Criterion | Limit | Post-layout E5 (dev15b, F2) | E4-dev13x (F1) | Evidence | Status |
+| --- | --- | --- | --- | --- | --- |
+| Loop PM, valid rows (tt, ss, ff, ssx, ffx; 6.9 and 15.4 µA at tt and ffx) | ≥ 63° | 63.18° (ffx 6.9 µA CM 0.5 V, CM2 ×32); CM1 worst 63.67° (ffx 6.9 µA CM 2.5 V) | 62.21° (CM1) | `sim/results/r1afe-post-e5d15b.json` | **passed** (margin 0.18°) |
+| Loop GM, all rows | ≥ 10 dB | 11.79 dB (tt 15.4 µA CM 2.5 V, DM2) | — | same | **passed** |
+| Loop rows not valid (RHP-pole flag) | 0 | **25 of 144**, all CM1/CM2 (DM 0) | 39 of 144 (DM and CM) | same | **not valid** (25 rows; see step 2, open issue 2) |
+| f_c minimum at ss | ≥ 1.0 MHz | 1.046 MHz (ss 11.81 µA CM 0.5 V) | 1.087 MHz | same | **passed** |
+| Pole matching, nominal (sine vs cosine) | ≤ 1 % | **1.567 %** (ffx 15.36 µA CM 0.5 V ×16; ×4 1.296 %, ×32 1.172 %); all other points ≤ 0.84 % | 0.865 % | same | **failed** by 0.57 % |
+| Pole matching, MC 20 samples ss (recorded) | recorded | worst 1.277 % (all gains), ×32 worst 1.239 % σ 0.542 % | ×32 1.251 / 0.552 % | same | recorded |
+| Output CM | 0.600 ± 0.030 V | 0.5921 – 0.5991 V | — | same | **passed** |
+| ×32 output DC offset (nominal) | ≤ 5 mV | **−6.0 (ffx 6.9 µA) to −24.8 mV (ss)**; tt −22.9 mV CM 0.5 V, −14.4 mV CM 2.5 V | −118.2 mV (tt CM 2.5 V, R only) | same | **failed** by up to 19.8 mV |
+| `x1p`/`x1n` imbalance | record | R (P − N) +19.4 Ω ×32, +21.1 Ω ×1 (E4 +73.9 / +89.8 Ω); C +7.7 fF (E4 +0.8 fF) | — | `reports/pex-e5-dev15b/x1_pair_r.json`, `pair_loads.json` | recorded |
+| Noise ×32 input-referred at ss | ≤ 35 µV | 32.94 µV | — | `sim/results/post-e5d15b-summary.json` | **passed** |
+| Settling residual (0 V reset) | ≤ 0.25 LSB | 0.0162 LSB (ss ×32) | — | same | **passed** |
+| Settling residual (0.6 V reset, tt ×32) | report | 0.0112 LSB | — | same | recorded |
+| THD | ≤ 0.1 % | 0.011 % | — | same | **passed** |
+| Schematic regression F2: loops (real loops, 288 + 112 rows) | ≥ 63°, ≥ 10 dB, valid | PM 67.49° (ffx CM1 ×32), GM 11.12 dB; all valid (the 144 CMFB-node break rows are not applicable, as in F1) | — | `sim/results/summary-20261027f2.json` | **passed** |
+| Schematic regression F2: f_c, noise, THD | as above | 1.081 MHz, 32.8 µV, 0.026 % | — | same | **passed** |
+| DRC main + maximal, antenna | 0 | 0, 0 | 0, 0 | `reports/layout-e5-dev15b/drc_db_items.txt`, `antenna.log` | **passed** |
+| LVS | match | match | match | `reports/layout-e5-dev15b/lvs_summary.txt` | **passed** |
+| Supply islands | 0 | 0 (`vdd` 23, `vss` 42 parts joined) | 0 | `reports/layout-e5-dev15b/supply_island_check.json` | **passed** |
+| Pins, box, TopMetal2 | same as E4; supply ≥ 1 µm | centres and signal pins same, supply 1.0 µm, 192.8 × 494.4 µm, TopMetal2 0 | — | `reports/layout-e5-dev15b/pin_layer_check.json` | **passed** |
+
+Built against: IHP SG13G2 open PDK `84374023ee8b4b126bebbba67fcbada0a9c0ff0b`, ngspice-46, KLayout 0.30.9, kpex 0.3.12
+(container image `sha256:ddeb6957…`; versions from the run records `run.json`).
+
+Files of record: `layout/r1_afe.gds` = `layout-e5-dev15b` (sha256 `b2bdeaa4…139a`), with `layout/r1_afe_ports.json`
+and `layout/r1_afe_layout.json`; E4 kept as `layout/r1_afe_revE4.gds`.
+
+### Open issues (layout E5)
+
+1. ×32 DC offset: the `x1p`/`x1n` router paths differ by about 19 Ω (see step 1). Lever: resistance-aware balancing of
+   the two `x1` trees in a third layout iteration.
+2. CM loop rows flagged by the RHP-pole rule while the Nyquist count says stable (see step 2). The rule of record for
+   these rows needs a decision (keep "not valid", or add a Nyquist-count test for loops with an open-loop RHP pole).
+3. The extraction ties the OTA1 gates to the feedback-unit head; the real gate tap on the `x1` tree is not modelled.
+4. Small margins after F2 (post-layout: PM 63.18° against 63°, f_c 1.046 MHz against 1.0 MHz).
+5. Nominal pole matching fails only at ffx 15.36 µA CM 0.5 V (1.567 %, ×16). Probable cause (not verified): sine and
+   cosine channel supply impedance differ (top-level `vdd` 5.07 / 10.0 Ω, `vss` 3.69 / 7.62 Ω,
+   `reports/pex-e5-dev15b/top_supply_z.json`). Lever: equal top-level supply paths to the two channels.
+
+### Failures and mistakes (layout E5)
+
+| # | What happened | Class | Effect and correction |
+| --- | --- | --- | --- |
+| 1 | kpex called without an engine flag does not run LVS (rc 1, `reports/pex-e5-dev14/FAILED_try1.txt`) | tooling | Called the kpex LVS runset directly with the kpex options (`pex/run_pexr.sh`) |
+| 2 | `tools/pin_layer_check.py` E5 additions: one syntax error, then two sort errors on pins without a box | tooling | Fixed (list comprehension, boxless entries excluded, `key=str`); re-run |
+| 3 | dev15: the top-level label pass wrote a routed-net text (`c4`) on a Metal3 pin node, so 1 extra pin entry | regression | dev15b: routed-net texts are not written on Metal3 in the top cell; same geometry, checks re-run |
+| 4 | The E4 "68 pins" count included 11 duplicate routed-net texts and 36 channel texts (21 real pin shapes) | verification-gap | `pin_count.txt` and `centres_same` now compare pin shapes, labels and centres |
+| 5 | The x1 fix was estimated to remove the offset; the router paths after the bars keep about 19 Ω difference | estimation | Recorded as failed with the next lever; no third iteration (budget) |
+| 6 | The CM flags were expected to come from the vss wiring; the elimination shows a supply-impedance CM pole that the flag rule marks | spec-ambiguity | Rows stay not valid; decision open (open issue 2) |
+| 7 | `WCS` 28 µm screened for CM1 also loads DM1 (60.22°) | estimation | Rejected; F2 = `WCP` 6 µm |
+| 8 | Combined screen `r1afe-screen-h2` started and then cancelled | planning | Recorded as abandoned (`sim/runs/r1afe-screen-h2/ABANDONED.json`) |
+| 9 | kpex ran slow while other tracks loaded the shared CPUs | process-hygiene | Waited; one kpex at a time kept |
+| 10 | Gate tap of OTA1 on the `x1` tree not modelled in the extraction | verification-gap | Open issue 3 |
+| 11 | Nominal pole matching at ffx 15.36 µA grew from 0.865 % (E4) to 1.567 %; not screened on an R-only view before the full set | regression | Open issue 5; found only in the final set |
+| 12 | The time budget ran out while the final post-layout set ran (kpex about 50 min, campaign about 2.5 h on 3 CPUs) | planning | Reported at the budget; no third iteration |
 
 ## Revision F1 / Layout E4 (2026-10-26/27, track T3; not closed)
 

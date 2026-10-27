@@ -1,0 +1,31 @@
+{
+ "question": "Layout E5 step 2c (track T3): CM flags on pexr-e4-dev13x need more than one wiring group (r1afe-elim-cm-e5: no single group; all wiring shorted: valid). Pairs: all supply wiring (channel vdd+vss and top), channel signal + top, the whole channel, OTA2-internal + stage-2 signal nets; CM1/CM2 at tt 10.14 uA CM 2.5 V",
+ "variants": {
+  "P_sup": {
+   "netlist": "$G1_RESULTS_ROOT/r1_afe/revF1/e5/elim-cm/P_sup.spice"
+  },
+  "P_chsig_top": {
+   "netlist": "$G1_RESULTS_ROOT/r1_afe/revF1/e5/elim-cm/P_chsig_top.spice"
+  },
+  "P_ch": {
+   "netlist": "$G1_RESULTS_ROOT/r1_afe/revF1/e5/elim-cm/P_ch.spice"
+  },
+  "P_xa2": {
+   "netlist": "$G1_RESULTS_ROOT/r1_afe/revF1/e5/elim-cm/P_xa2.spice"
+  }
+ },
+ "jobs": [
+  {
+   "tag": "stb_tt_ib10.14_cm2.5",
+   "tmpl": "tb_afe_stb.cir",
+   "corner": "tt",
+   "subs": {
+    "VCMI": 2.5,
+    "KLIST": "0 5",
+    "LLIST": "2 5",
+    "IB": "10.14u",
+    "CL": "2.8p"
+   }
+  }
+ ]
+}

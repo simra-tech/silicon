@@ -1,0 +1,31 @@
+{
+ "question": "Layout E5 step 2e (track T3): how far must the top-level supply resistance (and the channel vss) fall for valid CM rows? Top vdd/vss R x 0.5 / x 0.3, with and without channel vss x 0.5; CM1/CM2 at tt 10.14 uA CM 2.5 V on pexr-e4-dev13x",
+ "variants": {
+  "S_t05": {
+   "netlist": "$G1_RESULTS_ROOT/r1_afe/revF1/e5/elim-cm/S_t05.spice"
+  },
+  "S_t03": {
+   "netlist": "$G1_RESULTS_ROOT/r1_afe/revF1/e5/elim-cm/S_t03.spice"
+  },
+  "S_t03_cv05": {
+   "netlist": "$G1_RESULTS_ROOT/r1_afe/revF1/e5/elim-cm/S_t03_cv05.spice"
+  },
+  "S_t05_cv05": {
+   "netlist": "$G1_RESULTS_ROOT/r1_afe/revF1/e5/elim-cm/S_t05_cv05.spice"
+  }
+ },
+ "jobs": [
+  {
+   "tag": "stb_tt_ib10.14_cm2.5",
+   "tmpl": "tb_afe_stb.cir",
+   "corner": "tt",
+   "subs": {
+    "VCMI": 2.5,
+    "KLIST": "0 5",
+    "LLIST": "2 5",
+    "IB": "10.14u",
+    "CL": "2.8p"
+   }
+  }
+ ]
+}
