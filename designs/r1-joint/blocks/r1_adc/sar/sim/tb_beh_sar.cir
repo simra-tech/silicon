@@ -1,0 +1,23 @@
+* sar/sim/tb_beh_sar.cir -- T2j (D21): the behavioural SAR logic r1_sar5_logic of record (schematic/r1_adc_r5.spice)
+* alone, driven by the comparator outputs and mclk of a full-core run (PWL from sar/tb/vec_extract.py, digitised at
+* the 0.6 V bridge threshold, forced "no output" decisions at 0.5 V) and by the same ideal timing include as that
+* run. Reference outputs for the RTL equivalence (sar/tb/compare.py). Substitutions: TIMING VEC (file name of the PWL include) VDD TSTOP RAW.
+.include schematic/r1_adc_r5.spice
+.include sim/r5/TIMING
+.include sar/sim/vec/VEC
+Vdd vdd 0 VDD
+XSAR oap oan obp obn oanp obnp mclk wina winb trka0 trka1 trkb0 trkb1 lata latb
++ stba0 stba1 stba2 stba3 stba4 stba5 stba6 stba7 stba8 stba9 stba10 stba11 stba12 stba13
++ stbb0 stbb1 stbb2 stbb3 stbb4 stbb5 stbb6 stbb7 stbb8 stbb9 stbb10 stbb11 stbb12 stbb13
++ clka clkab clkb clkbb clkna clknab clknb clknbb
++ cpa12 cpa11 cpa10 cpa9 cpa8 cpa7 cpa6 cpa5 cpa4 cpa3 cpa2 cpa1 cpa0
++ cna12 cna11 cna10 cna9 cna8 cna7 cna6 cna5 cna4 cna3 cna2 cna1 cna0
++ cpb12 cpb11 cpb10 cpb9 cpb8 cpb7 cpb6 cpb5 cpb4 cpb3 cpb2 cpb1 cpb0
++ cnb12 cnb11 cnb10 cnb9 cnb8 cnb7 cnb6 cnb5 cnb4 cnb3 cnb2 cnb1 cnb0 rawa rawb vdd 0 r1_sar5_logic
+.control
+set num_threads=1
+save SAVELIST
+tran 0.05n TSTOP 0 0.05n
+write RAW/sar.raw
+.endc
+.end

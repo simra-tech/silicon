@@ -1,0 +1,49 @@
+* sar/sim/tb_beh_mux.cir -- T2j (D21): the r5 mux-sequence deck of record (sim/r5/tb_adc5_isa.cir as run t2-isa-tt:
+* frames e c e e, full core r1_adc5_core, option 3c reference with the r1_bgr model, 33 ns start-up hold pulse) with
+* the SAR boundary saved: comparator outputs, mclk, comparator clocks, CDAC lines, raw registers, timing ports.
+* Purpose: reference vectors of the behavioural SAR logic r1_sar5_logic for the RTL equivalence (sar/tb).
+* Change against t2-isa-tt: the r1_refbuf5 bias pin nb (netlist of record since 2026-10-21 10:04) is fed with
+* Ibref 5 uA (as sim/r5/run_deck5.py for runs after the pin); save list extended. Substitutions: CORNER TEMP VDD RAW.
+.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerMOSlv.lib CORNER
+.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerCAP.lib cap_typ
+.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerMOShv.lib CORNER
+.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerRES.lib res_typ
+.include schematic/r1_adc_r5.spice
+.include sim/r5/TIMING
+.temp TEMP
+.option reltol=1e-4 vntol=1e-6 abstol=1e-12 method=trap klu seed=1
+Vdd vdd 0 VDD
+Vdda vdda 0 3.3
+Vbgi vbgw 0 DC 1.045 TRNOISE(0.0004646 4.73e-08 0 0)
+Vbgf vbgi vbgw DC 0 TRNOISE(0 4.73e-08 1.15 1.285e-05)
+Rbg vbgi vbg 190k
+XCF vbg 0 r1_reffilt5 w=82u
+Ibref vdda nbr 5u
+XREF vbg vref vrefl nbr vdda 0 r1_refbuf5 ndec=4 ndecl=2
+Vtvrefa vrefa vref 0
+Vtvrefb vrefb vref 0
+Vtvrefla vrefla vrefl 0
+Vtvreflb vreflb vrefl 0
+Vcme vcme 0 0.6
+Vcmi vcmi 0 0.6
+Vsin vsin 0 PWL(0 0.40 1.012u 0.40 1.022u -0.40 2.352u -0.40 2.362u 0.72 6u 0.72)
+Visa visa 0 0.85
+Esp sinp vcme vsin 0 0.5
+Esn sinn vcme vsin 0 -0.5
+Ecp cosp vcme vsin 0 -0.5
+Ecn cosn vcme vsin 0 0.5
+Eap isap vcmi visa 0 0.5
+Ean isan vcmi visa 0 -0.5
+Ebp isbp vcmi visa 0 -0.5
+Ebn isbn vcmi visa 0 0.5
+XADC sinp sinn cosp cosn isap isan isbp isbn trka0 trka1 trkb0 trkb1 clk30 wina winb lata latb
++ stba0 stba1 stba2 stba3 stba4 stba5 stba6 stba7 stba8 stba9 stba10 stba11 stba12 stba13
++ stbb0 stbb1 stbb2 stbb3 stbb4 stbb5 stbb6 stbb7 stbb8 stbb9 stbb10 stbb11 stbb12 stbb13
++ rawa rawb topap topan topbp topbn vdd vrefa vrefb vrefla vreflb 0 r1_adc5_core
+.control
+set num_threads=1
+save SAVELIST
+tran 1n 3.31u 0 0.2n
+write RAW/sar.raw
+.endc
+.end

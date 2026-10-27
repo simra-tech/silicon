@@ -1,0 +1,70 @@
+# LibreLane Classic flow for r1_adc_sar (T2j, D21): the SAR logic and frame sequencer of r1_adc as a standard-cell
+# sub-macro in a row at the ADC north edge. Template: r1_ctrl/flow/librelane/config.yaml (revision 0.6).
+# Run with flow/run_harden.sh, which copies this file, the SDC, the pin file and the RTL to the results root and
+# sets DIE_AREA / CORE_AREA for the height under test (the values below are those of the run of record,
+# five rows, t2j-ll-h2312-h).
+meta:
+  version: 2
+  flow: Classic
+  substituting_steps:
+    # as r1_ctrl and G1: magic reports overlaps between abutted cells that are not real
+    Checker.IllegalOverlap: null
+
+DESIGN_NAME: r1_adc_sar
+VERILOG_FILES:
+  - dir::../rtl/r1_adc_sar.v
+VERILOG_DEFINES:
+  - SYNTHESIS
+# the four decision latches (sg13g2_dlhq_1) are instantiated, not inferred
+LINTER_ERROR_ON_LATCH: false
+
+STD_CELL_LIBRARY: sg13g2_stdcell
+
+CLOCK_PORT: clk
+CLOCK_PERIOD: 23.81
+PNR_SDC_FILE: dir::r1_adc_sar_pnr.sdc
+SIGNOFF_SDC_FILE: dir::r1_adc_sar.sdc
+FALLBACK_SDC: dir::r1_adc_sar.sdc
+
+# D21 box: <= 439 x 15 um. Three rows do not hold the logic (global placement 122 %); four rows (the core bottom
+# snaps to a multiple of 3.78 um from the die origin: 19.34 um) fail detailed placement after timing repair; five
+# rows, 23.12 um, is the smallest height that closes (README "Area"). run_harden.sh sets DIE_AREA / CORE_AREA.
+FP_SIZING: absolute
+DIE_AREA: [0, 0, 439, 23.12]
+CORE_AREA: [2.88, 3.78, 436.32, 22.68]
+PL_TARGET_DENSITY_PCT: 82
+# outputs are driven by the logic directly (no port buffers): area (README "Area"); the resizer still repairs slew
+DESIGN_REPAIR_BUFFER_OUTPUT_PORTS: false
+IO_PIN_ORDER_CFG: dir::pins.cfg
+
+# routing below Metal5: the sub-macro sits inside the r1_adc box, whose Metal5 belongs to the analog layout
+RT_MAX_LAYER: Metal4
+# power: Metal1 rails and Metal4 straps only (no ring, no TopMetal); strap width 1.6 um (pins >= 1 um, D21)
+PDN_CORE_RING: false
+PDN_MULTILAYER: false
+PDN_VERTICAL_LAYER: Metal4
+PDN_VWIDTH: 1.6
+PDN_VSPACING: 1.6
+PDN_VPITCH: 54.0
+PDN_VOFFSET: 12.0
+VDD_NETS: [VDD]
+GND_NETS: [VSS]
+
+# keep the dummy loads, the window delay cells and the decision latches as written
+RSZ_DONT_TOUCH_RX: "u_ld_.*|u_dly_.*|u_lat_.*"
+
+MAX_FANOUT_CONSTRAINT: 8
+CTS_ROOT_BUFFER: sg13g2_buf_2
+CTS_SINK_CLUSTERING_ENABLE: false
+CTS_CLK_BUFFERS:
+  - sg13g2_buf_2
+  - sg13g2_buf_4
+DRT_THREADS: 2
+STA_THREADS: 2
+GRT_ALLOW_CONGESTION: true
+
+RUN_HEURISTIC_DIODE_INSERTION: false
+RUN_ANTENNA_REPAIR: true
+DESIGN_REPAIR_MAX_SLEW_PCT: 30
+DESIGN_REPAIR_MAX_CAP_PCT: 30
+RUN_POST_GRT_DESIGN_REPAIR: true

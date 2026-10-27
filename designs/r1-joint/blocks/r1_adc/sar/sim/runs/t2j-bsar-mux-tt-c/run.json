@@ -1,0 +1,33 @@
+{
+  "run_id": "t2j-bsar-mux-tt-c",
+  "block": "r1_adc_sar",
+  "track": "T2j",
+  "question": "Behavioural r1_sar5_logic alone on the vectors of case mux_tt (strobe hold 1.0 ns; reference for the RTL equivalence)",
+  "command": "G1_CPUSET=116 G1_WORKDIR=designs/r1-joint/blocks/r1_adc G1_RESULTS_ROOT=<G1_RESULTS_ROOT> flow/run.sh ngspice -b <G1_RESULTS_ROOT>/r1_adc_sar/t2j-bsar-mux-tt-c/deck.cir (runner sar/sim/run_ng.py)",
+  "deck_template": "sar/sim/tb_beh_sar.cir",
+  "deck": "sar/sim/runs/t2j-bsar-mux-tt-c/deck.cir",
+  "substitutions": {
+    "TIMING": "r1_adc_timing_r5_mux_n0_cq_pre33.inc",
+    "VEC": "mux_tt_pwl.inc",
+    "VDD": "1.2",
+    "TSTOP": "3.31u",
+    "SAVELIST": "file sar/sim/save_sar.inc"
+  },
+  "includes_sha256": {
+    "schematic/r1_adc_r5.spice": "340c0e6a17ecec3aaa376b04adecad1de828aaf7648e2daf9f9f4d52bb0988d6",
+    "sim/r5/r1_adc_timing_r5_mux_n0_cq_pre33.inc": "c46eea5444e665d9a5ebb521ce23a3f4fe99f00b67599b855e184df5d745c61e",
+    "sar/sim/vec/mux_tt_pwl.inc": "e3edefca8faa4e951e1974cf3ade4b9a5141045be5a0dc18f3f363278c12b6be"
+  },
+  "pdk_commit": "84374023ee8b4b126bebbba67fcbada0a9c0ff0b (checked by flow/run.sh)",
+  "container_image": "tapeoutbench-eda:latest sha256:ddeb69576f2808676d1c5d474ecf04f6d1d6f8abdcff6b72b39790ded924bab2",
+  "ngspice_version": "not found in log",
+  "raw_results": "<G1_RESULTS_ROOT>/r1_adc_sar/t2j-bsar-mux-tt-c/",
+  "started_utc": "2026-10-27T03:44:48.944799Z",
+  "wall_s": 19.3,
+  "returncode": 0,
+  "status": "completed",
+  "errors": [],
+  "missing_outputs": [],
+  "result": "see sar/README.md",
+  "disposition": "pending post-processing"
+}

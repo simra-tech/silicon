@@ -1,5 +1,25 @@
 # R1_ADC — 12-bit SAR ADC with two simultaneous track-and-holds (schematic level, revisions 1 to 5)
 
+## SAR logic sub-macro (`r1_adc_sar`, decision D21, 2026-10-27, track T2j)
+
+The SAR logic and the frame sequencer are now a standard-cell sub-macro, `sar/` (spec, RTL, testbenches, flow,
+reports: `sar/README.md`; integration for layout B5: `sar/INTEGRATION.md`). It replaces the behavioural
+`r1_sar5_logic` and the ideal timing sources of the r5 decks.
+
+1. Function: bit-exact against `r1_sar5_logic` on the r5 mux-sequence (tt) and first-conversion (ss / 125 °C)
+   vectors, with forced "no output" decisions, at RTL and at gate level with SDF (slow and fast). Simulated.
+2. Hardened with LibreLane (run `t2j-ll-h2312-h`): **439.0 × 23.12 µm**, five rows. The D21 box (439 × 15 µm) is
+   not met; the smallest height that closes is 23.12 µm (`sar/README.md` "Area"). Magic and KLayout DRC 0, LVS
+   clean, antenna 0, pin check passed. Sign-off STA typ / fast / slow: no setup or hold violation.
+3. Timing against the analog part (STA): CDAC lines switch 0.49–1.55 ns after the `clk` edge (fast–slow), inside
+   the one-shot reset less 0.2 ns at every corner; the comparator clocks follow `mclk` by 0.33–1.78 ns.
+4. B5 must make the ADC box 23.12 µm taller (recommended: 439.0 × 205.42 µm, macro at (0, 182.3)), give the macro
+   its own `VSS` drops to the top-level `vss`, and run LVS with the comparer-limit deck (`sar/INTEGRATION.md`).
+5. New ADC input `cur_trk` (track ISA/ISB before a current frame): `r1_ctrl` has no driver yet (open issue S1).
+6. Closed-loop mixed-signal run (r5 mux deck at tt with the gate-level macro, transistor-level cells): 110/112
+   decisions equal; decision 13 of frame 3 differs in both slices, an input on that decision boundary (analog tie).
+   Recorded as failed bit-exact (`sar/README.md` "Status"). ff and ss closed-loop runs: not run.
+
 ## Layout B (revision 5, 2026-10-26, track T2)
 
 State: **not closed.** Layout B3 is the layout of record (`layout/r1_adc.gds`, sha256 `677c7ef8…`). It is DRC

@@ -1,0 +1,33 @@
+{
+  "run_id": "t2j-bsar-fc-ss125-b",
+  "block": "r1_adc_sar",
+  "track": "T2j",
+  "question": "Behavioural r1_sar5_logic alone on the vectors of case fc_ss125 (reference for the RTL equivalence)",
+  "command": "G1_CPUSET=117 G1_WORKDIR=designs/r1-joint/blocks/r1_adc G1_RESULTS_ROOT=<G1_RESULTS_ROOT> flow/run.sh ngspice -b <G1_RESULTS_ROOT>/r1_adc_sar/t2j-bsar-fc-ss125-b/deck.cir (runner sar/sim/run_ng.py)",
+  "deck_template": "sar/sim/tb_beh_sar.cir",
+  "deck": "sar/sim/runs/t2j-bsar-fc-ss125-b/deck.cir",
+  "substitutions": {
+    "TIMING": "r1_adc_timing_r5_n0_cq_vdd108_pre33.inc",
+    "VEC": "fc_ss125_pwl.inc",
+    "VDD": "1.08",
+    "TSTOP": "1.86u",
+    "SAVELIST": "file sar/sim/save_sar.inc"
+  },
+  "includes_sha256": {
+    "schematic/r1_adc_r5.spice": "340c0e6a17ecec3aaa376b04adecad1de828aaf7648e2daf9f9f4d52bb0988d6",
+    "sim/r5/r1_adc_timing_r5_n0_cq_vdd108_pre33.inc": "13b3f34db27d3f53820da06456073b3d5bd23e22290edb7382913f7dc4b687c0",
+    "sar/sim/vec/fc_ss125_pwl.inc": "ea1c80bcaa48273926f11864e40343e27335e58c36590fc86687ab8d6bb0f799"
+  },
+  "pdk_commit": "84374023ee8b4b126bebbba67fcbada0a9c0ff0b (checked by flow/run.sh)",
+  "container_image": "tapeoutbench-eda:latest sha256:ddeb69576f2808676d1c5d474ecf04f6d1d6f8abdcff6b72b39790ded924bab2",
+  "ngspice_version": "not found in log",
+  "raw_results": "<G1_RESULTS_ROOT>/r1_adc_sar/t2j-bsar-fc-ss125-b/",
+  "started_utc": "2026-10-27T03:41:25.072855Z",
+  "wall_s": 14.4,
+  "returncode": 0,
+  "status": "completed",
+  "errors": [],
+  "missing_outputs": [],
+  "result": "see sar/README.md",
+  "disposition": "superseded by -c"
+}

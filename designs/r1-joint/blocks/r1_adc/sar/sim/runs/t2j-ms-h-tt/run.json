@@ -1,0 +1,33 @@
+{
+  "run_id": "t2j-ms-h-tt",
+  "block": "r1_adc_sar",
+  "track": "T2j",
+  "question": "Mixed-signal r5 mux deck at tt (frames e c e e) with the gate-level r1_adc_sar of record (release-t2j-h, run t2j-ll-h2312-h; PDK cell transistor netlists, antenna diode cell left out, SPARSE solver) in place of r1_sar5_logic and the r1_gate protocol as ideal sources; codes against t2j-beh-mux-tt",
+  "command": "G1_CPUSET=118 G1_WORKDIR=designs/r1-joint/blocks/r1_adc G1_RESULTS_ROOT=<G1_RESULTS_ROOT> flow/run.sh ngspice -b <G1_RESULTS_ROOT>/r1_adc_sar/t2j-ms-h-tt/deck.cir (runner sar/sim/run_ng.py)",
+  "deck_template": "sar/sim/tb_gl_mux.cir",
+  "deck": "sar/sim/runs/t2j-ms-h-tt/deck.cir",
+  "substitutions": {
+    "CORNER": "mos_tt",
+    "TEMP": "27",
+    "VDD": "1.2",
+    "GLNET": "<G1_RESULTS_ROOT>/r1_adc_sar/release-t2j-h/r1_adc_sar_gl_sim.spice",
+    "SAVELIST": "file sar/sim/save_gl.inc"
+  },
+  "includes_sha256": {
+    "schematic/r1_adc_r5.spice": "340c0e6a17ecec3aaa376b04adecad1de828aaf7648e2daf9f9f4d52bb0988d6",
+    "<G1_RESULTS_ROOT>/r1_adc_sar/release-t2j-h/r1_adc_sar_gl_sim.spice": "f986e9611d8f3d407619275e222c6deecb5617dbab03abea36fab5d6657a5b04"
+  },
+  "pdk_commit": "84374023ee8b4b126bebbba67fcbada0a9c0ff0b (checked by flow/run.sh)",
+  "container_image": "tapeoutbench-eda:latest sha256:ddeb69576f2808676d1c5d474ecf04f6d1d6f8abdcff6b72b39790ded924bab2",
+  "ngspice_version": "not found in log",
+  "raw_results": "<G1_RESULTS_ROOT>/r1_adc_sar/t2j-ms-h-tt/",
+  "started_utc": "2026-10-27T04:46:13.772985Z",
+  "wall_s": 4144.1,
+  "returncode": 0,
+  "status": "completed",
+  "errors": [],
+  "missing_outputs": [],
+  "result": "see sar/README.md",
+  "disposition": "run of record: 110/112 decisions equal; frame 3 decision 13 differs in both slices (analog tie)",
+  "codes": "sim/runs/t2j-ms-h-tt/codes.json"
+}

@@ -1,0 +1,38 @@
+* sar/sim/tb_beh_fc.cir -- T2j (D21): the r5 first-conversion deck of record (sim/r5/tb_adc5_points.cir as run
+* t2-ff-ss-pre33: ss / 125 C / 1.08 V, ideal VREF 1.045 V, -0.90 V (A) / -0.88 V (B) in frames 0 and 1, one 33 ns
+* start-up hold pulse on trk0, r1_adc5_core_fast) with the SAR boundary saved (as tb_beh_mux.cir).
+* Substitutions: CORNER TEMP VDD TIMING RAW.
+.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerMOSlv.lib CORNER
+.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerCAP.lib cap_typ
+.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerMOShv.lib CORNER
+.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerRES.lib res_typ
+.include schematic/r1_adc_r5.spice
+.include sim/r5/TIMING
+.temp TEMP
+.option reltol=1e-4 vntol=1e-6 abstol=1e-12 method=trap klu seed=1
+Vdd vdd 0 VDD
+Vref vref 0 1.045
+Vtvrefa vrefa vref 0
+Vtvrefb vrefb vref 0
+Vtvrefla vrefla vref 0
+Vtvreflb vreflb vref 0
+Vcm vcm 0 0.6
+Vda vda 0 PWL(0 -0.9000000 7.883333e-07 -0.9000000 7.983333e-07 -0.9000000)
+Vdb vdb 0 PWL(0 -0.8808511 7.883333e-07 -0.8808511 7.983333e-07 -0.8808511)
+Esp sinp vcm vda 0 0.5
+Esn sinn vcm vda 0 -0.5
+Ecp cosp vcm vdb 0 0.5
+Ecn cosn vcm vdb 0 -0.5
+Vip isap 0 0.6
+Vin isan 0 0.6
+XADC sinp sinn cosp cosn isap isan isap isan trka0 trka1 trkb0 trkb1 clk30 wina winb lata latb
++ stba0 stba1 stba2 stba3 stba4 stba5 stba6 stba7 stba8 stba9 stba10 stba11 stba12 stba13
++ stbb0 stbb1 stbb2 stbb3 stbb4 stbb5 stbb6 stbb7 stbb8 stbb9 stbb10 stbb11 stbb12 stbb13
++ rawa rawb topap topan topbp topbn vdd vrefa vrefb vrefla vreflb 0 r1_adc5_core_fast
+.control
+set num_threads=1
+save SAVELIST
+tran 1n 1.8600u 0 0.2n
+write RAW/sar.raw
+.endc
+.end

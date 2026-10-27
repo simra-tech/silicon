@@ -1,0 +1,38 @@
+* sar/sim/tb_beh_fc.cir -- T2j (D21): the r5 first-conversion deck of record (sim/r5/tb_adc5_points.cir as run
+* t2-ff-ss-pre33: ss / 125 C / 1.08 V, ideal VREF 1.045 V, -0.90 V (A) / -0.88 V (B) in frames 0 and 1, one 33 ns
+* start-up hold pulse on trk0, r1_adc5_core_fast) with the SAR boundary saved (as tb_beh_mux.cir).
+* Substitutions: mos_ss 125 1.08 r1_adc_timing_r5_n0_cq_vdd108_pre33.inc RAW.
+.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerMOSlv.lib mos_ss
+.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerCAP.lib cap_typ
+.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerMOShv.lib mos_ss
+.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerRES.lib res_typ
+.include schematic/r1_adc_r5.spice
+.include sim/r5/r1_adc_timing_r5_n0_cq_vdd108_pre33.inc
+.temp 125
+.option reltol=1e-4 vntol=1e-6 abstol=1e-12 method=trap klu seed=1
+Vdd vdd 0 1.08
+Vref vref 0 1.045
+Vtvrefa vrefa vref 0
+Vtvrefb vrefb vref 0
+Vtvrefla vrefla vref 0
+Vtvreflb vreflb vref 0
+Vcm vcm 0 0.6
+Vda vda 0 PWL(0 -0.9000000 7.883333e-07 -0.9000000 7.983333e-07 -0.9000000)
+Vdb vdb 0 PWL(0 -0.8808511 7.883333e-07 -0.8808511 7.983333e-07 -0.8808511)
+Esp sinp vcm vda 0 0.5
+Esn sinn vcm vda 0 -0.5
+Ecp cosp vcm vdb 0 0.5
+Ecn cosn vcm vdb 0 -0.5
+Vip isap 0 0.6
+Vin isan 0 0.6
+XADC sinp sinn cosp cosn isap isan isap isan trka0 trka1 trkb0 trkb1 clk30 wina winb lata latb
++ stba0 stba1 stba2 stba3 stba4 stba5 stba6 stba7 stba8 stba9 stba10 stba11 stba12 stba13
++ stbb0 stbb1 stbb2 stbb3 stbb4 stbb5 stbb6 stbb7 stbb8 stbb9 stbb10 stbb11 stbb12 stbb13
++ rawa rawb topap topan topbp topbn vdd vrefa vrefb vrefla vreflb 0 r1_adc5_core_fast
+.control
+set num_threads=1
+save v(clk30) v(trka0) v(trka1) v(trkb0) v(trkb1) v(wina) v(winb) v(lata) v(latb) v(rawa) v(rawb) v(stba0) v(stba1) v(stba2) v(stba3) v(stba4) v(stba5) v(stba6) v(stba7) v(stba8) v(stba9) v(stba10) v(stba11) v(stba12) v(stba13) v(stbb0) v(stbb1) v(stbb2) v(stbb3) v(stbb4) v(stbb5) v(stbb6) v(stbb7) v(stbb8) v(stbb9) v(stbb10) v(stbb11) v(stbb12) v(stbb13) v(xadc.mclk) v(xadc.oap) v(xadc.oan) v(xadc.oanp) v(xadc.oann) v(xadc.obp) v(xadc.obn) v(xadc.obnp) v(xadc.obnn) v(xadc.clka) v(xadc.clkab) v(xadc.clkna) v(xadc.clknab) v(xadc.clkb) v(xadc.clkbb) v(xadc.clknb) v(xadc.clknbb) v(xadc.cpa0) v(xadc.cpa1) v(xadc.cpa2) v(xadc.cpa3) v(xadc.cpa4) v(xadc.cpa5) v(xadc.cpa6) v(xadc.cpa7) v(xadc.cpa8) v(xadc.cpa9) v(xadc.cpa10) v(xadc.cpa11) v(xadc.cpa12) v(xadc.cna0) v(xadc.cna1) v(xadc.cna2) v(xadc.cna3) v(xadc.cna4) v(xadc.cna5) v(xadc.cna6) v(xadc.cna7) v(xadc.cna8) v(xadc.cna9) v(xadc.cna10) v(xadc.cna11) v(xadc.cna12) v(xadc.xsar.ra0) v(xadc.xsar.ra1) v(xadc.xsar.ra2) v(xadc.xsar.ra3) v(xadc.xsar.ra4) v(xadc.xsar.ra5) v(xadc.xsar.ra6) v(xadc.xsar.ra7) v(xadc.xsar.ra8) v(xadc.xsar.ra9) v(xadc.xsar.ra10) v(xadc.xsar.ra11) v(xadc.xsar.ra12) v(xadc.xsar.ra13) v(xadc.cpb0) v(xadc.cpb1) v(xadc.cpb2) v(xadc.cpb3) v(xadc.cpb4) v(xadc.cpb5) v(xadc.cpb6) v(xadc.cpb7) v(xadc.cpb8) v(xadc.cpb9) v(xadc.cpb10) v(xadc.cpb11) v(xadc.cpb12) v(xadc.cnb0) v(xadc.cnb1) v(xadc.cnb2) v(xadc.cnb3) v(xadc.cnb4) v(xadc.cnb5) v(xadc.cnb6) v(xadc.cnb7) v(xadc.cnb8) v(xadc.cnb9) v(xadc.cnb10) v(xadc.cnb11) v(xadc.cnb12) v(xadc.xsar.rb0) v(xadc.xsar.rb1) v(xadc.xsar.rb2) v(xadc.xsar.rb3) v(xadc.xsar.rb4) v(xadc.xsar.rb5) v(xadc.xsar.rb6) v(xadc.xsar.rb7) v(xadc.xsar.rb8) v(xadc.xsar.rb9) v(xadc.xsar.rb10) v(xadc.xsar.rb11) v(xadc.xsar.rb12) v(xadc.xsar.rb13)
+tran 1n 1.8600u 0 0.2n
+write <G1_RESULTS_ROOT>/r1_adc_sar/t2j-beh-fc-ss125/sar.raw
+.endc
+.end

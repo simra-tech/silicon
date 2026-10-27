@@ -1,0 +1,23 @@
+* sar/sim/tb_beh_sar.cir -- T2j (D21): the behavioural SAR logic r1_sar5_logic of record (schematic/r1_adc_r5.spice)
+* alone, driven by the comparator outputs and mclk of a full-core run (PWL from sar/tb/vec_extract.py, digitised at
+* the 0.6 V bridge threshold, forced "no output" decisions at 0.5 V) and by the same ideal timing include as that
+* run. Reference outputs for the RTL equivalence (sar/tb/compare.py). Substitutions: r1_adc_timing_r5_mux_n0_cq_pre33.inc mux_tt_meta_pwl.inc (file name of the PWL include) 1.2 3.31u RAW.
+.include schematic/r1_adc_r5.spice
+.include sim/r5/r1_adc_timing_r5_mux_n0_cq_pre33.inc
+.include sar/sim/vec/mux_tt_meta_pwl.inc
+Vdd vdd 0 1.2
+XSAR oap oan obp obn oanp obnp mclk wina winb trka0 trka1 trkb0 trkb1 lata latb
++ stba0 stba1 stba2 stba3 stba4 stba5 stba6 stba7 stba8 stba9 stba10 stba11 stba12 stba13
++ stbb0 stbb1 stbb2 stbb3 stbb4 stbb5 stbb6 stbb7 stbb8 stbb9 stbb10 stbb11 stbb12 stbb13
++ clka clkab clkb clkbb clkna clknab clknb clknbb
++ cpa12 cpa11 cpa10 cpa9 cpa8 cpa7 cpa6 cpa5 cpa4 cpa3 cpa2 cpa1 cpa0
++ cna12 cna11 cna10 cna9 cna8 cna7 cna6 cna5 cna4 cna3 cna2 cna1 cna0
++ cpb12 cpb11 cpb10 cpb9 cpb8 cpb7 cpb6 cpb5 cpb4 cpb3 cpb2 cpb1 cpb0
++ cnb12 cnb11 cnb10 cnb9 cnb8 cnb7 cnb6 cnb5 cnb4 cnb3 cnb2 cnb1 cnb0 rawa rawb vdd 0 r1_sar5_logic
+.control
+set num_threads=1
+save v(mclk) v(oap) v(oanp) v(obp) v(obnp) v(clka) v(clkab) v(clkna) v(clknab) v(clkb) v(clkbb) v(clknb) v(clknbb) v(clk30) v(trka0) v(trka1) v(trkb0) v(trkb1) v(wina) v(winb) v(lata) v(latb) v(rawa) v(rawb) v(cpa0) v(cpa1) v(cpa2) v(cpa3) v(cpa4) v(cpa5) v(cpa6) v(cpa7) v(cpa8) v(cpa9) v(cpa10) v(cpa11) v(cpa12) v(cna0) v(cna1) v(cna2) v(cna3) v(cna4) v(cna5) v(cna6) v(cna7) v(cna8) v(cna9) v(cna10) v(cna11) v(cna12) v(xsar.ra0) v(xsar.ra1) v(xsar.ra2) v(xsar.ra3) v(xsar.ra4) v(xsar.ra5) v(xsar.ra6) v(xsar.ra7) v(xsar.ra8) v(xsar.ra9) v(xsar.ra10) v(xsar.ra11) v(xsar.ra12) v(xsar.ra13) v(cpb0) v(cpb1) v(cpb2) v(cpb3) v(cpb4) v(cpb5) v(cpb6) v(cpb7) v(cpb8) v(cpb9) v(cpb10) v(cpb11) v(cpb12) v(cnb0) v(cnb1) v(cnb2) v(cnb3) v(cnb4) v(cnb5) v(cnb6) v(cnb7) v(cnb8) v(cnb9) v(cnb10) v(cnb11) v(cnb12) v(xsar.rb0) v(xsar.rb1) v(xsar.rb2) v(xsar.rb3) v(xsar.rb4) v(xsar.rb5) v(xsar.rb6) v(xsar.rb7) v(xsar.rb8) v(xsar.rb9) v(xsar.rb10) v(xsar.rb11) v(xsar.rb12) v(xsar.rb13)
+tran 0.05n 3.31u 0 0.05n
+write <G1_RESULTS_ROOT>/r1_adc_sar/t2j-bsar-mux-tt-meta-c/sar.raw
+.endc
+.end

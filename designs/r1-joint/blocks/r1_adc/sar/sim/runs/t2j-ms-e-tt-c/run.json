@@ -1,0 +1,48 @@
+{
+  "run_id": "t2j-ms-e-tt-c",
+  "block": "r1_adc_sar",
+  "track": "T2j",
+  "question": "Mixed-signal probe: r5 mux deck at tt with the gate-level r1_adc_sar of hardening run t2j-ll-h2312-e (PDK cell transistor netlists, antenna diode cell left out) in place of r1_sar5_logic; codes against t2j-beh-mux-tt; runtime",
+  "command": "G1_CPUSET=117 G1_WORKDIR=designs/r1-joint/blocks/r1_adc G1_RESULTS_ROOT=<G1_RESULTS_ROOT> flow/run.sh ngspice -b <G1_RESULTS_ROOT>/r1_adc_sar/t2j-ms-e-tt-c/deck.cir (runner sar/sim/run_ng.py)",
+  "deck_template": "sar/sim/tb_gl_mux.cir",
+  "deck": "sar/sim/runs/t2j-ms-e-tt-c/deck.cir",
+  "substitutions": {
+    "CORNER": "mos_tt",
+    "TEMP": "27",
+    "VDD": "1.2",
+    "GLNET": "<G1_RESULTS_ROOT>/r1_adc_sar/t2j-gl-spice-e/r1_adc_sar_gl_b.spice",
+    "SAVELIST": "file sar/sim/save_gl.inc"
+  },
+  "includes_sha256": {
+    "schematic/r1_adc_r5.spice": "340c0e6a17ecec3aaa376b04adecad1de828aaf7648e2daf9f9f4d52bb0988d6",
+    "<G1_RESULTS_ROOT>/r1_adc_sar/t2j-gl-spice-e/r1_adc_sar_gl_b.spice": "bbe811dfcd1a21d94459a5695392011c99b659ba23e1983f906e7b63b17bb1f5"
+  },
+  "pdk_commit": "84374023ee8b4b126bebbba67fcbada0a9c0ff0b (checked by flow/run.sh)",
+  "container_image": "tapeoutbench-eda:latest sha256:ddeb69576f2808676d1c5d474ecf04f6d1d6f8abdcff6b72b39790ded924bab2",
+  "ngspice_version": "not found in log",
+  "raw_results": "<G1_RESULTS_ROOT>/r1_adc_sar/t2j-ms-e-tt-c/",
+  "started_utc": "2026-10-27T04:25:17.340290Z",
+  "wall_s": 178.8,
+  "returncode": 1,
+  "status": "failed",
+  "errors": [
+    "Warning: singular matrix:  check node n.xsar.x_442_.xn8.nsg13_lv_nmos#NOI",
+    "Warning: singular matrix:  check node xthb.bp11",
+    "Warning: singular matrix:  check node n.xsar.x_366_.xp2.nsg13_lv_pmos#NOI",
+    "Warning: singular matrix:  check node n.xthb.xdn1.xmn.nsg13_lv_nmos#NOI",
+    "Warning: singular matrix:  check node n.xsar.x_366_.xp2.nsg13_lv_pmos#NOI",
+    "Warning: singular matrix:  check node xsar.x_388_.clkpos",
+    "Error: Transient op failed, timestep too small",
+    "Error: The operating point could not be simulated successfully.",
+    "Error: Finding the operating point for transient simulation failed ",
+    "doAnalyses: TRAN:  Timestep too small; initial timepoint: trouble with node \"vbg\"",
+    "tran simulation(s) aborted",
+    "Error during 'write': no writable vector found.",
+    "Error: incomplete or empty netlist"
+  ],
+  "missing_outputs": [
+    "sar.raw"
+  ],
+  "result": "see sar/README.md",
+  "disposition": "failed: KLU operating point"
+}

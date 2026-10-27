@@ -1,0 +1,32 @@
+{
+  "run_id": "t2j-beh-mux-tt",
+  "block": "r1_adc_sar",
+  "track": "T2j",
+  "question": "Reference vectors of the behavioural SAR (r1_sar5_logic) on the r5 mux-sequence deck at tt: comparator outputs, mclk, CDAC lines, raw",
+  "command": "G1_CPUSET=116 G1_WORKDIR=designs/r1-joint/blocks/r1_adc G1_RESULTS_ROOT=<G1_RESULTS_ROOT> flow/run.sh ngspice -b <G1_RESULTS_ROOT>/r1_adc_sar/t2j-beh-mux-tt/deck.cir (runner sar/sim/run_ng.py)",
+  "deck_template": "sar/sim/tb_beh_mux.cir",
+  "deck": "sar/sim/runs/t2j-beh-mux-tt/deck.cir",
+  "substitutions": {
+    "CORNER": "mos_tt",
+    "TEMP": "27",
+    "VDD": "1.2",
+    "TIMING": "r1_adc_timing_r5_mux_n0_cq_pre33.inc",
+    "SAVELIST": "file sar/sim/save_beh.inc"
+  },
+  "includes_sha256": {
+    "schematic/r1_adc_r5.spice": "340c0e6a17ecec3aaa376b04adecad1de828aaf7648e2daf9f9f4d52bb0988d6",
+    "sim/r5/r1_adc_timing_r5_mux_n0_cq_pre33.inc": "c46eea5444e665d9a5ebb521ce23a3f4fe99f00b67599b855e184df5d745c61e"
+  },
+  "pdk_commit": "84374023ee8b4b126bebbba67fcbada0a9c0ff0b (checked by flow/run.sh)",
+  "container_image": "tapeoutbench-eda:latest sha256:ddeb69576f2808676d1c5d474ecf04f6d1d6f8abdcff6b72b39790ded924bab2",
+  "ngspice_version": "not found in log",
+  "raw_results": "<G1_RESULTS_ROOT>/r1_adc_sar/t2j-beh-mux-tt/",
+  "started_utc": "2026-10-27T03:36:48.332806Z",
+  "wall_s": 210.0,
+  "returncode": 0,
+  "status": "completed",
+  "errors": [],
+  "missing_outputs": [],
+  "result": "see sar/README.md",
+  "disposition": "pending post-processing"
+}
