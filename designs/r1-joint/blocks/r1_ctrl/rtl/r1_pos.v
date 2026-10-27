@@ -19,6 +19,13 @@
 // the CORDIC datapath is 18 bits with 4 fractional bits (revision 0.1: 20 bits,
 // 5 fractional bits), inputs saturated at +-49151 so that the CORDIC gain
 // (2.33 x with the diagonal) stays inside 18 bits.
+// Revision 0.8 (PLAN.md D22): per-channel gain. The cosine channel is multiplied by
+// COS_GAIN (Q2.14) in the IDLE tick in which the pair is accepted (the shared
+// multiplier is free there), so the pair latency is unchanged (19 ticks); GAIN is
+// now SIN_GAIN (the sine channel gain, Q2.14, same arithmetic as before). Both
+// channels: code' = sat((code - OFS) * GAIN), 4 fractional bits, +-131071, then the
+// CORDIC input limit +-49151. With COS_GAIN = 1.0 (0x4000) the result is
+// bit-identical to revision 0.7.
 // Number formats: R1_REGISTER_MAP.md section 5.
 // SPDX-License-Identifier: Apache-2.0
 
@@ -33,7 +40,8 @@ module r1_pos (
     // calibration and configuration (registers)
     input  wire [11:0] ofs_sin,         // signed, ADC LSB
     input  wire [11:0] ofs_cos,
-    input  wire [15:0] gain,            // Q2.14, multiplies the sine channel
+    input  wire [15:0] gain,            // Q2.14, SIN_GAIN, multiplies the sine channel
+    input  wire [15:0] cos_gain,        // 0.8: Q2.14, COS_GAIN, multiplies the cosine channel
     input  wire [15:0] ph_sin,          // Q1.15 signed, sin(alpha)
     input  wire [15:0] ph_icos,         // Q2.14, 1/cos(alpha)
     input  wire [7:0]  h3_amp,          // 16-bit angle LSB
@@ -72,9 +80,9 @@ module r1_pos (
     reg [4:0]  it;
 
     // cx, cy also hold the correction intermediates:
-    //   IDLE -> M1: cx = sine - offset, cy = cosine - offset (ADC LSB)
+    //   IDLE -> M1: cx = sine - offset (ADC LSB), cy = (cosine - offset) * COS_GAIN (4 fractional bits, 0.8)
     //   M1 -> M2:   cx = sine * gain (4 fractional bits)
-    //   M2 -> M3:   cx = cx - cosine * sin(alpha), saturated
+    //   M2 -> M3:   cx = cx - cy * sin(alpha), saturated
     reg signed [17:0] cx, cy;           // CORDIC x, y (4 fractional bits)
     reg        [17:0] cz;               // CORDIC angle, 2^18 = one turn
     reg        [17:0] th_m;             // corrected measured angle
@@ -141,11 +149,18 @@ module r1_pos (
     wire [4:0]  ki_eff  = (ki_sh < 5'd8) ? 5'd8 : (ki_sh > 5'd23) ? 5'd23 : ki_sh;
     wire [16:0] ki_mul  = 17'd1 << (5'd23 - ki_eff);
 
+    // offset-corrected codes (ADC LSB)
+    wire signed [11:0] s12 = {~sin_code[11], sin_code[10:0]};
+    wire signed [11:0] c12 = {~cos_code[11], cos_code[10:0]};
+    wire signed [12:0] ds_n = {s12[11], s12} - {ofs_sin[11], ofs_sin};
+    wire signed [12:0] dc_n = {c12[11], c12} - {ofs_cos[11], ofs_cos};
+
     // ---------------- multiplier operand mux ----------------
     always @(*) begin
         mul_a = 20'sd0;
         mul_b = 17'sd0;
         case (st)
+            S_IDLE: begin mul_a = {{5{dc_n[12]}}, dc_n}; mul_b = {1'b0, cos_gain}; end   // 0.8 (D22)
             S_M1: begin mul_a = cx;                mul_b = {1'b0, gain}; end
             S_M2: begin mul_a = cy;                mul_b = {ph_sin[15], ph_sin}; end
             S_M3: begin mul_a = cx;                mul_b = {1'b0, ph_icos}; end
@@ -159,18 +174,13 @@ module r1_pos (
     end
 
     // derived values
-    wire signed [11:0] s12 = {~sin_code[11], sin_code[10:0]};
-    wire signed [11:0] c12 = {~cos_code[11], cos_code[10:0]};
-    wire signed [12:0] ds_n = {s12[11], s12} - {ofs_sin[11], ofs_sin};
-    wire signed [12:0] dc_n = {c12[11], c12} - {ofs_cos[11], ofs_cos};
-    wire signed [12:0] dc = cy[12:0];
     wire signed [34:0] p_sh10 = prod >>> 10;
-    wire signed [34:0] p_sh11 = prod >>> 11;
+    wire signed [34:0] p_sh15 = prod >>> 15;           // 0.8: cy has 4 fractional bits (0.7: cy in LSB, >>> 11)
     wire signed [34:0] p_sh14 = prod >>> 14;
-    wire signed [21:0] d_full = {{4{cx[17]}}, cx} - $signed(p_sh11[21:0]);
+    wire signed [21:0] d_full = {{4{cx[17]}}, cx} - $signed(p_sh15[21:0]);
     wire signed [21:0] y4 = (p_sh14 > 35'sd2097151) ? 22'sd2097151 :
                             (p_sh14 < -35'sd2097151) ? -22'sd2097151 : p_sh14[21:0];
-    wire signed [21:0] x4 = {{5{dc[12]}}, dc, 4'b0};
+    wire signed [21:0] x4 = {{4{cy[17]}}, cy};          // 0.8: cy = cosine * COS_GAIN, 4 fractional bits
     wire signed [17:0] x5 = satin(x4);
     wire signed [17:0] y5 = satin(y4);
     // Revision 0.3 (D18): two CORDIC iterations per tick (it, it+1), so a pair takes <= 22 ticks.
@@ -224,7 +234,7 @@ module r1_pos (
             case (st)
                 S_IDLE: if (smp_valid) begin
                     cx <= {{5{ds_n[12]}}, ds_n};
-                    cy <= {{5{dc_n[12]}}, dc_n};
+                    cy <= sat18(p_sh10);                     // 0.8: (cosine - offset) * COS_GAIN
                     snap_b <= snap_a;   // 0.3: a hold in the same tick belongs to the next pair (D18 frame)
                     if (!smp_sh) sh_pend <= 1'b0;
                     st <= S_M1;

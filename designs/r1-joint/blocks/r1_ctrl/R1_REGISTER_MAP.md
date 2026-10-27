@@ -1,9 +1,9 @@
-# R1 bus protocols and register map (draft 0.7, 2026-10-27)
+# R1 bus protocols and register map (draft 0.8, 2026-10-27)
 
 Owner block: `r1_ctrl` (`designs/r1-joint/blocks/r1_ctrl`). This document is the contract between
 the host, the digital macro (`rtl/r1_ctrl_top.v`) and the analog blocks it connects to. It is a
-draft: nothing here is on silicon. The RTL in `rtl/` implements this version (revision 0.7; change log in section 7).
-Versioning rule: `ID` = 0x52 followed by the RTL revision digit (0.5 = 0x5205, 0.7 = 0x5207). Revision 0.6 was a
+draft: nothing here is on silicon. The RTL in `rtl/` implements this version (revision 0.8; change log in section 7).
+Versioning rule: `ID` = 0x52 followed by the RTL revision digit (0.5 = 0x5205, 0.7 = 0x5207, 0.8 = 0x5208). Revision 0.6 was a
 hardening of the 0.5 RTL without an RTL change, so it has no `ID` of its own.
 Revision 0.2 checked every BiSS interpretation item of 0.1 against the BiSS C Rev D2 document
 ("D2", page numbers of that PDF). Section 3.4 lists the result. One item stays **[verify]**: the
@@ -165,7 +165,7 @@ read 0. Reset values apply after `por_n`. `EN` does not reset the registers.
 
 | Addr | Name | Type | Reset | Bits |
 | --- | --- | --- | --- | --- |
-| 0x00 | `ID` | RO | 0x5207 | chip 'R', RTL revision 0.7 (0.5 and 0.6: 0x5205, 0.4: 0x5204, 0.3: 0x5203, 0.2: 0x5202, 0.1: 0x5210) |
+| 0x00 | `ID` | RO | 0x5208 | chip 'R', RTL revision 0.8 (0.7: 0x5207, 0.5 and 0.6: 0x5205, 0.4: 0x5204, 0.3: 0x5203, 0.2: 0x5202, 0.1: 0x5210) |
 | 0x01 | `STATUS` | RO | — | 0 AMP_LOW, 1 AMP_HIGH, 2 OVERSPEED, 3 TRACK_ERR, 4 CAL_VALID, 5 CLK_FAULT, 6 POS_VALID, 7 FAULT, 8 EN (synchronised), 9 GATE_ACTIVE, 10 OSC_DONE, 11 CAL_BUSY, 12 CAL_DONE, 13 CAL_EXH (any comparator), 14 TRIM_UNLK (0.7, section 4.3) |
 | 0x02 | `FAULT` | RO | 0x1800 (EN high at reset; 0x1900 with EN low) | latched causes: 0–3 comparator flags `cmp[3:0]`, 4 OTEMP, 5 AMP, 6 OVERSPEED, 7 WDT, 8 STO (EN low), 9 I2T_A, 10 I2T_B, 11 CAL (CRC mismatch), 12 POR |
 | 0x03 | `FAULT_MASK` | RW | 0x0000 | 1 = source does not latch; bits 8, 11, 12 cannot be masked |
@@ -246,28 +246,30 @@ The STA limit stays 42 MHz and no timing constraint changes.
 
 | Addr | Name | Type | Reset | Format |
 | --- | --- | --- | --- | --- |
-| 0x10 | `OFS_SIN` | RW | 0 | [11:0] signed ADC LSB, subtracted from the sine code |
-| 0x11 | `OFS_COS` | RW | 0 | [11:0] signed ADC LSB |
-| 0x12 | `GAIN` | RW | 0x4000 | Q2.14, multiplies the sine channel (= A_cos / A_sin) |
+| 0x10 | `SIN_OFS` (0.7 name `OFS_SIN`) | RW | 0 | [11:0] signed (two's complement) ADC LSB, −2048…+2047, subtracted from the sine code |
+| 0x11 | `COS_OFS` (0.7 name `OFS_COS`) | RW | 0 | [11:0] signed ADC LSB, subtracted from the cosine code |
+| 0x12 | `SIN_GAIN` (0.7 name `GAIN`) | RW | 0x4000 | unsigned Q2.14 (0x4000 = 1.0, LSB 2^−14, range 0…3.99994), multiplies the offset-corrected sine code |
+| 0x3F | `COS_GAIN` (0.8) | RW | 0x4000 | unsigned Q2.14, multiplies the offset-corrected cosine code. CRC-covered (word 44) |
 | 0x13 | `PH_SIN` | RW | 0 | Q1.15 signed, sin α |
 | 0x14 | `PH_ICOS` | RW | 0x4000 | Q2.14, 1 / cos α |
 | 0x15 | `H3` | RW | 0 | 7:0 H3_AMP (16-bit angle LSB), 15:8 H3_PH (1/256 turn) |
 | 0x16 | `ZERO_OFS` | RW | 0 | 16-bit angle LSB, subtracted after the direction |
 | 0x17 | `POS_CFG` | RW | 0x0164 | 0 DIR, 4:1 KP (loop gain 2^−KP), 9:5 KI (2^−KI per tick; values outside 8–23 are clamped to 8 or 23) |
-| 0x18 | `CAL_CRC` | RW | 0 | 7:0 CRC-8 of 0x10–0x17, 0x36–0x3C, 0x50–0x5D, 0x60–0x6D (revision 0.3) |
+| 0x18 | `CAL_CRC` | RW | 0 | 7:0 CRC-8 of 0x10–0x17, 0x36–0x3C, 0x50–0x5D, 0x60–0x6D (revision 0.3) and 0x3F (revision 0.8) |
 
 `CAL_CRC` is CRC-8 with polynomial 0x07, initial value 0xFF, no reflection and no final XOR.
-Revision 0.3 computes it over 43 words (86 bytes), high byte first, with the values that read
+Revision 0.8 computes it over 44 words (88 bytes; 0.3 to 0.7: 43 words), high byte first, with the values that read
 back (unused bits as 0, `EXH` bits as read), in this order:
 
 1. 0x10..0x17 (position calibration, 8 words);
 2. 0x36..0x3C (`CMP_THR_A/B`, `AZ_START`, `AZ_CFG`, `CMP_CAL_A/B`, `CMP_CAL_IDEAL`, 7 words);
 3. 0x50..0x5D (`ADC_A_W0`–`ADC_A_W13`, 14 words);
-4. 0x60..0x6D (`ADC_B_W0`–`ADC_B_W13`, 14 words).
+4. 0x60..0x6D (`ADC_B_W0`–`ADC_B_W13`, 14 words);
+5. 0x3F (`COS_GAIN`, 1 word, revision 0.8). A host CRC routine of 0.7 (43 words) does not match 0.8.
 
 The hardware checks it continuously, one byte per tick, through the register read multiplexer
 (the SPI takes the multiplexer for 2 ticks per frame; the check then pauses). A write to a covered word or to
-`CAL_CRC` clears `CAL_VALID` until the next complete check (≤ 172 ticks plus 2 ticks per SPI frame). A comparator
+`CAL_CRC` clears `CAL_VALID` until the next complete check (≤ 176 ticks plus 2 ticks per SPI frame). A comparator
 calibration search (`CAL_BUSY`) also clears it, because the search writes `CMP_CAL_A/B`: after a
 search the host reads the codes, writes the new `CAL_CRC` and then `CTRL.CLR` (FAULT bit 11 is
 latched while `CAL_VALID` = 0). Reason for the extension (0.2 open issue 6): the comparator
@@ -277,6 +279,36 @@ position words. Error detection: all single-bit and all odd-weight errors (0x07 
 x + 1); 2-bit errors are detected while their distance is < 127 bits; other patterns escape with
 probability 2^−8. S1 lists `PHASE` as 10 bit with a LUT. R1 uses two host-computed words (sin α,
 1/cos α) instead, so no LUT is needed.
+
+**Channel offset and gain correction (revision 0.8, PLAN.md D22).** Both encoder channels are corrected after the ADC
+weight correction (section 4.11) and before the CORDIC:
+
+    s = (RAW_SIN − 2048) − SIN_OFS,   c = (RAW_COS − 2048) − COS_OFS        (13-bit signed, ADC LSB)
+    s' = sat((s × SIN_GAIN) >> 10),   c' = sat((c × COS_GAIN) >> 10)          (18-bit signed, 4 fractional bits)
+
+`>>` is the arithmetic shift (rounds towards −∞); `sat` limits to ±131071 (±8191.9 LSB). Then the phase correction
+(`PH_SIN`, `PH_ICOS`) acts on s' and c' as before, and x, y are limited to ±49151 (±3071.9 LSB) at the CORDIC input
+(section 5). Reset = no correction (offsets 0, gains 1.0): with `COS_GAIN` = 1.0 the arithmetic is bit-identical to
+revision 0.7. The angle depends only on the ratio `SIN_GAIN` / `COS_GAIN`; `AMPLITUDE` (and `AMP_LIM`) follow both
+gains. The cosine multiplication uses the shared multiplier in the tick in which the pair is accepted, so the pair
+latency stays 19 ticks. The offsets are **subtracted** (the host writes the measured mid-point); PLAN.md D22 wrote the
+sketch as (code + OFS) × GAIN, the sign is a register convention kept from revision 0.3.
+
+Host calibration with the raw-code capture (section 4.5), gates off or at low speed, at least one electrical period:
+
+1. Write any value to `RAW_SIN_MIN` (0x5E). This clears all four capture registers.
+2. Turn the encoder through at least one electrical period.
+3. Read `RAW_SIN_MIN`, `RAW_SIN_MAX`, `RAW_COS_MIN`, `RAW_COS_MAX`.
+4. Write `SIN_OFS` = round((MAX + MIN) / 2) − 2048 and the same for `COS_OFS` (12-bit two's complement).
+5. Compute A_x = (MAX − MIN) / 2 per channel and a target A_t (for example the mean of the two).
+6. Write `SIN_GAIN` = round(16384 × A_t / A_sin) and `COS_GAIN` = round(16384 × A_t / A_cos).
+7. Write `CAL_CRC` (section 4.4) and then `CTRL.CLR`.
+
+At the D22 example (25 mV ≈ 57 LSB offset per channel, 3 % gain mismatch, 1638 LSB amplitude) the angle error is
+3.65° el before and 0.030° el after this procedure (simulated, `tb/d22_ref.py`, README revision 0.8). The
+correction removes static offset and gain; drift after the calibration (temperature, supply) stays (D22: AFE limit
+1 mV ≈ 0.07°). For a finer fit (phase, 3rd harmonic) use the conic fit of `tb/pos_ref.py` on `RAW_SIN`/`RAW_COS`
+samples.
 
 ### 4.5 Position (read only)
 
@@ -289,9 +321,19 @@ probability 2^−8. S1 lists `PHASE` as 10 bit with a LUT. R1 uses two host-comp
 | 0x1D | `RAW_SIN` | [11:0] last sine code (offset binary); a read takes a snapshot of RAW_COS |
 | 0x1E | `RAW_COS` | [11:0] cosine code of the same pair as the last RAW_SIN read |
 | 0x1F | `MEAS_ANGLE` | corrected angle of the last pair, before the tracking loop |
+| 0x5E | `RAW_SIN_MIN` (0.8) | [11:0] smallest `RAW_SIN` code since the last clear (offset binary). Reset and clear value 0xFFF |
+| 0x5F | `RAW_SIN_MAX` (0.8) | [11:0] largest `RAW_SIN` code since the last clear. Reset and clear value 0x000 |
+| 0x6E | `RAW_COS_MIN` (0.8) | [11:0] smallest `RAW_COS` code. Reset and clear value 0xFFF |
+| 0x6F | `RAW_COS_MAX` (0.8) | [11:0] largest `RAW_COS` code. Reset and clear value 0x000 |
 | 0x0D | `EXTRAP` | RW, reset 0: ticks of velocity extrapolation |
 | 0x0E | `AMP_LIM` | RW, reset 0x7C08: 7:0 LO, 15:8 HI, units of 16 ADC LSB (4 consecutive pairs) |
 | 0x0F | `OVS_LIM` | RW, reset 0x4000: OVERSPEED when \|VELOCITY\| > OVS_LIM |
+
+Raw-code capture (revision 0.8, D22): every encoder pair that reaches the position path (the `smp_valid` pair, so
+discarded frames are not captured) updates the four words with the weight-corrected codes (the values of `RAW_SIN`
+and `RAW_COS`, before `SIN_OFS`/`COS_OFS`). A write of any value to any of the four addresses clears all four in the
+tick after the write (a clear wins over a pair in the same tick). MIN > MAX means that no pair arrived since the
+clear. The capture runs from reset. The words are not covered by `CAL_CRC` (they are measurements).
 
 ### 4.6 Gate path and ADC scheduling
 
@@ -408,7 +450,8 @@ chip-level integration places them. There is no oscillator enable bit (confirmed
 ### 4.9 BiSS identification (0x40–0x7F)
 
 A native SPI read of 0x40–0x7F returns the BiSS byte in [7:0], except 0x50–0x5D and 0x60–0x6D,
-which are the ADC weights (section 4.11; the BiSS control channel does not access them).
+which are the ADC weights (section 4.11), and 0x5E, 0x5F, 0x6E, 0x6F, the raw-code capture (section 4.5, revision
+0.8). The BiSS control channel does not access them.
 
 | BiSS addr | Content | Value in this RTL |
 | --- | --- | --- |
@@ -563,7 +606,8 @@ Revision 0.4: each word is a bank of flip-flops on its own gated clock (`R1_CFG_
 | Signal | Format |
 | --- | --- |
 | ADC codes | 12-bit offset binary, mid-scale 0x800 = 0 |
-| Corrected x, y | 18 bit, 4 fractional bits, saturated at ±49151 (±3072 LSB) before the CORDIC |
+| Channel correction (0.8) | s' = sat((s − SIN_OFS) × SIN_GAIN >> 10), c' = sat((c − COS_OFS) × COS_GAIN >> 10), 18 bit, 4 fractional bits, ±131071 (section 4.4) |
+| Corrected x, y | x = c', y = (s' − c' · sin α) / cos α; 18 bit, 4 fractional bits, saturated at ±49151 (±3072 LSB) before the CORDIC |
 | CORDIC | 18-bit x/y (0.1: 20 bit), 18-bit angle (2^18 = one turn), 18 iterations after a ±90° pre-rotation |
 | H3 correction | θ ← θ − H3_AMP · sin(4θ + H3_PH), 256-entry sine table (8 bit) |
 | Tracking loop | NCO θ (16.20 bit) += ω every tick; per pair e = θ_meas − θ(at hold); θ += e·2^−KP, ω += e·2^−KI |
@@ -606,6 +650,7 @@ The testbench ADC model delivers `adc_valid_a` 17 ticks and `adc_valid_b` 16 tic
 
 | Version | Date | Change |
 | --- | --- | --- |
+| 0.8 | 2026-10-27 | ID 0x5208 (PLAN.md D22). New register `COS_GAIN` (0x3F, Q2.14, reset 1.0): cosine channel gain. `OFS_SIN`, `OFS_COS`, `GAIN` renamed `SIN_OFS`, `COS_OFS`, `SIN_GAIN` (same address, format, reset and arithmetic; `GAIN` was the gain ratio applied to the sine channel). `CAL_CRC` covers 44 words (0x3F appended; the 0.7 host routine does not match). New read-only capture `RAW_SIN_MIN/MAX` (0x5E/0x5F), `RAW_COS_MIN/MAX` (0x6E/0x6F), cleared by a write to any of them. Correction arithmetic and host procedure in section 4.4. No port, pin or timing change; pair latency 19 ticks. |
 | 0.7 | 2026-10-27 | ID 0x5207. One new output port `cur_trk` (section 6; ADC SAR sub-macro, D21). `CMP_THR_A/B` reset 0x003F (was 0x3F3F: NEG cell code 0 tripped at zero current, r1_top finding R4). `EN` synchroniser reset 1 (`FAULT` after a power-up with `EN` high is 0x1800, finding R3). `OSC_TRIM` hardware lock with `STATUS.TRIM_UNLK` (bit 14) set by a qualifying `OSC_COUNT` read (section 4.3). New register `AZ_EXT` (0x3E, reset 120): comparator mask after `az_win`, replaces the fixed 16 ticks (section 4.6). |
 | 0.1 | 2026-10-20 | first draft with the first RTL |
 | 0.5 | 2026-10-21 | ID 0x5205. Ownership gaps of the r1_top assembly closed. Ports: `thr_*`, `cal_*` and `ana_ctrl` removed; added `tap_p[31:0]`, `tap_n[31:0]` (tap-index adders in `r1_tapidx`, section 4.10), `pga_c[3:0]`, `t2f_en`, `t2f_mode`, `bias_en`. `ANA_CTRL` (0x0C) reset 0x0028; bits 2:0 `PGA_GAIN` (decoder to the 4 AFE lines), 3 `T2F_EN` (reset 1), 4 `T2F_MODE`, 5 `BIAS_EN` (reset 1), 6 `ADC_ARM`. New register `ADC_CFG` (0x3D, `DISCARD` reset 1) and the first-conversion discard (section 4.11). Bootstrap pre-charge hold sequence after reset and `ADC_ARM` (section 4.11). `r1_biss`: the reset of the MA-domain flops is released through a registered `ma_rel` (CDC finding F), no function change. Bug fix in `r1_gate`: the encoder frame start compare was 8 bit and never fired after `PAIR_TICKS` had been 0 for more than 255 ticks; now 9 bit. No other register, bit meaning or reset value changed. |

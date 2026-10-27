@@ -1,4 +1,6 @@
-# r1_ctrl — R1 digital macro (revision 0.7 hardened and signed off in 532 x 679 um)
+# r1_ctrl — R1 digital macro (revision 0.8 hardened and signed off in 532 x 679 um)
+
+State (2026-10-27, track T5h): revision 0.8 (PLAN.md D22: `COS_GAIN`, renamed `SIN_OFS`/`COS_OFS`/`SIN_GAIN`, raw-code min/max capture, ID 0x5208; "Revision 0.8" below) is hardened and signed off. Run of record `r1ctrl_ll_20261027_t22`: DRC, LVS, antenna 0; setup, hold, fanout, slew, cap clean at typ / fast / slow; gate-level SDF slow 430 checks passed; release `r1ctrl_08_release`. Drop-in for 0.7: same box, same 128 pins, no port change. Utilisation 79.9 % (0.7: 84.8 %; goal near 75 % not met). Revision 0.8 replaces 0.7 as the macro of record.
 
 State (2026-10-27): revision 0.7 (RTL fixes R3, R4, `OSC_TRIM` lock, comparator mask, new output `cur_trk`; "Revision 0.7" below) is hardened and signed off. Run of record `r1ctrl_ll_20261027_t17`: DRC, LVS, antenna 0; setup, hold, fanout, slew, cap clean at typ / fast / slow; gate-level SDF slow 379 checks passed; release `r1ctrl_07_release`. It is a drop-in for 0.6 (same box, same 127 pin positions) plus one south pin `cur_trk`. Revision 0.7 replaces 0.6 as the macro of record.
 
@@ -25,6 +27,116 @@ written from the specification and studies S1, S2, S3 and S5. No third-party RTL
 Patterns copied from G1 `g1_ctrl` (not shared): the two-flop synchroniser, the
 async-assert/sync-release reset, the SCLK-domain shift logic with a hand-off to the core clock,
 the `run_sim.sh` style and the `ALL TESTS PASSED` convention.
+
+## Revision 0.8 (2026-10-27, PLAN.md D22: channel offset and gain correction, raw-code capture; hardening runs `r1ctrl_ll_20261027_t19` to `_t22`)
+
+Goal: D22 (host-written offset and gain per encoder channel before the CORDIC, reset = no correction, min/max capture of the raw codes for the host calibration), regression clean, re-hardened in the same 532 x 679 um box with the same 128 pins (`pins_v07`, no pin moves), utilisation back near 75 % with the t18 hold strategy. Register map: `R1_REGISTER_MAP.md` draft 0.8, `ID` 0x5208. All numbers are simulated, synthesized or LibreLane/OpenSTA results; nothing is measured. Paths are relative to this directory; `<G1_RESULTS_ROOT>` is the bulk results root (`r1_ctrl/<run-id>/`). Track T5h, CPU set 112-115.
+
+Summary: RTL regression, D22 bit-exact model, hardening `_t22`, sign-off STA (typ/fast/slow), DRC/LVS/antenna and gate-level SDF slow (incl. `d22`) **passed**; utilisation **79.9 %**, the "near 75 %" goal is **not met** (open issue 1). Formal equivalence, CDC tool, IR drop, gate-level `disc`/`cdc`/`cal`: not run.
+
+### What changed
+
+| # | Change | Where |
+| --- | --- | --- |
+| 1 | **D22 per-channel gain.** New register `COS_GAIN` (0x3F, unsigned Q2.14, reset 0x4000 = 1.0) multiplies the offset-corrected cosine code. The multiplication uses the shared `r1_pos` multiplier in the IDLE tick in which the pair is accepted (the multiplier was idle there), so the pair latency stays 19 ticks and no state is added. `cy` now carries 4 fractional bits; the phase step uses `>>> 15` (was `>>> 11` on an integer `cy`) and the CORDIC x input is `cy` (was `dc << 4`): with `COS_GAIN` = 1.0 every intermediate value equals revision 0.7 bit for bit. | `rtl/r1_pos.v` |
+| 2 | **D22 names.** The offsets and the sine gain existed since revision 0.1/0.3 (`OFS_SIN` 0x10, `OFS_COS` 0x11, `GAIN` 0x12 = gain ratio on the sine channel). They keep their address, format, reset and arithmetic and are renamed `SIN_OFS`, `COS_OFS`, `SIN_GAIN`. | `R1_REGISTER_MAP.md` 4.4 |
+| 3 | **CRC coverage.** `COS_GAIN` is the 44th `CAL_CRC` word (appended after 0x6D; engine counter 0..43; a write of 0x3F clears `CAL_VALID`). | `rtl/r1_regs.v`, map 4.4 |
+| 4 | **Raw-code capture.** `RAW_SIN_MIN/MAX` (0x5E/0x5F), `RAW_COS_MIN/MAX` (0x6E/0x6F), 4 x 12 flip-flops: min/max of the weight-corrected codes (`RAW_SIN`/`RAW_COS`) of every encoder pair that reaches `r1_pos` (`smp_valid`). A write of any value to any of the four clears all four (MIN 0xFFF, MAX 0x000; reset the same; a clear wins over a pair in the same tick). Not CRC-covered (measurements). | `rtl/r1_regs.v`, `rtl/r1_ctrl_top.v` (`smp_valid` to `r1_regs`), map 4.5 |
+| 5 | `ID` 0x5208, register map draft 0.8 (change log section 7). No port, pin or SDC change: the `r1_ctrl_top` port list is identical to 0.7 (only the `CHIP_ID` default differs); `flow/check_sdc_ports.py` on `flow/r1_ctrl.sdc` and `flow/r1_ctrl_pnr6h.sdc`: 30 ports, 128 bits, 0 unconstrained, 0 stale, so the SDC files stay unchanged. | `rtl/r1_ctrl_top.v`, `rtl/r1_regs.v` |
+| 6 | Testbenches: new `tb/tb_d22.v` + `tb/d22_ref.py` (integer model of the `r1_pos` measurement path, 5 cases x 4096 pairs, bit-exact; angle error before / after the host correction); new chip-level group `d22` in `tb/tb_top.v` (ID, reset values, capture clear, `COS_GAIN` read/write and CRC coverage, capture against the ADC model, host calibration, `MEAS_ANGLE` error at 16 static angles before / after); the ADC model has per-channel head offset and gain (default 0 / 1, other groups unchanged); `load_cal_crc` covers 44 words; `spi`/`v07` ID checks 0x5208; `tb_pos.v` ties `cos_gain` to 1.0. `sim/run_all.sh` runs the D22 group; `sim/signoff/run_gl.sh` runs `d22` at three clocks at gate level. | `tb/`, `sim/` |
+
+### Correction arithmetic (fixed point)
+
+    s  = (RAW_SIN - 2048) - SIN_OFS              13-bit signed, ADC LSB (SIN_OFS: 12-bit two's complement, -2048..+2047)
+    c  = (RAW_COS - 2048) - COS_OFS
+    s' = sat18((s * SIN_GAIN) >>> 10)            SIN_GAIN, COS_GAIN: unsigned Q2.14, 0x4000 = 1.0, LSB 2^-14 = 61 ppm,
+    c' = sat18((c * COS_GAIN) >>> 10)            range 0 .. 3.99994 (D22 asks for at least 0.75 .. 1.25)
+    sat18: +-131071 = +-8191.9 LSB, 4 fractional bits
+
+then, unchanged from 0.3: y = (s' - c' * PH_SIN) * PH_ICOS, x = c', both limited to +-49151 (+-3071.9 LSB) at the CORDIC input. The angle depends on SIN_GAIN / COS_GAIN only; `AMPLITUDE` follows both. The offsets are subtracted (the host writes the measured mid-point); PLAN.md D22 sketched (code + OFS) x GAIN; the sign of the 0.3 register is kept (decision 2). Host procedure: register map section 4.4.
+
+Decisions (recommended option, taken without asking):
+
+1. **Reuse the existing offset and gain words instead of adding a second set.** D22 states that register map 0.7 had "`RAW_SIN`/`RAW_COS` only"; in fact `OFS_SIN`, `OFS_COS` (0x10, 0x11, subtracted before the CORDIC) and `GAIN` (0x12, sine channel) exist since revision 0.1/0.3 and are applied exactly where D22 asks (after the weight correction, before the CORDIC). A second offset/gain stage in series would cost a multiplier pass and four registers for no function. Missing were the cosine gain (an angle needs only the ratio, but D22 asks per channel and `AMPLITUDE`/`AMP_LIM` need both) and the capture. Failure 1 (spec-ambiguity).
+2. **Keep the subtract convention** of the 0.3 offsets (D22 sketch: + OFS). The host writes the measured mid-point directly; all 0.3-0.7 calibration code and `tb/pos_ref.py` stay valid.
+3. **Cosine gain in the IDLE tick** (multiplier free) instead of a new state: no latency change (the frame arithmetic of D18 and the overrun margin stay as in 0.7). Cost: a 13-bit subtractor in front of the multiplier input mux on a path that starts at the `r1_gate` code registers (timing checked by sign-off STA below).
+4. **`COS_GAIN` at 0x3F**, the last free native address, and CRC-covered: a gain upset moves the angle, the same class as the other position words. The 0.7 host CRC routine (43 words) does not match 0.8 (checked: test `d22`).
+5. **Capture in the 0x5E/0x5F/0x6E/0x6F holes** of the slice A/B weight blocks (SIN is slice A, COS slice B), one clear for all four (one window for both channels; the host reads a consistent set).
+6. **Capture of the corrected codes** (`RAW_SIN`/`RAW_COS` domain, before the offsets), so the host computes the offsets in the units it writes. Discarded frames (first-conversion discard) are not captured.
+7. **Hardening**: the t18 hold strategy (post-CTS hold margin 0.1 ns, place-and-route `-min` input delay 0.30 ns on the ADC inputs only, `flow/r1_ctrl_pnr6h.sdc`), otherwise the t17/config.yaml settings. Two runs in parallel on 2 CPUs each: t21 = exactly the t18 settings (`flow/librelane/cfg_v08_t21.yaml`), t22 = t21 plus the t17 post-GRT timing repair (hold margin 0.15 ns, `cfg_v08_t22.yaml`). The run that signs off with the lower utilisation is the run of record.
+
+### Status (revision 0.8)
+
+| # | Check | Status | Evidence |
+| --- | --- | --- | --- |
+| 1 | Regression `r1ctrl_20261027_v08b` (`sim/run_all.sh`, RTL concat sha256 `0ad07872...` = t21, t22): all 0.7 groups (`biss` 3 x 48, `ssi` 3 x 9, `spi` 27, `gate` 22, `safe` 32, `cal` 2 x 32, `tap` 2 x 5, `ana` 9, `disc` 14, `cdc` 3 x 4, `v07` 36/40/40) plus `d22` 3 x 17 | **passed**: 24 logs, 528 checks, 0 failed | `sim/results/r1ctrl_20261027_v08b/summary.md`, `top_*.log`; superseded: `r1ctrl_20261027_v08` (failure 2) |
+| 1a | Position V3, 16 cases, RTL vs float reference (`cur_trk`-era cases unchanged) | **passed**: max 0.023 deg el (limit 0.05), no count slip | `pos_*_check.log` |
+| 1b | ADC weights, one-hot, `r1_tapidx` exhaustive, calibration search vs `r1_safe` model | **passed**: 0 mismatches | `adcw_result.json`, `tapidx_result.json`, `calmc_check.json` |
+| 1c | SDC port check (`flow/r1_ctrl.sdc`; also `flow/r1_ctrl_pnr6h.sdc`) | **passed**: 30 ports, 128 bits, 0 unconstrained, 0 stale; port list identical to 0.7 | `sdc_ports.json` |
+| 1d | Yosys CHECK | **passed**: 0 problems | `yosys_check.txt` |
+| 2 | D22 bit-exact: `tb_d22` vs `tb/d22_ref.py` integer model, 5 cases x 4096 pairs (`raw` reset words, `cor` host-calibrated, `sat` extreme words and full-range codes, `full` random words incl. phase and H3, `lo` gain 0.75 / 0 and offsets at the limits) | **passed**: 20 480 pairs, 0 mismatches (angle and `AMPLITUDE`) | `d22_result.json` |
+| 2a | D22 position error, 4096 points over one turn, head 1638 LSB, +57 / -57 LSB (+-25.0 mV), sine gain 1.03 | **passed**: before (reset words) **3.647 deg el** max; after the min/max host calibration **0.030 deg el** max (limit 0.05) | `d22_result.json` |
+| 3 | Chip-level `d22` at 23.8 / 33.3 / 47.6 ns: ID 0x5208, reset values, capture clear by 0x5E and by 0x6F, `COS_GAIN` R/W, CRC over 43 words fails / 44 words passes, write of 0x3F clears `CAL_VALID`, capture = model min/max exactly (385-770 pairs), host calibration from the captured words, `MEAS_ANGLE` at 16 static angles | **passed**: 17 / 17 / 17 checks. Error before 3.518, after 0.052 deg el; `AMPLITUDE` 1663 (A_t 1662.5) | `top_d22_*.log` |
+| 4 | Negative control: chip-level `d22` on the 0.7 RTL (development tool, host Icarus 11) | **passed as a control**: 12 of 17 checks fail, as expected | `<G1_RESULTS_ROOT>/r1_ctrl/r1ctrl_dev08/neg07/top_d22_33.333.log` |
+| 5 | Yosys area delta (flat, typical) | 236 730 um^2, +6 612 um^2 (+2.9 %) over 0.7; table below | `stat_flat.txt` |
+| 6 | Hardening `_t19`, `_t20` | **abandoned** within 1 min (failure 3): the configuration append did not reach the container; not a hardening result | `<G1_RESULTS_ROOT>/r1_ctrl/r1ctrl_ll_20261027_t19/disposition.json`, `_t20/` |
+| 6a | Hardening `_t21`: t18 settings exactly (`flow/librelane/cfg_v08_t21.yaml`) | **abandoned**: 93 post-CTS hold buffers; detailed routing stayed at 10 violations for the last iterations; stopped after 2 h 20 min on 2 CPUs when t22 had passed | `<G1_RESULTS_ROOT>/r1_ctrl/r1ctrl_ll_20261027_t21/disposition.json` |
+| 6b | Hardening `_t22`: t21 + post-GRT timing repair, hold margin 0.15 ns (`cfg_v08_t22.yaml`); DIE_AREA 532 x 679, `pins_v07` | **passed** (exit 0, 2 h 20 min on 2 CPUs), **run of record for 0.8**: 93 + 32 hold buffers; utilisation **79.9 %** (target near 75 %: **not met**, section below) | `<G1_RESULTS_ROOT>/r1_ctrl/r1ctrl_ll_20261027_t22/`, `reports/ll_t22.md` |
+| 7 | Sign-off STA with `flow/r1_ctrl.sdc` (nominal SPEF), t22: true setup slack (worst flip-flop D) typ / fast / slow; outputs; hold; max-fanout 8, slew, cap | **passed**: setup +9.460 / +10.157 / **+3.714 ns** (0.7: +3.559 at slow; the flow summary shows 0.000 = latch borrow, worst borrow 2.246 ns at slow, 0.7: 1.228 ns); outputs +15.769 / +16.660 / +14.264 ns; hold +0.205 / +0.120 / **+0.360 ns** (0.7: +0.323 / +0.195 / +0.550); 0 VIOLATED paths; fanout, slew, cap 0 / 0 / 0 at all corners | `<G1_RESULTS_ROOT>/r1_ctrl/r1ctrl_20261027_t22sta/` |
+| 8 | Detailed routing, Magic DRC, KLayout DRC, LVS, antenna (t22); pins 128 of 128 on the `pins_v07` slots | **passed**: 0 / 0 / 0 / 0 / 0; 0 pin mismatches (no pin moved) | same, `pins_check.txt` |
+| 9 | Gate-level simulation with SDF at slow (MAXIMUM), t22 netlist: chip-level list, `v07` and `d22` at 23.8 / 33.3 / 47.6 ns | **passed**: 430 checks, 0 failed: `tap` 5, `ana` 9, `ssi` 3 x 9, `spi` 27, `gate` 22, `safe` 32, `biss` 3 x 47 (1 GLSKIP each, as in 0.6/0.7), `v07` 36 / 40 / 40, **`d22` 3 x 17** (capture, CRC coverage, correction: 3.518 to 0.052 deg el, as RTL). `disc`, `cdc`, `cal`: **not run** (as 0.7) | `<G1_RESULTS_ROOT>/r1_ctrl/r1ctrl_gl_20261027_t22/` |
+| 10 | Release files `r1ctrl_08_release` (GDS, LEF, DEF, netlist, SDF x 3, sign-off and place-and-route SDC, `pins_v07.*`, register map 0.8, `SOURCE.txt`; `sim/signoff/release08.sh`) with `SHA256SUMS` | **passed** (written): GDS sha256 `f8bc16ed…`, LEF `3de0eb55…`; the 128 LEF pin shapes are identical to `r1ctrl_07_release` (only the obstruction shapes differ) | `<G1_RESULTS_ROOT>/r1_ctrl/r1ctrl_08_release/` |
+
+### Area delta (Yosys, flat, no hardening)
+
+| Quantity | 0.7 (`r1ctrl_20261027_v07c`) | 0.8 (`r1ctrl_20261027_v08b`) | Delta |
+| --- | --- | --- | --- |
+| Cell area (um^2) | 230 118 | **236 730** | +6 612 (+2.9 %) |
+| Cells / flip-flops and latches | 15 444 / 2 093 | 15 914 / 2 158 | +470 / +65 |
+
+New flip-flops: capture 4 x 12 = 48, `COS_GAIN` 16 (64 of the 65; one not attributed). The rest of the delta is the four 12-bit comparators and the clear logic of the capture, the 13-bit subtractor and the wider multiplier operand mux in `r1_pos`, the 44th CRC word and the 5 read-mux entries.
+
+### Area and utilisation (hardening of record `r1ctrl_ll_20261027_t22`)
+
+| Quantity | 0.6 (`_t12`) | 0.7 (`_t17`) | 0.8 (`_t22`) |
+| --- | --- | --- | --- |
+| Die / core (um^2) | 361 228 / 333 666 | same | same (532 x 679) |
+| Standard-cell area, utilisation | 251 815 um^2, 75.47 % | 283 041 um^2, 84.8 % | **266 436 um^2, 79.9 %** |
+| Sequential / clock buffers / timing-repair buffers (um^2) | see `reports/ll_t10.md` | 100 004 / 6 831 / 45 182 | 103 169 / 7 249 / 21 640 |
+| Hold buffers | 71 (t13) | 1 606 post-CTS | 93 post-CTS + 32 post-GRT |
+
+The t18 hold strategy halves the timing-repair buffer area (45 182 to 21 640 um^2) and takes 4.9 points back, but the result is 79.9 %, not near 75 %. Of the 14 621 um^2 over 0.6, the RTL accounts for about 8 200 um^2 in synthesis (0.7 +1 592, 0.8 +6 612, Yosys flat); the rest is repair and buffering. The 0.7 estimate "near 76 % with t18" was made before the 0.8 RTL and without the post-GRT repair that routing needed (t21 without it did not route; failure 4).
+
+### CDC table (revision 0.8 additions)
+
+| Signal | Source domain | Destination | Crossing | Note |
+| --- | --- | --- | --- | --- |
+| `COS_GAIN` write | SPI frame decoded into the `clk` domain (`reg_wr`, existing hand-off of `r1_spi`) | `clk` (gated word u_3f) | none new | same path as every configuration word |
+| capture clear (write to 0x5E/0x5F/0x6E/0x6F) | `clk` (`reg_wr`, `reg_addr`) | `clk` | none | decode of the registered write pulse |
+| `smp_valid`, `sin_code`, `cos_code` into the capture | `clk` (`r1_gate` registers) | `clk` | none | |
+| capture read (SPI) | `clk` | SCLK shift register | existing read hand-off (`rd_sel`, 2-tick decode) | same as `RAW_SIN` |
+| `COS_GAIN` into `r1_pos` | `clk` (static word) | `clk` | none | the IDLE-tick multiply is a single-cycle `clk` path (STA above) |
+
+No new asynchronous input, no new clock. The 0.5 CDC table (revision 0.5 section) is otherwise unchanged.
+
+### Open issues (revision 0.8)
+
+1. Utilisation 79.9 % against the "near 75 %" goal (section above). Options for a later revision: a smaller box margin is not possible (pins fixed); reduce RTL (for example drop the 12-bit capture to 8 bits per word, or share one comparator per channel) or tune the post-GRT repair margin (0.15 to 0.05 ns; not run).
+2. Gate-level `disc`, `cdc`, `cal`: not run (probes are not nets of the netlist), as in 0.6 and 0.7.
+3. Formal equivalence RTL vs netlist, a CDC tool, IR drop with real supply locations: not run, as in 0.7.
+4. ADC -> ctrl timing: assumption only (revision 0.7 section; `INTERFACES.md` "ADC -> ctrl timing", recheck with the hardened SAR in `r1_adc` layout B5).
+5. The host must use the 44-word CRC routine for 0.8 (a 0.7 routine leaves `CAL_VALID` 0 and FAULT bit 11 latched).
+6. The correction removes static offset and gain only; the AFE offset drift after calibration (D22 limit 1 mV = 0.07 deg) stays, and the min/max method needs a full electrical period with stable amplitude. The angle error after correction includes the host rounding of the words (0.030 deg el in the model case).
+7. Open issues 1-8 of revision 0.7 (AZ_EXT at 42 MHz, mask delay, AZ_EXT not CRC-covered, calibration-search flag timing, `cur_trk` with a late frame not exercised, GUARD, `cur_trk` route) are unchanged.
+
+### Failures and mistakes (revision 0.8)
+
+| # | What happened | Class | Effect / fix |
+| --- | --- | --- | --- |
+| 1 | D22 says register map 0.7 had "`RAW_SIN`/`RAW_COS` only" and asks for new `SIN_OFS`, `COS_OFS`, `SIN_GAIN`, `COS_GAIN`; the map already had `OFS_SIN`, `OFS_COS` and the sine gain `GAIN` at the requested place in the path since 0.1/0.3. Implemented literally, the chip would have two offset/gain stages in series | spec-ambiguity | decision 1: renamed the existing words, added only `COS_GAIN` and the capture (about 4 registers and one multiplier pass saved) |
+| 2 | Regression `r1ctrl_20261027_v08`: `tb/tb_top.v` did not compile in the container (a new function used the `WNOM` localparam before its declaration); the host Icarus 11 used for the development runs accepted it. All chip-level groups did not run | tooling | function moved below `WNOM`; rerun `_v08b` passed. Rule: compile development changes once with the container tool before a full run |
+| 3 | Hardening `_t19`/`_t20` were launched with `R1_CFG_APPEND` in the host environment; `flow/run.sh` forwards only its own variables, so the runs used `config.yaml` without the append. Seen in the run copy of the configuration within a minute | process-hygiene | stopped and kept; relaunched as `_t21`/`_t22` with the variable set inside the container command (as `reports/ll_t17.md` shows: `flow/run.sh env R1_CFG_APPEND=...`) |
+| 4 | `_t21` (the t18 settings exactly) did not finish detailed routing (10 violations for the last iterations after 2 h 20 min); the parallel variant `_t22` with the post-GRT repair routed clean. The 0.7 estimate "utilisation near 76 % with t18" did not hold: 79.9 % | estimation | `_t22` is the run of record; open issue 1 |
 
 ## Revision 0.7 (2026-10-27, RTL fixes R3, R4, OSC_TRIM lock, comparator mask, new output `cur_trk`; hardening runs `r1ctrl_ll_20261027_t13` to `_t18`; run of record `_t17`)
 
@@ -844,7 +956,9 @@ latches; they pass in t5.
 | `tb/tb_top.v` | testbenches (b)–(f), `cal` and `calmc` on the macro top: BiSS/SSI master, SPI host, encoder + two-slice ADC model (D18), behavioural comparators with hysteresis (0.3) |
 | `tb/tb_tapidx.v`, `tb/tapidx_ref.py` | revision 0.5: exhaustive check of `r1_tapidx` (4096 pairs per cell type) against the Python form of the `r1_safe` formula |
 | `tb/cmpcal_ref.py` | revision 0.3: Python model of the two-sided calibration search, compared with `r1_safe` `sim/cal_model.py` on its MC data; writes the comparator tables for `calmc` and checks the RTL results |
+| `tb/tb_d22.v`, `tb/d22_ref.py` | revision 0.8: D22 channel correction, integer model of the `r1_pos` measurement path (bit-exact, 5 cases x 4096 pairs), angle error before / after the host correction |
 | `sim/run_all.sh`, `sim/summarize.py` | full run, summary, per-block area, `run.json` |
+| `sim/signoff/signoff08.sh`, `sim/signoff/release08.sh` | revision 0.8: sign-off STA / fanout / pins / SDC-port check of a hardening run; release files with `SHA256SUMS` |
 | `sim/results/<run-id>/` | summary, `run.json`, test logs, synthesis statistics, input hashes |
 | `flow/synth.tcl` | Yosys synthesis for the cell area (Booth, PDK latch map, 42 MHz delay target) |
 | `flow/check_sdc_ports.py` | revision 0.5: port list from the RTL against the SDC patterns (unconstrained bits, stale patterns) |

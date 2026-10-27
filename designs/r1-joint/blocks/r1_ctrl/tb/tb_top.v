@@ -1,6 +1,7 @@
 // Chip-level testbench for r1_ctrl_top (testbenches b..f and cal of the r1_ctrl
 // README, revision 0.3).
-//   +test=biss | ssi | spi | gate | safe | cal | calmc | tap | ana | disc | cdc | v07    test group
+//   +test=biss | ssi | spi | gate | safe | cal | calmc | tap | ana | disc | cdc | v07 | d22    test group
+//   (d22, revision 0.8: COS_GAIN, CRC coverage, raw min/max capture, host calibration, angle error before/after)
 //   (v07, revision 0.7: R3 EN synchroniser, R4 threshold reset, OSC_TRIM lock, comparator mask, reset-value table)
 //   +vec=<file> +out=<file>                   (calmc) comparator tables from tb/cmpcal_ref.py, RTL results
 //   +clk_ns=<real>                            clk period (RC corners: 23.81, 33.33, 47.62)
@@ -65,6 +66,11 @@ module tb_top;
 
     // ---------------- encoder + ADC model ----------------
     real enc_f = 1000.0, enc_amp = 1400.0, enc_ph0 = 0.1;
+    // 0.8 (test d22): head offset (LSB) and gain per channel; defaults leave the other tests unchanged
+    real enc_os = 0.0, enc_oc = 0.0, enc_gs = 1.0, enc_gc = 1.0;
+    // 0.8: model of the raw-code capture (weight-corrected codes of the encoder conversions, as r1_adcw computes them)
+    reg  mm_en = 1'b0;
+    integer mm_smin = 4095, mm_smax = 0, mm_cmin = 4095, mm_cmax = 0, mm_n = 0;
     real held_ang;
     integer conv_a = 0, conv_b = 0;
     reg  conv_sel = 0;
@@ -78,6 +84,7 @@ module tb_top;
     // (both <= 17, the binding conversion time); 14 decisions from a greedy SAR
     // with the nominal r1_adc revision-3 weights (1/4 LSB), i.e. the reset weights
     localparam CONV = 17;
+    integer f_mm;
     localparam [195:0] WNOM = {14'd8130, 14'd4065, 14'd2032, 14'd1016, 14'd508, 14'd315, 14'd158,
                                14'd79,   14'd39,   14'd20,   14'd10,   14'd5,   14'd2,   14'd1};
     function [13:0] sar14;
@@ -89,6 +96,17 @@ module tb_top;
             for (j = 13; j >= 0; j = j - 1)
                 if (acc + WNOM[14*j +: 14] <= 4 * c) begin acc = acc + WNOM[14*j +: 14]; r[j] = 1'b1; end
             sar14 = r;
+        end
+    endfunction
+    // 0.8: weight-corrected code of a raw decision word (r1_adcw: (sum + 2) >> 2, clamped), nominal weights
+    function integer adcw_code;
+        input [13:0] r;
+        integer j, acc;
+        begin
+            acc = 0;
+            for (j = 0; j < 14; j = j + 1) if (r[j]) acc = acc + WNOM[14*j +: 14];
+            acc = (acc + 2) / 4;
+            adcw_code = (acc > 4095) ? 4095 : acc;
         end
     endfunction
     function real angle_now;           // turns
@@ -114,11 +132,22 @@ module tb_top;
             if (conv_b > 0) conv_b <= conv_b - 1;
             if (conv_a == 1) begin
                 adc_valid_a <= 1'b1;
-                adc_raw_a <= conv_bad ? 14'h3FFF : conv_sel ? sar14(ia_code) : sar14(code(enc_amp * $sin(6.283185307179586 * held_ang) - 0.5));
+                adc_raw_a <= conv_bad ? 14'h3FFF : conv_sel ? sar14(ia_code) : sar14(code(enc_gs * enc_amp * $sin(6.283185307179586 * held_ang) + enc_os - 0.5));
+                if (mm_en && !conv_sel && !conv_bad) begin
+                    mm_n = mm_n + 1;
+                    f_mm = adcw_code(sar14(code(enc_gs * enc_amp * $sin(6.283185307179586 * held_ang) + enc_os - 0.5)));
+                    if (f_mm < mm_smin) mm_smin = f_mm;
+                    if (f_mm > mm_smax) mm_smax = f_mm;
+                end
             end
             if (conv_b == 1) begin
                 adc_valid_b <= 1'b1;
-                adc_raw_b <= conv_bad ? 14'h3FFF : conv_sel ? sar14(ib_code) : sar14(code(enc_amp * $cos(6.283185307179586 * held_ang) - 0.5));
+                adc_raw_b <= conv_bad ? 14'h3FFF : conv_sel ? sar14(ib_code) : sar14(code(enc_gc * enc_amp * $cos(6.283185307179586 * held_ang) + enc_oc - 0.5));
+                if (mm_en && !conv_sel && !conv_bad) begin
+                    f_mm = adcw_code(sar14(code(enc_gc * enc_amp * $cos(6.283185307179586 * held_ang) + enc_oc - 0.5)));
+                    if (f_mm < mm_cmin) mm_cmin = f_mm;
+                    if (f_mm > mm_cmax) mm_cmax = f_mm;
+                end
             end
         end
     end
@@ -326,6 +355,7 @@ module tb_top;
     // revision 0.3: CRC-8 over the 43 covered words in the order 0x10..0x17,
     // 0x36..0x3C, 0x50..0x5D, 0x60..0x6D (values as read back, high byte first)
     reg  [7:0] crc_r;
+    reg        crc_v07 = 1'b0;         // 0.8 test d22: 1 = the 43-word CRC of revision 0.7 (negative check)
     task crc_word;
         input [15:0] w;
         integer j;
@@ -349,6 +379,7 @@ module tb_top;
             for (ci = 8'h36; ci <= 8'h3C; ci = ci + 1) begin spi_rd(ci); crc_word(rd_val); end
             for (ci = 8'h50; ci <= 8'h5D; ci = ci + 1) begin spi_rd(ci); crc_word(rd_val); end
             for (ci = 8'h60; ci <= 8'h6D; ci = ci + 1) begin spi_rd(ci); crc_word(rd_val); end
+            if (!crc_v07) begin spi_rd(7'h3F); crc_word(rd_val); end      // 0.8: COS_GAIN is the 44th word
             spi_wr(7'h18, {8'd0, crc_r});
             #(360 * clk_ns);
         end
@@ -712,7 +743,7 @@ module tb_top;
         // =================================================================
         if (test == "spi") begin
             spi_rd(7'h00);
-            check(rd_val == 16'h5207, "spi: ID reads 0x5207 (revision 0.7)");
+            check(rd_val == 16'h5208, "spi: ID reads 0x5208 (revision 0.8)");
             spi_rd(7'h08);
             check(rd_val == 16'd22 && osc_trim == 5'd22, "spi: OSC_TRIM reset value 22 (D13), on the oscillator port");
             spi_rd(7'h05);
@@ -787,7 +818,7 @@ module tb_top;
             check(b_crc_wire == 6'h3A && b_data[19:2] == 18'h0, "spi/biss: BiSS frame after SPI sees the new TEST_POS");
             // MA traffic while CS_N high does not disturb SPI state; SPI after BiSS
             spi_rd(7'h00);
-            check(rd_val == 16'h5207, "spi/biss: SPI read correct after BiSS traffic on the shared pad");
+            check(rd_val == 16'h5208, "spi/biss: SPI read correct after BiSS traffic on the shared pad");
         end
 
         // =================================================================
@@ -1252,7 +1283,7 @@ module tb_top;
                 integer j, ok, cnt, hi, fast, per;
                 // ---- 1. R3: EN/STO_IN synchroniser reset value
                 en_pad = 1'b1; por_n = 0; #(10 * clk_ns); por_n = 1; #(20 * clk_ns);
-                spi_rd(7'h00); check(rd_val == 16'h5207, "v07: ID reads 0x5207 (RTL revision 0.7)");
+                spi_rd(7'h00); check(rd_val == 16'h5208, "v07: ID reads 0x5208 (RTL revision 0.8)");
                 spi_rd(7'h02);
                 $display("INFO v07 R3: FAULT after power-up with EN high = 0x%04h", rd_val);
                 check(rd_val == 16'h1800, "v07 R3: power-up with EN high: FAULT = 0x1800 (POR, CAL), STO bit 8 clear");
@@ -1529,6 +1560,91 @@ module tb_top;
                 // power-on fault
                 por_n = 0; #(10 * clk_ns); por_n = 1; #(20 * clk_ns);
                 check(!fault_n && dut.u_safe.cause[12] && dut.u_safe.cause[11], "safe: power-on reset latches POR and CAL (gates disabled until CAL_CRC and CLR)");
+            end
+        end
+
+        // =================================================================
+        // Revision 0.8 test d22 (PLAN.md D22). Only ports and SPI are used, so the group also runs at gate level.
+        if (test == "d22") begin
+            begin : d22t
+                integer j, smin, smax, cmin, cmax, os_i, oc_i, gs_i, gc_i;
+                real a_s, a_c, a_t, e, e0, e1, ang;
+                // ---- 1. ID and reset values of the D22 words
+                spi_rd(7'h00); check(rd_val == 16'h5208, "d22: ID reads 0x5208 (RTL revision 0.8)");
+                spi_rd(7'h10); j = rd_val; spi_rd(7'h11); j = j | rd_val;
+                check(j == 0, "d22: SIN_OFS (0x10) and COS_OFS (0x11) reset 0");
+                spi_rd(7'h12); j = rd_val; spi_rd(7'h3F);
+                check(j == 16'h4000 && rd_val == 16'h4000, "d22: SIN_GAIN (0x12) and COS_GAIN (0x3F) reset 0x4000 = 1.0");
+                // ---- 2. capture clear (encoder frames stopped: PAIR_TICKS 0)
+                spi_wr(7'h28, 16'h1400); #(100 * clk_ns);
+                spi_rd(7'h5E); smin = rd_val; spi_rd(7'h5F); smax = rd_val; spi_rd(7'h6E); cmin = rd_val; spi_rd(7'h6F); cmax = rd_val;
+                $display("INFO d22 capture since reset: SIN %0d..%0d COS %0d..%0d", smin, smax, cmin, cmax);
+                check(smin <= smax && cmin <= cmax, "d22: capture runs from reset (encoder pairs captured, MIN <= MAX)");
+                spi_wr(7'h5E, 16'h0000); #(5 * clk_ns);
+                spi_rd(7'h5E); smin = rd_val; spi_rd(7'h5F); smax = rd_val; spi_rd(7'h6E); cmin = rd_val; spi_rd(7'h6F); cmax = rd_val;
+                check(smin == 12'hFFF && smax == 0 && cmin == 12'hFFF && cmax == 0,
+                      "d22: a write to RAW_SIN_MIN (0x5E) clears all four: MIN 0xFFF, MAX 0x000");
+                // ---- 3. COS_GAIN read/write and CRC coverage
+                spi_wr(7'h3F, 16'h4321); spi_rd(7'h3F);
+                check(rd_val == 16'h4321, "d22: COS_GAIN read back 0x4321 (16 bit)");
+                crc_v07 = 1'b1; load_cal_crc; crc_v07 = 1'b0;
+                spi_rd(7'h01);
+                check(!rd_val[4], "d22: CAL_CRC over the 43 words of 0.7 (without COS_GAIN) leaves CAL_VALID 0");
+                load_cal_crc; spi_rd(7'h01);
+                check(rd_val[4], "d22: CAL_CRC over 44 words incl. COS_GAIN (0x3F) sets CAL_VALID");
+                spi_wr(7'h3F, 16'h4000); #(20 * clk_ns); spi_rd(7'h01);
+                check(!rd_val[4], "d22: a write of COS_GAIN clears CAL_VALID (CRC-covered word)");
+                load_cal_crc; spi_wr(7'h04, 16'h0001); #(20 * clk_ns);
+                check(fault_n, "d22: CAL_CRC and CLR release the CAL fault");
+                // ---- 4. head with D22 errors: +57 / -57 LSB (25 mV), sine gain 1.03, amplitude 1638 LSB; capture 2 periods
+                enc_amp = 1638.0; enc_os = 57.0; enc_oc = -57.0; enc_gs = 1.03; enc_gc = 1.0; enc_f = 5000.0;
+                spi_wr(7'h6F, 16'hFFFF);
+                mm_smin = 4095; mm_smax = 0; mm_cmin = 4095; mm_cmax = 0; mm_n = 0; mm_en = 1'b1;
+                spi_wr(7'h28, 16'h1416);
+                #(400_000);
+                spi_wr(7'h28, 16'h1400); #(100 * clk_ns); mm_en = 1'b0;
+                spi_rd(7'h5E); smin = rd_val; spi_rd(7'h5F); smax = rd_val; spi_rd(7'h6E); cmin = rd_val; spi_rd(7'h6F); cmax = rd_val;
+                $display("INFO d22 capture: %0d pairs, RTL SIN %0d..%0d COS %0d..%0d, model SIN %0d..%0d COS %0d..%0d",
+                         mm_n, smin, smax, cmin, cmax, mm_smin, mm_smax, mm_cmin, mm_cmax);
+                check(mm_n > 300 && smin == mm_smin && smax == mm_smax && cmin == mm_cmin && cmax == mm_cmax,
+                      "d22: RAW_SIN/COS_MIN/MAX equal the model min/max of the corrected codes (2 periods, exact)");
+                spi_wr(7'h6F, 16'h0000); #(5 * clk_ns);
+                spi_rd(7'h5E); j = (rd_val == 12'hFFF); spi_rd(7'h5F); j = j && (rd_val == 0);
+                spi_rd(7'h6E); j = j && (rd_val == 12'hFFF); spi_rd(7'h6F); j = j && (rd_val == 0);
+                check(j, "d22: a write to RAW_COS_MAX (0x6F) clears all four");
+                // ---- 5. host calibration (R1_REGISTER_MAP.md 4.4) from the captured values
+                os_i = (smax + smin + 1) / 2 - 2048; oc_i = (cmax + cmin + 1) / 2 - 2048;
+                a_s = (smax - smin) / 2.0; a_c = (cmax - cmin) / 2.0; a_t = (a_s + a_c) / 2.0;
+                gs_i = $rtoi(16384.0 * a_t / a_s + 0.5); gc_i = $rtoi(16384.0 * a_t / a_c + 0.5);
+                $display("INFO d22 host calibration: SIN_OFS %0d COS_OFS %0d SIN_GAIN 0x%04h COS_GAIN 0x%04h (A_t %0.1f LSB)",
+                         os_i, oc_i, gs_i, gc_i, a_t);
+                // ---- 6. static angles: MEAS_ANGLE error before (reset words) and after the correction
+                enc_f = 0.0; e0 = 0.0; e1 = 0.0;
+                spi_wr(7'h28, 16'h1416);
+                for (j = 0; j < 16; j = j + 1) begin
+                    enc_ph0 = (j + 0.37) / 16.0; ang = enc_ph0 * 360.0;
+                    #(200 * clk_ns); spi_rd(7'h1F);
+                    e = rd_val / 65536.0 * 360.0 - ang; e = e - 360.0 * $floor((e + 180.0) / 360.0);
+                    if (e < 0) e = -e; if (e > e0) e0 = e;
+                end
+                spi_wr(7'h10, os_i[15:0] & 16'h0FFF); spi_wr(7'h11, oc_i[15:0] & 16'h0FFF);
+                spi_wr(7'h12, gs_i[15:0]); spi_wr(7'h3F, gc_i[15:0]);
+                load_cal_crc; spi_wr(7'h04, 16'h0001);
+                for (j = 0; j < 16; j = j + 1) begin
+                    enc_ph0 = (j + 0.37) / 16.0; ang = enc_ph0 * 360.0;
+                    #(200 * clk_ns); spi_rd(7'h1F);
+                    e = rd_val / 65536.0 * 360.0 - ang; e = e - 360.0 * $floor((e + 180.0) / 360.0);
+                    if (e < 0) e = -e; if (e > e1) e1 = e;
+                end
+                spi_rd(7'h1C);
+                $display("INFO d22 MEAS_ANGLE error at 16 static angles: before %0.3f, after %0.4f deg el; AMPLITUDE %0d LSB",
+                         e0, e1, rd_val);
+                check(e0 > 1.0, "d22: without correction the 25 mV / 3 % head error gives > 1 deg el");
+                check(e1 < 0.1, "d22: with the host correction the error is < 0.1 deg el");
+                check(rd_val >= a_t - 4 && rd_val <= a_t + 4, "d22: AMPLITUDE after correction = A_t +- 4 LSB");
+                spi_rd(7'h01);
+                check(rd_val[4] && fault_n, "d22: CAL_VALID and no fault after the calibration words and CAL_CRC");
+                enc_amp = 1400.0; enc_os = 0.0; enc_oc = 0.0; enc_gs = 1.0; enc_f = 1000.0;
             end
         end
 

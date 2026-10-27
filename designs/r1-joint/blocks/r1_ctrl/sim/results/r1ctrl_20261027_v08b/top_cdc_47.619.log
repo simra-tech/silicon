@@ -1,0 +1,11 @@
+# tb_top test=cdc clk_ns=47.619
+PASS init: FAULT_N high after CAL_CRC load and CLR
+INFO cdc: SSI 2 MHz, 16 clk phases, position changing every tick: pattern 0 7, pattern 1 9, mixed 0
+PASS cdc D: SSI at 2 MHz, 16 asynchronous phases, word changing every tick: 16 of 16 words complete (no mix)
+PASS cdc D: both position patterns occur over the phases (the test samples the changing word)
+INFO cdc: SSI 10 MHz (outside the 2 MHz limit), 16 clk phases: pattern 0 0, pattern 1 1, mixed 15 (information, not a check)
+INFO cdc: ma_rst_n rising edges 36 (off a clk edge: 0), falling edges 36
+PASS cdc F: the reset of the ma domain is released only at clk edges (registered), at least 5 releases observed
+# 4 checks, 0 failed
+ALL TESTS PASSED
+tb/tb_top.v:1655: $finish called at 1700788236 (1ps)

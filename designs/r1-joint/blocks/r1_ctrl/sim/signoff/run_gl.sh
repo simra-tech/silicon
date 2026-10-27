@@ -6,6 +6,7 @@
 #   slow: SDF nom_slow_1p08V_125C, MAXIMUM; typ: SDF nom_typ_1p20V_25C, TYPICAL; zd: no SDF (zero delay)
 # Revision 0.6: LLRUN=<hardening run id>; the 0.5 tests tap and ana also run (add them to GL_JOBS); disc, cdc, cal are GLSKIP (README 0.6).
 # Revision 0.7: the v07 group (ports and SPI only) at three clocks is in the default list.
+# Revision 0.8: the d22 group (ports and SPI only) at three clocks is in the default list.
 # Revision 0.6 default list: tap ana ssi spi gate safe biss (cal needs thr_*/cal_*, disc and cdc need nets the netlist does not have: not run).
 # Tests (same set as sim/run_all.sh, 315 RTL checks): biss, ssi at 23.810 33.333 47.619 ns; spi gate safe cal at 33.333; cal at 23.810.
 set -u
@@ -42,7 +43,7 @@ fi
 [ -n "$SDFARG" ] && SDFARG="+sdf=$OUT/delays.sdf +sdfmode=$SDFMODE"
 cd "$OUT"
 # GL_JOBS="biss:33.333 ..." reruns a subset with the compiled model of the first call (no recompile)
-JOBS="${GL_JOBS:-v07:23.810 v07:33.333 v07:47.619 tap:33.333 ana:33.333 ssi:23.810 spi:33.333 gate:33.333 safe:33.333 ssi:33.333 ssi:47.619 biss:23.810 biss:33.333 biss:47.619}"   # 0.6: tap, ana added; cal, disc, cdc are GLSKIP (README 0.6) and not in the default list
+JOBS="${GL_JOBS:-d22:23.810 d22:33.333 d22:47.619 v07:23.810 v07:33.333 v07:47.619 tap:33.333 ana:33.333 ssi:23.810 spi:33.333 gate:33.333 safe:33.333 ssi:33.333 ssi:47.619 biss:23.810 biss:33.333 biss:47.619}"   # 0.6: tap, ana added; cal, disc, cdc are GLSKIP (README 0.6) and not in the default list
 for j in $JOBS; do echo "$j"; done | xargs -P "$PAR" -I{} sh -c '
   t=${1%%:*}; ck=${1##*:}
   s=$(date +%s)

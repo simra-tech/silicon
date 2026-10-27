@@ -1,0 +1,13 @@
+# tb_top test=ana clk_ns=33.333
+PASS init: FAULT_N high after CAL_CRC load and CLR
+PASS ana: reset 0x0028: PGA x1 (c1..c4 = 0000), T2F_EN 1, T2F_MODE 0 (PTAT), BIAS_EN 1
+PASS ana: ANA_CTRL reads 0x0028 after reset
+PASS ana: ADC_CFG reads 1 after reset (DISCARD 1)
+PASS ana: gain codes 0..5 give c1..c4 = 0000 1000 1100 1110 1101 1111 (c1 first), codes 6 and 7 act as 5
+PASS ana: bits 3, 4, 5 drive T2F_EN, T2F_MODE, BIAS_EN independently
+PASS ana: T2F_EN alone
+PASS ana: BIAS_EN alone
+PASS ana: reserved bits 15:7 store and read back, no output
+# 9 checks, 0 failed
+ALL TESTS PASSED
+tb/tb_top.v:1655: $finish called at 693464926 (1ps)

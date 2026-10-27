@@ -132,7 +132,7 @@ open(f"{summ}/top_calmc.log", "w").write(re.sub(r"/\S*/r1_ctrl/", "<G1_RESULTS_R
 shutil.copy(f"{out}/versions.txt", summ)
 shutil.copy(f"{out}/inputs.sha256", summ)
 open(f"{summ}/summary.md", "w").write("\n".join(lines) + "\n")
-top_ok = all(v["passed"] for v in res["top"].values()) and len(res["top"]) == 21   # 0.7: + top_v07 at 3 clocks
+top_ok = all(v["passed"] for v in res["top"].values()) and len(res["top"]) == 24   # 0.7: + top_v07 at 3 clocks; 0.8: + top_d22 at 3 clocks
 pos_ok = all(v["rtl_vs_float_reference_deg_el"]["max_abs"] < 0.05 for v in res["pos"].values()) and len(res["pos"]) == 16
 cs_ok = all(v["count_safety"]["max_abs_step_error_deg_el_after_lock"] < 90.0 and abs(v["count_safety"]["multiturn_offset_end_counts"]) < 0.5
             for k, v in res["pos"].items() if "count_safety" in v and k not in ("f22_250k_a2x_gap", "f22_250k_alim_gap"))   # information only
@@ -152,6 +152,17 @@ shutil.copy(f"{out}/tapidx/tapidx_result.json", summ)
 shutil.copy(f"{out}/sdc_ports.json", summ)
 shutil.copy(f"{out}/syn/yosys_check.txt", summ)
 open(f"{summ}/summary.md", "w").write("\n".join(lines) + "\n")
+d22 = json.load(open(f"{out}/d22/d22_result.json"))
+res["d22"] = d22
+lines += ["", "## Revision 0.8: D22 channel correction (tb_d22 + d22_ref.py, 4096 pairs per case)", "",
+          "| Case | Points | Mismatches vs integer model | Position error max (deg el) | Registers |", "| --- | --- | --- | --- | --- |"]
+for k, v in d22["cases"].items():
+    pe = v.get("pos_err_deg_el", {}).get("max_abs")
+    lines.append(f"| {k} | {v['points']} | {v['mismatches']} | {'' if pe is None else f'{pe:.4f}'} | "
+                 + ", ".join(f"{a} {b}" for a, b in v["regs"].items()) + " |")
+lines += ["", f"Stimulus: {d22['stimulus']}. Criteria: {d22['criteria']}. Verdict: {'passed' if d22['passed'] else 'FAILED'}."]
+shutil.copy(f"{out}/d22/d22_result.json", summ)
+open(f"{summ}/summary.md", "w").write("\n".join(lines) + "\n")
 cal_ok = cm["disposition"].startswith("passed") and ck["disposition"].startswith("passed")
 run = dict(
     run_id=rid,
@@ -160,9 +171,9 @@ run = dict(
     tools=ver, pdk_commit=ver.get("pdk_commit"),
     inputs="inputs.sha256 (RTL, testbenches, scripts)",
     bulk_results="$G1_RESULTS_ROOT/r1_ctrl/" + rid,
-    question="Does the r1_ctrl revision 0.7 RTL (EN synchroniser reset 1 for R3, CMP_THR reset 0x003F for R4, OSC_TRIM lock, comparator mask az_win + AZ_EXT, ID 0x5207) pass the whole revision-0.5 regression plus the new v07 tests, and what is its synthesized cell area?",
+    question="Does the r1_ctrl revision 0.8 RTL (D22: COS_GAIN, raw min/max capture, ID 0x5208) pass the whole revision-0.7 regression plus the new D22 tests (bit-exact model, chip-level d22), and what is its synthesized cell area?",
     result=res,
-    disposition=("simulation checks passed" if (top_ok and pos_ok and aw["passed"] and cs_ok and cal_ok and tp["disposition"] == "passed" and sd["disposition"] == "passed") else "simulation checks FAILED (see summary.md)")
+    disposition=("simulation checks passed" if (top_ok and pos_ok and d22["passed"] and aw["passed"] and cs_ok and cal_ok and tp["disposition"] == "passed" and sd["disposition"] == "passed") else "simulation checks FAILED (see summary.md)")
                 + f"; cell area {area/1e6:.3f} mm2 = {area/180000:.2f} x the 0.18 mm2 budget (before placement)",
 )
 json.dump(run, open(f"{summ}/run.json", "w"), indent=1)

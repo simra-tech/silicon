@@ -4,7 +4,7 @@
 // with the crossings described in r1_biss.v and r1_spi.v.
 // Reset: por_n asynchronous assert, synchronous release. EN/STO_IN does not
 // reset the core; it is a fault source and gates the outputs directly.
-// Interface: R1_REGISTER_MAP.md (revision 0.7) and blocks/INTERFACES.md 0.1.
+// Interface: R1_REGISTER_MAP.md (revision 0.8) and blocks/INTERFACES.md 0.1.
 // Revision 0.2 ports: 13 raw ADC decisions with adc_valid (weights applied
 // here, D12); is_smp (isense pair track-and-hold); az_win (isense auto-zero
 // window); comparator threshold and calibration codes to r1_safe (analog).
@@ -15,10 +15,11 @@
 // Revision 0.7: EN synchroniser reset 1 (r1_safe), CMP_THR reset 0x003F,
 // comparator mask az_win + AZ_EXT ticks aligned to the synchronised flags, OSC_TRIM lock
 // (STATUS bit 14 TRIM_UNLK), ID 0x5207. One new port: cur_trk (r1_adc SAR input, coordinator 2026-10-27).
+// Revision 0.8 (PLAN.md D22): COS_GAIN (cosine channel gain), raw-code min/max capture, ID 0x5208; no port change.
 // SPDX-License-Identifier: Apache-2.0
 
 module r1_ctrl_top #(
-    parameter [15:0] CHIP_ID    = 16'h5207,
+    parameter [15:0] CHIP_ID    = 16'h5208,
     parameter [15:0] PROFILE_ID = 16'h0001,
     parameter [47:0] DEV_ID     = 48'h52_31_4A_46_45_30,
     parameter [31:0] DEV_SN     = 32'h0000_0000,
@@ -76,7 +77,7 @@ module r1_ctrl_top #(
     wire [17:0] test_pos;
     wire [15:0] ana_ctrl;
     wire [3:0]  adc_disc;
-    wire [15:0] osc_win, wdt_period, amp_lim, ovs_lim, gain, ph_sin, ph_icos, h3,
+    wire [15:0] osc_win, wdt_period, amp_lim, ovs_lim, gain, cos_gain, ph_sin, ph_icos, h3,
                 zero_ofs, sched,
                 i2t_lim;
     wire [12:0] period, duty_a, duty_b, duty_c, phase_a, phase_b, phase_c, az_start;   // 0.4: 13 bit
@@ -103,7 +104,7 @@ module r1_ctrl_top #(
     r1_pos u_pos (
         .clk(clk), .rst_n(rst_n), .smp_sh(smp_sh), .smp_valid(smp_valid),
         .sin_code(sin_code), .cos_code(cos_code),
-        .ofs_sin(ofs_sin), .ofs_cos(ofs_cos), .gain(gain), .ph_sin(ph_sin), .ph_icos(ph_icos),
+        .ofs_sin(ofs_sin), .ofs_cos(ofs_cos), .gain(gain), .cos_gain(cos_gain), .ph_sin(ph_sin), .ph_icos(ph_icos),
         .h3_amp(h3[7:0]), .h3_ph(h3[15:8]), .zero_ofs(zero_ofs), .dir(pos_cfg[0]),
         .kp_sh(pos_cfg[4:1]), .ki_sh(pos_cfg[9:5]), .extrap(extrap),
         .amp_lo(amp_lim[7:0]), .amp_hi(amp_lim[15:8]), .ovs_lim(ovs_lim),
@@ -285,7 +286,7 @@ module r1_ctrl_top #(
         .clk(clk), .rst_n(rst_n), .wr(reg_wr), .addr(reg_addr), .wdata(reg_wdata), .rd(reg_rd),
         .rdata(reg_rdata), .status(status), .fault_cause(cause), .osc_count(osc_count),
         .pos(pos_out), .turns(turns), .velocity(velocity), .amplitude(amplitude),
-        .raw_sin(sin_code), .raw_cos(cos_code), .meas_angle(meas_angle), .i_a(i_a), .i_b(i_b),
+        .raw_sin(sin_code), .raw_cos(cos_code), .smp_valid(smp_valid), .meas_angle(meas_angle), .i_a(i_a), .i_b(i_b),
         .temp(temp), .e_a(e_a), .e_b(e_b), .biss_frames(biss_frames), .biss_cc_err(biss_cc_err),
         .spi_err(spi_err), .pos_ovr(pos_ovr_cnt), .late_cnt(late_cnt), .id_byte(id_byte),
         .cmp_cal_a(cmp_cal_a), .cmp_cal_b(cmp_cal_b), .cal_busy(cal_busy), .rd_sel(spi_rd_sel),
@@ -297,7 +298,7 @@ module r1_ctrl_top #(
         .test_pos(test_pos),
         .timeout_ticks(timeout_ticks), .osc_trim(osc_trim), .osc_arm(osc_arm), .osc_win(osc_win), .wdt_period(wdt_period),
         .ana_ctrl(ana_ctrl), .adc_disc(adc_disc), .extrap(extrap), .amp_lim(amp_lim), .ovs_lim(ovs_lim),
-        .ofs_sin(ofs_sin), .ofs_cos(ofs_cos), .gain(gain), .ph_sin(ph_sin), .ph_icos(ph_icos),
+        .ofs_sin(ofs_sin), .ofs_cos(ofs_cos), .gain(gain), .cos_gain(cos_gain), .ph_sin(ph_sin), .ph_icos(ph_icos),
         .h3(h3), .zero_ofs(zero_ofs), .pos_cfg(pos_cfg), .cal_crc(cal_crc), .cal_valid(cal_valid),
         .period(period), .duty_a(duty_a), .duty_b(duty_b), .duty_c(duty_c), .phase_a(phase_a),
         .phase_b(phase_b), .phase_c(phase_c), .dead(dead), .sched(sched), .ot_lim(ot_lim),

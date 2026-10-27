@@ -26,7 +26,7 @@ module tb_pos;
     r1_pos dut (
         .clk(clk), .rst_n(rst_n), .smp_sh(smp_sh), .smp_valid(smp_valid),
         .sin_code(sin_code), .cos_code(cos_code),
-        .ofs_sin(regs[0][11:0]), .ofs_cos(regs[1][11:0]), .gain(regs[2]), .ph_sin(regs[3]),
+        .ofs_sin(regs[0][11:0]), .ofs_cos(regs[1][11:0]), .gain(regs[2]), .cos_gain(16'h4000), .ph_sin(regs[3]),
         .ph_icos(regs[4]), .h3_amp(regs[5][7:0]), .h3_ph(regs[5][15:8]), .zero_ofs(16'd0),
         .dir(1'b0), .kp_sh(regs[6][3:0]), .ki_sh(regs[7][4:0]), .extrap(regs[8][7:0]),
         .amp_lo(8'd16), .amp_hi(8'd200), .ovs_lim(16'h7FFF),

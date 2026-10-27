@@ -1,0 +1,25 @@
+# tb_top test=d22 clk_ns=23.810
+PASS init: FAULT_N high after CAL_CRC load and CLR
+PASS d22: ID reads 0x5208 (RTL revision 0.8)
+PASS d22: SIN_OFS (0x10) and COS_OFS (0x11) reset 0
+PASS d22: SIN_GAIN (0x12) and COS_GAIN (0x3F) reset 0x4000 = 1.0
+INFO d22 capture since reset: SIN 2582..3447 COS 754..3173
+PASS d22: capture runs from reset (encoder pairs captured, MIN <= MAX)
+PASS d22: a write to RAW_SIN_MIN (0x5E) clears all four: MIN 0xFFF, MAX 0x000
+PASS d22: COS_GAIN read back 0x4321 (16 bit)
+PASS d22: CAL_CRC over the 43 words of 0.7 (without COS_GAIN) leaves CAL_VALID 0
+PASS d22: CAL_CRC over 44 words incl. COS_GAIN (0x3F) sets CAL_VALID
+PASS d22: a write of COS_GAIN clears CAL_VALID (CRC-covered word)
+PASS d22: CAL_CRC and CLR release the CAL fault
+INFO d22 capture: 770 pairs, RTL SIN 417..3792 COS 353..3628, model SIN 417..3792 COS 353..3628
+PASS d22: RAW_SIN/COS_MIN/MAX equal the model min/max of the corrected codes (2 periods, exact)
+PASS d22: a write to RAW_COS_MAX (0x6F) clears all four
+INFO d22 host calibration: SIN_OFS 57 COS_OFS -57 SIN_GAIN 0x00003f0d COS_GAIN 0x000040fa (A_t 1662.5 LSB)
+INFO d22 MEAS_ANGLE error at 16 static angles: before 3.518, after 0.0521 deg el; AMPLITUDE 1663 LSB
+PASS d22: without correction the 25 mV / 3 % head error gives > 1 deg el
+PASS d22: with the host correction the error is < 0.1 deg el
+PASS d22: AMPLITUDE after correction = A_t +- 4 LSB
+PASS d22: CAL_VALID and no fault after the calibration words and CAL_CRC
+# 17 checks, 0 failed
+ALL TESTS PASSED
+tb/tb_top.v:1655: $finish called at 2282445700 (1ps)

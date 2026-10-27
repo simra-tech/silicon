@@ -1,0 +1,1272 @@
+{
+ "run_id": "r1ctrl_20261027_v08b",
+ "command": "flow/run.sh sh sim/run_all.sh r1ctrl_20261027_v08b",
+ "container_image": "tapeoutbench-eda:latest (id pinned in flow/run.sh)",
+ "tools": {
+  "date_utc": "2026-10-27T12:07:48Z",
+  "iverilog": "Icarus Verilog version 14.0 (devel) (s20260301-328-geda9fdcd-dirty)",
+  "yosys": "Yosys 0.67 (git sha1 2d1509d1b, Release, GNU /usr/bin/c++ 13.3.0)",
+  "python": "3.12.3 numpy 2.5.1",
+  "pdk_commit": "84374023ee8b4b126bebbba67fcbada0a9c0ff0b",
+  "rtl_concat": "0ad07872c6b916f290193d4ef0e77e13e9d7f70da334c9818239f4167fae5244"
+ },
+ "pdk_commit": "84374023ee8b4b126bebbba67fcbada0a9c0ff0b",
+ "inputs": "inputs.sha256 (RTL, testbenches, scripts)",
+ "bulk_results": "$G1_RESULTS_ROOT/r1_ctrl/r1ctrl_20261027_v08b",
+ "question": "Does the r1_ctrl revision 0.8 RTL (D22: COS_GAIN, raw min/max capture, ID 0x5208) pass the whole revision-0.7 regression plus the new D22 tests (bit-exact model, chip-level d22), and what is its synthesized cell area?",
+ "result": {
+  "pos": {
+   "cal_neg": {
+    "case": "cal_neg",
+    "regs": {
+     "ofs_sin": -73,
+     "ofs_cos": -91,
+     "gain": 20570,
+     "ph_sin": 60010,
+     "ph_icos": 16622,
+     "h3_amp": 104,
+     "h3_ph": 143
+    },
+    "measured_vs_true_deg_el": {
+     "max_abs": 0.21527804337787226,
+     "rms": 0.16650771841477294,
+     "mean": -0.16555666886613013,
+     "max_abs_zeroed": 0.057516174316411844,
+     "rms_zeroed": 0.017771035018924717
+    },
+    "reference_vs_true_deg_el": {
+     "max_abs": 0.2118303987226772,
+     "rms": 0.16758913942163164,
+     "mean": -0.166691348363062,
+     "max_abs_zeroed": 0.05299378154920542,
+     "rms_zeroed": 0.01732379961173084
+    },
+    "rtl_vs_float_reference_deg_el": {
+     "max_abs": 0.021361428707053227,
+     "rms": 0.007111690526776801,
+     "mean": 0.0011346794969320096,
+     "max_abs_zeroed": 0.020226749210121218,
+     "rms_zeroed": 0.007020587196801206
+    },
+    "tracked_vs_true_deg_el_after_settle": {
+     "max_abs": 0.2023720375184366,
+     "rms": 0.1660871724277535,
+     "mean": -0.1655852333192648,
+     "max_abs_zeroed": 0.056344299316466936,
+     "rms_zeroed": 0.012902687768482952
+    },
+    "lock_pairs_to_0p5deg_from_reset": 43,
+    "velocity_lsb_per_tick": {
+     "true": -2.1845333333333334,
+     "mean": -2.191333333333333,
+     "rel_err": 0.003112792968749778
+    }
+   },
+   "cal_noise": {
+    "case": "cal_noise",
+    "regs": {
+     "ofs_sin": 73,
+     "ofs_cos": 91,
+     "gain": 13050,
+     "ph_sin": 5528,
+     "ph_icos": 16622,
+     "h3_amp": 104,
+     "h3_ph": 170
+    },
+    "measured_vs_true_deg_el": {
+     "max_abs": 0.20737332380968335,
+     "rms": 0.1259595379048549,
+     "mean": 0.12327778853136553,
+     "max_abs_zeroed": 0.08647819519040463,
+     "rms_zeroed": 0.025853279173453036
+    },
+    "reference_vs_true_deg_el": {
+     "max_abs": 0.20374466207574607,
+     "rms": 0.12437624325672071,
+     "mean": 0.12196241639085702,
+     "max_abs_zeroed": 0.08178224568488905,
+     "rms_zeroed": 0.024384808278068826
+    },
+    "rtl_vs_float_reference_deg_el": {
+     "max_abs": 0.02217766739561643,
+     "rms": 0.006994875825739605,
+     "mean": 0.0013153721405082697,
+     "max_abs_zeroed": 0.020980461510707985,
+     "rms_zeroed": 0.006870086167544846
+    },
+    "tracked_vs_true_deg_el_after_settle": {
+     "max_abs": 0.16799026716906734,
+     "rms": 0.12385488392060569,
+     "mean": 0.12272018660265434,
+     "max_abs_zeroed": 0.05523284912106263,
+     "rms_zeroed": 0.016726866747732723
+    },
+    "lock_pairs_to_0p5deg_from_reset": 41,
+    "velocity_lsb_per_tick": {
+     "true": 2.1845333333333334,
+     "mean": 2.162875,
+     "rel_err": -0.009914398193359375
+    }
+   },
+   "cal": {
+    "case": "cal",
+    "regs": {
+     "ofs_sin": 73,
+     "ofs_cos": 91,
+     "gain": 13049,
+     "ph_sin": 5524,
+     "ph_icos": 16622,
+     "h3_amp": 104,
+     "h3_ph": 170
+    },
+    "measured_vs_true_deg_el": {
+     "max_abs": 0.1732278159972073,
+     "rms": 0.1282007547216924,
+     "mean": 0.12713742293078018,
+     "max_abs_zeroed": 0.053841247558607655,
+     "rms_zeroed": 0.016477536276138863
+    },
+    "reference_vs_true_deg_el": {
+     "max_abs": 0.16159134187166124,
+     "rms": 0.12655467782861204,
+     "mean": 0.12579057727146994,
+     "max_abs_zeroed": 0.03597288812113708,
+     "rms_zeroed": 0.013885861515013727
+    },
+    "rtl_vs_float_reference_deg_el": {
+     "max_abs": 0.023336114880066632,
+     "rms": 0.006977057632379547,
+     "mean": 0.0013468456593092515,
+     "max_abs_zeroed": 0.02198926922075738,
+     "rms_zeroed": 0.006845826464025036
+    },
+    "tracked_vs_true_deg_el_after_settle": {
+     "max_abs": 0.161673128497223,
+     "rms": 0.12776467455897958,
+     "mean": 0.12703872908312308,
+     "max_abs_zeroed": 0.03463439941409993,
+     "rms_zeroed": 0.013600491833269113
+    },
+    "lock_pairs_to_0p5deg_from_reset": 40,
+    "velocity_lsb_per_tick": {
+     "true": 2.1845333333333334,
+     "mean": 2.1604375,
+     "rel_err": -0.011030197143554688
+    }
+   },
+   "cal_self": {
+    "case": "cal_self",
+    "regs": {
+     "ofs_sin": 73,
+     "ofs_cos": 91,
+     "gain": 13165,
+     "ph_sin": 5854,
+     "ph_icos": 16652,
+     "h3_amp": 104,
+     "h3_ph": 171
+    },
+    "measured_vs_true_deg_el": {
+     "max_abs": 0.554594449627854,
+     "rms": 0.3096289827620256,
+     "mean": -0.12137743912976734,
+     "max_abs_zeroed": 0.4462825012207198,
+     "rms_zeroed": 0.2848466679400452
+    },
+    "reference_vs_true_deg_el": {
+     "max_abs": 0.5452911881049728,
+     "rms": 0.309144302423207,
+     "mean": -0.12237783608274527,
+     "max_abs_zeroed": 0.4420135647627713,
+     "rms_zeroed": 0.2838905862413123
+    },
+    "rtl_vs_float_reference_deg_el": {
+     "max_abs": 0.02211671382508703,
+     "rms": 0.007277697240614303,
+     "mean": 0.001000396952977312,
+     "max_abs_zeroed": 0.021116316872109717,
+     "rms_zeroed": 0.007208611729211025
+    },
+    "tracked_vs_true_deg_el_after_settle": {
+     "max_abs": 0.545549771893497,
+     "rms": 0.3144504298094843,
+     "mean": -0.12146651994031475,
+     "max_abs_zeroed": 0.4312902832031286,
+     "rms_zeroed": 0.2900430267063122
+    },
+    "lock_pairs_to_0p5deg_from_reset": 45,
+    "velocity_lsb_per_tick": {
+     "true": 2.1845333333333334,
+     "mean": 2.1689583333333333,
+     "rel_err": -0.007129669189453125
+    }
+   },
+   "f22_100k_gap": {
+    "case": "f22_100k_gap",
+    "regs": {
+     "ofs_sin": 73,
+     "ofs_cos": 91,
+     "gain": 13049,
+     "ph_sin": 5524,
+     "ph_icos": 16622,
+     "h3_amp": 104,
+     "h3_ph": 170
+    },
+    "measured_vs_true_deg_el": {
+     "max_abs": 0.1605459312432894,
+     "rms": 0.12708168848624427,
+     "mean": 0.1260377830440476,
+     "max_abs_zeroed": 0.052741607673096436,
+     "rms_zeroed": 0.016255238966450355
+    },
+    "reference_vs_true_deg_el": {
+     "max_abs": 0.15044061486752833,
+     "rms": 0.12634240408612174,
+     "mean": 0.12565423667326162,
+     "max_abs_zeroed": 0.03569193317338888,
+     "rms_zeroed": 0.013168746193955763
+    },
+    "rtl_vs_float_reference_deg_el": {
+     "max_abs": 0.016666128128514448,
+     "rms": 0.0071400861974497435,
+     "mean": 0.0003835463707452269,
+     "max_abs_zeroed": 0.017049674499259676,
+     "rms_zeroed": 0.007129777211701674
+    },
+    "tracked_vs_true_deg_el_after_settle": {
+     "max_abs": 0.14135647812363486,
+     "rms": 0.1265950054386246,
+     "mean": 0.12648067245022296,
+     "max_abs_zeroed": 0.0161422607445625,
+     "rms_zeroed": 0.005379116892650143
+    },
+    "lock_pairs_to_0p5deg_from_reset": 122,
+    "velocity_lsb_per_tick": {
+     "true": 218.45333333333332,
+     "mean": 218.4375,
+     "rel_err": -7.247924804676398e-05
+    },
+    "count_safety": {
+     "pair_ticks": 22,
+     "frame_rate_hz": 1363636.3636363635,
+     "f_end_hz": 100000.0,
+     "deg_el_per_frame_end": 26.4,
+     "lock_pair": 122,
+     "max_abs_step_error_deg_el_after_lock": 0.034478759765655585,
+     "max_abs_error_deg_el_after_lock": 0.4984420654373414,
+     "multiturn_drift_counts_max": 0.0057493082682285035,
+     "multiturn_offset_end_counts": 0.005535716756278646,
+     "from_pair": 122,
+     "skip": 68,
+     "acc_hz_per_s": null,
+     "max_frame_gap_ticks": 44,
+     "frames_err_gt45deg_after_lock": 0,
+     "note": "one count = 90 deg el = 2^16 of the 18-bit position"
+    }
+   },
+   "f22_208k_gap": {
+    "case": "f22_208k_gap",
+    "regs": {
+     "ofs_sin": 73,
+     "ofs_cos": 91,
+     "gain": 13049,
+     "ph_sin": 5524,
+     "ph_icos": 16622,
+     "h3_amp": 104,
+     "h3_ph": 170
+    },
+    "measured_vs_true_deg_el": {
+     "max_abs": 0.1774260581873972,
+     "rms": 0.12727884988669175,
+     "mean": 0.12611750888734616,
+     "max_abs_zeroed": 0.05130854930005105,
+     "rms_zeroed": 0.017154578995975833
+    },
+    "reference_vs_true_deg_el": {
+     "max_abs": 0.1658679283161874,
+     "rms": 0.12583241345944307,
+     "mean": 0.12505103334239936,
+     "max_abs_zeroed": 0.04081689497378804,
+     "rms_zeroed": 0.014001261979777151
+    },
+    "rtl_vs_float_reference_deg_el": {
+     "max_abs": 0.02307193139735231,
+     "rms": 0.00737467171618439,
+     "mean": 0.0010664755451191437,
+     "max_abs_zeroed": 0.022005455852233166,
+     "rms_zeroed": 0.007297151007972416
+    },
+    "tracked_vs_true_deg_el_after_settle": {
+     "max_abs": 0.14644754255577289,
+     "rms": 0.1269100751326358,
+     "mean": 0.12678859939056342,
+     "max_abs_zeroed": 0.01965894316520947,
+     "rms_zeroed": 0.005551417364104663
+    },
+    "lock_pairs_to_0p5deg_from_reset": 1518,
+    "velocity_lsb_per_tick": {
+     "true": 454.38293333333337,
+     "mean": 454.375,
+     "rel_err": -1.7459575946565664e-05
+    },
+    "count_safety": {
+     "pair_ticks": 22,
+     "frame_rate_hz": 1363636.3636363635,
+     "f_end_hz": 208000.0,
+     "deg_el_per_frame_end": 54.912,
+     "lock_pair": 1518,
+     "max_abs_step_error_deg_el_after_lock": 0.78171240625037,
+     "max_abs_error_deg_el_after_lock": 4.610247471075577,
+     "multiturn_drift_counts_max": 0.04257781721116416,
+     "multiturn_offset_end_counts": 0.04236245454007175,
+     "from_pair": 200,
+     "skip": 68,
+     "acc_hz_per_s": null,
+     "max_frame_gap_ticks": 44,
+     "frames_err_gt45deg_after_lock": 0,
+     "note": "one count = 90 deg el = 2^16 of the 18-bit position"
+    }
+   },
+   "f22_250k_a2x_gap": {
+    "case": "f22_250k_a2x_gap",
+    "regs": {
+     "ofs_sin": 73,
+     "ofs_cos": 91,
+     "gain": 13049,
+     "ph_sin": 5524,
+     "ph_icos": 16622,
+     "h3_amp": 104,
+     "h3_ph": 170
+    },
+    "measured_vs_true_deg_el": {
+     "max_abs": 0.1732278159972073,
+     "rms": 0.12676856487825885,
+     "mean": 0.12568753673046798,
+     "max_abs_zeroed": 0.05239136135829546,
+     "rms_zeroed": 0.01652005302414547
+    },
+    "reference_vs_true_deg_el": {
+     "max_abs": 0.1623212799858898,
+     "rms": 0.12617363553961433,
+     "mean": 0.12544103187507896,
+     "max_abs_zeroed": 0.03688024811081084,
+     "rms_zeroed": 0.01357695943128835
+    },
+    "rtl_vs_float_reference_deg_el": {
+     "max_abs": 0.020627647017907768,
+     "rms": 0.007089441725989513,
+     "mean": 0.0002465048546301006,
+     "max_abs_zeroed": 0.020381142163277667,
+     "rms_zeroed": 0.007085154856659448
+    },
+    "tracked_vs_true_deg_el_after_settle": {
+     "max_abs": 0.13917752303592662,
+     "rms": 0.1261368654245979,
+     "mean": 0.1260777306023504,
+     "max_abs_zeroed": 0.01309979243357623,
+     "rms_zeroed": 0.0038619509712415684
+    },
+    "lock_pairs_to_0p5deg_from_reset": 514,
+    "velocity_lsb_per_tick": {
+     "true": 546.1333333333333,
+     "mean": 546.125,
+     "rel_err": -1.52587890625e-05
+    },
+    "count_safety": {
+     "pair_ticks": 22,
+     "frame_rate_hz": 1363636.3636363635,
+     "f_end_hz": 250000.0,
+     "deg_el_per_frame_end": 66.0,
+     "lock_pair": 514,
+     "max_abs_step_error_deg_el_after_lock": 50.325988769530866,
+     "max_abs_error_deg_el_after_lock": 90.37947833257351,
+     "multiturn_drift_counts_max": 1.0041392822265571,
+     "multiturn_offset_end_counts": 7.729593908337051e-05,
+     "from_pair": 200,
+     "skip": 68,
+     "acc_hz_per_s": 4000000000.0,
+     "max_frame_gap_ticks": 44,
+     "frames_err_gt45deg_after_lock": 102,
+     "note": "one count = 90 deg el = 2^16 of the 18-bit position"
+    }
+   },
+   "f22_250k_alim_gap": {
+    "case": "f22_250k_alim_gap",
+    "regs": {
+     "ofs_sin": 73,
+     "ofs_cos": 91,
+     "gain": 13049,
+     "ph_sin": 5524,
+     "ph_icos": 16622,
+     "h3_amp": 104,
+     "h3_ph": 170
+    },
+    "measured_vs_true_deg_el": {
+     "max_abs": 0.1732278159972073,
+     "rms": 0.1300685687536415,
+     "mean": 0.129041131831614,
+     "max_abs_zeroed": 0.05574495645944148,
+     "rms_zeroed": 0.016316215040161185
+    },
+    "reference_vs_true_deg_el": {
+     "max_abs": 0.1623212799858898,
+     "rms": 0.1285274105579936,
+     "mean": 0.12780649330322913,
+     "max_abs_zeroed": 0.03807661710451807,
+     "rms_zeroed": 0.013593952121244634
+    },
+    "rtl_vs_float_reference_deg_el": {
+     "max_abs": 0.020627647017907768,
+     "rms": 0.006765429721530958,
+     "mean": 0.001234638528057801,
+     "max_abs_zeroed": 0.019393008489849966,
+     "rms_zeroed": 0.00665181982783732
+    },
+    "tracked_vs_true_deg_el_after_settle": {
+     "max_abs": 0.14373684920016697,
+     "rms": 0.1300387030205767,
+     "mean": 0.1299415687404393,
+     "max_abs_zeroed": 0.013795280459727666,
+     "rms_zeroed": 0.005025235969328139
+    },
+    "lock_pairs_to_0p5deg_from_reset": 533,
+    "velocity_lsb_per_tick": {
+     "true": 546.1333333333333,
+     "mean": 546.125,
+     "rel_err": -1.52587890625e-05
+    },
+    "count_safety": {
+     "pair_ticks": 22,
+     "frame_rate_hz": 1363636.3636363635,
+     "f_end_hz": 250000.0,
+     "deg_el_per_frame_end": 66.0,
+     "lock_pair": 533,
+     "max_abs_step_error_deg_el_after_lock": 42.24555639648337,
+     "max_abs_error_deg_el_after_lock": 79.7160416336018,
+     "multiturn_drift_counts_max": 0.8856137207031161,
+     "multiturn_offset_end_counts": 0.00012154642737257859,
+     "from_pair": 200,
+     "skip": 68,
+     "acc_hz_per_s": 2500000000.0,
+     "max_frame_gap_ticks": 44,
+     "frames_err_gt45deg_after_lock": 78,
+     "note": "one count = 90 deg el = 2^16 of the 18-bit position"
+    }
+   },
+   "f22_250k_amax_gap": {
+    "case": "f22_250k_amax_gap",
+    "regs": {
+     "ofs_sin": 73,
+     "ofs_cos": 91,
+     "gain": 13050,
+     "ph_sin": 5526,
+     "ph_icos": 16622,
+     "h3_amp": 104,
+     "h3_ph": 170
+    },
+    "measured_vs_true_deg_el": {
+     "max_abs": 0.21415921248957046,
+     "rms": 0.1277336054332398,
+     "mean": 0.12501893353988325,
+     "max_abs_zeroed": 0.09845127379713442,
+     "rms_zeroed": 0.026194278259284814
+    },
+    "reference_vs_true_deg_el": {
+     "max_abs": 0.20369036062347584,
+     "rms": 0.12570849877202173,
+     "mean": 0.12354745421822738,
+     "max_abs_zeroed": 0.08932599438938521,
+     "rms_zeroed": 0.0232089038886027
+    },
+    "rtl_vs_float_reference_deg_el": {
+     "max_abs": 0.021880809385496847,
+     "rms": 0.007903137024344791,
+     "mean": 0.0014714793219239024,
+     "max_abs_zeroed": 0.021019835188989203,
+     "rms_zeroed": 0.007764941946384391
+    },
+    "tracked_vs_true_deg_el_after_settle": {
+     "max_abs": 0.15931912459262634,
+     "rms": 0.12603018790096823,
+     "mean": 0.1256597550923912,
+     "max_abs_zeroed": 0.03365936950023515,
+     "rms_zeroed": 0.00965578647618267
+    },
+    "lock_pairs_to_0p5deg_from_reset": 531,
+    "velocity_lsb_per_tick": {
+     "true": 546.1333333333333,
+     "mean": 546.1249084919473,
+     "rel_err": -1.5426345311375655e-05
+    },
+    "count_safety": {
+     "pair_ticks": 22,
+     "frame_rate_hz": 1363636.3636363635,
+     "f_end_hz": 250000.0,
+     "deg_el_per_frame_end": 66.0,
+     "lock_pair": 531,
+     "max_abs_step_error_deg_el_after_lock": 9.116709130858382,
+     "max_abs_error_deg_el_after_lock": 53.66663740784379,
+     "multiturn_drift_counts_max": 0.596223471679675,
+     "multiturn_offset_end_counts": 8.660380040581117e-05,
+     "from_pair": 200,
+     "skip": 68,
+     "acc_hz_per_s": 2000000000.0,
+     "max_frame_gap_ticks": 44,
+     "frames_err_gt45deg_after_lock": 14,
+     "note": "one count = 90 deg el = 2^16 of the 18-bit position"
+    }
+   },
+   "f22_250k_gap": {
+    "case": "f22_250k_gap",
+    "regs": {
+     "ofs_sin": 73,
+     "ofs_cos": 91,
+     "gain": 13049,
+     "ph_sin": 5524,
+     "ph_icos": 16622,
+     "h3_amp": 104,
+     "h3_ph": 170
+    },
+    "measured_vs_true_deg_el": {
+     "max_abs": 0.18045902693486796,
+     "rms": 0.12771090192267165,
+     "mean": 0.1265790964957149,
+     "max_abs_zeroed": 0.05387993043915307,
+     "rms_zeroed": 0.01696486959073845
+    },
+    "reference_vs_true_deg_el": {
+     "max_abs": 0.16765653994046195,
+     "rms": 0.1260997036126603,
+     "mean": 0.12534478876571645,
+     "max_abs_zeroed": 0.042311751174745504,
+     "rms_zeroed": 0.01377748817741078
+    },
+    "rtl_vs_float_reference_deg_el": {
+     "max_abs": 0.022885287366633752,
+     "rms": 0.006935291315447366,
+     "mean": 0.0012343077304289695,
+     "max_abs_zeroed": 0.021650979636204784,
+     "rms_zeroed": 0.0068245695876533435
+    },
+    "tracked_vs_true_deg_el_after_settle": {
+     "max_abs": 0.13817044297089529,
+     "rms": 0.1273123113924081,
+     "mean": 0.1272339662318496,
+     "max_abs_zeroed": 0.011493943225251005,
+     "rms_zeroed": 0.004465699160269847
+    },
+    "lock_pairs_to_0p5deg_from_reset": 1522,
+    "velocity_lsb_per_tick": {
+     "true": 546.1333333333333,
+     "mean": 546.125,
+     "rel_err": -1.52587890625e-05
+    },
+    "count_safety": {
+     "pair_ticks": 22,
+     "frame_rate_hz": 1363636.3636363635,
+     "f_end_hz": 250000.0,
+     "deg_el_per_frame_end": 66.0,
+     "lock_pair": 1522,
+     "max_abs_step_error_deg_el_after_lock": 0.955643886719246,
+     "max_abs_error_deg_el_after_lock": 5.631281777010616,
+     "multiturn_drift_counts_max": 0.05211760570573176,
+     "multiturn_offset_end_counts": 0.05200089122789848,
+     "from_pair": 200,
+     "skip": 68,
+     "acc_hz_per_s": null,
+     "max_frame_gap_ticks": 44,
+     "frames_err_gt45deg_after_lock": 0,
+     "note": "one count = 90 deg el = 2^16 of the 18-bit position"
+    }
+   },
+   "f22_250k": {
+    "case": "f22_250k",
+    "regs": {
+     "ofs_sin": 73,
+     "ofs_cos": 91,
+     "gain": 13049,
+     "ph_sin": 5524,
+     "ph_icos": 16622,
+     "h3_amp": 104,
+     "h3_ph": 170
+    },
+    "measured_vs_true_deg_el": {
+     "max_abs": 0.18045902693486796,
+     "rms": 0.1277368502932115,
+     "mean": 0.12660083936936714,
+     "max_abs_zeroed": 0.053858187565500815,
+     "rms_zeroed": 0.01699795263559782
+    },
+    "reference_vs_true_deg_el": {
+     "max_abs": 0.16765653994046195,
+     "rms": 0.12612326532730933,
+     "mean": 0.1253648096049659,
+     "max_abs_zeroed": 0.04229173033549605,
+     "rms_zeroed": 0.013810958313365483
+    },
+    "rtl_vs_float_reference_deg_el": {
+     "max_abs": 0.022885287366633752,
+     "rms": 0.006944183678565225,
+     "mean": 0.0012360297648255324,
+     "max_abs_zeroed": 0.02164925760180822,
+     "rms_zeroed": 0.006833294767688351
+    },
+    "tracked_vs_true_deg_el_after_settle": {
+     "max_abs": 0.13817044296845263,
+     "rms": 0.12732026825492865,
+     "mean": 0.12724202192229567,
+     "max_abs_zeroed": 0.01092842104615696,
+     "rms_zeroed": 0.004463022029188381
+    },
+    "lock_pairs_to_0p5deg_from_reset": 1544,
+    "velocity_lsb_per_tick": {
+     "true": 546.1333333333333,
+     "mean": 546.125,
+     "rel_err": -1.52587890625e-05
+    },
+    "count_safety": {
+     "pair_ticks": 22,
+     "frame_rate_hz": 1363636.3636363635,
+     "f_end_hz": 250000.0,
+     "deg_el_per_frame_end": 66.0,
+     "lock_pair": 1544,
+     "max_abs_step_error_deg_el_after_lock": 0.17065429687544753,
+     "max_abs_error_deg_el_after_lock": 4.686548553403645,
+     "multiturn_drift_counts_max": 0.05217123287587455,
+     "multiturn_offset_end_counts": 0.052051019049080056,
+     "from_pair": 200,
+     "skip": 0,
+     "acc_hz_per_s": null,
+     "max_frame_gap_ticks": 22,
+     "frames_err_gt45deg_after_lock": 0,
+     "note": "one count = 90 deg el = 2^16 of the 18-bit position"
+    }
+   },
+   "fast_100k": {
+    "case": "fast_100k",
+    "regs": {
+     "ofs_sin": 73,
+     "ofs_cos": 91,
+     "gain": 13049,
+     "ph_sin": 5524,
+     "ph_icos": 16622,
+     "h3_amp": 104,
+     "h3_ph": 170
+    },
+    "measured_vs_true_deg_el": {
+     "max_abs": 0.12526150742223988,
+     "rms": 0.11378815635833936,
+     "mean": 0.1134512046739022,
+     "max_abs_zeroed": 0.01565551758508371,
+     "rms_zeroed": 0.00875035344830356
+    },
+    "reference_vs_true_deg_el": {
+     "max_abs": 0.1249624503523141,
+     "rms": 0.11597897837319283,
+     "mean": 0.11577934239873877,
+     "max_abs_zeroed": 0.015255840143608299,
+     "rms_zeroed": 0.006802006924808113
+    },
+    "rtl_vs_float_reference_deg_el": {
+     "max_abs": 0.008370945681770455,
+     "rms": 0.0042193342495066505,
+     "mean": -0.0023281377247468837,
+     "max_abs_zeroed": 0.006042807957023572,
+     "rms_zeroed": 0.003518885653679338
+    },
+    "tracked_vs_true_deg_el_after_settle": {
+     "max_abs": 0.11813870468767362,
+     "rms": 0.11394084776839188,
+     "mean": 0.11391079940168156,
+     "max_abs_zeroed": 0.004227905285992067,
+     "rms_zeroed": 0.002616595087078018
+    },
+    "lock_pairs_to_0p5deg_from_reset": 98,
+    "velocity_lsb_per_tick": {
+     "true": 218.45333333333332,
+     "mean": 218.4375,
+     "rel_err": -7.247924804676398e-05
+    }
+   },
+   "fast_k0": {
+    "case": "fast_k0",
+    "regs": {
+     "ofs_sin": 73,
+     "ofs_cos": 91,
+     "gain": 13049,
+     "ph_sin": 5524,
+     "ph_icos": 16622,
+     "h3_amp": 104,
+     "h3_ph": 170
+    },
+    "measured_vs_true_deg_el": {
+     "max_abs": 0.1627065757704227,
+     "rms": 0.12698533423975025,
+     "mean": 0.12603970564676767,
+     "max_abs_zeroed": 0.03666687012365502,
+     "rms_zeroed": 0.015468280850089649
+    },
+    "reference_vs_true_deg_el": {
+     "max_abs": 0.15189563786388277,
+     "rms": 0.12585052726097956,
+     "mean": 0.12547601717995432,
+     "max_abs_zeroed": 0.026419620683928446,
+     "rms_zeroed": 0.00970176914394293
+    },
+    "rtl_vs_float_reference_deg_el": {
+     "max_abs": 0.011332348160994873,
+     "rms": 0.007828846423110781,
+     "mean": 0.0005636884665847699,
+     "max_abs_zeroed": 0.011450266210568175,
+     "rms_zeroed": 0.0078085268539778855
+    },
+    "tracked_vs_true_deg_el_after_settle": {
+     "max_abs": 0.13428860701909032,
+     "rms": 0.1265329327079683,
+     "mean": 0.1264608482252651,
+     "max_abs_zeroed": 0.009475708010278305,
+     "rms_zeroed": 0.004270471382142778
+    },
+    "lock_pairs_to_0p5deg_from_reset": 72,
+    "velocity_lsb_per_tick": {
+     "true": 109.22666666666666,
+     "mean": 109.21875,
+     "rel_err": -7.247924804676398e-05
+    }
+   },
+   "fast_k30": {
+    "case": "fast_k30",
+    "regs": {
+     "ofs_sin": 73,
+     "ofs_cos": 91,
+     "gain": 13049,
+     "ph_sin": 5524,
+     "ph_icos": 16622,
+     "h3_amp": 104,
+     "h3_ph": 170
+    },
+    "measured_vs_true_deg_el": {
+     "max_abs": 0.1627065757704227,
+     "rms": 0.12698533423975025,
+     "mean": 0.12603970564676767,
+     "max_abs_zeroed": 0.03666687012365502,
+     "rms_zeroed": 0.015468280850089649
+    },
+    "reference_vs_true_deg_el": {
+     "max_abs": 0.15189563786388277,
+     "rms": 0.12585052726097956,
+     "mean": 0.12547601717995432,
+     "max_abs_zeroed": 0.026419620683928446,
+     "rms_zeroed": 0.00970176914394293
+    },
+    "rtl_vs_float_reference_deg_el": {
+     "max_abs": 0.011332348160994873,
+     "rms": 0.007828846423110781,
+     "mean": 0.0005636884665847699,
+     "max_abs_zeroed": 0.011450266210568175,
+     "rms_zeroed": 0.0078085268539778855
+    },
+    "tracked_vs_true_deg_el_after_settle": {
+     "max_abs": 0.13401394882012846,
+     "rms": 0.12569131213178442,
+     "mean": 0.12560025252191312,
+     "max_abs_zeroed": 0.00888977051199484,
+     "rms_zeroed": 0.0047835668534383135
+    },
+    "lock_pairs_to_0p5deg_from_reset": 73,
+    "velocity_lsb_per_tick": {
+     "true": 109.22666666666666,
+     "mean": 109.21875,
+     "rel_err": -7.247924804676398e-05
+    }
+   },
+   "ideal": {
+    "case": "ideal",
+    "regs": {
+     "ofs_sin": 0,
+     "ofs_cos": 0,
+     "gain": 16384,
+     "ph_sin": 0,
+     "ph_icos": 16384,
+     "h3_amp": 0,
+     "h3_ph": 0
+    },
+    "measured_vs_true_deg_el": {
+     "max_abs": 0.028788785565317433,
+     "rms": 0.012152673498046922,
+     "mean": 0.0006875327940608641,
+     "max_abs_zeroed": 0.029476318359378296,
+     "rms_zeroed": 0.012133209460288029
+    },
+    "reference_vs_true_deg_el": {
+     "max_abs": 0.027921124980325077,
+     "rms": 0.012056908766541316,
+     "mean": 6.412393874903606e-05,
+     "max_abs_zeroed": 0.027985248919074113,
+     "rms_zeroed": 0.012056738245693987
+    },
+    "rtl_vs_float_reference_deg_el": {
+     "max_abs": 0.007055859452115193,
+     "rms": 0.0021264006595202683,
+     "mean": 0.000623408855312884,
+     "max_abs_zeroed": 0.006432450596802309,
+     "rms_zeroed": 0.0020329636405813337
+    },
+    "tracked_vs_true_deg_el_after_settle": {
+     "max_abs": 0.020246126544046665,
+     "rms": 0.0054630166568894484,
+     "mean": 0.0012672447081226454,
+     "max_abs_zeroed": 0.01897888183592402,
+     "rms_zeroed": 0.005314004313433206
+    },
+    "lock_pairs_to_0p5deg_from_reset": 40,
+    "velocity_lsb_per_tick": {
+     "true": 2.1845333333333334,
+     "mean": 2.158541666666667,
+     "rel_err": -0.011898040771484375
+    }
+   },
+   "uncal": {
+    "case": "uncal",
+    "regs": {
+     "ofs_sin": 0,
+     "ofs_cos": 0,
+     "gain": 16384,
+     "ph_sin": 0,
+     "ph_icos": 16384,
+     "h3_amp": 0,
+     "h3_ph": 0
+    },
+    "measured_vs_true_deg_el": {
+     "max_abs": 13.946413851153467,
+     "rms": 8.477271608385347,
+     "mean": 5.536967440020624,
+     "max_abs_zeroed": 12.447965698242179,
+     "rms_zeroed": 6.41919975468031
+    },
+    "reference_vs_true_deg_el": {
+     "max_abs": 13.943428968402023,
+     "rms": 8.476863623851887,
+     "mean": 5.536440599360823,
+     "max_abs_zeroed": 12.44640110006763,
+     "rms_zeroed": 6.419115389766139
+    },
+    "rtl_vs_float_reference_deg_el": {
+     "max_abs": 0.008807499669557264,
+     "rms": 0.002669722902419855,
+     "mean": 0.0005268406597994441,
+     "max_abs_zeroed": 0.008280659009757819,
+     "rms_zeroed": 0.0026172235851923656
+    },
+    "tracked_vs_true_deg_el_after_settle": {
+     "max_abs": 14.007852327715957,
+     "rms": 8.83112092617106,
+     "mean": 6.428699495684685,
+     "max_abs_zeroed": 13.455809326171902,
+     "rms_zeroed": 6.054793110159909
+    },
+    "lock_pairs_to_0p5deg_from_reset": 2000,
+    "velocity_lsb_per_tick": {
+     "true": 2.1845333333333334,
+     "mean": 2.1774375,
+     "rel_err": -0.0032482147216797985
+    }
+   }
+  },
+  "top": {
+   "top_ana_33.333.log": {
+    "checks": 9,
+    "failed": 0,
+    "passed": true
+   },
+   "top_biss_23.810.log": {
+    "checks": 48,
+    "failed": 0,
+    "passed": true
+   },
+   "top_biss_33.333.log": {
+    "checks": 48,
+    "failed": 0,
+    "passed": true
+   },
+   "top_biss_47.619.log": {
+    "checks": 48,
+    "failed": 0,
+    "passed": true
+   },
+   "top_cal_23.810.log": {
+    "checks": 32,
+    "failed": 0,
+    "passed": true
+   },
+   "top_cal_33.333.log": {
+    "checks": 32,
+    "failed": 0,
+    "passed": true
+   },
+   "top_cdc_23.810.log": {
+    "checks": 4,
+    "failed": 0,
+    "passed": true
+   },
+   "top_cdc_33.333.log": {
+    "checks": 4,
+    "failed": 0,
+    "passed": true
+   },
+   "top_cdc_47.619.log": {
+    "checks": 4,
+    "failed": 0,
+    "passed": true
+   },
+   "top_d22_23.810.log": {
+    "checks": 17,
+    "failed": 0,
+    "passed": true
+   },
+   "top_d22_33.333.log": {
+    "checks": 17,
+    "failed": 0,
+    "passed": true
+   },
+   "top_d22_47.619.log": {
+    "checks": 17,
+    "failed": 0,
+    "passed": true
+   },
+   "top_disc_33.333.log": {
+    "checks": 14,
+    "failed": 0,
+    "passed": true
+   },
+   "top_gate_33.333.log": {
+    "checks": 22,
+    "failed": 0,
+    "passed": true
+   },
+   "top_safe_33.333.log": {
+    "checks": 32,
+    "failed": 0,
+    "passed": true
+   },
+   "top_spi_33.333.log": {
+    "checks": 27,
+    "failed": 0,
+    "passed": true
+   },
+   "top_ssi_23.810.log": {
+    "checks": 9,
+    "failed": 0,
+    "passed": true
+   },
+   "top_ssi_33.333.log": {
+    "checks": 9,
+    "failed": 0,
+    "passed": true
+   },
+   "top_ssi_47.619.log": {
+    "checks": 9,
+    "failed": 0,
+    "passed": true
+   },
+   "top_tap_23.810.log": {
+    "checks": 5,
+    "failed": 0,
+    "passed": true
+   },
+   "top_tap_33.333.log": {
+    "checks": 5,
+    "failed": 0,
+    "passed": true
+   },
+   "top_v07_23.810.log": {
+    "checks": 36,
+    "failed": 0,
+    "passed": true
+   },
+   "top_v07_33.333.log": {
+    "checks": 40,
+    "failed": 0,
+    "passed": true
+   },
+   "top_v07_47.619.log": {
+    "checks": 40,
+    "failed": 0,
+    "passed": true
+   }
+  },
+  "syn": {
+   "cell_area_um2": 236729.7576,
+   "seq_area_um2": 99692.208,
+   "cells": 15914,
+   "flops": 2158,
+   "kGE_nand2": 32.6181875,
+   "ratio_cell_area_to_0p18mm2": 1.31516532,
+   "macro_est_um2_at_g1_ratio": 361811.6017849899,
+   "per_block_um2_incl_children": {
+    "r1_ctrl_top (glue)": 5241.6504,
+    "r1_biss": 16515.6138,
+    "r1_idrom": 179.6256,
+    "r1_regs": 66367.917,
+    "r1_sync2": 97.9776,
+    "r1_cmpcal": 11605.6962,
+    "r1_gate": 40195.2726,
+    "r1_pos": 65953.4778,
+    "r1_safe": 23017.4028,
+    "r1_spi": 6131.727000000001,
+    "r1_tapidx": 7364.5362
+   },
+   "hier_total_um2": 242670.897
+  },
+  "adcw": {
+   "array_full_scale_lsb": 4092.7920915811737,
+   "nom": {
+    "max_abs_dnl": 3.375,
+    "max_abs_inl": 4.019526057661551,
+    "missing_codes": 6,
+    "ramp_step_lsb": 0.0625,
+    "n": 65536,
+    "mismatches_vs_model": 0,
+    "missing_code_range": [
+     1,
+     4092
+    ]
+   },
+   "cal": {
+    "max_abs_dnl": 0.4375,
+    "max_abs_inl": 0.5972811974947945,
+    "missing_codes": 0,
+    "ramp_step_lsb": 0.0625,
+    "n": 65536,
+    "mismatches_vs_model": 0,
+    "missing_code_range": [
+     1,
+     4092
+    ]
+   },
+   "ideal_quantiser": {
+    "max_abs_dnl": 0.0,
+    "max_abs_inl": 0.0,
+    "missing_codes": 0,
+    "ramp_step_lsb": 0.0625
+   },
+   "model_weight_resolution_sweep": {
+    "exact": {
+     "max_abs_dnl": 0.375,
+     "max_abs_inl": 0.30891179839633764,
+     "missing_codes": 1,
+     "ramp_step_lsb": 0.0625
+    },
+    "1/2_lsb": {
+     "max_abs_dnl": 0.6875,
+     "max_abs_inl": 0.9614174431036417,
+     "missing_codes": 1,
+     "ramp_step_lsb": 0.0625
+    },
+    "1/4_lsb": {
+     "max_abs_dnl": 0.4375,
+     "max_abs_inl": 0.5972811974947945,
+     "missing_codes": 1,
+     "ramp_step_lsb": 0.0625
+    },
+    "1/8_lsb": {
+     "max_abs_dnl": 0.375,
+     "max_abs_inl": 0.3312967771498734,
+     "missing_codes": 1,
+     "ramp_step_lsb": 0.0625
+    },
+    "1/16_lsb": {
+     "max_abs_dnl": 0.375,
+     "max_abs_inl": 0.28403207331052727,
+     "missing_codes": 1,
+     "ramp_step_lsb": 0.0625
+    }
+   },
+   "checks": {
+    "rtl_bit_exact": true,
+    "mismatch_example_shows_error_with_nominal_weights": true,
+    "calibrated_no_missing_dnl_lt_1_inl_le_1": true
+   },
+   "passed": true
+  },
+  "cmpcal": {
+   "model": "passed: implemented search (half-code CAL_IDEAL) vs r1_safe cal_model on 274 comparator samples: exact 274, within 1 code 274, EXH mismatches 0, initial-state dependence 0; brief wording (6-bit integer CAL_IDEAL): exact 171, within 1 274. cal_model stored k_cal reproduced on 214/214, transient in-sample k_cal reproduced on 60/60",
+   "rtl": "passed: RTL (tb_top +test=calmc) vs Python model of the search: 274/274 identical (code and EXH); RTL vs r1_safe cal_model within 1 code: 274/274",
+   "agreement": {
+    "half": {
+     "n": 274,
+     "exact": 274,
+     "within1": 274,
+     "worse": [],
+     "s0_s1_differ": 0,
+     "exh_mismatch": 0,
+     "krel_ktrip_mismatch": 0
+    },
+    "int6": {
+     "n": 274,
+     "exact": 171,
+     "within1": 274,
+     "worse": [],
+     "s0_s1_differ": 0,
+     "exh_mismatch": 0,
+     "krel_ktrip_mismatch": 0
+    }
+   },
+   "reference_checks": {
+    "stored_vs_recomputed_mismatch": 0,
+    "stored_compared": 214,
+    "transient_vs_recomputed_mismatch": 0,
+    "transient_compared": 60
+   },
+   "inputs_sha256": {
+    "cal-model-20261020-r3": "66bd0da552bad8d4566a9c1384792535585629e0a8f704459a415d289e021519",
+    "cal-model-corner-20261020-r3": "33b6c9da439517e4f0021ec9de061ae1be0c54c009ef9a0940caad83db71bc99",
+    "safe-dcmc-20261020-r3rppd": "6efdbb7dd13b1b68bc248fb459333047e72205afb7e31d051573684ca5916ad5",
+    "safe-dcmc-20261020-r3": "bc8a063933c4dc1817c79c680452b40464d11049855dbbdb9d311717c4eea350",
+    "safe-dccorner-20261020-r3": "dde402f404e6155fc6b6f5f7beaf84816c6ebc191dfbab507079d74884f0101a",
+    "safe-mc-20261020-r3": "7c7fc6fbf7b59e2dd6dced94cdb4bab8508a65808247cd8cc55ce95f34326fc2"
+   }
+  },
+  "tapidx": {
+   "samples": 16384,
+   "oc_pairs": 4096,
+   "neg_pairs": 4096,
+   "mismatches": 0,
+   "first_mismatches": [],
+   "clipped_samples_oc": 312,
+   "clipped_samples_neg": 312,
+   "identity_failures": 0,
+   "disposition": "passed"
+  },
+  "sdc_ports": {
+   "ports": 30,
+   "bits": 128,
+   "unconstrained": [],
+   "stale": [],
+   "disposition": "passed"
+  },
+  "yosys_check": {
+   "problems": [
+    "0"
+   ],
+   "warnings": 0
+  },
+  "d22": {
+   "model": "tb/d22_ref.py (integer model of rtl/r1_pos.v)",
+   "n": 4096,
+   "cases": {
+    "raw": {
+     "points": 4096,
+     "mismatches": 0,
+     "first_mismatch": [],
+     "bit_exact": true,
+     "regs": {
+      "sin_ofs": "0x0",
+      "cos_ofs": "0x0",
+      "sin_gain": "0x4000",
+      "cos_gain": "0x4000",
+      "ph_sin": "0x0",
+      "ph_icos": "0x4000",
+      "h3": "0x0"
+     },
+     "pos_err_deg_el": {
+      "max_abs": 3.647186279296875,
+      "mean": 0.0006547272205289015,
+      "pk_pk": 5.68267822265625,
+      "max_abs_minus_mean": 3.646531552076346
+     },
+     "amplitude_lsb": {
+      "min": 1570,
+      "max": 1755
+     }
+    },
+    "cor": {
+     "points": 4096,
+     "mismatches": 0,
+     "first_mismatch": [],
+     "bit_exact": true,
+     "regs": {
+      "sin_ofs": "0x39",
+      "cos_ofs": "0xfc7",
+      "sin_gain": "0x3f12",
+      "cos_gain": "0x40f5",
+      "ph_sin": "0x0",
+      "ph_icos": "0x4000",
+      "h3": "0x0"
+     },
+     "pos_err_deg_el": {
+      "max_abs": 0.029937744140625,
+      "mean": 0.0006580799817975172,
+      "pk_pk": 0.05493164062505684,
+      "max_abs_minus_mean": 0.029279664158827483
+     },
+     "amplitude_lsb": {
+      "min": 1661,
+      "max": 1663
+     }
+    },
+    "sat": {
+     "points": 4096,
+     "mismatches": 0,
+     "first_mismatch": [],
+     "bit_exact": true,
+     "regs": {
+      "sin_ofs": "0x800",
+      "cos_ofs": "0x7ff",
+      "sin_gain": "0xffff",
+      "cos_gain": "0xffff",
+      "ph_sin": "0x7fff",
+      "ph_icos": "0xffff",
+      "h3": "0xff80"
+     }
+    },
+    "full": {
+     "points": 4096,
+     "mismatches": 0,
+     "first_mismatch": [],
+     "bit_exact": true,
+     "regs": {
+      "sin_ofs": "0x8a6",
+      "cos_ofs": "0x618",
+      "sin_gain": "0x4e87",
+      "cos_gain": "0x3327",
+      "ph_sin": "0xc387",
+      "ph_icos": "0x3f7f",
+      "h3": "0x1426"
+     }
+    },
+    "lo": {
+     "points": 4096,
+     "mismatches": 0,
+     "first_mismatch": [],
+     "bit_exact": true,
+     "regs": {
+      "sin_ofs": "0x7ff",
+      "cos_ofs": "0x800",
+      "sin_gain": "0x3000",
+      "cos_gain": "0x0",
+      "ph_sin": "0x0",
+      "ph_icos": "0x4000",
+      "h3": "0x0"
+     }
+    }
+   },
+   "stimulus": {
+    "amp_lsb": 1638.0,
+    "ofs_sin_lsb": 57.0,
+    "ofs_cos_lsb": -57.0,
+    "ofs_mv": 25.048828125,
+    "gain_sin": 1.03,
+    "gain_cos": 1.0,
+    "minmax": {
+     "sin_min": 418,
+     "sin_max": 3792,
+     "cos_min": 353,
+     "cos_max": 3629
+    }
+   },
+   "criteria": "bit-exact all cases; raw max error > 1 deg el; cor max error <= 0.05 deg el",
+   "passed": true
+  }
+ },
+ "disposition": "simulation checks passed; cell area 0.237 mm2 = 1.32 x the 0.18 mm2 budget (before placement)"
+}

@@ -22,10 +22,17 @@
 // unless TRIM_UNLK is set. TRIM_UNLK is set by an SPI read of OSC_COUNT that returns a
 // completed count inside OSC_WIN (osc_meas_ok, from the top level) and cleared by every
 // accepted write that changes OSC_TRIM.
+// Revision 0.8 (PLAN.md D22): COS_GAIN (0x3F, Q2.14, reset 0x4000 = 1.0), the cosine
+// channel gain (GAIN 0x12 is now named SIN_GAIN; OFS_SIN/OFS_COS are named SIN_OFS/COS_OFS);
+// COS_GAIN is CRC-covered as the 44th word, after 0x6D. Raw-code capture for the host
+// calibration: RAW_SIN_MIN/MAX (0x5E/0x5F), RAW_COS_MIN/MAX (0x6E/0x6F), the minimum and
+// maximum of the weight-corrected encoder codes (the RAW_SIN/RAW_COS values) of every
+// encoder pair (smp_valid); a write of any value to any of the four clears all four
+// (MIN 0xFFF, MAX 0x000, = reset; MIN > MAX means no pair since the clear).
 // SPDX-License-Identifier: Apache-2.0
 
 module r1_regs #(
-    parameter [15:0] CHIP_ID = 16'h5207
+    parameter [15:0] CHIP_ID = 16'h5208
 ) (
     input  wire        clk,
     input  wire        rst_n,
@@ -45,6 +52,7 @@ module r1_regs #(
     input  wire [11:0] amplitude,
     input  wire [11:0] raw_sin,
     input  wire [11:0] raw_cos,
+    input  wire        smp_valid,      // 0.8: raw_sin / raw_cos hold a new encoder pair in this tick
     input  wire [17:0] meas_angle,
     input  wire [11:0] i_a, i_b,
     input  wire [13:0] temp,
@@ -79,6 +87,7 @@ module r1_regs #(
     output wire [15:0] ovs_lim,
     output wire [11:0] ofs_sin, ofs_cos,
     output wire [15:0] gain, ph_sin, ph_icos,
+    output wire [15:0] cos_gain,       // 0.8: COS_GAIN (0x3F)
     output wire [15:0] h3,
     output wire [15:0] zero_ofs,
     output wire [9:0]  pos_cfg,
@@ -169,6 +178,8 @@ module r1_regs #(
     r1_cword #(.W(4), .RV(4'd1), .A(7'h3D)) u_3d (clk, rst_n, wr, addr, wdata[3:0], adc_disc);
     // 0.7: AZ_EXT (0x3E), [7:0] comparator mask after az_win in ticks, reset 120 (4 us at 30 MHz); not covered by CAL_CRC
     r1_cword #(.W(8), .RV(8'd120), .A(7'h3E)) u_3e (clk, rst_n, wr, addr, wdata[7:0], az_ext);
+    // 0.8: COS_GAIN (0x3F), Q2.14, reset 1.0; CRC-covered (word 43)
+    r1_cword #(.W(16), .RV(16'h4000), .A(7'h3F)) u_3f (clk, rst_n, wr, addr, wdata, cos_gain);
     assign cmp_cal_wr_a = wr && (addr == 7'h3A);
     assign cmp_cal_wr_b = wr && (addr == 7'h3B);
 
@@ -206,11 +217,23 @@ module r1_regs #(
     // ---------------- flip-flop registers ----------------
     reg [11:0] raw_cos_hold;
     reg        trim_wr_d;
+    // 0.8: raw-code capture (D22); cleared by a write to 0x5E, 0x5F, 0x6E or 0x6F
+    reg [11:0] sin_min, sin_max, cos_min, cos_max;
+    wire       mm_clr = wr && ((addr[6:1] == 6'b101111) || (addr[6:1] == 6'b110111));   // 0x5E/0x5F, 0x6E/0x6F
     always @(posedge clk or negedge rst_n) begin
         if (!rst_n) begin
             clr_pulse <= 1'b0; osc_arm <= 1'b0; cal_run <= 1'b0; gate_en <= 1'b0; wdt_en <= 1'b0;
             raw_cos_hold <= 12'h800; trim_unlk <= 1'b0; trim_wr_d <= 1'b0;
+            sin_min <= 12'hFFF; sin_max <= 12'h000; cos_min <= 12'hFFF; cos_max <= 12'h000;
         end else begin
+            if (mm_clr) begin
+                sin_min <= 12'hFFF; sin_max <= 12'h000; cos_min <= 12'hFFF; cos_max <= 12'h000;
+            end else if (smp_valid) begin
+                if (raw_sin < sin_min) sin_min <= raw_sin;
+                if (raw_sin > sin_max) sin_max <= raw_sin;
+                if (raw_cos < cos_min) cos_min <= raw_cos;
+                if (raw_cos > cos_max) cos_max <= raw_cos;
+            end
             clr_pulse <= 1'b0;
             osc_arm   <= 1'b0;
             cal_run   <= 1'b0;
@@ -231,13 +254,14 @@ module r1_regs #(
     // revision 0.3: the CRC engine reads the covered words through the read
     // multiplexer (maddr). The SPI owns it only in the two ticks in which it
     // decodes a frame (rd_sel); the engine then holds its position and state.
-    reg  [5:0]  cw;                    // covered word 0..42
+    reg  [5:0]  cw;                    // covered word 0..43 (0.8: 43 = COS_GAIN 0x3F)
     reg         chalf;                 // 0: high byte, 1: low byte
     reg  [7:0]  crc;
     reg         dirty;
     wire [6:0]  caddr = (cw < 6'd8)  ? 7'h10 + {1'd0, cw} :
                         (cw < 6'd15) ? 7'h36 + {1'd0, cw - 6'd8} :
-                        (cw < 6'd29) ? 7'h50 + {1'd0, cw - 6'd15} : 7'h60 + {1'd0, cw - 6'd29};
+                        (cw < 6'd29) ? 7'h50 + {1'd0, cw - 6'd15} :
+                        (cw < 6'd43) ? 7'h60 + {1'd0, cw - 6'd29} : 7'h3F;
     wire [6:0]  maddr = rd_sel ? addr : caddr;
     wire [15:0] cv = rdata;
     wire [7:0] cb = chalf ? cv[7:0] : cv[15:8];
@@ -252,14 +276,14 @@ module r1_regs #(
         end
     endfunction
     wire       first = (cw == 6'd0) && !chalf;
-    wire       last  = (cw == 6'd42) && chalf;
+    wire       last  = (cw == 6'd43) && chalf;
     wire [7:0] crc_n = crc8_byte(first ? 8'hFF : crc, cb);
     wire       adv   = !rd_sel;
     // the latch word changes in the tick after the write pulse; a write marks the
     // pass dirty in both ticks so no pass mixes old and new values
     reg  cal_wr_d, cal_busy_d;
     wire cal_wr = wr && (((addr >= 7'h10) && (addr <= 7'h18)) || ((addr >= 7'h36) && (addr <= 7'h3C)) ||
-                         ((addr >= 7'h50) && (addr <= 7'h5D)) || ((addr >= 7'h60) && (addr <= 7'h6D)));
+                         ((addr >= 7'h50) && (addr <= 7'h5D)) || ((addr >= 7'h60) && (addr <= 7'h6D)) || (addr == 7'h3F));
     always @(posedge clk or negedge rst_n) begin
         if (!rst_n) begin
             cw <= 6'd0; chalf <= 1'b0; crc <= 8'hFF; dirty <= 1'b1; cal_valid <= 1'b0;
@@ -360,6 +384,11 @@ module r1_regs #(
             7'h3C: rdata = {1'b0, ideal_neg, 1'b0, ideal_oc};
             7'h3D: rdata = {12'd0, adc_disc};
             7'h3E: rdata = {8'd0, az_ext};
+            7'h3F: rdata = cos_gain;
+            7'h5E: rdata = {4'd0, sin_min};
+            7'h5F: rdata = {4'd0, sin_max};
+            7'h6E: rdata = {4'd0, cos_min};
+            7'h6F: rdata = {4'd0, cos_max};
             default: begin
                 if (wsel_any) rdata = {2'd0, w_or};
                 else          rdata = maddr[6] ? {8'd0, id_byte} : 16'd0;
