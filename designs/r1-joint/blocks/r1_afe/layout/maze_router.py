@@ -341,7 +341,7 @@ class Router:
                 if self.inside(a, b) and self.occ[l, a, b] == FREE:
                     self.pen[l, a, b] = min(int(self.pen[l, a, b]) + cost, 300)
 
-    def widen(self, k, layers=(1, 2), sides=(1, -1)):
+    def widen(self, k, layers=(1, 2), sides=(1, -1), ywin=None):
         """supply widening after routing: every wire edge of net k on `layers` takes the parallel free track on each
         side (one 1.1 um box per side, up to 1.9 um total width); then extra vias on the widened nodes next to each
         via of the net. Only free nodes are used, so the grid spacing rules still hold."""
@@ -353,6 +353,10 @@ class Router:
                 if a[0] != b[0] or a[0] not in layers:
                     continue
                 l = a[0]
+                if ywin is not None:       # E7: widen only the edges inside a y window (one branch of a net)
+                    ya_, yb_ = self.xy(a[1], a[2])[1], self.xy(b[1], b[2])[1]
+                    if not (ywin[0] <= ya_ <= ywin[1] and ywin[0] <= yb_ <= ywin[1]):
+                        continue
                 di, dj = b[1] - a[1], b[2] - a[2]
                 for sd in sides:
                     oi, oj = (0, sd) if di else (sd, 0)

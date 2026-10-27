@@ -1,0 +1,45 @@
+{
+ "run_id": "r1afe-mech-e7-s1t",
+ "campaign": "var:$G1_RESULTS_ROOT/r1_afe/r1afe-mech-e7-s1t/frozen/var_spec.json",
+ "date_utc": "2026-10-27T17:32:03Z",
+ "command": "G1_CPUSET=106-108 G1_CPUS=3 G1_WORKDIR=designs/r1-joint/blocks/r1_afe/sim G1_RESULTS_ROOT=<bulk> flow/run.sh python3 run_afe.py var:$G1_RESULTS_ROOT/r1_afe/r1afe-mech-e7-s1t/frozen/var_spec.json r1afe-mech-e7-s1t",
+ "tools": {
+  "ngspice": "ngspice-46 : Circuit level simulation program",
+  "image_id": "sha256:ddeb69576f2808676d1c5d474ecf04f6d1d6f8abdcff6b72b39790ded924bab2",
+  "pdk_commit": "84374023ee8b4b126bebbba67fcbada0a9c0ff0b"
+ },
+ "inputs": {
+  "sim/tb_afe_op.cir": "68a57662613efcd4cfae80246b256c0e45756de45ea9a1324a97e5df3bc91a4a",
+  "sim/common_head.inc": "52ea3b1f1dda8aa3c448bf5977fb76f41feeb33019c36e7ad163e81eab0fcfd0",
+  "sim/gain_codes.inc": "a62c9d6daa3d544c36ac868c4e6a9266f32e581d093ac404c6c52bcc6e5276f6",
+  "schematic/r1_afe.spice": "9e262f8cbc4d1b46a5a423fffbafe060ccf34d178fee7906facb3ae84691051a",
+  "sim/run_afe.py": "41d65c69d353468b4592aee3ed5772a1ac81d04ef93ef4d60fe087c7e0ed06b7"
+ },
+ "netlist_edits": null,
+ "variant_netlists": {
+  "BASE": {
+   "path": "r1_afe/r1afe-mech-e7-s1t/frozen/var_BASE.spice",
+   "sha256": "26c312d922069ab1fb1bc11afb09b4bdec7ac7ca54b93fc88ebb9fa87f1f06fa"
+  },
+  "XN27": {
+   "path": "r1_afe/r1afe-mech-e7-s1t/frozen/var_XN27.spice",
+   "sha256": "65793b14800bddf8be5069bd89e12db3d5e91790f8833817719e13935a4785b7"
+  },
+  "XN14": {
+   "path": "r1_afe/r1afe-mech-e7-s1t/frozen/var_XN14.spice",
+   "sha256": "75778194c87dc0c9dd3cd33765ed5a56be275ebf4880c1863383c83cb213b200"
+  }
+ },
+ "netlist_sha256": "9e262f8cbc4d1b46a5a423fffbafe060ccf34d178fee7906facb3ae84691051a",
+ "netlist_override": null,
+ "frozen_inputs": "$G1_RESULTS_ROOT/r1_afe/r1afe-mech-e7-s1t/frozen/",
+ "lsb_V": 0.000439453125,
+ "raw": "$G1_RESULTS_ROOT/r1_afe/r1afe-mech-e7-s1t/",
+ "jobs": 24,
+ "failed_jobs": [],
+ "wall_seconds": 423.9,
+ "summary": "results/r1afe-mech-e7-s1t.json",
+ "question": "Layout E7 (track T3k), mechanism test on the iteration build R view (s1t = dev17): does equal x1 N-port and P-port resistance within each side (series R at every x1 N port of both sides, +27 / +14 Ohm) remove the CM/VDDA dependence of the x32 offset?",
+ "result": "+14/+27 Ohm at every x1 N port: no effect (<= 0.03 mV)",
+ "disposition": "hypothesis rejected"
+}

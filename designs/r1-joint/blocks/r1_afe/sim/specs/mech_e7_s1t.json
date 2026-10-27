@@ -1,0 +1,96 @@
+{
+ "question": "Layout E7 (track T3k), mechanism test on the iteration build R view (s1t = dev17): does equal x1 N-port and P-port resistance within each side (series R at every x1 N port of both sides, +27 / +14 Ohm) remove the CM/VDDA dependence of the x32 offset?",
+ "variants": {
+  "BASE": {
+   "netlist": "$G1_RESULTS_ROOT/r1_afe/revF2/e7/mech-s1t/BASE.spice"
+  },
+  "XN27": {
+   "netlist": "$G1_RESULTS_ROOT/r1_afe/revF2/e7/mech-s1t/XN27.spice"
+  },
+  "XN14": {
+   "netlist": "$G1_RESULTS_ROOT/r1_afe/revF2/e7/mech-s1t/XN14.spice"
+  }
+ },
+ "jobs": [
+  {
+   "tag": "op_tt_ib10.14_cm0.5_v3.3",
+   "tmpl": "tb_afe_op.cir",
+   "corner": "tt",
+   "subs": {
+    "VCMI": 0.5,
+    "IB": "10.14u",
+    "VDDA": 3.3
+   }
+  },
+  {
+   "tag": "op_tt_ib10.14_cm1.5_v3.0",
+   "tmpl": "tb_afe_op.cir",
+   "corner": "tt",
+   "subs": {
+    "VCMI": 1.5,
+    "IB": "10.14u",
+    "VDDA": 3.0
+   }
+  },
+  {
+   "tag": "op_tt_ib10.14_cm1.5_v3.6",
+   "tmpl": "tb_afe_op.cir",
+   "corner": "tt",
+   "subs": {
+    "VCMI": 1.5,
+    "IB": "10.14u",
+    "VDDA": 3.6
+   }
+  },
+  {
+   "tag": "op_tt_ib10.14_cm2.0_v3.3",
+   "tmpl": "tb_afe_op.cir",
+   "corner": "tt",
+   "subs": {
+    "VCMI": 2.0,
+    "IB": "10.14u",
+    "VDDA": 3.3
+   }
+  },
+  {
+   "tag": "op_tt_ib10.14_cm2.5_v3.0",
+   "tmpl": "tb_afe_op.cir",
+   "corner": "tt",
+   "subs": {
+    "VCMI": 2.5,
+    "IB": "10.14u",
+    "VDDA": 3.0
+   }
+  },
+  {
+   "tag": "op_tt_ib10.14_cm2.5_v3.3",
+   "tmpl": "tb_afe_op.cir",
+   "corner": "tt",
+   "subs": {
+    "VCMI": 2.5,
+    "IB": "10.14u",
+    "VDDA": 3.3
+   }
+  },
+  {
+   "tag": "op_tt_ib10.14_cm2.5_v3.6",
+   "tmpl": "tb_afe_op.cir",
+   "corner": "tt",
+   "subs": {
+    "VCMI": 2.5,
+    "IB": "10.14u",
+    "VDDA": 3.6
+   }
+  },
+  {
+   "tag": "op_tt_ib10.14_cm2.8_v3.3",
+   "tmpl": "tb_afe_op.cir",
+   "corner": "tt",
+   "subs": {
+    "VCMI": 2.8,
+    "IB": "10.14u",
+    "VDDA": 3.3
+   }
+  }
+ ]
+}

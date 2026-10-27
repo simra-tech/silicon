@@ -1,0 +1,67 @@
+{
+ "question": "Layout E7 (track T3k): on screen build s1a (R-only view), which input-path port group carries the 3.3 -> 3.6 V step of the x32 offset at CM 2.5 V (+3.6 -> -3.0 mV)? Port-level elimination",
+ "variants": {
+  "BASE": {
+   "netlist": "$G1_RESULTS_ROOT/r1_afe/revF2/e7/elim-s1a/BASE.spice"
+  },
+  "XN": {
+   "netlist": "$G1_RESULTS_ROOT/r1_afe/revF2/e7/elim-s1a/XN.spice"
+  },
+  "XP": {
+   "netlist": "$G1_RESULTS_ROOT/r1_afe/revF2/e7/elim-s1a/XP.spice"
+  },
+  "X": {
+   "netlist": "$G1_RESULTS_ROOT/r1_afe/revF2/e7/elim-s1a/X.spice"
+  },
+  "AN": {
+   "netlist": "$G1_RESULTS_ROOT/r1_afe/revF2/e7/elim-s1a/AN.spice"
+  },
+  "AP": {
+   "netlist": "$G1_RESULTS_ROOT/r1_afe/revF2/e7/elim-s1a/AP.spice"
+  },
+  "A": {
+   "netlist": "$G1_RESULTS_ROOT/r1_afe/revF2/e7/elim-s1a/A.spice"
+  },
+  "F": {
+   "netlist": "$G1_RESULTS_ROOT/r1_afe/revF2/e7/elim-s1a/F.spice"
+  },
+  "IN": {
+   "netlist": "$G1_RESULTS_ROOT/r1_afe/revF2/e7/elim-s1a/IN.spice"
+  },
+  "XA": {
+   "netlist": "$G1_RESULTS_ROOT/r1_afe/revF2/e7/elim-s1a/XA.spice"
+  }
+ },
+ "jobs": [
+  {
+   "tag": "op_tt_ib10.14_cm2.5_v3.3",
+   "tmpl": "tb_afe_op.cir",
+   "corner": "tt",
+   "subs": {
+    "VCMI": 2.5,
+    "IB": "10.14u",
+    "VDDA": 3.3
+   }
+  },
+  {
+   "tag": "op_tt_ib10.14_cm2.5_v3.6",
+   "tmpl": "tb_afe_op.cir",
+   "corner": "tt",
+   "subs": {
+    "VCMI": 2.5,
+    "IB": "10.14u",
+    "VDDA": 3.6
+   }
+  },
+  {
+   "tag": "op_tt_ib10.14_cm2.0_v3.3",
+   "tmpl": "tb_afe_op.cir",
+   "corner": "tt",
+   "subs": {
+    "VCMI": 2.0,
+    "IB": "10.14u",
+    "VDDA": 3.3
+   }
+  }
+ ]
+}

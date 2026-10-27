@@ -1,0 +1,85 @@
+{
+ "question": "Layout E7 (track T3k): which wiring group of the mirrored screen build s4a (R-only view) makes its CM-dependent x32 offset (-12.5 mV at CM 2.0 V, +8.7 mV at CM 2.5 V)? Stage-1 input-current path (ports), stage-2 wiring, m1, top-level signal wiring",
+ "variants": {
+  "BASE": {
+   "netlist": "$G1_RESULTS_ROOT/r1_afe/revF2/e7/elim-s4a/BASE.spice"
+  },
+  "PATH": {
+   "netlist": "$G1_RESULTS_ROOT/r1_afe/revF2/e7/elim-s4a/PATH.spice"
+  },
+  "S2": {
+   "netlist": "$G1_RESULTS_ROOT/r1_afe/revF2/e7/elim-s4a/S2.spice"
+  },
+  "M1": {
+   "netlist": "$G1_RESULTS_ROOT/r1_afe/revF2/e7/elim-s4a/M1.spice"
+  },
+  "TOP": {
+   "netlist": "$G1_RESULTS_ROOT/r1_afe/revF2/e7/elim-s4a/TOP.spice"
+  },
+  "ALL": {
+   "netlist": "$G1_RESULTS_ROOT/r1_afe/revF2/e7/elim-s4a/ALL.spice"
+  }
+ },
+ "jobs": [
+  {
+   "tag": "op_tt_ib10.14_cm0.5_v3.3",
+   "tmpl": "tb_afe_op.cir",
+   "corner": "tt",
+   "subs": {
+    "VCMI": 0.5,
+    "IB": "10.14u",
+    "VDDA": 3.3
+   }
+  },
+  {
+   "tag": "op_tt_ib10.14_cm1.5_v3.3",
+   "tmpl": "tb_afe_op.cir",
+   "corner": "tt",
+   "subs": {
+    "VCMI": 1.5,
+    "IB": "10.14u",
+    "VDDA": 3.3
+   }
+  },
+  {
+   "tag": "op_tt_ib10.14_cm2.0_v3.3",
+   "tmpl": "tb_afe_op.cir",
+   "corner": "tt",
+   "subs": {
+    "VCMI": 2.0,
+    "IB": "10.14u",
+    "VDDA": 3.3
+   }
+  },
+  {
+   "tag": "op_tt_ib10.14_cm2.5_v3.3",
+   "tmpl": "tb_afe_op.cir",
+   "corner": "tt",
+   "subs": {
+    "VCMI": 2.5,
+    "IB": "10.14u",
+    "VDDA": 3.3
+   }
+  },
+  {
+   "tag": "op_tt_ib10.14_cm2.8_v3.3",
+   "tmpl": "tb_afe_op.cir",
+   "corner": "tt",
+   "subs": {
+    "VCMI": 2.8,
+    "IB": "10.14u",
+    "VDDA": 3.3
+   }
+  },
+  {
+   "tag": "op_tt_ib10.14_cm2.5_v3.6",
+   "tmpl": "tb_afe_op.cir",
+   "corner": "tt",
+   "subs": {
+    "VCMI": 2.5,
+    "IB": "10.14u",
+    "VDDA": 3.6
+   }
+  }
+ ]
+}

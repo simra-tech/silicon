@@ -1,0 +1,53 @@
+{
+ "run_id": "r1afe-sens-e7-port",
+ "campaign": "var:$G1_RESULTS_ROOT/r1_afe/r1afe-sens-e7-port/frozen/var_spec.json",
+ "date_utc": "2026-10-27T15:22:13Z",
+ "command": "G1_CPUSET=106-108 G1_CPUS=3 G1_WORKDIR=designs/r1-joint/blocks/r1_afe/sim G1_RESULTS_ROOT=<bulk> flow/run.sh python3 run_afe.py var:$G1_RESULTS_ROOT/r1_afe/r1afe-sens-e7-port/frozen/var_spec.json r1afe-sens-e7-port",
+ "tools": {
+  "ngspice": "ngspice-46 : Circuit level simulation program",
+  "image_id": "sha256:ddeb69576f2808676d1c5d474ecf04f6d1d6f8abdcff6b72b39790ded924bab2",
+  "pdk_commit": "84374023ee8b4b126bebbba67fcbada0a9c0ff0b"
+ },
+ "inputs": {
+  "sim/tb_afe_op.cir": "68a57662613efcd4cfae80246b256c0e45756de45ea9a1324a97e5df3bc91a4a",
+  "sim/common_head.inc": "52ea3b1f1dda8aa3c448bf5977fb76f41feeb33019c36e7ad163e81eab0fcfd0",
+  "sim/gain_codes.inc": "a62c9d6daa3d544c36ac868c4e6a9266f32e581d093ac404c6c52bcc6e5276f6",
+  "schematic/r1_afe.spice": "9e262f8cbc4d1b46a5a423fffbafe060ccf34d178fee7906facb3ae84691051a",
+  "sim/run_afe.py": "41d65c69d353468b4592aee3ed5772a1ac81d04ef93ef4d60fe087c7e0ed06b7"
+ },
+ "netlist_edits": null,
+ "variant_netlists": {
+  "BASE": {
+   "path": "r1_afe/r1afe-sens-e7-port/frozen/var_BASE.spice",
+   "sha256": "e85e26d0e97192e5194974a60bf1a2d4bc26d0272281d36defb2e88edc7fa48d"
+  },
+  "SN": {
+   "path": "r1_afe/r1afe-sens-e7-port/frozen/var_SN.spice",
+   "sha256": "edb200609eaebec64d889586141202ea2c546176f1a52f60389a1263af3e9ab2"
+  },
+  "SP": {
+   "path": "r1_afe/r1afe-sens-e7-port/frozen/var_SP.spice",
+   "sha256": "d2c341067792ad7f3e2a181ac66586da98cf3b6df818a67f239f5bce937ea54d"
+  },
+  "SFN": {
+   "path": "r1_afe/r1afe-sens-e7-port/frozen/var_SFN.spice",
+   "sha256": "ae23321c4b22e3c9e9183067aacc773306fbba40b0fb1bb34060cf423d93126c"
+  },
+  "SFP": {
+   "path": "r1_afe/r1afe-sens-e7-port/frozen/var_SFP.spice",
+   "sha256": "20790f3bb73b832aeaa5a13cea2aae4f0d69e1e1cf2a1ea3fe425f5744fd6008"
+  }
+ },
+ "netlist_sha256": "9e262f8cbc4d1b46a5a423fffbafe060ccf34d178fee7906facb3ae84691051a",
+ "netlist_override": null,
+ "frozen_inputs": "$G1_RESULTS_ROOT/r1_afe/r1afe-sens-e7-port/frozen/",
+ "lsb_V": 0.000439453125,
+ "raw": "$G1_RESULTS_ROOT/r1_afe/r1afe-sens-e7-port/",
+ "jobs": 50,
+ "failed_jobs": [],
+ "wall_seconds": 698.3,
+ "summary": "results/r1afe-sens-e7-port.json",
+ "question": "Layout E7 step 1 (track T3k): x32 / x1 offset sensitivity to +20 Ohm in series with one TG port type on the p side only (all stage-1 input TGs N or P; feedback TG N or P), E6-dev16 R-only view, over input CM 0.5-2.8 V and VDDA 3.0-3.6 V",
+ "result": "+20 Ohm per port type (p side): input P -2.0...-2.6 mV at CM >= 2.5 V up to 3.3 V, input N -0.9 mV at CM 1.5 V, feedback N +1.2...+2.8 mV, feedback P 0",
+ "disposition": "diagnosis; README Layout E7 step 1"
+}

@@ -1,12 +1,299 @@
 # r1_afe — encoder analog front end (sine and cosine channels)
 
-State (2026-10-27): **layout E6 (`layout-e6-dev16`) is the layout of record, not closed** (section "Layout E6"): ×32 offset ≤ 5 mV at CM 0.5 V everywhere and at CM 2.5 V up to 3.3 V, pole matching ≤ 0.284 %, the CM rows closed by the supply-network method; failed: offset at CM 2.5 V and 3.6 V (−8.59 mV) and its drift, `x1` C balance (+10 fF), DM1 PM 62.58° at ffx 6.9 µA. Netlist of record: revision F2 (sha256 `9e262f8c…`, unchanged). E5 is kept as `layout/r1_afe_revE5.gds`.
+State (2026-10-27): **layout E7 (`layout-e7-dev17`) is the layout of record, not closed** (section "Layout E7": ×32 offset ≤ 4.96 mV over CM 0.5–2.8 V, tt/ss/ff, 3.0–3.6 V; failed: drift at every CM, bias extremes +6.00/−5.61 mV, DM1 62.07°, `x1` C −7.9 fF). Previous state: **layout E6 (`layout-e6-dev16`), not closed** (section "Layout E6"): ×32 offset ≤ 5 mV at CM 0.5 V everywhere and at CM 2.5 V up to 3.3 V, pole matching ≤ 0.284 %, the CM rows closed by the supply-network method; failed: offset at CM 2.5 V and 3.6 V (−8.59 mV) and its drift, `x1` C balance (+10 fF), DM1 PM 62.58° at ffx 6.9 µA. Netlist of record: revision F2 (sha256 `9e262f8c…`, unchanged). E5 is kept as `layout/r1_afe_revE5.gds`.
 Revision D is superseded by revision E (record below). Revision C is superseded; its record follows the revision-D section ("Revision C record"). Revision B is superseded; its
 record is kept at the end ("Revision B record").
 All numbers in this file are **simulated** unless they are marked estimated. Nothing is measured.
 
 Track T3 of `../README.md`. Specification row: `../../specification/R1_TOP_LEVEL_SPECIFICATION.md` §2 (`r1_afe`),
 §4 (encoder input), gate V1. Input standard and accuracy budget: `../../specification/studies/S1_ENCODER_CHAIN_20261020.md`.
+
+## Layout E7 (2026-10-27, track T3k; not closed)
+
+Status: **not closed**; iteration 1 (`layout-e7-dev17`) is final; stopped at the time budget (21:38 CET). Layout of record:
+`layout/r1_afe.gds` = dev17 (sha256 `329c810b…f69e`); E6 kept as `layout/r1_afe_revE6.gds` (sha256 `12a059ca…ba7f`); netlist F2 unchanged (no F3). All numbers are **simulated** (ngspice-46,
+IHP SG13G2 `84374023`). Nothing is measured.
+Starting point: layout E6 (`layout-e6-dev16`, layout of record, kept as `layout/r1_afe_revE6.gds` when E7 replaces it)
+and netlist F2 (`schematic/r1_afe.spice`, sha256 `9e262f8c…`). Same 21 pins and box (192.8 × 494.4 µm).
+Goal: ×32 offset ≤ 5 mV and drift span ≤ 1 mV (D22) over the specified input CM range 0.5–2.8 V
+(`../../specification/R1_TOP_LEVEL_SPECIFICATION.md`, row "Encoder input"), tt/ss/ff and VDDA 3.0–3.6 V; DM1 PM ≥ 63°.
+
+### Status (layout E7, iteration 1 = final)
+
+Post-layout set: spec `sim/specs/post_e7.json` (82 jobs, `sim/specs/make_post_e7.py`) on `pexrc-layout-e7-dev17`, run
+`r1afe-post-e7d17` (3 parallel jobs), stopped at the budget by PID (`STOPPED.txt` in the run directory); 70 finished jobs
+parsed by `sim/revf_reparse.py` into `r1afe-post-e7d17-stop`; reduction `sim/revf_post.py` → `sim/results/post-e7d17-summary.json`.
+Not run (stopped): `stb_ff_ib9.00_cm2.5`, `stb_ffx_ib15.36_cm2.5`, `stb_tt_ib6.9_cm2.5`, `acmc_ss_p0`, and 8 nominal AC
+points (`ac_*` at CM 2.5 V, ffx 15.36 µA, ssx, ff, tt 6.9/15.4 µA).
+
+| Criterion | Limit | E7-dev17 (F2) | E6-dev16 (F2) | Evidence | Status |
+| --- | --- | --- | --- | --- | --- |
+| ×32 offset, every CM 0.5/1.5/2.0/2.5/2.8 V × (tt 3.0/3.3/3.6 V, ss, ff) | ≤ 5 mV | worst **+4.96 mV** (tt CM 2.8 V) | −8.59 mV (ff CM 2.5 V); −5.80 mV (tt CM 2.0 V, screen) | `sim/results/r1afe-post-e7d17-stop.json` (`op_*`) | **passed** |
+| ×32 offset, bias extremes (tt 6.9/15.4 µA, ffx 6.9/15.36 µA), CM 0.5 and 2.5 V | ≤ 5 mV | **+6.00** (ffx 15.36 µA CM 2.5 V), **−5.61** (tt 15.4 µA CM 0.5 V); others −4.40 … +4.72 | −4.40 … +1.68 | same | **failed** by 1.00 mV (regression against E6) |
+| Drift (D22), CM 0.5 V: tt/ss/ff; 3.0–3.6 V | ≤ 1 mV span | **1.46**; 0.64 mV | 0.33; 0.30 | same | **failed** (corners) |
+| Drift, CM 1.5 V | ≤ 1 mV span | **2.11**; **1.65** | not run | same | **failed** |
+| Drift, CM 2.0 V | ≤ 1 mV span | **1.26**; **1.11** | not run | same | **failed** |
+| Drift, CM 2.5 V | ≤ 1 mV span | **8.21**; **7.63** | 9.21; 7.77 | same | **failed** |
+| Drift, CM 2.8 V | ≤ 1 mV span | **2.53**; **1.15** | not run | same | **failed** |
+| Input-path wiring per TG type, ×32 (p − n) | ≤ 5 Ω | N −3.19, P −3.71; feedback N −2.40 | −7.10, −10.63; −52.33 | `reports/pex-e7-dev17/path_balance.json` | **passed** |
+| Per-net port pairs (`a` P, `af`, `m1` of `xtf`) | ≤ 5 Ω | +11.3, +13.4/+11.7, −15.8/+10.3 | −40.4, −16.4/−38.4, −35.9/+1.6 | same | **failed** |
+| `x1p`/`x1n` R (R_eff ×32 / ×1) | ≤ 5 Ω | +4.61 / +4.57 | +4.15 / +4.11 | `reports/pex-e7-dev17/x1_pair_r.json` | **passed** |
+| `x1p`/`x1n` C | ≤ 1 fF | **−7.9 fF** (C trim overshoot, about 0.115 fF per stub edge) | +10.0 fF | `reports/pex-e7-dev17/pair_loads.json` | **failed** by 6.9 fF |
+| `m1p`/`m1n` C | recorded | +29.0 fF (`m1p` widened) | −12.2 fF | same | recorded |
+| DM1 PM, ffx 6.9 µA CM 0.5 V | ≥ 63° | **62.07°** | 62.58° | `sim/results/post-e7d17-summary.json`; `r1afe-dm1-e7d17` | **failed** by 0.93° |
+| Loop PM, other valid rows (15 points) | ≥ 63° | CM1 ffx 6.9 µA CM 2.5 V **62.96°**; all other rows ≥ 64.25° | 63.09° | same | **failed** by 0.04° |
+| Loop GM | ≥ 10 dB | 11.60 dB (tt 15.4 µA CM 2.5 V DM2) | 11.58 dB | same | **passed** |
+| Hold-state loops (ssx 6.94 µA, ff 9.00 µA, CM 2.5 V, C_L 1 fF), valid rows | ≥ 63° | ≥ 67.29° (ff DM2) | not run | same | **passed** |
+| Loop rows flagged (RHP-pole rule) | 0 or closed by method | 14 rows, all CM2 / CM1 | 14 | same | **not run** (supply-network method on dev17 not run) |
+| f_c minimum at ss | ≥ 1.0 MHz | 1.075 MHz | 1.075 MHz | same | **passed** |
+| Output CM | 0.600 ± 0.030 V | 0.5899 – 0.5968 V | 0.5897 – 0.5968 V | same | **passed** |
+| Pole matching, nominal | ≤ 1 % | tt/ss/ffx 6.9 µA CM 0.5 V only; ffx 15.36 µA (E6 worst) | 0.284 % | — | **not run** (stopped) |
+| Pole matching, MC at ss, second set (`acmc_ss_p1`, 10 samples) | recorded | worst 0.688 % | not run in E6 | `sim/results/post-e7d17-summary.json` | recorded; first set `acmc_ss_p0` **not run** in E7 |
+| Noise ×32 input-referred at ss | ≤ 35 µV | 32.80 µV | 32.80 µV | same | **passed** |
+| Settling residual tt ×1/×32, ss ×32, **ss ×1** | ≤ 0.25 LSB | 0.013 LSB (ss ×1 0.002) | 0.0145 (ss ×1 not run) | same | **passed** |
+| THD | ≤ 0.1 % | 0.011 % | 0.011 % | same | **passed** |
+| DRC main + maximal, antenna | 0 | 0, 0 | 0, 0 | `reports/layout-e7-dev17/drc_db_items.txt` | **passed** |
+| LVS | match | match | match | `reports/layout-e7-dev17/lvs_summary.txt` | **passed** |
+| Supply islands | 0 | 0 (`vdd` 23, `vss` 42) | 0 | `reports/layout-e7-dev17/supply_island_check.json` | **passed** |
+| Pins, box | as E6 | 57 shapes / 21 pins, same centres, supply 1.0 µm, 192.8 × 494.4 µm | — | `reports/layout-e7-dev17/pin_layer_check.json` | **passed** |
+| Schematic regression on F2 | as F2 | not re-run (netlist unchanged, sha256 `9e262f8c…`) | not re-run | — | **not run** in E7 |
+
+Built against: IHP SG13G2 open PDK `84374023ee8b4b126bebbba67fcbada0a9c0ff0b`, ngspice-46, KLayout 0.30.9, kpex 0.3.12
+(container image `sha256:ddeb6957…`; from the run records). Generator `layout/r1_afe_layout.py` (sha256 `7e1694d5…`),
+router `layout/maze_router.py` (`0cb55b81…`).
+
+### Open issues (layout E7)
+
+1. Offset drift (D22) fails at every input CM (0.64–8.21 mV span against 1 mV); at CM 2.5 V the 3.3 → 3.6 V step stays
+   (−7.6 mV). Cause (mechanism tests): the absolute `x1` wiring resistance between the input-TG ports and the OTA1 gate
+   (90–125 Ω, inside the loop) while the TG current moves between the P and N devices with CM and VDDA. Lever: a
+   low-resistance `x1` structure on both sides (× 0.25 cut the CM 2.5 V span 7.6 → 2.3 mV in simulation), then per-unit
+   `a`/`af`/`m1` balance with the mirrored resistor order (stage-2 resistor group kept in place).
+2. ×32 offset at the bias extremes: +6.00 mV (ffx 15.36 µA CM 2.5 V), −5.61 mV (tt 15.4 µA CM 0.5 V); E6 passed these
+   points (regression from the `m1p`/`af`/`a` widening; not diagnosed).
+3. DM1 PM 62.07° at ffx 6.9 µA (0.93° short) and CM1 62.96° at ffx 6.9 µA CM 2.5 V. Largest layout share: OTA1 `o1n`
+   (+32.6 fF since E5, 0.47°), then `m1` (+29 fF `m1p` in E7). Lever: shorter `o1n`/`o1p` routes, no `m1p` widening
+   (feedback balance by the `af` net only), `fwide` off (+0.14°); else a one-value change of the OTA1 compensation (F3)
+   with the full schematic regression.
+4. `x1` C −7.9 fF (trim overshoot): next build `ctrim=x1n:1:40,x1n:2:38` (about 0.115 fF per edge).
+5. The flagged CM rows (14) are not closed by the supply-network method for dev17 (not run); 3 loop points, 8 nominal AC
+   points and the first MC set were not run (stopped at the budget).
+
+### Step 1: elimination per TG port (E6-dev16 R-only view)
+
+Port-level elimination (run `r1afe-elim-e7-port`, spec `sim/specs/elim_e7_port.json`, variants by
+`pex/port_eliminate.py`): in a variant the named device terminal of every stage-1 TG of both sides is connected to the
+main node of its net, so the wiring to that port carries no device current. Ports: `x1` = summing-node side of the
+input TGs, `a` = resistor side of the input TGs (`xs1*_a1…8`), `af`/`m1` = the two sides of the feedback TG `xtf`;
+N / P = NMOS / PMOS device of the TG. ×32 / ×1 output offset, mV (sine channel, operating point):
+
+| Variant (ports or wiring removed) | tt CM 2.5 V 3.0 V | tt CM 2.5 V 3.3 V | tt CM 2.5 V 3.6 V | ff CM 2.5 V (3.6 V, −40 °C) | tt CM 1.5 V 3.3 V |
+| --- | --- | --- | --- | --- | --- |
+| E6 (none) | +0.59 / −1.21 | +0.37 / −1.45 | **−7.18** / −1.64 | **−8.59** / −1.85 | −2.52 / −0.98 |
+| `x1` N ports | +0.59 / −1.14 | +0.67 / −1.39 | −2.74 / −1.60 | −3.41 / −1.81 | −2.22 / −0.99 |
+| `x1` P ports | −2.17 / −1.07 | −2.22 / −1.34 | −2.45 / −1.55 | −2.51 / −1.75 | −1.79 / −0.98 |
+| `a` N ports | +0.59 / −1.63 | +0.18 / −1.88 | −9.87 / −2.06 | −11.97 / −2.35 | −3.98 / −1.17 |
+| `a` P ports | −3.45 / −1.71 | −4.15 / −1.77 | −10.56 / −1.87 | −12.24 / −2.12 | −3.01 / −0.98 |
+| `af` N port | +2.35 / −0.86 | +2.30 / −1.11 | −5.04 / −1.32 | −6.09 / −1.48 | −1.61 / −0.84 |
+| `af` P port | +1.13 / −1.21 | +0.37 / −1.45 | −7.18 / −1.64 | −8.59 / −1.85 | −2.52 / −0.98 |
+| `m1` N port of `xtf` | +5.08 / −0.26 | +5.96 / −0.52 | −1.17 / −0.74 | −1.64 / −0.82 | +0.12 / −0.58 |
+| `m1` P port of `xtf` | +0.60 / −1.21 | +0.37 / −1.45 | −7.18 / −1.64 | −8.59 / −1.85 | −2.52 / −0.98 |
+| `inp`/`inn` wiring | −0.94 / −1.25 | −1.38 / −1.49 | −9.18 / −1.68 | −10.92 / −1.90 | −3.37 / −0.99 |
+| `m1` wiring (all) | +2.60 / −0.39 | +4.07 / −0.71 | −2.71 / −0.98 | −3.32 / −1.09 | −0.89 / −0.76 |
+| all N ports (`x1`, `a`, `af`, `m1`) | +6.87 / −0.27 | +7.96 / −0.58 | +2.32 / −0.82 | +2.12 / −0.92 | −0.21 / −0.66 |
+| all P ports | −5.80 / −1.63 | −6.94 / −1.71 | −7.12 / −1.83 | −8.01 / −2.08 | −2.51 / −0.98 |
+| **whole input-current path** (all ports + `inp`/`inn`) | **−1.58** / −0.53 | **−1.23** / −0.72 | **−1.20** / −0.91 | **−1.16** / −1.01 | **−1.10** / −0.67 |
+
+Port-type sensitivity (run `r1afe-sens-e7-port`, spec `sim/specs/sens_e7_port.json`): +20 Ω in series with one port
+type on the p side only (8 input TGs, or the feedback TG); change of the ×32 offset, mV:
+
+| +20 Ω at | tt CM 0.5 V 3.6 V | tt CM 1.5 V 3.0 / 3.6 V | tt CM 2.5 V 3.0 / 3.3 / 3.6 V | ss CM 2.5 V | ff CM 2.5 V | tt CM 2.8 V 3.0 / 3.6 V |
+| --- | --- | --- | --- | --- | --- | --- |
+| input TG N ports | +0.19 | −0.88 / −0.85 | 0.00 / 0.00 / −0.46 | 0.00 | −0.78 | 0.00 / 0.00 |
+| input TG P ports | 0.00 | −0.03 / −0.01 | −2.00 / −2.21 / −0.84 | −1.61 | −0.69 | −2.47 / −2.61 |
+| feedback TG N port | −0.19 | +1.26 / +0.97 | +1.79 / +2.37 / +2.63 | +1.17 | (not finished) | +2.13 / +2.78 |
+
+Reading: (1) with the whole input-current path ideal the ×32 offset is −1.1 … −1.6 mV at every point, and the 3.6 V
+step at CM 2.5 V is gone: the path wiring carries the whole CM 2.5 V failure; the −1.2 mV rest is outside the path
+(OTA wiring, unchanged from E6). (2) No single port group is "the" term: removing one group changes the N/P current
+split of every TG, so the single-group rows move in both directions. The current split depends on CM and VDDA: the
+input TGs conduct through the PMOS at CM ≥ 2.5 V and ≤ 3.3 V (N sensitivity 0), through both at CM 1.5 V, and the NMOS
+reaches its threshold at CM 2.5 V only at 3.6 V (x1 node about 2.3 V); the feedback TG (node about 0.6 V) conducts
+through the NMOS everywhere. (3) The sign change between 3.3 V and 3.6 V at CM 2.5 V is the input-TG NMOS turning on
+while the N and P port paths of the two sides are unequal (E6 balanced only the `x1` net; table below). Lever: equal
+N-path and equal P-path wiring between the sides, for the input TGs and the feedback TG separately.
+
+Port resistances of E6-dev16 (`pex/path_balance.py`, R-only view; main node → port, other ports open; mean of the 8
+input units; Ω; p side / n side, difference p − n):
+
+| Port | p side | n side | p − n |
+| --- | --- | --- | --- |
+| `x1` N | 97.50 | 99.11 | −1.62 |
+| `x1` P | 125.07 | 128.60 | −3.53 |
+| `a` N | 83.07 | 111.26 | **−28.19** |
+| `a` P | 146.40 | 186.81 | **−40.41** |
+| `inp`/`inn` unit ports | 49.55 | 51.53 | −1.98 |
+| `af` N | 85.77 | 102.16 | **−16.40** |
+| `af` P | 140.12 | 178.49 | **−38.37** |
+| `m1` port of `xtf` N | 30.52 | 66.46 | **−35.94** |
+| `m1` port of `xtf` P | 35.45 | 33.84 | +1.61 |
+
+
+### Generator changes (layout E7, `layout/r1_afe_layout.py`, `layout/maze_router.py`; all default off)
+
+| Flag | Change | Purpose |
+| --- | --- | --- |
+| `x1wmode` (extended) | Any net may be named (E6: only `x1p`, `x1n`, `inp`, `inn`), e.g. `xs1n_a3:12`, `xs1n_af:12`, `m1p:12`. Optional y window `net:modes@ylo/yhi` (µm, channel coordinates): only the route edges inside the window are widened (`Router.widen(..., ywin)`). | per-port R trim of the input-current path |
+| `ctrim` | `net:layer:edges,…`: dead-end C trim stubs on named nets after the widening. | pair C balance |
+| `sym` | Mirrored stage-1 input path: NMOS TG row `xs2p | xs1p | xs1n reversed | xs2n reversed | middle`; stage-1 resistor units `p1…p8 pf | nf n8…n1`; resistor groups C, D before A. | equal `a`/`af`/`m1` routes (screens s3–s8; **not adopted**, see below) |
+| `x1order=np` | `x1n` routed before `x1p`. | `x1` P-port balance (screen s8; **not adopted**) |
+
+With the default flags the generator gives the dev16 ports file (sha256 `350b552f…`) and layout record (except the run
+time); build `layout-e7-s0`.
+
+### Screens (wiring-R-only views; `pex/path_balance.py`; ×32 path wiring difference p − n in Ω)
+
+`a`/`af`/`m1` port R per widening mode: n-side nets in builds s1a (Metal3 + Metal4), s1b (Metal3), s1c (Metal4), s1d
+(both layers, one side); p-side nets in s2a–s2d. Mirrored builds (`sym=1`): s3a/s3b (no trim), s4a–s4d (n-side trim),
+s5–s8 (`x1` windows, routing order). Operating-point screens on the R-only views (runs `r1afe-screen-e7-a`,
+`r1afe-screen-e7-b`; ×32 offset in mV, tt):
+
+| Build | Path N / P (×32, Ω) | Feedback N (Ω) | CM 1.5 V 3.0 / 3.3 / 3.6 V | CM 2.0 V 3.0 / 3.3 / 3.6 V | CM 2.5 V 3.0 / 3.3 / 3.6 V | CM 2.8 V 3.0 / 3.3 / 3.6 V |
+| --- | --- | --- | --- | --- | --- | --- |
+| E6-dev16 | −7.1 / −10.6 | −52.3 | −2.99 / −2.52 / −2.25 | **−5.13 / −5.80 / −5.24** | +0.59 / +0.37 / **−7.18** | +1.29 / +0.95 / +0.75 |
+| s1a (E6 + n-side `a`, `af`, `m1p` Metal3 + Metal4) | −3.6 / −4.2 | −2.4 | −0.61 / +0.29 / +0.98 | −2.24 / −2.34 / −1.26 | +4.56 / +3.56 / −2.97 | **+5.18 / +5.40** / +4.30 |
+| s1d (as s1a, one side) | −5.0 / −7.0 | −31.5 | −2.51 / −1.87 / −1.44 | −4.78 / **−5.17** / −4.40 | +0.91 / +0.36 / **−6.57** | +1.36 / +1.25 / +0.68 |
+| s3a (`sym`, no trim) | −16.5 / −47.6 | −5.1 | +4.91 / +3.70 / +2.46 | **+14.59 / +9.14 / +7.02** | **+32.3 / +37.2 / +17.7** | **+41.1 / +38.6 / +44.4** |
+| s4a (`sym`, n side Metal3 + Metal4) | +11.2 / −16.4 | −5.1 | **−8.88 / −8.52 / −8.17** | **−7.53 / −12.52 / −13.07** | **+7.18 / +8.66 / −11.90** | **+10.0 / +8.92 / +10.8** |
+| s4c (`sym`, n side Metal4) | +23.0 / −2.2 | −5.1 | **−14.7 / −13.7 / −12.6** | **−17.5 / −21.8 / −21.6** | −4.32 / −4.51 / **−25.2** | — / −4.69 / −4.63 |
+
+Elimination on s4a (run `r1afe-elim-e7-s4a`): with the stage-1 path ideal the offset is −2.6 … −6.0 mV over CM, and the
+stage-2 wiring carries a CM-dependent term of −6 mV (CM 2.5 V): moving resistor group C in front of the array changed
+the stage-2 routes. The mirrored arrangement was dropped for the time budget (failure 3).
+
+Elimination on s1a (run `r1afe-elim-e7-s1a`; ×32 offset, mV):
+
+| Ports made ideal | tt CM 2.0 V 3.3 V | tt CM 2.5 V 3.3 V | tt CM 2.5 V 3.6 V |
+| --- | --- | --- | --- |
+| none (s1a) | −2.34 | +3.56 | −2.97 |
+| `x1` N | +0.93 | +3.93 | +1.90 |
+| **`x1` P** | **+0.71** | **+0.79** | **+0.85** |
+| `x1` N and P | +0.69 | +0.79 | +0.94 |
+| `a` N / `a` P / `a` both | −2.33 / −2.40 / −2.34 | +3.52 / +4.84 / +4.84 | −3.16 / −2.47 / −2.60 |
+| feedback TG (`af`, `m1` ports) | −0.59 | +5.98 | −0.59 |
+| `inp`/`inn` wiring | −3.85 | +1.78 | −5.00 |
+
+Reading: the `x1` port wiring carries the whole CM and VDDA dependence. The summing node is inside the loop: a wiring
+drop between the OTA1 gate and the port where the input current enters is an input offset, ×9 (stage-1 noise gain) ×4
+(stage 2), about 1.1 mV per Ω at 31 µA. Which ports carry the current (N or P) depends on CM and VDDA, so the N-port and
+the P-port `x1` resistances must each match between the sides within about 0.5 Ω. The `a`, `af`, `m1` and `inp` ports
+are in series with the 40 kΩ units and matter about 10× less. `x1` per type (`x1_eff` in `pex/path_balance.py`, ×32,
+p − n): E6 and s1a −1.62 Ω (N), −3.61 Ω (P).
+
+### Iteration 1 (`layout-e7-dev17` = screen build s1t; `pex-e7-dev17`)
+
+Choice (18:12, at the point where only one RC extraction and the complete post-layout set still fit the budget): s1a
+(E6 generator flags + n-side `xs1n_a1…8`, `xs1n_af`, `m1p` widened on Metal3 + Metal4), with C trim stubs on `x1n`
+(`ctrim=x1n:1:80,x1n:2:76`) = build s1t, copied unchanged to `layout-e7-dev17` by `pex/run_iter_e7.sh`. Recorded
+reason: the best screened ×32 offset of all builds (worst |offset| 4.96 mV against 8.59 mV in E6); the `x1` window
+builds (w1–w18) balanced `x1_eff` to +1.4 Ω but kept the 3.6 V step (w9: −6.70 mV at tt CM 2.5 V 3.6 V), and the
+mirrored builds (`sym`) had a stage-2 wiring term. Generator record `reports/layout-e7-dev17/generator.json`.
+
+Balance before (E6-dev16) and after (E7-dev17), R-only views, `pex/path_balance.py` (`reports/pex-e7-dev17/path_balance.json`);
+p side / n side, difference p − n in Ω. Limit of the task: |ΔR| ≤ 5 Ω per pair.
+
+| Quantity | E6-dev16 | E7-dev17 | Status (≤ 5 Ω) |
+| --- | --- | --- | --- |
+| `x1` N ports, ×32 injection (`x1_eff`) | 91.89 / 93.51, −1.62 | 91.89 / 93.06, −1.17 | passed |
+| `x1` P ports, ×32 injection | 121.45 / 125.06, −3.61 | 121.45 / 124.60, −3.16 | passed (but see reading: about 0.5 Ω needed) |
+| `a` N ports (mean of 8) | 83.07 / 111.26, **−28.19** | 83.07 / 83.57, −0.51 | passed |
+| `a` P ports (mean of 8) | 146.40 / 186.81, **−40.41** | 146.40 / 135.11, **+11.28** | failed |
+| `inp`/`inn` unit ports (mean) | 49.55 / 51.53, −1.98 | unchanged | passed |
+| `af` N | 85.77 / 102.16, **−16.40** | 85.77 / 72.42, **+13.35** | failed |
+| `af` P | 140.12 / 178.49, **−38.37** | 140.12 / 128.38, **+11.74** | failed |
+| `m1` port of `xtf` N | 30.52 / 66.46, **−35.94** | 30.52 / 46.31, **−15.79** | failed |
+| `m1` port of `xtf` P | 35.45 / 33.84, +1.61 | 35.45 / 25.16, **+10.29** | failed |
+| input path ×32, N conducting / P conducting | −7.10 / −10.63 | −3.19 / −3.71 | passed |
+| input path ×1 (unit 1), N / P | −27.54 / **−99.33** | +0.10 / **−32.86** | N passed, P failed |
+| feedback path, N conducting (the feedback TG conducts through N at every CM) | **−52.33** | −2.40 | passed |
+| feedback path, P conducting (P sensitivity 0, run `r1afe-sens-e7-port`) | −36.76 | +22.08 | failed (no offset effect) |
+
+Per-unit spread: the per-unit `a` port differences of E7 stay at −20 … +30 Ω (the n-side TGs are 60–100 µm east of
+their resistor units; widening reduces but cannot equalize the routes).
+
+Offset preview on the R-only view (run `r1afe-screen-e7-d`; ×32 / ×1 output offset in mV; the DC point does not depend
+on the extracted C, so the RC netlist gives the same numbers within the solver tolerance):
+
+| Input CM | tt 3.0 V | tt 3.3 V | tt 3.6 V | ss (3.0 V, 125 °C) | ff (3.6 V, −40 °C) | Span tt over VDDA | Span tt/ss/ff |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| 0.5 V | −4.02 | −3.70 | −3.38 | −4.15 | −2.69 | 0.64 | **1.46** |
+| 1.5 V | −0.84 | +0.09 | +0.81 | −1.13 | +0.98 | **1.65** | **2.11** |
+| 2.0 V | −2.59 | −2.69 | −1.58 | — | — | **1.11** | — |
+| 2.5 V | +4.19 | +3.14 | −3.44 | +4.09 | −4.12 | **7.63** | **8.21** |
+| 2.8 V | +4.73 | +4.96 | +3.81 | — | — | **1.15** | — |
+
+Checks (`reports/layout-e7-dev17/`): DRC main + maximal 0 items, antenna 0 items (`drc_db_items.txt`), LVS match
+(`lvs_summary.txt`; top 63 nets / 46 devices, channel 143 nets / 243 devices), supply islands 0 (`vdd` 23, `vss` 42
+ports; `supply_island_check.json`), pins: 57 pin shapes (21 pins), same set and centres as E5/E6, supply pins 1.0 µm,
+box 192.8 × 494.4 µm, TopMetal2 0 (`pin_layer_check.json`).
+
+### Mechanism tests on the iteration build (R-only view of dev17; runs `r1afe-mech-e7-s1t`, `-b`, `-c`; ×32 offset, mV, tt)
+
+| Variant (both sides unless stated) | CM 0.5 V 3.3 V | CM 1.5 V 3.0 / 3.6 V | CM 2.0 V 3.3 V | CM 2.5 V 3.0 / 3.3 / 3.6 V | CM 2.8 V 3.3 V |
+| --- | --- | --- | --- | --- | --- |
+| dev17 | −3.70 | −0.84 / +0.81 | −2.69 | +4.19 / +3.14 / −3.44 | +4.96 |
+| +27 Ω at every `x1` N port (N equal to P port R) | −3.70 | −0.89 / +0.78 | −2.72 | +4.19 / +3.14 / −3.41 | +4.96 |
+| p side only: +3.2 Ω at `x1` P ports, +1.2 Ω at `x1` N ports (`x1_eff` p − n → 0) | −3.70 | −0.89 / +0.76 | −2.77 | +3.87 / +2.78 / −3.60 | +4.58 |
+| `x1` P ports ideal | −3.70 | +0.46 / +1.22 | +0.65 | +1.65 / +0.79 / +0.83 | +1.97 |
+| all `x1` wiring × 0.5 | −3.72 | −0.27 / +0.89 | −1.04 | +2.94 / +2.04 / −1.11 | +3.48 |
+| **all `x1` wiring × 0.25** | −3.73 | −0.01 / +0.90 | −0.19 | **+2.30 / +1.43 / −0.03** | +2.73 |
+
+Reading: the CM/VDDA dependence is not the small p − n difference of the `x1` ports (removing it moves the offset by
+0.4 mV). It scales with the absolute `x1` wiring resistance between the TG ports and the OTA1 gate (about 90–125 Ω),
+which sits inside the loop, while the TG current moves from the P to the N devices with CM and VDDA, and the `a`/`af`/
+`m1` differences set how differently the two sides split. **Next lever**: a low-resistance `x1` structure on both
+sides (× 0.25: about 25–30 Ω port to gate; for example a Metal4/Metal5 strap from the OTA1 gate pair to the centres of
+both TG bars, the gate pair placed between the N and P TG rows), then the remaining `a`/`af`/`m1` balance per unit
+with the mirrored resistor order but with resistor group C kept in place.
+
+### Step 3 diagnosis: DM1 phase margin at ffx 6.9 µA, CM 0.5 V, ×1 (E6 62.58°, E5 64.03°)
+
+Capacitance elimination on the E6-dev16 RC netlist (runs `r1afe-elim-e7-dm1`, `r1afe-elim-e7-dm1b`; specs
+`sim/specs/elim_e7_dm1.json`, `elim_e7_dm1b.json`; one loop only, ×1 DM1; all extracted C of the named nets removed),
+with the E5 → E6 change of the same nets (sum of extracted C per net, kpex 2.5D CC):
+
+| Removed | DM1 PM | Δ PM | Total C of the group in E6 | E5 → E6 change | Estimated share of the 1.45° loss (linear) |
+| --- | --- | --- | --- | --- | --- |
+| none (E6) | 62.58° | — | — | — | — |
+| `xa1_o1n`/`xa1_o1p` (OTA1 first-stage outputs) | 64.22° | +1.64° | 153.6 fF | +32.6 / +11.8 fF | **0.47°** |
+| `m1p`/`m1n` | 65.97° | +3.39° | 697.6 fF | +6.0 / +16.8 fF | 0.11° |
+| `xa1_fn`/`xa1_fp` (folding nodes, `fwide`) | 63.02° | +0.44° | 88.5 fF | +9.0 / +19.1 fF | 0.14° |
+| `xa1_gn`/`xa1_gp` | 63.17° | +0.59° | 126.3 fF | +17.7 / +2.4 fF | 0.09° |
+| `x1p`/`x1n` | 63.96° | +1.38° | 557.2 fF | +16.7 / +14.5 fF | 0.08° |
+| `x1` coupling C only | 63.56° | +0.98° | — | — | — |
+| `xa1_tn`/`xa1_tp` (tails, `pairbar`) | 62.74° | +0.16° | 156.0 fF | +33.1 / +15.3 fF | 0.05° |
+| `xs1*_af` | 63.00° | +0.42° | — | — | — |
+| `xs1*_a1` | 62.68° | +0.10° | — | — | — |
+| OTA1 compensation nodes `cz1`/`cz2`/`cb1`/`cb2` | 62.19° | −0.39° | — | +27.9 / +19.1 / +1.2 / +0.3 fF | (negative) |
+| all OTA1 wiring R × 1e-3 | 61.99° | −0.59° | — | — | — |
+
+Reading: no single parasitic carries the 1.45°; the largest share is the OTA1 first-stage output `o1n` (+32.6 fF
+in E6, 94 fF against 59 fF on `o1p`), then the folding nodes widened by `fwide`, then `m1`, `gn`, `x1`. The sum of the
+linear shares is about 0.95°. Lever: shorter `o1n`/`o1p` routes (equal on both sides) in the next build; `fwide` costs
+about 0.14°.
+
+### Failures and mistakes (layout E7)
+
+| # | What happened | Class | Effect and correction |
+| --- | --- | --- | --- |
+| 1 | The E6 port-pair metric (`x1` only, N and P averaged) hid the `a`, `af` and `m1` port differences of −16 to −40 Ω | verification-gap | `pex/path_balance.py` reports every port of the input-current path per TG device type |
+| 2 | First sensitivity reading (×32 offset per Ω of `x1` port wiring from the loop gain, about 1.1 mV/Ω) was 10× too high: p-side series R that equalizes `x1` per type moved the offset by 0.36 mV (run `r1afe-mech-e7-s1t-b`) | estimation | Decisions taken from the operating-point screens, not from the estimate |
+| 3 | The mirrored arrangement (`sym=1`) moved resistor group C and changed the stage-2 routes (−6 mV CM-dependent stage-2 term, run `r1afe-elim-e7-s4a`); 13 screen builds spent on it | planning | Dropped for the time budget; recorded as a lever with the stage-2 group kept in place |
+| 4 | The E6 drift set covered CM 0.5 and 2.5 V only; CM 2.0 V gives −5.1 … −5.8 mV on E6 (fails 5 mV) | verification-gap | E7 screens and `sim/specs/make_post_e7.py` cover CM 0.5, 1.5, 2.0, 2.5, 2.8 V |
+| 5 | `x1` y-window widening (w1–w18) changes `x1_eff` in steps of about 3 Ω (one via pair), not continuously; and balancing `x1_eff` did not remove the 3.6 V step | estimation | Not adopted; mechanism tests below |
+| 6 | Hypothesis "the N/P split is converted by the `x1` N-to-P port difference" tested with +27 Ω at every `x1` N port: no effect (≤ 0.03 mV, run `r1afe-mech-e7-s1t`) | estimation | Rejected; P-port test (ideal `x1` P ports) flattens the offset |
+| 7 | The GDS of the reproduction build `layout-e7-s0` has a different sha256 than dev16 with the same ports and layout record (GDS time stamp, not verified by XOR) | tooling | Reproduction judged by the ports/layout records |
+| 8 | DM1 at ffx 6.9 µA was not screened before the extraction: one kpex (63 min in E6) was the only RC view in the budget | planning | Result from the post-layout set; lever recorded |
 
 ## Layout E6 (2026-10-27, track T3j; not closed)
 

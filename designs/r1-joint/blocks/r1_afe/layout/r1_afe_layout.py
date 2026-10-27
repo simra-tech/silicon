@@ -63,10 +63,13 @@ ADJPAIRS = globals().get('adjpairs', '2') in ('1', '2')  # E6: XMP3/XMP4 and XMN
 ADJSYM = globals().get('adjpairs', '2') == '2'  # E6: mirror order XMN5 | XMN3A XMN3 XMN4 XMN4A | XMN6 (E6-s9 order 1 put XMN5 east of the group, next to the fp sinks: fn/fp wiring 364/495 Ohm with different topology, +14 mV x32 offset at tt CM 0.5 V, r1afe-elim-s9b-a1)
 SUPBAR_PAIRS = [('xa1_xmp3', 'xa1_xmp4', 'vdd'), ('xa1_xmn3a', 'xa1_xmn4a', 'vss'), ('xa2_xmp3', 'xa2_xmp4', 'vdd'), ('xa2_xmn3a', 'xa2_xmn4a', 'vss')]
 X1CENTRE = globals().get('x1centre', '1') == '1'  # E6: x1 bars fed only at their centre node (E5: the router entered a bar at any node)
-X1WMODE = dict((kv.split(':')[0], tuple(int(c) for c in kv.split(':')[1] if c.isdigit())) for kv in globals().get('x1wmode', 'x1p:12,x1n:12').split(',') if ':' in kv)  # E6: widening layers per x1 net (1 = Metal3, 2 = Metal4); E5 = both nets, both layers
-X1WHALF = set(kv.split(':')[0] for kv in globals().get('x1wmode', 'x1p:12,x1n:12').split(',') if kv.endswith('h'))  # E6: 'h' suffix = widen on one side only (about half the added width; R trim of one x1 net)
+X1WMODE = dict((kv.split(':')[0], tuple(int(c) for c in kv.split(':')[1].split('@')[0] if c.isdigit())) for kv in globals().get('x1wmode', 'x1p:12,x1n:12').split(',') if ':' in kv)  # E6: widening layers per x1 net (1 = Metal3, 2 = Metal4); E5 = both nets, both layers
+X1WY = dict((kv.split(':')[0], tuple(float(v) for v in kv.split('@')[1].split('/'))) for kv in globals().get('x1wmode', '').split(',') if '@' in kv)  # E7: optional y window of the widening, net:modes@ylo/yhi (um, channel coordinates)
+X1WHALF = set(kv.split(':')[0] for kv in globals().get('x1wmode', 'x1p:12,x1n:12').split(',') if kv.split('@')[0].endswith('h'))  # E6: 'h' suffix = widen on one side only (about half the added width; R trim of one x1 net)
 FWIDE = globals().get('fwide', '1') == '1'  # E6: widen the OTA folding nodes fn/fp of both OTAs (Metal3 + Metal4) after routing (s10a: fn/fp wiring 300-500 Ohm, -6 mV of x32 offset at tt CM 0.5 V, r1afe-elim-s10a)
 X1CBAL = globals().get('x1cbal', '1') == '1'  # E6: after the x1 widening, dead-end stubs on the net with less widened area (C balance; 1 widened edge side ~ 2 stub edges)
+SYM = globals().get('sym', '0') == '1'  # E7: mirrored stage-1 input path: NMOS TG row xs2p | xs1p | xs1n reversed | xs2n reversed | middle, stage-1 resistor units p1..p8 pf | nf n8..n1 (n segments reversed), resistor groups C, D before A so the unit array lies under the TG mirror axis (E6: n-side a<k> routes 60-100 um longer than p, a/af/m1 port R p - n -16 to -40 Ohm, pex/path_balance.py)
+CTRIM = [(kv.split(':')[0], int(kv.split(':')[1]), int(kv.split(':')[2])) for kv in globals().get('ctrim', '').split(',') if kv.count(':') == 2]  # E7: C trim stubs net:layer:edges (default none)
 SUPPIN = float(globals().get('suppin', '1.0'))  # E5 (assembly try f, chip-level EM): vdd/vss block pins this wide at the macro edge (um), same centres; E4: 0.4
 BIGFOOT = globals().get('bigfoot', '1') == '1'  # E5: strap feet 5 x 4 Via3/Via4 (E2-E4: 3 x 2); the foot is shared by both channels (top-level mutual supply impedance 4.2-4.9 Ohm, pex/top_supply_z.py)
 TGROWS = globals().get('tgrows', 'e5')  # E5: 'e5' = stage-1 PMOS TGs of both sides in one row, mirrored (x1p/x1n bars at the same y); 'e4' = E4 split
@@ -76,6 +79,8 @@ SYMENTRY = globals().get('symentry', '1') == '1'  # E6: every channel vdd/vss ed
 # P/N pairs of the channel and of the top level, balanced per layer after routing
 CH_PAIRS = [('outp', 'outn'), ('op2', 'on2'), ('m1p', 'm1n'), ('x1p', 'x1n'), ('x2p', 'x2n'), ('inp', 'inn')]
 CH_FIRST = ['xa1_vcms', 'xa2_vcms'] + [n for pr in CH_PAIRS for n in pr]
+if globals().get('x1order', 'pn') == 'np':   # E7: route x1n before x1p (the first-routed x1 net takes the short crossing of the OTA NMOS rows)
+    CH_FIRST = [('x1n' if n == 'x1p' else 'x1p' if n == 'x1n' else n) for n in CH_FIRST]
 TOP_PAIRS = [('souts_p', 'souts_n'), ('soutc_p', 'soutc_n'), ('sinp', 'sinn'), ('cosp', 'cosn')]
 TOP_FIRST = [n for pr in TOP_PAIRS for n in pr]
 
@@ -459,10 +464,10 @@ def route_and_balance(blk, first, pairs, cellname, log=print):
                         trims[key] = trims.get(key, [0, 0, 0])
                         trims[key][l] += R.add_stub(R.nets[net], l, int(n), log=log)
     if ok and X1WIDE:
-        for net in X1NETS + ('inp', 'inn'):   # E5: the summing nodes carry the stage-1 input current (31 uA at x32, CM 2.5 V); E6: inp/inn optional
+        for net in X1NETS + ('inp', 'inn') + tuple(sorted(n_ for n_ in X1WMODE if n_ not in X1NETS + ('inp', 'inn'))):   # E5: the summing nodes carry the stage-1 input current (31 uA at x32, CM 2.5 V); E6: inp/inn optional; E7: any net named in x1wmode (a<k>, af, m1 of the input-current path)
             if net in R.nets and X1WMODE.get(net, (1, 2) if net in X1NETS else ()):
                 sd = (1,) if net in X1WHALF else (1, -1)
-                nb, nv = R.widen(R.nets[net], layers=X1WMODE.get(net, (1, 2)), sides=sd)
+                nb, nv = R.widen(R.nets[net], layers=X1WMODE.get(net, (1, 2)), sides=sd, ywin=X1WY.get(net))
                 blk.stats.setdefault('widen_x1', {})[net] = dict(boxes=nb, extra_vias=nv, layers=list(X1WMODE.get(net, (1, 2))), sides=list(sd))
                 log('%s: widened %s on %s sides %s: %d boxes, %d extra vias' % (cellname, net, X1WMODE.get(net, (1, 2)), sd, nb, nv))
         if FWIDE:
@@ -485,6 +490,12 @@ def route_and_balance(blk, first, pairs, cellname, log=print):
                     got = -R.add_stub(ka, l, -d, log=log)
                 cb['%s:%d' % (pr_[0], l)] = dict(fat=[fa, fb], stub_edges=got)
             log('%s: %s C balance stubs %s' % (cellname, pr_, cb))
+    if ok and CTRIM:
+        for net, l, ne in CTRIM:       # E7: dead-end C trim stubs on named nets (layer 1 = Metal3, 2 = Metal4), after the widening
+            if net in R.nets:
+                got = R.add_stub(R.nets[net], l, ne, log=log)
+                blk.stats.setdefault('ctrim', []).append(dict(net=net, layer=l, asked=ne, placed=got))
+                log('%s: C trim %s layer %d: %d of %d edges' % (cellname, net, l, got, ne))
     if ok and WIDEN:
         for net in ('vss', 'vdd'):        # E2: supply widening (RC extraction showed 70-140 Ohm supply paths)
             if net in R.nets:
@@ -516,6 +527,8 @@ def build_channel(ly, W=400.0, H=600.0):
             names += ['%s_%s_%s' % (s, t, kind) for t in ts]
         return names
     tgn = tgs(['xs1p', 'xs2p'], 'xn') + ['xa1_xtc1_xn', 'xi1_xn', 'xi2_xn', 'xi3_xn', 'xi4_xn', 'xa1_xtc2_xn'] + tgs(['xs2n', 'xs1n'], 'xn')
+    if SYM:
+        tgn = tgs(['xs2p'], 'xn') + tgs(['xs1p'], 'xn') + tgs(['xs1n'], 'xn')[::-1] + tgs(['xs2n'], 'xn')[::-1] + ['xa1_xtc1_xn', 'xi1_xn', 'xi2_xn', 'xi3_xn', 'xi4_xn', 'xa1_xtc2_xn']
     tgp = tgs(['xs1p', 'xs2p'], 'xp') + ['xa1_xtc1_xp', 'xi1_xp', 'xi2_xp', 'xi3_xp', 'xi4_xp', 'xa1_xtc2_xp'] + tgs(['xs2n', 'xs1n'], 'xp')
     a1n = ['xa1_xmb0', 'xa1_xmb1', 'xa1_xmb4', 'xa1_xmb6', 'xa1_xmn3a', 'xa1_xmn3', 'xa1_xmn5', 'xa1_xmn7', 'xa1_xmc3',
            'xa1_xmnt', 'xa1_xmc4', 'xa1_xmn8', 'xa1_xmn6', 'xa1_xmn4', 'xa1_xmn4a']
@@ -570,6 +583,10 @@ def build_channel(ly, W=400.0, H=600.0):
         for s in ('xs1p', 'xs1n'):
             u1.append('%s_%s_xr' % (s, t))
     gA = dict(slots=[segs(u1[0])[0]['l']], cols=[[sg] for n in u1 for sg in segs(n)])
+    if SYM:
+        ts_ = ['xu%d' % (i + 1) for i in range(8)] + ['xuf']
+        u1m = ['xs1p_%s_xr' % t for t in ts_] + ['xs1n_%s_xr' % t for t in ts_[::-1]]
+        gA = dict(slots=[segs(u1m[0])[0]['l']], cols=[[sg] for n in u1m for sg in (segs(n) if n.startswith('xs1p') else segs(n)[::-1])])
     rs = ['xa1_xrs1', 'xa1_xrs2', 'xa2_xrs1', 'xa2_xrs2']
     gB = dict(slots=[segs(rs[0])[0]['l']], cols=[[sg] for n in rs for sg in segs(n)])
     S2 = lambda s, i: by['%s_xs%d_xr' % (s, i)]
@@ -578,7 +595,7 @@ def build_channel(ly, W=400.0, H=600.0):
     gD = dict(slots=[by['xs2p_xrf']['l']], cols=[[by['xs2p_xrf']], [by['xs2n_xrf']]])
     gE = dict(slots=[by['xa1_xrz1']['l'], by['xa2_xrz1']['l'], by['xro1']['l']],
               cols=[[by['xa1_xrz1'], by['xa2_xrz1'], by['xro1']], [by['xa1_xrz2'], by['xa2_xrz2'], by['xro2']]])
-    groups = [gA, gB, gC, gD, gE]
+    groups = [gC, gD, gA, gB, gE] if SYM else [gA, gB, gC, gD, gE]
     nres = sum(1 for g in groups for c in g['cols'] for s in c if s is not None)
     assert nres == len(res), (nres, len(res))
 

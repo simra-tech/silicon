@@ -1,0 +1,97 @@
+{
+ "question": "Layout E7 step 1 (track T3k): on the E6-dev16 R-only view, which port group of the stage-1 input-current path (x1, a<k>, af, m1 TGF ports per TG device type N / P; inp/inn and m1 wiring) carries the x32 offset term that changes sign between 3.3 and 3.6 V at CM 2.5 V? Port-level elimination (pex/port_eliminate.py), applied to both sides",
+ "variants": {
+  "BASE": {
+   "netlist": "$G1_RESULTS_ROOT/r1_afe/revF2/e7/elim-e6/BASE.spice"
+  },
+  "XN": {
+   "netlist": "$G1_RESULTS_ROOT/r1_afe/revF2/e7/elim-e6/XN.spice"
+  },
+  "XP": {
+   "netlist": "$G1_RESULTS_ROOT/r1_afe/revF2/e7/elim-e6/XP.spice"
+  },
+  "AN": {
+   "netlist": "$G1_RESULTS_ROOT/r1_afe/revF2/e7/elim-e6/AN.spice"
+  },
+  "AP": {
+   "netlist": "$G1_RESULTS_ROOT/r1_afe/revF2/e7/elim-e6/AP.spice"
+  },
+  "FAN": {
+   "netlist": "$G1_RESULTS_ROOT/r1_afe/revF2/e7/elim-e6/FAN.spice"
+  },
+  "FAP": {
+   "netlist": "$G1_RESULTS_ROOT/r1_afe/revF2/e7/elim-e6/FAP.spice"
+  },
+  "FMN": {
+   "netlist": "$G1_RESULTS_ROOT/r1_afe/revF2/e7/elim-e6/FMN.spice"
+  },
+  "FMP": {
+   "netlist": "$G1_RESULTS_ROOT/r1_afe/revF2/e7/elim-e6/FMP.spice"
+  },
+  "IN": {
+   "netlist": "$G1_RESULTS_ROOT/r1_afe/revF2/e7/elim-e6/IN.spice"
+  },
+  "M1": {
+   "netlist": "$G1_RESULTS_ROOT/r1_afe/revF2/e7/elim-e6/M1.spice"
+  },
+  "ALLN": {
+   "netlist": "$G1_RESULTS_ROOT/r1_afe/revF2/e7/elim-e6/ALLN.spice"
+  },
+  "ALLP": {
+   "netlist": "$G1_RESULTS_ROOT/r1_afe/revF2/e7/elim-e6/ALLP.spice"
+  },
+  "PATH": {
+   "netlist": "$G1_RESULTS_ROOT/r1_afe/revF2/e7/elim-e6/PATH.spice"
+  }
+ },
+ "jobs": [
+  {
+   "tag": "op_tt_ib10.14_cm2.5_v3.0",
+   "tmpl": "tb_afe_op.cir",
+   "corner": "tt",
+   "subs": {
+    "VCMI": 2.5,
+    "IB": "10.14u",
+    "VDDA": 3.0
+   }
+  },
+  {
+   "tag": "op_tt_ib10.14_cm2.5_v3.3",
+   "tmpl": "tb_afe_op.cir",
+   "corner": "tt",
+   "subs": {
+    "VCMI": 2.5,
+    "IB": "10.14u",
+    "VDDA": 3.3
+   }
+  },
+  {
+   "tag": "op_tt_ib10.14_cm2.5_v3.6",
+   "tmpl": "tb_afe_op.cir",
+   "corner": "tt",
+   "subs": {
+    "VCMI": 2.5,
+    "IB": "10.14u",
+    "VDDA": 3.6
+   }
+  },
+  {
+   "tag": "op_ff_ib9.00_cm2.5",
+   "tmpl": "tb_afe_op.cir",
+   "corner": "ff",
+   "subs": {
+    "VCMI": 2.5,
+    "IB": "9.00u"
+   }
+  },
+  {
+   "tag": "op_tt_ib10.14_cm1.5",
+   "tmpl": "tb_afe_op.cir",
+   "corner": "tt",
+   "subs": {
+    "VCMI": 1.5,
+    "IB": "10.14u"
+   }
+  }
+ ]
+}

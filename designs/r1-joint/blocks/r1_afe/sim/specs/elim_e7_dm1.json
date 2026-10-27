@@ -1,0 +1,40 @@
+{
+ "question": "Layout E7 step 3 (track T3k): which extracted capacitance sets the DM1 phase margin at ffx 6.9 uA CM 0.5 V x1 (E6 62.58 deg, E5 64.03 deg)? E6-dev16 RC netlist, one group of capacitors removed per variant (pex/rc_eliminate.py)",
+ "variants": {
+  "BASE": {
+   "netlist": "$G1_RESULTS_ROOT/r1_afe/pexrc-layout-e6-dev16/r1_afe_post_rc.spice"
+  },
+  "CX1": {
+   "netlist": "$G1_RESULTS_ROOT/r1_afe/revF2/e7/elim-dm1/CX1.spice"
+  },
+  "CM1": {
+   "netlist": "$G1_RESULTS_ROOT/r1_afe/revF2/e7/elim-dm1/CM1.spice"
+  },
+  "CA1": {
+   "netlist": "$G1_RESULTS_ROOT/r1_afe/revF2/e7/elim-dm1/CA1.spice"
+  },
+  "CAF": {
+   "netlist": "$G1_RESULTS_ROOT/r1_afe/revF2/e7/elim-dm1/CAF.spice"
+  },
+  "CXX": {
+   "netlist": "$G1_RESULTS_ROOT/r1_afe/revF2/e7/elim-dm1/CXX.spice"
+  },
+  "CO1": {
+   "netlist": "$G1_RESULTS_ROOT/r1_afe/revF2/e7/elim-dm1/CO1.spice"
+  }
+ },
+ "jobs": [
+  {
+   "tag": "stb_ffx_ib6.9_cm0.5_x1dm1",
+   "tmpl": "tb_afe_stb.cir",
+   "corner": "ffx",
+   "subs": {
+    "VCMI": 0.5,
+    "KLIST": "0",
+    "LLIST": "1",
+    "IB": "6.9u",
+    "CL": "2.8p"
+   }
+  }
+ ]
+}
