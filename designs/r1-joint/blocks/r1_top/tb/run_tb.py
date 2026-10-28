@@ -20,6 +20,7 @@ import hashlib
 import json
 import os
 import subprocess
+import re
 import sys
 import time
 
@@ -212,6 +213,18 @@ def build_deck(a, out, vvp_inc, io_inc):
         A('* deck 1b (fast view, --start op): supplies on from the operating point; por_n steps at %g us (POR delay: r1_bias record)' % a.por_step)
         A('V33 rail33 0 3.3')
         A('V12 rail12 0 1.2')
+        if a.pex_bias and a.view == 'pex':
+            # seventh budget: the extracted r1_bias revision 2 has its own POR (xpor), released from the operating
+            # point. POR step on the extracted cell: the delay MIM node xpor.cdel is held at VSS until por_step and
+            # then charged to VDDA in 100 ns (instead of the 197-247 us of the PMOS stack, r1_bias record); the
+            # extracted Schmitt trigger, ready inverter, VDD pass, por_raw pull-down and output inverters make the edge.
+            t0 = a.por_step
+            A('* deck 1b on the pex view: POR step on the extracted r1_bias POR (xu_bias.xpor.cdel), release at %g us' % t0)
+            A('Spor_hold xu_bias.xpor.cdel VSS tpor_h 0 swpor')
+            A('Vtpor_h tpor_h 0 PWL(0 1 %ge-6 1 %ge-6 0)' % (t0, t0 + 0.001))
+            A('Spor_set xu_bias.xpor.cdel VDDA tpor_s 0 swpor')
+            A('Vtpor_s tpor_s 0 PWL(0 0 %ge-6 0 %ge-6 1 %ge-6 1 %ge-6 0)' % (t0 + 0.001, t0 + 0.002, t0 + 0.1, t0 + 0.101))
+            A('.model swpor sw vt=0.5 vh=0.1 ron=1k roff=1e12')
     elif test == 1:
         A('V33 rail33 0 %s' % pwl([(0, 0), (2, 0), (22, 3.3)]))
         A('V12 rail12 0 %s' % pwl([(0, 0), (5, 0), (25, 1.2)]))
@@ -509,6 +522,8 @@ def pex_pass(view, a, rec, out, bulk):
         lines = list(sc['lines'])
         if h[0] == '*T10CELL':
             name = h[1]
+            if ('BEHAV' in h[2:]) != bool(getattr(a, 'adc_behav', False)):
+                continue      # seventh budget: one r1_adc section per deck (--adc-behav selects the BEHAV one)
             if name in a.pex_skip:
                 done[name] = 'schematic (--pex-skip)'
                 continue
@@ -526,8 +541,10 @@ def pex_pass(view, a, rec, out, bulk):
                 continue
             view = '\n'.join(L[:i] + lines + L[k + 1:]) + '\n'
             done[name] = 'extracted'
-            if name == 'r1_adc':
+            if name == 'r1_adc' and not a.adc_behav:
                 a.adc_pex = True
+            if name == 'r1_adc' and a.adc_behav:
+                done[name] = 'extracted (B5 RC, behavioural SAR r1_sar5_logic, sequencer model; --adc-behav)'
             continue
         n = h[1]
         if n.split('/')[0] in a.pex_skip:
@@ -558,6 +575,12 @@ def pex_pass(view, a, rec, out, bulk):
                 if w and w[0].lower() in ('.subckt', '.ends') and len(w) > 1 and w[1] == old:
                     l = l.replace(' ' + old, ' ' + new, 1)
                 S.append(l)
+            if getattr(a, 'pex_bias_drop', ''):
+                # seventh budget, BISECTION ONLY (xq127 abort): drop the lines of the renamed copy that match
+                rx = re.compile(a.pex_bias_drop)
+                kept = [l for l in S if not (l[:1].upper() in 'CRX' and rx.search(l))]
+                rec['pex_bias_drop'] = {'regex': a.pex_bias_drop, 'lines_dropped': len(S) - len(kept)}
+                S = kept
             dst = os.path.join(out, 'pexren_' + os.path.basename(src))
             open(dst, 'w').write('\n'.join(S) + '\n')
             lines = [x.replace('@RENAMED@', dst) for x in lines]
@@ -670,6 +693,8 @@ def main():
     ap.add_argument('--t2f-off', action='store_true', help='deviation D11: T2F enable input held at VSS')
     ap.add_argument('--thermal-subset', action='store_true', help='tests 1b, 5, 6: AFE, isense, safe, ADC as stubs (F18)')
     ap.add_argument('--chip-rc', action='store_true', help='chip view: insert the try-g top-level routing RC (fast variant, CHIP_RC) between the block pins')
+    ap.add_argument('--adc-behav', action='store_true', help='--view pex: r1_adc B5 RC extraction with the behavioural SAR and the sequencer model (views/pex.inc section BEHAV) instead of the transistor-level SAR sub-macro')
+    ap.add_argument('--pex-bias-drop', default='', help='BISECTION: regex; C/R/X lines of the renamed extracted r1_bias copy that match are dropped')
     ap.add_argument('--pex-skip', default='', help='--view pex: comma list of blocks (e.g. r1_isense) kept at schematic level (deck time)')
     ap.add_argument('--pex-bias', action='store_true', help='--view pex with --fast: keep the extracted r1_bias revision 2 (VREF buffer) instead of its behaviour')
     ap.add_argument('--nodcp', action='store_true', help='bisection: also remove dpantenna from the pad copy')
@@ -701,7 +726,7 @@ def main():
     a.chip_bias_pex = False
     if a.pex_bias and a.view != 'pex':
         sys.exit('--pex-bias needs --view pex')
-    if a.view == 'pex' and not (a.thermal_subset or a.safety_subset) and 'T10_VALID_BRIDGE' not in a.vdefine:
+    if a.view == 'pex' and not (a.thermal_subset or a.safety_subset or a.adc_behav) and 'T10_VALID_BRIDGE' not in a.vdefine:
         # the extracted ADC (B5 SAR sub-macro) makes its own valid: the ctrl takes it from the macro pins
         a.vdefine = a.vdefine + ['T10_VALID_BRIDGE']
     if a.thermal_subset and 'T10_VALID_BRIDGE' not in a.vdefine:

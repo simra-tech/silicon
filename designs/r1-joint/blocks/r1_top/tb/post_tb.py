@@ -276,6 +276,16 @@ def test2(w, res, mon, run):
     M['latency_equiv_us'] = -off / 360.0 / f * 1e6
     C.append(crit('MEAS_ANGLE per pair: residual after a constant (latency, zero offset)', M['meas_resid_max_deg'],
                   '<= 0.25 (spec electronic accuracy)', M['meas_resid_max_deg'] <= 0.25, 'deg el'))
+    if 'T10_T2_PAIRS' in (run.get('vdefine') or []):
+        # seventh budget: pair-only deck (deck time); the register and BiSS criteria need the lock (about 21 us)
+        for n in ('POS over SPI against the stimulus angle (same constant removed)',
+                  'MEAS_ANGLE over SPI equals a monitored pair value (register path)',
+                  'STATUS: POS_VALID (bit 6) and CAL_VALID (bit 4) set, no AMP_LOW/HIGH',
+                  'BiSS-C: ACK, START, CRC (master check), stop bit', 'BiSS-C: nE = 1, nW = 1',
+                  'BiSS-C: ST against the stimulus angle at LAT (same constant removed)'):
+            C.append({'name': n, 'value': None, 'limit': None, 'unit': '',
+                      'status': 'not run (pair-only deck T10_T2_PAIRS: tstop before the lock, deck time)'})
+        return C, M
     pos = spird(res, '19')
     pe = []
     for tr, v in pos:
@@ -378,9 +388,21 @@ def test4(w, res, mon, run):
     vth_sh = vref / 26.0 + (2 * 44 - 63) / 63.0 * vref / 14.0
     M['oc_threshold_shunt_mV'] = vth_sh * 1e3
     tstep = [float(r['t']) * 1e-9 for r in res if r['kind'] == 'OCSTEP']
-    if not tstep:
+    enonly = 'T10_T4_ENONLY' in (run.get('vdefine') or [])
+    if enonly:
+        # seventh budget: EN-low and clear parts only; the OC criteria are in the OC-part deck
+        for n in ('all three gates high before the step (fault path exercised on driven gates)',
+                  'OC step: all gates < 1 V within comparator 236 ns + 4 ticks + gate 1 us', 'OC step: FAULT_N low',
+                  'fault cause after the step is OC_A (bit 0, monitor of the latched cause)', 'after CLR: PWM on GATE_A again'):
+            C.append({'name': n, 'value': None, 'limit': None, 'unit': '',
+                      'status': 'not applicable (EN-only deck T10_T4_ENONLY; OC part in a separate deck)'})
+        fl = spird(res, '02')
+        M['fault_reads'] = [[a * 1e6, '0x%04X' % v] for a, v in fl]
+    if not tstep and not enonly:
         C.append(crit('OC step applied', None, 'yes', False))
         return C, M
+    if enonly:
+        return test4_en(w, res, run, t, C, M, fl)
     t_x = first(crossings(t, w['isa_p'], vth_sh, True, tstep[0] - 1e-9))
     t_f = first(crossings(t, w['fault_n'], 1.65, False, t_x or tstep[0]))
     tg = [first(crossings(t, w['gate_%s' % g], 1.0, False, t_x or tstep[0])) for g in 'abc']
@@ -405,6 +427,11 @@ def test4(w, res, mon, run):
     r1 = [int(r['gate_a_rises']) for r in res if r['kind'] == 'RESUME1']
     r2 = [int(r['gate_a_rises']) for r in res if r['kind'] == 'RESUME2']
     C.append(crit('after CLR: PWM on GATE_A again', r1, '>= 1 rising edge in 3.6 us', bool(r1) and r1[0] >= 1))
+    return test4_en(w, res, run, t, C, M, fl)
+
+
+def test4_en(w, res, run, t, C, M, fl):
+    r2 = [int(r['gate_a_rises']) for r in res if r['kind'] == 'RESUME2']
     ten = [float(r['t']) * 1e-9 for r in res if r['kind'] == 'ENLOW']
     if ten:
         t_e = first(crossings(t, w['en_sto_in'], 1.65, False, ten[0] - 1e-9))
@@ -501,7 +528,11 @@ def main():
         if run['test'] != 1:  # start state must be the bandgap on-state (F9)
             C.append(crit('start state: vref_bg at t = 0 is the on-state of r1_bgr (1.045 V record)', out['vref_bg_t0_V'],
                           '1.00-1.09', 1.00 <= out['vref_bg_t0_V'] <= 1.09, 'V'))
-        C.append(crit('master sequence completed (DONE line)', out['master_done_us'], 'before tstop', bool(done)))
+        if 'T10_T2_PAIRS' in (run.get('vdefine') or []) and not done:
+            C.append({'name': 'master sequence completed (DONE line)', 'value': None, 'limit': None, 'unit': '',
+                      'status': 'not run (pair-only deck T10_T2_PAIRS: tstop before the lock, deck time)'})
+        else:
+            C.append(crit('master sequence completed (DONE line)', out['master_done_us'], 'before tstop', bool(done)))
         fn = {1: test1, 2: test2, 3: test3, 4: test4, 5: test5, 6: test6}[run['test']]
         try:
             c2, M = fn(w, res, mon, run)
@@ -511,7 +542,13 @@ def main():
     out['criteria'] = C
     out['measurements'] = M
     out['spi'] = [r for r in res if r['kind'] in ('SPIRD', 'SPIWR')][:200]
-    out['verdict'] = 'passed' if C and all(c['status'] == 'passed' for c in C) else 'failed'
+    okst = lambda c: c['status'] == 'passed' or c['status'].startswith('not applicable')
+    if C and any(c['status'] == 'passed' for c in C) and all(okst(c) for c in C):
+        out['verdict'] = 'passed'
+    elif C and any(c['status'] == 'passed' for c in C) and all(okst(c) or c['status'].startswith('not run') for c in C):
+        out['verdict'] = 'partial'      # every evaluated criterion passed; the rest are not run (deck time)
+    else:
+        out['verdict'] = 'failed'
     os.makedirs(os.path.join(HERE, 'results'), exist_ok=True)
     js = json.dumps(out, indent=1, default=float)
     open(os.path.join(HERE, 'results', rid + '.json'), 'w').write(js)

@@ -1,0 +1,173 @@
+{
+ "run_id": "t10-t4-pex-en-a",
+ "test": 4,
+ "view": "pex",
+ "corner": "tt",
+ "temp_c": 27.0,
+ "sim_status": "completed",
+ "ngspice_wall_s": 8573.9,
+ "tstop_us": 25.3,
+ "master_done_us": 24.6951,
+ "t_end_us": 25.299999999999997,
+ "vref_bg_t0_V": 1.0449,
+ "criteria": [
+  {
+   "name": "start state: vref_bg at t = 0 is the on-state of r1_bgr (1.045 V record)",
+   "value": 1.0449,
+   "limit": "1.00-1.09",
+   "unit": "V",
+   "status": "passed"
+  },
+  {
+   "name": "master sequence completed (DONE line)",
+   "value": 24.6951,
+   "limit": "before tstop",
+   "unit": "",
+   "status": "passed"
+  },
+  {
+   "name": "all three gates high before the step (fault path exercised on driven gates)",
+   "value": null,
+   "limit": null,
+   "unit": "",
+   "status": "not applicable (EN-only deck T10_T4_ENONLY; OC part in a separate deck)"
+  },
+  {
+   "name": "OC step: all gates < 1 V within comparator 236 ns + 4 ticks + gate 1 us",
+   "value": null,
+   "limit": null,
+   "unit": "",
+   "status": "not applicable (EN-only deck T10_T4_ENONLY; OC part in a separate deck)"
+  },
+  {
+   "name": "OC step: FAULT_N low",
+   "value": null,
+   "limit": null,
+   "unit": "",
+   "status": "not applicable (EN-only deck T10_T4_ENONLY; OC part in a separate deck)"
+  },
+  {
+   "name": "fault cause after the step is OC_A (bit 0, monitor of the latched cause)",
+   "value": null,
+   "limit": null,
+   "unit": "",
+   "status": "not applicable (EN-only deck T10_T4_ENONLY; OC part in a separate deck)"
+  },
+  {
+   "name": "after CLR: PWM on GATE_A again",
+   "value": null,
+   "limit": null,
+   "unit": "",
+   "status": "not applicable (EN-only deck T10_T4_ENONLY; OC part in a separate deck)"
+  },
+  {
+   "name": "EN low: all gates < 1 V within 1 us (gate-drive row)",
+   "value": [
+    84.27260156340758,
+    84.27260156340927,
+    84.27260156343807
+   ],
+   "limit": "<= 1000",
+   "unit": "ns",
+   "status": "passed"
+  },
+  {
+   "name": "FAULT register: STO (bit 8) latched after EN low",
+   "value": [
+    [
+     17.345100000000002,
+     "0x0100"
+    ]
+   ],
+   "limit": "bit 8",
+   "unit": "",
+   "status": "passed"
+  },
+  {
+   "name": "after EN high and CLR: PWM on GATE_A again",
+   "value": [
+    1
+   ],
+   "limit": ">= 1 rising edge in 3.6 us",
+   "unit": "",
+   "status": "passed"
+  }
+ ],
+ "measurements": {
+  "oc_threshold_shunt_mV": 69.80580847723704,
+  "fault_reads": [
+   [
+    17.345100000000002,
+    "0x0100"
+   ]
+  ],
+  "en_gate_delay_ns": [
+   84.27260156340758,
+   84.27260156340927,
+   84.27260156343807
+  ],
+  "en_gates_before_V": [
+   3.2999999973244445,
+   3.2999999973244414,
+   3.299999997324444
+  ]
+ },
+ "spi": [
+  {
+   "kind": "SPIWR",
+   "t": "3476.0",
+   "addr": "03",
+   "data": "06ff"
+  },
+  {
+   "kind": "SPIWR",
+   "t": "5051.0",
+   "addr": "18",
+   "data": "007e"
+  },
+  {
+   "kind": "SPIWR",
+   "t": "6626.0",
+   "addr": "20",
+   "data": "0064"
+  },
+  {
+   "kind": "SPIWR",
+   "t": "8201.0",
+   "addr": "21",
+   "data": "004b"
+  },
+  {
+   "kind": "SPIWR",
+   "t": "9776.0",
+   "addr": "22",
+   "data": "004b"
+  },
+  {
+   "kind": "SPIWR",
+   "t": "11351.0",
+   "addr": "23",
+   "data": "004b"
+  },
+  {
+   "kind": "SPIWR",
+   "t": "12926.0",
+   "addr": "04",
+   "data": "0003"
+  },
+  {
+   "kind": "SPIRD",
+   "t": "17345.1",
+   "addr": "02",
+   "data": "0100",
+   "status": "92"
+  },
+  {
+   "kind": "SPIWR",
+   "t": "20795.1",
+   "addr": "04",
+   "data": "0003"
+  }
+ ],
+ "verdict": "passed"
+}

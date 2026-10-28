@@ -1,0 +1,196 @@
+{
+ "run_id": "t10-t2-pex-afeadc-c",
+ "test": 2,
+ "view": "pex",
+ "corner": "tt",
+ "temp_c": 27.0,
+ "sim_status": "completed",
+ "ngspice_wall_s": 6471.7,
+ "tstop_us": 12.5,
+ "master_done_us": null,
+ "t_end_us": 12.499999999999998,
+ "vref_bg_t0_V": 1.0449,
+ "criteria": [
+  {
+   "name": "start state: vref_bg at t = 0 is the on-state of r1_bgr (1.045 V record)",
+   "value": 1.0449,
+   "limit": "1.00-1.09",
+   "unit": "V",
+   "status": "passed"
+  },
+  {
+   "name": "master sequence completed (DONE line)",
+   "value": null,
+   "limit": null,
+   "unit": "",
+   "status": "not run (pair-only deck T10_T2_PAIRS: tstop before the lock, deck time)"
+  },
+  {
+   "name": "ADC strobes 0.6 ns before the clk30 edge (M1 check, 15 conversions)",
+   "value": [
+    0.585,
+    0.61
+   ],
+   "limit": "0.3-0.9 ns",
+   "unit": "ns",
+   "status": "passed"
+  },
+  {
+   "name": "ADC handshake integrity: strobes per started conversion, no stalled frame (O10, F22, F24)",
+   "value": {
+    "conversions_started": 15,
+    "complete_in_deck": 14,
+    "strobe_rises": {
+     "seq_stb0": 15,
+     "seq_stb13": 14,
+     "seq_lat": 14
+    },
+    "lost_valid_events": 0,
+    "stalls": 0,
+    "short": []
+   },
+   "limit": "strobe rises = conversions, 0 stalls",
+   "unit": "",
+   "status": "passed"
+  },
+  {
+   "name": "MEAS_ANGLE per pair: residual after a constant (latency, zero offset)",
+   "value": 0.1415129043323976,
+   "limit": "<= 0.25 (spec electronic accuracy)",
+   "unit": "deg el",
+   "status": "passed"
+  },
+  {
+   "name": "POS over SPI against the stimulus angle (same constant removed)",
+   "value": null,
+   "limit": null,
+   "unit": "",
+   "status": "not run (pair-only deck T10_T2_PAIRS: tstop before the lock, deck time)"
+  },
+  {
+   "name": "MEAS_ANGLE over SPI equals a monitored pair value (register path)",
+   "value": null,
+   "limit": null,
+   "unit": "",
+   "status": "not run (pair-only deck T10_T2_PAIRS: tstop before the lock, deck time)"
+  },
+  {
+   "name": "STATUS: POS_VALID (bit 6) and CAL_VALID (bit 4) set, no AMP_LOW/HIGH",
+   "value": null,
+   "limit": null,
+   "unit": "",
+   "status": "not run (pair-only deck T10_T2_PAIRS: tstop before the lock, deck time)"
+  },
+  {
+   "name": "BiSS-C: ACK, START, CRC (master check), stop bit",
+   "value": null,
+   "limit": null,
+   "unit": "",
+   "status": "not run (pair-only deck T10_T2_PAIRS: tstop before the lock, deck time)"
+  },
+  {
+   "name": "BiSS-C: nE = 1, nW = 1",
+   "value": null,
+   "limit": null,
+   "unit": "",
+   "status": "not run (pair-only deck T10_T2_PAIRS: tstop before the lock, deck time)"
+  },
+  {
+   "name": "BiSS-C: ST against the stimulus angle at LAT (same constant removed)",
+   "value": null,
+   "limit": null,
+   "unit": "",
+   "status": "not run (pair-only deck T10_T2_PAIRS: tstop before the lock, deck time)"
+  }
+ ],
+ "measurements": {
+  "pairs_used": 11,
+  "meas_err_mean_deg": -0.6717454023792687,
+  "meas_resid_max_deg": 0.1415129043323976,
+  "meas_resid_rms_deg": 0.06938056185386939,
+  "meas_samples": [
+   [
+    3.507145,
+    4.640471,
+    30653,
+    -0.5302324980468711
+   ],
+   [
+    4.240511000000001,
+    5.3738280000000005,
+    32547,
+    -0.5693369144531175
+   ],
+   [
+    4.973826,
+    6.107153,
+    34413,
+    -0.6467098792968784
+   ],
+   [
+    5.707159,
+    6.840478000000001,
+    36315,
+    -0.6747091675781292
+   ],
+   [
+    6.4404650000000006,
+    7.573797000000001,
+    38269,
+    -0.6312001230468809
+   ],
+   [
+    7.173799000000001,
+    8.307159,
+    40141,
+    -0.7004017417968953
+   ],
+   [
+    7.907140999999999,
+    9.040469,
+    42051,
+    -0.7174471019531268
+   ],
+   [
+    8.640486000000001,
+    9.773796,
+    43987,
+    -0.6987976957031492
+   ],
+   [
+    9.373822,
+    10.507161,
+    45861,
+    -0.7652599324218841
+   ],
+   [
+    10.10713,
+    11.240466000000001,
+    47831,
+    -0.6997854316406347
+   ],
+   [
+    10.840482000000002,
+    11.973801,
+    49713,
+    -0.755318940234389
+   ]
+  ],
+  "latency_equiv_us": 0.18659594510535243
+ },
+ "spi": [
+  {
+   "kind": "SPIWR",
+   "t": "3476.0",
+   "addr": "07",
+   "data": "0040"
+  },
+  {
+   "kind": "SPIWR",
+   "t": "5051.0",
+   "addr": "18",
+   "data": "007e"
+  }
+ ],
+ "verdict": "partial"
+}

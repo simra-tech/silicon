@@ -774,3 +774,170 @@ What the fast variant does not cover (in addition to 16.5):
 3. Coupling between top-level wires and macro-internal metal (black boxes), the supply pad cells and their ESD paths, and the 34 `sg13g2_decap_8` antenna/decap cells (their RC ports are left open in the deck).
 4. The ctrl supply: one grid node for `vdd`/`vss` of the co-simulated ctrl (`ictrl=0`); the ctrl current is not spread over the grid.
 5. The deck nets tied at one RC node (item 3 of the method): testbench parts on such a net see the RC node of the first pin only.
+
+## 17. Seventh budget (2026-10-28): gaps of the pex view closed or bounded
+
+Goal: close the gaps of the pex view (section 16) before the chip-view campaign on the try-h chip. All numbers are
+simulated (tt, 27 °C, fast view, ideal 30 MHz clock unless stated). Failures are in the R1 failure ledger
+(F-20261028-T10-63 to -68).
+
+### 17.1 Changes to the testbench
+
+| Item | Change |
+| --- | --- |
+| `run_tb.py`, deck 1b with `--pex-bias --view pex` | POR step on the extracted `r1_bias` POR: switch `Spor_hold` holds the delay capacitor node `xu_bias.xpor.cdel` at VSS until `--por-step`; switch `Spor_set` then charges it to VDDA in 100 ns (1 kΩ). The extracted Schmitt trigger, `ready` inverter, VDD pass device, `por_raw` pull-down and output inverters make the `por_n` edge. The 197-247 µs of the PMOS delay stack are not simulated (`r1_bias` record) |
+| `rtl/t10_master.v`, `T10_T4_ENONLY` | Test 4 EN-low and clear parts only: `FAULT_MASK` 0x06FF (all maskable sources), no `CMP_THR` writes, no OC step. Digital diagnostic `t10-diag-t4enonly-a`: `DONE` at 24.64 µs. `T10_T4_NOCRC` (no `CAL_CRC` write) is a diagnostic only: without it `CAL` (bit 11) stays latched and the gates stay off |
+| `post_tb.py` test 4 | With `T10_T4_ENONLY` the 5 OC criteria are "not applicable" (they are in the OC-part deck) |
+| `post_tb.py` verdict | `passed`: every criterion passed or not applicable. New `partial`: every evaluated criterion passed, the rest "not run" (deck time) |
+| `views/pex.inc` section `*T10CELL r1_adc BEHAV`, `--adc-behav` | `r1_adc` layout B5 RC extraction (`r1_adc_lay_pr`, with the layout filter and buffer) and the behavioural SAR `r1_sar5_logic` through the ADC owner wrapper `r1_adc5_core_lay` (`sim/post/r1_adc5_post.spice`, sha256 checked): the configuration of the B5 gain and offset record. Timing and `valid` come from the sequencer model (`seq_*`), as in the schematic view. Faster than the transistor-level SAR sub-macro: 7.5 µs in 5374 s with 1 thread (`t10-t3-pex-adcbh-a`) against 7 µs in 5551 s with 3 threads (`t10-t3-pex-adc-b`) |
+| `post_tb.py` test 2, `T10_T2_PAIRS` | Pair-only deck: `MEAS_ANGLE` per pair, strobes and handshake are evaluated; `POS`, `MEAS_ANGLE` over SPI, `STATUS`, BiSS-C and `DONE` are "not run" (they need the lock at about 21 µs) |
+| `adc_pex_check.py` | Track end from `seq_trka0/1` (sequencer model) when the SAR track signals are not saved; new column `error_lsb_b5_fit`: residual against the B5 mux fit (gain 1.0570, offset +8.0 LSB) |
+| `t3_split.py <l0-run> <l1-run> <out-id>` | Test 3 step from two half decks (level 0 = full sequence cut after the level-0 reads, level 1 = `T10_T3_LEVEL0=1`) |
+| `--pex-bias-drop <regex>` | BISECTION only: drop the C/R/X lines of the renamed `r1_bias` extraction that match |
+
+### 17.2 Test 1 and 1b on the pex view
+
+Test 1b **passed** on the pex view with the extracted `r1_bias` revision 2 (POR and VREF buffer r1_vbuf extracted),
+thermal subset, ctrl 0.8:
+
+| Run | Options | Result |
+| --- | --- | --- |
+| `t10-t1b-pex-c` | default (KLU, `gmin=1e-15`, `rshunt=1e12`, `tmax` 5 ns) | aborted at 2.43 µs after singular-matrix warnings at floating stub nodes (pad `xp_cos_n`, `xu_ls_afe0`) |
+| `t10-t1b-pex-d` | KLU, `gmin=1e-12`, `rshunt=1e10` | POR step, reset exit and `ID` passed; aborted at 8.28 µs (singular matrix at an internal node of the extracted POR resistor `xu_bias.xr143`) |
+| `t10-t1b-pex-e` | as `-d`, `tmax` 1 ns | **passed**, all 5 criteria (366 s): `por_n` at 1.005 µs (4 ns after the capacitor release), ctrl out of reset at 1.04 µs, `ID` 0x5208, `FAULT` 0x1800, `DONE` 12.45 µs |
+| `t10-t1b-pex-f` | Sparse 1.3, `gmin=1e-12`, `rshunt=1e10`, `itl1=400 itl2=200`, `tmax` 5 ns | **passed**, same values |
+
+Test 1 (rail ramps) on the pex view: **failed to simulate**. Bisection of the abort at `xu_bias.xq127` (diode-connected
+POR reference `npn13G2`, node `n149` = `vq`):
+
+| Run | Change against `t10-t1-pex-a` (KLU, 20.13 µs) | Abort at |
+| --- | --- | --- |
+| `t10-t1-pex-bis-a` | without `--hbt-selft0` (self-heating model of record) | 19.5 µs, now at `xu_t2f.x1.xqb2` (another npn) |
+| `t10-t1-pex-bis-b` | `tmax` 1 ns | 23.2 µs |
+| `t10-t1-pex-bis-c` | coupling C of `n149` to all non-VSS nets removed (14 lines, `--pex-bias-drop`) | 20.1 µs |
+| `t10-t1-pex-bis-d` | `gmin=1e-12`, `rshunt=1e10` | 17.9 µs |
+| `t10-t1-pex-bis-f` | `-d` + `tmax` 1 ns | 36.4 µs (singular matrix at the buffer node `xvb.ns__p3` first) |
+| `t10-t1-pex-bis-g` | `-f` with Sparse 1.3 | **62.2 µs** (best) |
+| `t10-t1-pex-bis-h` | `-g` without `--hbt-selft0` | 23.8 µs |
+| `t10-t1-pex-bis-e` | `--ctrl static` (no co-simulation), options of `-a` | no abort to 24.2 µs, then the 3 h limit (8 µs/h; no raw file) |
+
+Findings:
+
+1. The abort is not caused by the coupling capacitors of `n149`, by `tmax` alone or by self-heating. Without
+   `--hbt-selft0` it moves to another npn.
+2. In `-bis-h` the node `n149` is flat at 0.6667 V from 10 µs to the abort. Nothing in the POR switches near the
+   abort (`gooda`/`goodd` high since 20/22 µs, `cdel` 7.7 mV). The abort is numerical, inside the `npn13G2` VBIC
+   instance at a quiet state. It is not a circuit event.
+3. Without the co-simulation the deck passes the abort point of the same options (20.1 µs), so the d_cosim time
+   steps may take part. This is not proven beyond 24 µs.
+4. "Schematic bias with the extracted buffer only" is **not run**: the extraction is flat (POR, mirrors and
+   buffer in one netlist), and the schematic revision 2 cannot be combined with part of it without a split by the
+   `r1_bias` owner.
+5. The POR release (about 220 µs after the ramps) is not reached in any variant. The extracted POR delay is
+   therefore covered only by the `r1_bias` post-layout record (delay +2…+3 %), not in the chip deck.
+
+### 17.3 Test 4 EN-low and clear parts on the pex view
+
+Deck sizing: 370 s/µs (`t10-t4-pex-g`), so the full 38.7 µs sequence needs about 4 h. The EN-only sequence
+(`T10_T4_ENONLY`, 25.3 µs) needs about 2.6 h.
+
+Run `t10-t4-pex-en-a` (safe comparator and `r1_bias` revision 2 extracted, VREF buffer r1_vbuf extracted, isense
+schematic, AFE and ADC stubs, ctrl 0.8; 8576 s): **passed**, all evaluated criteria. All gates < 1 V 84.3 ns after EN
+low (limit 1 µs; schematic `t10-t4-sub-08-b` 84.3 ns), `FAULT` 0x0100 (STO), PWM on `GATE_A` again after EN high and
+`CTRL.CLR`, `DONE` at 24.70 µs. With the OC part (`t10-t4-pex-g`, 16.4) all 10 criteria of test 4 passed on the
+pex view.
+
+### 17.4 Extracted-ADC current conversion at −71.5 LSB (`t10-t3-pex-adc-b`)
+
+Which conversion: the 7th conversion of the deck, at 6.51 µs. It is the first current-path conversion (`adc_sel`
+high, current frame), not the first conversion after enable. The first conversion after enable (2.48 µs) is an
+encoder conversion with the AFE stubbed, so its input floats (−225 / −347 LSB). It is not evaluable, as are the
+other encoder conversions of the current subset.
+
+Cause: the same deck with the behavioural SAR and the sequencer model (`t10-t3-pex-adcbh-a`, `--adc-behav`, 7.5 µs,
+5374 s, VREF buffer r1_vbuf extracted for the chip and the ADC layout buffer for the ADC) gives code 757.25 against
+757.0 with the hardened SAR. The input is −557.2 mV (expected 828.46).
+
+| Model | Residual (LSB) |
+| --- | --- |
+| raw | −71.2 (hardened SAR −71.5) |
+| B5 gain 1.0570 removed | −1.6 (−1.9) |
+| B5 mux fit (gain 1.0570, offset +8.0 LSB) | −9.7 (−10.0) |
+| B5 gain with +12 LSB offset (R2-4 slot estimate) | −14.0 |
+
+1. The error does not depend on the SAR (hardened or behavioural: 0.25 LSB apart). So it is not the B5
+   first-conversion hold, and not the SAR timing.
+2. It is not the `DISCARD` count: the check uses the raw decisions at the macro pins, before the ctrl.
+3. The B5 gain explains −69.5 LSB of it (0.0570 × 1219.6 LSB from mid-scale). After the gain is removed, −1.6 LSB is
+   left. With the +8.0 LSB mux-fit offset, −9.7 LSB is left (0.8 % of the reading, about 3 × the fit residual). In
+   this chip deck the encoder conversions near −0.17 V show about −2 LSB after the gain is removed, so the offset in
+   the chip deck is near 0, not +8. With one current-path sample, the offset is not resolved further.
+
+**Chip finding (not a testbench artefact):** the ADC layout gain (B5 1.0570, B6 1.0496) goes 1:1 into the current
+words `I_A` / `I_B` (+5.7 % for B5). `r1_ctrl` 0.8 has no current-gain correction: D22 covers only the encoder
+channels (`SIN_GAIN`, `COS_GAIN`), and `I_ZERO` is an offset only. The test 3 limit (1 % of 14 × dV / LSB) is met with
+the extracted ADC only after the gain is removed by the host. Decision needed: host calibration of the current
+gain (with the shunt tolerance) or an ADC gain fix in B7/B8. Owner: coordinator / `r1_adc`.
+
+### 17.5 Test 2 with the extracted AFE E6 and the extracted ADC B5
+
+Deck sizing: 2 µs probe `t10-t2-pex-probe-a` 790 s (395 s/µs, before the conversions). Once the conversions run:
+4.2 µs/h with 3 threads (`t10-t2-pex-afeadc-a`, stopped at 2.5 µs by PID). The full sequence (39 µs, lock at about
+21 µs) needs about 9 h. The pair-only deck runs instead.
+
+Run `t10-t2-pex-afeadc-c` (`T10_T2_PAIRS`, 12.5 µs, `--nodcp`, 3 threads, 6473 s; ctrl 0.8 design weights, D22 words
+at reset; chip VREF M6, ADC on its own layout buffer): **partial**.
+
+| Criterion | Pex AFE + ADC (`-afeadc-c`) | Pex AFE, ADC schematic (`t10-t2-pex-afe-d`) |
+| --- | --- | --- |
+| ADC strobes, handshake | passed (15 conversions) | passed (51) |
+| `MEAS_ANGLE` per pair, residual after a constant (≤ 0.25°) | **passed**: 0.142° max, 0.069° rms, 11 pairs; constant −0.672° | passed: 0.048° max, 0.022° rms, 47 pairs; −0.621° |
+| `POS`, `MEAS_ANGLE` over SPI, `STATUS`, BiSS-C, `DONE` | **not run** (lock at about 21 µs) | passed |
+
+`t10-t2-pex-afeadc-b` (same deck without `--nodcp`) aborted at 3.62 µs (`dparea` instance, after `vmax` warnings
+of the extracted AFE resistor segments).
+
+### 17.6 Test 3 current words with the extracted ADC B5
+
+Two half decks (12.4 µs each, 1 thread; isense c and `r1_bias` revision 2 with r1_vbuf extracted, ADC B5 with the
+behavioural SAR, `--adc-behav`): `t10-t3-pex-adcbh-l0` (level 0, 8390 s) and `t10-t3-pex-adcbh-l1` (level 1,
+`T10_T3_LEVEL0=1`, 8456 s). Strobes and handshake passed in both (12 conversions each). Step from `t3_split.py`
+(`results/t10-t3-pex-adcbh-split.json`; ADC VREF 1.0502 V, LSB 457.1 µV):
+
+| Channel | Level 0 / level 1 word | Step measured / expected | Error | Error after the B5 gain 1.0570 is removed |
+| --- | --- | --- | --- | --- |
+| `I_A` (30 mV) | 757 / 1734 | 977 / 918.7 | **+6.34 % (failed, limit 1 %)** | +0.61 % (passed) |
+| `I_B` (80 mV) | 759 / 3365 | 2606 / 2450.0 | **+6.37 % (failed)** | +0.63 % (passed) |
+
+With the ADC at schematic level the same step is +0.22 % / +0.26 % (`t10-t3-pex-is-b`; level-0 words 827 / 827).
+This confirms the chip finding of 17.4: the ADC layout gain goes 1:1 into the current words. The isense, bias and
+ADC extractions together are within 1 % only after a host gain calibration.
+
+### 17.7 State of the pex view after the seventh budget
+
+| Test | Pex view |
+| --- | --- |
+| 1 ramps | **failed to simulate** (17.2) |
+| 1b | **passed** (`t10-t1b-pex-e`, `-f`) |
+| 2 | **passed** with the extracted AFE (`t10-t2-pex-afe-d`); with AFE and ADC extracted **partial** (pairs passed; lock-dependent criteria not run) |
+| 3 | **passed** with the ADC schematic (`t10-t3-pex-is-b`); with the extracted ADC: **failed** against the 1 % limit (+6.3 %, the B5 gain; +0.6 % after the gain is removed; 17.6) |
+| 4 | **passed**, all 10 criteria (`t10-t4-pex-g` + `t10-t4-pex-en-a`) |
+| 5, 6 | **passed** (16.4) |
+
+Not run on the pex view: test 1 to the POR release; the lock-dependent part of test 2 with the extracted ADC
+(about 9 h); the extracted `r1_osc` together with the extracted `r1_bias` (T10-52); the extracted `r1_isense` in
+test 4 (deck time); corners. The list of 16.5 is unchanged otherwise.
+
+### 17.8 Run log, seventh budget
+
+| Run | Deck | Wall | Verdict |
+| --- | --- | --- | --- |
+| `t10-diag-t4ctrl05-a` | digital-only test 4, ctrl 0.5 (source 5 latch, T10-62) | < 1 min | diagnostic |
+| `t10-diag-t4enonly-a` | digital-only test 4 EN-only, with / without CRC | < 1 min | diagnostic |
+| `t10-t4-pex-en-a` | test 4 EN-low and clear, pex | 8576 s | passed |
+| `t10-t1b-pex-c` / `-d` / `-e` / `-f` | test 1b, pex, POR step | 15-366 s | failed / failed / passed / passed |
+| `t10-t1-pex-bis-a` … `-h` | test 1 ramp bisection | 120-10803 s | failed (abort or limit) |
+| `t10-t2-pex-probe-a` | 2 µs rate probe, AFE + ADC extracted | 790 s | probe |
+| `t10-t2-pex-afeadc-a` / `-b` / `-c` | test 2, AFE + ADC extracted | stopped / 25 min / 6473 s | failed (stopped) / failed (abort) / partial |
+| `t10-t3-pex-adcbh-a` | ADC current conversion, behavioural SAR | 5374 s | ADC check (17.4) |
+| `t10-t3-pex-adcbh-l0` / `-l1` | test 3 halves, extracted ADC | 8390 / 8456 s | step +6.34 % / +6.37 % (failed; +0.61 / +0.63 % after the B5 gain is removed) |

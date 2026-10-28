@@ -14,6 +14,7 @@ from post_tb import read_raw, crossings, adc_lsb  # noqa: E402
 
 WNOM = [1, 2, 5, 10, 20, 39, 79, 158, 315, 508, 1016, 2032, 4065, 8130]   # w[i] for raw[i], 1/4 LSB
 B5_GAIN = 1.0570
+B5_OFFSET = 8.0     # LSB, r1_adc B5 mux fit (postb5-isa-tt-rc, behavioural SAR): code = 2047.5 + 8.0 + 1.0570 x ideal
 
 
 def main():
@@ -30,9 +31,11 @@ def main():
             continue
         bits = [1 if w['adc_raw_a%d' % k][i] > 0.6 else 0 for k in range(14)]
         code = sum(b * wk for b, wk in zip(bits, WNOM)) / 4.0
-        if 'xu_adc.sar_trka0' in w:
-            # track end of slice A (SAR track signals trka0 / trka1, falling edge), when saved
-            te = sorted(list(crossings(t, w['xu_adc.sar_trka0'], 0.6, False)) + list(crossings(t, w['xu_adc.sar_trka1'], 0.6, False)))
+        trk = [k for k in (('xu_adc.sar_trka0', 'xu_adc.sar_trka1'), ('seq_trka0', 'seq_trka1')) if k[0] in w and k[1] in w]
+        if trk:
+            # track end of slice A (track signals trka0 / trka1, falling edge): hardened SAR (sar_*) or the
+            # sequencer model (seq_*, --adc-behav), when saved
+            te = sorted(list(crossings(t, w[trk[0][0]], 0.6, False)) + list(crossings(t, w[trk[0][1]], 0.6, False)))
             th = [h for h in te if h < tv]
         else:
             th = [h for h in holds if h < tv]
@@ -45,15 +48,16 @@ def main():
         exp = 2047.5 + v / lsb
         rows.append({'t_valid_us': tv * 1e6, 't_start_us': th * 1e6, 'sel_current': sel, 'v_in_mV': v * 1e3,
                      'code': code, 'expected': exp, 'error_lsb': code - exp,
-                     'error_lsb_b5_gain': (code - 2047.5) / B5_GAIN + 2047.5 - exp})
+                     'error_lsb_b5_gain': (code - 2047.5) / B5_GAIN + 2047.5 - exp,
+                     'error_lsb_b5_fit': code - (2047.5 + B5_OFFSET + B5_GAIN * (exp - 2047.5))})
     out = {'run_id': rid, 'vref_adc_V': vr, 'lsb_uV': lsb * 1e6, 'weights': 'r1_ctrl 0.8 reset (WNOM)',
            'conversions': rows}
     p = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'results', rid + '.adccheck.json')
     json.dump(out, open(p, 'w'), indent=1)
     for r in rows:
-        print('%.3f us sel_cur=%d vin %+.3f mV code %.2f exp %.2f err %+.2f LSB (B5 gain removed %+.2f)' % (
+        print('%.3f us sel_cur=%d vin %+.3f mV code %.2f exp %.2f err %+.2f LSB (B5 gain removed %+.2f, B5 fit %+.2f)' % (
             r['t_valid_us'], r['sel_current'], r['v_in_mV'], r['code'], r['expected'], r['error_lsb'],
-            r['error_lsb_b5_gain']))
+            r['error_lsb_b5_gain'], r['error_lsb_b5_fit']))
 
 
 if __name__ == '__main__':

@@ -208,11 +208,21 @@ module t10_master (
             // and stayed (CLR clears only inactive sources), so the gates never switched on (t10-diag-t4ctrl08-a,
             // cause 0x0020). FAULT_MASK is now the first write and masks every maskable source except OC_A
             // (bits 1-7, 9, 10; EN 8, CAL 11 and POR 12 cannot be masked).
+`ifdef T10_T4_ENONLY
+            // seventh budget: EN-low and clear parts only (deck time on the pex view). Every maskable source is
+            // masked (OC_A too), the CMP_THR writes and the OC step are left out; EN (bit 8) cannot be masked.
+            spi_wr(7'h03, 16'h06FF);          // FAULT_MASK: all maskable sources
+`else
             spi_wr(7'h03, 16'h06FE);          // FAULT_MASK: only OC_A latches
 `endif
+`endif
+`ifndef T10_T4_ENONLY
             spi_wr(7'h36, 16'h002C);          // CMP_THR_A: THR_OC_A 44, THR_NEG_A 0
             spi_wr(7'h37, 16'h003F);          // CMP_THR_B: THR_OC_B 63, THR_NEG_B 0
+`endif
+`ifndef T10_T4_NOCRC
             write_crc;                        // CRC check runs (<= 174 ticks) during the next writes
+`endif
             spi_wr(7'h20, 16'd100);           // PWM_PERIOD 100 ticks (3.3 us; compressed, D7)
             spi_wr(7'h21, 16'd75); spi_wr(7'h22, 16'd75); spi_wr(7'h23, 16'd75);      // DUTY_A/B/C
 `ifndef T10_CTRL07
@@ -220,6 +230,7 @@ module t10_master (
 `endif
             spi_wr(7'h04, 16'h0003);          // CLR and GATE_EN in one write (D7)
             sel_a = 3'd1;                     // ISA 30 mV while A is on (below the threshold)
+`ifndef T10_T4_ENONLY
             @(posedge gate_a_pad); #(800.0);
             sel_a = 3'd3;                     // step to 100 mV inside the on-window
             $display("T10RES OCSTEP t=%0.1f", $realtime);
@@ -228,6 +239,7 @@ module t10_master (
             spi_wr(7'h04, 16'h0003);          // CLR (source inactive: gates off), GATE_EN kept
             cnt = ga_rises; #(3600.0);
             $display("T10RES RESUME1 t=%0.1f gate_a_rises=%0d", $realtime, ga_rises - cnt);
+`endif
             @(posedge gate_a_pad); #(800.0);
             m_en = 1'b0;                      // EN/STO_IN low inside the on-window
             $display("T10RES ENLOW t=%0.1f", $realtime);

@@ -1,0 +1,66 @@
+{
+ "run_id": "t10-t2-pex-probe-a",
+ "test": 2,
+ "view": "pex",
+ "corner": "tt",
+ "temp_c": 27.0,
+ "sim_status": "completed",
+ "ngspice_wall_s": 788.7,
+ "tstop_us": 2.0,
+ "master_done_us": null,
+ "t_end_us": 2.0,
+ "vref_bg_t0_V": 1.0449,
+ "criteria": [
+  {
+   "name": "start state: vref_bg at t = 0 is the on-state of r1_bgr (1.045 V record)",
+   "value": 1.0449,
+   "limit": "1.00-1.09",
+   "unit": "V",
+   "status": "passed"
+  },
+  {
+   "name": "master sequence completed (DONE line)",
+   "value": null,
+   "limit": "before tstop",
+   "unit": "",
+   "status": "failed"
+  },
+  {
+   "name": "ADC strobes 0.6 ns before the clk30 edge (M1 check)",
+   "value": null,
+   "limit": "0.3-0.9 ns",
+   "unit": "ns",
+   "status": "failed"
+  },
+  {
+   "name": "ADC handshake integrity: strobes per started conversion, no stalled frame (O10, F22, F24)",
+   "value": {
+    "conversions_started": 0,
+    "complete_in_deck": 0,
+    "strobe_rises": {
+     "seq_stb0": 0,
+     "seq_stb13": 0,
+     "seq_lat": 0
+    },
+    "lost_valid_events": 0,
+    "stalls": 0,
+    "short": []
+   },
+   "limit": "strobe rises = conversions, 0 stalls",
+   "unit": "",
+   "status": "passed"
+  },
+  {
+   "name": "enough encoder pairs (>= 10) after the reset",
+   "value": 0,
+   "limit": ">= 10",
+   "unit": "",
+   "status": "failed"
+  }
+ ],
+ "measurements": {
+  "pairs_used": 0
+ },
+ "spi": [],
+ "verdict": "failed"
+}
