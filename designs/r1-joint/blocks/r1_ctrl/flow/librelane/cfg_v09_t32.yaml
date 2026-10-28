@@ -1,0 +1,15 @@
+# Revision 0.9 sign-off track T5j, run t32 (full hardening, no hand repair): the t24 settings (= 0.8 record t22: t18 hold
+# strategy, flow/r1_ctrl_pnr6h.sdc, post-GRT timing repair with hold margin 0.15 ns) plus
+#   PL_TIMING_DRIVEN true: timing-driven global placement (keeps the placement-time resizer changes). On this netlist
+#     OpenROAD CTS then keeps all 75 clock-gate sinks (exploration t31a: 0 open pins; t24 placement: _16393_/A lost in
+#     every CTS option tried, see README "Revision 0.9 sign-off");
+#   GRT_DESIGN_REPAIR_MAX_SLEW_PCT 30 (t24: 10): post-GRT slew repair margin, for the 3 max-slew nets of t30.
+# PL_TARGET_DENSITY_PCT stays 80 (GPL raises it to its 0.85 floor, as in t24). Same RTL (t24/t30), DIE_AREA 532 x 679,
+# pins_v07 (128 pins), sign-off SDC flow/r1_ctrl.sdc. Identical to exploration t31a, which stopped after the post-GRT repair.
+PNR_SDC_FILE: dir::r1_ctrl_pnr6h.sdc
+RUN_POST_GRT_RESIZER_TIMING: true
+GRT_RESIZER_HOLD_SLACK_MARGIN: 0.15
+GRT_DESIGN_REPAIR_MAX_SLEW_PCT: 30
+DRT_THREADS: 4
+STA_THREADS: 2
+PL_TIMING_DRIVEN: true

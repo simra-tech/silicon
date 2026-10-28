@@ -15,6 +15,7 @@ cp R1_REGISTER_MAP.md $O/R1_REGISTER_MAP_0.9.md
 echo "run $LL; RTL concat sha256 $(cat $R/$LL/rtl/*.v | sha256sum | cut -d' ' -f1); RTL revision 0.9, ID 0x5209 (PLAN.md D27)" > $O/SOURCE.txt
 echo "sign-off STA: $STA; gate-level simulation: $GL; pins: pins_v07 (128, same slots as 0.7 and 0.8)" >> $O/SOURCE.txt
 if [ -f $R/$LL/eco/eco.log ]; then echo "flow: steps 1-35 of $(grep -o '"source_run_steps_1_35": "[^"]*"' $R/$LL/run.json | cut -d'"' -f4), then one-pin post-CTS repair ($(grep ECO: $R/$LL/eco/eco.log | sed 's/^ECO: //'); flow/librelane/run_harden_eco.sh), then the remaining LibreLane steps and checkers" >> $O/SOURCE.txt; fi
-echo "status: NOT SIGNED OFF (README revision 0.9): IR derate U_max below 1 ns, 3 max-slew nets at slow, 2 max-fanout nets (antenna diodes); DRC/LVS/antenna 0, setup and hold met. r1ctrl_08_release stays the macro of record." >> $O/SOURCE.txt
+# T5j: R1_RELEASE_STATUS=<one line> replaces the t30 status line (the t30 release is kept as r1ctrl_09_t30_release)
+echo "${R1_RELEASE_STATUS:-status: NOT SIGNED OFF (README revision 0.9): IR derate U_max below 1 ns, 3 max-slew nets at slow, 2 max-fanout nets (antenna diodes); DRC/LVS/antenna 0, setup and hold met. r1ctrl_08_release stays the macro of record.}" >> $O/SOURCE.txt
 (cd $O && sha256sum $(ls | grep -v SHA256SUMS) > SHA256SUMS)
 cat $O/SHA256SUMS

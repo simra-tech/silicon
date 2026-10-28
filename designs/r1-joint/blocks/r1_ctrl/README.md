@@ -1,4 +1,6 @@
-# r1_ctrl — R1 digital macro (revision 0.8 of record; revision 0.9 hardened, not signed off, in 532 x 679 um)
+# r1_ctrl — R1 digital macro (revision 0.9 of record, signed off, in 532 x 679 um)
+
+State (2026-10-28, track T5j): revision 0.9 is **signed off** and replaces 0.8 as the macro of record. Hardening `r1ctrl_ll_20261028_t32` (same RTL, ID 0x5209, same box, same 128 pins and LEF pin shapes as 0.8) is one LibreLane run without the t30 hand repair: timing-driven placement gives a placement on which OpenROAD CTS keeps every clock-gate sink. DRC, LVS, antenna 0; setup and hold met at typ / fast / slow (slow setup +5.676 ns); max slew, cap and fanout 0; IR derate at the try-h1 losses U_max +3.340 ns (requirement 1 ns); gate-level SDF slow 502 checks, 0 failed. Utilisation 84.4 %. Release `r1ctrl_09_release` (t32); the t30 files are kept as `r1ctrl_09_t30_release`. "Revision 0.9 sign-off" below.
 
 State (2026-10-28, track T5i): revision 0.9 (PLAN.md D27: `IA_OFS`/`IB_OFS`/`IA_GAIN`/`IB_GAIN` at 0x48-0x4B correct the phase-current samples for `I_A`/`I_B` and the I²t model; raw current capture 0x4C-0x4F; ID 0x5209; "Revision 0.9" below) passes the RTL regression (600 checks) and the bit-exact model. It is hardened in the same box with the same 128 pins (`r1ctrl_ll_20261028_t30`: DRC, LVS, antenna 0; setup and hold met at typ / fast / slow), but it is **not signed off**: the ctrl IR derate at the try-h1 losses gives +0.650 ns (requirement 1 ns), 3 nets exceed max slew at slow, 2 nets exceed max fanout through antenna diodes, and gate-level SDF ran only `d27` at 23.8 ns. Utilisation 85.4 %. Revision 0.8 (`r1ctrl_08_release`) stays the macro of record.
 
@@ -30,7 +32,64 @@ Patterns copied from G1 `g1_ctrl` (not shared): the two-flop synchroniser, the
 async-assert/sync-release reset, the SCLK-domain shift logic with a hand-off to the core clock,
 the `run_sim.sh` style and the `ALL TESTS PASSED` convention.
 
-## Revision 0.9 (2026-10-28, PLAN.md D27: phase-current offset and gain correction, raw current capture; hardening runs `r1ctrl_ll_20261028_t23` to `_t30`; not signed off)
+## Revision 0.9 (2026-10-28, PLAN.md D27: phase-current offset and gain correction, raw current capture; hardening runs `r1ctrl_ll_20261028_t23` to `_t30`, not signed off; sign-off hardening `_t32`, signed off)
+
+### Revision 0.9 sign-off (track T5j, 2026-10-28; hardening `r1ctrl_ll_20261028_t32`)
+
+Goal: sign off 0.9 with the t30 RTL unchanged (RTL concat sha256 `f68edabe...`, ID 0x5209, 128 pins, 532 x 679 um box, LEF pin shapes as 0.8), with no hand repair of the clock tree. Track T5j, CPU set 112-115. All numbers are LibreLane, OpenSTA or Icarus results; nothing is measured.
+
+Summary: **Signed off.** Hardening `r1ctrl_ll_20261028_t32` (one uninterrupted LibreLane run, no hand repair of the clock tree) passes every 0.9 sign-off item: CTS keeps all 75 clock-gate sinks; DRC, LVS and antenna 0; 128 pins and LEF pin shapes as 0.8; setup and hold met at typ / fast / slow (slow setup +5.676 ns, hold +0.370 / +0.120 ns slow / fast); max slew, cap and fanout 0 at every corner; IR derate at the try-h1 losses U_max +3.340 ns and OCV_max +3.295 ns (requirement >= 1 ns); gate-level SDF slow 20 jobs, 502 checks, 0 failed, `d27` included. Utilisation 84.4 % (t30: 85.4 %). Release `r1ctrl_09_release` (GDS sha256 `aabd9fe0…`). Revision 0.9 replaces 0.8 as the macro of record.
+
+How the CTS defect was removed: the lost pin is a placement effect, not a CTS setting. On the t24 placement, OpenROAD CTS (LibreLane build, OpenROAD 26Q1) drops input A of `_16393_` inside `clock_tree_synthesis` with every option tried (attempt table, rows 6-10), also with `-no_insertion_delay`, where the 75 clock-gate ANDs are ordinary sinks of one tree. `_16393_` and its sister `_16394_` are two copies of the same RTL clock gate (`r1_cgate` in the `r1_cword` instances `u_wb` and `u_wa` of `u_regs.g_w[6]`, ADC weight words 0x66 and 0x56); no gate is synthesis-inserted, no keep or dont-touch attribute exists, and no two clock sink pins share a location. Timing-driven global placement (`PL_TIMING_DRIVEN` true) keeps the placement-time resizer changes, so CTS sees another placement and netlist (19 132 instances in the step-34 netlist against 19 693 for t24). On that placement CTS keeps all 75 clock-gate sinks. The defect is not understood inside OpenROAD; it can come back with another netlist (open issue 6). The step-35 check (`r1ctrl_dev09/ctscheck.py`) and the disconnected-pins checker find it.
+
+| # | Check | Status | Evidence |
+| --- | --- | --- | --- |
+| S1 | Hardening `r1ctrl_ll_20261028_t32` (`flow/librelane/cfg_v09_t32.yaml`: t24 settings + `PL_TIMING_DRIVEN` true + `GRT_DESIGN_REPAIR_MAX_SLEW_PCT` 30), one uninterrupted LibreLane run, no hand repair | **passed**: exit 0 (3 h 27 min on the shared CPU set; detailed routing 2 h 16 min, 0 violations after 19 iterations) | `<G1_RESULTS_ROOT>/r1_ctrl/r1ctrl_ll_20261028_t32/` (`run.json`, `inputs.sha256`, `disposition.json`) |
+| S2 | CTS: clock-gate sinks after step 35; disconnected-pins checker | **passed**: 75 of 75 connected (33 latency delay buffers); checker passed. Step-35 and step-44 netlists byte-identical to exploration `_t31a` (deterministic) | step `35-openroad-cts`, `51-checker-disconnectedpins` |
+| S3 | Detailed routing, Magic DRC, KLayout DRC, LVS, antenna, XOR | **passed**: routing / Magic DRC / KLayout DRC / LVS / antenna / XOR 0 / 0 / 0 / 0 / 0 / 0; illegal overlap 0 | run `final/`, `reports/ll_t32.md` |
+| S4 | Pins: 128 of 128 on the `pins_v07` slots; LEF pin shapes against `r1ctrl_08_release` | **passed**: 128 pins, 0 mismatches against `pins_v07` (no pin moved); 130 LEF pins (128 + VDD/VSS) with PORT shapes identical to 0.8. The antenna notes differ on 3 pins: `cs_n` ANTENNAGATEAREA 0.1807 -> 0.3614 um^2; `ma_sclk` loses and `sdi` gains ANTENNADIFFAREA 2.0154 um^2 (input buffers and antenna diode of the new placement) | `<G1_RESULTS_ROOT>/r1_ctrl/r1ctrl_20261028_t32sta/pins_check.txt`, `lef_pins.txt` |
+| S5 | Sign-off STA (`flow/r1_ctrl.sdc`, rcx nominal SPEF, `sim/signoff/sta_true.tcl`): true setup slack to flop D typ / fast / slow; outputs; latch borrow; hold | **passed**: setup +10.912 / +11.092 / **+5.676 ns** (t30: +9.521 / +10.202 / +3.302); worst path at slow `h3[8]` -> `u_pos.cx[13]` (t30: `meas_angle` -> `u_pos.cx`); outputs +15.322 / +16.374 / +13.549 ns; worst latch borrow at slow 2.062 ns (t30: 2.318); hold +0.211 / +0.120 / **+0.370 ns**; 0 VIOLATED paths | `<G1_RESULTS_ROOT>/r1_ctrl/r1ctrl_dev09j/t32pre/sta/` (step outputs before the flow end); repeated on `final/` by `sim/signoff/signoff08.sh`, run `<G1_RESULTS_ROOT>/r1_ctrl/r1ctrl_20261028_t32sta/`: identical reports; the final netlist, SPEF and SDF are byte-identical to the step outputs |
+| S6 | Max slew 1.5 ns, max cap, max fanout 8 (`sim/signoff/sta_fanout06.tcl`) at typ / fast / slow | **passed**: 0 / 0 / 0 violators at every corner. Fanout: the largest load count of a non-clock net is 6, with and without antenna diodes (checker count 6, logic fanout 6); 11 antenna diodes in the design (t30: 39), no net above 8 in either count. Method check: the same script gives the t30 checker count 11 on `net2427` (logic fanout 6) | `t32pre/sta/fanout_*.rpt`, `<G1_RESULTS_ROOT>/r1_ctrl/r1ctrl_dev09j/fanout_stat.tcl` |
+| S7 | ctrl IR derate at the try-h1 losses (`sim/signoff/derate09.sh`, method of `r1ctrl_20261028_t30derateb`; requirement: derated setup >= 1 ns) | **passed**: at slow U_typ +4.146, **U_max +3.340**, U_max_meancell +3.531, OCV_typ +4.110, **OCV_max +3.295 ns** (t30: +0.650 / +0.624); derated hold >= +0.357 ns at slow; fast: setup >= +11.030 ns, OCV_bound hold +0.077 ns (t30: +0.070) | `<G1_RESULTS_ROOT>/r1_ctrl/r1ctrl_20261028_t32derate/` (inputs = the step outputs, sha256 in `inputs.sha256`) |
+| S8 | Gate-level simulation with SDF at slow (MAXIMUM), t32 netlist: chip-level list, `v07`, `d22`, `d27` at 23.8 / 33.3 / 47.6 ns (20 jobs, as `r1ctrl_gl_20261028_t30`) | **passed**: 20 of 20 jobs, 502 checks, 0 failed: `biss` 3 x 47 (1 GLSKIP each, as 0.6-0.8), **`d27` 3 x 24**, `d22` 3 x 17, `v07` 36 / 40 / 40, `tap` 5, `ana` 9, `ssi` 3 x 9, `spi` 27, `gate` 22, `safe` 32. `disc`, `cdc`, `cal`: **not run** (as 0.8). Wall clock 2 h 8 min, 4 jobs in parallel. Inputs = the step outputs, byte-identical to `final/` | `<G1_RESULTS_ROOT>/r1_ctrl/r1ctrl_gl_20261028_t32/` |
+| S9 | Gate-level `r1ctrl_gl_20261028_t30` (started by T5i on t30; read when it ended) | **passed** (t30 result): 20 of 20 jobs, 502 checks, 0 failed (`biss` 3 x 47 with 1 GLSKIP each, `d27` 3 x 24, `d22` 3 x 17, `v07` 36 / 40 / 40, `tap` 5, `ana` 9, `ssi` 3 x 9, `spi` 27, `gate` 22, `safe` 32) | `<G1_RESULTS_ROOT>/r1_ctrl/r1ctrl_gl_20261028_t30/result_final.json` |
+| S10 | Utilisation | 84.4 % (281 533 um^2 of 333 666 um^2; t30 85.4 %, 0.8 79.9 %): 2 560 timing-repair buffers (t30 3 079), 19 hold buffers, 841 clock buffers | step `57-openroad-stapostpnr` metrics |
+| S11 | Release `r1ctrl_09_release` | **passed** (written, of record): GDS sha256 `aabd9fe045de988d…`, LEF `f4d575a43a4c4046…`, netlist `e8cac55e47864a8a…`, DEF `8ae593b792471b77…`, SDF slow `84391f79f293f1ae…`; `SOURCE.txt` names t32 and states SIGNED OFF. The t30 release (not signed off) is kept as `r1ctrl_09_t30_release`; `r1ctrl_08_release` is unchanged | `<G1_RESULTS_ROOT>/r1_ctrl/r1ctrl_09_release/`, `r1ctrl_09_t30_release/` |
+| S12 | Formal equivalence RTL vs netlist, CDC tool, gate-level `disc` / `cdc` / `cal`, chip-level IR drop with the 0.9 macro (the derate uses the try-h1 static losses; dynamic drop not included) | **not run** (as 0.8) | — |
+
+Attempt table, CTS defect (`_16393_/A`, clock gate of `u_regs.g_w[6].u_wb`). A run that needs the hand repair is not a sign-off candidate.
+
+| # | Run / replay | Setting (t24 base) | Clock-gate sinks after CTS | `_16393_/A` | Result |
+| --- | --- | --- | --- | --- | --- |
+| 1 | `r1ctrl_ll_20261028_t24` (T5i) | the 0.8 record settings (t22) exactly, CTS keys included | 75 -> 74, macro clustering diameter 200, 20 delay buffers | open | failed (disconnected-pins checker) |
+| 2 | `_t25` (T5i) | `CTS_SINK_CLUSTERING_SIZE` 28 | as t24 (identical tree) | open | failed |
+| 3 | `_t26` (T5i) | `CTS_SINK_CLUSTERING_MAX_DIAMETER` 100 | 75 -> 74, other tree | open | failed |
+| 4 | `ctstest` `cts0` / `cts2` (T5i) | `CTS_DELAY_BUFFER_DERATE_PCT` 0 / `CTS_BALANCE_LEVELS` false | 74, 20 delay buffers | open | failed |
+| 5 | `_t30` (T5i) | t24 steps 1-35 + one-pin hand repair (`eco_cts_pin.tcl`) | 75 after the repair | repaired by hand | not a sign-off candidate |
+| 6 | `r1ctrl_dev09j/ctsrep` `r0` | t24 replay (reference) | 74 (diameter 200) | open | defect reproduced in 1 min |
+| 7 | `ctsrep` `m1`, `m2`, `m3` | `CTS_MACRO_CLUSTERING_MAX_DIAMETER` 100; 50 with size 4; 100 with size 6 (the t22 and t23 macro clusters were found at 100 and 50) | 74 (diameter 100 / 50 / 100) | open | failed: the cluster diameter is not the cause (F-20261030-T5j-01) |
+| 8 | `r1ctrl_dev09j/diag` (OpenROAD of LibreLane, `cts.tcl` with a pin check after each command) | t24 replay | connected after `read_db` and `repair_clock_inverters`, open after `clock_tree_synthesis` | open | the pin is lost inside `clock_tree_synthesis`, not in `repair_clock_nets` or legalisation |
+| 9 | `diag` `noins`, `nosce`, `ndr0`, `nodummy`, `obs`, `nodist` | `-no_insertion_delay` (no macro tree, no delay buffers); no `-sink_clustering_enable`; no `-apply_ndr`; `-dont_use_dummy_load`; `-obstruction_aware`; no `-distance_between_buffers` | 1433 sinks in one tree (`noins`); 74 in the others | open in all six | failed: no CTS option avoids the defect on the t24 placement |
+| 10 | `diag` `mc1` | `-macro_clustering_size 1` | — | — | OpenROAD segmentation fault (F-20261030-T5j-04) |
+| 11 | `r1ctrl_ll_20261028_t31d` (to post-GRT) | t24 placement settings + max wire length 250 um, GRT slew margin 30 % | 74 (diameter 200) | open | failed |
+| 12 | `_t31a` (to post-GRT) | `PL_TIMING_DRIVEN` true + GRT slew margin 30 % | 75 (diameter 50, 33 delay buffers) | connected | passed |
+| 13 | `_t31b` (to post-GRT) | as t31a, density 70 % (raised to the 0.85 floor by GPL) | 75, duplicate of t31a | connected | passed (duplicate, F-20261030-T5j-03) |
+| 14 | `_t31c` (to post-GRT) | `PL_TIMING_DRIVEN` true, density 88 % + GRT slew margin 30 % | 75 (27 delay buffers) | connected | passed |
+| 15 | **`r1ctrl_ll_20261028_t32`** (full flow) | = t31a | 75; step-35 and step-44 netlists byte-identical to t31a | connected | **passed**: disconnected-pins checker passed; sign-off candidate |
+
+Exploration runs `_t31a` to `_t31d` stop after `OpenROAD.ResizerTimingPostGRT` (`R1_LL_EXTRA`); they are not hardening results. Quick slow-corner STA on their step-44 database (placement parasitics, `r1ctrl_dev09j/eval/`; relative only, it reads +6.309 ns for t24/t30 where the sign-off value is +3.302 ns): t31a +8.048, t31c +7.823, t31d +6.744 ns.
+
+Failures (track T5j; also in the failure ledger as `F-20261030-T5j-NN`):
+
+| # | What happened | Class | Effect / fix |
+| --- | --- | --- | --- |
+| 1 | First hypothesis wrong: the lost pin was linked to the macro cluster diameter (t22/t23 at 100/50 um, t24/t26 at 200 um). CTS replays with the diameter forced to 100 or 50 um still lost the pin | tooling | instrumented replay: the pin is lost inside `clock_tree_synthesis` with every option (rows 8-9) |
+| 2 | The instrumented OpenROAD replay outside LibreLane failed three times on missing process variables (`_TCL_ENV_IN`, the corner list, the excluded-cell list); the quick STA script first printed slack in seconds | tooling | fixed in `r1ctrl_dev09j/diag/env.tcl` and `eval/eval.tcl`; about 10 min lost |
+| 3 | Exploration `_t31b` (density 70 %) duplicated `_t31a`: GPL raises a target below its 0.85 floor to 0.85 (warning GPL-0302, also in the t24 log) | estimation | one exploration slot wasted; density can only go up in this box |
+| 4 | CTS option `-macro_clustering_size 1` crashed OpenROAD (segmentation fault) | tooling | not used |
+
+
+### Revision 0.9 record of track T5i (RTL, hardening t30)
 
 Goal: D27 (host-written offset and gain per phase-current channel, applied to the current samples before the over-current threshold compare and the bus registers, reset = no correction; raw min/max capture of the current codes for the host calibration; `ID` advances), with every 0.8 behaviour, the 128-pin map, the 532 x 679 um box and the ADC contract unchanged; regression clean, re-hardened with the 0.8 configuration of record (t22), sign-off STA, DRC/LVS/antenna, gate-level SDF slow, ctrl IR derate at the try-h1 losses. Register map: `R1_REGISTER_MAP.md` draft 0.9, `ID` 0x5209. All numbers are simulated, synthesized or LibreLane/OpenSTA results; nothing is measured. Paths are relative to this directory; `<G1_RESULTS_ROOT>` is the bulk results root (`r1_ctrl/<run-id>/`). Track T5i, CPU set 112-115.
 
@@ -134,6 +193,8 @@ No new asynchronous input, no new clock.
 3. **CTS loses one clock-gate pin on this netlist.** OpenROAD CTS (LibreLane 3.1.0.dev2, OpenROAD 26Q1) left `_16393_/A` unconnected in three runs; the delay-buffer derate and `CTS_BALANCE_LEVELS` do not stop it. t30 uses a checked one-pin repair. A new hardening of the same netlist will hit the same defect: use `run_harden_eco.sh`, or report the case upstream to OpenROAD (not done in this track).
 4. Gate-level SDF slow on t30: only `d27` at 23.8 ns finished (passed). The other 19 jobs of `r1ctrl_gl_20261028_t30` must be read when they end (about 1.5 h for `biss`); until then they count as not run.
 5. Not run (as 0.8): formal equivalence RTL vs netlist, a CDC tool, gate-level `disc`/`cdc`/`cal`, chip-level IR drop with the 0.9 macro.
+6. (T5j) The CTS defect of issue 3 is avoided, not fixed: timing-driven placement (t32) gives a placement on which OpenROAD CTS keeps every clock-gate sink. A new netlist or placement can lose a pin again. Every hardening must keep the step-35 check (`r1ctrl_dev09/ctscheck.py`) and the disconnected-pins checker; the case is not reported upstream (not done in this track).
+7. (T5j) Items 2 (derate, slew, fanout) and 4 (gate-level on t30: 20 of 20 jobs passed, 502 checks) are closed by "Revision 0.9 sign-off" above; item 3 is replaced by item 6.
 
 ### Failures and mistakes (revision 0.9)
 
@@ -1115,8 +1176,9 @@ latches; they pass in t5.
 | `tb/tb_icor.v`, `tb/icor_ref.py` | revision 0.9: D27 current correction, integer model, bit-exact (5 cases incl. saturation and restart) |
 | `sim/run_all.sh`, `sim/summarize.py` | full run, summary, per-block area, `run.json` |
 | `sim/signoff/signoff08.sh`, `sim/signoff/release08.sh` | revision 0.8: sign-off STA / fanout / pins / SDC-port check of a hardening run; release files with `SHA256SUMS` |
-| `sim/signoff/release09.sh`, `sim/signoff/derate09.sh` | revision 0.9: release files of 0.9 (`r1ctrl_09_release`); ctrl IR derate at the try-h1 losses (OpenSTA step of `../r1_top/irderate`, read-only) |
+| `sim/signoff/release09.sh`, `sim/signoff/derate09.sh` | revision 0.9: release files of 0.9 (`r1ctrl_09_release`); ctrl IR derate at the try-h1 losses (OpenSTA step of `../r1_top/irderate`, read-only); `R1_RELEASE_STATUS` sets the status line of `SOURCE.txt` (T5j) |
 | `flow/librelane/eco_cts_pin.tcl`, `flow/librelane/run_harden_eco.sh` | revision 0.9: one-pin post-CTS repair of a clock pin lost by OpenROAD CTS, and the LibreLane continuation from `OpenROAD.ResizerTimingPostCTS` (hardening `r1ctrl_ll_20261028_t30`) |
+| `flow/librelane/cfg_v09_t31a.yaml` … `cfg_v09_t31d.yaml`, `cfg_v09_t32.yaml` | revision 0.9 sign-off (T5j): placement explorations to the post-GRT repair, and the sign-off hardening t32 (timing-driven placement, no hand repair). Since t32 the one-pin repair above is not used; it stays for the t30 record |
 | `sim/results/<run-id>/` | summary, `run.json`, test logs, synthesis statistics, input hashes |
 | `flow/synth.tcl` | Yosys synthesis for the cell area (Booth, PDK latch map, 42 MHz delay target) |
 | `flow/check_sdc_ports.py` | revision 0.5: port list from the RTL against the SDC patterns (unconstrained bits, stale patterns) |
