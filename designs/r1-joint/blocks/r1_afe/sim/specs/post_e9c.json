@@ -1,0 +1,135 @@
+{
+ "question": "Layout E9c (track T3o): the check rows that set the worst PM and GM in E9b (CM1 ffx 6.9 uA CM 2.5 V x32; DM2 tt 15.4 uA CM 2.5 V x1; DM1 ffx 6.9 uA CM 0.5 V x1), f_c at ss, and one supply-path row at tt (variant E9cS, Tian probes in the sine-channel vss/vdd entry wires), on the RC netlist pexrc-layout-e9c-cal19 built with F3. Must equal E9b within 0.1 deg / 0.1 dB.",
+ "variants": {
+  "E9c": {
+   "netlist": "$G1_RESULTS_ROOT/r1_afe/pexrc-layout-e9c-cal19/r1_afe_post_rc.spice",
+   "jobs": [
+    {
+     "tag": "stb_ffx_ib6.9_cm0.5",
+     "tmpl": "tb_afe_stb.cir",
+     "corner": "ffx",
+     "subs": {
+      "VCMI": 0.5,
+      "KLIST": "0 5",
+      "LLIST": "1 2 4 5",
+      "IB": "6.9u",
+      "CL": "2.8p"
+     },
+     "prio": 0
+    },
+    {
+     "tag": "stb_ffx_ib6.9_cm2.5",
+     "tmpl": "tb_afe_stb.cir",
+     "corner": "ffx",
+     "subs": {
+      "VCMI": 2.5,
+      "KLIST": "0 5",
+      "LLIST": "1 2 4 5",
+      "IB": "6.9u",
+      "CL": "2.8p"
+     },
+     "prio": 0
+    },
+    {
+     "tag": "stb_tt_ib15.4_cm2.5",
+     "tmpl": "tb_afe_stb.cir",
+     "corner": "tt",
+     "subs": {
+      "VCMI": 2.5,
+      "KLIST": "0 5",
+      "LLIST": "1 2 4 5",
+      "IB": "15.4u",
+      "CL": "2.8p"
+     },
+     "prio": 1
+    },
+    {
+     "tag": "ac_ss_ib11.81_cm0.5",
+     "tmpl": "tb_afe_ac.cir",
+     "corner": "ss",
+     "subs": {
+      "VCMI": 0.5,
+      "IB": "11.81u"
+     },
+     "prio": 0
+    }
+   ]
+  },
+  "E9cS": {
+   "netlist": "$G1_RESULTS_ROOT/r1_afe/pexrc-layout-e9c-cal19/r1_afe_post_rc.spice",
+   "rx": [
+    [
+     "r1_afe",
+     "vdd__xsin vss__xsin r1_afe_ch",
+     "vdd_ys vss_ys r1_afe_ch\nVps vss__xsin vss_ys dc 0 ac {vs1}\nIps 0 vss__xsin dc 0 ac {is1}\nVpd vdd__xsin vdd_ys dc 0 ac {vs2}\nIpd 0 vdd__xsin dc 0 ac {is2}"
+    ]
+   ],
+   "jobs": [
+    {
+     "tag": "supl_tt_ib10.14_cm2.5",
+     "tmpl": "tb_afe_supl.cir",
+     "corner": "tt",
+     "subs": {
+      "VCMI": 2.5,
+      "KLIST": "0 5",
+      "LLIST": "1 2 3",
+      "IB": "10.14u",
+      "CL": "2.8p"
+     },
+     "prio": 2
+    }
+   ]
+  }
+ },
+ "jobs": [
+  {
+   "tag": "stb_ffx_ib6.9_cm0.5",
+   "tmpl": "tb_afe_stb.cir",
+   "corner": "ffx",
+   "subs": {
+    "VCMI": 0.5,
+    "KLIST": "0 5",
+    "LLIST": "1 2 4 5",
+    "IB": "6.9u",
+    "CL": "2.8p"
+   },
+   "prio": 0
+  },
+  {
+   "tag": "stb_ffx_ib6.9_cm2.5",
+   "tmpl": "tb_afe_stb.cir",
+   "corner": "ffx",
+   "subs": {
+    "VCMI": 2.5,
+    "KLIST": "0 5",
+    "LLIST": "1 2 4 5",
+    "IB": "6.9u",
+    "CL": "2.8p"
+   },
+   "prio": 0
+  },
+  {
+   "tag": "stb_tt_ib15.4_cm2.5",
+   "tmpl": "tb_afe_stb.cir",
+   "corner": "tt",
+   "subs": {
+    "VCMI": 2.5,
+    "KLIST": "0 5",
+    "LLIST": "1 2 4 5",
+    "IB": "15.4u",
+    "CL": "2.8p"
+   },
+   "prio": 1
+  },
+  {
+   "tag": "ac_ss_ib11.81_cm0.5",
+   "tmpl": "tb_afe_ac.cir",
+   "corner": "ss",
+   "subs": {
+    "VCMI": 0.5,
+    "IB": "11.81u"
+   },
+   "prio": 0
+  }
+ ]
+}
