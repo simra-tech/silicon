@@ -1,12 +1,81 @@
 # r1_afe — encoder analog front end (sine and cosine channels)
 
-State (2026-10-28): **layout E9 (`layout-e9-dev21`, netlist F3 `schematic/r1_afe_revF3.spice`) is the layout of record, not closed** (section "Layout E9": DM1 at the bias extreme 65.25°, f_c ss 1.0628 MHz; failed: drift span 1.54 mV, `x1` ΔC +2.2 fF; part of the campaign not run). Earlier: layout E8 (`layout-e8-dev19`, kept as `layout/r1_afe_revE8.gds`), not closed. Before that (2026-10-27): **layout E7 (`layout-e7-dev17`), not closed** (section "Layout E7": ×32 offset ≤ 4.96 mV over CM 0.5–2.8 V, tt/ss/ff, 3.0–3.6 V; failed: drift at every CM, bias extremes +6.00/−5.61 mV, DM1 62.07°, `x1` C −7.9 fF). Previous state: **layout E6 (`layout-e6-dev16`), not closed** (section "Layout E6"): ×32 offset ≤ 5 mV at CM 0.5 V everywhere and at CM 2.5 V up to 3.3 V, pole matching ≤ 0.284 %, the CM rows closed by the supply-network method; failed: offset at CM 2.5 V and 3.6 V (−8.59 mV) and its drift, `x1` C balance (+10 fF), DM1 PM 62.58° at ffx 6.9 µA. Netlist of record: revision F2 (sha256 `9e262f8c…`, unchanged). E5 is kept as `layout/r1_afe_revE5.gds`.
+State (2026-10-28, track T3n): **layout E9b (`layout-e9b-dev22`, netlist F3) built and extracted, not closed** (section "Layout E9b": every loop row, the supply-path loop gain, the CM step, f_c at ss, noise, THD ×1, offset and the drift span under D29 (1.542 mV ≤ 1.6 mV) passed; failed: `x1` ΔC +1.6 fF; not run: holds, settling, THD ×32, ac/MC tail). `layout/r1_afe.gds` = E9b (sha256 `73c6915e…`, with `layout/r1_afe_ports.json` and `r1_afe_layout.json` of the same build); E9 kept as `layout/r1_afe_revE9.gds`. Before: **layout E9 (`layout-e9-dev21`, netlist F3 `schematic/r1_afe_revF3.spice`) is the layout of record, not closed** (section "Layout E9": DM1 at the bias extreme 65.25°, f_c ss 1.0628 MHz; failed: drift span 1.54 mV, `x1` ΔC +2.2 fF; part of the campaign not run). Earlier: layout E8 (`layout-e8-dev19`, kept as `layout/r1_afe_revE8.gds`), not closed. Before that (2026-10-27): **layout E7 (`layout-e7-dev17`), not closed** (section "Layout E7": ×32 offset ≤ 4.96 mV over CM 0.5–2.8 V, tt/ss/ff, 3.0–3.6 V; failed: drift at every CM, bias extremes +6.00/−5.61 mV, DM1 62.07°, `x1` C −7.9 fF). Previous state: **layout E6 (`layout-e6-dev16`), not closed** (section "Layout E6"): ×32 offset ≤ 5 mV at CM 0.5 V everywhere and at CM 2.5 V up to 3.3 V, pole matching ≤ 0.284 %, the CM rows closed by the supply-network method; failed: offset at CM 2.5 V and 3.6 V (−8.59 mV) and its drift, `x1` C balance (+10 fF), DM1 PM 62.58° at ffx 6.9 µA. Netlist of record: revision F2 (sha256 `9e262f8c…`, unchanged). E5 is kept as `layout/r1_afe_revE5.gds`.
 Revision D is superseded by revision E (record below). Revision C is superseded; its record follows the revision-D section ("Revision C record"). Revision B is superseded; its
 record is kept at the end ("Revision B record").
 All numbers in this file are **simulated** unless they are marked estimated. Nothing is measured.
 
 Track T3 of `../README.md`. Specification row: `../../specification/R1_TOP_LEVEL_SPECIFICATION.md` §2 (`r1_afe`),
 §4 (encoder input), gate V1. Input standard and accuracy budget: `../../specification/studies/S1_ENCODER_CHAIN_20261020.md`.
+
+## Layout E9b (2026-10-28, track T3n; not closed)
+
+Status: **not closed** (stopped at the 6 h budget, 17:10 CET; campaign `r1afe-post-e9b` reparsed as `r1afe-post-e9b-stop`, 33 of 68 jobs, 0 failed jobs; reduction `sim/results/post-e9b-stop-summary.json`). Failed: `x1` ΔC +1.6 fF (limit 1 fF). Not run on E9b: 7 hold states, 15 settling, THD ×32, 10 ac rows, 2 Monte Carlo rows; on E9 (equal to E9b within 0.01° on every loop row run on both) all of these passed. Every other row passed, including the drift span under the D29 allocation (1.542 mV ≤ 1.6 mV). Decision D29 (`../../PLAN.md` §2a). Layout E9b = E9 generator and placement (`layout/r1_afe_layout.py`
+sha256 `b3ce7072…`, E9 flags) with the `x1p` C trim at 23/23 edges (E9 25/25, E8 22/22), netlist F3
+(`schematic/r1_afe_revF3.spice`, passed explicitly to the generator, the wiring-R view and the RC build; ledger
+F-20261030-T3m-08). Same 21 pins and box (192.8 × 494.4 µm), supply pins 1.0 µm. E9 kept as `layout/r1_afe_revE9.gds`
+(sha256 `1c665046…`). Script `pex/run_iter_e9b.sh`; layout run `layout-e9b-dev22`, extraction `pex-e9b-dev22` (kpex 0.3.12
+2.5D CC + KLayout RNetExtractor R), RC netlist `pexrc-layout-e9b-dev22`, wiring-R view for the op screen
+`pexr-layout-e9b-dev22-lvs`. Campaign spec `sim/specs/post_e9b.json` (68 jobs, loop rows first), op spec
+`sim/specs/op_e9b.json` (73 points). All numbers are **simulated** (ngspice-46, IHP SG13G2 `84374023`, KLayout 0.30.9). Nothing
+is measured.
+
+### Status (layout E9b = `layout-e9b-dev22`, netlist F3)
+
+| Criterion | Limit | E9b-dev22 (F3) | Evidence | Status |
+| --- | --- | --- | --- | --- |
+| DRC main + maximal, antenna | 0 | 0 (`full.lyrdb` 0 items), antenna 0 | `reports/layout-e9b-dev22/drc.log`, `drc_db_items.txt` | **passed** |
+| LVS (F3) | match | match (channel 143 nets / 243 devices, top 63 / 46) | `reports/layout-e9b-dev22/lvs_summary.txt` | **passed** |
+| Supply islands | 0 | 0 (vdd 23, vss 42 ports) | `reports/layout-e9b-dev22/supply_island_check.json` | **passed** |
+| Pins, box | same; supply ≥ 1 µm | 57 shapes / 21 pins same, 192.8 × 494.4 µm, supply 1.0 µm; C trim placed 23/23 | `reports/layout-e9b-dev22/pin_layer_check.json` | **passed** |
+| `x1p` − `x1n` C (kpex) | \|ΔC\| ≤ 1 fF | 350.7 / 349.1 fF, **+1.6 fF** (E9 25/25: 351.5 / 349.2 fF, +2.2 fF); kpex step about 0.4 fF per edge pair, not 1.1–1.5 fF | `reports/pex-e9b-dev22/pair_loads.json` | **failed** by 0.6 fF |
+| `x1` R, TG ports → UF head | ≤ 25 Ω, \|ΔR\| ≤ 3 Ω | ×32 20.36 / 20.30 Ω, ×1 22.37 / 20.86 Ω (equal to E9) | `reports/pex-e9b-dev22/x1_pair_r.json` | **passed** (path means) |
+| ×32 static offset, 73 `op_*` points | ≤ 5 mV | −4.01 … −0.56 mV (equal to E9: the trim stubs are dead ends) | `r1afe-op-e9b` | **passed** |
+| Drift span, 39 spans (D29 allocation) | ≤ 1.6 mV | worst **1.542 mV** (15.4 µA CM 2.5 V, all five points); 11 of 39 spans > 1.0 mV, **0 of 39 > 1.6 mV** | `r1afe-op-e9b`, `sim/results/r1afe-op-e9b-drift.json` | **passed** (D29; failed against the former 1 mV of D22) |
+| Loop rows DM1/DM2/CM1/CM2, ×1 and ×32, tt/ss/ff/sf/fs/ssx/ffx, CM 0.5/2.5 V, bias extremes (20 stb jobs, 160 rows) | PM ≥ 63°, GM ≥ 10 dB, valid | worst valid PM **63.31°** (CM1 ffx 6.9 µA CM 2.5 V ×32), worst GM **11.51 dB** (DM2 tt 15.4 µA CM 2.5 V ×1); DM1 ffx 6.9 µA CM 0.5 V ×1 **65.25°** (GM 25.42 dB); 18 rows flagged `pm_valid` false (16 `cm2` at CM 2.5 V, PM 64.33–76.78°; `cm1` ×1 at ff 9.00 µA and tt 6.9 µA CM 0.5 V, 81.93° / 81.97°), closed by the supply-path row below; all 160 rows equal to E9 (`r1afe-post-e9d21f3`) within 0.01° and 0.01 dB | `r1afe-post-e9b-stop` | **passed** |
+| Hold states (7 jobs) | as loop rows | ff 9.00 µA and ssx 6.94 µA were running at the stop; the other 5 not started (E9: all 7 passed, worst PM 66.68°, GM 12.99 dB) | `r1afe-post-e9b-stop` (`not_run`) | **not run** |
+| f_c at ss CM 0.5 V (×16) | ≥ 1.0 MHz | **1.0627 MHz** (output CM 0.5905 / 0.5907 V) | `r1afe-post-e9b-stop` | **passed** |
+| Flagged rows: supply-path DC loop gain tt/ss/ff (supply-network method) | ≤ −20 dB | 6 jobs (tt/ss/ff, CM 0.5/2.5 V, ×1/×32, probe in `vss`/`vdd`/both): worst **−82.3 dB** (tt CM 2.5 V ×32, both entries) | `r1afe-post-e9b-stop` (variant `E9bS`) | **passed** |
+| CM step tt ×1, tt/ss/ff ×32 (peak classification) | ≤ 1 loop-response overshoot per event | 1 loop-response overshoot at most on every event and signal (stage-1 CM 5 mV band, output CM 2 mV band); 6 feed-through spikes (VDDA steps, 6–12 ns, τ 19–29 ns) not counted; waveforms with the marks in `reports/cmstep-e9b/*.png` | `r1afe-post-e9b-stop`, `sim/results/r1afe-post-e9b-cmstep-classified.json` | **passed** |
+| Noise ×32 at ss, input-referred | ≤ 35 µV | 32.65 µV | `r1afe-post-e9b-stop` | **passed** |
+| THD (`tran_tt_x1`, `tran_tt_x32`) | ≤ 0.1 % | ×1 **0.0104 %**; ×32 was running at the stop (E9: 0.0115 % worst) | `r1afe-post-e9b-stop` | ×1 **passed**, ×32 **not run** |
+| Settling (15 jobs) | non-linear residual ≤ 0.25 LSB | not started (E9: 0.024 LSB worst) | `r1afe-post-e9b-stop` (`not_run`) | **not run** |
+| Other ac rows (10), pole matching MC (2) | as E8 | not started (E9: f_c ≥ 1.0628 MHz, pole matching 0.724 %, output CM 0.5897–0.5939 V) | `r1afe-post-e9b-stop` (`not_run`) | **not run** |
+
+### Next levers (not done)
+
+1. `x1` ΔC: trim 19/19 edges on `x1p` (about −1.6 fF at 0.4 fF per edge pair), after a one-variable calibration build pair; one kpex extraction (2.5 h at the present CPU share).
+2. The not-run rows above on the E9b extraction (`sim/specs/post_e9b.json`, priorities 4–8).
+
+### Failures and mistakes (layout E9b)
+
+| # | Class | What happened | Effect / fix |
+| --- | --- | --- | --- |
+| 1 | estimation | `x1` C trim step taken as 1.1–1.5 fF per edge (D29, from the E8 → E9 kpex difference, which also held changes not caused by the trim: `x1n` moved +1.2 fF with no trim on `x1n`); kpex on E9b gives about 0.4 fF per Metal3 + Metal4 edge pair | ΔC +1.6 fF, **failed**; next: a one-variable calibration (two builds that differ only in the trim) before the one extraction; about 19/19 edges from this step |
+| 2 | estimation | kpex channel extraction planned at the E9 rate (88 min); it took 2 h 29 min at about half a core (CPU set shared with 9 jobs of earlier runs, not to be touched) | campaign started 14:07 instead of about 13:10; the tail of the campaign is **not run** |
+| 3 | tooling | the CM-step counter of `sim/run_afe.py` (`overshoots`) counts the pre-edge level segment as the first excursion when the settled level moves, so a disturbance plus one overshoot counts 2 (E8 ss ×32 output CM, input-CM steps: counter 2, waveform 1) | classification by `sim/cmstep_classify.py` (main excursion, feed-through < τ, loop-response peaks after the main excursion); the counter stays as recorded |
+
+### Drift span table (D29 allocation 1.6 mV; run `r1afe-op-e9b`, wiring-R view; ×32 output offset span, mV; simulated)
+
+Points per row: tt 3.3 V, tt 3.0 V, tt 3.6 V, ss, ff (nominal bias = corner-matched tt 10.14 / ss 11.81 / ff 9.00 µA).
+
+| Bias | CM | corners (tt/ss/ff) | supply (3.0/3.3/3.6 V) | all five | > 1.0 mV | > 1.6 mV |
+| --- | --- | --- | --- | --- | --- | --- |
+| nominal | 0.5 V | 1.129 | 0.910 | 1.291 | 2 | 0 |
+| nominal | 1.5 V | 0.545 | 0.707 | 0.707 | 0 | 0 |
+| nominal | 2.0 V | 0.520 | 0.229 | 0.520 | 0 | 0 |
+| nominal | 2.5 V | 0.895 | 1.138 | 1.266 | 2 | 0 |
+| nominal | 2.8 V | 0.897 | 0.665 | 0.897 | 0 | 0 |
+| 6.9 µA | 0.5 V | 1.263 | 0.901 | 1.263 | 2 | 0 |
+| 6.9 µA | 1.5 V | 0.683 | 0.726 | 0.765 | 0 | 0 |
+| 6.9 µA | 2.5 V | 0.490 | 0.844 | 0.850 | 0 | 0 |
+| 6.9 µA | 2.8 V | 0.785 | 0.822 | 0.822 | 0 | 0 |
+| 15.4 µA | 0.5 V | 1.101 | 0.946 | 1.480 | 2 | 0 |
+| 15.4 µA | 1.5 V | 0.507 | 0.667 | 0.667 | 0 | 0 |
+| 15.4 µA | 2.5 V | 1.237 | 1.286 | 1.542 | 3 | 0 |
+| 15.4 µA | 2.8 V | 0.918 | 0.298 | 0.918 | 0 | 0 |
+
+Worst span 1.542 mV; 11 of 39 spans above 1.0 mV, 0 above 1.6 mV; |offset| ≤ 4.01 mV at all 73 points (ffx rows included). The values are equal to E9 to the last digit: the C-trim stubs carry no DC current. The D29 condition (full-chip test 2 angle residual ≤ 0.25° with the extracted E9 and the ADC of record) is outside this block and **not run** here.
 
 ## Layout E9 (2026-10-28, track T3m; not closed)
 
@@ -45,6 +114,23 @@ mis-calibrated. Part of the campaign is not run.
 | CM step (×1, ×32), supply-path loop gain | ≤ 1 loop-response overshoot; ≤ −20 dB | — | ×32 failed by count | `sim/specs/cmstep_e9.json`, `supl_e9.json` | **not run** |
 | Noise, THD, settling, pole matching MC, output CM | as E8 | — | see E8 | `r1afe-post-e9d21f3-stop` (`not_run`) | **not run** (output CM 0.5905–0.5907 V on the one ac row, **passed**) |
 
+### Campaign `r1afe-post-e9d21f3` complete (recorded 2026-10-28 by track T3n; reduction `sim/results/post-e9d21f3-full-summary.json`)
+
+The E9 campaign that was stopped at the T3m budget ran to its end (58 jobs, 0 failed jobs, wall 4.8 h, finished 14:14 UTC). All
+numbers are **simulated** on `pexrc-layout-e9-dev21-f3`.
+
+| Criterion | Limit | E9-dev21 (F3), all 58 jobs | Status |
+| --- | --- | --- | --- |
+| Loop rows, 20 jobs (tt/ss/ff/sf/fs/ssx/ffx, CM 0.5/2.5 V, bias extremes, ×1 and ×32) | PM ≥ 63°, GM ≥ 10 dB | worst PM 63.31° (CM1 ffx 6.9 µA CM 2.5 V ×32), worst GM 11.51 dB (DM2 tt 15.4 µA CM 2.5 V); DM1 ffx 6.9 µA 65.25° | **passed** |
+| Hold states, 7 jobs | as loop rows | worst PM 66.68° (DM2 ffx 15.36 µA hold), worst GM 12.99 dB | **passed** |
+| Flagged rows (`pm_valid` false) | supply-network method | 29 rows: `cm2` at CM 2.5 V or ×32 (PM 64.33–77.05°) and `cm1` ×1 at ff 9.00 µA and tt 6.9 µA CM 0.5 V (81.94°, 81.98°) | **not run** on E9 (supply-path loop gain) |
+| f_c, 11 ac rows | ≥ 1.0 MHz at ss | 1.0628 MHz (ss CM 0.5 V) … 1.8039 MHz | **passed** |
+| Output CM | 0.570–0.630 V | 0.5897–0.5939 V | **passed** |
+| Pole matching (MC, ss, 120 samples) | ≤ 1 % | 0.724 % | **passed** |
+| Noise ×32 at ss, input-referred | ≤ 35 µV | 32.65 µV | **passed** |
+| Settling, 15 jobs, non-linear residual | ≤ 0.25 LSB | 0.024 LSB worst | **passed** |
+| THD (`tran_tt_x1`, `tran_tt_x32`) | ≤ 0.1 % | 0.0115 % worst | **passed** |
+
 ### Netlist F3 (`schematic/r1_afe_revF3.spice`)
 
 The shortfall at ffx 6.9 µA is a netlist property: E5–E8 wiring moved DM1 by < 1.5°. Levers screened on the schematic F2
@@ -68,7 +154,7 @@ Confirmation on the extracted E8 netlist (device edit only; runs `r1afe-screen-f
 `LRZ` 25 µm was the first choice; the full schematic loop set (`r1afe-sch-f3-loops`) then gave DM1 GM 9.47 dB at tt
 15.4 µA CM 2.5 V ×1 (the Rz zero lifts the high-frequency loop gain), so F3 takes 23 µm (schematic GM 10.39 dB, post-layout
 11.60 dB). The trade pair of D26 is not needed: F3 holds DM1 and f_c at ss together. The ff hold-state rows of the post
-screen (`stb_ff_ib9.00_cm2.5_hold`, `LRZ` 25/27/29) did not finish (gmin stepping > 3 h) and are **not run**.
+screen (`stb_ff_ib9.00_cm2.5_hold`, `LRZ` 25/27/29) did not finish (gmin stepping > 3 h) and are **not run** at the T3m stop; they finished at 14:44 UTC (run `r1afe-screen-f3-post`, 10.8 h wall, 0 failed jobs): DM1 ×1 77.67 / 74.94 / 71.63°, GM 12.33 / 11.49 / 10.71 dB, DM2 ≥ 66.95° (simulated, extracted E8 with the device edit).
 
 ### Layout builds (generator `layout/r1_afe_layout.py`, E8 flags + E9 flags; records `reports/layout-e9-*/generator.json`)
 

@@ -1,0 +1,872 @@
+{
+ "question": "Layout E9b (decision D29): E9 generator and placement with the x1p C trim 23/23 edges, netlist F3; kpex 2.5D CC + RNetExtractor R (pex-e9b-dev22), RC netlist pexrc-layout-e9b-dev22 built with sch=r1_afe_revF3.spice. Full campaign: loops PM >= 63 deg, GM >= 10 dB with validity at tt/ss/ff/sf/fs/ssx/ffx, bias extremes, hold states; f_c ss >= 1 MHz; supply-path DC loop gain (variant E9bS, Tian probes in the sine-channel vss/vdd entry wires) <= -20 dB at tt/ss/ff; CM step x1/x32 (<= 1 loop-response overshoot); noise x32 ss; THD; settling. Jobs ordered by prio (loop rows first).",
+ "variants": {
+  "E9b": {
+   "netlist": "$G1_RESULTS_ROOT/r1_afe/pexrc-layout-e9b-dev22/r1_afe_post_rc.spice"
+  },
+  "E9bS": {
+   "netlist": "$G1_RESULTS_ROOT/r1_afe/pexrc-layout-e9b-dev22/r1_afe_post_rc.spice",
+   "rx": [
+    [
+     "r1_afe",
+     "vdd__xsin vss__xsin r1_afe_ch",
+     "vdd_ys vss_ys r1_afe_ch\nVps vss__xsin vss_ys dc 0 ac {vs1}\nIps 0 vss__xsin dc 0 ac {is1}\nVpd vdd__xsin vdd_ys dc 0 ac {vs2}\nIpd 0 vdd__xsin dc 0 ac {is2}"
+    ]
+   ],
+   "jobs": [
+    {
+     "tag": "supl_tt_ib10.14_cm0.5",
+     "tmpl": "tb_afe_supl.cir",
+     "corner": "tt",
+     "subs": {
+      "VCMI": 0.5,
+      "KLIST": "0 5",
+      "LLIST": "1 2 3",
+      "IB": "10.14u",
+      "CL": "2.8p"
+     },
+     "prio": 2
+    },
+    {
+     "tag": "supl_tt_ib10.14_cm2.5",
+     "tmpl": "tb_afe_supl.cir",
+     "corner": "tt",
+     "subs": {
+      "VCMI": 2.5,
+      "KLIST": "0 5",
+      "LLIST": "1 2 3",
+      "IB": "10.14u",
+      "CL": "2.8p"
+     },
+     "prio": 2
+    },
+    {
+     "tag": "supl_ss_ib11.81_cm0.5",
+     "tmpl": "tb_afe_supl.cir",
+     "corner": "ss",
+     "subs": {
+      "VCMI": 0.5,
+      "KLIST": "0 5",
+      "LLIST": "1 2 3",
+      "IB": "11.81u",
+      "CL": "2.8p"
+     },
+     "prio": 2
+    },
+    {
+     "tag": "supl_ss_ib11.81_cm2.5",
+     "tmpl": "tb_afe_supl.cir",
+     "corner": "ss",
+     "subs": {
+      "VCMI": 2.5,
+      "KLIST": "0 5",
+      "LLIST": "1 2 3",
+      "IB": "11.81u",
+      "CL": "2.8p"
+     },
+     "prio": 2
+    },
+    {
+     "tag": "supl_ff_ib9.00_cm0.5",
+     "tmpl": "tb_afe_supl.cir",
+     "corner": "ff",
+     "subs": {
+      "VCMI": 0.5,
+      "KLIST": "0 5",
+      "LLIST": "1 2 3",
+      "IB": "9.00u",
+      "CL": "2.8p"
+     },
+     "prio": 2
+    },
+    {
+     "tag": "supl_ff_ib9.00_cm2.5",
+     "tmpl": "tb_afe_supl.cir",
+     "corner": "ff",
+     "subs": {
+      "VCMI": 2.5,
+      "KLIST": "0 5",
+      "LLIST": "1 2 3",
+      "IB": "9.00u",
+      "CL": "2.8p"
+     },
+     "prio": 2
+    }
+   ]
+  }
+ },
+ "jobs": [
+  {
+   "tag": "stb_ffx_ib6.9_cm0.5",
+   "tmpl": "tb_afe_stb.cir",
+   "corner": "ffx",
+   "subs": {
+    "VCMI": 0.5,
+    "KLIST": "0 5",
+    "LLIST": "1 2 4 5",
+    "IB": "6.9u",
+    "CL": "2.8p"
+   },
+   "prio": 0
+  },
+  {
+   "tag": "stb_ffx_ib6.9_cm2.5",
+   "tmpl": "tb_afe_stb.cir",
+   "corner": "ffx",
+   "subs": {
+    "VCMI": 2.5,
+    "KLIST": "0 5",
+    "LLIST": "1 2 4 5",
+    "IB": "6.9u",
+    "CL": "2.8p"
+   },
+   "prio": 0
+  },
+  {
+   "tag": "stb_tt_ib15.4_cm2.5",
+   "tmpl": "tb_afe_stb.cir",
+   "corner": "tt",
+   "subs": {
+    "VCMI": 2.5,
+    "KLIST": "0 5",
+    "LLIST": "1 2 4 5",
+    "IB": "15.4u",
+    "CL": "2.8p"
+   },
+   "prio": 1
+  },
+  {
+   "tag": "ac_ss_ib11.81_cm0.5",
+   "tmpl": "tb_afe_ac.cir",
+   "corner": "ss",
+   "subs": {
+    "VCMI": 0.5,
+    "IB": "11.81u"
+   },
+   "prio": 0
+  },
+  {
+   "tag": "stb_ss_ib11.81_cm0.5",
+   "tmpl": "tb_afe_stb.cir",
+   "corner": "ss",
+   "subs": {
+    "VCMI": 0.5,
+    "KLIST": "0 5",
+    "LLIST": "1 2 4 5",
+    "IB": "11.81u",
+    "CL": "2.8p"
+   },
+   "prio": 1
+  },
+  {
+   "tag": "stb_ff_ib9.00_cm2.5",
+   "tmpl": "tb_afe_stb.cir",
+   "corner": "ff",
+   "subs": {
+    "VCMI": 2.5,
+    "KLIST": "0 5",
+    "LLIST": "1 2 4 5",
+    "IB": "9.00u",
+    "CL": "2.8p"
+   },
+   "prio": 1
+  },
+  {
+   "tag": "stb_tt_ib10.14_cm0.5",
+   "tmpl": "tb_afe_stb.cir",
+   "corner": "tt",
+   "subs": {
+    "VCMI": 0.5,
+    "KLIST": "0 5",
+    "LLIST": "1 2 4 5",
+    "IB": "10.14u",
+    "CL": "2.8p"
+   },
+   "prio": 1
+  },
+  {
+   "tag": "stb_tt_ib10.14_cm2.5",
+   "tmpl": "tb_afe_stb.cir",
+   "corner": "tt",
+   "subs": {
+    "VCMI": 2.5,
+    "KLIST": "0 5",
+    "LLIST": "1 2 4 5",
+    "IB": "10.14u",
+    "CL": "2.8p"
+   },
+   "prio": 1
+  },
+  {
+   "tag": "stb_ssx_ib6.94_cm0.5",
+   "tmpl": "tb_afe_stb.cir",
+   "corner": "ssx",
+   "subs": {
+    "VCMI": 0.5,
+    "KLIST": "0 5",
+    "LLIST": "1 2 4 5",
+    "IB": "6.94u",
+    "CL": "2.8p"
+   },
+   "prio": 1
+  },
+  {
+   "tag": "stb_ssx_ib6.94_cm2.5",
+   "tmpl": "tb_afe_stb.cir",
+   "corner": "ssx",
+   "subs": {
+    "VCMI": 2.5,
+    "KLIST": "0 5",
+    "LLIST": "1 2 4 5",
+    "IB": "6.94u",
+    "CL": "2.8p"
+   },
+   "prio": 1
+  },
+  {
+   "tag": "stb_ff_ib9.00_cm0.5",
+   "tmpl": "tb_afe_stb.cir",
+   "corner": "ff",
+   "subs": {
+    "VCMI": 0.5,
+    "KLIST": "0 5",
+    "LLIST": "1 2 4 5",
+    "IB": "9.00u",
+    "CL": "2.8p"
+   },
+   "prio": 1
+  },
+  {
+   "tag": "stb_sf_ib10.14_cm0.5",
+   "tmpl": "tb_afe_stb.cir",
+   "corner": "sf",
+   "subs": {
+    "VCMI": 0.5,
+    "KLIST": "0 5",
+    "LLIST": "1 2 4 5",
+    "IB": "10.14u",
+    "CL": "2.8p"
+   },
+   "prio": 1
+  },
+  {
+   "tag": "stb_sf_ib10.14_cm2.5",
+   "tmpl": "tb_afe_stb.cir",
+   "corner": "sf",
+   "subs": {
+    "VCMI": 2.5,
+    "KLIST": "0 5",
+    "LLIST": "1 2 4 5",
+    "IB": "10.14u",
+    "CL": "2.8p"
+   },
+   "prio": 1
+  },
+  {
+   "tag": "stb_fs_ib10.14_cm0.5",
+   "tmpl": "tb_afe_stb.cir",
+   "corner": "fs",
+   "subs": {
+    "VCMI": 0.5,
+    "KLIST": "0 5",
+    "LLIST": "1 2 4 5",
+    "IB": "10.14u",
+    "CL": "2.8p"
+   },
+   "prio": 1
+  },
+  {
+   "tag": "stb_fs_ib10.14_cm2.5",
+   "tmpl": "tb_afe_stb.cir",
+   "corner": "fs",
+   "subs": {
+    "VCMI": 2.5,
+    "KLIST": "0 5",
+    "LLIST": "1 2 4 5",
+    "IB": "10.14u",
+    "CL": "2.8p"
+   },
+   "prio": 1
+  },
+  {
+   "tag": "stb_ss_ib11.81_cm2.5",
+   "tmpl": "tb_afe_stb.cir",
+   "corner": "ss",
+   "subs": {
+    "VCMI": 2.5,
+    "KLIST": "0 5",
+    "LLIST": "1 2 4 5",
+    "IB": "11.81u",
+    "CL": "2.8p"
+   },
+   "prio": 1
+  },
+  {
+   "tag": "stb_ffx_ib15.36_cm0.5",
+   "tmpl": "tb_afe_stb.cir",
+   "corner": "ffx",
+   "subs": {
+    "VCMI": 0.5,
+    "KLIST": "0 5",
+    "LLIST": "1 2 4 5",
+    "IB": "15.36u",
+    "CL": "2.8p"
+   },
+   "prio": 1
+  },
+  {
+   "tag": "stb_ffx_ib15.36_cm2.5",
+   "tmpl": "tb_afe_stb.cir",
+   "corner": "ffx",
+   "subs": {
+    "VCMI": 2.5,
+    "KLIST": "0 5",
+    "LLIST": "1 2 4 5",
+    "IB": "15.36u",
+    "CL": "2.8p"
+   },
+   "prio": 1
+  },
+  {
+   "tag": "stb_tt_ib6.9_cm0.5",
+   "tmpl": "tb_afe_stb.cir",
+   "corner": "tt",
+   "subs": {
+    "VCMI": 0.5,
+    "KLIST": "0 5",
+    "LLIST": "1 2 4 5",
+    "IB": "6.9u",
+    "CL": "2.8p"
+   },
+   "prio": 1
+  },
+  {
+   "tag": "stb_tt_ib6.9_cm2.5",
+   "tmpl": "tb_afe_stb.cir",
+   "corner": "tt",
+   "subs": {
+    "VCMI": 2.5,
+    "KLIST": "0 5",
+    "LLIST": "1 2 4 5",
+    "IB": "6.9u",
+    "CL": "2.8p"
+   },
+   "prio": 1
+  },
+  {
+   "tag": "stb_tt_ib15.4_cm0.5",
+   "tmpl": "tb_afe_stb.cir",
+   "corner": "tt",
+   "subs": {
+    "VCMI": 0.5,
+    "KLIST": "0 5",
+    "LLIST": "1 2 4 5",
+    "IB": "15.4u",
+    "CL": "2.8p"
+   },
+   "prio": 1
+  },
+  {
+   "tag": "acmc_ss_p0",
+   "tmpl": "tb_afe_ac.cir",
+   "corner": "ss",
+   "mismatch": true,
+   "subs": {
+    "NMC": 10,
+    "SEED": 101,
+    "IB": "11.81u"
+   },
+   "prio": 9
+  },
+  {
+   "tag": "acmc_ss_p1",
+   "tmpl": "tb_afe_ac.cir",
+   "corner": "ss",
+   "mismatch": true,
+   "subs": {
+    "NMC": 10,
+    "SEED": 102,
+    "IB": "11.81u"
+   },
+   "prio": 9
+  },
+  {
+   "tag": "noise_ss_ib11.81",
+   "tmpl": "tb_afe_noise.cir",
+   "corner": "ss",
+   "subs": {
+    "IB": "11.81u"
+   },
+   "prio": 5
+  },
+  {
+   "tag": "tran_tt_x1",
+   "tmpl": "tb_afe_tran.cir",
+   "corner": "tt",
+   "subs": {
+    "CODE": 0,
+    "AMP": 0.7,
+    "VCMI": 2.45,
+    "IB": "10.14u"
+   },
+   "prio": 5
+  },
+  {
+   "tag": "tran_tt_x32",
+   "tmpl": "tb_afe_tran.cir",
+   "corner": "tt",
+   "subs": {
+    "CODE": 5,
+    "AMP": 0.021875,
+    "VCMI": 2.45,
+    "IB": "10.14u"
+   },
+   "prio": 4
+  },
+  {
+   "tag": "stb_ff_ib9.00_cm2.5_hold",
+   "tmpl": "tb_afe_stb.cir",
+   "corner": "ff",
+   "subs": {
+    "VCMI": 2.5,
+    "KLIST": "0 5",
+    "LLIST": "1 2 4 5",
+    "IB": "9.00u",
+    "CL": "1f"
+   },
+   "prio": 6
+  },
+  {
+   "tag": "stb_ssx_ib6.94_cm2.5_hold",
+   "tmpl": "tb_afe_stb.cir",
+   "corner": "ssx",
+   "subs": {
+    "VCMI": 2.5,
+    "KLIST": "0 5",
+    "LLIST": "1 2 4 5",
+    "IB": "6.94u",
+    "CL": "1f"
+   },
+   "prio": 6
+  },
+  {
+   "tag": "stb_tt_ib10.14_cm2.5_hold",
+   "tmpl": "tb_afe_stb.cir",
+   "corner": "tt",
+   "subs": {
+    "VCMI": 2.5,
+    "KLIST": "0 5",
+    "LLIST": "1 2 4 5",
+    "IB": "10.14u",
+    "CL": "1f"
+   },
+   "prio": 6
+  },
+  {
+   "tag": "stb_ss_ib11.81_cm2.5_hold",
+   "tmpl": "tb_afe_stb.cir",
+   "corner": "ss",
+   "subs": {
+    "VCMI": 2.5,
+    "KLIST": "0 5",
+    "LLIST": "1 2 4 5",
+    "IB": "11.81u",
+    "CL": "1f"
+   },
+   "prio": 6
+  },
+  {
+   "tag": "stb_sf_ib10.14_cm2.5_hold",
+   "tmpl": "tb_afe_stb.cir",
+   "corner": "sf",
+   "subs": {
+    "VCMI": 2.5,
+    "KLIST": "0 5",
+    "LLIST": "1 2 4 5",
+    "IB": "10.14u",
+    "CL": "1f"
+   },
+   "prio": 6
+  },
+  {
+   "tag": "stb_fs_ib10.14_cm2.5_hold",
+   "tmpl": "tb_afe_stb.cir",
+   "corner": "fs",
+   "subs": {
+    "VCMI": 2.5,
+    "KLIST": "0 5",
+    "LLIST": "1 2 4 5",
+    "IB": "10.14u",
+    "CL": "1f"
+   },
+   "prio": 6
+  },
+  {
+   "tag": "stb_ffx_ib15.36_cm2.5_hold",
+   "tmpl": "tb_afe_stb.cir",
+   "corner": "ffx",
+   "subs": {
+    "VCMI": 2.5,
+    "KLIST": "0 5",
+    "LLIST": "1 2 4 5",
+    "IB": "15.36u",
+    "CL": "1f"
+   },
+   "prio": 6
+  },
+  {
+   "tag": "ac_ss_ib11.81_cm2.5",
+   "tmpl": "tb_afe_ac.cir",
+   "corner": "ss",
+   "subs": {
+    "VCMI": 2.5,
+    "IB": "11.81u"
+   },
+   "prio": 8
+  },
+  {
+   "tag": "ac_tt_ib10.14_cm0.5",
+   "tmpl": "tb_afe_ac.cir",
+   "corner": "tt",
+   "subs": {
+    "VCMI": 0.5,
+    "IB": "10.14u"
+   },
+   "prio": 8
+  },
+  {
+   "tag": "ac_tt_ib10.14_cm2.5",
+   "tmpl": "tb_afe_ac.cir",
+   "corner": "tt",
+   "subs": {
+    "VCMI": 2.5,
+    "IB": "10.14u"
+   },
+   "prio": 8
+  },
+  {
+   "tag": "ac_ffx_ib6.9_cm0.5",
+   "tmpl": "tb_afe_ac.cir",
+   "corner": "ffx",
+   "subs": {
+    "VCMI": 0.5,
+    "IB": "6.9u"
+   },
+   "prio": 8
+  },
+  {
+   "tag": "ac_ffx_ib6.9_cm2.5",
+   "tmpl": "tb_afe_ac.cir",
+   "corner": "ffx",
+   "subs": {
+    "VCMI": 2.5,
+    "IB": "6.9u"
+   },
+   "prio": 8
+  },
+  {
+   "tag": "ac_ffx_ib15.36_cm0.5",
+   "tmpl": "tb_afe_ac.cir",
+   "corner": "ffx",
+   "subs": {
+    "VCMI": 0.5,
+    "IB": "15.36u"
+   },
+   "prio": 8
+  },
+  {
+   "tag": "ac_ssx_ib6.94_cm0.5",
+   "tmpl": "tb_afe_ac.cir",
+   "corner": "ssx",
+   "subs": {
+    "VCMI": 0.5,
+    "IB": "6.94u"
+   },
+   "prio": 8
+  },
+  {
+   "tag": "ac_ff_ib9.00_cm0.5",
+   "tmpl": "tb_afe_ac.cir",
+   "corner": "ff",
+   "subs": {
+    "VCMI": 0.5,
+    "IB": "9.00u"
+   },
+   "prio": 8
+  },
+  {
+   "tag": "ac_tt_ib15.4_cm0.5",
+   "tmpl": "tb_afe_ac.cir",
+   "corner": "tt",
+   "subs": {
+    "VCMI": 0.5,
+    "IB": "15.4u"
+   },
+   "prio": 8
+  },
+  {
+   "tag": "ac_tt_ib6.9_cm0.5",
+   "tmpl": "tb_afe_ac.cir",
+   "corner": "tt",
+   "subs": {
+    "VCMI": 0.5,
+    "IB": "6.9u"
+   },
+   "prio": 8
+  },
+  {
+   "tag": "settle_ss_x1_p100",
+   "tmpl": "tb_afe_settle_adc_rs.cir",
+   "corner": "ss",
+   "subs": {
+    "CODE": 0,
+    "AMP": 0.7,
+    "VCMI": 2.45,
+    "CS": "2.8p",
+    "VRST": 0.0,
+    "IB": "11.81u"
+   },
+   "prio": 7
+  },
+  {
+   "tag": "settle_ss_x1_m100",
+   "tmpl": "tb_afe_settle_adc_rs.cir",
+   "corner": "ss",
+   "subs": {
+    "CODE": 0,
+    "AMP": -0.7,
+    "VCMI": 2.45,
+    "CS": "2.8p",
+    "VRST": 0.0,
+    "IB": "11.81u"
+   },
+   "prio": 7
+  },
+  {
+   "tag": "settle_ss_x1_p50",
+   "tmpl": "tb_afe_settle_adc_rs.cir",
+   "corner": "ss",
+   "subs": {
+    "CODE": 0,
+    "AMP": 0.35,
+    "VCMI": 2.45,
+    "CS": "2.8p",
+    "VRST": 0.0,
+    "IB": "11.81u"
+   },
+   "prio": 7
+  },
+  {
+   "tag": "settle_ss_x32_p100",
+   "tmpl": "tb_afe_settle_adc_rs.cir",
+   "corner": "ss",
+   "subs": {
+    "CODE": 5,
+    "AMP": 0.021875,
+    "VCMI": 2.45,
+    "CS": "2.8p",
+    "VRST": 0.0,
+    "IB": "11.81u"
+   },
+   "prio": 7
+  },
+  {
+   "tag": "settle_ss_x32_m100",
+   "tmpl": "tb_afe_settle_adc_rs.cir",
+   "corner": "ss",
+   "subs": {
+    "CODE": 5,
+    "AMP": -0.021875,
+    "VCMI": 2.45,
+    "CS": "2.8p",
+    "VRST": 0.0,
+    "IB": "11.81u"
+   },
+   "prio": 7
+  },
+  {
+   "tag": "settle_ss_x32_p50",
+   "tmpl": "tb_afe_settle_adc_rs.cir",
+   "corner": "ss",
+   "subs": {
+    "CODE": 5,
+    "AMP": 0.010937,
+    "VCMI": 2.45,
+    "CS": "2.8p",
+    "VRST": 0.0,
+    "IB": "11.81u"
+   },
+   "prio": 7
+  },
+  {
+   "tag": "settle_tt_x32_p100",
+   "tmpl": "tb_afe_settle_adc_rs.cir",
+   "corner": "tt",
+   "subs": {
+    "CODE": 5,
+    "AMP": 0.021875,
+    "VCMI": 2.45,
+    "CS": "2.8p",
+    "VRST": 0.0,
+    "IB": "10.14u"
+   },
+   "prio": 7
+  },
+  {
+   "tag": "settle_tt_x32_m100",
+   "tmpl": "tb_afe_settle_adc_rs.cir",
+   "corner": "tt",
+   "subs": {
+    "CODE": 5,
+    "AMP": -0.021875,
+    "VCMI": 2.45,
+    "CS": "2.8p",
+    "VRST": 0.0,
+    "IB": "10.14u"
+   },
+   "prio": 7
+  },
+  {
+   "tag": "settle_tt_x32_p50",
+   "tmpl": "tb_afe_settle_adc_rs.cir",
+   "corner": "tt",
+   "subs": {
+    "CODE": 5,
+    "AMP": 0.010937,
+    "VCMI": 2.45,
+    "CS": "2.8p",
+    "VRST": 0.0,
+    "IB": "10.14u"
+   },
+   "prio": 7
+  },
+  {
+   "tag": "settle_tt_x1_p100",
+   "tmpl": "tb_afe_settle_adc_rs.cir",
+   "corner": "tt",
+   "subs": {
+    "CODE": 0,
+    "AMP": 0.7,
+    "VCMI": 2.45,
+    "CS": "2.8p",
+    "VRST": 0.0,
+    "IB": "10.14u"
+   },
+   "prio": 7
+  },
+  {
+   "tag": "settle_tt_x1_m100",
+   "tmpl": "tb_afe_settle_adc_rs.cir",
+   "corner": "tt",
+   "subs": {
+    "CODE": 0,
+    "AMP": -0.7,
+    "VCMI": 2.45,
+    "CS": "2.8p",
+    "VRST": 0.0,
+    "IB": "10.14u"
+   },
+   "prio": 7
+  },
+  {
+   "tag": "settle_tt_x1_p50",
+   "tmpl": "tb_afe_settle_adc_rs.cir",
+   "corner": "tt",
+   "subs": {
+    "CODE": 0,
+    "AMP": 0.35,
+    "VCMI": 2.45,
+    "CS": "2.8p",
+    "VRST": 0.0,
+    "IB": "10.14u"
+   },
+   "prio": 7
+  },
+  {
+   "tag": "settle_vrst06_tt_x32_p100",
+   "tmpl": "tb_afe_settle_adc_rs.cir",
+   "corner": "tt",
+   "subs": {
+    "CODE": 5,
+    "AMP": 0.021875,
+    "VCMI": 2.45,
+    "CS": "2.8p",
+    "VRST": 0.6,
+    "IB": "10.14u"
+   },
+   "prio": 7
+  },
+  {
+   "tag": "settle_vrst06_tt_x32_m100",
+   "tmpl": "tb_afe_settle_adc_rs.cir",
+   "corner": "tt",
+   "subs": {
+    "CODE": 5,
+    "AMP": -0.021875,
+    "VCMI": 2.45,
+    "CS": "2.8p",
+    "VRST": 0.6,
+    "IB": "10.14u"
+   },
+   "prio": 7
+  },
+  {
+   "tag": "settle_vrst06_tt_x32_p50",
+   "tmpl": "tb_afe_settle_adc_rs.cir",
+   "corner": "tt",
+   "subs": {
+    "CODE": 5,
+    "AMP": 0.010937,
+    "VCMI": 2.45,
+    "CS": "2.8p",
+    "VRST": 0.6,
+    "IB": "10.14u"
+   },
+   "prio": 7
+  },
+  {
+   "tag": "cmstep_tt_x1",
+   "tmpl": "tb_afe_cmstep.cir",
+   "corner": "tt",
+   "subs": {
+    "CODE": 0,
+    "AMP": 0.7,
+    "IB": "10.14u"
+   },
+   "prio": 3
+  },
+  {
+   "tag": "cmstep_tt_x32",
+   "tmpl": "tb_afe_cmstep.cir",
+   "corner": "tt",
+   "subs": {
+    "CODE": 5,
+    "AMP": 0.021875,
+    "IB": "10.14u"
+   },
+   "prio": 3
+  },
+  {
+   "tag": "cmstep_ss_x32",
+   "tmpl": "tb_afe_cmstep.cir",
+   "corner": "ss",
+   "subs": {
+    "CODE": 5,
+    "AMP": 0.021875,
+    "IB": "11.81u"
+   },
+   "prio": 3
+  },
+  {
+   "tag": "cmstep_ff_x32",
+   "tmpl": "tb_afe_cmstep.cir",
+   "corner": "ff",
+   "subs": {
+    "CODE": 5,
+    "AMP": 0.021875,
+    "IB": "9.00u"
+   },
+   "prio": 3
+  }
+ ]
+}

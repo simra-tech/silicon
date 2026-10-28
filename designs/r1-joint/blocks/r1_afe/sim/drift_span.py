@@ -30,5 +30,6 @@ for b, (it, iss, iff) in B.items():
 allsp = [s for d in out['spans'].values() for s in (d['corners'], d['supply'], d['all'])]
 out['worst_span'] = max(allsp) if allsp else None
 out['n_spans_over_1mV'] = sum(1 for s in allsp if s > 1.0)
+out['n_spans_over_1p6mV'] = sum(1 for s in allsp if s > 1.6)   # D29 allocation 1.6 mV
 out['n_spans'] = len(allsp)
 print(json.dumps(out, indent=1))

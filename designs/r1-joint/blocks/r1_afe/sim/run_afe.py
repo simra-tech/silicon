@@ -509,9 +509,13 @@ def campaign(c):
             for sub, rx, rp in v.get('rx', []):
                 ed += (('@re', sub, rx, rp),)
             src = VARNET.get(vn)
-            for jj in spec['jobs']:
+            for jj in v.get('jobs', spec['jobs']):   # E9b: a variant may carry its own job list (default: spec jobs)
                 J.append(job('%s__%s' % (vn, jj['tag']), jj['tmpl'], jj['corner'], jj.get('mismatch', False), edits=ed,
                              src=src, **jj.get('subs', {})))
+                J[-1]['prio'] = jj.get('prio', 0)
+        J.sort(key=lambda d: d['prio'])   # E9b: optional job priority (stable; default 0 = spec order)
+        for d in J:
+            d.pop('prio')
     elif c == 'stbval':
         J.append(job('toy', 'tb_stb_toy.cir', 'tt'))
     elif c == 'stbq':

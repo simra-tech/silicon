@@ -14,7 +14,7 @@ ra = importlib.util.module_from_spec(spec); spec.loader.exec_module(ra)
 vs = json.load(open(os.path.join(out, 'frozen', 'var_spec.json')))
 res, not_run = [], []
 for vn in vs['variants']:
-    for jj in vs['jobs']:
+    for jj in vs['variants'][vn].get('jobs', vs['jobs']):   # E9b: per-variant job lists
         name = '%s__%s' % (vn, jj['tag'])
         log = os.path.join(out, name + '.log')
         done = os.path.exists(log) and jj['tag'] not in skip
