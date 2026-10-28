@@ -112,7 +112,9 @@ for k, (_, b, t) in VIAS.items():
     v.cut_layer = k; v.bottom_conductor = b; v.top_conductor = t; v.resistance = RVIA; v.merge_distance = 0.0
     tech.add_via(v)
 
-LJ = json.load(open(os.path.join(BLOCK, 'layout', 'r1_adc_layout.json')))
+# T2p (layout B10, 2026-10-30): -rd lj=<layout json> for a development layout; the default (the tracked record) gave
+# wrong port positions for B10 (62 ties, run pex-b10-dev1, invalid)
+LJ = json.load(open(globals().get('lj') or os.path.join(BLOCK, 'layout', 'r1_adc_layout.json')))
 # layout B9 (T2o, PLAN.md D28): the layout record of a B9 layout carries top stats 'b9_vrefl'; the reference devices
 # are then those of netlist revision 6 (r1_adc_netlist.py SCHEM = 'r6': clkgen chain input on vss, vrefl follower and
 # sink in three segments). Every earlier layout record keeps revision 5.

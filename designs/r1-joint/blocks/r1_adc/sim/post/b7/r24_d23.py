@@ -209,7 +209,9 @@ for mode in ("strobe", "boxcar", "regen", "25ns") + tuple("at%g" % x for x in (4
                                  "lsb_uV_at_1V": D["slices"][sl]["lsb_uV_at_1V"],
                                  "per_decision": D["slices"][sl]["max_abs_error_vs_decision_lsb"],
                                  "per_slot": {str(r["slot"]): (max([abs(x) for x in r["input_error_mid_eval_lsb_dec5_13"] if x is not None] or [0.0]),
-                                                               r["bits_differ_at"][:1]) for r in D["slices"][sl]["slots"]}}
+                                                               r["bits_differ_at"][:1]) for r in D["slices"][sl]["slots"]},
+                                 # T2p (2026-10-30, D30 item 2): final codes per slot, weights from the run steps (post_ref5 Wd)
+                                 "codes_base_buffer": {str(r["slot"]): [r["code_ideal"], r["code_buffer"]] for r in D["slices"][sl]["slots"]}}
                             for sl in "ab"}}
 db, di = LOAD(rb), LOAD(ri)
 tim = {}

@@ -1,8 +1,241 @@
 # R1_ADC — 12-bit SAR ADC with two simultaneous track-and-holds (schematic level, revisions 1 to 6)
 
+State (coordinator, 2026-10-30, PLAN.md D30; updated by T2p): the layout of record is B7 (`layout/r1_adc.gds`, identical
+to `layout/r1_adc_layout_b7.gds`) with netlist revision 5 and SAR release `t2j-ll-h2312-h`. Revision 6 and B9 are not
+adopted (kept as `layout/r1_adc_layout_b9.*`). Track T2p (D30 items 2-4) ended: code-level R2-4 on B7
+passes at tt and fails at ss / ff; the ff output window on B7 is 0.401 ns (passed against 0.30 ns); three B10 layouts
+fail the static offset and the drift, so B7 stays the layout of record. See "Layout B10".
+
+## Layout B10 (2026-10-30, track T2p): PLAN.md D30 items 2-4
+
+State: **ended, not adopted** (B7 stays the layout of record). Two dev2c window runs are still in progress at the
+end of the track (status table). All numbers are simulated or from layout tools. Nothing is measured. Runs are under
+`<G1_RESULTS_ROOT>/r1_adc/<run id>`; small records are under `sim/post/b10/`, `sim/post/runs/` and `reports/`.
+
+### Status (layout B10 and D30 items 2-4)
+
+Built against: PDK `84374023ee8b4b126bebbba67fcbada0a9c0ff0b`, ngspice 46, KLayout 0.30.9, kpex 0.3.12, container image
+`sha256:ddeb69576f28…` (from the run records). Raw data under `<G1_RESULTS_ROOT>/r1_adc/<run id>/`. All numbers simulated.
+
+| Check (limit) | Result | Evidence |
+| --- | --- | --- |
+| Code-level R2-4, B7, tt (final code with the real buffer, wiring and strobe − ideal-reference code ≤ 1 LSB, 10 slots incl. the first conversion) | **passed**: ≤ 1 LSB with both weight sets | `sim/post/b10/results/code_r24_b7_tt.json`, `b7proxy_ref_tt_d23_codes.json` |
+| Code-level R2-4, B7, ss / 125 °C / 1.08 V | **failed**: first conversion +2 / +3 LSB with the run-step weights (design weights: ≤ 1 LSB, passed) | `code_r24_b7_ss125.json`, `b7proxy_ref_ss125_d23_codes.json` |
+| Code-level R2-4, B7, ff / −40 °C / 1.32 V | **failed**: slot 9 slice A −2 LSB (design weights) / −4 LSB (run-step weights) | `code_r24_b7_ffm40.json`, `b7proxy_ref_ffm40_d23.json`; runs `postb10-cr-ffm40-{buf,base}` |
+| Per-decision reference-node error at the strobe (characteristic, not limited) | recorded: 4.30 / 3.44 / 6.53 LSB at tt / ss / ff | same |
+| Per-net R what-if on the B7 extraction (before the PEX) | **done**: the signal nets must fall together (× 0.5 → 1-2 LSB); single groups move the ff code by −7 to +14 LSB | "Per-net R what-if" |
+| B10 DRC main / maximal / antenna (0) | **passed** (dev1, dev2b, dev2c) | `reports/layout-b10-dev{1,2b,2c}{,a}/` |
+| B10 LVS stock and comparer-limit (match) | **passed** (dev1, dev2b, dev2c) | `reports/lvs-b10-dev{1,2b,2c}-{lim,stock}/` |
+| B10 pin check (52 pins, box 439.0 × 205.42 µm) | **passed** (dev1, dev2b, dev2c) | `reports/layout-b10-dev{1,2b,2c}/pin_table_b10.md` |
+| B10 PEX of record (KLayout R + kpex CC) | **done** (dev1 build2, dev2b, dev2c); dev1 build 1 invalid (B7 port list) | `pex/r1_adc_post_rc_b10{,b,c}.spice`, `pex/pex_build_b10{,b,c}.log` |
+| B10 static offset tt / ss / ff (≤ 10 LSB, D23) | **failed**: dev1 59 LSB, dev2b 69 LSB, dev2c 24 LSB (B7 9 LSB, passed) | `sim/post/b10/results/ofs_b10{c,b,d}_*.json` |
+| B10 drift tt / ss / ff (≤ 4 LSB, D30) | **failed**: dev1 40 / 35 LSB, dev2b 63 / 66 LSB, dev2c 10 / 17 LSB (B7 11 / 9 LSB, failed) | same |
+| B10 windows 1024 / 3072 tt (monotonic, no missing code) | dev2c: **not run, in progress** at the end of the track (`postb10d-win1024-tt-rc` on CPU 104, `postb10d-win3072-tt-rc` queued on CPU 103; about 2.5-3.6 h each); dev1, dev2b: not run (static offset 6-7 times the limit) | — |
+| B10 full scale tt / ss / ff (≥ ±0.86 V, D16 amendment) | dev2c tt / ss **passed**: ±0.8719 / ±0.8728 V (gain 1.0483 / 1.0472; B7 ±0.8709 / ±0.8720 V), ff **passed**: ±0.8701 V (gain 1.0504; B7 ±0.8694 V); dev1, dev2b: not run | `postb10d-isa-{tt,ss125}-rc`, `postb10d-isa-ffm40-rcr`; `sim/post/results/postb10d_isa_*_rc*.json` |
+| Record files changed (only if B10 has no failed row that B7 passes) | **no**: every B10 variant fails the static offset, which B7 passes; `layout/r1_adc.gds` = `layout/r1_adc_layout_b7.gds` (`5dcf5380…`), generator default `B7` | — |
+| ff output window on B7 (first raw change after `clk30` ≥ 0.30 ns, D30 item 4) | **passed**: 0.401 ns (by 0.101 ns, before clock-route skew) | `sim/post/b10/results/b7_ms_fc_ffm40_timing_recheck.json` (run `b7-ms-fc-ffm40`) |
+| B8 dev1 window 3072 (T2n run, finished after its budget) | **failed**: slice A has no hit on code 3059 | "Layout B8" status table |
+
+### Code-level R2-4 on B7 (D30 item 2)
+
+Deck: the D23 proxy deck of T2m (`sim/post/b7/gen_proxy.py`: behavioural `r1_sar5_logic` with the gate-level output
+delays of `r1_adc_sar` on the 52 CDAC lines and 8 comparator clocks; 10 `ref10` slots, slot 0 = the first conversion
+of the run at 0 V after 0.6 µs of track from t = 0; slots 1-9 at ±0.88 / ±0.87 / ±0.44 V and ±0.3 mV). Buffer run: B7
+extraction (`sim/post/r1_adc_post_rc_mb6.spice`, `r1_refbuf5` with bandgap model, real wiring). Ideal-reference run:
+the same netlist with each slice reference port forced to its buffer operating-point value of that corner
+(`make_sp_netlist.py --per-port`). Why the deck is representative: it reproduces the gate-level CDAC switch time
+(0.87-1.10 ns tt) and strobe (3.47-3.60 ns tt) and the gate-level per-decision error of slots 0-3 within 0.08 LSB
+(T2m, "Layout B7"); the comparator, CDAC, buffer and wiring are the extracted circuit. For ff the proxy delays come
+from the B7 gate-level ff run (`b7-ms-fc-ffm40`, `sim/post/b10/results/gl_timing_b7_ffm40.json`; `gen_proxy.py ffm40`,
+new optional timing-file argument); the ff base netlist uses the ff operating point (`postb10-op-ffm40-b7`,
+`sim/post/r1_adc_post_rc_mb6_sp_ffm40.spice`). The final code is evaluated with two weight sets, because D30 does not
+name one: the nominal design weights (`sim/post/b10/code_r24.py`, the `post_post.py win` method) and the weights from
+the capacitor steps of the run (`post_ref5.py` method, used by `r24_d23.py`, now also printing the per-slot codes).
+Simulated.
+
+| Corner | Runs | Code difference per slot 0-9, design weights, A / B (LSB) | Run-step weights, A / B (LSB) | Result (≤ 1 LSB) | Per-decision error at the strobe (characteristic) |
+| --- | --- | --- | --- | --- | --- |
+| tt / 27 °C / 1.2 V | `postb7-d23-ref-tt-{buf,base}` | 0 0 +1 0 0 0 0 0 0 0 / all 0 | 0 0 +1 0 +1 0 0 0 0 0 / 0 0 0 0 +1 0 0 0 0 0 | **passed** | 4.30 LSB (decision 7) |
+| ss / 125 °C / 1.08 V | `postb7-d23-ref-ss125-{buf,base}` | 0 0 0 0 0 0 −1 0 0 0 / 0 0 0 0 0 0 +1 0 0 −1 | **+2** −1 +1 0 0 0 0 +1 −1 0 / **+3** −1 0 +1 0 0 +1 0 +1 −1 | **failed** with the run-step weights in the first conversion (slot 0); passed with the design weights | 3.44 LSB (decision 7) |
+| ff / −40 °C / 1.32 V | `postb10-cr-ffm40-{buf,base}` (2836 s each) | 0 0 −1 0 0 0 0 0 0 **−2** / 0 0 −1 0 0 0 −1 0 0 0 | 0 0 −1 0 +1 0 0 0 0 **−4** / 0 +1 0 0 0 0 −1 0 0 0 | **failed** (slot 9, slice A, −0.88 V) | 6.53 LSB (decision 7); 0.88 LSB at regeneration |
+
+Results: `sim/post/b10/results/code_r24_b7_{tt,ss125,ffm40}.json` (design weights),
+`sim/post/b10/results/b7proxy_ref_{tt_d23_codes,ss125_d23_codes,ffm40_d23}.json` (run-step weights and the
+per-decision metric). The earlier B7 statement "differ by at most 1 LSB" used the run-step weights and left out
+slot 0. Timing at ff (buffer run): CDAC switch 0.60-0.75 ns, strobe 2.29-2.40 ns, regeneration 7.2-15.0 ns after the
+edge, so only 1.6 ns of settling before the strobe. Error against sample time at ff: 3.15 / 1.59 / 0.99 / 0.58 /
+0.33 / 0.22 LSB at 4 / 8 / 10 / 12 / 14 / 16 ns. At ff the comparator decides earlier than at tt, while the reference
+is still about 1 LSB off, and one late wrong decision in slot 9 is outside the redundancy (estimate; the wrong bit is
+decision 8 of slot 9). D30 item 2 is therefore **not closed at ss and ff**; the lever is the reference settling (the
+R2-4 levers of "Layout B8" / "Revision 6"), not the comparator wiring.
+
+### ff output window on B7 (D30 item 4)
+
+Gate-level `r1_adc_sar` in the B7 deck (`b7-ms-fc-ffm40`, ff / −40 °C / 1.32 V, macro pins, 50 fF load each, ideal
+clock), re-derived from the raw file with `sim/post/b5/b5_post.py timing`
+(`sim/post/b10/results/b7_ms_fc_ffm40_timing_recheck.json`, identical to the T2m record): the first change of any
+`adc_raw_*` bit is **0.401 ns** after the rising `clk30` edge (simulated), settled ≤ 0.718 ns; `adc_valid_*` 0.724-1.390 ns;
+no glitch; no raw edge at E15. Against the 0.30 ns of D30 item 4: **passed by 0.101 ns**, before the chip-level
+clock-route skew between the ADC and ctrl pins. INTERFACES.md is not changed (coordinator).
+
+### Per-net R what-if on the B7 extraction (D30 item 3, before the PEX)
+
+Deck of the B7 drift diagnosis (first conversion 0 V, behavioural SAR, ideal VREF 1.045 V on the slice ports,
+`fixtt` points, pre33 timing). Variants of `sim/post/r1_adc_post_rc_mb6.spice` by `sim/post/make_diag_netlist.py
+--r-scale` (`sim/post/b10/wif_mb7_<variant>.spice`, the header lists the nets). Groups: integration nodes = `xc4_dip
+xc4_din xc5_dip xc5_din`; tails = `xc4_xs1_tail(0) xc5_xs1_tail(0) xc4_lt xc5_lt`; outputs = `op on onp onn` and the
+output buffers `xc4/xc5_outpb/outnb`; signal = the three groups (no clocks). Runs `postb10-wif-<variant>-{tt,ffm40}`
+(609-659 s each), results `sim/post/b10/results/wif_*.json`. Codes A f0 / f1, B f0 / f1 (simulated):
+
+| Variant (wiring R × k) | tt | ff / −40 °C / 1.32 V | Span ff − tt (A / B) |
+| --- | --- | --- | --- |
+| none (B7, `postb7-dbase-*`) | 2039 / 2039, 2038 / 2038 | 2049 / 2049, 2048 / 2048 | +10 / +10 |
+| integration nodes × 0.3 (`int03`) | 2034 / 2034, 2033 / 2033 | 2028 / 2032, 2026 / 2027 | −6 / −7 |
+| tails × 0.3 (`tail03`) | 2047 / 2048, 2046 / 2046 | 2061 / 2061, 2059 / 2059 | +14 / +13 |
+| outputs × 0.3 (`out03`) | 2040 / 2040, 2039 / 2039 | 2048 / 2048, 2048 / 2048 | +8 / +9 |
+| signal × 0.5 (`sig05`) | 2040 / 2040, 2039 / 2040 | 2039 / 2039, 2037 / 2038 | −1 / −2 |
+| signal × 0.3 (`sig03`; = B8 "comparator group" incl. clocks) | 2041 / 2041, 2040 / 2040 | 2037 / 2037, 2036 / 2036 | −4 / −4 |
+| signal + slice `vdd` × 0.3 (`sigvdd03`) | 2044 / 2044, 2043 / 2043 | 2047 / 2047, 2045 / 2045 | +3 / +2 |
+| signal + `vdd` + `gnd` × 0.3 (B8 `drs03-supcmp`) | 2043 / 2044, 2042 / 2042 | 2043 / 2043, 2041 / 2041 | 0 / −1 |
+
+What must fall: no single group closes the drift, and the groups pull in opposite directions (integration nodes
+alone −6 / −7, tails alone +13 / +14). The comparator signal nets must fall **together and in proportion**: × 0.5 on
+all of them gives 1-2 LSB with the static offset unchanged (−8 LSB, as B7); × 0.3 alone overshoots to −4 LSB, and
+× 0.3 needs the slice `vdd` × 0.3 as well (≤ 3 LSB). The clocks do not matter (`sig03` = B8 group with clocks).
+Design target for B10: every long comparator signal net about 2-3 times lower, P and N equal, without moving the
+latch away from the SAR output pins.
+
+### Layout B10 (D30 item 3): three variants, none adopted
+
+Generator `layout/r1_adc_layout.py`, `-rd rev=B10` (default still `B7`); `-rd b10m=cluster` draws dev1, `-rd b10m=bus`
+(default for B10) draws the lane variants: `-rd b10lanes=c` (default) draws dev2c, `-rd b10lanes=b` draws dev2b. Same box 439.0 × 205.42 µm, same 52 pins, netlist revision 5 (the LVS CDL and the
+decap file are byte-identical to the record), SAR release `t2j-ll-h2312-h`. The changes are inside `r1_adc_slice`.
+
+| Variant | Change against B7 | GDS (sha256) | Run ids |
+| --- | --- | --- | --- |
+| dev1 (`b10m=cluster`) | latch, hold and buffer rows `B_p` / `B_n` moved from the west end (x 2-70) to the east end above the input stages (x 168-212); the `r1_cmp4` capacitor row under the east part of the array (x 97.6-195) | `<G1_RESULTS_ROOT>/r1_adc/layout-b10-dev1/` | `layout-b10-dev1(a)`, `lvs-b10-dev1-{lim,stock}`, `pex-b10-dev1` (build2) |
+| dev2b (`b10m=bus`) | B7 placement; the long comparator nets drawn as Metal4 lanes, 1.2 µm wide, under the slice `vdd` strap (y 2.4-15.2), router pins of their net, in the order gnd / `xc4_dip` / `xc4_din` / gnd / `onp` / `onn` / gnd / `xc4_xs1_tail` / `xc5_lt` (P and N of a pair with the same x extent) | `<G1_RESULTS_ROOT>/r1_adc/layout-b10-dev2b/` (`f31b3882…`) | `layout-b10-dev2b(a)`, `lvs-b10-dev2b-{lim,stock}`, `pex-b10-dev2b` |
+| dev2c (`b10m=bus`, `b10lanes=c`) | as dev2b, but no gnd shield lanes; six lanes at pitch 2.4 µm in the order `xc4_xs1_tail` / `onp` / `xc4_dip` / `xc4_din` / `onn` / `xc5_lt` (P and N mirrored about the `xc4_dip` / `xc4_din` pair) | `layout/r1_adc_layout_b10.gds` (`c9c6861d…`), `layout/r1_adc_layout_b10.json` | `layout-b10-dev2c(a)`, `lvs-b10-dev2c-{lim,stock}`, `pex-b10-dev2c` |
+
+Layout checks (all three variants): DRC main + maximal 0, antenna 0, LVS comparer-limit and stock match (`r1_adc`
+147/147 nets, 45/45 devices; `r1_adc_slice` 117/117, 179/179; `r1_adc_sar` 419), pin check passed (52 pins, box,
+`vss` 2.0 µm): `reports/layout-b10-dev1{,a}/`, `reports/lvs-b10-dev1-{lim,stock}/`, `reports/layout-b10-dev2b{,a}/`,
+`reports/lvs-b10-dev2b-{lim,stock}/`, `reports/layout-b10-dev2c{,a}/`, `reports/lvs-b10-dev2c-{lim,stock}/` (pin table
+`pin_table_b10.md`). The runs `layout-b10-dev2(a)` and
+`lvs-b10-dev2-*` failed on a missing GDS (tooling, failure 5) and are kept as failed.
+
+PEX of record per variant (KLayout RNetExtractor R + kpex 0.3.12 2.5D CC, `pex/run_pex.sh` + `pex/pex_build.py` with
+the variant's own layout JSON, new `-rd lj=` option; 4 port ties as in B9): `pex/r1_adc_post_rc_b10.spice` (dev1),
+`pex/r1_adc_post_rc_b10b.spice` (dev2b), `pex/r1_adc_post_rc_b10c.spice` (dev2c), merged
+`sim/post/r1_adc_post_rc_mb10{,b,c}.spice`. The first dev1 build used
+the B7 port list (62 ties) and is invalid (failure 4).
+
+Effective wiring R from the main node (extracted, `sim/post/net_reff.py`, max / median, Ω; tables
+`sim/post/b10/results/net_reff_mb10{,b,c}.txt`). The main node of `op on onp onn` is the north SAR pin.
+
+| Net | B7 | B10 dev1 | B10 dev2b | B10 dev2c |
+| --- | --- | --- | --- | --- |
+| `xc4_dip` / `xc4_din` | 156.9 / 111.8, 155.4 / 125.2 | 67.4 / 63.7, 86.6 / 62.8 | 50.6 / 46.4, 51.4 / 47.1 | 49.8 / 45.6, 49.4 / 45.2 |
+| `xc5_dip` / `xc5_din` | 107.3 / 101.1, 106.8 / 100.1 | 114.6 / 110.8, 89.7 / 83.2 | 128.9 / 121.8, 128.6 / 103.3 | 109.9 / 102.2, 110.7 / 102.6 |
+| `xc4_xs1_tail` | 91.3 / 89.3 | 78.6 / 69.1 | 68.2 / 62.8 | 71.5 / 65.6 |
+| `xc4_lt` / `xc5_lt` | 11.5 / 10.8, 162.8 / 162.8 | 105.5 / 57.8, 120.2 / 119.4 | 11.5 / 10.8, 63.3 / 62.5 | 11.5 / 10.8, 63.3 / 62.5 |
+| `op` / `on` | 109.6 / 88.2, 95.9 / 71.1 | 200.0 / 179.7, 200.8 / 180.6 | as B7 | as B7 |
+| `onp` / `onn` | 130.6 / 68.6, 93.2 / 72.7 | 134.3 / 113.8, 158.6 / 135.3 | 114.3 / 95.7, 116.2 / 95.0 | 99.3 / 68.6, 95.4 / 75.8 |
+| slice `vdd` | 138.3 / 32.6 | 146.1 / 34.6 | 134.8 / 32.6 | 134.8 / 30.6 |
+| slice `gnd` | 142.5 / 7.9 | (not extracted for the table) | 157.9 / 7.8 | 142.5 / 7.7 |
+
+Extracted P / N total C (slice, `sim/post/b10/cpair.py`): `xc4_dip` / `xc4_din` B7 114.4 / 112.8 fF, dev1 99.2 / 87.9 fF,
+dev2b 137.4 / 135.9 fF, dev2c 111.6 / 108.1 fF (cross coupling `onp`–`xc4_dip` and `onn`–`xc4_din` about 4.5 fF each); `op` / `on` B7 38.0 / 35.9, dev1 70.4 / 65.1 (10.7 fF more to `onp` on the P side), dev2b
+38.8 / 39.2 fF, dev2c 38.0 / 38.7 fF.
+
+Offset and drift (D23 offset deck: first conversion 0 V, buffer + bandgap DC, no noise, behavioural SAR, VDDA 3.3 V;
+codes A f0 / f1, B f0 / f1; ideal mid code 2048; simulated; `sim/post/b10/results/ofs_b10{c,b,d}_*.json`):
+
+| Extraction | tt / 27 °C / 1.2 V | ss / 125 °C / 1.08 V | ff / −40 °C / 1.32 V | Static offset (≤ 10 LSB) | Drift span (≤ 4 LSB) |
+| --- | --- | --- | --- | --- | --- |
+| B7 (`postb7-ofs-*-v33`) | 2040 / 2040, 2039 / 2039 | 2039 / 2040, 2039 / 2039 | 2049 / 2050, 2048 / 2048 | 9, passed | 11 / 9, failed |
+| B10 dev1 (`postb10c-ofs-*-v33`) | 2012 / 2012, 2011 / 2011 | 2024 / 2024, 2024 / 2024 | 1992 / 2032, 1989 / 1990 | **59, failed** | **40 / 35, failed** (A: frame 0 / 1 differ by 40) |
+| B10 dev2b (`postb10b-ofs-*-v33`) | 2031 / 2031, 2029 / 2029 | 2045 / 2045, 2045 / 2045 | 1982 / 1983, 1979 / 1979 | **69, failed** | **63 / 66, failed** |
+| B10 dev2c (`postb10d-ofs-{tt,ss125}-v33`, `postb10d-ofs-ffm40-v33r`) | 2038 / 2038, 2036 / 2036 | 2042 / 2042, 2041 / 2041 | 2032 / 2032, 2024 / 2024 | **24, failed** | **10 / 17, failed** |
+
+Diagnosis (first conversion 0 V, ideal VREF, behavioural SAR; runs `postb10-dg-*`, `postb10-wif-capint23-*`;
+`sim/post/b10/results/dg_*.json`, `wif_capint23.json`):
+
+| Run (extraction, corner) | Change in the extracted netlist | Code A f0 / f1, B f0 / f1 |
+| --- | --- | --- |
+| `postb10-dg-noc-tt` (dev1, tt) | all extracted C removed | 2032 / 2032, 2032 / 2032 |
+| `postb10-dg-nor-tt` (dev1, tt) | all extracted R set to 0.05 Ω | 2046 / 2046, 2046 / 2046 |
+| `postb10-dg-bbase-ffm40` (dev2b, ff) | none (reference for the rows below) | 1982 / 1982, 1978 / 1978 |
+| `postb10-dg-bnoc-ffm40` (dev2b, ff) | all extracted C removed | 2032 / 2032, 2032 / 2032 |
+| `postb10-dg-bnor-ffm40` (dev2b, ff) | all extracted R set to 0.05 Ω | 2049 / 2049, 2049 / 2049 |
+| `postb10-dg-bx5bal-ffm40` (dev2b, ff) | `xc5_dip` / `xc5_din` R made equal | 1982 / 1982, 1978 / 1978 |
+| `postb10-dg-bx5z-ffm40` (dev2b, ff) | `r1_cmp5n` internal nets R × 0.001 | 1982 / 1982, 1978 / 1978 |
+| `postb10-dg-bx4z-ffm40` (dev2b, ff) | `r1_cmp4` internal nets R × 0.001 | 2000 / 2001, 1998 / 1998 |
+| `postb10-dg-bsupz-ffm40` (dev2b, ff) | slice `vdd` / `gnd` R × 0.001 | 2048 / 2048, 2046 / 2046 |
+| `postb10-dg-bclkz-ffm40` (dev2b, ff) | comparator clock nets R × 0.001 | 1983 / 1984, 1979 / 1980 |
+| `postb10-dg-bswz-ffm40` (dev2b, ff) | CDAC switch and track nets R × 0.001 | **not run**: no result in 3600 s (the run of the same deck takes 710-750 s; failure 10) |
+| `postb10-wif-capint23-{tt,ss125,ffm40}` (B7) | +23 fF on `xc4_dip` and on `xc4_din` (symmetric) | 2040 / 2040, 2039 / 2039 (tt); 2040 (ss); 2050 (ff) |
+
+The ideal-VREF code of the B7 extraction at ff is 2049 / 2050. On dev2b, the supply R (slice `vdd` / `gnd`) carries
+almost all of the regression (1982 → 2048); the `r1_cmp4` internal nets carry about 18 LSB; the `r1_cmp5n` nets, the
+P/N balance of `xc5_dip` / `xc5_din` and the clocks do not move the code. A symmetric C increase on the integration
+nodes does not move the code. The extracted slice `vdd` R of dev2b is equal to B7 (134.8 / 138.3 Ω max); the
+slice `gnd` worst port rises from 142.5 to 157.9 Ω (medians 7.9 / 7.8 Ω). The candidate cause is the three gnd shield lanes: they connect the
+slice `gnd` to the comparator area through new Metal4 paths and change where the comparator tail current returns
+(failure 9). This is not verified. dev2c tests it: the same lanes without the shields.
+
+Result: **no B10 variant is better than B7** (static offset 59 / 69 / 24 LSB against 9 LSB; drift span 10-66 LSB
+against 11 / 9 LSB). Removing the gnd shields (dev2c) takes back most of the dev2b regression, which supports the
+shield cause of failure 9, but the code at ff now moves down (2032 / 2024) where B7 moves up (2049 / 2048). The
+comparator offset changes sign with routing changes of a few tens of ohms and a few fF; the drawn lanes did not
+reach the "× 0.5 on all signal nets" target of the what-if (`xc5_dip` / `xc5_din` and `onp` / `onn` stay at
+95-111 Ω). None is adopted. The record files (`layout/r1_adc.gds`, `layout/r1_adc_layout.json`,
+`layout/r1_adc_lvs.cdl`, generator default `B7`) are **not changed**. dev2c (generator default for `rev=B10`) is kept
+as `layout/r1_adc_layout_b10.gds` (`c9c6861d…`) and `layout/r1_adc_layout_b10.json`; dev1 and dev2b stay in the
+results root. Full scale and the windows ran on dev2c only (the variant nearest to the limits); dev1 and dev2b fail
+the static offset by 6-7 times and are not candidates (B8 failure 5).
+
+### Open issues (layout B10 and D30 items 2-4)
+
+1. D30 item 2 is not closed at ss and ff on B7: ff slot 9 −2 / −4 LSB, ss first conversion +2 / +3 LSB with the
+   run-step weights. The cause is the reference settling against the comparator decision time (strobe 1.6 ns after
+   the switch at ff), not the comparator wiring. Options for the coordinator: the weight set and slots of the limit
+   (design weights pass ss), a reference-path change (`r1_refbuf` loop bandwidth, "Revision 6" table), or a code-level
+   limit of 2 LSB at ff with the host calibration.
+2. Drift (D30 item 3): B7 stays at 11 / 9 LSB. The comparator offset is an R × C timing term of the `r1_cmp4` /
+   `r1_cmp5n` internal nets that moves by tens of LSB for moderate routing changes in either direction (B8 13-18 LSB,
+   B10 24-69 LSB). The per-net what-if shows that only a proportional reduction of all signal nets (× 0.5) or of
+   signal nets with the supplies (× 0.3) closes it; three drawn attempts did not reach that. Per D30 the recorded
+   mitigation is the raw min/max host recalibration (D27) and chip-level test 2 over the drift conditions. A circuit
+   option (not in D30, recommendation for a later revision): a comparator whose offset does not depend on the
+   regeneration timing of high-impedance internal nodes (pre-amplifier before the double-tail stage, or a per-
+   conversion offset calibration of `r1_cmp4`).
+3. The ff output window (0.401 ns) passes 0.30 ns; INTERFACES.md row to be reconciled by the coordinator with the
+   ctrl 0.9 sign-off.
+4. The dev2c windows 1024 / 3072 (`postb10d-win{1024,3072}-tt-rc`) were still running at the end of the track; the
+   results go to `sim/post/runs/` when they end. dev2c is not adopted, so they do not change the record.
+
+### Failures and deviations (layout B10 and D30 items 2-4)
+
+| # | What | Class | Effect |
+| --- | --- | --- | --- |
+| 1 | D30 item 2 does not name the weight set; the earlier B7 "≤ 1 LSB" used the run-step weights and left out slot 0 (first conversion) | spec-ambiguity | both weight sets reported; ss fails only with the run-step weights |
+| 2 | code-level R2-4 fails at ff on B7 (slot 9, −2 / −4 LSB) | functional-bug | D30 item 2 not closed |
+| 3 | B10 dev1 moved the latch away from the fixed SAR output pins; the outputs got 180 Ω and 65-70 fF and the dense cluster routed with detours; static offset 59 LSB | regression | dev1 not adopted; dev2b drawn |
+| 4 | the PEX scripts read the port list from the tracked B7 layout JSON; the first dev1 extraction had 62 port ties (1 mΩ) and three offset runs (`postb10-ofs-*`) used it | tooling | runs labelled INVALID (`INVALID.txt`), `-rd lj=` added, extraction rebuilt |
+| 5 | the first dev2 generator call ran without the results-root mount; the check chain ran on a missing GDS | process-hygiene | runs `layout-b10-dev2*`, `lvs-b10-dev2-*` kept as failed; dev2b regenerated |
+| 6 | B10 dev2b lanes blocked Metal4 over the input-stage rows, so the local `xc5_dip` / `xc5_din` got longer and unbalanced (122 / 103 Ω); static offset 69 LSB, ff span 63 / 66 LSB | regression | dev2b not adopted |
+| 7 | the B10 dev1 PEX was started before the last what-if groups (`int03`, `out03`, `tail03`) had finished; dev1 was designed from `sig03` / `sigvdd03` only | process-hygiene | dev2b designed after the full table |
+| 8 | short post-processing jobs (seconds) shared a CPU with a running simulation several times | process-hygiene | none measured |
+| 9 | B10 dev2b: the static offset grew to 69 LSB although the comparator net R fell; the supply R diagnosis returns the code to the B7 value, the slice `vdd` R did not change; the gnd shield lanes are the candidate cause (not verified) | regression | dev2b not adopted; dev2c drawn without shields |
+| 10 | diagnosis run `postb10-dg-bswz-ffm40` gave no result in 3600 s; after the runner timeout the ngspice process in the container kept CPU 105 | tooling | row "not run"; the dev2c ff runs moved to CPU 103 (`postb10d-*-ffm40-*r`); the ids `postb10d-ofs-ffm40-v33` and `postb10d-isa-ffm40-rc` hold a placeholder `deck.cir` only |
+| 11 | B10 dev2c (no shields): static offset 24 LSB, drift 10 / 17 LSB; the ff code moves down where B7 moves up | regression | dev2c not adopted; kept as `layout/r1_adc_layout_b10.*` |
+| 12 | `post_post.py isa` fails in the container (numpy 2: no `numpy.trapz`); the full-scale results were post-processed with the host Python (numpy 1.19.5, `taskset -c 104`) | tooling | result files equal in form to B8; the container path of `sim/r5/post_t2.py isa` stays broken (not changed: shared tool) |
+
 ## Revision 6 and layout B9 (2026-10-28, track T2o): PLAN.md D28
 
-State (coordinator, 2026-10-30, PLAN.md D30): **revision 6 and layout B9 are not adopted.** The layout of record is B7 (`layout/r1_adc.gds`, identical to `layout/r1_adc_layout_b7.gds`) with netlist revision 5; B9 is kept as `layout/r1_adc_layout_b9.gds` / `r1_adc_layout_b9.json` / `r1_adc_lvs_b9.cdl`, and the generator default is `B7` again. The T2o record below is unchanged.
+Revision 6 and B9 are **not adopted** (coordinator, PLAN.md D30; state note at the top of this file). The T2o record below
+is unchanged.
 
 State: **D28 item 3 failed, coordinator decision** (track T2o, 10:00–15:20 CET on 28 Oct). Netlist revision 6
 (`schematic/r1_adc_r6.spice`) and layout B9 are written. B9 passes DRC, antenna, LVS (stock and comparer-limit)
@@ -483,7 +716,7 @@ offset (dev1 18 LSB, dev2 13 LSB, against 9 LSB) and neither closes the drift. `
 | Static offset (≤ 10 LSB) | **failed**: dev1 18 LSB, dev2 13 LSB (B7 9 LSB, passed) | "Offset and drift (B8)" |
 | ff output window (≥ 0.5 ns after `clk30`) | **not run**: dev1 gate-level run `b8-ms-fc-ffm40` stopped at its deck limit (16 800 s) at 1.667 of 1.86 µs, no waveform written (CPU 103 gave 0.0060 µs per minute against 0.0083 for B7). The output timing is set by the unchanged `r1_adc_sar` macro and top wiring (XOR identical), so B7 (0.401 ns, failed) applies | `sim/post/b6/runs/b8-ms-fc-ffm40/run.json` |
 | ff first conversion, gate-level (≤ 1 LSB) | **not run** (same run, stopped at the deck limit) | as above |
-| Windows 1024 / 3072 tt (no missing code) | dev1 1024 **passed**: A 1015–1028, B 1015–1027, monotonic, no missing code, max \|DNL\| 0.33 LSB (resolution 1/3 LSB); 3072 **not run** (queued on CPU 104 after 1024, outside the budget) | `postb8-win1024-tt-rc`; `sim/post/results/postb8_win1024_tt_rc.json` |
+| Windows 1024 / 3072 tt (no missing code) | dev1 1024 **passed**: A 1015–1028, B 1015–1027, monotonic, no missing code, max \|DNL\| 0.33 LSB (resolution 1/3 LSB); 3072 (completed after the T2n budget, post-processed by T2p on 30 Oct) **failed**: monotonic, but slice A has no hit on code 3059 (A 3051–3064, DNL −1 at 3059 at 3 points per LSB); slice B 3051–3064, no missing code, max \|DNL\| 0.67 LSB | `postb8-win1024-tt-rc`, `postb8-win3072-tt-rc` (8875 s); `sim/post/results/postb8_win{1024,3072}_tt_rc.json` |
 | Full scale tt / ss / ff (≥ ±0.86 V) | dev1 **passed**: ±0.8697 / ±0.8707 / ±0.8678 V (full scale = 0.914 V / gain; gain 1.0509 / 1.0497 / 1.0532; B7 ±0.8709 / ±0.8720 / ±0.8694 V) | `postb8-isa-{tt,ss125,ffm40}-rc`; `sim/post/results/postb8_isa_*_rc.json` |
 | INL tt | **not run** (B8 not adopted; B7 INL in "Layout B7") | — |
 

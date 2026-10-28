@@ -58,10 +58,39 @@ TRIM = json.load(open(globals()['trim'])) if globals().get('trim') else {}
 # (vrefl follower and sink x3: xref_xmsfl_s1/_s2 in the follower row east of s0, xref_xmibl_s1/_s2 at the west and
 # east ends of the main-follower row; one Metal4 riser per vrefl follower into the vrefl bus). B9 (dev2) passed DRC,
 # antenna and LVS (stock and comparer-limit) and is the default; -rd rev=B7 draws B7 (layout/r1_adc_layout_b7.gds)
+# layout B10 (2026-10-30, T2p, PLAN.md D30 item 3): B7 with the comparator placed as one cluster. B7 split both
+# comparators: input stages, resets and tails at the east end of the lower region, latches, hold devices and output
+# buffers (rows B_n / B_p) at the west end, the r1_cmp4 integration capacitors under the array centre, so xc4_dip / din,
+# xc4_xs1_tail, onp / onn and xc5_lt ran 130-180 um. B10 puts B_p and B_n east of the driver rows, above the input
+# stages (x 158-212), and the cap row under the east part of the array. Netlist, pins and box unchanged. -rd rev=B7
+# still draws B7 (default)
 REV = globals().get('rev', 'B7')
-assert REV in ('B5', 'B6', 'B7', 'B8', 'B9'), REV
-B6 = REV in ('B6', 'B7', 'B8', 'B9')
-B7 = REV in ('B7', 'B8', 'B9')
+assert REV in ('B5', 'B6', 'B7', 'B8', 'B9', 'B10'), REV
+B6 = REV in ('B6', 'B7', 'B8', 'B9', 'B10')
+B7 = REV in ('B7', 'B8', 'B9', 'B10')
+B10 = REV == 'B10'
+# B10 mode: 'cluster' (dev1: comparator rows moved east; static offset -36 LSB, not adopted) or 'bus' (dev2: B7
+# placement, the long comparator nets as P/N-symmetric Metal4 lanes with gnd shields under the slice vdd strap)
+B10M = globals().get('b10m', 'bus')
+assert B10M in ('cluster', 'bus'), B10M
+B10C = B10 and B10M == 'cluster'
+B10B = B10 and B10M == 'bus'
+# B10 bus lanes (slice-local): Metal4, 1.2 um wide, centres 2.4 + 1.6 k; x extents from the B7 device ports of each
+# net (P and N of a pair get the same extent). Order: shield, pair, shield, pair, shield, tails
+B10_LANES = [('gnd', 1.6, 211.2), ('xc4_dip', 49.6, 196.0), ('xc4_din', 49.6, 196.0), ('gnd', 1.6, 211.2),
+             ('onp', 1.6, 157.6), ('onn', 1.6, 157.6), ('gnd', 1.6, 211.2), ('xc4_xs1_tail', 44.0, 194.4),
+             ('xc5_lt', 25.6, 212.0)]
+# B10 dev2c (-rd b10lanes=c, default): no gnd shield lanes (dev2b: the shields became gnd router pins and the comparator
+# ground reached them; supply R x 0.001 moved the ff code from -66 to -1 LSB), lanes at 2.4 um pitch in mirror order
+B10_LANES_C = [('xc4_xs1_tail', 44.0, 194.4), ('onp', 1.6, 157.6), ('xc4_dip', 49.6, 196.0), ('xc4_din', 49.6, 196.0),
+               ('onn', 1.6, 157.6), ('xc5_lt', 25.6, 212.0)]
+B10L = globals().get('b10lanes', 'c')
+assert B10L in ('b', 'c'), B10L
+B10_PITCH = 1.6 if B10L == 'b' else 2.4
+if B10L == 'c':
+    B10_LANES = B10_LANES_C
+B10_CAP_XEND = float(globals().get('b10capx', '195.0'))   # east end of the r1_cmp4 cap row under the array (B10)
+B10_DYC = float(globals().get('b10dyc', '0.8'))           # extra gap of the B_p row above the input-stage rows (B10)
 B8 = REV == 'B8'
 B9 = REV == 'B9'
 if B9:
@@ -793,16 +822,28 @@ def build_slice(ly):
     wCp = blk.seg_w(C_p, 0.4)
     ygc = gceil(max(tAp, tAn) + 3.2)
     ycap = 47.2
-    tCp, eCp = blk.mrow([dict(x0=gfloor(AX + NC * SP / 2 - wCp / 2), devs=C_p, bulk='vdd', gap=0.4)], ycap, 'p')
+    xCp = gfloor(B10_CAP_XEND - wCp) if B10C else gfloor(AX + NC * SP / 2 - wCp / 2)
+    tCp, eCp = blk.mrow([dict(x0=xCp, devs=C_p, bulk='vdd', gap=0.4)], ycap, 'p')
     log('cmp4 cap row (under the array): yg %.2f x %.1f-%.1f top %.2f' % (ycap, eCp[0][0], eCp[0][1], tCp))
     # small comparator devices: NMOS west of the driver N row, PMOS east of the driver P row
-    tBn, eBn = blk.mrow([dict(x0=2.0, devs=B_n, bulk='gnd', gap=0.4)], ygn, 'n')
-    # B_p: lower region west, on the cap-row rail (east of the trk rows, west of the cap row). The driver P row
-    # east end would put its NWell over the east boot NMOS rows.
-    tBp, eBp = blk.mrow([dict(x0=gceil(max(et1[0][1], et2[0][1]) + 2.4), devs=B_p, bulk='vdd', gap=0.4)], ygc, 'p')
+    if B10C:
+        # B10: B_p above the input-stage rows and B_n on the driver N-row rail, both east of the driver rows and
+        # right-aligned with the input stages (one comparator cluster, x >= 158)
+        tBp, eBp = blk.mrow([dict(x0=gfloor(WS - 1.2 - wBp), devs=B_p, bulk='vdd', gap=0.4)], gceil(ygc + B10_DYC), 'p')
+        tBn, eBn = blk.mrow([dict(x0=gfloor(WS - 1.2 - wBn), devs=B_n, bulk='gnd', gap=0.4)], ygn, 'n')
+        log('B10 cluster: B_p x %.1f-%.1f yg %.2f top %.2f; B_n x %.1f-%.1f top %.2f; cap row x %.1f-%.1f'
+            % (eBp[0][0], eBp[0][1], gceil(ygc + B10_DYC), tBp, eBn[0][0], eBn[0][1], tBn, eCp[0][0], eCp[0][1]))
+    else:
+        tBn, eBn = blk.mrow([dict(x0=2.0, devs=B_n, bulk='gnd', gap=0.4)], ygn, 'n')
+        # B_p: lower region west, on the cap-row rail (east of the trk rows, west of the cap row). The driver P row
+        # east end would put its NWell over the east boot NMOS rows.
+        tBp, eBp = blk.mrow([dict(x0=gceil(max(et1[0][1], et2[0][1]) + 2.4), devs=B_p, bulk='vdd', gap=0.4)], ygc, 'p')
     log('cmp rows: A x %.1f-%.1f top %.2f; B_n x %.1f-%.1f; B_p x %.1f-%.1f; trk top %.2f; drivers x %.1f-%.1f'
         % (xAn, eAp[0][1], max(tAp, tAn), eBn[0][0], eBn[0][1], eBp[0][0], eBp[0][1], t2, endsP[0][0], endsP[-1][1]))
-    if eBn[0][1] > endsN[0][0] - 2.0 or eBp[0][1] > xAn - 2.0 or xAn < et1[0][1] + 2.0:
+    if B10C:
+        if eBn[0][0] < endsN[0][1] + 2.0 or eBp[0][0] < endsP[-1][1] + 2.0 or tBp > ygn - 2.4:
+            log('WARNING B10 cluster overlap')
+    elif eBn[0][1] > endsN[0][0] - 2.0 or eBp[0][1] > xAn - 2.0 or xAn < et1[0][1] + 2.0:
         log('WARNING lower-region overlap')
     # ---- layout B: supply and reference straps (Metal4) and their Metal3 feeders, drawn before routing -------------
     D = blk.D
@@ -815,6 +856,14 @@ def build_slice(ly):
         R.reserve(2, x1, ya, x2, yb, net.split('#')[0])
         strap_nodes.setdefault(net, []).extend((2, x, y) for x in gpts(x1 + 0.4, x2 - 0.4) for y in gpts(ya + 0.3, yb - 0.3))
     strap('vdd', 0.8, WS - 0.8, *STRAP_VDD)
+    if B10B:
+        # B10 dev2: comparator bus lanes (Metal4) under the vdd strap; each lane is a router pin of its net
+        for k, (net, x1, x2) in enumerate(B10_LANES):
+            yc = round(2.4 + B10_PITCH * k, 4)
+            blk.box('M4', x1, yc - 0.6, x2, yc + 0.6)
+            R.reserve(2, x1, yc - 0.6, x2, yc + 0.6, net)
+            strap_nodes.setdefault(net + '#bus%d' % k, []).extend((2, x, yc) for x in gpts(x1 + 0.4, x2 - 0.4))
+        log('B10 bus lanes: %s' % ['%s y %.1f x %.1f-%.1f' % (n, 2.4 + B10_PITCH * k, a, b) for k, (n, a, b) in enumerate(B10_LANES)])
     strap('gnd', 0.8, WS - 0.8, *STRAP_GND)
     xk1, xk2 = gfloor(endsN[0][0] - 0.8), gceil(endsN[0][1] + 0.8)
     strap('gnd@K', xk1, xk2, *STRAP_GNDK)
@@ -827,7 +876,7 @@ def build_slice(ly):
         strap(bulk + '#%d' % len(strap_nodes), gfloor(sg['x0'] - 0.4), gceil(sg['xend'] + 0.4), *STRAP_REF)
     # the two vrefl straps stay separate router pins: each has its own feeder, the router joins them inside the slice
     # (dev1: one merged pin left the second vrefl group unconnected inside the slice, LVS split vrefl)
-    sx = {k: (sg['x0'], sg['xend']) for k, sg in zip([k for k in strap_nodes if '#' in k], segs)}
+    sx = {k: (sg['x0'], sg['xend']) for k, sg in zip([k for k in strap_nodes if '#' in k and '#bus' not in k], segs)}
     log('layout B straps: gnd@K x %.1f-%.1f, star x %.1f; P groups %s' % (xk1, xk2, xst,
         ['%s %.1f-%.1f' % (b, sg['x0'], sg['xend']) for (b, _), sg in zip(pmos_groups, segs)]))
     # feeders: Metal3 from the south pin up to the strap of the net, Via3 array on the overlap

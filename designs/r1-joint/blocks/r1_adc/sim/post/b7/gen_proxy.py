@@ -18,13 +18,15 @@ real CDAC switch and the real comparator strobe, so the behavioural SAR outputs 
   (ss) ns after the edge, so the comparator still evaluates at the capture.
 Writes sim/post/b7/r1_adc5_post_d23_<corner>.spice with r1_sar5_logic_d23 and the core r1_adc5_core_lay_d23 (copy of
 sim/post/r1_adc5_post.spice r1_adc5_core_lay with XSAR -> r1_sar5_logic_d23).
-usage: gen_proxy.py <corner tag> <GL run id for the timing> <vdd>"""
+usage: gen_proxy.py <corner tag> <GL run id for the timing> <vdd> [timing json, default results/gl_timing_b6.json]
+(T2p, 2026-10-30: optional 4th argument, used for ff with sim/post/b10/results/gl_timing_b7_ffm40.json.)"""
 import json, os, re, sys
 HERE = os.path.dirname(os.path.abspath(__file__))
 POST = os.path.dirname(HERE)
 BLOCK = os.path.dirname(os.path.dirname(POST))
 tag, rid, vdd = sys.argv[1], sys.argv[2], float(sys.argv[3])
-G = json.load(open(os.path.join(HERE, "results", "gl_timing_b6.json")))["runs"][rid]
+TJ = sys.argv[4] if len(sys.argv) > 4 else os.path.join(HERE, "results", "gl_timing_b6.json")
+G = json.load(open(TJ))["runs"][rid]
 m = lambda k: G[k]["median"]
 BEH_CLK = 0.09          # mclk -> behavioural clock output (50 %)
 WRAP = 0.06             # adc bridge 20 ps + dac 40 ps (50 % of the 80 ps ramp)

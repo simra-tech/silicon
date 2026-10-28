@@ -52,7 +52,7 @@ pins += [(0.0, y, 1, 0) for _, y in const('SLICE_WEST')]
 pins += [(ws, y, -1, 0) for _, y in const('SLICE_EAST')]
 # layout B5: slice north pins (SAR ports) from the layout record; stub downward into the empty slice area
 import json
-LJ = json.load(open(os.path.join(os.getcwd(), 'layout', 'r1_adc_layout.json')))
+LJ = json.load(open(globals().get('lj') or os.path.join(os.getcwd(), 'layout', 'r1_adc_layout.json')))   # T2p: -rd lj=<json>
 B5 = 'edge' in LJ['slice']
 if B5:
     pins += [(x, y, 0, -1) for lst in LJ['slice']['edge'].values() for (side, x, y) in lst if side == 'N']
