@@ -8,6 +8,8 @@
 # or rule line is changed. Outputs: $G1_RESULTS_ROOT/r1_adc/<run-id>/; log copy and summary in reports/<run-id>/.
 set -eu
 RID=$1; G=$2; MODE=$3
+# optional 4th argument (T2o, layout B9): the reference CDL, repository-relative (default the B5 CDL)
+CDL=${4:-designs/r1-joint/blocks/r1_adc/layout/r1_adc_lvs_b5.cdl}
 B=designs/r1-joint/blocks/r1_adc
 X=$G1_RESULTS_ROOT/r1_adc/$RID
 REP=$B/reports/$RID
@@ -25,7 +27,7 @@ else
 fi
 date -u +%Y-%m-%dT%H:%M:%SZ > "$X/start.txt"
 set +e
-flow/run.sh python3 "$RUN" --layout="$G" --netlist="/work/$B/layout/r1_adc_lvs_b5.cdl" --topcell=r1_adc --run_mode=deep \
+flow/run.sh python3 "$RUN" --layout="$G" --netlist="/work/$CDL" --topcell=r1_adc --run_mode=deep \
   --no_series_res --run_dir="$X/out" > "$X/console.log" 2>&1
 echo "exit $?" > "$X/exit.txt"
 date -u +%Y-%m-%dT%H:%M:%SZ > "$X/end.txt"
@@ -36,15 +38,15 @@ cp "$X/console.log" "$REP/lvs.log"
 for f in "$REP/lvs.log" "$REP/lvs_summary.txt"; do
   sed -i -e "s#$G1_RESULTS_ROOT#<G1_RESULTS_ROOT>#g" -e "s#/work/#<repo>/#g" -e "s#$(pwd)/#<repo>/#g" "$f"
 done
-python3 - "$RID" "$MODE" "$G" "$X" "$REP" <<'PY'
+python3 - "$RID" "$MODE" "$G" "$X" "$REP" "$CDL" <<'PY'
 import hashlib, json, os, re, sys
-rid, mode, g, x, rep = sys.argv[1:]
+rid, mode, g, x, rep, cdl = sys.argv[1:]
 root = os.environ['G1_RESULTS_ROOT']
 sha = lambda p: hashlib.sha256(open(p, 'rb').read()).hexdigest()
 L = open(os.path.join(rep, 'lvs.log'), errors='replace').read()
 res = [l.strip() for l in L.splitlines() if re.search(r'(?i)netlists match|don.t match|error', l)][-4:]
-j = dict(run_id=rid, mode=mode, command='G1_CPUSET=<cpus>; G1_RESULTS_ROOT=<G1_RESULTS_ROOT>; sh designs/r1-joint/blocks/r1_adc/layout/b5/run_lvs_b5.sh %s <gds> %s' % (rid, mode),
-         inputs={g.replace(root, '<G1_RESULTS_ROOT>'): sha(g), 'layout/r1_adc_lvs_b5.cdl': sha('designs/r1-joint/blocks/r1_adc/layout/r1_adc_lvs_b5.cdl')},
+j = dict(run_id=rid, mode=mode, command='G1_CPUSET=<cpus>; G1_RESULTS_ROOT=<G1_RESULTS_ROOT>; sh designs/r1-joint/blocks/r1_adc/layout/b5/run_lvs_b5.sh %s <gds> %s%s' % (rid, mode, '' if cdl.endswith('r1_adc_lvs_b5.cdl') else ' ' + cdl),
+         inputs={g.replace(root, '<G1_RESULTS_ROOT>'): sha(g), cdl.replace('designs/r1-joint/blocks/r1_adc/', ''): sha(cdl)},
          tools=dict(klayout='0.30.9 (container image sha256:ddeb69576f28...)', pdk_commit='84374023ee8b4b126bebbba67fcbada0a9c0ff0b'),
          start=open(os.path.join(x, 'start.txt')).read().strip(), end=open(os.path.join(x, 'end.txt')).read().strip(),
          exit=open(os.path.join(x, 'exit.txt')).read().strip(), result=res, raw='<G1_RESULTS_ROOT>/r1_adc/%s/' % rid)

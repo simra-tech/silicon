@@ -28,6 +28,15 @@ import math, os, re, json
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 NETLIST = os.path.join(HERE, '..', 'schematic', 'r1_adc_r5.spice')
+# revision 6 (T2o 2026-10-28, PLAN.md D28, layout B9): SCHEM = 'r6' (set by r1_adc_layout.py -rd rev=B9 after every import
+# or reload of this module) selects schematic/r1_adc_r6.spice: r1_cmp6_clkgen (delay-chain input on vss) instead of
+# r1_cmp4_clkgen, r1_refbuf6 (msfl 24, mibl 120) instead of r1_refbuf5, the vrefl follower and sink drawn as three
+# devices each (MSPLIT_R6). Default 'r5': the netlist of record and layouts B5-B8, unchanged.
+SCHEM = 'r5'
+
+
+def netlist_path():
+    return os.path.join(HERE, '..', 'schematic', 'r1_adc_%s.spice' % SCHEM)
 PRIM = {'sg13_lv_nmos': 'nmos', 'sg13_lv_pmos': 'pmos', 'sg13_hv_nmos': 'nmosHV', 'sg13_hv_pmos': 'pmosHV',
         'rppd': 'rppd', 'cap_cmim': 'cmim'}
 MODEL = {'nmos': 'sg13_lv_nmos', 'pmos': 'sg13_lv_pmos', 'nmosHV': 'sg13_hv_nmos', 'pmosHV': 'sg13_hv_pmos'}
@@ -72,6 +81,7 @@ RSEG = {'xcbias_xrb': 4, 'xcbiasn_xrb': 4}    # rppd 1 x 160 um drawn as 4 serie
 # multiplier split: device -> list of (w, ng) drawn devices (sum = m * w)
 MSPLIT = {'xref_xmsf': [(80.0, 32)] * 4, 'xref_xmib': [(80.0, 40)] * 4, 'xref_xmsfl': [(80.0, 32)],
           'xref_xmibl': [(80.0, 40)]}
+MSPLIT_R6 = dict(MSPLIT, xref_xmsfl=[(80.0, 32)] * 3, xref_xmibl=[(80.0, 40)] * 3)
 # decoupling / filter MIM as drawn: device -> list of (w, l); totals: XCD 4 x 70^2 = 19600, XCDL 2 x 70^2 = 9800,
 # XCG 50^2 = 2500, XCF 82^2 = 6724 um2.  Filled in by the layout generator (decap.json) when present.
 DECAP_FILE = os.path.join(HERE, 'r1_adc_decap.json')
@@ -87,7 +97,8 @@ def num(v):
     return x * mult
 
 
-def parse(path=NETLIST):
+def parse(path=None):
+    path = path or netlist_path()
     lines = []
     for raw in open(path).read().splitlines():
         if raw.startswith('+') and lines:
@@ -174,11 +185,15 @@ def slice_raw():
 def top_raw():
     sc = parse()
     out = []
-    flatten(sc, 'r1_cmp4_clkgen', {'clk30': 'clk', 'mclk': 'sar_mclk', 'mclkb': 'mclkb', 'vdd': 'vdd', 'gnd': 'vss'}, 'xckg', {}, out)
+    flatten(sc, 'r1_cmp6_clkgen' if SCHEM == 'r6' else 'r1_cmp4_clkgen', {'clk30': 'clk', 'mclk': 'sar_mclk', 'mclkb': 'mclkb', 'vdd': 'vdd', 'gnd': 'vss'}, 'xckg', {}, out)
     flatten(sc, 'r1_cmp4_bias', {'vbp': 'vbp', 'vdd': 'vdd', 'gnd': 'vss'}, 'xcbias', {}, out)
     flatten(sc, 'r1_cmp5n_bias', {'vbn': 'vbn', 'vdd': 'vdd', 'gnd': 'vss'}, 'xcbiasn', {}, out)
-    flatten(sc, 'r1_refbuf5', {'vbg': 'vref_in', 'vref': 'vref', 'vrefl': 'vrefl', 'nb': 'ibias', 'vdda': 'vdda', 'gnd': 'vss'},
-            'xref', dict(ndec='4', ndecl='2', msf='32', mib='160', msfl='8', mibl='40', ncg='1', mt='1', lt='8u'), out)
+    if SCHEM == 'r6':
+        flatten(sc, 'r1_refbuf6', {'vbg': 'vref_in', 'vref': 'vref', 'vrefl': 'vrefl', 'nb': 'ibias', 'vdda': 'vdda', 'gnd': 'vss'},
+                'xref', dict(ndec='4', ndecl='2', msf='32', mib='160', msfl='24', mibl='120', ncg='1', mt='1', lt='8u'), out)
+    else:
+        flatten(sc, 'r1_refbuf5', {'vbg': 'vref_in', 'vref': 'vref', 'vrefl': 'vrefl', 'nb': 'ibias', 'vdda': 'vdda', 'gnd': 'vss'},
+                'xref', dict(ndec='4', ndecl='2', msf='32', mib='160', msfl='8', mibl='40', ncg='1', mt='1', lt='8u'), out)
     flatten(sc, 'r1_reffilt5', {'vbg': 'vref_in', 'gnd': 'vss'}, 'xfilt', {}, out)
     return out
 
@@ -255,8 +270,9 @@ def top_devices():
                 out.append(dict(d, name='%s_g%d' % (d['name'], k), l=d['l'] / n, nets=[chain[k], chain[k + 1], d['nets'][2]],
                                 seg=k, orig=d['name']))
             continue
-        if d['name'] in MSPLIT:
-            for k, (w, ng) in enumerate(MSPLIT[d['name']]):
+        ms = MSPLIT_R6 if SCHEM == 'r6' else MSPLIT
+        if d['name'] in ms:
+            for k, (w, ng) in enumerate(ms[d['name']]):
                 out.append(dict(d, name='%s_s%d' % (d['name'], k), w=w, ng=ng, m=1, orig=d['name']))
             continue
         assert d.get('m', 1) == 1, d
@@ -280,8 +296,8 @@ def esc(n):
 def write_cdl(path=os.path.join(HERE, 'r1_adc_lvs.cdl'), ndummy=NDUMMY):
     sl = slice_devices(ndummy)
     top = top_devices()
-    L = ['* LVS reference CDL for r1_adc (revision 5 netlist of record), written by layout/r1_adc_netlist.py from '
-         'schematic/r1_adc_r5.spice', '* mapping: see the module docstring (CDAC units + dummies, Cboot / clkgen caps as MIM, '
+    L = ['* LVS reference CDL for r1_adc (%s), written by layout/r1_adc_netlist.py from '
+         'schematic/r1_adc_%s.spice' % ('revision 5 netlist of record' if SCHEM == 'r5' else 'revision 6 netlist', SCHEM), '* mapping: see the module docstring (CDAC units + dummies, Cboot / clkgen caps as MIM, '
          'multiplier and decoupling split); r1_sar5_logic (behavioural) not laid out: its nets are sar_* ports',
          '.subckt r1_adc_slice ' + ' '.join(SLICE_PORTS)]
     L += [cdl_line(d) for d in sl]

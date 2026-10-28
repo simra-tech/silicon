@@ -11,6 +11,9 @@ usage: run_post.py --id ID --cpu N --deck points|isa --core rec|recfast|lay [--n
        [--ibias 5u] [--vdda 3.3] [--question ...] [--disposition ...]
 --post-include / --core-cell (T2m, B7): core wrapper file and cell (default sim/post/r1_adc5_post.spice, r1_adc5_core_lay).
 --vdda (T2m, layout B7, 2026-10-27): VDDA of the deck (offset drift over 3.0-3.6 V, PLAN.md D23); default 3.3 as before.
+--schem / --refbuf (T2o, revision 6, 2026-10-28): schematic library of the deck (default schematic/r1_adc_r5.spice;
+schematic/r1_adc_r6.spice with --core-cell r1_adc6_core for the revision-6 cores) and the reference-buffer cell of the
+opt3 reference (default r1_refbuf5; r1_refbuf6). Defaults reproduce the earlier decks.
 Cores: rec = r1_adc5_core (netlist of record, full core), recfast = r1_adc5_core_fast (the r5 points-deck core),
 lay = r1_adc5_core_lay (sim/post/r1_adc5_post.spice around the layout netlist --netlist).
 Reference: rec/recfast: ideal (Vref on all four ports) or opt3 (r1_refbuf5 ndec 4 ndecl 2 + 10 pF filter + bandgap
@@ -33,7 +36,7 @@ for k, d in (('--id', None), ('--cpu', None), ('--deck', None), ('--core', None)
              ('--ref', ''), ('--vref', '1.045'), ('--points', ''), ('--save', 'codes'), ('--corner', 'mos_tt'), ('--temp', '27'),
              ('--vdd', '1.2'), ('--cm', '0.6'), ('--timing', ''), ('--tstop', ''), ('--tmax', '0.2n'), ('--noise', 'auto'),
              ('--ibias', '5u'), ('--bgr', '190k,82u'), ('--question', ''), ('--disposition', ''), ('--timeout', '36000'),
-             ('--seed', '1'), ('--vdda', '3.3'), ('--post-include', 'sim/post/r1_adc5_post.spice'), ('--core-cell', ''), ('--noopiter', 'auto'), ('--ideal-bgr', 'off50m'), ('--solver', 'klu'), ('--base-ibias', ''), ('--probe-extra', ''), ('--save-extra', ''), ('--rs', '')):
+             ('--seed', '1'), ('--vdda', '3.3'), ('--post-include', 'sim/post/r1_adc5_post.spice'), ('--core-cell', ''), ('--noopiter', 'auto'), ('--ideal-bgr', 'off50m'), ('--solver', 'klu'), ('--base-ibias', ''), ('--probe-extra', ''), ('--save-extra', ''), ('--rs', ''), ('--schem', 'schematic/r1_adc_r5.spice'), ('--refbuf', 'r1_refbuf5')):
     ap.add_argument(k, required=d is None, default=d)
 ap.add_argument('--op-only', action='store_true')
 a = ap.parse_args()
@@ -67,7 +70,7 @@ if ref == 'ideal':
     lines = ['Vref vref 0 %s' % a.vref] + ['Vt%s %s vref 0' % (n, n) for n in ('vrefa', 'vrefb', 'vrefla', 'vreflb')]
 elif ref == 'opt3':
     lines = ['Vdda vdda 0 %s' % a.vdda, bgr_src(nz), 'Rbg vbgi vbg %s' % rs, 'XCF vbg 0 r1_reffilt5 w=%s' % cw,
-             'Ibref vdda nbr %s' % a.ibias, 'XREF vbg vref vrefl nbr vdda 0 r1_refbuf5 ndec=4 ndecl=2',
+             'Ibref vdda nbr %s' % a.ibias, 'XREF vbg vref vrefl nbr vdda 0 %s ndec=4 ndecl=2' % a.refbuf,
              'Vtvrefa vrefa vref 0', 'Vtvrefb vrefb vref 0', 'Vtvrefla vrefla vrefl 0', 'Vtvreflb vreflb vrefl 0']
 elif ref == 'lay':
     lines = ['Vdda vdda 0 %s' % a.vdda, bgr_src(nz), 'Rbg vbgi vbg %s' % rs, 'Ibref vdda nbr %s' % a.ibias]
@@ -88,7 +91,7 @@ cell = {'rec': 'r1_adc5_core', 'recfast': 'r1_adc5_core_fast', 'lay': 'r1_adc5_c
 if a.core_cell:
     cell = a.core_cell      # T2m (B7): e.g. r1_adc5_core_lay_d23 from --post-include sim/post/b7/r1_adc5_post_d23_<corner>.spice
 extra = 'vbg nbr vdda' if lay else ''
-nets = ['.include schematic/r1_adc_r5.spice']
+nets = ['.include %s' % a.schem]
 if lay:
     nets += ['.include %s' % a.netlist, '.include %s' % a.post_include]
 has_vdda = ref != 'ideal'
@@ -178,7 +181,7 @@ src = src.replace('@RAW@', raw_dir)
 assert '@' not in src.replace('@RAW', ''), [l for l in src.splitlines() if '@' in l][:3]
 open(os.path.join(run_dir, 'deck.cir'), 'w').write(src.replace(root, '<G1_RESULTS_ROOT>'))
 open(os.path.join(raw_dir, 'deck.cir'), 'w').write(src)
-libs = ['schematic/r1_adc_r5.spice'] + ([a.netlist, a.post_include] if lay else [])
+libs = [a.schem] + ([a.netlist, a.post_include] if lay else [])
 lib_hash = {p: R5.sha256(os.path.join(BLOCK, p)) for p in libs}
 log_path = os.path.join(run_dir, 'ngspice.log')
 env = dict(os.environ)

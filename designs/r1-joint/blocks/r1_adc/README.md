@@ -1,4 +1,296 @@
-# R1_ADC — 12-bit SAR ADC with two simultaneous track-and-holds (schematic level, revisions 1 to 5)
+# R1_ADC — 12-bit SAR ADC with two simultaneous track-and-holds (schematic level, revisions 1 to 6)
+
+## Revision 6 and layout B9 (2026-10-28, track T2o): PLAN.md D28
+
+State (coordinator, 2026-10-30, PLAN.md D30): **revision 6 and layout B9 are not adopted.** The layout of record is B7 (`layout/r1_adc.gds`, identical to `layout/r1_adc_layout_b7.gds`) with netlist revision 5; B9 is kept as `layout/r1_adc_layout_b9.gds` / `r1_adc_layout_b9.json` / `r1_adc_lvs_b9.cdl`, and the generator default is `B7` again. The T2o record below is unchanged.
+
+State: **D28 item 3 failed, coordinator decision** (track T2o, 10:00–15:20 CET on 28 Oct). Netlist revision 6
+(`schematic/r1_adc_r6.spice`) and layout B9 are written. B9 passes DRC, antenna, LVS (stock and comparer-limit)
+and the pin check, and is the layout of record for revision 6 (`layout/r1_adc.gds`); B7 is kept as
+`layout/r1_adc_layout_b7.gds` for revision 5. With the strobe on the falling `clk` edge, `r1_cmp4` does not
+regenerate in time at any corner, so every code-level check fails. R2-4 at the strobe: 0.253 LSB (tt) and
+0.794 LSB (ss) on the B9 extraction (limit 0.25; B7 4.30 / 3.44). All numbers are simulated or from layout tools.
+Nothing is measured. Runs are under `<G1_RESULTS_ROOT>/r1_adc/<run id>`; small records are under `sim/post/b9/`,
+`sim/post/runs/` and `reports/`.
+
+### Reference-path time constants (D28 (2), first step)
+
+Method: AC impedance at the buffer main node and at the slice A port, B7 extraction (= B6 PEX), at the buffer operating
+point, comparators in reset, track switches open (runs `b9-zref2-b7-tt`, `b9-zref2-b7-ss125`; tool
+`sim/post/b9/gen_zref.py`; summary `sim/post/b9/results/tau_breakdown.json`). Transient values are from the B7 proxy
+buffer runs (`postb7-d23-ref-{tt,ss125}-buf`). Corners: tt = 27 °C / 1.2 V, ss = 125 °C / 1.08 V.
+
+| Element | tt | ss | Note |
+| --- | --- | --- | --- |
+| `vrefl` follower output impedance (open loop, flat to 10 MHz) | 298 Ω | 389 Ω | `r1_refbuf5` source follower, 200 µA |
+| `vrefl` wiring R, buffer main node to slice A port | 11.5 Ω | 11.5 Ω | top-level `vref` / `vrefl` max 12.6 / 12.4 Ω (`net_reff`); inside the slice to the drivers median 22.7 Ω, max 36 Ω |
+| `vrefl` node C (MIM decoupling 14.7 pF + CDAC) | 16.8 pF | 16.8 pF | |
+| `vrefl` pole / small-signal τ | 32 MHz / 5.0 ns | 24 MHz / 6.5 ns | |
+| `vrefl` transient τ (recovery after the CDAC step) | 5.4 ns | 8.6 ns | proxy, slot 6 tick 6 |
+| `vref` (MSB array) closed loop at 1 kHz / peak | 0.39 Ω / 78 Ω at 2.2 MHz | 0.66 Ω / 101 Ω at 1.7 MHz | the `vref` term is about −1.6 mV and is settled 12 ns after the edge |
+| 10 pF filter | not in the path | not in the path | it is on `vbg` (buffer input, inside the loop) |
+| CDAC step charge | 0.72 pC per slice (C7 group) | same | `vrefl` droop −40 mV peak about 6 ns after the edge |
+
+In B7 the reference error at the strobe comes from the `vrefl` follower output impedance. The wiring R (12 Ω) is 4 % of
+the follower impedance and is also in the base run of the D23 metric, so it does not count. B7 error against time after
+the edge (tt, D23 metric, `sim/post/b9/r24_d28.py` on the B7 runs): 0.61 LSB at 16 ns, 0.51 LSB at 17 ns, 0.41 LSB at
+18 ns, 0.25 LSB at 20 ns.
+
+Sizing for ≤ 0.25 LSB (3.4 mV) 15 ns after the edge, with a 2 mV design target: τ ≤ 3.4 ns (tt) and ≤ 3.9 ns (ss).
+With 16.8 pF this needs a follower output impedance ≤ 188 Ω (tt) and ≤ 176 Ω (ss); the wiring stays at 12 Ω (no
+change needed). The follower impedance is about 1/gm. With width and current scaled together (constant overdrive)
+gm scales with the current: factor 298/188 ≈ 1.6 (tt) and 389/176 ≈ 2.2 (ss); with the width fixed the factor is
+2.5 / 4.9. The sizing covers the follower only; the `vref` loop and the static `vrefl` offset are not in it (see
+the check below).
+Choice: `r1_refbuf6` = `r1_refbuf5` with the `vrefl` follower and its sink × 3 (`msfl` 8 → 24, `mibl` 40 → 120).
+Current (simulated, static operating point tt, buffer with bandgap DC): block IDDA 1.093 mA (B7 extraction,
+`postb6-op-tt-rc`) → **1.626 mA** (B9 extraction, `postb9-op-tt-rc2`), **+0.533 mA from VDDA 3.3 V (+1.76 mW)**.
+The estimate before the run was +0.40 mA (`vrefl` branch 200 → 600 µA). Block power row: the specification allows
+0.5–1 mA for the reference buffer (`R1_TOP_LEVEL_SPECIFICATION.md`, decided item 3 "ADC reference"); the block IDDA
+was already 1.09 mA with revision 5 and is now 1.63 mA. This is over that line (coordinator to accept or not).
+
+Check of the sizing before layout (`r1_refbuf6` what-if on the B7 extraction: `vrefl` follower and sink m × 3 in the
+extracted netlist, revision-6 strobe; netlist `sim/post/b9/r6_mb7_sb3.spice`; proxy deck, 10 `ref10` slots; D23
+metric with `sim/post/b9/r24_d28.py`; base runs `postb9-r6s-ref-{tt,ss125}-base` with the slice ports at the B7
+operating point; results `sim/post/b9/results/r24_sb3_{tt,ss125}.json`):
+
+| Corner | R2-4 at the strobe (limit 0.25 LSB) | Error 15 / 17 / 20 / 25 ns after the edge | `vrefl` port deviation at the strobe | B7 at the strobe |
+| --- | --- | --- | --- | --- |
+| tt | **0.281 LSB, failed** (A 0.281, B 0.275) | 0.46 / 0.31 / 0.52 / 0.25 LSB | −0.77 to 0 mV | 4.30 LSB (−33 mV) |
+| ss | **0.814 LSB, failed** (A 0.814, B 0.753) | 1.32 / 0.96 / 0.66 / 0.30 LSB | −4.05 to +0.1 mV | 3.44 LSB (−29 mV) |
+
+The follower × 3 cuts the error at the strobe by 15 times (tt) and 4 times (ss), but it does not reach 0.25 LSB. At
+tt the rest is mostly static: the error is 0.25 LSB at 25 ns as well, because the `vrefl` operating point of the
+what-if is 17 mV above the base-run value (1.075 V against 1.058 V; `xref_ng` falls by 40 mV; the cause is not traced).
+
+At ss, × 5 (`msfl` 40, `mibl` 200; `sim/post/b9/r6_mb7_sb5.spice`, run `postb9-sb5-ref-ss125-buf`,
+`sim/post/b9/results/r24_sb5_ss125.json`) gives **0.756 LSB** (× 3: 0.814 LSB). The `vrefl` deviation at the strobe
+halves (−4.05 → −2.09 mV), but the metric hardly moves. Deviations at the strobe in the ss buffer runs: `vrefl` port
+−4.05 / −2.09 mV (× 3 / × 5), `vref` port −0.31 / −0.29 mV, `xref_ng` −0.24 / −0.19 mV. The `vref` (MSB array)
+deviation does not change with the follower size; it comes from the closed buffer loop (101 Ω peak at 1.7 MHz at
+ss, table above). Estimate (not separated by a run): the remaining ss error is set by the `vref` loop recovery and
+by the static `vrefl` offset, not by the `vrefl` follower. More follower current alone does not close R2-4 at ss;
+the `vref` loop needs a higher bandwidth or more `vref` decoupling (a `r1_refbuf` loop change, not in D28).
+
+### Strobe on the falling clk edge and regeneration budget (D28 (1) and (3))
+
+Netlist change: `r1_cmp6_clkgen` = `r1_cmp4_clkgen` with the delay-chain input (`XPD0` / `XND0` gates) on `gnd`, so
+`x` = 1 and `mclk` = NOT `clk30`. Reset (`mclk` = 0) runs from the rising edge to the falling edge; evaluation runs from
+the falling edge (16.67 ns) to the next rising edge. The SAR RTL and the ctrl contract do not change (one edge per tick,
+17 ticks, outputs ≥ 0.5 ns after `clk30`). The `r1_osc` duty cycle is 48.6–49.4 % post-layout (its README, R2-5), so the falling
+edge comes 16.2–16.5 ns after the rising edge.
+
+Available regeneration time: from the strobe (comparator clock 50 % after the falling edge, measured 17.53 ns at
+tt and 18.02–18.05 ns at ss on the proxy deck, 17.83–18.83 ns on the gate-level SAR at ss) to the decision capture.
+The gate-level SAR captures about 0.5 ns after the next rising edge, the proxy deck 0.6 ns before it: about 15.2 ns
+(proxy tt) and 14.8–15.9 ns (ss), so 15.3–16.4 ns is the upper bound used in the table below.
+
+Comparator regeneration time after the strobe, schematic comparator cells, ideal clock, input held from the strobe
+(runs `b9-regen4-<corner>-cm<CM>`, tool `sim/post/b9/gen_regen.py`, summary `sim/post/b9/results/regen_sweep.json`;
+ss = ss / 125 °C / 1.08 V, ff = ff / −40 °C / 1.32 V). Values: |vd| = 30 mV / 1 mV / 1 µV:
+
+| Comparator, input CM | tt (ns) | ss (ns) | ff (ns) | Fits 15.3–16.4 ns |
+| --- | --- | --- | --- | --- |
+| `r1_cmp5n` (decision 0), 0.59 V | 9.0 / 10.7 / 11.1 | 10.6 / 12.2 / 12.8 | 8.2 / 9.8 / 10.1 | yes, every corner |
+| `r1_cmp4` (decisions 1–13), 0.37 V | 15.7 / 18.8 / 19.7 | 18.6 / 22.3 / 23.6 | 15.1 / 18.0 / 18.7 | **no**: only \|vd\| ≥ about 25 mV (tt, ff); none at ss |
+| `r1_cmp4`, 0.15 V | 15.0 / 17.8 / 18.7 | 16.8 / 19.9 / 21.1 | 14.8 / 17.5 / 18.2 | **no**: only \|vd\| ≥ about 10–20 mV (tt, ff); none at ss |
+
+The regeneration time of `r1_cmp4` is mostly its integration phase (the 80 µm integration capacitors `xci1` / `xci2`
+charge for about 15 ns); the latch adds only about 0.15 ns per decade of \|vd\|. In revision 5 the strobe came 3.5–5.9
+ns after the rising edge, so `r1_cmp4` had about 27 ns. With the strobe at the falling edge it has about 16 ns, and it
+does not finish at small \|vd\| at any corner. A decision that is not regenerated reads as a tie. From decision 5 the
+redundancy is about 1 LSB, so the late decisions cannot absorb this.
+
+Closed-loop confirmation (B7 extraction with the revision-6 strobe, proxy deck: behavioural SAR with the gate-level
+timing, 10 `ref10` slots, tt; tool `sim/post/b9/item3_regen.py`, results `sim/post/b9/results/item3_*.json`). A decision
+is "not regenerated" when the comparator output has not left its reset level by the capture instant:
+
+| Run | Strobe after the edge | `r1_cmp4` integration (strobe to regeneration) | Not regenerated (A / B) | Final-code error (max, A / B) |
+| --- | --- | --- | --- | --- |
+| `postb9-r6s-ref-tt-base` (reference ports ideal) | 17.53–17.55 ns | p50 15.2 ns, max 16.2 ns | 89 / 87 of 140 | 133 / 136 LSB against the revision-5 strobe run `postb7-d23-ref-tt-base` (design weights; limit 1 LSB) |
+| `postb9-sb3-ref-tt-buf` (`r1_refbuf6` what-if) | 17.53–17.54 ns | p50 15.2 ns, max 16.2 ns | 84 / 84 of 140 | 134 / 136 LSB against `postb7-d23-ref-tt-buf` |
+| `postb9-r6s-ref-ss125-base` (ss, reference ports ideal) | 18.02–18.05 ns | regenerated ones: p50 15.0 ns, max 15.9 ns | 105 / 105 of 140 (incl. decision 0 in 2 / 1 slots) | 242 / 244 LSB against `postb7-d23-ref-ss125-base` |
+| `b9-ms-fc-ss125z-r6s` (gate-level SAR, ss, first conversion 0 V, 2 frames) | 17.83–18.83 ns | decisions 1–3: 12.6–15.0 ns | 20 / 20 of 28: decisions 4–13 never regenerate (\|vd\| up to 54 mV) | decision 0 = 0 and decisions 1–13 = 1 in both frames and slices: code 2063 (design weights) for a 0 V input; revision 5 gives 2039–2040 at ss on this extraction (`postb7-ofs-ss125-v33`) |
+
+Schematic, revision 6 (`r1_adc6_core_fast`, ideal VREF, first conversion 0 V; runs `postb9-dsch6-{tt,ss125,ffm40}`,
+`sim/post/b9/results/dsch6_first.json`): codes 2063–2120 (tt), 2063–2160 (ss), 2063–2133 (ff), so the offset is
++15 to +112 LSB. Revision 5 on the same deck gives −1 to 0 LSB (`postb7-dsch-*`).
+
+Regeneration tail at the revision-5 strobe (all decisions regenerate there; the integration time shows what the
+revision-6 strobe must hold; `sim/post/b9/results/item3_tail_b7proxy_{tt,ss125}.json`,
+`item3_tail_b6gl_ss125.json`):
+
+| Corner, run | `r1_cmp4` integration min / p50 / p90 / max | Decisions over the revision-6 window (proxy 15.2 ns tt, 14.8 ns ss) |
+| --- | --- | --- |
+| tt, `postb7-d23-ref-tt-base` | 8.2 / 15.0 / 16.1 / 17.2 ns | 58 of 130 per slice |
+| ss, `postb7-d23-ref-ss125-base` | 11.1 / 20.9 / 22.3 / 24.1 ns | 102 of 130 per slice |
+| ss, gate level `b6-ms-fc-ss125` (2 slots) | 11.4 / 20.7 / 22.2 / 22.4 ns | — |
+
+**D28 item 3 failed, coordinator decision.** The strobe on the falling `clk` edge leaves `r1_cmp4` about 15–16 ns,
+and its integration phase needs 15 ns (tt) to 24 ns (ss). The failure is not a tail: at ss most decisions do not
+regenerate. The netlist and layout steps were continued as the track brief requires, but no post-layout
+result of revision 6 can pass while this stays open.
+
+What-if for the coordinator (not part of D28; it changes the comparator netlist): `r1_cmp4` with a smaller
+integration capacitor (runs `b9-regen5-<corner>-cm37-wc<W>`, `sim/post/b9/results/regen5_wcap.json`; CM 0.37 V;
+|vd| = 30 mV / 1 mV / 1 µV):
+
+| `wcap` | tt (ns) | ss (ns) | Fits 15.3 ns at ss |
+| --- | --- | --- | --- |
+| 80 µm (revision 5) | 15.7 / 18.8 / 19.7 | 18.6 / 22.3 / 23.6 | no |
+| 40 µm | 8.9 / 10.6 / 11.2 | 10.5 / 12.6 / 13.4 | yes, margin about 2 ns |
+| 20 µm | 5.4 / 6.5 / 6.9 | 6.4 / 7.6 / 8.2 | yes |
+
+A smaller integration capacitor raises the comparator noise (the D14 limit is 60 µV rms; revision 5 is at 57 µV at
+ss). The noise of the 40 µm variant is **not run**. The other option is the frame-contract change (option b of the
+B8 record).
+
+### Netlist revision 6 (`schematic/r1_adc_r6.spice`)
+
+`schematic/r1_adc_r6.spice` is written by `schematic/gen_r1_adc_r6.py`. It holds the revision-5 library unchanged
+(`schematic/r1_adc_r5.spice` stays the netlist of record of revision 5) and adds:
+
+| Cell | Change against revision 5 |
+| --- | --- |
+| `r1_cmp6_clkgen` | `r1_cmp4_clkgen` with the delay-chain input on `gnd`: `mclk` = NOT `clk30` |
+| `r1_refbuf6` | `r1_refbuf5` with `msfl` 8 → 24 and `mibl` 40 → 120 (`vrefl` follower and sink × 3); same pins |
+| `r1_adc6_core`, `r1_adc6_core_fast`, `r1_adc6_core_fast_mc` | the revision-5 cores with `r1_cmp6_clkgen` |
+
+The layout netlist generator (`layout/r1_adc_netlist.py`) selects revision 6 with `SCHEM = 'r6'` (set by
+`-rd rev=B9`): the clock generator gates `xckg_xpd0` / `xckg_xnd0` go to `vss`, and the follower and sink are drawn as
+three segments each (`xmsfl_s0..s2`, `xmibl_s0..s2`, W 80 µm per segment). With `SCHEM = 'r5'` the CDL is identical to
+`layout/r1_adc_lvs.cdl` (checked).
+
+### Changes in layout B9 (generator `-rd rev=B9`, from B7)
+
+- Netlist revision 6 (`r1_adc_netlist.py` `SCHEM = 'r6'`): `xckg_xpd0` / `xckg_xnd0` gates on `vss`; `vrefl` follower
+  `xref_xmsfl_s1`, `_s2` (row 2, east of `_s0`) and sinks `xref_xmibl_s1`, `_s2` (row 3, at both ends of the `vref`
+  follower row). The slice cell and the SAR macro are unchanged.
+- Reference wiring of the new segments: Metal2 strap with Via1 at every grid node on each follower source rail and
+  each sink drain rail; a Metal3 strap on the follower source rails; one Metal4 riser (2 µm) per follower from its rail
+  into the `vrefl` bus (like `_s0`). The sinks join through Metal2 and the router (DC current only).
+- No drift lever (see "Drift lever what-if").
+- The top-level `vrefl` wiring R was 12 Ω in B7 (4 % of the follower impedance, and in the base run of the D23 metric),
+  so the bus and slice-pin jumpers of B3 stay as they are.
+- The generator default is now B9 (it reproduces `layout/r1_adc.gds`, XOR 0). `-rd rev=B7` draws B7, `-rd rev=B8` B8.
+
+### Layout checks (B9)
+
+| Check | dev1 | dev2 | Evidence |
+| --- | --- | --- | --- |
+| DRC main + maximal (PDK deck, no density) | **passed**, 0 | **passed**, 0 | `reports/layout-b9-dev1/drc.log`, `reports/layout-b9-dev2/drc.log` |
+| Antenna | **passed**, 0 | **passed**, 0 | `reports/layout-b9-dev1a/`, `reports/layout-b9-dev2a/` |
+| LVS, comparer-limit deck (against `layout/r1_adc_lvs_b9.cdl`) | **failed**: `vref` and `vrefl` joined (the new `_s1` Metal3 strap touched the `vref` Metal3 vertical at x 268.8) | **passed**: `r1_adc` 147/147 nets, 45/45 devices; `r1_adc_slice` 117/117, 179/179; `r1_adc_sar` 419 | `reports/lvs-b9-dev1-lim/`, `reports/lvs-b9-dev2-lim/` |
+| LVS, stock deck | **failed** (same) | **passed** | `reports/lvs-b9-dev1-stock/`, `reports/lvs-b9-dev2-stock/` |
+
+`layout/r1_adc_lvs_b9.cdl` is made by `layout/b9/make_cdl_b9.py` from `layout/r1_adc_lvs_b5.cdl` and the revision-6
+analog CDL that the generator writes. It changes 6 lines only (2 clock-generator gates, 4 new devices).
+
+### Drift lever what-if (D28 (4), before the PEX)
+
+The B8 record names the `vdd` terminals of the `r1_cmp4` integration capacitors `xci1` / `xci2` under the CDAC as the
+next lever (extracted R to the slice `vdd` port 74–138 Ω, nodes `vdd__p22`..`p25`). What-if before any drawing: the B7
+extraction (`sim/post/b7/diag_mb7_e7all.spice`, the base of the B7 drift diagnosis) with each of the four nodes tied to
+the slice `vdd` port by 5 Ω or 1 Ω (estimate: about the lowest R that a local strap with a via stack can reach);
+tool `sim/post/b9/make_lever_netlist.py`, netlists `sim/post/b9/lev_mb7_r{5,1}.spice`. Deck of the B7 drift diagnosis:
+revision-5 strobe, ideal VREF on the slice ports, first conversion 0 V, behavioural SAR. Runs `postb9-dlev-r{5,1}-{tt,ffm40}`,
+summary `sim/post/b9/results/dlev_first.json`. Codes A f0 / f1, B f0 / f1 (simulated):
+
+| Variant | tt | ff / −40 °C / 1.32 V | ff − tt |
+| --- | --- | --- | --- |
+| B7 extraction (`postb7-dbase-*`) | 2039 / 2039, 2038 / 2038 | 2049 / 2049, 2048 / 2048 | +10 LSB |
+| capacitor `vdd` nodes to the port, 5 Ω | 2041 / 2041, 2040 / 2040 | 2051 / 2051, 2050 / 2050 | +10 LSB |
+| capacitor `vdd` nodes to the port, 1 Ω | 2041 / 2041, 2040 / 2040 | 2051 / 2051, 2050 / 2049 | +10 / +9 LSB |
+
+Result: the lever moves both corners by +2 LSB and does not change the drift. **The lever is not drawn in B9**: it can
+not close the 2 LSB drift limit, and moving the capacitor row or adding Metal3 over the CDAC tracks costs area and
+risk for no drift gain. The drift needs the comparator and supply wiring R lowered together (B8 record, about 3
+times); that is not a local change inside this box.
+
+### Post-layout results (B9 extraction `pex-b9-dev2`)
+
+All runs use `sim/post/r1_adc_post_rc_mb9.spice` (base runs `..._mb9_sp_{tt,ss125}.spice`, slice ports at the B9
+operating point). Static operating point tt (`postb9-op-tt-rc2`): slice ports `vref` 1.0495 V, `vrefl` 1.0786 V
+(A) / 1.0791 V (B); ss (`postb9-op-ss125-rc2`): 1.0497 V, 1.0818 / 1.0823 V.
+
+R2-4 (D23 metric, proxy deck, 10 `ref10` slots, `sim/post/b9/r24_d28.py`):
+
+| Corner | R2-4 at the strobe (limit 0.25 LSB) | 15 / 17 / 20 / 25 ns after the edge | Regeneration instant | B7 at the strobe |
+| --- | --- | --- | --- | --- |
+| tt (`postb9-ref-tt-{base,buf}`) | **0.253 LSB, failed** (A 0.253, B 0.225) | 0.44 / 0.29 / 0.47 / 0.20 LSB | 0.199 LSB | 4.30 LSB |
+| ss / 125 °C / 1.08 V (`postb9-ref-ss125-{base,buf}`) | **0.794 LSB, failed** (A 0.794, B 0.728) | 1.31 / 0.95 / 0.63 / 0.26 LSB | 0.267 LSB | 3.44 LSB |
+
+Results `sim/post/b9/results/r24_b9_{tt,ss125}.json`. The B9 extraction agrees with the × 3 what-if on the B7
+extraction (0.281 / 0.814 LSB). The decisions of the buffer and base runs differ where a decision does not
+regenerate, so the metric is taken on trajectories that are not those of a working converter (D28 (3)).
+
+Regeneration on the B9 extraction (base runs, `sim/post/b9/results/item3_b9_base_{tt,ss125}.json`): tt 85 / 82 and
+ss 105 / 104 of 140 decisions not regenerated (A / B), the same as on the B7 extraction.
+
+Offset (D23 offset deck: first conversion 0 V, buffer + bandgap DC, behavioural SAR; runs `postb9-ofs-<corner>-v33`,
+`sim/post/b9/results/ofs_b9_first.json`), codes A f0 / f1, B f0 / f1: tt 2063 / 2063, 2063 / 2063; ss 2063 / 2063,
+2063 / 2063; ff 2063 / 2162, 2063 / 2063. The word 2063 is "decision 0 = 0, decisions 1–13 = 1": no late decision
+regenerates. These numbers show the D28 (3) failure, not a layout property.
+
+Mux sequence tt (`postb9-isa-tt-rc`, `sim/post/b9/results/postb9_isa_tt_rc.json`): gain 1.048, offset +101.5 LSB,
+residual 5.6 LSB; codes 17–189 LSB above the pre-layout values; +0.85 V reads 4095 (clipped), so the positive full
+scale is below 0.86 V. IDD 0.562 mA (B6 0.757 mA; the cause of the drop is not traced), IDDA 1.634 mA
+(B6 1.101 mA).
+
+### Status (revision 6 and layout B9)
+
+| Check (limit) | Result | Evidence |
+| --- | --- | --- |
+| Reference time-constant breakdown and sizing (D28 (2)) | **done**: in B7 the `vrefl` follower 298 Ω (tt) / 389 Ω (ss) is the term; wiring 12 Ω; filter not in the path; ≤ 188 / 176 Ω needed | "Reference-path time constants"; `sim/post/b9/results/tau_breakdown.json` |
+| Regeneration budget at the falling-edge strobe, ss and ff (D28 (3); final-code error ≤ 1 LSB) | **failed** at tt, ss and ff: `r1_cmp4` needs 15–24 ns, about 15–16 ns are available; tt 84–89, ss 104–105 of 140 decisions not regenerated; code errors up to 136 (tt) / 246 (ss) LSB. **D28 item 3 failed, coordinator decision** | "Strobe on the falling clk edge"; `sim/post/b9/results/item3_*.json`, `regen_sweep.json` |
+| Netlist revision 6 written (`schematic/r1_adc_r6.spice`) | **done** | "Netlist revision 6" |
+| Schematic check: reference error at the new strobe | **not run** in a separable form: the schematic first-conversion deck has no settling term to separate (ideal and `r1_refbuf6` runs differ only by the non-regenerated decisions; `postb9-dsch6-tt` / `postb9-dsch6o-tt` codes 2120 / 2063 and 2063 / 2120). The reference error is measured on the B7 extraction (what-if) and on B9 | `sim/post/b9/results/dsch6_first.json` |
+| Schematic check: static offset (≤ 10 LSB) | **failed**: +15 to +112 LSB at tt / ss / ff (revision 5: −1 to 0 LSB); cause: D28 (3) | `postb9-dsch6-{tt,ss125,ffm40}` |
+| Schematic check: full scale (≥ ±0.86 V) | **not run**: the codes are wrong by up to 246 LSB (D28 (3)), so a gain fit does not give a full scale | — |
+| Buffer current against the block power row | **recorded**: static IDDA tt 1.093 → 1.626 mA (+0.533 mA, +1.76 mW); over the 0.5–1 mA buffer line of the specification | `postb6-op-tt-rc`, `postb9-op-tt-rc2` |
+| Drift-lever what-if before the PEX | **done**: tie of the `r1_cmp4` capacitor `vdd` nodes (5 Ω / 1 Ω) moves both corners by +2 LSB, drift unchanged (10 LSB); lever not drawn | "Drift lever what-if"; `sim/post/b9/results/dlev_first.json` |
+| Layout checks: DRC main / maximal / antenna (0), LVS stock and comparer-limit (match) | **passed** (dev2; dev1 failed LVS) | "Layout checks (B9)" |
+| Generator default (B9) reproduces `layout/r1_adc.gds`; slice and SAR macro unchanged against B7; pins | **passed**: default run `layout-b9-regen` against `layout/r1_adc.gds` 0 layers differ (`r1_adc`, `r1_adc_slice`, `r1_adc_sar`); B7 against B9: `r1_adc_slice` and `r1_adc_sar` 0 layers differ. Pin check (52 pins, box 439.0 × 205.42 µm): **passed**, pin table identical to B7 | `<G1_RESULTS_ROOT>/r1_adc/b9-chain103k.log`; `reports/layout-b9/pin_table_b9.md` |
+| PEX of record (KLayout RNetExtractor R + kpex 2.5D CC) | **done**: `pex-b9-dev2` (fail=0; 738 → 365 device instances after the merge) | `pex/b9/run_dev2.json`, `pex/r1_adc_post_rc_b9.spice`, `sim/post/r1_adc_post_rc_mb9.spice` |
+| R2-4 tt, D23 metric at the real strobe, 10 slots (≤ 0.25 LSB) | **failed: 0.253 LSB** (A 0.253, B 0.225; by 0.003 LSB). B7 4.30 LSB. 0.29 LSB at 17 ns, 0.20 LSB at 25 ns after the edge | `postb9-ref-tt-{base,buf}`; `sim/post/b9/results/r24_b9_tt.json` |
+| R2-4 ss / 125 °C, 10 slots (≤ 0.25 LSB) | **failed: 0.794 LSB** (A 0.794, B 0.728). B7 3.44 LSB. 0.95 LSB at 17 ns, 0.26 LSB at 25 ns | `postb9-ref-ss125-{base,buf}`; `sim/post/b9/results/r24_b9_ss125.json` |
+| Offset drift tt / ss / ff (≤ 2 LSB) | **failed**: codes A f0 / f1, B f0 / f1: tt 2063 / 2063, 2063 / 2063; ss 2063 / 2063, 2063 / 2063; ff 2063 / 2162, 2063 / 2063; span 0 / 99 LSB. 2063 is the word "decision 0 = 0, decisions 1–13 = 1" (no late decision regenerates); the numbers show D28 (3), not the layout | `postb9-ofs-{tt,ss125,ffm40}-v33`; `sim/post/b9/results/ofs_b9_first.json` |
+| Static offset (≤ 10 LSB) | **failed**: +15 LSB (tt, ss), +15 / +114 LSB (ff); cause D28 (3) | as above |
+| ff output window (≥ 0.5 ns after `clk30`) | **not run**: gate-level ff deck needs more than 16 800 s (B8 record) and the CPU budget went to the D28 (3) evidence. The output timing comes from the unchanged `r1_adc_sar` macro and top wiring, so B7 (0.401 ns, failed) applies | — |
+| ff first conversion, gate-level (≤ 1 LSB) | **not run** (same reason); the proxy and schematic results show the D28 (3) failure | — |
+| Windows 1024 / 3072 tt (no missing code) | **not run**: with 84–89 of 140 decisions not regenerated the static window has no meaning | — |
+| Full scale tt / ss / ff (≥ ±0.86 V) | tt **failed**: gain 1.048, offset +101.5 LSB, +0.85 V reads 4095 (clipped); cause D28 (3). ss / ff **not run** (same cause) | `postb9-isa-tt-rc` |
+| INL tt | **not run** (same reason as the windows) | — |
+
+### Open issues (revision 6 and layout B9)
+
+1. **D28 item 3 failed, coordinator decision.** With the strobe on the falling `clk` edge, `r1_cmp4` has about
+   15–16 ns to regenerate and needs 15 ns (tt) to 24 ns (ss). 84–105 of 140 decisions do not regenerate; codes are
+   wrong by up to 136 (tt) / 246 (ss) LSB. Options: (a) `r1_cmp4` integration capacitor 80 → 40 µm (regenerates in
+   ≤ 13.4 ns at ss in the cell sweep; comparator noise not run, D14 limit 60 µV); (b) the frame-contract change of
+   the B8 record (option b). Revision 6 and B9 cannot pass any code-level check before this is decided.
+2. R2-4 does not close with the follower alone: × 3 gives 0.281 LSB (tt) / 0.814 LSB (ss) on the B7 extraction,
+   × 5 gives 0.756 LSB at ss. The ss rest follows the `vref` (MSB array) loop recovery and the static `vrefl`
+   offset (estimate). Next step for `r1_refbuf`: a faster `vref` loop or more `vref` decoupling, sized with the same
+   proxy method.
+3. `vrefl` sits 29 mV above `vref` at the slice ports in B9 (1.0786 V against 1.0495 V at tt; revision 5: +8.6 mV).
+   This is a gain step of about 2.8 % between the LSB and MSB arrays. Cause not traced (`xref_ng` falls by 40 mV
+   with the larger follower). To check before revision 7: the `vrefl` / `vref` follower and sink ratios.
+4. Offset drift: the lever of the B8 record (the `r1_cmp4` capacitor `vdd` nodes) does not change the drift in the
+   what-if. The drift needs the comparator and supply wiring R lowered together (B8 record).
+5. Buffer current: block IDDA 1.63 mA at tt, over the 0.5–1 mA buffer line of the specification.
+
+### Failures and deviations (revision 6 and layout B9)
+
+| # | What | Class | Effect |
+| --- | --- | --- | --- |
+| 1 | D28 assumed about 15 ns is enough to regenerate after a falling-edge strobe; `r1_cmp4` needs 15–24 ns (the B7 timing already showed 5.4–17.4 ns tt, 6.1–24.1 ns ss) | estimation | D28 item 3 failed; every code-level check of revision 6 fails (ledger F-20261030-T2o-09) |
+| 2 | `r1_refbuf6` sized from the `vrefl` follower impedance only (× 3, above the 1.6 / 2.2 needed); the `vref` loop recovery and the static `vrefl` offset were left out, and × 5 still fails at ss | estimation | R2-4 0.253 / 0.794 LSB on B9 (ledger T2o-10, T2o-13) |
+| 3 | layout B9 dev1: the new `vrefl` Metal3 strap touched a `vref` Metal3 vertical; LVS joined `vref` and `vrefl` | regression | dev2 drawn; DRC and antenna did not see it (ledger T2o-08) |
+| 4 | regeneration decks: wrong output directory, one shared bias for 22 comparators, common mode written 100 times too small; impedance deck without the netlist include | tooling / process-hygiene | four reruns (`b9-regen2..4-*`, `b9-zref2-*`), no result affected (ledger T2o-01 to T2o-04) |
+| 5 | background chains waited with `pgrep` on their own command line (twice), and one chain waited on a wrong PID, so `b9-ms-fc-ss125z-r6s` shared CPU 105 with another run for 60 min | process-hygiene | the run completed inside its limit (4751 of 5700 s) (ledger T2o-05, T2o-07, T2o-12) |
+| 6 | a validation job ran on CPU 103 next to a regeneration chain | process-hygiene | none (ledger T2o-06) |
+| 7 | B9 op runs probed two names that are not nodes of the extraction | tooling | rerun as `postb9-op-*-rc2` (ledger T2o-11) |
 
 ## Layout B8 (2026-10-28, track T2n): PLAN.md D25
 

@@ -1,0 +1,31 @@
+{
+ "run_id": "pex-b9-dev2",
+ "block": "r1_adc",
+ "track": "T2o",
+ "question": "layout B9 dev2 (PLAN.md D28): kpex 2.5D CC (slice and top-only, pex/run_pex.sh, serial on one CPU) and pex_build.py RC netlist (reference netlist revision 6, selected from the layout record)",
+ "command": "G1_CPUSET=105; G1_RESULTS_ROOT=<G1_RESULTS_ROOT>; sh designs/r1-joint/blocks/r1_adc/pex/run_pex.sh <G1_RESULTS_ROOT>/r1_adc/pex-b9-dev2 <G1_RESULTS_ROOT>/r1_adc/layout-b9-dev2/r1_adc.gds; then G1_WORKDIR=designs/r1-joint/blocks/r1_adc flow/run.sh klayout -b -r pex/pex_build.py -rd kdir=<G1_RESULTS_ROOT>/r1_adc/pex-b9-dev2 -rd out=<G1_RESULTS_ROOT>/r1_adc/pex-b9-dev2/build",
+ "tools": {
+  "klayout": "KLayout 0.30.9",
+  "kpex": "0.3.12",
+  "image_id": "sha256:ddeb69576f2808676d1c5d474ecf04f6d1d6f8abdcff6b72b39790ded924bab2",
+  "pdk_commit": "84374023ee8b4b126bebbba67fcbada0a9c0ff0b"
+ },
+ "inputs": {
+  "<G1_RESULTS_ROOT>/r1_adc/layout-b9-dev2/r1_adc.gds (= layout/r1_adc.gds)": "2a69e31670c9d4efa22ee62f40273bae67e6ebfee38f2bae0aea39ed77b660a0",
+  "layout/r1_adc_lvs.cdl (revision 6)": "a8589ef1a7e6d88be28b566ec1fb8fe9f28c4aedc42025ce0ca4a47975f2612f"
+ },
+ "start": "2026-10-28T13:30:47+01:00",
+ "end": "2026-10-28T13:55:05+01:00",
+ "raw": "<G1_RESULTS_ROOT>/r1_adc/pex-b9-dev2/",
+ "result": "completed (pex.done fail=0; pex_build: reference netlist revision r6)",
+ "outputs": [
+  "pex/r1_adc_post_rc_b9.spice",
+  "pex/r1_adc_post_c_b9.spice",
+  "pex/pex_report_b9.json",
+  "pex/pex_build_b9.log",
+  "sim/post/r1_adc_post_rc_mb9.spice (merge_parallel.py: 738 -> 365 device instances)",
+  "sim/post/r1_adc_post_rc_mb9_sp_tt.spice (make_sp_netlist.py --per-port, op run postb9-op-tt-rc2)",
+  "sim/post/r1_adc_post_rc_mb9_sp_ss125.spice (make_sp_netlist.py --per-port, op run postb9-op-ss125-rc2)"
+ ],
+ "disposition": "PEX of record for layout B9"
+}

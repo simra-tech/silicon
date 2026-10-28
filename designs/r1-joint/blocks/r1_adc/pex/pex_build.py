@@ -113,6 +113,12 @@ for k, (_, b, t) in VIAS.items():
     tech.add_via(v)
 
 LJ = json.load(open(os.path.join(BLOCK, 'layout', 'r1_adc_layout.json')))
+# layout B9 (T2o, PLAN.md D28): the layout record of a B9 layout carries top stats 'b9_vrefl'; the reference devices
+# are then those of netlist revision 6 (r1_adc_netlist.py SCHEM = 'r6': clkgen chain input on vss, vrefl follower and
+# sink in three segments). Every earlier layout record keeps revision 5.
+if 'b9_vrefl' in LJ['top'].get('stats', {}):
+    N.SCHEM = 'r6'
+P('reference netlist revision', N.SCHEM)
 # layout B5 (2026-10-27, T2k): slice north pins (SAR ports) are slice edge pins; the SAR macro pins are top-level pins
 # (Metal2 router node of each macro south pin), so each SAR line has R from the macro pin to the slice port; clk
 # enters at the Metal5 feed on the macro clk pin; vdd / vss of the macro: extra ports vdd_sar / vss_sar (see write())

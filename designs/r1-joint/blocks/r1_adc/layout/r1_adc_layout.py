@@ -53,11 +53,19 @@ TRIM = json.load(open(globals()['trim'])) if globals().get('trim') else {}
 # too; drift lever of the B7 drift diagnosis (README "Layout B8"). B8 is not adopted: dev1 (b8w=all) static offset
 # 18 LSB, dev2 (b8w=common) ff offset +13 LSB, both worse than B7. The default stays B7 (layout of record); -rd rev=B8
 # draws the B8 variants
+# layout B9 (2026-10-28, T2o, PLAN.md D28): B7 (not B8) with the revision-6 netlist schematic/r1_adc_r6.spice
+# (r1_adc_netlist.py SCHEM = 'r6'): r1_cmp6_clkgen (delay-chain input on vss, a router net change only) and r1_refbuf6
+# (vrefl follower and sink x3: xref_xmsfl_s1/_s2 in the follower row east of s0, xref_xmibl_s1/_s2 at the west and
+# east ends of the main-follower row; one Metal4 riser per vrefl follower into the vrefl bus). B9 (dev2) passed DRC,
+# antenna and LVS (stock and comparer-limit) and is the default; -rd rev=B7 draws B7 (layout/r1_adc_layout_b7.gds)
 REV = globals().get('rev', 'B7')
-assert REV in ('B5', 'B6', 'B7', 'B8'), REV
-B6 = REV in ('B6', 'B7', 'B8')
-B7 = REV in ('B7', 'B8')
+assert REV in ('B5', 'B6', 'B7', 'B8', 'B9'), REV
+B6 = REV in ('B6', 'B7', 'B8', 'B9')
+B7 = REV in ('B7', 'B8', 'B9')
 B8 = REV == 'B8'
+B9 = REV == 'B9'
+if B9:
+    NLM.SCHEM = 'r6'
 # B8: comparator nets widened after the shields and before the supplies (they get the free tracks next to them first)
 B8_CMP_WIDEN = ['xc4_xs1_tail', 'xc4_xs1_tail0', 'xc4_dip', 'xc4_din', 'xc4_lt', 'xc4_outpb', 'xc4_outnb',
                 'xc5_xs1_tail', 'xc5_xs1_tail0', 'xc5_dip', 'xc5_din', 'xc5_lt', 'xc5_outpb', 'xc5_outnb',
@@ -1303,12 +1311,15 @@ def build_top(ly, sl):
           dict(x0=gceil(xc + 1.6), devs=xmib[2:], bulk='vss', gap=0.8)]
     t1, _ = blk.mrow(r1, 7.2, 'nHV')
     r2l = [rb('xmibl_s0'), rb('xmb0'), rb('xmt')]
-    r2r = [rb('xm1'), rb('xm2'), rb('xmsfl_s0')]
+    r2r = [rb('xm1'), rb('xm2'), rb('xmsfl_s0')] + ([rb('xmsfl_s1'), rb('xmsfl_s2')] if B9 else [])
     w2l = blk.seg_w(r2l, 0.8)
     r2 = [dict(x0=gfloor(xc - w2l - 1.6), devs=r2l, bulk='vss', gap=0.8), dict(x0=gceil(xc + 1.6), devs=r2r, bulk='vss', gap=0.8)]
     t2, _ = blk.mrow(r2, gceil(t1 + 3.2), 'nHV')
-    w3 = blk.seg_w(xmsf[:2], 0.8)
-    r3 = [dict(x0=gfloor(xc - w3 - 1.6), devs=xmsf[:2], bulk='vss', gap=0.8), dict(x0=gceil(xc + 1.6), devs=xmsf[2:], bulk='vss', gap=0.8)]
+    r3l, r3r = xmsf[:2], xmsf[2:]
+    if B9:
+        r3l, r3r = [rb('xmibl_s1')] + r3l, r3r + [rb('xmibl_s2')]
+    w3 = blk.seg_w(r3l, 0.8)
+    r3 = [dict(x0=gfloor(xc - w3 - 1.6), devs=r3l, bulk='vss', gap=0.8), dict(x0=gceil(xc + 1.6), devs=r3r, bulk='vss', gap=0.8)]
     t3, _ = blk.mrow(r3, gceil(t2 + 3.2), 'nHV')
     w4 = blk.seg_w([rb('xm3'), rb('xm4')], 0.8)
     r4 = [dict(x0=gfloor(xc - w4 / 2), devs=[rb('xm3'), rb('xm4')], bulk='vdda', gap=0.8)]
@@ -1381,6 +1392,32 @@ def build_top(ly, sl):
     for x in gpts(ls[0], ls[1]):
         D.sq('Via3', x, ls[2], VIA)
     blk.pin('vrefl', [(2, xl4, y) for y in gpts(lf[2] + 0.8, VREFL_Y[0] - 0.4)], 'm4')
+    if B9:
+        # layout B9 (r1_refbuf6): followers s1 / s2 (same row as s0, east of it): Metal3 strap on the source rail and one
+        # Metal4 riser each into the vrefl bus (same offset from the rail start as the s0 riser); sinks s1 / s2 (main
+        # follower row ends): Metal2 strap on the drain rail, joined by the router (DC sink current only)
+        b9r = []
+        for k in (1, 2):
+            fk = m2_strap('xref_xmsfl_s%d' % k, 2, 'vrefl')
+            sk = m2_strap('xref_xmibl_s%d' % k, 0, 'vrefl')
+            for (a_, b_, y) in (fk,):     # sinks: Metal2 strap only (the s1 rail crosses the vdd feeder, Metal3 at x 100)
+                # dev2: the Metal3 strap starts east of a vref Metal3 vertical that crosses the rail (dev1: the s1 strap
+                # touched the vertical at x 268.8 and LVS joined vref and vrefl)
+                for xv in VX:
+                    if a_ - 1.6 < xv < b_ + 1.6:
+                        assert xv < a_ + 4.0, (xv, a_)
+                        a_ = gceil(xv + 1.0 + 0.6)
+                D.box('M3', a_ - 0.2, y - 0.2, b_ + 0.2, y + 0.2); R.reserve(1, a_ - 0.2, y - 0.2, b_ + 0.2, y + 0.2, 'vrefl')
+                for x in gpts(a_, b_):
+                    D.sq('Via2', x, y, VIA)
+            xk = gnear(fk[0] + 16.8)
+            assert xk - 1.0 > xl4 + 1.0 + 0.4, (xk, xl4)
+            D.box('M4', xk - 1.0, fk[2] - 0.2, xk + 1.0, VREFL_Y[1]); R.reserve(2, xk - 1.0, fk[2] - 0.2, xk + 1.0, VREFL_Y[1], 'vrefl')
+            grid_vias('Via3', xk - 1.0, fk[2] - 0.2, xk + 1.0, fk[2] + 0.2)
+            blk.pin('vrefl', [(2, xk, y) for y in gpts(fk[2] + 0.8, VREFL_Y[0] - 0.4)], 'm4')
+            b9r.append(dict(follower=fk, sink=sk, riser_x=xk))
+        log('B9 vrefl followers / sinks s1, s2: %s' % b9r)
+        blk.stats['b9_vrefl'] = b9r
     # layout B3 (2026-10-27): vrefl bus to the slice vrefl pins. In B2 the router crossed under the vref bus with
     # 0.40 um wires and single cuts (20-22 Ohm from the vrefl decoupling to the slice pins, vref 1.6 Ohm). B3: per pin
     # a Metal2 jumper (2.0 um) from inside the vrefl bus under the vref bus and a Metal3 stub (2.0 um) in the gap of the
@@ -1717,7 +1754,13 @@ def main():
     sl.portlabels = slice_port_labels(sl)
     top, shapes = build_top(ly, sl)
     log('top routed', top.stats['route_ok'], top.stats['route_failed'], '%.0f s' % (time.time() - t0))
-    json.dump(shapes, open(os.path.join(HERE, 'r1_adc_decap.json'), 'w'), indent=1)
+    # B9 (T2o): a development run (-rd out=<elsewhere>) writes the decap, CDL and layout JSON next to its GDS, so the
+    # tracked layout-of-record files are not overwritten before the layout is adopted
+    DEV = os.path.abspath(OUT) != os.path.join(HERE, 'r1_adc.gds')
+    ODIR = os.path.dirname(os.path.abspath(OUT)) if DEV else HERE
+    if DEV and B9:
+        assert json.load(open(os.path.join(HERE, 'r1_adc_decap.json'))) == json.loads(json.dumps(shapes)), 'B9 decap shapes differ from the tracked file'
+    json.dump(shapes, open(os.path.join(ODIR, 'r1_adc_decap.json'), 'w'), indent=1)
     # layout B5: the SAR macro as a cell reference (not flattened) at (0, H), R0
     import hashlib
     sgds = os.path.join(os.environ['G1_RESULTS_ROOT'], 'r1_adc_sar', 'release-t2j-h', 'r1_adc_sar.gds')
@@ -1733,14 +1776,16 @@ def main():
     log('B5: r1_adc_sar placed at (0, %.2f), cells copied %d' % (H, sl2.cells()))
     import importlib
     importlib.reload(NLM)
-    NLM.write_cdl()
+    if B9:
+        NLM.SCHEM = 'r6'
+    NLM.write_cdl(os.path.join(ODIR, 'r1_adc_lvs.cdl')) if DEV else NLM.write_cdl()
     ly.write(OUT)
     rr = os.environ.get('G1_RESULTS_ROOT')
     log('wrote', (OUT.replace(rr, '<G1_RESULTS_ROOT>') if rr else OUT).replace('/work/', '<repo>/'))
     meta = dict(box=[W, HB5], analog_box=[W, H], slice=dict(origins=[[x, SY] for x in SX], size=[WS, HS], stats=sl.stats, edge=sl.edge),
                 top=dict(stats=top.stats), log=LOG,
                 ports=dict(slice=sl.ports, top=top.ports))
-    json.dump(meta, open(os.path.join(HERE, 'r1_adc_layout.json'), 'w'), indent=1, default=str)
+    json.dump(meta, open(os.path.join(ODIR, 'r1_adc_layout.json'), 'w'), indent=1, default=str)
 
 
 main()
