@@ -4,7 +4,7 @@
 // with the crossings described in r1_biss.v and r1_spi.v.
 // Reset: por_n asynchronous assert, synchronous release. EN/STO_IN does not
 // reset the core; it is a fault source and gates the outputs directly.
-// Interface: R1_REGISTER_MAP.md (revision 0.8) and blocks/INTERFACES.md 0.1.
+// Interface: R1_REGISTER_MAP.md (revision 0.9) and blocks/INTERFACES.md 0.1.
 // Revision 0.2 ports: 13 raw ADC decisions with adc_valid (weights applied
 // here, D12); is_smp (isense pair track-and-hold); az_win (isense auto-zero
 // window); comparator threshold and calibration codes to r1_safe (analog).
@@ -16,10 +16,12 @@
 // comparator mask az_win + AZ_EXT ticks aligned to the synchronised flags, OSC_TRIM lock
 // (STATUS bit 14 TRIM_UNLK), ID 0x5207. One new port: cur_trk (r1_adc SAR input, coordinator 2026-10-27).
 // Revision 0.8 (PLAN.md D22): COS_GAIN (cosine channel gain), raw-code min/max capture, ID 0x5208; no port change.
+// Revision 0.9 (PLAN.md D27): IA_OFS/IB_OFS/IA_GAIN/IB_GAIN applied to the phase-current samples (r1_icor) before the
+// I2t over-current model and the bus registers I_A/I_B; raw min/max capture of the current codes; ID 0x5209; no port change.
 // SPDX-License-Identifier: Apache-2.0
 
 module r1_ctrl_top #(
-    parameter [15:0] CHIP_ID    = 16'h5208,
+    parameter [15:0] CHIP_ID    = 16'h5209,
     parameter [15:0] PROFILE_ID = 16'h0001,
     parameter [47:0] DEV_ID     = 48'h52_31_4A_46_45_30,
     parameter [31:0] DEV_SN     = 32'h0000_0000,
@@ -89,6 +91,8 @@ module r1_ctrl_top #(
     wire [195:0] adc_wa, adc_wb;
     wire [7:0]  extrap, cal_crc, dead;
     wire [11:0] ofs_sin, ofs_cos, i_zero;
+    wire [11:0] ia_ofs, ib_ofs;          // 0.9 (D27)
+    wire [15:0] ia_gain, ib_gain;
     wire [9:0]  pos_cfg;
     wire        cal_valid;
     wire        osc_arm;
@@ -121,7 +125,9 @@ module r1_ctrl_top #(
     wire        fault, en_s;
     wire [15:0] e_a, e_b;
     wire [13:0] temp;
-    wire [11:0] i_a, i_b;
+    wire [11:0] i_a, i_b;              // 0.9: corrected current samples (r1_icor): I_A/I_B and I2t
+    wire [11:0] ir_a, ir_b;            // 0.9: raw current samples (r1_gate): capture, r1_icor input
+    wire        cur_valid;
     wire        pwm_wrap;
     wire        biss_frame_end, spi_frame_ok;
     wire [3:0]  cmp_s;
@@ -217,7 +223,11 @@ module r1_ctrl_top #(
         .adc_valid_a(adc_valid_a), .adc_raw_a(adc_raw_a), .adc_valid_b(adc_valid_b), .adc_raw_b(adc_raw_b),
         .adc_wa(adc_wa), .adc_wb(adc_wb), .adc_arm(adc_arm), .adc_disc(adc_disc),
         .smp_sh(smp_sh), .smp_valid(smp_valid), .sin_code(sin_code),
-        .cos_code(cos_code), .i_a(i_a), .i_b(i_b), .late_cnt(late_cnt));
+        .cos_code(cos_code), .i_a(ir_a), .i_b(ir_b), .cur_valid(cur_valid), .late_cnt(late_cnt));
+
+    // ---------------- phase-current correction (revision 0.9, D27) ----------------
+    r1_icor u_icor (.clk(clk), .rst_n(rst_n), .cur_valid(cur_valid), .raw_a(ir_a), .raw_b(ir_b),
+        .ofs_a(ia_ofs), .ofs_b(ib_ofs), .gain_a(ia_gain), .gain_b(ib_gain), .i_a(i_a), .i_b(i_b));
 
     // ---------------- bus ----------------
     wire [15:0] osc_count;
@@ -287,6 +297,7 @@ module r1_ctrl_top #(
         .rdata(reg_rdata), .status(status), .fault_cause(cause), .osc_count(osc_count),
         .pos(pos_out), .turns(turns), .velocity(velocity), .amplitude(amplitude),
         .raw_sin(sin_code), .raw_cos(cos_code), .smp_valid(smp_valid), .meas_angle(meas_angle), .i_a(i_a), .i_b(i_b),
+        .ir_a(ir_a), .ir_b(ir_b), .cur_valid(cur_valid), .ia_ofs(ia_ofs), .ib_ofs(ib_ofs), .ia_gain(ia_gain), .ib_gain(ib_gain),
         .temp(temp), .e_a(e_a), .e_b(e_b), .biss_frames(biss_frames), .biss_cc_err(biss_cc_err),
         .spi_err(spi_err), .pos_ovr(pos_ovr_cnt), .late_cnt(late_cnt), .id_byte(id_byte),
         .cmp_cal_a(cmp_cal_a), .cmp_cal_b(cmp_cal_b), .cal_busy(cal_busy), .rd_sel(spi_rd_sel),

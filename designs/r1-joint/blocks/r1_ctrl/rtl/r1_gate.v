@@ -31,6 +31,8 @@
 // smp_sh of pair n+1 (the same tick is allowed). The encoder frame is therefore
 // max(PAIR_TICKS, conversion + 5 ticks), with the conversion counted from the
 // adc_start pulse to the later adc_valid pulse: 22 ticks for <= 17 ticks.
+// Revision 0.9 (PLAN.md D27): cur_valid pulses in the tick in which i_a / i_b hold a new (not discarded)
+// current pair; i_a / i_b are the raw (weight-corrected) codes, corrected in r1_icor.
 // Gate outputs: registered PWM AND gate_ok (registered) AND the EN/STO_IN pad
 // level (asynchronous, so EN low forces the gates low at once).
 // SPDX-License-Identifier: Apache-2.0
@@ -71,6 +73,7 @@ module r1_gate (
     output reg  [11:0]  sin_code,       // both updated together when the pair is complete
     output reg  [11:0]  cos_code,
     output reg  [11:0]  i_a, i_b,
+    output reg          cur_valid,      // 0.9: pulse, i_a / i_b updated (raw current pair, D27)
     output reg  [3:0]   late_cnt        // saturating
 );
     // ---------------- PWM ----------------
@@ -213,9 +216,9 @@ module r1_gate (
             ca <= 12'h800; cb <= 12'h800; pa_r <= 1'b0; pb_r <= 1'b0; sc_pend <= 1'b0;
             adc_hold <= 1'b0; is_smp <= 1'b0; adc_start <= 1'b0; adc_sel <= 1'b0;
             smp_sh <= 1'b0; smp_valid <= 1'b0; sin_code <= 12'h800; cos_code <= 12'h800;
-            i_a <= 12'd0; i_b <= 12'd0; late_cnt <= 4'd0;
+            i_a <= 12'd0; i_b <= 12'd0; late_cnt <= 4'd0; cur_valid <= 1'b0;
         end else begin
-            adc_start <= 1'b0; smp_sh <= 1'b0; smp_valid <= 1'b0;
+            adc_start <= 1'b0; smp_sh <= 1'b0; smp_valid <= 1'b0; cur_valid <= 1'b0;
             if (ptim != 8'hFF) ptim <= ptim + 8'd1;
             if (stb) req <= 1'b1;
             if (adc_valid_a) begin tag_a <= adc_sel; drop_a <= cur_drop; end
@@ -225,7 +228,7 @@ module r1_gate (
                 if (!tag_a) begin
                     if (!drop_a) begin sin_code <= nca; cos_code <= ncb; smp_valid <= 1'b1; end
                     sc_pend <= 1'b0;                                // a start below overrides
-                end else if (!drop_a) begin i_a <= nca; i_b <= ncb; end
+                end else if (!drop_a) begin i_a <= nca; i_b <= ncb; cur_valid <= 1'b1; end
             end else begin
                 pa_r <= nra; pb_r <= nrb; ca <= nca; cb <= ncb;
             end

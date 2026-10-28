@@ -1,5 +1,7 @@
 #!/bin/sh
-# Full r1_ctrl verification run (revision 0.8: the 0.7 list plus the D22 group (tb_d22 + d22_ref.py bit-exact, chip-level d22 at three clocks); revision 0.7: the 0.5 list plus the v07 group at three clocks; revision 0.5: the list below is the 0.3 list plus: exhaustive r1_tapidx check,
+# Full r1_ctrl verification run (revision 0.9: the 0.8 list plus the D27 group (tb_icor + icor_ref.py bit-exact incl. saturation,
+# chip-level d27 at three clocks: words, CRC coverage, I_A/I_B through the chip, raw current capture, host calibration, I2t trip);
+# revision 0.8: the 0.7 list plus the D22 group (tb_d22 + d22_ref.py bit-exact, chip-level d22 at three clocks); revision 0.7: the 0.5 list plus the v07 group at three clocks; revision 0.5: the list below is the 0.3 list plus: exhaustive r1_tapidx check,
 # chip-level tests tap / ana / disc, SDC port check, Yosys CHECK pass): V3 position (tb_pos + pos_ref.py,
 # 30-tick cases of 0.2 and 22-tick D18 frame cases), ADC weight correction
 # (tb_adcw + adcw_ref.py), comparator calibration search model against the
@@ -89,6 +91,20 @@ done
 python3 tb/d22_ref.py check "$OUT/d22" > "$OUT/d22/check.log" 2>&1
 for ck in 23.810 33.333 47.619; do
   vvp -n "$OUT/tb_top.vvp" +test=d22 +clk_ns=$ck > "$OUT/top_d22_${ck}.log" 2>&1
+done
+
+# revision 0.9 (D27): phase-current offset/gain correction r1_icor bit-exact against the integer model (5 cases: every code at the
+# reset words, random words, saturation/rounding corners, field range, restart by a second pair); chip-level d27 at three clocks
+mkdir -p "$OUT/icor"
+iverilog -g2005 -Wall -Wno-timescale -o "$OUT/icor/tb_icor.vvp" rtl/r1_icor.v tb/tb_icor.v > "$OUT/icor/compile.log" 2>&1
+python3 tb/icor_ref.py gen "$OUT/icor" > "$OUT/icor/gen.log" 2>&1
+for c in id rnd sat cal; do
+  vvp -n "$OUT/icor/tb_icor.vvp" +dir="$OUT/icor" +case=$c +n=$(wc -l < "$OUT/icor/icor_${c}_stim.hex") > "$OUT/icor/tb_$c.log" 2>&1
+done
+vvp -n "$OUT/icor/tb_icor.vvp" +dir="$OUT/icor" +case=restart +restart=1 +n=$(wc -l < "$OUT/icor/icor_restart_stim.hex") > "$OUT/icor/tb_restart.log" 2>&1
+python3 tb/icor_ref.py check "$OUT/icor" > "$OUT/icor/check.log" 2>&1
+for ck in 23.810 33.333 47.619; do
+  vvp -n "$OUT/tb_top.vvp" +test=d27 +clk_ns=$ck > "$OUT/top_d27_${ck}.log" 2>&1
 done
 
 # revision 0.5: exhaustive r1_tapidx check (4096 pairs per cell type) against the Python form of the r1_safe formula

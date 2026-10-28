@@ -7,13 +7,15 @@
 # Revision 0.6: LLRUN=<hardening run id>; the 0.5 tests tap and ana also run (add them to GL_JOBS); disc, cdc, cal are GLSKIP (README 0.6).
 # Revision 0.7: the v07 group (ports and SPI only) at three clocks is in the default list.
 # Revision 0.8: the d22 group (ports and SPI only) at three clocks is in the default list.
+# Revision 0.9: the d27 group (ports and SPI only) at three clocks is in the default list; the three biss jobs
+# (about 1.5 h each at slow, the longest) start first, so the wall clock is about one biss job with 4 parallel jobs.
 # Revision 0.6 default list: tap ana ssi spi gate safe biss (cal needs thr_*/cal_*, disc and cdc need nets the netlist does not have: not run).
 # Tests (same set as sim/run_all.sh, 315 RTL checks): biss, ssi at 23.810 33.333 47.619 ns; spi gate safe cal at 33.333; cal at 23.810.
 set -u
 export LD_LIBRARY_PATH=/foss/tools/iverilog/lib
 RID="$1"; MODE="$2"; PAR="${3:-4}"
 LL=${LLRUN:-r1ctrl_ll_20261021_t7}   # hardening run whose netlist and SDF are simulated (0.6: r1ctrl_ll_20261021_t9)
-T7=$G1_RESULTS_ROOT/r1_ctrl/$LL/flow/runs/$LL/final
+T7=${GL_FINAL:-$G1_RESULTS_ROOT/r1_ctrl/$LL/flow/runs/$LL/final}   # 0.9: GL_FINAL=<dir with nl/ and sdf/> starts before the flow end; versions.txt keeps the sha256 for the comparison with final/
 V=/foss/pdks/ihp-sg13g2/libs.ref/sg13g2_stdcell/verilog
 OUT="$G1_RESULTS_ROOT/r1_ctrl/$RID/$MODE"
 mkdir -p "$OUT"
@@ -43,7 +45,7 @@ fi
 [ -n "$SDFARG" ] && SDFARG="+sdf=$OUT/delays.sdf +sdfmode=$SDFMODE"
 cd "$OUT"
 # GL_JOBS="biss:33.333 ..." reruns a subset with the compiled model of the first call (no recompile)
-JOBS="${GL_JOBS:-d22:23.810 d22:33.333 d22:47.619 v07:23.810 v07:33.333 v07:47.619 tap:33.333 ana:33.333 ssi:23.810 spi:33.333 gate:33.333 safe:33.333 ssi:33.333 ssi:47.619 biss:23.810 biss:33.333 biss:47.619}"   # 0.6: tap, ana added; cal, disc, cdc are GLSKIP (README 0.6) and not in the default list
+JOBS="${GL_JOBS:-biss:23.810 biss:33.333 biss:47.619 d27:23.810 d27:33.333 d27:47.619 d22:23.810 d22:33.333 d22:47.619 v07:23.810 v07:33.333 v07:47.619 tap:33.333 ana:33.333 ssi:23.810 spi:33.333 gate:33.333 safe:33.333 ssi:33.333 ssi:47.619}"   # 0.6: tap, ana added; cal, disc, cdc are GLSKIP (README 0.6) and not in the default list
 for j in $JOBS; do echo "$j"; done | xargs -P "$PAR" -I{} sh -c '
   t=${1%%:*}; ck=${1##*:}
   s=$(date +%s)

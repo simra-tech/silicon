@@ -132,7 +132,7 @@ open(f"{summ}/top_calmc.log", "w").write(re.sub(r"/\S*/r1_ctrl/", "<G1_RESULTS_R
 shutil.copy(f"{out}/versions.txt", summ)
 shutil.copy(f"{out}/inputs.sha256", summ)
 open(f"{summ}/summary.md", "w").write("\n".join(lines) + "\n")
-top_ok = all(v["passed"] for v in res["top"].values()) and len(res["top"]) == 24   # 0.7: + top_v07 at 3 clocks; 0.8: + top_d22 at 3 clocks
+top_ok = all(v["passed"] for v in res["top"].values()) and len(res["top"]) == 27   # 0.7: + top_v07 at 3 clocks; 0.8: + top_d22; 0.9: + top_d27
 pos_ok = all(v["rtl_vs_float_reference_deg_el"]["max_abs"] < 0.05 for v in res["pos"].values()) and len(res["pos"]) == 16
 cs_ok = all(v["count_safety"]["max_abs_step_error_deg_el_after_lock"] < 90.0 and abs(v["count_safety"]["multiturn_offset_end_counts"]) < 0.5
             for k, v in res["pos"].items() if "count_safety" in v and k not in ("f22_250k_a2x_gap", "f22_250k_alim_gap"))   # information only
@@ -164,6 +164,15 @@ lines += ["", f"Stimulus: {d22['stimulus']}. Criteria: {d22['criteria']}. Verdic
 shutil.copy(f"{out}/d22/d22_result.json", summ)
 open(f"{summ}/summary.md", "w").write("\n".join(lines) + "\n")
 cal_ok = cm["disposition"].startswith("passed") and ck["disposition"].startswith("passed")
+ic = json.load(open(f"{out}/icor/icor_result.json"))
+res["icor"] = ic
+lines += ["", "## Revision 0.9: D27 phase-current correction (tb_icor + icor_ref.py, bit-exact)", "",
+          "| Case | Vectors | Outputs | Mismatches | Saturated outputs | Identity violations at reset words |", "| --- | --- | --- | --- | --- | --- |"]
+for k, v in ic["cases"].items():
+    lines.append(f"| {k} | {v['vectors']} | {v['outputs']} | {v['mismatches']} | {v['saturated_outputs']} | {v['identity_violations_at_reset_words']} |")
+lines += ["", f"Criteria: {ic['criteria']}. Verdict: {'passed' if ic['passed'] else 'FAILED'}."]
+shutil.copy(f"{out}/icor/icor_result.json", summ)
+open(f"{summ}/summary.md", "w").write("\n".join(lines) + "\n")
 run = dict(
     run_id=rid,
     command="flow/run.sh sh sim/run_all.sh " + rid,
@@ -171,9 +180,9 @@ run = dict(
     tools=ver, pdk_commit=ver.get("pdk_commit"),
     inputs="inputs.sha256 (RTL, testbenches, scripts)",
     bulk_results="$G1_RESULTS_ROOT/r1_ctrl/" + rid,
-    question="Does the r1_ctrl revision 0.8 RTL (D22: COS_GAIN, raw min/max capture, ID 0x5208) pass the whole revision-0.7 regression plus the new D22 tests (bit-exact model, chip-level d22), and what is its synthesized cell area?",
+    question="Does the r1_ctrl revision 0.9 RTL (D27: IA_OFS/IB_OFS/IA_GAIN/IB_GAIN on the current samples, raw current capture, ID 0x5209) pass the whole revision-0.8 regression plus the new D27 tests (bit-exact model incl. saturation, chip-level d27), and what is its synthesized cell area?",
     result=res,
-    disposition=("simulation checks passed" if (top_ok and pos_ok and d22["passed"] and aw["passed"] and cs_ok and cal_ok and tp["disposition"] == "passed" and sd["disposition"] == "passed") else "simulation checks FAILED (see summary.md)")
+    disposition=("simulation checks passed" if (top_ok and pos_ok and d22["passed"] and ic["passed"] and aw["passed"] and cs_ok and cal_ok and tp["disposition"] == "passed" and sd["disposition"] == "passed") else "simulation checks FAILED (see summary.md)")
                 + f"; cell area {area/1e6:.3f} mm2 = {area/180000:.2f} x the 0.18 mm2 budget (before placement)",
 )
 json.dump(run, open(f"{summ}/run.json", "w"), indent=1)

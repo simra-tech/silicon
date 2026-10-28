@@ -1,4 +1,6 @@
-# r1_ctrl — R1 digital macro (revision 0.8 hardened and signed off in 532 x 679 um)
+# r1_ctrl — R1 digital macro (revision 0.8 of record; revision 0.9 hardened, not signed off, in 532 x 679 um)
+
+State (2026-10-28, track T5i): revision 0.9 (PLAN.md D27: `IA_OFS`/`IB_OFS`/`IA_GAIN`/`IB_GAIN` at 0x48-0x4B correct the phase-current samples for `I_A`/`I_B` and the I²t model; raw current capture 0x4C-0x4F; ID 0x5209; "Revision 0.9" below) passes the RTL regression (600 checks) and the bit-exact model. It is hardened in the same box with the same 128 pins (`r1ctrl_ll_20261028_t30`: DRC, LVS, antenna 0; setup and hold met at typ / fast / slow), but it is **not signed off**: the ctrl IR derate at the try-h1 losses gives +0.650 ns (requirement 1 ns), 3 nets exceed max slew at slow, 2 nets exceed max fanout through antenna diodes, and gate-level SDF ran only `d27` at 23.8 ns. Utilisation 85.4 %. Revision 0.8 (`r1ctrl_08_release`) stays the macro of record.
 
 State (2026-10-27, track T5h): revision 0.8 (PLAN.md D22: `COS_GAIN`, renamed `SIN_OFS`/`COS_OFS`/`SIN_GAIN`, raw-code min/max capture, ID 0x5208; "Revision 0.8" below) is hardened and signed off. Run of record `r1ctrl_ll_20261027_t22`: DRC, LVS, antenna 0; setup, hold, fanout, slew, cap clean at typ / fast / slow; gate-level SDF slow 430 checks passed; release `r1ctrl_08_release`. Drop-in for 0.7: same box, same 128 pins, no port change. Utilisation 79.9 % (0.7: 84.8 %; goal near 75 % not met). Revision 0.8 replaces 0.7 as the macro of record.
 
@@ -27,6 +29,127 @@ written from the specification and studies S1, S2, S3 and S5. No third-party RTL
 Patterns copied from G1 `g1_ctrl` (not shared): the two-flop synchroniser, the
 async-assert/sync-release reset, the SCLK-domain shift logic with a hand-off to the core clock,
 the `run_sim.sh` style and the `ALL TESTS PASSED` convention.
+
+## Revision 0.9 (2026-10-28, PLAN.md D27: phase-current offset and gain correction, raw current capture; hardening runs `r1ctrl_ll_20261028_t23` to `_t30`; not signed off)
+
+Goal: D27 (host-written offset and gain per phase-current channel, applied to the current samples before the over-current threshold compare and the bus registers, reset = no correction; raw min/max capture of the current codes for the host calibration; `ID` advances), with every 0.8 behaviour, the 128-pin map, the 532 x 679 um box and the ADC contract unchanged; regression clean, re-hardened with the 0.8 configuration of record (t22), sign-off STA, DRC/LVS/antenna, gate-level SDF slow, ctrl IR derate at the try-h1 losses. Register map: `R1_REGISTER_MAP.md` draft 0.9, `ID` 0x5209. All numbers are simulated, synthesized or LibreLane/OpenSTA results; nothing is measured. Paths are relative to this directory; `<G1_RESULTS_ROOT>` is the bulk results root (`r1_ctrl/<run-id>/`). Track T5i, CPU set 112-115.
+
+Summary: RTL regression (600 checks), the D27 bit-exact model (16 955 vectors) and the chip-level `d27` group **passed** (current-step error +5.664 % before, +0.000 % after the host calibration). OpenROAD CTS lost one clock-gate input in t24, t25 and t26; the hardening of record `_t30` is t24 plus a checked one-pin repair. On t30, sign-off setup and hold **passed** at typ / fast / slow (slow setup +3.302 ns, hold +0.341 / +0.111 ns slow / fast); max slew (3 nets at slow) and max fanout (2 nets, antenna diodes only) **failed**; the ctrl IR derate at the try-h1 losses **failed** (U_max +0.650 ns, requirement >= 1 ns). Utilisation **85.4 %** (0.8: 79.9 %). DRC, LVS and antenna are clean and the 128 pins are unchanged. Gate-level SDF slow: `d27` at 23.8 ns passed (24 checks); the other 19 jobs did not finish in the track budget (not run). Revision 0.9 is **not signed off**; revision 0.8 (`r1ctrl_08_release`) stays the macro of record.
+
+### What changed
+
+| # | Change | Where |
+| --- | --- | --- |
+| 1 | **D27 current correction (new module `r1_icor`).** I = sat(round((RAW − 2048 − OFS) × GAIN / 2^14) + 2048) per channel (arithmetic below). One shift-add multiplier (one 14-bit adder, 16 ticks per channel, channels in turn): `I_A` is written 18 ticks and `I_B` 35 ticks after the raw pair. A pair that arrives during the sequence restarts it (newer pair wins; only with a PWM period below 36 ticks). The first form with one parallel 13 x 17 multiplier (2 ticks) synthesized to 15 040 um^2 and was replaced (failure 3). | `rtl/r1_icor.v` (new) |
+| 2 | **Corrected samples everywhere downstream.** `I_A`/`I_B` (0x29/0x2A) and the I²t model (`I_ZERO`, `I2T_LIM`, FAULT bits 9/10) use the corrected samples. With the reset words every corrected sample equals the raw code, so all 0.8 behaviour is unchanged (regression below). `r1_gate` keeps the raw pair and gives a new internal strobe `cur_valid` (the tick in which a not-discarded current pair is written). | `rtl/r1_gate.v`, `rtl/r1_ctrl_top.v` |
+| 3 | **New registers** `IA_OFS` 0x48, `IB_OFS` 0x49 ([11:0] signed ADC LSB, subtracted, reset 0), `IA_GAIN` 0x4A, `IB_GAIN` 0x4B (unsigned Q2.14, reset 0x4000 = 1.0). CRC-covered as words 45..48 after `COS_GAIN` (engine counter 0..47; a write clears `CAL_VALID`). | `rtl/r1_regs.v`, map 4.4, 4.7 |
+| 4 | **Raw current capture** `RAW_IA_MIN/MAX` 0x4C/0x4D, `RAW_IB_MIN/MAX` 0x4E/0x4F (4 x 12 flip-flops): min/max of the raw (weight-corrected, before `IA_OFS`/`IA_GAIN`) current codes of every current pair (`cur_valid`), exactly as the 0.8 encoder capture. A write of any value to any of 0x4C-0x4F clears these four (MIN 0xFFF, MAX 0x000, = reset); the encoder capture 0x5E/0x5F/0x6E/0x6F is a separate group. Not CRC-covered. | `rtl/r1_regs.v`, map 4.7 |
+| 5 | `ID` 0x5209, register map draft 0.9 (change log section 7). No port, pin or SDC change: the `r1_ctrl_top` port list is identical to 0.8; `flow/check_sdc_ports.py`: 30 ports, 128 bits, 0 unconstrained, 0 stale. ADC contract (`adc_start`/`adc_sel`/`is_smp`/`cur_trk` timing, conversion ≤ 17 ticks, D18 frame) unchanged: `r1_gate` frame logic is untouched apart from the strobe. Reset values of all existing registers unchanged. | `rtl/r1_ctrl_top.v`, `rtl/r1_regs.v` |
+| 6 | Testbenches: new `tb/tb_icor.v` + `tb/icor_ref.py` (integer model, 5 cases, bit-exact incl. saturation and the restart rule); new chip-level group `d27` in `tb/tb_top.v` (24 checks, below); `load_cal_crc` covers 48 words (`crc_v08` gives the 0.8 routine for the negative check); `spi`/`v07`/`d22` ID checks 0x5209; the ADC model can draw random current codes and tracks the model min/max of the raw current codes. `sim/run_all.sh` runs the D27 group; `sim/summarize.py` expects 27 chip-level logs; `sim/signoff/run_gl.sh` runs `d27` at three clocks at gate level. | `tb/`, `sim/` |
+| 7 | Flow: `flow/librelane/config.yaml` lists `rtl/r1_icor.v`; `cfg_v09_t23.yaml`, `cfg_v09_t24.yaml` = the t22 settings (`cfg_v08_t22.yaml`, same keys); `cfg_v09_t25/26/28.yaml` (CTS variants, failures 5-8); `cfg_v09_t29.yaml` + `run_harden_eco.sh` + `eco_cts_pin.tcl` (one-pin post-CTS repair, t29/t30); `sim/signoff/release09.sh` (release), `sim/signoff/derate09.sh` (IR derate, reuses the r1_top method files read-only; `DERATE_FINAL`), `sim/signoff/run_gl.sh` (`GL_FINAL`, biss jobs first). | `flow/`, `sim/signoff/` |
+
+### Correction arithmetic (fixed point)
+
+    d = (RAW_I - 2048) - I_OFS                  13-bit signed, ADC LSB (I_OFS: 12-bit two's complement, -2048..+2047)
+    q = floor((d * I_GAIN + 8192) / 16384)       I_GAIN unsigned Q2.14, 0x4000 = 1.0, LSB 2^-14 = 61 ppm, range 0..3.99994
+    I = min(4095, max(0, q + 2048))              12-bit offset binary, the format of the raw code and of I_A / I_B in 0.8
+
+Hardware form: P = d x I_GAIN by 16 shift-add steps (P[29:0] = {14-bit high part, 16-bit low part}, the gain bits are shifted out of the low part); q = P[29:14] + P[13]. With I_OFS = 0 and I_GAIN = 0x4000, I = RAW for every code (4096 x 2 codes checked). The map is affine around mid-scale (the ADC zero), so it removes an ADC gain error exactly and a shunt or isense gain error together with its pedestal; host procedure: register map section 4.7.
+
+Decisions (recommended option, taken without asking):
+
+1. **"Over-current threshold compare" = the I²t model.** The over-current and phase-short trips of R1 are analog (`r1_safe` window comparators on the isense output, trip points from `CMP_THR`/`CMP_CAL`); a digital word cannot move them. The only digital threshold compare on the ADC current samples is the I²t model (E against `I2T_LIM` after `|I - I_ZERO|`), and it now uses the corrected sample. Failure 1 (spec-ambiguity).
+2. **Gain around mid-scale, offset subtracted** (as `SIN_OFS`/`SIN_GAIN`), not around `I_ZERO`: the ADC gain error of D27 acts around the ADC zero, and the offset word absorbs the isense pedestal; `I_ZERO` keeps its meaning in corrected units.
+3. **Round to nearest (half up)**, where D22 floors: the result is an integer LSB code, not an 18-bit value with 4 fraction bits; floor would add a −0.5 LSB bias to every current.
+4. **CRC-covered** (words 45..48): a gain upset moves every reported current and the I²t trip, the same class as the encoder words (0.8 decision 4). The 0.8 host CRC routine (44 words) does not match 0.9 (checked: `d27`).
+5. **Addresses 0x48-0x4F**: the native map 0x00-0x3F has no free address; 0x48-0x77 are refused by the BiSS control channel (`r1_idrom`), so no BiSS byte is hidden.
+6. **Capture of the raw codes, own clear group**: the host computes `IA_OFS`/`IA_GAIN` in the units it writes; the current calibration does not clear the encoder capture and the reverse.
+7. **Shift-add multiplier** (area; failure 3): one product per PWM period does not need a parallel multiplier. Latency 18 / 35 ticks (0.6 / 1.2 us at 30 MHz), well below the I²t update period (one PWM period or more).
+8. **Hardening**: exactly the 0.8 configuration of record t22 (t18 hold strategy + post-GRT timing repair, hold margin 0.15 ns).
+9. **One-pin repair instead of more CTS trials** (failures 4-9): CTS replays showed no LibreLane knob that stops the clock-gate latency balancing. The repair connects `_16393_/A` to `delaynet_15_clk`, the balanced clock of the sister word gate `_16394_` (`u_regs.g_w[6].u_wa`, same 9 sinks, about 60 um away). The script refuses to act unless the pin is open and the net is a clock net. Every step after CTS, all checkers, LVS and the gate-level run see the repaired netlist.
+
+### Status (revision 0.9)
+
+| # | Check | Status | Evidence |
+| --- | --- | --- | --- |
+| 1 | Regression `r1ctrl_20261028_v09b` (`sim/run_all.sh`, RTL concat sha256 `f68edabe...`, = t24): all 0.8 groups (`biss` 3 x 48, `ssi` 3 x 9, `spi` 27, `gate` 22, `safe` 32, `cal` 2 x 32, `tap` 2 x 5, `ana` 9, `disc` 14, `cdc` 3 x 4, `v07` 36/40/40, `d22` 3 x 17) plus `d27` 3 x 24 | **passed**: 27 logs, 600 checks, 0 failed | `sim/results/r1ctrl_20261028_v09b/summary.md`, `top_*.log`; superseded: `r1ctrl_20261028_v09` (first RTL form, also 600 / 0; failure 3) |
+| 1a | Position V3 (16 cases), ADC weights, one-hot, `r1_tapidx` exhaustive, calibration search vs `r1_safe` model, D22 bit-exact (5 x 4096 pairs) | **passed**: as 0.8, 0 mismatches | `pos_*_check.log`, `adcw_result.json`, `tapidx_result.json`, `calmc_check.json`, `d22_result.json` |
+| 1b | SDC port check (`flow/r1_ctrl.sdc`), Yosys CHECK | **passed**: 30 ports, 128 bits, 0 unconstrained, 0 stale; 0 problems | `sdc_ports.json`, `yosys_check.txt` |
+| 2 | D27 bit-exact: `tb_icor` vs `tb/icor_ref.py`, cases `id` (every code on both channels at the reset words), `rnd` (8192 random codes and words), `sat` (315 corner sets: codes 0/1/2047/2048/2049/4094/4095, offsets −2048/−1/0/1/2047, gains 0..0xFFFF), `cal` (4096 field-range sets: gain 0.75-1.25, offset ±200), `restart` (256 pairs, second pair 10 ticks after the first) | **passed**: 16 955 vectors, 0 mismatches, identity at the reset words for all 4096 codes; 8 031 saturated outputs exercised | `icor_result.json` |
+| 3 | Chip-level `d27` at 23.8 / 33.3 / 47.6 ns: ID 0x5209; reset values (words, capture, `I_A`/`I_B` 0); R/W widths; CRC over 44 words fails / 48 passes, each of the 4 words clears `CAL_VALID`; reset words give `I_A` = raw; 12 word sets through the chip (both saturation ends, ±0.5 / ±1.5 LSB rounding, gain 0) = model; capture of 24 random current pairs = model min/max exactly, clear by 0x4D and 0x4E, encoder group independent; host calibration of a 1.057 ADC gain; I²t trip on the corrected sample (gain 0.75: no trip at a raw current that trips at 1.0 x; gain 1.25 trips I2T_A; `IB_OFS` −800 with gain 1.25 trips I2T_B at zero raw current; `I2T_A/B` = i² of the corrected sample) | **passed**: 24 / 24 / 24 checks. Current step with the 1.057 gain: **+5.664 %** before, **+0.000 %** after (I_A 822 -> 1740, ideal 822 -> 1740) | `top_d27_*.log` |
+| 4 | Negative control: `d27` on the 0.8 RTL (git HEAD) | **passed as a control**: 19 of 24 checks fail, as expected | `<G1_RESULTS_ROOT>/r1_ctrl/r1ctrl_dev09/neg08/top_d27_33.333.log` |
+| 5 | Yosys area delta (flat, typical) | 253 057 um^2, +16 327 um^2 (+6.9 %) over 0.8; table below | `stat_flat.txt` |
+| 6 | Hardening `_t23` (first RTL form, superseded; comparison only) | exit 0: utilisation 87.3 %, DRC / LVS / antenna 0, 4 max-slew violations at slow | `<G1_RESULTS_ROOT>/r1_ctrl/r1ctrl_ll_20261028_t23/disposition.json`, `ll_report.md` |
+| 7 | Hardening `_t24` (final RTL, the 0.8 configuration of record t22, `cfg_v09_t24.yaml`) | **failed** (tooling, failure 4): stopped at the disconnected-pins checker after 2 h 13 min; CTS lost input A of the clock-gate AND `_16393_` | `<G1_RESULTS_ROOT>/r1_ctrl/r1ctrl_ll_20261028_t24/disposition.json` |
+| 8 | Hardening `_t25`, `_t26`, `_t27`, `_t28` (CTS variants, `cfg_v09_t25/26/28.yaml`) | **superseded / abandoned** (failures 5-8): same lost pin in the step-35 netlist (t25, t26; t28 by the CTS-only replay), t27 without the configuration keys; not stopped (no process is killed), set to nice 19, not used for any result | `<G1_RESULTS_ROOT>/r1_ctrl/r1ctrl_ll_20261028_t2{5,6,7,8}/disposition.json`, `*.note.txt` |
+| 8a | CTS-only replays on the t24 placement (`--from/--to OpenROAD.CTS`): `CTS_DELAY_BUFFER_DERATE_PCT` 0 (`cts0`), `CTS_BALANCE_LEVELS` false (`cts2`) | **failed as a fix**: 20 delay buffers and the same lost pin in both | `<G1_RESULTS_ROOT>/r1_ctrl/r1ctrl_dev09/ctstest/` |
+| 8b | Hardening `_t29` (repair route, first try) | **failed** (tooling, failure 9) after 1 min: odb schema of the repair tool | `<G1_RESULTS_ROOT>/r1_ctrl/r1ctrl_ll_20261028_t29/disposition.json` |
+| 9 | **Hardening of record `_t30`**: steps 1-35 (synthesis to CTS) of `_t24` unchanged, one-pin repair `_16393_/A` -> `delaynet_15_clk` (`flow/librelane/eco_cts_pin.tcl`, `run_harden_eco.sh`, `cfg_v09_t29.yaml`: DRT_THREADS 4), then every LibreLane step from `OpenROAD.ResizerTimingPostCTS` to the end, incl. all checkers. Connectivity: 0 cells with a missing pin before routing; the disconnected-pins checker passed | **passed** as a flow run: exit 0 (steps after CTS 2 h 26 min), detailed routing 0 violations, XOR passed; utilisation 85.4 %. Sign-off results in rows 10-13 | `<G1_RESULTS_ROOT>/r1_ctrl/r1ctrl_ll_20261028_t30/` (`run.json`, `eco/eco.log`, `inputs.sha256`), `reports/ll_t30.md` |
+| 10 | Sign-off STA with `flow/r1_ctrl.sdc` (nominal SPEF), t30: true setup slack typ / fast / slow; outputs; hold; max-fanout 8, slew, cap | setup and hold **passed**, design rules **failed**: true setup slack to flop D +9.521 / +10.202 / **+3.302 ns** typ / fast / slow (0.8: +3.714 at slow; same path class `meas_angle` -> `u_pos.cx`); outputs +15.497 / +16.482 / +13.840 ns; worst latch borrow 2.318 ns at slow (0.8: 2.246); hold +0.195 / +0.111 / **+0.341 ns**; 0 VIOLATED timing paths. Max fanout: 2 nets at every corner (`fanout2427` 11, `_29641_/Q` 9), each with 5 antenna diodes as loads, logic fanout 6 and 4. Max slew at slow: 3 nets, 1.64-1.71 ns against 1.5 ns (`_25313_`, `_25312_` a221oi_1, `_24469_` nand4_1); 0 at typ / fast. Max cap 0. Run on the step outputs before the flow end (fill-insertion netlist, `rcx` nominal SPEF); repeated on `final/` by `sim/signoff/signoff08.sh` (run `r1ctrl_20261028_t30sta`): identical slacks; the final netlist, SPEF and SDF are byte-identical to the step outputs | `<G1_RESULTS_ROOT>/r1_ctrl/r1ctrl_dev09/t30pre/sta/`, `<G1_RESULTS_ROOT>/r1_ctrl/r1ctrl_20261028_t30sta/` |
+| 11 | Detailed routing, Magic DRC, KLayout DRC, LVS, antenna (t30); pins 128 of 128 on the `pins_v07` slots | **passed**: routing / Magic DRC / KLayout DRC / LVS / antenna 0 / 0 / 0 / 0 / 0; 128 pins, 0 mismatches against `pins_v07` (no pin moved) | same, `pins_check.txt` |
+| 12 | Gate-level simulation with SDF at slow (MAXIMUM), t30 netlist: chip-level list, `v07`, `d22`, **`d27`** at 23.8 / 33.3 / 47.6 ns | **partly run**: `d27` at 23.8 ns **passed** (24 checks, 0 failed, 2 153 s). The other 19 jobs (`biss` x 3, `d27` at 33.3 / 47.6 ns, `d22` x 3, `v07` x 3, `tap`, `ana`, `ssi` x 3, `spi`, `gate`, `safe`) had not finished at the end of the track budget: **not run** in this record. The run continues in the results root; it was started on the step outputs (`GL_FINAL`), which are byte-identical to `final/` | `<G1_RESULTS_ROOT>/r1_ctrl/r1ctrl_gl_20261028_t30/` |
+| 13 | ctrl IR derate at the try-h1 losses (`sim/signoff/derate09.sh`: cases of `r1_top/r1ctrl_irderate_h1dev1`, `r1_top/irderate/sta_derate.tcl` read-only; method check: the script reproduces h1dev1 on the 0.8 t22 netlist exactly, run `r1ctrl_20261028_t22derate`); requirement: derated setup slack >= 1 ns | **failed**: derated setup slack at slow U_typ +1.565, **U_max +0.650**, U_max_meancell +0.867, OCV_typ +1.544, **OCV_max +0.624 ns** (requirement >= 1 ns; 0.8 t22: +2.011 / +1.114 / +1.326 / +2.002 / +1.102); derated hold >= +0.336 ns at slow; fast: setup >= +10.070 ns, OCV_bound hold +0.070 ns (0.8: +0.083). Inputs = the pre-flow-end netlist and SPEF (sha256 in `inputs.sha256`). The first attempt `r1ctrl_20261028_t30derate` is invalid (failure 10) | `<G1_RESULTS_ROOT>/r1_ctrl/r1ctrl_20261028_t30derateb/` |
+| 14 | Release files `r1ctrl_09_release` (same file set as 0.8, `sim/signoff/release09.sh`, `SOURCE.txt` names the repair) with `SHA256SUMS` | **written, not of record**: GDS sha256 `9b9a53b8…`, LEF `d35b5b68…`, netlist `ac3617a0…`; the 128 LEF pin shapes are identical to `r1ctrl_08_release` (`clk` and `ma_sclk` differ only in the `ANTENNADIFFAREA` note); `SOURCE.txt` names the repair and states NOT SIGNED OFF | `<G1_RESULTS_ROOT>/r1_ctrl/r1ctrl_09_release/` |
+| 15 | Formal equivalence (RTL vs netlist), CDC tool, chip-level IR drop with the 0.9 macro, gate-level `disc` / `cdc` / `cal` | **not run** (as 0.8; the probes of `disc`/`cdc`/`cal` are not netlist nets) | — |
+
+### Area delta (Yosys, flat, no hardening)
+
+| Quantity | 0.8 (`r1ctrl_20261027_v08b`) | 0.9 first form (`_v09`) | 0.9 (`r1ctrl_20261028_v09b`) | Delta 0.8 -> 0.9 |
+| --- | --- | --- | --- | --- |
+| Cell area (um^2) | 236 730 | 260 211 | **253 057** | +16 327 (+6.9 %) |
+| Cells / flip-flops and latches | 15 914 / 2 158 | 17 650 / 2 308 | 16 922 / 2 340 | +1 008 / +182 |
+| `r1_icor` (hierarchical) | — | 15 040 | 7 706 | +7 706 |
+| `r1_regs` incl. word children (hierarchical) | 66 368 | 75 311 | 75 311 | +8 943 |
+
+New flip-flops: words 2 x 12 + 2 x 16 = 56 (four gated clocks), capture 4 x 12 = 48, `r1_icor` 74 (state 3, step counter 4, d 13, product 30, corrected samples 24), `cur_valid` 1. The rest of the `r1_regs` delta is the four 12-bit comparators and clear logic of the capture, 8 read-mux entries and 4 CRC words.
+
+### Hardening result (t30, LibreLane, 532 x 679 um)
+
+| Quantity | 0.8 (`r1ctrl_ll_20261027_t22`) | 0.9 (`r1ctrl_ll_20261028_t30`) |
+| --- | --- | --- |
+| Standard-cell area (um^2) / utilisation of the core (333 666 um^2) | 266 436 / **79.9 %** | 284 899 / **85.4 %** |
+| Cells (excl. fill) / flip-flops | 19 444 / 2 158 | 20 749 / 2 340 |
+| Timing-repair buffers (count / um^2) | 2 819 / 21 640 | 3 079 / 23 522 |
+| Antenna diodes | 18 | 39 |
+| Sign-off setup slack to flop D, slow (ns) | +3.714 | **+3.302** (same path class, `meas_angle` -> `u_pos.cx`) |
+| Derated setup, try-h1 losses, U_max / OCV_max (ns) | +1.114 / +1.102 | **+0.650 / +0.624** |
+
+The D27 logic adds 16 300 um^2 of cells in the same box (Yosys); after placement and repair the macro is 18 463 um^2 larger and 5.5 points fuller. The worst flop path is unchanged logic; its 0.41 ns loss at slow comes from the denser placement.
+
+### CDC table (revision 0.9 additions)
+
+| Signal | Source domain | Destination | Crossing | Note |
+| --- | --- | --- | --- | --- |
+| `IA_OFS`, `IB_OFS`, `IA_GAIN`, `IB_GAIN` writes | SPI frame decoded into the `clk` domain (`reg_wr`) | `clk` (gated words u_48..u_4b) | none new | as every configuration word |
+| capture clear (write to 0x4C-0x4F) | `clk` | `clk` | none | decode of the registered write pulse |
+| `cur_valid`, raw `i_a`/`i_b` into `r1_icor` and the capture | `clk` (`r1_gate`) | `clk` | none | |
+| corrected `I_A`/`I_B` to `r1_safe` and the read mux | `clk` | `clk` / SCLK shift register | existing read hand-off | as `I_A` in 0.8 |
+
+No new asynchronous input, no new clock.
+
+### Open issues (revision 0.9)
+
+1. **The over-current trip points stay analog.** `IA_GAIN`/`IA_OFS` correct the digital samples and the I²t model only. The `r1_safe` comparator thresholds (`CMP_THR`, `CMP_CAL`) are not corrected by D27 (decision 1). A system-level owner must decide if the analog trip points need the same calibration.
+2. **Revision 0.9 is not signed off** (rows 10 and 13). Three sign-off items fail on t30: (a) the ctrl IR derate at the try-h1 losses gives U_max +0.650 ns and OCV_max +0.624 ns, below the 1 ns requirement; (b) 3 nets exceed the 1.5 ns max slew at slow (1.64-1.71 ns, `a221oi_1`/`nand4_1` drivers on long single-load wires); (c) 2 nets exceed max fanout 8 only because of antenna diodes (logic fanout 6 and 4). Recommended next run: the same RTL with timing-driven global placement and a larger post-GRT slew margin (`GRT_DESIGN_REPAIR_MAX_SLEW_PCT`), or a macro height step agreed with `r1_top`. The box, pins and contract stay the same in the first option.
+3. **CTS loses one clock-gate pin on this netlist.** OpenROAD CTS (LibreLane 3.1.0.dev2, OpenROAD 26Q1) left `_16393_/A` unconnected in three runs; the delay-buffer derate and `CTS_BALANCE_LEVELS` do not stop it. t30 uses a checked one-pin repair. A new hardening of the same netlist will hit the same defect: use `run_harden_eco.sh`, or report the case upstream to OpenROAD (not done in this track).
+4. Gate-level SDF slow on t30: only `d27` at 23.8 ns finished (passed). The other 19 jobs of `r1ctrl_gl_20261028_t30` must be read when they end (about 1.5 h for `biss`); until then they count as not run.
+5. Not run (as 0.8): formal equivalence RTL vs netlist, a CDC tool, gate-level `disc`/`cdc`/`cal`, chip-level IR drop with the 0.9 macro.
+
+### Failures and mistakes (revision 0.9)
+
+| # | What happened | Class | Effect / fix |
+| --- | --- | --- | --- |
+| 1 | D27 asks for the correction "before the over-current threshold compare". The over-current compare of R1 is analog (`r1_safe` comparators on the isense output); a digital correction cannot act on it. The only digital threshold on the current samples is the I²t model | spec-ambiguity | decision 1: the corrected samples feed I²t and `I_A`/`I_B`; the analog trip points stay with `CMP_THR`/`CMP_CAL` (open issue 1) |
+| 2 | New chip-level test `d27`, development run: 2 capture-clear checks failed because current pairs (every 300 ticks) kept arriving during the SPI read-back after the clear (testbench race, not the RTL) | functional-bug (testbench) | PWM stopped around the clear checks, as `d22` stops the encoder frames |
+| 3 | First `r1_icor` form: one parallel 13 x 17 multiplier for a product needed once per PWM period; estimate about 5 000 um^2, Yosys 15 040 um^2 (macro +23 481 um^2, +9.9 %); hardening t23 placed at 87.3 % | estimation | shift-add form, 7 706 um^2; regression `_v09` and hardening `_t23` superseded (t23 kept as a comparison) |
+| 4 | Hardening t24 (final RTL, the 0.8 configuration t22) stopped after 2 h 13 min at the disconnected-pins checker: OpenROAD CTS (clock-gate latency balancing, 20 delay buffers) left input A (clk) of the clock-gate AND `_16393_` (gated clock of `u_regs.g_w[6].u_wb`) unconnected; routing had reached 0 violations | tooling | rerun with other CTS settings (rows 5-7), then repair (row 9) |
+| 5 | t25 changed `CTS_SINK_CLUSTERING_SIZE` 30 -> 28 to perturb the tree; the clusters are limited by the 120 um diameter, so the tree and the lost pin were identical (found on the step-35 netlist after 20 min) | tooling | t26 changed the diameter; t25 not stopped (no process is killed), set to nice 19 |
+| 6 | t26 changed `CTS_SINK_CLUSTERING_MAX_DIAMETER` 120 -> 100: other tree, same lost pin. The defect follows the latency balancing, not the clustering | tooling | CTS-only replays (row 8); t26 not stopped, nice 19 |
+| 7 | t27 was started with `R1_CFG_APPEND` exported on the host; `flow/run.sh` does not pass it into the container, so t27 runs the base `config.yaml` (found after 1 min) | process-hygiene | relaunched as t28 with the variable set inside the container; t27 not stopped, nice 19 |
+| 8 | t28 set `CTS_DELAY_BUFFER_DERATE_PCT` 0. CTS-only replays on the t24 placement (`r1ctrl_dev09/ctstest`, tags `cts0`, `cts2`, about 5 min each) showed that neither `-delay_buffer_derate 0` nor `CTS_BALANCE_LEVELS` false stops the clock-gate latency balancing: 20 delay buffers, same lost pin. The replay should have come before t28 | tooling | t28 not stopped, nice 19; repair route (row 9) |
+| 9 | t29 = t24 steps 1-35 plus a one-pin repair (`flow/librelane/eco_cts_pin.tcl`: `_16393_/A` to `delaynet_15_clk`, the latency-balancing net of the sister gate `_16394_`, `u_regs.g_w[6].u_wa`, same 9 sinks), then LibreLane from `OpenROAD.ResizerTimingPostCTS` to the end. It stopped after 1 min: the repair was written by the newer `openroad` on the container PATH (odb schema 0.136); LibreLane uses `/foss/tools/openroad-librelane` (schema 0.126) | tooling | `run_harden_eco.sh` uses the LibreLane OpenROAD build; rerun t30 |
+| 10 | IR-derate run `r1ctrl_20261028_t30derate` started with an unedited `derate09.sh` (a `sed` edit had failed) and before `final/` existed: no netlist, empty result | process-hygiene | run kept as invalid; `derate09.sh` now stops on missing inputs; rerun `_t30derateb` |
+| 11 | t30 misses the derate requirement (U_max +0.650 ns < 1 ns), 3 max-slew nets at slow and 2 max-fanout nets (antenna diodes); the 16 300 um^2 of D27 logic in the same box raised the utilisation from 79.9 % to 85.4 % | design | not signed off; open issue 2 |
 
 ## Revision 0.8 (2026-10-27, PLAN.md D22: channel offset and gain correction, raw-code capture; hardening runs `r1ctrl_ll_20261027_t19` to `_t22`)
 
@@ -980,6 +1103,7 @@ latches; they pass in t5.
 | `rtl/r1_gate.v`, `rtl/r1_adcw.v` | PWM, dead time, current strobe, `az_win`, D18 ADC frame generator; ADC weight correction (14 decisions, one instance per slice) |
 | `rtl/r1_safe.v`, `rtl/r1_cmpcal.v` | fault sources and latch, I²t, T2F counter, watchdog; comparator offset calibration |
 | `rtl/r1_regs.v` | register file, read multiplexer, calibration CRC-8 checker |
+| `rtl/r1_icor.v` | revision 0.9 (D27): phase-current offset and gain correction (shift-add multiplier, 18 / 35 ticks) |
 | `rtl/r1_sync2.v` | two-flop synchroniser |
 | `rtl/r1_tapidx.v` | revision 0.5: tap-index adders for `r1_safe` (nP, nN, registered) |
 | `tb/tb_pos.v`, `tb/pos_ref.py` | testbench (a): RTL against a floating-point reference, host calibration fits, count safety (`+pair`, `+skip`, `+lat`) |
@@ -988,8 +1112,11 @@ latches; they pass in t5.
 | `tb/tb_tapidx.v`, `tb/tapidx_ref.py` | revision 0.5: exhaustive check of `r1_tapidx` (4096 pairs per cell type) against the Python form of the `r1_safe` formula |
 | `tb/cmpcal_ref.py` | revision 0.3: Python model of the two-sided calibration search, compared with `r1_safe` `sim/cal_model.py` on its MC data; writes the comparator tables for `calmc` and checks the RTL results |
 | `tb/tb_d22.v`, `tb/d22_ref.py` | revision 0.8: D22 channel correction, integer model of the `r1_pos` measurement path (bit-exact, 5 cases x 4096 pairs), angle error before / after the host correction |
+| `tb/tb_icor.v`, `tb/icor_ref.py` | revision 0.9: D27 current correction, integer model, bit-exact (5 cases incl. saturation and restart) |
 | `sim/run_all.sh`, `sim/summarize.py` | full run, summary, per-block area, `run.json` |
 | `sim/signoff/signoff08.sh`, `sim/signoff/release08.sh` | revision 0.8: sign-off STA / fanout / pins / SDC-port check of a hardening run; release files with `SHA256SUMS` |
+| `sim/signoff/release09.sh`, `sim/signoff/derate09.sh` | revision 0.9: release files of 0.9 (`r1ctrl_09_release`); ctrl IR derate at the try-h1 losses (OpenSTA step of `../r1_top/irderate`, read-only) |
+| `flow/librelane/eco_cts_pin.tcl`, `flow/librelane/run_harden_eco.sh` | revision 0.9: one-pin post-CTS repair of a clock pin lost by OpenROAD CTS, and the LibreLane continuation from `OpenROAD.ResizerTimingPostCTS` (hardening `r1ctrl_ll_20261028_t30`) |
 | `sim/results/<run-id>/` | summary, `run.json`, test logs, synthesis statistics, input hashes |
 | `flow/synth.tcl` | Yosys synthesis for the cell area (Booth, PDK latch map, 42 MHz delay target) |
 | `flow/check_sdc_ports.py` | revision 0.5: port list from the RTL against the SDC patterns (unconstrained bits, stale patterns) |

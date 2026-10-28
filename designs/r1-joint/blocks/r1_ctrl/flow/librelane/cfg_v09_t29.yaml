@@ -1,0 +1,7 @@
+# Revision 0.9, runs t29 (failed: odb schema, see run_harden_eco.sh) and t30: continuation of t24 (the 0.8 record configuration t22) after a one-pin post-CTS repair
+# (run_harden_eco.sh, eco_cts_pin.tcl): input A of the clock-gate AND _16393_ (u_regs.g_w[6].u_wb) to the
+# latency-balancing net delaynet_15_clk, the net of the sister gate _16394_ (u_regs.g_w[6].u_wa, same sink count).
+# OpenROAD CTS lost this pin in t24, t25 and t26; CTS_DELAY_BUFFER_DERATE_PCT 0 does not stop the gate latency
+# balancing (CTS-only replays on the t24 placement: 20 delay buffers, same pin lost; CTS_BALANCE_LEVELS false: same). DRT_THREADS 4 instead of 2:
+# wall-clock only; the routed result is checked by the same DRC, LVS, antenna and STA steps.
+DRT_THREADS: 4

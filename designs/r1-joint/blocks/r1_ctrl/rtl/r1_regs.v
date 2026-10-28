@@ -29,10 +29,15 @@
 // maximum of the weight-corrected encoder codes (the RAW_SIN/RAW_COS values) of every
 // encoder pair (smp_valid); a write of any value to any of the four clears all four
 // (MIN 0xFFF, MAX 0x000, = reset; MIN > MAX means no pair since the clear).
+// Revision 0.9 (PLAN.md D27): phase-current correction words IA_OFS (0x48), IB_OFS (0x49), signed ADC LSB, reset 0,
+// and IA_GAIN (0x4A), IB_GAIN (0x4B), Q2.14, reset 0x4000 (arithmetic in r1_icor.v); CRC-covered as words 45..48,
+// after 0x3F. Raw current capture RAW_IA_MIN/MAX (0x4C/0x4D), RAW_IB_MIN/MAX (0x4E/0x4F): min/max of the raw
+// (weight-corrected, before IA_OFS/IA_GAIN) current codes of every current pair (cur_valid); a write to any of the
+// four clears these four (the encoder capture is a separate group). I_A/I_B read the corrected samples.
 // SPDX-License-Identifier: Apache-2.0
 
 module r1_regs #(
-    parameter [15:0] CHIP_ID = 16'h5208
+    parameter [15:0] CHIP_ID = 16'h5209
 ) (
     input  wire        clk,
     input  wire        rst_n,
@@ -54,7 +59,9 @@ module r1_regs #(
     input  wire [11:0] raw_cos,
     input  wire        smp_valid,      // 0.8: raw_sin / raw_cos hold a new encoder pair in this tick
     input  wire [17:0] meas_angle,
-    input  wire [11:0] i_a, i_b,
+    input  wire [11:0] i_a, i_b,      // 0.9: corrected samples (r1_icor)
+    input  wire [11:0] ir_a, ir_b,    // 0.9: raw samples (r1_gate), capture only
+    input  wire        cur_valid,     // 0.9: ir_a / ir_b hold a new current pair in this tick
     input  wire [13:0] temp,
     input  wire [15:0] e_a, e_b,
     input  wire [7:0]  biss_frames,
@@ -88,6 +95,8 @@ module r1_regs #(
     output wire [11:0] ofs_sin, ofs_cos,
     output wire [15:0] gain, ph_sin, ph_icos,
     output wire [15:0] cos_gain,       // 0.8: COS_GAIN (0x3F)
+    output wire [11:0] ia_ofs, ib_ofs, // 0.9: IA_OFS (0x48), IB_OFS (0x49)
+    output wire [15:0] ia_gain, ib_gain, // 0.9: IA_GAIN (0x4A), IB_GAIN (0x4B)
     output wire [15:0] h3,
     output wire [15:0] zero_ofs,
     output wire [9:0]  pos_cfg,
@@ -180,6 +189,11 @@ module r1_regs #(
     r1_cword #(.W(8), .RV(8'd120), .A(7'h3E)) u_3e (clk, rst_n, wr, addr, wdata[7:0], az_ext);
     // 0.8: COS_GAIN (0x3F), Q2.14, reset 1.0; CRC-covered (word 43)
     r1_cword #(.W(16), .RV(16'h4000), .A(7'h3F)) u_3f (clk, rst_n, wr, addr, wdata, cos_gain);
+    // 0.9 (D27): phase-current offset and gain; CRC-covered (words 44..47)
+    r1_cword #(.W(12), .A(7'h48)) u_48 (clk, rst_n, wr, addr, wdata[11:0], ia_ofs);
+    r1_cword #(.W(12), .A(7'h49)) u_49 (clk, rst_n, wr, addr, wdata[11:0], ib_ofs);
+    r1_cword #(.W(16), .RV(16'h4000), .A(7'h4A)) u_4a (clk, rst_n, wr, addr, wdata, ia_gain);
+    r1_cword #(.W(16), .RV(16'h4000), .A(7'h4B)) u_4b (clk, rst_n, wr, addr, wdata, ib_gain);
     assign cmp_cal_wr_a = wr && (addr == 7'h3A);
     assign cmp_cal_wr_b = wr && (addr == 7'h3B);
 
@@ -220,12 +234,24 @@ module r1_regs #(
     // 0.8: raw-code capture (D22); cleared by a write to 0x5E, 0x5F, 0x6E or 0x6F
     reg [11:0] sin_min, sin_max, cos_min, cos_max;
     wire       mm_clr = wr && ((addr[6:1] == 6'b101111) || (addr[6:1] == 6'b110111));   // 0x5E/0x5F, 0x6E/0x6F
+    // 0.9: raw current capture (D27); cleared by a write to 0x4C, 0x4D, 0x4E or 0x4F
+    reg [11:0] ia_min, ia_max, ib_min, ib_max;
+    wire       im_clr = wr && (addr[6:2] == 5'b10011);                                    // 0x4C..0x4F
     always @(posedge clk or negedge rst_n) begin
         if (!rst_n) begin
             clr_pulse <= 1'b0; osc_arm <= 1'b0; cal_run <= 1'b0; gate_en <= 1'b0; wdt_en <= 1'b0;
             raw_cos_hold <= 12'h800; trim_unlk <= 1'b0; trim_wr_d <= 1'b0;
             sin_min <= 12'hFFF; sin_max <= 12'h000; cos_min <= 12'hFFF; cos_max <= 12'h000;
+            ia_min <= 12'hFFF; ia_max <= 12'h000; ib_min <= 12'hFFF; ib_max <= 12'h000;
         end else begin
+            if (im_clr) begin
+                ia_min <= 12'hFFF; ia_max <= 12'h000; ib_min <= 12'hFFF; ib_max <= 12'h000;
+            end else if (cur_valid) begin
+                if (ir_a < ia_min) ia_min <= ir_a;
+                if (ir_a > ia_max) ia_max <= ir_a;
+                if (ir_b < ib_min) ib_min <= ir_b;
+                if (ir_b > ib_max) ib_max <= ir_b;
+            end
             if (mm_clr) begin
                 sin_min <= 12'hFFF; sin_max <= 12'h000; cos_min <= 12'hFFF; cos_max <= 12'h000;
             end else if (smp_valid) begin
@@ -254,14 +280,15 @@ module r1_regs #(
     // revision 0.3: the CRC engine reads the covered words through the read
     // multiplexer (maddr). The SPI owns it only in the two ticks in which it
     // decodes a frame (rd_sel); the engine then holds its position and state.
-    reg  [5:0]  cw;                    // covered word 0..43 (0.8: 43 = COS_GAIN 0x3F)
+    reg  [5:0]  cw;                    // covered word 0..47 (0.8: 43 = COS_GAIN 0x3F; 0.9: 44..47 = 0x48..0x4B)
     reg         chalf;                 // 0: high byte, 1: low byte
     reg  [7:0]  crc;
     reg         dirty;
     wire [6:0]  caddr = (cw < 6'd8)  ? 7'h10 + {1'd0, cw} :
                         (cw < 6'd15) ? 7'h36 + {1'd0, cw - 6'd8} :
                         (cw < 6'd29) ? 7'h50 + {1'd0, cw - 6'd15} :
-                        (cw < 6'd43) ? 7'h60 + {1'd0, cw - 6'd29} : 7'h3F;
+                        (cw < 6'd43) ? 7'h60 + {1'd0, cw - 6'd29} :
+                        (cw == 6'd43) ? 7'h3F : {5'b10010, cw[1:0]};   // 0.9: 44..47 -> 0x48..0x4B
     wire [6:0]  maddr = rd_sel ? addr : caddr;
     wire [15:0] cv = rdata;
     wire [7:0] cb = chalf ? cv[7:0] : cv[15:8];
@@ -276,14 +303,15 @@ module r1_regs #(
         end
     endfunction
     wire       first = (cw == 6'd0) && !chalf;
-    wire       last  = (cw == 6'd43) && chalf;
+    wire       last  = (cw == 6'd47) && chalf;
     wire [7:0] crc_n = crc8_byte(first ? 8'hFF : crc, cb);
     wire       adv   = !rd_sel;
     // the latch word changes in the tick after the write pulse; a write marks the
     // pass dirty in both ticks so no pass mixes old and new values
     reg  cal_wr_d, cal_busy_d;
     wire cal_wr = wr && (((addr >= 7'h10) && (addr <= 7'h18)) || ((addr >= 7'h36) && (addr <= 7'h3C)) ||
-                         ((addr >= 7'h50) && (addr <= 7'h5D)) || ((addr >= 7'h60) && (addr <= 7'h6D)) || (addr == 7'h3F));
+                         ((addr >= 7'h50) && (addr <= 7'h5D)) || ((addr >= 7'h60) && (addr <= 7'h6D)) || (addr == 7'h3F) ||
+                         (addr[6:2] == 5'b10010));                              // 0.9: 0x48..0x4B
     always @(posedge clk or negedge rst_n) begin
         if (!rst_n) begin
             cw <= 6'd0; chalf <= 1'b0; crc <= 8'hFF; dirty <= 1'b1; cal_valid <= 1'b0;
@@ -389,6 +417,14 @@ module r1_regs #(
             7'h5F: rdata = {4'd0, sin_max};
             7'h6E: rdata = {4'd0, cos_min};
             7'h6F: rdata = {4'd0, cos_max};
+            7'h48: rdata = {4'd0, ia_ofs};
+            7'h49: rdata = {4'd0, ib_ofs};
+            7'h4A: rdata = ia_gain;
+            7'h4B: rdata = ib_gain;
+            7'h4C: rdata = {4'd0, ia_min};
+            7'h4D: rdata = {4'd0, ia_max};
+            7'h4E: rdata = {4'd0, ib_min};
+            7'h4F: rdata = {4'd0, ib_max};
             default: begin
                 if (wsel_any) rdata = {2'd0, w_or};
                 else          rdata = maddr[6] ? {8'd0, id_byte} : 16'd0;

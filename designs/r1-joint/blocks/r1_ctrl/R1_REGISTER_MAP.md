@@ -1,9 +1,9 @@
-# R1 bus protocols and register map (draft 0.8, 2026-10-27)
+# R1 bus protocols and register map (draft 0.9, 2026-10-28)
 
 Owner block: `r1_ctrl` (`designs/r1-joint/blocks/r1_ctrl`). This document is the contract between
 the host, the digital macro (`rtl/r1_ctrl_top.v`) and the analog blocks it connects to. It is a
-draft: nothing here is on silicon. The RTL in `rtl/` implements this version (revision 0.8; change log in section 7).
-Versioning rule: `ID` = 0x52 followed by the RTL revision digit (0.5 = 0x5205, 0.7 = 0x5207, 0.8 = 0x5208). Revision 0.6 was a
+draft: nothing here is on silicon. The RTL in `rtl/` implements this version (revision 0.9; change log in section 7).
+Versioning rule: `ID` = 0x52 followed by the RTL revision digit (0.5 = 0x5205, 0.7 = 0x5207, 0.8 = 0x5208, 0.9 = 0x5209). Revision 0.6 was a
 hardening of the 0.5 RTL without an RTL change, so it has no `ID` of its own.
 Revision 0.2 checked every BiSS interpretation item of 0.1 against the BiSS C Rev D2 document
 ("D2", page numbers of that PDF). Section 3.4 lists the result. One item stays **[verify]**: the
@@ -165,7 +165,7 @@ read 0. Reset values apply after `por_n`. `EN` does not reset the registers.
 
 | Addr | Name | Type | Reset | Bits |
 | --- | --- | --- | --- | --- |
-| 0x00 | `ID` | RO | 0x5208 | chip 'R', RTL revision 0.8 (0.7: 0x5207, 0.5 and 0.6: 0x5205, 0.4: 0x5204, 0.3: 0x5203, 0.2: 0x5202, 0.1: 0x5210) |
+| 0x00 | `ID` | RO | 0x5209 | chip 'R', RTL revision 0.9 (0.8: 0x5208, 0.7: 0x5207, 0.5 and 0.6: 0x5205, 0.4: 0x5204, 0.3: 0x5203, 0.2: 0x5202, 0.1: 0x5210) |
 | 0x01 | `STATUS` | RO | — | 0 AMP_LOW, 1 AMP_HIGH, 2 OVERSPEED, 3 TRACK_ERR, 4 CAL_VALID, 5 CLK_FAULT, 6 POS_VALID, 7 FAULT, 8 EN (synchronised), 9 GATE_ACTIVE, 10 OSC_DONE, 11 CAL_BUSY, 12 CAL_DONE, 13 CAL_EXH (any comparator), 14 TRIM_UNLK (0.7, section 4.3) |
 | 0x02 | `FAULT` | RO | 0x1800 (EN high at reset; 0x1900 with EN low) | latched causes: 0–3 comparator flags `cmp[3:0]`, 4 OTEMP, 5 AMP, 6 OVERSPEED, 7 WDT, 8 STO (EN low), 9 I2T_A, 10 I2T_B, 11 CAL (CRC mismatch), 12 POR |
 | 0x03 | `FAULT_MASK` | RW | 0x0000 | 1 = source does not latch; bits 8, 11, 12 cannot be masked |
@@ -176,7 +176,8 @@ calibration CRC does not match. Revision 0.7: the `EN` synchroniser resets to 1 
 power-up with `EN` high gives 0x1800, not 0x1900 (0.5 and 0.6 latched STO for the two ticks of synchroniser latency,
 r1_top finding R3). A power-up with `EN` low still latches STO. After reset, the gates stay off until the host does these steps:
 
-1. Write the calibration registers (section 4.4), the comparator words and the ADC weights of both slices.
+1. Write the calibration registers (section 4.4), the comparator words, the ADC weights of both slices and the
+   phase-current words (section 4.7, revision 0.9).
 2. Run the comparator calibration (section 4.10), if it is used.
 3. Write `CAL_CRC` (computed over the values that read back, section 4.4).
 4. Write `CTRL.CLR`.
@@ -255,21 +256,23 @@ The STA limit stays 42 MHz and no timing constraint changes.
 | 0x15 | `H3` | RW | 0 | 7:0 H3_AMP (16-bit angle LSB), 15:8 H3_PH (1/256 turn) |
 | 0x16 | `ZERO_OFS` | RW | 0 | 16-bit angle LSB, subtracted after the direction |
 | 0x17 | `POS_CFG` | RW | 0x0164 | 0 DIR, 4:1 KP (loop gain 2^−KP), 9:5 KI (2^−KI per tick; values outside 8–23 are clamped to 8 or 23) |
-| 0x18 | `CAL_CRC` | RW | 0 | 7:0 CRC-8 of 0x10–0x17, 0x36–0x3C, 0x50–0x5D, 0x60–0x6D (revision 0.3) and 0x3F (revision 0.8) |
+| 0x18 | `CAL_CRC` | RW | 0 | 7:0 CRC-8 of 0x10–0x17, 0x36–0x3C, 0x50–0x5D, 0x60–0x6D (revision 0.3), 0x3F (revision 0.8) and 0x48–0x4B (revision 0.9) |
 
 `CAL_CRC` is CRC-8 with polynomial 0x07, initial value 0xFF, no reflection and no final XOR.
-Revision 0.8 computes it over 44 words (88 bytes; 0.3 to 0.7: 43 words), high byte first, with the values that read
+Revision 0.9 computes it over 48 words (96 bytes; 0.8: 44 words; 0.3 to 0.7: 43 words), high byte first, with the values that read
 back (unused bits as 0, `EXH` bits as read), in this order:
 
 1. 0x10..0x17 (position calibration, 8 words);
 2. 0x36..0x3C (`CMP_THR_A/B`, `AZ_START`, `AZ_CFG`, `CMP_CAL_A/B`, `CMP_CAL_IDEAL`, 7 words);
 3. 0x50..0x5D (`ADC_A_W0`–`ADC_A_W13`, 14 words);
 4. 0x60..0x6D (`ADC_B_W0`–`ADC_B_W13`, 14 words);
-5. 0x3F (`COS_GAIN`, 1 word, revision 0.8). A host CRC routine of 0.7 (43 words) does not match 0.8.
+5. 0x3F (`COS_GAIN`, 1 word, revision 0.8). A host CRC routine of 0.7 (43 words) does not match 0.8;
+6. 0x48..0x4B (`IA_OFS`, `IB_OFS`, `IA_GAIN`, `IB_GAIN`, 4 words, revision 0.9, section 4.7). A host CRC routine of 0.8
+   (44 words) does not match 0.9.
 
 The hardware checks it continuously, one byte per tick, through the register read multiplexer
 (the SPI takes the multiplexer for 2 ticks per frame; the check then pauses). A write to a covered word or to
-`CAL_CRC` clears `CAL_VALID` until the next complete check (≤ 176 ticks plus 2 ticks per SPI frame). A comparator
+`CAL_CRC` clears `CAL_VALID` until the next complete check (≤ 192 ticks plus 2 ticks per SPI frame; 0.8: 176). A comparator
 calibration search (`CAL_BUSY`) also clears it, because the search writes `CMP_CAL_A/B`: after a
 search the host reads the codes, writes the new `CAL_CRC` and then `CTRL.CLR` (FAULT bit 11 is
 latched while `CAL_VALID` = 0). Reason for the extension (0.2 open issue 6): the comparator
@@ -390,8 +393,8 @@ of the mask (it is not lost). The mask delays an over-current that starts in the
 
 | Addr | Name | Type | Reset | Format |
 | --- | --- | --- | --- | --- |
-| 0x29 | `I_A` | RO | 0 | [11:0] last ISA code |
-| 0x2A | `I_B` | RO | 0 | [11:0] last ISB code |
+| 0x29 | `I_A` | RO | 0 | [11:0] last ISA sample, corrected with `IA_OFS` and `IA_GAIN` (revision 0.9; 0.8: the raw code) |
+| 0x2A | `I_B` | RO | 0 | [11:0] last ISB sample, corrected with `IB_OFS` and `IB_GAIN` (revision 0.9) |
 | 0x2B | `TEMP` | RO | 0 | [13:0] T2F edges in the last window (saturating) |
 | 0x2C | `OT_LIM` | RW | 0x3FFF | [13:0] OTEMP when TEMP ≥ OT_LIM |
 | 0x2D | `I2T_CFG` | RW | 0 | 3:0 TAU_SHIFT, 7:4 PRESCALE, 11:8 CMP_FILT |
@@ -401,11 +404,53 @@ of the mask (it is not lost). The mask delays an over-current that starts in the
 | 0x31 | `I2T_B` | RO | 0 | E_B[23:8] |
 | 0x34 | `T2F_WIN` | RW | 15 | window 2^T2F_WIN ticks (minimum 2^8) |
 | 0x0B | `WDT_PERIOD` | RW | 0xFFFF | watchdog period, 1024-tick units; kicked by every BiSS/SSI frame end and every well-formed SPI frame |
+| 0x48 | `IA_OFS` (0.9) | RW | 0 | [11:0] signed (two's complement) ADC LSB, −2048…+2047, subtracted from the ISA code. CRC-covered |
+| 0x49 | `IB_OFS` (0.9) | RW | 0 | [11:0] signed ADC LSB, subtracted from the ISB code. CRC-covered |
+| 0x4A | `IA_GAIN` (0.9) | RW | 0x4000 | unsigned Q2.14 (0x4000 = 1.0, LSB 2^−14, range 0…3.99994), multiplies the offset-corrected ISA code. CRC-covered |
+| 0x4B | `IB_GAIN` (0.9) | RW | 0x4000 | unsigned Q2.14, multiplies the offset-corrected ISB code. CRC-covered |
+| 0x4C | `RAW_IA_MIN` (0.9) | RO, W clears | 0xFFF | [11:0] smallest raw ISA code (weight-corrected, before `IA_OFS`/`IA_GAIN`) since the last clear |
+| 0x4D | `RAW_IA_MAX` (0.9) | RO, W clears | 0x000 | [11:0] largest raw ISA code since the last clear |
+| 0x4E | `RAW_IB_MIN` (0.9) | RO, W clears | 0xFFF | [11:0] smallest raw ISB code since the last clear |
+| 0x4F | `RAW_IB_MAX` (0.9) | RO, W clears | 0x000 | [11:0] largest raw ISB code since the last clear |
 
 I²t model: every 2^PRESCALE PWM periods, for each channel: i = |I − I_ZERO| >> 4 (8 bit);
 E ← E + ((i² · 256 − E) >> TAU_SHIFT). For a constant current, E[23:8] approaches i², with a
 time constant of 2^TAU_SHIFT updates. CMP_FILT: a comparator flag must stay high for
 CMP_FILT + 1 ticks before it latches (0 = 1 tick, 4 ticks from the pin to `FAULT_N`).
+
+**Phase-current offset and gain correction (revision 0.9, PLAN.md D27).** Each current sample of a current frame (the
+weight-corrected code, section 4.11) is corrected before it reaches `I_A`/`I_B` and the I²t model:
+
+    d = (RAW − 2048) − IA_OFS                       13-bit signed, ADC LSB
+    q = floor((d × IA_GAIN + 8192) / 16384)          rounded to the nearest LSB (half up)
+    I_A = min(4095, max(0, q + 2048))                12-bit offset binary, as the raw code
+
+and the same for B with `IB_OFS`, `IB_GAIN`. The correction is an affine map around mid-scale (the ADC zero), so it
+removes an ADC gain error exactly and a shunt or isense chain gain error together with its pedestal (the offset word
+takes the pedestal part). Reset = no correction (offsets 0, gains 1.0): `I_A`/`I_B` equal the raw codes, bit-identical to
+revision 0.8. `I_ZERO` and `I2T_LIM` act on the corrected samples. The analog over-current and phase-short comparators
+(section 4.10) compare the isense output directly; this correction does not move them (their trip points are set by
+`CMP_THR` and `CMP_CAL`). `I_A` is updated 18 ticks and `I_B` 35 ticks after the raw pair is complete (one shift-add
+multiplier, 16 ticks per channel). A pair that arrives less than 36 ticks after the previous one restarts the
+correction (the newer pair wins); this happens only with a PWM period below 36 ticks. The offsets are subtracted, as
+`SIN_OFS`/`COS_OFS`.
+
+Raw-code capture (revision 0.9): `RAW_IA_MIN/MAX`, `RAW_IB_MIN/MAX` hold the minimum and maximum of the raw codes of every
+current pair that is not discarded (section 4.11). A write of any value to any of 0x4C–0x4F clears these four (MIN 0xFFF,
+MAX 0x000, = reset; MIN > MAX means no current pair since the clear); the encoder capture (section 4.5) is a separate group.
+Not CRC-covered (measurements).
+
+Host calibration of a current channel (gates off, two known currents through the shunt, for example 0 and I_1):
+
+1. Write any value to `RAW_IA_MIN` (0x4C). Apply current 0. Wait at least two PWM periods. Read `RAW_IA_MIN` = R0
+   (`RAW_IA_MAX` = R0 for a constant current; their difference is the noise).
+2. Apply I_1, clear, wait, read R1. Compute the ideal codes T0, T1 of the two currents (shunt × isense gain / LSB + pedestal).
+3. Write `IA_GAIN` = round(16384 × (T1 − T0) / (R1 − R0)).
+4. Write `IA_OFS` = round(R0 − 2048 − (T0 − 2048) × 16384 / IA_GAIN) (12-bit two's complement).
+5. Do the same for B. Write `CAL_CRC` (section 4.4) and then `CTRL.CLR`.
+
+With an ADC gain of 1.057 (r1_top test 3) the current step reads +5.66 % before and +0.00 % after this procedure, level 0
+within 1 LSB (simulated, chip-level test `d27`, README revision 0.9).
 
 ### 4.8 Analog control
 
@@ -450,8 +495,9 @@ chip-level integration places them. There is no oscillator enable bit (confirmed
 ### 4.9 BiSS identification (0x40–0x7F)
 
 A native SPI read of 0x40–0x7F returns the BiSS byte in [7:0], except 0x50–0x5D and 0x60–0x6D,
-which are the ADC weights (section 4.11), and 0x5E, 0x5F, 0x6E, 0x6F, the raw-code capture (section 4.5, revision
-0.8). The BiSS control channel does not access them.
+which are the ADC weights (section 4.11), 0x5E, 0x5F, 0x6E, 0x6F, the raw-code capture (section 4.5, revision
+0.8), and 0x48–0x4F, the phase-current words and capture (section 4.7, revision 0.9; BiSS refuses 0x48–0x77, so no
+BiSS byte is hidden). The BiSS control channel does not access them.
 
 | BiSS addr | Content | Value in this RTL |
 | --- | --- | --- |
@@ -650,6 +696,7 @@ The testbench ADC model delivers `adc_valid_a` 17 ticks and `adc_valid_b` 16 tic
 
 | Version | Date | Change |
 | --- | --- | --- |
+| 0.9 | 2026-10-28 | ID 0x5209 (PLAN.md D27). New registers `IA_OFS`, `IB_OFS` (0x48, 0x49, signed ADC LSB, reset 0), `IA_GAIN`, `IB_GAIN` (0x4A, 0x4B, Q2.14, reset 0x4000): offset and gain of the two phase-current samples, applied before `I_A`/`I_B` and the I²t model (section 4.7). `CAL_CRC` covers 48 words (0x48–0x4B appended; the 0.8 host routine does not match). New read-only capture `RAW_IA_MIN/MAX` (0x4C/0x4D), `RAW_IB_MIN/MAX` (0x4E/0x4F) of the raw current codes, cleared by a write to any of them. `I_A`/`I_B` now read the corrected samples (identical to 0.8 at the reset words) and are updated 18 / 35 ticks after the raw pair. No port, pin or ADC timing change. |
 | 0.8 | 2026-10-27 | ID 0x5208 (PLAN.md D22). New register `COS_GAIN` (0x3F, Q2.14, reset 1.0): cosine channel gain. `OFS_SIN`, `OFS_COS`, `GAIN` renamed `SIN_OFS`, `COS_OFS`, `SIN_GAIN` (same address, format, reset and arithmetic; `GAIN` was the gain ratio applied to the sine channel). `CAL_CRC` covers 44 words (0x3F appended; the 0.7 host routine does not match). New read-only capture `RAW_SIN_MIN/MAX` (0x5E/0x5F), `RAW_COS_MIN/MAX` (0x6E/0x6F), cleared by a write to any of them. Correction arithmetic and host procedure in section 4.4. No port, pin or timing change; pair latency 19 ticks. |
 | 0.7 | 2026-10-27 | ID 0x5207. One new output port `cur_trk` (section 6; ADC SAR sub-macro, D21). `CMP_THR_A/B` reset 0x003F (was 0x3F3F: NEG cell code 0 tripped at zero current, r1_top finding R4). `EN` synchroniser reset 1 (`FAULT` after a power-up with `EN` high is 0x1800, finding R3). `OSC_TRIM` hardware lock with `STATUS.TRIM_UNLK` (bit 14) set by a qualifying `OSC_COUNT` read (section 4.3). New register `AZ_EXT` (0x3E, reset 120): comparator mask after `az_win`, replaces the fixed 16 ticks (section 4.6). |
 | 0.1 | 2026-10-20 | first draft with the first RTL |

@@ -1,0 +1,11 @@
+# Revision 0.9, run t25 (final RTL 0.9): the t24 settings (= 0.8 record t22: t18 hold strategy + post-GRT timing repair,
+# hold margin 0.15 ns) with CTS_SINK_CLUSTERING_SIZE 28 instead of 30. Reason: t24 stopped at the disconnected-pins checker
+# (exit 2) because OpenROAD CTS (latency-balancing delay buffers) left the clock input A of one clock-gate AND
+# (u_regs.g_w[6].u_wb gated clock) unconnected; OpenROAD is deterministic for the same inputs, so the clustering is
+# perturbed to change the tree. Same DIE_AREA 532 x 679, pins_v07, sign-off SDC.
+PNR_SDC_FILE: dir::r1_ctrl_pnr6h.sdc
+RUN_POST_GRT_RESIZER_TIMING: true
+GRT_RESIZER_HOLD_SLACK_MARGIN: 0.15
+CTS_SINK_CLUSTERING_SIZE: 28
+DRT_THREADS: 2
+STA_THREADS: 2

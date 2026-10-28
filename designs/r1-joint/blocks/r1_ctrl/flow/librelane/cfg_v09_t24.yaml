@@ -1,0 +1,10 @@
+# Revision 0.9, run t24 (final RTL 0.9 with the shift-add r1_icor; t23 = the same settings on the first RTL form with the parallel multiplier): appended to config.yaml by
+# run_harden.sh (R1_CFG_APPEND, set inside the container command). Exactly the 0.8 configuration of record t22: the t18
+# hold strategy (flow/r1_ctrl_pnr6h.sdc: -min input delay 0.30 ns on the ADC inputs for place and route, fanout limit 6;
+# post-CTS hold margin 0.1 ns of config.yaml) plus the post-GRT timing repair with hold margin 0.15 ns. Same DIE_AREA
+# 532 x 679, pins_v07 (128 pins), sign-off SDC flow/r1_ctrl.sdc unchanged. config.yaml adds rtl/r1_icor.v.
+PNR_SDC_FILE: dir::r1_ctrl_pnr6h.sdc
+RUN_POST_GRT_RESIZER_TIMING: true
+GRT_RESIZER_HOLD_SLACK_MARGIN: 0.15
+DRT_THREADS: 2
+STA_THREADS: 2

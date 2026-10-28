@@ -1,6 +1,8 @@
 // Chip-level testbench for r1_ctrl_top (testbenches b..f and cal of the r1_ctrl
 // README, revision 0.3).
-//   +test=biss | ssi | spi | gate | safe | cal | calmc | tap | ana | disc | cdc | v07 | d22    test group
+//   +test=biss | ssi | spi | gate | safe | cal | calmc | tap | ana | disc | cdc | v07 | d22 | d27    test group
+//   (d27, revision 0.9: IA/IB offset and gain words, CRC coverage, bit-exact I_A/I_B through the chip, raw current
+//    min/max capture, host calibration of a 1.057 ADC gain, I2t over-current trip on the corrected sample)
 //   (d22, revision 0.8: COS_GAIN, CRC coverage, raw min/max capture, host calibration, angle error before/after)
 //   (v07, revision 0.7: R3 EN synchroniser, R4 threshold reset, OSC_TRIM lock, comparator mask, reset-value table)
 //   +vec=<file> +out=<file>                   (calmc) comparator tables from tb/cmpcal_ref.py, RTL results
@@ -78,6 +80,10 @@ module tb_top;
     // revision 0.5 (test disc): ia_inc steps the ISA code by 1 at every current conversion, bad_n makes the next
     // bad_n conversions return all-ones decisions (the start-up error of the r1_adc revision 5, first frame wrong)
     reg  ia_inc = 1'b0, conv_bad = 1'b0;
+    // 0.9 (test d27): im_rnd sets new random ISA/ISB codes (300..3799) at every current conversion start; im_en tracks the
+    // model min/max of the raw (weight-corrected) current codes of the conversions, as RAW_IA/IB_MIN/MAX capture them
+    reg  im_rnd = 1'b0, im_en = 1'b0;
+    integer im_amin = 4095, im_amax = 0, im_bmin = 4095, im_bmax = 0, im_n = 0, im_seed = 27;
     integer bad_n = 0;
     // revision 0.3 (D18): two slices start together on adc_start; slice A returns
     // adc_valid_a CONV ticks after the start pulse, slice B one tick earlier
@@ -109,6 +115,17 @@ module tb_top;
             adcw_code = (acc > 4095) ? 4095 : acc;
         end
     endfunction
+    // 0.9 (test d27): integer model of r1_icor (register map 0.9 section 4.7)
+    function integer icor_m;
+        input integer raw; input integer ofs12; input integer gain;
+        integer d, q;
+        begin
+            d = raw - 2048 - ((ofs12 >= 2048) ? ofs12 - 4096 : ofs12);
+            q = (d * gain + 8192) >>> 14;
+            q = q + 2048;
+            icor_m = (q < 0) ? 0 : (q > 4095) ? 4095 : q;
+        end
+    endfunction
     function real angle_now;           // turns
         input dummy;
         real a;
@@ -127,12 +144,18 @@ module tb_top;
             conv_a <= CONV - 1; conv_b <= CONV - 2; conv_sel <= adc_sel;   // valid CONV ticks after the start pulse
             conv_bad <= (bad_n > 0); if (bad_n > 0) bad_n <= bad_n - 1;
             if (adc_sel && ia_inc) ia_code <= ia_code + 12'd1;
+            if (adc_sel && im_rnd) begin ia_code <= 300 + {$random(im_seed)} % 3500; ib_code <= 300 + {$random(im_seed)} % 3500; end
         end else begin
             if (conv_a > 0) conv_a <= conv_a - 1;
             if (conv_b > 0) conv_b <= conv_b - 1;
             if (conv_a == 1) begin
                 adc_valid_a <= 1'b1;
                 adc_raw_a <= conv_bad ? 14'h3FFF : conv_sel ? sar14(ia_code) : sar14(code(enc_gs * enc_amp * $sin(6.283185307179586 * held_ang) + enc_os - 0.5));
+                if (im_en && conv_sel && !conv_bad) begin
+                    im_n = im_n + 1; f_mm = adcw_code(sar14(ia_code));
+                    if (f_mm < im_amin) im_amin = f_mm;
+                    if (f_mm > im_amax) im_amax = f_mm;
+                end
                 if (mm_en && !conv_sel && !conv_bad) begin
                     mm_n = mm_n + 1;
                     f_mm = adcw_code(sar14(code(enc_gs * enc_amp * $sin(6.283185307179586 * held_ang) + enc_os - 0.5)));
@@ -143,6 +166,11 @@ module tb_top;
             if (conv_b == 1) begin
                 adc_valid_b <= 1'b1;
                 adc_raw_b <= conv_bad ? 14'h3FFF : conv_sel ? sar14(ib_code) : sar14(code(enc_gc * enc_amp * $cos(6.283185307179586 * held_ang) + enc_oc - 0.5));
+                if (im_en && conv_sel && !conv_bad) begin
+                    f_mm = adcw_code(sar14(ib_code));
+                    if (f_mm < im_bmin) im_bmin = f_mm;
+                    if (f_mm > im_bmax) im_bmax = f_mm;
+                end
                 if (mm_en && !conv_sel && !conv_bad) begin
                     f_mm = adcw_code(sar14(code(enc_gc * enc_amp * $cos(6.283185307179586 * held_ang) + enc_oc - 0.5)));
                     if (f_mm < mm_cmin) mm_cmin = f_mm;
@@ -356,6 +384,7 @@ module tb_top;
     // 0x36..0x3C, 0x50..0x5D, 0x60..0x6D (values as read back, high byte first)
     reg  [7:0] crc_r;
     reg        crc_v07 = 1'b0;         // 0.8 test d22: 1 = the 43-word CRC of revision 0.7 (negative check)
+    reg        crc_v08 = 1'b0;         // 0.9 test d27: 1 = the 44-word CRC of revision 0.8 (negative check)
     task crc_word;
         input [15:0] w;
         integer j;
@@ -380,6 +409,8 @@ module tb_top;
             for (ci = 8'h50; ci <= 8'h5D; ci = ci + 1) begin spi_rd(ci); crc_word(rd_val); end
             for (ci = 8'h60; ci <= 8'h6D; ci = ci + 1) begin spi_rd(ci); crc_word(rd_val); end
             if (!crc_v07) begin spi_rd(7'h3F); crc_word(rd_val); end      // 0.8: COS_GAIN is the 44th word
+            if (!crc_v07 && !crc_v08)                                        // 0.9: IA_OFS, IB_OFS, IA_GAIN, IB_GAIN = words 45..48
+                for (ci = 8'h48; ci <= 8'h4B; ci = ci + 1) begin spi_rd(ci); crc_word(rd_val); end
             spi_wr(7'h18, {8'd0, crc_r});
             #(360 * clk_ns);
         end
@@ -743,7 +774,7 @@ module tb_top;
         // =================================================================
         if (test == "spi") begin
             spi_rd(7'h00);
-            check(rd_val == 16'h5208, "spi: ID reads 0x5208 (revision 0.8)");
+            check(rd_val == 16'h5209, "spi: ID reads 0x5209 (revision 0.9)");
             spi_rd(7'h08);
             check(rd_val == 16'd22 && osc_trim == 5'd22, "spi: OSC_TRIM reset value 22 (D13), on the oscillator port");
             spi_rd(7'h05);
@@ -818,7 +849,7 @@ module tb_top;
             check(b_crc_wire == 6'h3A && b_data[19:2] == 18'h0, "spi/biss: BiSS frame after SPI sees the new TEST_POS");
             // MA traffic while CS_N high does not disturb SPI state; SPI after BiSS
             spi_rd(7'h00);
-            check(rd_val == 16'h5208, "spi/biss: SPI read correct after BiSS traffic on the shared pad");
+            check(rd_val == 16'h5209, "spi/biss: SPI read correct after BiSS traffic on the shared pad");
         end
 
         // =================================================================
@@ -1283,7 +1314,7 @@ module tb_top;
                 integer j, ok, cnt, hi, fast, per;
                 // ---- 1. R3: EN/STO_IN synchroniser reset value
                 en_pad = 1'b1; por_n = 0; #(10 * clk_ns); por_n = 1; #(20 * clk_ns);
-                spi_rd(7'h00); check(rd_val == 16'h5208, "v07: ID reads 0x5208 (RTL revision 0.8)");
+                spi_rd(7'h00); check(rd_val == 16'h5209, "v07: ID reads 0x5209 (RTL revision 0.9)");
                 spi_rd(7'h02);
                 $display("INFO v07 R3: FAULT after power-up with EN high = 0x%04h", rd_val);
                 check(rd_val == 16'h1800, "v07 R3: power-up with EN high: FAULT = 0x1800 (POR, CAL), STO bit 8 clear");
@@ -1570,7 +1601,7 @@ module tb_top;
                 integer j, smin, smax, cmin, cmax, os_i, oc_i, gs_i, gc_i;
                 real a_s, a_c, a_t, e, e0, e1, ang;
                 // ---- 1. ID and reset values of the D22 words
-                spi_rd(7'h00); check(rd_val == 16'h5208, "d22: ID reads 0x5208 (RTL revision 0.8)");
+                spi_rd(7'h00); check(rd_val == 16'h5209, "d22: ID reads 0x5209 (RTL revision 0.9)");
                 spi_rd(7'h10); j = rd_val; spi_rd(7'h11); j = j | rd_val;
                 check(j == 0, "d22: SIN_OFS (0x10) and COS_OFS (0x11) reset 0");
                 spi_rd(7'h12); j = rd_val; spi_rd(7'h3F);
@@ -1591,7 +1622,7 @@ module tb_top;
                 spi_rd(7'h01);
                 check(!rd_val[4], "d22: CAL_CRC over the 43 words of 0.7 (without COS_GAIN) leaves CAL_VALID 0");
                 load_cal_crc; spi_rd(7'h01);
-                check(rd_val[4], "d22: CAL_CRC over 44 words incl. COS_GAIN (0x3F) sets CAL_VALID");
+                check(rd_val[4], "d22: CAL_CRC over the 0.9 word set (48 words, incl. COS_GAIN 0x3F) sets CAL_VALID");
                 spi_wr(7'h3F, 16'h4000); #(20 * clk_ns); spi_rd(7'h01);
                 check(!rd_val[4], "d22: a write of COS_GAIN clears CAL_VALID (CRC-covered word)");
                 load_cal_crc; spi_wr(7'h04, 16'h0001); #(20 * clk_ns);
@@ -1645,6 +1676,158 @@ module tb_top;
                 spi_rd(7'h01);
                 check(rd_val[4] && fault_n, "d22: CAL_VALID and no fault after the calibration words and CAL_CRC");
                 enc_amp = 1400.0; enc_os = 0.0; enc_oc = 0.0; enc_gs = 1.0; enc_f = 1000.0;
+            end
+        end
+
+        // =================================================================
+        // Revision 0.9 test d27 (PLAN.md D27). Only ports and SPI are used, so the group also runs at gate level.
+        if (test == "d27") begin
+            begin : d27t
+                integer j, ok, nmis, va, vb, ea, eb, r0, r1, i0, i1, t0, t1, gw, ow, smn, smx;
+                real g_adc, err0, err1;
+                // ---- 1. ID and reset values of the D27 words, the capture and I_A/I_B (PWM off since reset: no current pair)
+                spi_rd(7'h00); check(rd_val == 16'h5209, "d27: ID reads 0x5209 (RTL revision 0.9)");
+                spi_rd(7'h48); j = rd_val; spi_rd(7'h49); j = j | rd_val;
+                check(j == 0, "d27: IA_OFS (0x48) and IB_OFS (0x49) reset 0");
+                spi_rd(7'h4A); j = rd_val; spi_rd(7'h4B);
+                check(j == 16'h4000 && rd_val == 16'h4000, "d27: IA_GAIN (0x4A) and IB_GAIN (0x4B) reset 0x4000 = 1.0");
+                spi_rd(7'h4C); j = (rd_val == 12'hFFF); spi_rd(7'h4D); j = j && (rd_val == 0);
+                spi_rd(7'h4E); j = j && (rd_val == 12'hFFF); spi_rd(7'h4F); j = j && (rd_val == 0);
+                check(j, "d27: RAW_IA/IB_MIN/MAX (0x4C..0x4F) reset MIN 0xFFF, MAX 0x000 (no current pair)");
+                spi_rd(7'h29); j = rd_val; spi_rd(7'h2A);
+                check(j == 0 && rd_val == 0, "d27: I_A, I_B reset 0 (as revision 0.8)");
+                // ---- 2. read/write and CRC coverage
+                spi_wr(7'h48, 16'hF123); spi_rd(7'h48); j = (rd_val == 16'h0123);
+                spi_wr(7'h49, 16'h0ABC); spi_rd(7'h49); j = j && (rd_val == 16'h0ABC);
+                spi_wr(7'h4A, 16'h8765); spi_rd(7'h4A); j = j && (rd_val == 16'h8765);
+                spi_wr(7'h4B, 16'h1234); spi_rd(7'h4B); j = j && (rd_val == 16'h1234);
+                check(j, "d27: IA_OFS/IB_OFS read back 12 bits, IA_GAIN/IB_GAIN 16 bits");
+                crc_v08 = 1'b1; load_cal_crc; crc_v08 = 1'b0; spi_rd(7'h01);
+                check(!rd_val[4], "d27: CAL_CRC over the 44 words of 0.8 (without 0x48..0x4B) leaves CAL_VALID 0");
+                load_cal_crc; spi_rd(7'h01);
+                check(rd_val[4], "d27: CAL_CRC over 48 words incl. 0x48..0x4B sets CAL_VALID");
+                ok = 0;
+                for (j = 8'h48; j <= 8'h4B; j = j + 1) begin
+                    spi_wr(j, 16'h0000); #(20 * clk_ns); spi_rd(7'h01); ok = ok + (!rd_val[4]);
+                    load_cal_crc;
+                end
+                check(ok == 4, "d27: a write of IA_OFS, IB_OFS, IA_GAIN or IB_GAIN clears CAL_VALID (CRC-covered words)");
+                spi_wr(7'h4A, 16'h4000); spi_wr(7'h4B, 16'h4000); load_cal_crc; spi_wr(7'h04, 16'h0001); #(20 * clk_ns);
+                check(fault_n, "d27: CAL_CRC and CLR release the CAL fault (words back at reset)");
+                // ---- 3. current frames (PWM period 300 ticks, strobe at the channel A centre); reset words: I = raw
+                spi_wr(7'h20, 16'd300); spi_wr(7'h21, 16'd150); spi_wr(7'h22, 16'd150); spi_wr(7'h25, 16'd150);
+                ia_code = 12'd1234; ib_code = 12'd2900; #(700 * clk_ns);
+                spi_rd(7'h29); va = rd_val; spi_rd(7'h2A); vb = rd_val;
+                $display("INFO d27 reset words: I_A %0d (raw %0d), I_B %0d (raw %0d)", va, adcw_code(sar14(1234)), vb, adcw_code(sar14(2900)));
+                check(va == adcw_code(sar14(1234)) && vb == adcw_code(sar14(2900)), "d27: with the reset words I_A, I_B equal the raw codes");
+                // ---- 4. bit-exact through the chip: 12 word sets incl. both saturation ends and the rounding half LSB
+                nmis = 0;
+                for (j = 0; j < 12; j = j + 1) begin
+                    case (j)
+                        0:  begin ia_code = 822;  ib_code = 1740; ow = 12'hFB8; gw = 16'h3C8E; end  // -72 LSB, 0.9461
+                        1:  begin ia_code = 3000; ib_code = 1000; ow = 12'h064; gw = 16'h5000; end  // +100, 1.25
+                        2:  begin ia_code = 4095; ib_code = 0;    ow = 12'h800; gw = 16'hFFFF; end  // saturate high / low
+                        3:  begin ia_code = 0;    ib_code = 4095; ow = 12'h7FF; gw = 16'h8000; end  // saturate low / high
+                        4:  begin ia_code = 2049; ib_code = 2047; ow = 12'h000; gw = 16'h2000; end  // +-0.5 LSB rounding
+                        5:  begin ia_code = 2051; ib_code = 2045; ow = 12'h000; gw = 16'h2000; end  // +-1.5 LSB rounding
+                        6:  begin ia_code = 1500; ib_code = 2600; ow = 12'hFFF; gw = 16'h0000; end  // gain 0: 2048
+                        7:  begin ia_code = 2500; ib_code = 1600; ow = 12'h001; gw = 16'h4001; end
+                        8:  begin ia_code = 3700; ib_code = 400;  ow = 12'hF38; gw = 16'h3000; end  // -200, 0.75
+                        9:  begin ia_code = 1111; ib_code = 3333; ow = 12'h0C8; gw = 16'h4E35; end
+                        10: begin ia_code = 2048; ib_code = 2048; ow = 12'h7FF; gw = 16'h4000; end
+                        default: begin ia_code = 600; ib_code = 3500; ow = 12'h123; gw = 16'h6789; end
+                    endcase
+                    spi_wr(7'h48, ow[15:0]); spi_wr(7'h4A, gw[15:0]);
+                    spi_wr(7'h49, (12'h000 - ow) & 12'hFFF); spi_wr(7'h4B, 16'hFFFF - gw[15:0]);
+                    #(700 * clk_ns);
+                    ea = icor_m(adcw_code(sar14(ia_code)), ow, gw);
+                    eb = icor_m(adcw_code(sar14(ib_code)), (12'h000 - ow) & 12'hFFF, 16'hFFFF - gw);
+                    spi_rd(7'h29); va = rd_val; spi_rd(7'h2A); vb = rd_val;
+                    if (va != ea || vb != eb) nmis = nmis + 1;
+                    $display("INFO d27 vector %0d: raw %0d / %0d, I_A %0d (model %0d), I_B %0d (model %0d)",
+                             j, adcw_code(sar14(ia_code)), adcw_code(sar14(ib_code)), va, ea, vb, eb);
+                end
+                check(nmis == 0, "d27: I_A and I_B equal the integer model for 12 word sets (24 values, saturation and rounding)");
+                // ---- 5. raw-code capture against the model (random currents, corrected words active)
+                spi_wr(7'h20, 16'd0); #(400 * clk_ns);                      // current frames stopped for the clear checks
+                spi_rd(7'h5E); smn = rd_val; spi_rd(7'h5F); smx = rd_val;
+                spi_wr(7'h4D, 16'h0000); #(5 * clk_ns);
+                spi_rd(7'h4C); j = (rd_val == 12'hFFF); spi_rd(7'h4D); j = j && (rd_val == 0);
+                spi_rd(7'h4E); j = j && (rd_val == 12'hFFF); spi_rd(7'h4F); j = j && (rd_val == 0);
+                spi_rd(7'h5E); va = rd_val; spi_rd(7'h5F);
+                check(j && va <= smn && rd_val >= smx && va != 12'hFFF, "d27: a write to RAW_IA_MAX (0x4D) clears the four current words, not the encoder capture");
+                // the constant codes of vector 11 are captured after the clear (>= 2 current pairs): the model starts with them
+                spi_wr(7'h20, 16'd300); spi_wr(7'h4C, 16'h0000); #(700 * clk_ns);
+                im_amin = adcw_code(sar14(ia_code)); im_amax = im_amin; im_bmin = adcw_code(sar14(ib_code)); im_bmax = im_bmin; im_n = 0;
+                @(negedge adc_sel); im_en = 1'b1; im_rnd = 1'b1;            // aligned to a frame boundary
+                #(24 * 300 * clk_ns);
+                @(negedge adc_sel); im_rnd = 1'b0; #(2 * clk_ns); im_en = 1'b0;
+                spi_wr(7'h20, 16'd0); #(400 * clk_ns);                      // stopped: no pair during the reads
+                spi_rd(7'h4C); r0 = rd_val; spi_rd(7'h4D); r1 = rd_val; spi_rd(7'h4E); i0 = rd_val; spi_rd(7'h4F); i1 = rd_val;
+                $display("INFO d27 capture: %0d current pairs, RTL IA %0d..%0d IB %0d..%0d, model IA %0d..%0d IB %0d..%0d",
+                         im_n, r0, r1, i0, i1, im_amin, im_amax, im_bmin, im_bmax);
+                check(im_n >= 20 && r0 == im_amin && r1 == im_amax && i0 == im_bmin && i1 == im_bmax,
+                      "d27: RAW_IA/IB_MIN/MAX equal the model min/max of the raw current codes (exact, words not applied)");
+                spi_wr(7'h5E, 16'h0000); #(5 * clk_ns); spi_rd(7'h4C);
+                check(rd_val == im_amin, "d27: a write to RAW_SIN_MIN (0x5E) does not clear the current capture");
+                spi_wr(7'h4E, 16'h0000); #(5 * clk_ns);
+                spi_rd(7'h4C); j = (rd_val == 12'hFFF); spi_rd(7'h4D); j = j && (rd_val == 0);
+                spi_rd(7'h4E); j = j && (rd_val == 12'hFFF); spi_rd(7'h4F); j = j && (rd_val == 0);
+                check(j, "d27: a write to RAW_IB_MIN (0x4E) clears all four current words");
+                spi_wr(7'h20, 16'd300);
+                // ---- 6. host calibration of an ADC gain error 1.057 (r1_top test 3, PLAN.md D27): ideal codes 822 / 1740
+                spi_wr(7'h48, 16'h0000); spi_wr(7'h49, 16'h0000); spi_wr(7'h4A, 16'h4000); spi_wr(7'h4B, 16'h4000);
+                g_adc = 1.0570; t0 = 822; t1 = 1740;
+                ia_code = $rtoi(2048.0 + g_adc * (t0 - 2048) + 0.5); ib_code = ia_code;     // rounded to the nearest code
+                #(700 * clk_ns); spi_wr(7'h4C, 16'h0000); #(700 * clk_ns); spi_rd(7'h4C); r0 = rd_val; spi_rd(7'h4D); j = rd_val;
+                check(r0 == j, "d27: constant current: RAW_IA_MIN = RAW_IA_MAX");
+                ia_code = $rtoi(2048.0 + g_adc * (t1 - 2048) + 0.5); ib_code = ia_code;
+                #(700 * clk_ns); spi_wr(7'h4C, 16'h0000); #(700 * clk_ns); spi_rd(7'h4C); r1 = rd_val;
+                err0 = (r1 - r0) * 1.0 / (t1 - t0) - 1.0;
+                // host: gain from the two levels, offset so that level 0 reads t0 (register map 0.9 section 4.7)
+                gw = $rtoi(16384.0 * (t1 - t0) / (r1 - r0) + 0.5);
+                ow = $rtoi(r0 - 2048.0 - (t0 - 2048.0) * 16384.0 / gw + ((r0 - 2048.0 - (t0 - 2048.0) * 16384.0 / gw) >= 0 ? 0.5 : -0.5));
+                $display("INFO d27 host calibration: raw %0d / %0d, IA_GAIN 0x%04h, IA_OFS %0d", r0, r1, gw, ow);
+                spi_wr(7'h48, ow[15:0] & 16'h0FFF); spi_wr(7'h4A, gw[15:0]);
+                spi_wr(7'h49, ow[15:0] & 16'h0FFF); spi_wr(7'h4B, gw[15:0]);
+                ia_code = $rtoi(2048.0 + g_adc * (t0 - 2048) + 0.5); ib_code = ia_code; #(700 * clk_ns); spi_rd(7'h29); i0 = rd_val;
+                ia_code = $rtoi(2048.0 + g_adc * (t1 - 2048) + 0.5); ib_code = ia_code; #(700 * clk_ns); spi_rd(7'h29); i1 = rd_val;
+                spi_rd(7'h2A); j = rd_val;
+                err1 = (i1 - i0) * 1.0 / (t1 - t0) - 1.0;
+                $display("INFO d27 current step: before %+0.3f %%, after %+0.3f %% (I_A %0d -> %0d, ideal %0d -> %0d, I_B %0d)",
+                         100.0 * err0, 100.0 * err1, i0, i1, t0, t1, j);
+                check(err0 > 0.05, "d27: without correction the 1.057 ADC gain gives a current step error > 5 %");
+                check(err1 < 0.0025 && err1 > -0.0025 && i0 >= t0 - 1 && i0 <= t0 + 1 && j == i1,
+                      "d27: after the host calibration the step error is within +-0.25 % and level 0 within 1 LSB");
+                // ---- 7. I2t over-current trip on the corrected sample (I_ZERO 2048, TAU 0: E = i^2 every period, I2T_LIM 3000)
+                spi_wr(7'h2F, 16'd2048); spi_wr(7'h2D, 16'h0000); spi_wr(7'h2E, 16'd3000);
+                ia_code = 12'd3048; ib_code = 12'd2048;
+                spi_wr(7'h48, 16'h0000); spi_wr(7'h4A, 16'h3000);           // A: 0.75, raw 3048 -> 2048 + 750 = 2798 (i 46)
+                spi_wr(7'h49, 16'h0CE0); spi_wr(7'h4B, 16'h4000);           // B: offset -800 -> 2848 (i 50)
+                load_cal_crc; spi_wr(7'h04, 16'h0001); #(6 * 300 * clk_ns);
+                spi_wr(7'h04, 16'h0001); #(20 * clk_ns);
+                spi_rd(7'h02); j = rd_val; spi_rd(7'h29); va = rd_val; spi_rd(7'h2A); vb = rd_val;
+                spi_rd(7'h30); ea = rd_val; spi_rd(7'h31); eb = rd_val;
+                $display("INFO d27 I2t below the limit: FAULT 0x%04h, I_A %0d, I_B %0d, I2T_A %0d, I2T_B %0d (raw A %0d alone would give %0d)",
+                         j, va, vb, ea, eb, adcw_code(sar14(3048)), ((adcw_code(sar14(3048)) - 2048) >> 4) * ((adcw_code(sar14(3048)) - 2048) >> 4));
+                check(j == 0 && fault_n && va == 2798 && vb == 2848 && ea == 46 * 46 && eb == 50 * 50,
+                      "d27: corrected samples 2798 / 2848 below I2T_LIM 3000: no trip; I2T_A/B = i^2 of the corrected samples");
+                spi_wr(7'h4A, 16'h5000);                                     // A: 1.25 -> 2048 + 1250 = 3298 (i 78)
+                #(4 * 300 * clk_ns); spi_rd(7'h02); j = rd_val; spi_rd(7'h29); va = rd_val; spi_rd(7'h30); ea = rd_val;
+                $display("INFO d27 I2t IA_GAIN 1.25: FAULT 0x%04h, I_A %0d, I2T_A %0d", j, va, ea);
+                check(j[9] && !j[10] && !fault_n && va == 3298 && ea == 78 * 78,
+                      "d27: IA_GAIN 1.25 on the same raw current trips I2T_A (corrected sample in the compare), I2T_B clear");
+                spi_wr(7'h4B, 16'h5000);                                     // B: (0 + 800) x 1.25 -> 3048 (i 62)
+                #(4 * 300 * clk_ns); spi_rd(7'h02); j = rd_val; spi_rd(7'h2A); vb = rd_val; spi_rd(7'h31); eb = rd_val;
+                $display("INFO d27 I2t IB_GAIN 1.25 with IB_OFS -800: FAULT 0x%04h, I_B %0d, I2T_B %0d", j, vb, eb);
+                check(j[10] && vb == 3048 && eb == 62 * 62, "d27: IB_OFS -800 and IB_GAIN 1.25 at zero raw current trip I2T_B");
+                // restore
+                ia_code = 12'd2048; ib_code = 12'd2048;
+                spi_wr(7'h2E, 16'hFFFF); spi_wr(7'h48, 16'h0000); spi_wr(7'h49, 16'h0000); spi_wr(7'h4A, 16'h4000); spi_wr(7'h4B, 16'h4000);
+                #(4 * 300 * clk_ns); load_cal_crc; spi_wr(7'h04, 16'h0001); #(20 * clk_ns);
+                spi_rd(7'h02);
+                check(rd_val == 0 && fault_n, "d27: words restored, CAL_CRC and CLR: FAULT 0");
+                spi_wr(7'h20, 16'd0);
             end
         end
 

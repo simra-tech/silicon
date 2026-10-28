@@ -1,0 +1,47 @@
+# tb_top test=d27 clk_ns=47.619
+PASS init: FAULT_N high after CAL_CRC load and CLR
+PASS d27: ID reads 0x5209 (RTL revision 0.9)
+PASS d27: IA_OFS (0x48) and IB_OFS (0x49) reset 0
+PASS d27: IA_GAIN (0x4A) and IB_GAIN (0x4B) reset 0x4000 = 1.0
+PASS d27: RAW_IA/IB_MIN/MAX (0x4C..0x4F) reset MIN 0xFFF, MAX 0x000 (no current pair)
+PASS d27: I_A, I_B reset 0 (as revision 0.8)
+PASS d27: IA_OFS/IB_OFS read back 12 bits, IA_GAIN/IB_GAIN 16 bits
+PASS d27: CAL_CRC over the 44 words of 0.8 (without 0x48..0x4B) leaves CAL_VALID 0
+PASS d27: CAL_CRC over 48 words incl. 0x48..0x4B sets CAL_VALID
+PASS d27: a write of IA_OFS, IB_OFS, IA_GAIN or IB_GAIN clears CAL_VALID (CRC-covered words)
+PASS d27: CAL_CRC and CLR release the CAL fault (words back at reset)
+INFO d27 reset words: I_A 1234 (raw 1234), I_B 2900 (raw 2900)
+PASS d27: with the reset words I_A, I_B equal the raw codes
+INFO d27 vector 0: raw 822 / 1740, I_A 956 (model 956), I_B 888 (model 888)
+INFO d27 vector 1: raw 3000 / 1000, I_A 3113 (model 3113), I_B 0 (model 0)
+INFO d27 vector 2: raw 4095 / 0, I_A 4095 (model 4095), I_B 2048 (model 2048)
+INFO d27 vector 3: raw 0 / 4095, I_A 0 (model 0), I_B 4095 (model 4095)
+INFO d27 vector 4: raw 2049 / 2047, I_A 2049 (model 2049), I_B 2045 (model 2045)
+INFO d27 vector 5: raw 2051 / 2045, I_A 2050 (model 2050), I_B 2038 (model 2038)
+INFO d27 vector 6: raw 1500 / 2600, I_A 2048 (model 2048), I_B 4095 (model 4095)
+INFO d27 vector 7: raw 2500 / 1600, I_A 2499 (model 2499), I_B 707 (model 707)
+INFO d27 vector 8: raw 3700 / 400, I_A 3437 (model 3437), I_B 0 (model 0)
+INFO d27 vector 9: raw 1111 / 3333, I_A 659 (model 659), I_B 4095 (model 4095)
+INFO d27 vector 10: raw 2048 / 2048, I_A 1 (model 1), I_B 4095 (model 4095)
+INFO d27 vector 11: raw 600 / 3500, I_A 0 (model 0), I_B 4095 (model 4095)
+PASS d27: I_A and I_B equal the integer model for 12 word sets (24 values, saturation and rounding)
+PASS d27: a write to RAW_IA_MAX (0x4D) clears the four current words, not the encoder capture
+INFO d27 capture: 24 current pairs, RTL IA 415..3690 IB 342..3500, model IA 415..3690 IB 342..3500
+PASS d27: RAW_IA/IB_MIN/MAX equal the model min/max of the raw current codes (exact, words not applied)
+PASS d27: a write to RAW_SIN_MIN (0x5E) does not clear the current capture
+PASS d27: a write to RAW_IB_MIN (0x4E) clears all four current words
+PASS d27: constant current: RAW_IA_MIN = RAW_IA_MAX
+INFO d27 host calibration: raw 752 / 1722, IA_GAIN 0x00003c92, IA_OFS -1
+INFO d27 current step: before +5.664 %, after +0.000 % (I_A 822 -> 1740, ideal 822 -> 1740, I_B 1740)
+PASS d27: without correction the 1.057 ADC gain gives a current step error > 5 %
+PASS d27: after the host calibration the step error is within +-0.25 % and level 0 within 1 LSB
+INFO d27 I2t below the limit: FAULT 0x00000000, I_A 2798, I_B 2848, I2T_A 2116, I2T_B 2500 (raw A 3048 alone would give 3844)
+PASS d27: corrected samples 2798 / 2848 below I2T_LIM 3000: no trip; I2T_A/B = i^2 of the corrected samples
+INFO d27 I2t IA_GAIN 1.25: FAULT 0x00000a00, I_A 3298, I2T_A 6084
+PASS d27: IA_GAIN 1.25 on the same raw current trips I2T_A (corrected sample in the compare), I2T_B clear
+INFO d27 I2t IB_GAIN 1.25 with IB_OFS -800: FAULT 0x00000e00, I_B 3048, I2T_B 3844
+PASS d27: IB_OFS -800 and IB_GAIN 1.25 at zero raw current trip I2T_B
+PASS d27: words restored, CAL_CRC and CLR: FAULT 0
+# 24 checks, 0 failed
+ALL TESTS PASSED
+tb/tb_top.v:1838: $finish called at 5351245538 (1ps)
