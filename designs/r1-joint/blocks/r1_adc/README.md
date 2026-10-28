@@ -1,5 +1,228 @@
 # R1_ADC — 12-bit SAR ADC with two simultaneous track-and-holds (schematic level, revisions 1 to 5)
 
+## Layout B8 (2026-10-28, track T2n): PLAN.md D25
+
+State: **not adopted; B7 stays the layout of record** (track T2n, 04:22–10:45 CET on 28 Oct). The decoupling does not
+fit (5.2 times the box) and no netlist revision 6 is written. The D25 fallback conflicts with the ctrl contract and is
+not applied. Two strap variants pass DRC and LVS, but both have a larger static offset than B7, and neither closes
+the drift. R2-4 stays at 3.4–3.9 LSB. All numbers are simulated or from layout tools. Nothing is measured.
+
+### Decoupling sizing (D25 step 1)
+
+Arithmetic (`sim/post/b8/decap_sizing.py`, result `sim/post/b8/results/decap_sizing.json`; estimate, not simulated).
+Inputs: unit MIM Cu = 22.04 fF, bridge 27.5 fF, LSB-array node 127.5 Cu + bridge + 64 fF wiring = 2.90 pF, top plate
+31 Cu + bridge + 60 fF; slice-port DC `vref` 1.050 V, `vrefl` 1.058 V; one LSB-array unit = 1.23 LSB, one MSB-array
+unit = 128 LSB. Each slice draws its own charge (both slices convert at the same time).
+
+1. Charge per step. The drivers switch a bottom plate from the reference to ground (monotonic). The capacitors that
+   stay on the reference must follow the moving top or LSB node, so the reference delivers
+   ΔQ = V<sub>ref</sub> · C<sub>bit</sub> / C<sub>node</sub> · C<sub>on</sub>.
+   Worst steps: C7 (64 Cu, before decision 6) ΔQ = 0.72 pC from `vrefl`; C6 (before decision 7) 0.18 pC;
+   C8 (1 Cu, before decision 5) 0.019 pC from `vref`.
+2. Allowed reference error at the strobe (0.25 LSB). Error in LSB = δ / V<sub>ref</sub> × (P − N weight on that
+   reference). After the C7 switch the `vrefl` imbalance is 64 units = 79 LSB: δ ≤ 3.4 mV. At decision 5 the `vref`
+   imbalance is up to 15 MSB units = 1920 LSB (residue of decisions 1–4 at ±0.88 V inputs): δ ≤ 0.14 mV.
+3. Charge-sharing bound C ≥ ΔQ / δ (no recovery before the strobe: in the B7 proxy run the `vrefl` port droop is still
+   growing at the strobe, −15 mV at 2 ns, −32 mV at 3.5 ns, −34 mV at 8 ns after the edge of tick 6; recovery in
+   about 20 ns; `postb7-d23-ref-tt-buf`, probe `xadc.xl.vrefl__p4`).
+
+| Port, per slice | Worst step | ΔQ (pC) | Allowed δ at the strobe | Required C |
+| --- | --- | --- | --- | --- |
+| `vrefl` (LSB array) | C7 before decision 6 | 0.72 | 3.4 mV | **214 pF** |
+| `vref` (MSB array) | C8 before decision 5 | 0.019 | 0.14 mV | **140 pF** |
+
+Required: 354 pF per slice, 708 pF for both slices = **472 800 µm² of MIM** (1.5 fF/µm²). The macro box is
+439.0 × 205.42 µm = 90 179 µm², and MIM bottom plates already cover 61 422 µm² of it (B6 Metal5 breakdown). The
+existing decoupling at the buffer is 29.4 pF (`vref`) and 14.7 pF (`vrefl`). **Shortfall: the decoupling needs
+5.2 times the whole box area.** The free Metal5 area (north channel and the band over the SAR macro, about
+15 000 µm², estimate) holds about 22 pF, 6 % of the requirement. These free areas are also not local: they are 100 µm
+or more from the slice reference straps, the CDAC TopMetal1 sheets block a direct path, and a plate over the SAR
+macro or the input channel couples digital edges or the inputs into the reference.
+Cross-check of the model against B7: the measured `vrefl` droop of about −30 mV at the decision-7 strobe gives
+30 mV × 96 units × 1.23 LSB / 1.058 V = 3.3 LSB from `vrefl` alone; the proxy deck gives 4.30 LSB with the `vref`
+term (−1.3 to −1.9 mV, coupled through the shared follower gate `ng`).
+
+Ideal-capacitor check (simulated, D23 proxy deck of T2m, tt, 10 slots; B7 extraction + ideal capacitors from each slice
+reference port node to `vss`, `sim/post/b8/make_cal_netlist.py`, netlist `sim/post/b8/cal_mb6_c100_100.spice`; buffer run
+`postb8-cal-c100-tt-buf`, base run `postb7-d23-ref-tt-base`; result `sim/post/b8/results/cal_c100_tt_d23.json`):
+
+| Decoupling at the slice ports (per slice) | R2-4 at the strobe (A / B) | Worst decision | At 25 ns | Boxcar | At regeneration |
+| --- | --- | --- | --- | --- | --- |
+| none (B7, `postb7-d23-ref-tt-buf`) | 4.30 / 4.30 LSB | 7 | 0.17 LSB | 1.45 LSB | 0.44 LSB |
+| ideal 100 pF on `vref` + 100 pF on `vrefl` (total 444 pF with the buffer decoupling, 10 × B7) | **1.05 / 1.04 LSB** | 7 (decisions 7–13: 0.50–1.05) | 0.47 LSB | 0.69 LSB | 0.55 LSB |
+
+200 pF per slice is 270 000 µm² of MIM (3 × the box) and still fails 0.25 LSB by 4 times. The larger capacitance also
+recovers more slowly through the follower (the error at 25 ns rises from 0.17 to 0.47 LSB). The charge-sharing bound
+above is therefore optimistic, not pessimistic. Local decoupling cannot close R2-4 inside this macro.
+
+Decision taken under D25 (shortfall case): **no local decoupling is drawn and no netlist revision 6 is written.** The
+part that fits cannot move R2-4 near 0.25 LSB (see the ideal-capacitor check above), and it would add coupling paths.
+
+### D25 fallback (strobe on the next tick): not applied, contract conflict
+
+The fallback moves the strobe of the affected decisions to the next tick in `r1_adc_sar`. In B7 every decision of the
+metric (5 to 13) is above 0.25 LSB at the strobe: 1.35 / 2.68 / 4.30 / 3.62 / 2.24 / 1.83 / 1.39 / 1.25 / 1.23 LSB
+(tt, proxy). So all 9 decisions are affected, and the conversion grows from 14 to 23 ticks. The ctrl contract
+(INTERFACES "ADC → ctrl", `r1_gate`: conversion ≤ 17 ticks for the 22-tick frame) allows 3 extra ticks only.
+With 3 extra ticks on the three worst decisions (6, 7, 8) the metric is still 2.24 LSB (decision 9). In addition,
+every extra tick takes one tick from the track window: 22 − 17 = 5 ticks = 167 ns, against the ≥ 250 ns of the
+"AFE → ADC" row, unless the host raises `PAIR_TICKS` to 25. The fallback therefore cannot close R2-4 with the ctrl
+contract unchanged. It was not implemented (no RTL change, no re-harden). This needs a coordinator decision; options
+in "Open issues (layout B8)".
+
+### Changes in layout B8 (comparator and supply wiring R, drift lever of B7)
+
+Generator `layout/r1_adc_layout.py`, `REV = 'B8'` (`-rd rev=B7` reproduces B7). Same box 439.0 × 205.42 µm, same 52
+pins at the same centres (`vss` 2.0 µm), the netlist of record (`schematic/r1_adc_r5.spice`) and the SAR release
+`t2j-ll-h2312-h` unchanged. After the routing and the clock shields, `widen()` of the maze router (parallel free
+track on each side, extra parallel vias where both layers are widened) runs on comparator nets on Metal2–Metal4, and
+the slice `vdd` / `gnd` are widened on Metal2 too (B7: Metal3–Metal4 only). Two variants were drawn:
+
+| Variant | Widened comparator nets | GDS | Run ids |
+| --- | --- | --- | --- |
+| dev1 (`-rd b8w=all`) | tails `xc4_xs1_tail(0)`, `xc5_xs1_tail(0)`, latch tails `xc4_lt`, `xc5_lt`, integration nodes `xc4/xc5_dip/din`, outputs `op on onp onn`, output buffers `xc4/xc5_outpb/outnb` | `<G1_RESULTS_ROOT>/r1_adc/layout-b8-dev1/` | `layout-b8-dev1(a)`, `lvs-b8-dev1-*`, `pex-b8-dev1` |
+| dev2 (default, `-rd b8w=common`) | the common-mode nets only: tails and latch tails | `<G1_RESULTS_ROOT>/r1_adc/layout-b8-dev2/` | `layout-b8-dev2(a)`, `lvs-b8-dev2-*`, `pex-b8-dev2` |
+
+XOR (KLayout, all layers): dev1, dev2 and B7 differ only inside `r1_adc_slice` (Metal1–Metal4, Via1–Via3); the
+shapes of the top cell outside the slice instances and the `r1_adc_sar` macro are identical in all three. So the
+macro outputs, the north pins and the top-level wiring are the same as in B7.
+
+Effective wiring R from the main node (extracted, `sim/post/net_reff.py`, slice `r1_adc_slice_post`; max / median, Ω; dev2 netlist `sim/post/r1_adc_post_rc_mb8b.spice`):
+
+| Net | B7 | B8 dev1 | B8 dev2 |
+| --- | --- | --- | --- |
+| `xc4_dip` / `xc4_din` | 156.9 / 111.8, 155.4 / 125.2 | 120.1 / 82.6, 108.0 / 77.1 | as B7 |
+| `xc4_xs1_tail` | 91.3 / 89.3 | 73.3 / 66.4 | 73.3 / 66.4 |
+| `xc5_lt` | 162.8 / 162.8 | 83.9 / 83.8 | 83.8 / 83.8 |
+| `xc5_dip` / `xc5_din` | 107.3 / 101.1, 106.8 / 100.1 | 84.0 / 77.8, 61.9 / 61.4 | as B7 |
+| `op` / `on` | 109.6 / 88.2, 95.9 / 71.1 | 70.7 / 60.8, 55.5 / 30.0 | as B7 |
+| `onp` / `onn` | 130.6 / 68.6, 93.2 / 72.7 | 77.4 / 29.0, 61.3 / 40.8 | as B7 |
+| `vdd` (worst port: `xc4_xci1` source / drain) | 138.3 / 32.6 | 127.7 / 30.4 | 126.2 / 30.4 |
+| `gnd` | 142.5 / 7.9 | 136.2 / 8.4 | 136.2 / 8.4 |
+
+The widening lowers the comparator nets by 1.2 to 2.8 times, but unevenly between P and N (`on` median 30 Ω against
+`op` 61 Ω), and it does not reach the worst supply ports. Those are the source / drain terminals of the `r1_cmp4`
+integration capacitors `xc4_xci1` / `xc4_xci2` (138 / 100 Ω and 112 / 74 Ω to `vdd`) and the `r1_cmp5n` capacitors
+and tail (63–76 Ω to `gnd`). The `r1_cmp4` capacitor row sits under the CDAC array (y 47.2–58.6 µm in the slice), where
+only Metal1 / Metal2 are free, and a Metal2 riser to it would cross the Metal2 gate rail of `xc4_dip` / `xc4_din`.
+
+Strap target (simulated, what-if on the B7 extraction, `sim/post/make_diag_netlist.py --r-scale`, behavioural SAR, ideal
+VREF, first conversion 0 V; result files `sim/post/b8/results/drs03_*.json`):
+
+| Wiring R scaled by 0.3 | tt codes A f0 / f1, B f0 / f1 | ff / −40 °C / 1.32 V | tt − ff span |
+| --- | --- | --- | --- |
+| none (B7, `postb7-dbase-*`) | 2039 / 2039, 2038 / 2038 | 2049 / 2049, 2048 / 2048 | 10 LSB |
+| comparator group only (`postb8-drs03-cmp-*`) | 2041 / 2041, 2040 / 2040 | 2037 / 2038, 2036 / 2036 | 4 LSB |
+| comparator + supply groups (`postb8-drs03-supcmp-*`) | 2043 / 2044, 2042 / 2042 | 2043 / 2043, 2041 / 2041 | ≤ 1 LSB |
+
+So the drift closes when the comparator **and** the slice supply wiring R both fall by about 3 times.
+
+Supply split at ff / −40 °C / 1.32 V (comparator group and one supply group scaled by 0.3; tt not run for these):
+comparator + `vdd` (`postb8-drs03-cmpvdd-ffm40`) 2046 / 2047, 2045 / 2045; comparator + `gnd`
+(`postb8-drs03-cmpgnd-ffm40`) 2032 / 2032, 2031 / 2031. Against comparator only (2037 / 2038, 2036 / 2036), the
+`vdd` wiring R is the supply term that moves the ff code toward tt; lowering only the `gnd` R moves it away.
+
+### Layout checks (B8)
+
+| Check | dev1 | dev2 | Evidence |
+| --- | --- | --- | --- |
+| DRC main + maximal (PDK deck, no density) | **passed**, 0 | **passed**, 0 | `reports/layout-b8-dev1/drc.log`, `reports/layout-b8-dev2/drc.log` |
+| Antenna | **passed**, 0 | **passed**, 0 | `reports/layout-b8-dev1a/antenna.log`, `reports/layout-b8-dev2a/antenna.log` |
+| LVS, comparer-limit deck | **passed**: `r1_adc` 147/147 nets, 45/45 devices; `r1_adc_slice` 117/117, 179/179; `r1_adc_sar` 419 | **passed** (same counts) | `reports/lvs-b8-dev1-lim/`, `reports/lvs-b8-dev2-lim/` |
+| LVS, stock deck | **passed** | **passed** | `reports/lvs-b8-dev1-stock/`, `reports/lvs-b8-dev2-stock/` |
+| Pin check (52 pins, box, `vss` 2.0 µm) | passed by XOR: top-cell shapes identical to B7 | same | XOR above; `reports/layout-b7/pin_table_b7.md` |
+| Generator default (B7) reproduces `layout/r1_adc.gds` | **passed**: flat XOR on all layers, 0 differences (86 cells) | not applicable | `<G1_RESULTS_ROOT>/r1_adc/layout-b7-regen-t2n/` |
+| Density deck | not run (Metal5 / TopMetal1 unchanged against B7: the changes are Metal1–Metal4 inside the slice) | not run | — |
+
+### R2-4 (B8)
+
+D23 proxy deck of T2m (`sim/post/b7/gen_proxy.py`, core `r1_adc5_core_lay_d23`) on the B8 dev1 extraction
+(`sim/post/r1_adc_post_rc_mb8.spice`; tt deck `sim/post/r1_adc_post_rc_mb8_sp_tt.spice`), 10 slots, buffer run minus
+ideal-port base run at the measured strobe, decisions 5–13 (`sim/post/b7/r24_d23.py`). Static base correction from
+`postb8-op-tt-rc` (A 1.049761 / 1.058142 V, B 1.049738 / 1.058302 V; equal to B7) and `postb8-op-ss125-rc`
+(A 1.050007 / 1.059001 V, B 1.049984 / 1.059162 V). Simulated.
+
+| Corner | Runs | R2-4 at the strobe A / B | Worst decision | Boxcar | At regeneration | At 25 ns | Result file |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| tt | `postb8-d23-ref-tt-buf`, `postb8-d23-ref-tt-base` | **3.36 / 3.87 LSB** | 7 (decisions 5–13: 1.21–3.87) | 1.35 LSB | 0.31 LSB | 0.18 LSB | `sim/post/b8/results/b8proxy_ref_tt_d23.json` |
+| ss / 125 °C / 1.08 V | `postb8-d23-ref-ss125-buf`, `postb8-d23-ref-ss125-base` | **3.37 / 3.52 LSB** (B7 3.44) | 7 (decisions 5–13: 0.68–3.52) | 1.18 LSB | 0.42 LSB | 0.46 LSB | `sim/post/b8/results/b8proxy_ref_ss125_d23.json` |
+
+Result: **failed** (limit 0.25 LSB). The wiring change moves R2-4 by 10–20 % only: the error is the reference droop,
+which B8 does not change (no decoupling, see "Decoupling sizing"). Settling sweep: 0.25 LSB is reached 20 ns after
+the clock edge (strobe now at 3.5–4.0 ns). Dev2 has the same reference wiring as dev1 and B7 (XOR: only comparator
+and slice supply straps differ); its R2-4 was not run.
+
+### Offset and drift (B8)
+
+D23 offset deck (first conversion 0 V, buffer + bandgap DC, no noise, behavioural SAR, VDDA 3.3 V), codes A f0 / f1,
+B f0 / f1; ideal mid code 2048 (simulated):
+
+| Extraction | tt / 27 °C / 1.2 V | ff / −40 °C / 1.32 V | ss / 125 °C / 1.08 V | Max offset | Span |
+| --- | --- | --- | --- | --- | --- |
+| B7 (`postb7-ofs-*-v33`) | 2040 / 2040, 2039 / 2039 | 2049 / 2050, 2048 / 2048 | 2039 / 2040, 2039 / 2039 | 9 LSB, passed | 11 / 9 LSB, failed |
+| B8 dev1 (`postb8-ofs-*-v33`) | 2035 / 2036, 2034 / 2035 | 2032 / 2032, 2030 / 2031 | 2039 / 2039, 2038 / 2038 | **18 LSB, failed** | **7 / 8 LSB, failed** |
+| B8 dev2 (`postb8b-ofs-*-v33`, netlist `sim/post/r1_adc_post_rc_mb8b.spice`) | 2043 / 2043, 2042 / 2042 | 2060 / 2061, 2059 / 2060 | 2040 / 2040, 2039 / 2039 | **13 LSB, failed** | **21 / 21 LSB, failed** |
+
+VDDA 3.0 and 3.6 V on dev1 (`postb8-ofs-<corner>-v30`, `-v36`): the same codes as at 3.3 V at every corner (0 LSB).
+
+Dev1 lowers the span by 3–4 LSB but moves every code down by 4–8 LSB. Cause (from the R table above): the P / N
+comparator nets were widened unevenly, so the widening added a P / N R mismatch. Dev2 widens the common-mode nets only.
+Dev2 improves tt (−5 / −6 LSB) and keeps ss (−8 / −9 LSB) but moves ff up by 17 LSB from tt (B7: +9 LSB). Lower R on the tails and latch
+tails alone shifts the ff code in the other direction from dev1. The offset at ff is therefore very sensitive to the
+balance between the comparator and supply wiring R. The uniform what-if (all groups × 0.3, ≤ 1 LSB span) is not
+reached by widening single net groups.
+
+**Decision: layout B8 is not adopted.** Both variants pass DRC and LVS, but both are worse than B7 on the static
+offset (dev1 18 LSB, dev2 13 LSB, against 9 LSB) and neither closes the drift. `layout/r1_adc.gds`,
+`layout/r1_adc_layout.json` and the LVS / decap files stay at B7. The generator keeps the B8 code behind
+`-rd rev=B8` (`-rd b8w=all` for dev1, `-rd b8w=common` for dev2); its default stays B7.
+
+### Status (layout B8)
+
+| Check (limit) | Result | Evidence |
+| --- | --- | --- |
+| Decoupling sizing (D25 step 1) | **done, shortfall**: 354 pF per slice = 472 800 µm² MIM needed, box 90 179 µm²; ideal 200 pF per slice still gives 1.05 LSB | "Decoupling sizing" |
+| Netlist revision 6 | not applicable: no decoupling drawn (shortfall case of D25) | "Decoupling sizing" |
+| D25 fallback (strobe on the next tick) | not applied: needs 9 extra ticks, the ctrl contract allows 3 | "D25 fallback" |
+| Layout checks: DRC main / maximal / antenna (0), LVS stock and comparer-limit (match), pins (52, `vss` 2.0 µm) | **passed** (dev1 and dev2) | "Layout checks (B8)" |
+| R2-4 tt, D23 metric at the real strobe, 10 slots (≤ 0.25 LSB) | dev1 **failed**: 3.36 / 3.87 LSB (B7 4.30 / 4.30) | "R2-4 (B8)" |
+| R2-4 ss / 125 °C, 10 slots (≤ 0.25 LSB) | dev1 **failed**: 3.37 / 3.52 LSB (B7 3.44) | "R2-4 (B8)" |
+| Offset drift tt / ss / ff (≤ 2 LSB) | **failed**: dev1 span 7 / 8 LSB; dev2 span 21 / 21 LSB; B7 11 / 9 LSB | "Offset and drift (B8)" |
+| Static offset (≤ 10 LSB) | **failed**: dev1 18 LSB, dev2 13 LSB (B7 9 LSB, passed) | "Offset and drift (B8)" |
+| ff output window (≥ 0.5 ns after `clk30`) | **not run**: dev1 gate-level run `b8-ms-fc-ffm40` stopped at its deck limit (16 800 s) at 1.667 of 1.86 µs, no waveform written (CPU 103 gave 0.0060 µs per minute against 0.0083 for B7). The output timing is set by the unchanged `r1_adc_sar` macro and top wiring (XOR identical), so B7 (0.401 ns, failed) applies | `sim/post/b6/runs/b8-ms-fc-ffm40/run.json` |
+| ff first conversion, gate-level (≤ 1 LSB) | **not run** (same run, stopped at the deck limit) | as above |
+| Windows 1024 / 3072 tt (no missing code) | dev1 1024 **passed**: A 1015–1028, B 1015–1027, monotonic, no missing code, max \|DNL\| 0.33 LSB (resolution 1/3 LSB); 3072 **not run** (queued on CPU 104 after 1024, outside the budget) | `postb8-win1024-tt-rc`; `sim/post/results/postb8_win1024_tt_rc.json` |
+| Full scale tt / ss / ff (≥ ±0.86 V) | dev1 **passed**: ±0.8697 / ±0.8707 / ±0.8678 V (full scale = 0.914 V / gain; gain 1.0509 / 1.0497 / 1.0532; B7 ±0.8709 / ±0.8720 / ±0.8694 V) | `postb8-isa-{tt,ss125,ffm40}-rc`; `sim/post/results/postb8_isa_*_rc.json` |
+| INL tt | **not run** (B8 not adopted; B7 INL in "Layout B7") | — |
+
+### Open issues (layout B8)
+
+1. R2-4 at the real strobe (tt 3.36 / 3.87 LSB on dev1, B7 4.30) cannot close inside this macro: local decoupling
+   needs 5.2 times the box, and an ideal 200 pF per slice still gives 1.05 LSB. The reference settles to 0.25 LSB about
+   20 ns after the edge. Options for the coordinator: (a) a strobe later in the tick (needs a second clock phase or a
+   delay line in `r1_adc`, against the ctrl contract "one edge per tick"); (b) the D25 fallback with a longer frame
+   (`PAIR_TICKS` 25 or more, conversion 23 ticks, track time kept at ≥ 250 ns; changes the ctrl contract and the frame
+   rate); (c) a reference buffer with a lower output impedance at the slice ports (new `r1_refbuf`, larger current);
+   (d) a specification change of R2-4 to the regeneration instant (0.31 LSB, near the limit) or to 25 ns (0.18 LSB).
+2. Offset drift: B7 11 / 9 LSB, dev1 7 / 8 LSB, dev2 21 / 21 LSB. The what-if shows that the drift closes only when the
+   comparator and `vdd` wiring R fall together by about 3 times. The worst `vdd` ports are the `r1_cmp4` integration
+   capacitors under the CDAC array (Metal1 / Metal2 only). Next lever: move that capacitor row out from under the CDAC,
+   or connect it on Metal3 from above, then run the what-if with the per-net R of the new layout before the PEX
+   (ledger F-20261030-T2n-07). The digital offset word of `r1_ctrl` (D22) can remove the static part, not the drift.
+3. B7 INL bow 4.74 / 6.22 LSB (B4 1.69 / 1.99); no INL limit is stated.
+
+### Failures and deviations (layout B8)
+
+| # | What | Class | Effect |
+| --- | --- | --- | --- |
+| 1 | D25 assumed local decoupling closes R2-4; the sizing shows 5.2 times the box, and ideal 200 pF still fails | estimation | no decoupling drawn, no netlist revision 6 |
+| 2 | the D25 fallback conflicts with the ctrl contract (9 decisions affected, 3 extra ticks allowed) | spec-ambiguity | fallback not applied; coordinator decision |
+| 3 | dev1 widened the P / N comparator nets unevenly; static offset 18 LSB | regression | dev2 drawn |
+| 4 | dev2 (common-mode nets only) moved the ff offset to +12 / +13 LSB | estimation | B8 not adopted |
+| 5 | long runs (R2-4 proxies, gate-level ff, windows, full scale) were started on the dev1 extraction before its offset result, so they are on a variant that is not adopted | process-hygiene | results kept as information on dev1 |
+| 6 | CPU 104 carried two or three jobs at a time (offset chains, windows, PEX), so runs took about 2 times longer | coordination | window 3072 not run in the budget |
+| 7 | the gate-level ff deck limit was sized from the B7 rate (0.0083 µs per minute); the B8 run gave 0.0060 and stopped at 1.667 of 1.86 µs with no waveform | estimation | ff window and ff first conversion not run on B8 |
+
 ## Layout B7 (2026-10-27, track T2m): closure under PLAN.md D23
 
 State: **not closed** (budget reached 04:20 CET on 28 Oct). Layout checks, static offset, ff first conversion, windows
@@ -165,7 +388,7 @@ extraction and the B6 runs are valid for B7. All simulated, behavioural SAR, ide
   `sim/post/results/postb6_win{1024,3072}_tt_rc.json`): **passed**, monotonic, no missing code, max |DNL| 0.33 LSB
   (one count). Codes 1024: A 1021–1033, B 1020–1032; 3072: A and B 3055–3067.
 - INL ramp on the B7 netlist (`postb7-inla-tt-rc`, `postb7-inlb-tt-rc`, reduced ramp `sim/r5/points/inlramp5{a,b}.json`):
-  **not run at the budget**. Both halves were still running at 04:20 CET on 28 Oct (half a on CPU 104 since 01:48,
+  **not run at the budget** (completed later: see the status table, bow 4.74 / 6.22 LSB). Both halves were still running at 04:20 CET on 28 Oct (half a on CPU 104 since 01:48,
   half b on CPU 103 since 02:22; B4 needed 1.8 h per half, the B6 netlist is slower). The runs are left to complete.
   Post-processing: `python3 sim/post/post_post.py inl sim/post/results/postb7_inl_tt_rc.json
   postb7-inla-tt-rc:inlramp5a.json postb7-inlb-tt-rc:inlramp5b.json`.
@@ -206,7 +429,7 @@ Built against: PDK `84374023ee8b4b126bebbba67fcbada0a9c0ff0b`, KLayout 0.30.9, k
 | ff output window (≥ 0.5 ns) | **failed: 0.401 ns** (by 0.099 ns); no raw edge at E15 | `sim/post/b6/results/b7_ms_fc_ffm40_timing.json` |
 | ff deck limit (measured µs per minute + 30 %) | **passed**: 13 474 s of 15 200 s | `sim/post/b6/runs/b7-ms-fc-ffm40/run.json` |
 | Windows 1024 / 3072 tt | **passed** | `sim/post/results/postb6_win{1024,3072}_tt_rc.json` |
-| INL tt on the B7 netlist | **not run** at the budget (both halves still running) | `<G1_RESULTS_ROOT>/r1_adc/postb7-inl{a,b}-tt-rc/` |
+| INL tt on the B7 netlist | not run at the B7 budget; **completed afterwards** (05:43 / 05:53 CET, 28 Oct, post-processed by T2n): monotonic, max \|INL\| 5.75 / 7.45 LSB, cubic bow 4.74 / 6.22 LSB (A / B; B4 bow 1.69 / 1.99 LSB), no limit stated | `sim/post/results/postb7_inl_tt_rc.json` |
 | Full scale tt / ss / ff (≥ ±0.86 V) | **passed** | `sim/post/results/postb6_isa_*_rc.json` |
 | Supply current tt | recorded: IDD 0.757 mA, IDDA 1.101 mA; with SAR 0.926 mA | `sim/post/results/postb6_isa_tt_rc.json`, `sim/post/b6/results/b6_ms_fc_tt_dec.json` |
 | Density deck B7 | not run (no drawn change) | — |

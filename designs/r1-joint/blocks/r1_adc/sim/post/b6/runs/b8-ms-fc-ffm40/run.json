@@ -1,0 +1,46 @@
+{
+  "run_id": "b8-ms-fc-ffm40",
+  "block": "r1_adc",
+  "track": "T2l",
+  "harness": "sim/post/b5 decks, runner sim/post/b6/run_b6.py",
+  "question": "first conversion, bit-exact and output window at ff / -40 C / 1.32 V, gate-level SAR, layout B8 extraction (pex-b8-dev1), both frames; limit from the B7 rate plus 25 %",
+  "command": "G1_CPUSET=103 G1_CPUS=1 G1_WORKDIR=designs/r1-joint/blocks/r1_adc G1_RESULTS_ROOT=<G1_RESULTS_ROOT> flow/run.sh timeout -s TERM -k 30 16800 ngspice -b <G1_RESULTS_ROOT>/r1_adc/b8-ms-fc-ffm40/deck.cir (runner sim/post/b6/run_b6.py)",
+  "argv": [
+    "--id",
+    "b8-ms-fc-ffm40",
+    "--cpu",
+    "103",
+    "--deck",
+    "sim/post/b8/decks/fc_ffm40.cir",
+    "--timeout",
+    "16800",
+    "--question",
+    "first conversion, bit-exact and output window at ff / -40 C / 1.32 V, gate-level SAR, layout B8 extraction (pex-b8-dev1), both frames; limit from the B7 rate plus 25 %"
+  ],
+  "deck_template": "sim/post/b8/decks/fc_ffm40.cir",
+  "deck": "sim/post/b6/runs/b8-ms-fc-ffm40/deck.cir",
+  "deck_template_sha256": "ce80c826294d84d0b308fb314721da30dab137d5e6b587e262614e9d4818ed64",
+  "tstop": "1.86u",
+  "smoke_test": false,
+  "includes_sha256": {
+    "sim/post/r1_adc_post_rc_mb8.spice": "b477b1f0a4b2e677dea021def2760470a2111a71a3f21cb2bc0f25bd289c227f",
+    "/foss/pdks/ihp-sg13g2/libs.ref/sg13g2_stdcell/spice/sg13g2_stdcell.spice": "container path (PDK 84374023)",
+    "sim/post/b5/sar/r1_adc_sar_gl_lumpc.spice": "102f66b6a65f778556d45695f7a38ee7122dba367afe0e5a41c8bf97f841a59a"
+  },
+  "pdk_commit": "84374023ee8b4b126bebbba67fcbada0a9c0ff0b (checked by flow/run.sh)",
+  "container_image": "tapeoutbench-eda:latest sha256:ddeb69576f2808676d1c5d474ecf04f6d1d6f8abdcff6b72b39790ded924bab2",
+  "ngspice_version": "not found in log",
+  "raw_results": "<G1_RESULTS_ROOT>/r1_adc/b8-ms-fc-ffm40/",
+  "started_utc": "2026-10-28T04:57:10.262652Z",
+  "wall_s": 16804.6,
+  "sim_us_per_wall_min": 0.0066,
+  "returncode": 124,
+  "killed_by_host": false,
+  "status": "timeout",
+  "errors": [],
+  "missing_outputs": [
+    "b5.raw"
+  ],
+  "result": "",
+  "disposition": "pending post-processing (sim/post/b5/b5_post.py)"
+}

@@ -48,10 +48,27 @@ TRIM = json.load(open(globals()['trim'])) if globals().get('trim') else {}
 # layout B6 (2026-10-27, T2l): -rd rev=B5 reproduces layout B5; default B6 (README "Layout B6")
 # layout B7 (2026-10-27, T2m): B6 + the south vss pin 2.0 um wide at the same centre (EM, r1_top integration_checklist_g);
 # -rd rev=B6 reproduces layout B6
+# layout B8 (2026-10-28, T2n, PLAN.md D25): B7 + wider comparator nets (widen() on Metal2-4 with the extra parallel
+# vias, the comparator internal nets of r1_cmp4 / r1_cmp5n and their outputs) and the slice supplies widened on Metal2
+# too; drift lever of the B7 drift diagnosis (README "Layout B8"). B8 is not adopted: dev1 (b8w=all) static offset
+# 18 LSB, dev2 (b8w=common) ff offset +13 LSB, both worse than B7. The default stays B7 (layout of record); -rd rev=B8
+# draws the B8 variants
 REV = globals().get('rev', 'B7')
-assert REV in ('B5', 'B6', 'B7'), REV
-B6 = REV in ('B6', 'B7')
-B7 = REV == 'B7'
+assert REV in ('B5', 'B6', 'B7', 'B8'), REV
+B6 = REV in ('B6', 'B7', 'B8')
+B7 = REV in ('B7', 'B8')
+B8 = REV == 'B8'
+# B8: comparator nets widened after the shields and before the supplies (they get the free tracks next to them first)
+B8_CMP_WIDEN = ['xc4_xs1_tail', 'xc4_xs1_tail0', 'xc4_dip', 'xc4_din', 'xc4_lt', 'xc4_outpb', 'xc4_outnb',
+                'xc5_xs1_tail', 'xc5_xs1_tail0', 'xc5_dip', 'xc5_din', 'xc5_lt', 'xc5_outpb', 'xc5_outnb',
+                'op', 'on', 'onp', 'onn']
+# B8 dev2 (default, -rd b8w=common): widen only the common-mode comparator nets (tails, latch tails); dev1 (-rd b8w=all)
+# also widened the P / N pair nets and their buffers, unevenly (on 30 Ohm median against op 61 Ohm), and the tt offset went
+# from -8 / -9 (B7) to -13 / -14 LSB (run postb8-ofs-tt-v33); dev2: tt -5 / -6, ff +12 / +13 LSB (postb8b-ofs-*)
+B8W = globals().get('b8w', 'common')
+assert B8W in ('all', 'common'), B8W
+if B8W == 'common':
+    B8_CMP_WIDEN = ['xc4_xs1_tail', 'xc4_xs1_tail0', 'xc4_lt', 'xc5_xs1_tail', 'xc5_xs1_tail0', 'xc5_lt']
 
 W, H = 439.0, 182.3               # H: analog part (layouts A-B4); B5 box height HB5
 HB5 = round(H + 23.12, 2)
@@ -937,9 +954,16 @@ def route_pairs(blk, first, pairs, cellname):
                 log('%s: shield %s %d of %d edge-sides (%d free candidates)' % (cellname, net, kept, tot, R.shield_cand))
         if getattr(R, 'widen_avoid_names', None):
             R.widen_avoid = {R.nets[n] for n in R.widen_avoid_names if n in R.nets}
+        if B8 and cellname == 'r1_adc_slice':
+            for net in B8_CMP_WIDEN:
+                if net in R.nets:
+                    nb, nv = R.widen(R.nets[net], layers=(0, 1, 2))
+                    blk.stats.setdefault('widen', {})[net] = dict(boxes=nb, extra_vias=nv)
+                    log('B8 widen %s: %d boxes, %d extra vias' % (net, nb, nv))
         for net in ('gnd', 'vss', 'vdd', 'vdda', 'vref', 'vrefl'):
             if net in R.nets:
-                nb, nv = R.widen(R.nets[net])
+                lw = (0, 1, 2) if (B8 and cellname == 'r1_adc_slice' and net in ('gnd', 'vdd')) else (1, 2)
+                nb, nv = R.widen(R.nets[net], layers=lw)
                 blk.stats.setdefault('widen', {})[net] = dict(boxes=nb, extra_vias=nv)
     for a, b in pairs:
         if a in R.nets and b in R.nets:
