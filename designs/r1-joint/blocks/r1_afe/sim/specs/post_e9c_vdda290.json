@@ -1,0 +1,104 @@
+{
+ "question": "Layout E9c at the chip-level worst supply (track T3p): the E9c check rows that set the loop margins, f_c and THD, re-run at VDDA 2.90 V instead of the corner supply (ss 3.0 V, ffx 3.0 V, tt 3.3 V). Same RC netlist, decks and options as post_e9c.json; only the VDDA substitution changes (the list of jobs is the subset named in the README).",
+ "variants": {
+  "E9c": {
+   "netlist": "$G1_RESULTS_ROOT/r1_afe/pexrc-layout-e9c-cal19/r1_afe_post_rc.spice"
+  }
+ },
+ "jobs": [
+  {
+   "tag": "tran_tt_x1",
+   "tmpl": "tb_afe_tran.cir",
+   "corner": "tt",
+   "subs": {
+    "CODE": 0,
+    "AMP": 0.7,
+    "VCMI": 2.45,
+    "IB": "10.14u",
+    "VDDA": 2.9
+   },
+   "prio": 0
+  },
+  {
+   "tag": "stb_ffx_ib6.9_cm0.5",
+   "tmpl": "tb_afe_stb.cir",
+   "corner": "ffx",
+   "subs": {
+    "VCMI": 0.5,
+    "KLIST": "0 5",
+    "LLIST": "1 2 4 5",
+    "IB": "6.9u",
+    "CL": "2.8p",
+    "VDDA": 2.9
+   },
+   "prio": 0
+  },
+  {
+   "tag": "stb_ffx_ib6.9_cm2.5",
+   "tmpl": "tb_afe_stb.cir",
+   "corner": "ffx",
+   "subs": {
+    "VCMI": 2.5,
+    "KLIST": "0 5",
+    "LLIST": "1 2 4 5",
+    "IB": "6.9u",
+    "CL": "2.8p",
+    "VDDA": 2.9
+   },
+   "prio": 0
+  },
+  {
+   "tag": "stb_ss_ib11.81_cm0.5",
+   "tmpl": "tb_afe_stb.cir",
+   "corner": "ss",
+   "subs": {
+    "VCMI": 0.5,
+    "KLIST": "0 5",
+    "LLIST": "1 2 4 5",
+    "IB": "11.81u",
+    "CL": "2.8p",
+    "VDDA": 2.9
+   },
+   "prio": 0
+  },
+  {
+   "tag": "stb_ss_ib11.81_cm2.5",
+   "tmpl": "tb_afe_stb.cir",
+   "corner": "ss",
+   "subs": {
+    "VCMI": 2.5,
+    "KLIST": "0 5",
+    "LLIST": "1 2 4 5",
+    "IB": "11.81u",
+    "CL": "2.8p",
+    "VDDA": 2.9
+   },
+   "prio": 0
+  },
+  {
+   "tag": "stb_tt_ib15.4_cm2.5",
+   "tmpl": "tb_afe_stb.cir",
+   "corner": "tt",
+   "subs": {
+    "VCMI": 2.5,
+    "KLIST": "0 5",
+    "LLIST": "1 2 4 5",
+    "IB": "15.4u",
+    "CL": "2.8p",
+    "VDDA": 2.9
+   },
+   "prio": 1
+  },
+  {
+   "tag": "ac_ss_ib11.81_cm0.5",
+   "tmpl": "tb_afe_ac.cir",
+   "corner": "ss",
+   "subs": {
+    "VCMI": 0.5,
+    "IB": "11.81u",
+    "VDDA": 2.9
+   },
+   "prio": 0
+  }
+ ]
+}

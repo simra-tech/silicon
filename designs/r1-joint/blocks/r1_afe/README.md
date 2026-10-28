@@ -10,6 +10,47 @@ Track T3 of `../README.md`. Specification row: `../../specification/R1_TOP_LEVEL
 
 ## Layout E9c (2026-10-28, track T3o; the `x1` ΔC row is closed, the AFE has no open row)
 
+### Headroom at the chip-level supply (VDDA 2.90 V; 2026-10-28, track T3p)
+
+Question: does the AFE keep its margins at the lowest supply that the chip gives it? The chip-level supply extraction (`../r1_top/README.md`, "Try h", item 7) gives an AFE loss of 93.1 mV at maximum sheet resistance (66.7 mV typical). At the 3.0 V minimum supply the AFE pins then see 2.907 V (2.933 V). The campaign of record has 3.0 V as its lowest point at the macro pins. This section re-runs the rows that depend on supply at **VDDA 2.90 V** (rounded down). All numbers are **simulated** (ngspice-46, IHP SG13G2 `84374023`). Nothing is measured.
+
+Method. Layout E9c, netlist F3, same decks, same options, same netlists as the record. Only the `VDDA` substitution of the job changes (the job `subs` already carry a `VDDA` key, so no change to the runner). The record has no 2.90 V point. Two new campaign specs hold the change:
+
+- `sim/specs/op_e9c_vdda290.json`: from `op_e9c.json` (wiring-R view `pexr-layout-e9c-cal19-lvs`, as the record) keeps every job whose supply is 3.0 V (13 tt `_v3.0` points, 13 ss points, 8 ffx points = 34 jobs). It sets `VDDA` 2.9 and renames the tag with `_v2.90`.
+- `sim/specs/post_e9c_vdda290.json`: from `post_e9b.json` (RC netlist `pexrc-layout-e9c-cal19`) keeps 7 jobs and sets `VDDA` 2.9: ffx 6.9 µA CM 0.5 V and CM 2.5 V loops, ss 11.81 µA CM 0.5 V and CM 2.5 V loops (×1 and ×32, DM1/DM2/CM1/CM2), tt 15.4 µA CM 2.5 V loops (the DM2 gain-margin row), ss f_c and output CM, tt ×1 THD.
+
+Reduction: `sim/vdda290_reduce.py`, summary `sim/results/r1afe-e9c-vdda290-summary.json`. Run ids: `r1afe-op-e9c-v290` (34 jobs, 0 failed, 610 s on one CPU) and `r1afe-post-e9c-v290` (7 jobs, 0 failed, 1878 s on three CPUs). Raw decks and logs are in `<G1_RESULTS_ROOT>/r1_afe/<run id>/`. The 3.0 V column is the record: `r1afe-op-e9c` and `r1afe-post-e9c`. Where E9c has no such job, the column uses E9b (`r1afe-post-e9b`), which equals E9c within 0.01° and 0.01 dB.
+
+| Row | Limit | 3.0 V (record) | 2.90 V | Status |
+| --- | --- | --- | --- | --- |
+| ×32 static offset, 34 points that use 3.0 V (tt, ss, ffx; all input CM) | \|offset\| ≤ 5 mV | worst \|3.859\| mV (tt 15.4 µA CM 2.5 V) | worst \|**3.782**\| mV (same point); change per point −0.465 … +0.225 mV | **passed** |
+| Drift span, 39 spans, 3.0 V tt point replaced by 2.90 V | ≤ 1.6 mV (D29) | worst 1.542 mV; 11 of 39 above 1.0 mV | worst **1.480 mV** (15.4 µA CM 0.5 V, all five); 14 of 39 above 1.0 mV; 0 of 39 above 1.6 mV | **passed** |
+| Drift span, 3.0 V tt point and the ss point (3.0 V) both replaced by 2.90 V (conservative reading) | ≤ 1.6 mV (D29) | worst 1.542 mV | worst **1.597 mV** (15.4 µA CM 0.5 V, all five; record of the same row 1.480 mV); 14 of 39 above 1.0 mV; 0 of 39 above 1.6 mV | **passed** (margin 3 µV) |
+| DM1 PM / GM, ffx 6.9 µA, CM 0.5 V, ×1 and ×32 | PM ≥ 63°, GM ≥ 10 dB | 65.26° / 25.42 dB | **66.15° / 25.31 dB** | **passed** |
+| CM1 PM, ffx 6.9 µA, CM 2.5 V (the record minimum) | ≥ 63° | 63.31° | **64.00°** | **passed** |
+| CM2 PM, ffx 6.9 µA, CM 0.5 V / CM 2.5 V | ≥ 63° | 63.46° / 63.79° | **63.32° / 63.70°** (new minimum of the set, margin 0.32°) | **passed** |
+| DM2 PM / GM, ffx 6.9 µA, CM 0.5 V / CM 2.5 V | PM ≥ 63°, GM ≥ 10 dB | 66.04° / 18.16 dB; 66.65° / 18.08 dB | **66.00° / 18.23 dB; 66.63° / 18.14 dB** | **passed** |
+| Loops at ss 125 °C, 11.81 µA, CM 0.5 V / CM 2.5 V (DM1, CM1, DM2, CM2) | PM ≥ 63°, GM ≥ 10 dB | worst PM 72.86° (DM2), worst GM 14.89 dB (DM2) / 73.37° (DM2), 14.64 dB (DM2) (E9b) | worst PM **72.82°**, GM **14.94 dB** / PM **73.37°**, GM **14.67 dB** | **passed** |
+| DM2 GM, tt 15.4 µA, CM 2.5 V (record minimum GM) | GM ≥ 10 dB | 11.51 dB (PM 71.50°) | **11.61 dB** (PM 71.42°) | **passed** |
+| Rows with `pm_valid` false (supply-network method) | as record | same rows as the record (CM2 at CM 2.5 V, tt CM2): 1, 1, 2 flagged rows | same count and same rows | counted as in the record |
+| Supply-path DC loop gain (variant `E9cS`) at 2.90 V | ≤ −20 dB | −82.3 dB (tt, 3.3 V) | not repeated | **not run** |
+| f_c at ss CM 0.5 V (×16 and all codes) | ≥ 1.0 MHz | 1.06268 MHz | **1.03547 MHz** (−2.6 %) | **passed** |
+| Output CM at ss CM 0.5 V | 0.570 … 0.630 V (0.600 ± 0.030 V) | 0.59053 … 0.59070 V | **0.59119 … 0.59140 V** | **passed** |
+| THD ×1, tt (`tran_tt_x1`) | ≤ 0.1 % | 0.0104 % (tt 3.3 V; the record has no tt 3.0 V THD) | **0.01755 %** | **passed** |
+| THD ×32, ss THD, hold, settling, CM step, noise, Monte Carlo at 2.90 V | as record | see E9b table | not repeated | **not run** |
+| Loops of the other corners (tt, ff, sf, fs) at 2.90 V | as record | supply is 3.3 V or 3.6 V in the record, not near 3.0 V | not applicable (ssx 3.6 V, ff 3.6 V, tt 3.3 V keep their supply) | **not applicable** |
+
+Reading. Every row that ran passes at 2.90 V. Lower supply moves the offset toward zero at most points, makes f_c lower by 2.6 %, and raises the THD ×1 from 0.010 % to 0.018 % (different corner supply, 2.90 V against 3.3 V). The smallest loop margin of the set is CM2 at ffx 6.9 µA CM 0.5 V: 63.32° (record 63.46°). The drift span has a thin margin only if the ss point is also moved to 2.90 V: 1.597 mV against 1.6 mV. The span changes with the row that holds the ss point. If D29 holds the 1.6 mV limit at the chip-level supply, this row has 3 µV of margin. The result is for the wiring-R view (offset) and the RC netlist (loops, ac, THD) of layout E9c. The D29 full-chip angle residual is outside this block and **not run** here.
+
+Failures and mistakes (track T3p).
+
+| # | Class | What happened | Effect / fix |
+| --- | --- | --- | --- |
+| 1 | tooling | A foreground wait loop with a 20 min limit went past the default 120 s tool limit and moved to the background; a `sleep 240` line was blocked | no effect on the runs; waits redone with an explicit tool timeout in blocks of 9 min (ledger F-20261030-T3p-01) |
+| 2 | process-hygiene | The runner fixes its worker count at launch. The 7-job campaign used three workers on CPUs 116-118. CPU 119 was idle from 22:48 to 23:09 after the 34-job run ended there | no effect on results; about 10 min of wall clock lost (ledger F-20261030-T3p-02) |
+| 3 | tooling | The first run of `sim/vdda290_reduce.py` cut its printed JSON at 12000 characters; the check read the cut text | the summary file on disk was complete; the check was redone from the file (ledger F-20261030-T3p-03) |
+
+
 Status: **closed on the block rows** (2026-10-28, 17:13 to 19:15 CET). The `x1p` C trim at 19/19 edges gives `x1p` − `x1n` = **+0.2 fF** (limit 1 fF; kpex 0.3.12, simulated). The check rows that the trim could change equal E9b within 0.01° / 0.01 dB / 0.00 mV. The E9b campaign `r1afe-post-e9b` ended with 68 of 68 jobs and 0 failed jobs; its rows are in the E9b status table below. The D29 condition (full-chip test 2 angle residual ≤ 0.25° with the extracted AFE and the ADC of record) is outside this block and **not run** here.
 
 Layout E9c = E9b generator and flags (`layout/r1_afe_layout.py` sha256 `b3ce7072…`) with the `x1p` C trim at 19/19 edges (E9b 23/23, E9 25/25), netlist F3 (`schematic/r1_afe_revF3.spice`, passed explicitly to every step). Same 21 pins and box (192.8 × 494.4 µm), supply pins 1.0 µm. `layout/r1_afe.gds` = E9c (sha256 `adb7632b…`, with `layout/r1_afe_ports.json` and `r1_afe_layout.json` of the same build; the only change in the ports file is the `x1p` trim stub box). E9b is kept as `layout/r1_afe_revE9b.gds` (sha256 `73c6915e…`). Script `pex/run_iter_e9c.sh` (the E9b script with the edge count as an argument). Layout run `layout-e9c-cal19`, extraction `pex-e9c-cal19` (kpex 2.5D CC + RNetExtractor R), RC netlist `pexrc-layout-e9c-cal19`, wiring-R view `pexr-layout-e9c-cal19-lvs`. Run ids: op screen `r1afe-op-e9c` (spec `sim/specs/op_e9c.json`, 73 points), check rows `r1afe-post-e9c` (spec `sim/specs/post_e9c.json`, 5 jobs). CPU set 116, 118, 119 (CPU 117 held a foreign process), one job per CPU. All numbers are **simulated** (ngspice-46, IHP SG13G2 `84374023`, KLayout 0.30.9). Nothing is measured.
