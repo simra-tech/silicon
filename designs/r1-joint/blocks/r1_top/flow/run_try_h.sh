@@ -12,12 +12,14 @@ T=designs/r1-joint/blocks/r1_top
 S=$G1_RESULTS_ROOT/r1_top/$1; shift
 O=$S/inputs/ofrecord
 STEPS=${*:-gen cdl lvs lvsstock main antenna maximal}
-F=$G1_RESULTS_ROOT/r1_ctrl/r1ctrl_ll_20261027_t22/flow/runs/r1ctrl_ll_20261027_t22/final
+# try h2 (T8h): R1H_CTRL_RUN=<LibreLane run of the ctrl release> (gate-level pnl for the CDL), R1H_CTRL_RELEASE=<release dir>
+CR=${R1H_CTRL_RUN:-r1ctrl_ll_20261027_t22}
+F=$G1_RESULTS_ROOT/r1_ctrl/$CR/flow/runs/$CR/final
 mkdir -p "$S/cdl"
 for st in $STEPS; do
   echo "step $st start $(date -u +%H:%M:%S)" >> "$S/steps.log"
   case $st in
-    gen) flow/run.sh env R1G_NOMAZE="${R1G_NOMAZE:-}" R1G_NO_SFEED="${R1G_NO_SFEED:-}" R1H_NO_FEED="${R1H_NO_FEED:-}" R1H_IOPADVSS_ECO="${R1H_IOPADVSS_ECO:-}" R1H_PADMAP="${R1H_PADMAP:-}" R1G_NO_SSTACK="${R1G_NO_SSTACK:-}" R1G_STRAP6="${R1G_STRAP6:-}" R1G_SHA_r1_adc="${R1G_SHA_r1_adc:-}" R1G_SHA_r1_afe="${R1G_SHA_r1_afe:-}" \
+    gen) flow/run.sh env R1G_NOMAZE="${R1G_NOMAZE:-}" R1G_NO_SFEED="${R1G_NO_SFEED:-}" R1H_NO_FEED="${R1H_NO_FEED:-}" R1H_IOPADVSS_ECO="${R1H_IOPADVSS_ECO:-}" R1H_PADMAP="${R1H_PADMAP:-}" R1G_NO_SSTACK="${R1G_NO_SSTACK:-}" R1G_STRAP6="${R1G_STRAP6:-}" R1G_SHA_r1_adc="${R1G_SHA_r1_adc:-}" R1G_SHA_r1_afe="${R1G_SHA_r1_afe:-}" R1G_SHA_r1_ctrl_top="${R1G_SHA_r1_ctrl_top:-}" R1H_CTRL_RELEASE="${R1H_CTRL_RELEASE:-}" \
            python3 $T/layout/r1_top_assemble_h.py "$G1_RESULTS_ROOT" "$S" "$O" > "$S/gen.log" 2>&1
          flow/run.sh python3 $T/layout/r1_top_png.py "$S/r1_top.gds" "$S/r1_top.png" 760 1700 >> "$S/gen.log" 2>&1 ;;
     cdl) flow/run.sh python3 $T/lvs/pnl2cdl.py "$F/pnl/r1_ctrl_top.pnl.v" "$S/cdl/r1_ctrl_top.cdl" \

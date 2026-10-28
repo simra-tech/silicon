@@ -44,6 +44,7 @@ WD, RNETF, KDIR, CDLF, OUT = sys.argv[1:6]
 TAU, MAXDEG = 1e-12, 8
 FAST = False
 CFILL, STEM = None, "r1_top_g_pex"
+TITLE = None      # T8h: --title "<provenance line>" replaces the try-g provenance comment (default unchanged)
 SUPPLY = {"VDD", "VSS", "VDDA", "IOVDD", "IOVSS"}
 _a = sys.argv[6:]
 while _a:
@@ -58,6 +59,8 @@ while _a:
         CFILL = _a.pop(0)
     elif _k == "--stem":
         STEM = _a.pop(0)
+    elif _k == "--title":
+        TITLE = _a.pop(0)
 os.makedirs(OUT, exist_ok=True)
 LOG = open(os.path.join(OUT, "top_netlist.log"), "w")
 
@@ -391,6 +394,7 @@ def write_netlist(path, R_el, Cg, Cc, title):
     ports = sorted(rcport)
     portset = set(rcport.values())
     L = ["* %s" % title,
+         ("* " + TITLE) if TITLE else
          ("* r1_top try g (run asm-20261028-g3, unfilled GDS sha256 8f1c5d7c…), chip-level extraction, track T11"
           if not CF else "* r1_top try g, chip-level extraction with the metal fill of asm-20261028-g3-fill (GDS sha256 "
           "3b337a55…) on the sensitive nets (pex/fill_net.py), track T11b"),

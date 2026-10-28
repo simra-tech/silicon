@@ -1,0 +1,127 @@
+{
+ "run": "pex-20261030-h2 (unfilled) and pex-20261030-h2-fill (filled)",
+ "track": "T8h",
+ "date": "2026-10-28",
+ "question": "Chip-level PEX of try h (asm-20261030-h2) with the macros as black boxes, unfilled and with the metal fill of asm-20261030-h2-fill on the 111 sensitive nets, full / reduced / fast variants at typ and max sheet, so the full-chip testbench can build its chip view on try h; checks (a)-(e) as pex-20261029-g3 / -g3-fill",
+ "method": "as pex-20261029-g3 (T11: top_wire.py wiring layout, RNetExtractor R typ/max, one full-chip kpex 0.3.12 2.5D CC run, top_netlist.py) and pex-20261029-g3-fill (T11b: 10 um bands of the groups clk, ana, tap, bus with and without the fill, kpex per band, fill_net.py Schur reduction, top_netlist.py --cfill); fast variant --fast --tau 1e-11 --maxdeg 16; check (b) against supply_h2.json (R1_PEX_SUPPLY_REF); provenance line by --title",
+ "inputs": {
+  "gds_unfilled": {
+   "path": "<G1_RESULTS_ROOT>/r1_top/asm-20261030-h2/r1_top.gds",
+   "sha256": "972350b8acfea2129d9aef51c6834a94e0cbfd992f34099bd8a06b535d6d0d43"
+  },
+  "gds_filled": {
+   "path": "<G1_RESULTS_ROOT>/r1_top/asm-20261030-h2-fill/r1_top.gds",
+   "sha256": "91791ff50079fd0dc46f76faa443633c770e734e1ab3f412445ee1351c004d62"
+  },
+  "cdl": {
+   "path": "<G1_RESULTS_ROOT>/r1_top/asm-20261030-h2/lvs/r1_top_h.cdl (lvs/r1_top_g.cdl is a link to it)",
+   "sha256": "cf61569b475954d05a6ec09968dcb95072bd8bf72b09c968481284079b510e25"
+  },
+  "supply_ref": {
+   "path": "<G1_RESULTS_ROOT>/r1_top/asm-20261030-h2/supply_h2.json",
+   "sha256": "de838b9ef8d4c82612a433269f8dc69f4f479d12c5cd0baa87a91164b60d1c88"
+  }
+ },
+ "scripts_sha256": {
+  "top_wire.py": "0fdb4536f9455bf38bdcf45d6065ee84f1458cfa27be891246a843bffdb228cb",
+  "make_lvsdb.py": "92cd5b4fb34878fa1c0bc254c27936ff62dde25709858f9ce5fe1383cf71f707",
+  "top_rnet.py": "1f9cf627efc7e294437713847506b549488f811b76cb8fb4a0fe2e1fdf974c46",
+  "top_netlist.py": "22253d51550a89d686c409bad21ba73186140558394d36ba0f966ed401c08806",
+  "fill_net.py": "0869950366ba8fb538ee51cb4f593ebf5e19ae1363fbef7ed93feff70b243a4e",
+  "top_checks.py": "26dccc989f6b419649bdb6e25d054c1329ec23105c072f2872cfb535979778ce",
+  "tran_subset.py": "707f9ba987c54b56a6d0776b9f2166035a819e25aa77f35fcdb7412aadf84b28",
+  "fill_report.py": "81dc8de9b4ba4b21a5df8a20aace46d497d9e566928e346157675d131d531b15"
+ },
+ "commands": [
+  "sh <P>/run_wire.sh 114",
+  "sh <P>/run_kpex_full.sh 112-113 2 (kpex --threads 2; 19:56-21:51 CET, 1 h 55 min)",
+  "sh <F>/run_prep.sh 114 <group> 10 <group> (clk ana tap bus), sh <F>/run_prep.sh 114 clk 20 clk20",
+  "sh <F>/run_kpex_slot.sh <cpu> <band dirs> (1 thread per band, one CPU each)",
+  "sh <P>/run_build.sh unfilled 112 113; sh <F>/run_build.sh filled 115 115",
+  "sh <F>/run_tran.sh (check d)",
+  "fill_net.py <F> <K> <F>/fill_margin_20um.json clk clk20",
+  "fill_report.py -> reports/pex_fill_h.md"
+ ],
+ "band_kpex_seconds": [
+  "kpex band_clk_fill rc 0 seconds 3026 cpuset 114",
+  "kpex band_tap_fill rc 0 seconds 503 cpuset 114",
+  "kpex band_clk_nofill rc 0 seconds 23 cpuset 114",
+  "kpex band_ana_nofill rc 0 seconds 18 cpuset 114",
+  "kpex band_tap_nofill rc 0 seconds 17 cpuset 114",
+  "kpex band_bus_nofill rc 0 seconds 13 cpuset 114",
+  "slot114 done",
+  "kpex band_clk20_nofill rc 0 seconds 26 cpuset 114",
+  "kpex band_ana_fill rc 0 seconds 807 cpuset 115",
+  "kpex band_bus_fill rc 0 seconds 1022 cpuset 115",
+  "slot115 done",
+  "kpex band_clk20_fill rc 0 seconds 5635 cpuset 114",
+  "slot114b done"
+ ],
+ "outputs_unfilled_sha256": {
+  "r1_top_h_pex.spice": "8f64ef0b596186cc28de0b573a307edceb0a56dc3dc152fd1d590b28f8db8879",
+  "r1_top_h_pex_red.spice": "ed8f85ecc2b10fb7c8bb881f4f1672484976ce0be25a59ac4e53d45c6fb45a08",
+  "max/r1_top_h_pex.spice": "134a99ac00f009b0dfff25db4975872984989903350eb90106cbdd3a5f83ad1b",
+  "max/r1_top_h_pex_red.spice": "929f9fa2653d65440cd169d6c41bc46e84e2598dd293443f2353e37fa5b7d831",
+  "fast/r1_top_h_pex_fast.spice": "e0585f0c8e9d83dc9321eb8b52de3163fbc620abc135a4ba876907df88d2cdca",
+  "fast/max/r1_top_h_pex_fast.spice": "89064a376098d7dec1db865547441c229267a2a7415b4690d25809d11e6902d4",
+  "pin_map.csv": "2ef8177fcb5e7e78317e8ed4ce240cba157cb44779012218c56874da70e75c3e",
+  "checks/checks.json": "b54b7ff77d96d918166bf93abaf6eca8a5925aa9a764f2b17a0b55506c7f69d9",
+  "checks_fast/checks.json": "e524d192c7f540fc5bc2876fd4d2149f845ea81e83592dcfd8c792fc6a737f03",
+  "kpex_full/r1_top_wire__r1_top_wire/r1_top_wire_k25d_pex_netlist.csv": "600120efde2101fdaa2ff792071f44e26c552bb07907103d6e42b2462ea1a3fd",
+  "rnet/rnet_typ.json": "19ad0d0be6fc54ceae402d6bd4de3dd0f498c4fc46b48366acf5e042a07aa51e",
+  "rnet/rnet_max.json": "75f53969e3f02f5720d7c9ce92e30b960c4a025ced69303f585e807922997644"
+ },
+ "outputs_filled_sha256": {
+  "r1_top_h_pex_fill.spice": "4013092d439f281f4d44545e65b4dbb22c79cfec03c7eae058745ef5eb23e7fa",
+  "r1_top_h_pex_fill_red.spice": "7d35ed612bcdad4aaf1609e24d7b6f143941e5a8ab5d96c7d241892322b1a546",
+  "max/r1_top_h_pex_fill.spice": "9afb248270ad67525a327ef43f8ab83a131fec3f1f4dcb9b4cf75c465d717137",
+  "max/r1_top_h_pex_fill_red.spice": "263396ee3803eb6a6d3288ed63b60b1894c9cba48cae4694b1dfa6432ba848ab",
+  "fast/r1_top_h_pex_fill_fast.spice": "c3abcfbbc1d456160a448d4832b0c304d509d74a397d757839ba6a6ae8b3f747",
+  "fast/max/r1_top_h_pex_fill_fast.spice": "41e60f6ef8c3044a41625ff68bc0ec89efc5da64189d2fe44a2f7531d27ba9ce",
+  "pin_map.csv": "2ef8177fcb5e7e78317e8ed4ce240cba157cb44779012218c56874da70e75c3e",
+  "cfill.json": "fb97f7e012ffc9908cc07180c070af5ef3a4bc513b9e0368a9fa175112acb299",
+  "fill_margin_20um.json": "b58bd21b7b3ddbe01486efcb55c93e99fe51a136355b64442280bdb075ddd752",
+  "checks/checks.json": "dd8dfb96b79392b9b484ddce6cb9befc658eea4fa49a80ec5807dfae86be5832",
+  "checks_fast/checks.json": "bfb8b16f48bf1b99d67df96f0d5dff8be49d8127d3986a05dc3895a30130f052",
+  "tran_fast/tran_subset.json": "29b18af0f7b733f29e7b531bac02dc783620bcda8a1e595b52d5541b8706463f"
+ },
+ "first_build": "the first build of both variants carried the try-g provenance comment of top_netlist.py; rebuilt with --title (element data unchanged: the check outputs of both builds are byte-identical); first sha256 in <P>/first_build_try_g_header.sha256 and <F>/first_build_try_g_header.sha256. Check (d) ran on the first filled fast file.",
+ "checks": {
+  "a_connectivity": {
+   "unfilled": true,
+   "filled": true,
+   "nets": 181
+  },
+  "b_supply_vs_supply_h2": {
+   "unfilled": true,
+   "filled": true,
+   "max_abs_delta_pct": 3.31,
+   "limit_pct": 10,
+   "first_check_against_try_g_values": "reported fail (try-g reference, h losses are lower); kept as checks_gref, checks_fast_gref"
+  },
+  "c_osc_clk": {
+   "unfilled_C_fF": 99.72,
+   "filled_C_fF": 181.04,
+   "R_osc_adc_ohm": 313.47,
+   "tran_skew_ps_unfilled": 29.87,
+   "tran_skew_ps_filled": 41.64
+  },
+  "d_tran": {
+   "netlist": "r1_top_h_pex_fill_fast.spice",
+   "completed": true,
+   "wall_s": 601.6
+  },
+  "e_reduction": "fast and reduced equal to full on OSC_CLK, AFE pairs (checks.json e_reduction)",
+  "window_check_max_abs_err_pct": 0.004
+ },
+ "tools": {
+  "klayout": "0.30.9 (container)",
+  "kpex": "0.3.12 (container)",
+  "ngspice": "46 (container)",
+  "container": "tapeoutbench-eda:latest sha256:ddeb69576f28...",
+  "cpuset": "112-115"
+ },
+ "pdk_commit": "84374023ee8b4b126bebbba67fcbada0a9c0ff0b",
+ "disposition": "passed: checks (a) connectivity, (b) supply vs supply_h2.json (max |delta| 3.31 %, limit 10 %), (c) tables, (d) 1 us transient completed, (e) reduction exact on both variants; OSC_CLK skew 29.87 ps unfilled / 41.64 ps filled (typ, simulated, ADC pin 50 fF)",
+ "outputs": "<G1_RESULTS_ROOT>/r1_top/pex-20261030-h2/, <G1_RESULTS_ROOT>/r1_top/pex-20261030-h2-fill/; report reports/pex_fill_h.md"
+}

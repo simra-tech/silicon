@@ -94,6 +94,18 @@ for mm in inst_re.finditer(body):
             print(f"merge net {conn[a]} into {conn[b]} ({inst}.{a} = {inst}.{b})")
     insts.append((cell, inst, conn))
 
+# R1 change (T8h, 2026-10-28): module-level `assign <a> = <b>;` between two plain nets (r1_ctrl 0.9 drives the port
+# fault_n through `assign fault_n = net7485;`) is one conductor: the net <b> is merged into <a> (a port keeps its
+# name). Before this change the assign was skipped and the CDL port was left floating.
+for am in re.finditer(r"^\s*assign\s+(\\\S+\s|[\w\[\]]+)\s*=\s*(\\\S+\s|[\w\[\]]+)\s*;", body, re.M):
+    lhs, rhs = san(am.group(1)), san(am.group(2))
+    if lhs != rhs:
+        if rhs in ports and lhs not in ports:
+            lhs, rhs = rhs, lhs
+        alias[rhs] = lhs
+        print(f"merge net {rhs} into {lhs} (assign)")
+
+
 def res(n):
     while n in alias:
         n = alias[n]

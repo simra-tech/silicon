@@ -1,7 +1,199 @@
 # R1_TOP
 
 Block `r1_top` (track T8, P3 preparation). This block assembles the R1 chip top level from the ring of record and
-the macros. Try g (below) is the current state: the current macros, the chip CDL of record and the extracted supply network. The section "Supply feed redesign (try h preparation)" is the h0 ctrl supply feed; it edits the `IOPadVss` cell and is rejected by PLAN.md D24. The section "Supply feed with unmodified pads (try h1)" is the ctrl supply feed of record for try h (IO cells as shipped). Try f has no placeholder: every macro is a real layout. Tries d and e had placeholder outlines.
+the macros. Try h (section "Try h (track T8h)", first below) is the current state: the h1 supply network with every IO cell as shipped and the current macros (ctrl 0.9, ADC B7, AFE E9c). Try g is the previous state (ctrl 0.8, try-g supply network). The section "Supply feed redesign (try h preparation)" is the h0 ctrl supply feed; it edits the `IOPadVss` cell and is rejected by PLAN.md D24. The section "Supply feed with unmodified pads (try h1)" is the ctrl supply feed of record for try h (IO cells as shipped). Try f has no placeholder: every macro is a real layout. Tries d and e had placeholder outlines.
+
+## Try h (track T8h, 2026-10-28; run `asm-20261030-h2`, filled `asm-20261030-h2-fill`)
+
+State: **done**; the filled chip `asm-20261030-h2-fill` is the try-h layout of record. Try h = the h1 supply network (section "Supply
+feed with unmodified pads (try h1)"), every IO cell as shipped (PLAN.md D24), the pin map unchanged, and the current
+macros of record: `r1_ctrl_top` 0.9 (release `r1ctrl_09_release`, run `r1ctrl_ll_20261028_t32`, signed off),
+`r1_adc` layout B7 (netlist revision 5, SAR `t2j-ll-h2312-h`, `vss` pin 2.0 µm), `r1_afe` layout E9c (netlist F3).
+All other macros and the ring as `asm-20261030-h1`. Generator `layout/r1_top_assemble_h.py` (default = h1 network),
+driver `flow/run_try_h.sh`, macro drop-ins by `R1G_SHA_<macro>` / `R1G_CDL_SHA_<macro>` and, new, the ctrl release by
+`R1H_CTRL_RELEASE` / `R1H_CTRL_RUN` ([`reports/integration_checklist_h.md`](reports/integration_checklist_h.md)).
+All numbers are extracted, simulated or STA results. Nothing is measured.
+
+### Status (try h)
+
+| # | Check | Result | Evidence |
+| --- | --- | --- | --- |
+| 1 | Generator self-check (net conflicts, routes inside macros, TopMetal1 over MIM, maze) | passed: 0 / 0 / 0 / 0 failed (76 maze nets, 139 access stubs), no unmerged standard cell | `asm-20261030-h2/r1_top_assembly.json`, `gen.log` |
+| 2 | Chip CDL of record `r1_top_h.cdl` | written | `asm-20261030-h2/lvs/` |
+| 3 | DRC main / antenna / maximal, unfilled | **passed**: 0 / 0 / 0 | `drc_main/`, `drc_antenna/`, `drc_maximal/` |
+| 4 | LVS, comparer-limit deck / stock deck | comparer-limit deck **passed**: "Netlists match", 59 circuit pairs, `r1_top` 261 devices, 51 subcircuits (after the `pnl2cdl.py` fix, failure H2-1); stock deck **failed to run**: KLayout signal 11 at "Extracting diodevdd_2kv ESD device" (twice; as try g F1 and h0; failure H2-2) | `lvs_limits/`, `lvs_stock/` |
+| 5 | Fill, density deck, DRC main on the filled chip | **passed**: fill gate passed; density 0, main 0 (also antenna 0, maximal 0, LVS comparer-limit deck "Netlists match" on the filled chip) | `asm-20261030-h2-fill/` |
+| 6 | Bond map 24/24 | **passed**: 24 of 24 openings matched, 22 labels at row centres, `all_ok` | `asm-20261030-h2-fill/bondmap/` |
+| 7 | Supply extraction (feed R, losses, isense-bgr, AFE VDDA, EM) | see "Supply" | `asm-20261030-h2/supply_h2.json` |
+| 8 | Ctrl IR derate, release 0.9 (≥ 1 ns) | **passed**: setup +3.295 ns worst (max sheet, grid spread), hold ≥ +0.077 ns (fast bound) | `r1ctrl_irderate_h2/sta/` |
+| 9 | Chip PEX of the sensitive nets on the filled chip (full and fast variants) | **passed**: checks (a)-(e) pass on both variants; supply against `supply_h2.json` within 3.31 % (limit 10 %); `OSC_CLK` skew 29.87 ps unfilled, 41.64 ps filled (typ, simulated, ADC pin 50 fF; limit 90 ps); 1 µs transient completed (see "Chip PEX (try h)") | `pex-20261030-h2`, `pex-20261030-h2-fill` |
+
+Evidence paths are relative to `<G1_RESULTS_ROOT>/r1_top/` unless they start with `reports/`. Run records:
+`reports/runs/asm-20261030-h2.json`, `asm-20261030-h2-fill.json`, `r1ctrl_irderate_h2.json`,
+`pex-20261030-h2.json` (both PEX runs). LVS reports: [`reports/runs/asm-20261030-h2_lvs_report.txt`](reports/runs/asm-20261030-h2_lvs_report.txt),
+[`reports/runs/asm-20261030-h2-fill_lvs_report.txt`](reports/runs/asm-20261030-h2-fill_lvs_report.txt).
+
+GDS (unfilled) `<G1_RESULTS_ROOT>/r1_top/asm-20261030-h2/r1_top.gds`, sha256
+`972350b8acfea2129d9aef51c6834a94e0cbfd992f34099bd8a06b535d6d0d43`. **Filled chip** (the deliverable)
+`<G1_RESULTS_ROOT>/r1_top/asm-20261030-h2-fill/r1_top.gds`, sha256
+`91791ff50079fd0dc46f76faa443633c770e734e1ab3f412445ee1351c004d62`. **Chip CDL of record**
+`<G1_RESULTS_ROOT>/r1_top/asm-20261030-h2/lvs/r1_top_h.cdl`, sha256
+`cf61569b475954d05a6ec09968dcb95072bd8bf72b09c968481284079b510e25`; include list with the sha256 of each source:
+`lvs/r1_top_h_includes.txt` in the same directory. The post-layout campaign takes this CDL, not the try-g file.
+
+### Macros (sha256; snapshot `<G1_RESULTS_ROOT>/r1_top/asm-20261030-h2/inputs/`, `inputs.sha256`)
+
+| Macro | Revision | GDS sha256 | LVS netlist sha256 | Change against h1 |
+| --- | --- | --- | --- | --- |
+| `r1_ctrl_top` | 0.9, release `r1ctrl_09_release` (run `r1ctrl_ll_20261028_t32`, signed off) | `aabd9fe045de988dbb9364ca36424dfb6bb497f42a4455a3ed1e32df218165e6` (LEF `f4d575a4…`) | netlist `e8cac55e47864a8a8793104201dca9327f578d0952faca06f8a9f0ce84bf5502`; CDL from `final/pnl/r1_ctrl_top.pnl.v` (`0da12f3e…`) by `lvs/pnl2cdl.py`: `202311279f11d7ee9a516410eda5c0b1e2d377b5ab025fc7067938f7c0d5e14e` | 0.8 → 0.9. Box, pins, labels and the power stripes are identical to 0.8 (XOR, `asm-20261030-h2/probe/xor_ctrl08_09_detail.json`); only internal TopMetal1 signal routes and two TopMetal2 signal pieces (local y 57-71) differ. No top-level route changed |
+| `r1_adc` | layout B7, netlist revision 5, SAR `t2j-ll-h2312-h` | `5dcf53803eb33c931f558f857bd609e5b6e6a858f9bcc8161550a29be042ad7b` | `layout/r1_adc_lvs_b5.cdl` `0740d3a21d00e32faeec149c3f5b594d45e4791c6ffee137edf84795e70b0392` (the B7 block LVS reference; unchanged) | B6-dev3 → B7: `vss` pin 1.0 → 2.0 µm at the same centre. The top-level `vss` neck follows the pin (x 741.0-743.0); the Metal3 riser was already 2.0 µm: no code change |
+| `r1_afe` | layout E9c (`layout-e9c-cal19`), netlist F3 | `adb7632ba4d7df94a0a18ae01f7c3fcd50c10c5f3e87a688de6f66fc873b8a08` | `layout/r1_afe_lvs.cdl` `cc9d997a512bf7d691504f2e694319e8daa8d3868c8c9522366c0d7533a30cd9` | E6 → E9c: same 21 pins and box; the ports file differs only inside `r1_afe_ch` (`x1p` trim stub, net statistics), not at the macro pins |
+| `r1_padring` | revision d, IO cells as shipped | `81bba04b3c0655ece75587d6c90b159d4bb860e0dbe0e3dd80e2c65c50d0725d` | projected ref `62405f60…` | none |
+| `r1_isense` | layout c | `192dd37aa592b85d68b158b18f0f71c8e906664783b047dcdd3bf1ceacd6c7ac` | `3021793d…` | none |
+| `r1_bias` | revision 2 | `e7ee13940db0ecc2a36c8bf7c6d1947358aceb6dd1dff3b3add9f4eafa2bb78c` | `abb7bc28…` | none |
+| `r1_osc` | revision 2, layout r2d | `7c5fb60fdbbfa3cce7714520d3bc652292f0ff964452e3bf4afe226ea68ba971` | `600d5f2b…` | none |
+| `r1_safe` | revision 3 | `fbc3113948e0c15e1e049cfad1e2e5c5349b10ba0ae7d250f5b228e50aa28324` | `a083d263…` | none |
+| `r1_bgr`, `r1_t2f`, `r1_ls`, `r1_gate_lv` | as try f | `324e3c27…`, `5e7aa75a…`, `a4f49636…`, `a3dee0f0…` | `c4d175ee…`, `9867279d…`, `4f3fefbe…`, `c0602540…` | none |
+
+Full sha256 of every row: [`reports/integration_checklist_h.md`](reports/integration_checklist_h.md).
+
+### Supply (extracted, `flow/supply_h_rnet.py` and `flow/supply_h.py`; `asm-20261030-h2/supply_h2.json`)
+
+The top-level supply metal is the h1 network without change, the ctrl stripes are identical, and the block currents
+of record are unchanged (ctrl 40.25 mA, the 0.8 value; the ctrl 0.9 LibreLane typ power is 30.16 mW = 25.1 mA, so
+40.25 mA is conservative). The numbers therefore equal h1; the only change is the ADC `vss` port (2 µm pin): ADC VSS
+rise +0.01 mV.
+
+| Item | h2 typ | h2 max | Limit | Result |
+| --- | --- | --- | --- | --- |
+| VDD + VSS feed R at the worst ctrl grid point (Ω) | 0.943 | **1.383** | ≤ 1.43 | passed (3.3 % margin, open issue H1-1) |
+| Supply loss at the ctrl, worst / best point (mV) | 38.0 / 27.9 | 55.7 / 43.9 | ≤ 57.6 | passed |
+| Shared isense-bgr VSS path, pads open (Ω) | 1.357 | **1.822** | ≤ 2.3 | passed |
+| isense-bgr ground offset, all / ctrl only / isense only (mV) | 3.01 / 1.27 / 1.82 | 3.87 / 1.53 / 2.45 | — | reported |
+| AFE VDDA loss, VDDA drop + VSS rise (mV) | 66.7 (37.3 + 29.3) | **93.1** (48.2 + 44.9) | — | reported (open issue H1-3) |
+| ADC loss VDD / VDDA (mV) | 24.1 / 41.9 | 38.4 / 61.5 | — | reported |
+| EM of the new shapes and via arrays | 69 rows, 0 failed, 10 not measured (each with a passing bound row) | | TM1 15, TM2 16 mA/µm, TV2 10 mA/cut | passed |
+| `OSC_CLK` R osc → ADC clk / osc → ctrl clk (Ω) | 313.27 / 5.24 | 451.86 / 6.13 | — | equal to h1 and try g (same route; `asm-20261030-h2/clk_skew_g.json`); skew with C: see "Chip PEX" |
+
+Top-cell metal against h1 (XOR of the `r1_top` cell shapes, every layer Metal1-TopMetal2 and every via layer;
+`asm-20261030-h2/probe/xor_top_h1_h2.json`): 0 µm² except Metal3 1.4 µm² at x 741.0-743.0, y 375.6-377.0 (the ADC
+`vss` neck at the 2 µm pin). No signal route and no supply shape changed; the maze result is identical (76 nets,
+139 access stubs, 0 failed).
+
+### Ctrl IR derate with the 0.9 release (run `r1ctrl_irderate_h2`, method of T11b / h1)
+
+`irderate/run_derate.sh` with `R1_DERATE_CTRL_RELEASE=r1ctrl_09_release` and `R1_DERATE_CTRL_RUN=r1ctrl_ll_20261028_t32`:
+cells characterized at 1.08 V / 1.32 V minus the four losses of `supply_h2.json`, OpenSTA on the 0.9 release
+netlist, the release sign-off SDC and the t32 nominal SPEF. STA results:
+
+| Case | early / late | Setup, flop D (ns) | TNS | Hold (ns) | Result |
+| --- | --- | --- | --- | --- | --- |
+| Slow 1.08 V / 125 °C, no derate | 1.000 / 1.000 | +5.676 | 0 | +0.370 | passed |
+| typ sheet, worst point, uniform | 1.0873 / 1.0873 | +4.146 | 0 | +0.406 | passed |
+| typ sheet, grid spread | 1.0627 / 1.0873 | +4.110 | 0 | +0.357 | passed |
+| max sheet, worst point, uniform | 1.1333 / 1.1333 | +3.340 | 0 | +0.425 | passed |
+| max sheet, mean cell ratio | 1.1224 / 1.1224 | +3.531 | 0 | +0.421 | passed |
+| max sheet, grid spread | 1.1023 / 1.1333 | **+3.295** | 0 | +0.363 | passed (limit ≥ 1 ns) |
+| Fast 1.32 V / −40 °C, max sheet, uniform | 1.0834 / 1.0834 | +11.067 | 0 | +0.135 | passed |
+| fast, grid spread | 1.0644 / 1.0834 | +11.059 | 0 | +0.123 | passed |
+| fast, bound: early paths without drop | 1.000 / 1.0834 | +11.030 | 0 | **+0.077** | passed |
+
+These equal the ctrl track's own run `r1ctrl_20261028_t32derate` (cases of h1), because the losses equal h1.
+
+### Chip PEX (try h) (runs `pex-20261030-h2`, unfilled, and `pex-20261030-h2-fill`, filled)
+
+Method as T11 (`pex-20261029-g3`) and T11b (`pex-20261029-g3-fill`): `pex/top_wire.py` wiring layout, RNetExtractor
+R at typ and max sheet, one full-chip kpex 0.3.12 2.5D run on the unfilled wiring (1 h 55 min, 2 threads), and for
+the fill the band method (10 µm bands per group clk / tap / ana / bus with and without the fill, kpex per band,
+`pex/fill_net.py` Schur reduction). `pex/top_netlist.py` writes the full, the reduced (`_red`) and the fast
+(`--fast --tau 1e-11 --maxdeg 16`) variant, each at typ and max sheet. Check (b) uses `supply_h2.json`
+(`R1_PEX_SUPPLY_REF`). Macros are black boxes. Report: [`reports/pex_fill_h.md`](reports/pex_fill_h.md).
+Run record: [`reports/runs/pex-20261030-h2.json`](reports/runs/pex-20261030-h2.json).
+
+| Variant (path relative to the run directory) | Unfilled `pex-20261030-h2` sha256 | Filled `pex-20261030-h2-fill` sha256 |
+| --- | --- | --- |
+| full, typ (`r1_top_h_pex[_fill].spice`) | `8f64ef0b596186cc28de0b573a307edceb0a56dc3dc152fd1d590b28f8db8879` | `4013092d439f281f4d44545e65b4dbb22c79cfec03c7eae058745ef5eb23e7fa` |
+| fast, typ (`fast/r1_top_h_pex[_fill]_fast.spice`) | `e0585f0c8e9d83dc9321eb8b52de3163fbc620abc135a4ba876907df88d2cdca` | `c3abcfbbc1d456160a448d4832b0c304d509d74a397d757839ba6a6ae8b3f747` |
+| fast, max (`fast/max/…_fast.spice`) | `89064a376098d7dec1db865547441c229267a2a7415b4690d25809d11e6902d4` | `41e60f6ef8c3044a41625ff68bc0ec89efc5da64189d2fe44a2f7531d27ba9ce` |
+
+The sha256 of the `_red` and `max/` files, `pin_map.csv`, `cfill.json` and the kpex CSV are in the run record.
+
+| Net (filled, typ) | C wire (fF) | Net | C wire (fF) |
+| --- | --- | --- | --- |
+| `OSC_CLK` | 181.04 (unfilled 99.72) | `POR_N` | 259.85 (unfilled 159.39) |
+| `VREF_B` | 181.64 | `VREF_BG` | 157.53 |
+| `CUR_TRK` | 84.76 | `AFE_SOUTS_P` / `_N` | 101.07 / 89.47 |
+| `AFE_SOUTC_P` / `_N` | 66.91 / 63.42 | `ISN_OUTA_P` / `_N` | 140.21 / 174.45 |
+| `ISN_OUTB_P` / `_N` | 224.14 / 205.11 | | |
+
+`OSC_CLK`: R ADC branch 313.47 Ω, ctrl branch 5.46 Ω; skew (transient, typ, ADC pin 50 fF) 29.87 ps unfilled and
+41.64 ps filled; Elmore at the max sheet about 60 ps (estimate). The 20 µm band check adds +0.59 fF to `OSC_CLK`
+(10 µm band is sufficient). Check (d): 1 µs transient of the filled fast netlist completed in 601.6 s; the nodes
+equal `pex-20261029-g3-fill` within 0.02 mV. Check (e): reduced and fast netlists equal the full netlist on `OSC_CLK`
+and the AFE → ADC pairs (C exact, skew within 0.01 ps).
+
+Testbench include (T10): include the variant file; the subcircuits are `r1_top_rc` and `r1_top_pex`, with the ports
+of `pex-20261029-g3` (`pin_map.csv` unchanged in form). Only the file names change from `r1_top_g_pex*` to
+`r1_top_h_pex*`.
+
+### Open issues (try h)
+
+1. H2-1 (= H1-1). The ctrl feed margin is small: 1.383 Ω against 1.43 Ω at max sheet (3.3 %). With ctrl 0.9 the
+   derated setup margin is large (+3.295 ns against 1 ns), so the timing reason for the feed limit is met with
+   2.3 ns to spare; the pin-map option h1c (INTERFACES "Open contract mismatches", owner decision) is not needed for
+   timing with 0.9.
+2. H2-2 (= H1-3). AFE VDDA loss 93.1 mV at max sheet. The AFE track has to confirm its headroom at 3.0 V − 93 mV.
+3. H2-3. The stock LVS deck crashes on the chip (signal 11 at the `diodevdd_2kv` ESD extraction); only the
+   comparer-limit deck copy gives the chip LVS result (as try g).
+4. H2-4. Window density margins stay small at the ADC corner window (400, 400): Metal1 26.21 %, Metal2 25.63 %,
+   Metal3 25.93 % (limit 25 %). `r1_adc` B10 must not lower its Metal1-Metal3 coverage
+   (`reports/integration_checklist_h.md`).
+5. H2-5. The ADC → ctrl output-window row (INTERFACES, D30 item 4) stays open on the ADC side (T2p re-measure at ff
+   on the layout of record); the `OSC_CLK` skew below adds to the ADC → ctrl hold margin (ADC edge later).
+6. H2-6. `r1_adc` B10 is not in this try (not adopted at the start); drop-in by `R1G_SHA_r1_adc`.
+7. H2-7. No dynamic IR drop and no Metal1-Metal5 ctrl rails in the supply model (h1 H1-5).
+
+### Failures and mistakes (try h)
+
+| # | What happened | Class | Fix |
+| --- | --- | --- | --- |
+| H2-1 | First chip LVS (comparer-limit deck): "Netlists don't match" in `r1_ctrl_top` only, PIN mismatch `fault_n` (layout 20 258 nets, CDL 20 260). The ctrl 0.9 powered netlist drives the port through a module-level `assign fault_n = net7485;` (0.8 has none), and `lvs/pnl2cdl.py` skipped every `assign`, so the CDL port floated | tooling | `pnl2cdl.py` merges the two nets of a module-level `assign`; regression: the 0.8 CDL is identical apart from the header path; CDL rebuilt (`r1_top` subcircuit unchanged), LVS rerun: match. First results kept as `lvs_limits_try1`, `lvs_stock_try1`, `cdl_try1`, `lvs_try1` |
+| H2-2 | Stock LVS deck: KLayout signal 11 at "Extracting diodevdd_2kv ESD device", with the first and with the fixed CDL (h1 had completed; try g and h0 crashed) | tooling | recorded; the comparer-limit deck copy is the LVS of record |
+| H2-3 | The generator, the driver CDL step, the derate driver and the run-record writer were hard-wired to ctrl 0.8 (release path, t22 pnl and SPEF, CPU set); the drop-in mechanism covered only ADC and AFE | tooling | `R1H_CTRL_RELEASE`, `R1H_CTRL_RUN` (generator, `run_try_h.sh`), `R1_DERATE_CTRL_RELEASE`, `R1_DERATE_CTRL_RUN` (`run_derate.sh`), `R1_RUN_CPUSET`, `R1_RUN_TRACK` (`write_run_json_h.py`); defaults unchanged |
+| H2-4 | Own probe `xor_top_h1_h2.py` called `top_cell()` on a GDS with several top cells and stopped | functional-bug | selects the cell `r1_top`; rerun |
+| H2-5 | Three background wait loops for the fill chain hit the 30 min harness limit (wait loops only, no run affected) | process-hygiene | waits in 10 min blocks |
+| H2-6 | PEX check (b) compared the try-h supply nodes with the hard-coded try-g values and reported a fail (h losses are lower by design) | verification-gap | `pex/top_checks.py` takes `R1_PEX_SUPPLY_REF=<supply_h*.json>` and records the reference; rerun against `supply_h2.json`: pass within 3.31 %. First outputs kept as `checks_gref`, `checks_fast_gref` |
+| H2-7 | The first PEX netlists of both runs carried the try-g provenance comment line of `top_netlist.py` | process-hygiene | `pex/top_netlist.py --title`; both variants rebuilt; element data unchanged (check outputs byte-identical); first sha256 in `first_build_try_g_header.sha256` of each run. Check (d) ran on the first filled fast file (same elements) |
+
+### Built against (try h)
+
+PDK `84374023ee8b4b126bebbba67fcbada0a9c0ff0b` (checked by `flow/run.sh`), KLayout 0.30.9, ngspice 46, kpex 0.3.12,
+OpenSTA in `tapeoutbench-eda:latest` `sha256:ddeb6957…` (container logs). CPU set 112-115, one job per CPU. Macros: the
+snapshot `inputs/` of `asm-20261030-h2`.
+
+### Reproduce try h (repository root, POSIX shell)
+
+1. Set `G1_RESULTS_ROOT=<results root>; export G1_RESULTS_ROOT`, `G1_WORKDIR=.; export G1_WORKDIR` and
+   `G1_CPUSET=<one CPU>; export G1_CPUSET`.
+2. Copy `inputs/` and `env.sh` of `<G1_RESULTS_ROOT>/r1_top/asm-20261030-h2/` into the new run directory and source
+   `env.sh` (macro sha256, `R1H_CTRL_RELEASE=r1ctrl_09_release`, `R1H_CTRL_RUN=r1ctrl_ll_20261028_t32`).
+3. Run `sh designs/r1-joint/blocks/r1_top/flow/run_try_h.sh <run> gen cdl`, then copy `cdl/r1_top.cdl` to
+   `lvs/r1_top_h.cdl` (and link `lvs/r1_top_g.cdl` to it for `pex/top_wire.py`).
+4. Run `<run>/chain.sh` (checks, supply, fill, filled checks and probes; one CPU per chain).
+5. Derate: `R1_DERATE_CTRL_RELEASE=r1ctrl_09_release; export R1_DERATE_CTRL_RELEASE; R1_DERATE_CTRL_RUN=r1ctrl_ll_20261028_t32; export R1_DERATE_CTRL_RUN`,
+   then `sh designs/r1-joint/blocks/r1_top/irderate/run_derate.sh <derate run> <run>/supply_h2.json <cpu> <cpu>`.
+6. `OSC_CLK` resistance: `flow/run.sh python3 designs/r1-joint/blocks/r1_top/flow/clk_skew_g.py <run> <run>/clk_skew_g.json`.
+7. PEX: the `run_*.sh` scripts in `<G1_RESULTS_ROOT>/r1_top/pex-20261030-h2/` and `pex-20261030-h2-fill/`
+   (wiring and R, full kpex, band layouts and band kpex, `run_build.sh unfilled|filled <4 CPUs>`).
+8. Records: `R1_RUN_CPUSET=112-115 R1_RUN_TRACK=... python3 designs/r1-joint/blocks/r1_top/flow/write_run_json_h.py <run> <question> <disposition>`
+   and `flow/write_fill_run_json.py`.
+
+New files of try h: `reports/integration_checklist_h.md`, `reports/runs/asm-20261030-h2*.json`,
+`reports/runs/asm-20261030-h2*_lvs_report.txt`, `reports/runs/r1ctrl_irderate_h2.json`, `reports/runs/pex-20261030-h2.json`, `reports/pex_fill_h.md`.
+Changed: `layout/r1_top_assemble_h.py` (`R1H_CTRL_RELEASE`), `flow/run_try_h.sh` (`R1H_CTRL_RUN`, ctrl variables),
+`lvs/pnl2cdl.py` (module-level `assign`), `irderate/run_derate.sh` (ctrl release variables, one-CPU mode),
+`flow/write_run_json_h.py` (`R1_RUN_CPUSET`, `R1_RUN_TRACK`, `supply_h2.json`), `pex/top_checks.py`
+(`R1_PEX_SUPPLY_REF`), `pex/top_netlist.py` (`--title`).
 
 ## Supply feed with unmodified pads (try h1) (track T8g, 2026-10-28; run `asm-20261030-h1`)
 

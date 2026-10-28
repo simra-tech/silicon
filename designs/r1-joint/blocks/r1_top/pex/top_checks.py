@@ -214,7 +214,17 @@ ref = {"typ": {"vdd_ctrl_worst": 22.8, "vss_ctrl_worst": 46.1, "vdda_afe_far": 4
                "path_R": 1.494},
        "max": {"vdd_ctrl_worst": 30.6, "vss_ctrl_worst": 63.6, "vdda_afe_far": 57.2, "isense_bgr_offset": 6.78,
                "path_R": 2.021}}
-res["b_supply"] = {}
+# T8h (try h): R1_PEX_SUPPLY_REF=<supply_h*.json of flow/supply_h.py> replaces the try-g reference values above
+# (the h networks have lower losses); the row key stays "supply_g" for the readers, the source is recorded.
+REF_SRC = "reports/supply_g.md (try g)"
+if os.environ.get("R1_PEX_SUPPLY_REF"):
+    _sj = json.load(open(os.environ["R1_PEX_SUPPLY_REF"]))["summary"]
+    ref = {c: {"vdd_ctrl_worst": _sj[c]["ctrl_vdd_drop_worst_mV"], "vss_ctrl_worst": _sj[c]["ctrl_vss_rise_worst_mV"],
+               "vdda_afe_far": _sj[c]["macro_loss"]["afe (VDDA)"]["supply_drop_mV"],
+               "isense_bgr_offset": _sj[c]["isense_minus_bgr_mV"]["all"], "path_R": _sj[c]["isense_bgr_path_R_ohm"]}
+           for c in ("typ", "max")}
+    REF_SRC = os.path.basename(os.environ["R1_PEX_SUPPLY_REF"])
+res["b_supply"] = {"reference_source": REF_SRC}
 for corner, rj in (("typ", RTYP), ("max", RMAX)):
     spice = os.path.join(ND, "r1_top_g_pex.spice") if corner == "typ" else os.path.join(ND, "max", "r1_top_g_pex.spice")
     if not os.path.exists(spice):

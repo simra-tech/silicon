@@ -15,8 +15,10 @@ echo "$LOSS" > $R/loss_V.json
 VS=$(python3 -c "import json; l=json.load(open('$R/loss_V.json')); print(','.join(['1.08']+['%.4f'%(1.08-v) for v in l.values()]))")
 VF=$(python3 -c "import json; l=json.load(open('$R/loss_V.json')); print(','.join(['1.32']+['%.4f'%(1.32-v) for v in l.values()]))")
 echo "ss $VS ff $VF" > $R/voltages.txt
-(G1_CPUSET=$CA; export G1_CPUSET; flow/run.sh python3 $I/char_cells.py $R/char_ss ss125 $VS 180 > $R/char_ss.console 2>&1) &
-(G1_CPUSET=$CB; export G1_CPUSET; flow/run.sh python3 $I/char_cells.py $R/char_ff ff-40 $VF 180 > $R/char_ff.console 2>&1) &
+# one job per CPU: with <cpuset a> = <cpuset b> the two characterizations run one after the other (T8h)
+if [ "$CA" = "$CB" ]; then BG=""; else BG="&"; fi
+eval "(G1_CPUSET=$CA; export G1_CPUSET; flow/run.sh python3 $I/char_cells.py $R/char_ss ss125 $VS 180 > $R/char_ss.console 2>&1) $BG"
+eval "(G1_CPUSET=$CB; export G1_CPUSET; flow/run.sh python3 $I/char_cells.py $R/char_ff ff-40 $VF 180 > $R/char_ff.console 2>&1) $BG"
 wait
 echo "char done" > $R/char.done
 G1_CPUSET=$CA; export G1_CPUSET
@@ -31,8 +33,11 @@ CASESF=$(python3 -c "
 import json; p=json.load(open('$R/factors_ff.json'))['points']
 print('base:1.0:1.0 U_max:%.4f:%.4f OCV_max:%.4f:%.4f OCV_bound:1.0:%.4f' % (p['max_worst']['F_worst'],p['max_worst']['F_worst'],p['max_best']['F_worst'],p['max_worst']['F_worst'],p['max_worst']['F_worst']))")
 echo "slow $CASES" > $R/cases.txt; echo "fast $CASESF" >> $R/cases.txt
-ARGS="NETLIST=$C/r1ctrl_08_release/r1_ctrl_top.nl.v SDC=$C/r1ctrl_08_release/r1_ctrl_signoff.sdc SPEF=$C/r1ctrl_ll_20261027_t22/flow/runs/r1ctrl_ll_20261027_t22/final/spef/nom/r1_ctrl_top.nom.spef"
-G1_CPUSET=$CA,$CB; export G1_CPUSET
+# ctrl release (T8h, try h2): R1_DERATE_CTRL_RELEASE=<release dir>, R1_DERATE_CTRL_RUN=<LibreLane run of its nominal SPEF>; default 0.8
+CREL=${R1_DERATE_CTRL_RELEASE:-r1ctrl_08_release}; CRUN=${R1_DERATE_CTRL_RUN:-r1ctrl_ll_20261027_t22}
+ARGS="NETLIST=$C/$CREL/r1_ctrl_top.nl.v SDC=$C/$CREL/r1_ctrl_signoff.sdc SPEF=$C/$CRUN/flow/runs/$CRUN/final/spef/nom/r1_ctrl_top.nom.spef"
+echo "$ARGS" > $R/sta_inputs.txt
+G1_CPUSET=$CA; [ "$CA" = "$CB" ] || G1_CPUSET=$CA,$CB; export G1_CPUSET
 flow/run.sh env LIBNAME=slow_1p08V_125C $ARGS CASES="$CASES" sta -no_splash -exit $I/sta_derate.tcl > $R/sta/derate_slow_1p08V_125C.rpt 2>&1
 echo "slow rc $?" >> $R/sta.done
 flow/run.sh env LIBNAME=fast_1p32V_m40C $ARGS CASES="$CASESF" sta -no_splash -exit $I/sta_derate.tcl > $R/sta/derate_fast_1p32V_m40C.rpt 2>&1

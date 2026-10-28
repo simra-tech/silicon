@@ -51,7 +51,7 @@ Usage (inside the pinned container, repository root as cwd):
 <ofrecord_dir> holds the input GDS snapshots of r1_afe, r1_adc, r1_isense and r1_bias. Drop-in of a new
 revision (ADC B6 final, AFE E7): copy the new GDS into <ofrecord_dir> under the same name and set the environment variable
 R1G_SHA_<macro> (e.g. R1G_SHA_r1_adc) to its sha256; pins are read from the GDS labels, the AFE ring cut follows the
-AFE height. Coordinates and their reasons: README "Try g"; drop-in rules: reports/integration_checklist_g.md.
+AFE height. The ctrl release: R1H_CTRL_RELEASE with R1G_SHA_r1_ctrl_top (try h2). Coordinates and their reasons: README "Try g"; drop-in rules: reports/integration_checklist_g.md.
 """
 import hashlib
 import json
@@ -81,7 +81,9 @@ def log(*a):
 
 RING_GDS = os.path.join(RES, "r1_padring/ring-20261021-d/r1_padring_1700.gds")
 RING_SHA = "81bba04b3c0655ece75587d6c90b159d4bb860e0dbe0e3dd80e2c65c50d0725d"
-CTRL_GDS = os.path.join(RES, "r1_ctrl/r1ctrl_08_release/r1_ctrl_top.gds")
+# try h2 (track T8h): R1H_CTRL_RELEASE=<release directory under <results root>/r1_ctrl> selects another ctrl release
+# (e.g. r1ctrl_09_release, with R1G_SHA_r1_ctrl_top); default 0.8
+CTRL_GDS = os.path.join(RES, "r1_ctrl", os.environ.get("R1H_CTRL_RELEASE") or "r1ctrl_08_release", "r1_ctrl_top.gds")
 MACRO_GDS = {
     "r1_ctrl_top": CTRL_GDS,
     "r1_bgr": os.path.join(BLK, "r1_bgr/layout/r1_bgr.gds"),

@@ -1,0 +1,410 @@
+{
+ "run": "asm-20261030-h2-fill",
+ "track": "T8h (r1_top try h chip fill)",
+ "question": "T8h: fill of try h (asm-20261030-h2) and the checks of the filled chip (density, main, antenna, maximal, LVS comparer-limit deck, bond map)",
+ "command": "sh designs/r1-joint/blocks/r1_top/flow/fill_top.sh <G1_RESULTS_ROOT>/r1_top/asm-20261030-h2 <G1_RESULTS_ROOT>/r1_top/asm-20261030-h2-fill [args]; sh designs/r1-joint/blocks/r1_top/flow/run_fill_checks.sh <source> <run>",
+ "tools": {
+  "klayout": "0.30.9 (container)",
+  "container": "tapeoutbench-eda:latest sha256:ddeb69576f2808676d1c5d474ecf04f6d1d6f8abdcff6b72b39790ded924bab2",
+  "cpuset": "115"
+ },
+ "pdk_commit": "84374023ee8b4b126bebbba67fcbada0a9c0ff0b",
+ "input": {
+  "source_run": "asm-20261030-h2",
+  "gds": "<G1_RESULTS_ROOT>/r1_top/asm-20261030-h2/r1_top.gds",
+  "sha256": "972350b8acfea2129d9aef51c6834a94e0cbfd992f34099bd8a06b535d6d0d43"
+ },
+ "output": {
+  "gds": "<G1_RESULTS_ROOT>/r1_top/asm-20261030-h2-fill/r1_top.gds",
+  "sha256": "91791ff50079fd0dc46f76faa443633c770e734e1ab3f412445ee1351c004d62"
+ },
+ "filler_macro_changes_against_pdk": [
+  "199,201c199,201",
+  "< \t\t'distance_m2' => 1.5,",
+  "< \t\t'distance_m3' => 2.0,",
+  "< \t\t'distance_m4' => 2.0,",
+  "---",
+  "> \t\t'distance_m2' => 0.45,",
+  "> \t\t'distance_m3' => 0.45,",
+  "> \t\t'distance_m4' => 0.45,",
+  "136c136",
+  "<   gp_spacing_h = gp_width + 5",
+  "---",
+  ">   gp_spacing_h = gp_width + 1.6"
+ ],
+ "exclusions": {
+  "thru": {
+   "r1_ctrl_top": [
+    10,
+    30,
+    50,
+    67
+   ],
+   "r1_safe": [
+    10
+   ]
+  },
+  "ring_depth_um": 0.0,
+  "halo_um": 1.0,
+  "bond_openings": 24,
+  "excluded_area_um2": 926952.6,
+  "deleted_orphan_cells": [
+   "Act_FILL_CELL",
+   "GatP_FILL_CELL",
+   "Met1_M_FILL_CELL",
+   "Met1_S_FILL_CELL",
+   "Met2_M_FILL_CELL",
+   "Met2_S_FILL_CELL",
+   "Met3_M_FILL_CELL",
+   "Met3_S_FILL_CELL",
+   "Met4_M_FILL_CELL",
+   "Met4_S_FILL_CELL",
+   "Met5_M_FILL_CELL",
+   "Met5_S_FILL_CELL",
+   "TM1_FILL_CELL",
+   "TM2_FILL_CELL"
+  ]
+ },
+ "excluded_instances": [
+  {
+   "cell": "r1_ctrl_top",
+   "bbox_um": [
+    538.8,
+    673.3,
+    1070.8,
+    1352.3
+   ]
+  },
+  {
+   "cell": "r1_afe",
+   "bbox_um": [
+    336.0,
+    740.0,
+    528.8,
+    1234.4
+   ]
+  },
+  {
+   "cell": "r1_isense",
+   "bbox_um": [
+    1113.8,
+    735.0,
+    1272.2,
+    1031.8
+   ]
+  },
+  {
+   "cell": "r1_osc",
+   "bbox_um": [
+    1088.8,
+    1041.8,
+    1237.0,
+    1152.2
+   ]
+  },
+  {
+   "cell": "r1_safe",
+   "bbox_um": [
+    1088.8,
+    376.0,
+    1338.14,
+    663.81
+   ]
+  },
+  {
+   "cell": "r1_bgr",
+   "bbox_um": [
+    336.0,
+    376.0,
+    432.0,
+    570.3
+   ]
+  },
+  {
+   "cell": "r1_bias",
+   "bbox_um": [
+    444.0,
+    376.0,
+    564.0,
+    612.74
+   ]
+  },
+  {
+   "cell": "r1_t2f",
+   "bbox_um": [
+    366.8,
+    622.74,
+    458.8,
+    725.34
+   ]
+  },
+  {
+   "cell": "r1_adc",
+   "bbox_um": [
+    592.0,
+    376.0,
+    1031.0,
+    581.42
+   ]
+  },
+  {
+   "cell": "r1_gate_lv",
+   "bbox_um": [
+    440.0,
+    1296.0,
+    468.39,
+    1323.9
+   ]
+  },
+  {
+   "cell": "r1_ls",
+   "bbox_um": [
+    480.25,
+    640.3,
+    489.45,
+    652.0
+   ]
+  },
+  {
+   "cell": "r1_ls",
+   "bbox_um": [
+    495.45,
+    640.3,
+    504.65,
+    652.0
+   ]
+  },
+  {
+   "cell": "r1_ls",
+   "bbox_um": [
+    510.65,
+    640.3,
+    519.85,
+    652.0
+   ]
+  },
+  {
+   "cell": "r1_ls",
+   "bbox_um": [
+    480.25,
+    660.3,
+    489.45,
+    672.0
+   ]
+  },
+  {
+   "cell": "r1_ls",
+   "bbox_um": [
+    495.45,
+    660.3,
+    504.65,
+    672.0
+   ]
+  },
+  {
+   "cell": "r1_ls",
+   "bbox_um": [
+    510.65,
+    660.3,
+    519.85,
+    672.0
+   ]
+  },
+  {
+   "cell": "sg13g2_decap_8",
+   "bbox_um": [
+    1214.76,
+    1354.78,
+    1329.48,
+    1359.17
+   ]
+  },
+  {
+   "cell": "sg13g2_tiehi",
+   "bbox_um": [
+    1094.76,
+    1035.83,
+    1097.16,
+    1040.22
+   ]
+  }
+ ],
+ "fill": {
+  "layers": {
+   "Activ": {
+    "rectangles": 35888,
+    "area_um2": 414865.3,
+    "pdk_cell_rectangles": 35888,
+    "supplementary_flat_rectangles": 0
+   },
+   "GatPoly": {
+    "rectangles": 51173,
+    "area_um2": 358211.0,
+    "pdk_cell_rectangles": 0,
+    "supplementary_flat_rectangles": 51173
+   },
+   "Metal1": {
+    "rectangles": 52321,
+    "area_um2": 466028.5,
+    "pdk_cell_rectangles": 52321,
+    "supplementary_flat_rectangles": 0
+   },
+   "Metal2": {
+    "rectangles": 214059,
+    "area_um2": 1164018.7,
+    "pdk_cell_rectangles": 214059,
+    "supplementary_flat_rectangles": 0
+   },
+   "Metal3": {
+    "rectangles": 137002,
+    "area_um2": 629648.2,
+    "pdk_cell_rectangles": 137002,
+    "supplementary_flat_rectangles": 0
+   },
+   "Metal4": {
+    "rectangles": 148517,
+    "area_um2": 664845.0,
+    "pdk_cell_rectangles": 148517,
+    "supplementary_flat_rectangles": 0
+   },
+   "Metal5": {
+    "rectangles": 39952,
+    "area_um2": 406807.0,
+    "pdk_cell_rectangles": 39952,
+    "supplementary_flat_rectangles": 0
+   },
+   "TopMetal1": {
+    "rectangles": 5480,
+    "area_um2": 274000.0,
+    "pdk_cell_rectangles": 5480,
+    "supplementary_flat_rectangles": 0
+   },
+   "TopMetal2": {
+    "rectangles": 7183,
+    "area_um2": 359150.0,
+    "pdk_cell_rectangles": 7183,
+    "supplementary_flat_rectangles": 0
+   }
+  },
+  "cells": {
+   "Act_FILL_CELL": {
+    "placements": 35888,
+    "rectangles": 35888
+   },
+   "GatP_FILL_CELL": {
+    "placements": 0,
+    "rectangles": 0
+   },
+   "Met1_S_FILL_CELL": {
+    "placements": 15547,
+    "rectangles": 15547
+   },
+   "Met1_M_FILL_CELL": {
+    "placements": 36774,
+    "rectangles": 36774
+   },
+   "Met2_S_FILL_CELL": {
+    "placements": 24162,
+    "rectangles": 24162
+   },
+   "Met2_M_FILL_CELL": {
+    "placements": 189897,
+    "rectangles": 189897
+   },
+   "Met3_S_FILL_CELL": {
+    "placements": 38522,
+    "rectangles": 38522
+   },
+   "Met3_M_FILL_CELL": {
+    "placements": 98480,
+    "rectangles": 98480
+   },
+   "Met4_S_FILL_CELL": {
+    "placements": 45303,
+    "rectangles": 45303
+   },
+   "Met4_M_FILL_CELL": {
+    "placements": 103214,
+    "rectangles": 103214
+   },
+   "Met5_S_FILL_CELL": {
+    "placements": 15495,
+    "rectangles": 15495
+   },
+   "Met5_M_FILL_CELL": {
+    "placements": 24457,
+    "rectangles": 24457
+   },
+   "TM1_FILL_CELL": {
+    "placements": 5480,
+    "rectangles": 5480
+   },
+   "TM2_FILL_CELL": {
+    "placements": 7183,
+    "rectangles": 7183
+   }
+  },
+  "gate_passed": true
+ },
+ "steps_log": [
+  "step density start 18:32:35",
+  "step density end 18:35:15",
+  "step main start 18:35:15",
+  "step main end 18:46:19",
+  "step antenna start 18:46:19",
+  "step antenna end 18:50:51",
+  "step maximal start 18:50:51",
+  "step maximal end 19:12:15",
+  "step lvs start 19:12:15",
+  "step lvs end 19:41:32",
+  "step bondmap start 19:41:32",
+  "step bondmap end 19:41:49",
+  "done"
+ ],
+ "checks": {
+  "drc_main": {
+   "state": "completed",
+   "exit": "0",
+   "total": 0,
+   "rules": {},
+   "evidence": "<G1_RESULTS_ROOT>/r1_top/asm-20261030-h2-fill/drc_main/"
+  },
+  "drc_maximal": {
+   "state": "completed",
+   "exit": "0",
+   "total": 0,
+   "rules": {},
+   "evidence": "<G1_RESULTS_ROOT>/r1_top/asm-20261030-h2-fill/drc_maximal/"
+  },
+  "drc_density": {
+   "state": "completed",
+   "exit": "0",
+   "total": 0,
+   "rules": {},
+   "evidence": "<G1_RESULTS_ROOT>/r1_top/asm-20261030-h2-fill/drc_density/"
+  },
+  "drc_antenna": {
+   "state": "completed",
+   "exit": "0",
+   "total": 0,
+   "rules": {},
+   "evidence": "<G1_RESULTS_ROOT>/r1_top/asm-20261030-h2-fill/drc_antenna/"
+  },
+  "lvs_limits": {
+   "state": "match",
+   "evidence": "<G1_RESULTS_ROOT>/r1_top/asm-20261030-h2-fill/lvs_limits/"
+  },
+  "bondmap": {
+   "state": "passed",
+   "openings_in_gds": 24,
+   "rows": 24,
+   "labels_134_25": 22,
+   "openings_unmatched": 0,
+   "evidence": "<G1_RESULTS_ROOT>/r1_top/asm-20261030-h2-fill/bondmap/"
+  }
+ },
+ "disposition": "passed: fill gate passed; density 0, main 0, antenna 0, maximal 0; LVS Netlists match (59 pairs, r1_top 261 devices, 51 subcircuits); bond map 24/24, all_ok; window minimum Metal1 26.21, Metal2 25.63, Metal3 25.93, Metal4 27.43, Metal5 27.44 % (limit 25 %); ADC box Metal5 70.46 % (D23, informational)",
+ "gds_sha256": "91791ff50079fd0dc46f76faa443633c770e734e1ab3f412445ee1351c004d62",
+ "window_density": "<G1_RESULTS_ROOT>/r1_top/asm-20261030-h2-fill/window_density.json",
+ "adc_box_density": "<G1_RESULTS_ROOT>/r1_top/asm-20261030-h2-fill/adc_box_density.json"
+}

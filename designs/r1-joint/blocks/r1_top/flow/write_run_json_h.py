@@ -21,7 +21,9 @@ asm = json.load(open(os.path.join(run, "r1_top_assembly.json")))
 name = r["run"]
 r["track"] = ("T8f (r1_top supply feed redesign, try h0)" if asm.get("try") == "h0" else
               "T8g (r1_top supply feed with unmodified IO cells, try %s)" % asm.get("try"))
-r["tools"]["cpuset"] = "112-119"
+r["tools"]["cpuset"] = os.environ.get("R1_RUN_CPUSET", "112-119")     # T8h: R1_RUN_CPUSET=112-115
+if os.environ.get("R1_RUN_TRACK"):
+    r["track"] = os.environ["R1_RUN_TRACK"]
 snap = os.path.join(run, "inputs", "inputs.sha256")
 if os.path.exists(snap):
     r["input_snapshots"]["inputs/inputs.sha256"] = [
@@ -30,7 +32,7 @@ if os.path.exists(snap):
 for k in ("try", "iopadvss_eco", "padmap", "vss_pad_cell_origins_x", "antenna_diodes_removed", "merged_std_cells", "south_vdd_feed", "south_supply_stacks", "supply_h_feed"):
     if k in asm:
         r[k] = asm[k]
-for f in ("supply_h0.json", "supply_h1.json", "clk_skew_g.json"):
+for f in ("supply_h0.json", "supply_h1.json", "supply_h2.json", "clk_skew_g.json"):
     r.setdefault("results", {})[f] = ("<G1_RESULTS_ROOT>/r1_top/%s/%s" % (name, f)
                                       if os.path.exists(os.path.join(run, f)) else "not run")
 s = json.dumps(r, indent=1)
