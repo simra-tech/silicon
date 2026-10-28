@@ -1,0 +1,68 @@
+{
+ "run_id": "t10-chip-probe-t3-d",
+ "test": 3,
+ "view": "pex",
+ "corner": "tt",
+ "temp_c": 27.0,
+ "sim_status": "completed",
+ "ngspice_wall_s": 2846.1,
+ "tstop_us": 2.0,
+ "master_done_us": null,
+ "t_end_us": 2.0,
+ "vref_bg_t0_V": 1.0451965840478155,
+ "criteria": [
+  {
+   "name": "start state: vref_bg at t = 0 is the on-state of r1_bgr (1.045 V record)",
+   "value": 1.0451965840478155,
+   "limit": "1.00-1.09",
+   "unit": "V",
+   "status": "passed"
+  },
+  {
+   "name": "master sequence completed (DONE line)",
+   "value": null,
+   "limit": "before tstop",
+   "unit": "",
+   "status": "failed"
+  },
+  {
+   "name": "ADC strobes 0.6 ns before the clk30 edge (M1 check)",
+   "value": null,
+   "limit": "0.3-0.9 ns",
+   "unit": "ns",
+   "status": "failed"
+  },
+  {
+   "name": "ADC handshake integrity: strobes per started conversion, no stalled frame (O10, F22, F24)",
+   "value": {
+    "conversions_started": 0,
+    "complete_in_deck": 0,
+    "strobe_rises": {
+     "seq_stb0": 0,
+     "seq_stb13": 0
+    },
+    "lost_valid_events": 0,
+    "stalls": 0,
+    "short": []
+   },
+   "limit": "strobe rises = conversions, 0 stalls",
+   "unit": "",
+   "status": "passed"
+  },
+  {
+   "name": "two I_A / I_B reads (levels 0 and 1, D7)",
+   "value": 0,
+   "limit": 2,
+   "unit": "",
+   "status": "failed"
+  }
+ ],
+ "measurements": {
+  "adc_vrefo_V": 1.0503865031357327,
+  "adc_lsb_uV": 457.2448040922917,
+  "I_A": [],
+  "I_B": []
+ },
+ "spi": [],
+ "verdict": "failed"
+}

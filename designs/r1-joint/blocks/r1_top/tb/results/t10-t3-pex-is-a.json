@@ -1,0 +1,108 @@
+{
+ "run_id": "t10-t3-pex-is-a",
+ "test": 3,
+ "view": "pex",
+ "corner": "tt",
+ "temp_c": 27.0,
+ "sim_status": "failed",
+ "ngspice_wall_s": 3899.7,
+ "tstop_us": 19.6,
+ "master_done_us": null,
+ "t_end_us": 17.50722181832126,
+ "vref_bg_t0_V": 1.0449,
+ "criteria": [
+  {
+   "name": "start state: vref_bg at t = 0 is the on-state of r1_bgr (1.045 V record)",
+   "value": 1.0449,
+   "limit": "1.00-1.09",
+   "unit": "V",
+   "status": "passed"
+  },
+  {
+   "name": "master sequence completed (DONE line)",
+   "value": null,
+   "limit": "before tstop",
+   "unit": "",
+   "status": "failed"
+  },
+  {
+   "name": "ADC strobes 0.6 ns before the clk30 edge (M1 check, 17 conversions)",
+   "value": [
+    0.596,
+    0.6
+   ],
+   "limit": "0.3-0.9 ns",
+   "unit": "ns",
+   "status": "passed"
+  },
+  {
+   "name": "ADC handshake integrity: strobes per started conversion, no stalled frame (O10, F22, F24)",
+   "value": {
+    "conversions_started": 17,
+    "complete_in_deck": 16,
+    "strobe_rises": {
+     "seq_stb0": 17,
+     "seq_stb13": 16
+    },
+    "lost_valid_events": 0,
+    "stalls": 0,
+    "short": []
+   },
+   "limit": "strobe rises = conversions, 0 stalls",
+   "unit": "",
+   "status": "passed"
+  },
+  {
+   "name": "two I_A / I_B reads (levels 0 and 1, D7)",
+   "value": 1,
+   "limit": 2,
+   "unit": "",
+   "status": "failed"
+  }
+ ],
+ "measurements": {
+  "adc_vrefo_V": 1.0498751031186442,
+  "adc_lsb_uV": 457.022186037006,
+  "I_A": [
+   [
+    8.926,
+    827
+   ]
+  ],
+  "I_B": [
+   [
+    10.501,
+    827
+   ]
+  ]
+ },
+ "spi": [
+  {
+   "kind": "SPIWR",
+   "t": "3476.0",
+   "addr": "20",
+   "data": "0040"
+  },
+  {
+   "kind": "SPIWR",
+   "t": "5051.0",
+   "addr": "21",
+   "data": "0028"
+  },
+  {
+   "kind": "SPIRD",
+   "t": "8926.0",
+   "addr": "29",
+   "data": "033b",
+   "status": "80"
+  },
+  {
+   "kind": "SPIRD",
+   "t": "10501.0",
+   "addr": "2a",
+   "data": "033b",
+   "status": "80"
+  }
+ ],
+ "verdict": "failed"
+}

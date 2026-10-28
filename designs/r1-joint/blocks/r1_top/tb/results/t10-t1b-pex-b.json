@@ -1,0 +1,92 @@
+{
+ "run_id": "t10-t1b-pex-b",
+ "test": 1,
+ "view": "pex",
+ "corner": "tt",
+ "temp_c": 27.0,
+ "sim_status": "completed",
+ "ngspice_wall_s": 227.3,
+ "tstop_us": 13.0,
+ "master_done_us": 11.451,
+ "t_end_us": 13.0,
+ "vref_bg_t0_V": 1.0449,
+ "criteria": [
+  {
+   "name": "master sequence completed (DONE line)",
+   "value": 11.451,
+   "limit": "before tstop",
+   "unit": "",
+   "status": "passed"
+  },
+  {
+   "name": "ctrl comes out of reset after por_n (within 5 ticks)",
+   "value": 0.0408,
+   "limit": "por_n + 0.17 us",
+   "unit": "us",
+   "status": "failed"
+  },
+  {
+   "name": "ID over SPI equals the RTL 0.8 value 0x5208",
+   "value": [
+    "0xFFFF"
+   ],
+   "limit": "0x5208",
+   "unit": "",
+   "status": "failed"
+  },
+  {
+   "name": "FAULT after reset has POR (bit 12) and CAL (bit 11) set",
+   "value": [
+    "0xFFFF"
+   ],
+   "limit": "0x1800",
+   "unit": "",
+   "status": "passed"
+  },
+  {
+   "name": "FAULT after reset equals the register-map reset value 0x1800 (EN high throughout, STO bit 8 clear)",
+   "value": [
+    "0xFFFF"
+   ],
+   "limit": "0x1800",
+   "unit": "",
+   "status": "failed"
+  }
+ ],
+ "measurements": {
+  "t_por_us": null,
+  "core_out_of_reset_us": [
+   0.0408
+  ],
+  "id_read": [
+   "0xFFFF"
+  ],
+  "fault_after_reset": [
+   "0xFFFF"
+  ]
+ },
+ "spi": [
+  {
+   "kind": "SPIRD",
+   "t": "3276.0",
+   "addr": "00",
+   "data": "ffff",
+   "status": "ff"
+  },
+  {
+   "kind": "SPIRD",
+   "t": "6426.0",
+   "addr": "01",
+   "data": "ffff",
+   "status": "ff"
+  },
+  {
+   "kind": "SPIRD",
+   "t": "9576.0",
+   "addr": "02",
+   "data": "ffff",
+   "status": "ff"
+  }
+ ],
+ "verdict": "failed"
+}

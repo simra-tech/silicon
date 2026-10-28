@@ -130,6 +130,11 @@ def sel_expr(ch, levels):
     return e
 
 
+# sixth budget: try-g chip-level extraction, fast variant (r1_top README "Chip-level extraction (try g)")
+CHIP_RC = ('r1_top/pex-20261029-g3/fast/r1_top_g_pex_fast.spice',
+           'cce466ec6537dbeda36fa2f2a21cbfbd69a62cef0c760a8ca1f7d5a02ccbd4d5')
+
+
 def build_deck(a, out, vvp_inc, io_inc):
     test = a.test
     desc, _, fenc = TESTS[test]
@@ -158,6 +163,17 @@ def build_deck(a, out, vvp_inc, io_inc):
                                  '* T2F HBTs abort the transient, F15); the level-shifter output t2f_en33 is loaded by 1 MOhm\n'
                                  'XU_T2F VDDA VDD VSS pbias pcasc vref_bg VSS t2f_mode33 t2f_fout r1_t2f\n'
                                  'Rt2f_en_ld t2f_en33 VSS 1meg')
+    if a.chip_bias_pex:
+        # --view pex: the extracted r1_bias revision 2 has the pins vref (bandgap in) and vref_b (buffered out, D20)
+        if a.vbuf == 'real':
+            raise SystemExit('--view pex with the extracted r1_bias already has the VREF buffer; drop --vbuf real')
+        old_b = 'XU_BIAS VDDA VDD VSS pbias pcasc ib_afe_s1 ib_afe_s2 ib_afe_c1 ib_afe_c2 ib_is_a ib_is_b ib_sf_oa ib_sf_na ib_sf_ob ib_sf_nb ib_adc_ref por_n r1_bias'
+        m6 = 'Evref_m6 vref_m6i VSS vref_bg VSS 1\nRvref_m6 vref_m6i vref_l 10'
+        if old_b not in chip or m6 not in chip:
+            raise SystemExit('--view pex: XU_BIAS or M6 lines not found in r1_chip.sp')
+        chip = chip.replace(m6, '* --view pex: MODEL M6 removed; the VREF buffer is inside the extracted r1_bias revision 2 (vref_b = vref_l)')
+        chip = chip.replace(old_b, old_b.replace(' por_n r1_bias', ' por_n vref_bg vref_l r1_bias_r2pex'))
+        chip = chip.replace(' pbias pcasc vref_bg t2f_en33 ', ' pbias pcasc vref_l t2f_en33 ').replace(' pbias pcasc vref_bg VSS t2f_mode33 ', ' pbias pcasc vref_l VSS t2f_mode33 ')
     if a.vbuf == 'real':
         # D20: the VREF buffer r1_vbuf of r1_bias revision 2 (blocks/r1_bias/schematic/r1_bias.spice, commit ae4dfac95)
         # replaces MODEL M6. Its bias leg ibvb (one r1_bias_leg unit) is an ideal source of the recorded 5 uA leg current
@@ -177,6 +193,12 @@ def build_deck(a, out, vvp_inc, io_inc):
                                 'XU_VBUF vref_bg vref_l ibvb VDDA VSS r1_vbuf\nIvbuf_leg VDDA ibvb DC %.6g' % (ivb * 1e6, ivb))
         chip = chip.replace(' pbias pcasc vref_bg t2f_en33 ', ' pbias pcasc vref_l t2f_en33 ').replace(' pbias pcasc vref_bg VSS t2f_mode33 ', ' pbias pcasc vref_l VSS t2f_mode33 ')
         A('.include %s' % os.path.join(out, 'r1_vbuf_rev2.spice'))
+    if a.chip_rc:
+        # sixth budget, chip view: top-level routing RC of try g between the block pins (chip_rc.py)
+        import chip_rc
+        hdr = [l for l in chip_rc._join(open(vvp_inc).read()) if l.lower().startswith('.subckt r1_ctrl_top_tb ')][0]
+        chip, a.chip_rep = chip_rc.chip_rc_pass(chip, a.chip_rc, hdr.split()[2:])
+        A('.include %s' % a.chip_rc)
     open(os.path.join(out, 'r1_chip_nodcn.sp'), 'w').write(chip)
     A('.include %s' % os.path.join(out, 'r1_chip_nodcn.sp'))
     A('.temp %g' % a.temp)
@@ -246,7 +268,11 @@ def build_deck(a, out, vvp_inc, io_inc):
     A('* master pad drives (dac_bridge 0 / 3.3 V inside XU_CTRL) through 50 Ohm board lines')
     for m, p in (('tbm_cs_n', 'CS_N'), ('tbm_sclk', 'MA_SCLK'), ('tbm_sdi', 'SDI'), ('tbm_en', 'EN_STO_IN')):
         A('Rb_%s %s %s 50' % (p.lower(), m, p))
-    A('.save ' + ' '.join('v(%s)' % s for s in SAVE))
+    save = list(SAVE)
+    if getattr(a, 'adc_pex', False):
+        # extracted ADC wrapper: reference nodes vrefa / vrefla of r1_adc_lay_sar, valid from the macro
+        save = [{'xu_adc.vrefo': 'xu_adc.vrefa', 'xu_adc.vreflo': 'xu_adc.vrefla'}.get(x, x) for x in save] + ['adc_valid_a']
+    A('.save ' + ' '.join('v(%s)' % s for s in save))
     if a.save_extra:
         A('.save ' + ' '.join(a.save_extra.split(',')))
     A('.save i(Vm_vdda) i(Vm_iovdd) i(Vm_vdd)')
@@ -292,6 +318,24 @@ PINNED_RTL = {
  "r1_biss.v": "fda134e13102b358e21860db7b2fb1fac6eb6b17ad2faaff9a2953ddbcce64b8",
  "r1_ctrl_top.v": "bb75421096187133c243e8c5d1e387aac0e562ce65082d35080a9535dfb77dd9"
 }
+
+PINNED_RTL_08 = {   # r1_ctrl RTL revision 0.8, commit 665f75453 (frozen copy ctrl_rtl_0.8)
+ "r1_adcw.v": "198de6c050266d8fb8d863b5c7a34c61e2711dc94ff13b1a8b753c8ab69dfba2",
+ "r1_biss.v": "fda134e13102b358e21860db7b2fb1fac6eb6b17ad2faaff9a2953ddbcce64b8",
+ "r1_cmpcal.v": "98c3f1b9135240de3c9d1abd3996e309b3cec08b3e77af9aefdca06bd10f4a11",
+ "r1_ctrl_top.v": "04ee2cf3bd94b3fff9371e8a9690e07ea7e2a808328fc179ea26a61c69fd5342",
+ "r1_gate.v": "05be2446f9c6d137cb62d9a96996f22ef85f487b1a020d7475cf41eca075faff",
+ "r1_idrom.v": "ea79c1cf13683cd151e715d74f3ca59848a86b122ce07f42008aa949156d787c",
+ "r1_lib.v": "ed65a30a374f75e062e0ec4567e5c414cb72d7b2c790921dfdbd80938e068869",
+ "r1_pos.v": "b5d6b4e533f706ef6417d9888a91b7cd02532c3c3266e2cb1545d08f2cfba90d",
+ "r1_regs.v": "012d938a2bd2005239909d713628380d1ceeeb58d481fce86548f1f8a0c7735e",
+ "r1_safe.v": "47e4ae4071fd3b100f04b38b0c6489990e5ff0ec060b74547266f05895b239de",
+ "r1_sinlut.v": "3e10c65e93bb9bf6d6379d8ae3fae3aec2fce6cf612038d3421fac3db2a35e86",
+ "r1_spi.v": "884ceaf4639583549e91d039c99f4ea931052b3b24dcdf42af27e0bc7d3f764b",
+ "r1_sync2.v": "c3164e4bc1ba06279047eaad2e9bf36f2904cdc73064bc8696df6c2fcc09d18f",
+ "r1_tapidx.v": "fbbf0029b95ca1daed4339d968b12527cedbe23668ac41304a289ec17712946f",
+}
+
 
 PINNED_RTL_07 = {   # r1_ctrl RTL revision 0.7, commit fdf0fcc0a (frozen copy ctrl_rtl_0.7)
  "r1_adcw.v": "198de6c050266d8fb8d863b5c7a34c61e2711dc94ff13b1a8b753c8ab69dfba2",
@@ -434,6 +478,112 @@ def thermal_subset(view, rec, keep_safety=False):
     return '\n'.join(L) + '\n'
 
 
+def pex_pass(view, a, rec, out, bulk):
+    """Sixth budget: replace every schematic block still in the (sch-based) view by its extracted netlist of record
+    (views/pex.inc sections). Stubs and behavioural blocks of the deck options stay as they are."""
+    txt = open(os.path.join(HERE, 'views', 'pex.inc')).read().replace('@G1_RESULTS_ROOT@', bulk)
+    secs, cur = [], None
+    for l in txt.splitlines():
+        if l.startswith('*T10PEX ') or l.startswith('*T10CELL '):
+            cur = {'head': l.split(), 'sha': [], 'lines': []}
+        elif l.startswith('*T10END'):
+            secs.append(cur)
+            cur = None
+        elif cur is not None:
+            if l.startswith('*T10SHA '):
+                cur['sha'].append(l.split()[1:3])
+            else:
+                cur['lines'].append(l)
+    done, bad = {}, []
+    for sc in secs:
+        for path, want in sc['sha']:
+            hp = path.replace('/work/', ROOT + '/') if path.startswith('/work/') else path
+            got = sha(hp)
+            rec.setdefault('pex_inputs_sha256', {})[path.replace(bulk, '<G1_RESULTS_ROOT>')] = got
+            if got != want:
+                bad.append(path)
+    if bad:
+        raise SystemExit('--view pex: extracted netlist differs from views/pex.inc: ' + ', '.join(bad))
+    for sc in secs:
+        h = sc['head']
+        lines = list(sc['lines'])
+        if h[0] == '*T10CELL':
+            name = h[1]
+            if name in a.pex_skip:
+                done[name] = 'schematic (--pex-skip)'
+                continue
+            L = view.splitlines()
+            pins, i, j = subckt_header(view, name)
+            if pins is None:
+                done[name] = 'not in the deck'
+                continue
+            k = j
+            while not L[k].lower().startswith('.ends'):
+                k += 1
+            body = L[j:k]
+            if not any(x.startswith('XCORE ') for x in body):
+                done[name] = 'kept (stub or model of the deck options)'
+                continue
+            view = '\n'.join(L[:i] + lines + L[k + 1:]) + '\n'
+            done[name] = 'extracted'
+            if name == 'r1_adc':
+                a.adc_pex = True
+            continue
+        n = h[1]
+        if n.split('/')[0] in a.pex_skip:
+            done[n] = 'schematic (--pex-skip)'
+            continue
+        cands = ['.include /work/designs/r1-joint/blocks/' + n, '.include ' + os.path.join(out, 'selft0_' + os.path.basename(n))]
+        hit = [c for c in cands if c in view.splitlines()]
+        if not hit:
+            done[n] = 'kept (stub, behaviour or ideal model of the deck options)'
+            continue
+        opts = h[2:]
+        if 'DROP' in opts:
+            sub = opts[opts.index('DROP') + 1]
+            S = open(os.path.join(BLOCKS, n)).read().splitlines()
+            _, i, j = subckt_header('\n'.join(S), sub)
+            k = j
+            while not S[k].lower().startswith('.ends'):
+                k += 1
+            dst = os.path.join(out, 'pexdrop_' + os.path.basename(n))
+            open(dst, 'w').write('\n'.join(S[:i] + ['* T10 --view pex: subckt %s removed (extracted cell below)' % sub] + S[k + 1:]) + '\n')
+            lines = ['.include ' + dst] + lines
+        if 'RENAME' in opts:
+            old, new = opts[opts.index('RENAME') + 1].split('=')
+            src = sc['sha'][0][0]
+            S = []
+            for l in open(src).read().splitlines():
+                w = l.split()
+                if w and w[0].lower() in ('.subckt', '.ends') and len(w) > 1 and w[1] == old:
+                    l = l.replace(' ' + old, ' ' + new, 1)
+                S.append(l)
+            dst = os.path.join(out, 'pexren_' + os.path.basename(src))
+            open(dst, 'w').write('\n'.join(S) + '\n')
+            lines = [x.replace('@RENAMED@', dst) for x in lines]
+        if 'CHIPBIAS' in opts:
+            a.chip_bias_pex = True
+        if a.hbt_selft0:
+            # deviation D4 also on the extracted copies (npn13G2 instance parameter selft=0)
+            new_lines = []
+            for x in lines:
+                if x.startswith('.include '):
+                    f = x.split(None, 1)[1]
+                    t = open(f).read()
+                    if 'npn13G2' in t:
+                        T = [l + ' selft=0' if (l[:1] in 'Xx' and ' npn13G2' in l) else l for l in t.splitlines()]
+                        f2 = os.path.join(out, 'selft0_pex_' + os.path.basename(f))
+                        open(f2, 'w').write('\n'.join(T) + '\n')
+                        rec['hbt_selft0_instances'] = rec.get('hbt_selft0_instances', 0) + sum(1 for l in T if l.endswith(' selft=0'))
+                        x = '.include ' + f2
+                new_lines.append(x)
+            lines = new_lines
+        view = view.replace(hit[0], '\n'.join(lines))
+        done[n] = 'extracted'
+    rec['pex_view'] = done
+    return view
+
+
 def fast_view(view, a, rec):
     t = a.temp
     v = {k: interp_t(FAST_REC[k], t) for k in FAST_REC}
@@ -442,6 +592,8 @@ def fast_view(view, a, rec):
     for inc in (bgr_inc, bias_inc):
         if inc not in view:
             raise SystemExit('--fast: include not found in the view: ' + inc)
+    if a.pex_bias:
+        bias_inc = None
     bgr = ['* FAST VIEW: r1_bgr as its recorded behaviour at %g C (bgr-op-20261020-b, tt)' % t,
            '.subckt r1_bgr vdd vss vref iptat pbias pcasc vbe dvbe',
            'Vref vref vss %.6g' % v['vref'],
@@ -468,7 +620,11 @@ def fast_view(view, a, rec):
                  'Vpor por_n vss DC 1.2', '.ends r1_bias']
     else:
         bias += ['Bpor por_n vss V=v(vdd)', '.ends r1_bias']
-    view = view.replace(bgr_inc, '\n'.join(bgr)).replace(bias_inc, '\n'.join(bias))
+    view = view.replace(bgr_inc, '\n'.join(bgr))
+    if bias_inc:
+        view = view.replace(bias_inc, '\n'.join(bias))
+    else:
+        rec['fast_view_bias'] = 'r1_bias not behavioural (--pex-bias): the extracted revision 2 with its VREF buffer'
     rec['fast_view'] = {'temp_c': t, 'vref_V': v['vref'], 'pbias_offset_V': v['vsg'],
                         'pcasc_offset_V': v['vsg'] + v['vds_mp1'], 'i10_A': v['i10'], 'i5_A': v['i5'],
                         'por_n': 'released (= VDD) from t = 0'}
@@ -513,10 +669,13 @@ def main():
     ap.add_argument('--por-step', type=float, default=1.0, help='deck 1b: por_n release time in us (fast view)')
     ap.add_argument('--t2f-off', action='store_true', help='deviation D11: T2F enable input held at VSS')
     ap.add_argument('--thermal-subset', action='store_true', help='tests 1b, 5, 6: AFE, isense, safe, ADC as stubs (F18)')
+    ap.add_argument('--chip-rc', action='store_true', help='chip view: insert the try-g top-level routing RC (fast variant, CHIP_RC) between the block pins')
+    ap.add_argument('--pex-skip', default='', help='--view pex: comma list of blocks (e.g. r1_isense) kept at schematic level (deck time)')
+    ap.add_argument('--pex-bias', action='store_true', help='--view pex with --fast: keep the extracted r1_bias revision 2 (VREF buffer) instead of its behaviour')
     ap.add_argument('--nodcp', action='store_true', help='bisection: also remove dpantenna from the pad copy')
     ap.add_argument('--bridge-fixed', action='store_true', help='bisection: core output bridges not scaled by v(vdd) (static VDD only)')
     ap.add_argument('--por-fixed', action='store_true', help='bisection: fast-view POR B-source replaced by a 1.2 V source')
-    ap.add_argument('--ctrl-rev', choices=['0.5', '0.7'], default='0.5', help='r1_ctrl RTL revision (frozen copies)')
+    ap.add_argument('--ctrl-rev', choices=['0.5', '0.7', '0.8'], default='0.5', help='r1_ctrl RTL revision (frozen copies)')
     ap.add_argument('--encoder-subset', action='store_true', help='test 2: isense and safe as stubs (deck time)')
     ap.add_argument('--t2f-stub', action='store_true', help='decks 2, 3: r1_t2f as a 1 GOhm output stub (HBT abort, F18)')
     ap.add_argument('--current-subset', action='store_true', help='test 3: AFE as a stub; isense, safe, ADC, gate real')
@@ -532,12 +691,19 @@ def main():
     ap.add_argument('--stall-abort', action='store_true', help='stop ngspice when the monitor prints T10MON STALL')
     ap.add_argument('--threads', type=int, default=1, help='ngspice OpenMP threads (device load)')
     a = ap.parse_args()
+    a.pex_skip = [x.strip() for x in a.pex_skip.split(",") if x.strip()]
     if a.cosim_delay and not any(d.startswith('T10_SEQ_LAT') for d in a.vdefine):
         # F24: with the 1 ps output delay the clk-edge-to-analog latency of the macro outputs is 0.141 ns
         # (run t10-diag-hs-dly-b), not 1.14 ns; the strobe timing of the sequencer model follows it
         a.vdefine = a.vdefine + ['T10_SEQ_LAT=%g' % (0.141 + (a.cosim_delay - 1e-12) * 1e9)]
     if a.bridge_fixed and not (a.fast and a.start == 'op'):
         sys.exit('--bridge-fixed needs a static VDD (--fast --start op)')
+    a.chip_bias_pex = False
+    if a.pex_bias and a.view != 'pex':
+        sys.exit('--pex-bias needs --view pex')
+    if a.view == 'pex' and not (a.thermal_subset or a.safety_subset) and 'T10_VALID_BRIDGE' not in a.vdefine:
+        # the extracted ADC (B5 SAR sub-macro) makes its own valid: the ctrl takes it from the macro pins
+        a.vdefine = a.vdefine + ['T10_VALID_BRIDGE']
     if a.thermal_subset and 'T10_VALID_BRIDGE' not in a.vdefine:
         # F24/T10-29: with the ADC as a stub, the old valid path keeps the frames stopped after frame 1 (the reference
         # behaviour of the subset results); running frames put strobe events next to master SPI edges, and d_cosim lost one
@@ -572,7 +738,13 @@ def main():
     bad_pin = [n for n in NETLISTS if sha(os.path.join(BLOCKS, n)) != PINNED[n]]
     # r1_ctrl RTL 0.5 of record (commit f65d55c49); track T5g edits the tree for revision 0.7
     # frozen copy <G1_RESULTS_ROOT>/r1_top/tb/ctrl_rtl_0.5 (taken 2026-10-27 from the tree = f65d55c49) is used when present
-    if a.ctrl_rev == '0.7':
+    if a.ctrl_rev == '0.8':
+        # sixth budget: r1_ctrl RTL 0.8 from commit 665f75453, frozen; 0.8 keeps every 0.7 change (T10_CTRL07)
+        CTRL_DIR = os.path.join(os.environ.get('G1_RESULTS_ROOT', ''), 'r1_top', 'tb', 'ctrl_rtl_0.8')
+        bad_pin += ['r1_ctrl/rtl/' + n for n in CTRL_RTL if sha(os.path.join(CTRL_DIR, n)) != PINNED_RTL_08.get(n)]
+        rec['ctrl_rtl_dir'] = 'frozen copy ctrl_rtl_0.8 (= r1_ctrl RTL 0.8, 665f75453)'
+        a.vdefine = a.vdefine + [d for d in ('T10_CTRL07', 'T10_CTRL08') if d not in a.vdefine]
+    elif a.ctrl_rev == '0.7':
         # fifth budget: r1_ctrl RTL 0.7 from commit fdf0fcc0a, frozen (the tree copy is changed by another track)
         CTRL_DIR = os.path.join(os.environ.get('G1_RESULTS_ROOT', ''), 'r1_top', 'tb', 'ctrl_rtl_0.7')
         bad_pin += ['r1_ctrl/rtl/' + n for n in CTRL_RTL if sha(os.path.join(CTRL_DIR, n)) != PINNED_RTL_07.get(n)]
@@ -609,8 +781,9 @@ def main():
     for n in NETLISTS:
         for s in subckt_names(os.path.join(BLOCKS, n)):
             names.setdefault(s, []).append(n)
-    for s in subckt_names(os.path.join(HERE, 'views', a.view + '.inc')):
-        names.setdefault(s, []).append('views/%s.inc' % a.view)
+    vbase = 'sch' if a.view == 'pex' else a.view
+    for s in subckt_names(os.path.join(HERE, 'views', vbase + '.inc')):
+        names.setdefault(s, []).append('views/%s.inc' % vbase)
     dup = {k: v for k, v in names.items() if len(v) > 1}
     rec['duplicate_subckts'] = dup
     if dup:
@@ -645,7 +818,7 @@ def main():
         inc = inc.replace('adc_bridge(in_low=1.65 in_high=1.65 rise_delay=1e-12 fall_delay=1e-12)',
                           'adc_bridge(in_low=1.65 in_high=1.65 rise_delay=%s fall_delay=%s)' % (d, d))
     open(vvp_inc, 'w').write(inc)
-    view = open(os.path.join(HERE, 'views', a.view + '.inc')).read()
+    view = open(os.path.join(HERE, 'views', ('sch' if a.view == 'pex' else a.view) + '.inc')).read()
     if any(l.startswith('*PENDING') for l in view.splitlines()):
         finish('failed', None, {'errors': ['views/%s.inc is not complete (*PENDING lines)' % a.view]})
         sys.exit(1)
@@ -699,6 +872,11 @@ def main():
             'Bclk osc_clk vss V=v(ck0)*v(vdd)',
             'Cl0 en vss 5f', 'Cl1 trim0 vss 5f', 'Cl2 trim1 vss 5f', 'Cl3 trim2 vss 5f', 'Cl4 trim3 vss 5f', 'Cl5 trim4 vss 5f',
             '.ends r1_osc']))
+    if a.view == 'pex':
+        view = pex_pass(view, a, rec, out, bulk)
+        if a.chip_bias_pex:
+            rec['m6_vref_buffer'] = 'not used: VREF buffer r1_vbuf inside the extracted r1_bias revision 2 (pex-rc-20261026-r2d)'
+            rec['vbuf'] = 'r1_vbuf (extracted, in r1_bias rev 2)'
     if a.ctrl == 'static':
         txt_ctrl = static_ctrl(open(vvp_inc).read())
         open(vvp_inc, 'w').write(txt_ctrl)
@@ -715,7 +893,17 @@ def main():
     open(io_inc, 'w').write('\n'.join(io_lines) + '\n')
     rec['nodcn_dantenna_removed'] = nrem
     rec['por_fixed'] = bool(a.por_fixed)
+    if a.chip_rc:
+        rcp = os.path.join(bulk, CHIP_RC[0])
+        got = hashlib.sha256(open(rcp, 'rb').read()).hexdigest()
+        if got != CHIP_RC[1]:
+            raise SystemExit('--chip-rc: %s sha256 %s, expected %s' % (rcp, got, CHIP_RC[1]))
+        a.chip_rc = rcp
+        rec['chip_rc'] = {'file': '<G1_RESULTS_ROOT>/' + CHIP_RC[0], 'sha256': got}
     deck = build_deck(a, out, vvp_inc, io_inc)
+    if a.chip_rc:
+        rec['chip_rc'].update(a.chip_rep)
+        rec['view_label'] = a.view + ' + chip RC (try g)'
     dpath = os.path.join(out, 'deck.cir')
     open(dpath, 'w').write(deck)
     open(os.path.join(rec_dir, 'deck.cir'), 'w').write(deck.replace(bulk, '<G1_RESULTS_ROOT>'))

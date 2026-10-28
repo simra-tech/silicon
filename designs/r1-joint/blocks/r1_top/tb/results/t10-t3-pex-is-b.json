@@ -1,0 +1,147 @@
+{
+ "run_id": "t10-t3-pex-is-b",
+ "test": 3,
+ "view": "pex",
+ "corner": "tt",
+ "temp_c": 27.0,
+ "sim_status": "completed",
+ "ngspice_wall_s": 4611.4,
+ "tstop_us": 19.6,
+ "master_done_us": 19.401,
+ "t_end_us": 19.599999999999998,
+ "vref_bg_t0_V": 1.0449,
+ "criteria": [
+  {
+   "name": "start state: vref_bg at t = 0 is the on-state of r1_bgr (1.045 V record)",
+   "value": 1.0449,
+   "limit": "1.00-1.09",
+   "unit": "V",
+   "status": "passed"
+  },
+  {
+   "name": "master sequence completed (DONE line)",
+   "value": 19.401,
+   "limit": "before tstop",
+   "unit": "",
+   "status": "passed"
+  },
+  {
+   "name": "ADC strobes 0.6 ns before the clk30 edge (M1 check, 19 conversions)",
+   "value": [
+    0.595,
+    0.599
+   ],
+   "limit": "0.3-0.9 ns",
+   "unit": "ns",
+   "status": "passed"
+  },
+  {
+   "name": "ADC handshake integrity: strobes per started conversion, no stalled frame (O10, F22, F24)",
+   "value": {
+    "conversions_started": 19,
+    "complete_in_deck": 18,
+    "strobe_rises": {
+     "seq_stb0": 19,
+     "seq_stb13": 18
+    },
+    "lost_valid_events": 0,
+    "stalls": 0,
+    "short": []
+   },
+   "limit": "strobe rises = conversions, 0 stalls",
+   "unit": "",
+   "status": "passed"
+  },
+  {
+   "name": "I_A code step for 30 mV within 1 % of 14 x dV / LSB",
+   "value": 0.21904069716981145,
+   "limit": "|e| <= 1",
+   "unit": "%",
+   "status": "passed"
+  },
+  {
+   "name": "I_B code step for 80 mV within 1 % of 14 x dV / LSB",
+   "value": 0.25984649549926564,
+   "limit": "|e| <= 1",
+   "unit": "%",
+   "status": "passed"
+  }
+ ],
+ "measurements": {
+  "adc_vrefo_V": 1.0498814325084114,
+  "adc_lsb_uV": 457.0249412900252,
+  "I_A": [
+   [
+    8.926,
+    827
+   ],
+   [
+    15.951,
+    1748
+   ]
+  ],
+  "I_B": [
+   [
+    10.501,
+    827
+   ],
+   [
+    17.526,
+    3284
+   ]
+  ],
+  "A_step1": {
+   "measured_codes": 921,
+   "expected_codes": 918.9870443711093,
+   "error_pct": 0.21904069716981145
+  },
+  "B_step1": {
+   "measured_codes": 2457,
+   "expected_codes": 2450.6321183229584,
+   "error_pct": 0.25984649549926564
+  }
+ },
+ "spi": [
+  {
+   "kind": "SPIWR",
+   "t": "3476.0",
+   "addr": "20",
+   "data": "0040"
+  },
+  {
+   "kind": "SPIWR",
+   "t": "5051.0",
+   "addr": "21",
+   "data": "0028"
+  },
+  {
+   "kind": "SPIRD",
+   "t": "8926.0",
+   "addr": "29",
+   "data": "033b",
+   "status": "80"
+  },
+  {
+   "kind": "SPIRD",
+   "t": "10501.0",
+   "addr": "2a",
+   "data": "033b",
+   "status": "80"
+  },
+  {
+   "kind": "SPIRD",
+   "t": "15951.0",
+   "addr": "29",
+   "data": "06d4",
+   "status": "88"
+  },
+  {
+   "kind": "SPIRD",
+   "t": "17526.0",
+   "addr": "2a",
+   "data": "0cd4",
+   "status": "80"
+  }
+ ],
+ "verdict": "passed"
+}

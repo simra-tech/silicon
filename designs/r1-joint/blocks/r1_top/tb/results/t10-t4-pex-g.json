@@ -1,0 +1,166 @@
+{
+ "run_id": "t10-t4-pex-g",
+ "test": 4,
+ "view": "pex",
+ "corner": "tt",
+ "temp_c": 27.0,
+ "sim_status": "completed",
+ "ngspice_wall_s": 7587.1,
+ "tstop_us": 20.5,
+ "master_done_us": null,
+ "t_end_us": 20.5,
+ "vref_bg_t0_V": 1.0449,
+ "criteria": [
+  {
+   "name": "start state: vref_bg at t = 0 is the on-state of r1_bgr (1.045 V record)",
+   "value": 1.0449,
+   "limit": "1.00-1.09",
+   "unit": "V",
+   "status": "passed"
+  },
+  {
+   "name": "master sequence completed (DONE line)",
+   "value": null,
+   "limit": "before tstop",
+   "unit": "",
+   "status": "failed"
+  },
+  {
+   "name": "all three gates high before the step (fault path exercised on driven gates)",
+   "value": [
+    3.300000022391523,
+    3.3000000223915107,
+    3.300000022391512
+   ],
+   "limit": "> 3.0 V",
+   "unit": "",
+   "status": "passed"
+  },
+  {
+   "name": "OC step: all gates < 1 V within comparator 236 ns + 4 ticks + gate 1 us",
+   "value": [
+    312.5477995128838,
+    312.5477995128838,
+    312.5477995129109
+   ],
+   "limit": "<= 1369 ns",
+   "unit": "ns",
+   "status": "passed"
+  },
+  {
+   "name": "OC step: FAULT_N low",
+   "value": 200.37023539395622,
+   "limit": "<= 1369 ns",
+   "unit": "ns",
+   "status": "passed"
+  },
+  {
+   "name": "fault cause after the step is OC_A (bit 0, monitor of the latched cause)",
+   "value": [
+    "0001"
+   ],
+   "limit": "bit 0",
+   "unit": "",
+   "status": "passed"
+  },
+  {
+   "name": "after CLR: PWM on GATE_A again",
+   "value": [],
+   "limit": ">= 1 rising edge in 3.6 us",
+   "unit": "",
+   "status": "failed"
+  },
+  {
+   "name": "EN low applied",
+   "value": null,
+   "limit": "yes",
+   "unit": "",
+   "status": "failed"
+  },
+  {
+   "name": "after EN high and CLR: PWM on GATE_A again",
+   "value": [],
+   "limit": ">= 1 rising edge in 3.6 us",
+   "unit": "",
+   "status": "failed"
+  }
+ ],
+ "measurements": {
+  "oc_threshold_shunt_mV": 69.80580847723704,
+  "t_cross_us": 18.045352388072185,
+  "fault_delay_ns": 200.37023539395622,
+  "gate_delay_ns": [
+   312.5477995128838,
+   312.5477995128838,
+   312.5477995129109
+  ],
+  "gates_before_V": [
+   3.300000022391523,
+   3.3000000223915107,
+   3.300000022391512
+  ],
+  "limit_ns": 1369.3322971651553,
+  "f_clk_MHz": 30.000233139651844,
+  "fault_reads": [],
+  "fault_cause_monitor": [
+   "0001"
+  ]
+ },
+ "spi": [
+  {
+   "kind": "SPIWR",
+   "t": "3476.0",
+   "addr": "03",
+   "data": "06fe"
+  },
+  {
+   "kind": "SPIWR",
+   "t": "5051.0",
+   "addr": "36",
+   "data": "002c"
+  },
+  {
+   "kind": "SPIWR",
+   "t": "6626.0",
+   "addr": "37",
+   "data": "003f"
+  },
+  {
+   "kind": "SPIWR",
+   "t": "8201.0",
+   "addr": "18",
+   "data": "001f"
+  },
+  {
+   "kind": "SPIWR",
+   "t": "9776.0",
+   "addr": "20",
+   "data": "0064"
+  },
+  {
+   "kind": "SPIWR",
+   "t": "11351.0",
+   "addr": "21",
+   "data": "004b"
+  },
+  {
+   "kind": "SPIWR",
+   "t": "12926.0",
+   "addr": "22",
+   "data": "004b"
+  },
+  {
+   "kind": "SPIWR",
+   "t": "14501.0",
+   "addr": "23",
+   "data": "004b"
+  },
+  {
+   "kind": "SPIWR",
+   "t": "16076.0",
+   "addr": "04",
+   "data": "0003"
+  }
+ ],
+ "verdict": "failed"
+}

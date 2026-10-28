@@ -1,0 +1,68 @@
+{
+ "run_id": "t10-t5-pex-125-a",
+ "test": 5,
+ "view": "pex",
+ "corner": "tt",
+ "temp_c": 125.0,
+ "sim_status": "completed",
+ "ngspice_wall_s": 821.0,
+ "tstop_us": 25.0,
+ "master_done_us": 24.926000000000002,
+ "t_end_us": 24.999999999999996,
+ "vref_bg_t0_V": 1.04397,
+ "criteria": [
+  {
+   "name": "start state: vref_bg at t = 0 is the on-state of r1_bgr (1.045 V record)",
+   "value": 1.04397,
+   "limit": "1.00-1.09",
+   "unit": "V",
+   "status": "passed"
+  },
+  {
+   "name": "master sequence completed (DONE line)",
+   "value": 24.926000000000002,
+   "limit": "before tstop",
+   "unit": "",
+   "status": "passed"
+  },
+  {
+   "name": "TEMP equals f_T2F x 2^8 / f_clk within 1 count (ctrl counter)",
+   "value": 18,
+   "limit": "18.21 +- 1",
+   "unit": "counts",
+   "status": "passed"
+  },
+  {
+   "name": "f_T2F within 3 % of the T2F record at 125 C (2.1100 MHz, G1 bandgap)",
+   "value": 1.155913551975708,
+   "limit": "|e| <= 3",
+   "unit": "%",
+   "status": "passed"
+  }
+ ],
+ "measurements": {
+  "f_t2f_MHz": 2.1343897759466874,
+  "f_clk_MHz": 30.000030000027493,
+  "temp_reads": [
+   18
+  ],
+  "temp_expected": 18.213441207953835,
+  "f_t2f_vs_record_pct": 1.155913551975708
+ },
+ "spi": [
+  {
+   "kind": "SPIWR",
+   "t": "3476.0",
+   "addr": "34",
+   "data": "0008"
+  },
+  {
+   "kind": "SPIRD",
+   "t": "23051.0",
+   "addr": "2b",
+   "data": "0012",
+   "status": "80"
+  }
+ ],
+ "verdict": "passed"
+}

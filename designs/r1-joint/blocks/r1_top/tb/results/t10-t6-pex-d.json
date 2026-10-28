@@ -1,0 +1,85 @@
+{
+ "run_id": "t10-t6-pex-d",
+ "test": 6,
+ "view": "pex",
+ "corner": "tt",
+ "temp_c": 27.0,
+ "sim_status": "completed",
+ "ngspice_wall_s": 1282.5,
+ "tstop_us": 12.5,
+ "master_done_us": 12.201,
+ "t_end_us": 12.499999999999998,
+ "vref_bg_t0_V": 1.0449,
+ "criteria": [
+  {
+   "name": "start state: vref_bg at t = 0 is the on-state of r1_bgr (1.045 V record)",
+   "value": 1.0449,
+   "limit": "1.00-1.09",
+   "unit": "V",
+   "status": "passed"
+  },
+  {
+   "name": "master sequence completed (DONE line)",
+   "value": 12.201,
+   "limit": "before tstop",
+   "unit": "",
+   "status": "passed"
+  },
+  {
+   "name": "OSC_COUNT = 16 f_osc / f_ref within 1.5 counts",
+   "value": 49,
+   "limit": "48.50 +- 1.5",
+   "unit": "counts",
+   "status": "passed"
+  },
+  {
+   "name": "extracted r1_osc at code 22 within 2 % of the post-layout record 30.30 MHz and inside the D13 band 28-32 MHz",
+   "value": 30.31386711489784,
+   "limit": "30.30 +- 2 %",
+   "unit": "MHz",
+   "status": "passed"
+  },
+  {
+   "name": "STATUS.OSC_DONE (bit 10) set",
+   "value": [
+    "0x0580"
+   ],
+   "limit": "bit 10",
+   "unit": "",
+   "status": "passed"
+  }
+ ],
+ "measurements": {
+  "osc_count": 49,
+  "osc_count_expected": 48.50218738383654,
+  "osc_f_waveform_MHz": 30.31386711489784,
+  "osc_f_from_count_MHz": 30.625,
+  "f_ref_MHz": 10.0,
+  "status": [
+   "0x0580"
+  ]
+ },
+ "spi": [
+  {
+   "kind": "SPIWR",
+   "t": "3476.0",
+   "addr": "08",
+   "data": "0116"
+  },
+  {
+   "kind": "SPIRD",
+   "t": "10326.0",
+   "addr": "01",
+   "data": "0580",
+   "status": "80"
+  },
+  {
+   "kind": "SPIRD",
+   "t": "11901.0",
+   "addr": "09",
+   "data": "0031",
+   "status": "80"
+  }
+ ],
+ "verdict": "passed"
+}

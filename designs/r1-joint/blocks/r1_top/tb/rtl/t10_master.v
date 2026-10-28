@@ -65,6 +65,9 @@ module t10_master (
         // ctrl 0.7: CMP_THR_A/B reset 0x003F (was 0x3F3F); the CAL_CRC shadow must follow, or CAL_VALID stays 0
         sh[7'h36] = 16'h003F; sh[7'h37] = 16'h003F;
 `endif
+`ifdef T10_CTRL08
+        sh[7'h3F] = 16'h4000;       // ctrl 0.8: COS_GAIN reset 1.0 (Q2.14)
+`endif
         sh[7'h50] = 1; sh[7'h51] = 2; sh[7'h52] = 5; sh[7'h53] = 10; sh[7'h54] = 20; sh[7'h55] = 39; sh[7'h56] = 79;
         sh[7'h57] = 158; sh[7'h58] = 315; sh[7'h59] = 508; sh[7'h5A] = 1016; sh[7'h5B] = 2032; sh[7'h5C] = 4065;
         sh[7'h5D] = 8130;
@@ -82,6 +85,9 @@ module t10_master (
         for (a = 8'h36; a <= 8'h3C; a = a + 1) crc_word(sh[a]);
         for (a = 8'h50; a <= 8'h5D; a = a + 1) crc_word(sh[a]);
         for (a = 8'h60; a <= 8'h6D; a = a + 1) crc_word(sh[a]);
+`ifdef T10_CTRL08
+        crc_word(sh[7'h3F]);        // ctrl 0.8: COS_GAIN is the 44th covered word, after 0x6D
+`endif
     end endtask
     task write_crc; begin calc_crc; spi_wr(7'h18, {8'd0, crc_r}); end endtask
 
@@ -177,7 +183,11 @@ module t10_master (
             #(`T10_SETTLE_NS); tb_reset;
             spi_wr(7'h20, 16'd64);            // PWM_PERIOD 64 ticks (2.13 us; compressed, D7)
             spi_wr(7'h21, 16'd40);            // DUTY_A 40: strobe at tick 20 (DUTY_A >= 2 DEAD + 2)
-            for (n = 0; n < 2; n = n + 1) begin   // levels 0 and 1 (D7)
+`ifndef T10_T3_LEVEL0
+`define T10_T3_LEVEL0 0
+`endif
+            // sixth budget: T10_T3_LEVEL0=1 runs level 1 only (pex view, deck-time split; level 0 from another deck)
+            for (n = `T10_T3_LEVEL0; n < 2; n = n + 1) begin   // levels 0 and 1 (D7)
                 sel_a = n; sel_b = n;
                 $display("T10RES SEL t=%0.1f sel=%0d", $realtime, n);
                 #(2300.0);                    // one PWM period: one current frame after the level change
@@ -192,12 +202,22 @@ module t10_master (
             #(`T10_SETTLE_NS); tb_reset;
             // CMP_THR: THR_NEG 0 (cell code c = 63: NEG never trips). The reset value THR_NEG 63 (c = 0) trips NEG at
             // zero current, and CLR does not clear an active source (finding R4; the first sequence wrote 63, F20)
+`ifdef T10_CTRL07
+            // sixth budget: with ctrl 0.7/0.8 source 5 (amplitude low/high) becomes active about 6 us after the reset
+            // when the AFE is stubbed (safety subset, no encoder signal). With the 0x000E mask written later it latched
+            // and stayed (CLR clears only inactive sources), so the gates never switched on (t10-diag-t4ctrl08-a,
+            // cause 0x0020). FAULT_MASK is now the first write and masks every maskable source except OC_A
+            // (bits 1-7, 9, 10; EN 8, CAL 11 and POR 12 cannot be masked).
+            spi_wr(7'h03, 16'h06FE);          // FAULT_MASK: only OC_A latches
+`endif
             spi_wr(7'h36, 16'h002C);          // CMP_THR_A: THR_OC_A 44, THR_NEG_A 0
             spi_wr(7'h37, 16'h003F);          // CMP_THR_B: THR_OC_B 63, THR_NEG_B 0
             write_crc;                        // CRC check runs (<= 174 ticks) during the next writes
             spi_wr(7'h20, 16'd100);           // PWM_PERIOD 100 ticks (3.3 us; compressed, D7)
             spi_wr(7'h21, 16'd75); spi_wr(7'h22, 16'd75); spi_wr(7'h23, 16'd75);      // DUTY_A/B/C
+`ifndef T10_CTRL07
             spi_wr(7'h03, 16'h000E);          // FAULT_MASK: only OC_A latches
+`endif
             spi_wr(7'h04, 16'h0003);          // CLR and GATE_EN in one write (D7)
             sel_a = 3'd1;                     // ISA 30 mV while A is on (below the threshold)
             @(posedge gate_a_pad); #(800.0);

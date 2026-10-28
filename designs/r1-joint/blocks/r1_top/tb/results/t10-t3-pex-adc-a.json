@@ -1,0 +1,63 @@
+{
+ "run_id": "t10-t3-pex-adc-a",
+ "test": 3,
+ "view": "pex",
+ "corner": "tt",
+ "temp_c": 27.0,
+ "sim_status": "failed",
+ "ngspice_wall_s": 3784.8,
+ "tstop_us": 7.0,
+ "master_done_us": null,
+ "t_end_us": 5.089261562512107,
+ "vref_bg_t0_V": 1.0449,
+ "criteria": [
+  {
+   "name": "start state: vref_bg at t = 0 is the on-state of r1_bgr (1.045 V record)",
+   "value": 1.0449,
+   "limit": "1.00-1.09",
+   "unit": "V",
+   "status": "passed"
+  },
+  {
+   "name": "master sequence completed (DONE line)",
+   "value": null,
+   "limit": "before tstop",
+   "unit": "",
+   "status": "failed"
+  },
+  {
+   "name": "extracted ADC: one adc_valid_a pulse per started conversion, no stalled frame",
+   "value": {
+    "conversions_started": 5,
+    "complete_in_deck": 3,
+    "valid_pulses": 4,
+    "stalls": 0
+   },
+   "limit": "valid pulses >= complete conversions, 0 stalls",
+   "unit": "",
+   "status": "passed"
+  },
+  {
+   "name": "two I_A / I_B reads (levels 0 and 1, D7)",
+   "value": 0,
+   "limit": 2,
+   "unit": "",
+   "status": "failed"
+  }
+ ],
+ "measurements": {
+  "adc_vrefo_V": 1.0499717200931877,
+  "adc_lsb_uV": 457.06424446927383,
+  "I_A": [],
+  "I_B": []
+ },
+ "spi": [
+  {
+   "kind": "SPIWR",
+   "t": "3476.0",
+   "addr": "20",
+   "data": "0040"
+  }
+ ],
+ "verdict": "failed"
+}

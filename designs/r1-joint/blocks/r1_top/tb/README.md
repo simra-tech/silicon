@@ -642,3 +642,135 @@ raw-word codes (0 difference in 22 pairs); CORDIC MEAS against atan2 of the code
 
 All runs: tt, 27 °C, fast view, D11 (T2F held off), fixes F22-F24, PDK 84374023. Evidence: `tb/results/<run>.json` and
 `tb/runs/<run>/` (deck and `run.json`); waveforms and logs under `<G1_RESULTS_ROOT>/r1_top/tb/<run>/`.
+
+## 16. Sixth budget (2026-10-28): post-layout view (`--view pex`) with the block extractions of record
+
+This is the first half of the closing bar (full-chip post-layout functional campaign). The second half (top-level
+routing parasitics) comes after chip assembly try g.
+
+### 16.1 Extracted netlists of record (inventory)
+
+| Block | Netlist used | sha256 (first 8) | Notes |
+| --- | --- | --- | --- |
+| `r1_afe` | layout E6 (dev16) RC, `<G1_RESULTS_ROOT>/r1_afe/pexrc-layout-e6-dev16/r1_afe_post_rc.spice` | ed92a249 | same subckt name and pins as the schematic (fd0fcf4e4) |
+| `r1_isense` | layout c RC, `<G1_RESULTS_ROOT>/r1_isense/pex-20261026-c/rc/r1_isense_post.spice` | 1989529b | also defines its internal `r1_ls` |
+| `r1_safe` | comparator cell only, `<G1_RESULTS_ROOT>/r1_safe/pex-cmp-20261021-a/rc/r1_safe_cmp_pex.spice` | 598c5bd6 | string, mux, level shifters and threshold DACs: schematic |
+| `r1_bgr` | `<G1_RESULTS_ROOT>/r1_bgr/pex-rc-20261021-b/r1_bgr_pex.spice` | 0b5a7299 | used only in full-view decks; the fast view keeps the recorded behaviour |
+| `r1_bias` revision 2 | `<G1_RESULTS_ROOT>/r1_bias/pex-rc-20261026-r2d/r1_bias_pex.spice` | 0ae828e6 | POR and VREF buffer (`vref`, `vref_b`) extracted; replaces MODEL M6 |
+| `r1_osc` r2d | `<G1_RESULTS_ROOT>/r1_osc/pex-rc-20261021-r2d/r1_osc_pex.spice` | c6d76aac | used with `--osc tl` |
+| `r1_adc` B5 | `r1_adc/sim/post/r1_adc_post_rc_mb5.spice` + SAR `r1_adc/sim/post/b5/sar/r1_adc_sar_gl_lumpc.spice` (transistor-level stdcells, lumped C) | 7bf2b33f / 102f66b6 | the SAR makes its own timing and `valid`; the ctrl takes `valid` from the pins (`T10_VALID_BRIDGE`), the sequencer model is not used |
+| `r1_t2f`, `r1_ls`, `r1_gate` | none | — | no extraction of record; LVS netlists equal the schematic |
+| padring | `r1_padring/netlist/r1_padring_1700.cdl` | db5b69f1 | not a simulation netlist (not LVS-qualified); the decks keep the PDK IO cells with deviation D1 (`nodcn`) |
+| `r1_ctrl` 0.8 | gate level `<G1_RESULTS_ROOT>/r1_ctrl/r1ctrl_08_release/r1_ctrl_top.nl.v`, SDF slow/typ/fast | ddd4e85c; SDF c407b0f2 / 766a8e02 / fdf83c12 | not co-simulated; the decks use RTL 0.8 (665f75453) |
+
+The runner checks every sha256 in `views/pex.inc` (`*T10SHA` lines) and records them in `run.json`
+(`pex_inputs_sha256`, `pex_view`).
+
+### 16.2 Changes to the testbench
+
+| Item | Change |
+| --- | --- |
+| `--ctrl-rev 0.8` | ctrl RTL 0.8 from `<G1_RESULTS_ROOT>/r1_top/tb/ctrl_rtl_0.8` (665f75453, sha256 list `PINNED_RTL_08`); adds `T10_CTRL07` and `T10_CTRL08`. `ID` 0x5208 |
+| `rtl/t10_master.v` | With `T10_CTRL08`: `COS_GAIN` (0x3F, reset 0x4000) is the 44th `CAL_CRC` word, after 0x60-0x6D. Reset CRC 0x7E |
+| `views/pex.inc` | One section per block (16.1). Sections `*T10PEX <schematic include> [DROP sub] [RENAME old=new] [CHIPBIAS]` and `*T10CELL r1_adc`, each closed by `*T10END` |
+| `--view pex` | The runner builds the schematic deck with every option (subsets, fast view, ideal clock), then replaces each schematic block that is still in the deck. Stubs and behavioural blocks stay. `CHIPBIAS`: `XU_BIAS` gets the revision-2 pins (`vref` on `vref_bg`, `vref_b` on `vref_l`), MODEL M6 is removed, the T2F reference moves to `vref_l` |
+| `--pex-bias` | With `--fast`: keep the extracted `r1_bias` revision 2 in place of its recorded behaviour. VREF buffer label: `r1_bias rev 2 (extracted)` |
+| `post_tb.py` | Extracted ADC: `valid_check` (one `adc_valid_a` pulse per started conversion, no stall) replaces the strobe and handshake checks of model M1. Test 3 adds the step error after the B5 layout gain 1.0570 is removed (D16 amendment) |
+| `--pex-skip <blocks>` | `--view pex`: keep the named blocks (for example `r1_isense`, `r1_adc`) at schematic level, for deck time. Recorded in `run.json` `pex_view` as "schematic (--pex-skip)" |
+| `--vdefine T10_T3_LEVEL0=1` | `rtl/t10_master.v`: test 3 runs level 1 only (deck-time split; not used for a result) |
+| `adc_pex_check.py <run-id>` | Extracted ADC in the chip: for each `adc_valid_a` rise, the 14 raw decisions with the ctrl reset weights against `2047.5 + v_in / LSB` at the `adc_hold` rise; writes `results/<run-id>.adccheck.json` |
+
+### 16.3 Deck time and convergence on the pex view (step 2)
+
+Measured rates (tt, 27 °C, fast view, ideal clock; simulated µs per wall hour):
+
+| Deck content (extracted blocks) | Rate | Run |
+| --- | --- | --- |
+| test 3 current subset: isense, ADC B5 + SAR, bias rev 2; before the first conversion | 7.5 µs/h (3 threads), 480 s/µs; 2 µs probe 989 s | `t10-pex-probe-d` |
+| same, after the first conversion | 2.7-3.7 µs/h (7 µs in 5551 s, 3 threads) | `t10-t3-pex-a`, `t10-t3-pex-adc-b` |
+| test 4 safety subset: isense, safe comparator, bias rev 2 | 5.5-6.5 µs/h (1 thread) | `t10-t4-pex-c`, `-d` |
+| test 4 safety subset: safe comparator, bias rev 2 (isense schematic) | 9.2 µs/h | `t10-t4-pex-e` |
+| test 3 current subset: isense, bias rev 2 (ADC schematic) | 15.3 µs/h (19.6 µs in 4611 s) | `t10-t3-pex-is-b` |
+| test 2 encoder subset: AFE E6 (bias behaviour, ADC schematic) | 13.5 µs/h (39 µs in 10 390 s) | `t10-t2-pex-afe-d` |
+| tests 5 and 6 thermal subset: bias rev 2, or osc r2d | 110 µs/h (test 5), 30 µs/h (test 6) | `t10-t5-pex-27-a`, `t10-t6-pex-d` |
+
+Consequences for the 3 h deck limit:
+
+1. The transistor-level SAR of the B5 ADC (stdcells as transistors) is the main cost. With it, the test 3 sequence (DONE at 19.4 µs) needs about 6 h. It does not fit. The extracted ADC is therefore checked in a 7 µs integration deck (`t10-t3-pex-adc-a`), and the current words use the ADC at schematic level (`t10-t3-pex-is-a`).
+2. Test 4 with the extracted isense needs about 6 h for 40.5 µs; without it about 4.4 h. Only the OC part (to 21 µs) runs on the pex view (`t10-t4-pex-f`). The EN-low and clear parts are **not run** on the pex view.
+3. Test 2 with the extracted ADC does not fit (39 µs at under 4 µs/h). Test 2 runs with the extracted AFE and the ADC at schematic level.
+
+Convergence (ledger T10-45 to T10-55):
+
+1. The extracted `r1_afe` E6 needs Sparse 1.3, `gmin=1e-12`, `rshunt=1e10` and a nodeset of its outputs for the operating point. KLU fails with a singular matrix at internal nodes of the split `rppd` resistors.
+2. The extracted `r1_safe` comparator with the extracted `r1_bias` needs a nodeset of the bias outputs (`--nodeset`, values from `t10-pex-probe-d`).
+3. The extracted `r1_bias` revision 2 aborts transients at `xu_bias.xq127` (the diode-connected POR reference `npn13G2`) in four decks: the test 1 rail ramps (all four option sets, 20-85 µs) and test 6 together with the extracted `r1_osc`. With the supplies on from the operating point it runs (tests 3, 4, 5).
+
+### 16.4 Results on the pex view (step 3)
+
+All runs: tt, 27 °C unless stated, fast view, ctrl RTL 0.8, D11 (T2F held off) except tests 5 and 6, PDK 84374023.
+VREF buffer label: "bias rev 2 (extracted)" = `--pex-bias`; "M6" = the ideal model of the fast view.
+
+| Test | Extracted blocks in the deck | VREF buffer | Run | Result |
+| --- | --- | --- | --- | --- |
+| 1 power-up (rail ramps) | bias rev 2 (POR, buffer) | bias rev 2 (extracted) | `t10-t1-pex-a` … `-d` | **failed to simulate**: all four decks abort at the POR reference npn `xu_bias.xq127` (20.1-84.5 µs), before the extracted POR releases (about 200 µs) |
+| 1b (POR step, ID, FAULT) | bias rev 2 | bias rev 2 (extracted) | `t10-t1b-pex-b` | **not applicable**: with the extracted POR the operating point has `por_n` = VDD, so there is no reset; reads 0xFFFF (T10-47). Schematic result 0.8: passed (`t10-t1b-sub-08-a`) |
+| 2 encoder path | AFE E6 (bias behaviour, ADC schematic) | M6 | `t10-t2-pex-afe-d` (39 µs, 10 390 s) | **passed**, all 11 criteria: MEAS residual 0.048°, `POS` 0.39°, `STATUS` 0x0150, BiSS-C CRC, nE = 1, nW = 1, ST −0.43° (schematic `-07-k`: 0.046°, 0.39°, −0.43°) |
+| 2 with the extracted ADC | AFE E6 + ADC B5 | — | — | **not run**: does not fit 3 h (16.3) |
+| 3 current words | isense c, bias rev 2 (ADC schematic) | bias rev 2 (extracted) | `t10-t3-pex-is-b` (19.6 µs, 4611 s) | **passed**: `I_A` step +0.22 %, `I_B` step +0.26 % (limit 1 %); level-0 words 827 / 827 (schematic 820 / 821); 19 conversions, strobes 0.595-0.599 ns, no stall |
+| 3 with the extracted ADC | isense c, ADC B5 + SAR, bias rev 2 | bias rev 2 (extracted) | `t10-t3-pex-adc-b` (7 µs, 5551 s) | **partial**: `valid` per started conversion passed (7 pulses, 6 complete conversions, 0 stalls). One current-path conversion: code 757.0 against 828.5 from the pin voltage at the track end (−71.5 LSB raw; −1.9 LSB after the B5 layout gain 1.0570 is removed, D16 amendment). The encoder conversions are not evaluable (AFE stub, floating ADC input). The current-word criterion: **not run** (sequence does not fit 3 h) |
+| 4 OC part (to 20.5 µs) | safe comparator, bias rev 2 (isense schematic) | bias rev 2 (extracted) | `t10-t4-pex-g` (ctrl 0.8, FAULT_MASK fix, 1 thread, 7588 s) | **passed**, the 5 OC criteria: all gates 3.3 V before the step; OC step at 18.04 µs (threshold 69.81 mV); `FAULT_N` low after 200.4 ns; all gates < 1 V after 312.5 ns (limit 1369 ns); cause OC_A. Schematic with the same ctrl 0.8 and fix (`t10-t4-sub-08-b`, M6): 167.0 ns and 279.2 ns. The pex view adds 33.3 ns to each delay; both stay within the 1369 ns limit. The other 4 criteria (DONE line, PWM after `CLR`, EN low, PWM after EN high and `CLR`) are after `tstop`: **not run**. Earlier: `t10-t4-pex-f` (ctrl 0.8) and `t10-t4-pex-05-a` (ctrl 0.5) failed with the testbench fault of 16.4.1 |
+| 4 EN-low and clear parts | — | — | — | **not run** on the pex view (deck time, 16.3) |
+| 5 at 27 °C | bias rev 2 (T2F reference) | bias rev 2 (extracted) | `t10-t5-pex-27-a` (805 s) | **passed**: `TEMP` 14 (expected 13.86 ± 1); f_T2F 1.6240 MHz, +1.48 % against the record (schematic with r1_vbuf: 1.6240 MHz, +1.48 %); `vref_l` 1.0445-1.0455 V |
+| 5 at 125 °C | bias rev 2 | bias rev 2 (extracted) | `t10-t5-pex-125-a` (821 s) | **passed**: `TEMP` 18 (expected 18.21 ± 1); f_T2F 2.1344 MHz, +1.16 % (schematic +1.16 %) |
+| 6 oscillator count | osc r2d (bias behaviour) | M6 | `t10-t6-pex-d` (1283 s) | **passed**: `OSC_COUNT` 49 (expected 48.50 ± 1.5); extracted r1_osc at code 22: 30.31 MHz, post-layout record 30.30 MHz (D13 band 28-32 MHz). With the extracted bias as well: aborts (T10-52) |
+
+#### 16.4.1 Test 4 with ctrl 0.8: FAULT_MASK order (testbench fix)
+
+1. With ctrl 0.8, test 4 kept `FAULT_N` low and the gates off after `CTRL.CLR` + `GATE_EN`, on the pex view (`t10-t4-pex-f`) and on the schematic view (`t10-t4-sub-08-a`). The same latch occurs on the pex view with ctrl 0.5 (`t10-t4-pex-05-a`) and in a digital-only diagnostic with ctrl 0.5 (`t10-diag-t4ctrl05-a`). The schematic pass `t10-t4-safe-vb-a` (ctrl 0.5) did not latch source 5. With the ADC stubbed, the amplitude input depends on stub levels, which differ between decks.
+2. Cause (digital-only diagnostic `t10-diag-t4ctrl08-a`, the master and ctrl 0.8 in Icarus with the analog inputs at 0): fault source 5 (amplitude low/high) is active about 6 µs after the reset, because the safety subset has no encoder signal. It latched before the master wrote `FAULT_MASK` 0x000E (which does not mask bit 5), and `CTRL.CLR` clears only inactive sources. Cause register 0x0020 after the clear.
+3. Fix (`rtl/t10_master.v`, `T10_CTRL07`): `FAULT_MASK` 0x06FE (every maskable source except OC_A) is the first write of test 4. Diagnostic `t10-diag-t4ctrl08-b`: cause 0x0000 after the clear, `FAULT_N` high, gates on, OC step at 17.95 µs.
+4. Reruns with the fix:
+   - Schematic view, ctrl 0.8 (`t10-t4-sub-08-b`, 38.7 µs, 1 thread, 10507 s, VREF buffer M6): all 10 criteria **passed**. `FAULT_N` 167.0 ns, gates 279.2 ns, EN low 84.3 ns, `FAULT` 0x0100 after EN low, PWM on `GATE_A` after both clears, `DONE` at 37.86 µs.
+   - Pex view, ctrl 0.8, OC part (`t10-t4-pex-g`, 20.5 µs, 1 thread, 7588 s, VREF buffer r1_vbuf in the extracted r1_bias revision 2): the 5 OC criteria **passed** (`FAULT_N` 200.4 ns, gates 312.5 ns, cause OC_A). The EN-low and clear criteria are after `tstop`: **not run**.
+
+### 16.5 What the pex view does not cover (step 4)
+
+1. **Top-level routing parasitics.** `r1_chip.sp` connects the blocks with ideal wires. The routing between blocks, the supply rails and the pad-to-core nets come after chip assembly try g and its extraction.
+2. **Blocks without an extraction of record:** `r1_t2f`, `r1_gate` (LV and HV cells), `r1_ls` (`t10_ls`), and the `r1_safe` string, mux, level shifters and threshold DACs (only the comparator cell is extracted). These stay at schematic level.
+3. **Padring.** `r1_padring_1700.cdl` is not a simulation netlist. The decks use the PDK `sg13g2_io` cells with deviation D1 (`nodcn`; `dantenna` removed).
+4. **`r1_ctrl` at gate level.** The gate-level netlist and SDF of 0.8 (`r1ctrl_08_release`) are not co-simulated. The decks use RTL 0.8. Digital timing is covered by the ctrl STA, not by these decks.
+5. **The SAR as gate-level Verilog with SDF.** The B5 SAR runs as transistor-level stdcells (lumped C). This is accurate but too slow for full sequences (16.3).
+6. **Fast-view behaviour.** `r1_bgr` stays the recorded behaviour in every fast deck (the `r1_bgr` extraction is used only in full-view decks, and none ran). `r1_bias` is extracted only with `--pex-bias`.
+7. **Ideal parts of the deck:** the 30 MHz ideal clock (D5) except in test 6; the MODEL `vcm` / `vcm2` 0.6 V sources in the ADC wrapper; the board model; the stubs of each subset.
+8. **Tests and parts not run on the pex view:** test 1 power-up (aborts, T10-54), test 1b (no POR step with the extracted bias), test 2 with the extracted ADC, test 3 sequence with the extracted ADC, test 4 EN-low and clear parts, test 4 with the extracted isense.
+9. **Corners.** tt only (test 5 at 27 °C and 125 °C). No ss/ff, no supply corners, no mismatch.
+10. **Open items of the extractions themselves:** B5 ADC offset +12 LSB and R2-4 with real CDAC timing (r1_adc README); AFE E6 CM 2.5 V offset drift (r1_afe README).
+
+### 16.6 Chip view: block extractions + try-g top-level routing RC (`--chip-rc`)
+
+Method (`chip_rc.py`, called by `run_tb.py --chip-rc`):
+
+1. Include `<G1_RESULTS_ROOT>/r1_top/pex-20261029-g3/fast/r1_top_g_pex_fast.spice` (fast variant, typ sheet, sha256 `cce466ec…`, checked by the runner) and instantiate its RC network `r1_top_rc` (the `Xrc` line of the wrapper `r1_top_pex`, `ictrl=0`).
+2. Move every pad, block and ctrl pin of the deck netlist from its deck net to its RC port node (`u_<inst>__<pin>`, `io_<pad>__<pin>`): by position where the pin lists are equal (pads and analog blocks), by name for `r1_adc` (the CDL has 4 more `*_nc` pins) and for the ctrl wrapper (`CTRL_MAP`; testbench pins stay on their deck nets). The pad and supply nets of the deck are the top ports of the RC network.
+3. Each other deck net is tied by a 0 V source to the RC node of its first moved pin, so that stubs, MODEL sources, loads and probes stay connected there (179 nets, 493 pins moved).
+4. Deck ties of non-supply pins to a supply are kept (D11 T2F enable at VSS, `r1_gate` `gate_en` at VDD).
+
+Probes (2 µs, 1 thread):
+
+| Probe | Deck | Rate | Result |
+| --- | --- | --- | --- |
+| `t10-chip-probe-t5-a` | test 5 thermal subset, bias rev 2 extracted, Sparse, `reltol=1e-4` | 4349 s for 2 µs (2175 s/µs; 3066 s/µs over 0.27-0.99 µs) | completed 2 µs |
+| `t10-chip-probe-t3-a` / `-b` / `-c` | test 3 current subset (isense extracted, ADC schematic), with / without the extracted bias | — | operating point failed (`xu_bias.xq127`; pad `dparea` and `t10_ls` node) |
+| `t10-chip-probe-t3-d` | as `-c` with Sparse, `gmin=1e-12`, `rshunt=1e10`, bias nodeset | 2846 s for 2 µs (1423 s/µs; 1381 s/µs over 0.31-0.56 µs) | completed 2 µs; no stall |
+| `t10-chip-probe-t6-a` / `-b` | test 6 (osc extracted, bias behaviour) | under 0.1 µs/h (`-b`) | `-a` operating point failed at the T2F HBT; `-b` stopped by PID after 17 min |
+
+Result: no subset deck fits the 3 h limit on the chip view (test 3: 19.6 µs × 1423 s = 7.7 h; tests 1b, 5: 13-25 µs × 2175 s = 8-15 h; test 6 slower; test 2 and test 4 are longer). The subset decks 1b, 3, 4, 5, 6 and test 2 are **not run** on the chip view. The tool and the include are ready; the decks need a faster top-level netlist (fewer RC nodes on the slow nets) or more than 3 h per deck.
+
+What the fast variant does not cover (in addition to 16.5):
+
+1. Supply noise coupled into signals: every coupling capacitor to a supply net goes to ground at both ends (r1_top README, chip-level extraction open issue 9).
+2. Fill: the netlist of record is unfilled. With the fill, the C of `OSC_CLK` and `VREF_B` rises by 22-91 % and the AFE pair C by 22-41 % (band check, `fill_eff.json`); not in the netlist.
+3. Coupling between top-level wires and macro-internal metal (black boxes), the supply pad cells and their ESD paths, and the 34 `sg13g2_decap_8` antenna/decap cells (their RC ports are left open in the deck).
+4. The ctrl supply: one grid node for `vdd`/`vss` of the co-simulated ctrl (`ictrl=0`); the ctrl current is not spread over the grid.
+5. The deck nets tied at one RC node (item 3 of the method): testbench parts on such a net see the RC node of the first pin only.

@@ -150,7 +150,7 @@ def test1(w, res, mon, run):
 
 def ctrl_id(run):
     """Expected ID register for the co-simulated ctrl revision (run.json ctrl_rev; 0.5 when absent)."""
-    return {'0.5': 0x5205, '0.7': 0x5207}[str((run or {}).get('ctrl_rev', '0.5'))]
+    return {'0.5': 0x5205, '0.7': 0x5207, '0.8': 0x5208}[str((run or {}).get('ctrl_rev', '0.5'))]
 
 
 def test1b(w, res, mon, run):
@@ -176,6 +176,23 @@ def test1b(w, res, mon, run):
     C.append(crit('FAULT after reset equals the register-map reset value 0x1800 (EN high throughout, STO bit 8 clear)',
                   M['fault_after_reset'], '0x1800', bool(flt) and flt[0][1] == 0x1800))
     return C, M
+
+
+def adc_pex(run):
+    return ((run or {}).get('pex_view') or {}).get('r1_adc') == 'extracted'
+
+
+def valid_check(w, mon):
+    """--view pex with the extracted ADC (B5 SAR sub-macro): the testbench sequencer model is not used; every
+    conversion the ctrl started must return one adc_valid_a pulse from the macro."""
+    t = w['time']
+    starts = [float(m['t']) * 1e-9 for m in mon if m['kind'] == 'START']
+    nfull = len([x for x in starts if x < t[-1] - 1.0e-6])
+    nv = len(crossings(t, w['adc_valid_a'], 0.6, True)) if 'adc_valid_a' in w else None
+    stall = [m for m in mon if m['kind'] == 'STALL']
+    return crit('extracted ADC: one adc_valid_a pulse per started conversion, no stalled frame',
+                {'conversions_started': len(starts), 'complete_in_deck': nfull, 'valid_pulses': nv, 'stalls': len(stall)},
+                'valid pulses >= complete conversions, 0 stalls', nv is not None and nv >= nfull and not stall)
 
 
 def strobe_check(w):
@@ -223,10 +240,13 @@ def hs_check(w, mon):
 def test2(w, res, mon, run):
     t = w['time']
     C, M = [], {}
-    sc = strobe_check(w)
-    if sc:
-        C.append(sc)
-    C.append(hs_check(w, mon))
+    if adc_pex(run):
+        C.append(valid_check(w, mon))
+    else:
+        sc = strobe_check(w)
+        if sc:
+            C.append(sc)
+        C.append(hs_check(w, mon))
     f = 1e4
     stim = lambda tt: (360.0 * f * tt + THETA0_DEG)
     rst = [float(r['t']) * 1e-9 for r in res if r['kind'] == 'TBRESET']
@@ -296,8 +316,13 @@ def test2(w, res, mon, run):
     return C, M
 
 
+B5_GAIN = 1.0570
+
+
 def adc_lsb(w):
-    vr = float(np.mean(w['xu_adc.vrefo'][w['time'] > w['time'][-1] / 2]))
+    # schematic ADC wrapper: buffer output node xu_adc.vrefo; extracted B5 wrapper (--view pex): xu_adc.vrefa
+    key = 'xu_adc.vrefo' if 'xu_adc.vrefo' in w else 'xu_adc.vrefa'
+    vr = float(np.mean(w[key][w['time'] > w['time'][-1] / 2]))
     # Fourth budget: the r1_adc revision-5 record with the design weights (r1_regs reset weights): nominal line
     # 2047.5 + v / LSB, LSB = 454.9 uV x VREF / 1.045 V (r1_adc sim/results/r5/isa5_tt.json, locate run; gain fit
     # 0.99825 on that line). The earlier constant 2 x 0.914 V x VREF / 4096 was the revision-3 full scale at
@@ -307,10 +332,13 @@ def adc_lsb(w):
 
 def test3(w, res, mon, run):
     C, M = [], {}
-    sc = strobe_check(w)
-    if sc:
-        C.append(sc)
-    C.append(hs_check(w, mon))
+    if adc_pex(run):
+        C.append(valid_check(w, mon))
+    else:
+        sc = strobe_check(w)
+        if sc:
+            C.append(sc)
+        C.append(hs_check(w, mon))
     lsb, vr = adc_lsb(w)
     M['adc_vrefo_V'] = vr
     M['adc_lsb_uV'] = lsb * 1e6
@@ -331,6 +359,14 @@ def test3(w, res, mon, run):
             M['%s_step%d' % (ch, k)] = {'measured_codes': dm, 'expected_codes': de, 'error_pct': e}
             C.append(crit('I_%s code step for %.0f mV within 1 %% of 14 x dV / LSB' % (ch, lv[k] * 1e3), e, '|e| <= 1',
                           abs(e) <= 1.0, '%'))
+            if adc_pex(run):
+                # extracted B5 ADC: full-scale gain 1.0570 from the layout (r1_adc README B5, run postb5-isa-tt-rc);
+                # D16 amendment: the host weight calibration removes it. Same step after division by that gain.
+                ec = (dm / B5_GAIN - de) / de * 100.0
+                M['%s_step%d' % (ch, k)]['error_pct_b5_gain_removed'] = ec
+                C.append(crit('I_%s code step for %.0f mV within 1 %% after the B5 layout gain %.4f is removed (host '
+                              'weight calibration, D16 amendment)' % (ch, lv[k] * 1e3, B5_GAIN), ec, '|e| <= 1',
+                              abs(ec) <= 1.0, '%'))
     return C, M
 
 
@@ -432,8 +468,14 @@ def test6(w, res, mon, run):
     C.append(crit('OSC_COUNT = 16 f_osc / f_ref within 1.5 counts', oc[0][1], '%.2f +- 1.5' % exp6,
                   abs(oc[0][1] - exp6) <= 1.5, 'counts'))
     # D13 band (28-32 MHz) is the post-layout target; the schematic runs fast by design (r1_osc README, 32.69 MHz)
-    C.append(crit('r1_osc at code 22 within 2 % of the schematic record 32.69 MHz (D13 band: post-layout, 30.30 MHz passed)',
-                  f_o / 1e6, '32.69 +- 2 %', abs(f_o - 32.69e6) <= 0.02 * 32.69e6, 'MHz'))
+    if ((run or {}).get('pex_view') or {}).get('r1_osc/schematic/r1_osc.spice') == 'extracted':
+        # --view pex: the extracted r1_osc r2d; its post-layout record at code 22 is 30.30 MHz (D13 band 28-32 MHz)
+        C.append(crit('extracted r1_osc at code 22 within 2 % of the post-layout record 30.30 MHz and inside the D13 band '
+                      '28-32 MHz', f_o / 1e6, '30.30 +- 2 %', abs(f_o - 30.30e6) <= 0.02 * 30.30e6 and
+                      28e6 <= f_o <= 32e6, 'MHz'))
+    else:
+        C.append(crit('r1_osc at code 22 within 2 % of the schematic record 32.69 MHz (D13 band: post-layout, 30.30 MHz passed)',
+                      f_o / 1e6, '32.69 +- 2 %', abs(f_o - 32.69e6) <= 0.02 * 32.69e6, 'MHz'))
     C.append(crit('STATUS.OSC_DONE (bit 10) set', M['status'], 'bit 10', bool(st) and (st[0][1] & 0x400) != 0))
     return C, M
 
