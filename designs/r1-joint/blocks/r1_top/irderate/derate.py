@@ -14,12 +14,17 @@ voltage V* with F(V*) = F_target, the allowed loss 1.08 V - V*, and the combined
 worst point that keeps it (ctrl current 40.25 mA, as supply_g.md).
 """
 import json
+import os
 import sys
 
 import numpy as np
 
 VMIN = 1.08
 LOSS = {"typ_worst": 0.0689, "max_worst": 0.0942, "typ_best": 0.0497, "max_best": 0.0719}
+# try h0 (track T8f): other losses (V) from the environment, JSON with the same four keys, e.g. the supply loss of the
+# try-h0 network (reports/supply_h0.md); without it the try-g values above are used.
+if os.environ.get("R1_IRDERATE_LOSS"):
+    LOSS = {k: float(v) for k, v in json.loads(os.environ["R1_IRDERATE_LOSS"]).items()}
 I_CTRL = 40.25e-3
 
 
@@ -51,7 +56,7 @@ if sys.argv[1] == "factors":
     out = sys.argv[2]
     VMIN = float(sys.argv[3])
     D, R, vs, worst, mean = curve(sys.argv[4:])
-    res = {"method": __doc__.strip().splitlines()[0], "nominal_V": VMIN, "voltages": vs,
+    res = {"method": __doc__.strip().splitlines()[0], "nominal_V": VMIN, "voltages": vs, "loss_V": LOSS,
            "ratio_per_cell": {k: {"%.4f" % v: round(r[v], 4) for v in vs} for k, r in R.items()},
            "delay_ps_nominal": {k: round(D[k][VMIN], 2) for k in R},
            "F_worst": {"%.4f" % v: round(worst[v], 4) for v in vs}, "F_mean": {"%.4f" % v: round(mean[v], 4) for v in vs},

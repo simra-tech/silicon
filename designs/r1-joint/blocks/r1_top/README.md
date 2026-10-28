@@ -1,7 +1,174 @@
 # R1_TOP
 
 Block `r1_top` (track T8, P3 preparation). This block assembles the R1 chip top level from the ring of record and
-the macros. Try g (below) is the current state: the current macros, the chip CDL of record and the extracted supply network. Try f has no placeholder: every macro is a real layout. Tries d and e had placeholder outlines.
+the macros. Try g (below) is the current state: the current macros, the chip CDL of record and the extracted supply network. The section "Supply feed redesign (try h preparation)" is the new ctrl supply feed for try h. Try f has no placeholder: every macro is a real layout. Tries d and e had placeholder outlines.
+
+## Supply feed redesign (try h preparation) (track T8f, 2026-10-28; run `asm-20261030-h0`)
+
+State: the new ctrl supply feed **meets the target**. VDD + VSS feed resistance at the worst `r1_ctrl` grid point is
+0.726 Ω at max sheet (target ≤ 1.2 Ω, T11b limit 1.43 Ω, try g 2.34 Ω). The ctrl derated setup slack is +2.42 ns
+at the worst case (pass: ≥ 1 ns; try g −1.15 ns). No macro moved. No signal route changed. The macros and the chip
+CDL are the try-g inputs (`asm-20261028-g3`); the CDL sha256 is the same (`979e6cc3…`). This run is the try-h
+preparation: the B7 ADC and the E8 AFE are not in it. Generator: `layout/r1_top_assemble_h.py` (copy of the try-g
+generator; `R1H_NO_FEED=1` draws the try-g supply network). Driver: `flow/run_try_h.sh`. Supply extraction:
+`flow/supply_h_rnet.py` (the `supply_g_rnet.py` method plus a segment breakdown and EM of the new shapes) and
+`flow/supply_h.py`. Report: [`reports/supply_h0.md`](reports/supply_h0.md). All numbers are extracted, simulated or
+STA results. Nothing is measured.
+
+Runs: `h0-dev1`, `h0-dev2`, `h0-dev3` are development runs; `h0` is the run of record; `h0-fill` is its filled chip.
+
+| Run | Change | Result |
+| --- | --- | --- |
+| `asm-20261030-h0-dev1` | first network | supply only; first generation had a TopMetal2 net conflict (F1) |
+| `asm-20261030-h0-dev2` | conflict fixed | DRC main 204, maximal 2 (F2-F5); antenna 0; LVS match |
+| `asm-20261030-h0-dev3` | slotted `IOPadVss` riser, stub vias, pins and labels fixed | DRC main 0, antenna 0, maximal 0; LVS match |
+| `asm-20261030-h0` | same generator as dev3 (record) | see Status |
+
+### Diagnosis (try g, max sheet, worst ctrl grid point; extracted again with `supply_h_rnet.py`)
+
+Region cut sets of the DC solution. Full table: `reports/supply_h0.md`.
+
+| Net | Segment | Try g: voltage at the segment end (mV) | Try h0 (mV) |
+| --- | --- | --- | --- |
+| VSS | bondpads -> VSS IO rail (inside the two `IOPadVss` cells: Metal2 plate, one via strip) | 26.9 (42 % of the VSS rise) | 1.2 |
+| VSS | IO rail and south core rows | 27.7-31.2 | 1.4-1.8 |
+| VSS | south feed to the ctrl south stripe ends | none (try g has no south VSS feed) | 5.9 (23.9 mA) |
+| VSS | columns and IO rows to the north row, then the north stripe ends | 47.2 (40.3 mA) | 9.6 (16.3 mA) |
+| VSS | worst point inside the ctrl grid | 63.6 | **12.1** |
+| VDD | bondpad -> IO rail -> inner south row | 12.0 | 2.5 (pad-1 riser fingers) |
+| VDD | south strap and bar -> ctrl south ends | 20.4 (19.5 mA, 8 µm bar) | 8.1 (24.2 mA, 28 µm bar, two straps) |
+| VDD | ring path to the north row -> ctrl north ends | 26.5 (20.8 mA) | 14.9 (16.0 mA) |
+| VDD | worst point inside the ctrl grid | 30.6 | **17.1** |
+
+Cause: 42 % of the VSS rise was inside the PDK `IOPadVss` cell. Its bondpad joins the IO rails only through a Metal2
+plate. The ctrl VSS stripes were fed from the north end only, through 20 mV of ring path.
+
+### Network (try h0)
+
+1. `IOPadVss` riser (ring ECO in the ring copy of the cell, pads 2 and 5). The IO TopMetal2 rails are cut to 3.9 µm
+   stubs. TopVia2 stay only under the stubs. Pins are clipped and the `iovdd` / `iovss` labels moved to the stubs.
+   The riser is three 18.33 µm TopMetal2 fingers to a 65 × 18.5 µm band with 297 TopVia2 on the VSS TopMetal1 rail.
+   This is the pattern of the PDK `IOPadVdd` cell.
+2. Two 28 µm TopMetal2 fingers per VSS pad, from the riser to the outer south VSS TopMetal2 row.
+3. VDD pad 1: the outer VSS TopMetal2 row is open over x 453-537. Two 28 µm TopMetal2 fingers join the pad-1 riser to
+   the inner VDD row. A TopMetal1 bridge (x 425-571, 17.5 µm) keeps the VSS row continuous.
+4. Nine new TopMetal1 tabs with TopVia2 join the VSS TopMetal1 IO rail and the outer VSS TopMetal2 row. Five stack
+   pads are extended.
+5. South VSS feed (TopMetal1 only): west strap x 566-590 (24 µm), east strap x 1036-1064 (28 µm), bar y 654.5-682.5
+   (28 µm), and extensions onto the 7 ctrl VSS stripes. No TopMetal1 crosses a MIM block.
+6. South VDD feed (TopMetal2): bar 28 µm (y 664-692; try g 8 µm), second strap x 1036-1064 over the east VSS strap.
+
+All new shapes are ≤ 30 µm wide (Slt.c). Recommended option taken and recorded: no TopMetal2 strap over the ADC,
+because the ADC TopMetal1 over the CDAC is the MIM top plate. The signal routes are on Metal2-Metal5, so no signal
+net is crossed and no route is changed (self-check: 0 net conflicts, 0 routes inside macros, 0 TopMetal1 over MIM).
+
+### Results (extracted; `supply_h0.json`)
+
+| Item | try g typ | try g max | try h0 typ | try h0 max | Limit / target | Result |
+| --- | --- | --- | --- | --- | --- | --- |
+| Supply loss at the ctrl, worst point (mV) | 68.9 | 94.2 | 23.1 | 29.2 | ≤ 57.6 | passed |
+| VDD + VSS feed R at 40.25 mA (Ω) | 1.71 | 2.34 | 0.575 | **0.726** | ≤ 1.2 | passed |
+| Shared isense-bgr VSS path (Ω) | 1.494 | 2.021 | 1.353 | 1.818 | ≤ 2.3 | passed |
+| isense-bgr ground offset, all / ctrl only (mV) | 5.34 / 3.60 | 6.78 / 4.46 | 3.14 / 1.36 | 3.99 / 1.61 | — | reported |
+| EM of the new shapes and via arrays | — | — | 64 rows | 0 failed | TM1 15, TM2 16 mA/µm, TV2 10 mA/cut | passed |
+
+The loss at every other macro is lower or equal (`reports/supply_h0.md`). The VDDA network is not changed.
+
+Ctrl IR-drop derate (method of T11b; `irderate/derate.py` takes the h0 loss through `R1_IRDERATE_LOSS`; run
+`<G1_RESULTS_ROOT>/r1_top/r1ctrl_irderate_h0/`; OpenSTA, 0.8 release netlist, sign-off SDC, t22 nominal SPEF):
+
+| Case | early / late | Setup, flop D (ns) | TNS | Hold (ns) | Result |
+| --- | --- | --- | --- | --- | --- |
+| Slow 1.08 V / 125 °C, no derate | 1.000 / 1.000 | +3.714 | 0 | +0.360 | passed |
+| typ sheet, worst point, uniform | 1.0514 / 1.0514 | +2.711 | 0 | +0.382 | passed |
+| typ sheet, grid spread | 1.0284 / 1.0514 | +2.702 | 0 | +0.347 | passed |
+| max sheet, worst point, uniform | 1.0659 / 1.0659 | +2.428 | 0 | +0.387 | passed |
+| max sheet, mean cell ratio | 1.0606 / 1.0606 | +2.532 | 0 | +0.385 | passed |
+| max sheet, grid spread | 1.0381 / 1.0659 | **+2.418** | 0 | +0.345 | passed |
+| Fast 1.32 V / −40 °C, max sheet, uniform | 1.0419 / 1.0419 | +10.106 | 0 | +0.127 | passed |
+| fast, grid spread | 1.0245 / 1.0419 | +10.099 | 0 | +0.117 | passed |
+| fast, bound: early paths without drop | 1.000 / 1.0419 | +10.089 | 0 | **+0.102** | passed |
+
+Worst path in every slow case: `_27652_` → `_27611_`. Outputs keep ≥ 14.0 ns. The worst latch borrow is 2.39 ns.
+
+### Status
+
+GDS (unfilled) `<G1_RESULTS_ROOT>/r1_top/asm-20261030-h0/r1_top.gds`, sha256
+`db604461a290378c360e0cd5b83ec43c4d73e133abca4a1ef0fc40339570d031`. Filled chip `<G1_RESULTS_ROOT>/r1_top/asm-20261030-h0-fill/r1_top.gds`, sha256
+`05760501130957d6d5bb5d24e7a02a2993b1da09ec934c7ac0804b8fda562afd`. Chip CDL: the try-g CDL of record, sha256 `979e6cc3…` (unchanged).
+
+| Check | Unfilled `-h0` | Filled `-h0-fill` | Evidence |
+| --- | --- | --- | --- |
+| Generator self-check | passed (0 / 0 / 0 / 0 / 0) | — | `r1_top_assembly.json`, `gen.log` |
+| DRC main | passed, 0 (dev2: 204, F2-F4) | passed, 0 | `drc_main/` |
+| DRC antenna | passed, 0 | passed, 0 | `drc_antenna/` |
+| DRC maximal | passed, 0 (dev2: 2, F5) | passed, 0 | `drc_maximal/` |
+| DRC density | not run on the unfilled GDS | passed, 0; window minimum Metal2 25.58 %, Metal3 25.86 % (as try g) | `drc_density/` |
+| LVS, comparer-limit deck copy | passed: "Netlists match"; `r1_top` 261 devices, 51 subcircuits | passed: "Netlists match"; `r1_top` 261 devices, 51 subcircuits ([`reports/runs/asm-20261030-h0-fill_lvs_report.txt`](reports/runs/asm-20261030-h0-fill_lvs_report.txt)) | `lvs_limits/` |
+| LVS, stock PDK deck | failed to run: KLayout signal 11 at "Extracting diodevdd_2kv ESD device" (same as try g F1; tooling) | not run (try g F1: same crash expected) | `lvs_stock/` |
+| Bond map | — | passed, 24 of 24 openings matched, 22 labels at row centres, `all_ok` | `bondmap/` |
+| Feed R ≤ 1.2 Ω, max sheet | passed, 0.726 Ω | — | `supply_h0.json` |
+| isense-bgr ground ≤ 2.3 Ω | passed, 1.818 Ω | — | `supply_h0.json` |
+| EM of the new trunks and via arrays | passed, 64 rows, 0 failed, 12 rows not measured (each has a passing bound row) | — | `supply_h0.json`, `supply_rnet/` |
+| Ctrl derate setup ≥ 1 ns, typ and max sheet | passed, ≥ +2.418 ns | — | `<G1_RESULTS_ROOT>/r1_top/r1ctrl_irderate_h0/sta/derate_summary.json` |
+| Ctrl derate hold, slow and fast | passed, ≥ +0.102 ns | — | `.../r1ctrl_irderate_h0/sta/derate_fast_summary.json` |
+| `OSC_CLK` skew and top-level PEX with the new shapes | not run (the TopMetal1 bar crosses the channel; open issue H2) | not run | — |
+| Dynamic IR drop, ctrl Metal1-Metal5 rails | not run | — | — |
+| Post-layout simulation of top-level nets | not run | not run | — |
+| Run records | written | written | `reports/runs/asm-20261030-h0*.json`, `reports/runs/r1ctrl_irderate_h0.json` |
+
+Evidence paths are relative to `<G1_RESULTS_ROOT>/r1_top/<run>/` unless they start with `reports/` or
+`<G1_RESULTS_ROOT>`.
+
+### Open issues (T8f)
+
+1. H1. The `IOPadVss` riser is an edit of the PDK IO cell copy in the ring (pads 2 and 5). The padring track (T6)
+   must accept it, and the IHP intake must accept a modified `sg13g2_io` cell copy. Fallback: the try-g feed
+   (`R1H_NO_FEED=1`) with the new south VSS straps only (not run).
+2. H2. The TopMetal1 VSS bar and straps cross the channel south of the ctrl. They add capacitance to `OSC_CLK`,
+   `CUR_TRK` and the ADC north nets. The skew and the PEX are not extracted again.
+3. H3. The AFE VDDA loss is unchanged: 75.8 mV at max sheet (57 mV drop + 18.5 mV VSS rise).
+4. H4. Try h must run again with the B7 ADC and E8 AFE GDS (`R1G_SHA_*`), then repeat this section's checks.
+5. H5. The ctrl supply network has no Metal1-Metal5 rails and no dynamic drop (as T11b A3).
+6. H6. The fast-corner factors interpolate F between the characterized voltages (1.32, 1.2258, 1.2481 V).
+7. H7. The share of the east VDD TopMetal2 strap is not measured separately.
+
+### Failures and mistakes (T8f)
+
+| # | What happened | Class | Fix |
+| --- | --- | --- | --- |
+| F1 | dev1: TopMetal2 net conflict. The SHAPES record of the ring VSS row was not split at the new pad-1 gap. | functional-bug | two SHAPES segments; dev1 regenerated in place (first `gen.log` lost) |
+| F2 | dev2: DRC main TV2.a / TV2.b 102. The bridge TopVia2 array overlapped the array of tab 425-448. | functional-bug | bridge west array removed |
+| F3 | dev2: TV2.d 82. Stub TopVia2 had enclosure < 0.5 µm after the rail cut. | functional-bug | keep only the vias inside the 3.4 µm stubs |
+| F4 | dev2: TM2.b 10 (stub to riser 1.1 µm) and Pin.h 10 (pins on the cut rails); the labels at x 40 landed on the riser | functional-bug | `IOPadVdd` finger pattern from x 7.5; pins clipped; labels moved to the stubs |
+| F5 | dev2: maximal Slt.c.TM2 2 on the 70 µm solid riser | functional-bug | slotted riser (three 18.33 µm fingers) |
+| F6 | Try g and T11b did not see that the `IOPadVss` cell joins its pad to the rail only through Metal2: 42 % of the VSS rise | verification-gap | segment breakdown (`supply_h_rnet.py`) |
+| F7 | 12 EM cut rows have no node pair inside the shape ("not measured") | numerical | bound row (all net current in the shape) for each |
+| F8 | The first wait loop for the characterization exited 1 (glob in `tail`); the run itself completed | tooling | checked `char.done` |
+| F9 | The ctrl-side SSTACK pad at x 559-571 would merge with the west strap to 31 × 40 µm (Slt.c.TM1) | planning | that pad not extended |
+| F10 | dev3 and h0 GDS sha256 differ for the same generator (GDS time stamp); the supply numbers are equal | tooling | h0 is the record; dev3 kept |
+
+### Built against (T8f)
+
+Same as try g: PDK `84374023ee8b4b126bebbba67fcbada0a9c0ff0b` (checked by `flow/run.sh`), KLayout 0.30.9 and
+ngspice 46 (container logs), OpenSTA in `tapeoutbench-eda:latest` `sha256:ddeb6957…`. CPU set 112-119.
+
+### Reproduce (repository root, POSIX shell)
+
+1. Set `G1_CPUSET=112-119; export G1_CPUSET`, `G1_RESULTS_ROOT=<results root>; export G1_RESULTS_ROOT` and
+   `G1_WORKDIR=.; export G1_WORKDIR`.
+2. Copy the snapshot `inputs/` of `asm-20261028-g3` into `<G1_RESULTS_ROOT>/r1_top/<run>/inputs/`.
+3. Run `sh designs/r1-joint/blocks/r1_top/flow/run_try_h.sh <run> gen cdl main antenna maximal lvs lvsstock`.
+4. Run the supply steps of `reports/supply_h0.md`.
+5. Run `fill_top.sh`, `run_fill_checks.sh` and the two probes as try g, steps 4-6.
+6. Characterize with `irderate/char_cells.py` at the loss voltages, then run `irderate/derate.py factors` with
+   `R1_IRDERATE_LOSS` set to the `loss_V` of `run.json`, then `irderate/sta_derate.tcl` and `irderate/sta_parse.py`
+   (commands in `<G1_RESULTS_ROOT>/r1_top/r1ctrl_irderate_h0/run.json`).
+7. Write the records with `flow/write_run_json_h.py` and `flow/write_fill_run_json.py`.
+
+New files: `layout/r1_top_assemble_h.py`, `flow/run_try_h.sh`, `flow/supply_h_rnet.py`, `flow/supply_h.py`,
+`flow/write_run_json_h.py`, `reports/supply_h0.md`. Changed: `irderate/derate.py` (optional `R1_IRDERATE_LOSS`; the
+default output is unchanged apart from the new `loss_V` key).
 
 ## Try g (2026-10-27, track T8e; run names as the brief, `asm-20261028-g…`): current macros, ADC 23.12 µm taller, ctrl 0.8 — run of record `asm-20261028-g3`, filled `asm-20261028-g3-fill`
 
