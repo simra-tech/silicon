@@ -15,6 +15,7 @@ import json
 import os
 import sys
 import numpy as np
+_trapz = getattr(np, "trapezoid", None) or np.trapz  # numpy 2 removed np.trapz (ledger F-20261030-273)
 HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, os.path.join(HERE, "..", "r4"))
 sys.path.insert(0, os.path.join(HERE, "..", "r3"))
@@ -122,9 +123,9 @@ elif cmd == "isa":
         res["frames"].append(row)
     m = t > 0.6e-6
     tt, idd = t[m], -d["i(vdd)"][m]
-    res["idd_mA"] = float(np.trapz(idd, tt) / (tt[-1] - tt[0]) * 1e3)
+    res["idd_mA"] = float(_trapz(idd, tt) / (tt[-1] - tt[0]) * 1e3)
     if "i(vdda)" in d:
-        res["idda_mA"] = float(np.trapz(-d["i(vdda)"][m], tt) / (tt[-1] - tt[0]) * 1e3)
+        res["idda_mA"] = float(_trapz(-d["i(vdda)"][m], tt) / (tt[-1] - tt[0]) * 1e3)
     res["max_abs_error_lsb"] = max(abs(r[s]["error_lsb"]) for r in res["frames"] for s in "ab")
     # linear part (gain and offset, removed by the gain/weight calibration): least squares over the 8 conversions
     x = np.array([r[s]["ideal_code"] - 2047.5 for r in res["frames"] for s in "ab"])
