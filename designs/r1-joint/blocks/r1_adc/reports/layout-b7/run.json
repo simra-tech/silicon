@@ -1,0 +1,30 @@
+{
+ "run_id": "layout-b7",
+ "block": "r1_adc",
+ "track": "T2m",
+ "question": "layout B7 of record: B6 + south vss pin 2.0 um wide at the same centre x 150.0 (EM: r1_top/reports/integration_checklist_g.md, vss 1.97 mA against 2.0 mA for 1.0 um)",
+ "command": "G1_CPUSET=103-105; G1_RESULTS_ROOT=<G1_RESULTS_ROOT>; G1_WORKDIR=designs/r1-joint/blocks/r1_adc/layout; flow/run.sh klayout -b -r r1_adc_layout.py -rd out=<G1_RESULTS_ROOT>/r1_adc/layout-b7-dev1/r1_adc.gds; copied to layout/r1_adc.gds",
+ "tools": {
+  "klayout": "KLayout 0.30.9",
+  "image_id": "sha256:ddeb69576f2808676d1c5d474ecf04f6d1d6f8abdcff6b72b39790ded924bab2",
+  "pdk_commit": "84374023ee8b4b126bebbba67fcbada0a9c0ff0b"
+ },
+ "outputs": {
+  "layout/r1_adc.gds": "5dcf53803eb33c931f558f857bd609e5b6e6a858f9bcc8161550a29be042ad7b",
+  "layout/r1_adc_layout.json": "b9af0326505bc89f607b045f21c214e02c72cfd9d90ab3d7d65f8df7ebc4990a",
+  "layout/r1_adc_lvs.cdl (unchanged)": "2e18b5c2f80a2755f83f4c181012f6733bfb8cbede01f993abfadf51a534e18b",
+  "layout/r1_adc_lvs_b5.cdl (unchanged)": "0740d3a21d00e32faeec149c3f5b594d45e4791c6ffee137edf84795e70b0392"
+ },
+ "inputs": {
+  "layout/r1_adc_layout.py": "a8a893f29dc233258bc4d5c0ef66526099ad6f1ce2c8f42c41b3797c134f18e8",
+  "layout/maze_router.py": "50eadf3732b05920e5dde23f7cc72dbcf1011fc42b59095d2f66ed357f544433",
+  "layout/r1_adc_netlist.py": "a04d6f2b237aafa10ec20eb0dcc8b0c5a9bb33a4b3a8ea245459dda6a6d6410f"
+ },
+ "kept": {
+  "layout/r1_adc_layout_b6.gds": "9d6dad3d23a033e0484d4fc8d23ba25280c3231680f244c25b44dc9c5c49d880"
+ },
+ "xor_against_b6": "layer 30/2 (Metal3 pin purpose) differs: 2 polygons (the vss pin shape); every drawn layer identical (layout/b5/xor.py); the extraction of B6 (pex-b6-dev3, sim/post/r1_adc_post_rc_mb6.spice) is therefore the extraction of B7",
+ "raw": "<G1_RESULTS_ROOT>/r1_adc/layout-b7-dev1/",
+ "result": "DRC main + maximal 0 (reports/layout-b7-dev1/drc.log), antenna 0 (reports/layout-b7-dev1a/antenna.log), LVS comparer-limit and stock decks match (reports/lvs-b7-dev1-lim/, reports/lvs-b7-dev1-stock/), pin check passed, vss 2.00 um (reports/layout-b7/pin_table_b7.md)",
+ "disposition": "layout of record B7"
+}

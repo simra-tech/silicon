@@ -1,5 +1,241 @@
 # R1_ADC — 12-bit SAR ADC with two simultaneous track-and-holds (schematic level, revisions 1 to 5)
 
+## Layout B7 (2026-10-27, track T2m): closure under PLAN.md D23
+
+State: **not closed** (budget reached 04:20 CET on 28 Oct). Layout checks, static offset, ff first conversion, windows
+1024 / 3072 and full scale pass. R2-4 under D23 (tt 4.30, ss 3.44 LSB), offset drift (11 LSB), the ff output window
+(0.401 ns) and the ff bit-exact check fail. INL is not run. Same box 439.0 × 205.42 µm,
+same 52 pins at the same centres, netlist of record and SAR release `t2j-ll-h2312-h` unchanged. Change against B6:
+the south `vss` pin is 2.0 µm wide (B6 1.0 µm) at the same centre x 150.0 (`layout/r1_adc_layout.py`, `REV = 'B7'`;
+`-rd rev=B6` reproduces B6). All numbers are simulated or from layout tools. Nothing is measured.
+
+### Strobe phase in the 33.3 ns tick (r1_ctrl 0.8 RTL and the gate-level SAR)
+
+`r1_ctrl` 0.8 (`blocks/r1_ctrl/rtl/r1_gate.v`, frame generator unchanged since 0.7) registers every ADC command on
+the rising `clk` edge: `adc_start` (one tick), `adc_hold` / `is_smp` (E0 to E15), `adc_sel`, `cur_trk`. It issues no
+command at any other phase of the tick, and no per-decision strobe. One decision is taken per tick. The comparator
+strobe of each decision is made inside `r1_adc` from the same rising edge: the one-shot `r1_cmp4_clkgen` holds `mclk`
+low (comparator reset), and the SAR macro gates `mclk` to the comparator clock. The comparator evaluates from the
+rising edge of its clock (the strobe) and regenerates later in the tick; the SAR takes the decision at the next
+edge. Times in ns after the rising `clk` edge E(k), 50 % crossings at the macro pins, simulated (gate-level SAR on
+the B6 extraction; `sim/post/b7/results/gl_timing_b6.json`, `b6gl_ref_tt_s4_d23.json`):
+
+| Event in tick k | Made by | tt (27 °C, 1.2 V) | ss (125 °C, 1.08 V) |
+| --- | --- | --- | --- |
+| `adc_start` / hold request (tick 0 only) | `r1_ctrl` register, clock to output | 0.3 (deck) | 0.3 (deck) |
+| `mclk` falls (comparator reset) | `r1_cmp4_clkgen` | 0.18 | 0.25 |
+| comparator clock falls (decision k − 1 latched) | `r1_adc_sar` | 0.75–0.94 | 1.14–1.43 |
+| CDAC line of decision k − 1 switches | `r1_adc_sar` | 0.81–1.04 | 1.25–1.57 |
+| `mclk` rises | `r1_cmp4_clkgen` | 2.80–2.96 | 4.56–4.71 |
+| **comparator clock rises: strobe of decision k** | `r1_adc_sar` gate | **3.48–4.02** | **5.58–5.92** |
+| comparator regenerates (output leaves reset by VDD / 2) | `r1_cmp4` | 9.3–20.4 | not measured |
+| decision k taken | `r1_adc_sar` flip-flops | 33.33 (next edge) | 33.33 |
+
+Settling time from the real CDAC switch to the real strobe: **2.48–2.86 ns at tt** (4.0–4.7 ns at ss, from the
+first-conversion run). A strobe later in the tick cannot come from `r1_ctrl` without a new clock phase: its RTL has
+one edge per tick.
+
+### Offset and drift (D23 item 3: static ≤ 10 LSB, drift ≤ 2 LSB)
+
+First conversion at 0 V differential, frames 0 and 1, behavioural SAR, B7 extraction (= B6, see "Layout"), reference
+buffer and bandgap model at DC (no noise). Offset = code − 2048 with the design weights (1 LSB resolution). Runs
+`postb7-ofs-<corner>-v<VDDA>`, summary `sim/post/b7/results/offset_d23.json`. Corners: tt = 27 °C / 1.2 V,
+ss = 125 °C / 1.08 V, ff = −40 °C / 1.32 V.
+
+| Corner | VDDA 3.0 V (A f0 / f1, B f0 / f1) | VDDA 3.3 V | VDDA 3.6 V |
+| --- | --- | --- | --- |
+| tt | −8 / −8, −9 / −9 | −8 / −8, −9 / −9 | −8 / −8, −9 / −9 |
+| ss | −9 / −9, −9 / −9 | −9 / −8, −9 / −9 | −9 / −8, −9 / −9 |
+| ff | +1 / +2, 0 / 0 | +1 / +2, 0 / 0 | +1 / +2, 0 / 0 |
+| schematic (netlist of record, ideal VREF; `postb7-dsch-*`) | tt −1 / 0, 0 / −1; ss 0 / −1, 0 / −1; ff 0 / 0, −1 / −1 | | |
+
+Static offset: max |offset| 9 LSB, **passed** (limit 10 LSB, margin 1 LSB). Drift: span 11 LSB (slice A) / 9 LSB
+(slice B) over the corners, **failed** (limit 2 LSB) by 9 / 7 LSB. VDDA from 3.0 to 3.6 V moves the code by ≤ 1 LSB at
+every corner. The whole drift is between tt / ss and ff; the schematic has no drift (≤ 1 LSB), so the term is in the
+layout.
+
+### R2-4 under D23 (real CDAC switch to the real strobe; limit 0.25 LSB)
+
+Metric: `sim/r5/post_ref5.py` method (buffer run against base run with ideal slice reference ports, static base
+correction), with the step and the error sampled at the measured strobe of each decision (`sim/post/b7/r24_d23.py`).
+For information, the same data is also evaluated as a boxcar (strobe to regeneration), at regeneration, at 25 ns and
+at fixed times. Two decks:
+
+1. Gate-level SAR (`b6-ms-ref-tt-*-s4`, 4 slots, B6 extraction = B7), result `sim/post/b7/results/b6gl_ref_tt_s4_d23.json`.
+2. D23 proxy (`sim/post/b7/gen_proxy.py`): behavioural SAR logic with the gate-level output delays added (bridge,
+   delay, bridge with the corner VDD). It is about 8 times faster, so all 10 slots fit. The proxy reproduces the GL
+   timing (strobe 3.47–3.60 ns, line switch 0.87–1.10 ns at tt) and the GL R2-4 of slots 0–3 within 0.08 LSB.
+   Runs `postb7-d23-ref-tt-{buf,base}`, result `sim/post/b7/results/b7proxy_ref_tt_d23.json`.
+
+R2-4 per slot at tt, LSB (A / B):
+
+| Slot | 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| GL, at strobe | 1.12 / 1.07 | 3.62 / 3.38 | 2.78 / 2.98 | 1.87 / 1.50 | | | | | | |
+| proxy, at strobe | 1.11 / 1.11 | 3.56 / 3.55 | 2.72 / 3.13 | 1.84 / 1.58 | 1.56 / 1.87 | 1.10 / 0.70 | 4.30 / 4.30 | 4.25 / 4.24 | 3.62 / 3.61 | 3.55 / 3.55 |
+| proxy, at 25 ns | 0.02 / 0.02 | 0.14 / 0.14 | 0.14 / 0.14 | 0.10 / 0.17 | 0.16 / 0.08 | 0.02 / 0.01 | 0.11 / 0.10 | 0.09 / 0.10 | 0.12 / 0.14 | 0.14 / 0.15 |
+
+Metric over all slots, tt (proxy, 10 slots): **4.30 LSB at the strobe, failed by 4.05 LSB**. Boxcar 1.45, at
+regeneration 0.44, at 25 ns 0.17 LSB. Error against sample time: 3.18 / 2.41 / 2.27 / 2.13 / 1.65 / 1.21 / 0.86 /
+0.61 / 0.41 / 0.25 LSB at 4 / 5 / 6 / 8 / 10 / 12 / 14 / 16 / 18 / 20 ns after the edge. Final codes of buffer and
+base runs differ by at most 1 LSB (ties).
+
+R2-4 per slot at ss / 125 °C / 1.08 V (proxy, 10 slots, `postb7-d23-ref-ss125-{buf,base}`, reference buffer on the
+ss / 125 °C operating point, result `sim/post/b7/results/b7proxy_ref_ss125_d23.json`), LSB (A / B):
+
+| Slot | 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| at strobe | 0.67 / 0.67 | 3.41 / 3.40 | 2.91 / 2.91 | 1.47 / 0.98 | 0.96 / 1.50 | 1.09 / 1.09 | 3.44 / 3.41 | 3.37 / 3.38 | 2.64 / 2.93 | 2.83 / 2.89 |
+| at 25 ns | 0.24 / 0.24 | 0.35 / 0.35 | 0.40 / 0.40 | 0.27 / 0.21 | 0.20 / 0.27 | 0.24 / 0.24 | 0.48 / 0.47 | 0.40 / 0.40 | 0.43 / 0.43 | 0.37 / 0.37 |
+
+Metric at ss: **3.44 LSB at the strobe, failed by 3.19 LSB**. Boxcar 1.21, at regeneration 0.47, at 25 ns 0.48 LSB;
+at 20 ns 0.86 LSB. Timing at ss: line switch 1.30–1.62 ns, strobe 5.65–5.80 ns, regeneration 11.7–29.9 ns after the
+edge. Final codes differ by at most 1 LSB.
+
+Settling time available (switch to strobe): 2.47–2.70 ns at tt, 4.16–4.45 ns at ss. Settling time needed for
+0.25 LSB: about 20 ns after the edge at tt (about 19 ns after the switch); more than 25 ns at ss. The literal D23 metric cannot pass with this strobe phase. Levers:
+
+1. Move the strobe later in the tick. This needs a second clock phase or a delay line in `r1_cmp4_clkgen`; `r1_ctrl`
+   has one edge per tick. A strobe at 20 ns leaves 13 ns for regeneration at tt; at ss the comparator needs 25–28 ns
+   after the edge, so this does not fit at ss without a faster comparator.
+2. Make the reference settle faster: local decoupling on the slice reference ports, or a lower-impedance buffer
+   output. Both change the netlist of record.
+3. Evaluate the metric at regeneration, where the integrating comparator actually decides: 0.44 LSB at tt and
+   0.47 LSB at ss. This also fails 0.25 LSB, so a metric change alone does not close R2-4.
+
+Recommended option (recorded): lever 2, local decoupling at the slice reference ports, sized by a sweep on the proxy
+deck, as a netlist change for the coordinator to decide. Levers 1 and 3 do not close R2-4 at ss.
+
+### Drift diagnosis (D23: per-net sweep after the drift failure)
+
+Deck: first conversion 0 V, behavioural SAR, slice reference ports on ideal 1.045 V (`--ref lay-ideal`), so the
+buffer and bandgap are not in the loop. Base codes: tt 2039 / 2039, 2038 / 2038; ff / −40 °C / 1.32 V 2049 / 2049,
+2048 / 2048 (same drift as the offset table). Variant netlists are made from `sim/post/r1_adc_post_rc_mb6.spice` by
+`sim/post/make_diag_netlist.py` (`sim/post/b7/diag_mb7_*.spice`; the header of each file lists its nets). Codes A f0 /
+f1, B f0 / f1; runs `postb7-d<...>` under `<G1_RESULTS_ROOT>/r1_adc/`.
+
+| Variant | tt | ff / −40 °C / 1.32 V | Result |
+| --- | --- | --- | --- |
+| base (B7 extraction) | 2039 / 2039, 2038 / 2038 | 2049 / 2049, 2048 / 2048 | drift 10 LSB |
+| all couplings to the top plates moved to ground (`e7all`) | 2039 / 2039, 2038 / 2038 | 2049 / 2049, 2048 / 2048 | no change: coupling is not the term |
+| one corner variable at a time (`ddec`): ff process only / −40 °C only / 1.32 V only | — | 2041 / 2041, 2040 / 2040; 2042 / 2042, 2041 / 2041; 2041 / 2041, 2039 / 2039 | each moves 2–3 LSB; together 10 LSB (not additive): a speed term |
+| all parasitic C removed (`noc`) | 2042 / 2042, 2042 / 2041 | 2051 / 2051, 2051 / 2051 | drift stays (9 LSB) |
+| all wiring R set to 0.05 Ω (`nor`) | 2047 / 2047, 2047 / 2047 | 2047 / 2047, 2047 / 2047 | **offset and drift gone**: wiring R is the term |
+| wiring R only on the supplies `vdd`, `gnd`, `vss`, `vdda` (`ronly-sup`) | 2044 (all four) | 2038 / 2038, 2037 / 2037 | −3 / −10 LSB |
+| wiring R only on the comparator, its clock generator and the SAR clocks (`ronly-cmp`) | 2039 (all four) | 2042 (all four) | −8 / −5 LSB |
+| wiring R only on the sampling switches, tracks and top plates (`ronly-sw`) | 2047 (all four) | 2047 (all four) | 0 / 0 |
+| wiring R only on the rest (CDAC lines, bottom plates, vref, inputs, ibias; `ronly-rest`) | 2047 / 2047, 2046 / 2046 | 2047 / 2047, 2045 / 2045 | 0 / −2 LSB |
+| wiring R on the supply and comparator groups together (`ronly-supcmp`) | — | 2050 (all four) | +3 LSB at ff: the interaction gives the ff term |
+
+Result: the static offset and the drift both come from wiring resistance, not from coupling capacitance. At tt the
+term is in the comparator group (−8 LSB alone, base −8.5). At ff the single groups give −10 (supply), −5
+(comparator), 0 (switches) and −1 (rest) LSB, but supply and comparator R together give +3 LSB (base +1.5). So the
+ff term is an interaction: the comparator internal R sets its speed, and the supply R sets the droop that the
+decision sees at that time. Lever: lower the wiring R of the comparator nets (wider, parallel straps on the
+double-tail internal nodes `xc4_*` / `xc5_*` and the clock nets `sar_clk*`) and of the slice supply near the
+comparator (more vias, a wider local `vdd` / `gnd` grid). This is a layout change inside the same box and netlist.
+It was not done in B7 (budget).
+
+### ff / −40 °C / 1.32 V gate-level first conversion (D23 item: ff window, bit-exact)
+
+Run `b7-ms-fc-ffm40` (gate-level SAR, B7 = B6 extraction, 0 V, ideal VREF 1.045 V, both frames; deck
+`sim/post/b5/decks/b6s4/fc_ffm40.cir`). Deck limit: sized from the measured 0.0096 µs per wall minute of
+`b6-ms-fc-ffm40-f0` (1.86 µs → 194 min) plus 30 % = 15 200 s. The run completed in 13 474 s (0.0083 µs per minute,
+margin 11 %). Results `sim/post/b6/results/b7_ms_fc_ffm40_dec.json` and `b7_ms_fc_ffm40_timing.json`.
+
+- First conversion: frame 0 − frame 1 = −1 / −1 LSB (A 2048 / 2049, B 2052 / 2053). **Passed** (≤ 1 LSB, as at ss).
+- Bit-exact against the behavioural SAR on the same netlist (`postb7-dbase-ffm40`, A 2049 / 2049, B 2048 / 2048):
+  **failed, not a tie**. Decision 0 (MSB) differs in all four words: the gate-level comparator sees −1.9 to −2.6 mV
+  (4.3–5.7 LSB below its threshold) where the behavioural deck decides 1. The redundancy brings the final code back
+  to within 1 LSB (A) and 4–5 LSB (B). Probable cause (not separated by a run): the same speed term as in the drift
+  diagnosis. The gate-level strobe phase at ff differs from the behavioural clock, and the comparator wiring R and
+  the supply droop make the decision depend on that phase. Tie list: no tie case (all four first differences have |vd| > 4 LSB).
+- Output window against `clk30` (macro pins, 50 fF): `adc_raw_*` first change **0.401 ns, failed** against ≥ 0.5 ns
+  (by 0.099 ns); settled ≤ 0.718 ns; `adc_valid_*` 0.724–1.390 ns; no glitch; no raw edge at E15 (setup 32.6 ns, hold
+  33.7 ns at the ctrl capture edge). Lever: a hold delay on the raw outputs needs a SAR re-harden (release fixed);
+  the alternative is an INTERFACES limit "no raw change at the capture edge E15", which passes.
+- Supply current at ff (gate-level, 0.6 µs to end): IDD 1.09 mA (SAR share not split in the deck).
+
+### Windows, INL, full scale and supply current
+
+B7 is electrically identical to B6 (see "Layout checks": only the `vss` pin shape on layer 30/2 differs), so the B6
+extraction and the B6 runs are valid for B7. All simulated, behavioural SAR, ideal VREF 1.045 V, tt.
+
+- Static windows 1024 and 3072 (1/3 LSB steps, B4 window centres; `postb6-win1024-tt-rc`, `postb6-win3072-tt-rc`,
+  `sim/post/results/postb6_win{1024,3072}_tt_rc.json`): **passed**, monotonic, no missing code, max |DNL| 0.33 LSB
+  (one count). Codes 1024: A 1021–1033, B 1020–1032; 3072: A and B 3055–3067.
+- INL ramp on the B7 netlist (`postb7-inla-tt-rc`, `postb7-inlb-tt-rc`, reduced ramp `sim/r5/points/inlramp5{a,b}.json`):
+  **not run at the budget**. Both halves were still running at 04:20 CET on 28 Oct (half a on CPU 104 since 01:48,
+  half b on CPU 103 since 02:22; B4 needed 1.8 h per half, the B6 netlist is slower). The runs are left to complete.
+  Post-processing: `python3 sim/post/post_post.py inl sim/post/results/postb7_inl_tt_rc.json
+  postb7-inla-tt-rc:inlramp5a.json postb7-inlb-tt-rc:inlramp5b.json`.
+- Full scale (D16 amendment, ≥ ±0.86 V and ≥ 1 % above ±0.85 V; `postb6-isa-{tt,ss125,ffm40}-rc`): **passed**,
+  ±0.8709 / ±0.8720 / ±0.8694 V at tt / ss / ff.
+- Supply current tt: IDD 0.757 mA, IDDA 1.101 mA (behavioural SAR, SAR not included); with the gate-level SAR
+  IDD 0.926 mA (`b6-ms-fc-tt`). ff gate-level: IDD 1.09 mA (`b7-ms-fc-ffm40`).
+
+### Layout checks (B7)
+
+Only change: `vss` pin 2.0 µm wide at the same centre. An XOR of B7 against B6 shows a difference only on layer 30/2
+(Metal3 pin); every drawn layer is identical. B6 is kept as `layout/r1_adc_layout_b6.gds`.
+
+| Check | Result | Evidence |
+| --- | --- | --- |
+| DRC main + maximal (PDK deck) | **passed**, 0 | `reports/layout-b7-dev1/drc.log`, `run.json` |
+| Antenna | **passed**, 0 | `reports/layout-b7-dev1a/antenna.log` |
+| LVS, comparer-limit deck | **passed**: `r1_adc` 147/147 nets, 45/45 devices; `r1_adc_slice` 117/117, 179/179; `r1_adc_sar` 419 nets | `reports/lvs-b7-dev1-lim/lvs_summary.txt` |
+| LVS, stock deck | **passed** (same counts) | `reports/lvs-b7-dev1-stock/lvs_summary.txt` |
+| Pin check (52 pins, box 439.00 × 205.42 µm, `vss` ≥ 2 µm, north pins unchanged) | **passed**, `vss` 2.00 µm at x 150.0 | `reports/layout-b7/pin_table_b7.md`, `reports/layout-b7/run.json` |
+| Density deck | not run for B7 (no drawn change against B6; B6 Metal5 70.46 %, accepted at chip level by D23) | `reports/layout-b6-dens/density.log` |
+
+### Status (layout B7)
+
+Built against: PDK `84374023ee8b4b126bebbba67fcbada0a9c0ff0b`, KLayout 0.30.9, kpex 0.3.12 (B6 extraction), ngspice
+46, container image `sha256:ddeb69576f28…` (from the run records). Raw data under `<G1_RESULTS_ROOT>/r1_adc/<run id>/`.
+
+| Check (limit) | Result | Evidence |
+| --- | --- | --- |
+| Layout checks (DRC, antenna, LVS ×2, pins) | **passed** | see "Layout checks (B7)" |
+| R2-4 tt, D23 metric at the real strobe, 10 slots (≤ 0.25 LSB) | **failed: 4.30 LSB** (by 4.05); GL slots 0–3 3.62 LSB | `sim/post/b7/results/b7proxy_ref_tt_d23.json`, `b6gl_ref_tt_s4_d23.json` |
+| R2-4 ss / 125 °C, 10 slots (≤ 0.25 LSB) | **failed: 3.44 LSB** (by 3.19) | `sim/post/b7/results/b7proxy_ref_ss125_d23.json` |
+| Static offset, tt / ss / ff × VDDA 3.0 / 3.3 / 3.6 V (≤ 10 LSB) | **passed**: max 9 LSB | `sim/post/b7/results/offset_d23.json` |
+| Offset drift over corners (≤ 2 LSB) | **failed**: 11 LSB (A), 9 LSB (B) | same |
+| Drift per-net sweep | run: wiring R is the term (zero R removes it); groups interact | "Drift diagnosis" |
+| ff first conversion, gate-level (frame 0 − frame 1 ≤ 1 LSB) | **passed**: −1 / −1 LSB | `sim/post/b6/results/b7_ms_fc_ffm40_dec.json` |
+| ff bit-exact against the behavioural SAR, tie list | **failed, not a tie**: MSB differs in 4 / 4 words (4.3–5.7 LSB from threshold); codes within 1 (A) / 5 (B) LSB | same |
+| ff output window (≥ 0.5 ns) | **failed: 0.401 ns** (by 0.099 ns); no raw edge at E15 | `sim/post/b6/results/b7_ms_fc_ffm40_timing.json` |
+| ff deck limit (measured µs per minute + 30 %) | **passed**: 13 474 s of 15 200 s | `sim/post/b6/runs/b7-ms-fc-ffm40/run.json` |
+| Windows 1024 / 3072 tt | **passed** | `sim/post/results/postb6_win{1024,3072}_tt_rc.json` |
+| INL tt on the B7 netlist | **not run** at the budget (both halves still running) | `<G1_RESULTS_ROOT>/r1_adc/postb7-inl{a,b}-tt-rc/` |
+| Full scale tt / ss / ff (≥ ±0.86 V) | **passed** | `sim/post/results/postb6_isa_*_rc.json` |
+| Supply current tt | recorded: IDD 0.757 mA, IDDA 1.101 mA; with SAR 0.926 mA | `sim/post/results/postb6_isa_tt_rc.json`, `sim/post/b6/results/b6_ms_fc_tt_dec.json` |
+| Density deck B7 | not run (no drawn change) | — |
+
+### Open issues (layout B7)
+
+1. R2-4 under D23 fails at tt and ss by more than 3 LSB. The reference settles in about 20 ns, the strobe comes at
+   3.5–5.8 ns. Next lever: local decoupling at the slice reference ports (netlist change, coordinator decision),
+   sized on the proxy deck (`sim/post/b7/gen_proxy.py`, 50 min per run).
+2. Offset drift 11 LSB from wiring R. Next lever: lower the wiring R of the comparator nets and the slice supply
+   (straps and vias, same box and netlist), then repeat the drift table and the GL ff run.
+3. ff output window 0.401 ns against 0.5 ns. Next lever: INTERFACES decision (limit "no raw change at E15") or a SAR
+   re-harden with a hold delay.
+4. ff bit-exact fails without a tie; probably the same speed term as item 2. Re-check after item 2.
+5. Density of B7 not re-run (drawn layers identical to B6).
+
+### Failures and mistakes (layout B7)
+
+| # | What | Class | Fix / record |
+| --- | --- | --- | --- |
+| 1 | `postb7-d23-smoke-tt` failed: the `adc_bridge` / `dac_bridge` instances need array syntax | tooling | fixed in `gen_proxy.py`; run kept as failed, `postb7-d23-smoke2-tt` completed |
+| 2 | chains replanned several times; five chains stopped by PID before or between runs | planning | each stop noted in its chain log |
+| 3 | the first drift sweep plan targeted top-plate couplings; the term is wiring R | estimation | `noc` / `nor` runs found it; R-group sweep added |
+| 4 | D23 "real strobe" admits several sample points (strobe edge, boxcar, regeneration) | spec-ambiguity | literal strobe edge used for the verdict; the others given for information |
+| 5 | the earlier behavioural decks drove the CDAC lines at 1.2 V at every corner | verification-gap | D23 proxy uses the corner VDD |
+| 6 | the ff output window was open since B6 and now fails by 0.099 ns | verification-gap | recorded as open issue 3 |
+| 7 | single-group R results do not add (sum −16 LSB at ff against +1.5 LSB with all R) | numerical | interaction run `postb7-dsw-ronly-supcmp-ffm40` added (+3 LSB at ff) |
+| 8 | INL halves queued behind the ss proxies and the drift sweep; neither finished inside the 7 h budget | estimation | recorded as not run; runs left to complete |
+
 ## Layout B6 (2026-10-27, track T2l): closure after the SAR integration
 
 State: **layout closed (DRC, antenna, LVS on both decks, pins); post-layout set partly failed** (offset −7 LSB at tt

@@ -8,7 +8,9 @@ sim/post/runs/<id>/{deck.cir, ngspice.log, run.json}; segments: sim/post/results
 usage: run_post.py --id ID --cpu N --deck points|isa --core rec|recfast|lay [--netlist sim/post/r1_adc_lay0.spice]
        [--ref ideal|opt3 (rec) | lay|lay-ideal (lay)] [--vref 1.045 | op:<run id>] [--points <json>] [--save codes|full]
        [--op-only] [--corner mos_tt --temp 27 --vdd 1.2] [--timing <inc in sim/r5>] [--tstop 3.31u] [--noise auto|tt|ss|none]
-       [--ibias 5u] [--question ...] [--disposition ...]
+       [--ibias 5u] [--vdda 3.3] [--question ...] [--disposition ...]
+--post-include / --core-cell (T2m, B7): core wrapper file and cell (default sim/post/r1_adc5_post.spice, r1_adc5_core_lay).
+--vdda (T2m, layout B7, 2026-10-27): VDDA of the deck (offset drift over 3.0-3.6 V, PLAN.md D23); default 3.3 as before.
 Cores: rec = r1_adc5_core (netlist of record, full core), recfast = r1_adc5_core_fast (the r5 points-deck core),
 lay = r1_adc5_core_lay (sim/post/r1_adc5_post.spice around the layout netlist --netlist).
 Reference: rec/recfast: ideal (Vref on all four ports) or opt3 (r1_refbuf5 ndec 4 ndecl 2 + 10 pF filter + bandgap
@@ -31,7 +33,7 @@ for k, d in (('--id', None), ('--cpu', None), ('--deck', None), ('--core', None)
              ('--ref', ''), ('--vref', '1.045'), ('--points', ''), ('--save', 'codes'), ('--corner', 'mos_tt'), ('--temp', '27'),
              ('--vdd', '1.2'), ('--cm', '0.6'), ('--timing', ''), ('--tstop', ''), ('--tmax', '0.2n'), ('--noise', 'auto'),
              ('--ibias', '5u'), ('--bgr', '190k,82u'), ('--question', ''), ('--disposition', ''), ('--timeout', '36000'),
-             ('--seed', '1'), ('--noopiter', 'auto'), ('--ideal-bgr', 'off50m'), ('--solver', 'klu'), ('--base-ibias', ''), ('--probe-extra', ''), ('--save-extra', ''), ('--rs', '')):
+             ('--seed', '1'), ('--vdda', '3.3'), ('--post-include', 'sim/post/r1_adc5_post.spice'), ('--core-cell', ''), ('--noopiter', 'auto'), ('--ideal-bgr', 'off50m'), ('--solver', 'klu'), ('--base-ibias', ''), ('--probe-extra', ''), ('--save-extra', ''), ('--rs', '')):
     ap.add_argument(k, required=d is None, default=d)
 ap.add_argument('--op-only', action='store_true')
 a = ap.parse_args()
@@ -64,11 +66,11 @@ def bgr_src(noise):
 if ref == 'ideal':
     lines = ['Vref vref 0 %s' % a.vref] + ['Vt%s %s vref 0' % (n, n) for n in ('vrefa', 'vrefb', 'vrefla', 'vreflb')]
 elif ref == 'opt3':
-    lines = ['Vdda vdda 0 3.3', bgr_src(nz), 'Rbg vbgi vbg %s' % rs, 'XCF vbg 0 r1_reffilt5 w=%s' % cw,
+    lines = ['Vdda vdda 0 %s' % a.vdda, bgr_src(nz), 'Rbg vbgi vbg %s' % rs, 'XCF vbg 0 r1_reffilt5 w=%s' % cw,
              'Ibref vdda nbr %s' % a.ibias, 'XREF vbg vref vrefl nbr vdda 0 r1_refbuf5 ndec=4 ndecl=2',
              'Vtvrefa vrefa vref 0', 'Vtvrefb vrefb vref 0', 'Vtvrefla vrefla vrefl 0', 'Vtvreflb vreflb vrefl 0']
 elif ref == 'lay':
-    lines = ['Vdda vdda 0 3.3', bgr_src(nz), 'Rbg vbgi vbg %s' % rs, 'Ibref vdda nbr %s' % a.ibias]
+    lines = ['Vdda vdda 0 %s' % a.vdda, bgr_src(nz), 'Rbg vbgi vbg %s' % rs, 'Ibref vdda nbr %s' % a.ibias]
 else:   # lay-ideal
     # --ideal-bgr off50m (default, 2026-10-26): bandgap DC 50 mV below the forced reference, so the error amplifier of the
     # laid-out buffer rails (ng low, followers off) instead of balancing at high open-loop gain against an ideal source;
@@ -79,14 +81,16 @@ else:   # lay-ideal
     # the reference wiring, so the forced value reaches the CDAC drivers unchanged. With the buffer biased, the 0.8 mA of
     # the sink XMIB flows from the forced main node through the wiring (RC netlist: 85-166 Ohm) and the slice-edge vref
     # moved by tens of mV (post-ref-tt-rc2-ideal: 100 LSB code difference)
-    lines = ['Vdda vdda 0 3.3', 'Vbgi vbgi 0 DC %.6f' % bdc, 'Rbg vbgi vbg %s' % rs, 'Ibref vdda nbr %s' % (a.base_ibias or a.ibias),
+    lines = ['Vdda vdda 0 %s' % a.vdda, 'Vbgi vbgi 0 DC %.6f' % bdc, 'Rbg vbgi vbg %s' % rs, 'Ibref vdda nbr %s' % (a.base_ibias or a.ibias),
              'Vrefi vrefa 0 %s' % a.vref, 'Vrefli vrefla 0 %s' % a.vref]
 reflines = '\n'.join(lines)
 cell = {'rec': 'r1_adc5_core', 'recfast': 'r1_adc5_core_fast', 'lay': 'r1_adc5_core_lay'}[a.core]
+if a.core_cell:
+    cell = a.core_cell      # T2m (B7): e.g. r1_adc5_core_lay_d23 from --post-include sim/post/b7/r1_adc5_post_d23_<corner>.spice
 extra = 'vbg nbr vdda' if lay else ''
 nets = ['.include schematic/r1_adc_r5.spice']
 if lay:
-    nets += ['.include %s' % a.netlist, '.include sim/post/r1_adc5_post.spice']
+    nets += ['.include %s' % a.netlist, '.include %s' % a.post_include]
 has_vdda = ref != 'ideal'
 pfx = 'xadc.xl.' if lay else 'xadc.'
 probe = ('v(vrefa) v(vrefb) v(vrefla) v(vreflb) v(topap) v(topan) v(topbp) v(topbn) v(%svbp) v(%svbn) i(vdd)' % (pfx, pfx)
@@ -174,7 +178,7 @@ src = src.replace('@RAW@', raw_dir)
 assert '@' not in src.replace('@RAW', ''), [l for l in src.splitlines() if '@' in l][:3]
 open(os.path.join(run_dir, 'deck.cir'), 'w').write(src.replace(root, '<G1_RESULTS_ROOT>'))
 open(os.path.join(raw_dir, 'deck.cir'), 'w').write(src)
-libs = ['schematic/r1_adc_r5.spice'] + ([a.netlist, 'sim/post/r1_adc5_post.spice'] if lay else [])
+libs = ['schematic/r1_adc_r5.spice'] + ([a.netlist, a.post_include] if lay else [])
 lib_hash = {p: R5.sha256(os.path.join(BLOCK, p)) for p in libs}
 log_path = os.path.join(run_dir, 'ngspice.log')
 env = dict(os.environ)
@@ -214,7 +218,7 @@ rj = {'run_id': a.id, 'block': 'r1_adc', 'harness': 'sim/post (T2 post-layout ha
       'base_ibias': (a.base_ibias or a.ibias) if ref == 'lay-ideal' else None, 'bgr_model': rs if ref != 'ideal' else None,
       'noise': (nz if ref in ('opt3', 'lay') else 'none'), 'ideal_bgr': a.ideal_bgr if ref == 'lay-ideal' else None, 'ref_ibias': a.ibias if ref != 'ideal' else None,
       'points_file': a.points or None, 'pwl_shift_ns': PWL_SHIFT * 1e9 if a.deck == 'points' else None,
-      'corner': [a.corner, a.temp, a.vdd], 'options': opts, 'tmax': a.tmax, 'tstop': tstop if not a.op_only else None,
+      'corner': [a.corner, a.temp, a.vdd], 'vdda_V': a.vdda, 'options': opts, 'tmax': a.tmax, 'tstop': tstop if not a.op_only else None,
       'substitutions': {k: (v if k != 'RAW' else '<G1_RESULTS_ROOT>/r1_adc/%s' % a.id) for k, v in subs.items() if k not in ('PWLA', 'PWLB')},
       'tool': next((l.strip() for l in lines_ if 'ngspice-' in l and 'Circuit level' in l), R5.NGSPICE_VERSION),
       'ngspice_version': R5.NGSPICE_VERSION, 'container_image': R5.IMAGE_ID, 'pdk_commit': R5.PDK_COMMIT,

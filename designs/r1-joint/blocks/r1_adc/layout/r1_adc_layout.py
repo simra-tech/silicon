@@ -46,9 +46,12 @@ OUT = globals().get('out', os.path.join(HERE, 'r1_adc.gds'))
 ROUNDS = int(globals().get('rounds', '6'))
 TRIM = json.load(open(globals()['trim'])) if globals().get('trim') else {}
 # layout B6 (2026-10-27, T2l): -rd rev=B5 reproduces layout B5; default B6 (README "Layout B6")
-REV = globals().get('rev', 'B6')
-assert REV in ('B5', 'B6'), REV
-B6 = REV == 'B6'
+# layout B7 (2026-10-27, T2m): B6 + the south vss pin 2.0 um wide at the same centre (EM, r1_top integration_checklist_g);
+# -rd rev=B6 reproduces layout B6
+REV = globals().get('rev', 'B7')
+assert REV in ('B5', 'B6', 'B7'), REV
+B6 = REV in ('B6', 'B7')
+B7 = REV == 'B7'
 
 W, H = 439.0, 182.3               # H: analog part (layouts A-B4); B5 box height HB5
 HB5 = round(H + 23.12, 2)
@@ -962,6 +965,8 @@ FEED_X = {'vdda': 50.0, 'vdd': 100.0, 'vss': 150.0}
 # wide at the macro edge (chip-level EM), centres unchanged
 SUPPLY_PINS = ('vdd', 'vdda', 'vss', 'vref_in')
 SUPPLY_PIN_HW = 0.5
+# layout B7: vss pin 2.0 um (the 2 um Metal3 feeder below it already has this width), others 1.0 um
+PIN_HW_NET = {'vss': 1.0} if B7 else {}
 # layout B4 (D21, SAR sub-macro r1_adc_sar for B5): router keep-out at the north edge, all routing layers, y >= NORTH_KEEP_Y
 # and x >= NORTH_KEEP_X0 (east of the comparator clock generator); the pin stubs stay
 NORTH_KEEP_Y, NORTH_KEEP_X0 = 171.6, 107.2      # layout B4 only; B5 has no north keep-out
@@ -1427,7 +1432,7 @@ def build_top(ly, sl):
         elif side == 'E':
             R.reserve(1, W - 1.0, y - 0.2, W, y + 0.2, net)
         elif side == 'S':
-            hw = SUPPLY_PIN_HW if net in SUPPLY_PINS else 0.2
+            hw = PIN_HW_NET.get(net, SUPPLY_PIN_HW) if net in SUPPLY_PINS else 0.2
             R.reserve(1, min(x, gnear(x)) - hw, 0.0, max(x, gnear(x)) + hw, 1.0, net)
     for net, y in (('ain_sin_p', 110.0), ('ain_sin_n', 114.0)):
         R.reserve(1, 0.0, y - 0.2, SX[0] + 0.2, y + 0.6, net)
@@ -1447,7 +1452,7 @@ def build_top(ly, sl):
         L = 'M3'
         if side == 'S':
             xg = gnear(x)       # pin at the checklist x, jog at y 0.6-1.0 to the router node (xg, 0.8)
-            hw = SUPPLY_PIN_HW if net in SUPPLY_PINS else 0.2
+            hw = PIN_HW_NET.get(net, SUPPLY_PIN_HW) if net in SUPPLY_PINS else 0.2
             D.box(L, x - hw, 0.0, x + hw, 1.0); D.box('M3pin', x - hw, 0.0, x + hw, 1.0)
             D.label('M3txt', x, 0.5, net, 0.3)
             if abs(xg - x) > 1e-6:

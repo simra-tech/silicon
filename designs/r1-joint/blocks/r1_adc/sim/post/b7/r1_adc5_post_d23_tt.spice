@@ -1,0 +1,293 @@
+* r1_adc5_post_d23_tt.spice -- written by sim/post/b7/gen_proxy.py (T2m); do not edit. Corner tt, timing from GL run b6-ms-ref-tt-base-s4, VDD 1.2 V.
+* Behavioural SAR r1_sar5_logic with the gate-level output timing (delays in ns: rise / fall):
+* clka 0.543/0.505, clkab 0.578/0.563, clkb 0.543/0.505, clkbb 0.578/0.563, clkna 0.543/0.505, clknab 0.578/0.563, clknb 0.543/0.505, clknbb 0.578/0.563
+* CDAC lines: cpa0 1.327, cpa1 1.327, cpa2 1.318, cpa3 1.319, cpa4 1.321, cpa5 1.363, cpa6 1.313, cpa7 1.338, cpa8 1.348, cpa9 1.343, cpa10 1.351, cpa11 1.377, cpa12 1.417, cna0 1.166, cna1 1.159, cna2 1.167, cna3 1.157, cna4 1.159, cna5 1.218, cna6 1.165, cna7 1.163, cna8 1.159, cna9 1.183, cna10 1.208, cna11 1.199, cna12 1.367, cpb0 1.335, cpb1 1.343, cpb2 1.327, cpb3 1.309, cpb4 1.310, cpb5 1.366, cpb6 1.304, cpb7 1.322, cpb8 1.307, cpb9 1.304, cpb10 1.314, cpb11 1.322, cpb12 1.408, cnb0 1.199, cnb1 1.183, cnb2 1.191, cnb3 1.184, cnb4 1.205, cnb5 1.166, cnb6 1.183, cnb7 1.169, cnb8 1.160, cnb9 1.180, cnb10 1.200, cnb11 1.197, cnb12 1.337
+.subckt r1_sar5_logic_d23 oap oan obp obn oanp obnp mclk wina winb trka0 trka1 trkb0 trkb1 lata latb stba0 stba1 stba2 stba3 stba4 stba5 stba6 stba7 stba8 stba9 stba10 stba11 stba12 stba13 stbb0 stbb1 stbb2 stbb3 stbb4 stbb5 stbb6 stbb7 stbb8 stbb9 stbb10 stbb11 stbb12 stbb13 clka clkab clkb clkbb clkna clknab clknb clknbb cpa12 cpa11 cpa10 cpa9 cpa8 cpa7 cpa6 cpa5 cpa4 cpa3 cpa2 cpa1 cpa0 cna12 cna11 cna10 cna9 cna8 cna7 cna6 cna5 cna4 cna3 cna2 cna1 cna0 cpb12 cpb11 cpb10 cpb9 cpb8 cpb7 cpb6 cpb5 cpb4 cpb3 cpb2 cpb1 cpb0 cnb12 cnb11 cnb10 cnb9 cnb8 cnb7 cnb6 cnb5 cnb4 cnb3 cnb2 cnb1 cnb0 rawa rawb vdd gnd
+.model r1_d23_adcb adc_bridge(in_low=0.6 in_high=0.6 rise_delay=20p fall_delay=20p)
+.model r1_d23_dacb dac_bridge(out_low=0 out_high=1.2 out_undef=0.6 input_load=1e-15 t_rise=80p t_fall=80p)
+.model r1_d23_dl_clka d_buffer(rise_delay=0.5427n fall_delay=0.5054n input_load=1e-15)
+.model r1_d23_dl_clkab d_buffer(rise_delay=0.5784n fall_delay=0.5632n input_load=1e-15)
+.model r1_d23_dl_clkb d_buffer(rise_delay=0.5427n fall_delay=0.5054n input_load=1e-15)
+.model r1_d23_dl_clkbb d_buffer(rise_delay=0.5784n fall_delay=0.5632n input_load=1e-15)
+.model r1_d23_dl_clkna d_buffer(rise_delay=0.5427n fall_delay=0.5054n input_load=1e-15)
+.model r1_d23_dl_clknab d_buffer(rise_delay=0.5784n fall_delay=0.5632n input_load=1e-15)
+.model r1_d23_dl_clknb d_buffer(rise_delay=0.5427n fall_delay=0.5054n input_load=1e-15)
+.model r1_d23_dl_clknbb d_buffer(rise_delay=0.5784n fall_delay=0.5632n input_load=1e-15)
+.model r1_d23_dl_cpa0 d_buffer(rise_delay=1.3270n fall_delay=1.3270n input_load=1e-15)
+.model r1_d23_dl_cpa1 d_buffer(rise_delay=1.3275n fall_delay=1.3275n input_load=1e-15)
+.model r1_d23_dl_cpa2 d_buffer(rise_delay=1.3177n fall_delay=1.3177n input_load=1e-15)
+.model r1_d23_dl_cpa3 d_buffer(rise_delay=1.3186n fall_delay=1.3186n input_load=1e-15)
+.model r1_d23_dl_cpa4 d_buffer(rise_delay=1.3213n fall_delay=1.3213n input_load=1e-15)
+.model r1_d23_dl_cpa5 d_buffer(rise_delay=1.3628n fall_delay=1.3628n input_load=1e-15)
+.model r1_d23_dl_cpa6 d_buffer(rise_delay=1.3128n fall_delay=1.3128n input_load=1e-15)
+.model r1_d23_dl_cpa7 d_buffer(rise_delay=1.3380n fall_delay=1.3380n input_load=1e-15)
+.model r1_d23_dl_cpa8 d_buffer(rise_delay=1.3482n fall_delay=1.3482n input_load=1e-15)
+.model r1_d23_dl_cpa9 d_buffer(rise_delay=1.3435n fall_delay=1.3435n input_load=1e-15)
+.model r1_d23_dl_cpa10 d_buffer(rise_delay=1.3505n fall_delay=1.3505n input_load=1e-15)
+.model r1_d23_dl_cpa11 d_buffer(rise_delay=1.3770n fall_delay=1.3770n input_load=1e-15)
+.model r1_d23_dl_cpa12 d_buffer(rise_delay=1.4170n fall_delay=1.4170n input_load=1e-15)
+.model r1_d23_dl_cna0 d_buffer(rise_delay=1.1657n fall_delay=1.1657n input_load=1e-15)
+.model r1_d23_dl_cna1 d_buffer(rise_delay=1.1591n fall_delay=1.1591n input_load=1e-15)
+.model r1_d23_dl_cna2 d_buffer(rise_delay=1.1673n fall_delay=1.1673n input_load=1e-15)
+.model r1_d23_dl_cna3 d_buffer(rise_delay=1.1572n fall_delay=1.1572n input_load=1e-15)
+.model r1_d23_dl_cna4 d_buffer(rise_delay=1.1589n fall_delay=1.1589n input_load=1e-15)
+.model r1_d23_dl_cna5 d_buffer(rise_delay=1.2175n fall_delay=1.2175n input_load=1e-15)
+.model r1_d23_dl_cna6 d_buffer(rise_delay=1.1651n fall_delay=1.1651n input_load=1e-15)
+.model r1_d23_dl_cna7 d_buffer(rise_delay=1.1627n fall_delay=1.1627n input_load=1e-15)
+.model r1_d23_dl_cna8 d_buffer(rise_delay=1.1591n fall_delay=1.1591n input_load=1e-15)
+.model r1_d23_dl_cna9 d_buffer(rise_delay=1.1825n fall_delay=1.1825n input_load=1e-15)
+.model r1_d23_dl_cna10 d_buffer(rise_delay=1.2075n fall_delay=1.2075n input_load=1e-15)
+.model r1_d23_dl_cna11 d_buffer(rise_delay=1.1985n fall_delay=1.1985n input_load=1e-15)
+.model r1_d23_dl_cna12 d_buffer(rise_delay=1.3670n fall_delay=1.3670n input_load=1e-15)
+.model r1_d23_dl_cpb0 d_buffer(rise_delay=1.3352n fall_delay=1.3352n input_load=1e-15)
+.model r1_d23_dl_cpb1 d_buffer(rise_delay=1.3428n fall_delay=1.3428n input_load=1e-15)
+.model r1_d23_dl_cpb2 d_buffer(rise_delay=1.3265n fall_delay=1.3265n input_load=1e-15)
+.model r1_d23_dl_cpb3 d_buffer(rise_delay=1.3087n fall_delay=1.3087n input_load=1e-15)
+.model r1_d23_dl_cpb4 d_buffer(rise_delay=1.3103n fall_delay=1.3103n input_load=1e-15)
+.model r1_d23_dl_cpb5 d_buffer(rise_delay=1.3663n fall_delay=1.3663n input_load=1e-15)
+.model r1_d23_dl_cpb6 d_buffer(rise_delay=1.3040n fall_delay=1.3040n input_load=1e-15)
+.model r1_d23_dl_cpb7 d_buffer(rise_delay=1.3218n fall_delay=1.3218n input_load=1e-15)
+.model r1_d23_dl_cpb8 d_buffer(rise_delay=1.3075n fall_delay=1.3075n input_load=1e-15)
+.model r1_d23_dl_cpb9 d_buffer(rise_delay=1.3042n fall_delay=1.3042n input_load=1e-15)
+.model r1_d23_dl_cpb10 d_buffer(rise_delay=1.3142n fall_delay=1.3142n input_load=1e-15)
+.model r1_d23_dl_cpb11 d_buffer(rise_delay=1.3224n fall_delay=1.3224n input_load=1e-15)
+.model r1_d23_dl_cpb12 d_buffer(rise_delay=1.4083n fall_delay=1.4083n input_load=1e-15)
+.model r1_d23_dl_cnb0 d_buffer(rise_delay=1.1987n fall_delay=1.1987n input_load=1e-15)
+.model r1_d23_dl_cnb1 d_buffer(rise_delay=1.1830n fall_delay=1.1830n input_load=1e-15)
+.model r1_d23_dl_cnb2 d_buffer(rise_delay=1.1909n fall_delay=1.1909n input_load=1e-15)
+.model r1_d23_dl_cnb3 d_buffer(rise_delay=1.1844n fall_delay=1.1844n input_load=1e-15)
+.model r1_d23_dl_cnb4 d_buffer(rise_delay=1.2054n fall_delay=1.2054n input_load=1e-15)
+.model r1_d23_dl_cnb5 d_buffer(rise_delay=1.1663n fall_delay=1.1663n input_load=1e-15)
+.model r1_d23_dl_cnb6 d_buffer(rise_delay=1.1826n fall_delay=1.1826n input_load=1e-15)
+.model r1_d23_dl_cnb7 d_buffer(rise_delay=1.1687n fall_delay=1.1687n input_load=1e-15)
+.model r1_d23_dl_cnb8 d_buffer(rise_delay=1.1599n fall_delay=1.1599n input_load=1e-15)
+.model r1_d23_dl_cnb9 d_buffer(rise_delay=1.1800n fall_delay=1.1800n input_load=1e-15)
+.model r1_d23_dl_cnb10 d_buffer(rise_delay=1.1995n fall_delay=1.1995n input_load=1e-15)
+.model r1_d23_dl_cnb11 d_buffer(rise_delay=1.1972n fall_delay=1.1972n input_load=1e-15)
+.model r1_d23_dl_cnb12 d_buffer(rise_delay=1.3370n fall_delay=1.3370n input_load=1e-15)
+XS oap oan obp obn oanp obnp mclk wina winb trka0 trka1 trkb0 trkb1 lata latb stba0 stba1 stba2 stba3 stba4 stba5 stba6 stba7 stba8 stba9 stba10 stba11 stba12 stba13 stbb0 stbb1 stbb2 stbb3 stbb4 stbb5 stbb6 stbb7 stbb8 stbb9 stbb10 stbb11 stbb12 stbb13 i_clka i_clkab i_clkb i_clkbb i_clkna i_clknab i_clknb i_clknbb i_cpa12 i_cpa11 i_cpa10 i_cpa9 i_cpa8 i_cpa7 i_cpa6 i_cpa5 i_cpa4 i_cpa3 i_cpa2 i_cpa1 i_cpa0 i_cna12 i_cna11 i_cna10 i_cna9 i_cna8 i_cna7 i_cna6 i_cna5 i_cna4 i_cna3 i_cna2 i_cna1 i_cna0 i_cpb12 i_cpb11 i_cpb10 i_cpb9 i_cpb8 i_cpb7 i_cpb6 i_cpb5 i_cpb4 i_cpb3 i_cpb2 i_cpb1 i_cpb0 i_cnb12 i_cnb11 i_cnb10 i_cnb9 i_cnb8 i_cnb7 i_cnb6 i_cnb5 i_cnb4 i_cnb3 i_cnb2 i_cnb1 i_cnb0 rawa rawb vdd gnd r1_sar5_logic
+AI_clka [i_clka] [di_clka] r1_d23_adcb
+AD_clka di_clka dd_clka r1_d23_dl_clka
+AO_clka [dd_clka] [clka] r1_d23_dacb
+AI_clkab [i_clkab] [di_clkab] r1_d23_adcb
+AD_clkab di_clkab dd_clkab r1_d23_dl_clkab
+AO_clkab [dd_clkab] [clkab] r1_d23_dacb
+AI_clkb [i_clkb] [di_clkb] r1_d23_adcb
+AD_clkb di_clkb dd_clkb r1_d23_dl_clkb
+AO_clkb [dd_clkb] [clkb] r1_d23_dacb
+AI_clkbb [i_clkbb] [di_clkbb] r1_d23_adcb
+AD_clkbb di_clkbb dd_clkbb r1_d23_dl_clkbb
+AO_clkbb [dd_clkbb] [clkbb] r1_d23_dacb
+AI_clkna [i_clkna] [di_clkna] r1_d23_adcb
+AD_clkna di_clkna dd_clkna r1_d23_dl_clkna
+AO_clkna [dd_clkna] [clkna] r1_d23_dacb
+AI_clknab [i_clknab] [di_clknab] r1_d23_adcb
+AD_clknab di_clknab dd_clknab r1_d23_dl_clknab
+AO_clknab [dd_clknab] [clknab] r1_d23_dacb
+AI_clknb [i_clknb] [di_clknb] r1_d23_adcb
+AD_clknb di_clknb dd_clknb r1_d23_dl_clknb
+AO_clknb [dd_clknb] [clknb] r1_d23_dacb
+AI_clknbb [i_clknbb] [di_clknbb] r1_d23_adcb
+AD_clknbb di_clknbb dd_clknbb r1_d23_dl_clknbb
+AO_clknbb [dd_clknbb] [clknbb] r1_d23_dacb
+AI_cpa0 [i_cpa0] [di_cpa0] r1_d23_adcb
+AD_cpa0 di_cpa0 dd_cpa0 r1_d23_dl_cpa0
+AO_cpa0 [dd_cpa0] [cpa0] r1_d23_dacb
+AI_cpa1 [i_cpa1] [di_cpa1] r1_d23_adcb
+AD_cpa1 di_cpa1 dd_cpa1 r1_d23_dl_cpa1
+AO_cpa1 [dd_cpa1] [cpa1] r1_d23_dacb
+AI_cpa2 [i_cpa2] [di_cpa2] r1_d23_adcb
+AD_cpa2 di_cpa2 dd_cpa2 r1_d23_dl_cpa2
+AO_cpa2 [dd_cpa2] [cpa2] r1_d23_dacb
+AI_cpa3 [i_cpa3] [di_cpa3] r1_d23_adcb
+AD_cpa3 di_cpa3 dd_cpa3 r1_d23_dl_cpa3
+AO_cpa3 [dd_cpa3] [cpa3] r1_d23_dacb
+AI_cpa4 [i_cpa4] [di_cpa4] r1_d23_adcb
+AD_cpa4 di_cpa4 dd_cpa4 r1_d23_dl_cpa4
+AO_cpa4 [dd_cpa4] [cpa4] r1_d23_dacb
+AI_cpa5 [i_cpa5] [di_cpa5] r1_d23_adcb
+AD_cpa5 di_cpa5 dd_cpa5 r1_d23_dl_cpa5
+AO_cpa5 [dd_cpa5] [cpa5] r1_d23_dacb
+AI_cpa6 [i_cpa6] [di_cpa6] r1_d23_adcb
+AD_cpa6 di_cpa6 dd_cpa6 r1_d23_dl_cpa6
+AO_cpa6 [dd_cpa6] [cpa6] r1_d23_dacb
+AI_cpa7 [i_cpa7] [di_cpa7] r1_d23_adcb
+AD_cpa7 di_cpa7 dd_cpa7 r1_d23_dl_cpa7
+AO_cpa7 [dd_cpa7] [cpa7] r1_d23_dacb
+AI_cpa8 [i_cpa8] [di_cpa8] r1_d23_adcb
+AD_cpa8 di_cpa8 dd_cpa8 r1_d23_dl_cpa8
+AO_cpa8 [dd_cpa8] [cpa8] r1_d23_dacb
+AI_cpa9 [i_cpa9] [di_cpa9] r1_d23_adcb
+AD_cpa9 di_cpa9 dd_cpa9 r1_d23_dl_cpa9
+AO_cpa9 [dd_cpa9] [cpa9] r1_d23_dacb
+AI_cpa10 [i_cpa10] [di_cpa10] r1_d23_adcb
+AD_cpa10 di_cpa10 dd_cpa10 r1_d23_dl_cpa10
+AO_cpa10 [dd_cpa10] [cpa10] r1_d23_dacb
+AI_cpa11 [i_cpa11] [di_cpa11] r1_d23_adcb
+AD_cpa11 di_cpa11 dd_cpa11 r1_d23_dl_cpa11
+AO_cpa11 [dd_cpa11] [cpa11] r1_d23_dacb
+AI_cpa12 [i_cpa12] [di_cpa12] r1_d23_adcb
+AD_cpa12 di_cpa12 dd_cpa12 r1_d23_dl_cpa12
+AO_cpa12 [dd_cpa12] [cpa12] r1_d23_dacb
+AI_cna0 [i_cna0] [di_cna0] r1_d23_adcb
+AD_cna0 di_cna0 dd_cna0 r1_d23_dl_cna0
+AO_cna0 [dd_cna0] [cna0] r1_d23_dacb
+AI_cna1 [i_cna1] [di_cna1] r1_d23_adcb
+AD_cna1 di_cna1 dd_cna1 r1_d23_dl_cna1
+AO_cna1 [dd_cna1] [cna1] r1_d23_dacb
+AI_cna2 [i_cna2] [di_cna2] r1_d23_adcb
+AD_cna2 di_cna2 dd_cna2 r1_d23_dl_cna2
+AO_cna2 [dd_cna2] [cna2] r1_d23_dacb
+AI_cna3 [i_cna3] [di_cna3] r1_d23_adcb
+AD_cna3 di_cna3 dd_cna3 r1_d23_dl_cna3
+AO_cna3 [dd_cna3] [cna3] r1_d23_dacb
+AI_cna4 [i_cna4] [di_cna4] r1_d23_adcb
+AD_cna4 di_cna4 dd_cna4 r1_d23_dl_cna4
+AO_cna4 [dd_cna4] [cna4] r1_d23_dacb
+AI_cna5 [i_cna5] [di_cna5] r1_d23_adcb
+AD_cna5 di_cna5 dd_cna5 r1_d23_dl_cna5
+AO_cna5 [dd_cna5] [cna5] r1_d23_dacb
+AI_cna6 [i_cna6] [di_cna6] r1_d23_adcb
+AD_cna6 di_cna6 dd_cna6 r1_d23_dl_cna6
+AO_cna6 [dd_cna6] [cna6] r1_d23_dacb
+AI_cna7 [i_cna7] [di_cna7] r1_d23_adcb
+AD_cna7 di_cna7 dd_cna7 r1_d23_dl_cna7
+AO_cna7 [dd_cna7] [cna7] r1_d23_dacb
+AI_cna8 [i_cna8] [di_cna8] r1_d23_adcb
+AD_cna8 di_cna8 dd_cna8 r1_d23_dl_cna8
+AO_cna8 [dd_cna8] [cna8] r1_d23_dacb
+AI_cna9 [i_cna9] [di_cna9] r1_d23_adcb
+AD_cna9 di_cna9 dd_cna9 r1_d23_dl_cna9
+AO_cna9 [dd_cna9] [cna9] r1_d23_dacb
+AI_cna10 [i_cna10] [di_cna10] r1_d23_adcb
+AD_cna10 di_cna10 dd_cna10 r1_d23_dl_cna10
+AO_cna10 [dd_cna10] [cna10] r1_d23_dacb
+AI_cna11 [i_cna11] [di_cna11] r1_d23_adcb
+AD_cna11 di_cna11 dd_cna11 r1_d23_dl_cna11
+AO_cna11 [dd_cna11] [cna11] r1_d23_dacb
+AI_cna12 [i_cna12] [di_cna12] r1_d23_adcb
+AD_cna12 di_cna12 dd_cna12 r1_d23_dl_cna12
+AO_cna12 [dd_cna12] [cna12] r1_d23_dacb
+AI_cpb0 [i_cpb0] [di_cpb0] r1_d23_adcb
+AD_cpb0 di_cpb0 dd_cpb0 r1_d23_dl_cpb0
+AO_cpb0 [dd_cpb0] [cpb0] r1_d23_dacb
+AI_cpb1 [i_cpb1] [di_cpb1] r1_d23_adcb
+AD_cpb1 di_cpb1 dd_cpb1 r1_d23_dl_cpb1
+AO_cpb1 [dd_cpb1] [cpb1] r1_d23_dacb
+AI_cpb2 [i_cpb2] [di_cpb2] r1_d23_adcb
+AD_cpb2 di_cpb2 dd_cpb2 r1_d23_dl_cpb2
+AO_cpb2 [dd_cpb2] [cpb2] r1_d23_dacb
+AI_cpb3 [i_cpb3] [di_cpb3] r1_d23_adcb
+AD_cpb3 di_cpb3 dd_cpb3 r1_d23_dl_cpb3
+AO_cpb3 [dd_cpb3] [cpb3] r1_d23_dacb
+AI_cpb4 [i_cpb4] [di_cpb4] r1_d23_adcb
+AD_cpb4 di_cpb4 dd_cpb4 r1_d23_dl_cpb4
+AO_cpb4 [dd_cpb4] [cpb4] r1_d23_dacb
+AI_cpb5 [i_cpb5] [di_cpb5] r1_d23_adcb
+AD_cpb5 di_cpb5 dd_cpb5 r1_d23_dl_cpb5
+AO_cpb5 [dd_cpb5] [cpb5] r1_d23_dacb
+AI_cpb6 [i_cpb6] [di_cpb6] r1_d23_adcb
+AD_cpb6 di_cpb6 dd_cpb6 r1_d23_dl_cpb6
+AO_cpb6 [dd_cpb6] [cpb6] r1_d23_dacb
+AI_cpb7 [i_cpb7] [di_cpb7] r1_d23_adcb
+AD_cpb7 di_cpb7 dd_cpb7 r1_d23_dl_cpb7
+AO_cpb7 [dd_cpb7] [cpb7] r1_d23_dacb
+AI_cpb8 [i_cpb8] [di_cpb8] r1_d23_adcb
+AD_cpb8 di_cpb8 dd_cpb8 r1_d23_dl_cpb8
+AO_cpb8 [dd_cpb8] [cpb8] r1_d23_dacb
+AI_cpb9 [i_cpb9] [di_cpb9] r1_d23_adcb
+AD_cpb9 di_cpb9 dd_cpb9 r1_d23_dl_cpb9
+AO_cpb9 [dd_cpb9] [cpb9] r1_d23_dacb
+AI_cpb10 [i_cpb10] [di_cpb10] r1_d23_adcb
+AD_cpb10 di_cpb10 dd_cpb10 r1_d23_dl_cpb10
+AO_cpb10 [dd_cpb10] [cpb10] r1_d23_dacb
+AI_cpb11 [i_cpb11] [di_cpb11] r1_d23_adcb
+AD_cpb11 di_cpb11 dd_cpb11 r1_d23_dl_cpb11
+AO_cpb11 [dd_cpb11] [cpb11] r1_d23_dacb
+AI_cpb12 [i_cpb12] [di_cpb12] r1_d23_adcb
+AD_cpb12 di_cpb12 dd_cpb12 r1_d23_dl_cpb12
+AO_cpb12 [dd_cpb12] [cpb12] r1_d23_dacb
+AI_cnb0 [i_cnb0] [di_cnb0] r1_d23_adcb
+AD_cnb0 di_cnb0 dd_cnb0 r1_d23_dl_cnb0
+AO_cnb0 [dd_cnb0] [cnb0] r1_d23_dacb
+AI_cnb1 [i_cnb1] [di_cnb1] r1_d23_adcb
+AD_cnb1 di_cnb1 dd_cnb1 r1_d23_dl_cnb1
+AO_cnb1 [dd_cnb1] [cnb1] r1_d23_dacb
+AI_cnb2 [i_cnb2] [di_cnb2] r1_d23_adcb
+AD_cnb2 di_cnb2 dd_cnb2 r1_d23_dl_cnb2
+AO_cnb2 [dd_cnb2] [cnb2] r1_d23_dacb
+AI_cnb3 [i_cnb3] [di_cnb3] r1_d23_adcb
+AD_cnb3 di_cnb3 dd_cnb3 r1_d23_dl_cnb3
+AO_cnb3 [dd_cnb3] [cnb3] r1_d23_dacb
+AI_cnb4 [i_cnb4] [di_cnb4] r1_d23_adcb
+AD_cnb4 di_cnb4 dd_cnb4 r1_d23_dl_cnb4
+AO_cnb4 [dd_cnb4] [cnb4] r1_d23_dacb
+AI_cnb5 [i_cnb5] [di_cnb5] r1_d23_adcb
+AD_cnb5 di_cnb5 dd_cnb5 r1_d23_dl_cnb5
+AO_cnb5 [dd_cnb5] [cnb5] r1_d23_dacb
+AI_cnb6 [i_cnb6] [di_cnb6] r1_d23_adcb
+AD_cnb6 di_cnb6 dd_cnb6 r1_d23_dl_cnb6
+AO_cnb6 [dd_cnb6] [cnb6] r1_d23_dacb
+AI_cnb7 [i_cnb7] [di_cnb7] r1_d23_adcb
+AD_cnb7 di_cnb7 dd_cnb7 r1_d23_dl_cnb7
+AO_cnb7 [dd_cnb7] [cnb7] r1_d23_dacb
+AI_cnb8 [i_cnb8] [di_cnb8] r1_d23_adcb
+AD_cnb8 di_cnb8 dd_cnb8 r1_d23_dl_cnb8
+AO_cnb8 [dd_cnb8] [cnb8] r1_d23_dacb
+AI_cnb9 [i_cnb9] [di_cnb9] r1_d23_adcb
+AD_cnb9 di_cnb9 dd_cnb9 r1_d23_dl_cnb9
+AO_cnb9 [dd_cnb9] [cnb9] r1_d23_dacb
+AI_cnb10 [i_cnb10] [di_cnb10] r1_d23_adcb
+AD_cnb10 di_cnb10 dd_cnb10 r1_d23_dl_cnb10
+AO_cnb10 [dd_cnb10] [cnb10] r1_d23_dacb
+AI_cnb11 [i_cnb11] [di_cnb11] r1_d23_adcb
+AD_cnb11 di_cnb11 dd_cnb11 r1_d23_dl_cnb11
+AO_cnb11 [dd_cnb11] [cnb11] r1_d23_dacb
+AI_cnb12 [i_cnb12] [di_cnb12] r1_d23_adcb
+AD_cnb12 di_cnb12 dd_cnb12 r1_d23_dl_cnb12
+AO_cnb12 [dd_cnb12] [cnb12] r1_d23_dacb
+.ends r1_sar5_logic_d23
+* core: copy of sim/post/r1_adc5_post.spice r1_adc5_core_lay with XSAR -> r1_sar5_logic_d23
+.subckt r1_adc5_core_lay_d23 sinp sinn cosp cosn isap isan isbp isbn trka0 trka1 trkb0 trkb1 clk30 wina winb lata latb stba0 stba1 stba2 stba3 stba4 stba5 stba6 stba7 stba8 stba9 stba10 stba11 stba12 stba13 stbb0 stbb1 stbb2 stbb3 stbb4 stbb5 stbb6 stbb7 stbb8 stbb9 stbb10 stbb11 stbb12 stbb13 rawa rawb topap topan topbp topbn vdd vrefa vrefb vrefla vreflb gnd vbg nb vdda
+XL nc_adc_hold nc_is_smp clk30 nc_adc_start nc_adc_sel nc_adc_valid_a nc_adc_raw_a_0 nc_adc_raw_a_1 nc_adc_raw_a_2 nc_adc_raw_a_3 nc_adc_raw_a_4 nc_adc_raw_a_5 nc_adc_raw_a_6 nc_adc_raw_a_7 nc_adc_raw_a_8 nc_adc_raw_a_9 nc_adc_raw_a_10 nc_adc_raw_a_11 nc_adc_raw_a_12 nc_adc_raw_a_13 nc_adc_valid_b nc_adc_raw_b_0 nc_adc_raw_b_1 nc_adc_raw_b_2 nc_adc_raw_b_3 nc_adc_raw_b_4 nc_adc_raw_b_5 nc_adc_raw_b_6 nc_adc_raw_b_7 nc_adc_raw_b_8 nc_adc_raw_b_9 nc_adc_raw_b_10 nc_adc_raw_b_11 nc_adc_raw_b_12 nc_adc_raw_b_13 nc_por_n sinp sinn cosp cosn nc_vcm2 nb isap isan isbp isbn nc_vcm vdda vdd gnd vbg topap topan topbp topbn sar_clka sar_clkab sar_clkb sar_clkbb sar_clkna sar_clknab sar_clknb sar_clknbb sar_cna0 sar_cna1 sar_cna10 sar_cna11 sar_cna12 sar_cna2 sar_cna3 sar_cna4 sar_cna5 sar_cna6 sar_cna7 sar_cna8 sar_cna9 sar_cnb0 sar_cnb1 sar_cnb10 sar_cnb11 sar_cnb12 sar_cnb2 sar_cnb3 sar_cnb4 sar_cnb5 sar_cnb6 sar_cnb7 sar_cnb8 sar_cnb9 sar_cpa0 sar_cpa1 sar_cpa10 sar_cpa11 sar_cpa12 sar_cpa2 sar_cpa3 sar_cpa4 sar_cpa5 sar_cpa6 sar_cpa7 sar_cpa8 sar_cpa9 sar_cpb0 sar_cpb1 sar_cpb10 sar_cpb11 sar_cpb12 sar_cpb2 sar_cpb3 sar_cpb4 sar_cpb5 sar_cpb6 sar_cpb7 sar_cpb8 sar_cpb9 sar_oan sar_oann sar_oanp sar_oap sar_obn sar_obnn sar_obnp sar_obp trka0 trka1 trkb0 trkb1 sar_mclk vrefa vrefla r1_adc_lay_pr
+Rnc_adc_hold nc_adc_hold gnd 1k
+Rnc_is_smp nc_is_smp gnd 1k
+Rnc_adc_start nc_adc_start gnd 1k
+Rnc_adc_sel nc_adc_sel gnd 1k
+Rnc_adc_valid_a nc_adc_valid_a gnd 1k
+Rnc_adc_raw_a_0 nc_adc_raw_a_0 gnd 1k
+Rnc_adc_raw_a_1 nc_adc_raw_a_1 gnd 1k
+Rnc_adc_raw_a_2 nc_adc_raw_a_2 gnd 1k
+Rnc_adc_raw_a_3 nc_adc_raw_a_3 gnd 1k
+Rnc_adc_raw_a_4 nc_adc_raw_a_4 gnd 1k
+Rnc_adc_raw_a_5 nc_adc_raw_a_5 gnd 1k
+Rnc_adc_raw_a_6 nc_adc_raw_a_6 gnd 1k
+Rnc_adc_raw_a_7 nc_adc_raw_a_7 gnd 1k
+Rnc_adc_raw_a_8 nc_adc_raw_a_8 gnd 1k
+Rnc_adc_raw_a_9 nc_adc_raw_a_9 gnd 1k
+Rnc_adc_raw_a_10 nc_adc_raw_a_10 gnd 1k
+Rnc_adc_raw_a_11 nc_adc_raw_a_11 gnd 1k
+Rnc_adc_raw_a_12 nc_adc_raw_a_12 gnd 1k
+Rnc_adc_raw_a_13 nc_adc_raw_a_13 gnd 1k
+Rnc_adc_valid_b nc_adc_valid_b gnd 1k
+Rnc_adc_raw_b_0 nc_adc_raw_b_0 gnd 1k
+Rnc_adc_raw_b_1 nc_adc_raw_b_1 gnd 1k
+Rnc_adc_raw_b_2 nc_adc_raw_b_2 gnd 1k
+Rnc_adc_raw_b_3 nc_adc_raw_b_3 gnd 1k
+Rnc_adc_raw_b_4 nc_adc_raw_b_4 gnd 1k
+Rnc_adc_raw_b_5 nc_adc_raw_b_5 gnd 1k
+Rnc_adc_raw_b_6 nc_adc_raw_b_6 gnd 1k
+Rnc_adc_raw_b_7 nc_adc_raw_b_7 gnd 1k
+Rnc_adc_raw_b_8 nc_adc_raw_b_8 gnd 1k
+Rnc_adc_raw_b_9 nc_adc_raw_b_9 gnd 1k
+Rnc_adc_raw_b_10 nc_adc_raw_b_10 gnd 1k
+Rnc_adc_raw_b_11 nc_adc_raw_b_11 gnd 1k
+Rnc_adc_raw_b_12 nc_adc_raw_b_12 gnd 1k
+Rnc_adc_raw_b_13 nc_adc_raw_b_13 gnd 1k
+Rnc_por_n nc_por_n gnd 1k
+Rnc_vcm2 nc_vcm2 gnd 1k
+Rnc_vcm nc_vcm gnd 1k
+Evrefb vrefb 0 vrefa 0 1
+Evreflb vreflb 0 vrefla 0 1
+XSAR sar_oap sar_oan sar_obp sar_obn sar_oanp sar_obnp sar_mclk wina winb trka0 trka1 trkb0 trkb1 lata latb stba0 stba1 stba2 stba3 stba4 stba5 stba6 stba7 stba8 stba9 stba10 stba11 stba12 stba13 stbb0 stbb1 stbb2 stbb3 stbb4 stbb5 stbb6 stbb7 stbb8 stbb9 stbb10 stbb11 stbb12 stbb13 sar_clka sar_clkab sar_clkb sar_clkbb sar_clkna sar_clknab sar_clknb sar_clknbb sar_cpa12 sar_cpa11 sar_cpa10 sar_cpa9 sar_cpa8 sar_cpa7 sar_cpa6 sar_cpa5 sar_cpa4 sar_cpa3 sar_cpa2 sar_cpa1 sar_cpa0 sar_cna12 sar_cna11 sar_cna10 sar_cna9 sar_cna8 sar_cna7 sar_cna6 sar_cna5 sar_cna4 sar_cna3 sar_cna2 sar_cna1 sar_cna0 sar_cpb12 sar_cpb11 sar_cpb10 sar_cpb9 sar_cpb8 sar_cpb7 sar_cpb6 sar_cpb5 sar_cpb4 sar_cpb3 sar_cpb2 sar_cpb1 sar_cpb0 sar_cnb12 sar_cnb11 sar_cnb10 sar_cnb9 sar_cnb8 sar_cnb7 sar_cnb6 sar_cnb5 sar_cnb4 sar_cnb3 sar_cnb2 sar_cnb1 sar_cnb0 rawa rawb vdd gnd r1_sar5_logic_d23
+.ends r1_adc5_core_lay_d23
