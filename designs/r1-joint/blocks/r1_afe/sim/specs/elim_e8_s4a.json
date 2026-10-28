@@ -1,0 +1,67 @@
+{
+ "question": "Layout E8 (track T3l): on screen build s4a (R-only view; x32 offset +12.6 mV at tt CM 2.5 V against -1.8 mV on s2b), which wiring group carries the offset? Group elimination (wire R x 1e-3)",
+ "variants": {
+  "BASE": {
+   "netlist": "$G1_RESULTS_ROOT/r1_afe/revF2/e8/elim-s4a/BASE.spice"
+  },
+  "X1": {
+   "netlist": "$G1_RESULTS_ROOT/r1_afe/revF2/e8/elim-s4a/X1.spice"
+  },
+  "IN": {
+   "netlist": "$G1_RESULTS_ROOT/r1_afe/revF2/e8/elim-s4a/IN.spice"
+  },
+  "A": {
+   "netlist": "$G1_RESULTS_ROOT/r1_afe/revF2/e8/elim-s4a/A.spice"
+  },
+  "FB": {
+   "netlist": "$G1_RESULTS_ROOT/r1_afe/revF2/e8/elim-s4a/FB.spice"
+  },
+  "VDD": {
+   "netlist": "$G1_RESULTS_ROOT/r1_afe/revF2/e8/elim-s4a/VDD.spice"
+  },
+  "VSS": {
+   "netlist": "$G1_RESULTS_ROOT/r1_afe/revF2/e8/elim-s4a/VSS.spice"
+  },
+  "OTA1": {
+   "netlist": "$G1_RESULTS_ROOT/r1_afe/revF2/e8/elim-s4a/OTA1.spice"
+  },
+  "OTA2": {
+   "netlist": "$G1_RESULTS_ROOT/r1_afe/revF2/e8/elim-s4a/OTA2.spice"
+  },
+  "ST2": {
+   "netlist": "$G1_RESULTS_ROOT/r1_afe/revF2/e8/elim-s4a/ST2.spice"
+  }
+ },
+ "jobs": [
+  {
+   "tag": "op_tt_ib10.14_cm2.5_v3.3",
+   "tmpl": "tb_afe_op.cir",
+   "corner": "tt",
+   "subs": {
+    "VCMI": 2.5,
+    "IB": "10.14u",
+    "VDDA": 3.3
+   }
+  },
+  {
+   "tag": "op_tt_ib10.14_cm2.5_v3.6",
+   "tmpl": "tb_afe_op.cir",
+   "corner": "tt",
+   "subs": {
+    "VCMI": 2.5,
+    "IB": "10.14u",
+    "VDDA": 3.6
+   }
+  },
+  {
+   "tag": "op_tt_ib10.14_cm0.5_v3.6",
+   "tmpl": "tb_afe_op.cir",
+   "corner": "tt",
+   "subs": {
+    "VCMI": 0.5,
+    "IB": "10.14u",
+    "VDDA": 3.6
+   }
+  }
+ ]
+}

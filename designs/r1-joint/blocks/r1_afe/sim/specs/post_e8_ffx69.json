@@ -1,0 +1,22 @@
+{
+ "question": "Post-layout campaign of revision F2 on layout E8, netlist E8 (nothing inherited): x32 offset <= 5 mV and drift span <= 1 mV (D22) over CM 0.5-2.8 V, tt/ss/ff, 3.0/3.3/3.6 V at the nominal bias and 6.9/15.4 uA; loops PM >= 63 deg, GM >= 10 dB with validity at tt/ss/ff/sf/fs/ssx/ffx and hold states; f_c >= 1.0 MHz at ss; pole matching <= 1 % (nominal, 20 MC at ss); output CM 0.600 +- 0.030 V; noise x32 ss <= 35 uV; settling <= 0.25 LSB incl. ss x1; THD <= 0.1 % -- single job of the campaign run ahead of the tail (the E7 failing row DM1 ffx 6.9 uA CM 0.5 V; same netlist and job)",
+ "variants": {
+  "E8": {
+   "netlist": "$G1_RESULTS_ROOT/r1_afe/pexrc-layout-e8-dev19/r1_afe_post_rc.spice"
+  }
+ },
+ "jobs": [
+  {
+   "tag": "stb_ffx_ib6.9_cm0.5",
+   "tmpl": "tb_afe_stb.cir",
+   "corner": "ffx",
+   "subs": {
+    "VCMI": 0.5,
+    "KLIST": "0 5",
+    "LLIST": "1 2 4 5",
+    "IB": "6.9u",
+    "CL": "2.8p"
+   }
+  }
+ ]
+}

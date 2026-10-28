@@ -1,0 +1,28 @@
+{
+ "question": "Layout E8 (track T3l): calibration of the magic-capacitance RC view (pex/magic_rc.sh) for the DM1/CM1 phase margin at ffx 6.9 uA CM 0.5 V x1: E7-dev17 with kpex 2.5D C (record 62.07 deg) against the same layout with magic C, and screen build s4b with magic C",
+ "variants": {
+  "E7K": {
+   "netlist": "$G1_RESULTS_ROOT/r1_afe/pexrc-layout-e7-dev17/r1_afe_post_rc.spice"
+  },
+  "E7M": {
+   "netlist": "$G1_RESULTS_ROOT/r1_afe/pexmrc-layout-e7-s1t/r1_afe_post_rc.spice"
+  },
+  "S4BM": {
+   "netlist": "$G1_RESULTS_ROOT/r1_afe/pexmrc-layout-e8-s4b/r1_afe_post_rc.spice"
+  }
+ },
+ "jobs": [
+  {
+   "tag": "stb_ffx_ib6.9_cm0.5_x1dm1",
+   "tmpl": "tb_afe_stb.cir",
+   "corner": "ffx",
+   "subs": {
+    "VCMI": 0.5,
+    "KLIST": "0",
+    "LLIST": "1 2",
+    "IB": "6.9u",
+    "CL": "2.8p"
+   }
+  }
+ ]
+}

@@ -28,6 +28,7 @@ Layers: no TopMetal2 anywhere; TopMetal1 only on the MIM top plates and their 1.
 has its top plate on TopMetal1); boundary on 189/4 only.
 """
 import json, math, os, sys
+import numpy as np
 HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, HERE)
 sys.path.insert(0, os.path.join(HERE, '..', '..', '..', '..', 'g1-guardian', 'blocks', 'g1_sense', 'layout'))
@@ -70,6 +71,20 @@ FWIDE = globals().get('fwide', '1') == '1'  # E6: widen the OTA folding nodes fn
 X1CBAL = globals().get('x1cbal', '1') == '1'  # E6: after the x1 widening, dead-end stubs on the net with less widened area (C balance; 1 widened edge side ~ 2 stub edges)
 SYM = globals().get('sym', '0') == '1'  # E7: mirrored stage-1 input path: NMOS TG row xs2p | xs1p | xs1n reversed | xs2n reversed | middle, stage-1 resistor units p1..p8 pf | nf n8..n1 (n segments reversed), resistor groups C, D before A so the unit array lies under the TG mirror axis (E6: n-side a<k> routes 60-100 um longer than p, a/af/m1 port R p - n -16 to -40 Ohm, pex/path_balance.py)
 CTRIM = [(kv.split(':')[0], int(kv.split(':')[1]), int(kv.split(':')[2])) for kv in globals().get('ctrim', '').split(',') if kv.count(':') == 2]  # E7: C trim stubs net:layer:edges (default none)
+X1BUS = globals().get('x1bus', '0') == '1'  # E8: low-R x1 structure: x1p/x1n routed before every other net (current pins first: UF head, NMOS TG bar, PMOS TG bar; gate rails and C_F plates after), widened on Metal3 + Metal4 before the other nets route and then reserved; Metal3 feed strip with a Via2 per node over the centre of each TG bar; double Via1/Via2 stack at the UF head (E7: single vias at the bar centre and the head, PMOS current through the OTA1 gate rail; 90-125 Ohm port to head)
+X1FEED = int(globals().get('x1feed', '2'))  # E8: feed strip half length in grid nodes (2 = 5 Via2)
+X1STRAP = globals().get('x1strap', '0') == '1'  # E8: Metal3 strap with one Via2 per node over the whole TG bar; only the centre x1feed nodes are router pins, the other strap nodes are blocked (the route enters at the bar centre)
+X1VCL = globals().get('x1vcl', '0') == '1'  # E8: at every Metal3/Metal4 layer change of the x1 bus, the largest free rectangle (up to 3 x 3 nodes) around the via is taken on both layers (one Via3 per node with x1vfill)
+X1NOW = dict((kv.split('@')[0], tuple(float(v) for v in kv.split('@')[1].split('/'))) for kv in globals().get('x1nowide', '').split(',') if '@' in kv)  # E8: R trim of one x1 branch: no widening of the net's Metal3/Metal4 edges inside the y window net@ylo/yhi (um)
+PRENETS = [n for n in globals().get('prenets', '').split(',') if n]  # E8: further input-current-path nets (a<k>, af) routed right after the x1 bus, widened on Metal3 + Metal4 (one track per side) and reserved; 'a' = xs1p_a1..8 + xs1n_a1..8, 'af' = xs1p_af + xs1n_af
+PRENETS = sum([['xs1%s_a%d' % (s_, q) for q in range(1, 9) for s_ in 'pn'] if n == 'a' else ['xs1p_af', 'xs1n_af'] if n == 'af' else [n] for n in PRENETS], [])
+PREW = globals().get('prew', '2')  # E8: widening of the prenets: '2' both sides, '1' one side, '0' none
+X1W2 = globals().get('x1w2', '0') == '1'  # E8: second widening pass of the x1 bus (one more track on each side, up to 3.5 um)
+X1VFILL = globals().get('x1vfill', '0') == '1'  # E8: Via3 on every node where the x1 bus has Metal3 and Metal4 (layer changes as arrays)
+X1HEADARR = globals().get('x1headarr', '0') == '1'  # E8: 2 x 2 Via1 and Via2 per head node (pitch 0.5 um), neighbour nodes reserved
+X1RAILV = globals().get('x1railv', '0') == '1'  # E8: Via1 rows at 0.5 um pitch along every TG rail under the x1 bars (E7: one Via1 per grid node)
+O1FIRST = globals().get('o1first', '0') == '1'  # E8: OTA1 first-stage outputs o1n/o1p routed right after the x1 nets (E7: o1n +32.6 fF since E5, about 0.47 deg of DM1 PM)
+DUMPNETS = [n for n in globals().get('dumpnets', '').split(',') if n]  # E8: write the router geometry of these nets to <out>_<cell>_nets.json
 SUPPIN = float(globals().get('suppin', '1.0'))  # E5 (assembly try f, chip-level EM): vdd/vss block pins this wide at the macro edge (um), same centres; E4: 0.4
 BIGFOOT = globals().get('bigfoot', '1') == '1'  # E5: strap feet 5 x 4 Via3/Via4 (E2-E4: 3 x 2); the foot is shared by both channels (top-level mutual supply impedance 4.2-4.9 Ohm, pex/top_supply_z.py)
 TGROWS = globals().get('tgrows', 'e5')  # E5: 'e5' = stage-1 PMOS TGs of both sides in one row, mirrored (x1p/x1n bars at the same y); 'e4' = E4 split
@@ -79,6 +94,8 @@ SYMENTRY = globals().get('symentry', '1') == '1'  # E6: every channel vdd/vss ed
 # P/N pairs of the channel and of the top level, balanced per layer after routing
 CH_PAIRS = [('outp', 'outn'), ('op2', 'on2'), ('m1p', 'm1n'), ('x1p', 'x1n'), ('x2p', 'x2n'), ('inp', 'inn')]
 CH_FIRST = ['xa1_vcms', 'xa2_vcms'] + [n for pr in CH_PAIRS for n in pr]
+if O1FIRST:
+    CH_FIRST = ['xa1_o1n', 'xa1_o1p'] + CH_FIRST
 if globals().get('x1order', 'pn') == 'np':   # E7: route x1n before x1p (the first-routed x1 net takes the short crossing of the OTA NMOS rows)
     CH_FIRST = [('x1n' if n == 'x1p' else 'x1p' if n == 'x1n' else n) for n in CH_FIRST]
 TOP_PAIRS = [('souts_p', 'souts_n'), ('soutc_p', 'soutc_n'), ('sinp', 'sinn'), ('cosp', 'cosn')]
@@ -411,9 +428,9 @@ class Block:
                 if l != 0 or abs(y - yr) > 1e-6:
                     continue
                 if 0 < x1 - (x + 0.2) < 0.3:
-                    self.box('M2', x + 0.2 - 0.01, yr - 0.2, x1 + 0.01, yr + 0.2)
+                    self.box('M2', x - 0.15, yr - 0.2, x1 + 0.01, yr + 0.2)   # E8: cover the 0.3 um wire too (no 0.04 um notch)
                 elif 0 < (x - 0.2) - x2 < 0.3:
-                    self.box('M2', x2 - 0.01, yr - 0.2, x - 0.2 + 0.01, yr + 0.2)
+                    self.box('M2', x2 - 0.01, yr - 0.2, x + 0.15, yr + 0.2)
         # one label per routed net (text datatype 25 on the layer of a node of the net)
         for k, paths in self.R.paths.items():
             if not paths:
@@ -433,13 +450,23 @@ class Block:
 
 def route_and_balance(blk, first, pairs, cellname, log=print):
     R = blk.R
-    ok = R.route_all(rounds=ROUTE_ROUNDS, log=log, first=first, lock=LOCK)
+    hidden = {}
+    if X1BUS and cellname == 'r1_afe_ch':     # E8: the pre-routed x1 bus is not re-routed and not ripped up
+        for n_ in tuple(X1NETS) + tuple(n2 for n2 in PRENETS if n2 in R.nets and R.nets[n2] in R.lock):
+            hidden[R.nets[n_]] = R.pins[R.nets[n_]]; R.pins[R.nets[n_]] = []
+    keep_lock = set(hidden)
+    ok = R.route_all(rounds=ROUTE_ROUNDS, log=log, first=[f for f in first if not hidden or (f not in X1NETS and f not in PRENETS)], lock=LOCK)
+    R.lock |= keep_lock
     if not ok:
         log('%s: locked priority routing failed %s; re-routing without the lock' % (cellname, R.failed))
         for k in list(R.paths):
-            R.unroute(k)
-        R.lock = set()
-        ok = R.route_all(rounds=ROUTE_ROUNDS, log=log, first=first, lock=False)
+            if k not in hidden:
+                R.unroute(k)
+        R.lock = set(keep_lock)
+        ok = R.route_all(rounds=ROUTE_ROUNDS, log=log, first=[f for f in first if not hidden or (f not in X1NETS and f not in PRENETS)], lock=False)
+        R.lock |= keep_lock
+    for k_, p_ in hidden.items():
+        R.pins[k_] = p_
     before, after, trims = {}, {}, {}
     for a, b in pairs:
         if a not in R.nets or b not in R.nets:
@@ -465,6 +492,8 @@ def route_and_balance(blk, first, pairs, cellname, log=print):
                         trims[key][l] += R.add_stub(R.nets[net], l, int(n), log=log)
     if ok and X1WIDE:
         for net in X1NETS + ('inp', 'inn') + tuple(sorted(n_ for n_ in X1WMODE if n_ not in X1NETS + ('inp', 'inn'))):   # E5: the summing nodes carry the stage-1 input current (31 uA at x32, CM 2.5 V); E6: inp/inn optional; E7: any net named in x1wmode (a<k>, af, m1 of the input-current path)
+            if X1BUS and net in X1NETS:
+                continue          # E8: widened in x1_preroute
             if net in R.nets and X1WMODE.get(net, (1, 2) if net in X1NETS else ()):
                 sd = (1,) if net in X1WHALF else (1, -1)
                 nb, nv = R.widen(R.nets[net], layers=X1WMODE.get(net, (1, 2)), sides=sd, ywin=X1WY.get(net))
@@ -496,6 +525,15 @@ def route_and_balance(blk, first, pairs, cellname, log=print):
                 got = R.add_stub(R.nets[net], l, ne, log=log)
                 blk.stats.setdefault('ctrim', []).append(dict(net=net, layer=l, asked=ne, placed=got))
                 log('%s: C trim %s layer %d: %d of %d edges' % (cellname, net, l, got, ne))
+    if ok and DUMPNETS:       # E8: per-net router geometry (paths, wide boxes, extra vias, pins) for analysis
+        dd = {}
+        for net in DUMPNETS:
+            if net in R.nets:
+                k = R.nets[net]
+                dd[net] = dict(paths=[[list(map(int, n)) for n in p_] for p_ in R.paths.get(k, [])],
+                               fat=[list(map(int, f)) for f in R.fat.get(k, [])], xvia=[list(map(int, v)) for v in R.xvia.get(k, [])],
+                               pins=[[list(map(int, n)) for n in p_] for p_ in R.pins.get(k, [])])
+        json.dump(dict(cell=cellname, P=0.8, x0=R.x0, y0=R.y0, nets=dd), open(OUT.replace('.gds', '_%s_nets.json' % cellname), 'w'))
     if ok and WIDEN:
         for net in ('vss', 'vdd'):        # E2: supply widening (RC extraction showed 70-140 Ohm supply paths)
             if net in R.nets:
@@ -1005,7 +1043,21 @@ def x1_bars(blk, nets, log=print, centre=False):
                             R.res[l, i, jj] = BLOCK
                     if R.res[1, ic, j] == -1:
                         R.res[1, ic, j] = k
-                    R.pins[k] = [p for p in R.pins[k] if p not in run] + [[(0, ic, j)]]
+                    feed = [(0, ic, j)]
+                    if X1BUS and X1RAILV and net in X1NETS:
+                        for (l, i, jj) in nodes:
+                            blk.m1pins.pop((i, jj), None)     # E8: Via1 rows drawn with the bar instead of one per node
+                    if X1BUS and net in X1NETS:
+                        # E8: Metal3 feed strip over the bar centre, one Via2 per node (E7: one Via2, 9 Ohm)
+                        hl = max(ic - ia, ib - ic) if X1STRAP else X1FEED
+                        fi = [i for i in range(ic - hl, ic + hl + 1) if ia <= i <= ib and R.res[1, i, j] in (-1, k) and R.occ[1, i, j] == -1]
+                        fi = [i for i in fi if all(q in fi for q in range(min(i, ic), max(i, ic) + 1))]
+                        for i in fi:
+                            R.res[1, i, j] = k if abs(i - ic) <= X1FEED else BLOCK
+                        feed = [(1, i, j) for i in fi if abs(i - ic) <= X1FEED] + [(0, ic, j)]
+                        blk.x1feeds = getattr(blk, 'x1feeds', []) + [(net, R.xy(min(fi), j)[0], R.xy(max(fi), j)[0], R.xy(ic, j)[1], [R.xy(i, j)[0] for i in fi])]
+                        log('x1 feed %s: %d Via2 at y %.2f' % (net, len(fi), R.xy(ic, j)[1]))
+                    R.pins[k] = [p for p in R.pins[k] if p not in run] + [feed]
                 else:
                     R.pins[k] = [p for p in R.pins[k] if p not in run] + [nodes]
                 xa, y = R.xy(ia, j); xb, _ = R.xy(ib, j)
@@ -1013,6 +1065,188 @@ def x1_bars(blk, nets, log=print, centre=False):
                 log('x1 bar %s: y %.2f x %.2f-%.2f, %d rails, %d rail nodes' % (net, y, xa, xb, len(run), len(rails)))
     blk.stats['x1_bars'] = [dict(net=b[0], x=[b[1], b[2]], y=b[3], rail_nodes=len(b[4])) for b in blk.bars]
     log('bars: %s' % blk.stats['x1_bars'])
+
+
+def x1_head(blk, log=print):
+    """E8: double Via1 + Via2 stack at the UF head of x1p / x1n (the main node of the summing net): the head pin node and
+    the next node away from the resistor body are reserved; Metal1 stub, Metal2 and Metal3 pads span both; the router pin
+    becomes the two Metal3 nodes (E7: one Via1 and one Via2 in series, 18 Ohm)."""
+    R = blk.R
+    blk.x1heads = []
+    for net in X1NETS:
+        if net not in R.nets:
+            continue
+        k = R.nets[net]
+        hp = [p for p in blk.ports if p['net'] == net and p['dev'].endswith('_xuf_xr_s0') and p['pt']]
+        if not hp:
+            log('x1 head %s: UF head port not found' % net); continue
+        xp, yp = hp[0]['pt']
+        i, j = R.ij(xp, yp)
+        d = -1 if yp < blk.H / 4 else 1
+        j2 = j + d
+        pin = [p_ for p_ in R.pins[k] if (0, i, j) in p_]
+        if not pin or not all(R.res[l, i, j2] == -1 for l in (0, 1)) or R.res[1, i, j] not in (-1, k):
+            log('x1 head %s: second node not free, single via kept' % net); continue
+        arr = False
+        if X1HEADARR and all(R.res[l, i + di, jj] in (-1, k) and R.occ[l, i + di, jj] == -1 for l in (0, 1) for di in (-1, 1) for jj in (j, j2)):
+            for l in (0, 1):
+                for di in (-1, 1):
+                    for jj in (j, j2):
+                        R.res[l, i + di, jj] = k
+            arr = True
+        for l in (0, 1):
+            R.res[l, i, j] = k; R.res[l, i, j2] = k
+        R.pins[k] = [p_ for p_ in R.pins[k] if p_ is not pin[0]] + [[(1, i, j), (1, i, j2), (0, i, j)]]
+        y2 = R.xy(i, j2)[1]
+        blk.x1heads.append((net, xp, min(yp, y2), max(yp, y2), arr))
+        log('x1 head %s: x %.2f y %.2f / %.2f, %s' % (net, xp, yp, y2, '2 x 2 Via1 + 2 x 2 Via2 per node' if arr else '2 Via1 + 2 Via2'))
+
+
+def x1_widen2(R, k):
+    """E8: second widening pass: next to every side track that widen() took on Metal3/Metal4, take the next parallel
+    track too (free nodes only); returns the number of boxes."""
+    n = 0
+    for p_ in list(R.paths.get(k, [])):
+        for a, b in zip(p_[:-1], p_[1:]):
+            if a[0] != b[0] or a[0] not in (1, 2):
+                continue
+            l = a[0]; di, dj = b[1] - a[1], b[2] - a[2]
+            for sd in (1, -1):
+                oi, oj = (0, sd) if di else (sd, 0)
+                a1 = (l, a[1] + oi, a[2] + oj); b1 = (l, b[1] + oi, b[2] + oj)
+                a2 = (l, a[1] + 2 * oi, a[2] + 2 * oj); b2 = (l, b[1] + 2 * oi, b[2] + 2 * oj)
+                if not (R.inside(a2[1], a2[2]) and R.inside(b2[1], b2[2])):
+                    continue
+                if not (R.occ[a1] == k and R.occ[b1] == k):
+                    continue
+                ok_ = all(R.res[q] in (-1, k) and R.occ[q] in (-1, k) for q in (a2, b2)) and R.res[a2] != k and R.res[b2] != k
+                if not ok_:
+                    continue
+                R.occ[a2] = k; R.occ[b2] = k
+                i1 = min(a1[1], b1[1], a2[1], b2[1]); i2 = max(a1[1], b1[1], a2[1], b2[1])
+                j1 = min(a1[2], b1[2], a2[2], b2[2]); j2 = max(a1[2], b1[2], a2[2], b2[2])
+                R.fat.setdefault(k, []).append((l, i1, j1, i2, j2)); n += 1
+    return n
+
+
+def x1_viaclusters(R, k):
+    """E8: around every Metal3/Metal4 via of net k, take the largest rectangle of up to 3 x 3 nodes that is free (or
+    own) on both layers and draw it on both layers; x1vfill then puts a Via3 on every node of it. Returns the count."""
+    vias = set()
+    for p_ in R.paths.get(k, []):
+        for a, b in zip(p_[:-1], p_[1:]):
+            if a[0] != b[0] and min(a[0], b[0]) == 1:
+                vias.add((a[1], a[2]))
+    def ok(i, j):
+        return R.inside(i, j) and all(R.res[l, i, j] in (-1, k) and R.occ[l, i, j] in (-1, k) for l in (1, 2)) \
+            and not (R.res[1, i, j] == k and R.occ[1, i, j] == -1) and not (R.res[2, i, j] == k and R.occ[2, i, j] == -1)
+    rects = [(-1, 1, -1, 1), (-1, 1, 0, 1), (-1, 1, -1, 0), (0, 1, -1, 1), (-1, 0, -1, 1), (0, 1, 0, 1), (-1, 0, 0, 1), (0, 1, -1, 0), (-1, 0, -1, 0)]
+    n = 0
+    for (i, j) in sorted(vias):
+        for (a0, a1, b0, b1) in rects:
+            nodes = [(i + a, j + b) for a in range(a0, a1 + 1) for b in range(b0, b1 + 1)]
+            if all(ok(*q) for q in nodes):
+                for l in (1, 2):
+                    for q in nodes:
+                        R.occ[l, q[0], q[1]] = k
+                    R.fat.setdefault(k, []).append((l, i + a0, j + b0, i + a1, j + b1))
+                n += 1
+                break
+    return n
+
+
+def x1_preroute(blk, log=print):
+    """E8: route x1p / x1n before every other net, current pins first (UF head, TG bar feeds from south to north, then
+    the gate rails and C_F plates as leaves, so no input current passes a gate rail), widen on Metal3 + Metal4 on both
+    sides while the grid is still free, then reserve every node of the bus for its net (no rip-up by later nets)."""
+    R = blk.R
+    out = {}
+    for net in X1NETS:
+        k = R.nets[net]
+        pins = list(R.pins[k])
+        heads = [p for p in pins if any(n[0] == 1 for n in p) and len(p) == 3 and p[2][0] == 0 and p[0][1] == p[2][1]]
+        feeds = sorted([p for p in pins if p not in heads and any(n[0] == 1 for n in p) and any(n[0] == 0 for n in p)
+                        and len({n[2] for n in p}) == 1 and len(p) >= 2], key=lambda p: p[0][2])
+        if len(heads) != 1:
+            heads = [min(pins, key=lambda p: min(n[2] for n in p))]
+        rest = [p for p in pins if p not in heads and p not in feeds]
+        tree = set(heads[0]); paths = []
+        for tp in feeds:
+            path = R.astar(k, list(tree), list(tp))
+            if path is None:
+                log('x1 preroute %s: feed not reachable' % net); return False
+            for n in path:
+                R.occ[n] = k; tree.add(n)
+            tree.update(tp); paths.append(path)
+        left = list(rest)
+        while left:
+            path = R.astar(k, list(tree), [n for p in left for n in p])
+            if path is None:
+                log('x1 preroute %s: leaf not reachable' % net); return False
+            hit = [p for p in left if path[-1] in p][0]; left.remove(hit)
+            for n in path:
+                R.occ[n] = k; tree.add(n)
+            tree.update(hit); paths.append(path)
+        R.paths[k] = paths
+        cur = sum(len(p) for p in paths[:len(feeds)])
+        if net in X1NOW:
+            # E8: the edges inside the window stay one track wide (R trim of that branch); widen() sees only the others
+            lo_, hi_ = X1NOW[net]
+            keep_paths = R.paths[k]
+            def inwin(a, b):
+                return lo_ <= R.xy(a[1], a[2])[1] <= hi_ and lo_ <= R.xy(b[1], b[2])[1] <= hi_
+            split = []
+            for p_ in keep_paths:
+                cur_ = [p_[0]]
+                for a, b in zip(p_[:-1], p_[1:]):
+                    if inwin(a, b):
+                        if len(cur_) > 1:
+                            split.append(cur_)
+                        cur_ = [b]
+                    else:
+                        cur_.append(b)
+                if len(cur_) > 1:
+                    split.append(cur_)
+            R.paths[k] = split
+            nb, nv = R.widen(k, layers=(1, 2), sides=(1, -1))
+            if X1W2:
+                nb += x1_widen2(R, k)
+            R.paths[k] = keep_paths
+        else:
+            nb, nv = R.widen(k, layers=(1, 2), sides=(1, -1))
+        if X1W2 and net not in X1NOW:
+            nb2 = x1_widen2(R, k)
+            nb += nb2
+        ncl = x1_viaclusters(R, k) if X1VCL else 0
+        if X1VFILL:
+            have = set(tuple(v) for v in R.xvia.get(k, []))
+            for p_ in R.paths[k]:
+                for a, b in zip(p_[:-1], p_[1:]):
+                    if a[0] != b[0]:
+                        have.add((min(a[0], b[0]), a[1], a[2]))
+            ii, jj = np.where((R.occ[1] == k) & (R.occ[2] == k))
+            for i, j in zip(ii.tolist(), jj.tolist()):
+                if (1, i, j) not in have and R.res[1, i, j] in (-1, k) and R.res[2, i, j] in (-1, k):
+                    R.xvia.setdefault(k, []).append((1, i, j)); nv += 1
+        m = (R.occ == k) & (R.res == -1)
+        R.res[m] = k
+        R.lock.add(k)
+        out[net] = dict(feeds=len(feeds), leaves=len(rest), current_path_nodes=cur, widen_boxes=nb, extra_vias=nv, via_clusters=ncl)
+        log('x1 preroute %s: %s' % (net, out[net]))
+    for net in PRENETS:          # E8: the rest of the input-current path, routed before every other net
+        if net not in R.nets:
+            continue
+        k = R.nets[net]
+        if not R.route_net(k):
+            R.unroute(k); log('preroute %s failed, left to the normal order' % net); continue
+        nb, nv = R.widen(k, layers=(1, 2), sides=(1, -1) if PREW == '2' else (1,)) if PREW in ('1', '2') else (0, 0)
+        m = (R.occ == k) & (R.res == -1)
+        R.res[m] = k
+        R.lock.add(k)
+        out[net] = dict(nodes=sum(len(p_) for p_ in R.paths[k]), widen_boxes=nb, extra_vias=nv)
+    log('preroute (input path): %s' % {n_: out[n_] for n_ in PRENETS if n_ in out})
+    blk.stats['x1_preroute'] = out
+    return True
 
 
 def supply_bars(blk, log=print):
@@ -1120,6 +1354,10 @@ def finish_channel(blk, cblocks, Wc, Hc, log=print):
         x1_bars(blk, PAIRBAR_NETS, log=log, centre=True)
     if SUPBAR:
         supply_bars(blk, log=log)
+    if X1BUS:
+        x1_head(blk, log=log)
+        if not x1_preroute(blk, log=log):
+            raise SystemExit('x1 preroute failed')
     ok = route_and_balance(blk, CH_FIRST, CH_PAIRS, 'r1_afe_ch', log=log)
     blk.stats['route_ok'] = ok
     blk.stats['route_failed'] = R.failed
@@ -1127,8 +1365,37 @@ def finish_channel(blk, cblocks, Wc, Hc, log=print):
     draw_vdd_grid(blk)
     for (net, xa, xb, y, rails) in getattr(blk, 'bars', []):
         blk.box('M2', xa - 0.2, y - 0.2, xb + 0.2, y + 0.2)
+        if X1RAILV and X1BUS and net in X1NETS:
+            # E8: Via1 row at 0.5 um pitch along each TG rail (port box) under the bar
+            nrv = 0
+            for p in blk.ports:
+                b = p['box']
+                if p['net'] != net or not b or not (b[1] - 1e-3 <= y <= b[3] + 1e-3) or b[2] < xa - 0.5 or b[0] > xb + 0.5:
+                    continue
+                a0, a1 = max(b[0] + 0.155, xa - 0.1), min(b[2] - 0.155, xb + 0.1)
+                if a1 < a0:
+                    continue
+                nv_ = int((a1 - a0) / 0.5 + 1e-6) + 1
+                x0_ = (a0 + a1) / 2 - (nv_ - 1) * 0.25
+                for q in range(nv_):
+                    blk.D.sq('Via1', round(round((x0_ + 0.5 * q) / 0.005) * 0.005, 3), y, VIA)   # E8: on the 5 nm grid
+                nrv += nv_
+            blk.stats.setdefault('x1_rail_vias', {})[net + '@%.1f' % y] = nrv
+            continue
         for (x, yy) in rails:
             blk.D.sq('Via1', x, yy, VIA); blk.D.sq('M1', x, yy, 0.34)
+    for (net, xa, xb, y, xs) in getattr(blk, 'x1feeds', []):     # E8: Metal3 feed strip, one Via2 per node
+        blk.box('M3', xa - 0.2, y - 0.2, xb + 0.2, y + 0.2)
+        for x in xs:
+            blk.D.sq('Via2', x, y, VIA)
+    for (net, x, ya, yb, arr) in getattr(blk, 'x1heads', []):      # E8: double Via1 / Via2 at the UF head
+        hw = 0.45 if arr else 0.2
+        blk.box('M1', x - (0.4 if arr else 0.17), ya - 0.2, x + (0.4 if arr else 0.17), yb + (0.4 if arr else 0.2))   # E8: joins the resistor head strip (no M1.b notch)
+        blk.box('M2', x - hw, ya - 0.2, x + hw, yb + 0.2)
+        blk.box('M3', x - hw, ya - 0.2, x + hw, yb + 0.2)
+        for y in (ya, yb):
+            for xx in ((x - 0.25, x + 0.25) if arr else (x,)):
+                blk.D.sq('Via1', xx, y, VIA); blk.D.sq('Via2', xx, y, VIA)
     for (x, y) in getattr(blk, 'supfeeds', []):
         blk.D.sq('Via3', x, y, VIA); blk.D.sq('M4', x, y, 0.40)
     for (net, xa, xb, y, rnodes, _d) in getattr(blk, 'supbars', []):
@@ -1367,7 +1634,7 @@ def main():
     st['vddgrid'] = blk.stats.get('vddgrid')
     st['vssgrid'] = blk.stats.get('vssgrid')
     st['top'].update(entries=top.stats.get('entries'), tm1_vias=top.stats.get('tm1_vias'))
-    st['channel'].update(supply_bars=blk.stats.get('supply_bars'), bars=blk.stats.get('x1_bars'), widen_x1=blk.stats.get('widen_x1'), widen_f=blk.stats.get('widen_f'), x1_cbal=blk.stats.get('x1_cbal'))
+    st['channel'].update(supply_bars=blk.stats.get('supply_bars'), bars=blk.stats.get('x1_bars'), widen_x1=blk.stats.get('widen_x1'), widen_f=blk.stats.get('widen_f'), x1_cbal=blk.stats.get('x1_cbal'), x1_preroute=blk.stats.get('x1_preroute'), x1_rail_vias=blk.stats.get('x1_rail_vias'), ctrim=blk.stats.get('ctrim'), x1_heads=[list(h) for h in getattr(blk, 'x1heads', [])], x1_feeds=[list(f[:4]) + [len(f[4])] for f in getattr(blk, 'x1feeds', [])])
     st['widen'] = dict(channel=blk.stats.get('widen'), top=top.stats.get('widen'), strap_vias=top.stats.get('strap_vias'))
     json.dump(st, open(os.path.join(os.path.dirname(OUT), 'r1_afe_layout.json'), 'w'), indent=1)
     nets = {}

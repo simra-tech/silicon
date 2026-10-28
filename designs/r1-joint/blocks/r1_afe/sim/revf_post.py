@@ -101,7 +101,7 @@ if R['pole']:
     w = max(v['worst_pct'] for v in R['pole'].values()); V['pole <= 1 %'] = ('passed' if w <= 1 else 'failed', R['pole'])
 if R['noise']:
     V['noise x32 ss <= 35'] = ('passed' if R['noise'].get('x32', 99) <= 35 else 'failed', R['noise'])
-if R['settle']:
+if any(R['settle'].values()):     # E8: corners with fewer than 3 finished levels give an empty entry (not run)
     w = max(v['resid_lsb'] for d in R['settle'].values() for v in d.values())
     V['settle resid <= 0.25 LSB'] = ('passed' if w <= 0.25 else 'failed', w)
 if R['thd'] is not None:

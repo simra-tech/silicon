@@ -8,6 +8,215 @@ All numbers in this file are **simulated** unless they are marked estimated. Not
 Track T3 of `../README.md`. Specification row: `../../specification/R1_TOP_LEVEL_SPECIFICATION.md` §2 (`r1_afe`),
 §4 (encoder input), gate V1. Input standard and accuracy budget: `../../specification/studies/S1_ENCODER_CHAIN_20261020.md`.
 
+## Layout E8 (2026-10-27/28, track T3l; not closed)
+
+Status: **not closed** (stopped at the time budget, 04:37 CET). Layout of record: `layout/r1_afe.gds` = `layout-e8-dev19`
+(sha256 `8942eda3…`); E7 kept as `layout/r1_afe_revE7.gds`. All numbers are **simulated** (ngspice-46, IHP SG13G2
+`84374023`, KLayout 0.30.9, kpex 2.5D). Nothing is measured. Netlist F2 (`schematic/r1_afe.spice`, sha256 `9e262f8c…`) is
+not changed. Same 21 pins and box (192.8 × 494.4 µm).
+Goal: close the post-layout record with a structural change of the `x1` summing-node wiring (target ≤ 25 Ω per side from
+every input-TG port to the UF head, |ΔR| ≤ 3 Ω, |ΔC| ≤ 1 fF), shorter OTA1 `o1n`/`o1p`, no `m1p` widening; then one full
+campaign on the final extraction (D22: offset ≤ 5 mV and drift span ≤ 1 mV over CM 0.5/1.5/2.5/2.8 V, tt/ss/ff, 3.0/3.3/3.6 V,
+nominal bias and 6.9/15.4 µA).
+
+Result in short: the `x1` R falls from 90–125 Ω to about 20 Ω per side; the CM 2.5 V drift span falls from 8.21 to 0.85 mV;
+static offset ≤ 3.18 mV everywhere. Open: drift span up to 1.53 mV (limit 1 mV), DM1 at ffx 6.9 µA 62.16° (limit 63°),
+`x1` ΔC −1.1 fF (limit 1 fF), and part of the loop, settling and CM-step set not run.
+
+### Status (layout E8, iteration 1 = final; campaign stopped at the time budget)
+
+Campaign runs (netlist `pexrc-layout-e8-dev19`, all jobs from `sim/specs/post_e8.json`, nothing inherited):
+`r1afe-post-e8d19b` (stopped 03:47 to reorder; reparsed as `r1afe-post-e8d19b-stop`), tail `r1afe-post-e8d19c` (spec
+`sim/specs/post_e8_tail.json`, the not-run jobs of the first run, reparsed as `r1afe-post-e8d19c-stop`), the single row
+`r1afe-post-e8d19-ffx69`, `r1afe-supl-e8d19`, `r1afe-cmstep-e8d19` (reparsed as `-stop`). Reduction
+`sim/revf_post.py` → `sim/results/post-e8d19-summary.json`.
+
+| Criterion | Limit | E8-dev19 | E7-dev17 | Evidence | Status |
+| --- | --- | --- | --- | --- | --- |
+| ×32 offset, 73 `op_*` points (CM 0.5/1.5/2.0/2.5/2.8 V, tt 3.0/3.3/3.6 V, ss, ff, ffx; nominal, 6.9, 15.4 µA) | ≤ 5 mV | −3.18 … −0.52 mV | +6.00 / −5.61 mV | `sim/results/r1afe-post-e8d19b-stop.json` | **passed** |
+| Drift span (D22), table below | ≤ 1 mV | worst **1.53 mV** (CM 0.5 V, 15.4 µA); 14 of 39 spans > 1 mV | 8.21 mV | same | **failed** by 0.53 mV |
+| Loops DM1, DM2, CM1, CM2 at tt, ss, ff, ssx, sf, fs (CM 0.5 V; CM 2.5 V except sf) | PM ≥ 63°, GM ≥ 10 dB, valid | PM ≥ 66.89° (ff hold DM2), GM ≥ 13.23 dB | — | `sim/results/post-e8d19-summary.json` | **passed** (valid rows) |
+| DM1 ffx 6.9 µA CM 0.5 V ×1 | ≥ 63° | **62.16°** (GM 26.73 dB) | 62.07° | `sim/results/r1afe-post-e8d19-ffx69.json` | **failed** by 0.84° |
+| Loops not run: sf CM 2.5 V; ffx 15.36 µA CM 0.5/2.5 V; ffx 6.9 µA CM 2.5 V; tt 6.9/15.4 µA | as above | — | — | `runs/r1afe-post-e8d19c-stop` (`not_run`) | **not run** |
+| Hold states (C_L 1 fF), CM 2.5 V | as above | ff, ssx: PM ≥ 66.89°; tt, ss, sf, fs, ffx | — | same | ff, ssx **passed**; 5 corners **not run** |
+| Flagged CM rows (15 rows `pm_valid` false: 14 × CM2 at CM 2.5 V or ×32, 1 × CM1 ff CM 0.5 V ×1) | supply-network method | see the two rows below | — | `sim/results/post-e8d19-summary.json` (`invalid`) | **closed by method** (loop gain); CM step partly **not run** |
+| Supply-path DC loop gain, tt/ss/ff, CM 0.5/2.5 V, ×1/×32, `vss`/`vdd`/both | ≤ −20 dB | worst −82.30 dB (ff CM 0.5 V ×1, both); worst \|T\| at any frequency −70.11 dB | — | `sim/results/r1afe-supl-e8d19.json` | **passed** |
+| CM step, tt ×1 | ≤ 1 loop-response overshoot | stage-1 CM ≤ 1 on every event; output CM 2 (2 mV band) on the two input-CM steps (feed-through peak 4.1–6.2 mV, settles in 136–162 ns), ≤ 1 on the other events | — | `sim/results/r1afe-cmstep-e8d19-stop.json` | **closed by method with a note** (as E6) |
+| CM step, tt/ss/ff ×32 | as above | — | — | same (`not_run`) | **not run** |
+| f_c at ss (and 10 other `ac_*` points) | ≥ 1.0 MHz | 1.0727 MHz (ss CM 0.5 V); others 1.11–1.81 MHz | — | `sim/results/r1afe-post-e8d19c-stop.json` | **passed** |
+| Pole matching, MC at ss (`acmc_ss_p0` and `_p1`) | ≤ 1 % | worst 0.832 % (120 values) | 0.688 % (p1 only) | `sim/results/post-e8d19-summary.json` | **passed** |
+| Output CM, every `op_*` point | 0.600 ± 0.030 V | 0.5894 … 0.5977 V | — | same | **passed** |
+| Noise ×32, ss, input-referred | ≤ 35 µV | 32.70 µV | — | `sim/results/r1afe-post-e8d19c-stop.json` | **passed** |
+| THD (`tran_tt_x1`) | ≤ 0.1 % | 0.0104 % | — | same | **passed**; `tran_tt_x32` **not run** |
+| Settling (15 jobs, incl. ss ×1) | ≤ 0.25 LSB residual | 1 of 15 jobs finished (ss ×1 +100 %); no fit | — | same | **not run** |
+| `x1` R, C; `o1`, `m1p`; DRC, antenna, LVS, islands, pins | see "Iteration 1" | — | — | `reports/layout-e8-dev19/`, `reports/pex-e8-dev19/` | see "Iteration 1" (ΔC **failed** by 0.1 fF) |
+| Schematic regression on F2 | as F2 | not re-run (netlist unchanged, sha256 `9e262f8c…`; `sim/results/summary-20261027f2.json` stands) | not run | — | **not run** in E8 |
+
+### Open issues (layout E8)
+
+1. Drift span 1.01–1.53 mV on 14 of 39 spans (CM 0.5 V corners at every bias, CM 2.8 V nominal and 6.9 µA, CM 2.5 V
+   15.4 µA). The offset is sign-stable (−0.5 … −3.2 mV); the s4b elimination puts the CM 0.5 V part on `fn`/`fp`
+   (−3.6 mV) and the CM ≥ 2.5 V part on the opposite `a` and feedback terms. Next lever: matched `fn`/`fp` routing, then
+   equal `a<k>` / `af` port R without pre-routing (pre-routing broke the channel, s7–s9).
+2. DM1 at ffx 6.9 µA CM 0.5 V ×1: 62.16° (E7 62.07°). The `x1` and `o1` wiring changes moved it by less than 0.3°;
+   the shortfall is not in these nets. Next lever: a device or compensation change in F3 (outside this track), or a
+   bias-extreme exception decided by the owner.
+3. `x1p` − `x1n` C −1.1 fF (limit 1 fF). Next lever: C trim 25/25 or 26/26 edges and one re-extraction.
+4. Not run at the budget: 7 loop jobs (sf CM 2.5 V, ffx 15.36 µA, ffx 6.9 µA CM 2.5 V, tt bias extremes), 5 hold states,
+   14 of 15 settling jobs, `tran_tt_x32`, CM step ×32 at tt/ss/ff. Cause: the campaign ran one job at a time for 13 min
+   and the ss loop jobs needed gmin stepping (about 30 min each, 4 parallel runs on 3 CPUs). Next: run the
+   `not_run` jobs of `sim/runs/r1afe-post-e8d19c-stop/run.json` and of `sim/runs/r1afe-cmstep-e8d19-stop/run.json` on the
+   same netlist, with `G1_CPUS=3` and no other run on the CPU set.
+### `x1` structure (generator flag `x1bus`, `layout/r1_afe_layout.py`)
+
+Cause of the E7 resistance (router geometry dump `-rd dumpnets=…`, build `layout-e8-s0` = the dev17 flags): the summing
+node current passed one Via1 per TG rail node, the 0.4 µm Metal2 bar, **one** Via2 at the bar centre (9 Ω), a 120–140 µm
+route, and **one** Via2 and one Via1 at the UF head (18 Ω); the PMOS-TG current reached the main route through the OTA1
+gate rail (the router had joined the gate-rail pin before the PMOS bar). E8 changes:
+
+| Element | E7 | E8 |
+| --- | --- | --- |
+| Bar feed | one Via2 at the bar centre | Metal3 strip over the bar centre, one Via2 per node (`x1feed`, 5 nodes) |
+| UF head (main node) | one Via1 + one Via2 | two Via1 + two Via2 (second node away from the resistor body) |
+| Route | routed with the other priority nets, widened after all nets (`x1p` one side, `x1n` both) | routed before every other net, current pins first (head, NMOS bar, PMOS bar), gate rails and C_F plates as leaves; widened on Metal3 + Metal4 on both sides while the grid is free; then reserved |
+| `o1n`/`o1p` | routed after the pairs | routed first among the other nets (`o1first`) |
+| `m1p` | widened (Metal3 + Metal4) | not widened |
+
+### Screens (wiring-R-only views; `pex/path_balance.py`; generator about 5 min, R view about 3 min)
+
+`x1` R from the TG ports to the UF head, ×32 injection per TG device type (`x1_eff`), p side / n side, Ω; `inp`/`inn`
+port mean, Ω. Generator flags on top of the E6/E7 defaults (`adjpairs=2`, `fwide=1`); no `m1p` widening in any E8 build.
+
+| Build | Flags (E8) | `x1` N ports p / n | `x1` P ports p / n | `inp` / `inn` |
+| --- | --- | --- | --- | --- |
+| E7-dev17 | — | 91.89 / 93.06 | 121.45 / 124.60 | 49.55 / 51.53 |
+| s1a | `x1bus` (feed 5 Via2, head 2 + 2 vias, pre-route, widening ±1 track), `o1first` | 29.61 / 30.36 | 28.25 / 42.27 | 49.55 / 51.53 |
+| s2a | s1a + `x1w2` (±2 tracks), `x1vfill`, `x1headarr` (2 × 2 vias per head node), `x1railv` (Via1 rows at 0.5 µm) | 20.34 / 22.15 | 17.03 / 29.32 | — |
+| s2b | s2a + feed strip over the whole bar, every node a pin (`x1feed=40`) | 18.95 / 20.61 | 25.89 / 24.09 | 49.38 / 51.41 |
+| s3b | s2a + Metal3 strap over the whole bar, pin only at the centre ±4 nodes (`x1strap`, `x1feed=4`) | 12.52 / 12.91 | 13.40 / 27.41 | 60.58 / 70.14 |
+| s4a | s3b + via clusters at every Metal3/Metal4 change (`x1vcl`) | 12.19 / 11.90 | 12.88 / 18.17 | 60.58 / 70.14 |
+| s4b | s2b + `x1vcl` | 18.61 / 20.27 | 25.49 / 23.75 | 49.38 / 51.41 |
+
+Operating-point screens (runs `r1afe-screen-e8-a`, `-b`; ×32 output offset, mV):
+
+| Build | CM 0.5 V 3.0 / 3.6 V | CM 1.5 V 3.0 / 3.6 V | CM 2.5 V 3.0 / 3.3 / 3.6 V | CM 2.5 V ss / ff | CM 2.8 V 3.0 / 3.6 V |
+| --- | --- | --- | --- | --- | --- |
+| E7-dev17 | −4.02 / −3.38 | −0.84 / +0.81 | +4.19 / +3.14 / −3.44 | +4.09 / −4.12 | +4.73 / +3.81 |
+| s2b | −1.97 / −2.90 | −0.73 / −1.47 | −2.49 / −1.75 / −1.52 | −2.25 / −1.38 | −2.21 / −1.78 |
+| s2c (s2b + n-side `a`/`af` widening) | −2.01 / −2.83 | −1.16 / −1.80 | −4.80 / −4.33 / −3.12 | −4.07 / −2.99 | −5.06 / −4.83 |
+| s4a | −1.41 / −3.61 | +5.08 / +2.72 | +9.83 / +12.55 / +13.52 | +7.39 / +15.64 | +12.93 / +15.00 |
+
+Reading: the `x1` structure removes the 3.6 V step at CM 2.5 V (E7 −7.6 mV between 3.3 and 3.6 V; s2b +0.23 mV). s4a has
+the lowest `x1` R but +10 to +15 mV at CM ≥ 1.5 V: elimination (run `r1afe-elim-e8-s4a`) puts +14.5 mV on the
+`inp`/`inn` wiring (port means 60.58 / 70.14 Ω; the centre-fed strap changed the input routes). The input wiring is in front
+of the gain: the input CM current (about 42 µA per side at CM 2.5 V) times the p − n difference is an input offset, ×32 at the
+output (about 1.3 mV per Ω). Every later build is screened for it.
+
+Wiring terms of s4b (run `r1afe-elim-e8-s4b`; term = offset − offset with the group's wire R × 1e-3; ×32, mV):
+
+| Group | CM 0.5 V 3.0 / 3.6 V | CM 2.5 V 3.0 / 3.6 V | CM 2.5 V ss / ff |
+| --- | --- | --- | --- |
+| offset (s4b) | −1.97 / −2.90 | −2.43 / −1.49 | −2.20 / −1.35 |
+| `x1` | +0.08 / −0.12 | −1.45 / −0.55 | −1.16 / −0.28 |
+| `inp`/`inn` | +0.10 / −0.14 | +1.62 / +2.06 | +1.30 / +2.39 |
+| `a<k>` (TG input side) | +0.31 / −0.52 | **+7.70 / +8.01** | **+6.19 / +9.02** |
+| `af`, `m1` (feedback path) | −0.59 / +0.72 | **−5.20 / −7.92** | **−3.53 / −9.30** |
+| stage 2 (`x2`, `op2`/`on2`, outputs, `xs2*`) | +0.94 / −0.08 | −3.96 / −2.28 | −3.61 / −2.49 |
+| OTA1 folding nodes `fn`/`fp` | −3.63 / −3.55 | −0.02 / −0.44 | −0.03 / −0.41 |
+| `vss` / `vdd` | +1.99 / +1.95; −1.15 / −1.16 | +0.02 / +0.41; −0.78 / −0.59 | +0.01 / +0.40; −0.83 / −0.53 |
+
+Reading: with the low-R `x1` bus the `x1` term is ≤ 1.45 mV; the CM 2.5 V drift now comes from the large and opposite `a`
+and feedback terms (port differences `a` N −54 Ω, P −76 Ω, `af` N −36 Ω), which move with the TG N/P current split
+(VDDA, corner). Next lever: the same low-R treatment for the `a<k>` and `af` nets (`prenets`).
+
+Pre-routing of the `a<k>` and `af` nets (flag `prenets`, widening `prew`; ×32 output offset, mV; runs `r1afe-screen-e8-c`,
+`-d`, `-e`; s11a/s11b on magic-RC views):
+
+| Build | Flags on top of s4b | Result | CM 0.5 V 3.0 / 3.6 V | CM 2.5 V 3.0 / 3.3 / 3.6 V | CM 2.5 V ss / ff |
+| --- | --- | --- | --- | --- | --- |
+| s7a, s7c | `prenets=a,af`, widened both sides (s7c without `o1first`) | **route failed** (`outp`, `on2`, `m1n`) | — | — | — |
+| s8a | `prenets=a,af`, `prew=1` | **route failed** (`on2`) | — | — | — |
+| s8b | `prenets=a,af`, `prew=0` | routed | −3.57 / −4.90 | −9.18 / −7.95 / −5.42 | −8.54 / −5.25 |
+| s9b | `prenets=inp,inn,a,af`, `prew=0` | routed | −3.88 / −5.09 | −4.50 / −3.35 / −0.87 | −4.44 / −0.05 |
+| s11a | `x1w2=0`, C trim 28/28 | routed | −2.99 / −2.42 | −0.65 / −1.52 / +0.08 | −0.13 / +0.80 |
+| s11b | `fwide=0`, C trim 28/28 | routed | −4.33 / −5.20 | −2.47 / −1.78 / −1.68 | −2.24 / −1.53 |
+
+Reading: pre-routing `a`/`af` moves the other nets and makes the offset worse. The s4b wiring (= s2b + via clusters) has
+the smallest drift span of all routed builds (CM 2.5 V: 1.11 mV over tt 3.0/3.3/3.6 V, ss, ff). s11a has a smaller static
+offset but a 2.3 mV span. Path metrics do not predict the sign or size of the result (verification gap; see failures).
+
+DM1 phase margin, ffx 6.9 µA, CM 0.5 V, ×1 (run `r1afe-dm1-e8-cal`, `-screen-e8-e`; magic-RC = `kpex --magic` coupling C in
+the RC build, `pex/magic_rc.sh`): E7 kpex 62.07°, E7 magic 61.87° (magic bias −0.20°); s4b 61.97°, s11a 62.13°,
+s11b 62.05° (magic). No `x1` or `o1` wiring change moves DM1 by more than 0.3°: the E7 DM1 shortfall (63° limit) is not a
+wiring effect of these nets.
+
+`x1` C trim (flag `ctrim`, dead-end stub edges on `x1p`, Metal3 and Metal4, placed after the widening; magic pair C `x1p − x1n`): 28/28 edges
++1.15 fF, 20/20 edges −1.40 fF (0.16 fF per edge). kpex reads about +0.76 fF above magic on this pair (E7: magic −8.66,
+kpex −7.90 fF). Chosen: 22/22 edges, magic −0.73 fF (expected kpex about 0.0 fF).
+
+**Final build** (recommended option, recorded): s4b wiring + C trim 22/22 = screen build `layout-e8-s12a` (s12b after the DRC fixes), iteration 1 =
+`layout-e8-dev19` / `pex-e8-dev19` (first attempt `layout-e8-dev18` stopped at DRC). Generator record `reports/layout-e8-dev19/generator.json`. Wiring R
+(R-only view, identical to s4b): `x1` ×32 N 18.61 / 20.27 Ω, P 25.49 / 23.75 Ω; magic C `x1` 328.29 / 329.02 fF,
+`o1n`/`o1p` 70.37 / 51.96 fF (E7 96 / 62 fF), `m1` 362.31 / 384.49 fF.
+
+### Iteration 1 (`layout-e8-dev19` = screen build s12b; `pex-e8-dev19`; kpex 2.5D 00:01–01:20 CET)
+
+The first attempt (`layout-e8-dev18` = s12a) stopped at the checks: DRC main 162 items (156 `Via1` off the 5 nm grid in the
+new TG-rail Via1 rows, 4 `M1.b` notches between the new UF-head Metal1 and the resistor head strip, 2 `M2.b` 0.04 µm
+notches at gate-rail bridges; `reports/layout-e8-dev18/drc.log`). The screens had no DRC. Fixes in the generator: Via1
+rows snapped to the 5 nm grid; head Metal1 extended 0.2 µm to join the head strip; gate-rail bridge drawn over the full
+0.3 µm wire. s12b = s12a + these fixes (same flags; `reports/layout-e8-dev19/generator.json`).
+
+| Item | Limit | E7-dev17 | E8-dev19 | Evidence | Status |
+| --- | --- | --- | --- | --- | --- |
+| `x1` R, TG ports → UF head, ×32 / ×1 path, p / n | ≤ 25 Ω, \|ΔR\| ≤ 3 Ω | 90–125 Ω | ×32 20.36 / 20.30 Ω, ×1 22.37 / 20.86 Ω (ΔR 0.06 / 1.51 Ω); per port 20.3–29.9 Ω (PMOS TG8 worst) | `reports/pex-e8-dev19/x1_pair_r.json` | **passed** (path means); 13 of 16 PMOS-port values > 25 Ω (max 29.9 Ω) |
+| `x1` R per TG type, ×32 injection, N p / n; P p / n | as above | 91.89 / 93.06; 121.45 / 124.60 | 18.61 / 20.27; 25.49 / 23.75 | `reports/pex-e8-dev19/path_balance.json` | P p side **failed by 0.49 Ω** |
+| `x1p` − `x1n` C (kpex) | \|ΔC\| ≤ 1 fF | −7.9 fF | 347.0 / 348.0 fF, **−1.1 fF** | `reports/pex-e8-dev19/pair_loads.json` | **failed by 0.1 fF** |
+| `o1n` / `o1p` C (magic, s12a geometry) | shorter | 96 / 62 fF | 70.37 / 51.96 fF | `pex/pair_loads_magic.py` on `pexr-e8-s12a` | **passed** |
+| `m1p` widening | none | widened | none (`m1p`/`m1n` 356.7 / 378.0 fF) | `reports/pex-e8-dev19/pair_loads.json` | **passed** |
+| DRC main + maximal, antenna | 0 | 0 | 0, 0 | `reports/layout-e8-dev19/drc.log`, `antenna.log`, `drc_db_items.txt` | **passed** |
+| LVS (F2) | match | match | match | `reports/layout-e8-dev19/lvs_summary.txt` | **passed** |
+| Supply islands | 0 | 0 | 0 (vdd 23 ports, vss 42 ports) | `reports/layout-e8-dev19/supply_island_check.json` | **passed** |
+| Pins, box | same; supply ≥ 1 µm | passed | 57 shapes / 21 pins, centres and signal pins same, supply 1.0 µm, 192.8 × 494.4 µm | `reports/layout-e8-dev19/pin_layer_check.json` | **passed** |
+
+The magic-to-kpex calibration of the `x1` pair C was wrong by 1.1 fF (expected kpex ≈ 0.0 fF, got −1.1 fF; magic on the same geometry −0.73 fF). A second
+iteration (kpex 80 min) and the full campaign (about 3 h on 3 CPUs) do not both fit the budget; recorded as failed by
+0.1 fF. Next lever: 25/25 or 26/26 trim edges (0.32 fF per step of one Metal3 + one Metal4 edge), then re-extraction.
+
+### Offset and drift on the final extraction (run `r1afe-post-e8d19b`, `op_*` rows; ×32 output offset, mV; simulated)
+
+Netlist `$G1_RESULTS_ROOT/r1_afe/pexrc-layout-e8-dev19/r1_afe_post_rc.spice` (kpex 2.5D CC + wiring R). Span columns:
+corners = tt 3.3 V (27 °C), ss (3.0 V, 125 °C), ff (3.6 V, −40 °C); supply = tt 3.0 / 3.3 / 3.6 V; all = the five points.
+Bias: nominal = corner-matched r1_bias current (tt 10.14, ss 11.81, ff 9.00 µA).
+
+| Bias | CM 0.5 V corners / supply / all | CM 1.5 V | CM 2.0 V | CM 2.5 V | CM 2.8 V | Worst \|offset\| |
+| --- | --- | --- | --- | --- | --- | --- |
+| nominal | **1.19** / 0.93 / **1.33** | 0.55 / 0.74 / 0.74 | 0.41 / 0.20 / 0.41 | 0.85 / 0.94 / **1.08** | **1.14** / 0.76 / **1.14** | 2.90 |
+| 6.9 µA | **1.30** / 0.93 / **1.30** | 0.68 / 0.76 / 0.78 | — | 0.68 / 0.92 / 0.92 | **1.01** / 0.93 / **1.01** | 2.76 |
+| 15.4 µA | **1.16** / 0.97 / **1.53** | 0.50 / 0.71 / 0.71 | — | **1.04** / **1.13** / **1.41** | 0.79 / 0.37 / 0.79 | 3.18 |
+| E7-dev17 (nominal) | 1.46 / 0.64 | 2.11 / 1.65 | 1.26 / 1.11 | 8.21 / 7.63 | 2.53 / 1.15 | 4.96 |
+
+Static offset: every one of the 73 `op_*` points (including ffx at 6.9 / 15.36 µA) is between −3.18 and −0.52 mV
+(limit ±5 mV): **passed**. Drift: the CM 2.5 V span falls from 8.21 to 0.85 mV (corners) and the 3.3 → 3.6 V step is gone;
+14 of the 39 span values exceed 1 mV, the worst 1.53 mV (CM 0.5 V, 15.4 µA, all points): **failed by 0.53 mV**. The
+residual is the sign-stable −1 … −3 mV offset that moves with temperature at CM 0.5 V (`fn`/`fp` term, s4b elimination)
+and with the TG N/P current split at CM ≥ 2.5 V (opposite `a` and feedback terms).
+
+### Failures and mistakes (layout E8)
+
+| # | Class | What happened | Effect / fix |
+| --- | --- | --- | --- |
+| 1 | estimation | The centre-fed Metal3 strap (s3b, s4a) gave the lowest `x1` R, but it moved the `inp`/`inn` routes (60.58 / 70.14 Ω) | +10 to +15 mV at CM ≥ 1.5 V; strap dropped, `inp`/`inn` screened in every later build |
+| 2 | functional-bug | Pre-routing `a`/`af` with widening blocked the channel (s7a, s7c, s8a) | `outp`, `on2`, `m1n` unrouted; builds discarded |
+| 3 | verification-gap | Wiring-R path metrics (`path_balance.py`) did not predict the sign or size of the offset of s8b, s9b, s11a, s11b | each candidate needed an op screen (13 jobs, about 10 min) |
+| 4 | planning | Twelve screen families before the first iteration | iteration 1 started at 23:50 CET, about 2 h into the 7 h budget; one iteration only |
+| 5 | estimation | Low-R `x1` and short `o1n`/`o1p` were expected to recover DM1 (E7 62.07°) | DM1 moves less than 0.3° on every build; the shortfall is not in these nets |
+| 6 | tooling | A shell `until` loop with `exit 1` ended the shell; the elimination table parser crashed on a non-number | count-based loop; `sim/elim_table.py` |
+| 7 | process-hygiene | The track clock was read wrong once (23:20 assumed, 22:06 real) | read `date` before every sizing decision |
+| 8 | verification-gap | Screen builds had no DRC; the first iteration build had 162 DRC items from the new E8 shapes | iteration 1 attempt `layout-e8-dev18` stopped after 4 min; fixed in s12b |
+| 9 | process-hygiene | `G1_CPUS` was not set for the screens and the first campaign start, so `run_afe.py` ran one job at a time on 3 CPUs | screens took about 3 × longer; campaign `r1afe-post-e8d19` stopped after 13 min and restarted as `r1afe-post-e8d19b` with `G1_CPUS=3` |
+| 10 | estimation | Magic-to-kpex offset of the `x1` pair C taken from E7 (+0.76 fF); on E8 it was −0.37 fF | `x1` ΔC −1.1 fF, 0.1 fF over the limit |
+
 ## Layout E7 (2026-10-27, track T3k; not closed)
 
 Status: **not closed**; iteration 1 (`layout-e7-dev17`) is final; stopped at the time budget (21:38 CET). Layout of record:

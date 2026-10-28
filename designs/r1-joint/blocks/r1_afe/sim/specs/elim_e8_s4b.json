@@ -1,0 +1,104 @@
+{
+ "question": "Layout E8 (track T3l): wiring terms of the x32 offset and of its drift (tt 3.0/3.6 V at CM 0.5 and 2.5 V, ss and ff at CM 2.5 V) on screen build s4b (R-only view); group elimination, wire R x 1e-3",
+ "variants": {
+  "BASE": {
+   "netlist": "$G1_RESULTS_ROOT/r1_afe/revF2/e8/elim-s4b/BASE.spice"
+  },
+  "X1": {
+   "netlist": "$G1_RESULTS_ROOT/r1_afe/revF2/e8/elim-s4b/X1.spice"
+  },
+  "IN": {
+   "netlist": "$G1_RESULTS_ROOT/r1_afe/revF2/e8/elim-s4b/IN.spice"
+  },
+  "A": {
+   "netlist": "$G1_RESULTS_ROOT/r1_afe/revF2/e8/elim-s4b/A.spice"
+  },
+  "FB": {
+   "netlist": "$G1_RESULTS_ROOT/r1_afe/revF2/e8/elim-s4b/FB.spice"
+  },
+  "VDD": {
+   "netlist": "$G1_RESULTS_ROOT/r1_afe/revF2/e8/elim-s4b/VDD.spice"
+  },
+  "VSS": {
+   "netlist": "$G1_RESULTS_ROOT/r1_afe/revF2/e8/elim-s4b/VSS.spice"
+  },
+  "OTA1": {
+   "netlist": "$G1_RESULTS_ROOT/r1_afe/revF2/e8/elim-s4b/OTA1.spice"
+  },
+  "ST2": {
+   "netlist": "$G1_RESULTS_ROOT/r1_afe/revF2/e8/elim-s4b/ST2.spice"
+  },
+  "FNFP": {
+   "netlist": "$G1_RESULTS_ROOT/r1_afe/revF2/e8/elim-s4b/FNFP.spice"
+  },
+  "GNGP": {
+   "netlist": "$G1_RESULTS_ROOT/r1_afe/revF2/e8/elim-s4b/GNGP.spice"
+  },
+  "O1": {
+   "netlist": "$G1_RESULTS_ROOT/r1_afe/revF2/e8/elim-s4b/O1.spice"
+  },
+  "TAIL": {
+   "netlist": "$G1_RESULTS_ROOT/r1_afe/revF2/e8/elim-s4b/TAIL.spice"
+  }
+ },
+ "jobs": [
+  {
+   "tag": "op_tt_ib10.14_cm0.5_v3.0",
+   "tmpl": "tb_afe_op.cir",
+   "corner": "tt",
+   "subs": {
+    "VCMI": 0.5,
+    "IB": "10.14u",
+    "VDDA": 3.0
+   }
+  },
+  {
+   "tag": "op_tt_ib10.14_cm0.5_v3.6",
+   "tmpl": "tb_afe_op.cir",
+   "corner": "tt",
+   "subs": {
+    "VCMI": 0.5,
+    "IB": "10.14u",
+    "VDDA": 3.6
+   }
+  },
+  {
+   "tag": "op_tt_ib10.14_cm2.5_v3.0",
+   "tmpl": "tb_afe_op.cir",
+   "corner": "tt",
+   "subs": {
+    "VCMI": 2.5,
+    "IB": "10.14u",
+    "VDDA": 3.0
+   }
+  },
+  {
+   "tag": "op_tt_ib10.14_cm2.5_v3.6",
+   "tmpl": "tb_afe_op.cir",
+   "corner": "tt",
+   "subs": {
+    "VCMI": 2.5,
+    "IB": "10.14u",
+    "VDDA": 3.6
+   }
+  },
+  {
+   "tag": "op_ss_ib11.81_cm2.5",
+   "tmpl": "tb_afe_op.cir",
+   "corner": "ss",
+   "subs": {
+    "VCMI": 2.5,
+    "IB": "11.81u"
+   }
+  },
+  {
+   "tag": "op_ff_ib9.00_cm2.5",
+   "tmpl": "tb_afe_op.cir",
+   "corner": "ff",
+   "subs": {
+    "VCMI": 2.5,
+    "IB": "9.00u"
+   }
+  }
+ ]
+}

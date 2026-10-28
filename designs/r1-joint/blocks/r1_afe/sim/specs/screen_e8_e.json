@@ -1,0 +1,151 @@
+{
+ "question": "Layout E8 screen (track T3l): builds s11a (x1 bus one widening pass) and s11b (fwide off), magic-capacitance RC views (pex/magic_rc.sh; DC points identical to the R view): DM1/CM1 phase margin at ffx 6.9 uA CM 0.5 V x1 and the x32 offset screen",
+ "variants": {
+  "s11a": {
+   "netlist": "$G1_RESULTS_ROOT/r1_afe/pexmrc-layout-e8-s11a/r1_afe_post_rc.spice"
+  },
+  "s11b": {
+   "netlist": "$G1_RESULTS_ROOT/r1_afe/pexmrc-layout-e8-s11b/r1_afe_post_rc.spice"
+  }
+ },
+ "jobs": [
+  {
+   "tag": "stb_ffx_ib6.9_cm0.5_x1dm1",
+   "tmpl": "tb_afe_stb.cir",
+   "corner": "ffx",
+   "subs": {
+    "VCMI": 0.5,
+    "KLIST": "0",
+    "LLIST": "1 2",
+    "IB": "6.9u",
+    "CL": "2.8p"
+   }
+  },
+  {
+   "tag": "op_tt_ib10.14_cm0.5_v3.0",
+   "tmpl": "tb_afe_op.cir",
+   "corner": "tt",
+   "subs": {
+    "VCMI": 0.5,
+    "IB": "10.14u",
+    "VDDA": 3.0
+   }
+  },
+  {
+   "tag": "op_tt_ib10.14_cm0.5_v3.6",
+   "tmpl": "tb_afe_op.cir",
+   "corner": "tt",
+   "subs": {
+    "VCMI": 0.5,
+    "IB": "10.14u",
+    "VDDA": 3.6
+   }
+  },
+  {
+   "tag": "op_tt_ib10.14_cm1.5_v3.0",
+   "tmpl": "tb_afe_op.cir",
+   "corner": "tt",
+   "subs": {
+    "VCMI": 1.5,
+    "IB": "10.14u",
+    "VDDA": 3.0
+   }
+  },
+  {
+   "tag": "op_tt_ib10.14_cm1.5_v3.6",
+   "tmpl": "tb_afe_op.cir",
+   "corner": "tt",
+   "subs": {
+    "VCMI": 1.5,
+    "IB": "10.14u",
+    "VDDA": 3.6
+   }
+  },
+  {
+   "tag": "op_tt_ib10.14_cm2.5_v3.0",
+   "tmpl": "tb_afe_op.cir",
+   "corner": "tt",
+   "subs": {
+    "VCMI": 2.5,
+    "IB": "10.14u",
+    "VDDA": 3.0
+   }
+  },
+  {
+   "tag": "op_tt_ib10.14_cm2.5_v3.6",
+   "tmpl": "tb_afe_op.cir",
+   "corner": "tt",
+   "subs": {
+    "VCMI": 2.5,
+    "IB": "10.14u",
+    "VDDA": 3.6
+   }
+  },
+  {
+   "tag": "op_tt_ib10.14_cm2.8_v3.0",
+   "tmpl": "tb_afe_op.cir",
+   "corner": "tt",
+   "subs": {
+    "VCMI": 2.8,
+    "IB": "10.14u",
+    "VDDA": 3.0
+   }
+  },
+  {
+   "tag": "op_tt_ib10.14_cm2.8_v3.6",
+   "tmpl": "tb_afe_op.cir",
+   "corner": "tt",
+   "subs": {
+    "VCMI": 2.8,
+    "IB": "10.14u",
+    "VDDA": 3.6
+   }
+  },
+  {
+   "tag": "op_tt_ib10.14_cm2.5_v3.3",
+   "tmpl": "tb_afe_op.cir",
+   "corner": "tt",
+   "subs": {
+    "VCMI": 2.5,
+    "IB": "10.14u",
+    "VDDA": 3.3
+   }
+  },
+  {
+   "tag": "op_ss_ib11.81_cm0.5",
+   "tmpl": "tb_afe_op.cir",
+   "corner": "ss",
+   "subs": {
+    "VCMI": 0.5,
+    "IB": "11.81u"
+   }
+  },
+  {
+   "tag": "op_ff_ib9.00_cm0.5",
+   "tmpl": "tb_afe_op.cir",
+   "corner": "ff",
+   "subs": {
+    "VCMI": 0.5,
+    "IB": "9.00u"
+   }
+  },
+  {
+   "tag": "op_ss_ib11.81_cm2.5",
+   "tmpl": "tb_afe_op.cir",
+   "corner": "ss",
+   "subs": {
+    "VCMI": 2.5,
+    "IB": "11.81u"
+   }
+  },
+  {
+   "tag": "op_ff_ib9.00_cm2.5",
+   "tmpl": "tb_afe_op.cir",
+   "corner": "ff",
+   "subs": {
+    "VCMI": 2.5,
+    "IB": "9.00u"
+   }
+  }
+ ]
+}
