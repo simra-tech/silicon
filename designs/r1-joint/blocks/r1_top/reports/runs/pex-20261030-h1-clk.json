@@ -1,0 +1,71 @@
+{
+ "run": "pex-20261030-h1-clk",
+ "track": "T8g",
+ "date": "2026-10-28",
+ "question": "Does the try-h1 metal (south VSS bar and straps across the channel, AFE VDDA strap) change the OSC_CLK load and the ADC-ctrl clock skew (limit 90 ps), with the chip fill?",
+ "method": "T11b per-net band method on the clk group (OSC_CLK, VREF_B, VREF_BG, CUR_TRK, POR_N): pex/top_wire.py --band 10 um with and without the fill of asm-20261030-h1-fill, pex/make_lvsdb.py, kpex 0.3.12 2.5D CC (4 threads), pex/fill_net.py (Schur reduction over the floating fill); flow/clk_skew_g.py for R; skew bound = 41.5 ps (T11b filled, simulated) + R(osc->ADC) x delta C (all of delta C at the ADC pin)",
+ "commands": [
+  "sh <G1_RESULTS_ROOT>/r1_top/pex-20261030-h1-clk/run_band.sh 112-115"
+ ],
+ "tools": {
+  "KLayout": "0.30.9",
+  "kpex": "0.3.12",
+  "pdk_commit": "84374023ee8b4b126bebbba67fcbada0a9c0ff0b",
+  "cpuset": "112-115"
+ },
+ "inputs_sha256": {
+  "<G1_RESULTS_ROOT>/r1_top/asm-20261030-h1/r1_top.gds": "5eef7dd4b06ee250cce64ce7912f97afd2b34ca07472298a355a20fc85be6659",
+  "<G1_RESULTS_ROOT>/r1_top/asm-20261030-h1-fill/r1_top.gds": "fabd34172c66e44f462509b43c5560effb13c4b2fab1ace50b050deeadf450e6",
+  "designs/r1-joint/blocks/r1_top/pex/top_wire.py": "0fdb4536f9455bf38bdcf45d6065ee84f1458cfa27be891246a843bffdb228cb",
+  "designs/r1-joint/blocks/r1_top/pex/make_lvsdb.py": "92cd5b4fb34878fa1c0bc254c27936ff62dde25709858f9ce5fe1383cf71f707",
+  "designs/r1-joint/blocks/r1_top/pex/fill_net.py": "0869950366ba8fb538ee51cb4f593ebf5e19ae1363fbef7ed93feff70b243a4e",
+  "designs/r1-joint/blocks/r1_top/flow/clk_skew_g.py": "477956b25c072df7e4ef9afdf3301705a0441071e2306f3c1568a7d9781854ef"
+ },
+ "kpex_times": [
+  "kpex band_clk_nofill rc 0 seconds 21 cpuset 112-115",
+  "kpex band_clk_fill rc 0 seconds 2961 cpuset 112-115",
+  "fill_net rc 0",
+  "clk_skew rc 0",
+  "done"
+ ],
+ "result": {
+  "OSC_CLK": {
+   "h1_C_unfilled_fF": 99.719,
+   "h1_C_filled_fF": 181.037,
+   "g3_C_unfilled_fF": 98.172,
+   "g3_C_filled_fF": 180.498
+  },
+  "VREF_B": {
+   "h1_C_unfilled_fF": 118.233,
+   "h1_C_filled_fF": 181.637,
+   "g3_C_unfilled_fF": 108.986,
+   "g3_C_filled_fF": 207.836
+  },
+  "VREF_BG": {
+   "h1_C_unfilled_fF": 100.594,
+   "h1_C_filled_fF": 157.532,
+   "g3_C_unfilled_fF": 98.644,
+   "g3_C_filled_fF": 156.42
+  },
+  "CUR_TRK": {
+   "h1_C_unfilled_fF": 64.023,
+   "h1_C_filled_fF": 84.767,
+   "g3_C_unfilled_fF": 63.238,
+   "g3_C_filled_fF": 84.585
+  },
+  "POR_N": {
+   "h1_C_unfilled_fF": 159.393,
+   "h1_C_filled_fF": 260.124,
+   "g3_C_unfilled_fF": 153.992,
+   "g3_C_filled_fF": 257.089
+  }
+ },
+ "osc_clk": {
+  "R_osc_adc_ohm_typ": 313.27,
+  "R_osc_adc_ohm_max": 451.86,
+  "delta_C_filled_fF": 0.539,
+  "skew_bound_ps_typ": 41.67,
+  "limit_ps": 90
+ },
+ "disposition": "passed (estimated from extracted C): OSC_CLK skew <= 41.7 ps typ, about 60 ps max sheet; limit 90 ps. Full-chip netlist of try h1 not built (not run)"
+}

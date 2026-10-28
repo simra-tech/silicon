@@ -1,0 +1,197 @@
+{
+ "run": "r1ctrl_irderate_h1dev1",
+ "track": "T8g",
+ "date": "2026-10-28",
+ "question": "Does r1_ctrl 0.8 keep setup slack >= 1 ns at 1.08 V minus the try-h1 supply loss (IO cells as shipped; asm-20261030-h1-dev1, equal ctrl loss to the record asm-20261030-h1), typ and max sheet, and hold >= 0?",
+ "method": "as r1ctrl_irderate_h0 (T8f) and r1ctrl_irderate_g3 (T11b): cell delay vs voltage (ngspice 46, mos_ss 125 C / mos_ff -40 C, PDK cells) at 1.08 / 1.32 V minus the four extracted losses, derate factor = largest cell/load ratio (mean reported), OpenSTA set_timing_derate on the 0.8 release netlist, sign-off SDC, t22 nominal SPEF; cases uniform worst, mean cell, grid spread (early = best point), fast bound (early 1.0)",
+ "loss_V": {
+  "typ_worst": 0.03797,
+  "max_worst": 0.05565,
+  "typ_best": 0.02794,
+  "max_best": 0.0439
+ },
+ "voltages": "ss 1.08,1.0420,1.0244,1.0521,1.0361 ff 1.32,1.2820,1.2644,1.2921,1.2761",
+ "cases": [
+  "slow base:1.0:1.0 U_typ:1.0873:1.0873 U_max:1.1333:1.1333 U_max_meancell:1.1224:1.1224 OCV_typ:1.0627:1.0873 OCV_max:1.1023:1.1333",
+  "fast base:1.0:1.0 U_max:1.0834:1.0834 OCV_max:1.0644:1.0834 OCV_bound:1.0:1.0834"
+ ],
+ "commands": [
+  "sh designs/r1-joint/blocks/r1_top/irderate/run_derate.sh r1ctrl_irderate_h1dev1 <G1_RESULTS_ROOT>/r1_top/asm-20261030-h1-dev1/supply_h1.json 112 113 (run as <G1_RESULTS_ROOT>/r1_top/h1-dev/derate_run.sh, same content apart from the results-root line)"
+ ],
+ "tools": {
+  "ngspice": "46",
+  "OpenSTA": "container tapeoutbench-eda:latest sha256:ddeb6957...",
+  "pdk_commit": "84374023ee8b4b126bebbba67fcbada0a9c0ff0b",
+  "cpuset": "112-115"
+ },
+ "inputs_sha256": {
+  "designs/r1-joint/blocks/r1_top/irderate/char_cells.py": "0085321dc257fe86d77d8097347b517262bbe222a1013d325f84e911e48ed8e8",
+  "designs/r1-joint/blocks/r1_top/irderate/derate.py": "c3d92148584b865b03e8716c9c578e88e431e89e7ca327451926c3271196054c",
+  "designs/r1-joint/blocks/r1_top/irderate/sta_derate.tcl": "ec8a56822889d483d97db44663713ba58b644b67730a5806af7661da3e47c343",
+  "designs/r1-joint/blocks/r1_top/irderate/sta_parse.py": "3d31e5fff71f37521304bfd49adcb6968f0a5b6455fbe20109ee193098be969a",
+  "<G1_RESULTS_ROOT>/r1_ctrl/r1ctrl_08_release/r1_ctrl_top.nl.v": "ddd4e85c5c43ce1a7a3e54fe0ced280033398f0a31124ea87699a6ad4599bd73",
+  "<G1_RESULTS_ROOT>/r1_ctrl/r1ctrl_08_release/r1_ctrl_signoff.sdc": "55412efa232d4f63fe370f15cd23ecd57e06a04cce4e1d624068f7a5cc285eba",
+  "<G1_RESULTS_ROOT>/r1_top/asm-20261030-h1-dev1/supply_h1.json": "5e38ad1e5b404cb33c4d65d31cb3ca63f66638710862fd1482453ea453f7198e",
+  "<G1_RESULTS_ROOT>/r1_top/r1ctrl_irderate_g3/char_ss_a/char_ss125.json": "a88e4f86b0ed71c0d75a5a0e6f6353ff732928bf3334658167fb522569c647dc",
+  "<G1_RESULTS_ROOT>/r1_top/r1ctrl_irderate_g3/char_ff/char_ff-40.json": "6aa764e4d4a36ba4353f1f6de082f914cd0984aec489f44ae82c271e8607d293"
+ },
+ "result": {
+  "slow": {
+   "derate_slow_1p08V_125C.rpt/base": {
+    "report": "derate_slow_1p08V_125C.rpt",
+    "early": 1.0,
+    "late": 1.0,
+    "wns_max": 0.0,
+    "wns_min": 0.3603,
+    "tns_max": 0.0,
+    "setup_ff": 3.7135,
+    "setup_ff_path": "_27652_ -> _27611_",
+    "setup_out": 14.2636,
+    "setup_latch": 0.0,
+    "latch_borrow": 2.2458,
+    "hold": 0.3603,
+    "hold_path": "_28116_ -> _28053_"
+   },
+   "derate_slow_1p08V_125C.rpt/U_typ": {
+    "report": "derate_slow_1p08V_125C.rpt",
+    "early": 1.0873,
+    "late": 1.0873,
+    "wns_max": 0.0,
+    "wns_min": 0.3963,
+    "tns_max": 0.0,
+    "setup_ff": 2.0108,
+    "setup_ff_path": "_27652_ -> _27611_",
+    "setup_out": 13.9146,
+    "setup_latch": 0.0,
+    "latch_borrow": 2.4396,
+    "hold": 0.3963,
+    "hold_path": "_28116_ -> _28053_"
+   },
+   "derate_slow_1p08V_125C.rpt/U_max": {
+    "report": "derate_slow_1p08V_125C.rpt",
+    "early": 1.1333,
+    "late": 1.1333,
+    "wns_max": 0.0,
+    "wns_min": 0.4152,
+    "tns_max": 0.0,
+    "setup_ff": 1.1137,
+    "setup_ff_path": "_27652_ -> _27611_",
+    "setup_out": 13.7308,
+    "setup_latch": 0.0,
+    "latch_borrow": 2.5417,
+    "hold": 0.4152,
+    "hold_path": "_28116_ -> _28053_"
+   },
+   "derate_slow_1p08V_125C.rpt/U_max_meancell": {
+    "report": "derate_slow_1p08V_125C.rpt",
+    "early": 1.1224,
+    "late": 1.1224,
+    "wns_max": 0.0,
+    "wns_min": 0.4107,
+    "tns_max": 0.0,
+    "setup_ff": 1.3263,
+    "setup_ff_path": "_27652_ -> _27611_",
+    "setup_out": 13.7744,
+    "setup_latch": 0.0,
+    "latch_borrow": 2.5175,
+    "hold": 0.4107,
+    "hold_path": "_28116_ -> _28053_"
+   },
+   "derate_slow_1p08V_125C.rpt/OCV_typ": {
+    "report": "derate_slow_1p08V_125C.rpt",
+    "early": 1.0627,
+    "late": 1.0873,
+    "wns_max": 0.0,
+    "wns_min": 0.3591,
+    "tns_max": 0.0,
+    "setup_ff": 2.0015,
+    "setup_ff_path": "_27652_ -> _27611_",
+    "setup_out": 13.9146,
+    "setup_latch": 0.0,
+    "latch_borrow": 2.4396,
+    "hold": 0.3591,
+    "hold_path": "_28116_ -> _28053_"
+   },
+   "derate_slow_1p08V_125C.rpt/OCV_max": {
+    "report": "derate_slow_1p08V_125C.rpt",
+    "early": 1.1023,
+    "late": 1.1333,
+    "wns_max": 0.0,
+    "wns_min": 0.3684,
+    "tns_max": 0.0,
+    "setup_ff": 1.102,
+    "setup_ff_path": "_27652_ -> _27611_",
+    "setup_out": 13.7308,
+    "setup_latch": 0.0,
+    "latch_borrow": 2.5417,
+    "hold": 0.3684,
+    "hold_path": "_28116_ -> _28053_"
+   }
+  },
+  "fast": {
+   "derate_fast_1p32V_m40C.rpt/base": {
+    "report": "derate_fast_1p32V_m40C.rpt",
+    "early": 1.0,
+    "late": 1.0,
+    "wns_max": 0.0,
+    "wns_min": 0.12,
+    "tns_max": 0.0,
+    "setup_ff": 10.157,
+    "setup_ff_path": "_28118_ -> _28426_",
+    "setup_out": 16.6603,
+    "setup_latch": 0.0,
+    "latch_borrow": 0.9389,
+    "hold": 0.12,
+    "hold_path": "_28116_ -> _28053_"
+   },
+   "derate_fast_1p32V_m40C.rpt/U_max": {
+    "report": "derate_fast_1p32V_m40C.rpt",
+    "early": 1.0834,
+    "late": 1.0834,
+    "wns_max": 0.0,
+    "wns_min": 0.1344,
+    "tns_max": 0.0,
+    "setup_ff": 10.0553,
+    "setup_ff_path": "_28118_ -> _28426_",
+    "setup_out": 16.5269,
+    "setup_latch": 0.0,
+    "latch_borrow": 1.0149,
+    "hold": 0.1344,
+    "hold_path": "_28116_ -> _28053_"
+   },
+   "derate_fast_1p32V_m40C.rpt/OCV_max": {
+    "report": "derate_fast_1p32V_m40C.rpt",
+    "early": 1.0644,
+    "late": 1.0834,
+    "wns_max": 0.0,
+    "wns_min": 0.1227,
+    "tns_max": 0.0,
+    "setup_ff": 10.0476,
+    "setup_ff_path": "_28118_ -> _28426_",
+    "setup_out": 16.5269,
+    "setup_latch": 0.0,
+    "latch_borrow": 1.0149,
+    "hold": 0.1227,
+    "hold_path": "_28116_ -> _28053_"
+   },
+   "derate_fast_1p32V_m40C.rpt/OCV_bound": {
+    "report": "derate_fast_1p32V_m40C.rpt",
+    "early": 1.0,
+    "late": 1.0834,
+    "wns_max": 0.0,
+    "wns_min": 0.0832,
+    "tns_max": 0.0,
+    "setup_ff": 10.0213,
+    "setup_ff_path": "_28118_ -> _28426_",
+    "setup_out": 16.5269,
+    "setup_latch": 0.0,
+    "latch_borrow": 1.0149,
+    "hold": 0.0832,
+    "hold_path": "_28116_ -> _28053_"
+   }
+  },
+  "worst_setup_ff_ns": 1.102,
+  "worst_hold_ns": 0.0832
+ },
+ "disposition": "passed: setup >= 1 ns in every slow case (worst 1.102 ns), hold >= 0 (worst 0.083 ns); STA result, nothing measured"
+}

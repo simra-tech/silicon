@@ -98,13 +98,14 @@ for c in ("typ", "max"):
 # bound rows: the whole net current (VSS: all block currents; VDD: all VDD currents) in one shape
 I_VSS = sum(rn[("VSS", "typ")]["currents_mA"].values())
 I_VDD = sum(rn[("VDD", "typ")]["currents_mA"].values())
+I_VDDA = sum(rn[("VDDA", "typ")]["currents_mA"].values()) if rn.get(("VDDA", "typ")) else 0.0
 south_vss = [x["I_mA"] for x in rn[("VSS", "max")]["breakdown"]["cuts"] if {x["from"], x["to"]} == {"S_feed", "ctrl_grid"}]
 south_vdd = [x["I_mA"] for x in rn[("VDD", "max")]["breakdown"]["cuts"] if {x["from"], x["to"]} == {"S_feed", "ctrl_grid"} or
              {x["from"], x["to"]} == {"S_core_row", "ctrl_grid"}]
 I_SV = abs(sum(south_vss))
 I_SD = abs(sum(south_vdd))
 for it in feed.get("em_items", []):
-    tot = I_VSS if it["net"] == "VSS" else I_VDD
+    tot = {"VSS": I_VSS, "VDD": I_VDD, "VDDA": I_VDDA}[it["net"]]
     lim = EM_LINE[it["layer"]] * it["width"]
     if "stripe south end" in it["name"]:
         tot = I_SV                                           # all south VSS inflow into one stripe end
@@ -115,10 +116,19 @@ for nm, n_cuts, cur in [
         ("IOPadVss riser TopVia2 onto the VSS rail (per pad)", feed.get("ring_eco", {}).get("iopadvss_riser_tv2", 0), I_VSS),
         ("VSS bridge TopVia2, west overlap (x 429-452)", via_count(23.0, 12.94, "TV2"), I_VSS),
         ("VSS tab TopVia2 (22 um tab)", via_count(22.0, 12.94, "TV2"), I_VSS),
-        ("VDD south bar TopVia2 per ctrl VDD stripe (2.2 x 7 um), all south VDD inflow", via_count(2.2, 7.0, "TV2"), I_SD)]:
+        ("VDD south bar TopVia2 per ctrl VDD stripe (2.2 x 7 um), all south VDD inflow", via_count(2.2, 7.0, "TV2"), I_SD),
+        # try h1 (T8g): the pin-access fingers over the unmodified IOPadVss (TopVia2 28 x 18 um onto the vss TopMetal1 pin)
+        ("VSS pad finger TopVia2 onto the IOPadVss vss pin (per finger, 28 x 18 um)",
+         via_count(28.0, 18.0, "TV2") if feed.get("enabled") and not feed.get("ring_eco", {}).get("iopadvss_riser_tv2") else 0, I_VSS)]:
+    if n_cuts == 0:                                          # shape not in this network (h0 riser in h1 and vice versa)
+        continue
     lim = EM_VIA["TV2"] * n_cuts
     em.append({"item": nm, "corner": "typ/max", "kind": "bound", "cuts": n_cuts, "I_mA": round(cur, 3), "limit_mA": lim,
                "state": "passed" if cur <= lim else "failed"})
+for va in feed.get("vdda_vias", []):                        # try h1: AFE VDDA TopMetal1 strap via arrays (all AFE current)
+    lim = EM_VIA[va["via"]] * va["cuts"]
+    em.append({"item": va["name"], "corner": "typ/max", "kind": "bound (all AFE VDDA current)", "cuts": va["cuts"],
+               "I_mA": va["I_mA"], "limit_mA": lim, "state": "passed" if va["I_mA"] <= lim else "failed"})
 out["em"] = em
 out["em_summary"] = {"rows": len(em), "failed": sum(1 for r in em if r["state"] == "failed"),
                      "not_measured": sum(1 for r in em if r["state"].startswith("not"))}

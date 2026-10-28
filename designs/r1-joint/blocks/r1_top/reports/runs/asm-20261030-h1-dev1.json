@@ -1,0 +1,1205 @@
+{
+ "run": "asm-20261030-h1-dev1",
+ "track": "T8g (r1_top supply feed with unmodified IO cells, try h1)",
+ "question": "T8g variant h1a: try-h0 network without the IOPadVss riser (IO cells as shipped, pin map unchanged); feed R at max sheet against 1.43 ohm?",
+ "command": "sh <G1_RESULTS_ROOT>/r1_top/h1-dev/gen_supply.sh asm-20261030-h1-dev1 <cpuset>  (gen, supply_h_rnet.py VSS VDD VDDA typ max, supply_h.py)",
+ "steps_log": [
+  "step gen start 01:17:10",
+  "step gen end 01:18:30",
+  "done"
+ ],
+ "tools": {
+  "klayout": "0.30.9 (container)",
+  "python": "3 (container)",
+  "container": "tapeoutbench-eda:latest sha256:ddeb69576f2808676d1c5d474ecf04f6d1d6f8abdcff6b72b39790ded924bab2",
+  "cpuset": "112-119"
+ },
+ "pdk_commit": "84374023ee8b4b126bebbba67fcbada0a9c0ff0b",
+ "inputs": {
+  "u_ring": {
+   "macro": "r1_padring",
+   "source": "<G1_RESULTS_ROOT>/r1_padring/ring-20261021-d/r1_padring_1700.gds (fill instances removed: 4141; west TopMetal1 ECO; south VSS row gap at pad 1; IO cells unmodified)",
+   "sha256": "81bba04b3c0655ece75587d6c90b159d4bb860e0dbe0e3dd80e2c65c50d0725d"
+  },
+  "u_ctrl": {
+   "macro": "r1_ctrl_top",
+   "source": "<G1_RESULTS_ROOT>/r1_ctrl/r1ctrl_08_release/r1_ctrl_top.gds",
+   "sha256": "f8bc16ed7233d1ea3eb12dd3f0cc1045eb169ea842c0d7ab6aad06d9ed302d2e"
+  },
+  "u_afe": {
+   "macro": "r1_afe",
+   "source": "<G1_RESULTS_ROOT>/r1_top/asm-20261030-h1-dev1/inputs/ofrecord/r1_afe.gds",
+   "sha256": "12a059ca4b9468541c479b13e8e77d946852b57c826f7dd568db60ae4f64ba7f"
+  },
+  "u_isense": {
+   "macro": "r1_isense",
+   "source": "<G1_RESULTS_ROOT>/r1_top/asm-20261030-h1-dev1/inputs/ofrecord/r1_isense.gds",
+   "sha256": "192dd37aa592b85d68b158b18f0f71c8e906664783b047dcdd3bf1ceacd6c7ac"
+  },
+  "u_osc": {
+   "macro": "r1_osc",
+   "source": "designs/r1-joint/blocks/r1_osc/layout/r1_osc.gds",
+   "sha256": "7c5fb60fdbbfa3cce7714520d3bc652292f0ff964452e3bf4afe226ea68ba971"
+  },
+  "u_safe": {
+   "macro": "r1_safe",
+   "source": "designs/r1-joint/blocks/r1_safe/layout/r1_safe.gds",
+   "sha256": "fbc3113948e0c15e1e049cfad1e2e5c5349b10ba0ae7d250f5b228e50aa28324"
+  },
+  "u_bgr": {
+   "macro": "r1_bgr",
+   "source": "designs/r1-joint/blocks/r1_bgr/layout/r1_bgr.gds",
+   "sha256": "324e3c27477a77c4a32d6760366d8d1fb82bea4887ae26b905cd7022aac54005"
+  },
+  "u_bias": {
+   "macro": "r1_bias",
+   "source": "<G1_RESULTS_ROOT>/r1_top/asm-20261030-h1-dev1/inputs/ofrecord/r1_bias.gds",
+   "sha256": "e7ee13940db0ecc2a36c8bf7c6d1947358aceb6dd1dff3b3add9f4eafa2bb78c"
+  },
+  "u_t2f": {
+   "macro": "r1_t2f",
+   "source": "designs/r1-joint/blocks/r1_t2f/layout/r1_t2f.gds",
+   "sha256": "5e7aa75ae9335b12b1c825d326e586c742755bd9305074fc1cdc2507d17af9a7"
+  },
+  "u_adc": {
+   "macro": "r1_adc",
+   "source": "<G1_RESULTS_ROOT>/r1_top/asm-20261030-h1-dev1/inputs/ofrecord/r1_adc.gds",
+   "sha256": "9d6dad3d23a033e0484d4fc8d23ba25280c3231680f244c25b44dc9c5c49d880"
+  },
+  "u_gate": {
+   "macro": "r1_gate_lv",
+   "source": "designs/r1-joint/blocks/r1_gate/layout/r1_gate_lv_filled.gds",
+   "sha256": "a3dee0f091c5236f7b6ff231b765d0b70e60a6e791d9db0b12fd821ce44e013b"
+  },
+  "u_ls_t2f0": {
+   "macro": "r1_ls",
+   "source": "designs/r1-joint/blocks/r1_ls/layout/r1_ls.gds",
+   "sha256": "a4f496364b55c71a035f44a9b13b68fd8475f98b05f5e13a4e38e9ec1703b4de"
+  },
+  "u_ls_t2f1": {
+   "macro": "r1_ls",
+   "source": "designs/r1-joint/blocks/r1_ls/layout/r1_ls.gds",
+   "sha256": "a4f496364b55c71a035f44a9b13b68fd8475f98b05f5e13a4e38e9ec1703b4de"
+  },
+  "u_ls_afe0": {
+   "macro": "r1_ls",
+   "source": "designs/r1-joint/blocks/r1_ls/layout/r1_ls.gds",
+   "sha256": "a4f496364b55c71a035f44a9b13b68fd8475f98b05f5e13a4e38e9ec1703b4de"
+  },
+  "u_ls_afe1": {
+   "macro": "r1_ls",
+   "source": "designs/r1-joint/blocks/r1_ls/layout/r1_ls.gds",
+   "sha256": "a4f496364b55c71a035f44a9b13b68fd8475f98b05f5e13a4e38e9ec1703b4de"
+  },
+  "u_ls_afe2": {
+   "macro": "r1_ls",
+   "source": "designs/r1-joint/blocks/r1_ls/layout/r1_ls.gds",
+   "sha256": "a4f496364b55c71a035f44a9b13b68fd8475f98b05f5e13a4e38e9ec1703b4de"
+  },
+  "u_ls_afe3": {
+   "macro": "r1_ls",
+   "source": "designs/r1-joint/blocks/r1_ls/layout/r1_ls.gds",
+   "sha256": "a4f496364b55c71a035f44a9b13b68fd8475f98b05f5e13a4e38e9ec1703b4de"
+  }
+ },
+ "lvs_reference_inputs": {},
+ "placeholders": {},
+ "outputs": {
+  "r1_top.gds": "9fbe4bad6d9b2a2439828eb1a21afa695bb04f92c49792711d683421b1f234b9",
+  "cdl/r1_top.cdl": null,
+  "r1_top.png": "f2f86979711674adc8b38b14b081a592d77f5743a02460582264453125f1066d"
+ },
+ "input_snapshots": {
+  "inputs/inputs.sha256": [
+   "551dab83d55b31763e292663fd24b6b74f5cb5bd628db89a28f9d1dbaf0ae327  ofrecord/r1_adc_b5.gds",
+   "9d6dad3d23a033e0484d4fc8d23ba25280c3231680f244c25b44dc9c5c49d880  ofrecord/r1_adc.gds",
+   "6a2edf74a6d2f2685331a57c7c3609e52370c0f1d7e527a6bc4e99be4f92f86f  ofrecord/r1_adc_layout.json",
+   "0740d3a21d00e32faeec149c3f5b594d45e4791c6ffee137edf84795e70b0392  ofrecord/r1_adc_lvs.cdl",
+   "12a059ca4b9468541c479b13e8e77d946852b57c826f7dd568db60ae4f64ba7f  ofrecord/r1_afe.gds",
+   "4271a5f9d38794c7be2daa399c04ba8a702daae5cd796a3e525d300f0bec91a7  ofrecord/r1_afe_lvs.cdl",
+   "350b552f401d893f96699ff78716498d341b48fb4b820bc731b9e570b3fd9be3  ofrecord/r1_afe_ports.json",
+   "e7ee13940db0ecc2a36c8bf7c6d1947358aceb6dd1dff3b3add9f4eafa2bb78c  ofrecord/r1_bias.gds",
+   "abb7bc280fd1632ec405e7cef62a2b4ba0ab688bc6fa85d897d1b0913a36b4a8  ofrecord/r1_bias_lvs.cdl",
+   "192dd37aa592b85d68b158b18f0f71c8e906664783b047dcdd3bf1ceacd6c7ac  ofrecord/r1_isense.gds",
+   "3021793df19e112a96bdcb6d5618b3b3a00e06bc80baa02c7e293da16f3212f2  ofrecord/r1_isense_lvs.cdl",
+   "373ea907636f40610f81f7cf0864c34fc7be516c67e21d47b6e84b1eed474530  ctrl08/pins_v07.cfg",
+   "5b46936ecc45321417c8879e074c6939b8c3c6363e5fc42774c2ab3a83b350c0  ctrl08/pins_v07.json",
+   "664442c42b444da24f57021a6c9cc179cd9a9509970ca625edb94b5f0aadabf1  ctrl08/pins_v07.md",
+   "55412efa232d4f63fe370f15cd23ecd57e06a04cce4e1d624068f7a5cc285eba  ctrl08/r1_ctrl_signoff.sdc",
+   "f17309cea29d15b4c6aabe629d429ec6d55363d51bde59021fe4039952ddd211  ctrl08/r1_ctrl_top.def",
+   "f8bc16ed7233d1ea3eb12dd3f0cc1045eb169ea842c0d7ab6aad06d9ed302d2e  ctrl08/r1_ctrl_top.gds",
+   "3de0eb55daac9717c44fd46e61ea9a0efb6cff7f6a9877a3f65de04fb294fe5e  ctrl08/r1_ctrl_top.lef",
+   "ddd4e85c5c43ce1a7a3e54fe0ced280033398f0a31124ea87699a6ad4599bd73  ctrl08/r1_ctrl_top.nl.v",
+   "fdf83c12d37b47a54ff2dd59a231ed82879da43c7ebb4c84eba3f8645930e7b2  ctrl08/r1_ctrl_top__nom_fast_1p32V_m40C.sdf",
+   "c407b0f2c2182851daf74f5e8a945fd13c71b2586b3a759db850694ac57d3fda  ctrl08/r1_ctrl_top__nom_slow_1p08V_125C.sdf",
+   "766a8e02c1a693648df9c9c2edca84ad3922ada8500844f94f7a0561d1657dd9  ctrl08/r1_ctrl_top__nom_typ_1p20V_25C.sdf",
+   "160148ae00de2bec44a6ec40d08497e346e2009b95246f9ce3983da93b75415a  ctrl08/r1_ctrl_top.pnl.v",
+   "4e1a53d4c24253da13696a63145363e30d675f3e7d3681c098254f15f3dcd672  ctrl08/r1_ctrl_top_pnr.sdc",
+   "218089fc0948de583b95e7451bb5ff38c3f7cc286686504ecaecd09c4afb1395  ctrl08/R1_REGISTER_MAP_0.8.md",
+   "d254e93b0fe8ee8cf62513db244bb30a816252fcdb8b8522889569b1d0dfc743  ctrl08/SHA256SUMS",
+   "41ef2f45cfe5291ba251f9bdab484edb6614074d063803e33d1690d19672527d  ctrl08/SOURCE.txt"
+  ]
+ },
+ "self_check": {
+  "instance_overlaps": [],
+  "instance_pairs_closer_than_10um": [],
+  "outside_extended_window": [],
+  "routes_inside_macros": []
+ },
+ "net_conflicts": 0,
+ "routed_nets": 173,
+ "ring_eco": {
+  "cut_tm1": [
+   321.0,
+   735.0,
+   365.0,
+   1239.4
+  ],
+  "tm2": [
+   [
+    324.82,
+    720.0,
+    339.82,
+    1254.4
+   ],
+   [
+    344.82,
+    720.0,
+    361.8,
+    1254.4
+   ]
+  ],
+  "tv2": [
+   [
+    324.82,
+    720.0,
+    339.82,
+    735.0
+   ],
+   [
+    324.82,
+    1239.4,
+    339.82,
+    1254.4
+   ],
+   [
+    344.82,
+    720.0,
+    361.8,
+    735.0
+   ],
+   [
+    344.82,
+    1239.4,
+    361.8,
+    1254.4
+   ]
+  ],
+  "east_columns": "no MIM block under the east columns (isense ends at x 1272.2, osc at 1237.0; column from 1340.42); no cut"
+ },
+ "antenna_decap_row": {
+  "cell": "sg13g2_decap_8",
+  "count": 34,
+  "origin_um": [
+   1215.0,
+   1355.0
+  ],
+  "pitch_um": 3.36,
+  "bbox_um": [
+   1215.0,
+   1355.0,
+   1329.24,
+   1358.78
+  ],
+  "gate_area_on_VDD_um2": 28.56,
+  "cell_source": "from r1_ctrl_top (PDK library cell)"
+ },
+ "antenna_diodes": 0,
+ "tm1_over_mim_blocks": [],
+ "maze": {
+  "grid_origin_um": [
+   319.4,
+   330.0
+  ],
+  "pitch_um": 0.8,
+  "failed": [],
+  "access_failed": []
+ },
+ "checks": {
+  "drc_main": {
+   "state": "not run"
+  },
+  "drc_maximal": {
+   "state": "not run"
+  },
+  "drc_density": {
+   "state": "not run"
+  },
+  "drc_antenna": {
+   "state": "not run"
+  },
+  "lvs_limits": {
+   "state": "not run"
+  },
+  "lvs_stock": {
+   "state": "not run"
+  }
+ },
+ "disposition": "development run (gen + supply only): feed R 1.383 ohm max, passed; derate r1ctrl_irderate_h1dev1 setup +1.102 ns passed",
+ "try": "h1",
+ "iopadvss_eco": false,
+ "padmap": {},
+ "vss_pad_cell_origins_x": [
+  597.0,
+  1023.0
+ ],
+ "antenna_diodes_removed": "30 sg13g2_antennanp of try f (the ADC SAR sub-macro drives the nets)",
+ "merged_std_cells": [
+  {
+   "cell": "sg13g2_LevelUpInv$1",
+   "into": "sg13g2_LevelUpInv",
+   "parent_instance_arrays": 2,
+   "merged": true
+  },
+  {
+   "cell": "sg13g2_Clamp_N43N43D4R$1",
+   "into": "sg13g2_Clamp_N43N43D4R",
+   "parent_instance_arrays": 1,
+   "merged": true
+  },
+  {
+   "cell": "sg13g2_RCClampInverter$1",
+   "into": "sg13g2_RCClampInverter",
+   "parent_instance_arrays": 1,
+   "merged": true
+  },
+  {
+   "cell": "sg13g2_DCPDiode$1",
+   "into": "sg13g2_DCPDiode",
+   "parent_instance_arrays": 1,
+   "merged": true
+  },
+  {
+   "cell": "sg13g2_DCNDiode$1",
+   "into": "sg13g2_DCNDiode",
+   "parent_instance_arrays": 1,
+   "merged": true
+  },
+  {
+   "cell": "sg13g2_DCPDiode$2",
+   "into": "sg13g2_DCPDiode",
+   "parent_instance_arrays": 1,
+   "merged": true
+  },
+  {
+   "cell": "sg13g2_DCNDiode$2",
+   "into": "sg13g2_DCNDiode",
+   "parent_instance_arrays": 1,
+   "merged": true
+  },
+  {
+   "cell": "sg13g2_DCPDiode$3",
+   "into": "sg13g2_DCPDiode",
+   "parent_instance_arrays": 1,
+   "merged": true
+  },
+  {
+   "cell": "sg13g2_DCNDiode$3",
+   "into": "sg13g2_DCNDiode",
+   "parent_instance_arrays": 1,
+   "merged": true
+  },
+  {
+   "cell": "sg13g2_GateLevelUpInv$1",
+   "into": "sg13g2_GateLevelUpInv",
+   "parent_instance_arrays": 1,
+   "merged": true
+  },
+  {
+   "cell": "sg13g2_DCPDiode$4",
+   "into": "sg13g2_DCPDiode",
+   "parent_instance_arrays": 1,
+   "merged": true
+  },
+  {
+   "cell": "sg13g2_DCNDiode$4",
+   "into": "sg13g2_DCNDiode",
+   "parent_instance_arrays": 1,
+   "merged": true
+  },
+  {
+   "cell": "sg13g2_DCPDiode$5",
+   "into": "sg13g2_DCPDiode",
+   "parent_instance_arrays": 1,
+   "merged": true
+  },
+  {
+   "cell": "sg13g2_DCNDiode$5",
+   "into": "sg13g2_DCNDiode",
+   "parent_instance_arrays": 1,
+   "merged": true
+  },
+  {
+   "cell": "sg13g2_antennanp$1",
+   "into": "sg13g2_antennanp",
+   "parent_instance_arrays": 1,
+   "merged": true
+  },
+  {
+   "cell": "sg13g2_decap_8$1",
+   "into": "sg13g2_decap_8",
+   "parent_instance_arrays": 41,
+   "merged": true
+  },
+  {
+   "cell": "sg13g2_fill_1$1",
+   "into": "sg13g2_fill_1",
+   "parent_instance_arrays": 77,
+   "merged": true
+  },
+  {
+   "cell": "sg13g2_fill_2$1",
+   "into": "sg13g2_fill_2",
+   "parent_instance_arrays": 62,
+   "merged": true
+  },
+  {
+   "cell": "sg13g2_decap_4$1",
+   "into": "sg13g2_decap_4",
+   "parent_instance_arrays": 37,
+   "merged": true
+  },
+  {
+   "cell": "sg13g2_inv_1$1",
+   "into": "sg13g2_inv_1",
+   "parent_instance_arrays": 12,
+   "merged": true
+  },
+  {
+   "cell": "sg13g2_or2_1$1",
+   "into": "sg13g2_or2_1",
+   "parent_instance_arrays": 6,
+   "merged": true
+  },
+  {
+   "cell": "sg13g2_and2_1$1",
+   "into": "sg13g2_and2_1",
+   "parent_instance_arrays": 2,
+   "merged": true
+  },
+  {
+   "cell": "sg13g2_nor3_1$1",
+   "into": "sg13g2_nor3_1",
+   "parent_instance_arrays": 9,
+   "merged": true
+  },
+  {
+   "cell": "sg13g2_a21o_1$1",
+   "into": "sg13g2_a21o_1",
+   "parent_instance_arrays": 4,
+   "merged": true
+  },
+  {
+   "cell": "sg13g2_nor2_1$1",
+   "into": "sg13g2_nor2_1",
+   "parent_instance_arrays": 8,
+   "merged": true
+  },
+  {
+   "cell": "sg13g2_nor2b_1$1",
+   "into": "sg13g2_nor2b_1",
+   "parent_instance_arrays": 50,
+   "merged": true
+  },
+  {
+   "cell": "sg13g2_nand2_1$1",
+   "into": "sg13g2_nand2_1",
+   "parent_instance_arrays": 4,
+   "merged": true
+  },
+  {
+   "cell": "sg13g2_nand2b_1$1",
+   "into": "sg13g2_nand2b_1",
+   "parent_instance_arrays": 6,
+   "merged": true
+  },
+  {
+   "cell": "sg13g2_o21ai_1$1",
+   "into": "sg13g2_o21ai_1",
+   "parent_instance_arrays": 3,
+   "merged": true
+  },
+  {
+   "cell": "sg13g2_nand3_1$1",
+   "into": "sg13g2_nand3_1",
+   "parent_instance_arrays": 1,
+   "merged": true
+  },
+  {
+   "cell": "sg13g2_inv_2$1",
+   "into": "sg13g2_inv_2",
+   "parent_instance_arrays": 1,
+   "merged": true
+  },
+  {
+   "cell": "sg13g2_a22oi_1$1",
+   "into": "sg13g2_a22oi_1",
+   "parent_instance_arrays": 2,
+   "merged": true
+  },
+  {
+   "cell": "sg13g2_mux2_1$1",
+   "into": "sg13g2_mux2_1",
+   "parent_instance_arrays": 46,
+   "merged": true
+  },
+  {
+   "cell": "sg13g2_nor4_1$1",
+   "into": "sg13g2_nor4_1",
+   "parent_instance_arrays": 2,
+   "merged": true
+  },
+  {
+   "cell": "sg13g2_nand3b_1$1",
+   "into": "sg13g2_nand3b_1",
+   "parent_instance_arrays": 3,
+   "merged": true
+  },
+  {
+   "cell": "sg13g2_and3_1$1",
+   "into": "sg13g2_and3_1",
+   "parent_instance_arrays": 1,
+   "merged": true
+  },
+  {
+   "cell": "sg13g2_nand4_1$1",
+   "into": "sg13g2_nand4_1",
+   "parent_instance_arrays": 1,
+   "merged": true
+  },
+  {
+   "cell": "sg13g2_a21oi_1$1",
+   "into": "sg13g2_a21oi_1",
+   "parent_instance_arrays": 8,
+   "merged": true
+  },
+  {
+   "cell": "sg13g2_xnor2_1$1",
+   "into": "sg13g2_xnor2_1",
+   "parent_instance_arrays": 1,
+   "merged": true
+  },
+  {
+   "cell": "sg13g2_dfrbpq_1$1",
+   "into": "sg13g2_dfrbpq_1",
+   "parent_instance_arrays": 39,
+   "merged": true
+  },
+  {
+   "cell": "sg13g2_tiehi$1",
+   "into": "sg13g2_tiehi",
+   "parent_instance_arrays": 1,
+   "merged": true
+  },
+  {
+   "cell": "sg13g2_buf_1$1",
+   "into": "sg13g2_buf_1",
+   "parent_instance_arrays": 59,
+   "merged": true
+  },
+  {
+   "cell": "sg13g2_buf_2$1",
+   "into": "sg13g2_buf_2",
+   "parent_instance_arrays": 23,
+   "merged": true
+  },
+  {
+   "cell": "sg13g2_buf_4$1",
+   "into": "sg13g2_buf_4",
+   "parent_instance_arrays": 12,
+   "merged": true
+  },
+  {
+   "cell": "sg13g2_dlygate4sd3_1$1",
+   "into": "sg13g2_dlygate4sd3_1",
+   "parent_instance_arrays": 9,
+   "merged": true
+  }
+ ],
+ "south_vdd_feed": true,
+ "south_supply_stacks": [
+  {
+   "vdd_stack_um": [
+    545.6,
+    343.0,
+    554.4,
+    362.16
+   ],
+   "vss_stack_um": [
+    559.0,
+    327.5,
+    571.0,
+    341.0
+   ]
+  },
+  {
+   "vdd_stack_um": [
+    687.6,
+    343.0,
+    696.4,
+    362.16
+   ],
+   "vss_stack_um": [
+    701.0,
+    327.5,
+    713.0,
+    341.0
+   ]
+  },
+  {
+   "vdd_stack_um": [
+    829.6,
+    343.0,
+    838.4,
+    362.16
+   ],
+   "vss_stack_um": [
+    843.0,
+    327.5,
+    855.0,
+    341.0
+   ]
+  },
+  {
+   "vdd_stack_um": [
+    971.6,
+    343.0,
+    980.4,
+    362.16
+   ],
+   "vss_stack_um": [
+    985.0,
+    327.5,
+    997.0,
+    341.0
+   ]
+  },
+  {
+   "vdd_stack_um": [
+    1113.6,
+    343.0,
+    1122.4,
+    362.16
+   ],
+   "vss_stack_um": [
+    1127.0,
+    327.5,
+    1139.0,
+    341.0
+   ]
+  }
+ ],
+ "supply_h_feed": {
+  "description": "try h0 supply feed (README 'Supply feed redesign (try h preparation)')",
+  "enabled": true,
+  "shapes": [
+   [
+    "TM2",
+    "VSS",
+    [
+     604.5,
+     301.0,
+     632.5,
+     342.16
+    ]
+   ],
+   [
+    "TM2",
+    "VSS",
+    [
+     641.5,
+     301.0,
+     669.5,
+     342.16
+    ]
+   ],
+   [
+    "TM2",
+    "VSS",
+    [
+     1030.5,
+     301.0,
+     1058.5,
+     342.16
+    ]
+   ],
+   [
+    "TM2",
+    "VSS",
+    [
+     1067.5,
+     301.0,
+     1095.5,
+     342.16
+    ]
+   ],
+   [
+    "TM2",
+    "VDD",
+    [
+     460.0,
+     296.0,
+     488.0,
+     362.16
+    ]
+   ],
+   [
+    "TM2",
+    "VDD",
+    [
+     502.0,
+     296.0,
+     530.0,
+     362.16
+    ]
+   ],
+   [
+    "TM1",
+    "VSS",
+    [
+     425.0,
+     323.5,
+     571.0,
+     341.0
+    ]
+   ],
+   [
+    "TM1",
+    "VSS",
+    [
+     400.0,
+     317.0,
+     422.0,
+     341.0
+    ]
+   ],
+   [
+    "TM1",
+    "VSS",
+    [
+     425.0,
+     317.0,
+     448.0,
+     341.0
+    ]
+   ],
+   [
+    "TM1",
+    "VSS",
+    [
+     640.0,
+     317.0,
+     662.0,
+     341.0
+    ]
+   ],
+   [
+    "TM1",
+    "VSS",
+    [
+     760.0,
+     317.0,
+     782.0,
+     341.0
+    ]
+   ],
+   [
+    "TM1",
+    "VSS",
+    [
+     900.0,
+     317.0,
+     922.0,
+     341.0
+    ]
+   ],
+   [
+    "TM1",
+    "VSS",
+    [
+     1080.0,
+     317.0,
+     1102.0,
+     341.0
+    ]
+   ],
+   [
+    "TM1",
+    "VSS",
+    [
+     1180.0,
+     317.0,
+     1202.0,
+     341.0
+    ]
+   ],
+   [
+    "TM1",
+    "VSS",
+    [
+     1250.0,
+     317.0,
+     1272.0,
+     341.0
+    ]
+   ],
+   [
+    "TM1",
+    "VSS",
+    [
+     1300.0,
+     317.0,
+     1322.0,
+     341.0
+    ]
+   ],
+   [
+    "TM1",
+    "VSS",
+    [
+     701.0,
+     317.0,
+     713.0,
+     333.0
+    ]
+   ],
+   [
+    "TM1",
+    "VSS",
+    [
+     843.0,
+     317.0,
+     855.0,
+     333.0
+    ]
+   ],
+   [
+    "TM1",
+    "VSS",
+    [
+     985.0,
+     317.0,
+     997.0,
+     333.0
+    ]
+   ],
+   [
+    "TM1",
+    "VSS",
+    [
+     1127.0,
+     317.0,
+     1139.0,
+     333.0
+    ]
+   ],
+   [
+    "TM1",
+    "VSS",
+    [
+     372.0,
+     317.0,
+     392.0,
+     333.0
+    ]
+   ],
+   [
+    "TM1",
+    "VSS",
+    [
+     566.0,
+     317.0,
+     590.0,
+     682.5
+    ]
+   ],
+   [
+    "TM1",
+    "VSS",
+    [
+     1036.0,
+     317.0,
+     1064.0,
+     682.5
+    ]
+   ],
+   [
+    "TM1",
+    "VSS",
+    [
+     561.0,
+     654.5,
+     1068.0,
+     682.5
+    ]
+   ],
+   [
+    "TM1",
+    "VSS",
+    [
+     568.54,
+     682.0,
+     570.74,
+     684.6
+    ]
+   ],
+   [
+    "TM1",
+    "VSS",
+    [
+     644.14,
+     682.0,
+     646.34,
+     684.6
+    ]
+   ],
+   [
+    "TM1",
+    "VSS",
+    [
+     719.74,
+     682.0,
+     721.94,
+     684.6
+    ]
+   ],
+   [
+    "TM1",
+    "VSS",
+    [
+     795.34,
+     682.0,
+     797.54,
+     684.6
+    ]
+   ],
+   [
+    "TM1",
+    "VSS",
+    [
+     870.94,
+     682.0,
+     873.14,
+     684.6
+    ]
+   ],
+   [
+    "TM1",
+    "VSS",
+    [
+     946.54,
+     682.0,
+     948.74,
+     684.6
+    ]
+   ],
+   [
+    "TM1",
+    "VSS",
+    [
+     1022.14,
+     682.0,
+     1024.34,
+     684.6
+    ]
+   ],
+   [
+    "TM2",
+    "VDD",
+    [
+     1036.0,
+     347.16,
+     1064.0,
+     692.0
+    ]
+   ]
+  ],
+  "em_items": [
+   {
+    "name": "VSS pad finger TopMetal2 28 um over the unmodified IOPadVss (x 604)",
+    "net": "VSS",
+    "layer": "TM2",
+    "box": [
+     604.5,
+     301.0,
+     632.5,
+     342.16
+    ],
+    "dir": "v",
+    "width": 28.0
+   },
+   {
+    "name": "VSS pad finger TopMetal2 28 um over the unmodified IOPadVss (x 642)",
+    "net": "VSS",
+    "layer": "TM2",
+    "box": [
+     641.5,
+     301.0,
+     669.5,
+     342.16
+    ],
+    "dir": "v",
+    "width": 28.0
+   },
+   {
+    "name": "VSS pad finger TopMetal2 28 um over the unmodified IOPadVss (x 1030)",
+    "net": "VSS",
+    "layer": "TM2",
+    "box": [
+     1030.5,
+     301.0,
+     1058.5,
+     342.16
+    ],
+    "dir": "v",
+    "width": 28.0
+   },
+   {
+    "name": "VSS pad finger TopMetal2 28 um over the unmodified IOPadVss (x 1068)",
+    "net": "VSS",
+    "layer": "TM2",
+    "box": [
+     1067.5,
+     301.0,
+     1095.5,
+     342.16
+    ],
+    "dir": "v",
+    "width": 28.0
+   },
+   {
+    "name": "VDD pad-1 riser finger TopMetal2 28 um (x 460)",
+    "net": "VDD",
+    "layer": "TM2",
+    "box": [
+     460.0,
+     296.0,
+     488.0,
+     362.16
+    ],
+    "dir": "v",
+    "width": 28.0
+   },
+   {
+    "name": "VDD pad-1 riser finger TopMetal2 28 um (x 502)",
+    "net": "VDD",
+    "layer": "TM2",
+    "box": [
+     502.0,
+     296.0,
+     530.0,
+     362.16
+    ],
+    "dir": "v",
+    "width": 28.0
+   },
+   {
+    "name": "VSS bridge TopMetal1 17.5 um under the VDD riser",
+    "net": "VSS",
+    "layer": "TM1",
+    "box": [
+     425.0,
+     323.5,
+     571.0,
+     341.0
+    ],
+    "dir": "h",
+    "width": 17.5
+   },
+   {
+    "name": "west VSS TopMetal1 strap 24 um (x 566-590)",
+    "net": "VSS",
+    "layer": "TM1",
+    "box": [
+     566.0,
+     380.0,
+     590.0,
+     640.0
+    ],
+    "dir": "v",
+    "width": 24.0
+   },
+   {
+    "name": "east VSS TopMetal1 strap 28 um (x 1036-1064)",
+    "net": "VSS",
+    "layer": "TM1",
+    "box": [
+     1036.0,
+     380.0,
+     1064.0,
+     640.0
+    ],
+    "dir": "v",
+    "width": 28.0
+   },
+   {
+    "name": "VSS TopMetal1 bar 28 um (y 654.5-682.5)",
+    "net": "VSS",
+    "layer": "TM1",
+    "box": [
+     592.0,
+     654.5,
+     1034.0,
+     682.5
+    ],
+    "dir": "h",
+    "width": 28.0
+   },
+   {
+    "name": "VSS stripe south end TopMetal1 2.2 um (x 568.54)",
+    "net": "VSS",
+    "layer": "TM1",
+    "box": [
+     568.54,
+     682.0,
+     570.74,
+     715.0
+    ],
+    "dir": "v",
+    "width": 2.2
+   },
+   {
+    "name": "VSS stripe south end TopMetal1 2.2 um (x 644.14)",
+    "net": "VSS",
+    "layer": "TM1",
+    "box": [
+     644.14,
+     682.0,
+     646.34,
+     715.0
+    ],
+    "dir": "v",
+    "width": 2.2
+   },
+   {
+    "name": "VSS stripe south end TopMetal1 2.2 um (x 719.74)",
+    "net": "VSS",
+    "layer": "TM1",
+    "box": [
+     719.74,
+     682.0,
+     721.94,
+     715.0
+    ],
+    "dir": "v",
+    "width": 2.2
+   },
+   {
+    "name": "VSS stripe south end TopMetal1 2.2 um (x 795.34)",
+    "net": "VSS",
+    "layer": "TM1",
+    "box": [
+     795.34,
+     682.0,
+     797.54,
+     715.0
+    ],
+    "dir": "v",
+    "width": 2.2
+   },
+   {
+    "name": "VSS stripe south end TopMetal1 2.2 um (x 870.94)",
+    "net": "VSS",
+    "layer": "TM1",
+    "box": [
+     870.94,
+     682.0,
+     873.14,
+     715.0
+    ],
+    "dir": "v",
+    "width": 2.2
+   },
+   {
+    "name": "VSS stripe south end TopMetal1 2.2 um (x 946.54)",
+    "net": "VSS",
+    "layer": "TM1",
+    "box": [
+     946.54,
+     682.0,
+     948.74,
+     715.0
+    ],
+    "dir": "v",
+    "width": 2.2
+   },
+   {
+    "name": "VSS stripe south end TopMetal1 2.2 um (x 1022.14)",
+    "net": "VSS",
+    "layer": "TM1",
+    "box": [
+     1022.14,
+     682.0,
+     1024.34,
+     715.0
+    ],
+    "dir": "v",
+    "width": 2.2
+   },
+   {
+    "name": "east VDD TopMetal2 strap 28 um (x 1036-1064)",
+    "net": "VDD",
+    "layer": "TM2",
+    "box": [
+     1036.0,
+     380.0,
+     1064.0,
+     640.0
+    ],
+    "dir": "v",
+    "width": 28.0
+   },
+   {
+    "name": "west VDD TopMetal2 strap 24 um (x 566-590, try g)",
+    "net": "VDD",
+    "layer": "TM2",
+    "box": [
+     566.0,
+     380.0,
+     590.0,
+     640.0
+    ],
+    "dir": "v",
+    "width": 24.0
+   },
+   {
+    "name": "VDD TopMetal2 bar 28 um (y 664-692)",
+    "net": "VDD",
+    "layer": "TM2",
+    "box": [
+     592.0,
+     664.0,
+     1034.0,
+     692.0
+    ],
+    "dir": "h",
+    "width": 28.0
+   }
+  ],
+  "ring_eco": {
+   "vss_row_gap": [
+    453.0,
+    327.16,
+    537.0,
+    342.16
+   ]
+  }
+ },
+ "results": {
+  "supply_h0.json": "not run",
+  "supply_h1.json": "<G1_RESULTS_ROOT>/r1_top/asm-20261030-h1-dev1/supply_h1.json",
+  "clk_skew_g.json": "not run"
+ },
+ "environment": "R1H_PADMAP= (empty)",
+ "note": "generated before the AFE VDDA strap was added to the generator; equal to the final generator with R1H_NO_VDDA_STRAP=1; the generator sha256 in this record is the final file"
+}

@@ -1,0 +1,192 @@
+{
+ "run": "r1ctrl_irderate_h0",
+ "track": "T8f",
+ "date": "2026-10-28",
+ "question": "Does r1_ctrl 0.8 keep setup slack >= 1 ns at the spec minimum VDD 1.08 V minus the try-h0 supply loss (asm-20261030-h0, typ and max sheet), and hold >= 0?",
+ "method": "as r1ctrl_irderate_g3 (T11b): cell delay vs voltage (ngspice 46, mos_ss 125 C / mos_ff -40 C, PDK cells), derate factor = largest cell/load ratio, OpenSTA set_timing_derate on the 0.8 release netlist, sign-off SDC, t22 nominal SPEF",
+ "loss_V": {
+  "typ_worst": 0.02314,
+  "max_worst": 0.02924,
+  "typ_best": 0.01305,
+  "max_best": 0.01736
+ },
+ "commands": [
+  "sh <G1_RESULTS_ROOT>/r1_top/r1ctrl_irderate_h0/run_char.sh",
+  "flow/run.sh env R1_IRDERATE_LOSS='<loss_V json>' python3 designs/r1-joint/blocks/r1_top/irderate/derate.py factors <R>/factors.json 1.08 <R>/char_ss/char_ss125.json <G1_RESULTS_ROOT>/r1_top/r1ctrl_irderate_g3/char_ss_a/char_ss125.json",
+  "flow/run.sh env R1_IRDERATE_LOSS='<loss_V json>' python3 designs/r1-joint/blocks/r1_top/irderate/derate.py factors <R>/factors_ff.json 1.32 <R>/char_ff/char_ff-40.json <G1_RESULTS_ROOT>/r1_top/r1ctrl_irderate_g3/char_ff/char_ff-40.json",
+  "sh <G1_RESULTS_ROOT>/r1_top/r1ctrl_irderate_h0/run_sta.sh"
+ ],
+ "tools": {
+  "ngspice": "46",
+  "OpenSTA": "container tapeoutbench-eda:latest sha256:ddeb6957...",
+  "pdk_commit": "84374023ee8b4b126bebbba67fcbada0a9c0ff0b",
+  "cpuset": "112-119"
+ },
+ "inputs_sha256": {
+  "irderate/char_cells.py": "0085321dc257fe86d77d8097347b517262bbe222a1013d325f84e911e48ed8e8",
+  "irderate/derate.py": "c3d92148584b865b03e8716c9c578e88e431e89e7ca327451926c3271196054c",
+  "irderate/sta_derate.tcl": "ec8a56822889d483d97db44663713ba58b644b67730a5806af7661da3e47c343",
+  "irderate/sta_parse.py": "3d31e5fff71f37521304bfd49adcb6968f0a5b6455fbe20109ee193098be969a",
+  "<G1_RESULTS_ROOT>/r1_ctrl/r1ctrl_08_release/r1_ctrl_top.nl.v": "ddd4e85c5c43ce1a7a3e54fe0ced280033398f0a31124ea87699a6ad4599bd73",
+  "<G1_RESULTS_ROOT>/r1_ctrl/r1ctrl_08_release/r1_ctrl_signoff.sdc": "55412efa232d4f63fe370f15cd23ecd57e06a04cce4e1d624068f7a5cc285eba",
+  "<G1_RESULTS_ROOT>/r1_ctrl/r1ctrl_ll_20261027_t22/.../spef/nom/r1_ctrl_top.nom.spef": "1a5e26a5c881e76fd107e28f0b3ae798eb87a8ba9d2cd45c2a127593a9062888",
+  "<G1_RESULTS_ROOT>/r1_top/asm-20261030-h0/supply_h0.json": "c42cf527da88493c4d7dd42d6eee912c7e182bb26b8497493be1cde0bcdee91a"
+ },
+ "result": {
+  "slow": {
+   "derate_slow_1p08V_125C.rpt/base": {
+    "report": "derate_slow_1p08V_125C.rpt",
+    "early": 1.0,
+    "late": 1.0,
+    "wns_max": 0.0,
+    "wns_min": 0.3603,
+    "tns_max": 0.0,
+    "setup_ff": 3.7135,
+    "setup_ff_path": "_27652_ -> _27611_",
+    "setup_out": 14.2636,
+    "setup_latch": 0.0,
+    "latch_borrow": 2.2458,
+    "hold": 0.3603,
+    "hold_path": "_28116_ -> _28053_"
+   },
+   "derate_slow_1p08V_125C.rpt/U_typ": {
+    "report": "derate_slow_1p08V_125C.rpt",
+    "early": 1.0514,
+    "late": 1.0514,
+    "wns_max": 0.0,
+    "wns_min": 0.3815,
+    "tns_max": 0.0,
+    "setup_ff": 2.711,
+    "setup_ff_path": "_27652_ -> _27611_",
+    "setup_out": 14.0581,
+    "setup_latch": 0.0,
+    "latch_borrow": 2.3599,
+    "hold": 0.3815,
+    "hold_path": "_28116_ -> _28053_"
+   },
+   "derate_slow_1p08V_125C.rpt/U_max": {
+    "report": "derate_slow_1p08V_125C.rpt",
+    "early": 1.0659,
+    "late": 1.0659,
+    "wns_max": 0.0,
+    "wns_min": 0.3874,
+    "tns_max": 0.0,
+    "setup_ff": 2.4282,
+    "setup_ff_path": "_27652_ -> _27611_",
+    "setup_out": 14.0002,
+    "setup_latch": 0.0,
+    "latch_borrow": 2.3921,
+    "hold": 0.3874,
+    "hold_path": "_28116_ -> _28053_"
+   },
+   "derate_slow_1p08V_125C.rpt/U_max_meancell": {
+    "report": "derate_slow_1p08V_125C.rpt",
+    "early": 1.0606,
+    "late": 1.0606,
+    "wns_max": 0.0,
+    "wns_min": 0.3853,
+    "tns_max": 0.0,
+    "setup_ff": 2.5316,
+    "setup_ff_path": "_27652_ -> _27611_",
+    "setup_out": 14.0214,
+    "setup_latch": 0.0,
+    "latch_borrow": 2.3803,
+    "hold": 0.3853,
+    "hold_path": "_28116_ -> _28053_"
+   },
+   "derate_slow_1p08V_125C.rpt/OCV_typ": {
+    "report": "derate_slow_1p08V_125C.rpt",
+    "early": 1.0284,
+    "late": 1.0514,
+    "wns_max": 0.0,
+    "wns_min": 0.3467,
+    "tns_max": 0.0,
+    "setup_ff": 2.7023,
+    "setup_ff_path": "_27652_ -> _27611_",
+    "setup_out": 14.0581,
+    "setup_latch": 0.0,
+    "latch_borrow": 2.3599,
+    "hold": 0.3467,
+    "hold_path": "_28116_ -> _28053_"
+   },
+   "derate_slow_1p08V_125C.rpt/OCV_max": {
+    "report": "derate_slow_1p08V_125C.rpt",
+    "early": 1.0381,
+    "late": 1.0659,
+    "wns_max": 0.0,
+    "wns_min": 0.3454,
+    "tns_max": 0.0,
+    "setup_ff": 2.4177,
+    "setup_ff_path": "_27652_ -> _27611_",
+    "setup_out": 14.0002,
+    "setup_latch": 0.0,
+    "latch_borrow": 2.3921,
+    "hold": 0.3454,
+    "hold_path": "_28116_ -> _28053_"
+   }
+  },
+  "fast": {
+   "derate_fast_1p32V_m40C.rpt/base": {
+    "report": "derate_fast_1p32V_m40C.rpt",
+    "early": 1.0,
+    "late": 1.0,
+    "wns_max": 0.0,
+    "wns_min": 0.12,
+    "tns_max": 0.0,
+    "setup_ff": 10.157,
+    "setup_ff_path": "_28118_ -> _28426_",
+    "setup_out": 16.6603,
+    "setup_latch": 0.0,
+    "latch_borrow": 0.9389,
+    "hold": 0.12,
+    "hold_path": "_28116_ -> _28053_"
+   },
+   "derate_fast_1p32V_m40C.rpt/U_max": {
+    "report": "derate_fast_1p32V_m40C.rpt",
+    "early": 1.0419,
+    "late": 1.0419,
+    "wns_max": 0.0,
+    "wns_min": 0.1272,
+    "tns_max": 0.0,
+    "setup_ff": 10.1059,
+    "setup_ff_path": "_28118_ -> _28426_",
+    "setup_out": 16.5933,
+    "setup_latch": 0.0,
+    "latch_borrow": 0.977,
+    "hold": 0.1272,
+    "hold_path": "_28116_ -> _28053_"
+   },
+   "derate_fast_1p32V_m40C.rpt/OCV_max": {
+    "report": "derate_fast_1p32V_m40C.rpt",
+    "early": 1.0245,
+    "late": 1.0419,
+    "wns_max": 0.0,
+    "wns_min": 0.1165,
+    "tns_max": 0.0,
+    "setup_ff": 10.0988,
+    "setup_ff_path": "_28118_ -> _28426_",
+    "setup_out": 16.5933,
+    "setup_latch": 0.0,
+    "latch_borrow": 0.977,
+    "hold": 0.1165,
+    "hold_path": "_28116_ -> _28053_"
+   },
+   "derate_fast_1p32V_m40C.rpt/OCV_bound": {
+    "report": "derate_fast_1p32V_m40C.rpt",
+    "early": 1.0,
+    "late": 1.0419,
+    "wns_max": 0.0,
+    "wns_min": 0.1015,
+    "tns_max": 0.0,
+    "setup_ff": 10.0888,
+    "setup_ff_path": "_28118_ -> _28426_",
+    "setup_out": 16.5933,
+    "setup_latch": 0.0,
+    "latch_borrow": 0.977,
+    "hold": 0.1015,
+    "hold_path": "_28116_ -> _28053_"
+   }
+  }
+ },
+ "disposition": "passed: setup to flop D >= 2.418 ns in every slow case (worst: max sheet, grid spread); hold >= +0.1015 ns (fast bound case)"
+}

@@ -1,5 +1,16 @@
 # SPDX-License-Identifier: Apache-2.0
-"""R1 top-level assembly, try h0 (track T8f): the try-g assembly with a new supply feed for r1_ctrl, KLayout Python.
+"""R1 top-level assembly, try h (tracks T8f h0, T8g h1): the try-g assembly with a new supply feed for r1_ctrl, KLayout Python.
+
+Try h1 (track T8g, PLAN.md D24, default): every IO cell stays as shipped. The h0 network below without item 1 (no cell
+edit): instead, two 28 um TopMetal2 fingers per IOPadVss over the cell (local y 160-201.16, the only free top-cell layer
+there) with TopVia2 onto the cell's TopMetal1 vss pin, joined to the outer south VSS row (pin access). New: AFE VDDA
+TopMetal1 strap x 368-522, y 727-738 over the 2.8 um Metal4 AFE VDDA rail (R1H_NO_VDDA_STRAP=1 leaves it out).
+Switches: R1H_IOPADVSS_ECO=1 (with R1H_NO_VDDA_STRAP=1: the rejected h0 network, record only); R1H_PADMAP=vss4 / vss6
+(pin-map variant: die pad 4 / 6 IOPadIOVss replaced by the unmodified IOPadVss; LVS reference from
+flow/ring_cdl_padswap.py through R1H_RING_CDL in lvs/make_top_cdl_g.py); R1H_NO_FEED=1 (the try-g network).
+README "Supply feed with unmodified pads (try h1)", reports/supply_h1.md.
+
+--- try h0 (track T8f) ---
 
 Copy of r1_top_assemble_g.py (try g, track T8e; placement, macros, signal routing and checks unchanged) with the try-h0
 supply network (README "Supply feed redesign (try h preparation)", reports/supply_h0.md). Every change is in the
@@ -141,6 +152,36 @@ for inst in list(ring.each_inst()):
         removed_fill += 1
         inst.delete()
 ly.cleanup()
+# Try h1 (track T8g, PLAN.md D24): every IO cell stays as shipped. R1H_IOPADVSS_ECO=1 draws the rejected try-h0 riser
+# (edited IOPadVss copy, record only). R1H_PADMAP=vss4 / vss6: variant with die pad 4 / 6 (IOPadIOVss, IOVSS) replaced
+# by the unmodified IOPadVss cell (a third core VSS pad; pin-map change, owner decision; README "try h1").
+RISER = bool(os.environ.get("R1H_IOPADVSS_ECO"))
+PADMAP = os.environ.get("R1H_PADMAP", "")
+if PADMAP not in ("", "vss4", "vss6"):
+    raise SystemExit("R1H_PADMAP must be empty, vss4 or vss6")
+VSS_PAD_X = [597.0, 1023.0]                          # IOPadVss cell origins (die pads 2 and 5), y 141
+PADSWAP = {}
+if PADMAP:
+    _px = 881.0 if PADMAP == "vss4" else 1165.0
+    _vcell = ly.cell("retained_fullchip_sg13g2_IOPadVss")
+    _hit = [i for i in ring.each_inst() if i.cell.name == "retained_fullchip_sg13g2_IOPadIOVss"
+            and abs(i.dcplx_trans.disp.x - _px) < 1e-3 and abs(i.dcplx_trans.disp.y - 141.0) < 1e-3]
+    if len(_hit) != 1:
+        raise SystemExit("pad swap: IOPadIOVss at x %.0f not found" % _px)
+    _hit[0].cell_index = _vcell.cell_index()
+    VSS_PAD_X = sorted(VSS_PAD_X + [_px])
+    _ltr = ly.layer(134, 25)
+    _relab = []
+    if PADMAP == "vss4":            # first-pad label rule: pad 4 loses the IOVSS label, pad 6 (now the first IOVSS pad) gets it
+        for _sh in list(ring.shapes(_ltr).each()):
+            if _sh.is_text() and _sh.text_string == "IOVSS" and abs(_sh.dtext.x - 921.0) < 1e-3:
+                _t = _sh.dtext
+                ring.shapes(_ltr).erase(_sh)
+                ring.shapes(_ltr).insert(db.DText("IOVSS", db.DTrans(1205.0, _t.y)))
+                _relab.append(["IOVSS", [921.0, _t.y], [1205.0, _t.y]])
+    PADSWAP = {"padmap": PADMAP, "die_pad": 4 if PADMAP == "vss4" else 6, "cell_origin_um": [_px, 141.0],
+               "from": "retained_fullchip_sg13g2_IOPadIOVss", "to": "retained_fullchip_sg13g2_IOPadVss (unmodified, as pads 2 and 5)",
+               "labels_moved": _relab}
 top = ly.create_cell("r1_top")
 top.insert(db.CellInstArray(ring.cell_index(), db.Trans()))
 _lt = ly.layer(134, 25)
@@ -591,7 +632,7 @@ def feed(layer, box, net, em=None, d=None, w=None):
                                  "dir": d, "width": w})
 
 
-if not NO_H:
+if not NO_H and RISER:
     # 1. IOPadVss riser (ring ECO, cell edit; both instances are VSS pads 2 and 5, cell origins x 597 and 1023, y 141).
     # Pattern of the PDK IOPadVdd cell of the same ring: IO TopMetal2 rails cut to stubs x 0-3.9 and 76.1-80 (pins and
     # the iovdd / iovss labels on the stubs), TopVia2 kept only under the stubs with 0.5 um enclosure, riser = bottom
@@ -637,6 +678,19 @@ if not NO_H:
         for _f0 in (7.5, 44.5):                     # aligned to the riser top band (local x 7.5-72.5)
             feed("TM2", B(_cx + _f0, 317.0, _cx + _f0 + 28.0, 342.16), "VSS",
                  "VSS pad riser finger TopMetal2 28 um (x %.0f)" % (_cx + _f0), "v", 28.0)
+if not NO_H and not RISER:
+    # 1'. try h1 (D24): no cell edit. The IOPadVss cell joins its bondpad (local y 0-3) to the core vss rail only through
+    # its Metal2 plate (local x 3.91-75, y 0-158): every layer Metal3-TopMetal2 carries the full-width iovss / iovdd
+    # rails between them (LEF OBS Metal1-TopMetal1 y 0-178, TopMetal2 y 0-132.5), and the fillers continue the rails, so
+    # no top-cell shape can bypass the plate. The only free top-cell layer over the cell is TopMetal2 above local
+    # y 132.5. There, two 28 um TopMetal2 fingers per VSS pad (local y 160-201.16) take the cell's TopMetal1 vss pin
+    # (local y 160-178) with TopVia2 and join it to the outer south VSS TopMetal2 row (pin access, parallel to the tabs).
+    for _cx in VSS_PAD_X:
+        for _f0 in (7.5, 44.5):
+            feed("TM2", B(_cx + _f0, 301.0, _cx + _f0 + 28.0, 342.16), "VSS",
+                 "VSS pad finger TopMetal2 28 um over the unmodified IOPadVss (x %.0f)" % (_cx + _f0), "v", 28.0)
+            via_array("TV2", B(_cx + _f0, 301.0, _cx + _f0 + 28.0, 319.0))
+if not NO_H:
     # 2. VDD riser at pad 1 through a gap in the outer VSS TopMetal2 row (ring cell shape)
     _gap = db.Region(db.Box.from_dbox(B(453.0, 326.0, 537.0, 343.5) * (1.0 / ly.dbu)))
     _rt = db.Region(ring.shapes(L["TM2"]))
@@ -804,6 +858,22 @@ via_array("V3", B(322.6, 735.6, 332.0, 738.0))                          # Metal3
 for pb in P["afe_vdd"]:
     rect("M3", B(pb.left, 736.0, pb.right, pb.top), "VDDA")
     via_array("V3", B(pb.left, 736.0, pb.right, 738.0))             # try g: full pin width (1.0 um pins, EM)
+# try h1 (track T8g): AFE VDDA TopMetal1 strap over the 2.8 um Metal4 rail (extracted h1-dev1, max sheet: 16 mV of the
+# 57 mV AFE VDDA drop are on the rail between the west riser and the AFE pins). TopMetal1 x 368-522, y 727-738 in the
+# channel between r1_t2f (top 725.34) and r1_afe (bottom 740), no MIM block under it, 6.2 um from the inner west VDD
+# column; Metal5 islands with Via4 / TopVia1 onto the rail between the AFE Metal5 lines (x 354.15, 365.35, 475.75,
+# 486.95). Switch off: R1H_NO_VDDA_STRAP=1.
+if not NO_H and not os.environ.get("R1H_NO_VDDA_STRAP"):
+    feed("TM1", B(368.0, 727.0, 522.0, 738.0), "VDDA", "AFE VDDA TopMetal1 strap 11 um (x 368-522)", "h", 11.0)
+    FEED["em_items"][-1]["box"] = [380.0, 727.0, 460.0, 738.0]
+    FEED["vdda_vias"] = []
+    for (_x0, _x1) in ((366.9, 474.7), (488.5, 521.8)):
+        _isl = B(_x0, 735.6, _x1, 738.4)
+        rect("M5", _isl, "VDDA")
+        _n4 = via_array("V4", _isl)
+        _n1 = via_array("TV1", B(max(_x0, 368.0), 735.6, _x1, 738.0))
+        FEED["vdda_vias"].append({"name": "AFE VDDA strap Via4 (x %.1f-%.1f)" % (_x0, _x1), "via": "V4", "cuts": _n4, "I_mA": 2.0})
+        FEED["vdda_vias"].append({"name": "AFE VDDA strap TopVia1 (x %.1f-%.1f)" % (_x0, _x1), "via": "TV1", "cuts": _n1, "I_mA": 2.0})
 # isense: vss <- Metal3-Metal5 stack (y 705-734.5) + Metal5 plate (x 1121.5-1376, y 705-734) + TopMetal1 plate
 # (x 1121.5-1338.7, y 705-731) -> outer east VSS column (TopVia1 at x 1361-1375): shared ground path to the bgr
 # (README "Try f" supply, <= 2.3 ohm); vdd <- inner east column (Metal4 y 729-731); vdda <- riser x 1366-1370
@@ -1594,13 +1664,14 @@ intrude = macro_vs_routes()
 mim = tm_over_mim()
 PLACED.insert(0, {"instance": "u_ring", "macro": "r1_padring", "orientation": "R0", "origin_um": [0, 0],
                   "bbox_um": [0, 0, DIE, DIE],
-                  "source": "<G1_RESULTS_ROOT>/r1_padring/ring-20261021-d/r1_padring_1700.gds (fill instances removed: %d; west TopMetal1 ECO%s)" % (removed_fill, "" if NO_H else "; try-h0 IOPadVss riser and south VSS row gap at pad 1"),
+                  "source": "<G1_RESULTS_ROOT>/r1_padring/ring-20261021-d/r1_padring_1700.gds (fill instances removed: %d; west TopMetal1 ECO%s%s)" % (removed_fill, "" if NO_H else ("; try-h0 IOPadVss riser and south VSS row gap at pad 1" if RISER else "; south VSS row gap at pad 1; IO cells unmodified"), ("; die pad %d IOPadIOVss -> IOPadVss" % PADSWAP["die_pad"]) if PADSWAP else ""),
                   "source_sha256": RING_SHA, "s7_c4": [0, 0], "try_f_origin_um": [0, 0], "delta_vs_try_f_um": [0, 0]})
 gds = os.path.join(OUT, "r1_top.gds")
 opt = db.SaveLayoutOptions()
 opt.write_context_info = False
 ly.write(gds, opt)
-res = {"gds": "r1_top.gds", "gds_sha256": sha256(gds), "top": "r1_top", "die_um": DIE, "try": "g" if NO_H else "h0",
+res = {"gds": "r1_top.gds", "gds_sha256": sha256(gds), "top": "r1_top", "die_um": DIE, "try": "g" if NO_H else ("h0" if RISER else "h1" + (("-" + PADMAP) if PADMAP else "")),
+       "iopadvss_eco": RISER, "padmap": PADSWAP, "vss_pad_cell_origins_x": VSS_PAD_X,
        "fill_instances_removed_from_ring": removed_fill, "ring_labels_copied_to_top": RING_LABELS,
        "ring_shapes_in_core_M2_M4": RING_IN_CORE,
        "antenna_decap_row": DECAP_ROW, "tie_cells": [TIE_CELL], "antenna_diodes": DIODE_CELLS,

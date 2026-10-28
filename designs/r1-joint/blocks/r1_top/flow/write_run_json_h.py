@@ -1,5 +1,5 @@
 # SPDX-License-Identifier: Apache-2.0
-"""Write run.json for one r1_top try-h0 run (track T8f; copy of write_run_json_g.py).
+"""Write run.json for one r1_top try-h run (tracks T8f h0, T8g h1; copy of write_run_json_g.py).
 
   python3 write_run_json_h.py <run_dir> <question> <disposition>
 
@@ -19,17 +19,18 @@ p = os.path.join(run, "run.json")
 r = json.load(open(p))
 asm = json.load(open(os.path.join(run, "r1_top_assembly.json")))
 name = r["run"]
-r["track"] = "T8f (r1_top supply feed redesign, try h0)"
+r["track"] = ("T8f (r1_top supply feed redesign, try h0)" if asm.get("try") == "h0" else
+              "T8g (r1_top supply feed with unmodified IO cells, try %s)" % asm.get("try"))
 r["tools"]["cpuset"] = "112-119"
 snap = os.path.join(run, "inputs", "inputs.sha256")
 if os.path.exists(snap):
     r["input_snapshots"]["inputs/inputs.sha256"] = [
         l.replace(os.environ.get("G1_RESULTS_ROOT", "/nonexistent"), "<G1_RESULTS_ROOT>")
         for l in open(snap).read().splitlines()]
-for k in ("try", "antenna_diodes_removed", "merged_std_cells", "south_vdd_feed", "south_supply_stacks", "supply_h_feed"):
+for k in ("try", "iopadvss_eco", "padmap", "vss_pad_cell_origins_x", "antenna_diodes_removed", "merged_std_cells", "south_vdd_feed", "south_supply_stacks", "supply_h_feed"):
     if k in asm:
         r[k] = asm[k]
-for f in ("supply_h0.json", "clk_skew_g.json"):
+for f in ("supply_h0.json", "supply_h1.json", "clk_skew_g.json"):
     r.setdefault("results", {})[f] = ("<G1_RESULTS_ROOT>/r1_top/%s/%s" % (name, f)
                                       if os.path.exists(os.path.join(run, f)) else "not run")
 s = json.dumps(r, indent=1)
@@ -37,4 +38,4 @@ root = os.environ.get("G1_RESULTS_ROOT")
 if root:
     s = s.replace(root, "<G1_RESULTS_ROOT>")
 open(p, "w").write(s)
-print("run.json (try h0)", name)
+print("run.json (try %s)" % asm.get("try"), name)

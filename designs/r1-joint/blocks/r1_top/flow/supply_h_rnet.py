@@ -155,6 +155,10 @@ for k, fx in enumerate((452.0, 466.0, 480.0, 494.0, 508.0, 522.0)):
     PORTS.append(("bias_%d" % k, "M3", db.DBox(fx, 375.4, fx + 6.0, 376.0), I["bias"] / 6))
 PORTS.append(("t2f", "M3", db.DBox(368.0, 621.5, 372.0, 622.5), I["t2f"]))
 PADS = [("pad2", "TM2", db.DBox(607.0, 71.0, 667.0, 131.0)), ("pad5", "TM2", db.DBox(1033.0, 71.0, 1093.0, 131.0))]
+# try h1 (track T8g): the VSS pads follow the assembly (R1H_PADMAP variant: a third IOPadVss at die pad 4 or 6)
+if asm.get("vss_pad_cell_origins_x"):
+    _dp = {597.0: 2, 881.0: 4, 1023.0: 5, 1165.0: 6}
+    PADS = [("pad%d" % _dp[cx], "TM2", db.DBox(cx + 10.0, 71.0, cx + 70.0, 131.0)) for cx in asm["vss_pad_cell_origins_x"]]
 if NET == "VDD":
     IV = {"ctrl": 40.25, "adc": 0.870, "isense": 1.138, "osc": 0.317, "bias": 0.05}
     I_SRC = {"ctrl": I_SRC["ctrl"], "adc": "r1_adc README layout B5 IDD 0.870 mA (SAR included, tt)",

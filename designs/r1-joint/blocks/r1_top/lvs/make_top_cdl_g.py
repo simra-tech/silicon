@@ -53,6 +53,10 @@ for _k in list(EXPECT):
     if os.environ.get("R1G_CDL_SHA_" + _k):
         EXPECT[_k] = os.environ["R1G_CDL_SHA_" + _k]
 RING = os.path.join(BLK, "r1_padring/netlist/r1_padring_1700_projected_ref.cdl")
+# try h1 (track T8g): R1H_RING_CDL names a ring reference with a pad-cell swap (flow/ring_cdl_padswap.py output);
+# default: the ring reference of record.
+if os.environ.get("R1H_RING_CDL"):
+    RING = os.environ["R1H_RING_CDL"]
 
 
 def sha(p):
