@@ -1,0 +1,80 @@
+{
+ "question": "D26 item 2, netlist F3 screen on the schematic F2 (fast): OTA1 lever candidates for DM1 at ffx 6.9 uA CM 0.5 V x1 with f_c at ss CM 0.5 V: output stage XMN7/8, XMP7/8 widths x1.25 / x1.5 (a1o), Miller Rz length 25 / 29 um (a1rz), switched Miller part WCCB 30 / 32 um; loops dm1 cm1 dm2 cm2 at x1 and x32, ffx 6.9 uA CM 0.5 / 2.5 V",
+ "variants": {
+  "base": {
+   "netlist": null,
+   "fv": "base"
+  },
+  "o125": {
+   "netlist": null,
+   "fv": "a1o1.25"
+  },
+  "o150": {
+   "netlist": null,
+   "fv": "a1o1.5"
+  },
+  "rz25": {
+   "netlist": null,
+   "fv": "a1rz25"
+  },
+  "rz29": {
+   "netlist": null,
+   "fv": "a1rz29"
+  },
+  "ccb30": {
+   "netlist": null,
+   "rx": [
+    [
+     "r1_afe_ota",
+     "(?m)^(XCC[12]B [^\\n]*?cap_cmim) w=\\S+ l=\\S+",
+     "\\1 w=30u l=30u"
+    ]
+   ]
+  },
+  "ccb32": {
+   "netlist": null,
+   "rx": [
+    [
+     "r1_afe_ota",
+     "(?m)^(XCC[12]B [^\\n]*?cap_cmim) w=\\S+ l=\\S+",
+     "\\1 w=32u l=32u"
+    ]
+   ]
+  }
+ },
+ "jobs": [
+  {
+   "tag": "stb_ffx_ib6.9_cm0.5",
+   "tmpl": "tb_afe_stb.cir",
+   "corner": "ffx",
+   "subs": {
+    "VCMI": 0.5,
+    "KLIST": "0 5",
+    "LLIST": "1 2 4 5",
+    "IB": "6.9u",
+    "CL": "2.8p"
+   }
+  },
+  {
+   "tag": "stb_ffx_ib6.9_cm2.5",
+   "tmpl": "tb_afe_stb.cir",
+   "corner": "ffx",
+   "subs": {
+    "VCMI": 2.5,
+    "KLIST": "0 5",
+    "LLIST": "1 2 4 5",
+    "IB": "6.9u",
+    "CL": "2.8p"
+   }
+  },
+  {
+   "tag": "ac_ss_ib11.81_cm0.5",
+   "tmpl": "tb_afe_ac.cir",
+   "corner": "ss",
+   "subs": {
+    "VCMI": 0.5,
+    "IB": "11.81u"
+   }
+  }
+ ]
+}

@@ -1,0 +1,39 @@
+{
+ "question": "D26 item 2: F3 Rz on the extracted E8 netlist: DM1 GM at tt 15.4 uA CM 2.5 V (schematic F3 9.47 dB) and DM1 PM at ffx 6.9 uA CM 0.5 V, LRZ 23 / 25 um; F2 base row in r1afe-post-e8d19r",
+ "variants": {
+  "rz23": {
+   "netlist": "$G1_RESULTS_ROOT/r1_afe/pexrc-layout-e8-dev19/r1_afe_post_rc.spice",
+   "fv": "a1rz23"
+  },
+  "rz25": {
+   "netlist": "$G1_RESULTS_ROOT/r1_afe/pexrc-layout-e8-dev19/r1_afe_post_rc.spice",
+   "fv": "a1rz25"
+  }
+ },
+ "jobs": [
+  {
+   "tag": "stb_tt_ib15.4_cm2.5",
+   "tmpl": "tb_afe_stb.cir",
+   "corner": "tt",
+   "subs": {
+    "VCMI": 2.5,
+    "KLIST": "0 5",
+    "LLIST": "1 2 4 5",
+    "IB": "15.4u",
+    "CL": "2.8p"
+   }
+  },
+  {
+   "tag": "stb_ffx_ib6.9_cm0.5",
+   "tmpl": "tb_afe_stb.cir",
+   "corner": "ffx",
+   "subs": {
+    "VCMI": 0.5,
+    "KLIST": "0 5",
+    "LLIST": "1 2 4 5",
+    "IB": "6.9u",
+    "CL": "2.8p"
+   }
+  }
+ ]
+}

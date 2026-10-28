@@ -41,6 +41,8 @@ sys.path.insert(0, os.path.join(BLOCK, 'layout'))
 sys.path.insert(0, os.path.join(BLOCK, 'pex'))
 import r1_afe_netlist as N           # noqa: E402
 import make_postlayout as MP         # noqa: E402
+if globals().get('sch'):   # E9: device sizes from this schematic file (default schematic/r1_afe.spice); must equal the LVS netlist of the layout
+    N.NETLIST = os.path.join(BLOCK, 'schematic', globals()['sch'])
 
 KCHDIR = kchdir    # noqa: F821  (-rd)
 KTOPDIR = ktopdir  # noqa: F821

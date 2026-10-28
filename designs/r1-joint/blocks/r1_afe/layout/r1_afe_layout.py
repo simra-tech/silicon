@@ -34,6 +34,8 @@ sys.path.insert(0, HERE)
 sys.path.insert(0, os.path.join(HERE, '..', '..', '..', '..', 'g1-guardian', 'blocks', 'g1_sense', 'layout'))
 from g1_layout_lib import *   # noqa  (pya, LIB, Draw, Mos, new_layout, write_gds, CONT, ...)
 import r1_afe_netlist as NLM
+if globals().get('sch'):   # E9: schematic netlist for the build and the LVS CDL (default schematic/r1_afe.spice)
+    NLM.NETLIST = os.path.join(HERE, '..', 'schematic', globals()['sch'])
 from maze_router import Router, P, LNAME, BLOCK
 
 try:
@@ -84,6 +86,8 @@ X1VFILL = globals().get('x1vfill', '0') == '1'  # E8: Via3 on every node where t
 X1HEADARR = globals().get('x1headarr', '0') == '1'  # E8: 2 x 2 Via1 and Via2 per head node (pitch 0.5 um), neighbour nodes reserved
 X1RAILV = globals().get('x1railv', '0') == '1'  # E8: Via1 rows at 0.5 um pitch along every TG rail under the x1 bars (E7: one Via1 per grid node)
 O1FIRST = globals().get('o1first', '0') == '1'  # E8: OTA1 first-stage outputs o1n/o1p routed right after the x1 nets (E7: o1n +32.6 fF since E5, about 0.47 deg of DM1 PM)
+DEVX = globals().get('devx', '0') == '1'  # E9: device x extents per row in the layout record (record only)
+FNSHIFT = int(globals().get('fnshift', '0'))  # E9: number of bias devices moved from before to after the OTA1 folding group (fn/fp matching; default 0 = E8)
 DUMPNETS = [n for n in globals().get('dumpnets', '').split(',') if n]  # E8: write the router geometry of these nets to <out>_<cell>_nets.json
 SUPPIN = float(globals().get('suppin', '1.0'))  # E5 (assembly try f, chip-level EM): vdd/vss block pins this wide at the macro edge (um), same centres; E4: 0.4
 BIGFOOT = globals().get('bigfoot', '1') == '1'  # E5: strap feet 5 x 4 Via3/Via4 (E2-E4: 3 x 2); the foot is shared by both channels (top-level mutual supply impedance 4.2-4.9 Ohm, pex/top_supply_z.py)
@@ -250,7 +254,8 @@ class Block:
                 xa = min(m.x0 for m in placed); xb = max(m.x1 for m in placed)
                 self.box('pSD', xa - 0.18, y_lo - 0.40, xb + 0.18, y_hi + 0.40)
             info.append(dict(row=r, kind=kind, yg=yg, yt=yt, yd=ydmax, x0=x_start, x1=xr, n=len(devs),
-                             ymin_act=min(m.y0 for m in placed), ymax_act=max(m.y1 for m in placed)))
+                             ymin_act=min(m.y0 for m in placed), ymax_act=max(m.y1 for m in placed),
+                             devx=[(d_['name'], round(m_.x0, 2), round(m_.x1, 2)) for d_, m_ in zip(devs, placed)] if DEVX else None))
             xmin_all, xmax_all = min(xmin_all, x_start), max(xmax_all, xr)
             prev_top = ydmax
             yg = gceil(ydmax + 3 * P)
@@ -591,6 +596,14 @@ def build_channel(ly, W=400.0, H=600.0):
                 i3 = lst.index(pre + 'xmn3a')
                 rest = [n_ for n_ in lst if n_ not in grp]
                 lst[:] = rest[:i3] + grp + rest[i3:]
+                if FNSHIFT and pre == 'xa1_':
+                    # E9: the last FNSHIFT bias devices before the OTA1 folding group are placed after it, so the
+                    # group axis moves west under the XMP1/XMP2 pair axis (E8: pair axis x 46, group axis x 59; fn
+                    # P-drain to cascode 87.7 Ohm, fp 131.4 Ohm, different star topology; CM 0.5 V drift term)
+                    mv = rest[i3 - FNSHIFT:i3]
+                    lst[:] = [n_ for n_ in lst if n_ not in mv]
+                    ig = lst.index(pre + 'xmn6') + 1
+                    lst[ig:ig] = mv
     a1p = ['xa1_xmb2', 'xa1_xmb3', 'xa1_xmb5', 'xa1_xmpt', 'xa1_xmp5', 'xa1_xmp7', 'xa1_xmct', 'xa1_xmc1', 'xa1_xmc2',
            'xa1_xmp8', 'xa1_xmp6']
     a2p1 = ['xa2_xmp3', 'xa2_xmp1', 'xa2_xmp2', 'xa2_xmp4', 'xa2_xmpt']

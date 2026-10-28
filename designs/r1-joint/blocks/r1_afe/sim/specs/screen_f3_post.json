@@ -1,0 +1,52 @@
+{
+ "question": "D26 item 2, netlist F3 confirmation on the extracted E8 netlist (pexrc-layout-e8-dev19, device edit only): OTA1 Miller Rz length 21 -> 25 / 27 / 29 um (XRZ1/2, rppd w 1 um); DM1 at ffx 6.9 uA CM 0.5 V x1 >= 63 deg, f_c at ss CM 0.5 V >= 1 MHz, loops at the ff hold state (C_L 1 fF, CM 2.5 V). Base values: r1afe-post-e8d19-ffx69, r1afe-post-e8d19c-stop, r1afe-post-e8d19b-stop",
+ "variants": {
+  "rz25": {
+   "netlist": "$G1_RESULTS_ROOT/r1_afe/pexrc-layout-e8-dev19/r1_afe_post_rc.spice",
+   "fv": "a1rz25"
+  },
+  "rz27": {
+   "netlist": "$G1_RESULTS_ROOT/r1_afe/pexrc-layout-e8-dev19/r1_afe_post_rc.spice",
+   "fv": "a1rz27"
+  },
+  "rz29": {
+   "netlist": "$G1_RESULTS_ROOT/r1_afe/pexrc-layout-e8-dev19/r1_afe_post_rc.spice",
+   "fv": "a1rz29"
+  }
+ },
+ "jobs": [
+  {
+   "tag": "stb_ffx_ib6.9_cm0.5",
+   "tmpl": "tb_afe_stb.cir",
+   "corner": "ffx",
+   "subs": {
+    "VCMI": 0.5,
+    "KLIST": "0 5",
+    "LLIST": "1 2 4 5",
+    "IB": "6.9u",
+    "CL": "2.8p"
+   }
+  },
+  {
+   "tag": "ac_ss_ib11.81_cm0.5",
+   "tmpl": "tb_afe_ac.cir",
+   "corner": "ss",
+   "subs": {
+    "VCMI": 0.5,
+    "IB": "11.81u"
+   }
+  },
+  {
+   "tag": "stb_ff_ib9.00_cm2.5_hold",
+   "tmpl": "tb_afe_stb.cir",
+   "corner": "ff",
+   "subs": {
+    "VCMI": 2.5,
+    "KLIST": "0 5",
+    "LLIST": "1 2 4 5",
+    "IB": "9.00u",
+    "CL": "1f"
+   }
+  }
+ ]
+}

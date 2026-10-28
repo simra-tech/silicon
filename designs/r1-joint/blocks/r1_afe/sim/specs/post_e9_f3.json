@@ -1,0 +1,680 @@
+{
+ "question": "Post-layout campaign of netlist F3 (OTA1 LRZ 23u) on layout E9 (RC netlist rebuilt with the F3 devices, pexrc-layout-e9-dev21-f3; the first RC build pexrc-layout-e9-dev21 took the device sizes from the F2 file; layout-e9-dev21 = screen build s2, kpex 2.5D CC + RNetExtractor R, nothing inherited): loops PM >= 63 deg, GM >= 10 dB with validity at tt/ss/ff/sf/fs/ssx/ffx, bias extremes and hold states (DM1 at ffx 6.9 uA CM 0.5 V first); f_c >= 1.0 MHz at ss; pole matching <= 1 %; noise x32 ss <= 35 uV; THD <= 0.1 %; settling <= 0.25 LSB. The op_* rows (offset, drift) run on the wiring-R view of the same build (r1afe-screen-e9-s2-op; DC identical).",
+ "variants": {
+  "E9": {
+   "netlist": "$G1_RESULTS_ROOT/r1_afe/pexrc-layout-e9-dev21-f3/r1_afe_post_rc.spice"
+  }
+ },
+ "jobs": [
+  {
+   "tag": "stb_ffx_ib6.9_cm0.5",
+   "tmpl": "tb_afe_stb.cir",
+   "corner": "ffx",
+   "subs": {
+    "VCMI": 0.5,
+    "KLIST": "0 5",
+    "LLIST": "1 2 4 5",
+    "IB": "6.9u",
+    "CL": "2.8p"
+   }
+  },
+  {
+   "tag": "stb_ffx_ib6.9_cm2.5",
+   "tmpl": "tb_afe_stb.cir",
+   "corner": "ffx",
+   "subs": {
+    "VCMI": 2.5,
+    "KLIST": "0 5",
+    "LLIST": "1 2 4 5",
+    "IB": "6.9u",
+    "CL": "2.8p"
+   }
+  },
+  {
+   "tag": "stb_tt_ib15.4_cm2.5",
+   "tmpl": "tb_afe_stb.cir",
+   "corner": "tt",
+   "subs": {
+    "VCMI": 2.5,
+    "KLIST": "0 5",
+    "LLIST": "1 2 4 5",
+    "IB": "15.4u",
+    "CL": "2.8p"
+   }
+  },
+  {
+   "tag": "ac_ss_ib11.81_cm0.5",
+   "tmpl": "tb_afe_ac.cir",
+   "corner": "ss",
+   "subs": {
+    "VCMI": 0.5,
+    "IB": "11.81u"
+   }
+  },
+  {
+   "tag": "stb_ss_ib11.81_cm0.5",
+   "tmpl": "tb_afe_stb.cir",
+   "corner": "ss",
+   "subs": {
+    "VCMI": 0.5,
+    "KLIST": "0 5",
+    "LLIST": "1 2 4 5",
+    "IB": "11.81u",
+    "CL": "2.8p"
+   }
+  },
+  {
+   "tag": "stb_ff_ib9.00_cm2.5",
+   "tmpl": "tb_afe_stb.cir",
+   "corner": "ff",
+   "subs": {
+    "VCMI": 2.5,
+    "KLIST": "0 5",
+    "LLIST": "1 2 4 5",
+    "IB": "9.00u",
+    "CL": "2.8p"
+   }
+  },
+  {
+   "tag": "stb_tt_ib10.14_cm0.5",
+   "tmpl": "tb_afe_stb.cir",
+   "corner": "tt",
+   "subs": {
+    "VCMI": 0.5,
+    "KLIST": "0 5",
+    "LLIST": "1 2 4 5",
+    "IB": "10.14u",
+    "CL": "2.8p"
+   }
+  },
+  {
+   "tag": "stb_tt_ib10.14_cm2.5",
+   "tmpl": "tb_afe_stb.cir",
+   "corner": "tt",
+   "subs": {
+    "VCMI": 2.5,
+    "KLIST": "0 5",
+    "LLIST": "1 2 4 5",
+    "IB": "10.14u",
+    "CL": "2.8p"
+   }
+  },
+  {
+   "tag": "stb_ssx_ib6.94_cm0.5",
+   "tmpl": "tb_afe_stb.cir",
+   "corner": "ssx",
+   "subs": {
+    "VCMI": 0.5,
+    "KLIST": "0 5",
+    "LLIST": "1 2 4 5",
+    "IB": "6.94u",
+    "CL": "2.8p"
+   }
+  },
+  {
+   "tag": "stb_ssx_ib6.94_cm2.5",
+   "tmpl": "tb_afe_stb.cir",
+   "corner": "ssx",
+   "subs": {
+    "VCMI": 2.5,
+    "KLIST": "0 5",
+    "LLIST": "1 2 4 5",
+    "IB": "6.94u",
+    "CL": "2.8p"
+   }
+  },
+  {
+   "tag": "stb_ff_ib9.00_cm0.5",
+   "tmpl": "tb_afe_stb.cir",
+   "corner": "ff",
+   "subs": {
+    "VCMI": 0.5,
+    "KLIST": "0 5",
+    "LLIST": "1 2 4 5",
+    "IB": "9.00u",
+    "CL": "2.8p"
+   }
+  },
+  {
+   "tag": "stb_sf_ib10.14_cm0.5",
+   "tmpl": "tb_afe_stb.cir",
+   "corner": "sf",
+   "subs": {
+    "VCMI": 0.5,
+    "KLIST": "0 5",
+    "LLIST": "1 2 4 5",
+    "IB": "10.14u",
+    "CL": "2.8p"
+   }
+  },
+  {
+   "tag": "stb_sf_ib10.14_cm2.5",
+   "tmpl": "tb_afe_stb.cir",
+   "corner": "sf",
+   "subs": {
+    "VCMI": 2.5,
+    "KLIST": "0 5",
+    "LLIST": "1 2 4 5",
+    "IB": "10.14u",
+    "CL": "2.8p"
+   }
+  },
+  {
+   "tag": "stb_fs_ib10.14_cm0.5",
+   "tmpl": "tb_afe_stb.cir",
+   "corner": "fs",
+   "subs": {
+    "VCMI": 0.5,
+    "KLIST": "0 5",
+    "LLIST": "1 2 4 5",
+    "IB": "10.14u",
+    "CL": "2.8p"
+   }
+  },
+  {
+   "tag": "stb_fs_ib10.14_cm2.5",
+   "tmpl": "tb_afe_stb.cir",
+   "corner": "fs",
+   "subs": {
+    "VCMI": 2.5,
+    "KLIST": "0 5",
+    "LLIST": "1 2 4 5",
+    "IB": "10.14u",
+    "CL": "2.8p"
+   }
+  },
+  {
+   "tag": "stb_ss_ib11.81_cm2.5",
+   "tmpl": "tb_afe_stb.cir",
+   "corner": "ss",
+   "subs": {
+    "VCMI": 2.5,
+    "KLIST": "0 5",
+    "LLIST": "1 2 4 5",
+    "IB": "11.81u",
+    "CL": "2.8p"
+   }
+  },
+  {
+   "tag": "stb_ffx_ib15.36_cm0.5",
+   "tmpl": "tb_afe_stb.cir",
+   "corner": "ffx",
+   "subs": {
+    "VCMI": 0.5,
+    "KLIST": "0 5",
+    "LLIST": "1 2 4 5",
+    "IB": "15.36u",
+    "CL": "2.8p"
+   }
+  },
+  {
+   "tag": "stb_ffx_ib15.36_cm2.5",
+   "tmpl": "tb_afe_stb.cir",
+   "corner": "ffx",
+   "subs": {
+    "VCMI": 2.5,
+    "KLIST": "0 5",
+    "LLIST": "1 2 4 5",
+    "IB": "15.36u",
+    "CL": "2.8p"
+   }
+  },
+  {
+   "tag": "stb_tt_ib6.9_cm0.5",
+   "tmpl": "tb_afe_stb.cir",
+   "corner": "tt",
+   "subs": {
+    "VCMI": 0.5,
+    "KLIST": "0 5",
+    "LLIST": "1 2 4 5",
+    "IB": "6.9u",
+    "CL": "2.8p"
+   }
+  },
+  {
+   "tag": "stb_tt_ib6.9_cm2.5",
+   "tmpl": "tb_afe_stb.cir",
+   "corner": "tt",
+   "subs": {
+    "VCMI": 2.5,
+    "KLIST": "0 5",
+    "LLIST": "1 2 4 5",
+    "IB": "6.9u",
+    "CL": "2.8p"
+   }
+  },
+  {
+   "tag": "stb_tt_ib15.4_cm0.5",
+   "tmpl": "tb_afe_stb.cir",
+   "corner": "tt",
+   "subs": {
+    "VCMI": 0.5,
+    "KLIST": "0 5",
+    "LLIST": "1 2 4 5",
+    "IB": "15.4u",
+    "CL": "2.8p"
+   }
+  },
+  {
+   "tag": "acmc_ss_p0",
+   "tmpl": "tb_afe_ac.cir",
+   "corner": "ss",
+   "mismatch": true,
+   "subs": {
+    "NMC": 10,
+    "SEED": 101,
+    "IB": "11.81u"
+   }
+  },
+  {
+   "tag": "acmc_ss_p1",
+   "tmpl": "tb_afe_ac.cir",
+   "corner": "ss",
+   "mismatch": true,
+   "subs": {
+    "NMC": 10,
+    "SEED": 102,
+    "IB": "11.81u"
+   }
+  },
+  {
+   "tag": "noise_ss_ib11.81",
+   "tmpl": "tb_afe_noise.cir",
+   "corner": "ss",
+   "subs": {
+    "IB": "11.81u"
+   }
+  },
+  {
+   "tag": "tran_tt_x1",
+   "tmpl": "tb_afe_tran.cir",
+   "corner": "tt",
+   "subs": {
+    "CODE": 0,
+    "AMP": 0.7,
+    "VCMI": 2.45,
+    "IB": "10.14u"
+   }
+  },
+  {
+   "tag": "tran_tt_x32",
+   "tmpl": "tb_afe_tran.cir",
+   "corner": "tt",
+   "subs": {
+    "CODE": 5,
+    "AMP": 0.021875,
+    "VCMI": 2.45,
+    "IB": "10.14u"
+   }
+  },
+  {
+   "tag": "stb_ff_ib9.00_cm2.5_hold",
+   "tmpl": "tb_afe_stb.cir",
+   "corner": "ff",
+   "subs": {
+    "VCMI": 2.5,
+    "KLIST": "0 5",
+    "LLIST": "1 2 4 5",
+    "IB": "9.00u",
+    "CL": "1f"
+   }
+  },
+  {
+   "tag": "stb_ssx_ib6.94_cm2.5_hold",
+   "tmpl": "tb_afe_stb.cir",
+   "corner": "ssx",
+   "subs": {
+    "VCMI": 2.5,
+    "KLIST": "0 5",
+    "LLIST": "1 2 4 5",
+    "IB": "6.94u",
+    "CL": "1f"
+   }
+  },
+  {
+   "tag": "stb_tt_ib10.14_cm2.5_hold",
+   "tmpl": "tb_afe_stb.cir",
+   "corner": "tt",
+   "subs": {
+    "VCMI": 2.5,
+    "KLIST": "0 5",
+    "LLIST": "1 2 4 5",
+    "IB": "10.14u",
+    "CL": "1f"
+   }
+  },
+  {
+   "tag": "stb_ss_ib11.81_cm2.5_hold",
+   "tmpl": "tb_afe_stb.cir",
+   "corner": "ss",
+   "subs": {
+    "VCMI": 2.5,
+    "KLIST": "0 5",
+    "LLIST": "1 2 4 5",
+    "IB": "11.81u",
+    "CL": "1f"
+   }
+  },
+  {
+   "tag": "stb_sf_ib10.14_cm2.5_hold",
+   "tmpl": "tb_afe_stb.cir",
+   "corner": "sf",
+   "subs": {
+    "VCMI": 2.5,
+    "KLIST": "0 5",
+    "LLIST": "1 2 4 5",
+    "IB": "10.14u",
+    "CL": "1f"
+   }
+  },
+  {
+   "tag": "stb_fs_ib10.14_cm2.5_hold",
+   "tmpl": "tb_afe_stb.cir",
+   "corner": "fs",
+   "subs": {
+    "VCMI": 2.5,
+    "KLIST": "0 5",
+    "LLIST": "1 2 4 5",
+    "IB": "10.14u",
+    "CL": "1f"
+   }
+  },
+  {
+   "tag": "stb_ffx_ib15.36_cm2.5_hold",
+   "tmpl": "tb_afe_stb.cir",
+   "corner": "ffx",
+   "subs": {
+    "VCMI": 2.5,
+    "KLIST": "0 5",
+    "LLIST": "1 2 4 5",
+    "IB": "15.36u",
+    "CL": "1f"
+   }
+  },
+  {
+   "tag": "ac_ss_ib11.81_cm2.5",
+   "tmpl": "tb_afe_ac.cir",
+   "corner": "ss",
+   "subs": {
+    "VCMI": 2.5,
+    "IB": "11.81u"
+   }
+  },
+  {
+   "tag": "ac_tt_ib10.14_cm0.5",
+   "tmpl": "tb_afe_ac.cir",
+   "corner": "tt",
+   "subs": {
+    "VCMI": 0.5,
+    "IB": "10.14u"
+   }
+  },
+  {
+   "tag": "ac_tt_ib10.14_cm2.5",
+   "tmpl": "tb_afe_ac.cir",
+   "corner": "tt",
+   "subs": {
+    "VCMI": 2.5,
+    "IB": "10.14u"
+   }
+  },
+  {
+   "tag": "ac_ffx_ib6.9_cm0.5",
+   "tmpl": "tb_afe_ac.cir",
+   "corner": "ffx",
+   "subs": {
+    "VCMI": 0.5,
+    "IB": "6.9u"
+   }
+  },
+  {
+   "tag": "ac_ffx_ib6.9_cm2.5",
+   "tmpl": "tb_afe_ac.cir",
+   "corner": "ffx",
+   "subs": {
+    "VCMI": 2.5,
+    "IB": "6.9u"
+   }
+  },
+  {
+   "tag": "ac_ffx_ib15.36_cm0.5",
+   "tmpl": "tb_afe_ac.cir",
+   "corner": "ffx",
+   "subs": {
+    "VCMI": 0.5,
+    "IB": "15.36u"
+   }
+  },
+  {
+   "tag": "ac_ssx_ib6.94_cm0.5",
+   "tmpl": "tb_afe_ac.cir",
+   "corner": "ssx",
+   "subs": {
+    "VCMI": 0.5,
+    "IB": "6.94u"
+   }
+  },
+  {
+   "tag": "ac_ff_ib9.00_cm0.5",
+   "tmpl": "tb_afe_ac.cir",
+   "corner": "ff",
+   "subs": {
+    "VCMI": 0.5,
+    "IB": "9.00u"
+   }
+  },
+  {
+   "tag": "ac_tt_ib15.4_cm0.5",
+   "tmpl": "tb_afe_ac.cir",
+   "corner": "tt",
+   "subs": {
+    "VCMI": 0.5,
+    "IB": "15.4u"
+   }
+  },
+  {
+   "tag": "ac_tt_ib6.9_cm0.5",
+   "tmpl": "tb_afe_ac.cir",
+   "corner": "tt",
+   "subs": {
+    "VCMI": 0.5,
+    "IB": "6.9u"
+   }
+  },
+  {
+   "tag": "settle_ss_x1_p100",
+   "tmpl": "tb_afe_settle_adc_rs.cir",
+   "corner": "ss",
+   "subs": {
+    "CODE": 0,
+    "AMP": 0.7,
+    "VCMI": 2.45,
+    "CS": "2.8p",
+    "VRST": 0.0,
+    "IB": "11.81u"
+   }
+  },
+  {
+   "tag": "settle_ss_x1_m100",
+   "tmpl": "tb_afe_settle_adc_rs.cir",
+   "corner": "ss",
+   "subs": {
+    "CODE": 0,
+    "AMP": -0.7,
+    "VCMI": 2.45,
+    "CS": "2.8p",
+    "VRST": 0.0,
+    "IB": "11.81u"
+   }
+  },
+  {
+   "tag": "settle_ss_x1_p50",
+   "tmpl": "tb_afe_settle_adc_rs.cir",
+   "corner": "ss",
+   "subs": {
+    "CODE": 0,
+    "AMP": 0.35,
+    "VCMI": 2.45,
+    "CS": "2.8p",
+    "VRST": 0.0,
+    "IB": "11.81u"
+   }
+  },
+  {
+   "tag": "settle_ss_x32_p100",
+   "tmpl": "tb_afe_settle_adc_rs.cir",
+   "corner": "ss",
+   "subs": {
+    "CODE": 5,
+    "AMP": 0.021875,
+    "VCMI": 2.45,
+    "CS": "2.8p",
+    "VRST": 0.0,
+    "IB": "11.81u"
+   }
+  },
+  {
+   "tag": "settle_ss_x32_m100",
+   "tmpl": "tb_afe_settle_adc_rs.cir",
+   "corner": "ss",
+   "subs": {
+    "CODE": 5,
+    "AMP": -0.021875,
+    "VCMI": 2.45,
+    "CS": "2.8p",
+    "VRST": 0.0,
+    "IB": "11.81u"
+   }
+  },
+  {
+   "tag": "settle_ss_x32_p50",
+   "tmpl": "tb_afe_settle_adc_rs.cir",
+   "corner": "ss",
+   "subs": {
+    "CODE": 5,
+    "AMP": 0.010937,
+    "VCMI": 2.45,
+    "CS": "2.8p",
+    "VRST": 0.0,
+    "IB": "11.81u"
+   }
+  },
+  {
+   "tag": "settle_tt_x32_p100",
+   "tmpl": "tb_afe_settle_adc_rs.cir",
+   "corner": "tt",
+   "subs": {
+    "CODE": 5,
+    "AMP": 0.021875,
+    "VCMI": 2.45,
+    "CS": "2.8p",
+    "VRST": 0.0,
+    "IB": "10.14u"
+   }
+  },
+  {
+   "tag": "settle_tt_x32_m100",
+   "tmpl": "tb_afe_settle_adc_rs.cir",
+   "corner": "tt",
+   "subs": {
+    "CODE": 5,
+    "AMP": -0.021875,
+    "VCMI": 2.45,
+    "CS": "2.8p",
+    "VRST": 0.0,
+    "IB": "10.14u"
+   }
+  },
+  {
+   "tag": "settle_tt_x32_p50",
+   "tmpl": "tb_afe_settle_adc_rs.cir",
+   "corner": "tt",
+   "subs": {
+    "CODE": 5,
+    "AMP": 0.010937,
+    "VCMI": 2.45,
+    "CS": "2.8p",
+    "VRST": 0.0,
+    "IB": "10.14u"
+   }
+  },
+  {
+   "tag": "settle_tt_x1_p100",
+   "tmpl": "tb_afe_settle_adc_rs.cir",
+   "corner": "tt",
+   "subs": {
+    "CODE": 0,
+    "AMP": 0.7,
+    "VCMI": 2.45,
+    "CS": "2.8p",
+    "VRST": 0.0,
+    "IB": "10.14u"
+   }
+  },
+  {
+   "tag": "settle_tt_x1_m100",
+   "tmpl": "tb_afe_settle_adc_rs.cir",
+   "corner": "tt",
+   "subs": {
+    "CODE": 0,
+    "AMP": -0.7,
+    "VCMI": 2.45,
+    "CS": "2.8p",
+    "VRST": 0.0,
+    "IB": "10.14u"
+   }
+  },
+  {
+   "tag": "settle_tt_x1_p50",
+   "tmpl": "tb_afe_settle_adc_rs.cir",
+   "corner": "tt",
+   "subs": {
+    "CODE": 0,
+    "AMP": 0.35,
+    "VCMI": 2.45,
+    "CS": "2.8p",
+    "VRST": 0.0,
+    "IB": "10.14u"
+   }
+  },
+  {
+   "tag": "settle_vrst06_tt_x32_p100",
+   "tmpl": "tb_afe_settle_adc_rs.cir",
+   "corner": "tt",
+   "subs": {
+    "CODE": 5,
+    "AMP": 0.021875,
+    "VCMI": 2.45,
+    "CS": "2.8p",
+    "VRST": 0.6,
+    "IB": "10.14u"
+   }
+  },
+  {
+   "tag": "settle_vrst06_tt_x32_m100",
+   "tmpl": "tb_afe_settle_adc_rs.cir",
+   "corner": "tt",
+   "subs": {
+    "CODE": 5,
+    "AMP": -0.021875,
+    "VCMI": 2.45,
+    "CS": "2.8p",
+    "VRST": 0.6,
+    "IB": "10.14u"
+   }
+  },
+  {
+   "tag": "settle_vrst06_tt_x32_p50",
+   "tmpl": "tb_afe_settle_adc_rs.cir",
+   "corner": "tt",
+   "subs": {
+    "CODE": 5,
+    "AMP": 0.010937,
+    "VCMI": 2.45,
+    "CS": "2.8p",
+    "VRST": 0.6,
+    "IB": "10.14u"
+   }
+  }
+ ]
+}

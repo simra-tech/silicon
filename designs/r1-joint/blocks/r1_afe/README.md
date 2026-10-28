@@ -1,12 +1,110 @@
 # r1_afe — encoder analog front end (sine and cosine channels)
 
-State (2026-10-27): **layout E7 (`layout-e7-dev17`) is the layout of record, not closed** (section "Layout E7": ×32 offset ≤ 4.96 mV over CM 0.5–2.8 V, tt/ss/ff, 3.0–3.6 V; failed: drift at every CM, bias extremes +6.00/−5.61 mV, DM1 62.07°, `x1` C −7.9 fF). Previous state: **layout E6 (`layout-e6-dev16`), not closed** (section "Layout E6"): ×32 offset ≤ 5 mV at CM 0.5 V everywhere and at CM 2.5 V up to 3.3 V, pole matching ≤ 0.284 %, the CM rows closed by the supply-network method; failed: offset at CM 2.5 V and 3.6 V (−8.59 mV) and its drift, `x1` C balance (+10 fF), DM1 PM 62.58° at ffx 6.9 µA. Netlist of record: revision F2 (sha256 `9e262f8c…`, unchanged). E5 is kept as `layout/r1_afe_revE5.gds`.
+State (2026-10-28): **layout E9 (`layout-e9-dev21`, netlist F3 `schematic/r1_afe_revF3.spice`) is the layout of record, not closed** (section "Layout E9": DM1 at the bias extreme 65.25°, f_c ss 1.0628 MHz; failed: drift span 1.54 mV, `x1` ΔC +2.2 fF; part of the campaign not run). Earlier: layout E8 (`layout-e8-dev19`, kept as `layout/r1_afe_revE8.gds`), not closed. Before that (2026-10-27): **layout E7 (`layout-e7-dev17`), not closed** (section "Layout E7": ×32 offset ≤ 4.96 mV over CM 0.5–2.8 V, tt/ss/ff, 3.0–3.6 V; failed: drift at every CM, bias extremes +6.00/−5.61 mV, DM1 62.07°, `x1` C −7.9 fF). Previous state: **layout E6 (`layout-e6-dev16`), not closed** (section "Layout E6"): ×32 offset ≤ 5 mV at CM 0.5 V everywhere and at CM 2.5 V up to 3.3 V, pole matching ≤ 0.284 %, the CM rows closed by the supply-network method; failed: offset at CM 2.5 V and 3.6 V (−8.59 mV) and its drift, `x1` C balance (+10 fF), DM1 PM 62.58° at ffx 6.9 µA. Netlist of record: revision F2 (sha256 `9e262f8c…`, unchanged). E5 is kept as `layout/r1_afe_revE5.gds`.
 Revision D is superseded by revision E (record below). Revision C is superseded; its record follows the revision-D section ("Revision C record"). Revision B is superseded; its
 record is kept at the end ("Revision B record").
 All numbers in this file are **simulated** unless they are marked estimated. Nothing is measured.
 
 Track T3 of `../README.md`. Specification row: `../../specification/R1_TOP_LEVEL_SPECIFICATION.md` §2 (`r1_afe`),
 §4 (encoder input), gate V1. Input standard and accuracy budget: `../../specification/studies/S1_ENCODER_CHAIN_20261020.md`.
+
+## Layout E9 (2026-10-28, track T3m; not closed)
+
+Status: **not closed** (stopped at the time budget, 11:25 CET; campaign `r1afe-post-e9d21f3` reparsed as `r1afe-post-e9d21f3-stop`, reduction `sim/results/post-e9d21f3-summary.json`). Decision D26 (`../../PLAN.md` §2a). Layout of record:
+`layout/r1_afe.gds` = `layout-e9-dev21` (sha256 `1c665046…`); E8 kept as `layout/r1_afe_revE8.gds` (sha256 `8942eda3…`).
+Netlist **F3** = `schematic/r1_afe_revF3.spice` (sha256 `8664ffda…`): OTA1 Miller Rz `LRZ` 21 → 23 µm, nothing else; F2
+stays in `schematic/r1_afe.spice` (sha256 `9e262f8c…`) until the coordinator adopts F3 as the file of record. The LVS
+netlist `layout/r1_afe_lvs.cdl` is now F3. All numbers are **simulated** (ngspice-46, IHP SG13G2 `84374023`, KLayout
+0.30.9, kpex 0.3.12 2.5D CC). Nothing is measured. Same 21 pins and box (192.8 × 494.4 µm), supply pins 1.0 µm.
+
+Result in short: F3 closes DM1 at the bias extreme (62.16° → 65.25°) and the new E8 failure CM1 ffx 6.9 µA CM 2.5 V ×32
+(61.99° → 63.31°), with f_c at ss 1.0628 MHz and every loop row run so far ≥ 63° / ≥ 11.5 dB. Drift is not closed (worst span 1.54 mV, E8 1.53 mV); the `fn`/`fp`
+re-placement (build s1) made it worse (4.13 mV) and was dropped. `x1` ΔC is +2.2 fF (E8 −1.1 fF): the trim step was
+mis-calibrated. Part of the campaign is not run.
+
+### Status (layout E9 = `layout-e9-dev21`, netlist F3; campaign stopped at the budget)
+
+| Criterion | Limit | E9-dev21 (F3) | E8-dev19 (F2) | Evidence | Status |
+| --- | --- | --- | --- | --- | --- |
+| E8 not-run jobs (8 loop rows, 5 hold states, 14 settling, `tran_tt_x32`, CM step ×32 tt/ss/ff) | as E8 | 31 jobs, 0 failed jobs; results in the E8 table | — | `r1afe-post-e8d19r` | **run**; on E8: CM1 ffx 6.9 µA CM 2.5 V ×32 61.99° **failed**, CM step ×32 **failed by count**, the rest **passed** |
+| F2 schematic regression (14 campaigns) | as F2 | 0 failed jobs; every deterministic row identical to `20261027f2`; Monte Carlo rows differ at the same seed (pole-matching worst 1.2867 → 1.2867 %, PSRR MC min up to 4 dB) | — | `sim/results/summary-20261028f2.json`, `r1afe-*-20261028f2` | **passed** (reproduced) |
+| F3 schematic: all loop and ac rows of the post-layout set (40 jobs) | PM ≥ 63°, GM ≥ 10 dB, valid; f_c ss ≥ 1 MHz | PM ≥ 67.74°, GM ≥ 10.39 dB (tt 15.4 µA CM 2.5 V DM1 ×1), all valid; f_c ss 1.0815 MHz | F2: 66.70°, 10.72 dB, 1.0864 MHz | `r1afe-sch-f3b-loops` (F2 side: `r1afe-sch-f3-loops`) | **passed** |
+| DM1 ffx 6.9 µA CM 0.5 V ×1 | ≥ 63° | **65.25°** (GM 25.42 dB) | 62.16° | `r1afe-post-e9d21f3-stop` | **passed** |
+| CM1 ffx 6.9 µA CM 2.5 V ×32 | ≥ 63° | **63.31°** | 61.99° | same | **passed** (margin 0.31°) |
+| f_c at ss CM 0.5 V (×16) | ≥ 1.0 MHz | 1.0628 MHz; pole matching 0.172 % | 1.0727 MHz | same | **passed** |
+| Other loop rows (tt/ss/ff/sf/fs/ssx/ffx, bias extremes, holds) | PM ≥ 63°, GM ≥ 10 dB, valid | run (11 of 32 loop jobs): tt, ss, ff, ssx, sf at CM 0.5 V (ff CM 2.5 V only) and CM 2.5 V, tt 15.4 µA CM 2.5 V, ffx 6.9 µA: PM ≥ 63.31°, GM ≥ 11.51 dB (tt 15.4 µA CM 2.5 V DM2) on every valid row. Not run: ff CM 0.5 V, fs, ss CM 2.5 V, ffx 15.36 µA, tt 6.9 µA, tt 15.4 µA CM 0.5 V, all 7 hold states | see E8 | same | **passed** (11 jobs); 21 jobs **not run** |
+| Flagged CM rows | supply-network method | 11 `cm2` rows flagged (`pm_valid` false), all at CM 2.5 V or ×32, PM 64.33–76.78° | 15 + 15 rows, closed by loop gain | same; `sim/specs/supl_e9.json` | **not run** (supply-path loop gain on E9) |
+| Drift span (D22), 39 spans, wiring-R view (DC equal to RC) | ≤ 1 mV | worst **1.54 mV** (15.4 µA CM 2.5 V, all points); 11 of 39 spans > 1 mV | 1.53 mV, 14 of 39 | `sim/results/r1afe-screen-e9-s2-op.json`, `sim/drift_span.py` | **failed** by 0.54 mV |
+| ×32 static offset, 73 `op_*` points | ≤ 5 mV | −4.01 … −0.56 mV | −3.18 … −0.52 mV | same | **passed** |
+| `x1p` − `x1n` C (kpex) | \|ΔC\| ≤ 1 fF | 351.5 / 349.2 fF, **+2.2 fF** | −1.1 fF | `reports/pex-e9-dev21/pair_loads.json` | **failed** by 1.2 fF |
+| `x1` R, TG ports → UF head | ≤ 25 Ω, \|ΔR\| ≤ 3 Ω | ×32 20.36 / 20.30 Ω, ×1 22.37 / 20.86 Ω (unchanged from E8) | same | `reports/pex-e9-dev21/x1_pair_r.json` | **passed** (path means) |
+| DRC main + maximal, antenna | 0 | 0, 0 | 0, 0 | `reports/layout-e9-dev21/drc.log`, `drc_db_items.txt` | **passed** |
+| LVS (F3) | match | match (channel 143 nets / 243 devices, top 63 / 46) | match (F2) | `reports/layout-e9-dev21/lvs_summary.txt` | **passed** |
+| Supply islands | 0 | 0 (vdd 23, vss 42 ports) | 0 | `reports/layout-e9-dev21/supply_island_check.json` | **passed** |
+| Pins, box | same; supply ≥ 1 µm | 57 shapes / 21 pins same, 192.8 × 494.4 µm | same | `reports/layout-e9-dev21/pin_layer_check.json` | **passed** |
+| CM step (×1, ×32), supply-path loop gain | ≤ 1 loop-response overshoot; ≤ −20 dB | — | ×32 failed by count | `sim/specs/cmstep_e9.json`, `supl_e9.json` | **not run** |
+| Noise, THD, settling, pole matching MC, output CM | as E8 | — | see E8 | `r1afe-post-e9d21f3-stop` (`not_run`) | **not run** (output CM 0.5905–0.5907 V on the one ac row, **passed**) |
+
+### Netlist F3 (`schematic/r1_afe_revF3.spice`)
+
+The shortfall at ffx 6.9 µA is a netlist property: E5–E8 wiring moved DM1 by < 1.5°. Levers screened on the schematic F2
+(run `r1afe-screen-f3-sch`; DM1 ×1 at ffx 6.9 µA CM 0.5 V, f_c ×16 at ss CM 0.5 V; schematic F2 base 69.6°, 1.086 MHz):
+
+| Variant | DM1 | f_c ss ×16 | Note |
+| --- | --- | --- | --- |
+| OTA1 output stage ×1.25 / ×1.5 (`XMN7/8`, `XMP7/8`) | 78.0° / 84.3° | 1.107 / 1.121 MHz | +25 / +50 % stage-2 current; changes MOS rows |
+| `LRZ` 25 / 29 µm | 76.3° / 82.0° | 1.077 / 1.068 MHz | no current, longer resistor only |
+| `WCCB` 30 / 32 µm | 71.7° / 73.7° | 1.058 / 1.029 MHz | f_c cost |
+
+Confirmation on the extracted E8 netlist (device edit only; runs `r1afe-screen-f3-post`, `-post2`):
+
+| `LRZ` | DM1 ffx 6.9 µA CM 0.5 V ×1 | DM1 GM tt 15.4 µA CM 2.5 V ×1 | f_c ss ×16 |
+| --- | --- | --- | --- |
+| 21 µm (F2, E8) | 62.16° | 12.61 dB | 1.0727 MHz |
+| 23 µm (**F3**) | 65.18° | 11.60 dB | — |
+| 25 µm | 68.05° | 10.68 dB | 1.0619 MHz |
+| 27 µm | 70.74° | — | 1.0567 MHz |
+
+`LRZ` 25 µm was the first choice; the full schematic loop set (`r1afe-sch-f3-loops`) then gave DM1 GM 9.47 dB at tt
+15.4 µA CM 2.5 V ×1 (the Rz zero lifts the high-frequency loop gain), so F3 takes 23 µm (schematic GM 10.39 dB, post-layout
+11.60 dB). The trade pair of D26 is not needed: F3 holds DM1 and f_c at ss together. The ff hold-state rows of the post
+screen (`stb_ff_ib9.00_cm2.5_hold`, `LRZ` 25/27/29) did not finish (gmin stepping > 3 h) and are **not run**.
+
+### Layout builds (generator `layout/r1_afe_layout.py`, E8 flags + E9 flags; records `reports/layout-e9-*/generator.json`)
+
+New generator options (default off = E8): `fnshift=<n>` (move the last n OTA1 bias devices from before to after the
+folding group), `devx=1` (device x extents in the layout record), `sch=<file>` (schematic for the build and the LVS CDL);
+`pex/pex_rc_build.py` takes the same `sch=`.
+
+| Build | Change on E8 | `fn`/`fp` P-drain → cascode R (fn / fp) | Drift span worst (spans > 1 mV) | ×32 offset | Use |
+| --- | --- | --- | --- | --- | --- |
+| E8-dev19 | — | 87.7 / 131.4 Ω | 1.53 mV (14 / 39) | −3.18 … −0.52 mV | E8 record |
+| s1 | `fnshift=2` (XMB4, XMB6 east of the group: group axis x 59 → 44, pair axis 46), C trim 25/25, F3 | 93.3 / 121.0 Ω | **4.13 mV** (34 / 39) | −3.68 … +1.05 mV | rejected (`r1afe-screen-e9-s1-op`); extracted as `layout-e9-dev20` before the screen ended, not used |
+| s2 = dev21 | C trim 25/25, F3 (E8 placement) | 87.7 / 131.4 Ω | 1.54 mV (11 / 39) | −4.01 … −0.56 mV | **E9 record** (`r1afe-screen-e9-s2-op`) |
+
+Reading: matching the folding-node star moved the other OTA1 routes and the CM 2.5 V terms grew (as the E8 pre-routing
+did); path metrics of one net pair do not predict the offset. Drift lever left: none found in this track.
+
+### Failures and mistakes (layout E9)
+
+| # | Class | What happened | Effect / fix |
+| --- | --- | --- | --- |
+| 1 | regression | F3 candidate `LRZ` 25 µm chosen on DM1 and f_c only; the full loop set gave GM 9.47 dB at tt 15.4 µA | step screen, F3 = 23 µm |
+| 2 | planning | Five campaigns time-shared 3 CPUs; the E8 re-run took 4.1 h; layout work started before its end (declared deviation from the brief: no E9 simulation before the E8 results were recorded) | E9 campaign started 10:10, about 1.5 h before the stop |
+| 3 | regression | `fnshift=2` (s1) improved the `fn`/`fp` match but tripled the drift span | s1 rejected; its kpex (dev20) ran in parallel and was not used |
+| 4 | verification-gap | The E8 not-run rows carried a fourth E8 failure (CM1 ffx 6.9 µA CM 2.5 V ×32 61.99°) | closed by F3 on E9 (63.31°) |
+| 5 | estimation | C trim step taken as 0.32 fF (magic) per Metal3 + Metal4 edge pair; kpex gives about 1.1–1.5 fF | ΔC +2.2 fF; next: 23/23 edges and one extraction |
+| 6 | tooling | `pex/pex_rc_build.py` took the device sizes from the F2 file: the first RC netlist of E9 (`pexrc-layout-e9-dev21`) had `LRZ` 21 µm; campaign `r1afe-post-e9d21` (DM1 62.23°) ran on it | `-rd sch=`; RC rebuilt as `pexrc-layout-e9-dev21-f3`; the wrong run cannot be stopped (no-kill rule) and was reniced |
+| 7 | tooling | Monte Carlo rows of the schematic regression are not reproducible at the same seed | MC rows compared by worst value only |
+
+### Next levers (not done)
+
+1. `x1` C trim 23/23 edges (kpex step about 1.1–1.5 fF) and one kpex extraction.
+2. Drift (1.54 mV, CM 0.5 V corners and CM 2.5 V at 15.4 µA): no layout lever found in E8 or E9 that moves the span below
+   1 mV without moving other routes; candidate for a coordinator decision (the D22 limit or a temperature-tracking host
+   correction).
+3. The rows marked not run in the status table on `pexrc-layout-e9-dev21-f3` (`sim/specs/post_e9_f3.json` tail,
+   `cmstep_e9.json`, `supl_e9.json`), then the waveform classification of the CM step counts.
 
 ## Layout E8 (2026-10-27/28, track T3l; not closed)
 
@@ -37,20 +135,20 @@ Campaign runs (netlist `pexrc-layout-e8-dev19`, all jobs from `sim/specs/post_e8
 | Drift span (D22), table below | ≤ 1 mV | worst **1.53 mV** (CM 0.5 V, 15.4 µA); 14 of 39 spans > 1 mV | 8.21 mV | same | **failed** by 0.53 mV |
 | Loops DM1, DM2, CM1, CM2 at tt, ss, ff, ssx, sf, fs (CM 0.5 V; CM 2.5 V except sf) | PM ≥ 63°, GM ≥ 10 dB, valid | PM ≥ 66.89° (ff hold DM2), GM ≥ 13.23 dB | — | `sim/results/post-e8d19-summary.json` | **passed** (valid rows) |
 | DM1 ffx 6.9 µA CM 0.5 V ×1 | ≥ 63° | **62.16°** (GM 26.73 dB) | 62.07° | `sim/results/r1afe-post-e8d19-ffx69.json` | **failed** by 0.84° |
-| Loops not run: sf CM 2.5 V; ffx 15.36 µA CM 0.5/2.5 V; ffx 6.9 µA CM 2.5 V; tt 6.9/15.4 µA | as above | — | — | `runs/r1afe-post-e8d19c-stop` (`not_run`) | **not run** |
-| Hold states (C_L 1 fF), CM 2.5 V | as above | ff, ssx: PM ≥ 66.89°; tt, ss, sf, fs, ffx | — | same | ff, ssx **passed**; 5 corners **not run** |
-| Flagged CM rows (15 rows `pm_valid` false: 14 × CM2 at CM 2.5 V or ×32, 1 × CM1 ff CM 0.5 V ×1) | supply-network method | see the two rows below | — | `sim/results/post-e8d19-summary.json` (`invalid`) | **closed by method** (loop gain); CM step partly **not run** |
+| Loops run by T3m (run `r1afe-post-e8d19r`, 2026-10-28): sf CM 2.5 V; ffx 15.36 µA CM 0.5/2.5 V; ffx 6.9 µA CM 2.5 V; tt 6.9/15.4 µA CM 0.5/2.5 V | as above | PM ≥ 65.11° and GM ≥ 11.44 dB on every valid row except **CM1 ffx 6.9 µA CM 2.5 V ×32 61.99°** (valid) | — | `sim/results/r1afe-post-e8d19r.json`, `sim/results/post-e8d19r-summary.json` | **failed** by 1.01° (one row); the others **passed** |
+| Hold states (C_L 1 fF), CM 2.5 V | as above | ff, ssx: PM ≥ 66.89°; tt, ss, sf, fs, ffx 15.36 µA (`r1afe-post-e8d19r`): PM ≥ 65.12°, GM ≥ 13.75 dB | — | same | **passed** (7 corners) |
+| Flagged CM rows (15 rows `pm_valid` false: 14 × CM2 at CM 2.5 V or ×32, 1 × CM1 ff CM 0.5 V ×1) | supply-network method | see the two rows below | — | `sim/results/post-e8d19-summary.json` (`invalid`) | **closed by method** (loop gain) for the ×1 CM step; the ×32 CM step **failed by count** (row below); 15 more `cm2` rows flagged in `r1afe-post-e8d19r`, same pattern |
 | Supply-path DC loop gain, tt/ss/ff, CM 0.5/2.5 V, ×1/×32, `vss`/`vdd`/both | ≤ −20 dB | worst −82.30 dB (ff CM 0.5 V ×1, both); worst \|T\| at any frequency −70.11 dB | — | `sim/results/r1afe-supl-e8d19.json` | **passed** |
 | CM step, tt ×1 | ≤ 1 loop-response overshoot | stage-1 CM ≤ 1 on every event; output CM 2 (2 mV band) on the two input-CM steps (feed-through peak 4.1–6.2 mV, settles in 136–162 ns), ≤ 1 on the other events | — | `sim/results/r1afe-cmstep-e8d19-stop.json` | **closed by method with a note** (as E6) |
-| CM step, tt/ss/ff ×32 | as above | — | — | same (`not_run`) | **not run** |
+| CM step, tt/ss/ff ×32 (`r1afe-post-e8d19r`) | as above | output CM (2 mV band) 2 counts on the input-CM steps at tt and ss, 2–3 at ff (feed-through peak 8.2–15.7 mV, settles in 144–262 ns); stage-1 CM 2 counts on the VDDA steps at ss, ≤ 1 elsewhere; 1 on every vcm2 event | — | `sim/results/r1afe-post-e8d19r.json` (`CMSROW`) | **failed by count**; the feed-through/loop-peak classification of the waveforms (2026-10-28 rule) **not run** |
 | f_c at ss (and 10 other `ac_*` points) | ≥ 1.0 MHz | 1.0727 MHz (ss CM 0.5 V); others 1.11–1.81 MHz | — | `sim/results/r1afe-post-e8d19c-stop.json` | **passed** |
 | Pole matching, MC at ss (`acmc_ss_p0` and `_p1`) | ≤ 1 % | worst 0.832 % (120 values) | 0.688 % (p1 only) | `sim/results/post-e8d19-summary.json` | **passed** |
 | Output CM, every `op_*` point | 0.600 ± 0.030 V | 0.5894 … 0.5977 V | — | same | **passed** |
 | Noise ×32, ss, input-referred | ≤ 35 µV | 32.70 µV | — | `sim/results/r1afe-post-e8d19c-stop.json` | **passed** |
-| THD (`tran_tt_x1`) | ≤ 0.1 % | 0.0104 % | — | same | **passed**; `tran_tt_x32` **not run** |
-| Settling (15 jobs, incl. ss ×1) | ≤ 0.25 LSB residual | 1 of 15 jobs finished (ss ×1 +100 %); no fit | — | same | **not run** |
+| THD (`tran_tt_x1`; `tran_tt_x32` in `r1afe-post-e8d19r`) | ≤ 0.1 % | 0.0104 %; ×32 0.0113 % | — | same | **passed** |
+| Settling (15 jobs, incl. ss ×1; 14 in `r1afe-post-e8d19r`) | ≤ 0.25 LSB residual | worst non-linear residual 0.0253 LSB (ss ×32); linear part up to 1.58 LSB (removed by calibration, INTERFACES row) | — | `sim/results/post-e8d19r-summary.json` | **passed** |
 | `x1` R, C; `o1`, `m1p`; DRC, antenna, LVS, islands, pins | see "Iteration 1" | — | — | `reports/layout-e8-dev19/`, `reports/pex-e8-dev19/` | see "Iteration 1" (ΔC **failed** by 0.1 fF) |
-| Schematic regression on F2 | as F2 | not re-run (netlist unchanged, sha256 `9e262f8c…`; `sim/results/summary-20261027f2.json` stands) | not run | — | **not run** in E8 |
+| Schematic regression on F2 | as F2 | re-run by T3m as `r1afe-*-20261028f2` (14 campaigns; see "Layout E9") | not run | `sim/results/r1afe-*-20261028f2.json` | see "Layout E9" |
 
 ### Open issues (layout E8)
 
@@ -67,6 +165,9 @@ Campaign runs (netlist `pexrc-layout-e8-dev19`, all jobs from `sim/specs/post_e8
    and the ss loop jobs needed gmin stepping (about 30 min each, 4 parallel runs on 3 CPUs). Next: run the
    `not_run` jobs of `sim/runs/r1afe-post-e8d19c-stop/run.json` and of `sim/runs/r1afe-cmstep-e8d19-stop/run.json` on the
    same netlist, with `G1_CPUS=3` and no other run on the CPU set.
+   Done 2026-10-28 by T3m (run `r1afe-post-e8d19r`, 31 jobs, 0 failed jobs, 4.1 h wall; `stb_ffx_ib6.9_cm0.5` was not
+   repeated, it finished in `r1afe-post-e8d19-ffx69`): one new failed row, CM1 at ffx 6.9 µA CM 2.5 V ×32 61.99°; CM step
+   ×32 fails by count; holds, settling and THD ×32 pass.
 ### `x1` structure (generator flag `x1bus`, `layout/r1_afe_layout.py`)
 
 Cause of the E7 resistance (router geometry dump `-rd dumpnets=…`, build `layout-e8-s0` = the dev17 flags): the summing

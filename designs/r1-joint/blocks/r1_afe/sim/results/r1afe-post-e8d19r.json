@@ -1,0 +1,5428 @@
+[
+ {
+  "name": "E8__tran_tt_x32",
+  "corner": "tt",
+  "mismatch": false,
+  "subs": {
+   "MOS": "mos_tt",
+   "RES": "res_typ",
+   "CAP": "cap_typ",
+   "VDDA": 3.3,
+   "TEMP": 27,
+   "VCMI": 2.45,
+   "ACVDD": 0,
+   "NMC": 1,
+   "SEED": 1,
+   "LSB": 0.000439453125,
+   "CL": "2.8p",
+   "KLIST": "0 1 2 3 4 5",
+   "LLIST": "1 2 3 4 5 6 7 8",
+   "IB": "10.14u",
+   "DIO": "dio_tt",
+   "CODE": 5,
+   "AMP": 0.021875,
+   "RAW": "$G1_RESULTS_ROOT/r1_afe/r1afe-post-e8d19r/E8__tran_tt_x32"
+  },
+  "rc": 0,
+  "edits": [],
+  "seconds": 6365.3,
+  "rows": [
+   {
+    "tag": "TRROW",
+    "code": 5.0,
+    "smax": 0.673509,
+    "smin": -0.676578,
+    "cmax": 0.673498,
+    "cmin": -0.676568,
+    "sphi": 0.929922,
+    "splo": 0.254271,
+    "snhi": 0.930849,
+    "snlo": 0.256412,
+    "ocm": 0.592864,
+    "ocmpp": 0.000653274,
+    "o1cmpp": 0.000210979
+   },
+   {
+    "tag": "THDROW",
+    "thd_percent": 0.0112347
+   },
+   {
+    "tag": "THDROW",
+    "thd_percent": 0.0113091
+   }
+  ],
+  "errors": [
+   "Warning: singular matrix:  check nodes xdut.xsin.xa2_xrs1_n6 and xdut.xsin.xa2_xrs2_n6",
+   "Warning: singular matrix:  check nodes xdut.xsin.xs1p_xu4_xr_n1 and xdut.xsin.xs1n_xu3_xr_n1",
+   "Warning: singular matrix:  check nodes xdut.xsin.xa2_xrs1_n4 and xdut.xsin.xa2_xrs1_n2",
+   "Warning: singular matrix:  check node xdut.xsin.xs1p_xu7_xr_n1",
+   "Warning: singular matrix:  check node xdut.xsin.xa1_xrs1_n3",
+   "Warning: singular matrix:  check node xdut.xcos.xa1_xrs1_n3"
+  ],
+  "deck": "r1_afe/r1afe-post-e8d19r/E8__tran_tt_x32.cir",
+  "log": "r1_afe/r1afe-post-e8d19r/E8__tran_tt_x32.log"
+ },
+ {
+  "name": "E8__stb_ss_ib11.81_cm2.5_hold",
+  "corner": "ss",
+  "mismatch": false,
+  "subs": {
+   "MOS": "mos_ss",
+   "RES": "res_wcs",
+   "CAP": "cap_wcs",
+   "VDDA": 3.0,
+   "TEMP": 125,
+   "VCMI": 2.5,
+   "ACVDD": 0,
+   "NMC": 1,
+   "SEED": 1,
+   "LSB": 0.000439453125,
+   "CL": "1f",
+   "KLIST": "0 5",
+   "LLIST": "1 2 4 5",
+   "IB": "11.81u",
+   "DIO": "dio_ss",
+   "RAW": "$G1_RESULTS_ROOT/r1_afe/r1afe-post-e8d19r/E8__stb_ss_ib11.81_cm2.5_hold"
+  },
+  "rc": 0,
+  "edits": [
+   [
+    "XA1 x1p x1n ",
+    "Vpa1p x1p y1p dc 0 ac {vdp1}\nVpa1n x1n y1n dc 0 ac {vdn1}\nIpa1p 0 x1p dc 0 ac {idp1}\nIpa1n 0 x1n dc 0 ac {idn1}\nXA1 y1p y1n "
+   ],
+   [
+    "XA2 x2p x2n ",
+    "Vpa2p x2p y2p dc 0 ac {vdp2}\nVpa2n x2n y2n dc 0 ac {vdn2}\nIpa2p 0 x2p dc 0 ac {idp2}\nIpa2n 0 x2n dc 0 ac {idn2}\nXA2 y2p y2n "
+   ],
+   [
+    "XMC1 vcmfb vcms tc",
+    "Vpc vcms vcmsy dc 0 ac {vc1}\nIpc 0 vcms dc 0 ac {ic1}\nXMC1 vcmfb vcmsy tc"
+   ],
+   [
+    "XMC1 vcmfb vcms tc",
+    "Vpc vcms vcmsy dc 0 ac {vc2}\nIpc 0 vcms dc 0 ac {ic2}\nXMC1 vcmfb vcmsy tc"
+   ],
+   [
+    "XMN7 outp ",
+    "Vpop outpi outp dc 0 ac {vop1}\nVpon outni outn dc 0 ac {von1}\nIpop 0 outpi dc 0 ac {iop1}\nIpon 0 outni dc 0 ac {ion1}\nXMN7 outpi "
+   ],
+   [
+    "XMN8 outn ",
+    "XMN8 outni "
+   ],
+   [
+    "XMP7 outp ",
+    "XMP7 outpi "
+   ],
+   [
+    "XMP8 outn ",
+    "XMP8 outni "
+   ],
+   [
+    "XCC1 cz1 outp ",
+    "XCC1 cz1 outpi "
+   ],
+   [
+    "XCC2 cz2 outn ",
+    "XCC2 cz2 outni "
+   ],
+   [
+    "XMN7 outp ",
+    "Vpop outpi outp dc 0 ac {vop2}\nVpon outni outn dc 0 ac {von2}\nIpop 0 outpi dc 0 ac {iop2}\nIpon 0 outni dc 0 ac {ion2}\nXMN7 outpi "
+   ],
+   [
+    "XMN8 outn ",
+    "XMN8 outni "
+   ],
+   [
+    "XMP7 outp ",
+    "XMP7 outpi "
+   ],
+   [
+    "XMP8 outn ",
+    "XMP8 outni "
+   ],
+   [
+    "XCC1 cz1 outp ",
+    "XCC1 cz1 outpi "
+   ],
+   [
+    "XCC2 cz2 outn ",
+    "XCC2 cz2 outni "
+   ],
+   [
+    "XCC1B cb1 outp ",
+    "XCC1B cb1 outpi "
+   ],
+   [
+    "XCC2B cb2 outn ",
+    "XCC2B cb2 outni "
+   ],
+   [
+    "?",
+    "XCD1B cd1 outp ",
+    "XCD1B cd1 outpi "
+   ],
+   [
+    "?",
+    "XCD2B cd2 outn ",
+    "XCD2B cd2 outni "
+   ],
+   [
+    "?",
+    "XCX1 cz1 outn ",
+    "XCX1 cz1 outni "
+   ],
+   [
+    "?",
+    "XCX2 cz2 outp ",
+    "XCX2 cz2 outpi "
+   ],
+   [
+    "?",
+    "XCX1 cz1 outn ",
+    "XCX1 cz1 outni "
+   ],
+   [
+    "?",
+    "XCX2 cz2 outp ",
+    "XCX2 cz2 outpi "
+   ]
+  ],
+  "seconds": 614.4,
+  "rows": [
+   {
+    "tag": "STBROW",
+    "code": 0,
+    "loop": "dm1",
+    "t_dc_db": 80.32,
+    "f_unity": 23582059.32607283,
+    "pm_valid": true,
+    "pm_deg": 80.94,
+    "gm_db": 16.34,
+    "f_180": 140962438.53864992,
+    "ph_min_deg": -354.8
+   },
+   {
+    "tag": "STBROW",
+    "code": 0,
+    "loop": "cm1",
+    "t_dc_db": 68.53,
+    "f_unity": 3345161.5985559593,
+    "pm_valid": true,
+    "pm_deg": 92.59,
+    "gm_db": null,
+    "f_180": null,
+    "ph_min_deg": -156.4
+   },
+   {
+    "tag": "STBROW",
+    "code": 0,
+    "loop": "dm2",
+    "t_dc_db": 84.74,
+    "f_unity": 25323167.706076235,
+    "pm_valid": true,
+    "pm_deg": 72.66,
+    "gm_db": 14.59,
+    "f_180": 145104823.88047588,
+    "ph_min_deg": -371.8
+   },
+   {
+    "tag": "STBROW",
+    "code": 0,
+    "loop": "cm2",
+    "t_dc_db": 105.75,
+    "f_unity": 6242970.766559469,
+    "pm_valid": true,
+    "pm_deg": 77.01,
+    "gm_db": 35.43,
+    "f_180": 133038591.35068296,
+    "ph_min_deg": -500.7
+   },
+   {
+    "tag": "STBROW",
+    "code": 5,
+    "loop": "dm1",
+    "t_dc_db": 58.85,
+    "f_unity": 15474880.251374455,
+    "pm_valid": true,
+    "pm_deg": 87.03,
+    "gm_db": 18.91,
+    "f_180": 114459800.98121856,
+    "ph_min_deg": -361.0
+   },
+   {
+    "tag": "STBROW",
+    "code": 5,
+    "loop": "cm1",
+    "t_dc_db": 68.4,
+    "f_unity": 5421786.097969149,
+    "pm_valid": true,
+    "pm_deg": 71.7,
+    "gm_db": null,
+    "f_180": null,
+    "ph_min_deg": -166.9
+   },
+   {
+    "tag": "STBROW",
+    "code": 5,
+    "loop": "dm2",
+    "t_dc_db": 76.8,
+    "f_unity": 21794537.50156868,
+    "pm_valid": true,
+    "pm_deg": 83.43,
+    "gm_db": 15.52,
+    "f_180": 151042813.0879567,
+    "ph_min_deg": -370.3
+   },
+   {
+    "tag": "STBROW",
+    "code": 5,
+    "loop": "cm2",
+    "t_dc_db": 94.31,
+    "f_unity": 6168619.006555346,
+    "pm_valid": false,
+    "pm_deg": 76.69,
+    "gm_db": 34.64,
+    "f_180": 134668200.33888778,
+    "ph_min_deg": -499.6
+   }
+  ],
+  "errors": [
+   "Warning: singular matrix:  check node xdut.xsin.xa2_xrs2_n3",
+   "Warning: singular matrix:  check node xdut.xsin.xa2_xrs2_n3",
+   "Warning: singular matrix:  check node xdut.xsin.xa2_xrs2_n3",
+   "Warning: singular matrix:  check node xdut.xsin.xa2_xrs2_n3",
+   "Warning: singular matrix:  check node xdut.xsin.xa2_xrs2_n3",
+   "Warning: singular matrix:  check node xdut.xsin.xa2_xrs2_n3",
+   "Warning: singular matrix:  check node xdut.xsin.xa2_xrs2_n3",
+   "Warning: singular matrix:  check node xdut.xsin.xa2_xrs2_n3"
+  ],
+  "deck": "r1_afe/r1afe-post-e8d19r/E8__stb_ss_ib11.81_cm2.5_hold.cir",
+  "log": "r1_afe/r1afe-post-e8d19r/E8__stb_ss_ib11.81_cm2.5_hold.log"
+ },
+ {
+  "name": "E8__settle_ss_x1_m100",
+  "corner": "ss",
+  "mismatch": false,
+  "subs": {
+   "MOS": "mos_ss",
+   "RES": "res_wcs",
+   "CAP": "cap_wcs",
+   "VDDA": 3.0,
+   "TEMP": 125,
+   "VCMI": 2.45,
+   "ACVDD": 0,
+   "NMC": 1,
+   "SEED": 1,
+   "LSB": 0.000439453125,
+   "CL": "2.8p",
+   "KLIST": "0 1 2 3 4 5",
+   "LLIST": "1 2 3 4 5 6 7 8",
+   "IB": "11.81u",
+   "DIO": "dio_ss",
+   "CODE": 0,
+   "AMP": -0.7,
+   "CS": "2.8p",
+   "VRST": 0.0,
+   "RAW": "$G1_RESULTS_ROOT/r1_afe/r1afe-post-e8d19r/E8__settle_ss_x1_m100"
+  },
+  "rc": 0,
+  "edits": [],
+  "seconds": 328.6,
+  "rows": [
+   {
+    "tag": "STROW",
+    "code": 0.0,
+    "t": "2.249u",
+    "vout0": -0.705669,
+    "err_s": 0.000135952,
+    "err_c": 0.000144237,
+    "lsb_s": 0.309367,
+    "lsb_c": 0.32822
+   },
+   {
+    "tag": "STROW",
+    "code": 0.0,
+    "t": "2.749u",
+    "vout0": -0.705669,
+    "err_s": 0.000135955,
+    "err_c": 0.00014424,
+    "lsb_s": 0.309372,
+    "lsb_c": 0.328225
+   },
+   {
+    "tag": "STROW",
+    "code": 0.0,
+    "t": "3.249u",
+    "vout0": -0.705669,
+    "err_s": 0.000135956,
+    "err_c": 0.000144241,
+    "lsb_s": 0.309375,
+    "lsb_c": 0.328227
+   },
+   {
+    "tag": "STROW",
+    "code": 0.0,
+    "t": "3.749u",
+    "vout0": -0.705669,
+    "err_s": 0.000135956,
+    "err_c": 0.000144241,
+    "lsb_s": 0.309375,
+    "lsb_c": 0.328228
+   },
+   {
+    "tag": "STROW",
+    "code": 0.0,
+    "t": "4.249u",
+    "vout0": -0.705669,
+    "err_s": 0.000135956,
+    "err_c": 0.000144241,
+    "lsb_s": 0.309375,
+    "lsb_c": 0.328229
+   },
+   {
+    "tag": "STROW",
+    "code": 0.0,
+    "t": "4.749u",
+    "vout0": -0.705669,
+    "err_s": 0.000135956,
+    "err_c": 0.000144241,
+    "lsb_s": 0.309375,
+    "lsb_c": 0.328229
+   },
+   {
+    "tag": "STROW",
+    "code": 0.0,
+    "t": "5.249u",
+    "vout0": -0.705669,
+    "err_s": 0.000135956,
+    "err_c": 0.000144241,
+    "lsb_s": 0.309376,
+    "lsb_c": 0.328229
+   },
+   {
+    "tag": "STTROW",
+    "code": 0.0,
+    "t": "5.05u",
+    "err_s": 0.0530136,
+    "lsb_s": 120.635
+   },
+   {
+    "tag": "STTROW",
+    "code": 0.0,
+    "t": "5.1u",
+    "err_s": 0.0139391,
+    "lsb_s": 31.7192
+   },
+   {
+    "tag": "STTROW",
+    "code": 0.0,
+    "t": "5.15u",
+    "err_s": 0.00353471,
+    "lsb_s": 8.04343
+   },
+   {
+    "tag": "STTROW",
+    "code": 0.0,
+    "t": "5.2u",
+    "err_s": 0.000800226,
+    "lsb_s": 1.82096
+   }
+  ],
+  "errors": [],
+  "deck": "r1_afe/r1afe-post-e8d19r/E8__settle_ss_x1_m100.cir",
+  "log": "r1_afe/r1afe-post-e8d19r/E8__settle_ss_x1_m100.log"
+ },
+ {
+  "name": "E8__settle_ss_x1_p50",
+  "corner": "ss",
+  "mismatch": false,
+  "subs": {
+   "MOS": "mos_ss",
+   "RES": "res_wcs",
+   "CAP": "cap_wcs",
+   "VDDA": 3.0,
+   "TEMP": 125,
+   "VCMI": 2.45,
+   "ACVDD": 0,
+   "NMC": 1,
+   "SEED": 1,
+   "LSB": 0.000439453125,
+   "CL": "2.8p",
+   "KLIST": "0 1 2 3 4 5",
+   "LLIST": "1 2 3 4 5 6 7 8",
+   "IB": "11.81u",
+   "DIO": "dio_ss",
+   "CODE": 0,
+   "AMP": 0.35,
+   "CS": "2.8p",
+   "VRST": 0.0,
+   "RAW": "$G1_RESULTS_ROOT/r1_afe/r1afe-post-e8d19r/E8__settle_ss_x1_p50"
+  },
+  "rc": 0,
+  "edits": [],
+  "seconds": 666.2,
+  "rows": [
+   {
+    "tag": "STROW",
+    "code": 0.0,
+    "t": "2.249u",
+    "vout0": 0.351958,
+    "err_s": 5.89136e-05,
+    "err_c": 5.53467e-05,
+    "lsb_s": 0.134061,
+    "lsb_c": 0.125945
+   },
+   {
+    "tag": "STROW",
+    "code": 0.0,
+    "t": "2.749u",
+    "vout0": 0.351958,
+    "err_s": 5.89118e-05,
+    "err_c": 5.5345e-05,
+    "lsb_s": 0.134057,
+    "lsb_c": 0.125941
+   },
+   {
+    "tag": "STROW",
+    "code": 0.0,
+    "t": "3.249u",
+    "vout0": 0.351958,
+    "err_s": 5.89112e-05,
+    "err_c": 5.53444e-05,
+    "lsb_s": 0.134056,
+    "lsb_c": 0.125939
+   },
+   {
+    "tag": "STROW",
+    "code": 0.0,
+    "t": "3.749u",
+    "vout0": 0.351958,
+    "err_s": 5.8911e-05,
+    "err_c": 5.53441e-05,
+    "lsb_s": 0.134055,
+    "lsb_c": 0.125939
+   },
+   {
+    "tag": "STROW",
+    "code": 0.0,
+    "t": "4.249u",
+    "vout0": 0.351958,
+    "err_s": 5.89109e-05,
+    "err_c": 5.53441e-05,
+    "lsb_s": 0.134055,
+    "lsb_c": 0.125938
+   },
+   {
+    "tag": "STROW",
+    "code": 0.0,
+    "t": "4.749u",
+    "vout0": 0.351958,
+    "err_s": 5.89109e-05,
+    "err_c": 5.5344e-05,
+    "lsb_s": 0.134055,
+    "lsb_c": 0.125938
+   },
+   {
+    "tag": "STROW",
+    "code": 0.0,
+    "t": "5.249u",
+    "vout0": 0.351958,
+    "err_s": 5.89109e-05,
+    "err_c": 5.5344e-05,
+    "lsb_s": 0.134055,
+    "lsb_c": 0.125938
+   },
+   {
+    "tag": "STTROW",
+    "code": 0.0,
+    "t": "5.05u",
+    "err_s": -0.0257605,
+    "lsb_s": -58.6195
+   },
+   {
+    "tag": "STTROW",
+    "code": 0.0,
+    "t": "5.1u",
+    "err_s": -0.00661537,
+    "lsb_s": -15.0536
+   },
+   {
+    "tag": "STTROW",
+    "code": 0.0,
+    "t": "5.15u",
+    "err_s": -0.00150372,
+    "lsb_s": -3.42179
+   },
+   {
+    "tag": "STTROW",
+    "code": 0.0,
+    "t": "5.2u",
+    "err_s": -0.000209014,
+    "lsb_s": -0.475623
+   }
+  ],
+  "errors": [],
+  "deck": "r1_afe/r1afe-post-e8d19r/E8__settle_ss_x1_p50.cir",
+  "log": "r1_afe/r1afe-post-e8d19r/E8__settle_ss_x1_p50.log"
+ },
+ {
+  "name": "E8__settle_ss_x32_p100",
+  "corner": "ss",
+  "mismatch": false,
+  "subs": {
+   "MOS": "mos_ss",
+   "RES": "res_wcs",
+   "CAP": "cap_wcs",
+   "VDDA": 3.0,
+   "TEMP": 125,
+   "VCMI": 2.45,
+   "ACVDD": 0,
+   "NMC": 1,
+   "SEED": 1,
+   "LSB": 0.000439453125,
+   "CL": "2.8p",
+   "KLIST": "0 1 2 3 4 5",
+   "LLIST": "1 2 3 4 5 6 7 8",
+   "IB": "11.81u",
+   "DIO": "dio_ss",
+   "CODE": 5,
+   "AMP": 0.021875,
+   "CS": "2.8p",
+   "VRST": 0.0,
+   "RAW": "$G1_RESULTS_ROOT/r1_afe/r1afe-post-e8d19r/E8__settle_ss_x32_p100"
+  },
+  "rc": 0,
+  "edits": [],
+  "seconds": 824.4,
+  "rows": [
+   {
+    "tag": "STROW",
+    "code": 5.0,
+    "t": "2.249u",
+    "vout0": 0.673555,
+    "err_s": 0.000642037,
+    "err_c": 0.000634414,
+    "lsb_s": 1.46099,
+    "lsb_c": 1.44364
+   },
+   {
+    "tag": "STROW",
+    "code": 5.0,
+    "t": "2.749u",
+    "vout0": 0.673555,
+    "err_s": 0.000642036,
+    "err_c": 0.000634414,
+    "lsb_s": 1.46099,
+    "lsb_c": 1.44364
+   },
+   {
+    "tag": "STROW",
+    "code": 5.0,
+    "t": "3.249u",
+    "vout0": 0.673555,
+    "err_s": 0.000642036,
+    "err_c": 0.000634413,
+    "lsb_s": 1.46099,
+    "lsb_c": 1.44364
+   },
+   {
+    "tag": "STROW",
+    "code": 5.0,
+    "t": "3.749u",
+    "vout0": 0.673555,
+    "err_s": 0.000642036,
+    "err_c": 0.000634413,
+    "lsb_s": 1.46099,
+    "lsb_c": 1.44364
+   },
+   {
+    "tag": "STROW",
+    "code": 5.0,
+    "t": "4.249u",
+    "vout0": 0.673555,
+    "err_s": 0.000642036,
+    "err_c": 0.000634413,
+    "lsb_s": 1.46099,
+    "lsb_c": 1.44364
+   },
+   {
+    "tag": "STROW",
+    "code": 5.0,
+    "t": "4.749u",
+    "vout0": 0.673555,
+    "err_s": 0.000642036,
+    "err_c": 0.000634413,
+    "lsb_s": 1.46099,
+    "lsb_c": 1.44364
+   },
+   {
+    "tag": "STROW",
+    "code": 5.0,
+    "t": "5.249u",
+    "vout0": 0.673555,
+    "err_s": 0.000642036,
+    "err_c": 0.000634413,
+    "lsb_s": 1.46099,
+    "lsb_c": 1.44364
+   },
+   {
+    "tag": "STTROW",
+    "code": 5.0,
+    "t": "5.05u",
+    "err_s": -0.0522833,
+    "lsb_s": -118.974
+   },
+   {
+    "tag": "STTROW",
+    "code": 5.0,
+    "t": "5.1u",
+    "err_s": -0.0133762,
+    "lsb_s": -30.4384
+   },
+   {
+    "tag": "STTROW",
+    "code": 5.0,
+    "t": "5.15u",
+    "err_s": -0.00258207,
+    "lsb_s": -5.87565
+   },
+   {
+    "tag": "STTROW",
+    "code": 5.0,
+    "t": "5.2u",
+    "err_s": 0.000147026,
+    "lsb_s": 0.334565
+   }
+  ],
+  "errors": [],
+  "deck": "r1_afe/r1afe-post-e8d19r/E8__settle_ss_x32_p100.cir",
+  "log": "r1_afe/r1afe-post-e8d19r/E8__settle_ss_x32_p100.log"
+ },
+ {
+  "name": "E8__settle_ss_x32_m100",
+  "corner": "ss",
+  "mismatch": false,
+  "subs": {
+   "MOS": "mos_ss",
+   "RES": "res_wcs",
+   "CAP": "cap_wcs",
+   "VDDA": 3.0,
+   "TEMP": 125,
+   "VCMI": 2.45,
+   "ACVDD": 0,
+   "NMC": 1,
+   "SEED": 1,
+   "LSB": 0.000439453125,
+   "CL": "2.8p",
+   "KLIST": "0 1 2 3 4 5",
+   "LLIST": "1 2 3 4 5 6 7 8",
+   "IB": "11.81u",
+   "DIO": "dio_ss",
+   "CODE": 5,
+   "AMP": -0.021875,
+   "CS": "2.8p",
+   "VRST": 0.0,
+   "RAW": "$G1_RESULTS_ROOT/r1_afe/r1afe-post-e8d19r/E8__settle_ss_x32_m100"
+  },
+  "rc": 0,
+  "edits": [],
+  "seconds": 922.4,
+  "rows": [
+   {
+    "tag": "STROW",
+    "code": 5.0,
+    "t": "2.249u",
+    "vout0": -0.678047,
+    "err_s": -0.000695161,
+    "err_c": -0.00068976,
+    "lsb_s": -1.58188,
+    "lsb_c": -1.56959
+   },
+   {
+    "tag": "STROW",
+    "code": 5.0,
+    "t": "2.749u",
+    "vout0": -0.678047,
+    "err_s": -0.000695162,
+    "err_c": -0.00068976,
+    "lsb_s": -1.58188,
+    "lsb_c": -1.56959
+   },
+   {
+    "tag": "STROW",
+    "code": 5.0,
+    "t": "3.249u",
+    "vout0": -0.678047,
+    "err_s": -0.000695162,
+    "err_c": -0.000689761,
+    "lsb_s": -1.58188,
+    "lsb_c": -1.56959
+   },
+   {
+    "tag": "STROW",
+    "code": 5.0,
+    "t": "3.749u",
+    "vout0": -0.678047,
+    "err_s": -0.000695162,
+    "err_c": -0.000689761,
+    "lsb_s": -1.58188,
+    "lsb_c": -1.56959
+   },
+   {
+    "tag": "STROW",
+    "code": 5.0,
+    "t": "4.249u",
+    "vout0": -0.678047,
+    "err_s": -0.000695162,
+    "err_c": -0.000689761,
+    "lsb_s": -1.58188,
+    "lsb_c": -1.56959
+   },
+   {
+    "tag": "STROW",
+    "code": 5.0,
+    "t": "4.749u",
+    "vout0": -0.678047,
+    "err_s": -0.000695162,
+    "err_c": -0.000689761,
+    "lsb_s": -1.58188,
+    "lsb_c": -1.56959
+   },
+   {
+    "tag": "STROW",
+    "code": 5.0,
+    "t": "5.249u",
+    "vout0": -0.678047,
+    "err_s": -0.000695162,
+    "err_c": -0.000689761,
+    "lsb_s": -1.58188,
+    "lsb_c": -1.56959
+   },
+   {
+    "tag": "STTROW",
+    "code": 5.0,
+    "t": "5.05u",
+    "err_s": 0.0545599,
+    "lsb_s": 124.154
+   },
+   {
+    "tag": "STTROW",
+    "code": 5.0,
+    "t": "5.1u",
+    "err_s": 0.0142442,
+    "lsb_s": 32.4135
+   },
+   {
+    "tag": "STTROW",
+    "code": 5.0,
+    "t": "5.15u",
+    "err_s": 0.00257892,
+    "lsb_s": 5.86848
+   },
+   {
+    "tag": "STTROW",
+    "code": 5.0,
+    "t": "5.2u",
+    "err_s": -0.000264055,
+    "lsb_s": -0.600872
+   }
+  ],
+  "errors": [],
+  "deck": "r1_afe/r1afe-post-e8d19r/E8__settle_ss_x32_m100.cir",
+  "log": "r1_afe/r1afe-post-e8d19r/E8__settle_ss_x32_m100.log"
+ },
+ {
+  "name": "E8__settle_ss_x32_p50",
+  "corner": "ss",
+  "mismatch": false,
+  "subs": {
+   "MOS": "mos_ss",
+   "RES": "res_wcs",
+   "CAP": "cap_wcs",
+   "VDDA": 3.0,
+   "TEMP": 125,
+   "VCMI": 2.45,
+   "ACVDD": 0,
+   "NMC": 1,
+   "SEED": 1,
+   "LSB": 0.000439453125,
+   "CL": "2.8p",
+   "KLIST": "0 1 2 3 4 5",
+   "LLIST": "1 2 3 4 5 6 7 8",
+   "IB": "11.81u",
+   "DIO": "dio_ss",
+   "CODE": 5,
+   "AMP": 0.010937,
+   "CS": "2.8p",
+   "VRST": 0.0,
+   "RAW": "$G1_RESULTS_ROOT/r1_afe/r1afe-post-e8d19r/E8__settle_ss_x32_p50"
+  },
+  "rc": 0,
+  "edits": [],
+  "seconds": 772.3,
+  "rows": [
+   {
+    "tag": "STROW",
+    "code": 5.0,
+    "t": "2.249u",
+    "vout0": 0.33562,
+    "err_s": 0.000324982,
+    "err_c": 0.000321437,
+    "lsb_s": 0.739514,
+    "lsb_c": 0.731447
+   },
+   {
+    "tag": "STROW",
+    "code": 5.0,
+    "t": "2.749u",
+    "vout0": 0.33562,
+    "err_s": 0.000324981,
+    "err_c": 0.000321436,
+    "lsb_s": 0.739513,
+    "lsb_c": 0.731446
+   },
+   {
+    "tag": "STROW",
+    "code": 5.0,
+    "t": "3.249u",
+    "vout0": 0.33562,
+    "err_s": 0.000324981,
+    "err_c": 0.000321436,
+    "lsb_s": 0.739512,
+    "lsb_c": 0.731445
+   },
+   {
+    "tag": "STROW",
+    "code": 5.0,
+    "t": "3.749u",
+    "vout0": 0.33562,
+    "err_s": 0.000324981,
+    "err_c": 0.000321436,
+    "lsb_s": 0.739512,
+    "lsb_c": 0.731445
+   },
+   {
+    "tag": "STROW",
+    "code": 5.0,
+    "t": "4.249u",
+    "vout0": 0.33562,
+    "err_s": 0.000324981,
+    "err_c": 0.000321436,
+    "lsb_s": 0.739512,
+    "lsb_c": 0.731445
+   },
+   {
+    "tag": "STROW",
+    "code": 5.0,
+    "t": "4.749u",
+    "vout0": 0.33562,
+    "err_s": 0.000324981,
+    "err_c": 0.000321436,
+    "lsb_s": 0.739512,
+    "lsb_c": 0.731445
+   },
+   {
+    "tag": "STROW",
+    "code": 5.0,
+    "t": "5.249u",
+    "vout0": 0.33562,
+    "err_s": 0.000324981,
+    "err_c": 0.000321436,
+    "lsb_s": 0.739512,
+    "lsb_c": 0.731445
+   },
+   {
+    "tag": "STTROW",
+    "code": 5.0,
+    "t": "5.05u",
+    "err_s": -0.0256424,
+    "lsb_s": -58.3507
+   },
+   {
+    "tag": "STTROW",
+    "code": 5.0,
+    "t": "5.1u",
+    "err_s": -0.00649256,
+    "lsb_s": -14.7742
+   },
+   {
+    "tag": "STTROW",
+    "code": 5.0,
+    "t": "5.15u",
+    "err_s": -0.00125884,
+    "lsb_s": -2.86456
+   },
+   {
+    "tag": "STTROW",
+    "code": 5.0,
+    "t": "5.2u",
+    "err_s": 7.8741e-05,
+    "lsb_s": 0.179179
+   }
+  ],
+  "errors": [],
+  "deck": "r1_afe/r1afe-post-e8d19r/E8__settle_ss_x32_p50.cir",
+  "log": "r1_afe/r1afe-post-e8d19r/E8__settle_ss_x32_p50.log"
+ },
+ {
+  "name": "E8__settle_tt_x32_p100",
+  "corner": "tt",
+  "mismatch": false,
+  "subs": {
+   "MOS": "mos_tt",
+   "RES": "res_typ",
+   "CAP": "cap_typ",
+   "VDDA": 3.3,
+   "TEMP": 27,
+   "VCMI": 2.45,
+   "ACVDD": 0,
+   "NMC": 1,
+   "SEED": 1,
+   "LSB": 0.000439453125,
+   "CL": "2.8p",
+   "KLIST": "0 1 2 3 4 5",
+   "LLIST": "1 2 3 4 5 6 7 8",
+   "IB": "10.14u",
+   "DIO": "dio_tt",
+   "CODE": 5,
+   "AMP": 0.021875,
+   "CS": "2.8p",
+   "VRST": 0.0,
+   "RAW": "$G1_RESULTS_ROOT/r1_afe/r1afe-post-e8d19r/E8__settle_tt_x32_p100"
+  },
+  "rc": 0,
+  "edits": [],
+  "seconds": 859.1,
+  "rows": [
+   {
+    "tag": "STROW",
+    "code": 5.0,
+    "t": "2.249u",
+    "vout0": 0.67438,
+    "err_s": 0.00065271,
+    "err_c": 0.000653381,
+    "lsb_s": 1.48528,
+    "lsb_c": 1.4868
+   },
+   {
+    "tag": "STROW",
+    "code": 5.0,
+    "t": "2.749u",
+    "vout0": 0.67438,
+    "err_s": 0.000652709,
+    "err_c": 0.00065338,
+    "lsb_s": 1.48528,
+    "lsb_c": 1.4868
+   },
+   {
+    "tag": "STROW",
+    "code": 5.0,
+    "t": "3.249u",
+    "vout0": 0.67438,
+    "err_s": 0.000652709,
+    "err_c": 0.00065338,
+    "lsb_s": 1.48528,
+    "lsb_c": 1.4868
+   },
+   {
+    "tag": "STROW",
+    "code": 5.0,
+    "t": "3.749u",
+    "vout0": 0.67438,
+    "err_s": 0.000652709,
+    "err_c": 0.00065338,
+    "lsb_s": 1.48528,
+    "lsb_c": 1.4868
+   },
+   {
+    "tag": "STROW",
+    "code": 5.0,
+    "t": "4.249u",
+    "vout0": 0.67438,
+    "err_s": 0.000652709,
+    "err_c": 0.00065338,
+    "lsb_s": 1.48528,
+    "lsb_c": 1.4868
+   },
+   {
+    "tag": "STROW",
+    "code": 5.0,
+    "t": "4.749u",
+    "vout0": 0.67438,
+    "err_s": 0.000652709,
+    "err_c": 0.00065338,
+    "lsb_s": 1.48528,
+    "lsb_c": 1.4868
+   },
+   {
+    "tag": "STROW",
+    "code": 5.0,
+    "t": "5.249u",
+    "vout0": 0.67438,
+    "err_s": 0.000652709,
+    "err_c": 0.00065338,
+    "lsb_s": 1.48528,
+    "lsb_c": 1.4868
+   },
+   {
+    "tag": "STTROW",
+    "code": 5.0,
+    "t": "5.05u",
+    "err_s": -0.0421047,
+    "lsb_s": -95.8116
+   },
+   {
+    "tag": "STTROW",
+    "code": 5.0,
+    "t": "5.1u",
+    "err_s": -0.00682711,
+    "lsb_s": -15.5355
+   },
+   {
+    "tag": "STTROW",
+    "code": 5.0,
+    "t": "5.15u",
+    "err_s": 2.52276e-05,
+    "lsb_s": 0.0574069
+   },
+   {
+    "tag": "STTROW",
+    "code": 5.0,
+    "t": "5.2u",
+    "err_s": 0.000892364,
+    "lsb_s": 2.03062
+   }
+  ],
+  "errors": [],
+  "deck": "r1_afe/r1afe-post-e8d19r/E8__settle_tt_x32_p100.cir",
+  "log": "r1_afe/r1afe-post-e8d19r/E8__settle_tt_x32_p100.log"
+ },
+ {
+  "name": "E8__settle_tt_x32_m100",
+  "corner": "tt",
+  "mismatch": false,
+  "subs": {
+   "MOS": "mos_tt",
+   "RES": "res_typ",
+   "CAP": "cap_typ",
+   "VDDA": 3.3,
+   "TEMP": 27,
+   "VCMI": 2.45,
+   "ACVDD": 0,
+   "NMC": 1,
+   "SEED": 1,
+   "LSB": 0.000439453125,
+   "CL": "2.8p",
+   "KLIST": "0 1 2 3 4 5",
+   "LLIST": "1 2 3 4 5 6 7 8",
+   "IB": "10.14u",
+   "DIO": "dio_tt",
+   "CODE": 5,
+   "AMP": -0.021875,
+   "CS": "2.8p",
+   "VRST": 0.0,
+   "RAW": "$G1_RESULTS_ROOT/r1_afe/r1afe-post-e8d19r/E8__settle_tt_x32_m100"
+  },
+  "rc": 0,
+  "edits": [],
+  "seconds": 1355.0,
+  "rows": [
+   {
+    "tag": "STROW",
+    "code": 5.0,
+    "t": "2.249u",
+    "vout0": -0.677446,
+    "err_s": -0.00064412,
+    "err_c": -0.000646084,
+    "lsb_s": -1.46573,
+    "lsb_c": -1.4702
+   },
+   {
+    "tag": "STROW",
+    "code": 5.0,
+    "t": "2.749u",
+    "vout0": -0.677446,
+    "err_s": -0.000644121,
+    "err_c": -0.000646085,
+    "lsb_s": -1.46573,
+    "lsb_c": -1.4702
+   },
+   {
+    "tag": "STROW",
+    "code": 5.0,
+    "t": "3.249u",
+    "vout0": -0.677446,
+    "err_s": -0.000644121,
+    "err_c": -0.000646085,
+    "lsb_s": -1.46573,
+    "lsb_c": -1.4702
+   },
+   {
+    "tag": "STROW",
+    "code": 5.0,
+    "t": "3.749u",
+    "vout0": -0.677446,
+    "err_s": -0.000644121,
+    "err_c": -0.000646085,
+    "lsb_s": -1.46573,
+    "lsb_c": -1.4702
+   },
+   {
+    "tag": "STROW",
+    "code": 5.0,
+    "t": "4.249u",
+    "vout0": -0.677446,
+    "err_s": -0.000644121,
+    "err_c": -0.000646085,
+    "lsb_s": -1.46573,
+    "lsb_c": -1.4702
+   },
+   {
+    "tag": "STROW",
+    "code": 5.0,
+    "t": "4.749u",
+    "vout0": -0.677446,
+    "err_s": -0.000644121,
+    "err_c": -0.000646085,
+    "lsb_s": -1.46573,
+    "lsb_c": -1.4702
+   },
+   {
+    "tag": "STROW",
+    "code": 5.0,
+    "t": "5.249u",
+    "vout0": -0.677446,
+    "err_s": -0.000644121,
+    "err_c": -0.000646085,
+    "lsb_s": -1.46573,
+    "lsb_c": -1.4702
+   },
+   {
+    "tag": "STTROW",
+    "code": 5.0,
+    "t": "5.05u",
+    "err_s": 0.0445733,
+    "lsb_s": 101.429
+   },
+   {
+    "tag": "STTROW",
+    "code": 5.0,
+    "t": "5.1u",
+    "err_s": 0.00717647,
+    "lsb_s": 16.3305
+   },
+   {
+    "tag": "STTROW",
+    "code": 5.0,
+    "t": "5.15u",
+    "err_s": -0.000198564,
+    "lsb_s": -0.451843
+   },
+   {
+    "tag": "STTROW",
+    "code": 5.0,
+    "t": "5.2u",
+    "err_s": -0.00095051,
+    "lsb_s": -2.16294
+   }
+  ],
+  "errors": [],
+  "deck": "r1_afe/r1afe-post-e8d19r/E8__settle_tt_x32_m100.cir",
+  "log": "r1_afe/r1afe-post-e8d19r/E8__settle_tt_x32_m100.log"
+ },
+ {
+  "name": "E8__settle_tt_x32_p50",
+  "corner": "tt",
+  "mismatch": false,
+  "subs": {
+   "MOS": "mos_tt",
+   "RES": "res_typ",
+   "CAP": "cap_typ",
+   "VDDA": 3.3,
+   "TEMP": 27,
+   "VCMI": 2.45,
+   "ACVDD": 0,
+   "NMC": 1,
+   "SEED": 1,
+   "LSB": 0.000439453125,
+   "CL": "2.8p",
+   "KLIST": "0 1 2 3 4 5",
+   "LLIST": "1 2 3 4 5 6 7 8",
+   "IB": "10.14u",
+   "DIO": "dio_tt",
+   "CODE": 5,
+   "AMP": 0.010937,
+   "CS": "2.8p",
+   "VRST": 0.0,
+   "RAW": "$G1_RESULTS_ROOT/r1_afe/r1afe-post-e8d19r/E8__settle_tt_x32_p50"
+  },
+  "rc": 0,
+  "edits": [],
+  "seconds": 1368.0,
+  "rows": [
+   {
+    "tag": "STROW",
+    "code": 5.0,
+    "t": "2.249u",
+    "vout0": 0.336364,
+    "err_s": 0.000326878,
+    "err_c": 0.000327123,
+    "lsb_s": 0.743829,
+    "lsb_c": 0.744387
+   },
+   {
+    "tag": "STROW",
+    "code": 5.0,
+    "t": "2.749u",
+    "vout0": 0.336364,
+    "err_s": 0.000326877,
+    "err_c": 0.000327122,
+    "lsb_s": 0.743827,
+    "lsb_c": 0.744385
+   },
+   {
+    "tag": "STROW",
+    "code": 5.0,
+    "t": "3.249u",
+    "vout0": 0.336364,
+    "err_s": 0.000326877,
+    "err_c": 0.000327122,
+    "lsb_s": 0.743826,
+    "lsb_c": 0.744385
+   },
+   {
+    "tag": "STROW",
+    "code": 5.0,
+    "t": "3.749u",
+    "vout0": 0.336364,
+    "err_s": 0.000326877,
+    "err_c": 0.000327122,
+    "lsb_s": 0.743826,
+    "lsb_c": 0.744384
+   },
+   {
+    "tag": "STROW",
+    "code": 5.0,
+    "t": "4.249u",
+    "vout0": 0.336364,
+    "err_s": 0.000326877,
+    "err_c": 0.000327122,
+    "lsb_s": 0.743826,
+    "lsb_c": 0.744384
+   },
+   {
+    "tag": "STROW",
+    "code": 5.0,
+    "t": "4.749u",
+    "vout0": 0.336364,
+    "err_s": 0.000326877,
+    "err_c": 0.000327122,
+    "lsb_s": 0.743826,
+    "lsb_c": 0.744384
+   },
+   {
+    "tag": "STROW",
+    "code": 5.0,
+    "t": "5.249u",
+    "vout0": 0.336364,
+    "err_s": 0.000326877,
+    "err_c": 0.000327122,
+    "lsb_s": 0.743826,
+    "lsb_c": 0.744384
+   },
+   {
+    "tag": "STTROW",
+    "code": 5.0,
+    "t": "5.05u",
+    "err_s": -0.0204776,
+    "lsb_s": -46.5978
+   },
+   {
+    "tag": "STTROW",
+    "code": 5.0,
+    "t": "5.1u",
+    "err_s": -0.00333474,
+    "lsb_s": -7.58837
+   },
+   {
+    "tag": "STTROW",
+    "code": 5.0,
+    "t": "5.15u",
+    "err_s": -1.28698e-05,
+    "lsb_s": -0.0292858
+   },
+   {
+    "tag": "STTROW",
+    "code": 5.0,
+    "t": "5.2u",
+    "err_s": 0.000438572,
+    "lsb_s": 0.997995
+   }
+  ],
+  "errors": [],
+  "deck": "r1_afe/r1afe-post-e8d19r/E8__settle_tt_x32_p50.cir",
+  "log": "r1_afe/r1afe-post-e8d19r/E8__settle_tt_x32_p50.log"
+ },
+ {
+  "name": "E8__settle_tt_x1_p100",
+  "corner": "tt",
+  "mismatch": false,
+  "subs": {
+   "MOS": "mos_tt",
+   "RES": "res_typ",
+   "CAP": "cap_typ",
+   "VDDA": 3.3,
+   "TEMP": 27,
+   "VCMI": 2.45,
+   "ACVDD": 0,
+   "NMC": 1,
+   "SEED": 1,
+   "LSB": 0.000439453125,
+   "CL": "2.8p",
+   "KLIST": "0 1 2 3 4 5",
+   "LLIST": "1 2 3 4 5 6 7 8",
+   "IB": "10.14u",
+   "DIO": "dio_tt",
+   "CODE": 0,
+   "AMP": 0.7,
+   "CS": "2.8p",
+   "VRST": 0.0,
+   "RAW": "$G1_RESULTS_ROOT/r1_afe/r1afe-post-e8d19r/E8__settle_tt_x1_p100"
+  },
+  "rc": 0,
+  "edits": [],
+  "seconds": 1115.2,
+  "rows": [
+   {
+    "tag": "STROW",
+    "code": 0.0,
+    "t": "2.249u",
+    "vout0": 0.707543,
+    "err_s": 0.000117183,
+    "err_c": 0.000115545,
+    "lsb_s": 0.266657,
+    "lsb_c": 0.26293
+   },
+   {
+    "tag": "STROW",
+    "code": 0.0,
+    "t": "2.749u",
+    "vout0": 0.707543,
+    "err_s": 0.000117183,
+    "err_c": 0.000115545,
+    "lsb_s": 0.266656,
+    "lsb_c": 0.262929
+   },
+   {
+    "tag": "STROW",
+    "code": 0.0,
+    "t": "3.249u",
+    "vout0": 0.707543,
+    "err_s": 0.000117183,
+    "err_c": 0.000115545,
+    "lsb_s": 0.266656,
+    "lsb_c": 0.262929
+   },
+   {
+    "tag": "STROW",
+    "code": 0.0,
+    "t": "3.749u",
+    "vout0": 0.707543,
+    "err_s": 0.000117183,
+    "err_c": 0.000115545,
+    "lsb_s": 0.266656,
+    "lsb_c": 0.262929
+   },
+   {
+    "tag": "STROW",
+    "code": 0.0,
+    "t": "4.249u",
+    "vout0": 0.707543,
+    "err_s": 0.000117183,
+    "err_c": 0.000115545,
+    "lsb_s": 0.266656,
+    "lsb_c": 0.262929
+   },
+   {
+    "tag": "STROW",
+    "code": 0.0,
+    "t": "4.749u",
+    "vout0": 0.707543,
+    "err_s": 0.000117183,
+    "err_c": 0.000115545,
+    "lsb_s": 0.266656,
+    "lsb_c": 0.262929
+   },
+   {
+    "tag": "STROW",
+    "code": 0.0,
+    "t": "5.249u",
+    "vout0": 0.707543,
+    "err_s": 0.000117183,
+    "err_c": 0.000115545,
+    "lsb_s": 0.266656,
+    "lsb_c": 0.262929
+   },
+   {
+    "tag": "STTROW",
+    "code": 0.0,
+    "t": "5.05u",
+    "err_s": -0.0409491,
+    "lsb_s": -93.1819
+   },
+   {
+    "tag": "STTROW",
+    "code": 0.0,
+    "t": "5.1u",
+    "err_s": -0.00743363,
+    "lsb_s": -16.9156
+   },
+   {
+    "tag": "STTROW",
+    "code": 0.0,
+    "t": "5.15u",
+    "err_s": -0.00103086,
+    "lsb_s": -2.34578
+   },
+   {
+    "tag": "STTROW",
+    "code": 0.0,
+    "t": "5.2u",
+    "err_s": 3.36936e-05,
+    "lsb_s": 0.0766717
+   }
+  ],
+  "errors": [],
+  "deck": "r1_afe/r1afe-post-e8d19r/E8__settle_tt_x1_p100.cir",
+  "log": "r1_afe/r1afe-post-e8d19r/E8__settle_tt_x1_p100.log"
+ },
+ {
+  "name": "E8__settle_tt_x1_m100",
+  "corner": "tt",
+  "mismatch": false,
+  "subs": {
+   "MOS": "mos_tt",
+   "RES": "res_typ",
+   "CAP": "cap_typ",
+   "VDDA": 3.3,
+   "TEMP": 27,
+   "VCMI": 2.45,
+   "ACVDD": 0,
+   "NMC": 1,
+   "SEED": 1,
+   "LSB": 0.000439453125,
+   "CL": "2.8p",
+   "KLIST": "0 1 2 3 4 5",
+   "LLIST": "1 2 3 4 5 6 7 8",
+   "IB": "10.14u",
+   "DIO": "dio_tt",
+   "CODE": 0,
+   "AMP": -0.7,
+   "CS": "2.8p",
+   "VRST": 0.0,
+   "RAW": "$G1_RESULTS_ROOT/r1_afe/r1afe-post-e8d19r/E8__settle_tt_x1_m100"
+  },
+  "rc": 0,
+  "edits": [],
+  "seconds": 1337.4,
+  "rows": [
+   {
+    "tag": "STROW",
+    "code": 0.0,
+    "t": "2.249u",
+    "vout0": -0.709487,
+    "err_s": -7.71013e-06,
+    "err_c": -5.39426e-06,
+    "lsb_s": -0.0175448,
+    "lsb_c": -0.0122749
+   },
+   {
+    "tag": "STROW",
+    "code": 0.0,
+    "t": "2.749u",
+    "vout0": -0.709487,
+    "err_s": -7.7101e-06,
+    "err_c": -5.39424e-06,
+    "lsb_s": -0.0175448,
+    "lsb_c": -0.0122749
+   },
+   {
+    "tag": "STROW",
+    "code": 0.0,
+    "t": "3.249u",
+    "vout0": -0.709487,
+    "err_s": -7.7101e-06,
+    "err_c": -5.39423e-06,
+    "lsb_s": -0.0175448,
+    "lsb_c": -0.0122749
+   },
+   {
+    "tag": "STROW",
+    "code": 0.0,
+    "t": "3.749u",
+    "vout0": -0.709487,
+    "err_s": -7.7101e-06,
+    "err_c": -5.39423e-06,
+    "lsb_s": -0.0175448,
+    "lsb_c": -0.0122749
+   },
+   {
+    "tag": "STROW",
+    "code": 0.0,
+    "t": "4.249u",
+    "vout0": -0.709487,
+    "err_s": -7.7101e-06,
+    "err_c": -5.39423e-06,
+    "lsb_s": -0.0175448,
+    "lsb_c": -0.0122749
+   },
+   {
+    "tag": "STROW",
+    "code": 0.0,
+    "t": "4.749u",
+    "vout0": -0.709487,
+    "err_s": -7.7101e-06,
+    "err_c": -5.39423e-06,
+    "lsb_s": -0.0175448,
+    "lsb_c": -0.0122749
+   },
+   {
+    "tag": "STROW",
+    "code": 0.0,
+    "t": "5.249u",
+    "vout0": -0.709487,
+    "err_s": -7.7101e-06,
+    "err_c": -5.39423e-06,
+    "lsb_s": -0.0175448,
+    "lsb_c": -0.0122749
+   },
+   {
+    "tag": "STTROW",
+    "code": 0.0,
+    "t": "5.05u",
+    "err_s": 0.0421267,
+    "lsb_s": 95.8617
+   },
+   {
+    "tag": "STTROW",
+    "code": 0.0,
+    "t": "5.1u",
+    "err_s": 0.0079465,
+    "lsb_s": 18.0827
+   },
+   {
+    "tag": "STTROW",
+    "code": 0.0,
+    "t": "5.15u",
+    "err_s": 0.00136476,
+    "lsb_s": 3.1056
+   },
+   {
+    "tag": "STTROW",
+    "code": 0.0,
+    "t": "5.2u",
+    "err_s": 0.00016744,
+    "lsb_s": 0.38102
+   }
+  ],
+  "errors": [],
+  "deck": "r1_afe/r1afe-post-e8d19r/E8__settle_tt_x1_m100.cir",
+  "log": "r1_afe/r1afe-post-e8d19r/E8__settle_tt_x1_m100.log"
+ },
+ {
+  "name": "E8__settle_tt_x1_p50",
+  "corner": "tt",
+  "mismatch": false,
+  "subs": {
+   "MOS": "mos_tt",
+   "RES": "res_typ",
+   "CAP": "cap_typ",
+   "VDDA": 3.3,
+   "TEMP": 27,
+   "VCMI": 2.45,
+   "ACVDD": 0,
+   "NMC": 1,
+   "SEED": 1,
+   "LSB": 0.000439453125,
+   "CL": "2.8p",
+   "KLIST": "0 1 2 3 4 5",
+   "LLIST": "1 2 3 4 5 6 7 8",
+   "IB": "10.14u",
+   "DIO": "dio_tt",
+   "CODE": 0,
+   "AMP": 0.35,
+   "CS": "2.8p",
+   "VRST": 0.0,
+   "RAW": "$G1_RESULTS_ROOT/r1_afe/r1afe-post-e8d19r/E8__settle_tt_x1_p50"
+  },
+  "rc": 0,
+  "edits": [],
+  "seconds": 1241.6,
+  "rows": [
+   {
+    "tag": "STROW",
+    "code": 0.0,
+    "t": "2.249u",
+    "vout0": 0.353196,
+    "err_s": 8.4703e-05,
+    "err_c": 8.40209e-05,
+    "lsb_s": 0.192746,
+    "lsb_c": 0.191194
+   },
+   {
+    "tag": "STROW",
+    "code": 0.0,
+    "t": "2.749u",
+    "vout0": 0.353196,
+    "err_s": 8.47026e-05,
+    "err_c": 8.40205e-05,
+    "lsb_s": 0.192746,
+    "lsb_c": 0.191193
+   },
+   {
+    "tag": "STROW",
+    "code": 0.0,
+    "t": "3.249u",
+    "vout0": 0.353196,
+    "err_s": 8.47026e-05,
+    "err_c": 8.40205e-05,
+    "lsb_s": 0.192745,
+    "lsb_c": 0.191193
+   },
+   {
+    "tag": "STROW",
+    "code": 0.0,
+    "t": "3.749u",
+    "vout0": 0.353196,
+    "err_s": 8.47025e-05,
+    "err_c": 8.40204e-05,
+    "lsb_s": 0.192745,
+    "lsb_c": 0.191193
+   },
+   {
+    "tag": "STROW",
+    "code": 0.0,
+    "t": "4.249u",
+    "vout0": 0.353196,
+    "err_s": 8.47025e-05,
+    "err_c": 8.40204e-05,
+    "lsb_s": 0.192745,
+    "lsb_c": 0.191193
+   },
+   {
+    "tag": "STROW",
+    "code": 0.0,
+    "t": "4.749u",
+    "vout0": 0.353196,
+    "err_s": 8.47025e-05,
+    "err_c": 8.40204e-05,
+    "lsb_s": 0.192745,
+    "lsb_c": 0.191193
+   },
+   {
+    "tag": "STROW",
+    "code": 0.0,
+    "t": "5.249u",
+    "vout0": 0.353196,
+    "err_s": 8.47025e-05,
+    "err_c": 8.40204e-05,
+    "lsb_s": 0.192745,
+    "lsb_c": 0.191193
+   },
+   {
+    "tag": "STTROW",
+    "code": 0.0,
+    "t": "5.05u",
+    "err_s": -0.0202498,
+    "lsb_s": -46.0795
+   },
+   {
+    "tag": "STTROW",
+    "code": 0.0,
+    "t": "5.1u",
+    "err_s": -0.00359774,
+    "lsb_s": -8.18685
+   },
+   {
+    "tag": "STTROW",
+    "code": 0.0,
+    "t": "5.15u",
+    "err_s": -0.000432026,
+    "lsb_s": -0.983098
+   },
+   {
+    "tag": "STTROW",
+    "code": 0.0,
+    "t": "5.2u",
+    "err_s": 6.57696e-05,
+    "lsb_s": 0.149662
+   }
+  ],
+  "errors": [],
+  "deck": "r1_afe/r1afe-post-e8d19r/E8__settle_tt_x1_p50.cir",
+  "log": "r1_afe/r1afe-post-e8d19r/E8__settle_tt_x1_p50.log"
+ },
+ {
+  "name": "E8__settle_vrst06_tt_x32_p100",
+  "corner": "tt",
+  "mismatch": false,
+  "subs": {
+   "MOS": "mos_tt",
+   "RES": "res_typ",
+   "CAP": "cap_typ",
+   "VDDA": 3.3,
+   "TEMP": 27,
+   "VCMI": 2.45,
+   "ACVDD": 0,
+   "NMC": 1,
+   "SEED": 1,
+   "LSB": 0.000439453125,
+   "CL": "2.8p",
+   "KLIST": "0 1 2 3 4 5",
+   "LLIST": "1 2 3 4 5 6 7 8",
+   "IB": "10.14u",
+   "DIO": "dio_tt",
+   "CODE": 5,
+   "AMP": 0.021875,
+   "CS": "2.8p",
+   "VRST": 0.6,
+   "RAW": "$G1_RESULTS_ROOT/r1_afe/r1afe-post-e8d19r/E8__settle_vrst06_tt_x32_p100"
+  },
+  "rc": 0,
+  "edits": [],
+  "seconds": 1124.6,
+  "rows": [
+   {
+    "tag": "STROW",
+    "code": 5.0,
+    "t": "2.249u",
+    "vout0": 0.67438,
+    "err_s": 0.000574644,
+    "err_c": 0.000575743,
+    "lsb_s": 1.30763,
+    "lsb_c": 1.31014
+   },
+   {
+    "tag": "STROW",
+    "code": 5.0,
+    "t": "2.749u",
+    "vout0": 0.67438,
+    "err_s": 0.000574644,
+    "err_c": 0.000575744,
+    "lsb_s": 1.30763,
+    "lsb_c": 1.31014
+   },
+   {
+    "tag": "STROW",
+    "code": 5.0,
+    "t": "3.249u",
+    "vout0": 0.67438,
+    "err_s": 0.000574644,
+    "err_c": 0.000575744,
+    "lsb_s": 1.30763,
+    "lsb_c": 1.31014
+   },
+   {
+    "tag": "STROW",
+    "code": 5.0,
+    "t": "3.749u",
+    "vout0": 0.67438,
+    "err_s": 0.000574644,
+    "err_c": 0.000575744,
+    "lsb_s": 1.30763,
+    "lsb_c": 1.31014
+   },
+   {
+    "tag": "STROW",
+    "code": 5.0,
+    "t": "4.249u",
+    "vout0": 0.67438,
+    "err_s": 0.000574644,
+    "err_c": 0.000575744,
+    "lsb_s": 1.30763,
+    "lsb_c": 1.31014
+   },
+   {
+    "tag": "STROW",
+    "code": 5.0,
+    "t": "4.749u",
+    "vout0": 0.67438,
+    "err_s": 0.000574644,
+    "err_c": 0.000575744,
+    "lsb_s": 1.30763,
+    "lsb_c": 1.31014
+   },
+   {
+    "tag": "STROW",
+    "code": 5.0,
+    "t": "5.249u",
+    "vout0": 0.67438,
+    "err_s": 0.000574644,
+    "err_c": 0.000575744,
+    "lsb_s": 1.30763,
+    "lsb_c": 1.31014
+   },
+   {
+    "tag": "STTROW",
+    "code": 5.0,
+    "t": "5.05u",
+    "err_s": -0.043276,
+    "lsb_s": -98.4768
+   },
+   {
+    "tag": "STTROW",
+    "code": 5.0,
+    "t": "5.1u",
+    "err_s": -0.00779811,
+    "lsb_s": -17.745
+   },
+   {
+    "tag": "STTROW",
+    "code": 5.0,
+    "t": "5.15u",
+    "err_s": -0.000289218,
+    "lsb_s": -0.658132
+   },
+   {
+    "tag": "STTROW",
+    "code": 5.0,
+    "t": "5.2u",
+    "err_s": 0.000753192,
+    "lsb_s": 1.71393
+   }
+  ],
+  "errors": [],
+  "deck": "r1_afe/r1afe-post-e8d19r/E8__settle_vrst06_tt_x32_p100.cir",
+  "log": "r1_afe/r1afe-post-e8d19r/E8__settle_vrst06_tt_x32_p100.log"
+ },
+ {
+  "name": "E8__settle_vrst06_tt_x32_m100",
+  "corner": "tt",
+  "mismatch": false,
+  "subs": {
+   "MOS": "mos_tt",
+   "RES": "res_typ",
+   "CAP": "cap_typ",
+   "VDDA": 3.3,
+   "TEMP": 27,
+   "VCMI": 2.45,
+   "ACVDD": 0,
+   "NMC": 1,
+   "SEED": 1,
+   "LSB": 0.000439453125,
+   "CL": "2.8p",
+   "KLIST": "0 1 2 3 4 5",
+   "LLIST": "1 2 3 4 5 6 7 8",
+   "IB": "10.14u",
+   "DIO": "dio_tt",
+   "CODE": 5,
+   "AMP": -0.021875,
+   "CS": "2.8p",
+   "VRST": 0.6,
+   "RAW": "$G1_RESULTS_ROOT/r1_afe/r1afe-post-e8d19r/E8__settle_vrst06_tt_x32_m100"
+  },
+  "rc": 0,
+  "edits": [],
+  "seconds": 932.8,
+  "rows": [
+   {
+    "tag": "STROW",
+    "code": 5.0,
+    "t": "2.249u",
+    "vout0": -0.677446,
+    "err_s": -0.000580089,
+    "err_c": -0.00058147,
+    "lsb_s": -1.32003,
+    "lsb_c": -1.32317
+   },
+   {
+    "tag": "STROW",
+    "code": 5.0,
+    "t": "2.749u",
+    "vout0": -0.677446,
+    "err_s": -0.000580089,
+    "err_c": -0.00058147,
+    "lsb_s": -1.32003,
+    "lsb_c": -1.32317
+   },
+   {
+    "tag": "STROW",
+    "code": 5.0,
+    "t": "3.249u",
+    "vout0": -0.677446,
+    "err_s": -0.000580089,
+    "err_c": -0.00058147,
+    "lsb_s": -1.32003,
+    "lsb_c": -1.32317
+   },
+   {
+    "tag": "STROW",
+    "code": 5.0,
+    "t": "3.749u",
+    "vout0": -0.677446,
+    "err_s": -0.000580089,
+    "err_c": -0.00058147,
+    "lsb_s": -1.32003,
+    "lsb_c": -1.32317
+   },
+   {
+    "tag": "STROW",
+    "code": 5.0,
+    "t": "4.249u",
+    "vout0": -0.677446,
+    "err_s": -0.000580089,
+    "err_c": -0.00058147,
+    "lsb_s": -1.32003,
+    "lsb_c": -1.32317
+   },
+   {
+    "tag": "STROW",
+    "code": 5.0,
+    "t": "4.749u",
+    "vout0": -0.677446,
+    "err_s": -0.000580089,
+    "err_c": -0.00058147,
+    "lsb_s": -1.32003,
+    "lsb_c": -1.32317
+   },
+   {
+    "tag": "STROW",
+    "code": 5.0,
+    "t": "5.249u",
+    "vout0": -0.677446,
+    "err_s": -0.000580089,
+    "err_c": -0.00058147,
+    "lsb_s": -1.32003,
+    "lsb_c": -1.32317
+   },
+   {
+    "tag": "STTROW",
+    "code": 5.0,
+    "t": "5.05u",
+    "err_s": 0.0434814,
+    "lsb_s": 98.9443
+   },
+   {
+    "tag": "STTROW",
+    "code": 5.0,
+    "t": "5.1u",
+    "err_s": 0.00782504,
+    "lsb_s": 17.8063
+   },
+   {
+    "tag": "STTROW",
+    "code": 5.0,
+    "t": "5.15u",
+    "err_s": 0.000271934,
+    "lsb_s": 0.618801
+   },
+   {
+    "tag": "STTROW",
+    "code": 5.0,
+    "t": "5.2u",
+    "err_s": -0.000766398,
+    "lsb_s": -1.74398
+   }
+  ],
+  "errors": [],
+  "deck": "r1_afe/r1afe-post-e8d19r/E8__settle_vrst06_tt_x32_m100.cir",
+  "log": "r1_afe/r1afe-post-e8d19r/E8__settle_vrst06_tt_x32_m100.log"
+ },
+ {
+  "name": "E8__settle_vrst06_tt_x32_p50",
+  "corner": "tt",
+  "mismatch": false,
+  "subs": {
+   "MOS": "mos_tt",
+   "RES": "res_typ",
+   "CAP": "cap_typ",
+   "VDDA": 3.3,
+   "TEMP": 27,
+   "VCMI": 2.45,
+   "ACVDD": 0,
+   "NMC": 1,
+   "SEED": 1,
+   "LSB": 0.000439453125,
+   "CL": "2.8p",
+   "KLIST": "0 1 2 3 4 5",
+   "LLIST": "1 2 3 4 5 6 7 8",
+   "IB": "10.14u",
+   "DIO": "dio_tt",
+   "CODE": 5,
+   "AMP": 0.010937,
+   "CS": "2.8p",
+   "VRST": 0.6,
+   "RAW": "$G1_RESULTS_ROOT/r1_afe/r1afe-post-e8d19r/E8__settle_vrst06_tt_x32_p50"
+  },
+  "rc": 0,
+  "edits": [],
+  "seconds": 923.6,
+  "rows": [
+   {
+    "tag": "STROW",
+    "code": 5.0,
+    "t": "2.249u",
+    "vout0": 0.336364,
+    "err_s": 0.000277933,
+    "err_c": 0.000278416,
+    "lsb_s": 0.632451,
+    "lsb_c": 0.633551
+   },
+   {
+    "tag": "STROW",
+    "code": 5.0,
+    "t": "2.749u",
+    "vout0": 0.336364,
+    "err_s": 0.000277933,
+    "err_c": 0.000278416,
+    "lsb_s": 0.632451,
+    "lsb_c": 0.633551
+   },
+   {
+    "tag": "STROW",
+    "code": 5.0,
+    "t": "3.249u",
+    "vout0": 0.336364,
+    "err_s": 0.000277933,
+    "err_c": 0.000278416,
+    "lsb_s": 0.632451,
+    "lsb_c": 0.633552
+   },
+   {
+    "tag": "STROW",
+    "code": 5.0,
+    "t": "3.749u",
+    "vout0": 0.336364,
+    "err_s": 0.000277933,
+    "err_c": 0.000278416,
+    "lsb_s": 0.632451,
+    "lsb_c": 0.633552
+   },
+   {
+    "tag": "STROW",
+    "code": 5.0,
+    "t": "4.249u",
+    "vout0": 0.336364,
+    "err_s": 0.000277933,
+    "err_c": 0.000278416,
+    "lsb_s": 0.632451,
+    "lsb_c": 0.633552
+   },
+   {
+    "tag": "STROW",
+    "code": 5.0,
+    "t": "4.749u",
+    "vout0": 0.336364,
+    "err_s": 0.000277933,
+    "err_c": 0.000278416,
+    "lsb_s": 0.632451,
+    "lsb_c": 0.633552
+   },
+   {
+    "tag": "STROW",
+    "code": 5.0,
+    "t": "5.249u",
+    "vout0": 0.336364,
+    "err_s": 0.000277933,
+    "err_c": 0.000278416,
+    "lsb_s": 0.632451,
+    "lsb_c": 0.633552
+   },
+   {
+    "tag": "STTROW",
+    "code": 5.0,
+    "t": "5.05u",
+    "err_s": -0.0215622,
+    "lsb_s": -49.066
+   },
+   {
+    "tag": "STTROW",
+    "code": 5.0,
+    "t": "5.1u",
+    "err_s": -0.00389512,
+    "lsb_s": -8.86356
+   },
+   {
+    "tag": "STTROW",
+    "code": 5.0,
+    "t": "5.15u",
+    "err_s": -0.000155971,
+    "lsb_s": -0.35492
+   },
+   {
+    "tag": "STTROW",
+    "code": 5.0,
+    "t": "5.2u",
+    "err_s": 0.000364075,
+    "lsb_s": 0.828472
+   }
+  ],
+  "errors": [],
+  "deck": "r1_afe/r1afe-post-e8d19r/E8__settle_vrst06_tt_x32_p50.cir",
+  "log": "r1_afe/r1afe-post-e8d19r/E8__settle_vrst06_tt_x32_p50.log"
+ },
+ {
+  "name": "E8__stb_sf_ib10.14_cm2.5",
+  "corner": "sf",
+  "mismatch": false,
+  "subs": {
+   "MOS": "mos_sf",
+   "RES": "res_typ",
+   "CAP": "cap_typ",
+   "VDDA": 3.3,
+   "TEMP": 27,
+   "VCMI": 2.5,
+   "ACVDD": 0,
+   "NMC": 1,
+   "SEED": 1,
+   "LSB": 0.000439453125,
+   "CL": "2.8p",
+   "KLIST": "0 5",
+   "LLIST": "1 2 4 5",
+   "IB": "10.14u",
+   "DIO": "dio_tt",
+   "RAW": "$G1_RESULTS_ROOT/r1_afe/r1afe-post-e8d19r/E8__stb_sf_ib10.14_cm2.5"
+  },
+  "rc": 0,
+  "edits": [
+   [
+    "XA1 x1p x1n ",
+    "Vpa1p x1p y1p dc 0 ac {vdp1}\nVpa1n x1n y1n dc 0 ac {vdn1}\nIpa1p 0 x1p dc 0 ac {idp1}\nIpa1n 0 x1n dc 0 ac {idn1}\nXA1 y1p y1n "
+   ],
+   [
+    "XA2 x2p x2n ",
+    "Vpa2p x2p y2p dc 0 ac {vdp2}\nVpa2n x2n y2n dc 0 ac {vdn2}\nIpa2p 0 x2p dc 0 ac {idp2}\nIpa2n 0 x2n dc 0 ac {idn2}\nXA2 y2p y2n "
+   ],
+   [
+    "XMC1 vcmfb vcms tc",
+    "Vpc vcms vcmsy dc 0 ac {vc1}\nIpc 0 vcms dc 0 ac {ic1}\nXMC1 vcmfb vcmsy tc"
+   ],
+   [
+    "XMC1 vcmfb vcms tc",
+    "Vpc vcms vcmsy dc 0 ac {vc2}\nIpc 0 vcms dc 0 ac {ic2}\nXMC1 vcmfb vcmsy tc"
+   ],
+   [
+    "XMN7 outp ",
+    "Vpop outpi outp dc 0 ac {vop1}\nVpon outni outn dc 0 ac {von1}\nIpop 0 outpi dc 0 ac {iop1}\nIpon 0 outni dc 0 ac {ion1}\nXMN7 outpi "
+   ],
+   [
+    "XMN8 outn ",
+    "XMN8 outni "
+   ],
+   [
+    "XMP7 outp ",
+    "XMP7 outpi "
+   ],
+   [
+    "XMP8 outn ",
+    "XMP8 outni "
+   ],
+   [
+    "XCC1 cz1 outp ",
+    "XCC1 cz1 outpi "
+   ],
+   [
+    "XCC2 cz2 outn ",
+    "XCC2 cz2 outni "
+   ],
+   [
+    "XMN7 outp ",
+    "Vpop outpi outp dc 0 ac {vop2}\nVpon outni outn dc 0 ac {von2}\nIpop 0 outpi dc 0 ac {iop2}\nIpon 0 outni dc 0 ac {ion2}\nXMN7 outpi "
+   ],
+   [
+    "XMN8 outn ",
+    "XMN8 outni "
+   ],
+   [
+    "XMP7 outp ",
+    "XMP7 outpi "
+   ],
+   [
+    "XMP8 outn ",
+    "XMP8 outni "
+   ],
+   [
+    "XCC1 cz1 outp ",
+    "XCC1 cz1 outpi "
+   ],
+   [
+    "XCC2 cz2 outn ",
+    "XCC2 cz2 outni "
+   ],
+   [
+    "XCC1B cb1 outp ",
+    "XCC1B cb1 outpi "
+   ],
+   [
+    "XCC2B cb2 outn ",
+    "XCC2B cb2 outni "
+   ],
+   [
+    "?",
+    "XCD1B cd1 outp ",
+    "XCD1B cd1 outpi "
+   ],
+   [
+    "?",
+    "XCD2B cd2 outn ",
+    "XCD2B cd2 outni "
+   ],
+   [
+    "?",
+    "XCX1 cz1 outn ",
+    "XCX1 cz1 outni "
+   ],
+   [
+    "?",
+    "XCX2 cz2 outp ",
+    "XCX2 cz2 outpi "
+   ],
+   [
+    "?",
+    "XCX1 cz1 outn ",
+    "XCX1 cz1 outni "
+   ],
+   [
+    "?",
+    "XCX2 cz2 outp ",
+    "XCX2 cz2 outpi "
+   ]
+  ],
+  "seconds": 2013.9,
+  "rows": [
+   {
+    "tag": "STBROW",
+    "code": 0,
+    "loop": "dm1",
+    "t_dc_db": 88.0,
+    "f_unity": 28640239.743718978,
+    "pm_valid": true,
+    "pm_deg": 80.5,
+    "gm_db": 15.27,
+    "f_180": 158882603.7976808,
+    "ph_min_deg": -348.2
+   },
+   {
+    "tag": "STBROW",
+    "code": 0,
+    "loop": "cm1",
+    "t_dc_db": 73.53,
+    "f_unity": 4857785.620526704,
+    "pm_valid": true,
+    "pm_deg": 94.99,
+    "gm_db": null,
+    "f_180": null,
+    "ph_min_deg": -154.6
+   },
+   {
+    "tag": "STBROW",
+    "code": 0,
+    "loop": "dm2",
+    "t_dc_db": 92.14,
+    "f_unity": 30473830.912394833,
+    "pm_valid": true,
+    "pm_deg": 70.73,
+    "gm_db": 13.74,
+    "f_180": 157132163.16262025,
+    "ph_min_deg": -365.1
+   },
+   {
+    "tag": "STBROW",
+    "code": 0,
+    "loop": "cm2",
+    "t_dc_db": 89.67,
+    "f_unity": 7202174.28597251,
+    "pm_valid": false,
+    "pm_deg": 73.06,
+    "gm_db": 40.75,
+    "f_180": 154616583.8871017,
+    "ph_min_deg": -497.2
+   },
+   {
+    "tag": "STBROW",
+    "code": 5,
+    "loop": "dm1",
+    "t_dc_db": 68.92,
+    "f_unity": 26443586.432170544,
+    "pm_valid": true,
+    "pm_deg": 79.46,
+    "gm_db": 15.96,
+    "f_180": 144862263.92959705,
+    "ph_min_deg": -351.0
+   },
+   {
+    "tag": "STBROW",
+    "code": 5,
+    "loop": "cm1",
+    "t_dc_db": 70.52,
+    "f_unity": 6672771.0887322845,
+    "pm_valid": true,
+    "pm_deg": 68.79,
+    "gm_db": 29.06,
+    "f_180": 86487310.17964786,
+    "ph_min_deg": -189.6
+   },
+   {
+    "tag": "STBROW",
+    "code": 5,
+    "loop": "dm2",
+    "t_dc_db": 83.12,
+    "f_unity": 26787423.634554144,
+    "pm_valid": true,
+    "pm_deg": 83.0,
+    "gm_db": 14.63,
+    "f_180": 163707700.28860658,
+    "ph_min_deg": -364.6
+   },
+   {
+    "tag": "STBROW",
+    "code": 5,
+    "loop": "cm2",
+    "t_dc_db": 82.69,
+    "f_unity": 7143439.346465695,
+    "pm_valid": false,
+    "pm_deg": 72.86,
+    "gm_db": 40.3,
+    "f_180": 159040382.88145593,
+    "ph_min_deg": -497.1
+   }
+  ],
+  "errors": [
+   "Warning: singular matrix:  check node xdut.xsin.xa2_xrs1_n3",
+   "Warning: singular matrix:  check nodes xdut.xsin.xa1_xrs2_n7 and xdut.xsin.xa1_xrs2_n6",
+   "Warning: singular matrix:  check nodes xdut.xcos.xa1_xrs1_n3 and xdut.xcos.xs1p_xuf_xr_n1",
+   "Warning: singular matrix:  check node xdut.xsin.xa2_xrs1_n3",
+   "Warning: singular matrix:  check nodes xdut.xsin.xa1_xrs2_n7 and xdut.xsin.xa1_xrs2_n6",
+   "Warning: singular matrix:  check nodes xdut.xcos.xa1_xrs1_n3 and xdut.xcos.xs1p_xuf_xr_n1",
+   "Warning: singular matrix:  check node xdut.xsin.xa2_xrs1_n3",
+   "Warning: singular matrix:  check nodes xdut.xsin.xa1_xrs2_n7 and xdut.xsin.xa1_xrs2_n6",
+   "Warning: singular matrix:  check nodes xdut.xcos.xa1_xrs1_n3 and xdut.xcos.xs1p_xuf_xr_n1",
+   "Warning: singular matrix:  check node xdut.xsin.xa2_xrs1_n3"
+  ],
+  "deck": "r1_afe/r1afe-post-e8d19r/E8__stb_sf_ib10.14_cm2.5.cir",
+  "log": "r1_afe/r1afe-post-e8d19r/E8__stb_sf_ib10.14_cm2.5.log"
+ },
+ {
+  "name": "E8__stb_ffx_ib15.36_cm0.5",
+  "corner": "ffx",
+  "mismatch": false,
+  "subs": {
+   "MOS": "mos_ff",
+   "RES": "res_bcs",
+   "CAP": "cap_bcs",
+   "VDDA": 3.0,
+   "TEMP": 125,
+   "VCMI": 0.5,
+   "ACVDD": 0,
+   "NMC": 1,
+   "SEED": 1,
+   "LSB": 0.000439453125,
+   "CL": "2.8p",
+   "KLIST": "0 5",
+   "LLIST": "1 2 4 5",
+   "IB": "15.36u",
+   "DIO": "dio_ff",
+   "RAW": "$G1_RESULTS_ROOT/r1_afe/r1afe-post-e8d19r/E8__stb_ffx_ib15.36_cm0.5"
+  },
+  "rc": 0,
+  "edits": [
+   [
+    "XA1 x1p x1n ",
+    "Vpa1p x1p y1p dc 0 ac {vdp1}\nVpa1n x1n y1n dc 0 ac {vdn1}\nIpa1p 0 x1p dc 0 ac {idp1}\nIpa1n 0 x1n dc 0 ac {idn1}\nXA1 y1p y1n "
+   ],
+   [
+    "XA2 x2p x2n ",
+    "Vpa2p x2p y2p dc 0 ac {vdp2}\nVpa2n x2n y2n dc 0 ac {vdn2}\nIpa2p 0 x2p dc 0 ac {idp2}\nIpa2n 0 x2n dc 0 ac {idn2}\nXA2 y2p y2n "
+   ],
+   [
+    "XMC1 vcmfb vcms tc",
+    "Vpc vcms vcmsy dc 0 ac {vc1}\nIpc 0 vcms dc 0 ac {ic1}\nXMC1 vcmfb vcmsy tc"
+   ],
+   [
+    "XMC1 vcmfb vcms tc",
+    "Vpc vcms vcmsy dc 0 ac {vc2}\nIpc 0 vcms dc 0 ac {ic2}\nXMC1 vcmfb vcmsy tc"
+   ],
+   [
+    "XMN7 outp ",
+    "Vpop outpi outp dc 0 ac {vop1}\nVpon outni outn dc 0 ac {von1}\nIpop 0 outpi dc 0 ac {iop1}\nIpon 0 outni dc 0 ac {ion1}\nXMN7 outpi "
+   ],
+   [
+    "XMN8 outn ",
+    "XMN8 outni "
+   ],
+   [
+    "XMP7 outp ",
+    "XMP7 outpi "
+   ],
+   [
+    "XMP8 outn ",
+    "XMP8 outni "
+   ],
+   [
+    "XCC1 cz1 outp ",
+    "XCC1 cz1 outpi "
+   ],
+   [
+    "XCC2 cz2 outn ",
+    "XCC2 cz2 outni "
+   ],
+   [
+    "XMN7 outp ",
+    "Vpop outpi outp dc 0 ac {vop2}\nVpon outni outn dc 0 ac {von2}\nIpop 0 outpi dc 0 ac {iop2}\nIpon 0 outni dc 0 ac {ion2}\nXMN7 outpi "
+   ],
+   [
+    "XMN8 outn ",
+    "XMN8 outni "
+   ],
+   [
+    "XMP7 outp ",
+    "XMP7 outpi "
+   ],
+   [
+    "XMP8 outn ",
+    "XMP8 outni "
+   ],
+   [
+    "XCC1 cz1 outp ",
+    "XCC1 cz1 outpi "
+   ],
+   [
+    "XCC2 cz2 outn ",
+    "XCC2 cz2 outni "
+   ],
+   [
+    "XCC1B cb1 outp ",
+    "XCC1B cb1 outpi "
+   ],
+   [
+    "XCC2B cb2 outn ",
+    "XCC2B cb2 outni "
+   ],
+   [
+    "?",
+    "XCD1B cd1 outp ",
+    "XCD1B cd1 outpi "
+   ],
+   [
+    "?",
+    "XCD2B cd2 outn ",
+    "XCD2B cd2 outni "
+   ],
+   [
+    "?",
+    "XCX1 cz1 outn ",
+    "XCX1 cz1 outni "
+   ],
+   [
+    "?",
+    "XCX2 cz2 outp ",
+    "XCX2 cz2 outpi "
+   ],
+   [
+    "?",
+    "XCX1 cz1 outn ",
+    "XCX1 cz1 outni "
+   ],
+   [
+    "?",
+    "XCX2 cz2 outp ",
+    "XCX2 cz2 outpi "
+   ]
+  ],
+  "seconds": 1342.1,
+  "rows": [
+   {
+    "tag": "STBROW",
+    "code": 0,
+    "loop": "dm1",
+    "t_dc_db": 44.12,
+    "f_unity": 9205561.561490463,
+    "pm_valid": true,
+    "pm_deg": 84.79,
+    "gm_db": 25.16,
+    "f_180": 177700307.441193,
+    "ph_min_deg": -329.5
+   },
+   {
+    "tag": "STBROW",
+    "code": 0,
+    "loop": "cm1",
+    "t_dc_db": 34.66,
+    "f_unity": 2063392.5508271446,
+    "pm_valid": true,
+    "pm_deg": 86.6,
+    "gm_db": null,
+    "f_180": null,
+    "ph_min_deg": -154.2
+   },
+   {
+    "tag": "STBROW",
+    "code": 0,
+    "loop": "dm2",
+    "t_dc_db": 64.9,
+    "f_unity": 31543484.546178963,
+    "pm_valid": true,
+    "pm_deg": 67.64,
+    "gm_db": 14.37,
+    "f_180": 159647413.3866033,
+    "ph_min_deg": -355.3
+   },
+   {
+    "tag": "STBROW",
+    "code": 0,
+    "loop": "cm2",
+    "t_dc_db": 58.15,
+    "f_unity": 8095533.2015375905,
+    "pm_valid": true,
+    "pm_deg": 69.75,
+    "gm_db": null,
+    "f_180": null,
+    "ph_min_deg": -155.7
+   },
+   {
+    "tag": "STBROW",
+    "code": 5,
+    "loop": "dm1",
+    "t_dc_db": 29.44,
+    "f_unity": 13288532.972607346,
+    "pm_valid": true,
+    "pm_deg": 102.89,
+    "gm_db": 22.26,
+    "f_180": 163577470.37952828,
+    "ph_min_deg": -334.4
+   },
+   {
+    "tag": "STBROW",
+    "code": 5,
+    "loop": "cm1",
+    "t_dc_db": 41.23,
+    "f_unity": 5476922.794681453,
+    "pm_valid": true,
+    "pm_deg": 70.76,
+    "gm_db": null,
+    "f_180": null,
+    "ph_min_deg": -153.4
+   },
+   {
+    "tag": "STBROW",
+    "code": 5,
+    "loop": "dm2",
+    "t_dc_db": 55.59,
+    "f_unity": 26205090.174100526,
+    "pm_valid": true,
+    "pm_deg": 79.44,
+    "gm_db": 15.77,
+    "f_180": 165464858.84997606,
+    "ph_min_deg": -355.3
+   },
+   {
+    "tag": "STBROW",
+    "code": 5,
+    "loop": "cm2",
+    "t_dc_db": 54.07,
+    "f_unity": 8009028.278948267,
+    "pm_valid": true,
+    "pm_deg": 69.36,
+    "gm_db": null,
+    "f_180": null,
+    "ph_min_deg": -153.9
+   }
+  ],
+  "errors": [
+   "Warning: singular matrix:  check nodes xdut.xrd1_n25 and xdut.xrd1_n7",
+   "Warning: singular matrix:  check nodes xdut.xrd1_n25 and xdut.xrd1_n7",
+   "Warning: singular matrix:  check nodes xdut.xrd1_n25 and xdut.xrd1_n7",
+   "Warning: singular matrix:  check nodes xdut.xrd1_n25 and xdut.xrd1_n7",
+   "Warning: singular matrix:  check nodes xdut.xrd1_n25 and xdut.xrd1_n7",
+   "Warning: singular matrix:  check nodes xdut.xrd1_n25 and xdut.xrd1_n7",
+   "Warning: singular matrix:  check nodes xdut.xrd1_n25 and xdut.xrd1_n7",
+   "Warning: singular matrix:  check nodes xdut.xrd1_n25 and xdut.xrd1_n7"
+  ],
+  "deck": "r1_afe/r1afe-post-e8d19r/E8__stb_ffx_ib15.36_cm0.5.cir",
+  "log": "r1_afe/r1afe-post-e8d19r/E8__stb_ffx_ib15.36_cm0.5.log"
+ },
+ {
+  "name": "E8__stb_ffx_ib15.36_cm2.5",
+  "corner": "ffx",
+  "mismatch": false,
+  "subs": {
+   "MOS": "mos_ff",
+   "RES": "res_bcs",
+   "CAP": "cap_bcs",
+   "VDDA": 3.0,
+   "TEMP": 125,
+   "VCMI": 2.5,
+   "ACVDD": 0,
+   "NMC": 1,
+   "SEED": 1,
+   "LSB": 0.000439453125,
+   "CL": "2.8p",
+   "KLIST": "0 5",
+   "LLIST": "1 2 4 5",
+   "IB": "15.36u",
+   "DIO": "dio_ff",
+   "RAW": "$G1_RESULTS_ROOT/r1_afe/r1afe-post-e8d19r/E8__stb_ffx_ib15.36_cm2.5"
+  },
+  "rc": 0,
+  "edits": [
+   [
+    "XA1 x1p x1n ",
+    "Vpa1p x1p y1p dc 0 ac {vdp1}\nVpa1n x1n y1n dc 0 ac {vdn1}\nIpa1p 0 x1p dc 0 ac {idp1}\nIpa1n 0 x1n dc 0 ac {idn1}\nXA1 y1p y1n "
+   ],
+   [
+    "XA2 x2p x2n ",
+    "Vpa2p x2p y2p dc 0 ac {vdp2}\nVpa2n x2n y2n dc 0 ac {vdn2}\nIpa2p 0 x2p dc 0 ac {idp2}\nIpa2n 0 x2n dc 0 ac {idn2}\nXA2 y2p y2n "
+   ],
+   [
+    "XMC1 vcmfb vcms tc",
+    "Vpc vcms vcmsy dc 0 ac {vc1}\nIpc 0 vcms dc 0 ac {ic1}\nXMC1 vcmfb vcmsy tc"
+   ],
+   [
+    "XMC1 vcmfb vcms tc",
+    "Vpc vcms vcmsy dc 0 ac {vc2}\nIpc 0 vcms dc 0 ac {ic2}\nXMC1 vcmfb vcmsy tc"
+   ],
+   [
+    "XMN7 outp ",
+    "Vpop outpi outp dc 0 ac {vop1}\nVpon outni outn dc 0 ac {von1}\nIpop 0 outpi dc 0 ac {iop1}\nIpon 0 outni dc 0 ac {ion1}\nXMN7 outpi "
+   ],
+   [
+    "XMN8 outn ",
+    "XMN8 outni "
+   ],
+   [
+    "XMP7 outp ",
+    "XMP7 outpi "
+   ],
+   [
+    "XMP8 outn ",
+    "XMP8 outni "
+   ],
+   [
+    "XCC1 cz1 outp ",
+    "XCC1 cz1 outpi "
+   ],
+   [
+    "XCC2 cz2 outn ",
+    "XCC2 cz2 outni "
+   ],
+   [
+    "XMN7 outp ",
+    "Vpop outpi outp dc 0 ac {vop2}\nVpon outni outn dc 0 ac {von2}\nIpop 0 outpi dc 0 ac {iop2}\nIpon 0 outni dc 0 ac {ion2}\nXMN7 outpi "
+   ],
+   [
+    "XMN8 outn ",
+    "XMN8 outni "
+   ],
+   [
+    "XMP7 outp ",
+    "XMP7 outpi "
+   ],
+   [
+    "XMP8 outn ",
+    "XMP8 outni "
+   ],
+   [
+    "XCC1 cz1 outp ",
+    "XCC1 cz1 outpi "
+   ],
+   [
+    "XCC2 cz2 outn ",
+    "XCC2 cz2 outni "
+   ],
+   [
+    "XCC1B cb1 outp ",
+    "XCC1B cb1 outpi "
+   ],
+   [
+    "XCC2B cb2 outn ",
+    "XCC2B cb2 outni "
+   ],
+   [
+    "?",
+    "XCD1B cd1 outp ",
+    "XCD1B cd1 outpi "
+   ],
+   [
+    "?",
+    "XCD2B cd2 outn ",
+    "XCD2B cd2 outni "
+   ],
+   [
+    "?",
+    "XCX1 cz1 outn ",
+    "XCX1 cz1 outni "
+   ],
+   [
+    "?",
+    "XCX2 cz2 outp ",
+    "XCX2 cz2 outpi "
+   ],
+   [
+    "?",
+    "XCX1 cz1 outn ",
+    "XCX1 cz1 outni "
+   ],
+   [
+    "?",
+    "XCX2 cz2 outp ",
+    "XCX2 cz2 outpi "
+   ]
+  ],
+  "seconds": 1287.3,
+  "rows": [
+   {
+    "tag": "STBROW",
+    "code": 0,
+    "loop": "dm1",
+    "t_dc_db": 63.31,
+    "f_unity": 25553174.457953203,
+    "pm_valid": true,
+    "pm_deg": 75.86,
+    "gm_db": 16.82,
+    "f_180": 149474440.5927188,
+    "ph_min_deg": -342.3
+   },
+   {
+    "tag": "STBROW",
+    "code": 0,
+    "loop": "cm1",
+    "t_dc_db": 53.47,
+    "f_unity": 4851431.194536506,
+    "pm_valid": true,
+    "pm_deg": 89.56,
+    "gm_db": null,
+    "f_180": null,
+    "ph_min_deg": -153.5
+   },
+   {
+    "tag": "STBROW",
+    "code": 0,
+    "loop": "dm2",
+    "t_dc_db": 65.94,
+    "f_unity": 32397472.06896082,
+    "pm_valid": true,
+    "pm_deg": 67.93,
+    "gm_db": 14.09,
+    "f_180": 161144995.27232456,
+    "ph_min_deg": -355.6
+   },
+   {
+    "tag": "STBROW",
+    "code": 0,
+    "loop": "cm2",
+    "t_dc_db": 67.0,
+    "f_unity": 8122080.65404201,
+    "pm_valid": true,
+    "pm_deg": 70.08,
+    "gm_db": null,
+    "f_180": null,
+    "ph_min_deg": -158.9
+   },
+   {
+    "tag": "STBROW",
+    "code": 5,
+    "loop": "dm1",
+    "t_dc_db": 41.82,
+    "f_unity": 18752624.567715008,
+    "pm_valid": true,
+    "pm_deg": 80.7,
+    "gm_db": 18.82,
+    "f_180": 115907084.7754383,
+    "ph_min_deg": -344.8
+   },
+   {
+    "tag": "STBROW",
+    "code": 5,
+    "loop": "cm1",
+    "t_dc_db": 53.1,
+    "f_unity": 7241692.955615898,
+    "pm_valid": true,
+    "pm_deg": 65.11,
+    "gm_db": null,
+    "f_180": null,
+    "ph_min_deg": -158.3
+   },
+   {
+    "tag": "STBROW",
+    "code": 5,
+    "loop": "dm2",
+    "t_dc_db": 58.91,
+    "f_unity": 27425352.215881947,
+    "pm_valid": true,
+    "pm_deg": 78.53,
+    "gm_db": 15.38,
+    "f_180": 168567706.3387647,
+    "ph_min_deg": -355.9
+   },
+   {
+    "tag": "STBROW",
+    "code": 5,
+    "loop": "cm2",
+    "t_dc_db": 68.33,
+    "f_unity": 8081158.73553375,
+    "pm_valid": true,
+    "pm_deg": 70.06,
+    "gm_db": null,
+    "f_180": null,
+    "ph_min_deg": -163.9
+   }
+  ],
+  "errors": [
+   "Warning: singular matrix:  check node xdut.xcos.xa1_xrs1_n1",
+   "Warning: singular matrix:  check node xdut.xcos.xa1_xrs1_n1",
+   "Warning: singular matrix:  check node xdut.xcos.xa1_xrs1_n1",
+   "Warning: singular matrix:  check node xdut.xcos.xa1_xrs1_n1",
+   "Warning: singular matrix:  check node xdut.xcos.xa1_xrs1_n1",
+   "Warning: singular matrix:  check node xdut.xcos.xa1_xrs1_n1",
+   "Warning: singular matrix:  check node xdut.xcos.xa1_xrs1_n1",
+   "Warning: singular matrix:  check node xdut.xcos.xa1_xrs1_n1",
+   "Warning: singular matrix:  check node xdut.xcos.xa2_xrs1_n9",
+   "Warning: singular matrix:  check node xdut.xcos.xa2_xrs1_n9"
+  ],
+  "deck": "r1_afe/r1afe-post-e8d19r/E8__stb_ffx_ib15.36_cm2.5.cir",
+  "log": "r1_afe/r1afe-post-e8d19r/E8__stb_ffx_ib15.36_cm2.5.log"
+ },
+ {
+  "name": "E8__stb_tt_ib10.14_cm2.5_hold",
+  "corner": "tt",
+  "mismatch": false,
+  "subs": {
+   "MOS": "mos_tt",
+   "RES": "res_typ",
+   "CAP": "cap_typ",
+   "VDDA": 3.3,
+   "TEMP": 27,
+   "VCMI": 2.5,
+   "ACVDD": 0,
+   "NMC": 1,
+   "SEED": 1,
+   "LSB": 0.000439453125,
+   "CL": "1f",
+   "KLIST": "0 5",
+   "LLIST": "1 2 4 5",
+   "IB": "10.14u",
+   "DIO": "dio_tt",
+   "RAW": "$G1_RESULTS_ROOT/r1_afe/r1afe-post-e8d19r/E8__stb_tt_ib10.14_cm2.5_hold"
+  },
+  "rc": 0,
+  "edits": [
+   [
+    "XA1 x1p x1n ",
+    "Vpa1p x1p y1p dc 0 ac {vdp1}\nVpa1n x1n y1n dc 0 ac {vdn1}\nIpa1p 0 x1p dc 0 ac {idp1}\nIpa1n 0 x1n dc 0 ac {idn1}\nXA1 y1p y1n "
+   ],
+   [
+    "XA2 x2p x2n ",
+    "Vpa2p x2p y2p dc 0 ac {vdp2}\nVpa2n x2n y2n dc 0 ac {vdn2}\nIpa2p 0 x2p dc 0 ac {idp2}\nIpa2n 0 x2n dc 0 ac {idn2}\nXA2 y2p y2n "
+   ],
+   [
+    "XMC1 vcmfb vcms tc",
+    "Vpc vcms vcmsy dc 0 ac {vc1}\nIpc 0 vcms dc 0 ac {ic1}\nXMC1 vcmfb vcmsy tc"
+   ],
+   [
+    "XMC1 vcmfb vcms tc",
+    "Vpc vcms vcmsy dc 0 ac {vc2}\nIpc 0 vcms dc 0 ac {ic2}\nXMC1 vcmfb vcmsy tc"
+   ],
+   [
+    "XMN7 outp ",
+    "Vpop outpi outp dc 0 ac {vop1}\nVpon outni outn dc 0 ac {von1}\nIpop 0 outpi dc 0 ac {iop1}\nIpon 0 outni dc 0 ac {ion1}\nXMN7 outpi "
+   ],
+   [
+    "XMN8 outn ",
+    "XMN8 outni "
+   ],
+   [
+    "XMP7 outp ",
+    "XMP7 outpi "
+   ],
+   [
+    "XMP8 outn ",
+    "XMP8 outni "
+   ],
+   [
+    "XCC1 cz1 outp ",
+    "XCC1 cz1 outpi "
+   ],
+   [
+    "XCC2 cz2 outn ",
+    "XCC2 cz2 outni "
+   ],
+   [
+    "XMN7 outp ",
+    "Vpop outpi outp dc 0 ac {vop2}\nVpon outni outn dc 0 ac {von2}\nIpop 0 outpi dc 0 ac {iop2}\nIpon 0 outni dc 0 ac {ion2}\nXMN7 outpi "
+   ],
+   [
+    "XMN8 outn ",
+    "XMN8 outni "
+   ],
+   [
+    "XMP7 outp ",
+    "XMP7 outpi "
+   ],
+   [
+    "XMP8 outn ",
+    "XMP8 outni "
+   ],
+   [
+    "XCC1 cz1 outp ",
+    "XCC1 cz1 outpi "
+   ],
+   [
+    "XCC2 cz2 outn ",
+    "XCC2 cz2 outni "
+   ],
+   [
+    "XCC1B cb1 outp ",
+    "XCC1B cb1 outpi "
+   ],
+   [
+    "XCC2B cb2 outn ",
+    "XCC2B cb2 outni "
+   ],
+   [
+    "?",
+    "XCD1B cd1 outp ",
+    "XCD1B cd1 outpi "
+   ],
+   [
+    "?",
+    "XCD2B cd2 outn ",
+    "XCD2B cd2 outni "
+   ],
+   [
+    "?",
+    "XCX1 cz1 outn ",
+    "XCX1 cz1 outni "
+   ],
+   [
+    "?",
+    "XCX2 cz2 outp ",
+    "XCX2 cz2 outpi "
+   ],
+   [
+    "?",
+    "XCX1 cz1 outn ",
+    "XCX1 cz1 outni "
+   ],
+   [
+    "?",
+    "XCX2 cz2 outp ",
+    "XCX2 cz2 outpi "
+   ]
+  ],
+  "seconds": 793.4,
+  "rows": [
+   {
+    "tag": "STBROW",
+    "code": 0,
+    "loop": "dm1",
+    "t_dc_db": 87.19,
+    "f_unity": 29172999.109521877,
+    "pm_valid": true,
+    "pm_deg": 80.48,
+    "gm_db": 15.12,
+    "f_180": 158958951.13456967,
+    "ph_min_deg": -348.1
+   },
+   {
+    "tag": "STBROW",
+    "code": 0,
+    "loop": "cm1",
+    "t_dc_db": 73.02,
+    "f_unity": 4796206.463190931,
+    "pm_valid": true,
+    "pm_deg": 95.06,
+    "gm_db": null,
+    "f_180": null,
+    "ph_min_deg": -154.6
+   },
+   {
+    "tag": "STBROW",
+    "code": 0,
+    "loop": "dm2",
+    "t_dc_db": 91.4,
+    "f_unity": 30293046.07851359,
+    "pm_valid": true,
+    "pm_deg": 70.22,
+    "gm_db": 13.78,
+    "f_180": 158003301.56841004,
+    "ph_min_deg": -364.9
+   },
+   {
+    "tag": "STBROW",
+    "code": 0,
+    "loop": "cm2",
+    "t_dc_db": 90.44,
+    "f_unity": 7520941.39259347,
+    "pm_valid": false,
+    "pm_deg": 75.48,
+    "gm_db": 35.61,
+    "f_180": 147599115.2873354,
+    "ph_min_deg": -497.6
+   },
+   {
+    "tag": "STBROW",
+    "code": 5,
+    "loop": "dm1",
+    "t_dc_db": 68.27,
+    "f_unity": 25994879.21036004,
+    "pm_valid": true,
+    "pm_deg": 79.68,
+    "gm_db": 16.0,
+    "f_180": 143456128.65057495,
+    "ph_min_deg": -351.3
+   },
+   {
+    "tag": "STBROW",
+    "code": 5,
+    "loop": "cm1",
+    "t_dc_db": 70.33,
+    "f_unity": 6567472.7919788165,
+    "pm_valid": true,
+    "pm_deg": 68.53,
+    "gm_db": 28.05,
+    "f_180": 81140243.31196249,
+    "ph_min_deg": -209.3
+   },
+   {
+    "tag": "STBROW",
+    "code": 5,
+    "loop": "dm2",
+    "t_dc_db": 82.45,
+    "f_unity": 26714112.81153852,
+    "pm_valid": true,
+    "pm_deg": 82.35,
+    "gm_db": 14.63,
+    "f_180": 164711883.14516315,
+    "ph_min_deg": -364.3
+   },
+   {
+    "tag": "STBROW",
+    "code": 5,
+    "loop": "cm2",
+    "t_dc_db": 82.97,
+    "f_unity": 7442103.770910994,
+    "pm_valid": false,
+    "pm_deg": 75.15,
+    "gm_db": 35.27,
+    "f_180": 150144280.03360432,
+    "ph_min_deg": -497.5
+   }
+  ],
+  "errors": [
+   "Warning: singular matrix:  check nodes xdut.xsin.xa2_xrs2_n8 and xdut.xsin.xa2_xrs2_n4",
+   "Warning: singular matrix:  check nodes xdut.xsin.xa2_xrs2_n8 and xdut.xsin.xa2_xrs2_n4",
+   "Warning: singular matrix:  check nodes xdut.xsin.xa2_xrs2_n8 and xdut.xsin.xa2_xrs2_n4",
+   "Warning: singular matrix:  check nodes xdut.xsin.xa2_xrs2_n8 and xdut.xsin.xa2_xrs2_n4",
+   "Warning: singular matrix:  check nodes xdut.xsin.xa2_xrs2_n8 and xdut.xsin.xa2_xrs2_n4",
+   "Warning: singular matrix:  check nodes xdut.xsin.xa2_xrs2_n8 and xdut.xsin.xa2_xrs2_n4",
+   "Warning: singular matrix:  check nodes xdut.xsin.xa2_xrs2_n8 and xdut.xsin.xa2_xrs2_n4",
+   "Warning: singular matrix:  check nodes xdut.xsin.xa2_xrs2_n8 and xdut.xsin.xa2_xrs2_n4",
+   "Warning: singular matrix:  check node xdut.xsin.xa2_xrs1_n4",
+   "Warning: singular matrix:  check node xdut.xsin.xa2_xrs1_n4"
+  ],
+  "deck": "r1_afe/r1afe-post-e8d19r/E8__stb_tt_ib10.14_cm2.5_hold.cir",
+  "log": "r1_afe/r1afe-post-e8d19r/E8__stb_tt_ib10.14_cm2.5_hold.log"
+ },
+ {
+  "name": "E8__stb_sf_ib10.14_cm2.5_hold",
+  "corner": "sf",
+  "mismatch": false,
+  "subs": {
+   "MOS": "mos_sf",
+   "RES": "res_typ",
+   "CAP": "cap_typ",
+   "VDDA": 3.3,
+   "TEMP": 27,
+   "VCMI": 2.5,
+   "ACVDD": 0,
+   "NMC": 1,
+   "SEED": 1,
+   "LSB": 0.000439453125,
+   "CL": "1f",
+   "KLIST": "0 5",
+   "LLIST": "1 2 4 5",
+   "IB": "10.14u",
+   "DIO": "dio_tt",
+   "RAW": "$G1_RESULTS_ROOT/r1_afe/r1afe-post-e8d19r/E8__stb_sf_ib10.14_cm2.5_hold"
+  },
+  "rc": 0,
+  "edits": [
+   [
+    "XA1 x1p x1n ",
+    "Vpa1p x1p y1p dc 0 ac {vdp1}\nVpa1n x1n y1n dc 0 ac {vdn1}\nIpa1p 0 x1p dc 0 ac {idp1}\nIpa1n 0 x1n dc 0 ac {idn1}\nXA1 y1p y1n "
+   ],
+   [
+    "XA2 x2p x2n ",
+    "Vpa2p x2p y2p dc 0 ac {vdp2}\nVpa2n x2n y2n dc 0 ac {vdn2}\nIpa2p 0 x2p dc 0 ac {idp2}\nIpa2n 0 x2n dc 0 ac {idn2}\nXA2 y2p y2n "
+   ],
+   [
+    "XMC1 vcmfb vcms tc",
+    "Vpc vcms vcmsy dc 0 ac {vc1}\nIpc 0 vcms dc 0 ac {ic1}\nXMC1 vcmfb vcmsy tc"
+   ],
+   [
+    "XMC1 vcmfb vcms tc",
+    "Vpc vcms vcmsy dc 0 ac {vc2}\nIpc 0 vcms dc 0 ac {ic2}\nXMC1 vcmfb vcmsy tc"
+   ],
+   [
+    "XMN7 outp ",
+    "Vpop outpi outp dc 0 ac {vop1}\nVpon outni outn dc 0 ac {von1}\nIpop 0 outpi dc 0 ac {iop1}\nIpon 0 outni dc 0 ac {ion1}\nXMN7 outpi "
+   ],
+   [
+    "XMN8 outn ",
+    "XMN8 outni "
+   ],
+   [
+    "XMP7 outp ",
+    "XMP7 outpi "
+   ],
+   [
+    "XMP8 outn ",
+    "XMP8 outni "
+   ],
+   [
+    "XCC1 cz1 outp ",
+    "XCC1 cz1 outpi "
+   ],
+   [
+    "XCC2 cz2 outn ",
+    "XCC2 cz2 outni "
+   ],
+   [
+    "XMN7 outp ",
+    "Vpop outpi outp dc 0 ac {vop2}\nVpon outni outn dc 0 ac {von2}\nIpop 0 outpi dc 0 ac {iop2}\nIpon 0 outni dc 0 ac {ion2}\nXMN7 outpi "
+   ],
+   [
+    "XMN8 outn ",
+    "XMN8 outni "
+   ],
+   [
+    "XMP7 outp ",
+    "XMP7 outpi "
+   ],
+   [
+    "XMP8 outn ",
+    "XMP8 outni "
+   ],
+   [
+    "XCC1 cz1 outp ",
+    "XCC1 cz1 outpi "
+   ],
+   [
+    "XCC2 cz2 outn ",
+    "XCC2 cz2 outni "
+   ],
+   [
+    "XCC1B cb1 outp ",
+    "XCC1B cb1 outpi "
+   ],
+   [
+    "XCC2B cb2 outn ",
+    "XCC2B cb2 outni "
+   ],
+   [
+    "?",
+    "XCD1B cd1 outp ",
+    "XCD1B cd1 outpi "
+   ],
+   [
+    "?",
+    "XCD2B cd2 outn ",
+    "XCD2B cd2 outni "
+   ],
+   [
+    "?",
+    "XCX1 cz1 outn ",
+    "XCX1 cz1 outni "
+   ],
+   [
+    "?",
+    "XCX2 cz2 outp ",
+    "XCX2 cz2 outpi "
+   ],
+   [
+    "?",
+    "XCX1 cz1 outn ",
+    "XCX1 cz1 outni "
+   ],
+   [
+    "?",
+    "XCX2 cz2 outp ",
+    "XCX2 cz2 outpi "
+   ]
+  ],
+  "seconds": 1417.2,
+  "rows": [
+   {
+    "tag": "STBROW",
+    "code": 0,
+    "loop": "dm1",
+    "t_dc_db": 88.0,
+    "f_unity": 28643128.71248014,
+    "pm_valid": true,
+    "pm_deg": 80.49,
+    "gm_db": 15.27,
+    "f_180": 158882505.7859903,
+    "ph_min_deg": -348.2
+   },
+   {
+    "tag": "STBROW",
+    "code": 0,
+    "loop": "cm1",
+    "t_dc_db": 73.53,
+    "f_unity": 4857708.96856853,
+    "pm_valid": true,
+    "pm_deg": 94.99,
+    "gm_db": null,
+    "f_180": null,
+    "ph_min_deg": -154.6
+   },
+   {
+    "tag": "STBROW",
+    "code": 0,
+    "loop": "dm2",
+    "t_dc_db": 92.14,
+    "f_unity": 30347565.629569154,
+    "pm_valid": true,
+    "pm_deg": 69.86,
+    "gm_db": 13.75,
+    "f_180": 157122973.9019996,
+    "ph_min_deg": -365.1
+   },
+   {
+    "tag": "STBROW",
+    "code": 0,
+    "loop": "cm2",
+    "t_dc_db": 89.67,
+    "f_unity": 7574586.047027662,
+    "pm_valid": false,
+    "pm_deg": 75.32,
+    "gm_db": 35.94,
+    "f_180": 147959179.0368459,
+    "ph_min_deg": -497.8
+   },
+   {
+    "tag": "STBROW",
+    "code": 5,
+    "loop": "dm1",
+    "t_dc_db": 68.92,
+    "f_unity": 26471569.376463853,
+    "pm_valid": true,
+    "pm_deg": 79.39,
+    "gm_db": 15.96,
+    "f_180": 144863051.02420655,
+    "ph_min_deg": -351.0
+   },
+   {
+    "tag": "STBROW",
+    "code": 5,
+    "loop": "cm1",
+    "t_dc_db": 70.52,
+    "f_unity": 6671942.181701424,
+    "pm_valid": true,
+    "pm_deg": 68.8,
+    "gm_db": 29.03,
+    "f_180": 86502794.02889858,
+    "ph_min_deg": -189.5
+   },
+   {
+    "tag": "STBROW",
+    "code": 5,
+    "loop": "dm2",
+    "t_dc_db": 83.12,
+    "f_unity": 26719376.69229502,
+    "pm_valid": true,
+    "pm_deg": 82.02,
+    "gm_db": 14.64,
+    "f_180": 163701392.92944446,
+    "ph_min_deg": -364.6
+   },
+   {
+    "tag": "STBROW",
+    "code": 5,
+    "loop": "cm2",
+    "t_dc_db": 82.69,
+    "f_unity": 7490753.989441193,
+    "pm_valid": false,
+    "pm_deg": 74.95,
+    "gm_db": 35.64,
+    "f_180": 150736286.607089,
+    "ph_min_deg": -497.8
+   }
+  ],
+  "errors": [
+   "Warning: singular matrix:  check node xdut.xsin.xa2_xrs1_n3",
+   "Warning: singular matrix:  check nodes xdut.xsin.xa1_xrs2_n7 and xdut.xsin.xa1_xrs2_n6",
+   "Warning: singular matrix:  check nodes xdut.xcos.xa1_xrs1_n3 and xdut.xcos.xs1p_xuf_xr_n1",
+   "Warning: singular matrix:  check node xdut.xsin.xa2_xrs1_n3",
+   "Warning: singular matrix:  check nodes xdut.xsin.xa1_xrs2_n7 and xdut.xsin.xa1_xrs2_n6",
+   "Warning: singular matrix:  check nodes xdut.xcos.xa1_xrs1_n3 and xdut.xcos.xs1p_xuf_xr_n1",
+   "Warning: singular matrix:  check node xdut.xsin.xa2_xrs1_n3",
+   "Warning: singular matrix:  check nodes xdut.xsin.xa1_xrs2_n7 and xdut.xsin.xa1_xrs2_n6",
+   "Warning: singular matrix:  check nodes xdut.xcos.xa1_xrs1_n3 and xdut.xcos.xs1p_xuf_xr_n1",
+   "Warning: singular matrix:  check node xdut.xsin.xa2_xrs1_n3"
+  ],
+  "deck": "r1_afe/r1afe-post-e8d19r/E8__stb_sf_ib10.14_cm2.5_hold.cir",
+  "log": "r1_afe/r1afe-post-e8d19r/E8__stb_sf_ib10.14_cm2.5_hold.log"
+ },
+ {
+  "name": "E8__stb_fs_ib10.14_cm2.5_hold",
+  "corner": "fs",
+  "mismatch": false,
+  "subs": {
+   "MOS": "mos_fs",
+   "RES": "res_typ",
+   "CAP": "cap_typ",
+   "VDDA": 3.3,
+   "TEMP": 27,
+   "VCMI": 2.5,
+   "ACVDD": 0,
+   "NMC": 1,
+   "SEED": 1,
+   "LSB": 0.000439453125,
+   "CL": "1f",
+   "KLIST": "0 5",
+   "LLIST": "1 2 4 5",
+   "IB": "10.14u",
+   "DIO": "dio_tt",
+   "RAW": "$G1_RESULTS_ROOT/r1_afe/r1afe-post-e8d19r/E8__stb_fs_ib10.14_cm2.5_hold"
+  },
+  "rc": 0,
+  "edits": [
+   [
+    "XA1 x1p x1n ",
+    "Vpa1p x1p y1p dc 0 ac {vdp1}\nVpa1n x1n y1n dc 0 ac {vdn1}\nIpa1p 0 x1p dc 0 ac {idp1}\nIpa1n 0 x1n dc 0 ac {idn1}\nXA1 y1p y1n "
+   ],
+   [
+    "XA2 x2p x2n ",
+    "Vpa2p x2p y2p dc 0 ac {vdp2}\nVpa2n x2n y2n dc 0 ac {vdn2}\nIpa2p 0 x2p dc 0 ac {idp2}\nIpa2n 0 x2n dc 0 ac {idn2}\nXA2 y2p y2n "
+   ],
+   [
+    "XMC1 vcmfb vcms tc",
+    "Vpc vcms vcmsy dc 0 ac {vc1}\nIpc 0 vcms dc 0 ac {ic1}\nXMC1 vcmfb vcmsy tc"
+   ],
+   [
+    "XMC1 vcmfb vcms tc",
+    "Vpc vcms vcmsy dc 0 ac {vc2}\nIpc 0 vcms dc 0 ac {ic2}\nXMC1 vcmfb vcmsy tc"
+   ],
+   [
+    "XMN7 outp ",
+    "Vpop outpi outp dc 0 ac {vop1}\nVpon outni outn dc 0 ac {von1}\nIpop 0 outpi dc 0 ac {iop1}\nIpon 0 outni dc 0 ac {ion1}\nXMN7 outpi "
+   ],
+   [
+    "XMN8 outn ",
+    "XMN8 outni "
+   ],
+   [
+    "XMP7 outp ",
+    "XMP7 outpi "
+   ],
+   [
+    "XMP8 outn ",
+    "XMP8 outni "
+   ],
+   [
+    "XCC1 cz1 outp ",
+    "XCC1 cz1 outpi "
+   ],
+   [
+    "XCC2 cz2 outn ",
+    "XCC2 cz2 outni "
+   ],
+   [
+    "XMN7 outp ",
+    "Vpop outpi outp dc 0 ac {vop2}\nVpon outni outn dc 0 ac {von2}\nIpop 0 outpi dc 0 ac {iop2}\nIpon 0 outni dc 0 ac {ion2}\nXMN7 outpi "
+   ],
+   [
+    "XMN8 outn ",
+    "XMN8 outni "
+   ],
+   [
+    "XMP7 outp ",
+    "XMP7 outpi "
+   ],
+   [
+    "XMP8 outn ",
+    "XMP8 outni "
+   ],
+   [
+    "XCC1 cz1 outp ",
+    "XCC1 cz1 outpi "
+   ],
+   [
+    "XCC2 cz2 outn ",
+    "XCC2 cz2 outni "
+   ],
+   [
+    "XCC1B cb1 outp ",
+    "XCC1B cb1 outpi "
+   ],
+   [
+    "XCC2B cb2 outn ",
+    "XCC2B cb2 outni "
+   ],
+   [
+    "?",
+    "XCD1B cd1 outp ",
+    "XCD1B cd1 outpi "
+   ],
+   [
+    "?",
+    "XCD2B cd2 outn ",
+    "XCD2B cd2 outni "
+   ],
+   [
+    "?",
+    "XCX1 cz1 outn ",
+    "XCX1 cz1 outni "
+   ],
+   [
+    "?",
+    "XCX2 cz2 outp ",
+    "XCX2 cz2 outpi "
+   ],
+   [
+    "?",
+    "XCX1 cz1 outn ",
+    "XCX1 cz1 outni "
+   ],
+   [
+    "?",
+    "XCX2 cz2 outp ",
+    "XCX2 cz2 outpi "
+   ]
+  ],
+  "seconds": 492.1,
+  "rows": [
+   {
+    "tag": "STBROW",
+    "code": 0,
+    "loop": "dm1",
+    "t_dc_db": 86.23,
+    "f_unity": 29673976.303433802,
+    "pm_valid": true,
+    "pm_deg": 80.43,
+    "gm_db": 14.98,
+    "f_180": 158870312.20780218,
+    "ph_min_deg": -348.0
+   },
+   {
+    "tag": "STBROW",
+    "code": 0,
+    "loop": "cm1",
+    "t_dc_db": 72.4,
+    "f_unity": 4733401.906948332,
+    "pm_valid": true,
+    "pm_deg": 95.11,
+    "gm_db": null,
+    "f_180": null,
+    "ph_min_deg": -154.7
+   },
+   {
+    "tag": "STBROW",
+    "code": 0,
+    "loop": "dm2",
+    "t_dc_db": 90.54,
+    "f_unity": 30207021.175832033,
+    "pm_valid": true,
+    "pm_deg": 70.58,
+    "gm_db": 13.81,
+    "f_180": 158745013.7297187,
+    "ph_min_deg": -364.8
+   },
+   {
+    "tag": "STBROW",
+    "code": 0,
+    "loop": "cm2",
+    "t_dc_db": 91.49,
+    "f_unity": 7461341.510699774,
+    "pm_valid": false,
+    "pm_deg": 75.63,
+    "gm_db": 35.34,
+    "f_180": 147275241.68188715,
+    "ph_min_deg": -497.4
+   },
+   {
+    "tag": "STBROW",
+    "code": 5,
+    "loop": "dm1",
+    "t_dc_db": 67.33,
+    "f_unity": 25394045.443132326,
+    "pm_valid": true,
+    "pm_deg": 80.01,
+    "gm_db": 16.08,
+    "f_180": 141790072.3214261,
+    "ph_min_deg": -351.6
+   },
+   {
+    "tag": "STBROW",
+    "code": 5,
+    "loop": "cm1",
+    "t_dc_db": 70.03,
+    "f_unity": 6471793.061477024,
+    "pm_valid": true,
+    "pm_deg": 68.5,
+    "gm_db": 27.71,
+    "f_180": 78208452.66651426,
+    "ph_min_deg": -513.8
+   },
+   {
+    "tag": "STBROW",
+    "code": 5,
+    "loop": "dm2",
+    "t_dc_db": 81.66,
+    "f_unity": 26679720.428586774,
+    "pm_valid": true,
+    "pm_deg": 82.67,
+    "gm_db": 14.63,
+    "f_180": 165616646.2173951,
+    "ph_min_deg": -364.1
+   },
+   {
+    "tag": "STBROW",
+    "code": 5,
+    "loop": "cm2",
+    "t_dc_db": 83.37,
+    "f_unity": 7387286.609865718,
+    "pm_valid": false,
+    "pm_deg": 75.34,
+    "gm_db": 34.96,
+    "f_180": 149620473.52095184,
+    "ph_min_deg": -497.3
+   }
+  ],
+  "errors": [
+   "Warning: singular matrix:  check node xdut.xcos.xa2_xrs2_n6",
+   "Warning: singular matrix:  check node xdut.xcos.xa2_xrs2_n6",
+   "Warning: singular matrix:  check node xdut.xcos.xa2_xrs2_n6",
+   "Warning: singular matrix:  check node xdut.xcos.xa2_xrs2_n6",
+   "Warning: singular matrix:  check node xdut.xcos.xa2_xrs2_n6",
+   "Warning: singular matrix:  check node xdut.xcos.xa2_xrs2_n6",
+   "Warning: singular matrix:  check node xdut.xcos.xa2_xrs2_n6",
+   "Warning: singular matrix:  check node xdut.xcos.xa2_xrs2_n6",
+   "Warning: singular matrix:  check node xdut.xcos.xa1_xrs1_n3",
+   "Warning: singular matrix:  check node xdut.xcos.xa1_xrs1_n3"
+  ],
+  "deck": "r1_afe/r1afe-post-e8d19r/E8__stb_fs_ib10.14_cm2.5_hold.cir",
+  "log": "r1_afe/r1afe-post-e8d19r/E8__stb_fs_ib10.14_cm2.5_hold.log"
+ },
+ {
+  "name": "E8__stb_ffx_ib15.36_cm2.5_hold",
+  "corner": "ffx",
+  "mismatch": false,
+  "subs": {
+   "MOS": "mos_ff",
+   "RES": "res_bcs",
+   "CAP": "cap_bcs",
+   "VDDA": 3.0,
+   "TEMP": 125,
+   "VCMI": 2.5,
+   "ACVDD": 0,
+   "NMC": 1,
+   "SEED": 1,
+   "LSB": 0.000439453125,
+   "CL": "1f",
+   "KLIST": "0 5",
+   "LLIST": "1 2 4 5",
+   "IB": "15.36u",
+   "DIO": "dio_ff",
+   "RAW": "$G1_RESULTS_ROOT/r1_afe/r1afe-post-e8d19r/E8__stb_ffx_ib15.36_cm2.5_hold"
+  },
+  "rc": 0,
+  "edits": [
+   [
+    "XA1 x1p x1n ",
+    "Vpa1p x1p y1p dc 0 ac {vdp1}\nVpa1n x1n y1n dc 0 ac {vdn1}\nIpa1p 0 x1p dc 0 ac {idp1}\nIpa1n 0 x1n dc 0 ac {idn1}\nXA1 y1p y1n "
+   ],
+   [
+    "XA2 x2p x2n ",
+    "Vpa2p x2p y2p dc 0 ac {vdp2}\nVpa2n x2n y2n dc 0 ac {vdn2}\nIpa2p 0 x2p dc 0 ac {idp2}\nIpa2n 0 x2n dc 0 ac {idn2}\nXA2 y2p y2n "
+   ],
+   [
+    "XMC1 vcmfb vcms tc",
+    "Vpc vcms vcmsy dc 0 ac {vc1}\nIpc 0 vcms dc 0 ac {ic1}\nXMC1 vcmfb vcmsy tc"
+   ],
+   [
+    "XMC1 vcmfb vcms tc",
+    "Vpc vcms vcmsy dc 0 ac {vc2}\nIpc 0 vcms dc 0 ac {ic2}\nXMC1 vcmfb vcmsy tc"
+   ],
+   [
+    "XMN7 outp ",
+    "Vpop outpi outp dc 0 ac {vop1}\nVpon outni outn dc 0 ac {von1}\nIpop 0 outpi dc 0 ac {iop1}\nIpon 0 outni dc 0 ac {ion1}\nXMN7 outpi "
+   ],
+   [
+    "XMN8 outn ",
+    "XMN8 outni "
+   ],
+   [
+    "XMP7 outp ",
+    "XMP7 outpi "
+   ],
+   [
+    "XMP8 outn ",
+    "XMP8 outni "
+   ],
+   [
+    "XCC1 cz1 outp ",
+    "XCC1 cz1 outpi "
+   ],
+   [
+    "XCC2 cz2 outn ",
+    "XCC2 cz2 outni "
+   ],
+   [
+    "XMN7 outp ",
+    "Vpop outpi outp dc 0 ac {vop2}\nVpon outni outn dc 0 ac {von2}\nIpop 0 outpi dc 0 ac {iop2}\nIpon 0 outni dc 0 ac {ion2}\nXMN7 outpi "
+   ],
+   [
+    "XMN8 outn ",
+    "XMN8 outni "
+   ],
+   [
+    "XMP7 outp ",
+    "XMP7 outpi "
+   ],
+   [
+    "XMP8 outn ",
+    "XMP8 outni "
+   ],
+   [
+    "XCC1 cz1 outp ",
+    "XCC1 cz1 outpi "
+   ],
+   [
+    "XCC2 cz2 outn ",
+    "XCC2 cz2 outni "
+   ],
+   [
+    "XCC1B cb1 outp ",
+    "XCC1B cb1 outpi "
+   ],
+   [
+    "XCC2B cb2 outn ",
+    "XCC2B cb2 outni "
+   ],
+   [
+    "?",
+    "XCD1B cd1 outp ",
+    "XCD1B cd1 outpi "
+   ],
+   [
+    "?",
+    "XCD2B cd2 outn ",
+    "XCD2B cd2 outni "
+   ],
+   [
+    "?",
+    "XCX1 cz1 outn ",
+    "XCX1 cz1 outni "
+   ],
+   [
+    "?",
+    "XCX2 cz2 outp ",
+    "XCX2 cz2 outpi "
+   ],
+   [
+    "?",
+    "XCX1 cz1 outn ",
+    "XCX1 cz1 outni "
+   ],
+   [
+    "?",
+    "XCX2 cz2 outp ",
+    "XCX2 cz2 outpi "
+   ]
+  ],
+  "seconds": 1060.9,
+  "rows": [
+   {
+    "tag": "STBROW",
+    "code": 0,
+    "loop": "dm1",
+    "t_dc_db": 63.31,
+    "f_unity": 25560577.812800325,
+    "pm_valid": true,
+    "pm_deg": 75.85,
+    "gm_db": 16.82,
+    "f_180": 149474432.9105652,
+    "ph_min_deg": -342.3
+   },
+   {
+    "tag": "STBROW",
+    "code": 0,
+    "loop": "cm1",
+    "t_dc_db": 53.47,
+    "f_unity": 4851428.977975778,
+    "pm_valid": true,
+    "pm_deg": 89.56,
+    "gm_db": null,
+    "f_180": null,
+    "ph_min_deg": -153.5
+   },
+   {
+    "tag": "STBROW",
+    "code": 0,
+    "loop": "dm2",
+    "t_dc_db": 65.94,
+    "f_unity": 32264559.338372815,
+    "pm_valid": true,
+    "pm_deg": 66.74,
+    "gm_db": 14.11,
+    "f_180": 161123367.34521767,
+    "ph_min_deg": -355.6
+   },
+   {
+    "tag": "STBROW",
+    "code": 0,
+    "loop": "cm2",
+    "t_dc_db": 67.0,
+    "f_unity": 8590689.194251634,
+    "pm_valid": true,
+    "pm_deg": 72.6,
+    "gm_db": 49.81,
+    "f_180": 188803965.9660976,
+    "ph_min_deg": -182.2
+   },
+   {
+    "tag": "STBROW",
+    "code": 5,
+    "loop": "dm1",
+    "t_dc_db": 41.82,
+    "f_unity": 18818554.553658325,
+    "pm_valid": true,
+    "pm_deg": 80.67,
+    "gm_db": 18.82,
+    "f_180": 115909958.97641192,
+    "ph_min_deg": -344.8
+   },
+   {
+    "tag": "STBROW",
+    "code": 5,
+    "loop": "cm1",
+    "t_dc_db": 53.1,
+    "f_unity": 7239797.325801907,
+    "pm_valid": true,
+    "pm_deg": 65.12,
+    "gm_db": null,
+    "f_180": null,
+    "ph_min_deg": -158.4
+   },
+   {
+    "tag": "STBROW",
+    "code": 5,
+    "loop": "dm2",
+    "t_dc_db": 58.91,
+    "f_unity": 27392420.45514321,
+    "pm_valid": true,
+    "pm_deg": 77.12,
+    "gm_db": 15.39,
+    "f_180": 168553138.48646432,
+    "ph_min_deg": -355.9
+   },
+   {
+    "tag": "STBROW",
+    "code": 5,
+    "loop": "cm2",
+    "t_dc_db": 68.33,
+    "f_unity": 8509828.791808512,
+    "pm_valid": true,
+    "pm_deg": 72.37,
+    "gm_db": null,
+    "f_180": null,
+    "ph_min_deg": -179.8
+   }
+  ],
+  "errors": [
+   "Warning: singular matrix:  check node xdut.xcos.xa1_xrs1_n1",
+   "Warning: singular matrix:  check node xdut.xcos.xa1_xrs1_n1",
+   "Warning: singular matrix:  check node xdut.xcos.xa1_xrs1_n1",
+   "Warning: singular matrix:  check node xdut.xcos.xa1_xrs1_n1",
+   "Warning: singular matrix:  check node xdut.xcos.xa1_xrs1_n1",
+   "Warning: singular matrix:  check node xdut.xcos.xa1_xrs1_n1",
+   "Warning: singular matrix:  check node xdut.xcos.xa1_xrs1_n1",
+   "Warning: singular matrix:  check node xdut.xcos.xa1_xrs1_n1",
+   "Warning: singular matrix:  check node xdut.xcos.xa2_xrs1_n9",
+   "Warning: singular matrix:  check node xdut.xcos.xa2_xrs1_n9"
+  ],
+  "deck": "r1_afe/r1afe-post-e8d19r/E8__stb_ffx_ib15.36_cm2.5_hold.cir",
+  "log": "r1_afe/r1afe-post-e8d19r/E8__stb_ffx_ib15.36_cm2.5_hold.log"
+ },
+ {
+  "name": "E8__stb_tt_ib6.9_cm0.5",
+  "corner": "tt",
+  "mismatch": false,
+  "subs": {
+   "MOS": "mos_tt",
+   "RES": "res_typ",
+   "CAP": "cap_typ",
+   "VDDA": 3.3,
+   "TEMP": 27,
+   "VCMI": 0.5,
+   "ACVDD": 0,
+   "NMC": 1,
+   "SEED": 1,
+   "LSB": 0.000439453125,
+   "CL": "2.8p",
+   "KLIST": "0 5",
+   "LLIST": "1 2 4 5",
+   "IB": "6.9u",
+   "DIO": "dio_tt",
+   "RAW": "$G1_RESULTS_ROOT/r1_afe/r1afe-post-e8d19r/E8__stb_tt_ib6.9_cm0.5"
+  },
+  "rc": 0,
+  "edits": [
+   [
+    "XA1 x1p x1n ",
+    "Vpa1p x1p y1p dc 0 ac {vdp1}\nVpa1n x1n y1n dc 0 ac {vdn1}\nIpa1p 0 x1p dc 0 ac {idp1}\nIpa1n 0 x1n dc 0 ac {idn1}\nXA1 y1p y1n "
+   ],
+   [
+    "XA2 x2p x2n ",
+    "Vpa2p x2p y2p dc 0 ac {vdp2}\nVpa2n x2n y2n dc 0 ac {vdn2}\nIpa2p 0 x2p dc 0 ac {idp2}\nIpa2n 0 x2n dc 0 ac {idn2}\nXA2 y2p y2n "
+   ],
+   [
+    "XMC1 vcmfb vcms tc",
+    "Vpc vcms vcmsy dc 0 ac {vc1}\nIpc 0 vcms dc 0 ac {ic1}\nXMC1 vcmfb vcmsy tc"
+   ],
+   [
+    "XMC1 vcmfb vcms tc",
+    "Vpc vcms vcmsy dc 0 ac {vc2}\nIpc 0 vcms dc 0 ac {ic2}\nXMC1 vcmfb vcmsy tc"
+   ],
+   [
+    "XMN7 outp ",
+    "Vpop outpi outp dc 0 ac {vop1}\nVpon outni outn dc 0 ac {von1}\nIpop 0 outpi dc 0 ac {iop1}\nIpon 0 outni dc 0 ac {ion1}\nXMN7 outpi "
+   ],
+   [
+    "XMN8 outn ",
+    "XMN8 outni "
+   ],
+   [
+    "XMP7 outp ",
+    "XMP7 outpi "
+   ],
+   [
+    "XMP8 outn ",
+    "XMP8 outni "
+   ],
+   [
+    "XCC1 cz1 outp ",
+    "XCC1 cz1 outpi "
+   ],
+   [
+    "XCC2 cz2 outn ",
+    "XCC2 cz2 outni "
+   ],
+   [
+    "XMN7 outp ",
+    "Vpop outpi outp dc 0 ac {vop2}\nVpon outni outn dc 0 ac {von2}\nIpop 0 outpi dc 0 ac {iop2}\nIpon 0 outni dc 0 ac {ion2}\nXMN7 outpi "
+   ],
+   [
+    "XMN8 outn ",
+    "XMN8 outni "
+   ],
+   [
+    "XMP7 outp ",
+    "XMP7 outpi "
+   ],
+   [
+    "XMP8 outn ",
+    "XMP8 outni "
+   ],
+   [
+    "XCC1 cz1 outp ",
+    "XCC1 cz1 outpi "
+   ],
+   [
+    "XCC2 cz2 outn ",
+    "XCC2 cz2 outni "
+   ],
+   [
+    "XCC1B cb1 outp ",
+    "XCC1B cb1 outpi "
+   ],
+   [
+    "XCC2B cb2 outn ",
+    "XCC2B cb2 outni "
+   ],
+   [
+    "?",
+    "XCD1B cd1 outp ",
+    "XCD1B cd1 outpi "
+   ],
+   [
+    "?",
+    "XCD2B cd2 outn ",
+    "XCD2B cd2 outni "
+   ],
+   [
+    "?",
+    "XCX1 cz1 outn ",
+    "XCX1 cz1 outni "
+   ],
+   [
+    "?",
+    "XCX2 cz2 outp ",
+    "XCX2 cz2 outpi "
+   ],
+   [
+    "?",
+    "XCX1 cz1 outn ",
+    "XCX1 cz1 outni "
+   ],
+   [
+    "?",
+    "XCX2 cz2 outp ",
+    "XCX2 cz2 outpi "
+   ]
+  ],
+  "seconds": 2085.8,
+  "rows": [
+   {
+    "tag": "STBROW",
+    "code": 0,
+    "loop": "dm1",
+    "t_dc_db": 74.04,
+    "f_unity": 11082784.776969464,
+    "pm_valid": true,
+    "pm_deg": 80.12,
+    "gm_db": 22.97,
+    "f_180": 151673829.78458995,
+    "ph_min_deg": -345.8
+   },
+   {
+    "tag": "STBROW",
+    "code": 0,
+    "loop": "cm1",
+    "t_dc_db": 59.39,
+    "f_unity": 1426393.5506793472,
+    "pm_valid": false,
+    "pm_deg": 81.05,
+    "gm_db": null,
+    "f_180": null,
+    "ph_min_deg": -179.7
+   },
+   {
+    "tag": "STBROW",
+    "code": 0,
+    "loop": "dm2",
+    "t_dc_db": 91.57,
+    "f_unity": 21576189.73507822,
+    "pm_valid": true,
+    "pm_deg": 69.9,
+    "gm_db": 16.14,
+    "f_180": 132347210.26369897,
+    "ph_min_deg": -377.0
+   },
+   {
+    "tag": "STBROW",
+    "code": 0,
+    "loop": "cm2",
+    "t_dc_db": 58.08,
+    "f_unity": 5818275.888285043,
+    "pm_valid": true,
+    "pm_deg": 69.83,
+    "gm_db": null,
+    "f_180": null,
+    "ph_min_deg": -157.3
+   },
+   {
+    "tag": "STBROW",
+    "code": 5,
+    "loop": "dm1",
+    "t_dc_db": 46.85,
+    "f_unity": 7540822.694087133,
+    "pm_valid": true,
+    "pm_deg": 112.46,
+    "gm_db": 24.98,
+    "f_180": 154001118.08848724,
+    "ph_min_deg": -341.2
+   },
+   {
+    "tag": "STBROW",
+    "code": 5,
+    "loop": "cm1",
+    "t_dc_db": 71.68,
+    "f_unity": 4509567.40821969,
+    "pm_valid": true,
+    "pm_deg": 75.69,
+    "gm_db": null,
+    "f_180": null,
+    "ph_min_deg": -155.3
+   },
+   {
+    "tag": "STBROW",
+    "code": 5,
+    "loop": "dm2",
+    "t_dc_db": 81.89,
+    "f_unity": 17443940.832587384,
+    "pm_valid": true,
+    "pm_deg": 82.17,
+    "gm_db": 17.56,
+    "f_180": 137539619.3643821,
+    "ph_min_deg": -377.6
+   },
+   {
+    "tag": "STBROW",
+    "code": 5,
+    "loop": "cm2",
+    "t_dc_db": 66.61,
+    "f_unity": 5729982.25289443,
+    "pm_valid": true,
+    "pm_deg": 69.32,
+    "gm_db": null,
+    "f_180": null,
+    "ph_min_deg": -153.5
+   }
+  ],
+  "errors": [
+   "Warning: singular matrix:  check nodes xdut.xcos.xa2_xrs2_n5 and xdut.xcos.xa2_xrs2_n1",
+   "Warning: singular matrix:  check node xdut.xcos.xs1n_xu7_xr_n1",
+   "Warning: singular matrix:  check node xdut.xsin.xa2_xrs1_n1",
+   "Warning: singular matrix:  check nodes xdut.xcos.xa2_xrs2_n5 and xdut.xcos.xa2_xrs2_n1",
+   "Warning: singular matrix:  check node xdut.xcos.xs1n_xu7_xr_n1",
+   "Warning: singular matrix:  check node xdut.xsin.xa2_xrs1_n1",
+   "Warning: singular matrix:  check nodes xdut.xcos.xa2_xrs2_n5 and xdut.xcos.xa2_xrs2_n1",
+   "Warning: singular matrix:  check node xdut.xcos.xs1n_xu7_xr_n1",
+   "Warning: singular matrix:  check node xdut.xsin.xa2_xrs1_n1",
+   "Warning: singular matrix:  check nodes xdut.xcos.xa2_xrs2_n5 and xdut.xcos.xa2_xrs2_n1"
+  ],
+  "deck": "r1_afe/r1afe-post-e8d19r/E8__stb_tt_ib6.9_cm0.5.cir",
+  "log": "r1_afe/r1afe-post-e8d19r/E8__stb_tt_ib6.9_cm0.5.log"
+ },
+ {
+  "name": "E8__stb_tt_ib6.9_cm2.5",
+  "corner": "tt",
+  "mismatch": false,
+  "subs": {
+   "MOS": "mos_tt",
+   "RES": "res_typ",
+   "CAP": "cap_typ",
+   "VDDA": 3.3,
+   "TEMP": 27,
+   "VCMI": 2.5,
+   "ACVDD": 0,
+   "NMC": 1,
+   "SEED": 1,
+   "LSB": 0.000439453125,
+   "CL": "2.8p",
+   "KLIST": "0 5",
+   "LLIST": "1 2 4 5",
+   "IB": "6.9u",
+   "DIO": "dio_tt",
+   "RAW": "$G1_RESULTS_ROOT/r1_afe/r1afe-post-e8d19r/E8__stb_tt_ib6.9_cm2.5"
+  },
+  "rc": 0,
+  "edits": [
+   [
+    "XA1 x1p x1n ",
+    "Vpa1p x1p y1p dc 0 ac {vdp1}\nVpa1n x1n y1n dc 0 ac {vdn1}\nIpa1p 0 x1p dc 0 ac {idp1}\nIpa1n 0 x1n dc 0 ac {idn1}\nXA1 y1p y1n "
+   ],
+   [
+    "XA2 x2p x2n ",
+    "Vpa2p x2p y2p dc 0 ac {vdp2}\nVpa2n x2n y2n dc 0 ac {vdn2}\nIpa2p 0 x2p dc 0 ac {idp2}\nIpa2n 0 x2n dc 0 ac {idn2}\nXA2 y2p y2n "
+   ],
+   [
+    "XMC1 vcmfb vcms tc",
+    "Vpc vcms vcmsy dc 0 ac {vc1}\nIpc 0 vcms dc 0 ac {ic1}\nXMC1 vcmfb vcmsy tc"
+   ],
+   [
+    "XMC1 vcmfb vcms tc",
+    "Vpc vcms vcmsy dc 0 ac {vc2}\nIpc 0 vcms dc 0 ac {ic2}\nXMC1 vcmfb vcmsy tc"
+   ],
+   [
+    "XMN7 outp ",
+    "Vpop outpi outp dc 0 ac {vop1}\nVpon outni outn dc 0 ac {von1}\nIpop 0 outpi dc 0 ac {iop1}\nIpon 0 outni dc 0 ac {ion1}\nXMN7 outpi "
+   ],
+   [
+    "XMN8 outn ",
+    "XMN8 outni "
+   ],
+   [
+    "XMP7 outp ",
+    "XMP7 outpi "
+   ],
+   [
+    "XMP8 outn ",
+    "XMP8 outni "
+   ],
+   [
+    "XCC1 cz1 outp ",
+    "XCC1 cz1 outpi "
+   ],
+   [
+    "XCC2 cz2 outn ",
+    "XCC2 cz2 outni "
+   ],
+   [
+    "XMN7 outp ",
+    "Vpop outpi outp dc 0 ac {vop2}\nVpon outni outn dc 0 ac {von2}\nIpop 0 outpi dc 0 ac {iop2}\nIpon 0 outni dc 0 ac {ion2}\nXMN7 outpi "
+   ],
+   [
+    "XMN8 outn ",
+    "XMN8 outni "
+   ],
+   [
+    "XMP7 outp ",
+    "XMP7 outpi "
+   ],
+   [
+    "XMP8 outn ",
+    "XMP8 outni "
+   ],
+   [
+    "XCC1 cz1 outp ",
+    "XCC1 cz1 outpi "
+   ],
+   [
+    "XCC2 cz2 outn ",
+    "XCC2 cz2 outni "
+   ],
+   [
+    "XCC1B cb1 outp ",
+    "XCC1B cb1 outpi "
+   ],
+   [
+    "XCC2B cb2 outn ",
+    "XCC2B cb2 outni "
+   ],
+   [
+    "?",
+    "XCD1B cd1 outp ",
+    "XCD1B cd1 outpi "
+   ],
+   [
+    "?",
+    "XCD2B cd2 outn ",
+    "XCD2B cd2 outni "
+   ],
+   [
+    "?",
+    "XCX1 cz1 outn ",
+    "XCX1 cz1 outni "
+   ],
+   [
+    "?",
+    "XCX2 cz2 outp ",
+    "XCX2 cz2 outpi "
+   ],
+   [
+    "?",
+    "XCX1 cz1 outn ",
+    "XCX1 cz1 outni "
+   ],
+   [
+    "?",
+    "XCX2 cz2 outp ",
+    "XCX2 cz2 outpi "
+   ]
+  ],
+  "seconds": 1970.3,
+  "rows": [
+   {
+    "tag": "STBROW",
+    "code": 0,
+    "loop": "dm1",
+    "t_dc_db": 87.19,
+    "f_unity": 19380097.959046233,
+    "pm_valid": true,
+    "pm_deg": 80.36,
+    "gm_db": 17.63,
+    "f_180": 140814072.6877971,
+    "ph_min_deg": -356.4
+   },
+   {
+    "tag": "STBROW",
+    "code": 0,
+    "loop": "cm1",
+    "t_dc_db": 73.08,
+    "f_unity": 3930565.6492376314,
+    "pm_valid": true,
+    "pm_deg": 90.85,
+    "gm_db": null,
+    "f_180": null,
+    "ph_min_deg": -156.7
+   },
+   {
+    "tag": "STBROW",
+    "code": 0,
+    "loop": "dm2",
+    "t_dc_db": 91.75,
+    "f_unity": 21998476.517316736,
+    "pm_valid": true,
+    "pm_deg": 70.34,
+    "gm_db": 15.94,
+    "f_180": 133250901.46981922,
+    "ph_min_deg": -376.5
+   },
+   {
+    "tag": "STBROW",
+    "code": 0,
+    "loop": "cm2",
+    "t_dc_db": 89.8,
+    "f_unity": 5824887.676655108,
+    "pm_valid": false,
+    "pm_deg": 70.11,
+    "gm_db": null,
+    "f_180": null,
+    "ph_min_deg": -178.0
+   },
+   {
+    "tag": "STBROW",
+    "code": 5,
+    "loop": "dm1",
+    "t_dc_db": 67.83,
+    "f_unity": 19726022.23459972,
+    "pm_valid": true,
+    "pm_deg": 82.22,
+    "gm_db": 17.91,
+    "f_180": 129838357.2155837,
+    "ph_min_deg": -357.6
+   },
+   {
+    "tag": "STBROW",
+    "code": 5,
+    "loop": "cm1",
+    "t_dc_db": 70.06,
+    "f_unity": 5689160.517871691,
+    "pm_valid": true,
+    "pm_deg": 68.69,
+    "gm_db": null,
+    "f_180": null,
+    "ph_min_deg": -164.6
+   },
+   {
+    "tag": "STBROW",
+    "code": 5,
+    "loop": "dm2",
+    "t_dc_db": 82.54,
+    "f_unity": 18999905.471316062,
+    "pm_valid": true,
+    "pm_deg": 85.34,
+    "gm_db": 16.89,
+    "f_180": 140471457.71982527,
+    "ph_min_deg": -375.9
+   },
+   {
+    "tag": "STBROW",
+    "code": 5,
+    "loop": "cm2",
+    "t_dc_db": 83.04,
+    "f_unity": 5772733.501187348,
+    "pm_valid": false,
+    "pm_deg": 70.03,
+    "gm_db": null,
+    "f_180": null,
+    "ph_min_deg": -179.1
+   }
+  ],
+  "errors": [
+   "Warning: singular matrix:  check node xdut.xsin.xa2_xrs1_n3",
+   "Warning: singular matrix:  check node xdut.xsin.xa2_xrs1_n3",
+   "Warning: singular matrix:  check node xdut.xsin.xa2_xrs1_n3",
+   "Warning: singular matrix:  check node xdut.xsin.xa2_xrs1_n3",
+   "Warning: singular matrix:  check node xdut.xsin.xa2_xrs1_n3",
+   "Warning: singular matrix:  check node xdut.xsin.xa2_xrs1_n3",
+   "Warning: singular matrix:  check node xdut.xsin.xa2_xrs1_n3",
+   "Warning: singular matrix:  check node xdut.xsin.xa2_xrs1_n3",
+   "Warning: singular matrix:  check nodes xdut.xcos.xa2_xrs2_n7 and xdut.xcos.xa2_xrs2_n9",
+   "Warning: singular matrix:  check nodes xdut.xcos.xa2_xrs2_n7 and xdut.xcos.xa2_xrs2_n9"
+  ],
+  "deck": "r1_afe/r1afe-post-e8d19r/E8__stb_tt_ib6.9_cm2.5.cir",
+  "log": "r1_afe/r1afe-post-e8d19r/E8__stb_tt_ib6.9_cm2.5.log"
+ },
+ {
+  "name": "E8__stb_tt_ib15.4_cm0.5",
+  "corner": "tt",
+  "mismatch": false,
+  "subs": {
+   "MOS": "mos_tt",
+   "RES": "res_typ",
+   "CAP": "cap_typ",
+   "VDDA": 3.3,
+   "TEMP": 27,
+   "VCMI": 0.5,
+   "ACVDD": 0,
+   "NMC": 1,
+   "SEED": 1,
+   "LSB": 0.000439453125,
+   "CL": "2.8p",
+   "KLIST": "0 5",
+   "LLIST": "1 2 4 5",
+   "IB": "15.4u",
+   "DIO": "dio_tt",
+   "RAW": "$G1_RESULTS_ROOT/r1_afe/r1afe-post-e8d19r/E8__stb_tt_ib15.4_cm0.5"
+  },
+  "rc": 0,
+  "edits": [
+   [
+    "XA1 x1p x1n ",
+    "Vpa1p x1p y1p dc 0 ac {vdp1}\nVpa1n x1n y1n dc 0 ac {vdn1}\nIpa1p 0 x1p dc 0 ac {idp1}\nIpa1n 0 x1n dc 0 ac {idn1}\nXA1 y1p y1n "
+   ],
+   [
+    "XA2 x2p x2n ",
+    "Vpa2p x2p y2p dc 0 ac {vdp2}\nVpa2n x2n y2n dc 0 ac {vdn2}\nIpa2p 0 x2p dc 0 ac {idp2}\nIpa2n 0 x2n dc 0 ac {idn2}\nXA2 y2p y2n "
+   ],
+   [
+    "XMC1 vcmfb vcms tc",
+    "Vpc vcms vcmsy dc 0 ac {vc1}\nIpc 0 vcms dc 0 ac {ic1}\nXMC1 vcmfb vcmsy tc"
+   ],
+   [
+    "XMC1 vcmfb vcms tc",
+    "Vpc vcms vcmsy dc 0 ac {vc2}\nIpc 0 vcms dc 0 ac {ic2}\nXMC1 vcmfb vcmsy tc"
+   ],
+   [
+    "XMN7 outp ",
+    "Vpop outpi outp dc 0 ac {vop1}\nVpon outni outn dc 0 ac {von1}\nIpop 0 outpi dc 0 ac {iop1}\nIpon 0 outni dc 0 ac {ion1}\nXMN7 outpi "
+   ],
+   [
+    "XMN8 outn ",
+    "XMN8 outni "
+   ],
+   [
+    "XMP7 outp ",
+    "XMP7 outpi "
+   ],
+   [
+    "XMP8 outn ",
+    "XMP8 outni "
+   ],
+   [
+    "XCC1 cz1 outp ",
+    "XCC1 cz1 outpi "
+   ],
+   [
+    "XCC2 cz2 outn ",
+    "XCC2 cz2 outni "
+   ],
+   [
+    "XMN7 outp ",
+    "Vpop outpi outp dc 0 ac {vop2}\nVpon outni outn dc 0 ac {von2}\nIpop 0 outpi dc 0 ac {iop2}\nIpon 0 outni dc 0 ac {ion2}\nXMN7 outpi "
+   ],
+   [
+    "XMN8 outn ",
+    "XMN8 outni "
+   ],
+   [
+    "XMP7 outp ",
+    "XMP7 outpi "
+   ],
+   [
+    "XMP8 outn ",
+    "XMP8 outni "
+   ],
+   [
+    "XCC1 cz1 outp ",
+    "XCC1 cz1 outpi "
+   ],
+   [
+    "XCC2 cz2 outn ",
+    "XCC2 cz2 outni "
+   ],
+   [
+    "XCC1B cb1 outp ",
+    "XCC1B cb1 outpi "
+   ],
+   [
+    "XCC2B cb2 outn ",
+    "XCC2B cb2 outni "
+   ],
+   [
+    "?",
+    "XCD1B cd1 outp ",
+    "XCD1B cd1 outpi "
+   ],
+   [
+    "?",
+    "XCD2B cd2 outn ",
+    "XCD2B cd2 outni "
+   ],
+   [
+    "?",
+    "XCX1 cz1 outn ",
+    "XCX1 cz1 outni "
+   ],
+   [
+    "?",
+    "XCX2 cz2 outp ",
+    "XCX2 cz2 outpi "
+   ],
+   [
+    "?",
+    "XCX1 cz1 outn ",
+    "XCX1 cz1 outni "
+   ],
+   [
+    "?",
+    "XCX2 cz2 outp ",
+    "XCX2 cz2 outpi "
+   ]
+  ],
+  "seconds": 1256.8,
+  "rows": [
+   {
+    "tag": "STBROW",
+    "code": 0,
+    "loop": "dm1",
+    "t_dc_db": 63.12,
+    "f_unity": 13958458.902855217,
+    "pm_valid": true,
+    "pm_deg": 97.97,
+    "gm_db": 21.01,
+    "f_180": 214295316.97844425,
+    "ph_min_deg": -311.7
+   },
+   {
+    "tag": "STBROW",
+    "code": 0,
+    "loop": "cm1",
+    "t_dc_db": 57.32,
+    "f_unity": 3802375.5250779293,
+    "pm_valid": true,
+    "pm_deg": 96.5,
+    "gm_db": null,
+    "f_180": null,
+    "ph_min_deg": -150.0
+   },
+   {
+    "tag": "STBROW",
+    "code": 0,
+    "loop": "dm2",
+    "t_dc_db": 89.31,
+    "f_unity": 42874075.447956316,
+    "pm_valid": true,
+    "pm_deg": 71.26,
+    "gm_db": 11.64,
+    "f_180": 185176291.55316237,
+    "ph_min_deg": -352.9
+   },
+   {
+    "tag": "STBROW",
+    "code": 0,
+    "loop": "cm2",
+    "t_dc_db": 91.68,
+    "f_unity": 8906694.157258995,
+    "pm_valid": true,
+    "pm_deg": 76.75,
+    "gm_db": 34.08,
+    "f_180": 182368572.85115045,
+    "ph_min_deg": -489.5
+   },
+   {
+    "tag": "STBROW",
+    "code": 5,
+    "loop": "dm1",
+    "t_dc_db": 43.79,
+    "f_unity": 15345527.663236396,
+    "pm_valid": true,
+    "pm_deg": 107.6,
+    "gm_db": 20.95,
+    "f_180": 203766856.97998348,
+    "ph_min_deg": -316.9
+   },
+   {
+    "tag": "STBROW",
+    "code": 5,
+    "loop": "cm1",
+    "t_dc_db": 56.71,
+    "f_unity": 6475030.658568366,
+    "pm_valid": true,
+    "pm_deg": 85.87,
+    "gm_db": null,
+    "f_180": null,
+    "ph_min_deg": -149.8
+   },
+   {
+    "tag": "STBROW",
+    "code": 5,
+    "loop": "dm2",
+    "t_dc_db": 80.05,
+    "f_unity": 35900578.486665376,
+    "pm_valid": true,
+    "pm_deg": 81.17,
+    "gm_db": 12.86,
+    "f_180": 188913945.75688753,
+    "ph_min_deg": -353.5
+   },
+   {
+    "tag": "STBROW",
+    "code": 5,
+    "loop": "cm2",
+    "t_dc_db": 76.05,
+    "f_unity": 8798538.421738096,
+    "pm_valid": true,
+    "pm_deg": 76.04,
+    "gm_db": 34.59,
+    "f_180": 184974171.2482235,
+    "ph_min_deg": -490.8
+   }
+  ],
+  "errors": [
+   "Warning: singular matrix:  check nodes xdut.xsin.xa2_xrs1_n1 and xdut.xcos.xa2_xrs2_n4",
+   "Warning: singular matrix:  check nodes xdut.xsin.xa2_xrs2_n1 and xdut.xsin.xa2_xrs1_n1",
+   "Warning: singular matrix:  check node xdut.xcos.xs1p_xu5_xr_n1",
+   "Warning: singular matrix:  check node xdut.xsin.xs1n_xuf_xr_n1",
+   "Warning: singular matrix:  check nodes xdut.xsin.xa2_xrs1_n1 and xdut.xcos.xa2_xrs2_n4",
+   "Warning: singular matrix:  check nodes xdut.xsin.xa2_xrs2_n1 and xdut.xsin.xa2_xrs1_n1",
+   "Warning: singular matrix:  check node xdut.xcos.xs1p_xu5_xr_n1",
+   "Warning: singular matrix:  check node xdut.xsin.xs1n_xuf_xr_n1",
+   "Warning: singular matrix:  check nodes xdut.xsin.xa2_xrs1_n1 and xdut.xcos.xa2_xrs2_n4",
+   "Warning: singular matrix:  check nodes xdut.xsin.xa2_xrs2_n1 and xdut.xsin.xa2_xrs1_n1"
+  ],
+  "deck": "r1_afe/r1afe-post-e8d19r/E8__stb_tt_ib15.4_cm0.5.cir",
+  "log": "r1_afe/r1afe-post-e8d19r/E8__stb_tt_ib15.4_cm0.5.log"
+ },
+ {
+  "name": "E8__stb_tt_ib15.4_cm2.5",
+  "corner": "tt",
+  "mismatch": false,
+  "subs": {
+   "MOS": "mos_tt",
+   "RES": "res_typ",
+   "CAP": "cap_typ",
+   "VDDA": 3.3,
+   "TEMP": 27,
+   "VCMI": 2.5,
+   "ACVDD": 0,
+   "NMC": 1,
+   "SEED": 1,
+   "LSB": 0.000439453125,
+   "CL": "2.8p",
+   "KLIST": "0 5",
+   "LLIST": "1 2 4 5",
+   "IB": "15.4u",
+   "DIO": "dio_tt",
+   "RAW": "$G1_RESULTS_ROOT/r1_afe/r1afe-post-e8d19r/E8__stb_tt_ib15.4_cm2.5"
+  },
+  "rc": 0,
+  "edits": [
+   [
+    "XA1 x1p x1n ",
+    "Vpa1p x1p y1p dc 0 ac {vdp1}\nVpa1n x1n y1n dc 0 ac {vdn1}\nIpa1p 0 x1p dc 0 ac {idp1}\nIpa1n 0 x1n dc 0 ac {idn1}\nXA1 y1p y1n "
+   ],
+   [
+    "XA2 x2p x2n ",
+    "Vpa2p x2p y2p dc 0 ac {vdp2}\nVpa2n x2n y2n dc 0 ac {vdn2}\nIpa2p 0 x2p dc 0 ac {idp2}\nIpa2n 0 x2n dc 0 ac {idn2}\nXA2 y2p y2n "
+   ],
+   [
+    "XMC1 vcmfb vcms tc",
+    "Vpc vcms vcmsy dc 0 ac {vc1}\nIpc 0 vcms dc 0 ac {ic1}\nXMC1 vcmfb vcmsy tc"
+   ],
+   [
+    "XMC1 vcmfb vcms tc",
+    "Vpc vcms vcmsy dc 0 ac {vc2}\nIpc 0 vcms dc 0 ac {ic2}\nXMC1 vcmfb vcmsy tc"
+   ],
+   [
+    "XMN7 outp ",
+    "Vpop outpi outp dc 0 ac {vop1}\nVpon outni outn dc 0 ac {von1}\nIpop 0 outpi dc 0 ac {iop1}\nIpon 0 outni dc 0 ac {ion1}\nXMN7 outpi "
+   ],
+   [
+    "XMN8 outn ",
+    "XMN8 outni "
+   ],
+   [
+    "XMP7 outp ",
+    "XMP7 outpi "
+   ],
+   [
+    "XMP8 outn ",
+    "XMP8 outni "
+   ],
+   [
+    "XCC1 cz1 outp ",
+    "XCC1 cz1 outpi "
+   ],
+   [
+    "XCC2 cz2 outn ",
+    "XCC2 cz2 outni "
+   ],
+   [
+    "XMN7 outp ",
+    "Vpop outpi outp dc 0 ac {vop2}\nVpon outni outn dc 0 ac {von2}\nIpop 0 outpi dc 0 ac {iop2}\nIpon 0 outni dc 0 ac {ion2}\nXMN7 outpi "
+   ],
+   [
+    "XMN8 outn ",
+    "XMN8 outni "
+   ],
+   [
+    "XMP7 outp ",
+    "XMP7 outpi "
+   ],
+   [
+    "XMP8 outn ",
+    "XMP8 outni "
+   ],
+   [
+    "XCC1 cz1 outp ",
+    "XCC1 cz1 outpi "
+   ],
+   [
+    "XCC2 cz2 outn ",
+    "XCC2 cz2 outni "
+   ],
+   [
+    "XCC1B cb1 outp ",
+    "XCC1B cb1 outpi "
+   ],
+   [
+    "XCC2B cb2 outn ",
+    "XCC2B cb2 outni "
+   ],
+   [
+    "?",
+    "XCD1B cd1 outp ",
+    "XCD1B cd1 outpi "
+   ],
+   [
+    "?",
+    "XCD2B cd2 outn ",
+    "XCD2B cd2 outni "
+   ],
+   [
+    "?",
+    "XCX1 cz1 outn ",
+    "XCX1 cz1 outni "
+   ],
+   [
+    "?",
+    "XCX2 cz2 outp ",
+    "XCX2 cz2 outpi "
+   ],
+   [
+    "?",
+    "XCX1 cz1 outn ",
+    "XCX1 cz1 outni "
+   ],
+   [
+    "?",
+    "XCX2 cz2 outp ",
+    "XCX2 cz2 outpi "
+   ]
+  ],
+  "seconds": 1954.7,
+  "rows": [
+   {
+    "tag": "STBROW",
+    "code": 0,
+    "loop": "dm1",
+    "t_dc_db": 85.1,
+    "f_unity": 46273587.55109277,
+    "pm_valid": true,
+    "pm_deg": 75.01,
+    "gm_db": 12.61,
+    "f_180": 179096233.70818344,
+    "ph_min_deg": -337.7
+   },
+   {
+    "tag": "STBROW",
+    "code": 0,
+    "loop": "cm1",
+    "t_dc_db": 71.74,
+    "f_unity": 5953578.217883508,
+    "pm_valid": true,
+    "pm_deg": 100.28,
+    "gm_db": null,
+    "f_180": null,
+    "ph_min_deg": -151.4
+   },
+   {
+    "tag": "STBROW",
+    "code": 0,
+    "loop": "dm2",
+    "t_dc_db": 89.65,
+    "f_unity": 43929620.17754119,
+    "pm_valid": true,
+    "pm_deg": 71.56,
+    "gm_db": 11.44,
+    "f_180": 186662997.2298886,
+    "ph_min_deg": -352.4
+   },
+   {
+    "tag": "STBROW",
+    "code": 0,
+    "loop": "cm2",
+    "t_dc_db": 93.12,
+    "f_unity": 8927108.235753726,
+    "pm_valid": false,
+    "pm_deg": 76.98,
+    "gm_db": 33.43,
+    "f_180": 181787080.26500905,
+    "ph_min_deg": -488.5
+   },
+   {
+    "tag": "STBROW",
+    "code": 5,
+    "loop": "dm1",
+    "t_dc_db": 65.81,
+    "f_unity": 35761107.04283599,
+    "pm_valid": true,
+    "pm_deg": 75.92,
+    "gm_db": 13.91,
+    "f_180": 157820575.91120595,
+    "ph_min_deg": -343.1
+   },
+   {
+    "tag": "STBROW",
+    "code": 5,
+    "loop": "cm1",
+    "t_dc_db": 69.49,
+    "f_unity": 7750658.832804778,
+    "pm_valid": true,
+    "pm_deg": 70.21,
+    "gm_db": 24.48,
+    "f_180": 85511325.58701375,
+    "ph_min_deg": -511.1
+   },
+   {
+    "tag": "STBROW",
+    "code": 5,
+    "loop": "dm2",
+    "t_dc_db": 81.08,
+    "f_unity": 39077659.7562946,
+    "pm_valid": true,
+    "pm_deg": 81.72,
+    "gm_db": 12.26,
+    "f_180": 193367449.5729978,
+    "ph_min_deg": -351.8
+   },
+   {
+    "tag": "STBROW",
+    "code": 5,
+    "loop": "cm2",
+    "t_dc_db": 83.77,
+    "f_unity": 8870032.134736432,
+    "pm_valid": false,
+    "pm_deg": 76.71,
+    "gm_db": 32.85,
+    "f_180": 183342115.56661072,
+    "ph_min_deg": -488.2
+   }
+  ],
+  "errors": [
+   "Warning: singular matrix:  check nodes xdut.xsin.xa1_xrs1_n3 and xdut.xsin.xa1_xrs1_n7",
+   "Warning: singular matrix:  check nodes xdut.xsin.xa1_xrs1_n3 and xdut.xsin.xa1_xrs1_n7",
+   "Warning: singular matrix:  check nodes xdut.xsin.xa1_xrs1_n3 and xdut.xsin.xa1_xrs1_n7",
+   "Warning: singular matrix:  check nodes xdut.xsin.xa1_xrs1_n3 and xdut.xsin.xa1_xrs1_n7",
+   "Warning: singular matrix:  check nodes xdut.xsin.xa1_xrs1_n3 and xdut.xsin.xa1_xrs1_n7",
+   "Warning: singular matrix:  check nodes xdut.xsin.xa1_xrs1_n3 and xdut.xsin.xa1_xrs1_n7",
+   "Warning: singular matrix:  check nodes xdut.xsin.xa1_xrs1_n3 and xdut.xsin.xa1_xrs1_n7",
+   "Warning: singular matrix:  check nodes xdut.xsin.xa1_xrs1_n3 and xdut.xsin.xa1_xrs1_n7",
+   "Warning: singular matrix:  check nodes xdut.xcos.xa2_xrs1_n2 and xdut.xsin.xa1_xrs1_n1",
+   "Warning: singular matrix:  check nodes xdut.xcos.xa2_xrs1_n2 and xdut.xsin.xa1_xrs1_n1"
+  ],
+  "deck": "r1_afe/r1afe-post-e8d19r/E8__stb_tt_ib15.4_cm2.5.cir",
+  "log": "r1_afe/r1afe-post-e8d19r/E8__stb_tt_ib15.4_cm2.5.log"
+ },
+ {
+  "name": "E8__stb_ffx_ib6.9_cm2.5",
+  "corner": "ffx",
+  "mismatch": false,
+  "subs": {
+   "MOS": "mos_ff",
+   "RES": "res_bcs",
+   "CAP": "cap_bcs",
+   "VDDA": 3.0,
+   "TEMP": 125,
+   "VCMI": 2.5,
+   "ACVDD": 0,
+   "NMC": 1,
+   "SEED": 1,
+   "LSB": 0.000439453125,
+   "CL": "2.8p",
+   "KLIST": "0 5",
+   "LLIST": "1 2 4 5",
+   "IB": "6.9u",
+   "DIO": "dio_ff",
+   "RAW": "$G1_RESULTS_ROOT/r1_afe/r1afe-post-e8d19r/E8__stb_ffx_ib6.9_cm2.5"
+  },
+  "rc": 0,
+  "edits": [
+   [
+    "XA1 x1p x1n ",
+    "Vpa1p x1p y1p dc 0 ac {vdp1}\nVpa1n x1n y1n dc 0 ac {vdn1}\nIpa1p 0 x1p dc 0 ac {idp1}\nIpa1n 0 x1n dc 0 ac {idn1}\nXA1 y1p y1n "
+   ],
+   [
+    "XA2 x2p x2n ",
+    "Vpa2p x2p y2p dc 0 ac {vdp2}\nVpa2n x2n y2n dc 0 ac {vdn2}\nIpa2p 0 x2p dc 0 ac {idp2}\nIpa2n 0 x2n dc 0 ac {idn2}\nXA2 y2p y2n "
+   ],
+   [
+    "XMC1 vcmfb vcms tc",
+    "Vpc vcms vcmsy dc 0 ac {vc1}\nIpc 0 vcms dc 0 ac {ic1}\nXMC1 vcmfb vcmsy tc"
+   ],
+   [
+    "XMC1 vcmfb vcms tc",
+    "Vpc vcms vcmsy dc 0 ac {vc2}\nIpc 0 vcms dc 0 ac {ic2}\nXMC1 vcmfb vcmsy tc"
+   ],
+   [
+    "XMN7 outp ",
+    "Vpop outpi outp dc 0 ac {vop1}\nVpon outni outn dc 0 ac {von1}\nIpop 0 outpi dc 0 ac {iop1}\nIpon 0 outni dc 0 ac {ion1}\nXMN7 outpi "
+   ],
+   [
+    "XMN8 outn ",
+    "XMN8 outni "
+   ],
+   [
+    "XMP7 outp ",
+    "XMP7 outpi "
+   ],
+   [
+    "XMP8 outn ",
+    "XMP8 outni "
+   ],
+   [
+    "XCC1 cz1 outp ",
+    "XCC1 cz1 outpi "
+   ],
+   [
+    "XCC2 cz2 outn ",
+    "XCC2 cz2 outni "
+   ],
+   [
+    "XMN7 outp ",
+    "Vpop outpi outp dc 0 ac {vop2}\nVpon outni outn dc 0 ac {von2}\nIpop 0 outpi dc 0 ac {iop2}\nIpon 0 outni dc 0 ac {ion2}\nXMN7 outpi "
+   ],
+   [
+    "XMN8 outn ",
+    "XMN8 outni "
+   ],
+   [
+    "XMP7 outp ",
+    "XMP7 outpi "
+   ],
+   [
+    "XMP8 outn ",
+    "XMP8 outni "
+   ],
+   [
+    "XCC1 cz1 outp ",
+    "XCC1 cz1 outpi "
+   ],
+   [
+    "XCC2 cz2 outn ",
+    "XCC2 cz2 outni "
+   ],
+   [
+    "XCC1B cb1 outp ",
+    "XCC1B cb1 outpi "
+   ],
+   [
+    "XCC2B cb2 outn ",
+    "XCC2B cb2 outni "
+   ],
+   [
+    "?",
+    "XCD1B cd1 outp ",
+    "XCD1B cd1 outpi "
+   ],
+   [
+    "?",
+    "XCD2B cd2 outn ",
+    "XCD2B cd2 outni "
+   ],
+   [
+    "?",
+    "XCX1 cz1 outn ",
+    "XCX1 cz1 outni "
+   ],
+   [
+    "?",
+    "XCX2 cz2 outp ",
+    "XCX2 cz2 outpi "
+   ],
+   [
+    "?",
+    "XCX1 cz1 outn ",
+    "XCX1 cz1 outni "
+   ],
+   [
+    "?",
+    "XCX2 cz2 outp ",
+    "XCX2 cz2 outpi "
+   ]
+  ],
+  "seconds": 572.6,
+  "rows": [
+   {
+    "tag": "STBROW",
+    "code": 0,
+    "loop": "dm1",
+    "t_dc_db": 77.77,
+    "f_unity": 13249253.785877071,
+    "pm_valid": true,
+    "pm_deg": 69.19,
+    "gm_db": 22.01,
+    "f_180": 124883506.88291208,
+    "ph_min_deg": -362.0
+   },
+   {
+    "tag": "STBROW",
+    "code": 0,
+    "loop": "cm1",
+    "t_dc_db": 67.51,
+    "f_unity": 3698363.8532020543,
+    "pm_valid": true,
+    "pm_deg": 83.56,
+    "gm_db": null,
+    "f_180": null,
+    "ph_min_deg": -158.5
+   },
+   {
+    "tag": "STBROW",
+    "code": 0,
+    "loop": "dm2",
+    "t_dc_db": 82.18,
+    "f_unity": 17061727.508360736,
+    "pm_valid": true,
+    "pm_deg": 66.62,
+    "gm_db": 18.03,
+    "f_180": 111140871.95894943,
+    "ph_min_deg": -385.1
+   },
+   {
+    "tag": "STBROW",
+    "code": 0,
+    "loop": "cm2",
+    "t_dc_db": 99.17,
+    "f_unity": 5399649.26942824,
+    "pm_valid": true,
+    "pm_deg": 63.94,
+    "gm_db": null,
+    "f_180": null,
+    "ph_min_deg": -156.3
+   },
+   {
+    "tag": "STBROW",
+    "code": 5,
+    "loop": "dm1",
+    "t_dc_db": 57.27,
+    "f_unity": 10980511.673121588,
+    "pm_valid": true,
+    "pm_deg": 90.26,
+    "gm_db": 23.06,
+    "f_180": 103977328.03337516,
+    "ph_min_deg": -363.4
+   },
+   {
+    "tag": "STBROW",
+    "code": 5,
+    "loop": "cm1",
+    "t_dc_db": 65.46,
+    "f_unity": 5094353.799574174,
+    "pm_valid": true,
+    "pm_deg": 61.99,
+    "gm_db": null,
+    "f_180": null,
+    "ph_min_deg": -168.0
+   },
+   {
+    "tag": "STBROW",
+    "code": 5,
+    "loop": "dm2",
+    "t_dc_db": 74.29,
+    "f_unity": 14536468.889939364,
+    "pm_valid": true,
+    "pm_deg": 81.33,
+    "gm_db": 19.23,
+    "f_180": 120847266.51868221,
+    "ph_min_deg": -383.1
+   },
+   {
+    "tag": "STBROW",
+    "code": 5,
+    "loop": "cm2",
+    "t_dc_db": 87.81,
+    "f_unity": 5368447.538207259,
+    "pm_valid": false,
+    "pm_deg": 64.52,
+    "gm_db": null,
+    "f_180": null,
+    "ph_min_deg": -178.3
+   }
+  ],
+  "errors": [
+   "Warning: singular matrix:  check node xdut.xcos.xs1n_xu8_xr_n1",
+   "Warning: singular matrix:  check node xdut.xcos.xs1n_xu8_xr_n1",
+   "Warning: singular matrix:  check node xdut.xcos.xs1n_xu8_xr_n1",
+   "Warning: singular matrix:  check node xdut.xcos.xs1n_xu8_xr_n1",
+   "Warning: singular matrix:  check node xdut.xcos.xs1n_xu8_xr_n1",
+   "Warning: singular matrix:  check node xdut.xcos.xs1n_xu8_xr_n1",
+   "Warning: singular matrix:  check node xdut.xcos.xs1n_xu8_xr_n1",
+   "Warning: singular matrix:  check node xdut.xcos.xs1n_xu8_xr_n1"
+  ],
+  "deck": "r1_afe/r1afe-post-e8d19r/E8__stb_ffx_ib6.9_cm2.5.cir",
+  "log": "r1_afe/r1afe-post-e8d19r/E8__stb_ffx_ib6.9_cm2.5.log"
+ },
+ {
+  "name": "E8__cmstep_tt_x32",
+  "corner": "tt",
+  "mismatch": false,
+  "subs": {
+   "MOS": "mos_tt",
+   "RES": "res_typ",
+   "CAP": "cap_typ",
+   "VDDA": 3.3,
+   "TEMP": 27,
+   "VCMI": 2.5,
+   "ACVDD": 0,
+   "NMC": 1,
+   "SEED": 1,
+   "LSB": 0.000439453125,
+   "CL": "2.8p",
+   "KLIST": "0 1 2 3 4 5",
+   "LLIST": "1 2 3 4 5 6 7 8",
+   "IB": "10.14u",
+   "DIO": "dio_tt",
+   "CODE": 5,
+   "AMP": 0.021875,
+   "RAW": "$G1_RESULTS_ROOT/r1_afe/r1afe-post-e8d19r/E8__cmstep_tt_x32"
+  },
+  "rc": 0,
+  "edits": [],
+  "seconds": 1237.2,
+  "rows": [
+   {
+    "tag": "CMSROW",
+    "event": "steady_before",
+    "o1cm_pp_mV": 0.121,
+    "ocm_pp_mV": 0.197
+   },
+   {
+    "tag": "CMSROW",
+    "event": "pin_cm_down",
+    "o1cm_peak_dev_mV": 490.42,
+    "o1cm_settle_ns_5mV": 640.0,
+    "ocm_peak_dev_mV": 11.15,
+    "ocm_settle_ns_2mV": 212.0,
+    "o1cm_pp_last2us_mV": 0.124,
+    "ocm_pp_last2us_mV": 0.195,
+    "o1cm_cos_pp_last2us_mV": 0.147,
+    "o1cm_overshoots_5mV": 1,
+    "ocm_overshoots_2mV": 2,
+    "o1cm_settle_ns_2pct": 472.0
+   },
+   {
+    "tag": "CMSROW",
+    "event": "pin_cm_up",
+    "o1cm_peak_dev_mV": 490.52,
+    "o1cm_settle_ns_5mV": 616.0,
+    "ocm_peak_dev_mV": 11.35,
+    "ocm_settle_ns_2mV": 200.0,
+    "o1cm_pp_last2us_mV": 0.121,
+    "ocm_pp_last2us_mV": 0.197,
+    "o1cm_cos_pp_last2us_mV": 0.102,
+    "o1cm_overshoots_5mV": 1,
+    "ocm_overshoots_2mV": 2,
+    "o1cm_settle_ns_2pct": 458.0
+   },
+   {
+    "tag": "CMSROW",
+    "event": "vcm2_up",
+    "o1cm_peak_dev_mV": 4.51,
+    "o1cm_settle_ns_5mV": 0.0,
+    "ocm_peak_dev_mV": 50.34,
+    "ocm_settle_ns_2mV": 170.0,
+    "o1cm_pp_last2us_mV": 0.103,
+    "ocm_pp_last2us_mV": 0.173,
+    "o1cm_cos_pp_last2us_mV": 0.082,
+    "o1cm_overshoots_5mV": 0,
+    "ocm_overshoots_2mV": 1,
+    "o1cm_settle_ns_2pct": 56.0
+   },
+   {
+    "tag": "CMSROW",
+    "event": "vcm2_down",
+    "o1cm_peak_dev_mV": 4.65,
+    "o1cm_settle_ns_5mV": 0.0,
+    "ocm_peak_dev_mV": 50.35,
+    "ocm_settle_ns_2mV": 170.0,
+    "o1cm_pp_last2us_mV": 0.121,
+    "ocm_pp_last2us_mV": 0.197,
+    "o1cm_cos_pp_last2us_mV": 0.102,
+    "o1cm_overshoots_5mV": 0,
+    "ocm_overshoots_2mV": 1,
+    "o1cm_settle_ns_2pct": 56.0
+   },
+   {
+    "tag": "CMSROW",
+    "event": "vdda_down",
+    "o1cm_peak_dev_mV": 173.13,
+    "o1cm_settle_ns_5mV": 988.0,
+    "ocm_peak_dev_mV": 30.93,
+    "ocm_settle_ns_2mV": 126.0,
+    "o1cm_pp_last2us_mV": 0.083,
+    "ocm_pp_last2us_mV": 0.166,
+    "o1cm_cos_pp_last2us_mV": 0.048,
+    "o1cm_overshoots_5mV": 1,
+    "ocm_overshoots_2mV": 1,
+    "o1cm_settle_ns_2pct": 1146.0
+   },
+   {
+    "tag": "CMSROW",
+    "event": "vdda_up",
+    "o1cm_peak_dev_mV": 174.84,
+    "o1cm_settle_ns_5mV": 1002.0,
+    "ocm_peak_dev_mV": 30.3,
+    "ocm_settle_ns_2mV": 126.0,
+    "o1cm_pp_last2us_mV": 0.103,
+    "ocm_pp_last2us_mV": 0.197,
+    "o1cm_cos_pp_last2us_mV": 0.077,
+    "o1cm_overshoots_5mV": 1,
+    "ocm_overshoots_2mV": 1,
+    "o1cm_settle_ns_2pct": 1164.0
+   }
+  ],
+  "errors": [],
+  "deck": "r1_afe/r1afe-post-e8d19r/E8__cmstep_tt_x32.cir",
+  "log": "r1_afe/r1afe-post-e8d19r/E8__cmstep_tt_x32.log"
+ },
+ {
+  "name": "E8__cmstep_ss_x32",
+  "corner": "ss",
+  "mismatch": false,
+  "subs": {
+   "MOS": "mos_ss",
+   "RES": "res_wcs",
+   "CAP": "cap_wcs",
+   "VDDA": 3.0,
+   "TEMP": 125,
+   "VCMI": 2.5,
+   "ACVDD": 0,
+   "NMC": 1,
+   "SEED": 1,
+   "LSB": 0.000439453125,
+   "CL": "2.8p",
+   "KLIST": "0 1 2 3 4 5",
+   "LLIST": "1 2 3 4 5 6 7 8",
+   "IB": "11.81u",
+   "DIO": "dio_ss",
+   "CODE": 5,
+   "AMP": 0.021875,
+   "RAW": "$G1_RESULTS_ROOT/r1_afe/r1afe-post-e8d19r/E8__cmstep_ss_x32"
+  },
+  "rc": 0,
+  "edits": [],
+  "seconds": 1137.6,
+  "rows": [
+   {
+    "tag": "CMSROW",
+    "event": "steady_before",
+    "o1cm_pp_mV": 0.081,
+    "ocm_pp_mV": 0.175
+   },
+   {
+    "tag": "CMSROW",
+    "event": "pin_cm_down",
+    "o1cm_peak_dev_mV": 904.99,
+    "o1cm_settle_ns_5mV": 872.0,
+    "ocm_peak_dev_mV": 15.73,
+    "ocm_settle_ns_2mV": 262.0,
+    "o1cm_pp_last2us_mV": 0.021,
+    "ocm_pp_last2us_mV": 0.171,
+    "o1cm_cos_pp_last2us_mV": 0.135,
+    "o1cm_overshoots_5mV": 1,
+    "ocm_overshoots_2mV": 2,
+    "o1cm_settle_ns_2pct": 512.0
+   },
+   {
+    "tag": "CMSROW",
+    "event": "pin_cm_up",
+    "o1cm_peak_dev_mV": 905.03,
+    "o1cm_settle_ns_5mV": 832.0,
+    "ocm_peak_dev_mV": 10.55,
+    "ocm_settle_ns_2mV": 248.0,
+    "o1cm_pp_last2us_mV": 0.081,
+    "ocm_pp_last2us_mV": 0.175,
+    "o1cm_cos_pp_last2us_mV": 0.113,
+    "o1cm_overshoots_5mV": 1,
+    "ocm_overshoots_2mV": 2,
+    "o1cm_settle_ns_2pct": 492.0
+   },
+   {
+    "tag": "CMSROW",
+    "event": "vcm2_up",
+    "o1cm_peak_dev_mV": 4.83,
+    "o1cm_settle_ns_5mV": 0.0,
+    "ocm_peak_dev_mV": 50.37,
+    "ocm_settle_ns_2mV": 206.0,
+    "o1cm_pp_last2us_mV": 0.093,
+    "ocm_pp_last2us_mV": 0.098,
+    "o1cm_cos_pp_last2us_mV": 0.046,
+    "o1cm_overshoots_5mV": 0,
+    "ocm_overshoots_2mV": 1,
+    "o1cm_settle_ns_2pct": 66.0
+   },
+   {
+    "tag": "CMSROW",
+    "event": "vcm2_down",
+    "o1cm_peak_dev_mV": 4.98,
+    "o1cm_settle_ns_5mV": 0.0,
+    "ocm_peak_dev_mV": 50.39,
+    "ocm_settle_ns_2mV": 206.0,
+    "o1cm_pp_last2us_mV": 0.08,
+    "ocm_pp_last2us_mV": 0.175,
+    "o1cm_cos_pp_last2us_mV": 0.112,
+    "o1cm_overshoots_5mV": 0,
+    "ocm_overshoots_2mV": 1,
+    "o1cm_settle_ns_2pct": 66.0
+   },
+   {
+    "tag": "CMSROW",
+    "event": "vdda_down",
+    "o1cm_peak_dev_mV": 60.66,
+    "o1cm_settle_ns_5mV": 1066.0,
+    "ocm_peak_dev_mV": 25.7,
+    "ocm_settle_ns_2mV": 174.0,
+    "o1cm_pp_last2us_mV": 0.033,
+    "ocm_pp_last2us_mV": 0.082,
+    "o1cm_cos_pp_last2us_mV": 0.062,
+    "o1cm_overshoots_5mV": 2,
+    "ocm_overshoots_2mV": 1,
+    "o1cm_settle_ns_2pct": 1782.0
+   },
+   {
+    "tag": "CMSROW",
+    "event": "vdda_up",
+    "o1cm_peak_dev_mV": 68.39,
+    "o1cm_settle_ns_5mV": 1188.0,
+    "ocm_peak_dev_mV": 25.65,
+    "ocm_settle_ns_2mV": 168.0,
+    "o1cm_pp_last2us_mV": 0.09,
+    "ocm_pp_last2us_mV": 0.175,
+    "o1cm_cos_pp_last2us_mV": 0.076,
+    "o1cm_overshoots_5mV": 2,
+    "ocm_overshoots_2mV": 1,
+    "o1cm_settle_ns_2pct": 1946.0
+   }
+  ],
+  "errors": [],
+  "deck": "r1_afe/r1afe-post-e8d19r/E8__cmstep_ss_x32.cir",
+  "log": "r1_afe/r1afe-post-e8d19r/E8__cmstep_ss_x32.log"
+ },
+ {
+  "name": "E8__cmstep_ff_x32",
+  "corner": "ff",
+  "mismatch": false,
+  "subs": {
+   "MOS": "mos_ff",
+   "RES": "res_bcs",
+   "CAP": "cap_bcs",
+   "VDDA": 3.6,
+   "TEMP": -40,
+   "VCMI": 2.5,
+   "ACVDD": 0,
+   "NMC": 1,
+   "SEED": 1,
+   "LSB": 0.000439453125,
+   "CL": "2.8p",
+   "KLIST": "0 1 2 3 4 5",
+   "LLIST": "1 2 3 4 5 6 7 8",
+   "IB": "9.00u",
+   "DIO": "dio_ff",
+   "CODE": 5,
+   "AMP": 0.021875,
+   "RAW": "$G1_RESULTS_ROOT/r1_afe/r1afe-post-e8d19r/E8__cmstep_ff_x32"
+  },
+  "rc": 0,
+  "edits": [],
+  "seconds": 1713.3,
+  "rows": [
+   {
+    "tag": "CMSROW",
+    "event": "steady_before",
+    "o1cm_pp_mV": 0.162,
+    "ocm_pp_mV": 0.248
+   },
+   {
+    "tag": "CMSROW",
+    "event": "pin_cm_down",
+    "o1cm_peak_dev_mV": 239.11,
+    "o1cm_settle_ns_5mV": 472.0,
+    "ocm_peak_dev_mV": 8.24,
+    "ocm_settle_ns_2mV": 174.0,
+    "o1cm_pp_last2us_mV": 0.186,
+    "ocm_pp_last2us_mV": 0.246,
+    "o1cm_cos_pp_last2us_mV": 0.181,
+    "o1cm_overshoots_5mV": 1,
+    "ocm_overshoots_2mV": 3,
+    "o1cm_settle_ns_2pct": 482.0
+   },
+   {
+    "tag": "CMSROW",
+    "event": "pin_cm_up",
+    "o1cm_peak_dev_mV": 239.24,
+    "o1cm_settle_ns_5mV": 410.0,
+    "ocm_peak_dev_mV": 10.71,
+    "ocm_settle_ns_2mV": 144.0,
+    "o1cm_pp_last2us_mV": 0.162,
+    "ocm_pp_last2us_mV": 0.248,
+    "o1cm_cos_pp_last2us_mV": 0.125,
+    "o1cm_overshoots_5mV": 1,
+    "ocm_overshoots_2mV": 2,
+    "o1cm_settle_ns_2pct": 420.0
+   },
+   {
+    "tag": "CMSROW",
+    "event": "vcm2_up",
+    "o1cm_peak_dev_mV": 3.37,
+    "o1cm_settle_ns_5mV": 0.0,
+    "ocm_peak_dev_mV": 50.33,
+    "ocm_settle_ns_2mV": 140.0,
+    "o1cm_pp_last2us_mV": 0.151,
+    "ocm_pp_last2us_mV": 0.241,
+    "o1cm_cos_pp_last2us_mV": 0.115,
+    "o1cm_overshoots_5mV": 0,
+    "ocm_overshoots_2mV": 1,
+    "o1cm_settle_ns_2pct": 44.0
+   },
+   {
+    "tag": "CMSROW",
+    "event": "vcm2_down",
+    "o1cm_peak_dev_mV": 3.51,
+    "o1cm_settle_ns_5mV": 0.0,
+    "ocm_peak_dev_mV": 50.34,
+    "ocm_settle_ns_2mV": 140.0,
+    "o1cm_pp_last2us_mV": 0.162,
+    "ocm_pp_last2us_mV": 0.248,
+    "o1cm_cos_pp_last2us_mV": 0.125,
+    "o1cm_overshoots_5mV": 0,
+    "ocm_overshoots_2mV": 1,
+    "o1cm_settle_ns_2pct": 44.0
+   },
+   {
+    "tag": "CMSROW",
+    "event": "vdda_down",
+    "o1cm_peak_dev_mV": 78.74,
+    "o1cm_settle_ns_5mV": 766.0,
+    "ocm_peak_dev_mV": 29.12,
+    "ocm_settle_ns_2mV": 114.0,
+    "o1cm_pp_last2us_mV": 0.148,
+    "ocm_pp_last2us_mV": 0.238,
+    "o1cm_cos_pp_last2us_mV": 0.11,
+    "o1cm_overshoots_5mV": 0,
+    "ocm_overshoots_2mV": 1,
+    "o1cm_settle_ns_2pct": 1224.0
+   },
+   {
+    "tag": "CMSROW",
+    "event": "vdda_up",
+    "o1cm_peak_dev_mV": 81.72,
+    "o1cm_settle_ns_5mV": 758.0,
+    "ocm_peak_dev_mV": 28.36,
+    "ocm_settle_ns_2mV": 112.0,
+    "o1cm_pp_last2us_mV": 0.159,
+    "ocm_pp_last2us_mV": 0.248,
+    "o1cm_cos_pp_last2us_mV": 0.122,
+    "o1cm_overshoots_5mV": 0,
+    "ocm_overshoots_2mV": 1,
+    "o1cm_settle_ns_2pct": 1230.0
+   }
+  ],
+  "errors": [
+   "Warning: singular matrix:  check node xdut.xcos.xa2_xrs2_n6",
+   "Warning: singular matrix:  check node xdut.xsin.xa1_xrs2_n3",
+   "Warning: singular matrix:  check node xdut.xsin.xs1p_xu3_xr_n1",
+   "Warning: singular matrix:  check nodes xdut.xcos.xa1_xrs2_n3 and xdut.xcos.xa1_xrs2_n2"
+  ],
+  "deck": "r1_afe/r1afe-post-e8d19r/E8__cmstep_ff_x32.cir",
+  "log": "r1_afe/r1afe-post-e8d19r/E8__cmstep_ff_x32.log"
+ }
+]

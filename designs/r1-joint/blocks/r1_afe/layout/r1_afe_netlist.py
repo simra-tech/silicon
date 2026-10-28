@@ -41,7 +41,8 @@ def num(v):
     return x * mult
 
 
-def parse(path=NETLIST):
+def parse(path=None):
+    path = path or NETLIST   # E9: NETLIST may be reassigned by the generator (-rd sch=<file>)
     lines = []
     for raw in open(path).read().splitlines():
         if raw.startswith('+') and lines:

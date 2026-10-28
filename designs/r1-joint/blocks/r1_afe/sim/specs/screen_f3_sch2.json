@@ -1,0 +1,64 @@
+{
+ "question": "D26 item 2: F3 Rz step size on the schematic F2 (LRZ 22/23/24 um): DM1 GM at tt 15.4 uA CM 2.5 V (F3 LRZ 25 um: 9.47 dB, r1afe-sch-f3-loops) against DM1 PM at ffx 6.9 uA CM 0.5 V and f_c at ss",
+ "variants": {
+  "rz22": {
+   "netlist": null,
+   "fv": "a1rz22"
+  },
+  "rz23": {
+   "netlist": null,
+   "fv": "a1rz23"
+  },
+  "rz24": {
+   "netlist": null,
+   "fv": "a1rz24"
+  }
+ },
+ "jobs": [
+  {
+   "tag": "stb_tt_ib15.4_cm2.5",
+   "tmpl": "tb_afe_stb.cir",
+   "corner": "tt",
+   "subs": {
+    "VCMI": 2.5,
+    "KLIST": "0 5",
+    "LLIST": "1 2 4 5",
+    "IB": "15.4u",
+    "CL": "2.8p"
+   }
+  },
+  {
+   "tag": "stb_ffx_ib6.9_cm0.5",
+   "tmpl": "tb_afe_stb.cir",
+   "corner": "ffx",
+   "subs": {
+    "VCMI": 0.5,
+    "KLIST": "0 5",
+    "LLIST": "1 2 4 5",
+    "IB": "6.9u",
+    "CL": "2.8p"
+   }
+  },
+  {
+   "tag": "stb_ff_ib9.00_cm2.5",
+   "tmpl": "tb_afe_stb.cir",
+   "corner": "ff",
+   "subs": {
+    "VCMI": 2.5,
+    "KLIST": "0 5",
+    "LLIST": "1 2 4 5",
+    "IB": "9.00u",
+    "CL": "2.8p"
+   }
+  },
+  {
+   "tag": "ac_ss_ib11.81_cm0.5",
+   "tmpl": "tb_afe_ac.cir",
+   "corner": "ss",
+   "subs": {
+    "VCMI": 0.5,
+    "IB": "11.81u"
+   }
+  }
+ ]
+}
